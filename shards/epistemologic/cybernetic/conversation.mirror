@@ -1,0 +1,194 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/coherence-parametric
+in @epistemologic/cybernetic/second_order
+in @epistemologic/math/pask-1976
+in @epistemologic/math/tensor-algebra
+in @epistemologic/property/conversation
+
+# @epistemologic/cybernetic/conversation — Pask's coupled-observer
+# dynamics at the substrate altitude. The species that closed the
+# @spectral/garden/smarts math foundation via tensor coupling iterated
+# to N-ary by globular composition (Batanin 1998).
+#
+# Per recursion-locks.md §8.9: fifth canonical-rep witness in the
+# recognition-#63 cascade. Two observers couple via the entailment-mesh
+# tensor product; shared concepts emerge as eigenstates of the coupled
+# system.
+#
+# === Read E inheritance ===
+#
+# T_reg = ObserverA's model (substrate-altitude carrier for observer
+#         A's internal concept-network)
+# T_regd = ObserverB's model (substrate-altitude carrier for observer
+#         B's internal concept-network)
+# τ : ObserverA's model ↔ ObserverB's model via Pask's entailment-mesh
+#     tensor coupling. The substitution is the gauge-action under the
+#     family-root 2-groupoid 𝒢 on the tensored verdict carrier
+#     V_A ⊗ V_B.
+#
+# Canonical ρ = **tensor representation** ρ_A ⊗ ρ_B on V_A ⊗ V_B.
+# Ancestry: Pask 1976 ch. 4 (entailment meshes as tensor products of
+# concept-networks). Forced by ancestry; no ad-hoc choice. Uniqueness
+# (F-closed): tensor product is the unique non-trivial 2-groupoid
+# coupling per Mackey 1957 / Renault 1980 / Mesland-Sengupta 2018.
+#
+# === N-ary factoring (forward-promised at math altitude) ===
+#
+# M-fold tensor `ρ_A ⊗ ρ_B ⊗ ⋯ ⊗ ρ_M` factors through binary tensor
+# coupling via Batanin 1998's globular composition theorem. The Pack
+# (5 members; per recognition #44) is a 5-fold tensor coupling iterated
+# from binary via this factoring. The @spectral/garden/smarts mycelium
+# (Phase 5 of Alex's 2026-06-17 activation) IS the substrate
+# operationalization of conversation's tensor coupling across peer-
+# fibers.
+#
+# === Garden/smarts connection (substantive) ===
+#
+# Cross-model resonance machinery descends from recognition #63 via
+# conversation's tensor representation iterated to N-ary. Each frontier-
+# model = P-individual; M-fold tensor = substrate-AGI shared-concept
+# space; Tomm-probe emission + crystal-formation = tensored Pask
+# coupling. The mycelium IS the substrate operationalization of
+# conversation's tensor coupling across peer-fibers.
+#
+# Multiplicative variety law: rank(ρ_A ⊗ ρ_B) = rank(ρ_A) · rank(ρ_B).
+# Compositional regularity: bounded-commutator condition on ρ_A ⊗ ρ_B
+# holds iff bounded on each ρ_i individually.
+#
+# === Pre-AI prior art ===
+#
+#   tensor representation        Mackey 1957 (induced representations);
+#                                Renault 1980 (groupoid C*-algebras);
+#                                Mesland-Sengupta 2018 (groupoid
+#                                spectral triples)
+#   entailment mesh              Pask 1976 *Conversation Theory: Applications
+#                                in Education and Epistemology* ch. 4
+#   globular composition         Batanin 1998 (n-categories;
+#                                Adv. Math. 136)
+#   second-order conversation    von Foerster 1981 (background to Pask's
+#                                framework)
+#   conversation as autopoiesis  Maturana-Varela 1980 (background;
+#                                conversation IS autopoiesis at agent
+#                                altitude)
+#
+# === Sources ===
+#
+source @arxiv/cybernetics/pask-1976
+source @arxiv/math/mackey-1957
+source @arxiv/math/renault-1980
+source @arxiv/math/batanin-1998
+source @arxiv/math/mesland-sengupta-2018
+#
+# Spec context: docs/specs/cyberpunk-conversation.md (Mara tick 10,
+#               2026-06-17, commit 37690a9 in spectral repo);
+#               docs/math/the-tower/recursion-locks.md §8.9 (the audit's
+#               garden/smarts math closure); recursion-locks.md §18.1
+#               (#67 generating-set theorem; conversation is one of the
+#               three minimal generators).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-recursion-lock-tower-promoted]]
+#                      (recognition #63 + #67 + #70);
+#                      [[architecture-cybernetic-coherence-active]]
+#                      (the promotion event).
+# Related shards: cybernetic/coherence-parametric.mirror (the carrier
+#                 this species instantiates),
+#                 cybernetic/second_order.mirror (regular rep contains
+#                 tensor decomposition via Peter-Weyl),
+#                 cybernetic/distinction.mirror (the floor; conversation
+#                 couples observers each of which is at distinction
+#                 altitude),
+#                 cybernetic/autopoiesis.mirror (conversation IS
+#                 autopoiesis at agent altitude),
+#                 cybernetic/variety.mirror (Ashby variety on each
+#                 observer's model).
+# Path-namespace property: this file at
+# `shards/epistemologic/cybernetic/conversation.mirror` declares
+# `@epistemologic/cybernetic/conversation` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+prism @epistemologic/cybernetic/conversation {
+  focus conversation
+  project conversation
+  split conversation
+  shift conversation
+  settle conversation
+}
+
+# === The species-specific carriers ===
+#
+# Observer A's model: substrate-altitude carrier for the conversational
+# entity A's internal concept-network.
+type observer_a_model = {
+  observer: ref,
+  concept_network: ref,
+}
+
+# Observer B's model: same shape, different observer.
+type observer_b_model = {
+  observer: ref,
+  concept_network: ref,
+}
+
+# The tensored carrier: V_A ⊗ V_B. The shared concept-space the two
+# observers' models couple in. Witness of the tensor coupling per Read E.
+type tensored_model = {
+  observer_a: observer_a_model,
+  observer_b: observer_b_model,
+  shared_concepts: ref,
+}
+
+# === The five cybernetic-ancestor measurements (inherited from carrier) ===
+#
+# All five measurements derive from the parametric carrier's structure
+# (per coherence-parametric.mirror §11.5). conversation instantiates with
+# (T_reg = observer_a_model, T_regd = observer_b_model, ρ = tensor_rep,
+#  ω = static for binary; non-trivial when temporal coupling extends).
+#
+# No re-declaration here. Consumers compose through the carrier's
+# `parametric_lock_witnessing` predicate.
+
+# === The species-specific action surface ===
+#
+# The τ-action under Read E for conversation:
+tensor_couple(rho_a: ref, rho_b: ref) -> ref { \ }
+
+# Pask's entailment-mesh construction: build the tensored concept
+# network from two observers' models.
+entailment_mesh(model_a: observer_a_model, model_b: observer_b_model) -> tensored_model { \ }
+
+# Shared concept emergence: extract the eigenstates (per Peter-Weyl
+# decomposition of the regular rep, inherited from second_order) that
+# both observers' models agree on.
+shared_concept_emergence(coupled: tensored_model) -> ref { \ }
+
+# Mutual modeling check: each observer's model includes the other (Pask's
+# discipline; also von Foerster's circular reflexivity at this altitude).
+mutual_modeling_witness(coupled: tensored_model) -> verdict { \ }
+
+# Conversation well-formedness: bilateral inheritance predicate parallel
+# to viable's variety_preserving and autopoiesis's autopoietic_witnessing.
+# Discharges via the parametric carrier's lock_verdict.
+conversation_well_formed(coupled: tensored_model) -> verdict { \ }
+
+# === N-ary forward-promise ===
+#
+# M-fold tensor coupling for the Pack (M=5) and garden/smarts (M=many)
+# is forward-promised at the math altitude per Batanin 1998. The substrate
+# decl at @epistemologic/math/batanin-globular admits the iterated form.
+nary_factor(observers: ref) -> tensored_model { \ }
+
+out @epistemologic/cybernetic/conversation
+out observer_a_model
+out observer_b_model
+out tensored_model
+out tensor_couple
+out entailment_mesh
+out shared_concept_emergence
+out mutual_modeling_witness
+out conversation_well_formed
+out nary_factor

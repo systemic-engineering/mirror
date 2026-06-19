@@ -1,0 +1,474 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/eigenform
+in @epistemologic/math/bundle
+in @epistemologic/math/connes_spectral_triple
+
+# @epistemologic/cybernetic/coherence-parametric — the parametric carrier
+# from which every cybernetic-coherence species inherits via thin
+# specialization.
+#
+# Recognition #63 (Reed + Mara + Taut, promoted 2026-06-17 via the
+# recursion-lock tower audit; the parametric-form-derivable third
+# ratification gate closed by §11 of
+# `docs/math/the-tower/recursion-locks.md`). Subsequent recognitions
+# #64 (carrier-extension / form-incompletion, 2026-06-18 §8.10) and
+# #67 (the form-restriction dual, §8.12) refine the carrier without
+# retracting; #70 (Pack-orchestra cybernetic instance) instantiates it.
+# This shard is item 1 of §11.8's forward-promised substrate-landing
+# path.
+#
+# === Why this is a separate shard from coherence-species ===
+#
+# `@epistemologic/cybernetic/coherence` is THE COHERENCE SPECIES
+# (Adjustment ↔ Morphism — the parallel-altitude regulator/regulated
+# pair from T11.11 / the first witness in §8.1). It IS an
+# instantiation. This shard `@epistemologic/cybernetic/coherence-
+# parametric` is the abstract form THAT species (and SEL, viable,
+# autopoiesis, bateson_learning, second_order, distinction,
+# conversation, design, autopoiesis, coevolution) all instantiate.
+#
+# Sibling-shard discipline: species-coherence declares
+# `use @epistemologic/cybernetic/coherence-parametric<Adjustment,
+# Morphism, natural_rep_morphism, 0>` (forward-promised when the
+# species-collapse rewrite lands; see §11.7's species-shard collapse
+# item in the forward-promised list); the parametric carrier here
+# names the lock-measurement five once.
+#
+# === The carrier shape, verbatim from §11.7 + §8.10 ===
+#
+# Per recursion-locks.md §11.7 (the parametric carrier sketch) extended
+# by §8.10 (the ω temporal-axis extension surfaced by coevolution),
+# the substrate-altitude declaration is:
+#
+#   prism @epistemologic/cybernetic/coherence-parametric<
+#     T_reg,        # species-specific regulator verdict carrier
+#     T_regd,       # species-specific regulated verdict carrier
+#     ρ,            # representation of the family-root 2-groupoid 𝒢
+#                   #   on V_S = T_reg ⊕ T_regd
+#     ω             # connection 1-form (temporal axis; static
+#                   #   species set ω = 0; temporal species
+#                   #   coevolution + viable Read D carry non-trivial ω)
+#   >
+#
+# The five cybernetic-ancestor measurements (Ashby variety-match;
+# Beer requisite-variety; Bateson logical-type-match; von Foerster
+# circular-reflexivity; Conant-Ashby good-regulator) each derive
+# mechanically from (ρ, ω) and the principal G-bundle structure —
+# no species-specific re-declaration required.
+#
+# === Grammar-extension status at THIS tick (substrate-pull honesty) ===
+#
+# Per the bootstrap's namespace-collector at
+# `bootstrap/src/lib.rs::collect_declared_namespaces`, a `prism @<path>`
+# line's `@<path>` reference is captured up to the first delimiter
+# (whitespace, `{`, `(`, `:`, `,`). The character `<` is NOT a
+# delimiter at this tick. A literal `prism @<path><T_reg, T_regd,
+# ρ, ω>` declaration would parse as the namespace
+# `@<path><T_reg` followed by the `,` delimiter and a confused
+# trailing token sequence.
+#
+# Mirror's grammar does NOT yet admit type-parameter syntax on prism
+# declarations. The substrate-pull resolution per
+# [[feedback-substrate-pull]]: declare what we CAN declare at this
+# altitude (the action surface plus the carrier types as records),
+# AND forward-promise the type-parameter syntax at the grammar-
+# extension altitude. The grammar-extension is a separate substrate-
+# pull tick; landing it requires grammar-aware work at
+# `bootstrap/src/lib.rs` (extending `collect_declared_namespaces`'s
+# delimiter set to admit `<` as a parameter-list opener) plus the
+# token.mirror corpus declarations for the new keyword shape. That
+# work is forward-promised; this shard does the discipline of NAMING
+# the carrier without requiring the grammar extension to land first.
+#
+# Per [[feedback-craft-not-deliver]]: the species-shard collapse
+# (rewriting coherence.mirror / SEL / viable / autopoiesis / etc. as
+# parametric-instantiations) also forward-promises until the grammar
+# extension lands. This shard is the substrate-altitude declaration
+# the species shards inherit FROM; the species-shard collapse is the
+# follow-up tick.
+#
+# === The carrier types declared at this tick ===
+#
+# Per [[feedback-no-bare-types]] every constituent is a typed record;
+# no bare primitives. The types named here are species-agnostic
+# (named with `ref` for the species' actual choice of T_reg / T_regd /
+# ρ / ω); the species-shard collapse closes the interpretation per-
+# species. This is the same shape as `variety.axis_budget`'s
+# `value: ref` and `eigenform.fixed_point`'s `seed/iteration/witness:
+# ref` precedents.
+#
+# === The 4-way bilateral mapping ===
+#
+# Per the cybernetic foundation §4.1, every cybernetic species' seam
+# maps to four cybernetic distinctions simultaneously. The parametric
+# carrier preserves this mapping uniformly across ALL species — that
+# IS what makes it parametric:
+#
+# - von Foerster first/second-order: T_reg ↔ T_regd IS the
+#   distinction between the observer (regulator) and the observed
+#   (regulated); the five ancestor measurements ARE the second-order
+#   observer's report on the observation.
+# - Maturana structure/organisation: T_reg ↔ T_regd IS the
+#   structure/organisation partition at the species' altitude; ρ
+#   is the organisation; (T_reg ⊕ T_regd, ω) is the structure that
+#   realises it.
+# - Beer S3/S4: T_reg IS the S5 policy carrier; T_regd IS the S3
+#   audit carrier; ρ is the S4 intelligence translating between
+#   them; ω carries the S2 coordination dynamics across time.
+# - Pask M/P-individual: T_reg ↔ T_regd IS the bilateral
+#   conversational agreement between two P-individuals; ρ is the
+#   conversational language; ω is the conversational tempo.
+#
+# Four traditions converging at one carrier with no per-tradition
+# specialisation. This IS what recognition #63 promotes: the carrier
+# admits all four readings AT ONCE; species inherit the four-way
+# mapping by inheriting the carrier.
+#
+# === Substrate-pull recognitions grounded here ===
+#
+# - Recognition #63 (recursion-lock tower; the parametric form
+#   itself).
+# - Recognition #64 (carrier-extension via ω; surfaced by coevolution
+#   §8.10).
+# - Recognition #67 (form-restriction at degenerate edges; surfaced
+#   by design §8.12).
+# - Recognition #70 (Pack-orchestra as cybernetic-coherence instance;
+#   ratifies the parametric carrier's reach into the agent altitude).
+#
+# === Pre-AI prior art ===
+#
+#   Conant-Ashby 1970 (IEEE T-SMC, "Every Good Regulator of a System
+#                      Must Be a Model of That System") — the
+#                      foundational theorem; the parametric form IS
+#                      this theorem at the substrate altitude per
+#                      §11.4 (Connes' bounded-commutator IS the
+#                      general case; Conant-Ashby is the finite-state
+#                      specialisation).
+#   Connes 1985        (Inst. Hautes Études Sci. Publ. Math. 62,
+#                      "Non-commutative differential geometry") — the
+#                      spectral triple (A, H, D); the bounded-
+#                      commutator `‖[D, π_E(g)]‖ < ∞` IS the
+#                      coextensivity reading at altitude α+1 per
+#                      §11.4.
+#   Peter-Weyl 1927    (Math. Annalen 97, "Die Vollständigkeit der
+#                      primitiven Darstellungen einer geschlossenen
+#                      kontinuierlichen Gruppe") — the regular
+#                      representation on L²(𝒢) decomposes into all
+#                      irreducibles with multiplicity equal to
+#                      dimension; the second_order species' canonical
+#                      ρ choice (§8.7) IS Peter-Weyl applied at the
+#                      2-groupoid altitude.
+#   Ashby 1956 §11/7   the requisite variety theorem; the first of
+#                      the five ancestor measurements.
+#   Beer 1972, 1979    the viable system model; the second of the
+#                      five (requisite variety at VSM S3/S4 altitude
+#                      via ω-holonomy around altitude loops).
+#   Bateson 1972       the logical-type hierarchy; the third of the
+#                      five (representation theory of 𝒢 decomposed
+#                      by logical type).
+#   von Foerster 1981  the second-order observation; the fourth of
+#                      the five (the Tomm probe at altitude α+1 IS
+#                      the trace tr(ρ ∘ ρ)).
+#
+# Spec context: docs/math/the-tower/recursion-locks.md §11.7
+#               (carrier sketch, the parametric form derivation
+#               that closes recognition #63's third ratification
+#               gate), §8.10 (coevolution's ω extension, the
+#               carrier-extension activation of candidate #64),
+#               §8.12 (design's form-restriction dual via degenerate
+#               T_regd = ⊥);
+#               docs/math/the-tower/principal-bundles.md §1-§4 (the
+#               2-groupoid bundle geometry the carrier instantiates),
+#               docs/math/the-tower/altitudes.md §2-§5 (the named-
+#               altitude atlas the parametric form fibers over),
+#               docs/math/the-tower/holonomy.md §5, §8 (the verdict-
+#               family-as-holonomy-components reading the lock_verdict
+#               action returns; the librarian-perturbation reading
+#               of gauge-equivalence the bench harness measures);
+#               docs/math/the-tower/curvature-and-tomm.md (the Tomm
+#               probe at substrate altitude IS the
+#               von_foerster_circular_reflexivity measurement);
+#               docs/specs/cybernetic-coherence-benchmark.md
+#               (T11.11 — the first-witness species, by construction).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]],
+#                      [[architecture-spectral-triples-all-the-way]]
+#                       (the fractal-self-similarity recognition
+#                        that makes Connes' framework apply at every
+#                        altitude; Conant-Ashby IS the finite-
+#                        dimensional specialisation per §11.4),
+#                      [[architecture-cybernetic-foundation]] (the
+#                        11-property family canon that grounds the
+#                        species this parametric form unifies),
+#                      [[architecture-error-as-tomm-probe]] (the
+#                        substrate-altitude reading of the
+#                        von_foerster_circular_reflexivity measurement),
+#                      [[feedback-substrate-pull]] (the discipline
+#                        that says: declare what CAN land at this
+#                        tick; forward-promise the rest at the
+#                        grammar-extension altitude),
+#                      [[feedback-craft-not-deliver]] (the species-
+#                        shard collapse is the FOLLOW-UP tick, not
+#                        bundled into this one),
+#                      [[feedback-no-bare-types]] (lock_pair,
+#                        connection_form, lock_carrier are typed
+#                        records; no bare refs as standalone fields),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (the parametric form was already implicit in
+#                        the §11 mechanical derivation; this shard
+#                        names it at substrate altitude so the
+#                        species-collapse can route through one
+#                        carrier).
+# Related shards: epistemologic/cybernetic.mirror (the family root),
+#                 epistemologic/cybernetic/variety.mirror (the first
+#                  precedent species — same shape; the lock-pair
+#                  here generalises variety's axis_budget pattern),
+#                 epistemologic/cybernetic/eigenform.mirror (the
+#                  second precedent species; tick 1 of this audit's
+#                  forward-promised landing path landed eigenform;
+#                  this tick lands the parametric carrier as item 2),
+#                 epistemologic/cybernetic/coherence.mirror (the
+#                  species-coherence shard; the FIRST instantiation
+#                  of this carrier; species-shard collapse forward-
+#                  promised),
+#                 glass.mirror (the @glass altitude lock_verdict's
+#                  verdicts surface against; the `transparency<p>`
+#                  and `Imperfect<T, Gap, Transparency<Ref>>`
+#                  carriers ARE the verdict-family this shard's
+#                  lock_verdict action returns).
+# Path-namespace property: this file at
+# `shards/epistemologic/cybernetic/coherence-parametric.mirror`
+# declares `@epistemologic/cybernetic/coherence-parametric` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/conant-ashby-1970
+source @arxiv/math/connes-1985
+source @arxiv/math/peter-weyl-1927
+
+# === Path-namespace declaration (no type parameters at this tick) ===
+#
+# The bare prism declaration. Type-parameter syntax forward-promised
+# at the grammar-extension altitude (see the header rationale above).
+# When the grammar lands `<T_reg, T_regd, ρ, ω>` on prism declarations,
+# this line rewrites to
+#
+#   prism @epistemologic/cybernetic/coherence-parametric<
+#       T_reg, T_regd, ρ, ω>
+#
+# without changing the carrier's substrate-altitude identity (the
+# content-addressing closes on the action surface + types below, not
+# on the type-parameter-syntax surface). Species-shard collapse is
+# the follow-up tick that consumes this rewrite.
+prism @epistemologic/cybernetic/coherence-parametric {
+  focus coherence_parametric
+  project coherence_parametric
+  split coherence_parametric
+  shift coherence_parametric
+  settle coherence_parametric
+}
+
+# === The connection_form carrier ===
+#
+# `ω` from §8.10's extension. The connection 1-form parameterizing
+# temporal evolution; species with static ρ set ω = 0 (modeled here
+# by the `is_trivial: true` invariant); species with non-trivial
+# temporal axis (coevolution; viable Read D) declare `is_trivial:
+# false` and carry the temporal data in `data`.
+#
+# Identity contract: byte-equality on (is_trivial, data). The
+# species' realisation closes the interpretation of `data` —
+# coevolution carries Kauffman NK lattice data; viable Read D
+# carries the temporal-identity Δt-window; static species'
+# `data` is the zero ref.
+type connection_form = {
+  is_trivial: ref,
+  data:       ref,
+}
+
+# === The lock_pair carrier (T_reg ↔ T_regd ↔ ρ ↔ ω) ===
+#
+# The substrate-altitude lift of the §11.7 carrier sketch's type
+# decomposition. Each field carries the species-specific data:
+#
+# - `t_reg`     T_reg: the regulator's verdict carrier (Adjustment
+#               for coherence-species; License for SEL; Identity for
+#               viable; Organization for autopoiesis; etc.).
+# - `t_regd`    T_regd: the regulated's verdict carrier (Morphism
+#               for coherence-species; Compliance for SEL; Stability
+#               for viable; Component for autopoiesis; etc.).
+# - `rho`       ρ: the species' choice of representation of the
+#               family-root 2-groupoid 𝒢 on V_S = T_reg ⊕ T_regd
+#               (natural rep for coherence-species; adjoint for
+#               autopoiesis; graded for bateson_learning; regular
+#               for second_order; identity for design; etc.).
+# - `omega`     ω: the connection 1-form (static species use ω = 0
+#               via `connection_form { is_trivial: true, data: ... }`;
+#               temporal species carry the non-trivial data).
+#
+# Identity contract: byte-equality on (t_reg, t_regd, rho, omega).
+# Two lock-pairs ARE the same lock under content-addressing iff all
+# four carriers are byte-equal. This IS the parametric form's
+# substrate-altitude identity per [[architecture-spectral-triples-
+# all-the-way]] — the spectral-triple's (A, H, D) at the carrier
+# altitude IS this record.
+#
+# Pattern-matches `variety.axis_budget`'s identity discipline and
+# `eigenform.fixed_point`'s triple-of-refs discipline. Same shape;
+# different content.
+type lock_pair = {
+  t_reg:  ref,
+  t_regd: ref,
+  rho:    ref,
+  omega:  connection_form,
+}
+
+# === The lock_carrier (the species' altitude-aware lock data) ===
+#
+# Per §2 of recursion-locks.md the lock at altitude α+1 carries the
+# species' name plus the (T_reg, T_regd, τ, ω) tuple. This shard
+# names that tuple plus the altitude and species-name as a typed
+# record. The natural substitution `τ : T_reg ↔ T_regd` is NOT a
+# separate field — per §11.3 the substitution IS the action of a
+# 2-arrow in 𝒢 on the species' verdict carrier; it derives from
+# `rho` and does not need re-declaration. Carrier collapses to
+# `(altitude, species, lock_pair)` instead of `(altitude, species,
+# T_reg, T_regd, τ, ω)`.
+#
+# - `altitude` the named-altitude (compiler, peer_pulse, reflection,
+#              librarian, home, federation per altitudes.md §2). The
+#              parametric form fibers over this atlas.
+# - `species`  the species' name as a ref (`coherence`, `sel`,
+#              `viable`, `autopoiesis`, `bateson_learning`,
+#              `second_order`, `distinction`, `conversation`,
+#              `algedonic`, `design`, `coevolution`, `eigenform`,
+#              `variety` — the eleven species the audit closed on
+#              plus eigenform per §11's table).
+# - `pair`     the (T_reg, T_regd, ρ, ω) tuple.
+type lock_carrier = {
+  altitude: ref,
+  species:  ref,
+  pair:     lock_pair,
+}
+
+# === The five cybernetic-ancestor measurements ===
+#
+# Per §3 + §11.5 of recursion-locks.md. Each measurement is a
+# substrate-altitude action; each derives from the lock_carrier's
+# (rho, omega, bundle-structure) without species-specific re-
+# declaration. Species do not override these; they inherit them.
+#
+# Bodies discharge `\` at this altitude per [[feedback-craft-not-
+# deliver]] — the discharge surfaces at the species-boundary via
+# the same `@code/metalogue/materialize.classify` discriminator the
+# variety / eigenform precedents route through. The substrate
+# declares the obligation; the realisation closes per-species via
+# the species-shard collapse follow-up tick.
+
+# Ashby variety-match (Ashby 1956 §11/7): do regulator_at(α+1) and
+# regulated_at(α+1) carry compatible variety budgets at altitude α?
+# Substrate reading: rank(ρ.image) — does the structure group's
+# action on V_S have enough variety to express the transformation
+# between T_reg and T_regd?
+ashby_variety_match(lock: lock_carrier) -> verdict { \ }
+
+# Beer requisite-variety witness (Beer 1972, 1979): does the
+# regulator hold requisite variety at the VSM S3/S4 altitude?
+# Substrate reading: holonomy(ω ↻ α+1) — does the connection
+# 1-form's holonomy around altitude loops at α+1 give the S3/S4
+# layer requisite variety?
+beer_requisite_variety_witness(lock: lock_carrier) -> verdict { \ }
+
+# Bateson logical-type-match (Bateson 1972; Russell-Whitehead
+# 1910-1913): do the two verdicts live at the same logical-type
+# level? Substrate reading: weight_decomposition(ρ) — does the
+# representation theory of 𝒢 decomposed by logical type put T_reg
+# and T_regd at the same G-module weight?
+bateson_logical_type_match(lock: lock_carrier) -> verdict { \ }
+
+# von Foerster circular-reflexivity (von Foerster 1981): does each
+# regulator's internal model include itself? Substrate reading:
+# tr(ρ ∘ ρ) — the trace of the representation composed with itself;
+# the Tomm probe `[D_F, a]` at altitude α+1 IS this measurement
+# per [[architecture-error-as-tomm-probe]].
+von_foerster_circular_reflexivity(lock: lock_carrier) -> verdict { \ }
+
+# Conant-Ashby good-regulator (Conant-Ashby 1970, IEEE T-SMC) —
+# the load-bearing measurement. Substrate reading: bounded_commutator
+# (D + ω, π_E(ρ)) — the bounded-commutator condition `‖[D, π_E(g)]‖
+# < ∞` from Connes' spectral triple specialised at finite-dimensional
+# altitudes IS Conant-Ashby's coextensivity per §11.4.
+conant_ashby_good_regulator(lock: lock_carrier) -> verdict { \ }
+
+# === The lock-hold verdict ===
+#
+# `lock_verdict(lock)` reads whether the recursion-lock at the
+# species' altitude HOLDS (rather than merely being measurable).
+# Per §4 of recursion-locks.md the lock holds iff the residual
+# coextensivity contracts; per §8.10's Kauffman extension this
+# admits two contraction modes:
+#
+# - PL fixed-point convergence `ρ(N) → 0` (static species; ω trivial)
+#   The classical case; per Polyak-Łojasiewicz the residual
+#   coextensivity across N pulses contracts to zero with rate
+#   satisfying PL. This is the cybernetic-coherence species' (T11.11
+#   bench-harness) reading.
+# - Red Queen bounded-sustainment `ε ≤ ρ(N) ≤ 1 - ε` (temporal
+#   species; ω non-trivial)
+#   Kauffman's edge-of-chaos / adjacent-possible reading; the lock
+#   holds by SUSTAINED dynamics rather than convergence. The
+#   coevolution species' (§8.10) reading.
+#
+# The verdict carrier IS the substrate's existing
+# `Imperfect<T_lock, Gap, Transparency<Ref>>` family per holonomy.md
+# §5. `T_lock` here is the species' altitude-specific lock-carrier
+# (the species-shard collapse names it; this shard carries the
+# obligation via `ref`). Body discharges `\`; the discharge is the
+# composite verdict from the five ancestor measurements + the
+# contraction-mode classification.
+#
+# Per [[feedback-no-bare-types]] the verdict carrier IS the typed
+# Imperfect family; not a bare `ref`. The action's return type
+# names that surface; the species-shard collapse closes T_lock per
+# species.
+lock_verdict(lock: lock_carrier) -> imperfect(lock_carrier) { \ }
+
+# === The parametric_lock_witnessing predicate ===
+#
+# The bilateral-agreement predicate per recognition #37 (the Pask
+# reading of `requires`) that consumer shards name in a `requires`
+# clause to declare bilateral commitment to the parametric form.
+# The species commits to declaring its (T_reg, T_regd, ρ, ω) tuple
+# via `lock_pair`; the consumer commits to discharging the five
+# ancestor measurements + the contraction-mode classification at
+# the species-boundary.
+#
+# Declared as a typed predicate so downstream species shards can
+# write `requires parametric_lock_witnessing(my_lock)` — same shape
+# as `variety.variety_preserving(species)` and
+# `eigenform.eigenform_witnessing(carrier)`. Body is `\` at this
+# altitude; the discharge IS the composite of the five ancestor
+# measurements falling within the species' declared contraction
+# mode (PL or Red Queen) at the species boundary.
+#
+# No `requires parametric_lock_witnessing(…)` clauses are added at
+# THIS shard. The property declares the predicate; species
+# instantiations add the clauses when the species-shard collapse
+# tick lands. Per [[feedback-craft-not-deliver]].
+parametric_lock_witnessing(lock: lock_carrier) -> verdict { \ }
+
+out @epistemologic/cybernetic/coherence-parametric
+out connection_form
+out lock_pair
+out lock_carrier
+out ashby_variety_match
+out beer_requisite_variety_witness
+out bateson_logical_type_match
+out von_foerster_circular_reflexivity
+out conant_ashby_good_regulator
+out lock_verdict
+out parametric_lock_witnessing

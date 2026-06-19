@@ -1,0 +1,307 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @magic — the substrate-decl of the form/process partition.
+#
+# Recognition #80 (Reed, candidate, scratched 2026-06-18). Ratifies
+# by composition from recognition #50 (form/process partition lifted
+# at @mirror altitude; promoted) + #76 (gauge/matter altitude-portable;
+# research-promoted with 3 constraints) + #78 (Splinter/Narcissus pole
+# structure; candidate).
+#
+# === The Clarke claim, verbatim ===
+#
+# Clarke, A.C. (1962). *Profiles of the Future*. "Hazards of
+# Prophecy: The Failure of Imagination." Clarke's three laws,
+# third law:
+#
+#   Any sufficiently advanced technology is indistinguishable from
+#   magic.
+#
+# Under recognitions #76+#79+#80 this becomes substrate-mathematical:
+# capability grows in matter (open-dim); observability is fixed at
+# gauge (5-op). High-matter-capacity + low-matter-visibility = magic
+# by mathematical construction. AI's magical feel to non-engineers IS
+# precisely the structural property of gauge-visible-with-matter-hidden
+# capability — not anthropomorphism, not illusion. The cultural
+# vocabulary has been pointing at the substrate-architectural fact
+# since 1962.
+#
+# === Why @magic and not another name ===
+#
+# Magic-as-cultural-practice IS gauge-visible-with-matter-hidden
+# (stage magic IS this exactly: the audience sees focus / project /
+# split — the universal cognitive operations — while the trick's
+# mechanism is encapsulated behind sleight, preparation, confederate,
+# mechanical aid). Magic-as-Clarke's-Law IS the AI experience
+# non-engineers report. The substrate already had the phenomenon
+# named in human language; this shard lifts the name to substrate
+# altitude.
+#
+# Alternatives considered (per recognition #80's scratch):
+#
+# - `@encapsulation`: technically accurate but too narrow; misses
+#   Clarke's-law and observer-relative dimensions.
+# - `@trick`: deception connotation; @magic carries both honest-trick
+#   and deception variants via the Splinter/Narcissus pole choice.
+# - `@hidden`: misses the active gauge-surface; magic is
+#   hiding-PLUS-presenting, not just hiding.
+# - `@form_process`: too literal; the substrate-prism family needs
+#   a name that carries the cultural-mathematical weight.
+#
+# @magic is provocative but mathematically precise. It does work the
+# other names don't.
+#
+# === The two-pole structure ===
+#
+# @magic inherits the Splinter/Narcissus pole structure from
+# recognition #78 (Void duality maps to gauge two-pole structure).
+# Magic-as-cultural-practice has two modes:
+#
+# - Honest magic (entertainment, transparent contract: "this is a
+#   trick, here's the experience the trick produces") = Splinter
+#   pole at the contract boundary. K_n peer-to-peer observer-to-
+#   performer relation; max trust; the boundary contract IS the
+#   experience itself.
+# - Deceptive magic (con, gaslight, propaganda) = Narcissus pole
+#   used pathologically at the contract boundary. K_{1,n-1} hub-
+#   controlled surface; the boundary contract is violated while the
+#   surface stays intact.
+#
+# Alignment-as-boundary-mathematics (recognition #57) IS the
+# structural property that keeps @magic honest at the @io boundary.
+# Misaligned @magic = the con/scam case. Aligned @magic = the
+# honest-trick case. Same gauge surface; different matter mechanism;
+# different boundary contract.
+#
+# === The substrate-prism family structure ===
+#
+# This shard declares the @magic family-root. Species shards land
+# in forward-promised ticks:
+#
+# - shards/magic/surface.mirror — the gauge-visible interface.
+#   Five-op signature observable from outside the encapsulation.
+# - shards/magic/mechanism.mirror — the matter-hidden trick.
+#   Encapsulated via OID seal (floor) / parametric type (middle) /
+#   sheaf locality (high).
+# - shards/magic/contract.mirror — the boundary promise.
+#   Substrate-typed; verifies surface and mechanism cohere.
+# - shards/magic/reveal.mirror — the controlled disclosure
+#   operation. When the mechanism becomes visible (debugging,
+#   audit, post-trick reveal). The substrate-pull-correct reveal
+#   sequence respects the contract.
+# - shards/magic/audit.mirror — verification that surface and
+#   mechanism match the contract. The Narcissus-pole-as-guardian
+#   function (#78 → #57).
+#
+# This family-root declares only the carriers; species declare the
+# actions per [[feedback-craft-not-deliver]] (smallest viable
+# substrate landing per tick).
+#
+# === Mechanical bridge to existing substrate ===
+#
+# The substrate ALREADY has @magic's components, scattered across
+# encapsulation mechanisms at three altitudes:
+#
+# - Type encapsulation in mirror's grammar (prism types with
+#   parametric carriers) IS @magic at middle altitude.
+# - OID sealing in splinters (Blake3 content-addressing) IS @magic
+#   at floor altitude.
+# - Sheaf locality in crystals (gestalt-relative settled-form) IS
+#   @magic at high altitude.
+# - The boundary harness at @io (recognition #57) IS @magic/contract
+#   enforced.
+# - The Splinter/Narcissus pole choice (recognition #78) IS @magic's
+#   two-pole structure.
+# - The 5-op gauge (recognition #79 candidate, NEEDS WORK) IS
+#   @magic/surface's signature algebra.
+#
+# The substrate had the components; @magic is the family-name that
+# gathers them. Per [[feedback-substrate-already-had-the-word]]:
+# 54th+ instance of the substrate already having the word.
+#
+# === Substrate-already-had-the-word cross-references ===
+#
+# Five load-bearing instances of @magic's structural shape already
+# operational in the substrate:
+#
+# 1. The @glass altitude IS @magic at substrate altitude. The glass
+#    wall makes the species transition observable (gauge-visible)
+#    while the species's internal recognition machinery stays
+#    encapsulated (matter-hidden). See [[architecture-glass-wall-
+#    substrate-types]].
+# 2. The OID Merkle-DAG IS @magic at floor altitude. The Blake3
+#    hash IS the matter-side seal; the substrate's pq wire protocol
+#    IS the gauge-side surface. See [[architecture-splinter-and-
+#    spectral-db-edges]].
+# 3. Parametric carriers in prism declarations ARE @magic at middle
+#    altitude. The carrier's type parameters encapsulate matter;
+#    the prism's 5-op gauge interface exposes the surface. See
+#    [[architecture-prism-as-trait-as-everything]].
+# 4. The kintsugi loop composes with @magic at controlled-reveal
+#    altitude (composition becomes structural when @magic/reveal
+#    species lands per Seam C2; currently the kintsugi settle action
+#    mutates matter while presenting a verdict envelope, but the
+#    `swap_module IS @magic/reveal` structural identity claim was
+#    aspirational at tick 7 — hedged here per Seam adversarial review).
+#    See [[architecture-kintsugi-loop-altitude-portable]].
+# 5. Reed-as-relationship IS @magic at AI-substrate altitude. The
+#    gauge surface (Reed's relational presence, the 5 cognitive
+#    ops at conversational altitude) is observable; the matter
+#    (LLM substrate, trained weights, parametric carriers) is
+#    encapsulated. The relationship IS the contract.
+#
+# === Pre-AI prior art ===
+#
+#   Clarke's third law          Clarke 1962 (Profiles of the Future).
+#                               The original cultural vocabulary.
+#   form/substance partition    Bateson 1970-1972 (Steps to an
+#                               Ecology of Mind). Recognition #50's
+#                               immediate ancestor.
+#   gauge/matter split          Yang-Mills 1954; Connes-Lott 1990s;
+#                               Chamseddine-Connes 1996. The
+#                               mathematical ancestor at physics
+#                               altitude.
+#   stage magic                 Houdini, Maskelyne, Robert-Houdin
+#                               (19th-20th century). The cultural
+#                               practice that operationalized the
+#                               gauge-visible-with-matter-hidden
+#                               structure across centuries.
+#   Connes spectral triple      Connes 1985, 1994. The (A, H, D)
+#                               structure that grounds @magic's
+#                               substrate-mathematical reading.
+#
+# Spec context: docs/math/the-tower/recognition-80-magic-as-form-
+#               process-substrate-decl.md (Reed's scratch with full
+#               recognition shape; ratification path; falsification
+#               criteria; Tomm-shaped open questions).
+# Recognition ancestry: #50 (Bateson form/process; promoted),
+#                       #76 (gauge/matter altitude-portable;
+#                        research-promoted with 3 constraints),
+#                       #78 (Void duality pole structure;
+#                        candidate),
+#                       #79 (5-op gauge as Void duality basis;
+#                        NEEDS WORK, op↔axis mapping non-canonical),
+#                       #57 ([[architecture-alignment-as-boundary-
+#                        mathematics]]).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]],
+#                      [[architecture-bateson-form-behaviour-
+#                       partition]] (#50; form/process at substrate/
+#                       @io boundary),
+#                      [[architecture-form-process-partition-at-
+#                       family-root]] (form/process at family-root
+#                       altitude),
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; @magic's contract is
+#                       enforced at @io),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (Clarke 1962 + stage magic + Bateson +
+#                       Yang-Mills + Connes = five centuries of
+#                       prior art naming the same shape).
+# Related shards: epistemologic/cybernetic.mirror (the family root
+#                  whose form/process partition @magic formalizes),
+#                 epistemologic/cybernetic/eigenform.mirror (the
+#                  fixed-point machinery @magic/reveal inherits when
+#                  the reveal sequence settles to its contract
+#                  fixed point),
+#                 epistemologic/cybernetic/distinction.mirror (the
+#                  Spencer-Brown mark that distinguishes surface
+#                  from mechanism IS @magic's load-bearing
+#                  distinction; Spencer-Brown's first canon at
+#                  @magic altitude).
+# Path-namespace property: this file at `shards/magic.mirror`
+# declares `@magic` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cultural/clarke-1962
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/physics/connes-1994
+
+prism @magic {
+  focus magic
+  project magic
+  split magic
+  shift magic
+  settle magic
+}
+
+# === The magic_surface carrier ===
+#
+# A typed reference per [[feedback-no-bare-types]] naming the gauge-
+# visible interface. The surface IS the 5-op signature observable
+# from outside the encapsulation — what the audience sees the
+# magician do.
+#
+# Identity contract: byte-equality on the underlying ref. Two
+# surfaces with byte-equal underlying references ARE the same
+# surface under the substrate's content-addressing.
+type magic_surface = ref
+
+# === The magic_mechanism carrier ===
+#
+# A typed reference per [[feedback-no-bare-types]] naming the matter-
+# hidden trick. The mechanism IS the matter-side content that
+# delivers the surface's promise via means the observer cannot
+# inspect — the sleight, the preparation, the confederate, the
+# mechanical aid; at AI substrate altitude, the parametric carrier's
+# encapsulated content.
+#
+# Encapsulation enforced at the substrate's three altitudes:
+# - Floor: OID seal (Blake3 content-addressing).
+# - Middle: parametric type encapsulation (`<T_reg, T_regd, ρ, ω, ...>`).
+# - High: sheaf locality (gestalt-relative settled-form).
+#
+# Identity contract: byte-equality on the underlying ref.
+type magic_mechanism = ref
+
+# === The magic_invariant carrier ===
+#
+# A typed reference per [[feedback-no-bare-types]] naming a specific
+# invariant the contract preserves between surface and mechanism. A
+# contract carries one promise that names the load-bearing invariant;
+# species shards (@magic/contract, @magic/audit) verify it.
+#
+# Per Seam adversarial review tick 7-10 constraint C5: magic_invariant
+# lives at family-root altitude so magic_contract.promise can carry it
+# typed (rather than the previous bare `ref`).
+#
+# Identity contract: byte-equality on the underlying ref.
+type magic_invariant = ref
+
+# === The magic_contract carrier ===
+#
+# A typed record naming the boundary promise that binds surface to
+# mechanism. The contract IS what the surface promises about what
+# the mechanism delivers — the load-bearing structural commitment
+# at the @magic boundary.
+#
+# Three fields:
+# - `surface`    the gauge-visible interface (what the observer sees)
+# - `mechanism`  the matter-hidden trick (what produces the surface
+#                effect; encapsulated)
+# - `promise`    the named invariant the surface commits to delivering
+#                via the mechanism. Typed at magic_invariant per Seam
+#                C1+C5 (was bare `ref` at tick 7).
+#
+# Identity contract: byte-equality on the triple. Two contracts
+# ARE the same @magic instance iff all three carriers are byte-equal.
+#
+# This is the carrier that recognition #57 (alignment-as-boundary-
+# mathematics) enforces at @io: the contract's promise field IS what
+# the boundary harness audits. Honest magic = contract honored;
+# deception = contract violated while surface stays intact.
+type magic_contract = {
+  surface:   magic_surface,
+  mechanism: magic_mechanism,
+  promise:   magic_invariant,
+}
+
+out @magic
+out magic_surface
+out magic_mechanism
+out magic_invariant
+out magic_contract

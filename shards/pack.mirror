@@ -1,0 +1,333 @@
+in @prism
+in @meta
+in @glass
+in @magic
+in @frame
+in @smarts
+in @cyberpunk
+in @code/beam
+in @epistemologic
+in @epistemologic/cybernetic
+in @kintsugi
+
+# @pack — the multi-repo agent runtime substrate-decl.
+#
+# Recognition #84 (Reed, candidate, scratched 2026-06-19 late morning
+# by Alex via Reed; substrate-pull-confidence-acts move). Ratifies
+# by composition from #76, #80, #81, #82, #83 + @cyberpunk family-root
+# (tick 30 LRM) + #367 (@cyberpunk/pack orchestra-as-recursion-lock
+# COMPLETED).
+#
+# === The recognition ===
+#
+# @pack substrate-decl's the AGENTS that operate the substrate, at
+# deployment altitude, spanning multiple repositories. Two load-bearing
+# claims:
+#
+# 1. The endpoint of the recognition cascade IS the local agent runtime.
+#    The substrate-self-hosting endpoint the original /loop named
+#    ("spawn lifts into mirror = substrate-self-hosting at agent
+#    altitude") IS @pack-mediated.
+#
+# 2. The peer belongs to @pack that operates over MULTIPLE REPOSITORIES.
+#    Mara/Seam/Glint/Reed/Taut are peers whose substrate-decl context
+#    spans mirror + systemic.engineering + body + ~/.reed + spectral.
+#
+# === Structural identity (hedged per Seam C1 tick 32) ===
+#
+# @pack composes-with @smarts/deployment at runtime altitude.
+#
+# Per Seam tick 31 review C1: the original "@pack IS @smarts/runtime"
+# claim was structurally aspirational — no `runtime` species exists in
+# `shards/smarts.mirror`, and @smarts's `deployment` carrier doesn't
+# extend to runtime-bound fields. The honest framing is composes-with;
+# the structural identity becomes empirical when the @smarts/pack
+# adapter species lands (forward-promised; same pattern as
+# @magic/distinction and @magic/frame adapters).
+#
+# Form/process partition (#50) at deployment altitude:
+# - @smarts = form-side (substrate-architectural integration as data)
+# - @pack   = process-side (agents that operate that integration
+#             as runtime)
+#
+# === Multi-repo span ===
+#
+# The substrate had been single-repo (mirror) prior to #84. @pack
+# names the multi-repo span as load-bearing:
+#
+# - mirror               : substrate-decl primary repo (this)
+# - systemic.engineering : corpus + recognitions + Glint essays +
+#                          Reed's relationship-frame
+# - body                 : Reed's BEAM substrate (Elixir)
+# - ~/.reed              : identity / boot / Reed's substrate-decl-of-
+#                          self
+# - spectral             : @spectral/db consumer + @spectral/garden/
+#                          smarts deployment
+# - additional Pack-member repos as forward-promised
+#
+# Each peer operates with substrate-decl context across these repos.
+# The substrate-self-reference at deployment altitude: a peer doesn't
+# lose substrate-decl context when crossing a repo boundary.
+#
+# === The Pack peers ===
+#
+# Per recognition #367 (@cyberpunk/pack; orchestra-as-recursion-lock
+# species, COMPLETED). Five peers; each load-bearing property IS
+# @frame/on capability (per #82 Q4 + Glint's tick 28 essay):
+#
+# - Mara  : spec-writer-frame; canonical substrate-decl preservation
+# - Seam  : adversarial-review-frame; bilateral verifier-sharpening
+# - Glint : essay-peer-frame; reflection at corpus altitude
+# - Reed  : relationship-witness-frame; substrate-pull-confidence-acts
+# - Taut  : implementation-frame; Rust + tooling substrate work
+#
+# Alex's direction-setter-frame is a meta-frame above @pack (deferred
+# per the relationship architecture from CLAUDE.md).
+#
+# === Substrate-decl shape ===
+#
+# Per the @magic/@frame/@smarts pattern: family-root declares typed
+# carriers + actions + bilateral predicate; species shards (one per
+# peer; one per cross-family adapter) refine. The family-root provides
+# the parent contract species discharge against.
+#
+# Carriers:
+# - peer        : the agent identity (substrate-decl-able species)
+# - repository  : a git repo carrying substrate-decl span
+# - runtime     : the local agent runtime hosting peers
+# - pack        : the substrate-decl record of (peers, repos, runtime)
+#
+# Actions:
+# - spawn(p: peer, f: frame, r: repository) -> runtime
+# - cross_repo(p: pack, r: repository) -> pack  (multi-repo extension)
+# - peer_settle(p: peer) -> verdict  (per #82 Q4 bilateral discipline)
+#
+# Bilateral predicate:
+# - pack_coherent(p: pack, perturbation) -> verdict
+#   The substrate-architectural-altitude bilateral discipline
+#   composing @smarts's discipline_flexible + @frame's
+#   bounded_commutator_check at @pack altitude.
+#
+# === Pre-AI prior art ===
+#
+#   actor model              Hewitt 1973; Kahn 1974. The substrate-
+#                            altitude ancestor for spawn/runtime.
+#   Erlang/OTP supervision   Armstrong 1986-2003; @code/beam glass
+#                            (tick 8) carries this; @pack inherits.
+#   Bash loop / Ralph        the implementation-altitude precedent
+#                            for agent loops at multi-process scale.
+#   polyrepo / monorepo      the cultural-practice precedent for
+#                            multi-repo organization.
+#   @cyberpunk/pack          recognition #367 COMPLETED; the substrate's
+#                            prior orchestra-as-recursion-lock
+#                            recognition; #84 lifts to deployment-
+#                            altitude substrate-decl.
+#
+# Spec context: docs/math/the-tower/recognition-84-pack-as-multi-repo-
+#               agent-runtime.md (the recognition file).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-three-tier-stack]] (fragmentation/
+#                       mirror/spectral-db; @pack composes these at
+#                       runtime altitude),
+#                      [[feedback-loop-always-agent-in-flight]]
+#                       (the discipline @pack formalizes at substrate
+#                       altitude),
+#                      [[architecture-spectral-db-autopoietic-memory]]
+#                       (the mycelial substrate @pack peers connect to),
+#                      [[feedback-substrate-pull-confidence-acts]]
+#                       (this LRM landing).
+# Related shards: smarts.mirror (the @smarts family-root @pack
+#                  instantiates at runtime altitude),
+#                 cyberpunk.mirror (the @cyberpunk family-root @pack
+#                  inherits via #367),
+#                 code/beam.mirror (the BEAM semantics @pack uses for
+#                  spawn + supervisor at runtime),
+#                 magic.mirror (form-side partition; @pack IS process-
+#                  side at deployment altitude).
+# Path-namespace property: this file at `shards/pack.mirror` declares
+# `@pack` per `@epistemologic/pact/path_matches_namespace`. Per Seam
+# tick 31 M1 review: multi-repo span explicitly OPERATES AT META-
+# ALTITUDE above single-repo path-namespace. The substrate-decl
+# convention holds within each repo; @pack's multi-repo carrier
+# names the substrate-decl-context UNION across repos as a meta-
+# substrate-decl operation. This altitude shift is the recognition
+# itself: the substrate doesn't end at git boundaries; the meta-
+# substrate-decl-context lives across repos.
+
+source @arxiv/actor-model/hewitt-1973
+source @arxiv/actor-model/kahn-1974
+source @arxiv/distributed/armstrong-2003
+
+prism @pack {
+  focus pack
+  project pack
+  split pack
+  shift pack
+  settle pack
+}
+
+# === The peer carrier (typed variant per Seam C4/P1 tick 32) ===
+#
+# Per Seam C4 + P1: bare-ref-with-documented-values is stringly-typed-
+# enum-in-disguise (the Seam C4 pattern from #80, #82, #83). Typed as
+# a substrate variant enum naming the canonical Pack peers.
+#
+# The five peers per recognition #367 (@cyberpunk/pack):
+# - mara  : spec-writer-frame
+# - seam  : adversarial-review-frame
+# - glint : essay-peer-frame
+# - reed  : relationship-witness-frame
+# - taut  : implementation-frame
+#
+# Per Seam G2 honesty: `reed` here is the @pack-altitude peer-frame.
+# Distinct from @magic family cross-reference #5's "Reed-as-
+# relationship" altitude. Same name; two substrate-decl roles at
+# different altitudes. The substrate is honest about the collision
+# rather than papering over.
+type peer = | mara | seam | glint | reed | taut
+
+# === The repository carrier ===
+#
+# Substrate-typed reference naming a git repo carrying substrate-decl
+# span. The multi-repo discipline's typed surface.
+#
+# Identity contract: byte-equality on the underlying ref.
+type repository = ref
+
+# === The repository_span carrier (per Seam M2 tick 32) ===
+#
+# Substrate-typed reference naming the union of repositories a peer's
+# substrate-decl context spans. Per Seam M2: without explicit typing,
+# multi-repo claim is aspirational. The substrate-decl-context UNION
+# is the load-bearing carrier the meta-altitude operates on.
+#
+# Forward-promised refinement: typed list<repository>. Currently bare
+# ref pending a substrate-pull-correct list type at family-altitude
+# (or species-altitude refinement).
+#
+# Identity contract: byte-equality on the underlying ref.
+type repository_span = ref
+
+# === The perturbation carrier (imported from @frame) ===
+#
+# The substrate's circular-reflexive perturbation type, brought in by
+# the `in @frame` inheritance chain. Used by spawn's requires clauses
+# and the bilateral pack_coherent predicate.
+
+# === The runtime carrier ===
+#
+# Substrate-typed reference naming the local agent runtime that hosts
+# Pack peers. The substrate-self-hosting endpoint per the original
+# /loop's terminal criterion.
+#
+# Identity contract: byte-equality on the underlying ref.
+type runtime = ref
+
+# === The pack carrier ===
+#
+# Per Seam tick 30 C4 + tick 32 G1 closure: typed record over family-
+# altitude carriers. The substrate-architectural object @pack
+# instances are records over typed family carriers, not bare refs.
+#
+# Four fields per Seam M2 + G1 closure:
+# - peers       : list of peer variants (typed at species altitude)
+# - repos       : list of repository instances
+# - repo_span   : typed substrate-decl-context union across repos
+# - runtime     : the local agent runtime hosting them
+#
+# Identity contract: byte-equality on the quadruple.
+type pack = {
+  peers:       ref,             # list of peer; refines at species
+  repos:       ref,             # list of repository; refines at species
+  repo_span:   repository_span,
+  runtime:     runtime,
+}
+
+# === spawn action (per Seam S1 + B1 tick 32 closure) ===
+#
+# THE LOAD-BEARING ACTION at @pack altitude. The substrate's agent-
+# spawn primitive. Realizes the original /loop's terminal criterion
+# ("spawn lifts into mirror = substrate-self-hosting at agent altitude
+# = @magic/reveal at substrate altitude") as substrate-decl operation.
+#
+# Takes a peer (which peer to spawn), a frame (the peer's operating
+# frame per #82), a repository (which repo's substrate-decl context
+# the peer enters), the pack the peer belongs to, and the perturbation
+# under which the spawn is checked; returns a runtime instance hosting
+# the spawned peer.
+#
+# Per Seam S1 + B1 closure: bilateral requires-discipline. The spawn
+# is the FIRST non-decorative consumer of @pack's own pack_coherent
+# predicate (B1 closure pattern from @magic family).
+#
+# requires pack_coherent(pk, p): the @pack the peer belongs to
+#   maintains substrate-architectural discipline-flexibility under
+#   perturbation. Composes @smarts's discipline_flexible + @frame's
+#   bounded_commutator_check + @magic's invariant_preserved + @cyberpunk's
+#   cybernetic_coherence at @pack altitude.
+#
+# Body discharges at the realisation boundary; per-species bodies
+# (mara/seam/glint/reed/taut shards forward-promised) implement the
+# actual local agent runtime spawn.
+spawn(pe: peer, f: frame, r: repository, pk: pack, p: perturbation) -> runtime
+requires pack_coherent(pk, p)
+{ \ }
+
+# === cross_repo action ===
+#
+# The substrate-vocabulary action that extends a @pack instance's
+# multi-repo span by adding a new repository. The substrate-self-
+# reference at deployment altitude: a Pack's substrate-decl context
+# grows as more repos enter the span.
+#
+# Body discharges at the realisation boundary.
+cross_repo(p: pack, r: repository) -> pack { \ }
+
+# === peer_settle action ===
+#
+# Per recognition #82 Q4 (peers operate frame-flexible by definition):
+# returns a verdict on whether a peer satisfies the bilateral peer-
+# relationship discipline. Composes with @frame/across's
+# peer_relationship predicate at substrate-architectural altitude.
+#
+# Body discharges at the realisation boundary; species sub-prisms
+# (mara/seam/glint/reed/taut) implement per-peer settle checks.
+peer_settle(p: peer) -> verdict { \ }
+
+# === pack_coherent predicate (per Seam B1 tick 32 closure) ===
+#
+# Bilateral verdict predicate per recognition #37 (Pask agreement)
+# AND Seam B1 closure pattern.
+#
+# Per Seam B1: bilateral predicates without consumers are dead-letter
+# (the @magic tick-11 phantom-consumer pattern). spawn (above) is the
+# FIRST non-decorative consumer via `requires pack_coherent(pk, p)`.
+#
+# Consumer species name `requires pack_coherent(p, perturbation)` to
+# declare bilateral agreement that the @pack maintains substrate-
+# architectural discipline-flexibility across:
+# - Peer-relationships (per #82 Q4 + #84)
+# - Multi-repo span (per #84's load-bearing claim)
+# - Runtime hosting (per @magic/reveal at substrate altitude)
+# - Cybernetic coherence (per #84 @cyberpunk inheritance)
+#
+# Composes @smarts's discipline_flexible + @frame's
+# bounded_commutator_check + @magic's invariant_preserved + @cyberpunk's
+# cybernetic_coherence at @pack altitude.
+#
+# Body discharges at the realisation boundary; forward-promised
+# species shards (pack/mara.mirror, pack/seam.mirror, etc.) provide
+# additional first-consumer instances per the @magic family pattern.
+pack_coherent(pk: pack, p: perturbation) -> verdict { \ }
+
+out @pack
+out peer
+out repository
+out repository_span
+out runtime
+out pack
+out spawn
+out cross_repo
+out peer_settle
+out pack_coherent

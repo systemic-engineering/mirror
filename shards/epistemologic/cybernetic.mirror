@@ -46,6 +46,22 @@ in @epistemologic
 #                                           cybernetic property; the
 #                                           shape teaches the structure
 #                                           for the next ten.
+#   @epistemologic/cybernetic/eigenform     von Foerster 1981; Kauffman
+#                                           2003. The identity carrier
+#                                           IS the fixed point of a
+#                                           recursive structure
+#                                           (seed, iteration, witness).
+#                                           Inherited by the
+#                                           forward-promised species
+#                                           `@cyberpunk/distinction`,
+#                                           `@cyberpunk/second_order`,
+#                                           `@cyberpunk/autopoiesis`
+#                                           per recursion-lock-tower
+#                                           audit §8.8.1 / §12.5.
+#                                           Recognition #38;
+#                                           `uuid_spectral` is the
+#                                           load-bearing prior
+#                                           instance.
 #
 # Pending — land when a consumer pulls (substrate-pull-urgency order per
 # the cybernetic foundation §5.3):
@@ -85,13 +101,6 @@ in @epistemologic
 #   @epistemologic/cybernetic/second_order     von Foerster 1981. The
 #                                              shard's model includes
 #                                              itself.
-#   @epistemologic/cybernetic/eigenform        von Foerster 1981;
-#                                              Kauffman 2003. The
-#                                              identity carrier is the
-#                                              fixed point of recursive
-#                                              structure (uuid_spectral
-#                                              is the load-bearing
-#                                              instance).
 #   @epistemologic/cybernetic/design           Glanville 1982, 2007. The
 #                                              shard's design history
 #                                              is part of its content.

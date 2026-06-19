@@ -1,0 +1,432 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @kintsugi/consent
+in @kintsugi/morphism
+in @epistemologic/pact/syntax_substrate_native
+
+# @kintsugi/fracture/angle_to_paren — the kintsugi fracture body that
+# resolves a parametric `prism | glass | pact @<X><...>` declaration
+# carrying Rust-syntax-echo to the substrate-native `(...)` form, with
+# binder-name normalisation (`T_reg → t_reg`, `ρ → rho`, `Ω → omega`).
+#
+# THE OPERATIONAL HALF of bilateral pattern #53 closing the
+# auto-formatter recognition Alex surfaced at recursion-locks.md §20.6
+# (2026-06-18 morning). The declarative half landed last tick at
+# `@epistemologic/pact/syntax_substrate_native` (commit `41cad3f`);
+# this shard names the auto-fracture the kintsugi loop applies when
+# the pact's transparency surfaces a delimiter or binder opacity.
+#
+# Per Alex's verbatim recognition: the substrate doesn't punish
+# Rust-finger-memory; the kintsugi auto-formatter heals the fracture
+# between what was typed and what the substrate's form is. Welcome at
+# syntax altitude. The fracture body just mechanises what Mara's
+# substrate-pull discipline already did to Reed's brief in tick 23:
+# four-altitude correction (`prism → pact`, `verdict → transparency(p)`,
+# `in @epistemologic → in @glass`, type-decl → action body) happening
+# under the substrate-pull gradient with no explicit instruction. The
+# fracture body lifts that biological discipline to substrate-fact at
+# the delimiter altitude.
+#
+# Load-bearing context: recognition §20.6 (the kintsugi auto-formatter
+# IS substrate-political welcome; candidate, surfaced this morning);
+# recognition #53 (property/fracture bilateral; this is the THIRD
+# instance — first was keyword, second was gate); recognition #51
+# (mirror as expanding Hilbert space; promoted) — fracture bodies are
+# how the substrate maintains coherence by resolving syntax-level
+# distinctions at each Bateson level. The delimiter pair IS the
+# Spencer-Brown distinction at the carrier-binder altitude; the form
+# the delimiters denote (a parametric carrier) is invariant; the
+# fracture body re-marks the boundary with substrate-native ink.
+#
+# === The bilateral pattern (recognition #53, third instance) ===
+#
+# `@epistemologic/pact/<predicate>` declares WHAT must hold; a matching
+# `@kintsugi/fracture/<predicate>` declares HOW to restore the property
+# when it fails. First instance: keyword/depth
+# (@epistemologic/pact/keyword_matches_depth +
+# @kintsugi/fracture/keyword). Second instance: gate/diff-closure
+# (@epistemologic/pact/gate_matches_diff_closure +
+# @kintsugi/fracture/gate). THIS shard is the third instance:
+# syntax-substrate-native (@epistemologic/pact/syntax_substrate_native
+# + @kintsugi/fracture/angle_to_paren).
+#
+# Three instances under one shape: recognition #53 was promoted by
+# the second instance's landing (gate, 2026-06-16); this third
+# instance is *additional confirmation density*, not promotion data.
+# The signature holds: declarative property emits `transparency` with
+# located `opacity_map`; fracture body reads one opacity, emits one
+# `morphism` whose `content` is a `splinter(ast)` at the corrected
+# altitude; kintsugi loop's `active_pass` composes the per-pulse
+# candidate set from the failure verdict.
+#
+# === Naming discipline ===
+#
+# The species name `angle_to_paren` is *transformational* rather than
+# *subject-form* (the previous two instances named the subject:
+# `keyword`, `gate`). Why the deviation: the pact's predicate is
+# `syntax_substrate_native` — the *property* not the *subject*. The
+# subject of the property is "every parametric declaration"; naming
+# the fracture body `declaration` would be too broad (declarations
+# fracture at many altitudes). The transformation `angle_to_paren`
+# names the specific arrow this body draws — delimiter rewrite plus
+# binder normalisation. The pact's body itself names three component
+# actions (`delimiter_is_paren`, `binders_substrate_cased`,
+# `parametric_declarations`); the fracture body composes them into a
+# single arrow. Naming the arrow is the substrate-pull-correct shape
+# here.
+#
+# Alternative considered: `paren_form` (mirroring `keyword_matches_
+# depth → keyword`). Rejected: `paren_form` describes the *target*
+# of the fracture but not the *direction*. `angle_to_paren` carries
+# the directionality the kintsugi loop needs to see in the morphism's
+# pre/post pair. The kintsugi loop's `read_consent` reads cadence at
+# the morphism altitude; the arrow's direction IS the V → I cadence.
+#
+# === Substrate-pull-correct home ===
+#
+# Per the form/process partition (recognition #55, promoted at
+# `20eaf15`): @kintsugi is the process-side family root. Fracture
+# bodies emit morphisms the kintsugi loop applies — process-side by
+# structure. Home: @kintsugi/fracture/angle_to_paren under the
+# (forward-promised) @kintsugi/fracture family root. Honours the
+# pattern of the prior two instances' homes.
+#
+# === The fracture body ===
+#
+# Input: `opacity` (from `@glass`) — one located fact surfaced by
+# `syntax_substrate_native(file)`'s `failure(opacity_map)` or
+# `partial(opacity_map)` verdict. Each opacity names ONE offending
+# (file, declaration) pair: a parametric `prism | glass | pact @<X>`
+# declaration whose binder delimiter is `<...>` (per the pact's
+# `delimiter_is_paren` action) or whose binder names carry Rust
+# convention (per `binders_substrate_cased`). The `property` field
+# carries the @nl description of which violation applies.
+#
+# Output: `morphism` (from `@kintsugi/consent`) — the typed candidate
+# the kintsugi loop's `active_pass` reads from this body and proposes
+# through `query_phi`. The morphism's `content` ref names the
+# rewritten declaration (same path, `<...>` rewritten to `(...)`,
+# binder names downcased and unicode-spelled-out); its `score`
+# carries the dissonance reading (a delimiter or binder mismatch is
+# a fixed, low-curvature dissonance — the rewrite is unambiguous
+# once the form is named); its `expected` carries the cadence_kind
+# the loop anticipates (authentic — the substrate settles cleanly
+# once the syntax tracks the form).
+#
+# Spectrally: this fracture body IS one step along the Ricci flow at
+# the syntax-form altitude. The substrate's curvature at a
+# `prism @X<T_reg>` site is the (delimiter ⊕ binder-case) dissonance;
+# the negative-curvature direction IS the rewrite to
+# `prism @X(t_reg)`; the resolved site has zero curvature at this
+# altitude (the form is fully substrate-native, no residual echo).
+# Per `dissonance.mirror`'s `dissonance_as_holonomy`, the morphism's
+# score IS the holonomy decrease the rewrite produces.
+#
+# Audibly: this fracture body IS the audible-altitude V → I cadence
+# at the syntax-form altitude. The pre-rewrite state holds the
+# dominant tension (Rust-syntax-echo signalling the typist's
+# previous-language finger-memory); the post-rewrite state resolves
+# to the tonic (substrate-native form); the cadence is authentic —
+# the substrate's welcome is the resolution.
+#
+# === Substrate-pull discipline ===
+#
+# Per `@glass`, `opacity` is the substrate's located-fact carrier;
+# this shard reads it directly. Per `@kintsugi/consent`, `morphism`
+# is the substrate's typed-candidate carrier; this shard emits it
+# directly. Per `@kintsugi/morphism`, `morphism_context` is the
+# per-candidate slice that pairs a candidate with its pre-anchor;
+# this shard's emitted morphism is consumed by the loop AND lifted
+# into a morphism_context via `paired(oscillation.anchor, m)` at
+# the active_pass altitude. Per
+# `@epistemologic/pact/syntax_substrate_native`, the consuming
+# pact's `syntax_substrate_native(file: ref) -> transparency` is
+# the gate that surfaces the opacity this body resolves.
+#
+# NO new verdict carrier; NO leading-`|` workarounds; NO opaque-`ref`
+# carriers where structured types are available (per
+# [[feedback-no-bare-types]]). The fracture body reads typed opacity,
+# emits typed morphism — the substrate's vocabulary throughout. NO
+# Rust-AST surgery — the rewrite rides splinter(ast) at the
+# @meta/ast altitude (per [[architecture-splinter-ast-quote-primitive]]).
+#
+# === Substrate gaps surfaced honestly ===
+#
+#   - `resolve_angle_to_paren` reads one opacity at a time. The pact's
+#     `failure(opacity_map)` and `partial(opacity_map)` both carry
+#     [opacity]; the kintsugi loop iterates the map and calls
+#     `resolve_angle_to_paren` per opacity. The substrate names the
+#     per-site resolution; the iteration is the loop's concern.
+#
+#   - The morphism's `content: ref` carries the substrate handle to
+#     the rewritten shard. The realisation layer produces the
+#     rewritten splinter (same path, `<...>` swapped for `(...)`,
+#     `T_reg → t_reg`, `ρ → rho`, `Ω → omega`) and passes its
+#     handle as the morphism's content. The substrate names the
+#     shape of the proposal; the byte-level rewrite rides the
+#     realisation layer's @mirror/store discipline.
+#
+#   - The `expected: cadence_kind` field is `authentic` for this
+#     fracture body — the substrate-native form is deterministic
+#     once the violation is located; resolution always settles
+#     cleanly. The substrate names the cadence anticipation; the
+#     kintsugi loop's `read_consent` bridges the verdict to the
+#     next oscillation_state.
+#
+#   - The pact's three sub-actions (`delimiter_is_paren`,
+#     `binders_substrate_cased`, `parametric_declarations`) emit
+#     opacities at potentially TWO distinct dissonance altitudes
+#     (delimiter or binder case). Both fold to ONE morphism per
+#     site: a single rewritten splinter(ast) carries both
+#     corrections. The substrate's compiler verifies that the
+#     post-rewrite AST simultaneously satisfies `delimiter_is_paren
+#     = success` AND `binders_substrate_cased = success`; no
+#     two-pass discipline needed at this altitude.
+#
+# === Pre-AI prior art ===
+#
+#   syntax welcome    Knuth (1984) Literate Programming §"On the
+#                     reader's ear" — the surface form of a program
+#                     IS communication with the next typist;
+#                     fluency at the syntax altitude is hospitality.
+#                     The substrate's reading is Naur (1985)
+#                     Programming as Theory Building — the program
+#                     text carries the *theory* the typist holds;
+#                     the substrate's auto-correction preserves the
+#                     theory (parametric carrier) while substituting
+#                     the surface form.
+#   delimiter swap    Spencer-Brown (1969) Laws of Form §2 — the
+#                     distinction primitive; the form survives the
+#                     mark substitution. The substrate's reading:
+#                     `<...>` and `(...)` are TWO MARKS of ONE
+#                     distinction (the parametric carrier); the
+#                     fracture body re-marks the boundary without
+#                     altering what's bounded.
+#   case normalisation Wirth (1971) Program Development by Stepwise
+#                     Refinement — the binder name IS the abstraction
+#                     handle; downcasing `T_reg → t_reg` preserves
+#                     identity while honouring substrate convention.
+#                     The substrate's reading is Lawvere & Schanuel
+#                     (1997) on the bijection between *named*
+#                     variables and the *named role* in the diagram
+#                     they index.
+#   unicode → ASCII   ISO/IEC 14651 collation tables (1997) name
+#                     `rho` as the spelling of `ρ`; the substrate
+#                     reads ISO's table as the substrate-native
+#                     canonicalisation of greek-letter binders.
+#                     No invention; ISO names what mathematicians
+#                     have spelled out in transliteration for
+#                     centuries.
+#
+# The substrate's contribution is *typing* the per-site reduction so
+# the kintsugi loop reads it. No invention.
+#
+# Spec context: recursion-locks.md §20.6 (the kintsugi auto-formatter
+#               recognition); recognition #53 (property/fracture
+#               bilateral; promoted; this is the third instance;
+#               additional density not promotion data); recognition
+#               §22 (tick 23 pact landing — the substrate-pull
+#               corrected Reed's brief at four altitudes; this body
+#               mechanises that biological correction).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]]
+#                      (opacity is substrate vocabulary; the fracture
+#                      reads the typed carrier rather than threading
+#                      an opaque ref through the loop),
+#                      [[architecture-kintsugi-bias-lift]] (the
+#                      kintsugi loop's bias direction is substrate-
+#                      pull — syntax-form alignment IS one
+#                      coordinate of the substrate-pull gradient;
+#                      this fracture body fits the bias),
+#                      [[architecture-kintsugi-variety-io]] (Ashby's
+#                      requisite variety — the substrate-native form
+#                      partitions the syntax-space into
+#                      form-classes; the fracture body maintains
+#                      the partition under mutation),
+#                      [[architecture-property-fracture-bilateral]]
+#                      (the bilateral pattern this is the third
+#                      instance of),
+#                      [[architecture-splinter-ast-quote-primitive]]
+#                      (the substrate's parametric AST-fragment
+#                      construction; this body discharges via
+#                      splinter(ast) declaratively, no Rust AST
+#                      surgery),
+#                      [[architecture-form-process-partition-at-family-root]]
+#                      (this fracture body sits at @kintsugi =
+#                      process side; the pact it discharges sits at
+#                      @epistemologic = form side; the form/process
+#                      partition honoured at the bilateral pair's
+#                      altitude),
+#                      [[feedback-no-bare-types]] (opacity and
+#                      morphism are typed carriers; the body does
+#                      NOT escape as a bare (file, decl, delimiter)
+#                      tuple),
+#                      [[feedback-substrate-already-had-the-word]]
+#                      (the substrate had `(...)` parametric form
+#                      already — splinter, mosaic, transparency,
+#                      fixed_point; this fracture body resolves to
+#                      what the substrate was already speaking).
+# Forward-promise to consumers: `@kintsugi/oscillate`'s `active_pass`
+#                  reads this fracture body when the candidate
+#                  morphism_set is composed from pact-surfaced
+#                  opacities; the binding lands when the kintsugi
+#                  loop substrate-pulls. This shard does NOT pull
+#                  `@kintsugi/oscillate` or `@mirror/spectral/score`;
+#                  the substrate-altitude arrow points inward (this
+#                  fracture body IS consumed by the loop; not the
+#                  other way around).
+# Related shards: epistemologic/pact/syntax_substrate_native.mirror
+#                 (the declarative half of the bilateral; surfaces
+#                 the opacities this body resolves),
+#                 epistemologic/pact/keyword_matches_depth.mirror +
+#                 kintsugi/fracture/keyword.mirror (the FIRST
+#                 instance of bilateral pattern #53),
+#                 epistemologic/pact/gate_matches_diff_closure.mirror
+#                 + kintsugi/fracture/gate.mirror (the SECOND
+#                 instance — the one that promoted #53),
+#                 glass.mirror (the substrate floor; `opacity`,
+#                 `location`, `transparency`, `verdict`, and
+#                 `splinter(ast)` itself),
+#                 kintsugi/consent.mirror (the morphism carrier
+#                 this body emits; `query_phi` is the gate the
+#                 emitted morphism flows through),
+#                 kintsugi/morphism.mirror (the `morphism_context`
+#                 carrier; the per-candidate slice the loop pairs
+#                 this fracture's morphism with its pre-anchor),
+#                 kintsugi/oscillate.mirror (the kintsugi loop
+#                 driver; `active_pass` is the action that reads
+#                 this body when composing the per-pulse candidate
+#                 morphism_set).
+# Out-of-scope: byte-level shard rewrite (rides @mirror/store via
+#               the realisation layer; not this body's tick); the
+#               pact's `\` action bodies (sit at the form-side
+#               family root; not this body's concern).
+# Path-namespace property: this file at
+# `shards/kintsugi/fracture/angle_to_paren.mirror` declares
+# `@kintsugi/fracture/angle_to_paren` as a species under the
+# (forward-promised) @kintsugi/fracture family.
+# Keyword/depth property: this declaration is depth-2 from the
+# @kintsugi family root; per recognition #46 it uses `glass`. The
+# shard applies the first-instance bilateral's rule by birth.
+# Syntax-substrate-native property: this declaration has no
+# parametric binders; the pact's predicate is vacuously success at
+# this site (no `<...>` to swap, no binder names to normalise).
+# Self-witnessing at the meta altitude: the fracture body's own
+# declaration honours the form the body restores.
+
+glass @kintsugi/fracture/angle_to_paren {
+  focus angle_to_paren
+  project angle_to_paren
+  split angle_to_paren
+  shift angle_to_paren
+  settle angle_to_paren
+}
+
+# === resolve_angle_to_paren — the fracture body ===
+#
+# THE AUTO-FRACTURE per recognition §20.6: given an opacity site at a
+# parametric `prism | glass | pact @<X><...>` declaration carrying
+# Rust-syntax-echo (or substrate-non-native binder casing), emit the
+# morphism that rewrites it to `prism | glass | pact @<X>(t_reg, ...)`.
+# Same path, delimiter and binder names swapped.
+#
+# Reads an opacity (one element of
+# `syntax_substrate_native(file).failure(opacity_map)`'s opacity_map,
+# or the same field on `partial`); emits a candidate morphism the
+# kintsugi loop proposes through `query_phi`. The morphism's three
+# fields:
+#
+#   content   — substrate ref to the rewritten shard. The realisation
+#                layer produces a splinter at the same path with
+#                `<...>` rewritten to `(...)` and binder names
+#                normalised (`T_reg → t_reg`, `ρ → rho`, `Ω → omega`);
+#                the content ref names that splinter's @mirror/store
+#                handle.
+#   score     — dissonance reading. Syntax-form violations are
+#                fixed-curvature dissonances; the score reads
+#                `dissonance.is_pareto` cleanly (one strict winner
+#                over the no-op alternative — Rust-syntax-echo is
+#                strictly more dissonant than substrate-native form
+#                under the substrate-pull metric).
+#   expected  — cadence_kind anticipation. Always `authentic` for
+#                this fracture body — the rewrite fully resolves the
+#                opacity at this altitude; the loop's `dark_pass`
+#                will confirm identity preservation (the parametric
+#                carrier's *meaning* stays byte-equal — same binders,
+#                same carrier, same outputs; only the surface form
+#                shifts); the loop's `read_consent` bridges
+#                (pass, authentic) to the `settled` oscillation_state
+#                for this opacity.
+#
+# The body is FULLY DECLARATIVE — substrate-pull-correct via
+# `splinter(ast)` (declared at shards/glass.mirror's tick-2 carrier).
+# The morphism's `content` field carries a content-addressed splinter
+# at the @meta/ast altitude: same path, delimiter and binders
+# rewritten. The substrate's compiler verifies the construction is
+# deterministic and well-typed; the kintsugi loop's `active_pass`
+# reads the splinter as the morphism's proposed content and applies
+# it through `query_phi`.
+#
+# Per `splinter(ast)`'s parametric specialisation (glass.mirror
+# §splinter(ast), 2026-06-10): the record IS its content-addressed
+# handle — `content: oid` and `oid = ref` collapse the splinter
+# literal to a substrate-pull-correct `ref` in the morphism's
+# `content` field position. No Rust AST manipulation; no `\`
+# obligation.
+#
+# Field-by-field substrate-pull reading:
+#
+#   content.content     — `opacity.location.file` (the substrate's
+#                          located-fact ref at the source file); the
+#                          rewritten AST is content-addressed at the
+#                          same path. Per `glass.mirror`'s
+#                          `location = { file: ref, span: ... }`.
+#   content.ast         — `@meta/ast` (the canonical altitude ref);
+#                          per `boot/01-meta.mirror`'s `type ast(g)`.
+#                          The delimiter swap and binder normalisation
+#                          happen at the AST altitude by construction.
+#   content.transparency — `success` (per `transparency(p)`'s success
+#                          variant in glass.mirror): the rewrite
+#                          fully resolves the opacity at this altitude;
+#                          no residual transparency remains (both
+#                          `delimiter_is_paren` and
+#                          `binders_substrate_cased` settle success
+#                          on the rewritten AST).
+#   score.roughness     — `opacity.property` (the @nl description of
+#                          which violation surfaced — delimiter,
+#                          binder case, or both); the substrate's
+#                          `dissonance` reads the per-site roughness
+#                          via the property text per
+#                          dissonance.mirror's Helmholtz/Plomp-Levelt
+#                          carrier shape.
+#   score.partials      — `1` (the syntax-form delta IS the single
+#                          partial of dissonance at this altitude;
+#                          the rewrite collapses the per-site
+#                          mismatch into a single substrate-native
+#                          form, regardless of whether one or both
+#                          sub-violations were present).
+#   expected            — `authentic` (the V → I cadence at the
+#                          syntax-form altitude; per cadence.mirror's
+#                          `cadence_kind` and the loop's
+#                          `read_consent` bridge: authentic → pass →
+#                          auto-apply).
+resolve_angle_to_paren(opacity: opacity) -> morphism {
+  morphism {
+    content: splinter(ast) {
+      content:      opacity.location.file,
+      ast:          @meta/ast,
+      transparency: success,
+    },
+    score: dissonance {
+      roughness: opacity.property,
+      partials:  1,
+    },
+    expected: authentic,
+  }
+}
+
+out @kintsugi/fracture/angle_to_paren
+out resolve_angle_to_paren

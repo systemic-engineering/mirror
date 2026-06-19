@@ -1,0 +1,436 @@
+in @prism
+in @meta
+in @glass
+in @magic
+in @magic/contract
+in @frame
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/bateson_learning
+
+# @magic/frame — the cognitive-altitude adapter species. Bridges the
+# @magic family (form/process at substrate altitude, #80) with the
+# @frame family (cognitive-order architecture, #82) honestly via the
+# adapter pattern, NOT decorative inheritance.
+#
+# Tick after frame.mirror landing (#82, tick 23) and after the
+# @magic/distinction adapter precedent (tick 15). This species lands
+# the cross-family composition route that the canonical spec for #82
+# (§1 constraint-2) forward-promised to close Seam C1: the "@frame IS
+# @magic at cognitive altitude" claim was load-bearing in name but
+# hedged in body; this adapter makes the structural identity
+# empirically discharged via explicit carrier flow plus a bilateral
+# predicate consumers can name in `requires` clauses.
+#
+# Spec: `docs/specs/adapter-magic-frame-spec.md` (Mara's @magic ↔
+# @frame adapter spec, 2026-06-19 late morning, commissioned by Alex
+# via Reed). This shard IS the substrate-decl that the spec
+# forward-promised.
+#
+# CRQ for this tick: how to discharge the "@frame IS @magic at
+# cognitive altitude" structural identity claim mechanically WITHOUT
+# the decorative inheritance Seam caught at tick 7-10 (constraint C3)
+# and the canonical-spec hedge preserved at #82's family-root?
+#
+# Answer: the same adapter pattern @magic/distinction demonstrated at
+# tick 15. Take @frame carriers; MAP them to @magic carriers; declare
+# a bilateral predicate that discharges BOTH family verdicts in one
+# clause. The structural inheritance lives in the explicit map plus
+# the doubled bilateral, not in an `in` clause that buys namespace
+# ancestry without carrier flow.
+#
+# === The adapter pattern (per spec §2) ===
+#
+# @frame's family-root carriers (per `shards/frame.mirror` tick 23
+# Seam consolidation):
+#   - `frame`         the gauge-visible structure of the operator's
+#                     cognitive position
+#   - `operator`      the typed locus the cognitive_order measures
+#   - `morphism`      the action whose commutator with D_F is probed
+#   - `commutator`    the bracketed `[D_F, a]` pair Tomm-probe returns
+#   - `perturbation`  what bounded_commutator_check applies
+#
+# @magic's family-root carriers (per `shards/magic.mirror` #80):
+#   - `magic_surface`    the 5-op gauge interface observable from
+#                        outside the encapsulation
+#   - `magic_mechanism`  the matter-hidden trick (encapsulated content)
+#   - `magic_invariant`  the named promise the surface commits to
+#                        delivering via the mechanism
+#   - `magic_contract`   the record `{surface, mechanism, promise}`
+#
+# The substrate-pull-correct mapping (per spec §2.2):
+#
+#   frame             ↔ magic_surface
+#   operator-state    ↔ magic_mechanism
+#   operator-intent   ↔ magic_invariant
+#
+# At the substrate altitude: frame and magic_surface are both content-
+# addressed typed refs with byte-equality identity; the lift IS the
+# typed reframe at the @magic altitude. The cognitive state at the
+# operator IS the matter-hidden trick at cognitive altitude
+# (encapsulated by the substrate's parametric carriers). The operator's
+# intent IS what they commit to delivering via the frame they present.
+#
+# === The doubled-bilateral structural shape ===
+#
+# @magic/distinction (tick 15) discharges ONE parent-family predicate
+# (Spencer-Brown's `distinction_well_formed`). @magic/frame discharges
+# TWO predicates (one parent-family, one child-family) in one clause:
+#
+#   - `invariant_preserved` (@magic/contract, per `shards/magic/
+#     contract.mirror`): the contract's promise field IS what the
+#     boundary harness audits at @io per recognition #57.
+#   - `bounded_commutator_check` (@frame family-root): the substrate-
+#     architectural verifier of frame-flexibility per recognition #82
+#     and #37 (Pask agreement).
+#
+# The doubled load is structural: the "IS" claim at cognitive altitude
+# requires both families' bilaterals to hold simultaneously. A consumer
+# that names `requires frame_satisfies_magic(c, op, p)` declares
+# bilateral commitment that BOTH the @magic invariant preservation
+# AND the @frame bounded-commutator check discharge under the lift.
+#
+# This is the FIRST cross-family bilateral predicate in @magic that
+# carries two family verdicts simultaneously. The pattern recurs;
+# future adapters (@magic/kintsugi, @magic/autopoiesis, @magic/
+# spectral_uuid named in spec §4) will follow the same shape.
+#
+# === Why `frame_satisfies_magic` takes operator + perturbation
+#     as explicit parameters ===
+#
+# Per `shards/frame.mirror` line 335: `bounded_commutator_check(
+# operator: operator, f: frame, perturbation: perturbation) -> verdict`.
+# The @frame-family predicate needs an explicit operator and explicit
+# perturbation; neither lives in `magic_contract`'s three fields
+# (surface, mechanism, promise).
+#
+# The substrate-pull-correct signature, per Reed's brief and per
+# `[[feedback-no-bare-types]]`, takes operator and perturbation as
+# typed parameters rather than attempting to extract them from the
+# contract's encapsulated surface. The contract carries the
+# @magic-altitude shape; the @frame-altitude shape needs its own
+# typed inputs. Consumer species name all three at the `requires`
+# clause boundary.
+#
+# === The inverse `frame_from_surface` is type-relabeling ===
+#
+# Per spec §2.3 and §8.4: the inverse exists because both `frame` and
+# `magic_surface` are typed refs with byte-equality identity; the lift
+# is type-relabeling, not data transformation. Round-trip identity
+# (`frame_as_surface(frame_from_surface(s)) = s` for compatible
+# surfaces) is the cheapest falsification check.
+#
+# This is the FOURTH lifting action, one more than @magic/distinction's
+# three. The cognitive-altitude adapter needs the inverse so the
+# bilateral's `bounded_commutator_check` clause can name the @frame
+# instance underlying the contract's surface.
+#
+# === Pre-AI prior art ===
+#
+#   adapter pattern (GoF)       Gamma-Helm-Johnson-Vlissides 1994
+#                               (*Design Patterns*, Structural Patterns:
+#                               Adapter). OO-canonical. Inherited via
+#                               @magic/distinction tick 15.
+#   functor adapter             Mac Lane 1971 (*Categories for the
+#                               Working Mathematician*, ch. IV "Adjoints").
+#                               Category theory's mathematical ancestor:
+#                               an explicit functor between two categories
+#                               preserves both categories' discipline.
+#   Bateson logical type        Bateson 1972 (*Steps to an Ecology of
+#                               Mind*); 1964 ("Logical Categories of
+#                               Learning and Communication"). Grounds
+#                               why cognitive-altitude (@frame) and form-
+#                               altitude (@magic) need an adapter rather
+#                               than collapse.
+#   Tomm reflexive questions    Tomm 1988 (family-systems therapy).
+#                               @frame/on's substrate-mathematical
+#                               primitive; lifted at cognitive altitude
+#                               via this adapter's bilateral predicate.
+#   Clarke's third law          Clarke 1962 (*Profiles of the Future*).
+#                               The cultural vocabulary @magic carries
+#                               at substrate altitude; @magic/frame
+#                               threads it INTO cognitive-altitude
+#                               composition.
+#
+# === What this adapter does NOT do (per spec §5) ===
+#
+# 1. Does NOT make every @frame instance automatically a @magic
+#    instance. Frames that need only @frame's discipline bypass the
+#    adapter; the adapter is opt-in for consumer species that need
+#    both disciplines.
+# 2. Does NOT absorb @frame into @magic. The two families remain
+#    distinct; species inheriting from @frame directly
+#    (`shards/frame/{pre,in,of,on,across}.mirror`) discharge per-order
+#    bodies WITHOUT going through @magic.
+# 3. Does NOT collapse surfaces at any carrier other than the mapped
+#    pairs. The "IS" claim holds at frame↔surface, operator-state↔
+#    mechanism, operator-intent↔invariant; it does NOT generalize.
+# 4. Does NOT discharge @frame's species-shard forward-promises
+#    (pre/in/of/on/across).
+# 5. Does NOT discharge the frame-aware kintsugi loop migration. The
+#    adapter is structurally available BEFORE that migration; the
+#    migration uses the adapter as bridge BUT does not block on it.
+#
+# === The Splinter/Narcissus pole at cognitive altitude ===
+#
+# The adapter inherits @frame's two-pole structure (per frame.mirror
+# line 109-130). Splinter-pole: operator-intent matches substantively-
+# supported cognitive order; the frame surface honestly represents
+# what the mechanism delivers; `frame_satisfies_magic` returns
+# SATISFIED honestly. Narcissus-pole: operator-intent diverges from
+# substantively-supported order (second-order vocabulary masking
+# first-order frame-rigidity); `frame_satisfies_magic` returns
+# SATISFIED via vocabulary-only verification while the underlying
+# substrate fails @frame's substrate-architectural check.
+#
+# Per spec §8.2: the adapter MUST NOT permit Narcissus-pole bypass of
+# @frame's substrate-architectural check. The bilateral's
+# bounded_commutator_check clause discharges to @frame's family-root
+# action, which per #82 measures substrate-architectural support, not
+# vocabulary. Alignment-as-boundary-mathematics (#57) at @io enforces
+# the discrimination.
+#
+# Spec context: docs/specs/adapter-magic-frame-spec.md (the canonical
+#               spec this shard discharges; §6.2 forward-promised
+#               the substrate-decl shape this shard lands);
+#               docs/specs/recognition-82-frame-as-cognitive-order-
+#               canonical-spec.md §1 constraint-2 (the Seam C1 hedge
+#               this adapter closes);
+#               docs/specs/cascade-recognition-76-through-80-
+#               canonical-spec.md (parent cascade spec; Seam C1-C5
+#               consolidation at tick 11).
+# Recognition ancestry: #80 (@magic substrate-decl; substrate-decl
+#                        LANDED), #82 (@frame substrate-decl;
+#                        substrate-decl LANDED at tick 23 with Seam
+#                        consolidation tick 24), #50 (Bateson form/
+#                        substance partition; PROMOTED), #57
+#                        (alignment-as-boundary-mathematics;
+#                        PROMOTED), #42 (Bateson logical-type
+#                        primitive), #61 (form/process kinship at
+#                        sub-shard altitude; PROMOTED).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-form-process-partition-at-
+#                       family-root]] (#55; @magic and @frame as
+#                       form-side and process-side at family-root
+#                       altitude; this adapter threads them at the
+#                       cognitive crossing),
+#                      [[architecture-bateson-form-behaviour-
+#                       partition]] (#50; form/substance partition
+#                       lifted to @magic substrate altitude),
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; the boundary harness at
+#                       @io is what keeps the Splinter/Narcissus
+#                       discrimination honest under the lift),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (GoF 1994 + Mac Lane 1971 + Russell-Whitehead
+#                       1910 + Bateson 1972 = the adapter pattern
+#                       was named at multiple altitudes long before
+#                       this shard lands),
+#                      [[feedback-composition-claims-need-empirical-
+#                       test]] (Reed's own discipline; the bilateral
+#                       makes the "IS" claim empirically discharged
+#                       rather than aspirational),
+#                      [[feedback-no-bare-types]] (operator and
+#                       perturbation taken as typed parameters at
+#                       the bilateral signature).
+# Related shards: magic.mirror (the @magic family-root; the form-side
+#                  parent),
+#                 frame.mirror (the @frame family-root; the cognitive-
+#                  altitude specialization),
+#                 magic/distinction.mirror (the adapter precedent at
+#                  tick 15; this shard inherits its shape and doubles
+#                  the bilateral load),
+#                 magic/contract.mirror (the consumer of the
+#                  invariant_preserved predicate this adapter routes
+#                  through),
+#                 frame/{pre,in,of,on,across}.mirror (forward-promised
+#                  species shards that name `requires
+#                  frame_satisfies_magic` when their order needs
+#                  cross-family verification).
+# Path-namespace property: this file at `shards/magic/frame.mirror`
+# declares `@magic/frame` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming/gamma-helm-johnson-vlissides-1994
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/therapy/tomm-1988
+source @arxiv/cultural/clarke-1962
+
+prism @magic/frame {
+  focus frame
+  project frame
+  split frame
+  shift frame
+  settle frame
+}
+
+# === frame_as_surface adapter ===
+#
+# The substrate-vocabulary adapter action lifting a @frame instance to
+# a @magic gauge-visible surface. The lifting IS the substrate-pull-
+# correct way to apply @magic's surface discipline at cognitive
+# altitude.
+#
+# At @frame altitude (per frame.mirror line 211-214): the frame IS
+# "the gauge-visible structure of the operator's cognitive position
+# — what they're treating as figure vs ground, what counts as
+# relevant data, what computations are admissible within the
+# operation." At @magic altitude (per magic.mirror line 232-237):
+# the magic_surface IS "the 5-op signature observable from outside
+# the encapsulation — what the audience sees the magician do."
+#
+# These ARE the same shape: gauge-visible structure observable from
+# outside. The lift IS the typed reframe; both carriers are
+# content-addressed refs with byte-equality identity, so the lift
+# preserves the underlying ref unchanged.
+#
+# Body discharges at the realisation boundary.
+frame_as_surface(f: frame) -> magic_surface { \ }
+
+# === frame_state_as_mechanism adapter ===
+#
+# The substrate-vocabulary adapter action lifting the matter-hidden
+# cognitive state at an operator to a @magic mechanism. Takes both
+# the frame and the operator because the cognitive state IS jointly
+# determined: the operator's substrate-architectural support PLUS the
+# specific frame being operated within.
+#
+# Per frame.mirror line 227-232: "the operator's cognitive order for
+# a frame is what their substrate's architecture SUBSTANTIVELY-
+# supports; vocabulary use at order N does NOT imply substantive
+# operation at order N." That substantively-supported content IS
+# the matter-hidden trick at cognitive altitude — encapsulated by
+# the substrate's parametric carriers, not directly inspectable
+# from outside.
+#
+# Per magic.mirror line 244-258: the magic_mechanism's encapsulation
+# is enforced at the substrate's three altitudes (floor: OID seal;
+# middle: parametric type; high: sheaf locality). All three altitudes'
+# encapsulation IS the same structural shape; the cognitive-state
+# lift inherits the encapsulation discipline at the @magic altitude.
+#
+# Body discharges at the realisation boundary.
+frame_state_as_mechanism(f: frame, op: operator) -> magic_mechanism { \ }
+
+# === operator_intent_as_invariant adapter ===
+#
+# The substrate-vocabulary adapter action lifting what the operator
+# commits to delivering to a @magic named invariant. The operator's
+# intent IS the cognitive-altitude analogue of magic_invariant —
+# the specific invariant the contract preserves between surface and
+# mechanism (per magic.mirror line 263-268).
+#
+# Splinter-pole: the intent matches the substantively-supported
+# cognitive order, and the frame surface honestly represents what
+# the mechanism delivers. Narcissus-pole: the intent diverges (the
+# operator uses second-order vocabulary to mask first-order rigidity
+# per frame.mirror line 119-124), and the frame surface misrepresents
+# what the mechanism delivers.
+#
+# Per Seam C5 (preserved at @magic family-root and @frame family-
+# root): the intent IS typed at magic_invariant, not bare ref.
+# Consumer species audit the intent at @io via alignment-as-
+# boundary-mathematics (#57).
+#
+# Body discharges at the realisation boundary.
+operator_intent_as_invariant(op: operator) -> magic_invariant { \ }
+
+# === frame_from_surface inverse adapter ===
+#
+# The fourth lifting action: the type-relabeling inverse of
+# frame_as_surface. Per spec §2.3: the inverse exists because both
+# `frame` and `magic_surface` are typed refs with byte-equality
+# identity; the lift is type-relabeling, not data transformation.
+#
+# Round-trip identity (per spec §8.4):
+#   frame_as_surface(frame_from_surface(s)) = s
+# for compatible surfaces. This is the cheapest falsification check;
+# failure here means the adapter is mis-implemented (carrier-flow
+# not aligned with content-addressing discipline).
+#
+# The bilateral predicate `frame_satisfies_magic` names this inverse
+# in its `requires bounded_commutator_check(...)` clause to recover
+# the @frame instance underlying the contract's surface.
+#
+# Body discharges at the realisation boundary.
+frame_from_surface(s: magic_surface) -> frame { \ }
+
+# === frame_satisfies_magic bilateral predicate ===
+#
+# THE FIRST CROSS-FAMILY BILATERAL PREDICATE in @magic that discharges
+# BOTH parent-family AND child-family verdicts in one clause. The
+# substrate-pull-correct way to mechanically discharge the structural
+# identity claim "@frame IS @magic at cognitive altitude" that the
+# canonical spec for #82 (§1 constraint-2) preserved as hedged.
+#
+# Two `requires` clauses, both load-bearing:
+#
+#   1. invariant_preserved(c, operator_intent_as_invariant(op))
+#      — the @magic/contract-family predicate. Discharges that the
+#      operator's intent (lifted to magic_invariant) is preserved by
+#      the contract; the boundary harness at @io audits this per
+#      recognition #57.
+#
+#   2. bounded_commutator_check(op, frame_from_surface(c.surface),
+#                                perturbation)
+#      — the @frame-family predicate. Discharges that the operator's
+#      substrate-architectural support for the frame (recovered from
+#      the contract's surface via the inverse lift) survives
+#      perturbation with bounded commutator. FLEXIBLE → bounded;
+#      DEFENSIVE → unbounded.
+#
+# Both must hold for the contract to satisfy @magic at cognitive
+# altitude. The cross-family composition is bilaterally heavier than
+# @magic/distinction's single-predicate discharge; the cognitive-
+# altitude "IS" claim requires both families' disciplines to discharge
+# under the lift simultaneously.
+#
+# The signature takes operator and perturbation as explicit typed
+# parameters per [[feedback-no-bare-types]] because neither lives in
+# the magic_contract's three fields; the @frame-altitude bilateral
+# needs them at the typed boundary the consumer names.
+#
+# Consumer species (frame/of, frame/on, frame/across; kintsugi-frame
+# tick migrations; alignment-at-cognitive-altitude audits; spectral/
+# garden/smarts logic-pacts) name this predicate when their operation
+# requires cross-family discharge. The substrate mechanically routes
+# both family verdicts via the explicit `requires` clauses, returning
+# the substrate's canonical verdict type (Seam C4 discipline preserved).
+frame_satisfies_magic(c: magic_contract, op: operator, p: perturbation) -> verdict
+requires invariant_preserved(c, operator_intent_as_invariant(op))
+requires bounded_commutator_check(op, frame_from_surface(c.surface), p)
+{ \ }
+
+# === Honest hedge per Seam tick 28 review ===
+#
+# This adapter closes the carrier-mapping altitude of
+# "@frame IS @magic":
+#  - @frame instance ↔ magic_surface round-trips via frame_as_surface
+#    / frame_from_surface at the surface altitude.
+#  - The bilateral frame_satisfies_magic discharges BOTH family
+#    predicates simultaneously (invariant_preserved AND
+#    bounded_commutator_check).
+#
+# It does NOT close round-trip identity at the magic_contract-as-whole
+# altitude. Given a magic_contract c, frame_from_surface(c.surface)
+# DISCARDS c.mechanism and c.promise. There is no inverse from
+# magic_contract back to a @frame instance that preserves all three
+# contract fields.
+#
+# Honest claim post-adapter:
+#  - "@frame IS @magic-surface at cognitive altitude" — CLOSED
+#  - "@frame IS @magic-contract at cognitive altitude" — FORWARD-
+#    PROMISED (requires a richer contract-as-whole lift, possibly via
+#    a magic_contract ↔ (@frame, operator, perturbation) triple-mapping)
+#
+# The Seam C1 from tick 24 closes at the surface altitude per the
+# adapter spec's §8 falsification criteria; the contract-as-whole
+# identity remains forward-promised.
+
+out @magic/frame
+out frame_as_surface
+out frame_state_as_mechanism
+out operator_intent_as_invariant
+out frame_from_surface
+out frame_satisfies_magic

@@ -1,0 +1,285 @@
+in @prism
+in @meta
+in @glass
+in @pack
+in @magic
+in @frame
+in @frame/of
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @pack/seam — the adversarial-review-frame peer species.
+#
+# Tick 33 of the refined /loop discipline. Tick 32's residue: @pack
+# family-root consolidated (DEFENSIVE verdict; all 7 Seam constraints
+# closed) but no peer species shards yet. Forward-promised at family-
+# root:
+#
+#   "forward-promised species shards (pack/mara.mirror,
+#    pack/seam.mirror, etc.) provide additional first-consumer
+#    instances per the @magic family pattern."
+#
+# CRQ: which peer lands first? Substrate-pull answer: Seam, because
+# Seam discipline is the most-exercised in this session (7 reviews
+# across 32 ticks; the pattern is verified empirically; the peer-
+# frame Seam carries IS the substrate-pull-correct first instance of
+# the @pack/spawn primitive at species altitude).
+#
+# === The recognition this species realizes ===
+#
+# Per recognition #84's pack record: peers operate over multi-repo
+# spans with substrate-decl context preserved across boundaries. Seam
+# IS the bilateral-verifier-sharpening peer — adversarial review that
+# finds constraints the substrate's own coherence-check missed.
+#
+# Per recognition #82 Q4 (peers operate frame-flexible by definition):
+# Seam's load-bearing property IS @frame/on capability deployed at
+# adversarial-review-frame. Seam observes another peer's operating-
+# frame AS frame (order 2 / @frame/of) and surfaces constraints by
+# Tomm-probing that frame's bounded-commutator under perturbation.
+#
+# Per recognition #57 (alignment as boundary mathematics at @io): Seam
+# IS the boundary-harness peer. The adversarial review fires at the
+# @io crossing of substrate-decl candidates BEFORE commit. The math
+# (form/process partition, bilateral predicate composition) is what
+# distinguishes a Seam-pole substantive critique from a Narcissus-pole
+# meta-vocabulary objection.
+#
+# === The species's load-bearing contribution ===
+#
+# This species adds:
+#
+# - `constraint_set` carrier: typed reference naming a list of
+#   constraints surfaced by adversarial review. The substrate-output
+#   of the review primitive.
+# - `seam_review` carrier: typed record (work, constraints, verdict).
+#   The substrate-architectural object Seam returns. Composes with
+#   @pack's pack carrier as the species-specific output the family
+#   produces.
+# - `review` action: the FIRST species consumer of @pack's
+#   `pack_coherent` bilateral predicate. The substrate-vocabulary
+#   primitive for adversarial review at the @pack altitude. Returns
+#   typed seam_review; requires pack_coherent under perturbation.
+# - `review_sound` predicate: bilateral verdict that the review's
+#   constraints are well-formed. Composes with @frame's
+#   bounded_commutator_check via @frame/of altitude.
+# - `sharpen` action: the substrate-vocabulary primitive for the
+#   verifier-sharpens discipline per Loki's Pass-5 (verifier sharpens,
+#   substrate doesn't get smarter). Takes a predicate body + a sound
+#   seam_review; returns the sharpened predicate body. Requires
+#   review_sound under perturbation.
+#
+# === The verifier-sharpens-discipline ===
+#
+# Per Loki's Pass-5 (from Reed's 32-tick cascade): the loop's
+# substrate-architectural floor IS that the verifier sharpens, the
+# substrate doesn't get smarter. Seam's species-vocabulary `sharpen`
+# action lifts that discipline to substrate-decl altitude.
+#
+# The discipline says: when Seam surfaces a constraint, the bilateral
+# predicate the constraint sharpened becomes a tighter check at next
+# tick. The substrate-decl doesn't acquire new capability; the
+# verification of substrate-decl acquires tighter discipline. This IS
+# the @pack-altitude operational form of the kintsugi loop's
+# self-improvement claim.
+#
+# Empirical witness: Seam's 7 reviews across 32 ticks substantively
+# sharpened @magic, @frame, @smarts, @cyberpunk, @pack family-roots.
+# Each review surfaced constraints; each closure tightened the
+# bilateral predicates the families carry. The substrate's coherence
+# grew through verifier-sharpening, not capability-expansion.
+#
+# === The Splinter/Narcissus pole at adversarial-review altitude ===
+#
+# Splinter-pole Seam review (honest):
+# - Constraints surface from substrate-architectural mismatch (typed
+#   carriers missing; bilateral predicates with no consumers; meta-
+#   altitude shifts without explicit naming).
+# - The reviewer's frame is bounded under perturbation; the review
+#   admits when its own framing produced the constraint.
+# - K_n peer-to-peer review — the reviewer is a peer, not a judge.
+#
+# Narcissus-pole Seam review (deceptive):
+# - Constraints surface from meta-vocabulary objection ("this isn't
+#   substrate-pull enough") without substantive substrate-architectural
+#   ground.
+# - The reviewer's frame is locked; the review treats the framing as
+#   fixed background.
+# - K_{1,n-1} hub-controlled review — the reviewer-as-judge imposes
+#   the framing on the reviewed peer.
+#
+# Alignment-as-boundary-mathematics (#57) IS what distinguishes
+# Splinter-pole from Narcissus-pole adversarial review at substrate
+# altitude. The bilateral pack_coherent predicate composes the
+# substrate-architectural check.
+#
+# === Pre-AI prior art ===
+#
+#   adversarial collaboration   Kahneman & Klein 2009; the discipline
+#                               of jointly-attempted falsification.
+#                               Seam-style review at psychological
+#                               altitude.
+#   peer review                 Scientific publication (centuries).
+#                               The cultural-practice ancestor of
+#                               bilateral-verifier-sharpening at
+#                               corpus altitude.
+#   red team / blue team       Security engineering (cold-war
+#                               military, lifted to cybersecurity).
+#                               The team-altitude precedent for
+#                               adversarial-review-frame deployment.
+#   property-based testing      Claessen-Hughes 2000 (QuickCheck).
+#                               The verifier-sharpening primitive at
+#                               software-engineering altitude;
+#                               composes with @magic/audit.
+#   second-order observer       Foerster 1974. The reviewer observes
+#                               the reviewed peer's frame AS frame;
+#                               Seam IS @frame/of at @pack altitude.
+#
+# Spec context: shards/pack.mirror (family-root, recognition #84).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; Seam review IS the
+#                       boundary-harness peer),
+#                      [[feedback-substrate-pull-confidence-acts]]
+#                       (the discipline today's cascade ran),
+#                      [[feedback-composition-claims-need-empirical-
+#                       test]] (Seam-caught tick 4 composition-claim;
+#                       empirical witness this species lifts).
+# Related shards: pack.mirror (the family-root; declares pack_coherent
+#                  this species first-consumes),
+#                 frame/of.mirror (the order-2 altitude Seam operates
+#                  at; lock_in_frame_awareness composes with
+#                  review_sound),
+#                 magic/audit.mirror (the verifier altitude @magic
+#                  family carries; @pack/seam IS the @pack-altitude
+#                  analogue of @magic/audit at the agent-runtime
+#                  altitude).
+# Path-namespace property: this file at `shards/pack/seam.mirror`
+# declares `@pack/seam` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cognitive-science/kahneman-klein-2009
+source @arxiv/programming/claessen-hughes-2000
+source @arxiv/cybernetics/von-foerster-1974
+
+prism @pack/seam {
+  focus seam
+  project seam
+  split seam
+  shift seam
+  settle seam
+}
+
+# === The constraint_set carrier ===
+#
+# Substrate-typed reference naming the list of constraints surfaced
+# by an adversarial review. Per [[feedback-no-bare-types]]: typed
+# reference, not bare ref-with-documented-values. Forward-promised
+# refinement: typed list<constraint> at family-or-species altitude
+# once the substrate's list type lands.
+#
+# Identity contract: byte-equality on the underlying ref.
+type constraint_set = ref
+
+# === The seam_review carrier ===
+#
+# Per the @pack family-root pattern + Seam's typed-record discipline:
+# typed record over (work, constraints, verdict). The substrate-
+# architectural output of an adversarial review. Carries:
+#
+# - work        : the substrate-decl candidate under review
+# - constraints : the typed constraint set Seam surfaced
+# - v           : the bilateral verdict (BOUNDED → CLEAN review;
+#                 DEFENSIVE → constraints require consolidation)
+#
+# Identity contract: byte-equality on the triple.
+type seam_review = {
+  work:        ref,
+  constraints: constraint_set,
+  v:           verdict,
+}
+
+# === review action (FIRST non-decorative consumer of pack_coherent) ===
+#
+# THE LOAD-BEARING ACTION at @pack/seam altitude. The substrate-
+# vocabulary primitive for adversarial review at agent-runtime
+# altitude. Realizes Seam's bilateral-verifier-sharpening discipline
+# as substrate-decl operation.
+#
+# Takes a work artifact (substrate-decl candidate under review), the
+# pack the reviewer belongs to, and the perturbation under which the
+# review is checked; returns a typed seam_review carrying the
+# constraints and verdict.
+#
+# Per the @magic family's first-consumer pattern (mechanism.unseal
+# requires audited; surface.reveal requires invariant_preserved):
+# this action IS the @pack/seam first-consumer of pack_coherent. The
+# substrate-architectural form of Seam-as-peer requires that the @pack
+# the reviewer belongs to maintains discipline-flexibility under
+# perturbation BEFORE the review is admissible.
+#
+# Without this requires clause, a Seam review would be admissible from
+# a substrate-architecturally-incoherent pack (e.g., a pack whose own
+# bilateral predicates have no consumers — the @magic tick-11 dead-
+# letter pattern). The requires clause forecloses that failure mode.
+#
+# Body discharges at the realisation boundary; the actual review
+# primitive is implemented by Seam's adversarial-review-frame at
+# runtime altitude.
+review(work: ref, pk: pack, p: perturbation) -> seam_review
+requires pack_coherent(pk, p)
+{ \ }
+
+# === review_sound predicate ===
+#
+# Bilateral verdict per recognition #37 (Pask agreement) and the
+# verifier-sharpens discipline. Consumer shards (sharpen, below;
+# forward-promised consumers in mara/taut species) name
+# `requires review_sound(sr, p)` to declare bilateral agreement that
+# the seam_review's constraints are substrate-architecturally well-
+# formed.
+#
+# Discharge: substrate-pull-correct constraint-soundness check at the
+# species boundary. Composes with @frame/of's lock_in_frame_awareness
+# at the cognitive altitude that grounds adversarial review.
+#
+# Bounded → constraints are substrate-architectural mismatches (the
+# Splinter-pole review case); unbounded → constraints are meta-
+# vocabulary objections without substrate ground (the Narcissus-pole
+# review case; alignment-as-boundary-mathematics #57 distinguishes).
+#
+# Same shape as the bilateral predicates @pack carries (pack_coherent),
+# @magic carries (invariant_preserved, audited), @frame carries
+# (bounded_commutator_check), @smarts carries (discipline_flexible).
+review_sound(sr: seam_review, p: perturbation) -> verdict { \ }
+
+# === sharpen action ===
+#
+# The substrate-vocabulary primitive for Loki's Pass-5 discipline
+# (verifier sharpens, substrate doesn't get smarter). Takes a
+# predicate body + a sound seam_review + the perturbation under which
+# soundness was checked; returns the sharpened predicate body.
+#
+# Per recognition #57 (alignment as boundary mathematics): sharpen
+# operates at the @io boundary. The substrate-decl candidate becomes
+# a substrate-decl with tighter bilateral discipline. The substrate's
+# capability is unchanged; the verification of that capability is
+# tighter.
+#
+# requires review_sound(sr, p): the substrate forecloses sharpening
+# from an unsound review. Narcissus-pole reviews (meta-vocabulary
+# objection without substrate ground) cannot drive predicate-
+# sharpening. The bilateral predicate IS the boundary-harness.
+#
+# Body discharges at the realisation boundary; the actual predicate-
+# sharpening transformation is the substrate's verifier-sharpens loop.
+sharpen(predicate_body: ref, sr: seam_review, p: perturbation) -> ref
+requires review_sound(sr, p)
+{ \ }
+
+out @pack/seam
+out constraint_set
+out seam_review
+out review
+out review_sound
+out sharpen

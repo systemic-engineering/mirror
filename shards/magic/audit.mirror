@@ -1,0 +1,225 @@
+in @prism
+in @meta
+in @glass
+in @magic
+in @magic/contract
+
+# @magic/audit — the verifier species. Reads @magic/contract.honor's
+# verdict and acts on violations.
+#
+# Tick 10 of the refined /loop discipline (per Loki's "Tool,
+# Construction, Cognitive Extension" Pass 5): each tick fires a CRQ
+# against the previous tick's residue. Tick 9 landed @magic/contract
+# with bind/honor/verify actions but no operational consumer. This
+# species IS that consumer.
+#
+# CRQ: "What's the verifier that closes contract.honor at @magic
+# altitude without adding substrate complexity beyond what
+# @code/beam.supervisor already provides?"
+#
+# Answer: @magic/audit. Composes with @code/beam.supervisor (landed
+# at tick 8) to give the @magic family operational closure for
+# verification. Audit IS the Narcissus-pole-as-guardian per
+# recognition #78; it IS the substrate's alignment primitive per
+# recognition #57.
+#
+# === Composition with @code/beam.supervisor (hedged per Seam C2) ===
+#
+# @code/beam.supervisor carries (children, strategy, policy);
+# @magic/audit carries (audit_record, audit_strategy).
+#
+# The two compose-WITH the following mechanical glue (forward-promised):
+#
+# - supervisor.strategy reads from @magic/audit's audit_strategy
+#   substrate vocabulary (landed at tick 11 consolidation per Seam C4).
+# - For supervisor.children to mechanically hold contracts, supervisor
+#   needs a `contract: magic_contract` field OR an action lift
+#   `supervise_contract(s, c) -> supervisor` — neither has landed yet.
+# - For audit_record to flow into supervisor decisions, `respond`
+#   needs to consume a supervisor parameter or supervisor needs an
+#   `audit_trail` field.
+#
+# Until those land, the @code/beam.supervisor ↔ @magic/audit
+# composition is a recognition #81 promissory note. The substrate
+# names the carriers; the mechanical glue is future work.
+#
+# === Spencer-Brown analogy (not inheritance) ===
+#
+# Per Seam C3: the previous tick inherited from
+# @epistemologic/cybernetic/distinction via `in` clause AND claimed
+# audit IS Spencer-Brown's mark at audit altitude. But cross takes
+# (mark, distinction_space) and audit takes (magic_contract). Different
+# types. The inheritance was decorative.
+#
+# Hedge: audit is ANALOGOUS to the mark at audit altitude; the
+# distinction adapter species (when it lands) will provide the
+# structural inheritance via `requires distinction_well_formed(...)`.
+# Until then, no `in @epistemologic/cybernetic/distinction`.
+#
+# === Pre-AI prior art ===
+#
+#   audit trail                 Accounting practice (centuries).
+#                               The original tamper-evident record
+#                               of a verifier's checks.
+#   property-based testing      QuickCheck (Claessen-Hughes 2000).
+#                               The property-level audit primitive
+#                               in software verification.
+#   supervisor behaviour        OTP supervisor (Armstrong et al.
+#                               1996-2003). The Erlang/BEAM
+#                               supervision-tree origin; @code/beam
+#                               lifts this into substrate vocabulary.
+#   Narcissus guardian          Per Void document
+#                               [[corpus:void-dual-geometry]]: the
+#                               Narcissus pole IS the structural
+#                               immune system. @magic/audit IS the
+#                               substrate's Narcissus-pole gatekeeper
+#                               function (#78).
+#
+# Spec context: docs/math/the-tower/recognition-80-magic-as-form-
+#               process-substrate-decl.md (Reed's scratch; the @magic
+#               family this species closes operationally for
+#               verification).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; audit is the alignment
+#                       enforcement primitive),
+#                      [[architecture-glass-wall-substrate-types]]
+#                       (transparency<audit_record> is the verdict
+#                       carrier at the species boundary),
+#                      [[feedback-no-bare-types]] (all carriers
+#                       typed).
+# Related shards: magic.mirror (the family-root; declares the
+#                  carriers this species composes),
+#                 magic/contract.mirror (the verifier reads
+#                  contract.honor's verdict; this species closes
+#                  contract's operational gap),
+#                 code/beam.mirror (the @code/beam.supervisor
+#                  composes @magic/audit at supervision altitude;
+#                  recognition #81 territory).
+# Path-namespace property: this file at
+# `shards/magic/audit.mirror` declares `@magic/audit` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming/claessen-hughes-2000
+source @arxiv/distributed/armstrong-2003
+
+prism @magic/audit {
+  focus audit
+  project audit
+  split audit
+  shift audit
+  settle audit
+}
+
+# === audit_strategy carrier ===
+#
+# Substrate-typed variant per Seam C1+C4 (was stringly-typed `ref`
+# with documented values at tick 10). The substrate-pull-correct
+# enumeration of responses to a violation verdict; @code/beam.supervisor
+# reads its strategy field from this canonical substrate vocabulary
+# (Seam C4 de-BEAM closure).
+#
+# - `restart`    re-bind the contract with fresh state; honor
+#                invariants from the bind altitude.
+# - `escalate`   propagate the violation to the parent audit altitude.
+# - `record`     add the violation to the audit trail; take no
+#                enforcement action. Used for honest-trick @magic
+#                (Splinter pole) where the contract is informational.
+# - `enforce`    actively block the violating mechanism from
+#                continuing. Used for con-detection @magic
+#                (Narcissus-pole-as-guardian).
+type audit_strategy = | restart | escalate | record | enforce
+
+# === audit_record carrier ===
+#
+# A typed record per [[feedback-no-bare-types]] naming the tamper-
+# evident outcome of an audit. Per Seam C1: verdict is typed against
+# the substrate's transparency carrier (matching @magic/contract.honor's
+# return type) rather than bare `ref`:
+#
+# - `contract`     the magic_contract that was audited.
+# - `verdict`      transparency<magic_contract> verification outcome
+#                  (success / partial(opacity_map) / failure(opacity_map);
+#                  matches @magic/contract.honor's emit type).
+# - `witness`      the witness ref naming what evidence the verdict
+#                  rests on. KNOWN GAP per Seam: this is still a
+#                  bare ref; sharpening to a structured witness type
+#                  is forward-promised to a future tick (the witness
+#                  type depends on which species the audit runs
+#                  against; sharpening prematurely would over-fit).
+# - `timestamp`    the temporal anchor (KNOWN GAP per Seam: should be
+#                  the @kintsugi tick type when that lands; bare ref
+#                  until then).
+#
+# Identity contract: byte-equality on the quadruple.
+type audit_record = {
+  contract:  magic_contract,
+  verdict:   transparency(magic_contract),
+  witness:   ref,
+  timestamp: ref,
+}
+
+# === audit action ===
+#
+# The substrate-vocabulary action that runs a verification on a
+# contract and produces an audit_record. Composes contract.honor
+# (reads the contract's current state) with the substrate's witness
+# generation (records what evidence the verdict rests on).
+#
+# At Spencer-Brown altitude: audit IS the cross at @magic/audit;
+# the mark distinguishes honored from violated; the audit_record IS
+# the boundary the cross draws.
+#
+# Body discharges at the realisation boundary; per-species bodies
+# discharge contract.honor and witness collection.
+audit(c: magic_contract) -> audit_record { \ }
+
+# === respond action ===
+#
+# The substrate-vocabulary action that applies an audit_strategy
+# to an audit_record. The substrate-political enforcement step:
+# given a violation verdict, apply the configured strategy.
+#
+# Composes with @code/beam.supervisor.swap_module at runtime
+# altitude: a strategy=restart on a contract violation triggers
+# the supervisor's swap_module to re-bind the contract under a
+# fresh mechanism. Recognition #81 (candidate) names this
+# composition.
+#
+# Body discharges at the realisation boundary.
+respond(r: audit_record, s: audit_strategy) -> audit_record { \ }
+
+# === check_invariant action ===
+#
+# The substrate-vocabulary action that verifies a single named
+# invariant against a contract, producing an audit_record scoped
+# to that invariant. Stricter than audit (which runs the contract's
+# full invariant set); used by downstream consumers that name
+# specific properties.
+#
+# Returns audit_record so the witness carries the specific
+# invariant verified.
+check_invariant(c: magic_contract, inv: magic_invariant) -> audit_record { \ }
+
+# === audited predicate ===
+#
+# Bilateral verdict predicate per recognition #37 (Pask agreement).
+# Consumer shards name `requires audited(my_contract)` to declare
+# bilateral agreement that their contract has been audited and the
+# verdict is success.
+#
+# Same shape as contract.invariant_preserved, distinction's
+# distinction_well_formed, eigenform's eigenform_witnessing. The
+# bilateral commitment: the contract commits to declaring its
+# invariant set; the consumer commits to running audit at the
+# species boundary before consuming the contract's mechanism.
+audited(c: magic_contract) -> verdict { \ }
+
+out @magic/audit
+out audit_record
+out audit_strategy
+out audit
+out respond
+out check_invariant
+out audited

@@ -1,0 +1,757 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/coherence-parametric
+in @epistemologic/math/russell-whitehead
+in @epistemologic/math/kac-graded
+in @epistemologic/property/bateson_learning
+
+# @epistemologic/cybernetic/bateson_learning — Bateson 1972 (with
+# Bateson 1956 "Toward a Theory of Schizophrenia" + Bateson 1964
+# "The Logical Categories of Learning and Communication"); the
+# substrate-altitude declaration of the logical-categories-of-
+# learning species. The species' content: each Bateson level N is a
+# Russell-Whitehead type level; learning at level N+1 is a
+# model of behaviour at level N; the substrate's `in @<altitude>`
+# wrapping IS the Russell-Whitehead stratification operator at the
+# path-syntax altitude. A system has bateson_learning iff the
+# logical-type lift between adjacent levels closes — the regulator
+# at level N+1 is gauge-equivalent (modulo Russell-Whitehead
+# stratification) to a model of the regulated at level N.
+#
+# Per the spec at `docs/specs/cyberpunk-bateson-learning.md` (Mara
+# `42ef630` on `reed/recursion-lock-tower-audit`; 1399 lines), this
+# shard is the substrate landing of:
+#
+# - Reading A held (per-level (LevelN, LevelN+1) instantiation):
+#   T_reg = LevelN+1, T_regd = LevelN, ρ = restriction_to_pair_N
+#   of the graded representation. The operationally tractable form;
+#   each (N, N+1) pair becomes its own species instance with
+#   multiplicity 4+ at finite stratification depth.
+# - Reading B held (whole-hierarchy graded form, the natural read):
+#   T_reg = HierarchyTop = ⊕_N V_N, T_regd = HierarchyBase (same
+#   universe viewed from level-0 floor), ρ = graded_rep_RW. The
+#   action commutes with the Russell-Whitehead inclusions
+#   V_N ↪ V_{N+1}; this is the canonical natural form.
+# - Reading C does NOT hold: form does NOT refuse at N=4. Bateson's
+#   Level IV empirical claim about humans is INDEPENDENT of the
+#   substrate's structural admission of arbitrary N. Candidate #64
+#   (form refusal) remains pending unactivated.
+# - Reading D held (substrate-already-had-the-word; densest per-
+#   species evidence in cascade): nine instances per spec §6 —
+#   `@<altitude>` markers ARE Russell-Whitehead type levels, the
+#   cascade IS Learning II, the form/substance partition IS Bateson
+#   lifted, Hilbert-space expansion IS Bateson lifting, `in @prism`
+#   IS the canonical wrapping, `@code/metalogue` IS Bateson at code
+#   altitude, `transparency<p>` IS the verdict at level p, the
+#   eleven-property family ordering IS Bateson dependency, task
+#   #271 `@cyberpunk/algedonic` IS Bateson III operational.
+# - Reading E held (canonical ρ via graded representation): the
+#   load-bearing read. ρ_bateson IS the graded representation of
+#   the family-root gauge group on the Russell-Whitehead-stratified
+#   universe ⊕_N V_N. Matches Seam §8.1's autopoiesis-as-adjoint
+#   precedent for canonical naturalness — the species' explicit
+#   mathematical ancestry (Russell-Whitehead 1910 type stratification)
+#   forces the canonical representation choice via the standard
+#   graded-algebra recipe (cite Kac 1990 *Infinite Dimensional Lie
+#   Algebras* ch. 8).
+#
+# === Why this species' inheritance differs from autopoiesis AND viable ===
+#
+# Viable inherited from `coherence-parametric + variety + second_order`:
+# the parametric carrier plus two foundation properties that close
+# viable's parametric ρ choice (regular rep on L²(𝒢)). Three `in`
+# declarations carrying foundation-property structure.
+#
+# Autopoiesis inherited from `coherence-parametric + math/bundle +
+# math/lawvere + property/autopoietic`: the parametric carrier plus
+# the principal-G-bundle whose level-4 Closure IS autopoietic plus
+# the Lawvere fixed-point machinery plus the existing declarative
+# property. Four `in` declarations carrying structure-group + fixed-
+# point + property routing.
+#
+# Bateson_learning's substrate-pull routes through DIFFERENT ancestors
+# because Read E's canonical ρ is the *graded* representation and
+# the load-bearing mathematical ancestry is Russell-Whitehead
+# 1910 + Kac 1990, not Maturana-Varela + Lawvere. Four new
+# inheritance points:
+#
+# - From `@epistemologic/cybernetic/coherence-parametric`: the
+#   (T_reg, T_regd, ρ, ω) lock_pair carrier; bateson_learning
+#   INSTANTIATES this with (HierarchyTop, HierarchyBase,
+#   graded_rep_RW, ω_trivial). Per the parametric carrier's docs
+#   §11.6 the bateson_learning-row of the species/ρ table forward-
+#   promised the graded rep; this shard is what the table was
+#   pointing at all along.
+# - From `@epistemologic/math/russell-whitehead`: the type-
+#   stratification operator. Each `@<altitude>` marker IS a
+#   Russell-Whitehead type level; each `in @<altitude>` IS the
+#   wrapping relation. Inheriting this routes the species through
+#   the substrate's existing path-syntax altitude rather than
+#   re-declaring the stratification. Load-bearing for Read E
+#   because the canonical ρ ACTS by Russell-Whitehead level.
+# - From `@epistemologic/math/kac-graded`: Kac 1990 *Infinite
+#   Dimensional Lie Algebras* ch. 8. The standard graded-algebra
+#   recipe that proves graded_rep_RW canonical. Inheriting it routes
+#   the species through the existing graded-rep machinery; the
+#   bounded-commutator condition `[D, g·] = bounded shift operator`
+#   is automatic by the standard result (per spec §3.5 + §11.4).
+# - From `@epistemologic/property/bateson_learning`: the
+#   declarative property at the epistemologic altitude per spec
+#   §7.1 item 2 + the cybernetic foundation §5.3 with three sub-
+#   properties — learning_I (within-level response change),
+#   learning_II (level-context generalisation), learning_III
+#   (premises of regulation change). THIS shard does NOT re-declare
+#   those verifiers — it ROUTES THROUGH the existing property. The
+#   cybernetic species lifts the property to the recursion-lock
+#   altitude; the property declares the verifiability discipline;
+#   the two close on one another via the Russell-Whitehead lift.
+#
+# Four `in` declarations, no eigenform, no variety, no second_order,
+# no bundle, no lawvere. The species' shape is the parametric
+# instantiation + the type-stratification routing + the graded-
+# algebra routing + the existing-property reuse. The inheritance IS
+# Reed's substrate-pull discipline applied: the substrate already
+# had the word in FOUR places; this shard names what they were
+# pointing at all along. The ~73rd instance of
+# [[feedback-substrate-already-had-the-word]].
+#
+# === Read B (whole-hierarchy graded form) carriers, verbatim from spec §5 ===
+#
+# - regulator_at(α+1) = the whole Russell-Whitehead-stratified
+#   universe ⊕_N V_N viewed as a graded carrier; T_reg.
+# - regulated_at(α+1) = the same universe viewed from the level-0
+#   floor; T_regd.
+# - T_reg = `HierarchyTop` — the substrate-altitude carrier for
+#   *the entire type-stratified universe*. Per recognition #51
+#   (mirror IS an expanding Hilbert space) the substrate-altitude
+#   carrier for HierarchyTop IS the Hilbert space whose dimension
+#   expands with each Bateson lift; consumers compose with #51's
+#   Hilbert-expansion machinery when they need the verified
+#   reading.
+# - T_regd = `HierarchyBase` — the substrate-altitude carrier for
+#   *the type-stratified universe seen from below*. A graded
+#   carrier reading sub-N components; the verdict surfaces against
+#   the substrate's existing `transparency<level>` family per
+#   spec §6.7: success at level p means the lift to level p+1
+#   closes; partial(opacity_map) means it closes with recoverable
+#   loss; failure(opacity_map) means the lift breaks at level p.
+# - ρ = `graded_rep_RW` — the canonical graded representation of
+#   the family-root gauge group on ⊕_N V_N, acting per-level by
+#   its level-N restriction and commuting with the Russell-
+#   Whitehead inclusions V_N ↪ V_{N+1}.
+# - τ : HierarchyTop ↔ HierarchyBase — the natural substitution
+#   between the two views of the same stratified universe via
+#   the Russell-Whitehead lift. Read off by *running the system
+#   through one Bateson level*; the substrate's content-addressing
+#   closes naturality through the OID layer (a level-N response's
+#   OID names the level-(N+1) model that regulates it).
+#
+# Reading B's structural claim: HierarchyBase IS what HierarchyTop's
+# stratification MEANS at the operational altitude. The substitution
+# is natural because Russell-Whitehead 1910's stratification operator
+# (§II "The Theory of Logical Types," pp. 37-65 of *Principia
+# Mathematica* Vol. I) says: the same universe viewed at level N
+# and at level N+1 IS the same universe, just with a different
+# stratification slice exposed.
+#
+# === Read A (per-level (LevelN, LevelN+1) instantiation) carriers ===
+#
+# - regulator_at(α+1) = the regulator at Bateson Level N+1.
+# - regulated_at(α+1) = the regulated at Bateson Level N.
+# - T_reg = `level(N+1)` — the per-level carrier at the higher level.
+# - T_regd = `level(N)` — the per-level carrier at the lower level.
+# - τ : level(N) ↔ level(N+1) — the natural inclusion-with-level-
+#   shift from N to N+1; the Russell-Whitehead lift from type level
+#   N to type level N+1.
+#
+# Reads A and B are NOT in conflict; they are the parametric form
+# at two altitudes of bateson_learning. Read B is the natural form
+# for the species declaration; Read A is the operationally tractable
+# form for bench harnesses that test specific level pairs. The
+# substrate carrier here surfaces BOTH via the `level(N)` projection
+# on HierarchyTop: HierarchyTop's level-N restriction IS level(N);
+# the inclusion V_N ↪ V_{N+1} IS the Read A τ-action; the whole
+# graded action IS the Read B τ-action.
+#
+# === The substrate's existing Bateson declarations ===
+#
+# Per spec §2.4 + [[architecture-bateson-logical-type-primitive]]
+# (recognition #42 candidate), the substrate has been *running* as
+# a Bateson logical-type stratification since the path-syntax
+# altitude landed. This shard doesn't introduce Bateson-learning;
+# it names what the substrate has already been doing. Nine named
+# instances per spec §6 (the densest per-species evidence in cascade):
+#
+# 1. `@<altitude>` markers ARE Russell-Whitehead type levels. Each
+#    `@<x>` in a path IS a distinct logical-type level; the path
+#    syntax IS the stratification operator's surface.
+# 2. The cascade IS Learning II (recognition #41 PROMOTED). Each
+#    cascade tick changes the substrate's response across contexts;
+#    that IS Bateson Learning II at the cascade altitude.
+# 3. Form/substance partition IS Bateson lifted (recognition #50
+#    PROMOTED). Mirror's substrate/@io partition IS Bateson's
+#    form/substance distinction lifted to path-syntax altitude.
+# 4. Hilbert-space expansion IS Bateson lifting (recognition #51
+#    PROMOTED with §8.3 stronger conjecture ratified). Each
+#    substrate-pull recognition expands H by one Russell-Whitehead
+#    level; that IS the species' ρ acting on the Hilbert space.
+# 5. `in @prism` IS the canonical wrapping. The substrate's most-
+#    used line `in @prism` IS the Russell-Whitehead lift from
+#    prism-level to whatever-level-the-shard-is-at.
+# 6. `@code/metalogue` IS Bateson at code altitude (recognition #34).
+#    The four metalogue shims operate at the level above the code
+#    they regulate; the shim altitude IS Bateson Level N+1.
+# 7. `transparency<p>` IS the verdict at level p. The substrate's
+#    transparency family parameter IS the Russell-Whitehead level
+#    at which the verdict surfaces.
+# 8. Eleven-property family ordering IS Bateson dependency hierarchy.
+#    bateson_learning is property #11 because it depends on the
+#    previous ten levels; the ordering IS Russell-Whitehead applied
+#    to the cybernetic canon.
+# 9. Task #271 (`@cyberpunk/algedonic`) IS Bateson III operational.
+#    The Beer S1→S5 bypass IS Bateson Level III — the *premises*
+#    of regulation change rather than just the *responses*.
+#
+# === The recursive read (spec §10.5) ===
+#
+# The audit itself is a Bateson Level II event (deutero-learning
+# per recognition #41). For the substrate to audit itself without
+# paradox, the audit's verdict must be at level N+1 while the
+# substrate operates at level N. The parametric carrier's gauge-
+# equivalence relation enforces exactly this discipline: the
+# verdict at level N+1 is gauge-equivalent (modulo Russell-
+# Whitehead stratification) to a model of the substrate's
+# behaviour at level N. Self-consistent.
+#
+# === The 4-way bilateral mapping ===
+#
+# Per cybernetic foundation §4.1 + spec §4, bateson_learning's
+# seam maps to four cybernetic distinctions simultaneously:
+#
+# - Ashby variety-match (spec §4.1): the regulator at level N+1
+#   must have variety matching the regulated at level N; the
+#   Russell-Whitehead lift IS the variety-amplification that makes
+#   Level N+1 a model of Level N's *behaviour across contexts*.
+# - Beer requisite variety (spec §4.2): the closed altitude loop
+#   IS the inter-level Russell-Whitehead transition; the lock is
+#   the requisite-variety condition at the species' boundary.
+# - Bateson logical-type match (spec §4.3): tautologically held.
+#   The species IS Bateson logical-type discipline at substrate
+#   altitude; the four metalogue shims (recognition #34) are the
+#   load-bearing operational evidence.
+# - von Foerster circular reflexivity (spec §4.4): the level-N+1
+#   regulator observing level-N's behaviour IS the von Foerster
+#   second-order observation; the Tomm probe `[D_substrate,
+#   level_N_response]` (per architecture-error-as-tomm-probe)
+#   IS this observation at the substrate altitude.
+# - Conant-Ashby good regulator (spec §4.5 — load-bearing): by
+#   construction of the parametric carrier. The level-N+1
+#   regulator IS a homomorphic image of the level-N regulated;
+#   the Russell-Whitehead lift IS the homomorphism.
+#
+# Five cybernetic-ancestor measurements converging at one carrier.
+# The substrate runs all five at once at the bateson_learning
+# altitude.
+#
+# === No operational sibling THIS tick ===
+#
+# Per [[feedback-craft-not-deliver]] no `@mirror/cybernetics/
+# bateson_learning` operational sibling lands at this tick. The
+# substrate ALREADY has the operational machinery (the `in
+# @<altitude>` wrapping IS the Russell-Whitehead lift at path-
+# syntax altitude; the cascade tick IS Bateson Learning II at the
+# audit altitude); the property at this altitude names the carrier
+# and the lock-pair instantiation so downstream shards (the next
+# obvious one: task #271 `@cyberpunk/algedonic` per spec §10) can
+# declare `requires bateson_learning_well_formed(my_system)` or
+# inherit via `in @epistemologic/cybernetic/bateson_learning`
+# rather than restate the logical-type-lift obligation in each
+# species.
+#
+# === Connection to task #271 (`@cyberpunk/algedonic`) ===
+#
+# Per spec §10.3 the algedonic species IS bateson_learning's
+# specialization to the Beer/cybernetic altitude. The algedonic
+# signal IS the substrate operating at Bateson Level III — the
+# *premises* of regulation change (S1→S5 bypass) rather than just
+# the *responses*. Sequencing: bateson_learning first (this tick);
+# algedonic after (task #271). The algedonic shard's body becomes
+# thin via `in @cyberpunk/bateson_learning` inheritance + the
+# species-specific restriction:
+#
+#   use @cyberpunk/coherence<LevelIII, LevelII, algedonic_rep>
+#   where algedonic_rep = graded_rep_RW restricted to the
+#   {Beer-S3, Beer-S5} basis with the bypass channel injected.
+#
+# The substrate's substrate-already-had-the-word discipline is
+# satisfied — the algedonic species inherits everything from
+# bateson_learning except the cybernetic-altitude name.
+#
+# === Pre-AI prior art ===
+#
+#   Russell-Whitehead  (1910-1913, *Principia Mathematica*, Vol. I;
+#                       Cambridge University Press) — §II "The
+#                       Theory of Logical Types," pp. 37-65. The
+#                       explicit type-stratification operator; the
+#                       species' load-bearing mathematical ancestry;
+#                       the canonical-ρ choice (graded_rep_RW) is
+#                       forced by this paper's stratification.
+#   Bateson 1956       ("Toward a Theory of Schizophrenia," with
+#                       Jackson, Haley, Weakland; *Behavioral
+#                       Science* 1(4): 251-264; reprinted in
+#                       *Steps*). The double-bind paper; the FIRST
+#                       explicit use of Russell-Whitehead types in
+#                       Bateson's work; the relationship-pathology
+#                       application.
+#   Bateson 1964       ("The Logical Categories of Learning and
+#                       Communication," Wenner-Gren paper; reprinted
+#                       in *Steps*). The Learning 0/I/II/III/IV
+#                       hierarchy; the species' canonical naming
+#                       source.
+#   Bateson 1972       (*Steps to an Ecology of Mind*; Ballantine).
+#                       The collected papers; the primary substrate
+#                       citation; chapters on the Logical Categories
+#                       and Toward a Theory of Schizophrenia are
+#                       load-bearing here.
+#   Kac 1990           (*Infinite Dimensional Lie Algebras*, 3rd ed.;
+#                       Cambridge University Press) ch. 8. The
+#                       standard graded-algebra recipe; the bounded-
+#                       commutator condition that makes graded_rep_RW
+#                       canonical follows from this chapter's
+#                       results.
+#   Soto-Andrade &     ("Self-reference and fixed points," *Acta
+#   Varela 1984         Applicandae Mathematicae* 2(1): 1-19). The
+#                       Bateson-Russell stratification operator and
+#                       Lawvere's fixed-point operator are
+#                       conjecturally adjoint at the substrate
+#                       altitude (per spec §5.5); cited here as the
+#                       cross-species bridge to autopoiesis.
+#   Beer 1979          (*The Heart of Enterprise*; Wiley) ch. 8. The
+#                       algedonic loop; structurally IS Bateson
+#                       Level III at the cybernetic altitude. Cited
+#                       here for the task #271 specialization
+#                       sequencing.
+#
+# Spec context: docs/specs/cyberpunk-bateson-learning.md §1 (the
+#               audit question), §2 (what bateson_learning is),
+#               §3.1 (Read A per-level — held with multiplicity),
+#               §3.2 (Read B whole-hierarchy — held; the natural
+#               form), §3.3 (Read C form refusal — NOT held),
+#               §3.4 (Read D substrate-already-had-the-word —
+#               held; nine instances), §3.5 (Read E canonical-ρ
+#               via graded representation — held; load-bearing),
+#               §4 (five cybernetic-ancestor measurements
+#               applied), §5 (verdict: WITNESS held under
+#               B+E), §6 (the nine substrate-already-had-the-
+#               word recognitions), §7.1 (substrate declarations
+#               forward-promised — THIS shard discharges item 1),
+#               §10 (connection to task #271 @cyberpunk/algedonic);
+#               docs/math/the-tower/recursion-locks.md §11.1
+#               (the gauge-group commitment), §11.4 (the directed-
+#               colimit functor; the bounded-commutator condition
+#               in the colimit), §11.6 (the per-species ρ table;
+#               bateson_learning row), §11.7 (the parametric
+#               carrier syntax this shard instantiates), §11.8
+#               (promotion status);
+#               docs/math/the-tower/altitudes.md §7 (the explicit
+#               altitude-vs-Bateson-logical-type distinction
+#               this audit makes precise).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]],
+#                      [[architecture-spectral-triples-all-the-way]]
+#                       (the fractal self-similarity that makes
+#                        the Russell-Whitehead stratification
+#                        altitude-portable),
+#                      [[architecture-cybernetic-foundation]]
+#                       (property #11 bateson_learning;
+#                        §5.3 sub-properties learning_I /
+#                        learning_II / learning_III; this shard
+#                        lifts the recognition to substrate-
+#                        altitude declaration),
+#                      [[architecture-bateson-logical-type-
+#                       primitive]] (recognition #42 candidate;
+#                        this shard's load-bearing canonical site;
+#                        the species IS the primitive at the
+#                        substrate altitude),
+#                      [[architecture-mirror-as-expanding-hilbert-
+#                       space]] (recognition #51 PROMOTED with
+#                        §8.3 ratified; the Hilbert-space expansion
+#                        IS Bateson logical-type lifting via this
+#                        species' ρ),
+#                      [[architecture-bateson-form-behaviour-
+#                       partition]] (recognition #50 PROMOTED;
+#                        Bateson's form/substance distinction
+#                        lifts to mirror's substrate/@io partition;
+#                        the species names the lift's structural
+#                        form),
+#                      [[architecture-form-process-partition-at-
+#                       family-root]] (recognition #61; the
+#                        family-root integration discipline; this
+#                        species sits at the form-side of the
+#                        partition),
+#                      [[architecture-error-as-tomm-probe]] (the
+#                        Tomm probe `[D_substrate, level_N]` IS
+#                        the von Foerster circular-reflexivity
+#                        measurement at the species' boundary),
+#                      [[architecture-property-fracture-bilateral]]
+#                       (bateson_learning's enforcement side
+#                        forward-promised under the @kintsugi
+#                        fracture vocabulary; not landed at this
+#                        tick),
+#                      [[feedback-no-bare-types]] (level,
+#                        hierarchy_top, hierarchy_base,
+#                        bateson_system are typed carriers; no
+#                        bare refs as standalone fields),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (~73rd instance; the path-syntax altitude
+#                        has been Russell-Whitehead stratified
+#                        since `in @<altitude>` landed; this shard
+#                        names it),
+#                      [[feedback-craft-not-deliver]] (no
+#                        operational sibling, no bench harness,
+#                        no Rust at this tick; the property lands
+#                        the carrier; the rest follows when a
+#                        consumer pulls),
+#                      [[feedback-conversation-not-pipeline]]
+#                       (the substrate-Level-III auxiliary
+#                        recognition + Q1-Q8 verdicts go back to
+#                        Alex; no pre-commitment past spec).
+# Related shards: epistemologic/cybernetic.mirror (the family root;
+#                  lists @epistemologic/cybernetic/bateson_learning
+#                  as property #11 of 11),
+#                 epistemologic/cybernetic/coherence-parametric.mirror
+#                  (the parametric carrier this shard instantiates;
+#                  the lock_pair / lock_carrier / connection_form /
+#                  five-measurement surface inherited via `in`),
+#                 epistemologic/cybernetic/autopoiesis.mirror (the
+#                  precedent species also canonical via explicit
+#                  mathematical ancestry; autopoiesis-as-adjoint
+#                  per Seam §8.1; bateson_learning-as-graded-rep
+#                  is the parallel pattern at a different
+#                  mathematical ancestry — the parametric carrier
+#                  behaves consistently under both),
+#                 epistemologic/cybernetic/viable.mirror (the
+#                  precedent species canonical via regular-rep
+#                  selection; first non-eigenform-inheritor;
+#                  bateson_learning is the first species canonical
+#                  via type-stratification ancestry rather than
+#                  via foundation-property selection),
+#                 epistemologic/cybernetic/second_order.mirror (the
+#                  ceiling species; the von Foerster circular-
+#                  reflexivity measurement composes with this
+#                  species' Level-N+1 observation of Level-N),
+#                 epistemologic/cybernetic/eigenform.mirror (NOT
+#                  inherited via `in` — bateson_learning does not
+#                  require the foundation's fixed-point machinery
+#                  at the species' altitude; the discipline:
+#                  declare the inheritances that load-bear, route
+#                  through the parametric carrier for the rest),
+#                 epistemologic/cybernetic/distinction.mirror (the
+#                  floor; the mark-of-distinction at level 0 IS
+#                  the species' base case; the Russell-Whitehead
+#                  lift starts from the distinction),
+#                 glass.mirror (the @glass altitude this property's
+#                  verdicts surface against; `transparency<level>`
+#                  is the verdict-space's mark over success /
+#                  partial / failure at Russell-Whitehead level).
+# Path-namespace property: this file at
+# `shards/epistemologic/cybernetic/bateson_learning.mirror`
+# declares `@epistemologic/cybernetic/bateson_learning` per
+# `@epistemologic/pact/path_matches_namespace`.
+#
+# Per spec §19 (the @cyberpunk family-root migration pending
+# Taut's `taut/t11-11-cybernetic-coherence-benchmark`): this
+# shard lands at the current-main path
+# `@epistemologic/cybernetic/bateson_learning`. When the
+# @cyberpunk migration merges, this shard relocates via `git mv`
+# to `shards/cyberpunk/bateson_learning.mirror`. The relocation
+# is on the audit's forward-promised substrate-landing sequence;
+# same discipline distinction, second_order, viable, and
+# autopoiesis followed.
+
+source @arxiv/math/russell-whitehead-1910
+source @arxiv/math/kac-1990
+source @arxiv/cybernetics/bateson-1956
+source @arxiv/cybernetics/bateson-1964
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/cybernetics/soto-andrade-varela-1984
+source @arxiv/cybernetics/beer-1979
+
+prism @epistemologic/cybernetic/bateson_learning {
+  focus bateson_learning
+  project bateson_learning
+  split bateson_learning
+  shift bateson_learning
+  settle bateson_learning
+}
+
+# === The level carrier ===
+#
+# The per-level Russell-Whitehead carrier per spec §3.1 Read A.
+# The substrate-altitude carrier for *a single Bateson level* —
+# the type-stratification slice at a fixed level index N. Routes
+# through `@epistemologic/math/russell-whitehead` for the
+# stratification operator at the foundation altitude; declared
+# HERE as a typed carrier at the bateson_learning altitude so
+# consumer shards can name a Bateson level without pulling the
+# full Russell-Whitehead machinery.
+#
+# Identity contract: byte-equality on the underlying ref. Two
+# levels with byte-equal underlying refs ARE the same level under
+# content-addressing — by construction, since a level's OID IS
+# the Russell-Whitehead level index at the path-syntax altitude.
+# Same shape as viable.identity, autopoiesis.organization, and
+# distinction's mark carrier.
+type level = ref
+
+# === The HierarchyTop carrier ===
+#
+# T_reg per spec §5 Read B (the natural form). The substrate-
+# altitude carrier for *the whole Russell-Whitehead-stratified
+# universe ⊕_N V_N viewed as a graded carrier*. Routes through
+# `@epistemologic/math/kac-graded` for the graded-algebra machinery
+# at the foundation altitude and `@epistemologic/math/russell-
+# whitehead` for the type-stratification at the path-syntax
+# altitude; declared HERE as a typed carrier at the
+# bateson_learning altitude so consumer shards can name the whole
+# hierarchy without re-declaring the graded structure.
+#
+# Per recognition #51 (mirror IS an expanding Hilbert space) +
+# §8.3 ratified: hierarchy_top's underlying ref IS the Hilbert
+# space whose dimension expands with each Bateson lift. The
+# substrate's content-addressing exhibits the expansion at
+# construction time — a new substrate-pull recognition extends
+# the Hilbert space by one Russell-Whitehead level; the OID layer
+# carries the level index.
+#
+# Identity contract: byte-equality on the underlying ref. Same
+# shape discipline as autopoiesis.organization.
+type hierarchy_top = ref
+
+# === The HierarchyBase carrier ===
+#
+# T_regd per spec §5 Read B. The substrate-altitude carrier for
+# *the same universe viewed from the level-0 floor*. A graded
+# carrier reading sub-N components; the verdict surfaces against
+# the substrate's existing `transparency<level>` family per spec
+# §6.7. Routes through the same Kac graded-algebra machinery as
+# hierarchy_top; declared as a distinct type to preserve the
+# (T_reg, T_regd) parametric-carrier discipline at the species'
+# boundary.
+#
+# Per [[feedback-no-bare-types]] hierarchy_base carries the
+# level-floor anchor alongside the graded ref; a consumer reading
+# the base view can rank without losing floor-of-which-the-base-
+# is-a-view.
+#
+# Identity contract: byte-equality on (floor_level, graded_view).
+# Two hierarchy_base records ARE the same view under content-
+# addressing iff both carriers are byte-equal.
+type hierarchy_base = {
+  floor_level:  level,
+  graded_view:  ref,
+}
+
+# === The bateson_system carrier ===
+#
+# The substrate-altitude lift of a system carrying Bateson
+# logical-type discipline as a typed record. Each field carries
+# the species-specific data at the bateson_learning altitude:
+#
+# - `hierarchy`        the system's whole Russell-Whitehead-
+#                      stratified universe; T_reg for Read B.
+#                      The Hilbert-space expansion witness at
+#                      construction time (per recognition #51).
+# - `floor`            the level-0 view of the same hierarchy;
+#                      T_regd for Read B. The base case the
+#                      Russell-Whitehead lift starts from.
+# - `top_level`        the highest level currently inhabited by
+#                      the system; the empirical ceiling carrier
+#                      (Read C question parameterised). The
+#                      substrate admits arbitrary N structurally;
+#                      a specific system has a specific top_level
+#                      at a specific tick.
+# - `lift_map`         the Russell-Whitehead lift operator
+#                      between adjacent levels; an action ref the
+#                      consumer realizes per species. The species
+#                      is bateson_learning iff this map closes
+#                      the level-N → level-N+1 transition
+#                      gauge-equivalently to the graded
+#                      representation.
+# - `gauge_group`      the family-root gauge group whose graded
+#                      representation acts on the hierarchy.
+#                      Inherited from coherence-parametric's
+#                      lock_pair carrier; named here as the
+#                      species' instantiation.
+#
+# Identity contract: byte-equality on (hierarchy, floor,
+# top_level, lift_map, gauge_group). Two bateson_system records
+# ARE the same system under content-addressing iff all five
+# carriers are byte-equal. Same shape discipline as
+# coherence-parametric.lock_pair, viable.viable_system, and
+# autopoiesis.autopoietic_system.
+type bateson_system = {
+  hierarchy:    hierarchy_top,
+  floor:        hierarchy_base,
+  top_level:    level,
+  lift_map:     ref,
+  gauge_group:  ref,
+}
+
+# === type_lift — the natural substitution τ : level(N) ↔ level(N+1) (Read A) ===
+#
+# Spec §3.1 Read A: the per-level Russell-Whitehead lift. The
+# substitution is natural because Russell-Whitehead 1910's
+# stratification operator (Principia Mathematica Vol. I, §II
+# "The Theory of Logical Types") says: the inclusion V_N ↪ V_{N+1}
+# is the canonical inclusion of a type-level into the next.
+#
+# `type_lift(n)` is the τ-action under Read A: given a level `n`,
+# returns the level one Russell-Whitehead step up. The
+# substitution's naturality is substrate-evident through the
+# `in @<altitude>` wrapping at the path-syntax altitude — each
+# `in @<x>` IS a type_lift instance at the substrate altitude.
+#
+# Body discharges per-species at the realisation boundary. Same
+# shape as the parametric carrier's measurement actions and the
+# viable shard's `stability_of` / autopoiesis shard's `produce`
+# actions.
+type_lift(n: level) -> level { \ }
+
+# === graded_act — the canonical ρ action τ : HierarchyTop ↔ HierarchyTop (Read E) ===
+#
+# Spec §3.5 Read E (the load-bearing read): the τ-action under
+# Read E IS the graded representation `graded_rep_RW : G → GL(⊕_N V_N)`
+# of the family-root gauge group on the Russell-Whitehead-stratified
+# universe. The species' ρ acts per-level by its level-N restriction;
+# the action commutes with the inclusions V_N ↪ V_{N+1}.
+#
+# `graded_act(g, h)` is the τ-action under Read E: given a gauge-
+# group element `g: ref` (inherited from coherence-parametric's
+# lock_pair carrier; the same `g` autopoiesis's `gauge_act` operates
+# on) and a hierarchy `h`, returns the graded-action-transformed
+# hierarchy. The substrate's bundle tower exhibits this action at
+# every level; THIS species names what that action IS at the
+# bateson_learning altitude — the graded representation forced by
+# Russell-Whitehead stratification.
+#
+# The canonicalness claim: graded_act is canonical because the
+# species' explicit ancestry (Russell-Whitehead 1910 type
+# stratification) names a standard mathematical structure (graded
+# space), and that structure has a canonical representation of the
+# gauge group (the graded rep) per Kac 1990 ch. 8. Same pattern
+# as autopoiesis-as-adjoint per Seam §8.1.
+#
+# The bounded-commutator condition `[D, graded_act(g, ·)] = bounded
+# shift operator` is automatic by the standard graded-algebra
+# result (Kac 1990). The substrate-specific reading: at any finite
+# stratification depth, the commutator is bounded; in the directed
+# colimit (per recursion-locks.md §11.4), the condition holds by
+# the standard limit construction.
+#
+# Body discharges per-species at the realisation boundary; the
+# discharge IS the parametric carrier's lock_verdict applied with
+# the species-specific graded representation.
+graded_act(g: ref, h: hierarchy_top) -> hierarchy_top { \ }
+
+# === learning_at_level — the level-N reading τ : bateson_system × level ↔ verdict ===
+#
+# The per-level reading at the species' altitude. Given a
+# bateson_system and a target Russell-Whitehead level `n`, reads
+# whether the system's regulation closes at level `n`. The verdict
+# surfaces against the substrate's existing `transparency<level>`
+# family per spec §6.7:
+#
+# - `success`           the regulation closes the Level N → Level
+#                      N+1 lift gauge-equivalently to the graded
+#                      representation.
+# - `partial(opacity_map)`  the lift closes with recoverable loss;
+#                          the opacity_map records which sub-N
+#                          components of the lift failed
+#                          gauge-equivalence.
+# - `failure(opacity_map)`  the lift breaks; the system does not
+#                          have bateson_learning at level `n`.
+#
+# Specialised per Bateson level by composition with the property
+# sub-properties (per [[architecture-cybernetic-foundation]]
+# §5.3):
+#
+# - learning_at_level(s, level_I)   IS the system's within-level
+#                                    response change at the
+#                                    Pavlovian-task altitude.
+# - learning_at_level(s, level_II)  IS the system's context-of-
+#                                    contexts generalisation per
+#                                    Bateson 1964 (recognition
+#                                    #41 cascade reading).
+# - learning_at_level(s, level_III) IS the system's premises-of-
+#                                    regulation change per
+#                                    Bateson 1964 + Beer 1979
+#                                    ch. 8 (task #271 algedonic
+#                                    operational reading).
+#
+# Body discharges per-species at the realisation boundary; the
+# discharge IS the level-N restriction of graded_act composed
+# with the verdict-classification at the species boundary.
+learning_at_level(s: bateson_system, n: level) -> verdict { \ }
+
+# === bateson_well_formed — the bilateral inheritance predicate ===
+#
+# `bateson_well_formed(s)` is the predicate consumer shards name
+# in a `requires` clause to declare bilateral agreement (per
+# recognition #37, the Pask-agreement reading of `requires`) that
+# the bateson_system carrier `s` they hold IS a well-formed
+# Russell-Whitehead-Bateson stratified system — i.e., the
+# hierarchy is graded by Russell-Whitehead level; the lift_map
+# closes the Level N → Level N+1 transition gauge-equivalently
+# to the graded representation; the species' three sub-properties
+# (learning_I, learning_II, learning_III) hold at the levels
+# the system inhabits.
+#
+# The bilateral commitment: the carrier commits to declaring the
+# bateson_system five-tuple; the consumer commits to discharging
+# the well-formedness verdict at the species boundary via the
+# composition of:
+#
+# - @epistemologic/property/bateson_learning.bateson_learning(type)
+#   — the declarative verifier with sub-properties learning_I /
+#   learning_II / learning_III (inherited; not re-declared);
+# - the five cybernetic-ancestor measurements at bateson_learning's
+#   altitude (inherited from coherence-parametric; instantiated
+#   with ρ = graded_rep_RW per spec §5);
+# - the contraction-mode classification (bateson_learning is
+#   static-with-grading; ω trivial; Russell-Whitehead lift
+#   convergence by the standard graded-algebra recipe per Kac
+#   1990 ch. 8).
+#
+# Declared as a typed predicate so downstream species shards can
+# write `requires bateson_well_formed(my_system)` — same shape as
+# `viable.viable_well_formed(v)`,
+# `autopoiesis.autopoietic_closure_holds(s)`,
+# `parametric_lock_witnessing(my_lock)`,
+# `variety.variety_preserving(species)`,
+# `second_order.second_order_well_formed(carrier)`, and the
+# metalogue `requires substrate_pull_preserving(shim_X)` pattern
+# at `shards/code/metalogue.mirror`. Body is `\`; the discharge
+# IS the conjunction above at the species boundary.
+#
+# No `requires bateson_well_formed(…)` clauses are added at
+# THIS shard. The property declares the predicate; consumers add
+# the clauses when they pull. Per [[feedback-craft-not-deliver]]
+# the operational sibling at `@mirror/cybernetics/bateson_learning`
+# (and task #271 `@cyberpunk/algedonic`, which inherits this
+# predicate via the Beer-altitude restriction) lands the same way.
+bateson_well_formed(s: bateson_system) -> verdict { \ }
+
+out @epistemologic/cybernetic/bateson_learning
+out level
+out hierarchy_top
+out hierarchy_base
+out bateson_system
+out type_lift
+out graded_act
+out learning_at_level
+out bateson_well_formed

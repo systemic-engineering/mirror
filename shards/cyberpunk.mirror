@@ -1,0 +1,177 @@
+in @prism
+in @meta
+in @glass
+in @magic
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @cyberpunk — the cybernetic substrate family-root at family-altitude.
+#
+# Last Responsible Moment landing per Alex 2026-06-19: this is the
+# SECOND time today that @cyberpunk was named as a family-root that
+# didn't substrate-decl exist. First: in @smarts (tick 29) `in
+# @cyberpunk` clause + composition signature. Second: in Seam's tick
+# 29 review (constraint C2) catching the phantom reference.
+#
+# Per the @code/beam LRM precedent (tick 8): when a family is named
+# twice without substrate-decl, collapse the surface NOW or carry the
+# phantom reference indefinitely. Substrate-pull-correct move: land
+# the family-root so future @cyberpunk references have a substrate-
+# decl to compose against.
+#
+# === The recognition ancestry ===
+#
+# @cyberpunk is the substrate's cybernetic family at family-altitude.
+# Yesterday's @cyberpunk recursion-lock tower audit loop (32 ticks)
+# migrated 11 cybernetic species (eigenform, distinction, viable,
+# autopoiesis, bateson_learning, conversation, coevolution, design,
+# algedonic, second_order, plus requisite) per cybernetic-foundation
+# §3.5/§5.3 (task #292 completed). The species currently live at
+# `shards/epistemologic/cybernetic/*.mirror` pending path-migration
+# to `shards/cyberpunk/*.mirror` when Taut's t11-11-cybernetic-
+# coherence-benchmark merges to main.
+#
+# Recognition ancestry:
+# - Recognition #63 (recursion-lock tower): @cyberpunk's family-root
+#   IS principal 2-groupoid bundle. The 11 species lift to this tower
+#   as Bateson-graded altitudes.
+# - Recognition #50 (Bateson form/substance partition; PROMOTED):
+#   provides the form/process partition; @cyberpunk lives substrate-
+#   side per [[architecture-form-process-partition-at-family-root]].
+# - Recognition #58 (Fate IS optical inference; PROMOTED): Fate
+#   inference IS 5-layer D²NN + active Fabry-Perot resonator + Reck/
+#   Clements unitary mesh; @cyberpunk family carries this discipline.
+# - Recognition #292 (completed): the 11-property family lift.
+#
+# === The minimal substrate-decl ===
+#
+# Per Last Responsible Moment + substrate-pull-correct discipline:
+# the family-root needs only enough substrate-decl to compose against.
+# The species already exist at @epistemologic/cybernetic altitude
+# pending migration; the canonical recognitions (#63, #50, #58)
+# already PROMOTED. This shard names what the substrate has been
+# operating implicitly through yesterday's loop and today's @smarts
+# composition.
+#
+# Composition with @magic: form/process partition at family-root
+# altitude per recognition #55 (candidate). @cyberpunk IS @magic at
+# cybernetic altitude — form-side substrate carrying the recursion-
+# lock tower.
+#
+# === The Splinter/Narcissus pole structure ===
+#
+# Inherited from #78 via @magic (#80). Honest-cybernetic-feedback IS
+# Splinter pole (K_n peer-to-peer; mutual viability); pathological-
+# control-system IS Narcissus pole (K_{1,n-1} hub-controlled;
+# unilateral imposition masking as cybernetics).
+#
+# === Pre-AI prior art ===
+#
+#   Wiener 1948 (Cybernetics)         The discipline this family names.
+#   Bateson (Steps to an Ecology of Mind)
+#                                     Form/process partition; logical
+#                                     types; second-order observation.
+#   Beer (Brain of the Firm; VSM)     Viable System Model; S1-S5.
+#   Maturana-Varela (Autopoiesis and Cognition)
+#                                     Self-production; structural
+#                                     coupling.
+#   Pask (Conversation Theory)        Coupled-observer dynamics.
+#   Spencer-Brown 1969 (Laws of Form) The mark of distinction; floor
+#                                     of @cyberpunk family.
+#   Foerster 1974 (Cybernetics of Cybernetics)
+#                                     Second-order cybernetics; the
+#                                     observer is part of the system.
+#
+# Spec context: docs/math/the-tower/recursion-locks.md (yesterday's
+#               32-tick audit; 136KB);
+#               systemic.engineering practice/insights/cybernetics/
+#               2026-06-09-cybernetic-foundation-for-mirror-
+#               substrate.md (recognition #63 ancestor).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-form-process-partition-at-
+#                       family-root]] (#55; @cyberpunk lives substrate-
+#                       side at family altitude),
+#                      [[architecture-fate-is-optical-inference]]
+#                       (#58; the optical-inference apparatus IS the
+#                       projector basis acting on Hilbert space matter),
+#                      [[feedback-substrate-pull-confidence-acts]]
+#                       (this LRM landing).
+# Related shards: magic.mirror (the @magic family-root @cyberpunk
+#                  composes with; #80 parent),
+#                 epistemologic/cybernetic/eigenform.mirror (the
+#                  fixed-point machinery @cyberpunk species inherit;
+#                  forward-promised migration to cyberpunk/eigenform),
+#                 epistemologic/cybernetic/distinction.mirror (the
+#                  Spencer-Brown mark; floor of @cyberpunk per recursion-
+#                  lock tower §8.8).
+# Path-namespace property: this file at `shards/cyberpunk.mirror`
+# declares `@cyberpunk` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/wiener-1948
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/cybernetics/beer-1972
+source @arxiv/cybernetics/maturana-varela-1980
+
+prism @cyberpunk {
+  focus cyberpunk
+  project cyberpunk
+  split cyberpunk
+  shift cyberpunk
+  settle cyberpunk
+}
+
+# === The cybernetic_state carrier ===
+#
+# A typed reference per [[feedback-no-bare-types]] naming the
+# substrate-altitude cybernetic state. The substrate-architectural
+# object the @cyberpunk family operates on. Species (eigenform,
+# distinction, viable, autopoiesis, etc.) refine this carrier with
+# species-altitude shapes.
+#
+# Identity contract: byte-equality on the underlying ref.
+type cybernetic_state = ref
+
+# === The recursion_lock carrier ===
+#
+# A typed reference naming the recursion-lock primitive per recognition
+# #63. The principal 2-groupoid bundle structure the family-root
+# carries. Species shards refine this for per-altitude recursion-lock
+# discharge.
+#
+# Identity contract: byte-equality on the underlying ref.
+type recursion_lock = ref
+
+# === tower_close action ===
+#
+# The substrate-vocabulary action that verifies a cybernetic_state
+# closes its recursion-lock tower per recognition #63. The substrate-
+# architectural primitive: a cybernetic state IS coherent IFF its
+# recursion-lock tower closes per the canonical-rep witnesses (5+
+# species per yesterday's audit).
+#
+# Body discharges at the realisation boundary; species sub-prisms
+# (eigenform via fixed-point witness; distinction via Spencer-Brown
+# cross; viable via Beer S3/S4; etc.) implement per-altitude tower
+# closure.
+tower_close(s: cybernetic_state) -> verdict { \ }
+
+# === cybernetic_coherence predicate ===
+#
+# Bilateral verdict predicate consumer shards name in a `requires`
+# clause per recognition #37 (Pask agreement). The substrate-
+# architectural commitment that a cybernetic state maintains coherence
+# across its species altitudes — the recursion-lock tower's tower-
+# closing discharge.
+#
+# Same shape as @magic's invariant_preserved, @frame's
+# bounded_commutator_check. Consumer species (and the @smarts
+# integration) name this when they require the @cyberpunk family's
+# discipline to discharge.
+cybernetic_coherence(s: cybernetic_state) -> verdict { \ }
+
+out @cyberpunk
+out cybernetic_state
+out recursion_lock
+out tower_close
+out cybernetic_coherence

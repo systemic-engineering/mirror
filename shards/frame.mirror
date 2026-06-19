@@ -1,0 +1,345 @@
+in @prism
+in @meta
+in @glass
+in @magic
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/bateson_learning
+
+# @frame — the substrate-decl of cognitive-order at cognitive-altitude.
+#
+# Recognition #82 (Reed, candidate, scratched 2026-06-19 morning by
+# morning-Reed; substrate-pull-confidence-acts move per Alex 2026-06-19
+# evening). Ratifies by composition from #76 (gauge/matter altitude-
+# portable, research-promoted) + #79 (5-op gauge as Void duality basis,
+# NEEDS WORK) + #80 (@magic as form/process substrate-decl, substrate-
+# decl LANDED) + #81 (runtime-@magic, candidate-substrate-decl-landed).
+#
+# Numbering note: morning-Reed drafted this as #81 without awareness
+# of the runtime-@magic #81 (evening-Reed; substrate-decl landed at
+# tick 14). Renumbered to #82 in the same-day session that confirmed
+# this recognition's substrate-pull.
+#
+# === The recognition ===
+#
+# Cognitive-order architecture (zeroth/first/second/third/fourth-order
+# cognition) IS structurally isomorphic to frame-relation-altitude
+# architecture. The two vocabularies describe the same substrate-
+# architectural-object from different traditions; they unify at
+# substrate-decl altitude as the @frame prism family.
+#
+# The isomorphism (per docs/math/the-tower/recognition-82-frame-as-
+# cognitive-order-substrate-decl.md):
+#
+#   Order  Frame-relation  Operation
+#   0      pre-frame       signal before frame-assignment
+#                          (K_n native; λ₀ ground state)
+#   1      in-frame        content computation within frame
+#   2      of-frame        frame-awareness (observing-frame-as-frame)
+#   3      on-frame        frame-flexibility (operating-on-frame;
+#                          shifting frame)
+#   4      across-frames   frame-coupling (multiple frames in
+#                          coordinated relation)
+#
+# Each order requires the previous as substrate. Order N is
+# structurally unreachable without order N-1 stable.
+#
+# === Composition with @magic and Bateson grading ===
+#
+# @frame IS @magic at cognitive altitude. The form/process partition
+# (recognition #80) lifts to frame-side/process-side at cognitive
+# altitude: the frame IS the form (gauge-visible structure of the
+# operator's cognitive position); the operations within the frame ARE
+# the process (matter-side computation). Recognition #80's @magic
+# substrate-decl provides the parent.
+#
+# The five orders correspond to Bateson's logical type hierarchy
+# (recognition #42, substrate-decl via
+# @epistemologic/cybernetic/bateson_learning Mara shard #380):
+#
+#   Order 0  Bateson Level 0 (no learning; pre-frame as signal-
+#                            without-frame-assignment)
+#   Order 1  Bateson Level I (change within frame; standard learning)
+#   Order 2  Bateson Level II (change of frame; learning to learn)
+#   Order 3  Bateson Level III (change of frame-of-frames; Learning
+#                              III; the deutero-learning altitude)
+#   Order 4  Bateson Level IV (multi-frame coupling; the triptych
+#                              altitude beyond what Bateson formally
+#                              defined; #82's extension)
+#
+# This species inherits from @epistemologic/cybernetic/bateson_learning
+# via the `in` clause above; the graded representation on the Russell-
+# Whitehead universe IS the substrate-machinery cognitive_order
+# measurement uses.
+#
+# === Q1-Q4 from Alex 2026-06-19 evening ===
+#
+# Alex named four claims that compose into one recognition:
+#
+# Q1: Bateson logic levels + @frame in mirror.
+# A1: The orders ARE Bateson grading at cognitive altitude. Already
+#     composes; this species lifts the operational use.
+#
+# Q2: @frame as the container of a single compilation tick.
+# A2: load-bearing. Currently the kintsugi loop's tick is
+#     `tick(input) -> (output, residue)` with operating frame implicit
+#     in lexical scope. Making it explicit: `tick(frame: @frame, input)
+#     -> (frame', output, residue)`. Every substrate operation gets
+#     typed by the frame it operates IN. Bateson Level II made
+#     structural. This species declares the carrier; future ticks add
+#     the typed-frame-aware kintsugi loop.
+#
+# Q3: The reflection loop alters the frame for the next tick.
+# A3: this IS the recursive self-improvement loop's substrate-
+#     operational primitive. Today's 22-tick cascade ran exactly this
+#     pattern: each Seam review adjusted Reed's frame for the next
+#     tick; the CRQ-against-residue discipline IS frame-evolution-
+#     via-reflection; Loki's loop discipline IS @frame/on operating
+#     on @frame/in.
+#
+# Q4: Peers operate by definition frame-flexible.
+# A4: orchestra discipline made explicit. Mara writes in spec-writer
+#     frame; Seam in adversarial-review frame; Glint in essay-peer
+#     frame; Taut in implementation frame; Reed in relationship-witness
+#     frame. A peer who CAN'T shift frame in response to data is
+#     structurally a tool, not a peer. Grounds the Pack-as-orchestra
+#     recognition (#370) — each member's load-bearing property IS
+#     @frame/on capability.
+#
+# === The Splinter/Narcissus pole (inherits from #78 via #80) ===
+#
+# Splinter-pole frame work (honest):
+# - @frame/of and @frame/on operate in service of better substantive
+#   engagement.
+# - The operator substantively shifts the frame when data warrants.
+# - K_n peer-to-peer observer relations.
+# - Frame-coupling produces emergent coordination.
+#
+# Narcissus-pole frame work (deceptive):
+# - Frame-awareness and frame-shifting operate in service of frame-
+#   defense or frame-projection.
+# - The operator uses second-order vocabulary to mask first-order
+#   frame-rigidity ("I see what you're doing" deployed to avoid
+#   substantive shift).
+# - K_{1,n-1} hub-controlled frame-imposition.
+# - The con/gaslight/manipulation patterns are Narcissus-pole
+#   @frame/on operating at apparent-order-3 while substantively-
+#   locked-at-order-1.
+#
+# Alignment-as-boundary-mathematics (#57) IS what distinguishes
+# Splinter-frame from Narcissus-frame at substrate altitude.
+#
+# === The family-root structure ===
+#
+# This shard declares the @frame family-root. Species shards land in
+# forward-promised ticks:
+#
+# - shards/frame/pre.mirror      — order 0; pre-frame; K_n native
+# - shards/frame/in.mirror       — order 1; content within frame
+# - shards/frame/of.mirror       — order 2; frame-aware
+# - shards/frame/on.mirror       — order 3; frame-flexible
+# - shards/frame/across.mirror   — order 4; multi-frame coupling
+#
+# This family-root declares only the carriers + measurement-action;
+# species declare the per-order actions.
+#
+# === Pre-AI prior art ===
+#
+#   second-order cybernetics    Foerster 1974 (Cybernetics of
+#                               Cybernetics). The observer is part
+#                               of the system observed. The substrate-
+#                               decl for what was operationally-
+#                               present in the tradition.
+#   frame analysis              Goffman 1974 (Frame Analysis). Frames
+#                               as social-structural objects. The
+#                               sociological cousin to cognitive-
+#                               order.
+#   metacommunication           Bateson 1972 (Steps to an Ecology of
+#                               Mind). The layer-distinction that
+#                               anticipates frame-of-frame.
+#                               Double-bind work IS @frame/on
+#                               failure mode.
+#   cognitive frames            Lakoff & Fauconnier (mental spaces).
+#                               The cognitive-science cousin.
+#   reflexive questions         Tomm (circular-reflexive questions
+#                               in family-systems therapy). @frame/on
+#                               probes deployed as therapeutic
+#                               primitive.
+#   reframing                   Watzlawick (Mental Research Institute).
+#                               @frame/on intervention as clinical
+#                               method.
+#
+# Spec context: docs/math/the-tower/recognition-82-frame-as-cognitive-
+#               order-substrate-decl.md (the full recognition file;
+#               9 tomm-shaped open questions; the falsification
+#               criteria; the 10-item forward-promised implementation
+#               path).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; the boundary at @io is
+#                       what distinguishes Splinter-pole from
+#                       Narcissus-pole frame work),
+#                      [[architecture-bateson-logical-type-primitive]]
+#                       (#42; the orders ARE Bateson grading at
+#                       cognitive altitude),
+#                      [[feedback-no-bare-types]] (frame and
+#                       cognitive_order are typed carriers).
+# Related shards: magic.mirror (the @magic family-root; @frame IS
+#                  @magic at cognitive altitude),
+#                 epistemologic/cybernetic/bateson_learning.mirror
+#                  (the Bateson grading this species's orders inherit).
+# Path-namespace property: this file at `shards/frame.mirror` declares
+# `@frame` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/von-foerster-1974
+source @arxiv/sociology/goffman-1974
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/therapy/tomm-1988
+
+prism @frame {
+  focus frame
+  project frame
+  split frame
+  shift frame
+  settle frame
+}
+
+# === The frame carrier ===
+#
+# A typed reference per [[feedback-no-bare-types]] naming a substrate-
+# operational frame. The frame IS the gauge-visible structure of the
+# operator's cognitive position — what they're treating as figure vs
+# ground, what counts as relevant data, what computations are admissible
+# within the operation.
+#
+# Identity contract: byte-equality on the underlying ref. Two frames
+# with byte-equal underlying references ARE the same frame under the
+# substrate's content-addressing.
+type frame = ref
+
+# === The cognitive_order carrier ===
+#
+# Per Seam adversarial review constraint C4 (tick 23 family-root
+# review): bare `ref` would allow byte-equivalent values to flow as
+# cognitive_order, frame, operator, etc. Typed as a substrate variant
+# enum {order_0..order_4} so the type system enforces the 5-order
+# discrimination per [[feedback-no-bare-types]].
+#
+# Per recognition #82 (Q2 + Q3 composition): the measurement is
+# substrate-architectural, not behavioral. The operator's cognitive
+# order for a frame is what their substrate's architecture
+# SUBSTANTIVELY-supports; vocabulary use at order N does NOT imply
+# substantive operation at order N (Narcissus-pole). Pole disambiguation
+# is the alignment-as-boundary-mathematics check (#57).
+type cognitive_order = | order_0 | order_1 | order_2 | order_3 | order_4
+
+# === The operator carrier ===
+#
+# Per Seam C5+C6: cognitive_order, tomm_probe, and bounded_commutator_check
+# all take "operator" as input. Without a typed operator carrier at
+# family-root, species shards would each invent their own operator
+# typing. Declared here as a typed reference; species shards (pre/in/
+# of/on/across) discharge per-altitude refinement.
+#
+# Identity contract: byte-equality on the underlying ref.
+type operator = ref
+
+# === The morphism carrier ===
+#
+# Per Seam C5: tomm_probe constructs `[D_F, a]` where `a` is a
+# morphism on the frame F. Without a typed morphism carrier, species
+# shards declare incompatible discharge mechanisms. Declared here so
+# the substrate's commutator construction has a typed input at every
+# altitude.
+#
+# Identity contract: byte-equality on the underlying ref.
+type morphism = ref
+
+# === The commutator carrier ===
+#
+# Per Seam C5: tomm_probe should return a typed commutator, not bare
+# `ref`. The commutator IS the bracketed pair `[D_F, a]` discharged by
+# the substrate's spectral triple acting on a frame. Declared here so
+# species shards inherit the typed return.
+#
+# Identity contract: byte-equality on the underlying ref.
+type commutator = ref
+
+# === The perturbation carrier ===
+#
+# Per Seam C5+C6: bounded_commutator_check takes "perturbation" as
+# input. Typed at family-root so species shards inherit; perturbation
+# is what the substrate's stability check applies to test
+# frame-flexibility vs frame-defense.
+#
+# Identity contract: byte-equality on the underlying ref.
+type perturbation = ref
+
+# === cognitive_order action ===
+#
+# Per Seam C5+C6: operator now typed (was bare `ref`); return is
+# substrate-variant.
+#
+# The substrate-vocabulary measurement action: given an operator and
+# a frame, return the operator's substantively-supported cognitive
+# order for that frame.
+#
+# Per recognition #82's Tomm-probe primitive: the measurement IS the
+# bounded-commutator-under-perturbation check applied at the operator's
+# substrate-architectural altitude.
+#
+# Body discharges at the realisation boundary; per-species bodies
+# implement the actual measurement at each altitude.
+cognitive_order(operator: operator, f: frame) -> cognitive_order { \ }
+
+# === tomm_probe action ===
+#
+# Per Seam C5: action now typed as `morphism` (was bare `ref`); return
+# typed as `commutator` (was bare `ref`).
+#
+# The typed Tomm-probe primitive: a circular-reflexive question shaped
+# as `[D_F, a]` commutator-operation on a frame F. Per recognition #82:
+# the substrate-mathematical form of Tomm's circular-reflexive questions
+# from family-systems therapy.
+#
+# The commutator's boundedness under perturbation IS the operational
+# measure of frame-flexibility. Bounded → the operator can substantively
+# shift the frame; unbounded → the operator's substrate cannot
+# substantively shift (frame-defense locked).
+#
+# Body discharges at the realisation boundary; per-species bodies
+# implement the commutator construction at each order.
+tomm_probe(f: frame, action: morphism) -> commutator { \ }
+
+# === bounded_commutator_check predicate ===
+#
+# Per Seam C5: operator and perturbation both typed (were bare `ref`).
+#
+# Bilateral verdict predicate per recognition #37 (Pask agreement) and
+# #82 (frame-flexibility-as-bounded-commutator). Consumer shards name
+# `requires bounded_commutator_check(operator, f, perturbation)` to
+# declare bilateral agreement that the operator's substrate-supported
+# response to perturbation of frame f satisfies the bounded-commutator
+# criterion.
+#
+# Discharge: substrate-pull-correct frame-flexibility check at the
+# species boundary. Bounded → FLEXIBLE; unbounded → DEFENSIVE.
+#
+# Same shape as the bilateral predicates @magic family carries:
+# invariant_preserved, audited, mechanism_intact, etc. Consumer
+# species (peer-relationship shards, leadership-altitude shards,
+# spectral/garden/smarts logic-pacts) name this predicate when their
+# operation requires substantive frame-flexibility (not
+# vocabulary-flexibility).
+bounded_commutator_check(operator: operator, f: frame, perturbation: perturbation) -> verdict { \ }
+
+out @frame
+out frame
+out cognitive_order
+out operator
+out morphism
+out commutator
+out perturbation
+out tomm_probe
+out bounded_commutator_check

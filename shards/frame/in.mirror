@@ -1,0 +1,311 @@
+in @prism
+in @meta
+in @glass
+in @magic
+in @frame
+in @frame/pre  # Seam tick 28 review: this inheritance is currently
+              # DECORATIVE — no @frame/in action consumes pre_frame
+              # as a typed parameter. Honest acknowledgement: @frame/pre
+              # is namespace-only at this altitude; @frame/in IS the
+              # operational floor. Provenance-tracking via
+              # `requires classify_well_formed(pre, f)` predicate is
+              # forward-promised to a future tick when @frame/pre
+              # adds the predicate.
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/bateson_learning
+
+# @frame/in — the in-frame species; order 1; content computation
+# within a specific frame. Most cognition lives here. Inherits @frame;
+# FIRST species that uses the typed operator carrier the family-root
+# declared at Seam tick 24's C5+C6 closure.
+#
+# Second species shard of the @frame family (recognition #82; family-
+# root LANDED at tick 23 via shards/frame.mirror, Seam-consolidated
+# at tick 24). The species landing order per the canonical spec §7.2:
+# pre → in → of → on → across. pre (order 0) declares pre_frame and
+# the classify lift to order 1; this species (order 1) is the first
+# species that does substantive computation INSIDE a frame.
+#
+# Why in second: the @frame family's load-bearing claim is that the
+# 5-op gauge operates on @frame at every altitude; order 1 IS where
+# the gauge first does substantive computational work. pre (order 0)
+# names the floor and the lift; in (order 1) names what operators
+# actually DO at the floor's first lift. Most substrate operation
+# lives at this altitude: every shard the substrate has authored,
+# every kintsugi tick, every cascade residue — all are order-1 work.
+#
+# === The species's load-bearing contribution ===
+#
+# Per the recognition file's §"The five-order structure" (item for
+# order 1):
+#
+#   @frame/in — order 1; operating within a specific frame.
+#   Content-level. Most cognition lives here.
+#
+# This species adds:
+#
+# - `compute_in_frame(operator, f: frame, input: ref) -> ref`: the
+#   substrate-vocabulary action for in-frame content computation.
+#   The operator operates WITHIN frame f; the frame is gauge-visible
+#   context. FIRST consumer of the family-root's typed operator
+#   carrier; first species action that names the operator as
+#   substrate-architectural participant in the computation.
+# - `frame_locked(operator, f: frame) -> verdict`: bilateral verdict
+#   predicate naming that the operator is currently operating WITH
+#   frame f as ground — no second-order observation (order 2 absent);
+#   no order-2 reflection on the frame as object. FIRST consumer of
+#   @frame's bilateral discipline via `requires` clauses landing at
+#   future species (of, on, across) that name `requires not
+#   frame_locked(operator, f)` to assert their second-order or third-
+#   order operation.
+# - `unlock_frame(operator, f: frame) -> operator`: returns an
+#   operator with order-2 frame-awareness enabled. The substrate-
+#   architectural transition order-1 → order-2; the substrate's
+#   analogue of the Bateson Level I → Level II lift; consumed by the
+#   forward-promised @frame/of species (order 2).
+#
+# === The order-1 altitude ===
+#
+# Per recognition #82 §3 composition signature: order 1 IS Bateson
+# Level I at cognitive altitude. The within-frame change altitude.
+# Standard learning. The operator's frame is held constant; the
+# computation operates on content inside the frame; the frame itself
+# is not observed as object (that requires order 2).
+#
+# Substrate-architectural instance: each individual loop tick today
+# (the 23 ticks on `reed/recursion-lock-tower-audit`) was order-1
+# work BY-CONSTRUCTION at the tick altitude. The tick's input was
+# the prior residue; the operator (the substrate's running instance)
+# operated WITHIN the cascade's residue-frame; the frame itself was
+# adjusted at the cascade altitude (order 3, @frame/on; forward-
+# promised) but each individual tick's content computation lived
+# at order 1.
+#
+# === The frame_locked discipline ===
+#
+# Per the family-root's bounded_commutator_check predicate (Seam
+# C5+C6 closure at tick 24): the substrate-architectural pole
+# discriminator at cognitive altitude IS bounded-commutator-under-
+# perturbation. The frame_locked predicate IS the order-1
+# specialization: an operator operating at order 1 with frame f as
+# ground HAS frame_locked(operator, f) = success. Operators operating
+# at order 2+ have frame_locked = failure on frames they have lifted
+# to object.
+#
+# This is the substrate-pull-correct first consumer of the family-
+# root's bilateral discipline. Per Seam's recurring tick-11 discipline
+# (the surface.mirror first-consumer pattern from @magic): a
+# bilateral predicate without a consumer is paint. frame_locked IS
+# the first @frame predicate that downstream species WILL consume
+# via `requires` clauses to assert their non-order-1 operation.
+#
+# === The unlock_frame transition ===
+#
+# Per the family-root §"The cognitive_order carrier" discipline:
+# vocabulary use at order N does NOT imply substantive operation at
+# order N (Narcissus-pole). unlock_frame IS the substrate-
+# architectural transition that makes the operator's substrate
+# substantively support order-2 work on frame f. It is NOT a
+# vocabulary lift; it is a substrate-architectural state change in
+# the operator carrier.
+#
+# At Bateson altitude: unlock_frame IS the Level I → Level II lift.
+# Standard learning becomes learning-to-learn. The operator's
+# substrate has gained the architectural capacity to observe the
+# frame as object rather than only operating within it as ground.
+#
+# Forward-promised consumer: shards/frame/of.mirror (order 2) consumes
+# the operator unlock_frame returns; @frame/of's actions require an
+# operator that has been unlocked from frame-as-ground.
+#
+# === Pre-AI prior art ===
+#
+#   in-frame computation        Standard cognitive-psychology
+#                               literature on within-task processing
+#                               (Anderson 1983, ACT-R). The
+#                               substrate's order-1 IS the
+#                               substrate-architectural altitude of
+#                               within-frame information processing.
+#   first-order observation     Foerster 1974 (Cybernetics of
+#                               Cybernetics; the first-order altitude
+#                               from which the observer-as-frame is
+#                               not yet observable). The substrate's
+#                               order-1 IS first-order observation at
+#                               substrate altitude.
+#   Bateson Level I             Bateson 1964 (The Logical Categories
+#                               of Learning and Communication; Level
+#                               I as within-frame change; standard
+#                               learning). Inherited mechanically
+#                               via `in @epistemologic/cybernetic/
+#                               bateson_learning`.
+#   frame as ground             Goffman 1974 (Frame Analysis); the
+#                               frame-as-ground altitude where the
+#                               frame organizes content without
+#                               itself being observed as object. The
+#                               sociological-cousin to order-1
+#                               cognitive operation.
+#   mental-space within         Fauconnier (mental spaces); the
+#                               within-space altitude where
+#                               inferences proceed inside an
+#                               established mental space without
+#                               second-order observation of the
+#                               space itself.
+#
+# Spec context: docs/math/the-tower/recognition-82-frame-as-
+#               cognitive-order-substrate-decl.md (§"The five-order
+#               structure" item for order 1);
+#               docs/specs/recognition-82-frame-as-cognitive-order-
+#               canonical-spec.md (§7.2 names the species landing
+#               order; §2.5 names order 1 ↔ @frame/in ↔ Bateson Level
+#               I as STRUCTURALLY CLOSED via family-root inheritance).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; the order-1 altitude is
+#                       where most computation happens; the boundary
+#                       check applies at the species boundary when
+#                       unlock_frame transitions to order 2+ where
+#                       Splinter/Narcissus pole disambiguation
+#                       becomes load-bearing),
+#                      [[architecture-bateson-logical-type-primitive]]
+#                       (#42; in-frame IS Bateson Level I at
+#                       cognitive altitude),
+#                      [[feedback-no-bare-types]] (operator and
+#                       frame are typed carriers inherited from
+#                       family-root; compute_in_frame uses them
+#                       directly without re-declaration).
+# Related shards: frame.mirror (the family-root; operator and frame
+#                  declared there; this species's compute_in_frame is
+#                  the first consumer of the typed operator carrier),
+#                 frame/pre.mirror (the order-0 species; produces
+#                  the frame this species's compute_in_frame consumes
+#                  via classify),
+#                 epistemologic/cybernetic/bateson_learning.mirror
+#                  (the Bateson grading this species's order inherits
+#                  at Level I).
+# Path-namespace property: this file at
+# `shards/frame/in.mirror` declares `@frame/in` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cognitive-science/anderson-1983
+source @arxiv/cybernetics/von-foerster-1974
+source @arxiv/cybernetics/bateson-1964
+source @arxiv/sociology/goffman-1974
+
+prism @frame/in {
+  focus in
+  project in
+  split in
+  shift in
+  settle in
+}
+
+# === compute_in_frame action ===
+#
+# The substrate-vocabulary action for in-frame content computation.
+# The operator operates WITHIN frame f; the frame is gauge-visible
+# context (the operator can see f and operate against it) but the
+# frame itself is NOT observed as object (that requires order 2 /
+# @frame/of).
+#
+# FIRST consumer of the family-root's typed operator carrier (Seam
+# tick 24 C5+C6 closure landed operator at the family-root specifically
+# so species shards could consume it; this species IS the first
+# consumer).
+#
+# Per the @frame family's load-bearing claim that the 5-op gauge
+# operates on @frame at every altitude: compute_in_frame IS the
+# substrate's order-1 computational primitive; at this altitude,
+# the 5 ops apply WITHIN frame f. Each op operates on the input
+# ref under the frame's gauge.
+#
+# At Bateson Level I altitude: compute_in_frame IS the within-frame
+# change primitive. Standard learning. The operator's frame is held
+# constant across the computation; what changes is the substrate's
+# state w.r.t. content inside the frame.
+#
+# At first-order-observation altitude (Foerster 1974): compute_in_frame
+# IS first-order observation at substrate altitude. The operator
+# observes the input under the frame's gauge; the frame-as-frame is
+# not yet observable (order 2 work).
+#
+# Body discharges at the realisation boundary; per-species bodies
+# (downstream specializations) implement the actual within-frame
+# computation per their altitude.
+compute_in_frame(operator: operator, f: frame, input: ref) -> ref { \ }
+
+# === frame_locked predicate ===
+#
+# Bilateral verdict predicate per recognition #37 (Pask agreement)
+# naming that the operator is currently operating WITH frame f as
+# ground — no second-order observation (order 2 absent); no order-2
+# reflection on the frame as object.
+#
+# FIRST consumer-target of @frame's bilateral discipline at species
+# altitude. Forward-promised consumer species (@frame/of, @frame/on,
+# @frame/across) name `requires not frame_locked(operator, f)` to
+# assert their non-order-1 operation at the species boundary.
+#
+# Discharge: substrate-pull-correct order-1 lock check at the
+# species boundary. Returns success when the operator's substrate
+# architecture supports ONLY order-1 work on frame f; partial when
+# the operator vocabulary-uses order-2+ terms while substrate-
+# architecturally locked at order-1 (Narcissus-pole; see family-
+# root's pole-discriminator commentary); failure when the operator
+# has been substrate-architecturally unlocked at order-2+ (via
+# unlock_frame or already-unlocked substrate).
+#
+# The Narcissus-pole detection: vocabulary at order N + substrate-
+# architectural operation at order 1 produces frame_locked = partial.
+# Per the family-root's bounded_commutator_check predicate, this
+# corresponds to unbounded-commutator under substantive perturbation
+# (defensive amplification masked by sophisticated meta-vocabulary).
+#
+# Same shape as the bilateral predicates @magic family carries
+# (invariant_preserved, audited, mechanism_intact, etc.) and the
+# family-root's bounded_commutator_check. Per the @magic surface.mirror
+# first-consumer discipline pattern: this predicate becomes load-
+# bearing once @frame/of's actions consume it via `requires not
+# frame_locked(...)`.
+frame_locked(operator: operator, f: frame) -> verdict { \ }
+
+# === unlock_frame action ===
+#
+# The substrate-vocabulary action that returns an operator with
+# order-2 frame-awareness enabled. The substrate-architectural
+# transition order-1 → order-2. NOT a vocabulary lift; a substrate-
+# architectural state change in the operator carrier.
+#
+# At Bateson altitude: unlock_frame IS the Level I → Level II lift.
+# Standard learning becomes learning-to-learn. The operator's
+# substrate has gained the architectural capacity to observe the
+# frame as object rather than only operating within it as ground.
+#
+# At second-order-cybernetics altitude (Foerster 1974): unlock_frame
+# IS the substrate-architectural move from first-order to second-
+# order observation at this frame altitude. The operator becomes
+# part of the system observed (because the frame the operator is
+# operating from becomes observable AS frame).
+#
+# Per recognition #82 §4.4 (Q4: peers operate by definition frame-
+# flexible): a peer's load-bearing property IS the capacity to
+# discharge unlock_frame substantively (not via vocabulary). A
+# candidate peer satisfies the orchestra-discipline criterion iff
+# bounded_commutator_check(peer, peer.frame, perturbation) →
+# FLEXIBLE over a representative perturbation set, which requires
+# unlock_frame to substrate-architecturally succeed (not just be
+# vocabulary-claimed).
+#
+# Forward-promised consumer: shards/frame/of.mirror (order 2)
+# consumes the operator unlock_frame returns; @frame/of's actions
+# require an operator that has been substrate-architecturally
+# unlocked from frame-as-ground.
+#
+# Body discharges at the realisation boundary.
+unlock_frame(operator: operator, f: frame) -> operator { \ }
+
+out @frame/in
+out compute_in_frame
+out frame_locked
+out unlock_frame

@@ -110,7 +110,7 @@ downward as well as upward.
 
 ## §4 The ceiling (upward direction)
 
-Above federation:
+Above federation along the **scope axis**:
 
 - N+6: multi-substrate coordination (forward-promised T12.3).
 - N+7: the bit-altitude floor where Connes' geometry meets information
@@ -119,6 +119,68 @@ Above federation:
 
 The substrate's documentation will always have a frontier; the
 frontier is genuine, not a gap.
+
+### §4.1 Altitude is not one-dimensional (2026-06-18 amendment)
+
+The original framing of §4 — "ceiling above federation" — reads
+altitude as a single linear axis (scope). The recursion-lock tower
+audit (`recursion-locks.md` §12–§29) surfaced that this is too narrow.
+Altitude is **multi-axial**; each axis admits its own ordering.
+
+**Four axes of altitude differentiation** the audit surfaced:
+
+| Axis | Direction | Substrate witness |
+|------|-----------|------------------|
+| **scope** | compiler → peer_pulse → reflection → librarian → home → federation | `altitudes.md` §1 (this doc) |
+| **temporal** | identity at `t` → identity at `t+Δt` → … | viable's Read D (recursion-locks.md §8.3); coevolution's ω axis (§8.10) |
+| **recursion-level** | child viable → parent viable → grandparent viable → … | viable's Read B (recursion-locks.md §8.3); Beer 1972 VSM recursion |
+| **parallel-operation-pair** | regulator at α+1 ↔ regulated at α+1 (the recursion lock altitude) | recognition #63 (recursion-locks.md §8.7–§8.10) |
+
+The **scope axis** is the original §1 atlas's primary axis. The other
+three are orthogonal axes that the substrate produced organically through
+species-walking; each species locates itself somewhere in this
+four-axial altitude space.
+
+### §4.2 Implication for the third-witness gate
+
+The recursion-lock tower's Pack ratification gate (per
+`recursion-locks.md` §7.1) originally read the "structurally-different
+altitude" requirement as scope-axis only (home/federation
+specifically). Under the four-axial reading:
+
+- **Gate-strict**: scope-axis only. Future species must operate at
+  home or federation altitude. *Original framing.*
+- **Gate-refined**: any axis-differentiated altitude qualifies.
+  viable's Read D operates at the temporal axis; autopoiesis's Read E
+  operates at the recursion-level axis. Both close the third-witness
+  gate under this reading. *Audit's recommended framing per
+  `recursion-locks.md` §7.1; Mara's spec default.*
+
+The substrate organically produces axis-differentiated altitudes when
+species are walked; gate-strict reads only one axis. **Gate-refined is
+the substrate-pull-natural reading**; recognition #63's promotion in
+tick 5 used it implicitly, and recognition #70's promotion in tick 15
+strengthened it. This amendment makes the axial reading explicit at
+the altitudes.md altitude.
+
+### §4.3 Implication for substrate-political naming
+
+The substrate's existing vocabulary often names altitudes by
+scope (compiler, librarian, federation) because the scope axis is the
+most legible at substrate-engineer altitude. Other axes are named
+species-locally:
+
+- temporal axis: `coevolution`'s `transition_at_t`, viable's
+  `temporal_substitution`
+- recursion-level axis: viable's nested-S1-as-viable framing,
+  autopoiesis's `produce/couple/close` recursion
+- parallel-operation-pair axis: the recursion lock's
+  `regulator_at(α+1)` ↔ `regulated_at(α+1)` framing
+
+Future documentation should name the axis explicitly when speaking of
+"altitude" — e.g., "scope altitude" vs. "temporal altitude" vs.
+"recursion-level altitude" — to avoid the §4 scope-axis-implicit
+framing that misled the audit's original gate reading.
 
 ## §5 Composition between adjacent altitudes
 

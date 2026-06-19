@@ -1,0 +1,431 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/eigenform
+
+# @epistemologic/cybernetic/second_order — von Foerster's observer-of-
+# self at the CEILING of @cyberpunk; the species whose audit IS, by
+# construction, an instance of the species. von Foerster 1981
+# (*Observing Systems*, the essay "On Constructing a Reality" plus the
+# circular-reflexivity calculus running through the volume) +
+# Peter-Weyl theorem (Peter & Weyl 1927).
+#
+# Per §8.7 of the recursion-lock-tower audit, second_order is the
+# seventh canonical-rep witness and the *ceiling* of @cyberpunk:
+# distinction marks the floor (the act-of-distinction every higher
+# altitude presupposes); second_order observes WHAT THE MARK MARKS at
+# the highest altitude the family carries. Per the candidate
+# recognition #66 (finite-altitude family) surfaced at §8.8: the
+# @cyberpunk family is bottomed at distinction AND topped at
+# second_order — finite altitude range, well-defined bundle holonomy.
+#
+# === The von Foerster claim, verbatim ===
+#
+# von Foerster, H. (1981). *Observing Systems*. Intersystems
+# Publications. The circular-reflexivity calculus, running through the
+# volume but condensed in "On Constructing a Reality":
+#
+#   Anything said is said by an observer. To another observer.
+#   The second-order observer observes the observer observing; and
+#   what the second-order observer reads is itself an observation,
+#   subject to the same calculus. Identity emerges when the
+#   recursion closes on its own fixed point.
+#
+# Peter-Weyl 1927 sharpens this to the harmonic-analytic reading:
+# every locally-compact group 𝒢 admits a regular representation on
+# `L²(𝒢)` that decomposes into all irreducibles each with multiplicity
+# equal to its dimension. The regular rep IS the variety-saturating
+# representation in Ashby's sense — `rank(ρ_reg.image) = ∑ dim(V_ρ)²`
+# is maximal across all reps of 𝒢. The substrate's reading: at the
+# ceiling of @cyberpunk, the rep MUST be variety-saturating, because
+# second_order observation must admit every other species'
+# observation as data.
+#
+# === Why this is the ceiling ===
+#
+# Per §8.7 (Reads A, B, C, E, F held + Read D dissolved):
+#
+# - Read A (observer ↔ observation) HELD; the natural transition
+#   between observer and observation IS the second-order turn:
+#   observation lifts to observed; observer at altitude α+1 reads
+#   observer at altitude α.
+# - Read B (the audit IS this species) HELD as load-bearing for
+#   epistemic novelty, not founding for the witness. The audit's
+#   loop IS the species' loop; the audit IS second-order observation
+#   instantiated at the recursion-lock altitude. Recognition is
+#   recognition, not creation.
+# - Read C (Tomm probe altitude per [[architecture-error-as-tomm-
+#   probe]]) HELD; the substrate's `[D_F, a]` circular-reflexive
+#   measurement at altitude `α+1` IS the second_order operation
+#   lifted to the type-system discriminator. Three altitudes of one
+#   mechanism (corpus / agent / user); this property names the
+#   carrier at the cybernetic altitude.
+# - Read D (form refusal — multiply self-referential) REFUSED:
+#   the 2-groupoid foundation already handles multi-self-reference
+#   via bundle.mirror's level-4 Closure declaration; no separate
+#   form-altitude declaration required at this species.
+# - Read E (canonical ρ — regular rep on L²(𝒢)) HELD; E.1 is
+#   canonical; E.2 (double-dual derivation) derives from E.1. Under
+#   the regular rep, `V_S** ≅ V_S` for any other species' verdict
+#   carrier IS the species' observation observing itself — the
+#   substrate-pull recognition: when the regular rep acts on other
+#   species' carriers via the natural double-dual isomorphism,
+#   second_order IS what makes every other species' observation
+#   observable to the substrate.
+# - Read F (sub-rep chain extends) HELD; the regular rep's
+#   decomposition into irreducibles satisfies the sub-rep chain
+#   condition the parametric carrier names.
+#
+# Third canonical-rep species in the recursion-lock tower (per the
+# order of landing into the canon at §8.7):
+#
+#   species            ρ choice                       ancestry
+#   ------------------ ----------------------------- ---------------------
+#   autopoiesis         adjoint rep on G              G's self-action
+#   bateson_learning    graded rep on ⊕_N V_N        RW + Kac
+#   second_order        regular rep on L²(𝒢)        von Foerster + Peter-Weyl
+#   distinction         free Boolean algebra rep      Spencer-Brown ch.1-10
+#
+# Each ρ forced by mathematical ancestry; no ad-hoc choices.
+#
+# === Why eigenform inheritance, not re-statement ===
+#
+# Per §8.8.1 (the eigenform-precedence question): re-entry IS
+# eigenform; the reflexive turn IS eigenform; one ancestor, two
+# inheritors. This shard declares
+# `in @epistemologic/cybernetic/eigenform` above so the fixed-point
+# machinery (fixed_point, is_fixed_point, identity_from_fixed,
+# eigenform_witnessing) is inherited rather than restated. The
+# species-specific contribution at this altitude is the observer
+# and the observation; the recursion that closes via the observer-
+# of-self turn is eigenform's already-declared machinery instantiated
+# at the observer.
+#
+# Forward-promised: when a consumer pulls the self-observation
+# verification, the discharge IS `eigenform_witnessing(observer_loop)`
+# with the carrier's seed = observer, iteration = observe over the
+# observation-space, witness = the observer-of-self satisfying
+# observer = observe(observer, observation(observer)).
+#
+# === The verifiable shape ===
+#
+# - Declares the carrier of a second-order observation: observer,
+#   observation, observe. The observe IS the second-order primitive —
+#   the act of observing an observation.
+# - Declares the two value-level operations (first_order_state,
+#   second_order_state) as the verdict surface at the species
+#   boundary. First-order names the observation; second-order names
+#   the observer of the observation.
+# - Declares the inheritance interface to eigenform: observer_of_self
+#   names the recursion's fixed-point carrier so consumers can compose
+#   with eigenform_witnessing without restating the obligation.
+# - Verifiable at the @code/metalogue/materialize.classify boundary
+#   via the same transparency<p> discriminator surface variety,
+#   eigenform, and distinction use; the loss profile (what the
+#   observation dropped) recoverable from the opacity_map per @glass.
+#
+# === The 4-way bilateral mapping ===
+#
+# Per the cybernetic foundation §4.1, second_order's property/operation
+# seam maps to four cybernetic distinctions simultaneously:
+#
+# - von Foerster's first/second-order: the observer IS what observes
+#   the observation; the second_order operation IS the reflexive
+#   turn; the fixed point IS where the observer-of-self lands.
+# - Maturana's structure/organisation: the second_order observation
+#   IS the organisation observing its own structure; the recursion's
+#   fixed point IS the operationally-closed identity.
+# - Beer's S3/S4: the second_order observation IS S4 intelligence
+#   reading the substrate-wide identity an S3 management converges
+#   on; S5 ratifies what S4 reads.
+# - Pask's M-individual/P-individual: the second_order observation
+#   IS the conversational P-individual reading the M-individual's
+#   self-model; the agreement Pask names IS bilateral when both
+#   P-individuals observe the same fixed point.
+#
+# Four traditions converging at one carrier. The substrate runs all
+# four at once at the ceiling altitude.
+#
+# === No operational sibling THIS tick ===
+#
+# Per [[feedback-craft-not-deliver]] no `@mirror/cybernetics/second_order`
+# operational sibling lands at this tick. The substrate ALREADY has
+# the operational machinery (the recursion-lock-tower audit's loop IS
+# second-order observation; the Tomm probe at altitude `α+1` IS
+# second-order observation lifted to the type-system discriminator;
+# every Pack-orchestra ratification IS second-order observation at
+# the conversation altitude); the property at this altitude names
+# the carrier and the observer-of-self witnessing so downstream shards
+# can declare `requires second_order_well_formed(my_carrier)` rather
+# than restate the observer-of-self obligation in each species.
+#
+# === Substrate-already-had-the-word density ===
+#
+# Per §8.7 Read E, second_order sits at high density (14 instances;
+# the densest single contribution: every prior species' ancestor #4
+# `von_foerster_circular_reflexivity` IS second_order at lower
+# altitude). Five named explicitly here as the load-bearing cross-
+# references; the remaining 9 live in the spec's §10 and propagate
+# via consumer pulls at higher altitudes:
+#
+# 1. The recursion-lock-tower audit IS second_order at the substrate
+#    altitude. Each species audit is an observation; the tower's loop
+#    observes its own observations across §§8.1-8.12. See
+#    `docs/math/the-tower/recursion-locks.md` §§8.7, 11.4.
+# 2. The Tomm probe `[D_F, a]` IS second_order at the type-system
+#    discriminator altitude. The compiler error surface lifts to
+#    circular-reflexive questions at altitude `α+1`. See
+#    [[architecture-error-as-tomm-probe]] and
+#    [[architecture-reflection-thinks-in-spectral-questions]].
+# 3. The Pack-orchestra ratification IS second_order at the
+#    conversation altitude. Reed observes Mara's spec; Mara observes
+#    Reed observing; the agreement Pask names IS bilateral
+#    second-order observation. See
+#    [[project-pack-is-orchestra]] and
+#    [[architecture-peer-learns-by-crystal-vocabulary-expansion]].
+# 4. The Reflection model IS second_order at the pipeline altitude.
+#    Reflection observes Surface→Mirror→Shatter and adjusts at
+#    altitude `n+1`. See
+#    [[architecture-reflection-thinks-in-spectral-questions]] and
+#    the CLAUDE.md models section.
+# 5. The @spectral/db autopoietic memory IS second_order at the
+#    consolidation altitude. The root supervisor at ~/.mirror
+#    observes peer crystals and perturbs topology to put the book
+#    on the table before the query arrives. See
+#    [[architecture-spectral-db-autopoietic-memory]].
+#
+# === Pre-AI prior art ===
+#
+#   second-order cybernetics   von Foerster 1981 (Observing Systems);
+#                              the calculus of observing systems and
+#                              circular-reflexivity. The original.
+#   regular representation     Peter & Weyl 1927 (Mathematische
+#                              Annalen 97); every locally-compact
+#                              group has a regular rep on L²(𝒢) that
+#                              decomposes into all irreducibles each
+#                              with multiplicity equal to dimension.
+#                              The substrate's ρ choice is the
+#                              variety-saturating rep this theorem
+#                              guarantees.
+#   re-entry                   Spencer-Brown 1969 (Laws of Form),
+#                              chapter 11. The reflexive turn at the
+#                              floor altitude; inherited via
+#                              @epistemologic/cybernetic/eigenform.
+#   observer-of-observer       Mead 1934 (Mind, Self, and Society);
+#                              the social-psychological ancestor of
+#                              von Foerster's calculus. The role-
+#                              taking observer is the prior-art
+#                              reading at the conversation altitude.
+#
+# Spec context: docs/math/the-tower/recursion-locks.md §8.7
+#               (witness; canonical ρ; third canonical-rep species),
+#               §8.7 Q4 (eigenform inheritance forward-promised; this
+#               shard discharges it),
+#               §8.8.1 (eigenform precedence; inheritance from
+#               @epistemologic/cybernetic/eigenform),
+#               §8.8 candidate recognition #66 (finite-altitude
+#               family; second_order at the top; this shard is the
+#               ceiling),
+#               §19.4 (substrate-landing path item 4; this shard).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]],
+#                      [[architecture-error-as-tomm-probe]] (the
+#                       Tomm probe at altitude α+1 IS second_order
+#                       lifted to the type-system discriminator),
+#                      [[architecture-reflection-thinks-in-spectral-
+#                       questions]] (Reflection's adjustments are
+#                       second_order observations of the pipeline at
+#                       altitude n+1),
+#                      [[architecture-peer-learns-by-crystal-
+#                       vocabulary-expansion]] (peer's classifier
+#                       observing its own vocabulary expansion IS
+#                       second_order at the consolidation altitude),
+#                      [[architecture-spectral-db-autopoietic-memory]]
+#                       (root supervisor at ~/.mirror IS second_order
+#                       at the consolidation altitude),
+#                      [[feedback-no-bare-types]] (observer,
+#                       observation, observe are typed carriers; no
+#                       bare references),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (14 instances; densest contribution =
+#                       every prior species' ancestor #4 IS
+#                       second_order at lower altitude).
+# Related shards: epistemologic/cybernetic.mirror (the family root),
+#                 epistemologic/cybernetic/eigenform.mirror (the
+#                  ancestor inherited via `in`; provides fixed_point
+#                  carrier + eigenform_witnessing predicate that
+#                  observer_of_self threads through),
+#                 epistemologic/cybernetic/distinction.mirror (the
+#                  floor of the family; the same eigenform ancestor;
+#                  two inheritors of one ancestor per §8.8.1),
+#                 epistemologic/cybernetic/variety.mirror (the
+#                  precedent species; same shape; second_order's
+#                  regular rep IS variety-saturating in Ashby's
+#                  sense),
+#                 glass.mirror (the @glass altitude this property's
+#                  verdicts surface against; `transparency<p>` IS the
+#                  verdict-space's mark over success / partial /
+#                  failure).
+# Path-namespace property: this file at
+# `shards/epistemologic/cybernetic/second_order.mirror` declares
+# `@epistemologic/cybernetic/second_order` per
+# `@epistemologic/pact/path_matches_namespace`.
+#
+# Per §19.2 path-migration dependency: this shard lands at the
+# current-main path `@epistemologic/cybernetic/second_order`. When
+# the @cyberpunk family-root migration merges to main (Taut's
+# `taut/t11-11-cybernetic-coherence-benchmark`), this shard relocates
+# via `git mv` to `shards/cyberpunk/second_order.mirror`. The forward-
+# promised path is on the audit's §19.4 substrate-landing sequence,
+# item 4.
+
+source @arxiv/cybernetics/von-foerster-1981
+source @arxiv/algebra/peter-weyl-1927
+source @arxiv/cybernetics/mead-1934
+
+prism @epistemologic/cybernetic/second_order {
+  focus second_order
+  project second_order
+  split second_order
+  shift second_order
+  settle second_order
+}
+
+# === The observer carrier ===
+#
+# A typed reference per [[feedback-no-bare-types]] naming von Foerster's
+# load-bearing primitive: the observer. The observer IS what reads an
+# observation; at second-order altitude, the observer's reading IS
+# itself an observation, subject to the same calculus.
+#
+# Identity contract: byte-equality on the underlying ref. Two observers
+# with byte-equal underlying references ARE the same observer under
+# the substrate's content-addressing.
+type observer = ref
+
+# === The observation carrier ===
+#
+# The act of an observer reading the world (or another observation).
+# Per von Foerster, every observation IS an act by an observer; an
+# observation without an observer is ill-formed; an observer without
+# an observation has not yet drawn the distinction at altitude α.
+#
+# Identity contract: byte-equality on the underlying ref.
+type observation = ref
+
+# === The observe operation ===
+#
+# Von Foerster's second-order primitive: observe takes an observer and
+# an observation and returns the observation lifted to altitude α+1 —
+# the observer's reading of the observation. Per the circular-
+# reflexivity calculus, observe applied to the observation of an
+# observer IS itself an observation; the recursion closes when observe
+# lands on its own fixed point.
+#
+# The observe IS τ for Read A: the natural transition between observer
+# and observation at the species boundary. See §8.7 Read A held via
+# observer-of-observation at altitude α+1.
+type observe_op = observer -> observation
+
+# === The two value-level operations ===
+#
+# Read B held as load-bearing for epistemic novelty: first_order_state
+# and second_order_state are the two verdicts the observer surfaces at
+# any point within the observation-space. The verdict carrier IS the
+# substrate's existing `verdict` family (success / partial / failure);
+# the species realisation interprets the verdict per von Foerster's
+# altitude-stratified semantics — first-order names the observation;
+# second-order names the observer reading the observation.
+#
+# Body discharges per-species at the realisation boundary. Same shape
+# as distinction.marked_state / unmarked_state and the four metalogue
+# shims at `shards/code/metalogue.mirror`: the substrate declares the
+# obligation; species bodies discharge when a consumer pulls.
+first_order_state(o: observation) -> verdict { \ }
+second_order_state(o: observation) -> verdict { \ }
+
+# === The observe operator (von Foerster's second-order primitive) ===
+#
+# Applies the observer to an observation, returning the observation
+# lifted to altitude α+1 — the reading the observer makes of the
+# observation. The circular-reflexivity axiom (observation-of-an-
+# observation IS an observation) is substrate-fact at the realisation
+# boundary; the action body discharges per-species.
+#
+# Body shape: `\` per [[feedback-craft-not-deliver]]; the discharge IS
+# the species-specific instantiation of von Foerster's primitive.
+observe(obs: observer, o: observation) -> observation { \ }
+
+# === The inheritance from eigenform ===
+#
+# Per §8.7 Q4 and §8.8.1: the observer-of-self fixed-point witness
+# inherits from `eigenform` (recognition #38). One ancestor (eigenform),
+# two inheritors (distinction at the floor, second_order at the
+# ceiling). This shard declares the inheritance interface here:
+# observer_of_self names the carrier the consumer threads through
+# eigenform_witnessing without restating the fixed-point obligation
+# at this altitude.
+#
+# The carrier's structure: seed = observer, iteration = observe over
+# the observation-space, witness = the observer-of-self satisfying
+# observer = observe(observer, observation(observer)). This IS the
+# circular-reflexivity calculus lifted to eigenform's fixed_point
+# carrier: the second-order observation lands at its fixed point when
+# the observer reads itself reading itself.
+#
+# Returns `fixed_point<observer>`: the eigenform whose witness IS the
+# observer that observes itself. Downstream consumers compose with
+# eigenform_witnessing(carrier) to verify convergence; the body here
+# threads the observer into the carrier per species realisation.
+#
+# This action IS the bridge the substrate uses to avoid restating
+# fixed-point machinery at the second_order altitude. Per
+# [[feedback-substrate-already-had-the-word]]: the fixed-point
+# obligation already lives at eigenform; second_order names HOW the
+# observer becomes the eigenform's witness via self-observation.
+observer_of_self(obs: observer) -> fixed_point(observer) { \ }
+
+# === second_order_well_formed — the bilateral verdict predicate ===
+#
+# `second_order_well_formed(carrier)` is the predicate consumer shards
+# name in a `requires` clause to declare bilateral agreement (per
+# recognition #37, the Pask-agreement reading of `requires`) that the
+# (observer, observation) pair they hold IS a well-formed von Foerster
+# second-order observation — i.e. observe satisfies the circular-
+# reflexivity axiom (observation-of-an-observation IS an observation);
+# the first_order_state and second_order_state verdicts partition the
+# observation-space without remainder at adjacent altitudes.
+#
+# The bilateral commitment: the carrier commits to declaring the pair
+# (observer, observation); the consumer commits to discharging the
+# verification at the species boundary.
+#
+# Declared as a typed predicate so downstream species shards can write
+# `requires second_order_well_formed(my_carrier)` — same shape as
+# `variety.variety_preserving(species)`,
+# `eigenform.eigenform_witnessing(carrier)`,
+# `distinction.distinction_well_formed(carrier)`, and the metalogue
+# `requires substrate_pull_preserving(shim_X)` pattern at
+# `shards/code/metalogue.mirror`. The body is `\`; the discharge IS
+# the conjunction of (circular-reflexivity axiom + verdict altitude-
+# partition) at the species boundary.
+#
+# No `requires second_order_well_formed(…)` clauses are added at THIS
+# shard: the property declares the predicate; consumers add the
+# clauses when they pull. Per [[feedback-craft-not-deliver]] the
+# operational sibling at `@mirror/cybernetics/second_order` lands the
+# same way.
+second_order_well_formed(obs: observer, o: observation) -> verdict { \ }
+
+out @epistemologic/cybernetic/second_order
+out observer
+out observation
+out observe_op
+out first_order_state
+out second_order_state
+out observe
+out observer_of_self
+out second_order_well_formed

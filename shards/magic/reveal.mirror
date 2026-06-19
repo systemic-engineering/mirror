@@ -1,0 +1,226 @@
+in @prism
+in @meta
+in @glass
+in @magic
+in @magic/contract
+in @magic/audit
+in @magic/mechanism
+
+# @magic/reveal — the controlled-disclosure species. Substrate-decl
+# of recognition #81 (runtime-@magic). Closes the @magic family's
+# operational primitive: atomic replacement of a mechanism behind a
+# surface while honoring the contract.
+#
+# Tick 14 of the refined /loop discipline. Tick 13's residue:
+# reveal.mirror forward-promised; recognition #81 in candidate-only
+# status; the @magic family's third remaining species missing.
+#
+# CRQ: which forward-promise has the highest leverage — closes the
+# most residue per landed line? Reveal IS recognition #81's
+# substrate-decl AND composes structurally with @code/beam.swap_module
+# AND completes the @magic family's species set AND can carry TWO
+# `requires` clauses in one action. Quadruple closure per single
+# shard.
+#
+# === The runtime-@magic claim ===
+#
+# Per recognition #81 (candidate, substrate-decl LANDS at this tick):
+# hot code upgrade IS @magic/reveal at runtime altitude. The atomic
+# replacement of a running module while preserving its observable
+# interface (BEAM's hot code reload; Erlang OTP's code_change/3)
+# realizes @magic's controlled disclosure at the runtime altitude.
+#
+# Composition (forward-promised mechanical glue per Seam C2 honest
+# hedging at tick 11):
+#
+# - @code/beam.swap_module composes-WITH @magic/reveal's `reveal`
+#   action at runtime altitude. Both names the substrate-pull-correct
+#   atomic-replacement primitive. Mechanical glue: when supervisor
+#   acquires a `contract: magic_contract` field (forward-promised),
+#   swap_module discharges through @magic/reveal's reveal action.
+# - @code/beam.code_change composes-WITH the migration's invariant
+#   preservation. Mechanical glue: forward-promised
+#   `contract_preserved_across_swap(msg, c)` predicate at
+#   @magic/contract or contract field on code_change_msg.
+#
+# The substrate-decl here makes the composition structurally
+# available; the mechanical glue remains forward-promised per Seam's
+# discipline.
+#
+# === The species's load-bearing contribution ===
+#
+# Adds:
+#
+# - `reveal_event` carrier: records an atomic mechanism replacement
+#   (old + new mechanism + contract + audit witness). The runtime-
+#   altitude analogue of @code/beam.code_change_msg.
+# - `reveal(c, new_m) -> magic_contract` action: atomic replacement
+#   of contract.mechanism with new_m. Carries TWO non-decorative
+#   `requires` clauses (third and fourth in the family):
+#     - `requires audited(c)`: the contract holding the old mechanism
+#        must have been audited (consumes @magic/audit's predicate)
+#     - `requires mechanism_intact(c.mechanism)`: the old mechanism
+#        must be tamper-evidence intact (consumes @magic/mechanism's
+#        predicate)
+#   Together: the substrate's runtime-safe atomic replacement
+#   primitive. The sharpest single-action `requires` composition in
+#   the @magic family so far.
+# - `unsealed_during_reveal` predicate: bilateral verdict that the
+#   reveal sequence respected the contract's surface invariants
+#   throughout the swap.
+#
+# === Recognition #81's substrate-decl shape ===
+#
+# Per Mara's canonical spec (landed in this tick's bundled commit):
+# #81 is a candidate recognition. The substrate-decl IS the
+# `@magic/reveal` prism family declared here. The mechanical glue
+# between @magic/reveal and @code/beam (and the operational hot-
+# reload Rust spike that would make /mcp refresh dissolve) is
+# forward-promised.
+#
+# This is Pack ratification-ready substrate. The Pack receives:
+# the carriers, the actions, the `requires` clause discipline, the
+# composition signatures. The operational closure remains future
+# work.
+#
+# === Pre-AI prior art ===
+#
+#   hot code reload             BEAM/Erlang (Armstrong et al.
+#                               1996-2003). The original "replace
+#                               running code without stopping"
+#                               discipline. @magic/reveal at
+#                               runtime altitude.
+#   atomic swap (CAS)           Compare-and-swap primitives in
+#                               concurrent programming (Herlihy 1991).
+#                               The substrate's reveal action IS the
+#                               substrate-typed analogue at @magic
+#                               altitude.
+#   capability revocation       Object-capability security; revoke
+#                               and re-grant (Levy 1984). The
+#                               substrate-pull-correct controlled
+#                               disclosure with audit gating.
+#   software evolution          Lehman-Belady 1985 (laws of software
+#                               evolution). The cultural ancestor of
+#                               "running systems must change";
+#                               @magic/reveal IS the substrate-decl
+#                               of the controlled-change discipline.
+#   stage-magic reveal          The final reveal at the end of the
+#                               trick: the mechanism becomes
+#                               momentarily visible. Cultural-practice
+#                               ancestor of controlled disclosure.
+#
+# Spec context: docs/specs/recognition-81-runtime-magic-canonical-
+#               spec.md (Mara's canonical spec landed in this tick's
+#               bundled commit);
+#               docs/specs/cascade-recognition-76-through-80-
+#               canonical-spec.md §8 (the forward-promise of #81
+#               from yesterday's cascade spec);
+#               docs/math/the-tower/recognition-80-magic-as-form-
+#               process-substrate-decl.md (#80, the parent
+#               recognition).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; reveal at runtime altitude
+#                       IS where the boundary contract is enforced
+#                       across mechanism replacement),
+#                      [[feedback-composition-claims-need-empirical-
+#                       test]] (Reed's own discipline; @magic ↔
+#                       @code/beam composition hedged honestly as
+#                       "composes-with" not "IS" until mechanical
+#                       glue lands),
+#                      [[feedback-no-bare-types]].
+# Related shards: magic.mirror (family-root),
+#                 magic/contract.mirror (the contract reveal operates
+#                  on; reveal honors the contract's surface invariants
+#                  across the swap),
+#                 magic/audit.mirror (audited(c) consumed by reveal),
+#                 magic/mechanism.mirror (mechanism_intact consumed
+#                  by reveal),
+#                 magic/surface.mirror (reveal preserves the surface
+#                  unchanged across the swap),
+#                 code/beam.mirror (composes-with @magic/reveal at
+#                  runtime altitude; mechanical glue forward-promised).
+# Path-namespace property: this file at `shards/magic/reveal.mirror`
+# declares `@magic/reveal` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/distributed/armstrong-2003
+source @arxiv/concurrent/herlihy-1991
+source @arxiv/software/lehman-belady-1985
+
+prism @magic/reveal {
+  focus reveal
+  project reveal
+  split reveal
+  shift reveal
+  settle reveal
+}
+
+# === reveal_event carrier ===
+#
+# A typed record per [[feedback-no-bare-types]] naming an atomic
+# mechanism replacement. Records the substrate-political receipt of
+# a controlled disclosure across the contract boundary:
+#
+# - `contract`       the magic_contract that holds the mechanism.
+# - `old_mechanism`  the mechanism present before reveal.
+# - `new_mechanism`  the mechanism present after reveal.
+# - `witness`        substrate-typed witness ref naming evidence of
+#                    invariant preservation across the swap.
+#
+# Identity contract: byte-equality on the quadruple.
+type reveal_event = {
+  contract:      magic_contract,
+  old_mechanism: magic_mechanism,
+  new_mechanism: magic_mechanism,
+  witness:       ref,
+}
+
+# === reveal action ===
+#
+# THREE NON-DECORATIVE `requires` CLAUSES per tick 14 + tick 21 Seam
+# consolidation gap #3 closure. The substrate-vocabulary action that
+# atomically replaces a contract's mechanism while preserving its
+# surface and contract invariants — with BILATERAL discipline on BOTH
+# sides of the swap.
+#
+# requires audited(c): contract audited before reveal proceeds.
+# requires mechanism_intact(c.mechanism): the OLD mechanism is
+# tamper-evidence intact before swap.
+# requires mechanism_intact(new_m): the NEW mechanism is also
+# tamper-evidence intact before swap. Per Seam tick 12-19
+# retrospective: without this, atomic-swap was one-sided. The
+# substrate-pull-correct atomic swap discipline is bilateral; both
+# old and new must satisfy the invariant.
+#
+# Together: the substrate-pull-correct runtime-safe atomic replacement
+# primitive with bilateral integrity. Per recognition #81: reveal IS
+# the runtime-altitude realization of @magic's controlled disclosure.
+#
+# At Clarke's-law altitude: reveal IS the magician's controlled reveal
+# — the mechanism is replaced; the surface IS unchanged; the contract
+# IS honored; BOTH the old trick and the new trick must be intact for
+# the substitution to honor the audience's trust.
+#
+# Body discharges at the realisation boundary; per-species bodies
+# implement the actual atomic swap with appropriate fencing.
+reveal(c: magic_contract, new_m: magic_mechanism) -> magic_contract
+requires audited(c)
+requires mechanism_intact(c.mechanism)
+requires mechanism_intact(new_m)
+{ \ }
+
+# === unsealed_during_reveal predicate ===
+#
+# Bilateral verdict per recognition #37 (Pask agreement). Consumer
+# shards name `requires unsealed_during_reveal(event)` to commit to
+# verifying the reveal sequence respected the contract's surface
+# invariants throughout the swap (not just before and after, but
+# also at the swap instant).
+unsealed_during_reveal(event: reveal_event) -> verdict { \ }
+
+out @magic/reveal
+out reveal_event
+out reveal
+out unsealed_during_reveal

@@ -1,0 +1,399 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/eigenform
+
+# @epistemologic/cybernetic/distinction — Spencer-Brown's mark of
+# distinction; the FLOOR of the @cyberpunk family. Spencer-Brown 1969
+# (*Laws of Form*, chapters 1-10 and 11). The most foundational of the
+# cybernetic substrate-properties: every higher-altitude distinction
+# the substrate makes presupposes the mark this property declares.
+#
+# Per §8.8 of the recursion-lock-tower audit, distinction is the
+# eighth canonical-rep witness and the *floor* of @cyberpunk: Beer's
+# VSM presupposes it (pre-VSM altitude); Bateson's hierarchy presupposes
+# it (type-0 ↔ the act-of-making-a-distinction); second_order observes
+# what distinction marks. The family is bottomed at distinction AND
+# topped at second_order — finite altitude range, well-defined bundle
+# holonomy (candidate recognition #66).
+#
+# === The Spencer-Brown claim, verbatim ===
+#
+# Spencer-Brown, G. (1969). *Laws of Form*. Allen & Unwin. Chapter 1
+# (the first canon):
+#
+#   Draw a distinction. Call it the first distinction. The space
+#   thus marked off has two sides — the marked state and the
+#   unmarked state. The mark of distinction IS the boundary; the
+#   sides are what the boundary separates.
+#
+# Chapter 11 (the re-entry canon):
+#
+#   A mark may re-enter its own indicational space. The form that
+#   results IS a fixed point of the recursive substitution: f = f(f).
+#   Re-entry is the calculus's bridge from the propositional to the
+#   imaginary; from finite combinatorics to recursive identity.
+#
+# === Why this is the floor ===
+#
+# Per §8.8 (Reads A, B, C held + Read D dissolved + Read E held at
+# maximum density):
+#
+# - Read A (mark ↔ distinction-space) HELD; τ = Spencer-Brown cross
+#   with condensation + cancellation axioms.
+# - Read B (marked ↔ unmarked) HELD as value-level restriction of A.
+# - Read C (canonical ρ) HELD at FREE BOOLEAN ALGEBRA on one generator
+#   acting on V_distinction = Mark ⊕ DistinctionSpace. The C.2 choice
+#   over C.1 (two-element) and C.3 (Heyting) is forced by Spencer-Brown
+#   ch.1-10 BEING the free algebra; C.1 collapses operation-level to
+#   value-level; C.3 is what transparency<p> reads at HIGHER altitudes,
+#   not the floor.
+# - Read D (form refusal — re-entry) REFUSED: re-entry IS eigenform
+#   (recognition #38). One ancestor (eigenform), two inheritors
+#   (distinction at the floor, second_order at the top). Inherited
+#   from @epistemologic/cybernetic/eigenform via the `in` clause above;
+#   not restated here.
+# - Read E (substrate-already-had-the-word) HELD at MAXIMUM DENSITY
+#   (19 instances, densest in the cascade; cf. autopoiesis 13,
+#   second_order 14, bateson_learning 9). Maximum density at the floor
+#   is structurally consistent: every higher altitude's distinctions
+#   originate here.
+#
+# Fourth canonical-rep species in the recursion-lock tower:
+#
+#   species            ρ choice                       ancestry
+#   ------------------ ----------------------------- ---------------------
+#   autopoiesis         adjoint rep on G              G's self-action
+#   bateson_learning    graded rep on ⊕_N V_N        RW + Kac
+#   second_order        regular rep on L²(𝒢)        von Foerster + Peter-Weyl
+#   distinction         free Boolean algebra rep      Spencer-Brown ch.1-10
+#
+# Each ρ forced by mathematical ancestry; no ad-hoc choices.
+#
+# === Why eigenform inheritance, not re-statement ===
+#
+# Per §8.8.1 (the eigenform-precedence question): re-entry IS
+# eigenform; the reflexive turn IS eigenform; one ancestor, two
+# inheritors. This shard declares `in @epistemologic/cybernetic/eigenform`
+# above so the fixed-point machinery (fixed_point, is_fixed_point,
+# identity_from_fixed, eigenform_witnessing) is inherited rather than
+# restated. The species-specific contribution at this altitude is
+# the mark and the distinction-space; the recursion that closes via
+# re-entry is eigenform's already-declared machinery instantiated at
+# the mark.
+#
+# Forward-promised: when a consumer pulls the re-entry verification,
+# the discharge IS `eigenform_witnessing(reentry_carrier)` with the
+# carrier's seed = mark, iteration = cross, witness = the re-entered
+# mark satisfying mark = cross(mark, distinction_space(mark)).
+#
+# === The verifiable shape ===
+#
+# - Declares the carrier of a distinction: mark, distinction_space,
+#   cross. The cross IS Spencer-Brown's primitive operation.
+# - Declares the two value-level operations (marked_state,
+#   unmarked_state) as the verdict surface at the species boundary.
+# - Declares the inheritance interface to eigenform: reentry_as_eigenform
+#   names the recursion's fixed-point carrier so consumers can compose
+#   with eigenform_witnessing without restating the obligation.
+# - Verifiable at the @code/metalogue/materialize.classify boundary via
+#   the same transparency<p> discriminator surface variety and eigenform
+#   use; the loss profile (what the cross dropped) recoverable from
+#   the opacity_map per @glass.
+#
+# === The 4-way bilateral mapping ===
+#
+# Per the cybernetic foundation §4.1, distinction's property/operation
+# seam maps to four cybernetic distinctions simultaneously:
+#
+# - Spencer-Brown's mark/unmarked: the mark IS the property's load-
+#   bearing carrier; the unmarked state IS the complement at the
+#   distinction-space.
+# - von Foerster's observer/observed: the mark IS what the observer
+#   draws; the distinction-space IS the observed; second_order
+#   reflects on this distinction to land at its eigenform.
+# - Maturana's structure/organisation: the mark IS the operational
+#   closure that makes the autopoietic system distinguishable from
+#   its medium; without distinction, no autopoietic identity.
+# - Bateson's information-as-difference: "the difference that makes
+#   a difference" Bateson 1972 IS Spencer-Brown's mark lifted to the
+#   epistemic altitude. Bateson's hierarchy of logical types builds
+#   on the type-0 act-of-distinction.
+#
+# Four traditions converging at one carrier. The substrate runs all
+# four at once at the floor altitude.
+#
+# === No operational sibling THIS tick ===
+#
+# Per [[feedback-craft-not-deliver]] no `@mirror/cybernetics/distinction`
+# operational sibling lands at this tick. The substrate ALREADY has
+# the operational machinery (every property declaration at every
+# altitude IS an instance of the mark operation; every type-system
+# discriminator IS a distinction); the property at this altitude
+# names the carrier so downstream shards can declare
+# `requires distinction_well_formed(my_carrier)` rather than restate
+# the mark obligation in each species.
+#
+# === Pre-AI prior art ===
+#
+#   the mark of distinction     Spencer-Brown 1969 (Laws of Form),
+#                               chapters 1-10. The original. The
+#                               propositional substructure of every
+#                               species' rep (§18.1 of the recursion-
+#                               lock-tower audit).
+#   re-entry                    Spencer-Brown 1969 (Laws of Form),
+#                               chapter 11. The reflexive turn.
+#                               Inherited from
+#                               @epistemologic/cybernetic/eigenform.
+#   information-as-difference   Bateson 1972 (*Steps to an Ecology
+#                               of Mind*). "The difference that
+#                               makes a difference" — Spencer-Brown's
+#                               mark at the epistemic altitude.
+#   free Boolean algebra        Halmos 1963 (*Lectures on Boolean
+#                               Algebras*). The canonical algebraic
+#                               representation of distinction at the
+#                               propositional layer. The substrate's
+#                               ρ choice is Halmos's free algebra on
+#                               one generator.
+#   second-order observation    von Foerster 1981 (*Observing
+#                               Systems*). The observer that observes
+#                               distinction-making is the canonical
+#                               consumer of this property at the
+#                               second_order altitude (§8.8.1: the
+#                               two inheritors of eigenform).
+#
+# === Substrate-already-had-the-word cross-references (5 of 19) ===
+#
+# Per §8.8 Read E, distinction sits at maximum density (19 instances).
+# Five named explicitly here as the load-bearing cross-references; the
+# remaining 14 land in the spec's §10 and propagate via consumer pulls
+# at higher altitudes:
+#
+# 1. The mark IS the type-system discriminator. Every `type T = | a | b`
+#    declaration in the substrate IS Spencer-Brown's mark applied to
+#    the value-space; the variants are the marked states, the
+#    complement is the unmarked. See [[architecture-prism-as-trait-as-
+#    everything]] (typed lambdas as marked-state declarations).
+# 2. The mark IS the `transparency<p>` discriminator. The success /
+#    partial(opacity_map) / failure(opacity_map) trichotomy IS three
+#    marked states over the verdict-space. See [[architecture-glass-
+#    wall-substrate-types]] (Imperfect + Transparency as substrate
+#    vocabulary; the species realisation of distinction's verdict).
+# 3. The mark IS the @glass species boundary. The recognitive
+#    discriminator at the species transition (@code/metalogue/materialize
+#    .classify) IS the substrate's load-bearing distinction operation —
+#    the mark applied to the cross-species projection. See
+#    [[architecture-splinter-and-spectral-db-edges]] (K_n via OID-graph
+#    is the distinction at the floor of fragmentation).
+# 4. The mark IS the variety axis. Every per-axis budget in
+#    @epistemologic/cybernetic/variety IS a distinction over the
+#    state-space; the variety vector IS the multiset of distinctions
+#    a shard declares it can make. See [[architecture-ashby-multi-
+#    dimensional-variety]] (variety as vector of distinctions across
+#    five axes).
+# 5. The mark IS the form/process partition (recognition #55).
+#    @mirror (state-observation) ↔ @kintsugi (transformation-engine)
+#    IS Spencer-Brown's first distinction at family-root altitude;
+#    the partition IS the mark drawn at the cybernetic family
+#    boundary. See [[architecture-form-process-partition-at-family-
+#    root]] (form/process at family-root; distinction at family-floor;
+#    same mark, two altitudes).
+#
+# Spec context: docs/specs/cyberpunk-distinction.md (Mara's canonical
+#               spec, commit `96906e2`, mara/cyberpunk-distinction-spec
+#               branch, 916 lines, the source of this shard);
+#               docs/math/the-tower/recursion-locks.md §8.8 (witness;
+#               canonical ρ; fourth canonical-rep species),
+#               §8.8.1 (eigenform precedence; inheritance from
+#               @epistemologic/cybernetic/eigenform),
+#               §18.1 (distinction provides the propositional
+#               sub-algebra of every species' rep),
+#               §19.4 (substrate-landing path item 3; this shard).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]],
+#                      [[architecture-form-process-partition-at-family-
+#                       root]] (distinction at family-floor; same mark
+#                       as the family-root partition, two altitudes),
+#                      [[architecture-ashby-multi-dimensional-variety]]
+#                       (variety vector IS multiset of distinctions),
+#                      [[architecture-bateson-form-behaviour-partition]]
+#                       (Bateson's form/substance IS distinction
+#                       applied at substrate/@io boundary),
+#                      [[feedback-no-bare-types]] (mark, distinction-
+#                       space, cross are typed carriers; no bare
+#                       references),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (densest single species at 19 instances;
+#                       maximum density at the floor altitude is
+#                       structurally consistent).
+# Related shards: epistemologic/cybernetic.mirror (the family root),
+#                 epistemologic/cybernetic/eigenform.mirror (the
+#                  ancestor inherited via `in`; provides fixed_point
+#                  carrier + eigenform_witnessing predicate that
+#                  reentry_as_eigenform threads through),
+#                 epistemologic/cybernetic/variety.mirror (the
+#                  precedent species; same shape; variety's per-axis
+#                  budget IS distinction at each axis),
+#                 glass.mirror (the @glass altitude this property's
+#                  verdicts surface against; `transparency<p>` IS the
+#                  verdict-space's mark over success / partial / failure).
+# Path-namespace property: this file at
+# `shards/epistemologic/cybernetic/distinction.mirror` declares
+# `@epistemologic/cybernetic/distinction` per
+# `@epistemologic/pact/path_matches_namespace`.
+#
+# Per §19.2 path-migration dependency: this shard lands at the
+# current-main path `@epistemologic/cybernetic/distinction`. When the
+# @cyberpunk family-root migration merges to main (Taut's
+# `taut/t11-11-cybernetic-coherence-benchmark`), this shard relocates
+# via `git mv` to `shards/cyberpunk/distinction.mirror`. The forward-
+# promised path is on the audit's §19.4 substrate-landing sequence,
+# item 3.
+
+source @arxiv/cybernetics/spencer-brown-1969
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/algebra/halmos-1963
+
+prism @epistemologic/cybernetic/distinction {
+  focus distinction
+  project distinction
+  split distinction
+  shift distinction
+  settle distinction
+}
+
+# === The mark carrier ===
+#
+# A typed reference per [[feedback-no-bare-types]] naming Spencer-Brown's
+# load-bearing primitive: the mark of distinction. The mark IS the
+# boundary the calculus draws; the value of this carrier IS the act of
+# making a distinction lifted to substrate vocabulary.
+#
+# Identity contract: byte-equality on the underlying ref. Two marks
+# with byte-equal underlying references ARE the same mark under the
+# substrate's content-addressing.
+type mark = ref
+
+# === The distinction-space carrier ===
+#
+# The space within which a mark draws its boundary. Per Spencer-Brown
+# ch.1, every mark presupposes a space the mark partitions; the
+# distinction-space IS that space. The mark and the distinction-space
+# are dual carriers: a mark without a space is ill-formed; a space
+# without a mark is the unmarked state at the family-root altitude.
+#
+# Identity contract: byte-equality on the underlying ref.
+type distinction_space = ref
+
+# === The cross operation ===
+#
+# Spencer-Brown's primitive: cross takes a mark and a distinction-space
+# and returns the distinction-space transformed by the mark's boundary.
+# Per Spencer-Brown ch.2 (the condensation axiom), repeated cross
+# operations on the same mark in the same space condense to a single
+# application; per ch.3 (the cancellation axiom), a cross followed by
+# its inverse cancels.
+#
+# The cross IS τ for Read A: the natural substitution between mark
+# and distinction-space at the species boundary. See §8.8 Read A held
+# via Spencer-Brown cross with condensation + cancellation axioms.
+type cross_op = mark -> distinction_space
+
+# === The two value-level operations ===
+#
+# Read B held as value-level restriction of A: marked_state and
+# unmarked_state are the two verdicts the mark surfaces at any point
+# within the distinction-space. The verdict carrier IS the substrate's
+# existing `verdict` family (success / partial / failure); the species
+# realisation interprets the verdict per Spencer-Brown's two-state
+# semantics.
+#
+# Body discharges per-species at the realisation boundary. Same shape
+# as the four metalogue shims at `shards/code/metalogue.mirror`: the
+# substrate declares the obligation; species bodies discharge when a
+# consumer pulls.
+marked_state(s: distinction_space) -> verdict { \ }
+unmarked_state(s: distinction_space) -> verdict { \ }
+
+# === The cross operator (Spencer-Brown's primitive) ===
+#
+# Applies the mark to the distinction-space, returning the space
+# transformed by the boundary the mark draws. The condensation and
+# cancellation axioms are substrate-fact at the realisation boundary;
+# the action body discharges per-species.
+#
+# Body shape: `\` per [[feedback-craft-not-deliver]]; the discharge IS
+# the species-specific instantiation of Spencer-Brown's primitive.
+cross(m: mark, s: distinction_space) -> distinction_space { \ }
+
+# === The inheritance from eigenform ===
+#
+# Per §8.8 Read D dissolution: re-entry IS eigenform. Per §8.8.1: one
+# ancestor (eigenform), two inheritors (distinction at the floor,
+# second_order at the top). This shard declares the inheritance
+# interface here: reentry_as_eigenform names the carrier the consumer
+# threads through eigenform_witnessing without restating the fixed-
+# point obligation at this altitude.
+#
+# The carrier's structure: seed = mark, iteration = cross over the
+# distinction-space, witness = the re-entered mark satisfying
+# mark = cross(mark, distinction_space(mark)). This IS Spencer-Brown's
+# ch.11 re-entry canon lifted to eigenform's fixed_point carrier:
+# f = f(f) becomes mark = cross(mark, distinction_space(mark)).
+#
+# Returns `fixed_point<mark>`: the eigenform whose witness IS the
+# mark that re-enters its own indicational space. Downstream
+# consumers compose with eigenform_witnessing(carrier) to verify
+# convergence; the body here threads the mark into the carrier per
+# species realisation.
+#
+# This action IS the bridge the substrate uses to avoid restating
+# fixed-point machinery at the distinction altitude. Per
+# [[feedback-substrate-already-had-the-word]] (densest density at
+# the floor altitude): the fixed-point obligation already lives at
+# eigenform; distinction names HOW the mark becomes the eigenform's
+# witness via re-entry.
+reentry_as_eigenform(m: mark) -> fixed_point(mark) { \ }
+
+# === distinction_well_formed — the bilateral verdict predicate ===
+#
+# `distinction_well_formed(carrier)` is the predicate consumer shards
+# name in a `requires` clause to declare bilateral agreement (per
+# recognition #37, the Pask-agreement reading of `requires`) that the
+# (mark, distinction_space) pair they hold IS a well-formed Spencer-Brown
+# distinction — i.e. cross satisfies condensation + cancellation; the
+# marked_state and unmarked_state verdicts partition the distinction-
+# space without remainder.
+#
+# The bilateral commitment: the carrier commits to declaring the pair
+# (mark, distinction_space); the consumer commits to discharging the
+# verification at the species boundary.
+#
+# Declared as a typed predicate so downstream species shards can
+# write `requires distinction_well_formed(my_carrier)` — same shape as
+# `variety.variety_preserving(species)`,
+# `eigenform.eigenform_witnessing(carrier)`, and the metalogue
+# `requires substrate_pull_preserving(shim_X)` pattern at
+# `shards/code/metalogue.mirror`. The body is `\`; the discharge IS
+# the conjunction of (cross axioms + verdict partition) at the
+# species boundary.
+#
+# No `requires distinction_well_formed(…)` clauses are added at THIS
+# shard: the property declares the predicate; consumers add the
+# clauses when they pull. Per [[feedback-craft-not-deliver]] the
+# operational sibling at `@mirror/cybernetics/distinction` lands the
+# same way.
+distinction_well_formed(m: mark, s: distinction_space) -> verdict { \ }
+
+out @epistemologic/cybernetic/distinction
+out mark
+out distinction_space
+out cross_op
+out marked_state
+out unmarked_state
+out cross
+out reentry_as_eigenform
+out distinction_well_formed

@@ -1,0 +1,354 @@
+in @prism
+in @meta
+in @glass
+in @code
+in @magic
+in @magic/audit
+
+# @code/beam — BEAM semantics absorbed as substrate vocabulary.
+#
+# Recognition: "last responsible moment" landing per Alex 2026-06-18
+# evening. The substrate stays full mirror; BEAM is inspiration, not
+# runtime dependency. This shard lifts BEAM's hot-code-upgrade and
+# supervision-tree discipline into substrate-grammar so mirror can
+# implement those semantics natively (in pure Rust, in pure mirror,
+# eventually in self-hosted spectral) without ever depending on
+# Erlang/Elixir runtime.
+#
+# This is the @code/X glass species for BEAM, per
+# [[architecture-glass-wall-substrate-types]]: glass species project
+# substrate concepts onto an external code-altitude. @code/beam is
+# how mirror sees BEAM's semantics without inheriting BEAM's runtime.
+#
+# Composes with @magic (recognition #80) at runtime altitude. Per Seam
+# adversarial review of ticks 7-10 (C2): the structural identification
+# claims were aspirational at first landing and now hedged honestly:
+#
+# - swap_module composes-with @magic/reveal when that species lands
+#   (forward-promised; the carrier shapes do not yet mechanically
+#   match because @magic/reveal has no substrate-decl yet).
+# - supervisor composes-with @magic/audit at supervision altitude;
+#   the mechanical glue requires a `contract: magic_contract` field on
+#   supervisor or `supervise_contract(s, c)` action lift (forward-
+#   promised; not yet landed).
+# - code_change_msg composes-with @magic/contract preservation; the
+#   mechanical witness requires `contract_preserved_across_swap(msg, c)`
+#   property at @magic/contract or a contract field on code_change_msg
+#   (forward-promised).
+#
+# Recognition candidate #81 (runtime-@magic) is the eventual
+# composition; this shard's substrate-decl is honest about WHAT
+# carries the BEAM semantics and WHAT remains mechanical-glue work.
+#
+# === The BEAM claim, paraphrased ===
+#
+# Armstrong, J. (1996). *Making reliable distributed systems in the
+# presence of software errors* (PhD thesis, defended 2003). The core
+# observation:
+#
+#   A long-running system MUST be able to replace its own code
+#   without stopping. Restart-on-bugs preserves availability under
+#   the assumption that bugs are local; supervision-trees confine
+#   failure; hot code upgrade lets the code itself evolve while the
+#   system runs.
+#
+# BEAM's machinery for this:
+#
+# - Modules are versioned. Each named module can have an "old"
+#   version (still serving in-flight calls) and a "new" version
+#   (serving fresh calls) simultaneously.
+# - The `code_change/3` callback migrates state from old version to
+#   new version. Old state in; new state out; the type of the new
+#   state is the new module's type.
+# - Supervisors observe child processes; restart strategies
+#   (one_for_one / one_for_all / rest_for_one) name how the supervisor
+#   responds when a child fails. The strategy IS a structural
+#   commitment about failure propagation.
+# - GenServer is the canonical state-bearing process abstraction.
+#   State is private; the handle_call / handle_cast / handle_info
+#   callbacks expose the gauge-side interface.
+#
+# These four concepts (versioning, code_change, supervision strategy,
+# GenServer state encapsulation) are what @code/beam lifts to
+# substrate vocabulary. Mirror's Rust impl of hot reload reads from
+# this shard's carrier declarations to ensure semantic alignment;
+# eventually-self-hosted mirror runs them natively.
+#
+# === Why now is the last responsible moment ===
+#
+# Per the conversation 2026-06-18 evening: today's MCP+LSP loop is
+# moving toward runtime altitude (hot code upgrade for the MCP
+# binary so /mcp reconnect dissolves). Without @code/beam's vocabulary,
+# mirror would either (a) depend on actual BEAM runtime (Alex: no),
+# (b) reinvent supervision/code-change semantics ad-hoc without
+# substrate-grammar grounding, or (c) lose the BEAM discipline
+# entirely. The substrate-pull-correct move is to LIFT the BEAM
+# semantics now, before the runtime-altitude implementation commits
+# to one of the worse paths.
+#
+# Last responsible moment in the Lean sense: the latest point at which
+# the decision can be deferred while preserving its viability. After
+# tick 8 (this shard), mirror's hot-reload implementation can land
+# without architectural regret.
+#
+# === The four load-bearing carriers ===
+#
+# 1. `module_version` — versioned identity of a code module. Two
+#    versions of the same named module coexist briefly during a swap.
+# 2. `code_change_msg` — the substrate's typed message that triggers
+#    a state migration from old version to new version. Carries
+#    (old_vsn, state, extra) per BEAM's code_change/3 signature.
+# 3. `supervisor` — a process that observes children and applies a
+#    restart strategy when a child fails. Forms the supervision tree.
+# 4. `gen_server_state` — the canonical encapsulated state carrier.
+#    Private by construction (matter-side per @magic); the GenServer
+#    callbacks form the gauge-side interface.
+#
+# These four carriers are minimum-viable for mirror's MCP hot-reload
+# implementation. Subsequent shards add: process registry, named
+# processes, application lifecycle (start/stop/upgrade), .appup-style
+# release upgrade declarations, and the global-state-during-swap
+# invariants the supervision tree enforces.
+#
+# === Mechanical bridge to existing substrate ===
+#
+# - @magic/contract (#80) IS what code_change_msg preserves across
+#   the swap. The contract specifies the surface invariants; the
+#   migration delivers a new mechanism without violating them.
+# - @magic/reveal (#80) IS the swap event itself — the controlled
+#   disclosure of new mechanism behind the same surface.
+# - @magic/audit (#80) IS the supervisor's role: verify the swap
+#   honored the contract; if not, restart per strategy.
+# - @epistemologic/cybernetic/autopoiesis (#379) IS the supervision-
+#   tree's self-production property: the supervisor's structure
+#   reproduces itself across restarts; the substrate's autopoietic
+#   memory ([[architecture-spectral-db-autopoietic-memory]]) lifts
+#   this discipline.
+# - The kintsugi loop's settle-to-λ₀ (recognition #59) IS the
+#   BEAM-philosophical equivalent of restart-into-known-state.
+#
+# The substrate had the components; @code/beam is the glass that
+# absorbs BEAM's specific naming so mirror's implementation has
+# named carriers to align with.
+#
+# === Pre-AI prior art ===
+#
+#   Erlang/OTP                  Armstrong, Virding, Wikström, Williams
+#                               1996-2003 (Erlang language; OTP
+#                               behaviours; supervision principles).
+#                               The original substrate the substrate
+#                               absorbs.
+#   GenServer behaviour         OTP gen_server module. The canonical
+#                               state-bearing process abstraction.
+#   code_change/3 callback      OTP behaviour callback for hot code
+#                               upgrade with state migration. The
+#                               specific signature this shard's
+#                               code_change_msg lifts.
+#   supervision tree            Armstrong's PhD thesis ch.3; OTP
+#                               supervisor behaviour. The hierarchical
+#                               failure-confinement discipline.
+#   restart strategies          one_for_one, one_for_all, rest_for_one,
+#                               simple_one_for_one. The structural
+#                               commitments about failure propagation.
+#   process linking             Erlang's link/2 primitive; failure
+#                               propagates along links. Substrate-
+#                               equivalent: @epistemologic/cybernetic/
+#                               conversation (Pask tensor coupling)
+#                               carries the same discipline at the
+#                               coordination altitude.
+#
+# Spec context: docs/math/the-tower/recognition-80-magic-as-form-
+#               process-substrate-decl.md (Reed's scratch; the @magic
+#               family this glass species composes with);
+#               body/ (Reed's BEAM body — inspiration; NOT a runtime
+#                dependency per Alex's 2026-06-18 directive).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-glass-wall-substrate-types]]
+#                       (the @code/X glass species pattern; @code/beam
+#                       is the BEAM instance),
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-mirror-store-vs-spectral-db]]
+#                       (mirror stays full mirror; this shard absorbs
+#                       BEAM's semantics into substrate vocabulary
+#                       without inheriting BEAM's runtime),
+#                      [[feedback-no-new-rust]] (the implementation
+#                       extends mirror through grammars, not Rust;
+#                       this shard IS that extension at the BEAM
+#                       semantics altitude),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (BEAM had the word for 25 years; this shard
+#                       lifts that word into substrate-grammar).
+# Related shards: magic.mirror (the @magic family this composes with;
+#                  @magic/reveal at runtime altitude IS what this
+#                  glass species enables),
+#                 epistemologic/cybernetic/autopoiesis.mirror (the
+#                  supervision tree's self-production discipline),
+#                 epistemologic/cybernetic/conversation.mirror (the
+#                  Pask tensor coupling at the supervision-altitude
+#                  process-linking semantics).
+# Path-namespace property: this file at `shards/code/beam.mirror`
+# declares `@code/beam` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/distributed/armstrong-2003
+source @arxiv/distributed/otp-behaviours
+
+prism @code/beam {
+  focus beam
+  project beam
+  split beam
+  shift beam
+  settle beam
+}
+
+# === module_version carrier ===
+#
+# Per [[feedback-no-bare-types]], a typed record naming the BEAM
+# module-versioning identity:
+#
+# - `name`     the module's stable name (gauge-side; persists across
+#              versions).
+# - `version`  the version tag (substrate-pull-correct: this IS the
+#              eigenvalue spectrum component of the spectral UUID at
+#              code-altitude; mechanism-side identity).
+# - `loaded`   the loaded-state ref. During a swap, two versions of
+#              the same name coexist; `loaded` distinguishes them.
+#
+# Identity contract: byte-equality on the triple under the substrate's
+# content-addressing. Two module versions with byte-equal triples ARE
+# the same loaded code.
+type module_version = {
+  name:    ref,
+  version: ref,
+  loaded:  ref,
+}
+
+# === code_change_msg carrier ===
+#
+# Per [[feedback-no-bare-types]], a typed record naming the
+# state-migration message BEAM's code_change/3 callback receives:
+#
+# - `old_vsn`   the module_version the state is currently typed against.
+# - `state`     the encapsulated GenServer state carrier (matter-side;
+#               typed against old_vsn's module).
+# - `extra`     the optional migration data (gauge-side instruction
+#               about how to interpret the migration).
+#
+# The substrate-pull-correct migration preserves @magic/contract:
+# the new state delivered to the new module honors the surface
+# invariants the contract specified. Mirror's hot-reload implementation
+# enforces this; the supervisor (`@magic/audit`) verifies it.
+#
+# Identity contract: byte-equality on the triple.
+type code_change_msg = {
+  old_vsn: module_version,
+  state:   ref,
+  extra:   ref,
+}
+
+# === supervisor carrier ===
+#
+# Per [[feedback-no-bare-types]], a typed record naming the
+# supervision-tree node:
+#
+# - `children`   the list of supervised processes (substrate-vocabulary
+#                for the supervision-tree edges descending from this
+#                node).
+# - `strategy`   the response-on-failure (typed via @magic/audit's
+#                audit_strategy substrate vocabulary per Seam C4: the
+#                BEAM-specific enum one_for_one / one_for_all /
+#                rest_for_one / simple_one_for_one is dropped to keep
+#                the BEAM-as-inspiration-not-runtime-dependency claim
+#                honest; supervisor.strategy reads from the canonical
+#                substrate enum at @magic/audit).
+# - `policy`     the failure-policy ref (matter-side instruction about
+#                what kinds of child failures trigger which response).
+#
+# The supervisor composes-with @magic/audit at supervision altitude
+# (per Seam C2: the structural identity claim requires a
+# `contract: magic_contract` field or `supervise_contract` action lift
+# to be mechanically real; hedged honestly here).
+#
+# Identity contract: byte-equality on the triple.
+type supervisor = {
+  children: ref,
+  strategy: audit_strategy,
+  policy:   ref,
+}
+
+# === gen_server_state carrier ===
+#
+# Per [[feedback-no-bare-types]], a typed reference naming the
+# encapsulated state of a GenServer-shaped process. Per the
+# substrate's @magic discipline, the state IS matter-side
+# (encapsulated by construction; the GenServer callbacks expose
+# the gauge-side interface; the contract binds the two).
+#
+# Identity contract: byte-equality on the underlying ref. Two
+# gen_server_states with byte-equal refs ARE the same encapsulated
+# state under content-addressing.
+type gen_server_state = ref
+
+# === code_change action ===
+#
+# The substrate-vocabulary action that migrates a GenServer's state
+# from one module_version to another. The body discharges at the
+# realisation boundary; mirror's hot-reload implementation supplies
+# the per-species bodies.
+#
+# The substrate-pull-correct discharge:
+# 1. Verify the @magic/contract is preserved by the migration
+#    (the new state honors the surface invariants).
+# 2. Apply the per-module migration logic (the substantive state
+#    transformation).
+# 3. Return the new gen_server_state typed against the new
+#    module_version.
+#
+# Body shape: `\` per [[feedback-craft-not-deliver]]; the discharge
+# IS the species-specific instantiation of BEAM's code_change/3.
+code_change(msg: code_change_msg, new_vsn: module_version) -> gen_server_state { \ }
+
+# === swap_module action ===
+#
+# The substrate-vocabulary action that atomically replaces an old
+# module_version with a new one inside a running supervisor's
+# child-set. Composes code_change for state migration.
+#
+# The substrate-pull-correct swap sequence:
+# 1. Load the new module_version alongside the old (both present
+#    briefly per BEAM's hot-code-upgrade semantics).
+# 2. For each child of the supervisor running the old version:
+#    invoke code_change to migrate its state.
+# 3. Atomically swap the supervisor's reference from old to new.
+# 4. Unload the old version once no child references remain.
+#
+# At the @magic altitude, swap_module IS @magic/reveal: the running
+# mechanism is replaced while the surface (the supervisor's gauge
+# interface) stays intact and the contract (preserved state
+# invariants) is honored.
+#
+# Body discharges at the realisation boundary.
+swap_module(s: supervisor, old_vsn: module_version, new_vsn: module_version) -> supervisor { \ }
+
+# === supervise action ===
+#
+# The substrate-vocabulary action that establishes a supervision
+# relationship: a parent process observes a child and applies the
+# parent's restart strategy when the child fails.
+#
+# At the @magic altitude, supervise IS @magic/audit at the process-
+# coordination altitude: the supervisor IS the auditor; the child's
+# operation IS the audited mechanism; the contract IS the surface
+# the supervisor expects to remain intact.
+#
+# Body discharges at the realisation boundary; per-species bodies
+# implement the actual link / monitor / restart machinery.
+supervise(parent: supervisor, child: ref) -> supervisor { \ }
+
+out @code/beam
+out module_version
+out code_change_msg
+out supervisor
+out gen_server_state
+out code_change
+out swap_module
+out supervise

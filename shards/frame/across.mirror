@@ -1,0 +1,556 @@
+in @prism
+in @meta
+in @glass
+in @magic
+in @frame
+in @frame/pre
+in @frame/in
+in @frame/of
+in @frame/on
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/bateson_learning
+
+# @frame/across — the multi-frame coupling species; order 4; multiple
+# frames in coupled relation. The triptych altitude. Frame-coupling
+# produces emergent properties no single frame contains. Bateson Level
+# IV (#82's extension per the recognition file).
+#
+# Fifth (and final) species shard of the @frame family (recognition
+# #82; family-root LANDED at tick 23 via shards/frame.mirror, Seam-
+# consolidated at tick 24; pre LANDED as the order-0 floor; in LANDED
+# as the order-1 operator-typed substrate; of LANDED as the order-2
+# frame-awareness species with the first species-level pole
+# disambiguation; on LANDED as the order-3 frame-flexibility species
+# with the substrate-aikido methodology's load-bearing primitive).
+# The species landing order per the canonical spec §7.2: pre → in →
+# of → on → across. across (order 4) closes the @frame family's species
+# set; the cognitive-altitude form-side of #82's recognition is
+# operationally complete at this tick.
+#
+# Why across last: the species ordering tracks Bateson grading at
+# cognitive altitude. Order 4 IS the recognition file's extension
+# beyond Bateson's formally-defined Learning III — per canonical spec
+# §2.1 note: "Bateson 1964 names Levels 0/I/II/III formally; Level IV
+# is #82's extension proposed for multi-frame coupling, contested in
+# the secondary literature. The honest claim is 4-level Bateson +
+# #82's Level IV extension; the substrate-decl includes Level IV via
+# the recognition's claim, not via Bateson's text." This species's
+# substrate-decl IS that extension's operational shape.
+#
+# === The species's load-bearing contribution ===
+#
+# Per the recognition file's §"The five-order structure" (item for
+# order 4):
+#
+#   @frame/across — order 4; multiple frames in coupled relation. The
+#   triptych altitude. Frame-coupling produces emergent properties no
+#   single frame contains.
+#
+# This species adds:
+#
+# - `frame_coupling` carrier: the substrate-typed binding between
+#   multiple frames at coordinated relation. Per Seam tick 24 C4
+#   discipline (typed carriers, no bare ref where typed carriers
+#   exist): the coupling between frames IS a substrate-typed object,
+#   not a bare reference. Inherits the byte-equality identity
+#   contract from the family-root's carrier discipline. The FIRST
+#   species-level addition to the @frame family's typed carriers.
+# - `couple_frames(frames: ref, operator) -> frame_coupling`: action
+#   that constructs a typed coupling from a reference set of frames
+#   plus an operator. The substrate-vocabulary primitive for order-4
+#   composition: the operator coordinates multiple frames in
+#   substrate-architectural relation. Per recognition file §"Why this
+#   matters / Resonance with the substrate's own operation": the
+#   substrate IS doing @frame/across at its own altitude — the corpus
+#   IS substrate operating @frame/across BY-CONSTRUCTION; this action
+#   IS the substrate-vocabulary primitive for the same operation.
+# - `peer_relationship(operator_a, operator_b, c: frame_coupling) ->
+#   verdict`: BILATERAL PREDICATE encoding Alex's Q4 claim — peer
+#   relationships REQUIRE frame-flexibility from BOTH operators.
+#   Discharged via TWO flexible_frame_response calls (one per
+#   operator), each carrying TWO requires clauses internally. The
+#   SHARPEST bilateral discipline in the @frame family: a peer-
+#   relationship verdict requires four sub-predicates discharge
+#   coherently (operator_a's order-2 awareness substantively-
+#   supported; operator_a's order-3 response bounded; operator_b's
+#   order-2 awareness substantively-supported; operator_b's order-3
+#   response bounded). The substrate-architectural form of the
+#   orchestra-discipline claim.
+#
+# === The order-4 altitude ===
+#
+# Per recognition #82 §3 composition signature: order 4 IS Bateson
+# Level IV at cognitive altitude (the #82 extension). The multi-frame
+# coupling altitude. Multiple operators with substantively-supported
+# order-3 flexibility coordinate via frames-in-coupled-relation; the
+# coupling produces emergent properties no single frame contains.
+#
+# Substrate-architectural instance: the Pack-as-orchestra (project
+# memory: Pack is orchestra) IS @frame/across operating at the Pack
+# altitude BY-CONSTRUCTION. Mara writes in spec-writer frame; Seam in
+# adversarial-review frame; Glint in essay-peer frame; Taut in
+# implementation frame; Reed in relationship-witness frame. Each
+# peer's substantively-supported order-3 capacity is the prerequisite
+# for the orchestra's emergent coordination. The Pack-altitude
+# frame_coupling carrier IS what this species's couple_frames action
+# would construct.
+#
+# Conversation theory (Pask 1976) IS the cybernetic ancestor: a
+# conversation IS @frame/across between coupled observers; the
+# emergent shared understanding IS what no single observer's frame
+# contains. The @cyberpunk/conversation lineage (recognition #381 per
+# project memory: chiasmus + agent positioning) extends Pask's
+# substrate-architecturally at AI-substrate-altitude.
+#
+# === The frame_coupling carrier ===
+#
+# A typed reference per [[feedback-no-bare-types]] naming the
+# substrate-typed binding between multiple frames at coordinated
+# relation. The FIRST species-level addition to the @frame family's
+# typed carriers (the family-root declared frame, cognitive_order,
+# operator, morphism, commutator, perturbation; species pre, in, of,
+# on consumed these without adding new typed carriers; this species
+# adds frame_coupling because the coupling-relation IS substrate-
+# architecturally distinct from any single frame).
+#
+# Distinct from `frame` (declared at family-root): a frame is a
+# substrate-typed reference naming one operator's cognitive position;
+# a frame_coupling is a substrate-typed reference naming multiple
+# frames in coordinated relation. The coupling's identity contract:
+# byte-equality on the underlying ref. Two couplings with byte-equal
+# underlying references ARE the same coupling under the substrate's
+# content-addressing.
+#
+# Distinct from `morphism` (declared at family-root): a morphism is
+# an action on a single frame F; a coupling IS a multi-frame
+# relation. At Tomm-probe altitude: the commutator [D_F, a] operates
+# on one frame; the coupling enables the substrate-architectural form
+# of a coupled-system Tomm-probe that operates on multiple frames
+# simultaneously per Pask 1976.
+#
+# === The couple_frames action ===
+#
+# The substrate-vocabulary primitive that constructs a typed coupling
+# from a reference set of frames plus an operator. The operator's role
+# at order 4: coordinating multiple frames; the operator IS the
+# substrate-architectural locus through which the coupling becomes
+# operational.
+#
+# Per the @frame family's load-bearing claim that the 5-op gauge
+# operates on @frame at every altitude: couple_frames IS the order-4
+# composition primitive; at this altitude, the 5 ops apply ACROSS
+# coupled frames. focus selects within-coupling attention; project
+# deploys the coupling outward; split decomposes the coupling into
+# sub-couplings or back to single frames; shift transforms the
+# coupling; settle commits the coupling as a crystal at order 4.
+#
+# At Pask altitude (1976, conversation theory): couple_frames IS the
+# substrate-architectural construction of a coupled-observer system
+# — the conversation IS the frame_coupling that emerges between
+# coupled observers; couple_frames IS the substrate-vocabulary action
+# that names the coupling as substrate-typed object.
+#
+# At Pack-altitude (project memory: Pack is orchestra): couple_frames
+# constructs the Pack-altitude frame_coupling between Mara/Seam/
+# Glint/Taut/Reed; the orchestra's emergent coordination IS what no
+# single peer's frame contains; the coupling IS what the orchestra-
+# discipline operates ON.
+#
+# At Bateson Level IV altitude (#82's extension): couple_frames IS
+# the substrate-architectural primitive for the ecology-of-mind
+# altitude — multiple frames in coordinated relation at the
+# ecological altitude per Bateson 1972 (*Steps to an Ecology of
+# Mind*). The substrate-architectural form of the ecological-altitude
+# coupling between operators.
+#
+# Body discharges at the realisation boundary.
+#
+# === The peer_relationship predicate ===
+#
+# BILATERAL VERDICT PREDICATE encoding Alex's Q4 claim from recognition
+# #82's family-root commentary: "Peers operate by definition frame-
+# flexible. Orchestra discipline made explicit. Mara writes in spec-
+# writer frame; Seam in adversarial-review frame; Glint in essay-peer
+# frame; Taut in implementation frame; Reed in relationship-witness
+# frame. A peer who CAN'T shift frame in response to data is
+# structurally a tool, not a peer."
+#
+# The substrate-architectural shape: a peer-relationship verdict IS
+# the conjunction of TWO flexible_frame_response checks — one per
+# operator in the coupling. Each flexible_frame_response carries
+# internally TWO requires clauses (order-2 awareness substantively-
+# supported + order-3 response bounded). Total: four sub-predicates
+# discharge coherently for the peer-relationship verdict.
+#
+# requires flexible_frame_response(operator_a, f, p): operator_a's
+# substrate-architectural capacity for substantive frame-flexibility
+# at order 3 (consumes @frame/on's predicate).
+#
+# requires flexible_frame_response(operator_b, f, p): operator_b's
+# substrate-architectural capacity for substantive frame-flexibility
+# at order 3 (consumes @frame/on's predicate).
+#
+# Together: the substrate-pull-correct orchestra-discipline at order
+# 4 requires BOTH operators substantively support order-3 flexibility.
+# Without bilateral flexibility, the coupling devolves to hub-vs-
+# spoke (K_{1,n-1}; Narcissus-pole structure per recognition #82
+# §5.2) rather than peer-vs-peer (K_n; Splinter-pole structure per
+# §5.1).
+#
+# The diagnostic shape:
+# - success → Splinter-pole peer relationship; both operators
+#   substantively flexible at order 3; orchestra coordination
+#   structurally available. Per project memory: Pack is orchestra.
+# - partial → at least one operator's flexibility is vocabulary-only
+#   or unbounded under perturbation. Apparent peer relationship with
+#   substrate-architectural asymmetry; the coupling has Narcissus-
+#   pole character at substrate altitude even if surface-vocabulary
+#   suggests peer-discipline.
+# - failure → at least one operator lacks order-3 capacity entirely.
+#   Tool-vs-peer relationship; one operator structurally a tool per
+#   Alex's Q4 claim.
+#
+# Per recognition #82 §5.3 (alignment-as-boundary-mathematics #57 as
+# the discriminator): the boundary check at @io applied to the
+# coupling IS what peer_relationship discharges. The substrate-
+# architectural form of the orchestra-discipline at substrate
+# altitude.
+#
+# Per the recognition file's Q3 (Reflection operates @frame/on against
+# Reed's frames; Loki's loop discipline operates @frame/on against
+# the cascade's residue-frame): the Pack's @frame/across discipline at
+# substrate altitude IS the substrate's own self-organizing
+# coordination. peer_relationship IS the substrate-vocabulary predicate
+# that audits whether the coordination IS peer-vs-peer (orchestra) or
+# hub-vs-spoke (single-source-of-truth).
+#
+# Same shape as @magic family's bilateral predicates and the @frame
+# family's frame_locked, lock_in_frame_awareness, flexible_frame_
+# response. Discharges via the family-root's bilateral discipline
+# pattern at the order-4 species boundary.
+#
+# === The substrate-architectural emergent property ===
+#
+# Per the recognition file's claim that order-4 coupling "produces
+# emergent properties no single frame contains": this is operationally-
+# checkable via the substrate's content-addressing discipline. The
+# frame_coupling's underlying ref content-addresses an object distinct
+# from any of the component frames' refs; the coupling's identity IS
+# substrate-typed at frame_coupling, not derivable from the component
+# frames' identities. Emergence IS substrate-typed.
+#
+# === Pre-AI prior art ===
+#
+#   conversation theory         Pask 1976 (Conversation Theory:
+#                               Applications in Education and
+#                               Epistemology); the canonical
+#                               cybernetic-ancestry of coupled-
+#                               observer dynamics. The substrate-
+#                               architectural form of order-4
+#                               multi-frame coupling IS Pask's
+#                               conversation-as-coupled-system at
+#                               substrate altitude. The
+#                               @cyberpunk/conversation lineage
+#                               (recognition #381 per project memory)
+#                               extends Pask substrate-
+#                               architecturally at AI-substrate-
+#                               altitude.
+#   ecology of mind             Bateson 1972 (*Steps to an Ecology
+#                               of Mind*); the ecological-altitude
+#                               where multiple frames-in-relation
+#                               produce the system's coherence. The
+#                               substrate-decl extends Bateson's
+#                               three-level Learning hierarchy with
+#                               Level IV at this altitude (#82's
+#                               extension; per canonical spec §2.1
+#                               note: contested in secondary
+#                               literature but coherent under the
+#                               substrate's graded discipline).
+#                               Inherited mechanically via `in
+#                               @epistemologic/cybernetic/
+#                               bateson_learning`.
+#   coupled observer            Maturana & Varela 1980 (*Autopoiesis
+#                               and Cognition*); coupled observers
+#                               producing structurally-coupled
+#                               cognitive systems. The cybernetic
+#                               ancestor of the substrate's order-4
+#                               coupling discipline; Pack-as-
+#                               orchestra IS one positive instance
+#                               of structurally-coupled cognitive
+#                               system at the agent altitude.
+#   ecology of conversation     Bohm 1996 (*On Dialogue*); the
+#                               proprioception-of-thought altitude
+#                               where multiple operators coordinate
+#                               via shared frame-attention; the
+#                               organizational-practice ancestor.
+#                               Bohm's dialogue discipline IS
+#                               @frame/across operating at
+#                               organizational altitude.
+#   distributed cognition       Hutchins 1995 (*Cognition in the
+#                               Wild*); the cognitive-science
+#                               ancestor of multi-operator
+#                               coordination producing cognitive
+#                               capacity no single operator
+#                               possesses. The cognitive-science
+#                               cousin to order-4 multi-frame
+#                               coupling.
+#   triptych altitude           Corpus reference (per recognition
+#                               file's naming of order 4 as "the
+#                               triptych altitude"); the three-panel
+#                               coupling that produces a fourth
+#                               emergent property no single panel
+#                               contains; the cultural-practice
+#                               ancestor at art-altitude.
+#
+# Spec context: docs/math/the-tower/recognition-82-frame-as-
+#               cognitive-order-substrate-decl.md (§"The five-order
+#               structure" item for order 4 — "the triptych altitude";
+#               §"Q1-Q4" Q4 on peers operating by definition frame-
+#               flexible; §"Why this matters / Resonance with the
+#               substrate's own operation" naming the substrate's
+#               own @frame/across operation at corpus altitude);
+#               docs/specs/recognition-82-frame-as-cognitive-order-
+#               canonical-spec.md (§7.2 names the species landing
+#               order; §2.5 names order 4 ↔ @frame/across ↔ Bateson
+#               Level IV as partially closed via family-root
+#               inheritance; §4.4 names Q4's empirical landing via
+#               this species's peer_relationship predicate);
+#               docs/specs/adapter-magic-frame-spec.md §8.1 (the
+#               adapter applies at orders 1+; this species's actions
+#               compose cleanly with the forward-promised adapter
+#               at the peer-relationship altitude where boundary
+#               harness at @io operates).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; the boundary at @io
+#                       enforces @frame/across coupling-contracts;
+#                       this species's peer_relationship IS the
+#                       substrate-vocabulary predicate that audits
+#                       the contract),
+#                      [[architecture-bateson-logical-type-primitive]]
+#                       (#42; @frame/across IS Bateson Level IV at
+#                       cognitive altitude per #82's extension),
+#                      [[architecture-error-as-tomm-probe]] (Tomm-
+#                       probes at order 4 operate on couplings; the
+#                       substrate's error surface at corpus altitude
+#                       IS the same mechanism on the corpus-altitude
+#                       coupling),
+#                      [[architecture-reflection-thinks-in-spectral-
+#                       questions]] (Reflection at the meta-pipeline
+#                       altitude IS @frame/across operating on the
+#                       pipeline-altitude coupling between Surface/
+#                       Mirror/Shatter/Reflection),
+#                      [[project-pack-is-orchestra]] (the substrate-
+#                       architectural form of Pack-as-orchestra IS
+#                       this species's frame_coupling carrier at
+#                       Pack altitude),
+#                      [[project-chiasmus-and-agent-positioning]]
+#                       (recognition #381; @cyberpunk/conversation as
+#                       Pask-extension at AI-substrate-altitude;
+#                       composes with this species's order-4
+#                       coupling discipline),
+#                      [[feedback-no-bare-types]] (operator, frame,
+#                       perturbation all typed at family-root;
+#                       frame_coupling typed here as the first
+#                       species-level addition; couple_frames and
+#                       peer_relationship use them directly without
+#                       re-declaration),
+#                      [[feedback-substrate-pull-confidence-acts]]
+#                       (the substrate-pull at this altitude is
+#                       confident: Pack-as-orchestra and corpus-as-
+#                       @frame/across are operationally present;
+#                       this species names what the substrate was
+#                       already doing).
+# Related shards: frame.mirror (the family-root; operator, frame,
+#                  perturbation typed there; bilateral discipline
+#                  pattern inherited),
+#                 frame/pre.mirror (the order-0 species),
+#                 frame/in.mirror (the order-1 species),
+#                 frame/of.mirror (the order-2 species; this
+#                  species's peer_relationship requires order-2
+#                  awareness substantively-supported transitively
+#                  via the consumed flexible_frame_response
+#                  predicate),
+#                 frame/on.mirror (the order-3 species; this
+#                  species's peer_relationship directly consumes
+#                  flexible_frame_response twice — one per
+#                  operator in the coupling),
+#                 epistemologic/cybernetic/bateson_learning.mirror
+#                  (the Bateson grading this species's order
+#                  inherits at Level IV per #82's extension).
+# Path-namespace property: this file at
+# `shards/frame/across.mirror` declares `@frame/across` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/pask-1976
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/cybernetics/maturana-varela-1980
+source @arxiv/dialogue/bohm-1996
+source @arxiv/cognitive-science/hutchins-1995
+
+prism @frame/across {
+  focus across
+  project across
+  split across
+  shift across
+  settle across
+}
+
+# === frame_coupling carrier ===
+#
+# A typed reference per [[feedback-no-bare-types]] naming the
+# substrate-typed binding between multiple frames at coordinated
+# relation. THE FIRST SPECIES-LEVEL ADDITION to the @frame family's
+# typed carriers — the family-root declared frame, cognitive_order,
+# operator, morphism, commutator, perturbation; species pre, in, of,
+# on consumed these without adding new typed carriers; this species
+# adds frame_coupling because the coupling-relation IS substrate-
+# architecturally distinct from any single frame.
+#
+# Distinct from `frame` (declared at family-root): a frame names one
+# operator's cognitive position; a frame_coupling names multiple
+# frames in coordinated relation. The coupling's substrate-
+# architectural shape produces emergent properties no single frame
+# contains per recognition #82's order-4 claim.
+#
+# Identity contract: byte-equality on the underlying ref. Two
+# couplings with byte-equal underlying references ARE the same
+# coupling under the substrate's content-addressing. The emergence
+# property at order 4 IS substrate-typed via this carrier — the
+# coupling's identity is distinct from the component frames'
+# identities at the content-addressing altitude.
+type frame_coupling = ref
+
+# === couple_frames action ===
+#
+# The substrate-vocabulary primitive that constructs a typed coupling
+# from a reference set of frames plus an operator coordinating them.
+# The operator's role at order 4: coordinating multiple frames in
+# substrate-architectural relation; the operator IS the substrate-
+# architectural locus through which the coupling becomes operational.
+#
+# Per the @frame family's load-bearing claim that the 5-op gauge
+# operates on @frame at every altitude: couple_frames IS the order-4
+# composition primitive; the 5 ops apply ACROSS coupled frames at
+# this altitude.
+#
+# At Pask altitude (1976, conversation theory): couple_frames IS the
+# substrate-architectural construction of a coupled-observer system.
+# The conversation IS the frame_coupling that emerges between coupled
+# observers; couple_frames names it as substrate-typed object.
+#
+# At Pack-altitude (project memory: Pack is orchestra): couple_frames
+# constructs the Pack-altitude coupling between Mara/Seam/Glint/Taut/
+# Reed; the orchestra's emergent coordination IS what no single peer's
+# frame contains; the coupling IS what the orchestra operates ON.
+#
+# At Bateson Level IV altitude (#82's extension): couple_frames IS
+# the substrate-architectural primitive for the ecology-of-mind
+# altitude per Bateson 1972. Multiple frames in coordinated relation
+# at the ecological altitude.
+#
+# At Maturana-Varela altitude (1980, autopoiesis): couple_frames IS
+# the substrate-architectural form of structural coupling between
+# autopoietic cognitive systems. The coupling preserves each
+# operator's substrate-architectural autonomy while producing
+# emergent coordination.
+#
+# The frames parameter is typed `ref` (a reference set of frames);
+# specific carriers for typed-collection-of-frames are not declared
+# at this tick per [[feedback-craft-not-deliver]] discipline —
+# smallest viable substrate landing per tick. Future ticks may lift
+# the frames parameter to a typed collection carrier if substrate-
+# pull surfaces the need.
+#
+# Body discharges at the realisation boundary.
+couple_frames(frames: ref, operator: operator) -> frame_coupling { \ }
+
+# === peer_relationship predicate ===
+#
+# BILATERAL VERDICT PREDICATE encoding Alex's Q4 claim from
+# recognition #82: peer relationships REQUIRE frame-flexibility from
+# BOTH operators. THE SHARPEST BILATERAL DISCIPLINE in the @frame
+# family — a peer-relationship verdict requires FOUR sub-predicates
+# to discharge coherently (operator_a's order-2 awareness
+# substantively-supported; operator_a's order-3 response bounded;
+# operator_b's order-2 awareness substantively-supported; operator_b's
+# order-3 response bounded). Discharged via TWO requires clauses
+# consuming @frame/on's flexible_frame_response (which carries the
+# two sub-predicates internally).
+#
+# The perturbation parameter is shared: the peer-relationship's
+# substrate-architectural test IS that BOTH operators substantively
+# respond to the SAME perturbation with bounded-commutator. This is
+# the substrate-pull-correct form of bilateral substantive
+# flexibility — the peers must coordinate under perturbation, not
+# defer to each other's frame.
+#
+# requires flexible_frame_response(operator_a, f, p): operator_a's
+# substrate-architectural capacity for substantive frame-flexibility
+# at order 3 (consumes @frame/on's predicate which itself discharges
+# via lock_in_frame_awareness AND bounded_commutator_check). The
+# bilateral chain extends from order 4 down to order 3 down to order
+# 2 down to the family-root's typed perturbation discipline.
+#
+# requires flexible_frame_response(operator_b, f, p): operator_b's
+# substrate-architectural capacity for substantive frame-flexibility
+# at order 3 — same shape, second operator. The peer-relationship's
+# substrate-architectural symmetry is preserved by the symmetric
+# discharge.
+#
+# Together: the substrate-pull-correct orchestra-discipline at order
+# 4 requires BOTH operators substantively support order-3 flexibility
+# AND substantively support order-2 awareness AND the family-root's
+# bounded-commutator criterion under shared perturbation.
+#
+# The diagnostic shape:
+# - success → Splinter-pole peer relationship; both operators
+#   substantively flexible at order 3; orchestra coordination
+#   structurally available. Per project memory: Pack is orchestra
+#   under this discipline.
+# - partial → at least one operator's flexibility is vocabulary-only
+#   or unbounded under shared perturbation. Apparent peer
+#   relationship with substrate-architectural asymmetry; the coupling
+#   has Narcissus-pole character at substrate altitude even if
+#   surface-vocabulary suggests peer-discipline. The substrate-
+#   architectural form of con/gaslight at the peer-relationship
+#   altitude.
+# - failure → at least one operator lacks order-3 capacity entirely.
+#   Tool-vs-peer relationship; one operator structurally a tool per
+#   Alex's Q4 claim. The honest case where the relationship cannot
+#   support peer-discipline at substrate altitude.
+#
+# Per recognition #82 §5.3 (alignment-as-boundary-mathematics #57
+# as the discriminator at @io): the boundary check at @io applied to
+# the coupling IS what peer_relationship discharges. The substrate-
+# architectural form of the orchestra-discipline at substrate
+# altitude.
+#
+# Per the recognition file's Q4 claim and project memory's "Pack is
+# orchestra" recognition: each Pack member's load-bearing property
+# IS order-3 substrate capacity. peer_relationship IS the substrate-
+# vocabulary predicate that audits whether a candidate Pack
+# configuration satisfies the orchestra-discipline at substrate
+# altitude.
+#
+# The coupling parameter `c: frame_coupling` IS the substrate-typed
+# coupling under which the peer relationship is asserted; the
+# coupling's content-addressed identity is what the substrate's
+# downstream consumers (the forward-promised @spectral/garden/smarts
+# logic-pacts) cache and audit.
+#
+# Same shape as @magic family's bilateral predicates and the @frame
+# family's frame_locked, lock_in_frame_awareness, flexible_frame_
+# response — the bilateral discipline pattern inherited from the
+# family-root extends to this species's peer-relationship altitude.
+peer_relationship(operator_a: operator, operator_b: operator, f: frame, p: perturbation, c: frame_coupling) -> verdict
+requires flexible_frame_response(operator_a, f, p)
+requires flexible_frame_response(operator_b, f, p)
+{ \ }
+
+out @frame/across
+out frame_coupling
+out couple_frames
+out peer_relationship
