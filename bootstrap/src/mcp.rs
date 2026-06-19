@@ -124,7 +124,7 @@ fn tools_list_result() -> Value {
             },
             {
                 "name": "prisms",
-                "description": "focus: enumerate prism declarations across a directory of .mirror files. Returns structured JSON listing of (path, prism_name, ops). Substrate-introspection primitive for substrate-driven tool registration (task #312 / lens-server gen_prism MVP per task #310). Walks directory recursively; reads each .mirror file's `prism @path { focus N project N split N shift N settle N }` declaration via regex match (no full grammar parse needed).",
+                "description": "focus: enumerate prism declarations across a directory of .mirror files. Returns structured JSON listing of (path, prism_name, ops, requires). Substrate-introspection primitive for substrate-driven tool registration (task #312 / lens-server gen_prism MVP per task #310). Tick 18 expanded the envelope to also surface `requires` clauses (the substrate's bilateral predicate discipline).",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
@@ -200,14 +200,32 @@ fn extract_prism_declaration(path: &std::path::Path) -> Option<Value> {
     let content = std::fs::read_to_string(path).ok()?;
     let mut prism_name: Option<String> = None;
     let mut ops: Vec<String> = Vec::new();
+    // Tick 18 (2026-06-19): also extract `requires` clauses across the
+    // whole file (not just inside the prism declaration block).
+    // Bilateral predicates declared as `requires <pred>(args)` are the
+    // substrate's commitment; surfacing them at the introspection
+    // altitude is the verifier-sharpening Loki's discipline names.
+    let mut requires_clauses: Vec<String> = Vec::new();
     let mut in_prism_block = false;
     for line in content.lines() {
         let trimmed = line.trim();
+        // Skip comment lines so the requires clause inside a comment
+        // block doesn't leak into the substrate-introspection output.
+        if trimmed.starts_with('#') {
+            continue;
+        }
         if let Some(rest) = trimmed.strip_prefix("prism @") {
-            // Take everything up to ` {` or end of line as the prism name.
             let name = rest.split('{').next().unwrap_or(rest).trim();
             prism_name = Some(format!("@{}", name));
             in_prism_block = true;
+            continue;
+        }
+        if let Some(rest) = trimmed.strip_prefix("requires ") {
+            // Drop trailing `{` or whitespace; keep the predicate call.
+            let clause = rest.trim_end_matches(|c: char| c.is_whitespace() || c == '{').trim();
+            if !clause.is_empty() {
+                requires_clauses.push(clause.to_string());
+            }
             continue;
         }
         if in_prism_block {
@@ -215,7 +233,6 @@ fn extract_prism_declaration(path: &std::path::Path) -> Option<Value> {
                 in_prism_block = false;
                 continue;
             }
-            // Extract op signature lines: `focus name`, `project name`, etc.
             for op in &["focus", "project", "split", "shift", "settle"] {
                 if let Some(rest) = trimmed.strip_prefix(*op) {
                     let target = rest.trim();
@@ -231,6 +248,7 @@ fn extract_prism_declaration(path: &std::path::Path) -> Option<Value> {
         "path": path.to_string_lossy(),
         "prism": name,
         "ops": ops,
+        "requires": requires_clauses,
     }))
 }
 
