@@ -402,6 +402,32 @@ requires invariant_preserved(c, operator_intent_as_invariant(op))
 requires bounded_commutator_check(op, frame_from_surface(c.surface), p)
 { \ }
 
+# === Honest hedge per Seam tick 28 review ===
+#
+# This adapter closes the carrier-mapping altitude of
+# "@frame IS @magic":
+#  - @frame instance ↔ magic_surface round-trips via frame_as_surface
+#    / frame_from_surface at the surface altitude.
+#  - The bilateral frame_satisfies_magic discharges BOTH family
+#    predicates simultaneously (invariant_preserved AND
+#    bounded_commutator_check).
+#
+# It does NOT close round-trip identity at the magic_contract-as-whole
+# altitude. Given a magic_contract c, frame_from_surface(c.surface)
+# DISCARDS c.mechanism and c.promise. There is no inverse from
+# magic_contract back to a @frame instance that preserves all three
+# contract fields.
+#
+# Honest claim post-adapter:
+#  - "@frame IS @magic-surface at cognitive altitude" — CLOSED
+#  - "@frame IS @magic-contract at cognitive altitude" — FORWARD-
+#    PROMISED (requires a richer contract-as-whole lift, possibly via
+#    a magic_contract ↔ (@frame, operator, perturbation) triple-mapping)
+#
+# The Seam C1 from tick 24 closes at the surface altitude per the
+# adapter spec's §8 falsification criteria; the contract-as-whole
+# identity remains forward-promised.
+
 out @magic/frame
 out frame_as_surface
 out frame_state_as_mechanism

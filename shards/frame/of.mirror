@@ -402,8 +402,13 @@ observe_frame(operator: operator, f: frame) -> ref { \ }
 # The substrate-aikido methodology's diagnostic question — "is this
 # operator at substantive order 2 or vocabulary-only order 2?" —
 # becomes a substrate-typed verdict via this predicate.
-lock_in_frame_awareness(operator: operator, f: frame) -> verdict
-requires bounded_commutator_check(operator, f, perturbation)
+# Seam tick 28 fix: perturbation lifted to predicate signature. The
+# tick-26 form had `perturbation` as a free variable in the requires
+# clause without binding it in the signature, making the pole-
+# disambiguation prose-only. Now consumers MUST supply the perturbation
+# they are checking against.
+lock_in_frame_awareness(operator: operator, f: frame, p: perturbation) -> verdict
+requires bounded_commutator_check(operator, f, p)
 { \ }
 
 # === reflect_to_frame_flexibility action ===
