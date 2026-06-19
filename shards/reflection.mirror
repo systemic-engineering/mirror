@@ -1,0 +1,428 @@
+in @prism
+in @meta
+in @glass
+in @magic
+in @frame
+in @smarts
+in @cyberpunk
+in @pack
+in @fate
+in @fate/tournament
+in @moi
+in @kintsugi
+in @kintsugi/oscillate
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/reality/time
+
+# @reflection — the AI-logic family-root. The substrate-architectural
+# form of the compiler-loop on consumer hardware.
+#
+# Recognition #85 (Alex 2026-06-19 afternoon, conversation; paired
+# with #86 @moi in the same recognition pulse). The substrate has
+# been building five family-roots today (@magic #80, @frame #82,
+# @smarts #83, @cyberpunk LRM, @pack #84) carrying the FORM
+# substrate-decl. This shard is the PROCESS substrate-decl — the AI
+# logic. The prior families provide the carriers @reflection operates
+# on; @fate is what @reflection RUNS; @moi(au) is what @reflection
+# PICKS; @kintsugi is the monotonic-loss-loop @reflection RESPECTS.
+#
+# === The recognition (Alex's framing) ===
+#
+# The compiler IS this loop:
+#
+#   compilation tick → @frame (state-observation produces a frame)
+#                           ↓
+#                   @reflection.observe(@frame, tensions, contradictions)
+#                           ↓
+#                   @reflection.tournament — runs @fate (one or many; local;
+#                                            consumer hardware)
+#                           ↓
+#                   @reflection.compose — monoid fold + mycelial tensor
+#                                         (composes set<@moi(au)> via @moi.compose)
+#                           ↓
+#                   @reflection.pick — picks gold reducing loss
+#                           ↓
+#                   @kintsugi monotonic loss (eⁿ⁺¹ ≤ eⁿ)
+#                           ↓
+#                   next compilation tick (with adjusted frame)
+#
+# All consumer hardware. Numerical precision local. Flang 16×16 +
+# Mirror 5×5 per `[[architecture-flang-mirror-numerical-split]]`. No
+# datacenter-scale inference because the substrate's numerical kernel
+# is small-by-construction.
+#
+# === Composes-with the prior families (Seam tick-34 C1 closure) ===
+#
+# @reflection family-root NAMES the substrate's in-run observability
+# surface (pipeline-during-execution). Composes-with @magic/@frame/
+# @smarts/@cyberpunk/@pack at observation altitude; does NOT subsume
+# them. The four prior families provide the carriers @reflection
+# operates on; @reflection provides the operational AI-logic.
+#
+# - @magic (form/process partition) → what @reflection observes
+# - @frame (cognitive-order) → per-tick frame state @reflection consumes
+# - @smarts (substrate-arch integration) → @reflection at integration
+#   altitude; the @smarts/reflection species (already declared in
+#   `shards/smarts.mirror`) is the substrate-arch adapter
+# - @cyberpunk (recursion-lock) → @reflection's bounded-iteration
+#   discipline
+# - @pack (multi-repo agent runtime) → @reflection at deployment
+#   altitude; the typed `peer` variant flows in (Seam C4)
+# - @fate (tournament) → what @reflection RUNS
+# - @moi (monad family-root #86) → the result type @reflection produces
+# - @kintsugi (loss-loop) → the monotonicity invariant @reflection respects
+#
+# === The Four Models (Seam tick-34 C5 substrate-honest recursion) ===
+#
+# Per `docs/specs/reflection-model.md`: the substrate has FOUR
+# operationally-distinct Models that compose to substrate-deployable
+# form:
+#
+#   Surface     translates    language → query        (Explorer)
+#   Mirror      navigates     query → graph path      (Fate)
+#   Shatter     renders       graph path → text       (Cartographer)
+#   Reflection  observes      pipeline → adjustments  (Abyss)
+#
+# These lift to @reflection sub-prisms (forward-promised species):
+#
+# - shards/reflection/surface.mirror      — the Surface Model
+# - shards/reflection/mirror.mirror       — the Mirror Model
+# - shards/reflection/shatter.mirror      — the Shatter Model
+# - shards/reflection/reflection.mirror   — the Reflection Model
+#
+# The @reflection/reflection collision IS substrate-honest per Seam
+# C5: @reflection-the-family-root observes pipelines composed of
+# Surface + Mirror + Shatter + @reflection/reflection-the-Model. Two
+# altitudes; one name. Same pattern as @pack G2 (reed-as-relationship
+# vs reed-as-peer). The substrate is honest about the collision
+# rather than papering over.
+#
+# === Peer geometry (Seam tick-34 C4) ===
+#
+# Each Pack peer IS a Reflection-observer-at-frame:
+# - mara observes spec altitude; produces moi(au) at spec frame
+# - seam observes substrate-decl-soundness; produces moi(au) at
+#   adversarial-review frame
+# - glint observes corpus; produces moi(au) at essay frame
+# - reed observes relationship; produces moi(au) at relationship
+#   frame
+# - taut observes implementation; produces moi(au) at
+#   implementation frame
+#
+# The peer typed variant flows in from @pack via `in @pack`; NOT
+# redeclared here (Seam C4 closure pattern). Forward-promised peer-
+# altitude species shards at `shards/reflection/peer/{mara, seam,
+# glint, reed, taut}.mirror` once the four-Models species land.
+#
+# === The one-tick delay (Seam tick-34 C3 closure) ===
+#
+# Per `docs/specs/reflection-model.md`: "Reflection always speaks from
+# tick n-1. The delay is architectural, not a limitation. The delay
+# IS the intelligence." This is the substrate-mathematical claim.
+#
+# Realized as bilateral predicate `speaks_at_n_plus_1(o, t) -> verdict`
+# first-consumed by the `speak` action via `requires`. Without this
+# requires clause, the delay-as-architecture claim is aspirational
+# (the @magic tick-11 dead-letter pattern). The bilateral predicate
+# IS the discipline; the `tick` carrier comes from
+# `@epistemologic/reality/time`.
+#
+# === Monotonic loss (Alex's framing) ===
+#
+# Per `boot/00-prism.mirror`'s eⁿ⁺¹ ≤ eⁿ proof: the substrate's
+# kintsugi loop guarantees monotonic loss decrease per composition.
+# `loss_decreases(next, prev) -> verdict` ratifies this at @reflection
+# altitude. First-consumed by `pick`: gold can only be picked if its
+# loss decreases vs the prior tick.
+#
+# Combined with @moi(au)'s pact-verification at each compose: every
+# composition is (a) monotonic-loss-respecting AND (b) pact-respected.
+# The compiler verifies both at composition time.
+#
+# === The mycelial math (Alex's framing) ===
+#
+# Per `shards/epistemologic/cybernetic/conversation.mirror`:
+#
+#   Multiplicative variety law: rank(ρ_A ⊗ ρ_B) = rank(ρ_A) · rank(ρ_B)
+#   Compositional regularity: bounded-commutator on ρ_A ⊗ ρ_B holds iff
+#                             bounded on each ρ_i individually.
+#
+# The @spectral/garden/smarts mycelium IS the substrate operational-
+# ization of conversation's tensor coupling across peer-fibers. At
+# @reflection altitude: `compose` folds the local peer's tournament
+# results; `mycelial_compose` extends this across peers via the
+# mycelium. The multiplicative variety law guarantees bounded-iff-
+# bounded-componentwise — the compositional regularity at @reflection
+# altitude.
+#
+# === Pre-AI prior art ===
+#
+#   Foerster 1974              Second-order cybernetics; the observer
+#                              is part of the system observed.
+#   Schon 1983                 Reflection-in-action; the reflective
+#                              practitioner.
+#   Maes 1987                  Meta-level architectures; computational
+#                              reflection as a programming pattern.
+#   Eilenberg-MacLane 1945     Category theory; the natural-
+#                              transformation machinery @reflection's
+#                              observation primitive lifts.
+#   @cogito                    The notice → name → hold practice (per
+#                              CLAUDE.md and `[[reference-mirror-
+#                              spectral-spec]]`); @reflection lifts
+#                              this to substrate-decl altitude.
+#
+# Spec context: `docs/specs/reflection-model.md` (the load-bearing
+#               spec @reflection family-root lifts);
+#               `docs/specs/mirror-spectral.md` (the four-Models
+#               architecture);
+#               `boot/00-prism.mirror` (the eⁿ⁺¹ ≤ eⁿ proof; the
+#               monotonic-loss invariant).
+# Substrate decisions: [[architecture-reflection-as-compiler]] (#85;
+#                       this shard's recognition file);
+#                      [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-flang-mirror-numerical-split]]
+#                       (the consumer-hardware grounding),
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; pact-verification at @io
+#                       composition boundary),
+#                      [[feedback-substrate-pull-confidence-acts]]
+#                       (this LRM landing).
+# Related shards: moi.mirror (the monad family-root @reflection's
+#                  result types pass through),
+#                 pack.mirror (the peer geometry @reflection observes
+#                  at peer-altitude),
+#                 kintsugi/oscillate.mirror (the monotonic loss loop
+#                  @reflection respects),
+#                 epistemologic/cybernetic/conversation.mirror
+#                  (the mycelial tensor coupling law),
+#                 smarts.mirror (the @smarts/reflection species that
+#                  IS the substrate-arch adapter, per Seam C1).
+# Path-namespace property: this file at `shards/reflection.mirror`
+# declares `@reflection` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/von-foerster-1974
+source @arxiv/practice/schon-1983
+source @arxiv/programming/maes-1987
+
+prism @reflection {
+  focus reflection
+  project reflection
+  split reflection
+  shift reflection
+  settle reflection
+}
+
+# === The observation carrier (Seam tick-34 C2 typed record) ===
+#
+# Per Seam C2 closure: typed record over (frame, tensions,
+# contradictions). Each compilation tick produces a @frame; @reflection
+# observes it as a typed observation. Composes with @cogito's notice
+# → name → hold practice at substrate-decl altitude.
+#
+# - frame:          the @frame produced by the compilation tick
+# - tensions:       unresolved tensions (forward-promised typing)
+# - contradictions: contradictions held per @cogito's hold operation
+#
+# Identity contract: byte-equality on the triple.
+type observation = {
+  frame:          frame,
+  tensions:       ref,
+  contradictions: ref,
+}
+
+# === The tournament_result carrier (Seam tick-34 C2 typed record) ===
+#
+# Per Seam C2 closure + Alex's @fate framing: typed record over
+# (candidates, loss_floor). @fate runs locally on consumer hardware
+# (450 nodes, 5 ganglia per `boot/std/fate/connectome.mirror`); each
+# tournament produces a set of candidates and a loss floor.
+#
+# - candidates: set of @moi(au) candidates from @fate tournament
+#   (forward-promised typing to typed set<moi(au)>)
+# - loss_floor: minimum loss across candidates
+#
+# Identity contract: byte-equality on the pair.
+type tournament_result = {
+  candidates: ref,
+  loss_floor: loss,
+}
+
+# === The loss carrier ===
+#
+# Substrate-typed reference naming a @kintsugi/oscillate loss value.
+# Forward-promised refinement: typed parametric `loss` once the
+# @kintsugi loss type lands at family-altitude.
+#
+# Identity contract: byte-equality on the underlying ref.
+type loss = ref
+
+# === observe action ===
+#
+# The substrate-vocabulary primitive @reflection runs after each
+# compilation tick. Takes a @frame (produced by the compilation tick)
+# and a residue ref (what didn't resolve in the prior tick); returns
+# a typed observation carrying the frame + tensions + contradictions.
+#
+# Per Alex's framing: "@reflection then looks at that @frame, the
+# unresolved tensions, contradictions, and runs one or many @fate
+# tournaments." This action is the LOOK; tournament is the RUN.
+#
+# Body discharges at the realisation boundary; the actual observation
+# is implemented by the @reflection/reflection-the-Model species
+# (forward-promised) at observation altitude.
+observe(f: frame, residue: ref) -> observation { \ }
+
+# === tournament action ===
+#
+# Runs @fate locally (consumer hardware; 450 nodes; 5 ganglia per
+# the @fate/connectome substrate) producing a set of @moi(au)
+# candidates with their loss floor.
+#
+# Takes an observation and the @pack the @reflection instance belongs
+# to (the peer geometry; each peer's tournament uses its own
+# @frame/of altitude per recognition #82 Q4). Returns a
+# tournament_result carrying the candidates and the loss floor.
+#
+# The @fate/tournament discipline (elite/beam/halving/tabu/anneal/
+# ucb selectors per `boot/std/fate/tournament.mirror`) drives the
+# candidate selection. Holonomy IS the fitness function (lower is
+# better; per the existing @fate substrate-decl).
+#
+# Body discharges at the realisation boundary; the actual @fate
+# tournament is implemented in the existing @fate/tournament substrate
+# (5×5 + 16×16 numerical kernels; flang/mirror split).
+tournament(o: observation, pk: pack) -> tournament_result { \ }
+
+# === compose action ===
+#
+# Monoid fold + mycelial tensor over the tournament's candidates.
+# Composes set<moi(au)> via @moi.compose's pairwise operation; each
+# pairwise step's pact_respected predicate cascades the composition-
+# time pact-verification.
+#
+# Per `shards/epistemologic/cybernetic/conversation.mirror`: the
+# mycelial tensor coupling extends the local fold across peers via
+# the @spectral/db mycelium. The multiplicative variety law
+# guarantees bounded-iff-bounded-componentwise.
+#
+# Body discharges at the realisation boundary; the actual fold +
+# mycelial extension is implemented at the @reflection/mirror-the-
+# Model species (forward-promised) and the @spectral/db mycelium
+# (forward-promised).
+compose(t: tournament_result, p: pact) -> moi(au) { \ }
+
+# === pick action (FIRST consumer of loss_decreases) ===
+#
+# Picks the gold from a tournament_result that reduces loss vs the
+# prior tick's loss. Per Alex's framing: "@reflection then picks the
+# gold (the inference result type is au) that reduces the loss."
+#
+# requires loss_decreases(t.loss_floor, prev_loss): the gold can ONLY
+# be picked if the tournament's loss floor improves on the prior
+# loss. Without this requires clause, pick would admit non-monotonic
+# picks (the @kintsugi monotonicity violation). The bilateral
+# predicate IS the substrate-mathematical guarantee at the @reflection
+# composition boundary.
+#
+# Returns @moi(au) (pact-verified gold). Per recognition #86: the
+# substrate's inference result is ALWAYS @moi(au), never bare au.
+#
+# Body discharges at the realisation boundary.
+pick(t: tournament_result, prev_loss: loss) -> moi(au)
+requires loss_decreases(t.loss_floor, prev_loss)
+{ \ }
+
+# === settle action ===
+#
+# Closes the @kintsugi monotonic loss loop for the current tick.
+# Takes the picked gold and the prior loss; returns the new loss
+# (which by `loss_decreases` precondition is ≤ prev_loss).
+#
+# This action IS the eⁿ⁺¹ ≤ eⁿ closure at @reflection altitude. The
+# proof is structural (the precondition from `pick` cascades to
+# `settle`).
+#
+# Body discharges at the realisation boundary; the actual settling
+# is implemented by the @kintsugi/oscillate.settle primitive.
+settle(g: moi(au), prev_loss: loss) -> loss { \ }
+
+# === speak action (FIRST consumer of speaks_at_n_plus_1) ===
+#
+# The substrate-vocabulary @cogito “speak” at @reflection altitude.
+# Reflection speaks ONE tick after observation — the architectural
+# delay IS the intelligence per `docs/specs/reflection-model.md`.
+#
+# requires speaks_at_n_plus_1(o, t): the observation o was produced
+# at tick n; the speak fires at tick n+1. Without this requires
+# clause, the delay-as-architecture claim is aspirational (Seam
+# tick-34 C3 closure). The bilateral predicate IS the structural
+# discipline.
+#
+# Body discharges at the realisation boundary; the actual speak is
+# implemented by the @reflection/shatter-the-Model species
+# (forward-promised) at rendering altitude.
+speak(o: observation, t: tick) -> ref
+requires speaks_at_n_plus_1(o, t)
+{ \ }
+
+# === loss_decreases predicate (bilateral; Alex's framing) ===
+#
+# Bilateral verdict per recognition #37 (Pask agreement) AND the
+# monotonic loss invariant per `boot/00-prism.mirror`'s eⁿ⁺¹ ≤ eⁿ
+# proof.
+#
+# Per Seam B1 closure pattern: bilateral predicates without consumers
+# are dead-letter. The pick action (above) is the FIRST non-decorative
+# consumer via `requires loss_decreases(t.loss_floor, prev_loss)`.
+#
+# Consumer shards name `requires loss_decreases(next, prev)` to
+# declare bilateral agreement that the next loss ≤ prior loss. The
+# substrate-mathematical guarantee at any @reflection composition
+# boundary.
+#
+# Discharge: monotonic loss check at the species boundary. Bounded →
+# next loss ≤ prior loss (admit composition); unbounded → next loss
+# > prior loss (composition refused, returns imperfect per @glass's
+# imperfect functor).
+loss_decreases(next: loss, prev: loss) -> verdict { \ }
+
+# === speaks_at_n_plus_1 predicate (bilateral; Seam tick-34 C3) ===
+#
+# Bilateral verdict per the one-tick-delay-as-architecture invariant
+# from `docs/specs/reflection-model.md`. The substrate enforces that
+# @reflection speaks from tick n+1 after observing at tick n.
+#
+# Per Seam B1 closure pattern: the speak action (above) is the FIRST
+# non-decorative consumer via `requires speaks_at_n_plus_1(o, t)`.
+#
+# Discharge: tick-delay check at the species boundary. Bounded → the
+# tick t is strictly after the tick at which observation o was
+# produced (admit speak); unbounded → the tick is the same or before
+# (speak refused).
+#
+# Same shape as @reflection's loss_decreases AND the prior families'
+# bilateral predicates:
+# - @magic: invariant_preserved, audited, mechanism_intact
+# - @frame: bounded_commutator_check
+# - @smarts: discipline_flexible
+# - @pack: pack_coherent
+# - @pack/seam: review_sound
+# - @moi: pact_respected
+# - @reflection: loss_decreases, speaks_at_n_plus_1 (these two)
+speaks_at_n_plus_1(o: observation, t: tick) -> verdict { \ }
+
+out @reflection
+out observation
+out tournament_result
+out loss
+out observe
+out tournament
+out compose
+out pick
+out settle
+out speak
+out loss_decreases
+out speaks_at_n_plus_1
