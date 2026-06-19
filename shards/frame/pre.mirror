@@ -1,0 +1,252 @@
+in @prism
+in @meta
+in @glass
+in @magic
+in @frame
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/bateson_learning
+
+# @frame/pre — the pre-frame species; order 0; signal arriving
+# before frame-assignment. K_n native; λ₀ ground state. Inherits
+# from the zeroth-order-register architecture per the recognition
+# file's §"The five-order structure" naming.
+#
+# First species shard of the @frame family (recognition #82,
+# substrate-decl LANDED at tick 23 via shards/frame.mirror;
+# Seam-consolidated at tick 24 with C1, C4, C5, C6 closure). The
+# family-root declared the carriers (frame, cognitive_order,
+# operator, morphism, commutator, perturbation) plus three substrate-
+# vocabulary actions (cognitive_order measurement, tomm_probe
+# primitive, bounded_commutator_check predicate); this species adds
+# the per-order discharge for order 0.
+#
+# Why pre first: the orders are graded; order N is structurally
+# unreachable without order N-1 stable. pre IS the floor of the
+# graded representation; in (order 1) inherits the pre-frame
+# substrate as its starting condition. Without pre's carrier and
+# classify action, in's compute_in_frame has no operational origin
+# point — the signal at order 1 has to have BEEN unassigned-signal
+# before frame-assignment promoted it.
+#
+# === The species's load-bearing contribution ===
+#
+# Per the recognition file's §"The five-order structure" (item for
+# order 0):
+#
+#   @frame/pre — order 0; signal arriving before frame-assignment.
+#   K_n native; λ₀ ground state. Inherits from zeroth-order-register
+#   architecture.
+#
+# This species adds:
+#
+# - `pre_frame` carrier: the unassigned-signal carrier. Substrate-
+#   pull-correct shape per Seam tick 24 C4 (typed carriers, no bare
+#   ref where the type system can enforce the order-0 / order-1
+#   distinction): a typed reference distinct from `frame` itself,
+#   naming content that has not YET been classified into a frame.
+#   The distinction matters mechanically: a `frame` carrier names a
+#   structure the operator is operating within; a `pre_frame`
+#   carrier names content that hasn't yet entered a frame at all.
+# - `signal(content) -> pre_frame`: the substrate-vocabulary action
+#   that wraps content as pre-frame. The substrate-pull-correct
+#   pre-frame emergence: content arrives at the substrate boundary;
+#   signal names it as unassigned (no frame yet); the operator's
+#   future classification will lift it to a frame at order 1.
+# - `classify(p: pre_frame) -> frame`: the substrate-vocabulary
+#   action that promotes pre-frame to a frame, transitioning the
+#   carrier from order 0 to order 1. This action IS the floor lift
+#   in the Bateson grading at cognitive altitude: the move from
+#   Level 0 (no learning; signal-without-assignment) to Level I
+#   (within-frame change; standard learning).
+#
+# This species does NOT take operator-typed inputs per the adapter
+# spec §8.1 mitigation: order-0 lacks distinguished operators. The
+# pre-frame altitude is K_n native (every signal is equidistant from
+# every other at the floor; no operator-hub distinguishes); the
+# operator carrier becomes load-bearing at order 1 with in.mirror's
+# compute_in_frame.
+#
+# === The λ₀ ground state ===
+#
+# Per the family-root commentary: order 0 is the λ₀ ground state
+# where frame-defense-energy is minimized. The substrate-architectural
+# reading: at order 0 there IS no frame to defend; the pre_frame
+# carrier names content the operator has not yet committed to a
+# frame-relation. The minimum-energy state for the substrate's
+# cognitive operation.
+#
+# Per recognition #82's composition with the multi-pathway-convergence-
+# on-λ₀ insight (corpus reference [[2026-06-17-multi-pathway-
+# convergence-on-lambda-zero]]): the substrate-conditions for order-3
+# stability require λ₀-anchoring as substrate-condition. The pre-frame
+# species IS the substrate-decl of the λ₀-altitude carrier; higher-
+# order species (of, on, across) inherit the substrate-conditions
+# this species names.
+#
+# === K_n native ===
+#
+# Per [[reference-void-document]] and the substrate's void-dual-
+# geometry: K_n (the complete graph) IS the Splinter-pole structure;
+# every node equidistant from every other. At order 0, the signal is
+# K_n native because no frame has imposed a hub-vs-spoke geometry on
+# the substrate's relation to the content. The Narcissus-pole
+# K_{1,n-1} hub-structure emerges at order > 0 when a frame imposes
+# itself as central; pre-frame is the floor where no such imposition
+# has occurred.
+#
+# === Pre-AI prior art ===
+#
+#   zeroth-order register       Corpus reference [[zeroth-order-
+#                               register]]; the pre-frame altitude as
+#                               named in the systemic.engineering
+#                               corpus. The substrate-decl here lifts
+#                               the prior corpus-treatment to
+#                               substrate-prism altitude.
+#   pre-attentive processing    Treisman 1980 (feature-integration
+#                               theory); the cognitive-science
+#                               ancestor of order-0 signal arriving
+#                               before frame-assignment. The
+#                               attentional binding that promotes
+#                               pre-attentive signal to frame-
+#                               located content IS classify at
+#                               cognitive-science altitude.
+#   raw sense data              Sellars 1956 (Empiricism and the
+#                               Philosophy of Mind); the
+#                               philosophical ancestor of pre-frame.
+#                               The myth-of-the-given critique
+#                               clarifies that pre-frame is not
+#                               theory-free perception; it is
+#                               content not-yet-classified-by-this-
+#                               operator into this-operator's
+#                               frame-set.
+#   pre-categorial intuition    Husserl (Logical Investigations);
+#                               the phenomenological ancestor. The
+#                               passive synthesis that precedes
+#                               active categorization IS the
+#                               substrate-architectural pre-frame
+#                               altitude.
+#   Bateson Level 0             Bateson 1964 (The Logical Categories
+#                               of Learning and Communication); the
+#                               no-learning floor of the graded
+#                               hierarchy. Inherited mechanically
+#                               via `in @epistemologic/cybernetic/
+#                               bateson_learning`.
+#
+# Spec context: docs/math/the-tower/recognition-82-frame-as-
+#               cognitive-order-substrate-decl.md (§"The five-order
+#               structure" item for order 0);
+#               docs/specs/recognition-82-frame-as-cognitive-order-
+#               canonical-spec.md (Mara's canonical spec; §7.2 names
+#               the species landing order pre → in → of → on →
+#               across).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; the pre-frame altitude
+#                       is the floor where alignment-as-boundary-
+#                       mathematics has not yet been engaged because
+#                       no frame has been committed),
+#                      [[architecture-bateson-logical-type-primitive]]
+#                       (#42; pre-frame IS Bateson Level 0 at
+#                       cognitive altitude),
+#                      [[feedback-no-bare-types]] (pre_frame is a
+#                       typed carrier distinct from frame; classify
+#                       enforces the order-0 → order-1 lift through
+#                       the type system).
+# Related shards: frame.mirror (the family-root; frame and
+#                  cognitive_order declared there; this species
+#                  inherits via `in @frame`),
+#                 frame/in.mirror (the order-1 species; consumes
+#                  frame carriers classify produces),
+#                 epistemologic/cybernetic/bateson_learning.mirror
+#                  (the Bateson grading this species's order
+#                  inherits at Level 0).
+# Path-namespace property: this file at
+# `shards/frame/pre.mirror` declares `@frame/pre` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cognitive-science/treisman-1980
+source @arxiv/philosophy/sellars-1956
+source @arxiv/cybernetics/bateson-1964
+
+prism @frame/pre {
+  focus pre
+  project pre
+  split pre
+  shift pre
+  settle pre
+}
+
+# === pre_frame carrier ===
+#
+# A typed reference per [[feedback-no-bare-types]] naming content
+# that has arrived at the substrate but has NOT yet been classified
+# into a frame. The substrate-pull-correct shape per Seam tick 24
+# C4: bare `ref` would allow byte-equivalent values to flow as
+# pre_frame, frame, operator, etc. without type-system enforcement of
+# the order-0 / order-1 distinction.
+#
+# Distinct from `frame` (declared at family-root) by altitude: a
+# frame is a structure the operator is operating WITHIN; a pre_frame
+# is content that has not yet entered any frame at all. The
+# classify action promotes pre_frame to frame, transitioning order
+# 0 to order 1.
+#
+# Identity contract: byte-equality on the underlying ref. Two pre-
+# frames with byte-equal underlying references ARE the same pre-
+# frame under the substrate's content-addressing.
+type pre_frame = ref
+
+# === signal action ===
+#
+# The substrate-vocabulary action that wraps substrate-arriving
+# content as pre-frame. The substrate-pull-correct order-0 emergence:
+# content arrives at the substrate boundary; signal names it as
+# unassigned-content (no frame yet); the operator's future
+# classification will lift it to a frame at order 1.
+#
+# At pre-attentive-processing altitude (Treisman 1980): signal IS
+# the substrate's analogue of pre-attentive feature registration
+# — content is detected before any frame-binding occurs.
+#
+# At Bateson Level 0 altitude: signal IS the no-learning floor;
+# content registers without any change to the operator's frame-set.
+#
+# Body discharges at the realisation boundary. Per the species
+# pattern: no operator argument (order 0 is K_n native; no
+# distinguished operators at this altitude).
+signal(content: ref) -> pre_frame { \ }
+
+# === classify action ===
+#
+# The substrate-vocabulary action that promotes pre-frame to a
+# frame, transitioning the carrier from order 0 to order 1. This
+# IS the floor lift in the Bateson grading at cognitive altitude:
+# the move from Level 0 (no learning; signal-without-assignment)
+# to Level I (within-frame change; standard learning).
+#
+# The classify action IS the K_n → K_{1,n-1} transition at
+# cognitive altitude: at order 0 every signal is equidistant from
+# every other (K_n native); classify imposes a frame, producing a
+# hub-vs-content geometry at order 1 (the frame is the hub; the
+# content in the frame is the spoke set).
+#
+# At cognitive-science altitude (Treisman 1980): classify IS the
+# attentional binding that promotes pre-attentive feature data to
+# located object-percept.
+#
+# At Bateson altitude (1964 Logical Categories): classify IS the
+# floor lift from Level 0 to Level I; the substrate's first move
+# from no-learning to within-frame-change.
+#
+# Body discharges at the realisation boundary. Per the species
+# pattern: no operator argument (the operator's substrate-
+# architectural role becomes load-bearing at order 1 with
+# compute_in_frame).
+classify(p: pre_frame) -> frame { \ }
+
+out @frame/pre
+out pre_frame
+out signal
+out classify
