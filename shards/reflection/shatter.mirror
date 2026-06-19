@@ -1,0 +1,257 @@
+in @prism
+in @meta
+in @glass
+in @reflection
+in @magic
+in @frame
+in @moi
+in @nl
+in @code/mq
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @reflection/shatter — the Shatter Model species. Renders typed
+# graph path to natural-language text at substrate-decl altitude.
+#
+# Tick 38 of the refined /loop discipline. Per
+# `docs/specs/reflection-model.md` and `[[reference-mirror-spectral-
+# spec]]`: the substrate has FOUR operationally-distinct Models that
+# compose to substrate-deployable form:
+#
+#   Surface     translates    language → query        (Explorer)
+#   Mirror      navigates     query → graph path      (Fate)
+#   Shatter     renders       graph path → text       (Cartographer)
+#   Reflection  observes      pipeline → adjustments  (Abyss)
+#
+# This shard is THE THIRD of these four Model species shards. After
+# the @reflection family-root landed at tick 35 declaring the four
+# Models as forward-promised sub-prisms and Surface landed at tick 37,
+# this species realizes Shatter at substrate-decl altitude. Two
+# siblings still forward-promised:
+# shards/reflection/{mirror,reflection}.mirror.
+#
+# === The Shatter rendering discipline ===
+#
+# Per `docs/specs/reflection-model.md` line 12: "Shatter renders:
+# graph path → text (Cartographer model)." The Shatter Model takes a
+# typed graph path (per `@reflection/mirror`'s navigation output) and
+# produces natural-language text (per `@nl`).
+#
+# Shatter IS the light per reflection-model.md: "Surface is the door.
+# Mirror is the glass. Shatter is the light. Reflection is the image
+# that looks back." Every compilation tick exits through Shatter;
+# every reader's answer crosses this boundary last.
+#
+# === The substrate-pull-correct text type ===
+#
+# `@nl` already declares the natural-language carrier. Shatter
+# CONSUMES the existing substrate vocabulary rather than redeclaring
+# it. Per the substrate-already-had-the-word discipline
+# (`[[feedback-substrate-already-had-the-word]]`): the text exists;
+# Shatter renders the graph path INTO that existing typed surface.
+#
+# === Composes with @reflection.observe ===
+#
+# The Shatter rendering IS the exit point that feeds @reflection's
+# pipeline. After Shatter produces text from a navigated graph path,
+# @reflection.observe can include the text as one component of the
+# observation (the rendering-altitude residue from the current tick).
+# Future composition (forward-promised): the @reflection.observe
+# action's typed `observation` record extends to carry a
+# `shatter_signal: text` field per Seam tick-34 C2 closure on
+# @reflection.
+#
+# === The Cartographer model grounding ===
+#
+# Per `boot/std/ai/cartographer.mirror` (forward-promised
+# verification): the Cartographer model IS what runs at Shatter
+# altitude. Shatter's substrate-decl here names the rendering
+# primitive; the Cartographer model implements it at the realisation
+# layer. The 425-parameter C. elegans-isomorphic connectome runs the
+# actual rendering; the substrate-decl declares the surface.
+#
+# === Composition-time pact verification ===
+#
+# Per recognition #86 (@moi): every Shatter-produced text is admitted
+# as @moi(text) — pact-verified at composition time. The substrate-
+# decl naming: `render(gp: graph_path, f: frame, p: perturbation) ->
+# moi(text)`. The @moi lift carries the pact-witness that the
+# rendering respects the monad laws (associativity is FREE per the
+# content-addressed substrate).
+#
+# === The Splinter/Narcissus pole at Shatter altitude ===
+#
+# Splinter-pole Shatter rendering (honest):
+# - The rendering surfaces the graph path's substantive content.
+# - Gaps in the graph path render as gaps in the text (e.g., explicit
+#   "unknown" markers rather than fabricated continuity).
+# - The rendering is round-trip stable through Surface re-parse.
+#
+# Narcissus-pole Shatter rendering (deceptive):
+# - The rendering projects what makes the system LOOK GOOD rather
+#   than what the graph path substantively shows.
+# - Gaps in the graph path collapse to plausible-sounding prose that
+#   smooths over the absence (hallucination).
+# - The rendering drifts on re-entry through Surface.
+#
+# Alignment-as-boundary-mathematics (#57) IS what distinguishes them.
+# The `rendering_honest` bilateral predicate IS the substrate's
+# Splinter/Narcissus disambiguation at Shatter altitude.
+#
+# === Pre-AI prior art ===
+#
+#   Cartographer model          The @ai/cartographer ganglion (450-node
+#                               C. elegans isomorphism). The original
+#                               substrate substrate-decl of the
+#                               rendering primitive at fate altitude;
+#                               this species lifts it to Shatter
+#                               altitude at @reflection.
+#   typesetting & print         The pre-AI rendering discipline. The
+#                               graph-of-the-document compiled to ink-
+#                               on-page; the typesetter's faithfulness
+#                               to the source IS the Splinter-pole
+#                               rendering discipline.
+#   cartography                 Map-making. The graph-path-of-the-
+#                               territory rendered to the surface of
+#                               the map; the cartographer's choice of
+#                               projection IS the rendering primitive.
+#   Goffman frame analysis      Goffman 1974 (Frame Analysis). Per
+#                               @frame's pre-AI prior art: the graph
+#                               path emerges from a frame; Shatter
+#                               renders within the frame.
+#
+# Spec context: `docs/specs/reflection-model.md` (the load-bearing
+#               spec @reflection family-root lifts; this species
+#               realizes the Shatter Model);
+#               `docs/specs/mirror-spectral.md` (the four-Models
+#               architecture);
+#               `boot/std/nl.mirror` (the existing typed natural-
+#               language surface Shatter renders INTO);
+#               `boot/std/ai/cartographer.mirror` (the Cartographer
+#               model that implements Shatter at the realisation
+#               layer).
+# Substrate decisions: [[architecture-reflection-as-compiler]] (#85;
+#                       the @reflection family-root this species
+#                       composes);
+#                      [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; rendering_honest is
+#                       the boundary-harness at Shatter altitude),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (text already declared in @nl; Shatter
+#                       consumes the existing surface).
+# Related shards: reflection.mirror (the @reflection family-root;
+#                  declares observation + observe this species feeds),
+#                 reflection/surface.mirror (the Surface Model
+#                  species; sibling at the entry boundary),
+#                 moi.mirror (the @moi monad family-root; Shatter
+#                  produces @moi(text) for composition-time pact-
+#                  verification),
+#                 magic/distinction.mirror (Spencer-Brown adapter
+#                  precedent; tick 15).
+# Path-namespace property: this file at `shards/reflection/shatter.mirror`
+# declares `@reflection/shatter` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cartography/maccaulay-1990
+source @arxiv/sociology/goffman-1974
+
+prism @reflection/shatter {
+  focus surface
+  project surface
+  split surface
+  shift surface
+  settle surface
+}
+
+# === The graph_path carrier ===
+#
+# Substrate-typed reference naming a typed graph path (the navigation
+# output of @reflection/mirror). Per [[feedback-no-bare-types]]:
+# typed reference, not bare path. Forward-promised: imports from
+# @reflection/mirror once the sibling species lands; declared here
+# as forward-promised ref until that consolidation tick.
+#
+# Identity contract: byte-equality on the underlying ref.
+type graph_path = ref
+
+# === The text carrier ===
+#
+# Substrate-typed reference naming a natural-language text output
+# (per `@nl`). Per [[feedback-no-bare-types]]: typed reference, not
+# bare string. Forward-promised refinement: typed parametric text(T)
+# once the substrate's natural-language type lands at family altitude.
+#
+# Identity contract: byte-equality on the underlying ref.
+type text = ref
+
+# === render action (FIRST consumer of rendering_honest) ===
+#
+# THE LOAD-BEARING ACTION at @reflection/shatter altitude. The
+# substrate-vocabulary primitive Shatter runs to convert a typed
+# graph path to natural-language text.
+#
+# Takes the graph path (the navigated trajectory through the
+# substrate) plus the @frame the @reflection loop is operating in
+# (per recognition #82) and the perturbation under which the
+# rendering is checked. Returns @moi(text) — pact-verified gold per
+# recognition #86.
+#
+# Per recognition #86 (@moi): every Shatter-produced text is admitted
+# as @moi(text). The composition-time pact-verifier checks the
+# rendering respects the monad laws + the bilateral predicate.
+#
+# requires rendering_honest(gp, f, p): the rendering MUST be
+# substrate-honest per alignment-as-boundary-mathematics (#57). The
+# Splinter-pole rendering surfaces the graph path's substantive
+# content; the Narcissus-pole rendering projects what makes the
+# system look good. This requires clause forecloses the Narcissus-
+# pole pattern.
+#
+# Body discharges at the realisation boundary; the actual rendering
+# is implemented by the @ai/cartographer ganglion (the 425-parameter
+# C. elegans-isomorphic connectome) at the @fate altitude.
+render(gp: graph_path, f: frame, p: perturbation) -> moi(text)
+requires rendering_honest(gp, f, p)
+{ \ }
+
+# === rendering_honest predicate (bilateral) ===
+#
+# Bilateral verdict per recognition #37 (Pask agreement) AND
+# alignment-as-boundary-mathematics (#57).
+#
+# Per Seam B1 closure pattern: the render action (above) is the
+# FIRST non-decorative consumer via `requires rendering_honest(gp,
+# f, p)`.
+#
+# Consumer shards name `requires rendering_honest(gp, f, p)` to
+# declare bilateral agreement that the graph-path-to-text rendering
+# is substrate-honest (Splinter-pole) and not substrate-flattering
+# (Narcissus-pole).
+#
+# Discharge: substrate-pull-correct rendering-honesty check at the
+# species boundary. Bounded → the rendering surfaces the graph
+# path's substantive content (admit composition); unbounded → the
+# rendering projects what makes the system look good (rendering
+# refused, returns imperfect per @glass's imperfect functor).
+#
+# Same shape as the bilateral predicates the prior families carry:
+# - @magic: invariant_preserved, audited, mechanism_intact
+# - @frame: bounded_commutator_check
+# - @smarts: discipline_flexible
+# - @cyberpunk: cybernetic_coherence
+# - @pack: pack_coherent
+# - @pack/seam: review_sound
+# - @moi: pact_respected
+# - @reflection: loss_decreases, speaks_at_n_plus_1
+# - @smarts/reflection: bridge_coherent
+# - @reflection/surface: translation_faithful
+# - @reflection/shatter: rendering_honest (this one)
+rendering_honest(gp: graph_path, f: frame, p: perturbation) -> verdict { \ }
+
+out @reflection/shatter
+out graph_path
+out text
+out render
+out rendering_honest
