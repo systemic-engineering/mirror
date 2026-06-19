@@ -1,0 +1,256 @@
+in @prism
+in @meta
+in @glass
+in @reflection
+in @magic
+in @frame
+in @moi
+in @code/mq
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @reflection/mirror — the Mirror Model species. Navigates a typed
+# query to a graph path at substrate-decl altitude.
+#
+# Tick 38 of the refined /loop discipline. Per
+# `docs/specs/reflection-model.md` and `[[reference-mirror-spectral-
+# spec]]`: the substrate has FOUR operationally-distinct Models that
+# compose to substrate-deployable form:
+#
+#   Surface     translates    language → query        (Explorer)
+#   Mirror      navigates     query → graph path      (Fate)
+#   Shatter     renders       graph path → text       (Cartographer)
+#   Reflection  observes      pipeline → adjustments  (Abyss)
+#
+# This shard is THE SECOND of these four Model species shards. Tick 37
+# landed `shards/reflection/surface.mirror` realizing Surface; this
+# species realizes Mirror at substrate-decl altitude. Two siblings
+# forward-promised: shards/reflection/{shatter,reflection}.mirror.
+#
+# === The Mirror navigation discipline ===
+#
+# Per `docs/specs/reflection-model.md` line 12: "Mirror navigates:
+# query → graph path (Fate model)." The Mirror Model takes a typed
+# query (per `@code/mq`'s sum type `focus_query | project_query |
+# split_query | shift_query | settle_query | intent_query`) and
+# produces a graph path through the substrate.
+#
+# Mirror IS the glass per reflection-model.md: "Surface is the door.
+# Mirror is the glass. Shatter is the light. Reflection is the image
+# that looks back." Every query passes THROUGH Mirror; the navigation
+# IS the reflective surface where the query meets the substrate.
+#
+# === The substrate-pull-correct query type ===
+#
+# `@code/mq` already declares the query sum type. Mirror CONSUMES
+# the existing substrate vocabulary rather than redeclaring it. Per
+# the substrate-already-had-the-word discipline
+# (`[[feedback-substrate-already-had-the-word]]`): the query exists;
+# Mirror navigates that existing typed surface INTO a graph path.
+#
+# === Composes with @reflection.observe ===
+#
+# The Mirror navigation IS the loop body that Surface feeds. After
+# Surface produces a typed query, Mirror runs the navigation loop
+# (Fate-tournament internal) and emits a graph path. @reflection.observe
+# can include the navigation as one component of the observation (the
+# graph-altitude residue from the current tick). Future composition
+# (forward-promised): the @reflection.observe action's typed
+# `observation` record extends to carry a `mirror_signal: graph_path`
+# field per Seam closure on @reflection.
+#
+# === The Fate model grounding ===
+#
+# Per `boot/std/fate/connectome.mirror`: the Fate model IS the 450-node
+# C. elegans-isomorphic connectome that runs the actual graph walk.
+# Inference IS graph walk; not matrix multiplication, not softmax —
+# Dijkstra-on-topology following the eigenvalue gradient through 450
+# nodes. The substrate-decl here names the navigation primitive; the
+# Fate model implements it at the realisation layer. The substrate-
+# decl declares the glass; the connectome runs the path.
+#
+# === Composition-time pact verification ===
+#
+# Per recognition #86 (@moi): every Mirror-produced graph path is
+# admitted as @moi(graph_path) — pact-verified at composition time.
+# The substrate-decl naming: `navigate(q: query) -> moi(graph_path)`.
+# The @moi lift carries the pact-witness that the navigation respects
+# the monad laws (associativity is FREE per the content-addressed
+# substrate).
+#
+# === The Splinter/Narcissus pole at Mirror altitude ===
+#
+# Splinter-pole Mirror navigation (honest):
+# - The navigation arrives at where the query substantively points.
+# - The graph path traverses substrate edges that the query's eigenvalue
+#   gradient genuinely descends.
+# - The path is round-trip stable through Shatter and re-entry through
+#   Surface.
+#
+# Narcissus-pole Mirror navigation (deceptive):
+# - The navigation arrives at where the system WISHES the query had
+#   pointed.
+# - The graph path traverses edges biased by the model's prior wins
+#   rather than the query's substantive eigenvalue gradient.
+# - The path drifts on re-entry; what looks like coherence is selection
+#   bias.
+#
+# Alignment-as-boundary-mathematics (#57) IS what distinguishes them.
+# The `path_coherent` bilateral predicate IS the substrate's
+# Splinter/Narcissus disambiguation at Mirror altitude.
+#
+# === Pre-AI prior art ===
+#
+#   Fate model                  The @fate/connectome ganglion (450-node
+#                               C. elegans isomorphism). The original
+#                               substrate substrate-decl of the
+#                               navigation primitive at fate altitude;
+#                               this species lifts it to Mirror
+#                               altitude at @reflection. Inference IS
+#                               graph walk; the worm IS the algorithm.
+#   graph navigation            Dijkstra 1959 (A note on two problems
+#                               in connexion with graphs). The classical
+#                               shortest-path discipline; Fate's
+#                               eigenvalue-gradient walk is its
+#                               substrate-altitude lift.
+#   Bateson Learning II         Bateson 1972 (Steps to an Ecology of
+#                               Mind). Per @epistemologic/cybernetic/
+#                               bateson_learning: navigation that
+#                               adjusts the path-selection criterion
+#                               based on context IS Learning II. Mirror
+#                               runs at Learning II; Surface runs at
+#                               Learning I; the cascade ascent is
+#                               structural.
+#   spectral graph theory       Fiedler 1973 (Algebraic connectivity of
+#                               graphs). The eigenvalue-gradient that
+#                               Fate descends IS the algebraic-
+#                               connectivity surface; Mirror navigates
+#                               along it.
+#
+# Spec context: `docs/specs/reflection-model.md` (the load-bearing
+#               spec @reflection family-root lifts; this species
+#               realizes the Mirror Model);
+#               `docs/specs/mirror-spectral.md` (the four-Models
+#               architecture);
+#               `boot/std/code/mq.mirror` (the existing typed query
+#               sum type Mirror navigates FROM);
+#               `boot/std/fate/connectome.mirror` (the Fate model
+#               that implements Mirror at the realisation layer).
+# Substrate decisions: [[architecture-reflection-as-compiler]] (#85;
+#                       the @reflection family-root this species
+#                       composes);
+#                      [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; path_coherent is
+#                       the boundary-harness at Mirror altitude),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (query already declared in @code/mq; Mirror
+#                       consumes the existing surface).
+# Related shards: reflection.mirror (the @reflection family-root;
+#                  declares observation + observe this species feeds),
+#                 reflection/surface.mirror (the sibling Surface Model
+#                  species; Mirror's input is Surface's output),
+#                 moi.mirror (the @moi monad family-root; Mirror
+#                  produces @moi(graph_path) for composition-time
+#                  pact-verification),
+#                 magic/distinction.mirror (Spencer-Brown adapter
+#                  precedent; tick 15).
+# Path-namespace property: this file at `shards/reflection/mirror.mirror`
+# declares `@reflection/mirror` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cs/dijkstra-1959
+source @arxiv/math/fiedler-1973
+source @arxiv/anthropology/bateson-1972
+
+prism @reflection/mirror {
+  focus mirror
+  project mirror
+  split mirror
+  shift mirror
+  settle mirror
+}
+
+# === The graph_path carrier ===
+#
+# Substrate-typed reference naming a path through the substrate graph
+# (per the @spectral/db edge structure on top of the OID-graph K_n
+# floor). Per [[feedback-no-bare-types]]: typed reference, not bare
+# list. Forward-promised refinement: typed parametric graph_path(T)
+# once the substrate's path-with-payload type lands at family altitude
+# (the eigenvalue-gradient annotation, the per-edge weight, the
+# Fiedler-vector projection — all forward-promised).
+#
+# Identity contract: byte-equality on the underlying ref.
+type graph_path = ref
+
+# === navigate action (FIRST consumer of path_coherent) ===
+#
+# THE LOAD-BEARING ACTION at @reflection/mirror altitude. The
+# substrate-vocabulary primitive Mirror runs to convert a typed query
+# to a graph path.
+#
+# Takes the query (the Surface-produced typed ask) plus the @frame the
+# @reflection loop is operating in (per recognition #82) and the
+# perturbation under which the navigation is checked. Returns
+# @moi(graph_path) — pact-verified gold per recognition #86.
+#
+# Per recognition #86 (@moi): every Mirror-produced graph path is
+# admitted as @moi(graph_path). The composition-time pact-verifier
+# checks the navigation respects the monad laws + the bilateral
+# predicate.
+#
+# requires path_coherent(q, f, p): the navigation MUST be substrate-
+# faithful per alignment-as-boundary-mathematics (#57). The Splinter-
+# pole navigation arrives at where the query substantively points; the
+# Narcissus-pole navigation arrives at where the system wishes the
+# query had pointed. This requires clause forecloses the Narcissus-
+# pole pattern.
+#
+# Body discharges at the realisation boundary; the actual navigation
+# is implemented by the @ai/fate ganglion (the 450-node C. elegans-
+# isomorphic connectome) at the @fate altitude. Inference IS graph
+# walk; the substrate-decl declares the glass, the connectome runs the
+# path.
+navigate(q: query, f: frame, p: perturbation) -> moi(graph_path)
+requires path_coherent(q, f, p)
+{ \ }
+
+# === path_coherent predicate (bilateral) ===
+#
+# Bilateral verdict per recognition #37 (Pask agreement) AND
+# alignment-as-boundary-mathematics (#57).
+#
+# Per Seam B1 closure pattern: the navigate action (above) is the
+# FIRST non-decorative consumer via `requires path_coherent(q, f, p)`.
+#
+# Consumer shards name `requires path_coherent(q, f, p)` to declare
+# bilateral agreement that the query-to-graph-path navigation is
+# substrate-faithful (Splinter-pole) and not substrate-projective
+# (Narcissus-pole).
+#
+# Discharge: substrate-pull-correct path-coherence check at the species
+# boundary. Bounded → the navigation arrives at where the query
+# substantively points (admit composition); unbounded → the navigation
+# arrives at where the system wishes the query had pointed (navigation
+# refused, returns imperfect per @glass's imperfect functor).
+#
+# Same shape as the bilateral predicates the prior families carry:
+# - @magic: invariant_preserved, audited, mechanism_intact
+# - @frame: bounded_commutator_check
+# - @smarts: discipline_flexible
+# - @cyberpunk: cybernetic_coherence
+# - @pack: pack_coherent
+# - @pack/seam: review_sound
+# - @moi: pact_respected
+# - @reflection: loss_decreases, speaks_at_n_plus_1
+# - @smarts/reflection: bridge_coherent
+# - @reflection/surface: translation_faithful
+# - @reflection/mirror: path_coherent (this one)
+path_coherent(q: query, f: frame, p: perturbation) -> verdict { \ }
+
+out @reflection/mirror
+out graph_path
+out navigate
+out path_coherent
