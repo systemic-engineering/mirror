@@ -1,0 +1,441 @@
+in @prism
+in @meta
+in @glass
+in @moi
+in @magic
+in @loop
+in @reflection
+in @reflection/mirror
+in @kintsugi
+in @mirror/store
+in @mirror/spectral
+in @mirror/bench
+in @mirror/au
+in @epistemologic
+in @epistemologic/property
+in @epistemologic/reality/time
+in @code/mq
+
+# @mirror/ref — the navigable surface of the substrate's spectral
+# triple. One CLI over two altitudes (reference / reflection); same
+# five-op algebra; different projections of H.
+#
+# Recognition #89 candidate (Alex 2026-06-20 conversation; landed in
+# the same session as Seam's adversarial round-trip on Mara's spec).
+# Per Mara's spec at docs/specs/mirror-ref-spec.md and prior insight
+# at docs/insights/2026-06-20-mirror-ref-as-substrate-honest-reflection-
+# reference.md. Adversarial-reviewed by Seam (DEFENSIVE → round-trip),
+# perf-reviewed by Taut (MIXED → forward-promised engine work), DX-
+# reviewed by Glint (SERVICEABLE → forward-promised docs+TUI).
+#
+# === The recognition (substrate-honest collision) ===
+#
+# `mirror ref` collapses TWO surfaces into one substrate-honest
+# collision:
+#
+# 1. reference altitude — navigate the shard dependency lattice
+#    (the xref work; the spatial projection of H)
+# 2. reflection altitude — walk @reflection.observe's one-tick-delay
+#    record of the AI-logic loop (#85; the temporal projection of H)
+#
+# Same surface, two altitudes. Same #pack-G2 pattern Alex named
+# across today's cascade: /loop ⇔ @loop (#88); @reflection-family ⇔
+# @reflection/reflection-Model; reed-as-relationship ⇔ reed-as-peer;
+# bench-altitude bench ⇔ substrate-altitude bench (#87).
+#
+# The structural claim: ref is a Prism transform on the substrate's
+# dependency-and-trace graph. Its five-operation surface (focus,
+# project, split, shift, settle) composes naturally over both
+# projections of H per the Connes triple (A, H, D) the substrate
+# inherits from [[architecture-connes-spectral-triple]].
+#
+# === Why this family-root NOW ===
+#
+# Today's cascade closed at #88 @loop (the iterative-discipline
+# substrate-decl). The next altitude is the navigable substrate
+# surface itself — the operator's hand on H. The substrate's existing
+# primitives (prism, glass, imperfect, transparency, splinter, pact,
+# fracture, query_phi, @spectral/db) compose into this surface
+# without invention; @mirror/ref is the consumer that surfaces them.
+#
+# Per [[feedback-substrate-already-had-the-word]] (55th+ instance):
+# the substrate had the word in prism (the algebra), in imperfect
+# (the carrier), in @spectral/db (the graph store), in
+# @reflection.observe (the temporal projection), in pact and fracture
+# (the optimization pairs), in splinter(ast) (the AST navigation),
+# in query_phi (the predicate projection). The CLI surface composes
+# them; it does not introduce new substrate.
+#
+# === Composes with today's cascade ===
+#
+# - @reflection (#85): observe_at lifts @reflection.observe's one-
+#   tick-delay record into a graph_ref at the temporal altitude
+# - @reflection/mirror (#85 species, tick 39): the navigate primitive
+#   that ref surfaces at CLI altitude; ref consumes graph_path from
+#   this species
+# - @moi (#86): settle_with returns moi(au); every ref pipeline's
+#   gold is pact-verified at composition time
+# - @loop (#88): each ref query is one tick of @loop at the
+#   navigation-discipline altitude; loop_well_founded cascade
+#   downstream at bootstrap dispatch (forward-promised)
+# - @mirror/bench (#87): three-conjunct monotone_non_increasing
+#   gates regression at perf altitude (forward-promised wire via
+#   @mirror/bench.record at cmd_ref dispatch)
+# - @mirror/au: settle_with returns moi(au) — the gold-with-pact-
+#   verified carrier per the cascade's substrate-decl shape
+# - @kintsugi: the eight optimization pipelines per insight §5
+#   (prune_unreachable, break_cycle, merge_tightly_coupled,
+#   compress_path, demote_to_cold, substitute_with_higher,
+#   resolve_hole, forge_missing_fracture) each become #53 bilateral
+#   property+fracture instances; forward-promised per Mara spec §8
+#
+# === The substrate-honest collision in carrier form ===
+#
+# `graph_ref` is the same carrier at both altitudes. At reference
+# altitude it carries the shard dependency lattice; at reflection
+# altitude it carries the @reflection.observe predecessor chain.
+# The altitude is a tag on the projection (encoded in the
+# `transparency(@mirror/ref)` channel), not a separate type.
+#
+# Same applies to `edge_ref` (typed edge_kind variant), `query_phi`
+# (the structural Φ query lifted from @mirror/spectral/consent),
+# `graph_path` (reused from @reflection/mirror per substrate-already-
+# had-the-word).
+#
+# === Pre-AI prior art ===
+#
+#   Smalltalk-72/76 System Browser  Kay 1972; the deepest ancestor
+#                                   of all reference-navigation
+#                                   tools. "Senders of / implementors
+#                                   of" predates every modern IDE.
+#   Erlang `xref`                   Carlsson 1993 (OTP `tools` 4.2.1).
+#                                   Modes module/application/release;
+#                                   the proto-form of the five-op
+#                                   algebra at dependency-graph
+#                                   altitude.
+#   Elixir `mix xref`              Valim 2016. Typed `compile-connected`
+#                                   edges; the load-bearing prior art
+#                                   for typed edge_kind variants.
+#   Bazel query                     Google 2016+. Explicit graph
+#                                   algebra (somepath/allpaths/deps/
+#                                   rdeps); set algebra (∪/∩/∖);
+#                                   the most explicit prior art.
+#   Joern + Code Property Graph     Yamaguchi et al. 2014 (S&P);
+#                                   AST + control-flow + data-flow
+#                                   unified as one property graph.
+#                                   The graph-native ancestor.
+#   Sourcegraph SCIP/LSIF           2017+. Precomputed code-intel
+#                                   indexes; precise vs search-based
+#                                   intelligence (mirrors transparency
+#                                   tiers).
+#   LSP findReferences/Implementations Microsoft 2016+. The lowest-
+#                                   common-denominator surface;
+#                                   `textDocument/references` returns
+#                                   typed Location lists.
+#   Glamorous Toolkit               Feenk 2020+. Moldable development;
+#                                   the closest existing prior art to
+#                                   mirror's substrate-pull stance.
+#                                   Mirror surpasses by content-
+#                                   addressing the substrate.
+#   Haskell weeder                  Mitchell 2017 (rewrite Charles
+#                                   2018+). Dead-export detection via
+#                                   HIE-file traversal. Demonstrates
+#                                   reachability-from-pact-roots is
+#                                   the algorithm.
+#   cargo-machete/udeps/tree        Rust ecosystem 2020+. The dual
+#                                   problem (find unused) showing the
+#                                   substrate-altitude pull toward
+#                                   first-class root declarations
+#                                   (pacts).
+#
+# Spec context: docs/specs/mirror-ref-spec.md (Mara, 2026-06-20;
+#               Seam-consolidated round-trip);
+#               docs/insights/2026-06-20-mirror-ref-as-substrate-
+#               honest-reflection-reference.md (Mara insight foundation;
+#               eight kintsugi optimization pipelines as #53 bilateral
+#               instances).
+# Substrate decisions: [[architecture-loop-as-monad]] (#88; ref query
+#                       IS one @loop tick at navigation altitude),
+#                      [[architecture-mirror-bench-ouroboros]] (#87;
+#                       bench composes via forward-promised dispatch),
+#                      [[architecture-reflection-as-compiler]] (#85+
+#                       #86; the compiler IS this loop; @moi(au)
+#                       carries the gold),
+#                      [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-operations-as-linear-algebra]]
+#                       (focus/project/split/shift/settle have precise
+#                       linear-algebraic meanings; ref consumes them),
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; ref_query_compositional
+#                       IS the alignment harness at navigation
+#                       altitude),
+#                      [[architecture-property-fracture-bilateral]]
+#                       (#53; ref's self-application of the bilateral
+#                       predicate is the cleanest instance — the
+#                       desugarer's correctness is the property; the
+#                       fracture body's discharge at parse time is the
+#                       operational half),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (55th+ instance — ref composes existing
+#                       primitives, invents none).
+# Related shards: reflection/mirror.mirror (the Mirror Model; ref
+#                  surfaces its navigate primitive at CLI),
+#                 loop.mirror (the iterative discipline; ref query
+#                  IS one tick of @loop at navigation altitude),
+#                 moi.mirror (the monad family-root; settle_with
+#                  returns moi(au) per pact-verified composition),
+#                 mirror/bench.mirror (the perf-altitude bench; ref
+#                  --bench wires through @mirror/bench.record at
+#                  cmd_ref dispatch — forward-promised),
+#                 mirror/spectral/eigensheaf.mirror (the sheaf-
+#                  Laplacian's eigendecomposition; shift_to --basis=
+#                  @spectral consumes this),
+#                 mirror/spectral/consent.mirror (query_phi; this
+#                  shard lifts it to first-class carrier),
+#                 mirror/store/crystal.mirror (the content-addressed
+#                  storage; ref results persist as crystals).
+# Path-namespace property: this file at `shards/mirror/ref.mirror`
+# declares `@mirror/ref` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming/kay-1972
+source @arxiv/programming/carlsson-1993
+source @arxiv/programming/valim-2016
+source @arxiv/programming/yamaguchi-2014
+source @arxiv/programming/feenk-2020
+
+prism @mirror/ref {
+  focus  ref
+  project ref
+  split  ref
+  shift  ref
+  settle ref
+}
+
+# === graph_ref carrier ===
+#
+# Imperfect-wrapped per @glass's loss discipline. transparency(@mirror/
+# ref) carries the per-node/edge located opacity. The same carrier
+# bears both altitudes — reference (shard dep lattice) and reflection
+# (temporal predecessor chain) — discriminated at the projection
+# altitude, not the type altitude.
+type graph_ref = imperfect(graph_handle, query_error, transparency(@mirror/ref))
+
+# === node_ref carrier ===
+#
+# Typed reference to a graph node — a shard at the SpectralUuid layer
+# or a splinter at the OID layer per shards/glass.mirror's three-
+# layer recognition (mosaic-as-type-system.md §1B).
+type node_ref = ref
+
+# === edge_kind variant (substrate-discriminated) ===
+#
+# Per Seam C4 closure pattern (variants over bare ref-with-documented-
+# values): typed substrate variant naming the seven first-class edge
+# kinds. Same-shape different-meaning forbidden per
+# [[feedback-no-bare-types]].
+#
+# Per Elixir's mix xref typed-edge precedent: each kind discriminates
+# how the substrate's compiler treats the edge at recompilation time.
+type edge_kind =
+  | in_edge               # the substrate ancestry header
+  | callers_edge          # action-to-action call site
+  | pact_edge             # property -> fracture discharge
+  | fracture_edge         # fracture body -> morphism emission
+  | kintsugi_bridge_edge  # cross-shard kintsugi loop binding
+  | reflection_predecessor_edge  # @reflection.observe temporal link
+  | ast_child_edge        # splinter(ast) AST altitude descent
+
+# === edge_ref carrier ===
+#
+# Typed edge carrying its kind and a located opacity. Imperfect-
+# wrapped per @glass.
+type edge_ref = imperfect(edge_handle, edge_error, transparency(@mirror/ref))
+
+# === query_phi carrier ===
+#
+# The structural Φ query lifted from @mirror/spectral/consent's
+# query_phi as a first-class carrier at @mirror/ref altitude. The
+# same query the kintsugi loop's active_pass uses internally; ref
+# surfaces it as the user-facing predicate-projection primitive.
+type query_phi = imperfect(predicate, query_error, transparency(@mirror/ref))
+
+# === graph_path carrier (reused, not redeclared) ===
+#
+# Per [[feedback-substrate-already-had-the-word]]: graph_path comes
+# from @reflection/mirror (tick 39, the Mirror Model species). Ref
+# consumes it as the output type of the navigate-style actions.
+
+# === Forward-promised refinement carriers ===
+#
+# Per Mara spec §6 + Seam C11 closure: refinements blocked on
+# substrate features not yet landed.
+# - graph_handle(altitude): parametric over @<altitude>; lands when
+#   parametric ref typing reaches family altitude
+# - edge_handle(edge_kind): parametric over edge_kind; same blocker
+type graph_handle = ref
+type edge_handle  = ref
+type query_error  = ref
+type edge_error   = ref
+type predicate    = ref
+
+# === focus_at action (THE source action) ===
+#
+# Lifts an @<altitude> reference into a graph_ref scoped to that
+# node + neighborhood at depth. The reference-altitude entry point;
+# the substrate-pull-correct equivalent of "give me the local graph
+# around X."
+#
+# Per [[architecture-operations-as-linear-algebra]]: focus is
+# eigenvalue extraction at λ₀; ref's focus_at lifts that algebra to
+# the dep-graph altitude.
+focus_at(target: ref, depth: ref) -> graph_ref { \ }
+
+# === project_by action ===
+#
+# Predicate filter; consumes query_phi. The substrate-pull-correct
+# equivalent of "give me the subgraph matching this property."
+# Per [[architecture-operations-as-linear-algebra]]: project is
+# orthogonal projection; ref's project_by is the dep-graph
+# specialization.
+project_by(phi: query_phi, g: graph_ref) -> graph_ref { \ }
+
+# === split_by action ===
+#
+# Orthogonal decomposition by an axis (altitude, family, cycle-
+# membership, reachability). Returns a typed handle to the
+# decomposition; the substrate's parametric collection family
+# settles the return shape at a later tick (per Mara spec forward-
+# promise: set(T)).
+split_by(axis: ref, g: graph_ref) -> ref { \ }
+
+# === shift_to action ===
+#
+# Basis transformation; spectral when basis=@spectral. The
+# substrate-pull-correct equivalent of "give me the eigenanalysis on
+# this subgraph's Laplacian." Per [[architecture-operations-as-
+# linear-algebra]]: shift is basis transformation; ref's shift_to
+# at the spectral basis returns eigendecomposition + Fiedler vector
+# + spectral gap as substrate-typed fields on the returned graph_ref.
+shift_to(basis: ref, g: graph_ref) -> graph_ref { \ }
+
+# === settle_with action (FIRST non-decorative consumer of
+# ref_query_compositional; #53 self-application instance) ===
+#
+# THE LOAD-BEARING ACTION at @mirror/ref altitude. Kintsugi fix-point
+# on the graph_ref via a fracture body. Returns moi(au) per the
+# substrate's #86 monad family-root — the gold-with-pact-verified
+# carrier.
+#
+# requires ref_query_compositional(phi_of(g), g): the substrate
+# forecloses non-compositional queries at the settle boundary. The
+# bilateral predicate IS the alignment-as-boundary-mathematics check
+# (#57) at the navigation altitude. Every shortcut in the named-
+# subcommand surface MUST desugar to a composition of focus/project/
+# split/shift/settle; the predicate enforces it.
+#
+# This is the self-application instance of #53 — the property
+# (ref_query_compositional) and the fracture body (the desugaring at
+# parse time) compose as a bilateral pair where ref itself is the
+# first consumer.
+settle_with(fracture: ref, g: graph_ref) -> moi(au)
+requires ref_query_compositional(phi_of(g), g)
+{ \ }
+
+# === observe_at action (the reflection altitude entry point) ===
+#
+# Lifts @reflection.observe's one-tick-delay record into a graph_ref
+# at the temporal altitude. Per [[architecture-reflection-as-
+# compiler]] (#85) the observation is asymmetric — Reflection sees
+# what the loop did, but only after the loop committed.
+#
+# Per Seam C3 deferred: the one-tick-delay invariant
+# (speaks_at_n_plus_1) is consumed downstream at @reflection.speak,
+# not at this shard. The observe_at action lifts the record without
+# emitting; the speak-altitude action enforces the delay.
+observe_at(g: graph_ref, t: tick) -> observation { \ }
+
+# === phi_of action ===
+#
+# Lifts a graph_ref's lineage into a query_phi. The substrate-pull-
+# correct equivalent of "give me the predicate that produced this
+# graph." Composes with settle_with's requires clause: the desugarer
+# at parse time validates that the user's query is its own predicate's
+# witness — the substrate's "query and result share content-addressed
+# history."
+phi_of(g: graph_ref) -> query_phi { \ }
+
+# === ref_query_compositional predicate (bilateral; #53 self-applied) ===
+#
+# Bilateral verdict per recognition #37 (Pask agreement) AND the #53
+# property+fracture pattern self-applied at @mirror/ref. Returns
+# verdict that the query_phi composes from the five primitive ops
+# (focus/project/split/shift/settle) on the graph_ref.
+#
+# Per Seam B1 closure pattern: settle_with (above) is the FIRST non-
+# decorative consumer via `requires ref_query_compositional(phi_of
+# (g), g)`. The bilateral pair forces every shortcut in the named-
+# subcommand surface to lower to the primitive composition at parse
+# time; without this, the bag-of-subcommands surface drifts
+# unchecked from the algebra.
+#
+# Same shape as the bilateral predicates the prior families carry:
+# - @magic: invariant_preserved, audited, mechanism_intact
+# - @frame: bounded_commutator_check
+# - @smarts: discipline_flexible
+# - @cyberpunk: cybernetic_coherence
+# - @pack: pack_coherent
+# - @pack/seam: review_sound
+# - @moi: pact_respected
+# - @reflection: loss_decreases, speaks_at_n_plus_1
+# - @smarts/reflection: bridge_coherent
+# - @reflection/surface: translation_faithful
+# - @reflection/mirror: path_coherent
+# - @mirror/bench: monotone_non_increasing, bench_overhead_below_floor
+# - @loop: loop_well_founded
+# - @mirror/store/crystal: crystal_well_formed
+# - @mirror/ref: ref_query_compositional (this one; self-applied)
+ref_query_compositional(phi: query_phi, g: graph_ref) -> verdict { \ }
+
+# === interface_authored_by_human predicate (bilateral; Seam C9 rim closure) ===
+#
+# Per Seam C9 review of Mara's Decision 2 (Q3 cycle-break, author-in-
+# the-loop): the spec said "the substrate refuses to create the
+# interface shard automatically" — but "refuses" was prose, not a
+# typed obligation. This predicate makes the substrate's no-add-
+# without-pact discipline a structural check.
+#
+# Bilateral verdict: returns verdict that a splinter(@meta/ast)
+# proposed as an interface shard for cycle-breaking is authored by a
+# human (the substrate's first-class operator), not synthesized
+# automatically. Any action that would write the interface shard
+# MUST consume `requires interface_authored_by_human(s)`.
+#
+# Same #53 first-consumer pattern; the consumer lives at the
+# @kintsugi/fracture/break_cycle shard (forward-promised; Mara spec
+# §8 entry #2). At this shard the predicate is declared; the
+# operational consumer lands when the cycle-break fracture body
+# lands per the @magic family pattern.
+interface_authored_by_human(s: splinter(@meta/ast)) -> verdict { \ }
+
+out @mirror/ref
+out graph_ref
+out node_ref
+out edge_kind
+out edge_ref
+out query_phi
+out graph_handle
+out edge_handle
+out query_error
+out edge_error
+out predicate
+out focus_at
+out project_by
+out split_by
+out shift_to
+out settle_with
+out observe_at
+out phi_of
+out ref_query_compositional
+out interface_authored_by_human
