@@ -26,6 +26,7 @@ mirror-self
 bootstrap/mirror.ll
 
 # Nix / direnv
+.envrc.secret
 .direnv/
 
 # Git worktrees
