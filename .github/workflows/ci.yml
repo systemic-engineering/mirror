@@ -12,6 +12,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: systemic-engineering/ci/actions/nix-setup@main
+
+      # Rust compile cache — keyed on Cargo.lock + bootstrap manifest.
+      # Streamline tick (2026-06-20 Taut): the local devShell already
+      # warms ~/.cargo-target via direnv; CI was cold-compiling every
+      # run (~38min worst case observed 2026-06-19). Swatinem/rust-cache
+      # caches ~/.cargo/{registry,git} + bootstrap/target/ keyed by
+      # Cargo.lock content, shared with kintsugi.yml + release.yml via
+      # `shared-key: bootstrap` so cache hits cross workflows.
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: bootstrap
+          shared-key: bootstrap
+          # Don't save the cache from PR branches — only main pushes
+          # repopulate the shared key. Avoids fork PRs poisoning the
+          # cache and keeps cache turnover deterministic.
+          save-if: ${{ github.ref == 'refs/heads/main' }}
+
       - name: Run quality gate
         run: nix develop -c just check
 

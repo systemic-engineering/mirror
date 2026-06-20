@@ -43,6 +43,20 @@ jobs:
           restore-keys: |
             mirror-store-${{ runner.os }}-
 
+      # Rust compile cache — keyed on Cargo.lock + bootstrap manifest.
+      # Streamline tick (2026-06-20 Taut): yesterday's 38min cold-compile
+      # hang was caused by no cache crossing local↔CI. Swatinem/rust-cache
+      # caches ~/.cargo/{registry,git} + bootstrap/target/ keyed by
+      # Cargo.lock; `shared-key: bootstrap` shares hits with ci.yml +
+      # release.yml. Local dev (direnv + ~/.cargo-target) stays
+      # asymmetric on purpose — runner OS differs; cache key would miss
+      # — but every CI workflow now hits the same shared key.
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: bootstrap
+          shared-key: bootstrap
+          save-if: ${{ github.ref == 'refs/heads/main' }}
+
       - name: Build mirror
         run: nix develop -c cargo build --release --manifest-path bootstrap/Cargo.toml
 
