@@ -1,0 +1,188 @@
+in @prism
+in @meta
+in @glass
+in @mirror
+in @mirror/docs
+in @epistemologic
+in @epistemologic/property
+
+# @mirror/docs/spec — the spec species of @mirror/docs.
+#
+# Tick 46 / docs-ouroboros tick 2. First species of the @mirror/docs
+# family-root (#90 candidate, landed tick 45 at commit `f21cc30`).
+#
+# === The recognition this species declares ===
+#
+# `docs/specs/` is a heterogeneous catalog of substrate-decl
+# specifications. Two kinds coexist that the family-root's
+# taxonomy_kind variant collapsed into `spec`:
+#
+# 1. **Evergreen specs**: substrate-decl specifications rewritten in
+#    place (e.g., `mirror-spectral.md`, `kintsugi-ci-v0.1.md`,
+#    `mosaic-as-type-system.md`, `mirror-ref-spec.md`). No date
+#    convention; the file IS the current state.
+#
+# 2. **Per-recognition canonical specs**: dated snapshots tied to a
+#    specific recognition number. They accumulate as the cascade
+#    grows; each carries `recognition-NN-<topic>-canonical-spec.md`
+#    or `recognition-NN-research-<DATE>.md` shape. After the cascade
+#    closed at #89/#90, six files of this kind sit in `docs/specs/`
+#    flat. The Reed-agent cleanup audit (S-4 finding) flagged
+#    consolidation into `docs/specs/recognitions/` before the next
+#    cascade.
+#
+# This species substrate-decl's the recognition-spec sub-kind
+# explicitly. Tick 2 executes the consolidation move: six files
+# (cascade-recognition-76-through-80-canonical-spec.md;
+# recognition-{76,79}-research-2026-06-18.md;
+# recognition-{81,82}-*-canonical-spec.md;
+# string-theory-tower-research-2026-06-18.md) move from `docs/specs/`
+# to `docs/specs/recognitions/`. Evergreen specs stay at the top of
+# `docs/specs/`.
+#
+# === Why this species NOW ===
+#
+# Three cascading reasons (Reed-agent cleanup S-4 / S-2):
+#
+# 1. Sprawl risk: `docs/specs/` had 107 flat files at audit time; 3
+#    new recognition-canonical-specs landed in the 5 days before
+#    audit. Without subdir consolidation, `docs/specs/` becomes
+#    unfindable at corpus growth.
+#
+# 2. Sub-kind discrimination: per `[[architecture-property-fracture-
+#    bilateral]]`'s discipline, taxonomy_kind variants that hide
+#    sub-kinds (evergreen vs dated) drift into stringly-typed-
+#    enum-in-disguise. This species names the substrate-decl form of
+#    the sub-kind discrimination.
+#
+# 3. Recognition-pattern continuity: every recognition (#76 onward)
+#    has a canonical spec; the spec convention IS load-bearing for
+#    the substrate's auditable history. The subdir makes the
+#    convention substrate-fact.
+#
+# === The spec_kind variant ===
+#
+# Per Seam C4 closure pattern: typed substrate variant naming the
+# two canonical sub-kinds of spec. Same-shape different-meaning
+# forbidden per [[feedback-no-bare-types]].
+#
+# - evergreen_spec: substrate-decl specifications rewritten in
+#   place; live at `docs/specs/<topic>.md`; dating_discipline =
+#   evergreen
+# - recognition_spec: dated snapshots tied to a recognition number;
+#   live at `docs/specs/recognitions/recognition-NN-<topic>-
+#   canonical-spec.md` OR `docs/specs/recognitions/recognition-NN-
+#   research-<YYYY-MM-DD>.md`; dating_discipline =
+#   date_suffixed_on_respec
+type spec_kind =
+  | evergreen_spec
+  | recognition_spec
+
+# === The recognition_id carrier ===
+#
+# Typed reference for a recognition number (#76, #79, #80, #82,
+# #83, #84, #85, #86, #87, #88, #89, #90, ...). Per
+# [[feedback-no-bare-types]]: typed reference, not bare nat.
+# Forward-promised refinement: typed parametric recognition_id once
+# the substrate's recognition-tower type lands.
+#
+# Identity contract: byte-equality on the underlying ref.
+type recognition_id = ref
+
+# === The spec_record carrier ===
+#
+# Typed record over (path, kind, recognition_id?, dating). The
+# substrate-architectural object @mirror/docs/spec instances are
+# records carrying spec metadata.
+#
+# For evergreen_spec: recognition_id is the substrate's empty/null
+# ref (forward-promised: option<recognition_id> when option family
+# parametric over substrate-altitude types lands).
+#
+# Identity contract: byte-equality on the quadruple.
+type spec_record = {
+  path:           ref,
+  kind:           spec_kind,
+  recognition_id: recognition_id,
+  dating:         ref,
+}
+
+# === catalog action ===
+#
+# THE LOAD-BEARING ACTION at @mirror/docs/spec altitude. Given a
+# spec file path, returns the typed spec_record carrying its
+# sub-kind classification + (for recognition_spec) the recognition
+# number it documents.
+#
+# Body discharges at the realisation boundary; the classification
+# heuristic reads the filename pattern (`recognition-NN-*` →
+# recognition_spec; else evergreen_spec).
+catalog(path: ref) -> spec_record { \ }
+
+# === canonical_subdir_for action ===
+#
+# Returns the canonical subdir for a spec_kind:
+# - evergreen_spec → `docs/specs/`
+# - recognition_spec → `docs/specs/recognitions/`
+#
+# The substrate's convention-over-configuration discipline at the
+# spec altitude.
+canonical_subdir_for(k: spec_kind) -> ref { \ }
+
+# === relocate action (FIRST non-decorative consumer of
+# spec_in_canonical_subdir) ===
+#
+# Moves a spec_record's file to its canonical_subdir. The substrate-
+# pull-correct equivalent of "move recognition specs to recognitions/
+# subdir."
+#
+# requires spec_in_canonical_subdir(s): the substrate forecloses
+# moves that would put a spec in the wrong subdir. Without this
+# requires clause, relocate would admit misclassified moves (the
+# @magic tick-11 dead-letter pattern at the spec altitude). The
+# bilateral predicate IS the substrate's move-correctness check.
+#
+# Body discharges via the realisation boundary's git mv (preserving
+# content-addressed history).
+relocate(s: spec_record) -> ref
+requires spec_in_canonical_subdir(s)
+{ \ }
+
+# === spec_in_canonical_subdir predicate (bilateral) ===
+#
+# Bilateral verdict per recognition #37 (Pask agreement) AND the
+# alignment-as-boundary-mathematics check (#57) at the spec
+# altitude.
+#
+# Returns verdict that a spec_record's classification is substrate-
+# architecturally consistent with the canonical subdir for its kind:
+# - evergreen_spec records land at `docs/specs/<topic>.md`
+# - recognition_spec records land at
+#   `docs/specs/recognitions/recognition-NN-*.md`
+#
+# Per Seam B1 closure pattern: relocate (above) is the FIRST non-
+# decorative consumer via `requires spec_in_canonical_subdir(s)`.
+#
+# Discharge: substrate-pull-correct subdir-classification check at
+# the species boundary. Bounded → spec is in its canonical subdir
+# (admit relocate); unbounded → spec violates the subdir convention
+# (relocate refused; manual review required).
+#
+# Same shape as the bilateral predicates the prior families carry:
+# - @mirror/docs: doc_well_classified (the parent family-root)
+# - @mirror/ref: ref_query_compositional, interface_authored_by_human
+# - @mirror/bench: monotone_non_increasing,
+#   bench_overhead_below_floor
+# - @loop: loop_well_founded
+# - @mirror/store/crystal: crystal_well_formed
+# - @mirror/docs/spec: spec_in_canonical_subdir (this one)
+spec_in_canonical_subdir(s: spec_record) -> verdict { \ }
+
+out @mirror/docs/spec
+out spec_kind
+out recognition_id
+out spec_record
+out catalog
+out canonical_subdir_for
+out relocate
+out spec_in_canonical_subdir
