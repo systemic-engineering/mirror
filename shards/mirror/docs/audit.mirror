@@ -1,0 +1,191 @@
+in @prism
+in @meta
+in @glass
+in @mirror
+in @mirror/docs
+in @pack
+in @pack/seam
+in @epistemologic
+in @epistemologic/property
+
+# @mirror/docs/audit — the audit species of @mirror/docs.
+#
+# Tick 47 / docs-ouroboros tick 3. Second species of the @mirror/docs
+# family-root (#90 candidate, landed tick 45 at commit `f21cc30`).
+#
+# === The recognition this species declares ===
+#
+# Adversarial review records are first-class substrate (per
+# `@pack/seam` tick 33). They live in their own subdir under docs/
+# because their lifecycle differs from spec/insight/research/plan/
+# roadmap. The Reed-agent cleanup audit (docs/cleanup-review-
+# 2026-06-20.md S-3 finding) surfaced that the substrate had THREE
+# names for the same job: `audits/` + `reviews/` + `review/`. Eight
+# files split arbitrarily across them; all are Seam-authored
+# adversarial-review records.
+#
+# This species declares the canonical convention:
+# - subdir: `docs/audits/` (matching @pack/seam's vocabulary)
+# - dating: dated YYYY-MM-DD prefix per insight + audit altitude
+# - naming: `audits/YYYY-MM-DD-<author>-<scope>.md` ideal form
+# - lifecycle: snapshots; never rewritten in place
+#
+# === Why this species NOW ===
+#
+# Three cascading reasons (Reed-agent cleanup S-3):
+#
+# 1. Naming-redundancy: three subdir names for one job is strict
+#    drift; the substrate's content-addressing discipline requires
+#    canonical paths.
+#
+# 2. Pack-vocabulary alignment: `@pack/seam` (tick 33) declared the
+#    adversarial-review-frame peer as load-bearing; the docs subdir
+#    that catalogs Seam's work must match the substrate-decl name.
+#
+# 3. Future-cascade-readiness: Seam reviews accumulate as the
+#    cascade grows (today added three: Seam-on-@reflection-design,
+#    Seam-on-mirror-ref-spec, the round-trip closing C1-C11). Without
+#    consolidation, the splitting compounds.
+#
+# === Tick 3 executes ===
+#
+# Five files move via git mv (history-preserving) from `reviews/`
+# and `review/` to `audits/`:
+# - reviews/2026-04-14-fold-operator-review.md
+# - reviews/2026-04-14-session-final-review.md
+# - reviews/2026-05-30-pre-merge-adversarial-review.md
+# - reviews/seam-ast-optics-review.md (undated; preserve as-is
+#   per honest-history)
+# - review/2026-05-20-seam-adversarial.md
+#
+# Three files already at canonical path stay put:
+# - audits/2026-05-22-seam-mirror-post-meta-glass.md
+# - audits/2026-05-25-peer-glass-audit.md
+# - audits/option-result-audit.md (undated; preserve as-is per
+#   honest-history)
+#
+# After this tick: `docs/reviews/` and `docs/review/` become empty;
+# directories removed implicitly when git tracks no files there.
+#
+# === Dating discipline (per S-4 cleanup finding) ===
+#
+# - Ideal: `YYYY-MM-DD-<author>-<scope>.md` (e.g.,
+#   `2026-05-22-seam-mirror-post-meta-glass.md`)
+# - Backward-compatible: undated files preserved as honest-history
+#   (substrate's no-retroactive-rewrite discipline); the convention
+#   applies forward, not retroactively
+# - Author MUST be one of @pack/peer variants (typically seam, but
+#   any peer's adversarial review is admissible)
+#
+# === The audit_kind variant ===
+#
+# Per Seam C4 closure pattern: typed substrate variant naming the
+# four canonical sub-kinds of adversarial review. Same-shape
+# different-meaning forbidden per [[feedback-no-bare-types]].
+#
+# - pre_loop: review before a /loop discipline starts (e.g.,
+#   pre-loop adversarial review of self-improving mirror MCP)
+# - retrospective: review after-the-fact of a cascade (e.g.,
+#   ticks 12-19 retrospective review)
+# - pre_merge: review gating a branch merge to main
+# - design: review of a spec/insight before substrate-decl lands
+type audit_kind =
+  | pre_loop
+  | retrospective
+  | pre_merge
+  | design
+
+# === The author carrier ===
+#
+# Typed reference for the audit author (peer per @pack/peer variant).
+# Per [[feedback-no-bare-types]]: typed reference grounded in the
+# Pack's substrate-decl typing, not bare string.
+#
+# Identity contract: byte-equality on the underlying ref.
+type author = ref
+
+# === The audit_record carrier ===
+#
+# Typed record over (path, kind, author, dating). The substrate-
+# architectural object @mirror/docs/audit instances are records
+# carrying audit metadata.
+#
+# Identity contract: byte-equality on the quadruple.
+type audit_record = {
+  path:   ref,
+  kind:   audit_kind,
+  author: author,
+  dating: ref,
+}
+
+# === catalog action ===
+#
+# THE LOAD-BEARING ACTION at @mirror/docs/audit altitude. Given an
+# audit file path, returns the typed audit_record carrying its
+# sub-kind classification + author + dating metadata.
+#
+# Body discharges at the realisation boundary; the classification
+# heuristic reads the filename pattern (YYYY-MM-DD prefix, author
+# token, scope name).
+catalog(path: ref) -> audit_record { \ }
+
+# === canonical_subdir action ===
+#
+# Returns the canonical subdir for audits: `docs/audits/`. The
+# substrate's convention-over-configuration discipline at the audit
+# altitude.
+canonical_subdir() -> ref { \ }
+
+# === consolidate action (FIRST non-decorative consumer of
+# audit_in_canonical_subdir) ===
+#
+# Moves an audit_record's file from a redundant subdir (reviews/
+# or review/) to the canonical subdir (audits/). The substrate-
+# pull-correct equivalent of "consolidate three names into one job."
+#
+# requires audit_in_canonical_subdir(a): the substrate forecloses
+# moves that would put an audit in the wrong subdir. Without this
+# requires clause, consolidate would admit misclassified moves
+# (the @magic tick-11 dead-letter pattern at the audit altitude).
+# The bilateral predicate IS the substrate's consolidation-
+# correctness check.
+#
+# Body discharges via the realisation boundary's git mv (preserving
+# content-addressed history).
+consolidate(a: audit_record) -> ref
+requires audit_in_canonical_subdir(a)
+{ \ }
+
+# === audit_in_canonical_subdir predicate (bilateral) ===
+#
+# Bilateral verdict per recognition #37 (Pask agreement) AND the
+# alignment-as-boundary-mathematics check (#57) at the audit
+# altitude.
+#
+# Returns verdict that an audit_record's path is in the canonical
+# `docs/audits/` subdir (NOT in `reviews/` or `review/`).
+#
+# Per Seam B1 closure pattern: consolidate (above) is the FIRST
+# non-decorative consumer via `requires audit_in_canonical_subdir(a)`.
+#
+# Discharge: substrate-pull-correct subdir-classification check at
+# the species boundary. Bounded → audit is in canonical subdir
+# (admit consolidate); unbounded → audit violates the subdir
+# convention (consolidate refused; manual review required).
+#
+# Same shape as the bilateral predicates the prior families carry:
+# - @mirror/docs: doc_well_classified (the parent family-root)
+# - @mirror/docs/spec: spec_in_canonical_subdir (sibling species)
+# - @pack/seam: review_sound (the peer-altitude predicate this
+#   species composes with at substrate-decl altitude)
+# - @mirror/docs/audit: audit_in_canonical_subdir (this one)
+audit_in_canonical_subdir(a: audit_record) -> verdict { \ }
+
+out @mirror/docs/audit
+out audit_kind
+out author
+out audit_record
+out catalog
+out canonical_subdir
+out consolidate
+out audit_in_canonical_subdir
