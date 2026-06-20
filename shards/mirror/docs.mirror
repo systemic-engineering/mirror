@@ -1,0 +1,378 @@
+in @prism
+in @meta
+in @glass
+in @magic
+in @kintsugi
+in @epistemologic
+in @epistemologic/property
+in @mirror
+
+# @mirror/docs — the substrate-decl form of docs/ taxonomy. The
+# substrate describes itself in substrate the same way mirror
+# describes itself in mirror.
+#
+# Recognition #90 candidate (Alex 2026-06-20; landed in the same
+# session that recognized #85→#89 closing the cascade). The substrate-
+# honest collision shape Alex named across today's cascade recurs at
+# the documentation altitude: docs/ ⇔ @mirror/docs (cleanup-as-
+# operator vs docs-as-substrate-decl). Same #pack-G2 pattern as
+# /loop ⇔ @loop (#88); @reflection-family ⇔ @reflection/reflection-
+# Model; reference ⇔ reflection (#89); reed-as-relationship ⇔
+# reed-as-peer.
+#
+# Tick 45 of the refined /loop discipline / tick 1 of the docs/
+# ouroboros loop. Per Reed-as-substrate-actor cleanup audit
+# (2026-06-20 cleanup-review): 18 top-level files audited (13
+# SUPERSEDED archive candidates, 4 CURRENT, 1 HONEST_HISTORY); 13
+# subdirectories; ~195 files total. The audit surfaced THREE
+# organizational findings that this family-root makes substrate-
+# fact: (S-1) top-level convention undefined; (S-3) audits/+
+# reviews/+review/ are three names for one job; (S-4) dating
+# discipline varies by kind.
+#
+# === The recognition ===
+#
+# The substrate had every primitive for self-describing docs:
+# - prism (the typed-record algebra for taxonomy)
+# - glass (the imperfect/transparency carrier for classification)
+# - kintsugi (the loop that moves docs into right shape)
+# - pact + fracture (the bilateral pattern for "classify + repair")
+# - splinter(ast) (the AST-altitude move-shard morphisms)
+#
+# What was missing: the family-root that NAMES the docs taxonomy as
+# substrate. This shard is that name. After it lands, the kintsugi
+# loop can drive docs/ cleanup substrate-pull-correctly: each tick
+# applies one morphism (move file, consolidate subdir, archive
+# superseded); dark_count decreases monotonically; the substrate
+# witnesses its own cleanup.
+#
+# === The taxonomy_kind variant ===
+#
+# Per Seam C4 closure pattern (variants over bare ref-with-documented-
+# values): typed substrate variant naming the docs subdirectory kinds.
+# Same-shape different-meaning forbidden per [[feedback-no-bare-
+# types]].
+#
+# The kinds surveyed in the cleanup audit:
+# - spec: substrate-decl specifications (evergreen; lives at docs/specs/)
+# - insight: dated synthesis documents (lives at docs/insights/)
+# - audit: adversarial-review records (dated; Seam-authored typically)
+# - research: long-form research synthesis (lives at docs/research/)
+# - plan: planning documents (lives at docs/plans/; mostly superseded)
+# - roadmap: phased work tracks (lives at docs/roadmap/)
+# - math: mathematical-altitude documentation (lives at docs/math/)
+# - cicd: CI/CD operational docs (lives at docs/cicd/)
+# - ai: AI-specific architectural docs (lives at docs/ai/)
+# - hook: git/build hook documentation (lives at docs/hooks/)
+# - benchmark: benchmark notes (lives at docs/benchmarks/)
+# - cleanup_review: dated self-cleanup audits (lives at docs/ top-
+#   level; HONEST_HISTORY convention)
+# - grant: grant/funding artifacts (lives at docs/ top-level)
+# - ops: operational notes (CACHE.md, root-focus.md, etc.; docs/ top-
+#   level)
+# - branding: brand/visual artifacts (logo-prompt.md, etc.; docs/
+#   top-level)
+# - archive: superseded docs preserved as honest-history (lives at
+#   docs/archive/<original-path>; substrate-pull-correct convention)
+# - unknown: forward-promised refinement for [UNSURE] register
+#
+# === The dating_discipline variant ===
+#
+# Per S-4 cleanup audit finding: dating varies by kind. This variant
+# names the substrate's canonical conventions:
+# - evergreen: spec docs (substrate-decl specifications; rewritten in
+#   place; no date in filename)
+# - dated: insight + audit + cleanup_review (snapshot at a tick;
+#   filename carries YYYY-MM-DD prefix)
+# - date_suffixed_on_respec: per-recognition canonical specs
+#   (filename adds a date suffix when re-spec'd; preserves prior
+#   versions implicitly)
+# - undated: ops/branding/grant (no date convention; rewritten in
+#   place)
+#
+# === The supersession_status variant ===
+#
+# Per Reed-agent cleanup categories: classification of each doc's
+# relationship to current substrate.
+# - current: actively referenced by landed substrate (#80→#89 shards);
+#   keep
+# - superseded: described a recognition or design that landed
+#   substrate-decl shards replaced; archive candidate
+# - stale: old enough AND not referenced; review candidate
+# - orphan: at wrong path (top-level should be in subdir); move
+#   candidate
+# - duplicate: two docs describing the same thing; consolidate
+#   candidate
+# - contradictory: describes substrate state contradicting current
+#   shards; rewrite or delete candidate
+# - honest_history: stale but preserved as historical record
+#   (cleanup-review-2026-04-29.md is the prior example); keep with
+#   note
+#
+# === The archive convention ===
+#
+# Per the cleanup audit's structural finding: superseded docs do NOT
+# get deleted (no-add-without-pact + no-delete-without-pact). They
+# move to docs/archive/<original-path> with a supersession header
+# explaining WHY they're archived and WHAT they're superseded by.
+# This preserves the substrate's honest-history discipline; the
+# move is content-addressed (git history retains the original path);
+# the archive is the substrate's own past.
+#
+# === Composes with the cascade ===
+#
+# - @mirror/ref (#89): docs/ cleanup pipelines ARE @mirror/ref queries
+#   (`mirror ref where 'taxonomy_kind = superseded' | settle
+#   archive_doc`); the navigation surface drives the docs-cleanup
+#   ouroboros loop
+# - @loop (#88): each docs cleanup tick IS one @loop iteration at the
+#   docs-discipline altitude; loop_well_founded cascades
+# - @mirror/bench (#87): each doc classification persists as a bench
+#   crystal at the docs altitude (forward-promised dispatch)
+# - @moi (#86): doc_record records are @moi(doc_record) at
+#   composition time (pact-verified that the classification respects
+#   the taxonomy)
+# - @kintsugi: the cleanup ouroboros loop IS @kintsugi at the docs
+#   altitude
+# - @magic family: the substrate's mechanism+contract+audit+reveal
+#   discipline at substrate-decl altitude maps to docs/ at the
+#   documentation altitude
+# - @epistemologic/property/* + @kintsugi/fracture/* (#53 bilateral):
+#   each docs cleanup discipline becomes a property+fracture pair
+#   (forward-promised; tick 2+ of this loop)
+#
+# === Pre-AI prior art ===
+#
+#   Knuth literate programming   1984; tangled source + woven docs;
+#                                the substrate's content-addressed
+#                                substrate-decl IS literate
+#                                programming at type-system altitude.
+#   Diataxis framework           Procida 2017+; tutorials/how-to/
+#                                reference/explanation as four kinds
+#                                of documentation. The substrate's
+#                                taxonomy_kind variant lifts this
+#                                discipline at substrate-decl
+#                                altitude.
+#   Maven/Gradle conventions     directory layout as convention
+#                                (src/main vs src/test vs docs); the
+#                                substrate's subdir-per-kind echoes
+#                                this at documentation altitude.
+#   Rust's docs.rs              autogenerated rustdoc; convention-
+#                                over-configuration for docs. The
+#                                substrate gets this for free via
+#                                content-addressed substrate-decl.
+#   Wikipedia categorization     hierarchical kind + cross-reference;
+#                                the substrate's @mirror/docs and
+#                                @mirror/ref compose to give the
+#                                same discipline at substrate-decl
+#                                altitude.
+#
+# Spec context: docs/cleanup-review-2026-06-20.md (Reed-agent cleanup
+#               audit grounding this tick; 18 top-level + 13 subdirs
+#               + ~195 files).
+# Substrate decisions: [[architecture-mirror-ref-reference-reflection-
+#                       collision]] (#89; the navigation surface that
+#                       drives docs cleanup),
+#                      [[architecture-loop-as-monad]] (#88; each
+#                       cleanup tick IS one @loop iteration),
+#                      [[architecture-mirror-bench-ouroboros]] (#87;
+#                       bench measures docs cleanup runtime),
+#                      [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; doc_well_classified IS the
+#                       boundary-harness at documentation altitude),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (56th+ instance; the substrate had every
+#                       primitive for self-describing docs).
+# Related shards: mirror/ref.mirror (the navigation surface; docs
+#                  cleanup uses ref to find and move docs),
+#                 mirror/bench.mirror (perf measurement of cleanup
+#                  iterations),
+#                 loop.mirror (the iterative discipline this loop
+#                  inherits),
+#                 moi.mirror (the monad family-root; doc_record
+#                  results pass through moi at composition).
+# Path-namespace property: this file at `shards/mirror/docs.mirror`
+# declares `@mirror/docs` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming/knuth-1984
+source @arxiv/documentation/procida-2017
+
+prism @mirror/docs {
+  focus  docs
+  project docs
+  split  docs
+  shift  docs
+  settle docs
+}
+
+# === The taxonomy_kind variant ===
+#
+# Per Seam C4 closure pattern: typed substrate variant naming the
+# canonical docs subdirectory kinds. Each kind discriminates the
+# downstream subdir + dating discipline + lifecycle convention.
+type taxonomy_kind =
+  | spec
+  | insight
+  | audit
+  | research
+  | plan
+  | roadmap
+  | math
+  | cicd
+  | ai
+  | hook
+  | benchmark
+  | cleanup_review
+  | grant
+  | ops
+  | branding
+  | archive
+  | unknown
+
+# === The dating_discipline variant ===
+#
+# Per S-4 cleanup audit finding: dating varies by kind. The substrate
+# names the four canonical conventions.
+type dating_discipline =
+  | evergreen
+  | dated
+  | date_suffixed_on_respec
+  | undated
+
+# === The supersession_status variant ===
+#
+# Per Reed-agent cleanup categories: classification of each doc's
+# relationship to current substrate. Bilateral predicate
+# doc_well_classified discriminates on this variant.
+type supersession_status =
+  | current
+  | superseded
+  | stale
+  | orphan
+  | duplicate
+  | contradictory
+  | honest_history
+
+# === The archive_location carrier ===
+#
+# Typed reference for the archive destination of a superseded doc.
+# Per the archive convention: docs/archive/<original-path>.
+# Identity contract: byte-equality on the underlying ref.
+type archive_location = ref
+
+# === The doc_record carrier ===
+#
+# Per [[feedback-no-bare-types]]: typed record over (path,
+# taxonomy_kind, dating_discipline, supersession_status). The
+# substrate-architectural object @mirror/docs instances are records
+# over typed family carriers, not bare refs.
+#
+# Identity contract: byte-equality on the quadruple.
+type doc_record = {
+  path:       ref,
+  kind:       taxonomy_kind,
+  dating:     dating_discipline,
+  status:     supersession_status,
+}
+
+# === classify action ===
+#
+# THE LOAD-BEARING ACTION at @mirror/docs altitude. Given a doc
+# path, returns the typed doc_record carrying its taxonomy
+# classification + dating + supersession status.
+#
+# Body discharges at the realisation boundary; the classification
+# heuristic reads the path (subdirectory + filename), the file
+# content (header), and cross-references against landed shards on
+# main to discriminate current vs superseded.
+classify(path: ref) -> doc_record { \ }
+
+# === subdir_for action ===
+#
+# Returns the canonical subdir for a taxonomy kind. The substrate's
+# convention-over-configuration discipline at documentation altitude.
+subdir_for(k: taxonomy_kind) -> ref { \ }
+
+# === archive action (FIRST non-decorative consumer of
+# doc_well_classified) ===
+#
+# Moves a superseded doc to its archive location per the archive
+# convention. The substrate-pull-correct equivalent of "preserve as
+# honest-history; don't delete."
+#
+# requires doc_well_classified(d): the substrate forecloses
+# archiving misclassified docs. Without this requires clause,
+# archive would admit incorrect moves (the @magic tick-11 dead-
+# letter pattern at docs altitude). The bilateral predicate IS the
+# substrate's archive-correctness check.
+#
+# Body discharges via the @kintsugi loop's morphism application;
+# the actual move is implemented by the realisation boundary's git
+# mv (preserving content-addressed history).
+archive(d: doc_record) -> archive_location
+requires doc_well_classified(d)
+{ \ }
+
+# === consolidate action ===
+#
+# Consolidates multiple subdirectory names for the same taxonomy_kind
+# (per S-3 cleanup finding: audits/ + reviews/ + review/ are three
+# names for one job). Returns the canonical subdir; the realisation
+# layer moves files from the redundant subdirs into the canonical
+# one.
+consolidate(redundant: ref, canonical: ref, k: taxonomy_kind) -> ref { \ }
+
+# === doc_well_classified predicate (bilateral) ===
+#
+# Bilateral verdict per recognition #37 (Pask agreement) AND the
+# alignment-as-boundary-mathematics check (#57) at documentation
+# altitude. Returns verdict that a doc_record's classification is
+# substrate-architecturally well-formed:
+# - path matches the subdir for kind
+# - dating discipline matches kind's convention
+# - supersession status is current evidence-grounded (per cross-
+#   reference against landed substrate)
+#
+# Per Seam B1 closure pattern: archive (above) is the FIRST non-
+# decorative consumer via `requires doc_well_classified(d)`.
+#
+# Discharge: substrate-pull-correct classification check at the
+# species boundary. Bounded → doc is substrate-architecturally well-
+# classified (admit archive); unbounded → doc violates one or more
+# substrate-pull constraints (archive refused; manual review
+# required).
+#
+# Same shape as the bilateral predicates the prior family-roots
+# carry:
+# - @magic: invariant_preserved, audited, mechanism_intact
+# - @frame: bounded_commutator_check
+# - @smarts: discipline_flexible
+# - @cyberpunk: cybernetic_coherence
+# - @pack: pack_coherent
+# - @pack/seam: review_sound
+# - @moi: pact_respected
+# - @reflection: loss_decreases, speaks_at_n_plus_1
+# - @smarts/reflection: bridge_coherent
+# - @reflection/surface: translation_faithful
+# - @reflection/mirror: path_coherent
+# - @mirror/bench: monotone_non_increasing, bench_overhead_below_floor
+# - @loop: loop_well_founded
+# - @mirror/store/crystal: crystal_well_formed
+# - @mirror/ref: ref_query_compositional, interface_authored_by_human
+# - @mirror/docs: doc_well_classified (this one)
+doc_well_classified(d: doc_record) -> verdict { \ }
+
+out @mirror/docs
+out taxonomy_kind
+out dating_discipline
+out supersession_status
+out archive_location
+out doc_record
+out classify
+out subdir_for
+out archive
+out consolidate
+out doc_well_classified
