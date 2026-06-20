@@ -1,0 +1,144 @@
+in @prism
+in @meta
+in @glass
+in @kintsugi
+in @epistemologic
+in @epistemologic/property/cold_compile_within_tolerance
+in @mirror
+in @mirror/bench
+
+# @kintsugi/fracture/cold_compile_within_tolerance — the OPERATIONAL
+# HALF of the second ouroboros bite. The auto-fracture that emits a
+# re-bench morphism when cold compile time regresses past tolerance.
+#
+# Tick 43 / second ouroboros bite (operational half). Sibling to
+# @epistemologic/property/cold_compile_within_tolerance (declarative
+# half; landed in the same tick).
+#
+# === The bilateral pattern (#53; fourth instance, operational half) ===
+#
+# Per the established property+fracture bilateral discipline:
+# - Declarative half: the predicate (@epistemologic/property/<name>)
+# - Operational half: the fracture body via splinter(ast)
+#                     (@kintsugi/fracture/<name>)
+#
+# When the property's verdict fails on an opacity (a crate at the
+# current substrate-pull tick where cold compile regressed against
+# baseline), this fracture body emits a morphism whose splinter(ast)
+# names a re-bench action.
+#
+# === The re-bench discipline ===
+#
+# Per Taut's analysis: yesterday's 38-min hang would have been caught
+# at the pre-push gate if cold_compile baseline crystal had existed.
+# This fracture body composes that future-state:
+#
+#   When property fails (current cold_compile > baseline × (1 + tol)):
+#     emit morphism { content: splinter(ast) { ... } } that:
+#       - clears the substrate's incremental compile cache for `crate`
+#       - re-runs cold_compile against `crate` with measured runtime
+#       - records new bench_crystal at @mirror/bench altitude
+#       - if new runtime still > baseline × (1 + tol):
+#           refuse push (substrate-pull-correct hold)
+#         else:
+#           the new crystal becomes the chain's next predecessor
+#
+# === Composes with @mirror/bench ===
+#
+# The emitted morphism IS a re-bench operation. Bench records the
+# re-run; the predecessor-chain grows; @loop.bind cascades the pact-
+# verification at the next iteration.
+#
+# === Pre-AI prior art ===
+#
+#   pre-push gate              Git hooks with cargo audit + cargo
+#                              test; this fracture body lifts the
+#                              gate to substrate-decl altitude.
+#   regression-bench bisect    git bisect over perf crystals; the
+#                              predecessor-OID chain at @mirror/bench
+#                              enables substrate-altitude bisection.
+#   property-based shrinking   QuickCheck-style shrinking;
+#                              substrate's re-bench IS shrinking at
+#                              perf altitude.
+#
+# Spec context: shards/epistemologic/property/cold_compile_within_
+#               tolerance.mirror (the DECLARATIVE HALF this fracture
+#               body composes); shards/mirror/bench.mirror (the bench
+#               substrate-decl this fracture body's morphism feeds).
+# Substrate decisions: [[architecture-mirror-bench-ouroboros]] (#87;
+#                       this fracture body is the operational half of
+#                       the second ouroboros bite),
+#                      [[architecture-property-fracture-bilateral]]
+#                       (#53 pattern; this is the operational half of
+#                       the fourth instance),
+#                      [[architecture-splinter-ast-quote-primitive]]
+#                       (the substrate's quote primitive; this body
+#                       discharges via splinter(ast) declaratively,
+#                       no Rust),
+#                      [[architecture-loop-as-monad]] (#88; the re-
+#                       bench IS one @loop iteration at the perf
+#                       altitude),
+#                      [[feedback-no-bare-types]] (opacity, morphism,
+#                       bench_crystal are typed carriers).
+# Related shards: epistemologic/property/cold_compile_within_tolerance.mirror
+#                  (the declarative half),
+#                 mirror/bench.mirror (the bench substrate-decl whose
+#                  regress_check feeds back to the chain walk),
+#                 kintsugi/fracture/dark_count_monotone.mirror
+#                  (SIBLING THIRD INSTANCE of the bilateral pattern;
+#                  this shard is the FOURTH),
+#                 kintsugi/oscillate.mirror (the kintsugi loop
+#                  driver; active_pass reads this fracture body when
+#                  composing the per-pulse candidate morphism_set),
+#                 glass.mirror (the substrate floor; opacity,
+#                  location, transparency, verdict, splinter(ast)).
+# Path-namespace property: this file at
+# `shards/kintsugi/fracture/cold_compile_within_tolerance.mirror`
+# declares `@kintsugi/fracture/cold_compile_within_tolerance` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming/floyd-hoare-1969
+source @arxiv/programming/bencher-criterion-2014
+source @arxiv/programming/claessen-hughes-2000
+
+glass @kintsugi/fracture/cold_compile_within_tolerance {
+  focus cold_compile_within_tolerance
+  project cold_compile_within_tolerance
+  split cold_compile_within_tolerance
+  shift cold_compile_within_tolerance
+  settle cold_compile_within_tolerance
+}
+
+# === resolve_cold_compile_regression action (fracture body) ===
+#
+# THE LOAD-BEARING ACTION. Reads an opacity (one element of
+# `cold_compile_within_tolerance(c, baseline, current, tol)
+# .failure(opacity_map)`'s opacity_map); emits a candidate morphism
+# the kintsugi loop proposes through query_phi.
+#
+# The morphism's content field carries a content-addressed splinter
+# at @meta/ast altitude: the re-bench action on the offending crate.
+# Per [[architecture-splinter-ast-quote-primitive]]: splinter(ast)
+# IS the substrate's quote primitive; the re-bench rides the same
+# carrier as every other AST rewrite.
+#
+# The body is FULLY DECLARATIVE via splinter(ast). No Rust
+# manipulation; the substrate's compiler verifies the construction is
+# deterministic and well-typed.
+resolve_cold_compile_regression(opacity: opacity) -> morphism {
+  morphism {
+    content: splinter(ast) {
+      content:      opacity.location.file,
+      ast:          @meta/ast,
+      transparency: success,
+    },
+    score: dissonance {
+      roughness: opacity.property,
+      partials:  1,
+    },
+    expected: authentic,
+  }
+}
+
+out @kintsugi/fracture/cold_compile_within_tolerance
+out resolve_cold_compile_regression

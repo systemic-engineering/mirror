@@ -1,0 +1,166 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/property
+in @mirror
+in @mirror/bench
+in @kintsugi
+
+# @epistemologic/property/cold_compile_within_tolerance — the
+# DECLARATIVE HALF of the second ouroboros bite. Substrate-pull-correct
+# property asserting: cold compile time across substrate-pull ticks
+# is bounded by baseline × (1 + tolerance).
+#
+# Tick 43 / second ouroboros bite. Per Taut's substrate-decl analysis
+# 2026-06-19: this IS the lift that WOULD have caught yesterday's
+# 38-min pre-push hang. The first ouroboros bite (dark_count_monotone
+# at tick 41) was safe but didn't catch real regressions; this bite
+# catches the regression class today's hang exposed.
+#
+# === The bilateral pattern (#53; fourth instance) ===
+#
+# - First: @kintsugi/fracture/keyword (2026-06-10 `d908798`)
+# - Second: @mirror/fracture/predicate (forward-promised, #272)
+# - Third: dark_count_monotone (yesterday tick 41, `499ffd9`)
+# - Fourth (THIS): cold_compile_within_tolerance
+#
+# Declarative half: this property
+# Operational half: @kintsugi/fracture/cold_compile_within_tolerance
+#                    (sibling shard in this same tick)
+#
+# === The predicate ===
+#
+# Per @mirror/bench's three-conjunct monotone_non_increasing
+# (substrate-mathematical floor for eⁿ⁺¹ ≤ eⁿ at op-runtime altitude),
+# specialized to the cold_compile operation:
+#
+#   cold_compile_within_tolerance(crate, baseline, current,
+#                                 tolerance) ⇔
+#     runtime_ns(current) ≤ runtime_ns(baseline) × (1 + tolerance)
+#   ∧ output_oid(current)  ≡ output_oid(baseline)
+#   ∧ env_oid(current)     ≡ env_oid(baseline)
+#
+# Three-conjunct guards against false-positives:
+# - perf conjunct: the substrate-mathematical regression check
+# - output conjunct: same binary produced (correctness)
+# - env conjunct: same hardware+toolchain+flags (no cross-machine
+#                 false-positive)
+#
+# === Why this lift catches yesterday's regression ===
+#
+# Yesterday's 38-min cold compile (vs ~25s warm) was a substrate
+# regression: same op, same env, same expected output, BUT runtime
+# exploded. The three-conjunct's perf check fails with verdict
+# `failure`; the fracture body (sibling shard) emits a re-bench
+# morphism that the kintsugi loop applies, refusing the push gate
+# until cold compile returns within tolerance.
+#
+# This IS the substrate disclosure Alex's framing #2 named: regression
+# tests fail when the same operation becomes slower (with an error
+# delta).
+#
+# === Crystal storage shape (per @mirror/bench bench_crystal) ===
+#
+# Both baseline and current are bench_crystals at perf altitude. The
+# fracture_calendar from Mara's @mirror/store/crystal (the existing
+# build-lifecycle altitude crystal) names WHEN to re-bench. The
+# predecessor-OID chain at perf altitude tracks the cold_compile
+# crystal evolution.
+#
+# === Composes with @mirror/bench ===
+#
+# This property's verdict feeds @mirror/bench's regress_check via
+# composition. When the kintsugi loop runs cold_compile_within_
+# tolerance against the current bench_crystal, the verdict gates
+# whether the substrate-pull tick is admissible. The pre-push gate
+# becomes substrate-pull-correct: regress → imperfect → hold the
+# push until re-converge.
+#
+# === Pre-AI prior art ===
+#
+#   compile-time budgets       webpack/parcel/turborepo bundle-size
+#                              budgets at the build-tool altitude.
+#                              This property lifts to substrate-decl.
+#   Criterion.rs threshold     Bencher discipline of failing CI when
+#                              perf regresses past threshold.
+#                              Substrate-altitude equivalent.
+#   monotone ranking functions Floyd-Hoare loop invariants;
+#                              cold_compile_ns IS a ranking function
+#                              for substrate-pull-tick admissibility.
+#
+# Spec context: shards/mirror/bench.mirror (#87; the bench substrate-
+#               decl this property composes via monotone_non_
+#               increasing); shards/epistemologic/property/
+#               dark_count_monotone.mirror (the THIRD bilateral
+#               instance; this shard is the FOURTH).
+# Substrate decisions: [[architecture-mirror-bench-ouroboros]] (#87;
+#                       this property is the second ouroboros bite),
+#                      [[architecture-property-fracture-bilateral]]
+#                       (#53 pattern; this is the fourth instance),
+#                      [[architecture-loop-as-monad]] (#88; the
+#                       loop's bind action's pact-respected cascades
+#                       through this property),
+#                      [[architecture-shards-as-substrate-source]],
+#                      [[feedback-no-bare-types]] (crate and
+#                       bench_crystal are typed carriers).
+# Related shards: mirror/bench.mirror (the bench substrate-decl;
+#                  monotone_non_increasing is the three-conjunct
+#                  this property specializes),
+#                 epistemologic/property/dark_count_monotone.mirror
+#                  (sibling third instance; substrate-pull-pattern
+#                  ancestor),
+#                 kintsugi/fracture/cold_compile_within_tolerance.mirror
+#                  (the OPERATIONAL HALF of this bilateral pair;
+#                  landed in this same tick).
+# Path-namespace property: this file at
+# `shards/epistemologic/property/cold_compile_within_tolerance.mirror`
+# declares `@epistemologic/property/cold_compile_within_tolerance`
+# per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming/floyd-hoare-1969
+source @arxiv/programming/bencher-criterion-2014
+
+prism @epistemologic/property/cold_compile_within_tolerance {
+  focus cold_compile_within_tolerance
+  project cold_compile_within_tolerance
+  split cold_compile_within_tolerance
+  shift cold_compile_within_tolerance
+  settle cold_compile_within_tolerance
+}
+
+# === The crate carrier ===
+#
+# Typed reference for the Rust crate being benched. Forward-promised
+# refinement: typed parametric crate once the substrate's cargo-
+# manifold type lands.
+#
+# Identity contract: byte-equality on the underlying ref.
+type crate = ref
+
+# === cold_compile_within_tolerance predicate (declarative half) ===
+#
+# THE LOAD-BEARING PREDICATE. Returns verdict that the current cold
+# compile crystal's runtime is bounded by baseline × (1 + tolerance)
+# under same output_oid and same env_oid.
+#
+# Body discharges at the realisation boundary; the @kintsugi loop's
+# active_pass reads this predicate during the pre-push gate. The
+# operational half (the fracture body that emits a re-bench morphism
+# when this predicate fails) lives at
+# @kintsugi/fracture/cold_compile_within_tolerance (sibling shard in
+# this same tick).
+#
+# Bounded → substrate-pull is honest (cold compile within tolerance,
+# same binary, same env). Unbounded → substrate-pull regressed; the
+# kintsugi loop must re-converge before the push is admissible.
+cold_compile_within_tolerance(
+  c: crate,
+  baseline: bench_crystal,
+  current: bench_crystal,
+  tolerance: metric
+) -> verdict { \ }
+
+out @epistemologic/property/cold_compile_within_tolerance
+out crate
+out cold_compile_within_tolerance
