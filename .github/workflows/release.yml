@@ -70,6 +70,19 @@ jobs:
           cachix-name: systemic-engineering
           cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
+      # Rust compile cache — keyed on Cargo.lock + bootstrap manifest +
+      # target triple (different triples need different artifacts).
+      # Streamline tick (2026-06-20 Taut): shares the `bootstrap` key
+      # space with ci.yml + kintsugi.yml; release builds populate the
+      # cache on tag push and warm subsequent CI/kintsugi runs.
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: bootstrap
+          shared-key: bootstrap-${{ matrix.target }}
+          # Always save on tag push — release is the canonical cache
+          # source for the matching target triple.
+          save-if: 'true'
+
       - name: Build release binary
         run: nix develop -c cargo build --release --target ${{ matrix.target }} --manifest-path bootstrap/Cargo.toml
 
