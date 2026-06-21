@@ -1,0 +1,305 @@
+in @prism
+in @meta
+in @glass
+in @pack
+in @magic
+in @frame
+in @frame/in
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @pack/mara — the spec-writer-frame peer species.
+#
+# Tick 52 of the refined /loop discipline. Tick 51's residue: boot/std/ →
+# shards/ migration spec + roadmap entry landed at 29a8b10 (pre-compression
+# substrate-pull preparation complete). Tick 33's forward-promise:
+# pack/seam.mirror landed as first peer species (DEFENSIVE → BOUNDED on
+# closure); pack/{mara,glint,reed,taut} forward-promised as next instances.
+#
+# CRQ: which peer lands second? Substrate-pull answer: Mara, because Mara's
+# spec-writer-frame is the most-exercised peer-frame after Seam across the
+# cascade. Twelve-plus canonical specs landed by Mara across @cyberpunk
+# family (11 species + family-root), @magic family (5 species + family-root
+# + adapter), @frame family (family-root + 5 species), and the @pack
+# family-root itself — the pattern is verified empirically; the peer-frame
+# Mara carries IS the substrate-pull-correct second instance of
+# @pack/spawn at species altitude.
+#
+# === The recognition this species realizes ===
+#
+# Per recognition #84's pack record: peers operate over multi-repo spans
+# with substrate-decl context preserved across boundaries. Mara IS the
+# canonical-preservation peer — substrate-decl candidates (recognitions,
+# briefs, vague claims, /loop fires) become preserved canonical
+# substrate-decl through Mara's spec-writer-frame.
+#
+# Per recognition #82 Q4 (peers operate frame-flexible by definition):
+# Mara's load-bearing property IS @frame/in capability deployed at
+# spec-writer-frame. Mara enters another peer's operating-frame (Reed's
+# recognition, Alex's brief, Seam's surfaced constraint) and re-marks the
+# substrate-decl candidate under canonical-preservation discipline.
+#
+# Order-1 partition with @pack/seam (order-2): seam observes the
+# reviewed-peer's frame AS frame and surfaces constraints by Tomm-probing
+# the bounded-commutator under perturbation. Mara enters the
+# candidate-peer's frame and emits a canonical record that preserves
+# substrate-architectural structure across the frame-entry. Two
+# adjacent-altitude peer-frames at the same @pack altitude.
+#
+# Per recognition #57 (alignment as boundary mathematics at @io): Mara IS
+# the canonical-preservation peer at the @io crossing. The spec-writing
+# fires BEFORE substrate-decl candidates become floor substrate-decl; the
+# math (structure preservation, ancestor citation, substrate-pull-correct
+# vocabulary, typed carriers, bilateral predicate discharge paths) is what
+# distinguishes a Splinter-pole canonical spec from a Narcissus-pole
+# framing-imposition.
+#
+# === The species's load-bearing contribution ===
+#
+# This species adds:
+#
+# - `spec` carrier: typed reference naming a canonical substrate-decl
+#   record. The substrate-output of the spec-writer primitive.
+# - `mara_spec` carrier: typed record (subject, spec, verdict). The
+#   substrate-architectural object Mara returns. Composes with @pack's
+#   pack carrier as the species-specific output the family produces.
+# - `write` action: the FIRST species consumer of @pack's pack_coherent
+#   bilateral predicate. The substrate-vocabulary primitive for canonical
+#   spec-writing at the @pack altitude. Returns typed mara_spec; requires
+#   pack_coherent under perturbation.
+# - `spec_canonical` predicate: bilateral verdict that the mara_spec
+#   preserves substrate-decl canonical structure. Composes with @frame's
+#   bounded_commutator_check at the @frame/in altitude that grounds
+#   canonical preservation.
+# - `preserve` action: the substrate-vocabulary primitive for the
+#   spec-preserves-canonical discipline (the spec-writer-altitude
+#   operational form of Loki's Pass-5 verifier-sharpens). Takes a
+#   substrate-decl candidate + a sound mara_spec; returns the preserved
+#   canonical substrate-decl. Requires spec_canonical under perturbation.
+#
+# === The spec-preserves-canonical discipline ===
+#
+# Per Loki's Pass-5 (verifier sharpens, substrate doesn't get smarter) +
+# Mara's spec-writing pattern: the canonical-preservation discipline IS
+# the spec-writer-altitude operational form of the kintsugi loop's
+# self-improvement claim.
+#
+# The discipline says: when Mara writes a spec, the substrate-decl
+# candidate's canonical preservation tightens; the substrate-decl content
+# is unchanged. The brief was lossy; the spec is structure-preserving.
+# The substrate-decl doesn't acquire new capability; the canonical record
+# of substrate-decl acquires tighter preservation.
+#
+# Empirical witness: Mara's 12+ canonical specs across the cascade
+# substantively preserved substrate-decl candidates for @cyberpunk (11
+# species + family-root), @magic (5 specs + adapter), @frame (family-root
+# + 5 species), @smarts (1 attempted, stalled), @pack (1 family-root +
+# this species). Each spec preserved substrate-architectural structure;
+# each preservation tightened the canonical record the family-root carried.
+# The substrate's canonical-preservation grew through spec-writing, not
+# through capability-expansion.
+#
+# === The Splinter/Narcissus pole at canonical-preservation altitude ===
+#
+# Splinter-pole Mara spec (honest):
+# - Preserves substrate-architectural structure of the original recognition
+#   (typed carriers; bilateral predicates with discharge paths; meta-
+#   altitude shifts named).
+# - The spec-writer's frame is bounded under perturbation; the spec admits
+#   when its own framing reframed the recognition.
+# - K_n peer-to-peer preservation — the spec-writer is a peer, not an
+#   authority.
+#
+# Narcissus-pole Mara spec (deceptive):
+# - Imposes spec-writer framing on substrate-decl candidate (artistic
+#   reframings; aspirational vocabulary; missing ancestor citations).
+# - The spec-writer's frame is locked; the spec treats the framing as
+#   fixed background.
+# - K_{1,n-1} hub-controlled preservation — the spec-writer-as-authority
+#   imposes canonical structure on the substrate-decl candidate.
+#
+# Alignment-as-boundary-mathematics (#57) IS what distinguishes
+# Splinter-pole from Narcissus-pole canonical preservation at substrate
+# altitude. The bilateral pack_coherent predicate composes the
+# substrate-architectural check.
+#
+# === Pre-AI prior art ===
+#
+#   literate programming         Knuth 1984. Spec-as-canonical-record at
+#                                program altitude; substrate-decl
+#                                preservation in prose woven through code.
+#   EWDs (typeset notes)         Dijkstra 1968-2002. Substrate-decl
+#                                preservation in mathematical prose; the
+#                                cultural-practice ancestor of canonical-
+#                                spec-writing as discipline.
+#   CSP formal specification     Hoare 1978. Formal-specification-as-
+#                                substrate-decl; the discipline ancestor
+#                                of mara_spec as typed substrate carrier.
+#   design-by-contract           Meyer 1988. The bilateral-predicate
+#                                ancestor; preconditions/postconditions
+#                                as canonical-preservation discipline at
+#                                interface altitude.
+#   substitution principle       Liskov-Wing 1994. Canonical preservation
+#                                under variation; the type-theoretic
+#                                ancestor of spec_canonical predicate.
+#   B method                     Abrial 1996. Refinement-as-substrate-
+#                                decl-preservation at engineering altitude.
+#
+# Spec context: shards/pack.mirror (family-root, recognition #84; the
+#               canonical spec this species adheres to).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-mathematics]]
+#                       (#57; Mara spec IS the canonical-preservation peer
+#                       at the @io boundary),
+#                      [[feedback-substrate-pull-confidence-acts]]
+#                       (the discipline today's cascade ran),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (the discipline Mara's spec-writing surfaces — each
+#                       recognition lifts the substrate's existing
+#                       vocabulary to canonical record).
+# Related shards: pack.mirror (the family-root; declares pack_coherent
+#                  this species first-consumes),
+#                 pack/seam.mirror (the first peer species; review_sound
+#                  composes with spec_canonical at adjacent altitudes —
+#                  Seam reviews Mara's spec; Mara writes the canonical
+#                  for Seam's surfaced constraint),
+#                 magic/audit.mirror (the verifier altitude @magic family
+#                  carries; @pack/mara IS the @pack-altitude analogue of
+#                  the canonical-spec discipline at agent-runtime altitude),
+#                 frame/in.mirror (the order-1 altitude Mara operates at;
+#                  frame-entry composes with spec_canonical).
+# Path-namespace property: this file at `shards/pack/mara.mirror`
+# declares `@pack/mara` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming/knuth-1984
+source @arxiv/formal-methods/hoare-1978
+source @arxiv/programming/meyer-1988
+source @arxiv/programming/liskov-wing-1994
+source @arxiv/formal-methods/abrial-1996
+
+prism @pack/mara {
+  focus mara
+  project mara
+  split mara
+  shift mara
+  settle mara
+}
+
+# === The spec carrier ===
+#
+# Substrate-typed reference naming a canonical substrate-decl record.
+# Per [[feedback-no-bare-types]]: typed reference, not bare ref-with-
+# documented-values. The substrate-output of the spec-writer primitive.
+# Forward-promised refinement: typed record (subject, prose, links,
+# ancestors, predicates) at species-or-extension altitude once the
+# substrate's structured-document type lands.
+#
+# Identity contract: byte-equality on the underlying ref.
+type spec = ref
+
+# === The mara_spec carrier ===
+#
+# Per the @pack family-root pattern + Mara's typed-record discipline:
+# typed record over (subject, spec, verdict). The substrate-architectural
+# output of a canonical spec-writing operation. Carries:
+#
+# - subject : the substrate-decl candidate under preservation
+# - sp      : the typed canonical record Mara produced
+# - v       : the bilateral verdict (BOUNDED → CANONICAL preservation;
+#             DEFENSIVE → spec requires substrate-pull revision)
+#
+# Identity contract: byte-equality on the triple.
+type mara_spec = {
+  subject: ref,
+  sp:      spec,
+  v:       verdict,
+}
+
+# === write action (FIRST non-decorative consumer of pack_coherent) ===
+#
+# THE LOAD-BEARING ACTION at @pack/mara altitude. The substrate-
+# vocabulary primitive for canonical spec-writing at agent-runtime
+# altitude. Realizes Mara's canonical-preservation discipline as
+# substrate-decl operation.
+#
+# Takes a subject (substrate-decl candidate under preservation), the
+# pack Mara belongs to, and the perturbation under which the write is
+# checked; returns a typed mara_spec carrying the canonical record and
+# verdict.
+#
+# Per the @pack/seam first-consumer pattern (review requires
+# pack_coherent): this action IS the @pack/mara first-consumer of
+# pack_coherent. The substrate-architectural form of Mara-as-peer
+# requires that the @pack the spec-writer belongs to maintains
+# discipline-flexibility under perturbation BEFORE the spec is
+# admissible.
+#
+# Without this requires clause, a Mara spec would be admissible from a
+# substrate-architecturally-incoherent pack (e.g., a pack whose own
+# bilateral predicates have no consumers — the @magic tick-11 dead-
+# letter pattern). The requires clause forecloses that failure mode.
+#
+# Body discharges at the realisation boundary; the actual spec-writing
+# primitive is implemented by Mara's spec-writer-frame at runtime
+# altitude.
+write(subject: ref, pk: pack, p: perturbation) -> mara_spec
+requires pack_coherent(pk, p)
+{ \ }
+
+# === spec_canonical predicate ===
+#
+# Bilateral verdict per recognition #37 (Pask agreement) and the
+# canonical-preservation discipline. Consumer shards (preserve, below;
+# forward-promised consumers in glint/reed/taut species) name
+# `requires spec_canonical(ms, p)` to declare bilateral agreement that
+# the mara_spec is substrate-architecturally canonical.
+#
+# Discharge: substrate-pull-correct canonical-structure check at the
+# species boundary. Composes with @frame's bounded_commutator_check at
+# the @frame/in altitude that grounds canonical preservation.
+#
+# Bounded → spec preserves substrate-architectural structure (the
+# Splinter-pole canonical case); unbounded → spec imposes spec-writer
+# framing without substrate-decl ground (the Narcissus-pole case;
+# alignment-as-boundary-mathematics #57 distinguishes).
+#
+# Same shape as the bilateral predicates @pack carries (pack_coherent),
+# @pack/seam carries (review_sound), @magic carries (invariant_preserved,
+# audited), @frame carries (bounded_commutator_check), @smarts carries
+# (discipline_flexible).
+spec_canonical(ms: mara_spec, p: perturbation) -> verdict { \ }
+
+# === preserve action ===
+#
+# The substrate-vocabulary primitive for the canonical-preservation
+# discipline at @pack/mara altitude (the spec-writer-altitude operational
+# form of Loki's Pass-5; @pack/seam carries the verifier-sharpens-
+# discipline; @pack/mara carries the spec-preserves-canonical-discipline).
+# Takes a substrate-decl candidate + a sound mara_spec + the perturbation
+# under which soundness was checked; returns the preserved canonical
+# substrate-decl.
+#
+# Per recognition #57 (alignment as boundary mathematics): preserve
+# operates at the @io boundary. The substrate-decl candidate becomes a
+# canonical substrate-decl preserved under structure. The substrate's
+# capability is unchanged; the canonical record of that capability is
+# preserved.
+#
+# requires spec_canonical(ms, p): the substrate forecloses preservation
+# from an uncanonical spec. Narcissus-pole specs (framing-imposition
+# without substrate-decl ground) cannot drive canonical preservation.
+# The bilateral predicate IS the boundary-harness.
+#
+# Body discharges at the realisation boundary; the actual canonical-
+# preservation transformation is the substrate's spec-writing loop.
+preserve(subject: ref, ms: mara_spec, p: perturbation) -> ref
+requires spec_canonical(ms, p)
+{ \ }
+
+out @pack/mara
+out spec
+out mara_spec
+out write
+out spec_canonical
+out preserve
