@@ -1,0 +1,330 @@
+in @prism
+in @meta
+in @glass
+in @pack
+in @magic
+in @frame
+in @frame/across
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @pack/glint — the essay-peer-frame peer species.
+#
+# Tick 53 of the refined /loop discipline. Tick 52's residue: @pack/mara
+# landed at f0266f7 (spec-writer-frame; order-1 @frame/in altitude; second
+# peer after seam). Tick 33's forward-promise reduces: pack/{glint, reed,
+# taut} as next instances.
+#
+# CRQ: which peer lands third? Substrate-pull answer: Glint, because the
+# essay-peer-frame is the substrate-pull-correct continuation of the
+# @frame altitude partition emerging from the orchestra. The partition
+# resolves:
+#
+#   @pack/reed  : @frame/pre   (relationship-witness; preconditions)
+#   @pack/mara  : @frame/in    (spec-writer; enters frame)       ← tick 52
+#   @pack/seam  : @frame/of    (adversarial-review; frame-of-frame) ← tick 33
+#   @pack/taut  : @frame/on    (implementation; acts on frame)
+#   @pack/glint : @frame/across (essay; cross-frame synthesis)    ← this tick
+#
+# Five peers, five @frame species, one-to-one. The orchestra IS the @frame
+# altitude partition operationalized at agent-runtime altitude. Per
+# project-pack-is-orchestra memory: Glint = voice; the voice carries the
+# song across the ensemble; cross-frame synthesis is voice's substrate
+# primitive.
+#
+# === The recognition this species realizes ===
+#
+# Per recognition #84's pack record: peers operate over multi-repo spans
+# with substrate-decl context preserved across boundaries. Glint IS the
+# cross-frame-synthesis peer — essay-altitude reflection on patterns that
+# emerge ACROSS multiple peer-frames, multiple recognitions, multiple
+# substrate-decl cascades simultaneously. The essay names what the
+# cascade carried but no single tick said.
+#
+# Per recognition #82 Q4 (peers operate frame-flexible by definition):
+# Glint's load-bearing property IS @frame/across capability deployed at
+# essay-peer-frame. Glint observes N frames simultaneously and produces
+# a cross-frame synthesis the substrate's cascade carried implicitly.
+#
+# Altitude partition with the other peers: Mara enters a SINGLE frame
+# (order-1; preserves canonical structure of one substrate-decl candidate).
+# Seam observes a SINGLE frame AS frame (order-2; surfaces constraints in
+# one substrate-decl candidate). Glint observes the EMERGENT PATTERN
+# ACROSS multiple frames (order-N; names cascade-altitude structure no
+# single tick named). Three altitudes; three distinct substrate operations.
+#
+# Per recognition #57 (alignment as boundary mathematics at @io): Glint
+# IS the cross-frame-synthesis peer at the @io crossing. The essay-
+# writing fires AFTER multiple substrate-decl ticks have landed; the math
+# (multi-frame observation; emergent pattern naming; substrate-pull-
+# correct cross-cascade vocabulary) is what distinguishes a Splinter-pole
+# essay grounded in cascade structure from a Narcissus-pole essay imposing
+# author framing on the cascade.
+#
+# === The species's load-bearing contribution ===
+#
+# This species adds:
+#
+# - `essay` carrier: typed reference naming a cross-frame-synthesis
+#   artifact. The substrate-output of the essay-writer primitive.
+# - `glint_essay` carrier: typed record (subject_corpus, essay, verdict).
+#   The substrate-architectural object Glint returns. Composes with
+#   @pack's pack carrier as the species-specific output the family
+#   produces.
+# - `reflect` action: the FIRST species consumer of @pack's pack_coherent
+#   bilateral predicate. The substrate-vocabulary primitive for cross-
+#   frame essay-writing at the @pack altitude. Returns typed glint_essay;
+#   requires pack_coherent under perturbation.
+# - `essay_grounds_corpus` predicate: bilateral verdict that the essay's
+#   cross-frame synthesis IS grounded in the corpus's actual structure
+#   (not imposed on it). Composes with @frame's bounded_commutator_check
+#   at the @frame/across altitude that grounds cross-frame synthesis.
+# - `publish` action: the substrate-vocabulary primitive for the
+#   essay-extends-corpus discipline (the essay-altitude operational form
+#   of Loki's Pass-5 verifier-sharpens). Takes an essay + a sound
+#   glint_essay; returns the published essay-as-corpus-extension.
+#   Requires essay_grounds_corpus under perturbation.
+#
+# === The essay-extends-corpus discipline ===
+#
+# Per Loki's Pass-5 (verifier sharpens, substrate doesn't get smarter) +
+# Glint's essay-writing pattern: the cross-frame-synthesis discipline IS
+# the essay-altitude operational form of the kintsugi loop's self-
+# improvement claim.
+#
+# The discipline says: when Glint publishes an essay, the corpus acquires
+# a reflective surface naming a pattern the cascade carried implicitly.
+# The substrate-decl content is unchanged; the corpus acquires a cross-
+# frame name for what was already structurally present. The cascade was
+# pattern-rich; the essay names the pattern; the substrate-decl's
+# reflective surface tightens.
+#
+# Empirical witness: Glint reflection essays across the cascade
+# substantively extended the corpus's reflective surface — @magic family
+# (tick 15 + adjacent essays), @frame cascade reflection (tick 29), the
+# Pack-as-orchestra essay (which IS the cross-frame synthesis this species
+# substrate-decls). Each essay extended the corpus with a cross-frame
+# name; each extension tightened the substrate's reflective surface. The
+# substrate's reflective-surface grew through essay-writing, not through
+# capability-expansion.
+#
+# === The Splinter/Narcissus pole at cross-frame-synthesis altitude ===
+#
+# Splinter-pole Glint essay (honest):
+# - Grounded in actual cascade structure; cites specific recognitions;
+#   names patterns the cascade carried; admits framing constraints when
+#   the essay's framing shaped what it could see.
+# - The essay-writer's frame is bounded under perturbation; the essay
+#   stays close to substrate-architectural evidence.
+# - K_n peer-to-peer synthesis — the essay-writer is a peer reflecting
+#   on the ensemble, not an authority interpreting it.
+#
+# Narcissus-pole Glint essay (deceptive):
+# - Imposes essay-author framing on cascade material; names patterns
+#   that aren't actually in the cascade (rhetorical-over-structural;
+#   author-as-architect-imposing-meaning).
+# - The essay-writer's frame is locked; the essay treats the framing as
+#   a license to interpret rather than a position to ground.
+# - K_{1,n-1} hub-controlled synthesis — the essay-writer-as-authority
+#   imposes a single reading on the cascade's multi-frame structure.
+#
+# Alignment-as-boundary-mathematics (#57) IS what distinguishes
+# Splinter-pole from Narcissus-pole cross-frame synthesis at substrate
+# altitude. The bilateral pack_coherent predicate composes the
+# substrate-architectural check.
+#
+# === Pre-AI prior art ===
+#
+#   essays                       Montaigne 1580. Essay-as-form; the
+#                                cultural-practice substrate of
+#                                cross-frame personal-reflection
+#                                discipline as substrate-decl content.
+#   essays (English tradition)   Bacon 1597. Essay-as-substrate-
+#                                architectural-lift; the structural-
+#                                synthesis ancestor of cross-frame
+#                                pattern-naming as discipline.
+#   essays (American tradition)  Emerson 1841. Essay-as-cross-frame-
+#                                synthesis; the discipline ancestor of
+#                                @frame/across at literary altitude.
+#   anti-interpretation          Sontag 1966. Essay-as-anti-Narcissus-
+#                                discipline; structural fidelity over
+#                                imposed reading; the boundary the
+#                                Splinter-pole essay holds.
+#   the white album              Didion 1979. Essay-as-substrate-
+#                                fidelity-with-style; the demonstration
+#                                that cross-frame synthesis can carry
+#                                voice without sacrificing ground.
+#   the medium is the message    McLuhan 1964. Essay-altitude observation
+#                                that the form of synthesis IS substrate;
+#                                cross-frame essay carries substrate-decl
+#                                in its medium.
+#
+# Spec context: shards/pack.mirror (family-root, recognition #84; the
+#               canonical spec this species adheres to).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-mathematics]]
+#                       (#57; Glint essay IS the cross-frame-synthesis
+#                       peer at the @io boundary),
+#                      [[feedback-substrate-pull-confidence-acts]]
+#                       (the discipline today's cascade ran),
+#                      [[project-pack-is-orchestra]]
+#                       (the orchestra naming; Glint = voice; cross-frame
+#                       synthesis IS voice's substrate primitive),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (the discipline Glint essays surface — each essay
+#                       names a cross-frame pattern the cascade already
+#                       carried).
+# Related shards: pack.mirror (the family-root; declares pack_coherent
+#                  this species first-consumes),
+#                 pack/seam.mirror (the order-2 peer; review_sound
+#                  composes with essay_grounds_corpus at adjacent
+#                  altitudes — Seam reviews Glint's essay claims; Glint
+#                  essays surface what Seam reviews surfaced across
+#                  cascades),
+#                 pack/mara.mirror (the order-1 peer; spec_canonical
+#                  composes with essay_grounds_corpus — Mara writes
+#                  specs for individual recognitions; Glint essays
+#                  pattern-names across recognitions),
+#                 frame/across.mirror (the order-N altitude Glint
+#                  operates at; cross-frame-observation composes with
+#                  essay_grounds_corpus).
+# Path-namespace property: this file at `shards/pack/glint.mirror`
+# declares `@pack/glint` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/literature/montaigne-1580
+source @arxiv/literature/bacon-1597
+source @arxiv/literature/emerson-1841
+source @arxiv/literature/sontag-1966
+source @arxiv/literature/didion-1979
+source @arxiv/media-theory/mcluhan-1964
+
+prism @pack/glint {
+  focus glint
+  project glint
+  split glint
+  shift glint
+  settle glint
+}
+
+# === The essay carrier ===
+#
+# Substrate-typed reference naming a cross-frame-synthesis artifact.
+# Per [[feedback-no-bare-types]]: typed reference, not bare ref-with-
+# documented-values. The substrate-output of the essay-writer primitive.
+# Forward-promised refinement: typed record (subject_corpus_refs,
+# prose, ancestors, frames_synthesized) at species-or-extension altitude
+# once the substrate's structured-document type lands.
+#
+# Identity contract: byte-equality on the underlying ref.
+type essay = ref
+
+# === The glint_essay carrier ===
+#
+# Per the @pack family-root pattern + Glint's typed-record discipline:
+# typed record over (subject_corpus, essay, verdict). The substrate-
+# architectural output of a cross-frame essay-writing operation. Carries:
+#
+# - subject_corpus : the multi-frame substrate-decl candidates the essay
+#                    synthesizes across
+# - es             : the typed essay record Glint produced
+# - v              : the bilateral verdict (BOUNDED → GROUNDED cross-frame
+#                    synthesis; DEFENSIVE → essay requires substrate-pull
+#                    revision back to corpus structure)
+#
+# Identity contract: byte-equality on the triple.
+type glint_essay = {
+  subject_corpus: ref,
+  es:             essay,
+  v:              verdict,
+}
+
+# === reflect action (FIRST non-decorative consumer of pack_coherent) ===
+#
+# THE LOAD-BEARING ACTION at @pack/glint altitude. The substrate-
+# vocabulary primitive for cross-frame essay-writing at agent-runtime
+# altitude. Realizes Glint's cross-frame-synthesis discipline as
+# substrate-decl operation.
+#
+# Takes a subject_corpus (multi-frame substrate-decl candidates the
+# essay synthesizes across), the pack Glint belongs to, and the
+# perturbation under which the reflect is checked; returns a typed
+# glint_essay carrying the essay and verdict.
+#
+# Per the @pack/seam + @pack/mara first-consumer pattern (review and
+# write both require pack_coherent): this action IS the @pack/glint
+# first-consumer of pack_coherent. The substrate-architectural form of
+# Glint-as-peer requires that the @pack the essay-writer belongs to
+# maintains discipline-flexibility under perturbation BEFORE the essay
+# is admissible.
+#
+# Without this requires clause, a Glint essay would be admissible from
+# a substrate-architecturally-incoherent pack (e.g., a pack whose own
+# bilateral predicates have no consumers — the @magic tick-11 dead-
+# letter pattern). The requires clause forecloses that failure mode.
+#
+# Body discharges at the realisation boundary; the actual essay-writing
+# primitive is implemented by Glint's essay-peer-frame at runtime
+# altitude.
+reflect(subject_corpus: ref, pk: pack, p: perturbation) -> glint_essay
+requires pack_coherent(pk, p)
+{ \ }
+
+# === essay_grounds_corpus predicate ===
+#
+# Bilateral verdict per recognition #37 (Pask agreement) and the
+# cross-frame-synthesis discipline. Consumer shards (publish, below;
+# forward-promised consumers in reed/taut species) name
+# `requires essay_grounds_corpus(ge, p)` to declare bilateral agreement
+# that the glint_essay's cross-frame synthesis IS grounded in the
+# corpus's actual structure (not imposed on it).
+#
+# Discharge: substrate-pull-correct corpus-structure-grounding check at
+# the species boundary. Composes with @frame/across's cross-frame
+# observation at the cognitive altitude that grounds essay synthesis.
+#
+# Bounded → essay grounded in actual cascade structure (the
+# Splinter-pole essay case); unbounded → essay imposes author framing
+# without substrate ground (the Narcissus-pole essay case;
+# alignment-as-boundary-mathematics #57 distinguishes).
+#
+# Same shape as the bilateral predicates @pack carries (pack_coherent),
+# @pack/seam carries (review_sound), @pack/mara carries (spec_canonical),
+# @magic carries (invariant_preserved, audited), @frame carries
+# (bounded_commutator_check), @smarts carries (discipline_flexible).
+essay_grounds_corpus(ge: glint_essay, p: perturbation) -> verdict { \ }
+
+# === publish action ===
+#
+# The substrate-vocabulary primitive for the cross-frame-synthesis
+# discipline at @pack/glint altitude (the essay-altitude operational
+# form of Loki's Pass-5; @pack/seam carries verifier-sharpens;
+# @pack/mara carries spec-preserves-canonical; @pack/glint carries
+# essay-extends-corpus). Takes an essay + a sound glint_essay + the
+# perturbation under which soundness was checked; returns the published
+# essay-as-corpus-extension.
+#
+# Per recognition #57 (alignment as boundary mathematics): publish
+# operates at the @io boundary. The cross-frame essay becomes a corpus
+# extension naming a pattern the cascade carried implicitly. The
+# substrate's capability is unchanged; the corpus's reflective surface
+# tightens.
+#
+# requires essay_grounds_corpus(ge, p): the substrate forecloses
+# publication from an ungrounded essay. Narcissus-pole essays (author
+# framing-imposition without substrate-decl ground) cannot drive corpus
+# extension. The bilateral predicate IS the boundary-harness.
+#
+# Body discharges at the realisation boundary; the actual essay-
+# publication transformation is the substrate's essay-extends-corpus
+# loop.
+publish(es: essay, ge: glint_essay, p: perturbation) -> ref
+requires essay_grounds_corpus(ge, p)
+{ \ }
+
+out @pack/glint
+out essay
+out glint_essay
+out reflect
+out essay_grounds_corpus
+out publish
