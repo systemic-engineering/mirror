@@ -1,0 +1,314 @@
+in @prism
+in @meta
+in @glass
+in @smarts
+in @magic
+in @magic/contract
+in @frame
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @smarts/magic — the form/process-substrate-altitude adapter species.
+# Bridges the @smarts family (substrate-architectural integration;
+# #83) with the @magic family (form/process substrate-decl; #80)
+# honestly via the adapter pattern, following the @smarts/pack
+# precedent (tick 56) and the @magic/frame doubled-bilateral pattern
+# (tick 27).
+#
+# Tick 58 of the refined /loop discipline. Tick 57's residue:
+# orchestra Seam consolidation landed (C1/C3/C9 closed); the cross-
+# species `requires` mechanism surfaced the substrate-realisation gap
+# honestly. This tick extends the @smarts cross-family adapter set
+# the family-root explicitly forward-promised:
+#
+#   "Plus cross-family integration adapters following the @magic/
+#    distinction pattern:
+#    - shards/smarts/magic.mirror       — @smarts ↔ @magic adapter"
+#                                         [THIS SHARD]
+#
+# === The recognition this species realizes ===
+#
+# @smarts.smarts records carry `magic_form: magic_contract` as the
+# first form field (per smarts.mirror tick 30 C4 closure). The
+# typed-field already names the @magic identity at the @smarts
+# integration altitude; this adapter EMPIRICALLY DISCHARGES the
+# composition by exposing the bilateral predicate consumer species
+# can name in `requires` clauses.
+#
+# Without this adapter, the magic_form: magic_contract field is
+# substrate-decl'd as typed but the @magic discipline (invariant
+# preservation) is not load-bearing at the @smarts integration
+# boundary. With this adapter, the bilateral smarts_satisfies_magic
+# routes BOTH families' verdicts through one `requires` clause.
+#
+# === The adapter pattern (per @smarts/pack template, tick 56) ===
+#
+# @magic's family-root carriers (per shards/magic.mirror #80):
+#   - magic_surface     gauge-visible interface
+#   - magic_mechanism   matter-hidden trick
+#   - magic_invariant   the named promise
+#   - magic_contract    record {surface, mechanism, promise}
+#
+# @smarts's family-root carriers (per shards/smarts.mirror #83):
+#   - smarts            record {magic_form: magic_contract, frame_form,
+#                               cyberpunk_form, beam_form,
+#                               cybernetic_extra, kintsugi_form}
+#   - deployment        record {form: smarts, host: ref, manifest: ref}
+#
+# The substrate-pull-correct mapping (already typed at @smarts
+# carrier altitude; this adapter exposes the bilateral):
+#
+#   smarts.magic_form  ↔ magic_contract  (field-projection; this IS
+#                                          the load-bearing identity)
+#   smarts             ↔ magic-form-as-projection-of-integration
+#
+# === The doubled-bilateral structural shape ===
+#
+# Per @magic/frame + @smarts/pack templates: the bilateral predicate
+# discharges TWO family predicates in one clause:
+#
+#   1. discipline_flexible(s, p) (@smarts family-root): the substrate-
+#      architectural-integration discipline verifier per #83.
+#      Discharges that the @smarts integration maintains bilateral
+#      discipline-flexibility under perturbation.
+#
+#   2. invariant_preserved(magic_form_of(s), smarts_promise(s))
+#      (@magic/contract family): the form/process-substrate discipline
+#      verifier per #80. Discharges that the @magic contract's promise
+#      is preserved by the contract under the boundary harness at @io
+#      per recognition #57.
+#
+# Both must hold for the smarts integration to satisfy @magic at the
+# substrate altitude. The cross-family composition mechanically
+# discharges the form/process-substrate-altitude identity claim.
+#
+# === Pre-AI prior art ===
+#
+#   adapter pattern (GoF)       Gamma-Helm-Johnson-Vlissides 1994.
+#                               Structural OO-canonical adapter;
+#                               inherited via @magic/frame tick 27 +
+#                               @smarts/pack tick 56.
+#   functor adjunction          Mac Lane 1971. Category theory's
+#                               mathematical ancestor of cross-family
+#                               composition discipline preservation.
+#   composition over            Coplien 1992; Gamma et al 1994. The
+#   inheritance                 cultural-practice ancestor.
+#   Clarke's third law          Clarke 1962. The cultural vocabulary
+#                               @magic carries at substrate altitude;
+#                               @smarts/magic threads that into the
+#                               substrate-architectural integration.
+#   knowledge commons           Ostrom 1990. The hosting-discipline
+#                               ancestor of @smarts; @smarts/magic
+#                               threads @magic's encapsulation into
+#                               the common-goods integration boundary.
+#
+# === What this adapter does NOT do ===
+#
+# 1. Does NOT make every @magic_contract automatically a @smarts
+#    integration. The adapter is opt-in.
+# 2. Does NOT absorb @magic into @smarts. The two families remain
+#    distinct.
+# 3. Does NOT discharge the magic_form-to-other-form bilateral
+#    composition (frame_form, cyberpunk_form, etc. each need their
+#    own @smarts/<family> adapters forward-promised by the
+#    @smarts family-root).
+# 4. Does NOT supersede @magic/frame's cognitive-altitude bridge
+#    or @magic/distinction's Spencer-Brown-altitude adapter. Three
+#    @magic adapters at three altitudes; orthogonal.
+#
+# === The Splinter/Narcissus pole at form/process-substrate altitude ===
+#
+# Splinter-pole adapter (honest): smarts_satisfies_magic returns
+# SATISFIED only when BOTH bilaterals discharge substantively. The
+# @smarts discipline_flexible AND the @magic invariant_preserved
+# both hold under perturbation; the @smarts integration includes a
+# @magic contract whose promise is honored substantively.
+#
+# Narcissus-pole adapter (deceptive): smarts_satisfies_magic returns
+# SATISFIED while one or both bilaterals fail substantively. The
+# @smarts integration claims @magic discipline via name-only (the
+# magic_form field is populated but the promise is violated by the
+# mechanism); the contract is gauge-visible but matter-hidden in a
+# way that masks the violation.
+#
+# Per the @magic/frame + @smarts/pack precedent + #57: the adapter
+# MUST NOT permit Narcissus-pole bypass. The bilateral's two
+# `requires` clauses discharge to BOTH family predicates;
+# alignment-as-boundary-mathematics (#57) at @io enforces the
+# discrimination.
+#
+# Spec context: shards/smarts.mirror (the @smarts family-root;
+#               declares the magic_form: magic_contract field this
+#               adapter exposes);
+#               shards/magic.mirror (the @magic family-root; the
+#               form/process-substrate parent).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-mathematics]]
+#                       (#57; the boundary harness at @io keeps the
+#                       Splinter/Narcissus discrimination honest under
+#                       the lift),
+#                      [[architecture-form-process-partition-at-family-root]]
+#                       (#55; @smarts and @magic as form-side at
+#                       deployment and substrate altitudes
+#                       respectively; this adapter threads them at
+#                       the integration crossing),
+#                      [[feedback-composition-claims-need-empirical-test]]
+#                       (Reed's discipline; the bilateral makes the
+#                       composition empirically discharged),
+#                      [[feedback-no-bare-types]] (smarts and
+#                       perturbation taken as typed parameters at
+#                       the bilateral signature).
+# Related shards: smarts.mirror (the @smarts family-root; the form-
+#                  side at deployment altitude),
+#                 magic.mirror (the @magic family-root; the form-
+#                  side at substrate altitude),
+#                 magic/contract.mirror (the consumer of
+#                  invariant_preserved this adapter routes through),
+#                 magic/frame.mirror (the cognitive-altitude adapter
+#                  precedent at tick 27; this shard inherits the
+#                  doubled-bilateral shape),
+#                 magic/distinction.mirror (the Spencer-Brown-
+#                  altitude adapter precedent at tick 15),
+#                 smarts/pack.mirror (the agent-runtime-altitude
+#                  adapter precedent at tick 56; sibling cross-family
+#                  adapter from the @smarts family-root forward-promise
+#                  set).
+# Path-namespace property: this file at `shards/smarts/magic.mirror`
+# declares `@smarts/magic` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming/gamma-helm-johnson-vlissides-1994
+source @arxiv/mathematics/mac-lane-1971
+source @arxiv/programming/coplien-1992
+source @arxiv/cultural/clarke-1962
+source @arxiv/common-goods/ostrom-1990
+
+prism @smarts/magic {
+  focus magic
+  project magic
+  split magic
+  shift magic
+  settle magic
+}
+
+# === magic_form_of adapter ===
+#
+# The substrate-vocabulary adapter action projecting the @magic
+# contract from a @smarts integration. The @smarts integration's
+# magic_form field IS the @magic contract at the substrate altitude;
+# this projection EXPOSES the field as a substrate-decl operation
+# the bilateral predicate can name.
+#
+# At @smarts altitude (per smarts.mirror tick 30 C4): smarts is a
+# record with magic_form: magic_contract. At @magic altitude (per
+# magic.mirror #80): magic_contract is the form/process-substrate
+# record {surface, mechanism, promise}. The projection IS field
+# access at substrate-decl altitude; the lift preserves byte-equality
+# identity at the projected field.
+#
+# Body discharges at the realisation boundary.
+magic_form_of(s: smarts) -> magic_contract { \ }
+
+# === magic_as_smarts adapter ===
+#
+# The substrate-vocabulary adapter action lifting a @magic contract
+# to a @smarts integration with the magic_form field populated. The
+# other smarts fields (frame_form, cyberpunk_form, beam_form,
+# cybernetic_extra, kintsugi_form) are populated as default refs at
+# the lift altitude; consumer species that need the other fields
+# populated substantively use the other @smarts/<family> adapters
+# (forward-promised).
+#
+# Per smarts.mirror tick 30 C4 + Seam-precedent: the @smarts
+# integration IS a typed record; the magic_form projection is the
+# substrate-pull-correct lift surface. The adapter completes the
+# round-trip at the magic_form field altitude:
+#   magic_form_of(magic_as_smarts(mc)) = mc
+# for all magic_contract mc. This is the cheapest falsification
+# check; failure here means the adapter is mis-implemented.
+#
+# Body discharges at the realisation boundary.
+magic_as_smarts(mc: magic_contract) -> smarts { \ }
+
+# === smarts_promise adapter ===
+#
+# The substrate-vocabulary adapter action extracting the @magic
+# invariant (the promise) from a @smarts integration. The promise IS
+# the magic_form's promise field at the substrate altitude; this
+# extraction EXPOSES it as a substrate-decl operation the bilateral
+# predicate can name in invariant_preserved.
+#
+# Equivalent to magic_form_of(s).promise at the substrate-decl level;
+# named separately because the bilateral predicate consumes it as a
+# typed parameter, and the substrate-decl is cleaner when each
+# adapter operation is named explicitly per [[feedback-no-bare-types]].
+#
+# Body discharges at the realisation boundary.
+smarts_promise(s: smarts) -> magic_invariant { \ }
+
+# === smarts_satisfies_magic bilateral predicate ===
+#
+# THE CROSS-FAMILY BILATERAL PREDICATE in @smarts that discharges
+# BOTH parent-family AND child-family verdicts in one clause. The
+# substrate-pull-correct way to mechanically discharge the
+# form/process-substrate-altitude composition claim that the @smarts
+# family-root preserved as forward-promised at #83.
+#
+# Two `requires` clauses, both load-bearing:
+#
+#   1. discipline_flexible(s, p)
+#      — the @smarts family-root predicate. Discharges that the
+#      @smarts integration maintains substrate-architectural
+#      discipline-flexibility under perturbation; the boundary
+#      harness at @io audits this per recognition #57.
+#
+#   2. invariant_preserved(magic_form_of(s), smarts_promise(s))
+#      — the @magic/contract family-root predicate. Discharges that
+#      the @smarts integration's magic_form has its promise preserved
+#      by the contract under the boundary harness at @io.
+#
+# Both must hold for the smarts integration to satisfy @magic at
+# substrate altitude. The cross-family composition mechanically
+# discharges the form/process-substrate identity claim that the
+# magic_form: magic_contract typed-field carries at @smarts
+# integration altitude.
+#
+# The signature takes smarts and perturbation as explicit typed
+# parameters per [[feedback-no-bare-types]] because the consumer
+# species name these at the typed boundary.
+#
+# Consumer species (forward-promised @smarts species shards
+# implementing the four Models; @spectral/garden/smarts hosted
+# deployment) name this predicate when their operation requires
+# cross-family discharge.
+smarts_satisfies_magic(s: smarts, p: perturbation) -> verdict
+requires discipline_flexible(s, p)
+requires invariant_preserved(magic_form_of(s), smarts_promise(s))
+{ \ }
+
+# === Honest hedge per @magic/frame + @smarts/pack precedent ===
+#
+# This adapter closes the magic_form-projection altitude of
+# "@smarts integrates @magic at substrate altitude":
+#  - magic_contract ↔ smarts.magic_form round-trips via
+#    magic_as_smarts / magic_form_of.
+#  - The bilateral smarts_satisfies_magic discharges BOTH family
+#    predicates simultaneously.
+#
+# It does NOT close round-trip identity at the smarts-as-whole
+# altitude. Given a smarts s with all six form-fields populated,
+# magic_as_smarts(magic_form_of(s)) discards s.frame_form,
+# s.cyberpunk_form, s.beam_form, s.cybernetic_extra, s.kintsugi_form.
+# Other @smarts/<family> adapters cover those fields.
+#
+# Honest claim post-adapter:
+#  - "@smarts integrates @magic at magic_form altitude" — CLOSED.
+#  - "@smarts integrates @magic at smarts-as-whole altitude" —
+#    FORWARD-PROMISED pending the full cross-family adapter set.
+
+out @smarts/magic
+out magic_form_of
+out magic_as_smarts
+out smarts_promise
+out smarts_satisfies_magic
