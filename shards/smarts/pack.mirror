@@ -1,0 +1,383 @@
+in @prism
+in @meta
+in @glass
+in @smarts
+in @pack
+in @magic
+in @frame
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @smarts/pack — the agent-runtime-altitude adapter species. Bridges
+# the @smarts family (substrate-architectural integration; #83) with
+# the @pack family (multi-repo agent runtime; #84) honestly via the
+# adapter pattern, NOT decorative inheritance.
+#
+# Tick 56 of the refined /loop discipline. Tick 55's residue:
+# @pack/taut landed at 26b981b (orchestra closed; 5/5 peer species
+# operationalize the @frame altitude partition). This species lands
+# the cross-family composition route the @pack family-root
+# explicitly forward-promised at tick 31:
+#
+#   "@pack composes-with @smarts/deployment at runtime altitude. Per
+#    Seam tick 31 review C1: the original '@pack IS @smarts/runtime'
+#    claim was structurally aspirational — no `runtime` species
+#    exists in `shards/smarts.mirror`, and @smarts's `deployment`
+#    carrier doesn't extend to runtime-bound fields. The honest
+#    framing is composes-with; the structural identity becomes
+#    empirically discharged when the @smarts/pack adapter species
+#    lands (forward-promised; same pattern as @magic/distinction
+#    and @magic/frame adapters)."
+#
+# This shard IS that empirical discharge. The composes-with relation
+# becomes structurally identity-via-typed-mapping at the deployment-
+# runtime crossing.
+#
+# CRQ for this tick: how to discharge the "@pack composes-with
+# @smarts/deployment at runtime altitude" composition claim
+# mechanically WITHOUT the decorative inheritance Seam caught at
+# tick 31 (C1) and the family-root hedge preserved at #84?
+#
+# Answer: the @magic/frame adapter pattern. Take @pack carriers; MAP
+# them to @smarts carriers; declare a bilateral predicate that
+# discharges BOTH family verdicts in one clause. The structural
+# composition lives in the explicit map plus the doubled bilateral,
+# not in an `in` clause that buys namespace ancestry without carrier
+# flow.
+#
+# === The adapter pattern (per @magic/frame template, tick 27) ===
+#
+# @pack's family-root carriers (per shards/pack.mirror tick 32
+# consolidation):
+#   - `peer`          | mara | seam | glint | reed | taut variant
+#   - `repository`    git repo carrying substrate-decl span
+#   - `repository_span` substrate-decl-context union across repos
+#   - `runtime`       the local agent runtime hosting peers
+#   - `pack`          record {peers, repos, repo_span, runtime}
+#
+# @smarts's family-root carriers (per shards/smarts.mirror #83):
+#   - `smarts`        record {magic_form, frame_form, cyberpunk_form,
+#                             beam_form, cybernetic_extra, kintsugi_form}
+#   - `deployment`    record {form: smarts, host: ref, manifest: ref}
+#
+# The substrate-pull-correct mapping:
+#
+#   pack             ↔ smarts (via lift; @pack's substrate-architectural
+#                                integration record becomes a form-
+#                                field in the @smarts integration)
+#   runtime          ↔ deployment.host (the @pack runtime hosts peers;
+#                                @smarts.deployment.host names where)
+#   repository_span  ↔ deployment.manifest (the @pack repo-span IS
+#                                the deployment manifest at
+#                                substrate-architectural altitude)
+#
+# At the substrate altitude: pack and smarts are both content-
+# addressed typed records; the lift IS the typed reframe at the
+# @smarts altitude. The @pack runtime's host IS the @smarts
+# deployment's host (same byte-level ref). The @pack repo-span IS
+# the @smarts manifest at deployment altitude.
+#
+# === The doubled-bilateral structural shape ===
+#
+# Per @magic/frame template (tick 27): the bilateral predicate
+# discharges TWO family predicates in one clause:
+#
+#   1. discipline_flexible(s, p) (@smarts family-root): the
+#      substrate-architectural-integration-altitude discipline
+#      verifier per #83. Discharges that the @smarts integration
+#      maintains bilateral discipline-flexibility across the
+#      integration boundary.
+#
+#   2. pack_coherent(pk, p) (@pack family-root): the multi-repo-
+#      agent-runtime discipline verifier per #84. Discharges that
+#      the @pack maintains substrate-architectural discipline-
+#      flexibility across peer-relationships + multi-repo span +
+#      runtime hosting + cybernetic coherence.
+#
+# Both must hold for the pack to satisfy @smarts at deployment
+# altitude. The cross-family composition is bilaterally heavier
+# than single-bilateral discharge; the runtime-altitude
+# "composes-with" claim requires both families' disciplines to
+# discharge under the lift simultaneously.
+#
+# === Why `pack_satisfies_smarts` takes typed parameters explicitly ===
+#
+# Per [[feedback-no-bare-types]] + the @magic/frame template: the
+# signature takes pack + perturbation as typed parameters rather than
+# attempting to extract them from the smarts record alone. The pack
+# carries the @pack-altitude shape; the @smarts-altitude shape needs
+# its own typed inputs at the bilateral signature.
+#
+# === The inverse `pack_from_deployment` is type-relabeling ===
+#
+# Per the @magic/frame precedent (tick 27 §8.4): the inverse exists
+# because both `pack` and `smarts` (or rather, the @pack record and
+# the @smarts deployment) are typed records over substrate-architectural
+# integrations; the lift is type-relabeling at the form-projection,
+# not data transformation. Round-trip identity
+# (`pack_as_smarts(pack_from_deployment(d)) = d.form` for compatible
+# deployments) is the cheapest falsification check.
+#
+# === Pre-AI prior art ===
+#
+#   adapter pattern (GoF)       Gamma-Helm-Johnson-Vlissides 1994
+#                               (Design Patterns, Structural Patterns:
+#                               Adapter). OO-canonical. Inherited
+#                               via @magic/frame tick 27 + @magic/
+#                               distinction tick 15.
+#   functor adapter             Mac Lane 1971 (Categories for the
+#                               Working Mathematician, ch. IV Adjoints).
+#                               Category theory's mathematical
+#                               ancestor: explicit functor between
+#                               two categories preserves both
+#                               categories' discipline.
+#   composition over            Coplien 1992 (Advanced C++); Gamma
+#   inheritance                 et al 1994. The cultural-practice
+#                               ancestor of the adapter species
+#                               pattern (vs the inherits-and-overrides
+#                               trap @pack/@smarts originally hedged).
+#   BEAM/OTP supervisor         Armstrong 1986-2003. The runtime-
+#                               altitude ancestor of @pack hosting
+#                               peers; @smarts/pack adapter routes
+#                               the runtime-discipline through the
+#                               @smarts integration boundary.
+#   service mesh                Burns 2018 (Designing Distributed
+#                               Systems). The deployment-altitude
+#                               ancestor of @smarts.deployment
+#                               hosting @pack runtime; the cultural-
+#                               practice precedent for typed deployment
+#                               manifests over substrate-architectural
+#                               integrations.
+#
+# === What this adapter does NOT do ===
+#
+# 1. Does NOT make every @pack instance automatically a @smarts
+#    instance. Packs that need only @pack's discipline bypass the
+#    adapter; the adapter is opt-in for consumer species that need
+#    both disciplines.
+# 2. Does NOT absorb @pack into @smarts. The two families remain
+#    distinct; @pack peer species (mara/seam/glint/reed/taut)
+#    discharge per-frame bodies WITHOUT going through @smarts.
+# 3. Does NOT collapse carriers at any pair other than the mapped
+#    triple. The "composes-with" claim holds at pack↔smarts,
+#    runtime↔deployment.host, repository_span↔deployment.manifest;
+#    it does NOT generalize to peer↔form-field.
+# 4. Does NOT discharge @pack's species-shard forward-promises (the
+#    orchestra is its own 5-species set with its own bilateral
+#    discipline at @frame altitudes).
+# 5. Does NOT discharge the @smarts species-shard forward-promises
+#    (the four Models + the other cross-family adapters).
+#
+# === The Splinter/Narcissus pole at deployment-runtime altitude ===
+#
+# Splinter-pole adapter (honest): pack_satisfies_smarts returns
+# SATISFIED only when BOTH bilaterals discharge substantively. The
+# @smarts discipline_flexible AND the @pack pack_coherent both hold
+# under the perturbation; the @pack runtime hosts peers WITHIN the
+# @smarts integration discipline.
+#
+# Narcissus-pole adapter (deceptive): pack_satisfies_smarts returns
+# SATISFIED via vocabulary-only verification while one or both
+# bilaterals fail substantively. The @pack runtime hosts peers
+# OUTSIDE the @smarts integration discipline; the deployment
+# manifest names a host that doesn't actually carry the integration
+# discipline.
+#
+# Per the @magic/frame template + #57: the adapter MUST NOT permit
+# Narcissus-pole bypass. The bilateral's two `requires` clauses
+# discharge to BOTH family-root predicates; alignment-as-boundary-
+# mathematics (#57) at @io enforces the discrimination.
+#
+# Spec context: shards/pack.mirror (the @pack family-root; declares
+#               the composes-with hedge this adapter closes);
+#               shards/smarts.mirror (the @smarts family-root;
+#               declares deployment as the runtime-hosting carrier
+#               this adapter maps @pack.runtime to).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-mathematics]]
+#                       (#57; the boundary harness at @io keeps the
+#                       Splinter/Narcissus discrimination honest under
+#                       the lift),
+#                      [[architecture-form-process-partition-at-family-root]]
+#                       (#55; @smarts and @pack as form-side and
+#                       process-side at deployment altitude; this
+#                       adapter threads them at the runtime crossing),
+#                      [[feedback-composition-claims-need-empirical-test]]
+#                       (Reed's discipline; the bilateral makes the
+#                       composes-with claim empirically discharged
+#                       rather than aspirational),
+#                      [[feedback-no-bare-types]] (pack and
+#                       perturbation taken as typed parameters at
+#                       the bilateral signature).
+# Related shards: pack.mirror (the @pack family-root; the process-
+#                  side parent),
+#                 smarts.mirror (the @smarts family-root; the form-
+#                  side parent),
+#                 magic/frame.mirror (the adapter precedent at tick
+#                  27; this shard inherits its shape — doubled-
+#                  bilateral discharge + typed parameter signature),
+#                 magic/distinction.mirror (the earlier adapter
+#                  precedent at tick 15; single-bilateral discharge
+#                  the doubled pattern extends),
+#                 pack/{mara,seam,glint,reed,taut}.mirror (the
+#                  orchestra; the @pack family operationalized at
+#                  @frame altitudes; @smarts/pack composes-with the
+#                  whole orchestra at deployment altitude).
+# Path-namespace property: this file at `shards/smarts/pack.mirror`
+# declares `@smarts/pack` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming/gamma-helm-johnson-vlissides-1994
+source @arxiv/mathematics/mac-lane-1971
+source @arxiv/programming/coplien-1992
+source @arxiv/distributed/armstrong-2003
+source @arxiv/distributed/burns-2018
+
+prism @smarts/pack {
+  focus pack
+  project pack
+  split pack
+  shift pack
+  settle pack
+}
+
+# === pack_as_smarts adapter ===
+#
+# The substrate-vocabulary adapter action lifting a @pack instance
+# to a @smarts substrate-architectural integration view. At @pack
+# altitude: the pack record carries the multi-repo-agent-runtime
+# integration (peers, repos, span, runtime). At @smarts altitude:
+# the smarts record carries the substrate-architectural integration
+# (magic_form, frame_form, cyberpunk_form, ...). The lift IS the
+# typed reframe at the @smarts altitude.
+#
+# The substrate-pull-correct mapping uses bare ref for fields not
+# in @pack's vocabulary (magic_form, cyberpunk_form, etc.); the
+# adapter substantively populates the form fields the @pack record
+# corresponds to (the pack itself becomes part of the integration
+# at deployment altitude).
+#
+# Body discharges at the realisation boundary.
+pack_as_smarts(pk: pack) -> smarts { \ }
+
+# === pack_runtime_as_deployment adapter ===
+#
+# The substrate-vocabulary adapter action lifting the @pack runtime
+# to a @smarts deployment. Takes the @pack instance because the
+# deployment needs the smarts form (constructed from the pack via
+# pack_as_smarts), the host (from the @pack runtime), and the
+# manifest (from the @pack repository_span).
+#
+# The deployment record {form, host, manifest} composes from:
+#   - form     = pack_as_smarts(pk)          (the integration view)
+#   - host     = pk.runtime                   (the agent runtime ref)
+#   - manifest = pk.repo_span                 (the repo-span ref)
+#
+# Per @smarts deployment carrier (tick 30 C7): typed record
+# containing the substrate-architectural form, the host ref, and
+# the manifest. The form-vs-deployment distinction now mechanically
+# typed at the @pack altitude via this adapter.
+#
+# Body discharges at the realisation boundary.
+pack_runtime_as_deployment(pk: pack) -> deployment { \ }
+
+# === pack_from_deployment inverse adapter ===
+#
+# The type-relabeling inverse of pack_runtime_as_deployment. Per
+# @magic/frame precedent: the inverse exists because both pack and
+# smarts (and deployment) are typed records over substrate-
+# architectural integrations; the lift at the form-projection IS
+# type-relabeling, not data transformation.
+#
+# Round-trip identity (per @magic/frame §8.4):
+#   pack_runtime_as_deployment(pack_from_deployment(d)).form = d.form
+# for compatible deployments. This is the cheapest falsification
+# check; failure here means the adapter is mis-implemented
+# (carrier-flow not aligned with content-addressing discipline).
+#
+# The bilateral predicate `pack_satisfies_smarts` names this inverse
+# in its `requires pack_coherent(...)` clause to recover the @pack
+# instance underlying the deployment.
+#
+# Body discharges at the realisation boundary.
+pack_from_deployment(d: deployment) -> pack { \ }
+
+# === pack_satisfies_smarts bilateral predicate ===
+#
+# THE CROSS-FAMILY BILATERAL PREDICATE in @smarts that discharges
+# BOTH parent-family AND child-family verdicts in one clause. The
+# substrate-pull-correct way to mechanically discharge the
+# composes-with claim that the @pack family-root preserved as hedged
+# at tick 31 C1.
+#
+# Two `requires` clauses, both load-bearing:
+#
+#   1. discipline_flexible(pack_as_smarts(pk), p)
+#      — the @smarts family-root predicate. Discharges that the
+#      @pack lifted to @smarts integration maintains substrate-
+#      architectural discipline-flexibility under perturbation;
+#      the boundary harness at @io audits this per recognition #57.
+#
+#   2. pack_coherent(pk, p)
+#      — the @pack family-root predicate. Discharges that the @pack
+#      itself maintains peer-relationship + multi-repo span +
+#      runtime hosting + cybernetic coherence discipline under
+#      perturbation.
+#
+# Both must hold for the pack to satisfy @smarts at deployment
+# altitude. The cross-family composition is bilaterally heavier
+# than @pack's single-bilateral discharge at peer-species altitude;
+# the runtime-altitude composes-with claim requires both families'
+# disciplines to discharge under the lift simultaneously.
+#
+# The signature takes pack and perturbation as explicit typed
+# parameters per [[feedback-no-bare-types]] because the @pack-
+# altitude shape needs typed inputs at the bilateral boundary the
+# consumer names.
+#
+# Consumer species (the orchestra's individual peer-species when
+# composing with the @smarts integration at runtime altitude;
+# @spectral/garden/smarts hosted deployment) name this predicate
+# when their operation requires cross-family discharge.
+pack_satisfies_smarts(pk: pack, p: perturbation) -> verdict
+requires discipline_flexible(pack_as_smarts(pk), p)
+requires pack_coherent(pk, p)
+{ \ }
+
+# === Honest hedge per @magic/frame tick 28 review precedent ===
+#
+# This adapter closes the carrier-mapping altitude of
+# "@pack composes-with @smarts/deployment":
+#  - @pack instance ↔ @smarts integration view round-trips via
+#    pack_as_smarts / pack_from_deployment at the deployment
+#    altitude.
+#  - The bilateral pack_satisfies_smarts discharges BOTH family
+#    predicates simultaneously (discipline_flexible AND
+#    pack_coherent).
+#
+# It does NOT close round-trip identity at the smarts-as-whole
+# altitude. Given a smarts instance s with all six form-fields
+# populated, pack_from_deployment cannot recover s.magic_form,
+# s.frame_form, s.cyberpunk_form (which come from other adapters
+# in the @smarts cross-family set; @smarts/magic, @smarts/frame,
+# @smarts/cyberpunk forward-promised).
+#
+# Honest claim post-adapter:
+#  - "@pack composes-with @smarts.deployment at runtime altitude"
+#    — CLOSED via pack_runtime_as_deployment + pack_satisfies_smarts.
+#  - "@pack composes-with @smarts (full integration)" — FORWARD-
+#    PROMISED (requires the other cross-family adapters to land;
+#    the full @smarts integration is a coordination across multiple
+#    adapter species).
+#
+# The Seam C1 hedge from @pack tick 31 closes at the deployment-
+# runtime altitude per this adapter's discharge; the full-integration
+# identity remains forward-promised pending the other @smarts
+# cross-family adapters.
+
+out @smarts/pack
+out pack_as_smarts
+out pack_runtime_as_deployment
+out pack_from_deployment
+out pack_satisfies_smarts
