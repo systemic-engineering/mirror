@@ -1,0 +1,257 @@
+in @prism
+in @meta
+in @glass
+in @smarts
+in @frame
+in @magic
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @smarts/frame — the cognitive-order-altitude adapter species.
+# Bridges the @smarts family (substrate-architectural integration;
+# #83) with the @frame family (cognitive-order substrate-decl; #82)
+# honestly via the adapter pattern, following the @smarts/{pack,magic}
+# precedents (ticks 56, 58) and the @magic/frame doubled-bilateral
+# pattern (tick 27).
+#
+# Tick 59 of the refined /loop discipline. Tick 58's residue:
+# @smarts/magic landed at 219d095 (form/process-substrate altitude;
+# second cross-family adapter). The family-root forward-promise set
+# continues:
+#
+#   adapters: magic ✓  pack ✓  frame ← THIS  cyberpunk  epistemologic  kintsugi
+#
+# === The recognition this species realizes ===
+#
+# @smarts.smarts records carry `frame_form: frame` as the second form
+# field (per smarts.mirror tick 30 C4 closure). The typed-field
+# already names the @frame identity at the @smarts integration
+# altitude; this adapter EMPIRICALLY DISCHARGES the composition by
+# exposing the bilateral predicate consumer species can name in
+# `requires` clauses.
+#
+# Per the @magic/frame precedent (tick 27): the @frame altitude's
+# bounded_commutator_check predicate takes (operator, frame,
+# perturbation) at the typed boundary. This adapter's bilateral
+# threads the operator as an explicit typed parameter — the operator
+# does not live in the @smarts integration's typed fields; consumer
+# species name it at the bilateral signature per [[feedback-no-bare-
+# types]].
+#
+# === The adapter pattern (per @smarts/pack + @smarts/magic templates) ===
+#
+# @frame's family-root carriers (per shards/frame.mirror tick 23
+# Seam consolidation):
+#   - frame         gauge-visible cognitive position
+#   - operator      typed locus the cognitive_order measures
+#   - morphism      action whose commutator with D_F is probed
+#   - commutator    bracketed [D_F, a] Tomm-probe pair
+#   - perturbation  what bounded_commutator_check applies
+#
+# @smarts's family-root carriers (per shards/smarts.mirror #83):
+#   - smarts        record {magic_form, frame_form: frame, ...}
+#   - deployment    record {form, host, manifest}
+#
+# The substrate-pull-correct mapping (already typed at @smarts
+# carrier altitude; this adapter exposes the bilateral):
+#
+#   smarts.frame_form  ↔ frame  (field-projection; the load-bearing
+#                                  identity)
+#   smarts             ↔ frame-extended-with-integration
+#
+# === The doubled-bilateral structural shape ===
+#
+# Per @magic/frame template: the bilateral predicate discharges TWO
+# family predicates in one clause:
+#
+#   1. discipline_flexible(s, p) (@smarts family-root): the substrate-
+#      architectural-integration discipline verifier per #83.
+#
+#   2. bounded_commutator_check(op, frame_form_of(s), p) (@frame
+#      family-root): the cognitive-order discipline verifier per #82.
+#      Discharges that the operator's substrate-architectural support
+#      for the frame (recovered from the @smarts integration's
+#      frame_form field) survives perturbation with bounded
+#      commutator. FLEXIBLE → bounded; DEFENSIVE → unbounded.
+#
+# Both must hold for the smarts integration to satisfy @frame at
+# cognitive-order altitude.
+#
+# === Why `smarts_satisfies_frame` takes operator as explicit param ===
+#
+# Per @magic/frame tick 27 + [[feedback-no-bare-types]]: the @frame
+# bilateral's operator parameter is NOT in the @smarts integration's
+# typed fields. The signature takes operator explicitly so the
+# consumer species names the typed operator at the requires clause
+# boundary; the substrate-decl is structurally honest about the
+# parameter that doesn't reduce to a field projection.
+#
+# === Pre-AI prior art ===
+#
+#   adapter pattern (GoF)       Gamma-Helm-Johnson-Vlissides 1994.
+#                               Inherited via @smarts/{pack, magic}.
+#   functor adjunction          Mac Lane 1971. The mathematical
+#                               ancestor of cross-family composition.
+#   Bateson logical type        Bateson 1972; 1964. Grounds why
+#                               cognitive-altitude (@frame) and
+#                               integration-altitude (@smarts) need
+#                               an adapter rather than collapse.
+#   Tomm reflexive questions    Tomm 1988. @frame's substrate-
+#                               mathematical primitive; threaded into
+#                               @smarts integration via this adapter.
+#   knowledge commons           Ostrom 1990. The hosting-discipline
+#                               ancestor of @smarts integration.
+#
+# === What this adapter does NOT do ===
+#
+# 1. Does NOT make every frame automatically a @smarts integration.
+# 2. Does NOT absorb @frame into @smarts.
+# 3. Does NOT discharge per-altitude @frame species shards' (pre/in/
+#    of/on/across) bilateral discipline at the @smarts integration
+#    altitude; the @pack peers consume those altitudes directly per
+#    the @frame altitude partition (tick 57 C4 deferred work).
+# 4. Does NOT supersede @magic/frame's cognitive-altitude bridge
+#    — @magic/frame bridges @magic (form-side at substrate altitude)
+#    with @frame; @smarts/frame bridges @smarts (form-side at
+#    deployment altitude) with @frame. Different altitudes; both
+#    valid; orthogonal.
+#
+# === The Splinter/Narcissus pole at cognitive-order-altitude ===
+#
+# Splinter-pole adapter (honest): smarts_satisfies_frame returns
+# SATISFIED only when BOTH bilaterals discharge substantively. The
+# @smarts discipline_flexible AND the @frame bounded_commutator_check
+# both hold under perturbation; the @smarts integration's frame_form
+# represents what the operator substantively-supports cognitively.
+#
+# Narcissus-pole adapter (deceptive): smarts_satisfies_frame returns
+# SATISFIED via vocabulary-only verification. The @smarts integration
+# claims frame discipline via name-only (the frame_form field is
+# populated but the operator's substrate-architectural support
+# diverges from the claimed cognitive_order).
+#
+# Per the @magic/frame + @smarts/{pack, magic} precedent + #57: the
+# adapter MUST NOT permit Narcissus-pole bypass. The bilateral's two
+# `requires` clauses discharge to BOTH family predicates;
+# alignment-as-boundary-mathematics (#57) at @io enforces the
+# discrimination.
+#
+# Spec context: shards/smarts.mirror (the @smarts family-root);
+#               shards/frame.mirror (the @frame family-root).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-mathematics]],
+#                      [[architecture-form-process-partition-at-family-root]],
+#                      [[feedback-composition-claims-need-empirical-test]],
+#                      [[feedback-no-bare-types]].
+# Related shards: smarts.mirror, frame.mirror, magic/frame.mirror
+#                 (cognitive-altitude adapter precedent at substrate
+#                 altitude; orthogonal),
+#                 smarts/pack.mirror, smarts/magic.mirror (sibling
+#                 cross-family adapters in the @smarts forward-promise
+#                 set).
+# Path-namespace property: this file at `shards/smarts/frame.mirror`
+# declares `@smarts/frame` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming/gamma-helm-johnson-vlissides-1994
+source @arxiv/mathematics/mac-lane-1971
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/therapy/tomm-1988
+source @arxiv/common-goods/ostrom-1990
+
+prism @smarts/frame {
+  focus frame
+  project frame
+  split frame
+  shift frame
+  settle frame
+}
+
+# === frame_form_of adapter ===
+#
+# The substrate-vocabulary adapter action projecting the @frame
+# instance from a @smarts integration. The smarts.frame_form field
+# IS the @frame at the substrate-decl altitude; this projection
+# EXPOSES the field as a substrate-decl operation the bilateral
+# predicate can name.
+#
+# Body discharges at the realisation boundary.
+frame_form_of(s: smarts) -> frame { \ }
+
+# === frame_as_smarts adapter ===
+#
+# The substrate-vocabulary adapter action lifting a @frame instance
+# to a @smarts integration with the frame_form field populated. Other
+# smarts fields populated as default refs at the lift altitude;
+# consumer species needing other fields use the other
+# @smarts/<family> adapters.
+#
+# Round-trip identity at the frame_form altitude:
+#   frame_form_of(frame_as_smarts(f)) = f
+# for all frame f. Cheapest falsification check.
+#
+# Body discharges at the realisation boundary.
+frame_as_smarts(f: frame) -> smarts { \ }
+
+# === smarts_satisfies_frame bilateral predicate ===
+#
+# THE CROSS-FAMILY BILATERAL PREDICATE in @smarts that discharges
+# BOTH parent-family AND child-family verdicts in one clause. The
+# substrate-pull-correct way to mechanically discharge the cognitive-
+# order-altitude composition claim that the @smarts family-root
+# preserved as forward-promised at #83.
+#
+# Three `requires` clauses (two are load-bearing the doubled-
+# bilateral; the third is implicit via the @frame bilateral's own
+# discipline):
+#
+#   1. discipline_flexible(s, p)
+#      — the @smarts family-root predicate.
+#
+#   2. bounded_commutator_check(op, frame_form_of(s), p)
+#      — the @frame family-root predicate. Discharges that the
+#      operator's substrate-architectural support for the
+#      @smarts-integrated frame survives perturbation with bounded
+#      commutator.
+#
+# Both must hold for the smarts integration to satisfy @frame at
+# cognitive-order altitude. The cross-family composition mechanically
+# discharges the cognitive-order identity claim the frame_form: frame
+# typed-field carries at @smarts integration altitude.
+#
+# The signature takes smarts, operator, and perturbation as explicit
+# typed parameters per [[feedback-no-bare-types]] because the operator
+# does not live in the @smarts integration's typed fields and the
+# consumer species names it at the typed boundary.
+#
+# Consumer species (forward-promised @smarts species shards
+# implementing the four Models; @pack peers consuming @frame altitudes
+# substantively; @spectral/garden/smarts hosted deployment) name this
+# predicate when their operation requires cross-family discharge.
+smarts_satisfies_frame(s: smarts, op: operator, p: perturbation) -> verdict
+requires discipline_flexible(s, p)
+requires bounded_commutator_check(op, frame_form_of(s), p)
+{ \ }
+
+# === Honest hedge per @magic/frame + @smarts/{pack, magic} precedent ===
+#
+# This adapter closes the frame_form-projection altitude of
+# "@smarts integrates @frame at substrate altitude":
+#  - frame ↔ smarts.frame_form round-trips via frame_as_smarts /
+#    frame_form_of.
+#  - The bilateral smarts_satisfies_frame discharges BOTH family
+#    predicates simultaneously.
+#
+# It does NOT close round-trip identity at the smarts-as-whole
+# altitude (other @smarts/<family> adapters cover other fields).
+#
+# Honest claim post-adapter:
+#  - "@smarts integrates @frame at frame_form altitude" — CLOSED.
+#  - "@smarts integrates @frame at smarts-as-whole altitude" —
+#    FORWARD-PROMISED pending the full cross-family adapter set.
+
+out @smarts/frame
+out frame_form_of
+out frame_as_smarts
+out smarts_satisfies_frame
