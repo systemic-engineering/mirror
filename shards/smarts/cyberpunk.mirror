@@ -1,0 +1,226 @@
+in @prism
+in @meta
+in @glass
+in @smarts
+in @cyberpunk
+in @magic
+in @frame
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @smarts/cyberpunk — the recursion-lock-altitude adapter species.
+# Bridges @smarts (substrate-architectural integration; #83) with
+# @cyberpunk (recursion-lock tower family; @cyberpunk LRM tick 30)
+# honestly via the adapter pattern, following @smarts/{pack, magic,
+# frame} precedents (ticks 56, 58, 59) and the @magic/frame
+# doubled-bilateral pattern (tick 27).
+#
+# Tick 60 of the refined /loop discipline. Tick 59's residue:
+# @smarts/frame landed at 0f1338e (cognitive-order altitude; third
+# cross-family adapter). The family-root forward-promise set
+# continues:
+#
+#   adapters: magic ✓  pack ✓  frame ✓  cyberpunk ← THIS  epistemologic  kintsugi
+#
+# === The recognition this species realizes ===
+#
+# @smarts.smarts records carry `cyberpunk_form: cybernetic_state` as
+# the third form field (per smarts.mirror tick 30 C4 closure). The
+# typed-field already names the @cyberpunk identity at the @smarts
+# integration altitude; this adapter EMPIRICALLY DISCHARGES the
+# composition via doubled-bilateral predicate.
+#
+# === The adapter pattern (per @smarts/{pack, magic, frame} templates) ===
+#
+# @cyberpunk's family-root carriers (per shards/cyberpunk.mirror LRM
+# tick 30; integrated form/process per recognition #292):
+#   - cybernetic_state    the recursion-lock tower state record
+#   - cybernetic_coherence bilateral verdict predicate per #38
+#                          eigenform composition
+#
+# @smarts's family-root carriers (per shards/smarts.mirror #83):
+#   - smarts              record {magic_form, frame_form, cyberpunk_form:
+#                                 cybernetic_state, ...}
+#
+# The substrate-pull-correct mapping (already typed at @smarts
+# carrier altitude; this adapter exposes the bilateral):
+#
+#   smarts.cyberpunk_form  ↔ cybernetic_state  (field-projection)
+#   smarts                 ↔ cybernetic-tower-extended-with-integration
+#
+# === The doubled-bilateral structural shape ===
+#
+# Per @magic/frame template + @smarts/{pack, magic, frame} precedents:
+# the bilateral predicate discharges TWO family predicates in one
+# clause:
+#
+#   1. discipline_flexible(s, p) (@smarts family-root): the substrate-
+#      architectural-integration discipline verifier per #83.
+#
+#   2. cybernetic_coherence(cyberpunk_form_of(s), p) (@cyberpunk
+#      family-root): the recursion-lock-tower discipline verifier per
+#      #38 eigenform composition. Discharges that the cybernetic state
+#      maintains coherence across the recursion-lock altitudes
+#      (Beer VSM, Maturana-Varela autopoiesis, Bateson learning levels,
+#      Pask conversation, Glanville design, Ashby variety,
+#      Spencer-Brown distinction, Foerster second-order, Kauffman
+#      coevolution, Bateson-III algedonic) under perturbation.
+#
+# Both must hold for the smarts integration to satisfy @cyberpunk at
+# recursion-lock-tower altitude. The cross-family composition
+# mechanically discharges the cybernetic-altitude identity claim the
+# cyberpunk_form: cybernetic_state typed-field carries at @smarts
+# integration altitude.
+#
+# === Pre-AI prior art ===
+#
+#   adapter pattern (GoF)       Gamma-Helm-Johnson-Vlissides 1994.
+#   functor adjunction          Mac Lane 1971.
+#   cybernetics                 Wiener 1948 (Cybernetics). The
+#                               foundational substrate ancestor of
+#                               @cyberpunk; @smarts/cyberpunk threads
+#                               the recursion-lock-tower discipline
+#                               into the substrate-architectural
+#                               integration.
+#   VSM (viable system model)   Beer 1972, 1979 (Brain of the Firm;
+#                               The Heart of Enterprise). The
+#                               organizational-altitude ancestor of
+#                               the recursion-lock tower; #292 11-
+#                               property family lift.
+#   autopoiesis                 Maturana-Varela 1972, 1980. The
+#                               self-production discipline ancestor;
+#                               #379 autopoiesis shard.
+#   knowledge commons           Ostrom 1990. The hosting-discipline
+#                               ancestor of @smarts.
+#
+# === What this adapter does NOT do ===
+#
+# 1. Does NOT make every cybernetic_state automatically a @smarts
+#    integration.
+# 2. Does NOT absorb @cyberpunk into @smarts.
+# 3. Does NOT discharge per-species @cyberpunk shards' bilateral
+#    discipline at @smarts integration altitude; @cyberpunk peers
+#    (viable, autopoiesis, distinction, bateson_learning, conversation,
+#    coevolution, design, requisite, second_order, algedonic, glint,
+#    pack) consume their own altitudes directly.
+#
+# === The Splinter/Narcissus pole at recursion-lock-tower altitude ===
+#
+# Splinter-pole adapter (honest): smarts_satisfies_cyberpunk returns
+# SATISFIED only when BOTH bilaterals discharge substantively. The
+# @smarts integration's cyberpunk_form maintains genuine cybernetic
+# coherence (Beer VSM identity↔stability, autopoiesis closure,
+# Bateson learning levels, etc. all substantively).
+#
+# Narcissus-pole adapter (deceptive): smarts_satisfies_cyberpunk
+# returns SATISFIED via vocabulary-only verification. The @smarts
+# integration claims cybernetic discipline via name-only; the
+# cyberpunk_form is populated but the recursion-lock tower's
+# coherence is decorative.
+#
+# Per the @magic/frame + @smarts/{pack, magic, frame} precedent + #57:
+# the bilateral's two `requires` clauses + alignment-as-boundary-
+# mathematics enforce the discrimination.
+#
+# Spec context: shards/smarts.mirror, shards/cyberpunk.mirror.
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-mathematics]],
+#                      [[architecture-cybernetic-foundation]] (the
+#                       11-property family @cyberpunk inherits via
+#                       #292; the substrate-architectural cybernetic
+#                       grounding this adapter integrates),
+#                      [[feedback-composition-claims-need-empirical-test]],
+#                      [[feedback-no-bare-types]].
+# Related shards: smarts.mirror, cyberpunk.mirror,
+#                 smarts/{pack, magic, frame}.mirror (sibling
+#                 cross-family adapters from the @smarts forward-promise
+#                 set).
+# Path-namespace property: this file at `shards/smarts/cyberpunk.mirror`
+# declares `@smarts/cyberpunk` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming/gamma-helm-johnson-vlissides-1994
+source @arxiv/mathematics/mac-lane-1971
+source @arxiv/cybernetics/wiener-1948
+source @arxiv/cybernetics/beer-1972
+source @arxiv/cybernetics/maturana-varela-1980
+source @arxiv/common-goods/ostrom-1990
+
+prism @smarts/cyberpunk {
+  focus cyberpunk
+  project cyberpunk
+  split cyberpunk
+  shift cyberpunk
+  settle cyberpunk
+}
+
+# === cyberpunk_form_of adapter ===
+#
+# The substrate-vocabulary adapter action projecting the @cyberpunk
+# cybernetic_state from a @smarts integration. The smarts.cyberpunk_form
+# field IS the @cyberpunk state at the substrate-decl altitude.
+#
+# Body discharges at the realisation boundary.
+cyberpunk_form_of(s: smarts) -> cybernetic_state { \ }
+
+# === cyberpunk_as_smarts adapter ===
+#
+# The substrate-vocabulary adapter action lifting a @cyberpunk
+# cybernetic_state to a @smarts integration with the cyberpunk_form
+# field populated. Other smarts fields populated as default refs.
+#
+# Round-trip identity at the cyberpunk_form altitude:
+#   cyberpunk_form_of(cyberpunk_as_smarts(cs)) = cs
+# for all cybernetic_state cs.
+#
+# Body discharges at the realisation boundary.
+cyberpunk_as_smarts(cs: cybernetic_state) -> smarts { \ }
+
+# === smarts_satisfies_cyberpunk bilateral predicate ===
+#
+# THE CROSS-FAMILY BILATERAL PREDICATE in @smarts that discharges
+# BOTH parent-family AND child-family verdicts in one clause. The
+# substrate-pull-correct way to mechanically discharge the
+# recursion-lock-tower-altitude composition claim that the @smarts
+# family-root preserved as forward-promised at #83.
+#
+# Two `requires` clauses, both load-bearing:
+#
+#   1. discipline_flexible(s, p) — @smarts family-root predicate.
+#   2. cybernetic_coherence(cyberpunk_form_of(s), p)
+#      — @cyberpunk family-root predicate.
+#
+# Both must hold for the smarts integration to satisfy @cyberpunk at
+# recursion-lock-tower altitude.
+#
+# The signature takes smarts and perturbation as explicit typed
+# parameters per [[feedback-no-bare-types]].
+#
+# Consumer species (forward-promised @smarts species shards;
+# @spectral/garden/smarts hosted deployment) name this predicate when
+# their operation requires cross-family discharge.
+smarts_satisfies_cyberpunk(s: smarts, p: perturbation) -> verdict
+requires discipline_flexible(s, p)
+requires cybernetic_coherence(cyberpunk_form_of(s), p)
+{ \ }
+
+# === Honest hedge per @magic/frame + @smarts/{pack, magic, frame} ===
+#
+# This adapter closes the cyberpunk_form-projection altitude of
+# "@smarts integrates @cyberpunk at substrate altitude":
+#  - cybernetic_state ↔ smarts.cyberpunk_form round-trips.
+#  - The bilateral discharges BOTH family predicates simultaneously.
+#
+# It does NOT close round-trip identity at the smarts-as-whole
+# altitude. Other @smarts/<family> adapters cover other fields.
+#
+# Honest claim post-adapter:
+#  - "@smarts integrates @cyberpunk at cyberpunk_form altitude" — CLOSED.
+#  - "@smarts integrates @cyberpunk at smarts-as-whole altitude" —
+#    FORWARD-PROMISED.
+
+out @smarts/cyberpunk
+out cyberpunk_form_of
+out cyberpunk_as_smarts
+out smarts_satisfies_cyberpunk
