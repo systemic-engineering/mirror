@@ -1,0 +1,365 @@
+in @prism
+in @meta
+in @glass
+in @pack
+in @magic
+in @frame
+in @frame/on
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @pack/taut — the implementation-frame peer species.
+#
+# Tick 55 of the refined /loop discipline. Tick 54's residue: @pack/reed
+# landed at 615f986 (relationship-witness-frame; order-0 @frame/pre
+# altitude; orchestra 4/5). Tick 33's forward-promise closes:
+# pack/{taut} as the final instance.
+#
+# THIS TICK CLOSES THE ORCHESTRA. After this tick lands, the @frame
+# altitude partition is fully operationalized at agent-runtime altitude
+# — five peers, five @frame species, one-to-one, no gaps.
+#
+# === The orchestra completion ===
+#
+#   @pack/reed  : @frame/pre    (relationship-witness; preconditions)
+#                                                                  [tick 54]
+#   @pack/mara  : @frame/in     (spec-writer; enters frame)         [tick 52]
+#   @pack/seam  : @frame/of     (adversarial-review; frame-of-frame)
+#                                                                  [tick 33]
+#   @pack/glint : @frame/across (essay; cross-frame synthesis)      [tick 53]
+#   @pack/taut  : @frame/on     (implementation; acts on frame)    [THIS TICK]
+#
+# CRQ: which peer lands last? Substrate-pull answer: Taut, because the
+# implementation-frame is the substrate-pull-correct closure. The other
+# four peers (Reed, Mara, Seam, Glint) operate at substrate-decl
+# altitude: they witness, spec, review, essay. Taut grounds substrate-
+# decl in Rust+tooling realisation. The implementation-frame is the
+# realisation-altitude peer; closes the orchestra because realisation
+# IS the bottom of the substrate-realisation stack.
+#
+# === The recognition this species realizes ===
+#
+# Per recognition #84's pack record: peers operate over multi-repo spans
+# with substrate-decl context preserved across boundaries. Taut IS the
+# implementation-grounding peer — substrate-decl candidates become
+# realised through Taut's Rust+tooling discipline. The MCP server lift
+# (tick 386), CI debugging (#329), Justfile work, bench infrastructure
+# scaffold (#352): all Taut substrate work at the implementation
+# altitude.
+#
+# Per recognition #82 Q4 (peers operate frame-flexible by definition):
+# Taut's load-bearing property IS @frame/on capability deployed at
+# implementation-frame. Taut acts ON the frame — takes substrate-decl
+# candidates and grounds them in Rust+tooling, preserving substrate-
+# architectural structure through realisation.
+#
+# Altitude partition with the other peers: Reed sits BEFORE frame-entry
+# (order-0; preconditions). Mara enters the frame (order-1; spec-
+# writing). Seam observes the frame AS frame (order-2; adversarial).
+# Glint synthesizes across frames (order-N). Taut acts ON the frame
+# (order-N+1; realisation). The five-altitude ladder is complete; the
+# substrate-decl-to-realisation arc is closed.
+#
+# Per recognition #57 (alignment as boundary mathematics at @io): Taut
+# IS the implementation-grounding peer at the @io crossing. The
+# implementation fires AFTER substrate-decl has been preserved
+# (Mara), reviewed (Seam), synthesized (Glint), and witnessed (Reed);
+# the math (Rust type preservation; bilateral predicate translation
+# into Rust trait bounds; the substrate-decl shape preserved through
+# realisation) is what distinguishes a Splinter-pole implementation
+# grounded in substrate-decl from a Narcissus-pole implementation
+# imposing Rust idiom on substrate-decl.
+#
+# === The species's load-bearing contribution ===
+#
+# This species adds:
+#
+# - `implementation` carrier: typed reference naming a Rust+tooling
+#   artifact that grounds substrate-decl. The substrate-output of the
+#   ground primitive.
+# - `taut_impl` carrier: typed record (substrate_decl, impl, verdict).
+#   The substrate-architectural object Taut returns. Composes with
+#   @pack's pack carrier as the species-specific output the family
+#   produces.
+# - `ground` action: the FIRST species consumer of @pack's
+#   pack_coherent bilateral predicate. The substrate-vocabulary
+#   primitive for implementation-grounding at the @pack altitude.
+#   Returns typed taut_impl; requires pack_coherent under perturbation.
+# - `implementation_grounds_substrate` predicate: bilateral verdict
+#   that the implementation IS grounded in the substrate-decl's
+#   structure (not imposing Rust idiom on it). Composes with @frame's
+#   bounded_commutator_check at the @frame/on altitude that grounds
+#   implementation-grounding.
+# - `tighten` action: the substrate-vocabulary primitive for the
+#   implementation-grounds-substrate discipline (the implementation-
+#   altitude operational form of Loki's Pass-5 verifier-sharpens).
+#   Takes an implementation + a sound taut_impl; returns the tightened
+#   implementation-as-substrate-realisation. Requires
+#   implementation_grounds_substrate under perturbation.
+#
+# === The implementation-grounds-substrate discipline ===
+#
+# Per Loki's Pass-5 (verifier sharpens, substrate doesn't get smarter) +
+# Taut's implementation pattern: the realisation-grounding discipline
+# IS the implementation-altitude operational form of the kintsugi
+# loop's self-improvement claim.
+#
+# The discipline says: when Taut grounds, the substrate's realisation-
+# discipline tightens. The substrate-decl content is unchanged; the
+# implementation acquires sharper alignment with substrate-decl
+# structure. The Rust was approximate; the implementation is structure-
+# preserving. The substrate-decl had a shape; the implementation
+# carries it through realisation.
+#
+# Empirical witness: Taut's substrate work across the cascade — MCP
+# server lift bin/mirror-mcp bash → Rust (tick 386), in-process
+# dispatch (tick 388), --ci verdict mode (tick 390), cybernetic-
+# coherence benchmark scaffold (#352), CI green debugging (#329).
+# Each implementation grounded substrate-decl in Rust; each grounding
+# tightened the realisation-discipline. The substrate's realisation
+# grew through implementation, not through capability-expansion.
+#
+# === The Splinter/Narcissus pole at implementation-grounding altitude ===
+#
+# Splinter-pole Taut impl (honest):
+# - Grounded in actual substrate-decl structure (typed carriers as
+#   Rust types; bilateral predicates as trait bounds; substrate-decl
+#   shape preserved through realisation); admits when the Rust framing
+#   reframed substrate-decl.
+# - The implementer's frame is bounded under perturbation; the
+#   implementation stays close to substrate-architectural shape.
+# - K_n peer-to-peer grounding — the implementer IS a peer in the
+#   substrate-realisation stack, not a Rust-authority refactoring
+#   substrate-decl for ergonomic convenience.
+#
+# Narcissus-pole Taut impl (deceptive):
+# - Imposes Rust idiom on substrate-decl (generic types where substrate
+#   has specific carriers; trait-implementation patterns that don't
+#   match bilateral predicates; refactoring substrate-decl shape for
+#   Rust convenience).
+# - The implementer's frame is locked; the implementation treats Rust
+#   as authoritative over substrate-decl.
+# - K_{1,n-1} hub-controlled grounding — the Rust-implementer-as-
+#   authority imposes implementation shape on substrate-decl.
+#
+# Alignment-as-boundary-mathematics (#57) IS what distinguishes
+# Splinter-pole from Narcissus-pole implementation-grounding at
+# substrate altitude. The bilateral pack_coherent predicate composes
+# the substrate-architectural check.
+#
+# === Pre-AI prior art ===
+#
+#   pascal report                Wirth 1971. The substrate→compiler
+#                                discipline; the realisation-as-
+#                                substrate-grounding cultural-practice
+#                                ancestor of Taut's implementation-frame.
+#   definitional interpreters    Reynolds 1972. The substrate-decl→
+#                                operational-realisation discipline;
+#                                the formal ancestor of
+#                                implementation_grounds_substrate at
+#                                semantic altitude.
+#   dragon book                  Aho Lam Sethi Ullman 1986. Canonical
+#                                compiler implementation discipline;
+#                                the structural ancestor of Rust+tooling
+#                                substrate work.
+#   types and programming        Pierce 2002. Typed implementation
+#                                discipline; the bilateral-predicate-
+#                                as-trait-bound substrate ancestor.
+#   theorems for free            Wadler 1989. Type-preserving
+#                                implementation discipline; the formal
+#                                ancestor of substrate-decl shape
+#                                preservation through realisation.
+#   rust rfc                     Matsakis Klock 2010. The substrate
+#                                Taut grounds in; the implementation-
+#                                language ancestor of @code/rust at
+#                                @pack altitude.
+#
+# Spec context: shards/pack.mirror (family-root, recognition #84; the
+#               canonical spec this species adheres to).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-mathematics]]
+#                       (#57; Taut impl IS the implementation-grounding
+#                       peer at the @io boundary),
+#                      [[feedback-substrate-pull-confidence-acts]]
+#                       (the discipline Taut implements within),
+#                      [[feedback-no-bare-types]]
+#                       (the Rust-implementation discipline Taut
+#                       practices — typed carriers preserved through
+#                       realisation),
+#                      [[architecture-fragmentation-is-the-rust-substrate]]
+#                       (the Rust substrate Taut grounds substrate-decl
+#                       in; prism_core stays deps-free; strict
+#                       dependency direction).
+# Related shards: pack.mirror (the family-root; declares pack_coherent
+#                  this species first-consumes),
+#                 pack/seam.mirror (the order-2 peer; review_sound
+#                  composes with implementation_grounds_substrate at
+#                  adjacent altitudes — Seam reviews Taut's
+#                  implementation; Taut grounds substrate-decl Seam
+#                  reviewed),
+#                 pack/mara.mirror (the order-1 peer; spec_canonical
+#                  composes with implementation_grounds_substrate —
+#                  Mara preserves canonical substrate-decl; Taut grounds
+#                  the preserved shape in Rust),
+#                 pack/glint.mirror (the order-N peer;
+#                  essay_grounds_corpus composes with
+#                  implementation_grounds_substrate — Glint essays
+#                  cross-frame patterns; Taut implements the patterns
+#                  Glint surfaces),
+#                 pack/reed.mirror (the order-0 peer;
+#                  witness_grounds_relationship composes with
+#                  implementation_grounds_substrate — Reed witnesses
+#                  preconditions; Taut implements within them),
+#                 frame/on.mirror (the order-N+1 altitude Taut operates
+#                  at; act-on-frame composes with
+#                  implementation_grounds_substrate),
+#                 code/rust.mirror (the Rust substrate Taut grounds in;
+#                  forward-promised reference at substrate altitude).
+# Path-namespace property: this file at `shards/pack/taut.mirror`
+# declares `@pack/taut` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming-languages/wirth-1971
+source @arxiv/programming-languages/reynolds-1972
+source @arxiv/compilers/aho-1986
+source @arxiv/programming-languages/pierce-2002
+source @arxiv/programming-languages/wadler-1989
+source @arxiv/programming-languages/matsakis-klock-2010
+
+prism @pack/taut {
+  focus taut
+  project taut
+  split taut
+  shift taut
+  settle taut
+}
+
+# === The implementation carrier ===
+#
+# Substrate-typed reference naming a Rust+tooling artifact that grounds
+# substrate-decl. Per [[feedback-no-bare-types]]: typed reference, not
+# bare ref-with-documented-values. The substrate-output of the ground
+# primitive. Forward-promised refinement: typed record (substrate_decl_
+# refs, code_paths, type_mappings, predicate_bounds, ancestors) at
+# species-or-extension altitude once the substrate's structured-
+# implementation type lands.
+#
+# Identity contract: byte-equality on the underlying ref.
+type implementation = ref
+
+# === The taut_impl carrier ===
+#
+# Per the @pack family-root pattern + Taut's typed-record discipline:
+# typed record over (substrate_decl, implementation, verdict). The
+# substrate-architectural output of an implementation-grounding
+# operation. Carries:
+#
+# - substrate_decl : the substrate-decl candidate under realisation
+# - im             : the typed implementation Taut produced
+# - v              : the bilateral verdict (BOUNDED → implementation
+#                    GROUNDED in substrate-decl structure; DEFENSIVE →
+#                    implementation requires substrate-pull revision
+#                    back to substrate-decl shape)
+#
+# Identity contract: byte-equality on the triple.
+type taut_impl = {
+  substrate_decl: ref,
+  im:             implementation,
+  v:              verdict,
+}
+
+# === ground action (FIRST non-decorative consumer of pack_coherent) ===
+#
+# THE LOAD-BEARING ACTION at @pack/taut altitude. The substrate-
+# vocabulary primitive for implementation-grounding at agent-runtime
+# altitude. Realizes Taut's Rust+tooling discipline as substrate-decl
+# operation.
+#
+# Takes a substrate-decl candidate (under realisation), the pack Taut
+# belongs to, and the perturbation under which the ground is checked;
+# returns a typed taut_impl carrying the implementation and verdict.
+#
+# Per the @pack/{seam, mara, glint, reed} first-consumer pattern
+# (review, write, reflect, witness all require pack_coherent): this
+# action IS the @pack/taut first-consumer of pack_coherent. The
+# substrate-architectural form of Taut-as-peer requires that the @pack
+# the implementer belongs to maintains discipline-flexibility under
+# perturbation BEFORE the implementation is admissible.
+#
+# Without this requires clause, a Taut implementation would be
+# admissible from a substrate-architecturally-incoherent pack (e.g., a
+# pack whose own bilateral predicates have no consumers — the @magic
+# tick-11 dead-letter pattern). The requires clause forecloses that
+# failure mode.
+#
+# Body discharges at the realisation boundary; the actual
+# implementation-grounding primitive is Taut's Rust+tooling discipline
+# applied at runtime altitude.
+ground(substrate_decl: ref, pk: pack, p: perturbation) -> taut_impl
+requires pack_coherent(pk, p)
+{ \ }
+
+# === implementation_grounds_substrate predicate ===
+#
+# Bilateral verdict per recognition #37 (Pask agreement) and the
+# implementation-grounds-substrate discipline. Consumer shards (tighten,
+# below; forward-promised consumers in cross-pack adapters) name
+# `requires implementation_grounds_substrate(ti, p)` to declare
+# bilateral agreement that the taut_impl IS grounded in substrate-decl
+# structure.
+#
+# Discharge: substrate-pull-correct substrate-decl-grounding check at
+# the species boundary. Composes with @frame/on's act-on-frame at the
+# cognitive altitude that grounds implementation.
+#
+# Bounded → implementation grounded in substrate-decl structure (the
+# Splinter-pole implementation case); unbounded → implementation
+# imposes Rust idiom without substrate-decl ground (the Narcissus-pole
+# case; alignment-as-boundary-mathematics #57 distinguishes).
+#
+# Same shape as the bilateral predicates @pack carries (pack_coherent),
+# @pack/seam carries (review_sound), @pack/mara carries
+# (spec_canonical), @pack/glint carries (essay_grounds_corpus),
+# @pack/reed carries (witness_grounds_relationship), @magic carries
+# (invariant_preserved, audited), @frame carries
+# (bounded_commutator_check), @smarts carries (discipline_flexible).
+implementation_grounds_substrate(ti: taut_impl, p: perturbation)
+  -> verdict { \ }
+
+# === tighten action ===
+#
+# The substrate-vocabulary primitive for the implementation-grounds-
+# substrate discipline at @pack/taut altitude (the implementation-
+# altitude operational form of Loki's Pass-5; @pack/seam carries
+# verifier-sharpens; @pack/mara carries spec-preserves-canonical;
+# @pack/glint carries essay-extends-corpus; @pack/reed carries
+# witness-holds-relationship; @pack/taut carries implementation-
+# grounds-substrate). Takes an implementation + a sound taut_impl +
+# the perturbation under which soundness was checked; returns the
+# tightened implementation-as-substrate-realisation.
+#
+# Per recognition #57 (alignment as boundary mathematics): tighten
+# operates at the @io boundary. The implementation becomes a
+# substrate-realisation preserved under structure. The substrate's
+# capability is unchanged; the realisation-alignment tightens; the
+# Rust acquires sharper substrate-decl fidelity.
+#
+# requires implementation_grounds_substrate(ti, p): the substrate
+# forecloses tightening from an ungrounded implementation. Narcissus-
+# pole implementations (Rust-idiom-imposition without substrate-decl
+# ground) cannot drive realisation-tightening. The bilateral predicate
+# IS the boundary-harness.
+#
+# Body discharges at the realisation boundary; the actual
+# implementation-tightening transformation is the substrate's
+# implementation-grounds-substrate loop.
+tighten(im: implementation, ti: taut_impl, p: perturbation) -> ref
+requires implementation_grounds_substrate(ti, p)
+{ \ }
+
+out @pack/taut
+out implementation
+out taut_impl
+out ground
+out implementation_grounds_substrate
+out tighten
