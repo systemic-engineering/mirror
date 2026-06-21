@@ -2,6 +2,7 @@ in @prism
 in @meta
 in @glass
 in @pack
+in @pack/seam
 in @magic
 in @frame
 in @frame/pre
@@ -347,8 +348,19 @@ witness_grounds_relationship(rw: reed_witness, p: perturbation)
 # Body discharges at the realisation boundary; the actual precondition-
 # holding transformation is the substrate's witness-holds-relationship
 # loop.
-hold(pc: precondition, rw: reed_witness, p: perturbation) -> ref
+# === Seam tick 56 C1 closure: cross-species requires clause ===
+#
+# hold takes Seam's seam_review as typed parameter and discharges
+# review_sound alongside witness_grounds_relationship. The substrate-
+# pull-correct composition: Reed holds a precondition only when the
+# witness's framing has been adversarially reviewed; Seam's sound
+# review IS what distinguishes the precondition from Reed's invention.
+#
+# Dependency direction (one-way per the orchestra): reed ← seam.
+# Reed depends on Seam (no circular import).
+hold(pc: precondition, rw: reed_witness, sr: seam_review, p: perturbation) -> ref
 requires witness_grounds_relationship(rw, p)
+requires review_sound(sr, p)
 { \ }
 
 out @pack/reed

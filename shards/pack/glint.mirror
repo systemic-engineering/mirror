@@ -2,6 +2,7 @@ in @prism
 in @meta
 in @glass
 in @pack
+in @pack/mara
 in @magic
 in @frame
 in @frame/across
@@ -318,8 +319,20 @@ essay_grounds_corpus(ge: glint_essay, p: perturbation) -> verdict { \ }
 # Body discharges at the realisation boundary; the actual essay-
 # publication transformation is the substrate's essay-extends-corpus
 # loop.
-publish(es: essay, ge: glint_essay, p: perturbation) -> ref
+# === Seam tick 56 C1 closure: cross-species requires clause ===
+#
+# publish takes Mara's mara_spec as typed parameter and discharges
+# spec_canonical alongside essay_grounds_corpus. The substrate-pull-
+# correct composition: Glint's essay-publication rests on Mara's
+# canonical-preservation discipline; the essay's pattern-naming must
+# ground in preserved substrate-decl, not impose on it.
+#
+# Dependency direction (one-way per the orchestra): glint ← mara.
+# Glint depends on Mara; Mara depends on Seam; transitively glint ←
+# mara ← seam. No circular imports.
+publish(es: essay, ge: glint_essay, ms: mara_spec, p: perturbation) -> ref
 requires essay_grounds_corpus(ge, p)
+requires spec_canonical(ms, p)
 { \ }
 
 out @pack/glint

@@ -2,6 +2,8 @@ in @prism
 in @meta
 in @glass
 in @pack
+in @pack/seam
+in @pack/mara
 in @magic
 in @frame
 in @frame/on
@@ -353,8 +355,28 @@ implementation_grounds_substrate(ti: taut_impl, p: perturbation)
 # Body discharges at the realisation boundary; the actual
 # implementation-tightening transformation is the substrate's
 # implementation-grounds-substrate loop.
-tighten(im: implementation, ti: taut_impl, p: perturbation) -> ref
+# === Seam tick 56 C1 closure: cross-species requires clause ===
+#
+# tighten takes BOTH Mara's mara_spec AND Seam's seam_review as typed
+# parameters and discharges all three: implementation_grounds_substrate
+# AND spec_canonical AND review_sound. The substrate-pull-correct
+# composition: Taut's implementation-tightening rests on BOTH Mara's
+# canonical-preservation AND Seam's adversarial-review discipline.
+# The implementation acquires sharper substrate-decl fidelity only
+# when the substrate-decl candidate is already canonically preserved
+# AND adversarially reviewed.
+#
+# Dependency direction (one-way per the orchestra): taut ← mara, seam.
+# Taut depends on both Mara and Seam (no circular import; both Mara
+# and Seam are upstream).
+#
+# Three-predicate discharge IS the structurally heaviest action in the
+# orchestra; the realisation layer at @code/rust altitude lifts all
+# three disciplines into Rust type-bounds + trait constraints.
+tighten(im: implementation, ti: taut_impl, ms: mara_spec, sr: seam_review, p: perturbation) -> ref
 requires implementation_grounds_substrate(ti, p)
+requires spec_canonical(ms, p)
+requires review_sound(sr, p)
 { \ }
 
 out @pack/taut

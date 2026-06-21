@@ -277,9 +277,39 @@ sharpen(predicate_body: ref, sr: seam_review, p: perturbation) -> ref
 requires review_sound(sr, p)
 { \ }
 
+# === Seam tick 56 C3 + C9 closure: peer enum consumed + peer_settle ===
+#
+# seam_settles IS the @pack/seam species implementation of the family-
+# root peer_settle action. Per Seam tick 56 review C3: the `peer`
+# variant enum declared at pack.mirror was never consumed at species
+# altitude; per C9: peer_settle had zero consumers. This action closes
+# both at the seam altitude — consumes the peer variant as typed input,
+# implements the per-peer settle verdict.
+#
+# Takes the peer variant (the peer whose substrate-decl is under settle-
+# check), the work being settled, the pack the settle-check operates
+# within, and the perturbation. Returns a verdict on whether the peer's
+# substrate-decl operation maintains the @pack-altitude discipline
+# under perturbation.
+#
+# Per the @magic/audit verifier altitude precedent: Seam's settle-check
+# IS the substrate-architectural verifier of per-peer discipline
+# maintenance. Other species can add their own per-peer settle
+# implementations (forward-promised: mara_settles, glint_settles,
+# reed_settles, taut_settles — each implementing the family-root
+# peer_settle for the discipline-check Splinter-pole at their altitude).
+#
+# requires pack_coherent(pk, p): the @pack the settle-check operates
+# within must maintain discipline-flexibility BEFORE the settle is
+# admissible (same first-consumer pattern as review/sharpen).
+seam_settles(pe: peer, work: ref, pk: pack, p: perturbation) -> verdict
+requires pack_coherent(pk, p)
+{ \ }
+
 out @pack/seam
 out constraint_set
 out seam_review
 out review
 out review_sound
 out sharpen
+out seam_settles

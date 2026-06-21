@@ -2,6 +2,7 @@ in @prism
 in @meta
 in @glass
 in @pack
+in @pack/seam
 in @magic
 in @frame
 in @frame/in
@@ -293,8 +294,20 @@ spec_canonical(ms: mara_spec, p: perturbation) -> verdict { \ }
 #
 # Body discharges at the realisation boundary; the actual canonical-
 # preservation transformation is the substrate's spec-writing loop.
-preserve(subject: ref, ms: mara_spec, p: perturbation) -> ref
+# === Seam tick 56 C1 closure: cross-species requires clause ===
+#
+# preserve takes Seam's seam_review as typed parameter and discharges
+# review_sound alongside spec_canonical. The substrate-pull-correct
+# composition: Mara's preservation IS substrate-decl preservation only
+# after Seam's adversarial review has surfaced constraints; the
+# canonical record absorbs Seam's sharpening as preservation discipline.
+#
+# Dependency direction (one-way per the orchestra): mara ← seam.
+# Mara depends on Seam (no circular import); Seam does not depend on
+# Mara at the requires-clause boundary.
+preserve(subject: ref, ms: mara_spec, sr: seam_review, p: perturbation) -> ref
 requires spec_canonical(ms, p)
+requires review_sound(sr, p)
 { \ }
 
 out @pack/mara
