@@ -123,12 +123,23 @@ Neutrosophic's hold ("preserve under structure") vs cybernetic's hold
 boundaries. The candidate must be parametric over which hold-discipline
 discharges, with the frame parameter naming it.
 
-### H2: cognitive-altitude collision with @frame
+### H2: cognitive-altitude collision with @frame — RESOLVED 2026-06-23
 
 @frame names structural orders (pre/in/of/on/across); @cogito names
 cognitive cycle (notice/name/hold). Are these parallel altitudes
 (form-level frame + process-level cognition) or does @frame/on (frame-
-flexible) SUBSUME @cogito/name? Empirical test forward-promised.
+flexible) SUBSUME @cogito/name?
+
+**Empirical test result (post-`shards/frame/on.mirror` reading):**
+parallel altitudes; NO collapse. @frame/on's `shift_frame(operator, f,
+p) -> frame` PRODUCES a substantively-different structural frame in
+response to a perturbation (operator operates ON the frame); @cogito's
+proposed `name(noticed, frame, p) -> name_output` TAKES a frame as
+parameter to produce a named distinction WITHIN signal (operator
+operates WITHIN the frame). These are different operational arities:
+@frame/on changes the structural container; @cogito.name uses the
+container to label content. The altitudes compose orthogonally, not
+recursively. H2 hedge dissolved.
 
 ### H3: notice asymmetry
 
@@ -155,8 +166,11 @@ Land @cogito family-root WHEN all four conditions hold:
 
 1. **Seam adversarial review** of bare-ref types in proposal (especially
    `name_output`) returns CLEAN.
-2. **@frame/on species shard lands** — clarifies frame-shift vs
-   name-boundary distinction (empirical test for H2 orthogonality).
+2. **@frame/on species shard lands** — ~~clarifies frame-shift vs
+   name-boundary distinction (empirical test for H2 orthogonality).~~
+   **MET 2026-06-23**: `shards/frame/on.mirror` landed tick 26
+   (commit per task #424); H2 hedge resolved as parallel-not-recursive
+   (see §7 H2). One of four conditions discharged.
 3. **@reflection/{surface, mirror, shatter, reflection} model shards**
    demonstrate @cogito integration at all four model altitudes —
    validates the §3.3 composition map empirically.
@@ -164,6 +178,8 @@ Land @cogito family-root WHEN all four conditions hold:
    Glint, Reed, Taut) shows @cogito/name capability via frame-shift
    evidence in respective shards; validates the substrate-altitude claim
    that cognition is what each Pack peer does at @frame/on altitude.
+
+Status: **1 of 4 conditions met; 1 of 5 hedges resolved (H2).**
 
 Until all four hold: the candidate stays a candidate. The research is
 preserved here; the surface is not lost.
