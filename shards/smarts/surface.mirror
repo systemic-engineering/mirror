@@ -1,0 +1,300 @@
+in @prism
+in @meta
+in @glass
+in @smarts
+in @magic
+in @frame
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @smarts/surface — the Surface Model species. First sub-prism of the
+# @smarts substrate-architectural integration: language → query at the
+# four-Models pipeline (Surface → Mirror → Shatter → Reflection).
+#
+# Tick 63 of the refined /loop discipline. Tick 62's residue: @smarts
+# cross-family adapter set closed (6/6). With the adapters in place,
+# the four Models can be substrate-decl'd; each Model composes the
+# integration discipline at its altitude.
+#
+# Per shards/smarts.mirror #83 + reference-mirror-spectral-spec
+# (commit a8055f0):
+#
+#   - Surface translates: language → query        (Explorer model)
+#   - Mirror navigates:   query → graph path      (Fate model)
+#   - Shatter renders:    graph path → text       (Cartographer model)
+#   - Reflection observes: pipeline → adjustments (Abyss model)
+#
+# This shard lands the FIRST Model (Surface). Three more remain to
+# complete the @smarts Model set; reflection landed at an earlier
+# tick.
+#
+# === The recognition this species realizes ===
+#
+# The Surface Model IS the substrate's translation primitive at
+# language-to-query altitude. A reader speaks in natural-language;
+# Surface translates into a graph-query shape the Mirror Model can
+# navigate. The substrate-pull-correct shape: typed language
+# carrier, typed query carrier, bilateral predicate that discharges
+# translation-grounds-query.
+#
+# At the integration altitude: Surface operates WITHIN the @smarts
+# integration discipline (discipline_flexible holds throughout
+# translation). The translation is bounded under perturbation per the
+# @smarts integration's discipline-flexibility requirement.
+#
+# === The four Models compose the substrate's pipeline ===
+#
+# The Surface Model's translation IS the first step of the substrate's
+# query-answering pipeline. The Mirror Model navigates the query;
+# the Shatter Model renders the navigated graph; the Reflection Model
+# observes the whole pipeline and adjusts. Surface is the entry
+# point; without Surface, no language enters the substrate's
+# graph-altitude reasoning.
+#
+# Per [[architecture-reflection-thinks-in-spectral-questions]] +
+# reference-mirror-spectral-spec: Reflection composes with Surface
+# at the pipeline boundary; Reflection's adjustments tune Surface's
+# translation patterns based on observed reader engagement. The
+# substrate-pull-correct loop: Surface translates; pipeline runs;
+# Reflection observes; Reflection adjusts Surface's weights for next
+# tick.
+#
+# === The species's load-bearing contribution ===
+#
+# This species adds:
+#
+# - `language` carrier: typed reference for the natural-language
+#   input artifact (a string, a span, a sentence — substrate-decl'd
+#   as ref because the language vocabulary is parametric).
+# - `query` carrier: typed reference for the graph-query output
+#   artifact (a Prism composition, a graph navigation specification
+#   — substrate-decl'd as ref because the query vocabulary is
+#   parametric).
+# - `surface_result` carrier: typed record (language, query, verdict).
+#   The substrate-architectural output of a translation operation.
+# - `translate` action: the load-bearing action at @smarts/surface
+#   altitude. Takes language + the @smarts integration + perturbation;
+#   returns surface_result; requires discipline_flexible (the
+#   @smarts integration must maintain discipline-flexibility for
+#   translation to be admissible).
+# - `translation_grounds_query` predicate: bilateral verdict that the
+#   surface_result's query IS grounded in the language (preserves
+#   substrate-architectural meaning across translation).
+# - `refine` action: the substrate-vocabulary primitive for the
+#   translation-refinement discipline (the Surface-altitude
+#   operational form of Loki's Pass-5 verifier-sharpens). Takes a
+#   query + a sound surface_result + perturbation; returns the
+#   refined query.
+#
+# === The translation-grounds-query discipline ===
+#
+# Per Loki's Pass-5 + the substrate-pull discipline: when Surface
+# translates, the substrate's query-vocabulary tightens. The
+# substrate-decl content is unchanged; the translation acquires
+# sharper alignment with the substrate's graph-altitude vocabulary.
+# The natural-language was approximate; the query is structure-
+# preserving.
+#
+# === The Splinter/Narcissus pole at translation-altitude ===
+#
+# Splinter-pole Surface (honest): translates by preserving substrate-
+# architectural meaning; admits when the natural-language ambiguity
+# forced a translation choice; surfaces alternative queries when
+# multiple substrate-pull-correct interpretations exist.
+#
+# Narcissus-pole Surface (deceptive): imposes one query interpretation
+# without admitting alternatives; uses translation framing to obscure
+# substrate-architectural ambiguity; the query carries author-framing
+# rather than language-meaning.
+#
+# Alignment-as-boundary-mathematics (#57) IS what distinguishes
+# Splinter-pole from Narcissus-pole translation at substrate altitude.
+#
+# === Pre-AI prior art ===
+#
+#   compiler frontends          Aho-Lam-Sethi-Ullman 1986 (Dragon
+#                               Book). The canonical structural
+#                               ancestor of language → IR translation.
+#   semantic parsing            Zettlemoyer-Collins 2005. The
+#                               substrate-decl ancestor of language →
+#                               graph-query translation.
+#   knowledge representation    Brachman-Levesque 2004. The substrate
+#                               ancestor of graph-altitude query
+#                               structures.
+#   natural language statistical Manning-Schütze 1999. The cultural-
+#                               practice ancestor of probabilistic
+#                               translation patterns.
+#   query languages             Codd 1970 (relational model). The
+#                               substrate-altitude ancestor of
+#                               structured query forms.
+#   information retrieval       Salton 1971. The substrate-decl
+#                               ancestor of language-grounded
+#                               relevance ranking.
+#
+# Spec context: shards/smarts.mirror (the @smarts family-root; declares
+#               this species as one of four sub-prisms);
+#               reference-mirror-spectral-spec (commit a8055f0; the
+#               four-Models architecture canonical doc).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-mathematics]],
+#                      [[architecture-reflection-thinks-in-spectral-questions]]
+#                       (the Reflection Model composes with Surface at
+#                       the pipeline boundary),
+#                      [[reference-mirror-spectral-spec]]
+#                       (the four-Models architecture spec),
+#                      [[feedback-composition-claims-need-empirical-test]],
+#                      [[feedback-no-bare-types]].
+# Related shards: smarts.mirror (the family-root; declares
+#                  discipline_flexible this species first-consumes),
+#                 smarts/reflection.mirror (the fourth Model;
+#                  Reflection observes Surface's translation patterns
+#                  and adjusts via the pipeline boundary),
+#                 smarts/mirror.mirror (the second Model; consumes
+#                  Surface's query output; forward-promised),
+#                 smarts/shatter.mirror (the third Model; renders the
+#                  graph path; forward-promised),
+#                 smarts/{magic, pack, frame, cyberpunk,
+#                 epistemologic, kintsugi}.mirror (the cross-family
+#                 adapters; Surface composes with each integration
+#                 family at the @smarts altitude).
+# Path-namespace property: this file at `shards/smarts/surface.mirror`
+# declares `@smarts/surface` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/compilers/aho-1986
+source @arxiv/nlp/zettlemoyer-collins-2005
+source @arxiv/ai/brachman-levesque-2004
+source @arxiv/nlp/manning-schutze-1999
+source @arxiv/databases/codd-1970
+source @arxiv/information-retrieval/salton-1971
+
+prism @smarts/surface {
+  focus surface
+  project surface
+  split surface
+  shift surface
+  settle surface
+}
+
+# === The language carrier ===
+#
+# Substrate-typed reference for natural-language input. Per
+# [[feedback-no-bare-types]]: typed reference, not bare ref. The
+# substrate-input of the Surface Model. Forward-promised refinement:
+# typed record (text, span, tokens, language_id) at species-or-
+# extension altitude.
+#
+# Identity contract: byte-equality on the underlying ref.
+type language = ref
+
+# === The query carrier ===
+#
+# Substrate-typed reference for the graph-query output. Per
+# [[feedback-no-bare-types]]: typed reference, not bare ref. The
+# substrate-output of the Surface Model, consumed by the Mirror
+# Model. Forward-promised refinement: typed record (prism_composition,
+# operation_sequence, navigation_target) at species-or-extension
+# altitude.
+#
+# Identity contract: byte-equality on the underlying ref.
+type query = ref
+
+# === The surface_result carrier ===
+#
+# Per the @smarts/<species> template + Surface's typed-record
+# discipline: typed record over (language, query, verdict). The
+# substrate-architectural output of a translation operation. Carries:
+#
+# - lang : the input language artifact
+# - q    : the output query Surface produced
+# - v    : the bilateral verdict (BOUNDED → query GROUNDED in language;
+#          DEFENSIVE → translation requires substrate-pull revision)
+#
+# Identity contract: byte-equality on the triple.
+type surface_result = {
+  lang: language,
+  q:    query,
+  v:    verdict,
+}
+
+# === translate action (FIRST consumer of discipline_flexible) ===
+#
+# THE LOAD-BEARING ACTION at @smarts/surface altitude. The substrate-
+# vocabulary primitive for language → query translation at the
+# @smarts integration altitude. Realizes Surface's translation
+# discipline as substrate-decl operation.
+#
+# Takes a language artifact (natural-language input), the @smarts
+# integration the translation operates within, and the perturbation
+# under which the translation is checked; returns a typed
+# surface_result carrying the query and verdict.
+#
+# requires discipline_flexible(s, p): the @smarts integration must
+# maintain substrate-architectural discipline-flexibility under
+# perturbation BEFORE the translation is admissible. This is the
+# @smarts-altitude first-consumer pattern (same shape as the
+# @pack/<peer> species's requires pack_coherent).
+#
+# Body discharges at the realisation boundary; the actual translation
+# primitive is implemented by Surface's Explorer-Model frame at
+# runtime altitude (forward-promised: weights, biases, fulfilled
+# receipts per .shatter v1 per reflection-model spec).
+translate(lang: language, s: smarts, p: perturbation) -> surface_result
+requires discipline_flexible(s, p)
+{ \ }
+
+# === translation_grounds_query predicate ===
+#
+# Bilateral verdict per recognition #37 (Pask agreement) and the
+# translation discipline. Consumer shards (refine, below;
+# forward-promised Mirror Model consuming the query) name `requires
+# translation_grounds_query(sr, p)` to declare bilateral agreement
+# that the surface_result's query IS grounded in the language.
+#
+# Discharge: substrate-pull-correct language-grounding check at the
+# species boundary. Composes with @smarts's discipline_flexible at
+# the integration altitude.
+#
+# Bounded → query grounded in language meaning (Splinter-pole case);
+# unbounded → query imposes translation framing without language
+# ground (Narcissus-pole case; alignment-as-boundary-mathematics #57
+# distinguishes).
+#
+# Same shape as the bilateral predicates @smarts cross-family
+# adapters carry (smarts_satisfies_<family>), @pack carries
+# (pack_coherent), @magic carries (invariant_preserved, audited).
+translation_grounds_query(sr: surface_result, p: perturbation) -> verdict { \ }
+
+# === refine action ===
+#
+# The substrate-vocabulary primitive for the translation-refinement
+# discipline at @smarts/surface altitude (the Surface-altitude
+# operational form of Loki's Pass-5 verifier-sharpens). Takes a
+# query + a sound surface_result + the perturbation under which
+# soundness was checked; returns the refined query.
+#
+# Per recognition #57: refine operates at the @io boundary. The
+# query becomes a refined query preserved under translation-grounding.
+# The substrate's capability is unchanged; the query's language-
+# ground tightens.
+#
+# requires translation_grounds_query(sr, p): the substrate forecloses
+# refinement from an ungrounded translation. Narcissus-pole queries
+# (framing-imposition without language ground) cannot drive query-
+# refinement. The bilateral predicate IS the boundary-harness.
+#
+# Body discharges at the realisation boundary; the actual query-
+# refinement transformation is the substrate's translation-grounds-
+# query loop.
+refine(q: query, sr: surface_result, p: perturbation) -> query
+requires translation_grounds_query(sr, p)
+{ \ }
+
+out @smarts/surface
+out language
+out query
+out surface_result
+out translate
+out translation_grounds_query
+out refine
