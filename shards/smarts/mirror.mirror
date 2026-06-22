@@ -1,0 +1,240 @@
+in @prism
+in @meta
+in @glass
+in @smarts
+in @smarts/surface
+in @magic
+in @frame
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @smarts/mirror — the Mirror Model species. Second sub-prism of the
+# @smarts substrate-architectural integration: query → graph path at
+# the four-Models pipeline (Surface → Mirror → Shatter → Reflection).
+#
+# Tick 64 of the refined /loop discipline. Tick 63's residue:
+# @smarts/surface landed at b5c10f6 (Surface Model: language → query).
+# This tick lands the second Model; the Mirror Model consumes the
+# query Surface produces.
+#
+# Per reference-mirror-spectral-spec (commit a8055f0):
+#
+#   - Surface translates: language → query        (Explorer model)
+#   - Mirror navigates:   query → graph path      (Fate model)  ← THIS
+#   - Shatter renders:    graph path → text       (Cartographer model)
+#   - Reflection observes: pipeline → adjustments (Abyss model)
+#
+# === The recognition this species realizes ===
+#
+# The Mirror Model IS the substrate's navigation primitive at
+# query-to-graph-path altitude. Surface translated language into a
+# typed query; Mirror walks the graph to find the path that satisfies
+# the query. Mirror IS the Fate Model: among the eigenvalue-ranked
+# candidate paths, Fate selects the one with the smallest non-trivial
+# eigenvalue — the structurally lightest navigation.
+#
+# At the integration altitude: Mirror operates WITHIN the @smarts
+# integration discipline (discipline_flexible holds throughout
+# navigation). The navigation IS bounded under perturbation per the
+# @smarts integration's discipline-flexibility requirement.
+#
+# === The species's load-bearing contribution ===
+#
+# This species adds:
+#
+# - `graph_path` carrier: typed reference for the navigated graph
+#   path artifact (a sequence of typed graph edges; substrate-decl'd
+#   as ref because path vocabulary is parametric).
+# - `mirror_result` carrier: typed record (query, graph_path, verdict).
+#   The substrate-architectural output of a navigation operation.
+# - `navigate` action: the load-bearing action at @smarts/mirror
+#   altitude. Takes query + @smarts integration + perturbation;
+#   returns mirror_result; requires discipline_flexible.
+# - `navigation_grounds_path` predicate: bilateral verdict that the
+#   mirror_result's graph_path IS grounded in the query (preserves
+#   substrate-architectural meaning across navigation).
+# - `traverse` action: substrate-vocabulary primitive for the
+#   navigation-refinement discipline. Takes graph_path + sound
+#   mirror_result + perturbation; returns the refined graph_path;
+#   requires navigation_grounds_path.
+#
+# === Cross-species composition with @smarts/surface ===
+#
+# Per Seam tick 56 C1 closure precedent (one-way dependency chain):
+# this species imports `in @smarts/surface` to enable consumer
+# species composing the four-Models pipeline to thread the query
+# produced by translate through navigate. The dependency direction is
+# substrate-pull-correct: mirror ← surface (Mirror consumes Surface's
+# output; Surface does not depend on Mirror).
+#
+# === The Splinter/Narcissus pole at navigation-altitude ===
+#
+# Splinter-pole Mirror (honest): navigates by following the query's
+# substrate-architectural shape; selects the smallest-eigenvalue path
+# when multiple candidates exist; admits when the graph topology
+# under-determines the answer; returns the bounded answer.
+#
+# Narcissus-pole Mirror (deceptive): selects a path that satisfies
+# author-framing rather than query-meaning; uses navigation framing
+# to obscure substrate-architectural ambiguity in the graph; the
+# graph_path carries narrative rather than navigation.
+#
+# === Pre-AI prior art ===
+#
+#   shortest path               Dijkstra 1959. The canonical structural
+#                               ancestor of graph navigation.
+#   eigenvalue ranking          PageRank, Brin-Page 1998. The substrate
+#                               ancestor of fate-model selection via
+#                               spectral ranking.
+#   graph databases             Neo4j Cypher, RDF SPARQL. The cultural-
+#                               practice ancestor of typed graph
+#                               navigation.
+#   query planning              Selinger et al 1979 (System R). The
+#                               substrate ancestor of query → access-
+#                               plan translation.
+#   knowledge graphs            Google 2012, Schema.org. The substrate-
+#                               decl ancestor of typed graph entities.
+#   spectral methods            Cvetković-Doob-Sachs 1980. The
+#                               mathematical ancestor of eigenvalue-
+#                               based graph navigation.
+#
+# Spec context: shards/smarts.mirror, reference-mirror-spectral-spec.
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-mathematics]],
+#                      [[architecture-operations-as-linear-algebra]]
+#                       (settle = monad-close / measurement collapse;
+#                       Mirror's navigation IS the operational
+#                       counterpart of settle at the four-Models
+#                       altitude),
+#                      [[reference-mirror-spectral-spec]],
+#                      [[feedback-composition-claims-need-empirical-test]],
+#                      [[feedback-no-bare-types]].
+# Related shards: smarts.mirror, smarts/surface.mirror (the input
+#                  source for the Mirror Model; consumed via
+#                  in @smarts/surface),
+#                 smarts/reflection.mirror (the fourth Model;
+#                  Reflection observes Mirror's loop count and tunes
+#                  exit thresholds),
+#                 smarts/shatter.mirror (the third Model; consumes
+#                  Mirror's graph_path output; forward-promised),
+#                 smarts/{magic, pack, frame, cyberpunk,
+#                 epistemologic, kintsugi}.mirror (cross-family
+#                 adapters Mirror composes with at the @smarts
+#                 altitude).
+# Path-namespace property: this file at `shards/smarts/mirror.mirror`
+# declares `@smarts/mirror` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/algorithms/dijkstra-1959
+source @arxiv/information-retrieval/brin-page-1998
+source @arxiv/databases/selinger-1979
+source @arxiv/graphs/cvetkovic-doob-sachs-1980
+
+prism @smarts/mirror {
+  focus mirror
+  project mirror
+  split mirror
+  shift mirror
+  settle mirror
+}
+
+# === The graph_path carrier ===
+#
+# Substrate-typed reference for the navigated graph path output.
+# Per [[feedback-no-bare-types]]: typed reference, not bare ref. The
+# substrate-output of the Mirror Model, consumed by the Shatter
+# Model. Forward-promised refinement: typed record (edges, nodes,
+# eigenvalue_rank, prism_signature) at species-or-extension altitude.
+#
+# Identity contract: byte-equality on the underlying ref.
+type graph_path = ref
+
+# === The mirror_result carrier ===
+#
+# Per the @smarts/<species> template: typed record over (query,
+# graph_path, verdict). The substrate-architectural output of a
+# navigation operation. Carries:
+#
+# - q  : the input query artifact (typed from @smarts/surface)
+# - gp : the output graph_path Mirror produced
+# - v  : the bilateral verdict (BOUNDED → graph_path GROUNDED in
+#        query; DEFENSIVE → navigation requires substrate-pull
+#        revision)
+#
+# Identity contract: byte-equality on the triple.
+type mirror_result = {
+  q:  query,
+  gp: graph_path,
+  v:  verdict,
+}
+
+# === navigate action (FIRST consumer of discipline_flexible) ===
+#
+# THE LOAD-BEARING ACTION at @smarts/mirror altitude. The substrate-
+# vocabulary primitive for query → graph_path navigation at the
+# @smarts integration altitude. Realizes Mirror's Fate-model
+# discipline as substrate-decl operation.
+#
+# Takes a query (the typed query Surface produced), the @smarts
+# integration the navigation operates within, and the perturbation
+# under which the navigation is checked; returns a typed
+# mirror_result carrying the graph_path and verdict.
+#
+# requires discipline_flexible(s, p): the @smarts integration must
+# maintain substrate-architectural discipline-flexibility under
+# perturbation BEFORE the navigation is admissible.
+#
+# Body discharges at the realisation boundary; the actual navigation
+# primitive is implemented by Mirror's Fate-Model frame at runtime
+# altitude.
+navigate(q: query, s: smarts, p: perturbation) -> mirror_result
+requires discipline_flexible(s, p)
+{ \ }
+
+# === navigation_grounds_path predicate ===
+#
+# Bilateral verdict per recognition #37 (Pask agreement) and the
+# navigation discipline. Consumer shards (traverse, below;
+# forward-promised Shatter Model consuming the graph_path) name
+# `requires navigation_grounds_path(mr, p)` to declare bilateral
+# agreement that the mirror_result's graph_path IS grounded in the
+# query.
+#
+# Discharge: substrate-pull-correct query-grounding check at the
+# species boundary. Composes with @smarts's discipline_flexible at
+# the integration altitude.
+#
+# Bounded → graph_path grounded in query meaning; unbounded →
+# graph_path imposes navigation framing without query ground.
+navigation_grounds_path(mr: mirror_result, p: perturbation) -> verdict { \ }
+
+# === traverse action ===
+#
+# The substrate-vocabulary primitive for the navigation-refinement
+# discipline at @smarts/mirror altitude (the Mirror-altitude
+# operational form of Loki's Pass-5 verifier-sharpens). Takes a
+# graph_path + sound mirror_result + perturbation; returns the
+# refined graph_path.
+#
+# Per recognition #57: traverse operates at the @io boundary. The
+# graph_path becomes a refined graph_path preserved under
+# navigation-grounding. The substrate's capability is unchanged; the
+# graph_path's query-ground tightens.
+#
+# requires navigation_grounds_path(mr, p): the substrate forecloses
+# refinement from an ungrounded navigation.
+#
+# Body discharges at the realisation boundary; the actual graph_path-
+# refinement transformation is the substrate's navigation-grounds-
+# path loop.
+traverse(gp: graph_path, mr: mirror_result, p: perturbation) -> graph_path
+requires navigation_grounds_path(mr, p)
+{ \ }
+
+out @smarts/mirror
+out graph_path
+out mirror_result
+out navigate
+out navigation_grounds_path
+out traverse
