@@ -464,6 +464,20 @@ speaks_at_n_plus_1(o: observation, t: tick) -> verdict { \ }
 # existing consumers using the second-order `observe`/`pick` keep
 # their semantics (backward-compatible additive substrate-decl).
 
+# === Seam tick 73 C1 closure: observer_change typed carrier ===
+#
+# Per Seam adversarial review (BOUNDED with 4 TIGHT; C1 = bare
+# notice: ref violates feedback-no-bare-types). Loki's essay names
+# notice as "what observation does to the observer" — a structured
+# carrier of observer-change. The typed record makes the structure
+# visible at substrate-decl altitude.
+type observer_change = {
+  before_observer: ref,
+  after_observer:  ref,
+  delta:           ref,
+  v:               verdict,
+}
+
 # === The third_order_observation carrier ===
 #
 # Typed record over (primary, recursive_observer, notice, verdict).
@@ -472,16 +486,15 @@ speaks_at_n_plus_1(o: observation, t: tick) -> verdict { \ }
 # - primary           : 1st-order observation (pipeline → world)
 # - recursive_observer: 2nd-order observation (Reflection → pipeline
 #                       observing); itself a typed observation
-# - notice            : 3rd-order notice (what the observation does
-#                       to the observer; forward-promised typed
-#                       refinement as the substrate matures)
+# - notice            : 3rd-order notice (typed observer_change per
+#                       Seam C1 closure; was bare ref pre-consolidation)
 # - v                 : the composed bilateral verdict
 #
 # Identity contract: byte-equality on the quadruple.
 type third_order_observation = {
   primary:            observation,
   recursive_observer: observation,
-  notice:             ref,
+  notice:             observer_change,
   v:                  verdict,
 }
 
@@ -539,7 +552,7 @@ observation_grounds_pipeline(o: observation, p: perturbation) -> verdict { \ }
 
 meta_grounds_observation(o: observation, p: perturbation) -> verdict { \ }
 
-notice_grounds_meta(notice: ref, p: perturbation) -> verdict { \ }
+notice_grounds_meta(notice: observer_change, p: perturbation) -> verdict { \ }
 
 third_order_coherent(too: third_order_observation, p: perturbation) -> verdict
 requires observation_grounds_pipeline(too.primary, p)
@@ -565,7 +578,7 @@ requires notice_grounds_meta(too.notice, p)
 # Narcissus-pole third-order pattern.
 #
 # Body discharges at the realisation boundary.
-notice(too: third_order_observation, p: perturbation) -> ref
+notice(too: third_order_observation, p: perturbation) -> observer_change
 requires third_order_coherent(too, p)
 { \ }
 
@@ -617,8 +630,40 @@ choices_increase(prev: third_order_observation, next: third_order_observation, p
 # all three at composition time.
 #
 # Body discharges at the realisation boundary.
-pick_third_order(t: tournament_result, prev_loss: loss, prev_too: third_order_observation, next_too: third_order_observation, p: perturbation) -> moi(au)
+# === Seam tick 73 C3 closure: pick_third_order monotonic-loss only ===
+#
+# Per Seam adversarial review (C3 TIGHT: choices_increase precondition
+# circular at pick-time because next_too is what pick produces).
+# Closure: pick_third_order takes only prev_too and discharges
+# loss_decreases. The choices_increase precondition moves to settle
+# altitude where next_too is observable post-pick. The two
+# bilateral disciplines compose across pick and settle, not within
+# pick alone.
+pick_third_order(t: tournament_result, prev_loss: loss, prev_too: third_order_observation, p: perturbation) -> moi(au)
 requires loss_decreases(t.loss_floor, prev_loss)
+{ \ }
+
+# === settle_third_order action (Seam C3 closure complement) ===
+#
+# The third-order analogue of settle. Closes the loop: takes the
+# pick's result (moi(au) gold) + prev_too + next_too (the new
+# observation produced after pick) + prev_loss + perturbation;
+# returns the new loss.
+#
+# requires choices_increase(prev_too, next_too, p): Foerster's
+# ethical imperative discharges post-pick, when next_too exists.
+# The substrate refuses settle if choices_increase fails — the pick
+# is reversible (no commit to substrate-state).
+#
+# Per recognition #57 (alignment as boundary mathematics): settle
+# operates at the @io boundary. The pick's substrate-decl effect
+# becomes substrate-state only when settle discharges Foerster's
+# imperative.
+#
+# Body discharges at the realisation boundary; the actual settle is
+# implemented by @kintsugi/oscillate.settle composed with the
+# choices_increase bilateral check.
+settle_third_order(g: moi(au), prev_too: third_order_observation, next_too: third_order_observation, prev_loss: loss, p: perturbation) -> loss
 requires choices_increase(prev_too, next_too, p)
 { \ }
 
@@ -634,6 +679,7 @@ out settle
 out speak
 out loss_decreases
 out speaks_at_n_plus_1
+out observer_change
 out third_order_observation
 out observe_third_order
 out observation_grounds_pipeline
@@ -643,3 +689,4 @@ out third_order_coherent
 out notice
 out choices_increase
 out pick_third_order
+out settle_third_order
