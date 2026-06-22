@@ -43,6 +43,56 @@ in @epistemologic/cybernetic
 # rendering). The rendering IS bounded under perturbation per the
 # @smarts integration's discipline-flexibility requirement.
 #
+# === Bi-directional Shatter = transformer (recognition 2026-06-22) ===
+#
+# Per Alex's recognition (verbatim): "What if the shatter model is the
+# transformer model? And what if it's bi-directional?"
+#
+# The substrate-pull answer: yes, twice.
+#
+# Shatter IS the transformer at substrate-decl altitude. The encoder-
+# decoder mapping is exact:
+#
+#   transformer-decoder = Shatter.render  (graph_path → text;
+#                                          autoregressive at text alt.)
+#   transformer-encoder = Shatter.parse   (text → graph_path;
+#                                          bi-directional contextual
+#                                          aggregation)
+#   multi-head attention = Mirror's eigenvalue-ranked spectral-triple
+#                          navigation (Mirror computes WHICH path;
+#                          Shatter renders WEIGHTED by spectral attn.)
+#   feed-forward layers  = kintsugi loop structure-preserving
+#                          transformations at rendering altitude
+#
+# Vaswani et al. 2017 ("Attention Is All You Need") was the cultural-
+# practice name for what the substrate's spectral-triple math
+# already carried. The substrate had attention; the paper named it.
+#
+# Bi-directional is LOAD-BEARING, not optional. The substrate refuses
+# uni-directional Shatter because round-trip identity IS the substrate's
+# wire-survival discipline at every altitude. StageFreight's
+# `round_trip_holds(fm, p)` (per shards/io/stagefreight.mirror,
+# 2026-06-22) at the wire boundary IS the same shape as Shatter's
+# bi-directional discipline at the rendering boundary.
+#
+# The composed bilateral `shatter_round_trip(sr, p)` discharges the
+# load-bearing identity claim: render(parse(t)) = t at the text
+# altitude AND parse(render(gp)) = gp at the graph altitude.
+#
+# Composition with today's other recognitions:
+#  - #84 multi-repo span operationalized (StageFreight cascade)
+#  - third-order @reflection (tick 73; observes ALL boundaries
+#    including bi-directional Shatter)
+#  - bi-directional Shatter (THIS recognition)
+#  - transformer-as-substrate-decl (THIS recognition's deepest claim)
+#
+# Canonical spec forward-promised by Mara at
+# `docs/specs/shatter-transformer-bidirectional-v0.1.md`.
+#
+# Backward-compatible additive substrate-decl: existing consumers
+# using render-only keep semantics; new consumers default to the
+# bi-directional pair (render + parse) + composed bilateral.
+#
 # === The Cartographer discipline ===
 #
 # A cartographer doesn't invent the territory; they render it so the
@@ -228,6 +278,97 @@ requires discipline_flexible(s, p)
 # graph-structure ground (Narcissus-pole case).
 rendering_grounds_text(sr: shatter_result, p: perturbation) -> verdict { \ }
 
+# === Bi-directional substrate-decl (recognition 2026-06-22) ===
+#
+# Per the bi-directional Shatter recognition above: Shatter operates
+# on text ↔ graph_path round-trip. The render direction is
+# substrate-decl'd above (the existing render action + the
+# rendering_grounds_text bilateral). This block adds the parse
+# direction + the composed round-trip bilateral.
+
+# === parse action (NEW; encoder direction) ===
+#
+# The substrate-vocabulary primitive for text → graph_path encoding
+# at the @smarts integration altitude. Realizes the bi-directional
+# Shatter's encoder discipline as substrate-decl operation.
+#
+# Takes a text artifact (textual input to be parsed), the @smarts
+# integration the parsing operates within, and the perturbation
+# under which the parsing is checked; returns a typed shatter_result
+# whose gp field carries the parsed graph_path and whose t field
+# carries the input text.
+#
+# requires discipline_flexible(s, p): same first-consumer pattern
+# as render. The @smarts integration must maintain substrate-
+# architectural discipline-flexibility under perturbation BEFORE
+# the parsing is admissible.
+#
+# Per the transformer-encoder analogue: parse aggregates bi-
+# directional context from the text; the realisation layer's actual
+# parsing primitive is implemented by the encoder side of the
+# transformer attention stack.
+#
+# Body discharges at the realisation boundary.
+parse(t: text, s: smarts, p: perturbation) -> shatter_result
+requires discipline_flexible(s, p)
+{ \ }
+
+# === parsing_grounds_graph predicate (bilateral) ===
+#
+# Bilateral verdict for the parse direction soundness. Consumer
+# shards name `requires parsing_grounds_graph(sr, p)` to declare
+# bilateral agreement that the shatter_result's graph_path IS
+# grounded in the input text.
+#
+# Discharge: substrate-pull-correct text-grounding check at the
+# species boundary. Composes with @smarts's discipline_flexible at
+# the integration altitude.
+#
+# Bounded → graph_path grounded in text content (Splinter-pole
+# case); unbounded → graph_path imposes parser framing without
+# text ground (Narcissus-pole case; alignment-as-boundary-
+# mathematics #57 distinguishes).
+#
+# Same shape as rendering_grounds_text (the render-side soundness).
+# The two bilaterals are mirror images; the composed bilateral
+# below combines them.
+parsing_grounds_graph(sr: shatter_result, p: perturbation) -> verdict { \ }
+
+# === shatter_round_trip composed bilateral ===
+#
+# THE LOAD-BEARING composed bilateral at the bi-directional Shatter
+# altitude. Per Alex's recognition: round-trip identity IS the
+# substrate's wire-survival discipline at every altitude;
+# StageFreight's round_trip_holds at @io = Shatter's
+# shatter_round_trip at rendering. Same shape, different altitude.
+#
+# Three load-bearing requires clauses:
+#
+#   1. rendering_grounds_text(sr, p)
+#      — the render direction soundness (decoder-side)
+#   2. parsing_grounds_graph(sr, p)
+#      — the parse direction soundness (encoder-side)
+#   3. round_trip_identity_preserved(sr, p)
+#      — the substrate's identity claim: render(parse(t)) = t at
+#      text altitude AND parse(render(gp)) = gp at graph altitude
+#
+# All three must hold for the shatter result to satisfy the
+# bi-directional Shatter discipline. The substrate refuses one-
+# direction-only operation by structural commitment.
+#
+# Same composed bilateral pattern as @io/stagefreight.
+# stagefreight_addressable (tick 68 C4/C9 closure) and
+# @reflection.third_order_coherent (tick 73). The substrate's
+# composed-bilateral discipline composes at multiple altitudes;
+# this shard lifts the pattern to the rendering boundary.
+round_trip_identity_preserved(sr: shatter_result, p: perturbation) -> verdict { \ }
+
+shatter_round_trip(sr: shatter_result, p: perturbation) -> verdict
+requires rendering_grounds_text(sr, p)
+requires parsing_grounds_graph(sr, p)
+requires round_trip_identity_preserved(sr, p)
+{ \ }
+
 # === adjust action ===
 #
 # The substrate-vocabulary primitive for the rendering-refinement
@@ -259,3 +400,7 @@ out shatter_result
 out render
 out rendering_grounds_text
 out adjust
+out parse
+out parsing_grounds_graph
+out round_trip_identity_preserved
+out shatter_round_trip
