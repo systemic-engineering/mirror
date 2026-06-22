@@ -1,0 +1,257 @@
+in @prism
+in @meta
+in @glass
+in @smarts
+in @kintsugi
+in @magic
+in @frame
+in @cyberpunk
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @smarts/kintsugi — the loop-discipline-altitude adapter species.
+# Bridges @smarts (substrate-architectural integration; #83) with
+# @kintsugi (process-side family-root; recognition #55 form/process
+# partition) honestly via the adapter pattern, following the
+# @smarts/{pack, magic, frame, cyberpunk, epistemologic} precedents.
+#
+# Tick 62 of the refined /loop discipline. Tick 61's residue:
+# @smarts/epistemologic landed at bd74fdd (cybernetic-property
+# altitude; fifth cross-family adapter; substrate-architectural
+# honesty about property-family structure). This tick CLOSES the
+# @smarts cross-family adapter set:
+#
+#   adapters: magic ✓  pack ✓  frame ✓  cyberpunk ✓  epistemologic ✓  kintsugi ← CLOSES
+#
+# After this tick, the @smarts family-root's forward-promise set is
+# 6/6 closed. The substrate-architectural integration discipline
+# composes with EVERY family the @smarts integration carries
+# (form/process @magic; cognitive-order @frame; recursion-lock-tower
+# @cyberpunk; cybernetic-property @epistemologic/cybernetic;
+# loop-discipline @kintsugi; agent-runtime @pack).
+#
+# === The recognition this species realizes (with honest hedge) ===
+#
+# @smarts.smarts records carry `kintsugi_form: ref` as the sixth form
+# field (per smarts.mirror tick 30 C4 closure). The typed-field is
+# BARE ref, not a typed record — because @kintsugi's family-root
+# substrate-decl is minimal (per shards/kintsugi.mirror): it declares
+# the prism family but exports NO family-root carriers or bilateral
+# predicates. The discipline lives in species: @kintsugi/oscillate,
+# @kintsugi/consent, @kintsugi/morphism, @kintsugi/fracture/*.
+#
+# This adapter EXPOSES the field projection + acknowledges the
+# substrate-architectural fact that the kintsugi discipline has NO
+# single family-root bilateral predicate. The adapter follows the
+# @smarts/epistemologic precedent: project the field; declare
+# bilateral discharging discipline_flexible alone; consumer species
+# name SPECIFIC @kintsugi/<species> bilaterals (e.g.,
+# oscillation_converges, consent_threshold_met, fracture_resolves)
+# directly in their requires clauses.
+#
+# Per recognition #55 (form/process partition at family-root altitude;
+# Pack-promoted): @mirror = form-side; @kintsugi = process-side.
+# @smarts integrates the process-side discipline at deployment
+# altitude; the kintsugi_form field carries the process-side
+# specification the @smarts integration commits to running.
+#
+# === The adapter pattern (per @smarts/epistemologic precedent) ===
+#
+# - Projects the kintsugi_form field (single typed lift)
+# - Lifts a typed kintsugi specification to @smarts integration
+#   (single typed lift; opaque ref because the spec is parametric)
+# - Declares smarts_satisfies_kintsugi bilateral that discharges
+#   discipline_flexible alone at the smarts altitude
+#
+# Substrate-pull-honest framing: the kintsugi discipline IS parametric
+# over the @kintsugi/<species> set; the @smarts integration's
+# kintsugi_form field carries the species-specification-bundle; the
+# bilateral check fires at the SPECIFIC species the consumer names.
+#
+# === Pre-AI prior art ===
+#
+#   adapter pattern (GoF)       Gamma-Helm-Johnson-Vlissides 1994.
+#   functor adjunction          Mac Lane 1971.
+#   Maturana-Varela structure/  Maturana-Varela 1980. Structure/
+#   organisation                organisation distinction grounds
+#                               @mirror/@kintsugi form/process
+#                               partition the @smarts/kintsugi
+#                               adapter threads into integration.
+#   Beer VSM S3/S4              Beer 1972. S3 (now-operations) /
+#                               S4 (future-operations) distinction
+#                               grounds the loop-discipline altitude.
+#   kintsugi (the craft)        16th century Japan. The cultural-
+#                               practice ancestor of fracture-becomes-
+#                               structure discipline; @kintsugi names
+#                               the substrate's gold-line repair
+#                               discipline at family-root altitude.
+#   knowledge commons           Ostrom 1990. The hosting-discipline
+#                               ancestor of @smarts.
+#
+# === What this adapter does NOT do ===
+#
+# 1. Does NOT pretend a single family-root bilateral exists at
+#    @kintsugi (none exists by substrate-architectural design).
+# 2. Does NOT discharge specific kintsugi species checks (oscillate,
+#    consent, morphism, fracture). Consumer species name those
+#    directly.
+# 3. Does NOT absorb @kintsugi into @smarts.
+# 4. Does NOT supersede the @kintsugi/oscillate loop discipline that
+#    runs UNDER the @smarts integration; the @smarts integration
+#    HOSTS the kintsugi loop without claiming to BE the loop.
+#
+# === The Splinter/Narcissus pole at loop-discipline-altitude ===
+#
+# Splinter-pole adapter (honest): smarts_satisfies_kintsugi returns
+# SATISFIED when the @smarts integration's discipline-flexibility
+# holds AND consumer species name specific @kintsugi/<species>
+# bilaterals that discharge substantively (oscillation_converges,
+# fracture_resolves, etc.).
+#
+# Narcissus-pole adapter (deceptive): claims SATISFIED via
+# vocabulary-only verification — the kintsugi_form field is populated
+# but no kintsugi species discipline runs. The substrate is
+# structurally honest about this gap by NOT including a fake
+# family-root bilateral.
+#
+# === The Cascade closure ===
+#
+# This tick closes the @smarts cross-family adapter set (6/6). The
+# substrate-architectural integration discipline now composes with
+# EVERY family the @smarts integration carries. Consumer species
+# (forward-promised @smarts species shards implementing the four
+# Models; @spectral/garden/smarts hosted deployment) can name
+# multiple cross-family bilaterals in one requires sequence:
+#
+#   smarts_satisfies_magic AND smarts_satisfies_frame AND
+#   smarts_satisfies_cyberpunk AND smarts_satisfies_epistemologic_
+#   cybernetic AND smarts_satisfies_kintsugi AND
+#   pack_satisfies_smarts (the @pack/smarts direction;
+#   @smarts/pack discharges the smarts/pack direction)
+#
+# Six bilaterals; one integration discipline at substrate altitude.
+# The composition is mechanically discharged via doubled-bilateral
+# (where family-root bilaterals exist) or single-bilateral honesty
+# (where the family is structured as a property-bundle without a
+# family-root bilateral, as @epistemologic/cybernetic and @kintsugi
+# both are).
+#
+# Spec context: shards/smarts.mirror, shards/kintsugi.mirror.
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-mathematics]],
+#                      [[architecture-form-process-partition-at-family-root]]
+#                       (#55; @mirror/@kintsugi form/process partition
+#                       this adapter integrates at deployment altitude),
+#                      [[feedback-composition-claims-need-empirical-test]],
+#                      [[feedback-no-bare-types]] (kintsugi_form IS
+#                       bare ref because @kintsugi is a process-family
+#                       without a single typed family-root record;
+#                       the bare-ref is substrate-architecturally
+#                       honest).
+# Related shards: smarts.mirror, kintsugi.mirror,
+#                 smarts/{pack, magic, frame, cyberpunk, epistemologic}.mirror
+#                 (sibling cross-family adapters; @smarts/kintsugi
+#                 closes the set; @smarts/epistemologic is the
+#                 single-bilateral honesty precedent this adapter
+#                 inherits).
+# Path-namespace property: this file at `shards/smarts/kintsugi.mirror`
+# declares `@smarts/kintsugi` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming/gamma-helm-johnson-vlissides-1994
+source @arxiv/mathematics/mac-lane-1971
+source @arxiv/cybernetics/maturana-varela-1980
+source @arxiv/cybernetics/beer-1972
+source @arxiv/cultural/japan-16c-kintsugi
+source @arxiv/common-goods/ostrom-1990
+
+prism @smarts/kintsugi {
+  focus kintsugi
+  project kintsugi
+  split kintsugi
+  shift kintsugi
+  settle kintsugi
+}
+
+# === kintsugi_form_of adapter ===
+#
+# The substrate-vocabulary adapter action projecting the kintsugi
+# specification from a @smarts integration. The smarts.kintsugi_form
+# field IS the kintsugi spec at substrate-decl altitude (bare ref
+# because the spec is parametric over @kintsugi/<species>).
+#
+# Body discharges at the realisation boundary.
+kintsugi_form_of(s: smarts) -> ref { \ }
+
+# === kintsugi_as_smarts adapter ===
+#
+# The substrate-vocabulary adapter action lifting a kintsugi
+# specification to a @smarts integration with the kintsugi_form field
+# populated. Other smarts fields populated as default refs.
+#
+# Round-trip identity at the kintsugi_form altitude:
+#   kintsugi_form_of(kintsugi_as_smarts(kf)) = kf
+# for all kintsugi specs kf.
+#
+# Body discharges at the realisation boundary.
+kintsugi_as_smarts(kf: ref) -> smarts { \ }
+
+# === smarts_satisfies_kintsugi bilateral predicate ===
+#
+# The cross-family bilateral predicate in @smarts at the loop-
+# discipline altitude. The substrate-pull-honest discharge (per the
+# @smarts/epistemologic precedent):
+#
+#   1. discipline_flexible(s, p) (@smarts family-root): discharges
+#      that the @smarts integration maintains substrate-architectural
+#      discipline-flexibility under perturbation.
+#
+# UNLIKE the @smarts/{magic, pack, frame, cyberpunk} adapters: NO
+# SECOND requires clause discharging a family-root predicate at
+# @kintsugi, because no single family-root predicate exists at
+# @kintsugi (the family-root is minimal; species hold the disciplines).
+# Consumer species name specific @kintsugi/<species> bilaterals
+# directly in THEIR requires clauses.
+#
+# The signature takes smarts and perturbation as typed parameters per
+# [[feedback-no-bare-types]].
+#
+# Consumer species name this predicate when their operation requires
+# @smarts integration-altitude discharge alongside specific
+# @kintsugi species bilaterals named at consumer altitude.
+smarts_satisfies_kintsugi(s: smarts, p: perturbation) -> verdict
+requires discipline_flexible(s, p)
+{ \ }
+
+# === Honest hedge + cascade closure ===
+#
+# This adapter closes the kintsugi_form-projection altitude of
+# "@smarts integrates @kintsugi at substrate altitude":
+#  - kintsugi spec (bare ref) ↔ smarts.kintsugi_form round-trips.
+#  - The bilateral discharges @smarts discipline_flexible at
+#    integration altitude.
+#
+# It does NOT discharge any specific kintsugi species at family-root
+# altitude (none exists). It does NOT close round-trip identity at
+# the smarts-as-whole altitude.
+#
+# Honest claim post-adapter:
+#  - "@smarts integrates @kintsugi at kintsugi_form-projection
+#    altitude" — CLOSED.
+#  - "@smarts integrates @kintsugi at family-root bilateral altitude"
+#    — STRUCTURALLY-UNAVAILABLE (no family-root bilateral; consumer
+#    species name specific @kintsugi/<species> bilaterals).
+#  - "@smarts integrates @kintsugi at smarts-as-whole altitude" —
+#    FORWARD-PROMISED.
+#
+# CASCADE CLOSURE: with this tick, the @smarts cross-family adapter
+# set is 6/6 complete. The substrate-architectural integration
+# discipline at @smarts altitude composes with every family the
+# @smarts integration carries (six families; six adapters; one
+# integration discipline).
+
+out @smarts/kintsugi
+out kintsugi_form_of
+out kintsugi_as_smarts
+out smarts_satisfies_kintsugi
