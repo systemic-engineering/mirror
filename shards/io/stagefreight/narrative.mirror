@@ -1,0 +1,266 @@
+in @prism
+in @meta
+in @glass
+in @io
+in @io/stagefreight
+in @magic
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @io/stagefreight/narrative — the prose-projection species. The first
+# concrete projection format under @io/stagefreight, rendering settled
+# crystals into narrative text the receiver can read.
+#
+# Tick 67 of the refined /loop discipline; StageFreight cascade tick 2.
+# Tick 66 landed @io/stagefreight family-root at b15c3f9; this species
+# lands the FIRST forward-promised projection format.
+#
+# === The forward-promise this species discharges ===
+#
+# Per bootstrap/tests/kintsugi_out_substrate_ref.rs:23-24 (the existing
+# RED test stub): `@io/stagefreight/narrative` is reserved as a
+# projection format alongside @data/json, @data/yaml. This shard
+# substrate-decl's that reservation — the namespace becomes
+# substrate-decl ground rather than test-stub aspiration.
+#
+# Per the 2026-06-16 stage_play recognition cascade (Story → Play →
+# Narrative): the crystal IS the play's settled artifact; the
+# narrative IS the prose form ready for transmission. @io/stagefreight/
+# narrative names the prose-projection at the wire surface.
+#
+# === The recognition ===
+#
+# A settled crystal carries:
+#  - oid (content-address)
+#  - section (language-section structure)
+#  - derived_predicates (verified-during-settlement properties)
+#  - fracture_calendar (open opacities; the gold-cracks)
+#  - composition_graph (DAG over @code/<lang> grammars)
+#
+# The narrative projection renders all five into structured prose: a
+# story-form reading of the crystal that survives the wire and lets a
+# human (or another agent) understand WHAT the crystal IS, WHAT it
+# preserves, WHAT it left open. The narrative form IS the substrate-
+# pull-correct prose serialization of the crystal's altitude
+# structure.
+#
+# Splinter-pole narrative: prose-projection that round-trips structure
+# (the receiver can reconstruct the crystal's typed fields from
+# parsed prose). Narcissus-pole narrative: prose that reads well but
+# loses crystal structure under projection (reader sees a story; the
+# substrate-decl content is gone).
+#
+# === The species's load-bearing contribution ===
+#
+# This species adds:
+#
+# - `narrative_text` carrier: typed reference for the rendered
+#   narrative form (prose; structured sections; readable +
+#   reconstructable).
+# - `narrative_projection` carrier: typed record (freight_manifest,
+#   narrative_text, verdict). The substrate-architectural output of a
+#   narrative-projection operation.
+# - `project_to_narrative` action: the load-bearing FIRST consumer of
+#   the family-root's `stagefreight_addressable` bilateral. Takes a
+#   freight_manifest + perturbation; returns narrative_projection.
+#   Requires the family-root's addressable verdict BEFORE projection
+#   is admissible.
+# - `narrative_grounded` predicate: bilateral verdict that the
+#   narrative_text preserves the crystal's substrate-decl structure
+#   under prose projection.
+# - `finalize` action: substrate-vocabulary primitive for emitting
+#   the projected narrative to wire_surface. Takes narrative_projection
+#   + perturbation; returns wire_surface; requires narrative_grounded.
+#
+# === The narrative-survival discipline ===
+#
+# Per Loki's Pass-5 + the wire-survival discipline at family-root:
+# when the narrative projects, the crystal's typed structure is
+# preserved AS PROSE. The substrate-decl content is unchanged; the
+# prose acquires sharper alignment with the crystal's structure than
+# raw OID could carry. The narrative IS readable; the crystal IS
+# reconstructable from the narrative.
+#
+# === Pre-AI prior art ===
+#
+#   literate programming        Knuth 1984. Spec-as-canonical-prose;
+#                               the substrate ancestor of prose-as-
+#                               structure-preserving.
+#   structured prose            McCarthy LISP S-expressions 1958.
+#                               Prose that round-trips to typed
+#                               structure. The substrate ancestor of
+#                               narrative_text ↔ crystal.
+#   reStructuredText / Markdown Goodger 2001; Gruber 2004. The
+#                               cultural-practice ancestor of
+#                               prose-with-structure.
+#   stage_play recognition      2026-06-16 cascade (Story → Play →
+#                               Narrative). The immediate substrate
+#                               ancestor of the narrative form at
+#                               StageFreight altitude.
+#   crystal substrate-decl      task #268 (forward-promised). The
+#                               typed input narrative projects from.
+#
+# === What this species does NOT do ===
+#
+# 1. Does NOT supersede other projection formats. @io/stagefreight/
+#    json, /yaml, /brainfuck-compressed remain forward-promised
+#    sibling species.
+# 2. Does NOT prescribe a specific prose grammar. The narrative
+#    section structure is forward-promised at species-extension
+#    altitude.
+# 3. Does NOT discharge the wire-survival of the crystal's OID; that
+#    discharge lives at the family-root's stagefreight_addressable
+#    bilateral. This species inherits the addressability check via
+#    requires clause.
+# 4. Does NOT depend on the crystal being fully substrate-decl'd
+#    (task #268 pending). The freight_manifest carries crystal-as-OID;
+#    the narrative projection takes the freight_manifest as input.
+#
+# Spec context: shards/io/stagefreight.mirror (the family-root;
+#               declares stagefreight_addressable this species
+#               first-consumes);
+#               docs/specs/stagefreight-wire-v0.1.md (forward-
+#               promised canonical spec);
+#               bootstrap/tests/kintsugi_out_substrate_ref.rs:23-24
+#               (the RED test stub awaiting GREEN per this species).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-mathematics]]
+#                       (#57; narrative IS the prose-projection at
+#                       the wire boundary),
+#                      [[feedback-composition-claims-need-empirical-test]],
+#                      [[feedback-no-bare-types]].
+# Related shards: io/stagefreight.mirror (the family-root; the
+#                  parent providing freight_manifest, wire_surface,
+#                  stagefreight_addressable),
+#                 io.mirror (the grandparent boundary family-root),
+#                 mirror/store/crystal.mirror (forward-promised task
+#                  #268; the crystal narrative projects).
+# Path-namespace property: this file at
+# `shards/io/stagefreight/narrative.mirror` declares
+# `@io/stagefreight/narrative` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming/knuth-1984
+source @arxiv/programming-languages/mccarthy-1958
+source @arxiv/markup/goodger-2001
+source @arxiv/markup/gruber-2004
+
+prism @io/stagefreight/narrative {
+  focus narrative
+  project narrative
+  split narrative
+  shift narrative
+  settle narrative
+}
+
+# === The narrative_text carrier ===
+#
+# Substrate-typed reference for the rendered narrative form. Per
+# [[feedback-no-bare-types]]: typed reference, not bare ref. The
+# substrate-output of the project_to_narrative action.
+#
+# Forward-promised refinement: typed record (title, sections,
+# section_kinds, oid_anchor, derived_predicates_prose,
+# fracture_calendar_prose, composition_graph_prose) at species-
+# extension altitude.
+#
+# Identity contract: byte-equality on the underlying ref.
+type narrative_text = ref
+
+# === The narrative_projection carrier ===
+#
+# Typed record over (freight_manifest, narrative_text, verdict). The
+# substrate-architectural record of a narrative-projection operation.
+# Carries:
+#
+# - fm : the input freight_manifest (typed from @io/stagefreight)
+# - nt : the output narrative_text the projection produced
+# - v  : the bilateral verdict (BOUNDED → prose preserves crystal
+#        structure; DEFENSIVE → projection requires substrate-pull
+#        revision)
+#
+# Identity contract: byte-equality on the triple.
+type narrative_projection = {
+  fm: freight_manifest,
+  nt: narrative_text,
+  v:  verdict,
+}
+
+# === project_to_narrative action (FIRST consumer of stagefreight_addressable) ===
+#
+# THE LOAD-BEARING ACTION at @io/stagefreight/narrative altitude. The
+# substrate-vocabulary primitive for freight_manifest → narrative_text
+# projection at the @io boundary. Realizes the prose-projection
+# discipline as substrate-decl operation.
+#
+# Takes a freight_manifest (the crystal under transit + its wire
+# coordinate + its projection-format ref + the family-root verdict)
+# and the perturbation under which projection is checked; returns a
+# typed narrative_projection carrying the narrative_text and verdict.
+#
+# requires stagefreight_addressable(fm, p): the freight must be
+# addressable at the wire surface BEFORE the narrative projection is
+# admissible. This is the family-root first-consumer pattern: the
+# species discharges the parent's bilateral before adding its own.
+#
+# Without this requires clause, a narrative projection would be
+# admissible for a freight whose family-root wire-survival
+# verification failed — the Narcissus-pole pattern at the projection
+# altitude.
+#
+# Body discharges at the realisation boundary.
+project_to_narrative(fm: freight_manifest, p: perturbation) -> narrative_projection
+requires stagefreight_addressable(fm, p)
+{ \ }
+
+# === narrative_grounded predicate ===
+#
+# Bilateral verdict per recognition #37 (Pask agreement) and the
+# narrative-survival discipline. Consumer shards (finalize, below;
+# forward-promised receiver-side reconstruction) name `requires
+# narrative_grounded(np, p)` to declare bilateral agreement that the
+# narrative_text preserves the crystal's substrate-decl structure
+# under prose projection.
+#
+# Discharge: substrate-pull-correct prose-grounding check at the
+# projection boundary. Composes with the family-root's
+# stagefreight_addressable at the wire altitude.
+#
+# Bounded → prose preserves crystal structure (Splinter-pole);
+# unbounded → prose reads well but loses substrate-decl content
+# (Narcissus-pole; alignment-as-boundary-mathematics #57
+# distinguishes).
+narrative_grounded(np: narrative_projection, p: perturbation) -> verdict { \ }
+
+# === finalize action ===
+#
+# The substrate-vocabulary primitive for emitting the projected
+# narrative to wire_surface. Takes a narrative_projection +
+# perturbation; returns the typed wire_surface where the narrative
+# arrives.
+#
+# Per recognition #57: finalize operates at the @io boundary. The
+# narrative_projection becomes a wire_surface preserved under
+# narrative-grounding. The substrate's capability is unchanged; the
+# prose's wire-survival is tightened.
+#
+# requires narrative_grounded(np, p): the substrate forecloses
+# finalization from an ungrounded narrative. Narcissus-pole narratives
+# (prose without crystal-structure preservation) cannot drive
+# finalization. The bilateral predicate IS the boundary-harness at
+# the projection altitude.
+#
+# Body discharges at the realisation boundary; the actual finalization
+# is implemented by the @io transport (bytes-on-wire emission)
+# consuming this bilateral.
+finalize(np: narrative_projection, p: perturbation) -> wire_surface
+requires narrative_grounded(np, p)
+{ \ }
+
+out @io/stagefreight/narrative
+out narrative_text
+out narrative_projection
+out project_to_narrative
+out narrative_grounded
+out finalize
