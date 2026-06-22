@@ -135,9 +135,10 @@ in @kintsugi
 #                               discipline at substrate-architectural
 #                               altitude
 #
-# Spec context: docs/specs/recognition-83-smarts-substrate-
-#               architectural-integration-canonical-spec.md (Mara
-#               in flight at this scratch);
+# Spec context: docs/specs/recognitions/recognition-83-smarts-
+#               substrate-architectural-integration-canonical-spec.md
+#               (Mara canonical landed 2026-06-22 at commit 7a878c7;
+#               1,313 lines; #432 stall closure);
 #               docs/math/the-tower/recognition-83-smarts-substrate-
 #               architectural-integration.md (the recognition file).
 # Substrate decisions: [[architecture-shards-as-substrate-source]],
