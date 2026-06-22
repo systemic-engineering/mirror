@@ -4,6 +4,22 @@ in @glass
 in @epistemologic
 in @epistemologic/cybernetic
 
+# === ANTICIPATES @cogito family-root ===
+#
+# This shard's hold + dissolve actions are substrate-altitude
+# analogues of @cogito's (notice → name → hold) cognitive-altitude
+# primitives. The composition is STRUCTURAL ANALOGUE, not load-
+# bearing import: @cogito family-root has not landed as a shard
+# yet. Once it lands, the load-bearing composition claim becomes:
+#
+#   in @cogito
+#
+# at this header. Until then: structural analogue only; consumers
+# of hold/dissolve MUST NOT assume @cogito's typed primitives are
+# available at composition time. Seam C5 (2026-06-22) caught the
+# original prose-only composition claim; this is the substrate-
+# pull-honest downgrade.
+
 # @epistemologic/neutrosophic — the three-axis substrate family-root.
 #
 # Recognition #92 candidate (Alex, 2026-06-22, via the hedge from the
@@ -52,6 +68,14 @@ in @epistemologic/cybernetic
 # second-order observer (already in /cybernetic/second_order) gains
 # explicit indeterminacy axis when composed with neutrosophic.
 #
+# === Anticipates @cogito (NOT load-bearing) ===
+#
+# hold IS the structural analogue of @cogito's hold primitive at
+# substrate altitude. dissolve IS the structural analogue of
+# @cogito's name primitive (the binary gets named, then dissolved).
+# Until @cogito family-root lands as a shard, this composition is
+# ANALOGUE only — no `in @cogito` at the header. Per Seam C5.
+#
 # === Healing as substrate (Alex's framing) ===
 #
 # Per the neutrosophic-indeterminacy-and-healing-substrate essay
@@ -63,13 +87,13 @@ in @epistemologic/cybernetic
 # they hold.
 #
 # The substrate-decl below names this at the engineering altitude.
-# The `hold` action composes with @cogito (notice → name → hold);
-# hold IS the indeterminacy-honoring primitive lifted from cognitive
-# altitude to neutrosophic substrate altitude. The `dissolve` action
-# names Alex's framing ("dissolving binaries") as substrate-decl:
-# takes a binary verdict and dissolves it into three-axis form
-# where I > 0 by construction (the binary was always carrying
-# indeterminacy; the dissolve makes it visible).
+# The `hold` action is the substrate-altitude analogue of @cogito's
+# hold primitive (anticipated family-root; not yet imported). The
+# `dissolve` action names Alex's framing ("dissolving binaries") as
+# substrate-decl: takes a binary verdict and dissolves it into
+# three-axis form where I > 0 by construction — discharged via the
+# `indeterminacy_visible` bilateral on the result (substrate-typed
+# contract per Seam C4, not prose-only "by construction").
 #
 # === Pre-AI prior art ===
 #
@@ -171,60 +195,100 @@ prism @epistemologic/neutrosophic {
 # paraconsistent range admitting > 1 sums per Smarandache's
 # unconstrained variant). Per [[feedback-no-bare-types]]: typed
 # reference, not bare ref-with-documented-range. Forward-promised
-# refinement: typed parametric `ratio` with axis-algebra parameter
-# (paraconsistent | lukasiewicz | smarandache | belnap) once the
-# substrate's algebra-parameterization lands at species altitude.
+# refinement: typed parametric `ratio` with range constraint
+# discharged by the `axes_in_range` bilateral against the carrier's
+# `axis_algebra` tag.
 #
 # Identity contract: byte-equality on the underlying ref.
 type ratio = ref
 
+# === The axis_algebra carrier ===
+#
+# Substrate-typed reference naming WHICH three-axis algebra the
+# neutrosophic_verdict is operating under. Per Seam C6 (2026-06-22):
+# the bilaterals (axes_independent, axes_in_range) cannot mechanically
+# discharge against the right algebra without knowing which algebra
+# the verdict carries. Threading algebra through the carrier makes
+# the discipline structurally typed rather than realisation-altitude
+# prose.
+#
+# Forward-promised refinement to enum at species altitude:
+#
+# - smarandache_strict : each axis ∈ [0, 1]; sum unconstrained
+# - smarandache_paraconsistent : each axis ∈ [0, n]; sum unconstrained
+# - lukasiewicz : each ∈ [0, 1]; t + i + f = 1
+# - belnap : each ∈ {0, 1}; four states
+# - classical : i = 0; t + f = 1; two-axis collapse
+#
+# Identity contract: byte-equality on the underlying ref.
+type axis_algebra = ref
+
 # === The neutrosophic_verdict carrier ===
 #
-# Typed record over (v, t, i, f). The substrate-architectural
+# Typed record over (v, t, i, f, a). The substrate-architectural
 # three-axis verdict. Carries:
 #
 # - v : the existing 3-valued verdict (bounded | defensive | clean |
-#       partial) as the carrier label
+#       partial) as the carrier label — MUST be consistent with the
+#       (t, i, f) tuple per `verdict_consistent_with_axes` bilateral
 # - t : truth axis (ratio; "how much T is asserted")
 # - i : indeterminacy axis (ratio; "how much I remains; the
 #       irreducible third")
 # - f : falsity axis (ratio; "how much F is asserted")
+# - a : the axis_algebra this verdict operates under (Łukasiewicz
+#       axes are structurally different from Smarandache axes; the
+#       algebra travels with the verdict per Seam C6)
 #
-# Per Smarandache: t + i + f is unconstrained; the three axes are
-# structurally independent. Compare to fuzzy (one axis) or
-# intuitionistic fuzzy (two axes; membership + non-membership).
+# Per Smarandache: t + i + f is unconstrained UNDER the
+# smarandache_strict / smarandache_paraconsistent algebras; the
+# other algebras impose their own constraints discharged by
+# `axes_in_range`.
 #
-# Identity contract: byte-equality on the quadruple.
+# v ↔ (t, i, f) consistency: the existence of both the label `v`
+# and the three-axis tuple admits incoherent quadruples (e.g.,
+# v=bounded but t=0.1/i=0.9/f=0.9). The `verdict_consistent_with_axes`
+# bilateral discharges this redundancy; substrate-pull-correct
+# usage requires consumers to compose through it.
+#
+# Identity contract: byte-equality on the quintuple.
 type neutrosophic_verdict = {
   v: verdict,
   t: ratio,
   i: ratio,
   f: ratio,
+  a: axis_algebra,
 }
 
 # === lift action ===
 #
 # The substrate-vocabulary primitive lifting an existing 3-valued
-# verdict to a three-axis neutrosophic_verdict. Takes the verdict
-# + perturbation under which the lift is checked; returns the typed
-# neutrosophic_verdict with the three axes derived per the lift
-# discipline.
+# verdict to a three-axis neutrosophic_verdict UNDER a named
+# axis_algebra. Takes the verdict + algebra + perturbation; returns
+# the typed neutrosophic_verdict carrying (v, t, i, f, a).
 #
-# Per Mara's canonical (forward-promised): the lift discipline
-# preserves the verdict's substrate-altitude meaning while exposing
-# the three axes the substrate was implicitly carrying.
+# Per Mara's canonical: the lift discipline preserves the verdict's
+# substrate-altitude meaning while exposing the three axes the
+# substrate was implicitly carrying under the named algebra.
+#
+# The `a` parameter threads the algebra into the carrier; the
+# realisation boundary discharges the algebra-specific axis
+# derivation. Per Seam C6: the algebra MUST be named at lift
+# time so downstream consumers know which bilateral discipline
+# to discharge.
 #
 # Body discharges at the realisation boundary; the actual lift is
-# implemented by the species-altitude axis-derivation discipline.
-lift(v: verdict, p: perturbation) -> neutrosophic_verdict { \ }
+# implemented by the species-altitude algebra-tagged axis-derivation
+# discipline.
+lift(v: verdict, a: axis_algebra, p: perturbation) -> neutrosophic_verdict { \ }
 
 # === dissolve action ===
 #
 # The substrate-vocabulary primitive for Alex's "dissolving binaries"
 # framing. Takes a binary (a ref carrying a two-valued artifact: a
 # true/false claim, a polarized assertion, a both/and that's been
-# collapsed into either/or) + perturbation; returns a neutrosophic
-# verdict where I > 0 by construction.
+# collapsed into either/or) + algebra + perturbation; returns a
+# neutrosophic verdict where the discharge of `indeterminacy_visible`
+# on the result is the substrate-typed contract for I > 0.
 #
 # Per the neutrosophic-indeterminacy-and-healing-substrate essay
 # (commit 4d66dc0): the dissolve operation IS the substrate-decl
@@ -233,31 +297,41 @@ lift(v: verdict, p: perturbation) -> neutrosophic_verdict { \ }
 # pole; the polarized debate's third option that was suppressed);
 # the dissolve makes the indeterminacy visible.
 #
-# Composition with @cogito: dissolve is the substrate-altitude
-# analogue of @cogito's "name" operation — the binary gets named
-# as binary, then dissolved.
+# Anticipates @cogito's "name" operation (analogue, not import; per
+# Seam C5): dissolve names the binary as binary, then dissolves it.
+#
+# Per Seam C4 (2026-06-22): the "I > 0 by construction" claim is
+# discharged via the `indeterminacy_visible` bilateral, NOT a prose-
+# only realisation-altitude promise. Consumers of dissolve output
+# MUST compose through indeterminacy_visible to receive the
+# substrate-typed guarantee.
 #
 # Body discharges at the realisation boundary; the actual dissolve
 # operation is implemented by the species-altitude binary-detection
-# discipline composed with the axis-derivation discipline.
-dissolve(binary: ref, p: perturbation) -> neutrosophic_verdict { \ }
+# discipline composed with the algebra-tagged axis-derivation
+# discipline.
+dissolve(binary: ref, a: axis_algebra, p: perturbation) -> neutrosophic_verdict { \ }
 
 # === hold action ===
 #
-# The substrate-vocabulary primitive composing @cogito's "hold"
+# The substrate-vocabulary primitive ANTICIPATING @cogito's "hold"
 # operation at the neutrosophic altitude. Takes a neutrosophic_
 # verdict + perturbation; returns the same neutrosophic_verdict
 # preserved under structure.
 #
-# Per @cogito (notice → name → hold; per CLAUDE.md and
+# Per @cogito (notice → name → hold; CLAUDE.md +
 # [[reference-mirror-spectral-spec]]): hold IS the substrate's
 # existing indeterminacy-honoring primitive at cognitive altitude.
-# This action lifts it to substrate-decl altitude at the
-# neutrosophic family.
+# This action is the STRUCTURAL ANALOGUE at substrate-decl altitude
+# in the neutrosophic family. The @cogito family-root has not yet
+# landed as a shard; once it does, this action becomes a load-
+# bearing import. Per Seam C5.
 #
 # requires three_axis_coherent(nv, p): the substrate forecloses
 # holding from an incoherent three-axis verdict. The axes must be
 # independently coherent BEFORE the substrate honors them as held.
+# The algebra travels with nv (nv.a) and is threaded into the
+# coherence check.
 #
 # Body discharges at the realisation boundary; the actual hold is
 # implemented by the species-altitude axis-preservation discipline.
@@ -268,31 +342,81 @@ requires three_axis_coherent(nv, p)
 # === axes_independent predicate (sub-bilateral) ===
 #
 # Bilateral verdict that the three axes (t, i, f) are structurally
-# independent (no derivation constraint binds them to one another).
-# Per Smarandache: T, I, F are independent dimensions; T can be high
-# while I is high while F is high (paraconsistent variant).
+# independent UNDER the given axis_algebra (no derivation constraint
+# binds them to one another at the algebra-specified discipline).
+# Per Smarandache: T, I, F are independent dimensions in the
+# paraconsistent variant; Łukasiewicz collapses them under t+i+f=1.
+#
+# Per Seam C6: the algebra parameter MUST be threaded so the
+# realisation can discharge against the algebra-specific
+# independence definition. Without `a`, the bilateral cannot
+# distinguish Smarandache-independent from Łukasiewicz-derived.
 #
 # Discharge: substrate-pull-correct independence check at the
-# species boundary. Bounded → axes structurally independent;
-# unbounded → one axis is a derived function of the others (which
-# collapses neutrosophic discipline to fuzzy or intuitionistic
-# variant).
-axes_independent(t: ratio, i: ratio, f: ratio) -> verdict { \ }
+# species boundary under the named algebra. Bounded → axes
+# independent under `a`; unbounded → one axis is a derived function
+# of the others under `a`.
+axes_independent(t: ratio, i: ratio, f: ratio, a: axis_algebra) -> verdict { \ }
 
 # === axes_in_range predicate (sub-bilateral) ===
 #
 # Bilateral verdict that each axis is in the substrate-pull-correct
-# range for its species-altitude algebra. The substrate-decl is
-# parametric over the algebra:
+# range for the named algebra `a`. The substrate-decl is parametric
+# over the algebra; the algebra-specific range constraint is
+# discharged at the realisation boundary:
 #
-# - Smarandache strict: each ∈ [0, 1]
-# - Smarandache paraconsistent: each ∈ [0, n] for n unconstrained
-# - Łukasiewicz: each ∈ [0, 1]; t + i + f = 1 (single-axis-like)
-# - Belnap: each ∈ {0, 1}; four states (00, 01, 10, 11)
+# - smarandache_strict: each ∈ [0, 1]
+# - smarandache_paraconsistent: each ∈ [0, n] for n unconstrained
+# - lukasiewicz: each ∈ [0, 1]; t + i + f = 1
+# - belnap: each ∈ {0, 1}; four states (00, 01, 10, 11)
+# - classical: i = 0; t + f = 1
 #
-# Species declare their algebra; this predicate discharges the
-# species's chosen range constraint.
-axes_in_range(t: ratio, i: ratio, f: ratio) -> verdict { \ }
+# Per Seam C6: algebra threaded explicitly; the bilateral cannot
+# mechanically discharge without naming the algebra it is
+# discharging against.
+axes_in_range(t: ratio, i: ratio, f: ratio, a: axis_algebra) -> verdict { \ }
+
+# === verdict_consistent_with_axes predicate (sub-bilateral) ===
+#
+# Bilateral verdict that the `v` label is consistent with the
+# (t, i, f) tuple under the named algebra `a`. Per Seam C2
+# (2026-06-22): the neutrosophic_verdict carrier admits both a
+# 3-valued label AND a three-axis tuple, which together admit
+# incoherent quadruples (e.g., v=bounded but t=0.1/i=0.9/f=0.9).
+# This bilateral discharges the redundancy as substrate-typed
+# constraint, not realisation-altitude prose.
+#
+# Algebra-specific consistency at the realisation boundary:
+#
+# - bounded: high t, low i, low f
+# - clean: moderate t, low i, low f
+# - partial: moderate t, high i, low/moderate f
+# - defensive: low t, low i, high f
+#
+# Specific high/low thresholds are realisation-altitude choices
+# per the algebra `a`; this substrate-decl names the discipline,
+# the realisation discharges the numeric thresholds.
+verdict_consistent_with_axes(nv: neutrosophic_verdict, p: perturbation) -> verdict { \ }
+
+# === indeterminacy_visible predicate (sub-bilateral) ===
+#
+# Bilateral verdict that the indeterminacy axis of a neutrosophic_
+# verdict is strictly positive (i.e., the substrate has made the
+# indeterminacy visible rather than collapsed it to zero). Per Seam
+# C4 (2026-06-22): the dissolve action's "I > 0 by construction"
+# claim is substrate-typed via this bilateral, NOT prose-only.
+#
+# Splinter-pole: nv.i > 0 (indeterminacy visible; substrate honored
+# the dissolve discipline).
+# Narcissus-pole: nv.i = 0 (binary preserved; dissolve failed to
+# make indeterminacy visible; the binary was collapsed without
+# being honored).
+#
+# Consumers of dissolve MUST compose through this bilateral to
+# receive the substrate-typed guarantee. The realisation boundary
+# discharges the strict-positivity check against the algebra's
+# zero-distance discipline.
+indeterminacy_visible(nv: neutrosophic_verdict, p: perturbation) -> verdict { \ }
 
 # === three_axis_coherent composed bilateral ===
 #
@@ -301,18 +425,22 @@ axes_in_range(t: ratio, i: ratio, f: ratio) -> verdict { \ }
 # multiple altitudes today: StageFreight wire; Shatter rendering;
 # @reflection observation; this is the fourth altitude):
 #
-# Composes the two sub-predicates:
-#   1. axes_independent(nv.t, nv.i, nv.f)
-#   2. axes_in_range(nv.t, nv.i, nv.f)
+# Composes the three sub-predicates (consolidation tick 81 added
+# verdict_consistent_with_axes per Seam C2):
+#   1. axes_independent(nv.t, nv.i, nv.f, nv.a)
+#   2. axes_in_range(nv.t, nv.i, nv.f, nv.a)
+#   3. verdict_consistent_with_axes(nv, p)
 #
-# Both must hold for the neutrosophic_verdict to be substrate-pull-
-# coherent. The substrate refuses three-axis operation if either
-# sub-predicate fails.
+# All three must hold for the neutrosophic_verdict to be substrate-
+# pull-coherent. The substrate refuses three-axis operation if any
+# sub-predicate fails. The algebra `nv.a` travels with the verdict
+# and is threaded into the independence + range bilaterals; the
+# consistency bilateral discharges the v↔(t,i,f) redundancy.
 #
-# Splinter-pole: axes substantively independent + in range;
-# Narcissus-pole: axes collapsed to derived (one axis is a function
-# of the others) OR out-of-range (paraconsistent overflow without
-# species-altitude algebra discipline).
+# Splinter-pole: axes substantively independent + in range under
+# nv.a + v label consistent with tuple;
+# Narcissus-pole: axes collapsed to derived under nv.a OR
+# out-of-range under nv.a OR v label inconsistent with tuple.
 #
 # Same composed-bilateral pattern as @io/stagefreight.
 # stagefreight_addressable (tick 68 C4/C9) +
@@ -321,16 +449,20 @@ axes_in_range(t: ratio, i: ratio, f: ratio) -> verdict { \ }
 # The fourth altitude lift; the pattern composes across substrate-
 # decl altitudes.
 three_axis_coherent(nv: neutrosophic_verdict, p: perturbation) -> verdict
-requires axes_independent(nv.t, nv.i, nv.f)
-requires axes_in_range(nv.t, nv.i, nv.f)
+requires axes_independent(nv.t, nv.i, nv.f, nv.a)
+requires axes_in_range(nv.t, nv.i, nv.f, nv.a)
+requires verdict_consistent_with_axes(nv, p)
 { \ }
 
 out @epistemologic/neutrosophic
 out ratio
+out axis_algebra
 out neutrosophic_verdict
 out lift
 out dissolve
 out hold
 out axes_independent
 out axes_in_range
+out verdict_consistent_with_axes
+out indeterminacy_visible
 out three_axis_coherent
