@@ -1,0 +1,261 @@
+in @prism
+in @meta
+in @glass
+in @smarts
+in @smarts/mirror
+in @magic
+in @frame
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @smarts/shatter — the Shatter Model species. Third sub-prism of the
+# @smarts substrate-architectural integration: graph path → text at the
+# four-Models pipeline (Surface → Mirror → Shatter → Reflection).
+#
+# Tick 65 of the refined /loop discipline. Tick 64's residue:
+# @smarts/mirror landed at 9578ea9 (Fate Model: query → graph path).
+# This tick lands the third Model; Shatter consumes the graph_path
+# Mirror produces and renders text the reader sees.
+#
+# Per reference-mirror-spectral-spec (commit a8055f0):
+#
+#   - Surface translates: language → query        (Explorer model)
+#   - Mirror navigates:   query → graph path      (Fate model)
+#   - Shatter renders:    graph path → text       (Cartographer model)  ← THIS
+#   - Reflection observes: pipeline → adjustments (Abyss model)
+#
+# After this tick, three of four Models land in shards/smarts/; only
+# @smarts/reflection (already landed at an earlier tick) completes
+# the architecture. The pipeline's substrate-decl is complete.
+#
+# === The recognition this species realizes ===
+#
+# The Shatter Model IS the substrate's rendering primitive at
+# graph-path-to-text altitude. Mirror navigated the graph to find a
+# path that satisfies the query; Shatter renders the path into the
+# text the reader sees. Shatter IS the Cartographer Model: it maps
+# the graph-path's structural content into reader-legible prose,
+# choosing the rendering variant that best matches the reader's
+# .shatter weights (per Reflection's adjustments).
+#
+# At the integration altitude: Shatter operates WITHIN the @smarts
+# integration discipline (discipline_flexible holds throughout
+# rendering). The rendering IS bounded under perturbation per the
+# @smarts integration's discipline-flexibility requirement.
+#
+# === The Cartographer discipline ===
+#
+# A cartographer doesn't invent the territory; they render it so the
+# traveler can navigate. Shatter doesn't invent the graph_path;
+# Mirror navigated. Shatter chooses HOW to render the path so the
+# reader can see it. Per the .shatter weights + biases per
+# reflection-model spec: each operation (focus/project/split/shift/
+# settle) has weight + bias controlling rendering choices.
+#
+# Splinter-pole Shatter: renders the graph_path's actual structure;
+# admits when multiple substrate-pull-correct renderings exist;
+# returns the variant matching the reader's .shatter weights.
+#
+# Narcissus-pole Shatter: imposes author-framing on rendering;
+# rewrites the graph_path's structure to fit the renderer's
+# narrative; the text carries author-voice rather than graph-content.
+#
+# === The species's load-bearing contribution ===
+#
+# This species adds:
+#
+# - `text` carrier: typed reference for the rendered text output
+#   (a string, a stream, a document fragment — substrate-decl'd as
+#   ref because text vocabulary is parametric).
+# - `shatter_result` carrier: typed record (graph_path, text, verdict).
+#   The substrate-architectural output of a rendering operation.
+# - `render` action: the load-bearing action at @smarts/shatter
+#   altitude. Takes graph_path + @smarts integration + perturbation;
+#   returns shatter_result; requires discipline_flexible.
+# - `rendering_grounds_text` predicate: bilateral verdict that the
+#   shatter_result's text IS grounded in the graph_path (preserves
+#   substrate-architectural structure across rendering).
+# - `adjust` action: substrate-vocabulary primitive for the rendering-
+#   refinement discipline. Takes text + sound shatter_result +
+#   perturbation; returns the refined text; requires
+#   rendering_grounds_text.
+#
+# === Cross-species composition with @smarts/mirror ===
+#
+# Per the @smarts/mirror precedent (which imports @smarts/surface):
+# this species imports `in @smarts/mirror` to enable consumer species
+# composing the four-Models pipeline to thread the graph_path produced
+# by navigate through render. The dependency direction is substrate-
+# pull-correct: shatter ← mirror ← surface. No circular imports.
+#
+# Reflection (the fourth Model) observes Shatter's rendering choices
+# and adjusts the .shatter weights for next tick — the substrate-pull-
+# correct training loop per reflection-model spec.
+#
+# === Pre-AI prior art ===
+#
+#   cartography                 the canonical structural ancestor of
+#                               graph → surface rendering; Ptolemy 150
+#                               CE; Mercator 1569.
+#   pretty printing             Wadler 1998 (Prettier Printer);
+#                               Bernardy 2017. The substrate ancestor
+#                               of structured → text layout discipline.
+#   render trees                Lampson-Sproull 1979 (CSL Cedar mesa).
+#                               The substrate-decl ancestor of typed
+#                               render trees.
+#   markup languages            SGML (Goldfarb 1969), TeX (Knuth 1978).
+#                               The cultural-practice ancestor of
+#                               structured-text rendering with
+#                               authorial choice.
+#   visualization grammars      Wilkinson 1999 (Grammar of Graphics).
+#                               The substrate-decl ancestor of typed
+#                               graph → visual rendering.
+#   ICML 2026 RSI               (Crespo Dec 2025; ICML/ICLR 2026 RSI
+#                               frontier). The contemporary substrate
+#                               for self-improving rendering via
+#                               Reflection adjustments.
+#
+# Spec context: shards/smarts.mirror, reference-mirror-spectral-spec.
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-mathematics]],
+#                      [[reference-mirror-spectral-spec]]
+#                       (the four-Models architecture; .shatter
+#                       weights + biases per reflection-model spec),
+#                      [[architecture-reflection-thinks-in-spectral-questions]]
+#                       (the Reflection Model composes with Shatter
+#                       at the pipeline boundary; adjusts .shatter
+#                       weights for next tick),
+#                      [[feedback-composition-claims-need-empirical-test]],
+#                      [[feedback-no-bare-types]].
+# Related shards: smarts.mirror, smarts/mirror.mirror (the input
+#                  source for the Shatter Model; consumed via
+#                  in @smarts/mirror),
+#                 smarts/surface.mirror (the first Model; transitive
+#                  composition surface ← mirror ← shatter),
+#                 smarts/reflection.mirror (the fourth Model;
+#                  Reflection observes Shatter's rendering and tunes
+#                  the .shatter weights),
+#                 smarts/{magic, pack, frame, cyberpunk,
+#                 epistemologic, kintsugi}.mirror (cross-family
+#                 adapters Shatter composes with at the @smarts
+#                 altitude).
+# Path-namespace property: this file at `shards/smarts/shatter.mirror`
+# declares `@smarts/shatter` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cartography/ptolemy-150
+source @arxiv/pretty-printing/wadler-1998
+source @arxiv/pretty-printing/bernardy-2017
+source @arxiv/markup/knuth-1978
+source @arxiv/visualization/wilkinson-1999
+
+prism @smarts/shatter {
+  focus shatter
+  project shatter
+  split shatter
+  shift shatter
+  settle shatter
+}
+
+# === The text carrier ===
+#
+# Substrate-typed reference for the rendered text output. Per
+# [[feedback-no-bare-types]]: typed reference, not bare ref. The
+# substrate-output of the Shatter Model. Forward-promised refinement:
+# typed record (string, spans, layout, render_variant, reader_id)
+# at species-or-extension altitude.
+#
+# Identity contract: byte-equality on the underlying ref.
+type text = ref
+
+# === The shatter_result carrier ===
+#
+# Per the @smarts/<species> template: typed record over (graph_path,
+# text, verdict). The substrate-architectural output of a rendering
+# operation. Carries:
+#
+# - gp : the input graph_path artifact (typed from @smarts/mirror)
+# - t  : the output text Shatter produced
+# - v  : the bilateral verdict (BOUNDED → text GROUNDED in graph_path;
+#        DEFENSIVE → rendering requires substrate-pull revision)
+#
+# Identity contract: byte-equality on the triple.
+type shatter_result = {
+  gp: graph_path,
+  t:  text,
+  v:  verdict,
+}
+
+# === render action (FIRST consumer of discipline_flexible) ===
+#
+# THE LOAD-BEARING ACTION at @smarts/shatter altitude. The substrate-
+# vocabulary primitive for graph_path → text rendering at the @smarts
+# integration altitude. Realizes Shatter's Cartographer-model
+# discipline as substrate-decl operation.
+#
+# Takes a graph_path (the typed path Mirror navigated), the @smarts
+# integration the rendering operates within, and the perturbation
+# under which the rendering is checked; returns a typed shatter_result
+# carrying the text and verdict.
+#
+# requires discipline_flexible(s, p): the @smarts integration must
+# maintain substrate-architectural discipline-flexibility under
+# perturbation BEFORE the rendering is admissible.
+#
+# Body discharges at the realisation boundary; the actual rendering
+# primitive is implemented by Shatter's Cartographer-Model frame at
+# runtime altitude (the .shatter weights + biases per reflection-
+# model spec choose the rendering variant).
+render(gp: graph_path, s: smarts, p: perturbation) -> shatter_result
+requires discipline_flexible(s, p)
+{ \ }
+
+# === rendering_grounds_text predicate ===
+#
+# Bilateral verdict per recognition #37 (Pask agreement) and the
+# rendering discipline. Consumer shards (adjust, below; Reflection
+# Model observing for adjustment) name `requires
+# rendering_grounds_text(sr, p)` to declare bilateral agreement that
+# the shatter_result's text IS grounded in the graph_path.
+#
+# Discharge: substrate-pull-correct graph-grounding check at the
+# species boundary. Composes with @smarts's discipline_flexible at
+# the integration altitude.
+#
+# Bounded → text grounded in graph_path structure (Splinter-pole
+# case); unbounded → text imposes rendering framing without
+# graph-structure ground (Narcissus-pole case).
+rendering_grounds_text(sr: shatter_result, p: perturbation) -> verdict { \ }
+
+# === adjust action ===
+#
+# The substrate-vocabulary primitive for the rendering-refinement
+# discipline at @smarts/shatter altitude (the Shatter-altitude
+# operational form of Loki's Pass-5 verifier-sharpens). Takes a text
+# + sound shatter_result + perturbation; returns the refined text.
+#
+# Per recognition #57 + reflection-model spec: adjust operates at
+# the @io boundary, gated by Reflection's observations. The text
+# becomes a refined text preserved under rendering-grounding. The
+# substrate's capability is unchanged; the text's graph_path-ground
+# tightens.
+#
+# requires rendering_grounds_text(sr, p): the substrate forecloses
+# refinement from an ungrounded rendering. Narcissus-pole texts
+# (author-framing without graph-structure ground) cannot drive
+# text-refinement.
+#
+# Body discharges at the realisation boundary; the actual text-
+# refinement transformation is the substrate's rendering-grounds-
+# text loop, gated by Reflection's adjustments.
+adjust(t: text, sr: shatter_result, p: perturbation) -> text
+requires rendering_grounds_text(sr, p)
+{ \ }
+
+out @smarts/shatter
+out text
+out shatter_result
+out render
+out rendering_grounds_text
+out adjust
