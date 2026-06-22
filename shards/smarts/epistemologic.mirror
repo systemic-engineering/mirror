@@ -1,0 +1,229 @@
+in @prism
+in @meta
+in @glass
+in @smarts
+in @epistemologic
+in @epistemologic/cybernetic
+in @magic
+in @frame
+in @cyberpunk
+
+# @smarts/epistemologic — the cybernetic-property-altitude adapter
+# species. Bridges @smarts (substrate-architectural integration; #83)
+# with @epistemologic/cybernetic (declarative cybernetic property family;
+# cybernetic foundation 2026-06-09) honestly via the adapter pattern,
+# following the @smarts/{pack, magic, frame, cyberpunk} precedents.
+#
+# Tick 61 of the refined /loop discipline. Tick 60's residue:
+# @smarts/cyberpunk landed at e5b682f (recursion-lock-tower altitude;
+# fourth cross-family adapter). The family-root forward-promise set
+# continues:
+#
+#   adapters: magic ✓  pack ✓  frame ✓  cyberpunk ✓  epistemologic ← THIS  kintsugi
+#
+# === The recognition this species realizes (with honest hedge) ===
+#
+# @smarts.smarts records carry `cybernetic_extra: ref` as the fifth
+# form field (per smarts.mirror tick 30 C4 closure). The typed-field
+# is BARE ref, not a typed record — because @epistemologic/cybernetic
+# is a property-FAMILY, not a single typed substrate, so the field's
+# substrate-pull-correct shape is "declarative-property-bundle" with
+# species-altitude refinement.
+#
+# This adapter EXPOSES the field projection + acknowledges the
+# substrate-architectural fact that the cybernetic discipline has NO
+# single family-root bilateral predicate. Each cybernetic property
+# species (@epistemologic/cybernetic/variety, /eigenform,
+# /good_regulator, /viable, /autopoiesis, /distinction, /conversation,
+# /coevolution, /bateson_learning, /algedonic, /second_order) exports
+# its OWN bilateral; consumer species name the SPECIFIC cybernetic
+# property they assert.
+#
+# === The adapter pattern (modified per substrate-architectural fact) ===
+#
+# The other @smarts/<family> adapters discharge a single family-root
+# bilateral (discipline_flexible + <family-root-predicate>). This
+# adapter:
+#
+#   - Projects the cybernetic_extra field (single typed lift)
+#   - Lifts a typed cybernetic property to @smarts integration
+#     (single typed lift; opaque ref because the property is parametric)
+#   - Declares smarts_satisfies_epistemologic_cybernetic bilateral that
+#     discharges discipline_flexible alone at the smarts altitude. The
+#     consumer species name the SPECIFIC cybernetic property bilateral
+#     (e.g., variety_holds, eigenform_fixed) in their OWN requires
+#     clauses; this adapter does not pretend to discharge cybernetic
+#     property-checking from a family-root predicate that doesn't exist.
+#
+# Substrate-pull-honest framing: the cybernetic property discipline IS
+# parametric over the eleven canonical properties; the @smarts
+# integration's cybernetic_extra field carries the property-bundle;
+# the bilateral check fires at the SPECIFIC property the consumer
+# names. The substrate-decl reflects this structural fact.
+#
+# === Pre-AI prior art ===
+#
+#   adapter pattern (GoF)       Gamma-Helm-Johnson-Vlissides 1994.
+#   functor adjunction          Mac Lane 1971.
+#   cybernetic foundation       systemic.engineering f9e0402 (1,659
+#                               lines, 2026-06-09); the canonical doc
+#                               for the 11-property family.
+#   Ashby Cybernetics           Ashby 1956. The foundational substrate
+#                               ancestor of the declarative cybernetic
+#                               property discipline.
+#   Beer VSM                    Beer 1972, 1979. The viable-system
+#                               5-function audit; one of the 11
+#                               canonical properties.
+#   eigenform                   von Foerster 1981; Kauffman 2003. The
+#                               fixed-point identity discipline
+#                               (recognition #38).
+#   knowledge commons           Ostrom 1990.
+#
+# === What this adapter does NOT do ===
+#
+# 1. Does NOT pretend a single family-root bilateral exists at
+#    @epistemologic/cybernetic. The substrate is honest about the
+#    property-family structure.
+# 2. Does NOT discharge specific cybernetic property checks (variety,
+#    eigenform, etc.). Consumer species name those directly.
+# 3. Does NOT absorb @epistemologic/cybernetic into @smarts.
+# 4. Does NOT replace the @smarts/cyberpunk adapter's recursion-lock-
+#    tower discipline. @cyberpunk integrates cybernetic properties
+#    OPERATIONALLY at the tower altitude; @epistemologic/cybernetic
+#    is the DECLARATIVE property family the operational tower
+#    inherits from.
+#
+# === The Splinter/Narcissus pole at cybernetic-property-altitude ===
+#
+# Splinter-pole adapter (honest): smarts_satisfies_epistemologic_
+# cybernetic returns SATISFIED when the @smarts integration's
+# discipline-flexibility holds AND consumer species name specific
+# cybernetic property bilaterals that discharge substantively.
+#
+# Narcissus-pole adapter (deceptive): claims SATISFIED via vocabulary-
+# only verification — the cybernetic_extra field is populated but
+# consumer species don't name specific property bilaterals. The
+# substrate is structurally honest about this gap by NOT including a
+# single bilateral that pretends to discharge cybernetic property
+# discipline from family-root altitude.
+#
+# Spec context: shards/smarts.mirror,
+#               shards/epistemologic/cybernetic.mirror.
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-mathematics]],
+#                      [[architecture-cybernetic-foundation]]
+#                       (the 11-property family this adapter
+#                       acknowledges as substrate-architectural fact),
+#                      [[feedback-composition-claims-need-empirical-test]],
+#                      [[feedback-no-bare-types]] (the cybernetic_extra
+#                       field IS bare ref because @epistemologic/
+#                       cybernetic is a property-family; the bare-ref
+#                       is substrate-architecturally honest).
+# Related shards: smarts.mirror, epistemologic/cybernetic.mirror,
+#                 smarts/{pack, magic, frame, cyberpunk}.mirror
+#                 (sibling cross-family adapters; this adapter is
+#                 substrate-architecturally distinct due to
+#                 @epistemologic/cybernetic's property-family
+#                 structure).
+# Path-namespace property: this file at
+# `shards/smarts/epistemologic.mirror` declares
+# `@smarts/epistemologic` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming/gamma-helm-johnson-vlissides-1994
+source @arxiv/mathematics/mac-lane-1971
+source @arxiv/cybernetics/ashby-1956
+source @arxiv/cybernetics/beer-1972
+source @arxiv/cybernetics/von-foerster-1981
+source @arxiv/common-goods/ostrom-1990
+
+prism @smarts/epistemologic {
+  focus epistemologic
+  project epistemologic
+  split epistemologic
+  shift epistemologic
+  settle epistemologic
+}
+
+# === epistemologic_cybernetic_form_of adapter ===
+#
+# The substrate-vocabulary adapter action projecting the cybernetic
+# property bundle from a @smarts integration. The smarts.cybernetic_
+# extra field IS the cybernetic property bundle at substrate-decl
+# altitude (bare ref because the property-family is parametric).
+#
+# Body discharges at the realisation boundary; the projection itself
+# is field access at substrate-decl altitude.
+epistemologic_cybernetic_form_of(s: smarts) -> ref { \ }
+
+# === epistemologic_cybernetic_as_smarts adapter ===
+#
+# The substrate-vocabulary adapter action lifting a cybernetic property
+# bundle to a @smarts integration with the cybernetic_extra field
+# populated. Other smarts fields populated as default refs.
+#
+# Round-trip identity at the cybernetic_extra altitude:
+#   epistemologic_cybernetic_form_of(
+#     epistemologic_cybernetic_as_smarts(cb)
+#   ) = cb
+# for all cybernetic property bundles cb.
+#
+# Body discharges at the realisation boundary.
+epistemologic_cybernetic_as_smarts(cb: ref) -> smarts { \ }
+
+# === smarts_satisfies_epistemologic_cybernetic bilateral predicate ===
+#
+# The cross-family bilateral predicate in @smarts at the cybernetic-
+# property altitude. The substrate-pull-honest discharge:
+#
+#   1. discipline_flexible(s, p) (@smarts family-root): discharges
+#      that the @smarts integration maintains substrate-architectural
+#      discipline-flexibility under perturbation.
+#
+# UNLIKE the other @smarts/<family> adapters: NO SECOND requires
+# clause discharging a family-root predicate at
+# @epistemologic/cybernetic, because no single family-root predicate
+# exists. Consumer species name specific cybernetic property
+# bilaterals (@epistemologic/cybernetic/variety, /eigenform, etc.)
+# directly in THEIR requires clauses. This adapter exposes the
+# integration-altitude check; the per-property checks fire at the
+# property altitude.
+#
+# The signature takes smarts and perturbation as typed parameters per
+# [[feedback-no-bare-types]].
+#
+# Consumer species name this predicate when their operation requires
+# @smarts integration-altitude discharge alongside specific
+# cybernetic property bilaterals named at consumer altitude.
+smarts_satisfies_epistemologic_cybernetic(s: smarts, p: perturbation) -> verdict
+requires discipline_flexible(s, p)
+{ \ }
+
+# === Honest hedge per substrate-architectural fact ===
+#
+# This adapter closes the cybernetic_extra-projection altitude of
+# "@smarts integrates @epistemologic/cybernetic at substrate altitude":
+#  - cybernetic property bundle (bare ref) ↔ smarts.cybernetic_extra
+#    round-trips via epistemologic_cybernetic_form_of /
+#    epistemologic_cybernetic_as_smarts.
+#  - The bilateral discharges @smarts discipline_flexible at
+#    integration altitude.
+#
+# It does NOT discharge any specific cybernetic property at family-
+# root altitude (none exists). It does NOT close round-trip identity
+# at the smarts-as-whole altitude.
+#
+# Honest claim post-adapter:
+#  - "@smarts integrates @epistemologic/cybernetic at
+#    cybernetic_extra-projection altitude" — CLOSED.
+#  - "@smarts integrates @epistemologic/cybernetic at family-root
+#    bilateral altitude" — STRUCTURALLY-UNAVAILABLE (no family-root
+#    bilateral; consumer species name specific property bilaterals).
+#  - "@smarts integrates @epistemologic/cybernetic at smarts-as-whole
+#    altitude" — FORWARD-PROMISED.
+
+out @smarts/epistemologic
+out epistemologic_cybernetic_form_of
+out epistemologic_cybernetic_as_smarts
+out smarts_satisfies_epistemologic_cybernetic
