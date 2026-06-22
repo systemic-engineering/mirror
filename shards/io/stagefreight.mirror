@@ -296,6 +296,12 @@ type freight_manifest = {
 # the canonical namespace form; the address action substrate-decls
 # the computation that produces it.
 #
+# The address derivation discipline (reverse-DNS namespace +
+# projection-kind + OID-short composition) is verified by the
+# `address_well_formed` bilateral consumers can check on coord+oid
+# pairs. address() is the construction; address_well_formed() is
+# the verification.
+#
 # Body discharges at the realisation boundary.
 address(crystal_oid: ref) -> spectral_coordinate { \ }
 
@@ -325,49 +331,99 @@ address(crystal_oid: ref) -> spectral_coordinate { \ }
 #
 # Body discharges at the realisation boundary.
 freight(crystal_oid: ref, coord: spectral_coordinate, projection: ref, c: magic_contract, promise: magic_invariant, p: perturbation) -> freight_manifest
+requires address_well_formed(coord, crystal_oid)
 requires invariant_preserved(c, promise)
 { \ }
 
-# === stagefreight_addressable predicate ===
+# === Seam tick 68 C2 closure: address_well_formed predicate ===
+#
+# Per Seam adversarial review (docs/audits/stagefreight-seam-review-
+# 2026-06-22.md, C2 TIGHT): the address derivation rules (reverse-DNS
+# namespace + projection-kind + OID-short composition) had lived
+# only in spec prose at docs/specs/stagefreight-wire-v0.1.md §3.2.
+# This predicate lifts the rules to substrate-decl: consumers verify
+# coord+oid pairs follow the derivation discipline structurally, not
+# by parsing prose.
+#
+# Consumed by freight() above (gates the coord input) and by the
+# composed stagefreight_addressable below (one of four sub-
+# predicates the wire-survival discipline decomposes into).
+#
+# Bounded → coord derives byte-deterministically from crystal_oid
+# via the documented derivation function with reverse-DNS-shaped
+# namespace + projection-kind component; unbounded → the address
+# rules don't hold.
+address_well_formed(coord: spectral_coordinate, crystal_oid: ref) -> verdict { \ }
+
+# === Seam tick 68 C4/C9 closure: stagefreight_addressable sub-predicates ===
+#
+# Per Seam adversarial review (C4/C9 TIGHT): the monolithic bilateral
+# stagefreight_addressable had carried five wire-survival claims as
+# spec-prose only. This consolidation decomposes the bilateral into
+# four typed sub-predicates the composed bilateral discharges via
+# `requires` clauses. Consumers check sub-predicates individually;
+# the realisation layer discharges each at its altitude.
+#
+# - oid_resolves: the crystal_oid points at a settled crystal
+#   reachable in @mirror/store (forward-promised gate on task #268)
+# - address_well_formed: the coord follows the address derivation
+#   discipline (see above; C2 closure)
+# - projection_is_species: the projection ref names a substrate-
+#   decl'd @io/stagefreight/<species> projection format
+# - round_trip_holds: the freight survives the round-trip under
+#   perturbation (the load-bearing wire-survival claim)
+oid_resolves(crystal_oid: ref) -> verdict { \ }
+
+projection_is_species(projection: ref) -> verdict { \ }
+
+round_trip_holds(fm: freight_manifest, p: perturbation) -> verdict { \ }
+
+# === stagefreight_addressable predicate (composed) ===
 #
 # Bilateral verdict per recognition #37 (Pask agreement) and the
-# wire-survival discipline. Consumer shards (transit, below;
-# forward-promised projection-format species) name `requires
+# wire-survival discipline. Consumer shards (forward-promised
+# projection-format species; the narrative species's
+# project_to_narrative + finalize chain) name `requires
 # stagefreight_addressable(fm, p)` to declare bilateral agreement
 # that the crystal IS addressable at the wire surface with
 # round-trip OID identity.
 #
+# Per Seam tick 68 C4/C9: the bilateral now COMPOSES the four
+# sub-predicates declared above via `requires` clauses. The
+# substrate-decl carries the wire-survival decomposition typed,
+# not spec-prose-only.
+#
 # Discharge: substrate-pull-correct wire-addressing check at the
 # @io boundary. Composes with @magic's invariant_preserved at the
-# crystal-altitude.
+# crystal-altitude (via freight()'s requires chain).
 #
-# Bounded → crystal addressable + wire-survival holds (Splinter-
-# pole); unbounded → wire address doesn't round-trip OR projection
-# loses structure (Narcissus-pole).
-stagefreight_addressable(fm: freight_manifest, p: perturbation) -> verdict { \ }
-
-# === transit action ===
-#
-# The substrate-vocabulary primitive for putting the freight on the
-# wire. Takes a freight_manifest + perturbation; returns the typed
-# wire_surface where the crystal arrives.
-#
-# Per recognition #57: transit operates at the @io boundary. The
-# freight_manifest becomes a wire_surface preserved under structure.
-# The substrate's capability is unchanged; the crystal's wire-
-# survival is tightened.
-#
-# requires stagefreight_addressable(fm, p): the substrate forecloses
-# transit from an unaddressable freight. Narcissus-pole freight (no
-# round-trip identity) cannot drive transit. The bilateral predicate
-# IS the boundary-harness at the wire.
-#
-# Body discharges at the realisation boundary; the actual transit
-# is implemented by the projection-format species (e.g., @io/
-# stagefreight/narrative) consuming this bilateral.
-transit(fm: freight_manifest, p: perturbation) -> wire_surface
-requires stagefreight_addressable(fm, p)
+# Bounded → all four sub-predicates discharge (crystal addressable +
+# wire-survival holds; Splinter-pole); unbounded → one or more
+# sub-predicate fails (Narcissus-pole; alignment-as-boundary-
+# mathematics #57 distinguishes which sub-claim broke).
+stagefreight_addressable(fm: freight_manifest, p: perturbation) -> verdict
+requires oid_resolves(fm.crystal_oid)
+requires address_well_formed(fm.coord, fm.crystal_oid)
+requires projection_is_species(fm.projection)
+requires round_trip_holds(fm, p)
 { \ }
+
+# === Seam tick 68 C8 closure: transit removed ===
+#
+# Per Seam adversarial review (C8 TIGHT mild): family-root's
+# `transit` and species-altitude `finalize` had been parallel
+# siblings, not a chain. Each projection species's emission shape
+# is shape-different (narrative.finalize emits prose to
+# wire_surface; future json.encode would emit bytes; brainfuck-
+# compressed would emit compressed bytes; etc.). The family-root
+# generic `transit` was orphaning in the narrative-emission path.
+#
+# Closure: `transit` deleted from the family-root. Each projection
+# species owns its emission action (e.g., @io/stagefreight/narrative
+# defines `finalize(np, p) -> wire_surface requires narrative_grounded`).
+# The family-root provides the carriers + the composed bilateral +
+# address + freight; species provide emission per their projection
+# shape.
 
 out @io/stagefreight
 out spectral_coordinate
@@ -375,5 +431,8 @@ out wire_surface
 out freight_manifest
 out address
 out freight
+out address_well_formed
+out oid_resolves
+out projection_is_species
+out round_trip_holds
 out stagefreight_addressable
-out transit
