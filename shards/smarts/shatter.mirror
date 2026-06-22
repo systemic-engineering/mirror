@@ -313,6 +313,30 @@ parse(t: text, s: smarts, p: perturbation) -> shatter_result
 requires discipline_flexible(s, p)
 { \ }
 
+# === Seam tick 74 C1/C2/C9 closure: round_trip_pair carrier ===
+#
+# Per Seam adversarial review (DEFENSIVE verdict on tick 74; 4 TIGHT
+# findings clustered around shatter_result direction-discriminator
+# absence). Seam's recommended Option 2: add a round_trip_pair
+# carrier so the composed bilateral discharges over the pair, not
+# over a single direction-ambiguous shatter_result.
+#
+# Structural honesty: the round-trip identity IS a pair-property
+# (render(parse(t)) = t requires BOTH the parse-result and the
+# render-back-result; same for parse(render(gp)) = gp). A single
+# shatter_result cannot witness both intermediates. The pair makes
+# the pair-property explicit at substrate-decl altitude.
+#
+# Closes Seam C1 (direction-discriminator absent), C2 (round_trip
+# signature insufficient), C9 (pattern-borrow from StageFreight
+# semantic-deep mismatch). C4 (adjust asymmetry) closes below via
+# adjust_graph action.
+type round_trip_pair = {
+  forward: shatter_result,
+  reverse: shatter_result,
+  v:       verdict,
+}
+
 # === parsing_grounds_graph predicate (bilateral) ===
 #
 # Bilateral verdict for the parse direction soundness. Consumer
@@ -361,12 +385,66 @@ parsing_grounds_graph(sr: shatter_result, p: perturbation) -> verdict { \ }
 # @reflection.third_order_coherent (tick 73). The substrate's
 # composed-bilateral discipline composes at multiple altitudes;
 # this shard lifts the pattern to the rendering boundary.
-round_trip_identity_preserved(sr: shatter_result, p: perturbation) -> verdict { \ }
+# === round_trip_identity_preserved predicate (Seam C2 closure) ===
+#
+# Re-signed per Seam C2: takes the round_trip_pair, not a single
+# shatter_result. The substrate-decl now structurally witnesses
+# both intermediates: pair.forward carries (gp_input, t_intermediate);
+# pair.reverse carries (t_intermediate_input, gp_recovered). The
+# predicate discharges: gp_recovered byte-equals gp_input (the
+# round-trip closes at the graph altitude).
+#
+# Per the Seam tick 74 review's framing-produced constraint: this
+# review treats StageFreight's pattern as load-bearing precedent. The
+# substrate's pair-discharge IS the substrate-pull-correct lift here.
+#
+# Mara hedge #3 carried: round-trip identity at semantic-equality is
+# parametric over canonicalization choice. v0.1 discharges byte-
+# equality on content-addressed refs; semantic-equality at higher
+# altitudes is forward-promised.
+round_trip_identity_preserved(pair: round_trip_pair, p: perturbation) -> verdict { \ }
 
-shatter_round_trip(sr: shatter_result, p: perturbation) -> verdict
-requires rendering_grounds_text(sr, p)
+# === shatter_round_trip composed bilateral (Seam C9 closure) ===
+#
+# Re-shaped per Seam C9: composes over the round_trip_pair, not over
+# a single shatter_result. Three load-bearing requires clauses:
+#
+#   1. rendering_grounds_text(pair.forward, p)
+#      — forward direction soundness (render produces grounded text)
+#   2. parsing_grounds_graph(pair.reverse, p)
+#      — reverse direction soundness (parse-back produces grounded
+#      graph; note: reverse SR carries text-as-input + graph-as-output)
+#   3. round_trip_identity_preserved(pair, p)
+#      — the substrate's identity claim: the pair's reverse
+#      reconstructs the pair's forward input
+#
+# The composed bilateral now structurally witnesses the round-trip
+# at substrate-decl altitude, not signature-deep prose. Pattern-
+# borrow from StageFreight (composed-bilateral discipline) lifted to
+# semantic-deep at the rendering altitude via the pair-carrier.
+shatter_round_trip(pair: round_trip_pair, p: perturbation) -> verdict
+requires rendering_grounds_text(pair.forward, p)
+requires parsing_grounds_graph(pair.reverse, p)
+requires round_trip_identity_preserved(pair, p)
+{ \ }
+
+# === adjust_graph action (Seam C4 closure) ===
+#
+# The parse-direction analogue of `adjust` (above). Per Seam C4:
+# the existing adjust(t, sr, p) -> text only handles the render-side
+# refinement; the bi-directional load-bearing claim requires symmetry
+# at substrate-decl altitude. This action adds the parse-side
+# refinement primitive.
+#
+# Takes a graph_path + sound shatter_result + perturbation; returns
+# the refined graph_path. Requires parsing_grounds_graph soundness
+# BEFORE refinement is admissible.
+#
+# Body discharges at the realisation boundary; the parse-direction
+# refinement is implemented by the realisation layer's encoder-side
+# fine-tuning.
+adjust_graph(gp: graph_path, sr: shatter_result, p: perturbation) -> graph_path
 requires parsing_grounds_graph(sr, p)
-requires round_trip_identity_preserved(sr, p)
 { \ }
 
 # === adjust action ===
@@ -397,9 +475,11 @@ requires rendering_grounds_text(sr, p)
 out @smarts/shatter
 out text
 out shatter_result
+out round_trip_pair
 out render
 out rendering_grounds_text
 out adjust
+out adjust_graph
 out parse
 out parsing_grounds_graph
 out round_trip_identity_preserved
