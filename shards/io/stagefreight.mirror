@@ -1,0 +1,379 @@
+in @prism
+in @meta
+in @glass
+in @io
+in @magic
+in @magic/contract
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @io/stagefreight — the wire-protocol boundary species. The @io
+# surface where settled crystals (per @mirror/store/crystal, task
+# #268) become addressable and transportable to non-mirror-world
+# consumers.
+#
+# Tick 66 of the refined /loop discipline; first tick toward the
+# StageFreight PR-ready endpoint. Per the Pack-as-orchestra Track A
+# (substrate-decl track; ungated): family-root substrate-decl lands
+# first; @io/stagefreight/narrative projection-format species
+# forward-promised; canonical spec at docs/specs/stagefreight-wire-
+# v0.1.md forward-promised (Mara).
+#
+# Per @io family-root (T21, 2026-06-08): @io is the substrate's only
+# legitimate non-mirror surface; species parameterize the boundary;
+# the BODY of the call is opaque to the substrate by construction.
+# StageFreight IS the species naming the wire protocol for settled-
+# crystal transport.
+#
+# Forward-promised by EXISTING TEST STUBS:
+#
+#   - bootstrap/tests/crystal_substrate.rs:9 references
+#     `org.stagefreight.plan.spectral_coordinate` at the StageFreight
+#     wire surface (the OID of a settled crystal becomes a
+#     StageFreight-addressable coordinate).
+#   - bootstrap/tests/kintsugi_out_substrate_ref.rs:23-24 reserves
+#     `@io/stagefreight/narrative` as a forward-promised projection
+#     format (alongside @data/json, @data/yaml, etc.).
+#
+# This shard substrate-decl's the FAMILY-ROOT @io/stagefreight; the
+# /narrative species and the wire spec land in subsequent ticks.
+#
+# === The recognition ===
+#
+# Settled crystals (kintsugi loop output: oid + section +
+# derived_predicates + fracture_calendar + composition_graph per task
+# #268) need to ship. The wire protocol IS:
+#
+#   - the OID-namespaced address space (org.stagefreight.plan.
+#     spectral_coordinate) under which crystals are addressable
+#   - the typed transport surface (the actual bytes-on-wire
+#     contract)
+#   - the projection format vocabulary (narrative, json, etc.)
+#
+# StageFreight at the @io altitude declares the BOUNDARY: the typed
+# contract the mirror side sees. The realisation layer (Rust + the
+# Phase 4b emitter discharge) implements the actual wire bytes;
+# this shard substrate-decls what the contract IS.
+#
+# === Why "StageFreight" ===
+#
+# Naming compounds two threads: "Stage" from the optical-keywords
+# family (stage/facet/aperture/bench; stage = the substrate's
+# rendering surface); "Freight" = the crystal as payload-in-transit.
+# The full compound names the wire-altitude transport mechanism for
+# stage-processed artifacts — settled crystals shipped to the
+# non-mirror-world.
+#
+# The wordplay with stage-fright is intentional: the substrate has
+# anxiety about shipping its settled crystals to a world that may
+# not honor their @mirror/store/crystal discipline. StageFreight
+# declares the typed contract that survives the transit.
+#
+# === The species's load-bearing contribution ===
+#
+# This family-root adds:
+#
+# - `spectral_coordinate` carrier: typed reference for the OID-
+#   namespaced wire address. Per the test stub's
+#   `org.stagefreight.plan.spectral_coordinate` pattern: a
+#   substrate-pull-correct OID-derived address with the reverse-DNS
+#   namespace.
+# - `wire_surface` carrier: typed reference for the actual transport
+#   endpoint (substrate-decl'd as ref because the wire vocabulary is
+#   parametric over projection formats).
+# - `freight_manifest` carrier: typed record (crystal_oid,
+#   coordinate, projection, verdict). The substrate-architectural
+#   record of a freight operation.
+# - `address` action: computes spectral_coordinate from a crystal
+#   OID. The substrate-vocabulary primitive for wire-addressing.
+# - `freight` action: the load-bearing FIRST consumer of @magic's
+#   invariant_preserved bilateral predicate. Takes a crystal (via
+#   its OID; @mirror/store/crystal forward-promised), the wire
+#   coordinate, and the perturbation; returns freight_manifest.
+#   Requires invariant_preserved — the crystal's @magic contract
+#   must be honored across the @io boundary.
+# - `stagefreight_addressable` predicate: bilateral verdict that the
+#   crystal IS addressable at the wire surface (Splinter-pole →
+#   actual OID-addressing with structure preservation; Narcissus-
+#   pole → fake address that doesn't round-trip).
+# - `transit` action: the substrate-vocabulary primitive for putting
+#   the freight on the wire (the @io-altitude operational form of
+#   the freight discipline). Takes freight_manifest + perturbation;
+#   returns wire_surface; requires stagefreight_addressable.
+#
+# === The wire-survival discipline ===
+#
+# Per the @io family-root + recognition #57 (alignment as boundary
+# mathematics): the wire IS the @io boundary; the crystal's
+# substrate-decl'd structure (oid + section + derived_predicates +
+# fracture_calendar + composition_graph) must survive the transit.
+# StageFreight's stagefreight_addressable bilateral discharges this
+# at the @io altitude.
+#
+# The discipline says: when the crystal ships, the wire receives a
+# byte-exact representation whose OID matches the crystal's
+# content-address; the receiver can reconstruct the crystal's typed
+# structure from the wire bytes. The substrate-decl content is
+# unchanged across the boundary; the wire-survival discipline
+# tightens what "shipped" means.
+#
+# === The Splinter/Narcissus pole at wire-protocol altitude ===
+#
+# Splinter-pole StageFreight (honest):
+# - The wire bytes round-trip to the same OID; the typed structure
+#   (section, derived_predicates, fracture_calendar,
+#   composition_graph) is preserved; the projection format names a
+#   substrate-decl'd serialization the receiver can decode.
+# - K_n peer-to-peer transit — the wire is a peer in the substrate
+#   network, not an authoritative reframing layer.
+#
+# Narcissus-pole StageFreight (deceptive):
+# - The wire bytes claim to ship a crystal but the OID doesn't
+#   round-trip; the projection format is lossy without admitting it;
+#   the receiver reconstructs SOMETHING but not the crystal.
+# - K_{1,n-1} hub-controlled transit — the wire protocol's framing
+#   author imposes structure rather than ships substrate-decl'd
+#   structure.
+#
+# Alignment-as-boundary-mathematics (#57) IS what distinguishes
+# Splinter-pole from Narcissus-pole transit at substrate altitude.
+# The bilateral stagefreight_addressable predicate composes the
+# substrate-architectural check.
+#
+# === Pre-AI prior art ===
+#
+#   git plumbing                 Torvalds 2005. Content-addressed
+#                                object database; OID-as-address is
+#                                the substrate ancestor of
+#                                spectral_coordinate.
+#   IPFS                         Benet 2014. Content-addressed wire
+#                                protocol; the canonical structural
+#                                ancestor of content-addressed
+#                                transport.
+#   Protocol Buffers             Google 2008. The typed wire-format
+#                                ancestor of projection-format-as-
+#                                first-class.
+#   Cap'n Proto                  Varda 2013. Zero-copy typed wire
+#                                protocol; the discipline ancestor
+#                                of structure-preserving transit.
+#   reverse-DNS namespacing      Java 1995 (Sun); Apple bundle
+#                                identifiers (2000s). The cultural-
+#                                practice ancestor of
+#                                org.stagefreight.plan.* addressing.
+#   stage_play (build lifecycle) the 2026-06-16 recognition cascade
+#                                (Story → Play → Narrative). The
+#                                immediate substrate ancestor for
+#                                StageFreight's transport surface;
+#                                the crystal IS the play's settled
+#                                artifact ready for narrative
+#                                transmission.
+#
+# === What this family does NOT do ===
+#
+# 1. Does NOT discharge the wire-protocol Rust realisation. The
+#    actual bytes-on-wire implementation lands at
+#    bootstrap/src/stagefreight.rs (forward-promised; Phase 4b
+#    emitter or direct Rust).
+# 2. Does NOT depend on @mirror/store/crystal being fully substrate-
+#    decl'd (task #268 pending). This shard takes crystal-as-OID at
+#    the wire boundary; the crystal's typed structure is forward-
+#    promised via ref.
+# 3. Does NOT supersede the @io family's `imperfect<a, e, l>` return
+#    convention. The realisation layer will lift freight + transit
+#    actions into imperfect at the @io boundary; this shard names
+#    the typed pre-imperfect surface.
+# 4. Does NOT prescribe a single projection format. @io/stagefreight/
+#    narrative is forward-promised as ONE projection; future
+#    projections (json, yaml, brainfuck-compressed) follow the
+#    species pattern.
+#
+# Spec context: docs/specs/stagefreight-wire-v0.1.md (forward-
+#               promised; Mara substrate-pull-correct first attempt);
+#               docs/specs/kintsugi-self-hosting.md (the @io
+#               classification of every bootstrap Rust file);
+#               bootstrap/tests/crystal_substrate.rs (the RED test
+#               stub awaiting GREEN per this species + the wire
+#               realisation);
+#               bootstrap/tests/kintsugi_out_substrate_ref.rs:23-24
+#               (the projection-format reservation).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-mathematics]]
+#                       (#57; StageFreight IS the wire-altitude
+#                       boundary harness),
+#                      [[architecture-glass-wall-substrate-types]]
+#                       (the wall this species declares the wire
+#                       shape of),
+#                      [[feedback-composition-claims-need-empirical-test]]
+#                       (Reed's discipline; the bilateral makes the
+#                       wire-survival claim empirically discharged),
+#                      [[feedback-no-bare-types]] (spectral_coordinate
+#                       and freight_manifest as typed carriers).
+# Related shards: io.mirror (the @io family-root; declares the
+#                  boundary discipline this species parameterizes),
+#                 io/cargo.mirror (the precedent for path-namespace
+#                  at @io altitude; sibling boundary species),
+#                 magic.mirror, magic/contract.mirror (the
+#                  invariant_preserved bilateral this species
+#                  consumes; the crystal's @magic contract must hold
+#                  across the wire),
+#                 mirror/store/crystal.mirror (forward-promised task
+#                  #268; the crystal carrier StageFreight ships),
+#                 io/stagefreight/narrative.mirror (forward-promised
+#                  projection-format species).
+# Path-namespace property: this file at `shards/io/stagefreight.mirror`
+# declares `@io/stagefreight` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/version-control/torvalds-2005
+source @arxiv/distributed/benet-2014
+source @arxiv/protocols/google-protobuf-2008
+source @arxiv/protocols/varda-2013
+
+prism @io/stagefreight {
+  focus stagefreight
+  project stagefreight
+  split stagefreight
+  shift stagefreight
+  settle stagefreight
+}
+
+# === The spectral_coordinate carrier ===
+#
+# Substrate-typed reference for the OID-namespaced wire address.
+# Per the test stub's pattern (org.stagefreight.plan.
+# spectral_coordinate): a reverse-DNS-namespaced address derived
+# from the crystal's OID. The substrate-output of the address
+# primitive.
+#
+# Forward-promised refinement: typed record (oid, namespace,
+# projection_kind, version) at species-or-extension altitude once
+# the substrate's structured-coordinate type lands.
+#
+# Identity contract: byte-equality on the underlying ref.
+type spectral_coordinate = ref
+
+# === The wire_surface carrier ===
+#
+# Substrate-typed reference for the actual transport endpoint where
+# the crystal arrives on the wire. The carrier is parametric over
+# projection format (narrative, json, yaml, etc.); concrete
+# realisations live at species-altitude (@io/stagefreight/narrative
+# forward-promised).
+#
+# Identity contract: byte-equality on the underlying ref.
+type wire_surface = ref
+
+# === The freight_manifest carrier ===
+#
+# Typed record over (crystal_oid, coordinate, projection, verdict).
+# The substrate-architectural record of a freight operation.
+# Carries:
+#
+# - crystal_oid : the OID of the settled crystal under transit
+# - coord       : the spectral_coordinate the crystal addresses to
+# - projection  : the projection-format species ref (e.g.,
+#                 ref to @io/stagefreight/narrative)
+# - v           : the bilateral verdict (BOUNDED → crystal
+#                 ADDRESSABLE + wire-survival holds; DEFENSIVE →
+#                 transit requires substrate-pull revision)
+#
+# Identity contract: byte-equality on the quadruple.
+type freight_manifest = {
+  crystal_oid: ref,
+  coord:       spectral_coordinate,
+  projection:  ref,
+  v:           verdict,
+}
+
+# === address action ===
+#
+# The substrate-vocabulary action computing a spectral_coordinate
+# from a crystal OID. Takes the crystal's OID (forward-promised via
+# @mirror/store/crystal); returns the typed wire address.
+#
+# Per the test stub: org.stagefreight.plan.spectral_coordinate is
+# the canonical namespace form; the address action substrate-decls
+# the computation that produces it.
+#
+# Body discharges at the realisation boundary.
+address(crystal_oid: ref) -> spectral_coordinate { \ }
+
+# === freight action (FIRST consumer of invariant_preserved) ===
+#
+# THE LOAD-BEARING ACTION at @io/stagefreight altitude. The
+# substrate-vocabulary primitive for crystal → wire transit at the
+# @io boundary. Realizes StageFreight's wire-survival discipline as
+# substrate-decl operation.
+#
+# Takes the crystal_oid (the settled crystal under transit), the
+# spectral_coordinate (where it ships to), the projection format
+# ref (how it serializes), the @magic contract carrying the
+# crystal's promise, and the perturbation. Returns the typed
+# freight_manifest.
+#
+# requires invariant_preserved(c, promise): the crystal's @magic
+# contract must be honored across the wire BEFORE the freight is
+# admissible. Without this requires clause, a freight would be
+# admissible for a crystal whose @magic invariant fails at the
+# wire boundary — the Narcissus-pole wire-protocol case.
+#
+# Per the @io family discipline: the realisation layer lifts this
+# into `imperfect<freight_manifest, freight_error, transparency>`
+# at the boundary; this substrate-decl names the typed pre-imperfect
+# surface.
+#
+# Body discharges at the realisation boundary.
+freight(crystal_oid: ref, coord: spectral_coordinate, projection: ref, c: magic_contract, promise: magic_invariant, p: perturbation) -> freight_manifest
+requires invariant_preserved(c, promise)
+{ \ }
+
+# === stagefreight_addressable predicate ===
+#
+# Bilateral verdict per recognition #37 (Pask agreement) and the
+# wire-survival discipline. Consumer shards (transit, below;
+# forward-promised projection-format species) name `requires
+# stagefreight_addressable(fm, p)` to declare bilateral agreement
+# that the crystal IS addressable at the wire surface with
+# round-trip OID identity.
+#
+# Discharge: substrate-pull-correct wire-addressing check at the
+# @io boundary. Composes with @magic's invariant_preserved at the
+# crystal-altitude.
+#
+# Bounded → crystal addressable + wire-survival holds (Splinter-
+# pole); unbounded → wire address doesn't round-trip OR projection
+# loses structure (Narcissus-pole).
+stagefreight_addressable(fm: freight_manifest, p: perturbation) -> verdict { \ }
+
+# === transit action ===
+#
+# The substrate-vocabulary primitive for putting the freight on the
+# wire. Takes a freight_manifest + perturbation; returns the typed
+# wire_surface where the crystal arrives.
+#
+# Per recognition #57: transit operates at the @io boundary. The
+# freight_manifest becomes a wire_surface preserved under structure.
+# The substrate's capability is unchanged; the crystal's wire-
+# survival is tightened.
+#
+# requires stagefreight_addressable(fm, p): the substrate forecloses
+# transit from an unaddressable freight. Narcissus-pole freight (no
+# round-trip identity) cannot drive transit. The bilateral predicate
+# IS the boundary-harness at the wire.
+#
+# Body discharges at the realisation boundary; the actual transit
+# is implemented by the projection-format species (e.g., @io/
+# stagefreight/narrative) consuming this bilateral.
+transit(fm: freight_manifest, p: perturbation) -> wire_surface
+requires stagefreight_addressable(fm, p)
+{ \ }
+
+out @io/stagefreight
+out spectral_coordinate
+out wire_surface
+out freight_manifest
+out address
+out freight
+out stagefreight_addressable
+out transit
