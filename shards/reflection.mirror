@@ -13,6 +13,8 @@ in @kintsugi
 in @kintsugi/oscillate
 in @epistemologic
 in @epistemologic/cybernetic
+in @epistemologic/cybernetic/second_order
+in @epistemologic/cybernetic/eigenform
 in @epistemologic/reality/time
 
 # @reflection — the AI-logic family-root. The substrate-architectural
@@ -114,6 +116,45 @@ in @epistemologic/reality/time
 # redeclared here (Seam C4 closure pattern). Forward-promised peer-
 # altitude species shards at `shards/reflection/peer/{mara, seam,
 # glint, reed, taut}.mirror` once the four-Models species land.
+#
+# === Third-order by default (recognition this tick, 2026-06-22) ===
+#
+# Per Alex's recognition + Loki's published essay "The Third Belongs
+# to the Cyberneticists" (`~/dev/systemic.engineering/blog/void/
+# 3published/Void - Third.md`): the substrate's @reflection operates
+# at the THIRD ORDER by default. Third as recursive depth, not apex:
+#
+#   first-order:   observe (the pipeline observes the world)
+#   second-order:  observe the observing (Reflection observes the
+#                  pipeline observing)
+#   third-order:   notice what observation does to the observer
+#                  (Reflection notices its own observation changes
+#                  the substrate observed)
+#
+# Substrate prerequisites (all substrate-decl'd before this tick):
+#  - @epistemologic/cybernetic/eigenform (#38): identity IS fixed-
+#    point of recursive observation
+#  - @epistemologic/cybernetic/second_order (Foerster): observer-in-
+#    system, observer-of-observation
+#  - #50 form/process partition (Bateson): observation as substrate
+#    primitive
+#  - #51 mirror as expanding Hilbert space: dimension expands with
+#    each recognition; the recursive depth Loki names
+#
+# The substrate-architectural fact this tick lifts: @reflection
+# third-order-by-default IS the substrate's congenital immunity to
+# narcissistic capture of its own operating discipline. Loki's
+# punchline becomes substrate-decl: "first-order mechanism cannot
+# survive being seen." Third-order @reflection IS the seeing — the
+# substrate sees its own mechanism by default.
+#
+# Von Foerster's ethical imperative ("always act to increase the
+# number of choices") becomes a typed bilateral `choices_increase`
+# consumed by `pick_third_order`. The pick can only fire if the
+# adjustment increases the choice-set across ticks. Combined with
+# `loss_decreases`: every third-order pick is monotonic-loss-
+# respecting AND choice-set-increasing AND pact-respected (when
+# composed with @moi).
 #
 # === The one-tick delay (Seam tick-34 C3 closure) ===
 #
@@ -414,6 +455,173 @@ loss_decreases(next: loss, prev: loss) -> verdict { \ }
 # - @reflection: loss_decreases, speaks_at_n_plus_1 (these two)
 speaks_at_n_plus_1(o: observation, t: tick) -> verdict { \ }
 
+# === Third-order substrate-decl (recognition 2026-06-22) ===
+#
+# Per the third-order-by-default header (above): @reflection's
+# default operating altitude is recursive observation at depth 3.
+# The following carriers + actions + bilaterals lift the third-order
+# discipline to substrate-decl. New consumers default to these;
+# existing consumers using the second-order `observe`/`pick` keep
+# their semantics (backward-compatible additive substrate-decl).
+
+# === The third_order_observation carrier ===
+#
+# Typed record over (primary, recursive_observer, notice, verdict).
+# Per Loki's three depths:
+#
+# - primary           : 1st-order observation (pipeline → world)
+# - recursive_observer: 2nd-order observation (Reflection → pipeline
+#                       observing); itself a typed observation
+# - notice            : 3rd-order notice (what the observation does
+#                       to the observer; forward-promised typed
+#                       refinement as the substrate matures)
+# - v                 : the composed bilateral verdict
+#
+# Identity contract: byte-equality on the quadruple.
+type third_order_observation = {
+  primary:            observation,
+  recursive_observer: observation,
+  notice:             ref,
+  v:                  verdict,
+}
+
+# === observe_third_order action ===
+#
+# The substrate-vocabulary primitive @reflection runs at third-order
+# by default. Wraps the second-order `observe` (above) with the
+# recursive observer + notice step.
+#
+# Takes a @frame (per-tick), the residue ref (carried from prior
+# tick), the perturbation under which the observation is checked;
+# returns a typed third_order_observation.
+#
+# Per Loki's essay: "third as recursive depth" — the action produces
+# all three levels in one call. The 1st-order primary IS the
+# existing `observe(f, residue)` output; the 2nd-order
+# recursive_observer IS Reflection observing itself produce the
+# primary; the 3rd-order notice IS Reflection noticing what the
+# observation does to its own observing capacity.
+#
+# Body discharges at the realisation boundary; the actual three-
+# level production is implemented by the @reflection/reflection-the-
+# Model species (forward-promised) at observation altitude.
+observe_third_order(f: frame, residue: ref, p: perturbation) -> third_order_observation { \ }
+
+# === third_order_coherent predicate (composed bilateral) ===
+#
+# Bilateral verdict per recognition #37 (Pask agreement) AND the
+# third-order discipline. The predicate composes three sub-checks:
+#
+#   1. observation_grounds_pipeline(too.primary, p)
+#      — the 1st-order observation grounds in the pipeline
+#   2. meta_grounds_observation(too.recursive_observer, p)
+#      — the 2nd-order observation grounds in observing-the-
+#      observation
+#   3. notice_grounds_meta(too.notice, p)
+#      — the 3rd-order notice grounds in the recursive observer's
+#      action (what observation does to the observer)
+#
+# All three sub-predicates are forward-promised typed refinements;
+# the composed bilateral discharges them at the realisation
+# boundary. Same shape as @io/stagefreight's `stagefreight_
+# addressable` composed bilateral (per docs/audits/stagefreight-
+# seam-review-2026-06-22.md C4/C9 closure pattern).
+#
+# Splinter-pole: all three depths discharge substantively (the
+# observer notices observation-changes-observer); Narcissus-pole:
+# the third-order is name-only while the actual operation runs at
+# second-order with third-order prose framing.
+#
+# Per alignment-as-boundary-mathematics (#57): third-order-coherent
+# operates at the @io boundary; the bilateral IS the boundary-
+# harness the third-order discipline composes.
+observation_grounds_pipeline(o: observation, p: perturbation) -> verdict { \ }
+
+meta_grounds_observation(o: observation, p: perturbation) -> verdict { \ }
+
+notice_grounds_meta(notice: ref, p: perturbation) -> verdict { \ }
+
+third_order_coherent(too: third_order_observation, p: perturbation) -> verdict
+requires observation_grounds_pipeline(too.primary, p)
+requires meta_grounds_observation(too.recursive_observer, p)
+requires notice_grounds_meta(too.notice, p)
+{ \ }
+
+# === notice action (FIRST consumer of third_order_coherent) ===
+#
+# THE LOAD-BEARING ACTION at the third-order altitude. Notice IS the
+# third-order step: the substrate notices what its own observation
+# does to its own observing. Per Loki's essay: "notice what that
+# does to the observer."
+#
+# Takes a third_order_observation + perturbation; returns the
+# substrate's typed record of the observer-change (forward-promised
+# typed refinement).
+#
+# requires third_order_coherent(too, p): the third-order observation
+# must coherently discharge all three depths BEFORE the notice is
+# admissible. Without this requires clause, the notice would be
+# admissible from an incoherent third-order observation — the
+# Narcissus-pole third-order pattern.
+#
+# Body discharges at the realisation boundary.
+notice(too: third_order_observation, p: perturbation) -> ref
+requires third_order_coherent(too, p)
+{ \ }
+
+# === choices_increase predicate (Von Foerster's ethical imperative) ===
+#
+# Bilateral verdict lifting Von Foerster's ethical imperative
+# ("always act to increase the number of choices") to substrate-
+# decl. Consumed by `pick_third_order` (below) as a load-bearing
+# precondition.
+#
+# Discharge: substrate-pull-correct choice-set comparison at the
+# species boundary. Bounded → next observation's choice-set is
+# strictly larger than prior (admit pick); unbounded → the
+# adjustment shrinks the choice-set (pick refused; the substrate
+# refuses to take adjustments that narrow choice).
+#
+# Same bilateral shape as `loss_decreases` (the monotonic-loss
+# imperative); `choices_increase` is the choice-set-monotonicity
+# imperative. Both compose at `pick_third_order`: every third-order
+# pick respects monotonic loss AND choice-set increase AND pact-
+# verification (when composed with @moi).
+#
+# Loki's essay grounds this: "Von Foerster's ethical imperative, in
+# the end, was one sentence: always act to increase the number of
+# choices." The substrate lifts the ethical imperative to typed
+# bilateral discipline.
+choices_increase(prev: third_order_observation, next: third_order_observation, p: perturbation) -> verdict { \ }
+
+# === pick_third_order action (FIRST consumer of choices_increase) ===
+#
+# The third-order analogue of `pick` (above). Same shape (selects
+# gold from tournament reducing loss) PLUS the choices_increase
+# precondition: the pick can only fire if the resulting adjustment
+# increases the choice-set across ticks.
+#
+# Takes the tournament_result + prior loss + prior third_order_
+# observation + the new third_order_observation that the pick would
+# produce + perturbation; returns @moi(au) (pact-verified gold).
+#
+# Two requires clauses, both load-bearing:
+# 1. loss_decreases(t.loss_floor, prev_loss) — monotonic loss per
+#    @kintsugi's eⁿ⁺¹ ≤ eⁿ proof
+# 2. choices_increase(prev_too, next_too, p) — Von Foerster's
+#    choice-set-monotonicity per Loki's essay
+#
+# Combined with @moi.compose's pact-verification at composition
+# time: every third-order pick is monotonic-loss-respecting AND
+# choice-set-increasing AND pact-respected. The compiler verifies
+# all three at composition time.
+#
+# Body discharges at the realisation boundary.
+pick_third_order(t: tournament_result, prev_loss: loss, prev_too: third_order_observation, next_too: third_order_observation, p: perturbation) -> moi(au)
+requires loss_decreases(t.loss_floor, prev_loss)
+requires choices_increase(prev_too, next_too, p)
+{ \ }
+
 out @reflection
 out observation
 out tournament_result
@@ -426,3 +634,12 @@ out settle
 out speak
 out loss_decreases
 out speaks_at_n_plus_1
+out third_order_observation
+out observe_third_order
+out observation_grounds_pipeline
+out meta_grounds_observation
+out notice_grounds_meta
+out third_order_coherent
+out notice
+out choices_increase
+out pick_third_order
