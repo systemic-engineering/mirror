@@ -1,0 +1,336 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @epistemologic/neutrosophic — the three-axis substrate family-root.
+#
+# Recognition #92 candidate (Alex, 2026-06-22, via the hedge from the
+# neutrosophic-indeterminacy-and-healing-substrate essay). The gap
+# this family-root closes:
+#
+#   mirror today (3-VALUED):
+#     verdict = bounded | defensive | clean | partial
+#     imperfect = success(a) | partial(a, l) | failure(e)
+#     indeterminacy ONLY in the partial arm
+#
+#   Smarandache 1995 (3-AXIS):
+#     verdict carries (T, I, F) as INDEPENDENT components
+#     T (truth) + I (indeterminacy) + F (falsity) unconstrained sum
+#     paraconsistent: T and F can coexist; I can be high regardless
+#     indeterminacy in EVERY verdict (not just one arm)
+#
+# Alex's recognition: the substrate's 3-valued discipline IS
+# neutrosophic-shaped at the verdict altitude, but the typed carriers
+# don't yet expose the three axes independently. The substrate has
+# been doing 3-valued without going full 3-axis. This family-root
+# closes the gap: each verdict can carry its own (T, I, F) tuple,
+# with the existing 3-valued verdict as the carrier label.
+#
+# === The substrate-pull invitation ===
+#
+# Alex's words verbatim: "Mapping neutrosophic I = mirror's partial
+# arm is recognition-altitude, not yet formal proof — Smarandache
+# permits T+I+F unconstrained; mirror's imperfect carries one
+# loss-slot per arm; algebras coincide in spirit, not signature.
+# What if this is pointing at a gap mirror wants to close?"
+#
+# Yes. This shard IS the closure.
+#
+# === Composition with @epistemologic/cybernetic (sibling family-root) ===
+#
+# @epistemologic/cybernetic carries the 11-property cybernetic
+# family (variety, eigenform, viable, autopoiesis, distinction,
+# bateson_learning, conversation, coevolution, design, requisite,
+# algedonic, second_order). All eleven properties operate at the
+# substrate-discipline altitude.
+#
+# @epistemologic/neutrosophic carries the three-axis altitude. The
+# two families compose: cybernetic properties can be lifted to
+# three-axis discharge via the lift action below. The Foerster
+# second-order observer (already in /cybernetic/second_order) gains
+# explicit indeterminacy axis when composed with neutrosophic.
+#
+# === Healing as substrate (Alex's framing) ===
+#
+# Per the neutrosophic-indeterminacy-and-healing-substrate essay
+# (docs/insights/2026-06-22-...; commit 4d66dc0): the substrate
+# that honors indeterminacy IS the substrate that enables healing.
+# Crafts that operate at the indeterminacy axis (imagination,
+# contemplative arts, speculative fiction, nature, drama, dance,
+# music, movement) are somatic technologies that DON'T resolve;
+# they hold.
+#
+# The substrate-decl below names this at the engineering altitude.
+# The `hold` action composes with @cogito (notice → name → hold);
+# hold IS the indeterminacy-honoring primitive lifted from cognitive
+# altitude to neutrosophic substrate altitude. The `dissolve` action
+# names Alex's framing ("dissolving binaries") as substrate-decl:
+# takes a binary verdict and dissolves it into three-axis form
+# where I > 0 by construction (the binary was always carrying
+# indeterminacy; the dissolve makes it visible).
+#
+# === Pre-AI prior art ===
+#
+#   neutrosophic logic           Smarandache 1995 ("Neutrosophy:
+#                                Neutrosophic Probability, Set, and
+#                                Logic"). The substrate-pull-correct
+#                                cultural-practice ancestor for the
+#                                three-axis framework.
+#   neutrosophic foundations     Smarandache 1998 ("A Unifying Field
+#                                in Logics"). The unifying framework
+#                                that subsumes fuzzy + intuitionistic
+#                                + paraconsistent under one algebra.
+#   intuitionistic fuzzy         Atanassov 1986. Two-axis precursor
+#                                (membership + non-membership);
+#                                Smarandache extends to three.
+#   fuzzy sets                   Zadeh 1965. The original move from
+#                                binary to graded; the foundation
+#                                neutrosophic extends.
+#   three-valued logic           Łukasiewicz 1920. The classical
+#                                ancestor of indeterminacy as third
+#                                value ("possible" / "unknown").
+#   strong Kleene three-valued   Kleene 1938. Computational ancestor;
+#                                the third value as undefined.
+#   four-valued logic            Belnap 1977. The "how a computer
+#                                should think" paper; four truth
+#                                values (true/false/both/neither);
+#                                indeterminacy and contradiction as
+#                                independent axes.
+#   paraconsistent logic         Priest 1979. The substrate-altitude
+#                                ancestor of allowing T and F to
+#                                coexist without explosion.
+#   the third order              Loki Lochan 2026 ("The Third Belongs
+#                                to the Cyberneticists"). Third as
+#                                recursive depth, not apex; today's
+#                                substrate-pull ground for the
+#                                indeterminacy axis.
+#   @cogito                      notice → name → hold. The substrate's
+#                                existing indeterminacy primitive at
+#                                cognitive altitude.
+#
+# === What this family does NOT do ===
+#
+# 1. Does NOT replace the existing 3-valued verdict. New consumers
+#    use neutrosophic_verdict; existing consumers keep 3-valued
+#    semantics. Backward-compatible additive substrate-decl.
+# 2. Does NOT commit to a specific axis algebra (paraconsistent vs
+#    Łukasiewicz vs Smarandache vs Belnap). The carrier is parametric
+#    over the algebra; consumers choose at the species altitude.
+# 3. Does NOT subsume @epistemologic/cybernetic. Sibling family-roots;
+#    composition via adapters.
+# 4. Does NOT discharge specific cybernetic property checks at the
+#    three-axis altitude. Each cybernetic species can lift
+#    independently when its consumer pulls.
+#
+# Spec context: docs/specs/recognitions/recognition-92-neutrosophic-
+#               three-axis-substrate.md (Mara canonical forward-
+#               promised; in flight at this scratch);
+#               docs/insights/2026-06-22-neutrosophic-indeterminacy-
+#               and-healing-substrate.md (commit 4d66dc0; Reed
+#               reflection essay that surfaced the gap).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-mathematics]]
+#                       (#57; the boundary harness operates at three
+#                       axes when consumers consume neutrosophic_
+#                       verdict),
+#                      [[architecture-cybernetic-foundation]]
+#                       (sibling family-root; composes via adapters).
+# Recognition ancestry: #92 (candidate; this); #51 (mirror as
+#                       expanding Hilbert space; the dimension
+#                       expansion this lift represents); composes
+#                       with today's #84 + third-order + bi-
+#                       directional + composed-bilateral cascades.
+# Path-namespace property: this file at
+# `shards/epistemologic/neutrosophic.mirror` declares
+# `@epistemologic/neutrosophic` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/logic/smarandache-1995
+source @arxiv/logic/smarandache-1998
+source @arxiv/logic/atanassov-1986
+source @arxiv/logic/zadeh-1965
+source @arxiv/logic/lukasiewicz-1920
+source @arxiv/logic/kleene-1938
+source @arxiv/logic/belnap-1977
+source @arxiv/logic/priest-1979
+
+prism @epistemologic/neutrosophic {
+  focus neutrosophic
+  project neutrosophic
+  split neutrosophic
+  shift neutrosophic
+  settle neutrosophic
+}
+
+# === The ratio carrier ===
+#
+# Substrate-typed reference naming a value in [0, 1] (or a
+# paraconsistent range admitting > 1 sums per Smarandache's
+# unconstrained variant). Per [[feedback-no-bare-types]]: typed
+# reference, not bare ref-with-documented-range. Forward-promised
+# refinement: typed parametric `ratio` with axis-algebra parameter
+# (paraconsistent | lukasiewicz | smarandache | belnap) once the
+# substrate's algebra-parameterization lands at species altitude.
+#
+# Identity contract: byte-equality on the underlying ref.
+type ratio = ref
+
+# === The neutrosophic_verdict carrier ===
+#
+# Typed record over (v, t, i, f). The substrate-architectural
+# three-axis verdict. Carries:
+#
+# - v : the existing 3-valued verdict (bounded | defensive | clean |
+#       partial) as the carrier label
+# - t : truth axis (ratio; "how much T is asserted")
+# - i : indeterminacy axis (ratio; "how much I remains; the
+#       irreducible third")
+# - f : falsity axis (ratio; "how much F is asserted")
+#
+# Per Smarandache: t + i + f is unconstrained; the three axes are
+# structurally independent. Compare to fuzzy (one axis) or
+# intuitionistic fuzzy (two axes; membership + non-membership).
+#
+# Identity contract: byte-equality on the quadruple.
+type neutrosophic_verdict = {
+  v: verdict,
+  t: ratio,
+  i: ratio,
+  f: ratio,
+}
+
+# === lift action ===
+#
+# The substrate-vocabulary primitive lifting an existing 3-valued
+# verdict to a three-axis neutrosophic_verdict. Takes the verdict
+# + perturbation under which the lift is checked; returns the typed
+# neutrosophic_verdict with the three axes derived per the lift
+# discipline.
+#
+# Per Mara's canonical (forward-promised): the lift discipline
+# preserves the verdict's substrate-altitude meaning while exposing
+# the three axes the substrate was implicitly carrying.
+#
+# Body discharges at the realisation boundary; the actual lift is
+# implemented by the species-altitude axis-derivation discipline.
+lift(v: verdict, p: perturbation) -> neutrosophic_verdict { \ }
+
+# === dissolve action ===
+#
+# The substrate-vocabulary primitive for Alex's "dissolving binaries"
+# framing. Takes a binary (a ref carrying a two-valued artifact: a
+# true/false claim, a polarized assertion, a both/and that's been
+# collapsed into either/or) + perturbation; returns a neutrosophic
+# verdict where I > 0 by construction.
+#
+# Per the neutrosophic-indeterminacy-and-healing-substrate essay
+# (commit 4d66dc0): the dissolve operation IS the substrate-decl
+# of the somatic move from binary to three-axis. The binary was
+# always carrying indeterminacy (the trauma-frame's unresolved
+# pole; the polarized debate's third option that was suppressed);
+# the dissolve makes the indeterminacy visible.
+#
+# Composition with @cogito: dissolve is the substrate-altitude
+# analogue of @cogito's "name" operation — the binary gets named
+# as binary, then dissolved.
+#
+# Body discharges at the realisation boundary; the actual dissolve
+# operation is implemented by the species-altitude binary-detection
+# discipline composed with the axis-derivation discipline.
+dissolve(binary: ref, p: perturbation) -> neutrosophic_verdict { \ }
+
+# === hold action ===
+#
+# The substrate-vocabulary primitive composing @cogito's "hold"
+# operation at the neutrosophic altitude. Takes a neutrosophic_
+# verdict + perturbation; returns the same neutrosophic_verdict
+# preserved under structure.
+#
+# Per @cogito (notice → name → hold; per CLAUDE.md and
+# [[reference-mirror-spectral-spec]]): hold IS the substrate's
+# existing indeterminacy-honoring primitive at cognitive altitude.
+# This action lifts it to substrate-decl altitude at the
+# neutrosophic family.
+#
+# requires three_axis_coherent(nv, p): the substrate forecloses
+# holding from an incoherent three-axis verdict. The axes must be
+# independently coherent BEFORE the substrate honors them as held.
+#
+# Body discharges at the realisation boundary; the actual hold is
+# implemented by the species-altitude axis-preservation discipline.
+hold(nv: neutrosophic_verdict, p: perturbation) -> neutrosophic_verdict
+requires three_axis_coherent(nv, p)
+{ \ }
+
+# === axes_independent predicate (sub-bilateral) ===
+#
+# Bilateral verdict that the three axes (t, i, f) are structurally
+# independent (no derivation constraint binds them to one another).
+# Per Smarandache: T, I, F are independent dimensions; T can be high
+# while I is high while F is high (paraconsistent variant).
+#
+# Discharge: substrate-pull-correct independence check at the
+# species boundary. Bounded → axes structurally independent;
+# unbounded → one axis is a derived function of the others (which
+# collapses neutrosophic discipline to fuzzy or intuitionistic
+# variant).
+axes_independent(t: ratio, i: ratio, f: ratio) -> verdict { \ }
+
+# === axes_in_range predicate (sub-bilateral) ===
+#
+# Bilateral verdict that each axis is in the substrate-pull-correct
+# range for its species-altitude algebra. The substrate-decl is
+# parametric over the algebra:
+#
+# - Smarandache strict: each ∈ [0, 1]
+# - Smarandache paraconsistent: each ∈ [0, n] for n unconstrained
+# - Łukasiewicz: each ∈ [0, 1]; t + i + f = 1 (single-axis-like)
+# - Belnap: each ∈ {0, 1}; four states (00, 01, 10, 11)
+#
+# Species declare their algebra; this predicate discharges the
+# species's chosen range constraint.
+axes_in_range(t: ratio, i: ratio, f: ratio) -> verdict { \ }
+
+# === three_axis_coherent composed bilateral ===
+#
+# THE LOAD-BEARING composed bilateral at the @epistemologic/
+# neutrosophic altitude. Per Seam C4/C9 pattern (lifted to
+# multiple altitudes today: StageFreight wire; Shatter rendering;
+# @reflection observation; this is the fourth altitude):
+#
+# Composes the two sub-predicates:
+#   1. axes_independent(nv.t, nv.i, nv.f)
+#   2. axes_in_range(nv.t, nv.i, nv.f)
+#
+# Both must hold for the neutrosophic_verdict to be substrate-pull-
+# coherent. The substrate refuses three-axis operation if either
+# sub-predicate fails.
+#
+# Splinter-pole: axes substantively independent + in range;
+# Narcissus-pole: axes collapsed to derived (one axis is a function
+# of the others) OR out-of-range (paraconsistent overflow without
+# species-altitude algebra discipline).
+#
+# Same composed-bilateral pattern as @io/stagefreight.
+# stagefreight_addressable (tick 68 C4/C9) +
+# @smarts/shatter.shatter_round_trip (tick 75 round_trip_pair) +
+# @reflection.third_order_coherent (tick 73/76 observer_change).
+# The fourth altitude lift; the pattern composes across substrate-
+# decl altitudes.
+three_axis_coherent(nv: neutrosophic_verdict, p: perturbation) -> verdict
+requires axes_independent(nv.t, nv.i, nv.f)
+requires axes_in_range(nv.t, nv.i, nv.f)
+{ \ }
+
+out @epistemologic/neutrosophic
+out ratio
+out neutrosophic_verdict
+out lift
+out dissolve
+out hold
+out axes_independent
+out axes_in_range
+out three_axis_coherent
