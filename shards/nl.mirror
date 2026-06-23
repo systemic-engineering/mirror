@@ -1,4 +1,6 @@
 in @prism
+in @meta
+in @glass
 
 # @nl — raw unstructured natural language.
 #
@@ -44,6 +46,183 @@ type nl_literal(text) = @sigil("#")
 # grammars (@nl/markdown, @nl/english, ...) parse it further.
 template render(s: nl_literal) -> nl { s.block }
 
+# === Spectral primitives (Phase B 2026-06-23; substrate-already-
+# implicit per woz:explore) ===
+#
+# @nl carries the Connes spectral-triple discipline applied to
+# language. Per `src/dirac.rs` + `src/nl/` tokenizer (UAX#29 + Porter2
+# stemming + deterministic shared_oid_count): the substrate already
+# computes connes_distance and constructs Dirac operators over text
+# corpora. This section LIFTS those primitives to substrate-decl
+# altitude so @docs (and @docs/tea + @docs/design) can compose
+# against typed text-measurement.
+#
+# Per the planned five sub-grammars (corpus / discourse / spectral /
+# affect / measurement; nl-connes-inference.md): this v0.1 lifts the
+# core spectral primitives needed for spectral.engineer/case-study/X
+# (Fellowship stated-vs-enacted Connes distance per Alex 2026-06-23).
+# Discourse / affect / measurement sub-grammars are forward-promised.
+#
+# === The corpus carrier ===
+#
+# Typed text-corpus: a collection of documents with shared vocabulary
+# + IDF weighting. Per src/nl/ tokenizer; identity contract is
+# byte-equality on the underlying ref (corpus content-hashed).
+type corpus = ref
+
+# === The token carrier ===
+#
+# A stemmed token (Porter2 stem + IDF weight). The atoms of A in the
+# Connes triple (A, H, D).
+type token = ref
+
+# === The spectral_triple carrier ===
+#
+# The Connes (A, H, D) triple applied to language:
+# - A = token OID algebra (Porter2 stem hashing)
+# - H = ℓ²(tokens ∪ documents); TF-IDF weighted
+# - D = document-token incidence matrix (√(tf·idf) edges)
+#
+# Identity contract: byte-equality on the constructed triple (the
+# substrate's content-addressing applies; same corpus produces same
+# triple).
+type spectral_triple = ref
+
+# === The affect_profile carrier ===
+#
+# Forward-promised: valence/arousal projection of a corpus per the
+# affect sub-grammar (nl-connes-inference.md). v0.1 declares the
+# carrier; per-corpus measurement discharged at species altitude.
+type affect_profile = ref
+
+# === ingest action ===
+#
+# Take raw nl_literal text; tokenize via Porter2 stemming; produce
+# a single-document corpus. The substrate-vocabulary primitive for
+# turning text into typed corpus.
+#
+# Body discharges at the realisation boundary (src/nl/ tokenizer).
+ingest(text: nl, p: perturbation) -> corpus { \ }
+
+# === collect action ===
+#
+# Combine multiple single-document corpora into a multi-document
+# corpus with shared vocabulary + computed IDF. The substrate-
+# vocabulary primitive for building corpus-scale typed text.
+collect(corpora: ref, p: perturbation) -> corpus { \ }
+
+# === build_triple action ===
+#
+# Construct the spectral_triple (A, H, D) from a corpus. The
+# substrate-vocabulary primitive for the Connes triple construction
+# at language altitude. Body discharges at src/dirac.rs#construct_dirac.
+build_triple(c: corpus, p: perturbation) -> spectral_triple
+requires corpus_well_formed(c, p)
+{ \ }
+
+# === connes_distance action ===
+#
+# THE LOAD-BEARING action of @nl spectral. Compute the Connes
+# distance between two spectral triples. The substrate-vocabulary
+# primitive for grammatical-spectrum divergence between two text
+# corpora.
+#
+# Returns a ratio (forward-promised typed refinement; v0.1 bare ref).
+# Per `src/dirac.rs`: the implementation computes the spectral
+# distance via eigenvalue analysis on the Dirac operator.
+#
+# requires triples_compatible: the two triples must have compatible
+# algebra (shared token-OID space) for the distance to be defined.
+connes_distance(t1: spectral_triple, t2: spectral_triple, p: perturbation)
+  -> ref
+requires triples_compatible(t1, t2, p)
+{ \ }
+
+# === measure_affect action ===
+#
+# Forward-promised: project a corpus + triple into affect_profile
+# (valence/arousal) per the affect sub-grammar. Discharge at
+# species altitude.
+measure_affect(c: corpus, t: spectral_triple, p: perturbation)
+  -> affect_profile { \ }
+
+# === compare action ===
+#
+# THE TOP-LEVEL @nl measurement primitive: take two corpora; build
+# both triples; compute their Connes distance; return the typed
+# measurement. The substrate-vocabulary primitive spectral.engineer/
+# case-study/X consumes (Fellowship stated-vs-enacted distance).
+#
+# Composes ingest + collect + build_triple + connes_distance into
+# one substrate-call.
+compare(c1: corpus, c2: corpus, p: perturbation) -> ref
+requires corpus_well_formed(c1, p)
+requires corpus_well_formed(c2, p)
+{ \ }
+
+# === Bridge to @docs (B2; Phase B 2026-06-23) ===
+#
+# @nl produces typed text-measurement; @docs consumes it for
+# field construction. Per woz:explore §C2 workflow:
+#   @nl/corpus → @nl/spectral (Connes distance) → @nl/affect (valence/
+#   arousal) → @ui/field construction (claims→motes; relations→arcs;
+#   affect→color) → @ui/render (GPU eigenboard)
+#
+# This action declares the @nl-side contract that @docs.compose
+# (shards/docs.mirror) consumes. The actual field construction lives
+# at @docs altitude; @nl produces the typed measurements @docs needs.
+#
+# Body discharges at the realisation boundary; the bridge IS the
+# typed contract between @nl measurement and @docs composition.
+project_measurement(c1: corpus, c2: corpus, p: perturbation) -> ref
+requires corpus_well_formed(c1, p)
+requires corpus_well_formed(c2, p)
+{ \ }
+
+# === corpus_well_formed bilateral ===
+#
+# Bilateral verdict that a corpus is structurally valid for spectral
+# triple construction (non-empty vocabulary; IDF computed; tokens
+# Porter2-stemmed).
+corpus_well_formed(c: corpus, p: perturbation) -> verdict { \ }
+
+# === triples_compatible bilateral ===
+#
+# Bilateral verdict that two spectral triples share compatible algebra
+# (token-OID spaces overlap; vocabularies admit comparison).
+#
+# Splinter-pole: triples comparable; connes_distance well-defined;
+# Narcissus-pole: token spaces disjoint; distance undefined.
+triples_compatible(t1: spectral_triple, t2: spectral_triple, p: perturbation)
+  -> verdict { \ }
+
+# === nl_measurement_well_formed composed bilateral ===
+#
+# The composed bilateral at @nl-measurement altitude. Per the
+# composed-bilateral pattern recurring across substrate-decl today
+# (cascade_well_defined, stagefreight_addressable, shatter_round_trip,
+# third_order_coherent, three_axis_coherent, ui_instrument_coherent,
+# tea_well_formed, docs_complete, etc.) — 9th altitude lift.
+nl_measurement_well_formed(c1: corpus, c2: corpus, p: perturbation)
+  -> verdict
+requires corpus_well_formed(c1, p)
+requires corpus_well_formed(c2, p)
+{ \ }
+
 out @nl
 out nl_literal
+out corpus
+out token
+out spectral_triple
+out affect_profile
 out render
+out ingest
+out collect
+out build_triple
+out connes_distance
+out measure_affect
+out compare
+out project_measurement
+out corpus_well_formed
+out triples_compatible
+out nl_measurement_well_formed
