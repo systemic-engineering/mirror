@@ -1,0 +1,523 @@
+in @prism
+in @meta
+in @glass
+in @cascade
+in @labeled
+in @code/gleam
+in @code/beam
+
+# @cascade/code/gleam/beam — the Gleam → BEAM bytecode cascade species.
+#
+# Path naming: per Alex 2026-06-23 directive — cascade species shards
+# group by `@cascade/code/<source>/<target>`. Source language (Gleam)
+# groups together; targets (beam here; js in the sibling shard
+# shards/cascade/code/gleam/js.mirror) are leaves. This is the
+# A4 dual-target species pair instance: ONE source, TWO targets,
+# TWO shards under one source directory.
+#
+# Per recognition #95 candidate (@cascade as loss-lens substrate;
+# Mara canonical ce4874b 2026-06-23): each cascade species shard
+# discharges the per-grammar measurement of information loss in
+# compilation from a typed source grammar to a mainstream target.
+#
+# This species: source_grammar = @code/gleam, target_grammar =
+# @code/beam (shards/code/beam.mirror; landed 2026-06-19 by Reed).
+# The Gleam→BEAM cascade IS GLEAM'S NATIVE TARGET; the BEAM-side
+# runtime preserves the dimensions JS cannot: preemptive
+# concurrency, supervision trees, hot code upgrade, the OTP
+# behaviour family. The dual-target asymmetry is the load-bearing
+# substrate observation: same source, different target, different
+# loss profile.
+#
+# === The cascade shape (Gleam→BEAM) ===
+#
+# Source (Gleam admits):
+# - sound static typing (ADTs, generics, opaque types)
+# - structural exhaustiveness (the `case` statement)
+# - immutability by default
+# - explicit error handling (Result, Option)
+# - module-level encapsulation
+# - actor-model concurrency (via stdlib's gleam_otp wrapping
+#   Erlang's gen_server / supervisor primitives)
+#
+# Target (BEAM preserves):
+# - typed atom tags for ADT constructors (preserved via Erlang's
+#   atom + tuple discipline; tag is first element of tuple)
+# - pattern matching (BEAM's match/2 instruction; preserves
+#   exhaustiveness at runtime via the `function_clause` error
+#   when no clause matches)
+# - immutability (BEAM enforces by language)
+# - preemptive scheduling (BEAM scheduler; each process is
+#   independently scheduled per @code/beam's discipline)
+# - supervision tree (gen_supervisor; restart strategies;
+#   per @code/beam.swap_module + @code/beam.supervise actions)
+# - hot code upgrade (BEAM's two-version-coexistence per
+#   @code/beam.code_change_msg + @code/beam.code_change action)
+# - the @magic/contract preservation across hot swaps (per
+#   @code/beam's composition with @magic per recognition #80)
+#
+# Loss surfaces at: static type erasure (the type system itself
+# vanishes at runtime; BEAM is dynamically typed; the
+# constructor-tag-as-atom IS the preserved discrimination but the
+# type system is not present); generic erasure (parametric
+# polymorphism collapses to BEAM's dynamic dispatch); opaque-type
+# erasure (the encapsulation guarantee is compile-time-only).
+#
+# CRITICAL ASYMMETRY (with the js.mirror sibling): BEAM PRESERVES
+# the concurrency dimension. The actor-model concurrency that
+# Gleam→JS erases is NATIVELY preserved here. The loss profile of
+# Gleam→BEAM is substrate-architecturally SHALLOWER than the loss
+# profile of Gleam→JS; the difference is exactly the BEAM-
+# preserved dimensions (concurrency, supervision, hot upgrade).
+#
+# The loss_lens<@code/gleam, @code/beam> measures these gaps
+# against the Gleam compiler's emitted type info + the BEAM grammar
+# specification.
+#
+# === Why Gleam → BEAM as the dual-target sibling ===
+#
+# Per Mara's survey §2.7 (Gleam dossier in
+# docs/research/2026-06-23-typed-alternatives-cascade-survey.md):
+# Gleam compiles to TWO mainstream targets from one source —
+# `gleam build --target javascript` emits JS; `gleam build
+# --target erlang` emits BEAM bytecode. The dual-target shape IS
+# THE substrate-pull-correct test of the @cascade family-root's
+# parametric form: one source carrier, two target species, the
+# loss profiles substrate-architecturally distinct.
+#
+# This shard (beam.mirror) lands the BEAM arm of the dual-target
+# pair. The sibling shard (js.mirror at shards/cascade/code/gleam/
+# js.mirror) lands the JS arm. Both share gleam_source as their
+# carrier; both share the gleam_well_typed source-side bilateral;
+# both specialize the same family-root actions; the loss signatures
+# DIFFER because BEAM preserves substrate dimensions JS erases.
+#
+# The composed cascade<gleam, {js, beam}> at species altitude is
+# NOT a third shard; it IS the composition-by-co-presence of the
+# two species shards (js.mirror + beam.mirror) under @cascade/code/
+# gleam/. The dual-target shape per Mara survey §2.7 validates the
+# parametric form of the family-root.
+#
+# === First applied consumer ===
+#
+# Forward-promised: any BEAM-side runtime consumer of Gleam-
+# authored services. The natural production-shape candidates:
+#   /Users/reed/body/ (Reed's BEAM body; Elixir + Erlang). Future
+#                     Gleam-authored services could co-deploy via
+#                     this cascade species.
+#   gleam_otp ecosystem consumers (any Gleam server that needs
+#                                   supervision-tree + hot upgrade
+#                                   discipline; cascades through
+#                                   this species into BEAM).
+#
+# Honest hedge: spectral.engineer's CURRENT content cascade is
+# Gleam→JS (via the js.mirror sibling), NOT Gleam→BEAM. This shard
+# does not name a load-bearing live consumer in the spectral.
+# engineer site; it lands the substrate-decl for the dual-target
+# shape and the BEAM-deployment-future. The substrate-pull-correct
+# move is to LAND the species now (so the dual-target parametric
+# form is closed at substrate-decl altitude) and let production
+# consumers attach when they need the BEAM-side discipline.
+#
+# === Recognition ancestry ===
+#
+# - Recognition #95 (@cascade candidate; Mara canonical ce4874b):
+#   this species IS the FIFTH species discharge of the family-root
+#   (after purescript/js A3, rust/wasm A5, gleam/js sibling, and
+#   THIS shard).
+# - Recognition #93 H4 RESOLVED (labeled<> functor at
+#   shards/labeled.mirror): beam_artifact uses labeled<> instance.
+# - Recognition #51 (mirror as expanding Hilbert space): the dual-
+#   target case directly evidences that the loss measurement IS a
+#   dimension-projection per target — same source, two projections,
+#   each preserving a different basis of the source's
+#   dimensionality. The BEAM-target preserves more basis vectors
+#   than the JS-target; the loss is correspondingly smaller.
+# - Recognition #57 (alignment as boundary mathematics): the Gleam↔
+#   BEAM boundary IS the @io altitude this species operationalizes;
+#   the boundary is where Gleam's static types meet BEAM's
+#   dynamic-runtime invariants. The substrate-pull-correct boundary
+#   discharge composes with @code/beam's @magic-derived discipline
+#   (recognition #80) for runtime-altitude correctness.
+# - Recognition #80 (@magic family; @code/beam composes with):
+#   the BEAM target's hot-upgrade and supervision discipline
+#   composes through this species; a Gleam-authored gen_server
+#   compiled to BEAM inherits the @magic/contract preservation
+#   discipline that @code/beam declares.
+# - Recognition #59 (kintsugi loop altitude-portable): @kintsugi
+#   heals the loss this species measures, including at the BEAM
+#   runtime-upgrade altitude where hot swaps are the operational
+#   form of the kintsugi loop.
+#
+# === Pre-AI prior art ===
+#
+#   Gleam language                 Louis Pilfold 2018-present; the
+#                                  source grammar this species
+#                                  measures.
+#   Gleam Erlang backend           Pilfold + contributors
+#                                  2018-present; the original
+#                                  compiler subsystem (BEAM was
+#                                  Gleam's first target before JS).
+#   gleam_otp                      the Gleam wrapper around OTP
+#                                  behaviours; the actor-model
+#                                  surface this species discharges
+#                                  to BEAM at.
+#   Erlang/OTP                     Armstrong, Virding, Wikström,
+#                                  Williams 1996-2003; the runtime
+#                                  this species's target preserves
+#                                  semantics of.
+#   BEAM VM                        the Erlang virtual machine;
+#                                  per @code/beam's substrate-decl
+#                                  (shards/code/beam.mirror).
+#
+# Spec context: docs/specs/recognitions/recognition-95-cascade-as-
+#               loss-lens-substrate-decl.md (Mara canonical;
+#               Seam DEFENSIVE pending Reed consolidation);
+#               docs/research/2026-06-23-typed-alternatives-cascade-
+#               survey.md §2.7 (the Gleam dossier; dual-target
+#               shape named as substrate-pull-correct test of the
+#               parametric form).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[feedback-no-bare-types]],
+#                      [[feedback-loss-from-epistemologic-properties]]
+#                      (loss is @epistemologic/properties composite,
+#                      not Shannon, not invented).
+# Related shards: shards/cascade.mirror (the family-root this
+#                 specializes); shards/labeled.mirror (the functor
+#                 primitive beam_artifact instance rests on);
+#                 shards/code/gleam.mirror (source grammar);
+#                 shards/code/beam.mirror (target grammar; composes
+#                 with @magic per recognition #80);
+#                 shards/cascade/code/gleam/js.mirror (the sibling
+#                 dual-target species; same source, different target);
+#                 shards/cascade/code/rust/wasm.mirror (pattern
+#                 reference for the rustc-as-source-toolchain shape).
+# Path-namespace property: this file at
+# `shards/cascade/code/gleam/beam.mirror` declares
+# `@cascade/code/gleam/beam` per
+# `@epistemologic/pact/path_matches_namespace`.
+#
+# === Honest hedges ===
+#
+# 1. OTP version pinning. The BEAM target's runtime invariants
+#    evolve with the OTP release line (OTP 27 / OTP 28 / OTP 29).
+#    Hot-code-upgrade semantics, supervisor restart strategies,
+#    and the gen_server callback surface have all evolved across
+#    OTP versions in compatible-but-distinguishable ways. The
+#    substrate-decl assumes 2026's stable OTP 28+ shape; if the
+#    OTP release breaks compatibility at runtime, bundle_beam's
+#    body discharges differently but the substrate-decl stays
+#    stable. The beam_consumable bilateral discharges against the
+#    source's declared target OTP version at realisation boundary.
+#
+# 2. gleam_stdlib + gleam_otp version pinning. Gleam's stdlib +
+#    OTP wrapping evolve; the emitted .beam bytecode shape can
+#    change across major versions. Same hedge shape as js.mirror's
+#    hedge 2; bundle_beam discharges per-version.
+#
+# 3. FFI escape hatch. Gleam admits FFI to native Erlang via the
+#    `@external` decorator with target=erlang; FFI code is OUTSIDE
+#    the typing discipline (the type signature is declared on the
+#    Gleam side, the body lives in raw Erlang). The same hedge as
+#    js.mirror's hedge 3; the bilateral gleam_well_typed carries
+#    the Narcissus-warned pole for FFI-present programs.
+#
+# 4. BEAM-side substrate composition forward-promised. The composed
+#    cascade well-formedness COULD declare requires @code/beam
+#    bilaterals (e.g., supervision-tree-coherent, contract-
+#    preserved-across-swap) for BEAM-side runtime correctness;
+#    those bilaterals don't yet exist at @code/beam altitude
+#    (per @code/beam's own honest hedges about mechanical-glue
+#    forward-promises with @magic). This shard's composed bilateral
+#    stays at the cascade altitude (source typed + target
+#    consumable + loss well-defined) and does NOT pre-empt the
+#    BEAM-runtime bilaterals. When @magic/audit + @magic/contract
+#    discharge their bilaterals, a future @cascade/code/gleam/beam
+#    extension could LIFT the cascade-well-formed bilateral with
+#    additional BEAM-runtime requires clauses. Today: do not
+#    pre-empt.
+#
+# === Dual-target composition note ===
+#
+# (See js.mirror for the primary dual-target framing.) This shard
+# is the BEAM arm. The composed cascade<gleam, {js, beam}> at
+# species altitude is the composition-by-co-presence of js.mirror
+# + beam.mirror under @cascade/code/gleam/. The substrate-decl
+# assumes the survey-§2.7-noted invariant that the SAME
+# gleam_source compiles to BOTH targets via different target flags;
+# the asymmetric loss profiles are the substrate-architectural
+# evidence that the family-root's parametric form is honest.
+
+source @arxiv/programming-languages/gleam-language-tour
+source @arxiv/distributed/otp-behaviours
+
+prism @cascade/code/gleam/beam {
+  focus cascade
+  project cascade
+  split cascade
+  shift cascade
+  settle cascade
+}
+
+# === gleam_source carrier ===
+#
+# Specialization of @cascade.typed_source for source_grammar=gleam.
+# References a Gleam project (gleam.toml + src/*.gleam) as the unit
+# of cascade.
+#
+# SHARED with the sibling shard (js.mirror): the same gleam_source
+# IS the input for both species. This sharing is the load-bearing
+# evidence that the family-root's parametric form is honest — one
+# source carrier, two target species, no duplication. The carrier
+# is intentionally re-declared in both species shards; the bytes-
+# equal nature of the type declaration IS the substrate's witness
+# that the two species share their source.
+#
+# Identity contract: byte-equality on the source-tree content hash.
+type gleam_source = ref
+
+# === gleam_module carrier ===
+#
+# The output of `gleam build --target erlang`. Compiled Erlang
+# beam bytecode + .erl source intermediate + the emitted
+# gleam_stdlib + gleam_otp runtime support that bridges Gleam's
+# typed surface to BEAM's dynamic-runtime invariants. The .beam
+# bytecode IS the substrate-architectural deliverable;
+# measure_gleam_beam reads the gleam-emitted type info + the .beam
+# files to discharge the substrate-typed gap calculation.
+#
+# Identity contract: byte-equality on the underlying ref.
+type gleam_module = ref
+
+# === beam_metadata carrier ===
+#
+# Structured carrier for BEAM bundling shape (application name,
+# OTP version target, supervisor entrypoint module, gleam_stdlib
+# version, gleam_otp version, release shape). Per
+# [[feedback-no-bare-types]]: structured, not stringly. The carrier
+# names load-bearing fields without fixing one release shape (per
+# hedges 1+2: OTP version and stdlib version are fields).
+#
+# Identity contract: byte-equality on the underlying ref.
+type beam_metadata = ref
+
+# === beam_artifact carrier ===
+#
+# THE LOAD-BEARING NEW CARRIER. The @labeled<> instance per
+# recognition #93 H4. A beam_artifact IS a gleam_module annotated
+# with beam_metadata via the labeled functor.
+#
+# Substrate-architecturally load-bearing: the gleam_module's typed
+# identity is preserved (via labeled's parametricity per Wadler
+# 1989 / Reynolds 1983) while the beam_metadata dimension is added.
+# unlabel(artifact) returns the module; label_of(artifact) returns
+# the metadata. The cascade preserves typed source identity AND adds
+# release/bundling dimension AT ONE CARRIER altitude.
+#
+# Identity contract: byte-equality on the (module, metadata) pair
+# (inherited from @labeled).
+type beam_artifact = labeled(gleam_module, beam_metadata)
+
+# === compile_gleam_beam action ===
+#
+# Specialization of @cascade.compile for this cascade. Takes a
+# gleam_source and perturbation; returns the gleam_module via
+# `gleam build --target erlang`.
+#
+# Per recognition #51 (Hilbert space dimension growth): compile_
+# gleam_beam IS a DIMENSION PROJECTION. Gleam admits typed-feature
+# dimensions (ADTs, generics, exhaustiveness, opaque types); the
+# BEAM runtime preserves constructor-tag-as-atom dispatch + match-
+# instruction discrimination + immutability + preemptive
+# concurrency + supervision-tree discipline. Lossy by construction
+# at the type-system altitude; loss-PRESERVING at the runtime-
+# discipline altitude (in contrast to the JS target).
+#
+# requires gleam_well_typed(source, p): the substrate forecloses
+# compilation against type errors. The Gleam compiler runs the
+# typing discipline; the bilateral verdict reflects what it reports.
+#
+# Body discharges at the realisation boundary.
+compile_gleam_beam(source: gleam_source, p: perturbation) -> gleam_module
+requires gleam_well_typed(source, p)
+{ \ }
+
+# === bundle_beam action ===
+#
+# Wraps a gleam_module + beam_metadata into a beam_artifact via
+# @labeled.label construction. The typed module gets the
+# release/bundling dimension added without losing the underlying
+# module identity.
+#
+# Per hedges 1+2: body discharges per-OTP-version + per-stdlib-
+# version (OTP 28+ default; legacy OTP fallback if the source
+# pins). The substrate-decl does NOT pick versions; it declares
+# the action shape.
+#
+# requires beam_consumable(module, metadata, p): bilateral
+# commitment that the (module, metadata) pair is coherent at the
+# BEAM release altitude — application name resolves, supervisor
+# entrypoint is reachable, gleam_otp runtime correctly co-emitted,
+# OTP version compatibility upheld.
+#
+# Body discharges at the realisation boundary.
+bundle_beam(module: gleam_module, metadata: beam_metadata, p: perturbation)
+  -> beam_artifact
+requires beam_consumable(module, metadata, p)
+{ \ }
+
+# === measure_gleam_beam action ===
+#
+# THE LOAD-BEARING ACTION. Specialization of @cascade.measure for
+# this cascade. Returns substrate-typed measurement of information
+# loss between source's typing discipline and artifact's runtime-
+# preserved structure.
+#
+# Returns `imperfect<beam_artifact, ref, information_loss>` — the
+# loss slot carries measured loss as substrate-typed data, NOT
+# Shannon, NOT estimation; the composite of @epistemologic/properties
+# per [[feedback-loss-from-epistemologic-properties]].
+#
+# The measurement IS substrate-architectural: read the source's
+# typing-discipline use (ADT count, generic positions, exhaustive
+# case sites, opaque-type count, FFI annotation count); read the
+# artifact's runtime-preserved structure from the unlabel'd module's
+# .beam bytecode + the labeled metadata; compute the dimension gap.
+#
+# CRITICAL ASYMMETRY (vs the js.mirror sibling): the concurrency
+# dimension IS preserved on this target. The loss profile does NOT
+# report concurrency-erasure as part of the composite. The loss is
+# substrate-architecturally SHALLOWER than the JS cascade's loss
+# on the same source; the difference IS exactly what BEAM
+# preserves that JS erases (concurrency, supervision, hot upgrade).
+# This asymmetry is the load-bearing observation the dual-target
+# shape surfaces and the substrate-pull validation of the @cascade
+# family-root's parametric form.
+#
+# requires gleam_beam_loss_well_defined(source, artifact, p):
+# bilateral that the measurement IS computable. Per hedge 3: FFI
+# bounds the measurement to the typed sub-program; the bilateral
+# discharges with a Narcissus-warned verdict for FFI-present
+# programs.
+#
+# Body discharges at the realisation boundary.
+measure_gleam_beam(source: gleam_source, artifact: beam_artifact, p: perturbation)
+  -> imperfect(beam_artifact, ref, information_loss)
+requires gleam_beam_loss_well_defined(source, artifact, p)
+{ \ }
+
+# === gleam_well_typed bilateral ===
+#
+# Source-side typing-discipline bilateral. Specializes the family-
+# root's grammar_coherent at source_grammar=gleam.
+#
+# SHARED predicate-shape with the sibling shard (js.mirror): the
+# same gleam_source must be well-typed for EITHER cascade to
+# proceed; the bilateral's discharge does NOT depend on target
+# choice (Gleam's typer runs identically for both target flags).
+# This shard re-declares gleam_well_typed with the same shape;
+# this is intentional duplication at the substrate-decl altitude —
+# the property is genuinely the same property and discharges
+# identically across both species.
+#
+# Splinter-pole: well-typed by `gleam check`; FFI (if present)
+# correctly annotated at the boundary; loss measurement complete-
+# capable.
+# Narcissus-pole: type errors OR FFI annotations ill-formed at the
+# boundary. Compilation cannot proceed.
+# Narcissus-warned (per hedge 3): FFI annotations well-formed but
+# FFI code outside typing discipline; measurement bounded to typed
+# sub-program; FFI gap unmeasurable by this species.
+gleam_well_typed(source: gleam_source, p: perturbation) -> verdict { \ }
+
+# === beam_consumable bilateral ===
+#
+# Target-side packaging-well-formedness bilateral. Commitment that
+# the (module, metadata) pair forms a coherent BEAM release.
+#
+# Splinter-pole: metadata.application name resolves; supervisor
+# entrypoint module is present in the artifact's .beam files;
+# gleam_otp runtime correctly co-emitted; OTP version compatibility
+# upheld; release shape (.app file structure) valid; consumer
+# `application:start/1` would succeed.
+# Narcissus-pole: release drift (missing supervisor entrypoint;
+# gleam_otp version mismatch; OTP-incompatibility in emitted
+# bytecode; .app file malformed).
+beam_consumable(module: gleam_module, metadata: beam_metadata, p: perturbation) -> verdict { \ }
+
+# === gleam_beam_loss_well_defined bilateral ===
+#
+# Specializes the family-root's loss_well_defined for this cascade.
+# Commitment that the substrate-typed gap calculation IS computable
+# for the (source, artifact) pair.
+#
+# Splinter-pole: .beam bytecode readable from the artifact's
+# unlabel'd module; gleam-emitted type info present; composite of
+# @epistemologic/properties dischargeable; measurement bounded and
+# substrate-typed.
+# Narcissus-pole: bytecode malformed OR type info missing
+# (compiler emission failed); substrate cannot read the typing
+# residue; measurement undefined.
+# Narcissus-warned: type info present but covers only the typed
+# sub-program (FFI gap unmeasurable; per hedge 3).
+gleam_beam_loss_well_defined(source: gleam_source, artifact: beam_artifact, p: perturbation) -> verdict { \ }
+
+# === gleam_beam_cascade_well_formed composed bilateral ===
+#
+# THE LOAD-BEARING composed bilateral. Specializes the family-root's
+# cascade_well_defined for this cascade. Composes the three sub-
+# predicates at this altitude.
+#
+# requires gleam_well_typed(source, p): source-side typing
+# discipline IS coherent.
+# requires beam_consumable(unlabel(artifact, p), label_of(artifact, p), p):
+# target-side packaging IS well-formed; uses @labeled.unlabel +
+# @labeled.label_of to extract module and metadata from the
+# artifact. This labeled-projection pattern is the load-bearing
+# shape Mara A3 surfaced; it makes the composed bilateral
+# parametric over the labeled functor's structure rather than
+# re-deriving (module, metadata) ad-hoc.
+# requires gleam_beam_loss_well_defined(source, artifact, p): loss
+# measurement IS computable.
+#
+# Per hedge 4: BEAM-runtime bilaterals (supervision-tree-coherent,
+# contract-preserved-across-swap) are FORWARD-PROMISED at @magic/
+# audit + @magic/contract altitude per @code/beam's own honest
+# hedges; this composed bilateral does NOT pre-empt them. A future
+# extension could LIFT the requires clauses when those bilaterals
+# discharge.
+#
+# All three (current) sub-predicates must hold; substrate refuses
+# cascade if source has type errors OR packaging is malformed OR
+# measurement is undefined.
+#
+# Splinter-pole: all three discharge; substrate-typed loss returned.
+# Narcissus-pole: at least one sub-predicate fails; cascade blocked.
+# Narcissus-warned: all three discharge but at least one is warned
+# (e.g., FFI present); cascade operates with bounded measurement;
+# warning propagates to caller.
+#
+# Same composed-bilateral pattern as @cascade.cascade_well_defined
+# (the family-root) and sibling species (purescript/js, rust/wasm,
+# the gleam/js sibling). The discipline pattern is altitude-
+# portable; here it instantiates at the Gleam→BEAM altitude with
+# the BEAM-specific (shallower) loss profile.
+gleam_beam_cascade_well_formed(source: gleam_source, artifact: beam_artifact, p: perturbation) -> verdict
+requires gleam_well_typed(source, p)
+requires beam_consumable(unlabel(artifact, p), label_of(artifact, p), p)
+requires gleam_beam_loss_well_defined(source, artifact, p)
+{ \ }
+
+out @cascade/code/gleam/beam
+out gleam_source
+out gleam_module
+out beam_metadata
+out beam_artifact
+out compile_gleam_beam
+out bundle_beam
+out measure_gleam_beam
+out gleam_well_typed
+out beam_consumable
+out gleam_beam_loss_well_defined
+out gleam_beam_cascade_well_formed
