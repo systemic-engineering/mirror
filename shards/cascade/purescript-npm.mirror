@@ -1,0 +1,363 @@
+in @prism
+in @meta
+in @glass
+in @cascade
+in @labeled
+
+# @cascade/purescript-npm — the first cascade species. Discharges
+# `cascade<purescript, npm>` as concrete substrate-decl: Purescript
+# (typed-source grammar) pairs with the npm package format (mainstream-
+# target grammar) as one instance of the @cascade family.
+#
+# === Recognition ancestry ===
+#
+# Recognition #95 candidate (Alex, 2026-06-23). Family-root landed at
+# shards/cascade.mirror (Reed; ce4874b). This species IS the FIRST
+# CONCRETE DISCHARGE of that family-root — the Stage-1 instance Mara's
+# survey (docs/research/2026-06-23-typed-alternatives-cascade-survey.md
+# §2.3) and StageFreight PR-A §15 jointly named as first deliverable.
+#
+# Composes with: #93 H4 (labeled<v, m>; npm_artifact IS an instance);
+# #51 (Hilbert space; Purescript's typed dimensions absent in npm
+# output ARE the dimension reduction this species measures); #57
+# (alignment as boundary mathematics; the Purescript↔npm boundary IS
+# the @io altitude this species operationalizes); #59 (kintsugi loop
+# altitude-portable; @kintsugi heals the loss this species measures).
+#
+# === What this species declares ===
+#
+# Substrate surface for "compile a Purescript program through to an npm
+# package, with substrate-typed measurement of what the cascade erases
+# at runtime."
+#
+# Carriers specialize @cascade's parametric carriers:
+#
+#   purescript_source     specializes @cascade.typed_source for G=purescript
+#   purescript_module     output of `purs compile`
+#   npm_artifact          labeled(purescript_module, npm_metadata) — the
+#                         labeled<> instance per #93 H4
+#   npm_metadata          npm package shape (name, version, entry, exports)
+#
+# Actions specialize the family-root:
+#
+#   compile_ps            specializes @cascade.compile
+#   bundle_npm            wraps purescript_module into npm_artifact
+#   measure_ps_npm        specializes @cascade.measure
+#
+# Bilaterals close the discipline:
+#
+#   purescript_well_typed          source-side typing precondition
+#   npm_consumable                 target-side packaging well-formedness
+#   ps_npm_loss_well_defined       measurement is computable
+#   ps_npm_cascade_well_formed     composed bilateral (specializes
+#                                  @cascade.cascade_well_defined)
+#
+# === Why Purescript → npm first ===
+#
+# Per Mara's survey §2.3, three convergent reasons make this the
+# substrate-pull-correct first species:
+#
+# 1. The typed source IS substrate-architecturally maximal among
+#    surveyed cascades on axis-5 epistemologic variety (row poly +
+#    ADTs + type classes + HKTs + rank-N + functional deps). The
+#    target erases ALL of these to runtime dispatch. The information-
+#    theoretic gap is maximal; loss measurement has most signal.
+# 2. The toolchain forks cleanly between compilation (`purs compile`)
+#    and packaging (`spago bundle` / `pulp browserify` / `npm pack`).
+#    The two-action split maps onto the toolchain's natural boundary.
+# 3. The StageFreight PR-A consumer is already in flight (merged at
+#    PrPlanIT/StageFreight #1). The species has a downstream consumer
+#    at substrate-decl time — not forward-promised but load-bearing.
+#
+# === Forward-promised consumers ===
+#
+# - StageFreight PR-A §15 (LANDED). Multi-language translation layer
+#   rests on this species's substrate-decl.
+# - spectral.engineer @ui projection layer (forward-promised). The
+#   typography-content rendering pipeline compiles Purescript
+#   components into npm packages; the measurement substrate this
+#   species declares enables loss-aware @ui projection.
+# - Future cascade species (gleam-js, rust-wasm, scala-jvm) follow
+#   this species's shape; the dual-target gleam case (per family-
+#   root hedge 2) splits into two species sharing source.
+#
+# === Honest hedges ===
+#
+# 1. spago vs pulp output shape. The Purescript ecosystem has two
+#    mainstream toolchains. spago + esbuild emits ES modules with
+#    tree-shaking; pulp + browserify emits CommonJS with bundled
+#    deps. bundle_npm's body discharges per-toolchain at the
+#    realisation boundary; the substrate-decl assumes the 2026
+#    dominant path is spago + esbuild (Mara survey §2.3 footnote);
+#    if ecosystem inverts, the body discharges differently but the
+#    substrate-decl stays stable.
+#
+# 2. Module-path-to-oid mapping. Purescript modules carry dotted-
+#    path identifiers (e.g., `Data.Map.Internal`); the mapping to
+#    spectral content-addressed OIDs is NOT canonical. This species's
+#    carriers carry `ref` rather than committing to one mapping;
+#    the canonical mapping is forward-promised at @mirror/store
+#    crystallization altitude (per [[architecture-mirror-store-vs-
+#    spectral-db]]); this species DOES NOT pre-empt it.
+#
+# 3. npm package format wrapping. The npm registry accepts multiple
+#    shapes (classic CJS, dual ESM/CJS via exports, pure ESM,
+#    subpath exports). npm_metadata assumes the 2026-default dual-
+#    package shape; bundle_npm specializes per chosen wrapping;
+#    `npm_consumable` checks whatever shape lands IS registry-valid.
+#
+# 4. FFI purity boundary. Purescript admits FFI to native JavaScript;
+#    FFI code is OUTSIDE the typing discipline. A program with FFI
+#    has two code types at compile: well-typed Purescript and FFI
+#    JS. Loss measurement against FFI is fundamentally bounded — the
+#    substrate cannot measure what was NEVER typed. The bilateral
+#    `purescript_well_typed` carries a Narcissus-warned pole for
+#    FFI-present programs (measurement bounded to the typed sub-
+#    program). This is NOT a defect; it IS the substrate-pull-
+#    correct boundary of what cascade measurement can claim.
+#
+# Spec context: docs/specs/recognitions/recognition-95-cascade-as-
+#               loss-lens-substrate-decl.md (this is the first
+#               species discharge);
+#               docs/research/2026-06-23-typed-alternatives-cascade-
+#               survey.md §2.3 (Purescript-npm dossier);
+#               PrPlanIT/StageFreight #1 §15 (first applied consumer;
+#               merged 2026-06-23).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[feedback-no-bare-types]],
+#                      [[feedback-loss-from-epistemologic-properties]],
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]].
+# Related shards: cascade.mirror (the family-root; declares the
+#                  parametric carriers and actions this species
+#                  specializes),
+#                 labeled.mirror (the functor primitive; npm_artifact
+#                  IS labeled(purescript_module, npm_metadata)),
+#                 glass.mirror (imperfect<a, e, l> for measure_ps_npm
+#                  return).
+# Path-namespace property: this file at
+# `shards/cascade/purescript-npm.mirror` declares
+# `@cascade/purescript-npm` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming-languages/purescript-by-example
+source @arxiv/programming-languages/spago-tooling
+
+prism @cascade/purescript-npm {
+  focus purescript-npm
+  project purescript-npm
+  split purescript-npm
+  shift purescript-npm
+  settle purescript-npm
+}
+
+# === purescript_source carrier ===
+#
+# Specialization of @cascade.typed_source for source_grammar=
+# purescript. A program well-typed against the Purescript type
+# system (row polymorphism, ADTs, type classes, HKTs, rank-N
+# polymorphism, functional dependencies).
+#
+# Identity contract: byte-equality on the underlying ref.
+type purescript_source = ref
+
+# === purescript_module carrier ===
+#
+# The output of `purs compile`. A typed CommonJS-or-ESM module
+# carrying the compiled JavaScript plus externs (.externs.json)
+# that record the source's typing discipline at the module boundary.
+# The externs ARE the substrate-architectural residue; measure_ps_npm
+# reads them to discharge the substrate-typed gap calculation.
+#
+# Identity contract: byte-equality on the underlying ref.
+type purescript_module = ref
+
+# === npm_metadata carrier ===
+#
+# Structured carrier for npm package shape (name, version, entry,
+# exports). Per [[feedback-no-bare-types]]: structured, not stringly.
+# The carrier names load-bearing fields without fixing one wrapping
+# shape (per hedge 3).
+#
+# Identity contract: byte-equality on the underlying ref.
+type npm_metadata = ref
+
+# === npm_artifact carrier ===
+#
+# THE LOAD-BEARING NEW CARRIER. The @labeled<> instance per
+# recognition #93 H4. An npm_artifact IS a purescript_module
+# annotated with npm_metadata via the labeled functor.
+#
+# Substrate-architecturally load-bearing: the purescript_module's
+# typed identity is preserved (via labeled's parametricity per
+# Wadler 1989 / Reynolds 1983) while the npm_metadata dimension
+# is added. unlabel(artifact) returns the module; label_of(artifact)
+# returns the metadata. The cascade preserves typed source identity
+# AND adds packaging dimension AT ONE CARRIER altitude.
+#
+# Identity contract: byte-equality on the (module, metadata) pair
+# (inherited from @labeled).
+type npm_artifact = labeled(purescript_module, npm_metadata)
+
+# === compile_ps action ===
+#
+# Specialization of @cascade.compile for this cascade. Takes a
+# purescript_source and perturbation; returns the purescript_module
+# via `purs compile`.
+#
+# Per recognition #51 (Hilbert space dimension growth): compile_ps
+# IS a DIMENSION PROJECTION. Purescript admits typed-feature
+# dimensions; the runtime preserves only function dispatch,
+# closures, object access. Lossy by construction; externs carry
+# the substrate-architectural residue.
+#
+# requires purescript_well_typed(source, p): the substrate forecloses
+# compilation against type errors. The Purescript compiler runs the
+# typing discipline; the bilateral verdict reflects what it reports.
+#
+# Body discharges at the realisation boundary.
+compile_ps(source: purescript_source, p: perturbation) -> purescript_module
+requires purescript_well_typed(source, p)
+{ \ }
+
+# === bundle_npm action ===
+#
+# Wraps a purescript_module + npm_metadata into an npm_artifact via
+# @labeled.label construction. The typed module gets the npm
+# dimension added without losing the underlying module identity.
+#
+# Per hedge 1: body discharges per-toolchain (spago + esbuild
+# default; pulp + browserify alternative; hand-rolled `npm pack`
+# fallback). The substrate-decl does NOT pick a toolchain; it
+# declares the action shape.
+#
+# requires npm_consumable(module, metadata, p): bilateral commitment
+# that the (module, metadata) pair is coherent at the npm-registry
+# altitude — entry point resolves, exports map is well-formed,
+# version and name match registry rules.
+#
+# Body discharges at the realisation boundary.
+bundle_npm(module: purescript_module, metadata: npm_metadata, p: perturbation)
+  -> npm_artifact
+requires npm_consumable(module, metadata, p)
+{ \ }
+
+# === measure_ps_npm action ===
+#
+# THE LOAD-BEARING ACTION. Specialization of @cascade.measure for
+# this cascade. Returns substrate-typed measurement of information
+# loss between source's typing discipline and artifact's runtime-
+# preserved structure.
+#
+# Returns `imperfect<npm_artifact, ref, information_loss>` — the
+# loss slot carries measured loss as substrate-typed data, NOT
+# Shannon, NOT estimation; the composite of @epistemologic/properties
+# per [[feedback-loss-from-epistemologic-properties]].
+#
+# The measurement IS substrate-architectural: read the source's
+# typing-discipline use (row poly, ADT count, type class instances,
+# HKT positions, rank-N quantifiers, functional dep triggers); read
+# the artifact's runtime-preserved structure from the unlabel'd
+# module's externs + the labeled metadata; compute the dimension gap.
+#
+# requires ps_npm_loss_well_defined(source, artifact, p): bilateral
+# that the measurement IS computable. Per hedge 4: FFI bounds the
+# measurement to the typed sub-program; the bilateral discharges
+# with a Narcissus-warned verdict for FFI-present programs.
+#
+# Per Alex 2026-06-23 (verbatim): "math, not vibes." This action
+# operationalizes that at the Purescript-npm altitude.
+#
+# Body discharges at the realisation boundary.
+measure_ps_npm(source: purescript_source, artifact: npm_artifact, p: perturbation)
+  -> imperfect(npm_artifact, ref, information_loss)
+requires ps_npm_loss_well_defined(source, artifact, p)
+{ \ }
+
+# === purescript_well_typed bilateral ===
+#
+# Source-side typing-discipline bilateral. Specializes the family-
+# root's grammar_coherent at source_grammar=purescript.
+#
+# Splinter-pole: well-typed by `purs compile`; FFI (if present)
+# correctly annotated at the boundary; loss measurement complete-
+# capable.
+# Narcissus-pole: type errors OR FFI annotations ill-formed at the
+# boundary. Compilation cannot proceed.
+# Narcissus-warned (per hedge 4): FFI annotations well-formed but
+# FFI code outside typing discipline; measurement bounded to typed
+# sub-program; FFI gap unmeasurable by this species.
+purescript_well_typed(source: purescript_source, p: perturbation) -> verdict { \ }
+
+# === npm_consumable bilateral ===
+#
+# Target-side packaging-well-formedness bilateral. Commitment that
+# the (module, metadata) pair forms a coherent npm package.
+#
+# Splinter-pole: metadata.name matches npm naming rules; version
+# is valid semver; entry resolves inside the module's emitted files;
+# exports map (if present) resolves across all subpath conditions.
+# Narcissus-pole: registry would reject OR consumer `require`/
+# `import` resolution would fail.
+npm_consumable(module: purescript_module, metadata: npm_metadata, p: perturbation) -> verdict { \ }
+
+# === ps_npm_loss_well_defined bilateral ===
+#
+# Specializes the family-root's loss_well_defined for this cascade.
+# Commitment that the substrate-typed gap calculation IS computable
+# for the (source, artifact) pair.
+#
+# Splinter-pole: externs readable from the artifact's unlabel'd
+# module; composite of @epistemologic/properties dischargeable;
+# measurement bounded and substrate-typed.
+# Narcissus-pole: externs missing (bundler stripped them);
+# substrate cannot read the typing residue; measurement undefined.
+# Narcissus-warned: externs present but cover only the typed
+# sub-program (FFI gap unmeasurable; per hedge 4).
+ps_npm_loss_well_defined(source: purescript_source, artifact: npm_artifact, p: perturbation) -> verdict { \ }
+
+# === ps_npm_cascade_well_formed composed bilateral ===
+#
+# THE LOAD-BEARING composed bilateral. Specializes the family-root's
+# cascade_well_defined for this cascade. Composes the three sub-
+# predicates at this altitude.
+#
+# requires purescript_well_typed(source, p): source-side typing
+# discipline IS coherent.
+# requires npm_consumable(unlabel(artifact, p), label_of(artifact, p), p):
+# target-side packaging IS well-formed; uses @labeled.unlabel +
+# @labeled.label_of to extract module and metadata from the artifact.
+# requires ps_npm_loss_well_defined(source, artifact, p): loss
+# measurement IS computable.
+#
+# All three must hold; substrate refuses cascade if source has type
+# errors OR packaging is malformed OR measurement is undefined.
+#
+# Splinter-pole: all three discharge; substrate-typed loss returned.
+# Narcissus-pole: at least one sub-predicate fails; cascade blocked.
+# Narcissus-warned: all three discharge but at least one is warned
+# (e.g., FFI present); cascade operates with bounded measurement;
+# warning propagates to caller.
+#
+# Same composed-bilateral pattern as @cascade.cascade_well_defined
+# (the family-root) and forward-promised species (gleam-js, rust-
+# wasm, scala-jvm). The discipline pattern is altitude-portable.
+ps_npm_cascade_well_formed(source: purescript_source, artifact: npm_artifact, p: perturbation) -> verdict
+requires purescript_well_typed(source, p)
+requires npm_consumable(unlabel(artifact, p), label_of(artifact, p), p)
+requires ps_npm_loss_well_defined(source, artifact, p)
+{ \ }
+
+out @cascade/purescript-npm
+out purescript_source
+out purescript_module
+out npm_artifact
+out npm_metadata
+out compile_ps
+out bundle_npm
+out measure_ps_npm
+out purescript_well_typed
+out npm_consumable
+out ps_npm_loss_well_defined
+out ps_npm_cascade_well_formed
