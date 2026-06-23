@@ -255,6 +255,47 @@ as substrate-decl primitive, OR admit @cogito's sequencing IS
 asymmetric-by-type-chain (different from "asymmetric metaphysically"
 but still asymmetric). The dismissal was premature.
 
+**H3 PICKED 2026-06-23 (post-Seam) — admit type-chain asymmetry:**
+
+Direct substrate-pull admission: @cogito's notice→name→hold IS
+asymmetric-by-type-chain. The signatures encode it:
+
+- `notice(unnoticed, p) -> observer_change`
+- `name(noticed: observer_change, frame, p) -> mark`
+- `hold(named: mark, frame, p) -> hold_output`
+
+Each step's input type IS the prior step's output type. That's not
+operational direction (which the 5 ops have); that's structural
+dependency chain. The Descartes-asymmetry concern was right about
+THIS form of asymmetry.
+
+Why this admission is substrate-pull-acceptable (not a deal-breaker):
+
+1. **Bilateral-discipline symmetry preserved within each step.** Each
+   step's bilateral check (the `requires` clause) honors both Splinter
+   and Narcissus poles. The asymmetry is in the TYPE FLOW, not in
+   the verdict-altitude symmetry.
+
+2. **Sequential type-chains exist elsewhere in the substrate.**
+   `@io/stagefreight.stagefreight_addressable` composes 4 sub-
+   predicates with type dependencies; the @kintsugi loop has
+   step-dependent stages. Type-chained sequencing IS a substrate-
+   pattern, not a violation.
+
+3. **The avoided asymmetry was METAPHYSICAL** ("being is the fixed
+   point"), not type-level. @cogito's type-chain doesn't smuggle
+   metaphysical privilege; it encodes operational ordering that the
+   substrate's bilateral-altitude verdict-symmetry preserves.
+
+Resolution: H3 admits type-chain asymmetry as honest description of
+@cogito's shape. The candidate must update §3 to NAME this explicitly
+("@cogito's three actions form a type-chained pipeline, not a
+commutative-op algebra") rather than claim the 5-op analogy that
+Seam called out as category error.
+
+H3 PARTIAL: asymmetry-by-type-chain admitted; landing-time work is
+updating §3 prose to reflect the honest type-flow shape.
+
 ### H4: name_output type underspecified — RESOLVED 2026-06-23
 
 **Original concern:** research proposed `name_output = ref`, which
