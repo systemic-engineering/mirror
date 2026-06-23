@@ -1,0 +1,457 @@
+in @prism
+in @meta
+in @glass
+in @docs
+in @docs/tea
+in @docs/design
+in @ui
+in @nl
+
+# @docs/tea/spectral-engineer-case-study — the concrete @docs/tea
+# instance shape for spectral.engineer/case-study/X (Phase F; substrate
+# -decl for the FIRST DEPLOYED PAGE).
+#
+# Per Alex 2026-06-23: the first case study to ship is the Fellowship
+# stated-vs-enacted Connes distance — a page that takes two @nl
+# corpora (the stated charter of a fellowship; the enacted record of
+# the same fellowship) and projects their @nl.connes_distance into a
+# typed visualisation via @ui's eigenboard instrument. The page
+# composes punk-zine perimeter (cover/header/footer) with ND-friendly
+# long-form body (Atkinson + Tufte sidenotes) per @docs/design's
+# perimeter-loud/body-calm principle.
+#
+# === What this species declares ===
+#
+# The typed SHAPE of the first spectral.engineer page as a @docs/tea
+# instance: the case_study_model carrier (Model side), the case_study
+# _msg sum (Msg side), the cover/body/chrome/toggle/machine-readable
+# section layouts (View side), and the init/update/view/subscribe
+# actions specialized for the case-study page (Update + View + Sub
+# sides). Embeds @ui's eigenboard via subscribe_events; consumes
+# @docs/design's tokens via render_palette + render_typography.
+#
+# === The composition ===
+#
+# Design tokens (@docs/design palette + typography + section_layout)
+# + TEA pattern (@docs/tea model + msg + update + view + cmd + sub)
+# + eigenboard instrument (@ui field + subscribe_events bridge)
+# + text measurement (@nl corpus + connes_distance + project
+# _measurement) = one typed page.
+#
+# === Forward-promised ===
+#
+# - Gleam Lustre implementation at Phase G; cascade<gleam, js>
+#   delivery; StageFreight content-addressed deployment
+# - The actual stated + enacted Fellowship corpora (Phase G data load)
+# - URL slug "X" concrete value pending Alex confirmation (fellowship
+#   | the-fellowship | fellowships-stated-vs-enacted)
+# - CSS print stylesheet (print_friendly = true is substrate claim;
+#   discharge at Phase G)
+#
+# Spec context: shards/docs/tea.mirror (parent species; M/V/U pattern);
+#               shards/docs/design.mirror (Phase E tokens this species
+#                resolves);
+#               shards/docs.mirror (parent family-root; document /
+#                rendered_page carriers);
+#               shards/ui.mirror (subscribe_events bridge);
+#               shards/nl.mirror (corpus / spectral_triple /
+#                project_measurement bridge);
+#               shards/cascade/code/gleam/js.mirror (the cascade
+#                species that delivers this instance to browser);
+#               tasks/active/spectral-engineer-case-study-fellowship.md
+#                (forward-promised content brief; Phase G).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[feedback-no-bare-types]] (case_study_model /
+#                       case_study_msg / cover_layout / body_layout /
+#                       page_chrome / theme_toggle / machine_metadata
+#                       are separate carriers for separate concepts),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (every primitive on this page already exists
+#                       at parent altitude; this species is COMPOSITION,
+#                       not invention),
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; SSR-vs-client and HTTP
+#                       data-fetch effects fire at @io, not here).
+# Recognition ancestry: #59 kintsugi loop altitude-portable (the
+#                       composed bilateral lifts here too — 10th
+#                       altitude instance landing today, after
+#                       cascade / ui / docs / tea / design / rust-
+#                       wasm / ps-npm / gleam-js / gleam-beam);
+#                       #93 H4 (labeled<> at page altitude via
+#                       rendered_page from @docs);
+#                       #95 @cascade family-root (Gleam Lustre
+#                       delivery is cascade<gleam, js>);
+#                       #96 candidate territory (instrument @ui +
+#                       presentation @docs partition at the
+#                       deployed-page altitude — third witness).
+# Path-namespace property: this file at
+# `shards/docs/tea/spectral-engineer-case-study.mirror` declares
+# `@docs/tea/spectral-engineer-case-study` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming-languages/gleam-lustre
+source @arxiv/typography/tufte-2001-visual-display
+source @arxiv/web/aipref-content-usage
+source @arxiv/web/llms-txt
+
+prism @docs/tea/spectral-engineer-case-study {
+  focus case_study
+  project layout
+  split section
+  shift event
+  settle render
+}
+
+# === §1 Model — case_study state ===
+#
+# The typed page state for the Fellowship case study. Specializes
+# @docs/tea's bare `model = ref` into the concrete carrier the
+# page-runtime consumes. Per [[feedback-no-bare-types]] every named
+# concept gets its own carrier; the model is the composition.
+
+# Page identifier: the URL slug. Forward-promised concrete value
+# pending Alex confirmation (see hedge 6).
+type case_study_id = ref
+
+# Per-section disclosure state. Sections start `closed`; reader opens
+# on click; some open by default (the cover, the punctum claim).
+type section_state = open | closed
+
+# Theme selection per @docs/design tech toggle (Decision 4):
+# `light` = human-light (cream wine-leaked) | `dark` = human-dark or
+# tech-dark (wine-cave; tech-dark adds Recursive MONO at 1.0).
+type theme_state = light | dark
+
+# Lazy measurement: the @nl.connes_distance between stated and enacted
+# corpora is computed on demand (potentially expensive; bounded by
+# corpus size and Dirac operator construction). `none` until requested;
+# `some(triple)` after measurement_loaded msg fires.
+type measurement_state = option(spectral_triple)
+
+# THE LOAD-BEARING MODEL CARRIER. The complete page state at the @docs
+# /tea altitude, specialized for this case study. Composes seven typed
+# fields:
+#
+#   id              the URL slug (case_study_id)
+#   title           the page title (nl literal: e.g., "The Fellowship")
+#   stated_corpus   the charter / stated commitment (@nl corpus)
+#   enacted_corpus  the record of what happened (@nl corpus)
+#   measurement     lazy Connes distance + spectral triple
+#   eigenboard      the @ui field rendering the measurement
+#   selected_aside  which sidenote is currently expanded (mobile)
+#   theme           current theme_state
+#   viewer_state    scroll position + open-section map (for restore)
+type case_study_model = ref
+
+# === §2 Msg — page events ===
+#
+# The typed event sum the runtime dispatches into update_case_study.
+# Specializes @docs/tea's bare `msg = ref` into the concrete sum.
+# Per Elm: every state transition fires through a typed msg; the sum
+# is exhaustive.
+#
+# Eight constructors at v0.1 (Phase G may add more as interaction
+# surfaces; the family-root sum is open by construction at this
+# instance altitude):
+#
+#   measurement_requested(id)     reader clicked "measure"; dispatch
+#                                 connes_distance cmd to @io
+#   measurement_loaded(triple)    @io returned the result; update
+#                                 model and pass triple to eigenboard
+#   section_toggled(ref)          reader expanded/collapsed a section
+#   aside_opened(ref)             mobile reader tapped a sidenote
+#                                 anchor (Tufte collapse-below-900px
+#                                 per @docs/design §4)
+#   theme_switched(theme_state)   user toggled human <-> tech
+#   ui_event_received(ui_event)   bubbled from @ui.subscribe_events;
+#                                 mote_clicked / viewer_panned / etc.
+#   viewer_panned(ref)            scroll-position update (debounced)
+#   page_loaded(case_study_id)    initial mount complete; init cmd
+#                                 dispatch finished
+type case_study_msg = ref
+
+# === §3 Cover template (F1; punk-zine perimeter) ===
+#
+# Per @docs/design §4.2: the cover IS the perimeter — display stencil
+# face (cover-only; never body), high-contrast Track A palette, Sniffin'
+# Glue cut-paste asymmetric register. The bleed_into_body horizontal
+# rule IS the threshold between perimeter aggression and body care.
+#
+# Fields:
+#   title                   the case study title (nl literal)
+#   subtitle                short framing line (nl literal; one line)
+#   image_oid               cover image content-hash (@mirror/store
+#                            content-addressed; Phase G load)
+#   aggression_register     `high` for this case; punctum hook
+#   bleed_into_body         horizontal rule 4px in color_punctum
+#                            (the threshold; the visual semicolon)
+#
+# Composes @docs/design tokens:
+#   palette       wine_50 background (light) / wine_950 (dark)
+#   typography    Stencil display face for title; Atkinson for subtitle
+#   section_layout the broken-grid asymmetric cover layout
+#
+# Body discharges at Phase G Lustre view function.
+type cover_layout = ref
+
+# === §4 Long-form body template (F2; ND-friendly) ===
+#
+# Per @docs/design §4 (body sizing locked): 18px / 1.7 / 50-75ch /
+# Atkinson Hyperlegible Next. NEVER justified; left-aligned. Tufte
+# sidenotes in margin >= 900px, collapsed inline below.
+#
+# Lifts the aside[data-actor] + aside[data-side] + [data-role='claim'] +
+# [data-role='evidence'] patterns from systemic.engineering's
+# page.gleam:128-134 (named in @docs/design §4 layout).
+#
+# Fields:
+#   column_max_width     50-75ch (ND-friendly column)
+#   line_height          1.7 (above 1.5 dyslexia floor)
+#   font_size            18px base
+#   font_family          atkinson_hyperlegible_next (body face)
+#   sidenote_pattern     tufte collapse-below-900px
+#   paragraph_spacing    1.5em between paragraphs; no first-line indent
+#   heading_rhythm       1.5x scale; no skipped levels
+#
+# Composes @docs/design tokens:
+#   typography_stack    body face + heading face from §3
+#   section_layout      body section_layout from §4
+#   palette             wine ladder (50/100 light bg; 850/950 dark)
+type body_layout = ref
+
+# === §5 Index / nav / footer (F3) ===
+#
+# Page chrome: top breadcrumb nav, semantic footer, print-friendly
+# stylesheet claim. Per @docs/design §4 footer specification: wine_700
+# background, wine_300 text, minimal; the page settles here.
+#
+# Fields:
+#   nav              top breadcrumb: Index > Case Studies > Fellowship
+#   footer           { license, repo_link, show_me_your_work_v0_2 }
+#   print_friendly   substrate claim; CSS @media print at Phase G
+#
+# Notes:
+#   - license = SEL terms URL per @docs/design §6 machine-readability
+#   - repo_link = source-of-truth corpus location (for citation)
+#   - show_me_your_work_v0_2 = forward-promised per @docs/design H7
+#     (visible structure surfacing the spectral triple's H component;
+#     defers to v0.2)
+type page_chrome = ref
+
+# === §6 Tech toggle (F4) ===
+#
+# Per @docs/design §5: three rendering configurations, two user-facing
+# toggles. Default honors prefers-color-scheme; tech toggle is explicit
+# opt-in to wine-cave-in-monospace (Recursive MONO at 1.0). Persistence
+# via localStorage `spectral_theme` key.
+#
+# Fields:
+#   default        prefers_color_scheme (system preference resolves)
+#   user_override  localStorage persistence (`spectral_theme` key)
+#   light          wine_50 + wine_950 + atkinson (cream + near-black)
+#   dark           wine_850 + wine_50 + monospace (wine-cave-in-mono
+#                  per @docs/design §5 + spectral-engineer-color.md
+#                  Decision 9 Matrix-without-dystopia)
+#
+# Open at v0.1 (forward-promised per @docs/design §5 final block):
+#   - Selection highlight color per mode
+#   - Cursor blink rate in tech view (respect prefers-reduced-motion)
+#   - Mobile toggle UI location
+type theme_toggle = ref
+
+# === §7 Machine-readability layer (F5) ===
+#
+# Per @docs/design §6 + Mara research spectral-engineer-agents.md
+# Part 8 synthesis. The corpus position: anti-extraction is NOT
+# anti-agent. SEL §3 protects; AIPREF + llms.txt + JSON-LD welcome.
+# Single-source-of-truth per Decision 8.
+#
+# Fields:
+#   aipref            { training: allow_with_sel,
+#                       inference: allow_with_sel }
+#                     per-page Content-Usage header per AIPREF draft
+#   robots            no AI-targeted disallow blocks; sitemap reference
+#                     (refuse the bifurcation between walled garden
+#                      and extraction-target)
+#   llms_txt          auto-generated from frontmatter at build time
+#                     (title + 1-line summary + URL per piece)
+#   llms_full_txt     complete corpus concatenated; nightly refresh
+#   json_ld           Article + ScholarlyArticle additionalType;
+#                     author "Alex Wolf + Reed (Pack)";
+#                     datePublished "2026-06-23";
+#                     about "Fellowship stated-vs-enacted Connes
+#                            distance"
+#
+# The agent-facing layer renders identically across all three themes
+# (Decision 8: semantic/rendering separation is structural).
+type machine_metadata = ref
+
+# === §8 Actions ===
+#
+# Specializations of @docs/tea's bare init / update / view_of /
+# subscribe actions for this case_study. Each carries the purity
+# obligation from the parent species. Bodies discharge at Phase G
+# Lustre runtime + @io HTTP adapter.
+
+# Construct initial (case_study_model, cmd) pair. The cmd dispatched
+# at init MAY load the stated + enacted corpora over HTTP; per @docs
+# /tea hedge 4 cmd is a bare ref at v0.1 (typed effect shape forward-
+# promised). measurement starts `none`.
+init_case_study(id: case_study_id, p: perturbation)
+  -> (case_study_model, cmd)
+requires init_pure(p)
+{ \ }
+
+# Pure (state, msg) -> (new_state, cmd). Per @docs/tea: update_pure
+# obligation holds; substrate forecloses hidden side effects.
+# Dispatches connes_distance computation cmd on measurement_requested;
+# threads ui_event into eigenboard field on ui_event_received;
+# persists theme on theme_switched.
+update_case_study(
+  state: case_study_model,
+  m: case_study_msg,
+  p: perturbation
+) -> (case_study_model, cmd)
+requires update_pure(state, m, p)
+{ \ }
+
+# Pure model -> view projection. Composes cover_layout + body_layout +
+# page_chrome + theme_toggle + machine_metadata + the embedded
+# eigenboard @ui field into one rendered view. Per @docs/tea view_pure
+# obligation.
+view_case_study(state: case_study_model, p: perturbation) -> view
+requires view_pure(state, p)
+{ \ }
+
+# Pure model -> sub projection. Subscribes to @ui.subscribe_events on
+# the eigenboard field for ui_event bubbling (mote_clicked, viewer_
+# panned, etc.); each ui_event becomes a case_study_msg via the
+# ui_event_received constructor.
+subscribe_case_study(state: case_study_model, p: perturbation) -> sub { \ }
+
+# === §9 Composed bilateral ===
+#
+# THE LOAD-BEARING composed bilateral at the @docs/tea/spectral-
+# engineer-case-study altitude. Composes purity verdicts from @docs
+# /tea + composition verdict from @docs + instrument verdict from @ui
+# + design verdict from @docs/design.
+#
+# Same composed-bilateral pattern as @cascade.cascade_well_defined,
+# @ui.ui_instrument_coherent, @docs.docs_complete, @docs/tea.tea
+# _well_formed, @docs/design.design_complete, @cascade/code/rust/wasm
+# .rust_wasm_cascade_well_formed, @cascade/code/purescript/js.ps_npm
+# _cascade_well_formed, @cascade/code/gleam/js, @cascade/code/gleam
+# /beam — TENTH altitude lift of today's pattern.
+#
+# Five sub-predicates must hold for the case study to ship:
+#   1. init_pure(p)                    @docs/tea
+#   2. update_pure(state, m, p)        @docs/tea
+#   3. view_pure(state, p)             @docs/tea
+#   4. document_well_formed(state, p)  @docs (composition coherence)
+#   5. field_well_formed(state, p)     @ui (instrument coherence)
+#
+# Splinter-pole: all five discharge; page ships.
+# Narcissus-pole: any sub-predicate fails; deployment blocked at
+#   the failing altitude.
+# Narcissus-warned: all five discharge but at least one is warned
+#   (e.g., document warns deprecated anchor; design warns APCA at
+#   lower bound); page ships with audit-flag.
+case_study_well_formed(
+  state: case_study_model,
+  m: case_study_msg,
+  p: perturbation
+) -> verdict
+requires init_pure(p)
+requires update_pure(state, m, p)
+requires view_pure(state, p)
+requires document_well_formed(state, p)
+requires field_well_formed(state, p)
+{ \ }
+
+# === §10 Honest hedges ===
+#
+# 1. Measurement loading is async cmd. The connes_distance computation
+#    over the stated + enacted Fellowship corpora may take noticeable
+#    time (Dirac operator construction is O(n^2) in token count; the
+#    Fellowship corpora are bounded but non-trivial). The cmd-effect
+#    shape is FORWARD-PROMISED to Phase G — concrete typed effect
+#    description (HTTP fetch + worker dispatch) lives at @io adapter
+#    altitude per @docs/tea hedge 4.
+#
+# 2. Eigenboard field construction FROM the measurement is forward-
+#    promised at species altitude. The pipeline is:
+#      @nl.project_measurement(stated, enacted, p)
+#        -> intermediate measurement ref
+#      -> field construction (motes = tokens; arcs = Dirac couplings)
+#      -> @ui.render(field, p) -> rgba8_buffer
+#    The intermediate "measurement-to-field" projection has no
+#    substrate primitive yet (Mara recognition surfaces here);
+#    Phase G discharges or surfaces a new species shard.
+#
+# 3. The "show me your work" element per @docs/design §9 H7 is
+#    FORWARD-PROMISED to v0.2. This shard declares no carrier for it;
+#    a future @docs/work_surface species can specialize content_block
+#    once the pattern stabilizes.
+#
+# 4. SUBSTRATE-DECL ONLY. The Gleam Lustre runtime, the actual page
+#    HTML, the CSS bytes, the Webpack/Vite bundling — all Phase G
+#    implementation. This shard carries the TYPED SHAPE the
+#    implementation discharges against.
+#
+# 5. Fellowship CONTENT DATA (the actual stated charter text + the
+#    enacted record text) is forward-promised to Phase G load. The
+#    substrate-decl carries the TYPED SHAPE (case_study_model has
+#    stated_corpus + enacted_corpus fields of type @nl.corpus); the
+#    concrete corpus bytes load at deployment time from content-
+#    addressed storage.
+#
+# 6. URL slug "X" is a placeholder until Alex confirms (candidates:
+#    "fellowship" | "the-fellowship" | "fellowships-stated-vs-
+#    enacted"). The substrate carrier case_study_id is concrete;
+#    the resolved slug is a Phase G configuration value.
+#
+# 7. print_friendly = true is a SUBSTRATE CLAIM; the CSS print
+#    stylesheet that discharges it lives at Phase G. The substrate-
+#    decl admits the claim so the Phase G implementation can fail
+#    fast if @media print rendering is skipped.
+#
+# 8. Recognition #97 candidate (TEA-as-substrate-pattern; surfaced at
+#    @docs/tea Phase D) is third-witness territory for this shard.
+#    The first deployed @docs/tea instance IS a Pack-ratification
+#    surface for #97; if the page ships clean and the discipline
+#    holds at Phase G runtime, the candidate promotion-gate opens.
+#    Flagged here so Seam can review.
+#
+# 9. Recognition #96 candidate (instrument-altitude vs presentation-
+#    altitude) gets its THIRD witness in this shard: @ui (instrument)
+#    composes with @docs (presentation) at this case-study altitude;
+#    the embedded eigenboard is instrument-side, the typography body
+#    is presentation-side, both compose into one page. If Pack accepts
+#    the three-witness pattern (#96 territory: @ui Phase C / @docs
+#    Phase D / this shard Phase F), promotion-eligible.
+#
+# 10. @docs/design tokens are RESOLVED at Phase G via cascade<gleam,
+#     js> emitting CSS custom properties. This shard names the
+#     section layouts (cover_layout, body_layout, page_chrome,
+#     theme_toggle) as separate carriers; the per-token CSS bytes
+#     live in the cascade species, not here. Conflating "names the
+#     vocabulary" with "emits CSS" would be the form/process error.
+
+out @docs/tea/spectral-engineer-case-study
+out case_study_id
+out section_state
+out theme_state
+out measurement_state
+out case_study_model
+out case_study_msg
+out cover_layout
+out body_layout
+out page_chrome
+out theme_toggle
+out machine_metadata
+out init_case_study
+out update_case_study
+out view_case_study
+out subscribe_case_study
+out case_study_well_formed
