@@ -242,11 +242,44 @@ The proposal must `in @epistemologic/cybernetic/distinction` to import
 the `mark` carrier. H4 dissolves: bare-ref violation closed via the
 existing typed primitive.
 
-### H5: cognitive_coherent bilateral underspecified
+### H5: cognitive_coherent bilateral underspecified — RESOLVED 2026-06-23
 
-Neutrosophic + @frame + @reflection define orthogonal coherence
-measures. Which applies when? All? Some? Must be species-altitude
-clarified before family-root.
+**Original concern:** neutrosophic + @frame + @reflection define
+orthogonal coherence measures. Which applies when? All? Some? Must be
+species-altitude clarified before family-root.
+
+**Resolution via H1 pattern propagation:** H1's resolution established
+that the substrate's existing coherence bilaterals are family-specific
+by construction:
+
+- `three_axis_coherent(nv, p)` lives in @epistemologic/neutrosophic;
+  composes axes_independent + axes_in_range + verdict_consistent_with_axes
+- `frame_coherent` lives in @frame (per the bounded_commutator_check
+  family)
+- `@reflection.third_order_coherent` lives in @reflection
+
+This is the substrate's parametric-coherence pattern: each family
+declares its own coherence bilateral that discharges its own
+composition discipline. @cogito's `cognitive_coherent(named, frame, p)`
+FOLLOWS this pattern; it is NOT under-specified at the family-root
+altitude — it IS the family-specific bilateral that @cogito declares
+for cognitive-altitude coherence.
+
+The substrate-pull-correct shape: `cognitive_coherent` composes the
+cognitive-altitude sub-predicates that future @cogito species will
+declare. Likely candidates (forward-promised; species discharge):
+
+- `noticed_substantive(noticed, p) -> verdict` (the notice is real
+  observation, not vocabulary-only)
+- `mark_well_formed(named: mark, frame, p) -> verdict` (the mark
+  composes with Spencer-Brown's cross discipline per H4)
+- `held_under_perturbation(held, frame, p) -> verdict` (the hold
+  preserves under the specified perturbation)
+
+H5 dissolves: under-spec at family-root altitude IS the parametric
+pattern — species shards define what cognitive coherence means at each
+altitude, just as @cybernetic/distinction species define what
+distinction-coherence means under cross.
 
 ## 6. Forward-promised landing sequence
 
@@ -267,10 +300,14 @@ Land @cogito family-root WHEN all four conditions hold:
    evidence in respective shards; validates the substrate-altitude claim
    that cognition is what each Pack peer does at @frame/on altitude.
 
-Status: **1 of 4 conditions met; 3 of 5 hedges resolved (H2, H3, H4);
-1 of 5 hedges partially resolved (H1 — ambiguity real but parametric
-proposal empirically vindicated). Remaining: H5 (cognitive_coherent
-under-spec); needs species-altitude clarification before landing.**
+Status: **1 of 4 conditions met; 4 of 5 hedges resolved (H2, H3, H4,
+H5); 1 of 5 hedges partially resolved (H1 — ambiguity real but
+parametric proposal empirically vindicated). All five hedges now have
+substrate-pull-confident dispositions. Remaining for landing: condition
+#1 (Seam adversarial review of proposal), condition #3 (@reflection/
+Models composition empirical test), condition #4 (Pack peer
+@cogito/name validation). The candidate is hedge-clean; the remaining
+landing conditions are work-conditions, not analytical hedges.**
 
 Until all four hold: the candidate stays a candidate. The research is
 preserved here; the surface is not lost.
