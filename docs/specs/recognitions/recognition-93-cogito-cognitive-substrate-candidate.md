@@ -178,12 +178,35 @@ operates WITHIN the frame). These are different operational arities:
 container to label content. The altitudes compose orthogonally, not
 recursively. H2 hedge dissolved.
 
-### H3: notice asymmetry
+### H3: notice asymmetry — RESOLVED 2026-06-23
 
-Descartes' cogito is asymmetric (being is the fixed point); the
-substrate is symmetric (bilaterals; both poles valued). Risk: @cogito
-smuggles linear-time / hierarchy when substrate is symmetric. Hedge:
-order is pedagogical-operational, not metaphysical.
+**Original concern:** Descartes' cogito is asymmetric (being is the
+fixed point); the substrate is symmetric (bilaterals; both poles
+valued). Risk: @cogito smuggles linear-time / hierarchy when substrate
+is symmetric.
+
+**Analytical resolution:** the substrate's symmetry lives at the
+BILATERAL DISCIPLINE altitude (both Splinter and Narcissus poles are
+typed; both yield verdicts; neither is privileged metaphysically), NOT
+at the operational-shape altitude. The five foundational operations all
+have operational direction:
+
+- `focus`: input → eigenvalue (directional)
+- `project`: input → projection (directional)
+- `split`: input → decomposition (directional)
+- `shift`: input → transformed (directional)
+- `settle`: input → measured (directional)
+
+Directional operation ≠ asymmetric substrate. @cogito's `notice → name
+→ hold` follows the same operational-direction pattern as the
+foundational five: each step has typed input and typed output; the
+bilateral discipline at each step (axes_independent, cognitive_coherent,
+etc.) preserves both-poles-valued symmetry. The Descartes hierarchy
+concern conflates operational chaining with metaphysical privilege.
+
+H3 dissolves: @cogito's directional sequencing is structurally
+consistent with the substrate's existing operational patterns; the
+bilateral-discipline symmetry is preserved at each step.
 
 ### H4: name_output type underspecified
 
@@ -216,9 +239,11 @@ Land @cogito family-root WHEN all four conditions hold:
    evidence in respective shards; validates the substrate-altitude claim
    that cognition is what each Pack peer does at @frame/on altitude.
 
-Status: **1 of 4 conditions met; 1 of 5 hedges resolved (H2); 1 of 5
-hedges partially resolved (H1 — ambiguity real but parametric proposal
-empirically vindicated).**
+Status: **1 of 4 conditions met; 2 of 5 hedges resolved (H2 + H3);
+1 of 5 hedges partially resolved (H1 — ambiguity real but parametric
+proposal empirically vindicated). Remaining: H4 (bare-ref name_output
+violation), H5 (cognitive_coherent under-spec); both need typed-refinement
+proposals at species-altitude before landing.**
 
 Until all four hold: the candidate stays a candidate. The research is
 preserved here; the surface is not lost.
