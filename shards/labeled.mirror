@@ -1,0 +1,166 @@
+in @prism
+in @meta
+in @glass
+
+# @labeled — the functor primitive that adds a label dimension to a
+# value. Per recognition #93 H4 (RESOLVED 2026-06-23): name_output =
+# labeled<mark> where mark is Spencer-Brown's distinction marker;
+# labeled<v, m> lifts v with linguistic-label dimension m without
+# losing the underlying typed value reference.
+#
+# Per recognition #95 (@cascade, candidate 2026-06-23): loss_lens<
+# source_grammar, target_grammar> IS an instance of labeled<source_
+# grammar, target_grammar>. The labeled functor is the parametric
+# primitive both #93 H4 and #95 cascade rest on.
+#
+# Substrate-already-supports-parametric-carriers (per Mara woz:explore
+# 2026-06-23 discharging #93 H4 PARTIAL): the substrate already carries
+# imperfect(a, e, l), option(a), result(a, e), transparency(p) via
+# shift(T)/settle(T) infrastructure declared in boot/00-prism.mirror +
+# shards/prism.mirror. labeled(v, m) follows the same parametric
+# pattern — composes naturally with the existing substrate; no new
+# substrate primitives required. This shard IS the discharge of the
+# forward-promise.
+#
+# === Forward-promised consumers (this shard unblocks) ===
+#
+# - StageFreight integration spec §15.1 declares
+#   `npm_artifact = labeled<purescript_module>`
+#   (PrPlanIT/StageFreight PR #1, 2026-06-23; previously forward-
+#   promised per #93 H4 PARTIAL, now load-bearing)
+# - @cascade.loss_lens<source_grammar, target_grammar> IS
+#   labeled<source_grammar, target_grammar> at the cascade altitude
+#   (shards/cascade.mirror lines 203-221; previously forward-promised
+#   per hedge #3, now load-bearing)
+# - Future: cascade species shards (purescript-npm, gleam-js,
+#   rust-wasm) each instantiate labeled with their specific
+#   (source, target) pair
+#
+# === Recognition ancestry ===
+#
+# - Recognition #93 (@cogito candidate, hedge-clean post-Seam):
+#   H4 RESOLVED via this shard. name_output = labeled<mark> in
+#   @cogito's proposed name action signature.
+# - Recognition #95 (@cascade candidate): loss_lens IS instance of
+#   labeled at grammar-cascade altitude.
+# - Recognition #51 (mirror as expanding Hilbert space): labeled
+#   adds one more parametric carrier to the substrate's expanding
+#   functor library.
+#
+# === Pre-AI prior art ===
+#
+#   Wadler 1989 "Theorems for Free!"  parametricity → labeled<v, m>
+#                                     preserves v's typed identity
+#                                     across any m label transformation
+#   Reynolds 1983 parametricity        types as relations; labeled
+#                                     pairs two relations under one
+#                                     parametric constructor
+#   Haskell's Tagged newtype           ancestor of labeled(v, m) as
+#                                     zero-cost phantom-type lift
+#   ML labeled records                 (sml.org); structural ancestor
+#                                     of the (value, label) pair shape
+#
+# Spec context: docs/specs/recognitions/recognition-93-cogito-
+#               cognitive-substrate-candidate.md §3.3 H4 PARTIAL →
+#               this shard DISCHARGES H4;
+#               docs/specs/recognitions/recognition-95-cascade-as-
+#               loss-lens-substrate-decl.md (Mara canonical, in flight
+#               2026-06-23) loss_lens substrate-decl rests on this.
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[feedback-no-bare-types]] (labeled IS the
+#                      typed-refinement of bare-ref label_output),
+#                      [[feedback-substrate-already-had-the-word]]
+#                      (parametric pattern already present in
+#                      imperfect/option/result/transparency; labeled
+#                      composes naturally).
+# Path-namespace property: this file at `shards/labeled.mirror`
+# declares `@labeled` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming-languages/wadler-1989-theorems-for-free
+source @arxiv/programming-languages/reynolds-1983-parametricity
+
+prism @labeled {
+  focus labeled
+  project labeled
+  split labeled
+  shift labeled
+  settle labeled
+}
+
+# === The labeled carrier ===
+#
+# Parametric carrier over (value_type, label_type). The functor that
+# adds a label dimension to a value without losing the underlying
+# typed reference.
+#
+# Single-constructor sum matching shards/glass.mirror's parametric
+# pattern (lines 89-127 imperfect/option/result/transparency):
+#
+#   labeled(v, m) = annotated(v, m)
+#
+# Where:
+# - v is the underlying value (any type; parametric)
+# - m is the label / marker / metadata dimension (any type; parametric)
+# - annotated(v, m) is the labeled-pair constructor
+#
+# Identity contract: byte-equality on the (value, label) pair.
+type labeled(v, m) =
+  | annotated(v, m)
+
+# === unlabel action ===
+#
+# Project the labeled carrier back to its underlying value. The
+# substrate-vocabulary primitive for accessing what was labeled.
+# Composes with shift(T): unlabel produces a `v` from a labeled(v, m).
+#
+# At cascade altitude: unlabel(loss_lens<source, target>) returns the
+# source_grammar without the target dimension.
+#
+# Body discharges at the realisation boundary.
+unlabel(l: labeled(v, m), p: perturbation) -> v { \ }
+
+# === label_of action ===
+#
+# Project the labeled carrier back to its label dimension. The
+# substrate-vocabulary primitive for accessing the label without
+# losing the underlying value-reference identity.
+#
+# At cascade altitude: label_of(loss_lens<source, target>) returns
+# the target_grammar dimension.
+#
+# Body discharges at the realisation boundary.
+label_of(l: labeled(v, m), p: perturbation) -> m { \ }
+
+# === label action ===
+#
+# Construct a labeled carrier from (value, label). The substrate-
+# vocabulary primitive for lifting a value into the labeled functor.
+# Composes with shift(T): label produces labeled(v, m) from (v, m).
+#
+# At cascade altitude: label(source, target_grammar) constructs the
+# loss_lens<source, target> pairing.
+#
+# Body discharges at the realisation boundary.
+label(v: v, m: m, p: perturbation) -> labeled(v, m) { \ }
+
+# === labeled_well_formed predicate (bilateral) ===
+#
+# Bilateral verdict that a labeled carrier is structurally well-formed
+# (both v and m are typed-correctly per their declared types; the
+# annotated constructor admits the pair without type errors).
+#
+# Splinter-pole: labeled correctly carries v + m as a coherent pair;
+# Narcissus-pole: labeled has type errors in v or m; constructor
+# rejected.
+#
+# Body discharges at the realisation boundary; per-instance bodies
+# verify their specific (v, m) type-pair coherence.
+labeled_well_formed(l: labeled(v, m), p: perturbation) -> verdict { \ }
+
+out @labeled
+out labeled
+out label
+out unlabel
+out label_of
+out labeled_well_formed
