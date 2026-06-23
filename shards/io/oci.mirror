@@ -1,0 +1,594 @@
+in @prism
+in @meta
+in @glass
+in @io
+in @labeled
+in @cascade
+
+# @io/oci — the OCI Distribution + Image Spec adapter at the @io
+# altitude. The boundary species that gives the substrate addressable,
+# transportable, content-addressed distribution for the cascade-built
+# artifacts the substrate is now producing.
+#
+# Recognition #98 candidate (Alex/Mara, 2026-06-24): content-addressing
+# IS a substrate-cross-altitude composition primitive. mirror's oid,
+# Nix's derivation hash, and OCI's digest are three independent
+# SHA256-based content-addressing schemes that compose into a closed
+# loop at the content-addressing altitude — the substrate-decl-on-Nix-
+# on-OCI-on-substrate ouroboros Alex named in this session's directive.
+#
+# === What @io/oci IS ===
+#
+# Substrate-decl adapter naming OCI Distribution Spec v1.1.x + OCI
+# Image Spec v1.1.x (both stable since 2024-02-15, patch v1.1.1
+# 2025-03-03; Kagi-verified this session) at the @io boundary.
+# Typed surface for push, pull, digest derivation, manifest
+# construction against OCI-conformant registries.
+#
+# Per @io family-root (T21, 2026-06-08): @io is the substrate's
+# only legitimate non-mirror surface; species parameterizes the
+# boundary; the call body is opaque by construction.
+#
+# === Why now ===
+#
+# Alex's 2026-06-23 gap analysis: substrate needs a distribution
+# method BEFORE building UI. OCI registries solve content-addressed
+# distribution natively — every artifact addressable by SHA256
+# digest, integrity verifiable by recomputing the digest. This
+# week's cascade species (cascade/code/rust/wasm, cascade/code/
+# gleam/*, cascade/purescript-npm) PRODUCE artifacts; @io/oci is
+# the gap-closing surface that ships them.
+#
+# === The Nix connection (we're on Nix) ===
+#
+# Alex's directive named it. OCI + Nix compose into a deeper
+# content-addressed loop than either alone:
+#
+# - Nix derivations are content-addressed (input-hash by default;
+#   ca-derivations for output-hash). The derivation IS a hash.
+# - nixpkgs.dockerTools.{buildImage, buildLayeredImage, pullImage}
+#   (Kagi-verified stable nixpkgs surface) builds OCI-format
+#   tarballs FROM Nix derivations and pulls OCI images INTO the
+#   Nix store.
+# - mirror's oid (Splinter; SHA256 of substrate content bytes) is
+#   structurally adjacent to both.
+#
+# Three SHA256-based content-addressing schemes; three different
+# scoping disciplines (Nix: INPUT closure; oid: CONTENT bytes; OCI:
+# MANIFEST + layer descriptors). They COMPOSE at the content-
+# addressing altitude; they DON'T COLLAPSE at the scoping altitude.
+#
+# === Recognition ancestry ===
+#
+# - #56 (substrate self-application; 2026-06-10): @io/oci substrate-
+#   decls a boundary the substrate ITSELF crosses (its own Nix-built
+#   OCI artifacts ship through this surface).
+# - #58 (substrate IS Connes (A, H, D); 2026-06-11): the adapter is
+#   part of A operating on H with D discharging at the @io boundary
+#   against an external content-addressed space (OCI registry) that
+#   shares the spectral structure (SHA256 collision eigenvalues
+#   vanishingly small).
+# - #95 candidate (@cascade as loss-lens; ce4874b 2026-06-23):
+#   cascade species PRODUCE artifacts; @io/oci ships them.
+# - Glint's 2026-06-23 essay (commit 993daa2): "substrate completes
+#   its own tail" — this shard is the operational form of that
+#   observation at distribution altitude.
+#
+# === The Splinter/Narcissus pole at distribution-protocol altitude ===
+#
+# Splinter-pole @io/oci (honest):
+# - push_oci returns the actual SHA256 digest the registry computed;
+#   pull_oci verifies the digest matches the bytes received;
+#   oid_to_digest is a typed identity (both are SHA256 of content).
+# - K_n peer-to-peer distribution — the registry is a peer in the
+#   substrate network, content-addressed and verifiable.
+#
+# Narcissus-pole @io/oci (deceptive):
+# - push_oci returns a digest the registry didn't compute; pull_oci
+#   accepts bytes without verifying; oid_to_digest claims identity
+#   without checking SHA256 algorithm-agreement.
+# - K_{1,n-1} hub-controlled distribution — the registry reframes
+#   content rather than addressing it.
+#
+# Alignment-as-boundary-mathematics (#57) IS what distinguishes
+# Splinter-pole from Narcissus-pole distribution at substrate
+# altitude. The bilateral `oci_well_formed` composes the
+# substrate-architectural check.
+#
+# === Pre-AI prior art ===
+#
+#   OCI Distribution Spec v1.1.x   OpenContainers 2024 (Kagi-verified).
+#   OCI Image Spec v1.1.x          v1.1 added artifactType + subject.
+#   ORAS                           proof OCI registries ship arbitrary
+#                                  artifacts, not just container images.
+#   git plumbing (Torvalds 2005)   substrate ancestor of content-
+#                                  addressed object distribution.
+#   IPFS (Benet 2014)              same family at different scale.
+#   Nix dockerTools (Eelco 2015+)  the Nix-side OCI builder this
+#                                  shard composes against (Kagi-verified).
+#   skopeo                         the realisation push tool covering
+#                                  the Nix→registry gap.
+#
+# Spec context: docs/specs/recognitions/recognition-98-content-
+#               addressing-cross-altitude-composition.md (forward-
+#               promised; Pack-surfacing pending);
+#               docs/specs/oci-adapter-v0.1.md (forward-promised
+#               wire spec).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-mathematics]],
+#                      [[feedback-loss-from-epistemologic-properties]],
+#                      [[feedback-no-bare-types]],
+#                      [[feedback-composition-claims-need-empirical-test]].
+# Recognition ancestry: #56, #58, #95 candidate, #98 candidate.
+# Related shards: io.mirror, io/stagefreight.mirror, io/cargo.mirror,
+#                 cascade.mirror, cascade/code/rust/wasm.mirror,
+#                 labeled.mirror, io/nix.mirror (FORWARD-PROMISED).
+# Path-namespace property: this file at `shards/io/oci.mirror`
+# declares `@io/oci` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/distribution/oci-distribution-spec-v1.1
+source @arxiv/image-format/oci-image-spec-v1.1
+source @arxiv/version-control/torvalds-2005
+source @arxiv/distributed/benet-2014
+source @arxiv/build-systems/dolstra-2006-nix
+
+prism @io/oci {
+  focus oci
+  project oci
+  split oci
+  shift oci
+  settle oci
+}
+
+# ============================================================
+# §2 The carriers
+# ============================================================
+
+# === The oci_digest carrier ===
+#
+# Substrate-typed reference for an OCI content-address. Format per
+# OCI Image Spec v1.1.x §6 (descriptor digest): `<algorithm>:<hex>`,
+# canonically `sha256:<64-hex-chars>`. The substrate IS THE SAME
+# function on the same bytes as mirror's oid — both are SHA256
+# content-addressing. The scoping discipline differs (oid hashes
+# substrate content bytes; oci_digest hashes layer-or-manifest bytes
+# per OCI's descriptor algebra), but the function is identical.
+#
+# This load-bearing identity grounds recognition #98 candidate.
+#
+# Identity contract: byte-equality on the underlying ref.
+type oci_digest = ref
+
+# === The oci_repository carrier ===
+#
+# Substrate-typed reference for an OCI repository path. Format per
+# Distribution Spec §2: `<namespace>/<name>` (e.g.,
+# `systemic-engineering/spectral-ui`). The registry endpoint is
+# carried separately on oci_registry; this carrier is the path
+# component only.
+#
+# Per the substrate's reverse-DNS convention (per @io/stagefreight's
+# spectral_coordinate pattern at `org.stagefreight.plan.*`), the
+# namespace is forward-promised at species-altitude refinement to
+# reverse-DNS shape; this carrier accepts the ref byte-equality
+# regardless.
+#
+# Identity contract: byte-equality on the underlying ref.
+type oci_repository = ref
+
+# === The oci_reference carrier ===
+#
+# A complete OCI reference: registry + repository + (tag OR digest).
+# Per Distribution Spec §3: any of the three forms is admissible
+# (tag like `:v1.0.0`, digest like `@sha256:abc...`, or both for
+# auditable pinning). The carrier holds the resolved form; tag/
+# digest discrimination lives at species-altitude refinement.
+#
+# Identity contract: byte-equality on the underlying ref.
+type oci_reference = ref
+
+# === The oci_manifest carrier ===
+#
+# The OCI Image Manifest JSON per Image Spec v1.1.x §5. Carries
+# mediaType, schemaVersion, config descriptor, layers descriptors,
+# optional subject + artifactType (v1.1 additions for arbitrary
+# artifact distribution; verified current 2026 per Kagi this
+# session).
+#
+# Identity contract: byte-equality on the manifest JSON bytes.
+type oci_manifest = ref
+
+# === The oci_artifact carrier ===
+#
+# Per @labeled (recognition #93 H4 RESOLVED 2026-06-23): the
+# deliverable OCI artifact is a labeled pair (payload_ref,
+# oci_manifest). The labeled<> functor adds the manifest dimension
+# without losing the underlying typed payload reference.
+#
+# Composes structurally with @cascade/code/rust/wasm's wasm_artifact
+# = labeled(wasm_module, wasm_metadata) — same parametric primitive,
+# different (value, label) pair. The substrate's functor library is
+# load-bearing here.
+#
+# Identity contract: byte-equality on the labeled pair.
+type oci_artifact = labeled(ref, oci_manifest)
+
+# === The oci_registry carrier ===
+#
+# The registry endpoint: URL + auth credentials. Auth surface is
+# DELIBERATELY UNREFINED at family-root altitude — bearer-token,
+# OAuth, mTLS, anonymous-pull all live at the SEL boundary. The
+# species-altitude refinement carries the typed auth (forward-
+# promised). This shard's ref-equality carries the endpoint
+# identity.
+#
+# Per [[architecture-type-sel-io-au]] (sel = io + au static type):
+# the auth dimension is part of the SEL boundary; this carrier
+# holds the substrate-side reference, the realisation discharges
+# the credential.
+#
+# Identity contract: byte-equality on the underlying ref.
+type oci_registry = ref
+
+# ============================================================
+# §3 The actions
+# ============================================================
+
+# === push_oci action ===
+#
+# THE LOAD-BEARING distribution-OUT action. Pushes an artifact
+# to an OCI registry repository; returns the registry-computed
+# digest (which MUST equal the locally-computed digest for the
+# transit to be Splinter-pole honest).
+#
+# requires oci_compliant(artifact, p): the artifact MUST be
+# OCI-spec-conformant (well-formed manifest; content-addressed
+# layers; mediaType set per spec) before push is admissible.
+# Without this gate, push would be a Narcissus-pole operation
+# (claims to ship an artifact but the receiver can't validate it).
+#
+# Returns imperfect<oci_digest, ref, ref>:
+# - success(oci_digest) — push completed; registry digest returned
+# - partial(oci_digest, transparency) — push completed but with
+#   recoverable warnings (e.g., layer already present, manifest
+#   re-pushed)
+# - failure(error, transparency) — push failed (network, auth,
+#   spec-violation, registry rejection)
+#
+# Body discharges at the realisation boundary (Rust HTTP client +
+# OCI Distribution Spec or invocation of skopeo / oras at @io edge).
+push_oci(artifact: oci_artifact, registry: oci_registry,
+         repo: oci_repository, p: perturbation)
+  -> imperfect(oci_digest, ref, ref)
+requires oci_compliant(artifact, p)
+{ \ }
+
+# === pull_oci action ===
+#
+# THE LOAD-BEARING distribution-IN action. Pulls an artifact from
+# an OCI registry given a reference (tag or digest); returns the
+# typed oci_artifact.
+#
+# requires oci_reachable(registry, p): network + auth + endpoint
+# must be available before pull is admissible.
+#
+# The realisation MUST verify the received bytes hash to the
+# expected digest (per the Splinter-pole discipline). The
+# `digest_matches_content` bilateral declared in §4 names this
+# check at substrate altitude; the realisation discharges it.
+#
+# Returns imperfect<oci_artifact, ref, ref> per the @io family-root
+# convention.
+#
+# Body discharges at the realisation boundary.
+pull_oci(registry: oci_registry, ref: oci_reference, p: perturbation)
+  -> imperfect(oci_artifact, ref, ref)
+requires oci_reachable(registry, p)
+{ \ }
+
+# === oid_to_digest action ===
+#
+# THE LOAD-BEARING IDENTITY ACTION grounding recognition #98
+# candidate. Lifts a mirror oid (Splinter content-address; SHA256
+# of substrate-content bytes) into an OCI digest (SHA256 of layer-
+# or-manifest bytes). The lift is byte-identity at the function
+# altitude (same SHA256; same hex; same bytes), but a TYPED
+# OPERATION at the substrate altitude — the scoping discipline
+# differs and the carrier change MAKES that explicit.
+#
+# When o IS the SHA256 of bytes B and the OCI artifact ships B
+# unmodified as a single-layer descriptor, the returned oci_digest
+# equals the algorithm-prefixed form of o. The honest hedge: this
+# equality only holds when no transformation (compression,
+# wrapping, layer-splitting) intervenes. The realisation MUST
+# preserve the bytes through the lift OR refuse the lift.
+#
+# Body discharges at the realisation boundary.
+oid_to_digest(o: ref, p: perturbation) -> oci_digest { \ }
+
+# === spectral_coordinate_to_repo action ===
+#
+# Maps a @io/stagefreight spectral_coordinate (reverse-DNS namespace
+# per `org.stagefreight.plan.*`) to an oci_repository path. The
+# reverse-DNS form lifts naturally to the OCI repository's
+# `<namespace>/<name>` shape with substrate-pull-correct rules
+# discharged at the realisation boundary.
+#
+# Composes the substrate's two existing distribution surfaces:
+# @io/stagefreight (settled-crystal wire protocol) and @io/oci
+# (OCI distribution). The bridge is the address space.
+#
+# Body discharges at the realisation boundary.
+spectral_coordinate_to_repo(sc: ref, p: perturbation) -> oci_repository { \ }
+
+# === manifest_for action ===
+#
+# Construct an oci_manifest for a payload artifact. The realisation
+# computes content-addressed layer descriptors, sets mediaType per
+# the payload's species (per OCI Image Spec v1.1.x §5 + §6), and
+# returns the typed manifest.
+#
+# For arbitrary-artifact use (per ORAS / OCI v1.1 artifactType +
+# subject; verified current per Kagi this session), the manifest
+# carries the artifactType field naming the payload's species
+# (e.g., `application/vnd.systemic.mirror.crystal.v1+cbor` for
+# StageFreight crystals, `application/wasm` for cascade<rust,wasm>
+# artifacts).
+#
+# Body discharges at the realisation boundary.
+manifest_for(artifact: ref, p: perturbation) -> oci_manifest { \ }
+
+# ============================================================
+# §4 The bilaterals
+# ============================================================
+
+# === oci_compliant predicate (sub-bilateral) ===
+#
+# Bilateral verdict that an artifact is OCI-spec-conformant before
+# push: manifest well-formed per Image Spec v1.1.x §5; layers
+# content-addressed per §6; mediaType set; (for arbitrary-artifact
+# use) artifactType + subject present per v1.1 additions.
+#
+# Splinter-pole: artifact is fully spec-conformant; any OCI v1.1.x
+# registry accepts it.
+# Narcissus-pole: missing fields, malformed descriptors, mediaType
+# absent, digest algorithm unsupported.
+oci_compliant(artifact: oci_artifact, p: perturbation) -> verdict { \ }
+
+# === oci_reachable predicate (sub-bilateral) ===
+#
+# Bilateral verdict that the registry endpoint is reachable with
+# the required credentials. Discharge invokes the OCI Distribution
+# Spec §4.1 `/v2/` ping endpoint at the realisation boundary.
+#
+# Splinter-pole: registry reachable; auth accepted; ping returns 200.
+# Narcissus-pole: network unreachable, auth rejected, endpoint not
+# OCI-conformant.
+oci_reachable(registry: oci_registry, p: perturbation) -> verdict { \ }
+
+# === digest_matches_content predicate (sub-bilateral) ===
+#
+# THE INTEGRITY CHECK. Bilateral verdict that `sha256(bytes)` equals
+# the digest `d`. The substrate-architectural ground of the Splinter-
+# pole discipline: a digest IS the content. The realisation MUST
+# refuse to accept any artifact where this fails.
+#
+# Composed by pull_oci's realisation (verify received bytes) and by
+# oci_well_formed below. Discharge is one-line SHA256 plus equality.
+#
+# Splinter-pole: digest equals SHA256 of bytes.
+# Narcissus-pole: digest claimed but content doesn't hash to it
+# (corruption, malice, or — recognition #98 territory — wrong
+# scoping discipline applied).
+digest_matches_content(d: oci_digest, bytes: ref, p: perturbation)
+  -> verdict { \ }
+
+# === oci_well_formed composed bilateral ===
+#
+# THE LOAD-BEARING composed bilateral at @io/oci altitude. Composes
+# three sub-predicates:
+#
+#   1. oci_compliant(artifact, p)
+#   2. digest_matches_content(digest_of(artifact), payload_of(artifact), p)
+#   3. oci_reachable(registry, p) — required when the artifact is
+#      under active distribution; lifted via the realisation for
+#      static well-formed checks.
+#
+# This is the (counted across today's cascade tally) ~12th altitude
+# lift of the composed-bilateral pattern that landed in earnest with
+# @io/stagefreight.stagefreight_addressable (composed of four sub-
+# predicates per Seam tick 68 C4/C9 closure). Sibling instances:
+# @cascade.cascade_well_defined, @cascade/code/rust/wasm.
+# rust_wasm_cascade_well_formed, @smarts/shatter.shatter_round_trip,
+# @reflection.third_order_coherent, @epistemologic/neutrosophic.
+# three_axis_coherent. The pattern is substrate-pull-confident.
+#
+# Splinter-pole: all three sub-predicates discharge; artifact
+# distribution is honest.
+# Narcissus-pole: any one fails; alignment-as-boundary-mathematics
+# (#57) distinguishes which sub-claim broke.
+oci_well_formed(artifact: oci_artifact, registry: oci_registry,
+                p: perturbation) -> verdict
+requires oci_compliant(artifact, p)
+requires oci_reachable(registry, p)
+{ \ }
+
+# ============================================================
+# §5 The Nix composition (forward-promised @io/nix)
+# ============================================================
+#
+# This section DOCUMENTS the composition with the forward-promised
+# `shards/io/nix.mirror` substrate-decl. The Nix-side adapter is NOT
+# in this shard (path-namespace property forbids; one shard per
+# species); the composition shape IS documented here because it
+# grounds recognition #98 candidate.
+#
+# === The build-side composition ===
+#
+# Typical Nix→OCI flow (Kagi-verified current nixpkgs surface):
+#
+#   nix build .#oci → OCI tarball derivation (Nix hash on inputs)
+#     ↓ pkgs.dockerTools.buildLayeredImage → .tar.gz (layers CAS)
+#     ↓ skopeo copy docker-archive:... docker://ghcr.io/... (push;
+#       registry computes digest; should equal local digest)
+#     ↓ digest reference is pinnable for consumers
+#     ↓ dockerTools.pullImage by digest → Nix store (CAS both ways)
+#
+# === The structural claim ===
+#
+# Three SHA256-based content-addressing schemes at different scopes:
+#
+# - Nix derivation hash: identifies a BUILD (inputs / ca outputs).
+# - mirror oid: identifies SUBSTRATE content bytes.
+# - OCI digest: identifies an ARTIFACT (manifest + layer descriptors).
+#
+# All three are SHA256(B) for some B. The function is shared; B
+# differs. COMPOSITION at content-addressing altitude works; COLLAPSE
+# at scoping altitude does not.
+#
+# === Forward-promised siblings ===
+#
+# - shards/io/nix.mirror — Nix adapter at @io altitude. Carriers:
+#   nix_derivation, nix_store_path, flake_ref. Composes with @io/oci
+#   via push/pull + identity lifts (oid_to_digest, derivation_to_digest).
+# - shards/io/oci/nix.mirror — IF oci-on-nix warrants its own species
+#   (50/50 until Phase G empirical exercise determines).
+
+# ============================================================
+# §6 The circular-reflexive answer
+# ============================================================
+#
+# Probe (Alex 2026-06-24): how deep can the ouroboros go? After all
+# we're on nix.
+#
+# Honest answer at substrate-decl-altitude:
+#
+# The substrate-decl-on-Nix-on-OCI-on-substrate loop CLOSES at the
+# content-addressing altitude and OPENS at every scoping altitude.
+# That partition IS the load-bearing structural fact.
+#
+# The closure: any artifact A admits the cycle
+#
+#   substrate-decl describes A (has oid)
+#     → Nix derivation builds A (has hash)
+#       → OCI manifest packages A (has digest)
+#         → registry stores A (addressable by digest)
+#           → Nix pulls A back (dockerTools.pullImage by digest)
+#             → substrate-decl consumes A (oid recoverable)
+#               → substrate-decl describes a NEW artifact B
+#                 that depends on A → loop at altitude+1
+#
+# SHA256 is the shared function across three independent content-
+# addressing schemes. The fixed point EXISTS at content-addressing
+# altitude: an artifact whose oid + derivation hash + digest all
+# consistently identify the same SHA256 of the same bytes.
+#
+# The opening: at the scoping altitude, the three hashes address
+# DIFFERENT things (substrate content vs build inputs vs manifest
+# descriptors). The loop doesn't reduce; the loop COMPOSES.
+#
+# Recognition #98 candidate: **content-addressing is a substrate-
+# cross-altitude composition primitive**. The substrate already uses
+# CAS internally (oid; Splinter); composes against external CAS
+# (Nix derivation hash; OCI digest); composition is structurally
+# legible because the function is shared. The substrate's
+# distribution, build, and substrate-decl disciplines are all CAS.
+#
+# Honest hedge: this is hypothesis-altitude until a concrete
+# hello-world.wasm artifact actually round-trips through all
+# altitudes (substrate-decl → Nix build → OCI push → OCI pull →
+# Nix re-import → substrate consume). The substrate-decl ratifies
+# the SHAPE; the discharge is the working hello-world.wasm
+# round-trip pending Phase G or earlier. Recognition #98 stays
+# CANDIDATE until empirical Pack-altitude confirmation.
+
+# ============================================================
+# §7 Forward-promised work
+# ============================================================
+#
+# - shards/io/nix.mirror — substrate-decl for the Nix adapter at
+#   @io altitude. Symmetric counterpart. Composes via push/pull +
+#   derivation_hash ↔ oid ↔ digest identity lifts.
+# - hello-world.wasm round-trip: cascade<rust,wasm> (landed 2026-06-23)
+#   → Nix derivation → OCI push → OCI pull → Dockerfile FROM. This
+#   discharges #98's empirical hedge.
+# - shards/io/oci/<species>.mirror — projection-format species per
+#   the @io/stagefreight pattern (oci/crystal, oci/wasm); each
+#   refines manifest_for with its artifactType media type.
+# - docs/specs/recognitions/recognition-98-content-addressing-cross-
+#   altitude-composition.md — canonical-altitude candidate doc for
+#   Pack adversarial review (per #95's pattern).
+# - StageFreight PR-A spec §13.4 (Dockerfile pattern) becomes
+#   operational once @io/oci + @io/nix both land.
+# - Auth refinement at SEL boundary (per [[architecture-type-sel-io-au]]):
+#   oauth, bearer-token, mTLS, anonymous-pull as typed sub-carriers.
+
+# ============================================================
+# §8 Honest hedges
+# ============================================================
+#
+# 1. OCI Distribution Spec v1.1.x and Image Spec v1.1.x are mature
+#    (both stable since 2024-02-15; current patch v1.1.1 2025-03-03
+#    per Kagi this session) but the spec evolves. Spec citation is
+#    point-in-time 2026-06-24. Realisation must track spec version
+#    and decline non-conformant registries explicitly.
+#
+# 2. GHCR is one OCI registry option among many (Docker Hub, Azure
+#    ACR, Google AR, Harbor, Quay, etc.). This substrate-decl IS
+#    registry-agnostic by construction; the species shards declare
+#    registry-specific quirks where needed.
+#
+# 3. Nix derivation hash ≠ mirror oid ≠ OCI digest at the SCOPE
+#    altitude even though they share SHA256 at the function
+#    altitude. Conflating them is a Narcissus-pole error. The
+#    `oid_to_digest` action makes the substrate scoping explicit
+#    by being typed; consumers MUST NOT assume blanket identity.
+#
+# 4. The §6 circular-reflexive answer is hypothesis-altitude. The
+#    fixed-point CLAIM (loop closes at content-addressing altitude)
+#    needs empirical discharge: a concrete artifact round-tripping
+#    through all altitudes. The substrate-decl SHAPES the loop;
+#    Phase G (or earlier) DISCHARGES it. Until then: candidate.
+#
+# 5. #98 candidate is CONJECTURAL until Pack surfacing completes.
+#    Substrate-pull confidence is moderate (three witnesses: oid +
+#    derivation hash + digest all SHA256; closure shape sketched;
+#    ouroboros named by Glint 2026-06-23 + Alex 2026-06-24).
+#    Reed/Seam/Glint haven't weighed in at substrate altitude.
+#
+# 6. No typed auth surface yet (oauth, bearer, mTLS, anonymous-pull).
+#    oci_registry holds a ref; SEL boundary work (per [[architecture-
+#    type-sel-io-au]]) forward-promised. Auth-side Narcissus failures
+#    (token leakage, scope-creep, registry MITM) discharge at SEL
+#    species refinement.
+#
+# 7. The push_oci realisation likely depends on skopeo or oras at
+#    the @io edge (Kagi: Nix-native push is a gap; skopeo bridges
+#    nix-built tarballs). Standard @io family-root pattern per
+#    @io/cargo's reliance on the cargo binary.
+#
+# 8. #98 "composition primitive" claim is stronger than today's
+#    three-witness evidence supports. Truthful framing: content-
+#    addressing OBSERVED as a cross-altitude composition pattern in
+#    three independent schemes; more witnesses (IPFS CID, git OID,
+#    Maven coordinates) would strengthen; an altitude where content-
+#    addressing breaks composition would refute. CANDIDATE pending
+#    Pack adversarial review.
+
+out @io/oci
+out oci_digest
+out oci_repository
+out oci_reference
+out oci_manifest
+out oci_artifact
+out oci_registry
+out push_oci
+out pull_oci
+out oid_to_digest
+out spectral_coordinate_to_repo
+out manifest_for
+out oci_compliant
+out oci_reachable
+out digest_matches_content
+out oci_well_formed
