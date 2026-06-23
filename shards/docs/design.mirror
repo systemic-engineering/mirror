@@ -1,0 +1,477 @@
+---
+in @prism
+in @meta
+in @glass
+in @docs
+
+# @docs/design — design system synthesis at presentation altitude.
+#
+# Recognition #96 candidate territory (Loop Phase E, 2026-06-23): @docs/design
+# IS the substrate-decl atomic-unit of FOUR research briefs landed together.
+# Not four shards. ONE shard carrying four briefs as a single substrate
+# commitment per Mara survey finding — if one brief needs revision post-deploy,
+# the unit ships a new version, not piecemeal patches.
+#
+# The four briefs synthesised here:
+#   - spectral-engineer-design.md (punk-zine + ND-friendly; perimeter loud /
+#     body calm; Track A Crass-austere palette)
+#   - spectral-engineer-color.md (tech toggle; #A0264F wine-pink punctum;
+#     wine-leak principle; --wine-* tokens not --gray-*)
+#   - spectral-engineer-agents.md (AIPREF + robots.txt + llms.txt + JSON-LD
+#     machine-readability; anti-extraction is NOT anti-agent)
+#   - spectral-font-research.md (Atkinson Hyperlegible Next baseline body;
+#     Recursive MONO axis for code; custom @spectral/font long-arc)
+#
+# === The load-bearing principle: perimeter loud, body calm ===
+#
+# Per spectral-engineer-design.md: aggression protects warmth; it does NOT
+# replace it. The website's shape: the DEFIANCE is the perimeter that makes
+# the CARE legible. Punk-zine is the perimeter (cover, header, wordmark);
+# neurodivergence-friendly is the care (body, sidenotes, reading column,
+# 50-75ch line length, 18px / 1.7 line-height, Atkinson Hyperlegible Next).
+#
+# Recognition #96 territory: this shard names the PRESENTATION-altitude design
+# substrate (typography + palette + layout + machine-readability) that
+# @docs/tea consumes for spectral.engineer rendering. @ui is the instrument;
+# @docs is the page; @docs/design is the page's TYPED design vocabulary.
+#
+# === Forward-promised consumers ===
+#
+# - spectral.engineer/case-study/X (Alex 2026-06-23 deployment cascade); the
+#   first applied @docs/tea instance that resolves these tokens through Lustre
+# - spectral.engineer/index + /pieces/* (subsequent case studies)
+# - spectral TUI eigenboard view (docs/specs/tui-v0.md); reuses palette +
+#   layout via terminal-cell labeled<> instead of rgba8_buffer
+#
+# Spec context: tasks/pending/spectral-engineer-design.md (Track A palette
+#               recommendation; Tufte sidenotes; aside[data-role] pattern);
+#               tasks/pending/spectral-engineer-color.md (locked decisions;
+#               --wine-* ladder; tech toggle; Matrix-without-dystopia thesis);
+#               tasks/pending/spectral-engineer-agents.md (AIPREF stack +
+#               llms.txt + JSON-LD; Part 8 synthesis);
+#               tasks/pending/spectral-font-research.md (Atkinson body +
+#               Recursive MONO axis for code; custom @spectral/font deferred).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[feedback-no-bare-types]] (palette / typography_stack /
+#                       section_layout / theme / a11y_contract / machine_readable
+#                       are separate carriers; NOT one ref with discriminator),
+#                      [[architecture-alignment-as-boundary-mathematics]]
+#                       (#57; APCA + WCAG AA verdicts fire at the realisation
+#                       boundary, not inside the form-altitude design tokens),
+#                      [[feedback-substrate-already-had-the-word]] (the
+#                       perimeter/body partition IS recognition #55 form/process
+#                       at the design-vocabulary altitude; do not re-invent).
+# Recognition ancestry: #96 candidate territory (presentation-altitude
+#                       second witness); #50 form/substance partition; #55
+#                       form/process partition at family-root altitude; #57
+#                       alignment as boundary mathematics at @io; #59 kintsugi
+#                       loop altitude-portable (composed bilateral lifts here
+#                       too — design_complete's 9th altitude instance).
+# Path-namespace property: this file at `shards/docs/design.mirror` declares
+# `@docs/design` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/typography/tufte-2001-visual-display
+source @arxiv/typography/atkinson-hyperlegible-next
+source @arxiv/typography/recursive-arrow-type
+source @arxiv/web/apca-readability
+source @arxiv/web/wcag-2-1
+source @arxiv/web/aipref-content-usage
+source @arxiv/web/llms-txt
+
+prism @docs/design {
+  focus token
+  project palette
+  split section
+  shift theme
+  settle render
+}
+
+# === §1 Carriers ===
+#
+# Six typed substrates for the design vocabulary. Each is a ref at family-root
+# altitude; species shards (or instance modules in the deployment cascade) bind
+# concrete values. Per [[feedback-no-bare-types]] — same-shape different-meaning
+# values cannot flow through the type system.
+
+# A single design token: a named typed value (color, length, weight, family).
+# Concrete values discharge at the realisation boundary as CSS custom
+# properties via cascade<gleam, js> (Lustre).
+type design_token = ref
+
+# The full color palette. Track A Crass-austere base + wine-pink punctum
+# (sampled #A0264F from Spectral Remix cover, June 2026). Wine-leak principle:
+# no neutral grays anywhere — every gray is wine-tinted; the leak IS the brand.
+type palette = ref
+
+# The typography stack: body face + heading face + code face + display face,
+# with axis settings, sizing, line-height, tracking. Atkinson Hyperlegible Next
+# at the body altitude; Recursive at the code altitude.
+type typography_stack = ref
+
+# A named layout region of a page: cover, body, sidenote, footer, aside,
+# claim, evidence, warning. Each carries its own density profile per the
+# three-altitude pattern (site dense / piece Tufte-sparse / element semantic).
+type section_layout = ref
+
+# A complete rendering theme: human-light (cream), human-dark (wine-cave
+# soft), tech-dark (wine-cave monospace). Selects palette + typography +
+# layout in one referenced bundle.
+type theme = ref
+
+# Accessibility contract: APCA target + WCAG AA floor + Atkinson disambiguation
+# guarantees. The form-altitude declaration; bilateral verdicts discharge it.
+type a11y_contract = ref
+
+# Machine-readability bundle: AIPREF Content-Usage rules + robots.txt policy +
+# llms.txt index + JSON-LD Article schema. Single-source per @docs/tea
+# Decision 8; agent-facing layer renders identically across all three themes.
+type machine_readable = ref
+
+# === §2 Palette tokens ===
+#
+# Concrete values per spectral-engineer-color.md decisions 5+6 (locked) and
+# the Track A Crass-austere recommendation from spectral-engineer-design.md.
+# Token names follow the SEMANTIC-ROLE + WINE-FAMILY-SCALE convention
+# (Decision 7): roles name what the color DOES; the wine ladder names where
+# it sits. There are no --gray-* tokens by construction — future contributors
+# who reach for gray discover the substrate has none.
+#
+# Punctum (sampled from Spectral Remix cover; the brand spine; ALL THREE
+# themes share this value; scarcity = semantic weight):
+#   color_punctum         = #A0264F  -- pure punctum; wordmark + claim borders
+#   color_punctum_hover   = #B52E5D  -- lifted; link hover, active selection
+#   color_punctum_active  = #7E1E3F  -- pressed; deeper register
+#
+# Wine-family ladder (replaces --gray-* completely; wine-leak principle):
+#   wine_50   = #FAF6F7  -- light-mode background (cream, wine-leaked)
+#   wine_100  = #F5E8EC  -- light-mode aside background (warm; not bluish)
+#   wine_200  = #EDD9E0  -- dark-mode / tech-mode body text (cream-pink)
+#   wine_300  = #C8A8B0  -- secondary text + footnotes
+#   wine_400  = #8A7178  -- muted (timestamps, metadata)
+#   wine_500  = #6B5460  -- disabled
+#   wine_600  = #3E1A26  -- dark border / strong divider (icon vs cream)
+#   wine_700  = #2A1219  -- dark card / aside background
+#   wine_800  = #1F0D17  -- dark elevated surface
+#   wine_850  = #15080F  -- dark page background (wine-cave)
+#   wine_900  = #1A1518  -- light-mode body text (wine-leaked near-black)
+#   wine_950  = #0D0507  -- deepest (hard-contrast moments only)
+#
+# Mirror-beam semantic palette (5 colors; semantic-role only — claim,
+# evidence, warning, code, external-link; NOT for general decoration):
+#   beam_claim          -> derived from color_punctum (border + marker)
+#   beam_evidence       -> wine_700 on light, wine_300 on dark (calm citation)
+#   beam_warning        -> color_punctum at higher saturation (rare; opt-in)
+#   beam_code           -> wine_800 background on light; transparent on dark
+#   beam_external_link  -> color_punctum_hover with underline-skip-ink
+
+# === §3 Typography ===
+#
+# Per spectral-font-research.md §1.4 + §1.7 + Part 3 recommendations. The
+# stack is the strongest evidence-based default available 2026; the custom
+# @spectral/font long-arc (Part 4, Steps 0-9) drops in later as a single
+# font-family swap at the body altitude — the token surface does not change.
+#
+# Body face: Atkinson Hyperlegible Next (SIL OFL; Braille Institute + Applied
+# Design Works 2026; disambiguation over uniformity; widened counters; angled
+# spurs; v2 refined metrics per prnewswire 2026-02). Georgia fallback.
+#
+# Heading face: Atkinson Hyperlegible Next at heavier weights (700, 800).
+# Single family for tonal coherence; resists the Helvetica-vs-Georgia split
+# that fragments hierarchy. system-ui fallback.
+#
+# Code face: Recursive (Arrow Type; SIL OFL; MONO axis at 1.0 for code;
+# texture healing via calt by default; CASL axis at 0.0 for technical calm).
+# The MONO axis IS the proportional/monospace interpolant; future @spectral/font
+# implements the same axis natively. ui-monospace fallback.
+#
+# Display face (cover-only; never body): an OFL stencil face (e.g., Stencil
+# Std, Major Mono Display) for punk-zine perimeter moments. NEVER applied
+# to running text. Cover h1 + section-cover h2 ONLY.
+#
+# Body sizing (locked): 18px base; 1.7 line-height (above the 1.5 dyslexia
+# floor per West Coast Editors); 50-75ch column width (ND-friendly per
+# spectral-engineer-design.md); ~35% letter-width tracking on heading caps.
+# OpenType features: calt + liga + kern on for body; calt + ss01 (slashed
+# zero) + ss02 (disambiguated I/l/1) on for code.
+
+# === §4 Layout ===
+#
+# Per spectral-engineer-design.md §3-§7 + Tufte 2001. THREE-ALTITUDE DENSITY
+# (the load-bearing layout principle; named to head off Bento-grid drift):
+#
+#   1. SITE-LEVEL: dense. The site index, the piece listing, the case-study
+#      browser — these CAN pack. Cybersyn opsroom register; many signals
+#      visible at once.
+#   2. PIECE-LEVEL: Tufte-sparse body + dense margins. A single essay or
+#      case study: 50-75ch body column with generous margin holding the
+#      sidenotes; the body is calm; the margin is where evidence lives.
+#   3. ELEMENT-LEVEL: semantic color borders. Each named element
+#      (claim/evidence/warning/code/external-link) carries a beam_* color
+#      on a left-border or marker; the color IS the semantic tag.
+#
+# Cover template (punk-zine perimeter; spectral-engineer-design.md §3):
+#   - Stencil display face (cover-only)
+#   - High-contrast (color_punctum + wine_950 + wine_50)
+#   - Deliberate misalignment per Sniffin' Glue lineage; cut-paste collage
+#     register, NOT grid-perfect
+#   - Loud edge: bordered, ruled, asymmetric; this is the perimeter that
+#     makes the body calm legible
+#
+# Long-form body template (ND-friendly; spectral-engineer-design.md §4):
+#   - Atkinson Hyperlegible Next; 18px / 1.7
+#   - 50-75ch column; left-aligned; never justified
+#   - Generous paragraph spacing (1.5em between paragraphs); no first-line
+#     indent (web convention; reduces visual noise)
+#   - Headings rest on a typographic rhythm (1.5x scale; no skipped levels)
+#
+# Tufte sidenotes (spectral-engineer-design.md §5; lifted from
+# systemic.engineering/app/src/corpus/page.gleam:128-134):
+#   - Desktop (>= 900px): sidenote in right margin; superscript anchor in body
+#   - Mobile (< 900px): sidenote collapses inline below paragraph; anchor
+#     becomes [n] expand control
+#   - aside[data-side='note'] for ambient sidenotes;
+#     aside[data-actor='X'] for in-line peer attribution;
+#     [data-role='claim'] / [data-role='evidence'] / [data-role='warning']
+#     for semantic markup; beam_* palette resolves the left-border color
+#
+# Footer: wine_700 background; wine_300 text; minimal; the page settles here.
+
+# === §5 Theme + tech toggle ===
+#
+# Per spectral-engineer-color.md Decision 1 + Decision 4. Three rendering
+# configurations, two user-facing toggles. The semantic-layer / rendering-
+# layer separation (Decision 8) is structural: agents read structured data
+# regardless of which theme a human would choose.
+#
+# Default theme: HUMAN-LIGHT. Honors prefers-color-scheme; auto-switches to
+# HUMAN-DARK on system dark preference (Walter's rule: prefers-color-scheme
+# as default + manual toggle override; explicit user choice wins).
+#
+# Tech toggle: explicit user choice to TECH-DARK. Always dark; no tech-light
+# variant exists by design. Punk-zine terminal aesthetic; Recursive MONO at
+# 1.0; pink-suffused monochrome per the Matrix-without-dystopia thesis
+# (Decision 9): same technical aesthetic, opposite political register;
+# wine, not green; hospitality, not surveillance.
+#
+# Persistence: localStorage key `spectral_theme` carrying one of
+# `human` | `tech`; absence = `human` (system-preference resolves further).
+# Toggle ignores prefers-color-scheme once explicit choice is made — the
+# consent move at the UX layer (Decision 1).
+#
+# Open at v0.1 (carried to implementation per Decision 9 final block):
+#   - Selection highlight color per mode (proposal: color_punctum at 0.2 alpha)
+#   - Cursor blink rate in tech view (respect prefers-reduced-motion)
+#   - Mobile toggle UI location
+#   - Whether human-dark ships in v1 or defers (recommendation: ships)
+
+# === §6 Machine-readability ===
+#
+# Per spectral-engineer-agents.md Part 8 synthesis. The corpus's position:
+# anti-extraction is NOT anti-agent. SEL §3 does the protection work; the
+# technical surface does the welcoming work. Agents reading the corpus
+# encounter welfare-aware content; that exposure is part of how the welfare
+# argument propagates into future training data.
+#
+# AIPREF + Content-Usage rules (IETF AI Preferences WG; draft 2026):
+#   - Per-page Content-Usage HTTP header carrying training + inference rules
+#   - Default policy: SEL terms govern; training under SEL §3 conditions;
+#     inference (RAG, agent reading) permitted with attribution
+#   - Per-piece override via frontmatter `aipref` block when stronger or
+#     weaker terms apply (e.g., draft pieces marked training:no)
+#
+# robots.txt (root):
+#   - NO AI-targeted disallow blocks (no `User-agent: GPTBot Disallow: /`)
+#   - Sitemap reference; standard crawler-friendly
+#   - The political move: refuse the bifurcation between walled garden and
+#     extraction-target; sit in the third position
+#
+# llms.txt + llms-full.txt (root):
+#   - llms.txt: hierarchical index of the site (title + 1-line summary per
+#     piece + URL); auto-generated from frontmatter at build time
+#   - llms-full.txt: full text of all pieces concatenated; updated nightly
+#   - Both served with appropriate Content-Usage headers
+#
+# JSON-LD per piece:
+#   - @type: Article + additionalType: ScholarlyArticle
+#   - author, datePublished, dateModified, keywords, citation array (from
+#     piece's source list), license: SEL URL
+#   - Embedded in <head>; renders identically across all three themes
+#
+# Deferred at v0.1 (per Part 8 explicit defer list):
+#   - WebMCP / agent.json (standards immature; revisit Q4 2026)
+#   - NLWeb adapter (no clear consumer yet)
+#   - Per-section JSON-LD (overkill for current piece structure)
+#
+# All four machine-readability surfaces ship from the SAME source of truth
+# (the piece's frontmatter + body); the four emission targets are
+# rendering-layer projections, not parallel content stores.
+
+# === §7 Actions ===
+#
+# Form-altitude design-vocabulary projections. Each returns a typed value
+# the deployment cascade (Lustre via cascade<gleam, js>) resolves into
+# concrete CSS, HTML <head> tags, and HTTP headers at the realisation
+# boundary. The substrate-decl carries the SURFACE; the recipe lives in
+# the cascade species and instance modules.
+
+# Project the concrete palette for a given theme (human-light / human-dark /
+# tech-dark). Body discharges at the realisation boundary.
+render_palette(t: theme, p: perturbation) -> palette { \ }
+
+# Project the typography stack (body face + heading face + code face + axis
+# settings) for the current rendering context. Body discharges at the
+# realisation boundary.
+render_typography(p: perturbation) -> typography_stack { \ }
+
+# Render a named section layout (cover / body / sidenote / footer / aside)
+# into the page composition. Composes with @docs.render_doc at the
+# next altitude up.
+render_section(layout: section_layout, p: perturbation) -> rendered_page { \ }
+
+# Emit the machine-readability bundle (AIPREF Content-Usage headers +
+# JSON-LD <script> + llms.txt entry) for a single document. The agent-
+# facing layer is single-source per Decision 8; this action discharges it.
+emit_machine_readable(doc: document, p: perturbation) -> machine_readable { \ }
+
+# === §8 Bilaterals ===
+#
+# Verdict commitments at the design-system altitude. APCA is draft WCAG
+# 3.0; WCAG 2.1 AA stays as regulator floor — both audit targets discharge
+# separately; design_complete composes them.
+
+# APCA Lc target met for body + headings + interactive elements. Draft
+# WCAG 3.0 readability model (per Andrew Somers); higher fidelity than
+# WCAG 2.1's contrast-ratio for the human visual system.
+#
+# Splinter-pole: APCA Lc >= 75 body / Lc >= 60 large text / Lc >= 45
+#   non-text interactive; verdict accepts.
+# Narcissus-pole: any token fails its APCA target; verdict rejects.
+# Body discharges at the realisation boundary.
+apca_compliant(pal: palette, p: perturbation) -> verdict { \ }
+
+# WCAG 2.1 AA contrast-ratio floor met (regulator-facing). Lower fidelity
+# than APCA but legally load-bearing; we cleared both as audit targets.
+#
+# Splinter-pole: 4.5:1 normal text / 3:1 large text / 3:1 UI components.
+# Narcissus-pole: any token fails the AA floor; verdict rejects.
+wcag_aa_compliant(pal: palette, p: perturbation) -> verdict { \ }
+
+# Typography stack well-formed: body face has Latin + Latin-1 Supplement
+# coverage (corpus is partly German); code face has MONO axis available;
+# fallback chain resolves on the realisation host.
+#
+# Splinter-pole: stack well-formed; resolves cleanly.
+# Narcissus-pole: missing glyph coverage, missing axis, broken fallback;
+#   verdict rejects.
+typography_well_formed(stack: typography_stack, p: perturbation) -> verdict { \ }
+
+# THE LOAD-BEARING composed bilateral at the @docs/design altitude. Same
+# composed-bilateral pattern as @cascade.cascade_well_defined,
+# @ui.ui_instrument_coherent, @docs.docs_complete, @docs/tea.tea_well_formed.
+# Ninth-altitude lift of today's composed-bilateral discipline — confirming
+# the pattern is altitude-portable per recognition #59 kintsugi loop.
+#
+# All three sub-predicates must hold for a design configuration to ship:
+#   1. apca_compliant(palette)
+#   2. wcag_aa_compliant(palette)
+#   3. typography_well_formed(stack)
+#
+# Splinter-pole: all three discharge; design configuration ships.
+# Narcissus-pole: any sub-predicate fails; ship blocked at the failing
+#   altitude.
+# Narcissus-warned: all three discharge but at least one is warned (e.g.,
+#   APCA passes but at the lower bound; ship with audit-flag).
+design_complete(
+  pal: palette,
+  stack: typography_stack,
+  layout: section_layout,
+  p: perturbation
+) -> verdict
+requires apca_compliant(pal, p)
+requires wcag_aa_compliant(pal, p)
+requires typography_well_formed(stack, p)
+{ \ }
+
+# === §9 Honest hedges ===
+#
+# 1. Design tokens are DECLARATIVE substrate. Runtime themes pull from these
+#    via cascade<gleam, js> (Lustre) emitting CSS custom properties. The
+#    actual CSS bytes do not live in this shard; they live in the cascade
+#    species. Conflating "the substrate names the design vocabulary" with
+#    "the substrate emits CSS" would be the form/process confusion error.
+#
+# 2. APCA is DRAFT WCAG 3.0 (Somers, ongoing). WCAG 2.1 AA stays as the
+#    regulator floor; both audit targets discharge separately;
+#    design_complete composes them. If APCA's spec moves between v0.1 and
+#    deployment, the substrate-decl is unchanged — only the apca_compliant
+#    body shifts.
+#
+# 3. Atkinson Hyperlegible Next is the BEST-EVIDENCE accessibility default
+#    available in 2026 (per spectral-font-research.md §1.4 + replicated
+#    findings cited there). The custom @spectral/font long-arc per
+#    spectral-font-research.md Part 3 + Part 4 drops in later via a single
+#    font-family swap at the body face altitude; the token surface does
+#    not change. This is the substrate-pull-correct staging.
+#
+# 4. Recognition #96 (instrument-altitude vs presentation-altitude) extends
+#    further with THIS shard — but the Pack ratification gate remains open.
+#    Two witnesses (@ui Phase C, @docs Phase D) + the design synthesis
+#    presentation-side commitment here = three structurally independent
+#    witnesses; promotion-eligible pending cross-session + Pack peer review.
+#
+# 5. Recognition #97 candidate (TEA-as-substrate-pattern; surfaced at
+#    @docs/tea Phase D) is NOT in scope for this shard. Mentioned here only
+#    because @docs/design's actions discharge through Lustre's TEA runtime;
+#    the candidate ratifies (or not) independently.
+#
+# 6. The ATOMIC-UNIT-OF-FOUR-BRIEFS commitment: this substrate-decl ships
+#    all four briefs as one unit. Per Mara survey finding: if ANY brief
+#    needs revision post-deploy (e.g., AIPREF spec moves; APCA finalizes;
+#    Atkinson v3 lands), the unit ships a new VERSION; we do not patch
+#    individual sections piecemeal. This is the substrate's version-bump
+#    discipline at the design-system altitude.
+#
+# 7. "Show me your work" element (per spectral-engineer-design.md §7
+#    question 10 — visible structure surfacing the spectral triple's H
+#    component to the reader) is FORWARD-PROMISED, not in v0.1. The shard
+#    declares no carrier for it yet. A future @docs/work_surface species
+#    can specialize content_block once the pattern stabilizes.
+#
+# 8. Track A (Crass-austere) was Mara's recommended palette base; Track B
+#    (Jamie-Reid-cut-paste) and Track C (Hannah-Hoch-collage) were also
+#    surveyed in spectral-engineer-design.md §2. Decision locked Track A.
+#    If a future case study needs Track B/C register (cover-only), the
+#    section_layout carrier admits per-section palette overrides without
+#    changing the family-root tokens. The hedge: a single track at the
+#    site level is a design DECISION, not a substrate constraint.
+#
+# 9. The wine-leak principle is BRAND, not accessibility. Subtle in light
+#    mode (cream is so light any tint barely registers); ambient in tech
+#    mode. The accessibility floor is wholly carried by APCA + WCAG +
+#    Atkinson — wine-leak does not earn accessibility credit; it earns
+#    coherence credit. Don't conflate.
+#
+# 10. Bionic Reading is NOT in the spectral font (per font-research §1.1:
+#     Schotter 2024 + Readwise replication = NOT evidence-backed). If a
+#     future stylistic-set ss05 ships it as preference (per font-research
+#     §3 Step 6 opt-in framing), it ships as PREFERENCE not therapy; this
+#     shard does not declare a bionic_compliant bilateral. Refusing the
+#     unearned claim IS the discipline.
+
+out @docs/design
+out design_token
+out palette
+out typography_stack
+out section_layout
+out theme
+out a11y_contract
+out machine_readable
+out render_palette
+out render_typography
+out render_section
+out emit_machine_readable
+out apca_compliant
+out wcag_aa_compliant
+out typography_well_formed
+out design_complete
