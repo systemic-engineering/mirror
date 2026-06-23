@@ -86,10 +86,13 @@ in @prism
 in @meta
 in @glass
 in @epistemologic
-in @epistemologic/cybernetic   # second-order cybernetics parent
-in @frame                       # bidirectional with @frame (structural,
-                                # not cyclic; @frame names structure,
-                                # @cogito instantiates discipline within)
+in @epistemologic/cybernetic              # second-order cybernetics parent
+in @epistemologic/cybernetic/distinction  # Spencer-Brown mark primitive
+                                          # (per H4 resolution; name_output = mark)
+in @frame                                 # bidirectional with @frame
+                                          # (structural, not cyclic; @frame names
+                                          # structure, @cogito instantiates
+                                          # discipline within)
 ```
 
 ## 4. Sources / cultural-practice prior art
@@ -208,11 +211,36 @@ H3 dissolves: @cogito's directional sequencing is structurally
 consistent with the substrate's existing operational patterns; the
 bilateral-discipline symmetry is preserved at each step.
 
-### H4: name_output type underspecified
+### H4: name_output type underspecified — RESOLVED 2026-06-23
 
-Currently bare `ref` per the proposal. Violates
-[[feedback-no-bare-types]]. Must be substantively typed (distinction?
-boundary? predicate? AST fragment?) before landing.
+**Original concern:** research proposed `name_output = ref`, which
+violates [[feedback-no-bare-types]]. Must be substantively typed
+(distinction? boundary? predicate? AST fragment?) before landing.
+
+**Empirical test result (shard-altitude reading):** the substrate
+already has the word via @epistemologic/cybernetic/distinction.mirror
+(landed task #374; Spencer-Brown 1969 grounding):
+
+```mirror
+type mark = ref                          # Spencer-Brown's mark
+type distinction_space = ref             # the space the mark distinguishes
+type cross_op = mark -> distinction_space  # the cross operation
+```
+
+When @cogito's operator NAMES a noticed phenomenon, they DRAW A
+DISTINCTION — produce a `mark` in `distinction_space`. The substrate-
+pull-correct refinement of the proposed `name_output` is the existing
+Spencer-Brown `mark` primitive:
+
+```mirror
+name(noticed: observer_change, frame: @frame, p: perturbation) -> mark
+```
+
+This follows the recurring substrate-already-had-the-word pattern
+([[feedback-substrate-already-had-the-word]]; recurrence count 7+).
+The proposal must `in @epistemologic/cybernetic/distinction` to import
+the `mark` carrier. H4 dissolves: bare-ref violation closed via the
+existing typed primitive.
 
 ### H5: cognitive_coherent bilateral underspecified
 
@@ -239,11 +267,10 @@ Land @cogito family-root WHEN all four conditions hold:
    evidence in respective shards; validates the substrate-altitude claim
    that cognition is what each Pack peer does at @frame/on altitude.
 
-Status: **1 of 4 conditions met; 2 of 5 hedges resolved (H2 + H3);
+Status: **1 of 4 conditions met; 3 of 5 hedges resolved (H2, H3, H4);
 1 of 5 hedges partially resolved (H1 — ambiguity real but parametric
-proposal empirically vindicated). Remaining: H4 (bare-ref name_output
-violation), H5 (cognitive_coherent under-spec); both need typed-refinement
-proposals at species-altitude before landing.**
+proposal empirically vindicated). Remaining: H5 (cognitive_coherent
+under-spec); needs species-altitude clarification before landing.**
 
 Until all four hold: the candidate stays a candidate. The research is
 preserved here; the surface is not lost.
