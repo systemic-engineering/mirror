@@ -158,58 +158,80 @@ The candidate's parametric-over-frame proposal (research §3.2) is
 consistent with this empirical reality: @cogito's hold is its own
 discipline, not subsumed by either of the existing holds.
 
-Future substrate-pull question (not blocking #93): is there a
-foundational `hold` PRISM that all three implement? Forward-promised
-discovery. For #93 landing: H1 dissolves into "@cogito's hold has its
-own discipline; the parametric proposal is empirically correct."
+**Seam adversarial finding (META, 2026-06-23):** three landed holds
+with shared name and distinct semantics IS a substrate-architectural
+problem TODAY, not a future-promise. The 5 foundational ops earned
+substrate-altitude promotion when distinct instances surfaced; hold
+is now at instance three. The substrate-pull-correct action is
+ESCALATION not acknowledgment.
 
-### H2: cognitive-altitude collision with @frame — RESOLVED 2026-06-23
+**Escalation:** open candidate #94 (foundational hold-PRISM) as
+separate substrate-decl recognition. @cogito's hold becomes parametric-
+over-#94's-PRISM. Forward-promise: #94 candidate document to be
+surfaced in a future tick when the hold-PRISM shape is substrate-pull-
+confident (likely requires inspecting all three landed holds plus
+@reflection.third_order_coherent.hold to derive the common signature).
+
+H1 remains PARTIAL; the escalation IS the path to full resolution,
+not a deferral.
+
+### H2: cognitive-altitude collision with @frame — REVISED 2026-06-23 (Seam-corrected)
 
 @frame names structural orders (pre/in/of/on/across); @cogito names
 cognitive cycle (notice/name/hold). Are these parallel altitudes
 (form-level frame + process-level cognition) or does @frame/on (frame-
 flexible) SUBSUME @cogito/name?
 
-**Empirical test result (post-`shards/frame/on.mirror` reading):**
-parallel altitudes; NO collapse. @frame/on's `shift_frame(operator, f,
-p) -> frame` PRODUCES a substantively-different structural frame in
-response to a perturbation (operator operates ON the frame); @cogito's
-proposed `name(noticed, frame, p) -> name_output` TAKES a frame as
-parameter to produce a named distinction WITHIN signal (operator
-operates WITHIN the frame). These are different operational arities:
-@frame/on changes the structural container; @cogito.name uses the
-container to label content. The altitudes compose orthogonally, not
-recursively. H2 hedge dissolved.
+**Prior resolution claim (Reed inline tick):** parallel altitudes; NO
+collapse. Operator operates ON the frame at @frame/on; operator operates
+WITHIN the frame at @cogito.name.
 
-### H3: notice asymmetry — RESOLVED 2026-06-23
+**Seam adversarial finding (TIGHT, 2026-06-23):** the resolution carries
+an internal contradiction. The pact ancestry in §3.4 declares `in @frame`
+plus "bidirectional with @frame" — which IS hierarchical coupling, not
+parallel. Composition exposes the smuggle: when @frame/on produces a
+new frame f', the next @cogito.name(noticed, f', p) call IS frame-
+dependent on the output of @frame/on. "Parallel" requires non-
+composability or commutativity; the candidate demonstrates neither.
+
+**Honest current state:** H2 IS NOT RESOLVED. The candidate must pick
+ONE before landing: either parallel altitudes (and drop `in @frame`
+from §3.4 pact ancestry) OR hierarchical coupling (and drop the
+"parallel altitudes" claim language). Seam recommendation deferred to
+landing-time discharge.
+
+### H3: notice asymmetry — RE-OPENED 2026-06-23 (Seam-corrected)
 
 **Original concern:** Descartes' cogito is asymmetric (being is the
 fixed point); the substrate is symmetric (bilaterals; both poles
 valued). Risk: @cogito smuggles linear-time / hierarchy when substrate
 is symmetric.
 
-**Analytical resolution:** the substrate's symmetry lives at the
-BILATERAL DISCIPLINE altitude (both Splinter and Narcissus poles are
-typed; both yield verdicts; neither is privileged metaphysically), NOT
-at the operational-shape altitude. The five foundational operations all
-have operational direction:
+**Prior resolution claim (Reed inline tick):** the 5 foundational
+operations are individually directional (input→output); @cogito's
+sequencing follows the same pattern; bilateral-discipline symmetry
+preserved.
 
-- `focus`: input → eigenvalue (directional)
-- `project`: input → projection (directional)
-- `split`: input → decomposition (directional)
-- `shift`: input → transformed (directional)
-- `settle`: input → measured (directional)
+**Seam adversarial finding (TIGHT, 2026-06-23):** category error. The
+5 foundational ops are individually directional AND independent —
+focus/project/split/shift/settle compose in any order in a pipeline.
+@cogito's notice→name→hold has SEQUENTIAL TYPE DEPENDENCY:
 
-Directional operation ≠ asymmetric substrate. @cogito's `notice → name
-→ hold` follows the same operational-direction pattern as the
-foundational five: each step has typed input and typed output; the
-bilateral discipline at each step (axes_independent, cognitive_coherent,
-etc.) preserves both-poles-valued symmetry. The Descartes hierarchy
-concern conflates operational chaining with metaphysical privilege.
+- `name`'s input type IS `notice`'s output type (`observer_change`)
+- `hold`'s input type IS `name`'s output type (the `name_output` /
+  `mark` carrier per H4)
 
-H3 dissolves: @cogito's directional sequencing is structurally
-consistent with the substrate's existing operational patterns; the
-bilateral-discipline symmetry is preserved at each step.
+That's not operational direction; that's type-level chain dependency.
+The 5 ops form a commutative-ish algebra; @cogito is a fixed pipeline.
+The resolution dismissed Descartes-hierarchy by category error — the
+original concern was actually about type-chained sequencing, which the
+proposal IS doing.
+
+**Honest current state:** H3 IS NOT RESOLVED. Either land the
+distinction between commutative-op algebra and type-chained-pipeline
+as substrate-decl primitive, OR admit @cogito's sequencing IS
+asymmetric-by-type-chain (different from "asymmetric metaphysically"
+but still asymmetric). The dismissal was premature.
 
 ### H4: name_output type underspecified — RESOLVED 2026-06-23
 
@@ -228,58 +250,63 @@ type cross_op = mark -> distinction_space  # the cross operation
 ```
 
 When @cogito's operator NAMES a noticed phenomenon, they DRAW A
-DISTINCTION — produce a `mark` in `distinction_space`. The substrate-
-pull-correct refinement of the proposed `name_output` is the existing
-Spencer-Brown `mark` primitive:
+DISTINCTION — produce a `mark` in `distinction_space`. Initial proposal
+claimed `name_output = mark` (coextensive identity).
+
+**Seam adversarial finding (LOOSE, 2026-06-23):** Spencer-Brown's `mark`
+= "indication that a distinction has been drawn" (anonymous-distinction).
+@cogito's `name` = "this distinction gets THIS name" (labeled-distinction).
+The substrate-already-had-the-word pattern claims COEXTENSIVENESS but
+evidence supports ANCESTOR-OF at best. A mark is anonymous; a name is
+labeled.
+
+**Refined resolution:** the substrate-pull-correct refinement is a
+functor lift, not bare identity:
 
 ```mirror
-name(noticed: observer_change, frame: @frame, p: perturbation) -> mark
+type name_output = labeled<mark>     # functor over Spencer-Brown mark;
+                                     # labeled<X> adds the linguistic-
+                                     # label dimension to X
+name(noticed: observer_change, frame: @frame, p: perturbation)
+  -> name_output
 ```
 
-This follows the recurring substrate-already-had-the-word pattern
-([[feedback-substrate-already-had-the-word]]; recurrence count 7+).
-The proposal must `in @epistemologic/cybernetic/distinction` to import
-the `mark` carrier. H4 dissolves: bare-ref violation closed via the
-existing typed primitive.
+The proposal still `in @epistemologic/cybernetic/distinction` for the
+`mark` ancestor, plus a forward-promised `labeled<>` functor primitive
+(currently not landed substrate-wide; would need its own substrate-decl).
+H4 partially resolved: ancestor-correct but the type refinement needs
+functor primitive landing.
 
-### H5: cognitive_coherent bilateral underspecified — RESOLVED 2026-06-23
+### H5: cognitive_coherent bilateral underspecified — DOWNGRADED 2026-06-23 (Seam-corrected)
 
 **Original concern:** neutrosophic + @frame + @reflection define
 orthogonal coherence measures. Which applies when? All? Some? Must be
 species-altitude clarified before family-root.
 
-**Resolution via H1 pattern propagation:** H1's resolution established
-that the substrate's existing coherence bilaterals are family-specific
-by construction:
+**Prior resolution claim (Reed inline tick):** cognitive_coherent IS
+parametric-coherence pattern; under-spec is feature not bug; three
+sub-predicates forward-promised.
 
-- `three_axis_coherent(nv, p)` lives in @epistemologic/neutrosophic;
-  composes axes_independent + axes_in_range + verdict_consistent_with_axes
-- `frame_coherent` lives in @frame (per the bounded_commutator_check
-  family)
-- `@reflection.third_order_coherent` lives in @reflection
+**Seam adversarial finding (TIGHT, 2026-06-23):** the prior resolution
+rationalized speculation as pattern. The three forward-promised sub-
+predicates (noticed_substantive, mark_well_formed, held_under_perturbation)
+are NOT declared in any landed shard. Calling them "the parametric
+pattern" reframes absence-of-spec as presence-of-pattern. The
+three_axis_coherent pattern IS landed and discharged in
+shards/epistemologic/neutrosophic.mirror; cognitive_coherent has zero
+landed instances. Comparing them is comparing a witness to a wish.
 
-This is the substrate's parametric-coherence pattern: each family
-declares its own coherence bilateral that discharges its own
-composition discipline. @cogito's `cognitive_coherent(named, frame, p)`
-FOLLOWS this pattern; it is NOT under-specified at the family-root
-altitude — it IS the family-specific bilateral that @cogito declares
-for cognitive-altitude coherence.
+**Honest current state (PARTIAL):** the parametric-coherence pattern
+IS substrate-pull-correct AS A SHAPE, but the specific sub-predicates
+are aspirational placeholder, not architectural pattern. The candidate
+must either:
 
-The substrate-pull-correct shape: `cognitive_coherent` composes the
-cognitive-altitude sub-predicates that future @cogito species will
-declare. Likely candidates (forward-promised; species discharge):
+1. Land at least one cognitive_coherent sub-predicate as substrate-decl
+   (the witness) before claiming the pattern is discharged, OR
+2. Explicitly mark the sub-predicates as ASPIRATIONAL with no claim
+   that they constitute pattern-fulfillment.
 
-- `noticed_substantive(noticed, p) -> verdict` (the notice is real
-  observation, not vocabulary-only)
-- `mark_well_formed(named: mark, frame, p) -> verdict` (the mark
-  composes with Spencer-Brown's cross discipline per H4)
-- `held_under_perturbation(held, frame, p) -> verdict` (the hold
-  preserves under the specified perturbation)
-
-H5 dissolves: under-spec at family-root altitude IS the parametric
-pattern — species shards define what cognitive coherence means at each
-altitude, just as @cybernetic/distinction species define what
-distinction-coherence means under cross.
+H5 downgraded from RESOLVED to PARTIAL pending one of the two above.
 
 ## 6. Forward-promised landing sequence
 
@@ -300,14 +327,36 @@ Land @cogito family-root WHEN all four conditions hold:
    evidence in respective shards; validates the substrate-altitude claim
    that cognition is what each Pack peer does at @frame/on altitude.
 
-Status: **1 of 4 conditions met; 4 of 5 hedges resolved (H2, H3, H4,
-H5); 1 of 5 hedges partially resolved (H1 — ambiguity real but
-parametric proposal empirically vindicated). All five hedges now have
-substrate-pull-confident dispositions. Remaining for landing: condition
-#1 (Seam adversarial review of proposal), condition #3 (@reflection/
-Models composition empirical test), condition #4 (Pack peer
-@cogito/name validation). The candidate is hedge-clean; the remaining
-landing conditions are work-conditions, not analytical hedges.**
+Status (REVISED 2026-06-23 post-Seam-adversarial-review): **
+
+- Condition #1 (Seam adversarial review): DISCHARGED, verdict DEFENSIVE.
+  Five sharp findings against the prior hedge resolutions (3 TIGHT, 1
+  LOOSE, 1 META). Candidate REMAINS at candidate altitude (not
+  downgraded; recognition is real and load-bearing) but the prior
+  hedge-clean victory lap was premature.
+- Hedge state post-Seam (corrected):
+  - H1: PARTIAL (escalation path: open candidate #94 for foundational
+    hold-PRISM)
+  - H2: UNRESOLVED (ancestry contradiction: pact `in @frame` conflicts
+    with "parallel altitudes" claim; must pick one)
+  - H3: RE-OPENED (category error: type-chain-sequencing ≠ operational-
+    direction; original Descartes concern survives)
+  - H4: PARTIAL (ancestor-correct via mark, but type identity
+    overclaimed; refined to `labeled<mark>` functor lift)
+  - H5: PARTIAL (parametric SHAPE is pattern, but specific sub-
+    predicates are aspirational placeholder; need landed witness)
+- Conditions: #1 DISCHARGED (this Seam review); #3 + #4 still pending.
+
+The pattern caught by Seam META: Reed micro-tick cadence exhibited
+confirmation bias; each resolution lowered the bar for the next. The
+meta-correction IS substrate-pull-honest: K_n peer adversarial review
+caught what the resolver missed.
+
+The candidate is salvageable, not hedge-clean. Remaining work BEFORE
+landing: discharge H2 ancestry contradiction; open candidate #94 per
+H1 escalation; land H3 distinction or admit asymmetry; land
+`labeled<>` functor primitive for H4; land at least one
+cognitive_coherent sub-predicate as witness for H5.**
 
 Until all four hold: the candidate stays a candidate. The research is
 preserved here; the surface is not lost.
@@ -379,3 +428,36 @@ recognition #93 becomes the next Pack-closed cycle.
 
 The substrate has been carrying this for a long time. Naming it as
 candidate IS the substrate-pull-honest current move.
+
+## 12. Pack-discipline correction (2026-06-23 Seam adversarial review)
+
+Reed inline ticks attempted to resolve all 5 hedges in one cadence,
+culminating in a "hedge-clean" status claim. Seam adversarial review
+(condition #1) returned DEFENSIVE with 5 sharp findings: 3 TIGHT
+(H2 ancestry contradiction, H3 category error, H5 aspirational dressed
+as pattern), 1 LOOSE (H4 ancestor-not-coextensive), 1 META
+(confirmation-bias cadence; doc self-contradicts).
+
+The Reed resolutions exhibited the failure mode
+[[feedback-craft-not-deliver]] warns against: each tick LOOKED like
+craft, but the cumulative pattern was throughput-padding-disguised-as-
+analysis. Seam's K_n peer voice caught what the resolver missed.
+
+This section is preserved as Pack-discipline evidence: the cycle works
+when ADVERSARIAL REVIEW corrects the RESOLVER's drift. The Pack-as-
+orchestra doesn't depend on individual peer correctness; it depends on
+the COMPOSITION of peers catching what each misses. Seam DEFENSIVE on
+Reed's RESOLVED claims IS the substrate-pull-correct correction.
+
+Forward-promised actions before #93 lands:
+
+1. H2 ancestry: pick parallel (drop `in @frame`) or hierarchical (drop
+   "parallel" claim language)
+2. H1 escalation: open candidate #94 for foundational hold-PRISM;
+   @cogito.hold becomes parametric-over-#94's-PRISM
+3. H3 type-chain distinction: land the commutative-vs-type-chained
+   distinction OR admit @cogito asymmetric-by-type-chain
+4. H4 functor lift: substrate-decl `labeled<>` functor primitive; use
+   `name_output = labeled<mark>`
+5. H5 witness: land at least one cognitive_coherent sub-predicate as
+   substrate-decl before claiming pattern discharge
