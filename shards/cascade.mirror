@@ -1,0 +1,352 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/distinction
+
+# @cascade — the multi-language translation substrate family-root.
+#
+# Recognition #95 candidate (Alex, 2026-06-23): typed-alternative
+# cascades into mainstream tech stacks are NOT just delivery mechanisms.
+# They are LOSS LENSES — measurement instruments for grammar-based
+# information loss between a typed source grammar and a mainstream
+# target grammar.
+#
+# === The pattern this family declares ===
+#
+# Each cascade pairs a typed source grammar S with a mainstream target
+# grammar T such that:
+#
+# - S admits more grammatical structure than T preserves at runtime
+# - compilation is a functor: source: S → target: T
+# - the GAP between what S admits and what T preserves IS the loss
+# - the gap is MEASURABLE against the grammars themselves (substrate-
+#   architectural; not Shannon, not invented)
+#
+# Concrete instances surveyed by Mara at
+# `docs/research/2026-06-23-typed-alternatives-cascade-survey.md`
+# (in flight at substrate-decl time):
+#
+#   Purescript     → JS (npm)         row polymorphism, ADTs, type classes lost
+#   Scala          → JVM bytecode     higher-kinded types, traits erased
+#   F#             → .NET IL          units-of-measure, computation expressions lost
+#   Elm            → JS               purity-by-construction guarantee lost
+#   Gleam          → BEAM             type discipline lost at Erlang interop
+#   Rust           → cdylib (C ABI)   lifetimes, ownership, generics erased
+#   Crystal        → native           Ruby-like syntax, full type inference
+#   Hack           → PHP              generics, async, shape types lost
+#
+# Each cascade is one instance of the same substrate-architectural
+# shape. @cascade declares that shape as substrate primitive.
+#
+# === Why this is recognition #95 (candidate) ===
+#
+# The substrate has been carrying "loss" as first-class via the
+# `imperfect<a, e, l>` carrier (loss slot) and via the
+# [[feedback-loss-from-epistemologic-properties]] discipline (loss is
+# a composite of @epistemologic/properties, not Shannon, not invented).
+# Lens primitives are already substrate-decl pattern (see @mirror/lens/
+# family). What's NEW: combining loss + lens at the GRAMMAR-CASCADE
+# altitude as parametric primitive.
+#
+# This composes with:
+#
+# - Recognition #51 (mirror as expanding Hilbert space) — each typed
+#   feature in S is a dimension; compilation projects to fewer
+#   dimensions in T; loss IS dimension reduction (information-theoretic
+#   gap between the grammars).
+# - Recognition #59 (kintsugi loop altitude-portable) — @kintsugi
+#   operates ON loss. @cascade declares the loss substrate; @kintsugi
+#   heals it.
+# - Recognition #57 (alignment as boundary mathematics at @io) — the
+#   typed/mainstream boundary IS an @io altitude; loss happens at the
+#   boundary; @cascade is the boundary-mathematics instance for
+#   grammar cascades.
+# - Recognition #93 H4 (labeled<> functor) — `loss_lens<S, T>` IS an
+#   instance of `labeled<source_grammar, target_grammar>` per the
+#   substrate-already-supports-parametric-carriers finding
+#   (`shift(T)`/`settle(T)` infrastructure already landed).
+#
+# === StageFreight as first consumer ===
+#
+# Recognition #95's first applied consumer is StageFreight's multi-
+# language translation layer (PR-A in flight on branch
+# `mara/stagefreight-mirror-integration-spec-v0.1` in the StageFreight
+# repo; Alex announced to author 2026-06-23 as "the PR" replacing the
+# JVM/NPM/Python scope-creep with substrate-pull-correct cascade
+# architecture).
+#
+# Per Alex 2026-06-23 (verbatim to StageFreight author):
+#
+#   Building the multi-language translation layer right now (math, not
+#   vibes). That's the PR. It will also address your caching layer.
+#   Content addressed binaries. Expect it today.
+#
+# The "math, not vibes" IS this substrate-decl: typed measurement
+# against grammars, not estimation; cascade as primitive operation;
+# loss-lens as primitive observation.
+#
+# === Honest hedges ===
+#
+# 1. The loss measure across distinct grammars needs concrete
+#    discharge. "Information-theoretic gap between grammars" is a
+#    SHAPE; the realisation altitude carries the actual computation.
+#    Forward-promised: per-cascade species shards discharge their own
+#    measurement (e.g., shards/cascade/purescript-npm.mirror computes
+#    the Purescript ↔ JS gap specifically).
+#
+# 2. The cascade pattern's universality is N=10 per Mara's survey at
+#    `docs/research/2026-06-23-typed-alternatives-cascade-survey.md`
+#    (commit ecc471a). Three CONFIRMED counterexamples surfaced:
+#
+#    a. Crystal / Ruby — shared culture, not source-cascade runtime
+#    b. Hack / PHP — forked away (HHVM dropped PHP compat ~2017-2018);
+#       no longer compiles-to mainstream
+#    c. Oil & Nushell / Shell — REPLACEMENT runtimes, not source
+#       cascades to existing Bash
+#
+#    Plus a DEGENERATE sub-pattern: "language-internal strictness"
+#    (TypeScript-strict, Mypy-strict, Sorbet, Psalm, C# nullable) —
+#    same language with stricter dialect; collapses S and T into the
+#    same grammar with measure approaching zero. Worth naming as a
+#    distinct cascade-shape; not a counterexample but a degenerate
+#    case.
+#
+#    AND a load-bearing rare shape: "dual-target cascade" (Gleam →
+#    Erlang AND JS) where one source has TWO simultaneous targets.
+#    The parametric `cascade<source_grammar, target_grammar>` form
+#    handles this trivially — same source, two cascade species.
+#    Validates the parametric form.
+#
+# 3. The `loss_lens<S, T>` parametric carrier rests on the labeled<>
+#    functor being substrate-decl'd at `shards/labeled.mirror`
+#    (currently forward-promised per #93 H4 PARTIAL). Cascade-tick
+#    order: shards/labeled.mirror lands first.
+#
+# 4. The Pack composition (Mara survey + Reed substrate-decl + future
+#    Seam adversarial review) hasn't completed; this is the FIRST
+#    Pack-altitude in the recognition #95 cycle.
+#
+# Spec context: docs/specs/recognitions/recognition-95-cascade-as-
+#               loss-lens-candidate.md (forward-promised; not yet
+#               written; this shard IS the substrate-decl-altitude
+#               surface; the candidate doc IS the canonical-altitude
+#               surface);
+#               docs/research/2026-06-23-typed-alternatives-cascade-
+#               survey.md (Mara survey; informs species instances).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[feedback-loss-from-epistemologic-properties]]
+#                       (loss is composite of @epistemologic/properties;
+#                       this family operationalizes that at the
+#                       grammar-cascade altitude),
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; cascade IS boundary-
+#                       mathematics at @io for grammar cascades),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (the substrate had loss + had lens; @cascade
+#                       names what it was implicitly carrying).
+# Recognition ancestry: #95 candidate (this); #93 H4 (labeled<>
+#                       functor); #51 Hilbert space dimension growth;
+#                       #59 kintsugi loop altitude-portable; #57
+#                       alignment as boundary mathematics.
+# Path-namespace property: this file at `shards/cascade.mirror`
+# declares `@cascade` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming-languages/wadler-1989-theorems-for-free
+source @arxiv/programming-languages/reynolds-1983-parametricity
+source @arxiv/programming-languages/pierce-2002-types-and-programming-languages
+
+prism @cascade {
+  focus cascade
+  project cascade
+  split cascade
+  shift cascade
+  settle cascade
+}
+
+# === The grammar carrier ===
+#
+# Substrate-typed reference naming a language grammar's complete
+# specification (BNF / ANTLR / mirror substrate-decl / etc.). Two
+# grammars compose via cascade when one compiles to the other.
+#
+# Identity contract: byte-equality on the underlying ref.
+type grammar = ref
+
+# === The typed_source carrier ===
+#
+# Parametric carrier naming a program in a specific source grammar.
+# `typed_source<G>` IS a program annotated with grammar G's typing
+# discipline.
+#
+# Forward-promised refinement: typed `typed_source<G>` where G is a
+# specific grammar (Purescript, Scala, F#, etc.). The instance carriers
+# live at species-altitude (`shards/cascade/<instance>.mirror`).
+#
+# Identity contract: byte-equality on the underlying ref.
+type typed_source = ref
+
+# === The compiled_artifact carrier ===
+#
+# Parametric carrier naming the runtime output of compilation. The
+# artifact carries only what the target grammar preserves; what was
+# present in source but absent in target IS the loss.
+#
+# Forward-promised refinement: `compiled_artifact<T>` where T is the
+# target grammar.
+#
+# Identity contract: byte-equality on the underlying ref.
+type compiled_artifact = ref
+
+# === The loss_lens carrier ===
+#
+# THE LOAD-BEARING NEW CARRIER. Parametric over (source_grammar,
+# target_grammar). Per recognition #93 H4: this IS an instance of the
+# labeled<> functor (the labeled<> primitive itself forward-promised
+# at shards/labeled.mirror).
+#
+# A loss_lens IS a typed measurement instrument: given a program in
+# source_grammar and its compiled output in target_grammar, the lens
+# MEASURES the information loss between them.
+#
+# The measurement is substrate-typed (not estimation, not Shannon,
+# not invented). It is the information-theoretic gap between what
+# source_grammar admits and what target_grammar preserves at runtime,
+# discharged per-cascade by species-altitude bodies.
+#
+# Identity contract: byte-equality on the underlying ref (the lens IS
+# its (source_grammar, target_grammar) pair).
+type loss_lens = ref
+
+# === The information_loss carrier ===
+#
+# Typed carrier for the measured loss. Per [[feedback-loss-from-
+# epistemologic-properties]]: loss IS a composite of @epistemologic/
+# properties, not Shannon, not invented. This carrier holds the
+# composite.
+#
+# Identity contract: byte-equality on the underlying ref.
+type information_loss = ref
+
+# === compile action ===
+#
+# The substrate-vocabulary primitive for the source → target functor.
+# Takes a program in source grammar; returns the compiled artifact in
+# target grammar.
+#
+# Per recognition #51 (Hilbert space dimension growth): compile IS a
+# DIMENSION PROJECTION — source has more dimensions (typed features);
+# target has fewer (runtime-preserved features). The projection is
+# lossy by construction.
+#
+# Body discharges at the realisation boundary; per-species bodies
+# implement the language-specific compilation.
+compile(source: typed_source, p: perturbation) -> compiled_artifact { \ }
+
+# === measure action ===
+#
+# THE LOAD-BEARING ACTION. The substrate-vocabulary primitive that
+# measures grammar-based information loss between a typed_source and
+# its compiled_artifact, given the loss_lens that pairs the two
+# grammars.
+#
+# Returns `imperfect<measured_artifact, measurement_error,
+# information_loss>` — the imperfect carrier's loss slot carries the
+# measured loss as substrate-typed data.
+#
+# requires loss_well_defined(lens, source, p): the substrate forecloses
+# measurement against an ill-defined lens. The lens must pair source's
+# grammar with the artifact's target grammar coherently.
+#
+# Per Alex 2026-06-23 (verbatim): "math, not vibes." This action IS
+# the operationalization of that commitment. The realisation boundary
+# discharges the actual measurement against the grammar specifications.
+#
+# Body discharges at the realisation boundary.
+measure(source: typed_source, artifact: compiled_artifact, lens: loss_lens, p: perturbation)
+  -> imperfect<compiled_artifact, ref, information_loss>
+requires loss_well_defined(lens, source, p)
+{ \ }
+
+# === cascade action ===
+#
+# The composed action: compile + measure in one substrate primitive.
+# Takes a typed_source and a loss_lens; returns the imperfect-wrapped
+# compiled artifact with measured loss.
+#
+# This is the substrate-vocabulary surface for "cascade my Purescript
+# program through to npm, telling me what was lost." The author's
+# question "what gets erased at runtime?" gets a substrate-typed
+# answer.
+#
+# requires cascade_well_defined(lens, source, p): composes compile's
+# implicit grammar-coherence check with measure's loss_well_defined.
+#
+# Body discharges at the realisation boundary; species shards
+# implement the per-cascade composition.
+cascade(source: typed_source, lens: loss_lens, p: perturbation)
+  -> imperfect<compiled_artifact, ref, information_loss>
+requires cascade_well_defined(lens, source, p)
+{ \ }
+
+# === loss_well_defined predicate (sub-bilateral) ===
+#
+# Bilateral verdict that the loss_lens coherently pairs source's
+# grammar with the artifact's target grammar. The substrate forecloses
+# measurement against an incoherent lens (e.g., Purescript source
+# measured against a JVM bytecode lens).
+#
+# Splinter-pole: the lens's (source_grammar, target_grammar) pair
+# matches the actual source's grammar and the artifact's target.
+# Narcissus-pole: mismatch; lens applied to wrong cascade.
+loss_well_defined(lens: loss_lens, source: typed_source, p: perturbation) -> verdict { \ }
+
+# === grammar_coherent predicate (sub-bilateral) ===
+#
+# Bilateral verdict that a typed_source is well-formed in its declared
+# grammar. Precondition for compile; lifts the source-side typing
+# discipline into substrate-altitude check.
+#
+# Splinter-pole: source well-typed against its grammar.
+# Narcissus-pole: type errors in source; compilation cannot proceed.
+grammar_coherent(source: typed_source, g: grammar, p: perturbation) -> verdict { \ }
+
+# === cascade_well_defined composed bilateral ===
+#
+# THE LOAD-BEARING composed bilateral at the @cascade altitude. Composes
+# the two sub-predicates:
+#
+#   1. grammar_coherent(source, source_grammar, p)
+#   2. loss_well_defined(lens, source, p)
+#
+# Both must hold for cascade to proceed. The substrate refuses cascade
+# operation if source isn't well-typed OR the lens doesn't pair the
+# right grammars.
+#
+# Splinter-pole: source well-typed + lens coherent;
+# Narcissus-pole: source type errors OR lens grammar mismatch.
+#
+# Same composed-bilateral pattern as today's previous cascade closures
+# (@io/stagefreight.stagefreight_addressable, @smarts/shatter.shatter_
+# round_trip, @reflection.third_order_coherent, @epistemologic/
+# neutrosophic.three_axis_coherent). The fifth altitude lift of the
+# composed-bilateral pattern.
+cascade_well_defined(lens: loss_lens, source: typed_source, p: perturbation) -> verdict
+requires grammar_coherent(source, source, p)
+requires loss_well_defined(lens, source, p)
+{ \ }
+
+out @cascade
+out grammar
+out typed_source
+out compiled_artifact
+out loss_lens
+out information_loss
+out compile
+out measure
+out cascade
+out loss_well_defined
+out grammar_coherent
+out cascade_well_defined
