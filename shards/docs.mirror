@@ -317,6 +317,32 @@ type rendered_page = labeled(rgba8_buffer, document)
 # Body discharges at the realisation boundary.
 compose(corpus: nl_literal, field: field, p: perturbation) -> document { \ }
 
+# === field_from_measurement action (Phase F-hedge discharge; 2026-06-23) ===
+#
+# THE BRIDGE PRIMITIVE Mara F flagged as missing (per shards/docs/tea/
+# spectral-engineer-case-study.mirror §10 hedge 2): the pipeline from
+# @nl.project_measurement output → @ui field construction had no
+# substrate-typed primitive between @nl's measurement output and @ui's
+# field input. The compose action above takes (corpus, field, p), but
+# the field had to come from somewhere; before this action, that
+# somewhere was prose-bridged.
+#
+# This action closes the gap: takes a typed @nl measurement (the
+# output of project_measurement: a Connes distance + spectral structure
+# typed reference); returns a typed @ui field (motes for token clusters;
+# arcs for significant discourse relations; mote colors derived from
+# affect_profile when present).
+#
+# requires measurement_well_formed: the substrate forecloses field
+# construction from an ill-defined measurement.
+#
+# Body discharges at the realisation boundary; per-cascade species
+# (e.g., the spectral.engineer/case-study/X instance) implement the
+# specific mote-placement + arc-strength derivation algorithm.
+field_from_measurement(measurement: ref, p: perturbation) -> field
+requires measurement_well_formed(measurement, p)
+{ \ }
+
 # === render_doc action ===
 #
 # THE OUTPUT-PRODUCING ACTION. Takes a document + perturbation;
@@ -379,6 +405,18 @@ document_well_formed(doc: document, p: perturbation) -> verdict { \ }
 # Body discharges at the realisation boundary.
 composition_coherent(corpus: nl_literal, field: field, p: perturbation) -> verdict { \ }
 
+# === measurement_well_formed bilateral (Phase F-hedge discharge; 2026-06-23) ===
+#
+# Bilateral verdict that an @nl measurement ref (output of
+# project_measurement) carries the structural data needed for field
+# construction: token clusters identifiable; significant discourse
+# relations bounded; optional affect_profile properly typed.
+#
+# Splinter-pole: measurement well-formed for @ui field construction;
+# Narcissus-pole: measurement missing structural data; field construction
+# undefined.
+measurement_well_formed(measurement: ref, p: perturbation) -> verdict { \ }
+
 # === docs_complete composed bilateral ===
 #
 # THE LOAD-BEARING composed bilateral at the @docs altitude. Same
@@ -413,6 +451,8 @@ out @docs
 out document
 out content_block
 out page_state
+out field_from_measurement
+out measurement_well_formed
 out rendered_page
 out compose
 out render_doc
