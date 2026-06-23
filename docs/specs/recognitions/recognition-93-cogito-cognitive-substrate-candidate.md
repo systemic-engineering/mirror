@@ -115,13 +115,50 @@ in @frame                       # bidirectional with @frame (structural,
 The research surfaced **five honest hedges** that mean substrate-decl
 NOW would over-claim:
 
-### H1: "hold" ambiguity
+### H1: "hold" ambiguity — PARTIALLY RESOLVED 2026-06-23
 
 Neutrosophic's hold ("preserve under structure") vs cybernetic's hold
 ("maintain distinction under learning") vs somatic/therapeutic hold
 ("suspend without collapsing") are three different discharge
 boundaries. The candidate must be parametric over which hold-discipline
 discharges, with the frame parameter naming it.
+
+**Empirical test result (shard-altitude reading):** the substrate today
+carries TWO landed hold actions with DISTINCT semantics, plus the
+proposed @cogito hold as a third:
+
+1. `shards/epistemologic/neutrosophic.mirror`:
+   `hold(nv: neutrosophic_verdict, p: perturbation) -> neutrosophic_verdict`
+   `requires three_axis_coherent(nv, p)`
+   — **identity-preserving**: in.type == out.type; one bilateral check;
+   coherent input passes through unchanged.
+
+2. `shards/pack/reed.mirror`:
+   `hold(pc: precondition, rw: reed_witness, sr: seam_review, p: perturbation) -> ref`
+   `requires witness_grounds_relationship(rw, p)`
+   `requires review_sound(sr, p)`
+   — **transformative**: three inputs → ref; double-bilateral; the
+   held artifact is constructed FROM the witness + review, not
+   preserved unchanged.
+
+3. @cogito proposed (research §3.2):
+   `hold(named: name_output, frame: @frame, p: perturbation) -> hold_output`
+   `requires cognitive_coherent(named, frame, p)`
+   — **transformative**: two inputs → hold_output; one bilateral; the
+   held output is structurally distinct from the named input.
+
+The ambiguity IS real and IS empirically grounded — the three holds
+are not the same operation. The substrate-pull-correct resolution is
+NOT to collapse them to one prism. Each family's hold serves its
+family-specific discipline with family-specific bilateral discharge.
+The candidate's parametric-over-frame proposal (research §3.2) is
+consistent with this empirical reality: @cogito's hold is its own
+discipline, not subsumed by either of the existing holds.
+
+Future substrate-pull question (not blocking #93): is there a
+foundational `hold` PRISM that all three implement? Forward-promised
+discovery. For #93 landing: H1 dissolves into "@cogito's hold has its
+own discipline; the parametric proposal is empirically correct."
 
 ### H2: cognitive-altitude collision with @frame — RESOLVED 2026-06-23
 
@@ -179,7 +216,9 @@ Land @cogito family-root WHEN all four conditions hold:
    evidence in respective shards; validates the substrate-altitude claim
    that cognition is what each Pack peer does at @frame/on altitude.
 
-Status: **1 of 4 conditions met; 1 of 5 hedges resolved (H2).**
+Status: **1 of 4 conditions met; 1 of 5 hedges resolved (H2); 1 of 5
+hedges partially resolved (H1 — ambiguity real but parametric proposal
+empirically vindicated).**
 
 Until all four hold: the candidate stays a candidate. The research is
 preserved here; the surface is not lost.
