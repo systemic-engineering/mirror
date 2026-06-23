@@ -124,7 +124,20 @@ recurring; recognition #95 instantiates it for grammar cascades.
 Authoritative declaration: `shards/cascade.mirror` (Reed, today,
 origin/main). The canonical spec is documentation; the shard is source.
 
-## 3. Mathematical formalization
+## 3. Mathematical shape
+
+**Framing note (Seam-corrected 2026-06-23):** this section names the
+TYPED SURFACE the mathematical discharge operates against — it does
+NOT claim per-cascade loss numbers are already computable. The
+substrate-decl ratifies the SHAPE at v0.1; the actual computation
+(e.g., the Purescript→JS row-polymorphism loss number for program P)
+is discharged at species-altitude shard bodies, forward-promised
+throughout. Section title intentionally NOT "Mathematical
+formalization" — the math LIVES at recognition #51 (mirror as
+expanding Hilbert space), [[feedback-loss-from-epistemologic-
+properties]] (loss as @epistemologic/properties composite), and the
+forward-promised species shards. THIS section names the substrate
+that holds the math, not the math itself.
 
 This section names where the math LIVES. The substrate-decl ratifies
 the SHAPE; the discharge happens at species-altitude (per-cascade
@@ -265,7 +278,7 @@ numbers come from species-altitude shards.
 
 | Family | Composition with @cascade |
 |---|---|
-| @epistemologic/cybernetic | loss IS a measurable property; cascade IS variety-reduction (Ashby) from S's expressive variety to T's preserved variety |
+| @epistemologic/cybernetic | loss IS a measurable property (per [[feedback-loss-from-epistemologic-properties]]); cascade-as-Ashby-variety-reduction is **FORWARD-PROMISED claim**, not yet substrate-cited — would require a specific @cybernetic property witness (variety / requisite / coherence) to be load-bearing; flagged Seam C3 2026-06-23 |
 | @epistemologic/property | `@epistemologic/properties` are the composite ingredients of the loss verdict; cascade SPECIALIZES property-loss to grammar-pair erasure |
 | @kintsugi | @kintsugi reads cascade's loss-typed output; healing operates on loss-lens results per #59 altitude-portability |
 | @io | cascade IS boundary-mathematics at @io for grammar cascades, per recognition #57 alignment-as-boundary-mathematics |
@@ -331,18 +344,25 @@ relation collapse at the grammar boundary.
 Referenced in `shards/cascade.mirror` line 158 as
 `source @arxiv/programming-languages/reynolds-1983-parametricity`.
 
-### 5.3 Connes — spectral triple
+### 5.3 Connes — spectral triple (REMOVED 2026-06-23 per Seam C4)
 
-The substrate's deepest grounding (recognition #58: Fate IS optical
-inference; recognition: substrate IS Connes' (A, H, D)). A spectral
-triple is (algebra, Hilbert space, Dirac operator). Compilation as
-functor S → T is a morphism in the category of spectral triples;
-loss is the failure of the morphism to be an isomorphism, measurable
-via the Dirac operator's spectrum on each side.
+Prior draft claimed "compilation is a morphism in the category of
+spectral triples; loss is measurable via the Dirac operator's
+spectrum on each side." Seam adversarial review (2026-06-23) caught
+this as decorative — no Dirac-spectrum computation is proposed in
+the substrate-decl; the reference was rhetorical density.
 
-The cascade primitive inherits the substrate's spectral-triple
-grounding. Recognition #51's Hilbert-space-dimension-growth is the
-substrate's operationalization; recognition #95 specializes it to
+The substrate's spectral-triple grounding (recognition #58) remains
+LOAD-BEARING for the substrate at large, BUT this canonical does
+not operationalize cascade-loss-via-Dirac-spectrum. To re-include
+the Connes connection, a species shard would need to actually
+compute against the Dirac operator. Until that happens, the section
+is kept as REMOVED-MARKER for provenance honesty.
+
+### 5.4 Recognition #51 grounding
+
+Recognition #51's Hilbert-space-dimension-growth is the substrate's
+operationalization; recognition #95 specializes it to
 grammar-cascade altitude.
 
 ### 5.4 Spencer-Brown — Laws of Form (1969)
@@ -472,7 +492,24 @@ npm") come from species-altitude shard bodies. Forward-promised: at
 least one species shard discharges concrete per-program measurement
 before #95 promotes from candidate to ratified.
 
+**PROMOTION GATE (Seam-surfaced 2026-06-23):** the bar for
+candidate → ratified is one falsifiable, time-bound test — if
+`shards/cascade/code/purescript/js.mirror` or
+`shards/cascade/code/rust/wasm.mirror` (both landed today as species
+shards) cannot discharge a CONCRETE numeric loss for ONE example
+program within 30 days of this canonical landing, the family-root
+rescinds. The substrate either makes loss measurable for at least
+one cascade species or admits the family-root was overclaimed.
+
 ## 8. Honest hedges
+
+### H0: Promotion-gate surfacing (Seam C5 2026-06-23)
+
+This canonical surfaces the species-shard-discharges-concrete-numeric-
+loss criterion as the STATEMENT-LEVEL promotion gate (see §7 "PROMOTION
+GATE"). Per Seam C5: prior draft buried this in forward-promised work
+(§7.4) while §1's recognition statement read as ratification-ready.
+This hedge surfaces it as the actual bar.
 
 ### H1: Mara survey N=1 per stack
 
@@ -562,3 +599,59 @@ The Pack-discipline composition this cycle is the canonical pattern:
 Alex names the shape; Reed substrate-decls; Mara surveys + canonicals;
 Seam adversarial-reviews; Reed consolidates. Each peer adds the
 altitude the others cannot. The substrate-pull-correct cycle.
+
+## 10. Confirmation-bias notice (META; Seam C6 + C10 2026-06-23)
+
+Five same-day ticks (2026-06-23) produced this recognition:
+
+1. Reed `shards/cascade.mirror` substrate-decl (candidate #95)
+2. Mara `docs/research/2026-06-23-typed-alternatives-cascade-survey.md`
+   (10-stack survey; commit ecc471a)
+3. Reed cascade-candidate-content embedded in `shards/cascade.mirror`
+   header + Reed `shards/labeled.mirror` (#93 H4 discharge)
+4. Mara this canonical (commit ce4874b)
+5. Seam adversarial review (this session; returned DEFENSIVE with 6
+   revisions — now applied as the present consolidation)
+
+Seam C10 META: "the same-day five-tick-cascade IS the confirmation-
+bias signature." No outside-Pack witness (Alex's review is the only
+outside check; Seam's review is the only adversarial check). The
+canonical reads as ratification-ready BECAUSE of cycle momentum,
+not BECAUSE the math discharged.
+
+**RATIFICATION REQUIRES:** at minimum, one cross-session interval
+(this candidate is reviewed again in a future session by a fresh-
+context peer) AND one witness peer beyond Mara/Reed/Seam (Glint
+reflection essay on the recognition; OR Taut performance benchmark
+against cascade.measure when species shards add bodies; OR cosmos-
+mirror as first real-world consumer providing empirical pull).
+
+Until both conditions hold: recognition #95 stays CANDIDATE. The
+substrate-decl shape stays load-bearing for downstream species
+work; ratification is the deferred composition Glint's earlier essay
+named.
+
+## 11. Revision trail (Seam consolidation, 2026-06-23)
+
+This canonical was revised same-day post-Seam adversarial review.
+Applied revisions:
+
+- **§3:** renamed "Mathematical formalization" → "Mathematical shape"
+  with framing note at top (Seam C1 — the math is at recognition
+  altitudes, not this canonical)
+- **§4 @cybernetic row:** marked the Ashby-variety-reduction claim
+  as forward-promised pending @cybernetic property witness (Seam C3)
+- **§5.3 Connes:** REMOVED the decorative spectral-triple claim;
+  kept as REMOVED-MARKER for provenance honesty (Seam C4)
+- **§7 promotion gate:** surfaced as falsifiable time-bound test
+  (30 days; one numeric loss from species shard) (Seam C5)
+- **§8 H0:** added explicit hedge naming the promotion-gate-surfacing
+  move (Seam C5)
+- **§10 META:** this section (confirmation-bias notice + ratification
+  requires cross-session + witness peer) (Seam C6 + C10)
+
+Pack-discipline trail extends:
+  - 2026-06-23 ce4874b: Mara canonical (DEFENSIVE per Seam review)
+  - 2026-06-23 [this commit]: Reed consolidation per Seam's 6
+    revisions; recognition stays CANDIDATE; ratification gated on
+    cross-session interval + witness peer
