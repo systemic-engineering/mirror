@@ -1,0 +1,409 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/distinction
+
+# @ui — the GPU eigenboard rendering substrate family-root.
+#
+# Recognition #96 candidate territory (Loop Phase C, 2026-06-23):
+# @ui IS the substrate-altitude declaration of the @crates/ui Rust
+# crate. Not a design system. Not Atkinson Hyperlegible + cream
+# backgrounds. THAT is @docs / Phase E.
+#
+# @ui is THE SCIENTIFIC INSTRUMENT — the GPU pipeline that holds the
+# spectral superposition and lets the CPU collapse it. The eigenboard
+# IS the instrument and @ui IS its substrate-decl.
+#
+# === What this family declares ===
+#
+# Per Alex 2026-06-23 (Loop Phase C directive):
+#
+#   @ui IS the @crates/ui translation; @docs combines @ui + @nl
+#
+# So this family-root declares the INSTRUMENT primitives. @docs (a
+# separate forward-promised family) composes this family's render
+# primitives with @nl's typographic-content primitives. The split
+# is substrate-architectural: instrument-altitude vs presentation-
+# altitude. Conflating them was the error woz:explore caught.
+#
+# Five primitives, each a Prism per [[architecture-prism-as-trait-
+# as-everything]]:
+#
+#   mote          a glowing eigenboard node (position, radius,
+#                 color, glow_radius, energy); the SUBSTANCE the
+#                 instrument renders
+#   arc           a coupling between two motes (from, to, strength);
+#                 the RELATION the instrument renders
+#   field         a complete scene (motes + arcs + viewport); the
+#                 STATE the instrument operates on
+#   rgba8_buffer  the 512x512 RGBA8 output; the MEASUREMENT the
+#                 instrument produces
+#   spectral_gpu  the wgpu Context wrapper with aperture measurement
+#                 primitives (snapshot, snapshot_fast, cascade_ratio,
+#                 convergence_rate); the OBSERVATORY around the
+#                 instrument
+#
+# === The GPU/CPU partition (load-bearing) ===
+#
+# Per superposition.rs verbatim ("The GPU holds the superposition.
+# The CPU collapses it. That's the architecture."):
+#
+# - GPU holds: many simultaneous render branches alive at once;
+#   compute path + render path coexisting; mote/arc geometry +
+#   shader pipelines + bind groups — all simultaneous, all in
+#   flight. The superposition is the WIDTH of what can be in motion
+#   without a measurement.
+# - CPU collapses: serializes the field, content-addresses it,
+#   stamps the OID, ticks the clock. Sub-millisecond target. The
+#   measurement IS the snapshot.
+# - Cascade ratio = superposition_hold_time / snapshot_time IS
+#   the aperture. Higher ratio = wider aperture = more uncertainty
+#   held between anchors. This is the instrument's spec.
+#
+# The substrate-decl honors this partition: render/dispatch actions
+# operate on the GPU side (parametric over Context); snapshot/
+# measure actions operate on the CPU side (parametric over Field +
+# tick). The split is NOT cosmetic; it IS the architecture.
+#
+# === Why NOW (load-bearing for spectral.engineer) ===
+#
+# Per the deployment cascade:
+#
+#   spectral.engineer/case-study/X embeds:
+#   - GPU eigenboard rendering (this family, via cascade<rust, wasm>)
+#   - typographic content layer (@docs family, via cascade<gleam, js>)
+#
+# Today's cascade<rust, wasm> species (shards/cascade/code/rust/wasm
+# .mirror, Mara/Reed Loop Phase A) is the delivery vehicle. @ui ships
+# to browser via Rust->WASM. This substrate-decl IS the source-side
+# typed grammar that the cascade measures loss against.
+#
+# === Forward-promised consumers ===
+#
+# - shards/docs.mirror (forward-promised; combines @ui + @nl). The
+#   typographic-content substrate at presentation-altitude. The Phase
+#   E briefs (Atkinson Hyperlegible, cream backgrounds, Tufte
+#   sidenotes) discharge there, NOT here.
+# - spectral.engineer/case-study/X first deployment (via
+#   cascade<rust, wasm>). The case-study substrate composes @ui-
+#   rendered eigenboard panels with @docs-rendered narrative; this
+#   family supplies the eigenboard half.
+# - Future spectral TUI eigenboard view (forward-promised at
+#   docs/specs/tui-v0.md). Same @ui primitives, different cascade
+#   target (terminal via @cascade/code/rust/native, not WASM).
+#
+# === Recognition ancestry ===
+#
+# Recognition #96 candidate territory (this; substrate-architectural
+# discovery: instrument-altitude vs presentation-altitude is a real
+# partition the substrate carries, parallel to form/substance #50,
+# form/process #55). Composes with:
+#
+# - #50 form/substance partition (Bateson 1970): @ui's instrument-
+#   altitude renders the SUBSTANCE (motes, arcs); @docs's
+#   presentation-altitude renders the FORM (typography, layout).
+#   Adjacent Bateson levels.
+# - #55 form/process partition at family-root altitude: @ui is the
+#   PROCESS-side family (renders state); @field-state would be the
+#   FORM-side. The split lives WITHIN @ui at the carrier altitude
+#   (field is form; render is process).
+# - #57 alignment as boundary mathematics at @io: the GPU/CPU
+#   boundary IS an @io altitude; snapshot IS the boundary-
+#   mathematics measurement; aperture IS bounded by the cascade
+#   ratio. The substrate-typed instrument bound.
+# - #58 Fate IS optical inference (3 witnesses): the eigenboard
+#   render pipeline IS the visual analogue of Fate's optical
+#   inference; motes are weighted ganglia; arcs are coupling.
+# - #95 @cascade family-root (today; Reed): @ui's delivery to
+#   browser IS cascade<rust, wasm>; this family supplies the
+#   typed_source grammar that cascade measures.
+#
+# === Honest hedges ===
+#
+# 1. wgpu version pinning. The @crates/ui Rust source uses wgpu
+#    23.x APIs (Instance, Adapter, Device, Queue, RenderPipeline).
+#    wgpu has had breaking API changes every minor version since
+#    0.13; the substrate-decl carries the SHAPE of the pipeline
+#    (Context -> Buffer -> Program -> RenderPass), not the exact
+#    method signatures. When wgpu bumps, the realisation-boundary
+#    body changes; the substrate-decl stays stable.
+#
+# 2. WebGPU API surface stability. cascade<rust, wasm> delivers @ui
+#    via wgpu's WebGPU backend. WebGPU shipped to Chrome stable in
+#    May 2023, Firefox stable in 2025; Safari still flag-gated as
+#    of 2026. The substrate-decl assumes WebGPU IS available; the
+#    cascade body discharges feature detection + WebGL2 fallback at
+#    @io altitude. NOT this shard's concern; flagged so the gap is
+#    explicit.
+#
+# 3. The GPU/CPU partition is the asymmetry. GPU does superposition
+#    hold (parallel, simultaneous, many branches); CPU does collapse
+#    measurement (serial, atomic, one snapshot). The substrate-decl
+#    cannot fully express this asymmetry at the type level — the
+#    actions are typed but the parallelism property is a runtime
+#    invariant. Forward-promised: a future bilateral
+#    `superposition_held_in_parallel(gpu, p) -> verdict` that
+#    discharges via instrumentation. For now, the asymmetry is
+#    documentation-altitude only.
+#
+# 4. CPU collapse measurement IS asymmetric. snapshot has TWO
+#    implementations: full (CoincidenceHash<3>; eigenvalue-based;
+#    8ms at 200 motes; persistence-grade) and fast (FNV-1a; sub-
+#    millisecond; hot-path-grade). The substrate-decl carries BOTH
+#    as separate actions (snapshot + snapshot_fast); they are NOT
+#    interchangeable. Caller's choice IS substrate-typed. Composes
+#    with [[feedback-no-bare-types]] — two different things, two
+#    different action names, NOT a parameter switch.
+#
+# 5. The render pipeline is hard-coded to 512x512 RGBA8 (per pass.rs
+#    RENDER_WIDTH/RENDER_HEIGHT/RENDER_FORMAT). The substrate-decl
+#    inherits this constant; rgba8_buffer carrier names the shape
+#    but does NOT parametrize over (width, height, format) yet.
+#    Forward-promised: when windowed / variable-resolution rendering
+#    lands, the carrier lifts to `pixel_buffer(w, h, fmt)`.
+#
+# 6. Recognition #96 candidate. Promotion gate: a second witness of
+#    "instrument-altitude vs presentation-altitude" partition at a
+#    different family. Forward-promised: @audio (if it lands) would
+#    likely show the same split (instrument-altitude = signal
+#    pipeline; presentation-altitude = waveform/spectrogram
+#    rendering). Not yet promoted; flagged here so Seam can review.
+#
+# Spec context: docs/specs/recognitions/recognition-96-instrument-
+#               altitude-vs-presentation-altitude-candidate.md
+#               (forward-promised; this shard IS the substrate-decl
+#               altitude; the candidate doc is canonical-altitude);
+#               /Users/alexwolf/dev/projects/spectral/crates/ui/src/
+#               (source of truth Rust crate at instrument-altitude).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[feedback-no-bare-types]] (separate carriers
+#                       for separate concepts; mote/arc/field/buffer
+#                       are not interchangeable refs),
+#                      [[feedback-loss-from-epistemologic-properties]]
+#                       (loss in the cascade<rust, wasm> delivery is
+#                       composite of @epistemologic/properties),
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; GPU/CPU boundary IS @io
+#                       altitude),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (the @crates/ui Rust code already names mote,
+#                       arc, field, snapshot, aperture — this shard
+#                       names what the Rust was implicitly carrying).
+# Recognition ancestry: #96 candidate territory (this); #50 form/
+#                       substance partition; #55 form/process at
+#                       family-root altitude; #57 alignment as
+#                       boundary mathematics; #58 Fate IS optical
+#                       inference; #95 @cascade family-root.
+# Path-namespace property: this file at `shards/ui.mirror` declares
+# `@ui` per `@epistemologic/pact/path_matches_namespace`.
+
+source @code/rust
+source @arxiv/computer-graphics/akenine-moller-real-time-rendering
+source @arxiv/distributed-systems/lamport-1978-time-clocks-ordering
+
+prism @ui {
+  focus mote
+  project arc
+  split field
+  shift program
+  settle snapshot
+}
+
+# === The mote carrier ===
+#
+# An eigenboard primitive: position (NDC, [-1,1]^2), radius (geometric
+# nucleus), color (RGBA linear), glow_radius (halo extent; must be
+# >= radius), energy (spectral brightness scalar).
+#
+# Specialization lives at shards/ui/mote.mirror with the GPU-layout
+# mirror (MoteGpu, std430-aligned 48 bytes).
+#
+# Identity contract: byte-equality on the underlying ref (the mote IS
+# its (position, radius, color, glow_radius, energy) tuple).
+type mote = ref
+
+# === The arc carrier ===
+#
+# A directed coupling between two motes: from-index, to-index, strength
+# in [0, 1] (drives opacity and width at render).
+#
+# Specialization lives at shards/ui/field.mirror (arc is rendered as
+# part of the field pass, not standalone; the substrate honors the
+# render-altitude grouping).
+#
+# Identity contract: byte-equality on the underlying ref.
+type arc = ref
+
+# === The field carrier ===
+#
+# The complete scene: motes vector + arcs vector + viewer_idx (camera
+# follow target for windowed mode). The state the instrument operates
+# on; the input to render.
+#
+# Specialization lives at shards/ui/field.mirror.
+#
+# Identity contract: byte-equality on the underlying ref.
+type field = ref
+
+# === The rgba8_buffer carrier ===
+#
+# The render output: 512x512 RGBA8 byte buffer (row-major). The
+# measurement the instrument produces.
+#
+# Per hedge 5: hard-coded shape; future lift to parametric
+# pixel_buffer(w, h, fmt) when windowed rendering lands.
+#
+# Identity contract: byte-equality on the underlying ref.
+type rgba8_buffer = ref
+
+# === The spectral_gpu carrier ===
+#
+# The wgpu Context wrapper with aperture measurement primitives. Holds:
+# the wgpu Context (always present; the eigenboard renderer's device/
+# queue), tick counter (monotonic), last_snapshot OID, current device
+# state (compute | render | idle), superposition width (ticks since
+# last state change), width history (for convergence analysis).
+#
+# Specialization lives at shards/ui/gpu.mirror.
+#
+# Identity contract: byte-equality on the underlying ref.
+type spectral_gpu = ref
+
+# === The perturbation carrier (re-imported) ===
+#
+# Standard substrate carrier (declared in shards/glass.mirror); named
+# here for action signatures below. NOT redeclared.
+
+# === render action ===
+#
+# THE LOAD-BEARING ACTION. Takes a field + perturbation; produces an
+# rgba8_buffer. Operates on the GPU side: uploads mote_gpu_data +
+# arc_gpu_data, dispatches the arc pass (drawn first, under motes),
+# dispatches the mote pass (drawn on top), submits, reads back.
+#
+# Per superposition.rs: this IS the render branch of the
+# superposition. Calling render IS collapsing toward the Render
+# device state.
+#
+# requires field_well_formed(f, p): substrate forecloses rendering an
+# ill-formed field (e.g., arc indices out of bounds).
+#
+# Body discharges at the realisation boundary; species shard
+# shards/ui/field.mirror carries the pipeline-altitude body.
+render(f: field, p: perturbation) -> rgba8_buffer
+requires field_well_formed(f, p)
+{ \ }
+
+# === snapshot action ===
+#
+# THE CPU's only job: serialize the field, content-address it,
+# advance the clock. Per superposition.rs: this IS the measurement.
+#
+# Returns a ref (the Snapshot carrier: oid + tick + state + mote
+# count). Persistence-grade; uses full CoincidenceHash. For hot-
+# path use, see snapshot_fast at shards/ui/gpu.mirror.
+#
+# requires gpu_initialized(gpu, p): substrate refuses snapshot
+# against an uninitialized SpectralGpu (the dark OID guard).
+#
+# Body discharges at the realisation boundary.
+snapshot(f: field, gpu: spectral_gpu, p: perturbation) -> ref
+requires gpu_initialized(gpu, p)
+{ \ }
+
+# === couple action ===
+#
+# Construct an arc between two motes with a given coupling strength.
+# Substrate-vocabulary primitive for building field relations.
+#
+# requires field_well_formed(p): both motes must exist and be valid
+# carriers; strength must be in [0, 1] (the bilateral discharges).
+#
+# Body discharges at the realisation boundary.
+couple(from: mote, to: mote, strength: ref, p: perturbation) -> arc { \ }
+
+# === field_well_formed bilateral ===
+#
+# THE LOAD-BEARING SCENE BILATERAL. Commitment that a field is
+# render-coherent: arc endpoints are valid mote indices; viewer_idx
+# is a valid mote index; mote count is bounded by the GPU buffer
+# limits (200-mote benchmark target per superposition.rs comments).
+#
+# Splinter-pole: arc indices in bounds; viewer_idx in bounds; mote
+# count <= GPU buffer capacity; all motes have glow_radius >= radius.
+# Narcissus-pole: any of the above fail; render cannot proceed safely.
+# Narcissus-warned: field is renderable but uses default fallback
+# positions ([0, 0]) for out-of-bounds arc endpoints (current Rust
+# behavior at field.rs lines 60-63 via .unwrap_or([0.0, 0.0])).
+#
+# Body discharges at the realisation boundary; species shard
+# shards/ui/field.mirror carries the detail.
+field_well_formed(f: field, p: perturbation) -> verdict { \ }
+
+# === gpu_initialized bilateral ===
+#
+# Commitment that a spectral_gpu has been created via SpectralGpu::
+# new (wgpu Instance + Adapter + Device + Queue all live; tick at
+# zero or higher; state in {compute, render, idle}).
+#
+# Splinter-pole: device/queue present; tick monotonic; state valid.
+# Narcissus-pole: adapter request failed (no GPU; missing WGPU_
+# BACKEND for software fallback); construction never completed.
+#
+# Body discharges at the realisation boundary; species shard
+# shards/ui/gpu.mirror carries the detail.
+gpu_initialized(gpu: spectral_gpu, p: perturbation) -> verdict { \ }
+
+# === render_complete bilateral ===
+#
+# Commitment that an rgba8_buffer IS the result of a completed render
+# pass (correct byte length = 512 * 512 * 4 = 1048576; row-major
+# layout; staging buffer mapped and unmapped successfully).
+#
+# Splinter-pole: byte length matches; readback completed without
+# errors; pixel data is the rendered field.
+# Narcissus-pole: byte length mismatch; buffer map failed; readback
+# returned partial data.
+#
+# Body discharges at the realisation boundary.
+render_complete(buffer: rgba8_buffer, p: perturbation) -> verdict { \ }
+
+# === ui_instrument_coherent composed bilateral ===
+#
+# THE LOAD-BEARING composed bilateral at the @ui altitude. Composes
+# the three sub-predicates: field_well_formed + gpu_initialized +
+# render_complete. All three must hold for the instrument cycle
+# (render -> snapshot -> measure) to operate end-to-end.
+#
+# Splinter-pole: all three discharge; instrument-cycle complete.
+# Narcissus-pole: any sub-predicate fails; cycle blocked at the
+# failing altitude (field-altitude / gpu-altitude / output-altitude).
+# Narcissus-warned: all three discharge but at least one is warned
+# (e.g., field uses default fallback positions; instrument operates
+# with bounded measurement).
+#
+# Same composed-bilateral pattern as @cascade.cascade_well_defined
+# and the form/substance bilaterals across the substrate. The
+# discipline pattern is altitude-portable per recognition #59.
+ui_instrument_coherent(f: field, gpu: spectral_gpu, buffer: rgba8_buffer, p: perturbation) -> verdict
+requires field_well_formed(f, p)
+requires gpu_initialized(gpu, p)
+requires render_complete(buffer, p)
+{ \ }
+
+out @ui
+out mote
+out arc
+out field
+out rgba8_buffer
+out spectral_gpu
+out render
+out snapshot
+out couple
+out field_well_formed
+out gpu_initialized
+out render_complete
+out ui_instrument_coherent

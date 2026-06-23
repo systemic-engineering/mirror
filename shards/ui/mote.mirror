@@ -1,0 +1,273 @@
+in @prism
+in @meta
+in @glass
+in @ui
+
+# @ui/mote — the eigenboard primitive species shard.
+#
+# Specializes @ui's `mote` carrier with the substrate-typed shape and
+# per-mote operations. Source-of-truth is /Users/alexwolf/dev/projects/
+# spectral/crates/ui/src/mote.rs (the Rust Mote + MoteGpu structs).
+#
+# === What this species declares ===
+#
+# Two carriers:
+#
+#   mote_data     the CPU-side mote: position, radius, color,
+#                 glow_radius, energy (the substance the instrument
+#                 renders; one glowing node in the field)
+#   mote_gpu      the GPU-layout mirror: std430-aligned 48 bytes
+#                 (position [2 f32, offset 0], radius [f32, offset 8],
+#                 glow_radius [f32, offset 12], color [4 f32, offset
+#                 16], energy [f32, offset 32], 3x f32 padding to 48).
+#                 The shape MUST match mote.wgsl's MoteData struct.
+#
+# Three actions:
+#
+#   create_mote    constructor; takes the five fields, validates
+#                  bounds, returns mote_data
+#   update_position  mutates position (NDC); used by physics/animation
+#                  layers that drive the field over time
+#   set_color      mutates color (RGBA linear); used by the
+#                  highlight/selection layers
+#
+# Three bilaterals:
+#
+#   mote_in_bounds        position within NDC [-1, 1]^2; radii
+#                         positive; energy non-negative
+#   color_well_formed     RGBA channels in [0, 1]; alpha drives
+#                         peak opacity (per mote.rs comment)
+#   gpu_layout_aligned    mote_gpu satisfies std430 alignment
+#                         (vec2=align8, f32=align4, vec4=align16);
+#                         total size == 48; align == 16
+#
+# === The CPU/GPU asymmetry at this altitude ===
+#
+# mote_data lives on the CPU; mote_gpu is the upload-ready layout.
+# The conversion (CPU -> GPU) happens at field-render time via
+# MoteGpu::from(&Mote) in Rust. The substrate-decl carries BOTH
+# carriers because they are genuinely different things:
+#
+# - mote_data has logical fields (the human-meaningful shape)
+# - mote_gpu has byte-precise layout (the GPU-meaningful shape)
+#
+# Per [[feedback-no-bare-types]]: two different concepts, two
+# different carriers. NOT a parameter switch on one carrier.
+#
+# === Honest hedges ===
+#
+# 1. The 48-byte struct size and std430 alignment are wgpu-specific.
+#    Vulkan std140 would lay this out differently. The substrate-
+#    decl declares the SHAPE (offsets, sizes, padding) and the
+#    realisation-boundary body discharges per-backend. wgpu's WebGPU
+#    target uses std430 for storage buffers; the byte layout above
+#    matches that.
+#
+# 2. mote_gpu carries explicit padding fields (_pad0, _pad1, _pad2).
+#    These are NOT semantic; they exist to satisfy std430 alignment.
+#    The substrate-decl flags them as padding-only via the
+#    gpu_layout_aligned bilateral; bodies that construct mote_gpu
+#    MUST zero the padding (per mote.rs From impl).
+#
+# 3. NDC bounds [-1, 1]^2 are the wgpu/WebGPU convention. Metal-
+#    native rendering uses [-1, 1] x [-1, 1] for the y-axis too
+#    (same convention). DirectX uses [0, 1] for y; not a concern for
+#    the WebGPU cascade target. If/when a native DirectX backend
+#    lands, mote_in_bounds discharges differently per backend.
+#
+# 4. Color is RGBA LINEAR (not sRGB). Per mote.rs: "RGBA color
+#    (linear, 0.0-1.0). Alpha drives peak opacity." The render
+#    target (Rgba8Unorm per pass.rs) does NOT apply sRGB gamma;
+#    the additive blending depends on linear-space accumulation.
+#    color_well_formed bilateral discharges the linear-space
+#    invariant; gamma correction happens (if at all) at the
+#    presentation altitude in @docs, NOT here.
+#
+# Spec context: /Users/alexwolf/dev/projects/spectral/crates/ui/src/
+#               mote.rs (source of truth: Mote + MoteGpu structs);
+#               /Users/alexwolf/dev/projects/spectral/crates/ui/src/
+#               wgsl/mote.wgsl (the WGSL fragment shader; mote_gpu
+#               MUST match its MoteData struct).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[feedback-no-bare-types]] (mote_data vs
+#                       mote_gpu are separate carriers).
+# Related shards: ui.mirror (family-root; declares the `mote`
+#                  parametric carrier this species specializes),
+#                 ui/field.mirror (consumes mote_data via render
+#                  pipeline; uploads as mote_gpu),
+#                 ui/gpu.mirror (carries the wgpu Context; the
+#                  upload target).
+# Path-namespace property: this file at `shards/ui/mote.mirror`
+# declares `@ui/mote` per `@epistemologic/pact/path_matches_namespace`.
+
+source @code/rust
+
+prism @ui/mote {
+  focus mote
+  project mote
+  split mote
+  shift mote
+  settle mote
+}
+
+# === mote_data carrier ===
+#
+# The CPU-side mote: a glowing node in the eigenboard field. Five
+# fields, all numeric:
+#
+#   position      [f32; 2]   NDC, [-1, 1]^2
+#   radius        f32        geometric nucleus, NDC units
+#   color         [f32; 4]   RGBA linear, [0, 1]; alpha = peak opacity
+#   glow_radius   f32        halo extent, NDC units; MUST be >= radius
+#   energy        f32        spectral brightness scalar; >= 0
+#
+# Identity contract: byte-equality on the (position, radius, color,
+# glow_radius, energy) tuple.
+type mote_data = ref
+
+# === mote_gpu carrier ===
+#
+# The GPU-layout mirror: 48 bytes, std430-aligned. Offsets:
+#
+#   offset  0   position    [f32; 2]   (8 bytes)
+#   offset  8   radius      f32        (4 bytes)
+#   offset 12   glow_radius f32        (4 bytes)
+#   offset 16   color       [f32; 4]   (16 bytes)
+#   offset 32   energy      f32        (4 bytes)
+#   offset 36   _pad0       f32        (4 bytes padding)
+#   offset 40   _pad1       f32        (4 bytes padding)
+#   offset 44   _pad2       f32        (4 bytes padding) -> total 48
+#
+# Struct alignment = 16 (vec4 alignment); 48 = 3 * 16.
+#
+# MUST match mote.wgsl's MoteData struct exactly.
+#
+# Identity contract: byte-equality on the 48-byte block.
+type mote_gpu = ref
+
+# === create_mote action ===
+#
+# Constructor for mote_data. Takes the five fields, returns a
+# mote_data ref. The substrate forecloses construction against
+# bounds violations via the mote_in_bounds precondition.
+#
+# requires mote_in_bounds(position, radius, glow_radius, energy, p):
+# position is in NDC; radius and glow_radius are positive; energy is
+# non-negative; glow_radius >= radius.
+# requires color_well_formed(color, p): RGBA channels are in [0, 1].
+#
+# Body discharges at the realisation boundary.
+create_mote(
+  position: ref,
+  radius: ref,
+  color: ref,
+  glow_radius: ref,
+  energy: ref,
+  p: perturbation
+) -> mote_data
+requires mote_in_bounds(position, radius, glow_radius, energy, p)
+requires color_well_formed(color, p)
+{ \ }
+
+# === update_position action ===
+#
+# Mutates a mote's position. Used by physics/animation layers that
+# drive the field over time. The new position MUST satisfy
+# mote_in_bounds.
+#
+# requires mote_in_bounds(new_position, radius, glow_radius, energy, p):
+# the new position is in NDC; other invariants unchanged.
+#
+# Body discharges at the realisation boundary.
+update_position(m: mote_data, new_position: ref, p: perturbation) -> mote_data
+requires mote_in_bounds(new_position, m, m, m, p)
+{ \ }
+
+# === set_color action ===
+#
+# Mutates a mote's color (RGBA linear). Used by the highlight /
+# selection layers that the case-study UI activates over time.
+#
+# requires color_well_formed(new_color, p): RGBA in [0, 1].
+#
+# Body discharges at the realisation boundary.
+set_color(m: mote_data, new_color: ref, p: perturbation) -> mote_data
+requires color_well_formed(new_color, p)
+{ \ }
+
+# === to_gpu action ===
+#
+# Convert a mote_data into its mote_gpu layout. Zeroes the padding
+# fields; copies the five logical fields into their std430 offsets.
+# Mirror of the Rust `impl From<&Mote> for MoteGpu` at mote.rs lines
+# 39-52.
+#
+# requires mote_in_bounds(m, p): cannot upload an ill-formed mote.
+# requires color_well_formed(m, p): cannot upload an ill-formed color.
+#
+# Body discharges at the realisation boundary.
+to_gpu(m: mote_data, p: perturbation) -> mote_gpu
+requires mote_in_bounds(m, m, m, m, p)
+requires color_well_formed(m, p)
+{ \ }
+
+# === mote_in_bounds bilateral ===
+#
+# Substrate-typed commitment that a mote's geometric fields are
+# within instrument bounds.
+#
+# Splinter-pole: position within NDC [-1, 1]^2; radius > 0;
+# glow_radius >= radius; energy >= 0.
+# Narcissus-pole: any of the above fail; mote cannot enter the
+# render pipeline without clipping or division-by-zero artifacts.
+# Narcissus-warned: position on the NDC boundary (mote is half-
+# visible at the edge); allowed but flagged.
+#
+# Body discharges at the realisation boundary.
+mote_in_bounds(
+  position: ref,
+  radius: ref,
+  glow_radius: ref,
+  energy: ref,
+  p: perturbation
+) -> verdict { \ }
+
+# === color_well_formed bilateral ===
+#
+# Substrate-typed commitment that an RGBA color is in linear [0, 1]
+# range. Per hedge 4: the render target IS linear-space; sRGB gamma
+# correction is NOT applied; colors out of [0, 1] are clipped to
+# white-additive at the GPU.
+#
+# Splinter-pole: all four channels in [0, 1].
+# Narcissus-pole: any channel outside [0, 1] (NaN, negative, > 1).
+# Narcissus-warned: alpha == 0 (mote is fully transparent; will not
+# contribute to additive blending; visible-no-op).
+#
+# Body discharges at the realisation boundary.
+color_well_formed(color: ref, p: perturbation) -> verdict { \ }
+
+# === gpu_layout_aligned bilateral ===
+#
+# Substrate-typed commitment that a mote_gpu satisfies std430
+# alignment: total size == 48 bytes; struct alignment == 16; padding
+# fields are zero.
+#
+# Splinter-pole: size == 48; alignment == 16; _pad0/_pad1/_pad2 == 0.
+# Narcissus-pole: size mismatch (Rust struct drift; mote.wgsl drift);
+# upload would corrupt GPU buffer.
+#
+# Body discharges at the realisation boundary; the body's check IS a
+# static assertion (size_of::<MoteGpu>() == 48 at compile time).
+gpu_layout_aligned(g: mote_gpu, p: perturbation) -> verdict { \ }
+
+out @ui/mote
+out mote_data
+out mote_gpu
+out create_mote
+out update_position
+out set_color
+out to_gpu
+out mote_in_bounds
+out color_well_formed
+out gpu_layout_aligned

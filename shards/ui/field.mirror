@@ -1,0 +1,337 @@
+in @prism
+in @meta
+in @glass
+in @ui
+in @labeled
+
+# @ui/field — the scene + render pipeline species shard.
+#
+# Specializes @ui's `field` and `arc` carriers; supplies the render-
+# pipeline action body shape. Source-of-truth is /Users/alexwolf/dev/
+# projects/spectral/crates/ui/src/field.rs (the Field, Arc, ArcGpu,
+# render impl).
+#
+# === What this species declares ===
+#
+# Four carriers:
+#
+#   field_state       motes vector + arcs vector + viewer_idx; the
+#                     complete scene
+#   arc_data          from-index, to-index, strength; the CPU-side
+#                     coupling
+#   arc_gpu           std430 layout: from_pos [vec2], to_pos [vec2],
+#                     strength [f32], 3x f32 padding to 32 bytes
+#   labeled_render    THE LOAD-BEARING labeled<> projection:
+#                     labeled(rgba8_buffer, field_state) — the
+#                     render output annotated with the source field
+#                     that produced it (preserves provenance via the
+#                     labeled functor)
+#
+# Five actions:
+#
+#   add_mote          extend field_state.motes; returns new field_state
+#   add_arc           extend field_state.arcs; returns new field_state
+#                     (validates arc endpoints against current mote
+#                     count)
+#   set_viewer        change viewer_idx; returns new field_state
+#   render_field      THE RENDER ACTION: takes field_state +
+#                     spectral_gpu; uploads MoteGpu + ArcGpu data;
+#                     dispatches arc pass + mote pass; reads back
+#                     RGBA8; returns labeled(rgba8_buffer, field_state)
+#                     (the source field stays associated with its
+#                     render output via @labeled)
+#   resolve_arc       resolve an arc_data's endpoint indices to
+#                     mote positions; mirrors the field.rs lines
+#                     60-63 .unwrap_or([0.0, 0.0]) fallback
+#
+# Three bilaterals:
+#
+#   field_coherent           composed: motes valid + arcs valid
+#                            + viewer_idx valid (composes
+#                            mote-altitude and arc-altitude
+#                            checks via projection)
+#   arc_endpoints_valid      from-index and to-index are valid
+#                            indices into field_state.motes
+#   render_pipeline_ready    spectral_gpu has device + queue;
+#                            shader programs compile; bind groups
+#                            constructible
+#
+# === The labeled<> projection pattern (Mara A3 surprise) ===
+#
+# field_coherent uses labeled<> projection to bridge mote-altitude
+# bilaterals (mote_in_bounds, color_well_formed) into the field-
+# altitude composed verdict:
+#
+#   labeled(field_state.motes[i], mote_in_bounds(motes[i], p))
+#     -> per-mote labeled verdict
+#   unlabel(...) projects to per-mote bool;
+#   label_of(...) projects to per-mote diagnostic.
+#
+# Same pattern as @cascade/code/purescript/js's
+# ps_npm_cascade_well_formed (unlabel(artifact, p) +
+# label_of(artifact, p)). Composed bilaterals at family-root
+# altitude reach down through labeled<>'s functorial preservation.
+#
+# === Two-pass render order is load-bearing ===
+#
+# Per field.rs lines 90-149: arc pass FIRST (under motes), mote pass
+# SECOND (on top). The additive blending accumulates from baseline
+# upward; reversing inverts the semantic stack. render_field's body
+# MUST issue arc pass before mote pass, NOT a free choice.
+#
+# === Honest hedges ===
+#
+# 1. arc_data carries positional indices (from: usize, to: usize) NOT
+#    references to mote_data. Arcs are positionally-coupled to the
+#    motes vector. If/when motes are content-addressed, arc_data
+#    lifts to (from_oid, to_oid). Forward-promised.
+#
+# 2. The .unwrap_or([0.0, 0.0]) fallback at field.rs lines 60-63 IS
+#    the Narcissus-warned pole of arc_endpoints_valid. Substrate
+#    admits the fallback but flags it; caller discipline: validate
+#    BEFORE render to avoid silent fallback.
+#
+# 3. Per-render Program + bind group + buffer allocation (field.rs
+#    lines 92-102, 122-131) re-compiles shaders each call. Caching
+#    is a realisation-boundary optimization; substrate-decl carries
+#    the shape regardless.
+#
+# 4. 512x512 hard-coding propagates from @ui's family-root hedge 5.
+#    Lifts when pixel_buffer(w, h, fmt) lands.
+#
+# 5. viewer_idx RESERVED for windowed-mode camera-follow (field.rs
+#    line 47). Informational at the headless altitude; substrate-
+#    decl carries it because the Rust struct does.
+#
+# Spec context: /Users/alexwolf/dev/projects/spectral/crates/ui/src/
+#               field.rs + wgsl/arc.wgsl (sources of truth).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[feedback-no-bare-types]],
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57).
+# Related shards: ui.mirror (family-root), ui/mote.mirror,
+#                 ui/gpu.mirror, labeled.mirror (#93 H4).
+# Path-namespace property: this file at `shards/ui/field.mirror`
+# declares `@ui/field` per `@epistemologic/pact/path_matches_namespace`.
+
+source @code/rust
+
+prism @ui/field {
+  focus field
+  project arc
+  split field
+  shift field
+  settle field
+}
+
+# === field_state carrier ===
+#
+# The complete scene state: motes vector + arcs vector + viewer_idx
+# (the index into motes that the camera follows in windowed mode).
+#
+# Identity contract: byte-equality on the (motes, arcs, viewer_idx)
+# tuple.
+type field_state = ref
+
+# === arc_data carrier ===
+#
+# The CPU-side coupling between two motes: from-index, to-index,
+# strength in [0, 1] (drives opacity and width at render time).
+#
+# Per hedge 1: indices are positional (Vec<Mote> indices), NOT
+# content-addressed OIDs.
+#
+# Identity contract: byte-equality on the (from, to, strength) tuple.
+type arc_data = ref
+
+# === arc_gpu carrier ===
+#
+# The GPU-layout mirror for arcs: 32 bytes, std430-aligned. Offsets:
+#
+#   offset  0   from_pos    [f32; 2]   (8 bytes)
+#   offset  8   to_pos      [f32; 2]   (8 bytes)
+#   offset 16   strength    f32        (4 bytes)
+#   offset 20   _pad0       f32        (4 bytes padding)
+#   offset 24   _pad1       f32        (4 bytes padding)
+#   offset 28   _pad2       f32        (4 bytes padding) -> total 32
+#
+# Struct alignment = 8 (vec2 alignment); 32 = 4 * 8.
+#
+# MUST match arc.wgsl's ArcData struct exactly.
+#
+# Identity contract: byte-equality on the 32-byte block.
+type arc_gpu = ref
+
+# === labeled_render carrier ===
+#
+# THE LOAD-BEARING labeled<> instance. labeled(rgba8_buffer,
+# field_state): the render output annotated with the source field
+# that produced it.
+#
+# Per recognition #93 H4: this is an instance of labeled<v, m>. The
+# substrate-typed identity of the rgba8_buffer is preserved (via
+# labeled's parametricity per Wadler 1989 / Reynolds 1983) while the
+# field_state dimension is added. unlabel(labeled_render) returns
+# the buffer; label_of(labeled_render) returns the source field.
+#
+# Why this matters: the render output alone is opaque pixels; the
+# (output, source-field) pair IS the audit trail. When the substrate
+# wants to ask "what produced this image?", label_of answers; when
+# it wants the pixels, unlabel answers. Provenance preserved at the
+# carrier altitude.
+#
+# Identity contract: byte-equality on the (buffer, field) pair
+# (inherited from @labeled).
+type labeled_render = labeled(rgba8_buffer, field_state)
+
+# === add_mote action ===
+#
+# Extend field_state.motes with a new mote_data; returns the
+# extended field_state. Substrate-vocabulary primitive for building
+# fields incrementally.
+#
+# Body discharges at the realisation boundary.
+add_mote(f: field_state, m: ref, p: perturbation) -> field_state { \ }
+
+# === add_arc action ===
+#
+# Extend field_state.arcs with a new arc_data; validates endpoints
+# against current mote count BEFORE extending; returns the extended
+# field_state.
+#
+# requires arc_endpoints_valid(a, f, p): both indices must be valid.
+# Substrate refuses to add an arc with out-of-bounds endpoints
+# (stricter than the render-time .unwrap_or fallback; this IS the
+# discipline-boundary that prevents the warning pole at render).
+#
+# Body discharges at the realisation boundary.
+add_arc(f: field_state, a: arc_data, p: perturbation) -> field_state
+requires arc_endpoints_valid(a, f, p)
+{ \ }
+
+# === set_viewer action ===
+#
+# Change field_state.viewer_idx. Per hedge 5: informational at the
+# headless 512x512 altitude; load-bearing for windowed mode.
+#
+# Body discharges at the realisation boundary.
+set_viewer(f: field_state, idx: ref, p: perturbation) -> field_state { \ }
+
+# === render_field action ===
+#
+# THE RENDER ACTION at the species altitude. Discharges @ui's
+# `render` family-root action with the pipeline-altitude body shape:
+#
+#   1. Build mote_gpu_data from field_state.motes (via to_gpu)
+#   2. Build arc_gpu_data from field_state.arcs (via resolve_arc)
+#   3. Allocate render target (512x512 RGBA8)
+#   4. Clear pass: transparent black baseline
+#   5. Arc pass (under motes): if arcs non-empty
+#   6. Mote pass (on top): if motes non-empty
+#   7. Submit; readback as rgba8_buffer
+#   8. Wrap as labeled(buffer, field_state) preserving provenance
+#
+# Per hedge 3: program + bind group + buffer allocated per call
+# (caching is forward-promised).
+#
+# requires field_coherent(f, p): field is render-coherent.
+# requires render_pipeline_ready(gpu, p): GPU side is ready.
+#
+# Body discharges at the realisation boundary.
+render_field(f: field_state, gpu: spectral_gpu, p: perturbation) -> labeled_render
+requires field_coherent(f, p)
+requires render_pipeline_ready(gpu, p)
+{ \ }
+
+# === resolve_arc action ===
+#
+# Resolve an arc_data's endpoint indices to mote positions; returns
+# arc_gpu with from_pos and to_pos populated. Mirrors field.rs lines
+# 60-63 — if an index is out of bounds, falls back to [0.0, 0.0].
+#
+# requires arc_endpoints_valid(a, f, p): bilateral discharges with
+# Narcissus-warned pole for fallback case.
+#
+# Body discharges at the realisation boundary.
+resolve_arc(a: arc_data, f: field_state, p: perturbation) -> arc_gpu
+requires arc_endpoints_valid(a, f, p)
+{ \ }
+
+# === arc_endpoints_valid bilateral ===
+#
+# Substrate-typed commitment that an arc's from-index and to-index
+# are valid indices into field_state.motes.
+#
+# Splinter-pole: 0 <= from < len(motes); 0 <= to < len(motes);
+# from != to (no self-coupling at the rendering altitude).
+# Narcissus-pole: index out of range; arc cannot be added.
+# Narcissus-warned: index in range BUT one of the motes was added
+# after this arc was constructed (stale arc); rendering proceeds
+# but with stale endpoint data.
+#
+# Body discharges at the realisation boundary.
+arc_endpoints_valid(a: arc_data, f: field_state, p: perturbation) -> verdict { \ }
+
+# === render_pipeline_ready bilateral ===
+#
+# Substrate-typed commitment that the GPU side is ready to render:
+# spectral_gpu has device + queue; the Mote + Arc shader programs
+# compile against the device; bind groups are constructible.
+#
+# Splinter-pole: all of the above.
+# Narcissus-pole: device lost; shader compile error; bind group
+# layout mismatch.
+#
+# Body discharges at the realisation boundary.
+render_pipeline_ready(gpu: spectral_gpu, p: perturbation) -> verdict { \ }
+
+# === field_coherent composed bilateral (labeled<> projection) ===
+#
+# THE LOAD-BEARING composed bilateral. Composes mote-altitude and
+# arc-altitude bilaterals via labeled<> projection (the Mara A3
+# surprise pattern):
+#
+#   For each mote in f.motes:
+#     labeled(mote, mote_in_bounds(mote, p))
+#       -> projected via unlabel + label_of for per-mote verdict
+#     labeled(mote, color_well_formed(mote, p))
+#       -> projected similarly
+#
+#   For each arc in f.arcs:
+#     labeled(arc, arc_endpoints_valid(arc, f, p))
+#       -> projected for per-arc verdict
+#
+# The composed verdict is the conjunction of all per-element
+# verdicts. Splinter-pole iff all per-element splinter-pole.
+#
+# requires arc_endpoints_valid(a, f, p) for every a in f.arcs:
+# species-altitude commitment that ALL arcs are valid before
+# render-altitude operates.
+#
+# Splinter-pole: all motes in_bounds + colors well-formed; all arcs
+# endpoints-valid; viewer_idx in range.
+# Narcissus-pole: at least one element fails; render blocked at the
+# failing element's altitude.
+# Narcissus-warned: all discharge but at least one is warned (e.g.,
+# stale arc; mote on NDC boundary); render proceeds with bounded
+# fidelity.
+#
+# Same composed-bilateral pattern as @cascade.cascade_well_defined
+# and recognition #59 (kintsugi loop altitude-portable). The
+# discipline pattern reaches from species-altitude through labeled<>
+# projection back up to the family-root via ui_instrument_coherent.
+field_coherent(f: field_state, p: perturbation) -> verdict { \ }
+
+out @ui/field
+out field_state
+out arc_data
+out arc_gpu
+out labeled_render
+out add_mote
+out add_arc
+out set_viewer
+out render_field
+out resolve_arc
+out arc_endpoints_valid
+out render_pipeline_ready
+out field_coherent

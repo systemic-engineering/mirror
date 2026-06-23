@@ -1,0 +1,346 @@
+in @prism
+in @meta
+in @glass
+in @ui
+
+# @ui/gpu — the wgpu context + aperture-measurement species shard.
+#
+# Specializes @ui's `spectral_gpu` carrier and supplies the wgpu-
+# pipeline primitives (Context, Buffer, Program, RenderPass) that
+# the rendering pipeline rests on. Source-of-truth files:
+#
+#   /Users/alexwolf/dev/projects/spectral/crates/ui/src/context.rs
+#   /Users/alexwolf/dev/projects/spectral/crates/ui/src/buffer.rs
+#   /Users/alexwolf/dev/projects/spectral/crates/ui/src/program.rs
+#   /Users/alexwolf/dev/projects/spectral/crates/ui/src/pass.rs
+#   /Users/alexwolf/dev/projects/spectral/crates/ui/src/superposition.rs
+#
+# === What this species declares ===
+#
+# Six carriers: wgpu_context, typed_buffer, wgsl_program,
+# render_pass, device_state, snapshot_anchor.
+#
+# Six core actions: create_context, create_buffer, dispatch_compute,
+# dispatch_render, snapshot_full (persistence-grade,
+# CoincidenceHash, 8ms@200 motes), snapshot_fast (hot-path-grade,
+# FNV-1a, sub-ms).
+#
+# Three measurement primitives (the Aperture observatory):
+# cascade_ratio (= hold_time / snapshot_time; IS the aperture),
+# convergence_rate (slope on width_history), advance_state (tick +
+# width-history bookkeeping).
+#
+# Two bilaterals: context_valid (specializes gpu_initialized at
+# wgpu-component altitude), buffer_typed_correctly (element-T
+# matches shader binding layout).
+#
+# === The GPU/CPU partition is materialized HERE ===
+#
+# Family-root's load-bearing partition becomes concrete:
+#
+# - GPU side (wgpu_context, typed_buffer, wgsl_program, render_pass,
+#   dispatch_*): holds the superposition; async-dispatchable; many
+#   in flight simultaneously.
+# - CPU side (device_state, snapshot_anchor, snapshot_*,
+#   advance_state, cascade_ratio, convergence_rate): collapses the
+#   superposition; serial; atomic; sub-ms target on snapshot_fast.
+#
+# Reflected in carrier names (gpu_- vs snapshot_-) and signatures
+# (GPU actions take wgpu_context; CPU actions take spectral_gpu +
+# field_state). Partition visible at the type level.
+#
+# === Honest hedges ===
+#
+# 1. pollster::block_on (context.rs line 25) blocks calling thread
+#    on adapter+device requests. Acceptable for headless/CLI;
+#    problematic for tight event loops. Substrate-decl carries the
+#    synchronous shape; async lift forward-promised.
+#
+# 2. Adapter selection: power_preference None (wgpu picks). macOS
+#    Metal; Linux Vulkan/DX12; CI uses WGPU_BACKEND=gl software
+#    fallback. context_valid Narcissus-pole when no adapter found.
+#
+# 3. snapshot_full vs snapshot_fast are SEPARATE actions, NOT a
+#    parameter switch. Per [[feedback-no-bare-types]] + family-root
+#    hedge 4: substrate-typed choice between persistence and hot-
+#    path; forcing them into one signature lets callers pick wrong
+#    at the type level.
+#
+# 4. snapshot_anchor.tick monotonicity is NOT type-enforced; runtime
+#    invariant on spectral_gpu. Forward-promised:
+#    monotonic_tick(snapshots, p) -> verdict if needed.
+#
+# 5. dispatch_compute body is currently a no-op (superposition.rs
+#    lines 226-231). Substrate-decl carries the action shape; Metal
+#    kernel forward-promised via @fate (per [[architecture-fate-is-
+#    optical-inference]]).
+#
+# 6. cascade_ratio + convergence_rate are OBSERVATION primitives,
+#    NOT adjustment. Adjustment lives at @reflection altitude (per
+#    [[architecture-reflection-thinks-in-spectral-questions]]). The
+#    observatory feeds the spectral-altitude selector.
+#
+# Spec context: /Users/alexwolf/dev/projects/spectral/crates/ui/src/
+#               context.rs + buffer.rs + program.rs + pass.rs +
+#               superposition.rs (sources of truth).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[feedback-no-bare-types]],
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57),
+#                      [[architecture-fate-is-optical-inference]]
+#                       (#58; dispatch_compute forward-promises),
+#                      [[architecture-reflection-thinks-in-spectral-
+#                       questions]] (observatory feeds selector).
+# Related shards: ui.mirror (family-root), ui/mote.mirror,
+#                 ui/field.mirror.
+# Path-namespace property: this file at `shards/ui/gpu.mirror`
+# declares `@ui/gpu` per `@epistemologic/pact/path_matches_namespace`.
+
+source @code/rust
+
+prism @ui/gpu {
+  focus snapshot
+  project device
+  split context
+  shift program
+  settle snapshot
+}
+
+# === wgpu_context carrier ===
+#
+# wgpu Instance + Adapter + Device + Queue; headless by default.
+# Per context.rs: backends = all; power_preference = None.
+#
+# Identity contract: byte-equality on the underlying ref (the
+# device/queue handles are stable for the context's lifetime).
+type wgpu_context = ref
+
+# === typed_buffer carrier ===
+#
+# A typed GPU-backed buffer parametric over element type T.
+# T must implement Pod (bytemuck) so the substrate can safely
+# transmute slices.
+#
+# Three usage variants (per buffer.rs):
+#   storage   STORAGE | COPY_SRC | COPY_DST (for mote/arc data)
+#   vertex    VERTEX | COPY_SRC | COPY_DST (for vertex data)
+#   uniform   UNIFORM | COPY_DST (forward-promised; not yet
+#             instantiated in the Rust source)
+#
+# Identity contract: byte-equality on the underlying ref + element
+# type T.
+type typed_buffer = ref
+
+# === wgsl_program carrier ===
+#
+# A compiled WGSL shader program + render pipeline + bind group
+# layout. Two kinds (per program.rs ProgramKind):
+#
+#   program_mote   compiled from mote.wgsl; storage buffer binding
+#                  at binding=0; additive blending.
+#   program_arc    compiled from arc.wgsl; storage buffer binding
+#                  at binding=0; additive blending.
+#
+# Both use the same blend state (additive: src+dst for both color
+# and alpha; per program.rs lines 60-71). Both have vertex stage
+# entry `vs_main` and fragment stage entry `fs_main`.
+#
+# Identity contract: byte-equality on the underlying ref + program
+# kind.
+type wgsl_program = ref
+
+# === render_pass carrier ===
+#
+# A wgpu render pass abstraction. Re-export of wgpu::RenderPass.
+# The dispatch surface for one rendering stage (clear, arc, mote).
+#
+# Identity contract: scoped lifetime; not byte-equality (passes
+# are ephemeral encoder-borrows).
+type render_pass = ref
+
+# === device_state carrier ===
+#
+# Which dispatch branch is active this tick. Per superposition.rs:
+#
+#   compute   Metal compute path (fate inference on GPU)
+#   render    wgpu render path (spectral-ui eigenboard)
+#   idle      neither branch dispatched; system is between
+#             measurements
+#
+# Identity contract: byte-equality on the three-way enum tag.
+type device_state = ref
+
+# === snapshot_anchor carrier ===
+#
+# The CPU's content-addressed clock tick. Per superposition.rs:
+#
+#   oid          content address of field state at this tick
+#   tick         monotonic tick number (u64)
+#   state        which branch produced output this tick
+#   mote_count   number of motes in field at snapshot time
+#
+# Two construction paths (separate actions per [[feedback-no-bare-
+# types]] and hedge 3):
+#
+#   snapshot_full   uses CoincidenceHash<3>; persistence-grade;
+#                   eigenvalue-based; 8ms at 200 motes.
+#   snapshot_fast   uses FNV-1a 64-bit; hot-path-grade; sub-ms.
+#
+# Identity contract: byte-equality on the (oid, tick, state,
+# mote_count) tuple.
+type snapshot_anchor = ref
+
+# === create_context action ===
+#
+# Construct a wgpu_context: request adapter; request device + queue;
+# return wgpu_context. Per context.rs lines 24-57.
+#
+# Per hedge 1: blocks calling thread via pollster::block_on.
+# Per hedge 2: power_preference None; lets wgpu pick the backend.
+#
+# Body discharges at the realisation boundary.
+create_context(p: perturbation) -> wgpu_context { \ }
+
+# === create_buffer action ===
+#
+# Allocate a typed_buffer on the GPU with given usage + upload
+# initial data. T must be Pod.
+#
+# Body discharges at the realisation boundary.
+create_buffer(ctx: wgpu_context, data: ref, usage: ref, p: perturbation) -> typed_buffer { \ }
+
+# === dispatch_compute action ===
+#
+# Collapse the superposition to the Compute branch. Per hedge 5:
+# body is currently a no-op (Metal kernel forward-promised via
+# @fate). The substrate-decl carries the action shape (state
+# transitions to compute; tick advances) regardless.
+#
+# Body discharges at the realisation boundary.
+dispatch_compute(gpu: spectral_gpu, p: perturbation) -> device_state { \ }
+
+# === dispatch_render action ===
+#
+# Collapse the superposition to the Render branch. Sets state to
+# render; calls render on the field; returns the rgba8_buffer.
+#
+# Body discharges at the realisation boundary.
+dispatch_render(gpu: spectral_gpu, f: field, p: perturbation) -> rgba8_buffer { \ }
+
+# === snapshot_full action ===
+#
+# Persistence-grade snapshot. Uses CoincidenceHash<3> (eigenvalue-
+# based content addressing; 16-dimensional projection, three
+# observers). 8ms at 200 motes per superposition.rs comments.
+#
+# Use for: regression detection; cross-session persistence;
+# audit trails where the OID must be content-stable across runs.
+#
+# requires gpu_initialized(gpu, p): inherits from @ui family-root.
+#
+# Body discharges at the realisation boundary.
+snapshot_full(f: field, gpu: spectral_gpu, p: perturbation) -> snapshot_anchor
+requires gpu_initialized(gpu, p)
+{ \ }
+
+# === snapshot_fast action ===
+#
+# Hot-path-grade snapshot. Uses FNV-1a 64-bit hash. Sub-millisecond
+# target. Per [[feedback-no-bare-types]]: separate action from
+# snapshot_full; substrate-typed choice between persistence and
+# hot-path; NOT a parameter switch.
+#
+# Use for: render-loop tick clocks; aperture measurement; situations
+# where the OID needs to be deterministic + unique but does NOT
+# need to be cryptographically content-stable.
+#
+# requires gpu_initialized(gpu, p): inherits from @ui family-root.
+#
+# Body discharges at the realisation boundary.
+snapshot_fast(f: field, gpu: spectral_gpu, p: perturbation) -> snapshot_anchor
+requires gpu_initialized(gpu, p)
+{ \ }
+
+# === cascade_ratio action ===
+#
+# Measurement primitive. Returns superposition_hold_time /
+# snapshot_time. IS the system's aperture; higher ratio = wider
+# aperture = more uncertainty held between anchors.
+#
+# Per hedge 6: observation only; adjustment lives at @reflection
+# altitude.
+#
+# Body discharges at the realisation boundary.
+cascade_ratio(hold_ns: ref, snapshot_ns: ref, p: perturbation) -> ref { \ }
+
+# === convergence_rate action ===
+#
+# Measurement primitive. Linear regression slope on the spectral_
+# gpu's width_history. Negative = converging; zero = stable;
+# positive = diverging.
+#
+# Per hedge 6: observation only.
+#
+# Body discharges at the realisation boundary.
+convergence_rate(gpu: spectral_gpu, p: perturbation) -> ref { \ }
+
+# === advance_state action ===
+#
+# Tick the spectral_gpu's clock. If new_state != current state,
+# record the current superposition_width in width_history, reset
+# width to 0, increment tick, transition state. If new_state ==
+# current state, increment width, increment tick.
+#
+# Per superposition.rs lines 202-214.
+#
+# Body discharges at the realisation boundary.
+advance_state(gpu: spectral_gpu, new_state: device_state, p: perturbation) -> spectral_gpu { \ }
+
+# === context_valid bilateral ===
+#
+# Substrate-typed commitment that a wgpu_context has all four
+# components live: instance, adapter, device, queue.
+#
+# Specializes the family-root's gpu_initialized at the wgpu-
+# component altitude.
+#
+# Splinter-pole: all four components present; device not lost;
+# queue accepts submissions.
+# Narcissus-pole: adapter request failed (per hedge 2); device
+# lost; queue rejecting submissions.
+#
+# Body discharges at the realisation boundary.
+context_valid(ctx: wgpu_context, p: perturbation) -> verdict { \ }
+
+# === buffer_typed_correctly bilateral ===
+#
+# Substrate-typed commitment that a typed_buffer's element type T
+# matches the GPU shader's expected layout. Critical for storage
+# buffer bindings: a buffer typed Vec<MoteGpu> bound to a shader
+# expecting ArcData would silently corrupt without this bilateral.
+#
+# Splinter-pole: element type matches shader binding's declared
+# layout (size + alignment).
+# Narcissus-pole: type mismatch; binding would emit malformed data.
+#
+# Body discharges at the realisation boundary.
+buffer_typed_correctly(buf: typed_buffer, p: perturbation) -> verdict { \ }
+
+out @ui/gpu
+out wgpu_context
+out typed_buffer
+out wgsl_program
+out render_pass
+out device_state
+out snapshot_anchor
+out create_context
+out create_buffer
+out dispatch_compute
+out dispatch_render
+out snapshot_full
+out snapshot_fast
+out cascade_ratio
+out convergence_rate
+out advance_state
+out context_valid
+out buffer_typed_correctly
