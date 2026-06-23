@@ -1,0 +1,422 @@
+in @prism
+in @meta
+in @glass
+in @ui
+in @nl
+in @labeled
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/distinction
+
+# @docs — the typed-document substrate family-root.
+#
+# Recognition #96 candidate territory (continuing from @ui at
+# `shards/ui.mirror`, Mara Phase C, 2026-06-23): instrument-altitude
+# vs presentation-altitude is a real substrate partition. @ui declared
+# the INSTRUMENT side (mote/arc/field/rgba8_buffer/spectral_gpu); the
+# eigenboard substance. @docs declares the PRESENTATION side: the
+# typed document that COMPOSES instrument output with linguistic
+# content into a renderable page.
+#
+# === What this family declares ===
+#
+# Per Alex 2026-06-23 (Loop Phase D directive):
+#
+#   @docs combines @ui (instrument) + @nl (linguistic content) as
+#   substrate-decl. Presentation altitude; TEA loosely inspires the
+#   composition pattern at @docs/tea (NOT @code/elm).
+#
+# So this family-root names the SHAPE of a typed page: an ordered
+# composition of content blocks (some textual via @nl, some
+# instrument-rendered via @ui, some compositional/structural) that
+# together discharge into a single rendered_page artifact.
+#
+# Five primitives, each a Prism per [[architecture-prism-as-trait-
+# as-everything]]:
+#
+#   document         a complete typed-document instance; the unit
+#                    @docs operates on end-to-end
+#   content_block    a typed section / paragraph / aside / widget;
+#                    the COMPOSITION ATOM of a document
+#   page_state       the current rendering state (which sections
+#                    open, scroll position, interactive-widget
+#                    state); the typed mutable surface @docs/tea
+#                    consumes as `model`
+#   rendered_page    the rendered output + provenance — typed as
+#                    `labeled(rgba8_buffer, document)` per the
+#                    labeled<> functor primitive landed today at
+#                    `shards/labeled.mirror`; the projection back
+#                    to the source document IS the provenance
+#                    contract
+#   perturbation     re-imported from @glass for signatures (NOT
+#                    re-declared)
+#
+# === The composition workflow (per woz:explore earlier today) ===
+#
+# @docs IS a transformation workflow, NOT a pure functor. The shape:
+#
+#   text (corpus @nl)
+#     -> spectral triple (the typed structural decomposition;
+#        sections, references, glossary edges, sidenote anchors)
+#     -> field construction (instrument-altitude @ui scenes for
+#        any embedded eigenboard widgets)
+#     -> @ui render (the actual rgba8 pixels for instrument parts)
+#     -> presentation composition (typography + layout + instrument
+#        embedding into one page)
+#     -> rendered_page (the labeled artifact carrying both pixels
+#        and provenance)
+#
+# The workflow is NOT a single functor application — it is a
+# multi-altitude transformation where each step lives at its own
+# substrate altitude and the composition between altitudes happens
+# at @docs. That is what makes this family-root load-bearing: it
+# names the composition SURFACE, not the composition formula.
+#
+# === Recognition #96 candidate territory ===
+#
+# Continuing from @ui's hedge 6: the partition "instrument-altitude
+# vs presentation-altitude" needs a second witness to promote. @docs
+# IS the second witness — the same partition, lifted to the
+# presentation side. The candidate is now ratifiable IF Pack agrees
+# the partition is structural (not just a delivery-target convenience).
+#
+# Forward-promised: third witness from @audio (if it ever lands)
+# would close the recognition; ratification gate per
+# [[feedback-substrate-already-had-the-word]] requires structural
+# independence of witnesses, which @ui/@docs satisfy (one is the
+# substance-renderer; the other is the typography-composer; they
+# are not the same family lifted twice).
+#
+# === Forward-promised consumers ===
+#
+# - shards/docs/tea.mirror (LANDS IN THIS COMMIT). The TEA-shaped
+#   composition pattern at presentation-altitude; canonical
+#   implementor will be Gleam Lustre via cascade<gleam, js> per
+#   Mara research at c486718. NOT @code/elm — that grammar is
+#   deferred per §6 of the research doc.
+# - spectral.engineer/case-study/X (per Alex 2026-06-23 deployment
+#   cascade); the first applied @docs consumer. The case-study
+#   substrate composes @ui-rendered eigenboard panels with @docs-
+#   rendered narrative; this family supplies the narrative-side
+#   composition surface.
+# - Future @docs/sidenotes (per Tufte sidenote pattern;
+#   forward-promised at Phase E briefs); a species shard that
+#   specializes content_block with the sidenote-anchor carrier.
+# - Future @docs/glossary (per spectral.engineer corpus needs);
+#   another content_block species specialization.
+# - spectral TUI eigenboard view (docs/specs/tui-v0.md); same @docs
+#   primitives, different rendered_page shape (terminal cell grid
+#   vs RGBA8 buffer; the labeled<> functor accommodates both with
+#   a different first type parameter).
+#
+# === Recognition ancestry ===
+#
+# - #96 candidate territory: this is the second-witness shard. @ui
+#   surfaced the partition; @docs ratifies it from the other side.
+# - #93 H4 (labeled<> functor primitive; RESOLVED 2026-06-23 at
+#   `shards/labeled.mirror`): rendered_page = labeled(rgba8_buffer,
+#   document) IS the 5th load-bearing labeled<> instance landing
+#   today (after StageFreight npm_artifact, @cascade loss_lens,
+#   @cogito name_output, and the canonical labeled<> shard itself).
+#   The provenance contract IS the labeled functor at the page
+#   altitude.
+# - #50 form/substance partition (Bateson 1970): @docs operates at
+#   the form altitude (typography, layout, structure); the @ui
+#   embeds bring substance (eigenboard motes are the matter being
+#   rendered) into the form scaffold. Adjacent Bateson levels.
+# - #55 form/process partition at family-root altitude: @docs is
+#   form-side at the presentation altitude; @docs/tea (this commit)
+#   is process-side at the same altitude. The split lives WITHIN
+#   the family — same recognition #55 pattern as @mirror vs
+#   @kintsugi.
+# - #57 alignment as boundary mathematics at @io: the SSR vs
+#   client-side rendering boundary IS an @io altitude; @docs's
+#   render_doc action is form-side; the actual byte emission at
+#   network or screen happens at @io.
+# - #59 kintsugi loop altitude-portable: @docs's composed bilateral
+#   (docs_complete) follows the same composed-bilateral pattern as
+#   @cascade.cascade_well_defined, @ui.ui_instrument_coherent,
+#   confirming the discipline at one more altitude.
+# - #95 @cascade family-root: @docs's delivery to browser IS
+#   cascade<gleam, js> via Lustre per research doc; this family
+#   supplies the typed_source grammar that cascade measures.
+#
+# === Honest hedges ===
+#
+# 1. The composition shape is NOT a pure functor. text -> document
+#    is a transformation workflow with multiple non-commutative
+#    steps (section extraction, anchor resolution, instrument
+#    embedding, layout). The substrate-decl carries the SURFACE
+#    primitives (carriers + actions + bilaterals); the per-page
+#    composition recipe lives at the instance altitude. Conflating
+#    "the substrate names the composition" with "the substrate
+#    fully computes the composition" would be the error.
+#
+# 2. SSR vs client-side rendering is the substantive partition this
+#    shard does NOT resolve. render_doc returns a rendered_page;
+#    whether those bytes get emitted server-side and shipped as HTML
+#    or computed client-side via Lustre's JS bundle is a CASCADE-
+#    SPECIES decision, not a @docs-altitude one. The Universal
+#    Components pattern (Lustre 5.6.0) lets one source ship both;
+#    the substrate-decl admits both modes without forcing the
+#    choice.
+#
+# 3. content_block is genuinely polymorphic. A paragraph of @nl
+#    text, a Tufte sidenote, an embedded @ui eigenboard widget, a
+#    glossary cross-reference — all four are content_blocks but
+#    they discharge differently. The substrate-decl carries
+#    content_block as `ref` (parametric at the floor); species
+#    shards (`shards/docs/sidenotes.mirror`, etc.) will specialize.
+#    For now the polymorphism is documentation-altitude only.
+#
+# 4. The provenance contract (rendered_page carrying back-reference
+#    to source document via labeled<>) requires that document
+#    instances be content-addressed. The substrate already has the
+#    OID infrastructure (per @mirror/store + uuid.mirror); this
+#    shard ASSUMES content-addressing exists. Forward-promised:
+#    if a document is mutated mid-render (long-running interactive
+#    page), the labeled<> back-reference must carry the version
+#    that was rendered, not the current head. Discharge happens at
+#    species altitude.
+#
+# 5. Recognition #96 candidate is still un-ratified at commit time.
+#    The promotion gate (per Seam adversarial review pattern) needs
+#    Pack agreement. This shard lands as substrate-decl regardless;
+#    the recognition canonical doc is a separate forward-promise
+#    at `docs/specs/recognitions/recognition-96-instrument-altitude-
+#    vs-presentation-altitude-candidate.md` (referenced from
+#    `shards/ui.mirror` already; this shard extends the same
+#    candidate territory).
+#
+# 6. The "text -> spectral triple" step (workflow stage 2) currently
+#    has no substrate primitive. Sections, references, glossary
+#    edges, sidenote anchors are all content_block specializations
+#    we forward-promise; the EDGES BETWEEN them (the spectral
+#    triple's H component for the document) are not yet named at
+#    substrate altitude. Mara survey altitude finding: this might
+#    be the recognition that emerges from extending @docs further.
+#    Flagged for Pack review.
+#
+# Spec context: docs/research/2026-06-23-elm-architecture-and-code-
+#               elm-substrate-decl.md (Mara research; commit c486718;
+#               §5 declares the @docs/tea sketch this family-root
+#               grounds; §6 recommends @docs/tea over @code/elm at
+#               substrate-decl altitude);
+#               docs/specs/recognitions/recognition-96-instrument-
+#               altitude-vs-presentation-altitude-candidate.md
+#               (forward-promised canonical doc; this shard is
+#               second-witness substrate-decl-altitude surface).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[feedback-no-bare-types]] (document /
+#                       content_block / page_state / rendered_page
+#                       are separate carriers for separate concepts;
+#                       NOT one ref with a discriminator),
+#                      [[feedback-loss-from-epistemologic-properties]]
+#                       (any loss in the text -> document transform
+#                       is composite of @epistemologic/properties at
+#                       the realisation boundary),
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; SSR vs client-side IS
+#                       the @io boundary at this altitude),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (the rendered_page = labeled<> instance is
+#                       the 5th load-bearing labeled<> witness today;
+#                       the parametric carrier was already there).
+# Recognition ancestry: #96 candidate territory (second-witness side);
+#                       #93 H4 (labeled<> primitive; 5th load-bearing
+#                       instance today); #50 form/substance partition;
+#                       #55 form/process partition at family-root
+#                       altitude; #57 alignment as boundary
+#                       mathematics; #59 kintsugi loop altitude-
+#                       portable; #95 @cascade family-root.
+# Path-namespace property: this file at `shards/docs.mirror` declares
+# `@docs` per `@epistemologic/pact/path_matches_namespace`.
+
+source @code/rust
+source @code/gleam
+source @arxiv/programming-languages/wadler-1989-theorems-for-free
+source @arxiv/typography/tufte-2001-visual-display
+
+prism @docs {
+  focus content
+  project structure
+  split section
+  shift render
+  settle commit
+}
+
+# === The document carrier ===
+#
+# A complete typed-document instance: the unit @docs operates on
+# end-to-end. Carries the ordered composition of content blocks,
+# the global metadata (title, author, version), and the cross-
+# reference graph (the spectral triple's H component for the
+# document — see hedge 6).
+#
+# Identity contract: byte-equality on the underlying ref. Documents
+# ARE content-addressed (see hedge 4); two byte-identical documents
+# render byte-identically.
+type document = ref
+
+# === The content_block carrier ===
+#
+# A typed atom of document composition: paragraph, section heading,
+# Tufte sidenote, embedded eigenboard widget, glossary cross-
+# reference. The polymorphism is genuine (hedge 3); species shards
+# specialize.
+#
+# Identity contract: byte-equality on the underlying ref.
+type content_block = ref
+
+# === The page_state carrier ===
+#
+# The current rendering state: which sections are open, scroll
+# position, interactive-widget state, embedded eigenboard's current
+# field. The typed mutable surface @docs/tea (companion shard in
+# this commit) consumes as its `model` carrier.
+#
+# Identity contract: byte-equality on the underlying ref.
+type page_state = ref
+
+# === The rendered_page carrier ===
+#
+# THE LOAD-BEARING composed carrier. Per recognition #93 H4
+# (labeled<> functor primitive landed today at shards/labeled.mirror):
+#
+#   rendered_page = labeled(rgba8_buffer, document)
+#
+# The labeled<> functor pairs the rendered pixels with the source
+# document as provenance. unlabel(rendered_page) projects back to
+# the rgba8_buffer; label_of(rendered_page) projects back to the
+# source document; both projections are substrate-typed.
+#
+# This is the 5th load-bearing labeled<> instance landing today
+# (after StageFreight npm_artifact, @cascade loss_lens, @cogito
+# name_output, and the canonical labeled<> shard). The
+# substrate-already-had-the-word recognition holds at the page
+# altitude.
+#
+# Identity contract: byte-equality on the underlying labeled<> ref.
+type rendered_page = labeled(rgba8_buffer, document)
+
+# === compose action ===
+#
+# THE LOAD-BEARING ACTION. Takes a natural-language corpus, a
+# field (the @ui instrument scene for any embedded widgets), and
+# a perturbation; returns a typed document.
+#
+# This is workflow stage 1+2+3 collapsed into one substrate
+# primitive: text -> spectral triple -> field construction. The
+# realisation-boundary body discharges the actual section
+# extraction, anchor resolution, widget embedding.
+#
+# Per hedge 1: the substrate-decl carries the SURFACE; the
+# composition RECIPE per-document lives at the instance altitude.
+#
+# Body discharges at the realisation boundary.
+compose(corpus: nl_literal, field: field, p: perturbation) -> document { \ }
+
+# === render_doc action ===
+#
+# THE OUTPUT-PRODUCING ACTION. Takes a document + perturbation;
+# returns a rendered_page (the labeled<> artifact carrying both
+# pixels and provenance).
+#
+# requires document_well_formed(doc, p): the substrate forecloses
+# rendering an ill-formed document. Composition coherence is
+# verified before pixels are committed.
+#
+# Per hedge 2: whether the rendering executes server-side or
+# client-side is a CASCADE-SPECIES decision; this action's signature
+# admits both modes.
+#
+# Body discharges at the realisation boundary.
+render_doc(doc: document, p: perturbation) -> rendered_page
+requires document_well_formed(doc, p)
+{ \ }
+
+# === section action ===
+#
+# Project a named section out of a document. Substrate-vocabulary
+# primitive for accessing the composition atoms by name. Composes
+# with the spectral triple's H component (hedge 6): the edges
+# between content_blocks form a navigable structure.
+#
+# Body discharges at the realisation boundary.
+section(doc: document, name: ref, p: perturbation) -> content_block { \ }
+
+# === document_well_formed bilateral ===
+#
+# Commitment that a document is composition-coherent: all
+# content_blocks are typed correctly; all cross-references resolve;
+# the section graph has no orphaned anchors; embedded @ui fields
+# discharge field_well_formed (from @ui).
+#
+# Splinter-pole: every block typed, every anchor resolved, no
+# orphans; render_doc can proceed.
+# Narcissus-pole: missing block type, unresolved anchor, broken
+# embed; rendering blocked.
+# Narcissus-warned: anchors resolve but to deprecated targets;
+# document renders with sidenote-level warnings.
+#
+# Body discharges at the realisation boundary.
+document_well_formed(doc: document, p: perturbation) -> verdict { \ }
+
+# === composition_coherent bilateral ===
+#
+# Commitment that compose's three inputs (corpus, field,
+# perturbation) compose coherently: the corpus references resolve
+# against the field's eigenboard widgets where applicable; the
+# perturbation does not invalidate either side; the resulting
+# document satisfies document_well_formed.
+#
+# Splinter-pole: all three inputs coherently composable; compose
+# returns a well-formed document.
+# Narcissus-pole: corpus references a widget the field does not
+# contain; perturbation breaks the composition invariant.
+#
+# Body discharges at the realisation boundary.
+composition_coherent(corpus: nl_literal, field: field, p: perturbation) -> verdict { \ }
+
+# === docs_complete composed bilateral ===
+#
+# THE LOAD-BEARING composed bilateral at the @docs altitude. Same
+# composed-bilateral pattern as @cascade.cascade_well_defined and
+# @ui.ui_instrument_coherent — three requires + uses labeled<>
+# projection where carriers compose (rendered_page IS a labeled<>
+# instance; this bilateral's verdict ratifies the labeling).
+#
+# All three sub-predicates must hold for the @docs cycle (compose
+# -> render_doc -> output) to operate end-to-end. Composes
+# document_well_formed (output side) + composition_coherent (input
+# side) + the @ui's field_well_formed (instrument side, when an
+# embedded field is present).
+#
+# Splinter-pole: all three discharge; @docs cycle complete; the
+# rendered_page's labeled<> projection is provenance-valid.
+# Narcissus-pole: any sub-predicate fails; cycle blocked at the
+# failing altitude.
+# Narcissus-warned: all three discharge but at least one is warned
+# (e.g., document_well_formed warns deprecated anchors; @docs
+# operates with bounded provenance).
+#
+# Same composed-bilateral discipline pattern as @cascade and @ui;
+# altitude-portable per recognition #59.
+docs_complete(corpus: nl_literal, field: field, doc: document, p: perturbation) -> verdict
+requires composition_coherent(corpus, field, p)
+requires document_well_formed(doc, p)
+requires field_well_formed(field, p)
+{ \ }
+
+out @docs
+out document
+out content_block
+out page_state
+out rendered_page
+out compose
+out render_doc
+out section
+out document_well_formed
+out composition_coherent
+out docs_complete

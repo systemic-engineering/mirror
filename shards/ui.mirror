@@ -394,16 +394,82 @@ requires gpu_initialized(gpu, p)
 requires render_complete(buffer, p)
 { \ }
 
+# === ui_event carrier (event substrate; added 2026-06-23 for @docs/tea bridge) ===
+#
+# Typed event surface for @docs/tea to wire. Per Alex 2026-06-23
+# directive: @ui exposes a typed event surface that @docs/tea consumes
+# via subscribe; @ui does NOT own full M/V/U.
+#
+# Instance altitude declares concrete events (mote_clicked(mote_id),
+# arc_hovered(arc_id), viewer_panned(delta), zoom_changed(factor),
+# etc.). At family-root altitude: bare ref. Each @ui-consumer @docs/tea
+# instance specializes.
+#
+# Identity contract: byte-equality on the underlying ref.
+type ui_event = ref
+
+# === event_stream carrier ===
+#
+# Ordered sequence of ui_events; the output of subscribe_events. The
+# event-loop bridge from instrument-altitude (@ui) to presentation-
+# altitude (@docs/tea). At family-root altitude: bare ref. Refinement
+# to typed stream forward-promised.
+#
+# Identity contract: byte-equality on the underlying ref.
+type event_stream = ref
+
+# === subscribe_events action ===
+#
+# THE @ui CONTRACT that @docs/tea consumes via its subscribe action.
+# Takes a field; returns the event_stream of ui_events the instrument
+# emits as the user interacts with the eigenboard.
+#
+# Per the architectural partition (Mara recognition #96 candidate
+# territory): @ui owns event EMISSION; @docs/tea owns event WIRING
+# into Model/View/Update. This action IS the bridge.
+#
+# Body discharges at the realisation boundary (wgpu input handling +
+# event emission to JS bridge via @cascade/code/rust/wasm).
+subscribe_events(f: field, p: perturbation) -> event_stream { \ }
+
+# === emit_event action ===
+#
+# Internal: when the instrument detects user interaction, this action
+# emits the event to subscribers. The runtime implementation (Rust
+# wgpu event loop) calls emit_event; @docs/tea consumers receive via
+# subscribe_events.
+#
+# Takes a field + a ui_event; returns the field (possibly with internal
+# state updated to reflect the event having been emitted). At v0.1 the
+# field return is identity; refinement to typed event-emission state
+# forward-promised.
+emit_event(f: field, e: ui_event, p: perturbation) -> field { \ }
+
+# === event_well_typed bilateral ===
+#
+# Bilateral verdict that an emitted ui_event is structurally valid for
+# the field it's emitted on (e.g., mote_clicked(m) requires m to be a
+# valid mote_id in the field).
+#
+# Splinter-pole: event well-typed against field's structure;
+# Narcissus-pole: event references non-existent IDs or invalid payloads.
+event_well_typed(e: ui_event, f: field, p: perturbation) -> verdict { \ }
+
 out @ui
 out mote
 out arc
 out field
 out rgba8_buffer
 out spectral_gpu
+out ui_event
+out event_stream
 out render
 out snapshot
 out couple
+out subscribe_events
+out emit_event
 out field_well_formed
 out gpu_initialized
 out render_complete
+out event_well_typed
 out ui_instrument_coherent

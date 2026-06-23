@@ -1,0 +1,299 @@
+in @prism
+in @meta
+in @glass
+in @docs
+in @ui
+in @io
+
+# @docs/tea — The Elm Architecture as substrate composition pattern
+# at presentation altitude.
+#
+# Per Alex 2026-06-23 directive: "What if we let ourselves loosely
+# inspire by it for mirror's @ui layer?" + the deeper substrate-pull
+# correction: @docs/tea (NOT @ui/tea) per the instrument-altitude vs
+# presentation-altitude partition (Mara's recognition #96 candidate
+# territory; surfaced in shards/ui.mirror Phase C).
+#
+# Per Mara's Elm research (docs/research/2026-06-23-elm-architecture-
+# and-code-elm-substrate-decl.md, commit c486718) §5: substrate-decl
+# `@docs/tea` (not `@code/elm`) as presentation-altitude composition
+# pattern; strict purity at form altitude; effects at @io boundary;
+# Gleam Lustre as canonical implementor.
+#
+# === Why @docs/tea and not @ui/tea ===
+#
+# @ui is INSTRUMENT altitude (Mote/Arc/Field GPU rendering primitives;
+# rendering state). TEA's Model/View/Update is fundamentally about
+# user-facing INTERACTION and state evolution at the page/application
+# altitude — that's @docs territory.
+#
+# The deployment cascade matches the partition:
+# - Gleam Lustre (TEA) ships via cascade/code/gleam/js for the page;
+#   the page IS the @docs/tea instance
+# - Rust eigenboard ships via cascade/code/rust/wasm; the eigenboard
+#   IS the @ui instrument
+# - They compose via @ui's typed event surface (shards/ui.mirror
+#   subscribe_events / ui_event / emit_event — added this commit)
+#
+# @ui doesn't own M/V/U; @ui exposes a typed event surface that
+# @docs/tea wires through its Update / Cmd / Sub primitives. The
+# eigenboard is a rendering instrument that documents include; it
+# isn't a document.
+#
+# === Loose-inspiration, not strict-Elm ===
+#
+# Per Alex "loosely inspire": @docs/tea borrows TEA's structural
+# discipline (typed Msg algebra; pure Update; pure View; effects at
+# the boundary) WITHOUT adopting Elm-specific commitments (no Elm
+# compiler import; no ports-as-API; no Elm's specific Cmd / Sub
+# bifurcation — substrate uses @io for effects). The pattern is
+# substrate-pull-correct at the composition altitude; the Elm grammar
+# is a different question (@code/elm forward-promised at Mara research
+# c486718 §4 with explicit defer-recommendation).
+#
+# === Forward-promised consumers ===
+#
+# - spectral.engineer/case-study/X (per Alex 2026-06-23): the page IS
+#   a @docs/tea instance; Gleam Lustre as the implementor; @ui
+#   eigenboard rendered via subscribe_events bridge
+# - cosmos-mirror (forward-promised Loop 2): potentially uses @docs/tea
+#   for the data-exploration UI atop @spectral/db queries
+#
+# === Honest hedges ===
+#
+# 1. Lustre 5.6.0 maturity — Gleam Lustre is young per Mara research
+#    c486718 §8 H3; acceptable risk per systemic.engineering's existing
+#    Gleam commitment + BEAM/OTP supervision floor.
+# 2. TEA's strict-purity runtime overhead — negligible for static-content
+#    sites (spectral.engineer's case); matters for heavy interactive
+#    widgets; eigenboard already lives at @ui's instrument-altitude
+#    so this partition is clean.
+# 3. @docs/tea is substrate composition pattern, NOT Elm-grammar import;
+#    Pack peer review needed before promoting recognition #97 candidate
+#    (TEA-as-substrate-pattern).
+# 4. cmd + sub as bare refs at v0.1; refinement to typed effect
+#    descriptions forward-promised once @io adapter species name
+#    concrete effect shapes.
+#
+# Spec context: docs/research/2026-06-23-elm-architecture-and-code-
+#               elm-substrate-decl.md (Mara research c486718; §5
+#               recommendation grounds this species).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (TEA's pattern was already substrate-pull-
+#                       implicit in @docs's transformation workflow;
+#                       this species names it explicitly).
+# Related shards: shards/docs.mirror (parent family-root);
+#                 shards/ui.mirror (event surface this species wires);
+#                 shards/cascade/code/gleam/js.mirror (the cascade
+#                  species that delivers @docs/tea instances to
+#                  browser via Gleam Lustre).
+# Path-namespace property: this file at `shards/docs/tea.mirror`
+# declares `@docs/tea` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming-languages/elm-architecture
+source @arxiv/programming-languages/gleam-lustre
+
+prism @docs/tea {
+  focus model
+  project view
+  split message
+  shift update
+  settle commit
+}
+
+# === The model carrier ===
+#
+# Typed page state. The Model side of TEA. Instance altitude declares
+# concrete page-state types (e.g., for spectral.engineer/case-study/X:
+# { case_study_id, selected_section, eigenboard_field_config,
+#   open_aside, viewer_position }).
+#
+# At family-root altitude: bare ref. Each @docs/tea instance specializes.
+#
+# Identity contract: byte-equality on the underlying ref.
+type model = ref
+
+# === The msg carrier ===
+#
+# Typed event sum. The Msg side of TEA. Instance altitude declares
+# concrete event sums (e.g., mote_clicked(mote_id) | section_opened(
+# name) | viewer_moved(delta) | data_loaded(payload)).
+#
+# Composes naturally with @ui's ui_event type (this commit extends
+# shards/ui.mirror with subscribe_events that produces event_stream
+# of ui_event values; @docs/tea wires these into its msg sum).
+#
+# Identity contract: byte-equality on the underlying ref.
+type msg = ref
+
+# === The view carrier ===
+#
+# Pure model → rendered_page projection. The View side of TEA.
+# At @docs/tea altitude, view IS a typed function model → rendered_page
+# (where rendered_page = labeled(rgba8_buffer, document) per
+# shards/docs.mirror).
+#
+# Pure: depends only on its model input; no side effects. Discharged
+# by view_pure bilateral.
+#
+# Identity contract: byte-equality on the underlying ref.
+type view = ref
+
+# === The cmd carrier ===
+#
+# Effect description handed to @io for discharge. The Cmd side of TEA.
+# Substrate-pull-correct partition: effects are NOT embedded in Update;
+# they are DESCRIBED as cmd values that @io interprets at the boundary.
+#
+# v0.1: bare ref. Refinement to typed effect descriptions forward-
+# promised once @io adapter species name concrete effect shapes (HTTP
+# fetch, local storage, WebSocket, timer, etc.).
+#
+# Identity contract: byte-equality on the underlying ref.
+type cmd = ref
+
+# === The sub carrier ===
+#
+# Subscription description for long-running effects (event streams,
+# WebSocket feeds, animation frames, intervals). The Sub side of TEA.
+# Distinct from cmd: cmd fires once; sub produces ongoing event
+# streams over time.
+#
+# v0.1: bare ref. Refinement forward-promised.
+#
+# Identity contract: byte-equality on the underlying ref.
+type sub = ref
+
+# === init action ===
+#
+# Construct the initial (model, cmd) pair for a @docs/tea instance.
+# Per TEA: the runtime invokes init once at startup; result's model
+# becomes the starting state; result's cmd is dispatched to @io for
+# any initial effects (loading data, subscribing to streams).
+#
+# requires init_pure: depends only on its perturbation input;
+# substrate forecloses initializers with hidden side effects.
+#
+# Body discharges at the realisation boundary (instance shard or
+# Gleam Lustre runtime).
+init(p: perturbation) -> (model, cmd)
+requires init_pure(p)
+{ \ }
+
+# === update action ===
+#
+# Pure (state, event) → (new_state, effect_description) transition.
+# THE LOAD-BEARING action of TEA. Per the pattern: when an event
+# arrives, the runtime invokes update with the current model and the
+# event; result's model becomes the new state; result's cmd is
+# dispatched to @io.
+#
+# requires update_pure: depends only on (state, m) inputs; substrate
+# forecloses updaters with hidden side effects. The substrate-decl
+# discipline enforces what Elm's compiler enforces at compile-time:
+# Update is pure; effects flow through cmd to the @io boundary.
+#
+# This action's purity discipline IS the substrate's loose-TEA
+# inspiration made structural: state transitions ARE typed functors
+# with measurable loss if they erase information (composes with
+# recognition #95 @cascade's measure altitude at the application
+# level).
+update(state: model, m: msg, p: perturbation) -> (model, cmd)
+requires update_pure(state, m, p)
+{ \ }
+
+# === view_of action ===
+#
+# Pure model → view projection. The View side. Per TEA: after every
+# update, the runtime invokes view_of with the current model; result's
+# view is rendered (composes with @ui.render for the eigenboard
+# portion and @docs.render_doc for the page portion).
+#
+# requires view_pure: depends only on state input. Substrate-decl
+# discipline.
+view_of(state: model, p: perturbation) -> view
+requires view_pure(state, p)
+{ \ }
+
+# === subscribe action ===
+#
+# Pure model → sub projection. Per TEA: after every update, the
+# runtime invokes subscribe with the current model; the result
+# describes what event streams the runtime should be listening to
+# (eigenboard ui_events via @ui.subscribe_events; WebSocket feeds;
+# animation frames).
+#
+# Pure: depends only on state input.
+subscribe(state: model, p: perturbation) -> sub { \ }
+
+# === init_pure bilateral ===
+#
+# Bilateral verdict that init is pure (depends only on perturbation;
+# no hidden side effects; reproducible).
+#
+# Splinter-pole: pure;
+# Narcissus-pole: hidden side effects in initializer.
+init_pure(p: perturbation) -> verdict { \ }
+
+# === update_pure bilateral ===
+#
+# Bilateral verdict that update is pure (depends only on (state, msg)
+# inputs; produces (new_state, cmd) with no hidden side effects).
+# THE LOAD-BEARING bilateral of TEA — enforces what Elm's compiler
+# enforces at type altitude.
+#
+# Splinter-pole: pure;
+# Narcissus-pole: hidden side effects in updater.
+update_pure(state: model, m: msg, p: perturbation) -> verdict { \ }
+
+# === view_pure bilateral ===
+#
+# Bilateral verdict that view_of is pure (depends only on state input).
+#
+# Splinter-pole: pure;
+# Narcissus-pole: hidden side effects in view projection.
+view_pure(state: model, p: perturbation) -> verdict { \ }
+
+# === tea_well_formed composed bilateral ===
+#
+# THE LOAD-BEARING composed bilateral at the @docs/tea altitude.
+# Composes the three purity sub-predicates:
+#
+#   1. init_pure(p)
+#   2. update_pure(state, m, p)
+#   3. view_pure(state, p)
+#
+# All three must hold for @docs/tea to operate. The substrate refuses
+# TEA-instance dispatch if any composition step has hidden side effects;
+# effects MUST flow through cmd / sub to @io.
+#
+# Splinter-pole: all three pure; effects boundary-respected;
+# Narcissus-pole: any step impure; runtime undefined behavior.
+#
+# Same composed-bilateral pattern as cascade_well_defined,
+# stagefreight_addressable, shatter_round_trip, third_order_coherent,
+# three_axis_coherent, ui_instrument_coherent, rust_wasm_cascade_
+# well_formed, ps_npm_cascade_well_formed, gleam_*_cascade_well_formed.
+# Eighth altitude lift of today's composed-bilateral pattern.
+tea_well_formed(state: model, m: msg, p: perturbation) -> verdict
+requires init_pure(p)
+requires update_pure(state, m, p)
+requires view_pure(state, p)
+{ \ }
+
+out @docs/tea
+out model
+out msg
+out view
+out cmd
+out sub
+out init
+out update
+out view_of
+out subscribe
+out init_pure
+out update_pure
+out view_pure
+out tea_well_formed
