@@ -6,7 +6,12 @@ in @labeled
 in @code/rust
 in @code/wasm
 
-# @cascade/rust-wasm — the Rust → WebAssembly cascade species.
+# @cascade/code/rust/wasm — the Rust → WebAssembly cascade species.
+#
+# Path naming: per Alex 2026-06-23 directive — cascade species shards
+# group by `@cascade/code/<source>/<target>`. Source language (Rust)
+# groups together; targets (wasm here, potentially cdylib elsewhere)
+# are leaves.
 #
 # Per recognition #95 candidate (@cascade as loss-lens substrate;
 # Mara canonical ce4874b 2026-06-23): each cascade species shard
@@ -93,14 +98,15 @@ in @code/wasm
 #                 primitive wasm_artifact instance rests on);
 #                 shards/code/rust.mirror (source grammar);
 #                 shards/code/wasm.mirror (target grammar).
-# Path-namespace property: this file at `shards/cascade/rust-wasm.mirror`
-# declares `@cascade/rust-wasm` per
+# Path-namespace property: this file at
+# `shards/cascade/code/rust/wasm.mirror` declares
+# `@cascade/code/rust/wasm` per
 # `@epistemologic/pact/path_matches_namespace`.
 
 source @arxiv/programming-languages/webassembly-spec-2025
 source @arxiv/programming-languages/rust-2024-edition
 
-prism @cascade/rust-wasm {
+prism @cascade/code/rust/wasm {
   focus cascade
   project cascade
   split cascade
@@ -266,7 +272,7 @@ requires wasm_consumable(unlabel(artifact, p), label_of(artifact, p), p)
 requires rust_wasm_loss_well_defined(source, artifact, p)
 { \ }
 
-out @cascade/rust-wasm
+out @cascade/code/rust/wasm
 out rust_source
 out wasm_module
 out wasm_metadata

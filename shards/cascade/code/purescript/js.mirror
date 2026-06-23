@@ -4,9 +4,17 @@ in @glass
 in @cascade
 in @labeled
 
-# @cascade/purescript-npm — the first cascade species. Discharges
-# `cascade<purescript, npm>` as concrete substrate-decl: Purescript
-# (typed-source grammar) pairs with the npm package format (mainstream-
+# @cascade/code/purescript/js — the first cascade species. Discharges
+# `cascade<purescript, js>` as concrete substrate-decl: Purescript
+# (typed-source grammar) pairs with JS as target_grammar; npm is the
+# package format wrapping the JS deliverable (npm sits at the @io/
+# adapter altitude, not the language target altitude).
+#
+# Path naming: per Alex 2026-06-23 directive — cascade species shards
+# group by `@cascade/code/<source>/<target>`. Source language groups
+# together; targets are leaves. Admits arbitrary target additions per
+# source (e.g. /gleam/js + /gleam/beam; /purescript/js plus future
+# /purescript/wasm if PureScript ever ships WASM compilation; mainstream-
 # target grammar) as one instance of the @cascade family.
 #
 # === Recognition ancestry ===
@@ -137,16 +145,16 @@ in @labeled
 #                 glass.mirror (imperfect<a, e, l> for measure_ps_npm
 #                  return).
 # Path-namespace property: this file at
-# `shards/cascade/purescript-npm.mirror` declares
-# `@cascade/purescript-npm` per
+# `shards/cascade/code/purescript/js.mirror` declares
+# `@cascade/code/purescript/js` per
 # `@epistemologic/pact/path_matches_namespace`.
 
 source @arxiv/programming-languages/purescript-by-example
 source @arxiv/programming-languages/spago-tooling
 
-prism @cascade/purescript-npm {
-  focus purescript-npm
-  project purescript-npm
+prism @cascade/code/purescript/js {
+  focus cascade
+  project cascade
   split purescript-npm
   shift purescript-npm
   settle purescript-npm
@@ -349,7 +357,7 @@ requires npm_consumable(unlabel(artifact, p), label_of(artifact, p), p)
 requires ps_npm_loss_well_defined(source, artifact, p)
 { \ }
 
-out @cascade/purescript-npm
+out @cascade/code/purescript/js
 out purescript_source
 out purescript_module
 out npm_artifact
