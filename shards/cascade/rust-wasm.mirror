@@ -1,0 +1,280 @@
+in @prism
+in @meta
+in @glass
+in @cascade
+in @labeled
+in @code/rust
+in @code/wasm
+
+# @cascade/rust-wasm — the Rust → WebAssembly cascade species.
+#
+# Per recognition #95 candidate (@cascade as loss-lens substrate;
+# Mara canonical ce4874b 2026-06-23): each cascade species shard
+# discharges the per-grammar measurement of information loss in
+# compilation from a typed source grammar to a mainstream target.
+#
+# This species: source_grammar = @code/rust, target_grammar =
+# @code/wasm. The Rust→WASM cascade is the LOAD-BEARING delivery
+# mechanism for spectral.engineer's @ui (GPU eigenboard rendering
+# crate at /Users/alexwolf/dev/projects/spectral/crates/ui): the
+# wgpu-based Mote/Arc/Field instrument ships to browser via this
+# species discharging.
+#
+# === The cascade shape (Rust→WASM) ===
+#
+# Source (Rust admits):
+# - lifetimes (ownership tracking; erased at runtime)
+# - generics (monomorphized at compile time; erased)
+# - trait objects (some preserved as vtable; most erased)
+# - macros (expanded; erased)
+# - type-level safety (erased)
+# - zero-cost abstractions (preserved as flat code)
+#
+# Target (WASM preserves):
+# - linear memory model
+# - typed function signatures (i32, i64, f32, f64, externref)
+# - control flow (structured; no goto)
+# - imports/exports (named)
+# - bytecode (validated)
+#
+# Loss surfaces at: lifetime erasure, generic monomorphization
+# (information condensation), trait-object devirtualization,
+# macro expansion. The loss_lens<@code/rust, @code/wasm> measures
+# these gaps against the rustc + WASM grammar specifications.
+#
+# === First applied consumer ===
+#
+# spectral.engineer deployment per Loop Phase G:
+#   /Users/alexwolf/dev/projects/spectral/crates/ui (wgpu-based
+#   eigenboard rendering)
+#     → rustc --target wasm32-unknown-unknown
+#     → wasm-pack bundle
+#     → .wasm module
+#     → embed in spectral.engineer/case-study/X via <script type="module">
+#     → GPU eigenboard renders Connes-distance measurement
+#       (Fellowship stated-vs-enacted; per Alex 2026-06-23)
+#
+# === Recognition ancestry ===
+#
+# - Recognition #95 (@cascade candidate; Mara canonical ce4874b):
+#   this species IS the first species discharge of the family-root.
+# - Recognition #93 H4 RESOLVED (labeled<> functor at
+#   shards/labeled.mirror): wasm_artifact uses labeled<> instance.
+# - Recognition #51 (mirror as expanding Hilbert space): dimension
+#   reduction is measurable; this species computes it concretely
+#   for Rust→WASM.
+#
+# === Pre-AI prior art ===
+#
+#   Rust on WebAssembly             rustc --target wasm32 since 2018;
+#   (rustlang.org)                  the canonical Rust→WASM path
+#   wasm-pack                       Mozilla 2018; the build orchestration
+#   wasm-bindgen                    JS interop layer; substrate adapter
+#   WebAssembly spec                W3C 2019 v1; v2 2025; the target
+#                                   grammar this species measures against
+#   Bytecode Alliance               wasmtime, wasm-tools; the ecosystem
+#                                   that consumes the target
+#
+# Spec context: docs/specs/recognitions/recognition-95-cascade-as-
+#               loss-lens-substrate-decl.md §2 (substrate-decl shape
+#               this species specializes);
+#               docs/research/2026-06-23-typed-alternatives-cascade-
+#               survey.md §2.9 (Rust survey entry that informed this
+#               species; cascade pattern note: Rust→cdylib is INTEROP
+#               not COMPILE-TO at C ABI level, but Rust→WASM is
+#               COMPILE-TO at bytecode level — honest distinction).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[feedback-loss-from-epistemologic-properties]]
+#                      (loss is @epistemologic/properties composite,
+#                      not Shannon, not invented).
+# Related shards: shards/cascade.mirror (the family-root this
+#                 specializes); shards/labeled.mirror (the functor
+#                 primitive wasm_artifact instance rests on);
+#                 shards/code/rust.mirror (source grammar);
+#                 shards/code/wasm.mirror (target grammar).
+# Path-namespace property: this file at `shards/cascade/rust-wasm.mirror`
+# declares `@cascade/rust-wasm` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming-languages/webassembly-spec-2025
+source @arxiv/programming-languages/rust-2024-edition
+
+prism @cascade/rust-wasm {
+  focus cascade
+  project cascade
+  split cascade
+  shift cascade
+  settle cascade
+}
+
+# === The rust_source carrier ===
+#
+# Specialization of @cascade.typed_source for the Rust source grammar.
+# References a Rust crate (Cargo.toml + src/*) as the unit of cascade.
+#
+# Identity contract: byte-equality on the source-tree content hash.
+type rust_source = ref
+
+# === The wasm_module carrier ===
+#
+# Specialization of @cascade.compiled_artifact for the WASM target
+# grammar. The .wasm binary output of rustc + wasm-pack pipeline.
+#
+# Identity contract: byte-equality on the .wasm bytecode.
+type wasm_module = ref
+
+# === The wasm_metadata carrier ===
+#
+# The browser-runtime / wasm-pack metadata that wraps the wasm_module
+# for consumption: bindgen-generated .js shim, .d.ts type declarations,
+# package.json wrapping, export name list.
+type wasm_metadata = ref
+
+# === The wasm_artifact carrier ===
+#
+# Per @labeled (recognition #93 H4 RESOLVED at shards/labeled.mirror):
+# the deliverable WASM artifact is a labeled pair (wasm_module,
+# wasm_metadata). The labeled<> functor adds the browser-consumption
+# dimension without losing the underlying typed wasm_module reference.
+#
+# Identity contract: byte-equality on the labeled pair.
+type wasm_artifact = labeled(wasm_module, wasm_metadata)
+
+# === compile_rust_wasm action ===
+#
+# Specialization of @cascade.compile for the Rust→WASM functor.
+# Takes a rust_source; returns the wasm_module. Realisation invokes
+# `rustc --target wasm32-unknown-unknown` (or `cargo build --target
+# wasm32-...`) at the @io boundary.
+#
+# requires rust_well_typed(source, p): the Rust source must pass
+# rustc typecheck before WASM emission; type errors in source halt
+# the cascade.
+#
+# Body discharges at the realisation boundary (Rust toolchain).
+compile_rust_wasm(source: rust_source, p: perturbation) -> wasm_module
+requires rust_well_typed(source, p)
+{ \ }
+
+# === bundle_wasm action ===
+#
+# Construct the wasm_artifact by labeling the wasm_module with its
+# browser-runtime metadata. Realisation invokes wasm-pack OR
+# wasm-bindgen to generate the JS shim + .d.ts + package.json wrapper.
+#
+# requires wasm_consumable(module, metadata, p): the (module, metadata)
+# pair must be coherent (named exports match; types match; bindgen
+# annotations correctly mapped).
+#
+# Composes with @labeled.label to construct the wasm_artifact.
+bundle_wasm(module: wasm_module, metadata: wasm_metadata, p: perturbation)
+  -> wasm_artifact
+requires wasm_consumable(module, metadata, p)
+{ \ }
+
+# === measure_rust_wasm action ===
+#
+# Specialization of @cascade.measure for the Rust→WASM cascade.
+# Computes the information loss between rust_source's grammar-admitted
+# structure (lifetimes, generics, traits, macros, type-level safety)
+# and what wasm_artifact preserves at runtime (linear memory, typed
+# function signatures, structured control flow).
+#
+# Returns imperfect(wasm_artifact, error, information_loss):
+# - success(wasm_artifact) when cascade discharges with zero loss
+#   (impossible for Rust→WASM in practice; lifetime erasure alone
+#   guarantees positive loss)
+# - partial(wasm_artifact, information_loss) the load-bearing case;
+#   typed measurement of what was erased
+# - failure(error, information_loss) when cascade fails (e.g.,
+#   target_grammar rejects; loss too large to validate)
+#
+# requires rust_wasm_loss_well_defined(source, artifact, p): the
+# loss measurement must be defined against the (Rust, WASM) grammar
+# pair before measurement proceeds.
+#
+# Per [[feedback-loss-from-epistemologic-properties]]: loss is
+# composite of @epistemologic/properties, NOT Shannon.
+measure_rust_wasm(source: rust_source, artifact: wasm_artifact, p: perturbation)
+  -> imperfect(wasm_artifact, ref, information_loss)
+requires rust_wasm_loss_well_defined(source, artifact, p)
+{ \ }
+
+# === rust_well_typed predicate (bilateral) ===
+#
+# Bilateral verdict that the rust_source compiles cleanly under rustc
+# typecheck. Discharge invokes `cargo check --target wasm32-...` at
+# realisation boundary.
+#
+# Splinter-pole: source passes rustc typecheck against wasm32 target;
+# Narcissus-pole: type errors, lifetime errors, trait bounds unsatisfied.
+rust_well_typed(source: rust_source, p: perturbation) -> verdict { \ }
+
+# === wasm_consumable predicate (bilateral) ===
+#
+# Bilateral verdict that the (wasm_module, wasm_metadata) pair
+# coherently composes for browser/runtime consumption: bindgen
+# annotations match exports; .d.ts types match module signatures;
+# package.json wrapping correctly names entry points.
+#
+# Splinter-pole: pair coherent; consumer can import without errors;
+# Narcissus-pole: shim/types/exports drift; consumer hits runtime
+# errors.
+wasm_consumable(module: wasm_module, metadata: wasm_metadata, p: perturbation)
+  -> verdict { \ }
+
+# === rust_wasm_loss_well_defined predicate (bilateral) ===
+#
+# Bilateral verdict that the loss measurement is grammatically
+# well-defined: rust_source IS in @code/rust grammar AND
+# wasm_artifact.module IS in @code/wasm grammar AND the
+# (source, artifact) pair represents a valid cascade discharge
+# (rustc with --target wasm32 produced this artifact from this source).
+#
+# Splinter-pole: cascade-pair coherent; measurement well-defined;
+# Narcissus-pole: source/artifact grammar mismatch; measurement
+# undefined.
+rust_wasm_loss_well_defined(source: rust_source, artifact: wasm_artifact, p: perturbation)
+  -> verdict { \ }
+
+# === rust_wasm_cascade_well_formed composed bilateral ===
+#
+# Specialization of @cascade.cascade_well_defined for the Rust→WASM
+# instance. Composes three sub-bilaterals:
+#
+#   1. rust_well_typed(source, p)
+#   2. wasm_consumable(module_of_artifact, metadata_of_artifact, p)
+#   3. rust_wasm_loss_well_defined(source, artifact, p)
+#
+# All three must hold for the cascade to complete coherently.
+#
+# Splinter-pole: source well-typed + artifact consumable + loss
+# well-defined;
+# Narcissus-pole: any one fails (type errors / shim drift / grammar
+# mismatch).
+#
+# Same composed-bilateral pattern as @epistemologic/neutrosophic.
+# three_axis_coherent + @io/stagefreight.stagefreight_addressable +
+# @reflection.third_order_coherent + @smarts/shatter.shatter_round_trip
+# + @cascade.cascade_well_defined. Sixth altitude lift of today's
+# composed-bilateral pattern; instance at species altitude.
+rust_wasm_cascade_well_formed(source: rust_source, artifact: wasm_artifact, p: perturbation)
+  -> verdict
+requires rust_well_typed(source, p)
+requires wasm_consumable(unlabel(artifact, p), label_of(artifact, p), p)
+requires rust_wasm_loss_well_defined(source, artifact, p)
+{ \ }
+
+out @cascade/rust-wasm
+out rust_source
+out wasm_module
+out wasm_metadata
+out wasm_artifact
+out compile_rust_wasm
+out bundle_wasm
+out measure_rust_wasm
+out rust_well_typed
+out wasm_consumable
+out rust_wasm_loss_well_defined
+out rust_wasm_cascade_well_formed

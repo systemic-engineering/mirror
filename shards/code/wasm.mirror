@@ -1,0 +1,81 @@
+in @prism
+in @glass
+in @meta
+in @nl
+in @property
+in @io
+
+# @code/wasm — the WebAssembly altitude grammar.
+#
+# Per Alex 2026-06-23: "wasm is @code/wasm." Not a separate family-
+# root; lives as a glass instance under @code (matches @code/beam,
+# @code/llvm, @code/rust pattern). WASM is just another target_grammar
+# in @cascade.
+#
+# The altitude at which mosaic's shift delegates to a wasm toolchain
+# (wasm-pack / wasmtime / wasm-tools / wabt). When mirror.spec
+# declares `target binary { altitude @code/wasm, emit wasm-pack }`,
+# mosaic walks the target, resolves `@code/wasm` here, then resolves
+# `wasm-pack` against this altitude's namespace.
+#
+# === Why WASM as glass under @code ===
+#
+# WASM is the portable bytecode target: browsers, edge compute,
+# wasmtime serverless. Multiple source grammars cascade to wasm:
+# Rust (rustc --target wasm32), AssemblyScript, Gleam (~2026 ETA),
+# C/C++ via Emscripten, Go via TinyGo. Per @cascade family-root,
+# each (source_grammar, @code/wasm) pair is a cascade species
+# shard at `shards/cascade/<source>-wasm.mirror`.
+#
+# First cascade species discharging this altitude:
+#   shards/cascade/rust-wasm.mirror (Stage-1 instance, this session)
+#
+# === Forward-promised consumers ===
+#
+# - spectral.engineer @ui delivery (the GPU eigenboard rendering crate
+#   at /Users/alexwolf/dev/projects/spectral/crates/ui ships to
+#   browser via this WASM altitude per the deployment loop Phase C)
+# - Loop 2 (post-v1): @spectral/db ships to browser via WASM
+#   cascade (cosmos-mirror as first @spectral/db consumer)
+# - Future cascade species: gleam-wasm, assemblyscript-wasm
+#
+# Spec context: docs/specs/recognitions/recognition-95-cascade-as-
+#               loss-lens-substrate-decl.md (ce4874b);
+#               shards/cascade.mirror (@cascade family-root that this
+#               altitude is target_grammar for).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[feedback-substrate-already-had-the-word]]
+#                      (@code family-root pattern; wasm is just
+#                      another instance per Alex's directive).
+# Related shards: shards/code/rust.mirror (@code/rust as paired
+#                 cascade source); shards/code/beam.mirror (pattern
+#                 reference); shards/cascade.mirror (the cascade
+#                 family-root that target_grammar this).
+# Path-namespace property: this file at `shards/code/wasm.mirror`
+# declares `@code/wasm` per `@epistemologic/pact/path_matches_namespace`.
+
+prism @code/wasm {
+  focus wasm
+  project wasm
+  split wasm
+  shift wasm
+  settle wasm
+}
+
+# === build-property surface (settle_on consumers) ===
+#
+# mirror.spec's `settle_on { binary.validates, binary.runs }` block
+# resolves these names against this altitude's grammar. Declared
+# here as typed lambdas returning @glass.verdict so the spec parser
+# can typecheck the settle_on block.
+#
+# Body discharged by the toolchain invocation (wasm-validate,
+# wasmtime exec, browser load). Pure declaration at the altitude;
+# realisation at the @io boundary.
+validates(target) -> verdict { \ }
+runs(target) -> verdict { \ }
+
+out @code/wasm
+out validates
+out runs
