@@ -335,10 +335,26 @@ name(noticed: observer_change, frame: @frame, p: perturbation)
 ```
 
 The proposal still `in @epistemologic/cybernetic/distinction` for the
-`mark` ancestor, plus a forward-promised `labeled<>` functor primitive
-(currently not landed substrate-wide; would need its own substrate-decl).
-H4 partially resolved: ancestor-correct but the type refinement needs
-functor primitive landing.
+`mark` ancestor, plus a forward-promised `labeled<>` functor primitive.
+
+**H4 forward-promise depth (researched 2026-06-23):** mirror substrate
+ALREADY supports parametric type primitives via the `shift(T) -> type`
+and `settle(T) -> type` declarations in boot/00-prism.mirror +
+shards/prism.mirror. Landed parametric carriers include
+`imperfect(a, e, l)`, `option(a)`, `result(a, e)`, `transparency(p)`.
+
+`labeled<v, m>` composes immediately in the established pattern — NO
+new substrate primitive needed. The H4 forward-promise reduces to a
+single `shards/labeled.mirror` substrate-decl:
+
+```mirror
+type labeled<v, m> = annotated(v, m)
+shift shift(labeled<v, m>) -> shift(v)
+```
+
+H4 PARTIAL: ancestor-correct via mark; functor primitive infrastructure
+ALREADY in substrate; remaining work is the one-shard substrate-decl
+of `labeled<>` itself. Depth is shallower than initially hedged.
 
 ### H5: cognitive_coherent bilateral underspecified — DOWNGRADED 2026-06-23 (Seam-corrected)
 
