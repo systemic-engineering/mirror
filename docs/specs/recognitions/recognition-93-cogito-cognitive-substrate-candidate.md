@@ -200,6 +200,28 @@ from §3.4 pact ancestry) OR hierarchical coupling (and drop the
 "parallel altitudes" claim language). Seam recommendation deferred to
 landing-time discharge.
 
+**H2 PICKED 2026-06-23 (post-Seam) — hierarchical coupling:**
+
+Direct substrate-pull check: the proposed `name(noticed, frame, p) -> mark`
+and `hold(named, frame, p) -> hold_output` signatures BOTH thread
+`frame` through as input parameter. The cognitive operation IS
+function-of-frame. That's hierarchical coupling (cogito depends on
+frame's output), not parallel altitudes (which would require non-
+composability or commutativity).
+
+Resolution: KEEP `in @frame` in §3.4 pact ancestry; DROP the "parallel
+altitudes, NOT recursive" claim language from the prior H2 resolution.
+@cogito IS hierarchically coupled to @frame at the cognitive altitude;
+the @frame structure is prerequisite for @cogito operation. The
+"bidirectional with @frame" note in §3.4 should be revised to
+"depends on @frame's frame primitive; @frame's order-3 operator might
+optionally use @cogito for cognitive-altitude framing, but that's
+optional composition not bidirectional dependency."
+
+H2 PARTIAL: contradiction discharged via hierarchical pick; remaining
+work is updating §3.4 prose to reflect the pick ("hierarchical, not
+parallel") at landing time.
+
 ### H3: notice asymmetry — RE-OPENED 2026-06-23 (Seam-corrected)
 
 **Original concern:** Descartes' cogito is asymmetric (being is the
