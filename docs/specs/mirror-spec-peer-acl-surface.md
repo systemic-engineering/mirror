@@ -1134,50 +1134,95 @@ forward-promised, and gate on Pack adversarial review. Per
 recognition #95: substrate carries the measurement primitive at the
 right altitude; the per-ACL numbers are species work.*
 
-### 10.1 The team as a finite poset; ACL as a sheaf over it
+*Reframe note (Alex 2026-06-24): the earlier draft framed the elder-
+members relation as a sheaf over a team-poset with restriction maps.
+Alex's pull on this section: "I don't have enough context to answer
+this; what I'm seeing is the supervisor being responsible for
+spawning and handling additional requests in form of spectral-Tomm
+shaped circular constructs." The math reframes accordingly: members
+form an antichain (no internal rank; pack-equal); the elder is a
+distinguished N+1 OBSERVER (outside the antichain, at strictly
+higher altitude); the relation's algebraic structure comes from the
+SPECTRAL-TOMM PROBE MACHINERY (per
+`architecture-error-as-tomm-probe`), NOT from delegation-chain
+restriction maps. The ACL lattice (§10.2) and the `but` algebra
+(§10.3) survive unchanged — ACL composition really is lattice-
+shaped. The reframe is narrower than wholesale replacement: it
+corrects §10.1 (the relation) and the role of `=>` (§10.2 sub-note),
+leaves the rest.*
 
-The team peers form a finite set T = {p_supervisor, p_1, p_2, …,
-p_k}. The supervisor-relation IS a partial order on T:
+### 10.1 Members as antichain; elder as N+1 observer; spectral-Tomm probes as morphisms
 
-- p_supervisor is the TOP (⊤): infinite ACL, bind authority.
-- All team peers are BELOW p_supervisor (their ACL is bounded by
-  what the supervisor admits).
-- Team peers are mutually incomparable by default (the supervisor
-  does not partial-order them against each other; a hierarchical
-  team would EXPLICITLY chain them via overlapping ACL targets).
+The members form an antichain M = {p_1, p_2, …, p_k} — pack-equal,
+no internal rank. There is NO sub-ordering of members against each
+other; "member of this pack" is a flat relation. ACL refinements at
+the `=>` arrow annotate individual members but do NOT order them.
 
-This is a poset P with one maximum and a flat antichain below.
+The elder p_e is a DISTINGUISHED N+1 OBSERVER, at strictly higher
+altitude than M. The elder is NOT the supremum of M in a partial
+order on a single set; the elder sits at a HIGHER ALTITUDE of
+observation, in the sense of `architecture-spectral-db-autopoietic-
+memory` (the N+1 librarian operating one altitude above the agents
+being observed).
 
-A SHEAF F on P assigns:
+The relation E from M to {p_e} is NOT a sheaf restriction. It is a
+SPAWN-AND-PROBE relation populated by two operation kinds, both
+already substrate-decl:
 
-- to each peer p ∈ P: a stalk F(p) = the ACL admissible for p (an
-  `acl` value).
-- to each edge p_supervisor → p_i: a RESTRICTION MAP
-  F(p_supervisor) → F(p_i) = the projection that takes the
-  supervisor's infinite-ACL to p_i's declared ACL. This restriction
-  map IS the `=>` operator in `team { ~peer'p_i' => <ACL> }`.
+- **spawn(p_e → p_i, frame, repo, perturbation) -> runtime** (per
+  `shards/pack.mirror` action surface): elder fields a spawn request
+  for member p_i; only the elder dispatches against this spec.
+- **probe(p_i → p_e, [D_spec, action]) -> response** (per
+  `architecture-error-as-tomm-probe`): a spawned member lifts a
+  spectral-Tomm-shaped circular question to the elder. The probe
+  carrier is the commutator `[D_spec, member_action]` deployed as a
+  natural-language or typed-spectral question. The elder's response
+  IS spectral data the spec's next settle pass can use.
 
-**Composition.** For a hypothetical hierarchical team (p_supervisor
-→ p_sub_supervisor → p_leaf), restriction-map composition is the
-statement that p_leaf's ACL is the restriction of p_sub_supervisor's
-restriction of p_supervisor's. Composition associativity = the
-delegation chain doesn't leak permissions across levels.
+The morphisms in this relation are SPECTRAL-TOMM PROBES (Tomm 1987/
+1988 — the systemic-therapy circular-question primitive; reused at
+substrate altitude per `architecture-error-as-tomm-probe`). They
+are NOT sheaf restriction maps; the algebraic structure comes from
+the commutator probe of a spectral triple (per
+[[architecture-connes-spectral-triple]]; the spectral triple here is
+`(A_spec, H_spec, D_spec)` with the spec's frame as observation
+altitude).
 
-**Where this load-bears for mirror:** the sheaf vocabulary formally
-names the substrate's existing pattern: ACL flows DOWNWARD from
-supervisor through team via the => operator (restriction maps). The
-sheaf-vs-presheaf distinction (per the spectral-garden-git §7.1
-pattern) admits multiple-versions-coexist if two supervisors at
-different specs grant overlapping ACLs to the same team peer; the
-peer{} block is per-spec, so within ONE spec the structure is a
-TRUE sheaf, not just a presheaf.
+Directionality: members → elder for probes (member-to-N+1); elder →
+members for spawns (N+1-to-member dispatch). The relation is
+BIDIRECTIONAL across altitudes, not a downward delegation chain.
+
+What this means concretely:
+
+- The elder doesn't "own" or "delegate from" the members in the
+  delegation-chain sense; the elder OBSERVES at N+1 and FIELDS the
+  probes the members lift.
+- ACL on a member is an ANNOTATION on that member's invocation
+  surface, not a restriction of the elder's authority projected
+  down. The `=>` arrow is annotation; the spawn-and-probe relation
+  is the structural axis.
+- The pack_coherent bilateral (per @pack family-root) discharges
+  at SETTLE TIME on the (elder, members) pair; the spectral-Tomm
+  probes are the QUESTION-CARRIER during between-settle operation.
+
+**Honest framing limit:** the new framing is sharper at NAMING what
+the elder does (spawn + probe-handle) than at giving a clean
+algebraic structure that the sheaf framing would have offered. The
+spectral-Tomm probe machinery has algebraic structure (it's the
+commutator probe of a spectral triple, with the algebra-of-
+observation A_spec as the operator space), but that structure is
+INHERITED from the substrate's Connes-spectral-triple ancestor (per
+[[architecture-connes-spectral-triple]]); it is NOT a new property
+of the pack{} block. Pack adversarial review should ask whether
+this is a strength (substrate inheritance) or a weakness (less
+closed-form for pack-specific reasoning) of the reframe.
 
 ### 10.2 ACLs form a bounded lattice under (∨, ∧)
 
 The `<ACL>` values form a lattice:
 
 - ⊤ (top) = infinite ACL (all ops, all targets, all predicates
-  vacuously honored). The supervisor's ACL.
+  vacuously honored). The elder's ACL.
 - ⊥ (bottom) = empty ACL (no ops, no targets). The default for an
   unlisted peer.
 - ∨ (join) = union: `(ops_1 ∪ ops_2, targets_1 ∪ targets_2)`.
@@ -1191,7 +1236,7 @@ in the @magic/contract setting); the lattice is therefore a NON-
 distributive bounded lattice in full generality, reducing to a
 distributive lattice when no predicates are present.
 
-**Where this load-bears:** the `∨` / `∧` operators in team{} ACL
+**Where this load-bears:** the `∨` / `∧` operators in members{} ACL
 expressions ARE the lattice operations. The lattice carries the
 substrate-mathematical vocabulary for naming what unions and
 intersections of permissions mean. The non-distributivity at the
@@ -1199,6 +1244,14 @@ predicates axis is the structural reason the substrate carries
 @magic/contract.honor as a separate operational check (the lattice
 shape doesn't predict the predicate's verdict; only the actual
 discharge does).
+
+**On `=>` as ACL assignment (not restriction map):** the arrow in
+`members { ~peer'p' => acl }` is an ANNOTATION of member p with an
+ACL value drawn from this lattice. It is NOT the sheaf restriction
+map framing of the earlier draft. The lattice structure here is on
+the ACL VALUES; the spawn-and-probe relation on (elder, members)
+lives at §10.1's altitude, independently of how the lattice
+annotates individual members.
 
 ### 10.3 The `but` operator's algebraic structure (per consent spec §2.4)
 
@@ -1268,43 +1321,51 @@ transformation gives the CASCADE DERIVATION: a single type-N+1
 consent expression cascades to a family of type-1 ACL entries
 for each `~peer'…'` in scope.
 
-### 10.6 The supervisor relation as a distinguished element vs. algebraic structure
+### 10.6 The elder as the algebra A of the spec's spectral triple
 
-A load-bearing math question: is the supervisor JUST a distinguished
-element of the peer set, or does it carry additional algebraic
-structure?
-
-**Position (substrate-pull-leaning):** the supervisor carries the
-structure of an ALGEBRA-OF-OBSERVATION at the lambda-shell altitude.
-The lambda shell IS the observation interface for the spec; the
-supervisor IS the algebra A (in the Connes spectral triple sense)
-whose elements are the operations the shell admits. Per
+The substrate-pull-leaning math claim that survives the §10.1
+reframe: the elder carries the structure of an ALGEBRA-OF-OBSERVATION
+at this spec's altitude. The spec's frame IS the observation context;
+the elder IS the algebra A (in the Connes spectral triple sense)
+whose elements are the operations admitted at this spec. Per
 [[architecture-connes-spectral-triple]]: every substrate altitude
-carries a spectral triple (A, H, D); the supervisor's role at the
-peer{} altitude IS the A of the shell's spectral triple.
+carries a spectral triple (A, H, D); the elder's role at the pack{}
+altitude IS the A of THIS SPEC's spectral triple `(A_spec, H_spec,
+D_spec)`.
 
-**What this means concretely:** the supervisor doesn't just OWN the
-shell; the supervisor's identity-mirror declares what operations
-the shell admits. Different supervisors at different specs admit
-different operation sets; the algebra of the shell IS supervisor-
-specific.
+This is the structure that GROUNDS §10.1's spectral-Tomm probes:
+the probe carrier `[D_spec, a]` for `a ∈ A_spec` is well-defined
+exactly because the elder names what A_spec is. A spec with no
+elder declaration falls back to a default A_spec at the repo-local
+altitude (per §9.1); a spec with an explicit elder declaration
+admits the elder's chosen operation set as A_spec.
+
+**What this means concretely:** the elder doesn't just OWN the
+shell or DISPATCH spawns; the elder's identity-mirror declares
+what operations the spec's spectral triple admits. Different elders
+at different specs admit different operation sets; the algebra of
+the spec IS elder-specific. The spectral-Tomm probes from members
+are deployed AGAINST that elder-specific A_spec.
 
 **Status:** the framing is consistent with the substrate's existing
 spectral-triple architecture; promoting it to a full statement
-requires Pack adversarial review. Flagged; not v0.1 load-bearing.
+requires Pack adversarial review. Flagged; not v0.1 load-bearing,
+but UPGRADED in relevance by §10.1's reframe — the elder-as-A claim
+is no longer an alternative framing; it's the structural ground
+for the spawn-and-probe relation.
 
 ### 10.7 Default-to-repo-local as the initial object
 
-In the category of valid peer{} configurations for a given spec,
-the implicit `peer { supervisor ~peer'.'; team {} }` (§9.1) is
-an INITIAL OBJECT: every other valid peer{} configuration is a
-refinement that ADDS supervisor declaration + team entries.
-Morphisms in this category are the additive operations (adding a
-let binding; adding a team entry; tightening an ACL via `but`).
+In the category of valid pack{} configurations for a given spec,
+the implicit `pack { elder ~peer'.'; members {} }` (§9.1) is
+an INITIAL OBJECT: every other valid pack{} configuration is a
+refinement that ADDS elder declaration + member entries. Morphisms
+in this category are the additive operations (adding a let binding;
+adding a member entry; tightening an ACL via `but`).
 
 The Banach-fixed-point analog (per spectral-garden-git §7.2): the
 default-to-repo-local is a fixed point of the "do nothing" morphism;
-any peer{} block that arises from explicit declaration is an
+any pack{} block that arises from explicit declaration is an
 INCREASE in declared content (the spec's oid grows).
 
 **Status:** SHAPE. The category-theoretic existence of the initial
@@ -1317,17 +1378,16 @@ The spectral-garden-git spec named four roots (`@spectral/garden/git`,
 `@spectral/garden/oci`, `@spectral/garden/nix`, `@mirror/store`). The
 peer{} block is ORTHOGONAL to that structure but composes cleanly:
 
-- The supervisor's `~peer'…'` resolution discharges through
-  `@io/git` (the same adapter the garden uses). Peer-home-repo
-  reuse: a Pack peer's home repo IS a `garden { source ~git'…' }`
-  candidate AND a `peer { team { ~peer'…' => … } }` candidate; the
-  substrate names both surfaces over the same content-addressed
-  underlying ref.
-- The peer{} block is NOT a fifth garden root (it's not a package-
+- The elder's `~peer'…'` resolution discharges through `@io/git` (the
+  same adapter the garden uses). Peer-home-repo reuse: a Pack peer's
+  home repo IS a `garden { source ~git'…' }` candidate AND a `pack
+  { members { ~peer'…' => … } }` candidate; the substrate names both
+  surfaces over the same content-addressed underlying ref.
+- The pack{} block is NOT a fifth garden root (it's not a package-
   manager). It's an ORTHOGONAL surface at the same mirror.spec
   altitude; the two compose at the spec's top level the same way
   `source` and `target` compose.
-- Default-to-repo-local (§9) is the peer-altitude analog of the
+- Default-to-repo-local (§9) is the pack-altitude analog of the
   garden's `~oid'…'` intra-substrate source (§6.1 of garden spec):
   the substrate scales DOWN to one repo with no external deps.
 
@@ -1336,9 +1396,11 @@ peer{} block is ORTHOGONAL to that structure but composes cleanly:
 No closed-form proof of soundness for the lattice operations beyond
 the distributive-on-ops-and-targets argument; no formal proof for
 §10.4's Galois connection; no concrete derivation of §10.5's cascade
-for a worked example (the consent spec has one at §6.2; the peer{}
+for a worked example (the consent spec has one at §6.2; the pack{}
 block's specific authoring at type 1 IS that example unmodified);
-no proof of non-leakage for the restriction-map composition. Open
+no closed-form derivation of the spectral-Tomm probe algebra at the
+(elder, members) altitude beyond what `architecture-connes-spectral-
+triple` already names (the spec inherits, does not re-derive). Open
 work, gated on Pack adversarial review per spectral-garden-git §7.7.
 
 ### 10.10 Comparison to pre-AI ACL traditions
@@ -1346,25 +1408,25 @@ work, gated on Pack adversarial review per spectral-garden-git §7.7.
 Honest comparisons:
 
 - **Lampson-style ACLs** (Lampson 1971; Saltzer-Schroeder 1975): the
-  peer{} `team { => <ACL> }` IS the Lampson access matrix, with
-  PEERS as principals and ACLs as the matrix entries. The peer{}
+  pack{} `members { => <ACL> }` IS the Lampson access matrix, with
+  PEERS as principals and ACLs as the matrix entries. The pack{}
   block lifts the matrix to substrate-decl; the substrate inherits
   Lampson's decidability discipline.
 - **Object-capability models** (Miller 2006 *Robust Composition*;
   Drexler 1988; Stiegler 2004): the @magic/reveal lineage IS
-  capability revocation; the peer{} block's `=>` arrow IS
+  capability revocation; the pack{} block's `=>` arrow IS
   capability grant. The substrate inherits ocap's revocation-via-
   reveal discipline (per Levy 1984 citation in @magic/reveal).
-  However: peer{} is identity-based (each `~peer'…'` resolves to a
+  However: pack{} is identity-based (each `~peer'…'` resolves to a
   principal), not pure-capability (capabilities don't depend on
-  identity). The substrate sits BETWEEN ocap and ACL; the peer{}
+  identity). The substrate sits BETWEEN ocap and ACL; the pack{}
   block's identity discipline makes it ACL-leaning at the surface
   while inheriting ocap's revocation discipline through @magic/
   reveal.
 - **Lattice-based access control** (Denning 1976; Sandhu 1993): the
   ACL lattice (§10.2) IS Denning's information-flow lattice with
   the ACL ordering. Bell-LaPadula and Biba can be encoded as specific
-  ACL configurations; the peer{} block doesn't enforce them by
+  ACL configurations; the pack{} block doesn't enforce them by
   default but admits them via let-bindings.
 - **Capability-based effect systems** (Koka, Eff; Leijen 2014):
   ACLs as `acl { ops, targets, predicates }` ARE effect rows. The
@@ -1373,10 +1435,13 @@ Honest comparisons:
   honor check, but at substrate-decl altitude rather than at
   language-runtime altitude.
 
-The substrate's contribution: ONE surface (peer{}) that unifies
+The substrate's contribution: ONE surface (pack{}) that unifies
 ACL + ocap-revocation + lattice-ordering + effect-predicates under
-the geometric-consent-projection framing. The traditions don't
-disappear; they all compose at the same altitude.
+the geometric-consent-projection framing PLUS the spawn-and-probe
+relation at §10.1. The pre-AI traditions name the access-control
+shape; the substrate's contribution adds the spectral-Tomm probe
+machinery as the (elder, members) operational axis. The traditions
+don't disappear; they all compose at the same altitude.
 
 ---
 
