@@ -1,4 +1,4 @@
-# `pack { elder … members { … } }` — the lambda-shell-counterparty + ACL surface in `mirror.spec`
+# `pack { lead … members { … } }` — the lambda-shell-counterparty + ACL surface in `mirror.spec`
 
 *Mara, canonical spec for the substrate's per-spec pack-identity and
 access-control surface, configured through a top-level `pack { }` block
@@ -16,12 +16,12 @@ a99152a / ad03fda) and named by Alex 2026-06-24:*
 
 *Vocabulary note: Alex's probe used `peer { supervisor … team { … } }`.
 The cascade through Pack discussion (Alex 2026-06-24 afternoon)
-renamed the block to `pack { }`, the role-noun to `elder`, and the
+renamed the block to `pack { }`, the role-noun to `lead`, and the
 sub-block to `members { }` — because `peer` is the TYPE of an entry
 (`~peer'…'` resolves to a `peer`-typed value per `peer-glass.md`),
 while `pack` is the GROUP containing them (per `shards/pack.mirror`'s
 @pack family-root). The block names the pack scoped to one spec; the
-elder is the pack's N+1 observer; members are the antichain below.
+lead is the pack's N+1 observer; members are the antichain below.
 The original probe vocabulary is preserved as Alex's verbatim cue
 throughout; the substrate vocabulary settled where the substrate's
 existing nouns already lived. The spec filename keeps the historical
@@ -34,7 +34,7 @@ type 1), `docs/specs/peer-cognition.md` (Mara, 2026-06-17; the @peer
 root), `docs/specs/lambda-shell.md` (Reed+Alex 2026-05-07; `λsh` +
 `peer = @<name>` per-spec declaration), `shards/spectral/supervisor.
 mirror` (lifecycle-owner glass; lifecycle-altitude composition only —
-the elder of this spec is NOT delegation-chain-shaped, see §10),
+the lead of this spec is NOT delegation-chain-shaped, see §10),
 `shards/pack.mirror` (#84 multi-repo agent runtime — the family-root
 that `pack { }` extends), `shards/magic/contract.mirror` +
 `shards/magic/audit.mirror` + `shards/magic/reveal.mirror`
@@ -65,13 +65,13 @@ load-bearing per the Mara stall-recovery discipline.*
 1. Position statement
 2. Discovery — existing ACL surface across the substrate
 3. The `pack { }` block — proposed shape
-4. `elder` semantics — lambda-shell counterparty + spawn-and-probe responsibility
+4. `lead` semantics — lambda-shell counterparty + spawn-and-probe responsibility
 5. `members { ~peer'…' => <ACL> }` — per-member ACL syntax
 6. `~peer'…'` resolution — typed path literal via home-repo + `<name>.spec`
 7. ACL composition via variables + mirror expressions
 8. Composition with @magic, @frame, @pack, geometric-consent-projection
 9. Default behavior — when `pack{ }` is absent (repo-local)
-10. Mathematical shape — antichain of members, ACL lattice, elder as spawn-and-probe N+1 observer
+10. Mathematical shape — antichain of members, ACL lattice, lead as spawn-and-probe N+1 observer
 11. Open surface questions
 12. Cross-references — recognitions, prior specs, the @spectral/garden/git sibling
 13. Honest hedges
@@ -85,7 +85,7 @@ load-bearing per the Mara stall-recovery discipline.*
 predicates) and now, via the prior cascade, what it CONSUMES (garden
 sources). It does NOT yet name WHO it belongs to and WHO ELSE may
 operate it. The pack{} block IS that missing declaration: a top-level
-substrate-decl naming the spec's elder (the counterparty in λsh per
+substrate-decl naming the spec's lead (the counterparty in λsh per
 `lambda-shell.md`'s "home peer from spec", AND the spawn-and-probe
 responsible at N+1 per the spectral-Tomm machinery), the pack members
 that may operate the spec under per-member ACLs, and the variables
@@ -100,10 +100,10 @@ Three structural commitments load-bear the surface choice:
    AND `shards/pack.mirror` (#84) already carries the `pack` family-
    root with `peer` as variant type and `pack` as the group record.
    The pack{} block GENERALIZES the single-field home-peer shape into
-   a typed elder + members + ACL composition surface, USING the
+   a typed lead + members + ACL composition surface, USING the
    substrate's already-declared `pack`/`peer` partition. §2 surveys
    the inheritance.
-2. **One spec, one elder.** Per `lambda-shell.md`'s home-peer rule
+2. **One spec, one lead.** Per `lambda-shell.md`'s home-peer rule
    plus the spectral-Tomm probe machinery
    (`architecture-error-as-tomm-probe`,
    `architecture-reflection-thinks-in-spectral-questions`): each
@@ -125,7 +125,7 @@ Three structural commitments load-bear the surface choice:
    from lower-type parts.
 
 The pack{} block surface does NOT invent ACL machinery. It NAMES the
-substrate's existing scattered shape (elder-as-spawn-and-probe-handler
+substrate's existing scattered shape (lead-as-spawn-and-probe-handler
 at λsh + spectral-Tomm altitude; pack/peer partition in @pack; ACL-
 as-projection in geometric-consent-projection; per-spec peer declaration
 in `lambda-shell.md`) as one top-level `mirror.spec` block. The
@@ -162,10 +162,10 @@ systemic.engineering. This is the ELDER field of the pack{}
 block at single-field altitude. The lambda-shell spec uses keyword
 `spec` rather than `project` (per the `mirror.spec` grammar's actual
 top-level — `project mirror.spec { … }` per `mirror.spec:18`); the
-shape, however, IS the elder declaration.
+shape, however, IS the lead declaration.
 
 The pack{} block GENERALIZES: from one field (`peer = @reed`) to a
-typed block with an elder, a members map, and a per-member ACL.
+typed block with a lead, a members map, and a per-member ACL.
 
 ### 2.2 `@peer` glass — five-axis fixed point at typed directory
 
@@ -241,7 +241,7 @@ start_child(s: supervisor, spec: child_spec) -> gen_prism { \ }
 terminate_child(s: supervisor, id: uuid_spectral) -> au { \ }
 ```
 
-The `elder ~peer'~/.reed'` field of the pack{} block is the
+The `lead ~peer'~/.reed'` field of the pack{} block is the
 DECLARATIVE SURFACE for the spec's spawn-and-probe-handler at this
 spec's altitude. At RUNTIME, that handler COMPOSES-with a
 `@spectral/supervisor` instance for lifecycle-altitude duties (the
@@ -249,13 +249,13 @@ spec's altitude. At RUNTIME, that handler COMPOSES-with a
 session shards; the restart_strategy governing failure response when
 spawn returns a partial result).
 
-Honest framing (per the §10 revision): elder is NOT a supervisor in
+Honest framing (per the §10 revision): lead is NOT a supervisor in
 the delegation-chain sense. The supervisor record is a RUNTIME-
-ALTITUDE companion the elder uses to discharge lifecycle work; it is
-NOT the elder's identity or authority. The elder's authority comes
+ALTITUDE companion the lead uses to discharge lifecycle work; it is
+NOT the lead's identity or authority. The lead's authority comes
 from being the N+1 observer fielding spectral-Tomm probes from the
 members antichain (§10.1-§10.2). The earlier framing here (which
-identified elder with @spectral/supervisor at type altitude) was
+identified lead with @spectral/supervisor at type altitude) was
 sharper at runtime composition than at the relation it actually
 names; §10 carries the corrected math.
 
@@ -266,7 +266,7 @@ The @magic family closes the verification side of ACL:
 - `shards/magic/contract.mirror`: `bind(surface, mechanism,
   promise) -> magic_contract` + `honor(c) -> transparency(c)`. The
   ACL IS a magic_contract: the surface is the member's invocation
-  interface, the mechanism is what they can do in the elder's runtime,
+  interface, the mechanism is what they can do in the lead's runtime,
   the promise (magic_invariant) is the ACL expression.
 - `shards/magic/audit.mirror`: `audit(c) -> audit_record` +
   `respond(record, strategy)`. Every member action against the
@@ -277,7 +277,7 @@ The @magic family closes the verification side of ACL:
   and re-grant (Levy 1984). The substrate-pull-correct controlled
   disclosure with audit gating.` The reveal action (`reveal(c, new_m)`)
   IS the substrate's CAPABILITY-REVOCATION primitive. Removing a member
-  from `members { }` is a reveal at the elder altitude; the
+  from `members { }` is a reveal at the lead altitude; the
   audit_strategy=enforce closes the previously-honored contract.
 
 ### 2.6 Geometric consent projection — ACL as type-1 projection
@@ -323,10 +323,10 @@ The pack{} block is a SURFACE COMPOSITION over:
 
 | Existing shape | Source | Role in pack{} block |
 |---|---|---|
-| `peer = @<name>` | lambda-shell.md §Toggle | the `elder` field |
+| `peer = @<name>` | lambda-shell.md §Toggle | the `lead` field |
 | `@peer(~dir"<path>")` glass | peer-glass.md | the type of resolved `~peer'…'` |
 | `@pack` variant + record | shards/pack.mirror | the block's family-root (`pack`/`peer` partition; `members { }` populates the `peers` field) |
-| `@spectral/supervisor` | shards/spectral/supervisor.mirror | runtime-altitude COMPOSITION for the elder's lifecycle work (NOT identity, see §10) |
+| `@spectral/supervisor` | shards/spectral/supervisor.mirror | runtime-altitude COMPOSITION for the lead's lifecycle work (NOT identity, see §10) |
 | `@magic/contract` + `audit` + `reveal` | shards/magic/*.mirror | bind/verify/revoke for ACLs |
 | `geometric-consent-projection` | docs/specs/geometric-consent-projection.md | `<ACL>` IS the type-1 projection |
 | `~git'…'` precedent | shards/io/git.mirror (a1b507a) | sigil pattern for `~peer'…'` |
@@ -350,7 +350,7 @@ is the substrate composing with itself.
 New top-level block alongside `source`, `legacy`, `garden`, `target`,
 `settle_on` (per `mirror-spec-schema.md` and the four-commit Mara
 garden cascade). Holds the spec's identity-and-access declaration:
-who's the elder of this spec, who's on the pack as a member, what
+who's the lead of this spec, who's on the pack as a member, what
 they may do, and which variables hold reusable ACL fragments.
 
 ```mirror
@@ -367,7 +367,7 @@ project mirror.spec {
   pack {
     # who you talk to when you open the lambda shell at this spec;
     # who fields spectral-Tomm probes from spawned members (§10)
-    elder ~peer'~/.reed'
+    lead ~peer'~/.reed'
 
     # variables holding mirror expressions; reusable ACL fragments
     let read_only = acl { ops: [focus, project, split], targets: any }
@@ -396,7 +396,7 @@ entries inside `members { }` are `~peer'…'` (the type of an entry).
 `pack` and `peer` are NOT interchangeable here — they sit at adjacent
 altitudes the @pack family-root already names (`shards/pack.mirror`).
 
-Three visible field categories: `elder` (single field; one peer),
+Three visible field categories: `lead` (single field; one peer),
 `let` bindings (zero-or-more; mirror expressions reusable in ACL
 positions), `members { => }` (zero-or-more peer-to-ACL bindings).
 
@@ -404,7 +404,7 @@ positions), `members { => }` (zero-or-more peer-to-ACL bindings).
 
 ```
 pack_block    ::= "pack" "{" elder_field let_binding* members_block? "}"
-elder_field   ::= "elder" peer_ref
+elder_field   ::= "lead" peer_ref
 let_binding   ::= "let" identifier "=" mirror_expr
 members_block ::= "members" "{" member_entry+ "}"
 member_entry  ::= peer_ref "=>" acl_expr
@@ -421,10 +421,10 @@ projection.md` §2.4 (adversative refinement; not commutative, not
 associative; "default-with-exception"). Reuse, not re-invention.
 The `∨` / `∧` operators are the lattice operations on ACLs per §10.2.
 
-The `elder` field is REQUIRED iff pack{} is present at all; an
+The `lead` field is REQUIRED iff pack{} is present at all; an
 absent pack{} block triggers the default-to-repo-local rule (§9).
-The `members` block is OPTIONAL; a spec with `elder` only is
-admissible (the elder is the sole peer with infinite ACL).
+The `members` block is OPTIONAL; a spec with `lead` only is
+admissible (the lead is the sole peer with infinite ACL).
 
 ### 3.3 Substrate-decl shape (forward-promised)
 
@@ -448,7 +448,7 @@ prism @mirror/pack {
 }
 
 type mirror_pack_block = {
-  elder:      peer,                      # from @pack
+  lead:      peer,                      # from @pack
   bindings:   list((identifier, acl)),   # let bindings
   members:    list((peer, acl)),         # peer → ACL map
 }
@@ -463,62 +463,62 @@ the @peer glass `load(dir) -> peer` action (per peer-glass.md
 
 ---
 
-## 4. `elder` semantics — lambda-shell counterparty + spawn-and-probe responsibility
+## 4. `lead` semantics — lambda-shell counterparty + spawn-and-probe responsibility
 
-### 4.1 What "elder" means
+### 4.1 What "lead" means
 
-The elder is the peer who ANSWERS when a human (or another peer)
+The lead is the peer who ANSWERS when a human (or another peer)
 opens the lambda shell at this spec's root AND who FIELDS the
 spectral-Tomm-shaped circular probes lifting from spawned members.
 Per `lambda-shell.md` §"The Toggle":
 
 > `\` in mirror → `@reed>` (home peer from spec)
 
-The pack{} block's `elder ~peer'~/.reed'` IS the typed version of
+The pack{} block's `lead ~peer'~/.reed'` IS the typed version of
 that home-peer declaration, EXTENDED to name the spawn-and-probe
 role. Four semantic loads, all already declared in existing
 substrate; the first is the load-bearing one Alex named on 2026-06-24:
 
 1. **Spawn-and-probe responsible (per `architecture-error-as-tomm-
    probe` + `architecture-reflection-thinks-in-spectral-questions`).**
-   The elder is responsible for SPAWNING members (fielding `mirror
+   The lead is responsible for SPAWNING members (fielding `mirror
    spawn <member>` requests scoped to this spec) AND for HANDLING the
    spectral-Tomm probes those spawned members lift back. A
    spectral-Tomm probe is structurally `[D_substrate, member_action]`
    at the spec's frame altitude (per the error-as-Tomm-probe
    architecture): the member's compile-time or settle-time question
-   propagates to the elder's altitude as a circular-reflexive
-   question that the elder must answer. The elder IS the spec's N+1
+   propagates to the lead's altitude as a circular-reflexive
+   question that the lead must answer. The lead IS the spec's N+1
    observer in the sense of `architecture-spectral-db-autopoietic-
    memory` (the root supervisor at ~/.mirror operating at N+1 lifts
-   to per-spec altitude here: the elder is THIS SPEC's N+1
+   to per-spec altitude here: the lead is THIS SPEC's N+1
    librarian). This is the SUBSTRATE role; the next three are
    composition-altitude consequences.
 2. **λsh counterparty (per lambda-shell.md).** When `\` is pressed in
-   λsh at this spec's root, the prompt becomes `@<elder.name>>`.
-   When `mirror sh` enters this spec's directory, the elder's
+   λsh at this spec's root, the prompt becomes `@<lead.name>>`.
+   When `mirror sh` enters this spec's directory, the lead's
    five-axis fixed point loads. This is the surface where the
    spawn-and-probe role is most visible to a human operator.
 3. **@spectral/supervisor lifecycle composition (per shards/spectral/
    supervisor.mirror).** When members are spawned, lifecycle work
    (start_child / terminate_child / restart_strategy on failure)
-   COMPOSES through a `@spectral/supervisor` instance the elder uses.
-   This is RUNTIME-ALTITUDE COMPOSITION, NOT the elder's identity:
-   the elder USES `@spectral/supervisor`; the elder IS NOT a
+   COMPOSES through a `@spectral/supervisor` instance the lead uses.
+   This is RUNTIME-ALTITUDE COMPOSITION, NOT the lead's identity:
+   the lead USES `@spectral/supervisor`; the lead IS NOT a
    `@spectral/supervisor`. Default restart_strategy when unspecified:
    `one_for_one` (the BEAM default; the substrate-pull-correct choice
    per @spectral/supervisor's tick discipline).
 4. **@magic/contract bind site (per shards/magic/contract.mirror).**
-   The elder IS the principal who binds member contracts per
+   The lead IS the principal who binds member contracts per
    `bind(magic_surface, magic_mechanism, magic_invariant) ->
-   magic_contract`. Every member entry IS a contract the elder
-   bound. The elder's bind-authority is itself non-revocable from
-   within the spec (the elder IS the spec's root authority; revoking
+   magic_contract`. Every member entry IS a contract the lead
+   bound. The lead's bind-authority is itself non-revocable from
+   within the spec (the lead IS the spec's root authority; revoking
    it requires editing the spec).
 
-### 4.2 Exactly one elder
+### 4.2 Exactly one lead
 
-The elder field is single-valued. Two reasons, both substrate-pull-
+The lead field is single-valued. Two reasons, both substrate-pull-
 correct:
 
 - **λsh has one home peer per spec.** The toggle `\` resolves to one
@@ -530,34 +530,34 @@ correct:
   needs an unambiguous handler per altitude. Two elders at the same
   spec would mean two N+1 observers fielding probes from the same
   antichain of members; the probe `[D_substrate, member_action]`
-  would have an ambiguous answer-site. Single elder → single probe-
+  would have an ambiguous answer-site. Single lead → single probe-
   handler → the spawn-and-probe relation is well-defined.
 
-Multi-spec collaboration (Mara is elder of mirror; Glint is elder of
+Multi-spec collaboration (Mara is lead of mirror; Glint is lead of
 systemic.engineering) IS already supported — each spec has its own
-elder; cross-spec peer relationships are mediated at λsh's `mirror
-sh @<other-elder>` boundary per lambda-shell.md §"Agent Spawn".
+lead; cross-spec peer relationships are mediated at λsh's `mirror
+sh @<other-lead>` boundary per lambda-shell.md §"Agent Spawn".
 
-### 4.3 The elder is above the members (implicitly, with infinite ACL)
+### 4.3 The lead is above the members (implicitly, with infinite ACL)
 
-The elder is NOT redundantly listed in `members { }`. The elder has:
+The lead is NOT redundantly listed in `members { }`. The lead has:
 
 - **infinite ACL** at this spec (every op admissible against every
   target; the type-1 projection of the maximal type-N+1 consent the
-  elder authored when they declared themselves elder);
+  lead authored when they declared themselves lead);
 - **bind authority** for member contracts (per @magic/contract);
 - **revoke authority** for member contracts (per @magic/reveal's
   capability-revocation lineage; removing a `members { }` entry IS a
-  reveal at the elder altitude per §8.3);
-- **spawn authority** — only the elder can spawn members against this
-  spec (other peers may request spawns; only the elder dispatches
+  reveal at the lead altitude per §8.3);
+- **spawn authority** — only the lead can spawn members against this
+  spec (other peers may request spawns; only the lead dispatches
   them);
 - **probe-handler responsibility** — every spectral-Tomm probe a
-  spawned member lifts is fielded by the elder at altitude N+1;
+  spawned member lifts is fielded by the lead at altitude N+1;
 - **the responsibility** to discharge `pack_coherent(pack, perturbation)`
   (per @pack family-root) at every spec settle.
 
-The members field is for the OTHER peers; the elder's own permissions
+The members field is for the OTHER peers; the lead's own permissions
 + responsibilities are structural, not enumerated.
 
 ---
@@ -575,14 +575,14 @@ map (the earlier framing was reframed per Alex 2026-06-24; see §10).
 Semantically: `~peer'<path>' => <acl>` declares
 
 ```
-the elder binds a magic_contract:
+the lead binds a magic_contract:
   surface   = member's invocation interface
-  mechanism = the elder's runtime (composed-with @spectral/supervisor)
+  mechanism = the lead's runtime (composed-with @spectral/supervisor)
   promise   = <acl> evaluated at settle-time
 ```
 
 The contract IS audit-gated per @magic/audit; every member action
-discharges through `audit(contract) -> audit_record` and the elder's
+discharges through `audit(contract) -> audit_record` and the lead's
 `restart_strategy` (via @spectral/supervisor composition) governs the
 response on violation.
 
@@ -640,7 +640,7 @@ discharges:
 1. lookup(members, requesting_peer) → acl                       # members map
 2. acl_admits(acl, requested_op, requested_target) → verdict    # type-1 check
 3. audit(elder_contract_for_member, action_record) → audit_record
-4. respond(audit_record, elder.audit_strategy) → audit_record
+4. respond(audit_record, lead.audit_strategy) → audit_record
 ```
 
 Steps 1-2 are the type-1 projection (the ACL check proper); steps
@@ -678,7 +678,7 @@ All four resolve to a substrate-typed `peer` value per peer-glass.md
 ### 6.2 The self-naming rule (the missing rule)
 
 A peer at home `~peer'<path>'` is RESOLVED by reading the pack{}
-block of `<path>/mirror.spec` (if present) and taking the `elder`
+block of `<path>/mirror.spec` (if present) and taking the `lead`
 field as the peer's authoritative identity. This is the SELF-NAMING
 rule: each peer's home-repo spec names that peer's own identity.
 
@@ -686,15 +686,15 @@ rule: each peer's home-repo spec names that peer's own identity.
 resolve(~peer'<path>') =
   let home_spec = <path>/mirror.spec
   if home_spec has pack{} block:
-    return home_spec.pack.elder           # the peer's self-declaration
+    return home_spec.pack.lead           # the peer's self-declaration
   else:
     return @peer.load(~dir'<path>')       # five-axis fixed point only
 ```
 
 Why self-naming: every peer's identity is content-addressed at their
 home's five-axis fixed point (per peer-glass.md §"The five-axis fixed
-point"). The pack{} block's elder field is the peer's own declaration
-that they ARE the elder of their home spec. A `~peer'<other-path>'`
+point"). The pack{} block's lead field is the peer's own declaration
+that they ARE the lead of their home spec. A `~peer'<other-path>'`
 reference IS a reference to that peer's self-declaration; the
 substrate is honest about the recursive structure.
 
@@ -705,7 +705,7 @@ This avoids two failure modes:
   Mara's self-declared identity; the member's home spec is the
   authority on who they are.
 - **Pack-level identity drift.** If Mara's home spec doesn't declare
-  `elder ~peer'~/.mara'`, the member binding falls back to the
+  `lead ~peer'~/.mara'`, the member binding falls back to the
   five-axis fixed point load (lossy but well-defined). The substrate
   warns at settle but doesn't refuse.
 
@@ -750,7 +750,7 @@ visible in subsequent ACL positions of THIS block:
 
 ```mirror
 pack {
-  elder ~peer'~/.reed'
+  lead ~peer'~/.reed'
 
   let read_only = acl { ops: [focus, project, split], targets: any }
   let writer    = acl { ops: any, targets: [~d'shards/'] }
@@ -824,7 +824,7 @@ spec for reuse:
 
 ```mirror
 pack {
-  elder ~peer'~/.reed'
+  lead ~peer'~/.reed'
 
   # import ACLs from systemic.engineering's spec
   import ~peer'~/.glint' { read_only, writer, auditor } as se
@@ -846,7 +846,7 @@ Not in v0.1 to keep the surface bounded; flagged for Alex.
 
 Load-bearing distinction (Alex 2026-06-24): the `pack { }` BLOCK and
 the `@mirror/pack` GRAMMAR live in mirror permanently — these are
-substrate vocabulary. But the specific `elder ~peer'~/.reed'` +
+substrate vocabulary. But the specific `lead ~peer'~/.reed'` +
 `members { ~peer'~/.mara' => writer, … }` instances populated in any
 given `mirror.spec` are CONSUMER-LAYER content, NOT substrate
 default. Alex's words:
@@ -860,17 +860,17 @@ The partition is the same one Rust holds between `struct` (the
 language primitive ships with rustc) and `struct User { name: String }`
 (the user's own declaration). The substrate ships the BLOCK SHAPE +
 the GRAMMAR + the SEMANTICS; the consumer ships the SPECIFIC PACK
-(who their elder is, who their members are, what ACLs they grant).
+(who their lead is, who their members are, what ACLs they grant).
 
 Concretely:
 
 - `@mirror/pack` grammar (forward-promised at `shards/mirror/pack.mirror`):
   STAYS in mirror permanently.
-- The empty pack-shape (`pack { elder ~peer'.'; members {} }` per the
+- The empty pack-shape (`pack { lead ~peer'.'; members {} }` per the
   default-to-repo-local rule §9.1): STAYS in mirror as the substrate's
   zero-config default.
 - mirror's OWN `mirror.spec` populating a specific pack (e.g.
-  `elder ~peer'~/.reed'; members { ~peer'~/.mara' => writer, … }`):
+  `lead ~peer'~/.reed'; members { ~peer'~/.mara' => writer, … }`):
   THAT IS OUR pack; consumer-layer; lives in mirror's dogfood
   declaration, NOT in the substrate-decl. Other projects consuming
   mirror will populate THEIR pack at THEIR `mirror.spec`.
@@ -896,13 +896,13 @@ settle time) to:
 ```mirror
 bind(
   surface:   peer_invocation_interface(P),        # member's API at this spec
-  mechanism: elder_runtime,                        # the elder's @spectral runtime
+  mechanism: elder_runtime,                        # the lead's @spectral runtime
   promise:   acl_as_invariant(ACL)                # the ACL lifted to magic_invariant
 ) -> magic_contract
 ```
 
-Each member-entry is a magic_contract bound by the elder (per §4.3
-elder has bind authority). The contract's `honor(c)` (per
+Each member-entry is a magic_contract bound by the lead (per §4.3
+lead has bind authority). The contract's `honor(c)` (per
 shards/magic/contract.mirror) is the runtime check: the member's
 action against the spec IS honored iff the action satisfies the
 ACL-as-invariant.
@@ -916,10 +916,10 @@ member.act(op, target)
   ↓
 audit(contract, action_record) → audit_record
   ↓
-respond(audit_record, elder.audit_strategy) → audit_record
+respond(audit_record, lead.audit_strategy) → audit_record
 ```
 
-The elder's `audit_strategy` (one of `restart | escalate | record |
+The lead's `audit_strategy` (one of `restart | escalate | record |
 enforce` per shards/magic/audit.mirror) defaults to `enforce` (per
 O2 resolution; §11.O2). Explicit configuration of the strategy is
 forward-promised v0.2.
@@ -952,16 +952,16 @@ have been audited; both old and new mechanisms must be tamper-
 evidence intact. The substrate inherits Levy 1984's capability-
 revocation discipline (reveal.mirror's ancestor citation).
 
-What this means concretely: an elder cannot silently downgrade a
+What this means concretely: a lead cannot silently downgrade a
 member's ACL between settles; the downgrade IS a substrate-altitude
 reveal that the audit trail records. A member learning their
 capabilities were revoked IS a substrate-grounded event.
 
 ### 8.4 With @pack — pack_coherent over the members
 
-The members + elder together form a `pack`-shaped value (the `peers`
-field carries `elder :: members`) at this spec's altitude. The
-elder's settle-time obligation INCLUDES discharging
+The members + lead together form a `pack`-shaped value (the `peers`
+field carries `lead :: members`) at this spec's altitude. The
+lead's settle-time obligation INCLUDES discharging
 `pack_coherent(this_pack, perturbation)`:
 
 ```mirror
@@ -976,17 +976,17 @@ Forward-promised: an explicit `pack.coherent` predicate in
 substrate-architectural pack discipline at the spec's settle, not
 as a separate cron-or-CI invariant.
 
-### 8.5 With @frame/in — members operate in the spec's frame, elder observes at N+1
+### 8.5 With @frame/in — members operate in the spec's frame, lead observes at N+1
 
 Per shards/frame/in.mirror (order-1 species; computation within a
 frame): a member operating against this spec is operating WITHIN
 the spec's frame. The frame IS what the spec's source/garden/target/
-settle_on blocks declare; the elder is the OBSERVER at the frame's
+settle_on blocks declare; the lead is the OBSERVER at the frame's
 N+1 altitude (the spawn-and-probe role per §4.1); members operate
-WITHIN the frame the elder observes.
+WITHIN the frame the lead observes.
 
-The pack{} block's elder + members partition IS the order-2 view on
-this order-1 operation: the elder is OF-the-frame (order 2; they
+The pack{} block's lead + members partition IS the order-2 view on
+this order-1 operation: the lead is OF-the-frame (order 2; they
 observe the frame they spawned-and-handle-probes-from); members are
 IN-the-frame (order 1; they compute within it). The frame-relation
 altitude lift composes cleanly per recognition #82, AND aligns with
@@ -1011,7 +1011,7 @@ Two composition modes:
 
 - **Direct authoring at type-1.** `members { ~peer'M' => writer }`
   authors the type-1 ACL directly. The higher types are IMPLIED by
-  the authoring (the elder's act of writing the ACL IS a type-N+1
+  the authoring (the lead's act of writing the ACL IS a type-N+1
   consent at the implicit altitude).
 - **Authoring at type-N+1 with cascade.** A forward-promised v0.2
   feature: declare `consent { type: N+1, value: <expr> }` and the
@@ -1039,8 +1039,8 @@ When `mirror.spec` has no `pack { }` block, mosaic SYNTHESIZES one:
 ```mirror
 # implicit when pack{} is absent
 pack {
-  elder ~peer'.'                    # the repo itself is the elder's home
-  # members is empty                 # no members; elder is sole peer
+  lead ~peer'.'                    # the repo itself is the lead's home
+  # members is empty                 # no members; lead is sole peer
 }
 ```
 
@@ -1048,7 +1048,7 @@ The `~peer'.'` literal resolves via the same self-naming rule (§6.2)
 applied to the repo's own directory. Two cases:
 
 1. **The repo IS a peer home** (has the five-axis fixed point per
-   peer-glass.md). The elder resolves to the repo's own peer
+   peer-glass.md). The lead resolves to the repo's own peer
    identity. The spec is governed by "this repo's peer."
 2. **The repo is NOT a peer home** (no `identity.mirror` etc.).
    Mosaic synthesizes a minimal repo-local peer with identity
@@ -1066,9 +1066,9 @@ pack{} declaration.
 Three reasons, all substrate-pull-correct:
 
 - **Local sovereignty.** A spec on disk under your `~` IS yours.
-  Requiring an explicit elder declaration for every spec imposes
+  Requiring an explicit lead declaration for every spec imposes
   ceremony where none is needed. The default-to-repo-local rule
-  says "if you didn't declare otherwise, you ARE the elder."
+  says "if you didn't declare otherwise, you ARE the lead."
 - **No external authority by default.** Mirror is a local-first
   substrate. The default governance does NOT require a remote
   registry, a Pack membership, or any network handshake. The
@@ -1089,10 +1089,10 @@ MECHANICAL:
 # before (implicit; no pack{} block)
 project foo { source ~d'shards/'; … }
 
-# after (explicit; the elder is named; members are declarable)
+# after (explicit; the lead is named; members are declarable)
 project foo {
   pack {
-    elder ~peer'~/.alex'               # was implicit; now named
+    lead ~peer'~/.alex'               # was implicit; now named
     members {
       ~peer'~/.mara' => read_only
     }
@@ -1103,8 +1103,8 @@ project foo {
 ```
 
 Mosaic's settled oid of the spec changes (the spec now has more
-declared content); the elder's authority is unchanged (they were
-always the implicit elder; now they're named). No migration of
+declared content); the lead's authority is unchanged (they were
+always the implicit lead; now they're named). No migration of
 existing settled artifacts; the pack{} block is additive.
 
 ### 9.4 Interaction with the lambda shell
@@ -1134,13 +1134,13 @@ forward-promised, and gate on Pack adversarial review. Per
 recognition #95: substrate carries the measurement primitive at the
 right altitude; the per-ACL numbers are species work.*
 
-*Reframe note (Alex 2026-06-24): the earlier draft framed the elder-
+*Reframe note (Alex 2026-06-24): the earlier draft framed the lead-
 members relation as a sheaf over a team-poset with restriction maps.
 Alex's pull on this section: "I don't have enough context to answer
 this; what I'm seeing is the supervisor being responsible for
 spawning and handling additional requests in form of spectral-Tomm
 shaped circular constructs." The math reframes accordingly: members
-form an antichain (no internal rank; pack-equal); the elder is a
+form an antichain (no internal rank; pack-equal); the lead is a
 distinguished N+1 OBSERVER (outside the antichain, at strictly
 higher altitude); the relation's algebraic structure comes from the
 SPECTRAL-TOMM PROBE MACHINERY (per
@@ -1151,16 +1151,16 @@ shaped. The reframe is narrower than wholesale replacement: it
 corrects §10.1 (the relation) and the role of `=>` (§10.2 sub-note),
 leaves the rest.*
 
-### 10.1 Members as antichain; elder as N+1 observer; spectral-Tomm probes as morphisms
+### 10.1 Members as antichain; lead as N+1 observer; spectral-Tomm probes as morphisms
 
 The members form an antichain M = {p_1, p_2, …, p_k} — pack-equal,
 no internal rank. There is NO sub-ordering of members against each
 other; "member of this pack" is a flat relation. ACL refinements at
 the `=>` arrow annotate individual members but do NOT order them.
 
-The elder p_e is a DISTINGUISHED N+1 OBSERVER, at strictly higher
-altitude than M. The elder is NOT the supremum of M in a partial
-order on a single set; the elder sits at a HIGHER ALTITUDE of
+The lead p_e is a DISTINGUISHED N+1 OBSERVER, at strictly higher
+altitude than M. The lead is NOT the supremum of M in a partial
+order on a single set; the lead sits at a HIGHER ALTITUDE of
 observation, in the sense of `architecture-spectral-db-autopoietic-
 memory` (the N+1 librarian operating one altitude above the agents
 being observed).
@@ -1170,13 +1170,13 @@ SPAWN-AND-PROBE relation populated by two operation kinds, both
 already substrate-decl:
 
 - **spawn(p_e → p_i, frame, repo, perturbation) -> runtime** (per
-  `shards/pack.mirror` action surface): elder fields a spawn request
-  for member p_i; only the elder dispatches against this spec.
+  `shards/pack.mirror` action surface): lead fields a spawn request
+  for member p_i; only the lead dispatches against this spec.
 - **probe(p_i → p_e, [D_spec, action]) -> response** (per
   `architecture-error-as-tomm-probe`): a spawned member lifts a
-  spectral-Tomm-shaped circular question to the elder. The probe
+  spectral-Tomm-shaped circular question to the lead. The probe
   carrier is the commutator `[D_spec, member_action]` deployed as a
-  natural-language or typed-spectral question. The elder's response
+  natural-language or typed-spectral question. The lead's response
   IS spectral data the spec's next settle pass can use.
 
 The morphisms in this relation are SPECTRAL-TOMM PROBES (Tomm 1987/
@@ -1188,25 +1188,25 @@ the commutator probe of a spectral triple (per
 `(A_spec, H_spec, D_spec)` with the spec's frame as observation
 altitude).
 
-Directionality: members → elder for probes (member-to-N+1); elder →
+Directionality: members → lead for probes (member-to-N+1); lead →
 members for spawns (N+1-to-member dispatch). The relation is
 BIDIRECTIONAL across altitudes, not a downward delegation chain.
 
 What this means concretely:
 
-- The elder doesn't "own" or "delegate from" the members in the
-  delegation-chain sense; the elder OBSERVES at N+1 and FIELDS the
+- The lead doesn't "own" or "delegate from" the members in the
+  delegation-chain sense; the lead OBSERVES at N+1 and FIELDS the
   probes the members lift.
 - ACL on a member is an ANNOTATION on that member's invocation
-  surface, not a restriction of the elder's authority projected
+  surface, not a restriction of the lead's authority projected
   down. The `=>` arrow is annotation; the spawn-and-probe relation
   is the structural axis.
 - The pack_coherent bilateral (per @pack family-root) discharges
-  at SETTLE TIME on the (elder, members) pair; the spectral-Tomm
+  at SETTLE TIME on the (lead, members) pair; the spectral-Tomm
   probes are the QUESTION-CARRIER during between-settle operation.
 
 **Honest framing limit:** the new framing is sharper at NAMING what
-the elder does (spawn + probe-handle) than at giving a clean
+the lead does (spawn + probe-handle) than at giving a clean
 algebraic structure that the sheaf framing would have offered. The
 spectral-Tomm probe machinery has algebraic structure (it's the
 commutator probe of a spectral triple, with the algebra-of-
@@ -1222,7 +1222,7 @@ closed-form for pack-specific reasoning) of the reframe.
 The `<ACL>` values form a lattice:
 
 - ⊤ (top) = infinite ACL (all ops, all targets, all predicates
-  vacuously honored). The elder's ACL.
+  vacuously honored). The lead's ACL.
 - ⊥ (bottom) = empty ACL (no ops, no targets). The default for an
   unlisted peer.
 - ∨ (join) = union: `(ops_1 ∪ ops_2, targets_1 ∪ targets_2)`.
@@ -1249,7 +1249,7 @@ discharge does).
 `members { ~peer'p' => acl }` is an ANNOTATION of member p with an
 ACL value drawn from this lattice. It is NOT the sheaf restriction
 map framing of the earlier draft. The lattice structure here is on
-the ACL VALUES; the spawn-and-probe relation on (elder, members)
+the ACL VALUES; the spawn-and-probe relation on (lead, members)
 lives at §10.1's altitude, independently of how the lattice
 annotates individual members.
 
@@ -1321,45 +1321,45 @@ transformation gives the CASCADE DERIVATION: a single type-N+1
 consent expression cascades to a family of type-1 ACL entries
 for each `~peer'…'` in scope.
 
-### 10.6 The elder as the algebra A of the spec's spectral triple
+### 10.6 The lead as the algebra A of the spec's spectral triple
 
 The substrate-pull-leaning math claim that survives the §10.1
-reframe: the elder carries the structure of an ALGEBRA-OF-OBSERVATION
+reframe: the lead carries the structure of an ALGEBRA-OF-OBSERVATION
 at this spec's altitude. The spec's frame IS the observation context;
-the elder IS the algebra A (in the Connes spectral triple sense)
+the lead IS the algebra A (in the Connes spectral triple sense)
 whose elements are the operations admitted at this spec. Per
 [[architecture-connes-spectral-triple]]: every substrate altitude
-carries a spectral triple (A, H, D); the elder's role at the pack{}
+carries a spectral triple (A, H, D); the lead's role at the pack{}
 altitude IS the A of THIS SPEC's spectral triple `(A_spec, H_spec,
 D_spec)`.
 
 This is the structure that GROUNDS §10.1's spectral-Tomm probes:
 the probe carrier `[D_spec, a]` for `a ∈ A_spec` is well-defined
-exactly because the elder names what A_spec is. A spec with no
-elder declaration falls back to a default A_spec at the repo-local
-altitude (per §9.1); a spec with an explicit elder declaration
-admits the elder's chosen operation set as A_spec.
+exactly because the lead names what A_spec is. A spec with no
+lead declaration falls back to a default A_spec at the repo-local
+altitude (per §9.1); a spec with an explicit lead declaration
+admits the lead's chosen operation set as A_spec.
 
-**What this means concretely:** the elder doesn't just OWN the
-shell or DISPATCH spawns; the elder's identity-mirror declares
+**What this means concretely:** the lead doesn't just OWN the
+shell or DISPATCH spawns; the lead's identity-mirror declares
 what operations the spec's spectral triple admits. Different elders
 at different specs admit different operation sets; the algebra of
-the spec IS elder-specific. The spectral-Tomm probes from members
-are deployed AGAINST that elder-specific A_spec.
+the spec IS lead-specific. The spectral-Tomm probes from members
+are deployed AGAINST that lead-specific A_spec.
 
 **Status:** the framing is consistent with the substrate's existing
 spectral-triple architecture; promoting it to a full statement
 requires Pack adversarial review. Flagged; not v0.1 load-bearing,
-but UPGRADED in relevance by §10.1's reframe — the elder-as-A claim
+but UPGRADED in relevance by §10.1's reframe — the lead-as-A claim
 is no longer an alternative framing; it's the structural ground
 for the spawn-and-probe relation.
 
 ### 10.7 Default-to-repo-local as the initial object
 
 In the category of valid pack{} configurations for a given spec,
-the implicit `pack { elder ~peer'.'; members {} }` (§9.1) is
+the implicit `pack { lead ~peer'.'; members {} }` (§9.1) is
 an INITIAL OBJECT: every other valid pack{} configuration is a
-refinement that ADDS elder declaration + member entries. Morphisms
+refinement that ADDS lead declaration + member entries. Morphisms
 in this category are the additive operations (adding a let binding;
 adding a member entry; tightening an ACL via `but`).
 
@@ -1378,7 +1378,7 @@ The spectral-garden-git spec named four roots (`@spectral/garden/git`,
 `@spectral/garden/oci`, `@spectral/garden/nix`, `@mirror/store`). The
 peer{} block is ORTHOGONAL to that structure but composes cleanly:
 
-- The elder's `~peer'…'` resolution discharges through `@io/git` (the
+- The lead's `~peer'…'` resolution discharges through `@io/git` (the
   same adapter the garden uses). Peer-home-repo reuse: a Pack peer's
   home repo IS a `garden { source ~git'…' }` candidate AND a `pack
   { members { ~peer'…' => … } }` candidate; the substrate names both
@@ -1399,7 +1399,7 @@ the distributive-on-ops-and-targets argument; no formal proof for
 for a worked example (the consent spec has one at §6.2; the pack{}
 block's specific authoring at type 1 IS that example unmodified);
 no closed-form derivation of the spectral-Tomm probe algebra at the
-(elder, members) altitude beyond what `architecture-connes-spectral-
+(lead, members) altitude beyond what `architecture-connes-spectral-
 triple` already names (the spec inherits, does not re-derive). Open
 work, gated on Pack adversarial review per spectral-garden-git §7.7.
 
@@ -1440,7 +1440,7 @@ ACL + ocap-revocation + lattice-ordering + effect-predicates under
 the geometric-consent-projection framing PLUS the spawn-and-probe
 relation at §10.1. The pre-AI traditions name the access-control
 shape; the substrate's contribution adds the spectral-Tomm probe
-machinery as the (elder, members) operational axis. The traditions
+machinery as the (lead, members) operational axis. The traditions
 don't disappear; they all compose at the same altitude.
 
 ---
@@ -1455,26 +1455,26 @@ The noun matches the substrate's existing @pack family-root
 entry. The historical filename `mirror-spec-peer-acl-surface.md` is
 retained for commit-history continuity. Alex's original probe used
 `peer { supervisor … team { … } }`; the cascade settled to `pack {
-elder … members { … } }` per substrate vocabulary.
+lead … members { … } }` per substrate vocabulary.
 
 ### O2. CLOSED — audit_strategy default is `enforce`
 
 Resolved Alex 2026-06-24 (cascade pass): when the pack{} block does
-not specify, the elder's audit_strategy defaults to `enforce`. ACL
+not specify, the lead's audit_strategy defaults to `enforce`. ACL
 violations are actively blocked at the @magic/audit altitude.
 Explicit per-spec configuration of audit_strategy is forward-
 promised v0.2. The reasoning (Narcissus-pole-as-guardian: ACLs that
 don't gate are decorative) is consistent with substrate-pull on
 @magic.
 
-### O3. DISSOLVED — elder is not delegation; the cross-spec question reframes
+### O3. DISSOLVED — lead is not delegation; the cross-spec question reframes
 
-The original O3 asked whether an elder's ACL grant in spec A
-transitively extends to peers granted ACL in the elder's home spec.
-The §10 reframe dissolves this: the elder is an N+1 OBSERVER fielding
+The original O3 asked whether a lead's ACL grant in spec A
+transitively extends to peers granted ACL in the lead's home spec.
+The §10 reframe dissolves this: the lead is an N+1 OBSERVER fielding
 spectral-Tomm probes, NOT a delegation node in a permission chain.
-There is no "elder's ACL" that flows downward through a chain;
-each spec's pack{} block independently names its own elder and
+There is no "lead's ACL" that flows downward through a chain;
+each spec's pack{} block independently names its own lead and
 members. Cross-spec collaboration happens at the explicit
 `~peer'…'` boundary (§6.3 name-ref form; §8.5 frame composition);
 there is no implicit ACL transitivity to ask about.
@@ -1524,7 +1524,7 @@ lives in `mirror/`); the pack{} block is at mirror.spec altitude
 via `in @spectral/supervisor` from the @mirror/pack shard at runtime
 altitude (§2.4 + §4.1).
 
-Load-bearing follow-on (Alex 2026-06-24): named-peer INSTANCES (elder
+Load-bearing follow-on (Alex 2026-06-24): named-peer INSTANCES (lead
 ~peer'~/.reed' + members { … } populating a specific pack) do NOT
 live in mirror. The substrate ships the block shape + grammar + the
 empty-default; consumers ship their specific pack at their
@@ -1533,10 +1533,10 @@ empty-default; consumers ship their specific pack at their
 ### O7. DISSOLVED — single-hop self-naming holds; transitive redirection is not delegation
 
 The original O7 asked whether self-naming resolution (§6.2) follows
-the `elder` field one hop, or transitively closes. Per the §10
-reframe: elder is N+1 OBSERVER, not delegation chain. Transitive
-"redirection" through elder chains is not a meaningful operation
-— each spec's elder IS that spec's elder; resolving `~peer'<path>'`
+the `lead` field one hop, or transitively closes. Per the §10
+reframe: lead is N+1 OBSERVER, not delegation chain. Transitive
+"redirection" through lead chains is not a meaningful operation
+— each spec's lead IS that spec's lead; resolving `~peer'<path>'`
 means "give me the peer whose home is <path>" (one filesystem lookup
 plus one optional pack{} block read), NOT "chase a chain of
 redirections."
@@ -1547,12 +1547,12 @@ Resolution rule (settled, no choice to make):
 resolve(~peer'<path>') =
   let home_spec = <path>/mirror.spec
   if home_spec has pack{} block:
-    return home_spec.pack.elder           # ONE hop; the peer's self-declaration
+    return home_spec.pack.lead           # ONE hop; the peer's self-declaration
   else:
     return @peer.load(~dir'<path>')       # five-axis fixed point only
 ```
 
-If `home_spec.pack.elder` is `~peer'<other-path>'`, that is the
+If `home_spec.pack.lead` is `~peer'<other-path>'`, that is the
 peer's declared identity; the substrate does NOT chase further. The
 substrate has a TERMINATING resolution at the filesystem layer
 (load returns either the five-axis fixed point or fails with a
@@ -1569,10 +1569,10 @@ resolution never recurses past the first pack{} block read.
   per-spec scoped `pack`-shaped value extending @pack. The Pack peer
   variant is the substrate's existing typed surface for member
   identity.
-- **#82** (`@frame` cognitive-order substrate-decl): elder operates
+- **#82** (`@frame` cognitive-order substrate-decl): lead operates
   AT-frame (N+1 observer); members operate IN-frame; the partition
   IS the frame-relation altitude per recognition #82's Q3 (the
-  reflection loop alters the frame; the elder IS the reflection
+  reflection loop alters the frame; the lead IS the reflection
   altitude for the members).
 - **#80** (`@magic` form/process substrate-decl): every member entry
   desugars to a magic_contract bind; @magic/contract.honor IS the
@@ -1582,9 +1582,9 @@ resolution never recurses past the first pack{} block read.
   surface IS the boundary harness; alignment fires at the member-
   action boundary, not as internal-state shaping.
 - **#51** (mirror as expanding Hilbert space): each pack{} block
-  adds a substrate dimension scoped to one spec (the elder's
+  adds a substrate dimension scoped to one spec (the lead's
   spec-altitude algebra A_spec); cross-spec collaboration is the
-  direct sum of elder-algebras under explicit member binding.
+  direct sum of lead-algebras under explicit member binding.
 - **#42** (Bateson logical-type primitive): the consent-geometry
   projection cascades down the Bateson tower; the pack{} block
   authors at type 1 with higher types implicit.
@@ -1595,11 +1595,11 @@ resolution never recurses past the first pack{} block read.
 Architecture cross-refs (memory):
 
 - `architecture-error-as-tomm-probe` — the spectral-Tomm probe
-  machinery the elder fields per §10.1.
+  machinery the lead fields per §10.1.
 - `architecture-reflection-thinks-in-spectral-questions` — the
   Reflection-level analogue at meta-pipeline altitude.
 - `architecture-spectral-db-autopoietic-memory` — the N+1 librarian
-  role per-spec, lifted to per-spec altitude as the elder.
+  role per-spec, lifted to per-spec altitude as the lead.
 - `architecture-geometric-consent-projection` — ACL as type-1
   projection; the cascade direction discipline.
 
@@ -1638,8 +1638,8 @@ Architecture cross-refs (memory):
 - `shards/pack/{mara,seam,glint,reed,taut}.mirror` (the five Pack
   peer species; each declares the peer's substrate-decl identity).
 - `shards/spectral/supervisor.mirror` (the runtime-altitude
-  lifecycle owner the elder COMPOSES-with for spawned-member
-  lifecycle; NOT the elder's identity — see §2.4 + §10 reframe).
+  lifecycle owner the lead COMPOSES-with for spawned-member
+  lifecycle; NOT the lead's identity — see §2.4 + §10 reframe).
 - `shards/magic/contract.mirror` + `shards/magic/audit.mirror` +
   `shards/magic/reveal.mirror` (the verification + revocation
   lineage).
@@ -1684,7 +1684,7 @@ authority surface.
 
 Per §10's framing note + the §10.1 reframe note: the spawn-and-probe
 relation + ACL lattice + `but` algebra + Galois + natural-
-transformation + elder-as-A framings are mathematical VOCABULARY
+transformation + lead-as-A framings are mathematical VOCABULARY
 for naming what the substrate does. They are NOT formal proofs. The
 strongest formal claims are §10.2's lattice properties (distributivity
 on ops + targets axes, non-distributivity at predicates). The
@@ -1726,7 +1726,7 @@ substrate-pull sends us there.
 
 Alex's verbatim probe: "What if each mirror.spec has a clear owner
 peer? If it's undefined the default peer is repo-local?" Both
-"what ifs" answered affirmatively in this spec. The elder field IS
+"what ifs" answered affirmatively in this spec. The lead field IS
 the clear owner peer; the default-to-repo-local rule (§9) covers
 the undefined case. The ratification is Alex's; if either framing
 turns out to be wrong, the spec rescinds in that direction.
@@ -1742,9 +1742,9 @@ reframe pulls more weight on substrate inheritance than the spec
 should rest on. The ACL lattice (§10.2) and `but` algebra (§10.3)
 survive unchanged and carry the lattice-shaped reasoning.
 
-### H10. The elder-as-spectral-triple-A claim is hedged
+### H10. The lead-as-spectral-triple-A claim is hedged
 
-§10.6 names the elder as the algebra A of the spec's spectral triple.
+§10.6 names the lead as the algebra A of the spec's spectral triple.
 The claim is consistent with the substrate's existing
 [[architecture-connes-spectral-triple]] and is the STRUCTURAL
 GROUND for §10.1's spectral-Tomm probes, but is NOT empirically
@@ -1779,7 +1779,7 @@ not proof.
   6. 64465a0 — §11-§14 open questions + cross-refs + hedges +
      Pack trail
 - **2026-06-24 (Alex afternoon · cascade resolution)**: probe back
-  to Mara via Reed — O1/O2/O6 settled (pack/elder/members
+  to Mara via Reed — O1/O2/O6 settled (pack/lead/members
   vocabulary; enforce default; mirror); Q3 reframe ("the supervisor
   being responsible for spawning and handling additional requests
   in form of spectral-Tomm shaped circular constructs"); Q4
@@ -1789,11 +1789,11 @@ not proof.
   with cascade-mapping brief.
 - **2026-06-24 (Mara, cascade pass; this spec)**: cascade landed
   across three commits:
-  7. 08de3e0 — vocabulary cascade (peer{}→pack{}; supervisor→elder;
+  7. 08de3e0 — vocabulary cascade (peer{}→pack{}; supervisor→lead;
      team→members) + §4 spawn-and-probe reframe + §7.4 substrate-
      vs-USE
   8. f600939 — §10 spawn-and-probe relation replaces sheaf-over-
-     poset; elder is N+1 observer; spectral-Tomm probes as morphisms
+     poset; lead is N+1 observer; spectral-Tomm probes as morphisms
   9. (this commit) — §11 close/dissolve open questions + §12-§14
      cross-refs + hedges + Pack trail hygiene
 - **Forward-promised**: Seam adversarial review → Reed consolidation
@@ -1808,7 +1808,7 @@ consolidates; substrate-decl shards follow. Spec-before-shard
 inversion noted in H2; same pattern as the prior cascade.
 
 Cascade discipline observations:
-- The vocabulary cascade (peer/supervisor/team → pack/elder/members)
+- The vocabulary cascade (peer/supervisor/team → pack/lead/members)
   was substrate-pull-correct in retrospect: the substrate ALREADY
   had `pack` as family-root and `peer` as the type of an entry; the
   initial draft fought that partition. The cascade restored alignment.
