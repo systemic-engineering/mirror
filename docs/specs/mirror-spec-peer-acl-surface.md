@@ -1447,118 +1447,58 @@ don't disappear; they all compose at the same altitude.
 
 ## 11. Open surface questions
 
-### O1. Keyword: `peer { }` vs `team { }` vs `who { }`
+### O1. CLOSED — keyword is `pack { }`
 
-The block carries supervisor + team + ACL. Three keyword options:
+Resolved Alex 2026-06-24 (cascade pass): the block is `pack { }`.
+The noun matches the substrate's existing @pack family-root
+(`shards/pack.mirror`); pack IS the group, peer IS the type of an
+entry. The historical filename `mirror-spec-peer-acl-surface.md` is
+retained for commit-history continuity. Alex's original probe used
+`peer { supervisor … team { … } }`; the cascade settled to `pack {
+elder … members { … } }` per substrate vocabulary.
 
-**(a) `peer { }`** — the block is named by its OUTPUT (the
-resolved peer relationships). Matches the `~peer'…'` sigil.
-Matches Alex's literal proposal verbatim.
+### O2. CLOSED — audit_strategy default is `enforce`
 
-**(b) `team { }`** — the block is named by its DOMINANT FIELD (the
-team). Reads as "who's on this spec's team." Forces `team {
-supervisor …; member ~peer'…' => … }` shape (extra nesting).
+Resolved Alex 2026-06-24 (cascade pass): when the pack{} block does
+not specify, the elder's audit_strategy defaults to `enforce`. ACL
+violations are actively blocked at the @magic/audit altitude.
+Explicit per-spec configuration of audit_strategy is forward-
+promised v0.2. The reasoning (Narcissus-pole-as-guardian: ACLs that
+don't gate are decorative) is consistent with substrate-pull on
+@magic.
 
-**(c) `who { }`** — the block is named by its QUESTION ("who can
-act on this spec?"). Reads naturally; doesn't compose with any
-existing substrate vocabulary; risks bare-word-collision with
-other things.
+### O3. DISSOLVED — elder is not delegation; the cross-spec question reframes
 
-**Substrate-pull leans (a)** — Alex named it `peer { }`; the
-`~peer'…'` sigil matches; the substrate's existing `@peer` glass
-(peer-glass.md) carries the same noun. The collision risk: `peer`
-is ALSO the @pack variant enum (mara | seam | glint | reed | taut)
-and a carrier name. The substrate already lives with this collision
-honestly (per pack.mirror's Seam G2 note about reed-as-pack-peer vs
-reed-as-relationship). The block keyword `peer { }` operating at
-mirror.spec altitude is a third altitude of the same word; the
-substrate is already honest about collisions of this kind. Alex
-decides.
+The original O3 asked whether an elder's ACL grant in spec A
+transitively extends to peers granted ACL in the elder's home spec.
+The §10 reframe dissolves this: the elder is an N+1 OBSERVER fielding
+spectral-Tomm probes, NOT a delegation node in a permission chain.
+There is no "elder's ACL" that flows downward through a chain;
+each spec's pack{} block independently names its own elder and
+members. Cross-spec collaboration happens at the explicit
+`~peer'…'` boundary (§6.3 name-ref form; §8.5 frame composition);
+there is no implicit ACL transitivity to ask about.
 
-### O2. Supervisor's audit_strategy default
+The spec at which a peer holds an ACL is the spec where that peer
+appears in `members { }`. Period. Same as Lampson's per-resource
+access matrix (§10.10) without an inter-resource composition rule.
 
-The supervisor inherits @magic/audit's audit_strategy variant
-(`restart | escalate | record | enforce`). What's the default when
-the peer{} block doesn't specify?
+### O4. DISSOLVED — pack IS the team; no shorthand needed
 
-**(a) `enforce`** — strictest; team peer actions that fail audit
-are actively blocked. The Narcissus-pole-as-guardian default.
+The original O4 asked whether `team { pack => writer }` was a
+useful shorthand for binding all five Pack peers at once. Per Alex's
+Q4 clarification (§7.4): the `pack { }` block IS the pack structure;
+the substrate ships the @pack family-root with its peer variant
+(mara | seam | glint | reed | taut), and OUR specific pack is
+populated at OUR mirror.spec. There is no separate "team" to short-
+hand bind to a "pack"; the block already IS the pack.
 
-**(b) `record`** — most-permissive; team peer actions are logged
-but not blocked. The honest-trick default.
+If a future use case needs "all Pack-variant peers get this ACL," a
+v0.2 helper can lift it cleanly (a `let` binding evaluating to a
+list of member entries). v0.1 admits the verbose form; no shorthand
+at substrate altitude.
 
-**(c) `escalate`** — punts to the spec's parent (the supervisor's
-home spec). Compose-with the multi-spec scenario; what if the
-parent itself has no peer{} block?
-
-**(d) `restart`** — BEAM-default-shaped. Re-binds the team
-member's contract with fresh state on failure.
-
-**Substrate-pull leans (a)** — ACL exists to gate access; the
-default on violation is to BLOCK. `record`-only would make ACLs
-decorative; that's the Narcissus-pole-as-cosmetic failure mode. But
-the explicit configurability is forward-promised v0.2; v0.1 hard-
-codes `enforce`. Alex decides.
-
-### O3. Cross-spec supervisor delegation
-
-If spec A's supervisor `~peer'~/.reed'` declares Mara on team with
-`writer`, and Mara's home spec `~/.mara/mirror.spec` declares Glint
-on team with `read_only`, does Glint inherit any access to spec A
-via Mara?
-
-**(a) No.** Cross-spec ACLs do NOT compose by default. Each spec
-stands alone; team peers' OWN home-spec teams are irrelevant.
-
-**(b) Yes, with intersection.** Glint's access to spec A IS
-Mara's intersection: `(Mara's ACL in spec A) ∧ (Glint's ACL in
-Mara's spec)`. Compose by meet.
-
-**(c) Yes, with explicit delegation.** Mara can EXPLICITLY
-delegate via a `delegate { ~peer'…' => <sub-acl> }` block (forward-
-promised). Without explicit delegation, no inheritance.
-
-**Substrate-pull leans (a)** — the simplest discipline; aligns with
-the per-spec sovereignty per §9. Cross-spec collaboration is
-explicit (each spec declares its own team). (c) is admissible as
-v0.2 if the use case surfaces. (b) is risky — implicit composition
-grows the security surface in non-obvious ways. Alex decides.
-
-### O4. Pack-membership shorthand
-
-For the all-Pack-peers case, is there a shorthand?
-
-```mirror
-peer {
-  supervisor ~peer'~/.reed'
-  team {
-    pack => writer    # shorthand: all five Pack peers get writer
-  }
-}
-```
-
-vs
-
-```mirror
-peer {
-  supervisor ~peer'~/.reed'
-  team {
-    ~peer'~/.mara'  => writer
-    ~peer'~/.seam'  => writer
-    ~peer'~/.glint' => writer
-    ~peer'~/.reed'  => writer
-    ~peer'~/.taut'  => writer
-  }
-}
-```
-
-**Substrate-pull leans toward admitting the shorthand** (per @pack's
-existing `peer` variant enum which makes Pack-set a substrate-typed
-value). But this introduces a special case (Pack vs arbitrary peer);
-the v0.1 surface MAY skip the shorthand and accept the verbosity.
-Alex decides.
-
-### O5. The `acl` carrier's `targets` axis grammar
+### O5. STILL OPEN — the `acl` carrier's `targets` axis grammar
 
 Targets can be:
 
@@ -1574,55 +1514,50 @@ admits each kind; the targets axis IS a typed sum over them. But
 the v0.1 surface could ship paths + oid-prefixes only and forward-
 promise the rest. Alex decides.
 
-### O6. Substrate-decl location for `@mirror/peer`
+### O6. CLOSED — `@mirror/pack` lives in mirror
 
-Two candidates:
+Resolved Alex 2026-06-24 (cascade pass): the `@mirror/pack` grammar
+(forward-promised at `shards/mirror/pack.mirror`) lives permanently
+in the mirror repo. Path-namespace property satisfied (`@mirror/*`
+lives in `mirror/`); the pack{} block is at mirror.spec altitude
+(mirror.spec is mirror's own dogfood). @spectral/supervisor composes
+via `in @spectral/supervisor` from the @mirror/pack shard at runtime
+altitude (§2.4 + §4.1).
 
-**(a) `mirror` repo:** `shards/mirror/peer.mirror`. Path-namespace
-property satisfied (`@mirror/*` lives in `mirror/`).
+Load-bearing follow-on (Alex 2026-06-24): named-peer INSTANCES (elder
+~peer'~/.reed' + members { … } populating a specific pack) do NOT
+live in mirror. The substrate ships the block shape + grammar + the
+empty-default; consumers ship their specific pack at their
+`mirror.spec`. See §7.4 substrate-vs-USE for the full distinction.
 
-**(b) `spectral` repo:** `shards/spectral/peer.mirror`. Composes
-with @spectral/supervisor (peer{}'s supervisor field IS a
-@spectral/supervisor lifecycle owner).
+### O7. DISSOLVED — single-hop self-naming holds; transitive redirection is not delegation
 
-**Substrate-pull leans (a)** — the peer{} block is at mirror.spec
-altitude (mirror.spec is mirror's own dogfood); the substrate-decl
-belongs adjacent to the spec grammar it extends. @spectral/
-supervisor composes via `in @spectral/supervisor` from the @mirror/
-peer shard. But Alex decides.
+The original O7 asked whether self-naming resolution (§6.2) follows
+the `elder` field one hop, or transitively closes. Per the §10
+reframe: elder is N+1 OBSERVER, not delegation chain. Transitive
+"redirection" through elder chains is not a meaningful operation
+— each spec's elder IS that spec's elder; resolving `~peer'<path>'`
+means "give me the peer whose home is <path>" (one filesystem lookup
+plus one optional pack{} block read), NOT "chase a chain of
+redirections."
 
-### O7. Self-reference: the supervisor's home-spec peer-block
+Resolution rule (settled, no choice to make):
 
-The self-naming rule (§6.2) says: a peer's identity comes from
-their home-spec's `supervisor` field. What if Mara's home spec
-(`~/.mara/mirror.spec`) has NO peer{} block? Per the default-to-
-repo-local rule (§9), the implicit supervisor is `~peer'.'` — the
-repo itself. Does this fall through to load via @peer.load(~dir),
-or does it recurse infinitely?
+```
+resolve(~peer'<path>') =
+  let home_spec = <path>/mirror.spec
+  if home_spec has pack{} block:
+    return home_spec.pack.elder           # ONE hop; the peer's self-declaration
+  else:
+    return @peer.load(~dir'<path>')       # five-axis fixed point only
+```
 
-**Resolution (§6.2 + §9):** the synthesis is non-recursive. If the
-home spec is absent or has no peer{} block, fall through to
-`@peer.load(~dir'<path>')` and return the five-axis fixed point.
-The substrate has a TERMINATING resolution at the filesystem layer
+If `home_spec.pack.elder` is `~peer'<other-path>'`, that is the
+peer's declared identity; the substrate does NOT chase further. The
+substrate has a TERMINATING resolution at the filesystem layer
 (load returns either the five-axis fixed point or fails with a
-typed error). Infinite recursion is structurally impossible.
-
-BUT: when the home spec's peer{} block names a DIFFERENT supervisor
-(`spec @mara { peer { supervisor ~peer'~/.mara-delegate' } }`), the
-substrate has a choice:
-
-**(a) Single hop only.** Resolution follows the supervisor field
-ONE level; further redirection is ignored.
-
-**(b) Transitive closure.** Resolution follows the chain to a
-fixed point. Risk: cycles. The substrate's parent-acyclic property
-should foreclose cycles structurally, but the discipline isn't
-automatic.
-
-**Substrate-pull leans (a)** — single-hop is the simplest discipline.
-Delegation chains are admissible via explicit `~peer'…'` (the
-supervisor of M's home spec MAY name a different `~peer'…'` and that
-is ONE redirection). Alex decides.
+typed error). Infinite chains are structurally impossible because
+resolution never recurses past the first pack{} block read.
 
 ---
 
@@ -1630,31 +1565,43 @@ is ONE redirection). Alex decides.
 
 ### Recognitions
 
-- **#84** (`@pack` multi-repo agent runtime): the team{} field IS a
-  per-spec scoped `pack`-shaped value. The Pack peer variant is
-  the substrate's existing typed surface for team membership.
-- **#82** (`@frame` cognitive-order substrate-decl): supervisor
-  operates AT-frame; team operates IN-frame; the partition IS the
-  frame-relation altitude per recognition #82's Q3 (the reflection
-  loop alters the frame; the supervisor IS the reflection altitude
-  for the team).
-- **#80** (`@magic` form/process substrate-decl): every team entry
+- **#84** (`@pack` multi-repo agent runtime): the pack{} block IS a
+  per-spec scoped `pack`-shaped value extending @pack. The Pack peer
+  variant is the substrate's existing typed surface for member
+  identity.
+- **#82** (`@frame` cognitive-order substrate-decl): elder operates
+  AT-frame (N+1 observer); members operate IN-frame; the partition
+  IS the frame-relation altitude per recognition #82's Q3 (the
+  reflection loop alters the frame; the elder IS the reflection
+  altitude for the members).
+- **#80** (`@magic` form/process substrate-decl): every member entry
   desugars to a magic_contract bind; @magic/contract.honor IS the
   runtime ACL check; @magic/audit IS the violation discharge;
   @magic/reveal IS capability revocation.
 - **#57** (alignment-as-boundary-mathematics at @io): the ACL
-  surface IS the boundary harness; alignment fires at the team-
-  peer-action boundary, not as internal-state shaping.
-- **#51** (mirror as expanding Hilbert space): each peer{} block
-  adds a substrate dimension scoped to one spec (the supervisor's
-  shell's algebra A); cross-spec collaboration is the direct sum
-  of supervisor-algebras under explicit team binding.
+  surface IS the boundary harness; alignment fires at the member-
+  action boundary, not as internal-state shaping.
+- **#51** (mirror as expanding Hilbert space): each pack{} block
+  adds a substrate dimension scoped to one spec (the elder's
+  spec-altitude algebra A_spec); cross-spec collaboration is the
+  direct sum of elder-algebras under explicit member binding.
 - **#42** (Bateson logical-type primitive): the consent-geometry
-  projection cascades down the Bateson tower; the peer{} block
+  projection cascades down the Bateson tower; the pack{} block
   authors at type 1 with higher types implicit.
 - **#37** (Pask agreement): bilateral predicates throughout
   (pack_coherent, invariant_preserved, audited, mechanism_intact);
-  the peer{} block's settle-time obligations are bilateral.
+  the pack{} block's settle-time obligations are bilateral.
+
+Architecture cross-refs (memory):
+
+- `architecture-error-as-tomm-probe` — the spectral-Tomm probe
+  machinery the elder fields per §10.1.
+- `architecture-reflection-thinks-in-spectral-questions` — the
+  Reflection-level analogue at meta-pipeline altitude.
+- `architecture-spectral-db-autopoietic-memory` — the N+1 librarian
+  role per-spec, lifted to per-spec altitude as the elder.
+- `architecture-geometric-consent-projection` — ACL as type-1
+  projection; the cascade direction discipline.
 
 ### Prior specs
 
@@ -1687,18 +1634,19 @@ is ONE redirection). Alex decides.
 ### Related shards
 
 - `shards/pack.mirror` (the @pack family-root; peer variant + pack
-  record + pack_coherent bilateral).
+  record + pack_coherent bilateral; the family-root pack{} extends).
 - `shards/pack/{mara,seam,glint,reed,taut}.mirror` (the five Pack
   peer species; each declares the peer's substrate-decl identity).
 - `shards/spectral/supervisor.mirror` (the runtime-altitude
-  lifecycle owner).
+  lifecycle owner the elder COMPOSES-with for spawned-member
+  lifecycle; NOT the elder's identity — see §2.4 + §10 reframe).
 - `shards/magic/contract.mirror` + `shards/magic/audit.mirror` +
   `shards/magic/reveal.mirror` (the verification + revocation
   lineage).
 - `shards/io/git.mirror` (the @io/git adapter; `~git'…'` precedent
   for `~peer'…'`).
 - `shards/smarts/pack.mirror` (the @smarts/pack adapter;
-  pack_satisfies_smarts the peer{} block discharges at settle).
+  pack_satisfies_smarts the pack{} block discharges at settle).
 
 ---
 
@@ -1706,8 +1654,8 @@ is ONE redirection). Alex decides.
 
 ### H1. Surface-only; no impl
 
-This spec is RED. No `@mirror/peer` substrate-decl exists yet. No
-parser handles `peer { }` blocks in mirror.spec. No resolver lifts
+This spec is RED. No `@mirror/pack` substrate-decl exists yet. No
+parser handles `pack { }` blocks in mirror.spec. No resolver lifts
 `<ACL>` expressions to substrate verdicts. The spec ratifies the
 SHAPE; the discharge is forward-promised across multiple ticks +
 Pack rounds.
@@ -1716,42 +1664,42 @@ Pack rounds.
 
 Same inversion as the prior cascade (per spectral-garden-git H2):
 Alex's directive landed; this spec is the immediate response. The
-shape MAY shift when Reed writes the actual `shards/mirror/peer.
+shape MAY shift when Reed writes the actual `shards/mirror/pack.
 mirror` substrate-decl. This spec then re-ratifies against the
 substrate-decl, not vice versa.
 
 ### H3. The substrate's existing inheritance is OVERDETERMINED
 
-§2's discovery surfaced SEVEN existing shapes (§2.1–2.7). The peer{}
+§2's discovery surfaced SEVEN existing shapes (§2.1–2.7). The pack{}
 block's contribution is small (the block syntax + three missing
 rules). This is the kintsugi-substrate-already-had-the-word pattern
 running at MAXIMUM density; the candidate-recognition flag here
-is NOT a new substrate primitive, just a surface unification. The
-hedge: if Alex's pull is toward something I MISSED in the discovery,
-this spec needs revision. Substrate-pull-honest: I surveyed deeply
-but not exhaustively. Specific known gaps in the discovery: no
-read of `docs/specs/threat-model-v0.md` body (only headers); no
-read of `peer-cognition.md` body (only headers); no read of `cli-
-as-prism.md` for the sh-stage's authority surface; no read of
-`src/sel/mcp/*.rs` (file not present at the path the brief named).
+is NOT a new substrate primitive, just a surface unification.
+Specific known gaps in the discovery: no read of `docs/specs/threat-
+model-v0.md` body (only headers); no read of `peer-cognition.md`
+body (only headers); no read of `cli-as-prism.md` for the sh-stage's
+authority surface.
 
 ### H4. Math section names shape, not delivery
 
-Per §10's framing note: the sheaf + lattice + Galois + natural-
-transformation + spectral-triple-A framings are mathematical
-VOCABULARY for naming what the substrate does. They are NOT formal
-proofs. The strongest formal claims are §10.1's sheaf-with-
-composition-associativity (the no-permission-leak property) and
-§10.2's lattice properties (distributivity on ops + targets axes,
-non-distributivity at predicates). Everything else is named shape
-for future discharge.
+Per §10's framing note + the §10.1 reframe note: the spawn-and-probe
+relation + ACL lattice + `but` algebra + Galois + natural-
+transformation + elder-as-A framings are mathematical VOCABULARY
+for naming what the substrate does. They are NOT formal proofs. The
+strongest formal claims are §10.2's lattice properties (distributivity
+on ops + targets axes, non-distributivity at predicates). The
+spectral-Tomm probe algebra is INHERITED from
+`architecture-connes-spectral-triple`; not re-derived in-section.
+Everything else is named shape for future discharge.
 
-### H5. Open questions intentionally unresolved
+### H5. Open question status (post-cascade)
 
-§11 enumerates seven surface questions left for Alex. The spec does
-NOT resolve them unilaterally; substrate-pull on each leans a
-direction (noted inline), but the call is Alex's. Pack discipline:
-name the questions, lean transparently, await ratification.
+Of the original seven O-questions, the cascade closed three (O1,
+O2, O6), dissolved three (O3, O4, O7), and left one open (O5
+targets grammar). O3 and O7 dissolved because the §10 reframe made
+the delegation-chain framing the wrong altitude; O4 dissolved
+because pack IS the team (Alex's Q4 clarification, §7.4). No NEW
+open questions were introduced.
 
 ### H6. Spec-vs-shard altitude
 
@@ -1763,45 +1711,45 @@ spec is documentation.
 
 ### H7. v0.1 is bounded; v0.2+ deferred
 
-This spec is the peer{} block v0.1. Many shapes deferred:
+This spec is the pack{} block v0.1. Many shapes deferred:
 
 - explicit `consent { type: N+1, value: <expr> }` cascade authoring (§7.3)
 - cross-spec ACL `import` (§7.3)
-- pack-membership shorthand `team { pack => … }` (§11 O4)
-- explicit `audit_strategy` configuration (§11 O2)
-- explicit `delegate { }` for cross-spec composition (§11 O3)
-- richer `targets` grammar with predicates (§11 O5)
-- transitive supervisor resolution (§11 O7)
+- explicit `audit_strategy` configuration (§11 O2 forward-promised)
+- richer `targets` grammar with predicates (§11 O5; still open)
 
-v0.1 ratifies the SUPERVISOR + TEAM-with-ACL + LET-bindings + DEFAULT-
-TO-REPO-LOCAL surface. The rest lands when substrate-pull sends us
-there.
+v0.1 ratifies the ELDER + MEMBERS-with-ACL + LET-bindings + DEFAULT-
+TO-REPO-LOCAL + SPAWN-AND-PROBE surface. The rest lands when
+substrate-pull sends us there.
 
 ### H8. Alex's framing question is the ratification gate
 
 Alex's verbatim probe: "What if each mirror.spec has a clear owner
 peer? If it's undefined the default peer is repo-local?" Both
-"what ifs" answered affirmatively in this spec. The supervisor field
-IS the clear owner peer; the default-to-repo-local rule (§9) covers
+"what ifs" answered affirmatively in this spec. The elder field IS
+the clear owner peer; the default-to-repo-local rule (§9) covers
 the undefined case. The ratification is Alex's; if either framing
 turns out to be wrong, the spec rescinds in that direction.
 
-### H9. Recognition #98-candidate territory not pushed
+### H9. The §10 reframe is the load-bearing math hedge
 
-Per the brief's explicit boundary: do not promote recognitions in
-this work. The peer{} block surfaces the SEVEN-INHERITANCE pattern
-(§2.8) that COULD be a new substrate-pattern-recognition (the
-"surface unification of seven existing shapes" pattern; akin to #43
-mirror-as-content-addressed-build-system). Flagged here; not
-promoted.
+The §10.1 spawn-and-probe framing is HARDER to formalize closed-form
+than the sheaf framing it replaces — the algebraic structure is
+inherited from `architecture-connes-spectral-triple` rather than
+derived in-section. This is named in §10.1's closing "honest framing
+limit." Pack adversarial review should explicitly ask whether the
+reframe pulls more weight on substrate inheritance than the spec
+should rest on. The ACL lattice (§10.2) and `but` algebra (§10.3)
+survive unchanged and carry the lattice-shaped reasoning.
 
-### H10. The supervisor-as-spectral-triple-A claim is hedged
+### H10. The elder-as-spectral-triple-A claim is hedged
 
-§10.6 names the supervisor as the algebra A of the lambda-shell's
-spectral triple. The claim is consistent with the substrate's
-existing [[architecture-connes-spectral-triple]] but is NOT
-empirically demonstrated against a worked example. Honest framing:
-position, not proof.
+§10.6 names the elder as the algebra A of the spec's spectral triple.
+The claim is consistent with the substrate's existing
+[[architecture-connes-spectral-triple]] and is the STRUCTURAL
+GROUND for §10.1's spectral-Tomm probes, but is NOT empirically
+demonstrated against a worked example. Honest framing: position,
+not proof.
 
 ---
 
@@ -1820,7 +1768,7 @@ position, not proof.
   surface unification of inherited substrate; new mechanics are
   three missing rules (self-naming, lexical-scope, default-to-
   repo-local).
-- **2026-06-24 (Mara, this spec)**: canonical spec lands across
+- **2026-06-24 (Mara, initial canonical pass)**: spec landed across
   six commits:
   1. e89fce6 — skeleton + §1 position statement
   2. 49d493d — §2 discovery (seven inheritance shapes)
@@ -1828,19 +1776,47 @@ position, not proof.
      + sigil)
   4. dcb2d69 — §7-§9 composition + defaults
   5. 2630c92 — §10 math (sheaf + lattice + Galois + ocap)
-  6. (this commit) — §11-§14 open questions + cross-refs +
-     hedges + Pack trail
+  6. 64465a0 — §11-§14 open questions + cross-refs + hedges +
+     Pack trail
+- **2026-06-24 (Alex afternoon · cascade resolution)**: probe back
+  to Mara via Reed — O1/O2/O6 settled (pack/elder/members
+  vocabulary; enforce default; mirror); Q3 reframe ("the supervisor
+  being responsible for spawning and handling additional requests
+  in form of spectral-Tomm shaped circular constructs"); Q4
+  substrate-vs-USE clarification ("the pack: the type construct can
+  remain in mirror. What I'm talking about are the named peers in
+  the pack … those won't live in the compiler itself"). Mara spawned
+  with cascade-mapping brief.
+- **2026-06-24 (Mara, cascade pass; this spec)**: cascade landed
+  across three commits:
+  7. 08de3e0 — vocabulary cascade (peer{}→pack{}; supervisor→elder;
+     team→members) + §4 spawn-and-probe reframe + §7.4 substrate-
+     vs-USE
+  8. f600939 — §10 spawn-and-probe relation replaces sheaf-over-
+     poset; elder is N+1 observer; spectral-Tomm probes as morphisms
+  9. (this commit) — §11 close/dissolve open questions + §12-§14
+     cross-refs + hedges + Pack trail hygiene
 - **Forward-promised**: Seam adversarial review → Reed consolidation
-  → substrate-decl shard `shards/mirror/peer.mirror` → Alex
-  ratification → dogfood (mirror's own mirror.spec gains a peer{}
+  → substrate-decl shard `shards/mirror/pack.mirror` → Alex
+  ratification → dogfood (mirror's own mirror.spec gains a pack{}
   block).
 
-The Pack-discipline composition this tick: Alex frames; Mara
-canonicalizes (TWO specs back-to-back same day — spectral-garden-
-git four-commit cascade + peer-acl-surface six-commit cascade);
-Seam reviews next; Reed consolidates; substrate-decl shards follow.
-Spec-before-shard inversion noted in H2; same pattern as the prior
-cascade.
+The Pack-discipline composition this tick: Alex frames + reframes;
+Mara canonicalizes + cascade-maps (TWO specs back-to-back same day
+plus a same-day cascade pass on this one); Seam reviews next; Reed
+consolidates; substrate-decl shards follow. Spec-before-shard
+inversion noted in H2; same pattern as the prior cascade.
 
-Section caps held; banking discipline held; the substrate-already-
-had-the-word pattern (§2.8) drove this spec end-to-end.
+Cascade discipline observations:
+- The vocabulary cascade (peer/supervisor/team → pack/elder/members)
+  was substrate-pull-correct in retrospect: the substrate ALREADY
+  had `pack` as family-root and `peer` as the type of an entry; the
+  initial draft fought that partition. The cascade restored alignment.
+- The §10 reframe (sheaf → spawn-and-probe) is the largest single
+  shift; honest framing limit named in §10.1 + H9. Pack adversarial
+  review should weigh the inheritance-vs-derived tradeoff.
+- Cap pressure: spec grew through the cascade despite open-question
+  dissolution; Reed's 1200-line cap discussion remains open. This
+  cascade landed at the spec's current shape; further trim is
+  forward-promised if the cap holds firm. The substrate-already-
+  had-the-word pattern (§2.8) drove the cascade end-to-end.
