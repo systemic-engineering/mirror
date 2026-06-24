@@ -1013,3 +1013,260 @@ if `<name>` is a Pack peer; otherwise the override is a one-shot
 that the spec does NOT grant ACL to (since they're not in `team`).
 
 ---
+
+## 10. Mathematical shape
+
+*Framing note (per the spectral-garden-git §7 discipline): this
+section names the typed surface the mathematical discharge operates
+against — it does NOT claim to deliver proofs of soundness,
+completeness, or non-leakage. The substrate-decl ratifies the
+SHAPE; discharges happen at species-altitude shard bodies, are
+forward-promised, and gate on Pack adversarial review. Per
+recognition #95: substrate carries the measurement primitive at the
+right altitude; the per-ACL numbers are species work.*
+
+### 10.1 The team as a finite poset; ACL as a sheaf over it
+
+The team peers form a finite set T = {p_supervisor, p_1, p_2, …,
+p_k}. The supervisor-relation IS a partial order on T:
+
+- p_supervisor is the TOP (⊤): infinite ACL, bind authority.
+- All team peers are BELOW p_supervisor (their ACL is bounded by
+  what the supervisor admits).
+- Team peers are mutually incomparable by default (the supervisor
+  does not partial-order them against each other; a hierarchical
+  team would EXPLICITLY chain them via overlapping ACL targets).
+
+This is a poset P with one maximum and a flat antichain below.
+
+A SHEAF F on P assigns:
+
+- to each peer p ∈ P: a stalk F(p) = the ACL admissible for p (an
+  `acl` value).
+- to each edge p_supervisor → p_i: a RESTRICTION MAP
+  F(p_supervisor) → F(p_i) = the projection that takes the
+  supervisor's infinite-ACL to p_i's declared ACL. This restriction
+  map IS the `=>` operator in `team { ~peer'p_i' => <ACL> }`.
+
+**Composition.** For a hypothetical hierarchical team (p_supervisor
+→ p_sub_supervisor → p_leaf), restriction-map composition is the
+statement that p_leaf's ACL is the restriction of p_sub_supervisor's
+restriction of p_supervisor's. Composition associativity = the
+delegation chain doesn't leak permissions across levels.
+
+**Where this load-bears for mirror:** the sheaf vocabulary formally
+names the substrate's existing pattern: ACL flows DOWNWARD from
+supervisor through team via the => operator (restriction maps). The
+sheaf-vs-presheaf distinction (per the spectral-garden-git §7.1
+pattern) admits multiple-versions-coexist if two supervisors at
+different specs grant overlapping ACLs to the same team peer; the
+peer{} block is per-spec, so within ONE spec the structure is a
+TRUE sheaf, not just a presheaf.
+
+### 10.2 ACLs form a bounded lattice under (∨, ∧)
+
+The `<ACL>` values form a lattice:
+
+- ⊤ (top) = infinite ACL (all ops, all targets, all predicates
+  vacuously honored). The supervisor's ACL.
+- ⊥ (bottom) = empty ACL (no ops, no targets). The default for an
+  unlisted peer.
+- ∨ (join) = union: `(ops_1 ∪ ops_2, targets_1 ∪ targets_2)`.
+- ∧ (meet) = intersection: `(ops_1 ∩ ops_2, targets_1 ∩ targets_2)`.
+
+**Properties.** Commutative, associative, absorptive (a ∨ (a ∧ b) =
+a). DISTRIBUTIVE on the `ops` and `targets` axes independently (each
+is a Boolean algebra on a finite set). The `predicates` axis is
+NOT distributive in general (predicate composition is non-commutative
+in the @magic/contract setting); the lattice is therefore a NON-
+distributive bounded lattice in full generality, reducing to a
+distributive lattice when no predicates are present.
+
+**Where this load-bears:** the `∨` / `∧` operators in team{} ACL
+expressions ARE the lattice operations. The lattice carries the
+substrate-mathematical vocabulary for naming what unions and
+intersections of permissions mean. The non-distributivity at the
+predicates axis is the structural reason the substrate carries
+@magic/contract.honor as a separate operational check (the lattice
+shape doesn't predict the predicate's verdict; only the actual
+discharge does).
+
+### 10.3 The `but` operator's algebraic structure (per consent spec §2.4)
+
+The `but` operator is the substrate's existing adversative operator,
+declared at `geometric-consent-projection.md` §2.4 (forward-promised
+shard at `shards/epistemologic/logic/but.mirror`). Key properties:
+
+- `but(default: a, exception: predicate(a)) -> a` evaluates to `a`
+  unless `predicate(a)` is non-failure.
+- NOT commutative: `a but(p)` and `p but(a)` are different.
+- NOT associative: parenthesization matters.
+- IS monotone in the default argument: refining `default` refines
+  `but(default, exception)` accordingly.
+
+For ACL composition: `writer but(exception: target_under(~d'.secret/'))`
+means "the writer ACL EXCEPT for targets under .secret/." The non-
+commutativity matters: the exception is a refinement of the default,
+not a symmetric combination.
+
+**Where this load-bears:** the `but` operator IS the substrate's
+NATURAL way to express ACL exceptions. The peer{} block inherits
+the consent spec's adversative discipline; ACL refinements compose
+through `but`, not through ad-hoc "deny" rules. This forecloses
+XACML's combining-algorithm-zoo problem (per consent spec §5.7):
+there is ONE composition rule (`but`), not seven.
+
+### 10.4 ACL admission as a Galois connection (conjectural)
+
+**Conjecture.** Given the lattice (acl, ∧, ∨, ⊥, ⊤) and the set
+of (op, target) request pairs, the admission relation
+
+```
+admits : acl × (op, target) → verdict
+```
+
+induces a Galois connection between:
+
+- the lattice of ACLs (ordered by the admits relation: a ≤ b iff
+  every (op, target) admitted by a is also admitted by b);
+- the lattice of (op, target) sets (ordered by inclusion).
+
+The Galois pair: f: acl → (op, target) set (the set of admitted
+requests); g: (op, target) set → acl (the minimal ACL admitting all
+requests in the set).
+
+**Status:** SPECULATIVE. The Galois-connection framing IS the
+standard category-theoretic vocabulary for access-control lattices
+(Denning 1976; lattice-based access control). The substrate's ACL
+shape ADMITS the framing; whether it BENEFITS from the framing
+is Pack-discussion work. Flagged; not load-bearing for v0.1.
+
+### 10.5 Consent geometry projection is a natural transformation (per consent spec §2.2)
+
+Per geometric-consent-projection.md §2.2: the cascade_down operation
+IS a NATURAL TRANSFORMATION between the type-(N+1)-consent functor
+and the type-N-consent functor on the Bateson logical-type category.
+
+The peer{} block's `team { => <ACL> }` is the substrate's first
+direct-authoring surface for the codomain of this natural
+transformation at N=1. The consent spec's existing math applies
+UNCHANGED here; the peer{} block adds the AUTHORING SURFACE, not
+new mathematics.
+
+**Cross-altitude reference:** for a v0.2 `consent { type: N+1,
+value: <expr> }` form (forward-promised §7.3), the natural
+transformation gives the CASCADE DERIVATION: a single type-N+1
+consent expression cascades to a family of type-1 ACL entries
+for each `~peer'…'` in scope.
+
+### 10.6 The supervisor relation as a distinguished element vs. algebraic structure
+
+A load-bearing math question: is the supervisor JUST a distinguished
+element of the peer set, or does it carry additional algebraic
+structure?
+
+**Position (substrate-pull-leaning):** the supervisor carries the
+structure of an ALGEBRA-OF-OBSERVATION at the lambda-shell altitude.
+The lambda shell IS the observation interface for the spec; the
+supervisor IS the algebra A (in the Connes spectral triple sense)
+whose elements are the operations the shell admits. Per
+[[architecture-connes-spectral-triple]]: every substrate altitude
+carries a spectral triple (A, H, D); the supervisor's role at the
+peer{} altitude IS the A of the shell's spectral triple.
+
+**What this means concretely:** the supervisor doesn't just OWN the
+shell; the supervisor's identity-mirror declares what operations
+the shell admits. Different supervisors at different specs admit
+different operation sets; the algebra of the shell IS supervisor-
+specific.
+
+**Status:** the framing is consistent with the substrate's existing
+spectral-triple architecture; promoting it to a full statement
+requires Pack adversarial review. Flagged; not v0.1 load-bearing.
+
+### 10.7 Default-to-repo-local as the initial object
+
+In the category of valid peer{} configurations for a given spec,
+the implicit `peer { supervisor ~peer'.'; team {} }` (§9.1) is
+an INITIAL OBJECT: every other valid peer{} configuration is a
+refinement that ADDS supervisor declaration + team entries.
+Morphisms in this category are the additive operations (adding a
+let binding; adding a team entry; tightening an ACL via `but`).
+
+The Banach-fixed-point analog (per spectral-garden-git §7.2): the
+default-to-repo-local is a fixed point of the "do nothing" morphism;
+any peer{} block that arises from explicit declaration is an
+INCREASE in declared content (the spec's oid grows).
+
+**Status:** SHAPE. The category-theoretic existence of the initial
+object is straightforward; load-bearing more for vocabulary than
+for proof.
+
+### 10.8 Composition with the four-root garden structure (per spectral-garden-git §6)
+
+The spectral-garden-git spec named four roots (`@spectral/garden/git`,
+`@spectral/garden/oci`, `@spectral/garden/nix`, `@mirror/store`). The
+peer{} block is ORTHOGONAL to that structure but composes cleanly:
+
+- The supervisor's `~peer'…'` resolution discharges through
+  `@io/git` (the same adapter the garden uses). Peer-home-repo
+  reuse: a Pack peer's home repo IS a `garden { source ~git'…' }`
+  candidate AND a `peer { team { ~peer'…' => … } }` candidate; the
+  substrate names both surfaces over the same content-addressed
+  underlying ref.
+- The peer{} block is NOT a fifth garden root (it's not a package-
+  manager). It's an ORTHOGONAL surface at the same mirror.spec
+  altitude; the two compose at the spec's top level the same way
+  `source` and `target` compose.
+- Default-to-repo-local (§9) is the peer-altitude analog of the
+  garden's `~oid'…'` intra-substrate source (§6.1 of garden spec):
+  the substrate scales DOWN to one repo with no external deps.
+
+### 10.9 What's intentionally NOT in this section
+
+No closed-form proof of soundness for the lattice operations beyond
+the distributive-on-ops-and-targets argument; no formal proof for
+§10.4's Galois connection; no concrete derivation of §10.5's cascade
+for a worked example (the consent spec has one at §6.2; the peer{}
+block's specific authoring at type 1 IS that example unmodified);
+no proof of non-leakage for the restriction-map composition. Open
+work, gated on Pack adversarial review per spectral-garden-git §7.7.
+
+### 10.10 Comparison to pre-AI ACL traditions
+
+Honest comparisons:
+
+- **Lampson-style ACLs** (Lampson 1971; Saltzer-Schroeder 1975): the
+  peer{} `team { => <ACL> }` IS the Lampson access matrix, with
+  PEERS as principals and ACLs as the matrix entries. The peer{}
+  block lifts the matrix to substrate-decl; the substrate inherits
+  Lampson's decidability discipline.
+- **Object-capability models** (Miller 2006 *Robust Composition*;
+  Drexler 1988; Stiegler 2004): the @magic/reveal lineage IS
+  capability revocation; the peer{} block's `=>` arrow IS
+  capability grant. The substrate inherits ocap's revocation-via-
+  reveal discipline (per Levy 1984 citation in @magic/reveal).
+  However: peer{} is identity-based (each `~peer'…'` resolves to a
+  principal), not pure-capability (capabilities don't depend on
+  identity). The substrate sits BETWEEN ocap and ACL; the peer{}
+  block's identity discipline makes it ACL-leaning at the surface
+  while inheriting ocap's revocation discipline through @magic/
+  reveal.
+- **Lattice-based access control** (Denning 1976; Sandhu 1993): the
+  ACL lattice (§10.2) IS Denning's information-flow lattice with
+  the ACL ordering. Bell-LaPadula and Biba can be encoded as specific
+  ACL configurations; the peer{} block doesn't enforce them by
+  default but admits them via let-bindings.
+- **Capability-based effect systems** (Koka, Eff; Leijen 2014):
+  ACLs as `acl { ops, targets, predicates }` ARE effect rows. The
+  predicates axis IS the effect-handler predicate. The substrate
+  inherits effect-system discipline through @magic/contract's
+  honor check, but at substrate-decl altitude rather than at
+  language-runtime altitude.
+
+The substrate's contribution: ONE surface (peer{}) that unifies
+ACL + ocap-revocation + lattice-ordering + effect-predicates under
+the geometric-consent-projection framing. The traditions don't
+disappear; they all compose at the same altitude.
+
+---
