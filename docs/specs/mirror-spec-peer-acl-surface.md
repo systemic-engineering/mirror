@@ -676,3 +676,340 @@ the identity altitude. The team-binding lookup is by identity, not
 by path.
 
 ---
+
+## 7. ACL composition via variables + mirror expressions
+
+### 7.1 The `let` binding
+
+A `let` binding inside `peer { }` introduces a named mirror expression
+visible in subsequent ACL positions of THIS block:
+
+```mirror
+peer {
+  supervisor ~peer'~/.reed'
+
+  let read_only = acl { ops: [focus, project, split], targets: any }
+  let writer    = acl { ops: any, targets: [~d'shards/'] }
+  let secure    = acl { predicates: [magic_contract_honored] }
+
+  let writer_in_secure = writer ∧ secure
+  let safe_writer      = writer but(exception: target_under(~d'.secret/'))
+
+  team {
+    ~peer'~/.mara' => writer_in_secure
+    ~peer'~/.taut' => safe_writer
+  }
+}
+```
+
+Scoping: lexical within the `peer { }` block. A `let` is visible to
+subsequent `let`s and to the `team { }` block; not visible outside
+peer{}. Bindings are immutable (the substrate's existing immutability
+discipline; no rebinding).
+
+Type inference: the RHS evaluates to a mirror value; the binding's
+type is the value's type. The mirror compiler discharges type checks
+at parse time; an ACL position requires the binding to evaluate to
+an `acl` value.
+
+### 7.2 ACL expressions ARE mirror expressions
+
+Key commitment: the `<ACL>` slot does NOT introduce a parallel
+sub-grammar. ACL expressions ARE mirror expressions evaluating to
+an `acl` value. This means:
+
+- The `but` operator IS the one declared at `geometric-consent-
+  projection.md` §2.4 (and forward-promised at `shards/epistemologic/
+  logic/but.mirror` per consent spec §8.2).
+- Lattice operators `∨` / `∧` ARE the same operators used elsewhere
+  in the substrate (forward-promised at `shards/epistemologic/logic/
+  {join,meet}.mirror`; see §10.2 for the lattice structure).
+- Conditional ACLs via mirror's `if` / `match` expressions —
+  admissible by construction:
+
+  ```mirror
+  let conditional = match peer_class(requesting_peer) {
+    pack → writer
+    external → read_only
+    _ → acl { ops: [], targets: [] }      # the bottom acl (no access)
+  }
+  ```
+
+- Higher-order ACLs via parameterized expressions (forward-promised
+  syntax; lambda-shaped):
+
+  ```mirror
+  let read_in_dir = (d) → acl { ops: [focus, project, split], targets: [d] }
+  team {
+    ~peer'~/.glint' => read_in_dir(~d'docs/')
+    ~peer'~/.seam'  => read_in_dir(~d'shards/')
+  }
+  ```
+
+The parameterized form is the COMBINATOR ALGEBRA Alex named:
+"variables that contain mirror expressions and you can build complex
+ACL expressions and reuse them right there." Substrate-pull-correct
+(per the substrate's lambda discipline): no new language; mirror's
+existing expression grammar IS the composition language.
+
+### 7.3 Cross-spec ACL reuse (forward-promised)
+
+For v0.1: `let` bindings are scoped to one peer{} block. For v0.2+
+(forward-promised): an `import` form lifts ACL bindings from another
+spec for reuse:
+
+```mirror
+peer {
+  supervisor ~peer'~/.reed'
+
+  # import ACLs from systemic.engineering's spec
+  import ~peer'~/.glint' { read_only, writer, auditor } as se
+
+  team {
+    ~peer'~/.glint' => se.writer
+  }
+}
+```
+
+The import discharges via `~peer'…'` resolution (§6); the named
+ACLs become available with the namespaced prefix. Cross-spec ACL
+LIBRARIES become substrate-decl objects — a peer can publish their
+canonical ACL set, and other specs reference it without copy-paste.
+
+Not in v0.1 to keep the surface bounded; flagged for Alex.
+
+---
+
+## 8. Composition with @magic, @frame, @pack, geometric-consent-projection
+
+### 8.1 With @magic/contract — every team entry IS a contract
+
+The peer{} block's `team { ~peer'P' => ACL }` desugars (at mosaic
+settle time) to:
+
+```mirror
+bind(
+  surface:   peer_invocation_interface(P),       # team peer's API at this spec
+  mechanism: supervisor_runtime,                  # the supervisor's @spectral runtime
+  promise:   acl_as_invariant(ACL)                # the ACL lifted to magic_invariant
+) -> magic_contract
+```
+
+Each team-entry is a magic_contract bound by the supervisor (per §4.3
+supervisor has bind authority). The contract's `honor(c)` (per
+shards/magic/contract.mirror) is the runtime check: the team peer's
+action against the spec IS honored iff the action satisfies the
+ACL-as-invariant.
+
+### 8.2 With @magic/audit — every action is audited
+
+The audit chain runs on every team-peer action:
+
+```
+team_peer.act(op, target)
+  ↓
+audit(contract, action_record) → audit_record
+  ↓
+respond(audit_record, supervisor.audit_strategy) → audit_record
+```
+
+The supervisor's `audit_strategy` (one of `restart | escalate |
+record | enforce` per shards/magic/audit.mirror) IS configurable in
+the peer{} block (forward-promised v0.2; v0.1 default is `enforce`).
+
+Narcissus-pole catch: an ACL that LOOKS permissive at the type-1
+projection but masks a Narcissus-pole intent (the team peer's stated
+intent vs substrate-architecturally-supported behavior diverge per
+frame.mirror §Narcissus-pole) IS caught by audit through @magic's
+contract-vs-mechanism discrimination. The ACL surface alone is NOT
+sufficient; the audit chain IS the substrate-pull-correct check.
+
+### 8.3 With @magic/reveal — removing a team entry IS capability revocation
+
+Editing `team { }` to remove a peer (or to tighten their ACL)
+discharges through `@magic/reveal.reveal`:
+
+```
+reveal(
+  old_contract:  contract_for_peer_at_oldspec,
+  new_mechanism: revoked_or_tightened_mechanism
+) -> magic_contract
+  requires audited(old_contract)
+  requires mechanism_intact(old_contract.mechanism)
+  requires mechanism_intact(new_mechanism)
+```
+
+Per reveal.mirror's three-requires-clause discipline (the FIRST
+three-requires action in the @magic family): the old contract must
+have been audited; both old and new mechanisms must be tamper-
+evidence intact. The substrate inherits Levy 1984's capability-
+revocation discipline (reveal.mirror's ancestor citation).
+
+What this means concretely: a supervisor cannot silently downgrade
+a team peer's ACL between settles; the downgrade IS a substrate-
+altitude reveal that the audit trail records. A peer learning their
+capabilities were revoked IS a substrate-grounded event.
+
+### 8.4 With @pack — pack_coherent over the team
+
+The team is a `pack`-shaped value (the peers field) at this spec's
+altitude. The supervisor's settle-time obligation INCLUDES
+discharging `pack_coherent(team_as_pack, perturbation)`:
+
+```mirror
+settle_on {
+  # … existing settle predicates …
+  peer.team.pack_coherent
+}
+```
+
+Forward-promised: an explicit `peer.team.pack_coherent` predicate in
+`settle_on`'s admitted vocabulary. The peer{} block discharges
+substrate-architectural pack discipline at the spec's settle, not
+as a separate cron-or-CI invariant.
+
+### 8.5 With @frame/in — team peers operate in the spec's frame
+
+Per shards/frame/in.mirror (order-1 species; computation within a
+frame): a team peer operating against this spec is operating WITHIN
+the spec's frame. The frame IS what the spec's source/garden/target/
+settle_on blocks declare; the supervisor IS the operator at the
+frame; team peers operate WITHIN the frame the supervisor sets.
+
+The peer{} block's supervisor + team partition IS the order-2 view
+on this order-1 operation: the supervisor is OF-the-frame (order 2;
+they observe the frame they set); team peers are IN-the-frame
+(order 1; they compute within it). The frame-relation altitude lift
+composes cleanly per recognition #82.
+
+### 8.6 With geometric-consent-projection — ACL IS the type-1 projection
+
+The peer{} block's `team { => <ACL> }` is the substrate's first
+DIRECT-AUTHORING surface for the consent geometry's type-1 projection.
+Per geometric-consent-projection.md §6.1 + §6.3:
+
+```
+type-N+1 consent (the policy ABOUT the policy)
+     ↓  cascade_down (the natural transformation per consent spec §2.2)
+type-N consent (the kind-of-operation consent)
+     ↓  cascade_down
+type-1 ACL  ← THIS IS WHAT team { => } AUTHORS
+```
+
+Two composition modes:
+
+- **Direct authoring at type-1.** `team { ~peer'M' => writer }` authors
+  the type-1 ACL directly. The higher types are IMPLIED by the
+  authoring (the supervisor's act of writing the ACL IS a type-N+1
+  consent at the implicit altitude).
+- **Authoring at type-N+1 with cascade.** A forward-promised v0.2
+  feature: declare `consent { type: N+1, value: <expr> }` and the
+  cascade derives the type-1 ACL automatically (per consent spec
+  §6.2 the cascade derivation). The peer{} block's `let` bindings
+  with `but`-refinements are the v0.1 surface for higher-type
+  consent fragments — each `but` clause IS a type-2 refinement of
+  a type-1 ACL.
+
+Security invariant (per consent spec §1.3): negative consents do NOT
+cascade upward. A peer's `team { } => bottom_acl` (the empty ACL) at
+type 1 does NOT repudiate the type-N+1 policy that authored it. This
+property propagates structurally to the peer{} block: a tightened
+ACL at one settle does not retroactively invalidate prior settles
+that the looser ACL admitted.
+
+---
+
+## 9. Default behavior — when `peer { }` is absent (repo-local)
+
+### 9.1 The default-to-repo-local rule
+
+When `mirror.spec` has no `peer { }` block, mosaic SYNTHESIZES one:
+
+```mirror
+# implicit when peer{} is absent
+peer {
+  supervisor ~peer'.'                # the repo itself is the supervisor's home
+  # team is empty                     # no team members; supervisor is sole peer
+}
+```
+
+The `~peer'.'` literal resolves via the same self-naming rule (§6.2)
+applied to the repo's own directory. Two cases:
+
+1. **The repo IS a peer home** (has the five-axis fixed point per
+   peer-glass.md). The supervisor resolves to the repo's own peer
+   identity. The spec is supervised by "this repo's peer."
+2. **The repo is NOT a peer home** (no `identity.mirror` etc.).
+   Mosaic synthesizes a minimal repo-local peer with identity
+   derived from the repo's `git_hash` at HEAD (per shards/io/git.
+   mirror's `hash_to_oid`). The spec is supervised by the
+   anonymous local-repo peer.
+
+In BOTH cases, the human running `mirror kintsugi` locally has full
+authority (they own the filesystem; they run the binary). The default
+spec has no team; cross-peer collaboration requires explicit
+peer{} declaration.
+
+### 9.2 Why default-to-repo-local is structurally correct
+
+Three reasons, all substrate-pull-correct:
+
+- **Local sovereignty.** A spec on disk under your `~` IS yours.
+  Requiring an explicit supervisor declaration for every spec
+  imposes ceremony where none is needed. The default-to-repo-local
+  rule says "if you didn't declare otherwise, you ARE the
+  supervisor."
+- **No external authority by default.** Mirror is a local-first
+  substrate. The default supervision does NOT require a remote
+  registry, a Pack membership, or any network handshake. The
+  five-axis fixed point at the repo root (or its degenerate form)
+  IS the identity.
+- **The substrate scales DOWN cleanly.** A solo developer using
+  mirror needs zero ceremony; the moment they collaborate, they
+  declare a peer{} block. The complexity is paid only when needed.
+  Per the spectral-garden-git spec §1's discipline ("the substrate
+  does NOT mandate complexity; surfaces are opt-in").
+
+### 9.3 Promoting a default to an explicit declaration
+
+When a project moves from solo to collaborative, the migration is
+MECHANICAL:
+
+```mirror
+# before (implicit; no peer{} block)
+project foo { source ~d'shards/'; … }
+
+# after (explicit; the supervisor is named; team is declarable)
+project foo {
+  peer {
+    supervisor ~peer'~/.alex'          # was implicit; now named
+    team {
+      ~peer'~/.mara' => read_only
+    }
+  }
+  source ~d'shards/'
+  …
+}
+```
+
+Mosaic's settled oid of the spec changes (the spec now has more
+declared content); the supervisor's authority is unchanged (they
+were always the implicit supervisor; now they're named). No
+migration of existing settled artifacts; the peer{} block is
+additive.
+
+### 9.4 Interaction with the lambda shell
+
+For a spec with no `peer { }` block, `\` in λsh at that spec's root
+falls through to `@>` (the unnamed shell peer per lambda-shell.md
+§"The Unnamed Peer"). The unnamed shell peer IS the substrate's
+self-as-peer; it suggests aliases and maintains config.spec. Same
+shape as today; the default-to-repo-local rule is consistent with
+lambda-shell.md's existing fallback.
+
+When the user runs `\@<name>` to override (per lambda-shell.md), the
+override resolves through `~peer'<name>'` per §6.3's name-ref form
+if `<name>` is a Pack peer; otherwise the override is a one-shot
+that the spec does NOT grant ACL to (since they're not in `team`).
+
+---
