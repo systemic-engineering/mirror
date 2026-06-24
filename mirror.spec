@@ -23,6 +23,38 @@ project mirror.spec {
     retirement_target:  v1.0,
   }
 
+  # === Pack — the lambda-shell counterparty + ACL surface ===
+  #
+  # mirror.spec's dogfood of @mirror/pack (shards/mirror/pack.mirror,
+  # 13328a3) per peer-ACL spec §3.3 + Alex 2026-06-24 substrate-vs-USE
+  # distinction: mirror ships the BLOCK SHAPE permanently; named peers
+  # populate THIS INSTANCE at consumer altitude. The @pack.peer variant
+  # (~/.reed, ~/.mara, etc.) is transitional per Alex 2026-06-24;
+  # when it goes parametric, this block's references broaden without
+  # surface change.
+  #
+  # Lead-of-mirror call (Reed's surface to Alex — see commit message):
+  # `~peer'~/.reed'`. Rationale: Reed is the orchestrator peer who
+  # answers the lambda shell at mirror substrate altitude and fields
+  # the spectral-Tomm-shaped circular probes lifting from spawned
+  # Pack members (peer-ACL §4 + §10 reframe). Alex is mirror's human
+  # author; the lead is a PEER per peer-ACL §4. If wrong, this is
+  # the line.
+  pack {
+    lead ~peer'~/.reed'
+
+    bindings {
+      let writer = acl { ops: any, targets: any, predicates: [] }
+    }
+
+    members {
+      ~peer'~/.mara'  => writer
+      ~peer'~/.seam'  => writer
+      ~peer'~/.taut'  => writer
+      ~peer'~/.glint' => writer
+    }
+  }
+
   target binary {
     name     "mirror"
     altitude @code/rust
