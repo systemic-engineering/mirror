@@ -308,3 +308,371 @@ The spec proposes the BLOCK + the THREE MISSING RULES. Everything else
 is the substrate composing with itself.
 
 ---
+
+## 3. The `peer { }` block — proposed shape
+
+### 3.1 Top-level block in `mirror.spec`
+
+New top-level block alongside `source`, `legacy`, `garden`, `target`,
+`settle_on` (per `mirror-spec-schema.md` and the four-commit Mara
+garden cascade). Holds the spec's identity-and-access declaration:
+who supervises this spec, who's on the team, what they may do, and
+which variables hold reusable ACL fragments.
+
+```mirror
+in @mirror/cli
+in @mirror/mosaic
+in @spectral/garden/git
+in @mirror/peer       # NEW: imports the peer{} grammar
+in @property
+in @io
+
+project mirror.spec {
+  source ~d'shards/'
+
+  peer {
+    # who you talk to when you open the lambda shell at this spec
+    supervisor ~peer'~/.reed'
+
+    # variables holding mirror expressions; reusable ACL fragments
+    let read_only = acl { ops: [focus, project, split], targets: any }
+    let writer    = acl { ops: any, targets: [~d'shards/'] }
+    let auditor   = acl { ops: [audit, honor], targets: any }
+
+    # team peers + per-peer ACL (the type-1 projection authored here)
+    team {
+      ~peer'~/.mara'  => writer
+      ~peer'~/.seam'  => auditor
+      ~peer'~/.glint' => read_only
+      ~peer'~/.taut'  => writer but(
+        exception: target_under(~d'src/sel/')
+      )
+    }
+  }
+
+  garden { … }      # the prior cascade's block
+  target binary { … }
+  settle_on { … }
+}
+```
+
+Three visible field categories: `supervisor` (single field; one peer),
+`let` bindings (zero-or-more; mirror expressions reusable in ACL
+positions), `team { => }` (zero-or-more peer-to-ACL bindings).
+
+### 3.2 The block grammar (informal)
+
+```
+peer_block   ::= "peer" "{" supervisor_field let_binding* team_block? "}"
+supervisor   ::= "supervisor" peer_ref
+let_binding  ::= "let" identifier "=" mirror_expr
+team_block   ::= "team" "{" team_entry+ "}"
+team_entry   ::= peer_ref "=>" acl_expr
+peer_ref     ::= "~peer'" peer_path "'"
+acl_expr     ::= identifier                       # reuse a let-bound expr
+               | acl_literal                      # inline acl { ops:… targets:… }
+               | acl_expr "but" "(" acl_clause ")"  # adversative refinement
+               | acl_expr "∨" acl_expr           # join (union)
+               | acl_expr "∧" acl_expr           # meet (intersection)
+```
+
+The `but` operator IS the one declared at `geometric-consent-
+projection.md` §2.4 (adversative refinement; not commutative, not
+associative; "default-with-exception"). Reuse, not re-invention.
+The `∨` / `∧` operators are the lattice operations on ACLs per §10.2.
+
+The `supervisor` field is REQUIRED iff peer{} is present at all; an
+absent peer{} block triggers the default-to-repo-local rule (§9).
+The `team` block is OPTIONAL; a spec with `supervisor` only is
+admissible (the supervisor is the sole peer with infinite ACL).
+
+### 3.3 Substrate-decl shape (forward-promised)
+
+The block is parsed by `@mirror/peer` grammar (forward-promised). The
+substrate-decl shape per the @magic/@frame/@pack pattern:
+
+```mirror
+in @mirror/cli
+in @mirror/mosaic
+in @pack
+in @magic
+in @magic/contract
+in @spectral/supervisor
+
+prism @mirror/peer {
+  focus mirror_peer_block
+  project mirror_peer_block
+  split mirror_peer_block
+  shift mirror_peer_block
+  settle mirror_peer_block
+}
+
+type mirror_peer_block = {
+  supervisor: peer,                      # from @pack
+  bindings:   list((identifier, acl)),   # let bindings
+  team:       list((peer, acl)),         # peer → ACL map
+}
+
+type acl = ref     # parametric; refined at species; see §5 + §10
+```
+
+The carrier reuses @pack's existing `peer` variant (where the team
+member IS a Pack peer) and lifts arbitrary `~peer'<url>'` references
+through the @peer glass `load(dir) -> peer` action (per peer-glass.md
+§"Operations").
+
+---
+
+## 4. `supervisor` semantics — lambda-shell counterparty
+
+### 4.1 What "supervisor" means
+
+The supervisor is the peer who ANSWERS when a human (or another peer)
+opens the lambda shell at this spec's root. Per `lambda-shell.md`
+§"The Toggle":
+
+> `\` in mirror → `@reed>` (home peer from spec)
+
+The peer{} block's `supervisor ~peer'~/.reed'` IS the typed version
+of that home-peer declaration. Three semantic loads, all already
+declared in existing substrate:
+
+1. **λsh counterparty (per lambda-shell.md).** When `\` is pressed in
+   λsh at this spec's root, the prompt becomes `@<supervisor.name>>`.
+   When `mirror sh` enters this spec's directory, the supervisor's
+   five-axis fixed point loads.
+2. **@spectral/supervisor lifecycle owner (per shards/spectral/
+   supervisor.mirror).** The supervisor's `base.state: shard_ref`
+   carries the registry of team peers + their session shards. The
+   supervisor's `restart_strategy` (`one_for_one | one_for_all |
+   rest_for_one`) governs what happens when a team peer's session
+   fails. Default strategy when unspecified: `one_for_one` (the
+   BEAM default; the substrate-pull-correct choice per @spectral/
+   supervisor's tick discipline).
+3. **@magic/contract bind site (per shards/magic/contract.mirror).**
+   The supervisor IS the principal who binds team-member contracts
+   per `bind(magic_surface, magic_mechanism, magic_invariant) ->
+   magic_contract`. Every team entry IS a contract the supervisor
+   bound. The supervisor's bind-authority is itself non-revocable
+   from within the spec (the supervisor IS the spec's root authority;
+   revoking it requires editing the spec).
+
+### 4.2 Exactly one supervisor
+
+The supervisor field is single-valued. Two reasons, both substrate-
+pull-correct:
+
+- **λsh has one home peer per spec.** The toggle `\` resolves to one
+  prompt. Multiple homes would require multiple toggles, which the
+  current shell grammar doesn't admit (and the substrate has no
+  recognition pushing toward N-home shells; λsh's prior art — Nushell,
+  Warp — are all single-home).
+- **@spectral/supervisor has one lifecycle root.** The supervisor IS
+  the root of the supervision tree for this spec's runtime. A spec
+  with two supervisor roots would have two restart_strategies that
+  could disagree on the same team-peer failure; the substrate's
+  supervisor discipline forbids this by structure.
+
+Multi-spec collaboration (Mara supervises mirror; Glint supervises
+systemic.engineering) IS already supported — each spec has its own
+supervisor; cross-spec peer relationships are mediated at λsh's
+`mirror sh @<other-supervisor>` boundary per lambda-shell.md §"Agent
+Spawn".
+
+### 4.3 The supervisor is on the team (implicitly, with infinite ACL)
+
+The supervisor is NOT redundantly listed in `team { }`. The supervisor
+has:
+
+- **infinite ACL** at this spec (every op admissible against every
+  target; the type-1 projection of the maximal type-N+1 consent the
+  supervisor authored when they declared themselves supervisor);
+- **bind authority** for team contracts (per @magic/contract);
+- **revoke authority** for team contracts (per @magic/reveal's
+  capability-revocation lineage; removing a `team { }` entry IS a
+  reveal at the supervisor altitude per §8.3);
+- **the responsibility** to discharge `pack_coherent(pack, perturbation)`
+  (per @pack family-root) at every spec settle.
+
+The team field is for the OTHER peers; the supervisor's own
+permissions are structural, not enumerated.
+
+---
+
+## 5. `team { ~peer'…' => <ACL> }` — per-peer ACL syntax
+
+### 5.1 The arrow `=>`
+
+The `=>` operator binds a peer reference to an ACL expression. It is
+the substrate's existing map-literal arrow (sibling of, e.g., the
+match-arm arrow in @code/rust patterns); reused here at the team-
+entry altitude.
+
+Semantically: `~peer'<path>' => <acl>` declares
+
+```
+the supervisor binds a magic_contract:
+  surface   = team peer's invocation interface
+  mechanism = the supervisor's runtime
+  promise   = <acl> evaluated at settle-time
+```
+
+The contract IS audit-gated per @magic/audit; every team-peer action
+discharges through `audit(contract) -> audit_record` and the
+supervisor's `restart_strategy` governs the response on violation.
+
+### 5.2 ACL expression positions
+
+A `<ACL>` slot admits any of:
+
+```mirror
+# (a) identifier reusing a let-bound expression
+~peer'~/.mara'  => writer
+
+# (b) inline acl literal
+~peer'~/.taut'  => acl { ops: any, targets: [~d'src/'] }
+
+# (c) but-refinement of an existing acl
+~peer'~/.seam'  => auditor but(
+  exception: target_under(~d'.secret/')
+)
+
+# (d) lattice composition
+~peer'~/.glint' => writer ∨ auditor      # union (join)
+~peer'~/.glint' => writer ∧ read_only    # intersection (meet)
+```
+
+All four are mirror expressions; the substrate's existing expression
+grammar admits them already (per `geometric-consent-projection.md`
+§2.4 for `but`; the lattice ops are forward-promised at §10.2 of
+this spec). The `<ACL>` slot is NOT a parallel sub-grammar; it is
+ordinary mirror at the consent-value altitude.
+
+### 5.3 The acl literal
+
+Forward-promised type at the `@mirror/peer` grammar. Sketch:
+
+```mirror
+type acl = {
+  ops:     | any | list(operation),     # focus/project/split/shift/settle/audit/honor/…
+  targets: | any | list(target),        # paths, oid prefixes, prism-name prefixes
+  predicates: list(verdict_expr),       # @magic-style honor predicates evaluated at audit-time
+}
+```
+
+The `ops`, `targets`, and `predicates` slots are all substrate-typed.
+The `ops` slot reuses the five operations + the @magic operation
+family (audit, honor, reveal); `targets` reuses substrate path
+literals + content-address prefixes; `predicates` reuses the
+@magic-style `verdict` carrier (success / partial / failure).
+
+### 5.4 What an ACL means at runtime
+
+When a team peer attempts an action against this spec, mosaic
+discharges:
+
+```
+1. lookup(team, requesting_peer) → acl                          # team map
+2. acl_admits(acl, requested_op, requested_target) → verdict    # type-1 check
+3. audit(supervisor_contract_for_peer, action_record) → audit_record
+4. respond(audit_record, supervisor.audit_strategy) → audit_record
+```
+
+Steps 1-2 are the type-1 projection (the ACL check proper); steps
+3-4 are the @magic/audit discharge (the audit trail + violation
+response). The substrate already names every step; the peer{} block
+adds the DECLARATIVE SURFACE for step 1's lookup table.
+
+---
+
+## 6. `~peer'…'` resolution — typed path literal via home-repo + `<name>.spec`
+
+### 6.1 The sigil grammar
+
+New typed sigil sibling of `~d`, `~f`, `~git`, `~oci`:
+
+```
+~peer_literal ::= "~peer'" peer_path "'"
+peer_path     ::= local_path             # ~peer'~/.mara'   (local home dir)
+                | git_url                # ~peer'https://github.com/systemic-engineering/mara.git'
+                | ssh_spec               # ~peer'git@github.com:systemic-engineering/mara.git'
+                | name_ref               # ~peer'mara'       (resolves via pack registry; §6.3)
+```
+
+Four resolution modes, ordered by directness:
+
+1. **local path** — fastest; loads via `@peer.load(~dir'<path>')`.
+2. **git url** — clones via `@io/git` (the spectral-garden-git
+   adapter) then loads via `@peer.load(~dir'<clone-target>')`.
+3. **ssh spec** — same as git url at the protocol-adapter altitude.
+4. **name ref** — resolves via the Pack registry; §6.3.
+
+All four resolve to a substrate-typed `peer` value per peer-glass.md
+`type peer = { identity, gestalt, tensions, eigenboard, shatter }`.
+
+### 6.2 The self-naming rule (the missing rule)
+
+A peer at home `~peer'<path>'` is RESOLVED by reading the peer{}
+block of `<path>/mirror.spec` (if present) and taking the `supervisor`
+field as the peer's authoritative identity. This is the SELF-NAMING
+rule: each peer's home-repo spec names that peer's own identity.
+
+```
+resolve(~peer'<path>') =
+  let home_spec = <path>/mirror.spec
+  if home_spec has peer{} block:
+    return home_spec.peer.supervisor      # the peer's self-declaration
+  else:
+    return @peer.load(~dir'<path>')       # five-axis fixed point only
+```
+
+Why self-naming: every peer's identity is content-addressed at their
+home's five-axis fixed point (per peer-glass.md §"The five-axis fixed
+point"). The peer{} block's supervisor field is the peer's own
+declaration that they ARE the supervisor of their home spec. A
+`~peer'<other-path>'` reference IS a reference to that peer's
+self-declaration; the substrate is honest about the recursive
+structure.
+
+This avoids two failure modes:
+
+- **Forged identity at the team altitude.** A spec couldn't admit
+  `~peer'~/.mara' => writer` and have it bind to anyone OTHER than
+  Mara's self-declared identity; the team peer's home spec is the
+  authority on who they are.
+- **Pack-level identity drift.** If Mara's home spec doesn't declare
+  `supervisor ~peer'~/.mara'`, the team binding falls back to the
+  five-axis fixed point load (lossy but well-defined). The substrate
+  warns at settle but doesn't refuse.
+
+### 6.3 Pack-registry resolution (the `~peer'mara'` name-ref form)
+
+A bare name like `~peer'mara'` resolves through the @pack registry
+(per @pack.peer variant + the forward-promised pack registry shard).
+This is the CONVENIENCE FORM for the canonical Pack peers; non-Pack
+team members use one of the path/url forms.
+
+```
+resolve(~peer'<name>') where <name> in @pack.peer variants:
+  return @pack.registry.lookup(<name>)
+```
+
+The registry is a substrate-decl forward-promised at `shards/pack/
+registry.mirror` (companion to `shards/pack/{mara,seam,glint,reed,
+taut}.mirror`). For v0.1, only the five Pack peers are name-ref-
+resolvable; arbitrary name registration is forward-promised.
+
+### 6.4 Identity contract
+
+Byte-equality on the resolved peer's `identity.mirror` field (per
+peer-glass.md §"Identity vs continuity"). Two `~peer'…'` references
+that resolve to peers with the same `identity.mirror` ARE the same
+peer at the substrate's identity altitude, regardless of which home
+path was used to reference them.
+
+This closes a subtle failure: if Mara's home moves from `~/.mara` to
+`~/work/.mara`, references to both paths resolve to the same Mara at
+the identity altitude. The team-binding lookup is by identity, not
+by path.
+
+---
