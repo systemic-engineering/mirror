@@ -716,4 +716,480 @@ provides the contract; the species discharge through their
 `@io/<species>` adapter. This follows the @magic/@frame/@smarts
 family-root pattern (per `shards/pack.mirror` §"Substrate-decl shape").
 
+---
+
+## 7. Mathematical shape
+
+*Framing note: this section names the typed surface the mathematical
+discharge operates against — it does NOT claim to deliver proofs of
+termination, uniqueness, or convergence. The substrate-decl ratifies
+the SHAPE; discharges happen at species-altitude shard bodies, are
+forward-promised, and gate on Pack adversarial review. "Math, not
+vibes" per #95 means the substrate carries the measurement primitive
+at the right altitude; the per-package numbers are species work. This
+section follows recognition #95's discipline.*
+
+### 7.1 The dependency graph as a sheaf on a partial order
+
+Garden entries form a directed acyclic graph (DAG) where nodes are
+packages (typed `git_artifact`) and edges are dependencies. The DAG
+is a partial order P (transitively closed; `A ≤ B` iff A depends
+transitively on B).
+
+A SHEAF F on P assigns:
+- to each node v: a stalk F(v) = the package's settled shard (an oid)
+- to each edge u ≤ v: a restriction map F(u) → F(v) = "which oid u
+  pins as its dependency v"
+
+The restriction maps compose: if u ≤ v ≤ w and u pins v at oid Ov,
+then u's transitive pin of w equals the pin v carries of w in v's
+lock context. Composition associativity = lockfile consistency.
+
+**Sheaf condition (compatibility of overlapping pins).** If two
+consumers u1 and u2 both depend on v, the restriction maps
+F(u1 → v) and F(u2 → v) MAY pin different oids (different versions);
+the sheaf accepts this (a presheaf with optional unification at
+the gluing condition). UNIFIED resolution (Cargo's behavior; MVS's
+behavior) corresponds to requiring the restriction maps to agree at
+v — the sheaf becomes a TRUE sheaf on the unified subgraph.
+
+**Where this load-bears for mirror:** the partial-order structure +
+restriction maps formalize "each consumer pins what it depends on";
+the sheaf-vs-presheaf distinction formalizes "unified resolution vs
+multiple-versions-coexist." Mirror's pinning-first default is a
+presheaf; an explicit `unify` directive in `garden { }` (forward-
+promised) would lift it to a sheaf at the unified subgraph. The
+mathematical vocabulary is load-bearing for naming WHICH discipline
+is in effect.
+
+Reference: this connects to the substrate's existing eigensheaf
+work (per docs/specs/eigensheaf.md; recognition that cellular
+sheaves on the five-operation graph carry conductivity tensors).
+The garden-dependency sheaf is a SIBLING instance at the dependency-
+graph altitude.
+
+### 7.2 The lock file as a terminal object
+
+In the category of valid pinnings for a given `mirror.spec` S,
+`mirror.lock` L is a TERMINAL OBJECT in a slice category:
+
+- Objects: valid pinning assignments P (each garden entry → oid) that
+  satisfy the spec's constraints (every floating ref resolves to a
+  reachable commit; every pinned ref matches its oid).
+- Morphisms: refinements P → P' that respect the spec.
+- Terminal: the maximally-specific pinning that fixes every entry to
+  one oid; subsequent re-resolutions cannot refine further.
+
+The Banach-fixed-point analog: kintsugi iterates over the resolution
+pipeline; iteration converges to the terminal pinning (the lock file)
+in one step for pinned entries, in two steps for floating entries
+(resolve → pin). The substrate's `e^{n+1} ≤ e^n` discipline holds:
+opacity in the garden (unresolved floating refs) monotonically
+decreases as kintsugi advances.
+
+**Status:** SHAPE; the actual category-theoretic proof of terminality
+(initial vs terminal direction; existence under multi-version
+pinnings) is open work. This section names the framing the proof
+would operate against.
+
+### 7.3 Semantic versioning as adjunction (conjectural)
+
+Semver-shaped versions admit a preorder: `v ≤_compat w` iff w is
+semver-compatible with v. The constraint solver computes, for a set
+of requirements `R = { req1, req2, ... }`, the version v that
+satisfies all of them.
+
+**Conjecture:** the constraint-solver functor R → v is right adjoint
+to the inclusion functor (the version IS the requirement, viewed as
+a singleton constraint). The unit of the adjunction is "this version
+satisfies these requirements"; the counit is "these requirements
+admit at least this version."
+
+**Status:** speculative. Mirror's pinning-first stance sidesteps this
+for the peer-home-repo case (git refs are NOT semver; they're a
+partial order on the Merkle DAG). For the artifact-distribution case
+(`@spectral/garden/oci` with semver-tagged images), the adjunction
+framing MAY load-bear. Flagged for future Pack discussion; not
+required for the v0.1 spec.
+
+### 7.4 Merkle DAG dependency-resolution termination (the strongest framing)
+
+This is the section's **load-bearing mathematical candidate**.
+
+Cargo / npm / pip face dependency-hell because their constraint
+solvers operate over UNORDERED version sets (semver-compatible
+versions are not totally ordered when constraints conflict). SAT
+solvers are complete + correct but NP-complete in the worst case
+(per Russ Cox "Version SAT," 2016; Abate et al. 2020).
+
+Mirror's garden operates over a DIFFERENT structure: the git Merkle
+DAG. Each commit is a unique content-addressed node; each commit's
+parents are explicit pointers; the DAG has no cycles by construction
+(git refuses to write cyclic commits). The garden's dependency graph
+is embedded in this Merkle DAG.
+
+**Termination claim (informal):** for a garden whose entries pin to
+specific commit hashes (NOT floating refs), the resolution algorithm
+is trivially terminating. Each entry has at most one resolution
+(the commit itself); no constraint solver runs; no SAT instance is
+generated. Termination is O(n) in the number of entries, NOT NP
+in the search space.
+
+For floating entries, resolution is O(n) given network latency
+(one `ls-remote` per entry to resolve the symbolic ref). Once
+resolved, the lock pins the resolution; subsequent runs are O(n)
+in local CAS lookup.
+
+**Uniqueness claim (informal):** given a pinned `mirror.spec` + a
+fixed `mirror.lock`, the resolution is UNIQUE — every garden entry
+resolves to exactly one oid, deterministically, by content-address.
+No branching; no choices; no failure-to-converge mode admissible by
+the substrate's typed pipeline.
+
+**Comparison to MVS:** Go's MVS terminates and produces unique
+resolutions on a TOTAL-order assumption (semver). Mirror's garden
+terminates and produces unique resolutions on a PARTIAL-order
+structure (the Merkle DAG) BY PINNING — the unique resolution is the
+specific commit, not the maximum-compatible-version-in-semver-poset.
+The two algorithms address different problems; mirror's is structurally
+simpler because the substrate paid for the pinning-discipline
+upfront.
+
+**Open math:** what happens when a garden entry depends on ANOTHER
+garden entry (transitive deps with their own `mirror.spec`)? The
+transitive closure walks the Merkle DAG of dependency-DAGs. If every
+transitive entry is pinned, termination holds. If transitive entries
+are floating, resolution becomes O(n × depth) and the substrate must
+decide a unification policy at each shared dependency. The
+presheaf-vs-sheaf distinction (§7.1) is the formal handle.
+
+This is the strongest math the spec ratifies: **structural
+termination by content-addressing**, foreclosing the dependency-hell
+NP-hardness by construction. The substrate's typed-pinning discipline
+IS the algorithmic improvement; the math NAMES why it works.
+
+### 7.5 Cross-scope content-addressing as a Grothendieck topology (speculative)
+
+The four roots (§6) each define a SITE in the Grothendieck-topology
+sense; each root's bridge action (`hash_to_oid`, `oid_to_digest`)
+serves as a coverage; cross-scope queries are stalk computations.
+Speculative; flagged for Pack-altitude conversation; MAY be the right
+vocabulary if recognition #98 promotes. Not load-bearing for v0.1.
+
+### 7.6 Connection to recognition #51 (mirror as expanding Hilbert space)
+
+Each package added to the garden adds a dimension to the substrate's
+form-side Hilbert space (per #51). The garden's dependency DAG
+INDUCES a subspace decomposition: each entry's typed contribution is
+a basis vector in the spec's local subspace. `mirror.lock` pins the
+basis; re-resolution preserves the basis; cross-spec composition
+(when project A consumes project B as a garden entry) is the direct
+sum of the two subspaces under a typed adapter (B's exported
+substrate-decl bridge).
+
+**Where this load-bears:** the substrate already carries the
+Hilbert-space framing for expansion; the garden gives the expansion
+an EXPLICIT enumeration. Before garden, growth was per-shard
+(recognitions, settled crystals); with garden, growth is per-package
+(declarative units of expansion). Mirror becomes a substrate whose
+Hilbert space is auditable at the package altitude, not just the
+shard altitude.
+
+### 7.7 What's intentionally NOT in this section
+
+No closed-form proof of termination beyond §7.4's structural-pinning
+argument; no formal Banach proof for §7.2; no categorical proof for
+§7.5; no sheaf-vs-presheaf trade-off derivation for §7.1. Open work,
+gated on Pack adversarial review.
+
+---
+
+## 8. Open surface questions
+
+### O1. `garden { source ~git'...' }` vs `pack { peer <name> ~git'...' }`
+
+Three surfaces under consideration:
+
+**(a) Generic only:**
+```mirror
+garden {
+  source ~git'.../mara.git@main'
+  source ~git'.../seam.git@main'
+}
+```
+Clean; one keyword; peer membership is metadata at species altitude.
+
+**(b) Typed only:**
+```mirror
+garden {
+  pack {
+    peer mara  ~git'.../mara.git@main'
+    peer seam  ~git'.../seam.git@main'
+  }
+}
+```
+Explicit; integrates `@pack.peer` variant carrier; metadata is
+structural.
+
+**(c) Both:**
+```mirror
+garden {
+  source ~git'.../external-dep.git@v1.0'
+  pack {
+    peer mara  ~git'.../mara.git@main'
+  }
+}
+```
+Admits non-peer external deps AND typed peer membership in one
+block.
+
+**Substrate-pull leans (c)** — the substrate already admits both
+(garden sources are bare; pack-peer relationships are typed via
+`@pack.peer`); collapsing to one or the other discards substrate
+vocabulary. But the surface complexity matters; Alex decides.
+
+### O2. Spec-decl location for `@spectral/garden/git`
+
+Two candidates:
+
+**(a) `spectral` repo:** `shards/spectral/garden/git.mirror` in the
+spectral repository. Surface lives with `@spectral/db` and
+`@spectral/garden/smarts`; consistent with the substrate's
+project-naming convention.
+
+**(b) `mirror` repo:** `shards/spectral/garden/git.mirror` in the
+mirror repository. Surface lives with `@io/git` (a1b507a) and
+`@io/oci` (2801478); consistent with substrate-decl-source
+discipline (the family's other constituents already live in mirror).
+
+**Substrate-pull leans (b)** — the @spectral/garden family-root is
+structurally part of the mirror-substrate package-manager surface;
+living in mirror keeps the substrate-decl chain unbroken
+(@spectral/garden/git → @io/git → @io → mirror substrate). The
+spectral repo CONSUMES the substrate-decl; doesn't define it. But
+this violates path-namespace property `path_matches_namespace` for
+the `@spectral/...` prefix, which substrate convention would expect
+in a `spectral/` repo. Open; Alex decides; the FORWARD-PROMISED
+recognition-cross-repo-namespace pattern might apply (per #84
+`shards/pack.mirror` §path-namespace).
+
+### O3. Resolution strategy under conflicting transitive constraints
+
+When two transitive garden entries depend on the SAME package at
+DIFFERENT pins, what does mosaic do? Three options:
+
+**(a) Refuse to settle.** Both must agree or the spec is rejected.
+Maximally strict; surfaces conflicts immediately; high friction.
+
+**(b) Allow both.** Each consumer gets its pinned version; the
+substrate's CAS handles disambiguation (same oid space; different
+oids → different artifacts). Low friction; can lead to bloat.
+
+**(c) Force unification.** Mosaic picks one (newest commit, oldest
+commit, lexicographically-smallest oid) and reports a partial
+verdict. Forces resolution; opinionated; potentially wrong.
+
+**Substrate-pull leans (b)** — the CAS makes coexistence cheap; the
+substrate's presheaf shape (§7.1) naturally admits it. But Alex's
+stance on dependency uniqueness (and security-altitude concerns:
+multiple versions = wider attack surface) decides.
+
+### O4. Cycle handling
+
+Git's commit DAG is acyclic by construction; the garden's dependency
+GRAPH (which garden entry depends on which) MAY be cyclic if two
+repos import each other. Two options:
+
+**(a) Forbid.** `mirror.spec` parser rejects cyclic dependency
+graphs at settle time. The substrate stays acyclic; the structural
+guarantee is clean.
+
+**(b) Allow with fixed-point resolution.** Kintsugi iterates;
+cycles settle via the Banach-contraction discipline (each iteration
+uses the previous pin; convergence guaranteed by `e^{n+1} ≤ e^n`).
+Admits the corner case; substrate-decl complexity grows.
+
+**Substrate-pull leans (a)** — the simpler invariant. (b) MAY land
+later if a real cycle surfaces; YAGNI for v0.1.
+
+### O5. Auth surface (SEL boundary)
+
+Garden entries via ssh/https/git protocols need auth. Per
+`[[architecture-type-sel-io-au]]`: auth is at the SEL boundary; the
+substrate-decl admits a ref; the realisation discharges the credential.
+
+For `@spectral/garden/git`: the `~git'...'` sigil parses to
+`git_repository`; auth is OUT OF BAND (ssh-agent, gitcredentials,
+etc.). Open: does `@spectral/garden/git` need its own typed auth
+carrier (e.g., `~git_auth'<token-ref>'`) or does it inherit
+`@io/git`'s SEL-boundary discharge cleanly? Forward-promised.
+
+### O6. Versioning of the spec itself
+
+`mirror.spec` evolves. A garden entry pinned to a specific oid sees
+the SPEC version of the consumed package at lock time. If the
+upstream rewrites its spec (e.g., changes its `target` list or
+`source` directory), the consumer's pin keeps the OLD spec semantics.
+
+Good (reproducibility). But: how does a consumer discover when
+upstream has incompatible changes? Open. Likely: `mirror.lock`
+carries an additional `spec_oid` for each garden entry (cross-
+referencing the pinned package's mirror.spec at the pinned commit);
+mirror update surfaces spec-oid drift as a typed verdict. Sketch;
+not in v0.1.
+
+---
+
+## 9. Forward-promised
+
+- **`shards/spectral/garden/git.mirror`** (or its `mirror`-repo
+  equivalent per O2) — the substrate-decl. Family-root prism;
+  carriers for garden_entry / garden_source; actions for resolve /
+  pin / lift_to_oid; composed-bilateral `garden_well_formed`.
+- **`shards/spectral/garden.mirror`** — the parent family-root for
+  the four scope-graded roots (§6.4).
+- **`shards/spectral/garden/oci.mirror`** — the OCI-resolved sibling.
+- **`shards/spectral/garden/nix.mirror`** — the Nix-resolved sibling.
+- **`shards/mirror/lock.mirror`** — the `@mirror/lock` grammar for
+  the lock-file format (§4.5).
+- **mirror.spec migration** — the substrate's own `mirror.spec`
+  (`/Users/alexwolf/dev/projects/mirror/mirror.spec`) gains a
+  `garden { }` block as the first dogfood consumer.
+- **`mirror update` CLI command** — re-resolve floating refs;
+  rewrite `mirror.lock`. (One additional `command` block under
+  `target binary { cli { ... } }`.)
+- **Pack peer dogfood** — each peer's home repo gets a `mirror.spec`
+  that declares the other peers via
+  `garden { pack { peer ... } }`. The Pack's substrate-decl context
+  becomes auditable at the spec altitude.
+- **Auth refinement at SEL boundary** — per O5.
+- **Rust impl** — explicitly NOT in scope for this spec. Implementation
+  lands after substrate-decl + Seam review + Reed consolidation +
+  Alex ratification.
+
+## 10. Recognition cross-references
+
+- **#98 candidate** (content-addressing cross-altitude composition):
+  this spec NAMES the fifth witness shape (the four-root
+  package-manager family structure as a cross-altitude composition
+  at the surface altitude). Promotion deferred to Reed.
+- **#84** (`@pack` multi-repo agent runtime): peer-home-repo as
+  package source IS the operational form of #84 at distribution
+  altitude. The garden block makes Pack membership substrate-decl.
+- **#93 H4** (`labeled<v, m>` functor): the `git_artifact =
+  labeled(git_object, git_ref_metadata)` carrier composes here
+  unchanged.
+- **#95 candidate** (@cascade as loss-lens): garden entries may
+  carry cascade species (a Purescript package consumed as substrate-
+  decl input has a measurable loss against its npm cascade); the
+  garden + cascade composition is forward-promised.
+- **#57** (alignment-as-boundary-mathematics): the Splinter /
+  Narcissus discipline at distribution altitude IS the alignment
+  harness for garden entries. Garden's `well_formed` composed
+  bilateral IS the substrate-architectural alignment check.
+- **#51** (mirror as expanding Hilbert space): each garden entry
+  expands the spec's local subspace (§7.6).
+- **#56** (substrate self-application): garden entries can include
+  the substrate itself (`source ~git'.../mirror.git'`); the mirror's
+  own spec can reference mirror as a garden entry. Self-reference at
+  distribution altitude.
+- **#43** (mirror as content-addressed build system): garden
+  resolution discharges through the same CAS the substrate uses
+  internally. Unified addressing.
+- **#367** (`@cyberpunk/pack` orchestra-as-recursion-lock): the
+  Pack-as-orchestra story gains an operational distribution surface
+  via `garden { pack { ... } }`.
+
+## 11. Honest hedges
+
+### H1. Surface-only; no impl
+
+This spec is RED. No `@spectral/garden/git` substrate-decl exists yet.
+No `mirror.lock` grammar exists. No Rust resolver exists. The spec
+ratifies the SHAPE; the discharge is forward-promised across multiple
+ticks + Pack rounds.
+
+### H2. Mara writing the spec ahead of substrate-decl
+
+Usually substrate-decl lands first (Reed); canonical spec ratifies
+after (Mara). This spec inverts the order — Alex's directive landed
+this morning, this spec is the immediate response. The shape MAY
+shift when Reed writes the actual `shards/spectral/garden/git.mirror`
+substrate-decl. This spec then re-ratifies against the substrate-decl,
+not vice versa.
+
+### H3. Recognition #98 fifth-witness claim is candidate territory
+
+The four-root structure (§6) as a fifth witness to #98 is FLAGGED,
+NOT PROMOTED. Promotion is Reed's tick. The shape may turn out to be
+a sibling recognition rather than a witness; the territory needs Pack
+adversarial review.
+
+### H4. Math section names shape, not delivery
+
+Per §7's framing note: the sheaf framing, the terminal-object framing,
+the Grothendieck-topology framing are mathematical VOCABULARY for
+naming what the substrate does. They are NOT formal proofs. The
+strongest formal claim is §7.4's structural-termination-by-content-
+addressing argument; everything else is named shape for future
+discharge.
+
+### H5. Open questions intentionally unresolved
+
+§8 enumerates six surface questions left for Alex. The spec does NOT
+resolve them unilaterally; the substrate-pull on each leans a
+direction (noted inline), but the call is Alex's. This is Pack
+discipline: name the questions, lean transparently, await
+ratification.
+
+### H6. Spec-vs-shard altitude
+
+This is a `.md` spec, not a `.mirror` shard. The shard substrate-decl
+(forward-promised in §9) will be SHORTER and TIGHTER; this spec is
+the canonical narrative explaining WHY the shard takes the shape it
+does. The shard is source-of-truth; this spec is documentation.
+
+### H7. v0.1 is bounded; v0.2+ deferred
+
+This spec is `@spectral/garden/git` v0.1. Many shapes are deferred:
+- the `@spectral/garden` parent family-root (§6.4)
+- the OCI / Nix sibling roots (§6.2)
+- transitive cross-spec resolution (§8 O3, O6)
+- the `unify` directive (§7.1)
+- semver-via-adjunction (§7.3)
+- the Grothendieck-topology framing (§7.5)
+
+v0.1 ratifies the git-resolved single-spec case + Pack-peer membership.
+The rest lands when the substrate pulls there.
+
+### H8. Alex's framing question is the ratification gate
+
+Alex's verbatim: "What if @spectral/garden/git is the root for the
+garden package manager? What if this is a surface that's configured
+in the @../mirror/mirror.spec?" Both "what ifs" are answered
+affirmatively in this spec. The ratification is Alex's; if either
+framing turns out to be wrong, the spec rescinds in that direction.
+
+## 12. Pack-discipline trail
+
+- **2026-06-23 (Alex morning)**: gap analysis surfaces need for
+  distribution. `@io/oci` lands via Mara at 2801478.
+- **2026-06-24 (Alex morning)**: directive — "build @spectral/garden/git
+  abstraction layer using @git; each peer becomes their home repo."
+- **2026-06-24 (Reed / Mara)**: `shards/io/git.mirror` (a1b507a)
+  lands at @io/git altitude; §6 forward-promises
+  `shards/spectral/garden/git.mirror`.
+- **2026-06-24 (Alex midday)**: probe to Mara — "What if
+  @spectral/garden/git is the root for the garden package manager?
+  What if this is a surface that's configured in the
+  @../mirror/mirror.spec?" Mara spawned.
+- **2026-06-24 (Mara, this spec)**: canonical spec lands; §12 rounds.
+  Section caps load-bearing for stall recovery.
+- **Forward-promised**: Seam adversarial review → Reed consolidation
+  → substrate-decl shard → Alex ratification → dogfood (mirror's own
+  mirror.spec gains garden block).
+
+The Pack-discipline composition this tick: Alex frames; Mara
+canonicalizes; Seam reviews next; Reed consolidates; substrate-decl
+shard follows. Spec-before-shard inversion noted in H2.
 
