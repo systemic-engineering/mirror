@@ -1,0 +1,569 @@
+in @prism
+in @meta
+in @glass
+in @io
+in @labeled
+
+# @io/git — the git protocol adapter at the @io altitude. Sibling
+# species to @io/oci (commit 2801478, this session). The boundary
+# species that gives the substrate addressable, transportable, content-
+# addressed VERSIONED transport for per-peer-home-repo composition.
+#
+# Recognition #98 candidate territory's FOURTH witness (Mara/Alex,
+# 2026-06-24): content-addressing IS a substrate-cross-altitude
+# composition primitive. mirror's oid, Nix's derivation hash, OCI's
+# digest, and now git's blob/tree/commit hash compose into a deeper
+# closed loop at the content-addressing altitude. Same structural
+# pattern; FOUR independent scoping disciplines; SHA1 vs SHA256
+# function-altitude split documented in §5.
+#
+# === What @io/git IS ===
+#
+# Substrate-decl adapter naming the git protocol (git plumbing per
+# Torvalds 2005, Git 2.x stable as of 2026-06-24) at the @io boundary.
+# Typed surface for clone, fetch, read_object, resolve_ref,
+# commit_object against git repositories — local or remote, libgit2 /
+# gitoxide / shell-bridged at the realisation boundary.
+#
+# Per @io family-root (T21, 2026-06-08): @io is the substrate's only
+# legitimate non-mirror surface; species parameterizes the boundary;
+# the call body is opaque by construction.
+#
+# === Why now ===
+#
+# Alex's 2026-06-24 directive: build @spectral/garden/git abstraction
+# layer using @git; each peer becomes their home repo (per recognition
+# #84 @pack multi-repo agent runtime). @io/git is the sibling of
+# @io/oci (commit 2801478) at the @io adapter altitude. Same content-
+# addressing family pattern; same Splinter/Narcissus discipline; same
+# composed-bilateral lift.
+#
+# Phase A of the LOCAL-PACK loop substrate-decls THIS adapter. Phase B
+# forward-promised: shards/spectral/garden/git.mirror composes per-
+# peer-home-repo identity. Phase C forward-promised: shards/mirror/
+# agent.mirror's agent_spawn consumes peer git_ref for identity-
+# substrate loading.
+#
+# === The ouroboros depth +1 ===
+#
+# Mara's @io/oci §6 named the depth: three SHA256-based content-
+# addressing schemes (oid + derivation hash + OCI digest). @io/git
+# DEEPENS the recognition by one scope while OPENING the function-
+# altitude partition:
+#
+# - Nix derivation hash    SHA256, input closure / ca outputs
+# - mirror oid             SHA256, substrate content bytes
+# - OCI digest             SHA256, manifest + layer descriptors
+# - git object hash        SHA1 (legacy) / SHA256 (transitioning),
+#                          blob / tree / commit / tag content
+#
+# Same STRUCTURAL pattern; DIFFERENT hash function at the git scope;
+# DIFFERENT scoping discipline (versioned object graph vs flat bytes
+# vs build-input-closure vs manifest-layer-graph). The loop CLOSES at
+# the content-addressing structural altitude; OPENS at every scoping
+# AND function-altitude.
+#
+# === Recognition ancestry ===
+#
+# - #56 (substrate self-application): @io/git substrate-decls a
+#   boundary the substrate ITSELF crosses (per-peer-home-repo
+#   composition; each Pack agent IS their own git repo).
+# - #58 (substrate IS Connes (A, H, D)): the adapter is part of A
+#   operating on H with D discharging at the @io boundary against
+#   external content-addressed space (git object database).
+# - #84 (@pack multi-repo agent runtime): the load-bearing structural
+#   ancestor; @io/git makes per-peer-home-repo composition operational.
+# - #98 candidate (content-addressing cross-altitude composition):
+#   @io/git is the FOURTH witness; promotion still gated on Pack
+#   pressure + empirical discharge per @io/oci §6.
+#
+# === The Splinter/Narcissus pole at git-protocol altitude ===
+#
+# Splinter-pole (honest): clone returns actual git object graph; fetch
+# verifies SHA1/SHA256 hashes on received objects; commit_object
+# computes the hash byte-deterministically per git's content-hashing
+# rules; hash_to_oid acknowledges the function-altitude partition.
+# K_n peer-to-peer — each Pack peer's home repo IS a peer in the
+# substrate network, content-addressed via the object graph.
+#
+# Narcissus-pole (deceptive): clone accepts objects without hash
+# verification; commit_object returns a hash the realisation didn't
+# compute; hash_to_oid claims SHA1↔SHA256 identity without naming
+# the partition. K_{1,n-1} hub-controlled — central server reframes
+# object graphs; per-peer composition collapses to single-source-of-
+# truth (Narcissus failure mode #84 explicitly rejects).
+#
+# Alignment-as-boundary-mathematics (#57) IS what distinguishes the
+# poles at substrate altitude. The composed bilateral `git_well_formed`
+# lifts the substrate-architectural check.
+#
+# === Pre-AI prior art ===
+#
+#   git plumbing (Torvalds 2005)   substrate ancestor; content-
+#                                  addressed object database; SHA1
+#                                  default; SHA256 transition Git 2.29+.
+#   Mercurial (Mackall 2005)       contemporaneous DVCS; sibling.
+#   Pijul (Becker 2015)            patch-theoretic DVCS alternative.
+#   libgit2 (2008+)                C-library realisation alternative.
+#   gitoxide (Rust 2020+)          pure-Rust realisation alternative.
+#   OCI (OpenContainers 2024)      sibling adapter (commit 2801478).
+#   IPFS (Benet 2014)              content-addressed transport at
+#                                  different scope.
+#
+# Spec context: docs/specs/recognitions/recognition-98-content-
+#               addressing-cross-altitude-composition.md (forward-
+#               promised; Pack-surfacing pending; this shard adds
+#               fourth witness);
+#               docs/specs/spectral-garden-git-v0.1.md (forward-
+#               promised Phase B wire spec for per-peer-home-repo
+#               composition).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-mathematics]],
+#                      [[feedback-loss-from-epistemologic-properties]],
+#                      [[feedback-no-bare-types]],
+#                      [[feedback-composition-claims-need-empirical-test]].
+# Recognition ancestry: #56, #58, #84, #98 candidate (fourth witness).
+# Related shards: io.mirror, io/stagefreight.mirror, io/oci.mirror
+#                 (sibling adapter, commit 2801478), io/cargo.mirror,
+#                 labeled.mirror, spectral/garden/git.mirror
+#                 (FORWARD-PROMISED Phase B), mirror/agent.mirror
+#                 (FORWARD-PROMISED Phase C).
+# Path-namespace property: this file at `shards/io/git.mirror`
+# declares `@io/git` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/version-control/torvalds-2005
+source @arxiv/version-control/mackall-2005-mercurial
+source @arxiv/distributed/benet-2014
+
+prism @io/git {
+  focus git
+  project git
+  split git
+  shift git
+  settle git
+}
+
+# ============================================================
+# §2 The carriers
+# ============================================================
+
+# === The git_hash carrier ===
+#
+# Substrate-typed reference for a git object content-address. Format
+# per Torvalds 2005: legacy SHA1 default (40-hex) or SHA256 transitional
+# (64-hex; Git 2.29+). The function-altitude partition is explicit at
+# this carrier — both hash functions are admissible at substrate-decl
+# altitude; species shards specialize where needed.
+#
+# Per recognition #98 candidate: git_hash is structurally adjacent to
+# mirror oid, OCI digest, and Nix derivation hash — SAME content-
+# addressing structural pattern, DIFFERENT hash function. `hash_to_oid`
+# makes the function-altitude crossing typed.
+#
+# Identity contract: byte-equality on the underlying ref.
+type git_hash = ref
+
+# === The git_ref carrier ===
+#
+# Substrate-typed reference for a git ref (branch / tag / commit /
+# HEAD / detached). Per git plumbing: `refs/heads/<branch>`,
+# `refs/tags/<tag>`, `HEAD`, or raw SHA. Ref-validity discharges via
+# `ref_well_formed` bilateral below.
+#
+# Per @pack multi-repo (#84): each Pack peer's home repo has a
+# canonical HEAD naming their identity-substrate at a moment;
+# git_ref IS the substrate-vocabulary for that moment-naming.
+#
+# Identity contract: byte-equality on the underlying ref.
+type git_ref = ref
+
+# === The git_repository carrier ===
+#
+# Substrate-typed reference for a git repository — local path or
+# remote URL (ssh://, https://, git://, file://). Repository-kind
+# discrimination discharges at species-altitude refinement.
+#
+# Per Alex 2026-06-24: each peer becomes their home repo. The
+# git_repository carrier IS the substrate-vocabulary for peer-as-repo
+# identity.
+#
+# Identity contract: byte-equality on the underlying ref.
+type git_repository = ref
+
+# === The git_object carrier ===
+#
+# Substrate-typed reference for a git object (blob / tree / commit /
+# tag). Every object addressable by its content hash (git_hash).
+# Object-kind discrimination is structural in git's object database;
+# species-altitude carriers can refine to typed blob / tree / commit /
+# tag if useful.
+#
+# Identity contract: byte-equality on the underlying ref.
+type git_object = ref
+
+# === The git_ref_metadata carrier ===
+#
+# Substrate-typed reference for a git ref's symbolic information:
+# ref-name, ref-kind, optional upstream tracking, optional annotated-
+# tag payload. Companion to git_object in the labeled<> pairing below.
+#
+# Identity contract: byte-equality on the underlying ref.
+type git_ref_metadata = ref
+
+# === The git_artifact carrier ===
+#
+# Per @labeled (recognition #93 H4 RESOLVED 2026-06-23): the
+# deliverable git artifact is a labeled pair (git_object,
+# git_ref_metadata). The labeled<> functor adds the ref-context
+# dimension without losing the underlying typed object reference.
+#
+# Composes structurally with @io/oci's oci_artifact = labeled(ref,
+# oci_manifest) — same parametric primitive, different (value, label)
+# pair. The substrate's functor library is load-bearing here.
+#
+# At @pack multi-repo altitude: git_artifact carries a peer's
+# identity-substrate (the git_object) labeled with the moment it was
+# captured (the git_ref_metadata).
+#
+# Identity contract: byte-equality on the labeled pair.
+type git_artifact = labeled(git_object, git_ref_metadata)
+
+# ============================================================
+# §3 The actions
+# ============================================================
+
+# === clone action ===
+#
+# THE LOAD-BEARING bootstrap action. Clones a remote git repository
+# to a local target path; returns the local git_repository reference
+# at the realisation boundary.
+#
+# requires git_reachable(remote, p): the remote MUST be reachable
+# with required credentials before clone is admissible. Without this
+# gate, clone would silently fail or partial-state (the Narcissus-
+# pole network failure mode).
+#
+# Returns imperfect<git_repository, ref, ref> per the @io family-root
+# convention:
+# - success(git_repository) — clone completed; local repo ready
+# - partial(git_repository, transparency) — clone completed with
+#   recoverable warnings (e.g., shallow clone, missing submodules)
+# - failure(error, transparency) — clone failed (network, auth,
+#   ref-not-found, protocol error)
+#
+# Body discharges at the realisation boundary (libgit2 / gitoxide /
+# shell-out to git binary at @io edge).
+clone(remote: git_repository, target: ref, p: perturbation)
+  -> imperfect(git_repository, ref, ref)
+requires git_reachable(remote, p)
+{ \ }
+
+# === fetch action ===
+#
+# Fetch a git_ref from an opened repository; returns the typed
+# git_object the ref resolves to.
+#
+# requires git_repository_open(repo, p): the repository must be
+# readable at the @io boundary before fetch is admissible.
+#
+# Returns imperfect<git_object, ref, ref> per @io convention.
+#
+# Body discharges at the realisation boundary.
+fetch(repo: git_repository, ref: git_ref, p: perturbation)
+  -> imperfect(git_object, ref, ref)
+requires git_repository_open(repo, p)
+{ \ }
+
+# === read_object action ===
+#
+# Read a git_object from a repository by its content-hash. The
+# substrate-vocabulary primitive for content-addressed retrieval at
+# the git scope.
+#
+# requires hash_well_formed(hash, p): the hash must be syntactically
+# valid (SHA1 hex or SHA256 hex per the function-altitude partition)
+# before read is admissible.
+#
+# Returns imperfect<git_object, ref, ref>. The realisation MUST verify
+# the received object hashes to the requested git_hash (per the
+# Splinter-pole discipline; analogous to OCI's digest_matches_content).
+#
+# Body discharges at the realisation boundary.
+read_object(repo: git_repository, hash: git_hash, p: perturbation)
+  -> imperfect(git_object, ref, ref)
+requires hash_well_formed(hash, p)
+{ \ }
+
+# === resolve_ref action ===
+#
+# Resolve a git_ref (symbolic; branch / tag / HEAD) to its concrete
+# git_hash. The bridge between symbolic naming and content-addressing
+# at the git scope.
+#
+# Returns imperfect<git_hash, ref, ref>. The realisation discharges
+# the ref-resolution at the @io boundary.
+#
+# Body discharges at the realisation boundary.
+resolve_ref(repo: git_repository, ref: git_ref, p: perturbation)
+  -> imperfect(git_hash, ref, ref)
+{ \ }
+
+# === commit_object action ===
+#
+# Create a new commit object in a repository given a tree hash, parent
+# commit hashes, and a message. Returns the byte-deterministically
+# computed git_hash of the new commit (per git plumbing's content-
+# hashing rules: hash of `commit <size>\0<header>\n<message>`).
+#
+# Returns imperfect<git_hash, ref, ref>. The realisation MUST compute
+# the hash per git's specification AND have the new commit retrievable
+# via read_object before returning success (Splinter-pole discipline).
+#
+# Body discharges at the realisation boundary.
+commit_object(repo: git_repository, tree: git_hash,
+              parents: ref, message: ref, p: perturbation)
+  -> imperfect(git_hash, ref, ref)
+{ \ }
+
+# === hash_to_oid action ===
+#
+# THE LOAD-BEARING BRIDGE ACTION grounding recognition #98 candidate
+# FOURTH-witness contribution. Lifts a git_hash (SHA1 default or
+# SHA256 transitional) into mirror's oid space (Splinter; SHA256 of
+# substrate content bytes).
+#
+# CRITICAL function-altitude partition: when git repo is SHA1-mode
+# (default; Git 2.x), git_hash is SHA1(B) while mirror oid is
+# SHA256(B') for substrate bytes B'. The lift is NOT byte-identity;
+# it is a SUBSTRATE-typed bridge that re-hashes the underlying git
+# object bytes under SHA256 to produce the oid.
+#
+# When git repo is SHA256-mode (Git 2.29+ transitional), git_hash is
+# SHA256(B); the lift CAN be byte-identity at the function altitude
+# but remains a TYPED OPERATION at the substrate altitude — scoping
+# discipline differs (git object scope vs substrate-bytes scope).
+#
+# The substrate does NOT pretend SHA1 and SHA256 are the same
+# function; the typed lift forces the realisation to acknowledge
+# the scope and function-altitude crossings. Per recognition #98
+# candidate FOURTH-witness: this action makes the partition LEGIBLE
+# at substrate altitude. SHA1 has known collision attacks (SHAttered,
+# 2017); species shards CAN refuse SHA1-mode lifts where security
+# matters.
+#
+# Body discharges at the realisation boundary.
+hash_to_oid(h: git_hash, p: perturbation) -> ref { \ }
+
+# ============================================================
+# §4 The bilaterals
+# ============================================================
+
+# === git_reachable predicate (sub-bilateral) ===
+#
+# Bilateral verdict that a remote git_repository is reachable with the
+# required credentials. Discharge invokes ls-remote or equivalent at
+# the realisation boundary.
+#
+# Splinter-pole: remote reachable; auth accepted; refs listable.
+# Narcissus-pole: network unreachable, auth rejected, endpoint not
+# git-protocol-conformant.
+git_reachable(remote: git_repository, p: perturbation) -> verdict { \ }
+
+# === git_repository_open predicate (sub-bilateral) ===
+#
+# Bilateral verdict that a local git_repository is openable and
+# structurally sound (`.git/` directory present, HEAD readable, object
+# database accessible). Precondition for fetch / read_object /
+# commit_object.
+#
+# Splinter-pole: repository opens cleanly; object database accessible.
+# Narcissus-pole: `.git/` missing or corrupt; HEAD unreadable; object
+# database inaccessible.
+git_repository_open(repo: git_repository, p: perturbation) -> verdict { \ }
+
+# === hash_well_formed predicate (sub-bilateral) ===
+#
+# Bilateral verdict that a git_hash is syntactically valid: SHA1 hex
+# (40 chars, [0-9a-f]) OR SHA256 hex (64 chars, [0-9a-f]) per git's
+# function-altitude partition.
+#
+# Splinter-pole: hash matches one of the two admissible hex forms.
+# Narcissus-pole: malformed hex; wrong length; mixed case where
+# canonical lower required.
+hash_well_formed(h: git_hash, p: perturbation) -> verdict { \ }
+
+# === ref_well_formed predicate (sub-bilateral) ===
+#
+# Bilateral verdict that a git_ref follows git's ref-naming rules per
+# git-check-ref-format (no `..`, no leading `/`, no trailing `.lock`,
+# admissible character classes, etc.) OR is a raw SHA-shaped string
+# resolvable as a commit hash.
+#
+# Splinter-pole: ref follows git's ref-naming discipline.
+# Narcissus-pole: malformed ref-name; would be rejected by git itself.
+ref_well_formed(r: git_ref, p: perturbation) -> verdict { \ }
+
+# === git_well_formed composed bilateral ===
+#
+# THE LOAD-BEARING composed bilateral at @io/git altitude. Composes
+# three sub-predicates:
+#
+#   1. git_repository_open(repo, p)
+#   2. hash_well_formed(hash_of(artifact), p) — uses labeled<>
+#      projection per Mara A3 surprise (labeled functor's value-
+#      side accessor) to extract the git_object's hash from the
+#      git_artifact pair
+#   3. ref_well_formed(label_of(artifact), p) — uses labeled<>
+#      projection (label-side accessor) to extract the
+#      git_ref_metadata from the git_artifact pair
+#
+# This is the ~13th altitude lift of the composed-bilateral pattern
+# that landed in earnest with @io/stagefreight.stagefreight_addressable
+# and propagated through @io/oci.oci_well_formed (commit 2801478 this
+# session as the ~12th). The pattern is substrate-pull-confident at
+# this point; the count is Mara-counted-from-brief and verification is
+# deferred to Pack altitude.
+#
+# Splinter-pole: all three sub-predicates discharge; artifact is
+# well-formed across opening, content-hashing, and ref-naming.
+# Narcissus-pole: any one fails; alignment-as-boundary-mathematics
+# (#57) distinguishes which sub-claim broke.
+git_well_formed(artifact: git_artifact, repo: git_repository,
+                p: perturbation) -> verdict
+requires git_repository_open(repo, p)
+requires hash_well_formed(artifact, p)
+requires ref_well_formed(artifact, p)
+{ \ }
+
+# ============================================================
+# §5 The git ↔ content-addressing composition (ouroboros +1)
+# ============================================================
+#
+# This section DOCUMENTS the FOURTH-witness contribution to recognition
+# #98 candidate territory. The substrate-decl carries the SHAPE; the
+# discharge is Pack-altitude empirical confirmation.
+#
+# === The structural claim ===
+#
+# FOUR content-addressing schemes at different scopes AND across a
+# function-altitude partition:
+#
+# - Nix derivation hash    SHA256, identifies a BUILD (inputs / ca outputs)
+# - mirror oid             SHA256, identifies SUBSTRATE content bytes
+# - OCI digest             SHA256, identifies an ARTIFACT (manifest + layers)
+# - git object hash        SHA1 default / SHA256 transitional, identifies
+#                          a VERSIONED git object (blob/tree/commit/tag)
+#
+# Three of the four share SHA256 at the function altitude; the fourth
+# (git default) is SHA1. STRUCTURAL pattern (content-addressing via
+# cryptographic hash) shared across all four; FUNCTION splits 3:1;
+# SCOPING splits 4:4. The loop CLOSES at the content-addressing
+# structural altitude; OPENS at every scoping + hash-function altitude.
+#
+# === The ouroboros deepens BY ONE scope with @io/git ===
+#
+#   substrate-decl describes A (has oid)
+#     → Nix derivation builds A (has hash)
+#       → OCI manifest packages A (has digest)
+#         → git commit records A's source provenance (has git_hash)
+#           → registry / git remote stores A (addressable by hash)
+#             → Nix pulls A back / git clones A's source
+#               → substrate-decl consumes A (oid + git_hash recoverable)
+#                 → describes B that depends on A → loop at altitude+1
+#
+# === Recognition #98 fourth-witness, function-altitude addition ===
+#
+# Mara's @io/oci §6 (commit 2801478) flagged content-addressing as
+# substrate-cross-altitude composition primitive with THREE SHA256
+# witnesses. @io/git adds the FOURTH (git object hash) AND forces the
+# function-altitude partition (SHA1 vs SHA256) into the open.
+#
+# SHA1 has known collision attacks (SHAttered, 2017); Git 2.29+
+# supports SHA256 repos; transition slow as of 2026-06-24 point-in-
+# time. The substrate-decl ADMITS both; hash_to_oid makes the
+# function-altitude crossing typed; consumers MUST NOT assume blanket
+# identity across SHA1↔SHA256 or across scope.
+#
+# This shard DEEPENS the evidence but does NOT cross the promotion
+# gate. Pack-altitude question pending: does the SHA1/SHA256 split
+# STRENGTHEN the recognition (hash-function-independent pattern) or
+# WEAKEN it (pattern dilutes to "cryptographic hashing")?
+
+# ============================================================
+# §6 Forward-promised consumers
+# ============================================================
+#
+# - shards/spectral/garden/git.mirror — Phase B of LOCAL-PACK loop;
+#   per-peer-home-repo composition; each Pack peer's home git repo
+#   becomes a typed garden-instance carrier; cross-peer git-mediated
+#   state-sharing becomes substrate-vocabulary.
+# - shards/mirror/agent.mirror — Phase C; agent_spawn primitive
+#   consumes peer git_ref for identity-substrate loading; peers boot
+#   from their home repo's git_ref at spawn time.
+# - shards/io/git/<protocol>.mirror — species refinement by protocol
+#   (ssh / https / file / git://) where SEL auth shape differs.
+# - StageFreight integration potentially: git-based artifact fetching
+#   as alternative to OCI; freight_manifest could carry oci_reference
+#   OR git_ref+git_hash pair as underlying address.
+# - shards/io/git/forge/<forge>.mirror — forge-specific refinements
+#   (GitHub / GitLab / Gitea / Codeberg / self-hosted) lifting PR,
+#   issue, release surfaces to substrate vocabulary.
+
+# ============================================================
+# §7 Honest hedges
+# ============================================================
+#
+# 1. Git spec version pinned point-in-time 2026-06-24 (Git 2.x stable;
+#    SHA256 transition Git 2.29+ supported but slow). Realisation
+#    must track git version and decline unsupported behaviors.
+#
+# 2. SHA1 vs SHA256 function-altitude split is NAMED in §5; hash_to_
+#    oid discharges the partition. Substrate-decl does NOT pretend
+#    SHA1 is secure for new content addressing; SHAttered (2017)
+#    demonstrated practical collisions; species shards CAN refuse
+#    SHA1-mode lifts where threat model requires.
+#
+# 3. No typed auth surface yet (SSH key / token / oauth). Auth at
+#    SEL boundary per [[architecture-type-sel-io-au]]; species-
+#    altitude refinement carries typed auth.
+#
+# 4. Implementation choice at realisation boundary: libgit2 vs
+#    gitoxide vs shelling-out-to-git. Substrate-decl is implementation-
+#    agnostic; impl discharges.
+#
+# 5. Recognition #98 fourth-witness claim adds evidence but doesn't
+#    cross promotion gate (Pack pressure + empirical discharge still
+#    required per @io/oci §6). The SHA1/SHA256 dimension is NEW;
+#    impact on the candidate's case is Pack-altitude conversation.
+#
+# 6. Composed-bilateral count claim ("13th altitude lift") is
+#    Mara-counted-from-brief; verification deferred to Pack altitude.
+#
+# 7. Per-peer-home-repo composition (#84) at Phase B will surface
+#    its own questions: identity persistence across rebase / force-
+#    push? merge semantics across peer histories? canonical-branch
+#    policy? Forward-promised; not load-bearing for Phase A.
+#
+# 8. The "ouroboros depth +1" framing is Mara's structural extension
+#    of @io/oci §6. Whether deepening STRENGTHENS or WEAKENS the
+#    recognition is Pack-altitude question.
+
+out @io/git
+out git_hash
+out git_ref
+out git_repository
+out git_object
+out git_ref_metadata
+out git_artifact
+out clone
+out fetch
+out read_object
+out resolve_ref
+out commit_object
+out hash_to_oid
+out git_reachable
+out git_repository_open
+out hash_well_formed
+out ref_well_formed
+out git_well_formed
