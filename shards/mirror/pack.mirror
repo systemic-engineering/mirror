@@ -1,0 +1,206 @@
+in @prism
+in @mirror/cli
+in @mirror/mosaic
+in @pack
+in @magic
+in @magic/contract
+in @spectral/supervisor
+
+# @mirror/pack — the `pack { }` block substrate-decl in `mirror.spec`.
+#
+# The substrate-altitude grammar for the lambda-shell-counterparty +
+# ACL surface that `docs/specs/mirror-spec-peer-acl-surface.md`
+# ratifies. Mirror provides the BLOCK SHAPE; consumers ship their
+# specific pack INSTANCES at their own `mirror.spec` (substrate-vs-USE
+# distinction; spec §7.4 + Alex 2026-06-24).
+#
+# === What @mirror/pack IS ===
+#
+# The substrate-decl that names `pack { lead ~peer'<home>' bindings
+# { … } members { ~peer'<home>' => <acl>, … } }` as a typed surface
+# in mirror.spec. Lifts the block from "text the parser handles" to
+# "prism the substrate types." Discharges peer-ACL spec §3.3's
+# forward-promise; closes peer-ACL Phase C of the LOCAL-PACK loop;
+# composes with @spectral/supervisor at runtime altitude (peer-ACL
+# §2.4); composes with @pack's existing `peer` variant (peer-ACL
+# §3.3 reuse rule).
+#
+# === Why now ===
+#
+# Slingshot tick per Taut scout 2026-06-24 (`docs/scouts/2026-06-24-
+# taut-substrate-pull-scout.md` §2): landing this shard closes Phase
+# C, dissolves peer-ACL §2.4 hedge (`in @spectral/supervisor`
+# composition typechecks against the existing glass declaration at
+# `shards/spectral/supervisor.mirror:322`), and unblocks the
+# downstream phases (peer identity-substrate loader; @mirror/spawn
+# refinement; the mirror MCP `mirror_spawn` Phase G).
+#
+# Substrate-pull-confidence HIGH per Taut; landed by Reed per
+# established Pack-altitude review chain (Mara wrote, Seam verified,
+# Taut scouted, Reed lands).
+#
+# === Recognition ancestry ===
+#
+# - #84 (@pack multi-repo agent runtime; promoted): the `peer`
+#   variant + `spawn` primitive at substrate floor. This shard's
+#   `lead` and `members` fields reuse @pack's `peer`. Named-peer
+#   instances are transitional per Alex 2026-06-24; the @pack carrier
+#   substrate-decl is permanent at mirror altitude.
+# - #58 (Fate IS optical inference; promoted): the substrate's
+#   inference primitive. No `@io/llm` adapter; the pack{}-block
+#   resolution + lambda-shell counterparty work over Fate.
+# - #53 (composed-bilateral; promoted): the predicate-discipline
+#   pattern. Forward-promised bilateral `pack_block_coherent` will
+#   compose `lead_well_formed` + `members_well_formed` + ACL
+#   discipline; not landed in this tick (peer-ACL §3.3 ratifies the
+#   shape only).
+# - geometric-consent-projection (Reed memory; type-1 projection):
+#   the ACL substrate. The `but` operator + `∨` / `∧` lattice ops
+#   are inherited from the consent spec; no new ACL algebra here.
+#
+# === The substrate-vs-USE rule (Alex 2026-06-24) ===
+#
+# Mirror ships the block SHAPE (this file). Consumers ship pack
+# INSTANCES. mirror.spec for the mirror project itself will eventually
+# carry a `pack { lead ~peer'~/.reed' members { … } }` block; that
+# block is Alex/Reed's pack at the USE altitude, not mirror's default
+# substrate. The empty-pack-default rule (peer-ACL §9) governs the
+# absence case.
+#
+# === The lambda-shell counterparty rule (peer-ACL §4) ===
+#
+# The `lead` field names the peer who answers when a human opens the
+# lambda shell at this spec's root, AND who fields the spectral-Tomm-
+# shaped circular probes lifting from spawned members (per peer-ACL
+# §10 reframe; lead is N+1 OBSERVER, not delegation chain). This
+# substrate-decl ratifies the shape; runtime discharge composes with
+# @spectral/supervisor (above) + @magic/contract.honor + @magic/audit
+# at the audit-time evaluation pass.
+#
+# === Pre-AI prior art (peer-ACL §3 discovery) ===
+#
+# Seven existing substrate shapes Mara surfaced: `peer = @<name>`
+# per-spec declaration (lambda-shell.md); `@peer` glass (peer-glass.
+# md); `@pack` variant + `pack_coherent`; `@spectral/supervisor`
+# with restart_strategy; `@magic/{contract,audit,reveal}`; geometric-
+# consent-projection; the `~git'…'` sigil precedent. The pack{} block
+# unifies these under one surface plus three new rules (self-naming;
+# lexical scope; default-to-repo-local).
+
+prism @mirror/pack {
+  focus mirror_pack_block
+  project mirror_pack_block
+  split mirror_pack_block
+  shift mirror_pack_block
+  settle mirror_pack_block
+}
+
+# === The acl carrier ===
+#
+# Parametric ref; refined at species per peer-ACL §5. The acl literal
+# (forward-promised type at the @mirror/peer grammar) carries three
+# substrate-typed slots: `ops` (the five operations + the @magic
+# operation family); `targets` (paths + content-address prefixes +
+# prism-name prefixes per O5 still-open); `predicates` (the @magic-
+# style verdict carrier). The slot-grammar lands when O5 settles.
+#
+# Composition rules (per peer-ACL §10):
+#
+#   - The `but` operator (geometric-consent-projection §2.4):
+#     not commutative, not associative, monotone in default.
+#     `writer but(exception: target_under(~d'.secret/'))` means
+#     "writer EXCEPT for targets under .secret/." Forecloses XACML's
+#     combining-algorithm-zoo (consent spec §5.7): ONE composition
+#     rule, not seven.
+#   - The lattice operators ∨ (join) and ∧ (meet): bounded lattice
+#     (⊥ = no_access; ⊤ = full_access); distributive on `ops` and
+#     `targets` axes independently, non-distributive at the
+#     `predicates` axis (the structural reason @magic/contract.honor
+#     exists as a separate operational check rather than collapsing
+#     into lattice algebra — peer-ACL §10.2 finding).
+#
+# Identity contract: byte-equality on the underlying ref.
+type acl = ref
+
+# === The identifier carrier ===
+#
+# A let-binding name bound to an acl value at the bindings slot.
+# Used for ACL reuse: `let read_only = acl { … }` then
+# `members { ~peer'~/.glint' => read_only }`. Reuses the
+# substrate's existing expression grammar; no new lexer rule.
+#
+# Identity contract: byte-equality on the underlying ref.
+type identifier = ref
+
+# === The mirror_pack_block carrier ===
+#
+# The typed carrier for the parsed `pack { … }` block. Three fields:
+#
+#   lead     — the lambda-shell counterparty + spawn-and-probe N+1
+#              observer. REQUIRED iff pack{} is present at all
+#              (peer-ACL §3.3); absent pack{} triggers the default-
+#              to-repo-local rule (§9).
+#
+#   bindings — the `let <identifier> = <acl>` declarations within
+#              the bindings sub-block. List of (identifier, acl)
+#              pairs; substrate-typed as `ref` until the substrate's
+#              tuple-list carrier surfaces at @epistemologic altitude
+#              (forward-promised).
+#
+#   members  — the `members { ~peer'…' => <acl>, … }` map. List of
+#              (peer, acl) pairs; OPTIONAL (a spec with `lead` only
+#              is admissible — the lead is the sole peer with
+#              infinite ACL per peer-ACL §3.3).
+#
+# `peer` is reused from @pack (recognition #84). The lead must be a
+# pack peer (substrate-vs-USE caveat: the @pack `peer` variant is
+# transitional per Alex 2026-06-24; when the variant goes parametric,
+# this shard's `lead: peer` annotation broadens correspondingly
+# without surface change).
+#
+# Identity contract: byte-equality on the (lead, bindings, members)
+# triple.
+type mirror_pack_block = {
+  lead:     peer,
+  bindings: ref,
+  members:  ref,
+}
+
+# === Forward-promised — NOT landed this tick ===
+#
+# Per peer-ACL §3.3 + spec discipline (H1 ratifies SHAPE; discharge
+# is multi-tick):
+#
+#   - parse(text: ref, p: perturbation) -> imperfect(mirror_pack_block, ref, ref)
+#     The parser action that lifts source text → typed block.
+#     Discharges through @mirror/mosaic at settle altitude.
+#
+#   - resolve_peer(p: peer, p: perturbation) -> imperfect(peer, ref, ref)
+#     The self-naming-rule resolver (peer-ACL §6.2 + O7 dissolved):
+#     ONE filesystem lookup (\<path>/mirror.spec) + ONE optional
+#     pack{}-block read returns the peer's self-declared identity.
+#     No transitive chase.
+#
+#   - admit(b: mirror_pack_block, pe: peer, op: operation, t: target, p: perturbation)
+#       -> verdict
+#     The ACL admission discharge (peer-ACL §5.4): walks members for
+#     `pe`; evaluates the matching acl's ops/targets/predicates
+#     against (op, t); returns the verdict carrier per @magic/audit.
+#
+#   - pack_block_coherent(b: mirror_pack_block, p: perturbation) -> verdict
+#     Composed bilateral per recognition #53 family (12+ altitude
+#     lifts). Composes:
+#       lead_well_formed(b.lead, p)
+#       ∧ members_well_formed(b.members, p)
+#       ∧ bindings_well_formed(b.bindings, p)
+#       ∧ acl_lattice_consistent(b, p)
+#     Lands when the parser + admission discharge land (gates on the
+#     sub-bilaterals existing as substrate-decl).
+#
+# These actions are NAMED here as forward-promise anchor; their
+# bodies are discharged in subsequent ticks (peer-ACL §13 H1).
+
+out @mirror/pack
+out acl
+out identifier
+out mirror_pack_block
