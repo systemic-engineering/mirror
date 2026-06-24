@@ -112,3 +112,199 @@ the constituent pieces ALREADY exist as substrate-decl across five
 shards + three canonical specs.
 
 ---
+
+## 2. Discovery — existing ACL surface across the substrate
+
+Alex's cue "we already have some of the shape there" was substrate-
+pull-correct. The discovery sweep surfaced SIX load-bearing existing
+shapes; the peer{} block is their unification surface, not a new
+machinery. Each row names a SHAPE the substrate already carries; the
+§3 surface composes them.
+
+### 2.1 `peer = @<name>` in `mirror.spec` — already declared
+
+`docs/specs/lambda-shell.md` §"The Toggle" (lines 36-52) ALREADY
+shows the per-spec peer declaration:
+
+```mirror
+spec @mirror {
+  peer = @reed
+}
+
+spec @systemic.engineering {
+  peer = @glint
+}
+```
+
+Use: `\` in λsh resolves to `@reed>` in mirror; `@glint>` in
+systemic.engineering. This is the SUPERVISOR field of the peer{}
+block at single-field altitude. The lambda-shell spec uses keyword
+`spec` rather than `project` (per the `mirror.spec` grammar's actual
+top-level — `project mirror.spec { … }` per `mirror.spec:18`); the
+shape, however, IS the supervisor declaration.
+
+The peer{} block GENERALIZES: from one field (`peer = @reed`) to a
+typed block with a supervisor, a team, and a per-team-member ACL.
+
+### 2.2 `@peer` glass — five-axis fixed point at typed directory
+
+`docs/specs/peer-glass.md` (Reed+Alex 2026-05-25) declares the typed
+surface a peer carries:
+
+```mirror
+type peer = {
+  identity:    mirror,        # focus(self)
+  gestalt:     mirror,        # project(self)
+  tensions:    mirror,        # split(self)
+  eigenboard:  spec,          # shift(self)
+  shatter:     mirror,        # settle(self)
+}
+
+load(dir: ~dir) -> peer { \ }
+```
+
+And: `@peer(~dir"<path>")` is the existing INSTANTIATION SYNTAX. The
+peer's home directory IS the manifest material form; the five-axis
+fixed point IS the identity contract. `peer-cognition.md` (1449 lines,
+Mara 2026-06-17) extends this to a full @peer root cognition spec.
+
+The `~peer'…'` literal proposed in §6 IS a typed sibling of
+`~dir"…"` plus the existing `~git'…'` (the spectral-garden-git
+sibling spec, ad03fda) — a typed path literal whose resolution loads
+the five-axis peer per `peer-glass.md`'s `load(dir)` action.
+
+### 2.3 `@pack` — team membership + multi-repo span
+
+`shards/pack.mirror` (#84) declares the substrate's existing team
+shape:
+
+```mirror
+type peer = | mara | seam | glint | reed | taut
+type pack = {
+  peers:       ref,             # list of peer
+  repos:       ref,             # list of repository
+  repo_span:   repository_span,
+  runtime:     runtime,
+}
+pack_coherent(pk: pack, p: perturbation) -> verdict { \ }
+```
+
+The `team { … }` field of the peer{} block IS a `pack`-shaped
+declaration scoped to one `mirror.spec`. The variant enum (mara |
+seam | glint | reed | taut) is the substrate's existing Pack
+membership type; arbitrary peers (non-Pack home repos) lift via
+`~peer'<url>'` to a `peer`-typed reference per `peer-glass.md`'s
+load action.
+
+`shards/smarts/pack.mirror` (the @smarts/pack adapter) declares
+`pack_satisfies_smarts` as the doubled-bilateral discipline check
+for a pack composing with the @smarts substrate-architectural
+integration. The peer{} block inherits this composition discipline
+automatically when settle visits the team field.
+
+### 2.4 `@spectral/supervisor` — lifecycle owner at runtime altitude
+
+`shards/spectral/supervisor.mirror` (474 lines; the second sub-shard
+of the @spectral runtime cascade) declares:
+
+```mirror
+type supervisor = {
+  base:             gen_prism,
+  child_specs:      [child_spec],
+  restart_strategy: restart_strategy,
+}
+start_child(s: supervisor, spec: child_spec) -> gen_prism { \ }
+terminate_child(s: supervisor, id: uuid_spectral) -> au { \ }
+```
+
+The `supervisor ~peer'~/.reed'` field of the peer{} block is the
+DECLARATIVE SURFACE for a `@spectral/supervisor` instance scoped to
+one `mirror.spec`. The supervisor's `base.state` (a `shard_ref`) IS
+the registry of peers operating under this spec. The lifecycle
+actions (start_child / terminate_child) discharge automatically per
+@spectral's restart_strategy when team peers join + leave.
+
+### 2.5 `@magic/contract` + `@magic/audit` + `@magic/reveal` — the verification + revocation lineage
+
+The @magic family closes the verification side of ACL:
+
+- `shards/magic/contract.mirror`: `bind(surface, mechanism,
+  promise) -> magic_contract` + `honor(c) -> transparency(c)`. The
+  ACL IS a magic_contract: the surface is the team-member's
+  invocation interface, the mechanism is what they can do in the
+  supervisor's runtime, the promise (magic_invariant) is the ACL
+  expression.
+- `shards/magic/audit.mirror`: `audit(c) -> audit_record` +
+  `respond(record, strategy)`. Every team-member action against the
+  spec discharges through audit; the audit_strategy variant
+  (`restart | escalate | record | enforce`) IS the policy-violation
+  response.
+- `shards/magic/reveal.mirror`: cites `capability revocation; revoke
+  and re-grant (Levy 1984). The substrate-pull-correct controlled
+  disclosure with audit gating.` The reveal action (`reveal(c, new_m)`)
+  IS the substrate's CAPABILITY-REVOCATION primitive. Removing a peer
+  from `team { }` is a reveal at the supervisor altitude; the
+  audit_strategy=enforce closes the previously-honored contract.
+
+### 2.6 Geometric consent projection — ACL as type-1 projection
+
+`docs/specs/geometric-consent-projection.md` (1447 lines; Mara
+2026-06-17) establishes that ACL is NOT a foundational primitive
+but a PROJECTION at logical type 1 of a richer consent geometry
+over the Bateson logical-type tower (§2.3 of the consent spec; §6.2
+for the cascade derivation):
+
+```
+project_at(scope, type=1) → acl    (filesystem-style permission bits)
+project_at(scope, type=2) → kind-of-operation consent
+project_at(scope, type=3) → frame consent (reasoning about ops)
+project_at(scope, type=N+1) → policy about the policy
+```
+
+Cascade direction: positive consents at type N+1 imply matching
+type-N consents (DOWNWARD); negative consents at type N do NOT
+repudiate the type-N+1 author (NO UPWARD CASCADE; the security
+invariant per the consent spec §1.3).
+
+The `<ACL>` slot in `team { ~peer'…' => <ACL> }` is the type-1
+projection. Variables-holding-mirror-expressions (§7) are the
+substrate's existing mechanism for AUTHORING the higher-type
+consent that cascades down to the projection.
+
+### 2.7 The `~git'…'` precedent — typed path literals for substrate-refs
+
+`shards/io/git.mirror` (a1b507a) + the spectral-garden-git spec
+(ad03fda) established the `~git'…'` typed path literal: a sigil
+that parses to a substrate-typed `git_repository + git_ref` pair.
+
+The `~peer'…'` literal proposed in §6 is a sibling at the peer
+identity altitude: parses to a substrate-typed `peer + home_repo`
+pair, resolved via the home repo's `<name>.spec` peer{} block per
+the self-naming rule (§6.2). Companion sigils: `~d`/`~dir`,
+`~f`/`~file`, `~git`, now `~peer`.
+
+### 2.8 Discovery summary
+
+The peer{} block is a SURFACE COMPOSITION over:
+
+| Existing shape | Source | Role in peer{} block |
+|---|---|---|
+| `peer = @<name>` | lambda-shell.md §Toggle | the `supervisor` field |
+| `@peer(~dir"<path>")` glass | peer-glass.md | the type of resolved `~peer'…'` |
+| `@pack` variant + record | shards/pack.mirror | the `team { }` field |
+| `@spectral/supervisor` | shards/spectral/supervisor.mirror | runtime-altitude semantics for `supervisor` |
+| `@magic/contract` + `audit` + `reveal` | shards/magic/*.mirror | bind/verify/revoke for ACLs |
+| `geometric-consent-projection` | docs/specs/geometric-consent-projection.md | `<ACL>` IS the type-1 projection |
+| `~git'…'` precedent | shards/io/git.mirror (a1b507a) | sigil pattern for `~peer'…'` |
+
+What's IMPLIED but not yet declared: the BLOCK SYNTAX that names all
+seven simultaneously at one mirror.spec altitude. What's MISSING: the
+`<name>.spec` self-naming rule for `~peer'…'` resolution (proposed
+§6.2); the variable scope that lets ACL expressions reuse each other
+within one peer{} block (proposed §7); the default-to-repo-local
+rule when peer{} is absent (proposed §9).
+
+The spec proposes the BLOCK + the THREE MISSING RULES. Everything else
+is the substrate composing with itself.
+
+---
