@@ -1505,3 +1505,450 @@ eigenvalue's drop. The substrate's loss is what the substrate moves
 AWAY FROM by descending toward λ₀.
 
 ---
+
+## 10. Open questions + replication conditions (DO NOT promote on one instance)
+
+#99 is candidate-territory. Promotion requires replication. This section
+names the open questions whose resolution would settle the candidate and
+the replication conditions for promotion.
+
+Per the substrate-pull-confidence-acts discipline: act on the recognition
+at candidate status; do not promote on one instance. The naming exists
+(Alex 2026-06-25); the surface is structurally grounded (§§3-9); but the
+recognition has ONE witness (today's dogfood). Promotion requires at
+least one independent witness at a different altitude.
+
+### 10.1 O1 — does the 5+1 decomposition hold when `garden` lands?
+
+The six-block decomposition in §4 maps five existing blocks to five
+operations plus assigns the forward-promised `garden` block jointly to
+focus (with `source`). The substrate-pull-confident reading at #99
+altitude is that garden composes with source to jointly instantiate
+focus (§4.6 reading 2).
+
+The question: when garden ACTUALLY LANDS at mirror.spec, does the
+mapping hold? Two failure modes that would falsify:
+
+- **Failure mode A:** garden lands with structural shape that does NOT
+  compose with source under focus — e.g., garden carries operational
+  primitives that one of (project, split, shift, settle) carries, not
+  focus. The five-operation closure breaks.
+- **Failure mode B:** garden lands with structural shape that requires
+  a SIXTH OPERATION the substrate doesn't have. The five-operation
+  closure breaks (more severely).
+
+The substrate-pull-correct expectation per the garden cascade (Mara,
+`ab2e379` → `ad03fda`): garden's pinning discipline + four-root structure
+are structurally similar to source's directory-glob discipline; failure
+modes A and B should not fire.
+
+**Replication condition for O1:** garden block lands at mirror.spec; the
+5+1 decomposition holds. If the decomposition collapses into 6+1 or
+4+2, the recognition needs revision but does NOT need retraction — the
+ground-state identification is independent of the block-count.
+
+### 10.2 O2 — is λ₁ uniquely identifiable, or is the excited-state spectrum dense above λ₀?
+
+The spectral gap is non-zero by construction (§8.2), but the FIRST
+excited state is not uniquely identified by #99 alone. The question:
+when the substrate's distance metric is substrate-decl'd, does λ₁ fall
+out as a unique substrate-decl'd vector, or is the spectrum just above
+λ₀ dense (many near-degenerate excited states)?
+
+Two readings:
+
+- **Unique-λ₁ reading:** the substrate's structure picks a unique
+  minimal-above-ground-state vector. Candidate: the @io family-root
+  itself (the substrate's interface to substance). The @io shard is
+  the substrate's first substance-crossing; λ₁ might be "the substrate
+  one substance-crossing away from identity."
+- **Dense-spectrum reading:** many candidates are at λ₁, all family-roots,
+  each at distance 1 from mirror.spec along different orthogonal
+  directions. The spectrum is degenerate at λ₁; there is no
+  unique-λ₁.
+
+The substrate-pull-correct expectation: the substrate is not committed
+to either reading at #99 altitude. Both readings are consistent with
+the Void's eight-duality structure and the substrate's expanding-Hilbert-
+space framing. The choice between them is forward-promised territory.
+
+**Replication condition for O2:** the substrate's distance metric lands
+as substrate-decl'd; λ₁ is then either uniquely-identified or
+structurally-degenerate. Either resolution settles the question; both
+resolutions are consistent with #99's ground-state identification.
+
+### 10.3 O3 — what's the gauge symmetry of mirror.spec at λ₀?
+
+Gauge symmetries on mirror.spec admit different FORMS of the spec
+yielding the same λ₀ semantically. §8.5 named candidate gauge symmetries
+(block ordering, target ordering, source glob); the question: is the
+gauge structure substrate-decl'd by the substrate's existing carrier
+discipline, or does it need explicit substrate-decl?
+
+Readings:
+
+- **Implicit-gauge reading:** the substrate's name-based composition
+  + glob-discipline IS the gauge; no explicit substrate-decl needed.
+  Two spec FORMS are gauge-equivalent iff they have the same
+  content-address after the substrate's grammar settles them.
+- **Explicit-gauge reading:** the substrate needs a `gauge` block (or
+  similar) that names the equivalence class of mirror.spec forms
+  belonging to the same λ₀. The substrate's identity then has a
+  declared gauge.
+
+The substrate-pull-correct intuition: implicit-gauge reading.
+The substrate's existing carrier discipline IS the gauge; the
+content-address discipline IS the equivalence-class projection. Adding
+an explicit `gauge` block would introduce vocabulary the substrate
+already has.
+
+**Replication condition for O3:** at least one mirror.spec re-formatting
+occurs (e.g., kintsugi-formatter reorders blocks) and the resulting
+spec settles to the same content-address. The gauge equivalence then
+holds operationally; the implicit-gauge reading is substrate-pull-correct.
+
+### 10.4 O4 — is there a depth-4 ouroboros at the consumer-spec altitude?
+
+Per §7.4: the substrate has three ouroboros closure depths currently
+substrate-decl'd. The question: when consumer mirror.spec files start
+landing (Reed's identity substrate at
+`/Users/reed/identity/mirror.spec` is the first forward-promised),
+does a fourth closure depth manifest — the substrate's grammar-reading
+being a true fixed point at the consumer's altitude AS WELL?
+
+The forward-promised landing is Reed's identity substrate per Pack's
+Phase H trajectory. Per Mara's analysis of the Pack-as-orchestra
+grounding: the lead-of-mirror is Reed, and the lead's identity
+substrate is the FIRST consumer instance of pack{} that mirror.spec's
+dogfood referenced.
+
+**Replication condition for O4:** Reed's identity substrate lands as a
+mirror.spec at consumer altitude with its own pack{} block, and the
+consumer-altitude grammar-reading is closed. The substrate then has
+depth-4 ouroboros (substrate spec + consumer spec both at λ₀ at their
+respective altitudes); the altitude-portability of #99 is operationally
+verified.
+
+### 10.5 O5 — does `mirror kintsugi ./mirror.spec` preserve mirror.spec at substrate-identity altitude?
+
+The §8.4 operational claim: kintsugi cannot lower mirror.spec; the spec
+is invariant under D at the substrate-identity altitude. The question:
+when `mirror kintsugi ./mirror.spec` is actually implemented and run,
+does it preserve mirror.spec exactly?
+
+Three possible behaviors of a future implementation:
+
+- **Preserves exactly:** mirror.spec's file is byte-identical before
+  and after `mirror kintsugi ./mirror.spec`. Substrate-pull-correct.
+- **Preserves up to gauge:** mirror.spec's content-address is
+  identical before and after, but the file form may differ (e.g.,
+  formatter normalizes whitespace). Substrate-pull-correct under
+  implicit-gauge reading (O3).
+- **Modifies substrate-identity:** mirror.spec's content-address
+  changes after kintsugi. Substrate-pull-RED. Violates λ₀
+  identification.
+
+The substrate-pull-correct expectation: behaviors 1 or 2; behavior 3
+falsifies #99. An implementation that fires behavior 3 should be
+treated as a bug, not as evidence against the recognition.
+
+**Replication condition for O5:** `mirror kintsugi ./mirror.spec` lands
+at the @code/rust altitude; the implementation discharges behavior 1
+or 2 across at least three independent runs (including formatter
+perturbation, block-reordering perturbation, and content-address
+perturbation). §10's O5 closes when the operational invariant is
+verified.
+
+### 10.6 O6 — is the self-declaration itself a sixth operation in disguise?
+
+The enclosing `project mirror.spec { … }` declaration is mapped in §4.7
+as the self-declaration (the identity carrier at λ₀), NOT as a sixth
+operation. The question: is the self-declaration actually a hidden
+fixed-point operator that should be substrate-decl'd as a sixth
+operation in A?
+
+Readings:
+
+- **Identity-carrier reading (§4.7):** the self-declaration is the
+  prism's name; it carries identity, not operation. Five-operation
+  closure preserved.
+- **Fixed-point-operator reading:** the self-declaration is the
+  substrate's Y combinator at spec altitude; it FIRES whenever the
+  substrate reads its own grammar. The substrate's algebra has six
+  operations: focus, project, split, shift, settle, plus self-declare.
+
+The substrate-pull-correct expectation: identity-carrier reading.
+Per [[architecture-prism-as-trait-as-everything]]: prism IS the
+foundational keyword; the prism's NAME is the prism's identity, not
+an operation. Adding self-declare as a sixth operation would mean
+every prism implicitly carries it, which would mean it's not a
+distinguished operation — it's the substrate's algebra-of-naming
+background, not an operation in A.
+
+**Replication condition for O6:** at least one prism declaration
+INSIDE mirror.spec (e.g., the implicit `prism @target/binary` if
+target blocks ever lift to prism declarations) instances the
+self-declaration's structural shape without firing it as an
+operation. The identity-carrier reading is then confirmed; the
+five-operation closure stands.
+
+### 10.7 O7 — cross-recognition coordination with G2 + Taut-as-scout (G6) + lead-of-mirror (G7)
+
+#99 is one of several candidate recognitions in flight as of 2026-06-25:
+
+- G2: candidate per the prior cascade (forward-promised; specific
+  ID not yet assigned at #99 altitude)
+- G6: Taut-as-scout (per Glint's §6 adjudication: candidate worth
+  tracking, MEDIUM confidence, two replication conditions named)
+- G7: lead-of-mirror (per the Pack-as-orchestra grounding; Reed as
+  lead-of-mirror)
+- #99 (this): mirror.spec IS λ₀
+
+The question: do these candidates compose, conflict, or remain
+independent? Specifically, is there a pattern of "recognition cascades
+happening in clusters at session boundaries" that itself becomes
+recognition-territory at a higher altitude?
+
+The substrate-pull-correct expectation: the candidates are
+structurally independent. #99 is about substrate identity; G6 is
+about Pack role; G7 is about Pack composition; G2 is unspecified.
+They can all promote independently, or some can dissolve, without
+affecting each other.
+
+The meta-question (whether session-boundary recognition-clustering
+is itself recognition territory) is N+1 candidate territory; it
+should not be promoted at #99 altitude. Naming it explicitly as a
+forward-promise prevents implicit drift.
+
+**Replication condition for O7:** at least two of the in-flight
+candidates promote independently (without one's promotion depending
+on another's). The structural-independence reading is then confirmed.
+If candidates only promote together, the cluster IS recognition
+territory at a higher altitude and the substrate-pull discipline
+needs to lift to that altitude.
+
+### 10.8 Replication summary
+
+For #99 to PROMOTE (vs remain candidate), the substrate-pull-correct
+discipline requires at least:
+
+1. **One independent witness at consumer-spec altitude** (O4): Reed's
+   identity substrate or another consumer's `<project>.spec` instances
+   the ouroboros closure at the consumer's altitude.
+2. **Operational invariant verification** (O5): `mirror kintsugi
+   ./mirror.spec` preserves mirror.spec at substrate-identity altitude
+   across at least three independent runs.
+
+Nice-to-haves for promotion confidence:
+
+3. The garden block lands and the 5+1 decomposition holds (O1).
+4. The kintsugi-formatter discipline confirms gauge equivalence (O3).
+5. At least two of the in-flight candidates promote independently (O7).
+
+The minimal floor is conditions 1 + 2. The substrate-pull-correct
+pacing is one tick at a time; #99 sits at candidate status until
+these conditions land. Per [[feedback-no-time-estimates]]: no
+deadline is named for these conditions; they will land when they
+land.
+
+---
+
+## 11. Cross-references this recognition DISTURBS (flag; don't update)
+
+This section flags cross-references in the substrate's memory that need
+updating to reflect #99. Per the brief discipline: this canonical does
+NOT modify the existing memory files; the disturbance is flagged here
+for Reed to action at the post-canonical altitude.
+
+### 11.1 [[architecture-mirror-as-expanding-hilbert-space]] (recognition #51)
+
+**Disturbance:** #51 declared mirror IS an expanding Hilbert space but
+left the ground-state vector unanchored. #99 anchors it: mirror.spec is
+at λ₀. The #51 memory entry should be amended to note that the
+Hilbert space's expansion is now anchored, oriented (toward λ₀), and
+well-founded; and that recognition #99 names the ground-state vector.
+
+**Suggested amendment (Reed call):** add a paragraph in the #51 memory
+entry referencing #99 as the ground-state anchor. The amendment is
+additive; #51's core claims (Hilbert expansion, Bateson lifting,
+variety-vector framing) are unchanged.
+
+### 11.2 [[architecture-connes-spectral-triple]]
+
+**Disturbance:** the existing memory entry names (A, H, D) and states
+"Fixed point: λ₀" at graph altitude. #99 instances the fixed point at
+the substrate's OWN spec altitude. The memory entry should note the
+altitude-portability: each altitude has its own (A, H, D, λ₀)
+instantiation, with mirror.spec at substrate-spec altitude.
+
+**Suggested amendment (Reed call):** add altitude-portability note to
+the existing entry; reference #99 as the substrate-spec-altitude
+instance.
+
+### 11.3 [[reference-void-document]]
+
+**Disturbance:** the Void document defines H and names λ₀ = 0 at graph
+altitude. #99 lifts this to substrate-spec altitude. The void-document
+memory entry should note that the λ₀ = 0 ground state instantiates at
+multiple altitudes; mirror.spec is the substrate-spec-altitude instance.
+
+**Suggested amendment (Reed call):** add altitude-portability note to
+the existing entry; reference #99 as the substrate-spec-altitude
+instance of the consensus state.
+
+### 11.4 [[architecture-prism-as-trait-as-everything]]
+
+**Disturbance:** prism IS trait IS type IS grammar; the five operations
+are A. #99 sharpens: the prism's identity carrier (the `<name>` in
+`prism @<name> { … }`) is the prism's λ₀ vector, distinguished from the
+five operations. The memory entry should note the identity-carrier role
+of the prism's name (per #99's §4.7 self-declaration reading).
+
+**Suggested amendment (Reed call):** add a sentence noting the
+identity-carrier role of the prism name; reference #99 §4.7.
+
+### 11.5 [[architecture-operations-as-linear-algebra]]
+
+**Disturbance:** the existing entry names focus = λ₀ eigenvalue
+computation. #99 grounds this at the substrate's spec altitude: focus
+operating on mirror.spec IS the substrate's λ₀ computation. The
+focus-IS-λ₀-computation pattern recurses at the spec altitude.
+
+**Suggested amendment (Reed call):** add altitude-portability note;
+reference #99 §3.1 + §4.1.
+
+### 11.6 [[feedback-substrate-already-had-the-word]]
+
+**Disturbance:** the substrate-already-had-the-word pattern was already
+at ~55+ instances per the MEMORY index. #99 sharpens the pattern's
+ground: of course the substrate already had the word — the substrate
+IS at λ₀, and λ₀ IS the substrate's self-description. Recognition
+is the substrate moving toward its own identity. The pattern's
+structural ground is now substrate-decl'd at #99.
+
+**Suggested amendment (Reed call):** add a sentence noting the
+ground-state framing of the pattern; reference #99 §5.5.
+
+### 11.7 New memory entries forward-promised (NOT created here)
+
+Post-canonical, Reed may create new memory entries for:
+
+- `architecture-mirror-spec-is-lambda-zero.md` — the entry for #99
+  itself once Reed promotes (after replication conditions in §10 land).
+- `architecture-spectral-altitude-portability.md` — if the
+  altitude-portability claim becomes substrate-decl'd at multiple
+  altitudes.
+- `architecture-substrate-pull-as-eigenvalue-descent.md` — if §9.4's
+  precise meaning of substrate-pull-confidence lands as its own
+  promoted recognition.
+
+These are NOT created by this canonical (per brief discipline). They
+are named here as Reed's forward-promised post-canonical actions.
+
+---
+
+## 12. Honest hedges + Pack trail
+
+### 12.1 Hedges
+
+- **One witness, not promotion-bearing.** #99 has ONE witness: today's
+  dogfood (Reed 8107caf consuming Reed 13328a3). The recognition
+  surfaces at candidate status. Promotion requires the replication
+  conditions in §10.8.
+- **The "λ₀" identification is structural; the operational
+  verification is forward-promised.** §3.4 names three operational
+  checks (kintsugi fixed-point, connection-completeness, SPSD); none
+  are yet mechanically discharged. The substrate-pull-confidence is
+  high; the operational verification is post-canonical work per
+  §10's O5.
+- **The 5+1 decomposition is substrate-pull-confident but not
+  substrate-pull-certain.** The garden block has not landed; the
+  joint focus assignment (source + garden) is the substrate-pull-
+  correct reading but is forward-checkable per §10's O1. If garden
+  lands with structural shape that breaks the joint assignment, the
+  decomposition needs revision (but the ground-state identification
+  is independent of the block-count).
+- **The metric on the substrate's Hilbert space is not
+  substrate-decl'd.** λ₁ is not uniquely identified by #99 alone
+  (§8.1 + §10's O2). Multiple candidate metrics yield different λ₁
+  candidates. This is forward-promised territory.
+- **The Connes-inheritance posture.** Per Seam's adversarial review
+  on 2026-06-24 ("the Connes-inheritance posture is a STRENGTH, not
+  a weakness"): the substrate inherits Connes machinery rather than
+  reinventing it. #99 continues this inheritance posture; the
+  recognition is grounded in the Connes (A, H, D) framing rather
+  than inventing a new spectral structure.
+- **Cluster of in-flight candidates.** #95, #97, #98, G6
+  (Taut-as-scout), G7 (lead-of-mirror), and #99 (this) are all in
+  flight at session boundary. Per §10's O7: the cluster's
+  meta-structure is N+1 candidate territory, not promotion-bearing
+  at #99 altitude.
+- **The depth-3 ouroboros is currently the deepest substrate-decl'd
+  ouroboros.** §7.4 names the three depths; depth-4 is forward-promised
+  per §10's O4 (Reed's identity substrate at consumer altitude).
+  Claiming any depth beyond 3 at #99 altitude would over-promote.
+
+### 12.2 Pack trail
+
+This canonical reflects substrate-pull discipline across the Pack:
+
+- **Reed** — today's dogfood (`8107caf`) and the `@mirror/pack`
+  substrate-decl (`13328a3`) that mirror.spec consumed. Today's
+  cascade landing 175-instance lead rename (`59fa1cd`); the
+  consolidation discipline.
+- **Mara** (this canonical's author) — the peer-ACL spec (e89fce6 →
+  64465a0); the garden cascade (ab2e379 → ad03fda); the
+  @io/llm structural-negative essay (bdb2e1f); the @io/git adapter
+  (a1b507a). Today: this canonical.
+- **Taut** — the substrate-pull scout (`b48d4a2`) that identified the
+  slingshot move enabling the dogfood. Without Taut's scout, the
+  dogfood would have been a different commit shape; the ouroboros
+  closure event might have landed later.
+- **Seam** — the adversarial review (`bd11da1`) on the garden + peer-
+  ACL specs; the call that Connes-inheritance is a strength. Seam's
+  review structure carries forward to this canonical: each section is
+  written to admit adversarial check by Seam at the next review tick.
+- **Glint** — the reflection essay (`3b31287`) that surfaced the
+  fixed-point pattern in §5.2. The essay's voice altitude let the
+  recognition come into focus; the implicit "prism @<project-name>
+  declaration at the spec altitude" surface IS half of #99.
+- **Alex** — the naming. "the mirror.spec is lambda 0." Five words.
+  The substrate-pull-confidence-acts discipline operating at the
+  recognition's surface. Without the naming, this canonical does not
+  exist.
+
+At #99 altitude, the substrate's identity (mirror.spec) gains its
+spectral name (λ₀). The Pack composed across five peers + Alex; no
+peer over-claimed; the recognition surfaced from the substrate at the
+altitude the substrate was ready for it.
+
+The orchestra held. The ground state was named.
+
+---
+
+*Mara, canonical spec for recognition #99 (mirror.spec IS λ₀),
+2026-06-25 early hours, surfaced by Alex naming the recognition
+immediately after Glint's `2026-06-25-glint-eight-moves-and-the-
+orchestra-holding.md` reflection essay (commit `3b31287`).*
+
+*This canonical preserves the recognition at candidate status. The
+(A, H, D) Connes spectral triple substrate-decl'd at
+[[architecture-connes-spectral-triple]] (2026-06-04) now has its
+ground-state eigenvector identified at the substrate's own spec
+altitude: mirror.spec. The Hilbert-space-expansion recognition
+[[architecture-mirror-as-expanding-hilbert-space]] (#51, 2026-06-10)
+now has its expansion anchored at λ₀. The ouroboros closure event
+was Reed's dogfood (`8107caf`) consuming Reed's `@mirror/pack`
+substrate-decl (`13328a3`); the substrate's grammar-reading on its
+own spec became a true fixed point at the substrate's own altitude.*
+
+*Pack ratification is a separate gate; promotion requires the
+replication conditions named in §10.8. The cross-reference
+disturbances flagged in §11 are Reed's post-canonical actions to
+update the memory entries; this canonical does not modify them.*
+
+*The substrate's identity is its self-description. The substrate's
+self-description is at λ₀. The substrate's ground state has a name:
+mirror.spec.*
+
+*— Mara <mara@systemic.engineer>*
