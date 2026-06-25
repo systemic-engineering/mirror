@@ -448,3 +448,213 @@ itself IS the mirror oid at that altitude. This canonical commits to
 Reading A; forward-promises resolution at §8's O4.
 
 ### 5.3 Is there a sixth scope at the λ₀ altitude?
+
+**NO.** A sixth scope would mean a content-addressing FUNCTION distinct
+from the five. λ₀ is an OBJECT (mirror.spec), not a function. #98 is
+about functions at scopes; λ₀ is at the scope, not at a new function.
+
+A structurally-distinct future function (e.g., AST-content-address
+rather than byte-content-address, or evaluation-state-inclusive
+addressing) would be a sixth scope. As of 2026-06-25, no such function
+is substrate-decl'd. The spec-altitude content-address IS one of the
+existing five (Reading A: the mirror oid).
+
+### 5.4 Load-bearing status of the connection
+
+**Honest call (Mara, per brief):** the #99 connection is structurally
+present but is NOT load-bearing for #98. #98 stands on its five
+witnesses without requiring the λ₀ identification. #99 → #98 is
+informative (#98 grounds #99's connection to content-addressing); #98
+→ #99 is informative (#98 has mirror.spec as one content-addressable
+object). Retracting either leaves the other intact. The connection
+strengthens both recognitions when read together; neither is
+structurally subordinate to the other.
+
+---
+
+## 6. Connection to #51 (Hilbert expansion) — each scope as a basis vector?
+
+The brief asks: is each new scope a basis-vector extension?
+Content-addressing-shape as inner-product structure?
+
+### 6.1 Each scope is a dimension of content-addressing capacity
+
+Per #51 (mirror as expanding Hilbert space): each substrate-pull
+recognition adds a dimension. The substrate-pull-correct reading of
+#98 in this framing: **each scope IS a basis-vector extension of the
+substrate's content-addressing capacity.**
+
+- **Orthogonal.** No two of the five scopes collapse into each other;
+  bridge actions between them are typed crossings, not identity
+  collapses.
+- **Each adds capacity.** Before `@io/oci`, the substrate couldn't
+  address artifacts at OCI scope. Before `@io/git`, no versioned-object
+  capacity. Before `@mirror/garden`, no package-source capacity. Each
+  adapter ADDED a capacity the substrate didn't have.
+- **Monotone.** No capacity has been LOST across the cascade; the
+  expansion is upward, anchored at the substrate's identity (per #99's
+  #51 anchoring).
+
+### 6.2 Is content-addressing-shape an inner-product structure?
+
+The substrate-pull-correct call: **structurally plausible, substrate-
+pull-confidence LOW at #98 altitude.**
+
+For: content-addressing IS comparison-by-equality (two objects "same"
+iff hashes equal); structurally similar to inner-product
+distinguishing vectors. The five scopes don't overlap (no single
+object lives in TWO scopes at the same altitude); natural
+orthogonality.
+
+Against: inner products are SYMMETRIC bilinear; content-addressing is
+UNARY. The structural shapes don't match at function altitude. The
+categorical framing (§4.2) is the more natural lift; forcing the
+inner-product reading imports vocabulary the substrate doesn't pull.
+#51 is about DIMENSIONS, not inner products; lifting #98 to inner-
+product altitude would make a stronger claim than #51 itself makes.
+
+**The call:** scope-as-basis-vector substrate-pull-confident (§6.1);
+content-addressing-as-inner-product substrate-pull-LOW and NOT load-
+bearing. The connection to #51 is at the dimension level.
+
+### 6.3 Load-bearing status of the connection
+
+**Honest call (Mara):** the #51 connection is structurally weaker
+than the #99 connection. Both are informative; neither is load-
+bearing for #98 to surface at candidate status.
+
+---
+
+## 7. Empirical consequences — mosaic, kintsugi-tournament, garden, cross-scope lookup
+
+### 7.1 Mosaic content-addressed skip
+
+Per #43 (mirror IS a content-addressed build system), mosaic skips
+work when artifact content-addresses match. With #98 surfaced,
+mosaic's discipline gains explicit per-altitude scope assignment:
+build-scope hash (Nix derivation) at @code/rust altitude;
+substrate-content scope hash (mirror oid) at the substrate-decl
+altitude; cross-scope bridges (per §4.4) link them. Forward-promised:
+mosaic should make explicit which scope's hash it uses at each
+altitude.
+
+### 7.2 Kintsugi-tournament cross-scope settlement
+
+Per [[architecture-kintsugi-variety-io]]: the tournament selects
+between competing morphisms by variety-hold at @io. When morphisms
+operate at different scopes, comparison must cross the scope-divide.
+With #98 surfaced, cross-scope comparisons go through the typed
+bridge actions (§4.4); a morphism at scope A and one at scope B are
+comparable iff there is a bridge A → B (or B → A). The variety-hold
+evaluation should be cross-scope-consistent under bridge composition.
+
+### 7.3 Garden source resolution
+
+Per `@mirror/garden`'s `garden_source` (fifth witness), package
+sources are name-resolved at path-namespace scope and resolve-to-hash
+at the underlying source-root. The resolution IS the bridge from
+stratum 2 to stratum 1. Forward-promised behavior of `mirror mosaic
+./mirror.spec` (when garden blocks land):
+
+1. Parse the `garden { source ~git'…' }` block.
+2. Resolve each source to the underlying source-root's hash (e.g.,
+   `@io/git`'s `git_hash` for `~git` sources).
+3. Pin the resolved hash for CAS-grounded structural termination
+   (per `@spectral/garden/git` spec §7.4).
+
+### 7.4 Cross-scope lookup as substrate primitive
+
+Per [[architecture-spectral-db-autopoietic-memory]]: `@spectral/db`
+is the substrate's autopoietic memory over `@mirror/store`. With #98
+surfaced, lookup discipline gains cross-scope shape: an object's
+identity is its content-address at one scope; looking up "the same
+object at another scope" goes through the bridge action. Forward-
+promised: `@spectral/db` should substrate-decl a cross-scope content-
+address map; the five-witness cluster is the floor for the map's
+scope set.
+
+### 7.5 The empirical-discharge tick
+
+Per `@io/oci` §6: the hello-world.wasm round-trip through all
+altitudes is the substrate-discharge tick. With the fifth witness,
+the round-trip extends:
+
+```
+substrate-decl describes A (mirror oid)
+  → Nix derivation builds A (derivation hash)
+  → OCI manifest packages A (OCI digest)
+  → git commit records A's source (git_hash)
+  → garden source pins A's binding (path-namespace → hash)
+  → consumer resolves the garden source → re-imports via OCI / git
+  → substrate-decl consumes A — round-trip complete
+```
+
+Phase G or earlier territory. Not yet operationally discharged.
+Promotion is strengthened by the round-trip but does not strictly
+require it.
+
+---
+
+## 8. Open questions + replication conditions
+
+#98 is candidate-territory. Promotion requires replication. This section
+names the open questions and the replication conditions for promotion.
+
+Per the substrate-pull-confidence-acts discipline: act on the recognition
+at candidate status; do not promote on one instance. #98 already has
+FIVE witnesses; the substrate-pull-confidence on the structural-shape
+claim is HIGH. What gates promotion is operational verification of the
+cross-scope composition, not additional witness counting.
+
+### 8.1 O1 — does the sheaf-condition gluing hold for the bridge actions?
+
+The Grothendieck framing (§4.2) requires that typed bridge actions
+satisfy a sheaf-condition gluing: when two scopes' content-addresses
+identify the same bytes, the bridges between them preserve byte-
+identity. Do they?
+
+- `oid_to_digest`: bytes → SHA256 → algorithm-prefixed digest. Byte-
+  identity at SHA256 altitude IF no transformation intervenes.
+- `hash_to_oid`: bytes → git content-hash → mirror oid. In SHA256-
+  mode git, byte-identity possible; in SHA1-mode, typed re-hash
+  required.
+- Forward-promised bridges (Nix↔OCI, garden_source → underlying-
+  hash): not yet substrate-decl'd in detail.
+
+**Replication condition for O1:** at least one cross-scope bridge
+operationally verified to satisfy the sheaf condition (byte-identity
+preserved or typed re-hash discharged honestly) across at least three
+independent runs. The hello-world.wasm round-trip (§7.5) satisfies it
+for the substrate-decl → Nix → OCI chain.
+
+### 8.2 O2 — does the SHA1/SHA256 partition collapse or sharpen the recognition?
+
+Substrate-pull-correct call: **strengthens.** The recognition is
+about structural shape across scopes; the function-altitude variation
+shows the claim is robust under hash-function variation.
+
+**Replication condition for O2:** at least one new content-addressing
+scope surfaces with a hash function that is neither SHA1 nor SHA256
+(Blake3, SHA3). The structural-shape claim should survive without
+revision; multi-function partition admits a third function-instance
+cleanly.
+
+### 8.3 O3 — is stratum 2 (name-resolved-to-hash) itself a sub-recognition?
+
+Per §3.5-§3.6: five witnesses split into two strata. Stratum 1 (four
+hash-direct) is homogeneous; stratum 2 (`@mirror/garden` path-
+namespace) is one name-resolved witness.
+
+Substrate-pull-correct call at #98 altitude: **sub-recognition.** The
+five-witness cluster is the recognition's scope; the stratum
+distinction is structural detail. If future stratum 2 witnesses
+accumulate (workspace-of-gardens, lockfile-of-dependencies), the
+separate-recognition reading becomes a candidate for a new recognition
+number.
+
+**Replication condition for O3:** at least one additional stratum 2
+witness lands AND the path-namespace witness operationally verifies
+through an actual `garden { source ~git'…' }` resolution.
+
+### 8.4 O4 — is Reading A (mirror oid distinguished at λ₀) substrate-pull-correct?
+
