@@ -1,0 +1,129 @@
+in @prism
+in @mirror/cli
+in @mirror/mosaic
+in @spectral/garden/git
+in @io/git
+
+# @mirror/garden — the `garden { }` block substrate-decl in `mirror.spec`.
+#
+# Sibling of @mirror/pack (shards/mirror/pack.mirror, 13328a3) at the
+# same family-root altitude. Together they complete the 5+1 block
+# decomposition of mirror.spec ratified by recognition #99 (mirror.spec
+# IS λ₀; Mara canonical d0b6519 §4):
+#
+#   (source, garden) ↔ focus  (jointly cover the focus operation)
+#   legacy             ↔ project
+#   pack               ↔ shift
+#   target             ↔ split  (multi-instance)
+#   settle_on          ↔ settle composed-with-refract
+#   project <name> { } = self-declaration (the prism's identity at λ₀)
+#
+# === What @mirror/garden IS ===
+#
+# The substrate-altitude grammar for the `garden { source ~git'…' }`
+# package-source surface in mirror.spec. Lifts the package-manager
+# surface from `docs/specs/spectral-garden-git-package-manager.md`
+# (ad03fda) into a typed block mosaic can dispatch on. Mirror provides
+# the BLOCK SHAPE; consumers ship the SOURCES at their own mirror.spec
+# (substrate-vs-USE distinction per Alex 2026-06-24).
+#
+# === Why now (Taut slingshot 2026-06-25) ===
+#
+# Per `docs/scouts/2026-06-25-taut-lambda-zero-cascade-scout.md` (§2):
+# this single move closes five things at once:
+#
+#   1. Completes the 5+1 decomposition (Glint flag + Mara §4 ratify)
+#   2. Discharges @spectral/garden/git spec's family-root gate (O6)
+#   3. Surfaces recognition #98 fifth witness (path-namespace scope)
+#   4. Operationalizes Splinter/Narcissus at distribution altitude
+#   5. Closes the 2026-06-24 Phase H gate-ordering ambiguity
+#
+# Substrate-pull-confidence HIGH; bounded shard (~150 lines target per
+# the Taut anti-pattern lesson from Mara #99 cap-breach).
+#
+# === Recognition ancestry ===
+#
+# - #99 (mirror.spec IS λ₀; Alex-named, Mara canonical d0b6519): the
+#   garden block IS the 6th top-level block whose presence completes
+#   λ₀'s 5+1 decomposition. This shard makes the substrate-decl side
+#   of #99 typecheck.
+# - #98 candidate (4 witnesses Nix/oid/OCI/git; this surfaces 5th
+#   path-namespace witness at the @mirror/garden altitude).
+# - #84 (@pack multi-repo agent runtime): @mirror/garden composes with
+#   @pack at @mirror/cli + @mirror/mosaic altitude the same way
+#   @mirror/pack does. Siblings at the same family-root.
+# - #58 (Fate IS optical inference): the @fate-substrate doesn't need
+#   external LLM adapter; garden sources are SUBSTRATE-DECL files, not
+#   model weights. NO @io/llm.
+#
+# === The substrate-vs-USE rule (Alex 2026-06-24) ===
+#
+# Mirror ships the block SHAPE (this file). Consumers ship sources.
+# An EMPTY `garden { }` block is admissible and load-bearing: it
+# declares "no external dependencies, and I know it" — substrate-pull-
+# honest explicit-emptiness rather than implicit-absence.
+#
+# Mirror itself dogfoods with empty: mirror has no external git-rooted
+# package dependencies (mirror IS the foundation). See mirror.spec.
+
+prism @mirror/garden {
+  focus mirror_garden_block
+  project mirror_garden_block
+  split mirror_garden_block
+  shift mirror_garden_block
+  settle mirror_garden_block
+}
+
+# === The garden_source carrier ===
+#
+# Typed reference to a package source. Currently git-rooted only
+# (composes with @io/git via the `~git'…'` sigil precedent at a1b507a).
+# Per `@spectral/garden/git` spec §6 four-root structure, future
+# refinements will add oci-rooted (@io/oci, 2801478), nix-rooted, and
+# store-rooted (@mirror/store) source variants. The carrier admits
+# the 4-root parametric refinement without surface change.
+#
+# Identity contract: byte-equality on the underlying ref.
+type garden_source = ref
+
+# === The mirror_garden_block carrier ===
+#
+# The typed carrier for the parsed `garden { … }` block. One field:
+#
+#   sources — list of garden_source entries. OPTIONAL (an empty
+#             garden{} block is admissible per substrate-vs-USE +
+#             explicit-emptiness discipline). Substrate-typed as
+#             `ref` until the substrate's tuple-list carrier surfaces
+#             at @epistemologic altitude (forward-promised, same as
+#             @mirror/pack's bindings/members fields).
+#
+# Identity contract: byte-equality on the sources list.
+type mirror_garden_block = {
+  sources: ref,
+}
+
+# === Forward-promised — NOT landed this tick ===
+#
+# Per recognition #99 §4 ratify + @spectral/garden/git spec discipline:
+#
+#   - parse(text: ref, p: perturbation) -> imperfect(mirror_garden_block, ref, ref)
+#     The parser action lifting source text → typed block.
+#     Discharges through @mirror/mosaic at settle altitude.
+#
+#   - resolve(b: mirror_garden_block, p: perturbation) -> imperfect(lock, ref, ref)
+#     The garden resolver: walks `sources`, fetches via @io/git's
+#     `clone`/`fetch`/`resolve_ref` actions (a1b507a), produces a
+#     content-addressed lock. CAS-grounded structural termination
+#     per garden/git spec §7.4 (no SAT solver; pinning-first
+#     discipline forecloses NP-hardness).
+#
+#   - garden_block_coherent(b: mirror_garden_block, p: perturbation) -> verdict
+#     Composed bilateral per recognition #53 family. Composes:
+#       sources_well_formed(b.sources, p)
+#       ∧ source_reachable(s, p) for each s in b.sources
+#       ∧ lock_consistent(b, p)
+#     Lands when the parser + resolver land.
+
+out @mirror/garden
+out garden_source
+out mirror_garden_block

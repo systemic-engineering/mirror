@@ -55,6 +55,20 @@ project mirror.spec {
     }
   }
 
+  # === Garden — external package dependencies ===
+  #
+  # mirror.spec's dogfood of @mirror/garden (shards/mirror/garden.mirror).
+  # EXPLICITLY EMPTY per substrate-pull-honest declaration: mirror IS
+  # the foundation; everything else depends on it; mirror itself has
+  # no external git-rooted package dependencies.
+  #
+  # The empty block is load-bearing — it completes the 5+1 block
+  # decomposition that recognition #99 ratifies (mirror.spec IS λ₀):
+  # (source, garden) jointly cover the focus operation; absent garden
+  # would leave the decomposition implicit. Substrate-pull-honest:
+  # explicit-emptiness over implicit-absence.
+  garden { }
+
   target binary {
     name     "mirror"
     altitude @code/rust
