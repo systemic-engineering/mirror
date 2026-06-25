@@ -1,0 +1,154 @@
+in @prism
+in @io/git
+in @mirror/store
+in @mirror/pack
+
+# @peer — the substrate's peer carrier at glass altitude.
+#
+# Family-root for the parametric/open peer type that `~peer'<path>'`
+# references resolve to. Resolves the two-peer-types collision Taut
+# flagged in the 2026-06-24 substrate-pull scout (runner-up #3.1).
+#
+# === The two-peer altitudes ===
+#
+# @pack.peer (shards/pack.mirror:188) is the CLOSED variant:
+#   `type peer = | mara | seam | glint | reed | taut`
+#
+# Transitional per Alex 2026-06-24: "the named peers in the pack
+# (reed, mara etc) those won't live in the compiler itself. That's
+# our structure and not the default shape." Substrate-vs-USE applied.
+#
+# @peer.peer (this shard) is the PARAMETRIC carrier:
+#   the substrate-decl shape that EVERY pack's members must inhabit
+#
+# When @pack.peer goes parametric, it lifts to be typed against
+# @peer.peer. The 5-name closed variant becomes one specific
+# realization at the USE altitude; @peer is the SHAPE that ships.
+#
+# === G1 resolution (Alex 2026-06-25): ~peer composes ~git ===
+#
+# Alex confirmed today: "yes" — `~peer'<path>'` silently composes
+# `~git'<path>'` for url/ssh forms. Two-cache risk dissolves; @peer
+# is a typed LENS over @git, not a parallel resolver. Resolution
+# flow:
+#
+#   ~peer'<dir>'
+#     → @io/git resolves <dir> as a git ref (existing a1b507a shape)
+#     → @peer.load(<dir>) reads <dir>/mirror.spec
+#     → extracts the spec's pack{}.lead per peer-ACL §6.2 self-naming
+#     → returns typed peer
+#
+# Single-hop resolution per peer-ACL §6.2 + O7 dissolution (the lead
+# IS the peer's self-declaration; no transitive chase).
+#
+# === Recognition ancestry ===
+#
+# - #84 (@pack multi-repo agent runtime; promoted): the @pack.peer
+#   variant is the consumer-altitude instance; @peer (this shard) is
+#   the substrate-altitude shape
+# - #99 (mirror.spec IS λ₀; Alex-named, Mara canonical d0b6519):
+#   the @peer carrier IS what mirror.spec's pack{}.lead field refers
+#   TO at λ₀. Without @peer at substrate altitude, the lead-of-λ₀
+#   reference has no type. This shard makes the reference well-typed.
+# - peer-ACL spec §2.2 (`@peer` glass at peer-glass.md per Mara's 7
+#   discovery hits): the existing peer-glass.md doc gave the load(dir)
+#   signature; this shard makes it substrate-decl typecheck.
+# - #58 (Fate IS optical inference): the @peer carrier composes with
+#   @fate at runtime via the lead's spawn-and-probe relation; no
+#   external LLM adapter needed.
+#
+# === Composition with @mirror/pack ===
+#
+# `shards/mirror/pack.mirror` (13328a3) declares `type mirror_pack_block
+# = { lead: peer, bindings: ref, members: ref }`. The `lead: peer`
+# field references @pack.peer (closed variant) currently; when @pack
+# migrates to parametric, the lead field's type lifts to @peer.peer
+# (this shard). The @mirror/pack substrate-decl admits both readings
+# without surface change because `peer` is name-resolved at compose
+# time against the in-scope @pack OR @peer family.
+
+prism @peer {
+  focus peer
+  project peer
+  split peer
+  shift peer
+  settle peer
+}
+
+# === The kind carrier ===
+#
+# Closed variant distinguishing peer altitudes. Per recognition #84
+# pack-as-orchestra + the substrate-altitude composition rules:
+#
+#   human      — a Pack peer with a human body (Alex; future humans
+#                joining a pack at peer altitude)
+#   agent      — a Pack peer running on @fate inference (Reed, Mara,
+#                Seam, Taut, Glint as our current realizations; ANY
+#                substrate-aware agent more broadly)
+#   substrate  — a non-Pack-peer substrate entity that consumes ~peer'…'
+#                references at @mirror/pack altitude (e.g., a CI runner
+#                consuming the spec's pack block; not itself a peer)
+#
+# Identity contract: byte-equality on the variant tag.
+type kind = | human | agent | substrate
+
+# === The peer carrier ===
+#
+# Three-field record at glass altitude. The fields:
+#
+#   home     — the peer's home repo path (the canonical-path-rule
+#              anchor: ~peer'<home>' resolves through here per
+#              CLAUDE.md home-symlink convention). Composes with @io/
+#              git's `git_repository` carrier (shards/io/git.mirror).
+#
+#   lead_of  — list of mirror.spec paths where THIS peer is named
+#              `lead` in the spec's pack{} block. The reverse-
+#              relation of mirror_pack_block.lead. Used by audit (“who
+#              answers the lambda shell for spec S” → search lead_of).
+#              Substrate-typed as `ref` until tuple-list carrier
+#              surfaces at @epistemologic.
+#
+#   kind     — the closed variant above. Required iff peer is
+#              referenced as a pack member (mirror_pack_block.members
+#              entries are all human|agent kind; substrate-kind peers
+#              are NOT members).
+#
+# Identity contract: byte-equality on the (home, lead_of, kind)
+# triple. Two peer values with the same home but different kind are
+# distinct (kind admission gates pack membership; the same home repo
+# can host either a human or an agent presence over time, but at any
+# given peer-value, the kind is fixed).
+type peer = {
+  home:     ref,
+  lead_of:  ref,
+  kind:     kind,
+}
+
+# === load — the peer resolver ===
+#
+# Lifts `~peer'<dir>'` references into typed peer values. The G1-
+# composition with @io/git is encapsulated here: `load(dir, p)`
+# internally invokes @io/git's `resolve_ref` against <dir> + reads
+# <dir>/mirror.spec to extract pack{}.lead per peer-ACL §6.2.
+#
+# Returns imperfect(peer, ref, ref) per @glass discipline: success-
+# variant carries the typed peer; failure variants carry the missing
+# git-ref / missing-spec / malformed-pack-block / not-a-lead reasons
+# (refined at species per @glass/imperfect conventions).
+load(dir: ref, p: perturbation) -> imperfect(peer, ref, ref) { \ }
+
+# === Forward-promised — NOT landed this tick ===
+#
+# - lead_of_well_formed(p: peer, perturbation) -> verdict
+#     bilateral predicate; checks that p.lead_of entries actually
+#     name p in their pack{}.lead. Closes the reverse-relation
+#     invariant.
+#
+# - peer_coherent(p: peer, perturbation) -> verdict
+#     composed bilateral per recognition #53 family (14th altitude
+#     lift when it lands).
+
+out @peer
+out kind
+out peer
+out load
