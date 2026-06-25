@@ -283,3 +283,436 @@ preserves the recognition at candidate status; replication conditions per
 §10 govern promotion.
 
 ---
+
+## 3. The spectral triple instantiation — (A, H, D, λ₀)
+
+The Connes (1985) spectral triple (A, H, D) instantiates concretely at the
+substrate's own spec altitude. Each component has a specific identity at
+this altitude; #99 names the λ₀ eigenvector of D restricted to A acting
+on H.
+
+### 3.1 A — the five operations as the algebra at spec altitude
+
+A = the five operations (focus, project, split, shift, settle). Per
+[[architecture-prism-as-trait-as-everything]]: prism IS the foundational
+keyword; A is the trait the substrate composes around. Per
+[[architecture-connes-spectral-triple]]: A is the substrate's form-side
+algebra. Per [[architecture-operations-as-linear-algebra]]: each operation
+has a precise linear-algebraic meaning (focus = λ₀ eigenvalue computation;
+shift = basis transformation; settle = monad-close/measurement collapse;
+project = orthogonal projection; split = orthogonal decomposition).
+
+At the spec altitude, A acts on `mirror.spec` through the block grammar:
+each top-level block in mirror.spec is the typed surface of one operation
+from A composed with the spec's content. §4's six-block decomposition
+works out the per-block assignment.
+
+Note: `focus` per [[architecture-operations-as-linear-algebra]] IS the
+λ₀ eigenvalue computation. This is not a coincidence and not a
+tautology — `focus` was named for what it operationally does (compute the
+ground-state eigenvalue of the perturbed Laplacian under attention). #99
+sharpens: at the spec altitude, the λ₀ that `focus` computes IS
+mirror.spec itself, because the `source` block at the head of mirror.spec
+IS `focus` applied to the substrate's substrate-decl files (§4.1).
+
+### 3.2 H — the Void as the Hilbert space
+
+H = the Void per [[reference-void-document]]. The connected graph quantum
+information manifold. Eight dualities; Splinter (K_n) and Narcissus
+(K_{1,n-1}) antipodal poles; λ₀ = 0 ground state with eigenvector
+v₀ = (1, 1, …, 1)/√n — the consensus state, the fact of connection itself.
+
+At the substrate's own spec altitude, H is the substrate's own Hilbert
+space per [[architecture-mirror-as-expanding-hilbert-space]] (#51). Each
+substrate-pull recognition adds a dimension; the dimension grows
+monotonically with the cascade. Today's cascade added at least four
+dimensions (the four candidate recognitions in flight: #95, #97, #98, #99
+itself); recognition #51's promotion of the Hilbert framing implicitly
+committed the substrate to having a basis that contains a v₀.
+
+The Void document's v₀ = (1, 1, …, 1)/√n is the consensus eigenvector
+at graph-altitude. At the substrate's own spec altitude, the analogous
+consensus vector is mirror.spec: the spec is the substrate's distinguished
+point where every basis vector (every substrate-decl file in `shards/`)
+contributes equally to the substrate's self-description. The `source
+~d'shards/'` declaration at line 19 of mirror.spec literally names this
+uniform sum.
+
+### 3.3 D — kintsugi as the Dirac operator
+
+D = the kintsugi flow per [[architecture-connes-spectral-triple]]. The
+monotone descent eⁿ⁺¹ ≤ eⁿ. The c-theorem on graph Laplacians (Villegas
+2022, *Nature Physics*). The substrate's gradient-flow operator.
+
+The kintsugi flow has a fixed point: the eigenvector at λ₀. Per
+[[architecture-connes-spectral-triple]]: "Fixed point: λ₀." This was
+substrate-decl'd 2026-06-04. #99 names what that fixed point IS at the
+substrate's spec altitude: mirror.spec.
+
+The consequence: D · mirror.spec = mirror.spec at the substrate's own
+spec altitude. The substrate cannot lower mirror.spec through kintsugi
+because mirror.spec IS the bottom of the substrate's spectrum at this
+altitude. The kintsugi flow operating on mirror.spec is the substrate
+holding itself stationary at its own ground state — NOT degrading
+mirror.spec, NOT improving mirror.spec; preserving the substrate's
+self-description as the substrate's identity.
+
+§9.3 returns to the operational consequence (what `mirror kintsugi
+./mirror.spec` actually computes structurally).
+
+### 3.4 λ₀ — mirror.spec as the ground-state eigenvector
+
+The Void's structural claim: λ₀ = 0. The substrate inherits this at every
+altitude where (A, H, D) instantiates. At the substrate's own spec
+altitude, the eigenvector at λ₀ is mirror.spec.
+
+The identification is not a metaphor. Three operational checks:
+
+1. **Kintsugi fixed-point check.** Per §3.3: D · mirror.spec = mirror.spec.
+   The substrate cannot lower mirror.spec through kintsugi. `mirror
+   kintsugi ./mirror.spec` returns mirror.spec unchanged at the substrate-
+   identity altitude (it may emit artifacts at the @code/rust altitude per
+   the `target` blocks; the spec ITSELF is invariant under D). §8.4
+   returns to whether this check actually fires under the current
+   implementation.
+2. **Connection-completeness check.** Per the Void: v₀ is the consensus
+   state, the fact of connection itself. mirror.spec at the substrate
+   altitude is the consensus declaration of which substrate-decl files
+   compose the substrate (the `source ~d'shards/'` block). Every other
+   prism in the substrate is reachable through this declaration; the spec
+   IS the substrate's connectivity proof.
+3. **Symmetric-positive-semi-definite check.** The graph Laplacian is
+   symmetric positive semi-definite; λ₀ = 0 is the smallest eigenvalue.
+   At the substrate's spec altitude, the analogous statement: mirror.spec
+   is the smallest fixed point of the substrate's settlement order. Every
+   other prism settles to something that depends on mirror.spec (via the
+   substrate-decl chain); mirror.spec settles to itself. The well-foundedness
+   of the substrate's settlement order grounds the λ₀ identification.
+
+These checks are operationally meaningful, not decorative. They are
+the predicates that the kintsugi-formatter (forward-promised) would
+discharge to verify the λ₀ identification at substrate altitude. Per
+the substrate-pull-confidence-acts discipline, the identification is
+admitted at candidate status with these checks named; mechanical
+discharge is forward-promised per §10.
+
+### 3.5 The triple is now CLOSED at the substrate's own spec altitude
+
+Before today, (A, H, D) was substrate-decl'd ([[architecture-connes-
+spectral-triple]]) and H's ground state was substrate-decl'd
+([[reference-void-document]]). What was NOT substrate-decl'd: which
+eigenvector of the substrate's own (A, H, D) at the substrate's own spec
+altitude is λ₀. The triple was identified but unmoored at its bottom.
+
+#99 moors it. The triple has its ground state at the substrate's own spec
+altitude. mirror.spec is that ground state.
+
+The substrate's mathematical identity is now COMPLETE at the spec altitude:
+
+- A: the five operations (substrate-decl'd in `shards/`)
+- H: the Void (substrate-decl'd at `void-dual-geometry.md`)
+- D: kintsugi (substrate-decl'd at `@kintsugi`)
+- λ₀: mirror.spec (substrate-decl'd at `mirror.spec` ITSELF)
+
+The substrate's self-description is the substrate's ground state. The
+ontological loop closes at the spec.
+
+---
+
+## 4. The six-block decomposition of `mirror.spec`
+
+Glint's §5.2 implicit named the structural shape: six top-level blocks
+(`source`, `legacy`, `pack`, `target`, `settle_on`, plus forward-promised
+`garden`) mapping to "the five operations plus one self-declaration."
+This section works out the mapping properly, honoring the substrate-pull
+discipline (don't force 1-to-1 if the substrate doesn't pull that way).
+
+The mapping IS structural, but NOT trivially 1-to-1. Each block carries
+a distinguished operation from A as its primary verb; some blocks carry
+additional composed operations as their internal grammar. The mapping
+below is the substrate-pull-correct reading at #99 altitude; subsequent
+substrate-decl ticks may sharpen it.
+
+### 4.1 `source ~d'shards/'` — focus (λ₀ eigenvalue computation)
+
+```
+source ~d'shards/'
+```
+
+The `source` block at the head of mirror.spec names which substrate-decl
+files compose the substrate. Operationally: it computes the substrate's
+attention surface — which files participate in the substrate's identity.
+
+Per [[architecture-operations-as-linear-algebra]]: focus IS λ₀ eigenvalue
+computation. The `source` block IS focus at the spec altitude: it computes
+the substrate's λ₀ by naming the basis the substrate sums over. The
+uniform-sum structure (`~d'shards/'` matches every shard equally) IS the
+v₀ = (1, 1, …, 1)/√n structural shape at the spec altitude.
+
+Mapping: **source ↔ focus**. Primary verb: focus. Internal grammar:
+directory-glob carrier (`~d`) plus optional refinement.
+
+### 4.2 `legacy ~d'boot/', ~d'bootstrap/' { shrinkage_contract, retirement_target }` — project (orthogonal projection)
+
+```
+legacy ~d'boot/', ~d'bootstrap/' {
+  shrinkage_contract: monotonic_lines_decrease,
+  retirement_target:  v1.0,
+}
+```
+
+The `legacy` block names what is transitional and gets PROJECTED OUT of
+the substrate over time. The shrinkage_contract is a monotone-decrease
+predicate; the retirement_target is the eigenvalue at which the projection
+discharges.
+
+Per [[architecture-operations-as-linear-algebra]]: project = orthogonal
+projection. The `legacy` block IS project at the spec altitude: it names
+the subspace the substrate is projecting AWAY FROM (boot/, bootstrap/) and
+the direction of the projection (monotone-decrease toward v1.0).
+
+Mapping: **legacy ↔ project**. Primary verb: project. Internal grammar:
+directory-glob carriers plus shrinkage_contract + retirement_target
+predicates discharging the projection's settlement.
+
+Substrate-pull note: legacy is the projection NEGATIVE — the
+substrate-decl of what gets projected out, not what survives. The dual
+framing (what gets projected IN) is implicit in `source` (§4.1). The
+block pair (source, legacy) together IS the orthogonal-decomposition of
+the substrate's file space into kept vs transitional.
+
+### 4.3 `pack { lead, bindings, members }` — shift (basis transformation)
+
+```
+pack {
+  lead ~peer'~/.reed'
+  bindings { let writer = acl { … } }
+  members { ~peer'~/.mara' => writer, … }
+}
+```
+
+The `pack` block names the spec's authority basis — who is the lead (the
+N+1 observer fielding spectral-Tomm probes), who are the members (the
+antichain operating under per-member ACLs), what bindings hold reusable
+ACL fragments. Per `mirror-spec-peer-acl-surface.md` §10, the
+lead-members relation is spawn-and-probe; the lead transforms the
+substrate's authority basis at runtime by fielding probes and projecting
+responses.
+
+Per [[architecture-operations-as-linear-algebra]]: shift = basis
+transformation. The `pack` block IS shift at the spec altitude: it
+transforms the substrate's authority basis from "whatever defaults the
+running operator carries" to "the lead + members antichain declared
+here." Each consumer's mirror.spec instances a different shift; the
+substrate-vs-USE rule (per Alex 2026-06-24) means the BLOCK SHAPE
+(`@mirror/pack`) is invariant under the shift while the INSTANCE varies.
+
+Mapping: **pack ↔ shift**. Primary verb: shift. Internal grammar: lead
+(peer reference); bindings (let-bound ACL identifiers); members (peer →
+ACL map).
+
+Substrate-pull note: per `mirror-spec-peer-acl-surface.md` §2.4, the
+`pack` block COMPOSES with `@spectral/supervisor` at runtime altitude
+for lifecycle work. The supervisor composition IS the shift's operational
+closure; the substrate-decl shape (this block) is the shift's declarative
+surface. Shift's two altitudes (declarative + operational) parallel the
+substrate-vs-USE distinction; this is structurally coherent.
+
+### 4.4 `target <name> { altitude, emit, check, … }` — split (orthogonal decomposition)
+
+```
+target binary  { altitude @code/rust;     emit cargo;     check check }
+target fmt     { altitude @code/rust;     emit cargo;     check fmt_check }
+target lint    { altitude @code/rust;     emit cargo;     check clippy }
+target tests   { altitude @code/rust;     emit cargo;     check test }
+target audit   { altitude @release;       emit cargo;     check audit }
+target action  { altitude @ci/github;     emit yaml }
+target release { altitude @release;       emit github_release; needs [binary, action] }
+```
+
+The `target` blocks name the substrate's emission decomposition — mirror
+emits seven artifacts at four altitudes (@code/rust, @release, @ci/github,
+plus the implicit @substrate-of-the-spec-itself). Each target is one
+orthogonal component of the substrate's projection-to-substance space.
+
+Per [[architecture-operations-as-linear-algebra]]: split = orthogonal
+decomposition. The `target` blocks IS split at the spec altitude: they
+DECOMPOSE the substrate's emission surface into per-altitude
+per-artifact components. The `needs […]` field on `release` ratifies the
+orthogonal-but-composable property: targets are independent except
+through explicit `needs` edges.
+
+Mapping: **target ↔ split**. Primary verb: split. Internal grammar: name
++ altitude + emit + check + (optional) needs + (optional) cli sub-block.
+
+Substrate-pull note: split is multi-instance per spec by structural
+shape — mirror.spec has seven target blocks. This is unlike `source`,
+`legacy`, `pack`, `settle_on`, `garden` (each appears once at most per
+spec). The multiplicity is the structural signature of split's
+decomposition role: one substrate, many orthogonal components, named
+separately.
+
+### 4.5 `settle_on { binary.compiles, …, total_transparency.weight == 0 }` — settle (monad-close / measurement collapse)
+
+```
+settle_on {
+  binary.compiles
+  binary.tests_pass
+  fmt.formats
+  lint.lints
+  tests.tests_pass
+  audit.advisories_clean
+  action.validates
+  release.signs
+  total_transparency.weight == 0
+}
+```
+
+The `settle_on` block names the substrate's verdict-composition — the
+conjunction of per-target predicates plus the global transparency-weight
+constraint that, when satisfied, settles the spec to its identity.
+
+Per [[architecture-operations-as-linear-algebra]]: settle = monad-close /
+measurement collapse. The `settle_on` block IS settle at the spec
+altitude: it COLLAPSES the spec's measurement (the conjunction of
+predicates) to a single verdict (settles or doesn't). The `total_transparency.weight == 0` clause IS the measurement-collapse predicate at
+the transparency altitude: settle holds when no held fracture remains.
+
+Mapping: **settle_on ↔ settle**. Primary verb: settle. Internal grammar:
+conjunction of per-target predicate references plus the global
+transparency-weight clause.
+
+Substrate-pull note: settle COMPOSES with refract (per
+[[architecture-prism-as-trait-as-everything]]: refract is the final
+crystal-producing operation). The substrate's CLI surface
+(`spectral refract` in spectral; `mirror kintsugi` in mirror) is the
+operational form of refract; the spec's `settle_on` block is the
+declarative form of refract's settle-then-crystallize composition.
+`settle_on` is settle-with-refract-composed; the canonical maps it to
+settle as primary because refract is the composition operator over
+settle, not its own primitive in (A).
+
+### 4.6 `garden { … }` — (forward-promised; substrate-pull TBD)
+
+The `garden` block is forward-promised per Mara's garden cascade
+(`ab2e379` → `ad03fda`). The block names the substrate's dependency-
+resolution surface — four-root structure (git / oci / nix / store) with
+typed CAS at four scopes plus cross-scope bridge actions. Pinned entries
+resolve in O(n).
+
+The operation assignment is uncertain at #99 altitude. Three candidates:
+
+- **garden ↔ (a sixth operation, forward-promised)?** If garden is a
+  composition primitive that does not collapse to focus/project/split/
+  shift/settle, the substrate's algebra needs a sixth operation. This
+  would falsify the five-operation closure per
+  [[architecture-prism-as-trait-as-everything]] and is therefore
+  substrate-pull-RED at this altitude. Not the path.
+- **garden ↔ focus (composed with source)?** garden names the
+  EXTERNAL substrate the spec attends to (git remotes, OCI registries,
+  nix store, content-store), parallel to `source`'s attention to the
+  LOCAL substrate-decl files. Both blocks compute attention surfaces;
+  garden is the cross-repo extension of source. Mapping:
+  `(source, garden) ↔ focus` jointly, decomposing into local +
+  external attention.
+- **garden ↔ shift (basis transformation by pinning)?** garden's pinning
+  discipline TRANSFORMS the substrate's basis from "whatever the network
+  currently serves" to "the pinned content-addresses declared here."
+  This would parallel `pack`'s basis transformation of authority —
+  `garden` is basis transformation of dependency. Mapping:
+  `(pack, garden) ↔ shift` jointly, decomposing into authority +
+  dependency.
+
+The substrate-pull-correct call at #99 altitude is the SECOND reading:
+**garden ↔ focus (composed with source)**. Rationale: garden's pinning
+discipline is structurally similar to source's directory-glob discipline
+(both compute attention surfaces by naming where substrate-decl content
+lives); the difference is local-vs-remote attention. Both compose to
+focus at the spec altitude. The five-operation closure is preserved.
+
+This reading is substrate-pull-CONFIDENT but not substrate-pull-CERTAIN;
+the garden block has not landed at the spec yet. §10's O1 names this
+as an open question to be settled when `garden { }` actually lands at
+mirror.spec.
+
+Mapping (forward-promised): **garden ↔ focus (joint with source)**.
+Primary verb: focus. Internal grammar: four-root structure with typed
+CAS at four scopes plus pinning discipline. Forward-promised per Mara's
+garden cascade.
+
+### 4.7 The enclosing `project mirror.spec { … }` — self-declaration (the prism's identity at λ₀)
+
+```
+project mirror.spec {
+  source …
+  legacy …
+  pack …
+  target …
+  target …
+  …
+  settle_on …
+}
+```
+
+The enclosing `project <name> { … }` declaration is the SELF-DECLARATION:
+the spec names ITSELF as the project under which the five-operation
+composition (§§4.1-4.6) discharges. Per Glint's §5.2 implicit: "each
+project's mirror.spec IS a `prism @<project-name>` declaration at the
+spec altitude."
+
+The self-declaration IS the prism's identity at λ₀. It is NOT one of the
+five operations; it is the prism's NAME, the carrier of the spec's identity.
+Per [[architecture-prism-as-trait-as-everything]]: prism IS trait IS type
+IS grammar; the `prism @<name> { … }` declaration IS the unit of substrate
+identity. The `project <name> { … }` enclosing IS the spec-altitude
+specialization of `prism @<name>`.
+
+Mapping: **enclosing project ↔ self-declaration (prism identity)**. Primary
+verb: NONE (this is the identity carrier, not an operation). Internal
+grammar: name + body composed of the five blocks above.
+
+Substrate-pull note: the self-declaration is the "+1" in Glint's "five
+operations plus one self-declaration." It is not a SIXTH OPERATION; it
+is the IDENTITY CARRIER under which the five operations compose. Per
+[[architecture-shards-as-substrate-source]]: substrate source IS
+substrate data; the spec's name IS the spec's identity. The enclosing
+project declaration is the substrate's WAY OF NAMING ITSELF — the
+declarative surface for the λ₀ vector's identity field.
+
+### 4.8 Mapping summary table
+
+| Block | Operation | Composition role | Multiplicity |
+|-------|-----------|------------------|--------------|
+| `source` | focus | local attention surface | 1 |
+| `legacy` | project | transitional-subspace projection-out | 0..1 |
+| `pack` | shift | authority basis transformation | 0..1 |
+| `target` | split | per-altitude emission decomposition | 1..N |
+| `settle_on` | settle (composed w/ refract) | verdict measurement-collapse | 1 |
+| `garden` (forward) | focus (joint w/ source) | external attention surface | 0..1 |
+| enclosing `project <name> { }` | (self-declaration) | identity carrier at λ₀ | 1 |
+
+The mapping is NOT trivially 1-to-1. Five distinct operations (A); six
+block surfaces (source, legacy, pack, target, settle_on, garden); one
+self-declaration. The operation-to-block mapping is:
+
+- focus: source + garden (joint)
+- project: legacy
+- shift: pack
+- split: target
+- settle: settle_on (composed with refract at the CLI altitude)
+- self-declaration: enclosing `project <name> { }`
+
+The six-block decomposition decomposes naturally into five operations
+plus one self-declaration; Glint's §5.2 surface is sharpened by the
+joint focus assignment (source + garden) which keeps the algebra closed
+at five operations. The substrate-pull alignment IS the mapping's
+structural soundness.
+
+This decomposition is the substrate-pull-correct reading at #99 altitude.
+Open questions for replication (§10): does the mapping hold when garden
+actually lands? Are there sub-block primitives within (e.g.) `target`'s
+`cli` sub-block that instance the five operations recursively? Is the
+self-declaration ITSELF a sixth operation in disguise (e.g., a fixed-point
+operator)? These are flagged candidate territory, not foreclosed.
+
+---
