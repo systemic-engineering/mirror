@@ -1,0 +1,140 @@
+in @prism
+in @mirror/cli
+in @mirror/mosaic
+in @mirror/pack
+in @pack
+in @peer
+in @spectral/supervisor
+
+# @mirror/spawn — the `mirror spawn ~peer'<home>'` cli-surface
+# substrate-decl.
+#
+# Phase D close per the LOCAL-PACK loop. Lifts @pack.spawn (the
+# load-bearing primitive at @pack altitude per recognition #84,
+# shards/pack.mirror:273) to the cli surface where humans type
+# `mirror spawn ~peer'~/.reed'` and get a running Reed.
+#
+# === What @mirror/spawn IS ===
+#
+# The cli-surface thin wrapper that:
+#
+#   1. Accepts a ~peer'<home>' argument (one positional arg)
+#   2. Resolves it via @peer.load(dir, p) (672f434; G1-composed with
+#      @io/git per Alex 2026-06-25 yes-confirmation)
+#   3. Resolves contextual frame (current mirror.spec at @mirror/cli
+#      altitude)
+#   4. Resolves contextual repository (the resolved peer's home)
+#   5. Resolves contextual pack (the current spec's pack{} block; see
+#      mirror.spec dogfood 8107caf for the dogfood instance)
+#   6. Discharges pack_coherent check (existing @pack bilateral)
+#   7. Delegates to @pack.spawn with the resolved 5-tuple
+#
+# The substrate-pull point: at the cli surface a human says ONE thing
+# (the target peer); the substrate resolves the rest from context. This
+# is the substrate-vs-USE rule applied to invocation: USE specifies the
+# target; substrate fills the context.
+#
+# === Phase H gate (the empirical proof) ===
+#
+# Phase H of the LOCAL-PACK loop: `mirror spawn ~peer'~/.reed'` returns
+# running Reed via @fate (optical inference per recognition #58; NOT
+# @io/llm). This shard makes that invocation TYPECHECK at substrate
+# altitude; the actual Rust runtime + @fate composition lands at Alex's
+# altitude (Phase G + H).
+#
+# === Recognition ancestry ===
+#
+# - #84 (@pack multi-repo agent runtime; promoted): provides the
+#   @pack.spawn primitive this shard wraps
+# - #58 (Fate IS optical inference; promoted): @fate IS the inference
+#   primitive; cascade/code/* species discharge the loop. NO @io/llm.
+#   This shard does NOT declare `in @fate` because @fate is the
+#   runtime substrate, not a substrate-decl prism (per Taut Phase F
+#   anti-pattern correction 2026-06-24).
+# - #99 (mirror.spec IS λ₀; Alex-named, Mara canonical d0b6519):
+#   spawn at the cli surface is an EXCITATION above λ₀ — the substrate
+#   moves out of ground state to produce a runtime peer. The spawn
+#   action IS one of the spectral-gap-crossing operations.
+# - peer-ACL spec §4 (lead semantics): the spawned peer at the spec's
+#   root IS the lambda-shell counterparty; when `mirror spawn` runs
+#   without an explicit target, the default IS the current spec's
+#   pack{}.lead (forward-promised in this shard).
+#
+# === Composition with @spectral/supervisor (peer-ACL §2.4) ===
+#
+# Runtime lifecycle composition: @spectral/supervisor (existing glass
+# at shards/spectral/supervisor.mirror:322) owns the spawned peer's
+# lifecycle (restart_strategy, terminate). @mirror/spawn KICKS the
+# spawn through @spectral/supervisor.start_child rather than directly
+# instantiating; this preserves the lifecycle invariant for the
+# spawned peer.
+#
+# Per peer-ACL §10 reframe: the lead is N+1 observer (spawn-and-probe
+# relation, NOT delegation). @mirror/spawn discharges the SPAWN side;
+# the spectral-Tomm-probe handling at runtime is the lead's ongoing
+# responsibility.
+
+prism @mirror/spawn {
+  focus mirror_spawn_request
+  project mirror_spawn_request
+  split mirror_spawn_request
+  shift mirror_spawn_request
+  settle mirror_spawn_request
+}
+
+# === The mirror_spawn_request carrier ===
+#
+# The typed cli-surface request shape. Two fields:
+#
+#   target  — the peer to spawn (resolved via @peer.load from the
+#             ~peer'<home>' cli argument). REQUIRED at cli altitude.
+#
+#   options — the spawn options (substrate-typed as `ref` until the
+#             option-record carrier surfaces; current options include
+#             --hello-world for the Phase H empirical proof gate,
+#             --detach / --foreground, --restart-strategy override).
+#
+# Identity contract: byte-equality on the (target, options) tuple.
+type mirror_spawn_request = {
+  target:  peer,
+  options: ref,
+}
+
+# === spawn — the cli-surface action ===
+#
+# Lifts the cli invocation into the substrate. The contextual
+# resolutions (frame, repository, pack) happen INSIDE the body via
+# @mirror/cli's contextual lookup; the action signature surfaces only
+# the request + perturbation.
+#
+# Returns runtime per @pack.spawn's existing return type (recognition
+# #84). The runtime carrier composes with @spectral/supervisor for
+# lifecycle.
+spawn(r: mirror_spawn_request, p: perturbation) -> runtime
+requires peer_well_known(r.target, p)
+{ \ }
+
+# === peer_well_known — sub-bilateral predicate ===
+#
+# Checks that r.target is a peer the substrate can actually spawn:
+# the home repo exists (via @io/git.git_repository_open), the
+# mirror.spec parses (via @mirror/spec), and a pack{}.lead resolves
+# (via @peer.load + the self-naming rule per peer-ACL §6.2).
+#
+# Lifted to spawn's `requires` clause per recognition #53 family.
+peer_well_known(p: peer, perturbation) -> verdict { \ }
+
+# === Forward-promised — NOT landed this tick ===
+#
+# - default_target(spec_path: ref, p: perturbation) -> imperfect(peer, ref, ref)
+#     When `mirror spawn` runs without explicit target, resolve to the
+#     CURRENT spec's pack{}.lead. Closes the no-arg cli invocation.
+#
+# - mirror_spawn_coherent(r: mirror_spawn_request, p: perturbation) -> verdict
+#     Composed bilateral per recognition #53 family (15th altitude lift
+#     when it lands).
+
+out @mirror/spawn
+out mirror_spawn_request
+out spawn
+out peer_well_known
