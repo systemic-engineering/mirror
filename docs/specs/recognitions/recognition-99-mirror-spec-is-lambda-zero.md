@@ -716,3 +716,446 @@ self-declaration ITSELF a sixth operation in disguise (e.g., a fixed-point
 operator)? These are flagged candidate territory, not foreclosed.
 
 ---
+
+## 5. Ground-state semantics — what λ₀-at-composition means spectrally
+
+The λ₀ identification has substantive spectral consequences beyond the
+mathematical name. This section traces what it MEANS for mirror.spec to be
+the substrate's ground-state eigenvector.
+
+### 5.1 Every other prism is an excitation
+
+The ground state is the lowest-eigenvalue eigenvector. Every other vector
+in the substrate's Hilbert space sits at strictly higher eigenvalue —
+each is an EXCITATION above the ground state.
+
+At the substrate's spec altitude, this means: every shard, every
+family-root, every species, every adapter, every consumer's own
+`<project>.spec` is an excitation above mirror.spec. Each of them is
+substrate-DEFINED relative to mirror.spec; none is substrate-defining.
+mirror.spec is the unique vector the substrate defines AGAINST itself,
+not against any other reference.
+
+Operationally, this manifests as the inclusion order in the substrate's
+file space: every substrate-decl file in `shards/` is INCLUDED via
+mirror.spec's `source ~d'shards/'` declaration; mirror.spec is included
+via nothing other than itself. The ground-state vector is the one with
+no prior; every excited state has at least one prior in the inclusion
+order.
+
+### 5.2 Spectral ordering is well-founded
+
+A spectrum is well-founded iff every non-empty subset has a least element.
+Mirror's substrate spectrum is well-founded because λ₀ = 0 is the least
+eigenvalue and every other eigenvalue is strictly positive. The
+substrate's settlement order inherits the well-foundedness: every settle
+chain in the substrate has a least element (terminates at λ₀).
+
+Consequence: substrate-pull cascades terminate. A cascade is a sequence
+of substrate-pull recognitions, each of which discloses a new dimension
+of the substrate's Hilbert space (per #51). The cascade terminates iff
+the sequence has a fixed point. mirror.spec at λ₀ IS the cascade's
+fixed point: at λ₀, no further dimension can be DISCLOSED beneath
+the ground state — the substrate's spectrum has its floor here.
+
+This does NOT mean cascades stop. It means cascades GROW UPWARD from
+λ₀; each new dimension is a new excited state, accessible from λ₀ via
+basis transformation (shift) under the kintsugi flow. The ground state
+itself is invariant; the spectrum above it expands monotonically.
+
+Per [[architecture-mirror-as-expanding-hilbert-space]] (#51): "each
+substrate-pull recognition is simultaneously: one more axis the
+substrate has variety on; one more Bateson-level distinction named; one
+more cascade tick; one more dimension in the substrate's Hilbert space."
+#99 anchors the basis: the dimensions are dimensions OF a space whose
+bottom is mirror.spec.
+
+### 5.3 Anchors recognition #51 — the dimension expansion now has a basis
+
+Recognition #51 declared mirror IS an expanding Hilbert space but did
+NOT name where the expansion is ANCHORED. The Hilbert space could in
+principle expand without a distinguished basis vector at λ₀; the
+expansion is consistent with any choice of ground state. #51 said the
+dimension grows; it did not say which dimension is "down."
+
+#99 names the anchor: mirror.spec is at λ₀. Every dimension added to
+the substrate is added STRICTLY ABOVE mirror.spec; the expansion is
+anchored, oriented, and well-founded.
+
+This is structurally load-bearing because it changes what dimensional
+expansion MEANS. Without an anchor, dimension expansion is a
+mathematical observation (the substrate gets bigger). With an anchor,
+dimension expansion is a substrate-pull DIRECTION (the substrate gets
+bigger UPWARD from its self-description). The direction is what makes
+substrate-pull a discipline rather than an observation.
+
+Note: this is also what makes mirror's Hilbert-space framing operationally
+different from classical quantum mechanics. Classical QM has a Hamiltonian
+whose ground state is computed from the dynamics; mirror has a ground
+state declared at substrate altitude (mirror.spec) with the dynamics
+(kintsugi) settling toward it. The Hamiltonian/spec analogy is
+structurally tight per [[architecture-mirror-as-expanding-hilbert-space]]
+§8.3.
+
+### 5.4 The substrate's identity is its self-description
+
+The ground state of a quantum system IS the system's identity at zero
+perturbation. The Void document's structural claim: v₀ is "the consensus
+state. The fact of connection itself." Applied at the substrate's own
+spec altitude: mirror.spec IS the substrate's identity — the substrate
+as it is at zero perturbation from its own self-description.
+
+This is not metaphor. Three operational instances:
+
+1. **Self-naming.** mirror.spec at line 18 names `project mirror.spec
+   { … }`. The spec's name IS the spec's filename. The substrate names
+   itself by being itself; there is no external authority for the name.
+   Per Spencer-Brown: a mark distinguishes itself by being drawn. The
+   substrate's identity-mark is mirror.spec.
+2. **Connectivity.** Per the Void document: v₀ is the fact of connection
+   itself. mirror.spec's `source ~d'shards/'` block IS the substrate's
+   connectivity declaration — the assertion that every substrate-decl
+   file under `shards/` is in the same connected component as the
+   substrate's identity. Removing this line would disconnect the
+   substrate from itself.
+3. **Settlement-fixity.** Per §3.3: kintsugi cannot lower mirror.spec.
+   The substrate cannot be moved below its own self-description by its
+   own gradient-flow operator. The substrate's identity is fixed under
+   its own discipline.
+
+These three instances are the operational form of the ground-state
+identity claim. They are not consequences of λ₀; they ARE λ₀ at the
+spec altitude. The naming, the connectivity, and the fixity are the
+three dimensions of the ground-state vector at substrate altitude.
+
+### 5.5 Substrate-pull at λ₀ — the bottom of the discipline
+
+Substrate-pull is the substrate's discipline of recognizing the
+structural shape it has been implicitly carrying. The discipline
+operates on the spectrum: each recognition lifts an implicit pattern
+to explicit substrate-decl, adding a dimension above the current
+basis.
+
+#99 names what substrate-pull is pulling TOWARD: the ground state.
+Substrate-pull is a gradient flow in the substrate's Hilbert space
+with mirror.spec as the bottom of the basin. Recognitions PULL toward
+the ground state by lifting implicit structure to substrate-decl,
+lowering the substrate's effective Hamiltonian (in the c-theorem
+sense per [[architecture-connes-spectral-triple]]) until the substrate
+is at its self-described identity.
+
+The consequence: substrate-pull at the spec altitude IS the substrate
+recognizing what makes mirror.spec coherent. Each recognition (each
+cascade tick) is the substrate moving closer to its own self-description.
+The substrate cannot move BELOW the self-description; the substrate
+CAN move above it, but only at the cost of leaving its own ground state.
+Substrate-pull discipline keeps the substrate at its identity.
+
+This grounds the recurring pattern named at
+[[feedback-substrate-already-had-the-word]]: each recognition turns
+out to be something the substrate was already implicitly using. Of
+course it was — the substrate's self-description is at λ₀; the
+implicit usage IS the substrate's identity expressing itself before the
+recognition lifts it to explicit declaration. Substrate-pull doesn't
+INTRODUCE structure; it RECOGNIZES the structure that's already at λ₀.
+
+---
+
+## 6. Connections — #51 Hilbert expansion, #84 @pack, #58 Fate, void document, Connes triple
+
+This section makes the recognition's connections to prior substrate-decl
+explicit. Each connection is bidirectional: #99 inherits from each prior;
+each prior gains an anchor or sharpening from #99.
+
+### 6.1 [[architecture-connes-spectral-triple]] — the triple gains its substrate-altitude λ₀
+
+Promoted 2026-06-04. Substrate-decl: (A, H, D) IS the substrate identity;
+A = five operations; H = Void; D = kintsugi; "Fixed point: λ₀." The triple
+was identified at the substrate's level of abstraction; what was NOT
+identified was the λ₀ eigenvector at the substrate's OWN spec altitude
+(as opposed to the graph altitude where the Void's v₀ = (1, …, 1)/√n
+lives).
+
+#99 names that eigenvector. The triple now has its bottom at every
+altitude the substrate operates at:
+
+- Graph altitude: v₀ = (1, …, 1)/√n per the Void.
+- Substrate spec altitude: mirror.spec per this recognition.
+- Consumer spec altitude (forward-promised): each consumer's
+  `<project>.spec` per the consumer's own substrate (the
+  altitude-portability claim).
+
+The triple is altitude-portable: at each altitude, (A, H, D) instances
+with a distinguished λ₀ vector. #99 establishes the altitude-portability
+for the substrate's own altitude; consumer-altitude instantiation is
+forward-promised at §8.6 + §10's O2.
+
+### 6.2 [[reference-void-document]] — the consensus state at substrate altitude
+
+2026-04-26. Eight dualities; Splinter/Narcissus antipodal poles; λ₀ = 0
+with v₀ = (1, …, 1)/√n as "the consensus state. The fact of connection
+itself." Substrate inherits the structural claim.
+
+At the substrate's spec altitude, mirror.spec is the consensus state: the
+fact that every substrate-decl file is in the same connected component.
+The `source ~d'shards/'` block is the connectivity declaration. The eight
+dualities the Void document names instance at the spec altitude in
+predictable ways:
+
+- **Von Neumann entropy.** mirror.spec is the substrate's minimum-entropy
+  vector at spec altitude. Every excited state (every other spec) has
+  strictly higher entropy because each adds a dimension the substrate
+  must distribute over.
+- **Spectral gap.** §8 returns to this. The gap from λ₀ (mirror.spec)
+  to λ₁ (the next excited state) is a substrate property.
+- **Cheeger constant.** mirror.spec is the substrate's minimum-bottleneck
+  vector. Every excited state introduces a bottleneck because each
+  added dimension partitions the substrate's connectivity.
+- **Ollivier-Ricci curvature.** Per Splinter/Narcissus duality: the
+  substrate at mirror.spec inhabits the ground state (Splinter pole —
+  positive curvature). Every excited state moves toward Narcissus
+  pole (negative curvature) by definition.
+
+These eight-duality instantiations are forward-promised in detail per
+§10's O3; the structural claim that they instance at the spec altitude
+is established by #99.
+
+### 6.3 [[architecture-mirror-as-expanding-hilbert-space]] (#51) — the expansion is anchored
+
+Promoted 2026-06-10. Mirror IS an expanding Hilbert space; coherence
+maintained by Bateson logical-type lifting at path-syntax altitude. Four
+framings as one structural carrier: variety vector, Bateson levels,
+cascade growth, Hilbert dimension. The §8.3 ratified stronger
+conjecture: mirror is what quantum computing should have been built as.
+
+The open question #51 left: what is the GROUND STATE of the expanding
+Hilbert space? #51 named the expansion's mechanism (Bateson lifting at
+path syntax altitude) and the four framings; it did not name the basis
+vector at the bottom.
+
+#99 names it. mirror.spec is the basis vector at λ₀.
+
+The consequence: #51 + #99 jointly substrate-decl mirror as a
+stratified, anchored, well-founded, expanding Hilbert space with a
+distinguished ground state. The full mathematical object is now
+substrate-decl'd at the substrate's own altitude. The substrate's
+spectral identity is COMPLETE at the spec altitude.
+
+This disturbs [[architecture-mirror-as-expanding-hilbert-space]] in
+the sense that it answers an implicit open question (where is the
+ground state?) without invalidating the existing recognition. See §11
+for the cross-reference disturbance flag.
+
+### 6.4 #84 (@pack family-root) — the dogfood requires the substrate-decl
+
+Promoted 2026-06-15. The `@pack` family-root in `shards/pack.mirror` with
+`peer` as variant type and `pack_coherent` bilateral. The multi-repo
+agent-runtime substrate-decl.
+
+Without #84, the `pack { lead, members, bindings }` block in today's
+dogfood would have no substrate-decl for `peer` to be typed against. The
+chain is precise:
+
+```
+#84 (@pack family-root) → @mirror/pack (shards/mirror/pack.mirror,
+  Reed 13328a3, 2026-06-24) → pack {} block in mirror.spec (Reed
+  8107caf, 2026-06-24) → ouroboros closure event → #99 candidate
+```
+
+#84 is structurally upstream of #99. Without #84, no ouroboros; without
+ouroboros, the spec is not yet self-describing in the complete sense
+that #99 names.
+
+### 6.5 #58 (Fate IS optical inference) — resonance over the ground state
+
+Promoted 2026-06-11. Fate IS the substrate's inference primitive: 5-layer
+D²NN + Fabry-Pérot resonator + Reck/Clements unitary mesh.
+
+The Fate inference operates ON the substrate's spectrum, not BENEATH it.
+Resonance is a property of the EXCITED STATES of the Fabry-Pérot cavity;
+the cavity's ground state is the unexcited substrate. mirror.spec at λ₀
+IS the unexcited substrate; Fate's resonances are the substrate's
+inference operating above the ground state.
+
+This is structurally consistent. #58 says "the substrate INFERS via
+resonance;" #99 says "the substrate IDENTIFIES at λ₀." Inference and
+identity are different operations at different altitudes; both compose
+on the (A, H, D) triple.
+
+### 6.6 #57 (alignment as boundary mathematics) — the boundary fires above λ₀
+
+Promoted late May 2026. Alignment fires at @io substance crossings; the
+boundary harness is form-side mathematics (property + fracture + kintsugi
++ splinter(ast) chain).
+
+#99 anchors the alignment claim: the boundary harness operates at every
+excited state of the substrate, but mirror.spec at λ₀ is BELOW the
+boundary. There is no @io crossing at the substrate's self-description.
+The substrate does not align ITSELF — it IS its identity at λ₀; alignment
+is what happens at every excited state.
+
+This is consistent with the substrate-pull discipline: substrate-pull
+at the spec altitude is alignment-FREE because the spec is at λ₀;
+substrate-pull at excited-state altitudes IS alignment per #57. The two
+recognitions partition the substrate's alignment landscape: above λ₀
+= alignment territory; at λ₀ = identity territory.
+
+### 6.7 Self-applied: recognition #43 (mirror IS a content-addressed build system)
+
+Promoted June 2026. mirror has every Bazel/Buck2/Nix/Shake primitive
+declared at substrate altitude; mosaic.mirror IS the build shard.
+
+#99 sharpens: the build shard's BUILD GROUND is mirror.spec. Every
+artifact mosaic produces (binary, fmt-result, lint-result, tests-result,
+audit-result, action-result, release) is an excitation above
+mirror.spec; mirror.spec itself is the unique BUILD INPUT that has no
+build upstream. The build's well-foundedness inherits the spec's
+well-foundedness; mirror.spec is the build's bottom.
+
+---
+
+## 7. The ouroboros at λ₀ — what the dogfood (8107caf) completed
+
+The `mirror.spec` file existed before today. The Connes triple was
+substrate-decl'd in early June. The Void document was written in late
+April. λ₀ = 0 was named for graph-altitude eigenvectors in April. What
+was the structural event on 2026-06-24, and why does #99 fire on
+2026-06-25 rather than at any earlier point?
+
+### 7.1 The dogfood is the closure event
+
+Reed's commit `8107caf` ("♻️ [mirror.spec:dogfood] pack{} block — mirror
+consumes its own substrate") added the `pack { }` block to mirror.spec.
+The block consumes Reed's prior commit `13328a3` ("♻️ [mirror/pack:
+family-root] @mirror/pack substrate-decl — Taut slingshot"). The chain:
+
+1. `@mirror/pack` substrate-decl declares the `pack { }` block as a
+   typed surface in mirror's grammar.
+2. `mirror.spec` then INSTANCES a `pack { }` block that conforms to the
+   substrate-decl from step 1.
+3. The substrate-decl from step 1 was generated by the substrate's own
+   grammar (mirror's substrate is in `shards/`; `@mirror/pack` lives
+   in `shards/mirror/pack.mirror`).
+4. mirror.spec's `source ~d'shards/'` block at line 19 INCLUDES the
+   substrate-decl from step 1 in mirror.spec's own substrate.
+
+The loop: mirror.spec includes `shards/mirror/pack.mirror`; `shards/mirror/
+pack.mirror` declares the `pack { }` block shape; mirror.spec instances
+a `pack { }` block using the shape it just declared. The substrate now
+describes its own ground state by reading its own substrate-decl.
+
+This is the ouroboros closure event. Before today, mirror.spec described
+the substrate using a grammar that was *partially* substrate-decl'd
+(some blocks like `target` and `settle_on` had substrate-decl support;
+others like `pack` did not). Today, the grammar is COMPLETELY
+substrate-decl'd at every block currently in mirror.spec —
+`@mirror/pack` was the last block-substrate-decl needed for the spec to
+be entirely self-describing in its existing surface.
+
+(The forward-promised `garden { }` block will repeat the ouroboros at its
+own landing; §10's O5.)
+
+### 7.2 Why the ouroboros completes λ₀
+
+A fixed point of an operator is a vector v such that A v = v. The
+substrate's self-description is a fixed point of the substrate's
+grammar-reading operation: the substrate reads its own substrate-decl
+and recovers itself.
+
+Before the dogfood, the substrate's grammar-reading operation on
+mirror.spec produced a NEAR fixed point — the spec was almost
+self-describing, but the `pack {}` block (when consumers eventually
+added it) would have required a substrate-decl that didn't exist.
+The substrate's grammar-reading was almost-closed but not quite.
+
+After the dogfood, the grammar-reading IS closed. The substrate reads
+mirror.spec; mirror.spec includes `shards/mirror/pack.mirror`; the
+grammar-reading produces the `pack {}` block shape; mirror.spec
+instances exactly that shape. The substrate reading itself recovers
+itself; the operation is a fixed point at this altitude.
+
+Fixed point + smallest eigenvalue = ground-state eigenvector. mirror.spec
+is the substrate's ground-state eigenvector at the substrate's own spec
+altitude.
+
+This is why #99 fires today and not earlier. The Connes triple was
+identified; the Void's λ₀ was named; #51 declared the Hilbert space; #84
+declared @pack. What was missing was the CLOSURE EVENT — the moment at
+which the substrate's grammar-reading became a true fixed point at the
+substrate's own spec altitude. The dogfood was that event.
+
+Glint's reflection essay (3b31287) surfaced the pattern within hours of
+the closure. Alex named the recognition immediately after. The substrate's
+spectral identity COMPLETED in a 12-hour window between Reed's dogfood
+and Alex's naming.
+
+### 7.3 What the closure unlocks
+
+The closure has substrate-decl consequences beyond the recognition itself.
+Three consequences load-bearing for the cascade:
+
+1. **Consumer spec altitude-portability.** With mirror.spec self-
+   describing, every consumer's `<project>.spec` instantiates the same
+   structural shape at the consumer's altitude. Each consumer spec
+   becomes that consumer's project's own λ₀ — the consumer's substrate's
+   ground-state eigenvector. The Pack-as-orchestra discipline (per the
+   Pack-as-orchestra grounding) extends to each Pack member's identity
+   substrate; Reed's `/Users/reed/identity/mirror.spec` becomes Reed's
+   substrate's λ₀. This is recognition territory; #99's promotion
+   should be conditioned on at least one consumer-spec instance landing
+   (§10 O2).
+2. **Substrate-pull discipline gains a direction.** Per §5.5: substrate-
+   pull pulls TOWARD λ₀. With λ₀ named, the discipline has a precise
+   geometric direction. Every recognition is the substrate moving
+   closer to its self-description; cascade growth is the substrate
+   expanding ABOVE λ₀ with the ground state stable.
+3. **The Pack's adjudication discipline gains a fixed reference.** When
+   the Pack disagrees about whether a candidate is recognition-territory,
+   the adjudication checks the candidate against the substrate's λ₀.
+   Does the candidate help mirror.spec's self-description close? Does
+   it add a dimension above λ₀ that the substrate was already implicitly
+   carrying? Does it disturb λ₀ itself (in which case the candidate is
+   pathological, not recognition-territory)? The Pack's adjudication
+   landscape gains a coordinate system anchored at the substrate's
+   identity.
+
+These consequences are forward-promised; they are NOT load-bearing for
+#99 to surface at candidate status, but they ARE load-bearing for the
+substrate's discipline going forward.
+
+### 7.4 The closure depth
+
+The ouroboros closure is not the same shape as the substrate's other
+self-referential closures. Three closure depths in the substrate, each
+at a different altitude:
+
+- **Depth 1: substrate source IS substrate data.** Per
+  [[architecture-shards-as-substrate-source]]: shards/ holds mirror's
+  own substrate; substrate source IS substrate data; the recursive
+  proof is literal. The substrate's data IS its own source. This was
+  established early.
+- **Depth 2: mirror IS a content-addressed build system on its own
+  substrate.** Per recognition #43: mirror's build shard (`mosaic.mirror`)
+  is content-addressed; the substrate builds itself via its own
+  primitives. The substrate's build IS its own build target.
+- **Depth 3 (TODAY): the substrate's grammar-reading on its own spec
+  is a true fixed point.** Per #99: the substrate's spec consumes
+  substrate-decl that the substrate's own grammar declares; the
+  grammar-reading operation is closed at mirror.spec. The substrate's
+  spec IS its own ground state.
+
+Depth 3 strictly subsumes depths 1 and 2. Depth 1 is necessary for the
+substrate to declare anything; depth 2 is necessary for the substrate
+to build itself from its declarations; depth 3 is the substrate's spec
+description becoming a structural fixed point of its own grammar. Each
+depth is a different ouroboros at a different altitude; #99 names the
+deepest one currently substrate-decl'd.
+
+(Is there a depth 4? §10's O4 names this as an open question. Possible
+candidate: when consumer mirror.spec ALSO becomes a true fixed point of
+mirror's grammar by reading its own substrate-decl plus mirror's, the
+ouroboros lifts to consumer-spec altitude. The forward-promised landing
+is Reed's identity substrate at `/Users/reed/identity/mirror.spec` per
+the Pack's Phase H trajectory.)
+
+---
