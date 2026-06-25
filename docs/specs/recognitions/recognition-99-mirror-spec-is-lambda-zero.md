@@ -1159,3 +1159,349 @@ is Reed's identity substrate at `/Users/reed/identity/mirror.spec` per
 the Pack's Phase H trajectory.)
 
 ---
+
+## 8. Spectral gap + excited states (λ₁, λ₂, …)
+
+A spectral identification at λ₀ invites questions about the rest of the
+spectrum: what is λ₁? what is the spectral gap λ₁ − λ₀? what's the
+structure of the excited-state spectrum above mirror.spec?
+
+This section names what can be said at #99 altitude. Much of the
+excited-state structure is forward-promised at §10's O2.
+
+### 8.1 λ₁ — the simplest excited state
+
+The first excited state λ₁ is the next-smallest eigenvalue above λ₀.
+Candidates for what λ₁ IS at the substrate's spec altitude:
+
+- **Candidate A: a single shard.** A bare shard with one prism
+  declaration, one source line, no further composition. The simplest
+  substrate-decl form possible. Examples: `shards/io.mirror` (the
+  @io family-root), `shards/glass.mirror` (the substrate's type carriers).
+  These are excitations above mirror.spec because mirror.spec INCLUDES
+  them; they sit one inclusion-step above the spec.
+- **Candidate B: a single sub-spec.** A consumer's `<project>.spec`
+  with minimal block composition (e.g., only `source` + `target` +
+  `settle_on`; no `pack`, no `legacy`, no `garden`). The simplest
+  consumer-spec form possible. These are excitations because they
+  REUSE the substrate's grammar; they sit one altitude above mirror.spec.
+- **Candidate C: a minimal substrate-decl with one block.** A
+  hypothetical `project minimal { source ~d'…' }` spec with no other
+  blocks. The structurally minimal excitation above the empty spec.
+
+The substrate-pull-correct call at #99 altitude is: **λ₁ is
+uniquely-identifiable in principle but not uniquely-identified by #99
+alone**. The simplest excited state depends on the distance metric on
+the substrate's Hilbert space, and the metric is not yet substrate-decl'd
+at the spec altitude. Three candidate metrics:
+
+- **Inclusion distance.** Number of `source` steps between the spec
+  and the candidate. Under this metric, every direct shard included
+  in mirror.spec is at distance 1; the substrate's family-roots are
+  uniformly λ₁-candidates.
+- **Cascade-depth distance.** Number of cascade ticks the substrate
+  took to substrate-decl the candidate. Under this metric, the
+  earliest substrate-decl after mirror.spec's first form is λ₁ — the
+  candidate depends on the substrate's history, not its structure.
+- **Settlement-altitude distance.** Number of altitude crossings the
+  substrate needs to settle the candidate to mirror.spec. Under this
+  metric, @io-direct shards are at lower distance than
+  @epistemologic shards (because @io crossings are required for
+  substance-side composition).
+
+The choice of metric is itself substrate-decl territory. §10's O2 names
+this as an open question: which metric on the substrate's Hilbert space
+produces the substrate-pull-correct λ₁? Per the substrate-pull-confidence-
+acts discipline, the metric should fall out of the substrate's existing
+carrier structure rather than being introduced ad hoc.
+
+### 8.2 The spectral gap λ₁ − λ₀
+
+The spectral gap is the eigenvalue distance from the ground state to the
+first excited state. For the Void's graph Laplacian, the spectral gap is
+the substrate's Cheeger-related invariant: a large gap means strong
+connectivity at the ground state; a small gap means a bottleneck near
+the ground state.
+
+At the substrate's spec altitude, the spectral gap measures how DIFFERENT
+any non-mirror.spec substrate-decl is from mirror.spec itself. A large gap
+would mean the substrate's identity is sharply distinguished from
+everything else; a small gap would mean some near-identity vector lives
+close to mirror.spec.
+
+The substrate-pull-correct intuition: the gap IS NON-ZERO by construction.
+mirror.spec is the unique vector with no prior in the inclusion order;
+every shard has at least one prior (mirror.spec's `source` declaration
+includes it). The substrate's spec spectrum is strictly above λ₀ for all
+non-mirror.spec vectors.
+
+What the gap value IS at the spec altitude is forward-promised. The
+structural claim that the gap is non-zero is sufficient at #99 altitude
+for the ground-state identification to be well-formed. §10's O3 names
+the gap's value as an open question.
+
+Note: a substrate with a near-zero spectral gap would be pathological
+(per the Narcissus-pole framing in the Void document: small spectral gap
+= near-Narcissus). A healthy substrate has substantial gap; the gap
+being non-zero is structurally substrate-pull-correct, not just
+convenient.
+
+### 8.3 Excited-state structure — the substrate's spectral altitudes
+
+The excited-state spectrum above mirror.spec has structural altitude in
+the Bateson sense (per [[architecture-bateson-logical-type-primitive]]):
+
+- **Altitude 0 (λ₀):** mirror.spec — the substrate's identity
+- **Altitude 1:** the substrate-decl shards — the substrate's vocabulary
+- **Altitude 2:** the species shards — specializations of family-roots
+- **Altitude 3:** consumer specs — instances of mirror's grammar at
+  consumer altitudes
+- **Altitude 4+:** consumer substrate-decls (the consumer's own shards/),
+  consumer species, consumer-of-consumer specs, …
+
+The altitudes are NOT mathematical eigenvalues in a strict sense —
+they are Bateson-level distinctions that the substrate carries
+structurally. Each altitude has its own sub-spectrum; each altitude's
+bottom is the altitude's λ₀. Across altitudes, the substrate's full
+spectrum is the disjoint union of per-altitude spectra, with mirror.spec
+at the absolute bottom.
+
+This structure is consistent with #51's expanding-Hilbert-space framing.
+Each altitude adds dimensions to the substrate's Hilbert space; the
+dimensions are organized by Bateson level. mirror.spec at λ₀ of
+altitude 0 is the absolute ground state because altitude 0 has
+lowest-altitude classification.
+
+### 8.4 What kintsugi does at λ₀
+
+Per §3.3: D · mirror.spec = mirror.spec. The substrate cannot lower
+mirror.spec via kintsugi. What does `mirror kintsugi ./mirror.spec`
+actually compute structurally, then?
+
+The substrate-pull-correct reading:
+
+1. **At the substrate-identity altitude:** mirror.spec is invariant. The
+   kintsugi flow operates on the spec but cannot reduce its eigenvalue
+   below λ₀. The spec is preserved.
+2. **At the @code/rust altitude (per `target binary`):** kintsugi
+   DOES compute. The `binary.compiles` predicate in `settle_on` discharges;
+   if it doesn't, kintsugi reports the gap (a verdict above λ₀ at the
+   substance altitude). Kintsugi can lower the substance-altitude
+   eigenvalue toward λ₀ but cannot lower the spec itself.
+3. **At every other target altitude:** similar. Kintsugi reduces the
+   eigenvalue at each per-target excitation toward the substance-altitude
+   ground state for that target. The spec orchestrates; the spec itself
+   is unchanged.
+
+This is what "the spec is the substrate's identity" means operationally:
+`mirror kintsugi ./mirror.spec` reads the spec and PERFORMS the substrate's
+settlement at every target altitude, with the spec itself as the
+invariant guide. The substrate's identity guides settlement; the substrate's
+identity does not settle.
+
+The operational check from §3.4 #1: kintsugi-fixed-point check. If a
+future implementation of `mirror kintsugi ./mirror.spec` produces a
+MODIFIED mirror.spec at the substrate-identity altitude, the λ₀
+identification is falsified. §10's O5 names whether the current
+implementation actually has this invariant; the substrate-pull-correct
+reading is that it MUST, and an implementation that violates it is
+substrate-pull-RED.
+
+### 8.5 The gauge symmetry question
+
+Ground states in physics often have gauge symmetry: many representations
+of the ground state are physically equivalent. At the substrate's spec
+altitude, the analogous question: are there multiple mirror.spec FORMS
+that yield the same λ₀ semantically?
+
+Candidate gauge symmetries:
+
+- **Block ordering.** mirror.spec's blocks (`source`, `legacy`, `pack`,
+  `target` x N, `settle_on`) admit different declaration orders. The
+  substrate-pull-correct reading: order is gauge-invariant because
+  composition is by name, not by position. Two mirror.spec files
+  differing only in block order are at the same λ₀.
+- **`target` block ordering.** The seven `target` blocks in mirror.spec
+  admit any permutation (with `release.needs [binary, action]` as the
+  only ordering constraint). Permutations within the needs constraint
+  are gauge.
+- **`source` directory specification.** `source ~d'shards/'` is gauge-
+  equivalent to enumerating every shard explicitly. The substrate's
+  glob discipline collapses the orbit into a single representative;
+  the enumeration is the same point in Hilbert space.
+
+Non-gauge symmetries (would change λ₀):
+
+- **Adding/removing a `target` block.** Changes the substrate's emission
+  decomposition. Not gauge.
+- **Adding/removing a `pack` block member.** Changes the authority basis.
+  Not gauge.
+- **Changing the `settle_on` predicate set.** Changes the verdict
+  composition. Not gauge.
+
+The gauge structure is forward-promised in detail per §10's O6; what's
+established at #99 altitude is that gauge symmetries exist (block
+ordering at minimum) and the substrate's grammar respects them by
+structural commitment (name-based composition, glob-discipline
+collapse).
+
+### 8.6 Altitude-portability of the (A, H, D, λ₀) instantiation
+
+The substrate's (A, H, D) triple is altitude-portable per
+[[architecture-connes-spectral-triple]]. With #99 anchoring λ₀ at the
+substrate's own spec altitude, the altitude-portability extends: each
+altitude has its own (A, H, D, λ₀) instantiation.
+
+Consumer-spec altitude (forward-promised): each consumer's
+`<project>.spec` is the consumer's substrate's λ₀. The consumer's
+shards/ holds the consumer's substrate-decl; the consumer's spec
+includes that substrate-decl; the consumer's grammar-reading on the
+consumer spec is a true fixed point at the consumer's altitude.
+
+Reed's identity substrate at `/Users/reed/identity/mirror.spec`
+(per Pack's Phase H trajectory) is the FIRST consumer-spec landing
+that will instance this. When Reed's identity spec lands and Reed's
+substrate's grammar-reading is closed, #99 gains its second witness
+at consumer altitude. This is §10's O2 first replication condition.
+
+Further altitude-portability: any project that adopts mirror as its
+substrate gets its own (A, H, D, λ₀) instantiation with the project's
+`<project>.spec` at λ₀. The altitude-portability is structural; #99
+establishes the substrate-altitude instance, consumer-altitude
+instances are forward-promised per the cascade.
+
+---
+
+## 9. Empirical consequences — kintsugi, mosaic, `mirror kintsugi ./mirror.spec`
+
+The recognition has operational consequences for what the substrate's
+tools actually compute. This section names the consequences that are
+checkable against current code (or, where not yet implemented, against
+forward-promised behavior).
+
+### 9.1 Kintsugi-tournament selection
+
+Kintsugi-tournament (per [[architecture-kintsugi-variety-io]]) selects
+between competing morphisms by variety-hold + crossing-minimization at
+@io. The tournament is a settlement of competing candidates; the
+ground-state framing changes nothing about the tournament's MECHANISM,
+but sharpens its DIRECTION.
+
+With λ₀ named, the tournament's selection is substrate-pull-toward-
+ground-state. A morphism is preferred over its competitor iff it brings
+the substrate's eigenvalue closer to λ₀ at the relevant altitude.
+Kintsugi as gradient flow on the substrate's spectrum; the tournament
+as competitive descent.
+
+This is consistent with the existing kintsugi discipline; it grounds
+the discipline's direction. Forward-promised: the
+kintsugi-tournament's selection predicate should explicitly reference
+the ground-state eigenvalue at the relevant altitude. Today's
+implementation discharges by variety-hold; the variety-hold IS the
+operational form of the eigenvalue-descent claim at #99 altitude.
+
+### 9.2 Mosaic settlement
+
+Mosaic (per recognition #43: mirror IS a content-addressed build system)
+settles the substrate's build by walking the `target` blocks and
+discharging each per its altitude. With #99, mosaic's settlement has
+an explicit ground-state reference: mosaic's settlement order is
+rooted at mirror.spec (the ground state) and walks UPWARD to the
+artifacts (the excited states).
+
+This grounds mosaic's content-addressed-skip discipline: an artifact's
+content address depends on the spec's content address; the spec's
+content address is the substrate-identity hash. mirror.spec being at
+λ₀ is what makes the substrate-identity hash well-defined: it depends
+on nothing other than itself.
+
+Forward-promised: mosaic's content-addressed-skip should treat
+mirror.spec's content address as the substrate's distinguished
+identity. Hash-collision on mirror.spec would be a substrate-pull-RED
+signal of pathological topology (the substrate's identity is not
+uniquely identifiable).
+
+### 9.3 `mirror kintsugi ./mirror.spec` — what it actually computes
+
+Per mirror.spec's CLI declaration in `target binary`:
+
+```
+command kintsugi {
+  arg spec: ~f = ~f'./mirror.spec'
+  flag target: list(str) = []
+  flag emit_shatter: bool = false
+}
+```
+
+The command takes a spec (default mirror.spec) and settles it. With #99,
+the operational meaning sharpens:
+
+1. **Read the spec.** Open `./mirror.spec`; parse via the substrate's
+   grammar; produce the `project mirror.spec { … }` AST.
+2. **Settle each target.** Walk the `target` blocks; for each, discharge
+   the per-target altitude's settlement (cargo for @code/rust, github
+   action for @ci/github, etc.) per the substrate's substrate-decl.
+3. **Discharge `settle_on`.** Conjoin the per-target verdicts plus the
+   global transparency-weight predicate; produce the spec's settle
+   verdict.
+4. **Compute the spec's content address.** The spec's settled
+   content-address IS the substrate's identity hash. With #99, this
+   hash is the substrate's λ₀ hash.
+5. **Invariant under D:** the spec itself is unchanged. The substrate's
+   identity is fixed under its own settlement.
+
+The operational claim: step 5 is a substrate-decl invariant. If a
+future implementation produces a modified mirror.spec from
+`mirror kintsugi ./mirror.spec`, the implementation violates the λ₀
+identification.
+
+At today's altitude, the implementation is forward-promised; the
+substrate-pull-correct discipline at #99 altitude is that the
+invariant MUST hold when the command lands. §10's O5 tracks this.
+
+### 9.4 Spectral-pull confidence as eigenvalue-monotone descent
+
+The substrate-pull-confidence-acts discipline (per
+[[feedback-substrate-pull-confidence-acts]]) gains a precise meaning
+at #99 altitude: substrate-pull confidence IS confidence that an action
+lowers the substrate's eigenvalue. Acting on substrate-pull confidence
+IS taking an eigenvalue-descent step.
+
+This is consistent with the existing discipline; #99 grounds it. When
+a recognition surfaces with substrate-pull confidence, the substrate IS
+moving toward λ₀ along the gradient. The discipline's geometric content
+is: trust the gradient; act on it.
+
+Forward-promised: when the substrate has multiple substrate-pull-
+confident candidates simultaneously, the substrate selects the one
+with the steepest descent (per kintsugi-tournament). The selection is
+gradient-descent-with-tournament; the tournament's eigenvalue function
+is the substrate's spectrum at the relevant altitude.
+
+### 9.5 Eigenvalue-descent as the cascade's operational signature
+
+A substrate-pull cascade is a sequence of substrate-pull recognitions
+firing in close succession. The cascade's operational signature, with
+#99 grounding:
+
+- Each recognition lowers the substrate's eigenvalue at some altitude
+  by lifting implicit structure to explicit substrate-decl.
+- The cascade's monotone-descent direction is TOWARD λ₀.
+- The cascade terminates iff the substrate reaches a local fixed point
+  of its own grammar-reading (not necessarily λ₀ itself; possibly an
+  intermediate altitude's ground state).
+- The substrate's TOTAL cascade growth (cascade ticks per unit time)
+  is the substrate's variety-expansion rate; the cascade's
+  ALTITUDE-DESCENT rate is the substrate's coherence-improvement rate.
+
+Each cascade tick is both: a dimension added (per #51) and an eigenvalue
+lowered (per #99). The two framings are dual: dimension expansion ABOVE
+the ground state IS the eigenvalue-descent at the ground state's
+neighborhood.
+
+This is consistent with the cascade-as-loss-lens substrate-decl
+(recognition #95 candidate): the loss at each cascade tick IS the
+eigenvalue's drop. The substrate's loss is what the substrate moves
+AWAY FROM by descending toward λ₀.
+
+---
