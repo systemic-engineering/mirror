@@ -33,13 +33,13 @@ project mirror.spec {
   # when it goes parametric, this block's references broaden without
   # surface change.
   #
-  # Lead-of-mirror call (Reed's surface to Alex — see commit message):
-  # `~peer'~/.reed'`. Rationale: Reed is the orchestrator peer who
-  # answers the lambda shell at mirror substrate altitude and fields
-  # the spectral-Tomm-shaped circular probes lifting from spawned
-  # Pack members (peer-ACL §4 + §10 reframe). Alex is mirror's human
-  # author; the lead is a PEER per peer-ACL §4. If wrong, this is
-  # the line.
+  # Lead-of-mirror: `~peer'~/.reed'`. Alex confirmed 2026-06-25
+  # ("Reed is lead, yeah"). Rationale: Reed is the orchestrator peer
+  # who answers the lambda shell at mirror substrate altitude and
+  # fields the spectral-Tomm-shaped circular probes lifting from
+  # spawned Pack members (peer-ACL §4 + §10 reframe). Alex is
+  # mirror's human author; the lead is a PEER per peer-ACL §4. G7
+  # closed.
   pack {
     lead ~peer'~/.reed'
 
