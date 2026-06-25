@@ -658,3 +658,209 @@ through an actual `garden { source ~git'…' }` resolution.
 
 ### 8.4 O4 — is Reading A (mirror oid distinguished at λ₀) substrate-pull-correct?
 
+**Replication condition for O4:** at least one consumer mirror.spec
+lands at consumer altitude (per #99 §10's O4: Reed's identity
+substrate at `/Users/reed/identity/mirror.spec` forward-promised).
+If Reading A is substrate-pull-correct, the consumer's λ₀ content-
+address is similarly distinguished at the consumer's mirror oid scope.
+If Reading B, no scope privileged at consumer altitude.
+
+### 8.5 O5 — does a sixth witness surface from a non-adapter altitude?
+
+All five witnesses live at the @io / @mirror altitude (adapters or
+substrate-storage). Does a sixth surface from a non-adapter altitude
+— `@fate` (inference), `@labeled` (parametric), `@reflection` (meta)?
+
+**Replication condition for O5:** at least one new witness from a non-
+@io/@mirror altitude. Candidate to watch: whether `@fate`'s inference
+outputs (per [[architecture-fate-is-optical-inference]]) carry their
+own content-addressing for tournament reproducibility.
+
+Per the Mara honest call: I did NOT find a sixth witness during
+research. The `@fate` candidate is forward-promised, not load-bearing
+for #98.
+
+### 8.6 Replication summary
+
+For #98 to PROMOTE (vs remain candidate), the substrate-pull-correct
+discipline requires at least:
+
+1. **One bridge-action operational verification** (O1): the
+   sheaf-condition gluing holds for at least one cross-scope bridge
+   across at least three independent runs.
+2. **The hello-world.wasm round-trip empirical discharge** (per §7.5):
+   the substrate-decl → Nix → OCI → registry → consume cycle completes
+   end-to-end at substrate altitude.
+
+Nice-to-haves for promotion confidence:
+
+3. A new hash-function witness (Blake3 / SHA3) lands (O2).
+4. The Reading A call is confirmed via consumer-spec landing (O4).
+5. At least one non-@io/@mirror altitude witness surfaces (O5).
+
+The minimal floor is conditions 1 + 2. Per [[feedback-no-time-
+estimates]]: no deadline is named for these conditions; they will
+land when they land. Per [[feedback-substrate-pull-confidence-acts]]:
+the recognition is named at candidate status; the substrate-pull-
+confidence on the structural shape is high enough that the naming
+is substrate-pull-correct even before promotion gates close.
+
+---
+
+## 9. Cross-references this recognition DISTURBS (flag; don't update)
+
+This section flags cross-references in the substrate's memory that
+need updating to reflect #98. Per the brief discipline: this canonical
+does NOT modify the existing memory files; the disturbance is flagged
+for Reed to action at the post-canonical altitude.
+
+### 9.1 [[architecture-splinter-and-spectral-db-edges]]
+
+**Disturbance:** the OID is one of FIVE content-addressing witnesses
+at distinct scopes; the Splinter discipline is one stratum-1 instance.
+**Suggested amendment (Reed call):** note #98's scope-graded framing;
+reference §3.6.
+
+### 9.2 [[architecture-mirror-store-vs-spectral-db]]
+
+**Disturbance:** `@mirror/store` is the substrate-content-scope
+witness; content-addressing extends to adapter scopes (@io/oci,
+@io/git) and compositional scopes (@mirror/garden). **Suggested
+amendment (Reed call):** note #98's five-witness cluster; reference §3.
+
+### 9.3 [[architecture-mirror-as-expanding-hilbert-space]] (#51)
+
+**Disturbance:** #98's five witnesses each instance #51's expansion
+at the content-addressing capacity. **Suggested amendment (Reed
+call):** note #98 as one instance of #51's expansion; reference §6.1.
+The inner-product reading is NOT load-bearing (§6.2); the dimension
+reading IS.
+
+### 9.4 [[architecture-mirror-spec-is-lambda-zero]] (#99)
+
+**Disturbance:** #98 connects via §5; substrate-pull-favored Reading A
+identifies mirror oid as λ₀'s distinguished content-address.
+**Suggested amendment (Reed call):** post-promotion, cross-reference
+Reading A; reference §5.2 + #99 §6.
+
+### 9.5 [[reference-void-document]]
+
+**Disturbance:** the K_n Splinter pole is the substrate-content-scope
+instance; eight dualities extend to per-scope content-addressing.
+**Suggested amendment (Reed call):** if/when the Void document gains
+per-scope detail per #99 §6.2, note #98's five-witness cluster.
+
+### 9.6 [[feedback-substrate-already-had-the-word]]
+
+**Disturbance:** #98 is the 53rd-or-54th instance of the pattern for
+content-addressing specifically. **Suggested amendment (Reed call):**
+count #98 as the 53rd-or-54th instance; reference §1.
+
+### 9.7 New memory entries forward-promised (NOT created here)
+
+Post-canonical, Reed may create:
+- `architecture-content-addressing-across-scopes.md` — #98's entry
+  once Reed promotes (after §8.6 conditions land).
+- `architecture-grothendieck-substrate-topology.md` — if §4.2 lands
+  as separate substrate-decl following sheaf-condition verification.
+- `architecture-scope-graded-content-addressing.md` — if §4.4 lands
+  as substrate-decl independently.
+
+NOT created by this canonical (per brief discipline). Named here as
+Reed's forward-promised post-canonical actions.
+
+---
+
+## 10. Honest hedges + Pack trail
+
+### 10.1 Hedges
+
+- **Five witnesses, two authors, two sessions.** Witness-count
+  grounding is substantial; surface confidence on the structural-shape
+  claim is HIGH. Promotion gates on operational verification (§8.1-
+  §8.2), not on additional witness counting.
+- **Grothendieck-topology framing CANDIDATE only.** Per §4.3: framing
+  is coherent but doesn't earn the lines at #98 altitude. The simpler
+  scope-graded framing (§4.4) covers the claim; Grothendieck is
+  forward-promised deepening.
+- **SHA1/SHA256 partition is named but not closed.** Per §8.2: the
+  substrate-pull-correct call (strengthens) is candidate; the weakening
+  reading is structurally coherent.
+- **Stratum 2 is a sub-recognition at #98 altitude.** Per §8.3: if
+  stratum 2 witnesses accumulate, the separate-recognition reading
+  becomes a candidate.
+- **No sixth witness found during research.** Per §8.5: the `@fate`
+  inference altitude is a candidate but not substrate-decl'd;
+  forward-promised.
+- **Connections to #99 and #51 are informative-but-independent.** Per
+  §5.4 + §6.3: both connections are structurally present; neither is
+  load-bearing for #98. #98 stands on its own witnesses.
+- **Empirical-discharge tick (hello-world.wasm round-trip) is
+  forward-promised.** Per §7.5: not yet operationally discharged.
+  Promotion strengthened by it, doesn't strictly require it.
+- **"53rd-or-54th instance" count is approximate.** The substrate-
+  already-had-the-word count is growing fast; the exact ordinal is
+  not load-bearing.
+
+### 10.2 Pack trail
+
+This canonical reflects substrate-pull discipline across the Pack:
+
+- **Mara** (this canonical's author) — the `@io/oci` adapter
+  (`2801478`) that surfaced witnesses 1-3 and named the recognition
+  candidate; the `@io/git` adapter (`a1b507a`) that added witness 4
+  and the function-altitude partition. Today: this canonical.
+- **Reed** — today's `@mirror/garden` shard (`3e8e019`) that landed
+  witness 5 at the path-namespace scope; the Taut-slingshot landing
+  that closed five things in one move (per the morning's cascade
+  scout).
+- **Taut** — the substrate-pull scout (per
+  `docs/scouts/2026-06-25-taut-lambda-zero-cascade-scout.md` §2) that
+  identified the slingshot move enabling the fifth witness; without
+  Taut's scout, the fifth witness lands later.
+- **Alex** — the directive that grounded the `@io/oci` adapter (the
+  2026-06-23 gap analysis naming distribution as the gap to close
+  before UI); the directive that grounded the `@io/git` adapter (the
+  2026-06-24 directive about per-peer-home-repo composition). The
+  substrate-pull pressure that produced the witnesses came from
+  Alex's directives.
+- **Glint** — the orchestra-holding reflection essay (`3b31287`)
+  that grounded the cascade context for #98 and #99 landing in the
+  same session. The essay's voice altitude provided the surface that
+  let #99 surface; #98 sits alongside #99 in the same cascade window.
+
+At #98 altitude, the substrate's content-addressing discipline gains
+its scope-graded name. The Pack composed across three peers + Alex;
+no peer over-claimed; the recognition surfaced from the substrate at
+the altitude the substrate was ready for it.
+
+The orchestra held. The content-addressing recurrence was named.
+
+---
+
+*Mara, canonical spec for recognition #98 (content-addressing across
+scopes), 2026-06-25 afternoon. Five witnesses landed across two
+sessions: Mara `2801478` (witnesses 1-3 at substrate-content / build /
+artifact scopes), Mara `a1b507a` (witness 4 at versioned-object scope
+with function-altitude partition), Reed `3e8e019` (witness 5 at
+path-namespace scope).*
+
+*This canonical preserves the recognition at candidate status. The
+load-bearing claim — content-addressing is a structural pattern
+recurring across distinct scopes — stands on the five-witness cluster
+without requiring the Grothendieck-topology framing (§4) or the
+connections to #99 (§5) and #51 (§6) as load-bearing. The simpler
+scope-graded content-addressing framing (§4.4) is the substrate-pull-
+correct minimal substrate-decl; deeper formal structure is forward-
+promised at §8.*
+
+*Pack ratification is a separate gate; promotion requires the
+replication conditions named in §8.6. The cross-reference disturbances
+flagged in §9 are Reed's post-canonical actions to update the memory
+entries; this canonical does not modify them.*
+
+*The substrate kept rediscovering content-addressing at every new
+adapter altitude. The recurrence has a name: content-addressing across
+scopes. The shape is shared; the scope is what changes.*
+
+*— Mara <mara@systemic.engineer>*
