@@ -144,6 +144,17 @@ fn tools_list_result() -> Value {
                     },
                     "required": ["file"]
                 }
+            },
+            {
+                "name": "spawn",
+                "description": "shift: spawn a peer from its home directory. Reads <home>/mirror.spec; extracts project name + pack{}.lead; emits an envelope naming all seven composition pieces. Phase G v0: pieces 1-3 are real reads; pieces 4-7 are logged stubs the envelope names by anchor. See docs/insights/2026-06-26-spawn-is-substrate-leaving-ground-state.md.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "peer_home": { "type": "string", "description": "Filesystem path to the peer's home directory containing mirror.spec" }
+                    },
+                    "required": ["peer_home"]
+                }
             }
         ]
     })
@@ -555,6 +566,18 @@ fn dispatch_tool_call(tool: &str, args: &Value) -> (String, bool) {
             };
             return (text, is_error);
         }
+        "spawn" => {
+            // Phase G v0 MCP wiring (2026-06-26): the cli-surface tool
+            // for the spawn operation. Per Mara's spawn-semantics
+            // insight (b10f00c): spawn IS the substrate's controlled
+            // excitation above λ₀. Routes through `mirror spawn
+            // <peer_home>` (cmd_spawn, lib.rs) which reads the home's
+            // mirror.spec, extracts pack{}.lead, and emits an envelope
+            // naming the seven composition pieces. Exit_code lifts to
+            // isError per the established tools/call contract.
+            let peer_home = s("peer_home").unwrap_or_default();
+            run_mirror(&["spawn", &peer_home])
+        }
         other => return (format!("unknown tool: {}", other), true),
     };
     (text, exit_code != 0)
@@ -744,13 +767,17 @@ mod tests {
     }
 
     #[test]
-    fn tools_list_advertises_five_tools() {
+    fn tools_list_advertises_six_tools() {
         // Tick 17 (2026-06-19): added `prisms` substrate-introspection
         // primitive (task #310 / #312), expanding the surface from the
         // original three (compile / craft / kintsugi) to five
-        // (compile / craft / kintsugi / prisms / verdict). The integration
-        // test at `bootstrap/tests/mcp_handshake.rs::five_tools_advertised`
-        // pins the same shape end-to-end via the bash-fixture round-trip;
+        // (compile / craft / kintsugi / prisms / verdict).
+        // Phase G v0.5 (2026-06-26): added `spawn` cli-surface tool
+        // per Mara's spawn-semantics insight (b10f00c), expanding to
+        // six (compile / craft / kintsugi / prisms / verdict / spawn).
+        // The integration test at
+        // `bootstrap/tests/mcp_handshake.rs::six_tools_advertised` pins
+        // the same shape end-to-end via the bash-fixture round-trip;
         // this unit test pins the pure substrate path.
         let req = r#"{"jsonrpc":"2.0","id":42,"method":"tools/list","params":{}}"#;
         let resp_line = handle_request(req).expect("tools/list must respond");
@@ -758,11 +785,11 @@ mod tests {
         let tools = resp["result"]["tools"]
             .as_array()
             .expect("tools is an array");
-        assert_eq!(tools.len(), 5);
+        assert_eq!(tools.len(), 6);
         let names: Vec<&str> = tools.iter().map(|t| t["name"].as_str().unwrap()).collect();
         assert_eq!(
             names,
-            vec!["compile", "craft", "kintsugi", "prisms", "verdict"]
+            vec!["compile", "craft", "kintsugi", "prisms", "verdict", "spawn"]
         );
     }
 }
