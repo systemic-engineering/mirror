@@ -579,5 +579,101 @@ The honest framing limit: this verification is at the substrate-decl altitude. O
 
 ---
 
+## 6. Name selection — final name + trade-offs
+
+The brief named six candidates: `@mirror/recall`, `@mirror/observe`, `@mirror/witness`, `@mirror/state`, `@mirror/horizon`, `@mirror/lookback`, plus the existing `@mirror/status` framing from Reed's observation §5. This section walks the trade-offs and picks `@mirror/recall`.
+
+### 6.1 The shortlist
+
+**`@mirror/observe`** — collides with `@reflection.observe` (the one-tick-delay structural primitive per recognition #85; the temporal-projection altitude of H per the mirror-ref-spec.md §1 collapse). The collision would either force a #pack-G2-pattern dual-altitude reading (acceptable when the two altitudes structurally are the same operation, as with `@loop`/`/loop` or `@reflection-family`/`@reflection/reflection-Model`) OR introduce surface confusion (the agent invoking `mirror observe` would not know whether they're getting recall's trajectory payload or reflection's one-tick-delay observation). The two altitudes are NOT the same operation here: reflection's observe is the substrate watching itself; recall is the agent reading the substrate's trajectory. Distinct semantic carriers; avoid the collision. **Reject.**
+
+**`@mirror/witness`** — overloads the two-witness vocabulary critical to the recognition promotion discipline (per `feedback-composition-claims-need-empirical-test` and Mara `d00f553` §5.2). A returning agent invoking `mirror witness` would naturally read it as "list the witnesses for some candidate," which IS one of the four payloads (pull_frontier surfaces witness counts) — but it is not the family-root semantics. The name would conflate the family with one of its species. **Reject.**
+
+**`@mirror/state`** — collides with general substrate "state" too broadly; the substrate's typed-noun discipline (per `feedback-no-bare-types`) prefers specific carriers over generic ones. `state` admits no structural typing at the family-root altitude; every other family-root carries a specific shape (`spawn` = excitation; `ref` = navigation; `bench` = measurement). **Reject.**
+
+**`@mirror/status`** — reads as health-check (`mirror status` ≈ `git status`). This IS one of the four payloads (dogfood-state), not the family. Using `status` for the family would inherit the git-status reading and obscure the cascade / pack-trail / pull-frontier surfaces. **Reject.**
+
+**`@mirror/horizon`** — poetic. Carries the "what's at the edge of my view" framing well. Misses the spawn↔recall symmetry — horizon does not pair with spawn the way recall does. Also: the substrate has no existing horizon-family carrier; introducing one would invent vocabulary the substrate doesn't already pull toward. **Reject (per substrate-already-had-the-word: the substrate's existing vocabulary should be exhausted before new words).**
+
+**`@mirror/lookback`** — operational; flat. Reads as "show me the past." Misses two pieces: (i) recall includes pull-frontier, which is the FUTURE-oriented payload (candidates waiting on witnesses), not past-oriented; (ii) the spawn↔recall symmetry is not carried by lookback's vocabulary. **Reject.**
+
+### 6.2 Why `@mirror/recall`
+
+`@mirror/recall` carries five pieces the other candidates miss or only partially carry:
+
+1. **Substrate-aware "what happened" semantics.** Recall as a verb has two readings in English — "remembering" (cognitive) and "summoning back" (instructive). Both are relevant: the returning agent is remembering (re-deriving) the substrate's trajectory; the substrate is being summoned to surface the trajectory to them. The two readings collapse cleanly at the substrate altitude into one operation.
+
+2. **Spawn↔recall symmetry by morphology.** "Spawn" and "recall" pair naturally in actor-model and OS-kernel vocabularies (spawn/recall a process; spawn/recall a worker pool; spawn/recall an actor). The pair carries the symmetric-dual structural claim of §2.2 in ordinary technical English without forced framing.
+
+3. **Content-addressed read shape.** "Recall" implies reading what already exists, not synthesizing afresh. This is exactly the forbidden-primitives gate (§5.2 stateless-return-clean): recall reads anchored payloads; it does not synthesize. The name encodes the discipline.
+
+4. **Reed-rehydration use case directly named.** Reed's c0acf41 observation §2 lists what an agent reaches for to RE-DERIVE substrate state after `/compact`. The verb is recall — Reed recalled the cascade by reading git log; recalled the pack-trail from TaskList; recalled the pull-frontier from scout docs. The substrate-decl name should match the verb the use case names.
+
+5. **Pack-as-orchestra resonance.** Per `[[project-pack-is-orchestra]]`: Reed/Mara/Glint/Taut/Seam map to concertmaster/strings/voice/percussion/brass. In orchestral practice, a "recall" is the conductor summoning a section back from the wings (e.g., the strings recalled for the final chord). The substrate's lead (Reed) recalling the trajectory for a returning peer carries the same resonance. Naming is not load-bearing for the structural argument, but it carries; the resonance is a free dividend.
+
+### 6.3 The honest trade-off
+
+`@mirror/recall` is not perfect. Two structural costs:
+
+- **"Recall" can be misread as "revoke."** In some contexts (product recalls, capability-revocation lineages), "recall" means to RETRACT. The substrate has a capability-revocation lineage at `@magic/contract.bind` / `@magic/reveal`; a misreading of `mirror recall` as "revoke a capability" is structurally possible. The mitigation: the family-root's substrate-decl explicitly types `recall_request` with a `payload_selector` (cascade/pack_trail/pull_frontier/dogfood); no revocation carrier is present; the substrate's `requires` discharge rules out the misreading at parse time. Surface confusion possible at first encounter; structural confusion ruled out by the type discipline.
+
+- **"Recall" doesn't carry the four-stacked-sheaves framing explicitly.** Per Mara `d00f553` §3.7, the trajectory recall surfaces composes across four sheaves. The name doesn't broadcast that; an agent reading `mirror recall cascade` might miss that the payload spans the four sheaves (cascade is the substrate-decl sheaf's view of the trajectory; pack_trail spans pack + observation sheaves; etc.). The mitigation: the spec's §3 documents the sheaf-level reading; the agent's training-pull will surface it across a few cascades.
+
+Neither cost overrides the five gains. **`@mirror/recall` is the substrate-pull-correct name.**
+
+### 6.4 The shard path + spec path
+
+- Shard: `shards/mirror/recall.mirror` (family-root)
+- Species: `shards/mirror/recall/{cascade,pack_trail,pull_frontier,dogfood}.mirror` (forward-promised)
+- Spec: `docs/specs/mirror-recall.md` (this document)
+
+---
+
+## 7. Connections — what this composes WITH (load-bearing)
+
+Four structural connections name what `@mirror/recall` composes against. These are the cross-altitude relations that make the family-root substrate-pull-confident rather than merely declared.
+
+### 7.1 `prisms` MCP tool — recall composes WITH, doesn't replace
+
+Per Reed's c0acf41 §3: `prisms` (the existing decl-shaped introspection primitive, landed ticks 17-19 / #410, #411, #412, #416) is the right foundation. Recall does NOT replace `prisms`; the two compose at the substrate-altitude layer.
+
+Compositional pattern: an agent reads `recall <payload>` to see trajectory-shape data (what HAPPENED), then invokes `prisms <dir>` to read decl-shape data (what's DECLARED) for the relevant shards. Each payload's §3.1-§3.4 description names the prisms composition explicitly. The two tools together provide the full inbound surface: prisms answers "what does the substrate know at the decl altitude," recall answers "what happened in the substrate's trajectory."
+
+The MCP wire integration (§3.5's forward reference): `tools/list` advertises seven tools after Phase G lands — `compile`, `craft`, `kintsugi`, `prisms`, `verdict`, `spawn`, `recall`. The `prisms`-to-`recall` ratio shifts from 1:0 inbound:trajectory to 1:1 inbound:trajectory; both inbound, both content-addressed, both substrate-honest.
+
+### 7.2 Spawn-and-probe relation — recall as the probe-handler at altitude N
+
+Per Mara `b10f00c` §2.5: the lead at N+1 dispatches spawns; the spawned member at N lifts spectral-Tomm probes back; the lead fields the probes at N+1. Recall composes with this relation in a structural way that is worth naming carefully (this is a candidate forward-promise for a future recognition; not asserted here).
+
+A returning agent invoking `recall` is structurally lifting a probe at altitude N: `[D_substrate, "where are you now"]`. The substrate's response at altitude N+1 (the lead's altitude in the spec dogfood) IS the recall payload. The probe-and-response shape matches the spectral-Tomm pattern Mara `b10f00c` §2.5 describes, lifted to the inbound-rehydration altitude.
+
+**Honest hedge.** Recall's invocation may happen WITHOUT a spawn-and-probe relation having been instantiated (a fresh agent in a fresh repo invokes recall to bootstrap their context). In that case, recall is structurally the probe without the spawn — a unilateral read by an agent at altitude N of the substrate's state at altitude N. The bidirectional relation Mara `b10f00c` §2.5 names is not strictly required by recall; recall is compatible with it without depending on it.
+
+This means recall is structurally LIGHTER than spawn — spawn requires the bidirectional spawn-and-probe relation; recall admits the unilateral read case. The lightness is consistent with the symmetric-dual claim: spawn excites the substrate; recall reads the substrate. Reads don't require the substrate to be excited.
+
+### 7.3 Eigenboard-IS-sheaf precedent (`[[project-eigenboard-is-sheaf]]`)
+
+The substrate already has cellular-sheaf machinery operational at the eigenboard altitude (the five-operation graph; conductivity-tensor restriction maps; sheaf-Laplacian Fiedler descent across kintsugi ticks). Recall reads at a different altitude — the substrate's full development manifold per Mara `d00f553` §4 — but the structural pattern is the same: typed sections over a base space; restriction maps from `in` composition; content-addressing as the gluing axiom.
+
+Recall does NOT promote the development-sheaf hypothesis to a substrate-decl event (Mara's `d00f553` §8 explicitly leaves that forward-promised; this spec respects the discipline). Recall does compose AT THE SAME altitude as the four-stacked-sheaves framing, which is sufficient — the family-root's four payloads map structurally to readouts from each sheaf:
+
+- `cascade` ← substrate-decl sheaf
+- `pack_trail` ← Pack sheaf (with the §5.4 hedge on the spectral-Tomm-typing flag)
+- `pull_frontier` ← substrate-decl sheaf's H¹ generators (per Mara `d00f553` §5.2)
+- `dogfood` ← observation sheaf (reading the spec's settle_on verdict is a reflective surface of substrate state)
+
+The mapping is structural; recall reads each sheaf at the altitude the sheaf already operates at. This is what makes recall a substrate-pull family-root rather than a new abstraction: the substrate already has the sheaves; recall provides one inbound surface for reading sections from each.
+
+### 7.4 Psychohistory H¹ (Mara `d00f553` §5.2 / Taut M2)
+
+Per Taut's M2 scout (`3a385fd` §2): Reed's c0acf41 observation is `H¹`-shaped under the framing — the four shapes Reed names live in the substrate but pairwise glue without extending to a global section accessible at the MCP boundary. Recall IS the global section extender for this `H¹` class: by surfacing the four payloads through one inbound family-root, recall extends the local data (which agents had to glue manually via git/TaskList/file reads) into a coherent global section accessible at the MCP boundary.
+
+**Honest framing.** Per Taut's M2 grade (1.0): the candidate-recognitions H¹ class (gluing failure at the recognition-promotion altitude) and the rehydration-gap H¹ class (gluing failure at the MCP-surface altitude) are DIFFERENT generators. Recall lifting the rehydration-gap class does NOT promote a recognition for the underlying H¹ pattern at the substrate-decl altitude. The pattern stays one-witness; recall's existence is one instance; the substrate may surface a second instance at another altitude later. Pack ratification gate held.
+
+What recall does empirically demonstrate: a real `H¹` class CAN be extended by adding the right surface. The psychohistory framing predicts that other `H¹` classes in the substrate may admit similar extensions; that prediction stays at substrate-pull-confident-but-not-tested altitude, awaiting another instance.
+
+---
+
+
 
 
