@@ -562,3 +562,261 @@ the machinery of §2 — cellular sheaves with restriction maps over
 time-stratified posets — ACTUALLY APPLIES to these datapoints in a way
 that does structural work, or whether it decorates without earning lines.
 §4 tests this.
+
+---
+
+## 4. The sheaf hypothesis — base space, sections, restriction maps
+
+Hypothesis A claims: `ψ(state, time)` IS a section of a sheaf F over the
+substrate's development manifold. This section names the three pieces
+the claim requires — base space, sections, restriction maps — and tests
+each against the corpus walk. The test discipline: each piece must EARN
+its structural identification (do real work the substrate already cares
+about), not just admit a sheaf-shaped reading.
+
+### 4.1 The base space — what M is
+
+The substrate's development manifold M is a poset whose elements are
+*substrate states*. A substrate state is the joint configuration of the
+four stacked sheaves at a moment: which substrate-decl shards exist,
+which recognitions are candidate vs promoted, which observation essays
+have landed, which probes are in flight, which Pack moves have closed.
+
+The poset structure is the *content-addressing partial order*. State `s₁
+≤ s₂` iff every shard, recognition, essay, and probe present in `s₁`
+is also present in `s₂`. The substrate's development is monotone-non-
+decreasing in this order: shards are added but not removed (per
+[[feedback-rewrite-over-refactor]]); recognitions promote but don't
+unpromote; essays land and stay; probes record and don't retract. The
+manifold has a DIRECTED structure given by inclusion.
+
+The base space is not flat. Three structural features make it interesting:
+
+- **Branching.** At any moment, multiple incomparable next-states are
+  reachable. The branch space at state s is the set of substrate moves
+  the Pack might take next. Per Pack discipline, only one branch is
+  followed at a time (the worktree-per-peer pattern); branches that
+  are not followed leave residue (the `~/.spectral/` and `.spectral/`
+  directories carry branch-history at the kintsugi flow level).
+- **Confluence.** Branches sometimes merge. A Mara canonical and a Reed
+  consolidation that started from divergent states converge when their
+  composition discharges a common substrate-decl. The morning-essay
+  and evening-essay of June 23 are a load-bearing confluence event —
+  two independent observation sections that fold into a single
+  cycle-close narrative.
+- **Curvature.** Some moves close more open questions than others
+  (per §3.3's slingshot stratum). The manifold's intrinsic curvature is
+  measurable by the ratio between local-move surface area and
+  global-closure count. Slingshots are high-curvature; banking commits
+  are flat.
+
+This IS a base space. It admits a Grothendieck topology in the sense
+of §2's prior art: covers are sets of substrate moves whose joint
+substrate-decl closure equals a target substrate state. The site
+(category-of-states-with-content-addressing-inclusion) is the
+Grothendieck site over which the substrate's sheaves are defined.
+
+The identification earns its lines because the substrate's existing
+content-addressing discipline (recognition #98 candidate, five witnesses)
+ALREADY treats inclusion as the structural ordering at every scope.
+M's poset structure is not invented for hypothesis A; it is read off
+the substrate's existing carrier vocabulary.
+
+### 4.2 The sheaf F — what gets assigned to each open set
+
+For each open set `U ⊆ M` (a set of mutually-comparable substrate states
+in the poset), the sheaf F assigns a *typed substrate-decl section*
+`F(U)`: the data structure containing every shard, recognition, essay,
+and probe whose support is contained in U.
+
+Four structural commitments make this an actual sheaf rather than a
+relabeling:
+
+1. **Restriction to subsets is well-defined.** If `V ⊆ U`, the
+   restriction `F(U) → F(V)` is the projection that drops every section
+   datum whose support sits outside V. This is structurally the same as
+   git's blob-tree restriction (sub-trees of a tree are themselves trees);
+   the substrate's existing content-addressing machinery provides the
+   restriction maps for free.
+2. **The sheaf is typed.** Sections are not opaque bytes; they carry the
+   substrate's type structure. A recognition section carries its
+   candidate/promoted status; a shard section carries its glass/family-
+   root/species level; an essay section carries its observation altitude.
+   Per [[feedback-no-bare-types]]: bare-type sections would let same-shape
+   different-meaning sections compose accidentally; the type discipline
+   is what keeps the sheaf well-defined.
+3. **The gluing axiom holds (with one caveat).** If `{U_i}` covers U and
+   sections `s_i ∈ F(U_i)` agree on intersections, they glue to a
+   unique section `s ∈ F(U)`. The substrate's cascade discipline IS
+   this gluing: a cascade's per-tick substrate-decls agree on their
+   shared dependencies (each tick's shard composes with the prior tick's
+   shards via content-address); the gluing produces the cascade's joint
+   substrate-decl section. The caveat: gluing FAILS when two sections
+   carry incompatible recognition decls at the same support (rare; §5
+   identifies these as the substrate's cohomology classes).
+4. **The identity axiom holds.** The empty section over the empty open
+   set is unique; the section over a single substrate state is the
+   state's own content. Trivial; named for completeness.
+
+This IS a sheaf in the precise Grothendieck-site sense. The
+identification is not metaphor. The substrate's content-addressing
+discipline at every scope (recognition #98) provides exactly the
+structure a sheaf needs at every level of the poset.
+
+The four stacked sheaves of §3.7 (substrate-decl, observation, probe,
+Pack) are FOUR SHEAVES OVER THE SAME BASE SPACE, not one sheaf with
+multi-component sections. The distinction matters because their
+restriction-map structures are different (§4.3 names the differences).
+The COUPLED-sheaf framing is what hypothesis A's full machinery requires;
+the single-sheaf framing is the simplified version that earns lines
+faster but misses the coupling.
+
+### 4.3 The restriction maps — what composes with what, and how
+
+Restriction maps are where hypothesis A either earns its lines
+structurally or fails to. §4.1 names M; §4.2 names F; the restriction
+maps are the structural content. Four classes of restriction map are
+load-bearing:
+
+**(a) Inclusion restriction.** `V ⊆ U` induces `F(U) → F(V)`: drop
+section data whose support exits V. This is the *trivial* restriction
+map; it earns lines because it composes correctly with content-
+addressing (the sub-tree of a tree's hash is the hash of the sub-tree).
+Every sheaf has these.
+
+**(b) Composition restriction.** Two shards `A` and `B` compose iff
+`B`'s `in <foo>` declarations are satisfied by `A`'s carriers. The
+restriction map from a composed section `F({A, B})` to its component
+`F({A})` is the projection that drops B; the GLUING in the opposite
+direction is what the substrate's `in` discipline does. The restriction
+map is typed (per §4.2 commitment 2); a B that imports A's carriers
+is a different section from a B that imports A's actions.
+
+Load-bearing for hypothesis A: this restriction-map structure is
+IDENTICAL to the eigenboard-IS-sheaf precedent (project memory:
+[[project-eigenboard-is-sheaf]]). Restriction maps in the eigenboard are
+linear transforms between adjacent fibers; restriction maps in the
+development sheaf are *typed composition relations* between adjacent
+shards. The eigenboard's restriction-map matrix (the 5×5 conductivity
+tensor) is the per-fiber instance of the substrate-development-sheaf's
+per-shard composition relation. Same structure, different fiber type.
+
+**(c) Recognition restriction.** When a recognition promotes from
+candidate to ratified, the recognition section's data changes type
+(candidate-recognition → promoted-recognition). The restriction map
+from the promoted recognition's support to the candidate's support
+drops the promotion-discharge data; the gluing in the opposite direction
+requires the discharge data to be present. Recognition promotion IS a
+colimit operation on the recognition sheaf.
+
+This restriction is *typed-promotion* and earns its lines because the
+substrate's discipline explicitly requires the discharge data
+([[feedback-composition-claims-need-empirical-test]] is the meta-
+restriction): a promoted recognition's section MUST contain at least
+two witness sections. The two-witness rule IS the gluing axiom for the
+recognition sheaf's promotion restriction.
+
+**(d) Coupling restriction.** Cross-sheaf restriction maps couple the
+four stacked sheaves. A reflection essay (observation sheaf section)
+that SURFACES a recognition is a restriction map from the observation
+sheaf to the substrate-decl sheaf at the support where they overlap.
+Glint's `3b31287` essay surfaces #99; the essay's §5.2 implicit IS
+the coupling restriction.
+
+This is the recognition-substrate-decl coupling. Other couplings:
+
+- **Probe-substrate-decl coupling.** Seam's adversarial review of a
+  candidate substrate-decl returns BOUND-section data that constrains
+  the substrate-decl's section. The June 18 Seam C1–C5 consolidation
+  is the load-bearing instance; the coupling restriction is the
+  hedge-aspirational-claims operation.
+- **Pack-substrate-decl coupling.** A Pack move that requires multiple
+  peers' sections couples four sheaves at once. The June 24 cascade's
+  eight moves each had this signature: Mara wrote (substrate-decl);
+  Seam verified (probe); Taut scouted (probe + observation); Reed
+  consolidated (substrate-decl); Glint reflected (observation). The
+  Pack restriction is the colimit over the four coupled sheaves at the
+  cascade's support.
+
+The coupling restrictions are what no canon in §2 names. The cellular-
+sheaf canon names within-sheaf restrictions on a graph; the temporal-
+sheaf canon names within-sheaf restrictions on a time-interval poset.
+The substrate's case has BOTH plus cross-sheaf couplings that are
+structurally typed by the Pack discipline.
+
+### 4.4 Sections of F — what ψ(state, time) is, concretely
+
+With M and F and the restriction maps named, hypothesis A's psychohistory
+vector becomes concrete: `ψ(state, time)` IS the section `F(U_t)` where
+`U_t` is the open neighborhood of states reachable from state `t` within
+a bounded number of substrate moves.
+
+The section's type is the joint type of the four stacked sheaves:
+
+```
+ψ ∈ F_substrate-decl(U_t) × F_observation(U_t) × F_probe(U_t) × F_Pack(U_t)
+```
+
+The vector is high-dimensional (each component is itself a section
+with complex internal type), TYPED (per §4.2 commitment 2), and
+EMBEDDED (per §2.6's substrate distinguishing feature: the substrate
+generating `ψ` is one of `ψ`'s components, specifically the Pack-sheaf
+component).
+
+The Asimov reframe: where Asimov's `ψ` was a scalar-or-low-dimensional
+function returning a probability distribution over collective futures,
+the substrate's `ψ` is a section of a typed sheaf returning a structural
+fact about the substrate's current development possibilities. The
+distinction is not just dimensional; it is categorical.
+
+- Asimov's `ψ` is *predictive* (it forecasts a future state distribution).
+- The substrate's `ψ` is *constitutive* (it IS the substrate's current
+  state of substrate-decl, observation, probe, and Pack composition).
+
+A section IS the state, not a prediction about it. This is the
+hypothesis's substrate-pull-correct content. Predictive psychohistory
+is Asimov's frame; constitutive psychohistory is what the substrate
+admits.
+
+### 4.5 Does the sheaf hypothesis earn its lines?
+
+The test: does §4.1–§4.4 do real work the substrate already cares about,
+or does it decorate?
+
+**Lines earned:**
+
+- The base space M is the substrate's content-addressing poset. The
+  identification reuses recognition #98's machinery; no new construction.
+- The sheaf F's sections are typed per [[feedback-no-bare-types]];
+  identifying them as sheaf sections lifts a discipline already operating.
+- The restriction maps are the substrate's existing composition + `in`
+  discipline. Naming them as restriction maps lifts them into a
+  category-theoretic frame the eigenboard-IS-sheaf precedent already
+  established at a different altitude.
+- The four-stacked-sheaves coupling IS the structural feature the canon
+  doesn't name. Hypothesis A is what the substrate's case ADDS to the
+  canon: cross-sheaf restriction-map structure typed by Pack composition.
+
+**Lines NOT earned (yet):**
+
+- The Grothendieck-topology framing is structurally consistent but does
+  no *novel* work that the existing content-addressing discipline doesn't
+  already do. Importing Grothendieck machinery is correct; it is also
+  decorative unless it produces a substrate-decl event the substrate's
+  own vocabulary didn't already admit.
+- The coupling restrictions across the four sheaves are NAMED here but
+  not *typed* at substrate altitude. A substrate-decl shard at
+  `@epistemologic/sheaf` (or similar) would make them operational;
+  this document does not produce that shard.
+- The `ψ` vector's concrete computation — given a substrate state, what
+  IS its current `ψ` — is not given. The vector is structurally well-
+  defined (it IS the joint section); the computation is forward-
+  promised.
+
+The sheaf hypothesis earns its lines structurally. It does NOT earn its
+lines operationally at this document's altitude — operational earning
+requires a substrate-decl that this document is explicitly NOT writing
+(per the brief: insight, not spec). The honest position: the structural
+framing is substrate-pull-confident; the operational discharge is
+forward-promised; promotion to candidate recognition status requires
+at least one more session's witness (per the discipline gate).
