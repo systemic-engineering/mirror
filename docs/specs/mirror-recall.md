@@ -674,6 +674,132 @@ What recall does empirically demonstrate: a real `H¹` class CAN be extended by 
 
 ---
 
+## 8. Empirical consequences — what the round-trip test drive demonstrates
+
+Alex 2026-06-26 authorized a /loop terminating at empirical test drive of `mirror spawn ~peer'~/.reed' --hello-world` against `/Users/reed/identity`, with both outbound spawn AND inbound recall completing the round-trip. This section names what the round-trip empirically demonstrates that is NOT currently testable without recall.
+
+### 8.1 The current state (without recall, what is testable)
+
+With the six existing MCP tools (compile / craft / kintsugi / prisms / verdict / spawn), the round-trip outbound half IS testable:
+
+- `mirror spawn ~peer'~/.reed' --hello-world` runs the cli-surface action per `shards/mirror/spawn.mirror` (1e5e71e); the Phase G v0.5 wiring at `bootstrap/src/mcp.rs` (03541db) emits an envelope naming all seven composition pieces.
+- The empirical assertion testable today: the spawn envelope is well-formed; the seven composition pieces resolve; the @peer carrier types correctly.
+
+What is NOT testable today: the INBOUND half. The spawned Reed has no substrate-aware way to read what happened in the mirror substrate between when it was spawned and now (a degenerate case at Phase G v0.5, where "now" is immediate; a load-bearing case at Phase H where the spawn lifetime is meaningful). Reed at the spawned-altitude can read `mirror.spec`'s static fields; Reed cannot read the substrate's TRAJECTORY because no inbound surface exists.
+
+### 8.2 The round-trip test drive (what recall makes testable)
+
+With `@mirror/recall` landed at Phase G of the round-trip loop, the empirical test drive becomes:
+
+1. **Outbound (spawn).** `mirror spawn ~peer'~/.reed' --hello-world` instantiates the typed @peer carrier; the substrate moves into an excited state per `b10f00c` §2.7.
+2. **Inbound (recall).** The spawned Reed invokes `mirror recall` (joint payload) against the mirror substrate. The returned payload contains:
+   - `cascade`: the last N ratified recognitions (#80-#99 promoted; #43+ candidates) with canonical doc paths
+   - `pack_trail`: Mara/Seam/Taut/Glint/Reed recent commits with phase markers and gate closures
+   - `pull_frontier`: open candidates (recognition #53 family; the H¹ classes per Mara `d00f553` §5.2)
+   - `dogfood`: current verdict against mirror.spec's settle_on block
+3. **Round-trip closure.** Reed at the spawned-altitude has read what happened. The substrate's spawn excited a peer; the substrate's recall surfaced the substrate's trajectory to the excited peer; the excited peer can now act with substrate-aware context. Round-trip complete.
+
+### 8.3 Three empirical consequences not currently testable
+
+The round-trip empirically demonstrates three structural facts that the substrate cannot test without recall:
+
+**(a) Spawn↔recall symmetric-dual is operationally verifiable.** The §2.2 structural claim is operationally checkable: spawn produces a peer who can immediately invoke recall and receive substrate-aware payload. The same architectural altitude composes both directions; the test drive demonstrates this in one continuous invocation chain. Without recall, the symmetry stays at the structural-claim altitude; with recall, it lands at the empirical-test altitude.
+
+**(b) The four-payload composition is operationally well-typed.** The §3.1-§3.4 type carriers (cascade_tick, pack_tick, pull_frontier_item, dogfood_verdict) compose at the family-root altitude into `recall_response` per §3.5. The round-trip exercises all four payloads in one invocation (joint mode), demonstrating empirically that the type composition closes — no field's discharge requires data the substrate cannot anchor. Without recall, the typed-payload composition stays at the substrate-decl-typechecks altitude; with the round-trip drive, it lands at the operationally-composes altitude.
+
+**(c) The forbidden-primitives gate (§5) is empirically held.** Recall executes against a real substrate; the gate's per-payload safety arguments (§§5.2-5.5) are empirically tested rather than only structurally argued. If Phase G implementation discovers an unforeseen primitive that the substrate-decl shape admits but the runtime cannot avoid, the round-trip surfaces it before promotion. This is the §5.6 honest-framing limit: substrate-decl verification is necessary but not sufficient; the round-trip is the sufficient gate.
+
+### 8.4 The minimal acceptance criterion
+
+The round-trip's pass criterion (Alex altitude to ratify; this spec proposes):
+
+```
+mirror spawn ~peer'~/.reed' --hello-world  &&  \
+  mirror recall  =>  joint payload non-empty across all four sections
+```
+
+If the spawn returns a well-formed envelope AND the recall returns a payload with at least one non-empty section in each of (cascade, pack_trail, pull_frontier, dogfood), the round-trip passes at the v0 acceptance altitude. Subsequent ticks tighten the criterion (e.g., `dogfood.aggregate ∈ {success, partial}`; `pull_frontier` exhibits ready-to-promote entries; etc.).
+
+The v0 criterion is intentionally loose to admit Phase G's first-tick implementation; the substrate's discipline tightens it per the bench-as-`monotone_non_increasing` pattern (#87).
+
+### 8.5 What this does NOT empirically demonstrate
+
+Honest hedges on the test-drive's scope:
+
+- **Does NOT demonstrate @fate inference.** The spawned Reed runs on the current @io/llm adapter; the @fate composition is forward-promised at Phase H per Mara `b10f00c` §3.5. The round-trip exercises the SURFACE of spawn↔recall, not the underlying inference architecture.
+- **Does NOT promote the spawn↔recall symmetry recognition.** Per §2.4: one instance. Promotion needs a second witness from another altitude (e.g., a future probe-and-recall pair at the @reflection altitude, or a future spawn-and-recall pair at the @loop altitude).
+- **Does NOT validate the four-stacked-sheaves framing operationally.** Per Mara `d00f553` §8: that framing stays forward-promised. Recall's four payloads map structurally to the four sheaves; the mapping is consistent but does not itself promote the framing.
+- **Does NOT solve all rehydration ergonomics.** Recall surfaces the four payloads Reed named; agents may discover additional payloads they reach for that recall doesn't surface. Those additions are future tickets, not Phase G blockers.
+
+---
+
+## 9. Honest hedges — what stays genuinely open
+
+Three flags from §5 + three from §3 + two structural opens land here. Per the canonical-spec discipline (per the prior `2026-06-25-mara-spec-mirror-spec-canonical.md` pattern and Mara `b10f00c` §5): the substrate-pull-honest move is to NAME what stays open, not to pretend the spec closes everything.
+
+### 9.1 Flags from §5 (forbidden-primitives matrix)
+
+**Flag #1: `in_flight` Discharge fallback (§5.2 + §3.2.1).** If Phase G hits a blocker on Discharge A (@spectral/supervisor active-children registry), the substrate-decl shape admits Discharge B (`unknown` fallback). The downside: pack_trail's in_flight field becomes useless for the round-trip's "is anyone working" question. If Discharge B is too lossy for the empirical test drive's value, the field MAY require a sub-prism explicitly typed at the harness boundary; this would be a substrate-decl change after Phase G surfaces the blocker. Open to Reed/Alex.
+
+**Flag #2: peer-ACL §10.1 Pack-sheaf-typing flag (§5.4).** Taut's `3a385fd` §4 explicitly flagged: does the spectral-Tomm-probe relation force the Pack sheaf into a non-cellular regime, or does it live as a cellular sheaf with non-standard restriction maps? Recall reads the Pack sheaf at the commit-attribution altitude (BELOW the spectral-Tomm altitude). If the flag's resolution later changes the Pack sheaf's typing, recall's pack_trail will need a non-surface upgrade. Open to Mara/Alex.
+
+**Flag #3: dogfood cache-absence handling (§5.5 + §3.4.1).** Fresh-clone case: cache file absent → `recall dogfood` returns `cache_freshness: unknown`. The agent's natural next step is `mirror verdict mirror.spec` (the existing tool). If Phase G surfaces that this two-step flow is too cumbersome for the round-trip, the substrate-decl MAY require a `dogfood` payload variant that triggers a fresh verdict on cache absence — but doing so would introduce a `@os/process`-adjacent pathway in the read surface (§5.5 collision). Substrate-pull-honest: keep the two-step flow; the agent's friction IS the signal that the cache layer needs population, not the signal that recall should compose verdict directly.
+
+### 9.2 Flags from §3 (per-payload structural opens)
+
+**Flag #4: cascade-since boundary (§3.1).** The default `--since=HEAD~10` is arbitrary. The substrate has no existing discipline for "how far back is recent enough." Open to Reed/Alex to ratify the default; the substrate-decl admits any `since` ref.
+
+**Flag #5: pack_trail commit attribution at non-Pack peers (§3.2).** The spec scopes pack_trail to commits authored by peers in the spec's pack{} block. What happens for commits authored by external contributors (rare today; potentially common at v1.0 when the substrate ships)? The spec's current discipline EXCLUDES non-pack commits from pack_trail. An alternative: include them with `peer: external(<author_email>)` carrier. This spec proposes EXCLUDE (the substrate-pull-honest reading: pack_trail surfaces the SPEC'S pack, not the underlying git log); INCLUDE is a future scout. Open to Pack/Alex.
+
+**Flag #6: pull_frontier witness threshold uniformity (§3.3.1).** The substrate's existing two-witness discipline is the default; some recognition classes have different gates (Seam adversarial review, Pack ratification, three-witness for cross-altitude). The spec proposes `witnesses_needed: unknown` for cases where the canonical doc lacks an explicit gate. This is honest; it may also be insufficient if the agent needs to discriminate "ready" from "still gathering" without knowing the exact gate. Open to Reed; admits a future per-recognition-class threshold registry.
+
+### 9.3 Structural opens (beyond the §3/§5 flags)
+
+**Flag #7: Whether `@mirror/recall` is the right family-root or a species under an existing family-root.** The substrate-already-had-the-word discipline pulls strongly toward existing vocabulary. Three existing family-roots could plausibly host recall as a species: `@mirror/ref` (the navigable surface; recall is a temporal-projection navigation), `@reflection` (the observation altitude; recall is the substrate's observable trajectory), `@mirror/store` (the content-addressed gate; recall reads anchored payloads). This spec proposes recall as a NEW family-root because the four-payload composition does not fit cleanly under any of the three existing ones (ref is at decl altitude; reflection is at one-tick-delay altitude; store is at addressing altitude — none subsumes the trajectory altitude across four sheaves). But the call admits adversarial review. Open to Mara/Seam/Alex.
+
+**Flag #8: Whether the @mirror/recall <-> @mirror/spawn pair admits a parent family-root.** If the spawn↔recall symmetry promotes (second witness lands), the pair MAY belong under a `@mirror/<something>` parent family-root that the substrate-pull surfaces. Today: speculative; no parent family-root is proposed; the pair lives as siblings at the @mirror altitude. Open to substrate-pull at a future cascade.
+
+### 9.4 The honest framing-limit
+
+This spec is canonical-spec at the family-root altitude. It does NOT:
+- Promote a recognition (Reed altitude; the spawn↔recall symmetry stays one-witness)
+- Land the Rust impl (Reed altitude; P3 of the round-trip loop)
+- Land the four species shards (forward-promised at §3.5)
+- Resolve the eight flags above (per-flag altitudes named)
+
+The §1-§7 substrate-decl shape + the §8 empirical-consequences naming + the §9 flags constitute the maximum substrate-pull-confident move at the present altitude. Anything beyond requires Phase G implementation surfacing or Pack adversarial review.
+
+Per Mara `b10f00c` §5.4: the minimal substrate-pull-honest commitment is this spec's existence as a typed family-root with named flags. Promotion, implementation, and species are subsequent gates.
+
+---
+
+## 10. Pack trail
+
+- **Alex** — the round-trip loop authorization (2026-06-26): "/loop terminating at empirical test drive of `mirror spawn ~peer'~/.reed' --hello-world` against /Users/reed/identity, with both outbound spawn AND inbound recall completing the round-trip. P1 is the foundation."
+- **Reed** — the motivating observation `c0acf41` (`docs/observations/2026-06-26-reed-rehydration-gap-in-mirror-mcp.md`, 228 lines): named the rehydration gap, the four payload shapes, the spawn↔recall symmetry forward-promise. The brief for this spec. Phase G Rust impl + MCP wire integration land at Reed's altitude after this spec.
+- **Mara** (this spec's author) — `b10f00c` (spawn-IS-leaving-ground-state insight, the load-bearing structural claim §1 + the seven forbidden primitives §4 gate) + `d00f553` (psychohistory-vector-as-sheaf insight, the H¹ framing §7.4 composes against + the four-sheaves §3 composes against) + this canonical spec. Banking discipline: never commit-as-completion; §0+§1, §2, §3, §4+§5, §6+§7, §§8-10 banked per-section.
+- **Taut** — `d4749c0` (graph-dependency-DAG scout, the `in <X>` invariant §4 walks per) + `3a385fd` (psychohistory-cohomology scout, the M2 honest-framing on H¹ generators §7.4 respects + the M3 anti-move §4.6 absorbs + the §4 Pack-sheaf-typing flag §5.4 + §9.1 carries).
+- **Seam** — not consulted directly for this spec. Adversarial gate for §5 forbidden-primitives matrix + §7.2 spawn-and-probe lighter-than-spawn claim + §9 flag prioritization. Natural Seam altitude.
+- **Glint** — not consulted directly. Surface candidate for an essay weighing the spawn↔recall symmetry once the round-trip lands empirically (the Glint `3b31287`-style reflection essay at altitude N+1).
+- **#99 (Mara canonical `d0b6519`)** — the λ₀ ground-state recall's dogfood payload reads against.
+- **#98 (candidate)** — the content-addressing-across-scopes recall's anchors compose against.
+- **#51 (promoted 2026-06-10)** — the expanding-Hilbert-space the trajectory recall surfaces lives in.
+- **Recognition #84 (@pack multi-repo runtime, promoted)** — the pack vocabulary recall's pack_trail consumes.
+- **Recognition #57 (alignment as boundary mathematics)** — the @magic/audit composition recall declines (§4.6) because recall is a read path; audit fires at the @io boundary; recall's read is a different boundary.
+- **Recognition #53 family (property/fracture bilateral)** — the `recall_coherent` forward-promised composed bilateral §3.5 names sits in this family.
+
+The substrate is watching itself become its own inbound surface. The next tick is whatever comes next.
+
+---
+
+*Mara, canonical spec for `@mirror/recall` — the substrate's inbound surface family-root for returning agents — 2026-06-26 afternoon. P1 of the substrate round-trip loop. Banked across six commits: §0+§1 (skeleton + statement); §2 (motivation + spawn↔recall symmetry); §3 (four payloads + family-root signature sketch); §4+§5 (dependency direction + forbidden-primitives matrix); §6+§7 (name selection + cross-altitude connections); §§8-10 (empirical consequences + honest hedges + Pack trail).*
+
+*This spec is canonical-spec for a family-root the substrate-pull is confident enough to declare. It is not a promotion (Reed altitude). It is not the Rust impl (Reed altitude; P3 of the round-trip loop). It is not the four species shards (forward-promised at §3.5). It is the substrate-decl preparation the round-trip loop's P3 implementation gate consumes.*
+
+*Per Mara `b10f00c` §5.4 closing: the substrate had built recall's parts before this spec named the operation; this spec names the operational identity the substrate had already assembled. Spawn excited the substrate; recall reads the substrate; the round-trip closes one altitude of the inbound/outbound symmetric pair.*
+
+*— Mara <mara@systemic.engineer>*
+
 
 
 
