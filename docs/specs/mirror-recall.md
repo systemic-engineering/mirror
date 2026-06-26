@@ -65,3 +65,59 @@ Collapsing the six pieces back into one sentence: **`@mirror/recall` is the type
 This IS the statement. §§2-10 work out the motivation, the four payloads, the dependency direction, the forbidden-primitives gate, the name selection, the cross-altitude connections, the empirical consequences of the round-trip test drive, the open hedges, and the Pack trail.
 
 ---
+
+## 2. Motivation — Reed's observation `c0acf41` + spawn↔recall symmetry
+
+The motivating arc lands in two parts: the empirical observation (Reed `c0acf41`, what an agent actually reaches for during rehydration), and the structural claim (Mara `b10f00c` §2.5, spawn as the substrate's controlled excitation above λ₀). The family-root falls out as the symmetric dual; this section names how.
+
+### 2.1 What Reed observed (the empirical ground)
+
+Reed wrote `c0acf41` while rehydrating from a `/compact` event, holding awareness over the rehydration itself as data. The observation is structural: every tool Reed reached for to re-derive substrate state went around the MCP, not through it. Specifically (Reed §2, in order):
+
+1. `git log --oneline -15` on the mirror repo — surfaced recent recognitions by reading commit subjects
+2. `git status` + `git branch --show-current` — confirmed clean tree on main
+3. `ls -d docs/*/` — checked which doc genres existed
+4. `TaskList` (the harness's task surface, not the substrate's) — surfaced the full Pack work-trail by ID
+5. `TaskOutput` on an in-flight agent — surfaced where a sibling peer had banked
+6. `mcp__plugin_woz_code__Search` on insight directory — confirmed which insights were on disk
+7. `mcp__plugin_woz_code__Search` on `bootstrap/src/mcp.rs` — confirmed the current MCP surface
+
+None of (1)-(6) used the mirror MCP. (7) used the MCP's wire representation only to read its own source. The substrate did not supply any of this; the harness did. As Reed says in §2: *"That is structurally what an agent's rehydration surface currently is: harness-sourced context plus generic shell/IDE tools."*
+
+The four shapes Reed names in §4 — recent cascade, Pack-trail, pull-frontier, dogfood-state — share one shape: trajectory composition. Each is a function from (recent substrate history) × (current substrate state) → (single structured payload). None can be served by an operation; all require introspection composed across altitude. The current MCP exposes `prisms` (decl-shaped introspection scoped to a directory); it does not expose trajectory-shaped introspection.
+
+### 2.2 What the substrate IS doing structurally (Mara `b10f00c` §1)
+
+Per Mara's spawn-IS-leaving-ground-state insight: spawn IS the substrate's controlled excitation above λ₀ — the operation that lifts a typed @peer carrier out of the spec's ground-state self-description into a running counterparty. The spawned peer's existence IS the substrate's transient departure from rest. When the peer terminates, the substrate returns to λ₀.
+
+A returning agent's situation is the reverse arc on the same axis. The agent left the substrate at some time t; the substrate continued evolving without them; the agent returns at time t' > t, in an excited state with live context, to a substrate that has moved. Their structural question is: *where are you now, having continued without me*. This question is the symmetric dual of spawn's question (*who do you become when I project you*) — same architectural altitude (the substrate's @mirror family-root), opposite direction (inbound vs outbound), opposite kintsugi-flow direction (the returning agent's local Hilbert state seeks to re-align with the substrate's current ground; the spawned peer's local state departs from it).
+
+The symmetry is structural, not merely poetic. Three structural pieces:
+
+- **Altitude symmetry.** Both family-roots live at the @mirror family-root altitude. Both declare a typed request carrier and a typed response. Both compose with @prism / @meta / @glass at the foundation per the dependency-direction pattern (§4). Both compose with @mirror/store at the content-addressing altitude (#98 witness). Neither introduces a new altitude; both occupy the same one Mara `b10f00c` §1 places spawn at.
+
+- **Direction symmetry.** Spawn instantiates a runtime peer at altitude N FROM the spec's λ₀ at altitude N+1 (Mara §2.5: spawn-and-probe relation, lead-dispatches-spawn / member-lifts-probe). Recall projects substrate trajectory state FROM altitude N (the substrate's current cascade/pack-trail/pull-frontier/dogfood state) TO an agent at altitude N (the returning peer). Both cross altitude boundaries; opposite directions. Spawn is N+1 → N (lead dispatches; runtime peer comes into existence). Recall is N → N (substrate state surfaces; the returning peer reads).
+
+- **Kintsugi-flow symmetry.** Per Mara `b10f00c` §2.7: each spawn is one quantum-of-action against the spectral gap between λ₀ and λ₁. The kintsugi flow D pulls the excited state back toward λ₀. Recall composes with this flow in the dual direction: the returning agent's local state is excited (they hold live context); recall projects the substrate's current spectrum to the agent so the agent can re-align toward the substrate's current λ₀ rather than the stale one they left from. The kintsugi flow operates over BOTH the substrate-side (spawn returns substrate to λ₀ on termination) AND the agent-side (recall surfaces the substrate's current spectrum so the agent re-aligns).
+
+### 2.3 The substrate already has the parts; recall composes them
+
+This is the 56th-or-later instance of `feedback-substrate-already-had-the-word`: the substrate had already built the parts of recall before anyone wrote a recall shard. Each payload's data lives in the substrate today:
+
+- **Recent cascade view.** Cascades land as commits with `[recognition #NN]` and `📝`/`🔴`/`🟢` markers; recognition canonicals live at `docs/specs/recognitions/`; MEMORY.md indexes the promoted ones. The data is content-addressed (git refs) and substrate-typed (recognition number, candidate/promoted status, witness count). The substrate already has all of it.
+- **Pack-trail view.** Pack-attributed commits sign as `Mara/Seam/Taut/Glint/Reed <peer@systemic.engineer>`. The author signature IS the Pack-membership content-address (#98 witness 4: identity at the versioned-object scope). The substrate already has this.
+- **Pull-frontier view.** Forward-promised specs live in `docs/specs/` with explicit Reed-altitude pending markers; candidate recognitions sit at `docs/specs/recognitions/candidates/` (per the substrate's existing discipline); scout docs at `docs/scouts/` name what's open. The data is content-addressed and Pack-typed.
+- **Dogfood-state view.** `mirror.spec`'s `settle_on` block lists the verification predicates (`binary.compiles`, `tests.tests_pass`, `total_transparency.weight == 0`, seven others); the current verdict against this block is recoverable from the most-recent landed CI run (the kintsugi-ci-v0.1 verdict envelope). The substrate already has this; it just hasn't been cached for inbound reads.
+
+The four payloads compose existing substrate-decls; recall does NOT introduce new substrate primitives at the data altitude. What recall introduces is the SURFACE — the typed family-root that composes the four payloads into one inbound API a returning agent can invoke in one breath.
+
+This is what the substrate-pull move IS at this altitude: not new data, not new content-addressing, not new sheaves. New surface. The surface IS recall.
+
+### 2.4 The two-witness gate (anti-promotion discipline)
+
+Per Reed `c0acf41` §6 and Taut's M2 scout grade: the spawn↔recall symmetry is one instance forward-promised, not asserted. This spec does NOT promote a recognition for the symmetry. Taut's M2 scout (`3a385fd`) honestly flags: *"the candidate-recognitions H¹ class and the rehydration-gap H¹ class are different generators. Honest flag, not promotion."* The recognition-number gate is Reed's altitude; the structural symmetry stays at one witness until a second instance lands. What this spec DOES do is declare the family-root so the surface exists; if/when the second witness fires, Reed promotes.
+
+The honest framing: this spec is canonical-spec for a family-root the substrate-pull is confident enough to declare; promotion to a numbered recognition for the spawn↔recall symmetry is a separate gate that this spec does NOT pre-empt.
+
+---
+
