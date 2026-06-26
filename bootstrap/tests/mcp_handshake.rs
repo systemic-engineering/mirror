@@ -85,22 +85,113 @@ fn unknown_method_silent_drop() {
 }
 
 #[test]
-fn six_tools_advertised() {
+fn seven_tools_advertised() {
     let req = read_fixture("tools_list.req.json");
     let resp = mcp::handle_request(req.trim()).expect("tools/list must respond");
     let v: serde_json::Value = serde_json::from_str(&resp).expect("valid JSON");
     let tools = v["result"]["tools"].as_array().expect("tools array");
-    assert_eq!(tools.len(), 6);
+    assert_eq!(tools.len(), 7);
     let names: Vec<&str> = tools.iter().map(|t| t["name"].as_str().unwrap()).collect();
     // Tick 17 (2026-06-19): added `prisms` substrate-introspection
-    // primitive for substrate-driven tool registration foundation
-    // (task #310 / #312).
+    // primitive for substrate-driven tool registration foundation.
     // Phase G v0 (2026-06-26): added `spawn` cli-surface tool per
     // Mara's spawn-semantics insight (b10f00c).
+    // P3 RED (2026-06-26): added `recall` inbound trajectory surface
+    // tool per Mara's @mirror/recall spec (b034a60) + Seam Discharge C
+    // (88f8428). Dual of spawn per insight b10f00c §2.5.
     assert_eq!(
         names,
-        vec!["compile", "craft", "kintsugi", "prisms", "verdict", "spawn"]
+        vec!["compile", "craft", "kintsugi", "prisms", "verdict", "recall", "spawn"]
     );
+}
+
+/// P3 RED (2026-06-26): the recall tool routes to cmd_recall, returns
+/// non-empty response, isError absent on valid dir input.
+#[test]
+fn recall_tool_routes_to_cmd_recall() {
+    let dir = concat!(env!("CARGO_MANIFEST_DIR"), "/..");
+    let req = format!(
+        r#"{{"jsonrpc":"2.0","id":701,"method":"tools/call","params":{{"name":"recall","arguments":{{"dir":"{}"}}}}}}"#,
+        dir
+    );
+    let resp = mcp::handle_request(&req).expect("recall must respond");
+    let v: serde_json::Value = serde_json::from_str(&resp).expect("valid JSON");
+    let is_error = v["result"]["isError"].as_bool().unwrap_or(false);
+    assert!(
+        !is_error,
+        "recall must not lift isError on valid dir; got: {}",
+        resp
+    );
+    let text = v["result"]["content"][0]["text"]
+        .as_str()
+        .expect("text payload");
+    assert!(!text.is_empty(), "recall envelope must be non-empty");
+}
+
+/// P3 RED (2026-06-26): the recall envelope MUST carry the four
+/// payloads from Mara's @mirror/recall spec §3 (b034a60):
+/// cascade / pack_trail / pull_frontier / dogfood. Stub returns
+/// placeholder JSON without these keys; this test fails RED until
+/// the GREEN impl lands.
+#[test]
+fn recall_envelope_carries_four_payload_keys() {
+    let dir = concat!(env!("CARGO_MANIFEST_DIR"), "/..");
+    let req = format!(
+        r#"{{"jsonrpc":"2.0","id":702,"method":"tools/call","params":{{"name":"recall","arguments":{{"dir":"{}"}}}}}}"#,
+        dir
+    );
+    let resp = mcp::handle_request(&req).expect("recall must respond");
+    let v: serde_json::Value = serde_json::from_str(&resp).expect("valid JSON");
+    let text = v["result"]["content"][0]["text"]
+        .as_str()
+        .expect("text payload");
+    let envelope: serde_json::Value =
+        serde_json::from_str(text).expect("recall envelope text must be JSON");
+    for key in &["cascade", "pack_trail", "pull_frontier", "dogfood"] {
+        assert!(
+            envelope.get(*key).is_some(),
+            "recall envelope must carry '{}' payload key per Mara spec §3; got: {}",
+            key,
+            text
+        );
+    }
+}
+
+/// P3 RED (2026-06-26): Seam Discharge C (88f8428) — pack_trail records
+/// MUST use `last_seen_commit: content_address` (content-addressed),
+/// NOT `in_flight: bool` (stateless-return at runtime, forbidden by
+/// b10f00c §4). This test pins the Discharge C contract.
+#[test]
+fn recall_pack_trail_uses_last_seen_commit_not_in_flight() {
+    let dir = concat!(env!("CARGO_MANIFEST_DIR"), "/..");
+    let req = format!(
+        r#"{{"jsonrpc":"2.0","id":703,"method":"tools/call","params":{{"name":"recall","arguments":{{"dir":"{}"}}}}}}"#,
+        dir
+    );
+    let resp = mcp::handle_request(&req).expect("recall must respond");
+    let v: serde_json::Value = serde_json::from_str(&resp).expect("valid JSON");
+    let text = v["result"]["content"][0]["text"]
+        .as_str()
+        .expect("text payload");
+    let envelope: serde_json::Value =
+        serde_json::from_str(text).expect("recall envelope text must be JSON");
+    let pack_trail = envelope["pack_trail"]
+        .as_array()
+        .expect("pack_trail must be an array");
+    // Empty pack_trail vacuously satisfies field-shape; assert the
+    // negative only when at least one record exists.
+    if let Some(first) = pack_trail.first() {
+        assert!(
+            first.get("last_seen_commit").is_some(),
+            "Seam Discharge C: pack_tick must carry `last_seen_commit`; got: {}",
+            first
+        );
+        assert!(
+            first.get("in_flight").is_none(),
+            "Seam Discharge C: pack_tick must NOT carry `in_flight` (b10f00c §4 stateless-return); got: {}",
+            first
+        );
+    }
 }
 
 /// Tick 17 (2026-06-19): the substrate-introspection contract.

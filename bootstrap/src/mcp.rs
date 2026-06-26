@@ -146,6 +146,17 @@ fn tools_list_result() -> Value {
                 }
             },
             {
+                "name": "recall",
+                "description": "split: substrate's inbound trajectory surface for returning agents. Returns 4-payload envelope: cascade (recent ratified recognitions) + pack_trail (Pack-attributed commits with last_seen_commit per Seam Discharge C 88f8428) + pull_frontier (candidate recognitions awaiting witnesses) + dogfood (mirror.spec settle_on verdict). Content-addressed reads; never synthesizes fresh state. Per docs/specs/mirror-recall.md (Mara b034a60). Dual of spawn at substrate altitude per insight b10f00c §2.5.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "dir": { "type": "string", "description": "Path to spec directory containing mirror.spec to read trajectory from" }
+                    },
+                    "required": ["dir"]
+                }
+            },
+            {
                 "name": "spawn",
                 "description": "shift: spawn a peer from its home directory. Reads <home>/mirror.spec; extracts project name + pack{}.lead; emits an envelope naming all seven composition pieces. Phase G v0: pieces 1-3 are real reads; pieces 4-7 are logged stubs the envelope names by anchor. See docs/insights/2026-06-26-spawn-is-substrate-leaving-ground-state.md.",
                 "inputSchema": {
@@ -566,6 +577,20 @@ fn dispatch_tool_call(tool: &str, args: &Value) -> (String, bool) {
             };
             return (text, is_error);
         }
+        "recall" => {
+            // P3 RED (2026-06-26): the cli-surface tool for the
+            // recall operation. Per Mara's @mirror/recall canonical
+            // spec (b034a60) + Seam P2 Discharge C (88f8428): recall
+            // is the substrate's inbound trajectory surface for
+            // returning agents — dual of spawn at substrate altitude
+            // per insight b10f00c §2.5. Routes through `mirror recall
+            // <dir>` (cmd_recall, lib.rs). Stub returns placeholder
+            // envelope without the four payload keys; GREEN tick
+            // wires the real cascade/pack_trail/pull_frontier/dogfood
+            // reads.
+            let dir = s("dir").unwrap_or_default();
+            run_mirror(&["recall", &dir])
+        }
         "spawn" => {
             // Phase G v0 MCP wiring (2026-06-26): the cli-surface tool
             // for the spawn operation. Per Mara's spawn-semantics
@@ -767,29 +792,25 @@ mod tests {
     }
 
     #[test]
-    fn tools_list_advertises_six_tools() {
-        // Tick 17 (2026-06-19): added `prisms` substrate-introspection
-        // primitive (task #310 / #312), expanding the surface from the
-        // original three (compile / craft / kintsugi) to five
-        // (compile / craft / kintsugi / prisms / verdict).
-        // Phase G v0.5 (2026-06-26): added `spawn` cli-surface tool
-        // per Mara's spawn-semantics insight (b10f00c), expanding to
-        // six (compile / craft / kintsugi / prisms / verdict / spawn).
-        // The integration test at
-        // `bootstrap/tests/mcp_handshake.rs::six_tools_advertised` pins
-        // the same shape end-to-end via the bash-fixture round-trip;
-        // this unit test pins the pure substrate path.
+    fn tools_list_advertises_seven_tools() {
+        // P3 RED (2026-06-26): added `recall` inbound trajectory
+        // surface tool per Mara's @mirror/recall spec (b034a60) +
+        // Seam P2 Discharge C (88f8428), expanding to seven
+        // (compile / craft / kintsugi / prisms / verdict / spawn /
+        // recall). Recall is the dual of spawn per insight b10f00c
+        // §2.5; the round-trip closes one altitude of the
+        // outbound/inbound symmetric pair.
         let req = r#"{"jsonrpc":"2.0","id":42,"method":"tools/list","params":{}}"#;
         let resp_line = handle_request(req).expect("tools/list must respond");
         let resp: Value = serde_json::from_str(&resp_line).expect("valid JSON");
         let tools = resp["result"]["tools"]
             .as_array()
             .expect("tools is an array");
-        assert_eq!(tools.len(), 6);
+        assert_eq!(tools.len(), 7);
         let names: Vec<&str> = tools.iter().map(|t| t["name"].as_str().unwrap()).collect();
         assert_eq!(
             names,
-            vec!["compile", "craft", "kintsugi", "prisms", "verdict", "spawn"]
+            vec!["compile", "craft", "kintsugi", "prisms", "verdict", "recall", "spawn"]
         );
     }
 }

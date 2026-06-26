@@ -2593,6 +2593,13 @@ pub fn dispatch(args: &[String]) -> i32 {
                 1
             }
         },
+        "recall" => match positional {
+            Some(p) => cmd_recall(p),
+            None => {
+                merr!("usage: mirror recall <spec-dir>");
+                1
+            }
+        },
         "spawn" => match positional {
             Some(p) => cmd_spawn(p),
             None => {
@@ -2606,6 +2613,40 @@ pub fn dispatch(args: &[String]) -> i32 {
         }
     };
     rc
+}
+
+// ───────────────────────────────────────────────────────────────────────────────
+// `mirror recall <spec-dir>` — P3 RED stub for inbound trajectory surface.
+// ───────────────────────────────────────────────────────────────────────────────
+
+/// `mirror recall <spec-dir>` — P3 RED stub.
+///
+/// Per Mara's @mirror/recall canonical spec (`docs/specs/mirror-recall.md`,
+/// commit `b034a60`) + Seam P2 review (`88f8428`) applying Discharge C
+/// (`last_seen_commit: content_address` instead of `in_flight: bool`,
+/// which is forbidden as stateless-return-at-runtime per b10f00c §4).
+///
+/// Recall is the dual of spawn at substrate altitude (spawn = substrate
+/// leaving λ₀; recall = observer returning to substrate in excited
+/// state, asking for trajectory). The four payloads —
+/// `cascade`/`pack_trail`/`pull_frontier`/`dogfood` — compose existing
+/// substrate-decls into one inbound API a returning agent can invoke in
+/// one breath. Per Mara spec §3.
+///
+/// This stub returns a placeholder JSON envelope that does NOT carry
+/// the four payload keys. The RED tests in `bootstrap/tests/recall.rs`
+/// and `bootstrap/tests/mcp_handshake.rs` assert the four-payload
+/// contract — they fail against this stub. The GREEN tick wires the
+/// real reads (git log → cascade; commit authors → pack_trail with
+/// last_seen_commit; candidate-recognition scan → pull_frontier;
+/// mirror.spec settle_on → dogfood).
+fn cmd_recall(spec_dir: &str) -> i32 {
+    let envelope = format!(
+        "{{\"stub\":true,\"dir\":\"{}\",\"phase\":\"P3_RED_pending_GREEN\"}}\n",
+        spec_dir.replace('\\', "\\\\").replace('"', "\\\"")
+    );
+    _raw_stdout(envelope.as_bytes());
+    0
 }
 
 // ───────────────────────────────────────────────────────────────────────────────
