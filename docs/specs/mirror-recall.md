@@ -404,4 +404,180 @@ The signature mirrors `@mirror/spawn`'s shape (one positional argument; contextu
 
 ---
 
+## 4. Dependency direction — what `in <X>` this family-root imports
+
+Per Taut's `d4749c0` scout (`@graph family-root dependency-DAG scout`): **`in`-arrows point from consumer UP to grounding, never from grounding DOWN to consumer**. Taut verified this across 13 shards with five-instance witnessing and zero counter-instances. `@mirror/recall` MUST respect this invariant.
+
+The §3.5 signature sketch lists the imports. This section names what each import grounds, in the direction the invariant requires.
+
+### 4.1 Foundation layer (every family-root imports these)
+
+```mirror
+in @prism    # the foundational keyword; family-root pattern
+in @meta     # carrier altitude
+in @glass    # the bilateral-discharge surface
+```
+
+These are the family-root pattern from `prism.mirror`, `kintsugi.mirror`, `glass.mirror`. `@mirror/recall` consumes the family-root vocabulary; the foundation grounds it. Direction correct: consumer (recall) → grounding (prism/meta/glass).
+
+### 4.2 Content-addressing + spec resolution layer
+
+```mirror
+in @mirror/store   # the OPEN content-addressed gate
+in @mirror/spec    # the spec schema recall reads against
+in @mirror/cli     # contextual resolution for the cwd's mirror.spec
+```
+
+`@mirror/store` grounds the content-addressing payloads (§3.1-§3.4 each anchor at content-addresses; the addressing itself is `@mirror/store`'s domain). `@mirror/spec` grounds the `recall_request.spec` field's resolution. `@mirror/cli` grounds the contextual lookup that resolves the default spec when `r.spec` is absent. Direction correct: recall consumes the addressing/spec/cli vocabulary; those vocabularies don't import recall.
+
+### 4.3 Pack composition layer
+
+```mirror
+in @mirror/pack   # pack-block shape for the pack_trail payload
+in @pack          # family-root @pack carrier (peer + members + bindings)
+in @peer          # the peer carrier for pack_tick records
+```
+
+`@mirror/pack` grounds the pack{} block shape recall reads in §3.2. `@pack` grounds the underlying carrier and the pack-coherent discipline. `@peer` grounds the per-record peer field. Direction correct: recall consumes pack vocabulary; pack vocabulary doesn't import recall.
+
+The symmetry with `@mirror/spawn`'s import block is exact: spawn imports `@mirror/pack + @pack + @peer` to dispatch outward; recall imports the same three to read inward. Both consume the same pack-altitude vocabulary; both occupy the same architectural altitude.
+
+### 4.4 Trajectory + supervision layer
+
+```mirror
+in @mirror/bench         # bench_crystal for dogfood payload's per-predicate evidence
+in @loop                 # the @loop tick altitude for cascade ordering
+in @reflection           # the observation-side reads for the four sheaves
+in @spectral/supervisor  # in_flight resolution via Discharge A (§3.2.1)
+```
+
+`@mirror/bench` grounds the dogfood payload's evidence-anchoring (bench_crystal is the content-addressed measurement carrier per #87). `@loop` grounds the temporal ordering for cascade ticks (per #88). `@reflection` grounds the observation-sheaf reads (per #85; reflection's `observe` is the temporal-projection primitive Mara `b10f00c` §2.5 places at altitude N+1). `@spectral/supervisor` grounds the in_flight field's Discharge A path. Direction correct: recall consumes all four; none import recall.
+
+### 4.5 Epistemologic layer
+
+```mirror
+in @epistemologic                 # property/fracture/predicate ancestry
+in @epistemologic/property        # the predicate carrier for settle_on
+in @epistemologic/reality/time    # the time altitude for since-resolution
+```
+
+`@epistemologic/property` grounds the `predicate` carrier in the dogfood payload's `settle_on_predicates` field. `@epistemologic/reality/time` grounds the `since` field's time-altitude semantics. Direction correct: recall consumes the epistemologic vocabulary; epistemologic doesn't import recall.
+
+### 4.6 What recall does NOT import — explicit boundary
+
+`@mirror/recall` does NOT import:
+
+| NOT imported | Why |
+|---|---|
+| `@fate` | @fate is the runtime substrate, not a substrate-decl prism (per Taut's Phase F anti-pattern correction 2026-06-24; same exclusion as @mirror/spawn). |
+| `@io/llm` | Forbidden per b10f00c §4.2 (and the substrate has no @io/llm family). |
+| `@io/git` (directly) | @mirror/store transitively composes with @io/git; recall consumes @mirror/store. Direct @io/git import would be a structural collision with the addressing layer's encapsulation. |
+| `@os/process` / `@os/thread` | Forbidden per b10f00c §4.1; recall is a read path, not a process-fork path. |
+| `@magic/contract` (directly) | The pack-altitude ACL composition lifts through @mirror/pack; direct @magic import would duplicate the audit lineage. Recall is read-only at the pack altitude; @magic/audit composes only at the @io boundary (per #57 alignment-as-boundary-mathematics), and recall does not cross that boundary in the read path. |
+| Any `@psychohistory` / `@cohomology` / `@sheaf` abstract family-root | Per Taut's M3 anti-move (`3a385fd` §2): the substrate-already-had-the-word discipline at the math altitude. `@epistemologic/math/sheaf_laplacian` exists; recall does NOT introduce a duplicate abstract family-root. The Mara `d00f553` four-sheaves framing is the LANGUAGE recall reads ITSELF as a section of (§7.4); it is NOT a new family-root recall depends on. |
+
+### 4.7 The full DAG (one-line summary)
+
+```
+@prism / @meta / @glass
+    ↑
+@mirror/store / @mirror/spec / @mirror/cli
+    ↑
+@mirror/pack / @pack / @peer
+    ↑
+@mirror/bench / @loop / @reflection / @spectral/supervisor
+    ↑
+@epistemologic / @epistemologic/property / @epistemologic/reality/time
+    ↑
+@mirror/recall  ← THIS FAMILY-ROOT (consumer altitude)
+    ↑
+(future) @mirror/recall/cascade / pack_trail / pull_frontier / dogfood  ← species
+    ↑
+(future) @<consumer> (e.g., a hypothetical @harness/rehydration adapter, NOT in scope)
+```
+
+Read upward: every `in` arrow points from consumer to grounding. Recall sits at consumer altitude relative to everything below; recall sits at grounding altitude relative to its own future species. The substrate's existing dependency-DAG invariant holds; no inversion.
+
+**Verification.** Taut's `d4749c0` scout's pattern (`grep @graph shards/**/*.mirror`-style) was applied here: no shard in `shards/**/*.mirror` imports `@mirror/recall` today (slot empty per pre-spec verification). Recall is a new node in the DAG; the §4.1-§4.5 layer lists what it imports; nothing imports it yet. The first consumer will be the Phase G Rust impl + the MCP wire integration; the second consumer will be the four species shards.
+
+---
+
+## 5. Forbidden primitives check — the verification matrix
+
+Per Mara `b10f00c` §4 (the load-bearing gate): the inbound surface is stateless-return-adjacent. This section walks each of the seven forbidden primitives against each of the four payloads — a 4 × 7 = 28-cell verification matrix. Rows that are obviously safe are collapsed; rows that require structural argument are unpacked.
+
+The seven forbidden primitives (from `b10f00c` §4):
+
+1. **`@os/process`** — recall is not a process-fork; never spawns OS processes for reads.
+2. **identity-mint** — recall does not create peer IDs; identities come from the home's git ref (#98 witness 4).
+3. **stateless-return-at-runtime** — recall does not synthesize fresh content not anchored in content-addressed state.
+4. **idempotent-at-runtime** — recall may produce distinct call traces per invocation, but never returns different content for the same content-addressed input.
+5. **delegation-chain** — recall respects peer-ACL §10.1: lead→member is NOT a sheaf restriction map and NOT a delegation chain.
+6. **membership-side-effects** — recall is read-only; never adds/removes peers from the spec's pack{}.
+7. **`@io/llm`** — recall does not bridge to an external LLM service.
+
+### 5.1 The matrix
+
+| Payload \ Forbidden | 1. @os/process | 2. identity-mint | 3. stateless-return | 4. idempotent-runtime | 5. delegation-chain | 6. membership-SE | 7. @io/llm |
+|---|---|---|---|---|---|---|---|
+| `cascade` | safe ✓ | safe ✓ | §5.2 | §5.3 | safe ✓ | safe ✓ | safe ✓ |
+| `pack_trail` | safe ✓ | safe ✓ | §5.2 | §5.3 | §5.4 ⚠ | safe ✓ | safe ✓ |
+| `pull_frontier` | safe ✓ | safe ✓ | §5.2 | §5.3 | safe ✓ | safe ✓ | safe ✓ |
+| `dogfood` | §5.5 ⚠ | safe ✓ | §5.2 | §5.3 | safe ✓ | safe ✓ | safe ✓ |
+
+Legend: `safe ✓` = the row is structurally unreachable (recall doesn't compose with the relevant carrier at all); `§X.X` = unpacked in the named subsection; `⚠` = a structural argument is required, not merely an absence.
+
+### 5.2 Stateless-return-at-runtime (rows 3, all four payloads)
+
+**Argument.** Every payload anchors at a content-address (§3.1-§3.4): cascade at `promotion_commit`; pack_trail at `commit + spec_oid`; pull_frontier at `surfaced_at + canonical_doc_oid`; dogfood at `spec_oid + most_recent_landed_at`. Same content-address tuple → same payload bytes. The runtime invocation is a read; it does not synthesize. The substrate's existing content-addressing discipline (#98) provides the anchor; recall consumes it.
+
+**Where this could fail.** A payload field that reads a non-content-addressed source (e.g., `in_flight` field on pack_trail, where supervisor state mutates between calls) is the structural risk site. §3.2.1 names the discharge: Discharge A anchors at the supervisor's registry hash at recall-time (the read is anchored even though the underlying state mutates between recalls); Discharge B returns `unknown` (the substrate is honest about the non-anchorable state rather than synthesizing). Both discharges keep the payload's substrate-decl shape stateless-return-clean; neither admits an unanchored synthesis.
+
+**Open flag.** If Phase G hits a blocker on Discharge A and Discharge B's `unknown` returns are too lossy for the round-trip test drive's empirical value, the in_flight field MAY require a §9 hedge upgrade: surface `in_flight` as a sub-prism explicitly typed at the harness boundary, with a structural-flag for Alex/Reed review. This spec does NOT pre-empt that choice; flag #1 in §9.
+
+### 5.3 Idempotent-at-runtime (rows 4, all four payloads)
+
+**Argument.** Recall is idempotent at the IDENTITY altitude per the §3 anchors: same content-address tuple → structurally equivalent payload. Recall is NOT idempotent at the RUNTIME altitude in the strict sense: two recall invocations at different commits/spec_oids produce different payloads, by design — that IS what surfaces the trajectory.
+
+The forbidden primitive (per Mara `b10f00c` §4.5) is `idempotent-at-runtime` in the spawn sense: returning the existing runtime when asked to spawn an already-running peer. Recall has no analog because recall does not produce runtime state; it produces payload bytes anchored at content-addresses. The forbidden primitive's spawn-side concern (don't conflate two distinct runtime instances) maps to the recall-side concern (don't conflate two distinct content-address tuples — and recall doesn't, because the response IS keyed on the tuple).
+
+**Net.** Recall is idempotent at identity (same content-address → same bytes); recall is non-idempotent at trajectory (different commits → different bytes); recall is structurally unable to conflate runtimes (there are no runtimes in the read path).
+
+### 5.4 Delegation-chain (row 5, pack_trail) — peer-ACL §10.1 boundary
+
+**The concern.** Per peer-ACL §10.1 (and Mara `b10f00c` §2.5; Taut `3a385fd` §4): the lead→member relation is **NOT** a sheaf restriction map and **NOT** a delegation chain. The morphisms in the relation are spectral-Tomm probes; members form an antichain at altitude N; the lead is the distinguished N+1 observer. Recall's pack_trail payload (§3.2) walks pack-attributed commits — could this implicitly assert a lead→member delegation reading?
+
+**The argument.** No. Three structural pieces hold:
+
+1. **Records are antichain entries.** Each `pack_tick` record carries a `peer` field. The records form a sequence; the sequence has temporal order (by `commit` ancestry); it does NOT have authority order. Reading the payload gives "Mara committed X, then Reed committed Y, then Glint committed Z" — temporal trajectory, not authority projection. The pack_trail does not say "Reed delegated Y to Mara" or "Mara restricted from Reed."
+
+2. **The `peer` field resolves through the spec's pack{} block, not through a lead-of chain.** Per peer-ACL §6.2 self-naming + Alex 2026-06-24 G1: a peer IS what their home repo's mirror.spec says they are. The pack_tick.peer field reads the commit's signed author (or the substrate's per-commit peer-attribution if richer) and resolves through the spec's pack{} block. This is a CONTAINMENT check (peer ∈ pack{}.members ∪ {pack{}.lead}), not a delegation check. Containment is set membership; delegation is hierarchical.
+
+3. **The Mara `d00f553` four-sheaves framing the pack-trail reads against is the Pack sheaf, not the substrate-decl sheaf.** Per §3.6 of that insight + Taut `3a385fd` §4: the Pack sheaf's restriction-map structure is NOT the same shape as the substrate-decl sheaf's; coupling restrictions are typed differently. Recall reads the Pack sheaf's section data without claiming the cross-sheaf coupling restrictions ARE the lead→member relation. The Pack sheaf's morphisms are the substrate's Pack-discipline morphisms (commit-attribution, banking discipline, phase-marker semantics) — not the spectral-Tomm probes that peer-ACL §10.1 reserves for the lead-member altitude.
+
+**Honest hedge.** Taut's `3a385fd` §4 flag stays open: *"does the spectral-Tomm-probe relation force the Pack sheaf into a non-cellular regime, or does it live as a cellular sheaf with non-standard restriction maps?"* Recall does NOT resolve that flag. Recall reads the Pack sheaf at the commit-attribution altitude, which is below the spectral-Tomm altitude. If the flag's resolution later changes the Pack sheaf's typing, recall's pack_trail will need a non-surface upgrade; the substrate-decl shape (§3.2) does not pre-empt that upgrade. Flag #2 in §9.
+
+### 5.5 `@os/process` (row 1, dogfood) — the cache layer's @io boundary
+
+**The concern.** The dogfood payload's cache layer (§3.4.1) lives at `~/.mirror/recall/dogfood-cache.jsonl`. Cache population requires writing to disk; the kintsugi-ci pipeline that populates the cache runs cargo + lints + tests, each of which IS an OS-process spawn. Is recall therefore implicated in @os/process?
+
+**The argument.** No, with a discharge-boundary discipline.
+
+- **The READ path is process-clean.** `recall dogfood` reads the cache file (an @io read), parses it, returns the most-recent landed verdict. The read path crosses @io at the file boundary but never spawns OS processes.
+- **The WRITE path is OUT OF SCOPE for the recall substrate-decl.** The cache is populated by `mirror kintsugi --ci` as a side effect; that pipeline already exists, already spawns OS processes for cargo/lints/tests, and is already substrate-decl'd at the @mirror/spec + target altitude (per `mirror.spec`'s settle_on block). Recall does NOT trigger that pipeline; recall reads its output.
+- **The cache file's content-addressing.** Each cache entry is keyed on (spec_oid, kintsugi_ci_envelope_hash). The cache itself is append-only JSON-lines; the read path is deterministic on the (spec_oid, head_commit) tuple. No process-spawn at read time; no synthesis at read time.
+
+The substrate-decl shape (§3.4) anchors the read at content-addresses; the write is the existing CI pipeline's existing concern. Recall does NOT introduce a new @os/process pathway; recall consumes an existing-pipeline's existing output.
+
+**Open flag.** If the cache file is absent on a fresh clone, `recall dogfood` returns `cache_freshness: unknown` (§3.4.1). The agent's next step would naturally be to invoke `mirror verdict mirror.spec`, which IS a process-spawn — but it's the EXISTING `verdict` MCP tool's existing concern, not recall's. The boundary is clean. Flag #3 in §9 (only if Phase G discovers the absence-handling needs richer carriage).
+
+### 5.6 Net verification
+
+The matrix collapses to: 28 cells, 24 obviously safe, 4 unpacked (§§5.2-5.5). The four unpacks each name a structural argument grounding the safety, plus a flag for §9 if Phase G implementation surfaces an unforeseen edge. The forbidden-primitives gate per `b10f00c` §4 is held; recall is structurally clean against all seven primitives.
+
+The honest framing limit: this verification is at the substrate-decl altitude. Operational verification requires Phase G implementation; if Phase G implementation discovers an edge that the substrate-decl shape admits but operationally collides with a forbidden primitive, the Pack discipline at substrate-pull-honesty altitude says: pause, flag, defer to Mara/Alex/Seam for adversarial review. This spec does NOT pre-empt that gate.
+
+---
+
+
 
