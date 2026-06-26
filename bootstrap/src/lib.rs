@@ -2593,6 +2593,13 @@ pub fn dispatch(args: &[String]) -> i32 {
                 1
             }
         },
+        "spawn" => match positional {
+            Some(p) => cmd_spawn(p),
+            None => {
+                merr!("usage: mirror spawn <peer-home>");
+                1
+            }
+        },
         other => {
             merr!("unknown: {}", other);
             1
@@ -2601,9 +2608,147 @@ pub fn dispatch(args: &[String]) -> i32 {
     rc
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ───────────────────────────────────────────────────────────────────────────────
+// `mirror spawn <peer-home>` — Phase G v0 empirical-path-traversal proof.
+// ───────────────────────────────────────────────────────────────────────────────
+
+/// `mirror spawn <peer-home>` — v0 empirical-path-traversal proof.
+///
+/// Per Mara's spawn-semantics insight (`docs/insights/2026-06-26-spawn-is-
+/// substrate-leaving-ground-state.md`, commit `b10f00c`): spawn IS the
+/// substrate's controlled excitation above λ₀. The insight names seven
+/// composition pieces (§2.1–§2.7) that must compose, and seven structural
+/// negatives (§4.1–§4.7) the implementation must honor.
+///
+/// v0 implements pieces 1–3 as real reads (cli surface + peer-home
+/// filesystem resolution + pack{}.lead extraction); pieces 4–7 are logged
+/// stubs that prove the path traversed all seven. Phase H wires real
+/// @fate inference through the cascade/code/* species.
+///
+/// Structural negatives honored (§4):
+///   - No @os/process (no fork/exec; in-process only).
+///   - No @io/llm (no external LLM adapter; @fate is the inference home).
+///   - No identity-mint (identity comes from the home repo via filesystem;
+///     v0 does NOT create peers).
+///   - No delegation-chain (lead is the N+1 observer per peer-ACL §10).
+///   - No idempotent-at-runtime (envelope is emitted per call).
+///   - No membership-side-effects (spawn does NOT add members to the pack).
+///   - No stateless-return (envelope acknowledges persisted state even
+///     though v0 does not yet store it; Phase H wires storage).
+fn cmd_spawn(peer_home: &str) -> i32 {
+    // Piece 1 (insight §2.1): cli surface. The peer-home argument is the
+    // single positional. Context (frame, repository, pack) is resolved
+    // FROM peer-home, not passed in.
+    let spec_path = std::path::Path::new(peer_home).join("mirror.spec");
+
+    // Piece 2 (insight §2.2): @peer resolution via G1 single-hop. The
+    // `~peer'<path>'` sigil at substrate altitude is G1-composed with
+    // `~git'<path>'` per Alex's 2026-06-25 confirmation; at v0 we read
+    // the filesystem directly (the @io/git layer is the substrate-decl
+    // shape; the v0 impl uses std::fs as the immediate realisation).
+    let source = match fs::read_to_string(&spec_path) {
+        Ok(s) => s,
+        Err(e) => {
+            merr!(
+                "spawn: cannot read peer-home spec {}: {}",
+                spec_path.display(),
+                e
+            );
+            return 1;
+        }
+    };
+
+    let peer_name = extract_spec_project_name(&source).unwrap_or_else(|| "<unknown>".to_string());
+
+    // Piece 3 (insight §2.3): contextual pack. Read the spec's pack{}
+    // block and extract the lead. v0 admits a missing pack{} block (the
+    // default-to-repo-local rule per peer-ACL §9); Phase H will tighten
+    // this to enforce pack_coherent.
+    let pack_lead = extract_spec_pack_lead(&source);
+
+    // Pieces 4–7 (insight §§2.4–2.7): logged stubs. The envelope below
+    // names each piece's substrate anchor so the path-traversal is
+    // empirically checkable from stdout. Phase H replaces each `stub`
+    // marker with the real composition.
+    //
+    //   piece 4 (§2.4): lead-at-N+1 obligation contracted at spawn time.
+    //   piece 5 (§2.5): @spectral/supervisor.start_child lifecycle kick.
+    //   piece 6 (§2.6): @fate inference (NOT @io/llm) through cascade/
+    //                    code/* species discharge.
+    //   piece 7 (§2.7): λ₀ → excited-state transition; the substrate's
+    //                    transient departure from its own ground state.
+    let envelope = format!(
+        "spawn: peer={} home={} lead={} \
+         excitation=λ₀→runtime \
+         supervisor=stub@spectral/supervisor.start_child \
+         fate=stub@cascade/code/* \
+         probe_channel=stub@N+1 \
+         pack_coherent=stub_passed\n",
+        peer_name,
+        peer_home,
+        pack_lead.unwrap_or_else(|| "<no-lead>".to_string()),
+    );
+    _raw_stdout(envelope.as_bytes());
+    0
+}
+
+/// Extract `project <name>` from a mirror.spec source. v0 uses simple
+/// line-prefix matching; the substrate's full parser (per @mirror/spec)
+/// will replace this when Phase H lands. The text-matching style mirrors
+/// `mcp::extract_prism_declaration`.
+fn extract_spec_project_name(source: &str) -> Option<String> {
+    for line in source.lines() {
+        let line = line.trim_start();
+        if let Some(rest) = line.strip_prefix("project ") {
+            let name: String = rest
+                .chars()
+                .take_while(|c| !c.is_whitespace() && *c != '{')
+                .collect();
+            if !name.is_empty() {
+                return Some(name);
+            }
+        }
+    }
+    None
+}
+
+/// Extract `lead <peer-ref>` from a `pack { … }` block in a mirror.spec
+/// source. Returns the raw peer-ref text (sigil + path + closer); v0
+/// admits the substrate text verbatim so the trace shows what the spec
+/// actually declared. Phase H tightens to a typed peer carrier.
+fn extract_spec_pack_lead(source: &str) -> Option<String> {
+    let mut in_pack = false;
+    let mut depth: i32 = 0;
+    for line in source.lines() {
+        let trimmed = line.trim();
+        if !in_pack && (trimmed.starts_with("pack {") || trimmed.starts_with("pack{")) {
+            in_pack = true;
+            depth = 1;
+            continue;
+        }
+        if in_pack {
+            // Crude brace tracker: every `{` opens, every `}` closes.
+            for c in trimmed.chars() {
+                match c {
+                    '{' => depth += 1,
+                    '}' => depth -= 1,
+                    _ => {}
+                }
+            }
+            if let Some(after) = trimmed.strip_prefix("lead ") {
+                return Some(after.trim().to_string());
+            }
+            if depth <= 0 {
+                return None;
+            }
+        }
+    }
+    None
+}
+
+// ───────────────────────────────────────────────────────────────────────────────
 // Library entry point: in-process subcommand dispatch with fd-level capture.
-// ─────────────────────────────────────────────────────────────────────────────
+// ───────────────────────────────────────────────────────────────────────────────
 
 /// Captured output from `kintsugi_main` / `kintsugi_main_in` — the
 /// carrier integration tests assert on without spawning a subprocess.

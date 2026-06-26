@@ -84,8 +84,15 @@ fn spawn_emits_envelope_naming_seven_pieces() {
     let stdout = String::from_utf8_lossy(&out.stdout);
     // The envelope names all seven composition pieces by their substrate-
     // pull anchors so the path-traversal is empirically checkable.
-    for anchor in ["peer=", "home=", "lead=", "excitation=", "supervisor=", "fate=", "probe_channel="]
-    {
+    for anchor in [
+        "peer=",
+        "home=",
+        "lead=",
+        "excitation=",
+        "supervisor=",
+        "fate=",
+        "probe_channel=",
+    ] {
         assert!(
             stdout.contains(anchor),
             "envelope must name composition piece anchor `{}`; got:\n{}",
