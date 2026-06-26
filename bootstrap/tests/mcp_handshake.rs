@@ -85,19 +85,21 @@ fn unknown_method_silent_drop() {
 }
 
 #[test]
-fn five_tools_advertised() {
+fn six_tools_advertised() {
     let req = read_fixture("tools_list.req.json");
     let resp = mcp::handle_request(req.trim()).expect("tools/list must respond");
     let v: serde_json::Value = serde_json::from_str(&resp).expect("valid JSON");
     let tools = v["result"]["tools"].as_array().expect("tools array");
-    assert_eq!(tools.len(), 5);
+    assert_eq!(tools.len(), 6);
     let names: Vec<&str> = tools.iter().map(|t| t["name"].as_str().unwrap()).collect();
     // Tick 17 (2026-06-19): added `prisms` substrate-introspection
     // primitive for substrate-driven tool registration foundation
     // (task #310 / #312).
+    // Phase G v0 (2026-06-26): added `spawn` cli-surface tool per
+    // Mara's spawn-semantics insight (b10f00c).
     assert_eq!(
         names,
-        vec!["compile", "craft", "kintsugi", "prisms", "verdict"]
+        vec!["compile", "craft", "kintsugi", "prisms", "verdict", "spawn"]
     );
 }
 
@@ -417,6 +419,42 @@ fn parse_verdict_label_returns_none_on_garbage() {
     assert_eq!(
         mcp::parse_verdict_label(r#"{"target":"x","objective":0.0}"#),
         None
+    );
+}
+
+#[test]
+fn spawn_tool_routes_to_cmd_spawn() {
+    // Phase G v0 MCP wiring: tools/call `spawn` with `peer_home` must
+    // route to `cmd_spawn` (via `run_mirror`) and emit the envelope
+    // naming all seven composition pieces. Per Mara's spawn-semantics
+    // insight (b10f00c) the response must name the spawned peer + the
+    // pack{}.lead extracted from the home's mirror.spec.
+    let manifest = env!("CARGO_MANIFEST_DIR");
+    let fixture_abs = format!("{}/tests/fixtures/spawn-test-peer", manifest);
+    let req = format!(
+        r#"{{"jsonrpc":"2.0","id":99,"method":"tools/call","params":{{"name":"spawn","arguments":{{"peer_home":"{}"}}}}}}"#,
+        fixture_abs
+    );
+    let resp = mcp::handle_request(req.trim()).expect("tools/call must respond");
+    let v: Value = serde_json::from_str(&resp).expect("valid JSON");
+    assert_ne!(
+        v["result"]["isError"],
+        Value::Bool(true),
+        "spawn must not error on valid fixture peer; got: {}",
+        resp
+    );
+    let text = v["result"]["content"][0]["text"]
+        .as_str()
+        .expect("content[0].text is a string");
+    assert!(
+        text.contains("test-peer"),
+        "spawn response must name the spawned peer (test-peer); got:\n{}",
+        text
+    );
+    assert!(
+        text.contains("test-lead"),
+        "spawn response must mention the lead from pack{{}} (test-lead); got:\n{}",
+        text
     );
 }
 
