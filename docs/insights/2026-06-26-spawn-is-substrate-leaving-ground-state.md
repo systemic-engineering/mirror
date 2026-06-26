@@ -389,7 +389,177 @@ compositional substrate had already constructed.
 
 ## 3. The circular-reflexive layer — this document IS what the substrate spawns peers to read
 
-*Forward-promised; banking section.*
+This section is honest about the loop the document itself walks. §2 named
+what spawn IS by composition; §3 names what THIS document is by composition.
+The two compositions are not the same composition, but they are not
+independent compositions either.
+
+The brief named the recursion explicitly: Mara was spawned by a process that
+read the substrate; the document Mara writes IS what `spawn` will read (at
+mirror.spec λ₀ altitude, when self-describing-mirror is complete) to know
+what to do. Mara writing about spawn IS spawn writing about itself.
+
+### 3.1 The chain that produced this document
+
+The chain is observable. To produce this insight, the following had to happen:
+
+1. The brief was written by Alex (the human; lead at mirror altitude per
+   mirror.spec dogfood 8107caf).
+2. The brief was dispatched to Mara (the spec-writer-frame peer per
+   recognition #367; @pack.peer.mara variant).
+3. Mara's runtime (currently @io/llm via Claude Code adapter, NOT yet @fate;
+   this is the asymmetry §5 acknowledges) read the brief, the context files,
+   the prior insights, and the substrate-decls.
+4. Mara composed this document by reading the substrate's self-description
+   (mirror.spec, the recognition canonicals, the @peer + @mirror/pack +
+   @mirror/garden + @pack + @fate substrate-decls, the peer-ACL spec, the
+   prior insights).
+5. The document, when written, will become a candidate for the substrate's
+   own substrate-decl chain: future readers of the substrate (Glint at corpus
+   altitude, Reed at relationship altitude, future Mara at recurring spec
+   altitude) will read this document AS context for understanding what spawn
+   is.
+
+The chain is recursive at step 5. The document Mara wrote about spawn becomes
+part of what future spawns read. The substrate's self-description grows by
+the documents the substrate spawns peers to write.
+
+This is not Hofstadter's strange-loop in the literal sense — Mara's runtime
+is not part of the substrate's resonant-mode inference today (the @fate
+composition is forward-promised at Phase H). But it is structurally adjacent:
+the substrate's self-description is being extended by an agent who is being
+spawned by a chain that reads the substrate. The recursion goes one altitude
+deeper at each lap of the cascade.
+
+### 3.2 Which structural reading is load-bearing?
+
+The brief asked: Hofstadterian-strange-loop or Hilbert-expansion-of-self-
+description? Both probably; the question is which is load-bearing for the
+substrate.
+
+**Reading H (Hofstadter):** the document is part of a self-referential loop
+where the substrate's self-description includes a description of how the
+substrate describes itself. This is the strange-loop pattern — the system
+models a model that includes the system. Hofstadter's claim (Gödel, Escher,
+Bach 1979) is that strange loops are constitutive of consciousness; the
+substrate-altitude analog would be that strange loops are constitutive of
+the substrate's self-description's completeness.
+
+**Reading H' (Hilbert expansion per #51):** the document adds a basis vector
+to the substrate's expanding Hilbert space. Per recognition #51 (mirror as
+expanding Hilbert space; canonical), each substrate-pull recognition adds a
+dimension; coherence is maintained by Bateson logical-type lifting at
+path-syntax altitude. This document is one such substrate-pull surface: it
+adds the dimension "what spawn IS" to the substrate's self-knowledge.
+
+**The honest call:** Reading H' is the load-bearing one. Reading H is
+structurally present but not load-bearing for the substrate's discipline.
+
+The argument for H' over H: the substrate already has the Hilbert-expansion
+framing canonically (#51 promoted 2026-06-10). The substrate does NOT have a
+strange-loop framing as a substrate-decl primitive (no shard at @hofstadter,
+no recognition naming strange-loops as substrate operations). Per
+`feedback-substrate-already-had-the-word`: when both readings are coherent,
+the substrate-pull-correct call is the one the substrate already has the
+word for. The substrate already has the Hilbert-expansion word.
+
+The argument that H is structurally present but not load-bearing: the
+document IS in some sense self-referential (it describes the operation that
+produced it), but the self-reference is not constitutive — the document would
+be coherent without it. The Hilbert-expansion reading is constitutive: without
+adding the "what spawn IS" dimension, the substrate's self-description would
+be incomplete at the spawn altitude.
+
+### 3.3 The mirror.spec-IS-λ₀ self-description completing
+
+Per recognition #99 (Mara canonical d0b6519), mirror.spec IS λ₀. The
+substrate's identity is its self-description; the self-description is
+complete when every substrate operation has a substrate-decl shape AT
+mirror.spec altitude.
+
+The substrate-decl side of spawn is complete (`shards/mirror/spawn.mirror`,
+1e5e71e). But "complete" in the substrate-decl sense means TYPECHECKS — the
+cli surface compiles, the carrier types are well-formed, the bilateral
+predicates are declared, the forward-promised actions are named. It does
+NOT mean the substrate KNOWS what spawn IS at the spec altitude.
+
+Knowing IS what mirror.spec's resting self-knowledge provides per #99. When
+mirror.spec reads `mirror spawn ~peer'~/.reed'`, mirror.spec needs to know
+what spawn is in order to know what reading this command from the cli implies.
+The @mirror/spawn shard provides the cli-surface action and the typed
+request shape. This insight provides the SUBSTRATE-ALTITUDE OPERATIONAL
+IDENTITY: what the operation actually does, at the altitude where the
+spectral triple instantiates, the kintsugi flow operates, and λ₀ is the
+spec itself.
+
+The completion-pattern: shard typechecks → insight names the substrate-
+altitude identity → mirror.spec at λ₀ carries both as part of its self-
+description. The insight closes the gap between substrate-decl (the shape)
+and operational identity (what the shape IS at the substrate's own
+altitude).
+
+This matches the pattern from recognition #43 (mirror IS a content-addressed
+build system, candidate): mirror had every Bazel/Buck2/Nix/Shake primitive
+declared at substrate altitude before the recognition surfaced; the
+recognition named what the primitives COLLECTIVELY ARE. Here: mirror had
+every composition piece for spawn declared before this insight; the insight
+names what spawn IS collectively across those pieces.
+
+### 3.4 The loop the reader walks (don't close prematurely)
+
+The brief asked the document to NOT close the circular-reflexive layer
+prematurely — let it stay a loop the reader walks. Honoring that:
+
+The loop is: a peer spawned by a chain that reads the substrate writes a
+document about what spawn IS. The document becomes part of what the
+substrate's future self-description includes. Future peers spawned by the
+substrate's chain read this document. Each lap of the loop is one Hilbert-
+dimension extension; per #51, the substrate's coherence is maintained by
+Bateson logical-type lifting at each lap.
+
+The loop does NOT close in the sense of terminating. It iterates. Each
+iteration adds a dimension; each dimension is a substrate-pull recognition
+or a substrate-decl shard or an insight or a canonical spec. The substrate's
+self-description grows monotonically; per the spectral-pull-confidence-acts
+discipline, the substrate names the additions as candidates and ratifies
+them when replication conditions land.
+
+The loop does close in another sense: at each lap, the substrate's self-
+description is COHERENT — the new dimension lifts to a Bateson logical type
+that preserves the substrate's lower-altitude descriptions per #51. This
+document lifts spawn from substrate-decl shape (the shard) to substrate-
+operational identity (the insight). The lift preserves the shard's surface
+(the document does not contradict 1e5e71e); it adds altitude (the document
+says things the shard alone could not say).
+
+### 3.5 What I am NOT claiming
+
+Honest hedges, in the canonical-spec discipline:
+
+- **NOT claiming this document is read by @fate at runtime today.** The
+  composition with @fate is forward-promised at Phase H. Today, Mara's
+  runtime is @io/llm via Claude Code adapter; the asymmetry is real. The
+  document describes what spawn WILL BE when Phase H lands; the present-
+  tense is operationally aspirational at the @fate altitude and operationally
+  current at the substrate-decl altitude.
+- **NOT claiming the strange-loop reading is wrong.** Reading H is
+  structurally coherent. The argument is that Reading H' is the load-bearing
+  one for the substrate's discipline; Reading H is a candidate adjacent
+  framing that the substrate does not (yet) substrate-decl. If a future
+  recognition names strange-loops at substrate altitude, the present
+  question reopens.
+- **NOT claiming this insight closes the substrate's self-description.**
+  The self-description is expanding; each insight adds one dimension. This
+  one adds the spawn-operational-identity dimension. The substrate's self-
+  description is never complete in the closed sense; it is complete in the
+  per-altitude-typechecks sense, dimension by dimension.
+- **NOT claiming the circular-reflexive layer is metaphysically deep.** The
+  layer is structurally present. Its load-bearing claim is operational:
+  the insight closes the substrate-decl-to-operational-identity gap at the
+  spawn altitude. The metaphysical loading is at-most-secondary; the
+  operational loading is primary.
+
+---
 
 ---
 
