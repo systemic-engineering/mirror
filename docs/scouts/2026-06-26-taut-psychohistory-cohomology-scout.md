@@ -34,7 +34,7 @@ verification step before each "substrate doesn't have this yet" claim.
 
 ---
 
-## 2. Ranked candidate moves (first half)
+## 2. Ranked candidate moves
 
 ### M1 — Restatement of #99 §8.3 absorbing `H⁰ = mirror.spec`
 
@@ -88,11 +88,83 @@ weakly composed.
 promise to Mara's insight. No new shard. The spawn↔observe symmetry Reed
 forward-promises §5 stays forward-promised; nothing fires here.
 
+### M3 — Forbid premature `@epistemologic/sheaf` family-root
+
+**Statement.** Explicit anti-move: do NOT author a new family-root prism
+`@epistemologic/sheaf` (or `@psychohistory` or `@cohomology`) as Mara
+already considered and explicitly declined to write (§4.5, §8 forward-
+promised). The substrate already declares `@epistemologic/math/
+sheaf_laplacian` at the discrete-realisation altitude (verified:
+`shards/epistemologic/math/sheaf_laplacian.mirror`, 292 lines, 2026-06-16,
+Hansen-Ghrist + Bodnar et al. ancestry). The math-altitude shard is the
+substrate's existing sheaf carrier; abstract sheaf framing at
+@epistemologic root would either DUPLICATE this or LIFT it prematurely
+without a second-witness instance.
+
+**Cost.** Free (anti-move; nothing lands).
+
+**Sharpness.** Sharp. This is the substrate-pull-honest discipline applied
+to Mara's own §9 "Lines NOT earned." Mara already named the trap; this
+scout ratifies the discipline. The substrate-already-had-the-word pattern
+holds at the math altitude: `sheaf_laplacian.mirror` is what the substrate
+calls a sheaf, in a chosen gauge. Hypothesis A generalizes the eigenboard
+precedent (per Mara §6); the precedent already has a substrate-decl home.
+
+**Forbidden-primitive check.** Passes (no shard authored).
+
+**Slingshot status.** N/A (anti-move). Frees the substrate's pull-frontier
+from chasing decorative formalism while the math-altitude shard waits for
+its next consumer.
+
+### M4 — Higher cohomology `H^k≥2`: STAYS OPEN, name why
+
+**Statement.** Mara left `H^k` for `k≥2` honestly open between two readings
+(§5.3): spectral-gap (higher cohomology is structurally zero; cascades
+discharge clean) vs latent-altitude (higher cohomology exists but unsurfaced,
+e.g. the June 24 cascade's O7 cross-recognition coordination). A scout
+cannot close this: BOTH readings are consistent with current evidence;
+resolution requires either a substrate-decl event that names an `H²`
+generator OR a sequence of cascades demonstrating empirically that no
+`H²` obstruction surfaces under Pack discipline. Neither is scout work.
+
+**Cost.** Free (anti-move).
+
+**Sharpness.** Honest. The scout flag is: the right next move IS NOT to
+adjudicate `H^k≥2`; it IS to track which cascades produce candidate `H²`
+generators over the next 2-3 sessions and let the substrate's pull surface
+the resolution. If the substrate's cascades continue discharging clean
+(per Mara's §5.3 spectral-gap reading), that IS evidence — but evidence
+that needs Mara/Glint altitude to weigh, not Taut.
+
+**Forbidden-primitive check.** N/A.
+
+**Slingshot status.** N/A. Open question stays open.
+
 ---
 
-*M3 + M4 + §3 verification + §4-§7 land in the next commit. Bank-discipline:
-the affirmative moves (M1, M2) crystallize first because they are the
-substrate-pull-confident lifts. The anti-moves (M3, M4) and the
-verification artifact land next as discipline-holding.*
+## 3. Verification of the slingshot-anti-move (M3 substantiation)
+
+Per the brief's anti-overcommit gate (lesson from λ₀-cascade scout, 200ef24,
+where Reed caught my "@spectral/supervisor doesn't exist" before commit):
+every "this doesn't exist yet" claim was grep-checked before this scout
+banked.
+
+| Claim | Verified by |
+|-------|-------------|
+| `@epistemologic/math/sheaf_laplacian` ALREADY exists | grep `shards/epistemologic/math/sheaf_laplacian.mirror` (292 lines, Hansen-Ghrist + Bodnar ancestry, declares `type restriction`, `type operator`, `type eigenvalue`, `action sheaf_laplacian`, `action lambda_zero`). |
+| `@epistemologic/pact/composition_closed` ALREADY discharges the gluing-axiom shape at the import altitude | grep `shards/epistemologic/pact/composition_closed.mirror` (declares `composition_closed(corpus: ref) -> transparency`; verdict is `success | partial(opacity_map) | failure(opacity_map)`; this IS the substrate's existing operational form of "do local sections glue"). |
+| The substrate ALREADY treats two-witness as a discipline (recognition memory: feedback-composition-claims-need-empirical-test) | grep `shards/epistemologic/pact/*` (10 pact shards; the two-witness discipline is operational across the pact family, not yet abstracted as a single predicate). |
+| No `@psychohistory` / `@cohomology` / `@sheaf` ABSTRACT family-root exists | grep `shards/**/*.mirror` for these heads at family-root altitude (zero matches; `sheaf_laplacian` is at math altitude, not family-root). |
+| Reed's observation §5 explicitly forward-promises spawn↔observe symmetry; does NOT assert it | Read `docs/observations/2026-06-26-reed-rehydration-gap-in-mirror-mcp.md` §5 verbatim: "This is NOT a candidate recognition yet. One instance (this observation) does not earn a number." |
+
+Net: M3's anti-move stands. The substrate has the math-altitude sheaf
+carrier; the pact-altitude gluing carrier; the recognition-discipline
+two-witness rule. The abstract `@epistemologic/sheaf` would be a fourth
+naming of the same machinery — exactly the decorative-lift Mara flags in
+§9.
+
+---
+
+*§4 disanalogy, §5 cuts, §6 self-test, §7 Pack trail land in next commit.*
 
 *— Taut <taut@systemic.engineer>*
