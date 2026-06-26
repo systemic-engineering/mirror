@@ -820,3 +820,129 @@ requires a substrate-decl that this document is explicitly NOT writing
 framing is substrate-pull-confident; the operational discharge is
 forward-promised; promotion to candidate recognition status requires
 at least one more session's witness (per the discipline gate).
+
+---
+
+## 5. The cohomology hypothesis — composed psychohistory as `H*(work)`
+
+Hypothesis B claims: the cohomology of the work IS the composed
+psychohistory. With §4's sheaf machinery named, the test for B is
+concrete: do the substrate's cohomology classes `H^k(M, F)` IDENTIFY
+with structural facts the substrate already cares about?
+
+### 5.1 `H⁰(M, F)` — the global sections
+
+The zeroth cohomology of a sheaf is the space of global sections —
+local data that GLUES coherently across the entire base space. For
+the substrate's development sheaf, `H⁰(M, F)` is the substrate's
+*persistent self-description*: the data that holds across every
+reachable substrate state.
+
+The load-bearing identification: `H⁰(M, F)` IS `mirror.spec` per
+recognition #99. The spec at the substrate's root is the data that
+holds across every cascade tick, every recognition surfacing, every
+Pack move — the substrate's identity is invariant under D (§3.3 of
+#99). `H⁰ = mirror.spec = λ₀`. The three identifications collapse.
+
+This is hypothesis B's strongest line. The substrate's already-named
+λ₀ IS the development sheaf's already-defined `H⁰`. The composition
+of the substrate's per-tick local data into a global section IS the
+substrate's persistent identity. Not metaphor; the structural
+identification of two independently-derived invariants.
+
+### 5.2 `H¹(M, F)` — the irreducible obstructions
+
+The first cohomology measures local data that satisfies the gluing
+constraint pairwise but DOES NOT extend to a global section. For the
+substrate's development sheaf, `H¹(M, F)` IS the substrate's *open
+recognition candidates that cannot yet be ratified*.
+
+A candidate recognition is local-section data: a pattern that admits
+one witness. The two-witness rule is the gluing axiom that promotes
+the candidate to a global section. Until the second witness fires,
+the candidate sits at `H¹` — a real obstruction the substrate carries.
+
+The load-bearing identification: every CANDIDATE recognition in
+flight (§3.1's #99, the in-flight #98, the in-flight Pack candidates
+#84 + #95 + #96 + #97) IS a generator of the substrate's `H¹`. The
+substrate's cohomology has explicit, named, content-addressed
+elements: they are the candidates.
+
+This identification earns hypothesis B's lines harder than §5.1 does.
+The substrate has been carrying `H¹`-shaped obstructions explicitly
+for months without naming them as cohomology classes. The naming
+lifts the candidate-status carrier to substrate-mathematics altitude
+without adding new vocabulary — the substrate already operates on
+these objects; the name is what changes.
+
+### 5.3 Higher cohomology `H^k(M, F)` for `k ≥ 2`
+
+Higher cohomology measures higher-order gluing failures: data that
+satisfies all pairwise constraints AND all triple constraints but
+fails at the quadruple constraint, etc. For the substrate's case:
+`H²` would be open structural questions where pairwise composition
+works but cascade composition fails; `H³` would be deeper layered
+obstructions.
+
+The substrate-pull-honest position: the substrate has NOT explicitly
+identified `H²` or higher generators. Two candidate readings:
+
+- **Spectral-gap reading.** Higher cohomology is structurally zero
+  for the substrate — the substrate's `H¹` carries all obstructions;
+  cascades discharge without higher-order gluing failure. This is
+  consistent with #99's spectral-gap claim (§8.2) that the substrate's
+  spectrum is healthy.
+- **Latent-altitude reading.** Higher cohomology exists but has not
+  been surfaced. The June 24 cascade's `O7` open question
+  (cross-recognition coordination) is a candidate `H²` generator;
+  G6 (Taut-as-scout) coupling with G7 (lead-of-mirror) coupling with
+  #99 is a higher-order obstruction the substrate carries without
+  naming.
+
+Both readings are consistent with hypothesis B at this document's
+altitude. The substrate-pull-correct posture: leave the question open;
+noting it is enough.
+
+### 5.4 The composed psychohistory IS `H*(M, F)`
+
+The two hypotheses, joined: the composed psychohistory of the work
+IS the total cohomology `H*(M, F) = ⊕ H^k(M, F)`. The global
+sections (`H⁰ = mirror.spec`) are the persistent identity; the
+first cohomology (`H¹ = candidate recognitions`) is the open
+structural questions; higher cohomology (`H^k`, k≥2) is the
+latent layered obstructions.
+
+Reading the substrate's nine months of development through this
+frame: the trajectory IS the substrate moving through its own
+cohomology computation. Every cascade tick is a Cech-extension
+attempt; every recognition-ratification is an `H¹ → H⁰` reduction;
+every slingshot is a high-curvature `H^k` collapse. The substrate's
+development IS its self-computed cohomology, sequentially discharged.
+
+This is hypothesis B's substantive content. It is what no canon in
+§2 names. Asimov's `ψ` was a forecast function; Turchin's secular
+cycles are aggregate observables; Hansen-Ghrist's discourse sheaves
+are opinion dynamics. The substrate's psychohistory is its own
+cohomology computation — not a prediction, not an observation, but a
+structural fact about its development manifold's gluing constraints.
+
+### 5.5 Does the cohomology hypothesis earn its lines?
+
+The test:
+
+- **`H⁰ = mirror.spec` earns lines hard.** Two independently-defined
+  invariants identify. The substrate's identity AS its development
+  sheaf's global section is a structural collapse.
+- **`H¹ = candidate recognitions` earns lines hard.** The
+  candidate-vs-promoted carrier IS the gluing axiom; the
+  identification lifts an already-operating discipline.
+- **`H^k` for k≥2 is structurally consistent but not yet earned.**
+  No explicit higher-order generators are named in the substrate's
+  current vocabulary.
+- **The composed `H*(M, F) = psychohistory` is substrate-pull-
+  confident but operationally forward-promised.**
+
+Net: hypothesis B earns its lines harder than hypothesis A, because
+B's structural identifications collapse onto already-named
+substrate invariants (#99's λ₀; the candidate carrier discipline). A
+is the machinery; B is the load-bearing content.
