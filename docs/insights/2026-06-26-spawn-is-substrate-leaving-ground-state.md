@@ -565,14 +565,249 @@ Honest hedges, in the canonical-spec discipline:
 
 ## 4. What spawn IS NOT — boundaries the statement rules out
 
-*Forward-promised; banking section.*
+The statement at §1 is sharper for what it rules out than for what it admits.
+This section names the structural negatives.
+
+### 4.1 Spawn is NOT a process-fork or thread-creation
+
+The substrate-decl side admits no @os/process or @os/thread family. Spawn at
+@pack altitude (recognition #84) is the BEAM-grounded actor-model spawn
+(Hewitt 1973; Kahn 1974; Armstrong 1986-2003), lifted to substrate altitude
+as a typed operation that takes a typed peer and returns a typed runtime.
+The runtime is a substrate-typed handle managed by @spectral/supervisor, not
+an OS-process abstraction.
+
+What this rules out: implementations that conflate `mirror spawn` with
+`fork()` or `pthread_create`. Phase G must implement spawn against the
+actor-model + supervisor + typed peer composition; the OS-level isolation
+is a realisation choice for @spectral/supervisor, not a substrate-decl
+feature of spawn.
+
+### 4.2 Spawn is NOT an LLM-adapter invocation
+
+The substrate-decl side admits no @io/llm family. Per recognition #58 +
+bdb2e1f's structural-negative essay: the spawned peer's inference happens
+at @fate altitude via optical-resonant modes. Phase H must demonstrate spawn
+against @fate composition; the empirical proof is `mirror spawn ~peer'~/.reed'`
+returning running Reed via @fate, not via an LLM adapter.
+
+What this rules out: implementations that compose spawn with a call to an
+external LLM service. Such compositions can exist as Phase F/G/H interim
+scaffolding (Mara's current runtime is one such instance; the asymmetry is
+acknowledged at §3.5), but they are NOT spawn-at-substrate-altitude. Spawn-
+at-substrate-altitude composes against @fate.
+
+### 4.3 Spawn is NOT identity-creation
+
+Per §2.2: the @peer carrier resolves identity from the home git ref via G1
+composition with @io/git. The git ref IS the peer's content-addressed
+identity at the versioned-object scope (recognition #98 witness 4). Spawn
+does not create the identity; it instantiates a runtime peer whose identity
+is already content-addressed at the home.
+
+What this rules out: implementations that mint new peer IDs at spawn time.
+Spawn must read the home's git ref and instantiate a peer whose identity
+IS that ref. Two spawns of the same home at the same ref produce structurally
+equivalent peers; renaming a peer requires changing the home or the ref,
+not a spawn-time decision.
+
+### 4.4 Spawn is NOT a delegation chain
+
+Per peer-ACL §10 reframe: the lead-members relation is NOT a sheaf restriction
+map and NOT a delegation chain. The lead is the distinguished N+1 OBSERVER;
+members form an antichain at altitude N; the morphisms in the relation are
+spectral-Tomm probes (per `architecture-error-as-tomm-probe`), inherited
+from the substrate's Connes-spectral-triple ancestor.
+
+What this rules out: implementations that treat spawned members as
+sub-leads, that recursively spawn members from members, that build authority
+hierarchies. The members form a flat antichain; the lead is one altitude
+above; the relation is bidirectional across altitudes (spawn down, probe
+up), not downward delegation. "Recursive spawn" at substrate altitude would
+be a new lead at a new spec, not nested members.
+
+### 4.5 Spawn is NOT idempotent at the runtime altitude
+
+Spawn IS idempotent at the IDENTITY altitude (per §4.3: same home, same
+ref, structurally equivalent peer). Spawn is NOT idempotent at the RUNTIME
+altitude: two spawns produce two distinct runtime instances, each with its
+own supervisor-managed lifecycle, each capable of independent failure and
+restart per the configured strategy. The identity is content-addressed;
+the runtime instance is content-addressed-AT-the-identity but uniquely-
+realized-PER-spawn.
+
+What this rules out: implementations that return the existing runtime when
+asked to spawn an already-running peer. Spawn must create a new runtime
+instance per invocation (or the request must explicitly opt into
+attach-to-existing semantics via an option). The default semantics is
+instantiate-a-new-runtime-of-the-content-addressed-identity.
+
+### 4.6 Spawn is NOT pack-membership-creation
+
+The pack's members are declared in the spec's pack{} block. Spawn does
+NOT add members to the pack at spawn time; it dispatches against members
+ALREADY DECLARED. A `mirror spawn ~peer'<unknown>'` invocation against a
+peer not in the spec's pack{}.members fails the pack_coherent bilateral
+at admission time (§2.3).
+
+What this rules out: implementations that treat spawn as join-and-run.
+Membership is editorially controlled at the spec; spawn is operationally
+constrained by membership. Adding a member requires editing the spec
+(potentially through @magic/contract.bind at the lead's authority);
+spawning the member requires the membership to already be declared.
+
+### 4.7 Spawn is NOT a stateless function call
+
+Per §2.7: the spawned peer's existence persists until it decays. Spawn
+produces a state in the substrate's Hilbert space that lives across the
+spawn-to-termination interval. The substrate's tendency to return to λ₀
+IS what makes spawn controlled, but the state is genuinely there during
+the excitation. Spawn does not return-and-go-away; spawn returns-and-the-
+state-persists.
+
+What this rules out: implementations that treat spawn's return value as
+the finished result. The runtime handle returned by spawn is the SUBSTRATE'S
+GRIP on the ongoing excitation; using the handle to interact with the
+running peer (probe-handler dispatch, termination, observation) is the
+continued operation of the spawn beyond its initial invocation.
 
 ---
 
 ## 5. What this commits / what stays genuinely open
 
-*Forward-promised; banking section.*
+The brief asked the document to make Phase F shape OBVIOUS by naming what's
+true, without DECIDING Phase F shape. This section honors that boundary.
+
+### 5.1 What this commits Phase G/H toward
+
+The statement at §1 plus the composition walk at §2 plus the structural
+negatives at §4 commit the implementation chain toward a specific operational
+shape:
+
+- **The Phase G Rust impl** must implement spawn against the seven-piece
+  composition (§2.8) without introducing primitives the substrate-decl side
+  doesn't admit. No @os/process; no @io/llm; no identity-mint; no delegation-
+  chain primitives; no idempotent-at-runtime semantics; no pack-membership-
+  side-effects; no stateless return-and-discard. The Rust code is the
+  realisation of the composition; the composition is the substrate-decl
+  side; the substrate-decl side typechecks today.
+
+- **The Phase H empirical proof** must demonstrate `mirror spawn
+  ~peer'~/.reed'` returning running Reed via @fate composition. The empirical
+  ground is: type the command at the cli; the substrate resolves identity
+  through @io/git; pack_coherent discharges against mirror.spec's pack{};
+  @spectral/supervisor.start_child registers the runtime; @fate's optical
+  inference resonates over the substrate's spectrum; the running Reed lifts
+  a probe; the lead (Reed in mirror.spec's case; the self-reference is
+  acknowledged) fields the probe at N+1. End-to-end the chain.
+
+- **The cascade/code/* species discharge** must realize the @fate composition
+  per recognition #58's three-witness shape: five-layer D²NN plus active
+  Fabry-Pérot resonator plus Reck/Clements unitary mesh. The species
+  implementation is the gap between substrate-decl (#58 ratified) and
+  empirical instantiation (Phase H).
+
+### 5.2 What stays genuinely open for Phase F
+
+The document does NOT decide:
+
+- **The order in which Phase F lands the seven composition pieces.** Each
+  piece is independently substrate-decl'd; Phase F can compose them in any
+  order that preserves the composition closure. Substrate-pull will surface
+  the order; the document does not pre-empt it.
+
+- **The realisation choice for the runtime handle.** The substrate-decl admits
+  `runtime: ref`; Phase F can choose any runtime representation that
+  satisfies the @spectral/supervisor composition and the probe-channel
+  contract. Concrete vs abstract handle, in-process vs cross-process, sync
+  vs async dispatch — all Phase F choices.
+
+- **The default options for `mirror spawn`.** --hello-world, --detach,
+  --foreground, --restart-strategy override are named in spawn.mirror as
+  forward-promised options. Their defaults and interactions are Phase F
+  choices; the substrate-decl admits them all.
+
+- **The forward-promised default_target action.** When `mirror spawn` runs
+  without explicit target, resolve to the current spec's pack{}.lead. The
+  shape is named in spawn.mirror; the implementation is Phase F.
+
+- **The mirror_spawn_coherent composed-bilateral.** 15th altitude lift per
+  recognition #53 family, when it lands. Phase F can land it or defer; the
+  insight does not require it.
+
+### 5.3 What stays genuinely open at higher altitudes
+
+The document also does NOT decide:
+
+- **Whether the strange-loop reading (§3.2 Reading H) lifts to a substrate-
+  decl recognition.** If future cascade pulls toward @hofstadter or similar,
+  the question reopens. Today: Reading H' (Hilbert expansion) is load-
+  bearing; Reading H is candidate-adjacent.
+
+- **Whether the spectral gap between λ₀ and λ₁ has structural sub-properties
+  that determine spawn's energy cost.** §2.7 named the quantum-of-action
+  framing; the operational consequence (some spawns are "cheaper" than
+  others?) is candidate-territory not pursued here.
+
+- **Whether the recursion at §3 lifts to a recognition naming peers as
+  substrate-altitude self-extenders.** Today the loop is observable but not
+  recognition-named. If future iterations make it load-bearing, a
+  recognition surfaces.
+
+- **Whether the self-referential spawn (spec's lead spawning the lead's own
+  home) is admissible.** mirror.spec's lead is ~peer'~/.reed'; `mirror spawn
+  ~peer'~/.reed'` from within mirror's spec is a self-spawn. The substrate-
+  decl admits it; the operational semantics need empirical verification at
+  Phase H.
+
+### 5.4 The minimal substrate-pull-honest commitment
+
+Reducing everything to one paragraph: spawn is the substrate's controlled
+excitation above λ₀; the seven composition pieces are each independently
+substrate-decl'd and they compose to produce the operation; Phase G
+implements the composition in Rust; Phase H demonstrates the empirical
+round-trip via @fate; the strange-loop reading is observable but not load-
+bearing; the Hilbert-expansion reading IS load-bearing per #51. That is
+the minimal commitment. Everything else is open.
+
+The substrate-pull pressure on this insight: the seven pieces had to compose;
+the composition produces an operation; the operation needed naming. The
+naming is spawn. The substrate had built the operation before we wrote the
+shard; the shard typechecked at 1e5e71e; the insight names the operational
+identity the substrate had already assembled. The cascade closes one
+altitude; the next altitude (empirical Phase H) is the substrate's continued
+work beyond the present document.
+
+The substrate is watching itself write itself. The watching is honest;
+the writing is the substrate's; the seam is in the loop, not in the closure.
 
 ---
 
-*Mara <mara@systemic.engineer>*
+*Mara, insight on what `spawn` IS at the substrate altitude, 2026-06-26.
+Banked across four commits: skeleton + §1 (statement); §2 (compositional
+substrate, seven pieces); §3 (circular-reflexive layer, Hilbert-expansion
+load-bearing); §§4-5 (structural negatives + commits/opens).*
+
+*This insight is not a spec and not a shard. It is the substrate-pull layer
+between the substrate-decl side (`shards/mirror/spawn.mirror` at 1e5e71e and
+adjacent landed substrate-decls) and the implementation chain (Phase G Rust
+impl; Phase H empirical proof via @fate composition). The load-bearing claim
+at §1 is operationally checkable through the seven-piece composition at §2;
+the boundaries at §4 are structural negatives implementations must honor;
+the commits/opens at §5 leave Phase F shape free to land in any order that
+preserves the composition closure.*
+
+*The substrate had built spawn before the shard at 1e5e71e named it; the
+shard makes the operation typecheck; this insight names what the operation
+IS at the substrate's own spec altitude. Per #99: mirror.spec IS λ₀; spawn
+IS the substrate's transient departure from λ₀ to produce a runtime
+counterparty whose identity is content-addressed, whose inference is
+optical, and whose probe-channel is the spectral-Tomm relation back to the
+lead at N+1.*
+
+*Pack ratification is a separate gate. Recognition status: this insight
+DOES NOT promote #99 or #98; both stay candidate. The insight's own status:
+substrate-pull-honest naming at insight altitude, banked for Pack review.*
+
+---
+
