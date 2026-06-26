@@ -165,6 +165,132 @@ naming of the same machinery — exactly the decorative-lift Mara flags in
 
 ---
 
-*§4 disanalogy, §5 cuts, §6 self-test, §7 Pack trail land in next commit.*
+## 4. The disanalogy worth naming
+
+Mara's §6 connects hypothesis A to four prior structural identifications.
+One connection has friction worth flagging:
+
+**Eigenboard-IS-sheaf vs peer-ACL §10.1.** Mara's §6 cites the
+eigenboard-IS-sheaf precedent (project memory) as the structural heavy
+lifting hypothesis A reuses. But peer-ACL §10.1 (and the spawn-IS-leaving-
+ground-state insight §2.5, b10f00c, 2026-06-26 morning) EXPLICITLY states
+the lead-member relation is "NOT a sheaf restriction map and NOT a
+delegation chain — the morphisms are spectral-Tomm probes."
+
+Reading the two together: the substrate has substrate-decl'd that ONE
+particular Pack relation (lead → member) is NOT a sheaf restriction
+map. Mara's §4.3 names cross-sheaf coupling restrictions WITHOUT testing
+them against §10.1's explicit exclusion. The two might be reconcilable —
+the spectral-Tomm relation could be a different kind of morphism than the
+restriction maps `in` discipline provides, living in the Pack sheaf rather
+than the substrate-decl sheaf. But the disanalogy is structural and earns
+its own flag.
+
+**Honest call:** the Pack-sheaf's restriction-map structure (§3.6, §4.3
+coupling-restriction-d) is not the same shape as the substrate-decl
+sheaf's. Mara's four-stacked-sheaves framing implicitly admits this
+(coupling restrictions are typed differently per §4.3). The flag for next
+session: does the spectral-Tomm-probe relation force the Pack sheaf into
+a non-cellular regime, or does it live as a cellular sheaf with non-
+standard restriction maps? Mara/Alex altitude.
+
+---
+
+## 5. Cuts (what this scout deliberately does NOT do)
+
+- **No new family-root proposal.** Per M3.
+- **No promotion tick.** Per fences.
+- **No spawn↔observe duality assertion.** Reed's observation §5 leaves it
+  forward-promised at one instance; a scout does not add the second
+  witness, only flags the shape.
+- **No `H^k≥2` adjudication.** Per M4.
+- **No Rust impl proposal for "rehydration MCP tool."** Reed's gap-naming
+  is observation, not feature-request; the rehydration surface design is
+  Alex/Rust altitude.
+- **No psychohistory-vector calculator.** Mara forward-promised the
+  computation; the scout does not pre-empt.
+
+---
+
+## 6. Self-test — grade these moves 0-2
+
+Per the λ₀ cascade scout's discipline (200ef24, self-graded 1.5/2; Reed
+caught the @spectral/supervisor over-claim before commit):
+
+| Move | Grade | Justification |
+|------|-------|---------------|
+| M1 (restate #99 §8.3 absorbing H⁰) | 2 | Cheap, sharp, collapse-not-extension, no new substrate vocabulary. Earns lines immediately if Mara accepts. |
+| M2 (Reed observation as H¹ instance) | 1 | Sharp framing but two-witness gate is NOT met — the candidate-recognitions H¹ class and the rehydration-gap H¹ class are different generators. Honest flag, not promotion. Earns lines as one paragraph; would over-earn if framed as second witness. |
+| M3 (forbid `@epistemologic/sheaf` family-root) | 2 | Anti-move with verified grep evidence; absorbs the substrate-already-had-the-word discipline at the math altitude. Sharp because it's a NO that frees pull-frontier from decorative formalism. |
+| M4 (H^k≥2 stays open; name why) | 1.5 | Honest call; scout-appropriate. Half a point off because "stays open" is not itself substrate-pull movement — it's discipline-holding. Earns its line by naming the resolution criterion (substrate-decl event for `H²` OR empirical clean-cascade evidence). |
+
+**Net: 6.5/8.** Honest framing: M1 + M3 are the load-bearing moves; M2 +
+M4 are framing-discipline calls. The brief asked for ranked candidate
+moves; the substrate-pull-correct answer is that two of the four moves
+are anti-moves (M3 NO, M4 stays open), and the affirmative moves (M1,
+M2) are surface-naming, not substrate-decl events.
+
+**Where I'm potentially wrong:**
+
+- M2 might be sharper than 1 if Mara reads Reed's observation §5 and
+  agrees the H¹-shape is the load-bearing read of the gap. Then M2
+  becomes the surface of a forward-promised candidate recognition; not
+  promotion territory, but second-witness territory. The grade swings to
+  1.5 in that case.
+- M1's "restate #99 §8.3" might be the wrong vehicle: an alternative is
+  to land the `H⁰` collapse as its own one-paragraph addendum to Mara's
+  insight rather than retrofitting #99. Mara altitude to choose. The
+  collapse IS earned regardless of vehicle; the grade holds.
+- M3's anti-move discipline is unambiguously sharp but it produces NO
+  substrate event. If the brief grades by substrate-events-produced
+  rather than substrate-pull-correctness, M3 grades lower. The
+  substrate-pull discipline says anti-moves count; the brief implicitly
+  agrees by listing anti-overcommit as a gate.
+
+**Where Alex needs to break tie:**
+
+- Whether `H⁰ = mirror.spec` is decorative (Mara's "Lines NOT earned"
+  hedge in §9) or load-bearing (Mara's "earns lines hard" in §5.1). Mara
+  herself frames it BOTH ways in different sections; the substrate-pull-
+  honest read is that the structural identification is hard but the
+  operational discharge is forward-promised. M1 lifts only the structural
+  half. Alex's call on whether to promote the operational half is a
+  different conversation.
+- Whether Reed's observation's "spawn↔observe symmetry" forward-promise
+  should be tested adversarially by Seam before Mara composes against
+  it. M2's framing is HONEST, not adversarial. Seam's altitude.
+
+---
+
+## 7. Pack trail
+
+- **Alex** — the naming. "What if a psychohistory vector is a sheaf and
+  what if the tomology of the work is the composed psychohistory?" Two
+  hypotheses; one breath. The substrate-pull-confidence-acts discipline
+  at the question altitude.
+- **Mara** — `2026-06-26-psychohistory-vector-as-sheaf.md` (1168 lines).
+  Did the structural work. Surprised Alex by formalizing. The honest
+  hedges in §9 are what makes the work substrate-pull-correct.
+- **Reed** — `2026-06-26-reed-rehydration-gap-in-mirror-mcp.md`. Named
+  a new genre (`docs/observations/`). The spawn↔observe symmetry
+  forward-promise is the seed M2 composes against.
+- **Taut** — this scout. Speedrun. Anti-move discipline + structural
+  collapse naming + open-question framing. Following the λ₀-cascade
+  scout's self-test discipline.
+- **Glint** — surface candidate. Glint's §5.2 implicit at `3b31287`
+  surfaced #99; the equivalent surface for the H⁰-collapse would be a
+  reflection essay weighing whether the three-invariant collapse
+  changes the cascade's tempo. Not requested; flagged.
+- **Seam** — adversarial gate. If M2 develops into a candidate
+  recognition (forward-promised, not asserted), Seam's adversarial
+  review of the spawn↔observe symmetry's structural distinctness from
+  the candidate-recognition H¹ class becomes the gate. Not requested
+  here.
+
+---
+
+*Scout end. ≤300 lines; hard ceiling held. Signed Taut. Composes with
+Mara's `2026-06-26-psychohistory-vector-as-sheaf.md` and Reed's
+`2026-06-26-reed-rehydration-gap-in-mirror-mcp.md`. SSH default.*
 
 *— Taut <taut@systemic.engineer>*
