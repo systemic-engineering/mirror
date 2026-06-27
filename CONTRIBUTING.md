@@ -37,6 +37,128 @@ If something here conflicts with `AGENTS.md`, `AGENTS.md` wins;
 this document is the contributor-facing rendering of the same
 discipline.
 
+## The repository layering (read this before cloning)
+
+Mirror is one repository with a submodule, and the submodule has its
+own garden of nested sub-repos. The directory layout encodes a
+license + jurisdiction boundary; knowing where you are tells you
+which rules apply.
+
+```
+mirror/                                  Apache-2.0 (open foundation)
+├── bootstrap/                           the Rust seed
+├── boot/, shards/, prism/               the grammar
+├── license/{APACHE2,SEL}.md             both license texts live here
+│                                        (SEL is canonical at license/SEL.md)
+└── spectral.engineer/                   submodule — SEL jurisdiction
+    └── garden/                          per-package sub-repos
+        ├── README.md                    admission gates (8 of them)
+        └── spectral-db/                 first package; own git repo;
+                                          own license within gates
+```
+
+Three altitudes, three sets of rules:
+
+1. **`mirror/`** — Apache 2.0. The compiler, the grammars, the
+   bootstrap seed, the genre-documented docs. Standard open-source
+   contribution flow. This is the surface most contributors will
+   touch.
+2. **`mirror/spectral.engineer/`** — SEL-typed jurisdiction. The
+   curated corpus and the package garden. Contributing here means
+   engaging with the SEL license and the jurisdiction's discipline
+   directly. The submodule is its own git repository with its own
+   history.
+3. **`mirror/spectral.engineer/garden/<package>/`** — each package
+   is its *own* git sub-repo (recursive submodule pattern). License
+   is per-package, constrained by the garden's admission gates.
+   `spectral-db/` is the first inhabitant.
+
+The `type sel = io + au` boundary at the substrate altitude
+enforces which region a body lands in; the directory layout makes
+the same boundary visible to humans.
+
+### Cloning + bootstrapping
+
+Full tree (open foundation + SEL jurisdiction + garden packages):
+
+```bash
+git clone --recurse-submodules <mirror-url>
+# OR, if you already cloned without --recurse-submodules:
+git clone <mirror-url>
+cd mirror
+just bootstrap          # = git submodule update --init --recursive
+```
+
+Open-foundation only (skip if you only intend to work on
+`bootstrap/`, `boot/`, `shards/`, or `docs/`):
+
+```bash
+git clone <mirror-url>
+# spectral.engineer/ will be empty; that's fine. Mirror compiles
+# without it.
+```
+
+The `just bootstrap` recipe is idempotent — safe to re-run if you
+later want the submodules. CI initializes them as needed.
+
+### Where to contribute
+
+Three answers, depending on what you want to change:
+
+- **Open foundation (`mirror/`)** — Apache-2.0. Normal fork-and-PR
+  flow against this repository. Read on; the rest of this document
+  covers the discipline. This is where most contributions belong.
+- **SEL jurisdiction infrastructure
+  (`mirror/spectral.engineer/`)** — admission gates, jurisdiction
+  policy, the SEL license itself. Open issues / PRs against the
+  `spectral.engineer` sub-repo. See
+  [`spectral.engineer/garden/README.md`](./spectral.engineer/garden/README.md)
+  for the 8 admission gates (5 substrate-mechanical, 3
+  SEL-jurisdiction).
+- **A specific garden package
+  (`mirror/spectral.engineer/garden/<package>/`)** — open issues /
+  PRs against the *package's own* git repository. Each package may
+  ship its own `CONTRIBUTING.md`; check there first. The garden's
+  README lists the current packages and their upstream repos.
+
+### Proposing a new garden package
+
+The garden grows by admission, not by drop-in. To propose a new
+package, in brief:
+
+1. Create your package as its own git repository (anywhere — the
+   garden is the jurisdiction; your repo lives where you host it).
+2. Verify against the admission gates in
+   [`spectral.engineer/garden/README.md`](./spectral.engineer/garden/README.md)
+   — 5 substrate-mechanical (reachability, well-formed,
+   pinning, content-addressing, package declaration) and 3
+   SEL-jurisdiction (license compatibility, provenance,
+   anti-weaponization).
+3. Open an issue on `spectral.engineer` proposing the addition.
+   Include your license declaration, provenance record, and a
+   brief explanation of how each gate is satisfied.
+4. Once accepted, the package is added as a submodule under
+   `garden/`. You retain ownership of the upstream repo; the
+   garden pins a ref.
+
+The full checklist lives in the garden's README; this section is
+the pointer, not the spec.
+
+### A note on hooks in the submodules
+
+Mirror's `bootstrap/` carries the global commit-msg + pre-push
+hooks (phase-marker enforcement, `just format`, `just pre-commit`).
+At the time of writing, `spectral.engineer/` and the garden packages
+do **not** inherit those hooks — they're separate git repositories
+with their own (currently absent) hook configuration.
+
+Practically, this means: if you edit files directly inside
+`spectral.engineer/` or a garden package, your commits will not be
+auto-formatted and the phase-marker discipline is on you to apply
+manually. The recognition + the lift are forward-promised work; the
+limitation is real today. Flag commits with the appropriate marker
+(`📝`, `🔧`, `🔴`/`🟢` pair) by hand for now.
+
 ## Reporting an issue
 
 - Check that the issue has not already been reported (search open
