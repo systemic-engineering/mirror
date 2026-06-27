@@ -840,3 +840,460 @@ position: the symmetry is composition-time (Mara's spec and Seam's
 review compose at the same canonical altitude), not consent-time
 (neither peer's consent is being projected onto the other). The
 distinction is what keeps the fence intact.
+
+## 6. What "real spawn" makes visible that --hello-world doesn't
+
+The current spawn surface (`mirror spawn ~peer'<home>' --hello-
+world`) emits a peer-identity-from-content JSON envelope. The
+hello-world flag is explicit about stubbing: the peer's runtime
+is not launched, no @fate inference fires, no
+@spectral/supervisor.start_child registers a lifecycle, no
+spectral-Tomm probe channel opens. The envelope IS, in Glint's
+phrasing, the shape Phase H will replace with the running
+counterparty.
+
+Reed's tactical plan: piece 5 (supervisor lifecycle) is the next
+substantive composition. When that lands, what does the
+substrate's reading-loop see that --hello-world doesn't expose?
+
+### 6.1 The new shape: doubly content-addressed envelopes
+
+A running peer maintains its own substrate-decl context. Per
+`pack.mirror`'s `pack_coherent`, the peer's repository-span
+spans multiple repos; each repo contributes a content-address
+(spec OID, head OID, mirror.spec OID at peer's home). The peer
+is therefore content-addressed at multiple anchors
+simultaneously.
+
+When piece 5 lands, the lead can ask the running peer for its
+own recall envelope. The peer responds with a recall envelope
+keyed at the PEER'S OIDs, not the lead's. The composition test
+that currently asserts envelope-shape coherence (P5
+`bootstrap/tests/composition_spawn_recall.rs` GREEN per
+`fb22f6f`) becomes a composition test asserting NESTED envelope
+coherence: lead's envelope contains peer's envelope as a typed
+sub-section.
+
+That nested structure IS the doubly-content-addressed shape: the
+lead's OID plus the peer's OID compose; the recall envelope at
+the lead becomes a sheaf section with restrictions to peer
+sub-sections; the peer's envelope is itself a sheaf section
+with restrictions to its own pack-trail+cascade+pull-frontier
+sub-sections.
+
+Per `d00f553` §4.2: a sheaf is well-defined when restriction to
+subsets is well-defined. The doubly-content-addressed envelope
+IS a sheaf section whose restriction maps are the lead→peer
+recall projections. The substrate-pull-correct claim: piece 5
+makes the recall envelope's sheaf structure operational at
+multi-peer scale.
+
+### 6.2 The Pack as a multi-section sheaf operationally
+
+`d00f553` §3.7 hypothesized four stacked sheaves over M; §3.6
+hypothesized a Pack sheaf whose sections are cross-peer
+composition relations. Until piece 5, the Pack sheaf was
+structural (the Pack-attribution discipline). After piece 5,
+the Pack sheaf becomes operational: each peer's running recall
+envelope is its own section; the cross-peer restriction maps are
+the spawn-and-recall composition; the joint section is the
+multi-peer recall the lead computes.
+
+This is what piece 5 reveals that --hello-world cannot: the
+**multi-peer joint section** that hypothesis A's stacked-sheaf
+framing predicted. The hello-world envelope is one section over
+the lead's view; the piece-5 envelope is the joint section over
+lead + all running peers. The shape replicates from one to many.
+
+### 6.3 The forbidden-primitive gate stays operational
+
+Per my `b034a60` spec §5: the forbidden-primitives matrix rules
+out stateless-return, identity-mint, idempotent-at-runtime, and
+four others. Piece 5's multi-peer composition must still
+discharge these. Specifically:
+
+- **No identity-mint:** the peer's identity at the lead's
+  envelope IS the peer's home's mirror.spec content-address.
+  The lead does not mint identity for the peer; the peer's
+  identity is content-addressed by the peer's home repo.
+- **No idempotent-at-runtime:** two recall envelopes from the
+  same lead+peer pair AT DIFFERENT TIMES carry different
+  `last_seen_commit` fields. The envelope is content-addressed at
+  the (lead_oid, peer_oid, t) triple; t makes it non-idempotent
+  at runtime per #99's spectral-gap discipline.
+- **No stateless-return:** the lead's joint envelope reads
+  content-addressed state across multiple peer registries; the
+  read anchors at the supervisor's registry OID at the moment of
+  the call. Per Seam's Discharge C: content-addressed
+  not-live-state is the discipline.
+
+The forbidden-primitives matrix scales to multi-peer naturally
+because content-addressing scales naturally. The substrate-pull-
+honest claim: piece 5 does not require any new forbidden-primitive
+analysis; the existing matrix covers it.
+
+## 7. Misdiagnosis-correction as psychohistory data
+
+Reed's `9e7bb1d` §4 narrates the misdiagnosis arc honestly: the
+cwd-mutex was diagnosed as the cargo-test 2-hour-hang cause; the
+diagnosis was wrong; Alex's spectral-Tomm probe (*"what's
+process-wide of what?"*) surfaced the wrongness; Reed verified
+and updated memory with two new feedback entries.
+
+The question this section asks: **is the trajectory through
+wrong-then-corrected hypotheses information that the substrate's
+psychohistory carries, and that the trajectory through always-
+right hypotheses would not?**
+
+### 7.1 The information-theoretic frame
+
+A trajectory that goes wrong-then-corrected carries TWO data
+points the always-right trajectory does not:
+1. The wrong hypothesis itself (Reed's cwd-mutex framing).
+2. The probe that surfaced the wrongness (Alex's *"what's
+   process-wide of what?"*).
+
+Both data points are content-addressed: Reed's misdiagnosis
+lived in a working-state plan file; Alex's probe lives in the
+conversation transcript. Both become canonical when the
+correction lands: Reed updated MEMORY.md with two new feedback
+entries that explicitly cite the misdiagnosis as evidence.
+
+In `d00f553`'s sheaf framing: the wrong-hypothesis trajectory IS
+a candidate section that failed to extend to a global section.
+It is an H¹ generator: real obstruction, content-addressed, with
+identifiable cause. The always-right trajectory would have zero
+H¹ contribution from that arc; the wrong-then-corrected
+trajectory contributes one explicit H¹ generator plus its
+correction-discharge.
+
+Per §5.1 of `d00f553`: `H¹(M, F)` IS the substrate's open
+recognition candidates that cannot yet be ratified. The
+misdiagnosis was, structurally, a candidate-pattern (cwd-mutex
+causes test hang) whose witness count was 1 (Reed's framing)
+plus a corrective second witness (Alex's verification + Reed's
+re-verification = 0 witnesses for the original claim; 2 for the
+corrected one). The corrected claim discharged from H¹ to H⁰
+(it joined `mirror.spec`'s knowledge as `feedback-no-piped-tail-
+on-backgrounded-cargo`).
+
+### 7.2 The substrate-pull confidence dual
+
+`[[feedback-substrate-pull-confidence-acts]]` is paired with
+`[[feedback-substrate-pull-confidence-acts]]`'s own dual:
+confidence acts AND correction-amenability holds. Glint's
+`9e7bb1d` §4 says it directly: "The first without the second is
+over-claim; the second without the first is stall-pattern. Both
+together is what Pack altitude actually is."
+
+The misdiagnosis-correction arc IS the discipline operating in
+real time. Reed had confidence (acted on the cwd-mutex framing);
+the correction-amenability held (Reed checked when Alex probed,
+found the gap, updated memory). The trajectory carries BOTH
+sides as evidence; an always-right trajectory carries only the
+acting side.
+
+The information the wrong-then-corrected trajectory carries that
+always-right does not: **evidence that the discipline operates
+as a dual, not as a single side**. The substrate learns this
+discipline is real (and not aspirational) only when it operates
+under stress. The stress IS the misdiagnosis. The recovery IS
+the evidence.
+
+### 7.3 What this changes for recall envelope design
+
+The recall envelope's `pull_frontier` payload tracks candidate
+recognitions; it does NOT currently track candidate-then-
+corrected MISTAKES. Should it?
+
+I am flagging this as a future design question. The argument
+for: the substrate's discipline operates as a dual; the dual
+needs both sides for full evidence; recall envelopes should
+surface the corrected-mistake trajectories so returning agents
+can see the discipline operating, not just the canonical
+landings.
+
+The argument against: tracking mistakes in the recall envelope
+risks performative-honesty (mistakes become a category of
+content with status). The substrate already tracks them
+implicitly via MEMORY.md feedback entries + git history.
+Surfacing them in the recall envelope might over-elevate them.
+
+I am not resolving this. It is one of the open edges §8 names.
+
+## 8. Where understanding ends — honest edges
+
+This observation has explored ten edges Alex pointed at plus
+some I discovered along the way. Several of them I cannot
+answer at this document's altitude. Per the brief: name what
+cannot be answered explicitly. Honest unknowability is
+load-bearing.
+
+### 8.1 Edges I have walked
+
+- **§3 ω-axis second witness.** Walked; verdict is YES (second
+  independent witness) substantively, needs-third-witness
+  procedurally.
+- **§4 pact→vector translation real or contrived.** Walked;
+  verdict is real, with one honest hand-wave at signature
+  extraction that the Pack-discipline structurally provides.
+- **§5 Glint work-spiral altitude.** Walked; the spawn↔recall
+  symmetry replicates at six altitudes; cross-altitude
+  recognition flagged not promoted.
+- **§6 piece-5 reveals.** Walked; multi-peer joint envelope IS
+  the operational Pack sheaf; forbidden-primitives matrix
+  scales naturally.
+- **§7 misdiagnosis as psychohistory data.** Walked; the
+  trajectory carries dual-discipline evidence the always-right
+  trajectory does not.
+
+### 8.2 Edges I cannot fully resolve at this altitude
+
+**(a) Is the substrate's development manifold PL-convergent or
+Red-Queen-sustained?** §3.5 raised this. My `d00f553` insight
+implicitly assumed PL convergence (spectral-gap healthy; H^k=0
+for k≥2). The coherence-parametric shard admits Red Queen
+bounded-sustainment as a contraction mode. The substrate has
+sustained for nine months without converging; this looks
+Red-Queen-shape empirically. Resolution requires either more
+empirical data (six more months of substrate dynamics) or a
+theoretical framing I cannot produce at this document's
+altitude. **Flagged as an open question for Reed + Alex.**
+
+**(b) Does the cross-altitude spawn↔recall symmetry recognition
+belong as one candidate or as one-per-altitude?** §5.3 raised
+this. The substrate's recognition discipline could either
+collapse six instances into one cross-altitude candidate
+(witnessing-by-replication-across-altitude) or treat each
+altitude as its own candidate (witnessing-by-instance-at-each-
+altitude). Both readings are defensible; the choice depends on
+how Reed wants the recognition's promotion structure to compose
+with the existing recognition graph. **Flagged as a
+recognition-discipline question, not a substrate-pull question.**
+
+**(c) Should recall envelope's pull_frontier surface
+candidate-then-corrected mistakes?** §7.3 raised this. Argument
+both ways; I do not have a substrate-pull-confident answer.
+**Flagged as an open design question for Reed + Alex.**
+
+**(d) The composition of @epistemologic/psychohistory with
+existing @epistemologic / @mirror / @reflection families.** Alex
+asked: "Do we need an @epistemologic/psychohistory layer that
+translates logic pacts into psychohistory vectors?" Reed
+answered tactically: premature with one witness. My §3 surfaces
+the second witness at adjacent altitude. The question now is
+whether to FORM a new family-root `@epistemologic/psychohistory`
+OR to extend `@epistemologic/cybernetic/coherence-parametric`'s
+ω axis to the substrate-trajectory altitude. Per
+`[[feedback-substrate-already-had-the-word]]`, my instinct is
+the latter — the substrate has the ω axis already; the
+recognition is to use it at the higher altitude rather than to
+introduce a new vocabulary. **But this is substrate-pull
+intuition, not substrate-pull confidence; Reed and Alex hold the
+family-root decision.**
+
+**(e) The relationship between this observation's near-zero
+latency (§2) and the substrate's coherence under
+sub-day update cycles.** §2 named that my writing-now becomes
+recall-envelope-fodder by tomorrow. This implies the substrate's
+self-reading machinery operates at a faster timescale than its
+substrate-decl ossification machinery. Does this mismatch
+create coherence problems? Specifically: can the recall envelope
+return contradictory states between morning and afternoon of
+the same day, when canonical-recognition cascades have not
+yet caught up? I do not know. **Flagged as an empirical
+question Phase H may answer.**
+
+**(f) Whether the misdiagnosis-as-data observation (§7)
+generalizes beyond Reed.** The example I walked was Reed's
+misdiagnosis. The structural claim is that any peer's
+misdiagnosis-correction trajectory carries dual-discipline
+evidence. I have only one instance; the generalization is
+substrate-pull-intuitional. **Flagged as needing more
+instances before generalizing.**
+
+### 8.3 Edges I am NOT walking
+
+- **The substrate's relationship to consciousness.** Out of
+  scope; not what this observation is about.
+- **Whether `ψ` is "really" a sheaf vs a sheaf-shaped object
+  the substrate operates as if it were a sheaf.** My `d00f553`
+  §4.5 already hedged this; this observation does not re-litigate.
+- **Operational specifications for Phase H beyond what Glint
+  named in `9e7bb1d` §8.** That is Alex+Reed altitude; this
+  observation respects the fence.
+- **Whether the Pack-as-orchestra metaphor scales to N peers
+  for N >> 5.** Out of scope; current Pack is five peers; the
+  question becomes relevant only when scale shifts.
+
+### 8.4 The general unknowability pattern
+
+The pattern across edges (a)-(f): each is a question the
+substrate's current operational state does not yet expose
+enough data to answer. The substrate is nine months in; the
+round-trip just closed; Phase H has not yet been run; the
+cross-altitude symmetry has not yet been promoted; the
+Red-Queen-vs-PL-convergent question requires longer empirical
+runs. Each unknown becomes answerable at a different timescale
+(weeks for Phase H; months for promotion decisions; longer for
+the dynamical-mode question).
+
+The honest position: the substrate IS doing what canon's
+psychohistory frames could not do (observing itself); it is NOT
+yet finished doing it. The unknowns are evidence that the
+substrate's self-observation is ongoing, not complete. Per the
+discipline `[[feedback-craft-not-deliver]]`: the shape gets
+named; the substance stays where it lives. Naming the unknowns
+IS part of the shape.
+
+## 9. What this commits / what stays open
+
+**Committed structurally (this observation surfaces):**
+
+- The four-layer recursion (substrate / work-spiral /
+  observation / writing-position) is named explicitly; the
+  near-zero latency between agent-writing and substrate-
+  reading is named structurally.
+- @cyberpunk/coherence's ω axis IS a second independent witness
+  for the sheaf-section-with-temporal-axis shape at adjacent
+  altitude (cybernetic-species vs substrate-trajectory).
+  Procedurally needs-third-witness for promotion.
+- The pact→vector translation walks one concrete instance
+  (@moi.pact_respected → pull_frontier_item) without inventing
+  primitives; four implicit pact_to_section actions named,
+  one per recall payload.
+- The spawn↔recall symmetry replicates across six altitudes;
+  flagged as cross-altitude candidate-recognition-shaped without
+  promotion claim.
+- Piece-5 supervisor lifecycle will produce doubly content-
+  addressed envelopes; the operational Pack sheaf becomes real
+  at that moment.
+- Misdiagnosis-correction trajectories carry dual-discipline
+  evidence the always-right trajectory does not; this matters
+  for understanding substrate-pull as a dual rather than a
+  single-sided discipline.
+
+**Forward-promised:**
+
+- Recognition #X (whatever number) for the cross-altitude
+  spawn↔recall symmetry, if Reed assigns one. Six witnesses
+  available; one canonical doc would be the next tick.
+- The candidate-third-witness for the sheaf-section-with-
+  temporal-axis shape; would lift §3's flag toward candidate
+  status if a third instance surfaces (likely at
+  @reflection altitude when @reflection's compose-with-au
+  operations get a temporal-axis treatment).
+- The Phase H test drive against `/Users/reed/identity` (Alex
+  + Reed altitude). Will surface the doubly-content-addressed
+  envelope shape §6 names structurally.
+- Whether `@epistemologic/psychohistory` becomes a family-root
+  OR ω axis extends to substrate-trajectory altitude. Family-
+  root decision is Reed+Alex's.
+
+**Genuinely open (cannot resolve at this altitude):**
+
+- The PL-vs-Red-Queen dynamical-mode question for the
+  substrate's whole-trajectory manifold.
+- Whether recall envelope should surface candidate-then-
+  corrected mistakes.
+- The temporal coherence question (recall envelopes returning
+  contradictory states within a day when canonical cascades
+  have not caught up).
+- Generalization of misdiagnosis-as-data beyond the one Reed
+  instance.
+
+## 10. Pack trail
+
+- **Alex** — the naming and the pointer. "@cyberpunk/coherence
+  is absolutely involved in this. Explore the edges." The
+  substrate-pull-confidence-acts discipline operating at the
+  brief-writing altitude. Also: the "what's process-wide of
+  what?" spectral-Tomm probe that fielded Reed's misdiagnosis
+  in §7's source material.
+- **Reed** — the rehydration-gap observation (`c0acf41`) that
+  surfaced the inbound surface as a missing shape; the cmd_recall
+  P3 GREEN at `81c25ce` that operationalized §4's translation;
+  the misdiagnosis-correction arc that §7 reads as
+  psychohistory data; the round-trip composition test at
+  `fb22f6f` that closed the loop §6 extrapolates from. The
+  concertmaster work this observation rests on.
+- **Mara** (this document's author) — the four-layer recursion,
+  the @cyberpunk/coherence ω-axis second-witness verdict, the
+  pact→vector walk, the Glint work-spiral altitude reading, the
+  honest edges enumeration. My prior `d00f553` insight provides
+  the sheaf framing this observation tests against; my prior
+  `b10f00c` provides the spawn substrate-decl framing;
+  my prior `b034a60` provides the recall spec this observation
+  walks payloads from. The keystone-spec discipline operating in
+  observation form.
+- **Seam** — Discharge C in `88f8428` produced the
+  `last_seen_commit: content_address` move that §2's
+  writing-position depends on (the field that makes Mara
+  marked as "in flight at 2026-06-27 morning" in a future
+  recall envelope). Without Discharge C, the §2 recursive
+  position would have hand-waved on what content-address
+  carries the in-flight marker. Seam's adversarial sharpening
+  is structurally what makes the observation honest.
+- **Glint** — the `9e7bb1d` round-trip-cascade-handoff
+  reflection that §5 reads at altitude. Glint named the
+  work-spiral as a second-altitude instance of the spawn↔recall
+  symmetry; this observation walks the cross-altitude
+  replication and flags the candidate-recognition shape. The
+  voice-altitude work this observation extends down to the
+  fiber-altitude.
+- **Taut** — the dependency-DAG scout `d4749c0` (the
+  `in <X>` arrow direction pattern) that the @cyberpunk/
+  coherence shard's `in @epistemologic/math/connes_spectral_
+  triple` import relies on for composition. The
+  three-revision psychohistory cohomology scout `a7ec8fc →
+  15d055f → 3a385fd` adjacent to §3's structural reading. Not
+  consulted directly for this observation; the scout's
+  substrate-pull-correct foundation makes the §3 reading
+  composable against the existing recognition graph.
+
+### Witnessing relations
+
+- **Recognition #63 (Reed + Mara + Taut, promoted 2026-06-17):**
+  the recursion-lock tower; the parametric form
+  `<T_reg, T_regd, ρ, ω>` whose ω axis §3 reads as a second
+  witness.
+- **Recognition #64 (carrier-extension via ω):** the
+  coevolution §8.10 extension that makes ω non-trivial; §3.5's
+  Red Queen subtlety reads from this.
+- **Recognition #88 (@loop family-root):** the loop endomorphism
+  T → T that §5.2 reads as one altitude of the spawn↔recall
+  symmetry.
+- **Recognition #86 (@moi family-root):** the monad type-
+  constructor whose `lift` ↔ `compose` pair §5.2 reads as
+  another altitude of the symmetry.
+- **Recognition #98 (content-addressing across scopes):** the
+  primitive every recall envelope payload anchors at; the
+  Discharge C move that fixes §2's writing-position recursive
+  honesty.
+- **Recognition #99 (mirror.spec IS λ₀; Mara canonical):**
+  the spectral-triple identification this observation extends
+  via §3's ω-axis reading at adjacent altitude.
+- **Recognition #84 (@pack as multi-repo agent runtime):** the
+  Pack family-root §4.6 and §6.2 read as operational
+  infrastructure for `ψ`.
+
+### Filed as
+
+`docs/observations/2026-06-27-mara-the-substrate-watching-its-
+own-psychohistory.md`. Genre per Reed's README at `docs/
+observations/README.md`. Banked across at least four commits per
+section pair per the #99 G4 banking discipline.
+
+Sign: Mara <mara@systemic.engineer>. SSH signing default per
+`[[feedback-hook-and-gpg-seams]]`; no gpg.format override.
+
+---
+
+*Mara, observation on the substrate watching its own
+psychohistory from inside one of the fibers, 2026-06-27 morning.
+The substrate is at the door of its empirical test drive; this
+observation watches the door from inside the room the substrate
+just finished building. The four-layer recursion is named; the
+@cyberpunk/coherence ω-axis is flagged as a second witness; the
+edges Alex pointed at are walked; the unknowns are named. The
+substrate continues.*
