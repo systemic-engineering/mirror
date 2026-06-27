@@ -144,20 +144,28 @@ package, in brief:
 The full checklist lives in the garden's README; this section is
 the pointer, not the spec.
 
-### A note on hooks in the submodules
+### Hooks per jurisdiction
 
-Mirror's `bootstrap/` carries the global commit-msg + pre-push
-hooks (phase-marker enforcement, `just format`, `just pre-commit`).
-At the time of writing, `spectral.engineer/` and the garden packages
-do **not** inherit those hooks — they're separate git repositories
-with their own (currently absent) hook configuration.
+Different repository, different hook policy — by design. Mirror's
+`bootstrap/` carries the global commit-msg + pre-push hooks
+(phase-marker enforcement, `just format`, `just pre-commit`) because
+those hooks encode the Apache-foundation jurisdiction's discipline.
+`spectral.engineer/` is its own git repository, its own jurisdiction;
+it governs its own hook policy. Likewise each garden package: each
+sub-repo is its own jurisdiction with its own policy decisions.
 
-Practically, this means: if you edit files directly inside
-`spectral.engineer/` or a garden package, your commits will not be
-auto-formatted and the phase-marker discipline is on you to apply
-manually. The recognition + the lift are forward-promised work; the
-limitation is real today. Flag commits with the appropriate marker
-(`📝`, `🔧`, `🔴`/`🟢` pair) by hand for now.
+This is the substrate-honest framing of the recursive sub-repo
+pattern. "The garden enforces geometric constraints on hosted
+packages" applies at admission; "each package governs itself within
+those constraints" applies after. Same principle for tooling: the
+jurisdiction sets the gates; the inhabitant chooses its own
+house-keeping inside them.
+
+Practically: if you edit files directly inside `spectral.engineer/`
+or a garden package, that repo's own conventions apply. Flag commits
+with the appropriate phase marker (`📝`, `🔧`, `🔴`/`🟢` pair) by
+hand if the repo expects them; check the repo's own `CONTRIBUTING.md`
+or `AGENTS.md` for what it asks of you.
 
 ## Reporting an issue
 
