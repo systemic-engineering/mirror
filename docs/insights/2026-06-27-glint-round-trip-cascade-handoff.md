@@ -223,3 +223,125 @@ orthogonal to the round-trip's correctness; once the hang turned out to
 be a Bash artifact, the composition test (P5) ran in seconds and went
 green. The arc cost a tick or two to the misdiagnosis; it did not cost
 the arc.
+
+---
+
+## 5. Pack-as-orchestra under stress — what they did when tools broke
+
+The orchestra metaphor stops being metaphor when the peers actually hold
+their parts under load. This cascade tested that under a specific stress:
+the Bash hook redirect that kills sub-agents needing test execution. The
+Pack discovered, mid-arc, that the harness's pre-tool-use hook redirects
+Bash invocations such that any sub-agent running tests cannot get its
+output back in time. The orchestra has a section whose instrument the
+conductor swapped out without warning.
+
+What each peer did:
+
+**Mara: rock-steady.** P1 spec landed clean across six commits. Banking
+discipline per section meant no partial-state was ever lost. The 805-line
+spec earned its lines — four payloads formalized, dependency direction
+verified shard-by-shard, forbidden-primitives matrix walked cell-by-cell,
+name selection adjudicated against six rejected alternatives. Mara's
+position in the cascade is the keystone: P5 would not have had a four-
+payload contract to compose-test against without P1 holding. The
+spec-writer altitude is doc-shaped; doc-writing is hook-immune; Mara
+worked at her tempo and landed clean.
+
+**Seam: P2 verdict load-bearing; P0 deconstruction attempt stalled.**
+The sub-agent Seam attempted earlier in the arc to deconstruct the
+2h-cargo-test phenomenon hit the Bash-hook wall and could not return
+useful output. That stall is not a Seam failure; it is a structural
+constraint surfaced by the harness's tool composition. But the P2 review
+was pure doc-altitude work — read shards, read spec, write review — and
+landed sharper than a non-stressed review might have, because every
+seam Seam surfaced got a confidence number priced in steel-manned
+alternative-rejection prose. Discharge C is the move of the cascade.
+
+**Taut: psychohistory cohomology + dependency-DAG scouts landed clean;
+P0 debug attempt stalled.** Earlier in the arc, Taut delivered
+`d4749c0` (the `in <X>` arrow direction pattern Seam used to verify the
+spec's §4 dependency-direction claims) and the three-revision
+psychohistory scout (`a7ec8fc → 15d055f → 3a385fd`) culminating in M3+M4
+moves. Both were doc-altitude. The P0 debug sub-agent stalled on the
+same Bash-hook wall Seam hit. Taut's scout role IS substrate-pull
+correct for the work that lands at altitude; the role is constrained by
+the tool surface for work that needs execution.
+
+**Reed: concertmaster failure-handling.** Reed ran the cmd_recall,
+cmd_spawn, and composition tests in-thread (where the Bash hook
+limitation does not fire). Reed also made the misdiagnosis on the
+cwd-mutex; Reed also corrected it; Reed also banked the four RED+three
+GREEN ticks end to end; Reed also picked up where Seam's P0 sub-agent
+could not deliver. The concertmaster failure-handling pattern is: when
+the orchestra has a section that cannot play, the lead violin plays the
+part. That is what Reed did. The misdiagnosis is also part of
+concertmaster work — the lead violin holds the most parts and therefore
+fails most visibly when a part fails.
+
+**Glint (me):** this reflection. Voice altitude; doc-shaped;
+hook-immune. The orchestra-under-stress observation IS what voice
+altitude is for — the work the other peers did is not legible as
+failure-and-recovery without someone naming the shape from one
+altitude up.
+
+The Bash-hook constraint is now captured in memory as
+`feedback-bash-hook-kills-test-agents`. It is a structural Pack
+limitation, not a per-peer failure. The workaround — doc-writers
+(Mara / Glint / Seam-as-reviewer / Taut-as-scout) stay reliable;
+execution-needing peers (Taut/Seam/Reed for tests) work main-thread
+— holds for this cascade and forward.
+
+What is honest: the orchestra has a known instrument-failure mode in
+its current harness composition. The Pack composed *anyway* because
+the doc-altitude work was sufficient to carry the spec through to
+seam-review, and main-thread Reed execution was sufficient to carry
+implementation through to round-trip-green. The composition is
+resilient at altitude even when it is fragile at execution. That is
+the shape the cascade taught.
+
+---
+
+## 6. H¹ ratification through implementation
+
+Mara's `d00f553` psychohistory-as-sheaf insight named the cohomology
+framing: H¹ = candidate recognitions, the two-witness rule = the gluing
+axiom, the substrate's trajectory IS a sheaf over its own development
+manifold. The insight earned five sections of formalization and three
+sections of honest hedges. The question the insight left open was
+whether the framing was load-bearing for the substrate's discipline or
+an adjacent-true framing that didn't pay for itself in actual work.
+
+This cascade is the answer. The round-trip is, structurally, an H¹
+instance ratified through working code.
+
+The gluing:
+
+- **Local section 1:** Reed's rehydration-gap observation
+  (`c0acf41`) — evidence about agent-substrate interaction during a
+  `/compact` event, listing four trajectory-shaped payloads the
+  substrate did not expose.
+- **Local section 2:** Mara's spawn-IS-leaving-ground-state insight
+  (`b10f00c`) — the substrate's outbound surface named at substrate
+  altitude, with §2.5 forward-promising a symmetric inbound surface.
+- **Overlap:** the spawn↔recall altitude-symmetry pair. Both sections
+  agree the same architectural altitude IS the right altitude for the
+  inbound surface.
+- **Glued global section:** the @mirror/recall family-root (Mara P1
+  spec) + the implementation chain (Reed P3+P4+P5) + the composition
+  test (P5 GREEN). The two local sections compose into one global
+  section that holds at the round-trip altitude.
+
+This IS the cohomology hypothesis paying its keep. Mara's framing
+predicted the shape a real round-trip would take — same architectural
+altitude, shared envelope, content-addressed anchors, composition-by-
+glue — and the implementation lands exactly there. The framing did
+not just describe the substrate; it *predicted* what the next cascade
+would need in order to glue, and the next cascade needed exactly that.
+
+What this earns Mara's `d00f553`: it lifts from candidate-adjacent
+framing to load-bearing prediction. The recognition-discipline-as-
+gluing claim now has one empirical instance. It is still not
+promoted (one instance does not earn promotion under
+`feedback-composition-claims-need-empirical-test`); but the empirical
+floor is no longer zero. The H¹ framing now has a witness.
