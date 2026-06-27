@@ -828,3 +828,397 @@ Three failure modes pinned at substrate altitude:
 The three failure modes carry typed errors (per
 `[[feedback-no-bare-types]]`); the envelope's `verdict` field flips
 to `"error"` with a `reason` payload when any fires.
+
+---
+
+## §5 — Crystal store location: the substrate-pull-honest call
+
+The brief flagged: "Alex earlier asked Reed about crystal store
+location; what's substrate-pull-honest given fragmentation's existing
+structure?" This section pins the answer.
+
+### 5.1 The candidates
+
+Three plausible locations surfaced across the corpus:
+
+**(A) `.git/mirror/`** — `NamespacedGitStore::open(repo_path,
+"mirror")`'s default. Per Taut §3.2: the store lives inside `.git/`
+so it doesn't pollute the working tree; it uses the `.frgmnt` file
+format (fan-out objects + refs) rather than git's own ODB; it
+travels with `git` operations on `.git/` and survives clone IF the
+refs are pushed.
+
+**(B) `.spectral/db/<peer-oid>/`** — the dotted-directory pattern
+mentioned in `CLAUDE.md` (project instructions) for spectral session
+state: `gestalt/`, `sessions/`, `crystals/`, `HEAD`, `log`. A
+peer-scoped subtree per the substrate-decl pattern emerging in
+peer-ACL §10.
+
+**(C) `~/.mirror/`** — `mirror-store.md` §10.5's user-scoped canonical
+location: a bare fragmentation repo per `frgmnt_store.rs`,
+content-addressed, per-user (not per-project), independent of `$PWD`.
+
+### 5.2 The substrate-pull-honest call
+
+**(A) `.git/mirror/` is the v0 location.** Three reasons stack:
+
+**Reason 1 — fragmentation already declares the path.**
+`NamespacedGitStore::open(repo_path, "mirror")` constructs
+`.git/mirror/{objects,refs}/`. The substrate-decl side picked the
+location; not picking it would be inventing a new shape. Per
+`[[feedback-substrate-already-had-the-word]]`: when the substrate
+already declares a location, don't invent a competitor.
+
+**Reason 2 — `.git/<namespace>/` carries the git-clone semantics for
+free.** A crystal indexed at `.git/mirror/objects/<2hex>/<rest>`
+travels with `git clone` (no special-case code) so long as the
+`refs/mirror/<name>` refs are pushed. The substrate's
+spawn↔recall↔init triple (§7) consumes this: when a peer's home
+repo is cloned, its indexed crystals come along; the consumer can
+read `store.get_ref("HEAD")` to get the indexed surface immediately.
+`.spectral/db/` and `~/.mirror/` would each need a separate transport
+mechanism; `.git/mirror/` doesn't.
+
+**Reason 3 — the `repo IS a store` isomorphism per Alex 2026-06-17.**
+`spectral-db-as-autopoietic-memory.md`'s correction sequence: each
+repo IS a store; the substrate has one boundary unit, named two ways
+for two roles. `.git/mirror/` makes this isomorphism architecturally
+visible: the store lives **inside** the repo's `.git/`; opening the
+store IS opening the repo's storage role.
+
+### 5.3 What `.spectral/db/` and `~/.mirror/` ARE (so the call doesn't
+collide)
+
+Both candidates have legitimate roles **at different altitudes**;
+naming them avoids future collision:
+
+**`.spectral/db/<peer-oid>/`** is the **session-state** location, not
+the crystal-store location. Per `CLAUDE.md` (project instructions):
+"Like `.git/` but for graphs. `gestalt/` crystals (user understanding
+state), `sessions/` session data, `HEAD` current session timestamp,
+`log` tick log." The session-state altitude is operational
+intermediate data (the user's understanding-in-progress), not the
+content-addressed crystal accumulation. `.git/mirror/` is the
+storage altitude; `.spectral/db/` is the session-state altitude.
+Both can coexist in the same repo.
+
+**`~/.mirror/`** is the **per-user crystal-pool** location, per
+`mirror-store.md` §10.5. A bare fragmentation repo at the user's
+home directory; content-addressed; shared across all of the user's
+project checkouts. Same OID → same blob → one copy on disk. The
+relationship to `.git/mirror/`:
+
+- `.git/mirror/` is **per-repo**. Crystals for files in THIS repo.
+- `~/.mirror/` is **per-user**. Crystals shared across all repos.
+
+The two compose: `mirror init` writes to `.git/mirror/` (per-repo);
+a separate `mirror sync` (forward-promised; not in this spec's scope)
+mirrors crystals from `.git/mirror/` to `~/.mirror/` so they survive
+clean checkouts. The librarian per
+`spectral-db-as-autopoietic-memory.md` lives at `~/.mirror/`'s root
+supervisor altitude; it reads `~/.mirror/` AND it consolidates from
+the per-repo `.git/mirror/` stores it supervises.
+
+The architectural picture (forward-promised; not the v0 surface):
+
+```
+~/.mirror/                              ← librarian's catalog
+  └── (per-user crystal pool)
+       ↑ (sync; forward-promised)
+.git/mirror/                            ← THIS spec's v0 location
+  ├── objects/<2hex>/<rest>             ← content-addressed crystals
+  └── refs/
+       └── HEAD                         ← root OID of last init
+
+.spectral/db/<peer-oid>/                ← session-state (separate altitude)
+  ├── gestalt/
+  ├── sessions/
+  └── HEAD
+```
+
+### 5.4 The collision-avoidance pin
+
+To ensure future ticks don't re-conflate the three locations, the
+v0 surface declares:
+
+- **`mirror init` writes ONLY to `.git/mirror/`.** Not
+  `.spectral/db/`. Not `~/.mirror/`. The other two locations are
+  out of v0 scope.
+- **`mirror init` is idempotent against `.git/mirror/`** (§4.5). No
+  observable change on re-run against the same git state.
+- **`mirror init` does NOT touch `.spectral/db/`** (left for the
+  session-state command surface, currently un-spec'd at this
+  altitude).
+- **`mirror init` does NOT sync to `~/.mirror/`** (left for `mirror
+  sync`, forward-promised).
+
+The three location boundaries hold per altitude; the v0 surface
+honors the first altitude only.
+
+### 5.5 The selection between path (a) and path (b) revisited
+
+Per §3.1.5, the file-set comes from either:
+
+- (a) a new `walk_repo` primitive in fragmentation (~30 LOC), OR
+- (b) a `git ls-files`-driven manifest synthesized in mirror.
+
+The substrate-pull-honest call for v0: **path (b)**. Three reasons:
+
+1. **No fragmentation-side commit required.** v0 ships with one
+   diff (the Cargo edge §4.1) + ~200 LOC of mirror glue. Path (a)
+   adds a fragmentation commit; the v0 timeline benefits from
+   keeping changes mirror-side.
+2. **`git ls-files` IS what the user expects.** Files tracked by
+   git ARE the indexable surface; untracked files (build artifacts,
+   `target/`, editor state) are correctly excluded by default.
+   Path (a)'s `Tree::walk` over the head tree achieves the same
+   set; the substrate doesn't gain by re-implementing it.
+3. **Path (a) lands later for the historical walk.** When `mirror
+   init --history` (v1; §9.2) wants commit-by-commit indexing,
+   `walk_commits_following` is already there; path (a)'s `walk_repo`
+   adds value at that altitude. Deferring path (a) doesn't lose
+   future capability.
+
+The path (b) decision is REVERSIBLE: a later tick that adds
+`walk_repo` to fragmentation can swap mirror's manifest-synthesis
+for a direct `walk_repo` call; the envelope shape (§4.7) doesn't
+change; downstream consumers are unaffected.
+
+---
+
+## §6 — Git hooks integration
+
+The hook contract. `mirror init --install-hooks` writes two hooks
+into `.git/hooks/`; subsequent commits trigger incremental
+re-indexing; the substrate stays current without explicit
+`mirror reindex` invocations.
+
+### 6.1 The hook shape
+
+Two hooks, each pure shell template:
+
+**`.git/hooks/pre-commit`** — runs BEFORE the commit is created;
+checks that the staged set is indexable; fails the commit if any
+indexable file produces an error during dry-run crystallization.
+
+```sh
+#!/bin/sh
+# mirror init: pre-commit hook
+# Verifies staged files crystallize before letting the commit land.
+mirror reindex --staged --dry-run || {
+    echo "mirror: pre-commit crystallization failed; aborting commit." >&2
+    exit 1
+}
+```
+
+**`.git/hooks/post-commit`** — runs AFTER the commit lands; updates
+`.git/mirror/` with the delta from the just-committed change.
+
+```sh
+#!/bin/sh
+# mirror init: post-commit hook
+# Incrementally re-indexes the just-committed delta.
+mirror reindex --delta=HEAD~1..HEAD || {
+    echo "mirror: post-commit reindex failed (non-fatal; commit landed)." >&2
+}
+```
+
+Three properties the hooks honor:
+
+1. **Idempotency**, per §4.5: re-running a hook against an already-
+   indexed state produces no observable change. The pre-commit
+   dry-run never crashes on a re-run; the post-commit reindex never
+   double-writes a crystal.
+2. **Non-blocking on post-commit failure.** The commit ALREADY
+   landed by the time post-commit runs; failing the hook does NOT
+   roll back the commit. The hook surfaces the failure to stderr
+   and exits non-zero (so the user notices); the commit stays.
+3. **Hook-respecting** per
+   `[[architecture-jurisdiction-sets-gates-inhabitant-chooses-housekeeping]]`:
+   the hooks are written by the INHABITANT's own choice (the
+   `--install-hooks` flag is opt-in). The jurisdiction (mirror)
+   does NOT impose them. A peer that doesn't want auto-reindexing
+   omits the flag; their `.git/mirror/` becomes stale between
+   explicit `mirror reindex` calls; that's a choice the inhabitant
+   makes.
+
+### 6.2 The `mirror reindex` sibling subcommand
+
+The hooks invoke `mirror reindex`, NOT `mirror init`. The
+distinction:
+
+- **`mirror init`** initializes the store (creates the namespace,
+  walks the full file set, writes the root OID, sets up the
+  `.git/mirror/` shape). One-shot or idempotent rerun.
+- **`mirror reindex`** updates the store incrementally (walks
+  ONLY the delta — staged changes, or commit-range diffs — and
+  updates the existing crystals). Per-commit or per-edit cadence.
+
+`mirror reindex` is forward-promised; not in this spec's scope.
+Per `[[feedback-substrate-already-had-the-word]]`: the delta
+mechanism already exists at fragmentation altitude
+(`walk_commits_following` for commit ranges; `git diff --cached
+--name-only` for staged changes); `mirror reindex` composes them
+the same way `mirror init` composes the full-walk primitives.
+
+### 6.3 Hook semantics: what re-indexing means
+
+A re-index event is the moment the substrate's view of the repo
+catches up with the working tree's view. Per §4.5 idempotency, this
+is **structurally equivalent to running `init` and discarding the
+unchanged crystals** — but operationally cheaper, because the delta
+machinery avoids re-hashing unchanged files.
+
+The substrate's semantic claim: **the crystals at `.git/mirror/HEAD`
+represent the indexed projection of the repo as of the last
+re-index event**. The librarian (when it lives) reads
+`store.get_ref("HEAD")`; the read is correct IFF the last re-index
+event was post-current-state. Stale crystals are visible to the
+librarian as "the indexed surface at root OID X" — the librarian
+itself does not know whether the working tree has drifted; that's
+the inhabitant's housekeeping.
+
+This matches `[[architecture-jurisdiction-sets-gates-inhabitant-
+chooses-housekeeping]]`: the jurisdiction (the librarian's altitude)
+sets the GATE (you must give me a root OID; I trust the root OID's
+addressed bytes); the inhabitant (the repo) chooses the
+HOUSEKEEPING (hooks for auto-reindex; or manual `mirror reindex`;
+or accept stale crystals).
+
+### 6.4 The push semantics (forward-promised)
+
+The brief named: ".git/mirror/" travels with clones IF refs are
+pushed. v0 ships WITHOUT pushing `refs/mirror/*` by default; the
+inhabitant adds a `refspec` to `.git/config` if they want their
+indexed crystals to travel:
+
+```ini
+[remote "origin"]
+    fetch = +refs/heads/*:refs/remotes/origin/*
+    fetch = +refs/mirror/*:refs/remotes/origin/mirror/*
+    push = refs/heads/*:refs/heads/*
+    push = refs/mirror/*:refs/mirror/*
+```
+
+This is OPT-IN. The substrate's posture (per §6.3): the inhabitant
+chooses whether their crystals are visible to clones. The
+`--install-hooks` flag does NOT modify `.git/config`; that's
+a separate `mirror init --enable-push-refs` flag (forward-promised;
+not in v0 scope).
+
+The architectural reason for opt-in: the indexed crystals carry
+content fingerprints; pushing them is a transparency act; not every
+inhabitant wants every clone to know every file's BLAKE3. The
+choice belongs to the inhabitant per the consent geometry per
+`[[architecture-geometric-consent-projection]]`.
+
+---
+
+## §7 — The spawn↔recall↔init triple
+
+The substrate's becoming-mycelial triple. Three commands; three
+operational moments; one composition shape. `mirror init` is the
+third — the one that gives a peer the substrate shape it needs to
+be joined.
+
+### 7.1 The triple
+
+| Command | Direction | What it carries |
+|---|---|---|
+| **`mirror spawn`** | Outbound | The peer's own state offered to the lead. The substrate's controlled excitation above λ₀ per `[[architecture-spawn-is-substrate-leaving-ground-state]]`. |
+| **`mirror recall`** | Inbound | The peer's psychohistory consulted. The substrate's reading of accumulated crystals per `mirror-recall.md`. |
+| **`mirror init`** | Self-directed | The peer's substrate-shaping. The crystals THIS spec declares. |
+
+The three commands together compose the **operational lifecycle of a
+peer in the mycelium**:
+
+- Without `init`, the peer has no indexed crystals to recall from
+  AND no substrate to offer when it spawns. The peer is, at this
+  moment, off-substrate.
+- Without `recall`, the peer can't read its own psychohistory; the
+  crystals exist; the consumer surface doesn't.
+- Without `spawn`, the peer can't make its state observable to the
+  lead; the consumer surface exists; the wire to the lead doesn't.
+
+The three are complementary. v0 ships `spawn` (Reed's work; commits
+since 2026-06-26) and a v0 recall surface (Glint's `9e7bb1d`
+round-trip). `init` is the third; the triple closes the loop.
+
+### 7.2 init as becoming-mycelial
+
+The brief framed: "init as becoming-mycelial; complement to spawn
+(outbound) + recall (inbound)."
+
+The unpacking: `mirror init` is the moment a peer's repo becomes
+**joinable to the mycelium**. Before init, the peer has working-tree
+files but no content-addressed crystal store; the librarian per
+`spectral-db-as-autopoietic-memory.md` cannot include the peer in
+its cross-repo spectral graph because there are no crystals to
+participate in the sheaf.
+
+After init, the peer's `.git/mirror/HEAD` points at a root OID; the
+indexed crystals are content-addressed and persistent; the
+librarian can (when it lives) read the root OID and add the peer
+to the mycelium's spectral graph.
+
+The transition is **structural**, not operational. The peer doesn't
+need to call out to anything; the librarian doesn't need to know
+the peer exists yet. The mycelium grows by the substrate's
+self-organizing topology — the peer's `.git/mirror/` becomes
+DISCOVERABLE to the librarian when the librarian's supervisor walks
+the user's repo tree and finds the namespace. The substrate's
+content-addressing means a single OID identifies the indexed surface
+regardless of how the librarian encounters it.
+
+The mycelial verb is **become**, not **join**: the peer becomes
+joinable BY doing init. The joining is a subsequent act (the
+librarian's; forward-promised in §9.1).
+
+### 7.3 The triple's composition altitude
+
+The three commands compose at the **CLI altitude** (peer-initiated
+operations); they compose AT a deeper altitude through the substrate's
+shared envelope vocabulary. Each command emits a JSON envelope; each
+envelope names the operation's substrate effects; the envelopes are
+themselves indexable as crystals (forward-promised: the envelope
+crystals would be persisted under `refs/spectral/notes/<command>/<oid>`).
+
+The substrate's autopoietic move per §10: when the envelope crystals
+land in `.git/mirror/`, the librarian reads them; the librarian's
+catalog includes "this peer ran init on date X with envelope Y";
+subsequent `mirror recall` calls can surface the init history; the
+agent asking "when did this peer become mycelial?" gets a typed
+answer.
+
+The triple composes through the envelope vocabulary; the envelope
+vocabulary IS one of the things `mirror init` indexes; the indexing
+is what makes the composition self-referential. This is §10's
+load-bearing line, foreshadowed.
+
+### 7.4 What `mirror init` does NOT compose with `spawn` or `recall`
+
+Three structural negatives, per the discipline of naming what isn't
+collapsing:
+
+- **`mirror init` does NOT spawn.** init shapes the substrate;
+  spawn excites above λ₀. The two operate at different altitudes;
+  conflating them would re-introduce the spawn insight's structural
+  negative #4 (no idempotent-at-runtime semantics — spawn isn't
+  idempotent; init IS).
+- **`mirror init` does NOT recall.** init writes crystals; recall
+  reads them. The two are dual. A consumer can `init` without
+  caring about recall (the substrate's storage gate stands on its
+  own); a consumer can `recall` without re-running init (the
+  existing root OID suffices).
+- **`mirror init` does NOT bind the peer to the pack.** Per the
+  spawn insight §4.6 forbidden primitive: no
+  pack-membership-side-effects. init is a per-repo substrate-shaping
+  operation; it has no effect on the pack's membership; it does
+  not modify `pack { }` blocks in `mirror.spec`. The peer's
+  pack-membership is the lead's call per peer-ACL §10.1's
+  members-as-antichain pattern.
+
+The three negatives ensure the triple stays composable — each
+command stays at its own altitude; the composition lives at the
+envelope vocabulary altitude; the commands themselves don't bleed
+into each other's territory.
