@@ -100,3 +100,126 @@ Mara's insight named one altitude of the symmetry (substrate ↔ runtime).
 This cascade ratifies a second altitude (work-outbound ↔ work-inbound). The
 duality replicates. It is not yet a recognition; it is a forward-promise
 the next cascade can witness.
+
+---
+
+## 3. Discharge C — Seam at her sharpest
+
+Mara's P1 spec admitted three open flags before substrate-decl ossified them.
+Seam's P2 review adjudicated all three. The sharpest move was Discharge C
+on flag §9.1 #1.
+
+Mara had named two options for the `in_flight: bool` field of the
+`pack_trail` payload: **A** = read live state from `@spectral/supervisor`'s
+registry at recall-time; **B** = return `unknown` fallback. Seam introduced
+**C**: drop `in_flight: bool` entirely and replace it with
+`last_seen_commit: content_address`. The agent reads "Mara's most recent
+commit was 5 minutes ago" and infers in-flight status from temporal
+proximity to head. No live registry read; no unknown fallback; pure
+content-addressed.
+
+The move converted four problems into one structural simplification at
+once. Reading the chain:
+
+1. **API misattribution.** Mara's §3.2.1 referenced
+   `@spectral/supervisor.list_children()`. Seam verified by reading
+   `shards/spectral/supervisor.mirror` exhaustively: the action does not
+   exist. The supervisor exposes only `start_child` and `terminate_child`;
+   enumeration lives at `@spectral/registry.list(r)`. Critical-downgraded-
+   to-Serious flaw, requiring rewording.
+2. **Phase G blocker.** The actual enumeration action `@spectral/registry.
+   list` is a `\` obligation body — declared but not yet operationally
+   discharged. Discharge A would have made Phase G block on this discharge
+   landing first. A longer critical path.
+3. **Stateless-return forbidden-primitive risk.** §5 of the spec named
+   stateless-return as a forbidden primitive recall must NOT exhibit.
+   Discharge A would have read live state at call time; the read would
+   have been anchored even though the underlying state mutates. Mara's own
+   prose called this a "hand-wave" candidate. Discharge C reads
+   content-addressed bytes; the answer IS the trajectory-shape answer
+   because the question IS a trajectory question.
+4. **The §1 anchor-discipline coherence.** §1 of the spec committed recall
+   to anchoring at OID / commit / state content-addresses rather than
+   synthesizing values at call time. Discharge A would have violated §1's
+   own framing; Discharge C honors it exactly.
+
+One move. Four problems. Content-addressing dissolved all four. This IS
+what "the substrate already had the word" looks like at the seam-review
+altitude — not Mara discovering a missing concept the substrate had been
+implicitly using, but Seam noticing that the substrate's *existing*
+content-addressing primitive was the right tool at the field altitude the
+spec had reached for live-state instead.
+
+The trade-off Seam named honestly: Discharge C loses literal "is X working
+right now" semantics — the empirical value Reed's `c0acf41` §4(b)
+explicitly named. Seam priced this at confidence 1.5/2, not 2/2. The cost
+IS real. But the substrate doesn't natively expose live state in a
+content-addressed way; trying to make it do so at recall altitude would be
+the wrong altitude lift. The honest reading is that the trajectory IS the
+right answer to the trajectory question; the live state belongs to a
+different surface (the not-yet-existing-but-forward-promised
+`mirror status --live` or similar).
+
+Reed accepted C in implementation. The `pack_trail` payload now carries
+commit-shaped fields. The flaw is gone; the blocker is gone; the
+forbidden-primitive risk is gone; the §1 coherence holds.
+
+This is what an adversarial review earns when it is held at altitude. Seam
+didn't surface 22 surface seams (that pattern lived at the 2026-06-24 peer-
+ACL review); Seam surfaced ONE move that did the work of four corrections.
+The Pack's adversarial-review discipline pays its keep in moves like this
+one.
+
+---
+
+## 4. Reed's misdiagnosis arc — honest about the failure mode
+
+This cascade is not all clean. Mid-arc, after Taut and Seam agents both
+stalled trying to debug a `cargo test` 2-hour hang, Reed produced an
+architectural diagnosis: the `kintsugi_main_in` function's process-wide
+cwd mutex was deadlocking parallel test execution. Reed built an entire
+exploration around it — the mutex IS process-wide, parallel tests DO chdir,
+the contention pattern would explain the symptom.
+
+Alex pushed back with one question: *"what's process-wide of what?"*
+
+Reed verified. Default `cargo test` actually completes in 38 seconds. The
+2-hour hang was a Bash-wrapper artifact (`run_in_background` plus pipe to
+`tail` plus direnv slow-load on the shell that wrapped the test runner),
+not a test deadlock at all. The architectural smell — yes, the cwd mutex
+is genuinely a process-wide piece of state that doesn't belong at that
+altitude — was real, but it wasn't on fire. The fire was in the harness's
+shell composition with the build, not in the substrate's concurrency
+shape.
+
+The correction landed. Reed updated memory with two new feedback entries:
+5-minute hard cap on test suites (`feedback-test-timing-discipline`) and
+never pipe `cargo` through `tail` when backgrounded
+(`feedback-bash-hook-kills-test-agents`). The substrate learns from its
+own errors per the eⁿ⁺¹ < eⁿ principle the project's CLAUDE.md names.
+
+What is honest about naming this here: Reed is the concertmaster. The
+concertmaster's misdiagnosis was load-bearing in the moment — Reed had
+built an architectural conclusion atop an unverified premise, and the
+conclusion was elegant enough to be persuasive. Alex's one-line probe
+(*"what's process-wide of what?"*) IS the spectral-Tomm probe pattern
+from `architecture-error-as-tomm-probe`: the lead at N+1 fields a
+circular-reflexive question against the member's claim at N, and the
+question's structure forces the member to verify their premise. The
+mechanism worked.
+
+The correction-amenability is what saved the arc. Reed didn't defend the
+diagnosis; Reed checked, found the gap was a Bash artifact, and updated
+memory. The `feedback-substrate-pull-confidence-acts` discipline includes
+its own dual: confidence acts AND correction-amenability holds. The first
+without the second is over-claim; the second without the first is
+stall-pattern. Both together is what Pack altitude actually is.
+
+The cascade closed despite the misdiagnosis because the substrate has
+structural redundancy: the spec was already canonical, the review was
+already landed, the cmd_recall and cmd_spawn implementations were
+already green at the unit-test level. The 2-hour cargo-test hang was
+orthogonal to the round-trip's correctness; once the hang turned out to
+be a Bash artifact, the composition test (P5) ran in seconds and went
+green. The arc cost a tick or two to the misdiagnosis; it did not cost
+the arc.
