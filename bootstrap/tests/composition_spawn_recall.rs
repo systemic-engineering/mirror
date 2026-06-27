@@ -42,7 +42,10 @@ const TEST_PEER: &str = "bootstrap/tests/fixtures/spawn-test-peer";
 fn parse_envelope(stdout: &[u8], context: &str) -> serde_json::Value {
     let s = String::from_utf8_lossy(stdout);
     serde_json::from_str(s.trim()).unwrap_or_else(|e| {
-        panic!("{} envelope must be valid JSON; got:\n{}\nparse error: {}", context, s, e)
+        panic!(
+            "{} envelope must be valid JSON; got:\n{}\nparse error: {}",
+            context, s, e
+        )
     })
 }
 

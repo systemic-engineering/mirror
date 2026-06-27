@@ -2665,6 +2665,7 @@ fn cmd_recall(spec_dir: &str) -> i32 {
     let dogfood = recall_dogfood(spec_dir);
 
     let envelope = serde_json::json!({
+        "spec_version": "v0.1.0",
         "cascade": cascade,
         "pack_trail": pack_trail,
         "pull_frontier": pull_frontier,
@@ -3152,6 +3153,7 @@ fn cmd_spawn(peer_home: &str, hello_world: bool) -> i32 {
         let source_decl =
             extract_spec_source_decl(&source).unwrap_or_else(|| "<no-source-decl>".to_string());
         let envelope = serde_json::json!({
+            "spec_version": "v0.1.0",
             "spawn": "hello_world",
             "peer": peer_name,
             "home": peer_home,
