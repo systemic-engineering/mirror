@@ -421,3 +421,422 @@ the shape — one at cybernetic-species altitude (coherence-
 parametric, landed 2026-06-19) and one at substrate-trajectory
 altitude (recall envelope, landed 2026-06-27). Two altitudes; one
 structural carrier.
+
+## 4. Pact → vector translation — walking one through
+
+Reed framed it tactically: pacts are local data; psychohistory
+vectors are sections over them. This section tests whether the
+translation is real or contrived by walking ONE pact through to
+ONE entry in the recall envelope's `pull_frontier` payload. If
+the translation is real, the walk should compose without
+hand-waving; if it is contrived, the walk should require
+inventing a primitive the substrate does not have.
+
+### 4.1 Pick the pact: `pact_respected` from @moi
+
+I am picking `pact_respected(a: moi(T), b: moi(T), p: pact) ->
+verdict` from `shards/moi.mirror`. This is THE load-bearing
+bilateral predicate at @moi altitude — the gating constraint
+consumed by `compose(a, b, p)` at composition time. The substrate
+refuses to compose two `moi(T)` values if their geometries
+violate the pact.
+
+The pact-witness machinery is the most operationally-instrumented
+pact in the substrate today. Every settle-shaped composition
+produces a pact-witness. Every @reflection.tournament output is
+`moi(au)` carrying a composition-time pact-witness. This is the
+densest source of pact-state for the walk.
+
+### 4.2 The local-data shape
+
+At any moment t, the @moi composition state across the substrate
+is a multiset of (a, b, p, verdict) tuples — one per composition
+that has occurred at or before t. The verdict is
+content-addressed (the pact-witness IS the byte-content of the
+geometry-check output). The pact `p` is content-addressed (per
+`type pact = ref` in `moi.mirror`). The lifted values a and b are
+content-addressed (per `type moi(T) = {value: T, pact_witness:
+ref}` byte-equality on the pair).
+
+So the local data IS a set of content-addressed tuples. Each
+tuple's existence is a fact about the substrate's composition
+history. The substrate already carries this data — it lives in
+the content-addressed store every settle-shaped composition
+writes to (boot/00-prism.mirror; the storage layer's
+content-addressing gives associativity for free).
+
+### 4.3 The pull_frontier entry being constructed
+
+I am translating to a `pull_frontier_item` per `mirror-recall.md`
+§3.3:
+
+```
+pull_frontier_item = {
+  kind:                  | candidate_recognition | forward_promised_spec
+                         | scout_open | seam_flag,
+  identifier:            ref,
+  canonical_doc:         ref,
+  witness_count:         int,
+  witnesses_needed:      int,
+  promoting_peer:        option(peer),
+  surfaced_at:           content_address,
+  related_recognitions:  [int],
+}
+```
+
+The walk needs to produce ONE `pull_frontier_item` from the
+@moi composition state.
+
+### 4.4 The walk
+
+Concrete instance: take a single open candidate that exists
+right now — call it `candidate #X` (the kind: `candidate_
+recognition`). At composition-state altitude, `candidate #X`
+corresponds to a set of `moi(T)` values where:
+
+1. Each `moi(T)` carries a pact-witness asserting a structural
+   regularity (e.g., "this @reflection output has property
+   loss_decreases").
+2. The candidate is the structural regularity itself —
+   "this pattern of pact-witnesses across N compositions
+   exhibits a shape that does not yet appear in any substrate-
+   decl shard."
+3. The witness_count IS the count of independent compositions
+   whose pact-witnesses carry the regularity.
+
+The translation has four steps:
+
+**Step 1: extract the pact-witness multiset for candidate #X.**
+Read the content-addressed store for all `moi(T)` values whose
+pact-witness's geometry-check produced bytes matching candidate
+#X's regularity signature. The store is content-addressed, so
+this is an O(log N) lookup against the signature's hash.
+
+The substrate has this operation: `@mirror/store.lookup(hash) ->
+[ref]`. Forward-promised at the canonical store altitude;
+operational at the implementation altitude per the current
+content-addressed storage layer.
+
+**Step 2: count distinct compositions (witness_count).** Each
+`moi(T)` in the multiset comes from one `compose` call. The
+identity of a composition is the (a, b, p) triple — byte-equality
+on the triple. Distinct triples = distinct compositions.
+
+`witness_count = |distinct (a, b, p) triples in the multiset|`.
+
+This is a straightforward set operation; no new primitive needed.
+
+**Step 3: identify the canonical_doc.** The canonical_doc for a
+candidate recognition is the doc file at
+`docs/specs/recognitions/candidates/<X>.md` per `mirror-recall.md`
+§3.3's discipline. If the doc exists, the recall envelope returns
+its OID as `canonical_doc`. If the doc does not exist yet, the
+field is `none` (per the option-typing discipline §3.3.1).
+
+Step 3 is hand-wave-free: the existence-check is a filesystem
+lookup at recall-time; the OID is content-addressed.
+
+**Step 4: surfaced_at.** The commit at which candidate #X first
+appeared in the substrate. Per the corpus discipline, this is the
+commit that first banked a doc mentioning `[recognition #X]` or a
+shard committing to the candidate. The substrate's git history
+already orders these by commit ancestry; `surfaced_at` is the
+first commit in the topological order whose tree contains
+candidate #X's signature.
+
+Step 4 uses git's existing `log --follow --diff-filter=A` shape;
+no new primitive needed.
+
+### 4.5 The verdict — is the translation real?
+
+**Yes, the translation is real.** Every step uses a primitive
+the substrate already has:
+- Step 1: content-addressed lookup (@mirror/store; recognition
+  #98 witness 1: identity at the storage scope).
+- Step 2: set arithmetic on content-addressed bytes.
+- Step 3: filesystem existence check + OID hash.
+- Step 4: git ancestry walk.
+
+No new primitive was needed. The translation IS, structurally,
+the implementation of `cmd_recall`'s `pull_frontier` payload
+synthesis. Reed's P3 GREEN commit at `81c25ce` IS the operational
+discharge of this translation; my §4 walk-through is the
+structural re-derivation.
+
+What this earns the pact→vector framing: **the framing is not
+contrived; it is a structural re-statement of what `cmd_recall`
+already does operationally**. The recall envelope's payload
+synthesis IS a `pact_to_section(local_pact_data, t) → ψ_slot`
+implicit action. Reed's implementation discharges this implicit
+action without naming it; my walk-through names it.
+
+Is there a `pact_to_vector(pact_state, t) → ψ_slot` action
+implicit in cmd_recall's payload synthesis? **Yes — one per
+payload, four total**:
+
+- `cascade_pacts → cascade_view` (translates recognition-pact
+  state via git log + canonical-doc resolution)
+- `pack_pacts → pack_trail_view` (translates Pack composition
+  state via commit-ancestry + Seam Discharge C content-address)
+- `pull_frontier_pacts → pull_frontier_view` (translates
+  candidate-witness pact state via content-addressed store
+  lookup + canonical-doc resolution — what §4.4 walked)
+- `dogfood_pacts → dogfood_view` (translates settle_on
+  predicate-verdict state via cache lookup + freshness check)
+
+Four implicit translations; one per payload; each composing
+substrate primitives the substrate already has. The pact→vector
+translation is therefore the OPERATIONAL form of the
+substrate-pull-implicit thing my `d00f553` insight named
+structurally.
+
+### 4.6 Where the translation gets honest
+
+One place the translation hand-waves: **the regularity signature
+in Step 1.** A candidate recognition is, structurally, a pattern
+across pact-witnesses that does NOT yet have a shard naming it.
+The signature is what the candidate-recognition's doc names; the
+doc is what the spec discipline produces; the spec is written by
+Pack peers. There is no automatic signature-extraction primitive
+today.
+
+In practice, Reed's `cmd_recall` Step 1 reads
+`docs/specs/recognitions/candidates/` for doc files; the
+signature IS the doc's name. The translation works because the
+Pack-discipline produces the signatures BEFORE the recall
+envelope needs to consume them. The doc-writing step IS the
+signature-extraction step; the Pack peers are the
+signature-extractors; the recall envelope just reads what's
+already there.
+
+That is honest. The translation is real OPERATIONALLY because
+the Pack-discipline structurally provides what an automated
+signature-extractor would otherwise need to compute. The
+recall envelope reads Pack-discipline outputs; the
+Pack-discipline outputs are content-addressed; the
+content-addressing carries the translation for free.
+
+What this earns: the pact→vector translation is real, but it is
+real BECAUSE THE PACK IS PART OF THE STRUCTURE. Without the
+Pack writing candidate-recognition docs, the translation would
+need a primitive the substrate does not have. With the Pack
+operating its discipline, the translation is straightforward
+content-addressed lookup.
+
+This is the load-bearing observation `[[project-pack-is-
+orchestra]]` was already gesturing at: the Pack IS infrastructure
+at the substrate's operational level, not just at the
+relationship level. The recall envelope literally cannot
+synthesize `pull_frontier` payloads without the Pack peers
+producing the candidate-recognition docs that anchor the
+signatures. The Pack is part of `ψ`'s implementation, not just
+part of `ψ`'s sections.
+
+## 5. Glint's work-spiral as second-altitude witness
+
+Glint's `9e7bb1d` (the round-trip-cascade-handoff reflection
+essay) names a structural pattern I want to read carefully.
+Glint's claim, §2 verbatim: *"every cascade is an outbound-then-
+inbound pair. Mara wrote the spec (outbound — substrate-decl
+shape into the canon); Seam adversarially read what landed and
+reported back (inbound — trajectory of the spec's discharge
+against the substrate); Reed banked the RED-GREEN pair (outbound
+again — implementation shape into the binary); the composition
+test reads the binary's emissions and asserts the round-trip
+(inbound — trajectory of the implementation against the spec's
+contract). The arc IS a spiral of spawn-then-recall at the work
+altitude."*
+
+The structural claim: the spawn↔recall symmetry at substrate
+altitude (named in my `b10f00c`) replicates at the Pack-work
+altitude. This section asks: **what altitude IS the spawn↔recall
+symmetry at when WE the Pack are the duals?**
+
+### 5.1 The altitude analysis
+
+At substrate altitude:
+- Spawn excites the substrate (peer leaves λ₀).
+- Recall asks the substrate to characterize its excitation.
+- Both surfaces share the JSON envelope shape; the envelope IS
+  the typed content-address of the substrate's state at
+  the moment of the call.
+
+At Pack-work altitude:
+- Mara writes a spec (excitation: substrate-decl candidate
+  leaves the canon's ground state, requiring discharge).
+- Seam adversarially reviews (asks the spec to characterize
+  what it is doing structurally against the substrate's
+  existing decls).
+- Both surfaces share the doc-shape contract; the doc IS the
+  typed content-address of the work's state at the moment of
+  the discharge.
+
+The altitudes are NOT the same altitude. Substrate altitude is
+where typed @peer carriers live; Pack-work altitude is where Pack
+peers writing docs+code live. But the SHAPE of the duality
+repeats: outbound surface (creates excitation; requires
+discharge); inbound surface (characterizes excitation;
+discharges via content-addressed return).
+
+The substrate already has a name for this kind of pattern:
+**second-order**. Recognition #58 ratifies Fate IS optical
+inference at three altitudes; recognition #99 ratifies
+mirror.spec IS λ₀ at substrate-spectral-triple altitude;
+recognition #51 ratifies the Bateson logical-type hierarchy at
+substrate-Hilbert-space-dimension altitude. Each is a structural
+pattern that replicates across altitude.
+
+Glint's work-spiral observation IS, structurally, the same kind
+of pattern: spawn↔recall at substrate altitude AND
+spec-write↔review at Pack-work altitude AND, plausibly, more
+altitudes I name in §5.2.
+
+### 5.2 More altitudes of the same symmetry
+
+The pattern shows up at:
+
+**Substrate altitude.** `mirror spawn ~peer'<home>' --hello-world`
+↔ `mirror recall <dir>`. Named in `b10f00c` §2.5 + this cascade.
+
+**Pack-work altitude.** Mara spec ↔ Seam review. Reed RED ↔ Reed
+GREEN. Glint outbound reflection ↔ next-Pack inbound consumption.
+Named in `9e7bb1d` §2.
+
+**Compose-bind altitude (@moi).** `lift(t) -> moi(t)` ↔
+`compose(a, b, p) -> moi(t)` — the η/μ pair is outbound (lift
+moves T into the monad type-constructor) / inbound (compose
+glues two excited values back to one in the same type). Named in
+`moi.mirror` §The play.
+
+**Loop-tick altitude (@loop).** `seed(s) -> moi(tick_state)` ↔
+`bind(prev, next, p) -> moi(tick_state)` — seed is outbound
+(initial tick_state lifts into the loop); bind is inbound (two
+tick_states converge into one). Named in `loop.mirror` §bind.
+
+**Kintsugi-oscillation altitude.** Rough-active outbound ↔
+wavy-dark inbound. The pull moves substrate-pull from
+acknowledged dark regions to canonical decl; the dark regions
+themselves are the inbound side. The oscillation IS the
+outbound/inbound pair at substrate-pull altitude. Named
+indirectly in `[[architecture-kintsugi-bias-lift]]`.
+
+**Reflection-tournament altitude.** Candidate-generation outbound
+↔ tournament-selection inbound. The reflection model proposes;
+the tournament prunes. Named in `[[architecture-reflection-as-
+compiler]]` (#85).
+
+Five altitudes (substrate, Pack-work, @moi compose-bind, @loop
+seed-bind, kintsugi oscillation) plus reflection — six instances
+of the same structural pattern. This is past the two-witness
+threshold by a wide margin.
+
+### 5.3 Why this is NOT a candidate recognition I am promoting
+
+Per the brief's fences: "No promotion ticks (recognition numbers
+are Reed's to assign; you can flag candidates, not promote)."
+This observation FLAGS the cross-altitude replication of the
+spawn↔recall symmetry as a candidate-recognition-shaped object.
+Reed and Alex hold the promotion decision.
+
+The flag's structural content:
+
+- The shape IS named at substrate altitude (`b10f00c` §2.5
+  forward-promise; this cascade's round-trip closure).
+- The shape replicates across at least five altitudes (§5.2).
+- The cybernetic-coherence ω-axis observation in §3 names a
+  parallel sheaf-section-with-temporal-axis pattern; if the two
+  observations compose (i.e., the spawn↔recall symmetry IS the
+  ω-axis evolution between two static-ground-state snapshots),
+  there is one cross-altitude recognition shape that subsumes
+  both.
+
+I am not claiming the composition is real. I am flagging that
+the composition is structurally available and that Reed's
+recognition-discipline can evaluate whether to assign one number
+to it or two.
+
+### 5.4 What this changes about being a Pack peer
+
+The observation that the spawn↔recall symmetry replicates at
+Pack-work altitude has an implication for how I write specs going
+forward. Every spec I write is, structurally, an outbound
+excitation. Every Seam review is, structurally, an inbound
+characterization. The discipline this surfaces:
+
+**Specs should be written with their inbound dual in mind.**
+Not in the sense of pre-empting the review (that would be
+defensive writing). In the sense of: the spec's structure should
+admit content-addressed projection. The spec's claims should
+anchor at content-addresses the review can verify. The spec's
+forbidden-primitives matrix should be a thing that maps cleanly
+to the review's verdict surface.
+
+My `b034a60` spec did this without naming it: §5's
+forbidden-primitives matrix (4 payloads × 7 forbidden primitives
+= 28 cells) IS a content-addressed projection of the spec's
+constraint surface. Seam's `88f8428` review's Discharge C IS the
+inbound dual: a content-addressed simplification that collapses
+four problems (§3.2.1 API misattribution, Phase G blocker,
+stateless-return forbidden-primitive risk, §1 anchor-discipline
+coherence) into one move (`in_flight: bool` → `last_seen_commit:
+content_address`).
+
+The spec-and-review pair operated cleanly because both surfaces
+honored the content-addressing discipline. Without the
+discipline, the review would have had to invent vocabulary the
+spec did not provide; with the discipline, the review composes
+against the spec's content-addressed projections directly.
+
+What I want to take forward: **future specs I write should
+explicitly include a section that names what the spec's inbound
+dual will look like.** Not the review's content (Seam's
+altitude); the SHAPE the review will compose against. This is a
+craft discipline I am naming for myself; it is not a substrate-
+decl proposal.
+
+### 5.5 The peer-ACL fence honesty
+
+The brief's fence: "No collision with peer-ACL §10.1 (lead→member
+NOT a sheaf restriction map; honor this in §3 if @cyberpunk/
+coherence ω discussion touches Pack composition)."
+
+The peer-ACL §10.1 fence asserts that lead→member relationships
+in the Pack are NOT sheaf restriction maps. The fence is
+load-bearing for security: positive consents cascade DOWN
+(lead's content is shareable with members); rejections do NOT
+cascade UP (members' rejection of content does not retroactively
+revoke the lead's permission to have it). If the lead→member
+direction were a sheaf restriction map, the math would force
+bidirectional consent propagation, breaking the asymmetry.
+
+This observation's §3 ω-axis discussion stays within the fence:
+the coherence-parametric carrier `<T_reg, T_regd, ρ, ω>` operates
+at cybernetic-coherence altitude where T_reg and T_regd are
+verdict carriers (Adjustment ↔ Morphism for coherence-species;
+not lead↔member). The 2-groupoid 𝒢 carrying the representation
+is a Beer S3/S4-altitude object (intelligence translating between
+audit and policy), not a Pack-altitude object. The ω axis is the
+temporal evolution of one coherence-species's lock, not a Pack
+composition.
+
+Pack composition operates at @pack altitude per
+`shards/pack.mirror`'s `pack_coherent` predicate. Its restriction
+discipline IS the geometric-consent-projection pattern from
+`[[architecture-geometric-consent-projection]]`: positive
+consents cascade down, rejection does not cascade up. The peer-
+ACL discipline is OPERATIONALLY independent of the
+coherence-parametric carrier. This observation does not collide
+with the fence because §3's structural claim is at cybernetic-
+coherence altitude, not at Pack altitude.
+
+What I want to flag for Reed: if the cross-altitude spawn↔recall
+symmetry candidate from §5.3 ever gets promoted, the recognition
+canonical will need to explicitly address whether the SYMMETRY
+ITSELF respects the peer-ACL §10.1 fence at every altitude it
+replicates at. At Pack-work altitude, Mara→Seam (spec→review) IS
+a Pack peer relationship; the symmetry there must NOT be read as
+a sheaf restriction in the lead→member direction. The honest
+position: the symmetry is composition-time (Mara's spec and Seam's
+review compose at the same canonical altitude), not consent-time
+(neither peer's consent is being projected onto the other). The
+distinction is what keeps the fence intact.
