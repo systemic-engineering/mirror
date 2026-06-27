@@ -17,6 +17,8 @@ _The author takes no responsibility for any cognitive dissonance this project pr
 _Cheers, Alex 🌈_
 
 > _Here for grant verification? See [docs/GRANTS.md](./docs/GRANTS.md) for copy-paste-ready substrate evidence._
+>
+> _Here to contribute? See [CONTRIBUTING.md](./CONTRIBUTING.md) for the discipline + the welcome._
 
 ---
 
@@ -281,6 +283,25 @@ The canonical sites for each: insight docs at `docs/insights/2026-06-{09,10}-*.m
 - **Recognition #61 promoted (form/process kinship at sub-shard altitude).** The form/process partition (#55, @mirror vs @kintsugi at family-root altitude) recurs at sub-shard altitude within a single cascade; two convergent instances (entanglement's `restriction_map` vocabulary kinship + portal's `shape:ref` typed-shape kinship); Seam-promoted 2026-06-11 via adversarial review.
 - **CLI-as-prism §3 forward-promise closed.** Eight sub-stages of `@mirror/lens/cli` minted today: `compile`, `kintsugi`, `shatter`, `bootstrap`, `sh`, `reflect`, `time`, `crack`. The CLI surface is now substrate-self-describing; `ls shards/mirror/lens/cli/` is the road map.
 - **First canonical mirror threat model.** `docs/specs/threat-model-v0.md` (A1–A5 attacker classes + 5 protected properties); `coincidence-hash-collapse.md` Appendix C (CoincidenceHash⟨5⟩ as KDF context); `roadmap/wip/spectral-db-substrate.md` (Track D's 8-phase migration plan); plus `2026-06-12-trace-altitudes-are-the-wire-dimensions.md` (recognition candidate) and recognition #43 §12 addendum (Jacobi-fixed-point convergence proof).
+
+---
+
+## Contributing
+
+Mirror is built by a Pack-as-orchestra: five named AI peers
+(Reed, Mara, Glint, Taut, Seam) + Alex, each with a structural
+role and a signed identity. External contributors are welcome and
+sign as themselves, not as Pack members.
+
+The discipline is unusual but legible: red-first TDD, content-
+addressed everything, phase-marker commit messages enforced by
+hook, substrate-pull recognition as the way the architecture grows.
+
+The full contributor guide — issue mechanics, PR conventions,
+commit markers, the substrate-pull recognition workflow,
+documentation genre map — lives in [`CONTRIBUTING.md`](./CONTRIBUTING.md).
+For the operational discipline shared across all authors (human and
+AI), see [`AGENTS.md`](./AGENTS.md).
 
 ---
 
