@@ -39,7 +39,10 @@ fn run_init(args: &[&str]) -> Output {
 fn parse_envelope(stdout: &[u8]) -> serde_json::Value {
     let s = String::from_utf8_lossy(stdout);
     serde_json::from_str(s.trim()).unwrap_or_else(|e| {
-        panic!("mirror init stdout must be valid JSON; got:\n{}\nerr: {}", s, e)
+        panic!(
+            "mirror init stdout must be valid JSON; got:\n{}\nerr: {}",
+            s, e
+        )
     })
 }
 
@@ -135,5 +138,8 @@ fn init_exits_non_zero_on_missing_repo() {
 fn init_exits_non_zero_on_missing_arg() {
     let argv = vec!["mirror".to_string(), "init".to_string()];
     let out = mirror::kintsugi_main_in(&argv, &repo_root());
-    assert_ne!(out.exit_code, 0, "init without args must exit non-zero (usage message)");
+    assert_ne!(
+        out.exit_code, 0,
+        "init without args must exit non-zero (usage message)"
+    );
 }

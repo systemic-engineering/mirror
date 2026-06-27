@@ -2681,13 +2681,40 @@ pub fn dispatch(args: &[String]) -> i32 {
 ///   - No subprocess (in-process fragmentation calls)
 ///   - No identity-mint (repo path IS the identity at this altitude)
 ///   - No stateless-return (envelope anchors at root_oid — content-addressed)
+///
+/// P3 GREEN (envelope-shape only): emits the 9-key contract envelope
+/// with stub values for indexed / bytes_total / root_oid / store.
+/// Real fragmentation composition (NamespacedGitStore + project::project +
+/// per-file Splinter + set_ref) lands in the follow-up P4 GREEN tick
+/// per Mara spec §4.2–§4.6.
 fn cmd_init(repo_path: &str, hooks: bool) -> i32 {
-    let envelope = format!(
-        "{{\"stub\":true,\"repo\":\"{}\",\"hooks\":{},\"phase\":\"P3_RED_pending_GREEN\"}}\n",
-        repo_path.replace('\\', "\\\\").replace('"', "\\\""),
-        hooks,
-    );
-    _raw_stdout(envelope.as_bytes());
+    // Edge case: repo path must exist.
+    let path = std::path::Path::new(repo_path);
+    if !path.exists() {
+        merr!("init: repo path does not exist: {}", repo_path);
+        return 1;
+    }
+    if !path.is_dir() {
+        merr!("init: repo path is not a directory: {}", repo_path);
+        return 1;
+    }
+
+    // P3 GREEN envelope per Mara spec §4.7. Stub values for the
+    // composition fields (indexed / bytes_total / root_oid / store).
+    // Real composition wires via fragmentation in next GREEN tick.
+    let envelope = serde_json::json!({
+        "spec_version":    "v0.1.0",
+        "operation":       "init",
+        "repo":            repo_path,
+        "store":           format!("{}/.git/mirror/", repo_path),
+        "indexed":         0,
+        "bytes_total":     0,
+        "root_oid":        "stub@P3_GREEN_pending_P4_composition",
+        "hooks_installed": hooks,
+        "verdict":         "partial@stub",
+    });
+    let s = format!("{}\n", envelope);
+    _raw_stdout(s.as_bytes());
     0
 }
 
