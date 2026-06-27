@@ -3099,10 +3099,7 @@ fn parse_settle_on_predicates(body: &str) -> Vec<String> {
 ///   - No membership-side-effects (spawn does NOT add members to the pack).
 ///   - No stateless-return (envelope acknowledges persisted state even
 ///     though v0 does not yet store it; Phase H wires storage).
-fn cmd_spawn(peer_home: &str, _hello_world: bool) -> i32 {
-    // P4 RED: `_hello_world` flag plumbed but ignored. GREEN tick
-    // wires the JSON envelope branch per the substrate round-trip
-    // loop's `mirror spawn ... --hello-world` endpoint.
+fn cmd_spawn(peer_home: &str, hello_world: bool) -> i32 {
     // Piece 1 (insight §2.1): cli surface. The peer-home argument is the
     // single positional. Context (frame, repository, pack) is resolved
     // FROM peer-home, not passed in.
@@ -3144,6 +3141,39 @@ fn cmd_spawn(peer_home: &str, _hello_world: bool) -> i32 {
     //                    code/* species discharge.
     //   piece 7 (§2.7): λ₀ → excited-state transition; the substrate's
     //                    transient departure from its own ground state.
+    // P4 GREEN: --hello-world opts in to a structured JSON envelope.
+    // Default (no flag) keeps the text envelope (existing 5 tests).
+    // Per substrate round-trip loop endpoint: the envelope identifies
+    // the peer by declared content; bounded to mirror.spec reads;
+    // no @fate, no @io/llm, no identity-mint per b10f00c §4.
+    let lead_str = pack_lead.unwrap_or_else(|| "<no-lead>".to_string());
+
+    if hello_world {
+        let source_decl = extract_spec_source_decl(&source)
+            .unwrap_or_else(|| "<no-source-decl>".to_string());
+        let envelope = serde_json::json!({
+            "spawn": "hello_world",
+            "peer": peer_name,
+            "home": peer_home,
+            "lead": lead_str,
+            "source": source_decl,
+            "spec_oid": "uncommitted",
+            "excitation": "λ₀→runtime",
+            "composition_pieces": {
+                "1_cli_surface":            "real",
+                "2_peer_resolution":        "real",
+                "3_contextual_pack":        "real",
+                "4_lead_at_n_plus_1":       "stub@N+1",
+                "5_supervisor_kick":        "stub@spectral/supervisor.start_child",
+                "6_fate_inference":         "stub@cascade/code/*",
+                "7_lambda_zero_transition": "stub@λ₀→runtime",
+            }
+        });
+        let s = format!("{}\n", envelope);
+        _raw_stdout(s.as_bytes());
+        return 0;
+    }
+
     let envelope = format!(
         "spawn: peer={} home={} lead={} \
          excitation=λ₀→runtime \
@@ -3151,12 +3181,28 @@ fn cmd_spawn(peer_home: &str, _hello_world: bool) -> i32 {
          fate=stub@cascade/code/* \
          probe_channel=stub@N+1 \
          pack_coherent=stub_passed\n",
-        peer_name,
-        peer_home,
-        pack_lead.unwrap_or_else(|| "<no-lead>".to_string()),
+        peer_name, peer_home, lead_str,
     );
     _raw_stdout(envelope.as_bytes());
     0
+}
+
+/// Extract `source <ref>[, <ref>...]` from a `project { ... }` block in
+/// a mirror.spec source. Returns the raw text after `source ` up to the
+/// next comment, brace, or end-of-line. v0 admits the substrate text
+/// verbatim per the same pattern as `extract_spec_pack_lead`.
+fn extract_spec_source_decl(source: &str) -> Option<String> {
+    for line in source.lines() {
+        let trimmed = line.trim_start();
+        if let Some(rest) = trimmed.strip_prefix("source ") {
+            let cut = rest.find(" #").or_else(|| rest.find('{')).unwrap_or(rest.len());
+            let val = rest[..cut].trim().trim_end_matches(',').trim().to_string();
+            if !val.is_empty() {
+                return Some(val);
+            }
+        }
+    }
+    None
 }
 
 /// Extract `project <name>` from a mirror.spec source. v0 uses simple
