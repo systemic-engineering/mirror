@@ -3149,8 +3149,8 @@ fn cmd_spawn(peer_home: &str, hello_world: bool) -> i32 {
     let lead_str = pack_lead.unwrap_or_else(|| "<no-lead>".to_string());
 
     if hello_world {
-        let source_decl = extract_spec_source_decl(&source)
-            .unwrap_or_else(|| "<no-source-decl>".to_string());
+        let source_decl =
+            extract_spec_source_decl(&source).unwrap_or_else(|| "<no-source-decl>".to_string());
         let envelope = serde_json::json!({
             "spawn": "hello_world",
             "peer": peer_name,
@@ -3195,7 +3195,10 @@ fn extract_spec_source_decl(source: &str) -> Option<String> {
     for line in source.lines() {
         let trimmed = line.trim_start();
         if let Some(rest) = trimmed.strip_prefix("source ") {
-            let cut = rest.find(" #").or_else(|| rest.find('{')).unwrap_or(rest.len());
+            let cut = rest
+                .find(" #")
+                .or_else(|| rest.find('{'))
+                .unwrap_or(rest.len());
             let val = rest[..cut].trim().trim_end_matches(',').trim().to_string();
             if !val.is_empty() {
                 return Some(val);
