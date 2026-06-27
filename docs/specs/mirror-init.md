@@ -490,82 +490,30 @@ Path (a)'s ≤30 LOC `walk_repo` lands later if a workload demands it
 
 ### 3.2 The three secondary primitives
 
-Three more primitives compose at the edges; named for completeness
-because subsequent ticks will reference them.
+Three more primitives compose at the edges:
 
-#### 3.2.1 `WitnessedSingularity` / `NakedSingularity` — the shippable crystal
-
-`fragmentation/src/singularity.rs:78` + `fragmentation/src/naked.rs:25`.
-
-The substrate role: `WitnessedSingularity` collapses content under a
-witness, producing a commit whose tree IS a `Lens` back to the
-original (content-address invariant under observer; commit varies
-with witness). `NakedSingularity` carries content + witness + dual
-CIDs as a self-contained bundle — the "shippable crystal" shape.
-
-`mirror init` does NOT compose these in v0 (no peer-export wire
-exists yet). They're named here because the inter-peer crystal
-exchange forward-promised in §9.1 will consume them: when a peer
-exports a crystal to another peer's `.git/mirror/`, the carrier is
-`NakedSingularity`.
-
-#### 3.2.2 `ShardRef` + `HamiltonScheduler` — the typed session handle
-
-`fragmentation/src/shard_ref.rs:80` + `fragmentation/src/
-hamilton_scheduler.rs:33`.
-
-The substrate role: `ShardRef { id: SpectralUuid, context:
-ShardContext, budget_bytes: BudgetBytes }` is the typed session
-handle per `[[architecture-shard-ref-as-prism]]`. `HamiltonScheduler`
-is the priority-budgeted scheduler named for Margaret Hamilton
-(per `[[architecture-hamilton-scheduler]]`).
-
-`mirror init` v0 does NOT compose these — the v0 indexer runs as a
-single synchronous walk with no scheduling. v1 will pass a
-`ShardRef` to the indexer so per-peer budgets land on the indexing
-work (the librarian's tick budget per
-`spectral-db-as-autopoietic-memory.md` §6.4). Forward-promised in
-§9.3.
-
-#### 3.2.3 `append_note` / `read_notes` — the out-of-band metadata channel
-
-`fragmentation/vcs/git/src/notes.rs:48`.
-
-The substrate role: append-only git-notes under
-`refs/spectral/notes/<topic>` — out-of-band metadata that survives
-git operations without polluting trees. The substrate's natural
-home for "things observed about the indexed surface but not part of
-the surface itself."
-
-`mirror init` admits an OPTIONAL composition here: after indexing,
-append a note under `refs/spectral/notes/mirror-init/<run-oid>`
-recording the run's envelope (the same JSON emitted to stdout per
-§4.7). The note becomes the substrate's persistent record of the
-init operation — the librarian can read it later without re-walking
-the repo. v0 ships WITHOUT this composition (the envelope-to-stdout
-suffices); v1.5 lands the note per §9.4.
+- **`WitnessedSingularity` / `NakedSingularity`** (`fragmentation/
+  src/singularity.rs:78`, `src/naked.rs:25`) — the shippable-crystal
+  shape (content + witness + dual CIDs). v0 does not compose;
+  inter-peer crystal exchange (§9.1) will.
+- **`ShardRef` + `HamiltonScheduler`** (`fragmentation/src/
+  shard_ref.rs:80`, `src/hamilton_scheduler.rs:33`) — the typed
+  session handle per `[[architecture-shard-ref-as-prism]]` + the
+  priority-budgeted scheduler per
+  `[[architecture-hamilton-scheduler]]`. v0 runs synchronously
+  without budget; v1 wraps the walk in a `ShardRef` (§9.3).
+- **`append_note` / `read_notes`** (`fragmentation/vcs/git/src/
+  notes.rs:48`) — append-only git-notes under `refs/spectral/notes/
+  <topic>`. v0 ships without; v1.5 appends a per-init envelope-note
+  (§9.4).
 
 ### 3.3 What `mirror init` does NOT compose
 
-Per Taut's §3.7 grep-verified "what is NOT present" list:
-
-- **No `walk_repo` / `ingest_repo` primitive in fragmentation
-  today.** `mirror init` synthesizes one (path (a) above) OR drives
-  `project::project` from a synthesized manifest (path (b) above).
-  v0 recommendation: (b).
-- **No git-hook installer in fragmentation today.** `mirror init
-  --install-hooks` writes hooks via mirror-side `std::fs::write`
-  with a shell template (§6).
-- **No `mirror init`-shaped primitive at fragmentation altitude.**
-  Correct per Taut §3.7: init is mirror's altitude, not
-  fragmentation's. This spec lives at mirror's altitude and
-  composes fragmentation's primitives at the right altitude.
-
-The "what's NOT present" list is structurally important. It tells us
-the mirror-side glue is REAL work (~200 LOC); it's not free; but it's
-bounded. The substrate-pull-honest path is composition, not
-construction — but composition with the right ~200 LOC of mirror
-glue. §4 enumerates that glue.
+Per Taut's §3.7 grep-verified "NOT present": fragmentation has no
+`walk_repo`, no git-hook installer, no `mirror init`-shaped
+primitive. The mirror-side glue is REAL work (~200 LOC), bounded.
+The substrate-pull-honest path is composition with that ~200 LOC. §4
+enumerates the glue.
 
 ---
 
@@ -581,39 +529,27 @@ surface.
 The missing edge. `mirror/bootstrap/Cargo.toml` gains:
 
 ```toml
-[dependencies]
 fragmentation = {
     path = "../../fragmentation",
     features = ["concurrent", "singularity", "project", "supervision"],
     default-features = false,
 }
-fragmentation-git = {
-    path = "../../fragmentation/vcs/git",
-    default-features = false,
-}
+fragmentation-git = { path = "../../fragmentation/vcs/git", default-features = false }
 ```
 
-Two crates: `fragmentation` (the core; `concurrent` feature for
-`ConcurrentStore`'s DashMap backing; `singularity` for
-`WitnessedSingularity`; `project` for `project::project`;
-`supervision` reserved for §7's spawn↔recall↔init composition);
-`fragmentation-git` (the git wire layer; the
-`NamespacedGitStore` lives here per Taut §3.2). `fragmentation-git`
-transitively pulls `git2 = "0.19"` + `dashmap = "6"` — the binary-size
-posture risk Taut flagged as R2 (addressed in §8.2 below).
+`fragmentation`'s features: `concurrent` for `ConcurrentStore`;
+`singularity` for `WitnessedSingularity`; `project` for
+`project::project`; `supervision` reserved for §9.3. The
+`fragmentation-git` crate carries `NamespacedGitStore` and
+transitively pulls `git2 = "0.19"` + `dashmap = "6"` — the
+binary-size posture flagged as R2 (§8.2).
 
-The edge is one diff. The diff IS the Phase A unblock for everything
-downstream. Per `mirror-store.md` §4.6: "the minimum to unblock F-2
-is Cuts 1 and 2; both can land in a single fragmentation commit." —
-both cuts have landed (the `concurrent` feature exists today per
-`fragmentation/Cargo.toml`'s `features` block; the
-`Fragmentable`/`ContentAddressed`/`TreeShaped` trait split also
-exists today). Mirror's side of the F-2 work is THIS Cargo edge.
-
-The Cargo edge is **NOT a runtime composition**; it's a build-graph
-composition. The fragmentation crate becomes available to mirror's
-bootstrap; subsequent steps (§4.2–§4.7) compose the runtime
-primitives.
+The edge is one diff. Per `mirror-store.md` §4.6: Cuts 1+2 already
+landed in fragmentation (the `concurrent` feature gate and the
+`Fragmentable`/`ContentAddressed`/`TreeShaped` trait split exist
+today); the mirror side of F-2 IS this Cargo edge. NOT a runtime
+composition; a build-graph composition. The fragmentation crate
+becomes available; §4.2–§4.7 compose it at runtime.
 
 ### 4.2 Step 2 — Walk the source
 
@@ -651,13 +587,10 @@ fn cmd_init(repo_path: &str, install_hooks: bool, manifest_path: Option<&str>) -
 ```
 
 The walk produces `Projection { files: BTreeMap<target,
-ProjectedFile { content, oid }> }`. Each `ProjectedFile` is a
-`Vec<u8>` + a blob OID. The set is **deterministic** given the same
-git state (because `git ls-files` is deterministic; because file
-contents are deterministic; because `blob_oid_bytes` is the canonical
-git-shape blob hash).
-
-Determinism matters for §4.5 idempotency.
+ProjectedFile { content, oid }> }`. The set is **deterministic**
+given the same git state (`git ls-files` is deterministic;
+`blob_oid_bytes` is the canonical git blob hash). Determinism
+underwrites §4.5 idempotency.
 
 ### 4.3 Step 3 — Open the namespaced store
 
@@ -719,20 +652,16 @@ for (target, projected) in &projection.files {
 
 Two notes on shape:
 
-- **The `encode_splinter_as_fractal` adapter is mirror-side glue.**
-  fragmentation's `Fractal<String>` is the store's value type; mirror's
-  `Splinter<H>` is the crystal value type. The bridge is one
-  encode-decode pair; lives in mirror's `bootstrap/src/crystallize.rs`
-  or in a sibling module. ~20–30 LOC. Out of v0 scope for THIS spec to
-  pin the API; the bridge is forward-promised under the bilateral
-  pattern (declaration in `shards/`, fracture body in mirror Rust).
-- **The `Uncrystallized` verdict is expected at Tick A.** R1's
-  adversarial concern (§8.1): the `Crystallizations` floor is empty
-  per `floor_crystallizations` at line 510 of `crystallize.rs`; every
-  splinter lands `Uncrystallized`. This is NOT a blocker for `mirror
-  init` — the crystals are stored regardless; downstream consumers
-  (the librarian; `mirror recall`) can re-dispatch when the floor
-  populates.
+- **`encode_splinter_as_fractal` is mirror-side glue.**
+  fragmentation's `Fractal<String>` is the store's value type;
+  mirror's `Splinter<H>` is the crystal value type. The bridge is
+  ~20–30 LOC under the bilateral pattern (declaration in `shards/`,
+  fracture body in mirror Rust). Forward-promised, not pinned here.
+- **`Uncrystallized` at Tick A is expected.** The floor is empty
+  (per `floor_crystallizations:510`); the splinter lands
+  `Uncrystallized`. Not a blocker — the crystals are stored
+  regardless; downstream consumers re-dispatch when the floor
+  populates (R1; §8.1).
 
 ### 4.5 Step 5 — Flush + write the root ref
 
@@ -841,148 +770,86 @@ structure?" This section pins the answer.
 
 Three plausible locations surfaced across the corpus:
 
-**(A) `.git/mirror/`** — `NamespacedGitStore::open(repo_path,
-"mirror")`'s default. Per Taut §3.2: the store lives inside `.git/`
-so it doesn't pollute the working tree; it uses the `.frgmnt` file
-format (fan-out objects + refs) rather than git's own ODB; it
-travels with `git` operations on `.git/` and survives clone IF the
-refs are pushed.
-
-**(B) `.spectral/db/<peer-oid>/`** — the dotted-directory pattern
-mentioned in `CLAUDE.md` (project instructions) for spectral session
-state: `gestalt/`, `sessions/`, `crystals/`, `HEAD`, `log`. A
-peer-scoped subtree per the substrate-decl pattern emerging in
-peer-ACL §10.
-
-**(C) `~/.mirror/`** — `mirror-store.md` §10.5's user-scoped canonical
-location: a bare fragmentation repo per `frgmnt_store.rs`,
-content-addressed, per-user (not per-project), independent of `$PWD`.
+- **(A) `.git/mirror/`** — `NamespacedGitStore::open(repo_path,
+  "mirror")`'s default. Lives inside `.git/`; uses the `.frgmnt`
+  format (fan-out objects + refs); travels with `git` operations
+  if refs are pushed.
+- **(B) `.spectral/db/<peer-oid>/`** — the dotted-directory pattern
+  in `CLAUDE.md` (project instructions) for spectral session state.
+- **(C) `~/.mirror/`** — `mirror-store.md` §10.5's user-scoped
+  canonical location: a bare fragmentation repo, per-user (not
+  per-project), independent of `$PWD`.
 
 ### 5.2 The substrate-pull-honest call
 
-**(A) `.git/mirror/` is the v0 location.** Three reasons stack:
+**(A) `.git/mirror/` is the v0 location.** Three reasons:
 
-**Reason 1 — fragmentation already declares the path.**
-`NamespacedGitStore::open(repo_path, "mirror")` constructs
-`.git/mirror/{objects,refs}/`. The substrate-decl side picked the
-location; not picking it would be inventing a new shape. Per
-`[[feedback-substrate-already-had-the-word]]`: when the substrate
-already declares a location, don't invent a competitor.
+1. **Fragmentation already declares the path.**
+   `NamespacedGitStore::open(repo_path, "mirror")` constructs
+   `.git/mirror/{objects,refs}/`. Per
+   `[[feedback-substrate-already-had-the-word]]`: when the substrate
+   already declares a location, don't invent a competitor.
+2. **`.git/<namespace>/` carries git-clone semantics for free.**
+   Crystals at `.git/mirror/objects/` travel with `git clone` if
+   the refs are pushed. The spawn↔recall↔init triple (§7) consumes
+   this; the other candidates would need separate transport.
+3. **The `repo IS a store` isomorphism per Alex 2026-06-17.** Per
+   `spectral-db-as-autopoietic-memory.md`: each repo IS a store.
+   `.git/mirror/` makes the isomorphism architecturally visible —
+   opening the store IS opening the repo's storage role.
 
-**Reason 2 — `.git/<namespace>/` carries the git-clone semantics for
-free.** A crystal indexed at `.git/mirror/objects/<2hex>/<rest>`
-travels with `git clone` (no special-case code) so long as the
-`refs/mirror/<name>` refs are pushed. The substrate's
-spawn↔recall↔init triple (§7) consumes this: when a peer's home
-repo is cloned, its indexed crystals come along; the consumer can
-read `store.get_ref("HEAD")` to get the indexed surface immediately.
-`.spectral/db/` and `~/.mirror/` would each need a separate transport
-mechanism; `.git/mirror/` doesn't.
+### 5.3 What (B) and (C) ARE (so the call doesn't collide)
 
-**Reason 3 — the `repo IS a store` isomorphism per Alex 2026-06-17.**
-`spectral-db-as-autopoietic-memory.md`'s correction sequence: each
-repo IS a store; the substrate has one boundary unit, named two ways
-for two roles. `.git/mirror/` makes this isomorphism architecturally
-visible: the store lives **inside** the repo's `.git/`; opening the
-store IS opening the repo's storage role.
+Both candidates have legitimate roles at different altitudes:
 
-### 5.3 What `.spectral/db/` and `~/.mirror/` ARE (so the call doesn't
-collide)
+- **`.spectral/db/<peer-oid>/`** is the **session-state** altitude
+  (operational intermediate data per `CLAUDE.md`: `gestalt/`,
+  `sessions/`, `HEAD`, `log`). NOT the crystal-store altitude.
+  Coexists with `.git/mirror/` in the same repo.
+- **`~/.mirror/`** is the **per-user crystal-pool** altitude per
+  `mirror-store.md` §10.5 — a bare fragmentation repo shared
+  across all of the user's project checkouts. The librarian per
+  `spectral-db-as-autopoietic-memory.md` lives at `~/.mirror/`'s
+  root supervisor altitude; it consolidates from the per-repo
+  `.git/mirror/` stores it supervises. A forward-promised `mirror
+  sync` ports `.git/mirror/` → `~/.mirror/` (out of v0 scope).
 
-Both candidates have legitimate roles **at different altitudes**;
-naming them avoids future collision:
-
-**`.spectral/db/<peer-oid>/`** is the **session-state** location, not
-the crystal-store location. Per `CLAUDE.md` (project instructions):
-"Like `.git/` but for graphs. `gestalt/` crystals (user understanding
-state), `sessions/` session data, `HEAD` current session timestamp,
-`log` tick log." The session-state altitude is operational
-intermediate data (the user's understanding-in-progress), not the
-content-addressed crystal accumulation. `.git/mirror/` is the
-storage altitude; `.spectral/db/` is the session-state altitude.
-Both can coexist in the same repo.
-
-**`~/.mirror/`** is the **per-user crystal-pool** location, per
-`mirror-store.md` §10.5. A bare fragmentation repo at the user's
-home directory; content-addressed; shared across all of the user's
-project checkouts. Same OID → same blob → one copy on disk. The
-relationship to `.git/mirror/`:
-
-- `.git/mirror/` is **per-repo**. Crystals for files in THIS repo.
-- `~/.mirror/` is **per-user**. Crystals shared across all repos.
-
-The two compose: `mirror init` writes to `.git/mirror/` (per-repo);
-a separate `mirror sync` (forward-promised; not in this spec's scope)
-mirrors crystals from `.git/mirror/` to `~/.mirror/` so they survive
-clean checkouts. The librarian per
-`spectral-db-as-autopoietic-memory.md` lives at `~/.mirror/`'s root
-supervisor altitude; it reads `~/.mirror/` AND it consolidates from
-the per-repo `.git/mirror/` stores it supervises.
-
-The architectural picture (forward-promised; not the v0 surface):
+Picture (forward-promised, not v0):
 
 ```
-~/.mirror/                              ← librarian's catalog
+~/.mirror/                       ← librarian's catalog (per-user)
   └── (per-user crystal pool)
-       ↑ (sync; forward-promised)
-.git/mirror/                            ← THIS spec's v0 location
-  ├── objects/<2hex>/<rest>             ← content-addressed crystals
-  └── refs/
-       └── HEAD                         ← root OID of last init
+       ↑ mirror sync (forward-promised)
+.git/mirror/                     ← THIS spec's v0 location (per-repo)
+  ├── objects/<2hex>/<rest>      ← content-addressed crystals
+  └── refs/HEAD                  ← root OID of last init
 
-.spectral/db/<peer-oid>/                ← session-state (separate altitude)
-  ├── gestalt/
-  ├── sessions/
-  └── HEAD
+.spectral/db/<peer-oid>/         ← session state (separate altitude)
 ```
 
 ### 5.4 The collision-avoidance pin
 
-To ensure future ticks don't re-conflate the three locations, the
-v0 surface declares:
-
-- **`mirror init` writes ONLY to `.git/mirror/`.** Not
-  `.spectral/db/`. Not `~/.mirror/`. The other two locations are
-  out of v0 scope.
-- **`mirror init` is idempotent against `.git/mirror/`** (§4.5). No
-  observable change on re-run against the same git state.
-- **`mirror init` does NOT touch `.spectral/db/`** (left for the
-  session-state command surface, currently un-spec'd at this
-  altitude).
-- **`mirror init` does NOT sync to `~/.mirror/`** (left for `mirror
-  sync`, forward-promised).
-
-The three location boundaries hold per altitude; the v0 surface
-honors the first altitude only.
+The v0 surface declares: `mirror init` writes ONLY to `.git/mirror/`;
+is idempotent against it (§4.5); does NOT touch `.spectral/db/`;
+does NOT sync to `~/.mirror/`. The three location boundaries hold
+per altitude; v0 honors the first altitude only.
 
 ### 5.5 The selection between path (a) and path (b) revisited
 
-Per §3.1.5, the file-set comes from either:
+Per §3.1.5, file-set comes from (a) a new fragmentation `walk_repo`
+(~30 LOC) OR (b) a `git ls-files`-driven manifest synthesized in
+mirror. **v0 ships path (b).** Three reasons:
 
-- (a) a new `walk_repo` primitive in fragmentation (~30 LOC), OR
-- (b) a `git ls-files`-driven manifest synthesized in mirror.
+1. **No fragmentation-side commit.** v0 = one Cargo diff + ~200 LOC
+   mirror glue.
+2. **`git ls-files` IS the user expectation.** Tracked files ARE
+   the indexable surface; untracked are correctly excluded.
+3. **Path (a) defers cleanly.** `mirror init --history` (v1; §9.2)
+   reuses `walk_commits_following`; `walk_repo` lands when that
+   workload demands.
 
-The substrate-pull-honest call for v0: **path (b)**. Three reasons:
-
-1. **No fragmentation-side commit required.** v0 ships with one
-   diff (the Cargo edge §4.1) + ~200 LOC of mirror glue. Path (a)
-   adds a fragmentation commit; the v0 timeline benefits from
-   keeping changes mirror-side.
-2. **`git ls-files` IS what the user expects.** Files tracked by
-   git ARE the indexable surface; untracked files (build artifacts,
-   `target/`, editor state) are correctly excluded by default.
-   Path (a)'s `Tree::walk` over the head tree achieves the same
-   set; the substrate doesn't gain by re-implementing it.
-3. **Path (a) lands later for the historical walk.** When `mirror
-   init --history` (v1; §9.2) wants commit-by-commit indexing,
-   `walk_commits_following` is already there; path (a)'s `walk_repo`
-   adds value at that altitude. Deferring path (a) doesn't lose
-   future capability.
-
-The path (b) decision is REVERSIBLE: a later tick that adds
-`walk_repo` to fragmentation can swap mirror's manifest-synthesis
-for a direct `walk_repo` call; the envelope shape (§4.7) doesn't
-change; downstream consumers are unaffected.
+REVERSIBLE: a later `walk_repo` lands without breaking the
+envelope shape (§4.7).
 
 ---
 
@@ -1044,73 +911,42 @@ Three properties the hooks honor:
 
 ### 6.2 The `mirror reindex` sibling subcommand
 
-The hooks invoke `mirror reindex`, NOT `mirror init`. The
-distinction:
-
-- **`mirror init`** initializes the store (creates the namespace,
-  walks the full file set, writes the root OID, sets up the
-  `.git/mirror/` shape). One-shot or idempotent rerun.
-- **`mirror reindex`** updates the store incrementally (walks
-  ONLY the delta — staged changes, or commit-range diffs — and
-  updates the existing crystals). Per-commit or per-edit cadence.
-
-`mirror reindex` is forward-promised; not in this spec's scope.
-Per `[[feedback-substrate-already-had-the-word]]`: the delta
-mechanism already exists at fragmentation altitude
-(`walk_commits_following` for commit ranges; `git diff --cached
---name-only` for staged changes); `mirror reindex` composes them
-the same way `mirror init` composes the full-walk primitives.
+Hooks invoke `mirror reindex`, NOT `mirror init`. The distinction:
+**`mirror init`** initializes the store (full walk; one-shot or
+idempotent rerun); **`mirror reindex`** updates incrementally
+(staged changes OR commit-range diffs). Forward-promised; composes
+`walk_commits_following` + `git diff --cached --name-only` the same
+way `mirror init` composes the full-walk primitives.
 
 ### 6.3 Hook semantics: what re-indexing means
 
 A re-index event is the moment the substrate's view of the repo
-catches up with the working tree's view. Per §4.5 idempotency, this
-is **structurally equivalent to running `init` and discarding the
-unchanged crystals** — but operationally cheaper, because the delta
-machinery avoids re-hashing unchanged files.
+catches up with the working tree's view. Per §4.5 idempotency:
+**structurally equivalent to running `init` and discarding unchanged
+crystals** — operationally cheaper because the delta machinery
+avoids re-hashing.
 
-The substrate's semantic claim: **the crystals at `.git/mirror/HEAD`
-represent the indexed projection of the repo as of the last
-re-index event**. The librarian (when it lives) reads
-`store.get_ref("HEAD")`; the read is correct IFF the last re-index
-event was post-current-state. Stale crystals are visible to the
-librarian as "the indexed surface at root OID X" — the librarian
-itself does not know whether the working tree has drifted; that's
-the inhabitant's housekeeping.
-
-This matches `[[architecture-jurisdiction-sets-gates-inhabitant-
-chooses-housekeeping]]`: the jurisdiction (the librarian's altitude)
-sets the GATE (you must give me a root OID; I trust the root OID's
-addressed bytes); the inhabitant (the repo) chooses the
-HOUSEKEEPING (hooks for auto-reindex; or manual `mirror reindex`;
-or accept stale crystals).
+Semantic claim: **the crystals at `.git/mirror/HEAD` represent the
+indexed projection of the repo as of the last re-index event**. The
+librarian reads `store.get_ref("HEAD")` and trusts the root OID;
+the librarian does NOT know whether the working tree has drifted —
+that's the inhabitant's housekeeping per
+`[[architecture-jurisdiction-sets-gates-inhabitant-chooses-housekeeping]]`.
 
 ### 6.4 The push semantics (forward-promised)
 
-The brief named: ".git/mirror/" travels with clones IF refs are
-pushed. v0 ships WITHOUT pushing `refs/mirror/*` by default; the
-inhabitant adds a `refspec` to `.git/config` if they want their
-indexed crystals to travel:
+`.git/mirror/` travels with clones IF refs are pushed. v0 ships
+WITHOUT pushing `refs/mirror/*` by default; opt-in via
+`[remote "origin"] push = refs/mirror/*:refs/mirror/*` in
+`.git/config`. The `--install-hooks` flag does NOT modify
+`.git/config`; the push enablement is a separate forward-promised
+flag (`--enable-push-refs`).
 
-```ini
-[remote "origin"]
-    fetch = +refs/heads/*:refs/remotes/origin/*
-    fetch = +refs/mirror/*:refs/remotes/origin/mirror/*
-    push = refs/heads/*:refs/heads/*
-    push = refs/mirror/*:refs/mirror/*
-```
-
-This is OPT-IN. The substrate's posture (per §6.3): the inhabitant
-chooses whether their crystals are visible to clones. The
-`--install-hooks` flag does NOT modify `.git/config`; that's
-a separate `mirror init --enable-push-refs` flag (forward-promised;
-not in v0 scope).
-
-The architectural reason for opt-in: the indexed crystals carry
-content fingerprints; pushing them is a transparency act; not every
-inhabitant wants every clone to know every file's BLAKE3. The
-choice belongs to the inhabitant per the consent geometry per
-`[[architecture-geometric-consent-projection]]`.
+Opt-in is structural per
+`[[architecture-geometric-consent-projection]]`: indexed crystals
+carry content fingerprints; pushing them is a transparency act;
+not every inhabitant wants every clone to know every file's
+BLAKE3. Choice belongs to the inhabitant.
 
 ---
 
@@ -1381,125 +1217,53 @@ the three resolutions**.
 ## §9 — Forward-promises
 
 What this spec NAMES but does not LAND. Per
-`[[feedback-craft-not-deliver]]`: the spec ships when the shape
-settles, not when every implementation tick is in the past. Five
-forward-promises, ranked by load-bearing weight.
+`[[feedback-craft-not-deliver]]`: ship when the shape settles, not
+when every tick is in the past.
 
 ### 9.1 Mycelium registration
 
-**The forward-promise.** When the librarian per
-`spectral-db-as-autopoietic-memory.md` lives at `~/.mirror`'s root
-supervisor altitude, `mirror init` writes a discovery hint that the
-librarian's per-repo supervisor reads to add the peer to the
-mycelium.
-
-**What's needed.** A discovery mechanism. Two candidates:
-
-- (a) `mirror init` writes a `refs/spectral/notes/mycelium/joined`
-  note (per §3.2.3 git-notes); the librarian's supervisor reads
-  the notes ref-namespace; the join becomes visible.
-- (b) `mirror init` registers the repo path in a user-scoped
-  `~/.mirror/peers/` directory (per `mirror-store.md` §10.5); the
-  librarian's supervisor watches the directory.
-
-Path (a) keeps the per-repo discipline; path (b) centralizes the
-peer registry at the librarian's altitude. The choice depends on
-the librarian's own discovery shape (forward-promised in its own
-spec).
-
-**Forward-promised through.** A `mirror init --register-with-
-librarian` flag (opt-in) in the v1 surface; the librarian's
-discovery spec pins the mechanism.
+When the librarian per `spectral-db-as-autopoietic-memory.md`
+lives, `mirror init` writes a discovery hint that the per-repo
+supervisor reads to add the peer to the mycelium. Two candidate
+mechanisms: (a) `refs/spectral/notes/mycelium/joined` git-note
+(per §3.2 notes), or (b) registry in user-scoped `~/.mirror/peers/`.
+Choice depends on the librarian's discovery spec. v1 ships a
+`--register-with-librarian` opt-in flag.
 
 ### 9.2 `mirror init --history`
 
-**The forward-promise.** Per §3.1.4: `walk_commits_following`
-exists; the historical walk composes the primitive over a commit
-range. v1 surface admits `mirror init --history` that walks every
-commit in the repo's history (or a `--since=<ref>` range) and
-indexes each commit's tree as its own snapshot crystal.
-
-**What's needed.** The walk over `walk_commits_following`; a
-per-commit `Projection` (the tree at that commit); per-commit
-crystallization; a temporal-axis ref namespace
-(`refs/mirror/history/<commit-oid>`).
-
-**Forward-promised through.** v1 once the v0 forward-path
-(working-tree only) has shipped and the librarian's psychohistory
-consumption per Glint's `psychohistory-vector-as-sheaf` insight
-demands historical crystals.
+`walk_commits_following` (§3.1.4) composes over a commit range; v1
+admits `mirror init --history [--since=<ref>]` that indexes each
+commit's tree as a snapshot crystal under
+`refs/mirror/history/<commit-oid>`. Unblocks Glint's
+`psychohistory-vector-as-sheaf` consumption.
 
 ### 9.3 `ShardRef` + budget integration
 
-**The forward-promise.** v0 runs the indexer as one synchronous
-walk with no budget. v1 wraps the walk in a `ShardRef`
-(per `[[architecture-shard-ref-as-prism]]`); the `HamiltonScheduler`
-manages the budget (per `[[architecture-hamilton-scheduler]]`).
-
-**What's needed.** The Cargo edge for `fragmentation`'s
-`supervision` feature (already named in §4.1's feature list); the
-mirror-side integration with `ShardContext` as a typed prism over
-the indexer's state.
-
-**Forward-promised through.** v1 once spawn / recall / init have
-all stabilized their CLI shape and the substrate's typed-handle
-discipline can be applied uniformly.
+v0 runs synchronous; v1 wraps the walk in a `ShardRef` (per
+`[[architecture-shard-ref-as-prism]]`); `HamiltonScheduler` manages
+the budget. Needs `fragmentation`'s `supervision` feature (already
+in §4.1's feature list).
 
 ### 9.4 `mirror reindex` sibling
 
-**The forward-promise.** Per §6.2: the delta primitive. Walks
-staged changes OR commit-range diffs; updates the existing
-crystals incrementally.
-
-**What's needed.** A `--staged` flag (composes `git diff --cached
---name-only`); a `--delta=<range>` flag (composes
-`walk_commits_following` with a path-prefix that's the entire
-working tree); idempotent insertion against the existing
-`.git/mirror/objects/` (the content-addressed deduplication is
-free).
-
-**Forward-promised through.** A sibling spec
-(`mirror-reindex.md`); v0.5 surface (after `mirror init` ships
-and the hook integration §6 lands).
+The delta primitive (§6.2). Sibling spec `mirror-reindex.md`; v0.5
+after init + hooks land.
 
 ### 9.5 `@epistemologic/lq` atoms over indexed crystals
 
-**The forward-promise.** Per `[[architecture-epistemologic-lq]]`:
-LQ atoms ARE pacts; pacts predicate over substrate state; the
-substrate state INCLUDES the indexed crystal set per §4. v1 surface
-admits LQ queries over `mirror init`'s output:
+Per `[[architecture-epistemologic-lq]]`: LQ atoms ARE pacts;
+substrate state includes the indexed crystal set per §4. v1 admits
+LQ queries like `?- spec_declares(@spectral/db, X),
+file_addresses(X, Y).` ranging over `.git/mirror/objects/`.
+Substrate property: **LQ's atoms compose over `mirror init`'s
+outputs because both live on `Splinter<H>` content-addressing**.
 
-```mirror
-?- spec_declares(@spectral/db, X), file_addresses(X, Y).
-```
+### 9.6 `--enable-push-refs` semantics
 
-The query ranges over indexed crystals (the indexed shape per §4.4)
-and returns OIDs of files in the indexed set matching the
-predicate composition. The substrate-altitude property:
-**LQ's atoms compose over `mirror init`'s outputs because both live
-on `Splinter<H>` content-addressing**.
-
-**What's needed.** The `@epistemologic/lq` substrate-decl shards
-(per the canonical-doc Reed/Glint are bringing to mirror); the
-indexer that maps LQ atom→`Splinter` predicate dispatch over
-`.git/mirror/objects/`; the verdict envelope.
-
-**Forward-promised through.** `@epistemologic/lq`'s own canonical
-spec; this spec NAMES that the indexed crystals are the natural
-atom-range substrate.
-
-### 9.6 The `--register-mycelium-on-clone` semantics
-
-**The forward-promise (smaller).** §6.4 names the opt-in
-push/fetch refspec for `refs/mirror/*`. When a peer clones a repo
-with `refs/mirror/HEAD` populated, their `.git/mirror/` is
-pre-populated; the librarian's per-repo supervisor on the cloning
-peer detects the namespace and adds it to the local mycelium view.
-
-This is a smaller forward-promise — a UX paper-cut rather than
-substrate work — but it's the gesture that turns `mirror init`
-into a **distributed substrate-shaping** operation: one peer's
-init makes the substrate visible to every cloning peer.
+Per §6.4: opt-in push of `refs/mirror/*`. Turns `mirror init` into
+a distributed substrate-shaping operation — one peer's init makes
+the substrate visible to every cloning peer.
 
 ---
 
@@ -1683,245 +1447,117 @@ checkable; it doesn't merely assert it.
 
 ## §11 — Honest hedges + what stays open
 
-The list. What this spec has NOT settled; what subsequent ticks owe.
+What this spec has NOT settled:
 
-### 11.1 Posture A/B/C for R2 is decision-pending
-
-Per §8.2: Alex's call. This spec recommends B (Cargo-feature-gated
-fragmentation-git); the recommendation stays a recommendation until
-Alex signs off. If A or C lands instead, §4.1's Cargo edge shape
-changes; §10's empirical-checkability test (which assumes the
-Cargo edge composes with mirror's default build) needs minor
-adjustment.
-
-### 11.2 The `encode_splinter_as_fractal` bridge is not yet specified
-
-Per §4.4: ~20–30 LOC of mirror-side glue. The bridge spec is
-forward-promised; the v0 ticks that build the indexer need to land
-it (under the bilateral pattern per
-`[[architecture-property-fracture-bilateral]]`: declaration in
-`shards/`, fracture body in mirror Rust). This spec NAMES the bridge
-but does not pin its API.
-
-### 11.3 The path (a) vs path (b) decision MAY reverse
-
-Per §3.1.5 + §5.5: v0 ships path (b) (manifest synthesis in
-mirror; no fragmentation-side commit). If a workload empirically
-shows the manifest synthesis to be a bottleneck (large repos,
-millions of files), path (a)'s `walk_repo` lands and replaces (b).
-The reversal does NOT change the envelope shape; downstream
-consumers are unaffected.
-
-### 11.4 The `verdict_counts` envelope field is provisional
-
-Per §4.7 + §8.1's enhanced envelope: the verdict-count surfacing
-is provisional v0 shape. When Tick B/C/F populates
-`Crystallizations`, the verdict-count surface enriches; the
-field's shape MAY change (e.g., adding per-crystallization-path
-counts). v0 ships a minimal version; v0.5 expands.
-
-### 11.5 The git-hook templates are not yet tested in the wild
-
-Per §6.1: the hooks are pure shell. The substrate has not yet
-shipped a real `mirror init` invocation; the hooks therefore have
-not been validated against real commit cadences. The first ticks
-that ship the v0 indexer should validate the hooks against a real
-peer-home (Reed's, Mara's, Glint's); regressions surface there.
-
-### 11.6 The `--register-with-librarian` flag has no addressee yet
-
-Per §9.1: the flag awaits the librarian's spec. Until the librarian
-declares its discovery shape (path (a) git-notes vs path (b)
-user-directory), the flag's behavior is undefined. v0 ships
-WITHOUT the flag; v1 ships it once the librarian's spec pins the
-discovery mechanism.
-
-### 11.7 The declared-but-not-wired recognition is candidate, not promoted
-
-Per §2.2: this spec FLAGS the pattern; it does NOT promote it. The
-promotion call belongs to the Pack's adversarial review (Seam →
-Reed → Alex). This spec stays neutral on whether the pattern
-deserves its own family-root or dissolves into
-`[[feedback-substrate-already-had-the-word]]`'s existing surface.
-
-### 11.8 The "Phase A" naming is Reed's, not mine
-
-Reed's earlier sketch called the work "Phase A — Indexing parity."
-This spec doesn't adopt that naming because it's specific to Reed's
-roadmap framing. The work in §4 is just "the v0 init operation."
-If the Phase A naming is canonical elsewhere, this spec absorbs
-the alignment in a follow-up note.
-
-### 11.9 The binary-size estimate is unverified
-
-Per §8.2: "~500KB–1MB" added by fragmentation-git is my estimate
-from libgit2's typical strip-size profile, NOT measured against
-mirror's actual build. Posture B (feature-gating) reduces the
-risk; before Posture A lands (the unconditional pull), a Taut
-profiling tick should measure the actual delta.
-
-### 11.10 The recursion in §10 is unfalsifiable until the v0 ships
-
-§10.4's empirical-checkability test assumes the v0 indexer has
-shipped. Until then, the autopoietic claim sits at the "structurally
-sound but operationally untested" altitude. The substrate's
-psychohistory will weight this spec's recursion claim based on
-whether the v0 indexer ships and the round-trip works.
+1. **R2 Posture A/B/C is Alex's call.** §8.2 recommends B
+   (feature-gated fragmentation-git); if A or C lands, §4.1's
+   Cargo edge shape changes; §10's empirical test needs minor
+   adjustment.
+2. **`encode_splinter_as_fractal` bridge is not yet pinned.**
+   §4.4 names ~20–30 LOC under the bilateral pattern; the v0
+   indexer-ticks land the API.
+3. **Path (a) vs (b) MAY reverse.** v0 ships (b) per §5.5; large-
+   repo workloads may surface (a)'s value. Envelope shape unaffected.
+4. **`verdict_counts` envelope field is provisional.** §4.7's
+   v0 shape minimal; v0.5 expands when Tick B/C/F populates the
+   floor.
+5. **Hooks are untested in the wild.** First v0-ticks validate
+   against real peer-homes (Reed's, Mara's, Glint's).
+6. **`--register-with-librarian` awaits the librarian's spec**
+   (§9.1). v0 ships without; v1 ships once the librarian's
+   discovery mechanism pins.
+7. **The declared-but-not-wired flag is candidate, not promoted**
+   (§2.2). Promotion is Seam→Reed→Alex's call.
+8. **"Phase A" is Reed's naming, not mine.** This spec calls the
+   work "the v0 init operation"; alignment with Reed's framing
+   absorbs in a follow-up note.
+9. **Binary-size estimate is unverified.** §8.2's "~500KB–1MB" is
+   my estimate from libgit2's strip-size profile, NOT measured
+   against mirror's actual build. Taut profiling tick before
+   Posture A lands.
+10. **§10's recursion is unfalsifiable until v0 ships.** The
+    claim sits at "structurally sound but operationally untested"
+    until step 4 of §10.4 round-trips.
 
 ---
 
 ## §12 — Pack trail
 
-What each Pack member owes against this spec.
-
-### 12.1 Reed
-
-- **Decide v0 scope.** The three-item gap per Taut (Cargo edge,
-  walk-repo OR manifest synthesis, mirror-altitude `init` command)
-  vs alternative scoping. Recommendation: ship as named in §4.
-- **TDD pair the v0 indexer.** Per `[[feedback-write-red-in-
-  session]]`: Reed writes RED; an agent (or Reed) writes GREEN.
-  The v0 surface is ~200 LOC mirror-side; pair-tickable in 4–6
-  RED-GREEN-REFACTOR rotations.
-- **Take the Cargo-edge-posture decision to Alex.** Per §8.2: A vs
-  B vs C; this spec recommends B but the call is Alex's.
-
-### 12.2 Mara (me)
-
-- **Land §4's substrate-decl shards in subsequent ticks.** The
-  `encode_splinter_as_fractal` bridge (declaration); the `init`
-  command's substrate-decl in `shards/mirror/init.mirror`; the
-  property + fracture surfaces.
-- **Pair with Seam on R1/R2 adversarial review.** §8 surfaces the
-  risks at substrate altitude; Seam's adversarial check tests the
-  composition under pressure (empty floor; binary-size budget).
-- **Maintain the §10 recursion through subsequent edits.** If §4
-  changes shape, §10's autopoietic claim's empirical-checkability
-  test changes too. Keep them coherent.
-
-### 12.3 Seam
-
-- **Adversarial-review this spec.** Top concerns: §8.1 (does
-  `Uncrystallized` really not gate the storage?); §8.2 (is Posture
-  B the right substrate-altitude call?); §5 (is `.git/mirror/`
-  really the substrate-pull-honest store location given §1.3's
-  three candidates?); §10 (does the recursion lock survive
-  pressure?). Audit-readiness confidence target: 2.
-- **Probe the declared-but-not-wired flag.** Per §2.2: is this a
-  candidate worth promoting or does it dissolve into
-  `[[feedback-substrate-already-had-the-word]]`? Seam's call.
-
-### 12.4 Taut
-
-- **Profile the binary-size delta.** Per §11.9: measure mirror's
-  current binary size; add `fragmentation-git` as a dependency;
-  re-measure. Surface the actual delta to Alex for the Posture
-  decision.
-- **(Optional) implement `walk_repo` in fragmentation.** Per §3.1.5
-  path (a): ~30 LOC. If v0 ships path (b) and a subsequent
-  workload demands (a), Taut's the natural author.
-
-### 12.5 Glint
-
-- **Wire the v0 envelope into `mirror recall` cascade payload.**
-  Per §7.3 + §10.1(c): the envelope vocabulary composes through
-  recall. When the v0 indexer ships, the recall envelope's cascade
-  payload should surface `mirror init` history alongside the
-  existing substrate-decl crystals.
-- **Audit the spec for DX surface gaps.** Glint owns the user-
-  facing surface; flag anything in §4–§7 that surfaces an awkward
-  UX.
-
-### 12.6 Alex
-
-- **Decide Posture A vs B vs C** per §8.2. Pin the call so the v0
-  Cargo edge can land.
-- **Decide on `.git/mirror/` vs alternative store locations** per
-  §5. This spec recommends `.git/mirror/`; the recommendation
-  needs Alex's verdict before subsequent ticks lock it in.
-- **Decide on promoting (or dissolving) the declared-but-not-wired
-  flag** per §2.2 + §11.7.
+- **Reed.** Decide v0 scope (the three-item gap per Taut: Cargo
+  edge + manifest synthesis (path b) + mirror-altitude `init`
+  command; recommendation: ship as §4 names). TDD-pair the v0
+  indexer per `[[feedback-write-red-in-session]]` (~200 LOC
+  mirror-side; 4–6 rotations). Take §8.2's Posture A/B/C to Alex.
+- **Mara (me).** Land §4's substrate-decl shards in subsequent
+  ticks (the bridge declaration, `shards/mirror/init.mirror`,
+  property + fracture surfaces). Pair with Seam on R1/R2.
+  Maintain §10's recursion-coherence through edits.
+- **Seam.** Adversarial-review. Top concerns: §8.1 (`Uncrystallized`
+  really not gating?); §8.2 (Posture B correct?); §5 (`.git/mirror/`
+  substrate-pull-honest?); §10 (recursion lock under pressure?).
+  Target confidence: 2. Probe §2.2's declared-but-not-wired flag.
+- **Taut.** Profile binary-size delta per §11(9). (Optional)
+  implement `walk_repo` per §3.1.5 if a workload demands it.
+- **Glint.** Wire the v0 envelope into `mirror recall` cascade
+  payload (§7.3 + §10.1c). Audit §4–§7 for DX gaps.
+- **Alex.** Decide Posture A/B/C (§8.2); decide store location
+  (§5); decide on promoting the declared-but-not-wired flag
+  (§2.2 + §11(7)).
 
 ---
 
 ## §13 — References
 
-This spec consumes and points at:
+**Specs / scouts.**
 
-- **Taut's scout**:
-  `mirror/docs/scouts/2026-06-27-taut-fragmentation-git-store-for-mirror-init.md`
-  (commit `5580a7e`, 400 lines). The inventory-and-three-item-gap
-  that this spec lifts.
-- **Mara's prior canonical**:
-  `mirror/docs/specs/mirror-store.md` (Mara, 2026-06-04; original
-  2026-05-22). The canonical-intent doc this spec unblocks the
-  Red→Green tick for.
-- **Mara's prior autopoietic spec**:
-  `mirror/docs/specs/spectral-db-as-autopoietic-memory.md` (Mara,
-  2026-06-17). The Bateson N+1 framing the librarian altitude
-  inherits.
-- **Mara's spectral-db substrate-native spec**:
-  `spectral.engineer/garden/spectral-db/spec.md` (Mara, 2026-06-27).
-  The §11 precedent for the autopoietic recursion lock at the
-  consolidation altitude; this spec's §10 is the storage-altitude
-  analogue.
-- **The spawn insight**:
-  `mirror/docs/insights/2026-06-26-spawn-is-substrate-leaving-ground-state.md`
-  (Mara, commit `b10f00c`). The spawn↔init complement; the
-  structural-negative discipline §1.2 and §7.4 inherit.
-- **Mirror's current git surface**:
-  `mirror/bootstrap/src/git.rs` (60 lines, shell-out via
-  `Command::new("git")`). The thing the v0 indexer replaces (or
-  composes with) at the bridge altitude.
-- **fragmentation source files** read in preparation:
-  - `fragmentation/Cargo.toml`
-  - `fragmentation/vcs/git/Cargo.toml`
-  - `fragmentation/vcs/git/src/namespaced.rs`
-  - `fragmentation/vcs/git/src/store.rs`
-  - `fragmentation/vcs/git/src/walk.rs`
-  - `fragmentation/src/frgmnt_store.rs`
-  - `fragmentation/src/project.rs`
-- **Mirror's crystallization floor**:
-  `mirror/bootstrap/src/crystallize.rs` (39.6KB). The
-  `Crystallizations<H>` dispatch table; the empty floor at Tick A
-  per `floor_crystallizations`.
-- **Mirror's command dispatcher**:
-  `mirror/bootstrap/src/lib.rs:dispatch` (line ~2403). Where the
+- `mirror/docs/scouts/2026-06-27-taut-fragmentation-git-store-for-mirror-init.md`
+  (Taut, commit `5580a7e`) — inventory + three-item gap this spec lifts.
+- `mirror/docs/specs/mirror-store.md` (Mara, 2026-05-22, updated
+  2026-06-04) — canonical-intent doc this spec unblocks Red→Green for.
+- `mirror/docs/specs/spectral-db-as-autopoietic-memory.md` (Mara,
+  2026-06-17) — Bateson N+1 framing §7.2 + §10.1(d) compose with.
+- `spectral.engineer/garden/spectral-db/spec.md` (Mara, 2026-06-27) —
+  §11 precedent for the autopoietic recursion lock; §10 here is the
+  storage-altitude analogue.
+- `mirror/docs/insights/2026-06-26-spawn-is-substrate-leaving-ground-state.md`
+  (Mara, `b10f00c`) — spawn↔init complement; §1.2/§7.4 structural-
+  negative discipline.
+
+**Source read in preparation.**
+
+- `mirror/bootstrap/src/git.rs` (60 LOC shell-out) — current bridge.
+- `mirror/bootstrap/src/crystallize.rs` — `Crystallizations<H>` floor.
+- `mirror/bootstrap/src/lib.rs:dispatch` (~line 2403) — where the
   `init` Clap subcommand lands.
+- `fragmentation/{Cargo.toml, src/frgmnt_store.rs, src/project.rs}`.
+- `fragmentation/vcs/git/{Cargo.toml, src/namespaced.rs, src/store.rs, src/walk.rs}`.
 
-Load-bearing memory entries:
+**Load-bearing memory.**
 
-- `[[architecture-fragmentation-is-the-rust-substrate]]` — the
-  strict dependency chain mirror→fragmentation→prism_core.
-- `[[architecture-mirror-store-vs-spectral-db]]` — the open
-  foundation / closed engine split this spec's §1.3 inherits.
+- `[[architecture-fragmentation-is-the-rust-substrate]]` — strict
+  dependency chain mirror→fragmentation→prism_core.
+- `[[architecture-mirror-store-vs-spectral-db]]` — open / closed
+  split §1.3 inherits.
 - `[[architecture-splinter-and-spectral-db-edges]]` — Splinter as
-  the floor data type; K_n via OID-graph; the glass wall flip.
-- `[[architecture-spectral-db-autopoietic-memory]]` — the librarian
-  altitude this spec's §7.2 and §10.1(d) compose with.
-- `[[architecture-recursive-sub-repo-pattern]]` — the jurisdiction
-  pattern this spec's §6.3 inherits at the hook altitude.
-- `[[architecture-jurisdiction-sets-gates-inhabitant-chooses-housekeeping]]`
-  — the gates-vs-housekeeping pattern §6 lifts.
-- `[[architecture-epistemologic-lq]]` — the LQ atom altitude §9.5
-  composes with.
-- `[[architecture-shard-ref-as-prism]]` — the typed session handle
-  §3.2.2 and §9.3 forward-promise.
-- `[[architecture-hamilton-scheduler]]` — the budget altitude §9.3
-  composes with.
-- `[[architecture-property-fracture-bilateral]]` — the declaration
-  / fracture-body pattern §11.2's bridge lands under.
-- `[[architecture-geometric-consent-projection]]` — the consent
-  altitude §6.4's opt-in push semantics honors.
+  floor data type.
+- `[[architecture-spectral-db-autopoietic-memory]]` — librarian
+  altitude §7.2 + §10.1(d).
+- `[[architecture-recursive-sub-repo-pattern]]` +
+  `[[architecture-jurisdiction-sets-gates-inhabitant-chooses-housekeeping]]`
+  — §6.3 hook discipline.
+- `[[architecture-epistemologic-lq]]` — §9.5 atom altitude.
+- `[[architecture-shard-ref-as-prism]]` + `[[architecture-hamilton-scheduler]]`
+  — §3.2 + §9.3 typed-handle and budget altitudes.
+- `[[architecture-property-fracture-bilateral]]` — §11(2) bridge
+  pattern.
+- `[[architecture-geometric-consent-projection]]` — §6.4 consent
+  altitude.
 - `[[architecture-mirror-as-content-addressed-build-system]]` —
-  recognition #43, the substrate's content-addressing claim §4 and
-  §10 stand on.
-- `[[feedback-substrate-already-had-the-word]]` — the 52+-instance
-  pattern §2.1 lifts a specific instance of.
-- `[[feedback-craft-not-deliver]]` — the discipline §11's forward-
-  promises honor.
-- `[[feedback-no-bare-types]]` — every carrier in §3 and §4 typed
-  per this discipline.
+  recognition #43; §4 + §10 stand on it.
+- `[[feedback-substrate-already-had-the-word]]` — 52+ instance
+  pattern §2.1 specializes.
+- `[[feedback-craft-not-deliver]]` + `[[feedback-no-bare-types]]` —
+  discipline §11 + §3/§4 honor.
 
 ---
 
