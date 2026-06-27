@@ -2593,6 +2593,16 @@ pub fn dispatch(args: &[String]) -> i32 {
                 1
             }
         },
+        "init" => match positional {
+            Some(p) => {
+                let install_hooks = args.iter().any(|a| a == "--install-hooks");
+                cmd_init(p, install_hooks)
+            }
+            None => {
+                merr!("usage: mirror init <repo-path> [--install-hooks]");
+                1
+            }
+        },
         "recall" => match positional {
             Some(p) => cmd_recall(p),
             None => {
@@ -2643,6 +2653,48 @@ pub fn dispatch(args: &[String]) -> i32 {
 /// real reads (git log → cascade; commit authors → pack_trail with
 /// last_seen_commit; candidate-recognition scan → pull_frontier;
 /// mirror.spec settle_on → dogfood).
+// ─────────────────────────────────────────────────────────────────────────────────
+// `mirror init <repo-path>` — the bridge command (P3 RED stub).
+// ────────────────────────────────────────────────────────────────────────────────
+
+/// `mirror init <repo-path>` — P3 RED stub.
+///
+/// Per Mara's mirror-init spec (`docs/specs/mirror-init.md`, commits
+/// `fe215bd` → `14dd043`) + Seam's audit (commit `8392ab5`; 0C/3S/8L/12✓)
+/// + Reed's Cargo-edge GREEN (commit `6b36808`; fragmentation linkable;
+/// R2 = 0 bytes Δ empirically): mirror init is the bridge command that
+/// makes the declared substrate operational at the storage altitude.
+///
+/// v0 contract (spec §4.7): emit a JSON envelope to stdout with
+///   { spec_version, operation, repo, store, indexed, bytes_total,
+///     root_oid, hooks_installed, verdict }
+///
+/// This stub returns a placeholder envelope WITHOUT the contract keys.
+/// The RED tests in `bootstrap/tests/init.rs` assert the contract — they
+/// fail against this stub. The GREEN tick wires the real composition:
+/// NamespacedGitStore::open + project::project + per-file Splinter +
+/// store.insert_persistent + root_oid via set_ref("HEAD", root).
+///
+/// b10f00c §4 fences honored:
+///   - No @fate; pure content-addressing
+///   - No @io/llm
+///   - No subprocess (in-process fragmentation calls)
+///   - No identity-mint (repo path IS the identity at this altitude)
+///   - No stateless-return (envelope anchors at root_oid — content-addressed)
+fn cmd_init(repo_path: &str, hooks: bool) -> i32 {
+    let envelope = format!(
+        "{{\"stub\":true,\"repo\":\"{}\",\"hooks\":{},\"phase\":\"P3_RED_pending_GREEN\"}}\n",
+        repo_path.replace('\\', "\\\\").replace('"', "\\\""),
+        hooks,
+    );
+    _raw_stdout(envelope.as_bytes());
+    0
+}
+
+// ────────────────────────────────────────────────────────────────────────────────
+// `mirror recall <spec-dir>` — the inbound trajectory surface.
+// ────────────────────────────────────────────────────────────────────────────────
+
 fn cmd_recall(spec_dir: &str) -> i32 {
     // Edge case: missing/invalid directory returns non-zero.
     let dir_path = std::path::Path::new(spec_dir);
