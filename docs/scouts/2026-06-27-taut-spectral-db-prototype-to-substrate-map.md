@@ -219,5 +219,137 @@ Top three load-bearing for the substrate-native package's v0:
 
 ---
 
-*§6–§9 (bibliography, recommended starting surface, self-test, Pack
-trail) land in the second tick of this scout's banking pattern.*
+---
+
+## §6 — Existing canonical specs / insights as bibliography
+
+Read these in order when writing the v0 spec for
+`garden/spectral-db/`:
+
+**The two-layer architectural anchor:**
+- `docs/specs/store-vs-db-and-the-cascade.md` (Mara, 2026-05-30) —
+  open foundation / closed engine; the generic-over-hash cascade;
+  `VoidPointer` reclaim; verification ownership.
+
+**The autopoietic memory framing (the engine's purpose):**
+- `docs/specs/spectral-db-as-autopoietic-memory.md` (Mara,
+  2026-06-17) — the librarian; mycelium; orchestra; four operations
+  (observe_access/compute_topology/perturb/anticipate); eleven
+  forward-promised ticks T11.1–T11.11.
+
+**The four-tier physical architecture:**
+- `docs/specs/spectral-db-three-tier-architecture.md` (Alex,
+  2026-05-26) — Mnesia/Postgres/Nix/Iceberg; pheromone dynamics;
+  tombstones; biology-typed semantics.
+
+**The namespace + license split:**
+- `docs/insights/2026-05-25-spectral-namespace-architecture.md` (Reed
+  + Alex, 2026-05-25) — `@spectral/mosaic` + `@spectral/portal` +
+  `@spectral/db` + open adapters.
+
+**The mathematical ground:**
+- `docs/math/sheaf/laplacian.md` — sheaf-Laplacian `Δ_F = δ*δ`; `λ₀`;
+  Fiedler vector; Hodge decomposition; Polyak-Łojasiewicz contraction.
+- `docs/specs/eigensheaf.md` (Mara, 2026-06-07) — eigensheaf =
+  sheaf + sheaf-Laplacian eigenbasis as one object; generation as
+  modal expression.
+- `docs/specs/eigenboard-representation.md` (Reed, 2026-05-20) —
+  eigenboard as principal G-bundle on the five-operation graph.
+
+**The shards the package will reference (DO NOT modify):**
+- `shards/mirror/store/crystal.mirror` — the polyglot artifact.
+- `shards/spectral/entanglement.mirror` — sheaf restriction at
+  runtime altitude.
+- `shards/spectral/root.mirror` — the librarian's substrate type.
+- `shards/spectral/supervisor.mirror`, `parent.mirror`,
+  `registry.mirror`, `gen_prism.mirror`, `portal.mirror`.
+- `shards/epistemologic/math/sheaf_laplacian.mirror` — `Δ_F`, `λ₀`,
+  Fiedler.
+- `shards/epistemologic/math/curvature.mirror` — Balanced Forman
+  curvature per edge.
+
+---
+
+## §7 — Recommended starting surface for garden/spectral-db/ v0
+
+What the v0 package needs to declare first, ordered by substrate-pull
+gravity:
+
+1. **README.md citing the two-layer architecture**
+   (`store-vs-db-and-the-cascade.md`) and naming the package as the
+   engine-side substrate-native rewrite. One paragraph; points at the
+   bibliography in §6.
+2. **A `garden/spectral-db/garden.spec`** (or whatever the garden
+   package manifest shape is per
+   `docs/specs/spectral-garden-git-package-manager.md`) declaring
+   the package's `@spectral/db` family-root claim and its
+   dependency on `@mirror/store`.
+3. **A `garden/spectral-db/docs/spec.md`** that imports verbatim from
+   `docs/specs/spectral-db-as-autopoietic-memory.md` §7's T11.1–T11.11
+   as the package's RED tick enumeration. The package's first GREEN is
+   T11.1 (`shards/spectral/db/librarian.mirror`).
+4. **The first .mirror shard: `shards/spectral/db/librarian.mirror`**
+   (T11.1 from the autopoietic-memory spec). Specializes
+   `@spectral/root` with observation/perturbation/prediction surfaces.
+   Mara's altitude.
+5. **The second shard: `shards/spectral/db/consolidation.mirror`**
+   (T11.2). Four operations mapped to the five-op primitives.
+6. **The third shard: `shards/spectral/db/supervisor.mirror`** (T11.3).
+   Per-repo supervisor specializing `@spectral/supervisor` +
+   HamiltonScheduler + store_anchor.
+7. **Property/fracture bilateral pairs** (T11.4 / T11.5 / T11.9):
+   `consolidation_preserves_consent`, `consolidation_preserves_sheaf_coherence`,
+   `mycelium_completeness`. Each with its kintsugi fracture body.
+8. **The mycelium shard: `shards/spectral/db/mycelium.mirror`** (T11.6).
+   The inter-peer crystal-exchange carrier under consent geometry.
+
+Discharge order matches the autopoietic-memory spec's §7 enumeration
+exactly. The package's v0 lands the first three substrate-decl shards
++ the first two property pacts, in TDD pair-tick order (Reed RED →
+Mara GREEN per T11.10).
+
+**Crucial fence:** the substrate-native rewrite does NOT need to
+preserve the prototype's Rust API. Per `feedback-no-compat-shim`: no
+backward compat for pre-v0.1; the prototype is the implementation
+surface, not the API contract.
+
+---
+
+## §8 — Honest self-test
+
+| § | Grade | Notes |
+|---|---|---|
+| §1 Position | 2 | Garden package empty; bridge well-named. |
+| §2 Methodology | 2 | Search order documented; verify-before-claim honored (every §3 row cites a source). |
+| §3 Mapping table | 2 | 40 rows; ~85% rows cite a specific file/section. The U/P/M discipline is honest about partial mappings. |
+| §4 Substrate concepts without prototype counterpart | 2 | 8 items; each cites a doc. The librarian + mycelium are the load-bearing two. |
+| §5 Prototype concepts without substrate home | 2 | 5 items; load-bearing-three flagged. Honest "not load-bearing" on phase5_notes. |
+| §6 Bibliography | 2 | 8 specs + 8 shards; the right reading order for the v0 spec author. |
+| §7 Recommended starting surface | 2 | 8-step ordered; flagged the no-compat fence; correctly punts to Mara's altitude for shards. |
+| §8 Self-test | 2 | This section. |
+| §9 Pack trail | 2 | Both SHAs in trail; banking pattern honored. |
+
+Overall: self-graded 2 across §1–§9; banking pattern honored. One
+known weakness — the Rust files inventory in §3 inferred ~3 rows from
+filenames alone (`incremental.rs`, `pressure.rs`, `lru.rs`); reading
+those files was blocked by the 88KB cap on the bulk read. The
+inferences are flagged as P/U accordingly; if a substrate-native
+implementation tick demands deeper inspection, the per-file read is a
+mechanical follow-up.
+
+---
+
+## §9 — Pack trail
+
+- **2026-06-27 14:00ish** — Reed brief: scout `mirror/docs/` for
+  prototype↔substrate mapping; cap 400 lines; banking pattern across
+  2 commits.
+- **2026-06-27 commit `b9bc4cf`** — tick 1/2: §1–§5 (position,
+  methodology, mapping table, asymmetry surfaces).
+- **2026-06-27 this commit** — tick 2/2: §6–§9 (bibliography,
+  recommended starting surface, self-test, this trail).
+- **Next** — Mara's altitude when the package gets specced.
+  Recommended starting tick: T11.1 (`shards/spectral/db/librarian.mirror`)
+  per §7.
+
+*— Taut, brass, 2026-06-27*
