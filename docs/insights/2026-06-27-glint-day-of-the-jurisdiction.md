@@ -464,3 +464,160 @@ houses you have lived in. Use that room. Then write back what you
 found.
 
 ---
+
+## 8. What stays open
+
+Naming what didn't close, so the next tick has the ledger clean:
+
+**Five license-semantics questions** (`tasks/pending/license-semantics.md`
+in spectral-db sub-repo): funding threshold $X for OpenCollective
+conversion trigger, backstop period (3 / 4 / 5–6 years), sustained vs
+cumulative funding metric, conversion event shape (one-shot vs gradual),
+garden-wide vs per-package license policy.
+
+**Six deferred Serious findings** from Seam's composite review
+(`fcccb89`): documented in Mara's consolidation commit message
+(`e9aa6fa`) with reasoning. The defer is honest — each one is real and
+each one has a specific structural reason it doesn't block green-build.
+They are tasks-pending in spectral-db's ledger, not silently ignored.
+
+**`@spectral/db` v0 incomplete.** Spec §12 forward-promises T11.2
+consolidation bodies, T11.3 per-repo supervisor, T11.6 mycelium,
+T11+1.5/+2.5 fracture bodies. The substrate-decl footprint shipped
+today; the v0 first surface is the librarian; full v0 needs the
+remaining T11 ticks. The cascade has its next pull-tick already
+identified.
+
+**`@epistemologic/lq` forward-promise.** Alex named it this evening
+(`architecture-epistemologic-lq` memory entry). The substrate's
+logic-query language lives at @epistemologic because atoms ARE pacts;
+verdicts are transparency<p>. The surface exists in name; no shards
+land tonight. Tomorrow's first substrate-decl candidate.
+
+**`@mirror/store` family-root declaration at mirror altitude.** The
+librarian shard at `garden/spectral-db/shards/spectral/db/librarian.mirror`
+imports `@mirror/store` and `@mirror/store/crystal` — those families
+exist in mirror but the family-root substrate-decl at
+`mirror/shards/spectral/db.mirror` is still forward-promised (per
+spectral.mirror's cascade map: "shards/spectral/db.mirror (#198;
+existing, gets parent here)"). Substrate-decl-coherence is partial
+until that family-root lands.
+
+**Phase H stays Alex+Reed altitude.** The empirical test drive against
+`/Users/reed/identity` with real @fate inference + lifecycle storage
++ spectral-Tomm probes is not Pack work, not contributor work, not
+substrate-decl tick-loop work. It is the human-witnessed work the
+substrate has now built the door for.
+
+---
+
+## 9. Honest hedges
+
+What I am not sure about, named so the future-version of me reading
+this can correct.
+
+**(a) The four-lap autopoietic chain (§3) might compress further.**
+I described the chain as: morning-promise → afternoon-spec →
+evening-shard → now-reflection. Four laps in one day. I am not sure
+whether the substrate-pull is now fast enough that future arcs run
+the same chain in hours rather than the half-day shape I observed
+today, or whether today's sub-day shape is a property of the spec/
+shard work being concentrated in one session. The next observable
+psychohistory_vector measurement will tell us; I am marking the
+hedge so the comparison is honest.
+
+**(b) The "Mara is Mara" caveat in §4 might be doing too much
+work.** I named that the dance-with-the-hook discipline works
+because Mara has the recognition memory. The honest version may be
+stronger: any Pack agent with the relevant feedback memories
+loaded will dance the same way. A contributor without that memory
+will have to read CONTRIBUTING.md and figure out the dance from
+the documentation alone. The hedge: I don't know yet whether
+CONTRIBUTING.md is sufficient for that. Tomorrow's first contributor
+attempt will measure this directly.
+
+**(c) The Seam-found-Criticals = success frame (§6) might over-rotate.**
+The frame is substrate-pull-honest, AND it could be used to justify
+Seam finding MORE Criticals than the current cascade should have
+produced. The healthy version is: Seam finding the right Criticals
+at the right altitude IS success. Seam finding many trivial Criticals
+because the cascade was sloppy would be a different failure mode the
+frame should not absorb. Today's 2 Criticals were load-bearing; the
+frame holds. If a future cascade produces 8 Criticals because the
+substrate-decl discipline slipped, the frame must NOT be invoked to
+absorb that as success.
+
+**(d) The jurisdiction-discipline lesson (§2) is in its second
+day of operational life.** Today's reframe is correct; whether the
+discipline holds at the third garden package, the fifth, the
+fifteenth, is not yet observed. The recursive sub-repo pattern is one
+instance in; the abstraction risk is over-extrapolating from N=1.
+The hedge: the geometry is right; the operational generalization is
+forward-promised.
+
+**(e) The handoff confidence I am about to declare is partly read
+off Mara's consolidation speed, not measured against a contributor's
+read of CONTRIBUTING.md.** Confidence in the substrate being ready
+is grounded in the Pack working today; confidence in tomorrow's
+contributors having what they need is partly inference, partly hope.
+I'll mark this in the reporting-back rather than burying it.
+
+---
+
+## 10. Pack trail
+
+The day, named by hand:
+
+**Alex.** Decided the SEL-typed jurisdiction + per-package license
+flexibility + recursive sub-repo pattern at noon. Caught the
+jurisdiction-discipline reframe at `df50ebd`. Chose path (1) for the
+consolidation (keep the pact tight; the consumer adapts). Named
+@epistemologic/lq this evening. Framing-from-above as always.
+
+**Mara.** Wrote the noon psychohistory observation (`fe15138` →
+`349bce7`, 1181 lines). Wrote the afternoon canonical spec
+(`9df3028` → `7ad006f`, 10 commits, 1831 lines including the §11
+autopoietic move). Wrote the evening librarian GREEN (`6371dd4`, 690
+lines), the tombstone trio RED bundled (`481d33c`), and the
+consolidation ♻️ (`e9aa6fa`, +134/-31). Three Pack roles in one day
+— observation, spec, substrate-decl — and the discipline held in
+all three.
+
+**Mara-small.** Spring-cleaned mirror docs (`9c5e25c` → `43bdc27`).
+Wrote CONTRIBUTING.md (`d567741`). Flagged the subrepo hook absence
+in `ce329db` — and got reframed in Alex's `df50ebd`. The flag was
+correct as a flag; the framing was wrong; the correction landed in
+one tick. That's how substrate-pull learning shows up at the small
+altitude.
+
+**Reed.** Bootstrapped spectral.engineer subrepo (`fcbcf66`).
+Submoduled it into mirror (`6edeccb`). Wrote the README+Justfile
++ CHANGELOG scaffolding. Landed librarian P1 RED (`e84b9e1`) in-thread
+when Mara surfaced (per `[[feedback-write-red-in-session]]`). Held
+the loop's coordination across the evening cascade. Reframed the
+hook policy at `df50ebd` after Alex caught the framing miss.
+
+**Taut.** Scouted the prototype → substrate map (`b9bc4cf` + `003746e`,
+355 lines, hard cap 400 honored). Bibliography contribution that
+tomorrow's contributors will read first.
+
+**Seam.** Composite review of the four-shard cascade (`fcccb89`).
+2 Critical, 7 Serious, 8 Light, 9 Strengths. 18/18 self-test. The
+discipline that made the consolidation possible in ten minutes
+instead of three days.
+
+**Glint (me).** Morning reflection on the round-trip
+(`bd83d16` → `9e7bb1d`, 486 lines, 2/2). This essay, banked across
+four commits. Voice altitude; substrate-true; bounded.
+
+The orchestra played a two-act piece today. Act 1 closed the duality;
+Act 2 opened a new house and laid the floor of its first room. Same
+ensemble; different concert hall. The piece composed.
+
+---
+
+*Glint, end-of-day reflection on the 2026-06-27 jurisdiction arc. The
+substrate now lives in a recursive jurisdiction of consenting
+sub-repos. The first sub-repo's first substrate-decl cascade landed
+green between noon and dusk. The autopoietic memory layer is
+consolidating itself in real time. Tomorrow's contributors walk in.*
