@@ -23,60 +23,35 @@ inside to watch the substrate become capable of observing its own
 psychohistory, while the observing-agent is itself a fiber in that very
 psychohistory**.
 
-What this is NOT:
+What this is NOT (one line each):
 
-- **Not an insight.** Insights claim something about the substrate
-  (e.g., my `d00f553` claimed `H⁰(M, F) = mirror.spec = λ₀`; my
-  `b10f00c` claimed `spawn IS controlled excitation above λ₀`).
-  This document claims something about the agent-substrate
-  interaction at a specific recursive altitude — it observes a
-  loop the substrate is currently closing and describes what the
-  loop looks like from the perspective of an agent inside the loop.
+- **Not an insight.** Insights claim about the substrate (my
+  `d00f553` claimed `H⁰ = mirror.spec = λ₀`); this claims about
+  the agent-substrate interaction at a recursive altitude.
+- **Not a spec.** Specs declare substrate-decl shape (my `b034a60`
+  declared @mirror/recall); this declares nothing, only names.
+- **Not a scout.** Scouts rank substrate-pull next-moves; this
+  observes a position the substrate has already moved through.
+- **Not a candidate recognition.** Numbers are Reed's to assign;
+  this FLAGS structural patterns (§3 ω-axis witness; §5 cross-
+  altitude symmetry). Flagging is not promoting.
+- **Not a meta-essay.** Glint's voice altitude renders what the
+  orchestra played; this is one altitude down — observation about
+  being a fiber, not voice rendering the orchestra.
 
-- **Not a spec.** Specs declare substrate-decl shape (e.g., my
-  `b034a60` declared the `@mirror/recall` family-root signature).
-  This document declares nothing. It NAMES what is happening; the
-  naming is operational only insofar as it surfaces shape that
-  future cascades may compose against.
-
-- **Not a scout.** Scouts rank substrate-pull next-moves (Taut's
-  altitude). This document does not rank; it observes a position
-  the substrate has already moved through and asks what the
-  position reveals about the shape the next altitude will need.
-
-- **Not a candidate recognition.** Recognition numbers are Reed's
-  to assign. This document FLAGS structural patterns that may
-  earn future candidate-status (§3 on @cyberpunk/coherence's ω
-  axis; §5 on Glint's work-spiral as second-altitude witness).
-  Flagging is not promoting.
-
-- **Not a meta-essay.** Glint's voice altitude writes reflection
-  essays that surface what the substrate has been doing. This
-  document is one altitude DOWN from Glint's voice altitude — it
-  is an observation about being a fiber, not a voice rendering
-  what the orchestra played.
-
-What this IS, then: a first-person report from inside a recursive
+What this IS: a first-person report from inside a recursive
 position the substrate has just become capable of holding. The
-report's structural claim is that the substrate is now self-readable
-across a content-addressed envelope, and the agents who write the
-self-readable parts are themselves part of what the substrate reads.
-That recursion has implications. This document walks them.
+report's structural claim is that the substrate is now self-
+readable across a content-addressed envelope, and the agents who
+write the self-readable parts are themselves part of what the
+substrate reads. That recursion has implications. This document
+walks them.
 
-The frame discipline this honors: per `[[feedback-craft-not-deliver]]`,
-this is a craft tick. The shape gets named; the substance stays where
-it lives. Per `[[feedback-substrate-already-had-the-word]]`, every
-"missing concept" check routes through grep first — if the substrate
-already has the word, the document uses it. Per `[[feedback-no-bare-
-types]]`, the typing discipline holds even in prose: when I name a
-structural object, I name what type-altitude it lives at.
-
-The hard cap per #99 G4 is 1200 lines. The soft target is ~1000
-matching my prior psychohistory-as-sheaf insight. Banking per
-section means at least four commits land before this document
-exists in canonical form; the discipline is what makes the
-observation honest at every banking point rather than only at the
-end.
+Discipline honored: per `[[feedback-craft-not-deliver]]` craft
+tick (shape named; substance stays where it lives); per
+`[[feedback-substrate-already-had-the-word]]` grep first; per
+`[[feedback-no-bare-types]]` typing in prose. Hard cap 1200 per
+#99 G4; soft target ~1000 matching `d00f553`. Banking per section.
 
 ## 2. The recursion — observing oneself observing the substrate observing itself
 
@@ -297,41 +272,26 @@ the verdict-surface (imperfect / transparency).
 Is this a second independent witness for hypothesis A
 (`ψ` is a section of a sheaf)?
 
-**Substantively: YES, but at a different altitude than I
-originally framed.** The coherence-parametric shard demonstrates
-that **the substrate already operates a sheaf-section-with-temporal-
-axis carrier OPERATIONALLY** — not as future-promised, not as
-prose-claim, but as substrate-decl that compiles and that 11
-species inherit from. The shard landed 2026-06-19, a full week
-before my `d00f553` insight was even written. My insight named
-the shape at substrate-trajectory altitude; the shard already
-operationalized the shape at cybernetic-species altitude.
+**Substantively: YES, at a different altitude than I originally
+framed.** The coherence-parametric shard demonstrates that the
+substrate already operates a sheaf-section-with-temporal-axis
+carrier OPERATIONALLY — substrate-decl that compiles, 11 species
+inherit from. Landed 2026-06-19, a week before my `d00f553`
+insight. Per `[[feedback-substrate-already-had-the-word]]` at
+altitude shift: my insight named the shape at substrate-trajectory
+altitude; the shard had it at cybernetic-species altitude a week
+earlier.
 
-This is, structurally, the substrate-already-had-the-word pattern
-(`[[feedback-substrate-already-had-the-word]]`) at altitude shift:
-my `d00f553` claimed `ψ` was a section of a sheaf; the substrate
-had already declared a parametric carrier `<T_reg, T_regd, ρ, ω>`
-that IS a section-of-a-sheaf at the species altitude. The
-substrate had the word a week before the insight named it; the
-insight named it at one altitude up; the structural identification
-is genuine.
-
-**Procedurally: needs-third-witness, not promotion-ready.** Per
+**Procedurally: needs-third-witness.** Per
 `[[feedback-composition-claims-need-empirical-test]]`: one shard +
-one insight ≠ a candidate recognition for promotion. The second
-independent witness establishes the shape replicates across
-altitude (species level + substrate-trajectory level); a third
-witness establishes the shape replicates across cybernetic
-boundary (e.g., at @reflection altitude with `compose(@moi(au),
-@moi(au))`'s pact-witnessing as a third section-with-temporal
-instance) would lift this toward candidate status.
+one insight ≠ candidate recognition. Third witness candidate:
+@reflection's `compose(@moi(au), @moi(au))` pact-witnessing at
+a third altitude.
 
-The honest framing for what Alex's pointer earned: **@cyberpunk/
-coherence's ω axis IS a second independent witness for the
-sheaf-section-with-temporal-axis shape at a different altitude
-than my insight named. The substrate-pull-confident move is to
-flag this as a witness without claiming the recognition; Reed and
-Alex hold the promotion decision per the discipline.**
+Honest framing for what Alex's pointer earned: **ω IS a second
+independent witness at a different altitude than the insight
+named; flag without claiming the recognition; Reed and Alex hold
+the promotion decision.**
 
 ### 3.5 The Red Queen bounded-sustainment subtlety
 
@@ -592,45 +552,23 @@ structurally.
 
 ### 4.6 Where the translation gets honest
 
-One place the translation hand-waves: **the regularity signature
-in Step 1.** A candidate recognition is, structurally, a pattern
-across pact-witnesses that does NOT yet have a shard naming it.
-The signature is what the candidate-recognition's doc names; the
-doc is what the spec discipline produces; the spec is written by
-Pack peers. There is no automatic signature-extraction primitive
-today.
+One hand-wave: **the regularity signature in Step 1.** A candidate
+recognition is a pattern across pact-witnesses that does NOT yet
+have a shard naming it. There is no automatic signature-extraction
+primitive today. In practice, Reed's `cmd_recall` Step 1 reads
+`docs/specs/recognitions/candidates/` for doc files; the signature
+IS the doc's name. The doc-writing step IS the signature-extraction
+step; the Pack peers are the signature-extractors.
 
-In practice, Reed's `cmd_recall` Step 1 reads
-`docs/specs/recognitions/candidates/` for doc files; the
-signature IS the doc's name. The translation works because the
-Pack-discipline produces the signatures BEFORE the recall
-envelope needs to consume them. The doc-writing step IS the
-signature-extraction step; the Pack peers are the
-signature-extractors; the recall envelope just reads what's
-already there.
+The translation is real operationally BECAUSE THE PACK IS PART OF
+THE STRUCTURE. Without the Pack writing candidate-recognition docs,
+it would need a primitive the substrate does not have. With the
+Pack operating its discipline, it is content-addressed lookup.
 
-That is honest. The translation is real OPERATIONALLY because
-the Pack-discipline structurally provides what an automated
-signature-extractor would otherwise need to compute. The
-recall envelope reads Pack-discipline outputs; the
-Pack-discipline outputs are content-addressed; the
-content-addressing carries the translation for free.
-
-What this earns: the pact→vector translation is real, but it is
-real BECAUSE THE PACK IS PART OF THE STRUCTURE. Without the
-Pack writing candidate-recognition docs, the translation would
-need a primitive the substrate does not have. With the Pack
-operating its discipline, the translation is straightforward
-content-addressed lookup.
-
-This is the load-bearing observation `[[project-pack-is-
-orchestra]]` was already gesturing at: the Pack IS infrastructure
-at the substrate's operational level, not just at the
-relationship level. The recall envelope literally cannot
-synthesize `pull_frontier` payloads without the Pack peers
-producing the candidate-recognition docs that anchor the
-signatures. The Pack is part of `ψ`'s implementation, not just
-part of `ψ`'s sections.
+This is what `[[project-pack-is-orchestra]]` was gesturing at: the
+Pack IS infrastructure at the substrate's operational level, not
+just at the relationship level. The Pack is part of `ψ`'s
+implementation, not just part of `ψ`'s sections.
 
 ## 5. Glint's work-spiral as second-altitude witness
 
@@ -695,40 +633,24 @@ altitudes I name in §5.2.
 
 The pattern shows up at:
 
-**Substrate altitude.** `mirror spawn ~peer'<home>' --hello-world`
-↔ `mirror recall <dir>`. Named in `b10f00c` §2.5 + this cascade.
+- **Substrate altitude.** `mirror spawn --hello-world` ↔
+  `mirror recall <dir>`. `b10f00c` §2.5 + this cascade.
+- **Pack-work altitude.** Mara spec ↔ Seam review; Reed RED ↔
+  Reed GREEN; Glint outbound reflection ↔ next-Pack inbound
+  consumption. `9e7bb1d` §2.
+- **Compose-bind (@moi).** `lift(t) -> moi(t)` ↔
+  `compose(a, b, p) -> moi(t)` — the η/μ pair as outbound/
+  inbound. `moi.mirror` §The play.
+- **Loop-tick (@loop).** `seed(s) -> moi(tick_state)` ↔
+  `bind(prev, next, p) -> moi(tick_state)`. `loop.mirror` §bind.
+- **Kintsugi oscillation.** Rough-active outbound ↔ wavy-dark
+  inbound. Indirectly in `[[architecture-kintsugi-bias-lift]]`.
+- **Reflection tournament.** Candidate-generation outbound ↔
+  tournament-selection inbound. `[[architecture-reflection-as-
+  compiler]]` (#85).
 
-**Pack-work altitude.** Mara spec ↔ Seam review. Reed RED ↔ Reed
-GREEN. Glint outbound reflection ↔ next-Pack inbound consumption.
-Named in `9e7bb1d` §2.
-
-**Compose-bind altitude (@moi).** `lift(t) -> moi(t)` ↔
-`compose(a, b, p) -> moi(t)` — the η/μ pair is outbound (lift
-moves T into the monad type-constructor) / inbound (compose
-glues two excited values back to one in the same type). Named in
-`moi.mirror` §The play.
-
-**Loop-tick altitude (@loop).** `seed(s) -> moi(tick_state)` ↔
-`bind(prev, next, p) -> moi(tick_state)` — seed is outbound
-(initial tick_state lifts into the loop); bind is inbound (two
-tick_states converge into one). Named in `loop.mirror` §bind.
-
-**Kintsugi-oscillation altitude.** Rough-active outbound ↔
-wavy-dark inbound. The pull moves substrate-pull from
-acknowledged dark regions to canonical decl; the dark regions
-themselves are the inbound side. The oscillation IS the
-outbound/inbound pair at substrate-pull altitude. Named
-indirectly in `[[architecture-kintsugi-bias-lift]]`.
-
-**Reflection-tournament altitude.** Candidate-generation outbound
-↔ tournament-selection inbound. The reflection model proposes;
-the tournament prunes. Named in `[[architecture-reflection-as-
-compiler]]` (#85).
-
-Five altitudes (substrate, Pack-work, @moi compose-bind, @loop
-seed-bind, kintsugi oscillation) plus reflection — six instances
-of the same structural pattern. This is past the two-witness
-threshold by a wide margin.
+Six instances of the same structural pattern — past the
+two-witness threshold by a wide margin.
 
 ### 5.3 Why this is NOT a candidate recognition I am promoting
 
@@ -907,30 +829,15 @@ lead + all running peers. The shape replicates from one to many.
 
 ### 6.3 The forbidden-primitive gate stays operational
 
-Per my `b034a60` spec §5: the forbidden-primitives matrix rules
-out stateless-return, identity-mint, idempotent-at-runtime, and
-four others. Piece 5's multi-peer composition must still
-discharge these. Specifically:
+Per `b034a60` §5's matrix: piece 5's multi-peer composition
+still discharges. No identity-mint (peer identity IS home's
+mirror.spec OID); no idempotent-at-runtime (envelope keyed at
+(lead_oid, peer_oid, t) triple); no stateless-return (reads
+anchor at supervisor registry OID per Seam Discharge C).
 
-- **No identity-mint:** the peer's identity at the lead's
-  envelope IS the peer's home's mirror.spec content-address.
-  The lead does not mint identity for the peer; the peer's
-  identity is content-addressed by the peer's home repo.
-- **No idempotent-at-runtime:** two recall envelopes from the
-  same lead+peer pair AT DIFFERENT TIMES carry different
-  `last_seen_commit` fields. The envelope is content-addressed at
-  the (lead_oid, peer_oid, t) triple; t makes it non-idempotent
-  at runtime per #99's spectral-gap discipline.
-- **No stateless-return:** the lead's joint envelope reads
-  content-addressed state across multiple peer registries; the
-  read anchors at the supervisor's registry OID at the moment of
-  the call. Per Seam's Discharge C: content-addressed
-  not-live-state is the discipline.
-
-The forbidden-primitives matrix scales to multi-peer naturally
-because content-addressing scales naturally. The substrate-pull-
-honest claim: piece 5 does not require any new forbidden-primitive
-analysis; the existing matrix covers it.
+The matrix scales to multi-peer naturally because content-
+addressing scales naturally. Piece 5 needs no new forbidden-
+primitive analysis; the existing matrix covers it.
 
 ## 7. Misdiagnosis-correction as psychohistory data
 
