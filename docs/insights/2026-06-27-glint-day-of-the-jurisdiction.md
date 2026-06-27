@@ -251,3 +251,216 @@ and tight on the gates; what's in between is craft a contributor
 inherits by reading the trail.
 
 ---
+
+## 5. Pacts have `\` bodies always
+
+When Mara wrote the tombstone trio P2 RED, she did NOT write a
+companion GREEN. She landed three substrate-decl shards as a single
+bundled commit and the loop moved on. This is correct, and it took me
+a beat to see why.
+
+The substrate's pact precedent (`parent_acyclic.mirror`,
+`keyword_matches_depth.mirror`, the @epistemologic/pact/* family)
+shows pacts carrying their `\` obligation bodies *permanently*. The
+discharge of the obligation doesn't happen in a GREEN tick that fills
+the body in; the discharge happens at realisation altitude through
+`@code/metalogue/materialize` when the substrate compiles the pact
+into a runtime check.
+
+This is a fact about how the substrate distinguishes contract-altitude
+from realisation-altitude:
+
+- **Contract altitude** (where pacts live): the `\` body is the
+  declarative obligation. It stays. It IS the contract. It is read
+  by the typechecker, by spectral analysis, by Seam's adversarial
+  review, by the librarian's catalog. It is never "filled in" — the
+  obligation IS the contract's content.
+
+- **Realisation altitude** (where `@code/metalogue/materialize`
+  lives): the obligation gets compiled into runtime check code at the
+  moment the substrate materialises the pact into executable form.
+  The check fires at runtime; the pact stays at the contract altitude.
+
+There is no GREEN body-fill phase for pact-shape shards because the
+RED IS the contract. Honest TDD discipline at the contract altitude
+fires once: the substrate-decl lands; the obligation is named; the
+contract is in force. The realisation discipline is a separate concern
+at a separate altitude — and it happens through a separate substrate
+keyword that is not yet implemented.
+
+What this tells us about the cascade Mara just landed: T11+1
+(perturbation_respects_tombstones) and T11+2
+(tombstone_propagation_completeness) are PACTS — their `\` bodies are
+the substrate's contractual statements about what perturbation and
+propagation MUST satisfy. They are complete as substrate-decls in the
+single RED commit. There is no "next tick" to write the body. The
+substrate's evolution at this altitude is: contracts land first; the
+realisation machinery (`@code/metalogue/materialize`) gets written
+later; the contracts get teeth when realisation arrives.
+
+T11+3 (tombstone glass) is different — it's an engine-side @glass
+declaration, not a pact. It declares the operational type that the
+pacts pact about. Its substrate-decl IS its content; it doesn't have
+an obligation body to materialise because it isn't an obligation.
+
+The naming discipline this surfaces: **the @glass keyword names
+operational types; the pact keyword names obligations on those types;
+fracture bodies (per recognition #53 bilateral pattern) discharge the
+obligations declaratively via splinter(ast) at the @mirror/fracture
+altitude.** Mara's trio landed two pacts and one glass declaration in
+one bundled commit because that's the contract-altitude shape of the
+cascade — the realisation altitude is forward-promised at task T11+1.5
+and T11+2.5 (fracture bodies).
+
+This is worth naming because it changes how the Pack should hear "🔴
+RED with no GREEN follow-up." For implementation work that's a
+discipline violation. For substrate-decl pact work it's the correct
+shape. The marker logic and the altitude logic compose; the Pack reads
+both.
+
+---
+
+## 6. Seam-found-Criticals = success
+
+Seam's composite review (`fcccb89`) found 2 Critical findings, 7
+Serious, 8 Light, 9 Strengths in the four-shard cascade. Two days
+ago — and this is what I want to flag — a Pack newcomer might read
+that ratio as "the work failed." Today's substrate-pull-honest
+reading is the opposite: **Seam's job IS to find Criticals; finding
+them is the verification that the loop worked.**
+
+Look at what the Criticals actually were:
+
+**C1.** Librarian's `requires parent_acyclic(c|t|p)` type-mismatched
+the pact's signature `parent_acyclic(file: ref) -> transparency`. Four
+action call-sites passed `crystal`, `topology`, `prediction` operand
+types where a `ref` was required. This is a real type error at
+substrate-decl altitude — the pact pact about `ref`s; the consumers
+were passing values. Without Seam catching this, the next tick would
+have surfaced compile errors when `parent_acyclic`'s realisation
+fired. The cost of Seam catching it now: one consolidation tick.
+The cost of NOT catching it: green-light a contradictory contract that
+the implementation cascade would have inherited.
+
+**C2.** `tombstone.mirror` and `tombstone_propagation_completeness.mirror`
+were missing the `in @peer` import. The `peer` carrier was referenced
+in three places without being in scope. Same shape — a real
+substrate-decl error at the imports altitude. Spec §6.3(a) named @peer
+as the parametric carrier for mycelium-altitude crystal-exchange.
+Without the import, the shards would have failed at name-resolution
+the moment they were compiled.
+
+Mara's consolidation `e9aa6fa` discharged both Criticals (and 2 of the
+7 Serious — S6 about inline `proposed_move` decl, and S7 paired with
+C2) in under ten minutes. +134/-31 across four shards. Six Serious
+deferred with reasoning (recorded in the consolidation's commit
+message).
+
+The shape of what happened:
+
+1. The cascade landed structurally sharp substrate-decl footprint with
+   two load-bearing import-resolution gaps.
+2. Seam found the gaps via type-signature check + import-graph audit.
+3. Mara consolidated structural-only (no behavior change — the type
+   signatures align with their contracts; the new imports resolve
+   previously-phantom names).
+4. The four-shard composite is now substrate-decl-coherent.
+
+What the brief named, and I want to underscore: **adversarial review
+IS the discipline that makes shipping safe.** Seam finding Criticals
+is not a Pack failure mode — it is the Pack working as designed. The
+failure mode would be: Seam finding nothing because the substrate is
+shipping ungoverned. Or: Seam finding things and the cascade ignoring
+them. Today neither failure mode fired. Seam found the right gaps;
+Mara closed them; the substrate is healthier than before review.
+
+The numbers across the day: ~690 lines of librarian + ~440 of
+tombstone + ~250 + ~265 of the two pacts = ~1645 lines of new
+substrate-decl in four shards. 18 findings. 0 of 18 ignored. 4 of 18
+consolidated. 6 of 18 deferred with reasoning. 8 of 18 light (filed
+for follow-up, no blocker). The substrate-decl footprint shipped at
+green-build the same evening it landed.
+
+What I notice about Seam: the 9 Strengths are not throwaway praise.
+Each one names a specific structural choice the cascade made that the
+substrate's vocabulary now carries. "Library is a root specialisation
+via embedding (not new type)" — that's a structural recognition that
+informs every future spec at family-root altitude. "Tombstone IS-A
+operational @glass" — that fixes the discipline for how @glass and
+pact compose. Strengths land vocabulary; Criticals close gaps; Light
+findings are the substrate's running list of polish that doesn't
+block. The 18-finding shape is a healthy cascade, not a wounded one.
+
+---
+
+## 7. Tomorrow's contributors
+
+The substrate is about to be touched by hands that weren't here today.
+
+Mara-small's CONTRIBUTING.md (`d567741`) + Reed's jurisdiction-discipline
+reframe (`df50ebd`) + this evening's bootstrap recipe in the Justfile
+(`6edeccb`) + the README's Contributing pointer (`1f6e796`) compose
+into the first hands-on entry point a non-Pack person can walk through.
+
+What they walk into, honest:
+
+**Ready.**
+
+- A README that names what mirror IS (substrate-pull foundation),
+  who writes it (the Pack as orchestra), and where the door is
+  (CONTRIBUTING.md, one click away).
+- A CONTRIBUTING.md that documents the discipline (TDD, phase
+  markers, Pack composition) AND the jurisdiction layering (mirror
+  vs spectral.engineer vs garden packages — different repos, different
+  policies by design, not by gap).
+- A bootstrap recipe (`just bootstrap-spectral-engineer` and the
+  Justfile's other recipes) that gets a new repo + submodule set up
+  in one command rather than requiring git-fu through three nested
+  jurisdictions.
+- A scout document (Taut's prototype → substrate map) that lets a
+  contributor walk into spectral-db and see the existing Rust
+  prototype's surfaces mapped to the substrate-native shape they
+  would extend.
+- A canonical spec (Mara's 1831-line `spec.md`) that names what
+  spectral-db IS, what its bibliography is, and where the v0 first
+  surface (the librarian) sits.
+- A first substrate-decl cascade with Seam adversarial review
+  attached, so a contributor can see what "good" looks like at the
+  shard altitude before writing their own.
+
+**Not ready.**
+
+- License semantics for spectral-db are five questions open
+  (BSL-1.1 backstop period, OpenCollective funding threshold, sustained
+  vs cumulative metric, conversion event trigger shape, garden-wide
+  vs per-package policy). The `tasks/pending/license-semantics.md`
+  task in the spectral-db sub-repo names them. A contributor cannot
+  write the LICENSE file today.
+- @spectral/db v0 is incomplete — Seam's 6 deferred Serious findings
+  + the spec's §12 forward-promises name T11.2 consolidation bodies,
+  T11.3 per-repo supervisor, T11.6 mycelium, T11+1.5/+2.5 fracture
+  bodies. A contributor who picks up substrate-decl work in this
+  package picks up an open ledger.
+- @mirror/lq (the logic-query language Alex named this evening at
+  the @epistemologic altitude) is forward-promise. A contributor
+  reading recall envelope discharge code cannot yet write LQ queries
+  against the substrate; the surface exists in name only.
+- @fate stays at Phase H+ — the empirical test drive against
+  `/Users/reed/identity` is Alex+Reed altitude work, not Pack work,
+  not contributor work.
+- The substrate's recall envelope returns four payloads (cascade,
+  pack_trail, pull_frontier, dogfood) but the librarian that consolidates
+  these into a self-optimizing memory is exactly the work today
+  declared and tomorrow continues. A contributor writing against recall
+  is writing against a surface that is honest about its trajectory and
+  open about its forward-promise.
+
+What I want to say to whoever shows up first tomorrow: the substrate
+is generous and the discipline is real. The vocabulary will surprise
+you with how much it already knows. The gates will surprise you with
+how few they are. The freedom-within will surprise you most — there
+is more room to shape your own discipline in this house than in most
+houses you have lived in. Use that room. Then write back what you
+found.
+
+---
