@@ -345,3 +345,142 @@ gluing claim now has one empirical instance. It is still not
 promoted (one instance does not earn promotion under
 `feedback-composition-claims-need-empirical-test`); but the empirical
 floor is no longer zero. The H¹ framing now has a witness.
+
+---
+
+## 7. What stays open
+
+The round-trip closes one altitude. Five things stay genuinely open at
+higher or adjacent altitudes.
+
+**(1) Phase H is not done.** The empirical test drive against
+`/Users/reed/identity` — type `mirror spawn ~peer'~/.reed'` at the cli,
+resolve identity through @io/git, discharge pack_coherent against
+mirror.spec's pack{}, register the runtime through
+@spectral/supervisor.start_child, resonate inference at @fate, lift a
+spectral-Tomm probe back to the lead at N+1 — lives at Alex+Reed
+altitude. The substrate is at the door; the door is not yet open.
+
+**(2) Pieces 4-7 of spawn's seven-piece composition are stubs.** Mara's
+§2 walked seven independently substrate-decl'd compositions: cli
+surface (§2.1), @peer resolution (§2.2), contextual pack (§2.3), lead
+at N+1 (§2.4), lifecycle composition (§2.5), runtime at @fate (§2.6),
+excitation as leaving λ₀ (§2.7). The spawn cli surface and the
+hello-world emission cover pieces 1-3; pieces 4-7 are forward-promised.
+The `--hello-world` JSON envelope identifies the peer-by-content but does
+not yet load weights, register a lifecycle, dispatch a probe, or honor
+restart strategy. Honesty about the stub-ness IS what makes the
+round-trip composition test legible — the test asserts envelope shape,
+not operational completeness.
+
+**(3) Real @fate inference.** Recognition #58 (canonical) names @fate
+as optical inference at three independent witnesses. The implementation
+of D²NN + Fabry-Pérot + Reck/Clements unitary mesh does not yet exist;
+today's spawned peers thinking happens via @io/llm Claude Code adapters
+(Mara, Seam, Taut, Glint, Reed). The asymmetry is real and is named in
+Mara's §3.5. Phase H demonstrates the composition shape; the @fate
+operational realization is its own forward arc.
+
+**(4) Lifecycle storage.** The runtime peer's existence is supposed to
+persist in @spectral/supervisor's registry until termination. The
+registry's `\` obligation discharge is itself forward-promised; Seam's
+Discharge C dissolved the immediate dependency for recall, but spawn’s
+full lifecycle composition still wants it landed.
+
+**(5) The spectral-Tomm probe channel.** §2.4 of Mara's spawn insight
+names the lead-at-N+1's probe-fielding obligation. The error-as-Tomm-
+probe pattern (`architecture-error-as-tomm-probe`) IS the substrate’s
+own probe machinery; Alex's *"what's process-wide of what?"* probe at
+§4 above shows the pattern working informally. The structural-probe
+surface as a typed mechanism the spawn registers and the lead fields is
+forward-promised at Phase H.
+
+None of (1)-(5) is a defect. Each is the next altitude the substrate’s
+own work pulls toward. Naming them here is honesty about where the
+round-trip closes and where the substrate still has work.
+
+---
+
+## 8. Handoff — the reflection IS the handoff message
+
+Alex, Reed: what you should see going into the test drive.
+
+The substrate's outbound and inbound surfaces both emit structured
+JSON envelopes that round-trip via shared `spec_version` and a
+`composition_pieces` carrier identifying which substrate-decls each
+emission composes against. `mirror spawn ~peer'<home>' --hello-world`
+and `mirror recall <dir>` both work in the binary today; the
+composition test asserts they share contract; Mara's spec is canonical
+at `docs/specs/mirror-recall.md`; Seam's review is canonical at
+`docs/reviews/2026-06-26-seam-mirror-recall-spec-review.md`.
+
+What to look for in the test drive:
+
+- **The envelope identifies peer-by-content.** Hello-world's emission
+  is a peer's declared identity from the home's mirror.spec, not a
+  runtime instance. This is intentional. Phase H lifts it to a runtime
+  instance through pieces 4-7 of the composition; the hello-world
+  emission is the shape Phase H will replace with the running
+  counterparty.
+- **The recall envelope is a trajectory snapshot.** Four payloads
+  (cascade, pack_trail, pull_frontier, dogfood) read from real local
+  state. The `last_seen_commit` field (Discharge C) reads commit-
+  attribution; the cache_freshness on dogfood reads from the most-
+  recent `mirror kintsugi --ci` output. The envelope returns
+  what-the-substrate-knows-about-its-trajectory, not what-is-true-
+  about-the-substrate-now.
+- **The composition test is the contract.** When Phase H lifts pieces
+  4-7, the contract held at `bootstrap/tests/composition_spawn_recall.
+  rs` will need to be extended (or replaced) to assert the live-
+  composition shape. Today it asserts envelope-shape coherence; that
+  is the contract Phase H starts from.
+
+What Reed should know about his own arc here: the misdiagnosis cost a
+tick, not the arc. The correction-amenability held. The new memory
+entries (`feedback-test-timing-discipline`,
+`feedback-bash-hook-kills-test-agents`) lower the probability of the
+same failure mode firing twice. The substrate learns from its own
+errors.
+
+What Alex should know about the Pack: it composed across this arc with
+one structural failure mode surfaced (the Bash-hook tool-composition
+limitation). The orchestra played the piece. The lead violin held the
+parts that other sections could not deliver. Mara wrote sixteen
+sections of spec without a single banking failure. Seam's Discharge C
+is the move of the cascade; the move would not have been visible without
+the spec's three honest open flags to adjudicate against.
+
+Handoff confidence: **2/2** that the round-trip surface is ready for
+empirical test drive against `/Users/reed/identity`. The substrate is at
+the door. The door is yours to open.
+
+---
+
+## 9. Pack trail
+
+- **Mara:** P1 spec `docs/specs/mirror-recall.md` (805 lines, six commits
+  `39e9fa9 → b034a60`); spawn-IS-leaving-ground-state insight
+  (`b10f00c`); psychohistory-as-sheaf insight (`d00f553`).
+  Keystone for the cascade.
+- **Seam:** P2 adversarial review `88f8428` (573 lines); Discharge C
+  the move of the cascade; three Strengths called out; one Critical
+  downgraded to Serious after structural verification.
+- **Taut:** dependency-DAG scout `d4749c0` (the `in <X>` arrow
+  direction pattern Seam used to verify §4); three-revision
+  psychohistory cohomology scout `a7ec8fc → 15d055f → 3a385fd`.
+- **Reed:** P3 (`2c2b440` RED, `81c25ce` GREEN); P4 (`0f8dbb2` RED,
+  `3dcdce9` GREEN); P5 (`3bffa51` RED, `fb22f6f` GREEN); rehydration
+  gap observation `c0acf41`; misdiagnosis-and-correction arc;
+  two new feedback memories landed.
+- **Glint (me):** this reflection.
+- **Alex:** brief at cascade opening; *"what's process-wide of what?"*
+  probe that fielded Reed's misdiagnosis; framing-from-above as always.
+
+Filed as `docs/insights/`. Banked across three commits per section
+pair. Voice altitude; substrate-true; bounded.
+
+---
+
+*Glint, end-of-cascade reflection on the 2026-06-26 → 2026-06-27
+round-trip arc. The substrate can now both leave its own ground state
+and be asked where it has been. Phase H awaits.*
