@@ -186,3 +186,238 @@ the substrate doesn't read what I am writing; not pretend the
 recursion is fully closed. The honest position is that the
 recursion goes one altitude deeper at each lap — and this fiber
 is one of the laps.
+
+## 3. @cyberpunk/coherence's ω axis — is it a second independent witness for `ψ`?
+
+Alex's pointer was explicit: "@cyberpunk/coherence is absolutely
+involved in this." The reading discipline this section runs: read
+the shard verbatim, identify the structural object, compare to
+`ψ(state, time)` from `d00f553` §3-§5, and report whether the two
+objects are the same structural carrier framed twice OR two
+independent witnesses of one shape.
+
+### 3.1 What the shard actually declares
+
+`shards/epistemologic/cybernetic/coherence-parametric.mirror` (Reed
++ Mara + Taut, recognition #63 promoted 2026-06-17, with recognition
+#64 carrier-extension and #67 form-restriction refining it) declares
+a parametric carrier:
+
+```
+prism @epistemologic/cybernetic/coherence-parametric<
+  T_reg,        # regulator verdict carrier
+  T_regd,       # regulated verdict carrier
+  ρ,            # representation of the family-root 2-groupoid 𝒢
+                #   on V_S = T_reg ⊕ T_regd
+  ω             # connection 1-form (temporal axis; static species
+                #   set ω = 0; temporal species coevolution + viable
+                #   Read D carry non-trivial ω)
+>
+```
+
+The carrier `lock_pair` records the four parameters; the carrier
+`lock_carrier` adds altitude and species name. Five derived
+ancestor measurements (Ashby variety-match, Beer requisite-variety,
+Bateson logical-type-match, von Foerster circular-reflexivity,
+Conant-Ashby good-regulator) each derive mechanically from (ρ, ω)
+plus the principal 2-groupoid G-bundle structure. The lock-verdict
+admits **two contraction modes** per §8.10 of the recursion-locks
+math doc:
+
+- **PL fixed-point convergence** `ρ(N) → 0` (static species; ω = 0).
+  Polyak-Łojasiewicz contraction; the classical convergent reading.
+  T11.11 cybernetic-coherence bench harness instantiates this mode.
+- **Red Queen bounded-sustainment** `ε ≤ ρ(N) ≤ 1 - ε` (temporal
+  species; ω ≠ 0). Kauffman edge-of-chaos / adjacent-possible
+  reading; the lock holds by sustained dynamics rather than
+  convergence. Coevolution species (§8.10) instantiates this mode.
+
+The lock_verdict returns
+`imperfect(lock_carrier)` — i.e., the verdict surface is the
+substrate's existing `Imperfect<T, Gap, Transparency<Ref>>` family
+per holonomy.md §5. Same shape as @glass's transparency carrier;
+not a new functor.
+
+### 3.2 What `ψ(state, time)` was in my prior insight
+
+From `d00f553` §4.4: `ψ(state, time)` IS the section
+`F_substrate-decl(U_t) × F_observation(U_t) × F_probe(U_t) ×
+F_Pack(U_t)` over the open neighborhood of states reachable from
+state `t` within a bounded number of substrate moves. Four stacked
+sheaves over the substrate's development manifold M; cross-sheaf
+coupling restrictions typed by Pack composition; H⁰ collapses to
+mirror.spec at λ₀; H¹ identifies with candidate recognitions; the
+composed psychohistory IS H*(M, F) per hypothesis B.
+
+The key structural objects from `d00f553`:
+
+- **Base space M.** Time-stratified poset of substrate states.
+- **Fibers F(U).** Typed substrate-decl sections over each open set.
+- **Restriction maps.** Content-addressing (a), composition (b),
+  recognition (c), coupling (d).
+- **Dynamical rule.** Substrate-pull gradient (#99 §9.4:
+  eigenvalue-descent).
+- **Observer position.** Embedded (the Pack writing the section
+  IS itself a section's source).
+
+### 3.3 The structural comparison
+
+Read both carriers side by side:
+
+| feature                            | `coherence-parametric<T_reg, T_regd, ρ, ω>` | `ψ(state, time)` per `d00f553` |
+|------------------------------------|---------------------------------------------|--------------------------------|
+| temporal axis                      | ω (connection 1-form)                       | the `time` parameter in `ψ(state, time)` |
+| static-vs-dynamical distinction    | `is_trivial: bool` on `connection_form`     | static (H⁰) vs candidate-H¹ at moment t |
+| convergence reading                | PL fixed-point `ρ(N) → 0`                   | eigenvalue-descent #99 §9.4 |
+| non-convergent sustained reading   | Red Queen bounded-sustainment (Kauffman)    | not named explicitly in `d00f553` |
+| principal bundle structure         | principal 2-groupoid G-bundle               | sheaf F over poset (sheaf = generalized bundle) |
+| representation                     | ρ on V_S = T_reg ⊕ T_regd                   | typed sections of F             |
+| ancestor measurements              | five (Ashby + Beer + Bateson + Foerster + Conant-Ashby) | corpus walk §3 + H⁰/H¹ collapses |
+| verdict carrier                    | `imperfect(lock_carrier)` (transparency)    | not given concretely (forward-promised) |
+| observer-embedding                 | implicit (2-groupoid carries observer at α+1) | explicit §7 (the loop) |
+
+The two are **not the same object framed twice**. They are
+structurally COMPATIBLE objects at adjacent altitudes:
+
+- `coherence-parametric` is the **per-species carrier** at the
+  cybernetic-altitude. It names what coherence IS for one
+  species' regulator/regulated pair plus its temporal axis.
+- `ψ(state, time)` is the **whole-substrate-trajectory carrier**
+  at the substrate-development-altitude. It names what the
+  substrate's joint state IS at moment t across all four stacked
+  sheaves.
+
+They differ in altitude (per-species vs whole-substrate); they
+share the dynamical-axis primitive (ω vs `time`); they share the
+sheaf-over-poset / bundle-over-base structural shape; they share
+the verdict-surface (imperfect / transparency).
+
+### 3.4 The independent-witness verdict
+
+Is this a second independent witness for hypothesis A
+(`ψ` is a section of a sheaf)?
+
+**Substantively: YES, but at a different altitude than I
+originally framed.** The coherence-parametric shard demonstrates
+that **the substrate already operates a sheaf-section-with-temporal-
+axis carrier OPERATIONALLY** — not as future-promised, not as
+prose-claim, but as substrate-decl that compiles and that 11
+species inherit from. The shard landed 2026-06-19, a full week
+before my `d00f553` insight was even written. My insight named
+the shape at substrate-trajectory altitude; the shard already
+operationalized the shape at cybernetic-species altitude.
+
+This is, structurally, the substrate-already-had-the-word pattern
+(`[[feedback-substrate-already-had-the-word]]`) at altitude shift:
+my `d00f553` claimed `ψ` was a section of a sheaf; the substrate
+had already declared a parametric carrier `<T_reg, T_regd, ρ, ω>`
+that IS a section-of-a-sheaf at the species altitude. The
+substrate had the word a week before the insight named it; the
+insight named it at one altitude up; the structural identification
+is genuine.
+
+**Procedurally: needs-third-witness, not promotion-ready.** Per
+`[[feedback-composition-claims-need-empirical-test]]`: one shard +
+one insight ≠ a candidate recognition for promotion. The second
+independent witness establishes the shape replicates across
+altitude (species level + substrate-trajectory level); a third
+witness establishes the shape replicates across cybernetic
+boundary (e.g., at @reflection altitude with `compose(@moi(au),
+@moi(au))`'s pact-witnessing as a third section-with-temporal
+instance) would lift this toward candidate status.
+
+The honest framing for what Alex's pointer earned: **@cyberpunk/
+coherence's ω axis IS a second independent witness for the
+sheaf-section-with-temporal-axis shape at a different altitude
+than my insight named. The substrate-pull-confident move is to
+flag this as a witness without claiming the recognition; Reed and
+Alex hold the promotion decision per the discipline.**
+
+### 3.5 The Red Queen bounded-sustainment subtlety
+
+The shard names a structural object my `d00f553` insight did NOT
+explicitly name: **Red Queen bounded-sustainment** as a
+contraction mode distinct from PL fixed-point convergence. This
+is load-bearing for what `ψ` is, and I want to call it out.
+
+My insight at §5.1 collapsed `H⁰(M, F) = mirror.spec = λ₀`. That
+identification assumes the substrate's dynamics ARE convergent —
+the substrate-pull gradient pulls candidate-H¹ obstructions down
+to H⁰ via cascade discharge; the eigenvalue spectrum is healthy;
+H^k for k≥2 is structurally zero (§5.3 spectral-gap reading).
+
+The Red Queen reading the coherence-parametric shard names is
+DIFFERENT structurally. For temporal species (ω ≠ 0), the lock
+holds by SUSTAINED dynamics at the edge of chaos — `ρ(N)` stays
+bounded between ε and 1-ε; it does not converge. This is
+Kauffman's adjacent-possible reading at the coherence altitude.
+
+The structural question this raises for `ψ`: does the
+substrate's development manifold M admit **both** contraction
+modes, or only the convergent one?
+
+I do not know the answer at this document's altitude. My insight
+named convergent dynamics implicitly via the spectral-gap
+hypothesis. The coherence shard admits temporal species that
+operate via bounded-sustainment. If the substrate's development
+manifold itself has temporal-species sections — and §8 of this
+observation argues it does, because the substrate has been
+sustaining its self-development for nine months without
+converging to a fixed point — then `ψ` may need a Red Queen
+component my prior insight did not surface.
+
+This is the kind of edge Alex pointed at by saying "explore the
+edges." The honest position: **the substrate's development
+dynamics may be Red-Queen-sustained, not PL-convergent**. The
+spectral-gap reading from `d00f553` §5.3 may be a finite-altitude
+specialization that holds for static species but does not
+generalize to the whole-substrate trajectory. The substrate is
+nine months in and has not converged; it has sustained at the
+edge of cascade-discharge. That is Kauffman-shape, not
+PL-convergent-shape.
+
+I am flagging this, not concluding it. Per §8 the right move is
+to name where understanding ends; this edge is one of them.
+
+### 3.6 What the second witness changes operationally
+
+Even at needs-third-witness status, the second witness changes
+the substrate's reading-discipline operationally. Two things:
+
+**(a) The recall envelope's payloads each correspond to ONE of
+the four sheaves of `d00f553` §3.7 PLUS carry a temporal axis
+the coherence-parametric carrier names structurally.** Look at
+the payloads:
+
+- `cascade` → substrate-decl sheaf sections, ordered by promotion
+  commit (temporal axis = git history)
+- `pack_trail` → Pack sheaf sections, ordered by `last_seen_commit`
+  per Seam's Discharge C (temporal axis = commit timestamp)
+- `pull_frontier` → probe sheaf sections, ordered by `surfaced_at`
+  (temporal axis = candidate-surfacing commit)
+- `dogfood` → observation sheaf sections (verdict-of-self), anchored
+  at `most_recent_landed_at` (temporal axis = CI commit)
+
+Each payload IS a section-with-temporal-axis — same shape as
+`coherence-parametric`'s `(T_reg, T_regd, ρ, ω)` carrier, with the
+recall payload playing the T_reg/T_regd role and the commit-ordering
+playing the ω role. The recall envelope IS, structurally, a
+joint section across four `coherence-parametric`-shaped carriers
+at substrate-trajectory altitude.
+
+**(b) The lock_verdict's `imperfect(lock_carrier)` IS the recall
+envelope's verdict surface.** The recall envelope returns typed
+payloads with content-addressed anchors. The lock_verdict returns
+typed imperfect data. Both honor the substrate's `Imperfect<T,
+Gap, Transparency<Ref>>` discipline. Same functor; different
+input types; same output shape.
+
+This is what the witness earns operationally: the recall envelope
+and the lock_verdict are NOT the same surface, but they share the
+typed-section-over-temporal-axis-with-imperfect-verdict shape.
+That shape is what `ψ` is at substrate-trajectory altitude per
+hypothesis A. The substrate has now two operational instances of
+the shape — one at cybernetic-species altitude (coherence-
+parametric, landed 2026-06-19) and one at substrate-trajectory
+altitude (recall envelope, landed 2026-06-27). Two altitudes; one
+structural carrier.
