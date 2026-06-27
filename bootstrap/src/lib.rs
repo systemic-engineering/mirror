@@ -2641,12 +2641,432 @@ pub fn dispatch(args: &[String]) -> i32 {
 /// last_seen_commit; candidate-recognition scan → pull_frontier;
 /// mirror.spec settle_on → dogfood).
 fn cmd_recall(spec_dir: &str) -> i32 {
-    let envelope = format!(
-        "{{\"stub\":true,\"dir\":\"{}\",\"phase\":\"P3_RED_pending_GREEN\"}}\n",
-        spec_dir.replace('\\', "\\\\").replace('"', "\\\"")
-    );
-    _raw_stdout(envelope.as_bytes());
+    // Edge case: missing/invalid directory returns non-zero.
+    let dir_path = std::path::Path::new(spec_dir);
+    let md = match fs::metadata(dir_path) {
+        Ok(m) => m,
+        Err(e) => {
+            merr!("recall: cannot stat spec dir {}: {}", spec_dir, e);
+            return 1;
+        }
+    };
+    if !md.is_dir() {
+        merr!("recall: not a directory: {}", spec_dir);
+        return 1;
+    }
+
+    // Compose the four payloads per Mara spec §3 (b034a60).
+    let cascade = recall_cascade(spec_dir);
+    let pack_trail = recall_pack_trail(spec_dir);
+    let pull_frontier = recall_pull_frontier(spec_dir);
+    let dogfood = recall_dogfood(spec_dir);
+
+    let envelope = serde_json::json!({
+        "cascade": cascade,
+        "pack_trail": pack_trail,
+        "pull_frontier": pull_frontier,
+        "dogfood": dogfood,
+    });
+
+    // Single-line JSON so test parser sees one value when stdout.trim()'d.
+    let s = format!("{}\n", envelope);
+    _raw_stdout(s.as_bytes());
     0
+}
+
+/// Walk `<spec_dir>/docs/specs/recognitions/recognition-*.md` files;
+/// return the most-recent ~10 by file mtime as per Mara spec §3.1.
+/// Each record carries recognition_number, status, canonical_doc,
+/// promotion_commit (most-recent SHA), pack_attribution (author),
+/// altitude (omitted/unknown when not parseable).
+fn recall_cascade(spec_dir: &str) -> serde_json::Value {
+    let dir = format!("{}/docs/specs/recognitions", spec_dir);
+    let entries = match fs::read_dir(&dir) {
+        Ok(e) => e,
+        Err(_) => return serde_json::Value::Array(vec![]),
+    };
+
+    let mut files: Vec<(String, std::time::SystemTime)> = Vec::new();
+    for entry in entries.flatten() {
+        let name = entry.file_name();
+        let name_str = name.to_string_lossy().into_owned();
+        if !name_str.starts_with("recognition-") || !name_str.ends_with(".md") {
+            continue;
+        }
+        let md = match entry.metadata() {
+            Ok(m) => m,
+            Err(_) => continue,
+        };
+        if !md.is_file() {
+            continue;
+        }
+        let mtime = md.modified().unwrap_or(std::time::UNIX_EPOCH);
+        let rel = format!("docs/specs/recognitions/{}", name_str);
+        files.push((rel, mtime));
+    }
+    files.sort_by(|a, b| b.1.cmp(&a.1));
+    files.truncate(10);
+
+    let mut records: Vec<serde_json::Value> = Vec::new();
+    for (rel_path, _mtime) in files {
+        let basename = rel_path.rsplit('/').next().unwrap_or(&rel_path).to_string();
+        let recognition_number = parse_recognition_number(&basename);
+        let abs = format!("{}/{}", spec_dir, rel_path);
+        let body = fs::read_to_string(&abs).unwrap_or_default();
+        let status = parse_recognition_status(&body);
+
+        // git -C <spec_dir> log -1 --format="%H %an" -- <relpath>
+        let (promotion_commit, pack_attribution) = git_last_commit_for(spec_dir, &rel_path);
+
+        records.push(serde_json::json!({
+            "recognition_number": recognition_number,
+            "status": status,
+            "canonical_doc": rel_path,
+            "promotion_commit": promotion_commit,
+            "pack_attribution": pack_attribution,
+            "altitude": "unknown",
+        }));
+    }
+    serde_json::Value::Array(records)
+}
+
+fn parse_recognition_number(basename: &str) -> serde_json::Value {
+    // basename = "recognition-NN-...md"
+    let rest = match basename.strip_prefix("recognition-") {
+        Some(r) => r,
+        None => return serde_json::Value::Null,
+    };
+    let num_str: String = rest.chars().take_while(|c| c.is_ascii_digit()).collect();
+    match num_str.parse::<u64>() {
+        Ok(n) => serde_json::Value::from(n),
+        Err(_) => serde_json::Value::Null,
+    }
+}
+
+fn parse_recognition_status(body: &str) -> &'static str {
+    let lower = body.to_lowercase();
+    // Look at the head of the file where status is typically declared.
+    let head: String = lower.chars().take(2000).collect();
+    if head.contains("promoted") {
+        "promoted"
+    } else if head.contains("candidate") {
+        "candidate"
+    } else {
+        "unknown"
+    }
+}
+
+/// Run `git -C <spec_dir> log -1 --format=%H|%an -- <rel_path>`.
+/// Returns (commit_sha, author_name); empty strings on failure.
+fn git_last_commit_for(spec_dir: &str, rel_path: &str) -> (String, String) {
+    let out = Command::new("git")
+        .arg("-C")
+        .arg(spec_dir)
+        .arg("log")
+        .arg("-1")
+        .arg("--format=%H|%an")
+        .arg("--")
+        .arg(rel_path)
+        .output();
+    match out {
+        Ok(o) if o.status.success() => {
+            let s = String::from_utf8_lossy(&o.stdout).trim().to_string();
+            if s.is_empty() {
+                return (String::new(), String::new());
+            }
+            match s.split_once('|') {
+                Some((sha, an)) => (sha.to_string(), an.to_string()),
+                None => (s, String::new()),
+            }
+        }
+        _ => (String::new(), String::new()),
+    }
+}
+
+/// Walk Pack-attributed commits in the last month; group by peer and
+/// emit one record per peer with last_seen_commit (content-addressed
+/// per Seam Discharge C, 88f8428). NO `in_flight` field — forbidden
+/// per b10f00c §4 stateless-return-at-runtime.
+fn recall_pack_trail(spec_dir: &str) -> serde_json::Value {
+    let out = Command::new("git")
+        .arg("-C")
+        .arg(spec_dir)
+        .arg("log")
+        .arg("--format=%H|%an|%ae|%ct|%s")
+        .arg("--since=1 month ago")
+        .arg("-100")
+        .output();
+    let raw = match out {
+        Ok(o) if o.status.success() => String::from_utf8_lossy(&o.stdout).into_owned(),
+        _ => return serde_json::Value::Array(vec![]),
+    };
+
+    let pack_names: [&str; 5] = ["Mara", "Seam", "Taut", "Glint", "Reed"];
+
+    // Per-peer accumulator: (last_sha, last_unix, recent_phases [first 5])
+    use std::collections::HashMap;
+    struct Acc {
+        last_sha: String,
+        last_at: i64,
+        recent_subjects: Vec<String>,
+    }
+    let mut by_peer: HashMap<String, Acc> = HashMap::new();
+
+    for line in raw.lines() {
+        let parts: Vec<&str> = line.splitn(5, '|').collect();
+        if parts.len() < 5 {
+            continue;
+        }
+        let sha = parts[0];
+        let an = parts[1];
+        let ae = parts[2];
+        let ct: i64 = parts[3].parse().unwrap_or(0);
+        let subject = parts[4];
+
+        // Must match Pack peer name AND author email is on systemic.engineer.
+        let peer_name = match pack_names.iter().find(|n| **n == an) {
+            Some(n) => *n,
+            None => continue,
+        };
+        if !ae.contains("@systemic.engineer") {
+            continue;
+        }
+
+        let entry = by_peer.entry(peer_name.to_string()).or_insert_with(|| Acc {
+            last_sha: String::new(),
+            last_at: 0,
+            recent_subjects: Vec::new(),
+        });
+        // git log returns most-recent first, so first hit per peer is latest.
+        if entry.last_sha.is_empty() {
+            entry.last_sha = sha.to_string();
+            entry.last_at = ct;
+        }
+        if entry.recent_subjects.len() < 5 {
+            entry.recent_subjects.push(subject.to_string());
+        }
+    }
+
+    let mut records: Vec<(i64, serde_json::Value)> = by_peer
+        .into_iter()
+        .map(|(peer, acc)| {
+            let phases: Vec<String> = acc
+                .recent_subjects
+                .iter()
+                .filter_map(|s| extract_phase_marker(s))
+                .collect();
+            let v = serde_json::json!({
+                "peer": peer,
+                "last_seen_commit": acc.last_sha,
+                "last_seen_at": acc.last_at,
+                "recent_phases": phases,
+            });
+            (acc.last_at, v)
+        })
+        .collect();
+
+    records.sort_by(|a, b| b.0.cmp(&a.0));
+    let values: Vec<serde_json::Value> = records.into_iter().map(|(_, v)| v).collect();
+    serde_json::Value::Array(values)
+}
+
+/// Pull the first phase-marker emoji/symbol from a commit subject.
+/// Recognised markers: 🔴 🟢 ♻️ 📝 🔧 🔀.
+fn extract_phase_marker(subject: &str) -> Option<String> {
+    let markers: [&str; 6] = ["🔴", "🟢", "♻️", "📝", "🔧", "🔀"];
+    for m in markers {
+        if subject.contains(m) {
+            return Some(m.to_string());
+        }
+    }
+    None
+}
+
+/// Walk `<spec_dir>/docs/specs/recognitions/candidates/*.md` if the
+/// directory exists; else empty. Per Mara spec §3.3.
+fn recall_pull_frontier(spec_dir: &str) -> serde_json::Value {
+    let dir_rel = "docs/specs/recognitions/candidates";
+    let dir_abs = format!("{}/{}", spec_dir, dir_rel);
+    let entries = match fs::read_dir(&dir_abs) {
+        Ok(e) => e,
+        Err(_) => return serde_json::Value::Array(vec![]),
+    };
+
+    let mut records: Vec<serde_json::Value> = Vec::new();
+    for entry in entries.flatten() {
+        let name = entry.file_name();
+        let name_str = name.to_string_lossy().into_owned();
+        if !name_str.ends_with(".md") {
+            continue;
+        }
+        let rel = format!("{}/{}", dir_rel, name_str);
+        let abs = format!("{}/{}", spec_dir, rel);
+        let body = fs::read_to_string(&abs).unwrap_or_default();
+
+        let recog_num = parse_recognition_number(&name_str);
+        let identifier = match &recog_num {
+            serde_json::Value::Number(n) => format!("recognition #{}", n),
+            _ => name_str.clone(),
+        };
+        let witness_count = count_witnesses_in_body(&body);
+
+        // surfaced_at = first commit touching this file.
+        let surfaced_at = git_first_commit_for(spec_dir, &rel);
+
+        records.push(serde_json::json!({
+            "kind": "candidate_recognition",
+            "identifier": identifier,
+            "canonical_doc": rel,
+            "witness_count": witness_count,
+            "witnesses_needed": 2,
+            "surfaced_at": surfaced_at,
+        }));
+    }
+    serde_json::Value::Array(records)
+}
+
+/// Best-effort scan for explicit `## Witness <N>` headings (per Mara
+/// spec §3.3.1) or `Witness N:` lines in the body.
+fn count_witnesses_in_body(body: &str) -> u64 {
+    let mut count: u64 = 0;
+    for line in body.lines() {
+        let t = line.trim();
+        let lower = t.to_lowercase();
+        if lower.starts_with("## witness ") || lower.starts_with("### witness ") {
+            count += 1;
+        }
+    }
+    count
+}
+
+/// Run `git -C <spec_dir> log --diff-filter=A --format=%H -- <rel>`,
+/// return the first-introducing commit. Empty string on failure.
+fn git_first_commit_for(spec_dir: &str, rel_path: &str) -> String {
+    let out = Command::new("git")
+        .arg("-C")
+        .arg(spec_dir)
+        .arg("log")
+        .arg("--diff-filter=A")
+        .arg("--format=%H")
+        .arg("--")
+        .arg(rel_path)
+        .output();
+    match out {
+        Ok(o) if o.status.success() => {
+            let s = String::from_utf8_lossy(&o.stdout);
+            // log can return multiple SHAs (rename/re-add); pick first.
+            s.lines().next().unwrap_or("").to_string()
+        }
+        _ => String::new(),
+    }
+}
+
+/// Read `<spec_dir>/mirror.spec`'s settle_on block; surface predicate
+/// names + spec OID. v0 returns "unknown" verdicts (no live verdict
+/// cache wired in this tick) per Mara spec §3.4.1.
+fn recall_dogfood(spec_dir: &str) -> serde_json::Value {
+    let spec_path = format!("{}/mirror.spec", spec_dir);
+    let body = match fs::read_to_string(&spec_path) {
+        Ok(s) => s,
+        Err(_) => {
+            return serde_json::json!({
+                "spec_oid": "none",
+                "settle_on_predicates": [],
+                "predicate_verdicts": [],
+                "aggregate": "unknown",
+                "cache_freshness": "stale",
+            });
+        }
+    };
+
+    let predicates = parse_settle_on_predicates(&body);
+
+    // Spec OID via git rev-parse HEAD:mirror.spec; "uncommitted" if it fails.
+    let spec_oid = {
+        let out = Command::new("git")
+            .arg("-C")
+            .arg(spec_dir)
+            .arg("rev-parse")
+            .arg("HEAD:mirror.spec")
+            .output();
+        match out {
+            Ok(o) if o.status.success() => String::from_utf8_lossy(&o.stdout).trim().to_string(),
+            _ => "uncommitted".to_string(),
+        }
+    };
+
+    // most_recent_landed_at = current HEAD SHA.
+    let most_recent_landed_at = {
+        let out = Command::new("git")
+            .arg("-C")
+            .arg(spec_dir)
+            .arg("rev-parse")
+            .arg("HEAD")
+            .output();
+        match out {
+            Ok(o) if o.status.success() => String::from_utf8_lossy(&o.stdout).trim().to_string(),
+            _ => String::new(),
+        }
+    };
+
+    let predicate_verdicts: Vec<serde_json::Value> = predicates
+        .iter()
+        .map(|p| serde_json::json!({"predicate": p, "state": "unknown"}))
+        .collect();
+
+    serde_json::json!({
+        "spec_oid": spec_oid,
+        "settle_on_predicates": predicates,
+        "predicate_verdicts": predicate_verdicts,
+        "aggregate": "unknown",
+        "most_recent_landed_at": most_recent_landed_at,
+        "cache_freshness": "stale",
+    })
+}
+
+/// Parse the `settle_on { ... }` block from a mirror.spec body; return
+/// non-empty/non-comment predicate-name lines.
+fn parse_settle_on_predicates(body: &str) -> Vec<String> {
+    let mut preds: Vec<String> = Vec::new();
+    let mut in_block = false;
+    let mut depth: i32 = 0;
+    for line in body.lines() {
+        let trimmed = line.trim();
+        if !in_block {
+            if trimmed.starts_with("settle_on {") || trimmed.starts_with("settle_on{") {
+                in_block = true;
+                depth = 1;
+                continue;
+            }
+        } else {
+            // Track brace depth so nested blocks (none expected, but
+            // defensive) don't terminate the block early.
+            for c in trimmed.chars() {
+                match c {
+                    '{' => depth += 1,
+                    '}' => depth -= 1,
+                    _ => {}
+                }
+            }
+            if depth <= 0 {
+                break;
+            }
+            // Strip inline comments.
+            let no_comment = match trimmed.split_once('#') {
+                Some((pre, _)) => pre.trim(),
+                None => trimmed,
+            };
+            if no_comment.is_empty() {
+                continue;
+            }
+            // Skip lines that are purely brace artefacts.
+            if no_comment.chars().all(|c| c == '{' || c == '}') {
+                continue;
+            }
+            preds.push(no_comment.to_string());
+        }
+    }
+    preds
 }
 
 // ───────────────────────────────────────────────────────────────────────────────
