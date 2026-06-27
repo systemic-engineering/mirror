@@ -102,6 +102,94 @@ fn spawn_emits_envelope_naming_seven_pieces() {
     }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// P4 RED (2026-06-27) — --hello-world flag emits structured JSON envelope.
+//
+// Per the substrate round-trip loop endpoint: `mirror spawn
+// ~peer'~/.reed' --hello-world` reads peer's mirror.spec and returns
+// structured envelope identifying peer by declared content. The text
+// envelope (existing tests above) stays the default; --hello-world
+// opts in to JSON.
+//
+// b10f00c §4 fences still apply: no @fate, no @io/llm, no
+// identity-mint. Hello-world is bounded to reading the peer's
+// mirror.spec content; no live state queries.
+// ─────────────────────────────────────────────────────────────────────────────
+
+#[test]
+fn spawn_hello_world_emits_json_envelope() {
+    let out = run_spawn(&[TEST_PEER, "--hello-world"]);
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    let envelope: serde_json::Value = serde_json::from_str(stdout.trim()).unwrap_or_else(|e| {
+        panic!(
+            "--hello-world stdout must be valid JSON; got:\n{}\nparse error: {}",
+            stdout, e
+        )
+    });
+    assert_eq!(
+        envelope["spawn"].as_str().unwrap_or(""),
+        "hello_world",
+        "envelope.spawn must equal 'hello_world'; got: {}",
+        stdout
+    );
+}
+
+#[test]
+fn spawn_hello_world_envelope_carries_peer_identity() {
+    let out = run_spawn(&[TEST_PEER, "--hello-world"]);
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    let envelope: serde_json::Value =
+        serde_json::from_str(stdout.trim()).expect("valid JSON envelope");
+    assert_eq!(
+        envelope["peer"].as_str().unwrap_or(""),
+        "test-peer",
+        "envelope.peer must carry declared project name; got: {}",
+        stdout
+    );
+    let lead = envelope["lead"].as_str().unwrap_or("");
+    assert!(
+        lead.contains("test-lead"),
+        "envelope.lead must carry declared pack lead; got: {}",
+        lead
+    );
+}
+
+#[test]
+fn spawn_hello_world_envelope_names_seven_composition_pieces() {
+    let out = run_spawn(&[TEST_PEER, "--hello-world"]);
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    let envelope: serde_json::Value =
+        serde_json::from_str(stdout.trim()).expect("valid JSON envelope");
+    let pieces = envelope["composition_pieces"]
+        .as_object()
+        .expect("composition_pieces must be a JSON object");
+    // Per insight b10f00c §2.1–§2.7: seven composition pieces.
+    assert!(
+        pieces.len() >= 7,
+        "envelope.composition_pieces must name all 7 pieces; got {} keys: {:?}",
+        pieces.len(),
+        pieces.keys().collect::<Vec<_>>()
+    );
+}
+
+#[test]
+fn spawn_no_flag_still_emits_text_envelope() {
+    // Regression: the 5 tests above assert the text-envelope shape.
+    // --hello-world is opt-in; default behavior unchanged.
+    let out = run_spawn(&[TEST_PEER]);
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("peer="),
+        "default (no flag) envelope must remain text shape; got:\n{}",
+        stdout
+    );
+    assert!(
+        !stdout.trim_start().starts_with('{'),
+        "default envelope must NOT be JSON (that's --hello-world only); got:\n{}",
+        stdout
+    );
+}
+
 #[test]
 fn spawn_exits_non_zero_on_missing_home() {
     let out = run_spawn(&["bootstrap/tests/fixtures/does-not-exist"]);

@@ -2601,9 +2601,12 @@ pub fn dispatch(args: &[String]) -> i32 {
             }
         },
         "spawn" => match positional {
-            Some(p) => cmd_spawn(p),
+            Some(p) => {
+                let hello_world = args.iter().any(|a| a == "--hello-world");
+                cmd_spawn(p, hello_world)
+            }
             None => {
-                merr!("usage: mirror spawn <peer-home>");
+                merr!("usage: mirror spawn <peer-home> [--hello-world]");
                 1
             }
         },
@@ -3096,7 +3099,10 @@ fn parse_settle_on_predicates(body: &str) -> Vec<String> {
 ///   - No membership-side-effects (spawn does NOT add members to the pack).
 ///   - No stateless-return (envelope acknowledges persisted state even
 ///     though v0 does not yet store it; Phase H wires storage).
-fn cmd_spawn(peer_home: &str) -> i32 {
+fn cmd_spawn(peer_home: &str, _hello_world: bool) -> i32 {
+    // P4 RED: `_hello_world` flag plumbed but ignored. GREEN tick
+    // wires the JSON envelope branch per the substrate round-trip
+    // loop's `mirror spawn ... --hello-world` endpoint.
     // Piece 1 (insight §2.1): cli surface. The peer-home argument is the
     // single positional. Context (frame, repository, pack) is resolved
     // FROM peer-home, not passed in.
