@@ -58,6 +58,36 @@ serde_json = "1"
 [target.'cfg(unix)'.dependencies]
 libc = "0.2"
 
+# fragmentation — the Rust substrate mirror has DECLARED but never
+# imported. Per `[[architecture-fragmentation-is-the-rust-substrate]]`
+# (the OS layer IS the Rust substrate) + `docs/specs/store-vs-db-
+# and-the-cascade.md` (Mara 2026-06-04 §2.2 names fragmentation as
+# the canonical content-addressed carrier). The substrate already
+# had the WORD AND the WIRING; mirror's bootstrap just never plugged
+# in until this commit — the entire git surface has been 60 lines of
+# `Command::new("git")` shell-out at `bootstrap/src/git.rs`.
+#
+# Per Taut's scout (`docs/scouts/2026-06-27-taut-fragmentation-git-
+# store-for-mirror-init.md`, commit 5580a7e) + Mara's mirror-init
+# spec (`docs/specs/mirror-init.md`, commits fe215bd→14dd043) + Seam's
+# audit (`docs/audits/2026-06-27-seam-mirror-init-spec-review.md`,
+# commit 8392ab5): this single-line edge unblocks fragmentation's
+# 5 load-bearing primitives — `frgmnt_store::FrgmntStore` (top-level
+# crate), plus the `vcs/git/` workspace member's `GitStore` /
+# `NamespacedGitStore` / `write_node` / `walk_commits_following`
+# (the latter four require a separate `fragmentation-git` edge
+# landing in subsequent ticks; THIS edge proves the foundation).
+#
+# Companion fix in `fragmentation` repo at commit `414d6b2`: stale
+# `prism-core = { path = "../prism/core" }` was the second declared-
+# but-not-wired instance discovered today (the crate had been renamed
+# to `prismqueer`); rename-alias resolves it.
+#
+# Binary-size impact (R2 per Seam's audit): measured before/after at
+# the GREEN commit message; Alex picks Posture A/B/C with real data.
+[dependencies.fragmentation]
+path = "../../fragmentation"
+
 [profile.release]
 opt-level = "z"
 lto = true

@@ -42,10 +42,14 @@
 
 #[test]
 fn fragmentation_frgmnt_store_is_importable() {
-    use fragmentation::frgmnt_store::FrgmntStore;
-    // Compile-time symbol resolution. If the Cargo edge is missing,
-    // the `use` statement fails to resolve and this file does not
-    // compile. If the edge is wired, the `Option<FrgmntStore>` type
-    // is well-formed and the test passes trivially.
-    let _: Option<FrgmntStore> = None;
+    // The `as _` idiom: pure symbol-resolution check, no instantiation.
+    // `FrgmntStore<N: Fragmentable + Clone>` is generic; instantiating
+    // would require a concrete `Fragmentable` carrier which the bridge
+    // test deliberately doesn't have at this altitude (runtime exercise
+    // lands in subsequent `mirror init` ticks).
+    //
+    // The `use ... as _` statement verifies the module path resolves
+    // AND that `FrgmntStore` is a public symbol — the two things the
+    // Cargo edge being wired actually guarantees.
+    use fragmentation::frgmnt_store::FrgmntStore as _;
 }
