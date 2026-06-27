@@ -3152,6 +3152,26 @@ fn cmd_spawn(peer_home: &str, hello_world: bool) -> i32 {
     if hello_world {
         let source_decl =
             extract_spec_source_decl(&source).unwrap_or_else(|| "<no-source-decl>".to_string());
+
+        // P4.5 GREEN: the peer's hello IS their own recall. Compose the
+        // peer-side recall envelope in-process by invoking the same
+        // recall_* helpers against `peer_home`. Per Mara's circular-
+        // reflexive observation (349bce7 §3.6): the four payloads each
+        // correspond to a sheaf-section-with-temporal-axis at coherence
+        // altitude. The lead observes the peer's psychohistory_vector
+        // in one breath via this composition.
+        //
+        // Piece-6-via-recall: structured observation without @fate
+        // inference (b10f00c §2.6 substitution form). No subprocess;
+        // piece 5 supervisor.start_child stays a named stub.
+        let peer_recall = serde_json::json!({
+            "spec_version":  "v0.1.0",
+            "cascade":       recall_cascade(peer_home),
+            "pack_trail":    recall_pack_trail(peer_home),
+            "pull_frontier": recall_pull_frontier(peer_home),
+            "dogfood":       recall_dogfood(peer_home),
+        });
+
         let envelope = serde_json::json!({
             "spec_version": "v0.1.0",
             "spawn": "hello_world",
@@ -3167,9 +3187,10 @@ fn cmd_spawn(peer_home: &str, hello_world: bool) -> i32 {
                 "3_contextual_pack":        "real",
                 "4_lead_at_n_plus_1":       "stub@N+1",
                 "5_supervisor_kick":        "stub@spectral/supervisor.start_child",
-                "6_fate_inference":         "stub@cascade/code/*",
+                "6_fate_inference":         "partial@recall (no @fate; structured observation only)",
                 "7_lambda_zero_transition": "stub@λ₀→runtime",
-            }
+            },
+            "peer_recall": peer_recall,
         });
         let s = format!("{}\n", envelope);
         _raw_stdout(s.as_bytes());
