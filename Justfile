@@ -48,7 +48,25 @@ INSTALL_DIR := env_var_or_default("INSTALL_DIR", env_var("HOME") + "/.local/bin"
 default:
     @just --list
 
-# ──────────────────────────────────────────────────────────────────────────
+# ────────────────────────────────────────────────────────────────────────────────
+# Bootstrap — first-clone setup. Newcomers run this once after cloning.
+# ────────────────────────────────────────────────────────────────────────────────
+
+# Initialize git submodules (spectral.engineer + nested packages) so the
+# tree is complete for editing and CI. Idempotent; safe to re-run.
+#
+# Why: mirror hosts the spectral.engineer subrepo at `./spectral.engineer/`,
+# which is itself a git repo carrying its own license (SEL) and its own
+# garden of packages (each potentially a sub-sub-repo). The `--recursive`
+# flag handles the nested layer when packages get their own remotes.
+#
+# Contributors who only work on mirror's open foundation (Apache-2.0 surface)
+# can skip this; the substrate compiles without spectral.engineer being
+# initialized. Contributors who work on garden packages need it.
+bootstrap:
+    git submodule update --init --recursive
+
+# ────────────────────────────────────────────────────────────────────────────────
 # Hook-required recipes — these MUST exist for the global git-hooks to work.
 # ──────────────────────────────────────────────────────────────────────────
 
