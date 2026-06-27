@@ -172,6 +172,94 @@ fn spawn_hello_world_envelope_names_seven_composition_pieces() {
     );
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// P4.5 RED (2026-06-27) — peer_recall composition: the peer's hello
+// IS their own recall.
+//
+// Per Mara's circular-reflexive observation (349bce7 §3.6): the recall
+// envelope's payloads correspond to sheaf-section-with-temporal-axis
+// at coherence altitude. spawn --hello-world should compose its lead-
+// side envelope WITH the peer-side recall envelope, so the lead
+// observes the peer's psychohistory_vector in one breath.
+//
+// In-process composition: cmd_spawn invokes the same recall_*
+// helpers against peer_home. NO subprocess (yet); piece 5
+// supervisor.start_child stays stub. This proves piece-6-via-recall
+// (structured observation without @fate inference; b10f00c §2.6
+// substitution form).
+// ─────────────────────────────────────────────────────────────────────────────
+
+#[test]
+fn spawn_hello_world_envelope_carries_peer_recall() {
+    let out = run_spawn(&[TEST_PEER, "--hello-world"]);
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    let envelope: serde_json::Value =
+        serde_json::from_str(stdout.trim()).expect("valid JSON envelope");
+    assert!(
+        envelope.get("peer_recall").is_some(),
+        "spawn --hello-world envelope must carry 'peer_recall' (the peer's own \
+         recall payloads composed in); got:\n{}",
+        stdout
+    );
+    assert!(
+        envelope["peer_recall"].is_object(),
+        "peer_recall must be a JSON object; got: {}",
+        envelope["peer_recall"]
+    );
+}
+
+#[test]
+fn spawn_hello_world_peer_recall_has_four_payloads() {
+    let out = run_spawn(&[TEST_PEER, "--hello-world"]);
+    let envelope: serde_json::Value =
+        serde_json::from_str(String::from_utf8_lossy(&out.stdout).trim())
+            .expect("valid JSON envelope");
+    let peer_recall = envelope["peer_recall"]
+        .as_object()
+        .expect("peer_recall must be an object");
+    // Per Mara b034a60 §3: the four payloads are cascade /
+    // pack_trail / pull_frontier / dogfood. Each anchors at a
+    // typed content-address per §3.6 sheaf-section-with-temporal-axis.
+    for key in ["cascade", "pack_trail", "pull_frontier", "dogfood"] {
+        assert!(
+            peer_recall.get(key).is_some(),
+            "peer_recall must carry '{}' payload (the peer's own \
+             psychohistory_vector slot per d00f553); got keys: {:?}",
+            key,
+            peer_recall.keys().collect::<Vec<_>>()
+        );
+    }
+}
+
+#[test]
+fn spawn_hello_world_peer_recall_declares_spec_version() {
+    // P5 contract extension: the nested peer_recall envelope also
+    // carries spec_version so composition versioning flows through
+    // the round-trip transitively (lead envelope + peer_recall both
+    // declare the same spec_version).
+    let out = run_spawn(&[TEST_PEER, "--hello-world"]);
+    let envelope: serde_json::Value =
+        serde_json::from_str(String::from_utf8_lossy(&out.stdout).trim())
+            .expect("valid JSON envelope");
+    let peer_recall = &envelope["peer_recall"];
+    let outer_version = envelope["spec_version"]
+        .as_str()
+        .expect("outer envelope spec_version");
+    let peer_version = peer_recall["spec_version"].as_str().unwrap_or_else(|| {
+        panic!(
+            "peer_recall must declare spec_version (composition versioning \
+             flows through nested envelope); got peer_recall: {}",
+            peer_recall
+        )
+    });
+    assert_eq!(
+        outer_version, peer_version,
+        "outer envelope ({}) and peer_recall ({}) must declare the \
+         same spec_version",
+        outer_version, peer_version
+    );
+}
+
 #[test]
 fn spawn_no_flag_still_emits_text_envelope() {
     // Regression: the 5 tests above assert the text-envelope shape.
