@@ -880,6 +880,77 @@ substrate (post-lift):  Blake3(source_bytes, ...)
                           // source_mtime drops — see above.
 ```
 
+### 3.4.1 Cache-HIT and cache-MISS paths (Seam tick S-3 closure)
+
+The mtime-drop preserves OID correctness (the substrate-pull-honest
+content-addressing) but it does NOT preserve cargo's internal
+incremental invalidation algebra. Cargo's mtime-based fingerprint
+is a defensive optimization at the cargo altitude; dropping it at
+the substrate altitude requires the substrate to disambiguate two
+dispatch paths so cargo's correctness invariants stay intact:
+
+**Cache-HIT path (substrate bypasses cargo entirely):**
+
+```
+1. mosaic.shift @code/rust(target) produces a build_invocation_oid
+   = Blake3(source_bytes ++ dep_oids ++ rustc_version ++ cfg
+            ++ profile ++ target_triple ++ ...)
+2. cache_exists(build_invocation_oid)? → verdict
+3. If verdict = success: cache_read(build_invocation_oid)
+   → imperfect<artifact_bytes, _, _>
+4. The substrate hands the artifact to the next dispatcher in
+   the eigensheaf DAG. CARGO IS NEVER INVOKED on this path.
+5. cargo's internal mtime fingerprint plays no role; the
+   substrate's OID is the only addressing in effect.
+```
+
+**Cache-MISS path (substrate invokes cargo; cargo's algebra runs):**
+
+```
+1. cache_exists(build_invocation_oid)? → failure (miss).
+2. The substrate invokes `cargo build` (or `check`/`clippy`/`test`
+   per the dispatch) through @io/cargo at the @io altitude.
+3. INSIDE the cargo invocation, cargo's own mtime-based
+   fingerprint runs. Cargo decides what to rebuild, what to
+   re-link, what to skip. Cargo's incremental correctness
+   invariants stay intact because cargo is running its own
+   algebra against its own target/ directory.
+4. Cargo produces artifact bytes. The substrate captures stdout/
+   exit code + the artifact path; computes the Blake3 OID over
+   the artifact bytes; calls cache_write(artifact_bytes) → oid.
+5. The substrate caches `(build_invocation_oid → artifact_oid)`
+   so future cache_exists(build_invocation_oid) returns success.
+```
+
+**Why both paths preserve correctness.** Cache-HIT preserves
+correctness because the OID is content-addressed over EVERY input
+that affects the output (source bytes, dep OIDs, rustc version,
+cfg, profile, target_triple); if any input changes, the OID
+changes, and cache_exists returns failure (forcing the cache-MISS
+path). Cache-MISS preserves cargo's correctness because cargo's
+internal algebra runs unmolested — the substrate does not
+interfere with cargo's target/ dir or fingerprint files.
+
+**Where the substrate IS gentler than cargo: cross-invocation
+reuse.** Cargo's algebra is target/-dir-scoped; different target
+dirs (different worktrees, different machines, different branches)
+share nothing. The substrate's OID is content-addressed across ALL
+scopes; cache_read at one site can return an artifact stored from
+any other site whose inputs hashed identically. This is the
+cross-machine cache reuse hinted at §8.4 (and the @spectral/db
+territory at distribution altitude).
+
+**Where the substrate is STRICTER than cargo: mtime-touch is
+not a cache invalidation.** Cargo invalidates on mtime change
+even without content change (`touch foo.rs` triggers a rebuild).
+The substrate does not. A pure mtime touch produces the same OID
+as before; cache_exists succeeds; the cache-HIT path returns the
+prior artifact. This is a feature, not a bug — the substrate's
+content-addressing IS the correctness invariant; mtime is not.
+
+Both paths are substrate-pull-honest. The composition is
+well-defined.
+
 The trade-off: substrate-pull-honest hashing is SLOWER (must
 re-read every source file to compute the OID) but CORRECT (cache
 hits cross-checkout, cross-machine, cross-clone). Cargo's mtime
@@ -1312,12 +1383,30 @@ at compile.
 
 Per `MEMORY.md` and the P4 hook blocker context: the
 `fragmentation-git` Cargo edge introduces `libgit2-sys` as a
-transitive dependency. The pre-commit hook chain runs four cargo
-subcommands in sequence: `cargo check`, `cargo clippy`, `cargo
-test`, and (in some configurations) `cargo build --release`. Each
-subcommand triggers a fresh cargo dispatch; each dispatch sees
-`libgit2-sys` as an unbuilt translation unit and triggers its
-~2-3 minute cold compile.
+transitive dependency.
+
+**Seam tick S-4 closure (2026-06-28) — temporal-altitude
+disambiguation.** The current Justfile `pre-commit` recipe
+dispatches TWO top-level operations: `just build` (one `cargo
+build --release`) followed by `mirror kintsugi mirror.spec`. The
+latter shells through the existing bootstrap dispatcher; libgit2-
+sys recompiles internally during that step because the dispatcher
+does not yet share artifacts across the per-target invocations.
+The "four cargo subcommands" framing below is the AMBITION at the
+post-recognition-#43 dispatch shape (each `mirror.spec` target
+block becomes its own explicit cargo invocation via `@io/cargo`).
+The libgit2-sys waste analysis holds at BOTH temporal altitudes:
+today (waste inside `mirror kintsugi`'s internal dispatch) and
+post-#43 (waste across the explicit per-target dispatches). The
+unblock argument — content-addressed cache_read short-circuits
+the rebuild — holds at both.
+
+At the post-#43 dispatch shape (four cargo subcommands explicit):
+`cargo check`, `cargo clippy`, `cargo test`, and (in some
+configurations) `cargo build --release`. Each subcommand triggers
+a fresh cargo dispatch; each dispatch sees `libgit2-sys` as an
+unbuilt translation unit and triggers its ~2-3 minute cold
+compile.
 
 Net effect: libgit2-sys recompiled 4× per hook run. Total cold-
 compile budget exceeds the hook's signal-15 timeout; the hook

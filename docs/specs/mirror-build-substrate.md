@@ -1391,6 +1391,16 @@ outstanding kintsugi flow.
 
 ### 6.7 The eigenform
 
+**Retargeting breadcrumb (Seam tick S-2 closure, 2026-06-28).** This
+section's load-bearing eigenform identity claim uses `@mirror/build`
+as a morning-draft alias. The substrate's actual build orchestrator
+IS `@mirror/mosaic` (per §§1, 5, 11 + the amendment preamble at §0).
+The eigenform identity holds verbatim under the rename: read every
+`@mirror/build` below as `@mirror/mosaic` and the math is intact.
+The rename was not threaded inline to keep the amendment surgical;
+this breadcrumb closes Seam's S-2 finding that readers should not
+have to track the amendment-trail to reach the load-bearing claim.
+
 The Connes spectral triple at build altitude IS the same eigenform
 as @mirror itself, at one altitude up. The substrate's eigenform
 IS the build orchestrator's eigenform.
@@ -1398,7 +1408,8 @@ IS the build orchestrator's eigenform.
 This is the central mathematical claim of this spec. Concretely:
 
 - `@mirror` has (A_mirror, H_mirror, D_mirror) per recognition #58.
-- `@mirror/build` has (A_build, H_build, D_build) per §6.6 above.
+- `@mirror/mosaic` (morning-draft: `@mirror/build`) has (A_build,
+  H_build, D_build) per §6.6 above.
 - A_build = A_mirror's algebra-of-build-actions specialization.
 - H_build = H_mirror's restriction to artifact-bearing rays.
 - D_build = D_mirror's restriction to build-altitude error routing.
@@ -1440,7 +1451,22 @@ fragmentation-git Cargo edge wired into mirror's bootstrap. The
 edge pulls a heavy native closure: `git2 → libgit2-sys →
 libssh2-sys → libz-sys → openssl-sys`. The Justfile's `pre-commit`
 recipe (per `/Users/alexwolf/dev/projects/mirror/Justfile` lines
-99-133) dispatches six cargo subcommands across the chain:
+99-133) dispatches the following chain.
+
+**Seam tick S-4 closure (2026-06-28) — temporal-altitude
+disambiguation.** Today's Justfile actually dispatches TWO
+top-level operations: `just build` (one `cargo build --release`)
+followed by `mirror kintsugi mirror.spec`. The six-cargo-subcommand
+chain below is the AMBITION post-recognition-#43 dispatch shape:
+once `mirror.spec`'s target blocks dispatch per-target via
+`@io/cargo`, each becomes its own cargo invocation. The hook
+budget exhaustion analysis here works at BOTH temporal altitudes
+— today (two operations whose `mirror kintsugi` step shells out
+to cargo via the existing bootstrap dispatcher; libgit2-sys still
+recompiles across the internal cargo invocations) AND post-#43
+(six explicit per-target dispatches; the eigensheaf parallelism
+collapses them; the cache short-circuits libgit2-sys). The unblock
+argument holds at both. With that disambiguation in hand:
 
 - `cargo check` (det against source + Cargo metadata)
 - `cargo clippy` (det against source + Cargo metadata + clippy

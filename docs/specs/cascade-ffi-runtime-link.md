@@ -959,9 +959,15 @@ lifetime_contract_honored(contract: lifetime_contract,
 # @io/stagefreight.stagefreight_addressable, @reflection.third_
 # order_coherent, @smarts/shatter.shatter_round_trip, and the per-
 # cascade-species composed bilaterals (rust_wasm_cascade_well_formed,
-# gleam_beam_cascade_well_formed, etc.). Seventh altitude lift of
-# the composed-bilateral pattern; substrate's discipline is altitude-
-# portable.
+# gleam_beam_cascade_well_formed, etc.). ~14th altitude lift of the
+# composed-bilateral pattern. (Counted: cascade_well_defined at 5th,
+# rust_wasm at 6th, tea at 8th, nl/design at 9th, spectral-engineer-
+# case-study at 10th, oci at ~12th, git at ~13th; sibling forward-
+# promises at peer 14th + mirror_spawn 15th.) Substrate's discipline
+# is altitude-portable. Seam tick (docs/audits/2026-06-28-seam-
+# mirror-build-substrate-composite) S-1 closure: morning draft
+# under-counted at "seventh"; substrate-pull-honest count makes the
+# altitude-portability argument stronger, not weaker.
 #
 # Splinter-pole: symbols resolve + convention agrees + marshal
 # composes + lifetime honor-able; link discharges clean.
@@ -988,7 +994,8 @@ forecloses link operation if any one fails. The opacity surfaces
 at the @io altitude per the `transparency<p>` discipline already
 declared at `@mirror/loss/transparency` (recognition #59 the
 altitude-portable kintsugi loop; the substrate-altitude lift here
-is the seventh instance).
+is the ~14th landed instance — see the composed-bilateral count
+in the comment block above).
 
 ---
 
@@ -1132,8 +1139,15 @@ rust_cdylib_loss_well_defined(source: rust_source,
 # === rust_cdylib_cascade_well_formed composed bilateral ===
 #
 # All three sub-bilaterals must hold. Same composed-bilateral pattern
-# as the other cascade species. Eighth altitude lift of the
-# composed-bilateral pattern.
+# as the other cascade species. ~15th altitude lift of the composed-
+# bilateral pattern (one above runtime_link_safe's ~14th; sibling
+# count parity with mirror_spawn's forward-promised 15th). Seam tick
+# S-1 closure: morning draft under-counted at "eighth"; the count is
+# the same substrate-roster drift Mara acknowledged in mirror-build-
+# substrate.md §11 (carried forward from older context).
+#
+# Tightened to the substrate-pull-honest count: the discipline
+# argument is stronger at the true altitude.
 rust_cdylib_cascade_well_formed(source: rust_source,
                                 artifact: cdylib_artifact,
                                 p: perturbation) -> verdict
@@ -2255,5 +2269,7 @@ Soft-target ~1500 lines met. Markdown only. No `shards/` files
 land with this commit; no Rust ships; no cargo edge is wired. The
 forward-promises in §9 discharge in subsequent TDD-paired ticks
 (Reed RED, agent GREEN). The composed-bilateral pattern lifts to
-the seventh altitude with `runtime_link_safe`. The substrate's
-discipline holds.*
+the ~14th altitude with `runtime_link_safe` and the ~15th with
+`rust_cdylib_cascade_well_formed` (per the Seam tick S-1 closure;
+morning draft under-counted at 7th/8th). The substrate's discipline
+holds across the corrected count.*
