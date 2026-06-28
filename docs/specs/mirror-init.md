@@ -663,6 +663,83 @@ Two notes on shape:
   regardless; downstream consumers re-dispatch when the floor
   populates (R1; §8.1).
 
+#### 4.4.1 v0 composition: path (ii) per Taut scout 2026-06-27
+
+The `encode_splinter_as_fractal` glue named above (§4.4 step 4c) was
+forward-promised as "~20–30 LOC under the bilateral pattern." Taut's
+P4-GREEN scout (2026-06-27, scout transcript
+`tasks/a972edfa418c29467.output`) verified the glue is unwired — no
+shard declaration, no Rust impl, no LOC budget — and surfaced a
+substrate-pull-honest alternative: **drop the wrap.** Use
+`fragmentation::encoding::encode` directly on the file bytes; key the
+store entry by `Splinter::<Blake3>::new(...).oid().to_hex_string()`.
+The Splinter remains the OID source; the Fractal is the stored
+carrier; v0 does not need them to be the same object.
+
+The v0 composition body, per Taut §7(b):
+
+```rust
+let store = NamespacedGitStore::open(path, "mirror")?;
+let manifest = Manifest {
+    lenses: git_ls_files(path)?
+        .into_iter()
+        .map(|p| LensEntry { source: p.clone(), target: p })
+        .collect(),
+};
+let projection = project(path, &manifest)?;
+for (target, pf) in &projection.files {
+    // Fractal carrier — fragmentation's existing encoder over the
+    // file's bytes. No mirror-side wrap.
+    let fractal = fragmentation::encoding::encode(
+        &String::from_utf8_lossy(&pf.content),
+    );
+    // OID source — Splinter computes the content address; we keep
+    // only the hex string (the Splinter itself is not stored at v0).
+    let oid = Splinter::<Blake3>::new(
+        Content::Blob(BlobBytes::from(pf.content.clone())),
+    )
+    .oid()
+    .to_hex_string();
+    store.insert_persistent(
+        format!("splinter:{oid}"),
+        fractal,
+        pf.content.len(),
+    );
+}
+store.flush();
+let root = blake3_of_sorted_oid_pairs(&projection);
+store.set_ref("HEAD", &root)?;
+```
+
+~40 LOC for the composition body total. Per Taut §7(c):
+`floor_crystallizations` dispatch is omitted at v0 — the empty floor
+produces `Uncrystallized` for every input (R1; §8.1), so the call is
+pure overhead until the floor populates; it lands later when there's
+a verdict consumer.
+
+**Why this is substrate-pull-honest.** Each load-bearing primitive
+plays the role the substrate already named for it:
+
+- The **Splinter**'s role IS as the OID source. `Splinter::oid()` is
+  the content-addressing primitive; that's the surface v0 needs.
+- The **Fractal**'s role IS as the stored carrier.
+  `NamespacedGitStore::insert_persistent` takes
+  `Fractal<String>`; `fragmentation::encoding::encode` produces
+  exactly that. Already wired.
+- Conflating the two inside `encode_splinter_as_fractal` would add
+  a mirror-side wrap that v0 does not consume. Per
+  `[[feedback-substrate-already-had-the-word]]`: when the
+  substrate already has the primitives, the wrap is invention.
+
+**Forward-promise.** `encode_splinter_as_fractal` lands later if a
+downstream consumer needs the structural Fractal-of-Splinter view
+(e.g., a verifier that round-trips Splinter bytes through the store
+to check encoding determinism). That's a downstream concern, not a
+v0 P4-GREEN requirement. When it lands, it lands as the bilateral
+pattern §4.4 named — declaration in `shards/`, fracture body in
+mirror Rust — but the trigger is a real consumer, not the
+forward-promise alone.
+
 ### 4.5 Step 5 — Flush + write the root ref
 
 ```rust
@@ -707,6 +784,41 @@ real-time crystal updates (e.g., for the librarian's anticipation
 predictor to have current data).
 
 §6 elaborates the hook contract.
+
+#### 4.6.1 v0 deferral of `--install-hooks`
+
+The `--install-hooks` flag stays in the CLI surface (the `init.rs`
+test pins the flag's parse path; removing it would break the
+surface contract). The hook *implementation* defers to v0.1.
+
+**Why defer.** The hook templates (§6.1) invoke `mirror reindex`,
+which is itself forward-promised per §6.2 (sibling subcommand;
+delta primitive over `walk_commits_following`). Writing hook files
+that call a non-existent command would either (a) silently fail at
+commit time, eroding the substrate's trust contract, or (b) require
+shipping a no-op `mirror reindex` stub for v0 — extra surface for
+no user benefit. The substrate-pull-honest path: keep the flag
+*surface* (peers can pass `--install-hooks` and it parses cleanly),
+but treat the *body* as a no-op at v0.
+
+**v0 behaviour.** When `--install-hooks` is passed:
+
+- No files are written to `.git/hooks/`.
+- The envelope's `hooks_installed` field reflects the flag value as
+  passed (so peers observing the envelope can distinguish
+  "requested install" from "did not request"), NOT whether files
+  were written. v0.1 closes the gap when `mirror reindex` lands;
+  at that point `hooks_installed: true` will additionally mean the
+  files exist.
+- A future v0.1 envelope MAY add a `hooks_written: bool` field to
+  make the distinction explicit; v0 omits it (the field would be
+  uniformly `false` and add noise).
+
+**When the deferral closes.** When `mirror reindex` lands (§6.2
+forward-promise discharged), §4.6 + §6.1 become operative: the
+flag body writes the two hook templates; `hooks_installed: true`
+gains the stronger meaning. The CLI surface is unchanged across
+the transition.
 
 ### 4.7 Step 7 — Emit the envelope
 
