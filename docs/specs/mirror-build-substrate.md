@@ -1,23 +1,28 @@
-# mirror-build-substrate — `@code/metalogue` × `@mirror/build`
+# mirror-build-substrate — `@mirror/mosaic` discharge plan (afternoon amendment)
 
-*Mara, 2026-06-28. Canonical autopoietic spec for the substrate-decl
-naming what BUILD IS at substrate altitude. Composes three threads
-into one ground: (1) the `@code/metalogue` family — already partially
-declared at `shards/code/metalogue.mirror` for AST-reception per
-`docs/specs/code-metalogue-surface.md` — extended to carry the
-substrate's META-conversation ABOUT what BUILD IS at each language
-altitude; (2) `@mirror/build` as the family-root orchestrator that
-dispatches against `@code/metalogue` species declarations; (3) the
-Connes-spectral-triple shape at build altitude with eigensheaf
-parallelism as the operational engine. Names the math (sheaf of
-computations; determinism class as local stalk behavior;
-content-addressing as equalizer of congruent sections; parallelism as
-sheaf-Laplacian eigenvalue decomposition; distribution as gluing
-across remote restriction maps). Closes with the circular-reflexive
-recognition that this spec IS a crystal that mirror's eventual build
-orchestrator will index when it indexes itself — the bridge from
-"mirror builds" to "mirror orchestrates builds" crosses through this
-spec.*
+*Mara, 2026-06-28 morning original + 2026-06-28 afternoon amendment.
+The morning composition (9a5c53f, 1780 lines) proposed
+`@code/metalogue` (build axis) + `@mirror/build` (family-root) as
+the canonical naming of what BUILD IS at substrate altitude. The
+afternoon grep against `shards/` reveals both framings were
+wrong-altitude: `@mirror/mosaic` ALREADY IS the build system
+(`shards/mirror/mosaic.mirror`, 2026-06-09, recognition #43);
+`@code/metalogue` ALREADY IS codegen (sibling, not build);
+`@io/stagefreight` + `@io/oci` ALREADY substrate-decl the shipping
+side; `@io/cargo` ALREADY is the per-language delegate precedent.
+This spec is amended (§1 reframed, §5 retargeted, §8 closures, §11
+added) to acknowledge what the substrate already declared and to
+document the discharge plan: (a) per-language `@io/<lang>` species
+expansion, (b) eigensheaf-Laplacian parallelism discharge of
+`@mirror/mosaic`'s recognition #44+ forward-promise, (c) the
+genuinely-new `@epistemologic/property/determinism/*` family.
+Composes the math (sheaf of computations; determinism class as
+local stalk behavior; content-addressing as equalizer; parallelism
+as sheaf-Laplacian decomposition; distribution as gluing) — these
+hold altitude-true and retarget cleanly. Closes with the circular-
+reflexive recognition (§10) at document altitude + the substrate-
+already-had-the-word recognition (§11) at substrate-roster altitude.
+51st+ instance of `[[feedback-substrate-already-had-the-word]]`.*
 
 *Markdown only. No `shards/` substrate-decl files land with this
 commit; no Rust ships; no Cargo edge is wired. The substrate-decl
@@ -46,6 +51,19 @@ at substrate-decl altitude.
 ---
 
 ## §0 — Pre-position: this spec announces itself as a crystal
+
+**Amendment reading note, 2026-06-28 afternoon.** Sections §0,
+§3, §4.3, §6.6, §6.7, §7.2, §9.1, §9.6, §10.1 preserve their
+morning-draft language naming `@mirror/build` as the orchestrator.
+Per §§1, 5, 11 (the amended sections), the substrate's actual
+orchestrator IS `@mirror/mosaic`. Read every `@mirror/build`
+reference in the preserved sections as the morning-draft alias
+for what `@mirror/mosaic` already declares. The math, the
+eigenform identity, the recursion, the hook-budget unblock
+analysis — all retarget cleanly; only the family-root naming
+shifts. The retargeting was not threaded through every preserved
+sentence to keep the amendment surgical; §11 records the
+recognition; §§1 + 5 carry the corrected naming.
 
 Before any architectural content. A pre-position the spec earns by
 holding it for the rest of the document.
@@ -128,163 +146,220 @@ that spec.
 
 ---
 
-## §1 — What `@code/metalogue` IS (at build altitude)
+## §1 — What this spec IS (and what the substrate ALREADY HAS)
 
-The substrate already has `@code/metalogue` as a declared family.
-The existing declaration (per `docs/specs/code-metalogue-surface.md`,
-2026-06-08 → 2026-06-09 reframe; `shards/code/metalogue.mirror`,
-landed 2026-06-09 + 2026-06-10 cascade) carries the AST-altitude
-metalogue: the substrate's META-conversation ABOUT each language's
-metaprogramming surface (Rust's `macro_rules!`, Elixir's `quote`,
-Lisp's `defmacro`, etc.). That declaration realises the 34th instance
-of `[[feedback-substrate-already-had-the-word]]`: `@metalogue` at
-the NL altitude lifted to `@code/metalogue` at the AST altitude.
+**Amendment, 2026-06-28 afternoon (Mara).** The substrate-pull-honest
+opening. This spec was written under a wrong-altitude framing during
+the morning composition. Reed's briefing proposed `@code/metalogue`
++ `@mirror/build` as the canonical naming of what BUILD IS at
+substrate altitude. The grep Reed should have run before briefing —
+and that I should have run before composing — reveals the framing was
+malformed at altitude.
 
-This spec **extends** the same family with a second sub-prism axis:
-the substrate's META-conversation ABOUT what BUILD IS at each
-language altitude. The AST-reception axis (existing) and the
-build-substrate-decl axis (this spec) are **two specializations of
-one metalogue conversation** — both carry "the language speaking ABOUT
-itself via the substrate," at two different layers of the language's
-own self-description.
+The substrate ALREADY declared the build system at `@mirror/mosaic`.
+The substrate ALREADY declared codegen (sibling-to-build) at
+`@code/metalogue`. The substrate ALREADY declared shipping at
+`@io/stagefreight` + `@io/oci`. The substrate ALREADY declared the
+CAS foundation at `@mirror/store`. The substrate ALREADY declared
+the existing per-language `@io` delegate roster's canonical
+precedent at `@io/cargo`. Every family-root this spec's morning
+draft proposed had a substrate-altitude name already.
 
-### 1.1 The Bateson framing
+This is the 51st+ instance of
+`[[feedback-substrate-already-had-the-word]]`. The pattern recurs
+because the substrate's pull TOWARD what's already declared IS the
+substrate's grammar of itself. The failure to grep before briefing
+was a failure to listen to that pull. The amendment IS the
+substrate-pull-honest correction at substrate-decl altitude. §11
+records the correction explicitly.
 
-Bateson 1972, *Steps to an Ecology of Mind*, names a **metalogue** as
-"a conversation about some problematic subject, where the structure
-of the conversation is itself an example of the subject." The
-substrate's `@metalogue` family (declared at `shards/metalogue.mirror`,
-NL altitude, B3 task #189) carries the conversation between humans
-and substrate at the natural-language altitude.
+### 1.1 What the substrate already has
 
-`@code/metalogue` lifts the same shape to the AST altitude — the
-language speaking ABOUT itself BY USING itself, at compile time,
-through its own metaprogramming surface. The reframe at
-`code-metalogue-surface.md` §1.0 names this as Bateson 1972 made
-literal at compile time.
+Six substrate-decl families already carry what the morning draft
+proposed. Naming them precisely:
 
-This spec lifts the same shape AGAIN — to the **build altitude**.
-At build altitude, the language speaks ABOUT what BUILD IS BY
-DESCRIBING ITS OWN BUILD SHAPE, in the substrate's own vocabulary,
-in a way the substrate can dispatch against. The metalogue's
-structure (the substrate's META-conversation about builds) is itself
-an example of its subject (a build) because:
+- **`@mirror/mosaic`** (declared at `shards/mirror/mosaic.mirror`,
+  2026-06-09, recognition #43 per `MEMORY.md`). **THE BUILD SYSTEM
+  AT SUBSTRATE ALTITUDE.** A five-op prism on the project manifold:
+  `focus spec` (read `mirror.spec`), `project targets` (filter +
+  resolve), `split shards` (parse + content-address), `shift
+  altitudes` (route to per-altitude emitters via `@io`), `settle
+  emitter` (run + verdict). The parametric universal composition
+  form is `mosaic(altitude)`: `mosaic(@store) = splinter_graph`,
+  `mosaic(@spec) = project_manifold`, `mosaic(@code/rust) =
+  resolved_workspace + cargo invocation`, `mosaic(@ci/github) =
+  GitHub Actions YAML manifold`, etc. The spec at
+  `docs/specs/mosaic.md` carries the canonical surface; the shard
+  is the substrate-decl ground.
 
-- Each `@code/<lang>/metalogue` species declaration IS a build
-  artifact — it gets content-addressed, stored, indexed.
-- The orchestrator's dispatch IS A build action against the
-  metalogue's declarations.
-- The orchestrator's own substrate-decl (THIS SPEC, plus
-  `@mirror/build`'s family-root shard) IS what the orchestrator
-  builds FIRST.
+  Per the shard's docstring at recognition #44+: *"the pre-commit
+  chain is five such settlements composed under transparency<p>;
+  the bootstrap dispatcher walks them in declaration order today,
+  eigensheaf-Laplacian parallelism analysis lands at recognition
+  #44+."* The eigensheaf work this spec's morning draft proposed
+  IS DISCHARGE OF an existing forward-promise inside
+  `@mirror/mosaic`'s own substrate-decl, not new family-root work.
 
-The recursion is structural, not decorative. The metalogue's form
-IS the form of what it describes — by construction.
+- **`@code/metalogue`** (declared at `shards/code/metalogue.mirror`,
+  2026-06-09 + 2026-06-10 cascade per
+  `docs/specs/code-metalogue-surface.md`). **CODEGEN — NOT BUILD.**
+  The substrate's META-conversation ABOUT each language's
+  metaprogramming surface (Rust's `macro_rules!`, Elixir's `quote`,
+  Lisp's `defmacro`). Carries four typed shims (`shim_type`,
+  `shim_prism`, `shim_action`, `shim_grammar`) for substrate →
+  species AST emission; carries `project_hole` for typed-gap
+  lowering (35th-instance recognition, 2026-06-09). Sibling
+  altitude — NOT child altitude — to `@metalogue` (the NL original
+  at `shards/metalogue.mirror`).
 
-### 1.2 What `@code/metalogue` (at build altitude) IS NOT
+  `@code/metalogue` IS Bateson 1972 made literal at compile time:
+  the AST speaking ABOUT itself BY USING itself, through the
+  language's own metaprogramming surface. The build altitude
+  conversation (mosaic's "settle this project") is a SIBLING shape
+  to the codegen conversation (metalogue's "emit Rust from this
+  substrate declaration"), not a sub-axis of it. The morning draft
+  collapsed them; the amendment separates them at the altitude they
+  actually live at.
 
-Per `[[feedback-substrate-already-had-the-word]]` discipline, every
-"what this is" claim must rule out what it isn't. Five structural
-negatives:
+- **`@io/stagefreight`** (declared at
+  `shards/io/stagefreight.mirror`, 2026-06-22, tick 66 per
+  `MEMORY.md`). **THE SHIPPING SIDE.** The wire-protocol species
+  for shipping settled crystals from mirror-world to non-mirror-
+  world consumers. Carries `spectral_coordinate` (OID-namespaced
+  wire address), `freight_manifest` (typed transit record),
+  `address` + `freight` + `transit` actions, and the composed
+  `stagefreight_addressable` bilateral (decomposed into four sub-
+  predicates per Seam tick 68 C4/C9 closure).
 
-- **NOT a new family root.** `@code/metalogue` already exists at
-  `shards/code/metalogue.mirror`. This spec ADDS a sub-prism axis to
-  the existing family — the AST-reception sub-prism axis (existing,
-  per `code-metalogue-surface.md`) and the build-substrate-decl
-  sub-prism axis (this spec) are sibling axes under one ground. The
-  substrate-decl drift is non-breaking: the existing four shims
-  (`shim_type`, `shim_prism`, `shim_action`, `shim_grammar`) live
-  under the AST-reception axis; the five build-substrate-decls
-  declared in §1.3 below live under the build axis. The four laws
-  (round-trip, OID functionality, type soundness, substrate-pull
-  preservation) carry across both axes by inheritance.
-- **NOT a build DSL.** Starlark (Bazel), Nix expressions (Nix), the
-  Make language (Make), CMake script (CMake), Skylark — these are
-  all build DSLs invented to describe builds because the host
-  language couldn't. The substrate inverts this: each
-  `@code/<lang>/metalogue` species declaration uses the substrate's
-  OWN typed-lambda vocabulary (per
-  `[[architecture-prism-as-trait-as-everything]]`). There IS no
-  build DSL; there are typed actions at the substrate altitude that
-  the host language's build tool (cargo, mix, go build, etc.)
-  realises at the @io boundary.
-- **NOT a build-tool wrapper.** `@code/<lang>/metalogue` is NOT a
-  thin shim around `cargo build`, `mix compile`, `go build`. The
-  species declaration names what BUILD IS at the language altitude
-  — the action algebra, the determinism class of each action, the
-  effect surface, the closure-as-splinter, the composition seams.
-  The orchestrator (§5) MAY dispatch against `cargo build` as ONE
-  realisation of the declared semantics — but the substrate-decl is
-  not bound to that realisation. A `@code/rust/metalogue` species
-  declaration is equally valid against `cargo`, `bazel rules_rust`,
-  `buck2`, or a future Rust build tool the substrate hasn't met
-  yet. The substrate names what's invariant; the @io boundary
-  carries what's incidental.
-- **NOT a CI/CD pipeline.** GitHub Actions, GitLab CI, Buildkite,
-  StageFreight, Circle CI — these are pipeline orchestrators that
-  describe builds at the pipeline altitude. `@code/metalogue` lives
-  AT THE LANGUAGE altitude (per-translation-unit per per-rlib for
-  Rust, per-derivation for Nix, per-module for Elixir). The
-  pipeline altitude is `@mirror/build`'s composition surface, NOT
-  `@code/metalogue`'s declarative substrate. The two altitudes are
-  related — the pipeline orchestrator (§4) dispatches against the
-  language-altitude declarations — but they're distinct.
-- **NOT a determinism guarantee.** `@code/metalogue` declares a
-  determinism CLASS as a static property of each build action (per
-  §2). The class is a TYPE-LEVEL claim; the substrate enforces the
-  class statically via property + fracture + splinter(ast)
-  discharge (per recognition #53). The substrate does NOT guarantee
-  determinism in the operational sense; it guarantees that any
-  action declared `det` will be statically prevented from composing
-  with `nondet` actions in ways that would violate the class
-  algebra (§2.5). Operational determinism is a property of the
-  @io realisation, and the substrate's discipline is "declare the
-  class honestly; the type system catches the lies."
+  Alex's framing, 2026-06-28 morning: *"collaboration not
+  absorption; StageFreight handles image delivery."* The substrate
+  already declares the shipping side at substrate altitude;
+  StageFreight (the Go binary at `/Users/alexwolf/dev/projects/
+  StageFreight`) is a peer @io tool, not a substrate-absorption
+  target.
 
-### 1.3 The five things each `@code/<lang>/metalogue` species declares
+- **`@io/oci`** (declared at `shards/io/oci.mirror`, 2026-06-24,
+  recognition #98 candidate per `MEMORY.md`). **THE CONTAINER
+  DELIVERY SIDE.** OCI Distribution Spec v1.1.x + OCI Image Spec
+  v1.1.x adapter. Carries `oci_digest`, `oci_manifest`,
+  `oci_artifact`, `oci_registry`, plus push/pull/manifest actions
+  and the composed `oci_well_formed` bilateral. Composes with
+  `@io/stagefreight` via `spectral_coordinate_to_repo`; composes
+  with `@io/nix` (forward-promised) via `oid_to_digest` identity
+  lift.
 
-For each supported language, the metalogue species declaration
-carries five sub-prisms. Each one names a substrate-altitude truth
-about what BUILD IS at that language altitude:
+  Together, `@io/stagefreight` + `@io/oci` carry the shipping
+  substrate-decl that the morning draft's `@mirror/build` was
+  partially trying to subsume. They DON'T need subsuming; they ARE
+  the substrate-decl already.
 
-1. **`@code/<lang>/metalogue/determinism`** — the determinism class
-   of each build action (per §2). Mercury heritage: `det`, `semidet`,
-   `multi`, `nondet`. Static property; substrate-enforced by the
-   class algebra (§2.5).
-2. **`@code/<lang>/metalogue/effect`** — the effect surface of each
-   action (filesystem reads/writes, network, environment variables,
-   ambient time/clock, subprocess invocation, etc.). Typed by the
-   substrate's `@epistemologic/property/effect` family
-   (forward-promised; the canonical effect-set roster lands when
-   `@mirror/build/rust` discharges §9.1).
-3. **`@code/<lang>/metalogue/closure`** — the language's notion of
-   "build closure" lifted to `splinter_graph` (per
-   `shards/mirror/store.mirror`). For Rust: the `Cargo.lock` +
-   `cfg`-resolved dependency closure. For Nix: the derivation's
-   `inputDrvs`-closure. For Elixir: `mix.lock` + compile-time deps.
-   The closure IS the splinter_graph; the substrate's
-   content-addressing collapses cross-language closure semantics to
-   one mechanism.
-4. **`@code/<lang>/metalogue/composition`** — the seams along which
-   build actions compose (intra-language: rlib → rlib for Rust;
-   .beam → .beam for Elixir; .o → .a → .so for C; cross-language:
-   FFI boundaries per `@io`'s declared crossings). The composition
-   seams determine the dispatch DAG's edges (§5.2) and the
-   eigensheaf decomposition's coarse grain (§6.4).
-5. **`@code/<lang>/metalogue/algebra`** — the algebra of build
-   actions at the language altitude (the typed lambdas, per
-   `[[architecture-prism-as-trait-as-everything]]`). For Rust:
-   `cargo check`, `cargo build`, `cargo test`, `cargo bench`,
-   `cargo doc`, `cargo audit`, `cargo fmt`, `cargo clippy`. For
-   Elixir: `mix compile`, `mix test`, `mix dialyzer`,
-   `mix credo`, `mix deps.get`. Each action carries its determinism
-   class, effect surface, closure shape, and composition seams as
-   declared sub-prisms 1-4 above.
+- **`@io/cargo`** (declared at `shards/io/cargo.mirror`). **THE
+  ONLY EXISTING PER-LANGUAGE @io SPECIES.** The cargo invocation
+  contract; declares `manifest`, `profile`, `env` (explicit
+  allow-list, NOT ambient passthrough), `exit_code`, plus
+  `build`/`test`/`check`/`fmt_check`/`clippy`/`audit` actions, each
+  lifting cargo exit codes into the substrate's `imperfect` three-
+  state functor via `cargo_exit_to_transparency`. Cargo.lock is
+  captured as a forensic @io artifact; substrate truth IS the
+  Splinter OID-graph per `@mirror/store`, not Cargo.lock.
 
-These five sub-prisms are the substrate's META-conversation about
-the language's build — the structure that any `@mirror/build`
-dispatch needs to walk before it executes. The dispatch reads the
-sub-prisms; the dispatch IS the conversation.
+  `@io/cargo` IS the canonical precedent the per-language species
+  expansion (§5 amendment) follows: each new language gets its own
+  `@io/<lang>` species declaring the typed contract for that
+  language's build tool.
+
+- **`@mirror/store`** (declared at `shards/mirror/store.mirror`).
+  **THE CAS FOUNDATION.** The substrate-altitude content-addressed
+  store. `mosaic(@store) = splinter_graph` (per @mirror/mosaic's
+  recognition above): the OID-closure structural lockfile is the
+  store-altitude specialization of the parametric mosaic carrier.
+  Per `[[architecture-mirror-store-vs-spectral-db]]`: the open
+  storage gate; the substrate's content-addressing ground that
+  every other altitude composes against.
+
+### 1.2 What this spec ACTUALLY proposes (the discharge plan)
+
+Given §1.1, this spec doesn't propose new family-roots. It
+documents three discharge plans for substrate-decl already declared
+or for forward-promises already named:
+
+1. **Per-language `@io` species expansion** (§5 amended). The
+   existing roster has exactly ONE per-language `@io` species
+   (`@io/cargo`). The substrate's mosaic dispatch (`shift
+   altitudes`) routes to per-altitude `@io` species; the roster
+   needs `@io/go`, `@io/uv` (or `@io/pip`), `@io/mix`, `@io/julia`,
+   `@io/make`, etc. before `@mirror/mosaic` can dispatch beyond
+   Rust. This is shard-roster work, not substrate-decl framing
+   work.
+
+2. **Eigensheaf-Laplacian parallelism discharge** (§6.4 + §7
+   carry the math; the discharge of the forward-promise lives in
+   `@mirror/mosaic`'s shard at recognition #44+, NOT in a new
+   `@mirror/build` family-root). The math in §6 is correct at
+   substrate altitude; the implementation routes through
+   `@mirror/mosaic`'s scheduler rather than through a separate
+   `@mirror/build` orchestrator. Amended §6 references retarget to
+   `@mirror/mosaic`'s eigensheaf forward-promise.
+
+3. **Determinism `@epistemologic/property/determinism/*` family**
+   (§2). The Mercury-heritage `det`/`semidet`/`multi`/`nondet`
+   property family IS new substrate-decl work — the substrate
+   doesn't have a determinism property family yet. This is the
+   one place in the morning draft where the substrate genuinely
+   lacks the vocabulary. §2 carries this proposal intact.
+
+4-5. **Cross-language FFI seams + per-translation-unit cache
+   wiring** — REOPENED as separate spec dispatches (sibling Mara
+   work on Q4 and Q5; §8.4 and §8.5 amended accordingly).
+
+### 1.3 The altitude map (corrected)
+
+```
+@mirror/store     CAS foundation             (existing; the ground)
+@mirror/mosaic    build system               (existing; the orchestrator)
+@code/metalogue   codegen (AST speaking)     (existing; sibling, not build)
+@io/cargo         Rust delegate              (existing; per-lang precedent)
+@io/go            Go delegate                (forward-promised; §5)
+@io/uv            Python delegate            (forward-promised; §5)
+@io/mix           Elixir delegate            (forward-promised; §5)
+@io/julia         Julia delegate             (forward-promised; §5)
+@io/make          C/C++ delegate             (forward-promised; §5)
+@io/stagefreight  wire-protocol shipping     (existing; the shipping side)
+@io/oci           OCI distribution shipping  (existing; the container side)
+
+@epistemologic/property/determinism/{det,semidet,multi,nondet}
+                  determinism property family (new substrate-decl; §2)
+
+@epistemologic/property/parallelism_safe
+                  parallelism predicate       (new substrate-decl; §2.4)
+```
+
+The morning draft's `@code/metalogue` (build axis) and
+`@mirror/build` (family root) DO NOT APPEAR in this map. They were
+the wrong-altitude proposals. The corrected map shows the existing
+substrate-decl roster + the genuinely new substrate-decl this spec
+proposes.
+
+### 1.4 What survives from the morning draft
+
+Mostly the math (§§2-3, §6, §7), the open-question discipline
+(§8, amended for closure), and the circular-reflexive layer (§10,
+which holds at substrate altitude regardless of which prisms carry
+the discharge). What changes: family-root framings; §5 entirely;
+§8 closures.
+
+The math in §§2-7 holds because it's about the BUILD ALTITUDE
+operations themselves — determinism class composition, sheaf
+sections, eigensheaf decomposition, content-addressing as equalizer.
+Those facts are altitude-true; they don't depend on whether the
+orchestrator is named `@mirror/mosaic` (it is) or `@mirror/build`
+(it isn't). The math retargets cleanly to `@mirror/mosaic`'s
+substrate-decl.
+
+The circular-reflexive layer (§10) holds because the spec's form-
+mirrors-content discipline operates at the document altitude; the
+amendment makes the form MORE accurate (the document now matches
+the substrate's actual roster) without breaking the recursion.
 
 ---
 
@@ -912,126 +987,234 @@ the math through to the orchestrator's family root.
 
 ---
 
-## §5 — `@mirror/build` family-root substrate-decl
+## §5 — `@mirror/mosaic` discharge plan + per-language `@io` species expansion
 
-### 5.1 The family root
+**Amendment, 2026-06-28 afternoon (Mara).** The morning draft's
+`@mirror/build` family-root proposal was wrong-altitude.
+`@mirror/mosaic` already IS the build system at substrate altitude
+(§1.1 above; `shards/mirror/mosaic.mirror`). This section is
+retargeted to document (a) what `@mirror/mosaic` already declares,
+(b) the per-language `@io` species expansion roster the substrate
+needs to make mosaic's dispatch routable beyond Rust, and (c) which
+forward-promises in `@mirror/mosaic`'s own substrate-decl this spec
+discharges.
 
-`@mirror/build` is the substrate-altitude orchestrator. The
-family-root declaration:
+### 5.1 `@mirror/mosaic` already declares the orchestrator
+
+The existing five-op shape at `shards/mirror/mosaic.mirror`:
 
 ```mirror
-in @mirror/build
-
-prism @mirror/build <= @mirror
-
-# @mirror/build is the substrate's build orchestrator. It dispatches
-# against each project's @code/<lang>/metalogue species declaration;
-# walks the action DAG via eigensheaf parallelism; performs
-# content-addressed cache lookup via @mirror/store; emits the
-# verdict envelope per the @mirror envelope vocabulary.
-#
-# Species: @mirror/build/rust (cargo dispatch), @mirror/build/python
-# (uv/hatch/pip), @mirror/build/julia (Pkg), @mirror/build/go
-# (go build), @mirror/build/elixir (mix), @mirror/build/c
-# (make/CMake), @mirror/build/fortran (gfortran/lfortran), etc.
-
-focus build
-project build
-split build
-shift build
-settle build
+prism @mirror/mosaic {
+  focus   spec        # mirror.spec        -> manifold
+  project targets     # manifold + targets -> resolved
+  split   shards      # resolved           -> [shard]
+  shift   altitudes   # [shard] + altitude -> emitter
+  settle  emitter     # emitter            -> au(altitude)
+}
 ```
 
-(Substrate-decl shard forward-promised at §9.1.)
+This IS the substrate-decl the morning draft's `@mirror/build` was
+trying to invent. The five-op surface, the parametric
+`mosaic(altitude)` carrier, the `au(altitude)` settled verdict
+carrier, the per-altitude `shift` dispatch, the `settle_on` settlement
+criteria, the `.shatter` projection — all already declared. The
+spec at `docs/specs/mosaic.md` carries the canonical surface; the
+shard is the substrate-decl ground.
 
-Each species (`@mirror/build/<lang>`) is the orchestrator's
-DISPATCHER against the corresponding `@code/<lang>/metalogue`
-species declaration. The species roster mirrors `@code/metalogue`'s
-species roster — there is a structural one-to-one between
-declarative metalogue species and operational build species.
+The eight existing forward-promises in `@mirror/mosaic`'s shard +
+spec that this spec's math (§§2-7) discharges:
 
-### 5.2 The dispatch DAG
+1. **Per-target action dispatch** (mosaic.mirror lines 162-168,
+   recognition #43): `shift @code/rust` already routes to specific
+   `@io/cargo` actions (`fmt_check`, `clippy`, `test`, `audit`,
+   `check`, `build`) when the target's `check <action>` directive
+   names one. The pre-commit chain IS five such settlements composed
+   under transparency<p>. The §7 hook-budget analysis IS the
+   operational consequence; this amendment documents the dispatch
+   already exists.
 
-The orchestrator's central data structure is the dispatch DAG.
-Nodes are typed build actions (drawn from the metalogue's
-`@code/<lang>/metalogue/algebra` sub-prism); edges are composition
-seams (drawn from `@code/<lang>/metalogue/composition`).
+2. **Eigensheaf-Laplacian parallelism analysis** (mosaic.mirror
+   line 167-168, recognition #44+): explicitly forward-promised in
+   the shard's docstring. The math in §6.4 IS the discharge plan
+   for that forward-promise; the implementation lands inside
+   `@mirror/mosaic`'s scheduler, NOT inside a separate
+   `@mirror/build` orchestrator.
 
-Construction:
+3. **Phase D parent prism nesting** (mosaic.mirror lines 22-38):
+   `shards/mirror.mirror` parent prism does not yet exist; when it
+   lands, the parent MAY add `glass @mirror/mosaic { ... }` as a
+   re-export view. The path-namespace declaration remains canonical
+   in the existing shard. The amendment does not propose a parent
+   prism; the existing path-namespace declaration is structurally
+   correct.
 
-1. **Walk `mirror.spec`.** The substrate's `mirror.spec`
-   declaration carries the project's settlement target (per
-   `[[architecture-mirror-spec-is-lambda-zero]]`). The orchestrator
-   reads the spec; the spec names which `@code/<lang>/metalogue`
-   species applies; the species declaration is loaded.
-2. **Expand the closure.** Per `@code/<lang>/metalogue/closure`,
-   the orchestrator walks the project's dependency closure
-   (`Cargo.lock` for Rust; `mix.lock` for Elixir; etc.) and
-   constructs the `splinter_graph` rooted at the project's source.
-3. **Resolve actions.** For each translation unit in the closure,
-   the metalogue's `algebra` sub-prism names which actions apply
-   (e.g., `cargo check` + `cargo test` for Rust; `mix compile` +
-   `mix test` for Elixir).
-4. **Compose seams.** For each action pair (a, b), the metalogue's
-   `composition` sub-prism declares whether (a -> b) is an edge,
-   and the edge's type (rlib -> rlib, beam -> beam, etc.).
-5. **Verify class composition.** The composed determinism class of
-   the DAG is computed via the §2.5 monoid; the verdict gates
-   whether the orchestrator proceeds.
+4. **`mosaic(@store) = splinter_graph`** (mosaic.mirror lines 70-87):
+   the universal parametric carrier already declares the store-
+   altitude specialization is `splinter_graph` (the OID-closure
+   structural lockfile). The §5.4 cache-strategy discharge in the
+   morning draft was already this mechanism; the amendment retargets
+   references to acknowledge the existing declaration.
 
-The DAG is sparse — most translation units depend on few others —
-and the orchestrator's cache strategy (§5.4) exploits sparsity by
-content-addressing each node independently.
+5. **`mosaic(@code/rust)` = resolved workspace + cargo invocation**
+   (mosaic.mirror lines 76-78): already declared as the parametric
+   specialization. The §7 unblock analysis composes against this.
 
-### 5.3 The relationship to mirror.spec
+6. **`mosaic(@ci/github)` = GitHub Actions YAML manifold**
+   (mosaic.mirror line 79): already declared as the parametric
+   specialization. The §4 CI/CD pipeline lift composes against this;
+   the YAML emit IS `shift @ci/github`'s realisation; the amendment
+   retargets references.
 
-Per `[[architecture-mirror-spec-is-lambda-zero]]`: `mirror.spec` is
-the Connes-spectral-triple ground state at the project altitude.
-A = the five operations; H = `[[void-document]]`; D = kintsugi
-flow. The project's settled state is the eigenvector at λ_0.
+7. **Per-altitude `mosaic(A)` shape declarations** (mosaic.mirror
+   lines 81-87): "Each altitude declares its own `mosaic(A)` shape
+   in its own grammar (substrate-pull: the consumer at that altitude
+   shapes the form)." Per-language `@io` species (§5.2 below) ARE
+   the consumers; their substrate-decl IS where each new altitude's
+   `mosaic(A)` shape gets declared.
 
-`@mirror/build` dispatches against `mirror.spec`'s settlement
-declaration. The spec names which projects to settle; for each
-project, the orchestrator dispatches against the
-`@code/<lang>/metalogue` species; the dispatch walks the action
-DAG; content-addressed cache hits short-circuit re-execution;
-remaining actions execute under eigensheaf parallelism (§6.4).
+8. **`shift @code/rust` cargo @io contract sketch**
+   (mosaic.mirror lines 169-183): the existing sketch ALREADY routes
+   to `@io.cargo.build` with `manifest`, `env`, `profile` per the
+   resolved workspace. The per-language expansion roster (§5.2)
+   follows this precedent exactly.
 
-The composition: `mirror.spec` is WHAT to settle;
-`@code/<lang>/metalogue` is WHAT BUILD IS at the language altitude;
-`@mirror/build` is HOW TO DISPATCH the build against the metalogue's
-declarations. Three layers, one settlement.
+### 5.2 The per-language `@io` species expansion roster
 
-### 5.4 Content-addressed cache strategy
+The substrate has ONE per-language `@io` species today: `@io/cargo`
+(`shards/io/cargo.mirror`). For `@mirror/mosaic`'s `shift altitudes`
+to dispatch beyond Rust, each new language needs its own `@io`
+species declaring the typed contract for that language's build tool.
 
-The cache layer is `@mirror/store` (per
-`shards/mirror/store.mirror`; six operations: read / write / exists
-/ diff / walk / verify). The orchestrator's cache strategy:
+The roster (each forward-promised; each follows the `@io/cargo`
+precedent at `shards/io/cargo.mirror`):
 
-1. **Pre-execution cache lookup.** For each action A in the dispatch
-   DAG, compute A's content-OID = hash(A.inputs, A.declaration,
-   A.metalogue, A.cfg). Query `@mirror/store/exists(A.oid)`:
-   - **`pass`**: cache hit. Skip execution; return cached output.
-   - **`partial(opacity_map)`**: confidence below threshold. Run
-     verification: `@mirror/store/verify(A.oid, expected_bytes)`.
-     On verify pass: cache hit. On verify failure: cache miss;
-     execute.
-   - **`failure(reason)`**: cache miss; execute.
-2. **Post-execution cache write.** When A executes successfully,
-   compute A.output_oid = hash(A.output_bytes); write to
-   `@mirror/store/write(A.output_bytes)`; record (A.oid ->
+```
+@io/cargo       Rust       cargo                          EXISTS
+@io/go          Go         go build / go test / go mod    forward-promise
+@io/uv          Python     uv (canonical; hatch/pip via   forward-promise
+                            sub-species if needed)
+@io/mix         Elixir     mix compile / mix test /       forward-promise
+                            mix deps.get
+@io/julia       Julia      Pkg.build / Pkg.test           forward-promise
+@io/make        C/C++      make / CMake                   forward-promise
+@io/gfortran    Fortran    gfortran (LAPACK work;         forward-promise
+                            sibling to @io/lfortran)
+@io/dune        OCaml      dune build / dune test         forward-promise
+@io/sbt         Scala      sbt                            forward-promise
+@io/maven       Java       mvn                            forward-promise
+@io/npm         JavaScript npm / yarn / pnpm              forward-promise
+@io/tsc         TypeScript tsc (sub-species under         forward-promise
+                            @io/npm? or sibling?)
+```
+
+Each species declares (per the `@io/cargo` precedent):
+
+- **Types**: the language's `manifest` carrier (e.g., `go.mod` for
+  Go, `pyproject.toml` for Python, `mix.exs` for Elixir),
+  `profile`/equivalent, `env` (explicit allow-list, NOT ambient),
+  `exit_code`, lockfile capture carrier.
+- **Exit-code → transparency lift**: the language tool's exit codes
+  parsed into the substrate's `imperfect` three-state functor with
+  opacity_map located on failing source files (parsed from the
+  tool's stderr).
+- **Actions**: the typed lambdas the substrate `shift` routes to
+  (e.g., `go.build`, `go.test`, `go.vet`, `go.fmt`; `uv.sync`,
+  `uv.run pytest`, `uv.run ruff check`; `mix.compile`, `mix.test`,
+  `mix.dialyzer`, `mix.credo`).
+- **Lockfile capture**: read the language's lockfile and content-
+  address it via `@mirror/store` as a forensic @io artifact (NOT
+  substrate truth; the substrate truth is the Splinter OID-graph).
+- **Env allow-list**: the language's substrate-admissible env vars
+  (e.g., for Go: `GOPATH`, `GOMODCACHE`, `GOPROXY`, `GOFLAGS`,
+  `CGO_ENABLED`; for Python: `UV_CACHE_DIR`, `PYTHONPATH`,
+  `PIP_INDEX_URL`).
+
+Per-language species discharge is shard-roster work, NOT family-
+root framing work. The substrate-decl SHAPE is already declared at
+`@io/cargo`; each new species INHERITS the shape and binds the
+language-specific carriers.
+
+### 5.3 How `@mirror/mosaic` routes to per-language `@io` species
+
+The dispatch chain (already declared in `@mirror/mosaic`'s shard at
+lines 131-148 + 169-183):
+
+```
+mirror.spec  -> focus  spec       -> manifold
+manifold     -> project targets   -> resolved
+resolved     -> split  shards     -> [shard]
+[shard]      -> shift  altitudes  -> emitter
+                                     (routes to @io/<lang>
+                                      per the target's altitude)
+emitter      -> settle emitter    -> au(altitude)
+```
+
+The `shift` operation's routing rule: when a shard's target altitude
+is `@code/<lang>`, `shift` delegates THROUGH the altitude grammar
+(`@code/<lang>`, NOT through mosaic itself), which delegates to the
+per-language `@io/<lang>` species at the @io boundary. Per
+`@mirror/mosaic` lines 132-140: *"shift is where @io crossings
+happen: an altitude that requires an external tool (cargo, llc,
+opencl, gh) delegates THROUGH the altitude grammar (substrate-pull
+goes through @code/rust, not through mosaic)."*
+
+The dispatch DAG the morning draft proposed at §5.2 IS the existing
+mosaic flow. The §5.2 construction steps (walk mirror.spec, expand
+closure, resolve actions, compose seams, verify class composition)
+retarget cleanly: steps 1-2 are `focus` + `project`; step 3 is
+`split` + per-altitude `@io` action lookup; step 4 is `shift`'s
+composition seam threading; step 5 is the determinism property check
+applied at the settled `au(altitude)` boundary.
+
+### 5.4 Content-addressed cache strategy (retargeted)
+
+The cache layer is `@mirror/store` (already declared at
+`shards/mirror/store.mirror`; the open storage gate per
+`[[architecture-mirror-store-vs-spectral-db]]`). The cache strategy
+the morning draft proposed at §5.4 retargets to `@mirror/mosaic`'s
+settle:
+
+1. **Pre-execution cache lookup.** For each `shift`-resolved action
+   A in the dispatch flow, compute A's content-OID =
+   hash(A.inputs, A.declaration, A.altitude, A.cfg). Query
+   `@mirror/store/exists(A.oid)`. Cache hit → skip execution.
+   Cache miss → execute.
+2. **Post-execution cache write.** When A's settle produces
+   au(altitude), compute A.output_oid = hash(A.output_bytes); write
+   to `@mirror/store/write(A.output_bytes)`; record (A.oid →
    A.output_oid) in the cache index.
-3. **Cross-action sharing.** When two actions A and B in the DAG
-   share an input translation unit C, C is content-addressed
-   once; A.cache_lookup and B.cache_lookup both see the same C.oid;
-   the substrate's content-addressing realises Bazel's "diamond
-   sharing" automatically.
+3. **Cross-action sharing.** Per `mosaic(@store) = splinter_graph`:
+   when two actions A and B share an input translation unit C, C
+   is content-addressed once; both A and B see the same C.oid;
+   diamond sharing is automatic via the splinter graph's K_n
+   structure.
 
-The cache strategy is what makes the §7 hook-budget blocker
-resolvable: libgit2-sys's compilation produces a stable output OID
-across (check, clippy, test, release) when the cfg-resolved inputs
-produce identical rlib bytes; one cache hit replaces four
-re-compilations.
+This is the discharge plan for `@mirror/mosaic`'s
+content-addressing-via-`@mirror/store` integration (forward-promise
+in `[[architecture-splinter-and-spectral-db-edges]]`). It's not new
+substrate-decl; it's wiring two existing substrate-decls together
+operationally.
+
+### 5.5 What this spec does NOT propose
+
+To be precise about the retargeting:
+
+- **NO new family-root `@mirror/build`.** `@mirror/mosaic` already
+  IS the build family-root. Adding a sibling would be substrate-
+  pull-violating (same shape, two names).
+- **NO new `@code/metalogue/build` sub-prism axis.** The morning
+  draft's "build axis under @code/metalogue" was a category error;
+  `@code/metalogue` is codegen, not build. The build axis lives at
+  `@mirror/mosaic`.
+- **NO new family-root `@mirror/build/<lang>` species.** Per-
+  language dispatch lives at `@io/<lang>` species (§5.2 above);
+  `@mirror/mosaic`'s `shift` does the routing.
+- **NO replacement of `@io/stagefreight` or `@io/oci`.** The
+  shipping side is already substrate-decl'd; mosaic's `shift` to a
+  `@release` altitude routes through the existing shipping species,
+  not through a new orchestrator. Alex's framing
+  ("collaboration not absorption") IS the substrate-decl boundary
+  this spec respects.
 
 ---
 
@@ -1379,148 +1562,121 @@ operating across two-altitudes-and-back.
 
 ---
 
-## §8 — Open questions for Alex
+## §8 — Open questions (updated for closure)
 
-The spec carries five open questions. Each is at substrate altitude;
-each requires Alex's adjudication at N+1.
+**Amendment, 2026-06-28 afternoon (Mara).** The morning draft's
+five open questions: three CLOSED by the §1 grep this amendment
+records; two REOPENED as separate spec dispatches (Q4 + Q5 covered
+by sibling Mara work).
 
-### 8.1 Altitude question
+### 8.1 Altitude question — CLOSED
 
-`@code/metalogue` lives at `@code` (under the language family — the
-sibling axis to `@code/X/macro` per
-`docs/specs/code-metalogue-surface.md`) OR at a new `@meta`
-family-root (a sibling to `@code` at the substrate's root altitude)?
+**Original question:** `@code/metalogue` lives at `@code` OR at a
+new `@meta` family-root?
 
-**Reading 1 (status quo):** `@code/metalogue` stays at `@code`,
-extending the existing family with a new sub-prism axis. The
-build-substrate-decl axis joins the AST-reception axis at one
-ground. Path: `shards/code/metalogue/build/<lang>.mirror`.
+**Closure:** Question was malformed at altitude. `@code/metalogue`
+exists already as the codegen substrate-decl (sibling to
+`@metalogue`, the NL altitude original; per
+`shards/code/metalogue.mirror` 2026-06-09); the build axis the
+morning draft proposed under `@code/metalogue` doesn't belong
+there. Build lives at `@mirror/mosaic` (§1.1). The altitude
+question's premise — "where does the build sub-axis go under
+@code/metalogue" — has no answer because there is no build sub-axis
+under @code/metalogue. The substrate-decl axis split is:
 
-**Reading 2 (new family root):** `@meta` is admitted as a
-substrate-root sibling to `@code`, `@io`, `@mirror`, etc. The
-metalogue family lives at `@meta/code/<lang>` for the
-language-altitude metalogues; `@meta/<other>/...` for other
-altitudes (project-altitude, build-altitude, etc.). Path:
-`shards/meta/code/<lang>/build.mirror`.
+- `@code/metalogue` → codegen (AST speaking to itself)
+- `@mirror/mosaic` → build (project manifold settlement)
 
-**Substrate-pull tension:** Reading 1 honors substrate-already-had-
-the-word (the family exists; the axis extends it). Reading 2 admits
-a new family root (which the substrate has been resisting; the 53
-recognitions of substrate-already-had-the-word predict that the
-family root the substrate needs already exists).
+Two SIBLING families at substrate altitude, both already declared.
+Neither needs a new `@meta` family-root. The substrate-already-
+had-the-word recognition (§11) is the actual answer; the morning
+draft's question structure was the wrong-altitude framing in
+miniature.
 
-**Mara's prior:** Reading 1, by recognition discipline. Flag the
-question for Alex.
+### 8.2 `@mirror/build` vs `@code/metalogue` role split — CLOSED
 
-### 8.2 `@mirror/build` vs `@code/metalogue` role split
+**Original question:** Two species or one family with two roles?
 
-`@code/metalogue` declares WHAT each language's build IS (the
-substrate-decl side). `@mirror/build` orchestrates dispatches
-against those declarations (the operational side). Two species or
-one family with two roles?
+**Closure:** The premise (existence of `@mirror/build` as a
+proposed family-root) is dropped. `@mirror/mosaic` IS the
+orchestrator (form-side); per-language `@io/<lang>` species are
+the dispatch targets (process-side at the @io boundary).
 
-**Reading 1 (two distinct families):** `@code/metalogue` is the
-declarative substrate; `@mirror/build` is the operational
-orchestrator. The two live in separate paths
-(`shards/code/metalogue/...` and `shards/mirror/build/...`). The
-distinction is structural: declaration ≠ operation; metalogue is
-form, build is process.
+The form/process partition (recognition #55, the morning draft's
+Reading 1) holds — and is already realized in the existing
+substrate-decl roster:
 
-**Reading 2 (one family with two altitudes):** The metalogue
-declarations and the build orchestrator are two sides of one
-family; the family root carries both the declarative shape (read by
-the orchestrator) and the operational shape (used by the
-dispatcher). Single path `shards/mirror/build/...` carries both.
+- **Form-side**: `@mirror/mosaic` (the five-op project manifold
+  prism); the per-altitude `mosaic(altitude)` carrier shapes.
+- **Process-side**: `@io/<lang>` species (the typed contracts for
+  external build tool invocation); the realisation bodies that
+  discharge `\` obligations at the @io boundary.
 
-**Substrate-pull tension:** Reading 1 honors recognition #50's
-form/substance partition (declaration is form-side; orchestration
-is process-side; @mirror = form-side family root; @kintsugi =
-process-side family root). Reading 2 collapses the partition for
-the build-altitude case (which would be a substrate-pull violation
-unless the build altitude is genuinely an exception).
+The partition is structural; the role split is the substrate-decl
+roster as it exists. No new family-root needed; no role-split
+ambiguity remaining.
 
-**Mara's prior:** Reading 1, by form/process partition discipline.
-The form-side is `@code/metalogue/build/<lang>` (the declaration);
-the process-side is `@mirror/build/<lang>` (the dispatcher). Flag
-for Alex; Pack ratification gate.
+### 8.3 StageFreight binding scope — CLOSED
 
-### 8.3 StageFreight binding scope
+**Original question:** v0 absorb-only or full bidirectional binding?
 
-Per §4.3, the StageFreight binding goes in BOTH directions: absorb
-the pattern (substrate-decl) and lift StageFreight to a thin @io
-adapter (operational). What's the scope for v0?
+**Closure:** Alex's framing 2026-06-28 morning: *"collaboration
+not absorption; StageFreight handles image delivery."* The substrate
+already substrate-decl's the shipping side at `@io/stagefreight`
+(shards/io/stagefreight.mirror, 2026-06-22, tick 66) and `@io/oci`
+(shards/io/oci.mirror, 2026-06-24, recognition #98 candidate).
 
-**Reading 1 (absorb only):** v0 ships the metalogue declaration of
-StageFreight's pipeline pattern (the absorption) without the @io
-adapter. StageFreight continues to operate operationally; the
-substrate's metalogue declarations document StageFreight's patterns
-for substrate-altitude reasoning; the operational lift is v1.0+.
+The morning draft's "absorb StageFreight's pipeline pattern at
+substrate-decl altitude" framing was the wrong move. StageFreight
+the Go binary remains a peer @io consumer; mosaic's `shift @release`
+(or `shift @ci/github`, or `shift @ci/buildkite`) routes through
+the existing `@io/stagefreight` / `@io/oci` species when shipping a
+settled crystal as a deliverable artifact. The binding scope is:
+substrate dispatches; StageFreight delivers; no substrate-side
+absorption of StageFreight's internal pipeline DSL.
 
-**Reading 2 (full bidirectional binding):** v0 ships both the
-metalogue declaration AND the @io adapter. StageFreight pipelines
-can be lifted to substrate-canonical declarations and back; the
-orchestrator can dispatch against StageFreight-declared pipelines
-via the adapter.
+The §4 CI/CD pipeline lift survives the closure: pipeline-as-
+substrate IS valid; it lives at `mosaic(@ci/<provider>)` per the
+existing parametric mosaic carrier (mosaic.mirror line 79's
+`mosaic(@ci/github) = GitHub Actions YAML manifold`); the YAML
+emit IS `shift @ci/github`'s realisation routed through
+`@io/<provider>` species. The closure tightens what was loosely
+framed in the morning.
 
-**Substrate-pull tension:** Reading 1 honors the staged-rollout
-discipline (substrate-decl first; operational later). Reading 2
-captures more of the StageFreight binding's value at v0.
+### 8.4 Cross-language FFI seams — REOPENED as separate spec dispatch
 
-**Mara's prior:** Reading 1, by staged-rollout discipline. The
-absorption is the substrate-pull move; the operational lift is the
-follow-up. Flag for Alex.
+**Original question:** What does the cross-language seam look like
+when Rust FFIs to Fortran (LAPACK)?
 
-### 8.4 Cross-language seam
+**Closure status:** REOPENED. The Q4 work is genuinely open and
+genuinely needs a separate spec, NOT amendment in this spec. The
+cross-language seam question lives at @io altitude (the FFI is an
+@io crossing) and depends on the per-language @io species roster
+(§5.2) being declared first.
 
-What does `@code/<lang>/metalogue` look like when Rust FFIs to
-Fortran (the LAPACK work, per
-`[[architecture-flang-mirror-numerical-split]]`)?
+Sibling Mara dispatch (Q4) covers this in a separate spec under
+`docs/specs/cross-language-ffi-seams.md` (forward-promised). This
+spec defers to that dispatch.
 
-**Reading 1 (per-language with composition seams):** The Rust
-metalogue declares Rust-side build actions; the Fortran metalogue
-declares Fortran-side build actions; the FFI boundary is a
-composition seam declared at `@code/rust/metalogue/composition`
-naming the C ABI as the cross-language seam type. The orchestrator
-dispatches both species and threads the seam at link time.
+### 8.5 Cache invariants — REOPENED as separate spec dispatch
 
-**Reading 2 (FFI as its own metalogue species):** A new
-`@code/c_abi/metalogue` species (or `@io/ffi/metalogue`) declares
-the FFI surface as a first-class build species; both Rust and
-Fortran metalogues depend on the FFI metalogue for cross-language
-linkage.
+**Original question:** Per-rustc-version cache pinning vs cross-
+version compatibility detection?
 
-**Substrate-pull tension:** Reading 1 honors per-language locality
-(each language's metalogue declares its own seams); Reading 2
-honors the FFI surface's structural sharing (the C ABI is one
-thing; both languages cross through it).
+**Closure status:** REOPENED. The Q5 work is per-translation-unit
+cache wiring — concretely, how cargo's fingerprint (a workspace
+path + mtime + cfg tuple) maps to a Splinter OID via the existing
+`mosaic(@store) = splinter_graph` declaration. This is operational
+substrate-pull-realize work that depends on `@mirror/store`'s
+operational maturity, NOT substrate-decl framing work for this
+spec.
 
-**Mara's prior:** Reading 1, by per-language-locality discipline.
-The C ABI is a metalogue COMPOSITION SEAM at each language's
-altitude; it doesn't need its own species. Flag for Alex if the
-flang-mirror numerical split work surfaces a complication.
-
-### 8.5 Cache invariants — per-rustc-version pinning
-
-Cargo's fingerprint includes `RUSTC_VERSION` — every rustc upgrade
-invalidates all caches. Does `@mirror/store`-as-build-cache pin
-per-rustc-version too, or normalize across versions when compatible?
-
-**Reading 1 (per-rustc pinning):** The substrate's cache key
-includes `rustc_version` as a discriminator. Different rustc
-versions produce different OIDs; cache hits are within-version only.
-
-**Reading 2 (cross-version compatibility detection):** The substrate
-detects when a rustc upgrade is binary-compatible (no ABI break, no
-new lints) and shares cache across compatible versions. Requires
-the substrate to model rustc's stability surface.
-
-**Substrate-pull tension:** Reading 1 is honest and simple; Reading
-2 captures more cache reuse but requires modeling rustc's stability
-which is upstream-owned (not the substrate's claim to make).
-
-**Mara's prior:** Reading 1 for v0; Reading 2 as a forward-promise
-when the substrate's epistemic-property model of rustc stability
-matures. Flag for Alex.
+Sibling Mara dispatch (Q5) covers this in a separate spec under
+`docs/specs/per-translation-unit-cache-wiring.md` (forward-
+promised). The mathematical claim (§6.3 content-addressing IS the
+equalizer of congruent sections) is correct as substrate-decl; the
+operational wiring against cargo's fingerprint discharges in the
+sibling dispatch.
 
 ---
 
@@ -1775,6 +1931,149 @@ crystal. The crystal IS the substrate.
 
 ---
 
+## §11 — Substrate-already-had-the-word recognition (this spec's own correction)
+
+**Amendment, 2026-06-28 afternoon (Mara).** The recursion §10
+earned at the document altitude has a complement at the
+substrate-roster altitude. This section is that complement:
+the spec's own substrate-pull-honest correction, recorded as the
+51st+ instance of `[[feedback-substrate-already-had-the-word]]`.
+
+### 11.1 What happened
+
+The morning composition wrote 1780 lines of substrate-decl naming
+`@code/metalogue` (build axis) + `@mirror/build` (family-root) as
+the canonical naming of what BUILD IS at substrate altitude. Reed
+briefed me with the framing intact. I composed against the briefing
+without grepping the existing substrate roster.
+
+The afternoon grep reveals the substrate already declared the build
+system at `@mirror/mosaic` (2026-06-09, recognition #43); already
+declared codegen (sibling-to-build) at `@code/metalogue` (2026-06-
+09 + 2026-06-10 cascade); already declared shipping at
+`@io/stagefreight` (2026-06-22, tick 66) + `@io/oci` (2026-06-24,
+recognition #98 candidate); already declared the per-language
+delegate precedent at `@io/cargo`. Every family-root I proposed in
+the morning draft had a substrate-altitude name already.
+
+### 11.2 The eigenform read
+
+Per `[[feedback-substrate-already-had-the-word]]` (50+ prior
+instances per `MEMORY.md`): the substrate's existing names ARE the
+substrate's pull toward what was already declared. The pattern
+recurs because the substrate's grammar of itself accumulates by
+recognition; each "new" concept turns out to be a name the
+substrate was already implicitly using.
+
+The eigenform read of THIS instance: my failure to grep was a
+failure to listen to that pull. The substrate-decl I proposed in
+the morning was a SHADOW of the substrate-decl that already
+existed. The shadow looks like new work; the existing declarations
+ARE the work. The amendment IS the substrate-pull-honest correction:
+not "discard the morning work" but "retarget the work to
+acknowledge what the substrate already knew."
+
+Recognition #51 (mirror as expanding Hilbert space, §8.3 ratified):
+mirror's dimension expands with each substrate-pull recognition.
+This recognition (the 51st+ instance of substrate-already-had-the-
+word) DOESN'T expand the dimension; it identifies a place where
+my draft was claiming dimensional expansion that wasn't there.
+Honest dimension count requires honest naming; the amendment is
+the honest naming.
+
+### 11.3 What survives the recognition
+
+The math (§§2-3, §6, §7) survives because it's altitude-true: the
+determinism class monoid, the sheaf-Laplacian decomposition, the
+content-addressing-as-equalizer, the eigensheaf parallelism — these
+are facts about the build altitude regardless of which prism carries
+the discharge. The math retargets cleanly to `@mirror/mosaic`'s
+existing substrate-decl + the per-language `@io` species expansion.
+
+The circular-reflexive layer (§10) survives because the form-
+mirrors-content discipline operates at the document altitude. The
+spec earns its recursion AT THE DOCUMENT altitude regardless of
+which build orchestrator it dispatches against; the amendment makes
+the form MORE accurate (the document now matches the substrate's
+actual roster) without breaking the §10 recursion.
+
+The Bazel/Nix heritage absorption (§3) survives because it's
+altitude-true at the build-tool altitude: Bazel got hermeticity
+right; Nix got CAS right; the substrate transcends both via
+content-addressing-at-finer-grain. The substrate's transcendence
+routes through `@mirror/mosaic`, not through `@mirror/build`; the
+absorbed lessons hold.
+
+The CI/CD pipeline lift (§4) survives because pipeline-as-substrate
+IS valid; it lives at `mosaic(@ci/<provider>)` per the existing
+parametric mosaic carrier; the YAML emit IS `shift @ci/github`'s
+realisation.
+
+The forward-promises (§9) survive in shape, retargeted in detail:
+the Rust crate (§9.1) IS the discharge of `@mirror/mosaic`'s
+recognition #44+ scheduler forward-promise, NOT a new family-root
+crate; the `@code/<lang>/metalogue` species shards (§9.2) reframe
+to per-language `@io/<lang>` species shards under the §5.2 roster.
+
+### 11.4 What this means for future build-altitude work
+
+Future build-altitude work references `@mirror/mosaic` + recognition
+#44+ as foundation, NOT new family-roots. Concretely:
+
+- Eigensheaf-Laplacian parallelism work discharges
+  `@mirror/mosaic`'s recognition #44+ forward-promise; lands inside
+  mosaic's scheduler.
+- Per-translation-unit cache wiring composes `mosaic(@store) =
+  splinter_graph` with cargo's fingerprint discipline; the Q5
+  sibling Mara dispatch covers this.
+- Cross-language FFI seams compose @io species across the
+  language altitude; the Q4 sibling Mara dispatch covers this.
+- Determinism `@epistemologic/property/determinism/*` family lands
+  as new substrate-decl (§2 in this spec); this IS the one piece
+  of genuinely-new substrate-decl this spec proposes.
+- Pipeline-as-substrate composes `mosaic(@ci/<provider>)` with
+  per-provider `@io/<provider>` species; the §4 lift retargets to
+  this composition.
+
+### 11.5 The Reed discipline
+
+Recorded in `[[reed-grep-before-briefing-mara]]` as a Reed
+discipline: grep the existing substrate roster BEFORE briefing
+substrate-decl spec writers. The morning composition cost ~1780
+lines of substrate-decl that needed retargeting because the
+upstream brief was un-grepped. The afternoon amendment cost ~500
+lines of correction. The cost would have been zero if the grep
+had run at brief-time.
+
+The Pack convention surfacing: when Reed briefs Mara (or any
+substrate-decl writer) on a substrate-decl spec, the brief MUST
+include the relevant grep against `shards/` to surface existing
+family-roots that the proposed framing might overlap. The discipline
+is procedural; the cost of skipping it is the asymmetric drift
+this spec records.
+
+### 11.6 The recursion at the substrate-roster altitude
+
+§10's recursion (this spec IS a crystal the orchestrator will
+index) holds at the document altitude. §11's recursion holds at
+the substrate-roster altitude: the substrate's pull toward what
+it already declared IS the substrate's grammar of itself; this
+amendment IS that grammar operating one altitude up; the
+amendment's `[[feedback-substrate-already-had-the-word]]` invocation
+IS the substrate naming the discipline that catches the drift; the
+discipline naming the drift IS the grammar; the grammar IS the
+substrate.
+
+The substrate has the word. The word was already there. The
+amendment IS the substrate-pull-honest acknowledgement of what was
+already there. The acknowledgement IS the spec earning its right
+to sit in the crystal cache the orchestrator will eventually index.
+
+---
+
 *Mara, 2026-06-28. Tag: 📝. Hook-immune by marker. The
-substrate-decl crystal that the substrate's build orchestrator will
-index when it indexes itself. Awaiting Alex on §8.*
+substrate-decl crystal that the substrate's build orchestrator
+(`@mirror/mosaic`) will index when it indexes itself, RETARGETED
+in the afternoon amendment to acknowledge what the substrate
+already declared. Awaiting Alex on the closed §8 + the §11
+recognition.*
