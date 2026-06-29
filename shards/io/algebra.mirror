@@ -1,0 +1,808 @@
+in @prism
+in @meta
+in @glass
+in @io
+in @algebra
+in @glue
+in @bauchladen
+in @fate
+in @uuid/spectral
+
+# @io/algebra — the algebra-altitude @io boundary species.
+#
+# Sibling to @io/cargo (the Rust build-system delegate, 2026-06-05),
+# @io/oci (the OCI Distribution adapter, 2026-06-24), @io/stagefreight
+# (the wire-protocol surface, 2026-06-23), @io/git (the git plumbing
+# delegate) at the @io species altitude. Same shape — typed contract
+# the mirror side sees, opaque non-mirror body discharging at the
+# realisation boundary — at the algebra altitude.
+#
+# === The recognition (#104 chain P7, 2026-06-30) ===
+#
+# @algebra (P6, `34cf333`) lifted A — the typed operation surface of
+# the Connes spectral triple — to family-root altitude as substrate-
+# decl. That admission named WHAT an algebra IS at substrate altitude
+# (carrier, operation_set, composition rule). What was still missing:
+# the @io-boundary species that exposes substrate-altitude algebras
+# to external consumers AND consumes foreign-language algebra
+# libraries back into substrate altitude.
+#
+# This shard lands the BOUNDARY species for algebras. Same family
+# pattern as @io/cargo for Rust builds, @io/oci for container
+# distribution, @io/stagefreight for crystal wire transport: name
+# the typed surface where substrate-altitude content meets the
+# non-mirror world for ONE specific boundary kind. The boundary
+# kind here is the algebra altitude.
+#
+# === The fold-back terminal ===
+#
+# Per the P8 forward-promise threaded across @glue (`8d3f89e` §"The
+# self-recursive use case forward-promise") and the @fate × @glue ×
+# @kintsugi composition documented in `docs/specs/bauchladen-
+# autopoietic-fate.md` §4.5: the substrate's self-recursive boot
+# collapse composes
+#
+#   @glue × @kintsugi × @fate → @io/algebra
+#
+# at P8. @io/algebra IS THE OUTPUT ALTITUDE of that composition.
+# The three composed prisms each contribute:
+#
+#   - @kintsugi emits per-step candidate morphisms (the
+#     transformation engine's per-step output)
+#   - @glue lifts each candidate as a typed correspondence between
+#     spectral triples (the morphism-category vocabulary)
+#   - @fate selects one morphism within each correspondence's
+#     restriction (the constrained-inference operator)
+#
+# The composition's OUTPUT — the settled translated algebra-payload
+# crossing the substrate's outermost boundary — lands in @io/algebra's
+# typed surface as an `io_algebra_exposure` crystal. The fold-back
+# terminal IS the operational form of the substrate "closing its own
+# tail" (per Glint 2026-06-23's framing; the operational form of the
+# substrate-decl-on-Nix-on-OCI-on-substrate ouroboros named at
+# @io/oci).
+#
+# This shard lands P7 — the substrate-decl admission that names the
+# terminal altitude. P8 will land the composition discharge (the
+# operational composition of @glue × @kintsugi × @fate against the
+# typed surface this shard declares).
+#
+# === @io/algebra IS BOTH a @io species AND a @glue species ===
+#
+# Structurally load-bearing fact: @io/algebra inherits from TWO
+# substrate family-roots:
+#
+#   - `in @io` — the boundary-with-non-mirror-world discipline.
+#     Inherits @io's `imperfect<a, e, l>` return shape on every
+#     boundary action; inherits the substrate-only-legitimate-non-
+#     mirror-surface discipline; inherits the partition between
+#     permanent-@io content (algebras whose realisation will always
+#     live outside substrate altitude) and cross-wall-kintsugi
+#     candidates (algebras whose realisation may fold into substrate
+#     altitude when analyzability matures).
+#
+#   - `in @glue` — the morphism-category discipline. @io/algebra's
+#     `translate` action IS-A @glue species action at the io-algebra
+#     altitude. The translation across the @io boundary (substrate
+#     algebra ↔ external algebra) IS a correspondence in Mesland's
+#     category (per `shards/glue.mirror` §"The three known species
+#     of @glue"). This shard adds @io/algebra as the FOURTH known
+#     @glue species, sibling to:
+#
+#       Species                            Altitude               Declared at
+#       --------------------------------   --------------------   --------------
+#       @spectral/metalogue/tomm           spectral-metalogue     shards/spectral/
+#                                                                  metalogue.mirror
+#       @cascade/code/<src>/<tgt>          code-translation       shards/cascade.mirror
+#       @cascade/code/formal/prose         formal/prose           `437d061`
+#       @io/algebra (THIS shard)           io-algebra             shards/io/algebra.mirror
+#
+# The dual inheritance is structurally honest: the @io/algebra
+# boundary IS a translation surface (consumes/exposes algebras across
+# the @io wall) AND IS an @io boundary species (typed contract with
+# the non-mirror world). Both family-roots' obligations compose
+# transitively; the shard discharges both via the inheritance
+# predicate at §4.
+#
+# === Use cases ===
+#
+# Two structurally-symmetric use cases the family-root names:
+#
+#   1. External consumers reading substrate-altitude algebras.
+#      A non-mirror consumer (Rust client, Python notebook, foreign
+#      language library) needs to read a substrate-altitude algebra
+#      (e.g., the canonical five-op algebra of a prism, or the
+#      C*-algebra a `@algebra/c_star` species exposes). The
+#      `expose` action declared below lifts the algebra to an
+#      `io_algebra_exposure` crystal; `address` content-addresses
+#      the exposure via @bauchladen; downstream @io species (OCI,
+#      stagefreight) ship the addressed crystal to the consumer.
+#
+#   2. Foreign algebra libraries entering substrate altitude.
+#      An external algebra source (a Python sympy module, a Rust
+#      `num-traits` definition, a Lean4 algebraic structure) needs
+#      to be consumed AS an `algebra_carrier` at substrate altitude
+#      so downstream prisms can `@algebra.enumerate_operations` /
+#      `@algebra.compose` against it. The `consume` action declared
+#      below crosses the @io boundary and crystallizes the external
+#      algebra as a substrate-altitude `algebra_carrier`. The
+#      translation respects the cross-wall-kintsugi candidacy
+#      partition (per @io family-root): foreign algebras whose
+#      operations are byte-level pure (group multiplication tables,
+#      finite ring presentations) are cross-wall-kintsugi candidates;
+#      foreign algebras whose operations depend on external state
+#      (vendor SDK calls, kernel syscalls) remain permanent-@io.
+#
+# === Relationship to @algebra family-root ===
+#
+# @algebra (the family-root) declares WHAT an algebra IS at substrate
+# altitude. @io/algebra (this shard) declares HOW substrate-altitude
+# algebras MEET the non-mirror world. The relationship is the
+# canonical (family-root) ↔ (@io-altitude-exposure) pattern:
+#
+#   - @mirror/store ↔ @io/git    storage family-root ↔ git plumbing
+#   - @algebra      ↔ @io/algebra algebra family-root ↔ this shard
+#   - @cascade      ↔ @io/oci    cascade family ↔ OCI distribution
+#                                  (artifacts ship through OCI; the
+#                                   cascade-built outputs land in
+#                                   the OCI registry)
+#
+# Each family-root names a substrate-altitude discipline; the @io
+# species names the boundary where that discipline crosses to the
+# non-mirror world. The two families partition the substrate's
+# expressible surface for the algebra discipline: @algebra declares
+# operations the substrate KNOWS about; @io/algebra declares the
+# boundary the substrate USES to exchange algebras with the world.
+#
+# === Connes (A, H, D) at the @io boundary ===
+#
+# Per `architecture-connes-spectral-triple`: the substrate IS the
+# operational form of Connes' real spectral triple (A, H, D, J, γ).
+# @algebra (P6) named A at family-root altitude. The @io/algebra
+# boundary species names WHERE A MEETS THE WORLD — the @io-altitude
+# exposure of A across the substrate's outermost wall.
+#
+# In Connes' terms: A is the algebra of observables; H is the state
+# space they act on; D drives the spectral flow. @io/algebra declares
+# the boundary at which substrate-altitude A becomes addressable to
+# (and consumable from) external A's. The mathematical content is
+# the Mesland correspondence at the @io altitude — the morphism
+# between the substrate's A and the external world's A — which
+# composes structurally with @glue's correspondence vocabulary.
+#
+# === Pre-AI prior art ===
+#
+#   Foreign function interface  Bell Labs (1970s); the canonical
+#                                discipline of crossing a language
+#                                boundary while preserving typed
+#                                contract. SWIG (1996), ctypes (2003),
+#                                CFFI (2012) are the modern
+#                                instances. @io/algebra IS the
+#                                substrate-altitude FFI for the
+#                                algebra altitude.
+#
+#   Computer algebra systems   Macsyma (1968), Maple (1980), Sage
+#                                (2005), SymPy (2007). External
+#                                algebra libraries the substrate may
+#                                consume via @io/algebra; each
+#                                exposes algebraic structures as
+#                                consumable surfaces.
+#
+#   ATLAS of Lie groups        Adams-du Cloux 2007; reference
+#                                database of Lie algebra structure
+#                                consumable as an external algebra
+#                                source per the use case 2 pattern.
+#
+#   Open OnDemand              Hudak et al. 2018; the canonical
+#                                @io-altitude exposure pattern for
+#                                computational artifacts. Sibling
+#                                discipline to @io/oci's distribution
+#                                shape at the artifact altitude.
+#
+#   Universal algebra          Birkhoff 1935 ("On the structure of
+#                                abstract algebras", *Proc. Camb.
+#                                Phil. Soc.* 31:433-454); the
+#                                discipline of algebra-as-typed-
+#                                surface that @io/algebra exposes
+#                                across the @io wall.
+#
+#   Mesland correspondence     Mesland 2013 (arXiv:1304.3802);
+#                                inherited via `in @glue` — the
+#                                morphism-category vocabulary
+#                                @io/algebra uses at the io-algebra
+#                                altitude.
+#
+# Spec context: docs/specs/bauchladen-autopoietic-fate.md §4.5
+#               (the @glue × @fate composition pattern; @io/algebra
+#               IS-A @glue species and discharges this pattern at
+#               the io-algebra altitude);
+#               docs/specs/bauchladen-autopoietic-fate.md §6+ (the
+#               #104 chain spec — the @io/algebra section names the
+#               fold-back terminal altitude this shard declares);
+#               docs/insights/2026-05-26-glass-wall-and-cross-wall-
+#               kintsugi.md (the partition between permanent-@io
+#               sub-species and cross-wall-kintsugi candidates;
+#               @io/algebra inherits this partition for algebras).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-connes-spectral-triple]]
+#                       (@io/algebra is the @io-boundary exposure of
+#                        A; the substrate IS Connes (A, H, D); this
+#                        shard names where A meets the world),
+#                      [[architecture-operations-as-linear-algebra]]
+#                       (the operations @io/algebra exposes/consumes
+#                        have precise linear-algebraic meaning per
+#                        the operations-as-linear-algebra recognition;
+#                        the boundary preserves the algebraic
+#                        meaning across the @io wall),
+#                      [[architecture-glass-wall-substrate-types]]
+#                       (Imperfect + transparency are substrate
+#                        vocabulary; @io/algebra inherits them via
+#                        `in @io`),
+#                      [[architecture-fate-is-optical-inference]]
+#                       (#58; @io/algebra's translate action uses
+#                        @fate for selection within the algebra
+#                        correspondence's restriction),
+#                      [[architecture-form-process-partition-at-
+#                       family-root]] (#55+#61; @algebra is on the
+#                        form-side family-root; @kintsugi on the
+#                        process-side; @io/algebra at the boundary
+#                        between substrate-altitude form and non-
+#                        mirror-world substance — the partition
+#                        crosses the @io wall here),
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; the alignment harness
+#                        fires at @io boundaries; @io/algebra IS the
+#                        algebra-altitude alignment surface — the
+#                        boundary where substrate-altitude algebras
+#                        cross to/from the non-mirror world is where
+#                        the harness must discharge),
+#                      [[architecture-mirror-store-vs-spectral-db]]
+#                       (open-foundation @mirror/store; @io/algebra
+#                        exposures land as crystals on the open side
+#                        via @bauchladen),
+#                      [[architecture-peer-learns-by-crystal-
+#                       vocabulary-expansion]] (each consumed
+#                        external algebra extends A_peer; @io/algebra
+#                        IS the algebra-vocabulary-expansion surface
+#                        for the peer's learning at the @io boundary),
+#                      [[architecture-spectral-db-autopoietic-
+#                       memory]] (the librarian altitude consolidates
+#                        @io/algebra exposures into the autopoietic
+#                        memory layer),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (the @io species pattern was already operating
+#                        across cargo/oci/stagefreight/git; this shard
+#                        names the algebra-altitude species under the
+#                        existing pattern),
+#                      [[feedback-no-bare-types]] (io_algebra_
+#                        exposure, algebra_endpoint, algebra_payload
+#                        are typed carriers; no bare primitives),
+#                      [[feedback-craft-not-deliver]] (no operational
+#                        sibling at this tick; the family-species
+#                        admission lands the substrate-decl contract;
+#                        the P8 composition discharge follows when
+#                        the chain reaches it).
+# Recognition ancestry: #57 (alignment-as-boundary-mathematics),
+#                      #58 (fate is optical inference),
+#                      #61 (form/process partition at family-root),
+#                      #95 (cascade as loss-lens — sibling @glue
+#                       species pattern),
+#                      #98 (content-addressing cross-altitude
+#                       composition — @io/algebra exposures
+#                       crystallize via @bauchladen, composing CAS
+#                       with the @io/oci + @io/git sibling species),
+#                      #100 (@spectral/metalogue/tomm as @glue
+#                       species; @io/algebra is the fourth known
+#                       @glue species).
+# Related shards: io.mirror (the @io family-root this species sits
+#                  under),
+#                 algebra.mirror (the @algebra family-root this
+#                  species exposes at the @io altitude; just landed
+#                  at 34cf333),
+#                 glue.mirror (the @glue family-root this species
+#                  inherits from at the morphism-category altitude;
+#                  landed at 8d3f89e; the fourth known @glue species),
+#                 fate.mirror (the @fate constrained-inference
+#                  operator @io/algebra.translate consults),
+#                 bauchladen.mirror (the crystal-altitude family the
+#                  io_algebra_exposure carriers land in),
+#                 io/cargo.mirror (the OLDEST sibling @io species;
+#                  the canonical precedent for the per-altitude @io
+#                  species shape),
+#                 io/oci.mirror (the container-altitude sibling),
+#                 io/stagefreight.mirror (the wire-protocol sibling;
+#                  io_algebra_exposure crystals ship via stagefreight
+#                  + oci downstream),
+#                 io/git.mirror (the git-plumbing sibling),
+#                 algebra/metalogue.mirror (the @algebra sub-prism
+#                  at the metalogue altitude; @io/algebra exposes
+#                  metalogue algebras under the same boundary
+#                  discipline),
+#                 cascade.mirror (the cross-language @glue species
+#                  family — sibling at the io/algebra-isomorphic
+#                  altitude for code-translation rather than algebra-
+#                  translation),
+#                 spectral/metalogue.mirror (the spectral-metalogue
+#                  @glue species; sibling @glue species at a
+#                  different altitude).
+# Path-namespace property: this file at `shards/io/algebra.mirror`
+# declares `@io/algebra` per `@epistemologic/pact/path_matches_
+# namespace`.
+
+source @arxiv/math/connes-1985
+source @arxiv/math/connes-1995
+source @arxiv/math/mesland-2013
+source @arxiv/math/birkhoff-1935
+
+prism @io/algebra {
+  focus io_algebra_exposure
+  project io_algebra_exposure
+  split io_algebra_exposure
+  shift io_algebra_exposure
+  settle io_algebra_exposure
+}
+
+# ============================================================
+# §2 The carriers
+# ============================================================
+
+# === The io_algebra_exposure carrier ===
+#
+# Typed record per [[feedback-no-bare-types]] naming a substrate-
+# altitude algebra exposed at the @io boundary. The exposure IS the
+# crystallizable handle external consumers address; downstream @io
+# species (OCI, stagefreight) consume exposures and ship them via
+# their own wire protocols.
+#
+# - `algebra_carrier`   the substrate-altitude algebra being exposed;
+#                       per `@algebra.algebra_carrier`; carries the
+#                       (identity, operations, composition, altitude)
+#                       tuple naming WHAT is being exposed.
+# - `wire_format`       the typed ref naming the wire-format the
+#                       exposure uses to surface the algebra on the
+#                       non-mirror side. Per the substrate's
+#                       deferred-realisation discipline, the format
+#                       ref names a sibling species (e.g., `@data/
+#                       json`, `@data/yaml`, `@io/stagefreight/
+#                       narrative`); the realisation discharges the
+#                       actual byte layout.
+# - `addressability`    the typed ref naming the address-space the
+#                       exposure is addressable in. Per the
+#                       substrate's reverse-DNS convention (see
+#                       @io/stagefreight's spectral_coordinate
+#                       pattern): the address typically takes a
+#                       `org.<consumer>.<species>.<algebra-name>`
+#                       form. The realisation discharges the
+#                       concrete address-space mapping.
+# - `witness`           the OID of the exposure crystal landed in
+#                       @bauchladen. Per the @bauchladen-membership-
+#                       held obligation: every exposure IS a content-
+#                       addressed crystal; the witness ref provides
+#                       the @bauchladen-tray reference. Composes
+#                       structurally with @io/oci's oci_digest +
+#                       @io/stagefreight's spectral_coordinate at
+#                       the content-addressing altitude per
+#                       recognition #98.
+#
+# Identity contract: byte-equality on (algebra_carrier, wire_format,
+# addressability, witness). Two exposures with byte-equal fields
+# ARE the same exposure under content-addressing.
+type io_algebra_exposure = {
+  algebra_carrier:  algebra_carrier,
+  wire_format:      ref,
+  addressability:   ref,
+  witness:          ref,
+}
+
+# === The algebra_endpoint carrier ===
+#
+# Typed reference to an EXTERNAL algebra source that @io/algebra
+# consumes. The mirror image of io_algebra_exposure: where exposure
+# is substrate-altitude → @io-boundary, endpoint is @io-boundary →
+# substrate-altitude. The carrier names the foreign-language /
+# external library's algebra as addressable across the @io wall.
+#
+# - `source_ref`        typed ref naming the external algebra source
+#                       — a Python sympy module, a Rust crate's
+#                       trait-impl, a Lean4 algebraic structure, a
+#                       database table presenting a group via its
+#                       multiplication table. The ref's realisation
+#                       names HOW to reach the source.
+# - `external_shape`    typed ref naming the shape the source
+#                       presents on the @io side. Per the
+#                       substrate's substrate-pull-correct rules,
+#                       the shape ref carries enough typed metadata
+#                       for the consume action to construct an
+#                       algebra_carrier on the substrate side
+#                       (operation arity, composition associativity,
+#                       identity presence).
+# - `transit_format`    typed ref naming the format the algebra
+#                       arrives in across the @io wall (e.g., JSON
+#                       representation of a finite multiplication
+#                       table, a Lean4 elaborated term, a sympy
+#                       Algebra object's serialization).
+#
+# Identity contract: byte-equality on (source_ref, external_shape,
+# transit_format). Two endpoints with byte-equal fields name the
+# same external source under content-addressing.
+type algebra_endpoint = {
+  source_ref:       ref,
+  external_shape:   ref,
+  transit_format:   ref,
+}
+
+# === The algebra_payload carrier ===
+#
+# Typed payload transiting across the @io/algebra boundary. The
+# payload IS the substrate-altitude object an algebra-aware action
+# operates on (a group element, a ring element, a member of an
+# operation_set's domain). Crystallizes via @bauchladen per the
+# @bauchladen-membership-held obligation.
+#
+# - `algebra_ref`       the algebra_carrier the payload is typed
+#                       against; the substrate-altitude home of the
+#                       payload's type.
+# - `value_ref`         typed ref naming the payload's value within
+#                       the algebra's domain. Per [[feedback-no-bare-
+#                       types]]: not a bare scalar; the ref carries
+#                       the typed value AND its algebra-membership
+#                       witness.
+# - `transparency`      the residual opacity per @glass's
+#                       `transparency<algebra_payload>` carrier;
+#                       reports opacity introduced by the transit
+#                       (e.g., precision loss when an external
+#                       algebra uses a richer numeric domain than
+#                       substrate altitude can represent; ambiguity
+#                       when an external algebra's operation
+#                       presentation is partial).
+#
+# Identity contract: byte-equality on (algebra_ref, value_ref,
+# transparency). Two payloads with byte-equal fields ARE the same
+# payload under content-addressing.
+type algebra_payload = {
+  algebra_ref:      ref,
+  value_ref:        ref,
+  transparency:     transparency(algebra_payload),
+}
+
+# ============================================================
+# §3 The actions
+# ============================================================
+
+# === expose action ===
+#
+# THE LOAD-BEARING substrate-altitude → @io-boundary action. Lifts
+# a substrate-altitude algebra to the @io boundary as an
+# io_algebra_exposure crystal. The exposure is consumable by
+# external clients via downstream @io species (OCI distribution,
+# stagefreight wire transport).
+#
+# Per the @io family-root discipline: the BODY of the call is opaque
+# (the realisation may invoke a serialization library, write to a
+# socket, emit to a registry); the SHAPE of the call is typed (the
+# returned io_algebra_exposure carries the four-field typed record).
+#
+# requires algebra_well_typed(a): the algebra being exposed MUST
+# pass @algebra.algebra_witnessing at substrate altitude before
+# the @io exposure is admissible. Without this gate, expose would
+# be a Narcissus-pole operation (claims to expose an algebra that
+# isn't substrate-altitude well-formed). The @algebra family-root's
+# bilateral predicate composes here at the @io altitude.
+#
+# Returns imperfect<io_algebra_exposure, ref, transparency>:
+# - success(io_algebra_exposure) — exposure landed cleanly; the
+#   crystal is addressable on the @io side.
+# - partial(io_algebra_exposure, transparency) — exposure landed
+#   with residual opacity (e.g., the external wire format cannot
+#   represent the full composition rule; the residual is reported).
+# - failure(error, transparency) — exposure failed (external
+#   sink unreachable, format-conversion error, address-space
+#   collision).
+#
+# Body discharges at the realisation boundary.
+expose(a: algebra_carrier) -> imperfect<io_algebra_exposure, ref, transparency>
+requires algebra_well_typed(a)
+requires bauchladen_membership_held(a)
+{ \ }
+
+# === consume action ===
+#
+# THE LOAD-BEARING @io-boundary → substrate-altitude action. Reads
+# an external algebra from across the @io boundary and crystallizes
+# it as a substrate-altitude algebra_carrier. The mirror image of
+# expose: where expose ships substrate → world, consume ships
+# world → substrate.
+#
+# Per the @io family-root partition (permanent-@io vs cross-wall-
+# kintsugi candidate): the consumed algebra MAY fold into substrate
+# altitude when the external algebra is byte-level pure (a finite
+# group multiplication table is cross-wall-kintsugi-eligible); MUST
+# stay @io-bound when the external algebra depends on non-mirror
+# state (a vendor SDK's algebra-of-effects is permanent-@io). The
+# realisation discharges the discrimination per @code/metalogue/
+# materialize (the recognitive discriminator).
+#
+# requires endpoint_well_typed(endpoint): the external endpoint
+# MUST carry sufficient typed metadata for substrate-altitude
+# algebra_carrier construction before consume is admissible. The
+# Narcissus-pole risk: consuming an external algebra whose shape
+# claims to be a group but whose operations don't satisfy
+# associativity, producing an ill-typed substrate-altitude carrier.
+#
+# Returns imperfect<algebra_carrier, ref, transparency>:
+# - success(algebra_carrier) — the external algebra landed cleanly
+#   as a substrate-altitude carrier; downstream prisms can invoke
+#   @algebra.enumerate_operations / @algebra.compose against it.
+# - partial(algebra_carrier, transparency) — the carrier landed but
+#   with residual opacity (e.g., the external algebra's composition
+#   table is partial; the substrate-altitude carrier carries the
+#   partiality as a typed residual).
+# - failure(error, transparency) — consume failed (endpoint
+#   unreachable, format-parse error, shape mismatch, operation
+#   composition not closed at substrate altitude).
+#
+# Body discharges at the realisation boundary.
+consume(endpoint: algebra_endpoint) -> imperfect<algebra_carrier, ref, transparency>
+requires endpoint_well_typed(endpoint)
+{ \ }
+
+# === address action ===
+#
+# Content-addresses the exposure for downstream consumers. The
+# returned oid IS the @bauchladen-tray reference downstream @io
+# species (OCI digest, stagefreight spectral_coordinate) compose
+# with. Per recognition #98 candidate (content-addressing as
+# cross-altitude composition primitive): the oid composes with
+# OCI's digest and Nix's derivation hash at the function altitude
+# (all SHA256) while remaining scope-distinct at the typing
+# altitude.
+#
+# The action IS substrate-pull-trivial — every exposure already
+# carries its @bauchladen witness in the carrier's `witness` field
+# — but declaring the action explicitly gives downstream prisms a
+# typed entry point that doesn't require unpacking the carrier.
+#
+# Body discharges per-realisation; trivially total when the
+# exposure was constructed via expose() (the witness is set);
+# may be substrate-pull-non-trivial when the exposure carries a
+# placeholder witness pending realisation discharge.
+address(e: io_algebra_exposure) -> oid { \ }
+
+# === translate action ===
+#
+# THE @glue SPECIES ACTION at the io-algebra altitude. Translates a
+# payload across the @io/algebra boundary by applying a morphism
+# between source and target algebras. This IS the @glue.translate
+# action specialized to the io-algebra altitude; the action
+# discharges glue_witnessing for each invocation.
+#
+# The five-step structural form (per @glue.translate, specialized
+# to the @io/algebra altitude):
+#
+#   1. The (source_algebra, target_algebra) pair defines the
+#      @algebra.morphism_between's admissible set — the
+#      correspondence's typed restriction.
+#   2. @io/algebra invokes @fate.roll(restriction, hole) where
+#      hole is derived from (payload, target_algebra.operations,
+#      io-altitude).
+#   3. @fate's dice roll selects one algebra_morphism's OID from
+#      the admissible set within the typed restriction.
+#   4. @io/algebra applies the selected morphism to the payload;
+#      the morphism's operation_map computes the target-side
+#      output per the @algebra family-root's discipline.
+#   5. The algebra_payload is wrapped in imperfect (residual
+#      opacity surfaced via transparency<algebra_payload>); the
+#      output payload lands as a crystal in the @bauchladen tray.
+#
+# The composition with @fate is structurally non-trivial: @io/
+# algebra does NOT compute the translation directly; @io/algebra
+# carries the typed surface; @fate picks the morphism. The
+# underdetermined morphism selection (Mesland's category has many
+# morphisms between the same pair of algebras) is what makes
+# translate a @glue species action rather than a deterministic
+# function.
+#
+# Returns imperfect<algebra_payload, ref, transparency>:
+# - success(algebra_payload) — translation landed cleanly; the
+#   payload is in the target algebra's domain.
+# - partial(algebra_payload, transparency) — translation landed
+#   with residual opacity (precision loss, partial operation, etc.).
+# - failure(error, transparency) — translation failed (no admissible
+#   morphism, payload not in source algebra's domain, etc.).
+#
+# Body discharges at the realisation boundary; the realisation
+# MUST honor the glue_translation_uses_fate clause (per @glue's
+# discipline; the action invokes @fate, not a direct deterministic
+# compute).
+translate(payload: algebra_payload, source_algebra: algebra_carrier, target_algebra: algebra_carrier) -> imperfect<algebra_payload, ref, transparency>
+requires algebra_well_typed(source_algebra)
+requires algebra_well_typed(target_algebra)
+requires bauchladen_membership_held(payload)
+requires glue_translation_uses_fate(translate)
+{ \ }
+
+# ============================================================
+# §4 The bilateral requires obligations
+# ============================================================
+#
+# Downstream shards declare bilateral agreement (per recognition
+# #37, Pask-agreement) with the @io/algebra discipline by writing
+# the obligations below. The bilateral commitment: the
+# @io/algebra-importing prism commits to discharging the
+# obligations; the consumer commits to surfacing violations at
+# the species boundary.
+
+# Per @algebra.algebra_witnessing: the algebra being exposed or
+# consumed MUST be substrate-altitude well-typed. The @io/algebra
+# species composes the @algebra family-root's three sub-predicates
+# (bauchladen_membership_held + closure_under_composition +
+# operation_well_typed) at the @io boundary altitude. Inheritor
+# shards discharge by ensuring every algebra crossing @io/algebra
+# passes @algebra.algebra_witnessing first.
+algebra_well_typed(a: algebra_carrier) -> verdict { \ }
+
+# Per @bauchladen-membership-held discipline: payloads transiting
+# across @io/algebra crystallize in the @bauchladen tray. The
+# obligation composes both the exposure crystals (io_algebra_
+# exposure.witness) and the transit payloads (algebra_payload
+# crystallization for round-trip auditability). Inheritor shards
+# discharge by ensuring every transit payload lands in the tray.
+bauchladen_membership_held(payload: ref) -> verdict { \ }
+
+# Per @glue.translation_uses_fate (inherited via `in @glue`):
+# @io/algebra.translate MUST consult @fate for morphism selection
+# within the correspondence's restriction. The substrate-pull-
+# honest discipline that distinguishes @io/algebra.translate from
+# a deterministic FFI shim: the translation underdetermined-ness
+# is preserved at the io-algebra altitude. Inheritor shards
+# discharge by verifying the translate body invokes @fate.roll.
+glue_translation_uses_fate(action: ref) -> verdict { \ }
+
+# Round-trip fidelity at the @io boundary. An exposed algebra
+# consumed back across the @io boundary MUST produce a substrate-
+# altitude carrier byte-equal to the original (up to the cross-
+# wall-kintsugi candidacy partition — permanent-@io species need
+# only round-trip the @io-side identity, not the substrate-side
+# carrier). The bilateral discipline that distinguishes a
+# Splinter-pole exposure (honest round-trip) from a Narcissus-pole
+# exposure (claimed exposure that loses substrate-altitude
+# identity at the boundary).
+io_boundary_round_trip(exposure: io_algebra_exposure) -> verdict { \ }
+
+# Per `endpoint_well_typed`: the external endpoint MUST carry
+# enough typed metadata for substrate-altitude algebra_carrier
+# construction. The bilateral closes the substrate-decl loop that
+# @algebra.algebra_witnessing opened — @algebra checks the substrate-
+# altitude carrier is well-typed; @io/algebra checks the external
+# endpoint provides sufficient shape information before consume
+# admits the construction.
+endpoint_well_typed(endpoint: algebra_endpoint) -> verdict { \ }
+
+# === The io_algebra_well_formed inheritance predicate ===
+#
+# `io_algebra_well_formed(exposure)` is the predicate consumer
+# shards name in a `requires` clause to declare bilateral
+# commitment (per recognition #37, the Pask-agreement reading of
+# `requires`) that the io_algebra_exposure satisfies all relevant
+# obligations conjointly:
+#
+#   1. algebra_well_typed(exposure.algebra_carrier)
+#   2. bauchladen_membership_held(exposure.witness)
+#   3. io_boundary_round_trip(exposure)
+#
+# Same shape as @io/oci's oci_well_formed (composed bilateral
+# pattern; per Seam tick 68 C4/C9 closure pattern) and @io/
+# stagefreight's stagefreight_addressable.
+#
+# Sibling to:
+#   - `algebra.algebra_witnessing(a)` (the substrate-altitude
+#     family-root predicate this @io species lifts to the boundary).
+#   - `glue.glue_witnessing(c)` (the morphism-category family-root
+#     predicate; @io/algebra IS-A @glue species and discharges
+#     glue_witnessing for each translate invocation).
+#   - `io.io_well_formed` (the @io family-root predicate the
+#     boundary species inherit; the substrate-only-legitimate-non-
+#     mirror-surface discipline).
+#   - `cascade.cascade_well_defined` (the sibling @glue species at
+#     a different altitude; the cross-language cascade species'
+#     bilateral).
+#
+# Forward-promised inheritors:
+#
+#   - `@io/algebra/<species>` sub-shards: when a consumer pulls
+#     a specific external algebra source (e.g., `@io/algebra/sympy`,
+#     `@io/algebra/lean4`, `@io/algebra/sage`), the species sub-
+#     shard discharges io_algebra_well_formed for its species-
+#     specific exposures.
+#   - `@io/algebra/<altitude>` sub-shards: when a consumer pulls
+#     a specific substrate-altitude algebra exposure (e.g., the
+#     canonical five-op algebra at the canonical altitude, or a
+#     `@algebra/c_star` species exposure), the altitude sub-shard
+#     discharges io_algebra_well_formed for its altitude-specific
+#     exposures.
+#   - the P8 composition discharge: @glue × @kintsugi × @fate →
+#     @io/algebra; the composition's output crystals discharge
+#     io_algebra_well_formed at the fold-back terminal altitude.
+#
+# No `requires io_algebra_well_formed(...)` clauses at THIS
+# shard. The family-species declares the predicate; consumers add
+# the clauses when they pull.
+io_algebra_well_formed(exposure: io_algebra_exposure) -> verdict
+requires algebra_well_typed(exposure.algebra_carrier)
+requires bauchladen_membership_held(exposure.witness)
+requires io_boundary_round_trip(exposure)
+{ \ }
+
+# ============================================================
+# §5 Honest hedges
+# ============================================================
+#
+# 1. The P8 composition (@glue × @kintsugi × @fate → @io/algebra)
+#    is forward-promised, NOT discharged at this tick. This shard
+#    declares the SHAPE of the fold-back terminal; the operational
+#    composition lands at P8 when the chain reaches it. Substrate-
+#    decl admission is honest about being declaration-only.
+#
+# 2. The cross-wall-kintsugi candidacy partition (permanent-@io
+#    vs candidate) for consumed external algebras is forward-
+#    promised at species-altitude refinement. This shard declares
+#    the @io species; the per-species discriminator discharge
+#    follows when consumers pull specific external algebra sources.
+#
+# 3. The realisation MAY depend on external libraries at the @io
+#    edge (a Python interop layer for sympy, a Lean4 elaborator
+#    bridge, an OCI registry for distributed algebra-library
+#    consumption). Standard @io family-root pattern per @io/cargo's
+#    reliance on the cargo binary, @io/oci's reliance on skopeo/
+#    oras. The substrate-decl is realisation-tool-agnostic.
+#
+# 4. No typed auth surface at this tick (oauth, bearer-token,
+#    mTLS, anonymous-pull). The algebra_endpoint and io_algebra_
+#    exposure hold refs; SEL boundary work (per [[architecture-
+#    type-sel-io-au]]) forward-promised. Auth-side Narcissus
+#    failures discharge at SEL species refinement.
+#
+# 5. The fourth-known-@glue-species claim is structurally honest
+#    (the algebra-altitude translation IS a Mesland correspondence)
+#    but adds @io/algebra's species count under @glue without
+#    Pack adversarial review of the species enumeration. The
+#    @glue family-root admits new species when consumers pull
+#    them; this tick adds the fourth species via the @io/algebra
+#    substrate-decl admission.
+#
+# 6. io_boundary_round_trip is a strong claim — the substrate-pull-
+#    honest reading is that round-trip fidelity is achievable for
+#    cross-wall-kintsugi candidates and approximate for permanent-
+#    @io species. The bilateral's discharge per-species will refine
+#    the predicate; this shard declares the SHAPE.
+#
+# 7. The use cases (external consumers + foreign algebra libraries)
+#    are NOT exhaustive. Per the @io family-root pattern, additional
+#    use cases land when consumers pull specific exposure/consume
+#    flows (Lean4 elaborator integration, sympy notebook
+#    consumption, OCI-distributed algebra libraries via @io/oci
+#    composition).
+#
+# 8. The fold-back terminal claim (per the P8 forward-promise) is
+#    structurally-grounded but conjectural until the P8 composition
+#    actually discharges. Substrate-pull confidence is moderate:
+#    three witnesses (the @glue × @fate composition pattern, the
+#    @kintsugi loop's per-step morphism emission, the @io/algebra
+#    typed surface declared here); the empirical discharge follows
+#    when P8 lands.
+
+out @io/algebra
+out io_algebra_exposure
+out algebra_endpoint
+out algebra_payload
+out expose
+out consume
+out address
+out translate
+out algebra_well_typed
+out bauchladen_membership_held
+out glue_translation_uses_fate
+out io_boundary_round_trip
+out endpoint_well_typed
+out io_algebra_well_formed
