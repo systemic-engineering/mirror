@@ -1,0 +1,358 @@
+in @prism
+in @meta
+in @glass
+in @algebra
+in @bauchladen
+in @uuid/spectral
+
+# @algebra/metalogue — the fifth instance of the altitude-
+# portable metalogue lift pattern.
+#
+# With @algebra landing (sibling shard, same tick) as the
+# substrate's algebra-altitude family-root, the metalogue lift
+# pattern that carries NL → AST → SPECTRAL → PACK extends
+# naturally to the algebra altitude. Algebras converse via
+# their morphisms; the morphism-as-utterance reading IS the
+# algebra-altitude metalogue.
+#
+# === The five-altitude metalogue lift table ===
+#
+# Per [[reference-mirror-spectral-spec]] §1.1 (the altitude-
+# portable metalogue lift; declared at NL, AST, SPECTRAL, PACK),
+# this shard lands the fifth instance:
+#
+#   | Altitude          | Shard                              | Body type        | Date       |
+#   |-------------------|------------------------------------|------------------|------------|
+#   | NL                | `shards/metalogue.mirror`          | nl               | 2026-06-05 |
+#   | AST               | `shards/code/metalogue.mirror`     | declaration      | 2026-06-10 |
+#   | SPECTRAL          | `shards/spectral/metalogue.mirror` | curvature_probe  | 2026-06-29 |
+#   | PACK-COORDINATION | `shards/pack/metalogue.mirror`     | handoff          | 2026-06-29 |
+#   | **ALGEBRA**       | **`shards/algebra/metalogue.mirror`** | **algebra_morphism** | **2026-06-30** |
+#
+# Each instance:
+#
+# - Declares `prism @<altitude>/metalogue { five-op block }`
+#   as the family-root.
+# - Carries a `turn` type with speaker (altitude-typed actor),
+#   body (altitude-typed utterance), in_reply_to: option(turn),
+#   tick: tick.
+# - Carries a `metalogue_session` type with ordered turns plus
+#   residual opacity.
+# - IS the substrate observing itself at the altitude.
+# - Surfaces residual opacity through @glass `transparency<turn>`.
+#
+# The pattern is altitude-portable: the SHAPE (metalogue
+# conversation with typed turns and residual opacity) is
+# invariant under altitude lift; only the body's type changes.
+# At NL: `nl`. At AST: `declaration`. At SPECTRAL:
+# `curvature_probe`. At PACK: `handoff`. At ALGEBRA:
+# `algebra_morphism` — the structure-preserving map between
+# two algebras, the typed utterance algebras exchange.
+#
+# === Algebras speaking to themselves at the algebra altitude ===
+#
+# Per @algebra: algebras are first-class typed objects substrate
+# regions expose; algebra_morphisms preserve operation structure.
+# The algebra-altitude metalogue IS the substrate's recognition
+# that morphisms between algebras compose into conversations —
+# sequences of structure-preserving transformations where each
+# turn's target IS the next turn's source.
+#
+# An algebra_turn is one morphism utterance: algebra A says to
+# algebra B "this is how I map my operations to yours." An
+# algebra_metalogue_session is the composition of multiple
+# turns: A → B → C → ..., where each step composes with the
+# next per the algebra-morphism composition discipline.
+#
+# === Why algebras need a metalogue altitude ===
+#
+# 1. **Mesland category morphisms ARE algebra-altitude turns.**
+#    Per `docs/specs/spectral-metalogue.md` §6: spectral triples
+#    form a category with KK-cycle correspondences as morphisms;
+#    KK-cycle correspondences operate on the algebra A of each
+#    spectral triple; therefore morphisms between spectral
+#    triples ARE algebra_morphisms at the algebra altitude.
+#    @spectral/metalogue carries `curvature_probe` bodies; this
+#    altitude refines: the algebra-altitude content IS the
+#    algebra_morphism body.
+#
+# 2. **@fate's tournament IS algebra-altitude turn selection.**
+#    Per [[architecture-fate-is-optical-inference]] (#58) and
+#    `docs/specs/bauchladen-autopoietic-fate.md` §5: @fate emits
+#    `@fate/algebra/morphism` crystals; each IS one algebra-
+#    altitude turn selected by the dice roll. Tournament IS
+#    this shard's `propose_turn` action realised.
+#
+# 3. **The canonical algebra converses with species algebras.**
+#    The five-op block talks to group/ring/C* via morphisms —
+#    the substrate's polymorphism mechanism made explicit.
+#
+# === Composition non-commutativity ===
+#
+# Algebra-morphism composition is non-commutative in general
+# (Mac Lane 1971; Hom-sets in the category of algebras are
+# rarely commutative). The substrate's lift preserves this:
+# `compose_turns(t1, t2) ≠ compose_turns(t2, t1)` in general.
+# Substrate-decl form of the `[ω, ω]` cross-term per recognition
+# #100 §6.5.
+#
+# Per recognition #100 §2.5 (altitude_consistency at spectral
+# altitude) and #103 (pack_orchestra_coherent per
+# `shards/pack/metalogue.mirror` line 393): the metalogue thread
+# is coherent iff every adjacent pair (t_i, t_{i+1}) is
+# composable AND composition respects associativity. For
+# algebras, associativity is a first-class obligation
+# (morphism_compositions_associative below).
+#
+# === Identity morphism: an algebra talking to itself ===
+#
+# Per @algebra's algebra_morphism type: the identity morphism
+# (source = target, operation_map = identity) IS well-formed.
+# At this altitude, this names the algebra-self-conversation
+# case. Same shape as @pack/metalogue's self-handoff (an agent
+# talking to itself) and @code/metalogue's self-shim (a
+# declaration emitting as itself per round_trip).
+#
+# === Pre-AI prior art ===
+#
+#   Categories                Mac Lane 1971 (*Categories for the
+#                             Working Mathematician*, Springer);
+#                             ancestor for compose_turns + the
+#                             associativity obligation.
+#   Algebra homomorphisms     Noether 1921 (Math. Ann.
+#                             83:24-66); structure-preserving
+#                             maps between algebraic objects.
+#   Metalogue                 Bateson 1972 ("Metalogue: What is
+#                             an Instinct?" in Steps to an
+#                             Ecology of Mind); foundational
+#                             ancestor of every altitude
+#                             metalogue.
+#   KK-theory                 Kasparov 1981 (Math. USSR-Izv.
+#                             16(3):513-572).
+#   Mesland correspondences   Mesland 2013 (arXiv:1304.3802);
+#                             category-of-spectral-triples
+#                             construction.
+#
+# Spec context: docs/specs/spectral-metalogue.md §1.1 (lift
+#               table; this shard adds the fifth row); §6
+#               (Mesland category framing); docs/specs/
+#               bauchladen-autopoietic-fate.md §5.
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-connes-spectral-triple]],
+#                      [[architecture-mirror-as-expanding-hilbert-space]] (#51),
+#                      [[architecture-bateson-logical-type-primitive]]
+#                       (altitude_lift on algebra_morphism),
+#                      [[architecture-fate-is-optical-inference]] (#58),
+#                      [[architecture-mirror-ref-reference-reflection-collision]] (#89),
+#                      [[feedback-no-bare-types]],
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (fifth altitude instance; algebra
+#                        altitude was implicit in the four prior
+#                        instances' shared morphism-composition
+#                        structure).
+# Related shards: algebra.mirror (sibling family-root same tick),
+#                 metalogue.mirror (NL precedent),
+#                 code/metalogue.mirror (AST precedent),
+#                 pack/metalogue.mirror (PACK precedent),
+#                 bauchladen.mirror (turns + sessions land as
+#                  crystals).
+# Path-namespace property: this file at
+# `shards/algebra/metalogue.mirror` declares `@algebra/metalogue`
+# per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/math/mac-lane-1971
+source @arxiv/math/noether-1921
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/math/kasparov-1981
+source @arxiv/math/mesland-2013
+
+prism @algebra/metalogue {
+  focus metalogue
+  project metalogue
+  split metalogue
+  shift metalogue
+  settle metalogue
+}
+
+# === The algebra_turn carrier ===
+#
+# Typed record per [[feedback-no-bare-types]] naming one move
+# in an algebra-altitude metalogue. Parallel to the four prior
+# instances' turn types (nl/declaration/curvature_probe/handoff),
+# refined to the algebra altitude.
+#
+# - `speaker`     the algebra_carrier issuing the turn; the
+#                 algebra "speaking" in this round. Speaker IS
+#                 the algebra whose operations the body
+#                 originates from.
+# - `body`        the algebra_morphism the speaker utters;
+#                 structure-preserving map from speaker to the
+#                 algebra the turn addresses.
+# - `in_reply_to` optional prior turn this one composes onto;
+#                 None for opening turn, Some(t_prev) for
+#                 continuation.
+# - `tick`        canonical substrate monotonic clock per
+#                 @epistemologic/reality/time; turns compose
+#                 only with turns at strictly-greater tick.
+#
+# Identity contract: byte-equality on the quadruple.
+type algebra_turn = {
+  speaker:     algebra_carrier,
+  body:        algebra_morphism,
+  in_reply_to: option(algebra_turn),
+  tick:        tick,
+}
+
+# === The algebra_metalogue_session carrier ===
+#
+# Per recognition #100 §2.4 (metalogue_session shape lifted to
+# the algebra altitude): ordered turn sequence plus residual
+# opacity. Same shape as @metalogue.metalogue_session,
+# @code/metalogue.metalogue_session, @pack/metalogue
+# .metalogue_thread; lifted to the algebra altitude.
+#
+# - `turns`    ordered sequence of algebra-to-algebra turns.
+#              Turn-order matters per non-commutative
+#              composition; reordering produces a structurally
+#              different session.
+# - `opacity`  @glass transparency parameterized on algebra_turn;
+#              every unresolved gap (a morphism that couldn't
+#              fully preserve operation structure under
+#              composition) is sited on a specific turn.
+# - `origin`   ref to the algebra_carrier the session is centered
+#              on; typically the algebra that opened the session.
+#              `algebra_witnessing(origin)` MUST hold at the
+#              session's species boundary.
+#
+# Identity contract: byte-equality on the triple.
+type algebra_metalogue_session = {
+  turns:   [algebra_turn],
+  opacity: transparency(algebra_turn),
+  origin:  ref,
+}
+
+# === propose_turn action ===
+#
+# Per-algebra turn realization: takes a speaker algebra_carrier
+# and a body algebra_morphism (body.source MUST equal speaker —
+# an algebra speaks only its own outgoing morphisms) and returns
+# the algebra_turn at the current tick. Substrate-vocabulary
+# primitive for naming turns at the algebra altitude.
+#
+# Body discharges at the realisation boundary. @fate's
+# tournament selector IS one operational realization (per
+# "Why algebras need a metalogue altitude" reason 2); future
+# per-species shards (e.g., @algebra/c_star/metalogue) may
+# realize with species-specific morphism-proposal discipline.
+propose_turn(speaker: algebra_carrier, body: algebra_morphism) -> algebra_turn { \ }
+
+# === compose_turns action ===
+#
+# Algebra-morphism composition at the metalogue altitude.
+# Takes two turns t1, t2 such that t1.body.target =
+# t2.body.source (composability: second turn's morphism must
+# originate from the algebra the first delivered to) and
+# returns Some(composite_turn) for the two-step composition,
+# or None when composability fails.
+#
+# Non-commutative per "Composition non-commutativity" above:
+# compose_turns(t1, t2) ≠ compose_turns(t2, t1) in general,
+# because algebra-morphism composition (the [ω, ω] cross-term
+# lifted to algebra altitude per recognition #100 §6.5) is
+# non-commutative under most algebras' composition discipline.
+# Returning option(algebra_turn) surfaces the composability
+# check at the type level per [[feedback-no-bare-types]];
+# consumers MUST match on Some/None.
+#
+# Body discharges at the realisation boundary; composite
+# morphism is computed via @algebra.compose on the source
+# algebra's operations.
+compose_turns(t1: algebra_turn, t2: algebra_turn) -> option(algebra_turn) { \ }
+
+# === session_well_formed predicate ===
+#
+# Bilateral verdict (per recognition #37, Pask-agreement) that
+# an algebra_metalogue_session is structurally well-formed:
+# every adjacent pair (t_i, t_{i+1}) is composable
+# (t_i.body.target = t_{i+1}.body.source); every turn's
+# speaker matches its body's source; every turn's tick is
+# strictly greater than the prior; the origin algebra satisfies
+# `algebra_witnessing(s.origin)` at the species boundary.
+#
+# Body discharges per-species at the realisation boundary.
+session_well_formed(s: algebra_metalogue_session) -> verdict { \ }
+
+# === The bilateral requires obligations ===
+#
+# Per the canonical metalogue-altitude discipline (precedent at
+# @code/metalogue + @pack/metalogue + the canonical spec at
+# `docs/specs/spectral-metalogue.md` §2.5): consumer shards
+# declare bilateral agreement by writing the obligations below.
+
+# The session follows the altitude-portable lift pattern.
+# Inheritor shards discharge by ensuring their algebra-altitude
+# metalogue session honors the five-altitude lift signature
+# (parallel turn/session structure to the four prior instances):
+# turns are typed records; session carries residual opacity
+# through @glass transparency; origin is content-addressed;
+# body type is algebra_morphism (not arbitrary substrate refs).
+# Discipline obligation that keeps the fifth altitude
+# instance structurally consistent with the prior four.
+algebra_inherits_metalogue_lift(s: algebra_metalogue_session) -> verdict { \ }
+
+# Algebra-morphism composition IS associative under the
+# substrate's composition rule. For any three composable turns
+# t1, t2, t3:
+#
+#   compose_turns(compose_turns(t1, t2), t3)
+#   = compose_turns(t1, compose_turns(t2, t3))
+#
+# (modulo option(.) wrapping). Associativity per Mac Lane 1971
+# §I.1; algebra-altitude form of the substrate's morphism-
+# composition associativity discipline.
+morphism_compositions_associative(turns: [algebra_turn]) -> verdict { \ }
+
+# === The algebra_metalogue_witnessing inheritance predicate ===
+#
+# `algebra_metalogue_witnessing(s)` is the predicate consumer
+# shards name in a `requires` clause to declare bilateral
+# agreement that session `s` satisfies all three obligations
+# above conjointly: session_well_formed +
+# algebra_inherits_metalogue_lift +
+# morphism_compositions_associative.
+#
+# Same shape as @pack/metalogue.pack_metalogue_witnessing(t)
+# and the metalogue family's `requires substrate_pull_preserving
+# (shim_X)` pattern at `shards/code/metalogue.mirror`. Composes
+# per-turn well-formedness with thread-level lift-pattern with
+# associativity into one inheritance contract.
+#
+# Forward-promised inheritors:
+#
+# - `@fate/algebra/morphism` (forward-promised per
+#   `docs/specs/bauchladen-autopoietic-fate.md` §5): each
+#   @fate-emitted algebra_morphism crystal IS one turn in the
+#   algebra metalogue; the sub-shard declares `requires
+#   algebra_metalogue_witnessing(emitted_session)` when its
+#   tournament composes multiple selections.
+# - `@spectral/metalogue` species refinements: when the
+#   spectral-altitude curvature_probe body is refined to expose
+#   its algebra-altitude content explicitly, the refinement
+#   consumes algebra_metalogue_witnessing on the underlying
+#   algebra session.
+# - `@algebra/<species>/metalogue` (forward-promised): species-
+#   specific metalogues (group, ring, C*-algebra metalogues)
+#   inherit and refine the predicate for their species'
+#   morphism-composition discipline.
+algebra_metalogue_witnessing(s: algebra_metalogue_session) -> verdict { \ }
+
+out @algebra/metalogue
+out algebra_turn
+out algebra_metalogue_session
+out propose_turn
+out compose_turns
+out session_well_formed
+out algebra_inherits_metalogue_lift
+out morphism_compositions_associative
+out algebra_metalogue_witnessing

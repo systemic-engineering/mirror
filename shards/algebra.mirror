@@ -1,0 +1,336 @@
+in @prism
+in @meta
+in @glass
+in @bauchladen
+in @uuid/spectral
+
+# @algebra — the substrate's algebra-altitude family-root.
+#
+# Sibling to @bauchladen, @autopoietic, @fate, @glue at the
+# top-level path-namespace. The substrate-decl name for the
+# *algebra* of a Connes spectral triple — the typed operation
+# surface a substrate region exposes, irrespective of which
+# Hilbert space H the operations act on or which Dirac D drives
+# the flow.
+#
+# === The recognition (#104 chain P5, 2026-06-30) ===
+#
+# The five-operation block (focus, project, split, shift,
+# settle) is not "the operations a prism happens to expose"; it
+# IS the canonical algebra A of mirror's spectral triple per
+# [[architecture-connes-spectral-triple]]. Every prism
+# declaration `prism @X { focus, project, split, shift, settle }`
+# is the declaration of an A acting on its own H. The substrate
+# had been treating algebras as implicit infrastructure of the
+# prism keyword; this shard makes the algebra altitude
+# addressable in its own right.
+#
+# A is a substrate-decl object distinct from H and D:
+#
+#   - A names which OPERATIONS are admissible (the typed surface).
+#   - H names the STATE the operations act on (the void-document
+#     per [[reference-void-document]]).
+#   - D names the FLOW between states (kintsugi at substrate
+#     altitude; per-species Dirac operators at sub-altitudes).
+#
+# Per [[architecture-operations-as-linear-algebra]], the five
+# operations have precise linear-algebraic meaning when read as
+# A elements: focus = λ₀ eigenvalue computation; shift = basis
+# transformation; settle = monad-close / measurement collapse;
+# project = orthogonal projection; split = orthogonal
+# decomposition. The five together generate the substrate's
+# canonical algebra under composition.
+#
+# === Why a family-root, not a property ===
+#
+# Algebras are not predicates the substrate verifies *of* a
+# region; they are first-class typed objects substrate regions
+# *expose*. The discipline this shard names: "my content
+# exposes a typed algebra; downstream prisms may enumerate my
+# operations, compose them per my composition rule, and propose
+# morphisms between my algebra and another's algebra."
+#
+# Sibling shape to @bauchladen (tray-altitude content-
+# addressing), @autopoietic (fold-back permission), @fate
+# (constrained-inference operator), @glue (cross-region wiring):
+# each names a substrate-altitude family-root whose import
+# declares a contract.
+#
+# === Connes (A, H, D) at the substrate-decl altitude ===
+#
+#   Connes component   Substrate family-root        Role
+#   ----------------   --------------------------   --------------
+#   A (algebra)        @algebra (THIS shard)        typed operations
+#   H (Hilbert)        @uuid/spectral + @glass      typed state
+#   D (Dirac)          @kintsugi + @fate's D-flow   typed flow
+#   J (real structure) @epistemologic/cybernetic/   charge-conjugation
+#                      charge_conjugation             (recognition #102)
+#   γ (chirality)      @epistemologic/cybernetic/   Z/2 grading
+#                      chirality                      (recognition #101)
+#
+# The five family-roots together name the (A, H, D, J, γ) real
+# spectral triple at substrate-decl altitude. This shard lands
+# A; the others are landed or in flight per the #104 chain.
+#
+# === Abstract algebra as ancestor; @bauchladen dependency ===
+#
+# The substrate's notion of algebra subsumes the canon: group
+# (one binary op + inverses); ring (two ops + distributivity);
+# monoid (associative composition + identity); Lie algebra
+# (bracket [·,·] + Jacobi); C*-algebra (Banach + involution +
+# ||a*a|| = ||a||²). Each is a typed specialization at a sub-
+# altitude; species shards (forward-promised at
+# `shards/algebra/{group,ring,c_star,...}.mirror`) land when
+# consumers pull.
+#
+# Algebras land in the Bauchladen tray — every algebra_carrier
+# IS a content-addressed crystal (operation set + composition
+# rule hash deterministically). Structural dependency per the
+# @bauchladen-dependent admission pattern (precedents:
+# @autopoietic at `78edaa6`, @fate at `fdcba31`). No dependency
+# on @autopoietic this tick — algebras do NOT fold-back by
+# construction. Per [[feedback-craft-not-deliver]] the
+# dependency surface stays minimal.
+#
+# === No operational sibling THIS tick ===
+#
+# Per [[feedback-craft-not-deliver]] no `@mirror/algebra/...`
+# lands here. The substrate ALREADY has the machinery: every
+# prism declaration IS an algebra declaration; @glass content-
+# addresses the operations. This shard names the prism-altitude
+# contract so downstream shards can declare `in @algebra` and
+# discharge `requires algebra_witnessing(my_algebra)`. The sub-
+# prism `@algebra/metalogue` lands in the SAME tick (fifth
+# metalogue altitude lift; see `shards/algebra/metalogue.mirror`).
+#
+# === Pre-AI prior art ===
+#
+#   Spectral triples         Connes 1985 (*Non-commutative
+#                            differential geometry*, IHES); the
+#                            (A, H, D) framework this lifts.
+#   Real spectral triples    Connes 1995 ("Noncommutative
+#                            geometry and reality", J. Math.
+#                            Phys. 36(11):6194-6231); J + γ
+#                            extension per #101 + #102.
+#   Group / ring theory      Galois 1832; Noether 1921 ("Ideal
+#                            theory in rings", Math. Ann.
+#                            83:24-66); abstract-algebra
+#                            ancestors of species shards.
+#   Monoidal categories      Mac Lane 1971 (*Categories for the
+#                            Working Mathematician*, Springer);
+#                            ancestor for morphism composition.
+#   C*-algebras              Gelfand-Naimark 1943 (Mat. Sb.
+#                            12(2):197-217); bridge between
+#                            abstract algebra and Hilbert-space
+#                            operators.
+#
+# Spec context: docs/specs/bauchladen-autopoietic-fate.md §5;
+#               docs/specs/spectral-metalogue.md §6 (Mesland
+#               category framing).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-connes-spectral-triple]],
+#                      [[architecture-operations-as-linear-algebra]],
+#                      [[architecture-mirror-spec-is-lambda-zero]] (#99),
+#                      [[architecture-fate-is-optical-inference]] (#58),
+#                      [[architecture-at-x-is-mathematical-value]],
+#                      [[feedback-no-bare-types]],
+#                      [[feedback-substrate-already-had-the-word]] (~54th),
+#                      [[feedback-craft-not-deliver]].
+# Related shards: bauchladen.mirror (dependency),
+#                 prism.mirror (every five-op block IS one
+#                  algebra declaration),
+#                 glass.mirror (the splinter floor),
+#                 epistemologic/cybernetic/chirality.mirror (γ),
+#                 epistemologic/cybernetic/charge_conjugation.mirror (J),
+#                 algebra/metalogue.mirror (sub-prism, same tick).
+# Path-namespace property: this file at `shards/algebra.mirror`
+# declares `@algebra` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/math/connes-1985
+source @arxiv/math/connes-1995
+source @arxiv/math/connes-1995-reality
+source @arxiv/math/gelfand-naimark-1943
+source @arxiv/math/mac-lane-1971
+source @arxiv/math/noether-1921
+
+prism @algebra {
+  focus algebra_carrier
+  project algebra_carrier
+  split algebra_carrier
+  shift algebra_carrier
+  settle algebra_carrier
+}
+
+# === The algebra_carrier type ===
+#
+# A typed reference to an algebra per [[feedback-no-bare-types]].
+# Names the mathematical object — a group, a ring, a monoid, a
+# C*-algebra, the substrate's own five-op algebra — irrespective
+# of H or D.
+#
+# - `identity`    the typed ref to the algebra's identity
+#                 element (no-op composition).
+# - `operations`  the typed operation_set the algebra exposes;
+#                 the canonical algebra's is { focus, project,
+#                 split, shift, settle }.
+# - `composition` the typed ref to the algebra's composition
+#                 rule (associative for monoids; distributive
+#                 for rings; bracket for Lie algebras).
+# - `altitude`    the substrate-ref naming where the algebra
+#                 operates; matches @glass `splinter(altitude)`.
+#
+# Identity contract: byte-equality on the quadruple.
+type algebra_carrier = {
+  identity:    ref,
+  operations:  operation_set,
+  composition: ref,
+  altitude:    ref,
+}
+
+# === The operation_set type ===
+#
+# The typed set of operations an algebra exposes. Not a bare
+# `[ref]` per [[feedback-no-bare-types]]; carries arity and
+# well-typed-composition alongside the operation refs.
+#
+# - `members`     ordered list of operation refs.
+# - `arity_map`   typed mapping from each member to its arity.
+# - `composable`  typed predicate ref naming which member pairs
+#                 are admissible for composition.
+#
+# Identity contract: byte-equality on the triple.
+type operation_set = {
+  members:    [ref],
+  arity_map:  ref,
+  composable: ref,
+}
+
+# === The algebra_morphism type ===
+#
+# A morphism between two algebras preserving operation structure.
+# The substrate-decl name for an algebra homomorphism in the
+# canon (group homomorphism, ring homomorphism, etc.) per Mac
+# Lane.
+#
+# - `source`         the algebra the morphism originates from.
+# - `target`         the algebra the morphism delivers to.
+# - `operation_map`  typed mapping from each source operation to
+#                    its target counterpart; well-defined iff
+#                    the mapping preserves composition
+#                    (φ(a∘b) = φ(a)∘φ(b)).
+# - `altitude_lift`  optional Bateson-altitude transition per
+#                    #51 + [[architecture-bateson-logical-type-
+#                    primitive]]; cross-altitude morphisms lift
+#                    to an adjacent Bateson level; same-altitude
+#                    morphisms have empty lift.
+#
+# Identity contract: byte-equality on the quadruple.
+type algebra_morphism = {
+  source:        algebra_carrier,
+  target:        algebra_carrier,
+  operation_map: ref,
+  altitude_lift: ref,
+}
+
+# === enumerate_operations action ===
+#
+# Exposes the algebra's typed operation surface. Trivially
+# total (every carrier carries its operation_set by
+# construction). Body discharges per-species at the realisation
+# boundary.
+enumerate_operations(a: algebra_carrier) -> operation_set { \ }
+
+# === compose action ===
+#
+# Composes two operations within an algebra per the algebra's
+# composition rule. The canonical algebra's compose IS the
+# five-op-block's morphism composition; species algebras
+# specialize (group multiplication, ring multiplication, etc.).
+# Body discharges per-species at the realisation boundary.
+compose(a: algebra_carrier, o1: ref, o2: ref) -> ref { \ }
+
+# === morphism_between action ===
+#
+# Proposes morphisms between two algebras (the Hom(source,
+# target) space in categorical vocabulary). Multi-valued; empty
+# list IS valid output when no admissible morphism exists
+# (structurally incompatible composition rules). Consumers
+# select via downstream operations (typically @fate's tournament
+# or @algebra/metalogue's session composition). Body discharges
+# per-species at the realisation boundary.
+morphism_between(source: algebra_carrier, target: algebra_carrier) -> [algebra_morphism] { \ }
+
+# === The bilateral requires obligations ===
+#
+# Downstream shards declare bilateral agreement (per recognition
+# #37, Pask-agreement) with the @algebra discipline by writing
+# the obligations below.
+
+# Algebras admitted to the substrate land in the Bauchladen tray
+# as content-addressed crystals. Inheritor shards discharge by
+# ensuring every algebra_carrier passes
+# `bauchladen_witnessing(crystal_of_algebra)` at the species
+# boundary.
+bauchladen_membership_held(a: algebra_carrier) -> verdict { \ }
+
+# The algebra's operations compose within the algebra. For
+# every admissible pair (o1, o2), `compose(a, o1, o2)` returns
+# a ref that is a member of `a.operations.members` (or a
+# derived ref the composition rule's closure-discipline
+# accepts). Substrate's algebraic-soundness gate.
+closure_under_composition(a: algebra_carrier) -> verdict { \ }
+
+# Operations are members of their declared algebra. For every
+# operation ref o claimed to belong to algebra a, `o` appears
+# in `a.operations.members`. Ensures the operation_set's
+# content-addressing is consistent with downstream uses.
+operation_well_typed(o: ref, a: algebra_carrier) -> verdict { \ }
+
+# === The algebra_witnessing inheritance predicate ===
+#
+# `algebra_witnessing(a)` is the predicate consumer shards
+# name in a `requires` clause to declare bilateral agreement
+# that algebra `a` satisfies all three obligations above
+# conjointly: bauchladen_membership_held +
+# closure_under_composition + operation_well_typed.
+#
+# Same shape as bauchladen.bauchladen_witnessing(c),
+# autopoiesis.autopoietic_closure_holds(s),
+# fate.fate_witnessing(i).
+#
+# Forward-promised inheritors:
+#
+# - `@algebra/metalogue` (sub-prism landing this tick): fifth
+#   metalogue altitude lift; inherits structurally.
+# - `@algebra/<species>` shards: group, ring, monoid,
+#   C*-algebra, Lie algebra; each species shard declares its
+#   algebra-carrier specialization and discharges the
+#   witnessing predicate for its species.
+# - `@fate` (already declared at `fdcba31`):
+#   restricted_state_space carries an algebra ref per spec
+#   §4.2; future @fate sub-shards (`@fate/algebra/morphism`,
+#   `@fate/algebra/element`) declare `requires
+#   algebra_witnessing(carrier)` when their crystals carry
+#   algebra structure.
+# - `@spectral/metalogue` (canonical spec at
+#   `docs/specs/spectral-metalogue.md`): Tomm probes are typed
+#   against algebra correspondences per Mesland framing.
+#
+# No `requires algebra_witnessing(...)` clauses at THIS shard.
+# The family-root declares the predicate; consumers add the
+# clauses when they pull.
+algebra_witnessing(a: algebra_carrier) -> verdict { \ }
+
+out @algebra
+out algebra_carrier
+out operation_set
+out algebra_morphism
+out enumerate_operations
+out compose
+out morphism_between
+out bauchladen_membership_held
+out closure_under_composition
+out operation_well_typed
+out algebra_witnessing
