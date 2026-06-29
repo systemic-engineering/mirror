@@ -352,10 +352,31 @@ computing should have been built as." Discharges into: §7.5 (the autopoietic
 recursion + Bauchladen accumulation = the substrate's expansion-of-state
 mechanism — names what #51 declared structurally).
 
+**docs/specs/autopoietic-grammar-spec.md (Reed, 2026-06-04, 28KB).**
+
+The `@autopoietic` precursor at *grammar* class altitude — pre-dating
+[[architecture-prism-as-trait-as-everything]]'s collapse of `grammar` / `trait`
+/ `interface` to `prism`. Declares `abstract grammar @autopoietic` with
+`boundary = @me | @reality` and `< @autopoietic` inheritance from `@actor`
+and `@runtime`. The substrate had the word at the precursor altitude;
+@autopoietic-prism-class in this spec is the LIFT to prism-class altitude
+rather than a new invention. Substrate-already-had-the-word at the precursor
+altitude (per [[feedback-substrate-already-had-the-word]], the 7+-instance
+recurring pattern). Discharges into: §3 (the prism-class @autopoietic);
+§3.1 (the lift mechanics: `abstract grammar` → `prism`); §3.6 (the inheritance
+discipline — the prism-class lift INHERITS the 28KB precursor's content
+rather than duplicating).
+
 Naming the chain ties these into a single substrate-decl arc. Each is already
 in the substrate; the chain is the dependency order that lets them be
-addressed together as one structural arc rather than as six separate ancestors
-that happen to point at the same shape.
+addressed together as one structural arc rather than as seven separate
+ancestors that happen to point at the same shape.
+
+**Second witness for the precursor-lift framing:** Taut scout `27c8592`
+(`docs/scouts/2026-06-29-taut-scout-bauchladen-chain-updated.md`) grep-verified
+that `@autopoietic` has zero substrate-decl hits at the prism altitude AND that
+the 28KB grammar-spec is the unique precursor; the lift framing is
+substrate-pull-confirmed, not asserted.
 
 ---
 
@@ -923,6 +944,54 @@ the latter. The substrate's diversity at the prism altitude is healthy: not
 every prism needs to learn from its own outputs; some prisms are pure
 translators.
 
+### §3.6 — The grammar-class precursor: `docs/specs/autopoietic-grammar-spec.md` (Reed, 2026-06-04, 28KB)
+
+The @autopoietic prism-class declared in §3.3 is NOT new content. It is the
+LIFT of a 28KB precursor spec that already declared the discipline at the
+*grammar* class altitude — before [[architecture-prism-as-trait-as-everything]]
+collapsed `grammar` / `trait` / `interface` / `type` to `prism`.
+
+The precursor's shape:
+
+- File: `docs/specs/autopoietic-grammar-spec.md` (Reed, 2026-06-04).
+- Pre-prism-keyword discipline. Declares `abstract grammar @autopoietic`.
+- Carrier: `boundary = @me | @reality`.
+- Inheritance: `< @autopoietic` from `@actor` and `@runtime`.
+- Operational content the precursor carries: the produce / couple / close
+  vocabulary at the grammar altitude; the boundary discipline for
+  distinguishing self-referential operations from environmental coupling;
+  the inheritance shape for downstream actor/runtime grammars.
+
+The lift to prism class is MECHANICAL in form (`abstract grammar @autopoietic`
+→ `prism @autopoietic`) and STRUCTURAL in placement (the chain
+`@bauchladen ← @autopoietic ← @fate` situates the lifted prism class between
+the content-addressing discipline below and the constrained-inference operator
+above). What is new is the family-root naming and the dependency-chain
+position; what is INHERITED is the 28KB precursor's grammar-altitude content.
+
+The inheritance discipline:
+
+1. The prism-class lift does NOT duplicate the precursor's content.
+2. The prism-class shard `shards/autopoietic.mirror` (per §3.3) references the
+   precursor at the spec-cross-reference layer, not by re-declaration.
+3. The precursor's boundary / inheritance / coupling vocabulary remains the
+   source-of-truth at the grammar altitude; the prism-class lift adds the
+   commitment-bilateral (per Pask-agreement reading of `requires`) that prisms
+   importing `in @autopoietic` honor the precursor's discipline.
+4. The 28KB spec is NOT obsolete; it is the substrate's history of how the
+   discipline came to be nameable at the prism altitude. It stays in
+   `docs/specs/` as the precursor reference.
+
+This is the substrate-already-had-the-word discipline (per
+[[feedback-substrate-already-had-the-word]]) applied honestly: the substrate
+had `@autopoietic` at the grammar-class altitude for 25 days before this
+spec; the prism-class lift is the appropriate next move, not the original
+naming. The spec's contribution is the chain placement and the substrate-decl
+shape, not the discipline itself.
+
+The 28KB precursor is cross-referenced in §1.4's substrate-already-had
+inventory, and again here as the inheritance source for §3's lift.
+
 ---
 
 ## §4 — @fate — the constrained-inference operator
@@ -1137,6 +1206,36 @@ holes." The substrate-decl admission of @fate makes the resolution
 mechanism nameable at the family-root altitude; without the admission, the
 mechanism is implicit in every typed-gap discharge.
 
+**Cross-altitude composition with `@kintsugi/fracture/resolve_hole`.**
+@fate's `roll(q)` SELECTS the resolution candidate; `@kintsugi/fracture/
+resolve_hole` DISCHARGES it at the kintsugi-altitude fracture body. The
+forward-promised `resolve_hole` action (per `shards/mirror/ref.mirror`'s
+#53-bilateral forward-promise + `docs/insights/2026-06-20-mirror-ref-as-
+substrate-honest-reflection-reference.md`) is the @kintsugi-altitude form
+of what @fate's tournament selects. The composition flows:
+
+1. `@code/metalogue.project_hole(hole)` projects the typed-gap into a
+   candidate space.
+2. `@fate.roll(q)` (or `@fate/tournament` for cache-hit-aware selection)
+   selects one candidate.
+3. `@kintsugi/fracture/resolve_hole(hole, selected_candidate)` discharges the
+   selection at the kintsugi-altitude fracture body — the operational
+   transformation that turns the selected candidate into the substrate's
+   next state.
+
+The three-mechanism composition (`project_hole` → `@fate.roll` →
+`resolve_hole`) is the substrate-decl form of the `\` discharge pipeline.
+@fate selects within the typed restriction; @kintsugi/fracture/resolve_hole
+realizes the selection at the process-side family-root. The bilateral pattern
+(property + fracture, per #53) recurs here: `project_hole` declares the
+candidate-shape property; `resolve_hole` is the fracture body that discharges
+it via `splinter(ast)`; @fate is the selector that bridges the two.
+
+When `shards/kintsugi/fracture/resolve_hole.mirror` lands (forward-promised
+per `shards/mirror/ref.mirror`), the chain's composition with @kintsugi will
+be substrate-decl'd at both altitudes — @fate at the selection altitude,
+@kintsugi/fracture/resolve_hole at the discharge altitude.
+
 ### §4.5 — @fate's role in @glue: @glue uses @fate to pick which morphism to apply
 
 @glue (the forward-promised family-root for morphism composition at the
@@ -1191,6 +1290,47 @@ The two altitudes COMPOSE. A kintsugi morphism selection at tick N becomes
 part of the pipeline's history at tick N+1; Reflection's altitude selection
 at tick N+1 reads kintsugi's history; the read-and-decide cycle IS the
 autopoietic recursion across altitudes.
+
+### §4.7 — `candidates(hole)` migration home: orphaned boot-floor content lands HERE
+
+The boot-floor file `boot/std/fate/tournament.mirror` declared
+`candidates(hole) -> [resolution]` with a five-ganglion body
+(`@ai/abyss.depth`, `@ai/introject.pattern`, `@ai/cartographer.map`,
+`@ai/explorer.expand`, `@ai/fate.select`). The boot/ directory was killed in
+spring-clean. The `candidates(hole)` action's content was orphaned: 15+ specs
+still reference it (kintsugi-tournament.md, substrate-native-fate-tournament.md,
+kintsugi-wiring.md, code-metalogue-surface.md, lsp-and-mcp.md, road-to-1.0.md,
+gap-tension-tensor-substrate.md, ants-colonies-stigmergy.md, others), but no
+shard in `shards/` carries the action declaration.
+
+Taut scout `27c8592` §1 / §2.4 surfaced this as the most operationally
+significant unresolved tension. The chain in this spec — specifically
+@autopoietic's tick-action shape per §3.3-§3.4 — IS the migration home the
+orphaned content has been waiting for.
+
+The migration mapping:
+
+| Boot-floor element | Chain landing site |
+|---|---|
+| `candidates(hole) -> [resolution]` (the action) | `@autopoietic`'s tick-action; @fate inherits via `in @autopoietic` (§3.3) |
+| The five-ganglion body (depth, pattern, map, expand, select) | The autopoietic-tick's components; per §3.4 the components are the autopoietic-system's `produce` operations |
+| `[resolution]` (the return type) | Content-addressed crystals in the @bauchladen tray (§5, §6); each `resolution` becomes an `algebra_crystal` |
+| The five-ganglion optical-source shards (already in `shards/optics/source/ganglion/*.mirror` per recognition #58) | The OPERATIONAL realization of the autopoietic-tick's components; @fate's optical-inference machinery reads from these |
+
+The orphaned `candidates(hole)` was the substrate's prior naming of what
+@autopoietic now declares at prism-class altitude. The action's *body* (the
+five ganglia) is preserved structurally in `shards/optics/source/ganglion/`;
+the action's *signature* (the typed-gap → candidate-list operator) is what
+@autopoietic + @fate now declare at substrate-decl altitude.
+
+The migration is NOT a re-write; it is a re-anchoring. The boot/ content was
+spring-cleaned because it had no substrate-decl host; the chain provides the
+host. Once `shards/autopoietic.mirror` and `shards/fate.mirror` land, the 15+
+spec references to `candidates(hole)` will resolve to substrate-decl'd
+actions instead of dangling boot/ references.
+
+This discharges Taut scout `27c8592` §2.4's finding and absorbs one of the
+three pending tensions §10.6 enumerates.
 
 ---
 
@@ -2210,6 +2350,56 @@ The candidate-#104 status is honest: the chain has been NAMED and the
 substrate-decl shape has been declared; the operational landing is forward-
 promised. The two-witness discipline requires both.
 
+### §10.6 — Three pending tensions the chain resolves simultaneously
+
+Taut scout `27c8592` (`docs/scouts/2026-06-29-taut-scout-bauchladen-chain-
+updated.md`) §3 surfaced that the chain `@bauchladen ← @autopoietic ← @fate`
+resolves THREE pending substrate tensions in one move. The resolutions are
+substrate-pull-confirmed by Taut's grep-verified evidence; the chain has zero
+contradictions against existing substrate.
+
+**Tension 1 — orphaned `candidates(hole)` content (15+ spec references with
+no substrate-decl host).** Resolved by §4.7's migration mapping. The chain's
+@autopoietic + @fate substrate-decl shards become the host the spring-cleaned
+boot/std/fate/tournament.mirror content has been waiting for.
+
+**Tension 2 — @fate's persistent inability to substrate-decl at family-root
+altitude.** Prior Taut scout `26f88b7` found 0 substrate-decl hits for @fate;
+the Phase F anti-pattern note in `shards/mirror/spawn.mirror` was tracking the
+symptom without naming the cause. The chain names the cause: @fate cannot
+substrate-decl in the current topology because its inputs (the candidate
+catalog) and discipline (autopoietic closure) have no substrate-decl host.
+With @bauchladen providing the catalog and @autopoietic providing the
+discipline, @fate's substrate-decl lands coherently. Resolved by §4 in toto.
+
+**Tension 3 — operational-prism gap from `@epistemologic/cybernetic/
+autopoiesis`.** The 750+-line cybernetic species (Read C, operational
+closure) declares `autopoietic_closure_holds(s)` as a bilateral predicate
+that downstream species can reference in `requires` clauses — but no
+operational prism class exists for the predicate to BE INVOKED on. The
+property has been signaling the gap since 2026-06-09; the substrate's
+bilateral discipline (#53) needs a fracture body at prism altitude.
+Resolved by §3 + §3.6: @autopoietic at prism-class altitude IS the
+operational surface the property has been waiting for; the 28KB precursor
+spec is the inheritance source.
+
+The three tensions resolve SIMULTANEOUSLY because the chain is structurally
+single. Resolving any one in isolation would re-create the others; resolving
+all three requires the dependency-chain shape. This is the substrate-pull
+signature of a load-bearing recognition (per [[feedback-substrate-pull-
+confidence-acts]]): one naming move discharges multiple pending obligations
+because the obligations were aspects of one structural arc the substrate had
+not yet named.
+
+The Schmidt homage at §1.3 carries a fourth, lighter resolution: the
+substrate's cybernetic-elder canon extends into the systemic-therapy lineage
+at family-root altitude for the first time. Watzlawick + Cecchin already
+appear at species altitude (`shards/frame/*.mirror`, `epistemologic-
+grammar.md` §881); Schmidt at family-root altitude is the PROMOTION of the
+systemic-therapy lineage's altitude in the substrate. Taut scout §2.5
+confirmed: zero prior Schmidt or Heidelberg-school citations at family-root
+altitude.
+
 ---
 
 ## §11 — Circular-reflexive layer
@@ -2518,5 +2708,19 @@ The math entry is FORWARD-PROMISED; this spec lands without it.
 - `docs/specs/cyberpunk-autopoiesis.md` (the property-altitude spec for
   @epistemologic/cybernetic/autopoiesis; the precedent for §7's math
   formalization)
+- `docs/specs/autopoietic-grammar-spec.md` (Reed, 2026-06-04, 28KB; the
+  precursor at grammar-class altitude this spec's @autopoietic LIFTS to
+  prism-class altitude per §3.6; substrate-already-had-the-word at the
+  precursor altitude)
+- `docs/scouts/2026-06-29-taut-scout-bauchladen-chain-updated.md` (commit
+  `27c8592`; Taut's grep-verified substrate-pull confirmation; surfaced the
+  precursor-lift framing, the `candidates(hole)` migration home, and the
+  three-pending-tensions resolution §10.6 enumerates)
+- `shards/mirror/ref.mirror` (the #53-bilateral forward-promise for
+  `@kintsugi/fracture/resolve_hole`; the @kintsugi-altitude discharge form
+  for what @fate's tournament selects, per §4.4's cross-altitude composition)
+- `docs/insights/2026-06-20-mirror-ref-as-substrate-honest-reflection-reference.md`
+  (the 2026-06-20 insight proposing `@kintsugi/fracture/resolve_hole`; cited
+  in §4.4 as the second source for the cross-altitude composition)
 
 — Mara-4, 2026-06-29
