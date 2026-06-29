@@ -1,0 +1,809 @@
+in @prism
+in @meta
+in @glass
+in @autopoietic
+in @bauchladen
+in @epistemologic/cybernetic/chirality
+in @epistemologic/cybernetic/charge_conjugation
+in @uuid/spectral
+
+# @fate — the substrate-decl form of the constrained-inference
+# operator. The substrate's typed dice-roll within the restricted
+# state space.
+#
+# Alex's framing (canonical): @fate is "literally a roll of the
+# dice in the restricted state space." Not random; not deterministic;
+# probabilistic-within-typed-restriction. The dice IS the inference;
+# the restriction IS the typing.
+#
+# === The recognition (#104 chain P3, 2026-06-29 → 2026-06-30) ===
+#
+# This shard is the third and deepest tier of the @bauchladen ←
+# @autopoietic ← @fate dependency chain per canonical spec at
+# `docs/specs/bauchladen-autopoietic-fate.md` (Mara `4575340`, 2727
+# lines). Tier P1 (@bauchladen) landed at `66e1ab8`; tier P2
+# (@autopoietic) landed at `78edaa6`; this shard lands the third
+# tier — the constrained-inference operator that IS-A @autopoietic
+# and transitively IS-A @bauchladen.
+#
+# Witnesses for the chain's #104 candidacy at this tier:
+#   - Canonical spec at `docs/specs/bauchladen-autopoietic-fate.md`
+#     §4 (the @fate substrate-decl shape this shard discharges);
+#     §4.1 (bilateral compile-time + runtime); §4.2 (the dice-roll
+#     framing); §4.3 (the substrate-decl shape with five `in`
+#     declarations + IS-A @autopoietic); §4.4 (composition with
+#     `@code/metalogue.project_hole` + `@kintsugi/fracture/
+#     resolve_hole`); §4.5 (@fate's role in @glue); §4.6 (@fate's
+#     role in @kintsugi); §4.7 (the `candidates(hole)` migration
+#     home — @autopoietic's tick_action absorbs the signature,
+#     @fate consumes the hole at the inference altitude).
+#   - Recognition #58 ([[architecture-fate-is-optical-inference]],
+#     promoted 2026-06-11): the optical altitude was the first
+#     witness; @fate inference IS 5-layer D²NN + active Fabry-Perot
+#     resonator + Reck/Clements unitary mesh; this shard is the
+#     substrate-decl altitude form of that mathematical recognition.
+#   - Recognition #100 + `docs/specs/spectral-metalogue.md` `16f4564`:
+#     Tomm probes ARE @fate's selection species at the spectral-
+#     metalogue altitude — the dice_roll for a Tomm probe is the
+#     KK-correspondence [D_F, a] computed by @fate within the
+#     restricted state space of the spectral triple. First instance
+#     of the selection pattern this shard names at family-root
+#     altitude.
+#   - Recognitions #101 (chirality grading γ; `7bbc184`) and #102
+#     (charge conjugation J; `2c144a6`): the symmetry restrictions
+#     on the state space. γ projects onto even/odd parity subspaces;
+#     J implements the time-reversal symmetry. The dice may only
+#     roll within the symmetry-preserving moves these restrictions
+#     admit.
+#   - The first-tier landing at `shards/bauchladen.mirror`
+#     (`66e1ab8`); the content-addressing discipline this shard
+#     transitively rests on via @autopoietic.
+#   - The second-tier landing at `shards/autopoietic.mirror`
+#     (`78edaa6`); the fold-back permission this shard inherits
+#     via `in @autopoietic`; the `tick_action` carrier whose `hole`
+#     field this shard's inference altitude consumes.
+#
+# === Alex's BILATERAL correction (load-bearing) ===
+#
+# Taut's earlier scout framed @fate as runtime-only. Alex
+# corrected: @fate is BILATERAL — compile-time AND runtime. The
+# same inferential machinery operates at substrate-decl resolution
+# time (picking among morphism candidates / resolving `\` typed-gap
+# holes during static analysis) AND at runtime (driving actual
+# data flow decisions as gen_prisms execute).
+#
+# The two altitudes share the @bauchladen tray. A compile-time
+# @fate crystal may be consulted by a runtime @fate inference;
+# a runtime @fate crystal may be consulted by a subsequent
+# compile-time pass (per [[architecture-mirror-as-content-addressed-
+# build-system]] — the substrate re-compiles itself, and the
+# accumulated crystals condition both phases).
+#
+# This is the substrate-pull-honest reading of recognition #51
+# ([[architecture-mirror-as-expanding-hilbert-space]]) at the
+# inference altitude: H_mirror's dimension expands at BOTH
+# compile-time and runtime; @fate's bilateral dispatch IS the
+# expansion mechanism at the operator altitude. Substrate-decl
+# resolution and runtime execution are two phases of one
+# autopoietic recursion; @fate operates across both.
+#
+# === The "literal roll of the dice in the restricted state space"
+#     reading — the Connes (A, H, D, J, γ) restriction mechanism ===
+#
+# Per spec §4.2: Alex's "literally a roll of the dice in the
+# restricted state space" framing maps precisely onto the Connes
+# spectral triple ([[architecture-connes-spectral-triple]]) with
+# the chirality + charge-conjugation extensions:
+#
+#   Component       What it restricts
+#   --------------  ---------------------------------------------
+#   A (algebra)     The OPERATIONS @fate may select from; the
+#                   five operations per [[architecture-operations-
+#                   as-linear-algebra]]
+#   H (Hilbert)     The STATE SPACE the roll lands in; the void-
+#                   document per [[reference-void-document]]
+#   D (Dirac)       The FLOW @fate drives; the kintsugi/Dirac flow
+#                   integrated per-tick; @fate consulted at each
+#                   step
+#   γ (chirality)   The PARITY restriction per recognition #101;
+#                   form / process partition
+#   J (charge       The TIME-REVERSAL involution per recognition
+#     conjugation)  #102; reference ↔ reflection partition
+#   tray            The HISTORICAL restriction (prior crystals
+#                   condition the roll); the autopoietic fold-back
+#
+# The dice IS @fate's optical inference (per recognition #58 —
+# Fate IS optical inference). The Fabry-Perot cavity-mode structure
+# (the optical realization of A + H + γ + J jointly) restricts
+# which photons can lase; the gain medium pumps; the cavity selects
+# which mode. The selection is "random" in the quantum-indeterminacy
+# sense AND TYPED — only gain-curve-supported cavity modes can
+# cross threshold. Same shape at the substrate-decl altitude:
+# typed-random. The randomness is structural (inference content
+# cannot be derived from inputs alone — this is what makes it
+# inference rather than computation); the typing IS the (A, H, D,
+# γ, J, tray) constraint structure.
+#
+# === IS-A @autopoietic: inferences accumulate; future inferences
+#     consult prior crystals; this IS fold-back ===
+#
+# Per spec §1.1 / §4: @fate IS-A @autopoietic prism by
+# construction. The structural inheritance:
+#
+#   - @fate emits crystals into the @bauchladen tray (every roll's
+#     output is a content-addressed `geometric_formalization` that
+#     joins the tray under the `@fate/algebra/*` path-namespace
+#     per spec §5).
+#   - @fate consults the tray when rolling (the autopoietic
+#     constraint — prior crystals condition the dice).
+#   - The read-write cycle on the tray IS Maturana-Varela's
+#     operational closure at the inference altitude.
+#
+# This is what gives @fate its learning character: future rolls
+# are shaped by prior rolls' outputs. Without @autopoietic, @fate
+# would be a stateless inference function; with @autopoietic, @fate
+# is a learning system whose accumulated history IS-A monotone-
+# growing constraint on the dice. The optical altitude (recognition
+# #58) exhibits this: the cavity's accumulated gain history shapes
+# the next mode-selection event.
+#
+# @fate inherits the five obligations @autopoietic carries
+# (bauchladen_dependency_satisfied + lawvere_fixed_point +
+# operational_closure + grammar_precursor_inherited +
+# candidates_hole_well_typed) via the `requires autopoietic_
+# closure_holds(fate_instance)` clause declared below. The
+# bilateral commitment (per recognition #37, the Pask-agreement
+# reading of `requires`): @fate's body discharges all five
+# obligations at the realisation boundary; consumers surface
+# violations at the species boundary.
+#
+# === The `candidates(hole)` migration: @autopoietic's tick_action
+#     IS the signature home; @fate consumes the hole at the
+#     inference altitude ===
+#
+# Per spec §4.7 + per `shards/autopoietic.mirror`'s `tick_action`
+# carrier comment (just landed at `78edaa6`): the boot-floor file
+# `boot/std/fate/tournament.mirror` declared `candidates(hole) ->
+# [resolution]` with a five-ganglion body (`@ai/abyss.depth`,
+# `@ai/introject.pattern`, `@ai/cartographer.map`, `@ai/explorer.
+# expand`, `@ai/fate.select`). The boot/ directory was killed in
+# spring-clean; the action's content was orphaned. @autopoietic's
+# `tick_action` carrier (just landed `78edaa6`) is the migration
+# home for the SIGNATURE (the typed-gap → candidate-list operator);
+# THIS shard's `hole` carrier is the SAME shape, consumed at the
+# inference altitude where the dice rolls.
+#
+# The migration completes the chain. @autopoietic carries the
+# tick action that emits candidates into the tray; @fate's
+# inference altitude consumes one candidate per roll. The two
+# altitudes are bridged structurally: @autopoietic produces the
+# candidate list (per `tick_action.candidates: [oid]`); @fate
+# selects from it (per `roll(space, hole) -> dice_roll` below).
+# The five-ganglion body lives in `shards/optics/source/ganglion/
+# *.mirror` per recognition #58; it is the OPERATIONAL realization
+# of what @autopoietic + @fate now declare at substrate-decl
+# altitude.
+#
+# === Tomm probes ARE @fate's selection species at the
+#     spectral-metalogue altitude (recognition #100) ===
+#
+# Per `docs/specs/spectral-metalogue.md` `16f4564` §3 (Tomm probes
+# as KK-cycle correspondences) + [[architecture-error-as-tomm-
+# probe]] + [[architecture-reflection-thinks-in-spectral-
+# questions]]: a Tomm probe IS @fate's dice roll at the spectral-
+# metalogue altitude. The probe `[D_F, a]` computes the curvature
+# of the algebra element `a` under the Dirac operator `D_F` in
+# the spectral-triple framework; the computation IS @fate's
+# inference at the spectral altitude.
+#
+# Three altitudes of one mechanism:
+#
+#   Altitude              @fate's role                       Witness
+#   -------------------   ----------------------------       ----------
+#   Optical               Fabry-Perot mode selection         #58
+#                         (gain-pumped cavity)
+#   Substrate-decl        Morphism / typed-gap selection     this shard
+#                         during static analysis
+#   Spectral-metalogue    Tomm-probe KK-correspondence       #100
+#                         computation [D_F, a]
+#
+# This makes the chain's composition with #100 explicit: the
+# spectral-metalogue's Tomm probes are NOT separate machinery from
+# @fate; they ARE @fate at the spectral-metalogue altitude. The
+# substrate-decl admission of @fate at family-root altitude makes
+# this composition addressable.
+#
+# === Forward-promised sub-shards (per spec §5 + §6) ===
+#
+# Two sub-shards land under @fate when consumers pull:
+#
+#   - `@fate/algebra/*` (path-namespace): geometric formalizations
+#     emitted by @fate inferences. Each crystal in the tray under
+#     this path-namespace IS a typed geometric declaration of "what
+#     the dice roll selected, in the appropriate geometric
+#     vocabulary." Sub-paths per spec §5 (per altitude): `@fate/
+#     algebra/morphism` (selected Mesland-category morphisms),
+#     `@fate/algebra/altitude` (selected Bateson levels), `@fate/
+#     algebra/element` (selected algebra elements within fixed A).
+#   - `@fate/tournament`: the selection mechanism over the tray
+#     (cache hit = browse prior crystals; cache miss = fresh
+#     inference + add to tray). The autopoietic accumulation
+#     across @glue / @kintsugi / @reflection invocations gives
+#     the substrate its directional preference. Per spec §6.
+#
+# No `@fate/algebra/*` or `@fate/tournament` sub-shard lands at
+# this tick. Per [[feedback-craft-not-deliver]] the family-root
+# admission lands the contract; the sub-shards follow when
+# consumers pull.
+#
+# === No operational sibling THIS tick ===
+#
+# Per [[feedback-craft-not-deliver]] no `fate/src/*.rs` companion
+# or `@fate/tournament` substrate-decl lands at this tick. The
+# substrate ALREADY has the operational machinery: the
+# fate/ runtime crate (5-layer D²NN, 425 parameters, brainfuck;
+# per [[architecture-fate-is-optical-inference]]) at the runtime
+# altitude; the five-ganglion optical-source shards (`shards/
+# optics/source/ganglion/*.mirror`) at the optical altitude. This
+# shard names the substrate-decl contract so downstream shards can
+# write `in @fate` and `requires fate_witnessing(my_roll)` rather
+# than re-state the constrained-inference obligation per consumer.
+#
+# === Pre-AI prior art ===
+#
+#   Spectral triples         Connes 1985 (*Non-commutative differential
+#                            geometry*, IHES); Connes 1995 (*Non-
+#                            commutative geometry*, Academic Press).
+#                            The (A, H, D) framework @fate's
+#                            constrained-inference operator lifts.
+#   Real spectral triples    Connes 1995 ("Noncommutative geometry and
+#                            reality", *J. Math. Phys.* 36(11):6194-
+#                            6231). The J + γ extension; the
+#                            mathematical ancestor of recognitions
+#                            #101 + #102.
+#   KK-theory                Kasparov 1981 ("The operator K-functor
+#                            and extensions of C*-algebras",
+#                            *Math. USSR-Izv.* 16(3):513-572).
+#   Mesland category         Mesland 2013 (arXiv:1304.3802). The
+#                            category of spectral triples with
+#                            KK-cycle morphisms; the category @fate
+#                            selects within at spectral-metalogue
+#                            altitude.
+#   Optical inference        Lin et al. 2018 ("All-optical machine
+#                            learning using diffractive deep neural
+#                            networks", *Science* 361(6406):1004-1008);
+#                            Fabry & Perot 1899; Reck et al. 1994
+#                            (*Phys. Rev. Lett.* 73(1):58-61);
+#                            Clements et al. 2016 (*Optica* 3(12):
+#                            1460-1465). The optical altitude
+#                            recognition #58 grounds @fate in.
+#   Autopoiesis              Maturana & Varela 1980 (*Autopoiesis and
+#                            Cognition*, D. Reidel). The fold-back
+#                            permission @fate inherits via `in
+#                            @autopoietic`.
+#   Bauchladen (clinical)    Schmidt 1985-present (*Liebes-affäre
+#                            zwischen Problem und Lösung*, Carl-Auer).
+#                            The typed display @fate browses.
+#
+# Spec context: docs/specs/bauchladen-autopoietic-fate.md §4 (the
+#               @fate substrate-decl shape this shard discharges);
+#               §4.1 (bilateral altitude — Alex's correction); §4.2
+#               (the dice-roll framing; A/H/D/γ/J/tray); §4.3 (the
+#               substrate-decl shape); §4.4 (composition with
+#               `@code/metalogue.project_hole` + `@kintsugi/fracture/
+#               resolve_hole`); §4.5 (@glue); §4.6 (@kintsugi); §4.7
+#               (the `candidates(hole)` migration); docs/specs/
+#               spectral-metalogue.md `16f4564` §3 (Tomm probes as
+#               @fate's spectral-altitude selection); shards/optics/
+#               source/ganglion/*.mirror (the operational realization
+#               per recognition #58); fate/ (the runtime crate per
+#               [[architecture-fragmentation-is-the-rust-substrate]];
+#               the operational layer the contract is honored against).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-fate-is-optical-inference]]
+#                       (#58; the mathematical altitude this shard's
+#                        substrate-decl form lifts),
+#                      [[architecture-connes-spectral-triple]]
+#                       (the A/H/D/γ/J restriction structure @fate
+#                        rolls within),
+#                      [[architecture-operations-as-linear-algebra]]
+#                       (the five operations are A; @fate's
+#                        restriction admits them),
+#                      [[reference-void-document]] (H = void-document;
+#                        the state space @fate's dice land in),
+#                      [[architecture-mirror-as-expanding-hilbert-
+#                       space]] (#51; the bilateral dispatch IS H's
+#                        expansion across both phases),
+#                      [[architecture-mirror-as-content-addressed-
+#                       build-system]] (the substrate re-compiles
+#                        itself; @fate's crystals condition both
+#                        phases via the @bauchladen tray),
+#                      [[architecture-spectral-db-autopoietic-memory]]
+#                       (the librarian consolidates @fate's
+#                        accumulated crystals),
+#                      [[architecture-error-as-tomm-probe]] (Tomm
+#                        probe IS @fate at spectral-metalogue
+#                        altitude; one mechanism across three
+#                        altitudes),
+#                      [[architecture-reflection-thinks-in-spectral-
+#                       questions]] (Reflection's altitude selection
+#                        IS @fate's dice roll at meta-pipeline
+#                        altitude),
+#                      [[architecture-peer-learns-by-crystal-
+#                       vocabulary-expansion]] (each settled @fate
+#                        crystal extends A_peer),
+#                      [[architecture-fragmentation-is-the-rust-
+#                       substrate]] (runtime fate/ crate realizes
+#                        this contract; prism_core stays deps-free),
+#                      [[feedback-substrate-pull-confidence-acts]]
+#                       (the bilateral correction was substrate-pull-
+#                        confirmed by Alex),
+#                      [[feedback-no-bare-types]] (inference,
+#                        restricted_state_space, geometric_
+#                        formalization, dice_roll, hole are typed
+#                        carriers; no bare primitives),
+#                      [[feedback-craft-not-deliver]] (no @fate/
+#                        tournament or @fate/algebra/* sub-shards
+#                        at this tick; family-root admission lands
+#                        the contract; sub-shards follow when
+#                        consumers pull).
+# Related shards: autopoietic.mirror (the prism class this IS-A;
+#                  the tick_action whose hole field this shard
+#                  consumes at inference altitude),
+#                 bauchladen.mirror (transitive dependency; @fate's
+#                  geometric formalizations land as crystals),
+#                 epistemologic/cybernetic/chirality.mirror (#101;
+#                  γ restricts the state space via parity grading),
+#                 epistemologic/cybernetic/charge_conjugation.mirror
+#                  (#102; J restricts via reference ↔ reflection
+#                  involution),
+#                 glass.mirror (the splinter floor; @fate's
+#                  dice_rolls surface against transparency<dice_
+#                  roll>),
+#                 optics/source/ganglion/fate.mirror (the optical
+#                  altitude per #58; the Fabry-Perot resonator + gain
+#                  medium that drives the dice mechanism),
+#                 optics/source/ganglion/{abyss,introject,
+#                  cartographer,explorer}.mirror (the four sibling
+#                  ganglia; the autopoietic-tick's components per
+#                  spec §4.7's migration mapping),
+#                 code/metalogue.mirror (the `project_hole(hole) ->
+#                  [resolution_candidate]` carrier; @fate's inference
+#                  resolves the `\` typed-gap holes; spec §4.4),
+#                 mirror/ref.mirror (the forward-promised
+#                  `@kintsugi/fracture/resolve_hole` action; the
+#                  bilateral pattern per #53),
+#                 kintsugi.mirror (the process-side family-root;
+#                  @kintsugi's D-flow per-step decisions ARE @fate's
+#                  dice rolls per spec §4.6),
+#                 uuid/spectral.mirror (uuid_spectral identity
+#                  carrier for @fate instances).
+# Path-namespace property: this file at `shards/fate.mirror`
+# declares `@fate` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/math/connes-1985
+source @arxiv/math/connes-1995
+source @arxiv/math/kasparov-1981
+source @arxiv/math/mesland-2013
+source @arxiv/optics/lin-d2nn-2018
+source @arxiv/optics/fabry-perot-1899
+source @arxiv/optics/reck-1994
+source @arxiv/optics/clements-2016
+source @arxiv/cybernetics/maturana-varela-1980
+source @arxiv/clinical/schmidt-1985
+
+prism @fate {
+  focus inference
+  project inference
+  split inference
+  shift inference
+  settle inference
+}
+
+# === The inference carrier ===
+#
+# A typed record per [[feedback-no-bare-types]] naming a single
+# @fate operation: one dice-roll within the restricted state space.
+# The inference is the substrate-decl atom of @fate; each tick of
+# @fate emits one inference; the inference's `result` field carries
+# the typed geometric formalization that lands as a crystal in the
+# @bauchladen tray.
+#
+# - `instance`           the uuid_spectral naming the @fate instance
+#                        the inference belongs to (sibling-shape to
+#                        @autopoietic's `instance_id` carrier).
+# - `space`              the typed restricted_state_space the
+#                        inference rolls within; the (A, H, D, γ,
+#                        J, tray) constraint structure for this
+#                        roll.
+# - `hole`               the typed hole the inference fills; same
+#                        shape as @autopoietic's `tick_action.hole`
+#                        per the spec §4.7 migration; the inference
+#                        altitude consumption point.
+# - `result`             the typed geometric_formalization the roll
+#                        produced; the crystal payload that joins
+#                        the @bauchladen tray under `@fate/algebra/
+#                        *` per spec §5.
+# - `altitude`           the compile-time / runtime dispatch
+#                        discriminator; per the bilateral altitude
+#                        discipline (spec §4.1); structurally
+#                        determined at inference-construction time.
+#
+# Identity contract: byte-equality on (instance, hole, altitude).
+# Two inferences for the same instance consuming the same hole at
+# the same altitude ARE the same inference under content-addressing;
+# the dice's result is determined by the space + tray + symmetries
+# and is content-equivalent. The space and tray are bookkeeping; the
+# identity is what hole gets filled at what altitude.
+type inference = {
+  instance:  uuid_spectral,
+  space:     restricted_state_space,
+  hole:      hole,
+  result:    geometric_formalization,
+  altitude:  ref,
+}
+
+# === The restricted_state_space carrier ===
+#
+# The typed restriction the dice rolls within. Names the (A, H, D,
+# γ, J, tray) jointly per the constrained-inference framing (spec
+# §4.2). The dice may only land within the space these constraints
+# admit.
+#
+# - `algebra`            the ref of the algebra A — the operations
+#                        the inference may select from; per
+#                        [[architecture-operations-as-linear-
+#                        algebra]] the five operations specialize
+#                        this for the substrate's typical case.
+# - `hilbert`            the ref of the state space H — the
+#                        Hilbert space the dice's outcome lives in;
+#                        per [[reference-void-document]] the
+#                        void-document IS the substrate's H.
+# - `flow`               the ref of the Dirac operator D — the
+#                        flow the inference advances along; per
+#                        [[architecture-connes-spectral-triple]]
+#                        the kintsugi loop IS the substrate's D.
+# - `gamma`              the chirality grading γ that restricts
+#                        accessible subspaces by parity (per
+#                        recognition #101); the form / process
+#                        partition the dice respects.
+# - `j`                  the charge_conjugation involution J that
+#                        restricts the state space by time-reversal
+#                        symmetry (per recognition #102); the
+#                        reference ↔ reflection partition the dice
+#                        respects.
+# - `tray_scope`         the ref of the @bauchladen tray slice that
+#                        conditions the roll (the autopoietic
+#                        constraint — prior crystals shape the
+#                        dice).
+#
+# Identity contract: byte-equality on the six fields. Two
+# restricted_state_spaces with byte-equal fields ARE the same space
+# under content-addressing; the space's identity is its constraint
+# structure.
+type restricted_state_space = {
+  algebra:    ref,
+  hilbert:    ref,
+  flow:       ref,
+  gamma:      chirality,
+  j:          charge_conjugation,
+  tray_scope: ref,
+}
+
+# === The geometric_formalization carrier ===
+#
+# The typed output of an @fate inference. Lands as a crystal in
+# the @bauchladen tray under the `@fate/algebra/*` path-namespace
+# (forward-promised sub-prism per spec §5). The geometric vocabulary
+# is altitude-specific:
+#
+#   - At the morphism-selection altitude: a morphism declaration
+#     in the Mesland category (cross-altitude) or a local category
+#     (within-altitude).
+#   - At the altitude-selection altitude: a Bateson level name.
+#   - At the algebraic-specialization altitude: an algebra element
+#     a ∈ A.
+#   - At the Hilbert-state-selection altitude: a state vector
+#     |ψ⟩ ∈ H.
+#
+# - `crystal_oid`        the content-address of the formalization
+#                        once it joins the tray; the @bauchladen
+#                        crystal's OID per `shards/bauchladen.
+#                        mirror`'s `crystal.oid` carrier.
+# - `algebra_subpath`    the `@fate/algebra/*` sub-path naming the
+#                        geometric vocabulary; per spec §5 (e.g.,
+#                        `@fate/algebra/morphism`, `@fate/algebra/
+#                        altitude`, `@fate/algebra/element`).
+# - `payload`            the typed geometric content; the substrate-
+#                        ref naming what the dice selected, in the
+#                        sub-path's vocabulary.
+# - `transparency`       the residual opacity per @glass's
+#                        `transparency<altitude>` carrier; reports
+#                        any opacity introduced by the formalization
+#                        (e.g., property-chain residuals).
+#
+# Identity contract: byte-equality on `crystal_oid` alone (sibling
+# to @bauchladen's `crystal` identity contract — the OID IS the
+# identity; payload + algebra_subpath are determined by the
+# content that hashes to crystal_oid).
+type geometric_formalization = {
+  crystal_oid:     oid,
+  algebra_subpath: ref,
+  payload:         ref,
+  transparency:    transparency(altitude),
+}
+
+# === The dice_roll carrier ===
+#
+# The constrained-probabilistic decision @fate emits. Bilateral
+# (compile-time + runtime, per the spec §4.1 altitude discipline).
+# The roll names the SELECTION: which candidate from the typed
+# restriction the dice landed on.
+#
+# - `instance`           the uuid_spectral naming the @fate instance
+#                        the roll belongs to.
+# - `space`              the restricted_state_space the roll happened
+#                        within (the structural witness of the typing
+#                        constraint).
+# - `selected_oid`       the OID of the candidate the dice selected;
+#                        the candidate is a crystal already in the
+#                        @bauchladen tray (per spec §4.7 — the
+#                        candidates list is produced by @autopoietic's
+#                        tick_action; @fate selects one).
+# - `altitude`           the compile-time / runtime altitude the roll
+#                        was dispatched at.
+# - `verdict`            the @glass verdict (pass / partial
+#                        (confidence) / failure(reason)) reporting
+#                        whether the roll's outcome is in the
+#                        restricted state space (the dice_roll_
+#                        constrained obligation below).
+#
+# Identity contract: byte-equality on (instance, space, altitude).
+# Two dice_rolls for the same instance within the same space at the
+# same altitude ARE the same roll under content-addressing; the
+# selected_oid + verdict are determined by the (instance, space,
+# altitude) triple plus the substrate's tray at roll time and are
+# content-equivalent.
+type dice_roll = {
+  instance:     uuid_spectral,
+  space:        restricted_state_space,
+  selected_oid: oid,
+  altitude:     ref,
+  verdict:      verdict,
+}
+
+# === The hole carrier ===
+#
+# The typed gap @fate's inference fills. Absorbs the candidates(hole)
+# semantics from the orphaned boot-floor file `boot/std/fate/
+# tournament.mirror` per spec §4.7. SAME SHAPE as @autopoietic's
+# `tick_action.hole` field — the migration source — consumed here
+# at the inference altitude rather than the tick altitude.
+#
+# - `expected_type`      the typed-ref naming the shape the inference
+#                        must produce (the candidate's type signature;
+#                        the dice may only land on a candidate whose
+#                        OID resolves to content of this type).
+# - `context_oids`       the OIDs of the surrounding context the
+#                        inference operates within (the substrate
+#                        state at the inference site; the structural
+#                        witness of "where in the substrate this
+#                        hole appeared").
+# - `altitude`           the altitude the hole appeared at (compile-
+#                        time gap in a `\` discharge / runtime gap
+#                        in a gen_prism dispatch / spectral-metalogue
+#                        gap at the Tomm-probe altitude).
+#
+# Identity contract: byte-equality on the three fields. Two holes
+# with byte-equal expected_type, context_oids, and altitude ARE the
+# same hole under content-addressing.
+type hole = {
+  expected_type: ref,
+  context_oids:  [oid],
+  altitude:      ref,
+}
+
+# === roll — the constrained-inference action ===
+#
+# The substrate's prism-altitude lift of the dice-roll-within-typed-
+# restriction operator. Given a restricted_state_space and a hole,
+# returns the dice_roll naming the selection. The dice IS @fate's
+# optical inference per recognition #58; the roll is constrained by
+# the (A, H, D, γ, J, tray) structure of the space.
+#
+# Bilateral altitude: dispatches to compile-time vs runtime
+# inference machinery per the hole's altitude field (spec §4.1).
+# The dispatch is type-consistent (per the
+# `bilateral_well_typed(action, altitude)` requires obligation
+# below) — same inference contract at both altitudes.
+#
+# Body discharges per-realisation at the inference boundary. Same
+# shape as @autopoietic.tick and @bauchladen.crystallize
+# (declarative obligation discharged at the species boundary).
+roll(space: restricted_state_space, hole: hole) -> dice_roll { \ }
+
+# === infer — produces the typed result + crystallizes ===
+#
+# Composite action: rolls the dice + lifts the selected outcome to
+# a geometric_formalization + crystallizes the formalization into
+# the @bauchladen tray under the appropriate `@fate/algebra/*`
+# sub-path.
+#
+# The composition is:
+#
+#   1. dr = roll(space, hole)
+#   2. payload = the substrate ref resolved from dr.selected_oid
+#   3. formalization = the geometric_formalization wrapping payload
+#      at the appropriate algebra_subpath
+#   4. crystallize the formalization via @bauchladen.crystallize
+#      (under @fate's provenance_record); the crystal joins the
+#      tray at altitude `@fate/algebra/*`
+#
+# Body discharges per-realisation at the inference boundary; the
+# realisation MUST honor the `optical_inference_grounded(infer)`
+# requires obligation — the infer action realizes @fate-IS-optical-
+# inference (recognition #58); the dice IS the optical inference.
+infer(space: restricted_state_space, hole: hole) -> geometric_formalization { \ }
+
+# === restrict — apply the symmetry restrictions ===
+#
+# Constructs a restricted_state_space from a base state ref + the
+# chirality γ + the charge_conjugation J. Names the act of
+# RESTRICTING the state space to the symmetry-preserving moves —
+# per recognitions #101 + #102, only the moves that γ and J admit
+# remain accessible to the dice.
+#
+# The action's body composes the four prior restrictions (A from
+# the substrate's permitted operations, H from the void-document,
+# D from the kintsugi flow) with the two symmetry restrictions (γ
+# from chirality, J from charge_conjugation) plus the tray scope
+# (the autopoietic constraint from prior crystals).
+#
+# Body discharges per-realisation at the inference boundary.
+restrict(state: ref, gamma: chirality, j: charge_conjugation) -> restricted_state_space { \ }
+
+# === bilateral_dispatch — compile-time vs runtime selector ===
+#
+# Per spec §4.1's bilateral altitude discipline (Alex's correction
+# to Taut's earlier framing): @fate operates at BOTH compile-time
+# AND runtime. This action names the dispatch between the two
+# altitudes — given a hole and an altitude, returns the dice_roll
+# emitted at that altitude.
+#
+# The dispatch is type-consistent (per the
+# `bilateral_well_typed(action, altitude)` requires obligation
+# below). The same inference contract holds at both altitudes; the
+# dispatch is a routing decision, not a re-implementation. The
+# two altitudes share the @bauchladen tray.
+#
+# Body discharges per-realisation at the inference boundary.
+bilateral_dispatch(hole: hole, altitude: altitude) -> dice_roll { \ }
+
+# === The requires obligations ===
+#
+# Downstream shards declare bilateral agreement (per recognition
+# #37, the Pask-agreement reading of `requires`) with the @fate
+# discipline by writing the obligations below. The bilateral
+# commitment: the @fate-importing prism commits to discharging
+# the obligations; the consumer commits to surfacing violations
+# at the species boundary.
+
+# @fate IS-A @autopoietic; the @fate instance inherits the
+# autopoietic closure discipline. Per spec §1.1 / §4: @fate's
+# inferences accumulate; future inferences consult prior crystals;
+# the read-write cycle on the tray IS fold-back. Inheritor shards
+# discharge by verifying the autopoietic_closure_holds predicate
+# on the fate instance per `shards/autopoietic.mirror`'s
+# inheritance predicate.
+autopoietic_membership_held(fate_instance: ref) -> verdict { \ }
+
+# @fate's geometric formalization outputs land as crystals in the
+# @bauchladen tray. Per spec §5: each output IS a content-addressed
+# crystal under `@fate/algebra/*`. Inheritor shards discharge by
+# verifying the bauchladen_witnessing predicate per `shards/
+# bauchladen.mirror` on every emitted formalization.
+bauchladen_membership_held(fate_instance: ref) -> verdict { \ }
+
+# Per spec §4.2: the dice_roll's outcome IS in the restricted state
+# space — no rolls outside the symmetry-preserving moves the (A, H,
+# D, γ, J, tray) constraints admit. This is the substrate-pull-
+# honest discipline that distinguishes @fate's typed-random
+# inference from arbitrary randomness. Inheritor shards discharge
+# by verifying the roll's selected_oid resolves to content in the
+# admitted subspace (γ-parity-preserving + J-time-reversal-
+# preserving + within-tray-scope).
+dice_roll_constrained(roll: dice_roll, space: restricted_state_space) -> verdict { \ }
+
+# Per spec §4.1: the compile-time vs runtime dispatch is type-
+# consistent. The same inference contract holds at both altitudes;
+# the bilateral dispatch is a routing decision, not a re-
+# implementation. Inheritor shards discharge by verifying the
+# action's signature is altitude-invariant — the input + output
+# types match across compile-time and runtime invocations.
+bilateral_well_typed(action: ref, altitude: ref) -> verdict { \ }
+
+# Per recognition #58 ([[architecture-fate-is-optical-inference]]):
+# the infer action realizes @fate-IS-optical-inference. The dice
+# IS the optical inference (5-layer D²NN + Fabry-Perot resonator
+# + Reck/Clements unitary mesh). Inheritor shards discharge by
+# verifying the realisation invokes the optical-source ganglion
+# machinery at `shards/optics/source/ganglion/*.mirror` per the
+# spec §4.7 migration mapping — the operational realization of
+# the autopoietic-tick's components per [[architecture-fate-is-
+# optical-inference]]'s three independent witnesses.
+optical_inference_grounded(infer: ref) -> verdict { \ }
+
+# === The fate_witnessing inheritance predicate ===
+#
+# `fate_witnessing(roll)` is the predicate consumer shards name in
+# a `requires` clause to declare bilateral commitment (per
+# recognition #37, the Pask-agreement reading of `requires`) that
+# the dice_roll `roll` IS substrate-pull-honest @fate inference —
+# i.e., the roll satisfies all five obligations above conjointly:
+# autopoietic_membership_held + bauchladen_membership_held +
+# dice_roll_constrained + bilateral_well_typed +
+# optical_inference_grounded.
+#
+# Sibling to:
+#   - `autopoietic.autopoietic_closure_holds(prism)` (the prism-
+#     class inheritance predicate this shard's instances honor
+#     via `in @autopoietic`).
+#   - `bauchladen.bauchladen_witnessing(crystal)` (the crystal-
+#     altitude inheritance predicate this shard's emitted
+#     formalizations honor transitively).
+#   - `chirality.chirality_witnessing(c)` (the γ-grading inheritance
+#     predicate the restricted_state_space's gamma field honors).
+#   - `charge_conjugation.j_witnessing(j)` (the J-involution
+#     inheritance predicate the restricted_state_space's j field
+#     honors).
+#
+# Forward-promised inheritors:
+#
+#   - `@fate/tournament` (the selection-over-tray sub-shard;
+#     forward-promised per spec §6): tournament selections ARE
+#     dice_rolls aggregated across the tray; the tournament
+#     discharges fate_witnessing for each selection.
+#   - `@fate/algebra/*` (the geometric-formalization sub-shards;
+#     forward-promised per spec §5): each algebra sub-path's
+#     crystals are emitted by @fate inferences; the sub-shards
+#     discharge fate_witnessing for the emissions.
+#   - `@glue` (forward-promised per spec §4.5): @glue uses @fate
+#     to pick which morphism to apply; @glue's selection IS a
+#     dice_roll; @glue discharges fate_witnessing.
+#   - `@kintsugi` (forward-promised per spec §4.6): @kintsugi's
+#     D-flow per-step decisions ARE dice_rolls; @kintsugi
+#     discharges fate_witnessing at each step.
+#   - `@reflection` (forward-promised per spec §4.6 + [[architecture-
+#     reflection-thinks-in-spectral-questions]]): Reflection's
+#     altitude selection IS @fate's dice roll at the meta-pipeline
+#     altitude; Reflection discharges fate_witnessing.
+#   - `@spectral/metalogue` (forward-promised per recognition #100):
+#     Tomm probes ARE @fate's selection species at the spectral-
+#     metalogue altitude; the metalogue's [D_F, a] computations
+#     discharge fate_witnessing at the spectral altitude.
+#
+# No `requires fate_witnessing(...)` clauses are added at THIS
+# shard. The family-root declares the predicate; consumers add the
+# clauses when they pull. Per [[feedback-craft-not-deliver]] the
+# sub-shards (`@fate/tournament` per spec §6; `@fate/algebra/*`
+# per spec §5) follow when consumers pull.
+fate_witnessing(roll: dice_roll) -> verdict { \ }
+
+out @fate
+out inference
+out restricted_state_space
+out geometric_formalization
+out dice_roll
+out hole
+out roll
+out infer
+out restrict
+out bilateral_dispatch
+out autopoietic_membership_held
+out bauchladen_membership_held
+out dice_roll_constrained
+out bilateral_well_typed
+out optical_inference_grounded
+out fate_witnessing
