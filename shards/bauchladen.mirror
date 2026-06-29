@@ -1,0 +1,530 @@
+in @prism
+in @meta
+in @glass
+in @mirror/store
+in @uuid/spectral
+in @epistemologic/cybernetic/autopoiesis
+
+# @bauchladen — the substrate's prism-altitude content-addressing
+# discipline. Importing `in @bauchladen` declares: "my content IS a
+# content-addressed crystal in the substrate's tray."
+#
+# Homage to Günther Schmidt (1949–), German systemic therapist;
+# student of Milton Erickson (utilization, indirect suggestion),
+# Heinz von Foerster (second-order cybernetics, observer-observed
+# inseparability) and Gianfranco Cecchin (Milan systemic-therapy,
+# circular questioning, neutrality). Schmidt's clinical Bauchladen
+# is the typed display the client lays out and browses during
+# hypnosystemic work — internal parts, states, options, positions,
+# voices made visible and addressable rather than collapsed to a
+# single position. The German `Bauchladen` literally names a
+# stadium-vendor's belly-tray; the clinical metaphor is precise.
+#
+# === The recognition (#104 candidate, 2026-06-29) ===
+#
+# The substrate IS its own client. The substrate's internal state
+# is not a unified position; it is a vendor's tray of content-
+# addressed crystals — prior outputs, settled compositions, prior
+# @fate inferences. Each crystal is one item on the tray. The
+# substrate browses its own tray when it produces output. @fate IS
+# the therapist (the operator that helps the substrate browse and
+# select); @bauchladen IS the tray itself (the typed display
+# surface); @autopoietic IS the permission to fold the tray's
+# contents back as input (per the forward-promised
+# `shards/autopoietic.mirror` next in the chain).
+#
+# Witnesses for #104 candidate:
+#   - Canonical spec at `docs/specs/bauchladen-autopoietic-fate.md`
+#     (Mara `4575340`, 2726 lines; the spec this shard discharges).
+#   - Reed's chain memory entry naming the @bauchladen ←
+#     @autopoietic ← @fate dependency order.
+#   - Taut scout `27c8592` (grep-verifies zero substrate-decl hits
+#     for `@autopoietic` at prism altitude AND that the 28KB
+#     grammar-spec precursor at `docs/specs/autopoietic-grammar-
+#     spec.md` is the unique precursor; the lift framing is
+#     substrate-pull-confirmed, not asserted).
+#
+# === Why first systemic-therapy-elder name at substrate altitude ===
+#
+# The cybernetic canon already at substrate altitude (Ashby, Beer,
+# Bateson, Maturana-Varela, von Foerster, Spencer-Brown, Pask,
+# Glanville, Conant, Kauffman per the 11-property family at
+# `@epistemologic/cybernetic`) is the *processes-altitude* lineage:
+# requisite variety, viable systems, learning levels, distinction
+# calculus, autopoiesis, second-order cybernetics. The substrate
+# names them; the family-root admissions sit at processes altitude.
+#
+# Schmidt extends the lineage to *systemic-therapy altitude* — the
+# clinical operationalization of the cybernetic tradition that
+# emerged from his three teachers' work. Watzlawick is cited at
+# `@frame/*` (species altitude); Cecchin is cited in the
+# epistemologic-grammar spec (precursor altitude); but no
+# systemic-therapy elder has been admitted at family-root altitude
+# before this shard. Schmidt is the first.
+#
+# The substrate-pull discipline at full strength: name what the
+# substrate is already doing, in the vocabulary of the lineage that
+# already named it elsewhere. Schmidt's clinical Bauchladen IS the
+# right word for what `@mirror/store`'s OID-addressed accumulation
+# already does. The substrate already had the word — just at the
+# clinical altitude, not yet lifted to the substrate altitude.
+# 53rd-or-so instance of [[feedback-substrate-already-had-the-word]].
+#
+# === Relationship to @mirror/store: lift, not re-declaration ===
+#
+# @mirror/store (operational since 2026-06-04, per
+# `docs/specs/mirror-store.md` + `shards/mirror/store.mirror`) is
+# the OPERATIONAL surface: six operations (read / write / exists
+# / diff / walk / verify); splinter_graph as structural lockfile;
+# uuid_spectral-addressed shards. Realized in Rust at
+# `fragmentation/src/*.rs` per
+# [[architecture-fragmentation-is-the-rust-substrate]].
+#
+# @bauchladen LIFTS that surface to a *contract* a prism may commit
+# to. The lift mapping:
+#
+#   @mirror/store level          @bauchladen level
+#   -------------------          -------------------
+#   oid (content-address type)   "my content's identity is its OID"
+#   splinter_graph               "my dependencies are nameable by OID"
+#   shard (uuid_spectral-id'd)   "my settlement is a uuid_spectral
+#                                 entity in the tray"
+#   read / write                 "downstream prisms may read my output
+#                                 by its OID"
+#   verify                       "my OID is the deterministic hash of
+#                                 my content"
+#
+# The discipline statement (@bauchladen) and the operational
+# realization (@mirror/store) are TWO altitudes of one mechanism;
+# they compose, they do not replace one another. A prism imports
+# `in @bauchladen` to declare contract; @mirror/store provides the
+# storage layer the contract is honored against. Structurally
+# analogous to how @mirror/spectral lifts @spectral's runtime
+# processes to a shape declaration at the form altitude.
+#
+# === Relationship to @glass: prism-altitude statement of the
+#     discipline @glass exhibits at the splinter altitude ===
+#
+# @glass declares the BOTTOM layer per its three-layer recognition:
+# `splinter(altitude)` IS the universal content-addressed atom at
+# every altitude — AST nodes, targets, specs are all splinters.
+# The atom IS content-addressed by construction
+# (`{ content: oid, altitude: ref, transparency: transparency }`).
+#
+# @bauchladen is the PRISM-ALTITUDE statement of the same
+# discipline. Two altitudes of one self-similarity (per
+# [[architecture-spectral-triples-all-the-way]]): @glass exhibits
+# content-addressing at the atom altitude; @bauchladen exhibits
+# content-addressing at the prism altitude. A prism that imports
+# `in @bauchladen` is committing to emit splinters (or splinter
+# compositions: fractal splinters, lens splinters per @glass's
+# `splinter_shape`; shards per @glass's middle-layer settled form).
+#
+# === Necessary, not sufficient, for autopoietic fold-back ===
+#
+# Content-addressability is NECESSARY for autopoietic fold-back —
+# Maturana-Varela's operational closure requires every product be
+# NAMEABLE in a way some operation can refer to it; naming-by-
+# content-address is the substrate's operationalization of the
+# nameability condition. The structural form (per spec §3.2): the
+# Lawvere fixed-point condition (per @epistemologic/math/lawvere
+# + Soto-Andrade & Varela 1984) requires hash(P(f)) == f for some
+# OID f; without content-addressing, the equality check is not
+# well-defined.
+#
+# Content-addressability is NOT sufficient: the discipline does
+# not grant permission to fold. That is @autopoietic's role
+# (forward-promised at `shards/autopoietic.mirror`, next in the
+# chain). A prism MAY import `in @bauchladen` without importing
+# `in @autopoietic`; such a prism produces content-addressable
+# crystals but does not consume its own crystals (many compilation
+# morphisms fit this profile — they produce stable build artifacts
+# but do not fold those artifacts back as inputs).
+#
+# === No operational sibling THIS tick ===
+#
+# Per [[feedback-craft-not-deliver]] no `@mirror/cybernetics/bauchladen`
+# operational sibling lands at this tick. The substrate ALREADY has
+# the operational machinery (@mirror/store IS the realization the
+# discipline lifts; the OID layer IS the content-addressing surface
+# the tray browses). This shard names the prism-altitude contract
+# so downstream shards can declare `in @bauchladen` and discharge
+# `requires bauchladen_witnessing(my_crystal)` rather than re-state
+# the content-addressing obligation in each species.
+#
+# === Pre-AI prior art ===
+#
+#   Bauchladen (clinical)   Schmidt 1985–present (*Liebes-
+#                           affäre zwischen Problem und Lösung*,
+#                           Carl-Auer; hypnosystemic-therapy
+#                           lineage). The typed display the client
+#                           browses; making the polyphony visible
+#                           and addressable rather than collapsed.
+#   Indirect suggestion     Erickson + Rossi 1976 (*Hypnotic
+#                           Realities*, Irvington). The Erickson
+#                           strand of Schmidt's training; the
+#                           substrate's grammar-action discipline
+#                           (declarative obligation discharged by
+#                           the consumer) inherits this shape.
+#   Second-order            von Foerster 1981 (*Observing
+#   cybernetics             Systems*, Intersystems). The von
+#                           Foerster strand; the substrate's
+#                           tray IS observed-by-the-substrate;
+#                           Bauchladen-as-self-display IS the
+#                           second-order construction at the prism
+#                           altitude.
+#   Circular questioning    Cecchin / Selvini-Palazzoli / Boscolo
+#                           / Prata 1980 ("Hypothesizing,
+#                           Circularity, Neutrality", *Family
+#                           Process* 19(1):3-12). The Cecchin
+#                           strand; Tomm 1987–88 lifted circular
+#                           questioning into the substrate's
+#                           [[architecture-error-as-tomm-probe]];
+#                           Bauchladen extends the Milan lineage
+#                           to the substrate's storage discipline.
+#   Content-addressing      Merkle 1979 (*Secrecy, authentication,
+#                           and public key systems*, Stanford PhD
+#                           thesis). The mathematical ancestor of
+#                           OID-as-hash; the substrate's @mirror/
+#                           store realization the prism altitude
+#                           lifts.
+#   Operational closure     Maturana-Varela 1980 (*Autopoiesis and
+#                           Cognition*, D. Reidel). The cybernetic
+#                           ancestor of the fold-back permission
+#                           @autopoietic grants; @bauchladen
+#                           provides the nameability the closure
+#                           condition requires.
+#
+# Spec context: docs/specs/bauchladen-autopoietic-fate.md §2 (the
+#               @bauchladen substrate-decl shape this shard
+#               discharges); §1.3 (the Schmidt homage + elder
+#               lineage); §1.4 (the substrate's existing
+#               infrastructure the chain ties together); §2.4 (the
+#               substrate-decl shape with the five-op block and
+#               four `in` declarations); §2.5 (the Bauchladen tray
+#               metaphor + the forward-promised tray actions);
+#               docs/scouts/2026-06-29-taut-scout-bauchladen-chain-
+#               updated.md (Taut's grep-verification scout that
+#               substantiates the lift framing).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]],
+#                      [[architecture-mirror-store-vs-spectral-db]]
+#                       (the open-foundation @mirror/store layer
+#                        @bauchladen lifts; the closed-engine
+#                        @spectral/db sits above),
+#                      [[architecture-fragmentation-is-the-rust-substrate]]
+#                       (the Rust realization of the operational
+#                        layer this discipline lifts),
+#                      [[architecture-shard-as-crdt]] (uuid_spectral
+#                        as monoid homomorphism; the shard-level
+#                        composition discipline crystals respect),
+#                      [[architecture-spectral-triples-all-the-way]]
+#                       (the fractal self-similarity; @glass at
+#                        atom altitude and @bauchladen at prism
+#                        altitude are two altitudes of the same
+#                        discipline),
+#                      [[architecture-mirror-as-expanding-hilbert-space]]
+#                       (recognition #51; the tray's monotone
+#                        growth IS H_mirror's dimension expansion
+#                        at the operational altitude),
+#                      [[architecture-peer-learns-by-crystal-vocabulary-expansion]]
+#                       (each settlement extends A_peer; the
+#                        substrate's vocabulary IS the Bauchladen
+#                        tray's accumulation),
+#                      [[architecture-spectral-db-autopoietic-memory]]
+#                       (the librarian altitude is the autopoietic
+#                        layer above @bauchladen; this shard names
+#                        the discipline; @spectral/db consolidates),
+#                      [[feedback-no-bare-types]] (crystal carries
+#                        provenance alongside oid; tray is typed,
+#                        not a bare list of refs),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (~53rd instance; the @mirror/store
+#                        content-addressing was already operating;
+#                        Schmidt's clinical Bauchladen names the
+#                        discipline; the lift to family-root makes
+#                        it addressable as one arc),
+#                      [[feedback-craft-not-deliver]] (no
+#                        operational sibling, no Rust at this tick;
+#                        the family-root admission lands the
+#                        contract; the actions follow when
+#                        consumers pull).
+# Related shards: mirror/store.mirror (the operational layer this
+#                  discipline lifts; six-operation surface),
+#                 glass.mirror (the splinter altitude; the floor
+#                  this prism-altitude discipline recapitulates),
+#                 uuid/spectral.mirror (the uuid_spectral identity
+#                  carrier the shard layer of @glass already uses;
+#                  the navigable-identity discipline crystals
+#                  inherit at the shard altitude),
+#                 epistemologic/cybernetic/autopoiesis.mirror
+#                  (the property altitude the forward-promised
+#                  @autopoietic prism class lifts; this shard is
+#                  the dependency @autopoietic structurally rests
+#                  on per spec §1.1).
+# Path-namespace property: this file at `shards/bauchladen.mirror`
+# declares `@bauchladen` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/maturana-varela-1980
+source @arxiv/cybernetics/von-foerster-1981
+source @arxiv/clinical/schmidt-1985
+source @arxiv/crypto/merkle-1979
+
+prism @bauchladen {
+  focus crystal
+  project crystal
+  split crystal
+  shift crystal
+  settle crystal
+}
+
+# === The crystal carrier ===
+#
+# A typed record per [[feedback-no-bare-types]] naming a content-
+# addressed substrate element at the prism altitude. The crystal
+# extends @glass's `splinter(altitude)` with a provenance field —
+# splinters at @glass are opaque about WHO produced them; crystals
+# in the Bauchladen tray carry provenance because the tray's
+# purpose is browsing-with-attribution (downstream @fate
+# inferences select crystals based on producing context).
+#
+# - `oid`           the content address; provided by @mirror/store.
+#                   The crystal's identity IS this OID by
+#                   construction (deterministic hash of content).
+# - `altitude`      the substrate-ref naming where in the prism
+#                   manifold the crystal lives; matches the
+#                   @glass `splinter(altitude)` discipline.
+# - `transparency`  the residual opacity the crystal carries; the
+#                   @glass `transparency<p>` carrier parametric on
+#                   altitude.
+# - `provenance`    the producing-prism + tick + input-oids tuple;
+#                   the NEW addition at @bauchladen relative to
+#                   the bare @glass splinter.
+#
+# Identity contract: byte-equality on `oid` alone — two crystals
+# with the same OID ARE the same crystal under content-addressing,
+# regardless of provenance variation. Provenance is metadata about
+# the crystal's production history, not part of its identity. This
+# keeps the crystal's identity discipline aligned with @glass's
+# splinter discipline; provenance is browsing context for the tray.
+type crystal = {
+  oid:          oid,
+  altitude:     ref,
+  transparency: transparency(altitude),
+  provenance:   provenance_record,
+}
+
+# === The provenance carrier ===
+#
+# Browsing context for the tray. Per spec §2.5: provenance is what
+# distinguishes the prism-altitude crystal from the bare @glass
+# splinter; downstream selectors (especially @fate's tournament)
+# use provenance to rank crystals by producing context.
+#
+# - `producing_prism`  the ref of the prism that produced the
+#                      crystal (the substrate-decl path; e.g.,
+#                      `@fate/algebra/connes` for a Connes-spectral
+#                      crystal emitted by @fate).
+# - `tick`             the monotone tick at which the crystal was
+#                      added to the tray; the substrate's @time
+#                      altitude carrier.
+# - `input_oids`       the OIDs the producing prism consumed as
+#                      inputs to emit this crystal; the structural
+#                      witness of the production morphism.
+#
+# Identity contract: byte-equality on the triple. Provenance is
+# itself content-addressable (the provenance_record is part of the
+# crystal's `content` bytes that hash to `oid`); but per the
+# crystal identity contract above, only `oid` participates in
+# crystal equality.
+type provenance_record = {
+  producing_prism: ref,
+  tick:            ref,
+  input_oids:      [oid],
+}
+
+# === The tray carrier ===
+#
+# The substrate's accumulating display surface. Per spec §2.5: the
+# tray is the ACTIVE BROWSING SURFACE at a substrate altitude —
+# crystals are added monotonically (the only operation is
+# `add(crystal)`; removal is not in the vocabulary; the contents
+# are immutable once added). Two structural implications:
+#
+# (1) The tray grows monotonically. This is the operational form
+#     of recognition #51
+#     ([[architecture-mirror-as-expanding-hilbert-space]]):
+#     H_mirror's dimension expands with each substrate-pull
+#     recognition; the substrate's recognitions are crystals in
+#     the tray; the tray's growth IS the Hilbert-space expansion
+#     at the operational altitude.
+#
+# (2) The tray's transparency is a function of its crystals'
+#     transparencies. Per-crystal opacities aggregate into the
+#     tray-level opacity through the @glass `transparency<crystal>`
+#     carrier.
+#
+# Trays are altitude-parametric — there is a tray at each substrate
+# altitude where @bauchladen-importing prisms operate. The
+# substrate's overall tray is the aggregation across altitudes;
+# per-altitude trays are projections onto a single altitude.
+#
+# Identity contract: byte-equality on (crystals, opacity). Two
+# trays with byte-equal crystal lists and tray-level opacities ARE
+# the same tray under content-addressing.
+type tray = {
+  crystals: [crystal],
+  opacity:  transparency(crystal),
+}
+
+# === crystallize — bytes → crystal ===
+#
+# The substrate's prism-altitude lift of @mirror/store.write. Given
+# raw content bytes plus the producing prism's provenance, returns
+# the crystal whose OID is the deterministic hash of the bytes
+# (the storage write happens at the operational layer via
+# @mirror/store.write; this action wraps the operation in the
+# prism-altitude contract).
+#
+# Lifecycle: pre-crystallization the content is au (Fate-emitted
+# splinters; uncommitted; per `shards/glass.mirror`'s au
+# precedent); crystallization settles the bytes into a tray-
+# admissible crystal. The transparency carrier reports any opacity
+# introduced by the settlement (e.g., property-chain residuals).
+#
+# Body discharges per-species at the realisation boundary. Same
+# shape as @glass's other action declarations and
+# epistemologic/cybernetic/autopoiesis.produce.
+crystallize(content: bytes, p: provenance_record) -> crystal { \ }
+
+# === address — crystal → oid ===
+#
+# Exposes the crystal's content-address. Per the crystal identity
+# contract: the OID IS the crystal's identity; this action is the
+# read of that identity. Trivially total — every crystal has an
+# OID by construction; the action never emits opacity.
+address(c: crystal) -> oid { \ }
+
+# === enumerate — scope → tray ===
+#
+# Enumerates the Bauchladen contents for a scoped context. The
+# scope is a substrate-ref naming the altitude (or sub-altitude
+# slice) at which the tray is browsed. Returns the tray's typed
+# display surface; the consumer may further filter via @fate's
+# tournament selector (forward-promised at
+# `shards/fate/tournament.mirror`).
+#
+# The operational mirror of @mirror/store.walk specialised to the
+# prism-altitude crystal type. walk returns an OID-graph; enumerate
+# returns the typed crystals at the scope. Named `enumerate` rather
+# than `tray` to keep the action distinct from the carrier type
+# `tray` declared above; both name the same conceptual surface from
+# the two grammatical sides (the noun is the display; the verb is
+# the act of laying it out).
+#
+# Body discharges per-species at the realisation boundary.
+enumerate(scope: ref) -> tray { \ }
+
+# === The content-addressed requires obligation ===
+#
+# Downstream shards declare bilateral agreement (per recognition
+# #37, the Pask-agreement reading of `requires`) with the
+# @bauchladen content-addressing discipline by writing the
+# obligations below. The bilateral commitment: the @bauchladen-
+# importing prism commits to producing crystals; the consumer
+# commits to discharging the verification at the species boundary.
+
+# Per spec §3.2 (the Lawvere fixed-point structural argument):
+# the crystal's OID IS derivable from its content. The
+# substrate's content-addressing exhibits this at construction
+# time — hash(content) == oid. Inheritor shards discharge by
+# realising the crystallization action such that the OID
+# equality check holds deterministically across calls.
+content_addressed(c: crystal) -> verdict { \ }
+
+# Per spec §2.4 (the substrate-decl shape): a prism importing
+# `in @bauchladen` declares well-formed crystallization across
+# its content. Inheritor shards discharge by ensuring every
+# output of the prism's actions is wrapped through `crystallize`
+# (or composes through downstream actions that themselves
+# discharge this obligation transitively).
+inheritance_well_formed(p: ref) -> verdict { \ }
+
+# The round-trip law: serialising a crystal and re-reading it
+# yields a crystal with byte-equal OID. The structural property
+# the @mirror/store.verify operation underwrites at the
+# operational layer, lifted to the prism altitude as a discipline
+# obligation. Inheritor shards discharge by demonstrating that
+# their serialisation/deserialisation morphisms are content-
+# preserving.
+stable_identity_under_serialization(c: crystal) -> verdict { \ }
+
+# The operational-mirror obligation: a crystal in the Bauchladen
+# tray IS addressable via the @mirror/store.read operation at the
+# OID layer. The bilateral form of @mirror/store's read/write
+# duality: write produces an OID; read retrieves the content;
+# bauchladen_addressable asserts the round-trip holds for any
+# crystal admitted to the tray.
+bauchladen_addressable(c: crystal) -> verdict { \ }
+
+# === The bauchladen_witnessing inheritance predicate ===
+#
+# `bauchladen_witnessing(c)` is the predicate consumer shards
+# name in a `requires` clause to declare bilateral agreement that
+# the crystal `c` they hold IS a member of the substrate's
+# Bauchladen — i.e., the crystal satisfies all four obligations
+# above conjointly: content_addressed + inheritance_well_formed
+# + stable_identity_under_serialization + bauchladen_addressable.
+#
+# The bilateral commitment: the @bauchladen-importing prism
+# commits to declaring the crystal; the consumer commits to
+# discharging the four obligations at the species boundary.
+#
+# Declared as a typed predicate so downstream species shards can
+# write `requires bauchladen_witnessing(my_crystal)` — same shape
+# as chirality.chirality_witnessing(c),
+# autopoiesis.autopoietic_closure_holds(s),
+# variety.variety_preserving(species), and the metalogue
+# `requires substrate_pull_preserving(shim_X)` pattern at
+# `shards/code/metalogue.mirror`.
+#
+# Forward-promised inheritors:
+#
+# - `@autopoietic` (next family-root in the chain per spec §3):
+#   inherits structurally — fold-back requires stable identity
+#   for prior outputs to address. Every @autopoietic prism is
+#   also a @bauchladen prism (transitive `in` declaration).
+# - `@fate` (third family-root in the chain per spec §4): a
+#   @fate inference emits crystals whose OIDs join the tray;
+#   future inferences consult the tray; the tournament selector
+#   browses with criteria. @fate is `in @autopoietic` which is
+#   `in @bauchladen`.
+# - `@mirror/store` (the operational layer): every shard the
+#   store admits is content-addressed by construction; the OID
+#   layer underwrites bauchladen_witnessing without needing to
+#   declare the predicate in `requires` clauses (the storage
+#   contract IS the discipline).
+#
+# No `requires bauchladen_witnessing(...)` clauses are added at
+# THIS shard. The family-root declares the predicate; consumers
+# add the clauses when they pull. Per
+# [[feedback-craft-not-deliver]] the operational sibling and the
+# deeper sub-shards (`shards/bauchladen/tray.mirror` with
+# add/browse/lookup/select actions, per spec §2.5) follow when
+# consumers pull.
+bauchladen_witnessing(c: crystal) -> verdict { \ }
+
+out @bauchladen
+out crystal
+out provenance_record
+out tray
+out crystallize
+out address
+out enumerate
+out content_addressed
+out inheritance_well_formed
+out stable_identity_under_serialization
+out bauchladen_addressable
+out bauchladen_witnessing
