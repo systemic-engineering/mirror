@@ -1,0 +1,722 @@
+in @prism
+in @meta
+in @glass
+in @fate
+in @bauchladen
+in @autopoietic
+in @cascade
+in @uuid/spectral
+
+# @glue — the morphism family-root substrate-decl. The Mesland
+# correspondence as substrate primitive. A prism that does NOTHING
+# but translate between two other prisms (spectral triples).
+#
+# Uses @fate for the translation decision; carries the typed
+# restriction surface that defines which translations are admissible.
+# The substrate-decl form of the morphism category that has been
+# operating across @spectral/metalogue/tomm, @cascade, and the
+# scattered code-translation species without yet being named at
+# family-root altitude.
+#
+# === The recognition (#104 chain P5, 2026-06-30) ===
+#
+# This shard is the FIFTH tier of the #104 chain that began at
+# @bauchladen (P1, `66e1ab8`) and advanced through @autopoietic
+# (P2, `78edaa6`) and @fate (P3, `fdcba31`). P4 was the optical-
+# keywords work (in flight). This tier lifts the morphism-category
+# structure — already operating implicitly across multiple altitudes
+# in the substrate — to family-root altitude as substrate-decl.
+#
+# The structural fact resolved earlier today: @glue is genuinely
+# ABOVE @spectral/metalogue/tomm. Tomm probes are ONE species of
+# @glue (the spectral-metalogue-altitude species). @cascade
+# morphisms are ANOTHER species of @glue (the code-translation-
+# altitude species). The yesterday's P4 `@cascade/code/formal/prose`
+# (`437d061`) is YET ANOTHER species at the formal/prose altitude.
+# @glue is the family-root containing these as siblings.
+#
+# Witnesses for the chain's #104 candidacy at this tier:
+#   - Canonical spec at `docs/specs/bauchladen-autopoietic-fate.md`
+#     §4.5 (the @glue × @fate composition pattern this shard
+#     discharges); the five-step pattern (candidates → @fate algebra
+#     → dice roll → apply → tray crystal) IS the @glue.translate
+#     action's structural shape.
+#   - `docs/specs/spectral-metalogue.md` `16f4564` §3 + §4 (Tomm
+#     probes as Mesland-category morphisms; @cascade species as
+#     Mesland-category objects; both substrate-decl'd at
+#     `shards/spectral/metalogue.mirror` and `shards/cascade.mirror`
+#     respectively); both already operate; @glue names the family
+#     root they BOTH sit under as species.
+#   - `shards/fate.mirror` at `fdcba31` (the dependency just landed;
+#     @glue's forward-promise from the @fate shard at line 772-774
+#     of `fate.mirror`: "@glue uses @fate to pick which morphism
+#     to apply; @glue's selection IS a dice_roll; @glue discharges
+#     fate_witnessing"; this shard discharges that forward promise).
+#   - `shards/cascade.mirror` (the existing cross-language morphism
+#     family-root; its `compile` / `measure` / `cascade` actions
+#     ARE @glue.translate at the code-cascade altitude; this shard
+#     lifts the discipline to the species-spanning altitude).
+#   - The mathematical ancestors: Mesland 2013 (arXiv:1304.3802)
+#     names the category of spectral triples with unbounded
+#     KK-cycles as morphisms; Bertozzini-Conti-Lewkeeratiyutkul
+#     2006 (*Osaka J. Math.* 43) provides the category-theoretic
+#     formalization; Kasparov 1981 (*Math. USSR-Izv.* 16(3):513-572)
+#     grounds the underlying KK-theory.
+#
+# === The "above @spectral/metalogue/tomm" resolution ===
+#
+# Earlier today's structural recognition (informally surfaced via
+# substrate-pull cascade): the Tomm probes declared at
+# `shards/spectral/metalogue.mirror` (recognition #100) are NOT the
+# family-root of the morphism discipline. They are one ALTITUDE-
+# SPECIFIC species of a more general substrate primitive — the
+# Mesland correspondence between spectral triples.
+#
+# The three known species of @glue, with their altitudes and
+# canonical declaration sites:
+#
+#   Species                         Altitude                  Declared at
+#   -----------------------------   -----------------------   -------------
+#   @spectral/metalogue/tomm        spectral-metalogue        shards/spectral/
+#                                   (Bateson level V)         metalogue.mirror
+#                                                              + tomm.mirror
+#                                                              (recognition #100)
+#   @cascade/code/<src>/<tgt>       code-translation          shards/cascade.mirror
+#                                   (Bateson level IV)        + per-cascade species
+#                                                              (recognition #95)
+#   @cascade/code/formal/prose      formal/prose              `437d061` (yesterday's
+#                                   (mid-altitude code         P4 landing)
+#                                   ↔ NL morphism)
+#
+# These species WERE operating before this shard landed; the
+# substrate ALREADY had the morphism machinery scattered across
+# three sites. This shard's contribution is the family-root
+# admission that absorbs them as siblings under one substrate-decl
+# vocabulary. 54th-or-so instance of [[feedback-substrate-already-
+# had-the-word]] at family-root altitude.
+#
+# The substrate-decl form of the absorption:
+#
+#   @glue                                        family-root (this shard)
+#     ├── @spectral/metalogue/tomm               spectral-altitude species
+#     ├── @cascade/code/<src>/<tgt>              cross-language species
+#     └── @cascade/code/formal/prose             formal↔prose species
+#
+# Future @glue species (forward-promised, not landing this tick):
+#   - @glue/kintsugi/<source>/<target>           transformation morphisms
+#   - @glue/reflection/<source-altitude>/<target-altitude>
+#                                                Reflection's altitude
+#                                                selection as @glue
+#   - @glue/pack/<from-agent>/<to-agent>         Pack-handoff morphisms
+#                                                (per recognition #103)
+#
+# === Uses @fate for translation decisions: the composition mechanism ===
+#
+# @glue does NOT compute the translation directly. Per the canonical
+# spec §4.5 (Reed memory entry confirms): @glue CARRIES the typed
+# surface; @fate PICKS the morphism. The composition is:
+#
+#   @glue × @fate → typed translation outcome
+#
+# The structural form of the @glue.translate action below realizes
+# this composition. Given a correspondence (the typed morphism
+# surface) and a payload (the substrate state to translate), the
+# action consults @fate to select WHICH morphism to apply within
+# the correspondence's restriction surface. @fate's dice roll is
+# bounded by the correspondence's (source_prism, target_prism,
+# morphism_kind, restriction) tuple; the roll cannot land outside
+# the typed restriction.
+#
+# This is what distinguishes @glue from a direct deterministic
+# compute: the translation is STRUCTURALLY UNDERDETERMINED at the
+# @glue altitude — there may be multiple admissible morphisms
+# between the same (source, target) pair; @fate picks one within
+# the restriction. The structural underdetermination IS what makes
+# the morphism discipline a category rather than a function —
+# Mesland's category has many morphisms between the same pair of
+# objects; @glue inherits this.
+#
+# === The self-recursive use case forward-promise: @io/algebra ===
+#
+# Forward-promised composition: @glue × @kintsugi × @fate → @io/algebra
+# (fold_back at P8). At a future tick in the #104 chain, the
+# @kintsugi loop's per-step decisions will compose with @glue's
+# translation discipline + @fate's selection to ground the @io/
+# algebra surface — the substrate-decl form of how the substrate's
+# output algebra COMPOSES across the @io boundary.
+#
+# Mechanism: the kintsugi loop emits candidate morphisms at each
+# step (per `shards/fate.mirror` §4.6); each candidate morphism IS
+# a @glue correspondence; @fate selects one; @glue applies it;
+# the application's output crosses the @io boundary as a crystal
+# in the appropriate @io/algebra/* sub-namespace.
+#
+# This forward-promise is structural: the @io/algebra discipline
+# is NOT a new prism; it is the COMPOSITION of three existing
+# prims (@glue, @kintsugi, @fate) at the boundary altitude. The
+# composition lands at P8 of the chain; the family-root admission
+# of @glue at this tick (P5) makes the composition addressable
+# from the consumer side.
+#
+# === Inherits via `in @autopoietic` and `in @fate` ===
+#
+# @glue imports `in @fate` because @glue's translation decisions
+# ARE @fate dice rolls; the inheritance is structural, not
+# stylistic. Each @glue.translate emits a dice_roll (per
+# `shards/fate.mirror`'s carrier); the dice_roll satisfies
+# fate_witnessing per the inherited predicate; the translation
+# outcome is a content-addressed crystal in the @bauchladen tray
+# under `@fate/algebra/morphism` per spec §5.
+#
+# @glue imports `in @autopoietic` because @glue's morphism
+# selections accumulate; future @glue.translate invocations consult
+# prior morphism crystals via the tray; the read-write cycle on
+# the tray IS Maturana-Varela's operational closure at the
+# morphism-selection altitude. @glue is `in @autopoietic` is
+# `in @bauchladen` (transitive); the chain's full discipline
+# inheritance per spec §3.5 (forward-promised inheritors).
+#
+# @glue inherits the obligations @fate carries (autopoietic_
+# membership_held + bauchladen_membership_held + dice_roll_
+# constrained + bilateral_well_typed + optical_inference_grounded)
+# via the inheritance chain. The bilateral commitment (per
+# recognition #37, the Pask-agreement reading of `requires`):
+# @glue's body discharges all five obligations at the realisation
+# boundary; consumers surface violations at the species boundary.
+#
+# === The categorical composition: non-commutative per [ω, ω] cross-term ===
+#
+# Per the curvature-and-tomm reference (`docs/math/the-tower/
+# curvature-and-tomm.md` §5): the curvature 2-form Ω = dω + ½[ω, ω]
+# carries a non-trivial cross-term [ω, ω] that lives where altitude
+# transitions happen. The @glue.compose action below inherits this:
+# categorical composition of correspondences is NON-COMMUTATIVE in
+# general, because the cross-altitude composition c2 ∘ c1 carries
+# the curvature cross-term that c1 ∘ c2 does not.
+#
+# This is the structural reason @glue.compose returns a
+# correspondence rather than a verdict: the composed correspondence
+# is itself a typed morphism with its own restriction surface,
+# whose discharge may require additional @fate consultation. The
+# Mesland category's composition is the Kasparov intersection
+# product (per Mesland 2013 §3); the substrate-altitude form is
+# what @glue.compose declares.
+#
+# === No operational sibling THIS tick ===
+#
+# Per [[feedback-craft-not-deliver]] no `@glue/*` species sub-shard
+# or operational Rust sibling lands at this tick. The substrate
+# ALREADY has operational machinery at the species altitudes
+# (@spectral/metalogue/tomm at the spectral altitude, @cascade
+# species at the code-translation altitude, `437d061` at the
+# formal/prose altitude). This shard names the family-root
+# substrate-decl contract so downstream species can declare `in
+# @glue` and `requires glue_witnessing(my_correspondence)` rather
+# than re-state the morphism-category obligation per species.
+#
+# === Pre-AI prior art ===
+#
+#   Mesland correspondence    Mesland 2013 (arXiv:1304.3802,
+#                             "Unbounded bivariant K-theory and
+#                             correspondences in noncommutative
+#                             geometry"). The mathematical ancestor
+#                             of the morphism category @glue lifts;
+#                             unbounded KK-cycles as morphisms
+#                             between spectral triples.
+#   Spectral-triple category  Bertozzini, Conti & Lewkeeratiyutkul
+#                             2006 ("A category of spectral triples
+#                             and discrete groups with length
+#                             function", *Osaka J. Math.* 43(2):
+#                             327-350). The category-theoretic
+#                             formalization @glue's family-root
+#                             names at substrate altitude.
+#   KK-theory                 Kasparov 1981 ("The operator K-functor
+#                             and extensions of C*-algebras",
+#                             *Math. USSR-Izv.* 16(3):513-572). The
+#                             foundational bivariant K-theory the
+#                             Mesland correspondence elaborates;
+#                             intersection product = composition law.
+#   Spectral triples          Connes 1985 (*Non-commutative
+#                             differential geometry*, IHES); Connes
+#                             1995 (*Non-commutative geometry*,
+#                             Academic Press). The (A, H, D)
+#                             framework whose objects @glue's
+#                             morphisms connect.
+#   Curvature 2-form          Cartan 1923 (*Sur les variétés à
+#                             connexion affine*); the [ω, ω] cross-
+#                             term that makes categorical composition
+#                             non-commutative across altitude
+#                             transitions.
+#   Category theory           Mac Lane 1971 (*Categories for the
+#                             Working Mathematician*, Springer). The
+#                             categorical vocabulary @glue's compose
+#                             action realizes; morphism composition
+#                             law and identity discipline.
+#
+# Spec context: docs/specs/bauchladen-autopoietic-fate.md §4.5
+#               (the @glue × @fate composition pattern; the five-
+#               step structural form); docs/specs/spectral-metalogue.md
+#               `16f4564` §3 (Tomm probes as Mesland-category
+#               morphisms; the spectral-altitude species @glue
+#               absorbs as one of three known species); §4
+#               (@cascade species as Mesland-category objects + Tomm
+#               probes as Mesland-category morphisms); shards/
+#               cascade.mirror (the existing cross-language morphism
+#               family the spec brings under @glue's family-root);
+#               shards/spectral/metalogue.mirror (the Tomm species;
+#               substrate-decl precedent for what becomes a @glue
+#               species under the absorption); shards/fate.mirror
+#               (the dependency at fdcba31; @glue's forward-promise
+#               from fate.mirror line 772-774 is discharged here);
+#               docs/math/the-tower/curvature-and-tomm.md §5 (the
+#               [ω, ω] cross-term that makes @glue.compose non-
+#               commutative across altitude transitions).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-connes-spectral-triple]]
+#                       (the substrate IS the operational form of
+#                        Connes' (A, H, D); @glue's correspondences
+#                        connect spectral triples; the Mesland
+#                        category sits ABOVE any single triple),
+#                      [[architecture-fate-is-optical-inference]]
+#                       (#58; @glue's translation decisions ARE @fate
+#                        dice rolls; the optical machinery realizes
+#                        them at the operational altitude),
+#                      [[architecture-spectral-triples-all-the-way]]
+#                       (the fractal self-similarity; @glue at
+#                        morphism-category altitude; spectral triples
+#                        at object altitude; both substrate-decl'd),
+#                      [[architecture-error-as-tomm-probe]] (the Tomm
+#                        probe IS one @glue species at the spectral-
+#                        metalogue altitude; the three altitudes
+#                        named there ARE three altitudes of one @glue
+#                        morphism mechanism),
+#                      [[architecture-reflection-thinks-in-spectral-
+#                       questions]] (Reflection's altitude selection
+#                        IS @glue.translate at the meta-pipeline
+#                        altitude; forward-promised @glue/reflection
+#                        species per the family enumeration above),
+#                      [[architecture-mirror-as-expanding-hilbert-
+#                       space]] (#51; each @glue.translate landing
+#                        extends H_mirror by one morphism crystal;
+#                        the family-root admission contributes to
+#                        H's monotone growth),
+#                      [[architecture-form-process-partition-at-
+#                       family-root]] (#61; @mirror = state-
+#                        observation; @kintsugi = transformation
+#                        engine; @glue sits at the partition's
+#                        boundary as the morphism vocabulary connecting
+#                        the two sides),
+#                      [[architecture-pack-mesland-category-
+#                       recognition-103]] (Pack agents form a Mesland
+#                        category at the runtime altitude; Pack
+#                        handoffs are forward-promised @glue/pack
+#                        species),
+#                      [[architecture-mirror-store-vs-spectral-db]]
+#                       (open-foundation @mirror/store; @glue's
+#                        correspondences land as crystals on the
+#                        open side; the closed-engine @spectral/db
+#                        sits above for the selection consolidation),
+#                      [[architecture-spectral-db-autopoietic-memory]]
+#                       (the librarian altitude consolidates @glue's
+#                        morphism crystals; the autopoietic memory
+#                        layer for cross-altitude translation
+#                        decisions),
+#                      [[architecture-peer-learns-by-crystal-
+#                       vocabulary-expansion]] (each settled @glue
+#                        translation extends A_peer; the peer's
+#                        morphism vocabulary IS the @glue species
+#                        accumulation),
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; @glue's translations at
+#                        @io boundaries IS where alignment harness
+#                        fires; @glue × @kintsugi × @fate →
+#                        @io/algebra at P8),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (~54th instance; @spectral/metalogue/tomm
+#                        + @cascade + 437d061 were already operating
+#                        as @glue species without family-root
+#                        admission; the lift to family-root makes
+#                        the family addressable as one arc),
+#                      [[feedback-substrate-pull-confidence-acts]]
+#                       (the resolution "@glue is ABOVE @spectral/
+#                        metalogue/tomm" was substrate-pull-confirmed
+#                        earlier today; this shard discharges the
+#                        confidence),
+#                      [[feedback-no-bare-types]] (correspondence,
+#                        morphism, translation_outcome are typed
+#                        carriers; no bare primitives),
+#                      [[feedback-craft-not-deliver]] (no @glue/*
+#                        species sub-shards or Rust sibling at this
+#                        tick; the family-root admission lands the
+#                        contract; species follow when consumers
+#                        pull).
+# Related shards: fate.mirror (the constrained-inference operator
+#                  @glue's translation decisions consult; just landed
+#                  fdcba31; the dependency this shard structurally
+#                  rests on; @glue's forward-promise from fate.mirror
+#                  line 772-774 is discharged here),
+#                 cascade.mirror (the cross-language morphism family
+#                  now structurally a @glue species; the existing
+#                  precedent for @glue's discipline at the code-
+#                  translation altitude),
+#                 spectral/metalogue.mirror (the Tomm-probe family
+#                  now structurally a @glue species at the spectral-
+#                  metalogue altitude; the existing precedent at the
+#                  spectral altitude),
+#                 autopoietic.mirror (the prism class @glue IS-A via
+#                  `in @autopoietic`; the fold-back permission @glue
+#                  inherits transitively; morphism selections
+#                  accumulate in the tray and condition future
+#                  selections),
+#                 bauchladen.mirror (transitive dependency; @glue's
+#                  translation outcomes land as content-addressed
+#                  crystals in the tray),
+#                 kintsugi.mirror (the process-side family-root; the
+#                  kintsugi loop emits @glue correspondence candidates
+#                  at each step; forward-promised @glue/kintsugi
+#                  species; @glue × @kintsugi × @fate → @io/algebra
+#                  composition at P8),
+#                 glass.mirror (the splinter floor; @glue's
+#                  translation_outcomes surface against transparency<
+#                  translation_outcome>),
+#                 uuid/spectral.mirror (uuid_spectral identity carrier
+#                  for @glue correspondence instances).
+# Path-namespace property: this file at `shards/glue.mirror` declares
+# `@glue` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/math/mesland-2013
+source @arxiv/math/bertozzini-conti-lewkeeratiyutkul-2006
+source @arxiv/math/kasparov-1981
+source @arxiv/math/connes-1985
+source @arxiv/math/connes-1995
+source @arxiv/math/cartan-1923
+source @arxiv/math/mac-lane-1971
+
+prism @glue {
+  focus correspondence
+  project correspondence
+  split correspondence
+  shift correspondence
+  settle correspondence
+}
+
+# === The morphism carrier ===
+#
+# A typed record per [[feedback-no-bare-types]] naming a single
+# translation surface between two prisms (spectral triples). The
+# morphism IS the substrate-decl atom of @glue; each correspondence
+# admits a finite (possibly singleton) family of morphisms; the
+# correspondence's restriction selects the admissible subset; @fate
+# picks one morphism within that subset when translation fires.
+#
+# - `kind`               the typed ref naming the morphism class
+#                        (e.g., `@arxiv/math/kasparov-1981.kk_cycle`,
+#                        `@cascade/compile`, `@spectral/metalogue/
+#                        tomm.transmit`); determines the Mesland-
+#                        category morphism shape.
+# - `source_signature`   the typed shape of the source-side input
+#                        the morphism consumes; structurally bound
+#                        to the source_prism's algebra A_source.
+# - `target_signature`   the typed shape of the target-side output
+#                        the morphism produces; structurally bound
+#                        to the target_prism's algebra A_target.
+# - `differential`       the ref naming the morphism's differential
+#                        operator (the D_E in Mesland's (E, D_E, φ)
+#                        KK-cycle data); per spec §3.3 of spectral-
+#                        metalogue.md this IS the [D_F, a] commutator
+#                        the morphism issues across the correspondence.
+#
+# Identity contract: byte-equality on (kind, source_signature,
+# target_signature, differential). Two morphisms with byte-equal
+# fields ARE the same morphism under content-addressing.
+type morphism = {
+  kind:              ref,
+  source_signature:  ref,
+  target_signature:  ref,
+  differential:      ref,
+}
+
+# === The correspondence carrier ===
+#
+# The Mesland correspondence record. Per Mesland 2013: a
+# correspondence from triple T1 to triple T2 is a triple (E, D_E,
+# φ) where E is an (A_T1, A_T2)-correspondence, D_E is an unbounded
+# operator on E, and φ is a ∗-homomorphism A_T1 → End(E). The
+# substrate-altitude lift carries this structure as a typed record.
+#
+# - `source_prism`       the ref naming the source spectral triple
+#                        (the source-side prism whose state the
+#                        translation consumes); per Mesland's T1.
+# - `target_prism`       the ref naming the target spectral triple
+#                        (the target-side prism whose state the
+#                        translation produces); per Mesland's T2.
+# - `morphism_kind`      the typed ref naming the morphism class
+#                        admissible between source and target; sibling
+#                        shape to the morphism.kind field; per
+#                        [[feedback-no-bare-types]].
+# - `restriction`        the typed restriction surface defining
+#                        which morphisms within morphism_kind are
+#                        admissible for this correspondence; the
+#                        structural witness that downstream @fate
+#                        rolls cannot land outside the typing.
+#                        Sibling shape to @fate's restricted_state_
+#                        space carrier; the correspondence's
+#                        restriction IS @fate's space when @glue
+#                        consults @fate.
+#
+# Identity contract: byte-equality on (source_prism, target_prism,
+# morphism_kind, restriction). Two correspondences with byte-equal
+# fields ARE the same correspondence under content-addressing.
+type correspondence = {
+  source_prism:    ref,
+  target_prism:    ref,
+  morphism_kind:   ref,
+  restriction:     restricted_state_space,
+}
+
+# === The translation_outcome carrier ===
+#
+# The typed result of @glue applying a morphism via @fate. The
+# outcome carries the translated payload + the witness data
+# documenting WHICH morphism @fate selected. Lands as a crystal in
+# the @bauchladen tray under `@fate/algebra/morphism` per spec §5
+# of `bauchladen-autopoietic-fate.md` (the @fate.algebra path-
+# namespace; morphism-selection crystals).
+#
+# - `correspondence`     the ref of the correspondence the translation
+#                        was performed under (the structural witness
+#                        of the typing surface).
+# - `selected_morphism`  the OID of the morphism @fate selected from
+#                        the correspondence's admissible set; sibling
+#                        shape to @fate's dice_roll.selected_oid.
+# - `payload`            the translated payload; the substrate ref
+#                        naming the target-side state the morphism
+#                        produced from the source-side input.
+# - `transparency`       the residual opacity per @glass's
+#                        `transparency<correspondence>` carrier;
+#                        reports any opacity introduced by the
+#                        translation (e.g., loss-lens residuals when
+#                        the morphism is a @cascade species; bounded-
+#                        commutator residuals when the morphism is a
+#                        @spectral/metalogue/tomm species).
+#
+# Identity contract: byte-equality on (correspondence, selected_
+# morphism, payload). Two translation_outcomes with byte-equal
+# fields ARE the same outcome under content-addressing.
+type translation_outcome = {
+  correspondence:    ref,
+  selected_morphism: oid,
+  payload:           ref,
+  transparency:      transparency(correspondence),
+}
+
+# === propose — enumerate admissible morphisms between two prisms ===
+#
+# Given a source prism ref and a target prism ref, returns the list
+# of correspondences admissible between them. The enumeration is
+# typed: each returned correspondence carries the (morphism_kind,
+# restriction) tuple specifying which morphisms within the kind are
+# admissible.
+#
+# Multiple correspondences may exist between the same (source,
+# target) pair — this is the Mesland-category multi-morphism
+# structure (per Mesland 2013 §3). The propose action returns the
+# full family; downstream @fate consultation via translate selects
+# one morphism within one correspondence.
+#
+# Body discharges per-realisation at the morphism boundary. Same
+# shape as @fate.roll, @autopoietic.tick, @bauchladen.crystallize
+# (declarative obligation discharged at the species boundary).
+propose(source: ref, target: ref) -> [correspondence] { \ }
+
+# === translate — apply the correspondence via @fate ===
+#
+# THE LOAD-BEARING ACTION. Given a correspondence + a payload,
+# consults @fate to select WHICH morphism within the correspondence's
+# admissible set to apply; applies the selected morphism to the
+# payload; returns the translation outcome wrapped in @glass's
+# imperfect carrier (the @io-boundary discipline; per
+# [[architecture-alignment-as-boundary-mathematics]]).
+#
+# The five-step structural form per `bauchladen-autopoietic-fate.md`
+# §4.5:
+#
+#   1. The correspondence carries (source_prism, target_prism,
+#      morphism_kind, restriction); the restriction defines the
+#      typed @fate algebra A.
+#   2. @glue invokes @fate.roll(restriction, hole) where hole is
+#      derived from (payload, target_signature, altitude).
+#   3. @fate's dice roll selects one morphism's OID from A within
+#      the restriction's typed bound (the dice cannot land outside
+#      the typing per @fate.dice_roll_constrained).
+#   4. @glue applies the selected morphism to the payload; the
+#      morphism's differential operator computes the target-side
+#      output.
+#   5. The translation_outcome is wrapped in imperfect (residual
+#      opacity surfaced via transparency<correspondence>); the
+#      outcome lands as a crystal in the @bauchladen tray under
+#      `@fate/algebra/morphism`.
+#
+# The composition with @fate is structurally non-trivial: @glue
+# does NOT compute the translation directly; @glue carries the
+# typed surface; @fate picks the morphism. This is what makes
+# @glue.translate distinct from a deterministic compile or a pure
+# function — the underdetermined morphism selection is the
+# substrate-pull-honest reading of the morphism-category structure.
+#
+# Body discharges per-realisation at the morphism boundary; the
+# realisation MUST honor the translation_uses_fate(translate)
+# requires obligation — the action invokes @fate, not a direct
+# deterministic compute.
+translate(c: correspondence, payload: ref) -> imperfect<translation_outcome, ref, transparency(correspondence)>
+requires morphism_well_typed(c)
+requires translation_uses_fate(translate)
+requires restriction_preserved(c, payload)
+{ \ }
+
+# === compose — categorical composition of correspondences ===
+#
+# The Kasparov intersection product at the substrate altitude. Given
+# two correspondences c1 (source_prism → middle_prism) and c2
+# (middle_prism → target_prism), returns the composed correspondence
+# c2 ∘ c1 (source_prism → target_prism).
+#
+# The composition is NON-COMMUTATIVE in general — per the
+# curvature 2-form Ω = dω + ½[ω, ω] (curvature-and-tomm.md §5),
+# the [ω, ω] cross-term that lives where altitude transitions
+# happen makes c2 ∘ c1 ≠ c1 ∘ c2 in general. This is the structural
+# reason categorical composition matters at the substrate altitude:
+# the substrate's morphism family carries non-trivial composition
+# structure that downstream prisms (in particular @kintsugi for
+# transformation chains and @reflection for altitude transitions)
+# must respect.
+#
+# The composed correspondence carries the composed restriction:
+# the morphism @fate selects when @glue.translate is invoked on
+# (c2 ∘ c1, payload) must satisfy BOTH c1.restriction and c2.
+# restriction. The substrate-pull-honest reading: composition
+# tightens the typing surface, never relaxes it.
+#
+# Body discharges per-realisation at the morphism boundary; the
+# realisation MUST honor the morphism_well_typed predicate on the
+# returned composed correspondence (the composition cannot produce
+# an ill-typed correspondence).
+compose(c1: correspondence, c2: correspondence) -> correspondence
+requires morphism_well_typed(c1)
+requires morphism_well_typed(c2)
+{ \ }
+
+# === The requires obligations ===
+#
+# Downstream shards declare bilateral agreement (per recognition
+# #37, the Pask-agreement reading of `requires`) with the @glue
+# discipline by writing the obligations below. The bilateral
+# commitment: the @glue-importing prism commits to discharging
+# the obligations; the consumer commits to surfacing violations
+# at the species boundary.
+
+# Per Mesland 2013 §3: a correspondence (E, D_E, φ) is
+# mathematically valid iff E is an (A_T1, A_T2)-correspondence,
+# D_E is an unbounded operator on E, and φ is a ∗-homomorphism
+# A_T1 → End(E). The substrate-altitude form: the morphism_kind
+# admits morphisms whose source_signature is in A_T1 and whose
+# target_signature is in A_T2; the restriction's algebra slot
+# matches source_prism's algebra; the restriction's hilbert slot
+# matches target_prism's state space. Inheritor shards discharge
+# by verifying the structural alignment.
+morphism_well_typed(c: correspondence) -> verdict { \ }
+
+# Per spec §4.5 of `bauchladen-autopoietic-fate.md`: @glue's
+# translate action invokes @fate (not a direct deterministic
+# compute). The substrate-pull-honest discipline that distinguishes
+# @glue from a function; the translation MUST consult @fate to
+# select the morphism within the correspondence's admissible set.
+# Inheritor shards discharge by verifying the translate action's
+# body invokes @fate.roll (or an equivalent species-altitude @fate
+# consultation).
+translation_uses_fate(action: ref) -> verdict { \ }
+
+# Per Mesland's correspondence axioms + the substrate's typed
+# restriction surface: the translation must respect the
+# correspondence's restriction. The payload at the source side
+# must be in the restriction's algebra A_source; the morphism
+# selected by @fate must respect the γ + J + tray symmetry
+# restrictions (per recognitions #101 + #102). Inheritor shards
+# discharge by verifying the payload + morphism selection are
+# within the typed bound; the obligation closes the substrate-
+# decl loop that @fate.dice_roll_constrained opened — @fate
+# checks the dice is in the restricted state space; @glue
+# checks the payload + restriction are mutually coherent.
+restriction_preserved(c: correspondence, payload: ref) -> verdict { \ }
+
+# === The glue_witnessing inheritance predicate ===
+#
+# `glue_witnessing(c)` is the predicate consumer shards name in a
+# `requires` clause to declare bilateral commitment (per recognition
+# #37, the Pask-agreement reading of `requires`) that the
+# correspondence `c` IS a valid @glue morphism — i.e., the
+# correspondence satisfies all three obligations above conjointly:
+# morphism_well_typed + translation_uses_fate + restriction_preserved.
+#
+# Sibling to:
+#   - `fate.fate_witnessing(roll)` (the dice-roll inheritance
+#     predicate this shard's translate actions discharge via the
+#     translation_uses_fate clause).
+#   - `autopoietic.autopoietic_closure_holds(prism)` (the prism-
+#     class inheritance predicate this shard's instances honor
+#     via `in @autopoietic`).
+#   - `bauchladen.bauchladen_witnessing(crystal)` (the crystal-
+#     altitude inheritance predicate this shard's emitted
+#     translation_outcomes honor transitively via the @fate/
+#     algebra/morphism crystallization).
+#   - `cascade.cascade_well_defined(lens, source, p)` (the cross-
+#     language @glue species inheritance predicate; @cascade
+#     species discharge cascade_well_defined as the species-
+#     altitude form of glue_witnessing).
+#
+# Forward-promised inheritors:
+#
+#   - `@spectral/metalogue/tomm` (the spectral-altitude species
+#     per recognition #100): Tomm probes ARE @glue species at the
+#     spectral-metalogue altitude; the tomm.transmit action IS
+#     @glue.translate at the spectral altitude; the species
+#     discharges glue_witnessing for each transmit.
+#   - `@cascade/code/<src>/<tgt>` species (the cross-language @glue
+#     species per recognition #95): @cascade.compile IS
+#     @glue.translate at the code-translation altitude; each
+#     @cascade species discharges glue_witnessing for each compile.
+#   - `@cascade/code/formal/prose` (yesterday's P4 437d061): the
+#     formal/prose @glue species; the formal↔prose morphism IS
+#     @glue.translate at the mid-altitude code ↔ NL boundary;
+#     discharges glue_witnessing for each formal/prose transit.
+#   - `@glue/kintsugi/<source>/<target>` (forward-promised):
+#     @kintsugi's per-step morphism selections ARE @glue.translate
+#     at the transformation altitude; the @glue × @kintsugi × @fate
+#     composition at P8 grounds @io/algebra.
+#   - `@glue/reflection/<source-altitude>/<target-altitude>`
+#     (forward-promised per [[architecture-reflection-thinks-in-
+#     spectral-questions]]): Reflection's altitude selection IS
+#     @glue.translate at the meta-pipeline altitude.
+#   - `@glue/pack/<from-agent>/<to-agent>` (forward-promised per
+#     recognition #103): Pack-handoffs ARE @glue.translate at the
+#     runtime-agent altitude; the Pack-Mesland category's morphisms
+#     discharge glue_witnessing.
+#
+# No `requires glue_witnessing(...)` clauses are added at THIS
+# shard. The family-root declares the predicate; consumers add
+# the clauses when they pull. Per [[feedback-craft-not-deliver]]
+# the species sub-shards follow when consumers pull.
+glue_witnessing(c: correspondence) -> verdict { \ }
+
+out @glue
+out morphism
+out correspondence
+out translation_outcome
+out propose
+out translate
+out compose
+out morphism_well_typed
+out translation_uses_fate
+out restriction_preserved
+out glue_witnessing
