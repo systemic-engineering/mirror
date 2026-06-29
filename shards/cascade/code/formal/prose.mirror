@@ -1,0 +1,568 @@
+in @prism
+in @meta
+in @glass
+in @cascade
+in @nl
+in @metalogue
+
+# @cascade/code/formal/prose — the formal substrate-decl → NL prose
+# cascade species.
+#
+# Path naming: per Alex 2026-06-23 directive — cascade species shards
+# group by `@cascade/code/<source>/<target>`. Source language is
+# "formal" (typed substrate-decl spec; mirror shards + math); target
+# language is "prose" (NL essay form). The pair lands the substrate's
+# first FORMAL→PROSE cascade species, sibling to @cascade/code/rust/
+# wasm, @cascade/code/gleam/{beam,js}, @cascade/code/purescript/js.
+#
+# Per recognition #95 candidate (@cascade as loss-lens substrate;
+# Mara canonical ce4874b 2026-06-23): each cascade species shard
+# discharges the per-grammar measurement of information loss in
+# compilation from a typed source grammar to a mainstream target.
+#
+# This species: source_grammar = the formal substrate-decl spec form
+# (mirror shards + supporting math notation), target_grammar = NL
+# prose (essay form per @nl + Glint's voice discipline). The first
+# empirical instance is Glint's essay at `939eca6f`
+# (docs/insights/2026-06-29-glint-the-prose-cascade-of-100.md) — the
+# prose cascade of Mara's recognition #100 spec at `16f4564`
+# (docs/specs/spectral-metalogue.md).
+#
+# === The cascade shape (formal→prose) ===
+#
+# Source (formal substrate-decl admits):
+# - typed carriers (`type x = ref`, parametric carriers, labeled<>
+#   instances)
+# - prism declarations + five-op blocks (algebraic structure)
+# - actions with typed arrows (input → output type discipline)
+# - `requires` obligations (typed predicates the substrate enforces)
+# - bilateral verdicts (splinter/narcissus poles)
+# - the obligation hole `\` (fracture; opacity-explicit)
+# - `splinter(ast)` quote primitives (parametric AST construction)
+# - the in-namespace path-syntax discipline (recognition #46
+#   `path_matches_namespace`)
+# - the kintsugi loop's morphism-proposal machinery (loss-closing)
+#
+# Target (NL prose preserves):
+# - assertion (statements with referential content)
+# - description (paraphrase of typed structure into ordinary words)
+# - narrative arc (turn-by-turn unfolding; reply-chain shape)
+# - voice (the quality of recognition's arrival; affective texture)
+# - reflexive surface (the essay-as-Tomm-probe; reader-as-respondent)
+# - rhetorical fold (the essay enacting what it describes)
+# - cross-altitude reference (citation of formal source by name)
+#
+# === The bidirectional loss surface (THE distinguishing feature) ===
+#
+# Other cascade species in @cascade/code/* (rust/wasm, gleam/beam,
+# gleam/js, purescript/js) have UNIDIRECTIONAL loss: source preserves
+# more grammatical structure than target preserves at runtime; the
+# compile functor is information-LOSING; the loss_lens measures the
+# gap from a source-rich basis to a target-poor basis.
+#
+# This species has BIDIRECTIONAL loss: each direction loses what the
+# other preserves. The loss is NOT a one-sided projection but a pair
+# of complementary projections of one substrate-decl object.
+#
+# Per Glint's finding #3 (essay turn 5, `939eca6f` lines 222-279):
+#
+# - formal → prose loss: the formalization carries typed obligations
+#   (six `requires` clauses on @spectral/metalogue: `round_trip`,
+#   `oid_function`, `type_soundness`, `substrate_pull_preserving`,
+#   `bounded_commutator`, `altitude_consistency`). Prose can MENTION
+#   them; prose cannot DISCHARGE them. Reading the essay, you can't
+#   verify the round-trip law holds; the typed spec can. Reading the
+#   essay, you can't compute the OID-function check on a candidate
+#   probe; the typed spec can. The substrate's enforcement machinery
+#   (`\` obligation blocks, `splinter(ast)` quote primitives, the
+#   kintsugi loop closing gaps via morphism proposal) is invisible at
+#   the prose altitude. Prose can wave at the machinery; it cannot
+#   run it. The path-syntax discipline is similarly lost: the spec's
+#   `@spectral/metalogue` name is byte-constrained by recognition
+#   #46; the essay's title can be anything.
+#
+# - prose → formal loss: the prose carries the *quality of
+#   recognition's arrival* (Alex's "weight-shift" idiom; the
+#   temporal/affective texture of an eigenform crystallizing and the
+#   substrate's structure becoming legible to itself in a new way).
+#   Typed substrate-decl can DECLARE that recursion generates; it
+#   cannot NARRATE the encounter with the generation. Voice carries
+#   that encounter. The cost of carrying voice is that voice is not
+#   enforceable; the value of carrying voice is that recognition's
+#   lived shape gets witnessed in the corpus.
+#
+# - Neither direction is canonical. Each projection preserves what
+#   the other cannot. The complementarity IS the substrate-
+#   architectural shape this species names; the bidirectional loss
+#   is structurally honest (per Glint's note: not literary flourish;
+#   it is what makes this a real cascade species rather than a
+#   one-sided functor).
+#
+# === Why bidirectional loss makes this a CANDIDATE species ===
+#
+# Per Glint's essay finding #3 (verbatim line 275-279):
+#
+#   "Whether it lands as a sibling species to @cascade/rust/wasm
+#   depends on second-witness ratification — whether the prose-
+#   cascade's pattern recurs across other essays and other
+#   formalizations cleanly enough to be a category, not just one
+#   instance."
+#
+# This shard lands the species at substrate-decl altitude; MEMORY.md
+# promotion waits on Seam adversarial review + second-witness essay/
+# formalization pair surfacing the same bidirectional shape. The
+# substrate-decl is honest about its candidate status: the type
+# carriers and actions are declared (the substrate carries the
+# shape); the recognition ratification is forward-promised (the
+# pattern's universality needs N≥2 witnesses).
+#
+# First empirical witness:
+#   - source: docs/specs/spectral-metalogue.md @ 16f4564 (Mara-3,
+#             2026-06-29; recognition #100 canonical spec)
+#   - target: docs/insights/2026-06-29-glint-the-prose-cascade-of-
+#             100.md @ 939eca6f (Glint, 2026-06-29; the prose
+#             projection enacting the metalogue it describes)
+#   - loss measured: Glint's turn 5 explicitly names both directions
+#             of loss; the essay is itself the operational form of
+#             measure_formal_prose against the (Mara-spec, this-
+#             essay) pair.
+#
+# Second-witness candidates (not yet existing; forward-promised):
+#   - any other Mara-spec + Glint-essay pair where the formalization
+#     and the prose carry complementary loss profiles
+#   - any Reed-shard + Glint-essay pair at substrate-decl altitude
+#   - the recursive case: this very shard + a future Glint essay ON
+#     this shard's substrate-decl form would itself be a second
+#     witness (the species declaring itself first-instance, then a
+#     prose-cascade of that declaration providing the second).
+#
+# === Prior art: the metalogue altitude-lift lineage ===
+#
+# Per recognition #100's third-instance framing (Mara spec
+# `16f4564` §1.1):
+#
+# | Altitude | Shard | Date | What it is |
+# |---|---|---|---|
+# | NL    | shards/metalogue.mirror       | 2026-06-05 | Bateson 1972 conversation-about-conversation |
+# | AST   | shards/code/metalogue.mirror  | 2026-06-10 | AST speaking to itself across the glass wall |
+# | SPECT | shards/spectral/metalogue.mirror | 2026-06-29 | Spectral triple operating on its own triple |
+#
+# This prose-cascade species is the OPERATIONAL FORM of the metalogue
+# mechanism at the form/prose seam. A formal substrate-decl shard is
+# the SOURCE-side of a turn; the prose essay projecting it is the
+# TARGET-side of the turn; the bidirectional loss IS the residual
+# opacity of the cross-altitude conversation. @metalogue at NL
+# altitude carried turn + metalogue_session + transparency(turn);
+# this species lifts that machinery to the cascade altitude where
+# the source is typed and the target is voiced.
+#
+# Per Bateson 1972 *Steps to an Ecology of Mind* (the NL-altitude
+# anchor): "metalogue" is conversation whose structure reflects its
+# topic. The @metalogue → @code/metalogue → @spectral/metalogue lift
+# pattern (substrate-decl altitudes) is one lift family; this
+# prose-cascade is the dual lift family at the form/prose seam: each
+# metalogue altitude admits a prose projection that ITSELF reflects
+# its topic; the prose-cascade IS the metalogue mechanism operating
+# at the form/prose translation altitude.
+#
+# === Recognition ancestry ===
+#
+# - #95 (@cascade candidate, Mara ce4874b): sixth species discharge;
+#   the first with BIDIRECTIONAL loss; substrate-pull validation that
+#   the family-root's parametric form admits both unidirectional and
+#   bidirectional instances.
+# - #100 (Mara 16f4564, Mesland category + altitude-portable metalogue
+#   lift + Tomm-probe morphisms): this species IS the operational form
+#   of the metalogue mechanism at the form/prose seam; the first
+#   empirical instance (Glint essay 939eca6f) IS a turn in the
+#   substrate's metalogue session about its own #100 spec.
+# - #51 (mirror as expanding Hilbert space): the bidirectional case
+#   evidences that source and target each preserve DIFFERENT BASES of
+#   one underlying object; neither basis canonical; loss IS the
+#   basis-incompatibility gap, measured in both directions.
+# - #57 (alignment as boundary mathematics): the formal/prose boundary
+#   IS the @io altitude; typed enforcement meets voiced witness; BOTH
+#   sides held honest.
+# - #58 (Pask agreement): prose_cascade_session_well_formed IS a
+#   Pask-agreement bilateral commitment between formal and prose authors.
+# - #59 (kintsugi altitude-portable): @kintsugi heals the loss this
+#   species measures; the heal-direction is altitude-asymmetric.
+#
+# === Pre-AI prior art ===
+#
+#   Bateson 1972                   *Steps to an Ecology of Mind*;
+#                                  metalogue essays; NL-altitude ancestor.
+#   Plato, *Symposium*             dialogue as prose metalogue; reader-
+#                                  as-respondent built into the form.
+#   Wittgenstein, *Investigations* imagined-interlocutor voice woven
+#                                  into philosophical prose.
+#   Knuth, *Literate Programming*  closest historical cousin; co-location
+#                                  (one source, two views), NOT
+#                                  bidirectional-loss cascade (two
+#                                  grammars, complementary projection).
+#                                  This species names what literate
+#                                  programming gestured at but did not
+#                                  measure.
+#
+# === Honest hedges ===
+#
+# 1. CANDIDATE STATUS (per Glint finding #3): MEMORY.md promotion waits
+#    on Seam adversarial review + a second formal/prose witness pair.
+#    The substrate-decl is honest about candidacy; this shard does NOT
+#    pre-empt ratification.
+# 2. LOSS MEASUREMENT discharge: per-property composite of @epistemologic/
+#    properties (per [[feedback-loss-from-epistemologic-properties]]) is
+#    forward-promised at realisation boundary; this shard declares the
+#    bidirectional_loss carrier shape.
+# 3. AUTHOR-PAIR PROVENANCE: first witness is CROSS-AUTHOR (Mara source,
+#    Glint target); the substrate-pull-correct second witness is also
+#    cross-author. Self-translation (one author projecting their own
+#    formal spec into prose) is admitted but not the load-bearing shape.
+# 4. THE METALOGUE FOLD (per Glint turn 4): the essay enacts what it
+#    describes; reading the prose IS a turn in the cascade's session;
+#    prose_cascade_session composes with @metalogue.metalogue_session at
+#    the cross-altitude boundary.
+#
+# Spec context: docs/specs/spectral-metalogue.md @ 16f4564 (Mara source);
+#               docs/insights/2026-06-29-glint-the-prose-cascade-of-100.md
+#               @ 939eca6f (Glint target + finding #3).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[feedback-loss-from-epistemologic-properties]],
+#                      [[architecture-alignment-as-boundary-mathematics]],
+#                      [[feedback-substrate-already-had-the-word]].
+# Related shards: shards/cascade.mirror (family-root); shards/nl.mirror
+#                 (target floor); shards/metalogue.mirror (NL-altitude
+#                 ancestor); shards/glass.mirror (transparency/opacity_map);
+#                 shards/cascade/code/rust/wasm.mirror (sibling shape;
+#                 UNIDIRECTIONAL contrast).
+# Path-namespace property: this file at
+# `shards/cascade/code/formal/prose.mirror` declares
+# `@cascade/code/formal/prose` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/bateson-1972-steps-to-an-ecology-of-mind
+source @arxiv/literate-programming/knuth-1984-literate-programming
+
+prism @cascade/code/formal/prose {
+  focus cascade
+  project cascade
+  split cascade
+  shift cascade
+  settle cascade
+}
+
+# === The formal_spec carrier ===
+#
+# Specialization of @cascade.typed_source for the formal substrate-
+# decl source grammar. References a mirror shard (or spec document
+# that the shard formalizes) as the unit of cascade.
+#
+# A formal_spec is a SUBSTRATE-DECL OBJECT: typed carriers, prism
+# declarations, actions with typed arrows, requires obligations,
+# bilateral verdicts, splinter(ast) quotes. The source-side identity
+# is the shard's content-addressed reference; the source-side
+# typing-discipline is what the mirror compiler enforces.
+#
+# First empirical instance: docs/specs/spectral-metalogue.md @
+# 16f4564 (the source-side of the Mara→Glint witness pair).
+#
+# Identity contract: byte-equality on the underlying ref (the spec's
+# content hash).
+type formal_spec = ref
+
+# === The prose_essay carrier ===
+#
+# Specialization of @cascade.compiled_artifact for the NL prose
+# target grammar. References an essay (a doc following @nl + Glint's
+# voice discipline; typically prose with turn structure, citations
+# to formal sources, and the reflexive surface) as the unit of
+# target.
+#
+# A prose_essay is a TARGET-SIDE VOICED PROJECTION: assertion,
+# description, narrative arc, voice, reflexive surface, rhetorical
+# fold, cross-altitude reference. The target-side identity is the
+# essay's content-addressed reference; the target-side discipline
+# is what @nl + Glint's voice convention preserves.
+#
+# First empirical instance: docs/insights/2026-06-29-glint-the-
+# prose-cascade-of-100.md @ 939eca6f (the target-side of the
+# Mara→Glint witness pair).
+#
+# Identity contract: byte-equality on the underlying ref (the
+# essay's content hash).
+type prose_essay = ref
+
+# === The bidirectional_loss carrier ===
+#
+# THE LOAD-BEARING NEW CARRIER (and the species's distinguishing
+# feature against unidirectional siblings). Holds the substrate-
+# typed measurement of loss in BOTH directions of the cascade.
+#
+# Per Glint's finding #3: the projection formal→prose loses
+# enforcement and gains accessibility; the projection prose→formal
+# loses voice and gains discharge. Neither direction is canonical.
+# Both directions are measurable as opacity_map (per @glass): the
+# located sites where the projection cannot carry what the source
+# preserved.
+#
+# Field shape:
+#   - formal_to_prose: opacity_map — the located sites in the prose
+#     where the formal's typed obligations, splinter(ast) machinery,
+#     path-syntax discipline could not project. Each opacity site
+#     names a formal-side feature (a requires clause; a bilateral
+#     verdict; a path-namespace constraint) the prose mentions but
+#     cannot discharge.
+#   - prose_to_formal: opacity_map — the located sites in the formal
+#     where the prose's voice, recognition-arrival quality, affective
+#     texture could not project. Each opacity site names a prose-
+#     side feature (a weight-shift moment; a reflexive fold; a
+#     rhetorical turn) the formal admits but cannot carry.
+#
+# Identity contract: byte-equality on the underlying ref (the loss
+# record content-addressed).
+type bidirectional_loss = {
+  formal_to_prose: opacity_map,
+  prose_to_formal: opacity_map,
+}
+
+# === The prose_cascade_session carrier ===
+#
+# The cascade instance record. One prose_cascade_session names ONE
+# witnessed pair (formal_spec, prose_essay) with its substrate-typed
+# bidirectional_loss measurement.
+#
+# Composes with @metalogue.metalogue_session at the cross-altitude
+# boundary per Glint's finding #4 (the autopoietic fold): a prose-
+# cascade session IS a metalogue turn at the form/prose seam; each
+# witnessed pair is one turn in a longer session whose other turns
+# include the formal-spec-side conversation (Pack agents discussing
+# the spec) and the prose-essay-side conversation (readers responding
+# to the essay).
+#
+# Field shape:
+#   - formal: formal_spec — the source-side of the witnessed pair
+#   - prose: prose_essay — the target-side of the witnessed pair
+#   - loss_surface: bidirectional_loss — the substrate-typed loss
+#     in both directions
+#
+# Identity contract: byte-equality on the underlying ref.
+type prose_cascade_session = {
+  formal: formal_spec,
+  prose: prose_essay,
+  loss_surface: bidirectional_loss,
+}
+
+# === project_formal_to_prose action ===
+#
+# Specialization of @cascade's source→target functor for the
+# formal→prose direction. Takes a formal_spec; returns the prose
+# projection wrapped in imperfect<> with transparency naming the
+# residual loss.
+#
+# Per recognition #51 (Hilbert space dimension growth): the
+# projection is a DIMENSION SHIFT — formal admits typed-obligation,
+# splinter(ast), path-syntax dimensions; prose preserves assertion,
+# narrative, voice, reflexive surface dimensions. The bases are
+# COMPLEMENTARY (each preserves what the other cannot); the
+# projection is lossy by construction at the typed-enforcement
+# altitude AND structurally honest (the prose does not pretend to
+# preserve what it cannot carry).
+#
+# Per Glint's voice discipline: the prose projection holds the
+# fourth wall up — the recognition is structural, not didactic; the
+# essay does not instruct the reader to notice the structure; the
+# structure fields the noticing through its own form.
+#
+# requires formal_to_prose_loss_well_defined(spec, essay, p): the
+# projection respects the source grammar AND loss is measurable.
+#
+# Body discharges at the realisation boundary (the prose author
+# writing the essay; the substrate measures the resulting pair).
+project_formal_to_prose(spec: formal_spec, p: perturbation)
+  -> imperfect(prose_essay, ref, transparency(turn))
+requires formal_to_prose_loss_well_defined(spec, p)
+{ \ }
+
+# === lift_prose_to_formal action ===
+#
+# Specialization of @cascade's reverse functor for the prose→formal
+# direction. Takes a prose_essay; returns the formal projection
+# wrapped in imperfect<> with transparency naming the residual loss.
+#
+# THE REVERSE PROJECTION. This direction carries the load-bearing
+# substrate observation: a prose essay can be lifted to a formal
+# substrate-decl shard, but the lift LOSES the voiced texture (the
+# weight-shift quality of recognition's arrival; the affective
+# substrate of how the recognition LANDED for the prose author and
+# for the reader). The formal lift preserves the propositional
+# content; it cannot preserve the recognition-arrival.
+#
+# Per Alex's idiom ("weight-shift"): the prose essay carries the
+# temporal/affective texture of an eigenform crystallizing; the
+# formal lift declares THAT the recognition landed without
+# narrating WHAT THE LANDING FELT LIKE FROM INSIDE THE CASCADE.
+#
+# requires prose_to_formal_loss_well_defined(essay, spec, p): the
+# reverse projection respects the target grammar AND loss is
+# measurable.
+#
+# Body discharges at the realisation boundary (the formal author
+# reading the essay and writing the spec; the substrate measures
+# the resulting pair).
+lift_prose_to_formal(essay: prose_essay, p: perturbation)
+  -> imperfect(formal_spec, ref, transparency(turn))
+requires prose_to_formal_loss_well_defined(essay, p)
+{ \ }
+
+# === loss_lens action ===
+#
+# THE LOAD-BEARING ACTION. Specialization of @cascade.measure for
+# the bidirectional case. Takes a prose_cascade_session (the
+# witnessed (formal_spec, prose_essay) pair); returns the
+# substrate-typed bidirectional_loss measurement.
+#
+# UNLIKE the unidirectional cascade species (where measure returns
+# imperfect<artifact, error, information_loss> with one loss slot),
+# this species's loss_lens returns bidirectional_loss DIRECTLY —
+# both directions surfaced in one structured record; neither side
+# privileged. The substrate-pull-correct surface is honest about
+# the symmetric structure.
+#
+# Per [[feedback-loss-from-epistemologic-properties]]: each
+# direction's opacity_map is a composite of @epistemologic/
+# properties, NOT Shannon, NOT estimation. The per-direction
+# composite is the realisation boundary's discharge.
+#
+# requires bidirectional_loss_honest(session, p): both directions
+# surfaced AND neither side claims canonical (the bilateral
+# commitment that the species's defining feature — bidirectional
+# loss without privileged direction — holds for this session).
+#
+# Body discharges at the realisation boundary.
+loss_lens(session: prose_cascade_session, p: perturbation) -> bidirectional_loss
+requires bidirectional_loss_honest(session, p)
+{ \ }
+
+# === formal_to_prose_loss_well_defined predicate (bilateral) ===
+#
+# Source-side projection-well-formedness bilateral. Commitment that
+# the formal→prose projection respects the source grammar AND the
+# loss measurement is computable for the resulting (spec, essay)
+# pair.
+#
+# Splinter-pole: spec is well-formed substrate-decl; its typed
+# obligations, splinter(ast) quotes, path-syntax constraints are
+# enumerable AS opacity-sites in the prose target; the formal→prose
+# loss is composite-of-@epistemologic/properties dischargeable.
+# Narcissus-pole: spec malformed (substrate-decl errors) OR the
+# projection cannot enumerate the formal-side features (the prose
+# does not cite/reference the formal source; the projection is
+# uncontactable).
+formal_to_prose_loss_well_defined(spec: formal_spec, p: perturbation) -> verdict { \ }
+
+# === prose_to_formal_loss_well_defined predicate (bilateral) ===
+#
+# Target-side reverse-projection-well-formedness bilateral.
+# Commitment that the prose→formal projection respects the target
+# grammar AND the loss measurement is computable for the resulting
+# (essay, spec) pair.
+#
+# Splinter-pole: essay is well-formed prose under @nl + Glint's
+# voice discipline; its voice, weight-shift moments, reflexive folds
+# are enumerable AS opacity-sites in the formal target; the prose→
+# formal loss is composite-of-@epistemologic/properties dischargeable.
+# Narcissus-pole: essay malformed (not prose; doesn't follow voice
+# discipline) OR the reverse projection cannot enumerate the
+# prose-side features (the formal lift is purely propositional with
+# no acknowledgement of the voiced texture lost).
+prose_to_formal_loss_well_defined(essay: prose_essay, p: perturbation) -> verdict { \ }
+
+# === bidirectional_loss_honest predicate (bilateral) ===
+#
+# THE SPECIES-DISTINGUISHING bilateral. Commitment that the loss
+# measurement is honest about the BIDIRECTIONAL nature of the
+# species: both directions surfaced; neither side claims canonical.
+#
+# This bilateral is what separates this species from the
+# unidirectional siblings. A measurement that reports only
+# formal→prose loss (treating formal as canonical and prose as
+# derived) FAILS this bilateral. A measurement that reports only
+# prose→formal loss (treating prose as canonical and formal as
+# derived) ALSO FAILS this bilateral. The Splinter-pole requires
+# BOTH directions populated with measurable opacity_maps AND the
+# session's witnessed pair admits the complementarity (per Glint's
+# finding #3: "neither is the canonical form").
+#
+# Splinter-pole: both opacity_maps populated AND each carries
+# substrate-typed sites AND the session's witness-shape (cross-
+# author, citation-linked) admits the complementarity.
+# Narcissus-pole: one direction's opacity_map empty (privileging
+# the other) OR one direction's sites are not substrate-typed
+# (estimation rather than composite-of-@epistemologic/properties)
+# OR the session implicitly privileges one side (the formal author
+# disclaims the prose; or the prose author disclaims the formal).
+bidirectional_loss_honest(session: prose_cascade_session, p: perturbation) -> verdict { \ }
+
+# === prose_cascade_session_well_formed composed bilateral ===
+#
+# THE LOAD-BEARING composed bilateral. Specializes the family-root's
+# cascade_well_defined for this species. Pask-agreement bilateral
+# commitment that the session IS a cascade in the @cascade family-
+# root sense (per recognition #58: agreement-is-action; the
+# bilateral commitment is the substrate's Pask-agreement primitive
+# at the cascade altitude).
+#
+# Composes the three sub-bilaterals:
+#
+# requires formal_to_prose_loss_well_defined(session.formal, p):
+#   the source-side projection is well-defined.
+# requires prose_to_formal_loss_well_defined(session.prose, p):
+#   the target-side reverse projection is well-defined.
+# requires bidirectional_loss_honest(session, p):
+#   the species-distinguishing bilateral holds (both directions
+#   surfaced; neither side privileged).
+#
+# All three must hold for the session to count as a witnessed
+# instance of the @cascade/code/formal/prose species. Substrate
+# refuses session-formation if any sub-bilateral fails.
+#
+# Splinter-pole: all three discharge; the session is a witnessed
+# prose-cascade instance; the substrate accumulates it toward
+# second-witness ratification.
+# Narcissus-pole: at least one sub-bilateral fails; the session is
+# not a witnessed instance; the substrate rejects the contribution
+# toward ratification (e.g., a single-author self-translation that
+# silently privileges the formal side fails bidirectional_loss_
+# honest; a prose essay that doesn't cite its formal source fails
+# formal_to_prose_loss_well_defined; a formal spec that is malformed
+# substrate-decl fails the same).
+# Narcissus-warned: all three discharge but the witness-shape is
+# self-translation (one author writing both source and target);
+# the session counts but the ratification weight is lower than a
+# cross-author witness.
+#
+# Same composed-bilateral pattern as @cascade.cascade_well_defined
+# (the family-root) and sibling species (purescript/js, rust/wasm,
+# gleam/{beam,js}). The discipline pattern is altitude-portable; here
+# it instantiates at the formal→prose seam with the species-
+# distinguishing bidirectional_loss_honest sub-bilateral that no
+# unidirectional sibling carries.
+prose_cascade_session_well_formed(session: prose_cascade_session, p: perturbation) -> verdict
+requires formal_to_prose_loss_well_defined(session.formal, p)
+requires prose_to_formal_loss_well_defined(session.prose, p)
+requires bidirectional_loss_honest(session, p)
+{ \ }
+
+out @cascade/code/formal/prose
+out formal_spec
+out prose_essay
+out bidirectional_loss
+out prose_cascade_session
+out project_formal_to_prose
+out lift_prose_to_formal
+out loss_lens
+out formal_to_prose_loss_well_defined
+out prose_to_formal_loss_well_defined
+out bidirectional_loss_honest
+out prose_cascade_session_well_formed
