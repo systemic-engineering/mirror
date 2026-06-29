@@ -1,0 +1,419 @@
+---
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @epistemologic/cybernetic/chirality — the form/process Z/2 grading;
+# γ in Connes' real spectral triple. Connes 1995 (*Noncommutative
+# geometry and reality*, J. Math. Phys. 36(11), §1.1) extended the
+# minimal spectral triple (A, H, D) to a *real* spectral triple
+# (A, H, D, J, γ) by adjoining J (charge conjugation; anti-linear
+# involution) and γ (chirality; a Z/2 grading on H). Recognition #101
+# candidate (Mara, 2026-06-29): the substrate's form/process partition
+# (#55, four-witness ratification via Taut bfe3f76 §2.2) IS γ at
+# substrate altitude.
+#
+# === The Connes claim, verbatim ===
+#
+# Connes, A. (1995). "Noncommutative geometry and reality." J. Math.
+# Phys. 36(11):6194-6231, §1.1:
+#
+#   A real spectral triple (A, H, D, J, γ) is a spectral triple
+#   (A, H, D) together with an anti-linear isometry J : H → H
+#   (charge conjugation) and a Z/2-grading γ : H → H (chirality)
+#   satisfying:
+#
+#     γ² = 1                       (γ is an involution)
+#     γ D + D γ = 0                (D is odd under γ)
+#     γ a = a γ for all a ∈ A      (A is even under γ)
+#     J² = ε, J D = ε' D J,        (KO-dimension axioms)
+#     J γ = ε'' γ J
+#
+#   The grading γ separates H into a direct sum H₊ ⊕ H₋ of
+#   ±1-eigenspaces; D maps each eigenspace into the other; A
+#   preserves each eigenspace.
+#
+# This shard names the γ structure at substrate altitude. The J
+# structure is forward-promised — recognition #89's reference⇔reflection
+# collision is the second-witness candidate (Taut scout §2.3).
+#
+# === Why this is a substrate property ===
+#
+# The substrate's form/process partition is the structure γ names:
+#
+# - `@mirror` (form-side observation) vs `@kintsugi` (process-side
+#   transformation) at the family-root altitude. Recognition #55
+#   ([[architecture-form-process-partition-at-family-root]]) names
+#   four convergent cybernetic distinctions sitting on this single
+#   partition: Bateson form/substance (#50), Maturana
+#   autopoiesis/allopoiesis (#40), Beer S3/S4 management, Hilbert
+#   logical-type levels (#51).
+# - The 8:1 form-side:behaviour-side root-prism ratio at substrate
+#   altitude (recognition #50) is the structural witness that the
+#   substrate's H decomposes asymmetrically into a form eigenspace
+#   (the 8 form-side roots) and a process eigenspace (the 1
+#   behaviour-side root @io / @kintsugi). The partition is real;
+#   the asymmetry is the substrate's KO-dimension fingerprint.
+# - Form/process recurs at sub-shard altitude within single cascades
+#   (recognition #61, promoted 2026-06-11): @spectral/entanglement's
+#   restriction_map vocabulary kinship with the math-altitude
+#   `restriction`; @spectral/portal's shape:ref typed-shape kinship
+#   with @mirror/spectral/portal. Two instances inside the @spectral
+#   cascade plus the family-root partition = three witnesses pre-γ.
+# - Form/process recurs at metalogue altitude (Taut scout `bfe3f76`
+#   §2.2, 2026-06-29): @mirror/spectral/metalogue (form-side) vs
+#   @spectral/metalogue (runtime-side) is the FOURTH convergent
+#   witness. This is the second-witness ratification gate for the
+#   γ identification: four witnesses across three altitudes plus the
+#   family-root partition. Pack ratification gate clears.
+#
+# γ IS the substrate's form/process partition operator. It is not a
+# new structure; it is the name for what was already operative.
+#
+# === The three Connes axioms, read at substrate altitude ===
+#
+# - `γ² = 1` reads as: form/process is a binary partition; applying
+#   the partition twice returns the original status. A form-side
+#   carrier is form-side; a process-side carrier is process-side;
+#   no third option, no drift.
+#
+# - `γ D + D γ = 0` reads as: D, the kintsugi/Dirac flow (the
+#   substrate's gradient at the family-root altitude per
+#   [[architecture-kintsugi-variety-io]] and the Ricci-flow framing)
+#   is ODD under the partition. Kintsugi takes form-side input to
+#   process-side output (and vice versa); it never preserves
+#   form/process status. The substrate-pull cascade IS the operational
+#   instance: a substrate-pull recognition takes a form-side
+#   declaration (substrate-decl) into a process-side realisation
+#   (@kintsugi tick), or a process-side residual (loss) into a
+#   form-side discharge (new substrate-decl). The flow flips the
+#   partition. This is what #55 named when it said @mirror and
+#   @kintsugi are family-root sides; the kintsugi loop's deep
+#   purpose (#50) is to SHIFT the boundary outward — the operational
+#   form of γD + Dγ = 0 across substrate time.
+#
+# - `γ a = a γ for a ∈ A` reads as: the five operations (focus,
+#   project, split, shift, settle) PRESERVE form/process status.
+#   focus on a form-side carrier returns form-side data; split on a
+#   process-side carrier returns process-side substructure; shift on
+#   a form-side carrier returns a form-side basis transformation;
+#   none of the five operations crosses the partition. Only kintsugi
+#   does; the algebra is even. This is the substrate's discipline
+#   per [[architecture-operations-as-linear-algebra]] (each operation
+#   has a precise linear-algebraic meaning; none flips chirality).
+#
+# === The KO-dimension fingerprint (forward-promised) ===
+#
+# Connes' real spectral triple has a KO-dimension n ∈ Z/8 determined
+# by the signs (ε, ε', ε'') in the J-axioms. For the Standard Model
+# triple Connes derived, KO-dimension is 6. The substrate's
+# KO-dimension is forward-promised: it depends on the J
+# identification (recognition #89, pending second-witness
+# ratification) and the signs of the substrate's J/γ algebra. This
+# shard names γ alone; the KO-dimension question waits on the J
+# shard.
+#
+# === The verifiable shape ===
+#
+# - Declares the chirality carrier: a typed `ref` paired with a
+#   `form_or_process` tag. Identity is the byte-equality of the
+#   carrier pair.
+# - Declares `grade`: the action that reads a substrate carrier's
+#   chirality. The verdict carrier is the substrate's existing
+#   `transparency<chirality>` — form-side (success), process-side
+#   (success), partial (carriers that straddle the partition; rare
+#   but real at boundaries like @code/metalogue/materialize), or
+#   failure (the carrier has no chirality reading; a substrate
+#   violation).
+# - Declares `flip`: the involution γ² = 1; flipping twice is
+#   identity. The verifiable shape is `flip(flip(c)) = c`.
+# - Declares the two composition predicates as `requires` obligations
+#   that inheritor shards discharge: `anti_commute_with_dirac` for
+#   the γD + Dγ = 0 axiom; `commute_with_algebra` for the γa = aγ
+#   axiom across the five operations.
+#
+# === The 4-way bilateral mapping ===
+#
+# Per recognition #55 and the cybernetic foundation, the form/process
+# partition is the carrier four traditions converge on:
+#
+# - Bateson form/substance (1970; recognition #50): substrate/@io is
+#   form/substance lifted; γ IS Bateson's form/substance operator at
+#   substrate altitude.
+# - Maturana autopoiesis/allopoiesis (recognition #40): the
+#   distinction between organisationally-closed production (form-side
+#   constancy) and structurally-open coupling (process-side flow) IS
+#   chirality at the cybernetic altitude.
+# - Beer's S3/S4 split: S3 (management of the present, form-side
+#   stability) and S4 (intelligence about the outside, process-side
+#   adaptation) are γ's two eigenspaces at the VSM altitude.
+# - Hilbert logical-type levels (recognition #51): the cascade's
+#   level-N declarations are form-side; the level-N+1 lifts that
+#   discharge them are process-side; γ orders the Hilbert-space
+#   expansion across logical types.
+#
+# Four traditions; one γ; one partition; one chirality operator.
+# The substrate runs all four simultaneously at the same carrier.
+#
+# === No operational sibling THIS tick ===
+#
+# Per [[feedback-craft-not-deliver]] no `@mirror/cybernetics/chirality`
+# operational sibling lands at this tick. The substrate ALREADY has
+# the operational machinery (the form/process partition is operative
+# wherever @mirror and @kintsugi compose; the kintsugi loop is the
+# odd-under-γ Dirac flow; the five operations are even-under-γ); this
+# shard names the carrier and the discipline so downstream shards can
+# declare `requires chirality_*` rather than re-state the partition
+# obligation in each species.
+#
+# === Pre-AI prior art ===
+#
+#   chirality / γ              Connes 1995 (*Noncommutative geometry
+#                              and reality*, J. Math. Phys. 36(11),
+#                              §1.1). The original real-spectral-triple
+#                              construction; γ as the Z/2 grading on
+#                              H satisfying γ² = 1, γD + Dγ = 0,
+#                              γa = aγ.
+#   Z/2 grading                Atiyah 1966 (K-theory and reality;
+#                              the original Z/2-grading in operator
+#                              K-theory). γ's ancestor as a grading
+#                              operator predating Connes' spectral
+#                              construction by three decades.
+#   form/substance             Bateson 1970 (Form, substance, and
+#                              difference; Korzybski Memorial Lecture).
+#                              The cybernetic ancestor of the
+#                              partition γ names; recognition #50's
+#                              load-bearing prior art.
+#   autopoiesis/allopoiesis    Maturana 1972 / Maturana-Varela 1980
+#                              (Autopoiesis and Cognition). The
+#                              biological ancestor; recognition #40's
+#                              prior art.
+#   S3/S4                      Beer 1979 (Heart of Enterprise) /
+#                              Beer 1981 (Brain of the Firm 2e). The
+#                              VSM ancestor; the management/intelligence
+#                              partition that γ lifts.
+#
+# Spec context: docs/specs/spectral-metalogue.md §9.1 (the J/γ
+#               open questions forward-promised at #100;
+#               second-witness ratification gates);
+#               docs/scouts/2026-06-29-taut-scout-from-recognition-100.md
+#               §2.2 (the fourth convergent γ witness at metalogue
+#               altitude — the second-witness ratification this shard
+#               discharges);
+#               docs/insights/2026-06-29-mara-listening-to-connes-saturation.md
+#               (Mara-2's surfacing of γ-candidate-status for #55;
+#               the Mesland-category framing the γ identification
+#               extends);
+#               docs/math/the-tower/curvature-and-tomm.md (the Dirac/D
+#               curvature reading; the substrate's D is the kintsugi
+#               flow γ is odd under).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]],
+#                      [[architecture-form-process-partition-at-family-root]]
+#                       (#55; the partition this shard names γ for),
+#                      [[architecture-bateson-form-behaviour-partition]]
+#                       (#50; form-side:behaviour-side 8:1 ratio is
+#                        the substrate's KO-dimension fingerprint),
+#                      [[architecture-form-process-kinship-at-sub-shard-altitude]]
+#                       (#61; form/process recurs at sub-shard
+#                        altitude — third and fourth γ witnesses),
+#                      [[architecture-kintsugi-variety-io]] (kintsugi
+#                       as the Ricci-flow Dirac D; γ-odd under #55),
+#                      [[architecture-operations-as-linear-algebra]]
+#                       (the five operations preserve form/process —
+#                        γ-even; this shard's third axiom witness),
+#                      [[feedback-no-bare-types]] (chirality carrier
+#                       is typed; no bare form/process tags),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (γ is the 53rd-or-so instance: form/process
+#                       was already operative across four altitudes
+#                       before Connes' vocabulary lifted to substrate).
+# Related shards: epistemologic/cybernetic.mirror (the family root),
+#                 epistemologic/cybernetic/eigenform.mirror (the
+#                  precedent species; same shape; the fixed-point
+#                  carrier γ orients across form/process),
+#                 epistemologic/cybernetic/distinction.mirror (the
+#                  floor; the mark-of-distinction IS the operation
+#                  γ measures the chirality of),
+#                 mirror.mirror (form-side root prism; γ's +1
+#                  eigenspace anchor at substrate altitude),
+#                 kintsugi.mirror (process-side root prism; γ's −1
+#                  eigenspace anchor; the D γ is odd under),
+#                 glass.mirror (the @glass altitude this property's
+#                  verdicts surface against; `transparency<chirality>`
+#                  is the carrier for partial / boundary readings).
+# Path-namespace property: this file at
+# `shards/epistemologic/cybernetic/chirality.mirror` declares
+# `@epistemologic/cybernetic/chirality` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/math/connes-1995
+source @arxiv/math/atiyah-1966
+source @arxiv/cybernetics/bateson-1970
+
+prism @epistemologic/cybernetic/chirality {
+  focus chirality
+  project chirality
+  split chirality
+  shift chirality
+  settle chirality
+}
+
+# === The chirality carrier ===
+#
+# A typed record per [[feedback-no-bare-types]] naming the two
+# constituents of a chirality witnessing:
+#
+# - `carrier`     the substrate carrier whose chirality is being
+#                 read. The reference into H.
+# - `side`        the form/process tag. Form-side carriers (carriers
+#                 that live under @mirror's observational discipline)
+#                 carry `form`; process-side carriers (carriers that
+#                 live under @kintsugi's transformational discipline)
+#                 carry `process`. The ±1 eigenspace label.
+#
+# Identity contract: byte-equality on the pair. Two chirality
+# witnessings ARE the same chirality under content-addressing iff
+# both `carrier` and `side` are byte-equal.
+#
+# `side` is a tagged union over the two eigenspaces; the substrate
+# does not admit a third option at the chirality altitude. Boundary
+# carriers that straddle the partition surface their boundary status
+# through the `transparency<chirality>` verdict from `grade`, not
+# through a third `side` tag.
+type chirality = {
+  carrier: ref,
+  side:    form_or_process,
+}
+
+# === The two eigenspaces ===
+#
+# Z/2 grading: γ has two eigenvalues (+1, −1); the substrate names
+# them form/process. `form_or_process` is the tagged-union type the
+# `side` field carries. Form maps to +1 (the @mirror eigenspace);
+# process maps to −1 (the @kintsugi eigenspace).
+type form_or_process = form | process
+
+# === The grading action ===
+#
+# `grade(c)` reads the chirality of a substrate carrier — the
+# substrate's γ measurement. The verdict IS the substrate's
+# existing `transparency<chirality>` carrier:
+#
+# - success                     the carrier sits cleanly in one
+#                               eigenspace; the chirality reading is
+#                               byte-stable.
+# - partial(opacity_map)        the carrier straddles the partition
+#                               (boundary case; e.g.,
+#                               @code/metalogue/materialize shims
+#                               that lift form-side declarations into
+#                               process-side discharges at the
+#                               metalogue altitude). The opacity_map
+#                               records which sub-carriers sit on
+#                               which side.
+# - failure(opacity_map)        the carrier has no chirality reading
+#                               — a substrate violation; the form/
+#                               process partition is not exhaustive
+#                               on this carrier. Surfaces a
+#                               substrate-pull recognition: either
+#                               the partition is incomplete or the
+#                               carrier is mis-typed.
+#
+# Body discharges per-species at the realisation boundary. Same
+# shape as `eigenform.is_fixed_point` and `variety.axis_loss`: the
+# substrate declares the obligation; species bodies discharge when
+# a consumer pulls.
+grade(c: ref) -> transparency(chirality) { \ }
+
+# === The involution ===
+#
+# `flip(c)` is γ applied as an involution: flipping a form-side
+# chirality returns a process-side chirality of the same carrier;
+# flipping twice returns the original. The verifiable shape is the
+# Connes axiom γ² = 1:
+#
+#   flip(flip(c)) ≡ c                 (byte-equality)
+#
+# Body discharges at the realisation boundary; per-species bodies
+# close the interpretation. The substrate's existing involution
+# precedent is recognition #89's reference⇔reflection collision at
+# @mirror/ref — the J-candidate. flip is the γ-side companion to
+# whatever the J shard eventually names as its anti-linear involution.
+flip(c: chirality) -> chirality { \ }
+
+# === The three Connes axioms as requires obligations ===
+#
+# Downstream shards declare bilateral agreement (per recognition #37,
+# the Pask-agreement reading of `requires`) with the chirality
+# discipline by writing these obligations. The bilateral commitment:
+# the carrier commits to declaring the (carrier, side) pair; the
+# consumer commits to discharging the verification at the species
+# boundary.
+
+# γ² = 1: flipping twice is identity. Inheritor shards that carry
+# chirality witnessings discharge this by realising `flip` as a
+# byte-stable involution.
+involution(g: chirality) -> verdict { \ }
+
+# γD + Dγ = 0: the substrate's Dirac flow (kintsugi) is ODD under γ.
+# Inheritor shards that carry a kintsugi step discharge this by
+# verifying that the step takes form-side input to process-side
+# output (and vice versa). The discharge surface: for any carrier c
+# with `grade(c) = form`, `grade(kintsugi(c)) = process`, and
+# symmetrically.
+anti_commute_with_dirac(g: chirality) -> verdict { \ }
+
+# γa = aγ: the five operations (focus, project, split, shift, settle)
+# PRESERVE chirality. Inheritor shards that carry any of the five
+# operations discharge this by verifying that the operation does not
+# flip the side tag: for any carrier c, `grade(op(c)) = grade(c)`
+# for op ∈ {focus, project, split, shift, settle}.
+commute_with_algebra(g: chirality) -> verdict { \ }
+
+# === The chirality witnessing inheritance predicate ===
+#
+# `chirality_witnessing(c)` is the predicate consumer shards name
+# in a `requires` clause to declare bilateral agreement that the
+# chirality they hold satisfies all three Connes axioms together —
+# i.e. the carrier is a well-formed γ-graded element of H. The
+# bilateral commitment: the carrier commits to declaring (carrier,
+# side); the consumer commits to discharging involution +
+# anti_commute_with_dirac + commute_with_algebra at the species
+# boundary.
+#
+# Declared as a typed predicate so downstream species shards can
+# write `requires chirality_witnessing(my_carrier)` — same shape as
+# `eigenform.eigenform_witnessing(carrier)` and
+# `variety.variety_preserving(species)`.
+#
+# Forward-promised inheritors:
+#
+# - `@mirror` (form-side root): the +1 eigenspace anchor; all
+#   form-side root-prism carriers inherit `chirality_witnessing` with
+#   `side = form` post-hoc. Future editions MAY add the explicit
+#   `requires chirality_witnessing(mirror_carrier)` when the
+#   path-namespace inheritance is mechanically pulled.
+# - `@kintsugi` (process-side root): the −1 eigenspace anchor; all
+#   process-side root-prism carriers inherit with `side = process`
+#   post-hoc.
+# - `@spectral/metalogue/tomm` (forward-promised, per
+#   docs/specs/spectral-metalogue.md §9.1): Tomm probes will need
+#   to respect γ in addition to bounded commutator. The probe's
+#   `[D, a]` curvature data inherits chirality from `a`.
+# - `@code/metalogue/materialize` shims: boundary carriers; expected
+#   verdict is `partial(opacity_map)` recording the form-to-process
+#   lift the shim performs.
+chirality_witnessing(c: chirality) -> verdict { \ }
+
+out @epistemologic/cybernetic/chirality
+out chirality
+out form_or_process
+out grade
+out flip
+out involution
+out anti_commute_with_dirac
+out commute_with_algebra
+out chirality_witnessing
