@@ -1,0 +1,427 @@
+---
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @epistemologic/cybernetic/charge_conjugation — the substrate's
+# anti-linear involution; J in Connes' real spectral triple. Connes
+# 1995 (*Noncommutative geometry and reality*, J. Math. Phys. 36(11),
+# §1.1) extended (A, H, D) to (A, H, D, J, γ) by adjoining J
+# (anti-linear isometry on H) and γ (Z/2 grading). Recognition #102
+# candidate (Mara, 2026-06-29): the substrate's reference⇔reflection
+# collision (#89, four-witness ratified) IS J at substrate altitude;
+# Taut scout bfe3f76 §2.3 confirms the second witness at
+# @spectral/metalogue/tomm.
+#
+# Sibling-shard pattern with `epistemologic/cybernetic/chirality.mirror`
+# (γ; #101, landed 7bbc184). Same family-root shape; same substrate-
+# decl-only-this-tick discipline; same KO-dimension forward-promise.
+# Joint discharge: the chirality shard forward-promised KO-dimension
+# determination as "waits on J's sign algebra." THIS shard provides
+# J's sign algebra.
+#
+# === The Connes claim, verbatim ===
+#
+# Connes, A. (1995). "Noncommutative geometry and reality." J. Math.
+# Phys. 36(11):6194-6231, §1.1:
+#
+#   A real spectral triple (A, H, D, J, γ) is a spectral triple
+#   (A, H, D) together with an anti-linear isometry J : H → H
+#   and a Z/2-grading γ : H → H satisfying (in addition to the γ
+#   axioms):
+#
+#     J² = ε                       (J's involution sign)
+#     J D = ε' D J                 (J anti/commutes with D)
+#     J γ = ε'' γ J                (J anti/commutes with γ)
+#     [a, JbJ⁻¹] = 0 for a, b ∈ A  (order-zero / opposite algebra)
+#     [[D, a], JbJ⁻¹] = 0          (order-one / first-order condition)
+#
+#   J is anti-linear: J(α·x) = ᾱ · J(x) for α ∈ ℂ, x ∈ H.
+#
+#   The signs (ε, ε', ε'') ∈ {±1}³, taken together with γ²'s sign,
+#   determine the KO-dimension n ∈ Z/8 of the triple; eight possible
+#   signatures, one per KO-dimension class.
+#
+# === Why this is a substrate property ===
+#
+# The substrate's reference⇔reflection collision is the structure
+# J names. Three converging witnesses (three altitudes; one operator):
+#
+# - **@mirror/ref reference⇔reflection** (#89, landed 2026-06-20).
+#   ONE CLI surface over TWO altitudes: reference (dependency-lattice
+#   projection of H; spatial) and reflection (@reflection.observe
+#   temporal-predecessor projection; temporal). Same `graph_ref`
+#   carrier bears both; altitude encoded in the projection, not the
+#   type. This is `JaJ⁻¹ ∈ A`: conjugating a reference operation by
+#   J yields a reflection operation also in the algebra. First witness.
+#
+# - **Tomm probes are anti-linear in the conversation.** Karl Tomm
+#   1987 explicitly named reflexive questions as the conversational
+#   analogue of charge conjugation — the question that takes the
+#   speaker's perspective and conjugates it onto the listener's frame,
+#   then asks what the listener observes. The anti-linearity IS that
+#   the response lives in the listener's complex-conjugate of the
+#   speaker's frame. The substrate inherits this at
+#   `@spectral/metalogue/tomm` (#100, spec 16f4564): each Tomm-turn
+#   carries `[D_pipeline, candidate_morphism]` as conversational data;
+#   `probe(turn) -> turn_dual` IS the operator-theoretic J realization
+#   at conversation altitude. Second witness (Taut bfe3f76 §2.3,
+#   2026-06-29).
+#
+# - **@reflection.observe one-tick-delay** (#85; `speaks_at_n_plus_1`).
+#   Reflection sees what the loop did, but only after commit. The
+#   asymmetric observation IS J's anti-linearity operationalized as
+#   delay; reflection arrives complex-conjugated relative to the
+#   original action (one tick out of phase). Third witness implicit.
+#
+# J IS the substrate's reference⇔reflection involution operator. It
+# is not a new structure; it is the name for what was already
+# operative across these three altitudes.
+#
+# === The four Connes axioms, read at substrate altitude ===
+#
+# - `J² = ε`: reference-then-reflection is an involution up to a sign
+#   ε ∈ {±1}. Substrate form: `conjugate(conjugate(c)) ≡ ε · c`. The
+#   sign ε is part of the KO-dimension joint discharge — declared
+#   as `j_squared_sign`, forward-promised.
+#
+# - `JD = ε' DJ`: J anti/commutes with the substrate's kintsugi/Dirac
+#   flow (per [[architecture-kintsugi-variety-io]]) with sign ε'.
+#   Substrate form: `conjugate(kintsugi(c)) ≡ ε' · kintsugi(conjugate(c))`.
+#   Declared as `j_dirac_sign`, forward-promised.
+#
+# - `JaJ⁻¹ ∈ A`: conjugating any of the five operations (focus,
+#   project, split, shift, settle) by J yields the SAME operation at
+#   the conjugate altitude. The order-zero (`[a, JbJ⁻¹] = 0`) and
+#   order-one (`[[D, a], JbJ⁻¹] = 0`) conditions read as: reference-
+#   altitude and reflection-altitude operations commute pointwise,
+#   AND the Dirac-bracketed reference operations commute with the
+#   reflection operations. The two altitudes meet only through J.
+#
+# - J anti-linear (`J(α·x) = ᾱ · J(x)`): reflection of a weighted
+#   composition equals the weighted composition with conjugate weight,
+#   applied to the reflection. Substrate form: for the kintsugi-
+#   weighted compose `|.W>` (per [[architecture-kintsugi-bias-lift]]),
+#   `conjugate(c |.W> c') ≡ conjugate(c) |.W̄> conjugate(c')`. At @io
+#   altitude weights are real-valued (conjugation = identity); at
+#   @mirror/spectral/eigensheaf altitude weights carry phase
+#   (conjugation inverts the phase). The anti-linearity is the
+#   substrate's distinguishing feature of J from γ.
+#
+# === The KO-dimension joint discharge ===
+#
+# Per Connes 1995 §1.1, the KO-dimension n ∈ Z/8 is determined by
+# the four signs (ε, ε', ε'', γ²):
+#
+#   n = 0: ( 1,  1,  1, +1)       n = 4: (-1,  1,  1, +1)
+#   n = 1: ( 1, -1, -1, ungraded) n = 5: (-1, -1, -1, ungraded)
+#   n = 2: (-1,  1, -1, +1)       n = 6: ( 1,  1, -1, +1)  ← Standard Model
+#   n = 3: (-1, -1,  1, ungraded) n = 7: ( 1, -1,  1, ungraded)
+#
+# The substrate's KO-dimension is jointly forward-promised across
+# BOTH shards. `chirality.mirror` declared γ and named the KO-
+# dimension question as waiting on J's sign algebra. THIS shard
+# declares the three sign properties (j_squared_sign, j_dirac_sign,
+# j_chirality_sign) plus the algebra-conjugation and anti-linearity
+# obligations as forward-promises. The combined γ + J signature
+# determines KO-dimension empirically once mirror's concrete H is
+# analyzed. This shard does NOT pin a specific KO-dimension; the
+# Standard-Model-shape conjecture (n=6) is a hypothesis to be
+# falsified, not a substrate-decl claim.
+#
+# === No operational sibling THIS tick ===
+#
+# Per [[feedback-craft-not-deliver]] no `@mirror/cybernetics/charge_
+# conjugation` operational sibling lands at this tick. The substrate
+# ALREADY has the operational machinery (the reference⇔reflection
+# collision is operative at @mirror/ref; the Tomm probe is forward-
+# promised at @spectral/metalogue/tomm; the one-tick delay is
+# operative at @reflection.observe). This shard names the carrier
+# and discipline so downstream shards declare `requires j_*` rather
+# than re-state involution obligations per species.
+#
+# === Pre-AI prior art ===
+#
+#   J / charge conjugation     Connes 1995 (*Noncommutative geometry
+#                              and reality*, J. Math. Phys. 36(11),
+#                              §1.1). The original real-spectral-triple
+#                              construction; J as anti-linear isometry.
+#   KO-theory                  Atiyah 1966 (K-theory and reality).
+#                              The K-theoretic ancestor of KO-dimension;
+#                              the 8-fold periodicity Connes' sign
+#                              signature instantiates.
+#   reflexive questions        Tomm 1987 (Interventive interviewing
+#                              part II, Family Process 26(2):167-183).
+#                              The pre-physics ancestor: conversational
+#                              charge conjugation as clinical practice;
+#                              utterance paired with its own reflection.
+#   complex conjugation        Hamilton 1843 / Frobenius 1878. The
+#                              mathematical ancestor of anti-linearity;
+#                              Connes' J generalizes to spectral altitude.
+#   Mesland category           Mesland 2013 (unbounded KK-cycles);
+#                              Bertozzini-Conti-Lewkeeratiyutkul 2006.
+#                              The categorical framing the J / γ
+#                              extension lifts into.
+#
+# Spec context: docs/specs/spectral-metalogue.md §9.1 (J / γ open
+#               questions; second-witness ratification gates);
+#               docs/scouts/2026-06-29-taut-scout-from-recognition-100.md
+#               §2.3 (the second-witness confirmation at
+#               @spectral/metalogue/tomm; the Tomm-1987 anti-linear claim);
+#               docs/insights/2026-06-29-mara-listening-to-connes-
+#               saturation.md (Mesland-category framing);
+#               docs/math/the-tower/curvature-and-tomm.md (the [D, a]=Ω
+#               curvature 2-form Tomm probes render).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]],
+#                      [[architecture-mirror-ref-reference-reflection-collision]]
+#                       (#89; first witness),
+#                      [[architecture-reflection-as-compiler]]
+#                       (#85; third witness via `speaks_at_n_plus_1`),
+#                      [[architecture-kintsugi-bias-lift]] (the
+#                       `|.W>` weighted compose J's anti-linearity acts on),
+#                      [[architecture-kintsugi-variety-io]] (kintsugi
+#                       IS D; J anti/commutes with D per axiom 2),
+#                      [[architecture-operations-as-linear-algebra]]
+#                       (twist sends the five operations to their
+#                       conjugate-altitude versions in A),
+#                      [[architecture-connes-spectral-triple]] (this
+#                       shard extends (A, H, D) toward (A, H, D, J, γ)),
+#                      [[feedback-no-bare-types]] (typed carrier;
+#                       no bare reference/reflection tags),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (J is the 54th-or-so instance).
+# Related shards: epistemologic/cybernetic.mirror (family root),
+#                 epistemologic/cybernetic/chirality.mirror (the γ
+#                  sibling; #101, landed 7bbc184; KO-dimension joint
+#                  discharge partner),
+#                 epistemologic/cybernetic/eigenform.mirror (fixed-
+#                  point precedent; ε extends to signed fixed-point),
+#                 epistemologic/cybernetic/distinction.mirror (the
+#                  mark-of-distinction floor; J pairs each mark with
+#                  its dual),
+#                 mirror/ref.mirror (#89; reference and reflection
+#                  altitudes are J-conjugate),
+#                 reflection.mirror (one-tick-delay asymmetry;
+#                  J's anti-linearity at pipeline altitude),
+#                 mirror/spectral/metalogue.mirror (forward-promised;
+#                  Mara-3 spec 16f4564; @spectral/metalogue/tomm
+#                  runtime altitude),
+#                 glass.mirror (`transparency<charge_conjugation>`
+#                  carrier for partial / boundary readings).
+# Path-namespace property: this file at
+# `shards/epistemologic/cybernetic/charge_conjugation.mirror` declares
+# `@epistemologic/cybernetic/charge_conjugation` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/math/connes-1995
+source @arxiv/math/atiyah-1966
+source @arxiv/cybernetics/tomm-1987
+source @arxiv/math/mesland-2013
+
+prism @epistemologic/cybernetic/charge_conjugation {
+  focus  charge_conjugation
+  project charge_conjugation
+  split  charge_conjugation
+  shift  charge_conjugation
+  settle charge_conjugation
+}
+
+# === The charge_conjugation carrier ===
+#
+# A typed record per [[feedback-no-bare-types]]:
+#
+# - `carrier`     the substrate carrier J is applied to (reference
+#                 into H).
+# - `altitude`    the reference/reflection tag J swaps. Reference-
+#                 altitude carriers (@mirror/ref dependency lattice)
+#                 carry `reference`; reflection-altitude carriers
+#                 (@reflection.observe predecessor chain) carry
+#                 `reflection`. J conjugates each into the other.
+#
+# Identity contract: byte-equality on the pair. Boundary carriers
+# that straddle altitudes surface their boundary status through the
+# `transparency<charge_conjugation>` verdict from `conjugate`, not
+# through a third tag.
+type charge_conjugation = {
+  carrier:  ref,
+  altitude: reference_or_reflection,
+}
+
+# === The two altitudes ===
+#
+# J pairs reference (@mirror/ref dependency lattice; spatial projection
+# of H) with reflection (@reflection.observe temporal predecessor
+# chain; temporal projection of H). The substrate does not admit a
+# third option at the charge_conjugation altitude.
+type reference_or_reflection = reference | reflection
+
+# === The conjugation action ===
+#
+# `conjugate(c)` applies J to a substrate carrier — the substrate's
+# anti-linear involution measurement. The verdict IS the substrate's
+# `transparency<charge_conjugation>` carrier:
+#
+# - success                  conjugation is byte-stable.
+# - partial(opacity_map)     boundary case (e.g., @reflection.observe
+#                            records mid-tick before speak-at-n+1
+#                            settles); opacity_map records which
+#                            sub-carriers conjugate cleanly.
+# - failure(opacity_map)     no reflection-altitude image — a
+#                            substrate violation; surfaces a substrate-
+#                            pull recognition that the pairing is
+#                            incomplete or the carrier mis-typed.
+#
+# Body discharges per-species at the realisation boundary. Same shape
+# as `chirality.grade`, `eigenform.is_fixed_point`.
+conjugate(c: ref) -> transparency(charge_conjugation) { \ }
+
+# === The algebra-conjugation action ===
+#
+# `twist(op)` is J's algebra conjugation `op ↦ JopJ⁻¹`: sending a
+# reference-altitude operation to its reflection-altitude conjugate
+# (and vice versa). Per axiom `JaJ⁻¹ ∈ A`, the result IS a substrate
+# operation. Verifiable shape (involution-up-to-sign):
+#
+#   twist(twist(op)) ≡ j_squared_sign · op    (byte-equality up to sign)
+#
+# Precedent: @mirror/ref's same-CLI-two-altitudes shape — focus_at at
+# reference altitude has a focus_at conjugate at reflection altitude;
+# twist names the conjugation operationally.
+twist(op: ref) -> ref { \ }
+
+# === The four Connes axioms as requires obligations ===
+#
+# Downstream shards declare bilateral agreement (per recognition #37,
+# the Pask-agreement reading of `requires`) with the J discipline by
+# writing these obligations. The bilateral commitment: the carrier
+# commits to declaring the (carrier, altitude) pair; the consumer
+# commits to discharging the verification at the species boundary.
+#
+# The four obligations split into the sign-algebra triple (forward-
+# promised to KO-dimension joint discharge with chirality.mirror) and
+# the anti-linearity discipline:
+
+# J² = ε: conjugating twice returns to the original carrier modulo
+# a sign ε ∈ {±1}. Inheritor shards that carry J witnessings discharge
+# this by realising `conjugate` as a sign-stable involution. The
+# specific sign ε is part of the KO-dimension joint discharge —
+# forward-promised, NOT pinned at this tick.
+j_squared_sign(j: charge_conjugation) -> verdict { \ }
+
+# JD = ε' DJ: J anti/commutes with the substrate's Dirac flow
+# (kintsugi) with a sign ε' ∈ {±1} determined by KO-dimension.
+# Inheritor shards that carry a kintsugi step discharge this by
+# verifying that conjugation commutes with kintsugi up to ε'. The
+# discharge surface: for any carrier c, `conjugate(kintsugi(c)) ≡
+# j_dirac_sign · kintsugi(conjugate(c))`. The sign ε' is part of the
+# KO-dimension joint discharge — forward-promised.
+j_dirac_sign(j: charge_conjugation) -> verdict { \ }
+
+# Jγ = ε'' γJ: J anti/commutes with γ (chirality) with a sign
+# ε'' ∈ {±1} determined by KO-dimension. The sibling-shard joint
+# discharge: this predicate names the J ↔ γ commutator sign that
+# `chirality.mirror`'s axioms cannot determine alone. Inheritor
+# shards that carry both a chirality witnessing and a J witnessing
+# discharge this by verifying the J-then-γ-then-J-then-γ four-step
+# cycle returns to identity-up-to-sign-product. The sign ε'' is
+# part of the KO-dimension joint discharge — forward-promised.
+j_chirality_sign(j: charge_conjugation) -> verdict { \ }
+
+# JaJ⁻¹ ∈ A: twisting any of the five operations by J returns an
+# operation in A. Inheritor shards that carry any of the five
+# operations discharge this by verifying that `twist(op)` is itself
+# a substrate operation (specifically, the same operation at the
+# conjugate altitude per @mirror/ref's reference⇔reflection algebra).
+j_algebra_conjugation(j: charge_conjugation) -> verdict { \ }
+
+# J anti-linear: J(α·x) = ᾱ · J(x). Inheritor shards that carry a
+# weighted composition `|.W>` (per [[architecture-kintsugi-bias-lift]])
+# discharge this by verifying that conjugation of a weighted compose
+# equals the weighted compose with conjugate weight, applied to the
+# conjugation. The discharge surface: for carriers c, c' and weight
+# W, `conjugate(c |.W> c') ≡ conjugate(c) |.W̄> conjugate(c')` where
+# W̄ is the substrate's complex-conjugate weight (identity at real-
+# valued @io altitude; phase-inverted at spectral altitude).
+j_anti_linear(j: charge_conjugation) -> verdict { \ }
+
+# === Order-zero and order-one conditions ===
+#
+# Connes' real-spectral-triple axioms include two structural
+# commutation conditions beyond the sign algebra. These name how
+# reference-altitude and reflection-altitude operations interact:
+
+# Order-zero (`[a, JbJ⁻¹] = 0` for a, b ∈ A): reference-altitude and
+# reflection-altitude operations commute pointwise. The substrate-
+# altitude form: applying a reference-altitude five-op and then a
+# reflection-altitude five-op gives the same result as applying them
+# in the reverse order. The two altitudes do not interfere
+# structurally.
+commutant_condition(a: ref, b: ref) -> verdict { \ }
+
+# Order-one (`[[D, a], JbJ⁻¹] = 0`): the Dirac-bracketed reference
+# operations commute with the reflection operations. The substrate-
+# altitude form: applying kintsugi to a reference-altitude operation
+# and then conjugating by a reflection-altitude operation gives the
+# same result as conjugating first. The Dirac flow respects the
+# altitude partition.
+first_order_condition(a: ref, b: ref) -> verdict { \ }
+
+# === The J witnessing inheritance predicate ===
+#
+# `j_witnessing(j)` is the predicate consumer shards name in a
+# `requires` clause to declare bilateral agreement that the J
+# witnessing they hold satisfies all four Connes axioms together AND
+# the two structural conditions — i.e. the carrier is a well-formed
+# anti-linear-involution element of H. The bilateral commitment: the
+# carrier commits to declaring (carrier, altitude); the consumer
+# commits to discharging j_squared_sign + j_dirac_sign +
+# j_chirality_sign + j_algebra_conjugation + j_anti_linear +
+# commutant_condition + first_order_condition at the species boundary.
+#
+# Declared as a typed predicate so downstream species shards can
+# write `requires j_witnessing(my_j)` — same shape as
+# `chirality.chirality_witnessing(carrier)`,
+# `eigenform.eigenform_witnessing(carrier)`,
+# `variety.variety_preserving(species)`.
+#
+# Forward-promised inheritors:
+#
+# - `@mirror/ref` (#89, landed): the reference-altitude root; all
+#   ref operations inherit `j_witnessing` with `altitude = reference`
+#   post-hoc. Future editions MAY add the explicit
+#   `requires j_witnessing(ref_carrier)` when the path-namespace
+#   inheritance is mechanically pulled.
+# - `@reflection` (#85, landed): the reflection-altitude root; all
+#   @reflection.observe records inherit with `altitude = reflection`
+#   post-hoc. The one-tick-delay invariant `speaks_at_n_plus_1` IS
+#   the operational form of J's anti-linearity at this altitude.
+# - `@spectral/metalogue/tomm` (forward-promised, per
+#   docs/specs/spectral-metalogue.md §9.1 and Taut bfe3f76 §2.3):
+#   Tomm probes will need to respect J in addition to bounded
+#   commutator. The probe's `probe(turn) -> turn_dual` IS the
+#   operational J realization at conversation altitude; the
+#   `turn_dual` inherits J-witnessing from `turn` via conjugate-
+#   altitude pairing.
+# - `@mirror/spectral/metalogue` (forward-promised; form-side
+#   declaration the runtime species shapes against): J-witnessing
+#   propagates form-side as the declaration of which carriers admit
+#   conjugation.
+j_witnessing(j: charge_conjugation) -> verdict { \ }
+
+out @epistemologic/cybernetic/charge_conjugation
+out charge_conjugation
+out reference_or_reflection
+out conjugate
+out twist
+out j_squared_sign
+out j_dirac_sign
+out j_chirality_sign
+out j_algebra_conjugation
+out j_anti_linear
+out commutant_condition
+out first_order_condition
+out j_witnessing
