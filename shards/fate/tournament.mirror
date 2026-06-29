@@ -1,0 +1,818 @@
+in @prism
+in @meta
+in @glass
+in @fate
+in @bauchladen
+in @autopoietic
+in @uuid/spectral
+
+# @fate/tournament — the selection mechanism over the Bauchladen.
+# The substrate-decl form of the cache-coherent selector that browses
+# the typed display @fate has accumulated and emits a refined
+# selection.
+#
+# === The recognition (#104 chain P4, 2026-06-30) ===
+#
+# This shard is the fourth tier of the @bauchladen ← @autopoietic ←
+# @fate dependency chain per canonical spec at `docs/specs/
+# bauchladen-autopoietic-fate.md` (Mara `4575340`, 2726 lines). Tier
+# P1 (@bauchladen) landed at `66e1ab8`; tier P2 (@autopoietic) landed
+# at `78edaa6`; tier P3 (@fate) landed at `fdcba31`; THIS shard
+# lands tier P4 — the sub-prism under @fate whose selection mechanism
+# IS itself an @fate inference (autopoietic recursion: @fate
+# operating on @fate's own accumulated outputs).
+#
+# Per spec §6 the tournament is the SELECTION mechanism over the
+# Bauchladen tray; it browses prior @fate/algebra/* crystals and
+# refines the inference's dice roll based on prior selections. The
+# pattern unfolds in four steps:
+#
+#   1. @fate produces an initial candidate set via `roll(q)`.
+#   2. The tournament reads the Bauchladen tray for prior crystals
+#      at the same altitude.
+#   3. The tournament evaluates the candidates against the prior
+#      crystals (by selecting candidates that match patterns in
+#      successful prior crystals, by excluding candidates that match
+#      patterns in failed prior crystals).
+#   4. The tournament emits a refined selection.
+#
+# Witnesses for the chain's #104 candidacy at this tier:
+#   - Canonical spec at `docs/specs/bauchladen-autopoietic-fate.md`
+#     §6 (the @fate/tournament sub-prism shape this shard discharges);
+#     §6.1 (browses-the-Bauchladen mechanism — the four-step pattern);
+#     §6.2 (selection IS itself an @fate inference — the autopoietic
+#     recursion); §6.3 (cache-hit / cache-miss operational modes —
+#     the BEAM :ets analogue at the substrate altitude); §6.4 (the
+#     substrate-decl shape lifts the boot-altitude precedent).
+#   - The third-tier landing at `shards/fate.mirror` (`fdcba31`); the
+#     family-root the tournament sub-prism extends; the `roll(space,
+#     hole)` action this shard's selector consumes; the `dice_roll`
+#     carrier this shard's `select` emits as cache-miss path output.
+#   - The second-tier landing at `shards/autopoietic.mirror`
+#     (`78edaa6`); the `tick_action.candidates` carrier the tournament
+#     selects ACROSS; the fold-back permission the tournament inherits
+#     transitively via @fate.
+#   - The first-tier landing at `shards/bauchladen.mirror` (`66e1ab8`);
+#     the tray the tournament browses; the `crystal.provenance` field
+#     the tournament's `selection_rule` reads to rank candidates by
+#     producing context.
+#   - The orphaned boot-floor precursor `boot/std/fate/tournament.
+#     mirror` (killed in spring-clean per Taut scout `27c8592`): the
+#     `tournament(rules, [hole]) -> [resolution]` declaration; the
+#     `rule = greedy | beam(u64) | elite(u64) | halving(u64) |
+#     tabu(u64) | anneal(f64) | ucb(f64)` sum; the `compose(rule,
+#     rule) -> rule` associative composition; the `candidates(hole)`
+#     five-ganglion body. THIS shard is the discharge home: the
+#     orphan's signature lifts to substrate-decl altitude here; the
+#     rule vocabulary is preserved; the five-ganglion body is already
+#     preserved at `shards/optics/source/ganglion/*.mirror` per
+#     recognition #58.
+#   - The Q5 cache-HIT/cache-MISS pattern at `docs/specs/mosaic-
+#     store-cache-invariants.md` §3.4.1: same operational shape (cache
+#     lookup over content-addressed graph; hit path is O(1) lookup;
+#     miss path is fresh computation + add to graph). The substrate's
+#     build cache and @fate's tournament are TWO instances of one
+#     substrate pattern at TWO altitudes — build altitude in
+#     mosaic-store-cache-invariants, inference altitude here. The
+#     parallel is structural, not analogical.
+#
+# === The autopoietic recursion: @fate operating on @fate's own
+#     accumulated outputs ===
+#
+# Per spec §6.2: the tournament's selection IS itself an @fate
+# inference. This is the deepest form of the autopoietic fold-back
+# the chain has been building toward: not just @fate consulting its
+# own prior outputs (which @fate's family-root admission via `in
+# @autopoietic` already guarantees), but @fate selecting WHICH
+# selection rule to apply, where the selection-rule choice is itself
+# a dice roll within the restricted state space of prior selection
+# rules that worked, where THOSE prior rules are themselves crystals
+# in the tray that earlier @fate inferences emitted.
+#
+# The recursion is structural and has NO BOTTOM:
+#
+#   - @fate's `roll(space, hole)` produces candidates from the
+#     restricted state space.
+#   - @fate/tournament's `select(query)` refines those candidates by
+#     consulting prior selections in the tray.
+#   - The refined selection becomes a crystal in the tray (per the
+#     cache-miss `add` path).
+#   - The next @fate `roll(space, hole)` may consult THIS crystal
+#     (autopoietic fold-back at @fate altitude).
+#   - The next @fate/tournament `select(query)` may refine
+#     DIFFERENTLY based on the new tray contents (autopoietic
+#     fold-back at @fate/tournament altitude).
+#
+# The Lawvere fixed-point condition holds at the SYSTEM level (per
+# spec §3.4): some tick will produce a tournament selection that, when
+# fed back as input, produces a tournament selection with the same
+# OID. The substrate exhibits the fixed point CONSTRUCTIVELY — once
+# the tray accumulates enough crystals that the next `select` returns
+# a cache hit with byte-equal OID to the prior crystal, the fixed
+# point has been exhibited.
+#
+# === Cache-hit (Bauchladen lookup) vs cache-miss (fresh inference
+#     + add to Bauchladen + return) — the BEAM :ets pattern at
+#     inference altitude ===
+#
+# Per spec §6.3: the tournament's selection has two operational
+# modes that the type surface MUST disambiguate:
+#
+#   Mode          Operational path                          Cost
+#   -----------   --------------------------------------    --------
+#   cache_hit     browse tray → match prior crystal →       O(1)
+#                 return the prior crystal as selection;
+#                 tray NOT modified
+#   cache_miss    fresh @fate.roll(space, hole) →           O(inference)
+#                 evaluate against tournament rule →
+#                 crystallize new candidate →
+#                 add to tray → return new selection
+#
+# The cache-hit / cache-miss distinction is operationally important:
+# cache hits are O(1) (a tray lookup); cache misses are O(inference)
+# (running @fate's optical machinery per recognition #58). The
+# substrate's intelligence emerges from the cache-hit RATE growing
+# over time — early in the substrate's life, every query is a cache
+# miss; over time, the tray accumulates enough crystals that most
+# queries hit; the substrate becomes FASTER as it accumulates history.
+#
+# This is the substrate-decl form of what BEAM's `:ets` table provides
+# operationally: a content-addressed cache. The substrate's equivalent
+# is the Bauchladen tray with the tournament as the cache-coherent
+# selector. The analogy is not coincidental — @spectral's BEAM-on-
+# mirror operational model (per `shards/spectral.mirror`'s BEAM
+# section) already uses :ets-like patterns at the runtime altitude;
+# the substrate-decl admission of @fate/tournament makes the pattern
+# nameable at the family-root altitude.
+#
+# Same shape as Q5's mosaic(@store) cache lookup at the build
+# altitude per `docs/specs/mosaic-store-cache-invariants.md` §3.4.1:
+# the cache-coherent selector pattern recurs across altitudes
+# (build / inference / spectral-metalogue); the shape is a substrate
+# primitive, not a per-altitude reinvention.
+#
+# === The boot/std/fate/tournament.mirror migration: this shard is
+#     the discharge home ===
+#
+# The boot-floor file `boot/std/fate/tournament.mirror` (declared
+# 2026-05-20) carried the tournament discipline: the `rule` sum type
+# (greedy | beam(u64) | elite(u64) | halving(u64) | tabu(u64) |
+# anneal(f64) | ucb(f64)), the `tournament(rules, [hole]) ->
+# [resolution]` action, the `candidates(hole)` action with the five-
+# ganglion body, the `compose(rule, rule) -> rule` associative
+# composition. The boot/ directory was killed in spring-clean per
+# Taut scout `27c8592`; the tournament content was orphaned.
+#
+# Per the chain's three-tier migration mapping (per spec §4.7 +
+# `shards/autopoietic.mirror`'s tick_action carrier):
+#
+#   Boot-altitude precedent                       This-tier landing
+#   ------------------------------------------    --------------------
+#   `tournament(rules, [hole]) -> [resolution]`   THIS shard's
+#                                                 `select(query)`
+#                                                 action
+#   `rule = greedy | beam | elite | halving |     THIS shard's `rule`
+#    tabu | anneal | ucb`                         sum-type carrier
+#                                                 (preserved verbatim)
+#   `compose(rule, rule) -> rule`                 THIS shard's
+#                                                 `compose` action
+#                                                 (preserved verbatim)
+#   `candidates(hole)` five-ganglion body         @autopoietic's
+#                                                 `tick_action`
+#                                                 (already landed at
+#                                                 `78edaa6`); the
+#                                                 ganglia at `shards/
+#                                                 optics/source/
+#                                                 ganglion/*.mirror`
+#                                                 per recognition #58
+#
+# The migration is now COMPLETE for the tournament's substrate-decl
+# discipline. The 15+ specs that reference the boot/std/fate/tournament.
+# mirror content (kintsugi-tournament.md, substrate-native-fate-
+# tournament.md, kintsugi-wiring.md, code-metalogue-surface.md,
+# lsp-and-mcp.md, road-to-1.0.md, gap-tension-tensor-substrate.md,
+# ants-colonies-stigmergy.md, others) now resolve to substrate-decl'd
+# actions: @autopoietic.tick_action for the gap-to-candidates morphism;
+# @fate/tournament.select for the rule-driven selection over the
+# candidate list. No boot/ dangling references remain.
+#
+# === Prior art: Connes spectral triples + Mesland correspondences;
+#     candidates ARE morphisms in the Mesland category ===
+#
+# Per `docs/specs/spectral-metalogue.md` `16f4564` §3 + recognition
+# #58 + recognition #100: the substrate's spectral triples form a
+# Mesland category (Mesland 2013, arXiv:1304.3802) whose objects are
+# spectral triples and whose morphisms are unbounded KK-cycles. The
+# category structure makes cross-triple operations nameable.
+#
+# The tournament's CANDIDATES ARE MORPHISMS in the Mesland category.
+# At each tournament round, the candidate set the tournament browses
+# is a set of typed KK-cycle morphisms between spectral triples; the
+# tournament's `select(query)` IS the categorical selection of the
+# winning morphism. The autopoietic recursion at the categorical
+# altitude: the selected morphism becomes part of the substrate's
+# accumulated morphism graph; future tournament rounds consult that
+# graph to rank candidates by historical composition behavior.
+#
+# Three altitudes of the same selection mechanism:
+#
+#   Altitude              Tournament's role                  Witness
+#   -------------------   --------------------------------   ----------
+#   Optical               Fabry-Perot mode-selection across  #58
+#                         the gain medium's mode catalog
+#   Substrate-decl        Tournament-rule-driven selection   this shard
+#                         across the @bauchladen tray
+#   Spectral-metalogue    Mesland-category morphism          #100
+#                         selection across KK-cycle space
+#
+# === No operational sibling THIS tick ===
+#
+# Per [[feedback-craft-not-deliver]] no `fate/src/tournament.rs`
+# companion or per-rule sub-shard (greedy/beam/elite/halving/tabu/
+# anneal/ucb) lands at this tick. The substrate ALREADY has the
+# operational machinery: the fate/ runtime crate at the runtime
+# altitude; the five-ganglion optical-source shards at the optical
+# altitude; the @bauchladen tray at the storage altitude. This shard
+# names the sub-prism's substrate-decl contract so downstream shards
+# can write `in @fate/tournament` and `requires tournament_well_
+# formed(my_round)` rather than re-state the cache-coherent selection
+# obligation per consumer. The per-rule sub-shards (`shards/fate/
+# tournament/{greedy,beam,elite,halving,tabu,anneal,ucb}.mirror`)
+# follow when consumers pull per spec §6.4.
+#
+# === Pre-AI prior art ===
+#
+#   Tournament selection      Goldberg & Deb 1991 ("A comparative
+#                             analysis of selection schemes used in
+#                             genetic algorithms", *FOGA-1* 69-93).
+#                             The original tournament-selection
+#                             vocabulary (rule families: tournament,
+#                             rank, fitness-proportional).
+#   Beam search               Lowerre & Reddy 1976 ("The Harpy speech
+#                             recognition system", CMU PhD); Reddy
+#                             1976 (*Proc. IEEE* 64(4):501-531). The
+#                             beam(k) rule's ancestor; bounded-width
+#                             best-first search.
+#   Successive halving        Karnin, Koren, Somekh 2013 ("Almost
+#                             optimal exploration in multi-armed
+#                             bandits", *ICML 2013*); Jamieson &
+#                             Talwalkar 2016 ("Non-stochastic best
+#                             arm identification and hyperparameter
+#                             optimization", *AISTATS 2016*). The
+#                             halving(eta) rule's ancestor.
+#   Tabu search               Glover 1986 ("Future paths for integer
+#                             programming and links to artificial
+#                             intelligence", *Computers & OR* 13(5):
+#                             533-549). The tabu(tenure) rule's
+#                             ancestor.
+#   Simulated annealing       Kirkpatrick, Gelatt, Vecchi 1983
+#                             ("Optimization by simulated annealing",
+#                             *Science* 220(4598):671-680). The
+#                             anneal(T) rule's ancestor.
+#   UCB / multi-armed bandit  Auer, Cesa-Bianchi, Fischer 2002
+#                             ("Finite-time analysis of the multi-
+#                             armed bandit problem", *Machine Learning*
+#                             47(2-3):235-256). The ucb(c) rule's
+#                             ancestor.
+#   Cache hit / cache miss    Smith 1982 ("Cache memories", *ACM
+#                             Computing Surveys* 14(3):473-530). The
+#                             classical formalization of the cache-
+#                             coherent-selector pattern this shard's
+#                             cache_hit / cache_miss disambiguation
+#                             specializes.
+#   Spectral triples          Connes 1985; 1995. The (A, H, D)
+#                             framework; the tournament selects
+#                             within A at the morphism altitude.
+#   Mesland category          Mesland 2013 (arXiv:1304.3802). The
+#                             category of spectral triples with
+#                             KK-cycle morphisms; the tournament's
+#                             candidate set IS a typed subset of
+#                             the morphism collection between two
+#                             spectral triples.
+#   BEAM :ets                 Erlang/OTP ETS module (Armstrong 1996+).
+#                             The content-addressed cache the
+#                             substrate's @bauchladen + this shard's
+#                             tournament jointly recapitulate at the
+#                             substrate-decl altitude.
+#
+# Spec context: docs/specs/bauchladen-autopoietic-fate.md §6 (the
+#               @fate/tournament sub-prism shape this shard
+#               discharges); §6.1 (browses-the-Bauchladen — the
+#               four-step pattern); §6.2 (selection IS @fate
+#               inference — autopoietic recursion); §6.3 (cache-hit
+#               vs cache-miss — operational modes); §6.4 (substrate-
+#               decl shape lifts boot-altitude precedent);
+#               docs/specs/mosaic-store-cache-invariants.md §3.4.1
+#               (the Q5 cache-HIT/cache-MISS pattern this shard's
+#               cache_hit disambiguation parallels at the inference
+#               altitude); docs/specs/spectral-metalogue.md `16f4564`
+#               §3 (Tomm probes as Mesland-category KK-correspondences;
+#               candidates ARE morphisms); docs/specs/substrate-
+#               native-fate-tournament.md (the orphan precursor's
+#               spec context); docs/specs/kintsugi-tournament.md (the
+#               first concrete tournament consumer at merge altitude);
+#               docs/scouts/2026-06-29-taut-scout-bauchladen-chain-
+#               updated.md §2.4 (Taut's grep-verification that the
+#               candidates(hole) orphan's migration home is here).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-fate-is-optical-inference]]
+#                       (#58; the optical altitude the tournament's
+#                        selection mechanism realizes at the substrate
+#                        altitude — Fabry-Perot mode-selection as
+#                        tournament-rule-driven selection),
+#                      [[architecture-connes-spectral-triple]]
+#                       (the (A, H, D) framework; the tournament
+#                        selects within A — the algebra of operations
+#                        — at the morphism altitude),
+#                      [[architecture-mirror-as-expanding-hilbert-
+#                       space]] (#51; the tray's monotone growth IS
+#                        H_mirror's dimension expansion; each
+#                        tournament round on the cache-miss path
+#                        adds dimensions),
+#                      [[architecture-mirror-as-content-addressed-
+#                       build-system]] (the substrate re-compiles
+#                        itself; the tournament's cache-hit rate
+#                        grows monotonically with substrate age),
+#                      [[architecture-spectral-db-autopoietic-memory]]
+#                       (the librarian consolidates tournament
+#                        outcomes into the autopoietic memory
+#                        layer; the @spectral/db tier above this
+#                        shard),
+#                      [[architecture-peer-learns-by-crystal-
+#                       vocabulary-expansion]] (each tournament
+#                        round on the cache-miss path extends
+#                        A_peer; vocabulary expansion IS
+#                        autopoietic-recursive selection),
+#                      [[architecture-error-as-tomm-probe]] (Tomm
+#                        probes ARE @fate's selection species at
+#                        the spectral-metalogue altitude; the
+#                        tournament IS the selection mechanism at
+#                        the substrate-decl altitude),
+#                      [[architecture-reflection-thinks-in-spectral-
+#                       questions]] (Reflection's altitude selection
+#                        IS @fate's dice roll at the meta-pipeline
+#                        altitude; the tournament refines that
+#                        selection across the tray),
+#                      [[architecture-fragmentation-is-the-rust-
+#                       substrate]] (the runtime fate/ crate realizes
+#                        this sub-prism's contract; prism_core stays
+#                        deps-free),
+#                      [[feedback-substrate-pull-confidence-acts]]
+#                       (the chain's naming IS confidence-acting;
+#                        the @fate/tournament admission completes the
+#                        P4 tier substrate-pull-confirmed),
+#                      [[feedback-no-bare-types]] (tournament_round,
+#                        candidate_set, selection_witness, rule,
+#                        tournament_query, tournament_result are
+#                        typed carriers; no bare primitives),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (the boot/std/fate/tournament.mirror precursor
+#                        is the substrate-already-had ancestor; the
+#                        lift to substrate-decl altitude is the
+#                        appropriate next move, not the original
+#                        naming),
+#                      [[feedback-craft-not-deliver]] (no per-rule
+#                        sub-shards or Rust at this tick; the family-
+#                        root admission lands the contract; the per-
+#                        rule sub-shards follow when consumers pull).
+# Related shards: fate.mirror (the family-root this sub-prism extends;
+#                  the `roll(space, hole) -> dice_roll` action this
+#                  shard's cache-miss path invokes; the `dice_roll`
+#                  carrier this shard's cache-miss path emits),
+#                 autopoietic.mirror (the prism class transitively
+#                  inherited via @fate; the `tick_action.candidates`
+#                  carrier the tournament selects across; the
+#                  fold-back permission the tournament inherits),
+#                 bauchladen.mirror (the tray the tournament browses;
+#                  the `crystal` carrier the tournament emits to the
+#                  tray on the cache-miss path; the `provenance_record`
+#                  the `selection_rule` reads to rank candidates),
+#                 glass.mirror (the splinter floor; tournament_result
+#                  surfaces against transparency<tournament_round>;
+#                  the verdict carrier the tournament's
+#                  selection_witness lifts),
+#                 optics/source/ganglion/*.mirror (the five-ganglion
+#                  body that produces candidates per recognition #58;
+#                  the operational realization of the candidate set
+#                  the tournament browses),
+#                 mirror/ref.mirror (the forward-promised
+#                  `@kintsugi/fracture/resolve_hole` action; tournaments
+#                  are invoked during fracture-body discharge to
+#                  select among candidate resolutions),
+#                 kintsugi.mirror (the process-side family-root;
+#                  @kintsugi invokes the tournament at each
+#                  morphism-selection step per spec §4.6),
+#                 uuid/spectral.mirror (uuid_spectral identity
+#                  carrier for tournament instances).
+# Path-namespace property: this file at `shards/fate/tournament.mirror`
+# declares `@fate/tournament` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/optimization/goldberg-deb-1991
+source @arxiv/speech/lowerre-reddy-1976
+source @arxiv/ml/karnin-koren-somekh-2013
+source @arxiv/or/glover-1986
+source @arxiv/physics/kirkpatrick-1983
+source @arxiv/ml/auer-cesa-bianchi-fischer-2002
+source @arxiv/cs/smith-cache-1982
+source @arxiv/math/connes-1985
+source @arxiv/math/mesland-2013
+
+prism @fate/tournament {
+  focus tournament_round
+  project tournament_round
+  split tournament_round
+  shift tournament_round
+  settle tournament_round
+}
+
+# === The tournament_round carrier ===
+#
+# A typed record per [[feedback-no-bare-types]] naming a single
+# tournament selection. One round IS one @fate inference at the
+# tournament altitude: the dice roll selects a winner from the
+# candidate set the tournament browsed. The round is the substrate-
+# decl atom of @fate/tournament; each invocation of `select` emits
+# one round; the round's `winner` field carries the OID of the
+# selected crystal that joined (or already lived in) the @bauchladen
+# tray.
+#
+# - `instance`           the uuid_spectral naming the @fate/tournament
+#                        instance the round belongs to (sibling-shape
+#                        to @fate's `inference.instance` carrier).
+# - `hole`               the typed hole the round filled; the same
+#                        carrier @fate.hole declares; the inference-
+#                        altitude consumption point.
+# - `candidates_browsed` the candidate_set the tournament read from
+#                        the tray (cache-hit path) or constructed
+#                        fresh via @fate.roll (cache-miss path).
+# - `winner`             the OID of the candidate the round selected
+#                        as the tournament's outcome; resolves to a
+#                        crystal in the @bauchladen tray.
+# - `tick`               the substrate-ref naming the tick the round
+#                        fired at; the @time-altitude carrier
+#                        downstream consumers reference.
+#
+# Identity contract: byte-equality on (instance, hole, tick). Two
+# tournament_rounds for the same instance consuming the same hole at
+# the same tick ARE the same round under content-addressing; the
+# candidates_browsed and winner are determined by the tray state at
+# round time and are content-equivalent.
+type tournament_round = {
+  instance:           uuid_spectral,
+  hole:               hole,
+  candidates_browsed: candidate_set,
+  winner:             oid,
+  tick:               ref,
+}
+
+# === The candidate_set carrier ===
+#
+# The typed set of crystals from the @bauchladen tray the tournament
+# browses for a given round. Per spec §6.1's four-step pattern,
+# step 2 reads the tray for prior crystals at the round's altitude;
+# the candidate_set IS that read's typed result.
+#
+# - `tray_scope`     the substrate-ref naming the tray slice the
+#                    candidates were drawn from; the scope is
+#                    altitude-parametric per @bauchladen's enumerate
+#                    action.
+# - `members`        the list of crystal OIDs in the candidate set;
+#                    each OID resolves to a crystal in the tray; the
+#                    list is ordered per the tournament's selection_
+#                    rule (e.g., elite(k) sorts by score).
+# - `freshness`      the @glass verdict naming whether members were
+#                    drawn from the tray (cache-hit-eligible) or
+#                    constructed fresh (cache-miss path); the
+#                    discriminator the cache_hit verdict reads.
+#
+# Identity contract: byte-equality on (tray_scope, members). Two
+# candidate_sets with the same tray_scope and members ARE the same
+# set under content-addressing; freshness is metadata about the set's
+# construction history, not part of its identity.
+type candidate_set = {
+  tray_scope: ref,
+  members:    [oid],
+  freshness:  verdict,
+}
+
+# === The selection_witness carrier ===
+#
+# The proof carrier that the tournament's selection respects all the
+# restrictions the round operated under: the @fate restrictions (γ,
+# J per recognitions #101 + #102; tray scope per autopoietic closure),
+# the @fate/tournament restrictions (the selection_rule's per-rule
+# discipline), and the autopoietic closure obligation (the winner's
+# OID joins the tray on the cache-miss path; the round's outcome IS
+# admissible as input to future rounds).
+#
+# - `round`               the tournament_round whose selection the
+#                         witness attests.
+# - `fate_witness`        the verdict that the round's dice roll
+#                         satisfies @fate.fate_witnessing (the
+#                         family-root inheritance predicate).
+# - `rule_witness`        the verdict that the round's winner is the
+#                         per-rule-correct selection from
+#                         candidates_browsed.members under the
+#                         selection_rule the round operated under.
+# - `autopoietic_witness` the verdict that the round's outcome was
+#                         admitted to the tray on the cache-miss path
+#                         (or correctly identified as a cache-hit on
+#                         a prior tray member; either path closes the
+#                         autopoietic loop).
+#
+# Identity contract: byte-equality on (round). The three witness
+# verdicts are determined by the round + the tray state and are
+# content-equivalent given the round's identity.
+type selection_witness = {
+  round:               tournament_round,
+  fate_witness:        verdict,
+  rule_witness:        verdict,
+  autopoietic_witness: verdict,
+}
+
+# === The rule carrier ===
+#
+# The typed selection-rule vocabulary the tournament admits per round.
+# PRESERVED VERBATIM from the killed boot/std/fate/tournament.mirror
+# precursor per the migration mapping documented above; the rule
+# vocabulary is stable across the boot-altitude → substrate-decl-
+# altitude lift per spec §6.4.
+#
+# Each rule discharges per-round at the realisation boundary; the
+# rule's selection semantics live in the forward-promised per-rule
+# sub-shards (`shards/fate/tournament/{greedy,beam,elite,halving,
+# tabu,anneal,ucb}.mirror`) per spec §6.4.
+#
+# - `greedy`         pick the single best candidate by score; no
+#                    exploration.
+# - `beam(k)`        keep the top-k candidates at each step; bounded-
+#                    width best-first per Lowerre & Reddy 1976.
+# - `elite(k)`       reserve k slots for the top scorers; combine
+#                    with other rules.
+# - `halving(eta)`   successive halving with budget-ratio eta per
+#                    Karnin-Koren-Somekh 2013.
+# - `tabu(tenure)`   tabu search with the given tenure per Glover
+#                    1986; exclude recently-selected candidates.
+# - `anneal(T)`      simulated annealing with temperature T per
+#                    Kirkpatrick-Gelatt-Vecchi 1983.
+# - `ucb(c)`         upper-confidence-bound with exploration constant
+#                    c per Auer-Cesa-Bianchi-Fischer 2002.
+#
+# Identity contract: byte-equality on the rule constructor + its
+# parameter (where parameterized). Two rules with the same
+# constructor and parameter ARE the same rule under content-
+# addressing.
+type rule =
+  | greedy
+  | beam(ref)
+  | elite(ref)
+  | halving(ref)
+  | tabu(ref)
+  | anneal(ref)
+  | ucb(ref)
+
+# === The tournament_query carrier ===
+#
+# The typed query the consumer constructs to invoke a tournament
+# round. Per spec §6.1's substrate-decl shape; carries the candidate
+# fan-in, the altitude to browse, and the selection rule.
+#
+# - `candidates`     the initial @fate.roll output (the candidate set
+#                    the tournament starts from; may be refined by
+#                    the cache-hit path or replaced on cache-miss).
+# - `altitude`       the substrate-ref naming the tray altitude to
+#                    browse for prior crystals to match against.
+# - `selection_rule` the rule the round operates under (greedy /
+#                    beam / elite / halving / tabu / anneal / ucb);
+#                    determines the per-rule selection semantics.
+#
+# Identity contract: byte-equality on the three fields.
+type tournament_query = {
+  candidates:     candidate_set,
+  altitude:       ref,
+  selection_rule: rule,
+}
+
+# === The tournament_result carrier ===
+#
+# The typed outcome of a tournament round. Per spec §6.1's
+# substrate-decl shape; carries the refined selection, the cache-hit
+# discriminator, and the consulted-OIDs provenance trail.
+#
+# - `refined_selection` the crystal the tournament selected as the
+#                       round's winner; lives in the @bauchladen tray
+#                       (either pre-existing on cache-hit or newly
+#                       admitted on cache-miss).
+# - `cache_hit`         the @glass verdict naming whether the result
+#                       came from the tray (cache-hit) or required
+#                       fresh @fate.roll (cache-miss); the operational
+#                       mode discriminator per spec §6.3.
+# - `consulted_oids`    the OIDs of the prior crystals the round
+#                       consulted to refine the selection; the
+#                       provenance trail downstream tooling reads to
+#                       audit the round's reasoning.
+#
+# Identity contract: byte-equality on `refined_selection`. The cache_
+# hit verdict and consulted_oids are determined by the tray state and
+# are content-equivalent given the refined_selection.
+type tournament_result = {
+  refined_selection: crystal,
+  cache_hit:         verdict,
+  consulted_oids:    [oid],
+}
+
+# === browse — tray lookup; returns the typed candidate set ===
+#
+# Per spec §6.1 step 2: the tournament reads the @bauchladen tray for
+# prior crystals at the round's altitude. This action wraps the
+# @bauchladen.enumerate operation in the tournament's typed
+# candidate_set carrier; the scope ref selects the tray slice.
+#
+# The returned candidate_set's `freshness` verdict is `partial(0.0)`
+# for tray reads (cache-hit-eligible) and `partial(1.0)` for fresh
+# constructions (cache-miss path output); the cache_hit verdict reads
+# this discriminator.
+#
+# Body discharges per-round at the realisation boundary. Same shape
+# as @bauchladen.enumerate (declarative obligation discharged at the
+# species boundary).
+browse(hole: hole, scope: ref) -> candidate_set { \ }
+
+# === select — the round's selection action ===
+#
+# The tournament's primary action; the substrate-decl form of the
+# orphan precursor's `tournament(rules, [hole]) -> [resolution]`
+# action per the migration mapping documented above. Given a typed
+# query (candidates + altitude + selection_rule) and the restricted
+# state space the @fate family-root's restrictions admit, returns the
+# dice_roll naming the round's winner.
+#
+# Per spec §6.2: this action IS itself an @fate inference; the
+# tournament's selection IS a dice roll at the tournament altitude.
+# The select action discharges to @fate.roll under the hood at the
+# cache-miss path; at the cache-hit path it returns the prior
+# crystal's OID directly as the dice_roll's selected_oid.
+#
+# Body discharges per-round at the realisation boundary.
+select(candidates: candidate_set, restricted: restricted_state_space) -> dice_roll { \ }
+
+# === record — admit the round's outcome to the tray ===
+#
+# Per spec §6.3 cache-miss path step 4: the round's new crystal is
+# ADDED to the @bauchladen tray; future queries may now cache-hit on
+# this crystal. This action wraps the @bauchladen.crystallize
+# operation in the tournament's record discipline; the crystal joins
+# the tray under the producing-prism = `@fate/tournament` provenance.
+#
+# The autopoietic fold-back closure: recording the round's outcome
+# adds to the tray; the next round may consult this crystal as a
+# prior selection; the recursion has no bottom.
+#
+# Body discharges per-round at the realisation boundary. Same shape
+# as @bauchladen.crystallize.
+record(round: tournament_round) -> crystal { \ }
+
+# === cache_hit — bilateral verdict over a (hole, scope) pair ===
+#
+# Per spec §6.3 the cache-hit / cache-miss disambiguation: returns
+# the @glass verdict whether the @bauchladen tray already has a
+# winning candidate for the (hole, scope) pair the query identifies.
+# pass = cache-hit eligible; failure = cache-miss required.
+#
+# Inheritor shards discharge by browsing the tray at scope, filtering
+# by hole's expected_type, and returning pass iff at least one crystal
+# matches under the selection_rule the query would apply.
+#
+# Body discharges per-round at the realisation boundary.
+cache_hit(hole: hole, scope: ref) -> verdict { \ }
+
+# === compose — associative rule composition ===
+#
+# PRESERVED VERBATIM from the killed boot/std/fate/tournament.mirror
+# precursor per the migration mapping. Per spec §6.4: `elite(1).
+# beam(8).halving(3)` composes left-to-right; the composition is
+# associative per the boot-altitude grammar's declared associativity.
+#
+# Two rules compose into a single rule whose selection semantics are
+# the categorical product of the components (apply the first rule
+# first, then the second to the survivors). Inheritor shards discharge
+# the per-rule composition semantics per the per-rule sub-shards
+# forward-promised at `shards/fate/tournament/{greedy,beam,elite,
+# halving,tabu,anneal,ucb}.mirror`.
+#
+# Body discharges per-round at the realisation boundary.
+compose(left: rule, right: rule) -> rule { \ }
+
+# === The requires obligations ===
+#
+# Downstream shards declare bilateral agreement (per recognition
+# #37, the Pask-agreement reading of `requires`) with the
+# @fate/tournament discipline by writing the obligations below. The
+# bilateral commitment: the @fate/tournament-importing prism commits
+# to discharging the obligations; the consumer commits to surfacing
+# violations at the species boundary.
+
+# Per spec §6.1: tournaments ARE @fate instances; the tournament_
+# round's instance carrier IS a uuid_spectral naming an @fate
+# membership the round is registered against. Inheritor shards
+# discharge by verifying the @fate family-root's fate_witnessing
+# predicate on the round's instance.
+fate_membership_held(tournament_instance: ref) -> verdict { \ }
+
+# Per spec §6.1 step 2: the browse action returns crystals from the
+# proper @bauchladen tray scope; no crystals leak across scopes. The
+# substrate-pull-honest typing discipline: the candidate_set the
+# tournament browses is well-typed under the tray's altitude
+# parametricity. Inheritor shards discharge by verifying the
+# browse-action realisation respects the @bauchladen.enumerate
+# typing contract.
+bauchladen_browse_well_typed(browse: ref, scope: ref) -> verdict { \ }
+
+# Per spec §6.2 + spec §4.2: the tournament's selection respects the
+# restrictions the @fate family-root's restricted_state_space
+# enumerates: the algebra A's admissible operations; the Hilbert H's
+# state-space membership; the Dirac D's flow-step admissibility; γ's
+# parity preservation per recognition #101; J's time-reversal
+# preservation per recognition #102; the @bauchladen tray scope's
+# autopoietic closure constraint. Inheritor shards discharge by
+# verifying the round's winner OID resolves to content in the
+# admitted subspace.
+selection_respects_restrictions(select: ref, restricted: restricted_state_space) -> verdict { \ }
+
+# Per spec §6.3 cache-miss path step 4: recording the round's outcome
+# adds to the @bauchladen tray; the new crystal is admissible as
+# input to future rounds; the autopoietic loop closes. Inheritor
+# shards discharge by verifying the record-action realisation invokes
+# @bauchladen.crystallize with the @fate/tournament provenance.
+tournament_autopoietic(record: ref) -> verdict { \ }
+
+# === The tournament_well_formed inheritance predicate ===
+#
+# `tournament_well_formed(round)` is the predicate consumer shards
+# name in a `requires` clause to declare bilateral commitment (per
+# recognition #37, the Pask-agreement reading of `requires`) that
+# the tournament_round `round` IS substrate-pull-honest @fate/
+# tournament selection — i.e., the round satisfies all four
+# obligations above conjointly: fate_membership_held +
+# bauchladen_browse_well_typed + selection_respects_restrictions +
+# tournament_autopoietic.
+#
+# Sibling to:
+#   - `fate.fate_witnessing(roll)` (the family-root inheritance
+#     predicate the tournament_round's selection honors).
+#   - `autopoietic.autopoietic_closure_holds(prism)` (the prism-class
+#     inheritance predicate transitively inherited via @fate).
+#   - `bauchladen.bauchladen_witnessing(crystal)` (the crystal-
+#     altitude inheritance predicate the tournament's recorded
+#     crystals honor on the cache-miss path).
+#
+# Forward-promised inheritors (per spec §6.4):
+#
+#   - `@fate/tournament/greedy` — the greedy selection rule's
+#     selection semantics.
+#   - `@fate/tournament/beam` — the beam(k) selection rule per
+#     Lowerre-Reddy 1976.
+#   - `@fate/tournament/elite` — the elite(k) selection rule.
+#   - `@fate/tournament/halving` — the halving(eta) rule per
+#     Karnin-Koren-Somekh 2013.
+#   - `@fate/tournament/tabu` — the tabu(tenure) rule per Glover
+#     1986.
+#   - `@fate/tournament/anneal` — the anneal(T) rule per Kirkpatrick-
+#     Gelatt-Vecchi 1983.
+#   - `@fate/tournament/ucb` — the ucb(c) rule per Auer-Cesa-Bianchi-
+#     Fischer 2002.
+#   - `@kintsugi` (per spec §4.6): @kintsugi invokes the tournament
+#     at each morphism-selection step; the kintsugi merge-altitude
+#     tournament per `docs/specs/kintsugi-tournament.md` discharges
+#     tournament_well_formed for each round.
+#   - `@reflection` (per spec §4.6 + [[architecture-reflection-
+#     thinks-in-spectral-questions]]): Reflection's altitude
+#     selection IS a tournament over altitude candidates;
+#     Reflection discharges tournament_well_formed at the meta-
+#     pipeline altitude.
+#
+# No `requires tournament_well_formed(...)` clauses are added at THIS
+# shard. The sub-prism declares the predicate; consumers add the
+# clauses when they pull. Per [[feedback-craft-not-deliver]] the
+# per-rule sub-shards follow when consumers pull.
+tournament_well_formed(round: tournament_round) -> verdict { \ }
+
+out @fate/tournament
+out tournament_round
+out candidate_set
+out selection_witness
+out rule
+out tournament_query
+out tournament_result
+out browse
+out select
+out record
+out cache_hit
+out compose
+out fate_membership_held
+out bauchladen_browse_well_typed
+out selection_respects_restrictions
+out tournament_autopoietic
+out tournament_well_formed
