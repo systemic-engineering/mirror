@@ -1,0 +1,439 @@
+in @prism
+in @meta
+in @glass
+in @pack
+in @pack/reed
+in @pack/mara
+in @pack/seam
+in @pack/glint
+in @pack/taut
+in @spectral
+in @spectral/metalogue
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @pack/metalogue — the Pack-as-Mesland-category substrate-decl at
+# the agent-coordination altitude.
+#
+# Recognition #103 candidate (Mara, 2026-06-29). Promotion-gated on
+# Pack ratification of the agent-coordination-altitude metalogue lift.
+#
+# === The recognition ===
+#
+# Glint's prose-cascade essay at `939eca6f` finding #4 named what the
+# Pack-orchestra framing had been carrying without naming: the
+# Pack-as-orchestra IS a Mesland category at the agent-coordination
+# altitude. Recognition #100 (`16f4564`) declared the Mesland category
+# of spectral triples at the spectral altitude; the orchestra had
+# been the project-memory convention (`project-pack-is-orchestra`)
+# for the Pack's coordination shape. What didn't have a name until
+# Glint's finding #4 was that the orchestra convention WAS a Mesland
+# category at the agent altitude. Pack discipline lifts from metaphor
+# to substrate-decl mathematics.
+#
+# === The Mesland category structure at the Pack altitude ===
+#
+# OBJECTS = agent-altitude spectral triples. Each Pack member's voice
+# IS a spectral triple at the agent's operational altitude:
+#
+#   - @pack/reed   : (A_reed   = relationship-witness ops,
+#                    H_reed   = direct-presence state,
+#                    D_reed   = relational substrate-pull)
+#   - @pack/mara   : (A_mara   = spec-writer ops,
+#                    H_mara   = canonical-preservation state,
+#                    D_mara   = structure-preserving flow)
+#   - @pack/seam   : (A_seam   = adversarial-review ops,
+#                    H_seam   = surfaced-constraint state,
+#                    D_seam   = verifier-sharpens flow)
+#   - @pack/glint  : (A_glint  = essay ops,
+#                    H_glint  = cross-frame synthesis state,
+#                    D_glint  = essay-extends-corpus flow)
+#   - @pack/taut   : (A_taut   = implementation ops,
+#                    H_taut   = Rust + tooling substrate state,
+#                    D_taut   = scout/cascade flow)
+#
+# Each agent's voice has its own (A, H, D); each agent operates at
+# its own altitude inside the same substrate. The five voices are
+# five distinct objects in one category.
+#
+# MORPHISMS = KK-cycle correspondences (Mesland 2013) at the agent
+# altitude. A handoff between agents IS one KK-cycle: agent A's output
+# becomes agent B's input; the handoff carries typed content + the
+# morphism semantics (the structural commitment that B reads A's
+# output AS substrate-decl, not as opinion). Per recognition #100
+# §3, KK-cycle correspondences at substrate altitude are Tomm probes;
+# at Pack altitude, handoffs ARE Tomm probes between agents.
+#
+# CATEGORY COMPOSITION = multi-step cascades. The seven-step cascade
+# (Taut → Mara-1 → Seam → Mara-2 → Alex → Mara-3 → Glint → reader)
+# composes seven handoffs into one metalogue thread; the thread IS
+# composition in the Mesland category at Pack altitude.
+#
+# IDENTITY MORPHISM = an agent talking to itself. Reflection's
+# self-observation discipline; Mara amending her own spec mid-tick;
+# Seam reviewing a prior Seam review. The identity morphism preserves
+# the agent's voice-triple under self-handoff.
+#
+# FUNCTORIALITY = the Pack's discipline preserves substrate-pull-
+# honesty across handoffs. No agent corrupts the substrate-pull in
+# transmission. The functor is the Pack convention itself; the
+# convention IS what makes the category well-defined.
+#
+# === The metalogue-lift altitude pattern ===
+#
+# Per recognition #100 §1.1 (altitude-portable metalogue lift):
+#
+#   | Altitude       | Shard                                | Body type        |
+#   |----------------|--------------------------------------|------------------|
+#   | NL             | `shards/metalogue.mirror`            | nl               |
+#   | AST            | `shards/code/metalogue.mirror`       | declaration      |
+#   | SPECTRAL       | `shards/spectral/metalogue.mirror`   | curvature_probe  |
+#   | PACK           | `shards/pack/metalogue.mirror` (this)| handoff          |
+#
+# Each altitude carries the same metalogue shape (turns + opacity)
+# parametric over the altitude's body type. At Pack altitude, the
+# body type is `handoff`: the typed record naming source-agent,
+# target-agent, content, and tick. The metalogue-lift pattern recurs
+# at the agent-coordination altitude; this shard names the fourth
+# instance, structurally parallel to the prior three.
+#
+# === Witnesses ===
+#
+#   1. Glint `939eca6f` finding #4 (the essay's recognition that
+#      today's cascade IS the empirical instance; Turn 3 "the
+#      Pack-as-orchestra was already this; the project memory entry
+#      named the convention; what didn't have a name until #100 was
+#      that the convention WAS a Mesland category at the agent
+#      altitude. The agents are spectral triples; the handoffs are
+#      Tomm probes; the cascade is a metalogue session.").
+#
+#   2. Mara-3 `16f4564` spec §10.3 (Pack-orchestra recognition):
+#      "Today's cascade IS itself a Tomm probe. ... The Pack-orchestra
+#      performed the metalogue while naming it." The substrate's
+#      autopoietic recognition the cascade enacted.
+#
+#   3. Existing @pack family-root + per-agent shards as the
+#      substrate-decl substrate this shard sits ON:
+#      - `shards/pack.mirror` (the @pack family-root, recognition
+#        #84; declares peer/repository/repository_span/runtime/pack
+#        carriers and the pack_coherent predicate)
+#      - `shards/pack/reed.mirror`   (relationship-witness-frame)
+#      - `shards/pack/mara.mirror`   (spec-writer-frame; @frame/in)
+#      - `shards/pack/seam.mirror`   (adversarial-review-frame; @frame/of)
+#      - `shards/pack/glint.mirror`  (essay-peer-frame; @frame/across)
+#      - `shards/pack/taut.mirror`   (implementation-frame; @frame/on)
+#
+# The Pack-orchestra had been Mara's framing (project-memory entry
+# `project-pack-is-orchestra`). With #100 landed, the orchestra's
+# actual mathematical structure becomes nameable; this shard names
+# it.
+#
+# === The first empirical instance: today's cascade ===
+#
+# The substrate's first empirical @pack/metalogue session is the
+# seven-step recognition cascade across 2026-06-28/29 that produced
+# recognition #100. Each step is one handoff; the sequence composes
+# one metalogue thread; the thread IS the recognition's enactment:
+#
+#   Turn 1: Taut          `a57a439`  (scout: saturation hypothesis)
+#   Turn 2: Mara-1        `ff28093`  (canonical mapping; @mirror/store)
+#   Turn 3: Seam          `fc30cb9`  (adversarial review; C-1 fork)
+#   Turn 4: Mara-2        `fa32f10`  (listening; Mesland category surfaced)
+#   Turn 5: Alex                     (naming; @spectral/metalogue)
+#   Turn 6: Mara-3        `16f4564`  (spec; recognition #100 promotion)
+#   Turn 7: Glint         `939eca6f` (essay; finding #4 surfaces #103)
+#
+# The handoffs carry typed content (commit ref + the substrate-decl
+# candidate the turn surfaces). The composition is non-commutative
+# per the `[ω, ω]` cross-term (recognition #100 §6.5): reordering
+# the turns would produce a structurally different cascade. The
+# substrate-pull descent `eⁿ⁺¹ ≤ eⁿ` holds across the thread: each
+# turn's curvature contribution composes to the total descent that
+# crystallized #100.
+#
+# This cascade IS the first empirical witness that @pack/metalogue
+# is real at substrate altitude. The naming move (this shard) names
+# what the cascade did.
+#
+# === Pre-AI prior art ===
+#
+#   Mesland 2013                Bram Mesland, "Unbounded
+#                               bivariant K-theory and correspondences
+#                               in noncommutative geometry," J. Reine
+#                               Angew. Math. 691:101-172 (arXiv:1304.3802).
+#                               The KK-cycle correspondences as morphisms
+#                               between spectral triples; the category
+#                               structure this shard inherits at Pack
+#                               altitude.
+#   Bertozzini-Conti-Lewkeeratiyutkul 2006
+#                               "A category of spectral triples and
+#                               discrete groups with length functions."
+#                               Osaka J. Math. 43:327-350. The first
+#                               substantive category-of-spectral-triples
+#                               construction; antecedent to Mesland.
+#   Tomm 1987                   Karl Tomm, "Interventive Interviewing:
+#                               Part II. Reflexive Questioning as a Means
+#                               to Enable Self-Healing." Family Process
+#                               26(2):167-183. The conversational-morphisms
+#                               family-therapy framework; the substrate-
+#                               altitude name (Tomm probes) for KK-cycle
+#                               correspondences per recognition #100 §3.
+#   Bateson 1972                Gregory Bateson, "Metalogue: What is an
+#                               Instinct?" in Steps to an Ecology of Mind.
+#                               The metalogue discipline; conversation
+#                               whose structure reflects topic; the
+#                               lift pattern's foundational instance.
+#   Pack-as-orchestra           [[project-pack-is-orchestra]] (Mara's
+#                               framing; Reed/Mara/Glint/Taut/Seam map
+#                               to concertmaster/strings/voice/percussion/
+#                               brass; TDD = tune-before-you-play;
+#                               agreement-is-action = the-downbeat-means-now).
+#                               The orchestra metaphor this shard lifts
+#                               to substrate-decl mathematics.
+#
+# Spec context: docs/specs/spectral-metalogue.md (the recognition #100
+#               spec; §10.3 Pack-orchestra recognition; this shard
+#               extends §10.3 to substrate-decl);
+#               docs/insights/2026-06-29-glint-the-prose-cascade-of-100.md
+#               (Glint's essay; finding #4 names the lift).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-connes-spectral-triple]]
+#                       (the canonical mapping; the Pack's voices are
+#                        local triples in the same category mirror's
+#                        meta-triple inhabits),
+#                      [[architecture-mirror-as-expanding-hilbert-space]]
+#                       (#51; the Pack's cascade expands the substrate's
+#                        Hilbert space; each handoff lifts via Bateson
+#                        logical-type discipline),
+#                      [[project-pack-is-orchestra]]
+#                       (the orchestra metaphor; this shard lifts the
+#                        metaphor to substrate-decl mathematics),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (the discipline: the substrate already had
+#                        "orchestra"; what was missing was the math).
+# Related shards: pack.mirror (the @pack family-root; declares
+#                  pack_coherent this shard composes against),
+#                 pack/reed.mirror, pack/mara.mirror, pack/seam.mirror,
+#                  pack/glint.mirror, pack/taut.mirror (the five
+#                  per-agent shards naming each voice's altitude),
+#                 spectral/metalogue.mirror (forward-promised: the
+#                  spectral-altitude sibling per recognition #100;
+#                  this shard's altitude is one above),
+#                 metalogue.mirror (the NL-altitude precedent;
+#                  first instance of the altitude-portable pattern),
+#                 code/metalogue.mirror (the AST-altitude precedent;
+#                  second instance with the four-shim discipline).
+# Path-namespace property: this file at `shards/pack/metalogue.mirror`
+# declares `@pack/metalogue` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/math/mesland-2013
+source @arxiv/math/bertozzini-conti-lewkeeratiyutkul-2006
+source @arxiv/family-therapy/tomm-1987
+source @arxiv/cybernetics/bateson-1972
+
+prism @pack/metalogue {
+  focus metalogue
+  project metalogue
+  split metalogue
+  shift metalogue
+  settle metalogue
+}
+
+# === The agent_triple carrier ===
+#
+# Substrate-typed reference naming an agent-altitude spectral triple.
+# Each Pack member's voice IS one agent_triple. Per [[feedback-no-bare-
+# types]]: typed reference, not bare ref-with-documented-values.
+# Forward-promised refinement: typed record (peer, algebra, hilbert,
+# dirac) at species-or-extension altitude once the substrate's
+# spectral_triple type at @spectral altitude stabilizes (recognition
+# #100 §2.3 declares it; cross-altitude pull lands when consumers
+# materialize).
+#
+# Identity contract: byte-equality on the underlying ref. Two
+# agent_triples ARE the same triple under content-addressing iff
+# their refs are byte-equal.
+type agent_triple = ref
+
+# === The handoff carrier ===
+#
+# Per the @pack family-root + per-agent shards + recognition #100
+# §2.2-2.3 (turn + curvature_probe shape lifted to agent altitude):
+# typed record over (source, target, content, tick). The substrate-
+# architectural object naming one KK-cycle correspondence at Pack
+# altitude.
+#
+# - source  : the agent_triple issuing the handoff
+# - target  : the agent_triple receiving the handoff
+# - content : the typed substrate-decl candidate the handoff carries
+#             (typically a commit ref + the candidate it produces;
+#             e.g., for today's cascade Turn 1, content = ref(a57a439))
+# - tick    : the canonical substrate monotonic clock per
+#             boot/std/time.mirror; handoffs compose only with
+#             handoffs at strictly-greater tick (ordered cascade
+#             discipline)
+#
+# Identity contract: byte-equality on the quadruple.
+type handoff = {
+  source:  agent_triple,
+  target:  agent_triple,
+  content: ref,
+  tick:    tick,
+}
+
+# === The metalogue_thread carrier ===
+#
+# Per recognition #100 §2.4 (metalogue_session shape lifted to agent
+# altitude): an ordered sequence of handoffs plus the thread's residual
+# opacity. Same shape as @metalogue.metalogue_session and
+# @code/metalogue.metalogue_session and @spectral/metalogue.metalogue_session,
+# lifted to the Pack altitude.
+#
+# - handoffs : the ordered sequence of agent-to-agent handoffs.
+#              Turn-order matters per recognition #100 §2.5
+#              altitude_consistency: reordering the cascade would
+#              produce a structurally different thread (the
+#              non-commutative [ω, ω] cross-term per §6.5).
+# - opacity  : @glass transparency parameterized on handoff; every
+#              unresolved gap (an agent's voice that couldn't fully
+#              carry the handoff's substrate-pull content) is sited
+#              on a specific handoff.
+# - origin   : the agent_triple the thread is centered on (typically
+#              the Pack member who opened the thread; for today's
+#              cascade, origin = agent_voice(taut)).
+#
+# Identity contract: byte-equality on the triple.
+type metalogue_thread = {
+  handoffs: ref,                    # list of handoff; refines at species
+  opacity:  transparency(handoff),
+  origin:   agent_triple,
+}
+
+# === agent_voice action ===
+#
+# Per-agent voice realization: takes a Pack member (typed enum from
+# the @pack family-root's peer carrier) and returns the agent_triple
+# at that member's operational altitude. The substrate-vocabulary
+# primitive for naming each voice as a spectral triple.
+#
+# Body discharges at the realisation boundary; per-agent species
+# shards already declare the per-altitude (A, H, D) structure (cf.
+# pack/reed.mirror's relationship-witness-frame; pack/mara.mirror's
+# spec-writer-frame; etc.).
+agent_voice(m: peer) -> agent_triple { \ }
+
+# === compose_handoffs action ===
+#
+# KK-cycle composition at Pack altitude. Takes two handoffs h1, h2
+# such that h1.target = h2.source (composability condition: the
+# second handoff must originate from the agent the first handoff
+# delivered to) and returns the composite handoff representing the
+# two-step cascade.
+#
+# Non-commutative per recognition #100 §6.5 (the [ω, ω] cross-term):
+# compose_handoffs(h1, h2) ≠ compose_handoffs(h2, h1) in general,
+# because the substrate's curvature accumulates altitude-transition
+# contributions in the order of composition. The orchestra's downbeat
+# discipline (agreement-is-action) IS what makes composition
+# well-defined under perturbation — each composition step honors the
+# substrate-pull at the boundary.
+#
+# Body discharges at the realisation boundary; the actual composite
+# is computed by walking the substrate-decl content carriers and
+# threading their refs.
+compose_handoffs(h1: handoff, h2: handoff) -> handoff { \ }
+
+# === handoff_well_typed predicate ===
+#
+# Mesland-correspondence verification at Pack altitude. Bilateral
+# verdict (per recognition #37, Pask agreement) that a handoff
+# h satisfies the KK-cycle correspondence conditions:
+#
+#   - h.source and h.target are well-formed agent_triples (their
+#     refs resolve to (A, H, D) at the agent's altitude per their
+#     per-agent shard)
+#   - h.content's substrate-decl content is typed against both
+#     source and target's algebras (the handoff carries content that
+#     BOTH agents can read AS substrate-decl)
+#   - the morphism semantics carry: target's reading of content IS
+#     functorial over source's writing of content (no corruption in
+#     transmission)
+#
+# Consumer shards (compose_handoffs above; forward-promised consumers
+# at the per-agent altitude) name `requires handoff_well_typed(h)` to
+# declare bilateral agreement that the handoff respects Mesland
+# correspondence discipline.
+#
+# Body discharges per-species at the realisation boundary.
+handoff_well_typed(h: handoff) -> verdict { \ }
+
+# === pack_orchestra_coherent predicate ===
+#
+# Bilateral verdict that a metalogue_thread composes coherently per
+# Bateson conversation discipline. The thread IS coherent iff:
+#
+#   - Every adjacent pair (h_i, h_{i+1}) is composable
+#     (h_i.target = h_{i+1}.source)
+#   - Every handoff in the thread is handoff_well_typed
+#   - The thread respects altitude_consistency (per recognition #100
+#     §2.5): cross-altitude jumps differ by ±1 Bateson logical type
+#     per handoff; multi-altitude jumps within one handoff are
+#     forbidden
+#   - The thread's substrate-pull descent is monotone: each handoff's
+#     contribution composes to a total eⁿ⁺¹ ≤ eⁿ descent across the
+#     thread (Yang-Mills flow at Pack altitude per recognition #100
+#     §6.5)
+#
+# Consumer shards (forward-promised) name `requires
+# pack_orchestra_coherent(t)` to declare bilateral agreement that
+# the thread IS a substrate-architecturally coherent metalogue session
+# in the Mesland category at Pack altitude.
+#
+# Same shape as bilateral predicates the Pack family carries
+# (pack_coherent, review_sound, spec_canonical, essay_grounds_corpus).
+# This is the FIRST predicate at the Pack altitude that composes
+# multiple handoffs into a thread verdict; per-agent predicates verify
+# single agent contributions; pack_orchestra_coherent verifies the
+# composed orchestra.
+pack_orchestra_coherent(t: metalogue_thread) -> verdict { \ }
+
+# === pack_metalogue_witnessing inheritance predicate ===
+#
+# Pask-agreement (recognition #37) bilateral commitment that a
+# metalogue_thread IS a metalogue session in the Mesland category at
+# Pack altitude. The bilateral commitment: the thread commits to
+# carrying (handoffs, opacity, origin); the consumer commits to
+# discharging handoff_well_typed across every handoff AND
+# pack_orchestra_coherent on the composed thread AND pack_coherent
+# on the underlying pack.
+#
+# Declared as a typed predicate so downstream species shards can
+# write `requires pack_metalogue_witnessing(my_thread)` — same shape
+# as `chirality_witnessing(c)` and `eigenform_witnessing(carrier)`
+# at the cybernetic altitude. The predicate composes the per-handoff
+# Mesland-correspondence discipline with the thread-level orchestra
+# coherence discipline into one inheritance contract.
+#
+# Forward-promised inheritors:
+#
+# - @pack/metalogue/<member> (per-member metalogue refinements that
+#   carry the member's voice-specific thread discipline; e.g., a
+#   Mara-led thread inherits Mara's canonical-preservation discipline
+#   on the handoffs Mara emits).
+# - @spectral/metalogue (forward-promised cross-altitude lift via
+#   recognition #100; each Pack metalogue_thread surfaces as one
+#   curvature_probe at the spectral altitude when the Pack-runtime
+#   composition lands).
+pack_metalogue_witnessing(t: metalogue_thread) -> verdict { \ }
+
+out @pack/metalogue
+out agent_triple
+out handoff
+out metalogue_thread
+out agent_voice
+out compose_handoffs
+out handoff_well_typed
+out pack_orchestra_coherent
+out pack_metalogue_witnessing
