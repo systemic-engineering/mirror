@@ -11,6 +11,7 @@ in @spectral
 in @spectral/metalogue
 in @epistemologic
 in @epistemologic/cybernetic
+in @epistemologic/reality/time
 
 # @pack/metalogue — the Pack-as-Mesland-category substrate-decl at
 # the agent-coordination altitude.
@@ -243,19 +244,38 @@ prism @pack/metalogue {
 
 # === The agent_triple carrier ===
 #
-# Substrate-typed reference naming an agent-altitude spectral triple.
-# Each Pack member's voice IS one agent_triple. Per [[feedback-no-bare-
-# types]]: typed reference, not bare ref-with-documented-values.
-# Forward-promised refinement: typed record (peer, algebra, hilbert,
-# dirac) at species-or-extension altitude once the substrate's
-# spectral_triple type at @spectral altitude stabilizes (recognition
-# #100 §2.3 declares it; cross-altitude pull lands when consumers
-# materialize).
+# Typed record per [[feedback-no-bare-types]] naming the four
+# constituents of an agent-altitude spectral triple. Each Pack
+# member's voice IS one agent_triple; the record names the (A, H, D)
+# at the agent altitude plus the Bateson logical-type altitude at
+# which the triple operates (per recognition #51 — mirror as
+# expanding Hilbert space — different Pack voices operate at
+# adjacent Bateson levels and the altitude field surfaces that
+# explicitly).
 #
-# Identity contract: byte-equality on the underlying ref. Two
-# agent_triples ARE the same triple under content-addressing iff
-# their refs are byte-equal.
-type agent_triple = ref
+# - peer       the typed Pack-member variant from the @pack
+#              family-root (`| reed | mara | seam | glint | taut`);
+#              substrate already named the typed-enum-discipline
+#              precedent (the Seam-correction at C4/P1 tick 32 that
+#              landed `peer` as a typed variant rather than bare ref).
+# - algebra    A at the agent altitude — the operations the agent's
+#              voice can perform. Per-agent species shards bind
+#              this to the member's actual operational structure
+#              (cf. pack/reed.mirror's relationship-witness-frame).
+# - hilbert    H at the agent altitude — the space of utterances
+#              the agent can produce.
+# - dirac      D at the agent altitude — the kintsugi flow that
+#              transforms input utterances to output.
+#
+# Identity contract: byte-equality on the quadruple. Two
+# agent_triples ARE the same triple iff all four fields are
+# byte-equal under content-addressing.
+type agent_triple = {
+  peer:    peer,
+  algebra: ref,
+  hilbert: ref,
+  dirac:   ref,
+}
 
 # === The handoff carrier ===
 #
@@ -271,7 +291,8 @@ type agent_triple = ref
 #             (typically a commit ref + the candidate it produces;
 #             e.g., for today's cascade Turn 1, content = ref(a57a439))
 # - tick    : the canonical substrate monotonic clock per
-#             boot/std/time.mirror; handoffs compose only with
+#             @epistemologic/reality/time (shards/epistemologic/
+#             reality/time.mirror); handoffs compose only with
 #             handoffs at strictly-greater tick (ordered cascade
 #             discipline)
 #

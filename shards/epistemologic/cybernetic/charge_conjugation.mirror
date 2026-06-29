@@ -4,6 +4,7 @@ in @meta
 in @glass
 in @epistemologic
 in @epistemologic/cybernetic
+in @epistemologic/cybernetic/chirality
 
 # @epistemologic/cybernetic/charge_conjugation — the substrate's
 # anti-linear involution; J in Connes' real spectral triple. Connes
@@ -412,6 +413,45 @@ first_order_condition(a: ref, b: ref) -> verdict { \ }
 #   conjugation.
 j_witnessing(j: charge_conjugation) -> verdict { \ }
 
+# === KO-dimension joint discharge — forward-promised ===
+#
+# Per Connes 1995 §1.1, the substrate's KO-dimension n ∈ Z/8 is
+# determined by the joint signs (γ², ε, ε', ε'') of γ and J. The
+# substrate-decl needs a named action that takes the γ witnessing
+# from `chirality.mirror` AND the J witnessing from this shard and
+# emits the determined n. This shard hosts the joint action because
+# J's three sign predicates (j_squared_sign, j_dirac_sign,
+# j_chirality_sign) are the LAST of the four signs to land —
+# `chirality.mirror`'s γ² is already declared; this shard's three
+# J-signs complete the sign tuple.
+#
+# The eight KO-classes per Connes 1995 §1.1 (and as enumerated
+# above at the KO-dimension joint-discharge commentary):
+type ko_class = | zero | one | two | three | four | five | six | seven
+
+# `ko_dimension(g, c)` consumes a chirality witnessing g and a
+# charge_conjugation witnessing c, dispatches on the four signs
+# discharged across @chirality (γ²) and @charge_conjugation (ε, ε',
+# ε''), and returns the determined KO-class n per the Connes 1995
+# §1.1 table. The bilateral commitment: g.discharges
+# chirality_witnessing; c discharges j_witnessing; the action's body
+# is the table lookup on the four-sign signature.
+#
+# Forward-promised body: the discharge requires both witnessings to
+# have settled their sign obligations; the action is declared at
+# substrate-decl altitude so consumers can write `requires
+# ko_dimension(g, c) = six` (the Standard-Model conjecture) or
+# pattern-match on the returned class. The realisation body lands at
+# the species altitude where the substrate's concrete H has been
+# analyzed enough to discharge the four signs.
+#
+# Pre-AI prior art: Connes 1995 §1.1 (the 8-class table); Atiyah
+# 1966 (KO-theory's 8-fold periodicity).
+ko_dimension(g: chirality, c: charge_conjugation) -> ko_class
+requires chirality_witnessing(g)
+requires j_witnessing(c)
+{ \ }
+
 out @epistemologic/cybernetic/charge_conjugation
 out charge_conjugation
 out reference_or_reflection
@@ -425,3 +465,5 @@ out j_anti_linear
 out commutant_condition
 out first_order_condition
 out j_witnessing
+out ko_class
+out ko_dimension

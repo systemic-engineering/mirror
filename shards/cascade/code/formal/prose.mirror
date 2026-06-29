@@ -420,14 +420,20 @@ requires prose_to_formal_loss_well_defined(essay, p)
 # THE LOAD-BEARING ACTION. Specialization of @cascade.measure for
 # the bidirectional case. Takes a prose_cascade_session (the
 # witnessed (formal_spec, prose_essay) pair); returns the
-# substrate-typed bidirectional_loss measurement.
+# substrate-typed bidirectional_loss measurement wrapped in the
+# family-root's imperfect<> carrier.
 #
-# UNLIKE the unidirectional cascade species (where measure returns
-# imperfect<artifact, error, information_loss> with one loss slot),
-# this species's loss_lens returns bidirectional_loss DIRECTLY —
-# both directions surfaced in one structured record; neither side
-# privileged. The substrate-pull-correct surface is honest about
-# the symmetric structure.
+# Return shape preserves the family-root's three-slot imperfect
+# discipline: artifact-slot carries the witnessed session itself
+# (the substrate-architectural object the measurement IS measuring);
+# error-slot carries the substrate's error ref (matching @cascade.
+# measure's signature); loss-slot carries the bidirectional_loss
+# record. This species REFINES the family-root's information_loss
+# slot into a typed two-direction record without breaking the
+# @cascade.measure contract — both directions surfaced in one
+# structured record; neither side privileged. The substrate-pull-
+# correct surface is honest about the symmetric structure AND
+# preserves the family-root's imperfect carrier discipline.
 #
 # Per [[feedback-loss-from-epistemologic-properties]]: each
 # direction's opacity_map is a composite of @epistemologic/
@@ -440,7 +446,8 @@ requires prose_to_formal_loss_well_defined(essay, p)
 # loss without privileged direction — holds for this session).
 #
 # Body discharges at the realisation boundary.
-loss_lens(session: prose_cascade_session, p: perturbation) -> bidirectional_loss
+loss_lens(session: prose_cascade_session, p: perturbation)
+  -> imperfect<prose_cascade_session, ref, bidirectional_loss>
 requires bidirectional_loss_honest(session, p)
 { \ }
 
