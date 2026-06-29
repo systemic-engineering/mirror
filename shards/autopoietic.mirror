@@ -1,0 +1,780 @@
+in @prism
+in @meta
+in @glass
+in @bauchladen
+in @epistemologic/cybernetic/autopoiesis
+in @uuid/spectral
+
+# @autopoietic — the prism class permitted to fold back. A prism that
+# imports `in @autopoietic` declares the bilateral commitment (per
+# recognition #37's Pask-agreement reading of `requires`) that its
+# operations consume its own prior crystals as input. The substrate's
+# self-production discipline at the prism-class altitude.
+#
+# Homage: Humberto Maturana (1928–2021) + Francisco Varela (1946–
+# 2001); 1972 (*De máquinas y seres vivos*, Editorial Universitaria)
+# 1980 (*Autopoiesis and Cognition*, D. Reidel). The biological-
+# epistemological tradition that named the operational form: a
+# system is autopoietic iff the network of productions produces the
+# conditions for its own continued production. The structure is
+# circular; the boundary is self-maintained; the system is
+# operationally closed while structurally open.
+#
+# === The recognition (#104 chain P2, 2026-06-29) ===
+#
+# This shard is the second tier of the @bauchladen ← @autopoietic ←
+# @fate dependency chain per canonical spec at `docs/specs/
+# bauchladen-autopoietic-fate.md` (Mara `4575340`, ~2727 lines). The
+# first tier (@bauchladen) landed at `66e1ab8` as the prism-altitude
+# content-addressing discipline (Schmidt homage; the typed display
+# the substrate browses). This shard names the SECOND tier: the
+# prism class permitted to fold the tray's contents back as its own
+# input.
+#
+# Witnesses for the chain's #104 candidacy:
+#   - Canonical spec at `docs/specs/bauchladen-autopoietic-fate.md`
+#     §3 (the @autopoietic prism-class shape this shard discharges).
+#   - The first-tier landing at `shards/bauchladen.mirror`
+#     (`66e1ab8`); the dependency this shard structurally rests on.
+#   - The forward-promised third tier at `shards/fate.mirror` (per
+#     spec §4); @fate is `in @autopoietic` is `in @bauchladen`.
+#   - The 28KB grammar-class precursor at `docs/specs/autopoietic-
+#     grammar-spec.md` (Reed 2026-06-04); the substrate had the word
+#     at the precursor altitude; this shard is the LIFT to prism
+#     class (per spec §3.6), not the original naming.
+#   - The 750+-line cybernetic-species shard at `shards/
+#     epistemologic/cybernetic/autopoiesis.mirror` (#379, Maturana-
+#     Varela 1980 + Soto-Andrade & Varela 1984 bridge, ρ = adjoint);
+#     the property altitude this prism class lifts.
+#   - Taut scout `27c8592` (grep-verifies zero substrate-decl hits
+#     for `@autopoietic` at prism altitude AND that the 28KB
+#     grammar-spec is the unique precursor; the lift framing is
+#     substrate-pull-confirmed, not asserted).
+#
+# === Why @bauchladen is structurally necessary: the Lawvere fixed-
+#     point condition is MATHEMATICAL, not stylistic ===
+#
+# Per spec §3.2's structural argument: fold-back requires STABLE
+# IDENTITY for prior outputs to address. A system that consumes its
+# own prior outputs must NAME them unambiguously — "I am consuming
+# the X I produced at tick N, not some Y that happens to resemble X."
+#
+# Without content-addressing, the naming is unstable. The Lawvere
+# fixed-point condition (per `@epistemologic/math/lawvere` +
+# Soto-Andrade & Varela 1984) requires that the prism's tick-to-tick
+# map admit a fixed point — an OID f such that `hash(P(f)) == f`.
+# The substrate's content-addressing exhibits this AT CONSTRUCTION
+# TIME: the OID is the hash; the equality check is byte-equality on
+# the OID layer.
+#
+# Without @bauchladen, the equality check is not well-defined; the
+# fixed-point condition is unverifiable; "fold-back" reduces to
+# mere recurrence with ambiguous reference, which is NOT autopoiesis
+# in Maturana-Varela's sense (per spec §3.2 final paragraph). The
+# dependency is mathematical: stable identity is a load-bearing
+# precondition for the operational closure condition Maturana-Varela
+# 1980 names as the definition of autopoiesis.
+#
+# This is why `in @bauchladen` is the first declaration in the
+# import block above. The order is not stylistic; the chain
+# `@bauchladen ← @autopoietic` reflects a structural prerequisite
+# the Lawvere fixed-point machinery requires.
+#
+# === The 28KB grammar-class precursor: LIFT, not re-declaration ===
+#
+# Per spec §3.6: the @autopoietic prism-class declared here is the
+# LIFT of a 28KB precursor at `docs/specs/autopoietic-grammar-
+# spec.md` (Reed, 2026-06-04). The precursor declared `abstract
+# grammar @autopoietic` with `boundary = @me | @reality` and
+# `< @autopoietic` inheritance from `@actor` and `@runtime` — the
+# pre-prism-keyword form, before [[architecture-prism-as-trait-as-
+# everything]] collapsed `grammar` / `trait` / `interface` / `type`
+# to `prism`.
+#
+# The lift is MECHANICAL in form (`abstract grammar @autopoietic`
+# → `prism @autopoietic`) and STRUCTURAL in placement (the
+# `@bauchladen ← @autopoietic ← @fate` chain situates the lifted
+# prism class between the content-addressing discipline below and
+# the constrained-inference operator above).
+#
+# The inheritance discipline (spec §3.6, items 1-4):
+#
+#   1. This shard does NOT duplicate the precursor's content. The
+#      28KB spec carries the OBC/ADO mappings, the extraction
+#      analysis, the silence/fear/glue-work translations, the
+#      MirrorStore-as-substrate argument; these stay in the spec.
+#   2. The shard cross-references the precursor at the spec layer
+#      (this docblock), not by re-declaration.
+#   3. The precursor's boundary / inheritance / coupling vocabulary
+#      remains the source-of-truth at the grammar altitude.
+#   4. The 28KB spec is NOT obsolete; it is the substrate's history
+#      of how the discipline came to be nameable at the prism
+#      altitude. It stays in `docs/specs/` as the precursor reference.
+#
+# Substrate-already-had-the-word at the precursor altitude (per
+# [[feedback-substrate-already-had-the-word]]); the substrate had
+# `@autopoietic` at the grammar-class altitude for 25 days before
+# this shard. The shard's contribution is the chain placement and
+# the substrate-decl shape, not the discipline itself.
+#
+# === The #379 cybernetic property operationalized via Bauchladen ===
+#
+# `@epistemologic/cybernetic/autopoiesis` (per `shards/epistemologic/
+# cybernetic/autopoiesis.mirror`, 750+ lines, landed 2026-06-09) is
+# the SPECIES declaration at the cybernetic-ancestor altitude. It
+# carries typed carriers (organization, component, autopoietic_
+# system), the predicate `autopoietic_closure_holds(s)`, and the τ-
+# actions (produce, couple, close, gauge_act) for the four held
+# readings (A self-production, B structural coupling, C operational
+# closure, E bundle structure group). ρ = adjoint representation.
+#
+# This shard LIFTS that property to a prism class. The lift's
+# structural form (per spec §3.1):
+#
+#   Altitude                                           Carrier shape
+#   ----------------------------------                 -------------
+#   @epistemologic/property/autopoietic                predicate
+#     (verifier: `autopoietic(type)`)
+#   @epistemologic/cybernetic/autopoiesis              typed carriers
+#     (species: lock_pair instantiation; ρ=adjoint)    + predicate
+#   @autopoietic (THIS SHARD)                          prism contract
+#     (prism class: commitment to fold-back)
+#
+# The three altitudes STACK; they do NOT compete. The property
+# declares verifiability; the species declares the cybernetic-
+# ancestor placement; the prism class declares the commitment to
+# produce verifiable output. Per spec §3.4, Maturana-Varela's
+# operational form is operationalized at the substrate altitude via
+# content-addressed-crystal accumulation in the Bauchladen tray:
+#
+#   Maturana-Varela                Substrate
+#   --------------------------     -------------------------------
+#   Network of productions         Set of @autopoietic prisms
+#                                  operating over the Bauchladen tray
+#   Components produced            Crystals added to the tray
+#   Conditions for continued       Prior crystals consulted as inputs
+#     production                   to future inferences
+#   Boundary (membrane)            Crystals nameable by OID
+#   Structural coupling            @fate inferences reading external
+#                                  @io data and emitting crystals
+#   Operational closure            The tray-operation set closes —
+#                                  every product (crystal) is the
+#                                  input to some operation
+#
+# The Lawvere fixed-point witness (Soto-Andrade & Varela 1984): at
+# some tick a @fate inference will emit a crystal whose OID equals
+# an OID it consulted as input. The substrate exhibits this
+# constructively — content-addressing makes the OID equality check
+# trivial.
+#
+# === The candidates(hole) migration home (per spec §4.7) ===
+#
+# The boot-floor file `boot/std/fate/tournament.mirror` declared
+# `candidates(hole) -> [resolution]` with a five-ganglion body
+# (`@ai/abyss.depth`, `@ai/introject.pattern`, `@ai/cartographer.
+# map`, `@ai/explorer.expand`, `@ai/fate.select`). The boot/
+# directory was killed in spring-clean. The action's content was
+# orphaned: 15+ specs still reference it (kintsugi-tournament.md,
+# substrate-native-fate-tournament.md, kintsugi-wiring.md, code-
+# metalogue-surface.md, lsp-and-mcp.md, road-to-1.0.md, gap-tension-
+# tensor-substrate.md, ants-colonies-stigmergy.md, others), but no
+# shard in `shards/` carries the action declaration.
+#
+# Taut scout `27c8592` §1 / §2.4 surfaced this as the most
+# operationally significant unresolved tension. Spec §4.7's
+# four-row migration mapping table identifies @autopoietic's tick-
+# action carrier as the migration home:
+#
+#   Boot-floor element                          Chain landing site
+#   -----------------------------------------   -----------------------
+#   `candidates(hole) -> [resolution]`          @autopoietic's `tick`
+#     (the action)                              action; @fate inherits
+#                                               via `in @autopoietic`
+#   The five-ganglion body (depth, pattern,    The autopoietic-tick's
+#     map, expand, select)                      components; per spec
+#                                               §3.4 the components
+#                                               are the autopoietic-
+#                                               system's `produce`
+#                                               operations
+#   `[resolution]` (the return type)           Content-addressed
+#                                               crystals in the
+#                                               @bauchladen tray
+#   The five-ganglion optical-source           The OPERATIONAL
+#     shards (already in `shards/optics/        realization of the
+#     source/ganglion/*.mirror` per             autopoietic-tick's
+#     recognition #58)                          components
+#
+# The migration is NOT a re-write; it is a re-anchoring. The boot/
+# content was spring-cleaned because it had no substrate-decl host;
+# this shard provides the host. The `tick` action declared below
+# inherits the `candidates(hole)`-shape semantics under the
+# autopoietic discipline.
+#
+# === Forward-promised inheritors (per spec §3.5) ===
+#
+# Prisms that will import `in @autopoietic` once the chain lands:
+#
+#   - @fate (this chain's third tier; per spec §4): Fate inferences
+#     consult prior crystals and emit new crystals; the fold-back
+#     IS Fate's learning mechanism.
+#   - @glue (forward-promised): @glue uses @fate to pick which
+#     morphism to apply; @glue is autopoietic via @fate.
+#   - @kintsugi (forward-promised): @kintsugi drives the D-flow's
+#     per-step decisions via @fate; the kintsugi loop IS autopoietic.
+#   - @reflection (forward-promised): per [[architecture-reflection-
+#     thinks-in-spectral-questions]], Reflection consults the
+#     pipeline's spectral-altitude history and emits altitude-
+#     selection crystals; Reflection IS autopoietic.
+#   - @spectral/metalogue (forward-promised; the metalogue's turn
+#     chain consults prior turns via `in_reply_to`; the metalogue
+#     session IS autopoietic).
+#
+# Asymmetry: NOT every prism becomes @autopoietic. Many prisms are
+# stateless inference functions (e.g., @code/metalogue shims that
+# translate substrate declarations to language-specific AST nodes).
+# Such prisms import `in @bauchladen` (outputs are content-addressed
+# crystals) but do NOT import `in @autopoietic` (they do not fold
+# their outputs back as inputs). The asymmetry is structural and
+# healthy.
+#
+# === No operational sibling THIS tick ===
+#
+# Per [[feedback-craft-not-deliver]] no `@mirror/cybernetics/
+# autopoietic` operational sibling lands at this tick. The substrate
+# ALREADY has the operational machinery (content-addressed OID layer
+# at @mirror/store; the autopoiesis property at @epistemologic/
+# cybernetic/autopoiesis with four held readings; gen_prism's
+# typed-actor autopoietic instance; the librarian altitude at
+# @spectral/db as the autopoietic memory layer). This shard names
+# the prism-class contract so downstream shards can declare
+# `requires autopoietic_closure_holds(my_prism)` and `requires
+# lawvere_fixed_point(my_prism)` rather than re-state the obligations
+# per species. The deeper sub-shards (`shards/autopoietic/fold.
+# mirror` with `fold_back` + `exhibit_fixed_point` per spec §3.3)
+# follow when consumers pull.
+#
+# === Pre-AI prior art ===
+#
+#   Autopoiesis (biological)     Maturana & Varela 1972 (*De máquinas
+#                                y seres vivos. Autopoiesis: la
+#                                organización de lo vivo*, Editorial
+#                                Universitaria); the original
+#                                autopoiesis paper.
+#   Autopoiesis (elaborated)     Maturana & Varela 1980 (*Autopoiesis
+#                                and Cognition: The Realization of
+#                                the Living*, D. Reidel). The Boston
+#                                Studies elaboration; structural
+#                                coupling; organization vs structure.
+#   Operational closure          Varela 1979 (*Principles of
+#                                Biological Autonomy*, Elsevier).
+#                                The autonomy-via-organisation
+#                                refinement; the reading Maturana
+#                                later accepted as the operational
+#                                definition.
+#   Lawvere fixed-point bridge   Soto-Andrade & Varela 1984 ("Self-
+#                                reference and fixed points: a
+#                                discussion and an extension of
+#                                Lawvere's theorem", *Acta Applicandae
+#                                Mathematicae* 2(1):1-19, DOI 10.1007/
+#                                BF00046985). THE load-bearing formal
+#                                result; autopoiesis IS Lawvere
+#                                fixed-point; the bridge that makes
+#                                the substrate's construction-time
+#                                witness substrate-evident.
+#   Diagonal arguments           Lawvere 1969 ("Diagonal arguments
+#                                and Cartesian closed categories",
+#                                *Lecture Notes in Mathematics* 92,
+#                                134-145). The fixed-point theorem
+#                                Soto-Andrade & Varela apply.
+#   Grammar-class precursor      Reed 2026-06-04 (*autopoietic-
+#                                grammar-spec.md*, 28KB); the
+#                                @autopoietic discipline at
+#                                grammar-class altitude; the
+#                                substrate-already-had-the-word
+#                                ancestor this shard lifts.
+#
+# Spec context: docs/specs/bauchladen-autopoietic-fate.md §3 (the
+#               @autopoietic prism-class shape this shard discharges);
+#               §3.1 (the lift mechanics from property to prism class);
+#               §3.2 (the structural argument for @bauchladen
+#               dependency: Lawvere fixed-point requires stable
+#               identity); §3.3 (the substrate-decl shape with five
+#               `in` declarations and permission carrier); §3.4
+#               (Maturana-Varela operationalized via content-
+#               addressed accumulation); §3.5 (forward-promised
+#               inheritors); §3.6 (the grammar-class precursor lift
+#               discipline); §4.7 (the candidates(hole) migration
+#               mapping table); §10.3 (the relationship between the
+#               three altitudes: property / species / prism class);
+#               docs/specs/autopoietic-grammar-spec.md (Reed 2026-
+#               06-04 grammar-class precursor; 28KB; INHERITED not
+#               duplicated per §3.6); docs/specs/cyberpunk-
+#               autopoiesis.md (the recursion-lock tower audit doc
+#               grounding the cybernetic-species shard);
+#               docs/scouts/2026-06-29-taut-scout-bauchladen-chain-
+#               updated.md (Taut scout `27c8592` substantiating the
+#               precursor-lift framing and the candidates(hole)
+#               migration home).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]],
+#                      [[architecture-mirror-store-vs-spectral-db]]
+#                       (open-foundation @mirror/store; closed-engine
+#                        @spectral/db; @autopoietic's tray contents
+#                        propagate through both layers),
+#                      [[architecture-fragmentation-is-the-rust-
+#                       substrate]] (the Rust realization of the
+#                        operational layer the discipline lifts;
+#                        prism_core stays deps-free),
+#                      [[architecture-spectral-triples-all-the-way]]
+#                       (the fractal self-similarity; @bauchladen at
+#                        identity-discipline altitude, @autopoietic
+#                        at closure-discipline altitude, both lift
+#                        @glass's splinter altitude),
+#                      [[architecture-connes-spectral-triple]]
+#                       (the substrate IS the operational form of
+#                        Connes' (A, H, D); @autopoietic is the
+#                        closure condition on D_mirror's flow per
+#                        spec §1.5 — the flow's outputs can be
+#                        re-input),
+#                      [[architecture-spectral-db-autopoietic-memory]]
+#                       (the librarian altitude IS the substrate's
+#                        autopoietic memory layer; this shard names
+#                        the discipline; @spectral/db consolidates),
+#                      [[architecture-mirror-as-content-addressed-
+#                       build-system]] (content addressing makes
+#                        the autopoietic fixed point CONSTRUCTIBLE,
+#                        not just verifiable; Banach contraction
+#                        over hash space),
+#                      [[architecture-mirror-as-expanding-hilbert-
+#                       space]] (recognition #51; the tray's monotone
+#                        growth IS H_mirror's dimension expansion;
+#                        @autopoietic's fold-back drives the
+#                        recursion that expands H),
+#                      [[architecture-bateson-form-behaviour-
+#                       partition]] (recognition #50; @autopoietic
+#                        operationalizes Maturana's organisation/
+#                        structure co-arising; organisation = form,
+#                        structure = process; the kintsugi loop's
+#                        deep purpose is shifting the boundary
+#                        outward through autopoietic recursion),
+#                      [[architecture-form-process-partition-at-
+#                       family-root]] (recognition #61; @autopoietic
+#                        IS the cybernetic ancestor that DEFINED the
+#                        form/process partition via Maturana's
+#                        structure/organisation),
+#                      [[architecture-peer-learns-by-crystal-
+#                       vocabulary-expansion]] (each settled crystal
+#                        extends A_peer; vocabulary expansion IS
+#                        autopoietic by construction; the peer
+#                        produces the conditions for its own
+#                        continued naming),
+#                      [[architecture-shard-as-crdt]] (uuid_spectral
+#                        as monoid homomorphism; the autopoietic-
+#                        instance identity discipline crystals
+#                        respect at the shard altitude),
+#                      [[architecture-error-as-tomm-probe]] (the
+#                        Tomm probe IS the von_foerster_circular_
+#                        reflexivity measurement; @autopoietic's
+#                        fold-back IS the substrate observing itself
+#                        producing itself),
+#                      [[architecture-reflection-thinks-in-spectral-
+#                       questions]] (Reflection's altitude selection
+#                        is autopoietic by construction; forward-
+#                        promised inheritor per spec §3.5),
+#                      [[feedback-substrate-pull-confidence-acts]]
+#                       (the chain's naming IS confidence-acting;
+#                        substrate-pull-confirmed by Taut `27c8592`),
+#                      [[feedback-no-bare-types]] (autopoietic_
+#                        membership, tick, closure_witness,
+#                        tick_action are typed carriers; no bare
+#                        primitives),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (the 28KB grammar-class precursor is the
+#                        substrate-already-had ancestor; the lift
+#                        to prism class is the appropriate next
+#                        move, not the original naming),
+#                      [[feedback-craft-not-deliver]] (no operational
+#                        sibling, no `fold_back` sub-shard at this
+#                        tick; the family-root admission lands the
+#                        contract; the actions follow when consumers
+#                        pull).
+# Related shards: bauchladen.mirror (the content-addressing
+#                  discipline this STRUCTURALLY depends on; Lawvere
+#                  fixed-point requires stable identity; first tier
+#                  of the chain),
+#                 epistemologic/cybernetic/autopoiesis.mirror (the
+#                  property altitude this prism class lifts; 750+
+#                  lines; ρ = adjoint; four held readings; the
+#                  #379 cybernetic property),
+#                 glass.mirror (the splinter floor; @autopoietic's
+#                  verdicts surface against transparency<closure_
+#                  witness>),
+#                 epistemologic/math/lawvere.mirror (the formal
+#                  fixed-point machinery; Soto-Andrade & Varela
+#                  1984 bridge; the structural prerequisite for
+#                  autopoiesis at the math altitude),
+#                 mirror/store.mirror (the operational realization
+#                  of @bauchladen the discipline lifts; the OID
+#                  layer underwrites the construction-time fixed-
+#                  point witness),
+#                 uuid/spectral.mirror (uuid_spectral identity
+#                  carrier for autopoietic instances; the navigable-
+#                  identity discipline at the shard altitude),
+#                 fate.mirror (the @autopoietic prism that inherits
+#                  permission to fold back; the third tier of the
+#                  chain; forward-promised per spec §4).
+# Path-namespace property: this file at `shards/autopoietic.mirror`
+# declares `@autopoietic` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/maturana-varela-1972
+source @arxiv/cybernetics/maturana-varela-1980
+source @arxiv/cybernetics/varela-1979
+source @arxiv/math/soto-andrade-varela-1984
+source @arxiv/math/lawvere-1969
+
+prism @autopoietic {
+  focus autopoietic_membership
+  project autopoietic_membership
+  split autopoietic_membership
+  shift autopoietic_membership
+  settle autopoietic_membership
+}
+
+# === The autopoietic_membership carrier ===
+#
+# A typed record per [[feedback-no-bare-types]] naming a prism's
+# formal declaration that it IS @autopoietic — i.e., the bilateral
+# commitment (per recognition #37's Pask-agreement reading of
+# `requires`) that the prism's operations consume its own prior
+# crystals as input and respect the Lawvere fixed-point discipline.
+#
+# - `prism`                     the ref of the prism committing to
+#                               autopoietic discipline.
+# - `bauchladen_chain`          the witness that the prism imports
+#                               `in @bauchladen` (directly or
+#                               transitively); the structural
+#                               precondition the Lawvere fixed-point
+#                               requires; per spec §3.2.
+# - `instance_id`               the uuid_spectral identity carrier
+#                               for the autopoietic instance; the
+#                               navigable identity downstream
+#                               @autopoietic ticks reference.
+# - `closure_verdict`           the @glass verdict (pass / partial
+#                               (confidence) / failure(reason)) for
+#                               the operational closure condition;
+#                               `pass` means every output crystal
+#                               has been verified to be the input
+#                               of some operation in the prism's
+#                               operation set.
+# - `fixed_point_witness`       optional OID exhibiting the Lawvere
+#                               fixed point; per spec §3.3 the
+#                               witness is CONSTRUCTIBLE (once the
+#                               prism reaches a tick at which its
+#                               output's OID equals one of its
+#                               input OIDs, the witness is the OID),
+#                               but the substrate does not require
+#                               the witness be exhibited at every
+#                               tick.
+#
+# Identity contract: byte-equality on (prism, instance_id). Two
+# autopoietic_membership records ARE the same membership under
+# content-addressing iff both the prism ref and the instance_id
+# are byte-equal. The closure_verdict and fixed_point_witness are
+# tick-local readings; they do NOT participate in membership
+# identity.
+type autopoietic_membership = {
+  prism:               ref,
+  bauchladen_chain:    verdict,
+  instance_id:         uuid_spectral,
+  closure_verdict:     verdict,
+  fixed_point_witness: option(oid),
+}
+
+# === The tick carrier ===
+#
+# The discrete time unit of autopoietic operation. One tick = one
+# fold-back cycle: consume crystals from the Bauchladen → produce
+# new crystals → add to Bauchladen. The substrate's @time altitude
+# carrier specialized to the autopoietic discipline.
+#
+# - `instance`     the uuid_spectral naming the autopoietic instance
+#                  the tick belongs to.
+# - `index`        the monotone tick index within the instance; the
+#                  natural-number tick coordinate.
+# - `input_oids`   the OIDs the tick consumed from the tray as
+#                  inputs to its fold-back fold (per spec §3.3,
+#                  consumed input OIDs are tracked structurally).
+# - `output_oids`  the OIDs the tick produced; the new crystals
+#                  added to the tray at the end of the tick.
+#
+# Identity contract: byte-equality on (instance, index). Two ticks
+# with the same instance and index ARE the same tick under
+# content-addressing; the input/output OID sets are determined by
+# the tick's body and are content-equivalent.
+type tick = {
+  instance:    uuid_spectral,
+  index:       ref,
+  input_oids:  [oid],
+  output_oids: [oid],
+}
+
+# === The closure_witness carrier ===
+#
+# The proof carrier for the operational closure condition — the
+# defining property of autopoiesis per Maturana-Varela 1980 (Read C,
+# the operational-closure reading) and Varela 1979. Operational
+# closure holds iff the set of operations on the prism's output
+# space closes — every product (crystal) is itself the input to
+# some operation in the prism's operation set.
+#
+# - `instance`            the uuid_spectral naming the autopoietic
+#                         instance whose closure is being witnessed.
+# - `tick_range`          the inclusive tick range over which the
+#                         closure was verified; closure may hold
+#                         over some tick ranges and fail over others.
+# - `lawvere_witness`     optional OID exhibiting the Lawvere fixed
+#                         point within the tick range; presence
+#                         indicates the closure has been WITNESSED
+#                         constructively (not just verified
+#                         structurally).
+# - `verdict`             the @glass verdict (pass / partial
+#                         (confidence) / failure(reason)) for the
+#                         closure condition over the tick range.
+#
+# Identity contract: byte-equality on (instance, tick_range). Two
+# closure_witnesses for the same instance over the same tick range
+# ARE the same witness under content-addressing.
+type closure_witness = {
+  instance:        uuid_spectral,
+  tick_range:      ref,
+  lawvere_witness: option(oid),
+  verdict:         verdict,
+}
+
+# === The tick_action carrier ===
+#
+# The typed action carrier for what @autopoietic prisms DO at each
+# tick. PER SPEC §4.7 this IS the migration home for the orphaned
+# `candidates(hole) -> [resolution]` content from the spring-cleaned
+# `boot/std/fate/tournament.mirror` file. The five-ganglion body
+# (@ai/abyss.depth, @ai/introject.pattern, @ai/cartographer.map,
+# @ai/explorer.expand, @ai/fate.select) is preserved structurally
+# at `shards/optics/source/ganglion/*.mirror` per recognition #58;
+# this carrier names the SIGNATURE the ganglion bodies discharge
+# under the autopoietic discipline.
+#
+# The action shape: a typed gap (the "hole" in `candidates(hole)`)
+# becomes a list of candidate crystals (the "[resolution]"); each
+# candidate is a content-addressed crystal in the Bauchladen tray;
+# the @fate tournament selects from the candidate list per
+# `shards/fate.mirror` (forward-promised).
+#
+# - `instance`     the uuid_spectral naming the autopoietic instance
+#                  the action belongs to.
+# - `tick`         the tick at which the action fires.
+# - `hole`         the typed-gap carrier; the substrate-pull-typed
+#                  shape the action attempts to fill (per the
+#                  candidates(hole) migration; the gap's type
+#                  determines which ganglia contribute candidates).
+# - `candidates`   the list of candidate OIDs the action produced;
+#                  the operational form of `[resolution]`; each
+#                  candidate is a content-addressed crystal that
+#                  joins the Bauchladen tray and is selectable by
+#                  the @fate tournament.
+#
+# Identity contract: byte-equality on (instance, tick). Two
+# tick_actions for the same instance at the same tick ARE the same
+# action under content-addressing.
+type tick_action = {
+  instance:   uuid_spectral,
+  tick:       tick,
+  hole:       ref,
+  candidates: [oid],
+}
+
+# === fold_back — the autopoietic fold ===
+#
+# The substrate's prism-altitude lift of Maturana-Varela's network-
+# of-productions discipline. Given a prism ref and a tray of prior
+# crystals, consume the prior crystals as inputs, produce new
+# crystals, and return the produced crystal list. The body of this
+# action discharges per-prism at the realisation boundary; the
+# signature names the contract that fold-back-capable prisms commit
+# to.
+#
+# Subject to the Lawvere fixed-point condition (per spec §3.2 +
+# `lawvere_fixed_point` requires obligation below): at some tick the
+# produced crystal's OID must equal an OID in the prior_crystals
+# tray for the prism to qualify as autopoietic in Maturana-Varela's
+# sense. The witness is CONSTRUCTIBLE (per spec §3.4) — content-
+# addressing makes the OID equality check trivial — but the
+# substrate does not require the witness be exhibited at every tick.
+#
+# Body discharges per-prism at the realisation boundary. Same shape
+# as @bauchladen.crystallize and @glass.shatter (declarative
+# obligation discharged at the species boundary).
+fold_back(prism: ref, prior_crystals: tray) -> [crystal] { \ }
+
+# === tick — one fold-back cycle ===
+#
+# One discrete autopoietic operation cycle for an @autopoietic
+# prism. PER SPEC §4.7 this action absorbs the orphaned
+# `candidates(hole)` semantics from the spring-cleaned
+# `boot/std/fate/tournament.mirror` — the five-ganglion body that
+# previously discharged the gap-to-candidates morphism now
+# discharges under @autopoietic's prism-altitude discipline.
+#
+# The action reads the current scope's gap, dispatches to the
+# appropriate ganglia (depth, pattern, map, expand, select per
+# `shards/optics/source/ganglion/*.mirror`), produces candidate
+# crystals, adds them to the Bauchladen tray, and returns the
+# closure_witness for the tick.
+#
+# The verdict carrier surfaces operational closure (pass / partial /
+# failure) for the tick; downstream @fate tournament selectors
+# (forward-promised at `shards/fate/tournament.mirror`) consume the
+# tick's output candidates per spec §6.
+#
+# Body discharges per-prism at the realisation boundary.
+tick(prism: ref, scope: ref) -> closure_witness { \ }
+
+# === closure_check — bilateral verdict over a tick range ===
+#
+# Per Maturana-Varela 1980's operational-closure reading (Read C of
+# `shards/epistemologic/cybernetic/autopoiesis.mirror`): the
+# bilateral verdict that the prism's operations close on their
+# products over some tick range. The check searches the prism's
+# output history for the closure condition (every output is the
+# input of some operation) and returns the @glass verdict.
+#
+# Body discharges per-prism at the realisation boundary; the
+# closure-check semantics depend on the prism's operation set
+# (focus / project / split / shift / settle for a generic prism;
+# specialized operation sets for sub-shards).
+closure_check(prism: ref) -> verdict { \ }
+
+# === register_membership — formal declaration ===
+#
+# Per spec §3.3's permission-carrier discipline: a prism that
+# imports `in @autopoietic` MUST register its membership before
+# the substrate's fold-back machinery will recognize its outputs
+# as autopoietic. Registration produces the autopoietic_membership
+# record above; downstream tooling (the librarian, the @fate
+# tournament, the @spectral/db consolidation) reads the registered
+# membership to dispatch fold-back operations.
+#
+# Body discharges per-prism at the realisation boundary; registration
+# typically happens once per prism instance at first @autopoietic
+# tick.
+register_membership(prism: ref) -> autopoietic_membership { \ }
+
+# === The requires obligations ===
+#
+# Downstream shards declare bilateral agreement (per recognition
+# #37, the Pask-agreement reading of `requires`) with the
+# @autopoietic discipline by writing the obligations below. The
+# bilateral commitment: the @autopoietic-importing prism commits to
+# discharging the obligations; the consumer commits to surfacing
+# violations at the species boundary.
+
+# Per spec §3.2: the prism imports `in @bauchladen` (directly or
+# transitively) so the Lawvere fixed-point condition is well-defined.
+# The substrate-pull-honest precondition; without it, autopoiesis
+# reduces to mere recurrence with ambiguous reference. Inheritor
+# shards discharge by verifying the import chain.
+bauchladen_dependency_satisfied(prism: ref) -> verdict { \ }
+
+# Per spec §3.2 / §3.4: the prism's fold-back satisfies the Lawvere
+# fixed-point condition `hash(P(f)) == f` for some OID f in the
+# prism's output history. The MATHEMATICAL autopoiesis criterion
+# (Soto-Andrade & Varela 1984). Inheritor shards discharge by
+# exhibiting the fixed-point witness OID (constructibly, via the
+# OID equality check on the tick history).
+lawvere_fixed_point(prism: ref) -> verdict { \ }
+
+# Per Maturana-Varela 1980 Read C: the prism's operations close on
+# their products — every product (crystal) is the input to some
+# operation in the prism's operation set. The DEFINING property of
+# autopoiesis at the operational altitude. Inheritor shards discharge
+# by demonstrating the closure condition over a tick range via
+# closure_check.
+operational_closure(prism: ref) -> verdict { \ }
+
+# Per spec §3.6: the prism inherits the autopoietic-grammar-spec.md
+# (Reed 2026-06-04, 28KB) grammar-class semantics; the boundary
+# discipline (@me vs @reality), the actor/runtime inheritance shape,
+# the OBC/ADO mappings. Inheritor shards discharge by referencing
+# the precursor at the spec layer rather than re-declaring its
+# content.
+grammar_precursor_inherited(prism: ref) -> verdict { \ }
+
+# Per spec §4.7: the tick_action's candidates(hole) shape is well-
+# typed under the migrated semantics. The migrated content discharges
+# via the five-ganglion body at `shards/optics/source/ganglion/
+# *.mirror`; the gap's type determines which ganglia contribute
+# candidates; the candidate list's element type matches the gap's
+# expected resolution type. Inheritor shards discharge by verifying
+# the gap-to-candidate type alignment.
+candidates_hole_well_typed(action: tick_action) -> verdict { \ }
+
+# === The autopoietic_closure_holds inheritance predicate ===
+#
+# `autopoietic_closure_holds(prism)` is the predicate consumer
+# shards name in a `requires` clause to declare bilateral agreement
+# that the prism IS autopoietic — i.e., the prism satisfies all
+# five obligations above conjointly: bauchladen_dependency_satisfied
+# + lawvere_fixed_point + operational_closure +
+# grammar_precursor_inherited + candidates_hole_well_typed.
+#
+# The bilateral commitment: the @autopoietic-importing prism commits
+# to discharging the five obligations; the consumer commits to
+# surfacing violations at the species boundary.
+#
+# Declared as a typed predicate so downstream species shards can
+# write `requires autopoietic_closure_holds(my_prism)` — same shape
+# as `bauchladen.bauchladen_witnessing(c)`,
+# `chirality.chirality_witnessing(c)`,
+# `epistemologic/cybernetic/autopoiesis.autopoietic_closure_holds(s)`
+# (the species-altitude predicate this prism-class predicate
+# operationalizes at prism altitude), and the metalogue
+# `requires substrate_pull_preserving(shim_X)` pattern at
+# `shards/code/metalogue.mirror`.
+#
+# Forward-promised inheritors (per spec §3.5):
+#
+# - `@fate` (the chain's third tier): fate inferences consult prior
+#   crystals and emit new crystals; @fate is `in @autopoietic`.
+# - `@glue` (forward-promised): @glue uses @fate to pick which
+#   morphism to apply; @glue is autopoietic via @fate.
+# - `@kintsugi` (forward-promised): @kintsugi drives the D-flow's
+#   per-step decisions via @fate; the kintsugi loop IS autopoietic.
+# - `@reflection` (forward-promised): Reflection consults the
+#   pipeline's spectral-altitude history; Reflection IS autopoietic.
+# - `@spectral/metalogue` (forward-promised): the metalogue's turn
+#   chain consults prior turns via `in_reply_to`; the metalogue
+#   session IS autopoietic.
+#
+# No `requires autopoietic_closure_holds(...)` clauses are added at
+# THIS shard. The family-root declares the predicate; consumers add
+# the clauses when they pull. Per [[feedback-craft-not-deliver]] the
+# operational sibling and the deeper sub-shards (`shards/autopoietic/
+# fold.mirror` with fold_back + exhibit_fixed_point per spec §3.3)
+# follow when consumers pull.
+autopoietic_closure_holds(prism: ref) -> verdict { \ }
+
+out @autopoietic
+out autopoietic_membership
+out tick
+out closure_witness
+out tick_action
+out fold_back
+out closure_check
+out register_membership
+out bauchladen_dependency_satisfied
+out lawvere_fixed_point
+out operational_closure
+out grammar_precursor_inherited
+out candidates_hole_well_typed
+out autopoietic_closure_holds
