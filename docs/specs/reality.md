@@ -21,13 +21,22 @@ and `shards/reality/algebra/silicon.mirror` landing on top of the
 operational @bauchladen ← @autopoietic ← @fate chain, with the existing
 silicon.md content rehoused as one species shard under the new family-root)
 **Status:** canonical-naming; the substrate-pull work has been quietly
-happening across recognition #76 (gauge/matter altitude-portable; Pack-
-ratified), recognition #79 (the 5-op gauge IS the Void duality basis;
-Pack-ratified), the `@epistemologic/reality/*` property altitude
+happening across recognition #76 (gauge/matter altitude-portable;
+**RESEARCH-PROMOTED-with-3-constraints** per
+`docs/specs/recognitions/cascade-recognition-76-through-80-canonical-spec.md`
+§2.1 + §2.7 — NOT Pack-ratified; see §2.1 below for status correction
+absorbed from Taut scout `adaadae1`), recognition #79 (the 5-op gauge IS
+the Void duality basis; **NEEDS-MORE-WORK** per the cascade canonical
+spec §5.1 + §5.8 — NOT Pack-ratified; status correction absorbed from
+Taut scout `adaadae1`), the `@epistemologic/reality/*` property altitude
 (operational since 2026-06-06 per Mara's reality-family migration), and
 today's @silicon family-root spec at `27e9067`. This spec NAMES the
 top-level family-root at which the gauge/matter portability becomes
-gauge/matter COLLAPSE under the substrate's relationship to physical reality.
+gauge/matter COLLAPSE under the substrate's relationship to physical
+reality. Because #76 and #79 are candidate (not Pack-ratified), this
+spec's claims that compose them INHERIT candidate status; #106 promotion
+requires Seam adversarial review on the four-witness chain plus
+adjudication on the #76/#79 ratification gate (see §10.5).
 
 ---
 
@@ -334,8 +343,20 @@ observer's relationship to what crosses @io is named and learned from.
 
 ### §2.1 — Reference recognitions #76 (altitude-portable gauge/matter split; 5 ops as gauge; matter as altitude-portable) and #79 (5 ops IS Void duality basis; 5-axis projector algebra)
 
-**Recognition #76** (Pack-ratified, `docs/math/the-tower/recognition-76-
-gauge-matter-altitude-portable.md`). The substrate's form/process partition
+**Recognition #76** (status: **RESEARCH-PROMOTED-with-3-constraints**,
+NOT Pack-ratified; `docs/math/the-tower/recognition-76-gauge-matter-
+altitude-portable.md` + research at
+`docs/specs/recognitions/recognition-76-research-2026-06-18.md`; the
+cascade canonical spec at
+`docs/specs/recognitions/cascade-recognition-76-through-80-canonical-spec.md`
+§2.1 records the research-promotion verdict with three open constraints
+per §2.7: (1) carrier extras location for `T_reg/T_regd/ω` regulators;
+(2) cross-altitude action match between floor and high altitudes; (3)
+Mode B gauge-matter boundary at splinter altitude. **Status correction
+absorbed from Taut scout `adaadae1` §2.2**: earlier draft of this spec
+over-claimed Pack-ratification; the gauge-collapse claim at #106
+INHERITS the candidate status of #76 until those constraints close.).
+The substrate's form/process partition
 (promoted #50, Bateson form/substance lifted at @mirror altitude) IS the
 gauge/matter split, and this split is altitude-portable. The 5-op algebra
 (`focus`, `project`, `split`, `lift`, `refract`) is in the gauge role at
@@ -358,8 +379,18 @@ of the 5-op gauge algebra. The dimensional invariance — the property that
 makes "arbitrary-dimensional AI" operational — IS this split applied
 recursively.
 
-**Recognition #79** (Pack-ratified, `docs/math/the-tower/recognition-79-
-gauge-is-void-duality-basis.md`). The substrate's 5-op gauge algebra IS
+**Recognition #79** (status: **NEEDS-MORE-WORK**, NOT Pack-ratified;
+`docs/math/the-tower/recognition-79-gauge-is-void-duality-basis.md` +
+research at
+`docs/specs/recognitions/recognition-79-research-2026-06-18.md`; the
+cascade canonical spec §5.1 + §5.8 records three open NEEDS-WORK items:
+(1) formal proof of the orthogonality reduction 8 → 5; (2) canonical
+op ⇔ axis mapping (currently non-canonical); (3) closure of the
+projector algebra under composition. **Status correction absorbed from
+Taut scout `adaadae1` §2.2**: earlier draft over-claimed Pack-
+ratification; the projector-canonicality piece of the #106 strengthening
+claim INHERITS the candidate status of #79 until those items close.).
+The substrate's 5-op gauge algebra IS
 the projector basis for the orthogonal duality space of connected-graph
 quantum states. The gauge dim of 5 is NOT substrate-arbitrary — it is
 the exact dimension of the orthogonal duality space identified in the Void
@@ -2230,6 +2261,49 @@ agent-coordination altitude.
 The brief anticipated dissolution but did not name the day-long pull-
 trajectory. The writing surfaces it.
 
+### §10.5 — #106 promotion gate: Seam adversarial review required (status drift acknowledged)
+
+Absorbed from Taut scout `adaadae1` §2.2 + §5: the #106 promotion of
+the gauge-collapse recognition that this spec names is NOT a one-step
+landing. Seam adversarial review is required before promotion, on at
+least three load-bearing items:
+
+1. **The four-witness chain.** Per the candidate's witness count: (a)
+   the `property` altitude pattern at 2026-06-06 (the
+   `@epistemologic/reality/*` family migration); (b) today's @silicon
+   spec at `27e9067`; (c) yesterday's @glue/fold_back capstone (#104
+   chain landing); (d) this spec. Whether four witnesses across the
+   property altitude, two family-root specs, and one operational
+   capstone constitute a Pack-ratifiable cascade is the Seam call.
+
+2. **The #76 + #79 ratification gate.** Per §2.1 above and the
+   header **Status** correction: #76 is RESEARCH-PROMOTED-with-3-
+   constraints and #79 is NEEDS-MORE-WORK per the cascade canonical
+   spec. This spec's claims that compose them INHERIT candidate
+   status. Seam must adjudicate whether (i) the underlying #76+#79
+   constraints have closed via subsequent work this spec hasn't seen,
+   or (ii) the #106 claim must wait on #76+#79 ratification first,
+   or (iii) the #106 claim is independent enough to land with #76+#79
+   open as named.
+
+3. **gauge-COLLAPSE vs gauge-altitude-portability adjudication.**
+   Per §2.2 + §2.3 above: this spec claims the COLLAPSE is one
+   structural step stronger than #76's altitude-portability — it
+   declares matter and information are ONE gauge-orbit, not TWO
+   carriers under one gauge. Seam must adjudicate whether the
+   collapse is (i) a genuinely distinct recognition with its own
+   substrate-decl witness count, (ii) a reframing of #76 + #79 that
+   should fold into their ratification rather than promote separately,
+   or (iii) both — a reframing that strengthens enough to warrant its
+   own family-root naming.
+
+The Seam item is load-bearing. The substrate-pull is real (four
+witnesses; 65 days through the Void document; 24 days through the
+property altitude); the Pack-ratification gate is at least one cascade
+step behind reality.md's first-pass framing. This subsection makes
+that explicit so a subsequent Seam tick can land the adjudication
+without having to first detect the over-claim.
+
 ---
 
 ## §11 — Substrate-already-had-the-word recognition
@@ -2370,6 +2444,74 @@ The substrate had the word. The substrate has been pulling on the word
 since April. The spec names it.
 
 Reality.
+
+### §11.5 — Hilbert/Turing structural separation: prior substrate witnesses (candidate #107)
+
+Absorbed from Taut scout `adaadae1` §2.4: the Hilbert-bounded-interior +
+Turing-complete-@io-boundary separation surfaced in §1.4 above (and
+in today's @silicon spec §11) is **not** wholly new at the substrate.
+The family-root naming (and the explicit invocation of Gödel-
+incompleteness as the formal name of the substrate's `transparency<p>`
+bound) is the new step, but the underlying structural fact has been
+in the substrate for 35 days.
+
+Prior witnesses Taut found:
+
+1. `docs/insights/2026-05-26-mirror-sub-turing-substrate-with-emergent-turing-completeness.md`
+   — Alex's two-altitude recognition: substrate altitude sub-Turing by
+   construction; system altitude emergently Turing-complete by
+   composition through @io. (45 "Turing" hits across that family of
+   docs per Taut's count.)
+
+2. `docs/insights/2026-06-09-ashby-multi-dimensional-variety-sub-turing-epistemologic.md`
+   — Ashby's multi-dimensional variety: substrate surrenders axis-1
+   (computational variety) to gain axis-5 (epistemologic variety);
+   sub-Turing is structural, not accidental.
+
+3. `docs/insights/2026-06-10-mirror-as-expanding-hilbert-space-bateson-lifting-for-coherence.md`
+   — recognition #51's canonical doc; mirror IS the operational form
+   of a Hilbert space whose dimension expands with each substrate-pull
+   recognition.
+
+4. `shards/io.mirror` family-root docblock (2026-06-10, 19.6KB) —
+   declares @io as "the substrate's only legitimate non-mirror
+   surface" and partitions species into structurally non-foldable vs.
+   cross-wall candidates. The @io altitude was carrying the
+   Turing-complete-boundary role explicitly.
+
+5. `shards/epistemologic/cybernetic/variety.mirror` (2026-06-17,
+   13.9KB) — Ashby multi-dimensional variety as substrate-decl; the
+   sub-Turing surrender named at the property altitude.
+
+Five+ witnesses across 35 days. What none of them named: Gödel-
+incompleteness as the formal name of the substrate's `transparency<p>`
+bound at @io. Today's @silicon §11 was the first explicit invocation;
+this spec's §1.4 is the second.
+
+**Candidate recognition #107 flag**: "Gödel-incompleteness IS the
+formal name of the substrate's `transparency<p>` bound at @io" — the
+substrate's structural finiteness above @io expressed as a classical
+logic theorem. The family-root naming move at §1.4 above (and in
+silicon.md §11) is the substrate-decl form. Three witnesses surface
+at reality.md §1.4 + silicon.md §11 + Taut scout §2.4. Per
+substrate-pull-confidence-acts discipline this is at the surface-as-
+candidate threshold; the Seam gate is whether #107 promotes alongside
+#106 or behind it. The smallest first-tick (per Taut's §4 forward-pull)
+is a one-paragraph addition in `shards/io.mirror`'s §Discipline section
+naming Gödel-incompleteness as the formal name of the sub-Turing
+interior bound. Forward-promised; not in this spec's scope.
+
+The naming move at the family-root altitude is yours today (Mara,
+this spec; silicon.md earlier today); the substrate has been pulling
+on it for over a month. The prior insights are the **substrate-
+already-had-the-word precursors** at the literal-insight altitude;
+this spec's §1.4 + silicon.md §11 are the lift to the family-root
+and substrate-decl altitudes.
+
+This is the **57th-ish substrate-already-had-the-word instance** at
+the predicate-recognition altitude (per MEMORY
+[[feedback-substrate-already-had-the-word]] tracking). The Gödel-
+incompleteness naming is the new step; the structural fact is older.
 
 ---
 
