@@ -91,6 +91,57 @@ in @glass
 #     correct home at `@code/metalogue/materialize`) names which
 #     is which.
 #
+# === #107 — Hilbert/Turing structural separation (PROMOTED at substrate-decl altitude) ===
+#
+# Recognition #107 lands at this family root in operational form: the
+# substrate-decl admission that the substrate's interior (above this
+# family) is gauge-bounded — finite, with the `transparency<p>`
+# boundary marking the structural horizon below which the substrate
+# cannot fully characterize its own orbits — while @io is Turing-
+# unbounded — the surface across which anything that crosses enters
+# the unbounded computational world. The separation between gauge-
+# bounded interior and Turing-complete @io boundary IS the substrate's
+# epistemic horizon, and the @io family root NAMES that horizon at
+# substrate-decl altitude. The structural-separation form of #107
+# Pack-ratifies on the 35-day witness arc surfaced in Taut scout
+# `adaadae1` §2.4: `docs/insights/2026-05-26-mirror-sub-turing-
+# substrate-with-emergent-turing-completeness.md` (2026-05-26, Alex's
+# sub-Turing-interior + emergent-Turing-completeness-via-composition
+# recognition; 45 "Turing" hits across that doc family); `docs/
+# insights/2026-06-09-ashby-multi-dimensional-variety-sub-turing-
+# epistemologic.md` (2026-06-09, Ashby variety axis-1 surrender);
+# `docs/insights/2026-06-10-mirror-as-expanding-hilbert-space-bateson-
+# lifting-for-coherence.md` (2026-06-10, recognition #51's canonical
+# doc); this shard's family-root docblock above (2026-06-10, the
+# @io-as-only-legitimate-non-mirror-surface naming move); and
+# `shards/epistemologic/cybernetic/variety.mirror` (2026-06-17, sub-
+# Turing surrender at the property altitude). Five+ witnesses across
+# 35 days landing one structural fact at multiple altitudes; the lift
+# to substrate-decl altitude is what `docs/specs/reality.md` §1.4 +
+# §11.5 + the Seam adjudication at `docs/audits/2026-06-30-seam-
+# reality-106-107-adjudication.md` §7 ratify. The Seam adjudication
+# at composite `cb067a2` returned PROMOTE WITH RESERVATIONS: promote
+# the structural separation; bracket the Gödel identification.
+#
+# Candidate sub-recognition (forward-promised): the identification of
+# `transparency<p>` with Gödel-incompleteness specifically — i.e. the
+# claim that the substrate's gauge-bounded interior IS a sufficiently
+# expressive formal system admitting arithmetic encoding (via OID-
+# graph structure or equivalent), and that `transparency<p>` IS the
+# precise predicate that fails for Gödel-unprovable statements — is
+# named here as a sub-recognition under #107 pending an arithmetic-
+# encoding witness. The witness must establish (per Seam C-3): (1)
+# the substrate's interior admits arithmetic encoding at substrate-
+# decl altitude; (2) `transparency<p>` is the predicate-shape that
+# fails for the Gödel-unprovable subset; (3) the bridge is a
+# mathematical equivalence, not a structural analogy. Until that
+# witness lands, the structural separation Pack-ratifies; the Gödel-
+# specific identification stays at sub-recognition status under #107.
+# Resolution path: arithmetic-encoding witness lands as its own
+# substrate-decl shard or insight doc; sub-recognition then promotes
+# under #107 or surfaces as its own numbered recognition per Pack
+# discretion.
+#
 # === Species under this family ===
 #
 # Floor species (already declared in `boot/std/io/*.mirror`,
