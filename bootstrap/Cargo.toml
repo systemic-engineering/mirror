@@ -88,6 +88,47 @@ libc = "0.2"
 [dependencies.fragmentation]
 path = "../../fragmentation"
 
+# fragmentation-git — the git-transport workspace member of
+# fragmentation (`vcs/git/`, package name `fragmentation-git`).
+# Companion edge to `fragmentation` above; the two together surface
+# the five load-bearing primitives Taut's scout pinned for `mirror
+# init` composition:
+#
+#   from `fragmentation` (top-level, edge landed at 6b36808):
+#     - frgmnt_store::FrgmntStore
+#     - project::project (file-tree projection)
+#     - encoding::encode (raw-bytes → Fractal<String>)
+#
+#   from `fragmentation-git` (THIS edge):
+#     - NamespacedGitStore::open(&path, "mirror")
+#     - NamespacedGitStore::insert_persistent(key, fractal, size)
+#     - NamespacedGitStore::set_ref("HEAD", root_oid)
+#
+# The `NamespacedGitStore` lives at `.git/mirror/` per Mara's
+# mirror-init spec §5: a namespaced view of the host repo's `.git/`,
+# pollution-free of the working tree, traveling with clones if the
+# refs are pushed. This is the substrate's CLOSED storage gate
+# (`@spectral/db` per `architecture-mirror-store-vs-spectral-db`)
+# operating ON the OPEN content-addressed foundation
+# (`@mirror/store` per `shards/mirror/store.mirror`).
+#
+# Substrate-decl drift flagged by Taut (scout 2026-06-27): the
+# `NamespacedGitStore` Rust surface uses `insert_persistent`/
+# `set_ref` vocabulary while `@mirror/store` shard surface uses
+# `read`/`write`/`exists`/`diff`/`walk`/`verify`. The Rust impl is
+# below the substrate-decl altitude (one concrete realization of
+# the declared surface); the drift is structural-not-blocker for
+# v0; future tick admits `insert_persistent`/`set_ref` to
+# substrate vocabulary OR wraps the calls through a thin trait
+# whose method names match the shard. Task entry follows separately.
+#
+# No default features needed; `NamespacedGitStore` is unflagged.
+# Transitive: pulls `git2 = "0.19"` (R2 posture — binary-size
+# delta to be measured at P4 GREEN composition commit, where the
+# code is actually called).
+[dependencies.fragmentation-git]
+path = "../../fragmentation/vcs/git"
+
 [profile.release]
 opt-level = "z"
 lto = true

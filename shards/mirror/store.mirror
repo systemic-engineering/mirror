@@ -218,6 +218,40 @@ walk(root: oid) -> splinter_graph { \ }
 # [[architecture-fragmentation-is-the-rust-substrate]].
 verify(o: oid, content: bytes) -> verdict { \ }
 
+# === Substrate-decl drift observation (2026-06-28, Mara) ===
+#
+# Surface declared here (six operations): read / write / exists /
+# diff / walk / verify. These are the @io contract per
+# docs/specs/mirror-store.md §3.
+#
+# Rust impl below substrate-decl altitude: `NamespacedGitStore` in
+# `fragmentation-git` (one concrete realization the bootstrap uses,
+# scouted by Taut during today's mirror-init P3→P4 work) exposes a
+# different verb set at its method surface: `open`,
+# `insert_persistent`, `get_persistent`, `set_ref`, `get_ref`,
+# `flush`, `path`. The drift is structural-not-blocker for v0 —
+# the Rust impl IS one concrete realization of the declared
+# surface, sitting below substrate-decl altitude — but it deserves
+# naming because the verb sets do not line up by simple rename.
+#
+# The architectural question (forward-promised to Alex, tracked in
+# tasks/pending/): do `insert_persistent` / `set_ref` / `get_ref` /
+# `flush` deserve admission to substrate vocabulary as
+# wire-altitude specializations (a sub-prism under @mirror/store
+# naming the namespaced-git-store wire shape) — OR does P4's
+# `cmd_init` wrap the Rust calls through a thin trait whose method
+# names match the shard surface (read/write/exists/...), keeping
+# the substrate's surface as the only declared vocabulary and the
+# Rust verbs as private implementation detail?
+#
+# Both are substrate-pull-honest answers. The first admits the
+# wire altitude as a real altitude of the substrate; the second
+# keeps the substrate's six-operation surface as the single
+# canonical contract and treats the Rust verbs as below-the-line.
+# Alex decides — substrate vocabulary admission is not a sub-agent
+# call. The observation is logged here so the next pass over this
+# shard sees the drift named, not silently routed around.
+
 out @mirror/store
 out @mirror/store/oid
 out oid
