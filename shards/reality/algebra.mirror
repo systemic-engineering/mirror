@@ -1,0 +1,324 @@
+in @reality
+in @bauchladen
+in @uuid/spectral
+
+# @reality/algebra — the species-root for altitude-specific
+# matter+information realizations under @reality.
+#
+# A prism that imports `in @reality/algebra` declares its content IS
+# one species under the @reality family-root — one altitude at which
+# the substrate's 5-op gauge action operates uniformly across
+# matter-aspect and information-aspect carriers per `reality.md` §2.2.
+#
+# Per `reality.md` §3.1 the path-namespace discipline:
+#
+#   `shards/reality.mirror`               declares `@reality` family-
+#                                          root and ONLY that.
+#   `shards/reality/algebra.mirror`       declares `@reality/algebra`
+#     (THIS SHARD)                         species-root and ONLY that;
+#                                          the sub-prism class one
+#                                          altitude under @reality.
+#   `shards/reality/algebra/<alt>.mirror` declares one species per
+#                                          altitude and ONLY that.
+#
+# This shard lands the SPECIES-ROOT level — the typed namespace that
+# all six species shards specialize. Without it, species shards' `in
+# @reality/algebra` resolves to nothing. Per the Taut Pass-2 scout
+# ordering finding, the species-root MUST land before any species
+# shard; this tick discharges that ordering by landing the family-
+# root, species-root, and the math species in dependency order.
+#
+# === The species pattern ===
+#
+# Per `reality.md` §3.3 the species pattern is uniform across all
+# `@reality/algebra/<altitude>` shards. Each species declares four
+# constituents per the canonical spec:
+#
+#   1. **matter_carrier** — the matter-side type carrier for this
+#      altitude. By gauge-collapse semantics this is a NOMINAL label,
+#      not a distinct type. The label conveys to human-facing readers
+#      that this aspect of the orbit is the matter-side.
+#
+#   2. **information_carrier** — the information-side type carrier
+#      for this altitude. By gauge-collapse semantics this is the
+#      SAME TYPE as matter_carrier, with a different label. The
+#      label conveys the information aspect.
+#
+#   3. **gauge_action** — the 5-op algebra at this altitude. The
+#      altitude-specific parameterization of the substrate's 5-op
+#      block. The only altitude-specific variation is the H_altitude
+#      space on which the algebra acts.
+#
+#   4. **witness_predicate** — the substrate-decl predicate verifying
+#      the four invariances of `reality.md` §2.5 (algebra closure,
+#      Hilbert linearity, Dirac equivariance, spectral action
+#      invariance) at the species altitude. Dischargeable at the
+#      empirical altitude (LAPACK for silicon, Mesland operations
+#      for spectral, etc.).
+#
+# Under gauge-collapse (path-c uniformity per `reality.md` §2.3),
+# matter_carrier and information_carrier ARE THE SAME TYPE at each
+# altitude. They are two labels for the same underlying H_altitude
+# state. The shard declaration shape (substrate-decl, illustrative;
+# the canonical per-altitude version lands in
+# `shards/reality/algebra/<altitude>.mirror`):
+#
+#   prism @reality/algebra/<altitude> <= @reality/algebra {
+#     type matter_carrier      = H_<altitude>
+#     type information_carrier = H_<altitude>
+#     witness algebra_closure     <- closure_under_5op_at_<altitude>
+#     witness hilbert_linearity   <- linearity_under_5op_at_<altitude>
+#     witness dirac_equivariance  <- equivariance_under_kintsugi_at_<altitude>
+#     witness spectral_invariance <- action_invariance_under_glue_at_<altitude>
+#     focus <altitude>
+#     project <altitude>
+#     split <altitude>
+#     shift <altitude>
+#     settle <altitude>
+#   }
+#
+#   out @reality/algebra/<altitude>
+#
+# === The species inheritance chain ===
+#
+# Per `reality.md` §3.1 the inheritance chain is:
+#
+#   @autopoietic
+#     ↑                            (fold-back permission)
+#   @reality                       (family-root; gauge-action
+#     ↑                             uniformity; #106 candidate)
+#   @reality/algebra               (species-root; typed namespace;
+#     ↑                             THIS SHARD)
+#   @reality/algebra/<altitude>    (per-altitude species; per-altitude
+#                                   matter+information realization)
+#
+# Each level adds discipline:
+#   - @autopoietic adds fold-back permission.
+#   - @reality adds gauge-action uniformity + the gauge_orbit carrier.
+#   - @reality/algebra (this shard) adds the species_descriptor carrier
+#     + the typed namespace under which per-altitude species live.
+#   - @reality/algebra/<altitude> adds the altitude-specific
+#     (matter_carrier, information_carrier) labels + the
+#     altitude-specific witness predicates.
+#
+# === The six species (forward-promised; math lands this tick) ===
+#
+# Per `reality.md` §3.2 the substrate has been pulling on six species
+# at various altitudes:
+#
+#   silicon   hardware-altitude (subsumes today's @silicon at
+#             `27e9067`); matter aspect = transistor state; info
+#             aspect = executable algebra-of-silicon.
+#   nl        natural-language altitude (lifts @nl + @metalogue);
+#             matter aspect = waveform/bytes; info aspect =
+#             proposition/meaning. Autopoietic recursion: every nl
+#             crystal becomes input to future nl emissions.
+#   code      code altitude (lifts @code/<lang> + @cascade); matter
+#             aspect = source text; info aspect = denotational
+#             semantics.
+#   physics   physical-reality altitude (cosmos-mirror's territory);
+#             matter aspect = field configuration; info aspect =
+#             gauge structure / Lagrangian. Settlement at 2D/3D has
+#             a DEGENERATE form (Forman-Ricci fragments); species
+#             shard MUST declare fragmentation as valid crystal state.
+#   spectral  spectral altitude (the substrate operating on its own
+#             spectral triples per #100); matter aspect = (A, H, D)
+#             object; info aspect = representation theory + Mesland
+#             correspondences. Species shard MUST inherit `in @glue`
+#             rather than re-declare Tomm probes (already a @glue
+#             species per `shards/glue.mirror`).
+#   math      math altitude (LANDS THIS TICK); matter aspect = formal
+#             mathematical object; info aspect = mathematical content
+#             the object encodes. Per `805676e`: the highest-
+#             reflexive species; A IS the content. Discharge to
+#             LaTeX/Lean/Coq/Agda/Mathematica via @io.
+#
+# Each species MUST declare its @io discharge target(s); the species-
+# root names this as obligation through the io_discharge_declared
+# predicate inherited from @reality.
+#
+# === Pre-AI prior art ===
+#
+#   Path-namespace classes  the substrate's path-namespace pattern
+#                           per [[architecture-shards-as-substrate-
+#                           source]]; consistent application of the
+#                           `<path>.mirror declares @<path>` rule.
+#   Species-roots           consistent precedent in `shards/algebra/
+#                           metalogue.mirror` (sub-prism under
+#                           `@algebra`); `shards/spectral/metalogue.
+#                           mirror` (sub-prism under `@spectral`); the
+#                           pattern is uniform across the substrate.
+#
+# Spec context: docs/specs/reality.md §3.1 (path-namespace
+#               discipline); §3.3 (species pattern: four constituents);
+#               §8.1 (substrate-decl shard forward-promises naming
+#               this shard explicitly: "the species root declaration
+#               . Declares `@reality/algebra` and ONLY that. Inherits
+#               `<= @reality`. Path-namespace declaration:
+#               `shards/reality/algebra.mirror` declares the sub-prism
+#               class one altitude under @reality.");
+#               docs/specs/reality-algebra-math-and-glue.md §1.1
+#               (the math species' specialization of this species-
+#               root's pattern; the illustrative shard code shows
+#               `prism @reality/algebra/math <= @reality/algebra { ... }`
+#               which requires this species-root to resolve).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-connes-spectral-triple]],
+#                      [[architecture-mirror-as-expanding-hilbert-space]] (#51),
+#                      [[architecture-at-x-is-mathematical-value]]
+#                       (@reality/algebra at value position is the
+#                        species-root ref; admissible at value
+#                        positions in species shards),
+#                      [[feedback-no-bare-types]] (species_descriptor
+#                        is a typed carrier; no bare altitude string),
+#                      [[feedback-craft-not-deliver]] (no operational
+#                        species this tick except math; species follow
+#                        when consumers pull),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (the species-root pattern was implicit in
+#                        the canonical spec; this shard makes it
+#                        addressable as a substrate-decl object).
+# Related shards: reality.mirror (the family-root this shard
+#                  inherits from; the gauge_orbit carrier consumer
+#                  species shards observe at their altitudes),
+#                 reality/algebra/math.mirror (the first species
+#                  landing this tick; the highest-reflexive of the
+#                  six per `805676e`),
+#                 bauchladen.mirror (the content-addressing discipline
+#                  species crystals respect),
+#                 algebra.mirror (the substrate's algebra family-root;
+#                  the A side of the Connes spectral triple species
+#                  shards' gauge actions operate within; sibling
+#                  family-root at the top-level path-namespace, not
+#                  parent of this shard).
+# Path-namespace property: this file at `shards/reality/algebra.mirror`
+# declares `@reality/algebra` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/math/connes-1985
+source @arxiv/math/connes-1995-reality
+
+prism @reality/algebra <= @reality {
+  # Species-root for altitude-specific matter+information
+  # realizations under @reality. The typed namespace under which
+  # `@reality/algebra/<altitude>` species shards live.
+  #
+  # Per `reality.md` §3.3 each species declares four constituents:
+  # matter_carrier, information_carrier, gauge_action,
+  # witness_predicate. By gauge-collapse semantics (path-c
+  # uniformity per `reality.md` §2.3) matter_carrier and
+  # information_carrier are the SAME TYPE at each altitude — two
+  # nominal labels on the same H_altitude state.
+  #
+  # The species-root's 5-op block operates over species_descriptor
+  # (the typed handle for "one altitude under @reality/algebra/*");
+  # per-altitude shards specialize the 5-op block to their
+  # H_altitude carrier.
+  focus species_descriptor
+  project species_descriptor
+  split species_descriptor
+  shift species_descriptor
+  settle species_descriptor
+}
+
+# === The species_descriptor carrier ===
+#
+# A typed record per [[feedback-no-bare-types]] naming one species
+# under `@reality/algebra/*`. Lifts the per-altitude declaration shape
+# from `reality.md` §3.3 into a typed carrier the species-root level
+# can reference.
+#
+# - `altitude`            the substrate-ref naming the altitude the
+#                         species sits at; one of {silicon, nl, code,
+#                         physics, spectral, math, ...}. Must match
+#                         the species shard's path-namespace
+#                         declaration per `@epistemologic/pact/path_
+#                         matches_namespace`.
+# - `matter_label`        the species-specific human-facing label
+#                         for the matter aspect (e.g., "transistor
+#                         state" for silicon, "utterance" for nl,
+#                         "mathematical object" for math); nominal
+#                         per `reality.md` §3.3.
+# - `information_label`   the species-specific human-facing label
+#                         for the information aspect (e.g.,
+#                         "executable algebra" for silicon,
+#                         "proposition" for nl, "mathematical
+#                         content" for math); nominal per §3.3.
+# - `io_discharge_target` the ref naming the species' @io discharge
+#                         target(s); MUST be declared per the
+#                         `io_discharge_declared` obligation
+#                         inherited from @reality. Examples:
+#                         `@io/silicon` (cargo/LLVM/LAPACK);
+#                         `@io/nl` (conversational/paper);
+#                         `@io/math` (LaTeX/Lean/Coq/Agda).
+# - `witness_predicate`   the species-altitude four-invariances
+#                         witness predicate ref; the discharge
+#                         carrier per `reality.md` §3.3 item 4.
+#
+# Identity contract: byte-equality on (altitude,
+# io_discharge_target). Two species_descriptor records ARE the
+# same species under content-addressing iff both the altitude ref
+# and the io_discharge_target ref are byte-equal. The labels are
+# nominal; the witness_predicate is the discharge mechanism, not
+# the identity.
+type species_descriptor = {
+  altitude:            ref,
+  matter_label:        ref,
+  information_label:   ref,
+  io_discharge_target: ref,
+  witness_predicate:   ref,
+}
+
+# === enumerate_orbits — list all gauge_orbits at this species ===
+#
+# Given a species_descriptor, returns the list of gauge_orbits
+# (from @reality.gauge_orbit) currently registered at the species'
+# altitude. The list is the species' current Bauchladen content
+# at @reality altitude — the prior-art crystals @fate consults
+# when the next species inference fires.
+#
+# Body discharges per-species at the realisation boundary.
+enumerate_orbits(s: species_descriptor) -> [gauge_orbit] { \ }
+
+# === species_witnessing inheritance predicate ===
+#
+# `species_witnessing(s)` is the predicate consumer shards name in a
+# `requires` clause to declare bilateral commitment (per recognition
+# #37, the Pask-agreement reading of `requires`) that the
+# species_descriptor `s` IS a valid `@reality/algebra/*` species —
+# i.e., the species declares all four constituents per `reality.md`
+# §3.3 (matter_label, information_label, io_discharge_target,
+# witness_predicate) AND the species' io_discharge_target satisfies
+# `io_discharge_declared(s.altitude)` inherited from @reality.
+#
+# Sibling to:
+#   - `reality.reality_witnessing(o)` (the gauge-orbit inheritance
+#     predicate this shard's per-orbit registrations transitively
+#     discharge through the species' witness_predicate).
+#   - `bauchladen.bauchladen_witnessing(crystal)` (the crystal-
+#     altitude inheritance predicate species' orbit-crystals honor).
+#
+# Forward-promised inheritors:
+#
+#   - `@reality/algebra/math` (THIS TICK): the math-altitude species
+#     per `805676e`; the highest-reflexive species (A IS the content).
+#   - `@reality/algebra/silicon` (forward-promised): subsumes today's
+#     @silicon work at `27e9067`.
+#   - `@reality/algebra/nl` (forward-promised): lifts @nl + @metalogue.
+#   - `@reality/algebra/code` (forward-promised): lifts @code/<lang>
+#     + @cascade.
+#   - `@reality/algebra/physics` (forward-promised): cosmos-mirror's
+#     territory; MUST declare fragmentation as valid crystal state.
+#   - `@reality/algebra/spectral` (forward-promised): MUST inherit
+#     `in @glue` and read @spectral/metalogue as morphism family.
+#
+# No `requires species_witnessing(...)` clauses at THIS shard. The
+# species-root declares the predicate; consumers add the clauses
+# when they pull.
+species_witnessing(s: species_descriptor) -> verdict { \ }
+
+out @reality/algebra
+out species_descriptor
+out enumerate_orbits
+out species_witnessing
