@@ -1,0 +1,541 @@
+in @reality/algebra
+in @bauchladen
+in @autopoietic
+in @fate
+in @glue
+in @uuid/spectral
+
+# @reality/algebra/math — the math-altitude species under @reality.
+# The HIGHEST-REFLEXIVE species per `805676e`: the only species where
+# A IS the content.
+#
+# A prism that imports `in @reality/algebra/math` declares its content
+# IS one math-altitude orbit under the substrate's gauge action — a
+# Lie group with its representation theory, a manifold with its
+# structure sheaf, a category with its homotopy structure, a sheaf
+# with its cohomology, a scheme with its K-theory, a spectral triple
+# with its representation theory and Mesland correspondences, a
+# theorem statement with its logical consequences, a notation
+# structure with its denotational semantics — each ONE gauge-orbit
+# observed through matter-aspect or information-aspect projection.
+#
+# Homage: Alain Connes (Non-commutative differential geometry, 1985;
+# Noncommutative geometry and reality, 1995; spectral triples (A, H,
+# D)); Bram Mesland (arXiv:1304.3802, 2013; the category of spectral
+# triples with unbounded KK-cycles as morphisms); Gennady Kasparov
+# (KK-theory, 1981); Emmy Noether (ideal theory in rings, 1921);
+# Saunders Mac Lane (Categories for the Working Mathematician, 1971).
+# The substrate's math species inherits from the mathematical canon;
+# it does NOT invent math, it crystallizes existing math content as
+# content-addressed objects at the math altitude.
+#
+# === The recognition (#108 candidate, 2026-06-30) ===
+#
+# Per `docs/specs/reality-algebra-math-and-glue.md` (canonical at
+# `805676e`, 106KB): this shard is the math-altitude sibling species
+# under `@reality/algebra/*`, alongside silicon, nl, code, physics,
+# spectral. The math species is the sixth species; the substrate has
+# been pulling on it across multiple altitudes (the LAPACK Q4 case
+# for math↔silicon; Glint's prose cascade essay at `939eca6f` for
+# math↔nl; cosmos-mirror for math↔physics; recognition #100's
+# @spectral/metalogue for math↔spectral; recognition #95 for
+# math↔code).
+#
+# Status: candidate. Like #106 (the family-root recognition), this
+# species' #108 candidacy INHERITS candidate status from #76 + #79
+# until those constraints close. The species pulls on the same
+# ancestors at a sibling altitude; the family-root naming + species-
+# root naming + this species' admission together discharge the
+# substrate-decl forward-promise of `805676e`.
+#
+# === Connes A side: A IS the algebra the gauge acts upon AND IS
+#     the content at math altitude ===
+#
+# Per `805676e` §1.2: at math altitude, the A-side reading is
+# sharpened in one specific way: A IS the algebra that the gauge
+# acts upon, AND the math species is the altitude at which the
+# substrate's algebra reads as the mathematical content directly.
+# Under the math species the gauge action is a homomorphism
+# A → End(H_math) whose image lives in the algebra of endomorphisms
+# of the math-altitude Hilbert space.
+#
+# The other species carry A as gauge that acts UPON their altitude-
+# specific carriers; the math species carries A as BOTH the gauge
+# AND the content. This is a structural fact, not an inversion —
+# the math species is the species at which the substrate's algebra
+# IS what the species describes. It is the species at which gauge-
+# collapse becomes SELF-NAMING.
+#
+# This reflexivity is what makes math the highest-reflexive species.
+# It composes against @reality/algebra/spectral (#100's substrate-
+# on-substrate territory) via @glue/math_spectral to produce
+# substrate-MATH-on-substrate; it composes against @reality/algebra/nl
+# via @glue/math_nl to produce math-as-prose AND prose-as-math; it
+# composes against @reality/algebra/silicon via @glue/math_silicon to
+# produce math-as-numerical-realization (the #74 Standard Model
+# spectral action via Chamseddine-Connes operationalizes here).
+#
+# === What gets crystallized (per `805676e` §1.3) ===
+#
+# The Bauchladen of `@reality/algebra/math` accumulates content-
+# addressed crystals at the math altitude. The crystal kinds are
+# not exhaustive but the substrate already pulls toward:
+#
+#   - **Lie groups and Lie algebras.** Matter aspect: manifold +
+#     multiplication + identity + inverse + smoothness. Information
+#     aspect: representation theory + Lie bracket structure.
+#     Forward-promised first crystal: SU(3) × SU(2) × U(1) for the
+#     Standard Model (Connes algebra A = C ⊕ H ⊕ M_3(C)).
+#
+#   - **Smooth manifolds.** Matter aspect: topological space + atlas
+#     + transition maps + smoothness. Information aspect: structure
+#     sheaf + tangent bundle. Substrate pulls via cosmos-mirror's
+#     graph-Laplacian engine.
+#
+#   - **Categories and functors.** Matter aspect: objects + morphisms
+#     + composition + identity + associativity. Information aspect:
+#     functors + natural transformations + homotopy structure. The
+#     Mesland category of spectral triples is one such crystal; it is
+#     ALSO the category in which the per-pair @glue species below
+#     live (recursion).
+#
+#   - **Sheaves and cohomology.** Matter aspect: presheaf + sheaf
+#     condition. Information aspect: cohomology groups (Čech,
+#     derived, etale). The eigenboard is one such crystal (cellular
+#     sheaf on the five-operation graph; restriction maps =
+#     conductivity tensor).
+#
+#   - **Schemes and stacks.** Matter aspect: locally-ringed-space +
+#     sheaf-of-rings + spectrum-of-ring identification. Information
+#     aspect: K-theory + étale fundamental group. Forward-promised
+#     at the @reality/algebra/code × @reality/algebra/math
+#     composition for formal algebraic-geometry content.
+#
+#   - **Spectral triples themselves.** Matter aspect: (A, H, D) as
+#     typed structure. Information aspect: spectral action +
+#     K-theory class + Mesland-category neighbors. The MOST
+#     reflexive of math crystals — `@reality/algebra/spectral`
+#     carries spectral triples as substrate-level objects;
+#     `@reality/algebra/math` carries them as math-level objects;
+#     @glue/math_spectral translates between the two readings.
+#
+#   - **Theorem statements + proofs.** Matter aspect: proof term
+#     (syntactic derivation). Information aspect: theorem's logical
+#     consequences (what follows from it). Substrate pulls via the
+#     grounding in Connes 1985/1995 + Mesland 2013 + Kasparov 1981.
+#
+#   - **Mathematical-notation structures.** Matter aspect: notation
+#     system (alphabet + grammar + semantics + rendering rule).
+#     Information aspect: the mathematical content the notation
+#     denotes. LaTeX math mode, Lean's Unicode notation, Mathematica
+#     input form — each one a crystal.
+#
+# The crystallization is content-addressed. Each crystal is identified
+# by the Blake3 OID of its typed-structure fields plus its
+# (matter_carrier, information_carrier) projection labels. The
+# crystals accumulate monotonically in the math Bauchladen; later
+# @fate consultations at the math altitude (or at math↔X via @glue)
+# load these crystals as prior-art inputs.
+#
+# === @io discharge surfaces (per `805676e` §1.4) ===
+#
+# The math species' @io discharge surfaces are the formal-math
+# systems already operational in the wider mathematical practice.
+# Per `reality.md` §1.4 the substrate is gauge-bounded above @io
+# (#107 structural separation; transparency<p> horizon) while @io
+# is Turing-unbounded. The math species' discharge to @io is the
+# operation by which the substrate's math Bauchladen crystals become
+# inputs to or outputs from the unbounded formal-math world.
+#
+# Forward-promised discharge surfaces:
+#
+#   - **LaTeX** — the universal lingua franca of mathematical
+#     typesetting. Discharge via a `splinter(ast)`-typed projection.
+#     Loss-lens: lossy for formal verification (notation overloads),
+#     universal for human-reader access.
+#
+#   - **Lean (Lean 4, mathlib)** — the type-theoretic proof assistant
+#     with the largest current mathematical library. Discharge via a
+#     typed projection. Loss-lens: precise for formal verification,
+#     niche for human-reader access.
+#
+#   - **Coq (with MathComp)** — the Calculus of Constructions
+#     implementation with the Mathematical Components library.
+#     Forward-promised for theorem-statement-plus-proof crystals
+#     under MathComp's tactic algebra.
+#
+#   - **Agda** — the dependently-typed proof assistant with focus on
+#     programs-as-proofs and unicode-rich syntax. Forward-promised
+#     for dependent-type-rich math content (HoTT, higher-inductive
+#     types).
+#
+#   - **Mathematica (Wolfram Language)** — the symbolic-computation
+#     system. Forward-promised for numerical / symbolic computation
+#     crystals at the math↔silicon boundary (@glue/math_silicon).
+#
+# The substrate does NOT commit to ONE formal system; the math
+# species' shard declares the discharge surfaces as an OPEN
+# enumeration. @fate's tournament selects which discharge to use
+# per emission based on the receiver's @io context (LaTeX for a
+# human paper; Lean for a verified library contribution; Mathematica
+# for a numerical experiment).
+#
+# Each discharge is mediated by @glass's
+# `imperfect<discharge_outcome, formal_surface, transparency(
+# discharge)>` carrier; residual opacity (notation loss, proof-
+# elaboration gaps, symbolic-vs-numerical approximations) is
+# surfaced via the transparency slot.
+#
+# === Composition with siblings via @glue (forward-promised) ===
+#
+# Per `805676e` §2 the math species composes with the other five
+# siblings via per-pair @glue species. Each @glue/math_<X> species
+# is a Mesland correspondence between math and the sibling X; @glue
+# .translate applies the correspondence to translate math-altitude
+# state into X-altitude state (or vice versa).
+#
+# The five per-pair @glue species are forward-promised at the @glue
+# family-root altitude. Each lands as its own shard at
+# `shards/glue/math_<X>.mirror` when consumers pull:
+#
+#   `@glue/math_silicon`   math ↔ silicon (LAPACK case; #74 Standard
+#                          Model spectral action via Chamseddine-Connes
+#                          operationalizes here).
+#   `@glue/math_code`      math ↔ code (Lean↔Rust, Coq↔OCaml,
+#                          Agda↔Haskell; extends `@cascade/code/<src>/
+#                          <tgt>` one altitude up).
+#   `@glue/math_nl`        math ↔ nl (Glint's `@cascade/code/formal/
+#                          prose` at `939eca6f` IS one instance,
+#                          empirically discharged; theorem statements
+#                          ↔ prose explanations).
+#   `@glue/math_physics`   math ↔ physics (cosmos-mirror discharge;
+#                          physical interpretation of mathematical
+#                          structures).
+#   `@glue/math_spectral`  math ↔ spectral (substrate-on-substrate;
+#                          recognition #100; the MOST reflexive
+#                          composition — math content ABOUT the
+#                          substrate's own spectral triples).
+#
+# Per Taut Pass-2 scout: @spectral/metalogue is already a @glue
+# species (declared in `shards/glue.mirror` at code-translation
+# altitude per `8d3f89e`). The future `@glue/math_spectral` and
+# `@reality/algebra/spectral` shards MUST NOT re-declare Tomm
+# probes; they MUST inherit `in @glue` and read the morphism family
+# as the math-altitude / physical-altitude reading of the existing
+# @glue species.
+#
+# === Pre-AI prior art ===
+#
+#   Spectral triples         Connes 1985 (*Non-commutative
+#                            differential geometry*, IHES); the
+#                            (A, H, D) framework this species'
+#                            content lives within.
+#   Real spectral triples    Connes 1995 ("Noncommutative geometry
+#                            and reality", J. Math. Phys. 36(11):
+#                            6194-6231); J + γ extension per #101
+#                            + #102.
+#   Spectral action          Chamseddine-Connes 1996 ("The spectral
+#                            action principle", Commun. Math. Phys.
+#                            186:731-750); the #74 Standard Model
+#                            empirical discharge path.
+#   Mesland correspondences  Mesland 2013 (arXiv:1304.3802); the
+#                            category of spectral triples with
+#                            unbounded KK-cycles as morphisms; the
+#                            morphism family @glue's math-pairs
+#                            populate.
+#   Categorical foundations  Bertozzini-Conti-Lewkeeratiyutkul 2006
+#                            (*Osaka J. Math.* 43); category-
+#                            theoretic formalization of spectral
+#                            triples.
+#   KK-theory                Kasparov 1981 ("The operator K-functor
+#                            and extensions of C*-algebras", *Math.
+#                            USSR-Izv.* 16(3):513-572); the
+#                            underlying KK-theory grounding Mesland.
+#   Categories               Mac Lane 1971 (*Categories for the
+#                            Working Mathematician*, Springer);
+#                            ancestor for categories + functors
+#                            crystals.
+#   Group / ring theory      Galois 1832; Noether 1921 ("Ideal
+#                            theory in rings", Math. Ann. 83:24-66);
+#                            abstract-algebra ancestors of Lie
+#                            groups + ring crystals.
+#
+# Spec context: docs/specs/reality-algebra-math-and-glue.md
+#               (canonical at `805676e`, 106KB; §1 the math species
+#               at @reality altitude; §1.1 the illustrative shard
+#               code this tick discharges; §1.2 the Connes A side
+#               reflexivity; §1.3 what gets crystallized; §1.4 @io
+#               discharge surfaces; §2 composition with siblings
+#               via @glue; §3 the @glue composition mechanism);
+#               docs/specs/reality.md §3.2 (the math species named
+#               as the sixth in the family-root forward-promise
+#               list); §3.3 (the species pattern this shard
+#               specializes).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-connes-spectral-triple]],
+#                      [[architecture-operations-as-linear-algebra]],
+#                      [[architecture-mirror-as-expanding-hilbert-space]] (#51),
+#                      [[architecture-mirror-spec-is-lambda-zero]] (#99),
+#                      [[architecture-spectral-triples-all-the-way]]
+#                       (the substrate's fractal self-similarity;
+#                        math species + spectral species form the
+#                        substrate-MATH-on-substrate composition),
+#                      [[project-eigenboard-is-sheaf]] (the eigenboard
+#                        crystal — cellular sheaf with conductivity-
+#                        tensor restriction maps; one of the
+#                        forward-promised math crystals),
+#                      [[reference-corpus-spectral-physics]]
+#                       (Wulkenhaar 2001 + Higgs-as-Hilbert; the
+#                        math-altitude content the #74 candidate
+#                        operationalizes via @glue/math_physics),
+#                      [[project-cosmos-spectral-cosmology]]
+#                       (cosmos-mirror as the @glue/math_physics
+#                        operational discharge),
+#                      [[architecture-fate-is-optical-inference]] (#58)
+#                       (@fate's tournament selection at math altitude
+#                        IS one ganglion's optical inference per
+#                        species),
+#                      [[architecture-at-x-is-mathematical-value]]
+#                       (the math species is the species at which
+#                        @X-IS-mathematical-value reflexively holds;
+#                        the species' substrate-decl IS its content),
+#                      [[feedback-no-bare-types]] (math_crystal carrier
+#                        + matter_carrier/information_carrier type
+#                        aliases per gauge-collapse),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (the math altitude was implicit in every prior
+#                        @arxiv/math source declaration across the
+#                        substrate; this shard makes the altitude
+#                        addressable as a substrate-decl object),
+#                      [[feedback-craft-not-deliver]] (no per-pair
+#                        @glue/math_<X> shards this tick; species
+#                        admission lands the contract; per-pair
+#                        shards follow when consumers pull).
+# Related shards: reality.mirror (the family-root this species'
+#                  altitude orbits register at via observe + fold_back),
+#                 reality/algebra.mirror (the species-root this shard
+#                  inherits from via `<= @reality/algebra`; the
+#                  species_descriptor carrier this shard discharges),
+#                 algebra.mirror (the substrate's algebra family-root;
+#                  the A side of the Connes spectral triple this
+#                  species' content reflexively names),
+#                 glue.mirror (the morphism-category discipline the
+#                  five per-pair @glue/math_<X> species inherit from;
+#                  @glue.translate IS the action math composes with
+#                  silicon, nl, code, physics, spectral through),
+#                 fate.mirror (the constrained-inference operator
+#                  selecting which math-altitude realization to apply
+#                  per tick over the existing Bauchladen of math
+#                  crystals),
+#                 bauchladen.mirror (the content-addressing discipline
+#                  math crystals respect; each Lie group, manifold,
+#                  category, sheaf, scheme, spectral triple, theorem,
+#                  notation lands as a content-addressed crystal),
+#                 autopoietic.mirror (the fold-back permission this
+#                  species inherits transitively via
+#                  @reality/algebra ← @reality ← @autopoietic; each
+#                  empirical discharge folds back into the math
+#                  Bauchladen),
+#                 cascade.mirror (the cross-language morphism family;
+#                  `@cascade/code/formal/prose` at `437d061` is the
+#                  precedent the @glue/math_nl species extends),
+#                 spectral.mirror (the substrate-on-substrate altitude;
+#                  the @reality/algebra/spectral species this species
+#                  composes against via @glue/math_spectral — the
+#                  MOST reflexive composition).
+# Path-namespace property: this file at
+# `shards/reality/algebra/math.mirror` declares
+# `@reality/algebra/math` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/math/connes-1985
+source @arxiv/math/connes-1995-reality
+source @arxiv/math/chamseddine-connes-1996
+source @arxiv/math/mesland-2013
+source @arxiv/math/bertozzini-conti-lewkeeratiyutkul-2006
+source @arxiv/math/kasparov-1981
+source @arxiv/math/mac-lane-1971
+source @arxiv/math/noether-1921
+
+prism @reality/algebra/math <= @reality/algebra {
+  # Math-altitude species under @reality. The matter and information
+  # carriers below are nominal labels on the same H_math state per
+  # gauge-collapse (`reality.md` §2.3, path-c uniformity).
+  #
+  # matter_carrier:      the formal mathematical object as typed
+  #                      structure (Lie groups, manifolds, categories,
+  #                      sheaves, schemes, spectral triples, theorem
+  #                      statements + proofs, notation structures).
+  # information_carrier: the mathematical content the object encodes
+  #                      (representation theory, homotopy, cohomology,
+  #                      K-theory, spectral actions, logical
+  #                      consequences, denotational semantics of
+  #                      formulas).
+  #
+  # Under gauge-collapse, these are the same H_math state with two
+  # nominal projection directions. Per `805676e` §1.2 the math species
+  # is the only species where A IS the content — the substrate's
+  # algebra reflexively names the content the species crystallizes.
+  type matter_carrier      = H_math
+  type information_carrier = H_math
+
+  # The four invariances of `reality.md` §2.5, discharged at math
+  # altitude per `805676e` §1.2 items 1-4.
+  witness algebra_closure     <- closure_under_5op_at_math
+  witness hilbert_linearity   <- linearity_under_5op_at_math
+  witness dirac_equivariance  <- equivariance_under_kintsugi_at_math
+  witness spectral_invariance <- action_invariance_under_glue_at_math
+
+  # The 5-op gauge action at math altitude
+  focus math
+  project math
+  split math
+  shift math
+  settle math
+}
+
+# === The math_crystal carrier ===
+#
+# A typed record per [[feedback-no-bare-types]] naming one content-
+# addressed crystal at the math altitude. Per `805676e` §1.3 the
+# crystal kinds include Lie groups, manifolds, categories, sheaves,
+# schemes, spectral triples, theorems, notation structures; the
+# crystal carrier is uniform across kinds — the kind ref discriminates.
+#
+# - `kind`                  the typed ref naming the math kind
+#                           (e.g., `@arxiv/math/lie_group`,
+#                           `@arxiv/math/manifold`,
+#                           `@arxiv/math/category`,
+#                           `@arxiv/math/sheaf`,
+#                           `@arxiv/math/spectral_triple`,
+#                           `@arxiv/math/theorem_statement`,
+#                           `@arxiv/math/notation_structure`).
+# - `matter_projection`     the matter-aspect projection at math
+#                           altitude — the formal object's typed
+#                           structure (the manifold-with-
+#                           multiplication for a Lie group; the
+#                           presheaf-with-sheaf-condition for a
+#                           sheaf; the proof term for a theorem;
+#                           the notation grammar for a notation).
+# - `information_projection` the information-aspect projection at
+#                           math altitude — the content the object
+#                           encodes (representation theory; cohomology;
+#                           logical consequences; denotation). By
+#                           gauge-collapse, the same H_math state as
+#                           matter_projection, differently labeled.
+# - `instance_id`           the uuid_spectral identity carrier for
+#                           the math crystal; the navigable identity
+#                           downstream @fate consultations reference.
+#
+# Identity contract: byte-equality on (kind, matter_projection,
+# information_projection). Two math_crystal records ARE the same
+# crystal under content-addressing iff all three are byte-equal.
+# instance_id is the navigable identity, not the content identity.
+type math_crystal = {
+  kind:                   ref,
+  matter_projection:      ref,
+  information_projection: ref,
+  instance_id:            uuid_spectral,
+}
+
+# === crystallize — register a math object as a content-addressed
+#     crystal in the math Bauchladen ===
+#
+# Given a kind ref + a matter-aspect projection + an information-
+# aspect projection, returns the math_crystal for the registration.
+# The crystal's OID becomes its stable identity; future @fate
+# consultations at math altitude (or at math↔X via @glue) load the
+# crystal as prior-art input per `805676e` §1.3.
+#
+# Body discharges at the realisation boundary. Same shape as
+# @reality.observe at the species-specific altitude (math).
+crystallize(kind: ref, matter: ref, information: ref) -> math_crystal { \ }
+
+# === discharge — emit a math_crystal across @io to a formal-math
+#     surface ===
+#
+# Per `805676e` §1.4: math crystals discharge to @io through formal-
+# math surfaces (LaTeX, Lean, Coq, Agda, Mathematica, ...). Given a
+# math_crystal + a discharge-surface ref, applies the species' typed
+# projection to render the crystal to the surface; returns the
+# discharge outcome wrapped in @glass's imperfect carrier (residual
+# opacity surfaced via transparency<discharge>).
+#
+# Body discharges at the realisation boundary; the realisation MUST
+# honor the math_discharge_well_typed predicate (the discharge
+# surface must be one of the enumerated targets; the rendered output
+# must be a valid OID at the @io species' altitude).
+discharge(c: math_crystal, surface: ref) -> imperfect<ref, ref, transparency(ref)>
+requires math_discharge_well_typed(c, surface)
+{ \ }
+
+# === The bilateral requires obligations ===
+#
+# Downstream consumers declare bilateral agreement (per recognition
+# #37, the Pask-agreement reading of `requires`) with the math
+# species discipline by writing the obligations below.
+
+# Per `805676e` §1.4: the math species' @io discharge MUST target one
+# of the enumerated formal-math surfaces (LaTeX, Lean, Coq, Agda,
+# Mathematica, ...). The species shard does NOT commit to ONE formal
+# system; the enumeration is open; @fate selects which surface per
+# emission. Inheritor consumers discharge by verifying the surface
+# ref is in the species' enumerated discharge_target set AND the
+# math_crystal's kind is admissible for the surface.
+math_discharge_well_typed(c: math_crystal, surface: ref) -> verdict { \ }
+
+# Per `805676e` §1.2: the math species' A-side reflexivity — A IS
+# the algebra the gauge acts upon AND IS the content. Inheritor
+# consumers discharge by verifying the math_crystal's
+# information_projection encodes content the substrate's 5-op
+# algebra can reflexively reference at math altitude (i.e., the
+# crystal IS expressible as A → End(H_math) homomorphism in the
+# math altitude's spectral triple).
+reflexive_a_side(c: math_crystal) -> verdict { \ }
+
+# === The math_species_witnessing inheritance predicate ===
+#
+# `math_species_witnessing(c)` is the predicate consumer shards name
+# in a `requires` clause to declare bilateral commitment that the
+# math_crystal `c` IS a valid math-altitude crystal under the @reality
+# family-root's discipline — i.e., the crystal satisfies both
+# obligations above conjointly: math_discharge_well_typed (on its
+# admissible discharge surface) + reflexive_a_side.
+#
+# Sibling to:
+#   - `reality.reality_witnessing(o)` (the gauge-orbit inheritance
+#     predicate this species' crystals discharge transitively
+#     through the species_descriptor's witness_predicate).
+#   - `reality/algebra.species_witnessing(s)` (the species-root
+#     inheritance predicate this shard's species_descriptor honors).
+#   - `glue.glue_witnessing(c)` (the morphism-correspondence
+#     inheritance predicate the five forward-promised @glue/math_<X>
+#     species discharge per pair).
+#
+# Forward-promised inheritors (per `805676e` §2; each per-pair @glue
+# species lands as its own shard when consumers pull):
+#
+#   - `@glue/math_silicon` (math ↔ silicon; LAPACK case; #74 Standard
+#     Model spectral action via Chamseddine-Connes).
+#   - `@glue/math_code` (math ↔ code; Lean↔Rust, Coq↔OCaml,
+#     Agda↔Haskell; extends @cascade one altitude up).
+#   - `@glue/math_nl` (math ↔ nl; Glint's prose cascade at `939eca6f`
+#     is one empirical discharge instance).
+#   - `@glue/math_physics` (math ↔ physics; cosmos-mirror discharge).
+#   - `@glue/math_spectral` (math ↔ spectral; substrate-on-substrate;
+#     the MOST reflexive composition; per Taut Pass-2 MUST inherit
+#     `in @glue` rather than re-declaring Tomm probes).
+#
+# No `requires math_species_witnessing(...)` clauses at THIS shard.
+# The species declares the predicate; consumers add the clauses
+# when they pull.
+math_species_witnessing(c: math_crystal) -> verdict { \ }
+
+out @reality/algebra/math
+out math_crystal
+out crystallize
+out discharge
+out math_discharge_well_typed
+out reflexive_a_side
+out math_species_witnessing
