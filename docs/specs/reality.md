@@ -1562,7 +1562,13 @@ decl form of the principle is uniform across `@reality/algebra/<alt>`.
 Recognition #100 (the @spectral/metalogue + Mesland category
 recognition; per MEMORY [[architecture-spectral-db-autopoietic-
 memory]] and related) names the categorical structure of the
-substrate's cross-altitude operation. Mesland's category of unbounded
+substrate's cross-altitude operation. The Mesland category claim
+inherits the SPEC-altitude-only ratification framing of §7.7: #100 is
+Pack-ratified at `docs/specs/spectral-metalogue.md` (`16f4564`); the
+substrate-decl shard `shards/spectral/metalogue.mirror` does NOT exist
+on disk and is forward-promised per Seam audit `d54fb31` C-3. The
+categorical structure cited below is the spec-altitude claim; its
+substrate-decl discharge is pending. Mesland's category of unbounded
 KK-bimodules provides the framework: spectral triples are objects;
 bounded interpolations between them are morphisms; composition is
 associative; the identity is the spectral triple's own identity.
@@ -1846,11 +1852,14 @@ operate on different aspects of the same substrate-decl content.
 
 ### §7.7 — #100 @spectral/metalogue + Mesland category — @reality/algebra/* species are objects in this category
 
-Recognition #100 (Pack-ratified) named the @spectral/metalogue layer
-and its Mesland category structure. The substrate operating on its own
-spectral triples is categorically captured by Mesland's unbounded
-KK-bimodule category; objects are spectral triples; morphisms are
-bounded interpolations.
+Recognition #100 (Pack-ratified at SPEC altitude only —
+`docs/specs/spectral-metalogue.md` at `16f4564`; substrate-decl shard
+`shards/spectral/metalogue.mirror` does NOT exist on disk and is
+forward-promised per Seam audit `d54fb31` C-3) named the
+@spectral/metalogue layer and its Mesland category structure. The
+substrate operating on its own spectral triples is categorically
+captured by Mesland's unbounded KK-bimodule category; objects are
+spectral triples; morphisms are bounded interpolations.
 
 Under @reality, the @reality/algebra/* species are OBJECTS in this
 category. Each species is one spectral triple (A, H_altitude, D_altitude);
