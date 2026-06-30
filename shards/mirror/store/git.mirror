@@ -1,0 +1,413 @@
+in @prism
+in @glass
+in @meta
+in @mirror/store
+
+# @mirror/store/git — the git-backed namespaced wire species under
+# @mirror/store.
+#
+# A prism that imports `in @mirror/store/git` declares its content IS
+# one realization of the @mirror/store six-op surface at git-backed
+# wire altitude — content-addressed objects living under a namespaced
+# subdirectory of a host repository's `.git/` (e.g. `.git/mirror/`),
+# pollution-free of the working tree, traveling with clones if refs
+# are pushed.
+#
+# === The recognition (path α, closes the substrate-decl drift) ===
+#
+# This shard discharges Reed's drift observation logged at
+# `shards/mirror/store.mirror` commit `60f5b7d` ("Substrate-decl drift
+# observation (2026-06-28, Mara)"): the `NamespacedGitStore` Rust
+# surface in `fragmentation/vcs/git/src/namespaced.rs` exposes verbs
+# (`open` / `insert_persistent` / `get_persistent` / `set_ref` /
+# `get_ref` / `flush` / `path`) that did not line up by simple rename
+# with @mirror/store's six-op surface (`read` / `write` / `exists` /
+# `diff` / `walk` / `verify`).
+#
+# Alex's 2026-06-30 substrate-pull decision: path (α) — admit the
+# wire altitude as a REAL altitude of the substrate. The wire is now
+# a declared altitude of the substrate, not implementation detail
+# routed around the substrate-decl surface. The six-op surface
+# remains canonical at @mirror/store altitude; this species' wire
+# verbs carry the actual `NamespacedGitStore` vocabulary and declare
+# HOW they DISCHARGE to the inherited surface.
+#
+# === Family placement: two-tier, no intermediate species-root ===
+#
+# Mirrors the @reality/algebra/* pattern in spirit (family + species)
+# but two-tier not three-tier: @mirror/store is itself functionally
+# specific to storage, so no `algebra` qualifier is needed between
+# family-root and species. The species sits directly under
+# @mirror/store.
+#
+# The species roster (forward-promised at
+# `shards/mirror/store.mirror`'s species-roster paragraph):
+#
+#   Landed:
+#     @mirror/store/git    THIS SHARD — git-backed namespaced wire
+#                          (`fragmentation/vcs/git`).
+#
+#   Forward-promised (consumer-pull):
+#     @mirror/store/mem    in-memory wire (testing + ephemeral).
+#     @mirror/store/s3     object-store wire (cloud).
+#     @mirror/store/oci    OCI artifact wire (registry-backed).
+#     @mirror/store/<...>  other species when consumers pull.
+#
+# === The wire surface (`NamespacedGitStore` vocabulary) ===
+#
+# Canonical Rust impl: `fragmentation/vcs/git/src/namespaced.rs`
+# (module path `namespaced`; NOT re-exported at crate root per the
+# `bootstrap/tests/fragmentation_git_bridge.rs` discovery loop —
+# importers use `fragmentation_git::namespaced::NamespacedGitStore`).
+#
+# The species' wire actions name the methods that surface on the
+# Rust impl. Each is a typed lambda whose obligation block (`\`) is
+# discharged at the realisation boundary by binding to the
+# corresponding `NamespacedGitStore` method.
+#
+# - `open(path, namespace)`        the constructor; discovers the
+#                                  `.git/` from `path` (walking up;
+#                                  worktree-aware), creates
+#                                  `.git/<namespace>/` with the
+#                                  frgmnt store structure (objects/,
+#                                  refs/). The default cache size is
+#                                  16 MiB at the Rust altitude (the
+#                                  substrate altitude does not pin
+#                                  the number — `open_with_cache` is
+#                                  the variant the realisation calls
+#                                  when a non-default budget is
+#                                  required).
+# - `insert_persistent(store, key, fractal, size)`
+#                                  insert a content-addressed
+#                                  fragment with disk persistence
+#                                  (eviction writes to disk). `key`
+#                                  is the content-address (oid)
+#                                  string; `fractal` is the
+#                                  fragmentation-altitude
+#                                  `Fractal<String>` carrier; `size`
+#                                  is the byte-size for cache
+#                                  accounting.
+# - `get_persistent(store, key)`   fetch a fragment with disk
+#                                  fallback (cache miss reads from
+#                                  `.git/<namespace>/objects/`).
+#                                  Returns `imperfect` carrying the
+#                                  fragment on success and opacity
+#                                  on absence/drift.
+# - `set_ref(store, ref_name, oid)`
+#                                  write a named ref pointing at an
+#                                  oid (e.g. `set_ref("HEAD",
+#                                  root_oid)`). Refs live under
+#                                  `.git/<namespace>/refs/`.
+# - `get_ref(store, ref_name)`     read a named ref; returns
+#                                  `imperfect` carrying the oid on
+#                                  success and opacity on absence.
+# - `flush(store)`                 flush all cached entries to disk.
+#                                  The cache invariant: after
+#                                  `flush`, `cached_len` is zero
+#                                  and every inserted-persistent
+#                                  fragment is on-disk-resident.
+# - `path(store)`                  the store directory path (e.g.
+#                                  `.git/mirror/`). The wire's
+#                                  self-location carrier.
+#
+# === The discharge map: wire verbs -> six-op surface ===
+#
+# The species inherits the canonical six-op surface from
+# @mirror/store (`read` / `write` / `exists` / `diff` / `walk` /
+# `verify`). The wire verbs above are this species' specialization;
+# the species shard declares HOW each canonical op DISCHARGES through
+# the wire's vocabulary at the git-backed altitude.
+#
+# This is the substrate-decl honesty Alex's path-α decision turns on:
+# the six-op surface stays canonical at @mirror/store; the wire verbs
+# stay canonical at the species altitude; the discharge map names
+# the bridge.
+#
+#   read(oid)              <= get_persistent(store, oid)
+#                              The canonical read is the cache-with-
+#                              disk-fallback fetch; opacity on miss
+#                              is the wire's standard imperfect.
+#
+#   write(bytes)           <= insert_persistent(store, oid_of(bytes),
+#                                               fractal_of(bytes),
+#                                               size_of(bytes))
+#                          +  set_ref(store, ref_name, oid_of(bytes))
+#                              The canonical write is content-
+#                              addressed insert at this wire; the
+#                              `set_ref` companion is named here
+#                              because at the @mirror/store altitude
+#                              the ref-update is part of `write`'s
+#                              "this content is now reachable"
+#                              semantics (e.g. `mirror init`'s root
+#                              splinter becomes reachable through
+#                              `HEAD`). The realisation MAY split
+#                              the two when only one half is needed
+#                              (e.g. raw insert without ref change).
+#
+#   exists(oid)            <= get_persistent(store, oid).is_some
+#                              The canonical exists is presence of
+#                              the content-address in the cache-
+#                              with-disk fallback. `verdict`'s
+#                              `partial(confidence)` arm fires when
+#                              the oid is cache-resident but the
+#                              disk store has not yet been queried
+#                              (rare; documented at
+#                              @mirror/store.exists).
+#
+#   diff(a, b)             <= compute_delta(
+#                               get_persistent(store, a),
+#                               get_persistent(store, b))
+#                              The canonical diff is the content-
+#                              addressed delta between two fetched
+#                              fragments. Opacity is the @mirror
+#                              /store.diff `imperfect` shape
+#                              (`partial(opacity_map)` when no
+#                              common ancestor; `failure(reason)`
+#                              when one isn't present).
+#                              `compute_delta` is the inherited
+#                              substrate operation — not a wire
+#                              verb; the wire only fetches the
+#                              raw fragments.
+#
+#   walk(root)             <= walk_closure_via_get_persistent(store,
+#                                                              root)
+#                              The canonical walk is the OID-graph
+#                              closure of children under the root
+#                              splinter, reached by repeated
+#                              `get_persistent` calls on each
+#                              child oid (the closure IS the
+#                              lockfile per @mirror/store.walk).
+#                              `walk_closure_via_get_persistent` is
+#                              an inherited @mirror/store-altitude
+#                              traversal operation; the wire's role
+#                              is to fetch the fragments the
+#                              traversal asks for.
+#
+#   verify(oid, bytes)     <= hash(bytes) == oid
+#                              The canonical verify is byte-equality
+#                              between the re-hashed content and
+#                              the claimed oid; the wire does not
+#                              participate (the @mirror/store-
+#                              altitude hash algebra discharges).
+#                              Named here for completeness: the
+#                              integrity check is INDEPENDENT of
+#                              which species is wiring the bytes;
+#                              `verify` discharges identically at
+#                              every @mirror/store/* species.
+#
+# The ref operations (`set_ref` / `get_ref`) are species-private
+# wire verbs that do NOT bind to the six-op surface — they extend
+# it. Refs are the wire's address book on top of the content-address
+# foundation. The species exports `set_ref` / `get_ref` as
+# additional vocabulary callers may use when the wire is known to
+# be this species; consumers that want to stay portable across
+# species use only the six-op surface.
+#
+# `flush` and `path` are species-private control verbs that name
+# wire-altitude lifecycle and self-location; they do NOT bind to
+# the six-op surface either. They are exported so realisations can
+# observe cache invariants and locate the store on disk.
+#
+# === Pre-AI prior art ===
+#
+#   Content-addressed       git's `.git/objects/` is the canonical
+#   storage in `.git/`      content-addressed storage in `.git/`;
+#                           the namespace pattern lifts the same
+#                           discipline to a non-pollution sibling
+#                           directory.
+#   Namespaced refs         git's `refs/namespaces/<ns>/` discipline
+#                           (since 2011, gitnamespaces(7)); the same
+#                           per-namespace ref-isolation pattern but
+#                           specialized to this species' on-disk
+#                           layout (`.git/<namespace>/refs/`).
+#   Cache-with-disk-fallback the LRU + on-disk content-addressed
+#                           pattern used by `fragmentation`'s
+#                           `FrgmntStore` (the wire's underlying
+#                           store).
+#
+# Spec context: docs/specs/mirror-init.md (the mirror-init loop
+#               that pulled on this species' admission);
+#               docs/scouts/2026-06-27-taut-fragmentation-git-store-
+#               for-mirror-init.md (the Rust-surface scout that
+#               first named the drift).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-fragmentation-is-the-rust-substrate]]
+#                       (the Rust impl IS the substrate at the wire
+#                        altitude; this shard names the species
+#                        whose Rust realisation lives there),
+#                      [[architecture-glass-wall-substrate-types]]
+#                       (imperfect / verdict / transparency are
+#                        substrate vocabulary; the wire actions
+#                        return them, not ad-hoc Option/Result),
+#                      [[architecture-mirror-store-vs-spectral-db]]
+#                       (the @mirror/store OPEN gate this species
+#                        realizes at git-backed wire altitude;
+#                        @spectral/db remains the CLOSED engine
+#                        on top — this species sits below that
+#                        boundary),
+#                      [[feedback-no-bare-types]] (wire actions
+#                        return typed `imperfect<...>` shapes, not
+#                        bare unions; `usize` is a typed scalar via
+#                        the cli/lens precedent's `int` lifting),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (the wire altitude was implicit in every
+#                        prior `NamespacedGitStore` reference; this
+#                        shard makes the altitude addressable as a
+#                        substrate-decl object — the substrate had
+#                        the wire all along; it just was not yet
+#                        named).
+# Related shards: store.mirror (the family-root this species
+#                  inherits the six-op surface from; the species-
+#                  roster paragraph names this shard as the first
+#                  landed species),
+#                 glass.mirror (verdict / imperfect / transparency;
+#                  the wire actions return them).
+# Path-namespace property: this file at
+# `shards/mirror/store/git.mirror` declares `@mirror/store/git` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+prism @mirror/store/git <= @mirror/store {
+  # Git-backed namespaced wire species under @mirror/store. The 5-op
+  # gauge action at this species' altitude operates over
+  # `git_store` — the typed handle for one open NamespacedGitStore.
+  # Per-altitude wire verbs below specialize the inherited six-op
+  # surface (read / write / exists / diff / walk / verify) by
+  # discharging them through `NamespacedGitStore` method calls.
+  focus git_store
+  project git_store
+  split git_store
+  shift git_store
+  settle git_store
+}
+
+# === The git_store handle ===
+#
+# A typed reference per [[feedback-no-bare-types]] naming one open
+# `NamespacedGitStore` instance. The realisation layer
+# (`fragmentation/vcs/git/src/namespaced.rs::NamespacedGitStore`)
+# implements the carrier; the substrate altitude declares the typed
+# handle wire actions take and return.
+#
+# Construction: via `open` (below); never directly. Equality is
+# realisation-instance identity, not content-identity (two `open`
+# calls against the same `.git/<namespace>/` return distinct handles
+# that observe the same on-disk state).
+type git_store = ref
+
+# === The fractal carrier ===
+#
+# The fragmentation-altitude fragment carrier the wire moves. Per
+# `fragmentation/src/fragment.rs::Fractal<String>` (the concrete
+# realisation `NamespacedGitStore` parameterizes on). At the
+# substrate altitude this is a typed reference; the realisation
+# layer binds it to `Fractal<String>`.
+#
+# The wire actions take and return `fractal` on insert/get because
+# the `NamespacedGitStore` API operates at fragment granularity
+# (not raw `bytes`). The @mirror/store-altitude `read` / `write`
+# canonical ops take `bytes`; the discharge from canonical-`write`
+# to wire-`insert_persistent` is responsible for going `bytes` ->
+# `fractal` via the fragmentation-altitude encoder
+# (`fragmentation::encoding::encode`).
+type fractal = ref
+
+# === usize — cache-accounting byte-size scalar ===
+#
+# The size carrier `insert_persistent` takes for cache accounting.
+# Lifted from the substrate scalar floor as a typed reference per
+# the cli/lens `type int = ref(scalar/int)` precedent. The wire
+# does NOT enforce that the declared size equals the fragment's
+# actual on-wire byte count; the realisation layer's cache uses
+# the value as an accounting hint.
+type usize = ref(scalar/int)
+
+# === ref_name — the wire's named-ref string ===
+#
+# Refs in `.git/<namespace>/refs/` are addressed by string name
+# (e.g. `"HEAD"`, `"boot"`). Declared as a typed reference per
+# [[feedback-no-bare-types]] so call sites do not pass bare
+# `scalar/string` where the type system can distinguish ref-names
+# from arbitrary strings.
+type ref_name = ref(scalar/string)
+
+# === namespace_name — the wire's namespace-segment string ===
+#
+# The `<namespace>` segment in `.git/<namespace>/` (e.g.
+# `"mirror"`, `"spectral"`, `"notes/mirror"`). Same typing
+# discipline as `ref_name`: bare strings would let unrelated
+# string values flow through `open`. The realisation layer accepts
+# slash-separated nested namespaces (per `NamespacedGitStore`'s
+# `open_nested_namespace` test).
+type namespace_name = ref(scalar/string)
+
+# === The wire actions (`NamespacedGitStore` vocabulary) ===
+#
+# Each action's `\` obligation block discharges at the realisation
+# boundary by binding to the corresponding `NamespacedGitStore`
+# method. The signatures mirror the Rust impl's method surface;
+# the substrate altitude declares the typed shape callers may rely
+# on regardless of which realisation binds.
+
+# open(path, namespace) — discover `.git/` from `path` (walking
+# up; worktree-aware), create `.git/<namespace>/` with the frgmnt
+# store structure, return the typed handle. Failure modes:
+# `path` is not inside a git repository (returns
+# `failure(not_a_git_repo)` via the wire's imperfect lifting);
+# I/O failure on directory creation.
+open(path: ~d, namespace: namespace_name) -> imperfect<git_store, ref, transparency(ref)> { \ }
+
+# insert_persistent(store, key, fragment, size) — insert a
+# content-addressed fragment with disk persistence. Idempotent
+# on `key` (re-inserting the same key with byte-equal content is
+# a cache-update no-op; the on-disk file is content-addressed).
+# The verdict surface is the wire's success/partial/failure
+# triplet: `pass` on insert; `partial` on cache-pressure
+# eviction-to-disk that succeeded; `failure(reason)` on I/O.
+insert_persistent(store: git_store, key: oid, fragment: fractal, size: usize) -> verdict { \ }
+
+# get_persistent(store, key) — fetch a fragment with disk
+# fallback. The wire's standard imperfect: success carries the
+# fragment; partial carries a stale-cache hint; failure(reason)
+# carries oid-not-present.
+get_persistent(store: git_store, key: oid) -> imperfect<fractal, ref, transparency(ref)> { \ }
+
+# set_ref(store, name, oid) — write a named ref pointing at an
+# oid. Verdict on the write: `pass` on success; `failure(reason)`
+# on I/O. The realisation layer guarantees atomicity within one
+# `set_ref` call (no torn writes).
+set_ref(store: git_store, name: ref_name, target: oid) -> verdict { \ }
+
+# get_ref(store, name) — read a named ref. The wire's standard
+# imperfect: success carries the target oid; failure(reason)
+# carries ref-not-present.
+get_ref(store: git_store, name: ref_name) -> imperfect<oid, ref, transparency(ref)> { \ }
+
+# flush(store) — flush all cached entries to disk. After `flush`,
+# every inserted-persistent fragment is on-disk-resident and the
+# cache is empty (the realisation invariant per
+# `NamespacedGitStore::flush`'s `cached_len() == 0` post-condition).
+# `verdict`'s `partial(confidence)` arm fires when some entries
+# flushed and others failed (rare; surfaces I/O failure shape).
+flush(store: git_store) -> verdict { \ }
+
+# path(store) — the store directory path (e.g. `.git/mirror/`).
+# The wire's self-location carrier; called by realisations that
+# need to address the on-disk store from outside the typed handle
+# (e.g. for diagnostic output; for sibling tools that walk the
+# directory directly).
+path(store: git_store) -> ~d { \ }
+
+out @mirror/store/git
+out git_store
+out fractal
+out usize
+out ref_name
+out namespace_name
+out open
+out insert_persistent
+out get_persistent
+out set_ref
+out get_ref
+out flush
+out path
