@@ -89,13 +89,21 @@ in @uuid/spectral
 #     of @glue"). This shard adds @io/algebra as the FOURTH known
 #     @glue species, sibling to:
 #
-#       Species                            Altitude               Declared at
-#       --------------------------------   --------------------   --------------
-#       @spectral/metalogue/tomm           spectral-metalogue     shards/spectral/
-#                                                                  metalogue.mirror
+#       Species                            Altitude               Substrate evidence
+#       --------------------------------   --------------------   --------------------
 #       @cascade/code/<src>/<tgt>          code-translation       shards/cascade.mirror
-#       @cascade/code/formal/prose         formal/prose           `437d061`
+#                                                                  (LANDED; @glue
+#                                                                   inheritance edge
+#                                                                   forward-promised)
+#       @cascade/code/formal/prose         formal/prose           `437d061` (LANDED)
+#       @spectral/metalogue/tomm           spectral-metalogue     docs/specs/spectral-
+#                                                                  metalogue.md `16f4564`
+#                                                                  (SPEC LANDED; shard
+#                                                                   FORWARD-PROMISED
+#                                                                   per Seam audit C-3
+#                                                                   closure 2026-06-30)
 #       @io/algebra (THIS shard)           io-algebra             shards/io/algebra.mirror
+#                                                                  (LANDED)
 #
 # The dual inheritance is structurally honest: the @io/algebra
 # boundary IS a translation surface (consumes/exposes algebras across
@@ -323,9 +331,12 @@ in @uuid/spectral
 #                  family — sibling at the io/algebra-isomorphic
 #                  altitude for code-translation rather than algebra-
 #                  translation),
-#                 spectral/metalogue.mirror (the spectral-metalogue
-#                  @glue species; sibling @glue species at a
-#                  different altitude).
+#                 spectral/metalogue.mirror (FORWARD-PROMISED shard
+#                  per Seam audit C-3 closure 2026-06-30; the
+#                  spectral-metalogue @glue species spec lives at
+#                  docs/specs/spectral-metalogue.md `16f4564`;
+#                  sibling @glue species at a different altitude
+#                  once the shard discharges).
 # Path-namespace property: this file at `shards/io/algebra.mirror`
 # declares `@io/algebra` per `@epistemologic/pact/path_matches_
 # namespace`.

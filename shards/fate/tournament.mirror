@@ -459,12 +459,20 @@ prism @fate/tournament {
 # the same tick ARE the same round under content-addressing; the
 # candidates_browsed and winner are determined by the tray state at
 # round time and are content-equivalent.
+#
+# Per Seam audit `docs/audits/2026-06-30-seam-nine-shard-chain-
+# composite.md` C-1 + S-6 closure (2026-06-30): tick + hole are the
+# thin substrate-altitude carriers (@glass.tick = ref, @glass.hole =
+# ref) shared with @autopoietic.tick_action and @algebra/metalogue.
+# algebra_turn. Field types tick / hole reference @glass directly;
+# the rich inference-altitude metadata for holes lives at @fate.hole_
+# record where downstream selection consumes it.
 type tournament_round = {
   instance:           uuid_spectral,
   hole:               hole,
   candidates_browsed: candidate_set,
   winner:             oid,
-  tick:               ref,
+  tick:               tick,
 }
 
 # === The candidate_set carrier ===

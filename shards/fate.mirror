@@ -445,6 +445,15 @@ type inference = {
   altitude:  ref,
 }
 
+# NB: the `hole: hole` field above references @glass.hole (the thin
+# substrate-altitude gap carrier per Seam S-6 closure). The rich
+# inference-altitude metadata (expected_type / context_oids /
+# altitude) lives on this shard's `hole_record` declared further
+# below; sub-shards that need the rich metadata consume
+# `hole_record`, the inference action signature carries the thin
+# `hole` so the carrier composes with @autopoietic.tick_action.hole
+# at the chain altitude.
+
 # === The restricted_state_space carrier ===
 #
 # The typed restriction the dice rolls within. Names the (A, H, D,
@@ -574,13 +583,28 @@ type dice_roll = {
   verdict:      verdict,
 }
 
-# === The hole carrier ===
+# === The hole_record carrier ===
 #
-# The typed gap @fate's inference fills. Absorbs the candidates(hole)
-# semantics from the orphaned boot-floor file `boot/std/fate/
-# tournament.mirror` per spec §4.7. SAME SHAPE as @autopoietic's
-# `tick_action.hole` field — the migration source — consumed here
-# at the inference altitude rather than the tick altitude.
+# The rich inference-altitude record specializing the substrate's
+# thin gap carrier @glass.hole. Absorbs the candidates(hole) semantics
+# from the orphaned boot-floor file `boot/std/fate/tournament.mirror`
+# per spec §4.7. Consumed at the inference altitude where the @fate
+# selection machinery needs the typed-gap metadata (expected_type +
+# context_oids + altitude); upstream @autopoietic.tick_action carries
+# the thin @glass.hole and downstream consumers (this shard's
+# inference actions) consume the thin carrier directly while sub-
+# shards that need the full inference-altitude metadata work with
+# this specialized record.
+#
+# Per Seam audit `docs/audits/2026-06-30-seam-nine-shard-chain-
+# composite.md` S-6 closure (2026-06-30): the prior `type hole` rich
+# record collided with @autopoietic.tick_action.hole (typed `ref`).
+# The substrate-pull-honest reading parallels C-1: declare the thin
+# carrier (@glass.hole = ref) at substrate altitude; rename the rich
+# record to `hole_record` so upstream @autopoietic and downstream
+# @fate share the SAME thin carrier in their action signatures while
+# this shard's sub-prisms retain the rich-record vocabulary where
+# inference-altitude metadata is required.
 #
 # - `expected_type`      the typed-ref naming the shape the inference
 #                        must produce (the candidate's type signature;
@@ -596,10 +620,10 @@ type dice_roll = {
 #                        in a gen_prism dispatch / spectral-metalogue
 #                        gap at the Tomm-probe altitude).
 #
-# Identity contract: byte-equality on the three fields. Two holes
-# with byte-equal expected_type, context_oids, and altitude ARE the
-# same hole under content-addressing.
-type hole = {
+# Identity contract: byte-equality on the three fields. Two hole_
+# records with byte-equal expected_type, context_oids, and altitude
+# ARE the same record under content-addressing.
+type hole_record = {
   expected_type: ref,
   context_oids:  [oid],
   altitude:      ref,
@@ -622,7 +646,18 @@ type hole = {
 # Body discharges per-realisation at the inference boundary. Same
 # shape as @autopoietic.tick and @bauchladen.crystallize
 # (declarative obligation discharged at the species boundary).
-roll(space: restricted_state_space, hole: hole) -> dice_roll { \ }
+#
+# Per Seam audit `docs/audits/2026-06-30-seam-nine-shard-chain-
+# composite.md` M-5 closure (2026-06-30): roll honors yesterday's
+# bilateral discipline from #101 (γ chirality) + #102 (J charge
+# conjugation) at the discharge site. The two requires clauses
+# enforce that the restricted_state_space's γ + J fields carry
+# witnesses satisfying their respective bilaterals before the dice
+# may roll within the restricted state space.
+roll(space: restricted_state_space, hole: hole) -> dice_roll
+requires chirality_witnessing(space.gamma)
+requires j_witnessing(space.j)
+{ \ }
 
 # === infer — produces the typed result + crystallizes ===
 #
@@ -679,7 +714,16 @@ restrict(state: ref, gamma: chirality, j: charge_conjugation) -> restricted_stat
 # two altitudes share the @bauchladen tray.
 #
 # Body discharges per-realisation at the inference boundary.
-bilateral_dispatch(hole: hole, altitude: altitude) -> dice_roll { \ }
+#
+# Per Seam audit `docs/audits/2026-06-30-seam-nine-shard-chain-
+# composite.md` C-2 closure (2026-06-30): the `altitude: altitude`
+# typing was undeclared (no `type altitude` in the substrate); the
+# substrate-pull-honest carrier for altitudes is the substrate's
+# universal `ref` per the existing altitude field-typings across
+# @fate.inference.altitude, @fate.dice_roll.altitude, @bauchladen.
+# crystal.altitude, @algebra.algebra_carrier.altitude. Field-typed
+# `altitude: ref` to match.
+bilateral_dispatch(hole: hole, altitude: ref) -> dice_roll { \ }
 
 # === The requires obligations ===
 #
@@ -796,7 +840,7 @@ out inference
 out restricted_state_space
 out geometric_formalization
 out dice_roll
-out hole
+out hole_record
 out roll
 out infer
 out restrict

@@ -72,35 +72,86 @@ in @uuid/spectral
 # SPECIFIC species of a more general substrate primitive — the
 # Mesland correspondence between spectral triples.
 #
-# The three known species of @glue, with their altitudes and
-# canonical declaration sites:
+# The known species of @glue, with their altitudes and substrate
+# evidence sites:
 #
-#   Species                         Altitude                  Declared at
-#   -----------------------------   -----------------------   -------------
-#   @spectral/metalogue/tomm        spectral-metalogue        shards/spectral/
-#                                   (Bateson level V)         metalogue.mirror
-#                                                              + tomm.mirror
-#                                                              (recognition #100)
+#   Species                         Altitude                  Substrate evidence
+#   -----------------------------   -----------------------   --------------------
 #   @cascade/code/<src>/<tgt>       code-translation          shards/cascade.mirror
 #                                   (Bateson level IV)        + per-cascade species
-#                                                              (recognition #95)
+#                                                              (recognition #95;
+#                                                               LANDED)
 #   @cascade/code/formal/prose      formal/prose              `437d061` (yesterday's
-#                                   (mid-altitude code         P4 landing)
+#                                   (mid-altitude code         P4 landing; LANDED)
 #                                   ↔ NL morphism)
+#   @spectral/metalogue/tomm        spectral-metalogue        docs/specs/spectral-
+#                                   (Bateson level V)         metalogue.md `16f4564`
+#                                                              (recognition #100;
+#                                                               SPEC LANDED;
+#                                                               shard FORWARD-
+#                                                               PROMISED — see C-3
+#                                                               reframe below)
 #
-# These species WERE operating before this shard landed; the
-# substrate ALREADY had the morphism machinery scattered across
-# three sites. This shard's contribution is the family-root
-# admission that absorbs them as siblings under one substrate-decl
-# vocabulary. 54th-or-so instance of [[feedback-substrate-already-
-# had-the-word]] at family-root altitude.
+# Per Seam audit `docs/audits/2026-06-30-seam-nine-shard-chain-
+# composite.md` C-3 closure (2026-06-30): two of the three sites in
+# the prior species table were FABRICATED. The substrate evidence is:
 #
-# The substrate-decl form of the absorption:
+#   - `shards/spectral/metalogue.mirror` does NOT exist on disk;
+#   - `shards/spectral/metalogue/tomm.mirror` does NOT exist on disk;
+#   - the canonical spec `docs/specs/spectral-metalogue.md` `16f4564`
+#     (recognition #100) IS landed and grounds the substrate-pull
+#     for the spectral-metalogue species;
+#   - `shards/pack/metalogue.mirror` imports `in @spectral/metalogue`
+#     which is currently a dangling reference pending shard discharge.
+#
+# The substrate-pull-honest reframing: the @spectral/metalogue/tomm
+# species is FORWARD-PROMISED — the spec is the substrate-pull-
+# confirmation; the shard discharge follows when consumers pull. The
+# @cascade species (two variants) ARE landed at family-root altitude
+# (`shards/cascade.mirror`) and one specialization at `437d061`. The
+# @glue family-root admission lands the contract; consumers add @glue
+# species per the substrate-pull discipline (per [[feedback-craft-
+# not-deliver]]).
+#
+# The substrate-decl form of the family alignment (per Seam C-3 + C-4
+# closure 2026-06-30, the alignment is STRUCTURAL not import-enacted;
+# the inheritance edges are forward-promised migration ticks):
 #
 #   @glue                                        family-root (this shard)
-#     ├── @spectral/metalogue/tomm               spectral-altitude species
 #     ├── @cascade/code/<src>/<tgt>              cross-language species
-#     └── @cascade/code/formal/prose             formal↔prose species
+#     │                                          (STRUCTURALLY ALIGNED;
+#     │                                           @cascade does NOT yet
+#     │                                           `in @glue` — see
+#     │                                           absorption note below)
+#     ├── @cascade/code/formal/prose             formal↔prose species
+#     │                                          (STRUCTURALLY ALIGNED
+#     │                                           via @cascade above)
+#     └── @spectral/metalogue/tomm               spectral-altitude species
+#                                                (FORWARD-PROMISED via the
+#                                                 canonical spec at
+#                                                 docs/specs/spectral-
+#                                                 metalogue.md `16f4564`;
+#                                                 shard discharge pending)
+#
+# Per Seam audit C-4 closure (2026-06-30): the prior framing claimed
+# @cascade WAS absorbed as a @glue species. The substrate evidence:
+# `shards/cascade.mirror` imports `in @prism`, `in @meta`, `in @glass`,
+# `in @epistemologic`, `in @epistemologic/cybernetic`, `in @epistemologic
+# /cybernetic/distinction` — but NOT `in @glue`. It declares
+# `cascade_well_defined(lens, source, p)` independently of `glue_
+# witnessing(c)`. The "absorption" is therefore claimed-by-rhetoric,
+# not enacted-by-import; the substrate-pull-honest reading is that
+# @cascade is STRUCTURALLY ALIGNED with @glue's morphism-category
+# discipline (both operate as Mesland-category morphisms; cascade_
+# well_defined and glue_witnessing share the morphism-discharge
+# shape) but the inheritance edge is FORWARD-PROMISED via a future
+# @cascade rewrite tick that adds `in @glue` and refactors cascade_
+# well_defined as a refinement of glue_witnessing.
+#
+# The structural alignment IS load-bearing — when the rewrite tick
+# lands, the lift is mechanical because the substrate already
+# enforces the discipline through cascade's predicate shape. The
+# rewrite is forward-promised, not enacted.
 #
 # Future @glue species (forward-promised, not landing this tick):
 #   - @glue/kintsugi/<source>/<target>           transformation morphisms
@@ -262,10 +313,15 @@ in @uuid/spectral
 #               (@cascade species as Mesland-category objects + Tomm
 #               probes as Mesland-category morphisms); shards/
 #               cascade.mirror (the existing cross-language morphism
-#               family the spec brings under @glue's family-root);
-#               shards/spectral/metalogue.mirror (the Tomm species;
-#               substrate-decl precedent for what becomes a @glue
-#               species under the absorption); shards/fate.mirror
+#               family structurally aligned with @glue's family-root;
+#               inheritance edge forward-promised per Seam C-4 closure
+#               2026-06-30); docs/specs/spectral-metalogue.md `16f4564`
+#               (the Tomm-species spec; substrate-pull-confirmation
+#               for the spectral-altitude @glue species; shard
+#               discharge `shards/spectral/metalogue.mirror` +
+#               `shards/spectral/metalogue/tomm.mirror` forward-
+#               promised per Seam C-3 closure 2026-06-30);
+#               shards/fate.mirror
 #               (the dependency at fdcba31; @glue's forward-promise
 #               from fate.mirror line 772-774 is discharged here);
 #               docs/math/the-tower/curvature-and-tomm.md §5 (the
@@ -360,10 +416,12 @@ in @uuid/spectral
 #                  now structurally a @glue species; the existing
 #                  precedent for @glue's discipline at the code-
 #                  translation altitude),
-#                 spectral/metalogue.mirror (the Tomm-probe family
-#                  now structurally a @glue species at the spectral-
-#                  metalogue altitude; the existing precedent at the
-#                  spectral altitude),
+#                 spectral/metalogue.mirror (FORWARD-PROMISED shard
+#                  per Seam C-3 closure 2026-06-30; the Tomm-probe
+#                  family WILL structurally become a @glue species at
+#                  the spectral-metalogue altitude when the canonical
+#                  spec at docs/specs/spectral-metalogue.md `16f4564`
+#                  discharges to shards),
 #                 autopoietic.mirror (the prism class @glue IS-A via
 #                  `in @autopoietic`; the fold-back permission @glue
 #                  inherits transitively; morphism selections
@@ -678,14 +736,23 @@ restriction_preserved(c: correspondence, payload: ref) -> verdict { \ }
 # Forward-promised inheritors:
 #
 #   - `@spectral/metalogue/tomm` (the spectral-altitude species
-#     per recognition #100): Tomm probes ARE @glue species at the
-#     spectral-metalogue altitude; the tomm.transmit action IS
-#     @glue.translate at the spectral altitude; the species
-#     discharges glue_witnessing for each transmit.
+#     per recognition #100; FORWARD-PROMISED shard discharge per
+#     Seam C-3 closure 2026-06-30): Tomm probes WILL BE @glue species
+#     at the spectral-metalogue altitude once the canonical spec at
+#     `docs/specs/spectral-metalogue.md` `16f4564` discharges to
+#     shards (`shards/spectral/metalogue.mirror` + `shards/spectral/
+#     metalogue/tomm.mirror`); the future tomm.transmit action will
+#     be @glue.translate at the spectral altitude; the species will
+#     discharge glue_witnessing for each transmit.
 #   - `@cascade/code/<src>/<tgt>` species (the cross-language @glue
-#     species per recognition #95): @cascade.compile IS
-#     @glue.translate at the code-translation altitude; each
-#     @cascade species discharges glue_witnessing for each compile.
+#     species per recognition #95; FORWARD-PROMISED migration per
+#     Seam C-4 closure 2026-06-30): @cascade.compile is structurally
+#     aligned with @glue.translate at the code-translation altitude;
+#     each @cascade species WILL discharge glue_witnessing for each
+#     compile once `shards/cascade.mirror` adds `in @glue` and
+#     refactors cascade_well_defined as a refinement of glue_
+#     witnessing. The substrate-pull discipline is shared; the
+#     inheritance edge lands at a future tick.
 #   - `@cascade/code/formal/prose` (yesterday's P4 437d061): the
 #     formal/prose @glue species; the formal↔prose morphism IS
 #     @glue.translate at the mid-altitude code ↔ NL boundary;

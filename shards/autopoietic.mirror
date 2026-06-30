@@ -492,30 +492,44 @@ type autopoietic_membership = {
   fixed_point_witness: option(oid),
 }
 
-# === The tick carrier ===
+# === The tick_record carrier ===
 #
-# The discrete time unit of autopoietic operation. One tick = one
-# fold-back cycle: consume crystals from the Bauchladen → produce
+# The discrete time unit of autopoietic operation. One tick_record =
+# one fold-back cycle: consume crystals from the Bauchladen → produce
 # new crystals → add to Bauchladen. The substrate's @time altitude
 # carrier specialized to the autopoietic discipline.
 #
+# Per Seam audit `docs/audits/2026-06-30-seam-nine-shard-chain-
+# composite.md` C-1 closure (2026-06-30): this carrier was previously
+# named `type tick` and collided with the substrate-altitude thin
+# temporal-coordinate carrier @glass.tick that @algebra/metalogue.
+# algebra_turn.tick and @fate/tournament.tournament_round.tick
+# consume. The substrate-pull-honest reading: the THIN carrier
+# (@glass.tick = ref) is the substrate-wide temporal-coordinate
+# vocabulary; the autopoietic-cycle bookkeeping is a SPECIALIZED
+# record (this carrier) that carries a `tick` field naming the
+# temporal coordinate plus the per-cycle input/output OID metadata.
+# Renamed `tick` → `tick_record`; the `tick: tick` field below
+# references @glass.tick.
+#
 # - `instance`     the uuid_spectral naming the autopoietic instance
-#                  the tick belongs to.
-# - `index`        the monotone tick index within the instance; the
-#                  natural-number tick coordinate.
-# - `input_oids`   the OIDs the tick consumed from the tray as
+#                  the tick_record belongs to.
+# - `tick`         the substrate-altitude temporal coordinate for
+#                  this cycle (per @glass.tick); the monotone time
+#                  carrier the autopoietic-cycle record specializes.
+# - `input_oids`   the OIDs the cycle consumed from the tray as
 #                  inputs to its fold-back fold (per spec §3.3,
 #                  consumed input OIDs are tracked structurally).
-# - `output_oids`  the OIDs the tick produced; the new crystals
-#                  added to the tray at the end of the tick.
+# - `output_oids`  the OIDs the cycle produced; the new crystals
+#                  added to the tray at the end of the cycle.
 #
-# Identity contract: byte-equality on (instance, index). Two ticks
-# with the same instance and index ARE the same tick under
-# content-addressing; the input/output OID sets are determined by
-# the tick's body and are content-equivalent.
-type tick = {
+# Identity contract: byte-equality on (instance, tick). Two
+# tick_records with the same instance and tick ARE the same record
+# under content-addressing; the input/output OID sets are determined
+# by the cycle's body and are content-equivalent.
+type tick_record = {
   instance:    uuid_spectral,
-  index:       ref,
+  tick:        tick,
   input_oids:  [oid],
   output_oids: [oid],
 }
@@ -573,11 +587,19 @@ type closure_witness = {
 #
 # - `instance`     the uuid_spectral naming the autopoietic instance
 #                  the action belongs to.
-# - `tick`         the tick at which the action fires.
-# - `hole`         the typed-gap carrier; the substrate-pull-typed
-#                  shape the action attempts to fill (per the
-#                  candidates(hole) migration; the gap's type
-#                  determines which ganglia contribute candidates).
+# - `tick`         the substrate-altitude temporal coordinate (per
+#                  @glass.tick) at which the action fires; the thin
+#                  carrier shared with @algebra/metalogue.algebra_turn
+#                  and @fate/tournament.tournament_round per Seam C-1
+#                  closure.
+# - `hole`         the typed-gap carrier (per @glass.hole); the
+#                  substrate-pull-typed shape the action attempts
+#                  to fill (per the candidates(hole) migration; the
+#                  gap's type determines which ganglia contribute
+#                  candidates). Carrier-typed per Seam S-6 closure;
+#                  rich gap-records at @fate (@fate.hole_record) carry
+#                  the inference-altitude metadata for downstream
+#                  selection.
 # - `candidates`   the list of candidate OIDs the action produced;
 #                  the operational form of `[resolution]`; each
 #                  candidate is a content-addressed crystal that
@@ -590,7 +612,7 @@ type closure_witness = {
 type tick_action = {
   instance:   uuid_spectral,
   tick:       tick,
-  hole:       ref,
+  hole:       hole,
   candidates: [oid],
 }
 
@@ -766,7 +788,7 @@ autopoietic_closure_holds(prism: ref) -> verdict { \ }
 
 out @autopoietic
 out autopoietic_membership
-out tick
+out tick_record
 out closure_witness
 out tick_action
 out fold_back

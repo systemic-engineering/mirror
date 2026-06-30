@@ -152,10 +152,16 @@ in @uuid/spectral
 #
 # === Composition with the cybernetic-foundation recognitions ===
 #
-# Recognition #100 (@spectral/metalogue's Tomm probes) → the Tomm
-# probe is ONE @glue species the composition can use as the morphism
-# kind; the composition reuses the spectral-altitude species at
-# the substrate-pull-correct altitude.
+# Recognition #100 (@spectral/metalogue's Tomm probes — substrate-
+# pull-confirmed at `docs/specs/spectral-metalogue.md` `16f4564`;
+# shard discharge `shards/spectral/metalogue.mirror` + `shards/
+# spectral/metalogue/tomm.mirror` FORWARD-PROMISED per Seam audit
+# `docs/audits/2026-06-30-seam-nine-shard-chain-composite.md` C-3
+# closure 2026-06-30) → the Tomm probe WILL BE one @glue species the
+# composition can use as the morphism kind once the shards discharge;
+# the composition's substrate-pull alignment with the spectral-
+# metalogue altitude is grounded in the canonical spec, not yet in
+# the shard manifest.
 #
 # Recognition curvature 2-form work (per `docs/math/the-tower/
 # curvature-and-tomm.md` §5) → @kintsugi's D-flow IS what the
@@ -177,6 +183,37 @@ in @uuid/spectral
 # composes via this same mechanism (the @glue/pack/* forward-
 # promised species per `shards/glue.mirror` §"Forward-promised
 # inheritors”).
+#
+# === Forward-promised @kintsugi extension (Seam S-2 closure) ===
+#
+# Per Seam audit `docs/audits/2026-06-30-seam-nine-shard-chain-
+# composite.md` S-2 closure (2026-06-30): this shard imports `in
+# @kintsugi` and the `propose_step` action references @kintsugi's
+# per-step morphism emission, but the current `shards/kintsugi.mirror`
+# (2026-06-10) imports only `in @prism`, `in @glass`, `in @meta` —
+# it does NOT import `in @autopoietic` and does NOT declare a
+# `propose_step`-shaped action surfacing the proposal carrier this
+# capstone consumes.
+#
+# The substrate-pull-honest acknowledgment: P8's `propose_step` is
+# structurally a FORWARD-PROMISE to a future @kintsugi-amendment tick
+# that lifts @kintsugi to:
+#
+#   - import `in @autopoietic` (so @kintsugi's outputs are admissible
+#     as autopoietic-fold-eligible at @kintsugi's own substrate-decl
+#     admission);
+#   - declare `propose_step(prior_session: option(fold_back_session))
+#     -> composition_step` as a fracture-body forward-promise the
+#     family-root surfaces for consumers like this capstone.
+#
+# Until the amendment tick lands, the `autopoietic_closure_holds_
+# across_session` obligation P8 declares cannot fully fire over a
+# session whose `kintsugi_proposal` ref points to a @kintsugi shard
+# whose substrate-decl does not yet declare the autopoietic edge.
+# This shard's contract is honest about being declaration-only;
+# the bilateral discharge follows when the @kintsugi-amendment tick
+# lands. The capstone names the SHAPE of the composition; the
+# discharge follows when consumers pull the @kintsugi extension.
 #
 # === The composition with the autopoietic recursion ===
 #

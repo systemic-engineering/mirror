@@ -111,6 +111,53 @@ type location = {
   span: (u32, u32),
 }
 
+# === tick — the substrate's temporal-coordinate carrier ===
+#
+# A monotone temporal coordinate (a substrate-ref naming the position
+# in the substrate's time ordering). Declared at glass altitude so
+# every altitude that needs a temporal-coordinate field consumes the
+# SAME thin carrier rather than per-altitude reinvention.
+#
+# Per Seam audit `docs/audits/2026-06-30-seam-nine-shard-chain-
+# composite.md` C-1 closure (2026-06-30): two altitudes were
+# referencing `tick` with incompatible shapes — @autopoietic.tick
+# (rich record `{instance, index, input_oids, output_oids}`) and
+# @algebra/metalogue.algebra_turn.tick + @fate/tournament.tournament_
+# round.tick (temporal coordinate as `tick` / `ref`). The substrate-
+# pull-honest reading: `tick` is the THIN temporal-coordinate carrier
+# at substrate altitude; rich tick-records (the autopoietic-cycle
+# bookkeeping) are SPECIALIZED records (e.g., @autopoietic.tick_
+# record) that CARRY a tick field rather than reinvent the carrier.
+#
+# Identity contract: the substrate's ref-identity (byte-equality on
+# the ref). Tick equality at this altitude is ref equality; specialized
+# tick-records carry the temporal coordinate as one field and the
+# record's identity is the wider tuple.
+type tick = ref
+
+# === hole — the substrate's typed-gap carrier ===
+#
+# A typed-ref naming a gap the substrate's inference machinery (per
+# @fate's constrained-inference operator) attempts to fill. Declared
+# at glass altitude so every altitude that consumes the gap-discipline
+# carrier (per the candidates(hole) migration; @autopoietic's
+# tick_action; @fate's inference; @fate/tournament's selection) shares
+# ONE thin carrier rather than per-altitude reinvention.
+#
+# Per Seam audit `docs/audits/2026-06-30-seam-nine-shard-chain-
+# composite.md` S-6 closure (2026-06-30): @autopoietic.tick_action.hole
+# was typed `ref`; @fate.hole was a rich record `{expected_type,
+# context_oids, altitude}`. The substrate-pull-honest reading
+# parallels C-1: `hole` is the thin typed-gap carrier; rich gap-records
+# (e.g., @fate.hole_record) carry the inference-altitude metadata
+# (expected_type / context_oids / altitude) and reference a `hole`.
+#
+# Identity contract: the substrate's ref-identity (byte-equality on
+# the ref). Specialized hole-records carry their own wider tuple
+# identity; the hole field carries the substrate-altitude gap
+# identity.
+type hole = ref
+
 # opacity — the minimal located fact. One smudge on the glass.
 # property is @nl (human-readable description of what was checked);
 # weight is bits-of-missing-information at this site (Shannon-like).
@@ -353,6 +400,8 @@ type shard(altitude) = {
 out @glass
 out glass
 out location
+out tick
+out hole
 out opacity
 out opacity_map
 out imperfect
