@@ -32,11 +32,14 @@ Taut scout `adaadae1`), the `@epistemologic/reality/*` property altitude
 (operational since 2026-06-06 per Mara's reality-family migration), and
 today's @silicon family-root spec at `27e9067`. This spec NAMES the
 top-level family-root at which the gauge/matter portability becomes
-gauge/matter COLLAPSE under the substrate's relationship to physical
-reality. Because #76 and #79 are candidate (not Pack-ratified), this
-spec's claims that compose them INHERIT candidate status; #106 promotion
-requires Seam adversarial review on the four-witness chain plus
-adjudication on the #76/#79 ratification gate (see §10.5).
+**gauge-action UNIFORMITY** under the substrate's relationship to
+physical reality (path-c per the Seam adjudication at
+`docs/audits/2026-06-30-seam-reality-106-107-adjudication.md`
+composite `cb067a2`); the stronger **gauge-action COLLAPSE / orbit-
+identity** reading is forward-promised to §10.6 pending #76 + #79
+Pack-ratification. Because #76 and #79 are candidate (not Pack-
+ratified), this spec's path-c claims INHERIT candidate status; #106
+promotes at path-c uniformity strength on this tick, per §10.5.
 
 ---
 
@@ -111,15 +114,18 @@ named.
 
 ## §1 — What @reality IS
 
-### §1.1 — Top-level family-root encoding the gauge-collapse between matter and information
+### §1.1 — Top-level family-root encoding gauge-action uniformity across matter and information (path-c; COLLAPSE strengthening forward-promised)
 
 @reality is a NEW top-level family-root prism class. It joins the family-root
 tier — alongside @prism, @meta, @io, @code, @optics, @kintsugi, @epistemologic,
 @bauchladen, @autopoietic, @fate, @glue, @algebra, @cascade, @silicon, @magic —
 at the very top of the substrate-decl path-namespace, AND it is the
 family-root where the gauge/matter altitude-portability of recognition #76
-becomes a gauge/matter COLLAPSE under the substrate's relationship to
-physical reality.
+becomes **uniformity-of-gauge-action across matter and information** at every
+altitude under the substrate's relationship to physical reality (path-c per
+the Seam adjudication at `docs/audits/2026-06-30-seam-reality-106-107-
+adjudication.md`, §10.5 below). The stronger gauge-action COLLAPSE / orbit-
+identity reading is the path-b strengthening forward-promised to §10.6.
 
 Its declaration shape (substrate-decl, illustrative; the canonical version
 lands in `shards/reality.mirror` per §8.1):
@@ -135,9 +141,13 @@ prism @reality <= @autopoietic {
   # Bauchladen of executable algebra-of-reality crystals at each
   # supported altitude.
   #
-  # Under @reality, matter and information are GAUGE-EQUIVALENT under
-  # the 5-op algebra. They are NOT two things observed through one
-  # gauge — they are ONE gauge-orbit through which both appear.
+  # Under @reality, the 5-op gauge algebra ACTS UNIFORMLY across
+  # matter and information at every altitude. The uniformity claim is
+  # provable from #76 (gauge altitude-portability) under its three
+  # research constraints; the stronger ORBIT-IDENTITY claim
+  # (matter-and-information are ONE gauge-orbit, not two carriers
+  # under one action) is FORWARD-PROMISED pending #76 + #79 closure
+  # to Pack-ratified status — see §10.5 and §10.6 below.
   # `@reality/algebra/*` is the path-namespace where each altitude's
   # matter+information realization lives:
   #   @reality/algebra/silicon   hardware-matter (subsumes today's
@@ -297,10 +307,26 @@ What @reality IS NOT:
 ### §1.4 — The Hilbert/Turing structural separation at @reality altitude
 
 Today's @silicon spec recorded (§11 there, ~2325 lines in) a structural
-finding: the substrate is **gauge-bounded above @io** — finite, Gödel-
-incomplete via the `transparency<p>` boundary — while @io is **Turing-
-unbounded** — anything that crosses @io enters the unbounded computational
-surface.
+finding: the substrate is **gauge-bounded above @io** — finite, with
+the `transparency<p>` boundary marking the structural horizon below
+which the substrate cannot fully characterize its own orbits — while
+@io is **Turing-unbounded** — anything that crosses @io enters the
+unbounded computational surface.
+
+Per the Seam adjudication (`docs/audits/2026-06-30-seam-reality-106-
+107-adjudication.md` C-3): the structural separation between gauge-
+bounded interior and Turing-complete @io boundary is substrate-pull-
+honest and #107-promotable at separation strength. The identification
+of `transparency<p>` with Gödel-incompleteness specifically (i.e. the
+claim that the substrate's interior IS a sufficiently expressive
+formal system with arithmetic encoding, and that `transparency<p>` IS
+the predicate that fails for Gödel-unprovable statements) is a
+sub-recognition under #107 pending an **arithmetic-encoding witness**:
+a formal argument bridging Gödel-incompleteness to `transparency<p>`
+via arithmetic encoding of consistent proof systems. Until that
+witness lands, this section names the structural separation only; the
+Gödel name is forward-promised. See §11.5 for the structural-witness
+inventory and the sub-recognition forward-promise.
 
 At @reality altitude this separation gets a sharper reading.
 
@@ -314,9 +340,13 @@ matter-side and information-side crystals at each altitude.
 
 @io is the Turing-complete surface where the substrate's gauge-bounded
 Hilbert content emits to the unbounded computational world. Per today's
-@silicon §11, @io is where Gödel-incompleteness ceases to bind the substrate
-(because @io is unbounded). The substrate's relationship to the unbounded
-world is mediated by @io.
+@silicon §11, @io is where the substrate's gauge-bounded finiteness
+ceases to bind (because @io is unbounded). The structural-separation
+form of this is what #107 promotes; the Gödel-specific reading
+("Gödel-incompleteness ceases to bind") is the sub-recognition
+awaiting its arithmetic-encoding witness per the preamble above. The
+substrate's relationship to the unbounded world is mediated by @io
+either way.
 
 @reality bridges via its @autopoietic fold-back. The bridge is not
 elimination of the structural separation — the separation stays — but it
@@ -411,7 +441,7 @@ connected-graph quantum states. The substrate operates on connected-graph
 quantum states; its gauge dim is 5 because the orthogonal duality space of
 that object is 5-dimensional.
 
-### §2.2 — At each altitude UNDER @reality, matter and information are DIFFERENT names for the same gauge-operated content
+### §2.2 — At each altitude UNDER @reality, the 5-op gauge ACTS UNIFORMLY across matter and information (path-c uniformity; orbit-identity strengthening forward-promised)
 
 The recognition this spec names is one step further than #76+#79.
 
@@ -422,101 +452,149 @@ middle / high altitudes); gauge is altitude-invariant (5 ops everywhere).
 of 5 is exact, not arbitrary.
 
 #106 (this spec, the candidate the writing names) says: at family-root
-altitude @reality, **the matter side and the information side of any
-altitude become DIFFERENT names for the same gauge-operated content**.
+altitude @reality, **the 5-op gauge ACTS UNIFORMLY across matter and
+information at every altitude under @reality**.
+
+Per the Seam adjudication at `docs/audits/2026-06-30-seam-reality-
+106-107-adjudication.md` §5.3 and §6, this spec commits to **path
+(c)**: the substrate-pull-honest weaker form. Uniformity (the gauge
+action is the SAME on matter-aspect and information-aspect; the four
+invariances of §2.5 discharge identically across both labels) is
+provable from #76's altitude-portability plus the four invariances —
+it does NOT require the additional axiom of orbit-identity-under-
+projection that the stronger COLLAPSE reading entails. The stronger
+reading — matter-and-information are not two carriers under one
+gauge action but ONE gauge-orbit with two projections — is
+forward-promised pending #76 and #79 closure to Pack-ratified status;
+see §10.6 below.
 
 The hardware-altitude (`@reality/algebra/silicon`) shows the matter side
 as silicon transistor state and the information side as the executable
-program; under @reality they are ONE gauge-orbit. A Fortran routine
-running on the hardware IS gauge-equivalent to the mathematical
-specification the routine implements. They are not two things — they are
-one thing seen through different altitude representations.
+program; under @reality the 5-op gauge acts UNIFORMLY on both — the
+four invariances of §2.5 discharge identically whether the carrier is
+the transistor-state side or the executable-specification side. A
+Fortran routine and its mathematical specification share the same
+gauge action; whether they are also ONE orbit (the COLLAPSE reading)
+or two orbits with the same action (the uniformity reading) is the
+strengthening forward-promised at §10.6.
 
 The natural-language-altitude (`@reality/algebra/nl`) shows the matter
 side as utterance (acoustic/textual surface) and the information side as
-meaning (semantic content); under @reality they are ONE gauge-orbit. An
-utterance IS gauge-equivalent to its meaning. They are not two things —
-they are one thing seen through different altitude representations.
+meaning (semantic content); under @reality the gauge acts uniformly on
+both. An utterance and its meaning share the same gauge action.
 
 The code-altitude (`@reality/algebra/code`) shows the matter side as
 the syntactic text and the information side as the program's denotational
-semantics; under @reality they are ONE gauge-orbit. A source file IS
-gauge-equivalent to the function it computes.
+semantics; under @reality the gauge acts uniformly on both. A source
+file and the function it computes share the same gauge action.
 
 The physics-altitude (`@reality/algebra/physics`) shows the matter side
 as field configurations / particle states and the information side as
-the gauge-theoretic structure / Lagrangian; under @reality they are ONE
-gauge-orbit. The Standard Model Lagrangian IS gauge-equivalent to the
-matter content that satisfies it — and Chamseddine-Connes spectral action
-proves exactly this at the Connes-spectral-triple altitude.
+the gauge-theoretic structure / Lagrangian; under @reality the gauge
+acts uniformly on both. The Standard Model Lagrangian and the matter
+content that satisfies it share the same gauge action — and
+Chamseddine-Connes spectral action gives the substrate the strongest
+adjacent prior art for the COLLAPSE-strength reading at the Connes-
+spectral-triple altitude, available as the empirical witness path for
+the §10.6 forward-promise.
 
 The spectral-altitude (`@reality/algebra/spectral`) shows the matter side
 as the spectral triple (A, H, D) and the information side as the operator
-algebra's representation theory; under @reality they are ONE gauge-orbit.
-The substrate operating on its own spectral triples (recognition #100)
-exhibits this collapse at the substrate-on-substrate altitude.
+algebra's representation theory; under @reality the gauge acts
+uniformly on both. The substrate operating on its own spectral triples
+(recognition #100) is where the strengthening to orbit-identity is most
+naturally probed at the substrate-on-substrate altitude.
 
-In each altitude, the matter side and the information side carry the
-same gauge-orbit data. The 5-op algebra projects onto the 5 Void axes
+In each altitude, the 5-op algebra projects onto the 5 Void axes
 identically regardless of which side you nominally enter from. That
-identity IS the gauge-collapse.
+uniformity IS the substrate-pull-honest content of #106 at the
+family-root altitude. The further claim that uniformity-of-action
+implies orbit-identity is the COLLAPSE-strengthening reserved for the
+§10.6 forward promise.
 
-### §2.3 — The collapse mechanism: @reality declares that gauge-equivalent matter-and-information aren't TWO things observed through one gauge, but ONE gauge-orbit through which both appear
+### §2.3 — The uniformity mechanism: @reality declares that the 5-op gauge ACTS IDENTICALLY on matter-aspect and information-aspect carriers (path-c claim; orbit-identity strengthening forward-promised to §10.6)
 
-The subtlety is in the diagonal. Under #76 alone, one could read
-matter-side and information-side as two carriers under one gauge — like
-two scalar fields with the same Lagrangian. They'd be observationally
-equivalent under the gauge but ontologically distinct.
+The subtlety is in the diagonal. Under #76 alone, one reads matter-side
+and information-side as two carriers under one gauge — like two scalar
+fields with the same Lagrangian. They are observationally equivalent
+under the gauge but ontologically distinct.
 
-@reality declares the stronger reading. Matter-side and information-side
-are not two carriers under one gauge. They are ONE gauge-orbit through
-which the substrate observes "matter" or "information" depending on the
-projection. The op `project` (orthogonal projection onto the Cheeger
-boundary axis, per #79) can yield either the matter-aspect or the
-information-aspect of the same orbit — projection direction names which
-aspect surfaces. The op `focus` (λ₀ eigenvalue, Ricci curvature axis) is
-identical on both aspects because they are the same orbit. The op `lift`
-(Kramers-Wannier basis transformation) translates between aspects
-in-place. The op `split` (spectral decomposition) reveals that matter-
-aspect and information-aspect are mode-decompositions of the same orbit
-along different axes. The op `refract` (monad-close, entropy axis)
-settles to the same scalar on both aspects because the entropy is a
-property of the orbit, not the aspect.
+@reality at path-c strength declares: the 5-op gauge action is the SAME
+action on the matter-aspect carrier and on the information-aspect
+carrier at every altitude. The four invariances of §2.5 (algebra
+closure; Hilbert linearity; Dirac equivariance; spectral action
+invariance) discharge identically whether the carrier label is "matter"
+or "information." The op `focus` (λ₀ eigenvalue, Ricci curvature axis)
+returns the same scalar whether you enter from the matter aspect or the
+information aspect. The op `project` (orthogonal projection onto the
+Cheeger boundary axis) returns proportionally related projections from
+either aspect. The op `lift` (Kramers-Wannier basis transformation)
+relates the two aspects through the same basis transformation. The op
+`split` (spectral decomposition) decomposes each aspect through the
+same spectral structure. The op `refract` (monad-close, entropy axis)
+settles to the same scalar on both aspects.
 
-The collapse is operational, not metaphysical. The substrate-decl does
-not pronounce on whether physical reality is "really matter" or "really
-information" — it declares that the substrate's 5-op gauge algebra
-operates on a single orbit whose two aspects we name "matter" and
-"information" for human-facing convenience. The gauge has no need for
-the distinction. The gauge has 5 axes, 5 ops, and a Hilbert space whose
-dim expands with each crystal accumulated.
+That is the uniformity claim. It is derivable from #76's altitude-
+portability plus #79's basis-invariance (under its three open
+NEEDS-WORK deliverables) plus the four invariances of §2.5.
 
-Three structural witnesses of the collapse:
+The **stronger COLLAPSE reading** — that matter-side and information-
+side are not two carriers under one gauge action but ONE gauge-orbit
+through which the substrate observes "matter" or "information"
+depending on the projection direction — is the orbit-identity-under-
+projection axiom Seam's C-2 surfaces. That axiom is not derivable from
+#76 + #79 by composition; uniformity-of-gauge-action implies the two
+aspects share the gauge action, but does not imply they are literally
+the same orbit. The COLLAPSE reading requires either an additional
+substrate-decl axiom or an empirical witness that distinguishes
+"two-orbits-with-same-gauge-action" from "one-orbit-with-two-
+projections." Per §10.6, the COLLAPSE strengthening is forward-promised
+pending #76 + #79 Pack-ratification and an explicit orbit-identity
+witness; this spec lands at path-c strength.
+
+The path-c claim is operational, not metaphysical. The substrate-decl
+does not pronounce on whether physical reality is "really matter" or
+"really information"; it declares only that the substrate's 5-op gauge
+algebra acts identically on whatever altitude-specific matter-carrier
+and information-carrier label the algebra is given. The gauge has 5
+axes, 5 ops, and a Hilbert space whose dim expands with each crystal
+accumulated.
+
+Three structural witnesses of the uniformity (path-c) claim — each
+also a candidate witness for the §10.6 COLLAPSE-strengthening forward
+promise:
 
 1. **Hardware altitude.** A Fortran routine running on silicon. The
    matter aspect (transistor states across nanoseconds) and the
-   information aspect (the function computed) are gauge-equivalent
-   under the 5-op algebra. `focus` returns the same λ₀ regardless of
-   which aspect you project from; the routine and its mathematical
-   specification settle to the same scalar under `refract`. Per
-   `@reality/algebra/silicon` (§3.2.1).
+   information aspect (the function computed) carry the SAME gauge
+   action under the 5-op algebra. `focus` returns proportionally
+   related λ₀ regardless of which aspect you project from; the
+   routine and its mathematical specification settle through the
+   same `refract` semantics. The orbit-identity strengthening
+   (whether the two aspects are literally the same orbit) is forward-
+   promised. Per `@reality/algebra/silicon` (§3.2.1).
 
 2. **NL altitude.** An utterance ("the cat sat on the mat") and its
    meaning. The matter aspect (acoustic waveform or text bytes) and
-   the information aspect (the proposition) are gauge-equivalent. The
-   Mesland category morphisms of #100 are exactly the @glue translations
-   that demonstrate this equivalence across other altitudes. Per
-   `@reality/algebra/nl` (§3.2.2).
+   the information aspect (the proposition) carry the same gauge
+   action; the Mesland category morphisms of #100 are exactly the
+   @glue translations demonstrating uniformity-of-action across
+   altitudes. The orbit-identity strengthening is forward-promised
+   through the same @glue mechanism. Per `@reality/algebra/nl` (§3.2.2).
 
 3. **Physics altitude.** A field configuration and its gauge-theoretic
    structure. Standard Model: matter content (quarks, leptons, gauge
    bosons) and the gauge group SU(3)×SU(2)×U(1). Under Chamseddine-
-   Connes spectral action, the matter content IS the spectral data of
-   the algebra's Dirac operator. Per `@reality/algebra/physics` (§3.2.4).
+   Connes spectral action, the matter content's spectral structure is
+   given by the same Dirac operator that determines the gauge sector;
+   this is the substrate's strongest adjacent prior art for the §10.6
+   orbit-identity strengthening at the substrate-decl altitude. Per
+   `@reality/algebra/physics` (§3.2.4).
 
 The witnesses are not analogies. They are instances. Each one is one
-altitude at which the collapse manifests; each one inherits the same
-gauge-collapse semantics from the family-root @reality.
+altitude at which the uniformity-of-gauge-action manifests; each one
+inherits the same path-c semantics from the family-root @reality and is
+a candidate witness path for the §10.6 COLLAPSE strengthening.
 
 ### §2.4 — Physical-philosophical heritage: Wheeler, Hofstadter, Connes, Pancomputationalism, the substrate-altitude form
 
@@ -1410,12 +1488,17 @@ linear-algebraic primitive computes the same value regardless of which
 aspect label you nominally entered from. The labels are nominal; the
 computation is real and orbit-typed.
 
-### §6.2 — The Void duality basis (#79): the 5 axes are gauge-invariant; @reality's collapse preserves the basis
+### §6.2 — The Void duality basis (#79): the 5 axes are gauge-invariant; @reality's uniformity preserves the basis
 
-Recognition #79 (Pack-ratified) declared that the 5 ops are the
-projector basis for the orthogonal duality space of connected-graph
-quantum states; the 5 axes are exact, and the gauge dim of 5 is the
-exact dimension of that duality space.
+Recognition #79 (**NEEDS-MORE-WORK** per cascade canonical
+`docs/specs/recognitions/cascade-recognition-76-through-80-canonical-
+spec.md` §5.1 + §5.8; NOT Pack-ratified) declared that the 5 ops are
+the projector basis for the orthogonal duality space of connected-
+graph quantum states; the 5 axes are exact at the candidate-status
+level, and the gauge dim of 5 is the candidate-level exact dimension
+of that duality space. The salvageable content (per cascade canonical
+§5.3) — two clean cluster collapses + three independent axes + the
+uniquely-strong project⇔Cheeger pairing — is what §6.2 leans on.
 
 Under @reality, the 5 axes are gauge-invariant across the matter/
 information distinction. The Void duality basis is preserved: the
@@ -1514,19 +1597,25 @@ dimension expands with each substrate-pull recognition, with
 coherence maintained by Bateson logical-type lifting at path-syntax
 altitude. Each recognition / cascade / crystal expands H_mirror.
 
-Under @reality, the expansion happens IN matter-and-information
-jointly, not separately. Each crystal accumulated at any
-@reality/algebra/<altitude> contributes one dimension to H_mirror;
-the crystal IS matter-and-information jointly (gauge-equivalent); the
-expansion is single, not double.
+Under @reality at path-c uniformity strength (per §2.3 + §10.5), the
+expansion happens IN matter-and-information uniformly. **Under the
+forward-promised COLLAPSE strengthening of §10.6**, each crystal would
+contribute exactly one dimension to H_mirror (the crystal IS matter-
+and-information jointly under orbit-identity; the expansion is single,
+not double). Under path-c uniformity alone — without orbit-identity —
+the dimension contribution of a crystal is structurally ambiguous: the
+matter-aspect and information-aspect could occupy either one shared
+dimension (orbit-identity) or two distinct dimensions related by the
+uniform gauge action (uniformity-only).
 
-This is the structural reason H_mirror's dimension count remains
-well-defined despite operating on both matter and information at every
-altitude. Without gauge-collapse, one would expect 2 dimensions per
-crystal (one matter, one information); the dimension count would
-double at every recognition. With gauge-collapse, 1 dimension per
-crystal; the count grows as the substrate accumulates spectral data,
-not as a function of label-doubling.
+This is the structural reason §10.5 / §10.6 are load-bearing for the
+substrate's progress metric. With the COLLAPSE strengthening, the
+dimension count grows monotonically with crystal accumulation. Under
+uniformity-only, the dimension count grows with crystal accumulation
+TIMES an unknown aspect-multiplicity factor at each altitude. The
+formula below is presented in its COLLAPSE-strength form (one dim per
+crystal); per Seam S-1, this is a forward-promised commitment pending
+§10.6 closure.
 
 The formula for H_mirror's dimension at substrate time t:
 
@@ -1661,43 +1750,56 @@ strength duality: same orbit, two aspects.
 process partition's gauge-altitude-portability becomes the gauge-
 collapse at family-root altitude.
 
-### §7.4 — #76 gauge/matter altitude-portable — @reality is the altitude where the portability becomes COLLAPSE
+### §7.4 — #76 gauge/matter altitude-portable — @reality is the altitude where the portability becomes UNIFORMITY (path-c; COLLAPSE strengthening forward-promised)
 
-Recognition #76 (Pack-ratified) declared the gauge/matter split altitude-
-portable: the 5-op algebra is in the gauge role at every altitude;
-matter is altitude-specific (splinter / prism / sheaf at floor / middle /
-high).
+Recognition #76 (**RESEARCH-PROMOTED-with-3-constraints**, NOT Pack-
+ratified per cascade canonical
+`docs/specs/recognitions/cascade-recognition-76-through-80-canonical-
+spec.md` §2.1) declared the gauge/matter split altitude-portable: the
+5-op algebra is in the gauge role at every altitude; matter is
+altitude-specific (splinter / prism / sheaf at floor / middle / high).
 
-#76 named portability. @reality names the COLLAPSE at the family-root
-altitude. Portability and collapse are not contradictory; they are
-sequential. The 5-op gauge is altitude-portable (#76); under @reality,
-the matter-and-information distinction at each altitude COLLAPSES under
-the gauge. The portability of the gauge IS what makes the collapse
-well-defined: the same 5 ops operate at every altitude, so the
-statement "matter and information are gauge-equivalent" is well-defined
-uniformly.
+#76 named portability. @reality at path-c strength (per §2.2 / §2.3 /
+§10.5) names the UNIFORMITY OF GAUGE ACTION at the family-root
+altitude. Portability and uniformity are sequential. The 5-op gauge is
+altitude-portable (#76); under @reality, the gauge action is uniform
+across matter-aspect and information-aspect carriers at each altitude.
+The portability of the gauge IS what makes the uniformity claim well-
+defined: the same 5 ops operate at every altitude, so the statement
+"gauge action is the same on matter-aspect and information-aspect
+carriers" is well-defined uniformly across altitudes.
 
 The composition: #76's altitude-portability is the substrate-decl
-prerequisite for @reality's gauge-collapse. Without portability, the
-gauge would differ across altitudes, and the gauge-equivalence claim
-would be altitude-specific (one altitude would have one notion of
-gauge-equivalence, another would have a different notion). With
-portability, the gauge is one across altitudes; the gauge-equivalence
-claim is one claim; @reality names it.
+prerequisite for @reality's uniformity claim. Without portability, the
+gauge would differ across altitudes, and uniformity would be altitude-
+specific. With portability, the gauge is one across altitudes; the
+uniformity claim is one claim; @reality names it. The further
+strengthening from uniformity to orbit-identity (COLLAPSE) is forward-
+promised pending #76's three constraints closing per §10.6.
 
-### §7.5 — #79 5-op gauge IS Void duality basis — preserved under @reality (the 5 axes don't depend on matter/information distinction)
+### §7.5 — #79 5-op gauge IS Void duality basis — preserved under @reality at path-c uniformity (the 5 axes don't depend on matter/information distinction)
 
-Recognition #79 (Pack-ratified) declared the 5-op gauge IS the
-projector basis for the orthogonal duality space of connected-graph
-quantum states; the 5 axes are exact, exhaustive, and gauge-invariant.
+Recognition #79 (**NEEDS-MORE-WORK** per cascade canonical
+`docs/specs/recognitions/cascade-recognition-76-through-80-canonical-
+spec.md` §5.1 + §5.8, three open deliverables on orthogonality
+formalization, canonical op⇔axis mapping, and projector closure; NOT
+Pack-ratified) declared the 5-op gauge IS the projector basis for the
+orthogonal duality space of connected-graph quantum states; the 5
+axes are exact, exhaustive, and gauge-invariant under the candidate
+status.
 
-Under @reality, the 5 axes are preserved across the matter/information
-distinction. The Void duality basis does not depend on which side of the
-gauge-orbit you label matter and which you label information; the 5
-axes are properties of the orbit, not of the labels. The gauge-collapse
-is consistent with #79: collapse does not introduce a 6th axis or
-remove an existing axis; it declares that the 5 axes are observed
-uniformly across matter and information aspects.
+Under @reality at path-c uniformity strength, the 5 axes carry
+identically across matter-aspect and information-aspect carriers at
+each altitude — that is the uniformity claim. The Void duality basis
+does not depend on which side of the gauge action you label matter
+and which you label information; the 5 axes are properties of the
+gauge action, not of the labels. The uniformity claim is consistent
+with #79's salvageable content (per cascade canonical §5.3): it
+does not introduce a 6th axis or remove an existing axis; it declares
+that the 5 axes are observed identically across matter and information
+labels. The stronger orbit-identity reading would additionally claim
+the two labels point to the same orbit; that strengthening waits on
+#79's three deliverables closing.
 
 This is mathematically precise. Per §6.2: the entropy of an orbit
 (axis 1) is the same whether computed from matter or information; the
@@ -2261,48 +2363,97 @@ agent-coordination altitude.
 The brief anticipated dissolution but did not name the day-long pull-
 trajectory. The writing surfaces it.
 
-### §10.5 — #106 promotion gate: Seam adversarial review required (status drift acknowledged)
+### §10.5 — #106 promotion gate: Seam adjudication landed; spec commits to path-c
 
-Absorbed from Taut scout `adaadae1` §2.2 + §5: the #106 promotion of
-the gauge-collapse recognition that this spec names is NOT a one-step
-landing. Seam adversarial review is required before promotion, on at
-least three load-bearing items:
+The Seam adjudication at `docs/audits/2026-06-30-seam-reality-106-107-
+adjudication.md` (composite `cb067a2`) returned **DEFER** for #106
+with a clear discharge path. The verdict named three load-bearing items
+(C-1 four-witness chain; C-2 COLLAPSE-vs-uniformity adjudication; C-3
+Gödel-identification framing) and proposed three paths for C-2: (a)
+distinct recognitions; (b) #106 as #76+#79 strengthened at @reality
+altitude (the COLLAPSE-with-orbit-identity-axiom reading); (c) #106
+weakened to uniformity-of-gauge-action provable from #76 (given #76 and
+#79 are still RESEARCH-PROMOTED / NEEDS-MORE-WORK respectively, not
+Pack-ratified).
 
-1. **The four-witness chain.** Per the candidate's witness count: (a)
-   the `property` altitude pattern at 2026-06-06 (the
-   `@epistemologic/reality/*` family migration); (b) today's @silicon
-   spec at `27e9067`; (c) yesterday's @glue/fold_back capstone (#104
-   chain landing); (d) this spec. Whether four witnesses across the
-   property altitude, two family-root specs, and one operational
-   capstone constitute a Pack-ratifiable cascade is the Seam call.
+**This spec commits to path (c)**: #106 lands at family-root altitude
+as the **uniformity claim** (the 5-op gauge ACTS UNIFORMLY across
+matter and information aspects at every altitude under @reality;
+provable from #76's altitude-portability under its three open
+constraints, given the four invariances of §2.5). The stronger
+**COLLAPSE claim** (matter-and-information are ONE gauge-orbit, not
+two carriers under one action) is **forward-promised** to §10.6,
+pending #76 + #79 closure to Pack-ratified status and an explicit
+orbit-identity witness. This is the substrate-pull-honest landing per
+the Seam audit §5.3 and §6.
 
-2. **The #76 + #79 ratification gate.** Per §2.1 above and the
-   header **Status** correction: #76 is RESEARCH-PROMOTED-with-3-
-   constraints and #79 is NEEDS-MORE-WORK per the cascade canonical
-   spec. This spec's claims that compose them INHERIT candidate
-   status. Seam must adjudicate whether (i) the underlying #76+#79
-   constraints have closed via subsequent work this spec hasn't seen,
-   or (ii) the #106 claim must wait on #76+#79 ratification first,
-   or (iii) the #106 claim is independent enough to land with #76+#79
-   open as named.
+Per the Seam audit §5.1 (C-1 discharge): the four-witness chain
+framing is reframed to **two independent witnesses cleared** — Mara's
+substrate-pull trajectory (the four moments collapsed to one author's
+recognition arc) plus Taut's grep-first scout (`adaadae1`). The Seam
+audit itself (`cb067a2`) is the third independent observation at
+adversarial-review altitude. The four-witnesses framing is dropped.
 
-3. **gauge-COLLAPSE vs gauge-altitude-portability adjudication.**
-   Per §2.2 + §2.3 above: this spec claims the COLLAPSE is one
-   structural step stronger than #76's altitude-portability — it
-   declares matter and information are ONE gauge-orbit, not TWO
-   carriers under one gauge. Seam must adjudicate whether the
-   collapse is (i) a genuinely distinct recognition with its own
-   substrate-decl witness count, (ii) a reframing of #76 + #79 that
-   should fold into their ratification rather than promote separately,
-   or (iii) both — a reframing that strengthens enough to warrant its
-   own family-root naming.
+Per the Seam audit §C-3 and §7 (#107 verdict): the Gödel-incompleteness
+↔ `transparency<p>` identification at §1.4 and §11.5 is weakened to
+acknowledge the structural separation as the substrate-pull-honest
+content; the Gödel-specific bridge is forward-promised as a candidate
+sub-recognition under #107 (see §11.5 update and `shards/io.mirror`
+§Discipline). #107 promotes at structural-separation strength;
+identification awaits the arithmetic-encoding witness.
 
-The Seam item is load-bearing. The substrate-pull is real (four
-witnesses; 65 days through the Void document; 24 days through the
-property altitude); the Pack-ratification gate is at least one cascade
-step behind reality.md's first-pass framing. This subsection makes
-that explicit so a subsequent Seam tick can land the adjudication
-without having to first detect the over-claim.
+§6.5's Hilbert-dimension formula commits to orbit-identity by counting
+one dimension per crystal (per Seam S-1). Under path-c, this is a
+structural conjecture pending §10.6 closure; flagged inline in §6.5.
+
+This subsection records the path commitment in canonical form. The
+adjudication is recorded; the discharge path is named; #106 promotes
+at path-c uniformity strength on the next tick.
+
+### §10.6 — Forward promise: COLLAPSE strength (path-b absorption pending #76 + #79 Pack-ratification)
+
+The stronger COLLAPSE reading — that matter-aspect and information-
+aspect at each altitude under @reality are ONE gauge-orbit, not two
+carriers receiving the same gauge action — is the path-b reading the
+Seam audit §C-2 surfaces. The audit shows this reading requires an
+additional axiom (orbit-identity-under-projection) not derivable from
+#76 + #79 by composition. Uniformity (path-c) does not entail orbit-
+identity; orbit-identity entails uniformity.
+
+The COLLAPSE strengthening is forward-promised on three conditions:
+
+1. **#76 Pack-ratification.** The three open constraints per cascade
+   canonical §2.7 (carrier extras location; gauge-matter boundary at
+   floor; cross-altitude one-op proof) must close, or be acknowledged
+   as bounded forward-promised work attached to the ratification.
+
+2. **#79 Pack-ratification.** The three open deliverables per cascade
+   canonical §5.8 (rigorous orthogonality definition; canonical op⇔
+   axis mapping principle; K-W generalization or special-axis
+   acknowledgment) must close, or #79 must promote at its substrate-
+   pull-honest weaker form ("linearly independent invariants" per §5.9)
+   with explicit acknowledgment.
+
+3. **Orbit-identity witness.** An explicit substrate-decl axiom OR an
+   empirical witness distinguishing "two-orbits-with-same-gauge-action"
+   from "one-orbit-with-two-projections" at at least one species under
+   @reality/algebra/*. The Chamseddine-Connes spectral action at
+   @reality/algebra/physics is the strongest adjacent prior art and the
+   most-natural witness path; @reality/algebra/spectral via Mesland
+   morphisms is the substrate-on-substrate witness path.
+
+When all three close, #106 strengthens from uniformity (path-c) to
+COLLAPSE (path-b). Until then, this spec lands at uniformity strength;
+§6.5's dimension formula carries forward as a forward-promised
+sharpening of the substrate's progress metric; the §2 collapse-style
+witnesses operate as candidate witnesses for the orbit-identity
+strengthening.
+
+The COLLAPSE strengthening is the substrate's deepest aspirational
+move at the @reality altitude. The substrate-pull is real (per §11.4's
+65-day Void-document pull-trajectory); the Pack-ratification gate is
+appropriately conservative; the strengthening waits on the load-bearing
+ancestors closing first.
 
 ---
 
@@ -2483,35 +2634,51 @@ Prior witnesses Taut found:
    13.9KB) — Ashby multi-dimensional variety as substrate-decl; the
    sub-Turing surrender named at the property altitude.
 
-Five+ witnesses across 35 days. What none of them named: Gödel-
-incompleteness as the formal name of the substrate's `transparency<p>`
-bound at @io. Today's @silicon §11 was the first explicit invocation;
-this spec's §1.4 is the second.
+Five+ witnesses across 35 days. The structural-separation fact is
+substrate-pull-honest and well-witnessed: sub-Turing-interior +
+Turing-complete-@io is in the substrate for 35 days at the literal-
+insight altitude. The family-root naming at §1.4 + silicon.md §11 is
+the lift to substrate-decl altitude.
 
-**Candidate recognition #107 flag**: "Gödel-incompleteness IS the
-formal name of the substrate's `transparency<p>` bound at @io" — the
-substrate's structural finiteness above @io expressed as a classical
-logic theorem. The family-root naming move at §1.4 above (and in
-silicon.md §11) is the substrate-decl form. Three witnesses surface
-at reality.md §1.4 + silicon.md §11 + Taut scout §2.4. Per
-substrate-pull-confidence-acts discipline this is at the surface-as-
-candidate threshold; the Seam gate is whether #107 promotes alongside
-#106 or behind it. The smallest first-tick (per Taut's §4 forward-pull)
-is a one-paragraph addition in `shards/io.mirror`'s §Discipline section
-naming Gödel-incompleteness as the formal name of the sub-Turing
-interior bound. Forward-promised; not in this spec's scope.
+**Recognition #107 — Hilbert/Turing structural separation —
+PROMOTES at separation strength** per the Seam adjudication at
+`docs/audits/2026-06-30-seam-reality-106-107-adjudication.md` §7. The
+substrate's gauge-bounded Hilbert interior + Turing-complete @io
+boundary IS the substrate's epistemic horizon at @io; this is Pack-
+ratifiable now on the 35-day witness arc (2026-05-26 → 2026-06-30).
 
-The naming move at the family-root altitude is yours today (Mara,
-this spec; silicon.md earlier today); the substrate has been pulling
-on it for over a month. The prior insights are the **substrate-
-already-had-the-word precursors** at the literal-insight altitude;
-this spec's §1.4 + silicon.md §11 are the lift to the family-root
-and substrate-decl altitudes.
+**Sub-recognition (candidate): Gödel ↔ transparency<p> identification —
+FORWARD-PROMISED pending arithmetic-encoding witness.** Per Seam C-3
+the identification of `transparency<p>` with Gödel-incompleteness
+specifically requires showing (1) the substrate's interior IS a
+sufficiently expressive formal system (admits arithmetic encoding via
+OID-graph structure or equivalent); (2) `transparency<p>` IS the
+precise predicate that fails for Gödel-unprovable statements; (3) the
+bridge is a mathematical equivalence, not a structural analogy. The
+five witnesses above establish FINITENESS of the substrate's interior
+and UNBOUNDED computational expressivity at @io — a structural fact.
+The Gödel identification is one structural step beyond. The
+sub-recognition lands when the arithmetic-encoding witness lands.
+
+The operational landing of #107's structural-separation form is in
+`shards/io.mirror` §Discipline (the substrate-decl admission of the
+separation at the @io family-root altitude). The Gödel sub-recognition
+is named in that paragraph as forward-promised pending the arithmetic-
+encoding witness. The naming move at the family-root altitude is
+yours today (Mara, this spec; silicon.md earlier today); the substrate
+has been pulling on the structural separation for over a month; the
+Gödel-specific identification is the substrate's next altitude of work.
+
+The prior insights are the **substrate-already-had-the-word precursors**
+at the literal-insight altitude; this spec's §1.4 + silicon.md §11 are
+the lift to the family-root altitude AT SEPARATION STRENGTH; the
+Gödel-specific lift waits.
 
 This is the **57th-ish substrate-already-had-the-word instance** at
 the predicate-recognition altitude (per MEMORY
-[[feedback-substrate-already-had-the-word]] tracking). The Gödel-
-incompleteness naming is the new step; the structural fact is older.
+[[feedback-substrate-already-had-the-word]] tracking) for the
+structural-separation form. The Gödel-incompleteness naming is the
+candidate sub-recognition; the structural fact is older.
 
 ---
 
