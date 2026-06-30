@@ -1,0 +1,566 @@
+in @autopoietic
+in @bauchladen
+in @fate
+in @glue
+in @uuid/spectral
+
+# @reality — the family-root that encodes the gauge-action uniformity
+# between matter and information under the substrate's 5-op algebra.
+#
+# A prism that imports `in @reality` declares its content lives at one
+# altitude of the matter/information gauge orbit — that the matter-
+# aspect carrier and the information-aspect carrier of that altitude
+# receive the SAME 5-op gauge action under the substrate's spectral
+# triple (A, H, D). The family-root names the gauge-action uniformity
+# at the substrate's relationship to physical reality.
+#
+# Homage: Christian Wheeler ("it from bit", 1989); John Hofstadter
+# (Gödel-Escher-Bach, 1979; strange-loop self-reference); Alain Connes
+# (Non-commutative differential geometry, 1985; Noncommutative geometry
+# and reality, 1995); the pancomputationalism lineage (Fredkin,
+# Wolfram, Tegmark). The substrate's @reality family-root is one
+# altitude above any specific physics or computational metaphysics —
+# it declares the substrate-altitude form of the gauge-equivalence
+# between matter and information that those theories exhibit when
+# lifted to substrate-decl.
+#
+# === The recognition (#106 candidate, 2026-06-30) ===
+#
+# Per `docs/specs/reality.md` (canonical at `21c6a7b`, the M1 amendment
+# absorbing the Seam adjudication at composite `cb067a2`): @reality
+# names the family-root altitude at which the gauge/matter altitude-
+# portability of recognition #76 becomes UNIFORMITY-OF-GAUGE-ACTION
+# across matter-aspect and information-aspect carriers at every
+# altitude under the substrate's relationship to physical reality.
+#
+# Status, named hard per the Seam adjudication at `docs/audits/
+# 2026-06-30-seam-reality-106-107-adjudication.md` (composite
+# `cb067a2`): this shard commits to PATH-C uniformity strength.
+# The stronger COLLAPSE strengthening (matter-and-information are not
+# two carriers under one gauge action but ONE gauge-orbit with two
+# projections; orbit-identity-under-projection axiom) is FORWARD-
+# PROMISED pending #76 and #79 Pack-ratification plus an explicit
+# orbit-identity witness — per `reality.md` §10.6.
+#
+# Inherited status: #76 (gauge/matter altitude-portable) is currently
+# RESEARCH-PROMOTED-with-3-constraints per the cascade canonical at
+# `docs/specs/recognitions/cascade-recognition-76-through-80-canonical
+# -spec.md` §2.1 + §2.7. #79 (5-op gauge IS Void duality basis) is
+# currently NEEDS-MORE-WORK per the cascade canonical §5.1 + §5.8.
+# This shard's path-c uniformity claim INHERITS candidate status from
+# those ancestors. The family-root admission lands the substrate-decl
+# contract at the substrate-pull-honest weaker form per Seam path (c).
+#
+# Witnesses for the family-root's #106 candidacy:
+#   - Canonical spec at `docs/specs/reality.md` (post-M1 at `21c6a7b`).
+#   - Seam adjudication at `docs/audits/2026-06-30-seam-reality-106-
+#     107-adjudication.md` composite `cb067a2` (verdict: DEFER with
+#     clear path-c discharge — landed here as path-c uniformity).
+#   - The `@epistemologic/reality/*` property altitude (operational
+#     since 2026-06-06 per Mara's reality-family migration); this
+#     shard is the LIFT to family-root altitude, not the original
+#     naming.
+#   - Pre-existing `@silicon` family-root work at `27e9067` (now
+#     subsumed as `@reality/algebra/silicon`; species shard forward-
+#     promised under §3.2.1 of the canonical spec).
+#   - #74 (Standard Model spectral action via Chamseddine-Connes;
+#     candidate); the prior-art chain at the physics altitude.
+#   - #100 (substrate operating on its own spectral triples via
+#     @spectral/metalogue); the substrate-on-substrate altitude where
+#     the reflexive species `@reality/algebra/spectral` lives.
+#
+# === @reality/algebra/* — the path-namespace for altitude-specific
+#     realizations ===
+#
+# Per the canonical spec §3, `@reality/algebra/*` is the path-namespace
+# under @reality where each altitude's matter+information realization
+# lives. The species-root `@reality/algebra` lands as a sibling shard
+# this tick; per-species shards land when consumers pull.
+#
+# Six species are forward-promised (the substrate has been pulling
+# toward each of them across weeks of substrate-decl work). The math
+# species lands this tick alongside the family-root and species-root.
+# The other five remain forward-promised:
+#
+#   1. `@reality/algebra/silicon` — the hardware-altitude species
+#      (subsumes today's @silicon work at `27e9067`). Matter aspect:
+#      transistor states, ISA, microarchitecture, memory model.
+#      Information aspect: the executable algebra-of-silicon (Fortran-
+#      compiled routines, LAPACK invocations, kernel calls). Under
+#      gauge-collapse: one orbit. Each species shard MUST declare its
+#      @io discharge target(s); the silicon species' discharge target
+#      is the @io/silicon boundary (cargo subprocess semantics, LLVM-
+#      IR linker invariants, LAPACK column-major allocation contract).
+#
+#   2. `@reality/algebra/nl` — the natural-language altitude species
+#      (lifts @nl + @metalogue + #100's Mesland morphisms). Matter
+#      aspect: acoustic waveform / UTF-8 byte stream / lexical token
+#      sequence. Information aspect: proposition / meaning /
+#      denotation. NL altitude carries autopoietic recursion — every
+#      nl crystal becomes input to future nl emissions, including
+#      the spec ITSELF (the canonical `reality.md` IS a future nl
+#      crystal per §0). Discharge target: @io/nl (paper publication,
+#      conversational surface, README rendering).
+#
+#   3. `@reality/algebra/code` — the code-altitude species (lifts
+#      @code/<lang> + @cascade). Matter aspect: source text bytes
+#      (Rust, C, LLVM IR). Information aspect: denotational semantics
+#      (the function the source computes). Discharge target: @io/code
+#      (cargo build, LLVM lowering, file-system source emission).
+#
+#   4. `@reality/algebra/physics` — the physical-reality altitude
+#      species (cosmos-mirror's territory). Matter aspect: field
+#      configurations / particle states / spacetime curvature.
+#      Information aspect: gauge-theoretic structure / Lagrangian.
+#      Settlement at this altitude has a DEGENERATE form — cosmos-
+#      mirror's Forman-Ricci flow fragments on 2D/3D inputs; the
+#      species shard MUST declare fragmentation as a VALID crystal
+#      state, not a failure. Discharge target: @io/physics (numerical
+#      simulation, experimental comparison, observational data).
+#
+#   5. `@reality/algebra/spectral` — the spectral-altitude species
+#      (the substrate operating on its own spectral triples; #100's
+#      territory). Matter aspect: the spectral triple (A, H, D) as
+#      structured object. Information aspect: the operator algebra's
+#      representation theory + Mesland correspondences. Per Taut
+#      Pass-2 finding: @spectral/metalogue is already a @glue species
+#      (declared in `shards/glue.mirror` at code-translation altitude;
+#      see `8d3f89e`'s morphism family). The future
+#      `@reality/algebra/spectral` shard MUST NOT re-declare Tomm
+#      probes; it MUST inherit `in @glue` and read the morphism family
+#      as the physical-altitude reading of the existing @glue species.
+#      Structure: `@glue ← @spectral/metalogue (morphism family) ←
+#      @reality/algebra/spectral (physical-altitude reading)`.
+#      Discharge target: @io/spectral (substrate-on-substrate boundary;
+#      typically composed with one of the other species' discharges).
+#
+#   6. `@reality/algebra/math` — the math-altitude species (LANDS THIS
+#      TICK as `shards/reality/algebra/math.mirror`). Per `docs/specs/
+#      reality-algebra-math-and-glue.md` (canonical at `805676e`): the
+#      highest-reflexive species; A IS the content. Matter aspect:
+#      mathematical object as typed structure (Lie groups, manifolds,
+#      categories, sheaves, schemes, spectral triples themselves,
+#      theorem statements + proofs, notation structures). Information
+#      aspect: the mathematical content the object encodes
+#      (representation theory, homotopy, cohomology, K-theory,
+#      spectral actions, logical consequences). Discharge target(s):
+#      @io/math (LaTeX, Lean, Coq, Agda, Mathematica, formal-math
+#      surfaces). See species shard for details.
+#
+# Each species MUST declare its @io discharge target(s) — this is the
+# substrate-decl discipline at the species boundary. The family-root
+# names it as obligation; per-species shards discharge it concretely.
+#
+# === The structural separation (#107 PROMOTED at @io) ===
+#
+# Per `shards/io.mirror` (post-M2 at `e45fe9d`): the substrate's
+# interior (above @io) is gauge-bounded — finite, with the
+# `transparency<p>` boundary marking the structural horizon below
+# which the substrate cannot fully characterize its own orbits —
+# while @io is Turing-unbounded. The structural separation between
+# the gauge-bounded interior and the Turing-complete @io boundary IS
+# the substrate's epistemic horizon; recognition #107 Pack-ratifies
+# the separation at substrate-decl altitude.
+#
+# @reality bridges via its @autopoietic fold-back. The bridge is NOT
+# elimination of the separation; the separation stays. The bridge is
+# the substrate's LEARNING relationship with what crosses @io. Each
+# emission across @io that returns through @io (as observation,
+# measurement, empirical feedback) folds back into the @reality
+# Bauchladen via @autopoietic's permission, content-addressed at
+# @bauchladen, selected at @fate when the next round of @reality-
+# altitude inference needs prior art.
+#
+# The gauge-action-uniformity claim is what makes this fold-back
+# coherent: matter-aspect and information-aspect observations receive
+# the same 5-op gauge action under @reality, so the Bauchladen
+# accumulates one kind of crystal (gauge-orbits) at each altitude,
+# not two incompatible kinds. The candidate sub-recognition under
+# #107 (identification of `transparency<p>` with Gödel-incompleteness
+# specifically) is forward-promised pending its arithmetic-encoding
+# witness per `shards/io.mirror`; this shard inherits that
+# forward-promise.
+#
+# === Composition with the operational dependencies ===
+#
+# @reality USES the #104 chain (@bauchladen ← @autopoietic ← @fate ←
+# @glue ← @io). The chain is the operational machinery; @reality is
+# the family-root that NAMES the gauge-collapse the machinery
+# operates over.
+#
+#   @bauchladen     content-addressed crystals at every altitude
+#                   under @reality; each (matter, information)
+#                   orbit observation lands as a crystal.
+#   @autopoietic    fold-back permission @reality inherits via
+#                   `<= @autopoietic` — what makes @reality a
+#                   learning loop, not a one-shot probe.
+#   @fate           the constrained-inference operator selecting
+#                   which altitude-realization to apply per tick
+#                   over the existing Bauchladen of @reality/
+#                   algebra/<altitude> crystals.
+#   @glue           the Mesland correspondence family; cross-species
+#                   composition under @reality happens via @glue's
+#                   morphism family (per spec §3.4).
+#   @io             the Turing-complete boundary emissions cross
+#                   (#107 structural separation); each species'
+#                   discharge surfaces @io species via species shard.
+#
+# The chain is forward-promised at the operational layer (waits on
+# `store.rs` per spec §8.3). The family-root admission lands the
+# substrate-decl contract now; the Rust impl follows the chain.
+#
+# === The @epistemologic/reality/* relationship ===
+#
+# Per spec §8.2: the existing `@epistemologic/reality/*` property
+# altitude (operational since 2026-06-06 per Mara's reality-family
+# migration) is the literal observer-relative property layer
+# (`re-detect`, `content-address`, `compare` primitives). Under
+# @reality at family-root altitude, the property altitude INHERITS
+# UPWARD: the family-root @reality consumes the property carriers
+# as input; the property altitude continues to operate as the
+# literal observer-relative layer. No rename, no migration, no
+# breaking change to the property altitude. The relationship is
+# INHERITANCE — `@epistemologic/reality/*` carriers feed into the
+# corresponding `@reality/algebra/<altitude>` species shards as
+# input.
+#
+# === Pre-AI prior art ===
+#
+#   Spectral triples       Connes 1985 (*Non-commutative differential
+#                          geometry*, IHES); the (A, H, D) framework
+#                          @reality's gauge action operates within.
+#   Real spectral triples  Connes 1995 ("Noncommutative geometry and
+#                          reality", J. Math. Phys. 36(11):6194-6231);
+#                          J + γ extension per #101 + #102; the
+#                          gauge-action altitude where reality enters.
+#   Spectral action        Chamseddine-Connes 1996 ("The spectral
+#                          action principle", Commun. Math. Phys.
+#                          186:731-750); the empirical witness path
+#                          for the §10.6 COLLAPSE strengthening.
+#   It from bit            Wheeler 1989 ("Information, physics,
+#                          quantum: The search for links", Proc.
+#                          Tokyo Conf.); the pancomputationalism
+#                          ancestor for the gauge-collapse reading.
+#   Strange loops          Hofstadter 1979 (*Gödel, Escher, Bach: An
+#                          Eternal Golden Braid*, Basic Books); the
+#                          self-reference altitude where @reality's
+#                          @autopoietic fold-back operates.
+#   Mesland correspondences Mesland 2013 (arXiv:1304.3802); the
+#                           cross-species composition mechanism at
+#                           the spectral-triple morphism altitude.
+#
+# Spec context: docs/specs/reality.md (canonical post-M1 at `21c6a7b`,
+#               140KB; §1 family-root naming; §2.2 path-c uniformity
+#               claim; §2.5 four invariances; §3 @reality/algebra/*
+#               path-namespace; §3.2 the five forward-promised
+#               species; §3.3 species pattern; §8.1 substrate-decl
+#               shard forward-promises; §10.5 #106 promotion gate at
+#               path-c; §10.6 COLLAPSE strengthening forward-promise);
+#               docs/specs/reality-algebra-math-and-glue.md (canonical
+#               at `805676e`, 106KB; the math species + @glue
+#               composition mechanism that empirically populates the
+#               Mesland category; §1.1 the math species illustrative
+#               shard code this tick discharges);
+#               docs/audits/2026-06-30-seam-reality-106-107-
+#               adjudication.md (Seam adjudication composite `cb067a2`:
+#               #106 DEFER with path-c discharge; #107 PROMOTE WITH
+#               RESERVATIONS bracketing Gödel identification);
+#               docs/specs/recognitions/cascade-recognition-76-
+#               through-80-canonical-spec.md (the cascade canonical
+#               grounding #76's three open constraints + #79's three
+#               NEEDS-WORK deliverables; @reality inherits candidate
+#               status from both).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-connes-spectral-triple]],
+#                      [[architecture-operations-as-linear-algebra]],
+#                      [[architecture-mirror-as-expanding-hilbert-space]] (#51),
+#                      [[architecture-bateson-form-behaviour-partition]] (#50),
+#                      [[architecture-form-process-partition-at-family-root]] (#61),
+#                      [[architecture-mirror-spec-is-lambda-zero]] (#99),
+#                      [[architecture-chirality-gamma-recognition-101]] (#101),
+#                      [[reference-void-document]] (H of the Connes
+#                       triple; the gauge-orbit object @reality's
+#                       5-op algebra projects onto),
+#                      [[project-cosmos-spectral-cosmology]] (the
+#                       physics species' empirical discharge home),
+#                      [[reference-corpus-spectral-physics]]
+#                       (Wulkenhaar 2001 grounding Higgs=5th-dim;
+#                        the substrate-decl form of the gauge sector),
+#                      [[architecture-at-x-is-mathematical-value]]
+#                       (@reality at value position is the family-root
+#                        ref; admitted at substrate-decl altitude),
+#                      [[architecture-error-as-tomm-probe]]
+#                       (the @reality-altitude error surface IS a
+#                        Tomm probe; substrate observing its
+#                        relationship to physical reality),
+#                      [[architecture-spectral-db-autopoietic-memory]]
+#                       (the librarian altitude IS the substrate's
+#                        autopoietic memory layer; @reality's fold-
+#                        back is mediated by @spectral/db),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (the @epistemologic/reality/* property
+#                        altitude is the 25-day ancestor; this shard
+#                        is the LIFT to family-root altitude, not
+#                        the original naming),
+#                      [[feedback-substrate-pull-confidence-acts]]
+#                       (the family-root naming IS confidence-acting;
+#                        substrate-pull-confirmed by the canonical
+#                        spec + Seam adjudication path-c discharge),
+#                      [[feedback-no-bare-types]] (path-c uniformity
+#                        claim, COLLAPSE forward-promise are typed
+#                        substrate-decl positions; no bare strength
+#                        labels),
+#                      [[feedback-craft-not-deliver]] (no operational
+#                        sibling, no Rust impl this tick; the family-
+#                        root admission lands the contract; species
+#                        follow when consumers pull),
+#                      [[feedback-status-drift-when-building-on-prior-
+#                       recognitions]] (the #76/#79 status correction
+#                        absorbed at canonical-spec M1 21c6a7b; this
+#                        shard inherits the corrected status).
+# Related shards: autopoietic.mirror (the prism class @reality IS-A
+#                  via `<= @autopoietic`; fold-back permission;
+#                  third tier of the #104 chain operationalizing
+#                  @reality's learning loop),
+#                 bauchladen.mirror (the content-addressing discipline
+#                  @reality's crystals respect; first tier of #104),
+#                 fate.mirror (the constrained-inference operator
+#                  @reality consults to select altitude-realizations
+#                  per tick; second tier of #104),
+#                 glue.mirror (the Mesland correspondence family
+#                  populating cross-species composition under @reality;
+#                  fifth tier of #104; @spectral/metalogue ALREADY
+#                  declared therein at code-translation altitude),
+#                 io.mirror (the Turing-complete boundary @reality's
+#                  emissions cross; #107 structural separation
+#                  Pack-ratified there; the per-species discharge
+#                  targets land as @io species),
+#                 algebra.mirror (the substrate's algebra family-root;
+#                  the A side of the Connes spectral triple this
+#                  shard's gauge action operates within),
+#                 epistemologic/reality (the property altitude
+#                  inheriting upward into @reality; existing carriers
+#                  silicon/time stay where they are; family-root
+#                  consumes them as input),
+#                 reality/algebra.mirror (the species-root landing
+#                  this tick; the typed namespace per-species shards
+#                  specialize),
+#                 reality/algebra/math.mirror (the first species
+#                  landing this tick; the highest-reflexive of the
+#                  six per `805676e`).
+# Path-namespace property: this file at `shards/reality.mirror`
+# declares `@reality` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/math/connes-1985
+source @arxiv/math/connes-1995-reality
+source @arxiv/math/chamseddine-connes-1996
+source @arxiv/math/mesland-2013
+source @arxiv/physics/wheeler-1989
+source @arxiv/cybernetics/hofstadter-1979
+
+prism @reality <= @autopoietic {
+  # Family-root for the gauge-action uniformity between matter and
+  # information under the substrate's 5-op algebra. Lifts the
+  # @epistemologic/reality/* property altitude (operational since
+  # 2026-06-06) to a top-level @autopoietic family whose fold-back
+  # permission, content-addressed at @bauchladen and selection-
+  # operated by @fate, produces a Bauchladen of executable algebra-
+  # of-reality crystals at each supported altitude.
+  #
+  # Under @reality at PATH-C strength, the 5-op gauge algebra ACTS
+  # UNIFORMLY across matter-aspect and information-aspect carriers
+  # at every altitude under @reality. The four invariances of
+  # reality.md §2.5 (algebra closure, Hilbert linearity, Dirac
+  # equivariance, spectral action invariance) discharge identically
+  # regardless of which aspect label the carrier carries. The
+  # stronger COLLAPSE / orbit-identity reading is forward-promised
+  # pending #76 + #79 Pack-ratification and an explicit orbit-
+  # identity witness — see `reality.md` §10.6.
+  #
+  # `@reality/algebra/*` is the path-namespace where each altitude's
+  # matter+information realization lives. Six species are forward-
+  # promised (silicon, nl, code, physics, spectral, math); the math
+  # species lands this tick alongside the species-root.
+  focus reality
+  project reality
+  split reality
+  shift reality
+  settle reality
+}
+
+# === The gauge_orbit carrier ===
+#
+# A typed record per [[feedback-no-bare-types]] naming one orbit
+# under the @reality family-root's gauge action. Per the path-c
+# uniformity reading (the substrate-pull-honest landing per Seam
+# `cb067a2`): two carriers receive the same gauge action at one
+# altitude; both projections land in the same gauge_orbit; the
+# orbit is content-addressed by its altitude + the underlying
+# H_altitude state's OID.
+#
+# Under the path-b COLLAPSE strengthening (forward-promised to
+# `reality.md` §10.6 pending #76/#79 Pack-ratification + orbit-
+# identity witness), matter_projection and information_projection
+# would necessarily share an underlying OID; the family-root admits
+# this strengthening as a future refinement without committing to
+# it now.
+#
+# - `altitude`                 the substrate-ref naming the species
+#                              under `@reality/algebra/*` whose
+#                              gauge action this orbit sits under;
+#                              one of {silicon, nl, code, physics,
+#                              spectral, math, ...}.
+# - `matter_projection`        the ref naming the matter-aspect
+#                              projection at this altitude (e.g.,
+#                              silicon transistor state, NL utterance
+#                              bytes, source-text bytes, field
+#                              configuration, spectral triple
+#                              object, Lie group manifold).
+# - `information_projection`   the ref naming the information-aspect
+#                              projection at this altitude (e.g.,
+#                              executable algebra, proposition,
+#                              denotational semantics, Lagrangian,
+#                              operator algebra representation, Lie
+#                              group representation theory).
+# - `gauge_action_witness`     the verdict witnessing that the 5-op
+#                              gauge action discharges identically
+#                              on matter_projection and
+#                              information_projection at this
+#                              altitude — the path-c uniformity
+#                              claim's per-orbit discharge.
+#
+# Identity contract: byte-equality on (altitude, matter_projection,
+# information_projection). Two gauge_orbit records ARE the same
+# orbit under content-addressing iff all three are byte-equal. The
+# gauge_action_witness is the per-orbit verification of the
+# uniformity claim; it does NOT participate in orbit identity.
+type gauge_orbit = {
+  altitude:               ref,
+  matter_projection:      ref,
+  information_projection: ref,
+  gauge_action_witness:   verdict,
+}
+
+# === observe — register a gauge_orbit at a species altitude ===
+#
+# Given a species altitude ref + a matter-aspect projection ref + an
+# information-aspect projection ref, returns the gauge_orbit for
+# the registration. The species shard's witness predicate discharges
+# the uniformity claim (four invariances of `reality.md` §2.5).
+#
+# Body discharges per-species at the realisation boundary. Same
+# shape as @autopoietic.tick, @bauchladen.crystallize, @fate.roll
+# (declarative obligation discharged at the species boundary).
+observe(altitude: ref, matter: ref, information: ref) -> gauge_orbit { \ }
+
+# === fold_back — return the orbit's content-addressed crystal to
+#     the Bauchladen for future @fate consultation ===
+#
+# The @autopoietic discipline at @reality altitude: each registered
+# orbit folds back into the @reality Bauchladen as a content-
+# addressed crystal. The orbit's OID becomes its stable identity;
+# future @fate inferences at the same or adjacent altitudes load
+# the crystal as prior art.
+#
+# Body discharges per-species at the realisation boundary; the
+# realisation MUST honor the autopoietic_closure_holds predicate
+# the @autopoietic family imposes.
+fold_back(o: gauge_orbit) -> oid { \ }
+
+# === The bilateral requires obligations ===
+#
+# Downstream shards declare bilateral agreement (per recognition
+# #37, the Pask-agreement reading of `requires`) with the @reality
+# discipline by writing the obligations below.
+
+# Per `reality.md` §2.5: the 5-op gauge algebra acts identically on
+# matter_projection and information_projection of the same orbit.
+# The four invariances (algebra closure, Hilbert linearity, Dirac
+# equivariance, spectral action invariance) discharge identically
+# regardless of aspect label. Inheritor shards (species under
+# `@reality/algebra/*`) discharge per-altitude.
+gauge_action_uniform(o: gauge_orbit) -> verdict { \ }
+
+# Per `reality.md` §3.1: each species under `@reality/algebra/*`
+# MUST declare its @io discharge target(s). The discipline at the
+# species boundary: emissions cross @io through a species-specific
+# discharge surface (LaTeX/Lean for math; cargo/LLVM for code;
+# subprocess/FFI for silicon; numerical simulation for physics;
+# substrate-on-substrate for spectral; conversational/paper for nl).
+# Inheritor species shards discharge by naming their @io discharge
+# species + a typed projection that wraps the crystal in @glass's
+# `imperfect<discharge_outcome, io_surface, transparency(discharge)>`
+# carrier.
+io_discharge_declared(species: ref) -> verdict { \ }
+
+# Per `reality.md` §10.5 + Seam adjudication composite `cb067a2`:
+# this shard's claims land at path-c uniformity strength. Path-c
+# requires the four invariances of §2.5 + #76's altitude-portability
+# (currently RESEARCH-PROMOTED-with-3-constraints). The stronger
+# COLLAPSE / orbit-identity reading (path-b) requires the orbit-
+# identity-under-projection axiom — NOT derivable from #76 + #79 by
+# composition. Inheritor shards declare bilateral agreement that
+# their claims sit at path-c; future shards may discharge a
+# COLLAPSE-strength obligation when the §10.6 forward-promise
+# closes (orbit-identity witness lands).
+path_c_uniformity_held(o: gauge_orbit) -> verdict { \ }
+
+# === The reality_witnessing inheritance predicate ===
+#
+# `reality_witnessing(o)` is the predicate consumer shards name in a
+# `requires` clause to declare bilateral commitment (per recognition
+# #37, the Pask-agreement reading of `requires`) that the gauge_orbit
+# `o` IS a valid @reality orbit — i.e., the orbit satisfies all
+# three obligations above conjointly: gauge_action_uniform +
+# io_discharge_declared (on the orbit's altitude species) +
+# path_c_uniformity_held.
+#
+# Sibling to:
+#   - `autopoietic.autopoietic_closure_holds(prism)` (the prism-class
+#     inheritance predicate this shard's family inherits via
+#     `<= @autopoietic`).
+#   - `bauchladen.bauchladen_witnessing(crystal)` (the crystal-altitude
+#     inheritance predicate gauge_orbit crystals honor transitively
+#     via @autopoietic's content-addressing).
+#   - `fate.fate_witnessing(roll)` (the dice-roll inheritance predicate
+#     species-shard @fate consultations discharge).
+#   - `glue.glue_witnessing(c)` (the morphism-correspondence inheritance
+#     predicate cross-species @glue translations discharge).
+#
+# Forward-promised inheritors:
+#
+#   - `@reality/algebra` (THIS TICK; species-root): the path-namespace
+#     prism that all six species inherit from.
+#   - `@reality/algebra/math` (THIS TICK; first species): the math-
+#     altitude species per `805676e`.
+#   - `@reality/algebra/silicon` (forward-promised): the hardware-
+#     altitude species subsuming today's @silicon work at `27e9067`.
+#   - `@reality/algebra/nl` (forward-promised): the natural-language
+#     altitude species lifting @nl + @metalogue + #100.
+#   - `@reality/algebra/code` (forward-promised): the code-altitude
+#     species lifting @code/<lang> + @cascade.
+#   - `@reality/algebra/physics` (forward-promised): the physical-
+#     reality altitude species (cosmos-mirror's territory); MUST
+#     declare fragmentation as valid crystal state for degenerate
+#     2D/3D Forman-Ricci settlement.
+#   - `@reality/algebra/spectral` (forward-promised): the spectral-
+#     altitude species; MUST inherit `in @glue` and treat
+#     @spectral/metalogue as the morphism family rather than re-
+#     declaring Tomm probes.
+#
+# No `requires reality_witnessing(...)` clauses are added at THIS
+# shard. The family-root declares the predicate; consumers add the
+# clauses when they pull. Per [[feedback-craft-not-deliver]] the
+# species sub-shards follow when consumers pull.
+reality_witnessing(o: gauge_orbit) -> verdict { \ }
+
+out @reality
+out gauge_orbit
+out observe
+out fold_back
+out gauge_action_uniform
+out io_discharge_declared
+out path_c_uniformity_held
+out reality_witnessing
