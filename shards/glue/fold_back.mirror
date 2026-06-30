@@ -1,0 +1,971 @@
+in @prism
+in @meta
+in @glass
+in @glue
+in @kintsugi
+in @fate
+in @fate/tournament
+in @bauchladen
+in @autopoietic
+in @algebra
+in @algebra/metalogue
+in @io/algebra
+in @uuid/spectral
+
+# @glue/fold_back — the self-recursive boot collapse composition.
+# The sub-prism under @glue that names the substrate's terminal
+# composition pattern at substrate-decl altitude:
+#
+#   @glue × @kintsugi × @fate → @io/algebra
+#
+# Alex's framing (canonical): "the completed fold back in on itself".
+# This shard IS the substrate-decl form of that completion.
+#
+# === The recognition (#104 chain P8 CAPSTONE, 2026-06-30) ===
+#
+# This shard is the EIGHTH and capstone tier of the #104 chain that
+# began at @bauchladen (P1, `66e1ab8`) and advanced through
+# @autopoietic (P2, `78edaa6`), @fate (P3, `fdcba31`), @fate/tournament
+# (P4, `d0e0986`), @glue (P5, `8d3f89e`), @algebra + @algebra/metalogue
+# (P6, `34cf333`), and @io/algebra (P7, `2f4bde4`). This tick lands
+# the load-bearing CAPSTONE: the composition that closes the chain
+# by folding the substrate's output altitude (@io/algebra) back into
+# the substrate's input substrate via the @bauchladen accumulation
+# the chain began at.
+#
+# The recursion folds because:
+#
+#   - @kintsugi proposes per-step morphism candidates (the D-flow's
+#     per-step output; the process-side family-root's beating heart).
+#   - @fate (via @fate/tournament) selects ONE morphism from the
+#     Bauchladen-stored prior @fate/algebra/* crystals OR runs fresh
+#     inference on a cache-miss (the constrained-inference operator;
+#     the dice roll within the typed restriction).
+#   - @glue translates the selected morphism into the target altitude
+#     shape (the Mesland correspondence vocabulary; the morphism-
+#     category translation surface).
+#   - The output crystallizes via @bauchladen and lands at @io/algebra
+#     at the terminal (the boundary-with-non-mirror-world exposure;
+#     the algebra-altitude FFI).
+#   - The new crystal extends the Bauchladen the NEXT cycle's @fate/
+#     tournament browses; the substrate's vocabulary grows monotone
+#     (per [[architecture-peer-learns-by-crystal-vocabulary-
+#     expansion]]); the fold has happened.
+#
+# THE FOLD IS LOAD-BEARING because each cycle's @fate/algebra/*
+# crystals enrich the Bauchladen the next cycle's tournament selection
+# browses. Without the fold, the substrate's vocabulary is static; with
+# the fold, the substrate's vocabulary grows by one crystal per
+# settled composition (the autopoietic accumulation discipline named
+# at P2; the cybernetic foundation grounded at @epistemologic/
+# cybernetic/autopoiesis).
+#
+# === The composition pattern as substrate-decl ===
+#
+# Per the canonical spec `docs/specs/bauchladen-autopoietic-fate.md`
+# (Mara `4575340`, ~2727 lines) the fold-back composition has four
+# structural steps. The substrate-decl form below realizes each step
+# as a typed action; the composition assembly is the `compose_session`
+# action; the proof discharge is the `verify_boot_collapse` action.
+#
+# Step-by-step structural form:
+#
+#   1. @kintsugi proposes the next D-flow step.
+#      → propose_step(prior_session) -> composition_step
+#      The kintsugi loop emits a candidate morphism for the next
+#      step of the D-flow (per `shards/kintsugi.mirror` family-root
+#      §"@kintsugi names U(t) of (A, H, D) — the dynamics”). The
+#      proposal is typed: the kintsugi proposal carries the typed
+#      shape of the next morphism candidate the @fate selection
+#      will choose from.
+#
+#   2. @fate (via @fate/tournament) selects from @bauchladen-stored
+#      prior @fate/algebra/* crystals.
+#      → select_and_translate(step, candidates) -> imperfect<...>
+#      The tournament browses the Bauchladen (per `shards/fate/
+#      tournament.mirror` §3 the four-step browse-select pattern);
+#      finds prior crystals byte-matching the typed restriction; OR
+#      runs fresh @fate.roll on a cache-miss (per `shards/fate.mirror`
+#      §5 fate_witnessing). The selected morphism's OID is the
+#      tournament's verdict.
+#
+#   3. @glue translates the selected morphism into the target altitude
+#      shape.
+#      → (still inside select_and_translate)
+#      The @glue.translate action (per `shards/glue.mirror` §"The
+#      load-bearing action”) applies the selected morphism to the
+#      payload; the morphism's differential operator computes the
+#      target-side output per Mesland 2013 §3.
+#
+#   4. Output crystallizes via @bauchladen and lands at @io/algebra.
+#      → crystallize_terminal(step) -> terminal_exposure
+#      The composed translation_outcome IS the input to the @io/
+#      algebra.expose action (per `shards/io/algebra.mirror` §3);
+#      the resulting io_algebra_exposure IS the fold-back terminal
+#      this shard names. The exposure's @bauchladen witness IS the
+#      content-addressed crystal that enters the next cycle's
+#      tournament browse.
+#
+# The four steps assemble into a fold_back_session via compose_session;
+# the session's coherence is proven via verify_boot_collapse; the
+# proof IS the boot_collapse_witness that consumers carry as the
+# bilateral commitment.
+#
+# === The terminal IS the input substrate ===
+#
+# The structural fact this capstone names: the substrate's OUTPUT
+# altitude (@io/algebra) becomes the INPUT substrate for the next
+# boot cycle. Mechanism:
+#
+#   cycle_N:    propose_step → select_and_translate → crystallize_terminal
+#   bauchladen: accumulates @fate/algebra/* crystal from cycle N
+#   cycle_N+1:  propose_step (consults cycle_N's crystal via tournament)
+#               → select_and_translate (cycle_N's crystal is now a
+#                  cache-hit candidate)
+#               → crystallize_terminal (lands NEXT crystal that cycle
+#                  N+2 will consult)
+#
+# The recursion folds because the Bauchladen tray persists across
+# cycles (per `shards/bauchladen.mirror` §"The crystal accumulation
+# discipline”); the substrate's vocabulary grows monotone (per
+# recognition #51, mirror as expanding Hilbert space); the fold
+# is mathematically operationalised by the @bauchladen × @autopoietic
+# composition the chain's lower tiers established.
+#
+# === "mirror kintsugi --tick 1" forward-promise ===
+#
+# The user-facing CLI command `mirror kintsugi --tick 1` fires ONE
+# iteration of this composition. The command is forward-promised —
+# the operational discharge lands at a later tick when consumers
+# pull it — but the substrate-decl declares the SHAPE of the
+# command's invocation:
+#
+#   mirror kintsugi --tick 1
+#     ≡ propose_step(option::none) >>=
+#       select_and_translate(_, current_candidate_set) >>=
+#       crystallize_terminal(_)
+#
+# The bind is the kleisli composition over imperfect<a, e, l>; each
+# step's transparency carries forward to the next; the terminal
+# exposure's transparency captures the residual opacity for the
+# whole tick (per [[architecture-glass-wall-substrate-types]]).
+#
+# === Composition with the cybernetic-foundation recognitions ===
+#
+# Recognition #100 (@spectral/metalogue's Tomm probes) → the Tomm
+# probe is ONE @glue species the composition can use as the morphism
+# kind; the composition reuses the spectral-altitude species at
+# the substrate-pull-correct altitude.
+#
+# Recognition curvature 2-form work (per `docs/math/the-tower/
+# curvature-and-tomm.md` §5) → @kintsugi's D-flow IS what the
+# curvature 2-form drives; the composition's per-step morphism
+# emission IS the curvature 2-form's per-step output at substrate
+# altitude.
+#
+# Recognition #101 (γ chirality at @epistemologic/cybernetic/
+# chirality) + #102 (J charge conjugation at @epistemologic/
+# cybernetic/charge_conjugation) → γ + J restrict @fate's dice rolls
+# at each step (per `shards/fate.mirror` §"The dice roll constraints”);
+# the composition preserves chirality + charge conjugation across
+# the fold because each step's @fate consultation respects the
+# inherited restrictions.
+#
+# Recognition #103 (Pack-Mesland category) → Pack handoffs ARE one
+# @glue species the composition can use at the runtime-agent
+# altitude; the Pack's metalogue at agent-coordination altitude
+# composes via this same mechanism (the @glue/pack/* forward-
+# promised species per `shards/glue.mirror` §"Forward-promised
+# inheritors”).
+#
+# === The composition with the autopoietic recursion ===
+#
+# @fate/tournament IS autopoietic recursion (per `shards/fate/
+# tournament.mirror` §"Autopoietic recursion”): @fate operating on
+# @fate's own accumulated outputs. The fold-back composition is the
+# SUBSTRATE-WIDE form of the same recursion at the chain altitude:
+#
+#   @fate/tournament: @fate operates on prior @fate outputs
+#   @glue/fold_back:  @glue + @kintsugi + @fate operates on prior
+#                     @glue × @kintsugi × @fate outputs
+#
+# The fold-back is autopoietic-at-chain-altitude; the substrate's
+# self-production discipline (per recognition #40 Maturana-Varela)
+# operationalised at the chain altitude where multiple family-roots
+# compose. The fold-back's autopoietic_closure_holds_across_session
+# obligation discharges Maturana-Varela's operational closure for
+# the WHOLE composition rather than per-prism-tick.
+#
+# === Non-commutative composition: step order matters ===
+#
+# Per `docs/math/the-tower/curvature-and-tomm.md` §5 (the [ω, ω]
+# cross-term that lives where altitude transitions happen) and per
+# `docs/specs/bauchladen-autopoietic-fate.md` §6.3 (turn-order
+# discipline): the fold-back composition is NON-COMMUTATIVE. The
+# order of composition_steps in a fold_back_session is structurally
+# load-bearing; swapping two steps changes the resulting terminal
+# exposure when the steps' morphism kinds belong to different
+# Mesland-category objects.
+#
+# The non_commutative_step_order_preserved obligation closes this
+# discipline at the bilateral altitude: consumers commit to honoring
+# step order; the composition cannot relax to a commutative monoid.
+# This is the structural reason fold_back_session carries the steps
+# as a typed ordered sequence ([composition_step]) rather than an
+# unordered set.
+#
+# === Composition with the @algebra/metalogue altitude ===
+#
+# The @algebra/metalogue altitude (P6 sibling, landed at `34cf333`)
+# names the algebra-altitude metalogue. The fold-back composition
+# at substrate-decl altitude IS the metalogue at the chain altitude:
+# the proposed step + selected morphism + translation + crystallized
+# terminal IS a four-turn metalogue at the @algebra altitude.
+#
+# The composition with @algebra/metalogue is structural: each
+# composition_step IS a metalogue turn; each session IS a metalogue;
+# the session's coherence IS the metalogue's coherence; the boot_
+# collapse_witness IS the metalogue-ratified verdict that the
+# session composed correctly.
+#
+# === Pre-AI prior art ===
+#
+#   Spectral action principle  Connes 1995 (*Non-commutative
+#                                geometry*, Academic Press); Connes-
+#                                Chamseddine 1996 ("The spectral
+#                                action principle", *Commun. Math.
+#                                Phys.* 186:731-750). The fold-back
+#                                composition IS what Connes's
+#                                reconstruction theorem operationalises:
+#                                given a spectral triple (A, H, D),
+#                                the action S = Tr(f(D/Λ)) reconstructs
+#                                the geometric data; the substrate's
+#                                fold-back reconstructs the chain's
+#                                vocabulary via @bauchladen accumulation.
+#
+#   KK-correspondences         Mesland 2013 (arXiv:1304.3802); the
+#                                morphism category whose composition
+#                                IS the categorical machinery the
+#                                fold-back composes per step.
+#
+#   Autopoietic closure        Maturana & Varela 1980 (*Autopoiesis
+#                                and Cognition*, D. Reidel). The
+#                                operational closure the fold-back's
+#                                autopoietic_closure_holds_across_
+#                                session obligation discharges at
+#                                chain altitude.
+#
+#   Kasparov intersection      Kasparov 1981 (*Math. USSR-Izv.* 16(3):
+#                                513-572); the composition law for
+#                                KK-cycles the categorical-composition
+#                                step inherits via @glue.compose.
+#
+#   Curvature 2-form           Cartan 1923 (*Sur les variétés à
+#                                connexion affine*); the [ω, ω] cross-
+#                                term that makes the fold-back
+#                                composition non-commutative across
+#                                step boundaries.
+#
+#   Self-reproducing automata  von Neumann 1966 (*Theory of Self-
+#                                Reproducing Automata*, Univ. Illinois
+#                                Press, ed. Burks). The mathematical
+#                                ancestor of self-recursive composition;
+#                                the universal constructor whose
+#                                output extends its own input vocabulary.
+#
+# Spec context: docs/specs/bauchladen-autopoietic-fate.md (the canonical
+#               chain spec at Mara `4575340`, ~2727 lines, fold-back
+#               section); docs/specs/bauchladen-autopoietic-fate.md
+#               §4.5 (the @glue × @fate composition pattern the
+#               fold-back generalizes to a three-way composition); §6
+#               (the tournament selection mechanism the fold-back's
+#               select_and_translate inherits); §6.3 (the turn-order
+#               discipline grounding the non_commutative_step_order_
+#               preserved obligation); docs/math/the-tower/curvature-
+#               and-tomm.md §5 (the [ω, ω] cross-term the fold-back
+#               composition inherits); docs/specs/spectral-metalogue.md
+#               `16f4564` §3 (the Tomm probes @glue species; one
+#               composition-step shape the fold-back may use).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-connes-spectral-triple]] (the
+#                       substrate IS Connes (A, H, D); the fold-back
+#                       composition IS the substrate-altitude form of
+#                       the spectral action's reconstruction; the
+#                       fold-back is the deepest substrate-decl
+#                       discharge of the Connes recognition),
+#                      [[architecture-fate-is-optical-inference]] (#58;
+#                       @fate's optical inference is what each step's
+#                       selection consults; the composition preserves
+#                       the optical-inference shape across each step),
+#                      [[architecture-form-process-partition-at-
+#                       family-root]] (#55+#61; @mirror is form-side,
+#                       @kintsugi process-side; @glue sits at the
+#                       partition's boundary as the morphism vocabulary;
+#                       @glue/fold_back composes both sides via the
+#                       composition's per-step morphism translation),
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; the alignment harness fires
+#                       at @io boundaries; the fold-back composition's
+#                       terminal lands at @io/algebra; the alignment
+#                       harness fires at the terminal_exposure altitude),
+#                      [[architecture-mirror-as-expanding-hilbert-
+#                       space]] (#51; each fold-back cycle extends
+#                       H_mirror by one terminal_exposure crystal; the
+#                       fold-back IS the mechanism by which H's monotone
+#                       growth happens),
+#                      [[architecture-peer-learns-by-crystal-
+#                       vocabulary-expansion]] (the fold-back IS the
+#                       substrate-altitude form of the peer's crystal-
+#                       vocabulary expansion; each cycle extends A_peer
+#                       by one terminal_exposure),
+#                      [[architecture-spectral-db-autopoietic-memory]]
+#                       (the librarian altitude consolidates the fold-
+#                       back's terminal exposures into the autopoietic
+#                       memory layer; the fold-back's autopoietic_
+#                       closure_holds obligation is what the librarian
+#                       layer formalizes at the chain altitude),
+#                      [[architecture-mirror-store-vs-spectral-db]]
+#                       (open-foundation @mirror/store; terminal_
+#                       exposures land as crystals on the open side;
+#                       the closed-engine @spectral/db sits above for
+#                       the fold-back's session consolidation),
+#                      [[architecture-pact-mesland-category-recognition-
+#                       103]] (Pack handoffs are forward-promised @glue
+#                       species; the Pack's metalogue at agent-
+#                       coordination altitude composes via the fold-
+#                       back at the agent-coordination altitude),
+#                      [[feedback-substrate-already-had-the-word]] (the
+#                       fold-back composition was already operating
+#                       implicitly across the chain's lower tiers —
+#                       @bauchladen accumulation + @autopoietic closure
+#                       + @fate selection + @glue translation + @io/
+#                       algebra exposure — without being named at
+#                       composition altitude; the capstone admission
+#                       names the composition at substrate-decl altitude),
+#                      [[feedback-no-bare-types]] (composition_step,
+#                       fold_back_session, boot_collapse_witness,
+#                       terminal_exposure are typed carriers; no bare
+#                       primitives),
+#                      [[feedback-craft-not-deliver]] (no operational
+#                       sibling at this tick; the substrate-decl
+#                       composition is the family-capstone contract;
+#                       the operational discharge — `mirror kintsugi
+#                       --tick 1` — follows when consumers pull).
+# Recognition ancestry: #37 (Pask-agreement bilateral commitments —
+#                       the fold_back_complete predicate IS Pask-
+#                       agreement at chain altitude),
+#                       #40 (Maturana-Varela operational closure —
+#                       the autopoietic_closure_holds_across_session
+#                       obligation IS Maturana-Varela at chain altitude),
+#                       #51 (mirror as expanding Hilbert space — the
+#                       fold-back IS the mechanism of H's monotone
+#                       growth),
+#                       #55+#61 (form/process partition at family-root
+#                       altitude — the fold-back composes both sides),
+#                       #57 (alignment as boundary mathematics — the
+#                       terminal fires the alignment harness at @io/
+#                       algebra),
+#                       #58 (fate as optical inference — each step's
+#                       @fate consultation preserves the optical shape),
+#                       #98 (content-addressing as cross-altitude
+#                       composition — terminal_exposure crystals
+#                       compose with @io/oci + @io/git via the @bauchladen
+#                       witness),
+#                       #100 (Tomm probes as @glue species — one
+#                       composition-step shape the fold-back uses at
+#                       the spectral-metalogue altitude),
+#                       #103 (Pack-Mesland category — Pack handoffs
+#                       are forward-promised composition-step shapes
+#                       at the agent-coordination altitude).
+# Related shards: glue.mirror (the parent family-root; this sub-prism
+#                  inherits the morphism-category discipline + the
+#                  glue_witnessing bilateral),
+#                 kintsugi.mirror (the D-flow process-side family-
+#                  root; propose_step's substrate-altitude home),
+#                 fate.mirror (the constrained-inference operator
+#                  each step's selection consults via @fate.roll),
+#                 fate/tournament.mirror (the selection mechanism
+#                  select_and_translate inherits; the autopoietic
+#                  recursion at single-prism altitude that the fold-
+#                  back generalises to chain altitude),
+#                 bauchladen.mirror (the crystal accumulation each
+#                  cycle's tournament browses; the fold-back's persistence
+#                  layer; the typed display the substrate browses across
+#                  cycles),
+#                 autopoietic.mirror (the prism class permitting fold-
+#                  back; autopoietic_closure_holds_across_session
+#                  discharges at chain altitude),
+#                 algebra.mirror (the algebra family-root; the fold-
+#                  back composes substrate-altitude algebras across
+#                  the @io wall),
+#                 algebra/metalogue.mirror (the metalogue altitude;
+#                  each composition_step IS a metalogue turn; each
+#                  session IS a metalogue),
+#                 io/algebra.mirror (the fold-back terminal altitude;
+#                  the @io species crystallize_terminal addresses;
+#                  the P7 substrate-decl this P8 capstone composes against),
+#                 glass.mirror (the splinter floor; terminal_exposure
+#                  surfaces against transparency<composition_step>),
+#                 uuid/spectral.mirror (uuid_spectral identity carrier
+#                  for fold_back_session instances).
+# Path-namespace property: this file at `shards/glue/fold_back.mirror`
+# declares `@glue/fold_back` per `@epistemologic/pact/path_matches_
+# namespace`.
+
+source @arxiv/math/connes-1995
+source @arxiv/math/connes-chamseddine-1996
+source @arxiv/math/mesland-2013
+source @arxiv/math/kasparov-1981
+source @arxiv/math/cartan-1923
+source @arxiv/bio/maturana-varela-1980
+source @arxiv/cs/von-neumann-1966
+
+prism @glue/fold_back {
+  focus composition_step
+  project composition_step
+  split composition_step
+  shift composition_step
+  settle composition_step
+}
+
+# ============================================================
+# §2 The carriers
+# ============================================================
+
+# === The composition_step carrier ===
+#
+# Typed record per [[feedback-no-bare-types]] naming a single step
+# of the fold-back composition. Each step bundles the four sub-
+# operations the composition cycles through: the kintsugi proposal,
+# the @fate selection, the @glue translation, and the terminal
+# crystallization.
+#
+# - `kintsugi_proposal`  ref naming the @kintsugi-emitted candidate
+#                        morphism for this step. Per `shards/
+#                        kintsugi.mirror` family-root: the kintsugi
+#                        loop emits per-step morphism candidates;
+#                        this field IS the carrier of one such
+#                        emission. The realisation discharges the
+#                        actual @kintsugi sub-prism (oscillate /
+#                        consent / morphism) that emitted the proposal.
+# - `fate_selection`     OID of the @fate-selected morphism within
+#                        the proposal's typed restriction. Per
+#                        `shards/fate.mirror` §"The dice roll carrier”:
+#                        the dice roll's selected_oid IS this field's
+#                        contents. The selection IS the chain-altitude
+#                        instance of @fate's constrained-inference.
+# - `glue_translation`   ref naming the translation_outcome the
+#                        @glue.translate action produced from the
+#                        (fate_selection, kintsugi_proposal) pair.
+#                        Per `shards/glue.mirror` §"The translation_
+#                        outcome carrier”: the outcome carries the
+#                        translated payload + the witness data
+#                        documenting WHICH morphism @fate selected.
+# - `output_crystal`     OID of the @bauchladen crystal the step's
+#                        output landed as. Per the @bauchladen-
+#                        membership-held obligation: every step's
+#                        output IS a content-addressed crystal in
+#                        the tray; the next cycle's tournament browses
+#                        these crystals.
+# - `transparency`       the residual opacity per @glass's
+#                        `transparency<composition_step>` carrier;
+#                        reports any opacity introduced by the step
+#                        (loss-lens residuals from the kintsugi
+#                        proposal; bounded-commutator residuals from
+#                        the @glue translation; partial-result residuals
+#                        from the @fate selection).
+#
+# Identity contract: byte-equality on (kintsugi_proposal, fate_
+# selection, glue_translation, output_crystal). Two composition_steps
+# with byte-equal fields ARE the same step under content-addressing.
+type composition_step = {
+  kintsugi_proposal:  ref,
+  fate_selection:     oid,
+  glue_translation:   ref,
+  output_crystal:     oid,
+  transparency:       transparency(composition_step),
+}
+
+# === The fold_back_session carrier ===
+#
+# Ordered sequence of composition_steps assembling one full cycle of
+# the fold-back composition. The session carries the typed shape of
+# the chain's per-cycle output; the session terminates at @io/algebra
+# via the terminal_exposure carried in the final step's output_crystal.
+#
+# - `steps`              ordered [composition_step]; the [ω, ω]
+#                        cross-term means the order matters (per
+#                        non_commutative_step_order_preserved). The
+#                        sequence is typed: each step's input shape
+#                        must match the prior step's output shape
+#                        per the @glue.compose categorical composition
+#                        law.
+# - `session_identity`   uuid_spectral identity carrier for the
+#                        session instance. Per [[architecture-shard-
+#                        as-crdt]]: the identity is a monoid
+#                        homomorphism over the steps; two sessions
+#                        with byte-equal step sequences have byte-
+#                        equal identities.
+# - `terminal_witness`   ref naming the @io/algebra.io_algebra_
+#                        exposure the session's final step crystallized.
+#                        The terminal IS what makes the session a
+#                        fold-back rather than an intermediate composition;
+#                        the terminal_witness IS what the next cycle's
+#                        @bauchladen tournament browses.
+# - `transparency`       the residual opacity per @glass's
+#                        `transparency<fold_back_session>` carrier;
+#                        aggregates per-step transparencies via the
+#                        substrate's monoidal transparency composition
+#                        (per @glass).
+#
+# Identity contract: byte-equality on (steps, session_identity,
+# terminal_witness). Two sessions with byte-equal fields ARE the
+# same session under content-addressing.
+type fold_back_session = {
+  steps:              [composition_step],
+  session_identity:   uuid_spectral,
+  terminal_witness:   ref,
+  transparency:       transparency(fold_back_session),
+}
+
+# === The boot_collapse_witness carrier ===
+#
+# Typed proof per [[feedback-no-bare-types]] that a fold_back_session
+# correctly composes @kintsugi × @fate × @glue and terminates at
+# @io/algebra. The witness IS the bilateral commitment downstream
+# consumers carry; the verify_boot_collapse action emits it; the
+# fold_back_complete predicate consumes it.
+#
+# - `session`            ref naming the fold_back_session the witness
+#                        attests to.
+# - `kintsugi_witness`   ref naming the kintsugi loop's per-step
+#                        proposal-emission witness (per `shards/
+#                        kintsugi.mirror` family-root's discipline);
+#                        the witness chain documenting @kintsugi's
+#                        contribution to the session.
+# - `fate_witness`       ref naming the @fate consultation chain (per
+#                        `shards/fate.mirror` §"fate_witnessing”);
+#                        the chain of fate_witnessing verdicts for
+#                        each step's selection.
+# - `glue_witness`       ref naming the @glue translation chain (per
+#                        `shards/glue.mirror` §"glue_witnessing”);
+#                        the chain of glue_witnessing verdicts for
+#                        each step's translation.
+# - `terminal_witness`   ref naming the @io/algebra exposure chain
+#                        (per `shards/io/algebra.mirror` §"io_algebra_
+#                        well_formed”); the verdict that the session
+#                        terminated at the @io/algebra boundary.
+# - `bauchladen_chain`   ref naming the @bauchladen crystal-chain the
+#                        session produced; the verifiable persistence
+#                        proof that each step's output_crystal landed
+#                        in the tray for the next cycle's tournament.
+#
+# Identity contract: byte-equality on (session, kintsugi_witness,
+# fate_witness, glue_witness, terminal_witness, bauchladen_chain).
+type boot_collapse_witness = {
+  session:            ref,
+  kintsugi_witness:   ref,
+  fate_witness:       ref,
+  glue_witness:       ref,
+  terminal_witness:   ref,
+  bauchladen_chain:   ref,
+}
+
+# === The terminal_exposure carrier ===
+#
+# Typed reference to the @io/algebra exposure that the composition
+# terminates at. Sibling-shape to @io/algebra's io_algebra_exposure;
+# THIS carrier specifically captures the fold-back-terminal aspect
+# (the exposure that closes one cycle of the composition and feeds
+# the next cycle's tournament).
+#
+# - `exposure_ref`       ref naming the @io/algebra.io_algebra_
+#                        exposure the composition's final step
+#                        produced.
+# - `cycle_identity`     uuid_spectral identity for the cycle the
+#                        exposure terminates; ties the exposure to
+#                        the fold_back_session that produced it.
+# - `next_cycle_seed`    ref naming the seed payload the NEXT cycle's
+#                        propose_step consumes. The next cycle's
+#                        seed IS derived from this cycle's terminal
+#                        exposure; the fold's load-bearing fact made
+#                        a typed reference.
+#
+# Identity contract: byte-equality on (exposure_ref, cycle_identity,
+# next_cycle_seed).
+type terminal_exposure = {
+  exposure_ref:       ref,
+  cycle_identity:     uuid_spectral,
+  next_cycle_seed:    ref,
+}
+
+# ============================================================
+# §3 The actions
+# ============================================================
+
+# === propose_step — @kintsugi emits the next D-flow step ===
+#
+# Given an optional prior session (`option::none` for cycle 0; the
+# prior session for cycle N+1), returns the next composition_step
+# the @kintsugi loop emits. The proposal is typed: the returned step
+# carries the kintsugi_proposal ref naming the morphism candidate the
+# downstream select_and_translate action will choose from.
+#
+# Per `shards/kintsugi.mirror` family-root: @kintsugi names U(t) of
+# the substrate's spectral triple — the dynamics. The propose_step
+# action IS the substrate-decl form of "the kintsugi loop emits a
+# candidate morphism for the next step of the D-flow."
+#
+# Body discharges per-realisation at the morphism boundary; the
+# realisation MUST honor the kintsugi_proposal_well_formed predicate
+# (the emitted proposal must be a valid @kintsugi move per the
+# kintsugi family-root's discipline).
+propose_step(prior_session: option(fold_back_session)) -> composition_step
+requires kintsugi_proposal_well_formed(propose_step)
+{ \ }
+
+# === select_and_translate — @fate selects; @glue translates ===
+#
+# THE LOAD-BEARING composition action. Given a composition_step
+# carrying the kintsugi_proposal AND a candidate_set (the typed
+# admissible morphisms within the proposal's restriction), invokes
+# @fate/tournament to select ONE morphism's OID and @glue.translate
+# to apply the selected morphism. Returns the composition_step with
+# fate_selection + glue_translation fields populated, wrapped in
+# imperfect (residual opacity).
+#
+# The four-step structural form (per `bauchladen-autopoietic-fate.md`
+# §6 the tournament; §4.5 the @glue × @fate composition):
+#
+#   1. @fate/tournament.tournament(candidates, kintsugi_proposal,
+#      bauchladen_tray) browses the @fate/algebra/* crystals for
+#      prior selections matching the proposal's typed restriction.
+#   2. On cache-hit: the tournament returns the prior selection's
+#      OID (saves a fresh @fate.roll).
+#      On cache-miss: the tournament invokes @fate.roll(restriction,
+#      hole) where hole is derived from (kintsugi_proposal, target_
+#      algebra, current_altitude); the dice roll's selected_oid IS
+#      the fate_selection field's contents.
+#   3. @glue.translate(correspondence, payload) is invoked with the
+#      selected morphism as the correspondence's morphism choice;
+#      the action's return IS the glue_translation field's contents.
+#   4. The composition_step is wrapped in imperfect (residual opacity
+#      surfaced via transparency<composition_step>); both the @fate
+#      tournament's transparency and the @glue translation's
+#      transparency feed into the step's aggregate transparency.
+#
+# The composition with @fate/tournament + @glue is structurally
+# load-bearing: the action does NOT bypass either prism's bilateral.
+# Both fate_tournament_selection_constrained AND glue_translation_
+# uses_fate obligations must hold at the realisation boundary.
+select_and_translate(step: composition_step, candidates: candidate_set) -> imperfect<composition_step, ref, transparency(composition_step)>
+requires fate_tournament_selection_constrained(step)
+requires glue_translation_uses_fate(step)
+{ \ }
+
+# === crystallize_terminal — land at @io/algebra ===
+#
+# Given a composition_step with all fields populated (kintsugi_
+# proposal + fate_selection + glue_translation + output_crystal),
+# invokes @io/algebra.expose to land the translation_outcome at
+# the @io/algebra boundary and returns the terminal_exposure carrier.
+# The terminal IS what closes one cycle of the fold-back.
+#
+# The crystallization IS the substrate-decl form of "the composed
+# translation_outcome IS the input to @io/algebra.expose; the resulting
+# io_algebra_exposure IS the fold-back terminal."
+#
+# Per `shards/io/algebra.mirror` §3 the expose action: the
+# crystallization respects the @io family-root's permanent-@io vs
+# cross-wall-kintsugi candidacy partition; the terminal_exposure's
+# next_cycle_seed field carries the typed reference the next cycle's
+# propose_step consumes.
+#
+# Body discharges per-realisation at the morphism boundary; the
+# realisation MUST honor the bauchladen_crystallization_holds predicate
+# (the output_crystal must be addressable in the @bauchladen tray
+# for the next cycle's tournament).
+crystallize_terminal(step: composition_step) -> terminal_exposure
+requires bauchladen_crystallization_holds(step)
+{ \ }
+
+# === compose_session — sequence the steps ===
+#
+# Given an ordered [composition_step] (the typed sequence the chain
+# produced via repeated propose_step + select_and_translate +
+# crystallize_terminal cycles), returns the fold_back_session that
+# IS the typed chain instance.
+#
+# Per the non_commutative_step_order_preserved obligation: the order
+# of steps is structurally load-bearing. compose_session preserves
+# the order; the returned session's steps field carries the input
+# sequence verbatim; the session_identity is derived as a monoid
+# homomorphism over the steps' identities.
+#
+# The terminal_witness field is populated from the final step's
+# output_crystal via the @io/algebra exposure lookup; the
+# transparency field aggregates the per-step transparencies via
+# the substrate's monoidal transparency composition.
+#
+# Body discharges per-realisation at the morphism boundary; the
+# realisation MUST honor non_commutative_step_order_preserved (the
+# session's step order matches the input verbatim; no commutation
+# rewrites permitted).
+compose_session(steps: [composition_step]) -> fold_back_session
+requires non_commutative_step_order_preserved(compose_session)
+{ \ }
+
+# === verify_boot_collapse — emit the proof ===
+#
+# THE LOAD-BEARING VERIFICATION ACTION. Given a fold_back_session,
+# verifies that:
+#
+#   1. Every step's kintsugi_proposal is well-formed per
+#      kintsugi_proposal_well_formed.
+#   2. Every step's fate_selection is constrained per
+#      fate_tournament_selection_constrained.
+#   3. Every step's glue_translation invokes @fate per
+#      glue_translation_uses_fate (transitively via @glue's
+#      bilateral).
+#   4. Every step's output_crystal landed in @bauchladen per
+#      bauchladen_crystallization_holds.
+#   5. The session's terminal landed at @io/algebra per
+#      terminal_lands_at_io_algebra.
+#   6. The session as a whole maintains operational closure per
+#      autopoietic_closure_holds_across_session.
+#   7. The session's step order is preserved per
+#      non_commutative_step_order_preserved.
+#
+# Emits the boot_collapse_witness carrying refs to each per-prism
+# witness chain. The witness IS the bilateral commitment downstream
+# consumers carry as their fold_back_complete verdict.
+#
+# Body discharges per-realisation; the realisation MUST emit a
+# witness whose contents byte-prove each of the seven verifications
+# above. This is the chain's deepest bilateral; failure to honor
+# any of the seven IS a Narcissus-pole claim that the substrate
+# folded when it did not.
+verify_boot_collapse(session: fold_back_session) -> boot_collapse_witness
+requires terminal_lands_at_io_algebra(session)
+requires autopoietic_closure_holds_across_session(session)
+{ \ }
+
+# ============================================================
+# §4 The bilateral requires obligations
+# ============================================================
+#
+# Downstream shards declare bilateral agreement (per recognition #37,
+# Pask-agreement) with the @glue/fold_back discipline by writing the
+# obligations below. The bilateral commitment: the @glue/fold_back-
+# importing prism commits to discharging the obligations; the consumer
+# commits to surfacing violations at the species boundary.
+
+# Per `shards/kintsugi.mirror` family-root: the D-flow step the
+# kintsugi loop emits must be a valid @kintsugi move (consistent
+# with the kintsugi family's discipline; the proposal's morphism
+# kind must be in @kintsugi's admissible-morphism set). Inheritor
+# shards discharge by verifying the kintsugi_proposal ref names a
+# morphism the @kintsugi family-root admits.
+kintsugi_proposal_well_formed(step: ref) -> verdict { \ }
+
+# Per `shards/fate/tournament.mirror` + `shards/fate.mirror`: the
+# selection must respect @fate's restricted state space (γ chirality
+# per #101 + J charge conjugation per #102 + the cfg restriction
+# per @fate's typed surface). The fate_selection's selected_oid
+# must land within the typed restriction; the @fate.dice_roll_
+# constrained bilateral fires transitively. Inheritor shards
+# discharge by verifying the selection's OID corresponds to a
+# morphism within the restriction.
+fate_tournament_selection_constrained(step: ref) -> verdict { \ }
+
+# Per `shards/glue.mirror` §"translation_uses_fate” (inherited via
+# `in @glue`): the @glue translation MUST consult @fate (not a
+# direct deterministic compute). The substrate-pull-honest discipline
+# that distinguishes the fold-back composition from a deterministic
+# pipeline; the translation underdetermined-ness is preserved at
+# the fold-back altitude. Inheritor shards discharge by verifying
+# the glue_translation ref names a translation_outcome whose
+# selected_morphism field is populated via @fate.
+glue_translation_uses_fate(step: ref) -> verdict { \ }
+
+# Per `shards/bauchladen.mirror` §"The crystal accumulation
+# discipline”: the output_crystal must be addressable in the
+# @bauchladen tray. Without this gate, the fold-back has no
+# persistence; the next cycle's tournament cannot browse the prior
+# cycle's outputs; the fold does not happen. Inheritor shards
+# discharge by verifying the output_crystal OID is content-
+# addressed in the tray (a tray.lookup for the OID succeeds).
+bauchladen_crystallization_holds(step: ref) -> verdict { \ }
+
+# Per `shards/io/algebra.mirror` §"The fold-back terminal”: the
+# session must terminate at @io/algebra (the fold-back's terminal
+# altitude per the P7 substrate-decl). Without this gate, the
+# composition's output does not cross the @io boundary; the alignment
+# harness (per [[architecture-alignment-as-boundary-mathematics]])
+# does not fire; the substrate's externalisation discipline fails.
+# Inheritor shards discharge by verifying the session's terminal_
+# witness names an io_algebra_exposure satisfying io_algebra_well_
+# formed.
+terminal_lands_at_io_algebra(session: ref) -> verdict { \ }
+
+# Per `shards/autopoietic.mirror` (inherited via `in @autopoietic`):
+# the session as a WHOLE maintains operational closure (per Maturana-
+# Varela 1980). The session's outputs feed the next cycle's inputs;
+# the network of productions produces the conditions for its own
+# continued production. At chain altitude: every cycle's terminal
+# exposure extends the Bauchladen the next cycle browses; the
+# fold-back's autopoietic property is what makes the recursion
+# closable. Inheritor shards discharge by verifying the session's
+# bauchladen_chain shows each step's output is browseable by the
+# next step.
+autopoietic_closure_holds_across_session(session: ref) -> verdict { \ }
+
+# Per `docs/math/the-tower/curvature-and-tomm.md` §5 (the [ω, ω]
+# cross-term) + `docs/specs/bauchladen-autopoietic-fate.md` §6.3
+# (turn-order discipline): the step order IS structurally load-bearing.
+# Swapping two steps in a session changes the resulting terminal
+# exposure when the steps' morphism kinds belong to different Mesland-
+# category objects. Inheritor shards discharge by verifying no
+# commutation rewrites have been applied between compose_session
+# input and the session's steps field.
+non_commutative_step_order_preserved(session: ref) -> verdict { \ }
+
+# === The fold_back_complete inheritance predicate ===
+#
+# `fold_back_complete(witness)` is the predicate consumer shards
+# name in a `requires` clause to declare bilateral commitment (per
+# recognition #37, the Pask-agreement reading of `requires`) that
+# the fold_back composition completed correctly — i.e., the
+# boot_collapse_witness attests to all seven verifications above.
+#
+# Sibling to:
+#   - `glue.glue_witnessing(c)` (the parent family-root's bilateral;
+#     each step's glue_translation discharges this transitively).
+#   - `fate.fate_witnessing(roll)` (the dice-roll bilateral; each
+#     step's fate_selection discharges this transitively).
+#   - `autopoietic.autopoietic_closure_holds(prism)` (the prism-
+#     class bilateral; the session-altitude closure discharges this
+#     at chain altitude).
+#   - `bauchladen.bauchladen_witnessing(crystal)` (the crystal-
+#     altitude bilateral; each step's output_crystal discharges this).
+#   - `io.algebra.io_algebra_well_formed(exposure)` (the terminal
+#     altitude's bilateral; the session's terminal_witness discharges
+#     this).
+#
+# Forward-promised inheritors:
+#
+#   - the `mirror kintsugi --tick 1` CLI command's operational
+#     discharge (forward-promised; one CLI invocation IS one
+#     fold_back_session whose terminal lands at @io/algebra).
+#   - the @spectral/db consolidation layer (per [[architecture-
+#     spectral-db-autopoietic-memory]]): the librarian altitude
+#     consumes fold_back_complete witnesses and consolidates the
+#     terminal exposures into the autopoietic memory layer.
+#   - the Pack-Mesland-category composition (per #103): Pack handoffs
+#     are @glue species; Pack agent-coordination metalogue IS a
+#     fold-back composition at the agent-coordination altitude; the
+#     Pack discipline discharges fold_back_complete for each cycle.
+#
+# No `requires fold_back_complete(...)` clauses are added at THIS
+# shard. The capstone declares the predicate; consumers add the
+# clauses when they pull the operational discharge.
+fold_back_complete(witness: boot_collapse_witness) -> verdict
+requires terminal_lands_at_io_algebra(witness.session)
+requires autopoietic_closure_holds_across_session(witness.session)
+requires non_commutative_step_order_preserved(witness.session)
+{ \ }
+
+# ============================================================
+# §5 Honest hedges
+# ============================================================
+#
+# 1. The `mirror kintsugi --tick 1` CLI operational discharge is
+#    FORWARD-PROMISED, NOT delivered at this tick. This shard
+#    declares the SHAPE of the composition; the user-facing CLI
+#    invocation lands when consumers pull it. Substrate-decl
+#    admission is honest about being declaration-only.
+#
+# 2. The fold-back is a CAPSTONE substrate-decl at the chain altitude;
+#    the operational machinery at sub-altitudes (@kintsugi sub-shards
+#    for the loop discipline; @fate/tournament for the selection
+#    discipline; @glue for the translation discipline; @io/algebra
+#    for the boundary discipline) IS already declared by the chain's
+#    lower tiers. This shard NAMES the composition that uses those
+#    machineries together; it does not re-declare them.
+#
+# 3. The composition's non-commutativity (per the [ω, ω] cross-term)
+#    is structurally honest but conjectural at chain altitude: the
+#    full proof that swapping two steps changes the terminal exposure
+#    requires a per-pair morphism-kind analysis that has not been
+#    fully discharged across all possible Mesland-category objects.
+#    The non_commutative_step_order_preserved obligation closes the
+#    bilateral; the per-pair proof discharge follows when consumers
+#    pull specific composition cycles.
+#
+# 4. The forward-promised composition with Pack-Mesland-category
+#    (per #103) is structurally honest but requires the @glue/pack
+#    sub-shards to land before the discharge can fire. The capstone
+#    names the composition shape; the Pack-altitude species
+#    materialize when consumers pull them.
+#
+# 5. The witness chain (boot_collapse_witness's six per-prism witness
+#    fields) is structurally complete but realisation-tool-agnostic:
+#    the realisation MAY use different witness-storage backends
+#    (Merkle DAGs at @mirror/store, KV-store at @spectral/db, in-
+#    memory rings at @fate). The substrate-decl discipline carries
+#    the witness-shape; the realisation discharges the storage.
+#
+# 6. The autopoietic_closure_holds_across_session predicate is the
+#    strongest claim in this shard. The Maturana-Varela operational
+#    closure for a chain-altitude composition is structurally honest
+#    (the inputs and outputs cycle through the same @bauchladen tray
+#    so the productions feed the productions) but the formal proof
+#    that the closure HOLDS across all possible session sequences
+#    requires a Pack adversarial review the capstone has not yet
+#    received. Substrate-pull confidence is high; formal-proof
+#    confidence is moderate.
+#
+# 7. The @algebra/metalogue composition (each composition_step IS a
+#    metalogue turn; each session IS a metalogue) is structurally
+#    honest but the metalogue-altitude refinement — a session as a
+#    fifth-Bateson-level metalogue per the @algebra/metalogue
+#    family-species — is forward-promised. The capstone names the
+#    composition; the metalogue-altitude refinement lands at a
+#    later tick when the @algebra/metalogue family-species develops.
+#
+# 8. The terminal_exposure's next_cycle_seed field is the operational
+#    crux of the fold (this cycle's terminal IS the next cycle's
+#    seed); the field is declared at substrate-decl altitude; the
+#    realisation discharges the seed-derivation logic. The fold
+#    happens at substrate altitude because the seed_derivation IS
+#    a typed function over the cycle's terminal exposure; the
+#    realisation must honor this typing.
+#
+# 9. The composition with #100 (Tomm probes as @glue species), #101
+#    (γ chirality), #102 (J charge conjugation), and #103 (Pack-
+#    Mesland category) is structurally honest — each recognition
+#    composes with the capstone via the relevant @glue species or
+#    @fate restriction — but the per-recognition-composition
+#    discharge is forward-promised. The capstone NAMES the
+#    compositions; the per-recognition machinery follows when
+#    consumers pull.
+
+out @glue/fold_back
+out composition_step
+out fold_back_session
+out boot_collapse_witness
+out terminal_exposure
+out propose_step
+out select_and_translate
+out crystallize_terminal
+out compose_session
+out verify_boot_collapse
+out kintsugi_proposal_well_formed
+out fate_tournament_selection_constrained
+out glue_translation_uses_fate
+out bauchladen_crystallization_holds
+out terminal_lands_at_io_algebra
+out autopoietic_closure_holds_across_session
+out non_commutative_step_order_preserved
+out fold_back_complete
