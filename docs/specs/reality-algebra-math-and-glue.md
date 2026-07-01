@@ -28,6 +28,91 @@ species pulls on those same ancestors at a sibling altitude.
 
 ---
 
+## §P0 — Amendment 2026-07-01 (Alex directive): Cholesky theorem shard placement corrects to @epistemologic/math
+
+**Amendment authority.** Alex 2026-07-01 directive during the Cholesky
+arc P0 review. This amendment corrects a placement drift in the earlier
+draft of this spec (`6ae75fc`) that named the Cholesky theorem shard
+under `shards/reality/algebra/math/cholesky.mirror`. The canonical
+placement is `shards/epistemologic/math/cholesky.mirror`.
+
+**Substrate-pull-honest correction.** The confusion the earlier draft
+was working under: since @reality/algebra/math is the sixth species,
+and Cholesky is the first empirical crystal for the math ↔ silicon
+pair, it seemed natural to plant the Cholesky shard as a sub-shard
+under the math species. Alex named the type error directly:
+`@reality/algebra/math` is the substrate namespace for mathematical
+OBJECTS (Lie groups, manifolds, categories, sheaves, spectral triples,
+theorem statements, notation structures — the crystallized instances
+per §1.3). Matrices A and L are instances that live here. The
+Cholesky theorem — "for symmetric positive-definite A, A = LL^T" —
+is NOT a matrix; it is a PREDICATE on matrix structure. Predicates
+about mathematical objects live at `@epistemologic/math/*` (per
+[[feedback-substrate-already-had-the-word]]: the substrate has been
+carrying this partition since @epistemologic/math/curvature,
+@epistemologic/math/music, @epistemologic/math/sheaf_laplacian landed).
+
+**The distinction.** Two adjacent altitudes with a bright-line
+difference:
+
+- `@reality/algebra/math` — mathematical OBJECTS at family-root
+  altitude. The species where A IS the content per §1.2. Crystals
+  are `math_crystal` records (kind + matter_projection +
+  information_projection). A specific matrix is an instance here.
+
+- `@epistemologic/math/*` — PREDICATES / THEOREMS about mathematical
+  objects at property altitude. The Cholesky theorem is a predicate
+  on the structure of symmetric-positive-definite matrices. It
+  belongs alongside the existing `@epistemologic/math/*` predicate
+  cluster (curvature reads bottleneck-ness on a graph edge; music
+  reads harmonic structure; sheaf_laplacian names the operator and
+  its spectral gap; cholesky names the LL^T decomposition
+  theorem).
+
+The form/predicate partition here is the same partition #55 (form vs
+process at family-root altitude) and #55-instance at sub-shard
+altitude (per recognition #61 promoted). Object-vs-predicate is one
+more instance: `math_crystal` is form-side (a typed record for one
+object); a `theorem_statement` about matrix structure is process-
+side (a predicate the substrate discharges through @glue/math_silicon
+to silicon via LAPACK's dpotrf realization).
+
+**Scope of this amendment.** Every remaining structural argument in
+this spec holds unchanged. The math species shard at
+`shards/reality/algebra/math.mirror` still lands per §5.1 (already
+landed via `805676e`); the five per-pair @glue sub-shards still
+land per §3.3; the @io discharge surfaces still enumerate LaTeX /
+Lean / Coq / Agda / Mathematica per §1.4. The correction is local
+to where the Cholesky theorem itself gets crystallized as a
+predicate shard: `shards/epistemologic/math/cholesky.mirror`, NOT
+`shards/reality/algebra/math/cholesky.mirror`.
+
+**Where §2.1 and §5.3 name Cholesky as morphism_kind
+(`@arxiv/math/cholesky_decomposition.lapack_realization`) inside the
+@glue/math_silicon correspondence, no change.** The morphism_kind
+ref is @arxiv-sourced content per @glue's discipline, orthogonal to
+where the predicate shard lives.
+
+**Consequence for the Cholesky arc.** The first-empirical-crystal
+path through math ↔ silicon composes:
+
+1. `shards/epistemologic/math/cholesky.mirror` — the theorem shard
+   (predicate: symmetric-positive-definite ⇒ LL^T decomposition).
+2. `shards/glue/math_silicon.mirror` — the @glue species per §3.3.1
+   (the Mesland correspondence carrying `morphism_kind:
+   @arxiv/math/cholesky_decomposition.lapack_realization`).
+3. `shards/reality/algebra/silicon.mirror` — the silicon species
+   forward-promised at `reality.md` §3.2.1 (the sibling species
+   under `@reality/algebra/*`; this tick lands it).
+4. LAPACK dpotrf / dpotrs FFI binding — Reed's discharge boundary.
+
+The theorem shard at @epistemologic/math is the input; the @glue
+species is the composition mechanism; the silicon species is the
+target altitude; the LAPACK binding is where @io receives the
+realization.
+
+---
+
 ## §0 — Pre-position (autopoietic): this spec IS one of the @reality/algebra/nl crystals that @reality/algebra/math will compose against
 
 This spec is doubly autopoietic and the autopoiesis recurses one altitude
