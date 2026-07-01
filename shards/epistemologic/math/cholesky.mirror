@@ -1,0 +1,419 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @glue
+
+# @epistemologic/math/cholesky — the Cholesky decomposition theorem
+# as a predicate on matrix structure at @epistemologic/math altitude.
+#
+# === The recognition ===
+#
+# Per `docs/specs/reality-algebra-math-and-glue.md` §P0 (Alex directive
+# 2026-07-01): the Cholesky theorem is a PREDICATE on matrix
+# structure — "for symmetric positive-definite A, A = LL^T" — not a
+# matrix object. Predicates about mathematical objects live at
+# `@epistemologic/math/*` (per [[feedback-substrate-already-had-the-
+# word]]: the substrate has been carrying this partition since
+# `@epistemologic/math/curvature` `@epistemologic/math/music`
+# `@epistemologic/math/sheaf_laplacian` landed).
+#
+# The Cholesky arc composes four shards end-to-end:
+#
+#   1. THIS SHARD — @epistemologic/math/cholesky
+#      The theorem shard (predicate: symmetric-positive-definite ⇒
+#      LL^T decomposition).
+#   2. `shards/glue/math_silicon.mirror` — the @glue species per
+#      `reality-algebra-math-and-glue.md` §3.3.1 (the Mesland
+#      correspondence carrying `morphism_kind: @arxiv/math/cholesky_
+#      decomposition.lapack_realization`).
+#   3. `shards/reality/algebra/silicon.mirror` (Mara `9ca6723`, LANDED)
+#      — the silicon species; the target altitude the theorem
+#      discharges into via @glue/math_silicon.
+#   4. LAPACK dpotrf / dpotrs FFI binding — Reed's discharge boundary.
+#
+# This shard is INPUT to the composition; the @glue species is the
+# composition MECHANISM; the silicon species is the TARGET altitude;
+# the LAPACK binding is where @io receives the realization.
+#
+# === Cholesky 1910 ===
+#
+# André-Louis Cholesky (1875-1918), French military geodesist. Devised
+# the algorithm ~1910 for solving geodetic normal equations under least-
+# squares adjustment; the manuscript was published POSTHUMOUSLY by
+# Benoît in 1924 (`Sur la méthode de résolution des équations normales
+# provenant de l'application de la méthode des moindres carrés à un
+# système d'équations linéaires en nombre inférieur à celui des
+# inconnues (procédé du Commandant Cholesky)`, Bull. Géodésique 2:67-
+# 77). The substrate cites the underlying discipline; the theorem is:
+#
+#   For any symmetric positive-definite matrix A ∈ R^{n×n} there exists
+#   a UNIQUE lower-triangular matrix L ∈ R^{n×n} with strictly positive
+#   diagonal entries such that A = L · L^T.
+#
+# The theorem's constructive proof IS the Cholesky algorithm (the
+# recursive elimination Cholesky named). The uniqueness is what makes
+# LL^T a content-addressable normal form on the SPD cone. The strict-
+# positivity of the diagonal is what makes the decomposition NUMERICALLY
+# stable — LAPACK's `dpotrf` returns the decomposition; on failure
+# (non-positive-definite A) it reports the leading minor at which
+# positive-definiteness broke.
+#
+# The complex extension: for Hermitian positive-definite A ∈ C^{n×n}
+# there exists a unique lower-triangular L ∈ C^{n×n} with real strictly
+# positive diagonal such that A = L · L^*. LAPACK's `zpotrf` discharges
+# this variant. This shard's predicates admit both readings via the
+# `field` parameter on the matrix type carriers.
+#
+# === Why this lives at @epistemologic/math, not at @reality/algebra/math ===
+#
+# Per `reality-algebra-math-and-glue.md` §P0 the object-vs-predicate
+# partition is another instance of #55/#61 (form/process partition at
+# family-root altitude) recurring at sub-shard altitude:
+#
+#   `@reality/algebra/math` — mathematical OBJECTS at family-root
+#     altitude. `math_crystal` is form-side (a typed record for one
+#     object); a specific matrix instance lives here.
+#
+#   `@epistemologic/math/*` — PREDICATES / THEOREMS about mathematical
+#     objects at property altitude. Cholesky is a predicate on the
+#     structure of symmetric-positive-definite matrices; it lives
+#     alongside `@epistemologic/math/curvature` (per-edge Balanced
+#     Forman reading), `@epistemologic/math/music` (harmonic-decidable
+#     family), `@epistemologic/math/sheaf_laplacian` (Δ_F = δ*δ
+#     construction + λ₀ predicate).
+#
+# The theorem shard NAMES the predicate; the @glue species carries the
+# correspondence between the theorem and its silicon realization; the
+# silicon species targets the LAPACK routine.
+#
+# === Bridge to @glue/math_silicon ===
+#
+# The `discharge_via` action below is the substrate-decl edge that
+# points at the @glue/math_silicon Mesland correspondence. Per
+# `reality-algebra-math-and-glue.md` §2.1 the correspondence's
+# `morphism_kind` ref is `@arxiv/math/cholesky_decomposition.lapack_
+# realization`; this shard forward-references that kind via
+# `discharge_via` so consumers can locate the composition point
+# without re-declaring the correspondence at this altitude.
+#
+# @glue.translate(c_math_silicon, cholesky_instance) is the composed
+# operation that:
+#   1. Consults @fate to select the LAPACK realization (dpotrf vs
+#      zpotrf; LDL^T vs LL^T; in-place vs out-of-place) within the
+#      correspondence's restriction (precision: f64/f32/complex;
+#      conditioning: well-conditioned; layout: column-major).
+#   2. Applies the selected realization via FFI to the SPD input.
+#   3. Returns the imperfect<result, ref, transparency(precision)>
+#      wrapping the (L, verdict, opacity) triple.
+#
+# The predicate shard does NOT invoke @glue; it names the predicate
+# and its discharge_via edge; consumers pull the composition when
+# they need the empirical realization.
+#
+# === Pre-AI prior art ===
+#
+#   Cholesky decomposition   Cholesky ~1910; Benoît 1924 (Bull.
+#                            Géodésique 2:67-77, posthumous
+#                            publication). The theorem statement +
+#                            constructive algorithm this shard
+#                            names.
+#   Symmetric matrices       Sylvester 1852 (`A demonstration of the
+#                            theorem that every homogeneous quadratic
+#                            polynomial is reducible by real
+#                            orthogonal substitutions to the form
+#                            of a sum of positive and negative
+#                            squares`); Sylvester's law of inertia
+#                            grounds the positive-definiteness
+#                            reading.
+#   Positive-definite forms  Cauchy 1829 (via the quadratic-form
+#                            spectrum work grounding
+#                            `@epistemologic/math/sheaf_laplacian`
+#                            's eigenvalue predicate); Gram 1881
+#                            (`Über die Entwicklung reeller
+#                            Functionen in Reihen mittelst der
+#                            Methode der kleinsten Quadrate`,
+#                            J. reine angew. Math.  94:41-73) —
+#                            the Gram-matrix ancestor of the SPD
+#                            cone.
+#   Triangular factorization Turing 1948 (`Rounding-off errors in
+#                            matrix processes`, Quart. J. Mech. Appl.
+#                            Math. 1:287-308) — the numerical-
+#                            stability discipline the LAPACK
+#                            realization inherits; Wilkinson 1961
+#                            (`Error analysis of direct methods of
+#                            matrix inversion`, J. ACM 8:281-330) —
+#                            the modern floating-point analysis.
+#   LAPACK dpotrf / dpotrs   Anderson et al. 1992 (`LAPACK Users'
+#                            Guide`, SIAM); the reference numerical-
+#                            algebra library the substrate discharges
+#                            to via @glue/math_silicon.
+#
+# The substrate's contribution is *typing* the theorem as a predicate
+# shard at @epistemologic/math altitude so the LAPACK realization's
+# substrate-altitude home is the @glue/math_silicon correspondence;
+# no invention.
+#
+# Spec context: docs/specs/reality-algebra-math-and-glue.md §P0
+#               (Alex directive 2026-07-01 correcting placement to
+#               @epistemologic/math); §2.1 (the math ↔ silicon
+#               Mesland correspondence; morphism_kind ref);
+#               §3.3.1 (the @glue/math_silicon shard shape);
+#               §5.3 (the first-empirical-crystal path);
+#               docs/specs/cascade-ffi-runtime-link.md §7 (Q4 LAPACK
+#               FFI case; Reed's dpotrf binding work operationalizes
+#               here).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-connes-spectral-triple]],
+#                      [[architecture-operations-as-linear-algebra]],
+#                      [[architecture-form-process-partition-at-
+#                       family-root]] (#55; the object-vs-predicate
+#                       partition #P0 named is a sub-shard instance
+#                       of the family-root partition — @reality/
+#                       algebra/math carries objects, @epistemologic
+#                       /math carries predicates about them),
+#                      [[architecture-flang-mirror-numerical-split]]
+#                       (the D→flang dispatch discipline; LAPACK is
+#                       the flang-altitude realization),
+#                      [[feedback-no-bare-types]] (spd_matrix and
+#                       lower_triangular_matrix are typed carriers,
+#                       not bare matrix aliases),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (the @epistemologic/math predicate altitude
+#                       was already carrying curvature, music,
+#                       sheaf_laplacian; Cholesky joins the family).
+# Related shards: shards/glue/math_silicon.mirror (the @glue species
+#                  the discharge_via edge points at; the composition
+#                  mechanism that translates this predicate into
+#                  LAPACK invocations),
+#                 shards/reality/algebra/math.mirror (the OBJECT-side
+#                  sibling family-root; math_crystal carries specific
+#                  matrix instances; this shard's predicates ABOUT
+#                  matrices are the process-side counterpart),
+#                 shards/reality/algebra/silicon.mirror (Mara
+#                  `9ca6723`; the target altitude the discharge lands
+#                  at via @glue/math_silicon),
+#                 shards/epistemologic/math/sheaf_laplacian.mirror
+#                  (sibling predicate at same altitude; grounds the
+#                  eigenvalue reading Cholesky implicitly relies on
+#                  through positive-definiteness),
+#                 shards/epistemologic/math/curvature.mirror (sibling
+#                  predicate; the per-edge Balanced Forman reading),
+#                 shards/epistemologic/math/music.mirror (sibling
+#                  predicate at same altitude, family-root only),
+#                 glass.mirror (the splinter floor; imperfect carrier
+#                  wraps the discharge_via result).
+# Path-namespace property: this file at
+# `shards/epistemologic/math/cholesky.mirror` declares
+# `@epistemologic/math/cholesky` per the
+# `@epistemologic/pact/path_matches_namespace` rule.
+
+source @arxiv/math/cholesky-1910
+source @arxiv/math/benoit-1924
+source @arxiv/math/sylvester-1852
+source @arxiv/math/gram-1881
+source @arxiv/math/turing-1948
+source @arxiv/math/wilkinson-1961
+source @arxiv/math/anderson-lapack-1992
+
+prism @epistemologic/math/cholesky <= @epistemologic/math {
+  focus cholesky
+  project cholesky
+  split cholesky
+  shift cholesky
+  settle cholesky
+}
+
+# === The spd_matrix predicate carrier ===
+#
+# A typed record per [[feedback-no-bare-types]] naming the
+# symmetric-positive-definite matrix precondition Cholesky's theorem
+# quantifies over. Not a matrix instance — a predicate carrier
+# naming the STRUCTURAL PROPERTY (symmetry + positive-definiteness)
+# a matrix instance must satisfy for the theorem to apply.
+#
+# - `field`          the typed ref naming the scalar field
+#                    (`@arxiv/math/real` for R^{n×n} case discharging
+#                    to LAPACK `dpotrf`; `@arxiv/math/complex` for
+#                    C^{n×n} Hermitian case discharging to `zpotrf`).
+# - `dimension`      the u32 cardinal of the matrix rank (n for the
+#                    n × n matrix).
+# - `symmetric`      the verdict that A = A^T (or A = A^* in the
+#                    complex Hermitian case).
+# - `positive_def`   the verdict that x^T A x > 0 for every nonzero
+#                    x ∈ field^n. The strict inequality is what
+#                    makes LL^T's diagonal strictly positive and the
+#                    decomposition NUMERICALLY stable.
+#
+# Identity contract: byte-equality on (field, dimension, symmetric,
+# positive_def). The realisation layer discharges the verdicts
+# against a specific matrix instance; the substrate names the
+# predicate.
+type spd_matrix = {
+  field:        ref,
+  dimension:    u32,
+  symmetric:    verdict,
+  positive_def: verdict,
+}
+
+# === The lower_triangular_matrix predicate carrier ===
+#
+# A typed record per [[feedback-no-bare-types]] naming the
+# lower-triangular structural property Cholesky's theorem quantifies
+# over on the OUTPUT side. Not a matrix instance — a predicate
+# carrier naming the STRUCTURAL PROPERTY (lower-triangular form +
+# strictly-positive diagonal) the theorem's L must satisfy.
+#
+# - `field`          the typed ref naming the scalar field; must
+#                    match the source spd_matrix's field for the
+#                    theorem to compose.
+# - `dimension`      the u32 cardinal; must match the source
+#                    spd_matrix's dimension.
+# - `lower_tri`      the verdict that L_ij = 0 for j > i.
+# - `pos_diagonal`   the verdict that L_ii > 0 for every i.
+#                    Strictly positive; not merely non-negative.
+#                    This is what makes the decomposition UNIQUE
+#                    (the L cone is not modulo sign).
+#
+# Identity contract: byte-equality on (field, dimension, lower_tri,
+# pos_diagonal).
+type lower_triangular_matrix = {
+  field:        ref,
+  dimension:    u32,
+  lower_tri:    verdict,
+  pos_diagonal: verdict,
+}
+
+# === The cholesky_decomposition witness carrier ===
+#
+# A typed record per [[feedback-no-bare-types]] carrying the
+# (input, output, equality-witness) triple that instantiates the
+# theorem for a specific matrix pair. Substrate-altitude form of
+# "A = L · L^T"; the realisation layer discharges the equality
+# against IEEE-754 floating-point semantics.
+#
+# - `input`      the spd_matrix predicate carrier the theorem's
+#                hypothesis quantifies over.
+# - `output`     the lower_triangular_matrix predicate carrier the
+#                theorem's conclusion quantifies over.
+# - `equality`   the verdict witnessing A = L · L^T (or A = L · L^*
+#                in the Hermitian case). The realisation layer
+#                discharges via LAPACK's own residual check or via
+#                the substrate's numerical predicate library.
+#
+# Identity contract: byte-equality on (input, output, equality).
+type cholesky_decomposition = {
+  input:    spd_matrix,
+  output:   lower_triangular_matrix,
+  equality: verdict,
+}
+
+# === verify — the theorem's constructive verifier ===
+#
+# Given an spd_matrix predicate + a candidate lower_triangular_matrix
+# predicate, verifies whether the pair witnesses Cholesky's theorem
+# — i.e., whether A = L · L^T holds within the numerical tolerance
+# of the field. Returns the verdict.
+#
+# Pure; deterministic per IEEE-754 semantics on the platform. Body
+# discharges at the realisation boundary (LAPACK's residual check
+# or the substrate's numerical predicate library).
+#
+# This action is what @fate consultations at the math altitude call
+# when browsing prior cholesky_decomposition crystals in the
+# Bauchladen; the verdict is the cache-hit criterion.
+verify(a: spd_matrix, l: lower_triangular_matrix) -> verdict { \ }
+
+# === discharge_via — the bridge to @glue/math_silicon ===
+#
+# THE LOAD-BEARING BRIDGE ACTION. Given an spd_matrix predicate + a
+# morphism kind reference into @glue/math_silicon's admissible
+# morphism family, returns the imperfect-wrapped result of composing
+# the theorem's discharge with the LAPACK realization the morphism
+# names.
+#
+# The morphism parameter is expected to name a member of
+# `@arxiv/math/cholesky_decomposition.lapack_realization` (per
+# `reality-algebra-math-and-glue.md` §2.1); typical values include:
+#
+#   @arxiv/math/cholesky_decomposition.lapack_realization.dpotrf
+#   @arxiv/math/cholesky_decomposition.lapack_realization.zpotrf
+#   @arxiv/math/cholesky_decomposition.lapack_realization.dpotrs
+#
+# @fate selects one within the @glue/math_silicon correspondence's
+# restriction (precision: f64/f32/complex; conditioning: well-
+# conditioned; layout: column-major); @glue.translate applies the
+# selection via FFI to the SPD input; the result is the
+# lower_triangular_matrix decomposition wrapped in imperfect —
+# residual opacity (precision loss, conditioning warnings, LAPACK
+# info-parameter reports) surfaced via transparency<precision>.
+#
+# Body discharges at the realisation boundary; the realisation MUST
+# invoke @glue.translate on the @glue/math_silicon correspondence,
+# NOT a direct deterministic compute. The bilateral commitment
+# (per recognition #37, Pask-agreement): the discharge respects
+# the @glue morphism-category discipline.
+discharge_via(a: spd_matrix, morphism: ref) -> imperfect<lower_triangular_matrix, ref, transparency(ref)>
+requires cholesky_predicate_well_typed(a)
+requires morphism_targets_math_silicon(morphism)
+{ \ }
+
+# === The bilateral requires obligations ===
+#
+# Downstream consumers declare bilateral agreement (per recognition
+# #37, Pask-agreement) with the Cholesky predicate discipline by
+# writing the obligations below.
+
+# The spd_matrix carrier is well-typed as a Cholesky-admissible
+# predicate iff: (a) field is a real or complex ordered field
+# supporting the positive-definiteness quantifier; (b) dimension is
+# strictly positive (Cholesky is not defined on the empty matrix);
+# (c) the symmetric verdict is settled (`positive`); (d) the
+# positive_def verdict is settled (`positive`). Inheritor consumers
+# discharge by verifying each conjunct.
+cholesky_predicate_well_typed(a: spd_matrix) -> verdict { \ }
+
+# The morphism ref MUST name a member of @glue/math_silicon's
+# admissible morphism family — i.e., a value under
+# `@arxiv/math/cholesky_decomposition.lapack_realization`. This
+# obligation closes the substrate-decl loop that @glue/math_silicon's
+# correspondence opened: the theorem shard commits to naming
+# morphisms only in the correspondence's typed restriction; @glue
+# checks the restriction; @fate cannot select outside it. Inheritor
+# consumers discharge by verifying the morphism ref's namespace.
+morphism_targets_math_silicon(morphism: ref) -> verdict { \ }
+
+# === The cholesky_witnessing inheritance predicate ===
+#
+# `cholesky_witnessing(d)` is the predicate consumer shards name in
+# a `requires` clause to declare bilateral commitment that the
+# cholesky_decomposition witness `d` is a valid Cholesky instance —
+# i.e., d.input is Cholesky-admissible (cholesky_predicate_well_typed)
+# AND d.output is a lower_triangular_matrix with strictly positive
+# diagonal (encoded in the type) AND d.equality is a settled positive
+# verdict (A = L · L^T holds within the numerical tolerance).
+#
+# Sibling to:
+#   - `sheaf_laplacian.eigenvalue`'s spectral verdicts at the same
+#     altitude (@epistemologic/math predicate family).
+#   - `curvature.balanced_forman`'s per-edge verdicts.
+#   - `glue.glue_witnessing(c)` (the morphism-correspondence
+#     inheritance predicate the discharge_via bridge honors
+#     transitively via @glue/math_silicon).
+#
+# No `requires cholesky_witnessing(...)` clauses at THIS shard. The
+# predicate is declared; consumers add the clauses when they pull
+# specific Cholesky instances (Reed's dpotrf empirical-crystal
+# discharge; the first consumer to add the clause).
+cholesky_witnessing(d: cholesky_decomposition) -> verdict { \ }
+
+out @epistemologic/math/cholesky
+out spd_matrix
+out lower_triangular_matrix
+out cholesky_decomposition
+out verify
+out discharge_via
+out cholesky_predicate_well_typed
+out morphism_targets_math_silicon
+out cholesky_witnessing
