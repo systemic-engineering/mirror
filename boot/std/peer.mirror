@@ -26,7 +26,8 @@ in @mirror/runtime/gen_prism
 #
 # Spec: docs/specs/peer-glass.md
 # Audit: docs/audits/2026-05-25-peer-glass-audit.md
-# Tick 1 prior art: @cogito.eigenboard (boot/std/cogito.mirror).
+# Tick 1 prior art: @cogito.eigenboard (shards/cogito.mirror; lifted
+# from boot/std/cogito.mirror 2026-07-01 per Loki §7).
 #
 # Prior art (Silicon Venue table mechanics):
 #   - INTEGRITY = Fiedler value as decidable sub-Turing measurement

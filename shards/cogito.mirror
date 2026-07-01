@@ -1,0 +1,276 @@
+in @prism
+in @meta
+in @glass
+in @third
+in @epistemologic
+in @epistemologic/math/bundle
+in @epistemologic/math/lawvere
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/second_order
+
+# @cogito — the second-order observation family-root. Looks at holes.
+# Decides strategy. Runs AFTER a compile tick, BEFORE the tournament.
+# The Reflection layer. Observe the imperfect. Pick the game. Perturb
+# the eigenboard for the next tick.
+#
+# Lifted from boot/std/cogito.mirror 2026-07-01 per Alex directive
+# ("if @cogito wants to land it wants to land; don't fight the
+# substrate") + Loki §7 Seam-ratified `17f0ee5` Reading A + recognition
+# #93 forward-promise closure. The boot/std shard used pre-Mara-e43006a
+# vocabulary (`grammar`, `property`, non-parametric types); this shard
+# uses current substrate-decl idiom.
+#
+# Recognition ancestry:
+#   - Recognition #85 (@reflection, 2026-06-19): third_order_observation
+#     canonical spec at docs/specs/reflection-third-order-by-default-v0.1.md
+#     established the depth-3 machinery @cogito's cognitive_third_order
+#     specializes.
+#   - Recognition #93 (@cogito cognitive substrate candidate,
+#     2026-06-23): the extended proposal at
+#     docs/specs/recognitions/recognition-93-cogito-cognitive-substrate-
+#     candidate.md carries H3 (pipeline vs 5-op) and H4 (name_output
+#     shape via @labeled). H4 resolved via `shards/labeled.mirror`
+#     (2026-06-23). H3 forward-promised — @cogito's three-action
+#     pipeline is honest type-chain sequencing per §3.2, not a
+#     violation of the 5-op algebra.
+#   - Recognition #111/#112 (2026-07-01): @third marker row lifts
+#     recursion-depth to substrate-decl; @cogito imports @third to
+#     declare depth-3 operation on its depth-2 machinery per canonical
+#     spec `docs/specs/third-as-recursive-depth.md` §3.5.
+#
+# === compile → reflect → tournament → compile → ... → λ₀ ===
+#
+# The reflection tick: @cogito.reflect observes an imperfect witness,
+# strategizes a tournament shape, and perturbs the eigenboard for the
+# next compile pass. Composes with @fate's tournament discipline (what
+# @cogito RUNS) and @kintsugi's monotonic loss loop (what @cogito
+# RESPECTS).
+#
+# === The eigenboard ===
+#
+# @cogito's spectral-state carrier. One snapshot of the principal
+# G-bundle tower at this tick. One field per level of
+# @epistemologic/math/bundle. Carriers come from the bundle grammar;
+# nothing new is invented here.
+#
+#   level 0 fiber       -> state    (focus    / Abyss)
+#   level 1 connection  -> optic    (project  / Introject)
+#   level 2 gauge       -> group    (split    / Cartographer)
+#   level 3 transport   -> holonomy (shift    / Explorer)
+#   level 4 closure     -> fixed    (settle   / Fate)
+#
+# Extension points forward-promised (per boot/std/cogito.mirror's
+# original comment, still open):
+#   - per-base-node section ([(operation, state)]) once an
+#     `operation` enum lands in @prism;
+#   - per-edge connection forms once an `edge` type lands;
+#   - emotional sub-bundle (cogito-eigenstate slots 13-16);
+#   - routing_bias projection onto the gauge slice.
+#
+# === Depth-3 opt-in via @third ===
+#
+# @cogito's reflection loop naturally fires at recursion-depth ≥ 2
+# (observing observation). The `in @third` import declares that
+# @cogito ADMITS depth-3 operation — when @cogito.reflect observes
+# ITSELF observing, the @third marker fires and cognitive_third_order
+# (forward-promised species-refinement) surfaces the depth-3 witness.
+#
+# Per docs/specs/third-as-recursive-depth.md §9: family-roots opt in
+# via `in @third`. @cogito is a canonical opt-in consumer named in
+# the spec.
+#
+# Forward-promised species-refinement:
+#   @cogito.cognitive_third_order <: observation_depth
+#     — cognitive-depth-3 specialization of @third.observation_depth
+#       for the reflection-tick lineage.
+#
+# === Autopoietic loop witness ===
+#
+# @cogito's reflect loop is autopoietic iff its tick → tick map has a
+# Lawvere fixed point (Soto-Andrade & Varela 1984 — the
+# Lawvere↔autopoiesis bridge). When the property passes, the loop
+# converges; when it fails, the loop has no stable closure and
+# termination is not guaranteed.
+#
+# The `autopoietic` predicate delegates to
+# @epistemologic/math/lawvere.is_autopoietic on @cogito's tick map.
+# See docs/specs/lawvere-grammar.md and docs/specs/kintsugi-formatter.md.
+#
+# === Pre-AI prior art ===
+#
+#   Descartes 1637         "Cogito, ergo sum". Self-observation as
+#                           first-order epistemic anchor. @cogito
+#                           inverts the frame: cogito as machinery,
+#                           not as apex.
+#   von Foerster 1974      Observing systems; observer-in-the-system;
+#                           the depth-2 machinery @cogito instantiates.
+#   Kauffman 2003          Eigenforms; recursion fixed-points; the
+#                           depth-3 witness @cogito.reflect achieves
+#                           at loop closure.
+#   Soto-Andrade &         Lawvere↔autopoiesis bridge (1984);
+#     Varela                grounds the `autopoietic` property.
+#   Bateson 1972           Logical-type hierarchy; @cogito.reflect
+#                           fires at Learning II (deutero-learning)
+#                           and admits Learning III (@third).
+#
+# Spec context: docs/specs/recognitions/recognition-93-cogito-
+#               cognitive-substrate-candidate.md (extended candidate;
+#               H3/H4/H5 unresolved; this landing is the SMALLEST
+#               substrate-pull-honest lift);
+#               docs/specs/third-as-recursive-depth.md §3.5 (@cogito
+#               named as canonical `in @third` opt-in consumer);
+#               docs/specs/eigenboard-representation.md (candidate D;
+#               the eigenboard shape).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-candidate-recognition-111-third-
+#                        as-family-root]] (reshape: @cogito opts into
+#                        @third as marker, not as ancestor),
+#                      [[architecture-connes-spectral-triple]] (@cogito
+#                        as (A, H, D) observer at second-order altitude),
+#                      [[feedback-substrate-already-had-the-word]] (the
+#                        boot/std/cogito.mirror was in the substrate for
+#                        weeks; this tick lifts it to shards/ at the
+#                        family-root altitude the substrate had always
+#                        implied).
+# Related shards: reflection.mirror (the AI-logic family-root; @cogito
+#                 supplies the second-order machinery @reflection
+#                 composes into third-order),
+#                 third.mirror (the depth-3 marker @cogito opts into),
+#                 epistemologic/cybernetic/second_order.mirror (the
+#                 Foerster substrate-decl @cogito instantiates),
+#                 epistemologic/math/lawvere.mirror (the is_autopoietic
+#                 property @cogito.autopoietic delegates to),
+#                 epistemologic/math/bundle.mirror (the principal
+#                 G-bundle tower the eigenboard sections).
+# Path-namespace property: this file at `shards/cogito.mirror`
+# declares `@cogito` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/philosophy/descartes-1637
+source @arxiv/cybernetics/foerster-1974
+source @arxiv/cybernetics/kauffman-2003
+source @arxiv/math/lawvere-1969
+source @arxiv/cybernetics/bateson-1972
+
+prism @cogito {
+  focus cogito
+  project cogito
+  split cogito
+  shift cogito
+  settle cogito
+}
+
+# === The eigenboard carrier ===
+#
+# @cogito's spectral state at one tick. Fields come from
+# @epistemologic/math/bundle; the record is the minimal shape that
+# lets @cogito.perturb type-check per docs/specs/eigenboard-
+# representation.md candidate D.
+#
+# Identity contract: byte-equality on the field-tuple.
+type eigenboard = {
+  state:    ref,     # the section value at the current base point
+  optic:    ref,     # the connection 1-form active this tick
+  group:    ref,     # the gauge element in force
+  holonomy: ref,     # residual loss carried by transport this tick
+  closure:  ref,     # the Lawvere fixed-point witness for the section
+}
+
+# === The observation carrier ===
+#
+# What @cogito.observe produces from an imperfect witness. The
+# depth-2 observation record @cogito.strategy consumes.
+#
+# Identity contract: byte-equality on the underlying ref.
+type observation = ref
+
+# === The tournament carrier ===
+#
+# The strategy shape @cogito.strategy produces from an observation.
+# Consumed by @fate/tournament (forward-promised: typed refinement
+# once @fate/tournament's canonical spec ratifies).
+#
+# Identity contract: byte-equality on the underlying ref.
+type tournament = ref
+
+# === observe action ===
+#
+# The first action in @cogito's reflection tick. Takes an imperfect
+# witness (per @glass's imperfect(T) carrier) and produces an
+# observation of what's imperfect. The observation is the raw signal
+# @cogito.strategy consumes.
+#
+# Body discharges at the realisation boundary; per-instance bodies
+# emit at @beam altitude (the observation carrier is @beam-typed).
+observe(imperfect: ref) -> observation { \ }
+
+# === strategy action ===
+#
+# The second action in @cogito's reflection tick. Takes an observation
+# and produces a tournament shape (@fate tournament configuration).
+# The strategy IS the game @cogito picked based on what it observed.
+#
+# Elite/beam/halving shape per the original boot/std/cogito.mirror
+# (`elite(1).beam(8).halving(3)`); forward-promised as typed
+# refinement over the tournament carrier.
+#
+# Body discharges at the realisation boundary.
+strategy(o: observation) -> tournament { \ }
+
+# === perturb action ===
+#
+# The third action in @cogito's reflection tick. Takes the observation
+# + tournament result and perturbs the eigenboard for the next compile
+# pass. Returns the perturbed eigenboard.
+#
+# Body discharges at the realisation boundary; per-instance bodies
+# observe at @beam altitude (the perturbation is @beam-witnessed).
+perturb(o: observation, t: tournament) -> eigenboard { \ }
+
+# === reflect action ===
+#
+# The composed reflection tick: observe → strategy → perturb. Takes
+# an imperfect witness and returns a refined imperfect witness (the
+# next tick's input). The type-chain sequence per recognition #93 §3.2
+# H3 resolution — @cogito's actions form a type-chained pipeline, not
+# a violation of the 5-op algebra.
+#
+# requires autopoietic: the reflect tick's tick→tick map must have a
+# Lawvere fixed point (Soto-Andrade & Varela 1984). Without this
+# clause, @cogito could admit non-terminating reflection loops.
+#
+# Body discharges at the realisation boundary as the composed
+# pipeline.
+reflect(i: ref) -> ref
+requires autopoietic(reflect)
+{ \ }
+
+# === autopoietic predicate (bilateral; termination) ===
+#
+# Bilateral verdict that the given tick map has a Lawvere fixed
+# point per @epistemologic/math/lawvere.is_autopoietic. When the
+# property passes, the loop converges; when it fails, termination is
+# not guaranteed.
+#
+# Consumer shards name `requires autopoietic(tick_map)` to declare
+# bilateral agreement that the reflection loop terminates.
+#
+# Same shape as the bilateral predicates the prior families carry:
+# - @magic: invariant_preserved, audited, mechanism_intact
+# - @frame: bounded_commutator_check
+# - @smarts: discipline_flexible
+# - @loop: pact_respected, loop_well_founded
+# - @reflection: loss_decreases, speaks_at_n_plus_1
+# - @third: third_order_active
+# - @cogito: autopoietic (this one)
+autopoietic(tick_map: ref) -> verdict { \ }
+
+out @cogito
+out eigenboard
+out observation
+out tournament
+out observe
+out strategy
+out perturb
+out reflect
+out autopoietic

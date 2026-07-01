@@ -212,8 +212,8 @@ observer_observes_observing(o: observation_depth) -> verdict { \ }
 #
 # Presupposes depth_at_least(3, o). Required by third_order_active.
 # Grounded in Lawvere fixed-point theorem via
-# @epistemologic/math/lawvere.is_autopoietic (per boot/std/cogito.
-# mirror precedent).
+# @epistemologic/math/lawvere.is_autopoietic (per shards/cogito.mirror
+# precedent; lifted from boot/std/cogito.mirror 2026-07-01 per Loki §7).
 recursion_folds_back(o: observation_depth) -> verdict { \ }
 
 # === mechanism_visible(o) predicate ===
