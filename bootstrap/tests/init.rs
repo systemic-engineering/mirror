@@ -48,7 +48,14 @@ fn parse_envelope(stdout: &[u8]) -> serde_json::Value {
 
 #[test]
 fn init_exits_zero_on_valid_repo() {
-    let out = run_init(&["."]);
+    // P4 GREEN: the original P3 test used `.` against the mirror repo
+    // itself; once the wire-up landed, that would index 800+ files into
+    // the real `.git/mirror/` and slow the test surface. Switch to the
+    // fixture pattern (same as the P4 RED tests) to keep the envelope-
+    // shape assertion fast + sandboxed.
+    let fixture = init_fixture_repo();
+    let path_arg = fixture.path().to_str().expect("utf8 path").to_string();
+    let out = run_init_in_fixture(fixture.path(), &[&path_arg]);
     assert_eq!(
         out.status.code(),
         Some(0),
@@ -58,10 +65,12 @@ fn init_exits_zero_on_valid_repo() {
     );
 }
 
-/// P3 RED: envelope must carry the 9 contract keys per Mara spec §4.7.
+/// Envelope must carry the 9 contract keys per Mara spec §4.7.
 #[test]
 fn init_envelope_carries_contract_keys() {
-    let out = run_init(&["."]);
+    let fixture = init_fixture_repo();
+    let path_arg = fixture.path().to_str().expect("utf8 path").to_string();
+    let out = run_init_in_fixture(fixture.path(), &[&path_arg]);
     let envelope = parse_envelope(&out.stdout);
     for key in [
         "spec_version",
@@ -83,10 +92,12 @@ fn init_envelope_carries_contract_keys() {
     }
 }
 
-/// P3 RED: envelope.operation must equal "init".
+/// envelope.operation must equal "init".
 #[test]
 fn init_operation_equals_init() {
-    let out = run_init(&["."]);
+    let fixture = init_fixture_repo();
+    let path_arg = fixture.path().to_str().expect("utf8 path").to_string();
+    let out = run_init_in_fixture(fixture.path(), &[&path_arg]);
     let envelope = parse_envelope(&out.stdout);
     assert_eq!(
         envelope["operation"].as_str().unwrap_or(""),
@@ -96,10 +107,12 @@ fn init_operation_equals_init() {
     );
 }
 
-/// P3 RED: envelope.spec_version must == "v0.1.0" (matches spawn/recall envelope vocabulary).
+/// envelope.spec_version must == "v0.1.0" (matches spawn/recall envelope vocabulary).
 #[test]
 fn init_spec_version_v0_1_0() {
-    let out = run_init(&["."]);
+    let fixture = init_fixture_repo();
+    let path_arg = fixture.path().to_str().expect("utf8 path").to_string();
+    let out = run_init_in_fixture(fixture.path(), &[&path_arg]);
     let envelope = parse_envelope(&out.stdout);
     assert_eq!(
         envelope["spec_version"].as_str().unwrap_or(""),
@@ -109,10 +122,12 @@ fn init_spec_version_v0_1_0() {
     );
 }
 
-/// P3 RED: hooks_installed defaults to false (no --install-hooks flag).
+/// hooks_installed defaults to false (no --install-hooks flag).
 #[test]
 fn init_hooks_default_false() {
-    let out = run_init(&["."]);
+    let fixture = init_fixture_repo();
+    let path_arg = fixture.path().to_str().expect("utf8 path").to_string();
+    let out = run_init_in_fixture(fixture.path(), &[&path_arg]);
     let envelope = parse_envelope(&out.stdout);
     assert_eq!(
         envelope["hooks_installed"].as_bool(),
@@ -203,8 +218,7 @@ fn init_fixture_repo() -> FixtureDir {
         .expect("git init");
     assert!(status.success(), "git init failed in fixture");
     // Two files of known content for deterministic indexing.
-    std::fs::write(dir.path().join("hello.txt"), b"hello mirror init\n")
-        .expect("write hello.txt");
+    std::fs::write(dir.path().join("hello.txt"), b"hello mirror init\n").expect("write hello.txt");
     std::fs::create_dir_all(dir.path().join("sub")).expect("mkdir sub");
     std::fs::write(dir.path().join("sub/deep.md"), b"# deep\n").expect("write deep.md");
     // `git add -A` populates the index — the v0 walk reads tracked

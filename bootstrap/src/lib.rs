@@ -2682,13 +2682,48 @@ pub fn dispatch(args: &[String]) -> i32 {
 ///   - No identity-mint (repo path IS the identity at this altitude)
 ///   - No stateless-return (envelope anchors at root_oid — content-addressed)
 ///
-/// P3 GREEN (envelope-shape only): emits the 9-key contract envelope
-/// with stub values for indexed / bytes_total / root_oid / store.
-/// Real fragmentation composition (NamespacedGitStore + project::project +
-/// per-file Splinter + set_ref) lands in the follow-up P4 GREEN tick
-/// per Mara spec §4.2–§4.6.
+/// P4 GREEN: wire the empirical composition per Mara's `@mirror/store/git`
+/// species declaration at `shards/mirror/store/git.mirror` (commit
+/// `1de09a9`).
+///
+/// The discharge map this implements:
+///
+/// ```text
+/// write(bytes)       <= insert_persistent(store, oid_of(bytes),
+///                                         fractal_of(bytes), size_of(bytes))
+///                     + set_ref(store, "HEAD", root_oid)
+/// ```
+///
+/// Carrier translation at the wire boundary: canonical `write(bytes)`
+/// discharges to wire `insert_persistent(fractal)`. The `bytes -> fractal`
+/// encoding goes through `fragmentation::encoding::encode` (carrier #53
+/// candidate-witness per Mara's species shard).
+///
+/// Composition flow:
+///
+///   1. Open the namespaced store at `.git/mirror/` via
+///      `NamespacedGitStore::open(repo_path, "mirror")`. The wire's
+///      `open(path, namespace)` action.
+///   2. Enumerate the working-tree file set via `git ls-files` (the v0
+///      manifest source per spec §3.1.5 path (b) recommendation).
+///   3. Synthesize a `Manifest` from the file listing and project via
+///      `fragmentation::project::project` — yields per-file `(content,
+///      blob_oid)` deterministically.
+///   4. For each projected file:
+///      - encode the bytes as `Fractal<String>` via
+///        `fragmentation::encoding::encode` (the carrier translation),
+///      - compute the OID via `Splinter::<Blake3>::new(Content::Text(...))`
+///        (the substrate's BLAKE3 content-address),
+///      - `insert_persistent(store, format!("splinter:{oid}"), fractal,
+///        size)` — the wire's content-addressed persistence.
+///   5. Compute the root_oid as BLAKE3 of the sorted (target_path,
+///      splinter_oid) pairs (spec §4.5).
+///   6. `set_ref(store, "HEAD", root_oid)` — the wire's named-ref write
+///      that makes the indexed surface reachable.
+///   7. `flush(store)` — drain the cache to disk.
+///   8. Emit the envelope per spec §4.7.
 fn cmd_init(repo_path: &str, hooks: bool) -> i32 {
-    // Edge case: repo path must exist.
+    // Edge case: repo path must exist + be a directory.
     let path = std::path::Path::new(repo_path);
     if !path.exists() {
         merr!("init: repo path does not exist: {}", repo_path);
@@ -2699,23 +2734,190 @@ fn cmd_init(repo_path: &str, hooks: bool) -> i32 {
         return 1;
     }
 
-    // P3 GREEN envelope per Mara spec §4.7. Stub values for the
-    // composition fields (indexed / bytes_total / root_oid / store).
-    // Real composition wires via fragmentation in next GREEN tick.
+    // Step 1 (discharge map: open): open the @mirror/store/git species
+    // at `.git/mirror/`. NotAGitRepo failure surfaces non-zero exit.
+    let store = match fragmentation_git::namespaced::NamespacedGitStore::open(path, "mirror") {
+        Ok(s) => s,
+        Err(e) => {
+            merr!("init: cannot open namespaced store: {}", e);
+            return 2;
+        }
+    };
+
+    // Step 2: enumerate the working-tree file set via `git ls-files`.
+    // The v0 manifest source per spec §3.1.5 path (b). Synthesized in
+    // mirror; no fragmentation-side commit required.
+    let files = match init_enumerate_git_ls_files(path) {
+        Ok(v) => v,
+        Err(e) => {
+            merr!("init: cannot enumerate files via git ls-files: {}", e);
+            return 1;
+        }
+    };
+
+    // Step 3: synthesize the manifest + project.
+    let manifest = fragmentation::manifest::Manifest {
+        lenses: files
+            .iter()
+            .map(|f| fragmentation::manifest::LensEntry {
+                source: f.clone(),
+                target: f.clone(),
+            })
+            .collect(),
+    };
+    let projection = match fragmentation::project::project(path, &manifest) {
+        Ok(p) => p,
+        Err(e) => {
+            merr!("init: project failed: {}", e);
+            return 1;
+        }
+    };
+
+    // Step 4 (discharge map: write -> insert_persistent + carrier
+    // translation): per-file Splinter OID + Fractal carrier; persist
+    // into the namespaced store.
+    //
+    // The `splinter_oid_pairs` accumulator preserves the sorted
+    // (target, oid) order the BTreeMap gives us — load-bearing for
+    // root_oid determinism.
+    let mut splinter_oid_pairs: Vec<(String, String)> = Vec::new();
+    let mut bytes_total: usize = 0;
+
+    for (target, projected) in &projection.files {
+        // Substrate OID: BLAKE3 via Splinter::new + Content::Text. The
+        // substrate's content-addressing primitive.
+        let text = String::from_utf8_lossy(&projected.content).to_string();
+        let splinter: Splinter<Blake3> = Splinter::new(Content::Text(Text::new(text.clone())));
+        let oid_hex = init_blake3_oid_hex(splinter.oid().bytes());
+
+        // Wire carrier: Fractal<String> via fragmentation's encoder.
+        // The `bytes -> fractal` translation Mara flagged as the
+        // #53 carrier candidate-witness.
+        let fractal = fragmentation::encoding::encode(&text);
+
+        // Wire write: insert_persistent.
+        store.insert_persistent(
+            format!("splinter:{}", oid_hex),
+            fractal,
+            projected.content.len(),
+        );
+
+        splinter_oid_pairs.push((target.clone(), oid_hex));
+        bytes_total += projected.content.len();
+    }
+
+    // Step 5: root_oid = BLAKE3 of sorted (target, oid) pairs per spec §4.5.
+    // The BTreeMap projection already sorts by target; preserve the order.
+    let root_oid_hex = init_compute_root_oid(&splinter_oid_pairs);
+
+    // Step 6 (discharge map: set_ref): point HEAD at the root_oid.
+    if let Err(e) = store.set_ref("HEAD", &root_oid_hex) {
+        merr!("init: set_ref(HEAD) failed: {}", e);
+        return 1;
+    }
+
+    // Step 7: flush the cache to disk. Post-condition: cached_len == 0.
+    store.flush();
+
+    // Step 8: emit the envelope per spec §4.7.
     let envelope = serde_json::json!({
         "spec_version":    "v0.1.0",
         "operation":       "init",
         "repo":            repo_path,
-        "store":           format!("{}/.git/mirror/", repo_path),
-        "indexed":         0,
-        "bytes_total":     0,
-        "root_oid":        "stub@P3_GREEN_pending_P4_composition",
+        "store":           store.path().display().to_string(),
+        "indexed":         splinter_oid_pairs.len(),
+        "bytes_total":     bytes_total,
+        "root_oid":        root_oid_hex,
         "hooks_installed": hooks,
-        "verdict":         "partial@stub",
+        "verdict":         "ok",
     });
     let s = format!("{}\n", envelope);
     _raw_stdout(s.as_bytes());
     0
+}
+
+/// Enumerate the working-tree file set via `git ls-files`. The v0
+/// manifest source per spec §3.1.5 path (b). Returns one relative
+/// path per tracked file in the index.
+///
+/// Filters to entries that exist as regular files on disk — git's
+/// submodule entries surface in `ls-files` output but resolve to
+/// directories (or absent), which `project::project` cannot read as
+/// file bytes. Keeping the filter loose-but-typed (per
+/// [[feedback-no-bare-types]]) at this altitude — substrate-pull-honest
+/// behavior is "skip what cannot be projected"; the substrate-decl
+/// expression of that policy lives at the @mirror/store/git species
+/// surface when the consumer-pull surfaces (forward-promised).
+///
+/// Returns Err if `git ls-files` exits non-zero (e.g., not a git
+/// repository, though `NamespacedGitStore::open` will have caught that
+/// earlier).
+fn init_enumerate_git_ls_files(repo: &std::path::Path) -> std::io::Result<Vec<String>> {
+    let out = Command::new("git")
+        .arg("ls-files")
+        .current_dir(repo)
+        .output()?;
+    if !out.status.success() {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::Other,
+            format!(
+                "git ls-files exit {}: {}",
+                out.status,
+                String::from_utf8_lossy(&out.stderr)
+            ),
+        ));
+    }
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    Ok(stdout
+        .lines()
+        .filter(|l| !l.is_empty())
+        .filter(|l| {
+            // Skip submodule entries and any path that doesn't resolve to a
+            // readable file (the substrate cannot project a tree-as-leaf
+            // through `project::project`'s byte-read surface).
+            let p = repo.join(l);
+            p.is_file()
+        })
+        .map(|l| l.to_string())
+        .collect())
+}
+
+/// Lowercase-hex encoding of a Blake3Oid's raw bytes (32 -> 64 chars).
+/// The substrate's standard OID string form for ref writes and envelope
+/// emission.
+fn init_blake3_oid_hex(bytes: &[u8; 32]) -> String {
+    let mut s = String::with_capacity(64);
+    for b in bytes.iter() {
+        // Lowercase hex; matches the substrate convention for
+        // content-addressed strings.
+        s.push_str(&format!("{:02x}", b));
+    }
+    s
+}
+
+/// Compute the root_oid as BLAKE3 of the sorted (target, splinter_oid)
+/// pairs per spec §4.5. Stable per git state: same `git ls-files` +
+/// same file bytes -> same root_oid. Idempotency lives here.
+fn init_compute_root_oid(pairs: &[(String, String)]) -> String {
+    // Canonical bytes: for each pair in given order, emit
+    //   u64_le(target.len()) || target || u64_le(oid.len()) || oid
+    // The given order is already sorted (BTreeMap iteration).
+    let mut buf: Vec<u8> = Vec::new();
+    for (target, oid) in pairs.iter() {
+        let tlen = (target.len() as u64).to_le_bytes();
+        buf.extend_from_slice(&tlen);
+        buf.extend_from_slice(target.as_bytes());
+        let olen = (oid.len() as u64).to_le_bytes();
+        buf.extend_from_slice(&olen);
+        buf.extend_from_slice(oid.as_bytes());
+    }
+    let digest = blake3::hash(&buf);
+    let bytes = digest.as_bytes();
+    let mut s = String::with_capacity(64);
+    for b in bytes.iter() {
+        s.push_str(&format!("{:02x}", b));
+    }
+    s
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
