@@ -2,305 +2,105 @@ in @prism
 in @glass
 in @meta
 in @uuid/spectral
-in @nl
 
-# @spectral — the RUNTIME family root.
+# @spectral — the runtime namespace-parent.
 #
-# THE OUROBOROS TICK (2026-06-10, Alex + Mara): the substrate
-# consumes itself to produce its own runtime. @spectral becomes
-# a top-level family root sibling of @mirror, @kintsugi, @prism,
-# @glass, @nl, @epistemologic, @code, @io — same altitude, distinct
-# discipline. The three-altitude split is now substrate-fact:
+# Shrunk 2026-07-01 per Loki §5 (Seam-ratified `17f0ee5`). @spectral
+# was over-declared as a full family-root wearing BEAM-on-mirror
+# operational-model ceremony; the shard's own "Substrate-already-had-
+# the-word" section admitted its actual job:
 #
-#   @mirror             the language       (state observation; form)
-#   @kintsugi           the dynamics       (transformation; process)
-#   @mirror/spectral    the SHAPE          (mirror declarations OF
-#                                            runtime coordination —
-#                                            score/portal/voice/section
-#                                            etc.; declared at
-#                                            shards/mirror/spectral.mirror)
-#   @spectral           the RUNTIME        (the live operational layer;
-#                                            this shard)
+#   "The parent was already implied by the path syntax; the family
+#    root names it at the symbol altitude."
 #
-# The form-side family (@mirror/spectral) declares what the orchestra
-# IS — score, portal, voice, section, audition, conductor — as
-# OBSERVABLE substrate vocabulary. The runtime family (@spectral)
-# declares the LIVE PROCESSES that animate the form: gen_prism workers,
-# supervisor trees, entanglement graphs, the root registry. The
-# distinction is altitude-of-existence: form-side declarations are
-# bytes-in-the-store at every tick; runtime declarations are
-# processes-in-the-world that the form-side observers measure.
+# That IS the namespace-parent signature. The operational surface
+# (gen_prism, supervisor, parent, entanglement, registry, root — the
+# BEAM analogues), the ouroboros pipeline, and the sibling-family
+# candidates were narrative-in-a-header rather than substrate-decl at
+# the family-root altitude. They live in `docs/specs/spectral-runtime.md`
+# already (2026-06-10 spec; 20.3 KB); the species shards under
+# `shards/spectral/` declare them at the substrate altitude when they
+# land.
 #
-# === Substrate-already-had-the-word ===
+# === What @spectral IS now ===
 #
-# The 52-instance rug-pull track (per
-# [[feedback-substrate-already-had-the-word]]) bottoms out here.
-# @spectral was ALREADY in the substrate as a parentless ghost:
+# A namespace-parent for the runtime species living at
+# `shards/spectral/<name>.mirror`. Path-container; no operational
+# contract of its own. Sibling to @mirror, @kintsugi, @prism, @glass,
+# @nl, @epistemologic, @code, @io at the top-level path-altitude —
+# but the sibling-family DISCIPLINES (form/process/shape/runtime, the
+# ouroboros pipeline, gen_prism vocabulary) live at the SPECIES
+# altitude, not here.
 #
-#   @spectral/db        the graph database engine; declared via the
-#                       memory ref [[architecture-mirror-store-vs-spectral-db]]
-#                       and the substrate-pull task #198. Had no
-#                       parent. Was orphaned.
-#   @spectral/garden    the vetted-corpus distribution; declared via
-#                       docs/insights/2026-05-26-spectral-garden-as-vetted-
-#                       corpus-distribution.md and task #118. Had no
-#                       parent. Was orphaned.
-#   @spectral/portal    bound to @mirror/spectral/portal at the
-#                       form-side; the runtime side of portal needs
-#                       a parent at this altitude.
+# === What @spectral was ===
 #
-# This tick gives them a parent. The parent was already implied by
-# the path syntax; the family root names it at the symbol altitude.
+# Recognition #46 second instance (2026-06-10): the substrate-pull
+# cascade wanted a parent for `@spectral/db` (memory ref
+# [[architecture-mirror-store-vs-spectral-db]]; task #198) and
+# `@spectral/garden` (task #118); path syntax already implied it; this
+# shard names it. That job is DONE at namespace altitude.
 #
-# === The ouroboros pipeline (load-bearing recognition) ===
+# The BEAM-on-mirror operational model (gen_prism as gen_server
+# analogue; supervisor/parent/entanglement/registry/root) is now
+# documented at `docs/specs/spectral-runtime.md` and forward-promised
+# as `shards/spectral/gen_prism.mirror`, `shards/spectral/supervisor.mirror`,
+# `shards/spectral/parent.mirror`, `shards/spectral/entanglement.mirror`,
+# `shards/spectral/registry.mirror`, `shards/spectral/root.mirror`.
+# The ouroboros pipeline (substrate declarations → materialize → store
+# → lens/unix → cargo → binary) lives in the spec; when the cycle
+# closes, the closure is content-addressed, not header-narrative.
 #
-# Mirror substrate declares @spectral runtime in shards/. The pipeline:
+# === Species that gain @spectral as parent ===
 #
-#   1. shards/spectral/*.mirror      (substrate declarations of runtime)
-#   2. @code/metalogue/materialize   (substrate → @code/rust shim_prism)
-#   3. @mirror/store shard           (content-addressed Rust source;
-#                                     uuid_spectral-identified; the
-#                                     runtime crate lives HERE, not
-#                                     on disk)
-#   4. @mirror/lens/unix             (NAMED THIS TICK; sibling-family
-#                                     substrate-pull candidate; presents
-#                                     the @mirror/store shard contents
-#                                     to cargo as a Unix filesystem)
-#   5. @io/cargo                     (reads through the lens; compiles)
-#   6. binary                        (IS @spectral runtime)
-#
-# Mirror substrate writes mirror substrate's own runtime through
-# itself. The bootstrap/ directory becomes EPHEMERAL at the moment
-# step 5 closes against step 1 with the dependency cycle broken by
-# content-addressing (per task #285's kintsugi-on-Rust track: the
-# Rust source is generated from substrate declarations; the substrate
-# declarations are the source of truth; bootstrap is a temporary
-# bridge from before the loop closed).
-#
-# === BEAM-on-mirror operational model ===
-#
-# @spectral's primitive vocabulary borrows BEAM's gen_server/
-# supervisor discipline because the substrate-pull cascade has already
-# named it implicitly through:
-#
-#   - architecture-hamilton-scheduler.md     (per-shard memory manager;
-#                                              hard+soft realtime;
-#                                              Apollo 1202 priority)
-#   - architecture-three-tier-stack.md       (SpectralSupervisor;
-#                                              fragmentation-mcp /
-#                                              mirror / @spectral/db)
-#   - architecture-shard-as-crdt.md          (bounded semilattice;
-#                                              kintsugi as lattice
-#                                              ascent)
-#   - boot/std/spectral/portal.mirror        (gen_prism named in
-#                                              substrate 2026-05-11)
-#   - architecture-error-as-question.md      (Reflection threshold;
-#                                              Beer/Reyes/BEAM
-#                                              convergence)
-#
-# The substrate had every BEAM primitive declared informally for
-# weeks. This shard names them at the family-root altitude.
-#
-#   gen_prism            the worker primitive. Carries identity
-#                        (uuid_spectral), state surface (a shard ref
-#                        at @mirror/store), and tool surface (the
-#                        five-op block as the wire protocol). Analogue
-#                        to BEAM's gen_server.
-#   supervisor           a specialisation of gen_prism whose state
-#                        surface is the child registry; whose tool
-#                        surface is the lifecycle API (start_child,
-#                        restart_child, observe_child); whose
-#                        invariant is the restart-strategy contract.
-#                        Analogue to BEAM's :supervisor behaviour.
-#   parent               the single-parent lifecycle edge. Every
-#                        gen_prism has exactly one parent; the parent
-#                        owns the child's lifecycle (start, restart,
-#                        terminate). Acyclic at this edge class.
-#   entanglement         the peer-correlation edge. ORTHOGONAL to
-#                        parentage. A gen_prism may be entangled with
-#                        N peers; entanglement is a sheaf restriction
-#                        map at substrate altitude (cf.
-#                        [[Eigenboard is a sheaf]]). Polyadic;
-#                        mirror-query reachable. Cyclic permitted.
-#   registry             the supervisor's child index. Maps child
-#                        uuid_spectral to child shard ref. Mutated
-#                        under the supervisor's restart-strategy
-#                        invariant; observable through the supervisor's
-#                        five-op block.
-#   root                 the parentless supervisor. Vocabulary
-#                        anchor: at the operational level, root rests
-#                        at ~/.mirror/ (the substrate's home
-#                        supervisor — like BEAM's application/0 at
-#                        the top of the supervision tree).
-#
-# === Sibling relationship to @mirror, @kintsugi, @mirror/spectral ===
-#
-# @mirror = form-side observation surface (state, structure).
-# @kintsugi = process-side transformation engine (dynamics).
-# @mirror/spectral = shape declarations of runtime coordination at
-#   the form altitude (score, portal, voice, section, audition,
-#   conductor — what the orchestra LOOKS LIKE).
-# @spectral = the LIVE processes themselves (what the orchestra IS
-#   when it's actually playing — gen_prisms, supervisors,
-#   entanglement edges).
-#
-# The four families partition the substrate's altitude-of-existence:
-#
-#   altitude      family            carrier              tense
-#   -------       --------          -------              -----
-#   declaration   @mirror           shard                static
-#   declaration   @kintsugi         morphism             generative
-#   shape         @mirror/spectral  score envelope       observable
-#   process       @spectral         gen_prism            live
-#
-# The form/process partition (recognition #50/#55) cuts the FIRST
-# two pairs; the shape/process partition (NAMED THIS TICK) cuts the
-# SECOND pair. Same Bateson distinction lifted one level: a
-# declaration of HOW THE ORCHESTRA OBSERVES is form-side w.r.t. the
-# LIVE PLAYING, even though both are process-side w.r.t. raw state.
-# The lift is logical-type-graded per
-# [[architecture-bateson-logical-type-primitive]] (candidate #42).
-#
-# Cross-family imports at the runtime altitude:
-#
-#   @spectral/<species> in @mirror/spectral/<form>   (consume the
-#                                                       observation
-#                                                       surface)
-#   @spectral/<species> in @kintsugi                 (consume the
-#                                                       transformation
-#                                                       engine; the
-#                                                       supervisor's
-#                                                       restart logic
-#                                                       IS a kintsugi
-#                                                       morphism)
-#   @spectral/<species> in @mirror/store             (the gen_prism's
-#                                                       state surface
-#                                                       IS a shard ref)
-#
-# @spectral does NOT depend on @mirror/spectral at the family-root
-# altitude (per the orchestra-vs-runtime distinction); @spectral
-# species depend on @mirror/spectral species at the SUB-shard
-# altitude.
+#   @spectral/db          (existing; #198)
+#   @spectral/garden      (existing; #118)
+#   @spectral/portal      (runtime side of @mirror/spectral/portal)
+#   @spectral/gen_prism   (forward-promised)
+#   @spectral/supervisor  (forward-promised)
+#   @spectral/parent      (forward-promised)
+#   @spectral/entanglement (forward-promised)
+#   @spectral/registry    (forward-promised)
+#   @spectral/root        (forward-promised)
 #
 # === Path-syntax discipline ===
 #
 # @spectral sub-shards at depth >= 1 use `glass` per recognition #46
-# (the path-syntax property); the family root itself uses `prism`
-# per the depth-0 discipline. Sub-shards land at
+# (the path-syntax property); this namespace-parent itself uses
+# `prism` per the depth-0 discipline. Sub-shards land at
 # `shards/spectral/<name>.mirror`; deeper sub-shards at
 # `shards/spectral/<group>/<name>.mirror`.
 #
-# === The cascade map (sub-shards forward-promised, NOT landing
-#     this tick) ===
-#
-#   shards/spectral/gen_prism.mirror
-#     — worker primitive: identity (uuid_spectral), state surface
-#       (shard ref), tool surface (five-op block). The BEAM
-#       gen_server analogue. Lifts boot/std/spectral/portal.mirror's
-#       2026-05-11 informal naming to the substrate altitude.
-#
-#   shards/spectral/supervisor.mirror
-#     — supervisor specialisation of gen_prism. Declares child_spec,
-#       restart strategy (one_for_one / one_for_all / rest_for_one
-#       analogues), and the registry contract.
-#
-#   shards/spectral/parent.mirror
-#     — the single-parent lifecycle edge type. Every gen_prism has
-#       exactly one parent; the parent owns lifecycle. Acyclic.
-#
-#   shards/spectral/entanglement.mirror
-#     — peer correlation edge. Sheaf restriction map at substrate
-#       altitude. Polyadic; cyclic permitted; orthogonal to parent.
-#
-#   shards/spectral/registry.mirror
-#     — supervisor's child registry; query surface (lookup by
-#       uuid_spectral; enumerate children; observe child state).
-#
-#   shards/spectral/root.mirror
-#     — the parentless supervisor type; the family's top vocabulary
-#       anchor; resting place ~/.mirror/ (operational vocabulary,
-#       NOT a directory the substrate reads).
-#
-#   shards/spectral/db.mirror                    (#198; existing,
-#                                                  gets parent here)
-#     — the graph database engine declaration; existing parentless
-#       sub-prism that gains @spectral as parent this tick.
-#
-#   shards/spectral/garden.mirror                (#118; deferred)
-#     — vetted-corpus distribution; existing parentless sub-prism
-#       that gains @spectral as parent when it lands.
-#
-#   shards/spectral/portal.mirror                (runtime side)
-#     — the live portal: gen_prism specialisation carrying the
-#       portal's frame stream; @mirror/spectral/portal is its
-#       form-side shape; @spectral/portal is the live process.
-#
-# === Sibling-family substrate-pull candidate (NAMED THIS TICK) ===
-#
-# The ouroboros pipeline (above) requires a Unix-filesystem
-# impedance lens between the @mirror/store shard and cargo. Cargo
-# expects files on disk; the substrate's runtime crate lives as a
-# content-addressed shard. Without the lens, the loop doesn't
-# close.
-#
-#   @mirror/lens/unix
-#     — Unix-FS impedance lens over @mirror/store. Presents shard
-#       contents through FUSE/equivalent so subprocesses (cargo,
-#       rustc, ld) read shard children as files. Sibling under
-#       @mirror/lens (the observation/projection family root,
-#       2026-06-06). DOES NOT YET EXIST; declared as a
-#       substrate-pull-candidate target so the cascade picks it up
-#       at the next mirror/lens tick.
-#
-# Spec context: docs/specs/spectral-runtime.md (this tick's
-#               operational spec — the ouroboros pipeline, gen_prism
-#               surface, supervision tree, entanglement graph,
-#               bootstrap retirement),
-#               docs/specs/mirror-spectral.md (the form-side sibling
-#               family at @mirror/spectral),
-#               docs/specs/bootstrap-retirement-plan.md (where this
-#               tick lands the bootstrap closure).
+# Spec context: `docs/specs/spectral-runtime.md` (the operational
+#               spec — BEAM-on-mirror model, gen_prism surface,
+#               supervision tree, entanglement graph, ouroboros
+#               pipeline, bootstrap retirement),
+#               `docs/specs/mirror-spectral.md` (the form-side
+#               sibling family at @mirror/spectral),
+#               `docs/specs/bootstrap-retirement-plan.md`.
 # Substrate decisions: [[architecture-shards-as-substrate-source]],
 #                      [[architecture-prism-as-trait-as-everything]],
-#                      [[architecture-bateson-form-behaviour-partition]]
-#                      (the form/process partition at the family-root
-#                      altitude; the shape/process partition is the
-#                      lifted form of the same Bateson distinction at
-#                      the orchestra altitude),
-#                      [[architecture-three-tier-stack]] (the
-#                      SpectralSupervisor precedent; the supervision
-#                      tree this family declares at the substrate
-#                      altitude),
-#                      [[architecture-hamilton-scheduler]] (the
-#                      per-shard memory manager named for Margaret
-#                      Hamilton; lives under @spectral at the
-#                      supervisor altitude),
 #                      [[architecture-mirror-store-vs-spectral-db]]
 #                      (the open foundation / closed engine
 #                      business-model boundary; @mirror/store is
 #                      open; @spectral/db is the engine on top),
 #                      [[feedback-substrate-already-had-the-word]]
-#                      (the 52nd-instance rug-pull: @spectral/db and
-#                      @spectral/garden were declared without a
-#                      parent for weeks; this tick names the parent).
+#                      (the substrate had @spectral as a path-prefix
+#                      before the family-root named it; this shrink
+#                      admits the namespace-parent signature was the
+#                      honest one all along).
 # Related shards: mirror.mirror (sibling family root; the form-side
 #                 of the substrate),
 #                 kintsugi.mirror (sibling family root; the
-#                 process-side transformation engine; supervisor
-#                 restart logic IS a kintsugi morphism),
+#                 process-side transformation engine),
 #                 mirror/spectral.mirror (the SHAPE — orchestra
 #                 observation surface at the form altitude;
-#                 this family is the RUNTIME the score observes),
-#                 mirror/store.mirror (the runtime's state surface
-#                 carrier; gen_prism state is a shard ref into
-#                 @mirror/store),
-#                 mirror/lens.mirror (the sibling family hosting
-#                 the @mirror/lens/unix substrate-pull candidate
-#                 that closes the ouroboros pipeline),
-#                 io.mirror (boundary family; @io/cargo is the
-#                 ouroboros pipeline's compilation step).
+#                 species under @spectral are the RUNTIME the score
+#                 observes),
+#                 mirror/store.mirror (the runtime state surface
+#                 carrier; gen_prism state — when it lands — is a
+#                 shard ref into @mirror/store).
 # Path-namespace property: this file at `shards/spectral.mirror`
-# declares `@spectral` as the family root; species live at
+# declares `@spectral` as the namespace-parent; species live at
 # `shards/spectral/<name>.mirror`.
 
 prism @spectral {
