@@ -1,0 +1,288 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/cybernetic/second_order
+in @epistemologic/cybernetic/eigenform
+in @epistemologic/math/lawvere
+
+# @third — recursion-depth marker at substrate-decl altitude.
+#
+# Loki (systemic.engineering blog, "Void → Third", 2026-06-22):
+#
+#   Not third as apex. Third as recursive depth. The observer of
+#   the observer of the observer.
+#
+# The substrate has been operating at third-order altitude implicitly
+# for one recognition cascade (per candidate #111, Alex 2026-07-01):
+#   - @reflection substrate-decl'd third_order_observation at v0.1
+#     spec 2026-06-22 (Pack-ratified, 1514 lines).
+#   - @cyberpunk's ceiling species is @epistemologic/cybernetic/
+#     second_order (Foerster).
+#   - @pack demonstrated multi-repo third-order at StageFreight
+#     (Glint essay 2026-06-22-third-order-and-multi-repo.md).
+#   - @cascade at every metalogue-lift altitude is Learning II per
+#     Bateson (recognition #42, deutero-learning insight).
+#
+# What was missing: the substrate marker naming *recursion depth
+# of observation* as its own typed axis. @third supplies it.
+#
+# === Marker, not family-root ===
+#
+# @third is imported the way @meta and @glass are imported. It is
+# a substrate-altitude marker crossing family-roots, NOT a peer of
+# @cogito / @autopoietic / @bauchladen / @algebra / @cyberpunk /
+# @metalogue. Reed's initial candidate framing had @third as a
+# family-root inheriting from six roots; the writing surfaced that
+# recursion-depth is a *property of an observation* (marker
+# altitude), not a *domain the substrate is about* (family-root
+# altitude).
+#
+# See docs/specs/third-as-recursive-depth.md §2 for the reshape
+# argument.
+#
+# Marker row precedents (crossing families rather than sitting
+# alongside):
+#
+#   @meta          "operates on substrate substrate"
+#   @glass         "exposes an opacity surface"
+#   @epistemologic "admits verdict discipline"
+#   @third (this)  "witnesses recursion at depth >= 3"
+#
+# Families that want third-order operation opt in via `in @third`.
+# @reflection, @cogito, @pack, @cyberpunk, @fate, @cascade all
+# forward-promised as opt-in consumers (per canonical spec §9);
+# refinement shards land per-family when substrate pull surfaces.
+#
+# === Ancestry ===
+#
+# - Bateson 1972 (Steps to an Ecology of Mind): logical-type
+#   hierarchy; Learning III at recursion-depth-3.
+# - Foerster 1974/1981 (Observing Systems): second-order
+#   cybernetics; observer-in-the-system; ethical imperative
+#   "always act to increase the number of choices" as depth-3
+#   operational endpoint.
+# - Kauffman 2003 (Eigenforms; Cybernetics & Human Knowing 10:3-4):
+#   recursion fixed-points; identity as the object the recursion
+#   stabilizes on.
+# - Lawvere 1969 (Diagonal Arguments and Cartesian Closed Categories):
+#   fixed-point theorem grounding hash(P^n(f)) == f at each depth.
+# - Loki (systemic.engineering, 2026-06-22): "Void → Third"; the
+#   depth-vs-apex inversion.
+# - Alex (2026-07-01, candidate #111): the nervous-system <-> AI
+#   isomorphism naming @third as substrate-decl-worthy.
+# - Reed (candidate memory entry, 2026-07-01): initial framing;
+#   reshaped by this writing.
+#
+# === Prior substrate landings ===
+#
+# - docs/specs/reflection-third-order-by-default-v0.1.md (Mara,
+#   2026-06-22, 1514 lines, Pack-ratified): third-order at
+#   @reflection altitude; the machinery this marker factors out.
+# - shards/reflection.mirror: imports @cyberpunk +
+#   @epistemologic/cybernetic/second_order + eigenform; carries
+#   third_order_observation + third_order_coherent + notice +
+#   choices_increase + pick_third_order + settle_third_order.
+# - shards/epistemologic/cybernetic/second_order.mirror: Foerster
+#   substrate-decl (445 lines); ceiling of @cyberpunk per recursion-
+#   lock tower audit §8.7.
+# - shards/epistemologic/cybernetic/eigenform.mirror: Kauffman
+#   substrate-decl (309 lines); fixed-point witness across species.
+# - docs/insights/2026-06-22-third-order-and-multi-repo.md (Glint):
+#   Pack multi-repo third-order empirical demonstration.
+# - docs/specs/recognitions/recognition-93-cogito-cognitive-
+#   substrate-candidate.md: @cogito candidate (holds forward-
+#   promised @third opt-in per composition map).
+#
+# === Spec context ===
+#
+# Canonical spec: docs/specs/third-as-recursive-depth.md
+# Substrate decisions:
+#   [[architecture-candidate-recognition-111-third-as-family-root]]
+#   (Reed's initial framing; this shard reshapes per §12 findings),
+#   [[architecture-bateson-logical-type-primitive]] (recognition
+#   #42; Learning-level ladder this marker labels rung 3 of),
+#   [[architecture-connes-spectral-triple]] (each depth-n witness
+#   inherits (A_n, H_n, D_n, J_n, γ_n) per §6.5),
+#   [[architecture-mirror-as-expanding-hilbert-space]] (#51; H
+#   dimension expansion each cascade tick fires under third-order
+#   witness),
+#   [[architecture-bauchladen-fate-chain-recognition-104]] (Lawvere
+#   fixed-point at each depth grounds Rice-safety per §6.4),
+#   [[architecture-form-process-partition-at-family-root]] (@third
+#   as marker crosses form and process without inheriting either),
+#   [[feedback-substrate-already-had-the-word]] (53rd+ instance;
+#   @meta + @glass + @epistemologic row was the pattern @third
+#   joins).
+#
+# Related shards:
+#   metalogue.mirror (the language's self-conversation; naturally
+#     fires at depth >= 2, admits @third at depth >= 3);
+#   reflection.mirror (the first refinement consumer; forward-
+#     promised species third_order_observation <: observation_depth);
+#   epistemologic/cybernetic/second_order.mirror (depth-2 substrate;
+#     @third's precondition);
+#   epistemologic/cybernetic/eigenform.mirror (fold-back fixed-point
+#     machinery).
+#
+# Path-namespace property: this file at `shards/third.mirror`
+# declares `@third` per `@epistemologic/pact/path_matches_namespace`.
+#
+# === Substrate-decl-honest weakenings (per spec §11) ===
+#
+# - Candidate #111 strength; Pack ratification pending.
+# - @bateson may or may not become its own family-root; if it does,
+#   this shard adds `in @bateson`; if not, current imports are
+#   sufficient.
+# - Rice-safety argument is structural, not formal; formal proof
+#   forward-promised at docs/math/third-order/rice-safety.md.
+# - Loss function signature declared; discharge derivation forward-
+#   promised.
+# - Species-refinement shards NOT landed this tick; each family
+#   lands its own refinement when substrate pulls.
+
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/cybernetics/foerster-1974
+source @arxiv/cybernetics/kauffman-2003
+source @arxiv/math/lawvere-1969
+
+prism @third {
+  focus  observation_depth
+  project observation_depth
+  split  observation_depth
+  shift  observation_depth
+  settle observation_depth
+}
+
+# === observation_depth ===
+#
+# The typed carrier @third exposes to consumers. Names a recursion-
+# depth witness over a substrate ref (what is being observed) via a
+# witness ref (the action that observes) with a reflexivity opacity
+# carrier (how much of the recursion is legible).
+#
+# `depth: nat` is unbounded above. @third fires at depth >= 3; higher
+# depths are legitimate. `depth = 4` is the observer of the observer
+# of the observer of the observer — still @third-witnessed because
+# the marker fires at the depth-3 threshold, not at a fixed level.
+#
+# `reflexivity: transparency(ref)` is a @glass opacity carrier per
+# the standard discipline (loss carrier parameterized on ref). Not
+# every level of the recursion is fully legible; the marker admits
+# partial legibility. Substrate-pull-honest: fully legible depth-3
+# would be `partial(1.00)` = complete transparency; partial(0.85) =
+# 85% inspectable.
+type observation_depth = {
+  depth: nat,
+  substrate: ref,
+  witness: ref,
+  reflexivity: transparency(ref),
+}
+
+# === depth_at_least(d, o) predicate ===
+#
+# Bilateral verdict predicate — does the observation's recorded
+# depth meet or exceed d? The primitive on which the composed
+# third_order_active bilateral rests. Discharges via integer
+# comparison + substrate resolution + reflexivity carrier
+# admissibility.
+#
+# Same shape as @cyberpunk's cybernetic_coherence, @glass's
+# transparency check — a `requires` clause consumer families cite.
+depth_at_least(d: nat, o: observation_depth) -> verdict { \ }
+
+# === observer_observes_observing(o) predicate ===
+#
+# The Foerster requirement: depth-2 machinery is present under the
+# depth-3 witness. Discharges via @epistemologic/cybernetic/
+# second_order.second_order_witnessing on o.witness — the depth-3
+# observation must carry a valid depth-2 substrate.
+#
+# Presupposes depth_at_least(2, o). Required by third_order_active.
+observer_observes_observing(o: observation_depth) -> verdict { \ }
+
+# === recursion_folds_back(o) predicate ===
+#
+# The Kauffman requirement: the observation returns to the observer
+# as data. Discharges via @epistemologic/cybernetic/eigenform.
+# eigenform_witnessing on o.witness — the recursion has a fixed
+# point.
+#
+# Presupposes depth_at_least(3, o). Required by third_order_active.
+# Grounded in Lawvere fixed-point theorem via
+# @epistemologic/math/lawvere.is_autopoietic (per boot/std/cogito.
+# mirror precedent).
+recursion_folds_back(o: observation_depth) -> verdict { \ }
+
+# === mechanism_visible(o) predicate ===
+#
+# The Loki requirement: the observed structure is legible under the
+# reflexivity carrier. Discharges via a threshold check on o.
+# reflexivity — the substrate-pull discipline requires the mechanism
+# under observation to be inspectable.
+#
+# This predicate surfaced during writing of the canonical spec
+# (§10.3 circular-reflexive noticing). Without it, the substrate
+# could witness depth-3 recursion without the mechanism being
+# legible, defeating Loki's structural claim. The predicate lifts
+# the mechanism-visibility requirement to substrate-decl.
+#
+# "This piece knows it is doing what it describes" is the
+# structural version: the observation must know what it is
+# observing at a level the substrate can verify.
+mechanism_visible(o: observation_depth) -> verdict { \ }
+
+# === third_order_active(o) composed bilateral ===
+#
+# The load-bearing bilateral. Discharges four sub-predicates over
+# observation_depth. Consumers cite this in `requires` clauses when
+# they need the substrate to verify depth-3 discipline at the
+# boundary.
+#
+# Composition per the substrate's composed-bilateral discipline
+# (StageFreight-shape from @io/stagefreight; Shatter-shape from
+# @smarts/shatter; @reflection third_order_coherent shape from
+# reflection-third-order-by-default-v0.1.md §5). Four sub-predicates
+# projecting onto the carrier fields; all must hold for the
+# composed verdict to pass.
+#
+# Failure modes surface via transparency<observation_depth> per
+# @glass discipline (spec §7.2):
+#   fail depth_at_least              -> partial(o.depth / 3)
+#   fail observer_observes_observing -> Fail(missing_second_order)
+#   fail recursion_folds_back        -> Fail(open_recursion)
+#   fail mechanism_visible           -> partial(reflexivity_pct)
+third_order_active(o: observation_depth) -> verdict { \ }
+
+# === witness_third_order action ===
+#
+# The typed constructor. Any family that opts in via `in @third`
+# uses this action to produce depth-3 observation carriers. The
+# postcondition `requires third_order_active(result)` enforces the
+# discipline at the boundary — the substrate refuses to settle if
+# any of the four sub-predicates fails.
+#
+# primary  = what is being observed (a substrate ref)
+# observer = who is observing (the depth-2 machinery)
+# meta     = what observes the observing (the depth-3 machinery)
+#
+# Species-refinement per family (forward-promised):
+#   @reflection.third_order_observation <: observation_depth
+#   @cogito.cognitive_third_order       <: observation_depth
+#   @pack.multi_repo_third_order        <: observation_depth
+#   @cyberpunk.recursion_lock_third_order <: observation_depth
+#   @fate.tournament_third_order        <: observation_depth
+#   @cascade.cascade_third_order        <: observation_depth
+witness_third_order(primary: ref, observer: ref, meta: ref)
+  -> observation_depth
+requires third_order_active(result)
+{ \ }
+
+out @third
+out observation_depth
+out depth_at_least
+out observer_observes_observing
+out recursion_folds_back
+out mechanism_visible
+out third_order_active
+out witness_third_order
