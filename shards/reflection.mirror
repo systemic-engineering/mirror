@@ -8,7 +8,7 @@ in @cyberpunk
 in @pack
 in @fate
 in @fate/tournament
-in @moi
+in @loop
 in @kintsugi
 in @kintsugi/oscillate
 in @epistemologic
@@ -41,7 +41,7 @@ in @epistemologic/reality/time
 #                                            consumer hardware)
 #                           ↓
 #                   @reflection.compose — monoid fold + mycelial tensor
-#                                         (composes set<@moi(au)> via @moi.compose)
+#                                         (composes set<@moi(au)> via compose (at @loop, absorbed from @moi 2026-07-01))
 #                           ↓
 #                   @reflection.pick — picks gold reducing loss
 #                           ↓
@@ -340,7 +340,7 @@ tournament(o: observation, pk: pack) -> tournament_result { \ }
 # === compose action ===
 #
 # Monoid fold + mycelial tensor over the tournament's candidates.
-# Composes set<moi(au)> via @moi.compose's pairwise operation; each
+# Composes set<moi(au)> via compose (at @loop, absorbed from @moi 2026-07-01)'s pairwise operation; each
 # pairwise step's pact_respected predicate cascades the composition-
 # time pact-verification.
 #
@@ -451,7 +451,7 @@ loss_decreases(next: loss, prev: loss) -> verdict { \ }
 # - @smarts: discipline_flexible
 # - @pack: pack_coherent
 # - @pack/seam: review_sound
-# - @moi: pact_respected
+# - @loop: pact_respected (absorbed from @moi 2026-07-01)
 # - @reflection: loss_decreases, speaks_at_n_plus_1 (these two)
 speaks_at_n_plus_1(o: observation, t: tick) -> verdict { \ }
 
@@ -624,7 +624,7 @@ choices_increase(prev: third_order_observation, next: third_order_observation, p
 # 2. choices_increase(prev_too, next_too, p) — Von Foerster's
 #    choice-set-monotonicity per Loki's essay
 #
-# Combined with @moi.compose's pact-verification at composition
+# Combined with compose (at @loop, absorbed from @moi 2026-07-01)'s pact-verification at composition
 # time: every third-order pick is monotonic-loss-respecting AND
 # choice-set-increasing AND pact-respected. The compiler verifies
 # all three at composition time.

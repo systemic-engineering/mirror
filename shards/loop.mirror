@@ -1,16 +1,27 @@
 in @prism
 in @meta
 in @glass
-in @moi
 in @magic
 in @kintsugi
 in @epistemologic
+in @epistemologic/property/laws/monad
 in @epistemologic/cybernetic
 in @epistemologic/cybernetic/autopoiesis
 
 # @loop — the loop family-root. The substrate's circular-reflexive
 # operational structure at type altitude. Each tick is an endomorphism
-# T → T; the loop IS the chain of @moi-pact-verified bindings.
+# T → T; the loop IS the chain of pact-verified bindings.
+#
+# === @moi absorbed 2026-07-01 (Loki §1 direction-inverted) ===
+#
+# The monad family-root @moi was collapsed INTO @loop per Alex
+# 2026-07-01 [[feedback-legibility-over-foundation-when-collapsing]]:
+# @loop's docblock already stated "Monad's μ IS the loop at type
+# altitude"; the type-altitude monad content lives here now. @loop
+# survives (readable name; immediate parse); @moi's vocabulary
+# (moi(T), pact, geometry, lift, compose, pact_verify, pact_respected)
+# absorbed as sub-surface. Grounding preserved: same Moggi 1991,
+# Rondon-Kawaguchi-Jhala liquid types, Maturana-Varela μ-closure.
 #
 # Recognition #88 (Alex 2026-06-19 evening, conversation; the cascade
 # closure at iterative-discipline altitude). Builds on #86 @moi. The
@@ -145,6 +156,10 @@ source @arxiv/category-theory/moggi-1991
 source @arxiv/cybernetics/von-foerster-1981
 source @arxiv/biology/maturana-varela-1980
 source @arxiv/programming/kiselyov-2009
+source @arxiv/programming/wadler-1990
+source @arxiv/types/rondon-kawaguchi-jhala-2008
+source @arxiv/verification/flanagan-leino-2001
+source @arxiv/math/connes-1994
 
 prism @loop {
   focus loop
@@ -261,6 +276,132 @@ unroll(start: moi(tick_state), n: tick) -> ref { \ }
 # - @loop: loop_well_founded (this one)
 loop_well_founded(start: moi(tick_state), tolerance: ref) -> verdict { \ }
 
+# === @moi absorbed sub-surface (Loki §1) ============================
+#
+# Below this line: the monad-at-type-altitude vocabulary formerly
+# housed at @moi. Preserved verbatim in structure; renamed only via
+# family-root (`@moi` → `@loop`). Consumer signatures using `moi(T)`,
+# `pact`, `pact_respected` remain byte-identical.
+#
+# === The moi parametric type-constructor ===
+#
+# Per the substrate's existing parametric pattern (au(altitude),
+# settle(T)): moi(T) lifts T into the monad type-constructor.
+# Liquid-typed refinement per Rondon-Kawaguchi-Jhala: moi(T) = { t
+# : T | monad_laws(t) ∧ pact_respected(t) }.
+#
+# The record carries the lifted value AND the composition-time pact-
+# witness produced when moi(T) was constructed. The pact-witness IS
+# the substrate's evidence-token that the geometry of T respected the
+# pact at the moment of lifting.
+#
+# Identity contract: byte-equality on the (value, pact_witness) pair.
+type moi(T) = {
+  value:        T,
+  pact_witness: ref,
+}
+
+# === The pact carrier ===
+#
+# Per [[feedback-no-bare-types]]: typed reference naming the
+# substrate's pact — the substrate-decl form of a liquid-type
+# predicate. Forward-promised refinement: typed parametric `pact(T)`
+# once task #272 (@mirror/fracture/predicate) lands the sheaf-
+# diffusion Houdini fixpoint at substrate-altitude.
+#
+# Identity contract: byte-equality on the underlying ref.
+type pact = ref
+
+# === The geometry carrier ===
+#
+# Per @epistemologic/math/spectral-triple: typed reference naming
+# the spectral triple (A, H, D) geometry of a lifted type. The
+# pact-verifier checks the geometry respects the pact at composition
+# time.
+#
+# Identity contract: byte-equality on the underlying ref.
+type geometry = ref
+
+# === lift action (the η ; substrate's unit operation) ===
+#
+# The substrate-vocabulary η : Id → T at type altitude. Takes a value
+# of type T and lifts it into moi(T) — the monad's unit operation.
+# The lift constructs the pact-witness via the substrate's existing
+# composition-time machinery (content-addressing + monad-laws verdict
+# at @epistemologic/property/laws/monad altitude).
+#
+# Body discharges at the realisation boundary; the actual lift IS
+# the substrate's existing settle-shaped construction.
+lift(t: T) -> moi(T) { \ }
+
+# === compose action (the μ ; substrate's multiplication ; FIRST
+# non-decorative consumer of pact_respected) ===
+#
+# THE LOAD-BEARING type-altitude action. The substrate-vocabulary
+# μ composes two moi(T) values into one moi(T) via the monoid
+# combine operation. Composition-time pact-verification happens HERE.
+#
+# requires pact_respected(a, b, p): the geometry of BOTH lifted types
+# must respect the pact at composition time. Without this requires
+# clause, compose would admit pact-violating lifts (the @magic
+# tick-11 dead-letter pattern). The bilateral predicate IS the
+# composition-time boundary-harness per recognition #57.
+#
+# Per `boot/00-prism.mirror`: "Content-addressing gives associativity
+# for free at composition time." The substrate's existing storage
+# layer enforces the monad associativity law structurally; compose
+# only needs to verify the OTHER monad laws (left identity, right
+# identity) plus the pact — these are the non-free invariants.
+#
+# Body discharges at the realisation boundary; the actual composition
+# IS the substrate's existing content-addressing-based join.
+compose(a: moi(T), b: moi(T), p: pact) -> moi(T)
+requires pact_respected(a, b, p)
+{ \ }
+
+# === pact_verify action ===
+#
+# The substrate-vocabulary primitive for composition-time pact
+# verification. Takes a lifted moi(T) and a pact; returns a typed
+# verdict that the geometry respects the pact. The action IS the
+# liquid-type Houdini-fixpoint check (task #272) at type altitude.
+#
+# Distinct from pact_respected (the bilateral predicate consumed by
+# requires clauses): pact_verify is the queryable action; the
+# predicate is the gating constraint. Same shape as @magic/contract's
+# honor (action) vs invariant_preserved (bilateral predicate).
+pact_verify(m: moi(T), p: pact) -> verdict { \ }
+
+# === geometry action ===
+#
+# Returns the spectral triple (A, H, D) geometry of a lifted moi(T).
+# The substrate-mathematical surface the pact-verifier inspects.
+# Per @epistemologic/math/spectral-triple: the geometry IS what
+# distinguishes compose-admissible lifts from non-admissible ones.
+geometry(m: moi(T)) -> geometry { \ }
+
+# === pact_respected predicate (bilateral) ===
+#
+# Bilateral verdict per recognition #37 (Pask agreement) AND
+# composition-time verification per
+# @epistemologic/property/laws/monad.
+#
+# Per Seam B1 closure pattern: bilateral predicates without consumers
+# are dead-letter. The compose action (above) is the FIRST non-
+# decorative consumer via `requires pact_respected(a, b, p)`. bind
+# above (@loop's μ) is the SECOND consumer.
+#
+# Consumer shards name `requires pact_respected(a, b, p)` to declare
+# bilateral agreement that BOTH lifted types respect the pact at
+# composition time. The substrate-pull-correct discipline: every
+# composition in the cascade is gated by this predicate.
+#
+# Discharge: composition-time pact-check at the species boundary.
+# Bounded → BOTH lifted types' geometries respect the pact (admit
+# composition); unbounded → ONE OR BOTH lifted types violate the pact
+# (compose refuses, returns imperfect per @glass's imperfect functor).
+pact_respected(a: moi(T), b: moi(T), p: pact) -> verdict { \ }
+
 out @loop
 out tick
 out tick_state
@@ -269,3 +410,10 @@ out bind
 out terminal_check
 out unroll
 out loop_well_founded
+out moi
+out pact
+out geometry
+out lift
+out compose
+out pact_verify
+out pact_respected

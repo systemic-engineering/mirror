@@ -1,7 +1,6 @@
 in @prism
 in @meta
 in @glass
-in @moi
 in @magic
 in @loop
 in @reflection
@@ -73,9 +72,9 @@ in @code/mq
 # - @reflection/mirror (#85 species, tick 39): the navigate primitive
 #   that ref surfaces at CLI altitude; ref consumes graph_path from
 #   this species
-# - @moi (#86): settle_with returns moi(au); every ref pipeline's
-#   gold is pact-verified at composition time
-# - @loop (#88): each ref query is one tick of @loop at the
+# - @loop (#88; @moi #86 absorbed 2026-07-01 Loki §1): settle_with
+#   returns moi(au); every ref pipeline's gold is pact-verified at
+#   composition time; each ref query is one tick of @loop at the
 #   navigation-discipline altitude; loop_well_founded cascade
 #   downstream at bootstrap dispatch (forward-promised)
 # - @mirror/bench (#87): three-conjunct monotone_non_increasing
@@ -159,8 +158,9 @@ in @code/mq
 #                      [[architecture-mirror-bench-ouroboros]] (#87;
 #                       bench composes via forward-promised dispatch),
 #                      [[architecture-reflection-as-compiler]] (#85+
-#                       #86; the compiler IS this loop; @moi(au)
-#                       carries the gold),
+#                       #86; the compiler IS this loop; moi(au) at
+#                       @loop carries the gold; @moi absorbed
+#                       2026-07-01 Loki §1),
 #                      [[architecture-shards-as-substrate-source]],
 #                      [[architecture-prism-as-trait-as-everything]],
 #                      [[architecture-operations-as-linear-algebra]]
@@ -387,7 +387,7 @@ phi_of(g: graph_ref) -> query_phi { \ }
 # - @cyberpunk: cybernetic_coherence
 # - @pack: pack_coherent
 # - @pack/seam: review_sound
-# - @moi: pact_respected
+# - @loop: pact_respected (absorbed from @moi 2026-07-01)
 # - @reflection: loss_decreases, speaks_at_n_plus_1
 # - @smarts/reflection: bridge_coherent
 # - @reflection/surface: translation_faithful

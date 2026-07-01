@@ -355,7 +355,7 @@ fingerprint(e: env) -> ref { \ }
 # - @cyberpunk: cybernetic_coherence
 # - @pack: pack_coherent
 # - @pack/seam: review_sound
-# - @moi: pact_respected
+# - @loop: pact_respected (absorbed from @moi 2026-07-01)
 # - @reflection: loss_decreases, speaks_at_n_plus_1
 # - @smarts/reflection: bridge_coherent
 # - @reflection/surface: translation_faithful

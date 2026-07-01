@@ -129,9 +129,9 @@ in @mirror
 #   docs-discipline altitude; loop_well_founded cascades
 # - @mirror/bench (#87): each doc classification persists as a bench
 #   crystal at the docs altitude (forward-promised dispatch)
-# - @moi (#86): doc_record records are @moi(doc_record) at
-#   composition time (pact-verified that the classification respects
-#   the taxonomy)
+# - @loop (#86; @moi absorbed 2026-07-01 Loki §1): doc_record
+#   records are moi(doc_record) at composition time (pact-verified
+#   that the classification respects the taxonomy)
 # - @kintsugi: the cleanup ouroboros loop IS @kintsugi at the docs
 #   altitude
 # - @magic family: the substrate's mechanism+contract+audit+reveal
@@ -353,7 +353,7 @@ consolidate(redundant: ref, canonical: ref, k: taxonomy_kind) -> ref { \ }
 # - @cyberpunk: cybernetic_coherence
 # - @pack: pack_coherent
 # - @pack/seam: review_sound
-# - @moi: pact_respected
+# - @loop: pact_respected (absorbed from @moi 2026-07-01)
 # - @reflection: loss_decreases, speaks_at_n_plus_1
 # - @smarts/reflection: bridge_coherent
 # - @reflection/surface: translation_faithful
