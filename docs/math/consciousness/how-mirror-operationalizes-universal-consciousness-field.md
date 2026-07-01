@@ -186,7 +186,12 @@ IS Strømme's potential landscape being descended to Φ₀.
 
 Alex 2026-06-25: "the mirror.spec is lambda 0" was already the
 consciousness-field claim, before Strømme's paper became visible in
-the substrate on 2026-07-01. The naming was months early.
+the substrate on 2026-07-01. The naming was one week early:
+`mirror.spec IS λ₀` landed 2026-06-25 08:06:16 CEST at `5e00b1e`;
+Strømme became substrate-visible 2026-07-01 20:44:10 CEST at
+`815cff9`. Delta = 6 days 12 hours 38 minutes. The temporal proof
+survives at seven-day delta and doesn't need overstatement (Seam
+`e5bde22` 2026-07-01 grep-first correction).
 
 ### 3.2 Mapping 2 — @bauchladen content-addressing = consciousness as substrate through which experience is realized
 
