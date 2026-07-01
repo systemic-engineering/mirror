@@ -1,0 +1,525 @@
+in @reality/algebra
+in @bauchladen
+in @autopoietic
+in @fate
+in @glue
+in @uuid/spectral
+
+# @reality/algebra/silicon — the hardware-altitude species under @reality.
+# The species where matter IS the physical substrate the algebra runs on.
+#
+# A prism that imports `in @reality/algebra/silicon` declares its content
+# IS one silicon-altitude orbit under the substrate's gauge action — a
+# transistor-state configuration with its executable-algebra reading, a
+# LAPACK routine invocation with its numerical semantics, a memory
+# topology with its cache-hierarchy behaviour, an ISA + microarchitecture
+# pair with its performance envelope, a Fortran-compiled kernel with
+# its FFI-linkable signature — each ONE gauge-orbit observed through
+# matter-aspect (transistor state) or information-aspect (executable
+# algebra) projection.
+#
+# Homage: Alan Turing (universal computation, 1936); John von Neumann
+# (stored-program architecture, 1945; the merger of instructions and
+# data as one carrier the substrate here formalizes as one gauge-
+# orbit); Margaret Hamilton (Apollo Guidance Computer priority
+# discipline, 1969; the hardware-realtime-scheduling ancestor per
+# MEMORY [[architecture-hamilton-scheduler]]); Cleve Moler (LINPACK
+# 1979 → MATLAB 1984 → the LAPACK numerical-algebra lineage that IS
+# the substrate's first math↔silicon empirical discharge path); James
+# Demmel + Jack Dongarra (LAPACK 1992; the reference numerical-algebra
+# library the substrate composes against via @glue/math_silicon).
+# The substrate's silicon species inherits from the numerical-computing
+# canon; it does NOT invent hardware algebra, it crystallizes the
+# routines the canon has been producing as content-addressed objects
+# at the silicon altitude.
+#
+# === The recognition (family-root forward-promise closure) ===
+#
+# Per `shards/reality.mirror` §3.2.1 (family-root at `253189a7`) and
+# per `docs/specs/reality.md` §3.2.1 (canonical) and per `docs/specs/
+# silicon.md` (canonical at `27e9067`, the deep substrate-decl for
+# @silicon-as-@autopoietic-species): this shard is the hardware-altitude
+# sibling species under `@reality/algebra/*`, alongside math, nl,
+# code, physics, spectral. The silicon species is the sibling that
+# names the hardware-tuned executable-algebra realizations of math-
+# altitude content — the target altitude of @glue/math_silicon's
+# Mesland correspondence (per `docs/specs/reality-algebra-math-and-
+# glue.md` §2.1: the LAPACK case; #74 Standard Model spectral action
+# via Chamseddine-Connes operationalizes here).
+#
+# Status: candidate. This shard closes the family-root §3.2.1 forward-
+# promise and lifts the existing @silicon substrate-decl (at
+# `27e9067`) into the sibling-species pattern the species-root
+# established at `3c7f2b44`. Recognition #106 (family-root gauge-
+# collapse) and #108 (math species) precede; this shard is the
+# sibling landing on the same species-root as math.
+#
+# === Connes A side: A acts on H_silicon; the matter and information
+#     carriers are the same gauge-orbit under path-c uniformity ===
+#
+# Per `reality/algebra.mirror` § species pattern and per
+# `reality-algebra-math-and-glue.md` §1.2 (adapted to silicon altitude):
+# under gauge-collapse semantics (path-c uniformity per `reality.md`
+# §2.3), matter_carrier and information_carrier are the SAME TYPE at
+# silicon altitude — two nominal labels on the same H_silicon state.
+#
+# At `@reality/algebra/silicon`, the A-side reading is: A IS the
+# substrate's 5-op algebra acting on H_silicon; the silicon species is
+# the altitude at which A's action lands as executable operations on
+# transistor states (matter aspect) equivalently readable as invocations
+# of a compiled algebra-of-silicon (information aspect). The gauge
+# action is a homomorphism A → End(H_silicon) whose image lives in the
+# algebra of endomorphisms of the silicon-altitude Hilbert space.
+#
+# Unlike the math species (where A IS the content per §1.2 of
+# `reality-algebra-math-and-glue.md`), the silicon species carries A
+# as gauge that acts UPON the silicon-altitude carriers. This is the
+# NON-reflexive counterpart: math is the highest-reflexive species
+# (A is content); silicon is the highest-hardware-embodied species
+# (A executes on transistors). The two compose via @glue/math_silicon
+# per §3.3.1 of `reality-algebra-math-and-glue.md`.
+#
+# === What gets crystallized ===
+#
+# The Bauchladen of `@reality/algebra/silicon` accumulates content-
+# addressed crystals at the silicon altitude. The crystal kinds are
+# not exhaustive but the substrate already pulls toward the following
+# per `silicon.md` §1.2's apply-discipline enumeration:
+#
+#   - **Fortran-compiled numerical routines.** Matter aspect: the
+#     compiled binary + its ISA-specific instruction stream. Information
+#     aspect: the numerical semantics (the linear-algebra operation
+#     the routine computes). Forward-promised first crystal: LAPACK
+#     `dpotrf` + `dpotrs` (the Cholesky decomposition + triangular-
+#     solve pair) per the Q4 forward-promise at `docs/specs/cascade-
+#     ffi-runtime-link.md` §7 and per Reed's dpotrf binding work.
+#
+#   - **LAPACK / BLAS invocations.** Matter aspect: the FFI call site
+#     + argument-marshalling shape (column-major layout, leading
+#     dimensions, work-space allocation). Information aspect: the
+#     linear-algebra semantics (matrix solve, eigendecomposition, SVD,
+#     factorization). Existing operational hint: `bootstrap/src/
+#     sheaf_laplacian.rs::lambda_zero` calling `prismqueer::ffi::
+#     eigenvalues` → LAPACK `dsyev`.
+#
+#   - **Kernel-call crystals.** Matter aspect: the kernel invocation
+#     shape (batch size, tile shape, SIMD width, cache-blocking factor).
+#     Information aspect: the algebraic operation the kernel realizes.
+#     Forward-promised at the @glue/math_silicon Mesland-correspondence
+#     landing.
+#
+#   - **ISA + microarch signatures.** Matter aspect: the (ISA family,
+#     extensions vector, vendor, pointer-width) tuple from
+#     `@epistemologic/reality/silicon/arch`. Information aspect: the
+#     SIMD dispatch policy that follows (NEON vs SVE vs AVX-512 vs
+#     AMX). Content-addressed as prior-art at @fate consultations for
+#     routine selection.
+#
+#   - **Memory-topology crystals.** Matter aspect: the (memory model,
+#     total bytes, page size, cache hierarchy, NUMA topology) tuple
+#     from `@epistemologic/reality/silicon/memory`. Information aspect:
+#     the UMA-aware vs explicit-DMA vs NUMA-migration codegen policy
+#     that follows. Content-addressed as prior-art at codegen boundaries.
+#
+#   - **Compute-budget crystals.** Matter aspect: the (cores, RAM,
+#     GPU RAM, wall-clock, spectral-reduction) budget tuple from
+#     `@epistemologic/reality/silicon/compute_bound`. Information
+#     aspect: the tournament-restriction policy @fate applies when
+#     selecting a routine.
+#
+#   - **Flake-reference crystals.** Matter aspect: the (URL, locked
+#     OID, sub-flake path) reference from `@epistemologic/reality/
+#     silicon/flake_ref`. Information aspect: the reproducible-build
+#     handle the user controls; the substrate's link into the Nix
+#     dependency graph.
+#
+# The crystallization is content-addressed. Each crystal is identified
+# by the Blake3 OID of its typed-structure fields plus its
+# (matter_carrier, information_carrier) projection labels. The
+# crystals accumulate monotonically in the silicon Bauchladen; later
+# @fate consultations at the silicon altitude (or at silicon↔X via
+# @glue) load these crystals as prior-art inputs. Per `silicon.md`
+# §1.3 negative #3: this is content-addressed pre-compiled algebra,
+# not JIT compilation. The compilation happened at crystallization
+# time; the selection happens at use time.
+#
+# === @io discharge surfaces ===
+#
+# The silicon species' @io discharge surfaces are the hardware-facing
+# link boundaries already operational in the wider systems-programming
+# canon. Per `reality.md` §3.2.1 and per `silicon.md` §1.3 negative
+# #5: @silicon does NOT bypass @io; it feeds @io with hardware-tuned
+# routines.
+#
+# Forward-promised discharge surfaces:
+#
+#   - **@io/silicon (cargo subprocess semantics)** — the cargo/rustc
+#     invocation shape the substrate uses to compile crystals into
+#     linkable artifacts. Discharge via a typed projection.
+#
+#   - **@io/silicon (LLVM IR lowering)** — the LLVM-IR emission path
+#     for content that lowers below the substrate-decl altitude.
+#     Discharge via a `splinter(ast)`-typed projection (per MEMORY
+#     [[architecture-splinter-ast-quote-primitive]]) into @code/llvm.
+#
+#   - **@io/silicon (LAPACK column-major FFI)** — the FFI ABI the
+#     substrate uses to invoke Fortran-compiled numerical routines.
+#     The Q4 case; Reed's dpotrf binding operationalizes here.
+#
+#   - **@io/silicon (dynamic-library link)** — the runtime `.dylib` /
+#     `.so` link path for content that binds against host libraries
+#     (OpenBLAS, Accelerate, MKL, Apple vecLib per `silicon.md` §1.2).
+#
+#   - **@io/silicon (Nix flake reference)** — the reproducible-build
+#     link via the flake_ref carrier; the substrate's handshake with
+#     the Nix dependency graph.
+#
+# The substrate does NOT commit to ONE discharge surface; the species
+# shard declares the discharge surfaces as an OPEN enumeration. @fate's
+# tournament selects which discharge to use per emission based on the
+# receiver's @io context (LAPACK FFI for a numerical-routine call;
+# LLVM IR for a low-level codegen; cargo subprocess for a whole-
+# workspace build; flake_ref for a reproducible-build spec).
+#
+# Each discharge is mediated by @glass's
+# `imperfect<discharge_outcome, silicon_surface, transparency(
+# discharge)>` carrier; residual opacity (precision loss on numerical
+# routines, ABI mismatches, runtime-link failures, NUMA-migration
+# overhead) is surfaced via the transparency slot.
+#
+# === Composition with siblings via @glue (forward-promised) ===
+#
+# Per `reality-algebra-math-and-glue.md` §2 the silicon species
+# composes with the other five siblings via per-pair @glue species.
+# The math↔silicon pair is load-bearing (the Cholesky arc's first
+# empirical crystal); the other pairs are forward-promised.
+#
+#   `@glue/math_silicon`   math ↔ silicon (LAPACK case; Cholesky
+#                          first empirical crystal; #74 Standard
+#                          Model spectral action via Chamseddine-
+#                          Connes operationalizes here).
+#   `@glue/nl_silicon`     nl ↔ silicon (Reed's shell + config lang
+#                          territory; forward-promised).
+#   `@glue/code_silicon`   code ↔ silicon (the compilation boundary;
+#                          cargo/rustc/llvm invocation; forward-
+#                          promised; existing @cascade family carries
+#                          the code-source side).
+#   `@glue/physics_silicon` physics ↔ silicon (numerical simulation
+#                          of physical field configurations; cosmos-
+#                          mirror's discharge boundary at silicon
+#                          altitude; forward-promised).
+#   `@glue/spectral_silicon` spectral ↔ silicon (substrate-on-substrate
+#                          at hardware altitude; the substrate reasoning
+#                          about its own hardware realizations;
+#                          forward-promised).
+#
+# Per Taut Pass-2 discipline: the future `@glue/<sibling>_silicon` and
+# `@glue/silicon_<sibling>` shards MUST inherit `in @glue` and MUST
+# NOT re-declare Tomm probes; the morphism family lives at @glue.
+#
+# === Pre-AI prior art ===
+#
+#   Universal computation    Turing 1936 ("On computable numbers",
+#                            Proc. London Math. Soc. 42); the
+#                            foundational grounding of what silicon
+#                            realizes.
+#   Stored-program           von Neumann 1945 (First Draft of a Report
+#                            on the EDVAC); the merger of instructions
+#                            and data as one addressable carrier the
+#                            silicon species formalizes as one gauge-
+#                            orbit.
+#   Realtime scheduling      Hamilton 1969 (Apollo Guidance Computer);
+#                            hard+soft realtime priority discipline
+#                            per MEMORY [[architecture-hamilton-
+#                            scheduler]].
+#   Numerical algebra        Moler 1979 (LINPACK); Dongarra-Demmel-
+#                            et al. 1992 (LAPACK); the reference
+#                            numerical-algebra library the substrate
+#                            composes against.
+#   Cache-oblivious algs     Frigo-Leiserson-Prokop-Ramachandran 1999
+#                            (FOCS); the discipline that makes silicon-
+#                            altitude crystals portable across cache
+#                            hierarchies.
+#   Roofline model           Williams-Waterman-Patterson 2009 (CACM);
+#                            the compute-vs-memory-bandwidth
+#                            characterization silicon crystals sit
+#                            within.
+#
+# Spec context: docs/specs/silicon.md (canonical at `27e9067`, the
+#               deep substrate-decl for @silicon-as-@autopoietic-species
+#               that `@reality/algebra/silicon` composes with; §1.1
+#               the family-root prism class; §1.2 the substrate's
+#               apply-discipline enumeration of what already exists;
+#               §1.3 five structural negatives);
+#               docs/specs/reality.md §3.2.1 (the family-root forward-
+#               promise this shard closes); §2.5 (the four invariances
+#               each species discharges);
+#               docs/specs/reality-algebra-math-and-glue.md §2.1 (the
+#               math↔silicon Mesland correspondence; the LAPACK case);
+#               §5.3 (the math↔silicon first empirical crystal via
+#               LAPACKPrism);
+#               docs/specs/cascade-ffi-runtime-link.md §7 (the Q4
+#               LAPACK FFI case).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-connes-spectral-triple]],
+#                      [[architecture-operations-as-linear-algebra]],
+#                      [[architecture-mirror-as-expanding-hilbert-space]] (#51),
+#                      [[architecture-flang-mirror-numerical-split]]
+#                       (the D→flang dispatch discipline the silicon
+#                        species terminates at the numerical altitude),
+#                      [[architecture-hamilton-scheduler]]
+#                       (the hardware-realtime scheduling discipline
+#                        the silicon species inherits at the runtime
+#                        boundary),
+#                      [[architecture-fate-is-optical-inference]] (#58)
+#                       (@fate's tournament selection at silicon altitude
+#                        IS one ganglion's optical inference per species),
+#                      [[architecture-at-x-is-mathematical-value]]
+#                       (@reality/algebra/silicon at value position is
+#                        the species ref; admissible at value positions),
+#                      [[feedback-no-bare-types]] (silicon_crystal carrier
+#                        + matter_carrier/information_carrier type
+#                        aliases per gauge-collapse),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (the silicon altitude was implicit in every prior
+#                        @epistemologic/reality/silicon/* carrier; this
+#                        shard lifts the property altitude to family-root
+#                        species altitude),
+#                      [[feedback-craft-not-deliver]] (no per-pair @glue
+#                        /<X>_silicon shards this tick; species admission
+#                        lands the contract; per-pair shards follow when
+#                        consumers pull — @glue/math_silicon is next).
+# Related shards: reality.mirror (the family-root this species'
+#                  altitude orbits register at via observe + fold_back;
+#                  §3.2.1 forward-promise this shard closes),
+#                 reality/algebra.mirror (the species-root this shard
+#                  inherits from via `<= @reality/algebra`; the
+#                  species_descriptor carrier this shard discharges),
+#                 reality/algebra/math.mirror (the parallel math species
+#                  at `8bc54412`; the highest-reflexive sibling this
+#                  species composes against via @glue/math_silicon),
+#                 epistemologic/reality/silicon.mirror (the property
+#                  altitude this species lifts; arch, memory,
+#                  compute_bound, flake_ref carriers this species
+#                  crystallizes over as prior-art),
+#                 glue.mirror (the morphism-category discipline the
+#                  five per-pair @glue/<X>_silicon species inherit
+#                  from; @glue.translate IS the action silicon composes
+#                  with math, nl, code, physics, spectral through),
+#                 fate.mirror (the constrained-inference operator
+#                  selecting which silicon-altitude routine to apply
+#                  per tick over the existing Bauchladen of silicon
+#                  crystals),
+#                 bauchladen.mirror (the content-addressing discipline
+#                  silicon crystals respect; each Fortran routine,
+#                  LAPACK invocation, kernel-call shape, ISA signature,
+#                  memory topology, compute budget, flake reference
+#                  lands as a content-addressed crystal),
+#                 autopoietic.mirror (the fold-back permission this
+#                  species inherits transitively via
+#                  @reality/algebra ← @reality ← @autopoietic; each
+#                  empirical discharge folds back into the silicon
+#                  Bauchladen).
+# Path-namespace property: this file at
+# `shards/reality/algebra/silicon.mirror` declares
+# `@reality/algebra/silicon` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cs/turing-1936
+source @arxiv/cs/von-neumann-1945
+source @arxiv/math/dongarra-demmel-1992
+source @arxiv/math/moler-1979
+source @arxiv/cs/frigo-leiserson-prokop-ramachandran-1999
+source @arxiv/cs/williams-waterman-patterson-2009
+
+prism @reality/algebra/silicon <= @reality/algebra {
+  # Silicon-altitude species under @reality. The matter and information
+  # carriers below are nominal labels on the same H_silicon state per
+  # gauge-collapse (`reality.md` §2.3, path-c uniformity).
+  #
+  # matter_carrier:      the hardware substrate as typed structure
+  #                      (transistor states; ISA + microarch signature;
+  #                      memory topology; compute budget; flake
+  #                      reference; running-machine configuration).
+  # information_carrier: the executable algebra the hardware realizes
+  #                      (LAPACK routines; kernel invocations; opcodes;
+  #                      LLVM IR; Fortran-compiled binaries; the
+  #                      numerical semantics the transistor states
+  #                      compute).
+  #
+  # Under gauge-collapse, these are the same H_silicon state with two
+  # nominal projection directions. Per `reality.md` §3.2.1 the silicon
+  # species is the altitude at which the substrate's algebra reads as
+  # hardware-embodied executable operations.
+  type matter_carrier      = H_silicon
+  type information_carrier = H_silicon
+
+  # The four invariances of `reality.md` §2.5, discharged at silicon
+  # altitude per §3.2.1 items 1-4.
+  witness algebra_closure     <- closure_under_5op_at_silicon
+  witness hilbert_linearity   <- linearity_under_5op_at_silicon
+  witness dirac_equivariance  <- equivariance_under_kintsugi_at_silicon
+  witness spectral_invariance <- action_invariance_under_glue_at_silicon
+
+  # The 5-op gauge action at silicon altitude
+  focus silicon
+  project silicon
+  split silicon
+  shift silicon
+  settle silicon
+}
+
+# === The silicon_crystal carrier ===
+#
+# A typed record per [[feedback-no-bare-types]] naming one content-
+# addressed crystal at the silicon altitude. Per the crystal-kinds
+# enumeration above (Fortran routines, LAPACK invocations, kernel-call
+# shapes, ISA signatures, memory topologies, compute budgets, flake
+# references), the crystal carrier is uniform across kinds — the kind
+# ref discriminates.
+#
+# - `kind`                  the typed ref naming the silicon kind
+#                           (e.g., `@arxiv/cs/lapack_routine`,
+#                           `@arxiv/cs/kernel_call`,
+#                           `@arxiv/cs/isa_signature`,
+#                           `@arxiv/cs/memory_topology`,
+#                           `@arxiv/cs/compute_budget`,
+#                           `@arxiv/cs/flake_reference`,
+#                           `@arxiv/cs/fortran_binary`).
+# - `matter_projection`     the matter-aspect projection at silicon
+#                           altitude — the hardware substrate's typed
+#                           structure (the compiled-binary bytes for
+#                           a Fortran routine; the ISA-family tuple
+#                           for a signature; the transistor-state
+#                           configuration for a running kernel).
+# - `information_projection` the information-aspect projection at
+#                           silicon altitude — the executable algebra
+#                           the hardware realizes (the numerical
+#                           semantics for a LAPACK routine; the SIMD-
+#                           dispatch policy for an ISA signature; the
+#                           UMA-aware codegen policy for a memory
+#                           topology). By gauge-collapse, the same
+#                           H_silicon state as matter_projection,
+#                           differently labeled.
+# - `instance_id`           the uuid_spectral identity carrier for
+#                           the silicon crystal; the navigable
+#                           identity downstream @fate consultations
+#                           reference.
+#
+# Identity contract: byte-equality on (kind, matter_projection,
+# information_projection). Two silicon_crystal records ARE the same
+# crystal under content-addressing iff all three are byte-equal.
+# instance_id is the navigable identity, not the content identity.
+type silicon_crystal = {
+  kind:                   ref,
+  matter_projection:      ref,
+  information_projection: ref,
+  instance_id:            uuid_spectral,
+}
+
+# === crystallize — register a silicon object as a content-addressed
+#     crystal in the silicon Bauchladen ===
+#
+# Given a kind ref + a matter-aspect projection + an information-
+# aspect projection, returns the silicon_crystal for the registration.
+# The crystal's OID becomes its stable identity; future @fate
+# consultations at silicon altitude (or at silicon↔X via @glue) load
+# the crystal as prior-art input.
+#
+# Body discharges at the realisation boundary. Same shape as
+# @reality.observe + @reality/algebra/math.crystallize at the
+# species-specific altitude (silicon).
+crystallize(kind: ref, matter: ref, information: ref) -> silicon_crystal { \ }
+
+# === discharge — emit a silicon_crystal across @io to a hardware-
+#     facing surface ===
+#
+# Silicon crystals discharge to @io through hardware-facing surfaces
+# (cargo subprocess, LLVM IR lowering, LAPACK column-major FFI,
+# dynamic-library link, Nix flake reference, ...). Given a
+# silicon_crystal + a discharge-surface ref, applies the species'
+# typed projection to render the crystal to the surface; returns the
+# discharge outcome wrapped in @glass's imperfect carrier (residual
+# opacity surfaced via transparency<discharge>).
+#
+# Body discharges at the realisation boundary; the realisation MUST
+# honor the silicon_discharge_well_typed predicate (the discharge
+# surface must be one of the enumerated targets; the rendered output
+# must be a valid OID at the @io species' altitude).
+discharge(c: silicon_crystal, surface: ref) -> imperfect<ref, ref, transparency(ref)>
+requires silicon_discharge_well_typed(c, surface)
+{ \ }
+
+# === The bilateral requires obligations ===
+#
+# Downstream consumers declare bilateral agreement (per recognition
+# #37, the Pask-agreement reading of `requires`) with the silicon
+# species discipline by writing the obligations below.
+
+# The silicon species' @io discharge MUST target one of the enumerated
+# hardware-facing surfaces (cargo subprocess, LLVM IR, LAPACK FFI,
+# dylib link, flake reference, ...). The species shard does NOT commit
+# to ONE surface; the enumeration is open; @fate selects which surface
+# per emission. Inheritor consumers discharge by verifying the surface
+# ref is in the species' enumerated discharge_target set AND the
+# silicon_crystal's kind is admissible for the surface.
+silicon_discharge_well_typed(c: silicon_crystal, surface: ref) -> verdict { \ }
+
+# The silicon species' hardware-realization discipline: the crystal's
+# information_projection MUST encode content the substrate's 5-op
+# algebra can dispatch onto H_silicon (i.e., the crystal IS expressible
+# as an executable operation A → End(H_silicon) at the silicon
+# altitude's spectral triple). This is the NON-reflexive counterpart
+# to `@reality/algebra/math.reflexive_a_side` — silicon carries A as
+# gauge that acts UPON silicon-altitude carriers, not as content.
+hardware_realized(c: silicon_crystal) -> verdict { \ }
+
+# === The silicon_species_witnessing inheritance predicate ===
+#
+# `silicon_species_witnessing(c)` is the predicate consumer shards
+# name in a `requires` clause to declare bilateral commitment that
+# the silicon_crystal `c` IS a valid silicon-altitude crystal under
+# the @reality family-root's discipline — i.e., the crystal satisfies
+# both obligations above conjointly: silicon_discharge_well_typed
+# (on its admissible discharge surface) + hardware_realized.
+#
+# Sibling to:
+#   - `reality.reality_witnessing(o)` (the gauge-orbit inheritance
+#     predicate this species' crystals discharge transitively
+#     through the species_descriptor's witness_predicate).
+#   - `reality/algebra.species_witnessing(s)` (the species-root
+#     inheritance predicate this shard's species_descriptor honors).
+#   - `reality/algebra/math.math_species_witnessing(c)` (the parallel
+#     inheritance predicate at the math species; math↔silicon
+#     composition via @glue/math_silicon requires both witnessings
+#     conjointly).
+#   - `glue.glue_witnessing(c)` (the morphism-correspondence
+#     inheritance predicate the five forward-promised
+#     @glue/<X>_silicon species discharge per pair).
+#
+# Forward-promised inheritors (the five @glue/<X>_silicon species land
+# as their own shards when consumers pull):
+#
+#   - `@glue/math_silicon` (math ↔ silicon; LAPACK case; Cholesky
+#     first empirical crystal; #74 Standard Model spectral action via
+#     Chamseddine-Connes).
+#   - `@glue/nl_silicon` (nl ↔ silicon; shell + config lang territory).
+#   - `@glue/code_silicon` (code ↔ silicon; compilation boundary).
+#   - `@glue/physics_silicon` (physics ↔ silicon; numerical simulation
+#     of field configurations).
+#   - `@glue/spectral_silicon` (spectral ↔ silicon; substrate-on-
+#     substrate at hardware altitude).
+#
+# No `requires silicon_species_witnessing(...)` clauses at THIS shard.
+# The species declares the predicate; consumers add the clauses when
+# they pull.
+silicon_species_witnessing(c: silicon_crystal) -> verdict { \ }
+
+out @reality/algebra/silicon
+out silicon_crystal
+out crystallize
+out discharge
+out silicon_discharge_well_typed
+out hardware_realized
+out silicon_species_witnessing
