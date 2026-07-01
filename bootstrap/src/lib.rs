@@ -26,6 +26,7 @@
 //! run with `--test-threads=1`.
 
 pub mod ast;
+pub mod cholesky;
 pub mod crystallize;
 pub mod curvature;
 pub mod exec;
