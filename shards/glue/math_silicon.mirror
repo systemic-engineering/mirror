@@ -1,0 +1,524 @@
+in @prism
+in @meta
+in @glass
+in @glue
+in @reality/algebra/math
+in @reality/algebra/silicon
+in @fate
+in @bauchladen
+in @autopoietic
+
+# @glue/math_silicon — the Mesland correspondence between math-altitude
+# mathematical structures and silicon-altitude executable realizations.
+# The first @glue species after the family-root landing at `8d3f89e`;
+# the LOAD-BEARING species for the Cholesky arc's first empirical
+# crystal.
+#
+# === The recognition (Cholesky arc closure, 2026-07-01) ===
+#
+# Per `docs/specs/reality-algebra-math-and-glue.md` §2.1 + §3.3.1 the
+# math ↔ silicon Mesland correspondence carries LAPACK-class discharges
+# (Cholesky decomposition + triangular solve as the first empirical
+# case) + the Chamseddine-Connes spectral action numerical machinery
+# (the #74 candidate operationalizes here). This shard is the
+# substrate-decl form of the correspondence at species altitude,
+# forward-promised at `shards/glue.mirror` §"Forward-promised
+# inheritors" and at `shards/reality/algebra/math.mirror` §
+# "Forward-promised inheritors" and at
+# `shards/reality/algebra/silicon.mirror` §"Composition with siblings
+# via @glue".
+#
+# The Cholesky arc composes four shards end-to-end:
+#
+#   1. `shards/epistemologic/math/cholesky.mirror` — the theorem shard
+#      (predicate: symmetric-positive-definite ⇒ LL^T decomposition).
+#   2. THIS SHARD — @glue/math_silicon
+#      The Mesland correspondence carrying the LAPACK realization as
+#      morphism_kind; the composition mechanism between math (#1) and
+#      silicon (#3).
+#   3. `shards/reality/algebra/silicon.mirror` (Mara `9ca6723`, LANDED)
+#      — the silicon species; the target altitude.
+#   4. LAPACK dpotrf / dpotrs FFI binding — Reed's discharge boundary.
+#
+# This shard is the COMPOSITION MECHANISM. It carries the typed
+# correspondence surface + the discharge machinery + the bilateral
+# with @fate for selection. It does NOT re-declare Tomm probes (per
+# Taut Pass-2 discipline); the morphism-category discipline is
+# inherited via `in @glue`.
+#
+# === The correspondence shape ===
+#
+# Per `shards/glue.mirror` §"The correspondence carrier" the Mesland
+# correspondence record carries (source_prism, target_prism,
+# morphism_kind, restriction). For math ↔ silicon:
+#
+#   source_prism:   @reality/algebra/math
+#   target_prism:   @reality/algebra/silicon
+#   morphism_kind:  @arxiv/math/cholesky_decomposition.lapack_realization
+#                   (initial); OPEN enumeration extending to
+#                   @arxiv/math/eigendecomposition.lapack_realization,
+#                   @arxiv/math/svd.lapack_realization,
+#                   @arxiv/math/lu_factorization.lapack_realization,
+#                   @arxiv/math/qr_factorization.lapack_realization,
+#                   @arxiv/math/spectral_action.chamseddine_connes_
+#                   numerical, ...  per @fate tournament expansion.
+#   restriction:    precision:    { f32, f64, complex64, complex128 }
+#                   conditioning: well-conditioned
+#                                 (κ(A) ≤ 1/√ε for the field's ε)
+#                   layout:       column-major (LAPACK's native ABI)
+#
+# The restriction is what @fate's dice rolls MUST land within; @fate
+# cannot select a morphism outside these bounds (per
+# `shards/fate.mirror` §"The dice roll constraints" — γ + J symmetry
+# preservation composes on top).
+#
+# === Uses @fate for selection ===
+#
+# @glue/math_silicon does NOT compute the LAPACK discharge directly.
+# Per `shards/glue.mirror` §"The load-bearing action" the composition
+# is:
+#
+#   @glue × @fate → typed translation outcome
+#
+# When `translate(c_math_silicon, math_payload)` fires:
+#
+#   1. c_math_silicon carries the (math, silicon, morphism_kind,
+#      restriction) tuple.
+#   2. @glue invokes @fate.roll(restriction, hole) where hole is
+#      derived from (math_payload, silicon_signature, silicon_
+#      altitude).
+#   3. @fate's dice roll selects one morphism's OID within the
+#      restriction — e.g., dpotrf vs zpotrf vs LDL^T variant — the
+#      constrained-inference operator picks based on the payload's
+#      (field, dimension, conditioning-hint).
+#   4. @glue applies the selected morphism to the math payload; the
+#      selected realization's FFI body computes the silicon-altitude
+#      output.
+#   5. The translation_outcome IS the composed
+#      lower_triangular_matrix + LAPACK info-parameter + residual
+#      opacity wrapped in
+#      imperfect<lower_triangular_matrix, ref, transparency(
+#      correspondence)>; the crystal lands in the @bauchladen tray
+#      under `@fate/algebra/morphism/math_silicon` per
+#      `bauchladen-autopoietic-fate.md` §5.
+#
+# The bilateral is HARD: the translate action's body MUST invoke
+# @fate.roll (not a direct deterministic compute). This is the
+# discipline that distinguishes @glue/math_silicon from a bare FFI
+# wrapper — the LAPACK routine to use is @fate-selected within the
+# restriction, and each selection accumulates as a Bauchladen crystal
+# the next cycle's tournament browses.
+#
+# === Non-reflexive counterpart to @reality/algebra/math ===
+#
+# Per `shards/reality/algebra/math.mirror` §"Connes A side":
+# `@reality/algebra/math` is the HIGHEST-REFLEXIVE species (A IS the
+# content). Per `shards/reality/algebra/silicon.mirror` §"Connes A side":
+# `@reality/algebra/silicon` is the NON-REFLEXIVE counterpart (A acts
+# UPON silicon-altitude carriers).
+#
+# The @glue/math_silicon correspondence lifts one side into the other:
+# math's reflexive-A becomes, under translation, silicon's A-acting-
+# upon-transistor-states. The morphism_kind ref names the specific
+# lift (Cholesky's LL^T decomposition as a math-altitude theorem
+# lifts to LAPACK's dpotrf as a silicon-altitude executable
+# realization). The restriction bounds the lift's admissible instances
+# (precision, conditioning, layout).
+#
+# The @glue.compose composition IS non-commutative here: composing
+# c_math_silicon with c_silicon_math (the reverse; forward-promised)
+# does NOT return the identity correspondence. Reason: dpotrf followed
+# by symbolic reconstruction loses precision on non-representable
+# entries; the composition's transparency carrier surfaces the
+# residual opacity per the [ω, ω] cross-term (per `shards/glue.mirror`
+# §"The categorical composition").
+#
+# === Bilateral obligations from @glue ===
+#
+# @glue/math_silicon MUST discharge the three obligations @glue's
+# family-root declares:
+#
+#   - `morphism_well_typed(c_math_silicon)` — every morphism the
+#     correspondence admits must have source_signature in
+#     `@reality/algebra/math`'s H_math and target_signature in
+#     `@reality/algebra/silicon`'s H_silicon; the discharge is via
+#     the restriction's typing on precision/conditioning/layout.
+#   - `translation_uses_fate(translate_math_silicon)` — the
+#     species' translate body invokes @fate.roll on every call
+#     (not a direct deterministic compute); the substrate-pull-
+#     honest discipline preserved at species altitude.
+#   - `restriction_preserved(c_math_silicon, payload)` — the
+#     math payload's field + dimension + conditioning-hint must
+#     be within the restriction's typed bound.
+#
+# The three obligations conjointly imply `glue_witnessing(c)` at the
+# species altitude; consumers add `requires glue_witnessing(c)` when
+# they pull @glue/math_silicon.
+#
+# === Forward-promised morphism kinds ===
+#
+# The species' morphism_kind enumeration is OPEN; each morphism_kind
+# addition is a per-consumer pull. Initial kinds:
+#
+#   @arxiv/math/cholesky_decomposition.lapack_realization
+#     Cholesky's LL^T decomposition; the FIRST empirical crystal
+#     for the arc; LAPACK dpotrf (real) / zpotrf (complex); Reed's
+#     FFI binding operationalizes here.
+#
+# Forward-promised additions (per §3.3.1 open enumeration):
+#
+#   @arxiv/math/eigendecomposition.lapack_realization
+#     A = QΛQ^{-1}; LAPACK dsyev / zheev; the substrate's
+#     `sheaf_laplacian.lambda_zero` action already discharges here.
+#   @arxiv/math/svd.lapack_realization
+#     A = UΣV^*; LAPACK dgesvd / zgesvd; forward-promised for
+#     rank-revealing decompositions and pseudo-inverse crystals.
+#   @arxiv/math/lu_factorization.lapack_realization
+#     A = PLU; LAPACK dgetrf / zgetrf; forward-promised for general
+#     linear-solve crystals.
+#   @arxiv/math/qr_factorization.lapack_realization
+#     A = QR; LAPACK dgeqrf / zgeqrf; forward-promised for least-
+#     squares crystals.
+#   @arxiv/math/spectral_action.chamseddine_connes_numerical
+#     S = Tr(f(D/Λ)); the #74 candidate's numerical discharge;
+#     forward-promised for the Standard Model empirical crystal
+#     via cosmos-mirror's graph-Laplacian engine.
+#
+# The correspondence's `add_morphism` action (the substrate-decl
+# form of the roster expansion) is forward-promised itself; each
+# new kind lands via a Bauchladen crystal + a species-shard
+# amendment when consumers pull.
+#
+# === No Rust operational sibling this tick ===
+#
+# Per [[feedback-craft-not-deliver]] this shard is substrate-decl
+# only. The LAPACK dpotrf FFI binding is Reed's next-tick work; the
+# empirical crystal for the Cholesky arc lands when that binding
+# fires the first `@glue.translate(c_math_silicon, spd_matrix_
+# instance)` invocation and the outcome crystallizes in the
+# Bauchladen tray.
+#
+# === Pre-AI prior art ===
+#
+#   Cholesky decomposition    Cholesky ~1910; Benoît 1924 (Bull.
+#                             Géodésique 2:67-77, posthumous). The
+#                             theorem the FIRST morphism_kind
+#                             realizes.
+#   LAPACK                    Anderson et al. 1992 (`LAPACK Users'
+#                             Guide`, SIAM); the reference numerical-
+#                             algebra library the discharge targets.
+#   BLAS                      Lawson-Hanson-Kincaid-Krogh 1979
+#                             (ACM Trans. Math. Softw. 5(3):308-323);
+#                             the Level-1 BLAS foundation LAPACK
+#                             composes on.
+#   Mesland correspondences   Mesland 2013 (arXiv:1304.3802); the
+#                             morphism category the @glue family-
+#                             root lifts and this species specializes
+#                             to math ↔ silicon.
+#   KK-theory                 Kasparov 1981 (Math. USSR-Izv. 16(3):
+#                             513-572); the underlying KK-cycles
+#                             composing via intersection product;
+#                             the substrate-altitude form of the
+#                             @glue.compose action's non-commutativity.
+#   Spectral action           Chamseddine-Connes 1996 (Commun. Math.
+#                             Phys. 186:731-750); the numerical
+#                             discharge target for the #74 Standard
+#                             Model candidate operationalizing at
+#                             this species.
+#   Numerical linear algebra  Wilkinson 1961 (J. ACM 8:281-330); the
+#                             modern floating-point analysis
+#                             grounding the restriction's
+#                             conditioning bound.
+#   Column-major layout       Backus et al. 1957 (FORTRAN 0
+#                             specification); the ABI convention
+#                             LAPACK's Fortran heritage requires;
+#                             the restriction's `layout: column-
+#                             major` clause honors this.
+#
+# Spec context: docs/specs/reality-algebra-math-and-glue.md §P0
+#               (Cholesky arc placement per Alex 2026-07-01);
+#               §2.1 (the math ↔ silicon Mesland correspondence;
+#               the LAPACK case); §3.3.1 (the illustrative shard
+#               shape this file discharges); §5.3 (the first
+#               empirical crystal via LAPACKPrism);
+#               docs/specs/cascade-ffi-runtime-link.md §7 (Q4
+#               LAPACK FFI case; Reed's dpotrf work);
+#               docs/specs/silicon.md (the deep substrate-decl for
+#               @silicon-as-@autopoietic-species; §1.2 the apply-
+#               discipline enumeration).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-connes-spectral-triple]],
+#                      [[architecture-operations-as-linear-algebra]],
+#                      [[architecture-flang-mirror-numerical-split]]
+#                       (the D→flang dispatch discipline; LAPACK is
+#                       one flang-altitude realization the species
+#                       composes through),
+#                      [[architecture-fate-is-optical-inference]] (#58;
+#                       @fate's tournament selection at species
+#                       altitude IS one ganglion's optical inference
+#                       for the morphism choice),
+#                      [[architecture-form-process-partition-at-
+#                       family-root]] (#55/#61; @reality/algebra/math
+#                       is form-side, @reality/algebra/silicon is
+#                       process-side execution; @glue/math_silicon
+#                       carries the morphism vocabulary that lifts
+#                       one into the other),
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; the alignment harness
+#                       fires at the @io/silicon (LAPACK FFI) boundary
+#                       the discharge terminates at),
+#                      [[architecture-mirror-as-expanding-hilbert-
+#                       space]] (#51; each math↔silicon translation
+#                       extends H by one morphism crystal at species
+#                       altitude),
+#                      [[architecture-spectral-db-autopoietic-memory]]
+#                       (the librarian altitude consolidates
+#                       @glue/math_silicon morphism crystals into the
+#                       autopoietic memory layer),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (@glue/math_silicon was implicit across the
+#                       substrate's every LAPACK / BLAS / numerical
+#                       reference; this shard makes the composition
+#                       addressable at species altitude),
+#                      [[feedback-no-bare-types]] (correspondence,
+#                       math_silicon_translation are typed carriers;
+#                       no bare primitives),
+#                      [[feedback-craft-not-deliver]] (no Rust FFI
+#                       sibling at this tick; the substrate-decl
+#                       admission lands the contract; Reed's dpotrf
+#                       binding is the next-tick empirical discharge).
+# Related shards: glue.mirror (the family-root; this species inherits
+#                  the morphism-category discipline + the
+#                  glue_witnessing bilateral),
+#                 reality/algebra/math.mirror (the source_prism this
+#                  species' correspondences originate at; the
+#                  math_crystal + reflexive_a_side + math_species_
+#                  witnessing family the discharge consumes),
+#                 reality/algebra/silicon.mirror (the target_prism
+#                  this species' correspondences terminate at; the
+#                  silicon_crystal + hardware_realized + silicon_
+#                  species_witnessing family the discharge lands in),
+#                 epistemologic/math/cholesky.mirror (the theorem
+#                  predicate the FIRST morphism_kind realizes; the
+#                  discharge_via edge points here),
+#                 epistemologic/math/sheaf_laplacian.mirror (sibling
+#                  predicate at the same altitude; grounds the
+#                  eigendecomposition morphism_kind forward-promise),
+#                 fate.mirror (the constrained-inference operator
+#                  the translate action consults via @fate.roll for
+#                  each morphism selection),
+#                 bauchladen.mirror (the crystal accumulation
+#                  discipline; each math_silicon_translation lands
+#                  as a content-addressed crystal in the tray),
+#                 autopoietic.mirror (the fold-back permission
+#                  inherited transitively via `in @glue`; each
+#                  discharged translation folds back into the
+#                  species' Bauchladen).
+# Path-namespace property: this file at
+# `shards/glue/math_silicon.mirror` declares
+# `@glue/math_silicon` per the
+# `@epistemologic/pact/path_matches_namespace` rule.
+
+source @arxiv/math/cholesky-1910
+source @arxiv/math/anderson-lapack-1992
+source @arxiv/math/lawson-hanson-kincaid-krogh-1979
+source @arxiv/math/mesland-2013
+source @arxiv/math/kasparov-1981
+source @arxiv/math/chamseddine-connes-1996
+source @arxiv/math/wilkinson-1961
+source @arxiv/cs/backus-fortran-1957
+
+prism @glue/math_silicon <= @glue {
+  # The math ↔ silicon @glue species. Declares the Mesland
+  # correspondence between @reality/algebra/math source-side
+  # mathematical structures and @reality/algebra/silicon target-
+  # side executable realizations (LAPACK kernels, FFI bindings,
+  # Fortran-compiled routines).
+  #
+  # The species inherits from @glue via `<= @glue`; the correspondence,
+  # morphism, and translation_outcome carriers are re-used from the
+  # family-root; the species specializes the morphism_kind ref to
+  # `@arxiv/math/*.lapack_realization` and the restriction to
+  # LAPACK's native ABI (column-major, well-conditioned, f32/f64/
+  # complex).
+  focus correspondence_math_silicon
+  project correspondence_math_silicon
+  split correspondence_math_silicon
+  shift correspondence_math_silicon
+  settle correspondence_math_silicon
+}
+
+# === The math_silicon_translation carrier ===
+#
+# A typed record per [[feedback-no-bare-types]] specializing the
+# @glue family-root's translation_outcome to the math ↔ silicon
+# pair. The carrier binds the (math input, LAPACK realization,
+# silicon output, residual-opacity) tuple that a single
+# @glue.translate(c_math_silicon, payload) invocation produces.
+#
+# - `correspondence`     the ref of the c_math_silicon correspondence
+#                        the translation was performed under; carries
+#                        (source_prism = @reality/algebra/math,
+#                        target_prism = @reality/algebra/silicon,
+#                        morphism_kind, restriction).
+# - `selected_morphism`  the OID of the LAPACK realization @fate
+#                        selected — e.g., dpotrf for real Cholesky
+#                        with column-major layout; the substrate-
+#                        altitude form of the LAPACK routine name.
+# - `math_input`         ref naming the source-side math crystal
+#                        (e.g., an spd_matrix instance from
+#                        @epistemologic/math/cholesky).
+# - `silicon_output`     ref naming the target-side silicon crystal
+#                        (e.g., a lower_triangular_matrix silicon
+#                        crystal + LAPACK info parameter).
+# - `transparency`       residual opacity per @glass's
+#                        `transparency<correspondence>` carrier;
+#                        reports LAPACK info-parameter warnings
+#                        (info != 0), precision loss on ill-
+#                        conditioned inputs, ABI-marshalling residuals.
+#
+# Identity contract: byte-equality on (correspondence, selected_
+# morphism, math_input, silicon_output). Two math_silicon_translation
+# records with byte-equal fields ARE the same crystal under
+# content-addressing.
+type math_silicon_translation = {
+  correspondence:    ref,
+  selected_morphism: oid,
+  math_input:        ref,
+  silicon_output:    ref,
+  transparency:      transparency(correspondence),
+}
+
+# === translate — the load-bearing action at species altitude ===
+#
+# THE LOAD-BEARING ACTION. Given a math_input ref (an spd_matrix
+# instance from @epistemologic/math or a math_crystal from
+# @reality/algebra/math) + the c_math_silicon correspondence ref,
+# consults @fate to select which LAPACK realization to apply
+# within the correspondence's restriction; applies the selected
+# realization via FFI to the math_input; returns the
+# math_silicon_translation wrapped in imperfect (residual opacity).
+#
+# Structurally this action IS @glue.translate specialized to the
+# math ↔ silicon pair. The specialization is minimal:
+#
+#   - The correspondence's source_prism is fixed at @reality/algebra
+#     /math.
+#   - The correspondence's target_prism is fixed at @reality/algebra
+#     /silicon.
+#   - The restriction is fixed at (precision, conditioning, layout)
+#     per §3.3.1.
+#   - The morphism_kind is drawn from `@arxiv/math/*.lapack_
+#     realization` per the OPEN enumeration.
+#
+# The body MUST invoke @fate.roll for the morphism selection (per
+# `translation_uses_fate` inherited from @glue); MUST honor the
+# restriction (per `restriction_preserved` inherited from @glue);
+# MUST discharge to the LAPACK FFI at @io/silicon (per
+# `shards/reality/algebra/silicon.mirror` §"@io discharge surfaces").
+#
+# Body discharges at the realisation boundary. Reed's next-tick
+# dpotrf FFI binding IS the first realisation.
+translate(c: ref, math_input: ref) -> imperfect<math_silicon_translation, ref, transparency(ref)>
+requires morphism_kind_in_lapack_family(c)
+requires restriction_matches_lapack_abi(c)
+requires math_input_is_reality_algebra_math(math_input)
+{ \ }
+
+# === propose — enumerate the LAPACK realizations for a math input ===
+#
+# Given a math_input ref, returns the family of correspondences
+# admissible for the input's shape. The enumeration is typed per
+# the input's field (real vs complex → dpotrf vs zpotrf) and
+# structural predicate (SPD → Cholesky; general square → LU; etc.);
+# each returned correspondence carries the (morphism_kind,
+# restriction) tuple naming the LAPACK realization + its ABI bound.
+#
+# Multiple correspondences may exist for the same input (Cholesky
+# vs LU vs QR for a general SPD, though Cholesky is preferred by
+# conditioning). The propose action returns the full family; the
+# downstream translate consultation via @fate selects one.
+#
+# Body discharges at the realisation boundary. Sibling shape to
+# @glue.propose specialized to math ↔ silicon.
+propose(math_input: ref) -> [ref]
+requires math_input_is_reality_algebra_math(math_input)
+{ \ }
+
+# === The bilateral requires obligations ===
+#
+# Downstream consumers declare bilateral agreement (per recognition
+# #37, Pask-agreement) with the math ↔ silicon species discipline
+# by writing the obligations below.
+
+# Per §3.3.1: the correspondence's morphism_kind MUST be a member
+# of `@arxiv/math/*.lapack_realization` — Cholesky, eigen-, SVD,
+# LU, QR, Chamseddine-Connes spectral action numerical, etc.
+# Inheritor consumers discharge by verifying the morphism_kind
+# ref's namespace.
+morphism_kind_in_lapack_family(c: ref) -> verdict { \ }
+
+# Per §3.3.1: the correspondence's restriction MUST match LAPACK's
+# native ABI — column-major layout AND (f32 | f64 | complex64 |
+# complex128) precision AND well-conditioned inputs (κ(A) ≤ 1/√ε).
+# Inheritor consumers discharge by verifying each restriction slot.
+restriction_matches_lapack_abi(c: ref) -> verdict { \ }
+
+# The math_input ref MUST name a crystal at @reality/algebra/math
+# altitude (a math_crystal instance per `shards/reality/algebra/
+# math.mirror`, OR a predicate carrier from @epistemologic/math/*
+# — spd_matrix, symmetric_matrix, etc.). Inheritor consumers
+# discharge by verifying the ref's altitude.
+math_input_is_reality_algebra_math(math_input: ref) -> verdict { \ }
+
+# === The math_silicon_witnessing inheritance predicate ===
+#
+# `math_silicon_witnessing(t)` is the predicate consumer shards
+# name in a `requires` clause to declare bilateral commitment that
+# a math_silicon_translation `t` is a valid math ↔ silicon
+# translation under the species' discipline — i.e., t satisfies
+# all three obligations above conjointly.
+#
+# Sibling to:
+#   - `glue.glue_witnessing(c)` (the family-root bilateral;
+#     math_silicon_witnessing IS a specialization of glue_
+#     witnessing to the math ↔ silicon pair).
+#   - `reality/algebra/math.math_species_witnessing(c)` (the
+#     source-species bilateral; the math_input must satisfy this
+#     for the translation to originate at math altitude).
+#   - `reality/algebra/silicon.silicon_species_witnessing(c)` (the
+#     target-species bilateral; the silicon_output must satisfy
+#     this for the translation to land at silicon altitude).
+#   - `epistemologic/math/cholesky.cholesky_witnessing(d)` (the
+#     predicate bilateral; the Cholesky arc's first empirical
+#     crystal discharges this at input side).
+#
+# Forward-promised inheritors:
+#
+#   - Reed's dpotrf FFI binding (the next-tick empirical discharge);
+#     the first translate invocation lands the first
+#     math_silicon_translation crystal in the Bauchladen tray under
+#     `@fate/algebra/morphism/math_silicon`.
+#   - The Standard Model spectral action numerical discharge (the
+#     #74 candidate); when the Chamseddine-Connes morphism_kind
+#     lands as an addition to the OPEN enumeration, the empirical
+#     crystal for the coupling constants discharges via this species.
+#   - The eigenvalue / SVD / LU / QR forward-promised
+#     morphism_kinds (per the OPEN enumeration); each lands as a
+#     Bauchladen crystal + a species-shard amendment when
+#     consumers pull.
+#
+# No `requires math_silicon_witnessing(...)` clauses at THIS shard.
+# The species declares the predicate; consumers add the clauses
+# when they pull specific translations.
+math_silicon_witnessing(t: math_silicon_translation) -> verdict { \ }
+
+out @glue/math_silicon
+out math_silicon_translation
+out translate
+out propose
+out morphism_kind_in_lapack_family
+out restriction_matches_lapack_abi
+out math_input_is_reality_algebra_math
+out math_silicon_witnessing
