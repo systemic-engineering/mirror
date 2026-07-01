@@ -84,6 +84,20 @@ in @uuid/spectral
 #   @cascade/code/formal/prose      formal/prose              `437d061` (yesterday's
 #                                   (mid-altitude code         P4 landing; LANDED)
 #                                   ↔ NL morphism)
+#   @glue/math_silicon              math ↔ silicon            shards/glue/math_
+#                                   (Cholesky arc P3;         silicon.mirror `5edd3e9`
+#                                    LAPACK-class             (Cholesky arc P3
+#                                    Mesland correspondence)  commit 1 of 3; LANDED
+#                                                              2026-07-01; carries
+#                                                              morphism_kind
+#                                                              @arxiv/math/cholesky_
+#                                                              decomposition.lapack_
+#                                                              realization + open
+#                                                              enumeration for
+#                                                              eigendecomposition,
+#                                                              SVD, LU, QR,
+#                                                              Chamseddine-Connes
+#                                                              spectral action)
 #   @spectral/metalogue/tomm        spectral-metalogue        docs/specs/spectral-
 #                                   (Bateson level V)         metalogue.md `16f4564`
 #                                                              (recognition #100;
@@ -126,6 +140,15 @@ in @uuid/spectral
 #     ├── @cascade/code/formal/prose             formal↔prose species
 #     │                                          (STRUCTURALLY ALIGNED
 #     │                                           via @cascade above)
+#     ├── @glue/math_silicon                     math ↔ silicon species
+#     │                                          (LANDED at `5edd3e9`
+#     │                                           2026-07-01; imports
+#     │                                           `in @glue` — inheritance
+#     │                                           enacted; discharges
+#     │                                           glue_witnessing for
+#     │                                           LAPACK-class morphisms;
+#     │                                           Cholesky arc P3
+#     │                                           commit 1 of 3)
 #     └── @spectral/metalogue/tomm               spectral-altitude species
 #                                                (FORWARD-PROMISED via the
 #                                                 canonical spec at
@@ -253,17 +276,26 @@ in @uuid/spectral
 # product (per Mesland 2013 §3); the substrate-altitude form is
 # what @glue.compose declares.
 #
-# === No operational sibling THIS tick ===
+# === No operational sibling THIS tick (family-root landing) ===
 #
 # Per [[feedback-craft-not-deliver]] no `@glue/*` species sub-shard
-# or operational Rust sibling lands at this tick. The substrate
-# ALREADY has operational machinery at the species altitudes
-# (@spectral/metalogue/tomm at the spectral altitude, @cascade
-# species at the code-translation altitude, `437d061` at the
-# formal/prose altitude). This shard names the family-root
+# or operational Rust sibling lands at the family-root tick. The
+# substrate ALREADY has operational machinery at the species
+# altitudes (@spectral/metalogue/tomm at the spectral altitude,
+# @cascade species at the code-translation altitude, `437d061` at
+# the formal/prose altitude). This shard names the family-root
 # substrate-decl contract so downstream species can declare `in
 # @glue` and `requires glue_witnessing(my_correspondence)` rather
 # than re-state the morphism-category obligation per species.
+#
+# Roster update 2026-07-01: `@glue/math_silicon` (`5edd3e9`) is
+# the first @glue species landed AFTER the family-root admission —
+# the substrate-decl form of the math ↔ silicon Mesland
+# correspondence carrying LAPACK-class discharges. The species
+# imports `in @glue` enacting the inheritance edge and discharges
+# glue_witnessing for each translate; the Cholesky arc's second
+# and third commits (theorem shard + this roster update) close
+# the arc's substrate-decl side.
 #
 # === Pre-AI prior art ===
 #
