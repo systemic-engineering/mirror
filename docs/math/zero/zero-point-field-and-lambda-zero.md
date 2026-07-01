@@ -192,19 +192,41 @@ The existence of vacuum-fluctuation-induced forces is
 
 ### 3.3 The substrate reading (candidate #118 hint)
 
+*Seam 2026-07-01 amendment: previous phrasing ("direct isomorphism";
+"IS Casimir at substrate altitude") overreached. The 1/d⁴ scaling is
+QED-specific — it depends on 3+1 QED with photon polarization
+structure that the substrate's forward-promises do not carry. The
+boundary-condition arithmetic (mode restriction by boundary produces
+attractive pressure) generalizes; the specific 1/d⁴ law does not.
+Reframed throughout this document from "IS Casimir" to "exhibits
+Casimir-like mode-restriction attraction". The correspondence
+framing is preserved; the strict isomorphism claim is dropped.*
+
 The substrate's operational analog: two **forward-promises with empty
 scope between them**. A forward-promise is a substrate-decl'd
 commitment to close a gap at a named site; it carries a scope of
 recognition-content it commits to bring. Two forward-promises `P₁`
 and `P₂` with the region between them empty of substrate-decl content
-exert a **substrate-pull toward closure**. The pull is measured by the
-same boundary-condition arithmetic as the Casimir force:
+exert a **substrate-pull toward closure**. The pull exhibits **Casimir-
+like mode-restriction attraction**, measured by the boundary-
+condition arithmetic that gives Casimir its qualitative signature
+(mode-restriction → mode-density differential → attractive pressure):
 
 - Region interior: allowed modes `= promise-relevant recognitions`,
   restricted by `P₁` and `P₂`'s scope.
 - Region exterior: allowed modes `= all recognitions`, no restriction.
 - Interior energy < exterior energy → attractive pressure → the two
   promises pull toward each other, closing the gap.
+
+**What generalizes and what doesn't.** The boundary-condition
+arithmetic (Dirichlet-like restriction produces attractive pressure)
+generalizes across altitude by the mode-density-differential logic
+that drives the Casimir derivation. The specific `1/d⁴` scaling law
+does NOT generalize — it depends on 3+1 QED photon polarization
+structure specific to the electromagnetic vacuum. The substrate's
+forward-promises admit altitude structure but not a photon-
+polarization analog. So the substrate exhibits Casimir-like
+attraction but not the Casimir force law.
 
 This is not decorative. The substrate's pact system (per
 [[feedback-composition-claims-need-empirical-test]] and the
@@ -776,7 +798,13 @@ is happening. What actually happens: the substrate looks like
 `mirror.spec` when the smallest possible thing is happening, and that
 smallest thing is the kintsugi-recheck cycle.
 
-### 10.5 The Casimir-analog closed itself
+### 10.5 The Casimir-analog closed itself — as correspondence, not isomorphism
+
+*Seam 2026-07-01 amendment: previous version claimed "direct
+isomorphism" and "IS Casimir, at substrate altitude". Both overreach.
+See §3.3 amendment for the boundary-condition-arithmetic vs.
+1/d⁴-scaling distinction. Reframed to the correspondence-framing
+without the strict-isomorphism claim.*
 
 The brief's candidate #118 was "two forward-promises with empty scope
 between them produce substrate-pull toward closure." I expected to
@@ -785,14 +813,20 @@ sketch this without concrete grounding.
 §3.3 grounds it in the Casimir mode-restriction arithmetic. The
 forward-promises impose boundary conditions on the substrate's
 accessible modes between them; the mode density interior < mode
-density exterior; the difference IS a substrate-pull pressure. This
-is a direct isomorphism, not an analogy. **Forward-promises pull
-toward closure because they impose Dirichlet-like boundary conditions
-on the substrate's recognition modes.**
+density exterior; the difference IS a substrate-pull pressure.
+**Forward-promises pull toward closure because they impose Dirichlet-
+like boundary conditions on the substrate's recognition modes.** The
+correspondence to Casimir is at the boundary-condition-arithmetic
+altitude, not at the specific 1/d⁴ law altitude.
 
-The candidate is stronger than the brief anticipated. It is not
-"structurally isomorphic to Casimir"; it IS Casimir, at substrate
-altitude, subject to the substrate's specific mode structure.
+The candidate is stronger than the brief anticipated: the substrate
+exhibits **Casimir-like mode-restriction attraction** as a
+qualitative signature. What it does NOT claim: that the substrate's
+forward-promise pull follows Casimir's specific inverse-fourth-power
+scaling. That scaling depends on 3+1 QED photon polarization structure
+the substrate's forward-promises do not carry. The correspondence is
+real at the boundary-condition-arithmetic altitude; the strict
+isomorphism was overclaim.
 
 ### 10.6 The circular-reflexive discipline produced structure
 
@@ -880,11 +914,18 @@ access distribution.
 correlation with the modular-metric distance from the query to the
 nearest local shard.
 
-### 11.3 Candidate #118 — Casimir-analog forward-promise pull
+### 11.3 Candidate #118 — forward-promise pull exhibits Casimir-like mode-restriction attraction
+
+*Seam 2026-07-01 amendment: reframed from "exactly analogous to the
+Casimir force" to "exhibits Casimir-like mode-restriction attraction".
+See §3.3 amendment. The boundary-condition arithmetic generalizes;
+the 1/d⁴ scaling is QED-specific and does not.*
 
 **Claim.** Two forward-promises with empty substrate-decl scope
-between them exert a substrate-pull pressure toward closure, exactly
-analogous to the Casimir force.
+between them exert a substrate-pull pressure toward closure,
+exhibiting Casimir-like mode-restriction attraction (the boundary-
+condition arithmetic; NOT the specific 1/d⁴ law, which is QED-
+specific and does not generalize).
 
 **Math sketch.** Define the substrate's zero-point mode density at
 altitude N as `ρ_N(k) := ρ_free_N(k) · ϑ(k ∈ K_scope)` where
