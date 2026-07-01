@@ -345,7 +345,7 @@ fn usage() {
     merr!("  mirror <command> [args...]            (legacy subcommand surface)");
     merr!("  mirror '<mq-query>' < input           (mq pipeline over stdin)");
     merr!("  mirror <input> '<mq-query>'           (mq pipeline over input file)");
-    merr!("commands: compile [--strict] <file>, craft [--strict] [--target <crystal|binary>] <target>, kintsugi [--ci [--out @data/json|@data/mirror|@io/dir('path')]] [--shatter N] <file|dir>");
+    merr!("commands: compile [--strict] <file>, craft [--strict] [--target <crystal|binary>] <target>, kintsugi [--ci [--out @data/json|@data/mirror|@io/dir('path')]] [--shatter N] <file|dir>, init [--install-hooks] <repo-path>, recall <spec-dir>, spawn [--hello-world] <peer-home>");
     merr!("examples:");
     merr!("  cat mirror.ll | mirror '@code/llvm/ir |> @mirror/kintsugi |> @mirror/butterfly'");
 }
