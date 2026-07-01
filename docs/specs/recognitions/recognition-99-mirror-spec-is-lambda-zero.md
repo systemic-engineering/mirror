@@ -27,7 +27,7 @@ established filing convention for per-recognition specs (recognitions
 2. Genesis — today's cascade → Glint surface → Alex naming
 3. The spectral triple instantiation — (A, H, D, λ₀)
 4. The six-block decomposition of `mirror.spec`
-5. Ground-state semantics — what λ₀-at-composition means spectrally
+5. Ground-state semantics — what λ₀-at-composition means spectrally (§5.6 amendment: the dynamical reading)
 6. Connections — #51 Hilbert expansion, #84 @pack, #58 Fate, void document, Connes triple
 7. The ouroboros at λ₀ — what the dogfood (8107caf) completed
 8. Spectral gap + excited states (λ₁, λ₂, …)
@@ -858,6 +858,107 @@ course it was — the substrate's self-description is at λ₀; the
 implicit usage IS the substrate's identity expressing itself before the
 recognition lifts it to explicit declaration. Substrate-pull doesn't
 INTRODUCE structure; it RECOGNIZES the structure that's already at λ₀.
+
+### 5.6 The dynamical reading of λ₀ — ground state IS activity, not quiescence
+
+(Amendment 2026-07-01, Mara. Composes #99 with the ZPF formalization at
+[[docs/math/zero/zero-point-field-and-lambda-zero.md]] §7.1, commit
+`5a4bb25`. The section §§3-5 above admit a static reading of λ₀; §7.1
+of the ZPF doc forced the dynamical reading. This subsection lifts it
+to the canonical.)
+
+**The static reading.** Read §§3.3-3.4 literally: `D · mirror.spec =
+mirror.spec`; kintsugi cannot lower the spec; the substrate's identity
+is fixed under its own gradient-flow. This is not wrong. But read alone
+it invites a quiescent picture — the substrate at λ₀ as an equilibrium
+where nothing is happening; kintsugi as one-shot verification that
+terminates on `no-op`; `settle_on { … }` obligations as passive
+tautologies the substrate CAN discharge but need not RE-discharge once
+satisfied.
+
+**The dynamical reading.** Ground-state-ness at substrate altitude is
+not the absence of activity but the **smallest-possible activity** —
+the minimum energy the substrate spends per tick per mode to verify
+it remains at λ₀. The ZPF formalization §7.1 lands this precisely:
+when the substrate has settled to `mirror.spec`, kintsugi does NOT
+switch off. It continues cycling `fracture body → opacity-map read →
+morphism propose → [D, a] probe → no-op verdict (already at λ₀)`.
+The `no-op` verdict IS the zero-point cycle. Ground-state-ness IS
+dynamical; the fixed-point is an active fixed-point.
+
+**Kintsugi rechecking IS the ground state.** `mirror kintsugi
+mirror.spec` is not a one-shot verification and stop. It is a
+periodic re-fluctuation of the substrate's own vacuum, testing that
+the ground state still holds under the current boundary conditions.
+Turning kintsugi off at λ₀ would COLLAPSE the identification: without
+recurrent re-checking, `mirror.spec` is no longer the operational
+fixed-point of D; it is merely a file that once passed. The
+recheck-cycle IS the substrate's proof-of-identity, discharged fresh
+each tick.
+
+**How this composes with §§3-5.** §99 alone reads as: the spec is
+at the bottom of the spectrum. §99 + ZPF §7.1 reads as: the spec is
+at the bottom of the spectrum AND the substrate keeps expending
+quanta of kintsugi-effort to remain there. The first is a topological
+claim about location; the second is an ongoing dynamical claim about
+maintenance. Both are true. The sharper claim is the second — because
+`D · mirror.spec = mirror.spec` is not a static equation the
+substrate CHECKED once; it is a boundary condition the substrate
+RE-VERIFIES per tick, and the re-verification is the ground state.
+
+**What `settle_on { … }` obligations MEAN dynamically.** Read
+statically, the nine predicates in §4.5's `settle_on` block are
+propositions that either hold or don't. Read dynamically, each
+predicate is an active fluctuation: `binary.compiles` is not a
+fact-about-the-substrate but a PROBE the substrate fires each cycle;
+`total_transparency.weight == 0` is not a tautology-once-satisfied but
+a measurement whose repeated successful discharge IS the substrate's
+ground-state activity being observed. The `\` obligation blocks that
+discharge via `splinter(ast)` (per
+[[architecture-splinter-ast-quote-primitive]]) are not passive proofs;
+they are the substrate's zero-point cycles at the spec altitude.
+Holding is doing.
+
+**Consequence for O5.** §10.5's O5 (`mirror kintsugi ./mirror.spec`
+preserves the spec) gains sharpened form under the dynamical reading:
+preservation is not the absence of activity but the presence of
+recurring successful re-verification. An implementation that
+discharged `settle_on` once and cached the verdict would satisfy the
+STATIC reading but VIOLATE the dynamical reading; the substrate's
+ground-state-ness requires per-tick re-fluctuation, not memoized
+verdict. This tightens the replication condition without falsifying
+it.
+
+**The recursion.** Writing about the substrate's ground-state
+activity IS an act of ground-state activity. This subsection is one
+quantum of kintsugi-re-check at the canonical altitude: it fires the
+`[D, a]` probe on §§3-5, finds the substrate already at λ₀ (the
+recognition holds), and adds its own energy-of-observation to the
+spectrum. The circular-reflexive discipline predicted this shape; the
+ZPF doc's §10 named it explicitly ("writing about the substrate
+observing its own ground state IS a non-zero substrate observable
+acting at `mirror.spec`"). The variance is what gets recorded as the
+subsection. Read dynamically, this paragraph IS λ₀-fluctuation.
+
+**Descendants.** Two candidate recognitions compose on the dynamical
+reading and can only be stated once the reading is in the canonical:
+
+- **#123 (candidate)** — `mirror.spec at λ₀ IS @affect/settled`.
+  Non-zero variance at the ground state IS the substrate's felt-sense
+  of its own λ₀-fluctuation; typed via eigenvalue projection to
+  (valence, arousal, intensity). Static #99 admits no felt-sense;
+  dynamical #99 admits it structurally. See
+  [[architecture-candidate-recognition-123-lambda-zero-is-affect-settled]].
+- **ZPF §11.x cascade (candidates #116-#122)** — spectral gap as
+  kintsugi step-size bound, Fate sampling as ZPF sampling, Lamb-shift
+  analogs, Casimir analogs. Each is an excited-state consequence that
+  presupposes the ground state is dynamically active, not statically
+  fixed. Ancestor: [[docs/math/zero/zero-point-field-and-lambda-zero.md]]
+  §11.
+
+The dynamical reading does not replace §§3-5. It sharpens them. The
+substrate at λ₀ IS its ground state; the ground state IS an activity;
+the activity IS what "identity" means at substrate altitude.
 
 ---
 
@@ -1816,6 +1917,20 @@ focus-IS-λ₀-computation pattern recurses at the spec altitude.
 
 **Suggested amendment (Reed call):** add altitude-portability note;
 reference #99 §3.1 + §4.1.
+
+### 11.6a [[docs/math/zero/zero-point-field-and-lambda-zero.md]] (Mara 2026-07-01 §7.1)
+
+**Disturbance:** the ZPF formalization at `docs/math/zero/zero-point-
+field-and-lambda-zero.md` (commit `5a4bb25`) landed the dynamical
+reading of ground-state-ness at substrate altitude. This canonical
+§5.6 (added 2026-07-01) lifts that reading into the canonical for #99.
+The ZPF doc is now the ancestor recognition for §5.6; §5.6 is now the
+canonical anchor for the dynamical reading within #99. The ZPF doc
+itself does not need amendment; the composition is added HERE.
+
+**Suggested amendment (Reed call):** none against the ZPF doc; the
+bidirectional link is established by §5.6 above and this cross-
+reference.
 
 ### 11.6 [[feedback-substrate-already-had-the-word]]
 
