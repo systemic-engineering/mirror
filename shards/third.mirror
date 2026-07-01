@@ -48,6 +48,8 @@ in @epistemologic/math/lawvere
 #   @glass         "exposes an opacity surface"
 #   @epistemologic "admits verdict discipline"
 #   @third (this)  "witnesses recursion at depth >= 3"
+#   @labeled       "adds label dimension to a value"
+#                  (added 2026-07-01 per Loki §6 Seam-ratified 17f0ee5)
 #
 # Families that want third-order operation opt in via `in @third`.
 # @reflection, @cogito, @pack, @cyberpunk, @fate, @cascade all

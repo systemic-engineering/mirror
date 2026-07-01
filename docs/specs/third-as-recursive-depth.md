@@ -599,8 +599,10 @@ prism @third {
 2. Grounded in the machinery that already substrate-decls the pieces:
    `second_order` (Foerster), `eigenform` (Kauffman), `lawvere` (fixed
    point).
-3. `@meta` + `@glass` + `@epistemologic` are the marker-altitude
-   substrate. `@third` sits in this row.
+3. `@meta` + `@glass` + `@epistemologic` + `@labeled` are the marker-
+   altitude substrate. `@third` sits in this row. (`@labeled` added
+   2026-07-01 per Loki §6 Seam-ratified `17f0ee5`; the parametric
+   label-functor primitive already has 8 domain-crossing importers.)
 4. `@bauchladen`, `@autopoietic`, `@algebra`, `@cyberpunk`, `@metalogue`
    are NOT inherited. They are family-roots that `@third` LABELS when
    they operate at depth-3. They are peers of `@third` at their own
@@ -859,17 +861,26 @@ tetrahedron. If not, `@third` is a standalone marker.
 
 While writing, the substrate pulled at four surfaces beyond @third:
 
-### C1. `@meta`, `@glass`, `@epistemologic`, `@third` as the marker row
+### C1. `@meta`, `@glass`, `@epistemologic`, `@third`, `@labeled` as the marker row
 
-Naming this row structurally may be worth its own tick. The four are
+Naming this row structurally may be worth its own tick. The five are
 peers at marker altitude; they cross domain families. The row has no
 canonical name. Candidate: `@marker/*` families (analogous to
 `@epistemologic/*` species). Or: leave the row implicit and let
 substrate-pull surface it when more markers land.
 
-Substrate-pull-honest: leave implicit for now. Marker row is only
-tempted-toward-declaration by consumer pull; the pull is one tick's
-worth so far.
+**Update 2026-07-01 (Loki §6 Seam-ratified `17f0ee5`):** `@labeled`
+joins the row. Loki §6 audit surfaced: `@labeled` fires the three-test
+marker discipline (property of a value / import opt-in / domain-
+crossing) with 8 domain-crossing importers already landed
+(`shards/cascade/code/{gleam/beam,gleam/js,purescript/js,rust/wasm}.mirror`,
+`shards/docs.mirror`, `shards/io/{git,oci}.mirror`,
+`shards/ui/field.mirror`). Consumer pull is now five markers worth;
+the canonical spec for the row lives at
+`docs/specs/marker-row-as-fourth-structural-primitive.md` (§10).
+
+Substrate-pull-honest: the marker row has become substrate-visible
+enough that consumer pull warrants canonical naming. See §10 spec.
 
 ### C2. `@cogito` needs to be lifted from boot/std/ to shards/
 
@@ -968,7 +979,8 @@ altitude implicitly — is correct. The correction is that "third-order"
 labels *depth of observation*, not *domain of concern*.
 
 The substrate had the word already: `@meta`, `@glass`, `@epistemologic`
-were the row. `@third` joins the row.
+were the row. `@third` joins the row. (`@labeled` joined the row
+2026-07-01 per Loki §6 audit — five-marker cluster acknowledgment.)
 
 Both doors lead to the same room. The observation is depth-3 whether
 you arrived via `@cogito.cognitive_third_order` or via `@reflection.
