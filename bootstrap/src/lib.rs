@@ -3445,31 +3445,149 @@ fn cmd_spawn(peer_home: &str, hello_world: bool) -> i32 {
         // Piece-6-via-recall: structured observation without @fate
         // inference (b10f00c §2.6 substitution form). No subprocess;
         // piece 5 supervisor.start_child stays a named stub.
+        let cascade_val = recall_cascade(peer_home);
+        let pack_trail_val = recall_pack_trail(peer_home);
+        let pull_frontier_val = recall_pull_frontier(peer_home);
+        let dogfood_val = recall_dogfood(peer_home);
+
         let peer_recall = serde_json::json!({
             "spec_version":  "v0.1.0",
-            "cascade":       recall_cascade(peer_home),
-            "pack_trail":    recall_pack_trail(peer_home),
-            "pull_frontier": recall_pull_frontier(peer_home),
-            "dogfood":       recall_dogfood(peer_home),
+            "cascade":       cascade_val,
+            "pack_trail":    pack_trail_val,
+            "pull_frontier": pull_frontier_val,
+            "dogfood":       dogfood_val,
         });
+
+        // Phase H GREEN: content-addressed storage composition per
+        // Mara's @mirror/store/git species declaration (`1de09a9`) and
+        // Reed's RED brief (`88e82c8`). The composition mirrors
+        // cmd_init's discharge map (step 4-6): for each peer_recall
+        // payload + the spec source + the lead reference, splinter it
+        // into a content-addressed crystal, persist via
+        // insert_persistent, then compute root_oid = BLAKE3 over the
+        // sorted (name, oid) pairs and set_ref("HEAD", root_oid).
+        //
+        // Compatibility fallback (per RED brief): when peer_home is
+        // NOT a git repo, NamespacedGitStore::open returns NotAGitRepo.
+        // The existing spawn.rs (10) + composition_spawn_recall.rs (4)
+        // fixtures deliberately use a bare filesystem peer-home; skip
+        // persistence there and emit spec_oid: "uncommitted" as today
+        // so those tests continue to pass. spawn_storage.rs uses a
+        // git-init'd fixture that exercises the storage path.
+        //
+        // Do NOT auto-git-init inside cmd_spawn (heavier + wrong
+        // semantics per RED brief).
+        let peer_home_path = std::path::Path::new(peer_home);
+
+        // Compat gate (P2 recovery 2026-07-01): bare-filesystem peer-home
+        // fixtures (spawn.rs + composition_spawn_recall.rs) have no .git/
+        // directory. Empirical: fragmentation-git's NamespacedGitStore::open
+        // succeeds on non-git paths rather than returning NotAGitRepo. Gate
+        // on .git/ existence up-front to preserve the pre-Phase-H envelope
+        // shape (raw lead text + "uncommitted" spec_oid) for those fixtures.
+        let has_git_dir = peer_home_path.join(".git").is_dir();
+
+        let (spec_oid_value, lead_oid_value): (String, serde_json::Value) = if !has_git_dir {
+            (
+                "uncommitted".to_string(),
+                serde_json::Value::String(lead_str.clone()),
+            )
+        } else {
+            match fragmentation_git::namespaced::NamespacedGitStore::open(peer_home_path, "mirror")
+            {
+                Ok(store) => {
+                    // Payloads to content-address. Same primitive as
+                    // cmd_init: Splinter<Blake3>::new(Content::Text(...))
+                    // yields the OID; fragmentation::encoding::encode
+                    // yields the Fractal wire-carrier; insert_persistent
+                    // writes it under objects/.
+                    let cascade_json = cascade_val.to_string();
+                    let pack_trail_json = pack_trail_val.to_string();
+                    let pull_frontier_json = pull_frontier_val.to_string();
+                    let dogfood_json = dogfood_val.to_string();
+                    let payloads: [(&str, &str); 6] = [
+                        ("cascade", cascade_json.as_str()),
+                        ("pack_trail", pack_trail_json.as_str()),
+                        ("pull_frontier", pull_frontier_json.as_str()),
+                        ("dogfood", dogfood_json.as_str()),
+                        ("spec", source.as_str()),
+                        ("lead", lead_str.as_str()),
+                    ];
+
+                    let mut pairs: Vec<(String, String)> = Vec::with_capacity(payloads.len());
+                    let mut lead_oid_hex: String = String::new();
+                    for (name, payload) in payloads.iter() {
+                        let splinter: Splinter<Blake3> =
+                            Splinter::new(Content::Text(Text::new((*payload).to_string())));
+                        let oid_hex = init_blake3_oid_hex(splinter.oid().bytes());
+                        let fractal = fragmentation::encoding::encode(&(*payload).to_string());
+                        store.insert_persistent(
+                            format!("splinter:{}", oid_hex),
+                            fractal,
+                            payload.len(),
+                        );
+                        if *name == "lead" {
+                            lead_oid_hex = oid_hex.clone();
+                        }
+                        pairs.push(((*name).to_string(), oid_hex));
+                    }
+                    // Canonical sort (matches init_compute_root_oid's
+                    // BTreeMap-derived order in cmd_init).
+                    pairs.sort_by(|a, b| a.0.cmp(&b.0));
+                    let root_oid = init_compute_root_oid(&pairs);
+                    if let Err(e) = store.set_ref("HEAD", &root_oid) {
+                        merr!("spawn: set_ref(HEAD) failed: {}", e);
+                        return 1;
+                    }
+                    store.flush();
+                    (root_oid, serde_json::Value::String(lead_oid_hex))
+                }
+                Err(fragmentation_git::namespaced::NamespacedStoreError::NotAGitRepo(_)) => {
+                    // Retained as safety net; unreachable given the
+                    // has_git_dir gate above.
+                    ("uncommitted".to_string(), serde_json::Value::String(lead_str.clone()))
+                }
+                Err(e) => {
+                    merr!("spawn: cannot open namespaced store: {}", e);
+                    return 2;
+                }
+            }
+        };
+
+        // Composition-pieces status: real when storage composed;
+        // stubs preserved on the fallback path so the envelope
+        // continues to self-diagnose accurately.
+        let (piece_4, piece_5, piece_7): (&str, &str, &str) = if spec_oid_value == "uncommitted" {
+            (
+                "stub@N+1",
+                "stub@spectral/supervisor.start_child",
+                "stub@λ₀→runtime",
+            )
+        } else {
+            (
+                "real@lead-crystal",
+                "stub@spectral/supervisor.start_child",
+                "real@λ₀→runtime",
+            )
+        };
 
         let envelope = serde_json::json!({
             "spec_version": "v0.1.0",
             "spawn": "hello_world",
             "peer": peer_name,
             "home": peer_home,
-            "lead": lead_str,
+            "lead": lead_oid_value,
             "source": source_decl,
-            "spec_oid": "uncommitted",
+            "spec_oid": spec_oid_value,
             "excitation": "λ₀→runtime",
             "composition_pieces": {
                 "1_cli_surface":            "real",
                 "2_peer_resolution":        "real",
                 "3_contextual_pack":        "real",
-                "4_lead_at_n_plus_1":       "stub@N+1",
-                "5_supervisor_kick":        "stub@spectral/supervisor.start_child",
+                "4_lead_at_n_plus_1":       piece_4,
+                "5_supervisor_kick":        piece_5,
                 "6_fate_inference":         "partial@recall (no @fate; structured observation only)",
-                "7_lambda_zero_transition": "stub@λ₀→runtime",
+                "7_lambda_zero_transition": piece_7,
             },
             "peer_recall": peer_recall,
         });

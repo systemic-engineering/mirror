@@ -131,10 +131,16 @@ pre-commit:
         echo "  (recognition #53 second instance: @kintsugi/fracture/gate applied at @io)"
         exit 0
     fi
-    # Rust closure non-empty: run the substrate-native settlement chain unchanged.
-    just build
-    {{MIRROR_BIN_RELEASE}} kintsugi mirror.spec | tee /tmp/mirror-spec-verdict.mirror
-    {{MIRROR_BIN_RELEASE}} kintsugi --out=@data/json mirror.spec > /tmp/mirror-spec-verdict.json
+    # Rust closure non-empty: run the substrate-native settlement chain.
+    # Speed-up per Taut scout 2026-07-01 Win 1: use debug profile
+    # (build-debug + MIRROR_BIN_DEBUG). Bootstrap binary here only runs
+    # mirror.spec kintsugi locally; optimization buys zero extra signal.
+    # `just install` still uses --release for the shipped artifact.
+    # Saves 30-60s per commit. JSON gate retained for verdict fidelity
+    # (Win 3 grep-based gate deferred; needs care around dark verdicts).
+    just build-debug
+    {{MIRROR_BIN_DEBUG}} kintsugi mirror.spec | tee /tmp/mirror-spec-verdict.mirror
+    {{MIRROR_BIN_DEBUG}} kintsugi --out=@data/json mirror.spec > /tmp/mirror-spec-verdict.json
     jq -e '.verdict != "failure"' /tmp/mirror-spec-verdict.json > /dev/null || ( \
         echo "✖ mirror kintsugi mirror.spec: verdict failure — see /tmp/mirror-spec-verdict.mirror" >&2; \
         exit 1 )
