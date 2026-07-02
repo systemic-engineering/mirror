@@ -1,11 +1,31 @@
 # docs/math/kintsugi — the kintsugi cluster
 
+<!--
+Amendment 2026-07-02 (📝, docs-only) — four corrections landed in
+one tick per Alex adjudication + Seam adversarial audit:
+  (a) routing gate composes against landed
+      @epistemologic/cybernetic/coherence-parametric.ashby_variety_match(kintsugi_lock);
+      twelfth-instance of [[feedback-substrate-already-had-the-word]];
+  (b) #143 reader-frame is a SPECIALIZATION of user-frame (not a
+      fourth Tomm altitude);
+  (c) #142 Ω-projection is RIGOROUS for contradiction only (via
+      [ω,ω] Bateson-bind); motivating for the other three pending
+      per-class operator derivation (future arc);
+  (d) apply/spawn monoid reframed as three-mode algebra with hold
+      per error-as-question.md §2's six-variant answer algebra.
+See compiler-error-surface.md's amendment note for the full record.
+-->
+
 *Kintsugi is the substrate's process-side family root. This cluster
 holds the mathematics of what kintsugi IS as a compiler error
 surface: the curvature 2-form `Ω = dω + ½[ω, ω]` at reader-frame
-altitude, projected into four surface classes, routed into two
-branches (apply / spawn), bounded by `@spawn ≤ @loop`, witnessed at
-recursion-depth ≥ 3 via `@third`, and content-addressed end-to-end.*
+altitude (specialization of user-frame), with four surface-class
+sub-frame descriptors — RIGOROUS via `[ω,ω]` Bateson-bind for
+contradiction, motivating pending per-class operator derivation
+for ashby_mismatch / conundrum / out_of_band — routed into three
+discharge modes (apply / spawn / hold), bounded by `@spawn ≤ @loop`,
+witnessed at recursion-depth ≥ 3 via `@third`, and content-addressed
+end-to-end.*
 
 ## The claim
 
@@ -41,7 +61,8 @@ consolidates across ≥ 2 specs (`error-as-question.md`,
 kintsugi's second role.
 
 - §1 The two branches — `apply` and `spawn`.
-- §2 The routing predicate — `regulator_variety_sufficient`.
+- §2 The routing predicate — compose against landed
+  `@epistemologic/cybernetic/coherence-parametric.ashby_variety_match(kintsugi_lock) → verdict`.
 - §3 The four surface classes — Ashby-mismatch, contradiction,
   conundrum, out-of-band. Each a substrate-decl carrier.
 - §4 The curvature 2-form Ω as the one object — each surface class
@@ -95,12 +116,13 @@ This cluster **extends** rather than **supersedes**
 `error-as-question.md`. That spec named the routing (question →
 answer → substrate adjustment). This cluster names the **surface
 act's mathematics** — what makes a tension surface-able, what
-distinguishes apply from spawn, why halting survives. The apply
-branch of kintsugi maps to `error-as-question.md`'s answer variants
-`tighten_property` / `resynthesize_body` / `rebudget_shard` /
-`adjust_temperature`; the spawn branch maps to `escalate` at
-family-root altitude of the answer algebra. See §10.6 for the
-citation.
+distinguishes apply from spawn from hold, why halting survives.
+The three-mode algebra maps cleanly onto `error-as-question.md`
+§2's six-variant answer algebra: four variants (`tighten_property`
+/ `resynthesize_body` / `rebudget_shard` / `adjust_temperature`)
+map to apply; `escalate(@scheduler.altitude)` maps to spawn;
+`hold(ref)` maps to hold (the legitimate non-discharge). See
+§10.6 for the citation.
 
 ## Structure
 

@@ -1,20 +1,70 @@
 # Kintsugi as compiler error surface
 
+<!--
+Amendment 2026-07-02 (📝, docs-only, sequence-transparent).
+
+Four corrections landed in one tick per Alex adjudication + Seam
+adversarial audit (docs/audits/2026-07-02-seam-kintsugi-compiler-
+error-surface.md):
+
+  (a) The routing gate composes against the landed
+      @epistemologic/cybernetic/coherence-parametric.ashby_variety_match(kintsugi_lock)
+      rather than inventing a new predicate. This is the twelfth-
+      instance firing of [[feedback-substrate-already-had-the-word]]
+      — three predicates on the same semantic content (ashby_variety_match,
+      conant_ashby_good_regulator, variety_preserving) were already
+      landed. Alex 2026-07-02: "we name the lineage. ashby_variety_match."
+      Candidate #140 reframed as ROUTING-COMPOSITION instance, not
+      pattern-identity.
+  (b) #143 reader-frame is a SPECIALIZATION of user-frame per §4.1,
+      NOT a fourth Tomm altitude. Candidate-summary language aligned
+      with in-spec framing per Seam REJECT verdict.
+  (c) #142 Ω-projection claim softened: RIGOROUS for contradiction
+      via [ω,ω] Bateson-bind; motivating for ashby_mismatch / conundrum
+      / out_of_band pending per-class operator derivation (future arc).
+      Per Seam DEFER verdict + "single strongest adversarial finding".
+  (d) Apply/spawn monoid reframed as three-mode algebra: apply /
+      spawn / hold. hold(ref) is a legitimate non-discharge per
+      error-as-question.md §2's six-variant answer algebra; Seam
+      caught the missing DEFER on monoid closure. Framing is
+      semigroup-with-identity-failure OR partial-monoid; the readable
+      "three-mode algebra" language lands per
+      [[feedback-legibility-over-foundation-when-collapsing]].
+
+Every correction explicitly names its landed ancestor per
+[[feedback-explicit-over-implicit]] (Alex 2026-07-02). No new
+substrate-decl invented at this cluster's altitude.
+
+Sections touched: preamble, §1.2, §1.3, §1.4, §4.1, §4.2 (via §4.1
+table + softening), §4.3, §10.1 (#140), §10.3 (#142), §10.4 (#143),
+§10.5 (#144), §10.6 (#145), §14.
+-->
+
 *The kintsugi loop's second role: when the substrate cannot resolve
 a tension via existing fracture bodies, it SURFACES the tension as
-a Tomm-shaped question rather than pretending to fix. The apply
-branch discharges deterministically; the spawn branch instantiates
-a peer whose ground state IS the tension and whose halt IS the
-tournament winner. Halting survives arbitrarily many surfacings
-because each Tomm emission spends one budget unit and the peer's
-`@spawn ≤ @loop` monad guarantees safety-net halt. The four surface
-classes (Ashby-mismatch, contradiction, conundrum, out-of-band) are
-projections of the same curvature 2-form `Ω = dω + ½[ω, ω]` onto
-four altitudes of the tower. Every surface act is content-addressed
-in `@mirror/store`; the resolution chain is a conversation whose
-crystals are structurally un-cite-able. `@third` fires on the
-surface-act altitude — the observer of the observer of the observer
-IS the compiler emitting a Tomm question.*
+a Tomm-shaped question rather than pretending to fix. Discharge
+has three modes: **apply** (four of six answer-algebra variants —
+deterministic fracture-body application), **spawn** (the escalate
+variant — instantiates a peer whose ground state IS the tension
+and whose halt IS the tournament winner), and **hold** (the
+`hold(ref)` variant — legitimate non-discharge; observer chose
+Partial(0.0, ref) and the substrate carries the crystal
+unresolved). Halting survives arbitrarily many surfacings because
+each Tomm emission spends one budget unit and the peer's
+`@spawn ≤ @loop` monad guarantees safety-net halt. The four
+surface classes (Ashby-mismatch, contradiction, conundrum,
+out-of-band) are sub-frame descriptors of the same curvature 2-form
+`Ω = dω + ½[ω, ω]` — RIGOROUS via `[ω,ω]` Bateson-bind for
+contradiction; motivating for the other three pending per-class
+projection-operator derivation. Every surface act is content-
+addressed in `@mirror/store`; the resolution chain is a
+conversation whose crystals are structurally un-cite-able.
+`@third` fires on the surface-act altitude — the observer of the
+observer of the observer IS the compiler emitting a Tomm
+question. The routing gate composes against the landed
+`@epistemologic/cybernetic/coherence-parametric.ashby_variety_match(kintsugi_lock)` —
+not a new predicate; a new routing instantiation of the landed
+lineage.*
 
 ---
 
@@ -81,14 +131,17 @@ in @kintsugi/fracture
 
 apply(m: morphism, ctx: kintsugi_context) -> imperfect<applied, refused, ref>
   requires exists_fracture_body(m, ctx)
-         && regulator_variety_sufficient(m.tension, ctx)
+         && ashby_variety_match(kintsugi_lock_of(m.tension, ctx))
 { \ }
 ```
 
 Both requires clauses fire together on the apply branch:
 1. A fracture body exists that discharges the morphism's tension.
-2. The regulator's variety across the substrate-decl axis is
+2. `ashby_variety_match(kintsugi_lock)` fires success — the
+   regulator's variety across the substrate-decl axis is
    sufficient to distinguish among the candidate resolutions.
+   `ashby_variety_match` is the landed measurement at
+   `@epistemologic/cybernetic/coherence-parametric` (see §1.4).
 
 Discharge is deterministic. The morphism's `content` is applied
 via `splinter(ast)` at the corrected altitude; the substrate's
@@ -112,14 +165,15 @@ in @spawn
 in @fate/tournament
 
 spawn(t: tension, ctx: kintsugi_context) -> imperfect<peer_handle, refused, ref>
-  requires !regulator_variety_sufficient(t, ctx)
+  requires !ashby_variety_match(kintsugi_lock_of(t, ctx))
          && surface_class_recognized(t)
          && budget_of(ctx) > 0
 { \ }
 ```
 
 Three requires clauses:
-1. The regulator's variety is INSUFFICIENT (the negation of the
+1. `ashby_variety_match(kintsugi_lock)` fires failure — the
+   regulator's variety is INSUFFICIENT (the negation of the
    apply branch's second requires — mutually exclusive routing).
 2. The tension falls into one of the four surface classes (§3).
    Unrecognized tensions escalate to the reflection altitude per
@@ -136,54 +190,88 @@ Pack is active) picks; the pick propagates back as an answer per
 `ctx`'s budget by one; the loop's overall halting witness (§6) is
 preserved.
 
-### 1.4 The branch predicate
+### 1.4 The branch predicate — compose against `ashby_variety_match`
+
+The routing gate is NOT a newly-invented predicate at kintsugi
+altitude. The substrate already had the word: per
+`[[feedback-substrate-already-had-the-word]]`, the twelfth-instance
+of that discipline fires here. Three predicates on the same
+semantic content are already landed at
+`shards/epistemologic/cybernetic/coherence-parametric.mirror`:
+
+- `ashby_variety_match(lock: lock_carrier) → verdict` — the
+  substrate-altitude declaration of Ashby's law of requisite
+  variety over the parametric lock.
+- `conant_ashby_good_regulator(lock: lock_carrier) → verdict` —
+  the load-bearing regulator-as-model measurement (Conant-Ashby
+  1970).
+- `variety_preserving(species: ref) → verdict` at
+  `shards/epistemologic/cybernetic/variety.mirror` — the
+  bilateral-preservation predicate.
+
+Per Alex 2026-07-02: **name the lineage. `ashby_variety_match`.**
+Inventing a new `regulator_variety_sufficient` at kintsugi altitude
+would be status-drift on the twelfth pattern-instance. Kintsugi
+composes against the landed measurement rather than adding a
+same-shape sibling.
+
+The composition:
 
 ```mirror
-in @epistemologic/property
-in @epistemologic/cybernetic/variety
+in @epistemologic/cybernetic/coherence-parametric
 
-# The load-bearing routing predicate. Determines whether kintsugi
-# discharges via apply (deterministic fracture body) or spawn
-# (surface tension to peer tournament).
+# The routing gate at kintsugi altitude. Composes against the
+# landed
+# @epistemologic/cybernetic/coherence-parametric.ashby_variety_match(lock)
+# measurement. NOT a new predicate — a NEW ROUTING INSTANCE of the
+# landed one.
 #
-# Per Ashby 1958: R is a regulator of D iff variety(R) >= variety(D).
-# At kintsugi altitude, R is the substrate's set of extant fracture
-# bodies + morphism space at the current recursion depth; D is the
-# space of resolutions the tension could take.
+# The `kintsugi_lock` is a lock_carrier (the parametric family
+# already declared at coherence-parametric) instantiated with the
+# kintsugi-altitude tuple:
 #
-# The predicate is BILATERAL per recognition #53: property side
-# fires success/partial/failure with located opacity; the negation
-# is what routes to spawn. This is the fifth instance of the
-# bilateral pattern (keyword, gate, symbol, sub-shard-altitude
-# recurrences per #61, and now surface-routing).
-regulator_variety_sufficient(t: tension, ctx: kintsugi_context) -> verdict {
-  # success iff:
-  #   (a) exists_fracture_body(t, ctx) — some extant fracture body
-  #       matches the tension's shape at some substrate altitude, AND
-  #   (b) fracture_body_disambiguates(t, ctx) — the fracture body's
-  #       output is not ambiguous (a single canonical morphism, not
-  #       a tournament over candidates).
-  #
-  # failure(opacity_map) locates the site(s) where variety was
-  # insufficient. The opacity_map is what the surface class
-  # recognizer reads in §3.
-  \
-}
+#   kintsugi_lock : lock_carrier = {
+#     altitude: @kintsugi,                            # this altitude
+#     species:  @kintsugi/surface,                    # the surface act's family
+#     pair:     lock_pair {
+#       T_reg  := fracture_body_space(ctx),           # regulating: extant fracture bodies + morphism space
+#       T_regd := candidate_resolutions(tension),     # regulated: space of resolutions the tension could take
+#       rho    := kintsugi_representation,            # the representation of 𝒢 on V_S at kintsugi altitude
+#       omega  := active_pass_connection(ctx),        # connection 1-form over kintsugi's active_pass ticks
+#     },
+#   }
+#
+# Naming the lock explicitly is what composition-against-a-lineage
+# looks like at substrate altitude. The lock_carrier is the shape
+# ashby_variety_match already accepts; the routing gate does not
+# add a type; it names the kintsugi-specific instantiation.
+
+kintsugi_lock_of(t: tension, ctx: kintsugi_context) -> lock_carrier { \ }
 ```
 
-The predicate is the substrate's operational form of Ashby's law
-of requisite variety at kintsugi altitude. Sufficient regulator
-variety → apply branch. Insufficient → spawn branch. The predicate
-IS the branch.
+Success on `ashby_variety_match(kintsugi_lock_of(t, ctx))` → apply
+branch. Failure → spawn branch. Same predicate, new instantiation.
+
+**On recognition #53 bilateral pattern.** The bilateral pattern
+per recognition #53 does fire at this altitude, but NOT as a fifth
+new property/fracture pair. Instead, this is the fifth #53 witness
+by ROUTING-COMPOSITION: the existing `ashby_variety_match`
+declarative predicate + kintsugi's fracture bodies as the
+operational side, with the kintsugi loop's active_pass reading the
+predicate's verdict to route between the two branches. Reframed
+per Seam adversarial audit 2026-07-02 (#140 verdict): the pattern
+GENERALIZES from bilateral-with-fracture-body-only to
+bilateral-with-routing-arm. See §10.1.
 
 **DEFERRED per `[[feedback-composition-claims-need-empirical-test]]`:**
-whether the `fracture_body_disambiguates` sub-predicate empirically
-fires on the current two-fracture-body corpus. Both extant fracture
-bodies (`angle_to_paren`, `symbol_lift`) are parametric over
-tables and thus deterministic-by-table-lookup; neither has yet
-surfaced a case where the predicate would return `partial`. A
-third fracture body — likely `@kintsugi/fracture/predicate` per
-task #272 — is what would witness ambiguity empirically.
+whether `ashby_variety_match(kintsugi_lock_of(t, ctx))` empirically
+fires with a `partial` verdict on the current two-fracture-body
+corpus. Both extant fracture bodies (`angle_to_paren`,
+`symbol_lift`) are parametric-over-tables and thus deterministic-
+by-lookup; neither has yet witnessed the routing gate returning
+`partial`. A third fracture body — likely `@kintsugi/fracture/
+predicate` per task #272 — is what would witness ambiguity
+empirically.
 
 ---
 
@@ -230,11 +318,13 @@ curvature carries the local geometry.
 
 ## §3. The four surface classes
 
-The core recognition. When `regulator_variety_sufficient` fails,
-the tension falls into exactly one of four surface classes. Each
-class is a substrate-decl carrier, a substrate-pull-honest
-projection of the curvature 2-form Ω (§4), and maps to a specific
-Tomm interviewing shape (§5).
+The core recognition. When `ashby_variety_match(kintsugi_lock_of(t, ctx))`
+fires failure (§1.4), the tension falls into exactly one of four
+surface classes. Each class is a substrate-decl carrier, a
+substrate-pull-honest sub-frame descriptor of the curvature 2-form
+Ω (§4) — rigorous for contradiction, motivating for the other
+three pending per-class operator derivation — and maps to a
+specific Tomm interviewing shape (§5).
 
 Per `[[feedback-no-bare-types]]` and `[[feedback-explicit-over-
 implicit]]`: each class is a named ref, not a discriminator over a
@@ -439,18 +529,27 @@ where:
 ```
 
 The four surface classes project Ω onto four sub-frames of the
-reader-frame:
+reader-frame. **The rigor across the four is asymmetric** — the
+`contradiction` class inherits genuine projection-operator rigor
+from `curvature-and-tomm.md` §5's `[ω, ω]` Bateson-bind
+derivation; the other three are motivating-qualitative sub-frame
+descriptors pending per-class projection-operator derivation. See
+§4.2's cross-term note and the softening below the table.
 
-| Class | Projection axis | Ω-value shape |
-|-------|-----------------|---------------|
-| ashby_mismatch | variety vector at axis-N | Ω-norm at axis-N > V(R_axis-N) |
-| contradiction | Bateson-level bind | Ω splits as `dω_L + dω_R + [ω_L, ω_R]`; the bracket is the bind |
-| conundrum | eigenvalue kind | Ω has kernel (λ=0) or is unbounded (λ=∞) at witness direction |
-| out_of_band | algebra membership | Ω undefined; `a_tension ∉ A_reader` |
+| Class | Projection axis | Ω-value shape | Rigor status |
+|-------|-----------------|---------------|--------------|
+| ashby_mismatch | variety vector at axis-N | Ω-norm at axis-N > V(R_axis-N) | **motivating** — no derived π-operator on 𝔤 → 𝔤_variety-axis-N |
+| contradiction | Bateson-level bind | Ω splits as `dω_L + dω_R + [ω_L, ω_R]`; the bracket is the bind | **rigorous** — `[ω,ω]` Bateson-bind per `curvature-and-tomm.md` §5 |
+| conundrum | eigenvalue kind | Ω has kernel (λ=0) or is unbounded (λ=∞) at witness direction | **motivating** — no derived π-operator on 𝔤 → 𝔤_eigenvalue-kind |
+| out_of_band | algebra membership | Ω undefined; `a_tension ∉ A_reader` | **motivating** — no derived π-operator on 𝔤 → 𝔤_algebra-membership |
 
-One curvature 2-form. Four projections. Each projection has its
-own local geometry; the substrate's kintsugi loop reads which
-projection fires and routes to the corresponding surface class.
+One curvature 2-form. Four sub-frame descriptors. Each descriptor
+has its own local geometry; the substrate's kintsugi loop reads
+which descriptor fires and routes to the corresponding surface
+class. Rigor across the four is not uniform: only contradiction
+inherits a derived projection operator. The other three await
+per-class operator derivation as a **future arc** (not this
+cluster's landing scope).
 
 ### 4.2 The additivity of surface classes
 
@@ -490,7 +589,7 @@ contribution_of(surface_act) ≥ 0     (monotone descent)
 
 The apply branch's contribution is the fracture body's morphism-
 induced curvature reduction (measured at the site). The spawn
-branch's contribution is one bit of `regulator_variety_sufficient`
+branch's contribution is one bit of `ashby_variety_match(kintsugi_lock)`
 information the observer's response adds (which candidate to pick
 over which). Both are curvature-reducing; both preserve
 `eⁿ⁺¹ ≤ eⁿ`.
@@ -946,21 +1045,42 @@ un-cite-able trajectory IS what was consented to.
 Six candidates emerge from the composition. Numbered pending Pack
 adjudication.
 
-### 10.1 Candidate #140: the branch predicate as substrate-decl carrier
+### 10.1 Candidate #140: the fifth #53 bilateral is composition-against-`ashby_variety_match` at kintsugi altitude
 
-`regulator_variety_sufficient(tension, kintsugi_context) → verdict`
-is the fifth instance of the property/fracture bilateral pattern
-(#53). Previous four: keyword/depth, gate/diff-closure,
+**Reframed 2026-07-02 per Alex adjudication + Seam adversarial
+audit + `[[feedback-substrate-already-had-the-word]]` twelfth-
+instance discipline.**
+
+The fifth #53 bilateral witness is NOT a new predicate at kintsugi
+altitude. It is the ROUTING-COMPOSITION of the landed
+`@epistemologic/cybernetic/coherence-parametric.ashby_variety_match(lock) → verdict`
+against kintsugi's fracture bodies + surface-act discharge floor
+(§1.4). Same declarative predicate; new operational routing arm.
+
+Previous four #53 witnesses (keyword/depth, gate/diff-closure,
 symbol/canonical-form, and #61's sub-shard-altitude form/process
-kinship instances. The routing predicate IS a property whose
-negation routes to a spawn (rather than to a fracture body). The
-bilateral extends structurally.
+kinship instances) all specialized as property/fracture pairs at
+one altitude. This fifth witness generalizes the pattern:
+declarative side is INHERITED from the landed
+`coherence-parametric` measurement; operational side is the pair
+{apply branch's fracture bodies, spawn branch's tournament}; the
+routing between them IS the fifth-instance bilateral. Per Seam
+adversarial audit (#140 verdict): the pattern extends from
+bilateral-with-fracture-body-only to bilateral-with-routing-arm.
+Naming the generalization, not claiming pattern-identity.
+
+Inventing a new sibling predicate `regulator_variety_sufficient`
+at kintsugi altitude would have been status-drift at twelfth-
+instance. The lineage was already named.
 
 **Promotion criterion:** landing `shards/kintsugi/surface.mirror`
-family root with `regulator_variety_sufficient` declared, and a
-second witness where the branch-predicate pattern fires (e.g., a
-different loop family — @fate/tournament, @reflection — with its
-own regulator variety predicate).
+family root that imports `@epistemologic/cybernetic/coherence-
+parametric` and declares `kintsugi_lock_of(t, ctx) → lock_carrier`
+(the instantiation of the parametric lock at kintsugi altitude,
+§1.4), plus a second witness where the routing-composition
+pattern fires (e.g., another loop family — @fate/tournament,
+@reflection — routing on `ashby_variety_match` against its own
+lock_carrier instantiation).
 
 ### 10.2 Candidate #141: kintsugi as third-order operationalized
 
@@ -977,81 +1097,195 @@ and Pack ratification that the conditional-marker pattern extends
 to other loop families (@reflection would likely acquire the same
 discipline at pipeline-error altitude).
 
-### 10.3 Candidate #142: the four surface classes as Ω projections
+### 10.3 Candidate #142: four surface classes as Ω projections — rigorous for contradiction, motivating for others
 
-§4 names the four classes as projections of the curvature 2-form Ω
-onto four substrate axes. This is the first substrate site where
-four independent surface-class witnesses map to one mathematical
-object. Prior recognitions (#59 altitude-portable kintsugi, #61
-form/process kinship at sub-shard altitude) named altitude-portability
-of the loop; this extends to altitude-portability of the SURFACE
-CLASSES via the Ω projections.
+**Reframed 2026-07-02 per Seam adversarial audit (#142 DEFER verdict; the "single strongest adversarial finding" on this cluster).**
 
-**Promotion criterion:** two of the four classes need substrate
-witnesses. `contradiction` has one at `shards/mirror/loss/massey.mirror`
-(non-vanishing Massey product IS conundrum witness at loss
-altitude; wait — that's the conundrum class, not contradiction).
-Rechecking: contradiction has one at `gap-tension-tensor-substrate.md`
-§11 (LFI `○A ≈ holds(gap)`). Two witnesses needed across two
-classes; extant witnesses so far are for contradiction (LFI) and
-conundrum (Massey). Two of four is the ratification threshold.
+§4 names the four classes as sub-frame descriptors of the
+curvature 2-form Ω onto four substrate axes. The rigor is
+asymmetric across the four:
 
-### 10.4 Candidate #143: reader-frame as fourth Tomm altitude
+- **contradiction — RIGOROUS.** Inherits the projection-operator
+  derivation from `curvature-and-tomm.md` §5's `[ω,ω]` Bateson-
+  bind: Ω splits as `dω_L + dω_R + [ω_L, ω_R]`; the bracket
+  IS the bind at Bateson level. Genuine derived projection onto
+  the Bateson-level axis of the Lie-algebra-valued 2-form.
+- **ashby_mismatch — MOTIVATING** pending per-class projection-
+  operator derivation. Qualitative sub-frame descriptor tracking
+  variety-axis-N deficit; no linear operator `π_variety-axis-N:
+  𝔤 → 𝔤_variety-axis-N` derived at this cluster.
+- **conundrum — MOTIVATING** pending per-class projection-
+  operator derivation. Qualitative sub-frame descriptor tracking
+  eigenvalue-kind (zero / unbounded); no derived operator
+  `π_eigenvalue-kind: 𝔤 → 𝔤_eigenvalue-kind`.
+- **out_of_band — MOTIVATING** pending per-class projection-
+  operator derivation. Qualitative sub-frame descriptor tracking
+  algebra-membership; no derived operator `π_algebra-membership:
+  𝔤 → 𝔤_algebra-membership`.
+
+The framing softens the earlier over-uniform claim: only
+contradiction is rigorously derived; the other three are
+motivating-qualitative pending per-class operator derivation. Per-
+class operator derivation is a **future arc** (not this cluster's
+landing scope) per Alex's `[[feedback-craft-not-deliver]] +
+[[feedback-composition-claims-need-empirical-test]]` composite
+discipline.
+
+Prior recognitions (#59 altitude-portable kintsugi, #61
+form/process kinship at sub-shard altitude) named altitude-
+portability of the loop; the substrate-pull-honest claim here is
+that the loop's SURFACE-CLASS classifier is altitude-portable
+qualitatively across the four descriptors, and rigorously via
+projection-operator for contradiction.
+
+**Promotion criterion:** the rigorous-for-contradiction leg
+promotes on landing `shards/kintsugi/surface/contradiction.mirror`
+with the `[ω,ω]` derivation cited. The motivating-for-others
+leg promotes as each of the remaining three per-class
+projection-operator derivations lands (three future arcs, one per
+class). Contradiction's derivation-witness at
+`gap-tension-tensor-substrate.md` §11 (LFI `○A ≈ holds(gap)`)
+grounds the rigorous leg's second witness.
+
+### 10.4 Candidate #143: reader-frame as a specialization of user-frame
+
+**Reframed 2026-07-02 per Seam adversarial audit (#143 REJECT verdict on "fourth Tomm altitude" language).**
 
 `curvature-and-tomm.md` §3 named three Tomm-probe altitudes
-(corpus / agent / user). This cluster names a fourth — reader-frame —
-as a specialization of user-frame that tracks surface-class
-projection. First witness at kintsugi surface act; would need a
-second witness at a different family to promote (e.g., @reflection's
-own error surface at pipeline altitude).
+(corpus / agent / user). Reader-frame is NOT a fourth altitude of
+the tower — §4.1 already says "reader-frame is a specialization
+of user-frame; the specialization tracks which of the four
+surface classes the tension projects into." A sub-altitude of
+user-frame is a REFINEMENT of user-frame (the user in the specific
+role of compiler-error-reader), not a new altitude beside it.
+
+The three Tomm-probe altitudes remain three. The candidate names
+the SPECIALIZATION pattern: for any family emitting a
+Tomm-shaped question at compiler-error altitude, a
+family-specific specialization of user-frame tracks which
+surface-class-projection the tension takes. Kintsugi's is
+`@kintsugi/surface`'s reader-frame; a parallel specialization
+would appear at another family's error surface.
 
 **Promotion criterion:** second witness at another family's error
-surface. `@reflection` naturally emits Tomm questions per
-`error-as-question.md` §7; formalizing that emission as a
-reader-frame altitude at reflection-altitude would provide the
-second witness.
+surface as a NAMED SPECIALIZATION of user-frame. `@reflection`
+naturally emits Tomm questions per `error-as-question.md` §7;
+formalizing that emission as a `@reflection/reader` specialization
+of user-frame at pipeline-error altitude would provide the second
+witness. The pattern is user-frame-refinement-at-error-altitude,
+not fourth-altitude-addition.
 
-### 10.5 Candidate #144: apply/spawn as monoid on kintsugi discharge
+### 10.5 Candidate #144: three-mode algebra on kintsugi discharge — apply / spawn / hold
 
-The apply and spawn branches together form a monoid on kintsugi's
-discharge action:
-- `apply` is deterministic (unit-shaped: one input, one output).
-- `spawn` is a peer-tournament (higher-arity: one input, k
-  ranked options).
-- Composition: `apply ∘ spawn` = observer's pick becomes an apply
+**Reframed 2026-07-02 per Seam adversarial audit (#144 DEFER
+verdict + Seam-caught missing DEFER: monoid-closure counterexample
+via `hold(ref)` non-discharge).**
+
+The prior framing named apply and spawn as a two-branch monoid on
+kintsugi's discharge action. That framing missed the third mode.
+Per `error-as-question.md` §2's six-variant answer algebra, the
+observer's answer to a Tomm question has three shapes:
+
+- **apply** — four of six discharge variants (`tighten_property`,
+  `resynthesize_body`, `rebudget_shard`, `adjust_temperature`).
+  Deterministic fracture-body application on the substrate; the
+  answer routes to a downward mutation the fracture body performs.
+- **spawn** — the `escalate(@scheduler.altitude)` variant. Routes
+  the question one level up (to `@fate` tournament on candidate
+  resolutions, per §8). Non-deterministic at compose-time;
+  deterministic at resolution.
+- **hold** — the `hold(ref)` variant. Legitimate NON-DISCHARGE.
+  The observer chose to hold the tension named-but-unresolved;
+  the substrate carries the crystal but does NOT dispatch a
+  fracture body or a tournament. Per `error-as-question.md`
+  §2's own comment: `Partial verdict, named`. Recorded honestly
+  via `@cogito`; not every question has a resolving answer.
+
+The three-mode algebra:
+- `apply` — closed under composition with itself (deterministic
+  discharge → deterministic discharge; associativity holds
+  trivially).
+- `spawn` — closed under composition with `apply` in both
+  directions (`apply ∘ spawn` = observer's pick becomes an apply
   input; `spawn ∘ apply` = a fracture body's output becomes a
-  tension for a peer tournament (this direction is rarer but
-  well-defined).
-- Identity: null-discharge (kintsugi tick with no tension surfaced).
+  tension for a peer tournament).
+- `hold` — NOT closed under `discharge`. Composition with `apply`
+  or `spawn` is undefined: if the observer held the tension, the
+  substrate has no discharge to compose against. The tension
+  remains named; the next kintsugi tick observes it unchanged.
 
-**Promotion criterion:** the associativity of the composition
-needs empirical witness — three surfacings in a row (apply, spawn,
-apply) that compose without ordering effects. Ties in with #142's
-promotion path.
+Structural framing choice: this is either a **semigroup with
+identity failure** (associativity + closure on `{apply, spawn}`;
+`hold` breaks identity because null-discharge on a held tension
+is a distinct state from null-discharge on an unheld one), OR a
+**partial monoid** (closure fails on `hold`; the discharge
+operation is partial). Both framings preserve the safety of the
+composition — the substrate never confuses a held tension with a
+discharged one; the crystal chain distinguishes them by OID.
 
-### 10.6 Candidate #145: the `escalate` variant maps to spawn
+Per `[[feedback-legibility-over-foundation-when-collapsing]]`
+the readable framing is the three-mode algebra language; the
+foundational framing (semigroup-with-identity-failure vs partial-
+monoid) is downstream when the algebraic-witness tick lands.
 
-`error-as-question.md` §2's answer algebra has an `escalate`
-variant. This cluster's spawn branch IS the `escalate` at kintsugi
-altitude — the tension escalates from apply's deterministic altitude
-to spawn's peer-tournament altitude. The correspondence:
+This framing matches `error-as-question.md` §2's actual answer
+algebra: six variants; four map to apply; one (`escalate`) maps
+to spawn; one (`hold`) maps to hold. See §10.6 for the mapping
+table. The apply / spawn / hold trichotomy at kintsugi altitude
+IS the answer algebra's own structural trichotomy at the
+compose-altitude.
+
+**Promotion criterion:** associativity of composition on
+`{apply, spawn}` needs empirical witness — three surfacings in a
+row (apply, spawn, apply) that compose without ordering effects.
+Closure boundary on `hold` needs explicit substrate-decl at
+`shards/kintsugi/surface.mirror`: `hold` is a first-class
+non-discharge mode; the crystal chain records it as such. Ties
+in with #142's promotion path.
+
+**On the missing DEFER Seam caught.** The original spec framed
+apply/spawn as a monoid without addressing closure under `hold`.
+This was a composition-claim without empirical validation — the
+pattern `[[feedback-composition-claims-need-empirical-test]]`
+was fired at exactly the framing altitude. The correction lands
+the three-mode algebra with `hold` named explicitly; the
+DEFER-flag on associativity + closure remains.
+
+### 10.6 Candidate #145: three-mode algebra maps to the six-variant answer algebra — apply / spawn / hold
+
+**Reframed 2026-07-02 per Seam adversarial audit (#145
+RATIFY-WITH-CORRECTIONS: mapping needs sharpening on peer-halt-
+result altitude + hold routing).**
+
+`error-as-question.md` §2's six-variant answer algebra maps
+cleanly onto this cluster's three-mode kintsugi discharge algebra
+(§10.5). The correspondence sharpens the earlier "spawn IS
+escalate" wording (which had semantic collision with `escalate`'s
+`@scheduler.altitude` constructor) into a mode-per-variant table:
 
 ```
-error-as-question.md answer algebra ↔ kintsugi surface branches:
-  tighten_property  ↔  apply (fracture body strengthens property)
-  resynthesize_body ↔  apply (fracture body re-generates the body)
-  rebudget_shard    ↔  apply (fracture body adjusts scheduler budget)
-  adjust_temperature ↔ apply (fracture body changes β)
-  hold              ↔  spawn (observer answers "I don't know" —
-                       ranked options empty)
-  escalate          ↔  spawn (observer routes to next altitude)
+error-as-question.md §2 answer algebra ↔ kintsugi discharge mode:
+  tighten_property(ref, check)                ↔  apply (fracture body strengthens property)
+  resynthesize_body(ref, policy)              ↔  apply (fracture body re-generates the body)
+  rebudget_shard(ref, budget)                 ↔  apply (fracture body adjusts scheduler budget)
+  adjust_temperature(f64)                     ↔  apply (fracture body changes β)
+  escalate(@scheduler.altitude)               ↔  spawn (peer tournament routes one level up)
+  hold(ref)                                   ↔  hold  (observer chose Partial(0.0, ref); legitimate non-discharge)
 ```
 
-**Promotion criterion:** substrate-decl the mapping at
+The mapping fires at answer-algebra altitude, not at emission-
+altitude directly. The spawn branch INSTANTIATES a peer whose
+halt returns the observer's answer; the answer THEN routes via
+the six-variant algebra at the substrate-adjustment altitude.
+`hold(ref)` is the third mode — the observer answered but
+declined to discharge; the substrate carries the crystal without
+mutation.
+
+**Promotion criterion:** substrate-decl the three-mode mapping at
 `error-as-question.md` §13 amendment (see landing order 4). The
 correspondence is one of substrate-already-had-the-word: the
-apply/spawn distinction was implicit in the answer algebra's
-structure; this cluster names it.
+apply / spawn / hold trichotomy was implicit in the answer
+algebra's structure; this cluster names it explicitly.
 
 ---
 
@@ -1311,16 +1545,20 @@ completion. Not blocking; observed.
 tension = curvature at reader-frame altitude
 Ω = dω + ½[ω, ω] = [D, a]
 
-if regulator_variety_sufficient(tension, ctx):
+if ashby_variety_match(kintsugi_lock_of(tension, ctx)):
     apply(fracture_body(tension))                    # deterministic
 else:
-    surface_class = classify(Ω_projection(tension))  # one of four
+    surface_class = classify(Ω_projection(tension))  # one of four sub-frame descriptors
     tomm_shape = tomm_of(surface_class)              # one of four
     spawn(tension → peer at λ₀; @fate tournament)    # ranked options
-    observer_picks
-    absorb(pick) → substrate_adjustment
+    observer_picks → answer                          # from six-variant algebra
+    match answer:
+      tighten_property | resynthesize_body |
+      rebudget_shard | adjust_temperature -> apply(fracture_body(answer))
+      escalate(altitude)                  -> spawn(peer at altitude)
+      hold(ref)                           -> hold; substrate carries the crystal unresolved
 
-kintsugi_budget -= 1  # regardless of branch
+kintsugi_budget -= 1  # regardless of mode
 if kintsugi_budget = 0: halt (safety-net)
 if Ω_total < tolerance: halt (converged)
 ```
@@ -1334,7 +1572,10 @@ monotone; observer answers add information; the substrate absorbs
 the answer as one more curvature-descent tick.
 
 The four surface classes are not four different mechanisms — they
-are four projections of the one curvature 2-form. The four Tomm
+are four sub-frame descriptors of the one curvature 2-form
+(rigorous projection for contradiction via `[ω,ω]` Bateson-bind;
+motivating for ashby_mismatch / conundrum / out_of_band pending
+per-class operator derivation as a future arc). The four Tomm
 shapes are not four different question types — they are four
 asymmetries the observer's answer must address at the local
 geometry. The three-order discipline is not decoration — it IS
@@ -1342,9 +1583,10 @@ what makes the observer's answer legible as a substrate
 adjustment.
 
 `e^(n+1) ≤ e^(n)`. The curvature descends because the loop
-closes. The apply branch discharges via known fracture bodies; the
-spawn branch discharges via peer tournament; both are one tick;
-both preserve halting.
+closes. The apply mode discharges via known fracture bodies; the
+spawn mode discharges via peer tournament; the hold mode discharges
+nothing but records the tension named-but-unresolved; all three are
+one tick; all three preserve halting.
 
 Von Foerster: *always act to increase the number of choices*. The
 surface act increases choices by refusing to collapse the
@@ -1357,8 +1599,8 @@ Apache-2.0.
 
 ---
 
-*The apply branch heals. The spawn branch asks. Both close the
-loop. `e^(n+1) ≤ e^(n)`.*
+*Apply heals. Spawn asks. Hold names. All three close the loop.
+`e^(n+1) ≤ e^(n)`.*
 
 *Each error becomes a question the Reflection model is asked to
 answer. Kintsugi is the loop that asks.*
