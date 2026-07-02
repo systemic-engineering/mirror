@@ -402,6 +402,118 @@ geometry(m: moi(T)) -> geometry { \ }
 # (compose refuses, returns imperfect per @glass's imperfect functor).
 pact_respected(a: moi(T), b: moi(T), p: pact) -> verdict { \ }
 
+# === spawn-parent family-lift (2026-07-02 ; Mara §1.3) ==============
+#
+# Additive extension of @loop for species-of consumers. Per Mara's
+# spec `docs/math/spawn/spawn-as-loop-monad.md` §1.3: species
+# `@spawn <= @loop` inherits every action above and adds four
+# family-root operations that make halting decidable at the loop
+# carrier without inspecting the peer's program (Rice-safe by
+# construction — the witness is the budget, not the program).
+#
+# The four operations are declared HERE at family-root altitude so
+# every future @loop species inherits them (not just @spawn). The
+# vocabulary is the substrate's tick-with-input / terminal-projection
+# / budget-read / trajectory-read quartet. Species-of consumers
+# (`@spawn <= @loop`) inherit these actions; the @spawn species
+# shard lands next tick and refines carriers (seven-tuple
+# spawn_loop(a) record per Mara §1.1) without altering the family-
+# root moi(tick_state) two-field record above.
+#
+# Why the seven-tuple extension lives at species altitude and NOT
+# here: `moi(tick_state)` at @loop carries only (value, pact_witness)
+# because the family-root's monad discipline needs nothing else.
+# Budget / input / history / target are spawn-species refinements —
+# a bench-loop or a reflection-loop instance does not carry them.
+# Species altitude is where the record widens; family-root altitude
+# is where the action signatures are announced. This preserves
+# additive-only discipline on the family-root moi(tick_state) type.
+#
+# Composition note: species-of consumers (@spawn <= @loop) inherit
+# these actions. The @spawn species shard is forward-promised for
+# the next tick per Seam audit §9; no shard invocation of @spawn
+# is admitted here.
+#
+# Per [[feedback-no-bare-types]]: every carrier is a typed ref at
+# family-root altitude. Species refinement (u32 for budget, list
+# for trajectory) happens at the species shard.
+
+# === advance action (tick-with-input) ===
+#
+# The endomorphism-with-perturbation: consume one budget unit,
+# apply the input, produce the next tick's moi(tick_state). Per
+# Mara §2.2 substrate-honest right-identity: every advance IS a
+# bind that spends one tick from the budget. `advance` composes
+# atop the parent-family `bind` primitive — this is the legible
+# name at species altitude ([[feedback-legibility-over-foundation-
+# when-collapsing]]); the foundational `bind` remains the μ.
+#
+# Body discharges at the realisation boundary via the species-
+# level bind chain composed with the input-perturbation function.
+advance(state: moi(tick_state), input: ref) -> moi(tick_state) { \ }
+
+# === halt action (terminal projection ; safety-net-witness) ===
+#
+# Terminal projection at the loop carrier. Returns the peer's value
+# at halt or `exhausted` when budget hit zero without target-reach
+# or kintsugi convergence per Mara §3.1 halting theorem.
+#
+# Per Mara §3.1 halting theorem: halt returns `bounded` (halt-
+# verdict) iff (a) budget_of(state) = 0 OR (b) π_value(state) =
+# target OR (c) loss(state) < tolerance. The action IS the safety-
+# net witnessing at the terminal boundary — the Rice-safety comes
+# from inspecting the loop carrier, not the peer's program.
+#
+# The imperfect<value, exhausted, ref> return carrier:
+#   - success slot `value` — the peer's projected π_value at halt
+#     when either target-reach or kintsugi-convergence fires
+#     (Mara §3.2 convergent halt).
+#   - failure slot `exhausted` — the Narcissus-pole halt when
+#     budget hit zero (Mara §3.2 exhausted halt).
+#   - loss slot `ref` — a typed pointer to the crystallized halt-
+#     evidence (which condition of §3.1 fired, at what tick).
+#
+# The two halts are affect-distinguishable per Mara §3.2 (settled
+# vs drift_warning at the eigenboard). Cascade candidates #130 and
+# #131 forward-promised for empirical witnessing.
+halt(state: moi(tick_state)) -> imperfect<value, exhausted, ref> { \ }
+
+# === budget_of action (remaining-reductions read) ===
+#
+# Extracts the remaining reduction budget from a loop carrier. The
+# returned ref's underlying carrier is constrained to ℕ by the
+# substrate's admission-rules per Mara §3.1 — the ref refinement
+# to `budget` type (a species-altitude sub-type of `tick`) happens
+# at the species shard.
+#
+# Per [[feedback-no-bare-types]]: returns typed ref at family-root
+# altitude, NOT bare u32. Species-level refinement re-types the ref
+# as `budget = ref` (Mara §1.1) with the monotone-descent invariant
+# on ℕ that makes §3.1 well-founded.
+#
+# This IS the halting-decidability witness: reading budget from
+# the carrier is O(1) at the loop altitude; the halting proof of
+# §3.1 reduces to checking `budget_of(state) = 0` at each tick.
+budget_of(state: moi(tick_state)) -> ref { \ }
+
+# === trajectory_of action (crystallized history read) ===
+#
+# Extracts the crystallized trajectory (blob-chain) the peer has
+# walked. Content-addressed history witness per Mara §7.3: the
+# trajectory τ is a chain of content-addressed crystals, each link
+# BLAKE3-anchored; τ grows monotonically as the peer runs; at halt,
+# τ is a completed chain of length t ≤ B.
+#
+# Per [[feedback-no-bare-types]]: returns typed ref at family-root
+# altitude, NOT bare `list(ref)`. Species-level refinement re-types
+# the ref as `list(ref)` or a species-specific trajectory carrier
+# (Mara §1.1 `history: ref` field ; the underlying blob-chain).
+#
+# Composes with @spawn's un-cite-ability theorem at species altitude
+# per Mara §8.4 candidate #133: the trajectory is un-cite-able by
+# construction (content-addressing makes citation self-defeating).
+trajectory_of(state: moi(tick_state)) -> ref { \ }
+
 out @loop
 out tick
 out tick_state
@@ -417,3 +529,7 @@ out lift
 out compose
 out pact_verify
 out pact_respected
+out advance
+out halt
+out budget_of
+out trajectory_of
