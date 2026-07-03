@@ -1,0 +1,134 @@
+in @prism
+in @glass
+in @meta
+in @spectral
+in @spectral/supervisor
+in @loop
+in @epistemologic/reality/time
+
+# @spectral/restart_intensity — the supervisor's storm-protection
+# carrier. Substrate-decl form of BEAM's max_restarts / max_seconds
+# circuit breaker.
+#
+# Closes the forward-promise at `shards/spectral/supervisor.mirror`
+# line ~253: `restart_intensity.mirror` was named as a cascade sibling
+# but deferred pending the math floor. The math landed at
+# `docs/math/supervisor/emergent-supervision-from-geometry.md` §5
+# (Mara `a3dec7b`, Seam-ratified `3746197`). This shard is the
+# substrate-decl form the §5.5 template collapses to.
+#
+# Operationalizes candidate recognition #147 (renumbered at `ff00ec5`
+# from the original #136 per Reed's numbering-collision resolution):
+# restart-intensity IS a `@spawn ≤ @loop` instance at supervision
+# altitude. The math floor: §5.3 (composition) + §5.4 (Rice-safety
+# via budget-as-witness) + §5.5 (this shard's template).
+#
+# === What restart_intensity IS ===
+#
+# The typed carrier the supervisor's `child_spec` will surface to
+# gate the kintsugi-morphism-driven restart loop. Two fields:
+#
+#   budget — the initial restart allowance B₀. Monotone descent per
+#            `docs/math/spawn/spawn-as-loop-monad.md` §3.1: each
+#            `bind` step (each restart attempt) decrements by 1;
+#            `terminal_check` fires when budget = 0. Typed `ref` per
+#            [[feedback-no-bare-types]] + [[feedback-explicit-over-
+#            implicit]] (Alex 2026-07-02): bare `u32`/`u64` would let
+#            same-shape different-meaning integers flow through the
+#            type system, indistinguishable from an unrelated count.
+#            The `ref` carrier composes with `@spawn ≤ @loop`'s
+#            `budget: ref` field (Mara `7dba128` §3.1) at supervision
+#            altitude — same carrier, same discipline, same halting
+#            witness (per §5.4).
+#
+#   period — the time window within which the budget applies.
+#            Reuses the substrate's landed `duration` carrier from
+#            `@epistemologic/reality/time` (`type duration = settle({
+#            nanos: u64 })`; commit c8c88f2). Composes with
+#            `child_spec.shutdown: duration` at the supervisor
+#            altitude — one substrate-time carrier for both
+#            graceful-termination and storm-protection windows.
+#
+# === Recognition ancestry ===
+#
+# - Candidate #147 (this arc; substrate-pull-supervisor-emergence):
+#   supervision-altitude primitives are declaration ceremonies over
+#   substrate carriers already in place. Restart intensity is one row
+#   of the emergence table (`docs/math/supervisor/emergent-
+#   supervision-from-geometry.md` §1.1, row 5).
+# - Recognition #53 (property/fracture bilateral pattern; promoted):
+#   this shard is NOT a bilateral instance itself — it is the CARRIER
+#   that a future bilateral pair (`@epistemologic/property/
+#   restart_intensity_well_formed` + `@kintsugi/fracture/
+#   restart_storm`; supervisor forward-promise line 269-272) will
+#   predicate on. Bilaterals need something to be bilateral ABOUT.
+#   Craft discipline: land the carrier first; the bilateral is a
+#   separate cascade tick at pact + kintsugi altitude.
+# - [[feedback-substrate-already-had-the-word]]: grep 2026-07-03
+#   confirmed `restart_intensity`, `max_restarts`, `max_seconds` are
+#   NOT already declared in the substrate (only `restart_kind` +
+#   `restart_strategy` at `@spectral/supervisor`). This tick lands a
+#   genuinely new carrier; no substrate-collapse available.
+# - [[architecture-shards-as-substrate-source]]: substrate source IS
+#   substrate data; this shard IS the declaration.
+#
+# === Composition with `@spawn ≤ @loop` ===
+#
+# `@spawn ≤ @loop` (Mara `7dba128`; math at `docs/math/spawn/spawn-
+# as-loop-monad.md` §3.1) landed `budget: ref` as the halting witness
+# for spawn-shaped bounded loops. The parent abstraction: any spawn
+# whose bind-count is bounded IS a `@loop` with a monotone-descending
+# budget. `restart_intensity` specializes that parent at SUPERVISION
+# altitude: BEAM's max_restarts IS the initial B₀; BEAM's max_seconds
+# IS the substrate-time predicate on the loop's tick_history
+# (per §5.3, steps 1-5). One primitive, two altitudes; no separate
+# circuit-breaker mechanism needed at supervision.
+#
+# === Prior art ===
+#
+# BEAM's supervisor `max_restarts / max_seconds` fields (OTP
+# `supervisor` behaviour, since Erlang/OTP R6 — Armstrong 1996,
+# *Making reliable distributed systems in the presence of software
+# errors*, PhD thesis Ch. 4 §4.3.3). The circuit-breaker discipline
+# prevents unbounded restart loops when a permanent-restart child
+# has a deterministic startup failure: N restarts in T seconds →
+# escalate to the supervisor's own parent (per §5.4 escalation-by-
+# monotone-descent).
+#
+# === DEFERRED per [[feedback-composition-claims-need-empirical-test]] ===
+#
+# Whether `(budget, period)` empirically captures BEAM's
+# `{max_restarts, max_seconds}` semantics under a REAL restart storm
+# is unwitnessed at this tick. Per §5.5 H4 flag: two-tick empirical
+# validation required — (a) deterministic-failure child with
+# `budget = 3`; observe budget descent + escalation; (b) intermittent-
+# failure child with `budget = 3, period = 5s`; observe budget refresh
+# at period boundary. This shard lands the CARRIER; the empirical
+# witness lands at Alex's altitude when a runtime supervisor exercises
+# the storm-protection loop.
+#
+# Seam DEFER note (audit `3746197`) also flagged this: composition
+# claim at supervision altitude is analytical, not yet empirical.
+# Landing the carrier is Rice-safe (the carrier makes no runtime
+# promise); the empirical claim stays DEFERRED.
+
+glass @spectral/restart_intensity {
+  focus restart_intensity
+  project restart_intensity
+  split restart_intensity
+  shift restart_intensity
+  settle restart_intensity
+}
+
+# === restart_intensity — the storm-protection carrier ===
+#
+# Two-field record. `budget: ref` is the monotone-descent witness;
+# `period: duration` is the time window. Identity contract: byte-
+# equality on the (budget, period) tuple.
+type restart_intensity = {
+  budget: ref,
+  period: duration,
+}
+
+out @spectral/restart_intensity
+out restart_intensity
