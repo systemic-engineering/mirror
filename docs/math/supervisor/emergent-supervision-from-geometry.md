@@ -1312,19 +1312,28 @@ forward-promised.
 
 | # | Claim | Composition | Status | Empirical witness |
 |---|-------|-------------|--------|-------------------|
-| 135 | Restart policy IS kintsugi three-mode algebra | §4.3 | candidate | analytical; two closed sums byte-equivalent under mapping |
-| 136 | Restart intensity IS `@spawn ≤ @loop` budget | §5 | candidate | two-tick run: deterministic-failure child with budget=3; observe escalation |
-| 137 | BEAM `Registry` IS subsumed by autopoietic identity | §6 + §2.13 | candidate | analytical; content-addressed lookup replaces name registration |
-| 138 | Message passing IS `@glue` bus emission | §8 | candidate | needs @glue latency measurement against BEAM PID ! Msg |
-| 139 | The cascade CPU bug is structurally avoided by emergent-supervision | §13 | candidate | port `spectral serve` and measure |
-| 140 | The reader-frame at supervision altitude IS the same specialization as at compiler-error altitude | §12 | candidate | analytical; §12.3 argues the equivalence |
-| 141 | BEAM's fourteen primitives collapse to three residuals at substrate altitude | §2.15 | candidate | analytical; §2.1—§2.14 exhaustive |
-| 142 | The three-mode discharge IS a structural count (three) | §4.5 | candidate | analytical; Armstrong 1996 + kintsugi 2026-07-02 converge on same count |
+| 146 | Restart policy IS kintsugi three-mode algebra | §4.3 | candidate | analytical; two closed sums byte-equivalent under mapping |
+| 147 | Restart intensity IS `@spawn ≤ @loop` budget | §5 | candidate | two-tick run: deterministic-failure child with budget=3; observe escalation |
+| 148 | BEAM `Registry` IS subsumed by autopoietic identity | §6 + §2.13 | candidate | analytical; content-addressed lookup replaces name registration |
+| 149 | Message passing IS `@glue` bus emission | §8 | candidate | needs @glue latency measurement against BEAM PID ! Msg |
+| 150 | The cascade CPU bug is structurally avoided by emergent-supervision | §13 | candidate | port `spectral serve` and measure |
+| 151 | The reader-frame at supervision altitude IS the same specialization as at compiler-error altitude | §12 | candidate | analytical; §12.3 argues the equivalence |
+| 152 | BEAM's fourteen primitives collapse to three residuals at substrate altitude | §2.15 | candidate | analytical; §2.1—§2.14 exhaustive |
+| 153 | The three-mode discharge IS a structural count (three) | §4.5 | candidate | analytical; Armstrong 1996 + kintsugi 2026-07-02 converge on same count |
 
-#135 is the strongest single claim (see §16). #139 is the highest
+#146 is the strongest single claim (see §16). #150 is the highest
 practical value (blocking the prototype's #1 roadmap item).
-#141 is the umbrella claim under which §2's exhaustive mapping
+#152 is the umbrella claim under which §2's exhaustive mapping
 lives.
+
+**Renumber note (Reed 2026-07-03)**: this arc originally used
+#135–#142 which collided with the kintsugi-as-compiler-error-surface
+arc's #140–#145 (landed 2026-07-02 at `920fe86`+`9f4211d`).
+Renumbered to #146–#153 per Seam audit `3746197` recommendation:
+first-landing precedence + supervisor's amendment cheaper than
+kintsugi's. Discipline addition: candidate numbers are globally
+unique, ordered by first-landing timestamp; grep MEMORY.md ceiling
+before allocating.
 
 ---
 
