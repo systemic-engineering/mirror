@@ -58,11 +58,25 @@ in @epistemologic/cybernetic/coherence-parametric
 # `variety_preserving`. Alex 2026-07-02: "we name the lineage.
 # ashby_variety_match." Inventing `regulator_variety_sufficient` at
 # kintsugi altitude would be status-drift on the twelfth pattern-
-# instance. The verbatim ancestor is
-# `shards/spectral/supervisor.mirror:335` (Taut scout on kintsugi
-# arc). This shard's `requires ashby_variety_match(kintsugi_lock)`
-# clause is the substrate-fact of that discipline at the surface-
-# species altitude.
+# instance. The landed ancestor `ashby_variety_match(lock: lock_
+# carrier) -> verdict` lives at
+# `shards/epistemologic/cybernetic/coherence-parametric.mirror`
+# (declared alongside `conant_ashby_good_regulator` and
+# `beer_requisite_variety_witness`; Taut scout `docs/math/kintsugi/
+# compiler-error-surface.md` at commit `9f4211d`). This shard's
+# `requires ashby_variety_match(kintsugi_lock)` clause is the
+# substrate-fact of that discipline at the surface-species altitude.
+#
+# Citation correction (Reed 2026-07-03 per Seam audit `017e568`):
+# earlier drafts of this docblock claimed the verbatim ancestor was
+# `shards/spectral/supervisor.mirror:335`. That claim conflated two
+# distinct Taut findings: (i) `restart_kind` at supervisor.mirror:335
+# and `restart_strategy` at supervisor.mirror:373 are VERBATIM BEAM
+# names (twelfth-instance substrate-had-the-word); (ii) `ashby_
+# variety_match` at `@epistemologic/cybernetic/coherence-parametric`
+# is the actual predicate this shard composes against. Two different
+# findings. Un-cite-ability discipline requires the correction to be
+# stated, not silently rewritten — hence this note.
 #
 # === Conditional @third inheritance (candidate recognition #141) ===
 #
@@ -390,9 +404,10 @@ in @epistemologic/cybernetic/coherence-parametric
 #                  landed measurement this shard's `requires`
 #                  clause composes against; the twelfth-instance
 #                  ancestor),
-#                 spectral/supervisor.mirror (line 335: verbatim
-#                  ancestor for the `ashby_variety_match(kintsugi_
-#                  lock)` idiom per Taut's earlier scout),
+#                 epistemologic/cybernetic/coherence-parametric.mirror
+#                  (the actual landed predicate
+#                  `ashby_variety_match(lock: lock_carrier) -> verdict`
+#                  this shard's `requires` clause consumes),
 #                 third.mirror (Reed + Mara reshape `e43006ab`
 #                  landed observation_depth carrier; this shard
 #                  reuses via `in @third` — conditional-marker
