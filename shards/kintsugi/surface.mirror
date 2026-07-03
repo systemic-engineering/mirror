@@ -1,0 +1,656 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @third
+in @kintsugi
+in @kintsugi/consent
+in @kintsugi/morphism
+in @epistemologic/cybernetic/coherence-parametric
+
+# @kintsugi/surface — the substrate-decl of kintsugi's second role
+# (the compiler error surface) as a @kintsugi species.
+#
+# Per Mara's canonical spec at docs/math/kintsugi/compiler-error-
+# surface.md (`920fe86` + amendment `9f4211d`; landing-order step 5
+# closes here): when the kintsugi loop's regulator variety is
+# insufficient to resolve a tension via existing fracture bodies,
+# the loop MUST NOT pretend to fix — it SURFACES the tension as a
+# Tomm-shaped question at reader-frame altitude. This shard is the
+# substrate-fact of that surfacing at the family-species altitude.
+#
+# THE FIFTH #53 BILATERAL INSTANCE at kintsugi altitude.
+#
+# Per Alex 2026-07-02 (spec §10.1 #140 reframing + Seam adversarial
+# audit `062fdca`): the fifth #53 witness is NOT a new declarative
+# predicate at kintsugi altitude. It is the ROUTING-COMPOSITION of
+# the landed
+# `@epistemologic/cybernetic/coherence-parametric.ashby_variety_match(lock)`
+# against kintsugi's fracture bodies + surface-act discharge floor.
+# Same declarative predicate; new operational routing arm at the
+# surface-species altitude.
+#
+# Prior four #53 instances:
+# - keyword / depth  (@epistemologic/pact/keyword_matches_depth +
+#                     @kintsugi/fracture/keyword; 2026-06-10;
+#                     per-predicate).
+# - gate  / diff-closure (@epistemologic/pact/gate_matches_diff_closure
+#                     + @kintsugi/fracture/gate; 2026-06-16;
+#                     per-predicate; promotion tick).
+# - syntax-substrate-native / angle_to_paren + symbol_lift +
+#   operator_match (parametric-over-table variants; 2026-06-19).
+# - restart_intensity_well_formed + restart_storm (bilateral pair
+#                     `e7bd6ec` today at supervision altitude;
+#                     parametric-over-carrier).
+# - THIS: routing-composition against `ashby_variety_match(lock)` at
+#   kintsugi surface altitude. The property side lives at the
+#   landed `@epistemologic/cybernetic/coherence-parametric`; the
+#   operational side is kintsugi's `surface` action + four surface
+#   class carriers + the three-mode algebra discharge (per spec §8;
+#   `9f4211d` amendment).
+#
+# === The twelfth-instance discipline (Alex 2026-07-02) ===
+#
+# Per [[feedback-substrate-already-had-the-word]] the substrate had
+# three predicates on the same semantic content already landed at
+# `shards/epistemologic/cybernetic/coherence-parametric.mirror`:
+# `ashby_variety_match`, `conant_ashby_good_regulator`,
+# `variety_preserving`. Alex 2026-07-02: "we name the lineage.
+# ashby_variety_match." Inventing `regulator_variety_sufficient` at
+# kintsugi altitude would be status-drift on the twelfth pattern-
+# instance. The verbatim ancestor is
+# `shards/spectral/supervisor.mirror:335` (Taut scout on kintsugi
+# arc). This shard's `requires ashby_variety_match(kintsugi_lock)`
+# clause is the substrate-fact of that discipline at the surface-
+# species altitude.
+#
+# === Conditional @third inheritance (candidate recognition #141) ===
+#
+# PRECEDENT-SETTING: this is the FIRST substrate-decl site where a
+# marker (`@third`) is imported CONDITIONALLY at the species altitude
+# without the family root importing it.
+#
+# `@kintsugi` at its family root does NOT import `in @third` — the
+# apply branch is a level-1 act (deterministic fracture-body
+# application); the loop observes level-2 via `terminal_check`;
+# neither requires third-order discipline. Per spec §7.2: only the
+# surface act at the spawn branch and at Tomm-shape emission
+# requires the third-order marker (the observer of the observer of
+# the observer IS the compiler emitting a Tomm question, per §7.1).
+#
+# This shard imports `in @third` at the species altitude. The
+# family root stays clean; only THIS species crosses the marker.
+# The pattern is: marker at species, not at family. Legibility-
+# preserving per [[feedback-legibility-over-foundation-when-
+# collapsing]] — third-order discipline lands where it fires, not
+# uniformly across the family.
+#
+# Per Taut's earlier scout on the kintsugi arc: no landed precedent
+# for conditional-marker inheritance at species altitude. This shard
+# IS that precedent. Candidate #141 fires here as its FIRST
+# substrate-decl instance. Pack ratification: forward-promised when
+# a second species with the same conditional-marker shape lands
+# (@reflection would likely acquire the same discipline at
+# pipeline-error altitude per spec §10.4 candidate #143).
+#
+# === Composition with today's restart_intensity bilateral (`e7bd6ec`) ===
+#
+# The paired fracture body `@kintsugi/fracture/restart_storm`
+# discharges via compiler-error-surface §1's three-mode algebra
+# (apply / spawn / hold). At `e7bd6ec` the fracture body's `\`
+# obligation block DEFERS the three-mode-algebra dispatch — the
+# routing is described in the docblock but not instantiated at the
+# body altitude (the three-mode primitive was not yet substrate-
+# decl'd at species altitude).
+#
+# THIS shard PROVIDES the substrate-decl the fracture body's DEFER
+# was waiting on. The `surface` action + four surface class carriers
+# + the routing gate (`requires ashby_variety_match(kintsugi_lock)`)
+# ARE the three-mode-algebra floor. A future kintsugi tick can
+# compose `resolve_restart_storm`'s body against `surface(t, class,
+# ctx)` at its `\` obligation site:
+#
+#   - budget_positive/period_positive violation ⇒ apply branch
+#     (`ashby_variety_match(kintsugi_lock)` fires success; existing
+#     fracture body discharges deterministically).
+#   - ratio_within_supervision_range violation ⇒ spawn branch
+#     (`ashby_variety_match(kintsugi_lock)` fires failure;
+#     `surface(t, ashby_mismatch{...}, ctx)` emits at reader-frame;
+#     peer tournament over (budget, period) pairs).
+#   - context-local ratio ceiling ⇒ hold branch
+#     (surface as out_of_band; observer chooses ceiling
+#     renegotiation; `Partial(0.0, ref)`).
+#
+# Not composed this tick per craft-not-deliver. The composition
+# path is analytically clear; the actual body-altitude discharge
+# lands in a future tick when the empirical restart-storm witness
+# fires (per emergent-supervision §5.5 H4 DEFER inherited).
+#
+# === Substrate-pull discipline ===
+#
+# Per [[feedback-no-bare-types]] + [[feedback-explicit-over-implicit]]:
+# every semantic slot named explicitly as a typed carrier. The four
+# surface classes are named refs, not discriminators over a generic
+# tension. `tension`, `kintsugi_context`, `surface_class`, and the
+# four class carriers are substrate-decl typed carriers throughout.
+#
+# Per [[feedback-substrate-already-had-the-word]] grep 2026-07-03
+# confirmed:
+# - `surface(` action — no prior declaration; this is the first.
+# - `tension` type — no prior declaration in shards/; spec §2 named
+#   it as citation floor from gap-tension-tensor-substrate.md; the
+#   shard-altitude carrier lands here.
+# - `surface_class` type — no prior declaration; first landing.
+# - `kintsugi_context` type — no prior declaration; first landing.
+# - `observation_depth` — LANDED at `shards/third.mirror` per
+#   candidate #111 conditional-marker discipline; this shard REUSES
+#   (does not redeclare) the carrier via `in @third`.
+#
+# Only observation_depth was substrate-already-had-the-word. The
+# other four are first-instance landings, honestly named.
+#
+# === The tension carrier (spec §2) ===
+#
+# Per spec §2's citation floor over gap-tension-tensor-substrate.md
+# (Mara 2026-05-26; folded 2026-06-04). At kintsugi surface altitude
+# a tension is a local reading of curvature Ω at one site: a
+# `[D, a]` commutator value at reader-frame altitude that failed to
+# bound within kintsugi's active_pass tolerance. The seven-tuple
+# identity contract is byte-equality per spec §2's discipline.
+#
+# === The four surface classes (spec §3) ===
+#
+# Per spec §3: when `ashby_variety_match(kintsugi_lock_of(t, ctx))`
+# fires failure, the tension falls into exactly one of four surface
+# classes. Each class is a substrate-decl carrier — a sub-frame
+# descriptor of the curvature 2-form Ω (§4). Per spec §4.1's rigor
+# table:
+#
+#   ashby_mismatch — MOTIVATING pending per-class projection-
+#                    operator derivation; Ashby 1956 §11 variety-
+#                    attenuation ladder; Tomm circular shape (§5.2).
+#   contradiction  — RIGOROUS via `[ω,ω]` Bateson-bind per
+#                    curvature-and-tomm.md §5; two claims each hold,
+#                    conjunction implies failure at Bateson level;
+#                    Tomm linear-then-reflexive shape (§5.3).
+#   conundrum      — MOTIVATING pending per-class projection-
+#                    operator derivation; eigenvalue kernel (λ=0)
+#                    or unbounded (λ=∞) at `[D, a]`; Massey product
+#                    witness for non-abelian curvature; Tomm
+#                    reflexive shape (§5.4).
+#   out_of_band    — MOTIVATING pending per-class projection-
+#                    operator derivation; substrate's algebra does
+#                    not contain the requested `a`; algedonic
+#                    bypass per error-as-question.md §4; Tomm
+#                    strategic shape (§5.5).
+#
+# Class-level rigor asymmetry named honestly per Seam #142 DEFER
+# verdict (spec preamble amendment (c) at `9f4211d`).
+#
+# === The kintsugi_context carrier (spec §1.4) ===
+#
+# Per spec §1.4's kintsugi_lock instantiation: the context carrier
+# names the altitude (@kintsugi), the species (@kintsugi/surface),
+# and the lock_pair over active_pass connection form. Budget
+# tracking + perturbation ref for the third-order composition. Not
+# a full re-declaration of scheduler.altitude; the context sits at
+# kintsugi altitude and inherits altitude vocabulary from
+# @scheduler where consumed.
+#
+# === The surface action (spec §7.2) ===
+#
+# Per spec §7.2 canonical signature:
+#
+#   surface(t: tension, class: surface_class, ctx: kintsugi_context)
+#     -> observation_depth
+#     requires ashby_variety_match(kintsugi_lock)
+#
+# The precondition ties the substrate-decl to the twelfth-instance
+# discipline. Return carrier is `observation_depth` (from @third)
+# because the surface act IS third-order per spec §7.1: the
+# observer of the observing of the observing. The action's own
+# discharge produces a witness carrying the depth-3 recursion at
+# the surface-act boundary.
+#
+# The additional `third_order_active(...)` requires clause from
+# spec §7.2's declaration IS a downstream refinement — the base
+# discipline this shard lands is `ashby_variety_match(kintsugi_lock)`
+# per Alex 2026-07-02 twelfth-instance discipline (verbatim
+# ancestor). Composed refinement lands when the second species
+# extends the conditional-marker pattern (candidate #141 promotion).
+#
+# === Substrate gaps surfaced honestly (DEFER adjudication) ===
+#
+# - `kintsugi_lock` at this species altitude: the concrete
+#   instantiation of `lock_carrier` with the kintsugi tuple (spec
+#   §1.4 kintsugi_lock_of) is DEFERRED as a body-altitude concern.
+#   The `requires ashby_variety_match(kintsugi_lock)` clause names
+#   the lock as a carrier; the concrete instantiation composes at
+#   discharge time via `kintsugi_lock_of(t, ctx)` (spec §1.4's
+#   forward-promised action). Not landed this tick per craft-not-
+#   deliver — the shard names the substrate-decl surface; the body
+#   compositions land in follow-up ticks.
+#
+# - `surface_class_recognized(t)` classifier (spec §13.1
+#   forward-promise): the four-class classifier's Fate-inference
+#   discharge is NOT landed here; it forward-promises to
+#   `shards/kintsugi/surface/classifier.mirror` (~60 LOC per spec
+#   §13.1 estimate). Out of scope this tick.
+#
+# - Empirical composition of `surface` with a runtime kintsugi loop
+#   is DEFERRED per [[feedback-composition-claims-need-empirical-
+#   test]] — same DEFER emergent-supervision §5.5 H4 flags. The
+#   analytical shape composes; the operational witness lands when a
+#   runtime kintsugi tick fires a live spawn discharge over one of
+#   the four classes.
+#
+# === Pre-AI prior art ===
+#
+#   Karl Tomm's therapeutic       Tomm (1987, 1988) *Interventive
+#   interviewing                  interviewing* — the four Tomm
+#                                 question shapes (linear /
+#                                 circular / reflexive / strategic)
+#                                 mapped to the four surface
+#                                 classes per spec §5.
+#   W. Ross Ashby's law of        Ashby (1956) *Introduction to
+#   requisite variety             Cybernetics* §11 — the variety-
+#                                 attenuation ladder grounding the
+#                                 ashby_mismatch class per spec §3.1.
+#   Carnielli-Marcos LFI          Carnielli & Marcos (2004);
+#                                 Carnielli-Coniglio-Rodrigues (2026;
+#                                 arXiv:2604.18766) — the paraconsistent
+#                                 discipline for contradiction per
+#                                 spec §3.2.
+#   Massey products / non-        Massey (1958); Markl (2024;
+#   abelian curvature             arXiv:2404.19607) — Massey product
+#                                 as conundrum witness per spec §3.3.
+#   Beer's algedonic channel      Beer (1972) *Brain of the Firm* +
+#                                 Reyes/Henao/Hassall (2024) —
+#                                 out-of-band bypass per spec §3.4 +
+#                                 error-as-question.md §4.
+#   Heinz von Foerster            Foerster (1974/1981) *Observing
+#   second-order cybernetics      Systems* — the observer-in-the-
+#                                 observed grounding the third-order
+#                                 discipline per spec §7.
+#   Louis H. Kauffman             Kauffman (2003) *Eigenforms* —
+#   eigenforms                    recursion fixed-points grounding
+#                                 the surface act's fold-back per
+#                                 spec §7.3.
+#   Bateson double-bind           Bateson (1956, 1972) — the
+#                                 `[ω,ω]` Bateson-bind grounding
+#                                 contradiction's rigor per
+#                                 curvature-and-tomm.md §5.
+#
+# Spec context: docs/math/kintsugi/compiler-error-surface.md
+#               (Mara 920fe86 + `9f4211d` amendment; the canonical
+#               spec this shard's landing-order step 5 closes);
+#               docs/math/supervisor/emergent-supervision-from-
+#               geometry.md §5.5 (Mara a3dec7b; the H4 empirical
+#               DEFER this shard inherits);
+#               docs/math/the-tower/curvature-and-tomm.md §5
+#               (the `[ω,ω]` Bateson-bind grounding contradiction's
+#               rigorous projection);
+#               docs/specs/error-as-question.md §2 + §4 (the six-
+#               variant answer algebra + algedonic bypass);
+#               docs/specs/gap-tension-tensor-substrate.md
+#               (the tension vocabulary citation floor);
+#               docs/specs/third-as-recursive-depth.md
+#               (the @third marker discipline this shard
+#               conditionally inherits);
+#               docs/audits/2026-07-03-seam-restart-intensity-
+#               shard.md (Seam audit `f732d9c`; the audit that
+#               named the fourth #53 bilateral this shard follows
+#               as the fifth).
+# Substrate decisions: [[architecture-property-fracture-bilateral]]
+#                       (#53; this is the fifth instance via
+#                       routing-composition per spec §10.1),
+#                      [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]]
+#                       (opacity and morphism are substrate
+#                       vocabulary; the three-mode algebra sits at
+#                       the morphism content field, not at the
+#                       surface signature),
+#                      [[architecture-form-process-partition-at-
+#                       family-root]] (this species sits process-
+#                       side under @kintsugi; the paired declarative
+#                       predicate sits form-side under
+#                       @epistemologic),
+#                      [[architecture-kintsugi-loop-altitude-
+#                       portable]] (#59 promoted; the kintsugi loop
+#                       portable across altitudes — this is the
+#                       surface-species altitude witness),
+#                      [[architecture-candidate-recognition-111-
+#                       third-as-family-root]] (#111 landed as
+#                       marker per Mara reshape `e43006ab`; this
+#                       shard's conditional-marker discipline
+#                       operationalizes the marker at species
+#                       altitude for the first time — candidate
+#                       #141 first instance),
+#                      [[architecture-candidate-recognition-112-
+#                       marker-row-fourth-structural-primitive]]
+#                       (@third as marker crossing families; this
+#                       shard imports it conditionally, honouring
+#                       the marker-row discipline),
+#                      [[architecture-lift-as-load-bearing]] (`lift`
+#                       IS the substrate's variety-preservation verb;
+#                       the spawn discharge IS lift-at-kintsugi-
+#                       altitude — the tension is lifted to a peer
+#                       tournament whose winner preserves variety
+#                       across the surface act boundary),
+#                      [[feedback-no-bare-types]] + [[feedback-
+#                       explicit-over-implicit]] (every semantic
+#                       slot a typed carrier; four surface classes
+#                       are named refs, not discriminators),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (twelfth-instance discipline; the routing
+#                       gate composes against landed
+#                       ashby_variety_match; grep 2026-07-03
+#                       confirmed observation_depth as the only
+#                       already-landed carrier),
+#                      [[feedback-legibility-over-foundation-when-
+#                       collapsing]] (conditional-marker discipline
+#                       chosen over baseline family-root inheritance
+#                       — legibility of the marker's firing site
+#                       preserved),
+#                      [[feedback-composition-claims-need-empirical-
+#                       test]] (empirical surface-act composition
+#                       DEFERRED; analytical shape landed).
+# Substrate recognitions: recognition #53 (property/fracture
+#                       bilateral; this is the fifth instance via
+#                       routing-composition per spec §10.1
+#                       candidate #140),
+#                       recognition #59 (kintsugi loop altitude-
+#                       portable; this species is the surface-
+#                       species altitude witness),
+#                       candidate #141 (kintsugi as third-order
+#                       operationalized; this shard IS the first
+#                       substrate-decl instance — promotion
+#                       criterion "landing shards/kintsugi/
+#                       surface.mirror with `requires` on the
+#                       surface action" is met here),
+#                       candidate #142 (four surface classes as Ω
+#                       projections; the four carriers landed with
+#                       rigor asymmetry named honestly per Seam
+#                       #142 DEFER verdict),
+#                       candidate #144 (three-mode algebra on
+#                       kintsugi discharge apply/spawn/hold; this
+#                       shard provides the substrate-decl surface
+#                       the algebra composes over).
+# Related shards: kintsugi.mirror (the family root; does NOT
+#                  import @third — the conditional-marker
+#                  discipline honoured at family altitude),
+#                 kintsugi/fracture/restart_storm.mirror (the
+#                  fourth #53 bilateral's operational half `e7bd6ec`
+#                  today; its three-mode-algebra DEFER at `\` body
+#                  altitude composes against THIS shard's surface
+#                  action + four class carriers in a future tick),
+#                 epistemologic/cybernetic/coherence-parametric.mirror
+#                  (declares `ashby_variety_match(lock)` — the
+#                  landed measurement this shard's `requires`
+#                  clause composes against; the twelfth-instance
+#                  ancestor),
+#                 spectral/supervisor.mirror (line 335: verbatim
+#                  ancestor for the `ashby_variety_match(kintsugi_
+#                  lock)` idiom per Taut's earlier scout),
+#                 third.mirror (Reed + Mara reshape `e43006ab`
+#                  landed observation_depth carrier; this shard
+#                  reuses via `in @third` — conditional-marker
+#                  discipline at species altitude),
+#                 kintsugi/consent.mirror (morphism carrier the
+#                  spawn discharge emits; the surface act's tension
+#                  becomes the peer's ground state via consent
+#                  gating),
+#                 kintsugi/morphism.mirror (morphism_context; the
+#                  per-candidate slice pairing the surface act's
+#                  discharge with its pre-anchor at active_pass),
+#                 kintsugi/fracture/angle_to_paren.mirror +
+#                  kintsugi/fracture/symbol_lift.mirror (the two
+#                  extant fracture bodies whose apply branch this
+#                  shard's spawn branch is disjoint from — mutually
+#                  exclusive routing per spec §1.4).
+# Out-of-scope this tick: surface_class classifier (spec §13.1
+#                  forward-promise); kintsugi_lock_of body
+#                  instantiation (spec §1.4 forward-promise);
+#                  empirical composition witness with runtime
+#                  kintsugi loop; @reflection second witness of
+#                  conditional-marker pattern; per-class Ω
+#                  projection operator derivation for the three
+#                  motivating classes (spec §4.1 future arc).
+# Path-namespace property: this file at
+# `shards/kintsugi/surface.mirror` declares `@kintsugi/surface`
+# as a species under the @kintsugi family per
+# @epistemologic/pact/path_matches_namespace.
+# Keyword/depth property: this declaration is depth-1 from the
+# @kintsugi family root; per recognition #46 it uses `glass`.
+# Self-witnessing: this shard's own declaration honours the
+# surface-altitude discipline it enforces — no bare types, no
+# opaque refs where typed carriers exist, no invented vocabulary
+# where the substrate already carries the lineage. The
+# conditional-marker discipline is applied to THIS shard's own
+# @third import — the shard participates in the pattern it names.
+
+source @arxiv/therapy/tomm-1987
+source @arxiv/therapy/tomm-1988
+source @arxiv/cybernetics/ashby-1956
+source @arxiv/cybernetics/beer-1972
+source @arxiv/cybernetics/foerster-1974
+source @arxiv/cybernetics/kauffman-2003
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/logic/carnielli-marcos-2004
+source @arxiv/topology/massey-1958
+
+glass @kintsugi/surface {
+  focus surface
+  project surface
+  split surface
+  shift surface
+  settle surface
+}
+
+# === tension — the substrate's local reading of curvature (spec §2) ===
+#
+# Per spec §2 citation floor over gap-tension-tensor-substrate.md
+# (Mara 2026-05-26; folded 2026-06-04): a tension is the local
+# reading of curvature Ω at one site. At kintsugi surface altitude
+# a tension is a `[D, a]` commutator value at reader-frame altitude
+# that failed to bound within kintsugi's active_pass tolerance.
+#
+# Seven-tuple identity contract: byte-equality on all seven fields.
+# Two tensions at the same site with different `curvature` are
+# distinct — the curvature carries the local geometry.
+type tension = {
+  site:         ref,                     # where the curvature spiked
+  claim:        ref,                     # what the substrate expected
+  observed:     ref,                     # what the substrate measured
+  curvature:    ref,                     # the [D, a] value; see spec §4
+  altitude:     ref,                     # which tower altitude fired
+  transparency: transparency(ref),       # opacity map from active_pass
+  contract:     ref,                     # the contract at the moment of firing
+}
+
+# === surface_class — the four Tomm-shape carriers (spec §3) ===
+#
+# Closed sum naming which of the four sub-frame descriptors of the
+# curvature 2-form Ω the tension falls into. Per spec §3: when
+# `ashby_variety_match(kintsugi_lock_of(t, ctx))` fires failure,
+# the tension is exactly one of the four. Per spec §5 each maps to
+# a specific Tomm interviewing shape.
+#
+# Rigor across the four is asymmetric per spec §4.1 table:
+# `contradiction` is RIGOROUS via `[ω,ω]` Bateson-bind projection;
+# the other three are MOTIVATING pending per-class projection-
+# operator derivation. Named honestly per Seam #142 DEFER verdict.
+type surface_class =
+  | ashby_mismatch
+  | contradiction
+  | conundrum
+  | out_of_band
+
+# === ashby_mismatch — Ashby's variety attenuation (spec §3.1) ===
+#
+# Fires when regulator variety at some substrate-pull axis is
+# insufficient: the substrate can name the tension but has no
+# fracture body whose output-variety matches the tension's input-
+# variety. Per Ashby 1958: `V(R) < V(D)` at some axis.
+#
+# Sub-frame descriptor at variety-axis-N of the curvature 2-form Ω.
+# MOTIVATING per spec §4.1 pending per-class projection-operator
+# derivation. Tomm circular shape per spec §5.2 (Ashby's law is
+# relational; Tomm's circular questions elicit relational data).
+type ashby_mismatch = {
+  base:            tension,
+  axis:            ref,                  # which of the 5 variety axes fell short
+  regulator:       ref,                  # the R the substrate offered
+  demand:          ref,                  # the D the tension named
+  variety_deficit: nat,                  # V(D) - V(R) at this axis
+}
+
+# === contradiction — Carnielli-LFI bind at Bateson level (spec §3.2) ===
+#
+# Fires when two properties both fire success but their conjunction
+# implies failure. Per Carnielli-Marcos LFI (2004, 2007):
+# `A ∧ ¬A ⊢ ⊥` in classical logic; in LFI the substrate carries
+# `○A` (the consistency of A) as a separate operator. `○A` at
+# compile time IS `holds(gap)` — the claim that A has NO gap. When
+# two claims each hold but their gaps overlap, the substrate is in
+# a paraconsistent state.
+#
+# Sub-frame descriptor at Bateson-level-bind axis of Ω. RIGOROUS
+# per spec §4.1: inherits the projection-operator derivation from
+# curvature-and-tomm.md §5's `[ω,ω]` Bateson-bind — Ω splits as
+# `dω_L + dω_R + [ω_L, ω_R]`; the bracket IS the bind at Bateson
+# level. Tomm linear-then-reflexive shape per spec §5.3.
+type contradiction = {
+  base:          tension,
+  left:          ref,                    # first claim (holds independently)
+  right:         ref,                    # second claim (holds independently)
+  bind:          ref,                    # the level at which they meet
+  bateson_level: nat,                    # Bateson logical type where bind fires
+}
+
+# === conundrum — flat/unbounded eigenvalue (spec §3.3) ===
+#
+# Fires when the `[D, a]` commutator has an eigenvalue at 0 (flat
+# direction — the substrate has a direction it can't see) or at ∞
+# (unbounded — the substrate has a direction it sees but can't
+# measure). Per curvature-and-tomm.md §6: gaps in the substrate
+# come in these two flavors.
+#
+# Sub-frame descriptor at eigenvalue-kind axis of Ω. MOTIVATING per
+# spec §4.1 pending per-class projection-operator derivation. Tomm
+# reflexive shape per spec §5.4 (both kernel and unbounded direction
+# require the observer to observe the observing itself — third-
+# order per spec §7).
+#
+# `eigenvalue_type` is a two-variant discriminator per spec §3.3:
+# `zero` (flat direction) or `unbounded` (divergent direction).
+# Massey product witness for non-abelian curvature per Markl 2024.
+type conundrum = {
+  base:            tension,
+  eigenvalue_type: ref,                  # zero | unbounded (spec §3.3)
+  witness:         ref,                  # the [D, a] flat/divergent direction
+  massey_product:  ref,                  # H² cocycle when non-abelian applies
+}
+
+# === out_of_band — algedonic bypass (spec §3.4) ===
+#
+# Fires when the substrate has no `a ∈ A` such that `[D, a]`
+# computes for the tension. The tension names an object the
+# substrate's algebra does not contain. Per error-as-question.md §4
+# (algedonic bypass): this is the class that surfaces to Reflection
+# at recursion altitude, bypassing the intermediate altitudes.
+#
+# Sub-frame descriptor at algebra-membership axis of Ω. MOTIVATING
+# per spec §4.1 pending per-class projection-operator derivation.
+# Tomm strategic shape per spec §5.5 (the observer chooses which
+# structural future the substrate takes — grant the crossing under
+# a named pact, or refuse and route to the neighboring family's
+# kintsugi loop).
+#
+# The three algedonic classes (`glass_wall` violation, `halts`
+# undecidable, `autopoietic` non-convergence) are out_of_band
+# instances at kintsugi altitude per error-as-question.md §4.
+type out_of_band = {
+  base:                tension,
+  namespace_requested: ref,              # what the substrate was asked to name
+  algebra_at:          ref,              # the A the substrate had at this altitude
+  bypass_reason:       ref,              # glass_wall / halts / autopoietic violation
+}
+
+# === kintsugi_context — the surface act's carrier (spec §1.4) ===
+#
+# The context carrier the surface action reads at discharge time.
+# Per spec §1.4's kintsugi_lock instantiation: names the altitude
+# the loop's active_pass is firing at, the species surfacing the
+# tension, the budget available for spawn discharge (per §6.1 each
+# surface act decrements budget by one), the perturbation ref
+# threaded through the third-order composition, and the connection
+# 1-form over active_pass ticks (the `ω` in `[ω, ω]`).
+#
+# Budget bounds the surface-act depth per spec §6: halting survives
+# arbitrarily many surfacings because each Tomm emission spends one
+# budget unit and the peer's `@spawn ≤ @loop` monad guarantees
+# safety-net halt. When budget hits zero the loop terminates at
+# `terminal_check` per spec §6.
+type kintsugi_context = {
+  altitude:     ref,                     # active_pass altitude
+  species:      ref,                     # the surface act's family (@kintsugi/surface)
+  budget:       nat,                     # remaining surface-act budget
+  perturbation: ref,                     # threaded through @third composition
+  connection:   ref,                     # ω over active_pass ticks
+}
+
+# === surface — the compiler error surface act (spec §7.2) ===
+#
+# THE LOAD-BEARING ACTION. Given a tension, a surface class, and a
+# kintsugi context, emit an observation_depth witness carrying the
+# depth-3 recursion at the surface-act boundary.
+#
+# Signature per spec §7.2 canonical form. The `requires
+# ashby_variety_match(kintsugi_lock)` clause names the twelfth-
+# instance discipline (Alex 2026-07-02) at the substrate-fact
+# altitude — the surface act composes against the landed
+# `@epistemologic/cybernetic/coherence-parametric.ashby_variety_match(lock)`
+# measurement rather than inventing a same-shape sibling.
+#
+# `kintsugi_lock` is the surface-species instantiation of the
+# lock_carrier already declared at coherence-parametric.mirror
+# (per spec §1.4): a lock_carrier with the kintsugi-altitude tuple
+# {altitude=@kintsugi, species=@kintsugi/surface, pair=lock_pair{
+# T_reg=fracture_body_space(ctx), T_regd=candidate_resolutions(t),
+# rho=kintsugi_representation, omega=active_pass_connection(ctx)}}.
+# The concrete instantiation composes at discharge time via
+# `kintsugi_lock_of(t, ctx)` (spec §1.4 forward-promise; body
+# altitude concern; not landed this tick).
+#
+# Return `observation_depth` because the surface act IS third-order
+# per spec §7.1: the observer of the observing of the observing.
+# The depth-3 witness carries `primary = substrate_at_tension_site`,
+# `observer = kintsugi_loop`, `meta = surface_act` per Loki's
+# naming (Void → Third; systemic.engineering 2026-06-22).
+#
+# Per spec §7.2 the full precondition composed on top of this base
+# discipline is `requires third_order_active(surface_witness(t,
+# class), ctx.perturbation)` — the four sub-predicates
+# `depth_at_least(3, ...)`, `observer_observes_observing(...)`,
+# `recursion_folds_back(...)`, `mechanism_visible(...)` all fire.
+# The base discipline landed here is `ashby_variety_match(kintsugi_
+# lock)` per Alex 2026-07-02 twelfth-instance rule; the composed
+# refinement lands when the second species extends the conditional-
+# marker pattern (candidate #141 promotion criterion — @reflection
+# at pipeline-error altitude per spec §10.4 candidate #143).
+surface(t: tension, class: surface_class, ctx: kintsugi_context)
+  -> observation_depth
+  requires ashby_variety_match(kintsugi_lock)
+{ \ }
+
+out @kintsugi/surface
+out tension
+out surface_class
+out ashby_mismatch
+out contradiction
+out conundrum
+out out_of_band
+out kintsugi_context
+out surface
