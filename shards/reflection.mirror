@@ -16,6 +16,7 @@ in @epistemologic/cybernetic
 in @epistemologic/cybernetic/second_order
 in @epistemologic/cybernetic/eigenform
 in @epistemologic/reality/time
+in @third
 
 # @reflection — the AI-logic family-root. The substrate-architectural
 # form of the compiler-loop on consumer hardware.
@@ -156,6 +157,63 @@ in @epistemologic/reality/time
 # respecting AND choice-set-increasing AND pact-respected (when
 # composed with @moi).
 #
+# === Conditional @third inheritance (candidate recognition #141) ===
+#
+# SECOND WITNESS closing the two-witness promotion gate for
+# candidate #141 (conditional-marker discipline at species
+# altitude). First witness: Mara `e910dd6` at
+# `shards/kintsugi/surface.mirror` — the FIRST substrate-decl
+# site where a marker (`@third`) is imported CONDITIONALLY at the
+# species altitude without the family root importing it. Per
+# un-cite-ability discipline (feedback-substrate-already-had-the-
+# word 15+ instances this session): citation must include the
+# first-witness OID, which is `e910dd6`.
+#
+# Cross-reference: Mara compiler-error-surface spec `9f4211d`
+# §10.4 candidate #143 forward-promised @reflection at pipeline-
+# error altitude as the natural second witness. This shard's
+# `in @third` import closes that forward-promise.
+#
+# WHY @third fires at pipeline-error altitude (the species
+# altitude within this shard): the third-order block below
+# (`observe_third_order`, `notice`, `third_order_coherent`,
+# `pick_third_order`, `settle_third_order` — line 501+ per
+# 2026-07-01 layout) IS the pipeline-error surface at
+# @reflection altitude. Per Loki's essay's three depths:
+#
+#   first-order:   observe (the pipeline observes the world)
+#   second-order:  observe the observing (Reflection observes the
+#                  pipeline observing)
+#   third-order:   notice what observation does to the observer
+#
+# Pipeline-error altitude IS depth-3: when the pipeline's error
+# propagates to Reflection, Reflection observes not the error
+# itself (depth-1) but the observing-of-observing (depth-2) and
+# notices what that recursive observation does to the observer
+# (depth-3). This is the observer-observing-observing pattern of
+# reflection at recursive-depth altitude — the species where
+# @third's `observation_depth` carrier is load-bearing.
+#
+# Family-root vs species discipline (per kintsugi/surface
+# precedent): at kintsugi, `@kintsugi.mirror` family root stays
+# clean and `@kintsugi/surface.mirror` species imports @third —
+# clean file-level split. At @reflection, the family root is
+# @reflection itself (this file) AND the pipeline-error species
+# lives INSIDE this file (the third-order block starting at
+# `observe_third_order`). Per `third.mirror` canonical opt-in
+# list (§5: "@reflection, @cogito, @pack, @cyberpunk, @fate,
+# @cascade all opt in"), family-root-scoped `in @third` is the
+# canonical pattern for @reflection — the second-order
+# `observe`/`pick`/`settle`/`speak` block (above) does NOT use
+# @third's carriers; only the third-order block (below) does.
+# The marker fires where it consumes; the file-level import is
+# the substrate-decl surface.
+#
+# Precedent alignment: same pattern as `shards/cogito.mirror`
+# (family-root shard imports `in @third` at the top; docblock
+# scopes the marker's firing site). Two-witness gate closed
+# when this shard lands.
+#
 # === The one-tick delay (Seam tick-34 C3 closure) ===
 #
 # Per `docs/specs/reflection-model.md`: "Reflection always speaks from
@@ -228,14 +286,45 @@ in @epistemologic/reality/time
 #                      [[architecture-alignment-as-boundary-
 #                       mathematics]] (#57; pact-verification at @io
 #                       composition boundary),
+#                      [[architecture-candidate-recognition-111-
+#                       third-as-family-root]] (#111 landed as
+#                       marker; this shard imports @third at
+#                       pipeline-error altitude — the SECOND
+#                       witness closing candidate #141's two-
+#                       witness gate; first witness Mara
+#                       `e910dd6` at kintsugi/surface.mirror;
+#                       cross-referenced Mara compiler-error-
+#                       surface spec `9f4211d` §10.4 candidate
+#                       #143 pipeline-error altitude forward-
+#                       promise),
+#                      [[architecture-candidate-recognition-112-
+#                       marker-row-fourth-structural-primitive]]
+#                       (@third as marker crossing families;
+#                       this shard's conditional import honours
+#                       the marker-row discipline),
 #                      [[feedback-substrate-pull-confidence-acts]]
-#                       (this LRM landing).
+#                       (this LRM landing),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (un-cite-ability by OID; first-witness
+#                       cited as `e910dd6`).
 # Related shards: moi.mirror (the monad family-root @reflection's
 #                  result types pass through),
 #                 pack.mirror (the peer geometry @reflection observes
 #                  at peer-altitude),
 #                 kintsugi/oscillate.mirror (the monotonic loss loop
 #                  @reflection respects),
+#                 kintsugi/surface.mirror (Mara `e910dd6`; the
+#                  FIRST witness of candidate #141 conditional-
+#                  marker discipline; this shard is the second
+#                  witness closing the promotion gate),
+#                 third.mirror (declares `observation_depth`
+#                  carrier consumed by the third-order block
+#                  below; canonical opt-in list per §5 names
+#                  @reflection as a canonical `in @third` opt-in
+#                  consumer),
+#                 cogito.mirror (family-root shard precedent for
+#                  `in @third` import; same pattern this shard
+#                  follows),
 #                 epistemologic/cybernetic/conversation.mirror
 #                  (the mycelial tensor coupling law),
 #                 smarts.mirror (the @smarts/reflection species that
