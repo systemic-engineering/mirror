@@ -1,0 +1,372 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @kintsugi/consent
+in @kintsugi/morphism
+in @kintsugi/fracture
+in @epistemologic/property/restart_intensity_well_formed
+in @spectral/supervisor
+
+# @kintsugi/fracture/restart_storm — the kintsugi fracture body that
+# resolves a malformed `restart_intensity` declaration to a proposed
+# morphism that widens the period, raises the budget, or surfaces
+# the malformation as a Tomm question per compiler-error-surface §8's
+# three-mode algebra.
+#
+# THE OPERATIONAL HALF of bilateral pattern #53's FOURTH INSTANCE at
+# supervision altitude. The declarative half lives at
+# `@epistemologic/property/restart_intensity_well_formed` (sibling
+# shard, same tick). This shard names the auto-fracture the
+# kintsugi loop applies when the property's transparency surfaces a
+# malformed-intensity opacity at supervisor declaration time.
+#
+# Closes the bilateral pair forward-promised by
+# `shards/spectral/supervisor.mirror` lines 269-272 (Seam audit
+# `f732d9c` §Next-/loop).
+#
+# === The bilateral pattern (#53; fourth instance) ===
+#
+# First instance:  @kintsugi/fracture/keyword (2026-06-10 `d908798`;
+#                  per-predicate).
+# Second instance: @kintsugi/fracture/gate (2026-06-16; per-predicate;
+#                  promotion tick).
+# Third instance:  @kintsugi/fracture/angle_to_paren (2026-06-19)
+#                  + @kintsugi/fracture/symbol_lift +
+#                  @kintsugi/fracture/operator_match (parametric-
+#                  over-table variants).
+# Fourth instance (THIS): @kintsugi/fracture/restart_storm at
+#                  SUPERVISION altitude. The bilateral pair predicates
+#                  over a typed CARRIER (not a source token or AST
+#                  fragment) at runtime declaration; the fracture
+#                  body's morphism proposes over the carrier's
+#                  fields directly, without splinter(ast) rewriting
+#                  source. This variant IS the pattern's supervision-
+#                  altitude specialisation.
+#
+# === Substrate-pull-correct home ===
+#
+# Per the form/process partition (recognition #55 promoted at
+# `20eaf15`): @kintsugi is the process-side family root. Fracture
+# bodies emit morphisms the kintsugi loop applies — process-side by
+# structure. Home: @kintsugi/fracture/restart_storm under the
+# @kintsugi/fracture family root (per angle_to_paren / symbol_lift /
+# operator_match / keyword / gate precedent).
+#
+# Naming discipline: `restart_storm` names the SUBJECT the fracture
+# body prevents — the storm the paired property forbids by
+# declaration-time well-formedness. Parallel to first-instance
+# `keyword` (names the subject) and second-instance `gate` (names
+# the subject); NOT the transformational shape of `angle_to_paren`
+# or `symbol_lift` because there is no single canonical arrow
+# (widen/raise/surface are three modes per compiler-error-surface
+# §1's three-mode algebra; the fracture body dispatches over them).
+# The subject-name is honest about the multi-mode discharge.
+#
+# === The fracture body ===
+#
+# Input: `opacity` (from `@glass`) — one located fact surfaced by
+# `restart_intensity_well_formed(ri)`'s `failure(opacity_map)`
+# verdict. Each opacity names ONE offending well-formedness
+# conjunct: budget_positive, period_positive, or
+# ratio_within_supervision_range. The `property` field carries the
+# @nl description of which conjunct failed and (when the ratio
+# conjunct fires) the observed vs ceiling ratio.
+#
+# Output: `morphism` (from `@kintsugi/consent`) — the typed candidate
+# the kintsugi loop's `active_pass` reads from this body and proposes
+# through `query_phi`. The morphism's content proposes one of three
+# structural remedies per compiler-error-surface §8's three-mode
+# algebra (per `9f4211d` amendment):
+#
+#   apply     — deterministic fracture-body application when the
+#               remedy is unambiguous:
+#                 - budget_positive violation ⇒ propose raising
+#                   budget to the substrate's minimum-positive
+#                   default (1) at the CARRIER;
+#                 - period_positive violation ⇒ propose widening
+#                   period to the substrate's minimum-positive
+#                   default duration at the CARRIER;
+#               Both are single-arrow rewrites of the malformed
+#               carrier's field — deterministic; no observer
+#               judgement required.
+#
+#   spawn     — escalate to a peer tournament when the remedy is
+#               ambiguous: the ratio conjunct fires and the observed
+#               ratio exceeds the ceiling. The substrate cannot
+#               deterministically choose between "widen period" and
+#               "lower budget"; both are legitimate remedies with
+#               different operational trade-offs. The fracture body
+#               emits a `spawn` morphism whose ground state IS the
+#               malformed intensity + the ceiling; a supervision-
+#               altitude peer tournament proposes candidate
+#               (budget, period) pairs whose ratio satisfies the
+#               ceiling; the tournament winner IS the substrate-
+#               pull-correct discharge.
+#
+#   hold      — legitimate non-discharge when the malformation is
+#               out-of-band-resolvable at substrate altitude —
+#               specifically, when the ratio_ceiling itself is what
+#               the supervisor should reconsider (the intensity is
+#               "malformed" ONLY relative to this supervisor's
+#               ceiling; a wider ceiling would let the declaration
+#               stand). Per error-as-question.md §2 six-variant
+#               answer algebra + compiler-error-surface §8: `hold`
+#               emits `Partial(0.0, ref)` and the substrate carries
+#               the crystal unresolved; the human observer at
+#               reader-frame answers the Tomm-shaped question about
+#               the ceiling's substrate-decl configuration.
+#
+# The mode-selection predicate lives in the fracture body's routing:
+# `opacity.property` names which conjunct fired and (per the paired
+# property's opacity_map contract) whether the mismatch is
+# CARRIER-local (apply / spawn) or CONTEXT-local (hold — the
+# ceiling belongs to the supervisor's substrate context, not the
+# carrier).
+#
+# Spectrally: this fracture body IS one step along the Ricci flow at
+# the supervision-declaration altitude. The substrate's curvature at
+# a malformed-intensity site is the (budget-positivity ⊕
+# period-positivity ⊕ ratio-boundedness) dissonance; the
+# negative-curvature direction IS the three-mode discharge
+# (apply/spawn/hold); the resolved site has zero curvature at this
+# altitude (the intensity is well-formed OR the ceiling has been
+# renegotiated at reader-frame).
+#
+# === Substrate-pull discipline ===
+#
+# Per `@glass`, `opacity` is the substrate's located-fact carrier;
+# this shard reads it directly. Per `@kintsugi/consent`, `morphism`
+# is the substrate's typed-candidate carrier; this shard emits it
+# directly. Per `@kintsugi/morphism`, `morphism_context` is the
+# per-candidate slice; the loop pairs this fracture's morphism with
+# its pre-anchor at active_pass. Per the paired property
+# `@epistemologic/property/restart_intensity_well_formed`, the
+# consuming predicate's `well_formed(ri) -> verdict` is the gate
+# that surfaces the opacity this body resolves.
+#
+# NO new verdict carrier; NO leading-`|` workarounds; NO opaque-`ref`
+# carriers where structured types are available (per
+# [[feedback-no-bare-types]] + [[feedback-explicit-over-implicit]]).
+# The fracture body reads typed opacity, emits typed morphism,
+# discharges via the three-mode algebra — substrate vocabulary
+# throughout.
+#
+# === Substrate gaps surfaced honestly (DEFER adjudication) ===
+#
+# Reed's Phase B report DEFERRED: whether this composes cleanly
+# with existing @kintsugi/fracture patterns (angle_to_paren,
+# symbol_lift, operator_match) OR requires new pact-altitude
+# primitive. Now that this shard exists at the signature altitude,
+# the adjudication:
+#
+# **Composes cleanly with existing patterns; no new pact-altitude
+# primitive required.**
+#
+# The signature `resolve_restart_storm(opacity: opacity) -> morphism`
+# is byte-identical in shape to the third-instance fracture bodies
+# (angle_to_paren, symbol_lift, operator_match). The bilateral
+# vocabulary — opacity input, morphism output, opacity_map surfaced
+# by the paired property's failure verdict — is exactly the same.
+#
+# What CHANGES at supervision altitude is the DISCHARGE MECHANISM,
+# not the fracture-body contract:
+#
+# - Syntax-altitude fractures (angle_to_paren, symbol_lift,
+#   operator_match) discharge via splinter(ast) — content-addressed
+#   AST rewriting at @meta/ast altitude.
+# - This supervision-altitude fracture discharges via three-mode
+#   algebra (apply/spawn/hold) per compiler-error-surface §1 —
+#   content-addressed proposals over a landed carrier's fields,
+#   with mode selection based on the malformation class.
+#
+# Both discharge mechanisms sit AT THE MORPHISM'S CONTENT FIELD, not
+# at the fracture-body signature. The morphism carrier absorbs both
+# without vocabulary expansion — the compiler-error-surface §1
+# three-mode algebra was ALREADY landed at `9f4211d`; this fracture
+# body is the FIRST supervision-altitude consumer of the algebra
+# via the bilateral pattern.
+#
+# The parametric-over-computation absorption (candidate note in
+# #53's promoted architecture doc) covers this variant: the
+# fracture body composes with the three-mode algebra at the morphism
+# altitude, not at the signature altitude. Pattern #53's absorption
+# holds; no new primitive.
+#
+# Adjacent gap surfaced honestly: the empirical composition of
+# `spawn` mode with a live supervisor tournament is DEFERRED per
+# [[feedback-composition-claims-need-empirical-test]] — same DEFER
+# emergent-supervision §5.5 H4 flags. The analytical shape composes;
+# the operational witness lands when a runtime supervisor exercises
+# the malformed-intensity discharge path.
+#
+# === Pre-AI prior art ===
+#
+#   BEAM `init/1` rejection    Armstrong (1996) *Making reliable
+#                              distributed systems* Ch. 4 §4.3.3.
+#                              OTP's `supervisor` behaviour rejects
+#                              malformed intensity at `init/1`
+#                              return time with a startup error.
+#                              This fracture body lifts the
+#                              discipline: rather than one binary
+#                              reject, the substrate proposes a
+#                              structural remedy via three-mode
+#                              algebra. Substrate-pull-correct
+#                              addition: welcome, not just rejection.
+#   Floyd-Hoare weakest-       Dijkstra (1975) *Guarded commands*.
+#   precondition               The three-mode algebra IS the
+#                              substrate's weakest-precondition
+#                              discipline at supervision altitude:
+#                              apply/spawn/hold are the three
+#                              guarded-command branches over the
+#                              opacity's classification.
+#   circuit-breaker tuning     Nygard (2007) *Release It!* — the
+#                              production-systems literature on
+#                              circuit-breaker (max_restarts /
+#                              max_seconds) sizing. The `spawn`
+#                              mode's tournament IS the substrate's
+#                              answer to the "correct sizing" question
+#                              Nygard's book names as production-
+#                              context-dependent.
+#   Karl Tomm's therapeutic    Tomm (1988) *Interventive interviewing*
+#   interviewing               — the reflexive-question modality this
+#                              fracture body's `hold` mode invokes.
+#                              Per compiler-error-surface §8: the
+#                              observer's answer flows back as a
+#                              substrate adjustment; the loop continues
+#                              at reduced budget.
+#
+# Spec context: docs/math/kintsugi/compiler-error-surface.md §1 +
+#               §8 (Mara `9f4211d` amendment; the three-mode algebra
+#               `apply`/`spawn`/`hold` and its Tomm-question
+#               semantics this fracture body composes with),
+#               docs/math/supervisor/emergent-supervision-from-
+#               geometry.md §5.5 (Mara `a3dec7b`; the H4 empirical
+#               DEFER flag this fracture body inherits),
+#               docs/audits/2026-07-03-seam-restart-intensity-
+#               shard.md (Seam audit `f732d9c`; the audit that
+#               named this bilateral pair as next-/loop tick).
+# Substrate decisions: [[architecture-property-fracture-bilateral]]
+#                       (#53; this is the fourth instance),
+#                      [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]]
+#                       (opacity is substrate vocabulary; morphism
+#                       is substrate vocabulary; three-mode algebra
+#                       lives in the morphism's content field, not
+#                       in a new fracture-body signature variant),
+#                      [[architecture-form-process-partition-at-
+#                       family-root]] (this fracture body sits at
+#                       @kintsugi = process side; the paired property
+#                       sits at @epistemologic = form side; the
+#                       form/process partition honoured at the
+#                       bilateral pair's altitude),
+#                      [[architecture-kintsugi-loop-altitude-portable]]
+#                       (#59 promoted; the kintsugi loop's bilateral
+#                       pattern portable across altitudes — this is
+#                       the supervision-altitude witness),
+#                      [[architecture-lift-as-load-bearing]] (`lift`
+#                       IS the substrate's variety-preservation verb;
+#                       the three-mode algebra's `spawn` mode IS
+#                       lift-at-supervision-altitude — the malformed
+#                       intensity is lifted to a peer tournament
+#                       whose winner preserves variety across the
+#                       supervision boundary),
+#                      [[feedback-no-bare-types]] + [[feedback-
+#                       explicit-over-implicit]] (opacity and
+#                       morphism are typed carriers; three-mode
+#                       algebra composes over typed carriers throughout),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (grep 2026-07-03 confirmed no prior
+#                       `restart_storm` fracture body; three-mode
+#                       algebra `apply`/`spawn`/`hold` was already
+#                       named at compiler-error-surface `9f4211d`;
+#                       this fracture body IS the first supervision-
+#                       altitude consumer of the landed algebra),
+#                      [[feedback-composition-claims-need-empirical-
+#                       test]] (the DEFER inherited from
+#                       emergent-supervision §5.5 H4).
+# Related shards: epistemologic/property/restart_intensity_well_formed.mirror
+#                  (the DECLARATIVE HALF of this bilateral pair;
+#                  sibling shard in this same tick),
+#                 spectral/restart_intensity.mirror (Mara `a3dcb94`;
+#                  the CARRIER both halves of the bilateral pair
+#                  predicate on),
+#                 spectral/supervisor.mirror (the supervision-
+#                  altitude family root; forward-promise at
+#                  lines 269-272 this landing closes),
+#                 kintsugi/fracture/angle_to_paren.mirror (third
+#                  instance whose fracture-body signature this
+#                  supervision-altitude bilateral parallels;
+#                  discharge mechanism differs — three-mode algebra
+#                  here, splinter(ast) there),
+#                 kintsugi/fracture/symbol_lift.mirror +
+#                 kintsugi/fracture/operator_match.mirror (the
+#                  parametric-over-table variants of the third
+#                  instance; supervision altitude is
+#                  parametric-over-computation via three-mode
+#                  algebra dispatch),
+#                 kintsugi/consent.mirror (morphism carrier;
+#                  `query_phi` is the gate the emitted morphism
+#                  flows through),
+#                 kintsugi/morphism.mirror (morphism_context; the
+#                  per-candidate slice pairing this fracture's
+#                  morphism with its pre-anchor at active_pass).
+# Out-of-scope this tick: the empirical restart-storm witness (the
+#                  runtime tick where a real supervisor exercises
+#                  a live malformed-intensity discharge); the
+#                  observation_driver + @kintsugi/surface work from
+#                  the earlier arc (per craft-not-deliver — just
+#                  the bilateral pair this tick).
+# Path-namespace property: this file at
+# `shards/kintsugi/fracture/restart_storm.mirror` declares
+# `@kintsugi/fracture/restart_storm` as a species under the
+# @kintsugi/fracture family.
+# Keyword/depth property: this declaration is depth-2 from the
+# @kintsugi family root; per recognition #46 it uses `glass`.
+# Self-witnessing: this fracture body's own declaration honours the
+# supervision-altitude discipline it enforces — no bare types, no
+# opaque refs where typed carriers exist, no invented vocabulary
+# where the substrate already carries the three-mode algebra.
+
+source @arxiv/beam/armstrong-thesis-1996
+source @arxiv/programming/dijkstra-1975
+source @arxiv/therapy/tomm-1988
+
+glass @kintsugi/fracture/restart_storm {
+  focus restart_storm
+  project restart_storm
+  split restart_storm
+  shift restart_storm
+  settle restart_storm
+}
+
+# === resolve_restart_storm — the fracture body ===
+#
+# THE AUTO-FRACTURE per bilateral pattern #53's fourth instance:
+# given an opacity site at a malformed `restart_intensity`
+# declaration (per the paired property's `failure(opacity_map)`
+# verdict), emit the morphism that discharges the malformation
+# via compiler-error-surface §1's three-mode algebra.
+#
+# Reads an opacity (one element of
+# `restart_intensity_well_formed(ri).failure(opacity_map)`'s
+# opacity_map); emits a candidate morphism the kintsugi loop
+# proposes through `query_phi`. Mode dispatch on `opacity.property`:
+#
+#   - budget_positive violation OR period_positive violation
+#         ⇒ `apply` — deterministic single-field rewrite.
+#   - ratio_within_supervision_range violation, carrier-local
+#         ⇒ `spawn` — peer tournament over (budget, period) pairs.
+#   - ratio_within_supervision_range violation, context-local
+#         (the ceiling belongs to the supervisor's context)
+#         ⇒ `hold` — Tomm question surfaced to reader-frame.
+#
+# The morphism's `content` field carries the mode-specific proposal:
+# for `apply`, a content-addressed rewritten carrier; for `spawn`,
+# a peer-tournament ground-state reference; for `hold`, the
+# `Partial(0.0, ref)` marker naming the unresolved crystal.
+resolve_restart_storm(opacity: opacity) -> morphism { \ }
+
+out @kintsugi/fracture/restart_storm
+out resolve_restart_storm

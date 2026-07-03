@@ -1,0 +1,281 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/property
+in @spectral
+in @spectral/supervisor
+in @kintsugi
+
+# @epistemologic/property/restart_intensity_well_formed — the
+# DECLARATIVE HALF of bilateral pattern #53's FOURTH INSTANCE at
+# supervision altitude. Substrate-pull-correct property asserting:
+# a `restart_intensity` carrier is well-formed at declaration time
+# — non-degenerate budget, non-zero period, ratio within the
+# supervision-altitude sane range.
+#
+# Closes the bilateral pair forward-promised by
+# `shards/spectral/supervisor.mirror` lines 269-272 (Seam audit
+# `f732d9c` §Next-/loop) and pairs with the operational half at
+# `@kintsugi/fracture/restart_storm` (sibling shard, same tick).
+#
+# === The bilateral pattern (#53; fourth instance) ===
+#
+# First instance:  keyword/depth
+#                  (@epistemologic/pact/keyword_matches_depth +
+#                   @kintsugi/fracture/keyword; 2026-06-10
+#                   `5e68df9` + `d908798`; per-predicate).
+# Second instance: gate/diff-closure
+#                  (@epistemologic/pact/gate_matches_diff_closure +
+#                   @kintsugi/fracture/gate; 2026-06-16;
+#                   per-predicate; promotion tick for #53).
+# Third instance:  syntax-substrate-native / angle_to_paren
+#                  (@epistemologic/pact/syntax_substrate_native +
+#                   @kintsugi/fracture/angle_to_paren; 2026-06-19;
+#                   parametric-over-table).
+# Third instance also: symbol/canonical-form / symbol_lift +
+#                  operator/composition-primitive / operator_match
+#                  (parametric-over-table variants).
+# Fourth instance (THIS): restart_intensity_well_formed +
+#                  @kintsugi/fracture/restart_storm at SUPERVISION
+#                  altitude. The pattern absorbs the supervision-
+#                  altitude carrier variant — the property predicates
+#                  over a typed record (not a source token) whose
+#                  well-formedness gates a runtime kintsugi loop.
+#                  Substrate vocabulary unchanged; same @glass
+#                  opacity + @kintsugi/consent morphism chain.
+#
+# === The predicate ===
+#
+# Given the landed `restart_intensity` carrier (Mara `a3dcb94`,
+# `shards/spectral/restart_intensity.mirror`):
+#
+#   type restart_intensity = {
+#     budget: ref,      # initial B₀; monotone descent per @loop
+#     period: duration, # time window within which budget applies
+#   }
+#
+# `well_formed(ri: restart_intensity) -> verdict` reduces to a
+# three-conjunct at supervision altitude:
+#
+#   well_formed(ri) ⇔
+#       budget_positive(ri.budget)
+#     ∧ period_positive(ri.period)
+#     ∧ ratio_within_supervision_range(ri.budget, ri.period)
+#
+# Conjunct rationale, per emergent-supervision `a3dec7b` §5.5's
+# H4 discussion:
+#
+# - `budget_positive`: B₀ = 0 is a DEGENERATE storm-protector —
+#   the supervisor escalates on the FIRST failure, indistinguishable
+#   from having no restart intensity at all (and worse than absent:
+#   the field's presence suggests the supervisor considered storm
+#   protection). Substrate-pull-correct: forbid the degenerate
+#   declaration; the empty-configuration path is `option::none`
+#   on `restart_intensity`, not a zero-budget declaration.
+#
+# - `period_positive`: A zero-duration window is degenerate for the
+#   same structural reason — any single restart consumes the whole
+#   budget in a zero-width window; the ratio (§5.3 step 4) becomes
+#   `budget / 0`. Undefined. Substrate-pull-correct: the period IS
+#   the substrate-time predicate over the loop's tick_history; a
+#   zero-width window carries no predicate content.
+#
+# - `ratio_within_supervision_range`: Per emergent-supervision §5.5
+#   the (budget, period) ratio names how aggressive the storm
+#   detector is. BEAM defaults (max_restarts = 3, max_seconds = 5)
+#   sit at 3/5 = 0.6 restarts/second at supervision altitude. The
+#   sane range this conjunct guards: `budget / period.seconds ≤
+#   ratio_ceiling` where `ratio_ceiling` names the substrate's
+#   default (initial ceiling 10 restarts/second — one order of
+#   magnitude above BEAM's default, wide enough to accommodate
+#   fast-boot children while still catching pathological
+#   deterministic-failure storms). The ceiling is substrate-decl-
+#   configurable per-supervisor; this predicate reads the ceiling
+#   from the supervisor's substrate context.
+#
+# The three-conjunct guards against the three degenerate declaration
+# shapes: zero-budget (silent no-op), zero-period (undefined ratio),
+# and pathological-ratio (permits arbitrarily fast storm — defeats
+# the purpose of the field). Any violation surfaces one opacity
+# per offending field, which the paired fracture body reads.
+#
+# === Composes with @spawn ≤ @loop ===
+#
+# Per emergent-supervision §5.3: the restart intensity IS a
+# `@spawn ≤ @loop` at supervision altitude. Each restart is one
+# `bind` step; the budget's monotone descent IS the halting witness.
+# This property's `well_formed` verdict gates whether the loop
+# instantiation is admissible at declaration time — before any
+# child spawns, the supervisor's restart intensity must be
+# well-formed; else the storm-protector's contract is broken
+# at the source, and the fracture body surfaces the malformation
+# through the paired `@kintsugi/fracture/restart_storm` at
+# realisation time.
+#
+# The property fires at declaration time (compile-time gate); the
+# paired fracture fires at runtime AT MOST when the (well-formed)
+# intensity's budget is empirically exhausted (§5.5's H4 empirical
+# validation flag — DEFERRED per this cascade's discipline).
+#
+# === Rice-safety ===
+#
+# Per emergent-supervision §5.4: the supervisor cannot ask "will
+# this peer eventually stop failing?" (Rice forbids it). This
+# property asks the DECIDABLE question: "is the declaration well-
+# formed at supervision altitude?" — a syntactic three-conjunct on
+# a landed carrier's fields. Substrate-pull-correct scope: the
+# witness is the carrier, not the peer's future behaviour.
+#
+# === Pre-AI prior art ===
+#
+#   BEAM `max_restarts / max_seconds` validation
+#                              Armstrong (1996) *Making reliable
+#                              distributed systems in the presence
+#                              of software errors*, PhD thesis
+#                              Ch. 4 §4.3.3. OTP's `supervisor`
+#                              behaviour rejects `max_restarts < 0`
+#                              at `init/1` return time; this property
+#                              lifts the discipline to substrate-decl
+#                              altitude and adds the positive-period
+#                              + ratio-ceiling conjuncts.
+#   Floyd-Hoare precondition   Floyd (1967) *Assigning meanings to
+#                              programs* + Hoare (1969) *An
+#                              axiomatic basis for computer
+#                              programming*. Well-formedness IS the
+#                              declaration-time precondition over
+#                              the (budget, period) pair; the
+#                              supervisor's storm-protection contract
+#                              is a Hoare triple whose precondition
+#                              this property discharges.
+#   ranking function ceiling   Termination proofs via well-founded
+#                              orders; the ratio ceiling names the
+#                              supervision-altitude well-founded
+#                              base. Per emergent-supervision §5.4
+#                              "escalation by monotone descent" is
+#                              well-founded ONLY when the initial
+#                              rate is bounded away from ∞.
+#
+# === Substrate gaps surfaced honestly ===
+#
+# - `ratio_ceiling` is per-supervisor substrate-decl-configurable.
+#   The initial default (10 restarts/second) is an operational
+#   choice, not a substrate-mathematical one. Different supervision
+#   subtrees may declare tighter or looser ceilings via the
+#   supervisor's substrate context. This property reads the ceiling
+#   from context; it does NOT hardcode a substrate-wide value.
+#
+# - The ratio conjunct assumes `period.nanos > 0` — the ordering
+#   `budget_positive ∧ period_positive` before
+#   `ratio_within_supervision_range` is load-bearing.
+#
+# - Whether these three conjuncts are EMPIRICALLY sufficient to
+#   catch every degenerate declaration is DEFERRED per
+#   [[feedback-composition-claims-need-empirical-test]]. The
+#   analytical shape is right; the empirical audit lands when a
+#   runtime supervisor exercises a live restart-intensity storm.
+#   Seam audit `f732d9c` and emergent-supervision §5.5 H4 both
+#   flag the same DEFER.
+#
+# Spec context: docs/math/supervisor/emergent-supervision-from-
+#               geometry.md §5.5 (Mara `a3dec7b`; the math floor
+#               for the (budget, period) ratio discussion and
+#               the empirical H4 flag),
+#               docs/audits/2026-07-03-seam-restart-intensity-
+#               shard.md (Seam audit `f732d9c` naming this
+#               bilateral pair as the next-/loop tick),
+#               shards/spectral/restart_intensity.mirror (Mara
+#               `a3dcb94`; the CARRIER this property predicates
+#               on),
+#               shards/spectral/supervisor.mirror (the
+#               forward-promise at lines 269-272 this landing
+#               closes),
+#               docs/math/kintsugi/compiler-error-surface.md §1
+#               + `9f4211d` (the three-mode algebra the paired
+#               fracture body's morphism proposes over).
+# Substrate decisions: [[architecture-property-fracture-bilateral]]
+#                       (#53; this is the fourth instance),
+#                      [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-form-process-partition-at-family-root]]
+#                       (@epistemologic = form-side family root;
+#                       this property sits form-side; the paired
+#                       fracture at @kintsugi sits process-side),
+#                      [[architecture-lift-as-load-bearing]] (the
+#                       property's decidability rests on the landed
+#                       `duration` carrier; no bare integers cross
+#                       the predicate boundary),
+#                      [[feedback-no-bare-types]] + [[feedback-
+#                       explicit-over-implicit]] (`restart_intensity`,
+#                       `verdict`, and the sub-predicates are all
+#                       typed carriers; no primitive-over-primitive
+#                       comparisons at the substrate boundary),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (grep 2026-07-03 confirmed no `restart_storm`
+#                       or `well_formed`-on-supervision-carrier
+#                       precedent; `well_formed` exists at other
+#                       altitudes as expected bilateral pattern).
+# Related shards: spectral/restart_intensity.mirror (the carrier
+#                  this property predicates on; landed `a3dcb94`),
+#                 spectral/supervisor.mirror (the supervision-
+#                  altitude family root under which the carrier
+#                  lives),
+#                 kintsugi/fracture/restart_storm.mirror (the
+#                  OPERATIONAL HALF of this bilateral pair; sibling
+#                  shard in this same tick),
+#                 kintsugi/fracture/angle_to_paren.mirror (the third
+#                  instance whose fracture-body shape this bilateral
+#                  follows — same opacity → morphism arrow;
+#                  supervision-altitude specialisation of the
+#                  syntax-altitude precedent),
+#                 epistemologic/property/dark_count_monotone.mirror
+#                  (sibling in @epistemologic/property; monotone
+#                  witness at a different substrate altitude;
+#                  vocabulary parallel).
+# Path-namespace property: this file at
+# `shards/epistemologic/property/restart_intensity_well_formed.mirror`
+# declares `@epistemologic/property/restart_intensity_well_formed`
+# per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming/floyd-hoare-1969
+source @arxiv/beam/armstrong-thesis-1996
+
+prism @epistemologic/property/restart_intensity_well_formed {
+  focus restart_intensity_well_formed
+  project restart_intensity_well_formed
+  split restart_intensity_well_formed
+  shift restart_intensity_well_formed
+  settle restart_intensity_well_formed
+}
+
+# === well_formed predicate (declarative half) ===
+#
+# THE LOAD-BEARING PREDICATE. Returns verdict that the
+# restart_intensity is well-formed at supervision altitude — its
+# budget is positive, its period is positive, and their ratio is
+# within the substrate's per-supervisor sane range.
+#
+# Body discharges at the realisation boundary; the @kintsugi loop's
+# active_pass reads this predicate during the supervisor's
+# declaration-time gate. The operational half (the fracture body
+# that emits a widen/raise/surface morphism when this predicate
+# fails) lives at `@kintsugi/fracture/restart_storm` (sibling shard
+# in this same tick).
+#
+# Verdict semantics:
+#   success            — all three conjuncts hold; declaration is
+#                        well-formed; the supervisor's storm-
+#                        protection contract is admissible.
+#   failure(opacity_map)
+#                      — at least one conjunct fails; the opacity_map
+#                        names the offending field(s). The paired
+#                        fracture body reads one opacity at a time
+#                        and emits a morphism per site (widen the
+#                        period, raise the budget, or surface as
+#                        Tomm question per compiler-error-surface
+#                        §8's three-mode algebra when the
+#                        malformation is out-of-band-resolvable).
+well_formed(ri: restart_intensity) -> verdict { \ }
+
+out @epistemologic/property/restart_intensity_well_formed
+out well_formed
