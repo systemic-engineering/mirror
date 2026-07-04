@@ -1,0 +1,11 @@
+# TOKENIZE_DOCBLOCK_MARKER — this line is a docblock claim above `---`.
+# Per docs/math/kintsugi/doc-code-seam.md §6.1, above-seam `#`-lines must
+# produce `Docblock` AST nodes. Currently stripped silently by
+# bootstrap/src/tokenize.rs at lines 285-311.
+
+type marker = ref
+
+---
+
+# Below the seam. Comment/attribute discipline, not docblock discipline.
+type observed = ref
