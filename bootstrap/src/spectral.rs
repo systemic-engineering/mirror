@@ -487,7 +487,8 @@ where
 // `render_ast`.
 // ---------------------------------------------------------------------------
 
-use crate::grammar::{grammar_path_for_ref, load_grammar, Grammar};
+use crate::grammar::{grammar_path_for_ref_in, load_grammar_in, Grammar};
+use crate::Ctx;
 
 /// Append `depth` levels of two-space indent to `out`. Mirrors the
 /// pre-retirement `render::append_indent` byte-for-byte.
@@ -608,26 +609,48 @@ where
 /// pre-retirement entry points (`render_ast`, `render_ast_mirror`,
 /// `render_ast_with_grammar`) collapse into one Fold5At application
 /// keyed on grammar availability.
+///
+/// Convenience wrapper delegating to [`render_ast_in`] with a
+/// process-cwd-derived `Ctx`. LIVE dispatch paths (Arc 2) must call
+/// [`render_ast_in`] directly so grammar-path lookup + load resolve
+/// against `ctx.cwd()` — never the process cwd.
 pub fn render_ast(node: &AstNode, depth: i32, out: &mut Vec<u8>) {
+    let ctx = Ctx::from_process_cwd();
+    render_ast_in(node, depth, out, &ctx);
+}
+
+/// Ctx-threaded variant of [`render_ast`]. The load-bearing entry
+/// point for LIVE dispatch — grammar-tag lookup resolves via
+/// `grammar_path_for_ref_in` and grammar loading via `load_grammar_in`
+/// so relative shard paths resolve against `ctx.cwd()`.
+///
+/// Seam audit `5e7fd6d` correction #2: closes the fold-reducer's
+/// remaining process-cwd dependency.
+pub fn render_ast_in(node: &AstNode, depth: i32, out: &mut Vec<u8>, ctx: &Ctx) {
     let tag = node.grammar_tag.as_str();
     let grammar: Option<Grammar> = if tag.is_empty() || tag == "@mirror/grammar" || tag == "@mirror"
     {
         None
     } else {
-        grammar_path_for_ref(tag).and_then(|p| load_grammar(&p).ok())
+        grammar_path_for_ref_in(tag, ctx).and_then(|p| load_grammar_in(&p, ctx).ok())
     };
     let rendered = match &grammar {
-        Some(g) => render_fold_grammar(g).run(node, depth),
-        None => render_fold_mirror().run(node, depth),
+        Some(g) => render_fold_grammar(g, ctx).run(node, depth),
+        None => render_fold_mirror(ctx).run(node, depth),
     };
     out.extend_from_slice(&rendered);
 }
 
 /// Fold5At instance for mirror-canonical rendering. The five operation
 /// reducers + `on_other` together cover every `AstKind` the renderer
-/// emits. Captures nothing — mirror canonical form is grammar-free.
-fn render_fold_mirror() -> Fold5At<
-    impl Fn(&AstNode, i32, Vec<Vec<u8>>) -> Vec<u8>,
+/// emits. Captures `ctx` so the synthetic-root re-recursion (Focus at
+/// `name == "root"` and `depth == 0`) threads the same Ctx into the
+/// nested `render_ast_in` calls per Arc 2's Ctx-threaded dispatch
+/// discipline.
+fn render_fold_mirror<'c>(
+    ctx: &'c Ctx,
+) -> Fold5At<
+    impl Fn(&AstNode, i32, Vec<Vec<u8>>) -> Vec<u8> + 'c,
     impl Fn(&AstNode, i32, Vec<Vec<u8>>) -> Vec<u8>,
     impl Fn(&AstNode, i32, Vec<Vec<u8>>) -> Vec<u8>,
     impl Fn(&AstNode, i32, Vec<Vec<u8>>) -> Vec<u8>,
@@ -637,7 +660,7 @@ fn render_fold_mirror() -> Fold5At<
 > {
     Fold5At::new(
         // on_focus
-        |node: &AstNode, depth: i32, children: Vec<Vec<u8>>| -> Vec<u8> {
+        move |node: &AstNode, depth: i32, children: Vec<Vec<u8>>| -> Vec<u8> {
             let mut out = Vec::new();
             // Synthetic root Focus: children inherit depth (they were
             // recursed at depth+1, but we want them at depth). We
@@ -651,7 +674,7 @@ fn render_fold_mirror() -> Fold5At<
             // the pre-retirement render_ast(c, depth, out) call.
             if node.name == "root" && depth == 0 {
                 for c in &node.children {
-                    render_ast(c, depth, &mut out);
+                    render_ast_in(c, depth, &mut out, ctx);
                 }
                 return out;
             }
@@ -809,8 +832,14 @@ fn render_other_mirror(node: &AstNode, depth: i32) -> Vec<u8> {
 /// grammar by reference and consults it for the reverse-lookup
 /// keyword at each non-terminal kind. Falls through to the
 /// mirror-canonical fallback when the grammar has no keyword.
-fn render_fold_grammar<'g>(
+///
+/// `ctx` is captured so the synthetic-root re-recursion nests through
+/// the same Ctx (matches the mirror-canonical fold's shape). The
+/// grammar `g` is already loaded at construction time, so the inner
+/// per-node walk itself doesn't touch the filesystem.
+fn render_fold_grammar<'g, 'c: 'g>(
     g: &'g Grammar,
+    ctx: &'c Ctx,
 ) -> Fold5At<
     impl Fn(&AstNode, i32, Vec<Vec<u8>>) -> Vec<u8> + 'g,
     impl Fn(&AstNode, i32, Vec<Vec<u8>>) -> Vec<u8> + 'g,
@@ -830,7 +859,7 @@ fn render_fold_grammar<'g>(
                 // re-dispatches grammar). Matches the pre-retirement
                 // render_ast_with_grammar's recursive call at depth=0.
                 for c in &node.children {
-                    let sub = render_fold_grammar(g).run(c, depth);
+                    let sub = render_fold_grammar(g, ctx).run(c, depth);
                     out.extend_from_slice(&sub);
                 }
                 return out;

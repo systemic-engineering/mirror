@@ -293,12 +293,12 @@ use crate::crystallize::{
     floor_crystallizations, Blake3, Content, Crystallizations, CrystallizeError, Splinter, Text,
 };
 use crate::git::{git_crystal_exists, git_store_crystal};
-use crate::grammar::{grammar_for_file, grammar_for_file_in, load_grammar, load_grammar_in};
+use crate::grammar::{grammar_for_file_in, load_grammar_in};
 use crate::hash::canonical_hash;
 use crate::pipeline::{
     apply_rewrites, execute_pipeline, is_mq_query, parse_rewrite, split_pipeline,
 };
-use crate::spectral::{compute_content_oid, render_ast};
+use crate::spectral::{compute_content_oid, render_ast_in};
 use crate::tokenize::tokenize;
 
 /// Walk an AST, collecting every `AstKind::Dark` node in source order.
@@ -757,59 +757,6 @@ fn find_bootstrap_ll(deps_dir: &std::path::Path) -> Option<PathBuf> {
         }
     }
     best.map(|(_, p)| p)
-}
-
-#[allow(dead_code)]
-fn dump_ast(node: &crate::ast::AstNode, depth: usize) {
-    let indent = "  ".repeat(depth);
-    let kind_str = format!("{:?}", node.kind);
-    let body_marker = node
-        .body
-        .as_deref()
-        .map(|b| format!(" body={:?}", b))
-        .unwrap_or_default();
-    let kw_marker = if node.keyword.is_empty() {
-        String::new()
-    } else {
-        format!(" kw={}", node.keyword)
-    };
-    let tag_marker = if node.grammar_tag.is_empty() {
-        String::new()
-    } else {
-        format!(" tag={}", node.grammar_tag)
-    };
-    merr!(
-        "{}{} name={:?}{}{}{} oid={}",
-        indent,
-        kind_str,
-        node.name,
-        kw_marker,
-        tag_marker,
-        body_marker,
-        compute_content_oid(node)
-    );
-    for c in &node.children {
-        dump_ast(c, depth + 1);
-    }
-}
-
-#[allow(dead_code)]
-fn cmd_dump(file: &str) -> i32 {
-    let source = match fs::read(file) {
-        Ok(s) => s,
-        Err(e) => {
-            merr!("cannot read {}: {}", file, e);
-            return 1;
-        }
-    };
-    let grammar_path = grammar_for_file(file);
-    let grammar = match load_grammar(grammar_path) {
-        Ok(g) => g,
-        Err(_) => return 1,
-    };
-    let ast = tokenize(&source, &grammar);
-    dump_ast(&ast, 0);
-    0
 }
 
 /// Count Dark AST nodes — the cheapest loss surface for the kintsugi loop.
@@ -1540,14 +1487,6 @@ enum CiFormat {
 impl Default for CiFormat {
     fn default() -> Self {
         CiFormat::MirrorText
-    }
-}
-
-fn parse_ci_format(s: &str) -> Option<CiFormat> {
-    match s {
-        "mirror" | "mirror-text" => Some(CiFormat::MirrorText),
-        "json" => Some(CiFormat::Json),
-        _ => None,
     }
 }
 
@@ -2454,7 +2393,7 @@ fn cmd_kintsugi_single(
     }
 
     let mut out = Vec::new();
-    render_ast(&ast, 0, &mut out);
+    render_ast_in(&ast, 0, &mut out, ctx);
 
     if let Some(dir) = out_dir {
         // --out-dir path: settled bytes go to disk; no portal probe.
@@ -2559,7 +2498,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                 return 1;
             }
         };
-        return execute_pipeline(&segs, &source);
+        return execute_pipeline(&segs, &source, ctx);
     }
 
     // Path B: file + mq query — resolve the file path against `ctx.cwd()`
@@ -2579,7 +2518,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                 return 1;
             }
         };
-        return execute_pipeline(&segs, &source);
+        return execute_pipeline(&segs, &source, ctx);
     }
 
     if args.len() < 3 {

@@ -2,9 +2,10 @@
 
 use crate::ast::AstNode;
 use crate::exec::io_exec;
-use crate::grammar::{grammar_path_for_ref, load_grammar};
-use crate::spectral::{compute_content_oid, render_ast};
+use crate::grammar::{grammar_path_for_ref_in, load_grammar_in};
+use crate::spectral::{compute_content_oid, render_ast_in};
 use crate::tokenize::tokenize;
+use crate::Ctx;
 
 /// A rewrite rule parsed from `<symbol> => <replacement>` mq syntax.
 ///
@@ -329,22 +330,33 @@ pub fn split_pipeline(query: &str) -> Vec<Segment> {
     segs
 }
 
-fn tokenize_with_ref(r#ref: &str, source: &[u8]) -> Option<AstNode> {
-    let path = grammar_path_for_ref(r#ref)?;
-    let g = load_grammar(&path).ok()?;
+/// Tokenize `source` through the grammar located at `r#ref`, resolving
+/// grammar-path lookup and file read via `ctx` per Arc 2's Ctx-threaded
+/// dispatch discipline (`bootstrap/tests/thread_safety_option_a.rs`).
+/// Removes the last process-cwd dependency on the pipeline execution
+/// hot path (Seam audit `5e7fd6d` correction #1).
+fn tokenize_with_ref(r#ref: &str, source: &[u8], ctx: &Ctx) -> Option<AstNode> {
+    let path = grammar_path_for_ref_in(r#ref, ctx)?;
+    let g = load_grammar_in(&path, ctx).ok()?;
     Some(tokenize(source, &g))
 }
 
-/// Apply kintsugi to the current AST using its grammar tag.
-fn apply_implicit_kintsugi(ast: &mut AstNode, current_text: &mut Vec<u8>) -> Result<(), ()> {
+/// Apply kintsugi to the current AST using its grammar tag. Threads
+/// `ctx` through the tokenize + render dispatch so grammar paths
+/// resolve against `ctx.cwd()` rather than the process cwd.
+fn apply_implicit_kintsugi(
+    ast: &mut AstNode,
+    current_text: &mut Vec<u8>,
+    ctx: &Ctx,
+) -> Result<(), ()> {
     let tag = ast.grammar_tag.clone();
     if tag.is_empty() {
         return Ok(());
     }
     let mut out = Vec::new();
-    render_ast(ast, 0, &mut out);
+    render_ast_in(ast, 0, &mut out, ctx);
     *current_text = out;
-    match tokenize_with_ref(&tag, current_text) {
+    match tokenize_with_ref(&tag, current_text, ctx) {
         Some(new_ast) => {
             *ast = new_ast;
             Ok(())
@@ -353,19 +365,19 @@ fn apply_implicit_kintsugi(ast: &mut AstNode, current_text: &mut Vec<u8>) -> Res
     }
 }
 
-pub fn execute_pipeline(segs: &[Segment], source: &[u8]) -> i32 {
+pub fn execute_pipeline(segs: &[Segment], source: &[u8], ctx: &Ctx) -> i32 {
     if segs.is_empty() {
         return 1;
     }
     let first_ref = &segs[0].r#ref;
-    let mut ast = match tokenize_with_ref(first_ref, source) {
+    let mut ast = match tokenize_with_ref(first_ref, source, ctx) {
         Some(a) => a,
         None => return 1,
     };
     let mut current_text: Vec<u8> = source.to_vec();
 
     if segs[0].kintsugi_after {
-        if apply_implicit_kintsugi(&mut ast, &mut current_text).is_err() {
+        if apply_implicit_kintsugi(&mut ast, &mut current_text, ctx).is_err() {
             return 1;
         }
     }
@@ -374,14 +386,14 @@ pub fn execute_pipeline(segs: &[Segment], source: &[u8]) -> i32 {
         let r#ref = segs[i].r#ref.as_str();
         if r#ref == "@mirror/kintsugi" || r#ref == "@kintsugi" {
             let mut out = Vec::new();
-            render_ast(&ast, 0, &mut out);
+            render_ast_in(&ast, 0, &mut out, ctx);
             current_text = out;
             let tag = if !ast.grammar_tag.is_empty() {
                 ast.grammar_tag.clone()
             } else {
                 first_ref.clone()
             };
-            ast = match tokenize_with_ref(&tag, &current_text) {
+            ast = match tokenize_with_ref(&tag, &current_text, ctx) {
                 Some(a) => a,
                 None => return 1,
             };
@@ -419,7 +431,7 @@ pub fn execute_pipeline(segs: &[Segment], source: &[u8]) -> i32 {
                 }
             }
         } else {
-            let new_ast = match tokenize_with_ref(r#ref, &current_text) {
+            let new_ast = match tokenize_with_ref(r#ref, &current_text, ctx) {
                 Some(a) => a,
                 None => {
                     crate::merr!("pipeline: cannot dispatch {}", r#ref);
@@ -430,7 +442,7 @@ pub fn execute_pipeline(segs: &[Segment], source: &[u8]) -> i32 {
         }
 
         if segs[i].kintsugi_after {
-            if apply_implicit_kintsugi(&mut ast, &mut current_text).is_err() {
+            if apply_implicit_kintsugi(&mut ast, &mut current_text, ctx).is_err() {
                 return 1;
             }
         }

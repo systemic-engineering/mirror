@@ -1,40 +1,30 @@
-//! Phase A RED — thread-safety Option A source migration per /loop 2026-07-05
-//! Arc 2 (Alex direction: full source migration; no half-measures per
-//! [[feedback-no-shortcuts-in-compilation-work]]).
+//! Thread-safety Option A source migration — LANDED (GREEN) per /loop
+//! 2026-07-05 Arc 2 (`7d1ec39` GREEN + Seam audit `5e7fd6d` fold-forward
+//! corrections). Regression pins for the Ctx-threading discipline.
 //!
 //! **Substrate-pull rationale** (Taut `a6efbe5a2e0af97ab` + `ae063d68`):
-//! - fd capture is ALREADY thread-safe (thread-local `CAPTURE_STDOUT`/
-//!   `CAPTURE_STDERR` cells at `bootstrap/src/lib.rs:89-92`)
-//! - Only `set_current_dir` (cwd) remains process-wide
-//! - `kintsugi_main_lock` (`~line 3737`) serializes cwd swap
-//! - Docstring at lines 1-25 is STALE (describes replaced dup2 approach)
+//! fd capture is thread-safe via thread-local `CAPTURE_STDOUT` /
+//! `CAPTURE_STDERR` cells (`bootstrap/src/lib.rs:89-92`); the only
+//! process-wide state that used to remain was cwd, serialized by the
+//! (now-retired) `kintsugi_main_lock` mutex.
 //!
-//! Option A per /loop: thread cwd through the dispatch chain via `Ctx`
-//! struct; drop process-wide `set_current_dir`; drop `kintsugi_main_lock`;
-//! every `Command::new` gets explicit `.current_dir(cwd)`; every file
-//! read that resolves relative paths uses `cwd.join(path)`.
-//!
-//! **NO shortcuts per Alex 2026-07-05**: the full refactor threads cwd
-//! through ~70+ call sites in `bootstrap/src/lib.rs`, ~10 in `grammar.rs`,
-//! ~8 in `mcp.rs`. Every one lands.
-//!
-//! **RED phase**: current `dispatch` takes only `args`, `kintsugi_main_lock`
-//! exists, `set_current_dir` is called process-wide. Text-check tests fail
-//! on presence of the old shape.
-//!
-//! **GREEN phase** (Reed inline atomic commits):
-//! 1. Introduce `Ctx { cwd: PathBuf }` type
-//! 2. Thread `Ctx` through `dispatch(args, ctx)` and every command function
-//! 3. Every `Command::new(_)` gets `.current_dir(ctx.cwd())`
-//! 4. Every relative-path file read gets `ctx.cwd().join(path)`
-//! 5. Grammar loader takes `&Ctx` parameter
-//! 6. Remove `kintsugi_main_lock`; `kintsugi_main_in` no longer sets
-//!    process cwd (constructs `Ctx` and threads through)
-//! 7. Verify all 15+ integration tests pass WITHOUT `--test-threads=1`
+//! **Landed shape** (GREEN — per Alex 2026-07-05 no-shortcuts direction):
+//! 1. `Ctx { cwd: PathBuf }` declared in `bootstrap/src/lib.rs`
+//! 2. `dispatch(args, ctx)` and every `cmd_*` function take `&Ctx`
+//! 3. Every `Command::new` in the dispatch chain routes through
+//!    `ctx.command(_)` so subprocesses inherit `ctx.cwd()`
+//! 4. Every relative-path file read resolves via `ctx.resolve(path)`
+//! 5. `grammar.rs` exposes `load_grammar_in` / `grammar_for_file_in` /
+//!    `grammar_path_for_ref_in` variants taking `&Ctx`
+//! 6. `kintsugi_main_lock` mutex removed; `kintsugi_main_in(args, cwd)`
+//!    constructs a `Ctx` and threads it — never mutates process cwd
+//! 7. Arc 2 fold-forward (`5e7fd6d`) closed the last three LIVE-dispatch
+//!    process-cwd leaks: `pipeline::tokenize_with_ref`,
+//!    `spectral::render_ast` fold-reducer, `mcp::serve_loop`
 //!
 //! Downstream effect: `.cargo/config.toml`'s `RUST_TEST_THREADS = "1"`
-//! becomes redundant; can be removed in a follow-up commit once the
-//! source migration is fully in place and empirically verified.
+//! ceiling is no longer required and the fold-forward tick removes it.
+//! These text-check tests pin the landed shape as regression coverage.
 
 use std::path::PathBuf;
 

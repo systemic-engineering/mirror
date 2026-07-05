@@ -63,6 +63,8 @@ use std::io::{BufRead, BufReader, Write};
 
 use serde_json::{json, Value};
 
+use crate::Ctx;
+
 /// Build the response value for the MCP `initialize` request.
 ///
 /// Preserves the bash wrapper's exact response shape (server name
@@ -435,7 +437,7 @@ pub fn parse_verdict_label(payload: &str) -> Option<String> {
 /// boundary IS a structured signal, not opaque text. The substrate's
 /// `mirror kintsugi --ci` REJECT verdict exits non-zero; the MCP wire
 /// must surface that as structured failure for the agent caller.
-fn run_mirror(args: &[&str]) -> (String, i32) {
+fn run_mirror(args: &[&str], ctx: &Ctx) -> (String, i32) {
     // kintsugi_main expects full argv with program name at args[0].
     let mut argv: Vec<String> = vec!["mirror".to_string()];
     argv.extend(args.iter().map(|s| s.to_string()));
@@ -447,8 +449,16 @@ fn run_mirror(args: &[&str]) -> (String, i32) {
     // matches `error: <panic message>` on stderr with exit_code=2 —
     // distinct from a substrate-clean failure (exit_code=1) so callers
     // can distinguish substrate-internal vs panic-in-server.
+    //
+    // Arc 2 (Seam audit `5e7fd6d` correction #3): thread `ctx.cwd()`
+    // via `kintsugi_main_in` so the dispatch chain resolves relative
+    // shard paths against the MCP session's cwd (typically
+    // `$MIRROR_HOME`) — not the MCP server's process cwd. Removes the
+    // `set_current_dir($MIRROR_HOME)` mutation that used to live in
+    // `serve_loop`, closing the last process-wide cwd mutation in the
+    // binary.
     let output = match std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-        crate::kintsugi_main(&argv)
+        crate::kintsugi_main_in(&argv, ctx.cwd())
     })) {
         Ok(o) => o,
         Err(payload) => {
@@ -490,7 +500,7 @@ fn run_mirror(args: &[&str]) -> (String, i32) {
 /// in the `tools/call` response so clients can programmatically
 /// distinguish substrate failure (kintsugi REJECT, compile error) from
 /// success without scraping stderr text.
-fn dispatch_tool_call(tool: &str, args: &Value) -> (String, bool) {
+fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
     let s =
         |k: &str| -> Option<String> { args.get(k).and_then(|v| v.as_str()).map(|s| s.to_string()) };
     let b = |k: &str| -> bool { args.get(k).and_then(|v| v.as_bool()).unwrap_or(false) };
@@ -499,7 +509,7 @@ fn dispatch_tool_call(tool: &str, args: &Value) -> (String, bool) {
     let (text, exit_code) = match tool {
         "compile" => {
             let file = s("file").unwrap_or_default();
-            run_mirror(&["compile", &file])
+            run_mirror(&["compile", &file], ctx)
         }
         "craft" => {
             let target = s("target").unwrap_or_default();
@@ -512,7 +522,7 @@ fn dispatch_tool_call(tool: &str, args: &Value) -> (String, bool) {
                 argv.push("--reflect".into());
             }
             let refs: Vec<&str> = argv.iter().map(String::as_str).collect();
-            run_mirror(&refs)
+            run_mirror(&refs, ctx)
         }
         "kintsugi" => {
             // Settle prism: mutates the file. Read-only verdict
@@ -527,7 +537,7 @@ fn dispatch_tool_call(tool: &str, args: &Value) -> (String, bool) {
                 argv.push(n.to_string());
             }
             let refs: Vec<&str> = argv.iter().map(String::as_str).collect();
-            run_mirror(&refs)
+            run_mirror(&refs, ctx)
         }
         "prisms" => {
             // Substrate-introspection primitive (tick 17). Walks the
@@ -568,7 +578,7 @@ fn dispatch_tool_call(tool: &str, args: &Value) -> (String, bool) {
                 argv.push(n.to_string());
             }
             let refs: Vec<&str> = argv.iter().map(String::as_str).collect();
-            let (text, exit_code) = run_mirror(&refs);
+            let (text, exit_code) = run_mirror(&refs, ctx);
             let is_error = match parse_verdict_label(text.trim()) {
                 Some(label) => label != "success",
                 // No parseable verdict + non-zero exit → substrate-internal
@@ -589,7 +599,7 @@ fn dispatch_tool_call(tool: &str, args: &Value) -> (String, bool) {
             // wires the real cascade/pack_trail/pull_frontier/dogfood
             // reads.
             let dir = s("dir").unwrap_or_default();
-            run_mirror(&["recall", &dir])
+            run_mirror(&["recall", &dir], ctx)
         }
         "spawn" => {
             // Phase G v0 MCP wiring (2026-06-26): the cli-surface tool
@@ -601,7 +611,7 @@ fn dispatch_tool_call(tool: &str, args: &Value) -> (String, bool) {
             // naming the seven composition pieces. Exit_code lifts to
             // isError per the established tools/call contract.
             let peer_home = s("peer_home").unwrap_or_default();
-            run_mirror(&["spawn", &peer_home])
+            run_mirror(&["spawn", &peer_home], ctx)
         }
         other => return (format!("unknown tool: {}", other), true),
     };
@@ -614,7 +624,26 @@ fn dispatch_tool_call(tool: &str, args: &Value) -> (String, bool) {
 ///
 /// Result is either `Some(line)` to write to stdout, or `None` when the
 /// request is a notification (no response per JSON-RPC 2.0 §4.1.5).
+///
+/// Convenience wrapper delegating to [`handle_request_in`] with a
+/// process-cwd-derived `Ctx`. Preserved so existing tests + fixture
+/// harnesses keep the historical signature. Live MCP dispatch (Arc 2)
+/// uses [`handle_request_in`] with the `$MIRROR_HOME` Ctx built by
+/// [`serve_loop`], so `tools/call` payloads dispatch against the
+/// substrate home rather than the MCP server's process cwd.
 pub fn handle_request(line: &str) -> Option<String> {
+    let ctx = Ctx::from_process_cwd();
+    handle_request_in(line, &ctx)
+}
+
+/// Ctx-threaded variant of [`handle_request`]. Threads `ctx` through
+/// `dispatch_tool_call` → `run_mirror` → `kintsugi_main_in` so the
+/// dispatch chain resolves relative shard paths against `ctx.cwd()`.
+///
+/// Seam audit `5e7fd6d` correction #3: closes the MCP path's remaining
+/// process-cwd dependency, retiring the `set_current_dir($MIRROR_HOME)`
+/// mutation in `serve_loop`.
+pub fn handle_request_in(line: &str, ctx: &Ctx) -> Option<String> {
     let v: Value = match serde_json::from_str(line) {
         Ok(v) => v,
         Err(_) => return None, // bash wrapper silently dropped unparseable lines.
@@ -651,7 +680,7 @@ pub fn handle_request(line: &str) -> Option<String> {
                 .get("arguments")
                 .cloned()
                 .unwrap_or_else(|| json!({}));
-            let (text, is_error) = dispatch_tool_call(&tool, &args);
+            let (text, is_error) = dispatch_tool_call(&tool, &args, ctx);
             // Tick 20 (2026-06-19): substrate-pull USE of @magic/audit
             // at @io boundary. When MIRROR_MCP_AUDIT=1, emit an audit
             // record (matching the audit_record carrier from
@@ -696,13 +725,21 @@ pub fn handle_request(line: &str) -> Option<String> {
 ///
 /// Mirrors the bash wrapper's `while IFS= read -r line; do ... done`
 /// loop. Exits 0 on EOF.
+///
+/// Arc 2 (Seam audit `5e7fd6d` correction #3): the bash wrapper's
+/// `cd $MIRROR_HOME` used to be preserved as a process-wide
+/// `set_current_dir($MIRROR_HOME)` here — the LAST process-cwd
+/// mutation in the binary. It is retired: `serve_loop` now constructs
+/// a `Ctx` rooted at `$MIRROR_HOME` (falling back to the process cwd
+/// when unset) and threads it through `handle_request_in` →
+/// `dispatch_tool_call` → `run_mirror` → `kintsugi_main_in`. Grammar
+/// paths resolve against `ctx.cwd()` explicitly; the MCP server's
+/// process cwd is left untouched.
 pub fn serve_loop() -> i32 {
-    // The bash wrapper changed directory to MIRROR_HOME. Preserve that
-    // for parity — some `mirror compile` invocations resolve grammar
-    // paths relative to cwd.
-    if let Ok(home) = std::env::var("MIRROR_HOME") {
-        let _ = std::env::set_current_dir(&home);
-    }
+    let ctx = match std::env::var("MIRROR_HOME") {
+        Ok(home) => Ctx::new(std::path::PathBuf::from(home)),
+        Err(_) => Ctx::from_process_cwd(),
+    };
 
     let stdin = std::io::stdin();
     let stdout = std::io::stdout();
@@ -721,7 +758,7 @@ pub fn serve_loop() -> i32 {
         if trimmed.is_empty() {
             continue;
         }
-        if let Some(resp) = handle_request(trimmed) {
+        if let Some(resp) = handle_request_in(trimmed, &ctx) {
             let mut out = stdout.lock();
             // Newline-terminate; flush so the agent sees the frame.
             if writeln!(out, "{}", resp).is_err() {
