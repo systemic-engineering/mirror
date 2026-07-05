@@ -294,24 +294,43 @@ round earns the monotone decrease.
 
 Formalized here at the kintsugi inner-step altitude:
 
-**Theorem (round-level descent under 2-KP selection).** Let `T_n` be
-the opacity_map at round `n`. Let `R(T_n) = apply(selection, T_n)`
-be the state after applying the 2-KP-selected subset of morphisms.
-Under the following preconditions:
+**Theorem (round-level descent under 2-KP selection, CONDITIONAL on
+P3).** Let `T_n` be the opacity_map at round `n`. Let
+`R(T_n) = apply(selection, T_n)` be the state after applying the
+2-KP-selected subset of morphisms. Under the following preconditions:
 
 - (P1) **Candidate feasibility**: at least one candidate `c` exists
   with `transparency_gain(c) > 0` and `(silicon_cost(c), ram_cost(c))
   ≤ capacity`.
 - (P2) **PTAS approximation quality**: the selected subset satisfies
   `∑_{c ∈ selection} transparency_gain(c) ≥ (1 - ε) · OPT`.
-- (P3) **Application faithfulness**: applying `selection` reduces
-  the opacity by the sum of the gains, i.e. `‖T_{n+1}‖ = ‖T_n‖ -
-  ∑ transparency_gain(c ∈ selection)` (no interference).
+- (P3) **Application faithfulness** [**DEFERRED per §10.b**]: applying
+  `selection` reduces the opacity by the sum of the gains, i.e.
+  `‖T_{n+1}‖ = ‖T_n‖ - ∑ transparency_gain(c ∈ selection)` (no
+  interference).
 
-Then `‖R(T_n)‖ < ‖T_n‖` off-fixed-points, i.e. `‖T_{n+1}‖ < ‖T_n‖`.
+Then, **CONDITIONAL on P3's interference-free composition assumption
+(DEFERRED per §10.b)**, `‖R(T_n)‖ < ‖T_n‖` off-fixed-points, i.e.
+`‖T_{n+1}‖ < ‖T_n‖`.
 
 **Proof sketch.** Under (P1) `OPT > 0`; under (P2) selection gains
-`≥ (1-ε)·OPT > 0`; under (P3) opacity decreases by that gain. QED.
+`≥ (1-ε)·OPT > 0`; **assuming P3 (linear opacity decrease under
+selection application — an assumption the substrate cannot yet
+discharge structurally; see §10.b)**, opacity decreases by that
+gain. QED-conditional.
+
+**Discipline.** The theorem holds **unconditionally under (P1) +
+(P2)**; **P3 formalization is forward-promised via the interference-
+model landing per §10.b**. Applications that lack a P3 witness
+carry this theorem as **HEDGED, not proven**. Correction landed per
+Seam Phase D audit `f3b231d` §9.1: the prior statement read as
+unconditional; the corrected form names P3-conditionality explicitly
+so the substrate does not carry a hedged theorem as proven.
+
+**Empirical discipline**: the substrate audits observed descent
+`‖T_{n+1}‖ < ‖T_n‖` at @third depth 3 per `shards/reflection.mirror`;
+P3-derived theoretical descent is DEFERRED to interference-model
+formalization.
 
 ### §4.2 Safety envelope (when descent CAN fail)
 

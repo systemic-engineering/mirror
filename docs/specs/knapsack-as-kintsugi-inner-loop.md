@@ -218,7 +218,24 @@ load-bearing edge case."
 At capacity = 0, no morphism fits under budget. This is (P1) violation
 per `docs/math/resource-budget/README.md` §4.1.
 
-### §4.2 v0 recommendation: PARTIAL + hold(carrier)
+### §4.2 v0 recommendation: PARTIAL(opacity_map) OR hold(ref) — disjunction, not composition
+
+**Correction landed per Seam Phase D audit `f3b231d` §9.2**: the prior
+§4.2 body text read "PARTIAL + hold(carrier)" as if the two verdicts
+composed at capacity = 0. The `packing_verdict` enum shows them as
+**distinct variants**. The correct reading:
+
+- **`partial(opacity_map)`** — for capacity = 0 with deferrable
+  candidates: the round packs zero, opacity carried forward via
+  the opacity_map naming the deferred candidates; next tick may
+  raise capacity.
+- **`hold(ref)`** — for observer-declined non-discharge: the observer
+  explicitly declines to discharge; the substrate crystallizes the
+  tension unresolved against `ref`.
+
+These are **disjoint verdicts**, not a composed one. Capacity = 0
+yields **one of** `partial(opacity_map)` **or** `hold(ref)` depending
+on the deferability signal — not both simultaneously.
 
 The three-mode algebra per `docs/math/kintsugi/README.md`'s
 `compiler-error-surface.md` names three discharge modes: `apply`,
@@ -228,19 +245,21 @@ The three-mode algebra per `docs/math/kintsugi/README.md`'s
 - NOT `spawn` — spawning a peer at capacity = 0 doesn't help (the peer
   inherits or receives its own capacity; if the parent's is 0, so is
   the peer's typically).
-- **`hold(carrier)`** — the legitimate non-discharge. The substrate
-  crystallizes the tension unresolved; carries it forward; the observer's
-  next tick may raise capacity (via budget re-negotiation upstream).
+- **Either `partial(opacity_map)` OR `hold(ref)`** — the two
+  legitimate non-apply/non-spawn resolutions, chosen by the
+  deferability signal on the candidate set.
 
-Per `error-as-question.md` §2's six-variant answer algebra, `hold(ref)`
-is Variant 6 — the substrate's Partial(0.0, ref) commitment. Empirical
+Per `error-as-question.md` §2's six-variant answer algebra:
+`partial(opacity_map)` matches Variant 5 (Partial); `hold(ref)` matches
+Variant 6 — the substrate's Partial(0.0, ref) commitment. Empirical
 composition per candidate #141 (conditional-marker discipline; landed
-at kintsugi/surface's grin) already witnesses this shape.
+at kintsugi/surface's grin) already witnesses the `hold(ref)` shape.
 
-**The overflow verdict is `partial(opacity_map)` with the opacity_map
-naming the deferred candidates**. Not `failure`. Not `success`. The
-opacity_map's transparency drops to (near) 0 for this round; the next
-round may raise capacity and re-attempt.
+**The overflow verdict at capacity = 0 with deferrable candidates
+present is `partial(opacity_map)` with the opacity_map naming the
+deferred candidates**. Not `failure`. Not `success`. Not (simultaneously)
+`hold(ref)`. The opacity_map's transparency drops to (near) 0 for
+this round; the next round may raise capacity and re-attempt.
 
 ### §4.3 FAILURE variant reserved for structural mismatches
 
@@ -377,12 +396,39 @@ computation is silicon-bound.
 
 ### §7.1 Composition shape
 
-When @spectral-db invokes kintsugi under budget:
+**Correction landed per Seam Phase D audit `f3b231d` §9.3**: prior
+§7.1 read as if @kintsugi/knapsack could widen `active_pass` in-place
+to a top-k emission. `active_pass` emits a **SINGLE morphism per
+pulse** (pulse-atomicity contract per
+`shards/kintsugi/oscillate.mirror:475-478`, return type `morphism`
+singular, not `[morphism]` or `morphism_set`). **`@kintsugi/knapsack`
+sits ABOVE `active_pass`, wrapping multiple pulses within a capacity
+envelope** to enumerate the candidate set, then selecting via PTAS.
+It does **NOT** widen `active_pass` in-place to top-k.
+
+Two paths considered by Seam:
+
+- **Path 1 (external wrap)** — `@kintsugi/knapsack` orchestrator loops
+  `active_pass` under budget across multiple pulses, collecting
+  emitted morphisms into a candidate set, then applies PTAS selection
+  over the collected set. Pulse-atomicity preserved; ACTIVE→DARK
+  alternation discipline preserved. **RATIFIED** per Seam.
+- **Path 2 (in-place rewrite)** — widen `active_pass` to top-k, with
+  k determined by capacity. **REJECTED** per Seam: breaks pulse-
+  atomicity (one pulse would emit multiple morphisms) and contradicts
+  the ACTIVE→DARK alternation contract at `oscillate.mirror` header
+  lines 545-556.
+
+Concrete composition:
 
 1. @spectral-db issues an eigenvalue query with `silicon_cost = O(n³)`
    for Jacobi diagonalization.
-2. The query enters `@fate`'s tournament as one candidate.
-3. `@kintsugi/knapsack.select(candidates, capacity)` decides admission:
+2. The query enters `@fate`'s tournament as one candidate, surfaced
+   via one `active_pass` pulse emission (SINGLE morphism per pulse).
+3. **@kintsugi/knapsack wraps multiple such pulses** to build the
+   candidate set within a capacity envelope, then invokes
+   `@kintsugi/knapsack.select(candidates, capacity)` over the
+   collected candidates to decide admission:
    - IF `silicon_cost(query) ≤ capacity.silicon` AND
      `ram_cost(query) ≤ capacity.ram`: query is a candidate in the
      PTAS packing.
