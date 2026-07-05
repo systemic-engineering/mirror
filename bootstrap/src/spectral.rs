@@ -277,13 +277,14 @@ fn compute_oid_inner(node: &AstNode) -> String {
             let bytes: &[u8] = n.body.as_deref().map(str::as_bytes).unwrap_or(&[]);
             return hash_tagged("dark", bytes);
         }
-        // Docblock short-circuits identically to Dark, under a distinct
-        // "docblock" tag: hash the verbatim `#`-prefixed line bytes
+        // Doc short-circuits identically to Dark, under a distinct
+        // "doc" tag: hash the verbatim `#`-prefixed line bytes
         // (leaf, no children). Per `docs/math/kintsugi/doc-code-seam.md`
-        // §6.1 (the doc-as-declaration collapse).
-        if matches!(n.kind, AstKind::Docblock) {
+        // §6.1 (the doc-as-declaration collapse). Renamed from `docblock`
+        // to `doc` per Alex 2026-07-05 casing collapse.
+        if matches!(n.kind, AstKind::Doc) {
             let bytes: &[u8] = n.body.as_deref().map(str::as_bytes).unwrap_or(&[]);
-            return hash_tagged("docblock", bytes);
+            return hash_tagged("doc", bytes);
         }
         // In / Out are leaf terminals: hash just the name under the
         // kind tag. No body, no children.
@@ -311,8 +312,8 @@ fn compute_oid_inner(node: &AstNode) -> String {
             AstKind::MatchExpr => "match_expr",
             AstKind::SelectExpr => "select_expr",
             AstKind::ParametricType => "parametric_type",
-            // In / Out / Dark / Docblock handled above.
-            AstKind::In | AstKind::Out | AstKind::Dark | AstKind::Docblock => unreachable!(),
+            // In / Out / Dark / Doc handled above.
+            AstKind::In | AstKind::Out | AstKind::Dark | AstKind::Doc => unreachable!(),
         };
         let include_body = !matches!(n.kind, AstKind::Focus);
         let mut buf: Vec<u8> = Vec::new();
@@ -443,7 +444,7 @@ where
             AstKind::In
             | AstKind::Out
             | AstKind::Dark
-            | AstKind::Docblock
+            | AstKind::Doc
             | AstKind::IoBinding
             | AstKind::MatchExpr
             | AstKind::SelectExpr
@@ -589,7 +590,7 @@ where
             AstKind::In
             | AstKind::Out
             | AstKind::Dark
-            | AstKind::Docblock
+            | AstKind::Doc
             | AstKind::IoBinding
             | AstKind::MatchExpr
             | AstKind::SelectExpr
@@ -789,8 +790,8 @@ fn render_other_mirror(node: &AstNode, depth: i32) -> Vec<u8> {
                 out.extend_from_slice(body.as_bytes());
             }
         }
-        AstKind::Docblock => {
-            // Docblock body carries the verbatim `#`-prefixed line bytes
+        AstKind::Doc => {
+            // Doc body carries the verbatim `#`-prefixed line bytes
             // (leading `#` included, trailing newline excluded). Emit as-is
             // followed by a newline to round-trip the source line boundary.
             // Per `docs/math/kintsugi/doc-code-seam.md` §6.1.
@@ -1465,7 +1466,7 @@ fn kind_tag(k: AstKind) -> &'static str {
         AstKind::SelectExpr => "select_expr",
         AstKind::ParametricType => "parametric_type",
         AstKind::Dark => "dark",
-        AstKind::Docblock => "docblock",
+        AstKind::Doc => "doc",
     }
 }
 

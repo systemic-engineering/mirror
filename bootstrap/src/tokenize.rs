@@ -185,7 +185,7 @@ fn scan_items(source: &[u8], grammar: &Grammar, parent: &mut AstNode, base_off: 
     //
     // `above_seam` is true initially and flips to false when the first `---`
     // at column 0 is scanned. While true, `#`-prefixed lines at line start
-    // emit `AstKind::Docblock` nodes (declarative claims); while false, they
+    // emit `AstKind::Doc` nodes (declarative claims); while false, they
     // retain the pre-existing strip-to-EOL comment discipline.
     //
     // Load-bearing precondition per Seam audit `795f2b6` §3 correction C3
@@ -310,14 +310,14 @@ fn scan_items(source: &[u8], grammar: &Grammar, parent: &mut AstNode, base_off: 
             continue;
         }
 
-        // Attribute # / shebang #! / docblock line.
+        // Attribute # / shebang #! / doc line.
         //
         // Shebang (`#!`) and attribute (`#[...]`) forms retain their
         // existing strip-to-EOL / balanced-bracket discipline unconditionally
         // (they are structural, not commentary).
         //
         // For a plain `#`-prefixed line at line start:
-        //   - if `above_seam`, emit an `AstKind::Docblock` node carrying the
+        //   - if `above_seam`, emit an `AstKind::Doc` node carrying the
         //     verbatim line bytes per `docs/math/kintsugi/doc-code-seam.md`
         //     §6.1 (the doc-as-declaration collapse; load-bearing per Seam
         //     audit `795f2b6` §3 correction C3);
@@ -329,7 +329,7 @@ fn scan_items(source: &[u8], grammar: &Grammar, parent: &mut AstNode, base_off: 
                 continue;
             }
             // Peek at the byte after `#` to decide shebang / attribute /
-            // docblock without consuming.
+            // doc without consuming.
             let next = bytes.get(pos + 1).copied();
             if next == Some(b'!') {
                 // Shebang `#!` — preserve existing strip-to-EOL behavior.
@@ -374,7 +374,7 @@ fn scan_items(source: &[u8], grammar: &Grammar, parent: &mut AstNode, base_off: 
                     start: base_off + start,
                     end: base_off + end,
                 };
-                parent.add_child(AstNode::docblock_line(&bytes[start..end], span));
+                parent.add_child(AstNode::doc_line(&bytes[start..end], span));
                 pos = end;
                 at_line_start = false;
                 continue;

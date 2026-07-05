@@ -50,7 +50,7 @@ pub enum AstKind {
     ///
     /// Per `docs/specs/strict-and-total-classification.md`.
     Dark,
-    /// A `#`-prefixed line above the `---` seam — a docblock declaration.
+    /// A `#`-prefixed line above the `---` seam — a doc declaration.
     ///
     /// Per `docs/math/kintsugi/doc-code-seam.md` §6.1 (the doc-as-declaration
     /// collapse): `#`-lines above the seam are first-class AST nodes carrying
@@ -61,7 +61,12 @@ pub enum AstKind {
     /// trailing newline) live in `body`; the source span lives in `dark_span`.
     /// Load-bearing precondition for the eight-shard cascade in
     /// `docs/specs/doc-code-seam-shards.md` per Seam audit `795f2b6` §3.
-    Docblock,
+    /// Renamed from `Docblock` to `Doc` per Alex 2026-07-05: killing the
+    /// `doc` + `block` compound and the mixed casing (`Doc` vs `doc`) —
+    /// substrate says `doc` lowercase; Rust variant follows with `Doc`
+    /// PascalCase per Rust convention. Composes with @epistemologic/spec
+    /// `doc<T>` = `@loop<@nl<T>>` composite.
+    Doc,
 }
 
 /// Half-open byte span `[start, end)` into the source file. (0, 0) = unknown.
@@ -142,13 +147,13 @@ impl AstNode {
         node
     }
 
-    /// Construct a Docblock child carrying a `#`-prefixed line above the
+    /// Construct a Doc child carrying a `#`-prefixed line above the
     /// `---` seam. The verbatim line bytes (including the leading `#`,
     /// excluding the trailing newline) live in `body`; the source span
     /// lives in `dark_span`. Per `docs/math/kintsugi/doc-code-seam.md`
     /// §6.1.
-    pub fn docblock_line(bytes: &[u8], span: DarkSpan) -> Self {
-        let mut node = AstNode::new(AstKind::Docblock, "");
+    pub fn doc_line(bytes: &[u8], span: DarkSpan) -> Self {
+        let mut node = AstNode::new(AstKind::Doc, "");
         node.body = Some(String::from_utf8_lossy(bytes).into_owned());
         node.dark_span = span;
         node
