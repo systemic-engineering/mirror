@@ -40,8 +40,7 @@ fn repo_root() -> PathBuf {
 
 fn read_source(rel: &str) -> String {
     let path = repo_root().join(rel);
-    std::fs::read_to_string(&path)
-        .unwrap_or_else(|e| panic!("read {:?}: {}", path, e))
+    std::fs::read_to_string(&path).unwrap_or_else(|e| panic!("read {:?}: {}", path, e))
 }
 
 #[test]
@@ -70,8 +69,7 @@ fn tokenize_tracks_above_seam_state() {
 #[test]
 fn tokenize_emits_docblock_above_seam() {
     let content = read_source("bootstrap/src/tokenize.rs");
-    let has_emission = content.contains("AstKind::Docblock")
-        || content.contains("docblock_line");
+    let has_emission = content.contains("AstKind::Docblock") || content.contains("docblock_line");
     assert!(
         has_emission,
         "tokenize.rs must emit `Docblock` AST nodes for `#`-prefixed lines \
@@ -95,5 +93,47 @@ fn fixture_has_docblock_marker_seam_and_body() {
          docblock above `---` seam. Used by Tick 2 behavioral verification: \
          after GREEN, the marker string must appear in the AST content \
          (currently absent because `#`-lines are stripped by tokenize.rs)."
+    );
+}
+
+/// Behavioral verification (Phase B GREEN bonus). Actually invokes
+/// `tokenize` on the fixture and walks the resulting AST asserting that the
+/// marker string `TOKENIZE_DOCBLOCK_MARKER` appears in some `Docblock`
+/// node's `body`. Complements the text-check tests above: text-check proves
+/// the source pattern is present; this test proves the tokenizer's
+/// behavior actually produces a `Docblock` node whose contents survive
+/// through to the AST.
+///
+/// Per `docs/math/kintsugi/doc-code-seam.md` §6.1: `#`-lines above `---`
+/// must produce `AstKind::Docblock` nodes carrying the verbatim line bytes.
+#[test]
+fn tokenize_produces_docblock_carrying_marker() {
+    use mirror::ast::{AstKind, AstNode};
+    use mirror::grammar::Grammar;
+    use mirror::tokenize::tokenize;
+
+    let source = read_source("bootstrap/tests/fixtures/docblock_above_seam/simple.mirror");
+    let grammar = Grammar::new();
+    let root = tokenize(source.as_bytes(), &grammar);
+
+    fn find_docblock_with(node: &AstNode, needle: &str) -> bool {
+        if node.kind == AstKind::Docblock {
+            if let Some(body) = node.body.as_deref() {
+                if body.contains(needle) {
+                    return true;
+                }
+            }
+        }
+        node.children.iter().any(|c| find_docblock_with(c, needle))
+    }
+
+    assert!(
+        find_docblock_with(&root, "TOKENIZE_DOCBLOCK_MARKER"),
+        "tokenize must produce an `AstKind::Docblock` node whose body \
+         contains `TOKENIZE_DOCBLOCK_MARKER` when a `#`-prefixed line \
+         above the `---` seam carries the marker. Per \
+         `docs/math/kintsugi/doc-code-seam.md` §6.1: above-seam `#`-lines \
+         are first-class AST nodes carrying the verbatim line bytes, not \
+         silently stripped."
     );
 }

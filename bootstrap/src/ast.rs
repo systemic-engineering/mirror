@@ -50,6 +50,18 @@ pub enum AstKind {
     ///
     /// Per `docs/specs/strict-and-total-classification.md`.
     Dark,
+    /// A `#`-prefixed line above the `---` seam — a docblock declaration.
+    ///
+    /// Per `docs/math/kintsugi/doc-code-seam.md` §6.1 (the doc-as-declaration
+    /// collapse): `#`-lines above the seam are first-class AST nodes carrying
+    /// declarative claims, NOT silently stripped comments. Below the seam,
+    /// `#`-lines retain their existing comment/attribute discipline.
+    ///
+    /// The verbatim line bytes (including the leading `#` but excluding the
+    /// trailing newline) live in `body`; the source span lives in `dark_span`.
+    /// Load-bearing precondition for the eight-shard cascade in
+    /// `docs/specs/doc-code-seam-shards.md` per Seam audit `795f2b6` §3.
+    Docblock,
 }
 
 /// Half-open byte span `[start, end)` into the source file. (0, 0) = unknown.
@@ -126,6 +138,18 @@ impl AstNode {
     pub fn dark(bytes: &str, span: DarkSpan) -> Self {
         let mut node = AstNode::new(AstKind::Dark, "");
         node.body = Some(bytes.to_string());
+        node.dark_span = span;
+        node
+    }
+
+    /// Construct a Docblock child carrying a `#`-prefixed line above the
+    /// `---` seam. The verbatim line bytes (including the leading `#`,
+    /// excluding the trailing newline) live in `body`; the source span
+    /// lives in `dark_span`. Per `docs/math/kintsugi/doc-code-seam.md`
+    /// §6.1.
+    pub fn docblock_line(bytes: &[u8], span: DarkSpan) -> Self {
+        let mut node = AstNode::new(AstKind::Docblock, "");
+        node.body = Some(String::from_utf8_lossy(bytes).into_owned());
         node.dark_span = span;
         node
     }

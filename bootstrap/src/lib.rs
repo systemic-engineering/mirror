@@ -3546,7 +3546,10 @@ fn cmd_spawn(peer_home: &str, hello_world: bool) -> i32 {
                 Err(fragmentation_git::namespaced::NamespacedStoreError::NotAGitRepo(_)) => {
                     // Retained as safety net; unreachable given the
                     // has_git_dir gate above.
-                    ("uncommitted".to_string(), serde_json::Value::String(lead_str.clone()))
+                    (
+                        "uncommitted".to_string(),
+                        serde_json::Value::String(lead_str.clone()),
+                    )
                 }
                 Err(e) => {
                     merr!("spawn: cannot open namespaced store: {}", e);

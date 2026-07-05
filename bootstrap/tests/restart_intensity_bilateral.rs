@@ -37,7 +37,8 @@ fn repo_root() -> PathBuf {
 }
 
 fn read_property_shard() -> String {
-    let path = repo_root().join("shards/epistemologic/property/restart_intensity_well_formed.mirror");
+    let path =
+        repo_root().join("shards/epistemologic/property/restart_intensity_well_formed.mirror");
     std::fs::read_to_string(&path)
         .unwrap_or_else(|e| panic!("read property shard at {:?}: {}", path, e))
 }
@@ -139,13 +140,15 @@ fn bilateral_pair_cross_references() {
 
     // Property should mention the fracture body it discharges to
     assert!(
-        property_content.contains("restart_storm") || property_content.contains("@kintsugi/fracture"),
+        property_content.contains("restart_storm")
+            || property_content.contains("@kintsugi/fracture"),
         "property shard must cross-reference the paired fracture body per #53 bilateral pattern"
     );
 
     // Fracture should mention the property it restores
     assert!(
-        fracture_content.contains("well_formed") || fracture_content.contains("@epistemologic/property"),
+        fracture_content.contains("well_formed")
+            || fracture_content.contains("@epistemologic/property"),
         "fracture shard must cross-reference the paired property per #53 bilateral pattern"
     );
 }

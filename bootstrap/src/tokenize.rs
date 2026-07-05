@@ -181,6 +181,16 @@ fn scan_items(source: &[u8], grammar: &Grammar, parent: &mut AstNode, base_off: 
     let mut pos = 0usize;
     let llvm = grammar.is_llvm_ir();
     let mut at_line_start = true;
+    // Doc-code seam state per `docs/math/kintsugi/doc-code-seam.md` §6.1.
+    //
+    // `above_seam` is true initially and flips to false when the first `---`
+    // at column 0 is scanned. While true, `#`-prefixed lines at line start
+    // emit `AstKind::Docblock` nodes (declarative claims); while false, they
+    // retain the pre-existing strip-to-EOL comment discipline.
+    //
+    // Load-bearing precondition per Seam audit `795f2b6` §3 correction C3
+    // for the eight-shard cascade in `docs/specs/doc-code-seam-shards.md`.
+    let mut above_seam = true;
 
     while pos < len {
         // Skip whitespace.
@@ -247,6 +257,24 @@ fn scan_items(source: &[u8], grammar: &Grammar, parent: &mut AstNode, base_off: 
             }
             continue;
         }
+        // `---` at column 0 — the doc-code seam. Flip `above_seam` to false
+        // for the remainder of this scan, then consume the marker line.
+        // Per `docs/math/kintsugi/doc-code-seam.md` §6.1 and Reed + Alex
+        // `docs/specs/property-projection.md` (2026-05-19): above `---` is
+        // declaration; below `---` is observation. Must precede the `--`
+        // comment branch below, which would otherwise swallow `---` whole.
+        if above_seam
+            && (pos == 0 || bytes[pos - 1] == b'\n')
+            && pos + 2 < len
+            && bytes[pos] == b'-'
+            && bytes[pos + 1] == b'-'
+            && bytes[pos + 2] == b'-'
+        {
+            above_seam = false;
+            pos = find_eol(bytes, pos);
+            continue;
+        }
+
         // -- comment
         if pos + 1 < len && bytes[pos] == b'-' && bytes[pos + 1] == b'-' {
             while pos < len && bytes[pos] != b'\n' {
@@ -282,18 +310,51 @@ fn scan_items(source: &[u8], grammar: &Grammar, parent: &mut AstNode, base_off: 
             continue;
         }
 
-        // Attribute # / shebang #!
+        // Attribute # / shebang #! / docblock line.
+        //
+        // Shebang (`#!`) and attribute (`#[...]`) forms retain their
+        // existing strip-to-EOL / balanced-bracket discipline unconditionally
+        // (they are structural, not commentary).
+        //
+        // For a plain `#`-prefixed line at line start:
+        //   - if `above_seam`, emit an `AstKind::Docblock` node carrying the
+        //     verbatim line bytes per `docs/math/kintsugi/doc-code-seam.md`
+        //     §6.1 (the doc-as-declaration collapse; load-bearing per Seam
+        //     audit `795f2b6` §3 correction C3);
+        //   - if not `above_seam`, keep the pre-existing strip-to-EOL
+        //     behavior (below-seam commentary discipline).
         if bytes[pos] == b'#' {
             if llvm {
                 pos = find_eol(bytes, pos);
                 continue;
             }
-            pos += 1;
-            if pos < len && bytes[pos] == b'!' {
-                pos += 1;
+            // Peek at the byte after `#` to decide shebang / attribute /
+            // docblock without consuming.
+            let next = bytes.get(pos + 1).copied();
+            if next == Some(b'!') {
+                // Shebang `#!` — preserve existing strip-to-EOL behavior.
+                pos += 2;
+                if pos < len && bytes[pos] == b'[' {
+                    pos += 1;
+                    let mut bracket_depth = 1;
+                    while pos < len && bracket_depth > 0 {
+                        if bytes[pos] == b'[' {
+                            bracket_depth += 1;
+                        } else if bytes[pos] == b']' {
+                            bracket_depth -= 1;
+                        }
+                        pos += 1;
+                    }
+                } else {
+                    while pos < len && bytes[pos] != b'\n' {
+                        pos += 1;
+                    }
+                }
+                continue;
             }
-            if pos < len && bytes[pos] == b'[' {
-                pos += 1;
+            if next == Some(b'[') {
+                // Attribute `#[...]` — preserve balanced-bracket behavior.
+                pos += 2;
                 let mut bracket_depth = 1;
                 while pos < len && bracket_depth > 0 {
                     if bytes[pos] == b'[' {
@@ -303,10 +364,25 @@ fn scan_items(source: &[u8], grammar: &Grammar, parent: &mut AstNode, base_off: 
                     }
                     pos += 1;
                 }
-            } else {
-                while pos < len && bytes[pos] != b'\n' {
-                    pos += 1;
-                }
+                continue;
+            }
+            // Plain `#`-line.
+            if above_seam && at_line_start {
+                let start = pos;
+                let end = find_eol(bytes, pos);
+                let span = DarkSpan {
+                    start: base_off + start,
+                    end: base_off + end,
+                };
+                parent.add_child(AstNode::docblock_line(&bytes[start..end], span));
+                pos = end;
+                at_line_start = false;
+                continue;
+            }
+            // Below the seam (or mid-line `#`): strip silently to EOL,
+            // matching the pre-existing comment discipline.
+            while pos < len && bytes[pos] != b'\n' {
+                pos += 1;
             }
             continue;
         }
