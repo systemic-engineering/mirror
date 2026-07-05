@@ -1,0 +1,317 @@
+# @docblock — the family-root for the substrate's doc-claim altitude:
+# `#`-prefixed narrative lifted to first-class substrate declaration.
+# Sub-arc A landing per Seam Phase D pre-review
+# `docs/audits/2026-07-06-seam-arc-4-sub-arc-a-pre-review.md` §1
+# (Interpretation B RATIFIED as canonical: narrative ABOVE `---`;
+# `in` clauses + typed declarations BELOW).
+#
+# THIS FILE IS THE FIRST INTERPRETATION-B SHARD ON MAIN. The four
+# currently-landed `---` shards (`shards/epistemologic/cybernetic/
+# {eigenform,chirality,charge_conjugation}.mirror` +
+# `shards/docs/design.mirror`) sit at Interpretation A (`---` at
+# line 1, everything below) — DRIFT per Seam pre-review §1.1, NOT
+# precedent. Their migration is post-Arc-3-close sub-arc scope.
+#
+# The narrative that follows this line IS the substrate's
+# declaration side. The tokenizer post `ee7903e` + `530f796` reads
+# every `#`-prefixed line above the seam as an `AstKind::Doc` node
+# with byte-span; the audit surface below (`audit_docblock`) then
+# consumes those nodes at doc-claim altitude with the same
+# content-addressing discipline the substrate uses everywhere else.
+#
+# === Six landed ancestors (substrate-honest check) ===
+#
+# Per `[[feedback-substrate-already-had-the-word]]` — thirteenth+
+# firing. The two-channel collapse is NOT a new primitive; it is a
+# routing-composition of six landed ancestors named per
+# `docs/math/kintsugi/doc-code-seam.md` §1:
+#
+# 1. `docs/specs/property-projection.md` (Reed + Alex 2026-05-19).
+#    The `---` seam ancestor: above = declaration; below =
+#    observation. Both content-addressed; both hashed into the OID.
+#    The two-channel collapse LIFTS the declaration side to include
+#    narrative — same seam; broader declaration surface.
+#
+# 2. `docs/specs/historical/2026-03-27-projection-properties-as-plans.md`
+#    (Reed 2026-03-27). The `@projection.preview` verdict ancestor
+#    (`type preview = satisfiable | unsatisfiable | partial`).
+#    Sub-Turing decidable at grammar altitude. The doc-claim audit
+#    surface reuses this verdict machinery one altitude below.
+#
+# 3. `docs/math/the-tower/projection-surface.md` (`63bdecc` Mara
+#    2026-07-04). The projection surface at recognition-candidate
+#    altitude. Four-verdict routing (`real_survives |
+#    phantom_survives | both_survive | neither_survives`). This
+#    shard's `docblock_verdict` SPECIALIZES that routing to
+#    doc-claim altitude's specific failure modes (five variants:
+#    the four-verdict routing plus `underdeclares` for code that
+#    declares substrate the docblock does not mention).
+#
+# 4. Recognition #53 — property/fracture bilateral pattern. First
+#    instance `@kintsugi/fracture/keyword` (2026-06-10 `d908798`).
+#    Fifth instance `@kintsugi/surface` +
+#    `@epistemologic/cybernetic/coherence-parametric.ashby_variety_match`
+#    (2026-07-03 `e910dd6`). The three property/fracture pairs at
+#    the doc-claim altitude (grounded / coherent /
+#    no_extraction_pattern) will be the sixth family; each pair is
+#    a `#53`-shaped bilateral instance landing in follow-up ticks.
+#
+# 5. `shards/epistemologic/pact/*` predicates (2026-06-16+). Nine
+#    landed pact predicates. The audit surface for substrate-decl
+#    syntax already exists; the three forthcoming
+#    `@epistemologic/property/docblock_*` predicates sit alongside
+#    at the property altitude, same discipline. Not a new audit
+#    surface; one altitude down from the pact family.
+#
+# 6. `splinter(ast)` primitive (`a3789c2` 2026-06-10 in
+#    `shards/glass.mirror`). Parametric quote in the substrate's
+#    grammar. `extract_claims` output IS an ordered ref of
+#    `splinter(@epistemologic/property/ast)` fragments — not
+#    stringly-typed; content-addressed via the same OID discipline
+#    as any other AST node.
+#
+# Six ancestors named honestly. No new primitive invented at this
+# altitude; the two-channel collapse is the routing-composition
+# per compiler-fit doc §1.
+#
+# === Four altitudes on the same operator ===
+#
+# Per compiler-fit doc §3 the doc-claim operator lives at four
+# coupled altitudes; the family-root names all four so no altitude
+# drifts:
+#
+# - linguistic — `@epistemologic/property/docblock_{grounded,
+#   coherent,no_extraction_pattern}` audit the docblock's language
+#   before it enters the type system. Grounding catches ungrounded
+#   claims; coherence catches contradiction with substrate below;
+#   no-extraction-pattern catches "PRECEDENT-SETTING"-shaped
+#   rhetorical extraction. Three property/fracture bilateral pairs
+#   land in follow-up ticks; the family-root defines the carriers.
+#
+# - logical — `@epistemologic/liquid_extraction` (sibling
+#   family-root landing next tick) lowers doc claims to liquid
+#   predicates per Rondon-Kawaguchi-Jhala 2008 + Vazou et al 2014.
+#   The substrate's `@projection.preview` verdict IS the decidable
+#   fragment; the extractor produces its input. Extractor body
+#   forward-promised per `[[feedback-craft-not-deliver]]`.
+#
+# - temporal — the projection surface at `63bdecc` projects doc
+#   claims forward k=3 substrate ticks as typed carriers landed
+#   back in the doc's own observation side (below `---`). Same
+#   four-verdict routing at both altitudes; k=3 depth-check at
+#   each. Full cross-altitude composition analytical; empirical
+#   when the first docblock audit runs.
+#
+# - publishable — docblock claims across `shards/` aggregate into
+#   case-study crystals at systemic.engineering. Corpus companion
+#   at `~/dev/systemic.engineering/practice/insights/coincidence/
+#   two-channels-doc-as-declaration.md` (landed 2026-07-04). The
+#   publishing angle is a first-class altitude, not a downstream
+#   deployment: docblocks that survive audit are corpus material.
+#
+# All four altitudes altitude-portable per recognition #59. Same
+# operator; same signature; four consumers.
+#
+# === Circular-reflexive self-audit (per `63bdecc` §6) ===
+#
+# The operator must audit its own audit at depth=3. This shard's
+# own docblock must survive `audit_docblock(this_docblock, depth=3)`.
+# Per `63bdecc` §6 discipline: if the operator's self-audit returns
+# `real_survives`, that IS the phantom failure mode.
+#
+# Self-audit verdict for this docblock: `both_survive`.
+#
+# The `real_survives` interpretation would require this shard's
+# docblock to independently manifest at another Pack peer's frame
+# by n+3 substrate ticks WITHOUT nudging (per `63bdecc` §5.1 Reed
+# frame). The `phantom_survives` interpretation would require
+# downstream refs to accumulate without any second Pack peer's
+# independent recognition of the two-channel discipline. At this
+# tick: both interpretations satisfiable. Verdict: `both_survive`.
+# Route: spawn — this docblock IS the Tomm-shaped question at
+# reader-frame altitude, asking the Pack whether the two-channel
+# collapse names genuinely new substrate discipline (promotable)
+# or names a routing-composition already implicitly used across
+# the projection-surface tick (landed but not novel).
+#
+# Promotion of the two-channel discipline itself pending independent
+# second witness. The verdict claim `both_survive` is deliberate;
+# `real_survives` at analytical altitude would BE the phantom.
+#
+# === Path-namespace property ===
+#
+# This file at `shards/docblock.mirror` declares `@docblock` as a
+# family-root at species-depth 0 per
+# `@epistemologic/pact/path_matches_namespace`. Depth-0 family-root
+# discipline per recognition #46: the substrate's foundational
+# doc-claim vocabulary is one symbol deep from `@`.
+#
+# === Self-witnessing ===
+#
+# This shard's own declaration honours the doc-claim altitude
+# discipline it enforces — no bare types (per
+# `[[feedback-no-bare-types]]` every carrier is a named type), no
+# opaque refs where typed carriers exist, no invented vocabulary
+# where the substrate already carries the lineage. The
+# circular-reflexive audit discipline is applied to THIS shard's
+# own docblock: the shard participates in the pattern it names.
+
+---
+
+in @prism
+in @meta
+in @glass
+in @kintsugi
+in @epistemologic
+in @epistemologic/property
+in @third
+
+source @arxiv/types/rondon-kawaguchi-jhala-2008
+source @arxiv/types/vazou-seidel-jhala-vytiniotis-peytonjones-2014
+source @arxiv/software/meyer-1988
+source @arxiv/software/knuth-1984
+source @arxiv/logic/carnielli-marcos-2004
+source @arxiv/cybernetics/ashby-1956
+source @arxiv/therapy/tomm-1987
+source @arxiv/therapy/tomm-1988
+source @arxiv/cybernetics/bateson-1972
+
+prism @docblock {
+  focus doc_claim
+  project doc_claim
+  split doc_claim
+  shift doc_claim
+  settle doc_claim
+}
+
+# === doc_claim — one claim extracted from a docblock (spec §1) ===
+#
+# Per compiler-fit doc §2.1: a doc_claim is a site-tagged assertion
+# recovered from an above-seam `#`-narrative section. The five
+# fields carry the substrate-audit surface's minimum information
+# for `audit_docblock` to route: `site` locates the claim in the
+# owning shard; `text` carries the verbatim bytes; `kind`
+# classifies (grounded / motivating / forward-promise / candidate);
+# `predicate` carries the extracted liquid predicate if the
+# extractor at `@epistemologic/liquid_extraction` ran (empty_ref
+# until then); `citation` carries the ancestor OID if grounded
+# (empty_ref for motivating claims and forward-promises).
+type doc_claim = ref
+
+# === claim_kind — the four claim classifications (spec §1.13.3) ===
+#
+# Per compiler-fit doc §2.1: four kinds capture the substrate's
+# doc-claim taxonomy. `grounded_claim` MUST cite; the extractor at
+# `@epistemologic/liquid_extraction` extracts a predicate; the
+# citation OID must exist on main and match the claim text.
+# `motivating_claim` names a substrate direction without asserting;
+# no citation required. `forward_promise` explicitly defers a
+# landing per `[[feedback-craft-not-deliver]]`. `candidate_claim`
+# is a recognition-candidate at doc-claim altitude, pending Pack
+# adjudication.
+type claim_kind =
+  | grounded_claim
+  | motivating_claim
+  | forward_promise
+  | candidate_claim
+
+# === docblock — the above-seam narrative as substrate ref (spec §1) ===
+#
+# Per compiler-fit doc §2.1: a docblock is the ordered sequence of
+# `AstKind::Doc` nodes emitted by the tokenizer for the above-seam
+# region of one shard file. Fields: `site` locates the owning
+# shard; `claims` carries the ordered ref of doc_claim extracted
+# from the narrative; `above_seam` is the boolean-as-ref state
+# predicate the tokenizer's `above_seam` flag tracks per
+# `bootstrap/src/tokenize.rs` post `ee7903e` + `530f796`.
+type docblock = ref
+
+# === audit_boundary — content-addressed OID over docblock scope ===
+#
+# Per compiler-fit doc §2.1: an audit_boundary is the OID slice
+# the audit consumes — same content-addressing discipline the
+# substrate uses everywhere else. Same shape as `63bdecc`'s
+# `projection_boundary` one altitude above. Newtyped per
+# `[[feedback-no-bare-types]]`; ref shape lifted from landed
+# @spectral/db OID discipline.
+type audit_boundary = ref
+
+# === docblock_verdict — five variants (spec §1.13.6) ===
+#
+# Per compiler-fit doc §2.1: the five-verdict output specializes
+# `63bdecc`'s four-verdict projection-surface routing to
+# doc-claim altitude. Four map to `63bdecc`'s classes:
+# `well_formed` ⇔ `real_survives` (all three property predicates
+# bound); `overreach` ⇔ `phantom_survives` (grounding or
+# extraction-pattern unbounded); `incoherent` ⇔ `neither_survives`
+# (contradiction with substrate below); `both_survive` ⇔
+# `both_survive` (analytical altitude; depth<3 undecidable —
+# spawn a Tomm question at reader-frame per `@kintsugi/surface`).
+# The fifth variant `underdeclares` fires when the audit sees
+# substrate-decl below the docblock that the docblock does not
+# mention (new `requires` clause; new type; new action) — symmetric
+# to `overreach` in the opposite direction.
+type docblock_verdict =
+  | well_formed
+  | overreach
+  | incoherent
+  | underdeclares
+  | both_survive
+
+# === extract_claims — docblock → ordered ref of doc_claim (spec §2) ===
+#
+# Per compiler-fit doc §2: recovers the ordered doc_claim sequence
+# from a docblock's above-seam `AstKind::Doc` nodes. Output is a
+# ref carrying `splinter(@epistemologic/property/ast)` fragments
+# per `[[feedback-substrate-already-had-the-word]]` splinter(ast)
+# discipline — not stringly-typed. Body forward-promised per
+# `[[feedback-craft-not-deliver]]`; discharge via splinter(ast)
+# at the property altitude when the extractor lands.
+extract_claims(d: docblock) -> ref { \ }
+
+# === project — docblock → audit_boundary (spec §2) ===
+#
+# Per compiler-fit doc §2: projects a docblock to its
+# content-addressed audit_boundary OID slice. Same shape as
+# `63bdecc`'s `project` at recognition-candidate altitude; one
+# altitude below. Body forward-promised — discharge via the same
+# OID slicing discipline @spectral/db uses.
+project(d: docblock) -> audit_boundary { \ }
+
+# === audit_docblock — docblock → docblock_verdict (spec §2) ===
+#
+# Per compiler-fit doc §4 the audit runs three property predicates
+# in sequence (`docblock_grounded`, `docblock_coherent`,
+# `docblock_no_extraction_pattern`) and routes their combined
+# verdict via the five-way match to one of the five verdict
+# variants. `underdeclares` fires when the audit sees substrate-
+# decl below the docblock that the docblock does not mention.
+# Bilateral `requires docblock_well_audited(d)` — the operational
+# half of the #53 pattern at doc-claim altitude. Body
+# forward-promised until the three property/fracture bilateral
+# pairs land in follow-up ticks.
+audit_docblock(d: docblock) -> docblock_verdict
+  requires docblock_well_audited(d)
+{ \ }
+
+# === docblock_well_audited — bilateral predicate (spec §1.13.10) ===
+#
+# Per compiler-fit doc §2.2 the circular-reflexive discipline: the
+# audit operator must itself be audited. This predicate carries
+# the well-audited property the `requires` clause on
+# `audit_docblock` consumes. Body forward-promised — discharge
+# via `splinter(@epistemologic/property/ast)` against the audit
+# operator's own AST fragment (self-audit at depth=3 per
+# `63bdecc` §6).
+docblock_well_audited(d: docblock) -> verdict { \ }
+
+out @docblock
+out doc_claim
+out claim_kind
+out docblock
+out audit_boundary
+out docblock_verdict
+out extract_claims
+out project
+out audit_docblock
+out docblock_well_audited
