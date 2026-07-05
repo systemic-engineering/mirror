@@ -1,0 +1,93 @@
+in @prism
+in @meta
+in @glass
+in @bauchladen
+in @silicon
+in @algebra
+in @epistemologic/property/content_addressed
+in @epistemologic/property/numerical_stability
+in @uuid/spectral
+
+# @silicon/algebra — the sub-prism path-namespace where crystallized
+# executable algebra tuned to the local silicon accumulates. Each
+# crystal IS a routine carrier (per `docs/specs/silicon.md` §3.2);
+# the Bauchladen grows monotonically.
+#
+# === The recognition (§3.1 double-inheritance) ===
+#
+# Per spec §3.1 + §5.1: the double-inheritance shape (parent
+# @silicon <= @autopoietic; child @silicon/algebra <= @bauchladen)
+# IS the substrate-decl shape of a learning system. The parent
+# provides the LOOP; the child provides the TRAY.
+#
+# The §9.4 adjudication (from the spec's own open questions): the
+# double-inheritance is NOT redundant — @silicon/algebra inherits
+# @bauchladen DIRECTLY because the crystal-addressing discipline is
+# needed at the algebra altitude independently of the loop. AND
+# @silicon/algebra inherits @bauchladen INDIRECTLY via @silicon
+# (which inherits @autopoietic which inherits @bauchladen per the
+# chain) because the parent's loop produces the crystals the tray
+# receives. The double path is structural: it expresses (a) every
+# algebra crystal IS content-addressed AND (b) the loop that
+# produces algebra crystals is itself bauchladen-disciplined.
+#
+# The `in @silicon` clause (per spec §8.1 canonical shape) declares
+# the parent-child composition path: @silicon/algebra is a sub-prism
+# in @silicon's path-namespace; the parent's @fate tournament
+# dispatches over this sub-prism's Bauchladen.
+#
+# === Witnesses ===
+#
+#   - Canonical spec at `docs/specs/silicon.md` §3 + §8.1 (the
+#     substrate-decl shape this shard discharges).
+#   - Reed's RED tests at `bootstrap/tests/silicon_family_root.rs`
+#     `ea7b092` (tests 8-11 name this shard's shape).
+#   - Parent shard at `shards/silicon.mirror` (this tick, sibling
+#     commit); the family-root @silicon inherits.
+#   - `shards/bauchladen.mirror` (`66e1ab8`) — the content-
+#     addressing discipline this shard directly inherits.
+#   - `shards/glue/math_silicon.mirror` (`5edd3e9`) — the Mesland
+#     correspondence at @glue altitude that carries LAPACK-class
+#     discharges into @silicon/algebra crystals.
+#   - The Q4 LAPACK FFI case at `docs/specs/cascade-ffi-runtime-
+#     link.md` §7 (per silicon.md §8.3) — the first operational
+#     discharge into this Bauchladen (LAPACKPrism via
+#     @silicon/algebra → @io/algebra).
+#
+# === What crystallizes here ===
+#
+# Per spec §3.2 the routine carrier captures:
+#   - algebra: the @algebra-altitude math the routine implements
+#   - cfg: the cfg restriction the routine is tuned for
+#   - grading: γ-tag (chirality per #101)
+#   - conjugation: J-tag (charge conjugation per #102)
+#   - abi_surface: the @io/algebra ABI surface exposed
+#   - binary_oid: the compiled binary's content-addressed OID
+#   - source_oid: the Fortran/C/assembly source's OID
+#   - cascade: the compile-time cascade that built the binary
+#   - performance: empirical performance characterization
+#   - routine_oid: the path-namespace OID (@silicon/algebra/<oid>)
+#
+# The full type declaration lives in the routine-carrier shard
+# (forward-promised at `shards/silicon/algebra/routine.mirror`
+# per spec §3.2). This shard names the sub-prism; the type
+# lands when consumers pull.
+#
+# === Forward-promised ===
+#
+# Per [[feedback-craft-not-deliver]] this shard names the sub-prism
+# and stops. Sibling sub-prisms (@silicon/scheduler, @silicon/
+# memory_layout, @silicon/dispatch per silicon.md §3.3) land when
+# consumers pull. The routine-carrier type (per silicon.md §3.2)
+# lands when the first empirical crystal accumulates (LAPACK case
+# per silicon.md §8.3).
+
+prism @silicon/algebra <= @bauchladen {
+  focus algebra
+  project algebra
+  split algebra
+  shift algebra
+  settle algebra
+}
+
+out @silicon/algebra

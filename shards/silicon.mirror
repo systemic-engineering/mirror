@@ -1,0 +1,161 @@
+in @prism
+in @meta
+in @glass
+in @bauchladen
+in @autopoietic
+in @fate
+in @glue
+in @algebra
+in @epistemologic/reality/silicon/arch
+in @epistemologic/reality/silicon/compute_bound
+in @epistemologic/reality/silicon/memory
+in @epistemologic/reality/silicon/flake_ref
+in @io/algebra
+in @io/runtime-link
+in @uuid/spectral
+
+# @silicon — top-level @autopoietic family-root for hardware-altitude
+# inference. The substrate-decl name for the autopoietic learning loop
+# that tunes executable algebra to the local silicon.
+#
+# Homage: Alan Turing (universal computation, 1936); John von Neumann
+# (stored-program architecture, 1945; the merger of instructions and
+# data as one carrier); Margaret Hamilton (Apollo Guidance Computer
+# priority discipline, 1969; the hardware-realtime-scheduling ancestor
+# per MEMORY [[architecture-hamilton-scheduler]]); Cleve Moler
+# (LINPACK 1979 → MATLAB 1984 → the LAPACK numerical-algebra lineage
+# that IS the substrate's first math↔silicon empirical discharge
+# path); James Demmel + Jack Dongarra (LAPACK 1992; the reference
+# numerical-algebra library the substrate composes against via
+# @glue/math_silicon). The substrate's silicon family-root inherits
+# from the numerical-computing canon; it does NOT invent hardware
+# algebra, it lifts the substrate's implicit silicon-altitude
+# composition to substrate-decl at the family-root altitude.
+#
+# === The recognition (bottom-up requires the anchor, 2026-07-05) ===
+#
+# Per Alex direction (/loop 2026-07-05 Arc 1): bottom-up requires the
+# anchor. The substrate has been quietly composing @silicon for weeks
+# without the family-root landing. Three specialized silicons exist:
+#
+#   - `shards/reality/algebra/silicon.mirror` (Mara `9ca6723`) —
+#     the @reality/algebra species; matter/information gauge-orbit
+#     at the hardware altitude.
+#   - `shards/epistemologic/reality/silicon.mirror` (Mara 2026-06-06)
+#     — the property altitude family root; declares WHAT the silicon
+#     IS via arch/compute_bound/memory/flake_ref carriers.
+#   - `shards/glue/math_silicon.mirror` (Mara `5edd3e9`) — the
+#     math↔silicon Mesland correspondence at glue altitude.
+#
+# But NO `shards/silicon.mirror` top-level anchor. `docs/specs/
+# silicon.md` (Mara-silicon-1, 2026-06-30, 104.8KB) declared the
+# family a week ago at autopoietic altitude; spec-only per Taut
+# `ae063d68` Q1 grep. Every downstream composition (@mirror/bench
+# costs, @kintsugi/knapsack capacity, previous /loop's @silicon/bound
+# framing per Seam `f3b231d` Path (d)) anchors here once landed.
+#
+# This shard closes that gap. It lifts @silicon to substrate-decl at
+# family-root altitude WITHOUT re-parenting the existing specialized
+# silicons. Per Alex's Path (b) direction (Seam `f3b231d` §4 Path
+# (d)): existing carriers are already there; @silicon is the anchor
+# that COMPOSES with them, not the parent that OWNS them.
+#
+# Witnesses for the family-root landing:
+#   - Canonical spec at `docs/specs/silicon.md` §1.1 + §8.1 (Mara,
+#     2026-06-30, the canonical shape this shard discharges).
+#   - Reed's RED tests at `bootstrap/tests/silicon_family_root.rs`
+#     `ea7b092` (11 text-check tests naming the canonical shape).
+#   - The Q4 LAPACK FFI case at `docs/specs/cascade-ffi-runtime-
+#     link.md` §7 (the load-bearing first FFI discharge that anchors
+#     to @silicon-as-such once landed).
+#   - Seam `f3b231d` Phase D Path (d) (the "@silicon/bound framing
+#     anchors to @silicon" direction from previous /loop).
+#   - Recognition #58 ([[architecture-fate-is-optical-inference]],
+#     promoted 2026-06-11) — names @fate's mechanism (5-layer D²NN +
+#     active Fabry-Perot resonator + Reck/Clements unitary mesh);
+#     the fate-tournament @silicon dispatches over.
+#   - Recognition #104 (the @bauchladen ← @autopoietic ← @fate
+#     dependency chain, promoted 2026-06-29) — names the chain
+#     @silicon composes against.
+#   - Recognition #51 ([[architecture-mirror-as-expanding-hilbert-
+#     space]]) — names the discipline by which @silicon's emissions
+#     grow the substrate's reach without growing its action algebra.
+#
+# === Why <= @autopoietic (not <= @bauchladen or <= @fate) ===
+#
+# Per spec §1.1: the `<= @autopoietic` clause is load-bearing. It
+# declares @silicon IS-A @autopoietic prism class, inheriting the
+# fold-back permission that @autopoietic grants. Without @autopoietic
+# in the inheritance chain, @silicon could observe the hardware (via
+# @epistemologic/reality/silicon/* properties) but could not learn —
+# could not consume its own prior emissions as input to the next
+# round of inference. The fold-back is what makes @silicon a
+# learning loop, not a one-shot probe.
+#
+# The inheritance chain by transitivity:
+#   @silicon <= @autopoietic <= @bauchladen
+# (per shards/autopoietic.mirror's `in @bauchladen`)
+# (per shards/bauchladen.mirror's Lawvere fixed-point condition)
+#
+# The @fate composition is via `in @fate`, not `<= @fate`: @silicon
+# USES @fate at each round of the tournament; it does not INHERIT
+# @fate's typed dice-roll signature. The distinction matters per
+# spec §1.1: @silicon is the LOOP; @fate is the OPERATOR the loop
+# calls each tick.
+#
+# === Composition with existing specialized silicons (Path b) ===
+#
+# Per Alex direction (2026-07-05): existing carriers stay at their
+# altitudes; @silicon anchors WITHOUT re-parenting them.
+#
+#   - `@reality/algebra/silicon` — @reality/algebra species. Stays
+#     at `shards/reality/algebra/silicon.mirror` as gauge-orbit
+#     species under @reality/algebra. Composes with @silicon via
+#     @glue/math_silicon at the @glue altitude, NOT via inheritance.
+#
+#   - `@epistemologic/reality/silicon` — property altitude family
+#     root. Stays at `shards/epistemologic/reality/silicon.mirror`
+#     as the WHAT-the-silicon-IS carrier set. @silicon CONSUMES
+#     these properties (per spec §4.2) via the `in @epistemologic/
+#     reality/silicon/*` imports above.
+#
+#   - `@glue/math_silicon` — @glue species carrying the Mesland
+#     math↔silicon correspondence. Stays at `shards/glue/math_
+#     silicon.mirror` as @glue species; composes with @silicon
+#     when the tournament dispatches morphism_kind.
+#
+# The three existing shards are already at their proper altitudes.
+# Their `in @reality/algebra/silicon` / `in @epistemologic/reality/
+# silicon` / `in @glue` import edges STAY. @silicon anchors the
+# top-level family-root; the substrate composes across altitudes
+# via existing @glue morphisms.
+#
+# === Forward-promised sub-prisms (NOT landing this tick) ===
+#
+# Per [[feedback-craft-not-deliver]] this tick lands ONLY the
+# family-root + @silicon/algebra sub-prism. All other sub-prisms
+# named in `docs/specs/silicon.md` §8 forward-promise here:
+#
+#   - `@silicon/scheduler` — sub-prism for scheduling crystals
+#     across the local silicon's cores; forward-promised per §8.
+#   - `@silicon/memory_layout` — sub-prism for memory-layout
+#     crystals (UMA-aware, explicit-DMA, NUMA-aware);
+#     forward-promised per §8.
+#   - `@silicon/dispatch` — sub-prism for @io-crossing dispatch
+#     crystals; forward-promised per §8.
+#   - `@silicon/<arch>` species (@silicon/arm64, @silicon/x86_64,
+#     @silicon/riscv64) — open question §9.1 pending Pack
+#     adjudication.
+#
+# Each lands when consumers pull. Per [[feedback-craft-not-deliver]]
+# this shard names the family-root and stops.
+
+prism @silicon <= @autopoietic {
+  focus silicon
+  project silicon
+  split silicon
+  shift silicon
+  settle silicon
+}
+
+out @silicon
