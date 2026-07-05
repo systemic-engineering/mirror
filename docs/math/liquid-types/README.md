@@ -510,6 +510,29 @@ Sequential composition of three decidable procedures is decidable.
 Termination bounded by `O(|Q_mirror| · claims_per_docblock)` per
 §2.2. QED.
 
+**Correction (Seam `20d0c13` §5 C2)**: The theorem above proves
+decidability of the AUDIT step ASSUMING claims are already
+extracted. It does NOT address `extract_claims` itself. Seam catch:
+`extract_claims(d: docblock) -> [liquid_claim]` (per §2 signature)
+is an @io boundary — natural-language-to-liquid-predicate lowering
+is Turing-complete in the general case per #107. What was wrong:
+§6.1 elided the extraction-side floor; the sub-Turing decidability
+bound applies to `audit_docblock` post-extraction only.
+
+How it's corrected: `extract_claims` returns
+`imperfect<[liquid_claim], extraction_error, transparency>`.
+Success closes into the decidable audit above; failure routes via
+@pain to Alex Phase E as a Tomm question. The forward-promise:
+extraction's failure mode is CLASSIFIABLE at compile-time
+(well-formed input vs ambiguous vs unextractable — three-way split)
+even though extraction's SUCCESS output is undecidable in the
+general case. The sub-Turing decidability floor per #107 is
+preserved at the audit boundary; extraction Turing-completeness is
+named at the @io boundary where it belongs. Forward-promise: the
+extract_claims body specification lands at TICK 1b of the
+bottom-up landing spec (`docs/specs/doc-code-seam-bottom-up-landing.md`
+§TICK-1) alongside the docblock family-root.
+
 ### §6.2 Why sub-Turing matters — Gödel-safety
 
 The substrate cannot self-prove its own consistency (Gödel's second
@@ -561,15 +584,26 @@ Running `classify(this_doc)` under the five-signal auto-classifier:
   `@epistemologic/property/docblock_*`, `@kintsugi/fracture/*`,
   `@onto`. Five consumer families. Leans `marker`.
 - Signal 4 (marker-row citation): cites #55 form/process at §4.2
-  (altitude-portable) + #59 kintsugi loop at §4.2. Leans neither
-  marker nor family_root; cites both markers-of-marker.
+  (altitude-portable). Per `bdb148a` §3.4, Signal 4 fires on
+  citations of `[[architecture-candidate-recognition-112-marker-row-fourth-structural-primitive]]`
+  OR `[[architecture-form-process-partition-at-family-root]]` (#55).
+  #55 citation → SIGNAL 4 FIRES. Leans marker.
+  (#59 kintsugi-loop is a markers-of-marker citation, not the
+  marker row itself; does not contribute to Signal 4.)
 - Signal 5 (primary thin): `liquid_qualifier` primary carrier is a
   wide record (2 fields → borderline). Neutral.
 
-Count: 1 family_root + 1 marker + 3 neutral.
+**Correction (Seam `20d0c13` §5 C4)**: Prior draft counted Signal 4
+as neutral ("cites both markers-of-marker"). What was wrong: #55
+is the marker row itself (per `bdb148a` §3.4), not a markers-of-marker
+citation; citing #55 IS Signal 4 firing. How it's corrected: Signal 4
+leans marker. Adjusted count: 1 family_root + 2 marker + 2 neutral.
 
 Verdict: `≤ 2/5 signals agree → failure(cause)`. Auto-classifier
-refuses to classify this doc. Route: `spawn`.
+refuses to classify this doc. Route: `spawn`. (Final verdict
+preserved: no single kind clears the 3/5 majority threshold; the
+self-audit passes BECAUSE the marker-row signal on this doc's OWN
+citation is honestly counted.)
 
 **Tomm question at reader-frame**: "Alex/Pack: does this doc's math
 formalization LAND its own kind claim, or is it a routing-composition
