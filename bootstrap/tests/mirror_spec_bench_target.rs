@@ -25,8 +25,7 @@ fn repo_root() -> PathBuf {
 
 fn read_source(rel: &str) -> String {
     let path = repo_root().join(rel);
-    std::fs::read_to_string(&path)
-        .unwrap_or_else(|e| panic!("read {:?}: {}", path, e))
+    std::fs::read_to_string(&path).unwrap_or_else(|e| panic!("read {:?}: {}", path, e))
 }
 
 #[test]
@@ -60,8 +59,8 @@ fn mirror_spec_bench_block_emits_cargo() {
     let content = read_source("mirror.spec");
     // The bench target dispatches via cargo (matches existing binary/
     // fmt/lint/tests/audit targets). altitude @code/rust; emit cargo.
-    let has_bench_altitude_or_emit = content.contains("emit     cargo")
-        || content.contains("emit cargo");
+    let has_bench_altitude_or_emit =
+        content.contains("emit     cargo") || content.contains("emit cargo");
     assert!(
         has_bench_altitude_or_emit,
         "mirror.spec must contain `emit cargo` (already required by \

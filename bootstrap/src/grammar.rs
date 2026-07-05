@@ -1,6 +1,7 @@
 //! Grammar loading + keyword lookup. Mirrors the C `grammar_t` API.
 
 use crate::ast::AstKind;
+use crate::Ctx;
 use std::fs;
 use std::path::Path;
 
@@ -205,9 +206,21 @@ fn companion_keyword_sources(path: &str) -> &'static [&'static str] {
 /// Returns `Err` if a keyword is declared in both with conflicting ops; the
 /// caller surfaces this to the operator (stop-and-report per the
 /// keyword-harvester extension contract).
-fn merge_keyword_sources(g: &mut Grammar, companions: &[&str]) -> std::io::Result<()> {
+///
+/// Companion paths are hardcoded relative (e.g. `shards/mirror/glass/ast/token.mirror`).
+/// When `ctx` is `Some`, each is resolved against `ctx.cwd()` before reading; when
+/// `None` the read is process-cwd-relative (legacy `load_grammar` shape).
+fn merge_keyword_sources(
+    g: &mut Grammar,
+    companions: &[&str],
+    ctx: Option<&Ctx>,
+) -> std::io::Result<()> {
     for companion in companions {
-        let source = match fs::read_to_string(companion) {
+        let read_path: std::path::PathBuf = match ctx {
+            Some(c) => c.resolve(companion),
+            None => std::path::PathBuf::from(companion),
+        };
+        let source = match fs::read_to_string(&read_path) {
             Ok(s) => s,
             // Missing companion file is not fatal — the legacy file alone
             // remains a valid keyword source. This keeps the harvester
@@ -243,11 +256,32 @@ fn merge_keyword_sources(g: &mut Grammar, companions: &[&str]) -> std::io::Resul
     Ok(())
 }
 
+/// Load a grammar from a path, resolving against process cwd.
+///
+/// Prefer [`load_grammar_in`] which takes an explicit `&Ctx` — that variant
+/// resolves the grammar path (and companion sources) against `ctx.cwd()` so
+/// callers threaded through the dispatch chain don't inherit the process cwd
+/// implicitly. This function is retained as a compat wrapper for callers
+/// that haven't been threaded yet.
 pub fn load_grammar(path: &str) -> std::io::Result<Grammar> {
     let source = fs::read_to_string(path)?;
     let mut g = parse_grammar(&source);
     g.r#ref = grammar_ref_from_path(path);
-    merge_keyword_sources(&mut g, companion_keyword_sources(path))?;
+    merge_keyword_sources(&mut g, companion_keyword_sources(path), None)?;
+    Ok(g)
+}
+
+/// Load a grammar, resolving `path` and its companion keyword sources
+/// against `ctx.cwd()`. The Arc 2 shape per /loop 2026-07-05: relative
+/// grammar paths (`shards/mirror/spec.mirror`, `boot/std/mirror/grammar.mirror`,
+/// etc.) resolve against the caller's dispatch context instead of the
+/// process cwd. Absolute paths pass through unchanged.
+pub fn load_grammar_in(path: &str, ctx: &Ctx) -> std::io::Result<Grammar> {
+    let read_path = ctx.resolve(path);
+    let source = fs::read_to_string(&read_path)?;
+    let mut g = parse_grammar(&source);
+    g.r#ref = grammar_ref_from_path(path);
+    merge_keyword_sources(&mut g, companion_keyword_sources(path), Some(ctx))?;
     Ok(g)
 }
 
@@ -258,6 +292,10 @@ pub fn load_grammar(path: &str) -> std::io::Result<Grammar> {
 /// shards/ grammar exists on disk and prefer it; otherwise we return the
 /// boot/std/ path (which may itself be missing, in which case `load_grammar`
 /// surfaces the IO error to the caller — same contract as before).
+///
+/// Prefer [`grammar_for_file_in`] which takes a `&Ctx` — the presence check
+/// resolves against `ctx.cwd()` rather than the process cwd. This function
+/// is retained for callers that haven't been threaded yet.
 pub fn grammar_for_file(path: &str) -> &'static str {
     let p = Path::new(path);
     let ext = p.extension().and_then(|e| e.to_str()).unwrap_or("");
@@ -305,6 +343,46 @@ pub fn grammar_for_file(path: &str) -> &'static str {
     }
 }
 
+/// Ctx-aware variant of [`grammar_for_file`]. Existence checks for
+/// `shards/` vs `boot/std/` grammar files resolve against `ctx.cwd()`
+/// instead of the process cwd, so callers threaded through Arc 2 pick
+/// the correct file regardless of where the process was invoked.
+pub fn grammar_for_file_in(path: &str, ctx: &Ctx) -> &'static str {
+    let p = Path::new(path);
+    let ext = p.extension().and_then(|e| e.to_str()).unwrap_or("");
+    match ext {
+        "rs" => {
+            if ctx.resolve("shards/code/rust.mirror").exists() {
+                "shards/code/rust.mirror"
+            } else {
+                "boot/std/code/rust.mirror"
+            }
+        }
+        "spec" => "shards/mirror/spec.mirror",
+        "mirror" | "shard" | "shatter" => {
+            if ctx.resolve("shards/mirror/grammar.mirror").exists() {
+                "shards/mirror/grammar.mirror"
+            } else {
+                "boot/std/mirror/grammar.mirror"
+            }
+        }
+        "ll" => {
+            if ctx.resolve("shards/code/llvm/ir.mirror").exists() {
+                "shards/code/llvm/ir.mirror"
+            } else {
+                "boot/std/code/llvm/ir.mirror"
+            }
+        }
+        _ => {
+            if ctx.resolve("shards/code/rust.mirror").exists() {
+                "shards/code/rust.mirror"
+            } else {
+                "boot/std/code/rust.mirror"
+            }
+        }
+    }
+}
+
 /// Resolve a grammar ref like "@code/llvm/ir" to a .mirror path.
 ///
 /// Substrate-pull: try `shards/<ref>.mirror` first; if that file exists,
@@ -318,6 +396,20 @@ pub fn grammar_path_for_ref(r#ref: &str) -> Option<String> {
     let tail = &r#ref[1..];
     let shards_path = format!("shards/{}.mirror", tail);
     if Path::new(&shards_path).exists() {
+        return Some(shards_path);
+    }
+    Some(format!("boot/std/{}.mirror", tail))
+}
+
+/// Ctx-aware variant of [`grammar_path_for_ref`]. Existence checks
+/// resolve against `ctx.cwd()` instead of the process cwd.
+pub fn grammar_path_for_ref_in(r#ref: &str, ctx: &Ctx) -> Option<String> {
+    if !r#ref.starts_with('@') {
+        return None;
+    }
+    let tail = &r#ref[1..];
+    let shards_path = format!("shards/{}.mirror", tail);
+    if ctx.resolve(&shards_path).exists() {
         return Some(shards_path);
     }
     Some(format!("boot/std/{}.mirror", tail))

@@ -93,6 +93,87 @@ std::thread_local! {
     static CAPTURE_STDERR: std::cell::RefCell<Option<Vec<u8>>> = const { std::cell::RefCell::new(None) };
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// `Ctx` — explicit dispatch context per Arc 2 / /loop 2026-07-05
+// (feedback-no-shortcuts-in-compilation-work).
+//
+// The dispatch chain used to depend on the process-wide cwd via
+// `std::env::set_current_dir` inside `kintsugi_main_in`, serialised by
+// `kintsugi_main_lock` mutex. Arc 2 threads cwd through the dispatch chain
+// as an explicit `&Ctx` parameter so:
+//   - concurrent test threads no longer race on process cwd;
+//   - the `kintsugi_main_lock` mutex retires;
+//   - relative-path resolution is byte-checkable (explicit-over-implicit).
+//
+// The carrier is a struct (not a bare `PathBuf`) so future dispatch state
+// (env overrides, capture cells, etc.) extends without further signature
+// churn. `cwd` is the load-bearing field; helpers `resolve` / `command` /
+// `read` operationalise the substrate-pull to resolve every relative path
+// against `ctx.cwd()` explicitly.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// Explicit dispatch context. Carries the working directory that relative
+/// paths resolve against inside the dispatch chain. Threaded through
+/// `dispatch(args, ctx)` and every `cmd_*` function.
+///
+/// Constructed via [`Ctx::new`] (explicit cwd) or [`Ctx::from_process_cwd`]
+/// (the `mirror` binary entry point). The library entry points
+/// [`kintsugi_main`] and [`kintsugi_main_in`] construct the appropriate
+/// `Ctx` internally.
+pub struct Ctx {
+    /// Working directory that unresolved relative paths inside the
+    /// dispatch chain resolve against. Always absolute after
+    /// construction — `Ctx::new` canonicalises where the filesystem
+    /// permits; otherwise the caller-supplied path is retained verbatim.
+    cwd: std::path::PathBuf,
+}
+
+impl Ctx {
+    /// Construct a `Ctx` with an explicit cwd. Used by
+    /// `kintsugi_main_in(args, cwd)` so integration tests can dispatch
+    /// against a fixture directory without mutating the process cwd.
+    pub fn new(cwd: impl Into<std::path::PathBuf>) -> Self {
+        Self { cwd: cwd.into() }
+    }
+
+    /// Construct a `Ctx` inheriting the process cwd. Used by the binary
+    /// entry point (`mirror::dispatch` via `main`) and by
+    /// `kintsugi_main` (no explicit cwd variant).
+    pub fn from_process_cwd() -> Self {
+        Self {
+            cwd: std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from(".")),
+        }
+    }
+
+    /// The load-bearing field. Relative paths resolve against this.
+    pub fn cwd(&self) -> &std::path::Path {
+        &self.cwd
+    }
+
+    /// Resolve a possibly-relative path against `self.cwd()`. Absolute
+    /// paths are returned unchanged; relative paths are joined onto
+    /// `cwd`. Returns `PathBuf` so the caller can pass into `fs::read`,
+    /// `Command::current_dir`, etc.
+    pub fn resolve(&self, path: impl AsRef<std::path::Path>) -> std::path::PathBuf {
+        let p = path.as_ref();
+        if p.is_absolute() {
+            p.to_path_buf()
+        } else {
+            self.cwd.join(p)
+        }
+    }
+
+    /// Construct a `Command` with `.current_dir(ctx.cwd())` pre-set.
+    /// Used by every dispatch-chain `Command::new(...)` so subprocess
+    /// invocations resolve their own relative paths against `ctx.cwd()`
+    /// instead of the process cwd.
+    pub fn command(&self, program: impl AsRef<std::ffi::OsStr>) -> std::process::Command {
+        let mut cmd = std::process::Command::new(program);
+        cmd.current_dir(&self.cwd);
+        cmd
+    }
+}
+
 /// Write a UTF-8 byte slice to stdout. If the thread-local capture cell is
 /// installed, append to it; otherwise write to fd 1 directly via `libc::write`
 /// (bypassing `std::io::Stdout` and its `OUTPUT_CAPTURE` sink). Used by
@@ -212,7 +293,7 @@ use crate::crystallize::{
     floor_crystallizations, Blake3, Content, Crystallizations, CrystallizeError, Splinter, Text,
 };
 use crate::git::{git_crystal_exists, git_store_crystal};
-use crate::grammar::{grammar_for_file, load_grammar};
+use crate::grammar::{grammar_for_file, grammar_for_file_in, load_grammar, load_grammar_in};
 use crate::hash::canonical_hash;
 use crate::pipeline::{
     apply_rewrites, execute_pipeline, is_mq_query, parse_rewrite, split_pipeline,
@@ -357,16 +438,17 @@ fn read_stdin_all() -> io::Result<Vec<u8>> {
     Ok(buf)
 }
 
-fn cmd_compile(file: &str, no_cache: bool, strict: bool) -> i32 {
-    let source = match fs::read(file) {
+fn cmd_compile(file: &str, no_cache: bool, strict: bool, ctx: &Ctx) -> i32 {
+    let read_path = ctx.resolve(file);
+    let source = match fs::read(&read_path) {
         Ok(s) => s,
         Err(e) => {
             merr!("cannot read file {}: {}", file, e);
             return 1;
         }
     };
-    let grammar_path = grammar_for_file(file);
-    let grammar = match load_grammar(grammar_path) {
+    let grammar_path = grammar_for_file_in(file, ctx);
+    let grammar = match load_grammar_in(grammar_path, ctx) {
         Ok(g) => g,
         Err(e) => {
             merr!("cannot read grammar {}: {}", grammar_path, e);
@@ -451,11 +533,19 @@ fn parse_target(s: &str) -> Option<TargetKind> {
     }
 }
 
-fn cmd_craft_with(target: &str, no_cache: bool, kind: TargetKind, strict: bool) -> i32 {
+fn cmd_craft_with(target: &str, no_cache: bool, kind: TargetKind, strict: bool, ctx: &Ctx) -> i32 {
     let mut files: Vec<String> = Vec::new();
     match target {
-        "boot" | "std" => collect_files("boot", ".mirror", &mut files),
-        "cargo" => collect_files("src", ".rs", &mut files),
+        "boot" | "std" => collect_files(
+            ctx.resolve("boot").to_string_lossy().as_ref(),
+            ".mirror",
+            &mut files,
+        ),
+        "cargo" => collect_files(
+            ctx.resolve("src").to_string_lossy().as_ref(),
+            ".rs",
+            &mut files,
+        ),
         _ => {
             merr!("unknown target: {}", target);
             return 1;
@@ -470,8 +560,8 @@ fn cmd_craft_with(target: &str, no_cache: bool, kind: TargetKind, strict: bool) 
     let mut files_with_dark: usize = 0;
 
     for file in &files {
-        let grammar_path = grammar_for_file(file);
-        let grammar = match load_grammar(grammar_path) {
+        let grammar_path = grammar_for_file_in(file, ctx);
+        let grammar = match load_grammar_in(grammar_path, ctx) {
             Ok(g) => g,
             Err(_) => {
                 merr!("  skip {} (grammar error)", file);
@@ -534,7 +624,7 @@ fn cmd_craft_with(target: &str, no_cache: bool, kind: TargetKind, strict: bool) 
     mout!("{}", crystal);
 
     if kind == TargetKind::Binary && (target == "boot" || target == "std") {
-        return build_self_binary();
+        return build_self_binary(ctx);
     }
     if kind == TargetKind::Rust || kind == TargetKind::Gleam {
         merr!("--target rust/gleam: not yet implemented (declared for surface stability)");
@@ -556,11 +646,12 @@ fn cmd_craft_with(target: &str, no_cache: bool, kind: TargetKind, strict: bool) 
 /// This is the butterfly: the bootstrap emits IR for itself, clang turns the
 /// IR into a binary, and `./mirror-self craft boot` must match
 /// `mirror craft boot` for v1.0.0.
-fn build_self_binary() -> i32 {
+fn build_self_binary(ctx: &Ctx) -> i32 {
     merr!("== craft --target binary ==");
     merr!("1/3 cargo rustc --emit=llvm-ir");
 
-    let status = Command::new("cargo")
+    let status = ctx
+        .command("cargo")
         .args([
             "rustc",
             "--release",
@@ -585,7 +676,7 @@ fn build_self_binary() -> i32 {
     merr!("2/3 locate bootstrap/mirror.ll");
     let target_dir =
         std::env::var("CARGO_TARGET_DIR").unwrap_or_else(|_| "bootstrap/target".to_string());
-    let deps_dir = PathBuf::from(&target_dir).join("release").join("deps");
+    let deps_dir = ctx.resolve(PathBuf::from(&target_dir).join("release").join("deps"));
     let ll_path = match find_bootstrap_ll(&deps_dir) {
         Some(p) => p,
         None => {
@@ -595,7 +686,7 @@ fn build_self_binary() -> i32 {
     };
     merr!("    found: {}", ll_path.display());
 
-    let dest = PathBuf::from("bootstrap/mirror.ll");
+    let dest = ctx.resolve("bootstrap/mirror.ll");
     if let Err(e) = fs::copy(&ll_path, &dest) {
         merr!(
             "copy {} -> {} failed: {}",
@@ -608,7 +699,8 @@ fn build_self_binary() -> i32 {
     merr!("    copied to {}", dest.display());
 
     merr!("3/3 clang -O2 -o ./mirror-self -x ir bootstrap/mirror.ll -lm");
-    let status = Command::new("clang")
+    let status = ctx
+        .command("clang")
         .args([
             "-O2",
             "-o",
@@ -867,6 +959,7 @@ fn cmd_kintsugi(
     out_dir: Option<&str>,
     ci: bool,
     format: CiFormat,
+    ctx: &Ctx,
 ) -> i32 {
     // D4 (substrate-pull:realize): `.spec` extension routes to the
     // project-manifold walker. `mirror kintsugi <path>.spec` reads the
@@ -884,7 +977,7 @@ fn cmd_kintsugi(
         .and_then(|e| e.to_str())
         == Some("spec")
     {
-        return cmd_kintsugi_spec(file, format);
+        return cmd_kintsugi_spec(file, format, ctx);
     }
     // T22 (substrate-pull:realize) — kintsugi-on-Rust pilot. `.rs`
     // routes through the realisation discriminator
@@ -911,17 +1004,17 @@ fn cmd_kintsugi(
         // Directory target → corpus walker (T11.3). Single-file target
         // (or stat failure → treat as file path, let single-file emit
         // verdict: "failure") preserves T11.2 shape.
-        if let Ok(md) = fs::metadata(file) {
+        if let Ok(md) = fs::metadata(ctx.resolve(file)) {
             if md.is_dir() {
-                return cmd_kintsugi_ci_corpus(file, shatter, transform, format);
+                return cmd_kintsugi_ci_corpus(file, shatter, transform, format, ctx);
             }
         }
-        return cmd_kintsugi_ci_single(file, shatter, transform, format, out_dir);
+        return cmd_kintsugi_ci_single(file, shatter, transform, format, out_dir, ctx);
     }
     // Migration mode: --out + a directory input — walk and migrate
     // every .mirror file under the directory.
     if let Some(out_root) = out_dir {
-        let md = match fs::metadata(file) {
+        let md = match fs::metadata(ctx.resolve(file)) {
             Ok(m) => m,
             Err(e) => {
                 merr!("cannot stat {}: {}", file, e);
@@ -929,10 +1022,10 @@ fn cmd_kintsugi(
             }
         };
         if md.is_dir() {
-            return cmd_kintsugi_migrate(file, out_root, transform);
+            return cmd_kintsugi_migrate(file, out_root, transform, ctx);
         }
     }
-    cmd_kintsugi_single(file, shatter, transform, out_dir)
+    cmd_kintsugi_single(file, shatter, transform, out_dir, ctx)
 }
 
 /// T22 — `mirror kintsugi <file>.rs` invokes the realisation
@@ -1088,6 +1181,13 @@ fn spec_targets_from_ast(ast: &AstNode) -> Vec<SpecTarget> {
 ///   test      → cargo test                   (test suite)
 ///   audit     → cargo audit                  (advisory DB; @release alt.)
 ///   build     → cargo build --release        (artifact build)
+///   bench     → cargo bench                  (perf measurement; @mirror/bench consumer)
+///
+/// Per Seam Phase D `91e79c8` §7 Sub-arc 3a (RED `d25b91a`): the
+/// `bench` arm opens the perf-measurement floor for `target bench`
+/// blocks in mirror.spec; `@mirror/bench` (LANDED 2026-07-01 at
+/// `shards/mirror/bench.mirror`, 16.3KB) becomes the first harness
+/// wired via the standard `emit cargo` / `check bench` dispatch path.
 ///
 /// Unknown values fall back to `cargo check` and surface a `[kintsugi
 /// spec]` stderr note so the operator sees the unrecognised altitude.
@@ -1099,6 +1199,7 @@ fn cargo_args_for_check(check: &str) -> &'static [&'static str] {
         "test" => &["test"],
         "audit" => &["audit"],
         "build" => &["build", "--release"],
+        "bench" => &["bench"],
         _ => &["check"],
     }
 }
@@ -1129,8 +1230,9 @@ fn cargo_args_for_check(check: &str) -> &'static [&'static str] {
 /// wire it in the substrate proper. Same for `lockfile_capture` and
 /// the env_allowlist verification — substrate-declared, dispatcher-
 /// deferred to keep this tick minimal.
-fn cmd_kintsugi_spec(spec_path: &str, format: CiFormat) -> i32 {
-    let source = match fs::read(spec_path) {
+fn cmd_kintsugi_spec(spec_path: &str, format: CiFormat, ctx: &Ctx) -> i32 {
+    let read_spec = ctx.resolve(spec_path);
+    let source = match fs::read(&read_spec) {
         Ok(s) => s,
         Err(_) => {
             return emit_spec_verdict("failure", spec_path, 0.0, 1, 0, 0, &[], format);
@@ -1139,8 +1241,8 @@ fn cmd_kintsugi_spec(spec_path: &str, format: CiFormat) -> i32 {
     // Substrate-pull dispatch: the file extension picks the grammar,
     // the grammar loader merges in keyword companions, the tokenizer
     // produces an AST. `parse_spec_targets`'s text scanner retires.
-    let grammar_path = grammar_for_file(spec_path);
-    let grammar = match load_grammar(grammar_path) {
+    let grammar_path = grammar_for_file_in(spec_path, ctx);
+    let grammar = match load_grammar_in(grammar_path, ctx) {
         Ok(g) => g,
         Err(_) => {
             return emit_spec_verdict("failure", spec_path, 0.0, 1, 0, 0, &[], format);
@@ -1153,11 +1255,13 @@ fn cmd_kintsugi_spec(spec_path: &str, format: CiFormat) -> i32 {
     // substrate-declared `manifest ~f'...'` override isn't captured
     // by the bootstrap tokenizer today (substrate gap; see
     // `spec_targets_from_ast` docstring); every target uses the
-    // spec-dir default.
-    let spec_dir: PathBuf = std::path::Path::new(spec_path)
+    // spec-dir default. Derived from the resolved (ctx.cwd()-relative)
+    // spec path so the manifest probe hits the correct filesystem
+    // location regardless of the process cwd.
+    let spec_dir: PathBuf = read_spec
         .parent()
         .map(|p| p.to_path_buf())
-        .unwrap_or_else(|| PathBuf::from("."));
+        .unwrap_or_else(|| ctx.resolve("."));
 
     let mut per_target: Vec<PerFileVerdict> = Vec::with_capacity(targets.len());
     let mut any_failure = false;
@@ -1241,8 +1345,19 @@ fn cmd_kintsugi_spec(spec_path: &str, format: CiFormat) -> i32 {
                 t.check,
             );
         }
-        let mut cmd = Command::new("cargo");
-        cmd.args(cargo_args).arg("--manifest-path").arg(&manifest);
+        let mut cmd = ctx.command("cargo");
+        cmd.args(cargo_args);
+        // `cargo audit` does not accept `--manifest-path`; it reads
+        // `Cargo.lock` from CWD or via `-f <lockfile>`. Skip the
+        // manifest-path flag for audit and point it at the lockfile
+        // alongside the target manifest. Other subcommands need it.
+        if cargo_args != ["audit"] {
+            cmd.arg("--manifest-path").arg(&manifest);
+        } else if let Some(lock) = manifest.parent().map(|p| p.join("Cargo.lock")) {
+            if lock.is_file() {
+                cmd.arg("-f").arg(lock);
+            }
+        }
         let out = cmd.output();
         let cargo_pretty = cargo_args.join(" ");
         let (verdict, objective, dark, label_path) = match out {
@@ -1622,8 +1737,9 @@ fn kintsugi_ci_compute(
     file: &str,
     shatter: u64,
     transform: Option<&str>,
+    ctx: &Ctx,
 ) -> (&'static str, f64, u64, u64) {
-    let source = match fs::read(file) {
+    let source = match fs::read(ctx.resolve(file)) {
         Ok(s) => s,
         Err(_) => return ("failure", 0.0, 1, 0),
     };
@@ -1635,8 +1751,8 @@ fn kintsugi_ci_compute(
     } else {
         source
     };
-    let grammar_path = grammar_for_file(file);
-    let grammar = match load_grammar(grammar_path) {
+    let grammar_path = grammar_for_file_in(file, ctx);
+    let grammar = match load_grammar_in(grammar_path, ctx) {
         Ok(g) => g,
         Err(_) => return ("failure", 0.0, 1, 0),
     };
@@ -1682,9 +1798,10 @@ fn cmd_kintsugi_ci_single(
     transform: Option<&str>,
     format: CiFormat,
     out_dir: Option<&str>,
+    ctx: &Ctx,
 ) -> i32 {
     let (verdict, objective, iterations, dark_count) =
-        kintsugi_ci_compute(file, shatter, transform);
+        kintsugi_ci_compute(file, shatter, transform, ctx);
     match format {
         CiFormat::MirrorText => {
             emit_ci_verdict_mirror_text(verdict, file, objective, iterations, dark_count, out_dir)
@@ -1714,9 +1831,14 @@ fn cmd_kintsugi_ci_single(
 /// The reference is captured up to the first whitespace, `{`, `(`, or
 /// `:` — so `grammar @mirror/grammar("mirror", ...) { ... }` and
 /// `glass @foo/bar {` both yield the bare `@<path>` ref.
-fn collect_declared_namespaces(dir: &str, out: &mut std::collections::HashSet<String>) {
+fn collect_declared_namespaces(dir: &str, out: &mut std::collections::HashSet<String>, ctx: &Ctx) {
     let mut files: Vec<String> = Vec::new();
-    collect_files(dir, ".mirror", &mut files);
+    // Resolve the dir against ctx.cwd() so `collect_files`'s recursive
+    // walk (which propagates path prefixes as-is) sees absolute paths;
+    // otherwise a relative `dir` from CLI positional would resolve
+    // against the process cwd inside `fs::read_dir`.
+    let dir_resolved = ctx.resolve(dir).to_string_lossy().to_string();
+    collect_files(&dir_resolved, ".mirror", &mut files);
     for path in &files {
         let source = match fs::read_to_string(path) {
             Ok(s) => s,
@@ -1769,8 +1891,12 @@ fn collect_declared_namespaces(dir: &str, out: &mut std::collections::HashSet<St
 /// independent of the in-flight AST shape; the contract is just "every
 /// `in @<path>` resolves to a declared namespace somewhere in the
 /// corpus + shard tree".
-fn count_unresolved_imports(file: &str, declared: &std::collections::HashSet<String>) -> u64 {
-    let source = match fs::read_to_string(file) {
+fn count_unresolved_imports(
+    file: &str,
+    declared: &std::collections::HashSet<String>,
+    ctx: &Ctx,
+) -> u64 {
+    let source = match fs::read_to_string(ctx.resolve(file)) {
         Ok(s) => s,
         Err(_) => return 0,
     };
@@ -1810,9 +1936,16 @@ fn cmd_kintsugi_ci_corpus(
     shatter: u64,
     transform: Option<&str>,
     format: CiFormat,
+    ctx: &Ctx,
 ) -> i32 {
     let mut files: Vec<String> = Vec::new();
-    collect_files(dir, ".mirror", &mut files);
+    // Resolve the corpus dir against ctx.cwd() so `collect_files`'s
+    // recursive walk sees absolute paths for downstream `fs::read`.
+    // Downstream code (kintsugi_ci_compute, count_unresolved_imports)
+    // ALSO threads ctx and resolves internally, so absolute here is
+    // a no-op through the ctx.resolve() identity.
+    let dir_for_walk = ctx.resolve(dir).to_string_lossy().to_string();
+    collect_files(&dir_for_walk, ".mirror", &mut files);
     files.sort();
 
     // Cross-shard semantic resolution index (substrate-pull realize):
@@ -1824,12 +1957,12 @@ fn cmd_kintsugi_ci_corpus(
     // legacy tree is included as a fallback per the bootstrap-retirement
     // shrinkage contract; both substrate roots can satisfy an import.
     let mut declared: std::collections::HashSet<String> = std::collections::HashSet::new();
-    collect_declared_namespaces(dir, &mut declared);
-    if std::path::Path::new("shards").is_dir() {
-        collect_declared_namespaces("shards", &mut declared);
+    collect_declared_namespaces(dir, &mut declared, ctx);
+    if ctx.resolve("shards").is_dir() {
+        collect_declared_namespaces("shards", &mut declared, ctx);
     }
-    if std::path::Path::new("boot/std").is_dir() {
-        collect_declared_namespaces("boot/std", &mut declared);
+    if ctx.resolve("boot/std").is_dir() {
+        collect_declared_namespaces("boot/std", &mut declared, ctx);
     }
 
     let mut per_file: Vec<PerFileVerdict> = Vec::with_capacity(files.len());
@@ -1842,14 +1975,14 @@ fn cmd_kintsugi_ci_corpus(
 
     for path in &files {
         let (mut verdict, objective, iterations, mut dark_count) =
-            kintsugi_ci_compute(path, shatter, transform);
+            kintsugi_ci_compute(path, shatter, transform, ctx);
         // Cross-shard semantic resolution: count unresolved `in @<path>`
         // statements as additional dark regions and downgrade the
         // per-file verdict to `failure` when any unresolved import is
         // found. A dangling cross-shard import is a structural break,
         // not a soft `partial` — the dependency graph has no edge to
         // close.
-        let unresolved = count_unresolved_imports(path, &declared);
+        let unresolved = count_unresolved_imports(path, &declared, ctx);
         if unresolved > 0 {
             dark_count = dark_count.saturating_add(unresolved);
             verdict = "failure";
@@ -2101,7 +2234,7 @@ fn emit_corpus_verdict_mirror_text(
 /// the result. Path canonicalisation drops `std/mirror/` prefix; other
 /// namespace prefixes (`std/code/`, `code/`) preserve via the same
 /// strip-leading-`std/` rule.
-fn cmd_kintsugi_migrate(src_root: &str, out_root: &str, transform: Option<&str>) -> i32 {
+fn cmd_kintsugi_migrate(src_root: &str, out_root: &str, transform: Option<&str>, ctx: &Ctx) -> i32 {
     let rules = match transform {
         Some(q) => {
             match parse_rewrite(q) {
@@ -2115,7 +2248,8 @@ fn cmd_kintsugi_migrate(src_root: &str, out_root: &str, transform: Option<&str>)
         None => Vec::new(),
     };
     let mut files: Vec<String> = Vec::new();
-    collect_files(src_root, ".mirror", &mut files);
+    let src_for_walk = ctx.resolve(src_root).to_string_lossy().to_string();
+    collect_files(&src_for_walk, ".mirror", &mut files);
     files.sort();
     let mut errs = 0;
     for path in &files {
@@ -2137,8 +2271,12 @@ fn cmd_kintsugi_migrate(src_root: &str, out_root: &str, transform: Option<&str>)
         // drop `std/mirror/` (bootstrap-historical), and apply the
         // basename rewrite from the rules (so `grammar.mirror` →
         // `glass.mirror` when the rule is `grammar => glass`).
+        // Files were collected using the ctx-resolved src root, so
+        // strip that form first; fall back to the display form for
+        // callers that pass an already-absolute src_root.
         let rel = path
-            .strip_prefix(src_root)
+            .strip_prefix(&src_for_walk)
+            .or_else(|| path.strip_prefix(src_root))
             .unwrap_or(path)
             .trim_start_matches('/');
         // Strip `std/mirror/` and `std/` prefixes — bootstrap-historical
@@ -2166,7 +2304,9 @@ fn cmd_kintsugi_migrate(src_root: &str, out_root: &str, transform: Option<&str>)
                 rel_out = dst_base;
             }
         }
-        let dest = format!("{}/{}", out_root.trim_end_matches('/'), rel_out);
+        let dest_rel = format!("{}/{}", out_root.trim_end_matches('/'), rel_out);
+        let dest_path = ctx.resolve(&dest_rel);
+        let dest = dest_path.to_string_lossy().to_string();
         if let Some(parent) = std::path::Path::new(&dest).parent() {
             if let Err(e) = fs::create_dir_all(parent) {
                 merr!("  cannot mkdir {}: {}", parent.display(), e);
@@ -2194,8 +2334,9 @@ fn cmd_kintsugi_single(
     shatter: u64,
     transform: Option<&str>,
     out_dir: Option<&str>,
+    ctx: &Ctx,
 ) -> i32 {
-    let source = match fs::read(file) {
+    let source = match fs::read(ctx.resolve(file)) {
         Ok(s) => s,
         Err(e) => {
             merr!("cannot read file {}: {}", file, e);
@@ -2214,8 +2355,8 @@ fn cmd_kintsugi_single(
     } else {
         source
     };
-    let grammar_path = grammar_for_file(file);
-    let grammar = match load_grammar(grammar_path) {
+    let grammar_path = grammar_for_file_in(file, ctx);
+    let grammar = match load_grammar_in(grammar_path, ctx) {
         Ok(g) => g,
         Err(_) => return 1,
     };
@@ -2398,7 +2539,7 @@ fn hex_oid(oid: &[u8; 32]) -> String {
 /// the dispatch's index arithmetic matches the original `std::env::args`
 /// shape. Callers from tests pass synthetic argv prefixed with a
 /// placeholder program name (typically `"mirror"`).
-pub fn dispatch(args: &[String]) -> i32 {
+pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
     if args.len() < 2 {
         usage();
         return 1;
@@ -2421,14 +2562,17 @@ pub fn dispatch(args: &[String]) -> i32 {
         return execute_pipeline(&segs, &source);
     }
 
-    // Path B: file + mq query
+    // Path B: file + mq query — resolve the file path against `ctx.cwd()`
+    // so callers passing a relative path see it resolved consistently with
+    // the caller's dispatch context (not the process cwd).
     if args.len() == 3 && is_mq_query(&args[2]) {
         let segs = split_pipeline(&args[2]);
         if segs.is_empty() {
             merr!("empty query");
             return 1;
         }
-        let source = match fs::read(&args[1]) {
+        let resolved = ctx.resolve(&args[1]);
+        let source = match fs::read(&resolved) {
             Ok(s) => s,
             Err(e) => {
                 merr!("cannot read {}: {}", args[1], e);
@@ -2565,16 +2709,23 @@ pub fn dispatch(args: &[String]) -> i32 {
         found
     };
 
+    // The positional path is passed through cmd_* verbatim (so verdict
+    // envelopes emit the operator-supplied string, not the resolved
+    // absolute form). Each cmd_* function calls `ctx.resolve(pos)` when
+    // it needs to read the file — the Arc 2 substrate-pull threads cwd
+    // explicitly rather than mutating the process cwd, but the display
+    // path stays operator-facing.
+
     let rc = match args[1].as_str() {
         "compile" => match positional {
-            Some(p) => cmd_compile(p, no_cache, strict),
+            Some(p) => cmd_compile(p, no_cache, strict, ctx),
             None => {
                 merr!("usage: mirror compile [--strict] <file>");
                 1
             }
         },
         "craft" => match positional {
-            Some(p) => cmd_craft_with(p, no_cache, target_kind, strict),
+            Some(p) => cmd_craft_with(p, no_cache, target_kind, strict, ctx),
             None => {
                 merr!("usage: mirror craft [--strict] [--target <crystal|binary>] <target>");
                 1
@@ -2588,6 +2739,7 @@ pub fn dispatch(args: &[String]) -> i32 {
                 out_dir.as_deref(),
                 ci,
                 ci_format,
+                ctx,
             ),
             None => {
                 merr!("usage: mirror kintsugi [--ci [--out @data/json|@data/mirror|@io/dir('path')]] [--shatter N] [--transform <mq>] <file|dir>");
@@ -2597,7 +2749,7 @@ pub fn dispatch(args: &[String]) -> i32 {
         "init" => match positional {
             Some(p) => {
                 let install_hooks = args.iter().any(|a| a == "--install-hooks");
-                cmd_init(p, install_hooks)
+                cmd_init(p, install_hooks, ctx)
             }
             None => {
                 merr!("usage: mirror init <repo-path> [--install-hooks]");
@@ -2605,7 +2757,7 @@ pub fn dispatch(args: &[String]) -> i32 {
             }
         },
         "recall" => match positional {
-            Some(p) => cmd_recall(p),
+            Some(p) => cmd_recall(p, ctx),
             None => {
                 merr!("usage: mirror recall <spec-dir>");
                 1
@@ -2614,7 +2766,7 @@ pub fn dispatch(args: &[String]) -> i32 {
         "spawn" => match positional {
             Some(p) => {
                 let hello_world = args.iter().any(|a| a == "--hello-world");
-                cmd_spawn(p, hello_world)
+                cmd_spawn(p, hello_world, ctx)
             }
             None => {
                 merr!("usage: mirror spawn <peer-home> [--hello-world]");
@@ -2723,9 +2875,11 @@ pub fn dispatch(args: &[String]) -> i32 {
 ///      that makes the indexed surface reachable.
 ///   7. `flush(store)` — drain the cache to disk.
 ///   8. Emit the envelope per spec §4.7.
-fn cmd_init(repo_path: &str, hooks: bool) -> i32 {
-    // Edge case: repo path must exist + be a directory.
-    let path = std::path::Path::new(repo_path);
+fn cmd_init(repo_path: &str, hooks: bool, ctx: &Ctx) -> i32 {
+    // Edge case: repo path must exist + be a directory. Resolve via
+    // ctx so relative paths honor the dispatch context.
+    let resolved = ctx.resolve(repo_path);
+    let path = resolved.as_path();
     if !path.exists() {
         merr!("init: repo path does not exist: {}", repo_path);
         return 1;
@@ -2925,9 +3079,11 @@ fn init_compute_root_oid(pairs: &[(String, String)]) -> String {
 // `mirror recall <spec-dir>` — the inbound trajectory surface.
 // ────────────────────────────────────────────────────────────────────────────────
 
-fn cmd_recall(spec_dir: &str) -> i32 {
-    // Edge case: missing/invalid directory returns non-zero.
-    let dir_path = std::path::Path::new(spec_dir);
+fn cmd_recall(spec_dir: &str, ctx: &Ctx) -> i32 {
+    // Edge case: missing/invalid directory returns non-zero. Resolve
+    // via ctx so relative paths honor the dispatch context.
+    let resolved = ctx.resolve(spec_dir);
+    let dir_path = resolved.as_path();
     let md = match fs::metadata(dir_path) {
         Ok(m) => m,
         Err(e) => {
@@ -2940,11 +3096,15 @@ fn cmd_recall(spec_dir: &str) -> i32 {
         return 1;
     }
 
-    // Compose the four payloads per Mara spec §3 (b034a60).
-    let cascade = recall_cascade(spec_dir);
-    let pack_trail = recall_pack_trail(spec_dir);
-    let pull_frontier = recall_pull_frontier(spec_dir);
-    let dogfood = recall_dogfood(spec_dir);
+    // Compose the four payloads per Mara spec §3 (b034a60). Pass the
+    // ctx-resolved absolute form to helpers so their internal
+    // `format!("{}/docs/...", spec_dir)` composes to a filesystem
+    // path independent of the process cwd.
+    let resolved_str = resolved.to_string_lossy();
+    let cascade = recall_cascade(&resolved_str);
+    let pack_trail = recall_pack_trail(&resolved_str);
+    let pull_frontier = recall_pull_frontier(&resolved_str);
+    let dogfood = recall_dogfood(&resolved_str);
 
     let envelope = serde_json::json!({
         "spec_version": "v0.1.0",
@@ -3382,11 +3542,13 @@ fn parse_settle_on_predicates(body: &str) -> Vec<String> {
 ///   - No membership-side-effects (spawn does NOT add members to the pack).
 ///   - No stateless-return (envelope acknowledges persisted state even
 ///     though v0 does not yet store it; Phase H wires storage).
-fn cmd_spawn(peer_home: &str, hello_world: bool) -> i32 {
+fn cmd_spawn(peer_home: &str, hello_world: bool, ctx: &Ctx) -> i32 {
     // Piece 1 (insight §2.1): cli surface. The peer-home argument is the
     // single positional. Context (frame, repository, pack) is resolved
-    // FROM peer-home, not passed in.
-    let spec_path = std::path::Path::new(peer_home).join("mirror.spec");
+    // FROM peer-home, not passed in. Resolve via ctx so relative
+    // peer-home honors the dispatch context.
+    let peer_home_resolved = ctx.resolve(peer_home);
+    let spec_path = peer_home_resolved.join("mirror.spec");
 
     // Piece 2 (insight §2.2): @peer resolution via G1 single-hop. The
     // `~peer'<path>'` sigil at substrate altitude is G1-composed with
@@ -3446,10 +3608,11 @@ fn cmd_spawn(peer_home: &str, hello_world: bool) -> i32 {
         // Piece-6-via-recall: structured observation without @fate
         // inference (b10f00c §2.6 substitution form). No subprocess;
         // piece 5 supervisor.start_child stays a named stub.
-        let cascade_val = recall_cascade(peer_home);
-        let pack_trail_val = recall_pack_trail(peer_home);
-        let pull_frontier_val = recall_pull_frontier(peer_home);
-        let dogfood_val = recall_dogfood(peer_home);
+        let peer_home_resolved_str = peer_home_resolved.to_string_lossy();
+        let cascade_val = recall_cascade(&peer_home_resolved_str);
+        let pack_trail_val = recall_pack_trail(&peer_home_resolved_str);
+        let pull_frontier_val = recall_pull_frontier(&peer_home_resolved_str);
+        let dogfood_val = recall_dogfood(&peer_home_resolved_str);
 
         let peer_recall = serde_json::json!({
             "spec_version":  "v0.1.0",
@@ -3477,8 +3640,10 @@ fn cmd_spawn(peer_home: &str, hello_world: bool) -> i32 {
         // git-init'd fixture that exercises the storage path.
         //
         // Do NOT auto-git-init inside cmd_spawn (heavier + wrong
-        // semantics per RED brief).
-        let peer_home_path = std::path::Path::new(peer_home);
+        // semantics per RED brief). Use the ctx-resolved absolute path
+        // so `.git` presence and NamespacedGitStore paths honor the
+        // dispatch context.
+        let peer_home_path = peer_home_resolved.as_path();
 
         // Compat gate (P2 recovery 2026-07-01): bare-filesystem peer-home
         // fixtures (spawn.rs + composition_spawn_recall.rs) have no .git/
@@ -3715,18 +3880,6 @@ pub struct ExitOutput {
     pub stderr: Vec<u8>,
 }
 
-/// Process-wide serialization for `kintsugi_main_in`'s cwd swap. The cwd
-/// is a process-wide resource (`std::env::set_current_dir`), so two
-/// concurrent test threads calling `kintsugi_main_in` would race on it.
-/// The fd 1 / 2 capture is parallel-safe (per-thread thread-local cells
-/// in `CAPTURE_STDOUT` / `CAPTURE_STDERR`), so `kintsugi_main` itself
-/// does NOT need to take this lock; only the cwd-setting variant does.
-fn kintsugi_main_lock() -> &'static std::sync::Mutex<()> {
-    use std::sync::{Mutex, OnceLock};
-    static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
-    LOCK.get_or_init(|| Mutex::new(()))
-}
-
 /// In-process subcommand dispatch with fd-level stdout / stderr capture.
 ///
 /// The Taut #286 Win 2 entry point. Integration tests that used to spawn
@@ -3756,45 +3909,35 @@ fn kintsugi_main_lock() -> &'static std::sync::Mutex<()> {
 /// safe: each test thread has its own cells; libtest's own fd 1 writes
 /// (test progress lines) are unaffected.
 ///
-/// For tests that need the binary to run with a specific working
-/// directory (the mirror binary loads grammars via paths relative to
-/// its cwd), use [`kintsugi_main_in`] which performs the cwd swap
-/// under a package-internal mutex.
+/// For tests that need the binary to resolve relative paths (e.g. grammar
+/// paths like `shards/mirror/spec.mirror`) against a specific directory,
+/// use [`kintsugi_main_in`] which constructs a `Ctx` with the requested
+/// cwd and threads it through dispatch — WITHOUT mutating the process
+/// cwd. Arc 2 (/loop 2026-07-05) removed the `set_current_dir` swap
+/// and its serializing mutex; cwd is now an explicit dispatch parameter.
 pub fn kintsugi_main(args: &[String]) -> ExitOutput {
-    kintsugi_main_inner(args)
+    let ctx = Ctx::from_process_cwd();
+    kintsugi_main_inner(args, &ctx)
 }
 
-/// Like [`kintsugi_main`] but runs the dispatch with the process working
-/// directory temporarily set to `cwd`. The cwd change is process-wide,
-/// so this function holds a package-internal mutex around the
-/// set_current_dir / dispatch / restore sequence; concurrent tests under
-/// `cargo test` (default parallelism) take the mutex one at a time.
-/// The original cwd is restored before this function returns.
+/// Like [`kintsugi_main`] but runs the dispatch with `cwd` threaded
+/// through the dispatch chain via `Ctx`. Relative paths inside the
+/// dispatch chain resolve against `cwd` explicitly; the process cwd
+/// is NOT mutated (Arc 2 substrate-pull per /loop 2026-07-05).
 ///
-/// Integration tests use this when they need the binary to resolve
-/// grammar paths relative to the repo root rather than the test process
-/// cwd. Otherwise prefer [`kintsugi_main`].
+/// Integration tests use this when they need dispatch to resolve
+/// relative paths against a fixture directory. Otherwise prefer
+/// [`kintsugi_main`].
 pub fn kintsugi_main_in(args: &[String], cwd: &std::path::Path) -> ExitOutput {
-    let _guard = kintsugi_main_lock()
-        .lock()
-        .unwrap_or_else(|p| p.into_inner());
-
-    let saved_cwd = std::env::current_dir().ok();
-    let _ = std::env::set_current_dir(cwd);
-
-    let out = kintsugi_main_inner(args);
-
-    if let Some(prev) = saved_cwd {
-        let _ = std::env::set_current_dir(prev);
-    }
-    out
+    let ctx = Ctx::new(cwd);
+    kintsugi_main_inner(args, &ctx)
 }
 
-/// Run `dispatch(args)` with the thread-local capture cells installed,
+/// Run `dispatch(args, ctx)` with the thread-local capture cells installed,
 /// so `mout!` / `merr!` calls land in the per-call `Vec<u8>` buffers
 /// instead of fd 1 / 2. Shared body of `kintsugi_main` and
 /// `kintsugi_main_in`.
-fn kintsugi_main_inner(args: &[String]) -> ExitOutput {
+fn kintsugi_main_inner(args: &[String], ctx: &Ctx) -> ExitOutput {
     // Install fresh capture buffers on this thread. Any prior install
     // (recursive call) is saved + restored so nested invocations don't
     // lose each other's output — dispatch is not currently re-entrant
@@ -3804,7 +3947,8 @@ fn kintsugi_main_inner(args: &[String]) -> ExitOutput {
 
     // Catch panics so we always restore the prior cells before
     // returning to the caller.
-    let dispatch_result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| dispatch(args)));
+    let dispatch_result =
+        std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| dispatch(args, ctx)));
 
     // Take this call's captured bytes; restore the prior cells.
     let stdout_bytes = CAPTURE_STDOUT

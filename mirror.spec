@@ -150,6 +150,22 @@ project mirror.spec {
     check    audit
   }
 
+  # === bench — perf measurement floor (Seam Phase D §7 Sub-arc 3b) ===
+  #
+  # Per Seam Phase D `91e79c8` §7 Sub-arc 3b (RED `d25b91a`): wires
+  # @mirror/bench (LANDED 2026-07-01 at `shards/mirror/bench.mirror`,
+  # 16.3KB) INTO mirror.spec as the first harness. Dispatches
+  # `cargo bench` via `cargo_args_for_check` "bench" arm (Sub-arc 3a).
+  # Same target shape as tests/lint/fmt — @code/rust altitude, `emit cargo`,
+  # `check bench`. `record`/`compare` become the first harness at this
+  # target; no separate `bench/` scaffold per §8 signal-to-Alex #3.
+  target bench {
+    name     "mirror"
+    altitude @code/rust
+    emit     cargo
+    check    bench
+  }
+
   target action {
     name     "build"
     altitude @ci/github
@@ -169,6 +185,7 @@ project mirror.spec {
     fmt.formats
     lint.lints
     tests.tests_pass
+    bench.compiles
     # Forward-promised per docs/specs/kintsugi-ci-v0.1.md T11.4-T11.6:
     # the cargo-audit availability gate (T11.4), the action.yml validator
     # (T11.5), and the release.yml signature pipeline (T11.6) are named

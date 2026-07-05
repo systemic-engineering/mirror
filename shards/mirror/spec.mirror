@@ -141,8 +141,15 @@ needs(targets: [ref]) -> needs_decl { \ }
 #
 # Resolution: the `action` ref is looked up in the altitude's @io
 # contract (today: shards/io/cargo.mirror). Substrate-pull-correct
-# values for @code/rust: check, test, build, fmt_check, clippy, audit
-# (per shards/io/cargo.mirror's declared actions).
+# values for @code/rust: check, test, build, fmt_check, clippy, audit,
+# bench (per shards/io/cargo.mirror's declared actions).
+#
+# Per Seam Phase D `91e79c8` §7 Sub-arc 3a (RED `d25b91a`): `bench`
+# joins the accepted `check` values to dispatch `cargo bench`, opening
+# the perf-measurement floor for `target bench` blocks. Consumer:
+# @mirror/bench (LANDED 2026-07-01 at `shards/mirror/bench.mirror`,
+# 16.3KB) becomes the first harness wired into mirror.spec via the
+# standard `emit cargo` / `check bench` dispatch path.
 check(action: ref) -> check_decl { \ }
 
 out @mirror/spec

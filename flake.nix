@@ -94,6 +94,24 @@
             # Fortran numerical substrate (LAPACK/BLAS) — provided everywhere
             # so the prismqueer FFI link target is one ABI world (nix-store).
             pkgs.lapack pkgs.blas
+            # Perf-tooling floor (Seam Phase D `91e79c8` §7 Sub-arc 3c).
+            #
+            # Per RED `d25b91a`:
+            #   sccache        — compilation cache; big win on incremental rebuilds.
+            #                    Opt-in via `.cargo/config.toml`
+            #                    `[build] rustc-wrapper = "sccache"` in a later tick.
+            #   cargo-nextest  — per-process test isolation; 30% typical speedup;
+            #                    consumer of /loop 2026-07-05 Arc 2 (thread-safety
+            #                    Option A) once source migration lands.
+            #   cargo-audit    — discharges the `audit` target in mirror.spec
+            #                    (currently PARTIAL via tool-unavailable carve-out
+            #                    at bootstrap/src/lib.rs:~1276). Wiring cargo-audit
+            #                    converts audit verdict from `partial` to `success`.
+            #   lld            — cross-platform LLVM linker; conservative floor per
+            #                    Reed §8 signal-to-Alex #4. Linux `mold` / Darwin
+            #                    `sold` upgrades land in a follow-up tick if the
+            #                    perf delta warrants.
+            pkgs.sccache pkgs.cargo-nextest pkgs.cargo-audit pkgs.lld
           ] ++ rust.rustTools
             ++ pkgs.lib.optionals isDarwin [
             pkgs.libiconv

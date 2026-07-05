@@ -39,8 +39,7 @@ fn repo_root() -> PathBuf {
 
 fn read_source(rel: &str) -> String {
     let path = repo_root().join(rel);
-    std::fs::read_to_string(&path)
-        .unwrap_or_else(|e| panic!("read {:?}: {}", path, e))
+    std::fs::read_to_string(&path).unwrap_or_else(|e| panic!("read {:?}: {}", path, e))
 }
 
 #[test]

@@ -10,5 +10,6 @@
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
-    std::process::exit(mirror::dispatch(&args));
+    let ctx = mirror::Ctx::from_process_cwd();
+    std::process::exit(mirror::dispatch(&args, &ctx));
 }
