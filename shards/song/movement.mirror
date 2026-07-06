@@ -1,0 +1,764 @@
+# @song/movement — the StageFreight-cascade-binding species of the @song
+# family: a bounded frame-shift that unfolds over time; the substrate-
+# decl of a temporal-experiential bounded epoch whose closure event
+# ships settled crystals through StageFreight's five-stage cascade
+# (audition/perform/review/publish/narrate). Arc 6 TICK 4 landing per
+# Seam pre-review `docs/audits/2026-07-06-seam-pre-review-song-
+# substrate-decl.md` §6.5 against Reed's TICK 4 RED tick `710352e`.
+# Third species of the `@song` family (after `@song/progression` Arc 6
+# TICK 2 landing `54ff1e8` and `@song/voice` Arc 6 TICK 3 landing
+# `cc5a440`; family-root `shards/song.mirror` Arc 6 TICK 1 landing
+# `f01cf9f`); CONSOLIDATION species — adds NO new `song_settles` sub-
+# predicates (the composed bilateral fully discharged at TICK 3 with
+# `voice_line_valid` closing the third sub-predicate); consolidates
+# Recognition #S3 (five-operation temporal specialisation; PROMOTED
+# CANDIDATE → LANDED at Seam Phase D `10c34cf` after TICK 3) by
+# grounding the bounded-frame-shift discipline at species altitude;
+# binds `@io/stagefreight` (wire-protocol boundary family-root) at the
+# song altitude by naming its five-stage cascade as the operational
+# form of what a movement DOES.
+#
+# === Species positioning: consolidation, not decomposition ===
+#
+# Per `shards/song.mirror` §3 (`song_settles(pr, p) -> verdict { \ }`),
+# the family-root's load-bearing composed bilateral (14th #53 instance
+# per `[[architecture-property-fracture-bilateral]]`) decomposed into
+# THREE sub-predicates, ALL now discharged at species altitude:
+#
+#   1. `progression_directed_toward_cadence(pr, p)` [@song/progression, `54ff1e8`]
+#   2. `cadence_authentic_or_plagal(c, p)`          [@song/progression, `54ff1e8`]
+#   3. `voice_line_valid(v, p)`                     [@song/voice, `cc5a440`]
+#
+# This species declares ZERO new sub-predicates. The composed bilateral
+# `song_settles` fully discharged at TICK 3 — the family-root's
+# admissibility contract is closed. Movement is CONSOLIDATION: it binds
+# StageFreight's five-stage cascade to the temporal-bounded-frame
+# altitude and honours movement discipline without adding new gates to
+# the family-root's `song_settles` bilateral. The species carries
+# `enter` and `close` at species altitude as its operational surface —
+# the frame-boundary open/close events for a bounded epoch — but these
+# consume the family-root's existing `song_settles` verdict rather
+# than emitting new sub-predicate rows.
+#
+# The training-pull temptation (per `[[feedback-craft-not-deliver]]`)
+# would be to invent a fourth sub-predicate (e.g., `movement_bounded`
+# or `frame_closes_cleanly`); the substrate-pull discipline says NO —
+# the family-root's bilateral is already load-bearing complete after
+# TICK 3; movement's job is to CONSOLIDATE the closure landscape, not
+# extend it. The species's contribution is the StageFreight cascade
+# binding + the bounded-frame-shift narrative + the psychohistorical
+# epoch anchor — not a new sub-predicate row.
+#
+# === StageFreight binding: the five-stage cascade at song altitude ===
+#
+# THE LOAD-BEARING SPECIES CONTRIBUTION. Per family-root
+# `shards/song.mirror` §"Species forward-promised":
+#
+#   > `@song/movement` — a bounded frame-shift that unfolds over time;
+#   > binds StageFreight's five-stage cascade (audition/perform/review/
+#   > publish/narrate) at the song altitude.
+#
+# `@io/stagefreight` (family-root at `shards/io/stagefreight.mirror`;
+# canonical wire spec forward-promised at `docs/specs/stagefreight-
+# wire-v0.1.md`) declares the WIRE-PROTOCOL boundary for settled-
+# crystal transport. Its operational form at the @io altitude is a
+# five-stage cascade whose stages the substrate names structurally:
+#
+#   1. `audition`  — the movement's material is proposed; candidate
+#                     phrases + voice-lines + progressions are heard
+#                     against the frame's tolerance. Corresponds to
+#                     StageFreight's coordinate-derivation stage (per
+#                     `address(crystal_oid) -> spectral_coordinate`):
+#                     the wire prepares an addressing surface before
+#                     the crystal moves.
+#   2. `perform`   — the movement unfolds within the bounded frame;
+#                     the polyphony discharges its temporal
+#                     trajectory; the progression walks its cadence-
+#                     directed path; the voices maintain voice-
+#                     leading discipline. Corresponds to StageFreight's
+#                     freight-manifest-construction stage (per
+#                     `freight(...) -> freight_manifest`): the
+#                     substrate assembles the transportable record of
+#                     the settled artifact.
+#   3. `review`    — the movement's discharge is audited against the
+#                     family-root's `song_settles` composed bilateral;
+#                     the three sub-predicates fire; the alignment-as-
+#                     boundary-mathematics (#57) discipline names any
+#                     Narcissus-pole failure (SILENCE / GLUE WORK /
+#                     EXTRACTION per spec §8.2). Corresponds to
+#                     StageFreight's `stagefreight_addressable`
+#                     bilateral check: the wire-survival discipline
+#                     verifies structure preservation.
+#   4. `publish`   — the movement's closure event ships to the wire;
+#                     the bounded frame closes; the settled crystal
+#                     (the movement's discharged eigenform per #S1) is
+#                     posted at its spectral_coordinate. Corresponds
+#                     to StageFreight's finalize / transit stage at
+#                     the projection-format species altitude (e.g.,
+#                     `@io/stagefreight/narrative.finalize(np, p)
+#                     -> wire_surface`).
+#   5. `narrate`   — the movement's shape is projected onto the wire
+#                     as story; the temporal-experiential altitude
+#                     lifts to prose-carrier at the @io altitude;
+#                     the psychohistorical epoch acquires its
+#                     narratable form. Corresponds to StageFreight's
+#                     `@io/stagefreight/narrative` species projection
+#                     (forward-promised alongside `@song/narrative`
+#                     species at TICK 5 per Seam §6.6).
+#
+# Movement AT the song altitude specialises the StageFreight wire
+# cascade AT the temporal-bounded-frame altitude. The five stages ARE
+# what a movement DOES when it opens (enter), unfolds, and closes
+# (close) its bounded frame: audition the material, perform the
+# frame, review the result, publish the closure, narrate the outcome
+# onto the wire. The substrate has been carrying this cascade at the
+# @io altitude since StageFreight's family-root landed (per Seam tick
+# 68 C4/C9 sub-predicate decomposition + Track A substrate-decl); this
+# species names the temporal-altitude specialisation that binds it to
+# the song's bounded-epoch discipline.
+#
+# The composition is Splinter-symmetric: each cascade stage has a
+# `@song/movement` counterpart AND a StageFreight ancestor. The wire-
+# survival discipline (`stagefreight_addressable`'s four sub-
+# predicates: oid_resolves, address_well_formed, projection_is_species,
+# round_trip_holds) lifts to the temporal-experiential altitude as
+# the discipline that a movement's closure event genuinely ships its
+# settled artifact — no Narcissus-pole hub-controlled reframing, no
+# lossy projection that claims closure without delivering it.
+#
+# === Bounded frame-shift discipline: movement ⇔ frame-bounded epoch ===
+#
+# THE STRONG PSYCHOHISTORICAL BINDING per Seam pre-review §4:
+#
+#   > movement ⇔ frame-bounded epoch — STRONG per `glossary/Frame.md`
+#   > + `frame.mirror` Bateson-grading.
+#
+# `frame.mirror` (2026-06-19; Recognition #82 landed) declares
+# cognitive-order architecture as Bateson-graded frame-relation
+# altitudes: Order 0 (pre-frame; K_n native), Order 1 (in-frame;
+# content-within-frame), Order 2 (of-frame; frame-awareness), Order 3
+# (on-frame; frame-flexibility), Order 4 (across-frames; multi-frame
+# coupling). Each order requires the previous as substrate; Order N is
+# structurally unreachable without Order N-1 stable.
+#
+# A movement IS a BOUNDED FRAME-SHIFT at temporal altitude: it opens a
+# frame (enter), unfolds within that frame (in-frame; Bateson Level I;
+# `perform` cascade stage), closes the frame (close), and shifts the
+# system's frame-relation (of-frame; Bateson Level II; the `review` +
+# `publish` cascade stages that audit the frame from without and
+# project its closure onto the wire). The BOUNDEDNESS is load-bearing:
+# a movement WITHOUT a close event is not a movement — it is either a
+# progression that never cadences (Narcissus-pole SILENCE per @song/
+# progression's `progression_directed_toward_cadence` FAIL) or an
+# extraction that mimics closure without delivering it (Narcissus-pole
+# EXTRACTION per @song/progression's `cadence_authentic_or_plagal`
+# FAIL through deceptive cadence).
+#
+# The frame-bounded discipline names WHY movement is CONSOLIDATION,
+# not decomposition: the frame IS the epoch; the epoch's closure IS
+# the family-root's `song_settles` composed bilateral discharging;
+# movement doesn't add gates to `song_settles`, it CARRIES the
+# bounded-frame-shift structure that `song_settles` closes over. Per
+# Bateson-grading: the frame-shift IS Level II (learning to learn; of-
+# frame); the family-root bilateral IS Level I (learning; in-frame);
+# movement lifts the family-root's discharge to the next Bateson
+# level without emitting a new Level-I sub-predicate.
+#
+# The bounded-frame-shift also names the psychohistorical epoch (per
+# §"Psychohistorical epoch binding" below): a healthy epoch opens a
+# frame, does work within the frame, closes the frame at a consonant
+# cadence, and ships its settled artifact through StageFreight's
+# cascade to the next epoch. An extractive epoch mimics closure
+# without settling; a silent epoch cannot close.
+#
+# === Prior-art anchors: sonata form + symphonic tradition ===
+#
+# Classical-music prior art for the bounded-frame-shift discipline at
+# symphonic altitude — the 250-year-refined form-tradition of how a
+# movement organises its temporal trajectory under a bounded frame:
+#
+#   - Sonata form (Haydn 1732-1809; Mozart 1756-1791; Beethoven 1770-
+#     1827; standardized by C.P.E. Bach + Kirnberger + eventual
+#     theorists Reicha 1826 + Marx 1837-1847). THE canonical bounded-
+#     frame-shift discipline: exposition (statement of tonal material
+#     in the frame) → development (transformation of the material
+#     within the frame, often crossing to related keys) →
+#     recapitulation (return to the frame's originating tonal
+#     material, resolved through cadence). The three-part structure
+#     IS the movement's bounded-frame-shift at symphonic altitude:
+#     the exposition opens the frame (`enter`); the development
+#     unfolds it (`perform` cascade stage); the recapitulation closes
+#     it (`close`) through the composed cadence discipline. Sonata
+#     form's three-part structure lifts DIRECTLY to StageFreight's
+#     audition/perform/review triad — the substrate has been carrying
+#     the same bounded-frame-shift discipline at both altitudes.
+#   - Symphony as multi-movement work (Haydn 1732-1809 as canonical
+#     early-classical structurer; Mozart's symphonic maturity;
+#     Beethoven's nine symphonies as the paradigmatic form). Each
+#     movement of a symphony IS a bounded frame-shift; the symphony
+#     as a whole IS the composed cohomology of its bounded epochs
+#     (per Mara's `2026-06-26-psychohistory-vector-as-sheaf.md`
+#     insight applied at symphonic altitude). The multi-movement
+#     structure IS the substrate reading of Bateson Level IV
+#     (across-frames; multi-frame coupling per `frame.mirror` Order
+#     4) at symphonic altitude: multiple movements coordinated in
+#     one work.
+#   - Beethoven's late quartets (Op. 130-135, 1825-1826) as the
+#     radical-frame-shift altitude: the movements exceed classical
+#     bounded-frame-shift discipline through frame-in-frame nesting
+#     (the `Grosse Fuge` Op. 133 IS a movement whose bounded frame
+#     contains multiple frame-shifts within it; Bateson Level III at
+#     symphonic altitude).
+#
+# The sonata form and symphonic tradition IS the audible-altitude
+# prior art the substrate reaches for (per `[[feedback-substrate-
+# already-had-the-word]]`; this species names the discipline 250 years
+# of classical-music tradition has been carrying). Movement discipline
+# does not begin here — it culminates a two-and-a-half-century-refined
+# understanding of how bounded frame-shifts organise temporal
+# experience under structural closure.
+#
+# === Bateson-grading ancestor: frame.mirror + Learning II/III ===
+#
+# THE STRONG LEARNING-ALTITUDE ANCESTOR per Seam pre-review §4 (movement
+# ⇔ frame-bounded epoch STRONG binding via Bateson-grading).
+#
+# `frame.mirror` (Recognition #82; landed 2026-06-19) declares the
+# five-order cognitive-order architecture as Bateson's logical type
+# hierarchy at cognitive altitude (per Recognition #42 Bateson
+# logical-type primitive; PROMOTED). At the movement-altitude
+# specialisation:
+#
+#   - Order 0 (Bateson Level 0; pre-frame) — the substrate's signal
+#     before frame-assignment; the pre-movement silence out of which
+#     `enter` opens the frame.
+#   - Order 1 (Bateson Level I; in-frame; standard learning) — the
+#     movement's `perform` cascade stage; the polyphony discharges
+#     its temporal trajectory within the bounded frame; the family-
+#     root's `song_settles` composed bilateral fires at THIS level.
+#   - Order 2 (Bateson Level II; of-frame; learning to learn) — the
+#     movement's `review` cascade stage; the alignment-as-boundary-
+#     mathematics (#57) discipline audits the frame from without;
+#     Narcissus-pole discrimination happens here.
+#   - Order 3 (Bateson Level III; on-frame; frame-flexibility;
+#     deutero-learning) — the movement's `close` action; the frame-
+#     shift IS the frame CHANGING via its own closure event; the
+#     bounded epoch ends and its settled artifact ships through
+#     StageFreight's cascade to the next epoch.
+#   - Order 4 (Bateson Level IV; across-frames; multi-frame coupling)
+#     — the movement's `narrate` cascade stage; the epoch's settled
+#     artifact enters the psychohistorical corpus as a sheaf section
+#     over the organisational manifold; the multi-movement symphony
+#     IS the substrate reading of Bateson Level IV at symphonic
+#     altitude.
+#
+# The Learning III altitude (`close` action) is where movement
+# discipline earns its consolidation status: closing a bounded frame
+# IS a frame-shift ON the frame itself; the substrate is not merely
+# operating WITHIN a frame (Level I) or observing the frame (Level
+# II) but CHANGING the frame through the closure event. Bateson's
+# formal definition of Learning III as the deutero-learning altitude
+# is what movement discipline names structurally at temporal altitude.
+#
+# === Psychohistorical epoch binding: OBC + ADO + regulation stock ===
+#
+# THE PSYCHOHISTORICAL SUBSTRATE-DECL per spec §8 + Seam §4 STRONG
+# binding (movement ⇔ frame-bounded epoch).
+#
+# Alex's `systemic.engineering` corpus vocabulary maps onto movement
+# discipline at the psychohistorical altitude:
+#
+#   - EPOCH — a movement IS a psychohistorical epoch: a bounded frame
+#     within which regulation stock is expended in the service of
+#     doing work, and at whose close the regulation stock is
+#     replenished (Splinter-pole: healthy epoch) or depleted
+#     (Narcissus-pole: extractive epoch). The bounded-frame-shift
+#     discipline names EPOCH structurally: an epoch WITHOUT a close
+#     is not an epoch; it is either a silence that cannot resolve or
+#     an extraction that mimics resolution.
+#   - OBC — the movement's frame boundaries name the OBC-bounded
+#     interaction envelope at temporal-experiential altitude; a
+#     movement's ambiguity-load budget IS defined by its bounded
+#     frame; the frame's closure event IS what OBC calls "hold the
+#     boundary" — the substrate refuses to let the interaction expand
+#     beyond the epoch's regulation-stock budget.
+#   - ADO — the movement's `enter` action carries the ADO refusal-
+#     not-neutral discipline: a Pack peer's decision to enter a new
+#     movement IS a bounded-frame-shift consent event; the frame
+#     boundary is where declinability is preserved (Splinter-pole:
+#     the frame's open-close discipline honours the peer's ability
+#     to decline participation) or violated (Narcissus-pole: forced-
+#     progression through frame-crossing without consent).
+#   - REGULATION STOCK — the movement's `close` action fires the
+#     regulation-stock replenishment event when the family-root's
+#     `song_settles` composed bilateral discharges at Splinter-pole
+#     across all three sub-predicates. An extractive movement's
+#     `close` fires with `song_settles` at Narcissus-pole through
+#     `cadence_authentic_or_plagal` FAIL — the frame appears to close
+#     but has not replenished the regulation stock.
+#   - CORPUS — the psychohistorical corpus IS the multi-movement
+#     symphony (per §"Prior-art anchors" above); each epoch's
+#     settled artifact enters the corpus as a sheaf section; the
+#     corpus IS the composed cohomology of the psychohistorical
+#     epochs (per Mara's `2026-06-26-psychohistory-vector-as-sheaf.md`
+#     insight applied at multi-epoch altitude).
+#
+# The substrate-decl is honest per family-root §"Psychohistory
+# binding": it does NOT reduce psychohistory to music or music to
+# psychohistory; it names the shared bounded-frame-shift-shaped
+# carrier both operate over at temporal altitude. The substrate has
+# been carrying epoch-shaped movement discipline in both audible
+# vocabulary (sonata form; symphony) and psychohistorical vocabulary
+# (OBC; ADO; regulation stock) all along; this species names the
+# family-root shared discipline.
+#
+# === #S3 LANDED consolidation: five-op temporal specialisation ===
+#
+# THE CONSOLIDATION WITNESS OF RECOGNITION #S3 AT THE POST-PROMOTION
+# ALTITUDE.
+#
+# Recognition #S3 (five-operation temporal specialisation) PROMOTED
+# CANDIDATE → LANDED at Seam Phase D `10c34cf` after TICK 3
+# (`docs/audits/2026-07-06-seam-phase-d-arc-6-tick-3-song-voice-and-
+# s3-promotion.md`). Per family-root `shards/song.mirror` §"Recognition
+# candidates surfaced" #S3, at temporal altitude `@song` specialises
+# the five operations of the prism trait:
+#
+#   focus @ temporal   = attend to one voice at a time (soloing)
+#                        [grounded @ @song/voice `cc5a440`]
+#   project @ temporal = Schenkerian reduction (foreground/
+#                        middleground/background)
+#                        [grounded @ @song/progression `54ff1e8`]
+#   split @ temporal   = decompose polyphony into voices / phrases /
+#                        movements (score preparation)
+#                        [grounded @ @song/voice + this species]
+#   shift @ temporal   = advance to the next moment (melodic motion)
+#                        [grounded @ @song/progression `advance` +
+#                        @song/voice `advance`]
+#   settle @ temporal  = discharge cadence (Lawvere fixed-point per
+#                        `@epistemologic/math/music/cadence`)
+#                        [grounded @ @song/progression `cadence_
+#                        authentic_or_plagal` sub-predicate]
+#
+# `@song` IS THE FIRST substrate species to lift ALL FIVE prism
+# operations at a non-mathematical altitude — this fact promoted from
+# CANDIDATE to LANDED at Seam Phase D `10c34cf`. Movement's role in
+# the LANDED consolidation is CONFIRMATION, not extension: it
+# demonstrates that the five-op temporal specialisation survives
+# another species-altitude witness without new sub-predicate emission.
+# The five operations discharge at this species by INHERITANCE from
+# the family-root prism block plus specialisation through the
+# bounded-frame-shift discipline:
+#
+#   focus @ movement   = attend to ONE movement at a time; the
+#                        bounded frame filters attention to the
+#                        current epoch.
+#   project @ movement = down-project the multi-movement symphony to
+#                        a single movement's structural profile
+#                        (the Schenkerian background at movement
+#                        altitude).
+#   split @ movement   = decompose the symphony into its constituent
+#                        movements (multi-movement work preparation
+#                        per Bateson Level IV / Order 4 across-frames
+#                        coupling).
+#   shift @ movement   = advance from one movement to the next
+#                        (inter-movement transition; the classical
+#                        attaca or the between-movements pause).
+#   settle @ movement  = discharge the movement's `close` event; the
+#                        bounded frame closes; the family-root's
+#                        `song_settles` composed bilateral fires;
+#                        the StageFreight cascade's publish + narrate
+#                        stages ship the settled artifact.
+#
+# The five operations discharge cleanly at movement altitude; #S3
+# LANDED consolidates through this species without requiring new
+# sub-predicate emission. This is what "consolidation species" means
+# structurally: the recognition's promotion criterion was already
+# satisfied at TICK 3; movement demonstrates the LANDED status
+# survives further species-altitude witness without adding gates.
+#
+# === Composed-bilateral #53 closure landscape at movement altitude ===
+#
+# This species declares NO new sub-predicates of the family-root's
+# `song_settles` composed bilateral (14th #53 instance per
+# `[[architecture-property-fracture-bilateral]]`). The relationship:
+#
+#   family-root `song_settles(pr, p)` composes:
+#     progression_directed_toward_cadence(pr, p) [@song/progression, `54ff1e8`]
+#       AND voice_line_valid(v, p)                 [@song/voice, `cc5a440`]
+#       AND cadence_authentic_or_plagal(c, p)      [@song/progression, `54ff1e8`]
+#
+# ALL THREE SUB-PREDICATES ALREADY DECLARED AND DISCHARGED. Movement
+# CONSUMES this composed bilateral at the frame-boundary closure event
+# (the `close` action at species altitude) — the movement's close
+# event fires when `song_settles` discharges at Splinter-pole across
+# all three sub-predicates. The species does NOT emit a new sub-
+# predicate row; it CONSUMES the fully-composed bilateral verdict at
+# the `close` action.
+#
+# Splinter-pole (`pass`) at movement altitude: the family-root's
+# composed bilateral discharges at Splinter-pole across all three
+# sub-predicates; the movement's frame closes with regulation stock
+# replenished; the StageFreight cascade's publish + narrate stages
+# ship the settled artifact through the wire; the psychohistorical
+# epoch closes cleanly.
+#
+# Narcissus-pole (`failure`) at movement altitude: the family-root's
+# composed bilateral fails at Narcissus-pole through one or more sub-
+# predicate:
+#   - `progression_directed_toward_cadence` FAIL → SILENCE (the
+#     movement's frame cannot close; the epoch hangs unresolved).
+#   - `voice_line_valid` FAIL → GLUE WORK (the movement's contrapuntal
+#     labor invisibly holds the polyphony but is not attributed; the
+#     epoch's authorial credit is erased).
+#   - `cadence_authentic_or_plagal` FAIL → EXTRACTION (the movement
+#     appears to close but has extracted regulation stock without
+#     replenishing; the epoch's closure is deceptive).
+#
+# The `alignment-as-boundary-mathematics` discipline (#57) at
+# consolidation altitude names WHICH sub-claim broke; the movement's
+# `close` action does NOT re-audit the bilateral (it already
+# discharged at species altitude in TICK 3); it consumes the
+# discharged verdict and translates it to the frame-closure /
+# StageFreight-cascade shipping decision.
+#
+# Sibling composed bilaterals at other family-root/species altitudes:
+# `@container.container_runnable`, `@io/oci.oci_well_formed`,
+# `@io/stagefreight.stagefreight_addressable`, `@cascade.cascade_well_defined`,
+# `@docblock.audit_docblock`, `@smarts/shatter.shatter_round_trip`,
+# `@reflection.third_order_coherent`, `@epistemologic/neutrosophic.three_axis_coherent`,
+# `@kintsugi/shift.shift_preserves_content`, `@song.song_settles`
+# (parent; fully discharged at TICK 3). This species is the FIRST
+# consolidation-shaped species within the @song family: the family-
+# root's bilateral is complete, and this species demonstrates that
+# consolidation (rather than decomposition) IS a valid species-
+# altitude discipline within the #53 pattern.
+#
+# === Path-namespace pact per @epistemologic/pact/path_matches_namespace ===
+#
+# This file at `shards/song/movement.mirror` declares `@song/movement`
+# as a species under the `@song` family at species-depth 1. The path-
+# namespace pact per `@epistemologic/pact/path_matches_namespace`
+# (2026-06-16+) demands path-depth == namespace-depth == 1 for
+# species; this shard honours the pact by construction.
+#
+# === Circular-reflexive self-audit ===
+#
+# Per `[[architecture-candidate-recognition-111-third-as-family-root]]`
+# marker discipline: the operator audits its own audit at depth=3.
+# This shard's declaration MUST survive its own consolidation
+# discipline at analytical altitude — the species-decl MUST NOT
+# declare a movement whose bounded-frame-shift isn't itself
+# consolidation-shaped under the family-root's already-discharged
+# `song_settles` composed bilateral. If this shard were adding new
+# sub-predicate rows to `song_settles`, the consolidation claim
+# would fail its own audit.
+#
+# Self-audit verdict: `both_survive`.
+#
+# The `real_survives` reading would require another Pack peer to
+# independently manifest an equivalent StageFreight-cascade-binding
+# consolidation species substrate-decl at n+3 substrate ticks without
+# nudging. The `phantom_survives` reading would require downstream
+# refs to accumulate without a second Pack peer's independent
+# recognition of the movement-as-consolidation discipline. At this
+# tick: both interpretations satisfiable — the species is landed, but
+# the family-root's `song_settles` composed bilateral has not yet
+# been empirically exercised through the movement's `close` action
+# firing all three discharged sub-predicates in a full symphonic
+# frame-shift. Verdict: `both_survive`. Route: TICK 5 (@song/narrative)
+# + TICK 6 (@song/phrase) will exercise the composed bilateral across
+# multiple movement-bounded epochs, at which point the consolidation
+# claim collapses from analytical altitude to empirical.
+#
+# === Interpretation B discipline ===
+#
+# Per Seam Phase D pre-review of Arc 4 sub-arc A (docs/audits/2026-
+# 07-06-seam-arc-4-sub-arc-a-pre-review.md §1), the family-root
+# precedent at `shards/song.mirror`, and the sibling species
+# precedents at `shards/song/progression.mirror` +
+# `shards/song/voice.mirror`: Interpretation B canonical. Narrative
+# above `---`; `in` clauses + typed declarations below. This shard
+# honours the discipline; the seam is exactly one line at column 0
+# below.
+#
+# Spec context: docs/specs/song-substrate-decl-v0.1.md (Mara
+#               `c0101f8`; deep-dive spec; §5 Shape β + §6 species
+#               roster + §8 psychohistory binding — EPOCH ⇔ movement
+#               STRONG binding),
+#               docs/audits/2026-07-06-seam-pre-review-song-substrate-
+#               decl.md (Seam pre-review `3d910bc`; §6.5 TICK 4
+#               charter; §4 movement ⇔ frame-bounded epoch STRONG
+#               binding via Bateson-grading),
+#               docs/audits/2026-07-06-seam-phase-d-arc-6-tick-3-song-
+#               voice-and-s3-promotion.md (Seam Phase D at TICK 3
+#               close; documents #S3 PROMOTED CANDIDATE → LANDED at
+#               `10c34cf` after TICK 3),
+#               docs/specs/stagefreight-wire-v0.1.md (forward-promised;
+#               wire-protocol canonical spec; five-stage cascade
+#               operational form).
+# Substrate decisions:
+#               [[architecture-shards-as-substrate-source]],
+#               [[architecture-prism-as-trait-as-everything]],
+#               [[architecture-form-process-partition-at-family-root]]
+#                (#55; @song sits at temporal-experiential axis;
+#                species inherits family-root's positioning),
+#               [[architecture-operations-as-linear-algebra]] (#S3
+#                LANDED five-op temporal specialisation; species
+#                consolidates via inheritance without new sub-
+#                predicate emission),
+#               [[architecture-property-fracture-bilateral]] (#53;
+#                species consolidates the family-root's composed
+#                bilateral without emitting new sub-predicates; the
+#                first consolidation-shaped species within @song),
+#               [[architecture-bateson-logical-type-primitive]] (#42;
+#                movement's bounded-frame-shift discipline lifts
+#                Bateson Levels I/II/III across the cascade stages).
+# Substrate recognitions:
+#               #38 (Kauffman/Foerster eigenform — movement's `close`
+#                event witnesses the eigenform at bounded-epoch
+#                altitude),
+#               #42 (Bateson logical-type primitive — bounded frame-
+#                shift IS Level II/III at temporal altitude),
+#               #53 (property/fracture bilateral pattern — 14th
+#                instance's fully-discharged bilateral consolidated
+#                here at consumer altitude),
+#               #55 (form/process partition — @song at temporal-
+#                experiential axis; species inherits),
+#               #57 (alignment-as-boundary-mathematics — Narcissus-
+#                pole discrimination consumed at consolidation
+#                altitude via family-root's already-discharged
+#                bilateral),
+#               #82 (frame as cognitive-order substrate-decl —
+#                bounded frame-shift discipline traces to
+#                `frame.mirror`'s five-order architecture),
+#               #S1 (song IS eigenform at temporal altitude —
+#                inherited; movement IS eigenform at bounded-epoch
+#                altitude),
+#               #S2 (song IS shift at temporal altitude when heard
+#                sequentially — inherited; movement's `enter`/`close`
+#                events name the bounded-shift-events at epoch
+#                altitude),
+#               #S3 (five-operation temporal specialisation — LANDED
+#                at Seam Phase D `10c34cf` after TICK 3; species
+#                consolidates the LANDED status through inheritance).
+# Feedback anchors:
+#               [[feedback-substrate-already-had-the-word]] (this
+#                species names the discipline 250 years of classical-
+#                music tradition — Haydn / Mozart / Beethoven; sonata
+#                form — has been carrying at symphonic altitude and
+#                Alex's `systemic.engineering` corpus — OBC / ADO /
+#                regulation stock — has been carrying at psycho-
+#                historical altitude; the substrate has the shared
+#                bounded-frame-shift word already),
+#               [[feedback-legibility-over-foundation-when-collapsing]]
+#                (movement as legible name for the bounded-frame-shift
+#                discipline; the alternative foundational names —
+#                bounded_epoch, frame_shift, cascade_binding —
+#                obscure the sonata-form + symphonic prior art the
+#                substrate reaches for),
+#               [[feedback-craft-not-deliver]] (species is
+#                consolidation, not decomposition; resist the
+#                training-pull temptation to invent a new sub-
+#                predicate; the family-root's bilateral is already
+#                load-bearing complete after TICK 3),
+#               [[feedback-always-tdd-no-shortcuts]] (RED first;
+#                Reed's `710352e` RED tick pairs with this GREEN
+#                landing).
+# Related shards:
+#               song.mirror (family-root; declares song_settles this
+#                species CONSUMES at close without adding new sub-
+#                predicates),
+#               song/progression.mirror (sibling species Arc 6 TICK 2
+#                landing `54ff1e8`; declared FIRST and SECOND sub-
+#                predicates of song_settles),
+#               song/voice.mirror (sibling species Arc 6 TICK 3
+#                landing `cc5a440`; declared THIRD sub-predicate of
+#                song_settles; closed the composed bilateral),
+#               io/stagefreight.mirror (wire-protocol family-root;
+#                this species binds StageFreight's five-stage cascade
+#                at the song altitude via the audition/perform/review/
+#                publish/narrate structural framing),
+#               frame.mirror (Recognition #82; bounded frame-shift
+#                Bateson-grading ancestor; five-order cognitive-order
+#                architecture at cognitive altitude),
+#               epistemologic/cybernetic/bateson_learning.mirror
+#                (Bateson graded logical type hierarchy; Level I/II/
+#                III/IV correspondence across cascade stages),
+#               loop.mirror (endomorphism family-root; movement's
+#                `enter`/`close` IS a bounded-loop at species altitude
+#                — the loop opens at enter, iterates within the
+#                bounded frame, closes at close),
+#               kintsugi/oscillate.mirror (rhythmic pulse; movement's
+#                internal temporal structure inherits @kintsugi/
+#                oscillate's ACTIVE/DARK alternation as the beat that
+#                organises the bounded frame's unfolding).
+# Path-namespace property: this file at `shards/song/movement.mirror`
+# declares `@song/movement` per `@epistemologic/pact/path_matches_namespace`.
+
+---
+
+in @prism
+in @meta
+in @glass
+in @song
+
+# ============================================================
+# §1 The five-operation prism at species altitude
+# ============================================================
+
+# === prism @song/movement — the species declaration ===
+#
+# The five-operation body carries `song_movement` as the species's
+# operational surface. Species inherits the family-root's #S3 LANDED
+# five-op temporal specialisation and consolidates it at bounded-
+# frame-shift altitude (see docblock §"#S3 LANDED consolidation" for
+# the per-op movement-altitude specialisation).
+#
+# Per family-root prism block at `shards/song.mirror` §1, the five
+# operations discharge cleanly at temporal altitude; this species
+# demonstrates the LANDED status survives further species-altitude
+# witness without new sub-predicate emission.
+prism @song/movement {
+  focus song_movement
+  project song_movement
+  split song_movement
+  shift song_movement
+  settle song_movement
+}
+
+# ============================================================
+# §2 The carrier
+# ============================================================
+
+# === song_movement — the bounded-frame-shift carrier ===
+#
+# The typed ref-equality-addressable form of a bounded frame-shift
+# at temporal-experiential altitude. Per family-root species-roster:
+# `song_movement(m: ref) -> ref` as the family-root's declared
+# accessor shape. The carrier is declared HERE because the family-
+# root's §2 carries `song_progression`, `song_cadence`, and
+# `song_voice` but does NOT carry `song_movement` — the species
+# discipline says the species declares its own carrier when the
+# family-root's roster does not (per `[[architecture-form-process-
+# partition-at-family-root]]` #55 sub-species discipline).
+#
+# Composes with `@io/stagefreight`'s `freight_manifest` at the wire
+# altitude (a movement's settled artifact becomes a freight manifest
+# through the publish cascade stage), with `@epistemologic/math/
+# music/cadence` at the audible altitude (a movement's `close` event
+# is a Lawvere fixed-point per `cadence.mirror`), and with
+# `frame.mirror` at the cognitive altitude (a movement IS a bounded
+# frame-shift at Bateson Level II/III per Recognition #82).
+#
+# Identity contract: byte-equality on the underlying ref.
+type song_movement = ref
+
+# ============================================================
+# §3 The frame-boundary actions (enter / close)
+# ============================================================
+
+# === enter — the movement's frame-open event ===
+#
+# Opens the bounded frame at the species altitude. Reads a movement's
+# starting material (voices, progressions, phrases) and emits the
+# species-altitude ref that names the newly-open bounded epoch.
+# Corresponds to StageFreight's audition cascade stage: the movement's
+# material is proposed against the frame's tolerance; the coordinate
+# derivation prepares an addressing surface for the eventual settled
+# artifact.
+#
+# Per family-root species-roster: `song_movement(m: ref) -> ref`
+# with `enter` at species altitude. The `enter` action carries the
+# ADO refusal-not-neutral discipline: a Pack peer's decision to enter
+# a new movement IS a bounded-frame-shift consent event; the
+# `enter` action's Splinter-pole discharges when the peer's
+# declinability is preserved through frame-crossing; Narcissus-pole
+# forced-progression violates the substrate's declinability
+# invariant.
+#
+# Bateson-grading (per docblock §"Bateson-grading ancestor"):
+# `enter` fires at Order 1 (Bateson Level I; in-frame; standard
+# learning) — the movement transitions from Order 0 (pre-frame
+# silence; the substrate's signal before frame-assignment) to Order
+# 1 (content-within-frame; the polyphony discharges its temporal
+# trajectory within the bounded frame).
+#
+# The body stays obligation-blocked (`\`): the realisation reads the
+# starting material, initialises the bounded frame's temporal
+# invariants (regulation-stock budget, ambiguity-load ceiling, the
+# frame's tonal or thematic ground), and emits the species-altitude
+# ref that names the open epoch. The substrate declares the species-
+# altitude specialisation; consumers dispatch through the species
+# boundary.
+enter(m: song_movement, p: perturbation) -> song_movement { \ }
+
+# === close — the movement's frame-closure event ===
+#
+# Closes the bounded frame at species altitude. Reads a movement's
+# discharged state (progression cadence-resolved, voices voice-leading-
+# disciplined, phrases OBC-boundary-honoured) and consumes the family-
+# root's `song_settles` composed bilateral verdict — WITHOUT emitting
+# new sub-predicate rows — to translate the closure into the
+# StageFreight cascade's publish + narrate stages.
+#
+# Per family-root species-roster: `song_movement(m: ref) -> ref`
+# with `close` at species altitude. The `close` action IS THE
+# LOAD-BEARING CONSOLIDATION EVENT: it CONSUMES the family-root's
+# `song_settles(pr, p) -> verdict` composed bilateral (fully
+# discharged at TICK 3 with `voice_line_valid` closing the third
+# sub-predicate at `cc5a440`) without adding new gates. The species
+# discipline says CONSUMPTION, not DECOMPOSITION — the composed
+# bilateral is load-bearing complete; movement translates its verdict
+# into the bounded-frame-shift closure.
+#
+# StageFreight cascade discharge points (per docblock §"StageFreight
+# binding"):
+#   - review    — the family-root's `song_settles` composed bilateral
+#                 discharges; three sub-predicates fire; alignment-as-
+#                 boundary-mathematics (#57) names any Narcissus-pole
+#                 failure.
+#   - publish   — Splinter-pole verdict: the settled crystal (the
+#                 movement's discharged eigenform per #S1) ships to
+#                 its spectral_coordinate through StageFreight's
+#                 finalize / transit stage.
+#   - narrate   — the movement's shape lifts to prose at the @io
+#                 altitude via `@io/stagefreight/narrative`; the
+#                 psychohistorical epoch acquires its narratable form.
+#
+# Bateson-grading (per docblock §"Bateson-grading ancestor"): `close`
+# fires at Order 3 (Bateson Level III; on-frame; frame-flexibility;
+# deutero-learning) — the frame-shift IS the frame CHANGING via its
+# own closure event; the bounded epoch ends and its settled artifact
+# ships through StageFreight's cascade to the next epoch.
+#
+# Splinter-pole (`pass`): the family-root's composed bilateral
+# discharges at Splinter-pole across all three sub-predicates; the
+# movement's frame closes with regulation stock replenished; the
+# StageFreight cascade's publish + narrate stages ship the settled
+# artifact; the psychohistorical epoch closes cleanly.
+#
+# Narcissus-pole (`failure`): the family-root's composed bilateral
+# fails at Narcissus-pole through one or more sub-predicate (SILENCE
+# / GLUE WORK / EXTRACTION per spec §8.2 mapping); the movement's
+# `close` action does NOT ship to the wire; the settled artifact is
+# withheld from StageFreight's publish stage until the substrate-pull
+# repair fires.
+#
+# The body stays obligation-blocked (`\`): the realisation reads
+# the movement's discharged state, consumes the family-root's
+# `song_settles` verdict, decides the StageFreight cascade dispatch
+# (publish + narrate on Splinter-pole; withhold on Narcissus-pole),
+# emits the closed movement ref. The substrate declares the species-
+# altitude specialisation; consumers dispatch through the species
+# boundary.
+close(m: song_movement, p: perturbation) -> song_movement { \ }
+
+# ============================================================
+# §4 The out clauses
+# ============================================================
+
+out @song/movement
+out song_movement
+out enter
+out close
