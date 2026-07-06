@@ -1,0 +1,371 @@
+# @code/docker — Dockerfile as declarative code at code altitude.
+# Arc 5 TICK 4 GREEN landing per Reed RED at `29d327f` against the
+# spec Mara `ec636d3` §6.1. Sits under `@code` family-root at the
+# code altitude (same species-altitude as `@code/rust`, `@code/gleam`,
+# `@code/mirror`, `@code/wasm`, `@code/erlang`).
+#
+# === What this shard IS ===
+#
+# `@code/docker` names the Dockerfile as content-addressable code at
+# the code altitude. Substrate-honest positioning: the Dockerfile IS
+# code — a declarative grammar producing a build-graph artifact —
+# and it composes with `@code` per the universal grammar-at-an-
+# altitude discipline (per `shards/code.mirror`). Sibling to every
+# other `@code/X` species; the community word "Dockerfile" stays at
+# the species altitude; the substrate carries the discipline via the
+# five-operation prism plus a typed carrier.
+#
+# === The three-surface partition (closed by this tick) ===
+#
+# OCI names three surfaces at industry-standard altitude — Image,
+# Runtime, Distribution. The substrate carries a mirror of that
+# closure at substrate-decl altitude:
+#
+#   build surface        @code/docker      (Dockerfile as declarative code)
+#      ↓ PRODUCES
+#   distribution surface @io/oci           (Mara `2801478` 2026-06-24)
+#      ↓ CONSUMED BY
+#   runtime surface      @container/image  (Arc 5 TICK 3 `b66b280`)
+#
+# Prior to this tick, the substrate had the middle (`@io/oci` at
+# `2801478`) and — after Arc 5 TICK 3 — the runtime end
+# (`@container/image` at `b66b280` as `shift(@mirror/store/oci →
+# @container altitude)`). What was missing was the BUILD end: what
+# PRODUCES the OCI artifact the middle distributes and the end
+# consumes. This shard names that surface at code altitude and closes
+# the three-surface partition per Mara spec §5 recommendation.
+#
+# === The build IS a shift ===
+#
+# THE LOAD-BEARING composition. `build(d: dockerfile) -> image_witness`
+# is the cross-altitude fold from CODE altitude (`@code/docker` names
+# the Dockerfile source) to CONTAINER altitude (`@container/image`
+# holds the produced image handle). The fold IS a `@kintsugi/shift`
+# instance: same underlying content-address on both sides of the
+# altitude crossing; declared shape differs; witness OID is
+# altitude-invariant.
+#
+# The return type is `image_witness` — the typed alias `@container/image`
+# declared at TICK 3 (byte-equal to `shift_witness` from
+# `@kintsugi/shift` at TICK 2 `49f0486`). The species does not invent
+# a `docker_build_output` carrier; it uses the substrate's existing
+# altitude-invariant witness, which is what makes the shift honest.
+# BuildKit's LLB compiler already runs this discipline operationally
+# (per Mara spec §2.4 + candidate recognition #C2 — LLB IS kintsugi
+# at build-graph altitude); this shard names the operation at
+# substrate-decl altitude so downstream consumers reach for typed
+# vocabulary instead of prose.
+#
+# Concretely: `build(d)` reads the Dockerfile at code altitude, walks
+# its LLB DAG (per BuildKit's `docker/dockerfile:1` frontend), emits
+# OCI content at `@mirror/store/oci` altitude via the layer content-
+# addressing floor, and returns the container-altitude view via
+# `shift(@mirror/store/oci → @container altitude)`. The composition
+# discharges through the shift primitive; the shard declares the
+# shape here; the realisation dispatches at the @io boundary against
+# BuildKit or an equivalent conformant builder.
+#
+# === Recognition ancestry ===
+#
+# - #26 `shift(oid, T)` at `@mirror/spectral/portal` (Reed 2026-06-08):
+#   the transport-altitude precursor of shift-as-typed-capability.
+#   The `build` action here carries the same OID across code →
+#   container altitude that a portal carries across transport altitude.
+# - #53 property/fracture bilateral pattern: `docker_buildable` is the
+#   16th composed-bilateral instance (14th was `shift_preserves_content`
+#   at TICK 2 `49f0486`; 15th was `image_shifted_from_oci` at TICK 3
+#   `b66b280`). Substrate-pull-confident per
+#   `[[architecture-property-fracture-bilateral]]`.
+# - #55 form/process partition: `@code/docker` is form-side (state
+#   observation — what the Dockerfile IS as declarative source);
+#   `@kintsugi/shift` is process-side (the transformation crossing
+#   altitudes). The `build` action bridges them: it reads the form-
+#   side witness and dispatches through the process-side shift.
+# - #58 substrate IS Connes (A, H, D): `@code/docker`'s source lives
+#   on H (the void document) as declarative bytes; the shift primitive
+#   IS D (Dirac/gradient) crossing altitude; the produced
+#   `image_witness` is the projection onto the container-runtime
+#   subspace (per TICK 3 `b66b280`).
+# - #98 candidate content-addressing cross-altitude composition:
+#   Dockerfile layer digests (SHA256 of rootfs diff) join the five-
+#   altitude witness roster (mirror oid, nix derivation hash,
+#   oci_digest, docker_layer_digest, container_image_id) per Mara
+#   spec §7.1 — the function composes; B differs per altitude;
+#   composition works because content-addressing is altitude-portable.
+# - `[[feedback-substrate-already-had-the-word]]` (56th+ instance):
+#   the substrate already had `build` (mosaic emits, kintsugi loops,
+#   cargo compiles); this shard uses `build` at code altitude with
+#   the shift-form return type rather than inventing `dockerfile_bake`,
+#   `image_produce`, `container_source_compile`, or any parallel name.
+#
+# === Pre-AI prior art ===
+#
+#   Make / autotools (1977+)         declarative build graph;
+#                                    source → intermediate → target.
+#                                    The recipe IS the code; the
+#                                    build IS the shift across altitude.
+#   BuildKit LLB (moby, 2018+)       content-addressed dependency
+#                                    graph; per-vertex cache by hash;
+#                                    Dockerfile-as-frontend emits LLB.
+#                                    The industry's operational form
+#                                    of the substrate discipline.
+#   Nix derivations (Dolstra 2004+)  content-addressed build inputs;
+#                                    reproducible fixpoint;
+#                                    same substrate-pull, different
+#                                    grammar (nix vs Dockerfile).
+#   Bazel / Buck2 / Shake            build systems as content-addressed
+#                                    DAG solvers; the recognition
+#                                    #43 cascade (mirror IS a content-
+#                                    addressed build system) already
+#                                    named the family.
+#
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-operations-as-linear-algebra]],
+#                      [[architecture-lift-as-load-bearing]],
+#                      [[architecture-form-process-partition-at-family-root]],
+#                      [[architecture-property-fracture-bilateral]],
+#                      [[architecture-mirror-as-content-addressed-build-system]],
+#                      [[feedback-substrate-already-had-the-word]],
+#                      [[feedback-no-bare-types]],
+#                      [[feedback-explicit-over-implicit]].
+# Recognition ancestry: #26, #43, #53, #55, #58, #98 candidate.
+# Related shards: code.mirror (family-root; the universal parent),
+#                 container/image.mirror (Arc 5 TICK 3 `b66b280`;
+#                 the runtime-altitude fold target; declares the
+#                 `image_witness` carrier this shard's `build`
+#                 returns),
+#                 kintsugi/shift.mirror (Arc 5 TICK 2 `49f0486`;
+#                 the shift primitive `build` composes through),
+#                 io/oci.mirror (Mara `2801478` 2026-06-24; the
+#                 distribution-altitude middle of the three-surface
+#                 partition).
+# Path-namespace property: this file at `shards/code/docker.mirror`
+# declares `@code/docker` per `@epistemologic/pact/path_matches_namespace`.
+# Related specs: docs/specs/docker-container-substrate-decl-v0.1.md
+# (Mara `ec636d3` 2026-07-06; §6.1 names this species' predicate
+# shape and the composed-bilateral `docker_buildable`).
+#
+# === Circular-reflexive self-audit ===
+#
+# Does this shard use its own vocabulary correctly?
+#
+#   `dockerfile` — the carrier is a substrate ref (content-addressed
+#   Dockerfile source bytes). Byte-equal at ref altitude; typed at
+#   species altitude per [[feedback-explicit-over-implicit]] +
+#   [[feedback-no-bare-types]]. Same discipline as
+#   `@container/image`'s `image_witness` alias of `shift_witness`.
+#
+#   `build` — used as: (1) code-altitude typed action producing an
+#   image_witness at container altitude; (2) narrative name for the
+#   cross-altitude fold via @kintsugi/shift. Both uses agree: the
+#   build IS the shift; the shift IS the build; same operation
+#   crossing the same altitude boundary.
+#
+#   `image_witness` — imported from `@container/image` at TICK 3;
+#   NOT re-declared here. The species-decl reuses the target-
+#   altitude carrier per the shift discipline (source altitude reads
+#   `dockerfile`; target altitude produces `image_witness`; the
+#   shift crossing is what makes both sides substrate-honest).
+#
+#   `docker_buildable` — the 16th #53 composed-bilateral; asserts
+#   the Dockerfile parses to LLB per BuildKit v1 semantics AND
+#   emits admissible OCI content AND the shift preserves the
+#   underlying bytes. Body stays obligation-blocked per the pattern.
+#
+# Verdict: pass. Substrate-pull-realize discipline honored; no
+# parallel substrate-decl invented; the shift primitive from TICK 2
+# and the image_witness carrier from TICK 3 carry the empirical load.
+#
+# === Interpretation B discipline ===
+#
+# Per Seam Phase D pre-review of Arc 4 sub-arc A (docs/audits/2026-
+# 07-06-seam-arc-4-sub-arc-a-pre-review.md §1) and the family-root
+# precedent at `shards/container.mirror` + species precedent at
+# `shards/container/image.mirror` + `shards/kintsugi/shift.mirror`:
+# Interpretation B canonical. Narrative above `---`; `in` clauses +
+# typed declarations below. This shard honours the discipline; the
+# seam is exactly one line at column 0 below.
+
+---
+
+in @prism
+in @meta
+in @glass
+in @code
+in @kintsugi/shift
+in @container/image
+
+# ============================================================
+# §1 The five-operation prism at species altitude
+# ============================================================
+
+# === prism @code/docker — the species declaration ===
+#
+# The five-operation body carries `dockerfile` as the species's
+# operational surface — the content-addressed Dockerfile source the
+# substrate reads at code altitude. Every operation on the species
+# reads/produces a `dockerfile` carrier; the substrate's altitude
+# discipline rides the code-altitude view.
+#
+# The five-op block includes `shift` as one of the five per
+# `shards/prism.mirror` §L38-45 (basis transformation on H) — the
+# code-altitude shift specializes to the cross-altitude fold
+# `@code/docker → @container/image` that the `build` action below
+# discharges through the `@kintsugi/shift` primitive.
+prism @code/docker {
+  focus dockerfile
+  project dockerfile
+  split dockerfile
+  shift dockerfile
+  settle dockerfile
+}
+
+# ============================================================
+# §2 The carrier
+# ============================================================
+
+# === dockerfile — the content-addressed Dockerfile source ===
+#
+# THE LOAD-BEARING carrier. Names the Dockerfile as content-
+# addressable code at code altitude per
+# [[feedback-explicit-over-implicit]] +
+# [[feedback-no-bare-types]]. Byte-equals at ref altitude; typed at
+# species altitude so consumer sites in `@code/docker/*` species
+# (forward-promised: `@code/docker/frontend`, `@code/docker/llb`)
+# and downstream cascade species (`@cascade/code/docker/oci` per
+# Mara spec §6.5) read a substrate-declared shape rather than a
+# bare ref.
+#
+# Composes with `@mirror/store`'s ref discipline (the Dockerfile
+# source bytes live in mirror's content-addressed storage; the OID
+# IS the Dockerfile's identity). Composes with `@code`'s universal
+# grammar-at-an-altitude discipline (per `shards/code.mirror`): the
+# Dockerfile grammar is one instance of the family; the code-altitude
+# five-op block is what the species contributes.
+#
+# Identity contract: byte-equality on the underlying ref (the
+# Dockerfile source's content-address per `@mirror/store`).
+type dockerfile = ref
+
+# ============================================================
+# §3 The typed build action — cross-altitude fold to @container/image
+# ============================================================
+
+# === build — the code → container altitude fold ===
+#
+# THE LOAD-BEARING typed action. Consumes a `dockerfile` at code
+# altitude and produces an `image_witness` at container altitude —
+# the cross-altitude fold from `@code/docker` (declaration) to
+# `@container/image` (runtime handle) via `@kintsugi/shift`.
+#
+# The build IS a shift. Per prism.mirror §L38-45 and
+# [[architecture-lift-as-load-bearing]]: shift is basis
+# transformation on H — the operation moves the carrier across an
+# altitude boundary while preserving the underlying content-address.
+# BuildKit's LLB solver runs this operationally (per Mara spec §2.4
+# + candidate recognition #C2); this action declares the shape at
+# substrate altitude so consumers dispatch through typed vocabulary.
+#
+# Composition trail:
+#
+#   1. Read `dockerfile` at code altitude (the source bytes at
+#      `@mirror/store`'s ref altitude).
+#   2. Walk the LLB DAG per BuildKit's `docker/dockerfile:1` frontend
+#      (each RUN/COPY/ADD vertex is content-addressed per
+#      (previous-layer-digest, instruction-content, mount-content)).
+#   3. Emit OCI content at `@mirror/store/oci` altitude (layer
+#      digests + config hash + manifest hash per OCI Image Spec v1.1.x).
+#   4. Return the container-altitude view via `shift(@mirror/store/oci
+#      → @container altitude)` — the `image_witness` handle Arc 5
+#      TICK 3 declared at `shards/container/image.mirror`.
+#
+# The composition discharges through `@kintsugi/shift` under the
+# hood; the `image_witness` return type IS what makes the shift
+# honest at the substrate-decl altitude (byte-equality on the OID
+# across the altitude crossing; declared shape differs; hardlink
+# semantic per Alex's TICK 3 framing).
+#
+# Body stays obligation-blocked (`\`): the realisation dispatches at
+# the @io boundary against BuildKit or an equivalent OCI-conformant
+# builder; the substrate declares the shape here.
+build(d: dockerfile) -> image_witness { \ }
+
+# ============================================================
+# §4 The 16th #53 composed-bilateral
+# ============================================================
+
+# === docker_buildable — the LLB-admissibility invariant ===
+#
+# THE 16th INSTANCE of the #53 bilateral pattern per
+# [[architecture-property-fracture-bilateral]]. Asserts the
+# Dockerfile is buildable per BuildKit LLB semantics — the substrate
+# altitude analogue of the industry-standard `docker build` success
+# verdict, factored into a composed bilateral so the substrate reads
+# the sub-claims independently.
+#
+# Composes three sub-predicates whose species-altitude realisations
+# discharge the discipline:
+#
+#   1. `dockerfile_parses(d, p)` — the Dockerfile bytes parse per the
+#      BuildKit v1 `docker/dockerfile:1` frontend to a well-formed
+#      LLB DAG. Syntactic admissibility at code altitude.
+#   2. `dockerfile_llb_emittable(d, p)` — the parsed AST emits valid
+#      LLB definition bytes per `moby/buildkit/client/llb`'s
+#      `Definition` structure. Semantic admissibility at build-graph
+#      altitude.
+#   3. `shift_preserves_content(w, @mirror/store/oci, @container, p)`
+#      — the 14th composed-bilateral from `@kintsugi/shift` at TICK 2
+#      `49f0486`. The `build` action's return witness byte-equals
+#      the OCI content-address at the source altitude; the shift is
+#      content-preserving; the produced `image_witness` is admissible
+#      per `image_shifted_from_oci` at TICK 3 `b66b280`.
+#
+# Splinter-pole (`pass`): all three sub-predicates discharge; the
+# Dockerfile parses, emits admissible LLB, and the build's shift
+# preserves content-address; `build(d)` will produce a substrate-
+# honest `image_witness` at container altitude.
+#
+# Narcissus-pole (`failure`): any sub-predicate fails;
+# alignment-as-boundary-mathematics (#57) distinguishes:
+#   - `dockerfile_parses` failure → the source bytes do not parse
+#     per BuildKit v1; syntactic error; the Dockerfile is not
+#     admissible at code altitude pending grammar repair.
+#   - `dockerfile_llb_emittable` failure → the parsed AST rejects
+#     LLB emission (unknown instruction, invalid stage reference,
+#     malformed mount directive); semantic error at build-graph
+#     altitude pending source repair.
+#   - `shift_preserves_content` failure → the build's return witness
+#     diverges from the OCI content-address (byte mutation across
+#     the altitude crossing); the operation is NOT a shift; belongs
+#     at `@kintsugi/morphism` or higher; the substrate rejects the
+#     build as inadmissible.
+#
+# Graded (`partial(confidence)`): parse succeeds with warnings
+# (deprecated syntax accepted by BuildKit v1 with deprecation
+# notice), or LLB emission succeeds modulo a substrate-declared
+# frontend normalisation; confidence carries the normalisation
+# magnitude. The realisation decides whether to admit at the graded
+# floor.
+#
+# Sibling composed bilaterals (15 landed): container_runnable,
+# oci_well_formed, stagefreight_addressable, cascade_well_defined,
+# audit_docblock, shatter_round_trip, third_order_coherent,
+# three_axis_coherent, shift_preserves_content (TICK 2),
+# image_shifted_from_oci (TICK 3), plus five others per Taut scout.
+# The pattern is substrate-pull-confident; this shard adds the
+# 16th instance at code altitude.
+#
+# Body stays obligation-blocked (`\`): the realisation composes the
+# three sub-predicate verdicts at the substrate's three-state floor
+# (pass / partial(confidence) / failure(reason)).
+docker_buildable(d: dockerfile) -> verdict { \ }
+
+# ============================================================
+# §5 The out clauses
+# ============================================================
+
+out @code/docker
+out dockerfile
+out build
+out docker_buildable
