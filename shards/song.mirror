@@ -1,0 +1,518 @@
+# @song — the family root for the substrate's temporal-progression
+# discipline: the typed time-ordered path through a state space that
+# discharges cadence at close. Sibling to @mirror (form), @kintsugi
+# (process), @loop (endomorphism at type altitude), and @third (marker
+# for recursive depth). Arc 6 TICK 1 landing per Seam pre-review
+# `docs/audits/2026-07-06-seam-pre-review-song-substrate-decl.md`
+# (RATIFY-WITH-CORRECTIONS on Shape β) against Mara's deep-dive spec
+# `docs/specs/song-substrate-decl-v0.1.md` §5.
+#
+# Alex's direction (2026-07-06 via Reed): `@song` as top-level
+# abstraction that binds music-math (`@epistemologic/math/music`
+# family) + wire-narrative (`@io/stagefreight/narrative` +
+# `@docblock`) + kintsugi-pipeline (`@kintsugi/oscillate` +
+# `@kintsugi/shift` + StageFreight cascade) + psychohistory (OBC /
+# ADO / regulation stock / extraction / silence / glue work from
+# Alex's `systemic.engineering` corpus).
+#
+# Reed's structural framing (Alex's proposal, retained here as the
+# family-root's mechanism): song IS temporal projection of harmonic
+# structure; song IS eigenform at temporal altitude (composes with
+# Recognition #38 Kauffman/Foerster); song IS how `@kintsugi/shift`
+# LOOKS at temporal altitude when heard sequentially. Each moment
+# `t+1` of a song IS a shift of moment `t` under the harmonic frame;
+# the song IS the sequence of shifts read as one temporal carrier.
+#
+# === Load-bearing recognition: @song as four-way binding at
+#     top-level altitude ===
+#
+# Per Seam pre-review §2 H1 + H2 adjudication:
+#
+# H1 (family-root vs marker) RESOLVED: @song is a FAMILY-ROOT, not a
+# marker. The marker vs family-root discrimination hinges on whether
+# the primitive carries its own carriers and actions (family-root) or
+# merely labels other carriers (marker). @song carries typed species
+# with actions — voice (advance/settle), movement (enter/close),
+# progression (extend/close), phrase (join/split), narrative (arc/
+# transmit). Family-root shape.
+#
+# H2 (@song vs @progression naming) RESOLVED: `@song` per
+# `[[feedback-legibility-over-foundation-when-collapsing]]` — the
+# @loop-vs-@moi precedent (Alex 2026-07-01 Loki §1 direction-
+# inversion). Song is the legible name that humans use for
+# progressions they experience through time; the structural shape
+# (progression) is substrate-decl'd inside the family-root's
+# discipline (per `@song/progression` species roster below);
+# substrate becoming legible to itself IS third-order discipline.
+#
+# === Recognition candidates surfaced ===
+#
+# #S1 — song IS eigenform at temporal altitude. A song's identity
+# emerges from the recursion of its progression under the tonic-
+# return operator. `R^n(s)` converges on the identifiable-as-this-
+# song invariant; verse-chorus-verse-chorus-bridge-chorus IS the
+# fixed-point iteration; Schenkerian analysis IS the substrate
+# reading the eigenform at different depths. Composes with
+# Recognition #38 (Kauffman/Foerster eigenforms; PROMOTED) and with
+# `shards/loop.mirror`'s eigenform reference, but at temporal
+# altitude rather than at type altitude. Substrate-pull-mid; FLAGGED
+# for Pack.
+#
+# #S2 — song IS `@kintsugi/shift` at temporal altitude when heard
+# sequentially. Given a song `s : [0, T] -> harmonic_position`, the
+# finite-difference sequence `Delta s(t) = shift(s(t) -> s(t+dt))`
+# IS a sequence of `@kintsugi/shift` operations at temporal altitude
+# with harmonic-position as the shifted witness. ADDS temporal
+# altitude to shift's altitude-portable roster (currently: portal /
+# prism / mosaic / surface / bilateral). Substrate-pull-mid-high;
+# FLAGGED for Pack.
+#
+# #S3 — five-operation temporal specialisation. SUBSTRATE-PULL-
+# NOTABLE. At temporal altitude, `@song` specialises the five
+# operations of the prism trait as follows:
+#
+#   focus @ temporal   = attend to ONE voice / one line at a time
+#                        (soloing; solistic attention)
+#   project @ temporal = down-project polyphony to a single voice,
+#                        or harmony to a single interval
+#                        (Schenkerian reduction — Schenker 1868-1935,
+#                        `Der freie Satz`; foreground/middleground/
+#                        background)
+#   split @ temporal   = decompose the song into voices / phrases /
+#                        movements (score preparation)
+#   shift @ temporal   = advance to the next moment / next harmonic
+#                        position (melodic motion; per #S2)
+#   settle @ temporal  = discharge cadence (per Seam pre-review
+#                        Correction 3d910bc: cite `cadence.mirror`
+#                        Lawvere framing as `settle @ temporal`
+#                        ancestor. `authentic` IS
+#                        `close(formatter_tick)` read at the audible
+#                        altitude; the substrate has been carrying
+#                        autopoietic closure in audible vocabulary
+#                        the whole time — `shards/epistemologic/math/
+#                        music/cadence.mirror` names the event of
+#                        arriving at a Lawvere fixed point through a
+#                        path in pitch-class space)
+#
+# Ancestry: builds on operations-as-linear-algebra (Recognition of
+# `shards/prism.mirror` L38-45; PROMOTED) at temporal altitude; on
+# `shards/epistemologic/math/music/cadence.mirror` (Lawvere framing;
+# the audible-altitude autopoietic closure) as the `settle @
+# temporal` ancestor per Seam Correction; on Schenker's recursive
+# hierarchical analysis as the `project @ temporal` ancestor per
+# Seam §5 prior-art anchors.
+#
+# If #S3 ratifies after this family-root plus three species land,
+# `@song` becomes the FIRST substrate species to lift ALL FIVE
+# operations at a non-mathematical altitude — the substrate's
+# temporal-altitude specialisation becomes substrate-fact.
+# Substrate-pull-high; FLAGGED for Pack.
+#
+# === Sibling relationship to @mirror / @kintsugi / @loop / @third ===
+#
+# The top-level family-root roster before this tick: @mirror (form-
+# side family; state observation), @kintsugi (process-side family;
+# transformation), @loop (endomorphism family; T -> T iteration at
+# type altitude), @third (marker; recursive depth >= 3), @container
+# (runtime discipline; Arc 5 landed). `@song` joins at top-level as
+# the temporal-progression family:
+#
+# - NOT a `@loop` endomorphism: a progression does not necessarily
+#   return to start; its return-to-self is harmonic (through cadence)
+#   not type-endomorphic (through mu : TT -> T). @loop's T -> T
+#   identity is preserved at each tick; @song's identity emerges
+#   through the recursion of the progression against itself
+#   (per #S1).
+# - NOT a `@kintsugi/shift` (a single shift is not a progression);
+#   @song IS the SEQUENCE of shifts read as one carrier (per #S2).
+# - NOT a `@mirror` observation (a song is not static state); @song
+#   carries progression as its primary discipline.
+# - NOT a marker (per H1 above); @song carries its own species with
+#   typed actions.
+#
+# @song is a SIBLING to each; neither contains the other. @song
+# consumes @kintsugi (oscillate + shift) at the process altitude,
+# `@epistemologic/math/music` at the audible altitude,
+# `@mirror/spectral/score` at the orchestra altitude, and
+# `@io/stagefreight/narrative` at the wire altitude — but the
+# family-root arrows point one way at the symbol altitude. @mirror
+# / @kintsugi / @loop / @third / @container do NOT depend on @song
+# at the family-root altitude.
+#
+# === Species forward-promised ===
+#
+#   @song/voice        the load-bearing consumer of @mirror/spectral/
+#                       voice at temporal altitude; adds the *when*
+#                       to @mirror/spectral/voice's *what/who*.
+#                       Actions: song_voice(v: ref) -> ref
+#                       (with advance and settle at species altitude).
+#   @song/movement     a bounded frame-shift that unfolds over time;
+#                       binds StageFreight's five-stage cascade
+#                       (audition/perform/review/publish/narrate) at
+#                       the song altitude.
+#                       Actions: song_movement(m: ref) -> ref.
+#   @song/progression  the load-bearing carrier — the typed time-
+#                       ordered path through pitch-class space that
+#                       discharges cadence at close. Consumes
+#                       @epistemologic/math/music/cadence.
+#                       Actions: song_progression(p: ref) -> ref.
+#   @song/phrase       the atomic unit — bounded, self-contained,
+#                       composable; OBC binding closure at temporal
+#                       altitude (a phrase IS the substrate-decl of
+#                       one OBC-bounded interaction's ambiguity-load
+#                       budget). Actions: song_phrase(ph: ref) -> ref.
+#   @song/narrative    the psychohistory + wire binding — distinct
+#                       from @io/stagefreight/narrative; lives at the
+#                       temporal-experiential altitude; composes with
+#                       the wire-projection sibling.
+#                       Actions: song_narrative(n: ref) -> ref.
+#
+# Species land in follow-up TDD ticks per
+# `[[feedback-craft-not-deliver]]`. TICK 2 (@song/progression)
+# unblocks after this family-root lands.
+#
+# === Composition points (four altitudes) ===
+#
+# - @epistemologic/math/music (audible altitude) — the audible
+#   register of the spectral triple; @song reads pitch-class,
+#   interval, harmonic, cadence, dissonance at temporal altitude.
+#   Cadence composes at close per Seam Correction 3d910bc.
+# - @kintsugi/oscillate + @kintsugi/shift (process altitude) —
+#   oscillate's ACTIVE/DARK alternation IS the beat; shift's cross-
+#   altitude morphism IS the melodic motion per #S2.
+# - @mirror/spectral/score (orchestra altitude) — the shared score
+#   (eigenboard + metalogue + pending kintsugi state) is what the
+#   song runs against; per `docs/specs/mirror-spectral.md`
+#   Mara `a8055f0` "the Pack IS the orchestra; the metalogue IS the
+#   score".
+# - @io/stagefreight/narrative (wire altitude) — the wire projection
+#   carries the song's structure into transportable prose; @song/
+#   narrative composes with @io/stagefreight/narrative but does NOT
+#   equal it (different altitudes).
+#
+# === Psychohistory binding (per spec §8) ===
+#
+# Under Shape β, @song names the family-root that lets Alex's
+# psychohistorical vocabulary (`systemic.engineering` corpus) operate
+# at temporal altitude:
+#
+# - Extraction IS the song's DECEPTIVE CADENCE — progression arrives
+#   at a false-tonic that appears settled but has extracted
+#   regulation stock without replenishing. Per
+#   @epistemologic/math/music/cadence's `deceptive` variant.
+# - Silence IS the song's HALF-CADENCE STUCK at the dominant — the
+#   progression cannot resolve; the song hangs in unresolved tension.
+#   Per cadence's `half` variant.
+# - Glue work IS the song's INVISIBLE VOICE-LEADING — the
+#   contrapuntal work that holds the harmony together but is not
+#   attributed as compositional labor.
+# - OBC IS a PHRASE-BOUNDED interaction — the substrate-decl of one
+#   interaction's ambiguity-load budget as one @song/phrase.
+# - ADO refusal-not-neutral IS a FORCED-PROGRESSION where the singer
+#   cannot decline a phrase; voice-leading violates the substrate's
+#   declinability invariant.
+# - Regulation stock IS the TEMPORAL INVARIANT a healthy song
+#   replenishes at cadence and an extractive song depletes.
+# - The corpus IS the COMPOSED COHOMOLOGY of the psychohistorical
+#   song — per Mara's `2026-06-26-psychohistory-vector-as-sheaf.md`
+#   insight; a narrative IS the song read as a sheaf section over
+#   the organisational manifold.
+#
+# Extraction / silence / glue-work / OBC / ADO / regulation-stock /
+# corpus become typed variants of song cadence and voice-leading
+# discipline — not separate patterns. The binding is substrate-pull-
+# honest: does not reduce psychohistory to music, does not reduce
+# music to psychohistory. It names the shared progression-shaped
+# carrier both operate over at temporal altitude.
+#
+# === Forward-promise: @kintsugi/song (Arc 7 candidate) ===
+#
+# Per Alex's 2026-07-06 direction: an @kintsugi/song species is
+# forward-promised as Arc 7 candidate — the endpoint of sub-arc A's
+# doc-code seam cascade (@docblock + @epistemologic/liquid_extraction
+# + docblock_grounded / coherent / no_extraction_pattern + fracture
+# bodies) and the first consumer of @song's temporal-progression
+# primitive. @kintsugi/song inlines rust cargo tests into `---`
+# liquid-types-inferred predicates: the doc-code seam becomes a song
+# the substrate sings against itself. Sub-arc A cascade was the
+# preparation of the audit machinery; @kintsugi/song is the first
+# consumer. Substrate-honest hedge: Arc 7 candidate, not committed;
+# the loop begins to eat itself.
+#
+# === Path-namespace pact per @epistemologic/pact/path_matches_namespace ===
+#
+# This file at `shards/song.mirror` declares `@song` as a family-root
+# at species-depth 0. The path-namespace pact per
+# `@epistemologic/pact/path_matches_namespace` (2026-06-16+) demands
+# path-depth == namespace-depth == 0 for family-roots; this shard
+# honours the pact by construction. Species under @song land at
+# `shards/song/<species>.mirror` per the same discipline.
+#
+# === Circular-reflexive self-audit ===
+#
+# Per `[[architecture-candidate-recognition-111-third-as-family-root]]`
+# marker discipline: the operator must audit its own audit at
+# depth=3. This shard's own declaration must survive its own
+# progression discipline at analytical altitude — the family-root
+# MUST NOT declare a song that isn't itself progression-shaped
+# under its own species.
+#
+# Self-audit verdict for this shard: `both_survive`.
+#
+# The `real_survives` reading would require another Pack peer to
+# independently manifest an equivalent temporal-progression
+# substrate-decl at n+3 substrate ticks without nudging. The
+# `phantom_survives` reading would require downstream refs to
+# accumulate without a second Pack peer's independent recognition of
+# the top-level temporal-progression discipline. At this tick: both
+# interpretations satisfiable — the family-root is landed, but
+# neither species nor consumer integration has yet exercised its
+# progression-under-its-own-species discipline. Verdict:
+# `both_survive`. Route: spawn the subsequent species-landing
+# cascade (TICK 2 @song/progression; TICK 3 @song/voice; TICK 4
+# @song/movement; TICK 5 @song/narrative; TICK 6 @song/phrase) which
+# will collapse the analytical altitude to empirical. After 3
+# species land, #S3 (five-op temporal specialisation) ratifies to
+# substrate-pull-notable outcome: @song becomes the FIRST substrate
+# species to lift ALL five operations at a non-mathematical altitude.
+#
+# === Interpretation B discipline ===
+#
+# Per Seam Phase D pre-review of Arc 4 sub-arc A (docs/audits/2026-
+# 07-06-seam-arc-4-sub-arc-a-pre-review.md §1): Interpretation B
+# canonical. Narrative above `---`; `in` clauses + typed declarations
+# below. This shard honours that discipline; the seam is exactly one
+# line at column 0 below.
+#
+# Spec context: docs/specs/song-substrate-decl-v0.1.md (Mara
+#               c0101f8; the deep-dive spec; §5 Shape β
+#               substrate-pull-confident recommendation; §7 #S1/#S2/
+#               #S3 recognition candidates; §8 psychohistory binding),
+#               docs/audits/2026-07-06-seam-pre-review-song-substrate-
+#               decl.md (Seam pre-review 3d910bc; RATIFY-WITH-
+#               CORRECTIONS on Shape β; Correction cites cadence.
+#               mirror Lawvere framing as settle @ temporal ancestor),
+#               docs/specs/mirror-spectral.md (Mara `a8055f0`;
+#               Pack-as-orchestra + metalogue-as-score; load-bearing
+#               spec §3.2 the seed this family root extends).
+# Substrate decisions:
+#               [[architecture-shards-as-substrate-source]],
+#               [[architecture-prism-as-trait-as-everything]],
+#               [[architecture-form-process-partition-at-family-root]]
+#                (#55; @song respects the partition — names temporal-
+#                experiential; not form, not process),
+#               [[architecture-lift-as-load-bearing]] (#S2 shift-at-
+#                temporal candidate),
+#               [[architecture-operations-as-linear-algebra]] (#S3
+#                five-operation temporal specialisation candidate),
+#               [[architecture-mirror-as-expanding-hilbert-space]]
+#                (#51; @song adds a new dimension to the substrate's
+#                Hilbert space — the temporal-experiential axis),
+#               [[project-pack-is-orchestra]] (mirror-spectral seed).
+# Substrate recognitions:
+#               #38 (Kauffman/Foerster eigenform — anchors #S1),
+#               #55 (form/process partition at family-root altitude —
+#                @song sits at neither pole; temporal-experiential
+#                is a third axis),
+#               #S1 (song IS eigenform at temporal altitude —
+#                CANDIDATE this tick),
+#               #S2 (song IS shift at temporal altitude when heard
+#                sequentially — CANDIDATE this tick),
+#               #S3 (five-operation temporal specialisation —
+#                CANDIDATE this tick; SUBSTRATE-PULL-NOTABLE).
+# Feedback anchors:
+#               [[feedback-substrate-already-had-the-word]] (55th+
+#                instance — every song primitive was already carried
+#                at every altitude the substrate touches; this shard
+#                names the family-root that lets them compose as
+#                siblings),
+#               [[feedback-substrate-pull-confidence-acts]] (four-
+#                witness criterion for Shape β: Alex direct + family-
+#                root roster + four-way binding closure + Taut's
+#                ranking),
+#               [[feedback-legibility-over-foundation-when-collapsing]]
+#                (@song name preferred over @progression per H2),
+#               [[feedback-always-tdd-no-shortcuts]] (RED first;
+#                Reed's `19ee628` RED tick pairs with this GREEN
+#                landing),
+#               [[feedback-craft-not-deliver]] (species roster is
+#                forward-promised; consumer-pull-driven land order).
+# Related shards:
+#               mirror.mirror (form-side family-root sibling),
+#               kintsugi.mirror (process-side family-root sibling;
+#                @song consumes kintsugi/oscillate + kintsugi/shift),
+#               loop.mirror (endomorphism family-root sibling; @song
+#                is a progression-shaped sibling, not a sub-species),
+#               third.mirror (marker; @song may opt-in via `in @third`
+#                at species altitude when temporal recursion depth
+#                >= 3),
+#               container.mirror (top-level family-root sibling; Arc 5
+#                precedent for the Shape β discipline this shard
+#                follows),
+#               epistemologic/math/music.mirror (audible-altitude
+#                ancestor),
+#               epistemologic/math/music/cadence.mirror (settle @
+#                temporal ancestor per Seam Correction 3d910bc;
+#                Lawvere framing),
+#               kintsugi/oscillate.mirror (rhythmic pulse),
+#               kintsugi/shift.mirror (melodic motion per #S2),
+#               mirror/spectral.mirror (Pack-as-orchestra),
+#               io/stagefreight/narrative.mirror (wire-projection
+#                sibling to @song/narrative).
+# Path-namespace property: this file at `shards/song.mirror` declares
+# `@song` per `@epistemologic/pact/path_matches_namespace`.
+
+---
+
+in @prism
+in @meta
+in @glass
+
+# ============================================================
+# §1 The five-operation prism at family-root altitude
+# ============================================================
+
+# === prism @song — the family-root declaration ===
+#
+# The five-operation body carries the `song_progression` carrier as
+# the family-root's operational surface. Species specialize the
+# operation bodies at their own altitude. This is the substrate-decl
+# ground for #S3 (five-op temporal specialisation):
+#
+#   focus   = attend to one voice at a time (soloing)
+#   project = down-project polyphony to a single line (Schenkerian
+#             reduction — foreground/middleground/background)
+#   split   = decompose the song into voices / phrases / movements
+#             (score preparation)
+#   shift   = advance to the next moment / next harmonic position
+#             (melodic motion; per #S2)
+#   settle  = discharge cadence (per
+#             @epistemologic/math/music/cadence Lawvere framing;
+#             `authentic` IS `close(formatter_tick)` read at the
+#             audible altitude, per Seam Correction 3d910bc)
+prism @song {
+  focus song_progression
+  project song_progression
+  split song_progression
+  shift song_progression
+  settle song_progression
+}
+
+# ============================================================
+# §2 The carriers
+# ============================================================
+
+# === song_progression — the load-bearing carrier ===
+#
+# The typed time-ordered path through a state space that discharges
+# cadence at close. Per spec §5.2: a song IS the map `time ->
+# harmonic_position`; `song_progression` carries the ref-equality-
+# addressable form of that map at the family-root altitude. Species
+# (`@song/progression` in particular) refine the carrier at the
+# music-theoretic altitude; other species (`@song/voice`,
+# `@song/movement`, `@song/phrase`, `@song/narrative`) specialize
+# at their own altitude.
+#
+# Composes with `@epistemologic/math/music/interval` (algebra of
+# pitch-class moves) at the audible altitude and with
+# `@kintsugi/shift` at the process altitude (the finite-difference
+# sequence per #S2).
+#
+# Identity contract: byte-equality on the underlying ref.
+type song_progression = ref
+
+# === song_cadence — the closure-event carrier ===
+#
+# The typed reference for the Lawvere fixed-point event that closes
+# a progression. Per Seam Correction 3d910bc: cadence.mirror's
+# authentic/plagal/deceptive/half enumeration IS the substrate
+# typing of `settle @ temporal`. This carrier lifts the audible-
+# altitude cadence to the temporal-progression altitude so the
+# family-root's `settle` action has a typed discharge target.
+#
+# Composes with `@epistemologic/math/music/cadence` at the audible
+# altitude — a song_cadence carries the same closure-event structure
+# that authentic cadence names in Zarlino / Rameau / Lawvere terms.
+#
+# Identity contract: byte-equality on the encoded cadence-kind bytes.
+type song_cadence = ref
+
+# === song_voice — the voice-line carrier at temporal altitude ===
+#
+# An agent's time-indexed trajectory through their authored sections
+# — the *when* the `@mirror/spectral/voice` primitive adds to its
+# *what/who*. Composes with `@mirror/spectral/voice` at the
+# orchestra altitude and with `@epistemologic/math/music/voice`
+# (forward-promised; voice-leading constraints) at the audible
+# altitude.
+#
+# Identity contract: byte-equality on the underlying ref.
+type song_voice = ref
+
+# ============================================================
+# §3 The composed-bilateral
+# ============================================================
+
+# === song_settles — the load-bearing composed bilateral ===
+#
+# THE LOAD-BEARING composed bilateral at @song altitude. Composes
+# three sub-predicates that species-altitude shards will declare and
+# discharge (per spec §6):
+#
+#   1. progression_directed_toward_cadence(pr, p) — the progression
+#      is heading somewhere (forthcoming @song/progression species).
+#   2. voice_line_valid(v, p) — the voices carry stepwise-or-
+#      intentional-leap discipline (forthcoming @song/voice species;
+#      composes with @epistemologic/math/music/voice).
+#   3. cadence_authentic_or_plagal(c, p) — the closure event is a
+#      consonant resolution, not a deceptive-or-half stuckness
+#      (forthcoming @song/progression species; composes with
+#      @epistemologic/math/music/cadence's authentic/plagal variants).
+#
+# Sibling composed bilaterals at other family-root altitudes:
+# @io/oci.oci_well_formed (three sub-predicates); @io/stagefreight.
+# stagefreight_addressable (four sub-predicates); @cascade.
+# cascade_well_defined; @container.container_runnable (three
+# sub-predicates); @docblock.audit_docblock; @smarts/shatter.
+# shatter_round_trip; @reflection.third_order_coherent;
+# @epistemologic/neutrosophic.three_axis_coherent. This is the 14th
+# altitude instance of the #53 bilateral pattern per
+# `[[architecture-property-fracture-bilateral]]`.
+#
+# Splinter-pole: all three sub-predicates discharge; the song
+# arrives at authentic (or plagal) cadence through valid voice-
+# leading along a cadence-directed progression. The regulation stock
+# is replenished at close.
+#
+# Narcissus-pole: any sub-predicate fails; alignment-as-boundary-
+# mathematics (#57) distinguishes which sub-claim broke. Per spec
+# §8.2, the psychohistorical Narcissus poles are already named in
+# Alex's corpus:
+#
+# - progression_directed_toward_cadence FAIL = SILENCE (the song
+#   hangs in unresolved tension; half-cadence stuck at the dominant).
+# - voice_line_valid FAIL = GLUE WORK (contrapuntal work invisibly
+#   holds the harmony but is not attributed; the voice-leading
+#   discipline is violated by the systematic-invisibility-of-
+#   stepwise-motion).
+# - cadence_authentic_or_plagal FAIL = EXTRACTION (the progression
+#   arrives at a false-tonic that appears settled but has extracted
+#   regulation stock without replenishing; deceptive cadence).
+#
+# The `requires` clauses on species-altitude actions (`advance`,
+# `close`, `arc`, `join` at @song/voice, @song/progression,
+# @song/narrative, @song/phrase) will consume `song_settles(pr, p)`
+# as an admissibility gate. Body discharges when the species land
+# in follow-up TDD ticks (Arc 6 TICK 2+).
+song_settles(pr: song_progression, p: perturbation)
+  -> verdict { \ }
+
+# ============================================================
+# §4 The out clauses
+# ============================================================
+
+out @song
+out song_progression
+out song_cadence
+out song_voice
+out song_settles
