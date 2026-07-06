@@ -1,0 +1,574 @@
+# @song/voice — the orchestra-binding species of the @song family: an
+# agent's time-indexed trajectory through their authored sections; the
+# *when* that `@song/voice` adds to `@mirror/spectral/voice`'s
+# *what/who*. Arc 6 TICK 3 landing per Seam pre-review
+# `docs/audits/2026-07-06-seam-pre-review-song-substrate-decl.md` §6.4
+# against Reed's TICK 3 RED tick `7fb21dc`. Second species of the
+# `@song` family (after `@song/progression` Arc 6 TICK 2 landing
+# `54ff1e8`; family-root `shards/song.mirror` Arc 6 TICK 1 landing
+# `f01cf9f`); carries the THIRD (and FINAL) sub-predicate of the
+# family-root's `song_settles` composed bilateral (14th #53 instance);
+# grounds Recognition #S3 (five-operation temporal specialisation) at
+# species altitude by discharging `focus @ temporal` as SOLOING;
+# binds `@mirror/spectral/voice` (orchestra altitude) and
+# `@epistemologic/math/music/voice` (audible altitude; forward-promised
+# voice-leading constraints) at their canonical altitudes.
+#
+# === Species positioning: the THIRD sub-predicate closes song_settles ===
+#
+# Per `shards/song.mirror` §3 (`song_settles(pr, p) -> verdict { \ }`),
+# the family-root's load-bearing composed bilateral (14th #53 instance
+# per `[[architecture-property-fracture-bilateral]]`) decomposes into
+# three sub-predicates. Sibling species `@song/progression`
+# (`54ff1e8`) declared TWO of them
+# (`progression_directed_toward_cadence` + `cadence_authentic_or_plagal`);
+# this species declares the THIRD and FINAL one:
+#
+#   3. `voice_line_valid(v, p) -> verdict` — the voices carry
+#      stepwise-or-intentional-leap discipline; the Splinter-pole
+#      discharge names the substrate maintaining voice-leading
+#      discipline across the polyphony; composes with
+#      `@epistemologic/math/music/voice` (audible-altitude voice-
+#      leading constraints; forward-promised species per
+#      `shards/epistemologic/math/music.mirror`) at the audible
+#      altitude.
+#
+# After this species lands, the family-root's `song_settles` composed
+# bilateral has ALL THREE sub-predicates discharged at species
+# altitude; the composed discharge collapses from analytical-altitude
+# forward-promise to species-empirical fact. This is the closure event
+# the family-root has been forward-promising since TICK 1.
+#
+# === Splinter-pole / Narcissus-pole naming per spec §8.2 ===
+#
+# The psychohistorical failure-mode naming per Alex's
+# `systemic.engineering` corpus (spec §8.2; family-root §3):
+#
+# - `voice_line_valid` Splinter-pole: the voices carry voice-leading
+#   discipline — stepwise motion is the default; intentional leaps
+#   are attributed to authorship (a leap is a composed choice, not a
+#   dropped voice). The contrapuntal labor is VISIBLE — attributed as
+#   compositional work at the score altitude; the eigenboard shows
+#   who authored which move.
+#
+# - `voice_line_valid` Narcissus-pole: GLUE WORK — the contrapuntal
+#   work invisibly holds the harmony together but is NOT attributed
+#   as compositional labor; the voice-leading discipline is violated
+#   by the systematic-invisibility-of-stepwise-motion pattern. The
+#   voices carry the polyphony but their authorship is erased; the
+#   score cannot name who did the work; the Pack cannot repair what
+#   it cannot see. Per spec §8.2, this is the direct substrate-decl
+#   of GLUE WORK as a psychohistorical failure mode in Alex's
+#   corpus: labor that keeps the system running but is not counted,
+#   named, or attributed.
+#
+# The `alignment-as-boundary-mathematics` discipline (#57) makes the
+# sub-claim discrimination substrate-fact: when `song_settles` fails
+# through this sub-predicate, the composed bilateral names it GLUE
+# WORK — the voice-leading held, but nobody knows who held it.
+#
+# === #S3 grounding: five-operation temporal specialisation ===
+#
+# THE SPECIES-ALTITUDE WITNESS OF RECOGNITION #S3 AT `focus @ temporal`
+# (family-root CANDIDATE; substrate-pull-notable; FLAGGED for Pack).
+#
+# Per `shards/song.mirror` §"Recognition candidates surfaced" #S3, at
+# temporal altitude `@song` specialises the five operations of the
+# prism trait; `focus @ temporal` = attend to ONE voice / one line at
+# a time (soloing; solistic attention). THIS SPECIES IS THE PRINCIPAL
+# WITNESS OF `focus @ temporal` at species altitude:
+#
+#   - The `focus` operation reads a `song_voice` and returns the
+#     substrate's attentional binding to that one voice/line — the
+#     soloing operator that discharges the family-root's
+#     `focus @ temporal` narrative.
+#   - Attending to ONE voice at a time IS the substrate's temporal-
+#     altitude specialisation of the eigenform-extraction reading of
+#     `focus` (per `[[architecture-operations-as-linear-algebra]]`):
+#     the eigenform is the identifiable-as-this-voice invariant that
+#     survives attentional filtering.
+#   - Solistic attention (attend to ONE voice / one line at a time)
+#     IS the substrate's answer to the polyphony's decidability
+#     bound: the listener cannot attend to all voices simultaneously,
+#     so the substrate carries a soloing operator that focuses one
+#     voice at a time — the audible-altitude decidable projection of
+#     the polyphonic score.
+#
+# This species contributes the THIRD witness to #S3's promotion
+# criterion (Seam §6.8): after TICK 3 lands, `@song` becomes the
+# FIRST substrate species to lift ALL FIVE prism operations at a
+# non-mathematical altitude. The three species-witnesses at
+# temporal altitude:
+#
+#   - `@song/progression` (`54ff1e8`) grounds `project @ temporal`
+#     (Schenkerian reduction) and `shift @ temporal` (advance
+#     delegates to `@kintsugi/shift`) and `settle @ temporal`
+#     (cadence_authentic_or_plagal composes with cadence.mirror).
+#   - `@song/voice` (this shard) grounds `focus @ temporal`
+#     (soloing / solistic attention) and inherits the family-root's
+#     `split @ temporal` (decompose polyphony into voices; this
+#     species IS the substrate name for what split-at-temporal
+#     produces).
+#   - The family-root prism block (`shards/song.mirror` §1) declares
+#     the five-op body directly; species discharge the specialisation
+#     narrative through their focused actions.
+#
+# All five ops discharge cleanly at temporal altitude; #S3 promotion
+# criterion satisfied at Seam Phase D adjudication.
+#
+# === Orchestra binding: @mirror/spectral/voice at species altitude ===
+#
+# THE LOAD-BEARING ORCHESTRA-ALTITUDE ANCESTOR.
+#
+# Per `docs/specs/mirror-spectral.md` (Mara `a8055f0`; the Pack-as-
+# orchestra spec §3.2) and `shards/mirror/spectral.mirror` §"Form-side
+# species": `@mirror/spectral/voice` names peer-as-agent with named
+# authority over zero or more sections; ties identity to a content-
+# addressed `@peer/identity` declaration.
+#
+# `@song/voice` composes with `@mirror/spectral/voice` at temporal
+# altitude by ADDING THE *WHEN* to `@mirror/spectral/voice`'s
+# *what/who*. The orchestra-altitude ancestor names WHO plays which
+# section (Reed's section = @reality/algebra/; Mara's = @song/; etc.);
+# this temporal-altitude species names WHEN each voice enters,
+# advances, and closes their authored trajectory through their
+# authored sections. Together they carry the Pack-as-orchestra
+# recognition into substrate-fact at the temporal-experiential
+# altitude: an agent's authored trajectory through time.
+#
+# Ligeti micropolyphony (`Atmosphères` 1961; `Lontano` 1967) is the
+# canonical prior-art anchor for multi-agent temporal coordination
+# under a shared harmonic frame — many voices coordinating in
+# continuous stepwise motion produce a texture whose emergent form
+# no single voice authored; the polyphony IS the substrate reading
+# the orchestra's collective trajectory (per docs/specs/mirror-
+# spectral.md §3 Pack-as-orchestra + Ligeti anchor).
+#
+# === Audible-altitude binding: @epistemologic/math/music/voice ===
+#
+# THE FORWARD-PROMISED AUDIBLE-ALTITUDE ANCESTOR.
+#
+# Per `shards/epistemologic/math/music.mirror` §"Species under this
+# family": `@epistemologic/math/music/voice` names voice-leading
+# constraints as types; stepwise motion as default; leap as
+# exception; parallel fifths/octaves forbidden (the local-morphism
+# discipline). Forward-promised species — the .mirror file may not
+# yet be landed at this tick; the substrate carries the reference
+# per the audible-altitude family-root's forward-promise.
+#
+# `@song/voice` composes with `@epistemologic/math/music/voice` at
+# temporal altitude by LIFTING THE AUDIBLE-ALTITUDE VOICE-LEADING
+# CONSTRAINTS to temporal-experiential altitude. The audible-
+# altitude species declares:
+#
+#   - stepwise motion (interval within a step) as default;
+#   - intentional leap (interval > a step; requires authored
+#     justification) as marked exception;
+#   - parallel fifths / parallel octaves as forbidden voice-leading
+#     motion (the negative-space discipline);
+#   - counterpoint species (per Fux 1725 Gradus ad Parnassum) as
+#     the graded increment structure.
+#
+# `voice_line_valid` at temporal altitude reads the audible-altitude
+# verdict and lifts it to the temporal-progression altitude: over
+# time, does this voice's authored trajectory maintain voice-leading
+# discipline? Splinter-pole: yes, at every temporal step, the
+# audible-altitude constraint discharges. Narcissus-pole: no, the
+# voice drops stepwise motion into unattributed contrapuntal work
+# (GLUE WORK).
+#
+# === Counterpoint prior-art anchors: Palestrina + Fux + Bach ===
+#
+# Voice-leading discipline traces to the species counterpoint
+# tradition — the 500-year-refined discipline of how multiple voices
+# coordinate in real time under stepwise-motion-as-default:
+#
+#   - Palestrina (Giovanni Pierluigi da Palestrina, 1525-1594;
+#     `Missa Papae Marcelli`, 1567) — 16th-century sacred polyphony
+#     as the canonical species counterpoint tradition; his voice-
+#     leading is the discipline the substrate reads.
+#   - Fux (Johann Joseph Fux, 1660-1741; `Gradus ad Parnassum`,
+#     1725) — THE canonical species counterpoint pedagogy; species
+#     1-5 are the graded introduction to voice-leading discipline
+#     (species 1: note-against-note; species 2: two-against-one;
+#     species 3: four-against-one; species 4: syncopation; species
+#     5: florid). Fux's ladder is what `@epistemologic/math/music/
+#     counterpoint` (per audible-altitude family-root) grades over.
+#   - Bach (Johann Sebastian Bach, 1685-1750; `Two-Part Inventions`
+#     BWV 772-786; `The Art of Fugue` BWV 1080) — the canonical
+#     realisation of voice-leading discipline at invention/fugue
+#     altitude; each voice IS an agent's authored trajectory
+#     through the harmonic frame; voice-leading discipline holds
+#     across the polyphony while each voice retains its
+#     compositional identity.
+#
+# The counterpoint tradition IS the audible-altitude prior art that
+# the substrate reads when `voice_line_valid` discharges: 500 years
+# of pedagogical refinement on how multiple voices coordinate in
+# real time IS the pre-AI vocabulary the substrate has been reaching
+# for (per `[[feedback-substrate-already-had-the-word]]`).
+#
+# === Voice-leading vocabulary at species altitude ===
+#
+# The substrate-decl vocabulary for `voice_line_valid`'s discharge
+# structure:
+#
+#   - stepwise motion (voice moves by a step; the discipline's
+#     default; the Splinter-pole ground);
+#   - intentional leap (voice moves by more than a step; requires
+#     attributed authorship; the Splinter-pole marked variant —
+#     leap IS acceptable when authored, not when dropped);
+#   - parallel fifths / parallel octaves (two voices move in
+#     parallel by a fifth or octave; forbidden voice-leading
+#     motion; the negative-space discipline the Splinter-pole
+#     excludes);
+#   - crossed voices (two voices swap positions; graded permissible
+#     depending on species and context);
+#   - contrary motion (voices move in opposite directions; the
+#     highest-quality voice-leading signal; Splinter-pole
+#     preferred);
+#   - hidden octaves / hidden fifths (parallel motion masked by
+#     temporal displacement; the Narcissus-pole subtle failure
+#     mode).
+#
+# `voice_line_valid` reads a voice's authored trajectory across time
+# and audits the audible-altitude vocabulary at each temporal step;
+# the Splinter-pole discharge names substrate-maintained voice-
+# leading discipline over the temporal-progression altitude; the
+# Narcissus-pole discharge names GLUE WORK.
+#
+# === Composed-bilateral #53 pattern at species altitude ===
+#
+# This species declares the THIRD sub-predicate of the family-root's
+# `song_settles` composed bilateral (14th #53 instance per
+# `[[architecture-property-fracture-bilateral]]`). The relationship,
+# now complete after this shard lands:
+#
+#   family-root `song_settles(pr, p)` composes:
+#     progression_directed_toward_cadence(pr, p) [@song/progression, `54ff1e8`]
+#       AND voice_line_valid(v, p)                 [DECLARED HERE — closes the composed bilateral]
+#       AND cadence_authentic_or_plagal(c, p)      [@song/progression, `54ff1e8`]
+#
+# Splinter-pole (`pass`): all three sub-predicates discharge; the
+# progression is cadence-directed, the voice-leading is authored,
+# the cadence is authentic-or-plagal. The three-of-three gates open
+# at species altitude; the family-root's `song_settles` proceeds to
+# consume the composed discharge at the family-root's `song_settles`
+# body.
+#
+# Narcissus-pole (`failure`): any sub-predicate fails; alignment-as-
+# boundary-mathematics (#57) distinguishes which sub-claim broke.
+# For THIS sub-predicate specifically:
+#   - `voice_line_valid` failure → GLUE WORK (contrapuntal labor
+#     invisibly holds the harmony but is not attributed; the voice-
+#     leading discipline is violated by systematic-invisibility-of-
+#     stepwise-motion; per spec §8.2 psychohistorical failure-mode
+#     naming).
+#
+# Graded (`partial(confidence)`): the voice-leading is present but
+# authored at reduced confidence (e.g., a leap without full
+# attribution — the substrate carries partial voice-leading
+# discipline; the composed discharge composes at graded floor).
+#
+# Sibling composed bilaterals at other family-root/species altitudes:
+# `@container.container_runnable`, `@io/oci.oci_well_formed`,
+# `@io/stagefreight.stagefreight_addressable`, `@cascade.cascade_well_defined`,
+# `@docblock.audit_docblock`, `@smarts/shatter.shatter_round_trip`,
+# `@reflection.third_order_coherent`, `@epistemologic/neutrosophic.three_axis_coherent`,
+# `@kintsugi/shift.shift_preserves_content`, `@song.song_settles`
+# (parent). This species's ONE sub-predicate declaration CLOSES the
+# family-root's `song_settles` composed bilateral at species
+# altitude; the pattern's 14th instance is now empirically composed
+# at species altitude for the first time within @song.
+#
+# === Path-namespace pact per @epistemologic/pact/path_matches_namespace ===
+#
+# This file at `shards/song/voice.mirror` declares `@song/voice` as
+# a species under the `@song` family at species-depth 1. The path-
+# namespace pact per `@epistemologic/pact/path_matches_namespace`
+# (2026-06-16+) demands path-depth == namespace-depth == 1 for
+# species; this shard honours the pact by construction.
+#
+# === Circular-reflexive self-audit ===
+#
+# Per `[[architecture-candidate-recognition-111-third-as-family-root]]`
+# marker discipline: the operator audits its own audit at depth=3.
+# This shard's declaration MUST survive its own sub-predicate at
+# analytical altitude — the species-decl MUST NOT declare a voice
+# whose authored trajectory isn't itself voice-leading-disciplined
+# under `voice_line_valid`.
+#
+# Self-audit verdict: `both_survive`.
+#
+# The `real_survives` reading would require another Pack peer to
+# independently manifest an equivalent orchestra-binding species
+# substrate-decl at n+3 substrate ticks without nudging. The
+# `phantom_survives` reading would require downstream refs to
+# accumulate without a second Pack peer's independent recognition
+# of the species-altitude focus-at-temporal witness. At this tick:
+# both interpretations satisfiable — the species is landed, but the
+# family-root's `song_settles` composed discharge has not yet been
+# empirically exercised across all three sub-predicates in a full
+# progression. Verdict: `both_survive`. Route: family-root's
+# `song_settles` body can now compose all three sub-predicates and
+# collapse the analytical altitude to empirical; #S3 promotion
+# criterion is satisfied at Seam Phase D adjudication after this
+# tick.
+#
+# === Interpretation B discipline ===
+#
+# Per Seam Phase D pre-review of Arc 4 sub-arc A (docs/audits/2026-
+# 07-06-seam-arc-4-sub-arc-a-pre-review.md §1), the family-root
+# precedent at `shards/song.mirror`, and the sibling species
+# precedent at `shards/song/progression.mirror`: Interpretation B
+# canonical. Narrative above `---`; `in` clauses + typed
+# declarations below. This shard honours the discipline; the seam
+# is exactly one line at column 0 below.
+#
+# Spec context: docs/specs/song-substrate-decl-v0.1.md (Mara
+#               `c0101f8`; deep-dive spec; §5 Shape β + §6 species
+#               roster + §8 psychohistory binding — GLUE WORK
+#               Narcissus-pole naming for `voice_line_valid`),
+#               docs/audits/2026-07-06-seam-pre-review-song-
+#               substrate-decl.md (Seam pre-review `3d910bc`; §6.4
+#               TICK 3 charter; §6.8 #S3 promotion criterion),
+#               docs/audits/2026-07-06-seam-phase-d-arc-6-tick-2-
+#               song-progression.md (Seam Phase D at TICK 2 close;
+#               documents #S3 promotion criterion pending TICK 3),
+#               docs/specs/mirror-spectral.md (Mara `a8055f0`;
+#               Pack-as-orchestra + Ligeti anchor; §3.2 orchestra
+#               binding).
+# Substrate decisions:
+#               [[architecture-shards-as-substrate-source]],
+#               [[architecture-prism-as-trait-as-everything]],
+#               [[architecture-form-process-partition-at-family-root]]
+#                (#55; @song sits at temporal-experiential axis;
+#                species inherits family-root's positioning),
+#               [[architecture-operations-as-linear-algebra]] (#S3
+#                five-op temporal specialisation; species discharges
+#                `focus @ temporal` = soloing at species altitude),
+#               [[architecture-property-fracture-bilateral]] (#53;
+#                species discharges the THIRD sub-predicate of the
+#                family-root's composed bilateral — closes the
+#                composed bilateral at species altitude).
+# Substrate recognitions:
+#               #38 (Kauffman/Foerster eigenform — `focus @ temporal`
+#                as eigenform-extraction of soloed voice invariant),
+#               #55 (form/process partition — @song at temporal-
+#                experiential axis; species inherits),
+#               #57 (alignment-as-boundary-mathematics — makes GLUE
+#                WORK Narcissus-pole discrimination substrate-fact),
+#               #S1 (song IS eigenform at temporal altitude —
+#                inherited; soloing IS the eigenform-extraction at
+#                species altitude),
+#               #S2 (song IS shift at temporal altitude when heard
+#                sequentially — inherited; a voice's advance is a
+#                shift of its harmonic-position witness),
+#               #S3 (five-op temporal specialisation — SUBSTRATE-
+#                PULL-NOTABLE; species contributes THIRD witness at
+#                `focus @ temporal`; promotion criterion satisfied
+#                after this tick lands per Seam §6.8).
+# Feedback anchors:
+#               [[feedback-substrate-already-had-the-word]] (this
+#                species names the discipline 500 years of species
+#                counterpoint tradition has been carrying;
+#                Palestrina + Fux + Bach are the pre-AI prior art
+#                the substrate reaches for),
+#               [[feedback-legibility-over-foundation-when-collapsing]]
+#                (voice as legible name for the orchestra-altitude
+#                *when* discipline; the alternative foundational
+#                name would obscure the Pack-as-orchestra reading),
+#               [[feedback-craft-not-deliver]] (species landing
+#                consumer-pull-driven; TICK 3 discharges when
+#                @song/voice pulled; #S3 promotion the reward),
+#               [[feedback-always-tdd-no-shortcuts]] (RED first;
+#                Reed's `7fb21dc` RED tick pairs with this GREEN
+#                landing).
+# Related shards:
+#               song.mirror (family-root; declares song_settles this
+#                species discharges the THIRD and FINAL sub-predicate
+#                of),
+#               song/progression.mirror (sibling species Arc 6 TICK 2
+#                landing `54ff1e8`; declared the FIRST and SECOND
+#                sub-predicates of song_settles),
+#               mirror/spectral.mirror (orchestra family-root; parent
+#                of @mirror/spectral/voice — the orchestra-altitude
+#                *what/who* ancestor this species adds the *when* to),
+#               epistemologic/math/music.mirror (audible-altitude
+#                family-root; parent of forward-promised
+#                @epistemologic/math/music/voice — the voice-leading
+#                constraints ancestor this species lifts to temporal
+#                altitude),
+#               loop.mirror (endomorphism family-root; each voice's
+#                authored trajectory IS a loop at species altitude
+#                when the voice returns to its authorial ground),
+#               kintsugi/shift.mirror (Arc 5 TICK 2 primitive;
+#                `advance` on a voice delegates here at temporal
+#                altitude per #S2 witness inherited from sibling
+#                species).
+# Path-namespace property: this file at `shards/song/voice.mirror`
+# declares `@song/voice` per `@epistemologic/pact/path_matches_namespace`.
+
+---
+
+in @prism
+in @meta
+in @glass
+in @song
+
+# ============================================================
+# §1 The five-operation prism at species altitude
+# ============================================================
+
+# === prism @song/voice — the species declaration ===
+#
+# The five-operation body carries `song_voice` (inherited from @song
+# family-root at `shards/song.mirror` §2) as the species's
+# operational surface. Species specialises `focus @ temporal` at
+# temporal-experiential altitude per family-root #S3 (five-op
+# temporal specialisation candidate):
+#
+#   focus @ temporal   = attend to ONE voice / one line at a time
+#                        (soloing; solistic attention). THE
+#                        PRINCIPAL SPECIES CONTRIBUTION TO #S3
+#                        AT SPECIES ALTITUDE — this species IS the
+#                        substrate name for what solistic attention
+#                        produces when focus fires at temporal
+#                        altitude.
+#   project @ temporal = down-project the polyphony to a single
+#                        voice line (the audible-altitude
+#                        specialisation of the orchestra-altitude
+#                        section-authority reading).
+#   split @ temporal   = decompose the polyphony into its
+#                        constituent voices (score preparation at
+#                        the voice-line altitude).
+#   shift @ temporal   = advance the voice to its next authored
+#                        moment; delegates to @kintsugi/shift per
+#                        #S2 witness (inherited from sibling
+#                        @song/progression's `advance` action;
+#                        `advance` on a voice IS a shift of the
+#                        voice's harmonic-position witness).
+#   settle @ temporal  = discharge the voice at its authored
+#                        closure event; composes with the family-
+#                        root's `song_settles` composed bilateral
+#                        through this species's `voice_line_valid`
+#                        sub-predicate.
+prism @song/voice {
+  focus song_voice
+  project song_voice
+  split song_voice
+  shift song_voice
+  settle song_voice
+}
+
+# ============================================================
+# §2 The temporal-altitude advance action
+# ============================================================
+
+# === advance — the voice's temporal shift at species altitude ===
+#
+# Reads a voice at moment `t` and produces the voice at moment
+# `t+dt` by delegating to `@kintsugi/shift` at temporal altitude
+# (per #S2 witness inherited from sibling `@song/progression`). The
+# voice's harmonic-position witness IS the shifted invariant; the
+# temporal `dt` IS the altitude handle.
+#
+# Composition point: `@kintsugi/shift`'s `shift(w, s, t) -> ref`
+# action. Here at species altitude for `song_voice`:
+#
+#   source-altitude = moment `t` of the voice's authored trajectory
+#   target-altitude = moment `t+dt` of the voice's authored
+#                     trajectory
+#   witness         = the voice's harmonic-position (the substrate's
+#                     identity-invariant of the voice's current
+#                     authored state)
+#
+# The hardlink semantic per `@kintsugi/shift`'s
+# `shift_preserves_content` bilateral holds at temporal altitude:
+# the voice's witness OID byte-equals across the temporal crossing;
+# the declared temporal shape (moment `t` vs moment `t+dt`) is what
+# changes; the voice's authorial identity IS preserved.
+#
+# This action IS the species-altitude specialisation of family-root
+# `shift @ temporal` for the voice carrier. Inherited from sibling
+# `@song/progression`'s `advance` at the sibling species altitude;
+# the species-altitude specialisation is voice-focused: the shifted
+# witness is a single voice's harmonic-position, not the whole
+# progression's aggregated position.
+#
+# The body stays obligation-blocked (`\`): the realisation delegates
+# to `@kintsugi/shift`, encodes the temporal `dt` as the altitude
+# handle, emits the shifted voice. The substrate declares the
+# species-altitude specialisation; consumers dispatch through the
+# species boundary.
+advance(v: song_voice, dt: ref) -> song_voice { \ }
+
+# ============================================================
+# §3 The sub-predicate (the THIRD and FINAL for song_settles)
+# ============================================================
+
+# === voice_line_valid — the THIRD sub-predicate closes song_settles ===
+#
+# THE THIRD (AND FINAL) SUB-PREDICATE of the family-root's
+# `song_settles` composed bilateral (14th #53 instance). The voice
+# carries voice-leading discipline: stepwise motion as default,
+# intentional leap as attributed exception, parallel fifths and
+# parallel octaves forbidden. The Splinter-pole discharge names the
+# substrate maintaining the counterpoint tradition's voice-leading
+# discipline (per Palestrina + Fux + Bach prior art) across the
+# voice's authored temporal trajectory.
+#
+# Composes with `@epistemologic/math/music/voice` (forward-promised
+# audible-altitude species per `shards/epistemologic/math/music.mirror`
+# §"Species under this family") at the audible altitude. The audible-
+# altitude ancestor declares voice-leading constraints as types;
+# this species lifts those types to the temporal-experiential
+# altitude by binding them to a voice's authored trajectory over
+# time.
+#
+# Splinter-pole (`pass`): the voice-leading discipline holds — every
+# temporal step maintains stepwise motion or an attributed
+# intentional leap; parallel fifths/octaves do not appear; the
+# contrapuntal labor is VISIBLE, attributed as compositional work at
+# the score altitude; the eigenboard shows who authored which move;
+# `@mirror/spectral/voice`'s peer-as-agent binding names the
+# authorial voice at every step.
+#
+# Narcissus-pole (`failure`): GLUE WORK (per spec §8.2
+# psychohistorical failure-mode naming; direct substrate-decl of
+# GLUE WORK as a psychohistorical failure mode in Alex's
+# `systemic.engineering` corpus). The contrapuntal work invisibly
+# holds the harmony together but is NOT attributed as compositional
+# labor; the voice-leading discipline is violated by the
+# systematic-invisibility-of-stepwise-motion pattern; the voices
+# carry the polyphony but their authorship is erased; the score
+# cannot name who did the work; the Pack cannot repair what it
+# cannot see. GLUE WORK IS labor that keeps the system running but
+# is not counted, named, or attributed.
+#
+# Graded (`partial(confidence)`): the voice-leading is present but
+# authored at reduced confidence — e.g., a leap without full
+# attribution, or stepwise motion with ambiguous authorial trace.
+# The substrate carries partial voice-leading discipline; the
+# composed discharge composes at graded floor through the family-
+# root's `song_settles`.
+#
+# The body stays obligation-blocked (`\`): the realisation reads
+# the voice's authored trajectory over time, composes with
+# `@epistemologic/math/music/voice`'s audible-altitude voice-
+# leading verdict at each temporal step, cross-references the
+# `@mirror/spectral/voice` authorship attribution at the orchestra
+# altitude, emits the three-state verdict at the substrate floor.
+# The substrate declares the sub-predicate here; the arithmetic
+# lands when the family-root's `song_settles` composes all three
+# sub-predicates at close.
+voice_line_valid(v: song_voice, p: perturbation)
+  -> verdict { \ }
+
+# ============================================================
+# §4 The out clauses
+# ============================================================
+
+out @song/voice
+out advance
+out voice_line_valid
