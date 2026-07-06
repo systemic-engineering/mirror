@@ -1,0 +1,493 @@
+# @mirror/store/action_cache — the REAPI ActionCache surface
+# for verdict memoization. Sibling species under @mirror/store
+# alongside @mirror/store/git (wire) and @mirror/store/crystal
+# (settled artifact). N2 TICK 1 of the N-cascade.
+#
+# THE CLAIM: this species is the OPERATIONAL SURFACE that
+# realizes the memoization AUTHORIZED by N1's predicate
+# `@epistemologic/property/verdict_is_content_addressed`
+# (landed 2026-07-06 at `2857fb1`). Where N1 declared that
+# `verdict = f(spec_oid, target_oid, inputs_oid)` is a total
+# function of its three OID inputs, this species declares the
+# `cache_read` + `cache_write` action pair that implements the
+# memoization at store altitude.
+#
+# Interpretation B canonical per Seam pre-review
+# `docs/audits/2026-07-06-seam-arc-4-sub-arc-a-pre-review.md` §1:
+# narrative ABOVE `---`; `in` clauses + typed declarations BELOW.
+#
+# === Bazel REAPI ActionCache ancestor ===
+#
+# THE CANONICAL PRIOR-ART ANCHOR. Per M6 TICK 1 enrichment at
+# `shards/mirror/store.mirror` §"Bazel REAPI floor decomposition":
+# the industrial minimum floor decomposes into two orthogonal
+# open surfaces the Bazel Remote Execution API (REAPI) codified:
+#
+#   (1) OID -> object map — the Content-Addressable Storage (CAS)
+#       surface. Byte-in / byte-out; hash-mediated identity.
+#       Lives at @mirror/store's canonical six-op surface
+#       (read / write / exists / diff / walk / verify) IS REAPI's
+#       `ContentAddressableStorage`.
+#
+#   (2) action-hash -> OID map — the action-cache surface. Given a
+#       canonical action key (oid of the canonicalized action
+#       description) return the previously-recorded output oids.
+#       IS REAPI's `ActionCache`. THIS SPECIES.
+#
+# @mirror/store is the CAS; @mirror/store/action_cache is the
+# action-hash -> verdict map at substrate altitude. The split is
+# orthogonal to the scheduler (per Mokhov/Mitchell/Peyton Jones
+# "Build Systems à la Carte" JFP 2020); any scheduler discipline
+# (topological / restarting / suspending) composes with this
+# action-cache floor. Both surfaces are Apache-2.0 open.
+#
+# Forward-promise from `shards/mirror/store.mirror` M6 TICK 3
+# §"Bazel REAPI floor decomposition": the action-cache surface
+# is "forward-promised at M6 tick 3 as sub-prism
+# `@mirror/store/action_cache`". LANDING here at N2 TICK 1.
+#
+# === Recognition #43 grounding (mirror IS content-addressed build system) ===
+#
+# Per `[[architecture-mirror-as-content-addressed-build-system]]`
+# (#43 LANDED at M6 TICK 1 `884f433`): mirror has every Bazel /
+# Buck2 / Nix / Shake primitive declared at substrate altitude.
+# The action-cache primitive was declared at Bazel's REAPI floor
+# (2018+); mirror's altitude-4 form of the same primitive lives
+# HERE at @mirror/store/action_cache. This shard closes the last
+# unlanded Bazel-REAPI-floor-decomposition sub-prism.
+#
+# === The three-OID key discipline ===
+#
+# The cache is keyed on the same triple N1's predicate is signed
+# on: `(spec_oid, target_oid, inputs_oid) -> verdict`. Each OID
+# names one axis of the verdict's addressing:
+#
+#   - `spec_oid: oid` — the content-address of the property
+#     specification (the shard declaring the predicate whose
+#     verdict we cache); resolved through @mirror/store's CAS.
+#   - `target_oid: oid` — the content-address of the object
+#     under verdict (the artifact / crystal / splinter the
+#     predicate is evaluated against); resolved through
+#     @mirror/store's CAS.
+#   - `inputs_oid: oid` — the content-address of the composed
+#     input bundle (dependency closure OIDs, environment OIDs,
+#     ancestor verdicts folded in); the canonical hash of the
+#     inputs that participated in producing the verdict.
+#
+# The three OIDs together are the complete addressing of a
+# verdict. Nothing else participates. Because N1 declared that
+# verdict is a total function of the triple, this cache is
+# well-formed by construction: same triple -> same verdict,
+# always. No invalidation heuristic; no generational counter;
+# no mtime probe. Idempotent cache_write is a consequence of the
+# total-function invariant N1 anchored.
+#
+# === @mirror/store/crystal.derived_predicates carrier composition ===
+#
+# THE CARRIER THE ACTIONS READ/WRITE INTO. Per
+# `shards/mirror/store/crystal.mirror` (LANDED 2026-06-16, 19KB):
+# the `crystal` record's third field is
+#
+#   derived_predicates: [property_verdict]
+#
+# where `property_verdict = { verdict: verdict, where: location }`
+# (per @glass). N1's declaration lifted this field from
+# "audit-trail of what was verified" to "memoizable cache by
+# construction" — each `property_verdict` entry becomes a
+# key/value pair in the content-addressed verdict cache once the
+# location keys off the input OID triple.
+#
+# This species DECLARES THE SURFACE that reads/writes into the
+# `derived_predicates` list. `cache_read` looks up the triple
+# among the crystal's derived_predicates entries; `cache_write`
+# appends a new (verdict, where=triple) entry when the loop
+# issues a fresh verdict. The derived_predicates carrier IS the
+# substrate-decl'd cache storage; this species IS the
+# substrate-decl'd cache access.
+#
+# === Family-root six-op composition ===
+#
+# This species inherits the canonical six-op surface from
+# @mirror/store (`read` / `write` / `exists` / `diff` / `walk` /
+# `verify`) per the `in @mirror/store` clause below. The cache
+# actions DISCHARGE against that six-op surface at the
+# derived_predicates carrier:
+#
+#   cache_read(spec, target, inputs)
+#     <= walk(crystal_root)                # traverse to derived_predicates
+#      + read(derived_predicates_oid)       # fetch the [property_verdict] list
+#      + linear_scan_for_triple(entries, key=(spec, target, inputs))
+#                                          # match entry.where against triple
+#     -> imperfect(verdict, opacity)
+#         success:  hit — the cached verdict for the triple
+#         partial:  the triple matched but confidence is degraded
+#                    (stale-cache hint; @mirror/store six-op semantics)
+#         failure:  miss — no matching entry; caller runs kintsugi loop
+#
+#   cache_write(spec, target, inputs, v)
+#     <= walk(crystal_root)                # find the derived_predicates carrier
+#      + read(derived_predicates_oid)       # fetch existing list
+#      + append(entries, { verdict: v,
+#                          where: location_of(spec, target, inputs) })
+#      + write(new_derived_predicates_bytes) # content-addressed new oid
+#      + set_ref(crystal_head, new_oid)     # ref update the crystal head
+#     -> verdict
+#         pass:     write succeeded; new derived_predicates oid live
+#         partial:  write succeeded but ref-update was contended
+#                    (rare; documented at @mirror/store.write semantics)
+#         failure:  I/O failure; caller retries or bails
+#
+#   cache_exists(spec, target, inputs)
+#     <= cache_read(spec, target, inputs).is_success
+#     -> verdict (hit/miss check without fetching the full verdict)
+#
+# The six-op surface stays canonical at @mirror/store; the
+# cache verbs stay canonical at this species altitude; the
+# discharge map above names the bridge (same shape as
+# @mirror/store/git's wire-verb -> six-op discharge map).
+#
+# === Operational target: the 13-minute pre-commit hook ===
+#
+# Business context (Taut scout report + N1's operational target
+# §): the pre-commit hook takes ~13 minutes because
+# `cmd_kintsugi_spec` at `bootstrap/src/lib.rs:~1189` walks every
+# target on every invocation and spawns `cargo <check>` cold each
+# time. Zero cross-invocation cache; zero per-target result
+# memoization.
+#
+# This species is the substrate-decl'd surface the N3 Rust wiring
+# will consume. Once landed:
+#
+#   1. `cmd_kintsugi_spec` calls `cache_read(spec_oid, target_oid,
+#      inputs_oid)` before dispatching cargo.
+#   2. On cache hit (imperfect::success carrying the cached
+#      verdict): skip cargo; re-emit the verdict.
+#   3. On cache miss (imperfect::failure): run cargo; call
+#      `cache_write(spec_oid, target_oid, inputs_oid, v)` to
+#      record the fresh verdict; emit.
+#
+# The hook overhead falls from ~13 minutes to seconds on the
+# second invocation because incremental verdict caching is now
+# valid by construction. Recognition #43 supplies the principled
+# ancestor; the pre-commit hook supplies the empirical pull.
+#
+# === N-cascade forward-promises ===
+#
+# This shard is N2 TICK 1 of the N-cascade. N1 landed the
+# predicate; N2 lands the operational surface. Downstream
+# N-cascade ticks the surface enables:
+#
+#   - N3: Rust wiring at `bootstrap/src/lib.rs:~1189` —
+#         `cmd_kintsugi_spec` consults `cache_read` before
+#         dispatching cargo, calls `cache_write` after each
+#         fresh verdict. The 13-minute hook overhead falls
+#         empirically once N3 lands.
+#
+#   - N4: reverse closure `impacted_by(oid) -> [oid]` at
+#         @mirror/store. When an OID changes, the reverse-closure
+#         walk names every downstream OID whose cached verdict
+#         may be affected. Composes with cache_read at this
+#         species to invalidate exactly the impacted verdict
+#         entries (partial(opacity_map) on the impacted triples).
+#
+#   - N5: `@kintsugi/store/git commit-as-fold` — `mirror
+#         kintsugi --commit` IS `git commit` at git-projection
+#         altitude. Every commit is a fold over the verdict
+#         cache this species declares; every reverse-closure
+#         walk (N4) is a rebase over the fold. The terminal tick
+#         of the N-cascade at kintsugi-projection altitude.
+#
+# The N-cascade grounds this species as the operational hinge:
+# without cache_read + cache_write declared here, N3-N5 have no
+# substrate-decl surface to consume. This shard is where the
+# analytical invariant N1 declared becomes an executable contract.
+#
+# === Bilateral discipline per Recognition #53 ===
+#
+# Per `[[architecture-property-fracture-bilateral]]` (#53): the
+# declarative half at `@epistemologic/property/verdict_is_content_addressed`
+# (N1) pairs with an operational half. This species is the
+# store-side operational half — the surface where the
+# memoization invariant is DISCHARGED at read/write altitude.
+# A separate `@kintsugi/fracture/verdict_cache_miss` (or
+# equivalent naming) forward-promised at N3 is the fracture-side
+# operational half for the case where cache_read returns
+# `failure(miss)` and the kintsugi loop must re-issue the
+# verdict. The bilateral pair (property + fracture) is now
+# complete on the store side with this landing.
+#
+# === Interpretation B canonical (green-field species) ===
+#
+# First non-empty line = `#`-narrative; exactly one `---` seam at
+# column 0; `in @...` clauses BELOW seam. Follows the sibling
+# @mirror/store/git shape at `shards/mirror/store/git.mirror`
+# (LANDED 2026-06-30, 20KB).
+#
+# === Substrate-pull discipline ===
+#
+# Per [[feedback-substrate-pull]]: every carrier below rides a
+# type the substrate already declared. Per [[feedback-no-bare-types]]:
+# every action parameter is a typed newtype (`oid` from
+# @mirror/store; `verdict` from @glass); no bare primitives
+# escape. Per [[architecture-prism-as-trait-as-everything]]: the
+# five-operation glass block IS the canonical declaration form.
+# Per [[feedback-substrate-already-had-the-word]]: the cache
+# actions ride the six-op surface + crystal.derived_predicates
+# carrier the substrate had all along; nothing invented here.
+#
+# === Path-namespace property ===
+#
+# This file at `shards/mirror/store/action_cache.mirror`
+# declares `@mirror/store/action_cache` per
+# `@epistemologic/pact/path_matches_namespace`. Depth-2 sub-prism
+# under @mirror/store, sibling to `@mirror/store/git` and
+# `@mirror/store/crystal`.
+#
+# === Pre-AI prior art ===
+#
+#   Bazel REAPI ActionCache   `github.com/bazelbuild/remote-apis`
+#                             — the canonical action-hash -> output
+#                             OID map used by every remote-execution
+#                             build. `GetActionResult` +
+#                             `UpdateActionResult` are the
+#                             read/write pair; this species'
+#                             `cache_read` + `cache_write` at
+#                             substrate altitude match modulo
+#                             naming.
+#   Bazel Remote (buchgr)     `github.com/buchgr/bazel-remote` —
+#                             the reference standalone action-cache
+#                             server backing REAPI clients. Same
+#                             shape at wire altitude.
+#   Nix ca-derivations        the content-addressed derivation arc
+#                             (Dolstra 2020-2023); action = derivation
+#                             hash; output = content-address; the
+#                             same total-function invariant Nix's
+#                             ca-derivations arc names at the
+#                             derivation altitude.
+#   Buck2 dep graph           the incremental dep-graph engine
+#                             (Meta, 2023) built around a
+#                             content-addressed action cache;
+#                             action-hash -> output-OID discipline
+#                             at build-system altitude.
+#
+# Spec context:
+#              `docs/specs/mosaic-store-cache-invariants.md`
+#               (Mara 2026-06-28, 2016 lines; §9.2 forward-promises
+#               8 bilateral shard pairs; this shard is the
+#               store-side operational half of the
+#               verdict/content-addressing pair);
+#              `docs/specs/mirror-store.md` §§3, 4, 5, 7
+#               (the family-root surface this species specializes).
+# Substrate decisions:
+#              [[architecture-shards-as-substrate-source]],
+#              [[architecture-prism-as-trait-as-everything]],
+#              [[architecture-mirror-as-content-addressed-build-system]]
+#               (#43 LANDED; the ancestor recognition this species
+#               operationalizes at action-cache altitude),
+#              [[architecture-property-fracture-bilateral]]
+#               (#53; this shard closes the store-side operational
+#               half of the verdict/content-addressing bilateral;
+#               the fracture-side half at `@kintsugi/fracture/
+#               verdict_cache_miss` forward-promised at N3),
+#              [[architecture-fragmentation-is-the-rust-substrate]]
+#               (the Rust impl of the six-op surface + wire
+#               dispatch beneath this species; N3 wires
+#               cache_read/cache_write into `cmd_kintsugi_spec`),
+#              [[architecture-glass-wall-substrate-types]]
+#               (imperfect / verdict / transparency substrate
+#               vocabulary; the cache actions return them).
+# Substrate recognitions:
+#              #43 (mirror IS content-addressed build system —
+#               the ancestor; this shard is its action-cache
+#               altitude form),
+#              #53 (property/fracture bilateral pattern — the
+#               declarative property at N1 + the operational
+#               store-side surface here),
+#              #58 (Fate IS optical inference — verdicts EMERGE
+#               from runtime; the cache stores what Fate issued;
+#               the compiletime/runtime hinge at @fate binds
+#               both altitudes to the same content-addressed
+#               cache key).
+# Feedback anchors:
+#              [[feedback-substrate-already-had-the-word]] (the
+#               action-cache primitive was declared implicitly at
+#               `crystal.derived_predicates` since 2026-06-16;
+#               this species names the access surface the substrate
+#               was already carrying),
+#              [[feedback-craft-not-deliver]] (the shard lands the
+#               operational surface; the Rust wiring lands at N3;
+#               the reverse-closure at N4; the commit-as-fold at
+#               N5 — one tick after the other),
+#              [[feedback-always-tdd-no-shortcuts]] (RED first;
+#               Reed's `f59054a` RED tick pairs with this GREEN
+#               landing),
+#              [[feedback-no-bare-types]] (parameters are typed
+#               `oid` + `verdict`; no bare primitives escape the
+#               cache action signatures).
+# Related shards:
+#              store.mirror (@mirror/store family-root; declares
+#               the six-op surface + `oid` + Apache-2.0 floor
+#               invariants + the Bazel REAPI floor decomposition
+#               that forward-promised THIS species at M6 TICK 3),
+#              store/git.mirror (@mirror/store/git sibling species;
+#               template for shape + discharge-map discipline;
+#               the git-backed wire this action-cache surface may
+#               ride on for persistence),
+#              store/crystal.mirror (@mirror/store/crystal sibling
+#               species; declares the `derived_predicates:
+#               [property_verdict]` carrier this species reads and
+#               writes into),
+#              epistemologic/property/verdict_is_content_addressed.mirror
+#               (N1 predicate — the substrate-decl'd invariant
+#               that AUTHORIZES this cache by construction;
+#               landed at `2857fb1`),
+#              glass.mirror (verdict / imperfect / property_verdict
+#               / location — the substrate vocabulary the cache
+#               actions return + read).
+# Path-namespace property: this file at
+# `shards/mirror/store/action_cache.mirror` declares
+# `@mirror/store/action_cache` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+---
+
+in @prism
+in @meta
+in @glass
+in @mirror/store
+
+# === The @mirror/store/action_cache sub-prism ===
+#
+# Per @mirror/store/git's `prism <name> <= @mirror/store` and
+# @mirror/store/crystal's `glass <name>` precedents: sub-prisms
+# under @mirror/store may use `prism <= @mirror/store` (species
+# with its own wire vocabulary specializing the family six-op
+# surface) or `glass` (sub-prism whose actions ride the parent's
+# surface directly). This species follows @mirror/store/git's
+# `prism <= @mirror/store` shape because cache_read / cache_write
+# / cache_exists are wire-altitude verbs that DISCHARGE against
+# the family-root six-op surface (read / write / exists / walk).
+# The five-operation gauge action at this species' altitude
+# operates over `action_cache` — the typed handle for one open
+# ActionCache instance.
+prism @mirror/store/action_cache <= @mirror/store {
+  focus action_cache
+  project action_cache
+  split action_cache
+  shift action_cache
+  settle action_cache
+}
+
+# === The action_cache handle ===
+#
+# A typed reference per [[feedback-no-bare-types]] naming one open
+# ActionCache instance keyed on `(spec_oid, target_oid,
+# inputs_oid) -> verdict`. The realisation layer (N3 Rust wiring
+# at `bootstrap/src/lib.rs`) implements the carrier; the
+# substrate altitude declares the typed handle the cache actions
+# take and return.
+#
+# Construction: via the family-root's `settle` at this altitude
+# once a crystal head is bound; the action_cache is the
+# projection of `crystal.derived_predicates` as an addressable
+# key/value surface. Equality is realisation-instance identity;
+# the underlying derived_predicates carrier is content-addressed
+# (each cache_write emits a new derived_predicates oid).
+type action_cache = ref
+
+# === cache_read — the memoization lookup ===
+#
+# THE HIT-PATH ACTION. Given the three-OID triple that keys a
+# verdict per N1's `verdict_is_content_addressed` predicate,
+# fetch the cached verdict if present.
+#
+# The wire's standard imperfect return per @glass's `imperfect(a,
+# e, l)` floor:
+#
+#   success(v: verdict)      — HIT. The cached verdict for the
+#                              triple is returned; the caller
+#                              (N3 `cmd_kintsugi_spec`) skips
+#                              cargo and re-emits.
+#   partial(opacity_map)     — STALE-CACHE HINT. The triple
+#                              matched but confidence is degraded
+#                              (rare; documented at
+#                              @mirror/store six-op semantics).
+#                              Caller may treat as hit-with-warning
+#                              or fall through to re-issue.
+#   failure(reason: miss)    — MISS. No matching entry in the
+#                              crystal's derived_predicates.
+#                              Caller runs the kintsugi loop and
+#                              calls cache_write to record the
+#                              fresh verdict.
+#
+# Discharges through the six-op surface: `walk` the crystal head
+# to the derived_predicates carrier; `read` the carrier's oid;
+# linear-scan the [property_verdict] entries for one whose
+# `where` location matches the triple. Body is an obligation
+# block; the realisation layer binds through @io + fragmentation
+# dispatchers.
+cache_read(spec_oid: oid, target_oid: oid, inputs_oid: oid) -> imperfect { \ }
+
+# === cache_write — the memoization populate ===
+#
+# THE POPULATE-PATH ACTION. Given the same three-OID triple plus
+# a freshly-issued verdict (from a kintsugi loop pass), append
+# the (verdict, where=triple) entry into the crystal's
+# derived_predicates carrier and return the verdict passed in.
+#
+# Idempotent by content-address discipline (per N1's total-
+# function invariant): re-writing the same triple with the same
+# verdict emits a byte-equal new derived_predicates oid; two
+# cache_write calls with the same (triple, verdict) tuple against
+# the same starting crystal produce byte-identical output oids.
+# This is the substrate-altitude statement of N1's memoization-
+# by-construction claim: the cache's state is a total function
+# of the sequence of (triple, verdict) writes.
+#
+# Verdict return per @glass:
+#
+#   pass                 — write succeeded; new derived_predicates
+#                          oid is live; crystal head ref updated.
+#   partial(confidence)  — write succeeded but ref-update was
+#                          contended (rare; documented at
+#                          @mirror/store.write semantics).
+#   failure(reason)      — I/O failure at the derived_predicates
+#                          carrier's storage layer; caller
+#                          retries or bails.
+#
+# Discharges through the six-op surface: `walk` to find the
+# derived_predicates carrier; `read` the existing entries;
+# append the new property_verdict; `write` the new carrier bytes
+# and obtain the new oid; update the crystal head ref via the
+# underlying wire (@mirror/store/git's set_ref when the wire is
+# git-backed).
+cache_write(spec_oid: oid, target_oid: oid, inputs_oid: oid, v: verdict) -> verdict { \ }
+
+# === cache_exists — the presence check ===
+#
+# THE HIT/MISS CHECK WITHOUT FULL READ. Given the three-OID
+# triple, return a verdict indicating whether the cache carries
+# an entry for this key. Distinct from cache_read: does not
+# fetch the verdict payload; only checks presence.
+#
+# Useful for the N3 pre-commit hook's stat-only path: cheaper
+# than cache_read when the caller only needs to know if a fresh
+# kintsugi loop pass is required, without wanting to emit the
+# hit verdict yet.
+#
+#   pass                 — HIT. Entry present for the triple.
+#   partial(confidence)  — Entry present in a cache layer but
+#                          canonical carrier not yet confirmed
+#                          (rare; parallels @mirror/store.exists).
+#   failure(reason)      — MISS. No entry for the triple; caller
+#                          must run kintsugi loop.
+#
+# Discharges through the family-root six-op surface's `exists`
+# at the derived_predicates carrier; body is an obligation block.
+cache_exists(spec_oid: oid, target_oid: oid, inputs_oid: oid) -> verdict { \ }
+
+out @mirror/store/action_cache
+out action_cache
+out cache_read
+out cache_write
+out cache_exists
