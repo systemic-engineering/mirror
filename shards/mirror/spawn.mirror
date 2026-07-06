@@ -5,6 +5,7 @@ in @mirror/pack
 in @pack
 in @peer
 in @spectral/supervisor
+in @song
 
 # @mirror/spawn — the `mirror spawn ~peer'<home>'` cli-surface
 # substrate-decl.
@@ -73,6 +74,87 @@ in @spectral/supervisor
 # relation, NOT delegation). @mirror/spawn discharges the SPAWN side;
 # the spectral-Tomm-probe handling at runtime is the lead's ongoing
 # responsibility.
+#
+# === Composition with @song/movement (Arc 6 close, 2026-07-06) ===
+#
+# `mirror spawn ~peer'<home>'` IS `@song/movement.enter(m, p)` at cli
+# altitude — the frame-entry action of a temporal-bounded epoch at
+# runtime. Per shards/song/movement.mirror §3 (`enter` — the movement's
+# frame-open event): enter opens the bounded frame at species altitude,
+# reads a movement's starting material (voices, progressions, phrases),
+# and emits the frame-open cadence. When a human types the cli verb
+# `mirror spawn`, they discharge exactly this frame-entry action: the
+# spawned peer enters a bounded frame (movement altitude) whose closure
+# ships settled crystals through StageFreight's five-stage cascade.
+#
+# The cli verb `mirror spawn` IS the species-altitude action `enter` at
+# cli altitude. Same operation, two altitudes. The substrate-pull that
+# closes this binding: cli-verbs ARE species-altitude actions.
+#
+# === Composition with @song/voice (peer as time-indexed trajectory) ===
+#
+# The spawned peer's runtime trajectory IS a `song_voice` — the agent's
+# time-indexed trajectory through their authored sections (per
+# shards/song/voice.mirror §Species positioning). The *when* on top of
+# `@mirror/spectral/voice`'s *what/who*: @mirror/spectral/voice names
+# the peer as actor at orchestra altitude; @song/voice adds the temporal
+# dimension — that peer as actor at temporal altitude, unfolding a
+# time-indexed trajectory through their spec.
+#
+# The spawn action births the song_voice. From the moment spawn returns,
+# the spawned peer IS voicing their song — advancing through their
+# spec's state space one moment at a time, discharging `voice_line_valid`
+# at each cadence event.
+#
+# === Citations (M-cascade wiring) ===
+#
+# - Collapse spec `docs/specs/mcp-spec-song-collapse.md` §10 (Mara
+#   `2cfd2a7`): the M-cascade wiring path names spawn's return type
+#   upgrade as M2. Composes with #S2 (shift-at-temporal, LANDED),
+#   #S3 (five-op temporal specialisation, LANDED), #S4 (cascade-shape
+#   altitude-portable, LANDED). Per collapse spec §5.1: @song IS the
+#   spec's time-evolution operator applied to a peer.
+#
+# - @spectral/gen_prism/mcp_session (M1 LANDED at `01443b3`): sibling
+#   substrate. The MCP session gen_prism IS the state machine that
+#   accumulates @spec across mq queries; @mirror/spawn IS the substrate
+#   that consumes the ratified @spec into a running @song peer.
+#   Together they close the mq → @spec → @song wiring: M1 accumulates
+#   the spec, M2 spawns the peer whose trajectory IS the spec's time-
+#   evolution.
+#
+# - #43 (mirror IS content-addressed build system; LANDED at M6 TICK 1
+#   `884f433`; empirically substrate-fact per M1 TICK 1 `8eac1de` Seam
+#   Phase D): spawn IS the second first-order consumer of the Apache-2.0
+#   floor. The spawned peer's initial state IS an OID in @mirror/store;
+#   the spawn action IS the CAS-advance from empty session ref to peer-
+#   initialized ref. M6 store (floor) → M1 mcp_session (accumulator) →
+#   M2 spawn (peer-launcher) forms the rock-solid stack.
+#
+# === Return-type upgrade (2026-07-06) ===
+#
+# Original 2026-06-25 landing returned opaque `runtime` — opaque because
+# @song didn't exist yet; there was no typed temporal frame to name the
+# spawned peer's trajectory. Arc 6 close (`eb50a61`) landed the @song
+# family + 5 species (movement, voice, progression, narrative, phrase);
+# this tick upgrades the return type from opaque `runtime` to typed
+# `@song`. The spawned peer's temporal-progression trajectory IS a @song
+# by structural specialization (not analogy):
+#
+# - identity: uuid_spectral (from @spectral/gen_prism)
+# - state: shard_ref at the peer's evolving spec crystal
+# - trajectory: song_progression (time-ordered path through spec state
+#   space)
+# - actions: song_voice (advance/settle), song_movement (enter/close)
+#
+# Taut's composition-points scout (post @song landing) flagged the
+# 11-day-old type mismatch: spawn predates @song by 11 days (spawn
+# 2026-06-25 vs @song 2026-07-06); its `runtime` return was a
+# placeholder for a type that had not yet been declared. This tick
+# closes the mismatch: the typed temporal frame now exists, so spawn
+# returns @song at the family-root altitude. Species specialization
+# (which of the 5 species applies at any given consumer altitude)
+# happens at the consumer, not here.
 
 prism @mirror/spawn {
   focus mirror_spawn_request
@@ -107,10 +189,12 @@ type mirror_spawn_request = {
 # @mirror/cli's contextual lookup; the action signature surfaces only
 # the request + perturbation.
 #
-# Returns runtime per @pack.spawn's existing return type (recognition
-# #84). The runtime carrier composes with @spectral/supervisor for
-# lifecycle.
-spawn(r: mirror_spawn_request, p: perturbation) -> runtime
+# Returns @song per the return-type upgrade (see "Return-type upgrade"
+# section above). The spawned peer's temporal-progression trajectory IS
+# a @song — the peer's time-evolution operator applied to their spec.
+# Composes with @spectral/supervisor for lifecycle (start_child kicks
+# the spawn; restart_strategy owned by supervisor).
+spawn(r: mirror_spawn_request, p: perturbation) -> @song
 requires peer_well_known(r.target, p)
 { \ }
 
