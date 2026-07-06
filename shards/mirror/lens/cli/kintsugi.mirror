@@ -5,6 +5,7 @@ in @glass
 in @nl
 in @mirror/lens
 in @mirror/lens/cli
+in @song
 
 # @mirror/lens/cli/kintsugi — the coherence-settling loop as a stage.
 #
@@ -74,6 +75,173 @@ in @mirror/lens/cli
 #                 lens/cli/compile.mirror (sibling — the prior
 #                 sub-stage; same template, different operand naming),
 #                 glass.mirror (imperfect / transparency / au carriers).
+#
+# === Composition with @song/movement (2026-07-06; SECOND WITNESS) ===
+#
+# `mirror kintsugi @spec` IS `@song/movement.close` at cli altitude —
+# the closure event of the temporal-bounded epoch that IS the spec-
+# construction game. Per shards/song/movement.mirror §3 (`close` — the
+# movement's frame-closure event): close consumes the family-root's
+# `song_settles` composed bilateral verdict at species altitude, decides
+# StageFreight's publish + narrate cascade dispatch (publish + narrate
+# on Splinter-pole; withhold on Narcissus-pole), emits the closed
+# movement ref. When a human types `mirror kintsugi @spec` at the cli
+# surface they discharge exactly this frame-closure action: the bounded
+# frame that spawn opened (M2 TICK 1 `63ea934`; `mirror spawn` IS
+# `@song/movement.enter`) closes here through the tournament iteration
+# that ratifies the spec's `settle_on` conditions.
+#
+# The cli verb `mirror kintsugi @spec` IS the species-altitude action
+# `close` at cli altitude. Same operation, two altitudes. Frame-close
+# discipline: `spawn` opens the frame (enter); `kintsugi @spec` closes
+# it (close). Together the two verbs make the movement — the bounded
+# epoch's open-close discipline is exactly what the pair of cli verbs
+# discharges at the surface.
+#
+# Structural claim (not analogy): `mirror kintsugi @spec` doesn't
+# RESEMBLE `@song/movement.close`; it IS it, at cli altitude. The
+# closure event of the temporal-bounded spec-construction epoch is
+# structurally the same operation the species declares at species
+# altitude; the cli surface is the altitude at which a human discharges
+# it. The bounded-frame-shift discipline (per movement §"Bounded frame-
+# shift" + Bateson Level III on-frame frame-flexibility) lifts to cli
+# altitude without dilution: the kintsugi verb IS the frame-shift ON
+# the frame, discharged at the shell.
+#
+# === Composition with @mirror/spawn (kintsugi → spawn → @song) ===
+#
+# Composition chain at the M-cascade wire boundary:
+#
+#   MCP session (M1 `01443b3`) accumulates @spec via mq queries
+#     ↓
+#   `mirror kintsugi @spec` (this stage; M2 TICK 2) fires tournament;
+#   `settle` action ratifies @spec's `settle_on` conditions
+#     ↓
+#   Ratified @spec OID passes to `@mirror/spawn.spawn` (M2 TICK 1
+#   `63ea934`; return-type upgrade runtime → @song)
+#     ↓
+#   `spawn` returns @song — the running peer's time-evolution operator
+#
+# The kintsugi.settle action feeds a ratified @spec OID into
+# @mirror/spawn.spawn which returns @song. The @song emerges at the
+# spawn boundary post-tournament, NOT at kintsugi's return boundary —
+# kintsugi's actions keep their `imperfect` return type (they may
+# partial per recognition #306); the typed temporal frame surfaces at
+# the spawn action after the tournament's variety-maintenance discharge
+# ratifies the spec.
+#
+# === @spec provenance from MCP session (M1 → M2 wiring) ===
+#
+# The @spec that kintsugi settles IS accumulated by the MCP session
+# gen_prism (M1 TICK 1 LANDED at `8eac1de`; canonical
+# `@spectral/gen_prism/mcp_session`) across mq queries. Provenance
+# chain:
+#
+#   mq queries (LSP-shaped MCP surface across the session)
+#     ↓
+#   session state (crystals in @mirror/store — the Apache-2.0 floor;
+#   #43 content-addressed build system; M6 TICK 1 `884f433`)
+#     ↓
+#   @spec OID at ratification (session state settles into a byte-
+#   addressable ref carrying the accumulated query trajectory)
+#     ↓
+#   kintsugi.settle (this stage; one tournament iteration ratifies
+#   `settle_on` conditions per the @fate variety-maintenance contract)
+#     ↓
+#   @mirror/spawn (M2 TICK 1) consumes the ratified @spec OID
+#     ↓
+#   @song (post-tournament typed temporal frame at the peer's
+#   trajectory altitude)
+#
+# The @spec is not authored ex nihilo at kintsugi's boundary; it is
+# the accumulated composition of an mq query trajectory that lives in
+# the MCP session gen_prism's state as crystals in @mirror/store. When
+# `settle_on` ratifies, this stage's settle action fires one tournament
+# iteration; when the tournament converges cleanly, the ratified OID
+# feeds spawn and @song emerges as the running peer's time-evolution
+# operator.
+#
+# === Citations (M-cascade wiring + collapse spec) ===
+#
+# - Collapse spec `docs/specs/mcp-spec-song-collapse.md` §5, §10 (Mara
+#   2cfd2a7): the MCP session → @spec construction → kintsugi @spec
+#   ratification → @mirror/spawn → @song wire. This shard IS the
+#   kintsugi-@spec verb dispatch at cli altitude. Composes with #S2
+#   (shift-at-temporal, LANDED), #S3 (five-op temporal specialisation,
+#   LANDED at Seam Phase D `10c34cf`), #S4 (cascade-shape altitude-
+#   portable, LANDED).
+#
+# - @spectral/gen_prism/mcp_session (M1 TICK 1 LANDED at `8eac1de`;
+#   Seam Phase D RATIFY; "MCP session IS gen_prism" PROMOTED): sibling
+#   substrate. The MCP session gen_prism IS the state machine that
+#   accumulates @spec across mq queries; this stage IS the substrate
+#   that consumes the ratified @spec via `settle`. Together with
+#   @mirror/spawn (M2 TICK 1 LANDED at `63ea934`) they close the mq
+#   → @spec → @song wiring: M1 accumulates the spec, M2 TICK 2 (this
+#   stage) ratifies the spec through the tournament, M2 TICK 1 spawns
+#   the peer whose trajectory IS the spec's time-evolution.
+#
+# - #43 (mirror IS content-addressed build system; LANDED at M6 TICK 1
+#   `884f433`; empirically substrate-fact per M1 TICK 1 `8eac1de` +
+#   M2 TICK 1 `63ea934`): kintsugi IS the fourth first-order consumer
+#   of the Apache-2.0 floor. The chain: M6 self-declaration → M1
+#   mcp_session → M2 TICK 1 spawn → M2 TICK 2 kintsugi. The
+#   tournament's settled crystals are OIDs in @mirror/store; the
+#   ratified @spec OID that kintsugi.settle emits IS a content-
+#   addressed ref that spawn consumes. Recognition #43's operational
+#   grounding runs THROUGH this stage: the CAS-advance from
+#   accumulated session state to ratified @spec is where the content-
+#   addressed build system's discipline earns the M-cascade's
+#   composition.
+#
+# === Candidate recognition: cli-verbs ARE species-altitude actions ===
+#
+# Second-witness landing per M2 TICK 1 Seam Phase D `b50fedc` §3.
+# First witness: `mirror spawn` IS `@song/movement.enter` at cli
+# altitude (M2 TICK 1 `63ea934`; shards/mirror/spawn.mirror
+# "Composition with @song/movement" section). This tick lands the
+# second witness: `mirror kintsugi @spec` IS `@song/movement.close`
+# at cli altitude.
+#
+# Two witnesses land the candidate. `spawn` opens the frame (enter);
+# `kintsugi @spec` closes it (close). Together they specialise
+# @song/movement's two actions (enter/close) at cli altitude — same
+# operation, different altitudes.
+#
+# Structural claim: some cli verbs are species-altitude actions
+# PROJECTED to the cli surface. Not analogy — identity by structural
+# specialisation. The cli altitude is not a metaphor over the species
+# altitude; it is the projection at which a human discharges the
+# species-altitude action through the shell. Distinct from #S3 (five-
+# op temporal specialisation; LANDED) and #S4 (cascade-shape altitude-
+# portable; LANDED). Fresh candidate; second witness lands here; if
+# both witnesses discharge cleanly at Seam Phase D, the candidate
+# promotes CANDIDATE → LANDED.
+#
+# === Return-type transition (2026-07-06 / post-@song) ===
+#
+# Original 2026-06-12 landing: kintsugi actions return
+# `imperfect(settled-graph-ref)`. Arc 6 close (`eb50a61`) landed the
+# @song family + 5 species (movement, voice, progression, narrative,
+# phrase); M2 TICK 1 (`63ea934`) upgraded @mirror/spawn to return
+# @song. This tick (M2 TICK 2) names the composition: when kintsugi
+# settles an @spec whose `settle_on` ratifies, the ratified OID feeds
+# @mirror/spawn.spawn which returns @song. The kintsugi actions
+# themselves keep their `imperfect` return type (they may partial per
+# recognition #306); the @song emerges at the spawn boundary post-
+# tournament, not at kintsugi's boundary. The typed temporal frame
+# surfaces AFTER the tournament ratifies — kintsugi is the ratifier,
+# spawn is the frame-opener whose typed return names the post-
+# ratification state.
+#
+# This is substrate-honest witness that the @song wire post-dates the
+# shard's 2026-06-12 landing: pre-@song, kintsugi's contribution to
+# the pipeline was a settled-graph ref with no downstream typed frame;
+# post-@song, the ratified @spec OID feeds a spawn action whose
+# @song return names the peer's temporal-evolution trajectory. The
+# shard's return type does NOT change; what changes is that its
+# downstream composition (via the @mirror/spawn wire) now surfaces
+# @song at the M-cascade boundary.
 
 stage @mirror/lens/cli/kintsugi {
   # Per cli-as-prism §7: kintsugi declares `default focus` — the
