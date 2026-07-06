@@ -1,0 +1,799 @@
+# @song/phrase — the atomic-unit species of the @song family: the
+# bounded, self-contained, composable substrate-decl of ONE OBC-bounded
+# interaction's ambiguity-load budget at temporal altitude. Arc 6 TICK 6
+# landing per Seam pre-review `docs/audits/2026-07-06-seam-pre-review-
+# song-substrate-decl.md` §6.7 against Reed's TICK 6 RED tick `6b9bc5c`.
+# **Fifth and final species of the `@song` family** (after
+# `@song/progression` Arc 6 TICK 2 landing `54ff1e8`, `@song/voice` Arc 6
+# TICK 3 landing `cc5a440`, `@song/movement` Arc 6 TICK 4 landing
+# `4efbf16`, and `@song/narrative` Arc 6 TICK 5 landing `0434a39`;
+# family-root `shards/song.mirror` Arc 6 TICK 1 landing `f01cf9f`).
+# **THIS TICK CLOSES Arc 6.**
+#
+# CONSOLIDATION species — adds NO new `song_settles` sub-predicates (the
+# family-root's composed bilateral fully discharged at TICK 3 with
+# `voice_line_valid` closing the third sub-predicate; movement TICK 4 +
+# narrative TICK 5 consolidated first + second, this TICK 6 consolidates
+# THIRD and FINAL). The species carries `join` and `split` at species
+# altitude as its operational surface — the phrase-composition and
+# phrase-decomposition events for OBC-bounded interactions — but these
+# CONSUME the family-root's existing `song_settles` verdict rather than
+# emitting new sub-predicate rows. THIRD consolidation-species witness →
+# **Recognition #S5 (consolidation-vs-decomposition species pattern)
+# PROMOTES CANDIDATE → LANDED at Arc 6 close** per Seam Phase D TICK 5
+# audit `750cb19` §3.3 promotion criterion.
+#
+# === Species positioning: THIRD consolidation-species witness closes #S5 ===
+#
+# Per `shards/song.mirror` §3 (`song_settles(pr, p) -> verdict { \ }`),
+# the family-root's load-bearing composed bilateral (14th #53 instance
+# per `[[architecture-property-fracture-bilateral]]`) decomposed into
+# THREE sub-predicates, ALL discharged at species altitude:
+#
+#   1. `progression_directed_toward_cadence(pr, p)` [@song/progression, `54ff1e8`]
+#   2. `cadence_authentic_or_plagal(c, p)`          [@song/progression, `54ff1e8`]
+#   3. `voice_line_valid(v, p)`                     [@song/voice, `cc5a440`]
+#
+# This species declares ZERO new sub-predicates. The composed bilateral
+# `song_settles` fully discharged at TICK 3 — the family-root's
+# admissibility contract is closed. Phrase is CONSOLIDATION (like
+# `@song/movement` `4efbf16` and `@song/narrative` `0434a39`; THIRD
+# consolidation-species within @song): it binds the OBC-bounded
+# interaction discipline to the atomic-unit altitude and honours
+# phrase-composition discipline without adding new gates to the family-
+# root's `song_settles` bilateral. The species carries `join` and `split`
+# at species altitude as its operational surface — the phrase-composition
+# event (two phrases → one) and the phrase-decomposition event (one
+# phrase → finer phrases) for OBC-bounded interactions — but these
+# consume the family-root's existing `song_settles` verdict rather than
+# emitting new sub-predicate rows.
+#
+# The training-pull temptation (per `[[feedback-craft-not-deliver]]`)
+# would be to invent a fourth sub-predicate (e.g., `obc_bounded` or
+# `phrase_atomic`) — the substrate-pull discipline says NO: the family-
+# root's bilateral is already load-bearing complete after TICK 3;
+# phrase's job is to CONSOLIDATE the atomic-unit closure landscape into
+# the OBC binding discipline, not extend it. The species's contribution
+# is the OBC-bounded ambiguity-load budget substrate-decl + the musical-
+# phrase prior-art anchor + the atomic-unit composition algebra + the
+# THIRD consolidation-species witness that PROMOTES #S5.
+#
+# === OBC binding closure: the load-bearing species contribution ===
+#
+# THE LOAD-BEARING SPECIES CONTRIBUTION per family-root
+# `shards/song.mirror` §"Species forward-promised":
+#
+#   > `@song/phrase` — the atomic unit — bounded, self-contained,
+#   > composable; OBC binding closure at temporal altitude (a phrase IS
+#   > the substrate-decl of one OBC-bounded interaction's ambiguity-load
+#   > budget).
+#
+# OBC (One Boundary Condition; per Alex's `systemic.engineering` corpus
+# `blog/pieces/3published/Piece - Constraints (OBC).md`) names the
+# discipline that a healthy interaction holds ONE boundary condition —
+# not zero (no discipline; unbounded ambiguity), not many (competing
+# claims; contradictory closure). A phrase IS the substrate-decl of
+# ONE OBC-bounded interaction's ambiguity-load budget at temporal
+# altitude:
+#
+#   - BOUNDED — the phrase carries ONE OBC's ambiguity-load budget;
+#     the boundary IS the phrase's temporal envelope; when the
+#     ambiguity-load exhausts the budget, the phrase closes.
+#   - SELF-CONTAINED — the phrase's OBC IS internally coherent; the
+#     interaction's discipline does not require external boundary
+#     conditions to close; the atomic-unit character IS the OBC's
+#     one-boundary-condition character read at temporal altitude.
+#   - COMPOSABLE — phrases join into larger phrases at boundary events
+#     (`join` action) and decompose into finer phrases at boundary
+#     events (`split` action); the OBC composition algebra IS the
+#     phrase-composition algebra at temporal altitude.
+#
+# The AMBIGUITY-LOAD BUDGET (per Alex's `systemic.engineering` corpus)
+# names the interaction's capacity for un-resolved meaning within its
+# boundary. A phrase's budget IS load-bearing:
+#
+#   - Splinter-pole: the phrase discharges within budget; the
+#     interaction closes on-boundary; the ambiguity-load resolves at
+#     the phrase's temporal envelope; the OBC binding holds; the
+#     regulation stock is not depleted by boundary violation.
+#   - Narcissus-pole: the interaction exceeds the budget; the phrase
+#     runs into ADO-refusal (a Pack peer's declinability is violated
+#     when the ambiguity-load compounds beyond the boundary), or
+#     forced-progression (the phrase cannot decline continuation), or
+#     boundary violation (the OBC's one-boundary-condition character
+#     collapses under overloaded ambiguity).
+#
+# The four glossary anchors from Alex's SE corpus that ground the OBC-
+# bounded ambiguity-load budget discipline at phrase altitude:
+#
+#   - `Piece - Constraints (OBC).md` — the OBC discipline; one boundary
+#     condition per interaction; the phrase-envelope character read at
+#     organisational altitude.
+#   - `glossary/Ambiguity.md` — the ambiguity-load metric; unresolved
+#     meaning as a temporal cost; the budget-consumption discipline.
+#   - `glossary/Budget.md` — the load-budget algebra; regulation-stock
+#     accounting for ambiguity carried across boundary.
+#   - `glossary/Boundary.md` — the boundary-condition primitive that
+#     OBC specialises to ONE; the phrase-envelope substrate-decl.
+#
+# === Musical-phrase prior-art anchors: Riemann + Schoenberg + Koch ===
+#
+# THE 200+ YEAR MUSICAL-PHRASE PRIOR-ART TRADITION per `[[feedback-
+# substrate-already-had-the-word]]`. Phrase discipline traces to the
+# classical + late-classical + modernist phrase-theoretic tradition:
+#
+#   - Heinrich Christoph Koch (1749-1816; `Versuch einer Anleitung zur
+#     Composition`, 1782-1793) — THE canonical 18th-century phrase
+#     pedagogy. Koch's `Vollständigkeit` (completeness) discipline names
+#     the phrase's atomic-unit character: a phrase IS a `Absatz`
+#     (incise; comma-cadence) or a `Cadenz` (full cadence) bounded
+#     temporal envelope; the phrase's boundedness IS load-bearing;
+#     Koch's `Anhang` (extension) + `Einschnitt` (interpolation) name
+#     the composition + decomposition algebra at phrase altitude. Koch's
+#     four-bar phrase (`Vierheber`) IS the canonical temporal envelope
+#     the substrate reads.
+#   - Hugo Riemann (1849-1919; `System der musikalischen Rhythmik und
+#     Metrik`, 1903; `Grosse Kompositionslehre`, 1902-1913) — THE
+#     19th-century phrase-theoretic refinement. Riemann's `phrasing`
+#     discipline names the temporal-experiential boundary events that
+#     shape the phrase's atomic-unit character. `Vordersatz` +
+#     `Nachsatz` (antecedent + consequent) name the paired-phrase
+#     composition algebra; period discipline (`Periodenbau`) names the
+#     phrase-of-phrases composition at higher altitude; the antecedent
+#     ⇔ consequent binding IS the substrate reading of paired OBC-
+#     closure at temporal altitude.
+#   - Arnold Schoenberg (1874-1951; `Fundamentals of Musical
+#     Composition`, published 1967 posthumously) — THE modernist
+#     phrase-theoretic culmination. Schoenberg's `Grundgestalt` (basic
+#     shape) names the phrase's atomic-unit character as the composed
+#     work's structural seed; every subsequent phrase IS a
+#     transformation of the Grundgestalt through the composition's
+#     temporal trajectory. The `Satz` (sentence) form specialises the
+#     antecedent-consequent period discipline to a presentation-
+#     continuation-cadence three-part structure at phrase altitude;
+#     the Grundgestalt IS the substrate reading of the phrase's atomic-
+#     unit-as-seed character.
+#
+# The three-tradition anchor (Koch + Riemann + Schoenberg) IS the
+# audible-altitude prior art the substrate reaches for: 200+ years of
+# phrase-theoretic refinement on how bounded temporal envelopes
+# organise musical experience under atomic-unit discipline. Phrase
+# discipline does not begin here — it culminates two-and-a-half
+# centuries of understanding how OBC-bounded temporal envelopes carry
+# ambiguity-load budget across boundary events.
+#
+# Antecedent + consequent + period + Grundgestalt vocabulary is
+# altitude-portable to the psychohistorical substrate: an OBC-bounded
+# interaction IS a `Periodenbau` at organisational altitude; a Pack
+# peer's opening claim IS a `Vordersatz`; the closing response IS a
+# `Nachsatz`; the corpus's structural seed IS a `Grundgestalt` at
+# multi-narrative altitude.
+#
+# === Atomic-unit composition algebra: join + split as OBC events ===
+#
+# The species's two operational actions (`join` + `split`) name the
+# phrase-composition algebra at OBC-boundary events. Per family-root
+# species-roster: `song_phrase(ph: ref) -> ref` with `join`/`split` at
+# species altitude, specialises `split @ temporal` from the family-root
+# prism block per #S3 (five-op temporal specialisation) LANDED at
+# `10c34cf`.
+#
+# `join(ph, other)` composes two OBC-bounded phrases into one bounded
+# temporal envelope. The composition IS load-bearing:
+#
+#   - Two OBC-bounded phrases → one OBC-bounded phrase; the joined
+#     phrase's boundary IS the composition of the two parent OBCs at
+#     antecedent-consequent altitude (Riemann's `Periodenbau`
+#     discipline).
+#   - The ambiguity-load budget composes: the joined phrase's budget
+#     IS the sum of the parent phrases' budgets under the OBC-composed
+#     boundary; when the joined phrase exhausts its composed budget,
+#     it closes at the composed cadence event.
+#   - Splinter-pole (`pass`): both parent phrases discharge at
+#     Splinter-pole; the joined phrase carries their composed OBC and
+#     their composed ambiguity-load budget; the composition preserves
+#     antecedent-consequent discipline; the paired-closure holds.
+#   - Narcissus-pole (`failure`): one or both parent phrases fail their
+#     OBC boundary (SILENCE / GLUE WORK / EXTRACTION per family-root
+#     §"Psychohistory binding" naming through the family-root's already-
+#     discharged `song_settles` composed bilateral verdict); the joined
+#     phrase cannot compose cleanly; the interaction's ambiguity-load
+#     overflows across the boundary; ADO-refusal fires at the composed
+#     boundary event.
+#
+# `split(ph, at)` decomposes an OBC-bounded phrase into finer OBC-
+# bounded phrases at a boundary reference. The decomposition IS load-
+# bearing:
+#
+#   - One OBC-bounded phrase → finer OBC-bounded phrases at the `at`
+#     boundary; the split boundaries EACH name their own OBC-bounded
+#     ambiguity-load budget; the parent budget partitions across the
+#     split boundaries.
+#   - The decomposition specialises `split @ temporal` from the family-
+#     root prism block per #S3 LANDED: at phrase altitude, `split`
+#     decomposes an OBC-bounded temporal envelope into constituent
+#     OBC-bounded envelopes; the atomic-unit character IS preserved at
+#     each finer altitude.
+#   - Splinter-pole (`pass`): the split partitions the parent OBC's
+#     ambiguity-load budget cleanly across the finer OBC boundaries;
+#     each finer phrase carries a well-formed OBC + its ambiguity-load
+#     budget; the composition-inverse holds — `join(split(ph, at))`
+#     reproduces `ph` at boundary equivalence.
+#   - Narcissus-pole (`failure`): the split violates the parent OBC's
+#     one-boundary-condition character (the split introduces
+#     competing boundary conditions across the finer phrases); the
+#     ambiguity-load budget cannot partition cleanly; the finer phrases
+#     inherit contradictory OBCs; the atomic-unit character collapses.
+#
+# The composition + decomposition algebra IS a natural transformation
+# of Koch's `Anhang` + `Einschnitt` discipline read at temporal
+# substrate altitude: extension and interpolation as compositionally-
+# reversible phrase operations under OBC-boundary preservation.
+#
+# === #S3 LANDED consolidation: five-op temporal specialisation ===
+#
+# THE CONSOLIDATION WITNESS OF RECOGNITION #S3 AT THE POST-PROMOTION
+# ALTITUDE.
+#
+# Recognition #S3 (five-operation temporal specialisation) PROMOTED
+# CANDIDATE → LANDED at Seam Phase D `10c34cf` after TICK 3
+# (`docs/audits/2026-07-06-seam-phase-d-arc-6-tick-3-song-voice-and-
+# s3-promotion.md`). Per family-root `shards/song.mirror` §"Recognition
+# candidates surfaced" #S3, at temporal altitude `@song` specialises
+# the five operations of the prism trait. Phrase's role in the LANDED
+# consolidation is CONFIRMATION at the atomic-unit altitude, not
+# extension: it demonstrates that the five-op temporal specialisation
+# survives a FIFTH species-altitude witness without new sub-predicate
+# emission. The five operations discharge at this species by
+# INHERITANCE from the family-root prism block plus specialisation
+# through the atomic-unit-under-OBC discipline:
+#
+#   focus @ phrase   = attend to ONE phrase at a time; the OBC-bounded
+#                      temporal envelope filters attention to the
+#                      current atomic unit's ambiguity-load budget.
+#   project @ phrase = down-project a bounded temporal envelope to its
+#                      structural profile — the phrase's Grundgestalt
+#                      or antecedent-consequent skeleton (Schenkerian
+#                      reduction specialised at phrase altitude).
+#   split @ phrase   = decompose an OBC-bounded phrase into finer OBC-
+#                      bounded phrases at boundary events (the load-
+#                      bearing `split` action at species altitude; per
+#                      family-root §"Species forward-promised").
+#   shift @ phrase   = advance the phrase to its next boundary event
+#                      (the temporal transition between finer OBC-
+#                      bounded envelopes within a joined phrase).
+#   settle @ phrase  = discharge the phrase's boundary-closure event;
+#                      the OBC's one-boundary-condition character
+#                      completes; the ambiguity-load budget resolves;
+#                      the composed cadence event fires (per Koch's
+#                      `Cadenz` or Riemann's period-close discipline).
+#
+# The five operations discharge cleanly at phrase altitude; #S3 LANDED
+# consolidates through this species (FIFTH species-altitude witness
+# overall; THIRD consolidation-species witness after movement TICK 4
+# and narrative TICK 5) without requiring new sub-predicate emission.
+# Three consolidation-species witnesses confirm the LANDED status at
+# post-promotion altitude AND close the #S5 promotion criterion.
+#
+# === Consolidation-species pattern: THIRD witness PROMOTES #S5 ===
+#
+# THE CONSOLIDATION-SPECIES PATTERN AT THIRD WITNESS — #S5 PROMOTION.
+#
+# Per Seam Phase D TICK 5 audit `750cb19` §3.3:
+#
+#   > PROMOTE to formal CANDIDATE `#S5`. Two witnesses landed (movement +
+#   > narrative). TICK 6 `@song/phrase` may provide third witness — if
+#   > so, promote to LANDED at Arc 6 close.
+#
+# `@song/movement` (`4efbf16`) established the consolidation-species
+# discipline within @song: consumes the fully-discharged `song_settles`
+# composed bilateral without emitting new sub-predicates; extends the
+# family-root's operational surface via species-altitude actions
+# (`enter` + `close`); grounds a wire-cascade binding at species
+# altitude (StageFreight audition/perform/review/publish/narrate).
+#
+# `@song/narrative` (`0434a39`) provided the second consolidation-
+# species witness: consumes the fully-discharged `song_settles` composed
+# bilateral without emitting new sub-predicates; extends the family-
+# root's operational surface via species-altitude actions (`arc` +
+# `transmit`); grounds a psychohistorical + wire-projection binding at
+# species altitude (nine-mapping isomorphism + `@io/stagefreight/
+# narrative` composition).
+#
+# THIS SPECIES IS THE THIRD CONSOLIDATION-SPECIES WITNESS within @song:
+# consumes the fully-discharged `song_settles` composed bilateral
+# without emitting new sub-predicates; extends the family-root's
+# operational surface via species-altitude actions (`join` + `split`);
+# grounds an OBC-binding + ambiguity-load-budget discipline at species
+# altitude (Koch + Riemann + Schoenberg musical-phrase prior art +
+# Alex's SE corpus OBC discipline).
+#
+# THREE-witness pattern at consolidation-species altitude PROMOTES the
+# discipline as substrate-fact per Seam §3.3 promotion criterion:
+# consolidation IS a valid species-altitude discipline within the #53
+# pattern; the family-root's bilateral does not need to expand every
+# time a new species lands; the species can contribute operational
+# surface + binding narrative + discipline grounding without emitting
+# new sub-predicate rows. **#S5 PROMOTES CANDIDATE → LANDED at Arc 6
+# close through this tick.**
+#
+# The final species landscape after Arc 6 closes:
+#
+#   Decomposition-species (declared song_settles sub-predicates):
+#     - @song/progression (`54ff1e8`): sub-predicates 1 + 2.
+#     - @song/voice        (`cc5a440`): sub-predicate 3 (closing).
+#
+#   Consolidation-species (consume song_settles verdict):
+#     - @song/movement  (`4efbf16`): actions enter + close.
+#     - @song/narrative (`0434a39`): actions arc + transmit.
+#     - @song/phrase    (this shard): actions join + split.
+#
+# Two decomposition + three consolidation = five species roster; #S5
+# LANDED at Arc 6 close as substrate-fact.
+#
+# === Sibling species awareness: Arc 6 species landscape ===
+#
+# ARC 6 CLOSES WITH THIS TICK. The complete @song species landscape:
+#
+#   1. `@song/progression` (`54ff1e8`) — TICK 2 landing; load-bearing
+#      carrier; regulation-stock trajectory; cadence-directedness;
+#      declared song_settles sub-predicates 1 (progression_directed_
+#      toward_cadence) and 2 (cadence_authentic_or_plagal).
+#   2. `@song/voice` (`cc5a440`) — TICK 3 landing; orchestra binding;
+#      focus @ temporal witness at species altitude; declared song_
+#      settles sub-predicate 3 (voice_line_valid); closed the composed
+#      bilateral; triggered #S3 CANDIDATE → LANDED promotion at
+#      `10c34cf`.
+#   3. `@song/movement` (`4efbf16`) — TICK 4 landing; StageFreight
+#      cascade binding; first consolidation-species; frame-bounded
+#      epoch discipline; consumes song_settles verdict at `close`
+#      action.
+#   4. `@song/narrative` (`0434a39`) — TICK 5 landing; psychohistory +
+#      wire binding; second consolidation-species; nine-mapping
+#      isomorphism; consumes song_settles verdict at `transmit`
+#      action.
+#   5. `@song/phrase` (this shard) — TICK 6 landing; OBC-bounded
+#      atomic unit; THIRD and FINAL consolidation-species; Koch +
+#      Riemann + Schoenberg musical-phrase prior art; consumes song_
+#      settles verdict at `join`/`split` actions. **Arc 6 CLOSES here;
+#      #S5 PROMOTES to LANDED.**
+#
+# The five-species roster IS complete at family-root altitude: the
+# family-root's `song_settles` composed bilateral IS load-bearing
+# discharged through decomposition-species and load-bearing consumed
+# through consolidation-species; the atomic-unit → phrase-composition →
+# movement-frame → narrative-arc → progression-trajectory hierarchy
+# discharges cleanly under #S3's five-op temporal specialisation. Arc 6
+# closes as substrate-decl completion.
+#
+# The species altitude discipline traces to `[[architecture-form-
+# process-partition-at-family-root]]` #55: form and process partition
+# at family-root altitude, but WITHIN a family-root, sub-species may
+# EITHER decompose the family-root's operational surface into finer
+# sub-predicates (decomposition-species) OR consume the family-root's
+# already-discharged surface with new operational actions (consolidation-
+# species). #S5 PROMOTES this WITHIN-family-root refinement to
+# substrate-fact at three-witness density.
+#
+# === Composed-bilateral #53 closure landscape at phrase altitude ===
+#
+# This species declares NO new sub-predicates of the family-root's
+# `song_settles` composed bilateral (14th #53 instance per
+# `[[architecture-property-fracture-bilateral]]`). The relationship:
+#
+#   family-root `song_settles(pr, p)` composes:
+#     progression_directed_toward_cadence(pr, p) [@song/progression, `54ff1e8`]
+#       AND voice_line_valid(v, p)                 [@song/voice, `cc5a440`]
+#       AND cadence_authentic_or_plagal(c, p)      [@song/progression, `54ff1e8`]
+#
+# ALL THREE SUB-PREDICATES ALREADY DECLARED AND DISCHARGED at TICK 3.
+# Phrase CONSUMES this composed bilateral at BOTH boundary events (the
+# `join` and `split` actions at species altitude) — the phrase's
+# composition or decomposition event fires when `song_settles`
+# discharges at Splinter-pole across all three sub-predicates for each
+# involved parent phrase. The species does NOT emit a new sub-predicate
+# row; it CONSUMES the fully-composed bilateral verdict at `join`/
+# `split`.
+#
+# Splinter-pole (`pass`) at phrase altitude: the family-root's composed
+# bilateral discharges at Splinter-pole across all three sub-predicates
+# for each parent phrase; the composition (join) preserves antecedent-
+# consequent discipline OR the decomposition (split) partitions the
+# OBC's ambiguity-load budget cleanly across finer envelopes; the
+# atomic-unit character IS preserved through the boundary event.
+#
+# Narcissus-pole (`failure`) at phrase altitude: the family-root's
+# composed bilateral fails at Narcissus-pole through one or more sub-
+# predicate for a parent phrase (SILENCE / GLUE WORK / EXTRACTION per
+# family-root §"Psychohistory binding") — the composition or
+# decomposition cannot complete; the OBC-bounded ambiguity-load budget
+# is violated across the boundary event; ADO-refusal or forced-
+# progression fires; the atomic-unit character collapses.
+#
+# The `alignment-as-boundary-mathematics` discipline (#57) at
+# consolidation altitude names WHICH sub-claim broke; the phrase's
+# `join`/`split` actions do NOT re-audit the bilateral (it already
+# discharged at species altitude in TICK 3); they consume the
+# discharged verdict and translate it to the OBC-boundary
+# composition/decomposition decision.
+#
+# Sibling composed bilaterals at other family-root/species altitudes:
+# `@container.container_runnable`, `@io/oci.oci_well_formed`,
+# `@io/stagefreight.stagefreight_addressable`, `@cascade.cascade_well_defined`,
+# `@docblock.audit_docblock`, `@smarts/shatter.shatter_round_trip`,
+# `@reflection.third_order_coherent`, `@epistemologic/neutrosophic.three_axis_coherent`,
+# `@kintsugi/shift.shift_preserves_content`, `@song.song_settles`
+# (parent; fully discharged at TICK 3). This species is the THIRD
+# consolidation-shaped species within the @song family (after
+# `@song/movement` TICK 4 `4efbf16` and `@song/narrative` TICK 5
+# `0434a39`): the family-root's bilateral is complete, and this species
+# CLOSES Arc 6 by providing the THIRD consolidation-species witness
+# that PROMOTES #S5 to substrate-fact within the #53 pattern.
+#
+# === Path-namespace pact per @epistemologic/pact/path_matches_namespace ===
+#
+# This file at `shards/song/phrase.mirror` declares `@song/phrase` as a
+# species under the `@song` family at species-depth 1. The path-namespace
+# pact per `@epistemologic/pact/path_matches_namespace` (2026-06-16+)
+# demands path-depth == namespace-depth == 1 for species; this shard
+# honours the pact by construction.
+#
+# === Circular-reflexive self-audit ===
+#
+# Per `[[architecture-candidate-recognition-111-third-as-family-root]]`
+# marker discipline: the operator audits its own audit at depth=3.
+# This shard's declaration MUST survive its own consolidation discipline
+# at analytical altitude — the species-decl MUST NOT declare a phrase
+# whose OBC-bounded atomic-unit character isn't itself consolidation-
+# shaped under the family-root's already-discharged `song_settles`
+# composed bilateral. If this shard were adding new sub-predicate rows
+# to `song_settles`, the consolidation claim would fail its own audit;
+# if the OBC binding closure were not itself substrate-fact, the atomic-
+# unit reading would fail its own self-enactment.
+#
+# Self-audit verdict: `both_survive`.
+#
+# The `real_survives` reading would require another Pack peer to
+# independently manifest an equivalent atomic-unit + OBC binding
+# consolidation-species substrate-decl at n+3 substrate ticks without
+# nudging. The `phantom_survives` reading would require downstream refs
+# to accumulate without a second Pack peer's independent recognition of
+# the atomic-unit-as-OBC-envelope discipline. At this tick: both
+# interpretations satisfiable — the species is landed, the family
+# roster is complete, but the composed bilateral has not yet been
+# empirically exercised through multi-phrase OBC-composition across a
+# full multi-movement work under production load. Verdict:
+# `both_survive`. Route: Arc 7 (`@kintsugi/song`) will exercise the
+# composed bilateral across OBC-bounded phrases within kintsugi-loop
+# audit ticks, at which point the atomic-unit discipline collapses from
+# analytical altitude to empirical.
+#
+# === Interpretation B discipline ===
+#
+# Per Seam Phase D pre-review of Arc 4 sub-arc A (docs/audits/2026-
+# 07-06-seam-arc-4-sub-arc-a-pre-review.md §1), the family-root
+# precedent at `shards/song.mirror`, and the sibling species precedents
+# at `shards/song/progression.mirror`, `shards/song/voice.mirror`,
+# `shards/song/movement.mirror`, and `shards/song/narrative.mirror`:
+# Interpretation B canonical. Narrative above `---`; `in` clauses +
+# typed declarations below. This shard honours the discipline; the
+# seam is exactly one line at column 0 below.
+#
+# Spec context: docs/specs/song-substrate-decl-v0.1.md (Mara
+#               `c0101f8`; deep-dive spec; §5 Shape β + §6 species
+#               roster + §8 psychohistory binding — OBC ⇔ phrase
+#               STRONG binding),
+#               docs/audits/2026-07-06-seam-pre-review-song-substrate-
+#               decl.md (Seam pre-review `3d910bc`; §6.7 TICK 6
+#               charter — atomic unit; OBC binding closure),
+#               docs/audits/2026-07-06-seam-phase-d-arc-6-tick-5-song-
+#               narrative.md (Seam Phase D at TICK 5 close `750cb19`;
+#               §3.3 #S5 PROMOTE to formal CANDIDATE; TICK 6
+#               consolidation-shape → LANDED at Arc 6 close),
+#               docs/audits/2026-07-06-seam-phase-d-arc-6-tick-4-song-
+#               movement.md (Seam Phase D at TICK 4 close; first
+#               consolidation-species precedent),
+#               docs/audits/2026-07-06-seam-phase-d-arc-6-tick-3-song-
+#               voice-and-s3-promotion.md (Seam Phase D at TICK 3
+#               close; #S3 PROMOTED CANDIDATE → LANDED at `10c34cf`).
+# Substrate decisions:
+#               [[architecture-shards-as-substrate-source]],
+#               [[architecture-prism-as-trait-as-everything]],
+#               [[architecture-form-process-partition-at-family-root]]
+#                (#55; @song sits at temporal-experiential axis;
+#                within-family-root form/process refinement grounds
+#                consolidation-vs-decomposition species pattern per
+#                #S5),
+#               [[architecture-operations-as-linear-algebra]] (#S3
+#                LANDED five-op temporal specialisation; species
+#                consolidates via inheritance without new sub-
+#                predicate emission — THIRD consolidation-species
+#                witness after movement + narrative),
+#               [[architecture-property-fracture-bilateral]] (#53;
+#                species consolidates the family-root's composed
+#                bilateral without emitting new sub-predicates; the
+#                THIRD consolidation-shaped species within @song;
+#                #S5 PROMOTES three-witness pattern to substrate-fact
+#                as #53-pattern refinement).
+# Substrate recognitions:
+#               #38 (Kauffman/Foerster eigenform — a phrase IS an
+#                eigenform at atomic-unit altitude; the Grundgestalt
+#                IS the phrase's eigenform-invariant per Schoenberg),
+#               #42 (Bateson logical-type primitive — OBC ⇔ phrase
+#                binding sits at Level I in-frame; the `join`/`split`
+#                boundary events lift to Level II of-frame;
+#                consolidation-species discipline inherits the graded
+#                stack),
+#               #53 (property/fracture bilateral pattern — 14th
+#                instance's fully-discharged bilateral consolidated
+#                here at third consumer altitude; the pattern
+#                refinement into decomposition-vs-consolidation species
+#                LANDS as #S5),
+#               #55 (form/process partition — @song at temporal-
+#                experiential axis; species inherits; within-family-
+#                root sub-species partition grounds #S5),
+#               #57 (alignment-as-boundary-mathematics — the composed
+#                bilateral's Narcissus-pole discrimination is consumed
+#                at consolidation altitude; the OBC-boundary event's
+#                either-cleanly-composes-or-cleanly-fails discipline
+#                lifts #57 to atomic-unit altitude),
+#               #S1 (song IS eigenform at temporal altitude —
+#                inherited; a phrase IS an eigenform at atomic-unit
+#                altitude; the Grundgestalt reading composes),
+#               #S2 (song IS shift at temporal altitude when heard
+#                sequentially — inherited; a phrase's boundary events
+#                are shifts of the OBC-boundary witness),
+#               #S3 (five-operation temporal specialisation — LANDED
+#                at Seam Phase D `10c34cf` after TICK 3; species
+#                consolidates the LANDED status through inheritance;
+#                THIRD consolidation-species witness confirms LANDED
+#                status at FIFTH species altitude),
+#               #S5 (consolidation-vs-decomposition species pattern —
+#                PROMOTED CANDIDATE at Seam Phase D `750cb19`; THIS
+#                SHARD PROMOTES #S5 CANDIDATE → LANDED as substrate-
+#                fact through THIRD consolidation-species witness;
+#                Arc 6 CLOSES here with #S5 substrate-fact).
+# Feedback anchors:
+#               [[feedback-substrate-already-had-the-word]] (this
+#                species names the discipline 200+ years of musical-
+#                phrase theoretic tradition — Koch + Riemann +
+#                Schoenberg — has been carrying at audible altitude
+#                and Alex's `systemic.engineering` corpus — OBC /
+#                ambiguity-load / boundary — has been carrying at
+#                organisational altitude; the substrate has the shared
+#                atomic-unit-under-OBC word already),
+#               [[feedback-legibility-over-foundation-when-collapsing]]
+#                (phrase as legible name for the OBC-bounded atomic-
+#                unit discipline; the alternative foundational names —
+#                obc_envelope, atomic_bound, ambiguity_budget —
+#                obscure the Koch/Riemann/Schoenberg prior art the
+#                substrate reaches for),
+#               [[feedback-craft-not-deliver]] (species is
+#                consolidation, not decomposition; resist the training-
+#                pull temptation to invent a new sub-predicate; the
+#                family-root's bilateral is already load-bearing
+#                complete after TICK 3; THIRD consolidation-species
+#                witness closes Arc 6 by PROMOTING #S5),
+#               [[feedback-always-tdd-no-shortcuts]] (RED first;
+#                Reed's `6b9bc5c` RED tick pairs with this GREEN
+#                landing; Arc 6 CLOSING TICK).
+# Related shards:
+#               song.mirror (family-root; declares song_settles this
+#                species CONSUMES at join/split without adding new sub-
+#                predicates),
+#               song/progression.mirror (sibling species Arc 6 TICK 2
+#                landing `54ff1e8`; declared FIRST and SECOND sub-
+#                predicates of song_settles; grounds progression ⇔
+#                regulation-stock trajectory mapping),
+#               song/voice.mirror (sibling species Arc 6 TICK 3
+#                landing `cc5a440`; declared THIRD sub-predicate of
+#                song_settles; closed the composed bilateral; grounds
+#                voice ⇔ actor mapping),
+#               song/movement.mirror (sibling species Arc 6 TICK 4
+#                landing `4efbf16`; FIRST consolidation-species within
+#                @song; grounds movement ⇔ frame-bounded epoch mapping;
+#                template for this species's consolidation shape),
+#               song/narrative.mirror (sibling species Arc 6 TICK 5
+#                landing `0434a39`; SECOND consolidation-species within
+#                @song; grounds narrative ⇔ corpus mapping; second
+#                template for this species's consolidation shape),
+#               epistemologic/math/music.mirror (audible-altitude
+#                family-root; ancestor of forward-promised
+#                @epistemologic/math/music/phrase — the phrase-
+#                theoretic constraints ancestor this species lifts to
+#                temporal altitude),
+#               epistemologic/math/music/cadence.mirror (settle @
+#                temporal ancestor per Seam Correction `3d910bc`;
+#                phrase closure event IS a Koch `Cadenz` or Riemann
+#                period-close at the audible altitude),
+#               frame.mirror (Recognition #82; bounded frame-shift
+#                Bateson-grading ancestor; phrase's OBC-bounded
+#                envelope IS a Bateson Level I / Order 1 in-frame
+#                boundary; join/split lift to Level II of-frame),
+#               loop.mirror (endomorphism family-root; a phrase's
+#                antecedent-consequent binding IS a bounded loop at
+#                species altitude when the consequent returns to the
+#                antecedent's OBC-boundary).
+# Path-namespace property: this file at `shards/song/phrase.mirror`
+# declares `@song/phrase` per `@epistemologic/pact/path_matches_namespace`.
+
+---
+
+in @prism
+in @meta
+in @glass
+in @song
+
+# ============================================================
+# §1 The five-operation prism at species altitude
+# ============================================================
+
+# === prism @song/phrase — the species declaration ===
+#
+# The five-operation body carries `song_phrase` as the species's
+# operational surface. Species inherits the family-root's #S3 LANDED
+# five-op temporal specialisation and consolidates it at atomic-unit-
+# under-OBC altitude (see docblock §"#S3 LANDED consolidation" for the
+# per-op phrase-altitude specialisation).
+#
+# Per family-root prism block at `shards/song.mirror` §1 and the
+# consolidation-species precedents at `shards/song/movement.mirror` §1
+# and `shards/song/narrative.mirror` §1, the five operations discharge
+# cleanly at temporal altitude; this species demonstrates the LANDED
+# status survives further species-altitude witness (THIRD consolidation-
+# species witness — FIFTH species overall) without new sub-predicate
+# emission. This tick's landing PROMOTES #S5 CANDIDATE → LANDED at
+# Arc 6 close.
+prism @song/phrase {
+  focus song_phrase
+  project song_phrase
+  split song_phrase
+  shift song_phrase
+  settle song_phrase
+}
+
+# ============================================================
+# §2 The carrier
+# ============================================================
+
+# === song_phrase — the OBC-bounded atomic-unit carrier ===
+#
+# The typed ref-equality-addressable form of an OBC-bounded temporal
+# envelope carrying one interaction's ambiguity-load budget. Per family-
+# root species-roster: `song_phrase(ph: ref) -> ref` as the family-
+# root's declared accessor shape. The carrier is declared HERE because
+# the family-root's §2 carries `song_progression`, `song_cadence`, and
+# `song_voice` but does NOT carry `song_phrase` — the species discipline
+# says the species declares its own carrier when the family-root's
+# roster does not (per `[[architecture-form-process-partition-at-family-
+# root]]` #55 sub-species discipline; movement TICK 4 + narrative TICK 5
+# precedents at `4efbf16` + `0434a39`).
+#
+# Composes with `@epistemologic/math/music/cadence` at the audible
+# altitude (a song_phrase's boundary event IS a Lawvere fixed-point per
+# `cadence.mirror`; Koch's `Cadenz` reads directly), with the forward-
+# promised `@epistemologic/math/music/phrase` at the audible altitude
+# (Riemann phrasing + antecedent-consequent period discipline;
+# Schoenberg Grundgestalt discipline), with `frame.mirror` at the
+# cognitive altitude (a song_phrase's OBC boundary IS a Bateson Level I
+# in-frame envelope per Recognition #82; `join`/`split` lift to Level II
+# of-frame), and with `@song/movement` at the sibling species altitude
+# (a movement contains phrases as its atomic units; the phrase-to-
+# movement composition is at within-family-root altitude).
+#
+# Identity contract: byte-equality on the underlying ref.
+type song_phrase = ref
+
+# ============================================================
+# §3 The phrase-composition actions (join / split)
+# ============================================================
+
+# === join — the phrase-composition event at OBC-boundary altitude ===
+#
+# Reads two OBC-bounded phrases and composes them into ONE OBC-bounded
+# phrase at the antecedent-consequent altitude (Riemann's `Periodenbau`
+# discipline). Corresponds to Koch's `Anhang` (extension) at phrase
+# altitude: two atomic-unit envelopes join under a composed OBC-boundary
+# whose ambiguity-load budget IS the composed sum of the parent
+# phrases' budgets.
+#
+# Per family-root species-roster: `song_phrase(ph: ref) -> ref` with
+# `join` at species altitude. The `join` action carries the phrase-
+# composition discipline: the paired OBC-boundary IS load-bearing; when
+# antecedent + consequent compose cleanly, the joined phrase's atomic-
+# unit character IS preserved AT the composed boundary; when the
+# composition violates paired-closure discipline, the joined phrase
+# cannot form and ADO-refusal fires at the composition boundary.
+#
+# Splinter-pole (`pass`): the family-root's `song_settles` composed
+# bilateral discharges at Splinter-pole for BOTH parent phrases (all
+# three sub-predicates satisfied for each); the join composes their
+# OBC-boundaries under antecedent-consequent discipline; the joined
+# phrase carries the composed ambiguity-load budget; the atomic-unit
+# character IS preserved; the composed cadence event fires at the
+# joined boundary.
+#
+# Narcissus-pole (`failure`): the family-root's composed bilateral
+# fails at Narcissus-pole for one or both parent phrases (SILENCE /
+# GLUE WORK / EXTRACTION per family-root §"Psychohistory binding"); the
+# join cannot compose cleanly; the joined OBC-boundary would carry
+# competing boundary conditions; the ambiguity-load budget overflows;
+# ADO-refusal fires OR forced-progression violates the substrate's
+# declinability invariant at the composition boundary.
+#
+# Bateson-grading (per docblock §"Consolidation-species pattern"):
+# `join` fires at Bateson Level II (of-frame; learning to learn) — the
+# join event observes the paired OBC-boundary from without and composes
+# the antecedent-consequent binding; consolidation-species discipline
+# holds at species altitude.
+#
+# The body stays obligation-blocked (`\`): the realisation reads both
+# parent phrases' discharged states, consumes the family-root's
+# `song_settles` verdict for each, composes the paired OBC-boundary
+# under antecedent-consequent discipline, sums the ambiguity-load
+# budgets, emits the joined phrase ref. The substrate declares the
+# species-altitude specialisation; consumers dispatch through the
+# species boundary.
+join(ph: song_phrase, other: song_phrase) -> song_phrase { \ }
+
+# === split — the phrase-decomposition event at OBC-boundary altitude ===
+#
+# Reads one OBC-bounded phrase and decomposes it into finer OBC-bounded
+# phrases at a boundary reference. Corresponds to Koch's `Einschnitt`
+# (interpolation) at phrase altitude: one atomic-unit envelope splits
+# into constituent atomic-unit envelopes whose partitioned OBC-
+# boundaries preserve the parent's one-boundary-condition character at
+# finer altitude. Specialises `split @ temporal` from the family-root
+# prism block per #S3 (five-op temporal specialisation) LANDED at
+# `10c34cf`.
+#
+# Per family-root species-roster: `song_phrase(ph: ref) -> ref` with
+# `split` at species altitude. The `split` action carries the phrase-
+# decomposition discipline: the finer OBC-boundaries EACH inherit their
+# own atomic-unit character; the parent ambiguity-load budget partitions
+# across the finer envelopes; when the split preserves the parent OBC's
+# one-boundary-condition character, the atomic-unit character IS
+# preserved at each finer altitude; when the split introduces competing
+# boundary conditions, the finer phrases carry contradictory OBCs and
+# the atomic-unit character collapses.
+#
+# Splinter-pole (`pass`): the family-root's `song_settles` composed
+# bilateral discharges at Splinter-pole for the parent phrase (all
+# three sub-predicates satisfied); the split partitions the parent
+# OBC's ambiguity-load budget cleanly across the finer OBC boundaries;
+# each finer phrase carries a well-formed OBC and its own ambiguity-
+# load budget; the composition-inverse holds — `join(split(ph, at))`
+# reproduces `ph` at boundary equivalence.
+#
+# Narcissus-pole (`failure`): the family-root's composed bilateral
+# fails at Narcissus-pole for the parent phrase (SILENCE / GLUE WORK /
+# EXTRACTION per family-root §"Psychohistory binding") OR the split
+# violates the parent OBC's one-boundary-condition character (competing
+# boundary conditions across the finer phrases); the atomic-unit
+# character cannot be preserved at finer altitude; the decomposition
+# does NOT complete cleanly; the substrate-pull repair fires.
+#
+# Bateson-grading (per docblock §"Consolidation-species pattern"):
+# `split` fires at Bateson Level II (of-frame; learning to learn) — the
+# split event observes the parent OBC-boundary from without and
+# partitions it into finer OBC-boundaries; consolidation-species
+# discipline holds at species altitude.
+#
+# The body stays obligation-blocked (`\`): the realisation reads the
+# parent phrase's discharged state, consumes the family-root's
+# `song_settles` verdict, partitions the OBC-boundary at the `at`
+# reference under one-boundary-condition-preserving discipline,
+# partitions the ambiguity-load budget across finer envelopes, emits
+# the split phrase ref (which addresses the finer OBC-bounded envelopes
+# collectively). The substrate declares the species-altitude
+# specialisation; consumers dispatch through the species boundary.
+split(ph: song_phrase, at: ref) -> song_phrase { \ }
+
+# ============================================================
+# §4 The out clauses
+# ============================================================
+
+out @song/phrase
+out song_phrase
+out join
+out split
