@@ -143,7 +143,10 @@ fn t08_narrative_names_operational_pair() {
 fn t09_narrative_grounds_bateson_bind() {
     let content = read_docblock_incoherent_shard();
     assert!(
-        content.contains("[ω,ω]") || content.contains("Bateson") || content.contains("[omega") || content.contains("§3.2"),
+        content.contains("[ω,ω]")
+            || content.contains("Bateson")
+            || content.contains("[omega")
+            || content.contains("§3.2"),
         "T9: narrative must ground `[ω,ω]` Bateson-bind rigor per compiler-error-surface §3.2"
     );
 }

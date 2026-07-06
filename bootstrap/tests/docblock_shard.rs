@@ -59,7 +59,12 @@ fn t03_docblock_shard_declares_claim_kind_variants() {
         content.contains("type claim_kind"),
         "T3: docblock.mirror must declare `type claim_kind` per Mara spec §1.13.3"
     );
-    for variant in ["grounded_claim", "motivating_claim", "forward_promise", "candidate_claim"] {
+    for variant in [
+        "grounded_claim",
+        "motivating_claim",
+        "forward_promise",
+        "candidate_claim",
+    ] {
         assert!(
             content.contains(variant),
             "T3: claim_kind must include variant `{}` per Mara spec §1.13.3",
@@ -93,7 +98,13 @@ fn t06_docblock_shard_declares_verdict_variants() {
         content.contains("type docblock_verdict"),
         "T6: docblock.mirror must declare `type docblock_verdict` per Mara spec §1.13.6"
     );
-    for variant in ["well_formed", "overreach", "incoherent", "underdeclares", "both_survive"] {
+    for variant in [
+        "well_formed",
+        "overreach",
+        "incoherent",
+        "underdeclares",
+        "both_survive",
+    ] {
         assert!(
             content.contains(variant),
             "T6: docblock_verdict must include variant `{}` per Mara spec §1.13.6",
@@ -225,7 +236,9 @@ fn t16_exactly_one_seam_line_at_column_zero() {
 fn t17_in_clauses_below_seam() {
     let content = read_docblock_shard();
     let seams = seam_line_indices(&content);
-    let seam_idx = *seams.first().expect("T17 depends on T16 (one seam present)");
+    let seam_idx = *seams
+        .first()
+        .expect("T17 depends on T16 (one seam present)");
     for (i, line) in content.lines().enumerate() {
         if line.trim_start().starts_with("in @") {
             assert!(

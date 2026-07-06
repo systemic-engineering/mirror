@@ -139,7 +139,11 @@ fn t09_first_nonempty_line_is_narrative_docblock() {
         "T9: first non-empty line must be `#`-narrative per Interpretation B; got `{}`. Line-1 `---` is drift.",
         first
     );
-    assert_ne!(first.trim(), "---", "T9: line-1 `---` marker is Interpretation A drift");
+    assert_ne!(
+        first.trim(),
+        "---",
+        "T9: line-1 `---` marker is Interpretation A drift"
+    );
     assert!(
         !first.trim_start().starts_with("in "),
         "T9: `in @...` clauses live BELOW the seam per Interpretation B"
@@ -162,7 +166,9 @@ fn t10_exactly_one_seam_line_at_column_zero() {
 fn t11_in_clauses_below_seam() {
     let content = read_liquid_extraction_shard();
     let seams = seam_line_indices(&content);
-    let seam_idx = *seams.first().expect("T11 depends on T10 (one seam present)");
+    let seam_idx = *seams
+        .first()
+        .expect("T11 depends on T10 (one seam present)");
     for (i, line) in content.lines().enumerate() {
         if line.trim_start().starts_with("in @") {
             assert!(

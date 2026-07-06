@@ -89,14 +89,17 @@ fn seam_line_indices(content: &str) -> Vec<usize> {
 #[test]
 fn t05_first_nonempty_line_is_narrative_docblock() {
     let content = read_docblock_grounded_shard();
-    let first = first_nonempty_line(&content)
-        .expect("T5: must have at least one non-empty line");
+    let first = first_nonempty_line(&content).expect("T5: must have at least one non-empty line");
     assert!(
         first.trim_start().starts_with('#'),
         "T5: first non-empty line must be `#`-narrative per Interpretation B; got `{}`",
         first
     );
-    assert_ne!(first.trim(), "---", "T5: line-1 `---` is Interpretation A drift");
+    assert_ne!(
+        first.trim(),
+        "---",
+        "T5: line-1 `---` is Interpretation A drift"
+    );
     assert!(
         !first.trim_start().starts_with("in "),
         "T5: `in @...` clauses live BELOW the seam per Interpretation B"
