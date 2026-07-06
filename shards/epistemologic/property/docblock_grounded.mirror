@@ -1,0 +1,218 @@
+# @epistemologic/property/docblock_grounded — first of the trio of
+# #53 property/fracture bilateral instances at doc-claim altitude.
+# Sixth #53 family overall; landed per Seam Phase D ratification
+# chain (`820a451` TICK 1 `shards/docblock.mirror` family-root RATIFY,
+# `3283de4` TICK 2 `shards/epistemologic/liquid_extraction.mirror`
+# sibling family-root RATIFY). Interpretation B canonical: narrative
+# ABOVE `---`; `in` clauses + typed declarations BELOW, per Seam
+# pre-review `docs/audits/2026-07-06-seam-arc-4-sub-arc-a-pre-review.md`
+# §1.
+#
+# This shard is the DECLARATIVE HALF of the docblock grounding audit.
+# The OPERATIONAL HALF lands at TICK 4 as
+# `@kintsugi/fracture/docblock_ungrounded` per Mara spec
+# `docs/specs/doc-code-seam-shards.md` §4 (routes via
+# `@kintsugi/surface`'s `ashby_mismatch` class per compiler-error-
+# surface §3.1). Bilateral discipline per recognition #53: the
+# property side names WHAT grounds a docblock; the fracture side
+# names WHAT TO DO when a docblock is ungrounded. The two land
+# together in a paired atomic bundle at doc-claim altitude.
+#
+# === Sixth #53 family; first-of-trio at doc-claim altitude ===
+#
+# Recognition #53 (`[[architecture-property-fracture-bilateral]]`)
+# names a substrate pattern: declarative property at
+# `@epistemologic/property/<predicate>` + operational fracture body at
+# `@kintsugi/fracture/<predicate>`, bridged by the kintsugi loop.
+# Five prior instances landed:
+#
+# 1. `@kintsugi/fracture/keyword` (2026-06-10 `d908798`) — first.
+# 2. `@mirror/fracture/predicate` (task #272 forward-promised) — second.
+# 3. `dark_count_monotone` (2026-06-19 `499ffd9`) — third.
+# 4. `cold_compile_within_tolerance` (2026-06-19) — fourth.
+# 5. `@kintsugi/surface` + `ashby_variety_match` (2026-07-03 `e910dd6`)
+#    — fifth.
+#
+# THIS SHARD is the sixth family's FIRST-OF-TRIO. The three properties
+# in the trio (per Mara spec §3/§5/§7) are:
+#
+# - `docblock_grounded` — THIS SHARD. Every extractable claim in
+#   a docblock is either a motivating claim, a forward-promise, or
+#   has a citation whose ancestor exists on main with cited-content
+#   matching the claim text.
+# - `docblock_coherent` (TICK 5) — no two extracted predicates
+#   contradict; no extracted predicate contradicts a below-seam
+#   declaration.
+# - `docblock_no_extraction_pattern` (TICK 7) — no unmarked
+#   superlatives; hedged claims marked defer; citations content
+#   match; claim size matches landing size.
+#
+# The trio decomposes docblock well-audited-ness into three
+# independently-checkable predicates; each has a bilateral fracture
+# body that routes ungrounded/incoherent/extractive docblocks
+# through `@kintsugi/surface`. This shard is INDEPENDENT of the
+# other two (only imports `@epistemologic/liquid_extraction` for
+# `extractor_input`/`predicate_shape`, does not depend on
+# coherence or extraction-pattern checks).
+#
+# === Predicate substance per Mara spec §3 ===
+#
+# The docblock-grounded predicate answers: is every claim this
+# docblock makes either a motivating claim, a forward-promise, or
+# grounded in an existing substrate ancestor whose content matches
+# the claim text? In substrate narrative:
+#
+#   docblock_grounded(d) ⇔
+#     ∀ claim ∈ extract_claims(d):
+#       claim.kind ∈ {motivating_claim, forward_promise} ∨
+#       (claim.citation ≠ empty_ref ∧
+#        ancestor_exists_on_main(claim.citation) ∧
+#        cited_content_matches_claim(claim.citation, claim.text))
+#
+# Three sub-obligations per claim:
+#
+# - `extract_claims(d)` is @docblock's routing action (declared at
+#   TICK 1's `shards/docblock.mirror`) that walks the docblock's
+#   `#`-narrative and lifts each substantive assertion to a
+#   `doc_claim` with `kind`, `citation`, and `text` fields per
+#   the @docblock carrier surface.
+#
+# - Kind-check exemption: `motivating_claim` and `forward_promise`
+#   are the two kinds the substrate honors as ungrounded-by-design.
+#   Motivating claims name the "why" (no citation obligation).
+#   Forward-promises name commitments the substrate will honor at
+#   named future ticks (obligation deferred, not waived). Both
+#   route past the citation check.
+#
+# - Citation-check body: for `grounded_claim` and `candidate_claim`
+#   kinds, the citation must be non-empty (`empty_ref` is the
+#   substrate's null-citation carrier), the citation must resolve
+#   to an ancestor on main (not a dangling reference; not a branch-
+#   local commit), and the cited content must match the claim text
+#   (content-addressed check per the substrate's OID discipline —
+#   the citation IS the ancestor's OID; the match verifies the
+#   ancestor's content bytes ground the claim's assertion).
+#
+# The extractor body (`extract_predicate` in
+# `@epistemologic/liquid_extraction`) is forward-promised per TICK
+# 2's landing per `[[feedback-craft-not-deliver]]`; until it lands,
+# `docblock_grounded`'s body discharges at splinter(ast) altitude
+# with the extractor's output shape. `ancestor_exists_on_main` and
+# `cited_content_matches_claim` are sibling predicates the property
+# body composes against; they compose from the substrate's landed
+# content-addressing discipline (OID resolution + byte-match).
+#
+# === Sibling coupling to @docblock + @epistemologic/liquid_extraction ===
+#
+# This shard's `in @docblock` grounds the sibling-coupling to TICK
+# 1's family-root: the `doc_claim` carrier lifted through the
+# property predicate here is exactly @docblock's `doc_claim`. The
+# `in @epistemologic/liquid_extraction` grounds the sibling-coupling
+# to TICK 2's family-root: the extractor's output shape
+# (`predicate_shape` splinter(ast) fragment) is the surface this
+# property's body discharges over. Both sibling family-roots are
+# COUPLED via this shard: the property answers a question the
+# substrate can only ask at the intersection of the doc-claim
+# carrier and the liquid-extraction surface.
+#
+# === Path-namespace property ===
+#
+# This file at
+# `shards/epistemologic/property/docblock_grounded.mirror` declares
+# `@epistemologic/property/docblock_grounded` at species-depth 2
+# under @epistemologic per `@epistemologic/pact/path_matches_namespace`.
+# The depth mirrors the four landed siblings at
+# `@epistemologic/property/{cold_compile_within_tolerance,
+# dark_count_monotone, restart_intensity_well_formed}`: this
+# shard sits in the same species column and is subject to the
+# same path-namespace pact.
+#
+# === Circular-reflexive self-audit ===
+#
+# Per Mara's projection-surface spec `63bdecc` §6 the operator
+# must audit its own audit at depth=3. This shard's own docblock
+# is subject to `docblock_grounded(this_docblock)` at logical
+# altitude. Substrate-honest verdict at THIS shard's state:
+#
+# The narrative above makes seven citations — five to prior #53
+# instance commits (`d908798`, `499ffd9`, `e910dd6`, `499ffd9`,
+# task #272 forward-promise), two to Seam ratification commits
+# (`820a451`, `3283de4`), and multiple to substrate documents
+# (Mara spec §3, projection-surface §6, doc-code-seam pre-review
+# §1). Of those:
+#
+# - Ratification commits `820a451`, `3283de4` — `grounded_claim`
+#   kind, citation is the OID, ancestor exists on main by the
+#   Seam ratification chain preceding this landing.
+# - #53 instance commits `d908798`, `499ffd9`, `e910dd6` —
+#   `grounded_claim` kind, citations are OIDs landed on main
+#   prior to this shard's tick.
+# - Task #272 — `forward_promise` kind (exempt from citation
+#   check per the substrate's forward-promise honor).
+# - Mara spec §3, projection-surface §6, doc-code-seam pre-review
+#   — `grounded_claim` kind, citations are substrate document
+#   paths whose ancestor commits exist on main.
+# - The predicate substance framing itself — `motivating_claim`
+#   kind (naming the "why" of the trio; no citation obligation).
+# - TICK 4 forward-promise (`@kintsugi/fracture/docblock_ungrounded`)
+#   — `forward_promise` kind (exempt).
+# - The circular-reflexive verdict claim in this section is a
+#   `candidate_claim` — the shard's own docblock cannot decide
+#   its own grounding at analytical altitude; promotion to
+#   `grounded_claim` awaits the extractor body + the sibling
+#   fracture body + independent second-witness audit.
+#
+# Verdict: `both_survive` — the shard's docblock passes real
+# survival (analytical citations resolve; forward-promises are
+# honored) but phantom survival is also non-empty (the extractor
+# body has not landed; `cited_content_matches_claim` cannot
+# concretely check byte-match yet; the substrate can only decide
+# this at the sub-Turing altitude when the extractor discharges).
+# Promotion to `real_survives` awaits: extractor body (TICK 2
+# forward-promise) + fracture body (TICK 4) + Seam second-witness
+# audit at analytical altitude on the extracted predicate. Per
+# Mara spec §Cross-cutting: this is the honest verdict at THIS
+# shard's state.
+
+---
+
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/property
+in @epistemologic/liquid_extraction
+in @docblock
+
+prism @epistemologic/property/docblock_grounded {
+  focus docblock_grounded
+  project docblock_grounded
+  split docblock_grounded
+  shift docblock_grounded
+  settle docblock_grounded
+}
+
+# === docblock_grounded predicate (declarative half) ===
+#
+# THE LOAD-BEARING PREDICATE. Returns verdict that every extractable
+# claim in `d` is either an exempt kind (motivating_claim or
+# forward_promise) or has a citation whose ancestor exists on main
+# with cited-content matching the claim's text. Per Mara spec §3
+# predicate substance:
+#
+#   docblock_grounded(d) ⇔
+#     ∀ claim ∈ extract_claims(d):
+#       claim.kind ∈ {motivating_claim, forward_promise} ∨
+#       (claim.citation ≠ empty_ref ∧
+#        ancestor_exists_on_main(claim.citation) ∧
+#        cited_content_matches_claim(claim.citation, claim.text))
+#
+# Body discharges at splinter(ast) altitude via the liquid-extraction
+# surface's `extract_predicate` output; the operational half at
+# `@kintsugi/fracture/docblock_ungrounded` (TICK 4 forward-promise
+# per Mara spec §4) emits a Tomm-circular question naming the missing
+# ancestor when this predicate fails.
+docblock_grounded(d: docblock) -> verdict { \ }
+
+out @epistemologic/property/docblock_grounded
+out docblock_grounded
