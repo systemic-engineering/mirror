@@ -1,0 +1,266 @@
+# @epistemologic/property/docblock_coherent — second of the trio of
+# #53 property/fracture bilateral instances at doc-claim altitude.
+# Sixth #53 family overall (second-of-trio slot); landed per Seam
+# Phase D ratification chain:
+#   - `820a451` TICK 1 `shards/docblock.mirror` family-root RATIFY
+#   - `3283de4` TICK 2 `shards/epistemologic/liquid_extraction.mirror`
+#     sibling family-root RATIFY
+#   - `ff53d46` TICK 3 `docblock_grounded` (first-of-trio declarative
+#     half) RATIFY-WITH-CORRECTIONS
+#   - `9b0aeb5` TICK 4 `@kintsugi/fracture/docblock_ungrounded`
+#     (first-of-trio operational half) RATIFY
+# Interpretation B canonical per Seam pre-review
+# `docs/audits/2026-07-06-seam-arc-4-sub-arc-a-pre-review.md` §1:
+# narrative ABOVE `---`; `in` clauses + typed declarations BELOW.
+#
+# This shard is the DECLARATIVE HALF of the docblock coherence
+# audit. The OPERATIONAL HALF lands at TICK 6 as
+# `@kintsugi/fracture/docblock_incoherent` per Mara spec
+# `docs/specs/doc-code-seam-shards.md` §6 (routes via
+# `@kintsugi/surface`'s `contradiction` class per compiler-error-
+# surface §3.2). Bilateral discipline per recognition #53: the
+# property side names WHAT it means for a docblock to be coherent;
+# the fracture side names WHAT TO DO when a docblock's claims
+# contradict — emits a Tomm-linear-then-reflexive question naming
+# the two sites plus the frame at which they bind.
+#
+# === Sixth #53 family; second-of-trio at doc-claim altitude ===
+#
+# Recognition #53 (`[[architecture-property-fracture-bilateral]]`)
+# names a substrate pattern: declarative property at
+# `@epistemologic/property/<predicate>` + operational fracture body
+# at `@kintsugi/fracture/<predicate>`, bridged by the kintsugi loop.
+# The docblock trio (`docblock_grounded`, `docblock_coherent`,
+# `docblock_no_extraction_pattern`) IS the sixth #53 family
+# expressed as three property/fracture bilateral pairs; each pair
+# lands atomically per the #53 discipline.
+#
+# Trio slot ordering per Mara spec §3/§5/§7:
+#
+# - `docblock_grounded` (TICK 3 declarative `98664a7`; TICK 4
+#   operational `6cb6054`) — first-of-trio, ancestry check.
+# - `docblock_coherent` — THIS SHARD (declarative half; TICK 5).
+#   Operational half at TICK 6 (`@kintsugi/fracture/
+#   docblock_incoherent`) forward-promised.
+# - `docblock_no_extraction_pattern` (TICK 7 forward-promised) —
+#   third-of-trio, extraction-pattern check.
+#
+# The three bilaterals are INDEPENDENT at the declarative altitude:
+# `docblock_grounded` composes over ancestor-existence;
+# `docblock_coherent` composes over pairwise-non-contradiction plus
+# below-seam-non-contradiction; `docblock_no_extraction_pattern`
+# composes over four sub-checks (superlatives, hedges, citation-
+# content-match, claim-size-match). Aggregation into
+# `docblock_well_audited` happens at @docblock's family-root
+# (TICK 1). Each declarative property's fracture body routes
+# independently through `@kintsugi/surface` on the class the
+# specific failure names.
+#
+# This shard imports `@epistemologic/liquid_extraction` because
+# coherence is decidable only on extracted predicates: `contradicts`
+# takes two liquid predicates, not two doc-claim narratives. The
+# `in @epistemologic/liquid_extraction` grounds the sibling coupling
+# to TICK 2's sibling family-root (`3283de4`); the extractor's
+# `extract_predicate` output surface IS the input to `contradicts`.
+#
+# === Predicate substance per Mara spec §5 ===
+#
+# The docblock-coherent predicate answers: is every extracted
+# predicate mutually non-contradictory, AND does no extracted
+# predicate contradict any below-seam declaration on the shard?
+# In substrate narrative:
+#
+#   docblock_coherent(d) ⇔
+#     ∀ p, q ∈ extract_predicates(d): ¬contradicts(p, q)
+#   ∧ ∀ p ∈ extract_predicates(d), decl ∈ below_seam(d.site):
+#       ¬contradicts(p, decl_predicate(decl))
+#
+# Three composed sibling predicates:
+#
+# - `extract_predicates(d)` is the plural form of
+#   `@epistemologic/liquid_extraction.extract_predicate` (TICK 2
+#   sibling family-root) applied across the docblock's extracted
+#   claim set. Each doc_claim's citation-side text lowers to a
+#   `predicate_shape` (splinter(@epistemologic/property/ast) fragment
+#   per TICK 2's typed carrier surface) that the substrate can
+#   decide. Extractor body itself is forward-promised per TICK 2
+#   `[[feedback-craft-not-deliver]]`; until it lands, `contradicts`
+#   discharges at splinter(ast) altitude on the extractor's output.
+#
+# - `contradicts(p, q)` is the pairwise-non-contradiction primitive
+#   at liquid-predicate altitude. Per compiler-error-surface §3.2:
+#   two claims both fire success independently, but their
+#   conjunction implies failure — Carnielli-Marcos LFI `A ∧ ¬A ⊢ ⊥`
+#   in classical logic; in the substrate's paraconsistent framing,
+#   the two `holds(gap)` claims for the two predicates overlap.
+#   `contradicts` returns true when both `p.holds ∧ q.holds ∧
+#   ¬holds(conjoin(p, q))`. The predicate's body discharges via
+#   `splinter(@epistemologic/property/ast)` against the extracted
+#   AST fragments; contradiction is the ONE rigorous surface class
+#   with a derived projection operator (`[ω,ω]` Bateson-bind per
+#   curvature-and-tomm §5).
+#
+# - `below_seam(d.site)` walks the shard's `---` seam and returns
+#   the ordered set of typed declarations landing under
+#   Interpretation B discipline. Each `decl_predicate(decl)` lifts
+#   a typed declaration to its liquid predicate at
+#   `@epistemologic/property/*` altitude (e.g., a `type foo =
+#   satisfiable | unsatisfiable` declaration carries the liquid
+#   predicate "the four variants partition foo's carrier"; a
+#   `foo(x: bar) -> verdict` action declaration carries the
+#   predicate "foo terminates on all `bar`-shaped inputs given
+#   the composed `requires` clauses"). The substrate can only
+#   compare doc-claim predicates against below-seam predicates when
+#   both are lifted through the same `@epistemologic/property/ast`
+#   surface — which the extractor provides at TICK 2's landed
+#   sibling family-root.
+#
+# The two conjunction arms enforce two distinct failure modes at
+# distinct Bateson levels:
+#
+# - Arm 1 (pairwise across `extract_predicates(d)`) catches
+#   INTRA-DOCBLOCK contradictions: the docblock says one thing at
+#   line M and another thing at line N; the substrate reads both
+#   at #-narrative altitude but the two liquid predicates cannot
+#   both hold. Failure mode routes via `contradiction` (compiler-
+#   error-surface §3.2). Tomm shape: linear-then-reflexive — trace
+#   p; trace q; name the frame at which they bind (per Bateson
+#   1956 double-bind level-crossing discipline). TICK 6's
+#   `docblock_incoherent_body` emits exactly this Tomm shape.
+#
+# - Arm 2 (doc predicate against below_seam declaration) catches
+#   DOC-VS-CODE contradictions: the docblock's claim contradicts
+#   the type carrier or action signature landed below `---` on the
+#   SAME shard. Failure mode ALSO routes via `contradiction` —
+#   this is the load-bearing case for the two-channel collapse per
+#   `docs/math/kintsugi/doc-code-seam.md`. The doc channel and the
+#   code channel are the same shard; their `contradicts` witness
+#   IS the two-channel drift the two-channel discipline exists to
+#   catch. Tomm shape identical (linear-then-reflexive); the two
+#   sites are (doc-side line, below-seam decl line); the frame
+#   at which they bind is the shard itself.
+#
+# Body discharges at splinter(ast) altitude via the liquid-
+# extraction surface's `extract_predicate` output; the operational
+# half at `@kintsugi/fracture/docblock_incoherent` (TICK 6 forward-
+# promise per Mara spec §6) emits the Tomm question naming both
+# sites plus the frame.
+#
+# === Sibling coupling to @docblock + @epistemologic/liquid_extraction ===
+#
+# This shard's `in @docblock` grounds the sibling-coupling to
+# TICK 1's family-root (`5c0f5ba` + `820a451` RATIFY): the
+# `docblock` carrier the property predicate takes as input is
+# exactly @docblock's typed carrier. The `in @epistemologic/
+# liquid_extraction` grounds the sibling-coupling to TICK 2's
+# family-root (`32a1e2a` + `3283de4` RATIFY): the extractor's
+# output shape (`predicate_shape` splinter(ast) fragment) is the
+# surface this property's body discharges over. Both sibling
+# family-roots are COUPLED via this shard: coherence is a question
+# the substrate can only ask at the intersection of the doc-claim
+# carrier and the liquid-extraction surface.
+#
+# This shard also imports `in @epistemologic/property` (species-
+# family path) per the four sibling properties already landed at
+# that altitude: `cold_compile_within_tolerance`,
+# `dark_count_monotone`, `restart_intensity_well_formed`, and
+# `docblock_grounded`. The path-namespace pact carries the depth-2
+# discipline for all species members.
+#
+# === Path-namespace property ===
+#
+# This file at
+# `shards/epistemologic/property/docblock_coherent.mirror` declares
+# `@epistemologic/property/docblock_coherent` at species-depth 2
+# under @epistemologic per `@epistemologic/pact/path_matches_namespace`.
+# The depth mirrors the five landed siblings at
+# `@epistemologic/property/{cold_compile_within_tolerance,
+# dark_count_monotone, restart_intensity_well_formed,
+# docblock_grounded}`: this shard sits in the same species column
+# and is subject to the same path-namespace pact.
+#
+# === Circular-reflexive self-audit ===
+#
+# Per Mara's projection-surface spec `63bdecc` §6 the operator
+# must audit its own audit at depth=3. This shard's own docblock
+# is subject to `docblock_coherent(this_docblock)` at logical
+# altitude. Substrate-honest verdict at THIS shard's state:
+#
+# - Arm 1 (pairwise across `extract_predicates(this_docblock)`):
+#   the narrative above makes claims across multiple sections
+#   (bilateral #53 family membership; sixth-family/second-of-trio
+#   slot; predicate substance; sibling couplings; path-namespace).
+#   No two claims in the narrative contradict at analytical
+#   altitude — each section names distinct load-bearing content.
+#   Concrete `contradicts`-decidability awaits the extractor body
+#   (TICK 2 forward-promise) landing.
+#
+# - Arm 2 (doc predicates vs `below_seam(this.site)` declarations):
+#   the narrative above claims `docblock_coherent(d: docblock) ->
+#   verdict`; the below-seam declaration IS
+#   `docblock_coherent(d: docblock) -> verdict { \ }`. The
+#   narrative names three composed sibling predicates
+#   (`extract_predicates`, `contradicts`, `below_seam`); none of
+#   the three are declared below the seam — they compose against
+#   TICK 2's `extract_predicate` surface, compiler-error-surface's
+#   `contradiction`-class primitive, and the shard's own file
+#   parse. Each name is either a sibling-shard-side action landed
+#   at an ancestor commit (extractor-side at TICK 2 forward-promise;
+#   contradicts-side at compiler-error-surface §3.2 landed) or the
+#   substrate's own parse (below_seam is a metaprogramming primitive
+#   composed against the `---` line). No claim in the narrative
+#   contradicts a below-seam declaration on this shard.
+#
+# Verdict: `both_survive` — the shard's docblock passes real
+# survival (analytical pairwise-non-contradiction; analytical
+# doc-vs-code non-contradiction) but phantom survival is also
+# non-empty (the extractor body has not landed; `contradicts` at
+# liquid-predicate altitude cannot concretely check yet; the
+# `below_seam` walk cannot concretely resolve typed-decl liquid
+# predicates yet). Promotion to `real_survives` awaits: extractor
+# body (TICK 2 forward-promise) + `contradicts` discharge body +
+# fracture body at TICK 6 + Seam second-witness audit at analytical
+# altitude on the extracted predicate pairs. Per Mara spec
+# §Cross-cutting: this is the honest verdict at THIS shard's state.
+
+---
+
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/property
+in @epistemologic/liquid_extraction
+in @docblock
+
+prism @epistemologic/property/docblock_coherent {
+  focus docblock_coherent
+  project docblock_coherent
+  split docblock_coherent
+  shift docblock_coherent
+  settle docblock_coherent
+}
+
+# === docblock_coherent predicate (declarative half) ===
+#
+# THE LOAD-BEARING PREDICATE. Returns verdict that every extracted
+# predicate in `d` is mutually non-contradictory AND does not
+# contradict any below-seam declaration on `d.site`. Per Mara
+# spec §5 predicate substance:
+#
+#   docblock_coherent(d) ⇔
+#     ∀ p, q ∈ extract_predicates(d): ¬contradicts(p, q)
+#   ∧ ∀ p ∈ extract_predicates(d), decl ∈ below_seam(d.site):
+#       ¬contradicts(p, decl_predicate(decl))
+#
+# Body discharges at splinter(ast) altitude via the liquid-
+# extraction surface's `extract_predicate` output; the operational
+# half at `@kintsugi/fracture/docblock_incoherent` (TICK 6 forward-
+# promise per Mara spec §6) emits a Tomm-linear-then-reflexive
+# question (per compiler-error-surface §5.3 Bateson double-bind
+# discipline) naming the two contradicting sites plus the frame
+# at which they bind when this predicate fails.
+docblock_coherent(d: docblock) -> verdict { \ }
+
+out @epistemologic/property/docblock_coherent
+out docblock_coherent
