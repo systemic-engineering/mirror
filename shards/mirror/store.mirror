@@ -52,6 +52,232 @@ in @uuid/spectral
 # content addressing is the canonical identity. The store comes
 # first; .shatter comes after.
 #
+# === Apache-2.0 rock-solid floor discipline ===
+#
+# Per collapse spec `docs/specs/mcp-spec-song-collapse.md` §11
+# (Mara `2cfd2a7`, 2026-07-06 respawn): @mirror/store IS the minimum
+# viable Apache-2.0 floor for content-addressed graph compilation.
+# Recognition #43 ([[architecture-mirror-as-content-addressed-build-system]];
+# mirror IS content-addressed build system; LANDED per collapse spec
+# §11 promotion) grounds this shard as the substrate-decl of that
+# recognition. The Apache-2.0 floor is legible at engineering
+# altitude; the whole ecosystem depends on this being real and
+# usable standalone — not a teaser, not a demo, not a consolation
+# prize for adopters that skip @spectral/db.
+#
+# Per Alex's rock-solid-floor directive (spec §10.6, §11.6): the open
+# floor MUST be useful in agentic workflows even without the
+# @spectral/db magic. The nine §11.6 value-adds ARE first-order
+# capabilities of the open floor; the closed engine sits ON TOP of
+# them, not underneath them.
+#
+# === Non-negotiable v0 invariants ===
+#
+# The following are substrate invariants, not policies. They are
+# declared at v0 to avoid the class of failure Nix's ca-derivations
+# arc (2020-2023) documents: bolting content-addressing on later
+# costs the ecosystem a decade of dual-mode operation. Per collapse
+# spec §11.3.2, §11.3.3.
+#
+#   1. `oid` is immutable-under-hash. Once written, the bytes at an
+#      oid cannot change. Ever. Not by mutation, not by version, not
+#      by migration. `OID = BLAKE3(content)` by construction; the
+#      content-address is a function of the bytes, so the identity is
+#      immutable by construction. This is the immutability invariant.
+#      Amendments happen by writing NEW bytes, obtaining a NEW oid,
+#      and updating the reference (whether ref, splinter_graph child
+#      link, or crystal head) to point at the new oid — the oid
+#      itself never mutates.
+#
+#   2. Composition is purely-functional. Any `Prism<A, B>` acting on
+#      stored objects is a total function `OID_A -> OID_B`;
+#      deterministic; referentially transparent. Same input oid + same
+#      prism composition + same store => byte-identical output oid,
+#      verifiable by re-hash. This grounds the Dolstra 2006 lineage
+#      (Nix's purely-functional deployment discipline) at the
+#      substrate altitude. Consumers can rely on it; competing store
+#      species MUST honor it.
+#
+# === Bazel REAPI floor decomposition ===
+#
+# Per collapse spec §11.3.6: the industrial minimum floor decomposes
+# into two orthogonal open surfaces the Bazel Remote Execution API
+# (REAPI) codified:
+#
+#   (1) OID -> object map — the Content-Addressable Storage (CAS)
+#       surface. Byte-in / byte-out; hash-mediated identity. Realized
+#       here as `read` / `write` / `exists` / `verify` on the six-op
+#       surface below. This IS REAPI's `ContentAddressableStorage`
+#       (`FindMissingBlobs` + `BatchReadBlobs` + `BatchUpdateBlobs`)
+#       modulo naming.
+#
+#   (2) action-hash -> OID map — the action-cache surface. Given a
+#       canonical action key (oid of the canonicalized action
+#       description) return the previously-recorded output oids.
+#       Forward-promised at M6 tick 3 as sub-prism
+#       `@mirror/store/action_cache` with `record` and `lookup`
+#       actions. This IS REAPI's `ActionCache`.
+#
+# Both surfaces are open at Apache-2.0. Consumers can use the CAS
+# without the action-cache (naive byte-store); consumers wanting
+# incremental rebuild use both. The split is orthogonal to the
+# scheduler; per Mokhov/Mitchell/Peyton Jones "Build Systems à la
+# Carte" (JFP 2020), the Rebuilder × Scheduler factoring is
+# independent of the CAS layer @mirror/store declares — any scheduler
+# discipline (topological / restarting / suspending) composes with
+# this floor.
+#
+# === Prior-art anchors ===
+#
+# Cited to ground this shard against the actual state of the art;
+# adopters recognize the shape:
+#
+#   - Dolstra 2006 PhD `The Purely Functional Software Deployment
+#     Model` (TU Delft) — the canonical treatment of derivation-store
+#     mathematics; Nix's foundational text. Every invariant above
+#     traces to Dolstra's discipline (purely-functional composition,
+#     immutable-by-hash storage, closure discipline for reachability
+#     + GC, deterministic builds from typed inputs to content-
+#     addressed outputs). The ca-derivations arc (2020-2023) grounds
+#     the do-not-bolt-immutable-on-later warning.
+#
+#   - Mokhov, Mitchell, Peyton Jones `Build Systems à la Carte`
+#     (JFP 2020) — the canonical taxonomy of build-system design.
+#     The (scheduler: topological / restarting / suspending) ×
+#     (rebuilder: dirty-bit / verifying-trace / constructive-trace /
+#     deep-constructive-trace) grid. Nix = topological × verifying-
+#     trace; Bazel = restarting × constructive-trace; Shake =
+#     suspending. @mirror/store's Apache-2.0 floor is scheduler-
+#     agnostic (any scheduler can drive it); the Rebuilder × Scheduler
+#     factoring is orthogonal to the CAS-layer declaration this shard
+#     makes. The closed engine @spectral/db adds a suspending
+#     scheduler + spectral-embedding-based rebuilder — the fifth cell
+#     the Mokhov et al. Table 1 leaves empty.
+#
+#   - IPFS MERKLE_DAG.md + Merkle 1979 (`Secrecy, Authentication,
+#     and Public Key Systems`) — the content-addressing invariant
+#     substrate. Merkle DAG discipline: content-addressed nodes; DAG
+#     edges by content-address; deduplication by hash-collision;
+#     verifiable partial pulls; federation-friendly by construction.
+#     @mirror/store inherits via `splinter_graph`: the OID-graph IS a
+#     Merkle DAG; any partial fetch is verifiable by re-hashing;
+#     `verify(o, bytes) -> verdict` IS Merkle's original membership
+#     check.
+#
+#   - Bazel REAPI (`github.com/bazelbuild/remote-apis`) — the
+#     industry standard for the CAS + action-cache split named above.
+#     The floor that every remote build system exposes as open
+#     protocol; @mirror/store's six-op surface matches modulo naming.
+#
+# === Trichotomy at OID altitude (git-object-model analog) ===
+#
+# Per collapse spec §11.3.1 + [[architecture-splinter-and-spectral-db-edges]]:
+# the substrate carries a three-layer content-addressed trichotomy
+# analogous to git's blob/tree/commit but distinct because the
+# substrate carries the SpectralUuid layer git lacks:
+#
+#   - `splinter` (leaf; @glass altitude) — the atomic content-
+#     addressed unit. One splinter, one oid, one content. git's
+#     `blob` analog.
+#   - `splinter_graph` (composite; @mirror/store altitude, this
+#     shard) — the (root, children) OID-graph projection; the
+#     dependency-closure. git's `tree` analog. Substrate-canonical
+#     name; DOES NOT collide with @mirror family-root (per
+#     `feedback-substrate-already-had-the-word` 55+ instances,
+#     Kagi-derived alternative names superseded).
+#   - `crystal` (settled root; @mirror/store/crystal species
+#     altitude) — the SpectralUuid-addressed settlement of a
+#     composition. git's `commit` analog, extended with typed
+#     context. LANDED at `shards/mirror/store/crystal.mirror`.
+#
+# === Agentic-workflow first-order capabilities (the open floor's offer) ===
+#
+# Per Alex's rock-solid-floor directive and collapse spec §11.6: the
+# following are first-order substrate-decl'd capabilities of the open
+# Apache-2.0 floor — NOT consolation prizes for adopters that skip
+# @spectral/db, but the reason mirror is competitive at the open
+# layer today. Every capability below discharges against the six-op
+# surface + immutable-under-hash + purely-functional composition
+# invariants above, with no @spectral/db magic required.
+#
+#   - **Deterministic compilation** — same inputs -> same oid,
+#     always. Given the same input oid and the same prism
+#     composition, the output oid is byte-identical across machines,
+#     verifiable by hash. Makes agent-run divergence decidable at
+#     the store layer: if input oids match and output oids differ,
+#     it is a substrate bug.
+#   - **Reproducible builds** — cross-machine reproducibility
+#     (nix-copy analog). Agent A on machine X and agent B on machine
+#     Y running the same composition against the same input oid
+#     produce the same output oid. Auditors can re-run and check.
+#   - **Session persistence** — MCP session state IS crystals in
+#     the store. Agent restarts (crash, deploy, scale-down) do not
+#     lose accumulated context; the next process reads the session
+#     ref and resumes from the crystal. No in-process fragility;
+#     no external SQL/Redis shim.
+#   - **Cross-agent OID-addressed memory** — any two agents pointed
+#     at the same @mirror/store instance share the same OID space.
+#     Coordination reduces to hash-mediated pointer-passing (the oid
+#     IS the coordination). No out-of-band message bus, no explicit
+#     orchestrator required.
+#   - **Provenance chains** — every artifact traces to its inputs
+#     via closure; auditability IS a substrate primitive. Any
+#     decision's causes ARE its input oids; any rollback IS a walk
+#     backward through the OID-graph.
+#   - **Verifiable computation** — any content-addressed DAG is
+#     Merkle-verifiable. Trust boundaries reduce to hash boundaries;
+#     adopters can prove what they built without trusting each other.
+#
+# These are the offer to adopters using ONLY @mirror/store. Most
+# current agentic tooling does not deliver even these capabilities
+# with closed backends. The open floor at Apache-2.0 makes them
+# substrate primitives.
+#
+# === What @spectral/db adds (closed) — the deliberate fault plane ===
+#
+# Per collapse spec §11.4: @spectral/db (the closed engine) adds
+# typed edges (EdgeKind × Weight labeled multigraph) + graph
+# Laplacian eigenvalue navigation + sub-Turing Datalog-adjacent
+# query surface + spectral-embedding-based structural proximity +
+# cellular sheaf primitives (per Recognition #34 eigenboard-is-sheaf).
+# These are OPTIONAL on top of the open floor; @mirror/store MUST
+# remain usable standalone without @spectral/db.
+#
+# The fault plane is deliberate: storage protocol open (Apache-2.0),
+# query / scheduler / navigation closed (proprietary). This is the
+# same fault plane git/GitHub, Nix/Cachix, IPFS/Filecoin, and Bazel/
+# BuildBuddy discovered independently — five ecosystems drew the
+# line at the same place; @mirror/store inherits.
+#
+# The open surface deliberately does NOT expose typed edges, edge
+# weights, or Laplacian-based navigation (§11.3.7). These live in
+# @spectral/db. `walk(root: oid) -> splinter_graph` answers
+# reachability + ancestry + closure — Nix's `-q` discipline exactly
+# — but does not answer *which OIDs are STRUCTURALLY NEAR this OID
+# in the spectral embedding*.
+#
+# === Projection API (oid <-> working-tree) ===
+#
+# Per collapse spec §11.3.5: the store is the truth; the disk is a
+# projection. The Apache-2.0 floor formalizes the projection API as
+# operational escape hatch to the filesystem (git-object-model
+# analog):
+#
+#   - `project(o: oid, path) -> imperfect` — write the oid's content
+#     to the filesystem path (analog: `git checkout` at blob
+#     altitude). Renders the store's truth onto the working-tree.
+#   - `unproject(path) -> imperfect(oid)` — hash the file at path,
+#     return its oid (analog: `git hash-object`). Used for `mirror
+#     status`-style diffs against the working-tree.
+#
+# Forward-promised at M6 tick 2 as sub-prism
+# `@mirror/store/projection`. Without these two ops, the DAG-as-
+# source-of-truth discipline in collapse spec §3.6 has no
+# operational escape hatch to disk. With them, adopters build the
+# full round-trip: edit shard on disk -> unproject to new oid ->
+# write to store -> update ref; or read head ref -> project each oid
+# to canonical disk path -> working-tree renders store's truth.
+#
 # Substrate placement: per
 # [[architecture-fragmentation-is-the-rust-substrate]] the Rust
 # implementation lives in `fragmentation/src/*.rs` (Fragmentable,
