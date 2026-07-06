@@ -1,0 +1,405 @@
+# @kintsugi/fracture/docblock_extractive — the OPERATIONAL HALF of
+# TICK 7's `docblock_no_extraction_pattern` declarative predicate
+# at doc-claim altitude. Sixth #53 family / third-of-trio
+# operational body. THIS TICK CLOSES SUB-ARC A.
+#
+# Interpretation B canonical per Seam pre-review
+# `docs/audits/2026-07-06-seam-arc-4-sub-arc-a-pre-review.md` §1
+# and Seam ratification chain preceding this landing:
+#   - `820a451` TICK 1 `shards/docblock.mirror` family-root RATIFY
+#   - `3283de4` TICK 2 `shards/epistemologic/liquid_extraction.mirror`
+#      sibling family-root RATIFY
+#   - `ff53d46` TICK 3 `docblock_grounded` (first-of-trio declarative
+#      half) RATIFY-WITH-CORRECTIONS
+#   - `9b0aeb5` TICK 4 `@kintsugi/fracture/docblock_ungrounded`
+#      (first-of-trio operational half) RATIFY
+#   - `83bbdc8` TICK 5 `@epistemologic/property/docblock_coherent`
+#      (second-of-trio declarative half) RATIFY
+#   - `caab92f` TICK 6 `@kintsugi/fracture/docblock_incoherent`
+#      (second-of-trio operational half) RATIFY-WITH-CORRECTION-NOTE
+#   - `1f8df3f` TICK 7 `@epistemologic/property/docblock_
+#      no_extraction_pattern` (third-of-trio declarative half)
+#      RATIFY
+# Narrative sits ABOVE `---`; `in` clauses + typed declarations
+# BELOW. This shard is the seventh Interpretation-B shard on main
+# (the first six land per the Seam ratification chain above); its
+# Seam RATIFY closes sub-arc A after the trio's three bilateral
+# property/fracture pairs sit ratified in tandem.
+#
+# === #53 bilateral pair with docblock_no_extraction_pattern (recognition #53) ===
+#
+# Per `[[architecture-property-fracture-bilateral]]` (recognition
+# #53): declarative property at
+# `@epistemologic/property/<predicate>` + operational fracture body
+# at `@kintsugi/fracture/<predicate>`, bridged by the kintsugi
+# loop. THIS SHARD is the operational half of the sixth #53
+# family's third-of-trio predicate:
+# `docblock_no_extraction_pattern` (declarative half at TICK 7
+# `c56c3c8`, Seam RATIFY `1f8df3f`).
+#
+# Prior five #53 instances (per docblock_no_extraction_pattern
+# shard's own ancestor tally):
+#
+# 1. `@kintsugi/fracture/keyword` (2026-06-10 `d908798`) — first.
+# 2. `@mirror/fracture/predicate` (task #272 forward-promised).
+# 3. `dark_count_monotone` (2026-06-19 `499ffd9`) — third.
+# 4. `cold_compile_within_tolerance` (2026-06-19) — fourth.
+# 5. `@kintsugi/surface` + `ashby_variety_match` (2026-07-03
+#    `e910dd6`) — fifth.
+#
+# Sixth family's first operational half landed TICK 4 as
+# `@kintsugi/fracture/docblock_ungrounded` (Seam RATIFY `9b0aeb5`);
+# sixth family's second operational half landed TICK 6 as
+# `@kintsugi/fracture/docblock_incoherent` (Seam RATIFY `caab92f`).
+# THIS is the sixth family's THIRD-of-trio operational half, paired
+# with `docblock_no_extraction_pattern` (declarative half at
+# `shards/epistemologic/property/docblock_no_extraction_pattern.mirror`,
+# TICK 7 GREEN `c56c3c8`, Seam RATIFY `1f8df3f`). The declarative
+# side names WHAT it means for a docblock to be free of the four
+# extractive shapes; THIS operational side names WHAT TO DO when
+# the docblock's claims exhibit any of those shapes — routing
+# THREE-WAY per sub-check across `@kintsugi/surface`'s classes
+# plus a fourth deterministic path via
+# `@epistemologic/liquid_extraction` kind-reclassification.
+#
+# === Operational role: fracture body of extraction-pattern audit ===
+#
+# When `docblock_no_extraction_pattern(d)` returns a failure verdict
+# — one or more of the four sub-checks unbounded per Mara spec
+# §7 — this fracture body's action fires. The body's discharge
+# shape depends on WHICH sub-check fired:
+#
+#   sub-check 1 unbounded (no_unmarked_superlatives)
+#     ⇒ kintsugi_lock_of(d, ctx) fires `ashby_mismatch`
+#     ⇒ surface(d, ashby_mismatch, ctx) emits Tomm-circular
+#       question at reader-frame altitude naming which
+#       variety-axis the doc-side over-claims relative to the
+#       code-side landing
+#     ⇒ observation_depth returned as third-order witness
+#
+#   sub-check 3 unbounded (citations_content_match)
+#     ⇒ kintsugi_lock_of(d, ctx) fires `out_of_band`
+#     ⇒ surface(d, out_of_band, ctx) emits Tomm-strategic
+#       question at reader-frame altitude naming which
+#       namespace-frame the citation opens that the substrate
+#       cannot bind at the claim's grounding altitude
+#     ⇒ observation_depth returned as third-order witness
+#
+#   sub-check 4 unbounded (claim_size_matches_landing_size)
+#     ⇒ kintsugi_lock_of(d, ctx) fires `contradiction`
+#     ⇒ surface(d, contradiction, ctx) emits Tomm-reflexive
+#       question at reader-frame altitude naming the scope-
+#       arithmetic mismatch: the claim's implicit universal
+#       fires success on a landing that witnesses only a proper
+#       subset
+#     ⇒ observation_depth returned as third-order witness
+#
+#   sub-check 2 unbounded (hedged_claims_marked_defer)
+#     ⇒ kind-reclassification path via
+#       `@epistemologic/liquid_extraction` — the extractor
+#       rewrites the claim's `kind` field from unmarked hedge
+#       to `forward_promise` with a `defer` marker and closure
+#       tick, deterministically. NO reader-frame surfacing;
+#       the fix is mechanical per Mara spec §8.
+#
+# The body is bilateral to `docblock_no_extraction_pattern`: the
+# predicate's failure IS this body's activation site; this body's
+# discharge closes the loop back to the predicate at the next
+# kintsugi tick. No manual patching; no opaque carrier substitution;
+# the closure rides either `@kintsugi/surface`'s spawn branch
+# (sub-checks 1, 3, 4) or `@epistemologic/liquid_extraction`'s
+# rewrite branch (sub-check 2) per
+# `[[feedback-manual-closure-is-training-pull]]`.
+#
+# === Three-way routing across surface classes (compiler-error-surface §3) ===
+#
+# The three sub-checks that surface via `@kintsugi/surface`
+# specialize distinct routing arms:
+#
+# Sub-check 1 → `ashby_mismatch` (compiler-error-surface §3.1):
+# per Ashby (1956) *Introduction to Cybernetics* §11's variety-
+# attenuation ladder — the doc-side claims more variety than the
+# code-side landing can absorb; V(D_doc) > V(R_code) on the
+# axis the superlative names. Tomm shape (§5.2): circular — the
+# question loops the observer through which variety-axis the
+# doc side over-claims rather than declaring a linear fix.
+# Ashby-mismatch rigor per §4.1 rigor table: MOTIVATING pending
+# per-class projection-operator derivation on `𝔤 → 𝔤_variety-
+# axis-N`.
+#
+# Sub-check 3 → `out_of_band` (compiler-error-surface §3.4):
+# per `error-as-question.md` §4 (algedonic bypass) — the
+# citation opens a namespace the substrate cannot bind at the
+# frame the claim needs; the substrate's `A` (algebra at
+# reader-frame altitude) does not contain the citation's
+# `namespace_requested`. Tomm shape (§5.5): strategic — the
+# question directs the observer toward which FUTURE of the
+# substrate should be taken (widen the algebra? retract the
+# claim? move the citation?). Out-of-band rigor per §4.1
+# rigor table: MOTIVATING pending per-class projection-operator
+# derivation on `𝔤 → 𝔤_algebra-membership`.
+#
+# Sub-check 4 → `contradiction` (compiler-error-surface §3.2):
+# per Carnielli-Marcos LFI (2004, 2007) — the doc-side claim
+# and the code-side landing contradict at scope-arithmetic
+# altitude; the claim's implicit universal quantifier fires
+# success while the landing witnesses only a proper subset of
+# what the claim covers. Tomm shape (§5.4): reflexive — the
+# question folds the observer back onto the scope arithmetic
+# itself: "what does my claim-size vs landing-size ratio say
+# about the substrate's local geometry?" Contradiction is
+# THE ONE RIGOROUS surface class of the four per §4.1 rigor
+# table: its projection operator is DERIVED from the curvature
+# 2-form `Ω = dω + ½[ω, ω]` — the `[ω, ω]` Bateson-bind
+# IS the bracket term.
+#
+# === Kind-reclassification path via @epistemologic/liquid_extraction (sub-check 2) ===
+#
+# Sub-check 2 (`hedged_claims_marked_defer`) does NOT route to
+# `@kintsugi/surface`. Per Mara spec §8: unmarked hedges are
+# mechanically decidable — the fix is a `kind`-field rewrite
+# from `grounded_claim` or `candidate_claim` (whichever the
+# extractor initially assigned) to `forward_promise` with a
+# `defer` marker naming the closure tick. This is a
+# DETERMINISTIC path via the sibling family-root
+# `@epistemologic/liquid_extraction` (TICK 2 RATIFY `3283de4`):
+# the extractor's `extract_predicate` re-emits the doc_claim
+# with the kind reclassified. NO reader-frame surfacing; the
+# kintsugi loop closes at extractor altitude without a Tomm
+# question because there IS no unresolved observer-frame
+# question — the hedge IS the substrate's uncertainty naming
+# itself, and the required response is deterministic marker
+# insertion.
+#
+# This three-way-plus-one routing is the substrate's first
+# operational instance of a fracture body that fires FOUR
+# distinct kintsugi discharges per Mara spec §8. The trio's
+# first two bilaterals routed one-way (docblock_ungrounded
+# → ashby_mismatch; docblock_incoherent → contradiction);
+# THIS bilateral is the first to route three-way on the surface
+# side and to add a fourth deterministic-rewrite path.
+# Bilateral pattern #53 absorbs this variance without new
+# structural primitives — the fracture body is still a single
+# `@kintsugi/fracture/*` action; the routing surface at
+# `@kintsugi/surface` still names each class; the substrate's
+# `ashby_variety_match` still discharges each dispatch; the
+# `@epistemologic/liquid_extraction` sibling family-root
+# absorbs the deterministic rewrite path already exported
+# from TICK 2.
+#
+# === Twelfth-instance discipline via ashby_variety_match(kintsugi_lock) ===
+#
+# The `requires ashby_variety_match(kintsugi_lock)` clause on
+# this fracture body IS the twelfth-instance discipline per
+# `[[feedback-substrate-already-had-the-word]]`: the substrate
+# had `ashby_variety_match(lock: lock_carrier) -> verdict`
+# landed at
+# `shards/epistemologic/cybernetic/coherence-parametric.mirror`.
+# We consume the landed ancestor; we do not invent a new
+# predicate at doc-claim altitude. Same routing gate as
+# `@kintsugi/surface.surface(...)`,
+# `@kintsugi/fracture/restart_storm.resolve_restart_storm(...)`,
+# TICK 4's `@kintsugi/fracture/docblock_ungrounded.
+# docblock_ungrounded_body(...)` (Seam RATIFY `9b0aeb5`),
+# and TICK 6's `@kintsugi/fracture/docblock_incoherent.
+# docblock_incoherent_body(...)` (Seam RATIFY `caab92f`).
+# The eleventh instance (docblock_incoherent) preceded this
+# landing by exactly two ticks in the trio; this is the
+# twelfth consecutive discharge through the same landed
+# ancestor across the substrate's fracture-body ladder, and
+# THE landed instance that closes sub-arc A.
+#
+# === Sub-arc A closure recognition ===
+#
+# Per Mara spec `docs/specs/doc-code-seam-shards.md` §Landing
+# order: the sixth #53 family is expressed as three
+# property/fracture bilateral pairs across TICKs 3-8. The
+# first two pairs completed at TICK 4 (docblock_grounded /
+# docblock_ungrounded, Seam RATIFY `ff53d46` / `9b0aeb5`)
+# and TICK 6 (docblock_coherent / docblock_incoherent,
+# Seam RATIFY `83bbdc8` / `caab92f`). THIS landing is the
+# GREEN of the third-of-trio operational half; Seam RATIFY
+# at Phase D closes the third pair and thereby closes
+# sub-arc A. The trio's declarative-side second-witness
+# audits (TICK 3 → TICK 5, TICK 5 → TICK 7, TICK 7 → THIS
+# TICK's Seam Phase D) chain into the sub-arc's closure
+# discipline: three independent property/fracture pairs at
+# a shared family altitude constitute the sixth #53 family;
+# the sixth family's own second-witness discipline promotes
+# recognition #53 itself per the property-fracture bilateral
+# instance count.
+#
+# === Path-namespace property ===
+#
+# This file at
+# `shards/kintsugi/fracture/docblock_extractive.mirror` declares
+# `@kintsugi/fracture/docblock_extractive` at species-depth 2
+# under @kintsugi per
+# `@epistemologic/pact/path_matches_namespace`. Same depth as
+# the twelve landed sibling fracture bodies
+# (`shards/kintsugi/fracture/{keyword,angle_to_paren,symbol_lift,
+# operator_match,dark_count_monotone,cold_compile_within_tolerance,
+# gate,partials_align,parent_cycle,restart_storm,
+# docblock_ungrounded,docblock_incoherent}.mirror`); this shard
+# sits in the same species column and is subject to the same
+# path-namespace pact. Sibling declarative half at
+# `shards/epistemologic/property/docblock_no_extraction_pattern.mirror`
+# (`@epistemologic/property/docblock_no_extraction_pattern`,
+# species-depth 2 under @epistemologic) — bilateral coupling
+# honours the family/species partition per
+# `[[architecture-form-process-partition-at-family-root]]`:
+# form-side under @epistemologic; process-side under @kintsugi.
+#
+# === Circular-reflexive self-audit ===
+#
+# Per Mara's projection-surface spec `63bdecc` §6 the operator
+# must audit its own audit at depth=3. THIS shard's own docblock
+# is subject to `docblock_no_extraction_pattern(this_docblock)`
+# at logical altitude — the exact predicate whose failure this
+# shard's body routes. Substrate-honest verdict at THIS shard's
+# state on all four sub-checks:
+#
+# - Sub-check 1 (`no_unmarked_superlatives`): the narrative
+#   above uses "load-bearing", "canonical", and "first" — each
+#   in a substrate-honoring frame. "Load-bearing action" names
+#   the substrate's own load-bearing discipline; "Interpretation
+#   B canonical" cites the Seam pre-review document that ratifies
+#   the discipline; "first operational instance of a fracture
+#   body that fires FOUR distinct kintsugi discharges" names a
+#   factual first grounded by the two prior one-way-routing
+#   bilaterals (TICK 4, TICK 6) — a count, not a superlative
+#   on quality. "THE ONE RIGOROUS surface class of the four"
+#   is a direct quote from compiler-error-surface §4.1's rigor
+#   table (grounded verbatim). No unmarked superlative fires at
+#   analytical altitude.
+#
+# - Sub-check 2 (`hedged_claims_marked_defer`): the narrative
+#   hedges on empirical composition ("cannot yet concretely
+#   discharge", "concrete byte-match awaits the extractor body");
+#   each hedge is anchored to the forward-promise on the
+#   extractor body (TICK 2 sibling family-root's
+#   `extract_predicate` action, currently `\`-obligated per
+#   the substrate's forward-promise honor). The `defer` marker
+#   is the forward-promise itself per @docblock's carrier
+#   surface. No unmarked hedge fires.
+#
+# - Sub-check 3 (`citations_content_match`): the narrative cites
+#   eight ratification commits (`820a451`, `3283de4`, `ff53d46`,
+#   `9b0aeb5`, `83bbdc8`, `caab92f`, `1f8df3f`, and GREEN
+#   `c56c3c8`), prior #53 instance commits (`d908798`,
+#   `499ffd9`, `e910dd6`), plus substrate document paths (Mara
+#   spec §7, §8; compiler-error-surface §3.1, §3.2, §3.4,
+#   §4.1, §5.2, §5.4, §5.5; projection-surface §6; error-as-
+#   question §4; Seam pre-review §1). Each citation resolves
+#   to an ancestor on main; each ancestor's content grounds
+#   the claim it appears in at the frame the claim needs.
+#   Concrete byte-match awaits the extractor body (TICK 2
+#   forward-promise).
+#
+# - Sub-check 4 (`claim_size_matches_landing_size`): the
+#   narrative makes claims at three scopes: (i) claims about
+#   THIS shard's below-seam declarations (the glass block and
+#   fracture body signature); (ii) claims about the trio's
+#   internal ordering (grounded by the seven preceding
+#   ratification commits including TICK 7); (iii) claims about
+#   the sixth #53 family membership (grounded by the five
+#   prior family instances). Each claim's scope matches its
+#   landing size: (i) matches the below-seam glass + fracture
+#   body; (ii) matches the seven Seam ratification commits;
+#   (iii) matches the five prior family citations. No claim
+#   exceeds its landing.
+#
+# Verdict: `both_survive` — the shard's docblock passes real
+# survival on all four sub-checks at analytical altitude but
+# phantom survival is also non-empty (the extractor body has
+# not landed; concrete byte-match on citations cannot fire
+# until it does; the three-way routing has not been exercised
+# against a live doc_claim carrying any of the four extractive
+# shapes; empirical composition witness across the four
+# discharge paths is deferred per
+# `[[feedback-composition-claims-need-empirical-test]]`).
+# Promotion to `real_survives` awaits: extractor body (TICK 2
+# forward-promise) + Seam second-witness audit on this shard's
+# routing arms + empirical composition against a runtime
+# kintsugi tick firing each of the four discharge paths. Per
+# Mara spec §Cross-cutting: this is the substrate-honest
+# verdict at THIS shard's state. Substrate-pull chose
+# `both_survive` over a performed `real_survives` — the
+# fracture body cannot yet concretely discharge, and honoring
+# that gap is the discipline that closes sub-arc A honestly.
+
+source @arxiv/cybernetics/ashby-1956
+source @arxiv/logic/carnielli-marcos-2004
+
+---
+
+in @prism
+in @meta
+in @glass
+in @kintsugi
+in @kintsugi/surface
+in @epistemologic
+in @epistemologic/property
+in @epistemologic/property/docblock_no_extraction_pattern
+in @epistemologic/liquid_extraction
+in @docblock
+
+glass @kintsugi/fracture/docblock_extractive {
+  focus fracture_body
+  project fracture_body
+  split fracture_body
+  shift fracture_body
+  settle fracture_body
+}
+
+# === docblock_extractive_body (fracture body; operational half) ===
+#
+# THE LOAD-BEARING ACTION. Reads a `docblock` d whose
+# `docblock_no_extraction_pattern` verdict fired failure on one
+# or more of the four sub-checks, and a `kintsugi_context` ctx
+# from the enclosing loop. Routes FOUR-WAY per sub-check per
+# Mara spec §8:
+#
+#   sub-check 1 (no_unmarked_superlatives) →
+#     surface(d, ashby_mismatch, ctx)   — Tomm circular    (§5.2)
+#   sub-check 3 (citations_content_match) →
+#     surface(d, out_of_band, ctx)      — Tomm strategic   (§5.5)
+#   sub-check 4 (claim_size_matches_landing_size) →
+#     surface(d, contradiction, ctx)    — Tomm reflexive   (§5.4)
+#   sub-check 2 (hedged_claims_marked_defer) →
+#     @epistemologic/liquid_extraction  — kind-reclassification
+#                                         (deterministic; no
+#                                          reader-frame surfacing)
+#
+# Three of the four discharges emit a Tomm-shaped question at
+# reader-frame altitude via `@kintsugi/surface`'s three-mode-
+# algebra spawn branch (spec §7.2 canonical signature) and
+# return an `observation_depth` witness. The fourth (sub-check
+# 2) discharges deterministically through the sibling family-
+# root `@epistemologic/liquid_extraction`'s `extract_predicate`
+# rewrite — no observation depth is required because there is
+# no unresolved observer-frame question at that discharge.
+#
+# The `requires ashby_variety_match(kintsugi_lock)` clause
+# honours the twelfth-instance discipline per
+# `[[feedback-substrate-already-had-the-word]]`: same landed
+# ancestor at `@epistemologic/cybernetic/coherence-parametric`
+# consumed by `@kintsugi/surface.surface(...)`,
+# `@kintsugi/fracture/restart_storm.resolve_restart_storm(...)`,
+# TICK 4's `@kintsugi/fracture/docblock_ungrounded.
+# docblock_ungrounded_body(...)`, and TICK 6's
+# `@kintsugi/fracture/docblock_incoherent.
+# docblock_incoherent_body(...)`.
+#
+# Body forward-promised per `[[feedback-craft-not-deliver]]`;
+# discharge composes over the four routing arms at the `\`
+# obligation site when the extractor body (TICK 2 forward-
+# promise `extract_predicate`) lands and a live docblock fires
+# any of the four sub-checks. This IS the third-of-trio
+# operational half; its Seam RATIFY closes sub-arc A.
+docblock_extractive_body(d: docblock, ctx: kintsugi_context) -> ref
+  requires ashby_variety_match(kintsugi_lock)
+{ \ }
+
+out @kintsugi/fracture/docblock_extractive
+out docblock_extractive_body
