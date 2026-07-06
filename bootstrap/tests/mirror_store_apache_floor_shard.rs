@@ -203,9 +203,8 @@ fn t09_store_cites_build_systems_a_la_carte() {
 #[test]
 fn t10_store_cites_merkle_dag_ancestor() {
     let content = read_store_shard();
-    let has_merkle = content.contains("Merkle")
-        || content.contains("IPFS")
-        || content.contains("MERKLE_DAG");
+    let has_merkle =
+        content.contains("Merkle") || content.contains("IPFS") || content.contains("MERKLE_DAG");
     assert!(
         has_merkle,
         "T10: shard MUST cite Merkle DAG ancestor (Merkle 1979 OR IPFS MERKLE_DAG.md OR generic `Merkle` reference). The content-addressing invariant substrate the store realises."

@@ -423,12 +423,18 @@
 #                §5 + §9.2 through Fate multi-frequency tournament
 #                grounding at Recognition #58; grounded at species
 #                altitude here via `advance` delegating to
-#                `@kintsugi/shift`, which composes transitively with
-#                Fate at runtime altitude — see #S2 LANDED section
-#                above; Phase F preserved: no `in @fate` ancestry),
+#                `@kintsugi/shift`, which composes with
+#                @fate/tournament at runtime altitude — see #S2
+#                LANDED section above; @fate ancestry declared per
+#                Alex 2026-07-06 hinge-restoration — `in @fate` is
+#                the correct pattern; Taut Phase F flag STALE),
 #               #58 (Fate IS optical inference — LANDED 2026-06-11;
-#                the runtime substrate composing transitively beneath
-#                @kintsugi/shift to ground #S2 empirically),
+#                the runtime substrate composing beneath
+#                @kintsugi/shift + @fate/tournament to ground #S2
+#                empirically; the hinge @fate binds runtime
+#                arithmetic (peer processes, D²NN, Fabry-Perot,
+#                Reck/Clements) to compiletime substrate-decl
+#                (`prism @fate` + `prism @fate/tournament`)),
 #               #S3 (five-op temporal specialisation — CANDIDATE;
 #                inherits from family-root; promotes to LANDED after
 #                three species land per Seam §6.8).
@@ -451,9 +457,23 @@
 # Related shards:
 #               song.mirror (family-root; declares song_settles this
 #                species discharges two of three sub-predicates of),
+#               fate.mirror (substrate-decl'd `prism @fate` family-
+#                root at 2026-06-30 05:24; the runtime-compiletime
+#                hinge per Alex 2026-07-06; species composes via
+#                `in @fate` at ancestry altitude — the correct
+#                pattern for temporal-progression species riding
+#                Fate multi-frequency arithmetic; supersedes stale
+#                Taut Phase F anti-pattern flag 2026-06-24),
+#               fate/tournament.mirror (substrate-decl'd
+#                `prism @fate/tournament` species at 2026-06-30
+#                05:24; the multi-frequency tournament that selects
+#                which shift-candidate wins at each temporal step;
+#                composes transitively beneath @kintsugi/shift at
+#                runtime altitude per #S2 grounding above),
 #               kintsugi/shift.mirror (Arc 5 TICK 2 primitive;
 #                `advance` action delegates here at temporal altitude
-#                per #S2 witness),
+#                per #S2 witness; composes with @fate/tournament at
+#                runtime altitude for the empirical shift arithmetic),
 #               epistemologic/math/music/cadence.mirror (Lawvere
 #                `settle @ temporal` audible-altitude ancestor per
 #                Seam Correction `3d910bc`; cadence_authentic_or_plagal

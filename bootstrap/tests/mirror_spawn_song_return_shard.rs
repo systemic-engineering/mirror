@@ -98,8 +98,14 @@ fn t04_spawn_peer_well_known_predicate_preserved() {
 fn t05_spawn_recognition_ancestry_84_58_99_preserved() {
     let content = read_spawn_shard();
     let has_84 = content.contains("#84") || content.contains("@pack multi-repo");
-    let has_58 = content.contains("#58") || content.contains("Fate IS optical inference") || content.contains("optical inference");
-    let has_99 = content.contains("#99") || content.contains("lambda_0") || content.contains("λ₀") || content.contains("λ_0") || content.contains("mirror.spec IS");
+    let has_58 = content.contains("#58")
+        || content.contains("Fate IS optical inference")
+        || content.contains("optical inference");
+    let has_99 = content.contains("#99")
+        || content.contains("lambda_0")
+        || content.contains("λ₀")
+        || content.contains("λ_0")
+        || content.contains("mirror.spec IS");
     assert!(
         has_84 && has_58 && has_99,
         "T5: existing recognition ancestry (#84 @pack multi-repo agent runtime; #58 Fate IS optical inference; #99 mirror.spec IS λ₀ excitation) must remain preserved (regression guard)."

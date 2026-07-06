@@ -42,7 +42,10 @@ fn repo_root() -> PathBuf {
 fn read_action_cache_shard() -> String {
     let path = repo_root().join("shards/mirror/store/action_cache.mirror");
     std::fs::read_to_string(&path).unwrap_or_else(|e| {
-        panic!("read shards/mirror/store/action_cache.mirror at {:?}: {}", path, e)
+        panic!(
+            "read shards/mirror/store/action_cache.mirror at {:?}: {}",
+            path, e
+        )
     })
 }
 
@@ -140,7 +143,9 @@ fn t06_action_cache_declares_cache_read_action() {
     let has_cache_read = content.contains("cache_read(")
         && (content.contains("spec_oid") || content.contains("spec_ref"))
         && (content.contains("target_oid") || content.contains("target_ref"))
-        && (content.contains("inputs_oid") || content.contains("input_oid") || content.contains("inputs_ref"));
+        && (content.contains("inputs_oid")
+            || content.contains("input_oid")
+            || content.contains("inputs_ref"));
     assert!(
         has_cache_read,
         "T6: shard MUST declare `cache_read(spec_oid, target_oid, inputs_oid) -> imperfect` (or -> verdict OR -> imperfect(verdict, ...)). The verdict-cache read action keyed on the three-OID tuple per N1 predicate signature."
@@ -153,7 +158,9 @@ fn t07_action_cache_declares_cache_write_action() {
     let has_cache_write = content.contains("cache_write(")
         && (content.contains("spec_oid") || content.contains("spec_ref"))
         && (content.contains("target_oid") || content.contains("target_ref"))
-        && (content.contains("inputs_oid") || content.contains("input_oid") || content.contains("inputs_ref"));
+        && (content.contains("inputs_oid")
+            || content.contains("input_oid")
+            || content.contains("inputs_ref"));
     assert!(
         has_cache_write,
         "T7: shard MUST declare `cache_write(spec_oid, target_oid, inputs_oid, v: verdict) -> verdict` (or similar). Writes the verdict into the cache at the three-OID key; idempotent by content-address discipline."
@@ -227,7 +234,10 @@ fn t12_action_cache_composes_with_family_root_six_ops() {
     // Cite that composition.
     let has_six_op = content.contains("read")
         && content.contains("write")
-        && (content.contains("exists") || content.contains("walk") || content.contains("six-op") || content.contains("six op"));
+        && (content.contains("exists")
+            || content.contains("walk")
+            || content.contains("six-op")
+            || content.contains("six op"));
     assert!(
         has_six_op,
         "T12: shard narrative MUST cite family-root six-op composition — the underlying `read` + `write` (+ `exists` / `walk`) at `@mirror/store` that this species specializes at REAPI ActionCache altitude."

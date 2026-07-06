@@ -34,3 +34,10 @@ bootstrap/mirror.ll
 
 # Coverage
 target/llvm-cov/
+
+# @mirror/store persistent state (crystals-in-the-store-DAG). N3 TICK 1
+# lands `.mirror/action_cache/<spec_oid>/<target_oid>/<inputs_oid>/verdict.json`
+# as the verdict-cache surface (`shards/mirror/store/action_cache.mirror`);
+# future ticks add more crystal shapes under `.mirror/`. Untracked by
+# design — the persistence is per-workspace, not per-commit.
+.mirror/

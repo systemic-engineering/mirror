@@ -47,7 +47,8 @@ fn repo_root() -> PathBuf {
 }
 
 fn read_verdict_shard() -> String {
-    let path = repo_root().join("shards/epistemologic/property/verdict_is_content_addressed.mirror");
+    let path =
+        repo_root().join("shards/epistemologic/property/verdict_is_content_addressed.mirror");
     std::fs::read_to_string(&path).unwrap_or_else(|e| {
         panic!(
             "read shards/epistemologic/property/verdict_is_content_addressed.mirror at {:?}: {}",
@@ -141,7 +142,9 @@ fn t05_verdict_predicate_signature_declared() {
     let has_signature = content.contains("verdict_is_content_addressed(")
         && (content.contains("spec_oid") || content.contains("spec_ref"))
         && (content.contains("target_oid") || content.contains("target_ref"))
-        && (content.contains("inputs_oid") || content.contains("input_oid") || content.contains("inputs_ref"))
+        && (content.contains("inputs_oid")
+            || content.contains("input_oid")
+            || content.contains("inputs_ref"))
         && content.contains("-> verdict");
     assert!(
         has_signature,
@@ -223,8 +226,7 @@ fn t10_verdict_cites_mosaic_store_cache_invariants_spec() {
 #[test]
 fn t11_verdict_composes_with_mirror_store_oid_discipline() {
     let content = read_verdict_shard();
-    let has_store = content.contains("@mirror/store")
-        || content.contains("@mirror / store");
+    let has_store = content.contains("@mirror/store") || content.contains("@mirror / store");
     assert!(
         has_store,
         "T11: shard MUST cite `@mirror/store` — the OID discipline that provides `oid`, `walk`, `read`, `write`, `verify` primitives this predicate composes with."

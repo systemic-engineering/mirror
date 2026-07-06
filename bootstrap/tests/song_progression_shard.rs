@@ -44,9 +44,8 @@ fn repo_root() -> PathBuf {
 
 fn read_progression_shard() -> String {
     let path = repo_root().join("shards/song/progression.mirror");
-    std::fs::read_to_string(&path).unwrap_or_else(|e| {
-        panic!("read shards/song/progression.mirror at {:?}: {}", path, e)
-    })
+    std::fs::read_to_string(&path)
+        .unwrap_or_else(|e| panic!("read shards/song/progression.mirror at {:?}: {}", path, e))
 }
 
 fn first_nonempty_line(content: &str) -> Option<&str> {
@@ -238,7 +237,9 @@ fn t14_progression_cites_cadence_family_vocabulary() {
     // Cadence family: authentic (Splinter-pole) / plagal (Splinter-pole variant) /
     // deceptive (Narcissus-pole = EXTRACTION) / half (Narcissus-pole = SILENCE stuck).
     let has_cadence_family = content.contains("authentic")
-        && (content.contains("deceptive") || content.contains("half-cadence") || content.contains("half cadence"));
+        && (content.contains("deceptive")
+            || content.contains("half-cadence")
+            || content.contains("half cadence"));
     assert!(
         has_cadence_family,
         "T14: species narrative must cite cadence-family vocabulary — `authentic` (Splinter-pole discharge) AND at least one of `deceptive`/`half-cadence` (Narcissus-pole variant naming psychohistorical failure mode: EXTRACTION or SILENCE per spec §8.2)"

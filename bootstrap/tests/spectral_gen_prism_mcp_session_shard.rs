@@ -157,8 +157,7 @@ fn t06_mcp_session_declares_session_ref_pattern() {
 #[test]
 fn t07_mcp_session_grounds_state_lives_in_store_discipline() {
     let content = read_mcp_session_shard();
-    let has_store_state = (content.contains("state")
-        || content.contains("State"))
+    let has_store_state = (content.contains("state") || content.contains("State"))
         && (content.contains("@mirror/store")
             || content.contains("in the store")
             || content.contains("content-addressed")
@@ -285,9 +284,7 @@ fn t15_mcp_session_inherits_five_op_tool_surface_from_gen_prism() {
         || content.contains("tool-surface")
         || content.contains("five-op")
         || content.contains("five op"))
-        || (content.contains("focus")
-            && content.contains("project")
-            && content.contains("split"));
+        || (content.contains("focus") && content.contains("project") && content.contains("split"));
     assert!(
         has_tool_surface,
         "T15: species narrative MUST cite the five-op tool surface discipline inherited from @spectral/gen_prism. Per @spectral/gen_prism docblock: `The five-op block IS the tool surface; external callers speak through it`. MCP session's tool surface IS the mq wire specialized for JSON-RPC."

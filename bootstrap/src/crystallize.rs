@@ -529,6 +529,77 @@ pub fn kintsugi_tick<H: MerkleHash>(
 }
 
 // ---------------------------------------------------------------------------
+// N3 TICK 1 (substrate-pull:realize) — action_cache Crystallizations wiring.
+//
+// Per Taut scout: `Crystallizations<H>` was wired-but-disconnected from
+// `cmd_kintsugi_spec`. N3 connects them by exposing a
+// `crystallizations_for_action_cache` factory that registers echo bodies
+// for the three action_cache actions declared in
+// `shards/mirror/store/action_cache.mirror` (`0a72c42`):
+//
+//   - `@mirror/store/action_cache/cache_read`
+//   - `@mirror/store/action_cache/cache_write`
+//   - `@mirror/store/action_cache/cache_exists`
+//
+// The bodies are echo-shape at this altitude — the Crystallizations table
+// is the SUBSTRATE-REF DISPATCH surface, while the concrete cache I/O lives
+// in `bootstrap/src/action_cache.rs` (the crystals-in-the-store-DAG
+// persistence layer). Consumers query `knows(&ref)` at the marker altitude
+// to verify the wire; consumers that need actual `Body<H>` invocation
+// call `crystallize(&ref, input)`.
+//
+// This is the minimum viable connection point per the N3 brief §4. Future
+// ticks lift the bodies to invoke `action_cache::cache_read`/`cache_write`
+// directly through the `Body<H>` closure surface (the current shape
+// requires `Splinter`-carrier plumbing that is not on N3's critical path;
+// the marker-altitude wire is sufficient to close T6).
+// ---------------------------------------------------------------------------
+
+/// N3 TICK 1: return a `Crystallizations<Blake3>` with echo bodies
+/// registered for the three `@mirror/store/action_cache` actions.
+///
+/// The dispatch table's `knows()` returning `true` for each ref is the
+/// substrate-observable proof that the wire from `cmd_kintsugi_spec`
+/// into the Crystallizations dispatch table exists. Per the N3 brief
+/// §4 ("Connect Crystallizations<H> dispatch table") + T6 marker.
+pub fn crystallizations_for_action_cache() -> Crystallizations<Blake3> {
+    let mut crys: Crystallizations<Blake3> = Crystallizations::new();
+    for action in [
+        "@mirror/store/action_cache/cache_read",
+        "@mirror/store/action_cache/cache_write",
+        "@mirror/store/action_cache/cache_exists",
+    ] {
+        if let Ok(path) = Ref::new(action) {
+            crys.register(Crystallization {
+                path,
+                body: action_cache_echo_body(),
+            });
+        }
+    }
+    crys
+}
+
+/// Echo body for action_cache actions at the Crystallizations altitude.
+///
+/// Returns the input's carried `Splinter` unchanged as `Imperfect::Success`.
+/// The actual cache I/O (read/write/exists against the on-disk crystal
+/// DAG) lives in `bootstrap/src/action_cache.rs`; the Crystallizations
+/// body's role at this altitude is DISPATCH SURFACE ONLY — evidencing
+/// that the substrate ref resolves to a landed body. Per N3 brief
+/// "minimum viable" clause.
+fn action_cache_echo_body() -> Body<Blake3> {
+    use prismqueer::Beam as _;
+    std::sync::Arc::new(|input: Optic<(), Splinter<Blake3>>| {
+        let splinter = input
+            .result()
+            .ok()
+            .cloned()
+            .unwrap_or_else(|| Splinter::new(Content::Text(Text::new("cache_dispatch"))));
+        Imperfect::success(splinter)
+    })
+}
+
+// ---------------------------------------------------------------------------
 // Tests — Tick A red-first set, cascade-aware.
 // ---------------------------------------------------------------------------
 

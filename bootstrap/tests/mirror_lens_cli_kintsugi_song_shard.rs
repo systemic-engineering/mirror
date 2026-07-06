@@ -97,7 +97,13 @@ fn t03_kintsugi_existing_actions_preserved() {
 #[test]
 fn t04_kintsugi_existing_ancestry_preserved() {
     let content = read_cli_kintsugi_shard();
-    for req in ["in @prism", "in @optics", "in @glass", "in @mirror/lens", "in @mirror/lens/cli"] {
+    for req in [
+        "in @prism",
+        "in @optics",
+        "in @glass",
+        "in @mirror/lens",
+        "in @mirror/lens/cli",
+    ] {
         assert!(
             content.contains(req),
             "T4: existing ancestry `{}` must remain declared (regression guard)",
@@ -267,9 +273,8 @@ fn t14_kintsugi_preserves_ashby_variety_maintenance_narrative() {
     let content = read_cli_kintsugi_shard();
     // Per architecture-kintsugi-variety-io: @fate tournament IS variety-
     // maintenance; kintsugi.settle drives one round.
-    let has_variety = content.contains("variety")
-        || content.contains("Ashby")
-        || content.contains("tournament");
+    let has_variety =
+        content.contains("variety") || content.contains("Ashby") || content.contains("tournament");
     assert!(
         has_variety,
         "T14: shard narrative MUST preserve Ashby variety-maintenance framing (regression guard per architecture-kintsugi-variety-io). Existing shard names `variety-maintenance` + `tournament` extensively; this preserves it."
@@ -284,7 +289,8 @@ fn t15_kintsugi_settle_remains_the_one_write() {
     let has_settle_discipline = (content.contains("the ONE write")
         || content.contains("one write")
         || content.contains("the ONE"))
-        || (content.contains("settle") && (content.contains("iteration") || content.contains("write")));
+        || (content.contains("settle")
+            && (content.contains("iteration") || content.contains("write")));
     assert!(
         has_settle_discipline,
         "T15: shard narrative MUST preserve `settle IS the ONE write per invocation` discipline (regression guard per cli-as-prism §2.1 + existing shard §5-op mapping section)."

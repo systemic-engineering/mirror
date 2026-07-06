@@ -181,8 +181,14 @@ fn t08_spawn_cites_m3_tick_1_correction_or_hinge_discipline() {
 fn t09_spawn_preserves_recognition_ancestry_84_58_99() {
     let content = read_spawn_shard();
     let has_84 = content.contains("#84") || content.contains("@pack multi-repo");
-    let has_58 = content.contains("#58") || content.contains("Fate IS optical inference") || content.contains("optical inference");
-    let has_99 = content.contains("#99") || content.contains("lambda_0") || content.contains("λ₀") || content.contains("λ_0") || content.contains("mirror.spec IS");
+    let has_58 = content.contains("#58")
+        || content.contains("Fate IS optical inference")
+        || content.contains("optical inference");
+    let has_99 = content.contains("#99")
+        || content.contains("lambda_0")
+        || content.contains("λ₀")
+        || content.contains("λ_0")
+        || content.contains("mirror.spec IS");
     assert!(
         has_84 && has_58 && has_99,
         "T9: recognition ancestry (#84 @pack multi-repo; #58 Fate IS optical inference; #99 mirror.spec IS λ₀) must remain preserved (regression guard)"
@@ -192,8 +198,12 @@ fn t09_spawn_preserves_recognition_ancestry_84_58_99() {
 #[test]
 fn t10_spawn_preserves_peer_acl_10_lead_semantics_and_spectral_supervisor() {
     let content = read_spawn_shard();
-    let has_lead = content.contains("peer-ACL") || content.contains("lead") || content.contains("N+1 observer");
-    let has_supervisor = content.contains("@spectral/supervisor") || content.contains("start_child") || content.contains("lifecycle");
+    let has_lead = content.contains("peer-ACL")
+        || content.contains("lead")
+        || content.contains("N+1 observer");
+    let has_supervisor = content.contains("@spectral/supervisor")
+        || content.contains("start_child")
+        || content.contains("lifecycle");
     assert!(
         has_lead && has_supervisor,
         "T10: peer-ACL §10 lead semantics + @spectral/supervisor lifecycle composition must remain preserved (regression guard)"

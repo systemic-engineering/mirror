@@ -208,7 +208,9 @@ fn t14_song_composes_with_io_stagefreight_narrative() {
 fn t15_narrative_grounds_s3_and_cadence_lawvere_and_schenker() {
     let content = read_song_shard();
     // Seam's per-#S3 correction: cadence.mirror Lawvere framing must be cited as `settle @ temporal` ancestor
-    let has_cadence_lawvere = content.contains("cadence.mirror") || content.contains("Lawvere") || content.contains("authentic cadence");
+    let has_cadence_lawvere = content.contains("cadence.mirror")
+        || content.contains("Lawvere")
+        || content.contains("authentic cadence");
     assert!(
         has_cadence_lawvere,
         "T15a: narrative must cite `cadence.mirror` Lawvere framing as `settle @ temporal` ancestor per Seam Correction (audit `3d910bc`)"
