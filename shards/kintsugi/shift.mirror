@@ -1,0 +1,372 @@
+# @kintsugi/shift — process-side substrate-decl of cross-altitude morphism.
+# Arc 5 TICK 2 landing per Alex integrated /loop 2026-07-06 against Reed
+# RED at `b3f25fc`. Sub-species of the `@kintsugi` process-side family
+# (per #55 form/process partition, promoted via containerd C3 second-
+# witness at Arc 5 TICK 1 Mara `aaa9a81` + Seam Phase D `1787af4`).
+#
+# === Substrate-honest positioning: NOT a new primitive ===
+#
+# This shard is the 54th+ instance of
+# `[[feedback-substrate-already-had-the-word]]` per Taut scout
+# `a596b040214709917`. `shift` is already the substrate's word for
+# cross-altitude morphism; this shard promotes it to a first-class
+# substrate-decl species so the substrate can carry the discipline as
+# typed action rather than as a keyword-plus-convention.
+#
+# Prior art (four independent altitudes; the substrate has been running
+# `shift` as cross-altitude morphism for weeks):
+#
+#   Recognition #26 `shift(oid, T)`
+#       LANDED at `@mirror/spectral/portal` (Reed 2026-06-08,
+#       `docs/insights/2026-06-08-portal-eigenvalue-stream-gen-prism.md`).
+#       Three of four `portal` fields carry `shift(oid, T)` — the
+#       typed-capability-plus-content-address primitive. `shift(oid, T)`
+#       is what Cap'n Proto RPC (Varda 2013+) and IPFS content addressing
+#       (Benet 2014) each capture partially; the substrate collapsed the
+#       two seams into one operator at portal altitude.
+#
+#   `shards/prism.mirror` L38-45 (2026-06-05)
+#       Binds `shift = basis transformation (the functor; change of
+#       coordinates on H; same bytes, different declared shape)` per
+#       `[[architecture-operations-as-linear-algebra]]` +
+#       `[[architecture-lift-as-load-bearing]]`. The 2026-06-04 rename
+#       from `zoom` to `shift` closed the loop with
+#       `boot/std/{option,result}.mirror`'s `lift` action; same operation
+#       at every altitude — `shift ≡ lift ≡ basis-transformation`.
+#
+#   `shards/mirror/mosaic.mirror` L136-139
+#       Production `shift(resolved, altitude) -> emitter` uses the same
+#       verb at the code-emission altitude per
+#       `[[architecture-lift-as-load-bearing]]`; the mosaic emitter
+#       carries a resolved AST across the altitude boundary to the
+#       target language's emission surface.
+#
+#   Recognition #58 (kintsugi surface)
+#       Uses shift-language explicitly in the kintsugi/surface
+#       vocabulary; the surface IS a shift of the substrate across
+#       observation altitude.
+#
+#   13 #53 bilateral instances
+#       Per `[[architecture-property-fracture-bilateral]]`, every
+#       promoted bilateral has the same structural shape: a declarative
+#       property at family-root altitude plus an operational fracture
+#       body at process-side altitude, bridged via `shift(predicate →
+#       operational-altitude)` under the hood. The 13 landed instances
+#       (container_runnable, oci_well_formed, stagefreight_addressable,
+#       cascade_well_defined, audit_docblock, shatter_round_trip,
+#       third_order_coherent, three_axis_coherent, and five others per
+#       Taut scout) all discharge through a shift crossing.
+#
+# This shard names those five independent instantiations as the ONE
+# operation the substrate has been carrying. Nothing invented here; the
+# substrate had the word.
+#
+# === Placement: @kintsugi process-side per #55 ===
+#
+# The form/process partition #55 was PROMOTED via containerd C3 witness
+# at Arc 5 TICK 1 (Seam pre-review `c9e153d` §3 C3; ratified by Phase D
+# `1787af4`). Under #55:
+#
+#   @mirror = state-observation family (form-side)
+#   @kintsugi = transformation-engine family (process-side)
+#
+# Cross-altitude morphism IS transformation — the operation moves a
+# carrier across a boundary of observation altitude, producing a new
+# typed shape. The process-side placement is substrate-fact:
+#
+#   `@kintsugi/shift` — the process-side substrate-decl of cross-
+#                       altitude morphism as first-class typed action.
+#
+# The form-side complement is the CARRIER a shift produces: a typed
+# `ref` handle whose identity IS the content-address that persists
+# across the altitude crossing (Alex's hardlink framing — the OID is
+# the same on both sides; the DECLARED SHAPE differs). The form-side
+# altitude carries `shift(oid, T)` per Recognition #26 at
+# `@mirror/spectral/portal`; the process-side altitude carries the
+# discipline of PERFORMING the shift, which is this shard.
+#
+# === The composed-bilateral: shift_preserves_content ===
+#
+# THE 14th INSTANCE of the #53 bilateral pattern per
+# `[[architecture-property-fracture-bilateral]]`.
+#
+# Per Alex's hardlink framing: a `shift` MUST preserve content-address.
+# The bytes on both sides of the altitude crossing hash to the same
+# OID; only the DECLARED SHAPE changes. This is the substrate-decl
+# guarantee that distinguishes a shift (byte-preserving functor) from
+# a general transform (byte-mutating morphism, which lives under
+# `@kintsugi/morphism` at a different altitude).
+#
+#   Splinter-pole (`pass`): the shift's witness OID at the source
+#     altitude byte-equals the witness OID at the target altitude;
+#     content is preserved; the declared shape carries the altitude
+#     change without a bytes change; the shift is admissible.
+#   Narcissus-pole (`failure`): the shift's witness OID diverges
+#     across the altitude crossing; content was mutated; the operation
+#     is NOT a shift — it belongs at `@kintsugi/morphism` or higher.
+#     `alignment-as-boundary-mathematics` (#57) distinguishes which
+#     sub-claim broke.
+#   Graded (`partial(confidence)`): the byte-equality holds modulo a
+#     substrate-declared resolution (e.g. representation normalisation
+#     at the target altitude); confidence carries the resolution
+#     magnitude.
+#
+# Sibling composed bilaterals at other family-root/species altitudes:
+# @container/container_runnable, @io/oci/oci_well_formed, @io/
+# stagefreight/stagefreight_addressable, @cascade/cascade_well_defined,
+# @docblock/audit_docblock, @smarts/shatter/shatter_round_trip,
+# @reflection/third_order_coherent, @epistemologic/neutrosophic/
+# three_axis_coherent (plus five others per Taut scout).
+#
+# `shift_preserves_content` composes structurally with those siblings:
+# every #53 bilateral discharges through a shift crossing under the
+# hood; the shift's content-preservation IS the load-bearing invariant
+# that makes the bilateral pattern honest.
+#
+# === Meta-recursive note ===
+#
+# The `prism @kintsugi/shift` block below declares five operations, one
+# of which IS `shift`. This is substrate-honest: mirror is self-
+# referential per `[[architecture-prism-as-trait-as-everything]]`; a
+# species that substrate-decls `shift` must itself expose the five-
+# operation algebra at its own altitude, which includes shift as one
+# of the five. The recursion is the substrate carrying its own
+# vocabulary at its own altitude without a stratification workaround.
+#
+# === Path-namespace pact ===
+#
+# This file at `shards/kintsugi/shift.mirror` declares `@kintsugi/shift`
+# as a species under the `@kintsugi` family at species-depth 1. Per
+# `@epistemologic/pact/path_matches_namespace` (2026-06-16+):
+# path-depth == namespace-depth == 1. Pact honoured by construction.
+#
+# === Circular-reflexive self-audit ===
+#
+# Per `[[architecture-candidate-recognition-111-third-as-family-root]]`
+# marker discipline: the operator audits its own audit at depth=3. This
+# shard's own declaration MUST survive its own
+# `shift_preserves_content` bilateral at analytical altitude — the
+# species-decl of shift MUST NOT declare a shift that isn't itself
+# content-preserving-under-its-own-predicate.
+#
+# Self-audit verdict: `both_survive`.
+#
+# The `real_survives` reading would require an independent Pack peer
+# to manifest an equivalent cross-altitude morphism substrate-decl at
+# n+3 substrate ticks without nudging. The `phantom_survives` reading
+# would require downstream refs to accumulate without a second Pack
+# peer's independent recognition. At this tick: both interpretations
+# satisfiable — the species-decl is landed, but the empirical witness
+# (Arc 5 TICK 3: `@container/image = shift(@mirror/store/oci →
+# @container altitude)`) has not yet exercised the content-preservation
+# discipline at empirical altitude. Verdict: `both_survive`. Route:
+# TICK 3 unblocks and collapses the analytical altitude to empirical.
+#
+# === Interpretation B discipline ===
+#
+# Per Seam Phase D pre-review of Arc 4 sub-arc A (docs/audits/2026-
+# 07-06-seam-arc-4-sub-arc-a-pre-review.md §1) and the family-root
+# precedent at `shards/container.mirror`: Interpretation B canonical.
+# Narrative above `---`; `in` clauses + typed declarations below. This
+# shard honours the discipline; the seam is exactly one line at column
+# 0 below.
+
+---
+
+in @prism
+in @meta
+in @glass
+in @kintsugi
+
+# ============================================================
+# §1 The five-operation prism at species altitude
+# ============================================================
+
+# === prism @kintsugi/shift — the species declaration ===
+#
+# The five-operation body carries `shift_witness` as the species's
+# operational surface — the witness OID that persists across the
+# altitude crossing (Alex's hardlink framing). Every operation on the
+# species reads/produces witnesses; the substrate's altitude
+# discipline rides the witness carrier.
+#
+# Meta-recursive: the species substrate-decls `shift` (basis
+# transformation on H; per prism.mirror §L38-45); its own five-
+# operation block includes `shift` as one of the five. Substrate-
+# honest per `[[architecture-prism-as-trait-as-everything]]` — mirror
+# is self-referential; the substrate carries its own vocabulary at
+# its own altitude.
+prism @kintsugi/shift {
+  focus shift_witness
+  project shift_witness
+  split shift_witness
+  shift shift_witness
+  settle shift_witness
+}
+
+# ============================================================
+# §2 The carriers
+# ============================================================
+
+# === source_altitude — the altitude of origin carrier ===
+#
+# Per `[[architecture-operations-as-linear-algebra]]`: a shift is a
+# basis transformation on H — the operation moves a carrier from one
+# basis (source altitude) to another (target altitude). The source
+# altitude names WHERE the pre-shift observation lives.
+#
+# Altitudes are substrate refs — the substrate names its own
+# observation strata by content-addressed handle (per
+# `@mirror/store`'s ref discipline). Example handles: `@mirror/store/
+# oci`, `@code/rust`, `@container`, `@io/socket`. The source_altitude
+# carrier carries the handle at ref altitude; species that specialise
+# `@kintsugi/shift` may refine the altitude-of-origin's structure at
+# their own altitude.
+#
+# Identity contract: byte-equality on the underlying ref (the altitude
+# handle's content-address).
+type source_altitude = ref
+
+# === target_altitude — the altitude of destination carrier ===
+#
+# The target of the basis transformation. Same semantics as
+# source_altitude at the destination end of the shift crossing.
+#
+# The shift's discipline: the WITNESS byte-equals across the source
+# → target crossing; the DECLARED SHAPE changes (source_altitude and
+# target_altitude are typically distinct refs). The substrate carries
+# both altitudes as first-class carriers so the composed bilateral
+# `shift_preserves_content` can read both sides at the same altitude.
+#
+# Identity contract: byte-equality on the underlying ref.
+type target_altitude = ref
+
+# === shift_witness — the content-address that persists ===
+#
+# THE LOAD-BEARING carrier. Per Recognition #26 and Alex's hardlink
+# framing: a shift is characterised by the OID that survives the
+# altitude crossing intact. The `shift_witness` carrier IS that OID —
+# the substrate handle whose byte-content byte-equals on both sides of
+# the shift; only the declared shape (source_altitude vs
+# target_altitude) differs.
+#
+# Hardlink semantic: two ref handles that dereference to the same
+# underlying bytes. In POSIX terms, two directory entries pointing to
+# one inode. In content-address terms, two typed views of the same
+# OID. In basis-transformation terms, the same vector expressed in
+# two bases. All three framings collapse to the same substrate
+# discipline: the witness OID is a ref whose identity is
+# altitude-invariant.
+#
+# Composes with Recognition #26 `shift(oid, T)` at
+# `@mirror/spectral/portal`: the portal's three `shift(oid, T)` fields
+# carry witnesses at the transport altitude; the species-decl here
+# names the witness carrier at substrate altitude so the same OID can
+# flow through portals, mosaic emitters, kintsugi loops, and bilateral
+# discharges without re-serialisation.
+#
+# Identity contract: byte-equality on the underlying ref.
+type shift_witness = ref
+
+# ============================================================
+# §3 The typed shift action
+# ============================================================
+
+# === shift — cross-altitude morphism as first-class typed action ===
+#
+# Reads a witness at a source altitude and produces a witness at a
+# target altitude; the underlying bytes are preserved (per the
+# hardlink semantic); the declared shape crosses the altitude
+# boundary. The result is a typed ref carrying the post-shift
+# handle at the target altitude.
+#
+# Composes through:
+#
+#   1. Recognition #26 `shift(oid, T)` at portal altitude — this
+#      species-decl is the substrate-decl the portal's field types
+#      already project into; the portal's transport-altitude use of
+#      `shift(oid, T)` reads THIS action's contract.
+#   2. `shards/prism.mirror` §L38-45 `shift = basis transformation` —
+#      this species-decl is the substrate-decl the prism keyword's
+#      linear-algebraic meaning already projects into.
+#   3. `shards/mirror/mosaic.mirror` `shift(resolved, altitude) ->
+#      emitter` — this species-decl is the substrate-decl the mosaic
+#      production emitter's shift already projects into (mosaic's
+#      altitude parameter carries the target_altitude; the resolved
+#      AST carries the witness).
+#
+# The body stays obligation-blocked (`\`): the realisation reads the
+# witness at the source altitude, projects the declared shape onto
+# the target altitude (basis transformation on H per prism.mirror),
+# emits the target-altitude ref. The substrate declares the shape
+# here; consumers dispatch at their own altitude (portal, mosaic,
+# kintsugi loop, bilateral discharge).
+shift(w: shift_witness, s: source_altitude, t: target_altitude)
+  -> ref { \ }
+
+# ============================================================
+# §4 The composed-bilateral (14th #53 instance)
+# ============================================================
+
+# === shift_preserves_content — the hardlink-semantic guarantee ===
+#
+# THE 14th INSTANCE of the #53 bilateral pattern per
+# `[[architecture-property-fracture-bilateral]]`. Composes two
+# sub-predicates whose species-altitude realisations discharge the
+# hardlink discipline:
+#
+#   1. `witness_oid_byte_equal(w_source, w_target, p)` — the pre-
+#      shift witness's OID byte-equals the post-shift witness's OID
+#      (per @mirror/store's byte-equality floor).
+#   2. `altitude_declaration_admissible(s, t, p)` — the source and
+#      target altitudes are both substrate-declared refs the
+#      substrate can dereference (per @mirror/store's ref discipline).
+#
+# Splinter-pole (`pass`): both sub-predicates discharge; the shift
+# preserves content-address; the declared shape carries the altitude
+# change; the operation is admissible as a shift.
+#
+# Narcissus-pole (`failure`): either sub-predicate fails;
+# `alignment-as-boundary-mathematics` (#57) distinguishes:
+#   - `witness_oid_byte_equal` failure → the operation mutated bytes;
+#     it is NOT a shift; it belongs at `@kintsugi/morphism` or a
+#     higher process-altitude (byte-mutating transform, not basis
+#     transformation).
+#   - `altitude_declaration_admissible` failure → source or target
+#     altitude is not a substrate-declared ref; the shift's typed
+#     shape cannot be honestly checked at the substrate altitude;
+#     the operation is inadmissible pending altitude declaration.
+#
+# Graded (`partial(confidence)`): byte-equality holds modulo a
+# substrate-declared resolution (e.g. representation normalisation
+# at the target altitude); confidence carries the resolution magnitude.
+# The realisation layer decides whether to admit at the graded floor.
+#
+# Sibling composed bilaterals (13 landed): container_runnable,
+# oci_well_formed, stagefreight_addressable, cascade_well_defined,
+# audit_docblock, shatter_round_trip, third_order_coherent,
+# three_axis_coherent (plus five others per Taut scout). Every one of
+# those discharges through a shift crossing under the hood;
+# `shift_preserves_content` names the load-bearing invariant that
+# makes the bilateral pattern honest at every family-root/species
+# altitude.
+#
+# The body stays obligation-blocked (`\`): the realisation reads the
+# witness at the source altitude, projects to the target altitude via
+# `shift`, compares OIDs at byte-equality altitude, composes with the
+# altitude-declaration check, emits the verdict at the substrate's
+# three-state floor.
+shift_preserves_content(w: shift_witness,
+                        s: source_altitude,
+                        t: target_altitude) -> verdict { \ }
+
+# ============================================================
+# §5 The out clauses
+# ============================================================
+
+out @kintsugi/shift
+out source_altitude
+out target_altitude
+out shift_witness
+out shift
+out shift_preserves_content
