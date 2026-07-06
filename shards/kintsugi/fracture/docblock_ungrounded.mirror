@@ -1,0 +1,222 @@
+# @kintsugi/fracture/docblock_ungrounded — the OPERATIONAL HALF of
+# TICK 3's `docblock_grounded` declarative predicate at doc-claim
+# altitude. Sixth #53 family / first-of-trio operational body.
+#
+# Interpretation B canonical per Seam pre-review
+# `docs/audits/2026-07-06-seam-arc-4-sub-arc-a-pre-review.md` §1
+# and Seam ratification chain preceding this landing:
+#   - `820a451` TICK 1 `shards/docblock.mirror` family-root RATIFY
+#   - `3283de4` TICK 2 `shards/epistemologic/liquid_extraction.mirror`
+#      sibling family-root RATIFY
+#   - `ff53d46` TICK 3 `docblock_grounded` (declarative half)
+#      RATIFY-WITH-CORRECTIONS
+# Narrative sits ABOVE `---`; `in` clauses + typed declarations
+# BELOW. This shard is the fourth Interpretation-B shard on main
+# (the first three land per the Seam pre-review chain above).
+#
+# === #53 bilateral pair with docblock_grounded (recognition #53) ===
+#
+# Per `[[architecture-property-fracture-bilateral]]` (recognition
+# #53): declarative property at
+# `@epistemologic/property/<predicate>` + operational fracture body
+# at `@kintsugi/fracture/<predicate>`, bridged by the kintsugi
+# loop. THIS SHARD is the operational half of the sixth #53
+# family's first-of-trio predicate: `docblock_grounded` (declarative
+# half at TICK 3 `98664a7`).
+#
+# Prior five #53 instances (per docblock_grounded shard's own
+# ancestor tally):
+#
+# 1. `@kintsugi/fracture/keyword` (2026-06-10 `d908798`) — first.
+# 2. `@mirror/fracture/predicate` (task #272 forward-promised).
+# 3. `dark_count_monotone` (2026-06-19 `499ffd9`) — third.
+# 4. `cold_compile_within_tolerance` (2026-06-19) — fourth.
+# 5. `@kintsugi/surface` + `ashby_variety_match` (2026-07-03
+#    `e910dd6`) — fifth.
+#
+# THIS is the sixth family's operational half; paired with
+# `docblock_grounded` (declarative half at
+# `shards/epistemologic/property/docblock_grounded.mirror`) landed
+# TICK 3 `98664a7`. The declarative side names WHAT grounds a
+# docblock; THIS operational side names WHAT TO DO when a docblock
+# is ungrounded — emits a Tomm-circular question naming the missing
+# ancestor via the `@kintsugi/surface` `ashby_mismatch` class.
+#
+# === Operational role: fracture body of docblock grounding ===
+#
+# When `docblock_grounded(d)` returns a failure verdict on some
+# `doc_claim` — the claim's `kind` is `grounded_claim` or
+# `candidate_claim` (not exempted `motivating_claim` /
+# `forward_promise`), AND either the citation is `empty_ref`, the
+# ancestor does not exist on main, or the cited content does not
+# match the claim text — this fracture body's action fires. The
+# body's discharge shape:
+#
+#   ungrounded doc_claim c at docblock d
+#     ⇒ kintsugi_lock_of(c, ctx) fires `ashby_mismatch`
+#     ⇒ surface(c, ashby_mismatch, ctx) emits Tomm-circular
+#       question at reader-frame altitude naming the missing
+#       ancestor and its expected cited-content shape
+#     ⇒ observation_depth returned as third-order witness
+#
+# The body is bilateral to `docblock_grounded`: the predicate's
+# failure IS this body's activation site; this body's discharge
+# closes the loop back to the predicate at the next kintsugi tick.
+# No manual patching; no opaque carrier substitution; the closure
+# rides `@kintsugi/surface`'s spawn branch via `ashby_mismatch`
+# routing per `[[feedback-manual-closure-is-training-pull]]`.
+#
+# === ashby_mismatch surface class routing (compiler-error-surface §3.1) ===
+#
+# Per Mara's canonical spec `docs/math/kintsugi/compiler-error-
+# surface.md` §3.1: `ashby_mismatch` is the surface class fired
+# when the substrate's regulator variety is insufficient to attenuate
+# the disturbance variety through the existing fracture-body ladder.
+# Grounding: Ashby (1956) *Introduction to Cybernetics* §11's
+# variety-attenuation ladder. Tomm shape (§5.2): circular — the
+# question loops the observer back through the missing ancestor
+# rather than declaring a linear fix.
+#
+# A docblock claim without a resolvable citation IS an ashby_mismatch
+# at doc-claim altitude: the claim's `text` names substrate content
+# the docblock cannot itself ground, and no existing fracture body
+# in @kintsugi's ladder can attenuate the mismatch (a citation to
+# an absent ancestor is not a compile error the substrate can rewrite
+# via `angle_to_paren` or `symbol_lift` — it is a variety gap at
+# reader-frame altitude). Routing arm: `surface(t, ashby_mismatch,
+# ctx)` per `@kintsugi/surface`'s three-mode-algebra spawn branch
+# (spec §7.2 canonical signature); the discharge emits a Tomm-
+# circular question and returns an `observation_depth` witness.
+#
+# The `requires ashby_variety_match(kintsugi_lock)` clause on this
+# fracture body IS the twelfth-instance discipline per
+# `[[feedback-substrate-already-had-the-word]]`: the substrate had
+# `ashby_variety_match(lock: lock_carrier) -> verdict` landed at
+# `shards/epistemologic/cybernetic/coherence-parametric.mirror`.
+# We consume the landed ancestor; we do not invent a new predicate
+# at doc-claim altitude. Same routing gate as
+# `@kintsugi/surface.surface(...)` and
+# `@kintsugi/fracture/restart_storm.resolve_restart_storm(...)`
+# per the fifth #53 witness's discipline (`e910dd6`).
+#
+# === Path-namespace property ===
+#
+# This file at
+# `shards/kintsugi/fracture/docblock_ungrounded.mirror` declares
+# `@kintsugi/fracture/docblock_ungrounded` at species-depth 2 under
+# @kintsugi per `@epistemologic/pact/path_matches_namespace`. Same
+# depth as the six landed sibling fracture bodies
+# (`shards/kintsugi/fracture/{keyword,angle_to_paren,symbol_lift,
+# operator_match,dark_count_monotone,cold_compile_within_tolerance,
+# gate,partials_align,parent_cycle,restart_storm}.mirror`); this
+# shard sits in the same species column and is subject to the same
+# path-namespace pact. Sibling declarative half at
+# `shards/epistemologic/property/docblock_grounded.mirror`
+# (@epistemologic/property/docblock_grounded, species-depth 2 under
+# @epistemologic) — bilateral coupling honours the family/species
+# partition per `[[architecture-form-process-partition-at-family-
+# root]]`: form-side under @epistemologic; process-side under
+# @kintsugi.
+#
+# === Circular-reflexive self-audit ===
+#
+# Per Mara's projection-surface spec `63bdecc` §6 the operator
+# must audit its own audit at depth=3. THIS shard's own docblock
+# is subject to `docblock_grounded(this_docblock)` at logical
+# altitude — the exact predicate whose failure this shard's body
+# routes. Substrate-honest verdict at THIS shard's state:
+#
+# Narrative citations in this docblock:
+#
+# - Seam ratification commits `820a451`, `3283de4`, `ff53d46`,
+#   `98664a7` — `grounded_claim` kind, citations are OIDs on the
+#   ratification chain preceding this landing; ancestors exist on
+#   main.
+# - Prior #53 instance commits `d908798`, `499ffd9`, `e910dd6` —
+#   `grounded_claim` kind, citations are OIDs landed on main prior
+#   to this shard's tick.
+# - `@mirror/fracture/predicate` task #272 — `forward_promise`
+#   kind (exempt from citation check per the substrate's forward-
+#   promise honor).
+# - Mara spec `doc-code-seam-shards.md` §4, `compiler-error-
+#   surface.md` §3.1 + §5.2 + §7.2, projection-surface spec §6,
+#   Seam pre-review §1 — `grounded_claim` kind, citations are
+#   substrate document paths whose ancestor commits exist on main.
+# - Ashby (1956) §11 — `grounded_claim` kind via
+#   `source @arxiv/cybernetics/ashby-1956` in this shard.
+# - The routing-arm framing (ungrounded ⇒ ashby_mismatch ⇒ Tomm-
+#   circular) — `motivating_claim` kind (names the "why" of the
+#   operational half; no citation obligation).
+# - The bilateral-coupling framing (this body's activation IS
+#   `docblock_grounded`'s failure site) — `candidate_claim` kind
+#   pending the extractor body's landing at TICK 2 forward-promise
+#   `extract_predicate`; the substrate can only concretely verify
+#   the routing at sub-Turing altitude when the extractor
+#   discharges.
+#
+# Verdict: `both_survive` — the shard's docblock passes real
+# survival (analytical citations resolve; forward-promises are
+# honored; the routing arm is analytically clear) but phantom
+# survival is also non-empty (the extractor body has not landed;
+# `cited_content_matches_claim` cannot concretely check byte-match
+# yet; empirical composition witness with a live kintsugi tick
+# firing `ashby_mismatch` on a runtime doc_claim is deferred per
+# `[[feedback-composition-claims-need-empirical-test]]`). Promotion
+# to `real_survives` awaits: extractor body (TICK 2 forward-
+# promise) + declarative sibling second-witness audit + empirical
+# composition against a runtime kintsugi tick. Per Mara spec
+# §Cross-cutting: this is the substrate-honest verdict at THIS
+# shard's state. Substrate-pull chose `both_survive` over a
+# performed `real_survives` — the fracture body cannot yet
+# concretely discharge, and honoring that gap is the discipline.
+
+source @arxiv/cybernetics/ashby-1956
+
+---
+
+in @prism
+in @meta
+in @glass
+in @kintsugi
+in @kintsugi/surface
+in @epistemologic
+in @epistemologic/property
+in @epistemologic/property/docblock_grounded
+in @docblock
+
+glass @kintsugi/fracture/docblock_ungrounded {
+  focus fracture_body
+  project fracture_body
+  split fracture_body
+  shift fracture_body
+  settle fracture_body
+}
+
+# === docblock_ungrounded_body (fracture body; operational half) ===
+#
+# THE LOAD-BEARING ACTION. Reads a `doc_claim` c whose
+# `docblock_grounded` verdict fired failure and a `kintsugi_context`
+# ctx from the enclosing loop. Routes via `@kintsugi/surface`'s
+# `ashby_mismatch` class per compiler-error-surface §3.1 — the
+# ungrounded citation IS a variety mismatch at reader-frame
+# altitude that no existing fracture body in @kintsugi's ladder
+# can attenuate.
+#
+# The `requires ashby_variety_match(kintsugi_lock)` clause honours
+# the twelfth-instance discipline per
+# `[[feedback-substrate-already-had-the-word]]`: same landed
+# ancestor at `@epistemologic/cybernetic/coherence-parametric`
+# consumed by `@kintsugi/surface.surface(...)` and
+# `@kintsugi/fracture/restart_storm.resolve_restart_storm(...)`.
+#
+# Body forward-promised per `[[feedback-craft-not-deliver]]`;
+# discharge composes over `surface(t, ashby_mismatch, ctx)` at the
+# `\` obligation site when the extractor body (TICK 2 forward-
+# promise `extract_predicate`) lands and a live doc_claim fires
+# the routing.
+docblock_ungrounded_body(c: doc_claim, ctx: kintsugi_context) -> ref
+  requires ashby_variety_match(kintsugi_lock)
+{ \ }
+
+out @kintsugi/fracture/docblock_ungrounded
+out docblock_ungrounded_body
