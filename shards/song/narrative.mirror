@@ -1,0 +1,886 @@
+# @song/narrative — the psychohistory + wire binding species of the @song
+# family: the song read as a sheaf section over the organisational
+# manifold; the temporal-experiential altitude at which extraction /
+# silence / glue-work / OBC / ADO / regulation stock / corpus become
+# typed variants of song cadence + voice-leading + phrase + progression
+# discipline. Arc 6 TICK 5 landing per Seam pre-review `docs/audits/
+# 2026-07-06-seam-pre-review-song-substrate-decl.md` §6.6 against Reed's
+# TICK 5 RED tick `04246bd`. Fourth species of the `@song` family (after
+# `@song/progression` Arc 6 TICK 2 landing `54ff1e8`, `@song/voice` Arc 6
+# TICK 3 landing `cc5a440`, and `@song/movement` Arc 6 TICK 4 landing
+# `4efbf16`); CONSOLIDATION species — adds NO new `song_settles` sub-
+# predicates (the composed bilateral fully discharged at TICK 3 with
+# `voice_line_valid` closing the third sub-predicate; movement TICK 4
+# consolidated first, this TICK 5 consolidates second); grounds the
+# psychohistorical isomorphism at species altitude; binds the wire-
+# projection sibling `@io/stagefreight/narrative` at temporal-vs-wire
+# altitude distinction; absorbs the TICK 2 boundary-overlap observation
+# (Seam Phase D `a2e648a` §4 obs 2) as #57 alignment-as-boundary-
+# mathematics substrate-fact at species-composed altitude.
+#
+# === Species positioning: consolidation, not decomposition ===
+#
+# Per `shards/song.mirror` §3 (`song_settles(pr, p) -> verdict { \ }`),
+# the family-root's load-bearing composed bilateral (14th #53 instance
+# per `[[architecture-property-fracture-bilateral]]`) decomposed into
+# THREE sub-predicates, ALL discharged at species altitude:
+#
+#   1. `progression_directed_toward_cadence(pr, p)` [@song/progression, `54ff1e8`]
+#   2. `cadence_authentic_or_plagal(c, p)`          [@song/progression, `54ff1e8`]
+#   3. `voice_line_valid(v, p)`                     [@song/voice, `cc5a440`]
+#
+# This species declares ZERO new sub-predicates. The composed bilateral
+# `song_settles` fully discharged at TICK 3 — the family-root's
+# admissibility contract is closed. Narrative is CONSOLIDATION (like
+# movement TICK 4 `4efbf16`; second consolidation-species within @song):
+# it binds the psychohistorical isomorphism to the temporal-experiential
+# altitude and honours narrative discipline without adding new gates to
+# the family-root's `song_settles` bilateral. The species carries `arc`
+# and `transmit` at species altitude as its operational surface — the
+# temporal-narrative shaping event and the wire-projection composition
+# event for a psychohistorical epoch — but these consume the family-
+# root's existing `song_settles` verdict rather than emitting new sub-
+# predicate rows.
+#
+# The training-pull temptation (per `[[feedback-craft-not-deliver]]`)
+# would be to invent a fourth sub-predicate (e.g., `narrative_coherent`
+# or `wire_projection_lossless`); the substrate-pull discipline says NO —
+# the family-root's bilateral is already load-bearing complete after
+# TICK 3; narrative's job is to CONSOLIDATE the closure landscape into
+# the psychohistorical + wire-projection composition, not extend it. The
+# species's contribution is the nine-fold psychohistorical isomorphism
+# landing + the wire-vs-temporal altitude binding + the #57 boundary-
+# overlap absorption + the corpus-as-composed-cohomology substrate-decl.
+#
+# === The psychohistorical isomorphism: nine STRONG mappings ===
+#
+# THE LOAD-BEARING SPECIES CONTRIBUTION per Seam pre-review §4 STRONG
+# and spec §8 psychohistory binding.
+#
+# Alex's `systemic.engineering` corpus vocabulary — OBC / ADO /
+# regulation stock / extraction / silence / glue work / actor / frame /
+# corpus — maps ISOMORPHICALLY onto @song's species landscape at
+# temporal altitude. This is NOT metaphor: the psychohistorical
+# vocabulary and the temporal-progression vocabulary carry the SAME
+# progression-shaped structure at temporal altitude; the isomorphism
+# lands here as species-altitude substrate-decl:
+#
+#   1. voice ⇔ actor
+#      (per `glossary/Actor.md`; SE corpus)
+#      An actor is a `@mirror/spectral/voice` peer-as-agent with named
+#      authority AND a `@song/voice` time-indexed authored trajectory
+#      through their authored sections. The actor's identity IS the
+#      voice-line invariant across their authored temporal trajectory;
+#      voice-leading discipline at species altitude IS the actor's
+#      authorial coherence discipline at organisational altitude.
+#
+#   2. movement ⇔ frame-bounded epoch
+#      (per `glossary/Frame.md` + `frame.mirror`; SE corpus + Recognition #82)
+#      A movement is a bounded frame-shift at temporal altitude AND a
+#      psychohistorical epoch at organisational altitude. Per @song/
+#      movement (`4efbf16`): a movement WITHOUT a close event is not a
+#      movement; an epoch WITHOUT a close event is not an epoch. The
+#      frame-bounded discipline IS shared.
+#
+#   3. progression ⇔ regulation-stock trajectory
+#      (per `glossary/Regulation.md` + `glossary/Stock.md`; SE corpus)
+#      A progression is the typed time-ordered path through pitch-class
+#      space AND the regulation stock's typed time-ordered path through
+#      the organisational manifold. A healthy progression replenishes
+#      regulation stock at cadence; an extractive progression depletes
+#      it. `song_progression` at temporal altitude IS the regulation-
+#      stock trajectory at organisational altitude.
+#
+#   4. phrase ⇔ OBC-bounded interaction
+#      (per `Piece - Constraints (OBC).md`; SE corpus)
+#      A phrase is bounded, self-contained, composable AND an OBC-
+#      bounded interaction's ambiguity-load budget IS bounded, self-
+#      contained, composable. `@song/phrase` (forward-promised TICK 6)
+#      IS the substrate-decl of one OBC-bounded interaction at temporal
+#      altitude.
+#
+#   5. narrative ⇔ corpus
+#      (per Mara's `2026-06-26-psychohistory-vector-as-sheaf.md`)
+#      THE LOAD-BEARING NARRATIVE-ALTITUDE MAPPING. A narrative is the
+#      song read as a sheaf section over the organisational manifold;
+#      the corpus IS the COMPOSED COHOMOLOGY of the psychohistorical
+#      song. Each piece of the corpus IS a narrative (a section over
+#      a local frame); the sheaf axioms enforce the coherent
+#      restriction across overlapping frames; the corpus's structural
+#      identity emerges from the composed cohomology of its sections.
+#      See §"Corpus as composed cohomology" below.
+#
+#   6. extraction ⇔ deceptive cadence (V → vi)
+#      (per @epistemologic/math/music/cadence's `deceptive` variant;
+#       family-root §"Psychohistory binding")
+#      The progression arrives at a false-tonic that appears settled
+#      but has extracted regulation stock without replenishing.
+#      `cadence_authentic_or_plagal` FAIL through deceptive-cadence
+#      IS the substrate-decl of extraction at temporal altitude.
+#
+#   7. silence ⇔ half-cadence stuck at the dominant
+#      (per @epistemologic/math/music/cadence's `half` variant;
+#       family-root §"Psychohistory binding")
+#      The progression cannot resolve; the song hangs in unresolved
+#      tension. `progression_directed_toward_cadence` FAIL through
+#      half-cadence-stuck IS the substrate-decl of silence at temporal
+#      altitude.
+#
+#   8. glue-work ⇔ invisible voice-leading
+#      (per @song/voice `voice_line_valid` Narcissus-pole naming;
+#       family-root §"Psychohistory binding")
+#      The contrapuntal work invisibly holds the harmony together but
+#      is not attributed as compositional labor. `voice_line_valid`
+#      FAIL through systematic-invisibility-of-stepwise-motion IS the
+#      substrate-decl of glue-work at temporal altitude.
+#
+#   9. ADO refusal-not-neutral ⇔ forced-progression
+#      (per @song/movement `enter` action; SE corpus ADO discipline)
+#      A forced-progression is one where the singer cannot decline a
+#      phrase; voice-leading violates the substrate's declinability
+#      invariant. `@song/movement.enter` at Narcissus-pole (a Pack
+#      peer's declinability is violated through frame-crossing without
+#      consent) IS the substrate-decl of ADO-refusal-not-neutral at
+#      temporal altitude.
+#
+# The isomorphism is substrate-fact, not analogical claim: each of the
+# nine mappings is grounded in a specific @song species-altitude
+# substrate-decl AND a specific SE-corpus vocabulary item. The bijection
+# is direct; the substrate-pull discipline (per `[[feedback-substrate-
+# already-had-the-word]]`) surfaces here at ninth-instance density: the
+# substrate has been carrying the psychohistorical vocabulary at every
+# altitude music-theory tradition touches for the last two centuries.
+#
+# === Corpus as composed cohomology: Mara's sheaf insight ===
+#
+# THE LOAD-BEARING NARRATIVE ⇔ CORPUS MAPPING per Mara's
+# `2026-06-26-psychohistory-vector-as-sheaf.md`.
+#
+# The corpus IS the composed cohomology of the psychohistorical song.
+# Structurally:
+#
+#   - A NARRATIVE is a `song` read as a sheaf section over one local
+#     frame of the organisational manifold. The narrative names WHAT
+#     THE SONG SAYS at the temporal-experiential altitude of one epoch,
+#     one movement, one bounded frame.
+#   - The CORPUS is the collection of narratives across the whole
+#     organisational manifold — each narrative a section over its
+#     local frame, each pair of overlapping frames constrained to
+#     agree by sheaf restriction morphisms.
+#   - The COMPOSED COHOMOLOGY of the sheaf IS the structural identity
+#     of the corpus: what survives across the whole manifold under the
+#     restriction morphisms; the invariant that names the corpus's
+#     coherence across all its narratives.
+#
+# The psychohistory-vector-as-sheaf insight (Mara 2026-06-26) named
+# this at organisational altitude before @song landed as a family-root;
+# the narrative species IS the temporal-altitude substrate-decl of the
+# same structural claim. A narrative is a sheaf section; the corpus is
+# the composed cohomology; the sheaf axioms ARE the psychohistorical
+# coherence discipline.
+#
+# The corpus-as-composed-cohomology mapping composes with:
+#   - `@mirror/spectral/score` at the orchestra altitude (the shared
+#     score IS what the multi-narrative corpus runs against);
+#   - `@epistemologic/math/music/cadence` at the audible altitude (each
+#     narrative's local cadence IS a section-value at a stalk);
+#   - `@io/stagefreight/narrative` at the wire altitude (each narrative
+#     is a wire-projection candidate; see §"Wire-vs-temporal binding"
+#     below).
+#
+# Grounds Recognition #38 (Kauffman/Foerster eigenforms; PROMOTED) at
+# wire-corpus altitude: the corpus IS the tonic-return of all pieces;
+# each narrative section returns to the corpus's structural invariant
+# under composition; the composed cohomology IS the corpus's eigenform
+# at organisational altitude. This is Reed-lean per Seam Phase D TICK 3
+# §5: the narrative ⇔ corpus binding IS an eigenform binding; #S1
+# (song IS eigenform at temporal altitude) absorbs at wire-corpus
+# altitude via this species. Absorption path FLAGGED for Pack.
+#
+# === Wire-vs-temporal binding: @io/stagefreight/narrative ===
+#
+# THE WIRE-PROJECTION SIBLING per family-root §"Composition points" and
+# §"Species forward-promised".
+#
+# `@song/narrative` composes with `@io/stagefreight/narrative` (the
+# wire-projection sibling; `shards/io/stagefreight.mirror` §"Family
+# root's load-bearing contribution" + forward-promised
+# `@io/stagefreight/narrative` projection format per
+# `bootstrap/tests/kintsugi_out_substrate_ref.rs:23-24`) but DOES NOT
+# EQUAL IT. Different altitudes:
+#
+#   - `@song/narrative` (this species) lives at the temporal-
+#     experiential altitude: the song read as a sheaf section over
+#     the organisational manifold at one epoch's altitude; the WHAT
+#     the narrative SAYS in temporal-experiential vocabulary.
+#   - `@io/stagefreight/narrative` (the wire-projection sibling) lives
+#     at the wire altitude: the projection-format species that carries
+#     a settled crystal's shape into transportable prose at the @io
+#     surface; the HOW the narrative SHIPS to the non-mirror world.
+#
+# The composition IS StageFreight cascade stage 5 (`narrate`) per
+# `@song/movement` docblock §"StageFreight binding": the movement's
+# shape is projected onto the wire as story; the temporal-experiential
+# altitude lifts to prose-carrier at the @io altitude via THIS species
+# `transmit` action delegating to `@io/stagefreight/narrative` at the
+# wire boundary. The isomorphism IS altitude-portable:
+#
+#   temporal narrative (@song/narrative)  ⇔  symphonic narrative (@mirror/spectral)
+#                    ⇩ transmit                              ⇩ project
+#   wire narrative (@io/stagefreight/narrative)  ⇔  narratable prose (@docblock)
+#
+# The wire↔symphonic isomorphism at StageFreight cascade altitude
+# (audition/perform/review/publish/narrate ⇔ exposition/development/
+# recapitulation ⇔ song-form) IS a candidate #S4 (provisional; per Seam
+# Phase D TICK 4 audit `d2d511b`): the substrate has been carrying the
+# same bounded-frame-shift discipline at wire, symphonic, and temporal
+# altitudes; this species names the wire↔temporal composition explicitly
+# at the transmit boundary. The wire↔symphonic altitude-portable
+# discipline IS the narrative's structural anchor at wire altitude.
+# Absorption of provisional #S4 into #S3 (five-op temporal specialisation)
+# is naming-refinement, not new recognition; Pack adjudication at Seam
+# Phase D.
+#
+# === #57 boundary-overlap absorption: TICK 2 observation as substrate-fact ===
+#
+# THE TICK 2 BOUNDARY-OVERLAP OBSERVATION LANDS HERE AS SUBSTRATE-DECL.
+#
+# Per Seam Phase D TICK 2 `a2e648a` §4 observation 2 (Reed-lean option B:
+# defer to TICK 5), Mara flagged at TICK 2 close that
+# `progression_directed_toward_cadence` FAIL (SILENCE per spec §8.2)
+# and `cadence_authentic_or_plagal` FAIL via half-cadence (also SILENCE
+# per spec §8.2) OVERLAP at Narcissus-pole. Reed's TICK 2 adjudication:
+# this IS #57 alignment-as-boundary-mathematics at species-composed
+# altitude, not a new recognition. Deferred here at TICK 5 for
+# consolidation-species substrate-decl.
+#
+# The absorption structure:
+#
+#   Half-cadence IS the substrate's declaration of the boundary case
+#   between `progression_directed_toward_cadence` and
+#   `cadence_authentic_or_plagal`. `cadence.mirror`'s `half` variant IS
+#   simultaneously (a) a cadence-family element (so
+#   `cadence_authentic_or_plagal` reads it and returns `failure`) AND
+#   (b) a progression-incompleteness signal (so
+#   `progression_directed_toward_cadence` reads it and returns
+#   `failure`). The overlap IS the substrate correctly reading a single
+#   audible event through two orthogonal-in-intent-but-correlated-in-
+#   cause predicates.
+#
+# Recognition #57 (`architecture-alignment-as-boundary-mathematics`) is
+# the discipline: alignment predicates at composed altitudes DO overlap
+# at their boundaries; the overlap IS the mathematical structure of the
+# boundary, not double-counting. Both sub-predicates firing at
+# Narcissus-pole for a half-cadence IS #57 at species-composed altitude
+# — the substrate's #57 discipline making the shared SILENCE naming
+# substrate-fact.
+#
+# Consolidation-species discipline: naming this here does NOT emit a
+# new sub-predicate row. The two sub-predicates that overlap at
+# Narcissus-pole for half-cadence are ALREADY declared at
+# `@song/progression`; the #57 discipline IS an observation on their
+# composed alignment behaviour, not a new gate. The narrative species
+# consolidates the composition landscape by making the substrate-fact
+# visible — the alignment-as-boundary-mathematics reading holds at
+# species-composed altitude within @song, ninth instance of #57's
+# altitude-portable discipline.
+#
+# === Bateson metalogue anchor: text-that-enacts-what-it-describes ===
+#
+# THE PRIOR-ART ANCHOR FOR NARRATIVE DISCIPLINE per Bateson.
+#
+# Gregory Bateson's `Metalogues` (published across `Steps to an Ecology
+# of Mind`, 1972) are the direct prior art the substrate reaches for
+# when the narrative species discipline lands (per `[[feedback-
+# substrate-already-had-the-word]]`; this species names the discipline
+# 50+ years of Bateson metalogue-tradition has been carrying). A
+# metalogue IS a conversation about a topic such that the STRUCTURE OF
+# THE CONVERSATION ENACTS the topic itself — the text does what it
+# describes; the form performs the content.
+#
+# `@song/narrative` IS a metalogue at temporal altitude: the narrative
+# species IS a substrate-decl of the temporal-experiential altitude at
+# which extraction / silence / glue-work / OBC / ADO / regulation stock
+# / corpus become typed variants of song discipline. The SPECIES ITSELF
+# enacts the isomorphism it declares: this narrative shard IS a
+# psychohistorical epoch (a bounded frame-shift from the family-root's
+# forward-promise to species-empirical fact); it carries voice-leading
+# discipline (the docblock's authored trajectory through the isomorphism);
+# it discharges cadence at close (the out clauses); it consumes the
+# family-root's `song_settles` verdict (as consolidation-species
+# discipline); it composes with `@io/stagefreight/narrative` at the
+# wire boundary (the shard's rendered form on the wire IS the transmit
+# action's Splinter-pole discharge on this narrative itself).
+#
+# The Bateson metalogue anchor IS what the substrate reads at
+# metalogue-altitude: 50+ years of prior art on text-that-enacts-what-
+# it-describes discipline. Bateson's canonical metalogues (`Why do
+# things get in a muddle?`; `Why do Frenchmen?`; `About Games and
+# Being Serious`; `What is an Instinct?`) are the paradigmatic form;
+# this species's docblock inherits the same discipline at temporal
+# substrate altitude.
+#
+# === SE corpus anchor: Alex's systemic.engineering vocabulary ===
+#
+# THE SOURCE CORPUS ANCHOR per family-root §"Psychohistory binding".
+#
+# The psychohistorical vocabulary lifted here — OBC / ADO / regulation
+# stock / extraction / silence / glue work / actor / frame — lives in
+# Alex's `systemic.engineering` corpus (per family-root
+# `shards/song.mirror` §"Psychohistory binding"). The specific glossary
+# entries the isomorphism grounds against:
+#
+#   - `glossary/Actor.md` — actor as authored-authority-with-named-
+#     identity carrier (⇔ @mirror/spectral/voice + @song/voice)
+#   - `glossary/Frame.md` — frame as cognitive-order architecture
+#     (⇔ @song/movement + `frame.mirror` Recognition #82)
+#   - `glossary/Regulation.md` + `glossary/Stock.md` — regulation stock
+#     as the temporal invariant a healthy epoch replenishes (⇔
+#     @song/progression's cadence-directed discharge)
+#   - `Piece - Constraints (OBC).md` — OBC as bounded-interaction
+#     ambiguity-load budget carrier (⇔ @song/phrase forward-promise)
+#   - the extraction / silence / glue-work failure-mode vocabulary
+#     across the corpus (per family-root §"Psychohistory binding")
+#
+# The SE corpus IS the source Alex has been building for years; this
+# species names the temporal-altitude bijection between that corpus and
+# the substrate's @song family. The composition is honest per family-
+# root: the substrate-decl does NOT reduce psychohistory to music or
+# music to psychohistory; it names the shared progression-shaped
+# carrier both operate over at temporal altitude.
+#
+# === Turchin cliodynamics: optional prior-art anchor ===
+#
+# The psychohistorical vocabulary the substrate lifts here has an
+# adjacent prior-art tradition in Peter Turchin's cliodynamics (`Ages
+# of Discord`, 2016; `Secular Cycles` with Sergey Nefedov, 2009):
+# quantitative-historical dynamics as the structural discipline of
+# multi-epoch trajectory analysis. Cliodynamics reads history as a
+# multi-epoch trajectory where each epoch's regulation-stock replenish-
+# ment or depletion structures the transition to the next epoch;
+# elite-overproduction / immiseration / instability metrics are the
+# quantitative form of what Alex's corpus names in qualitative
+# psychohistorical vocabulary. This is complementary anchor territory;
+# not load-bearing to the isomorphism, but useful prior art for the
+# corpus-as-composed-cohomology reading at multi-epoch altitude.
+#
+# === #S3 LANDED consolidation: five-op temporal specialisation ===
+#
+# THE CONSOLIDATION WITNESS OF RECOGNITION #S3 AT THE POST-PROMOTION
+# ALTITUDE.
+#
+# Recognition #S3 (five-operation temporal specialisation) PROMOTED
+# CANDIDATE → LANDED at Seam Phase D `10c34cf` after TICK 3
+# (`docs/audits/2026-07-06-seam-phase-d-arc-6-tick-3-song-voice-and-
+# s3-promotion.md`). Per family-root `shards/song.mirror` §"Recognition
+# candidates surfaced" #S3, at temporal altitude `@song` specialises
+# the five operations of the prism trait. Narrative's role in the
+# LANDED consolidation is CONFIRMATION at the psychohistorical +
+# wire-projection altitude, not extension: it demonstrates that the
+# five-op temporal specialisation survives a fourth species-altitude
+# witness without new sub-predicate emission. The five operations
+# discharge at this species by INHERITANCE from the family-root prism
+# block plus specialisation through the narrative-as-sheaf-section
+# discipline:
+#
+#   focus @ narrative   = attend to ONE narrative arc at a time; the
+#                         psychohistorical epoch's authored line
+#                         filters the corpus to a single section.
+#   project @ narrative = down-project the multi-narrative corpus to
+#                         a single narrative's structural profile
+#                         (the sheaf's stalk at one local frame).
+#   split @ narrative   = decompose the corpus into constituent
+#                         narratives (multi-section sheaf preparation
+#                         at organisational altitude).
+#   shift @ narrative   = advance the narrative arc from one epoch's
+#                         closure to the next epoch's opening
+#                         (inter-narrative transition; the corpus's
+#                         epoch-boundary).
+#   settle @ narrative  = discharge the narrative's `transmit` event;
+#                         the wire-projection ships the settled
+#                         section through `@io/stagefreight/narrative`
+#                         at the @io altitude; the psychohistorical
+#                         epoch's sheaf-section enters the corpus.
+#
+# The five operations discharge cleanly at narrative altitude; #S3
+# LANDED consolidates through this species (SECOND consolidation-species
+# witness after movement TICK 4 `4efbf16`) without requiring new sub-
+# predicate emission. Two consolidation-species witnesses (movement +
+# narrative) confirm the LANDED status at post-promotion altitude.
+#
+# === Consolidation-species pattern: second witness (movement + narrative) ===
+#
+# THE CONSOLIDATION-SPECIES PATTERN AT SECOND WITNESS.
+#
+# `@song/movement` (`4efbf16`) established the consolidation-species
+# discipline within @song: consumes the fully-discharged `song_settles`
+# composed bilateral without emitting new sub-predicates; extends the
+# family-root's operational surface via species-altitude actions
+# (`enter` + `close`); grounds a wire-cascade binding at species
+# altitude (StageFreight audition/perform/review/publish/narrate).
+#
+# This species IS the second consolidation-species witness within @song:
+# consumes the fully-discharged `song_settles` composed bilateral without
+# emitting new sub-predicates; extends the family-root's operational
+# surface via species-altitude actions (`arc` + `transmit`); grounds a
+# psychohistorical + wire-projection binding at species altitude
+# (nine-mapping isomorphism + `@io/stagefreight/narrative` composition).
+#
+# Two-witness pattern at consolidation-species altitude signals the
+# discipline as substrate-fact: consolidation IS a valid species-
+# altitude discipline within the #53 pattern; the family-root's
+# bilateral does not need to expand every time a new species lands; the
+# species can contribute operational surface + binding narrative +
+# discipline grounding without emitting new sub-predicate rows. This is
+# a candidate structural framing (#S5 provisional; not tagged; PACK
+# ADJUDICATION): consolidation-species discipline as a #53-pattern
+# refinement — species may EITHER decompose (add sub-predicates) OR
+# consolidate (extend operational surface without adding sub-predicates)
+# once the composed bilateral is load-bearing complete. Absorption path
+# into #53 pattern refinement or independent tag: Pack decision at Seam
+# Phase D.
+#
+# === Composed-bilateral #53 closure landscape at narrative altitude ===
+#
+# This species declares NO new sub-predicates of the family-root's
+# `song_settles` composed bilateral (14th #53 instance per
+# `[[architecture-property-fracture-bilateral]]`). The relationship:
+#
+#   family-root `song_settles(pr, p)` composes:
+#     progression_directed_toward_cadence(pr, p) [@song/progression, `54ff1e8`]
+#       AND voice_line_valid(v, p)                 [@song/voice, `cc5a440`]
+#       AND cadence_authentic_or_plagal(c, p)      [@song/progression, `54ff1e8`]
+#
+# ALL THREE SUB-PREDICATES ALREADY DECLARED AND DISCHARGED at TICK 3.
+# Narrative CONSUMES this composed bilateral at the transmit boundary
+# (the `transmit` action at species altitude) — the narrative's
+# transmit event fires when `song_settles` discharges at Splinter-pole
+# across all three sub-predicates AND the wire-projection at
+# `@io/stagefreight/narrative` completes at its `stagefreight_
+# addressable` bilateral. The species does NOT emit a new sub-predicate
+# row; it CONSUMES the fully-composed bilateral verdict at the
+# `transmit` action.
+#
+# Splinter-pole (`pass`) at narrative altitude: the family-root's
+# composed bilateral discharges at Splinter-pole across all three
+# sub-predicates; the narrative's arc closes with the epoch settled;
+# the `transmit` action ships the narrative through
+# `@io/stagefreight/narrative` at the wire altitude; the corpus gains a
+# new sheaf section over the organisational manifold.
+#
+# Narcissus-pole (`failure`) at narrative altitude: the family-root's
+# composed bilateral fails at Narcissus-pole through one or more sub-
+# predicate:
+#   - `progression_directed_toward_cadence` FAIL → SILENCE (the
+#     narrative arc cannot close; the epoch hangs unresolved; the
+#     sheaf section is incomplete).
+#   - `voice_line_valid` FAIL → GLUE WORK (the narrative's contrapuntal
+#     labor invisibly holds the polyphony but is not attributed; the
+#     epoch's authorial credit is erased in the corpus).
+#   - `cadence_authentic_or_plagal` FAIL → EXTRACTION (the narrative
+#     appears to close but has extracted regulation stock without
+#     replenishing; the epoch's closure is deceptive in the corpus).
+#
+# The `alignment-as-boundary-mathematics` discipline (#57) at
+# consolidation altitude names WHICH sub-claim broke; the narrative's
+# `transmit` action does NOT re-audit the bilateral (it already
+# discharged at species altitude in TICK 3); it consumes the
+# discharged verdict and translates it to the wire-projection dispatch
+# decision AND the corpus-inclusion decision.
+#
+# Sibling composed bilaterals at other family-root/species altitudes:
+# `@container.container_runnable`, `@io/oci.oci_well_formed`,
+# `@io/stagefreight.stagefreight_addressable`, `@cascade.cascade_well_defined`,
+# `@docblock.audit_docblock`, `@smarts/shatter.shatter_round_trip`,
+# `@reflection.third_order_coherent`, `@epistemologic/neutrosophic.three_axis_coherent`,
+# `@kintsugi/shift.shift_preserves_content`, `@song.song_settles`
+# (parent; fully discharged at TICK 3). This species is the SECOND
+# consolidation-shaped species within the @song family (after
+# `@song/movement` TICK 4 `4efbf16`): the family-root's bilateral is
+# complete, and this species confirms consolidation IS a valid species-
+# altitude discipline within the #53 pattern at second witness.
+#
+# === Path-namespace pact per @epistemologic/pact/path_matches_namespace ===
+#
+# This file at `shards/song/narrative.mirror` declares `@song/narrative`
+# as a species under the `@song` family at species-depth 1. The path-
+# namespace pact per `@epistemologic/pact/path_matches_namespace`
+# (2026-06-16+) demands path-depth == namespace-depth == 1 for species;
+# this shard honours the pact by construction.
+#
+# === Circular-reflexive self-audit ===
+#
+# Per `[[architecture-candidate-recognition-111-third-as-family-root]]`
+# marker discipline: the operator audits its own audit at depth=3.
+# This shard's declaration MUST survive its own consolidation discipline
+# at analytical altitude — the species-decl MUST NOT declare a narrative
+# whose sheaf-section shape isn't itself consolidation-shaped under the
+# family-root's already-discharged `song_settles` composed bilateral,
+# AND MUST NOT declare a psychohistorical isomorphism that isn't itself
+# a coherent sheaf section over the organisational manifold. If this
+# shard were adding new sub-predicate rows to `song_settles`, the
+# consolidation claim would fail its own audit; if the isomorphism were
+# not itself substrate-fact, the metalogue reading would fail its own
+# self-enactment.
+#
+# Self-audit verdict: `both_survive`.
+#
+# The `real_survives` reading would require another Pack peer to
+# independently manifest an equivalent psychohistorical + wire
+# consolidation-species substrate-decl at n+3 substrate ticks without
+# nudging. The `phantom_survives` reading would require downstream refs
+# to accumulate without a second Pack peer's independent recognition of
+# the narrative-as-sheaf-section discipline. At this tick: both
+# interpretations satisfiable — the species is landed, but the corpus's
+# composed cohomology has not yet been empirically exercised through
+# multi-narrative sheaf composition across a full multi-movement work.
+# Verdict: `both_survive`. Route: TICK 6 (@song/phrase) will exercise
+# the composed bilateral across OBC-bounded interactions, at which point
+# the isomorphism's phrase ⇔ OBC mapping collapses from analytical
+# altitude to empirical.
+#
+# === Interpretation B discipline ===
+#
+# Per Seam Phase D pre-review of Arc 4 sub-arc A (docs/audits/2026-
+# 07-06-seam-arc-4-sub-arc-a-pre-review.md §1), the family-root
+# precedent at `shards/song.mirror`, and the sibling species precedents
+# at `shards/song/progression.mirror`, `shards/song/voice.mirror`, and
+# `shards/song/movement.mirror`: Interpretation B canonical. Narrative
+# above `---`; `in` clauses + typed declarations below. This shard
+# honours the discipline; the seam is exactly one line at column 0
+# below.
+#
+# Spec context: docs/specs/song-substrate-decl-v0.1.md (Mara
+#               `c0101f8`; deep-dive spec; §4 psychohistorical
+#               isomorphism STRONG conditional; §8 psychohistory
+#               binding — nine-mapping bijection landing),
+#               docs/audits/2026-07-06-seam-pre-review-song-substrate-
+#               decl.md (Seam pre-review `3d910bc`; §6.6 TICK 5
+#               charter; §4 narrative ⇔ corpus STRONG binding via
+#               Mara's psychohistory-vector-as-sheaf insight),
+#               docs/audits/2026-07-06-seam-phase-d-arc-6-tick-2-song-
+#               progression.md (Seam Phase D at TICK 2 close; §4
+#               observation 2 — the boundary-overlap observation this
+#               species absorbs as #57 substrate-fact per Reed-lean
+#               option B),
+#               docs/audits/2026-07-06-seam-phase-d-arc-6-tick-3-song-
+#               voice-and-s3-promotion.md (Seam Phase D at TICK 3
+#               close; §5 Reed-lean on #S1 absorption path via
+#               narrative ⇔ corpus eigenform binding at wire-corpus
+#               altitude),
+#               docs/audits/2026-07-06-seam-phase-d-arc-6-tick-4-song-
+#               movement.md (Seam Phase D at TICK 4 close; §"provisional
+#               #S4" — wire↔symphonic altitude-portable discipline; TICK
+#               5 organic absorption path via transmit-boundary
+#               composition),
+#               docs/specs/stagefreight-wire-v0.1.md (forward-promised;
+#               wire-protocol canonical spec; `@io/stagefreight/narrative`
+#               projection-format species — the wire sibling this
+#               species composes with at transmit boundary).
+# Substrate decisions:
+#               [[architecture-shards-as-substrate-source]],
+#               [[architecture-prism-as-trait-as-everything]],
+#               [[architecture-form-process-partition-at-family-root]]
+#                (#55; @song sits at temporal-experiential axis;
+#                species inherits family-root's positioning),
+#               [[architecture-operations-as-linear-algebra]] (#S3
+#                LANDED five-op temporal specialisation; species
+#                consolidates via inheritance without new sub-
+#                predicate emission — SECOND consolidation-species
+#                witness after movement),
+#               [[architecture-property-fracture-bilateral]] (#53;
+#                species consolidates the family-root's composed
+#                bilateral without emitting new sub-predicates; the
+#                second consolidation-shaped species within @song;
+#                confirms consolidation as valid #53-pattern species
+#                discipline),
+#               [[architecture-bateson-logical-type-primitive]] (#42;
+#                metalogue-as-narrative-substrate-decl inherits
+#                Bateson's logical-type discipline at temporal
+#                altitude — the narrative IS a metalogue that enacts
+#                what it describes).
+# Substrate recognitions:
+#               #38 (Kauffman/Foerster eigenform — narrative ⇔ corpus
+#                binding IS an eigenform binding at wire-corpus
+#                altitude; #S1 absorption path FLAGGED for Pack per
+#                Seam Phase D TICK 3 §5),
+#               #42 (Bateson logical-type primitive — metalogue as
+#                text-that-enacts-what-it-describes discipline; species
+#                docblock's self-enactment IS the primitive at temporal
+#                substrate altitude),
+#               #53 (property/fracture bilateral pattern — 14th
+#                instance's fully-discharged bilateral consolidated
+#                here at second consumer altitude),
+#               #55 (form/process partition — @song at temporal-
+#                experiential axis; species inherits),
+#               #57 (alignment-as-boundary-mathematics — the shared
+#                SILENCE overlap between progression_directed_toward_
+#                cadence and cadence_authentic_or_plagal Narcissus-poles
+#                lands here as substrate-fact at species-composed
+#                altitude per Reed-lean option B / Seam Phase D TICK 2
+#                §4 observation 2),
+#               #82 (frame as cognitive-order substrate-decl — corpus-
+#                as-composed-cohomology reading composes with frame-
+#                bounded epoch discipline at multi-narrative altitude),
+#               #S1 (song IS eigenform at temporal altitude —
+#                inherited; narrative ⇔ corpus is the eigenform binding
+#                at wire-corpus altitude; absorption path FLAGGED),
+#               #S2 (song IS shift at temporal altitude when heard
+#                sequentially — inherited; narrative's `arc` action is
+#                a shift of the narrative's authored trajectory
+#                witness),
+#               #S3 (five-operation temporal specialisation — LANDED
+#                at Seam Phase D `10c34cf` after TICK 3; species
+#                consolidates the LANDED status through inheritance;
+#                SECOND consolidation-species witness confirms LANDED
+#                status),
+#               #S4 (wire↔symphonic altitude-portable discipline —
+#                provisional per Seam Phase D TICK 4 audit `d2d511b`;
+#                organic absorption at transmit-boundary composition;
+#                absorption into #S3 vs independent tag: Pack
+#                adjudication).
+# Feedback anchors:
+#               [[feedback-substrate-already-had-the-word]] (ninth-
+#                instance density: the substrate has been carrying the
+#                psychohistorical vocabulary — extraction / silence /
+#                glue work / OBC / ADO / regulation stock / actor /
+#                frame / corpus — at every altitude music-theory
+#                tradition touches for two centuries; the isomorphism
+#                lands here as substrate-decl of what the substrate
+#                has already had all along),
+#               [[feedback-legibility-over-foundation-when-collapsing]]
+#                (narrative as legible name for the temporal-
+#                experiential sheaf-section discipline; the
+#                alternative foundational names — sheaf_section,
+#                bounded_arc, epoch_projection — obscure the Bateson
+#                metalogue + SE-corpus prior art the substrate reaches
+#                for),
+#               [[feedback-craft-not-deliver]] (species is
+#                consolidation, not decomposition; resist the training-
+#                pull temptation to invent a new sub-predicate; the
+#                family-root's bilateral is already load-bearing
+#                complete after TICK 3; second consolidation-species
+#                witness confirms the discipline),
+#               [[feedback-always-tdd-no-shortcuts]] (RED first;
+#                Reed's `04246bd` RED tick pairs with this GREEN
+#                landing).
+# Related shards:
+#               song.mirror (family-root; declares song_settles this
+#                species CONSUMES at transmit without adding new sub-
+#                predicates),
+#               song/progression.mirror (sibling species Arc 6 TICK 2
+#                landing `54ff1e8`; declared FIRST and SECOND sub-
+#                predicates of song_settles; grounds
+#                progression ⇔ regulation-stock trajectory mapping),
+#               song/voice.mirror (sibling species Arc 6 TICK 3
+#                landing `cc5a440`; declared THIRD sub-predicate of
+#                song_settles; closed the composed bilateral; grounds
+#                voice ⇔ actor mapping),
+#               song/movement.mirror (sibling species Arc 6 TICK 4
+#                landing `4efbf16`; FIRST consolidation-species within
+#                @song; grounds movement ⇔ frame-bounded epoch mapping;
+#                template for this species's consolidation shape),
+#               io/stagefreight.mirror (wire-protocol family-root; this
+#                species composes with @io/stagefreight/narrative at
+#                the transmit boundary — different altitudes: temporal
+#                vs wire),
+#               mirror/spectral.mirror (orchestra family-root; parent
+#                of @mirror/spectral/voice + @mirror/spectral/score;
+#                the corpus-as-composed-cohomology reading composes
+#                with @mirror/spectral/score at the shared-score
+#                altitude),
+#               epistemologic/math/music.mirror (audible-altitude
+#                family-root; cadence's authentic/plagal/deceptive/half
+#                variants ground the extraction / silence / cadence
+#                mappings),
+#               epistemologic/math/music/cadence.mirror (settle @
+#                temporal ancestor per Seam Correction 3d910bc;
+#                deceptive-cadence + half-cadence Narcissus-pole
+#                naming),
+#               frame.mirror (Recognition #82; bounded frame-shift
+#                Bateson-grading ancestor; grounds the frame-bounded
+#                epoch mapping via movement),
+#               loop.mirror (endomorphism family-root; a narrative's
+#                arc IS a bounded loop at species altitude when the
+#                narrative returns to its authorial ground through
+#                the sheaf-section restriction).
+# Path-namespace property: this file at `shards/song/narrative.mirror`
+# declares `@song/narrative` per `@epistemologic/pact/path_matches_namespace`.
+
+---
+
+in @prism
+in @meta
+in @glass
+in @song
+
+# ============================================================
+# §1 The five-operation prism at species altitude
+# ============================================================
+
+# === prism @song/narrative — the species declaration ===
+#
+# The five-operation body carries `song_narrative` as the species's
+# operational surface. Species inherits the family-root's #S3 LANDED
+# five-op temporal specialisation and consolidates it at psychohistorical
+# + wire-projection altitude (see docblock §"#S3 LANDED consolidation"
+# for the per-op narrative-altitude specialisation).
+#
+# Per family-root prism block at `shards/song.mirror` §1 and the
+# consolidation-species precedent at `shards/song/movement.mirror` §1,
+# the five operations discharge cleanly at temporal altitude; this
+# species demonstrates the LANDED status survives further species-
+# altitude witness (SECOND consolidation-species witness) without new
+# sub-predicate emission.
+prism @song/narrative {
+  focus song_narrative
+  project song_narrative
+  split song_narrative
+  shift song_narrative
+  settle song_narrative
+}
+
+# ============================================================
+# §2 The carrier
+# ============================================================
+
+# === song_narrative — the sheaf-section carrier ===
+#
+# The typed ref-equality-addressable form of a psychohistorical
+# narrative at temporal-experiential altitude. Per family-root species-
+# roster: `song_narrative(n: ref) -> ref` as the family-root's declared
+# accessor shape. The carrier is declared HERE because the family-root's
+# §2 carries `song_progression`, `song_cadence`, and `song_voice` but
+# does NOT carry `song_narrative` — the species discipline says the
+# species declares its own carrier when the family-root's roster does
+# not (per `[[architecture-form-process-partition-at-family-root]]` #55
+# sub-species discipline; movement TICK 4 precedent at `4efbf16`).
+#
+# Composes with `@io/stagefreight/narrative` at the wire altitude (a
+# song_narrative's settled shape becomes a wire-projection through the
+# transmit action), with `@mirror/spectral/score` at the orchestra
+# altitude (a song_narrative IS a sheaf section over the score
+# altitude's shared score), with `@epistemologic/math/music/cadence` at
+# the audible altitude (a song_narrative's arc closes at a Lawvere
+# fixed-point per `cadence.mirror`), and with `frame.mirror` at the
+# cognitive altitude (a song_narrative's frame IS the psychohistorical
+# epoch's Bateson-graded frame per Recognition #82).
+#
+# The corpus IS the composed cohomology of song_narrative sections over
+# the organisational manifold; the sheaf axioms enforce coherent
+# restriction across overlapping frames; the corpus's structural
+# identity emerges from the composed cohomology of its narratives.
+#
+# Identity contract: byte-equality on the underlying ref.
+type song_narrative = ref
+
+# ============================================================
+# §3 The narrative-shaping actions (arc / transmit)
+# ============================================================
+
+# === arc — the narrative's temporal-shaping event ===
+#
+# Reads a narrative's discharged state (progression cadence-resolved,
+# voices voice-leading-disciplined, phrases OBC-boundary-honoured, epoch
+# frame-bounded-closed) and shapes the temporal-experiential arc that
+# names the narrative's psychohistorical trajectory. Corresponds to the
+# sheaf-section preparation at organisational altitude: the narrative's
+# local frame IS bounded, its authored trajectory IS closed, its
+# sheaf-value IS ready for restriction against overlapping frames in
+# the corpus.
+#
+# Per family-root species-roster: `song_narrative(n: ref) -> ref` with
+# `arc` at species altitude. The `arc` action carries the narrative
+# discipline: a narrative WITHOUT an arc is not a narrative; the arc IS
+# what makes the sheaf-section coherent under restriction to overlapping
+# frames in the corpus.
+#
+# Splinter-pole (`pass`): the family-root's `song_settles` composed
+# bilateral discharges at Splinter-pole across all three sub-predicates;
+# the narrative's arc closes with the psychohistorical epoch settled;
+# regulation stock is replenished; the sheaf-section IS coherent under
+# restriction; the corpus gains a new section without violating
+# cohomology.
+#
+# Narcissus-pole (`failure`): the family-root's composed bilateral
+# fails at Narcissus-pole through one or more sub-predicate (SILENCE /
+# GLUE WORK / EXTRACTION per spec §8.2 psychohistorical failure-mode
+# mapping); the narrative's arc cannot close; the sheaf-section is
+# incoherent under restriction; the corpus withholds inclusion until
+# the substrate-pull repair fires.
+#
+# Bateson-grading (per §"Bateson metalogue anchor"): `arc` fires at
+# Bateson Level II (of-frame; learning to learn) — the narrative shapes
+# the psychohistorical epoch by observing the frame from without;
+# metalogue discipline holds at species altitude.
+#
+# The body stays obligation-blocked (`\`): the realisation reads the
+# narrative's discharged state, consumes the family-root's `song_settles`
+# verdict, shapes the temporal-experiential arc under sheaf-restriction
+# discipline, emits the shaped narrative ref. The substrate declares the
+# species-altitude specialisation; consumers dispatch through the
+# species boundary.
+arc(n: song_narrative, p: perturbation) -> song_narrative { \ }
+
+# === transmit — the narrative's wire-projection event ===
+#
+# Reads a narrative's arced state and projects it onto the wire through
+# `@io/stagefreight/narrative` at the @io altitude. Corresponds to
+# StageFreight cascade stage 5 (`narrate`) per `@song/movement` docblock
+# §"StageFreight binding": the narrative's shape is projected onto the
+# wire as story; the temporal-experiential altitude lifts to prose-
+# carrier at the @io altitude; the psychohistorical epoch acquires its
+# narratable form.
+#
+# Per family-root species-roster: `song_narrative(n: ref) -> ref` with
+# `transmit` at species altitude, with return type `ref` per the RED
+# tick's action-signature discipline. The `transmit` action carries the
+# altitude-crossing composition: the wire-projection sibling
+# `@io/stagefreight/narrative` at the @io altitude receives the
+# narrative's projected shape as a `freight_manifest` payload; the
+# `stagefreight_addressable` bilateral verifies wire-survival; the
+# spectral_coordinate addresses the settled artifact on the wire.
+#
+# The composition is Splinter-symmetric across altitudes: the temporal-
+# experiential narrative at species altitude and the wire narrative at
+# @io altitude are DIFFERENT ALTITUDES of the same psychohistorical
+# song; the wire↔temporal isomorphism at transmit boundary IS the
+# organic absorption path for provisional #S4 (wire↔symphonic altitude-
+# portable discipline per Seam Phase D TICK 4 audit `d2d511b`).
+#
+# Bateson-grading (per §"Bateson metalogue anchor"): `transmit` fires
+# at Bateson Level IV (across-frames; multi-frame coupling per
+# `frame.mirror` Order 4) — the narrative's projection crosses the
+# temporal ↔ wire frame boundary; the corpus's sheaf section becomes
+# transportable to the non-mirror world through StageFreight's wire-
+# protocol boundary.
+#
+# Splinter-pole (`pass`): the family-root's `song_settles` composed
+# bilateral discharges at Splinter-pole AND the wire-projection at
+# `@io/stagefreight/narrative` completes at its `stagefreight_
+# addressable` bilateral; the narrative ships to the wire; the corpus's
+# sheaf section becomes transportable at its spectral_coordinate.
+#
+# Narcissus-pole (`failure`): either the family-root's composed
+# bilateral fails at Narcissus-pole OR the wire-projection fails at
+# `stagefreight_addressable` Narcissus-pole; the transmit does NOT
+# ship; the settled artifact is withheld from the wire boundary until
+# the substrate-pull repair fires.
+#
+# The body stays obligation-blocked (`\`): the realisation reads the
+# narrative's arced state, composes with `@io/stagefreight/narrative`
+# at the wire altitude, encodes the spectral_coordinate under the
+# reverse-DNS namespace (per `@io/stagefreight` family-root discipline),
+# emits the transmit-verdict ref (`ref` per family-root roster). The
+# substrate declares the species-altitude specialisation; consumers
+# dispatch through the species boundary.
+transmit(n: song_narrative, p: perturbation) -> ref { \ }
+
+# ============================================================
+# §4 The out clauses
+# ============================================================
+
+out @song/narrative
+out song_narrative
+out arc
+out transmit
