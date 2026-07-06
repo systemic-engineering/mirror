@@ -30,8 +30,8 @@ fn repo_root() -> PathBuf {
 }
 
 fn read_docblock_no_extraction_pattern_shard() -> String {
-    let path = repo_root()
-        .join("shards/epistemologic/property/docblock_no_extraction_pattern.mirror");
+    let path =
+        repo_root().join("shards/epistemologic/property/docblock_no_extraction_pattern.mirror");
     std::fs::read_to_string(&path).unwrap_or_else(|e| {
         panic!(
             "read shards/epistemologic/property/docblock_no_extraction_pattern.mirror at {:?}: {}",

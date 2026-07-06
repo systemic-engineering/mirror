@@ -95,7 +95,11 @@ fn t07_runtime_names_splinter_pole_daemonless() {
     // Splinter-pole = the K_n complete-graph pole vs Narcissus K_{1,n-1} star-graph pole
     // Daemonless runtimes = Splinter-pole (peer-to-peer, no central hub)
     // Docker-with-daemon = Narcissus-pole-adjacent (hub-and-spoke)
-    let has_splinter_framing = content.contains("Splinter") || content.contains("splinter") || content.contains("daemonless") || content.contains("podman") || content.contains("buildah");
+    let has_splinter_framing = content.contains("Splinter")
+        || content.contains("splinter")
+        || content.contains("daemonless")
+        || content.contains("podman")
+        || content.contains("buildah");
     assert!(
         has_splinter_framing,
         "T7: narrative must name Splinter-pole / daemonless discipline (podman / buildah / containerd-direct) — the substrate-honest resolution of StageFreight-daemon blocker (#540)"
@@ -106,7 +110,10 @@ fn t07_runtime_names_splinter_pole_daemonless() {
 fn t08_runtime_cites_stagefreight_blocker_resolution() {
     let content = read_runtime_shard();
     // Explicit citation of the blocker this species resolves
-    let cites_blocker = content.contains("StageFreight") || content.contains("stagefreight") || content.contains("#540") || content.contains("daemon blocker");
+    let cites_blocker = content.contains("StageFreight")
+        || content.contains("stagefreight")
+        || content.contains("#540")
+        || content.contains("daemon blocker");
     assert!(
         cites_blocker,
         "T8: narrative must cite the StageFreight-daemon blocker (#540) that this species resolves via runtime_daemon_absent Splinter-pole path"
@@ -159,7 +166,9 @@ fn t10_exactly_one_seam_at_column_zero() {
 fn t11_in_clauses_below_seam() {
     let content = read_runtime_shard();
     let seams = seam_line_indices(&content);
-    let seam_idx = *seams.first().expect("T11 depends on T10 (one seam present)");
+    let seam_idx = *seams
+        .first()
+        .expect("T11 depends on T10 (one seam present)");
     for (i, line) in content.lines().enumerate() {
         if line.trim_start().starts_with("in @") {
             assert!(
@@ -177,11 +186,7 @@ fn t11_in_clauses_below_seam() {
 fn t12_runtime_inherits_universal_prism_meta_glass() {
     let content = read_runtime_shard();
     for req in ["in @prism", "in @meta", "in @glass"] {
-        assert!(
-            content.contains(req),
-            "T12: must inherit `{}`",
-            req
-        );
+        assert!(content.contains(req), "T12: must inherit `{}`", req);
     }
 }
 

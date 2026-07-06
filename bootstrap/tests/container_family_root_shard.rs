@@ -199,7 +199,9 @@ fn t14_first_nonempty_line_is_narrative_and_exactly_one_seam() {
 fn t15_in_clauses_below_seam() {
     let content = read_container_shard();
     let seams = seam_line_indices(&content);
-    let seam_idx = *seams.first().expect("T15 depends on T14 (one seam present)");
+    let seam_idx = *seams
+        .first()
+        .expect("T15 depends on T14 (one seam present)");
     for (i, line) in content.lines().enumerate() {
         if line.trim_start().starts_with("in @") {
             assert!(

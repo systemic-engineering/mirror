@@ -1,0 +1,500 @@
+# @container/runtime — runtime backend species (process-side).
+# Arc 5 TICK 5 GREEN landing per Reed RED at `2a5c7ad` against Mara
+# spec `ec636d3` (docs/specs/docker-container-substrate-decl-v0.1.md)
+# §6.3 + §10.4. Species under `@container` family-root at runtime
+# altitude.
+#
+# === What this shard IS ===
+#
+# `@container/runtime` names the runtime backend at the container-
+# runtime altitude — the runtime BINARY that consumes a
+# `container_spec` (from `@container` family-root) plus an
+# `image_witness` (from `@container/image`, TICK 3 `b66b280`) and
+# actually EXECUTES a container. Process-side of the runtime per
+# recognition #55 (`[[architecture-form-process-partition-at-family-
+# root]]`): `@container` at family-root altitude is form-side (state
+# observation — what a container IS: its typed spec, its rootfs, its
+# bounded capability set); `@container/runtime` at species altitude
+# is process-side (the transformation — the runtime dispatch that
+# takes a spec + image and spawns a running container).
+#
+# The species carries the runtime BACKEND identifier as its typed
+# carrier: docker / podman / buildah / containerd / runc / crun /
+# gvisor / kata are all valid `runtime_backend` values. The species
+# is vendor-agnostic per OCI Runtime Spec conformance discipline (per
+# Mara spec §2.6): the SUBSTRATE names the conformance class; each
+# backend is one witness under the same typed vocabulary.
+#
+# === Directly resolves the StageFreight-daemon blocker (#540) ===
+#
+# THE LOAD-BEARING resolution. Task #540 (StageFreight Stream-2 tick
+# blocked because docker was external + not running; substrate cannot
+# settle against an unreachable daemon) surfaced the substrate-pull
+# that motivated this entire cascade. Arc 5 TICK 5 discharges the
+# blocker at substrate-decl altitude via the `runtime_daemon_absent`
+# predicate declared below.
+#
+# The resolution is NOT "make the daemon reachable" (that would route
+# around the substrate-pull signal per
+# `[[feedback-slow-is-fast-no-workarounds]]`). The resolution is
+# substrate-honest: NAME the daemonless path as first-class typed
+# discipline. Podman, buildah, and containerd-direct dispatch are
+# daemonless runtimes — they execute containers without a central
+# daemon process — and they conform to the SAME OCI Runtime Spec
+# that docker does. The blocker was never "container runtime is
+# unreachable"; the blocker was "the ONE runtime we reached for
+# happened to require an external daemon we couldn't start."
+#
+# `runtime_daemon_absent(rt)` is the predicate that discriminates:
+# Splinter-pole runtimes (podman / buildah / containerd-direct) that
+# execute without a central daemon discharge PASS; Docker-with-daemon
+# runtimes that require `dockerd` at `/var/run/docker.sock` discharge
+# FAIL. Downstream consumers (StageFreight PR-B revival; CI daemonless
+# path; local-dev without Docker Desktop) dispatch through the typed
+# predicate rather than probing daemon reachability at @io.
+#
+# === Splinter-pole vs Narcissus-pole framing per Void document ===
+#
+# The Void document (`~/dev/systemic.engineering/practice/insights/
+# coincidence/void-dual-geometry.md`) declares the antipodal poles of
+# H: Splinter (K_n complete-graph) and Narcissus (K_{1,n-1} star-graph).
+# Per `[[reference-void-document]]` the two poles carry different
+# communication topologies:
+#
+#   Splinter-pole  — K_n complete graph. Every node talks to every
+#                    other node directly. Peer-to-peer. No central
+#                    hub. Failure-tolerant by construction: removing
+#                    any single node leaves K_{n-1} intact.
+#   Narcissus-pole — K_{1,n-1} star graph. Every node talks to ONE
+#                    central hub. Hub-and-spoke. The hub is a single
+#                    point of failure: removing the hub disconnects
+#                    every peripheral node.
+#
+# Container runtime backends partition cleanly along this axis:
+#
+#   Splinter-pole  — podman, buildah, containerd-direct dispatch,
+#                    runc-direct, crun-direct. Peer-to-peer runtime
+#                    invocation; each container is spawned by a
+#                    direct fork/exec of the runtime binary against a
+#                    rootfs; no central process mediates. Removing
+#                    any single container process does not disconnect
+#                    the others.
+#   Narcissus-pole — docker with dockerd, moby with a central daemon,
+#                    any runtime requiring a hub process at a known
+#                    socket. Hub-and-spoke: the daemon mediates every
+#                    container operation; the daemon is a single
+#                    point of failure; if `dockerd` is not running,
+#                    NO containers can be spawned regardless of local
+#                    runtime binary availability.
+#
+# The StageFreight-daemon blocker (#540) is the Narcissus-pole
+# reaching for its hub and finding it absent. The `runtime_daemon_absent`
+# predicate names the Splinter-pole discharge: the substrate-honest
+# path is the K_n peer-to-peer one; runtimes that require no daemon
+# discharge PASS and become admissible for dispatch through the
+# `spawn` action; runtimes that require a daemon discharge FAIL and
+# force the consumer to either start the daemon (Narcissus-pole
+# self-repair) or fall back to a Splinter-pole runtime.
+#
+# === Composes with @container/image (TICK 3 b66b280) ===
+#
+# THE LOAD-BEARING composition. The `spawn` action declared below
+# consumes an `image_witness` (from `@container/image`; TICK 3
+# `b66b280`; typed alias of `shift_witness` from `@kintsugi/shift` at
+# TICK 2 `49f0486`) plus a `runtime_backend` and produces a
+# `container_spec` (from `@container` family-root at Arc 5 TICK 1
+# `aaa9a81`).
+#
+# The composition rides the substrate's existing altitude discipline:
+# the `image_witness` carries the OID of the OCI content at the
+# container altitude (per `image_shifted_from_oci` bilateral at
+# TICK 3); the `runtime_backend` identifies which conformant runtime
+# binary discharges the dispatch; the `container_spec` carries the
+# runtime-spec bytes any conformant runtime consumes. The `spawn`
+# action reads the image, dispatches the runtime binary, and returns
+# the container-spec view of the running container.
+#
+# This makes `@container/runtime` the species that CLOSES the runtime
+# side of the three-surface partition at process-side altitude:
+#
+#   build surface        @code/docker      (Arc 5 TICK 4 `a1fb4bd`)
+#      ↓ PRODUCES
+#   distribution surface @io/oci           (Mara `2801478` 2026-06-24)
+#      ↓ CONSUMED BY
+#   runtime surface      @container        (Arc 5 TICK 1 `aaa9a81`)
+#      ├─ form-side:    @container/image  (Arc 5 TICK 3 `b66b280`)
+#      └─ process-side: @container/runtime (Arc 5 TICK 5 THIS TICK)
+#
+# The species does not compose with `@io/docker` (the daemon socket
+# species) at this altitude — that would collapse the Splinter-pole
+# discipline. Daemon-requiring backends dispatch through `@io/docker`
+# at species-body altitude in a forthcoming species; the family-root
+# `@container/runtime` stays vendor-neutral by carrying the runtime
+# identifier as an opaque `ref` and refusing to privilege the
+# daemon-requiring path.
+#
+# === Recognition ancestry ===
+#
+# - #26 `shift(oid, T)` at `@mirror/spectral/portal` (Reed 2026-06-08):
+#   the transport-altitude precursor of shift-as-typed-capability.
+#   `spawn` here carries the OID of the image across altitude via the
+#   same shift discipline that `@container/image` carries at TICK 3.
+# - #53 property/fracture bilateral pattern: `runtime_daemon_absent`
+#   is the 17th composed-bilateral instance per
+#   `[[architecture-property-fracture-bilateral]]` — following
+#   `shift_preserves_content` (TICK 2), `image_shifted_from_oci`
+#   (TICK 3), and `docker_buildable` (TICK 4) in the Arc 5 cascade.
+#   Substrate-pull-confident.
+# - #55 form/process partition at family-root altitude: this species
+#   is the direct process-side counterpart to `@container` family-
+#   root's form-side. The partition operationalizes cleanly: form-
+#   side declares WHAT a container IS (typed spec, rootfs, caps);
+#   process-side declares HOW a container RUNS (runtime backend,
+#   spawn action, daemon-absent discipline). The partition rides
+#   through this species by construction.
+# - #57 alignment-as-boundary-mathematics: the `runtime_daemon_absent`
+#   bilateral discriminates admissibility at the Splinter/Narcissus
+#   boundary. Runtimes on the Splinter-pole side of the boundary are
+#   admissible for daemonless dispatch; runtimes on the Narcissus-
+#   pole side are not (pending consumer choice to start the daemon).
+# - #58 substrate IS Connes (A, H, D): `runtime_backend` is a
+#   projection onto A (the five-operation algebra); `container_spec`
+#   is a state on H (the void document); `spawn` is D (the Dirac
+#   /gradient operator) crossing altitude via the shift primitive.
+# - #98 candidate content-addressing cross-altitude composition:
+#   the `image_witness` this species consumes carries the OID that
+#   composes across five altitudes per Mara spec §7.1 (mirror oid /
+#   nix derivation hash / oci_digest / docker_layer_digest /
+#   container_image_id). The `spawn` action rides that composition
+#   at the runtime altitude.
+# - `[[feedback-substrate-already-had-the-word]]` (57th+ instance):
+#   the substrate already had `spawn` (BEAM's spawn, Erlang's
+#   spawn/1, Unix's fork+exec, containerd's task-spawn); this shard
+#   uses `spawn` at container-runtime altitude with the typed
+#   `image_witness` + `runtime_backend` argument shape rather than
+#   inventing `container_start`, `runtime_dispatch`,
+#   `container_launch`, or any parallel name.
+# - `[[feedback-substrate-pull-confidence-acts]]`: the three-witness
+#   convergence for Splinter-pole daemonless discharge — Alex's
+#   direct 2026-07-06 direction on the StageFreight blocker;
+#   substrate structural roster (containerd's shim v2 IS
+#   Splinter-pole per Mara spec §2.5 candidate #C3); OCI structural
+#   closure (runc / crun / podman / cri-o / kata / gvisor all
+#   discharge daemonless per Mara spec §2.6) — motivates acting on
+#   the substrate-pull rather than asking.
+#
+# === Pre-AI prior art ===
+#
+#   Unix fork(2) + exec(3) (1970s+)  the substrate-original spawn:
+#                                    parent forks a child, child
+#                                    execs a runtime binary against
+#                                    a rootfs. Splinter-pole by
+#                                    construction; no daemon needed.
+#   BEAM spawn/1 (Erlang, 1986+)     each process is a lightweight
+#                                    concurrent unit spawned peer-to-
+#                                    peer; no central hub; the VM
+#                                    schedules but does not mediate.
+#   runc (OCI, 2015+)                the reference OCI runtime;
+#                                    daemonless; `runc run <spec>`
+#                                    against a rootfs; Splinter-pole
+#                                    canonical implementation.
+#   crun (Red Hat, 2018+)            runc-compatible; written in C for
+#                                    speed; daemonless; same discipline.
+#   podman (Red Hat, 2018+)          daemonless docker-CLI-compatible
+#                                    frontend; spawns runc/crun
+#                                    directly; rootless by default;
+#                                    the industry's flagship Splinter-
+#                                    pole runtime.
+#   buildah (Red Hat, 2018+)         daemonless image builder;
+#                                    complements podman; builds OCI
+#                                    images without dockerd or
+#                                    BuildKit daemon.
+#   containerd-direct (CNCF, 2016+)  containerd's runtime v2 shim can
+#                                    be invoked directly via ctr(1)
+#                                    without dockerd; shim v2 IS
+#                                    Splinter-pole per Mara spec §2.5
+#                                    C3 recognition.
+#
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-operations-as-linear-algebra]],
+#                      [[architecture-lift-as-load-bearing]],
+#                      [[architecture-form-process-partition-at-family-root]],
+#                      [[architecture-property-fracture-bilateral]],
+#                      [[reference-void-document]],
+#                      [[feedback-substrate-already-had-the-word]],
+#                      [[feedback-substrate-pull-confidence-acts]],
+#                      [[feedback-no-bare-types]],
+#                      [[feedback-explicit-over-implicit]].
+# Recognition ancestry: #26, #53, #55, #57, #58, #98 candidate.
+# Related shards: container.mirror (Arc 5 TICK 1 `aaa9a81`; the form-
+#                 side family-root at top-level; declares the
+#                 container_spec carrier this species produces),
+#                 container/image.mirror (Arc 5 TICK 3 `b66b280`;
+#                 declares the image_witness carrier this species
+#                 consumes; the runtime-altitude view of OCI content),
+#                 kintsugi/shift.mirror (Arc 5 TICK 2 `49f0486`; the
+#                 shift primitive the image_witness rides through),
+#                 code/docker.mirror (Arc 5 TICK 4 `a1fb4bd`; the
+#                 build-side species that produces the image_witness
+#                 this species consumes),
+#                 io/oci.mirror (Mara `2801478` 2026-06-24; the
+#                 distribution surface between build and runtime).
+# Path-namespace property: this file at `shards/container/runtime.mirror`
+# declares `@container/runtime` per `@epistemologic/pact/path_matches_namespace`.
+# Related specs: docs/specs/docker-container-substrate-decl-v0.1.md
+# (Mara `ec636d3` 2026-07-06; §6.3 names this species and its
+# predicate shape including `runtime_daemon_absent`; §10.4 forward-
+# promises this species as the direct StageFreight-daemon blocker
+# resolution).
+# Cross-repo: StageFreight `docs/architecture/mirror-integration-
+# spec-v0.1.md` — the consumer-side spec whose PR-B was blocked by
+# task #540; the daemonless-path revival dispatches through the
+# typed `runtime_daemon_absent` predicate declared here.
+#
+# === Circular-reflexive self-audit ===
+#
+# Does this shard use its own vocabulary correctly?
+#
+#   `runtime_backend` — carrier for the runtime identifier. Named
+#   per [[feedback-explicit-over-implicit]]: the semantic slot
+#   "which OCI-conformant runtime binary discharges dispatch"
+#   deserves its own type name even though it byte-equals `ref` at
+#   the underlying altitude. Same discipline as `container_spec` /
+#   `image_witness` / `dockerfile` at sibling species.
+#
+#   `spawn` — used as: (1) container-runtime-altitude typed action
+#   consuming `image_witness` + `runtime_backend` and producing
+#   `container_spec`; (2) narrative name for the process-side
+#   transformation (form-side → running container). Both uses agree:
+#   spawn IS the runtime's dispatch action at process-side altitude;
+#   spawn's return value IS the container's form-side state.
+#
+#   `runtime_daemon_absent` — the 17th #53 composed-bilateral;
+#   discriminates Splinter-pole vs Narcissus-pole runtimes at the
+#   daemon-absence axis. Body stays obligation-blocked per the
+#   pattern; the realisation composes at the substrate's three-state
+#   floor. Does not claim to check daemon reachability at @io; the
+#   claim is about the RUNTIME'S ARCHITECTURE (whether it requires a
+#   daemon to dispatch), which is a static property of the backend
+#   identifier — a runtime is daemonless or it isn't, regardless of
+#   whether a daemon happens to be running on the host.
+#
+#   `Splinter` / `Narcissus` / `daemonless` — used only in narrative
+#   as the framing for the discriminator. The substrate carries the
+#   semantic through the `runtime_daemon_absent` bilateral; no new
+#   substrate keyword invented; the discipline rides the existing
+#   bilateral carrier per the #53 pattern.
+#
+# Verdict: pass. Substrate-pull-realize discipline honored; no
+# parallel substrate-decl invented; the shift primitive from TICK 2,
+# the image_witness carrier from TICK 3, and the container_spec
+# carrier from TICK 1 carry the empirical load; the daemonless
+# discipline names a runtime-altitude ARCHITECTURE property, not an
+# @io reachability probe.
+#
+# === Interpretation B discipline ===
+#
+# Per Seam Phase D pre-review of Arc 4 sub-arc A (docs/audits/2026-
+# 07-06-seam-arc-4-sub-arc-a-pre-review.md §1) and the family-root
+# precedent at `shards/container.mirror` + species precedent at
+# `shards/container/image.mirror` + `shards/kintsugi/shift.mirror` +
+# `shards/code/docker.mirror`: Interpretation B canonical. Narrative
+# above `---`; `in` clauses + typed declarations below. This shard
+# honours the discipline; the seam is exactly one line at column 0
+# below.
+
+---
+
+in @prism
+in @meta
+in @glass
+in @container
+in @container/image
+
+# ============================================================
+# §1 The five-operation prism at species altitude
+# ============================================================
+
+# === prism @container/runtime — the species declaration ===
+#
+# The five-operation body carries `runtime_backend` as the species's
+# operational surface — the runtime binary identifier the substrate
+# reads at container-runtime altitude. Every operation on the species
+# reads/produces a `runtime_backend` carrier; the substrate's
+# altitude discipline rides the process-side view of the container
+# runtime.
+#
+# The five-op block includes `shift` per `shards/prism.mirror`
+# §L38-45 (basis transformation on H) — at container-runtime altitude
+# shift specializes to the cross-runtime-family fold (e.g. docker →
+# podman drop-in dispatch under the shared OCI Runtime Spec
+# conformance class).
+prism @container/runtime {
+  focus runtime_backend
+  project runtime_backend
+  split runtime_backend
+  shift runtime_backend
+  settle runtime_backend
+}
+
+# ============================================================
+# §2 The carrier
+# ============================================================
+
+# === runtime_backend — the runtime backend identifier ===
+#
+# THE LOAD-BEARING carrier. Names the OCI-Runtime-Spec-conformant
+# runtime backend the substrate dispatches through per
+# [[feedback-explicit-over-implicit]] + [[feedback-no-bare-types]].
+# Byte-equals at ref altitude; typed at species altitude so consumer
+# sites read a substrate-declared shape rather than a bare ref.
+#
+# Values populate the OCI runtime-conformance class: docker (with
+# dockerd; Narcissus-pole), podman (daemonless; Splinter-pole),
+# buildah (daemonless image builder; Splinter-pole), containerd-
+# direct (shim v2 without dockerd; Splinter-pole), runc (reference
+# implementation; Splinter-pole), crun (Red Hat C rewrite;
+# Splinter-pole), gvisor / kata (sandboxed variants; Splinter-pole).
+# The substrate does NOT privilege any particular backend at the
+# type altitude — vendor-neutrality is enforced per Mara spec §2.6.
+#
+# Composes with `@mirror/store`'s ref discipline (the runtime
+# identifier bytes live in mirror's content-addressed storage).
+# Composes with `@container`'s family-root discipline at the
+# runtime-altitude fold (a runtime consumes a `container_spec`
+# from the family-root and executes it).
+#
+# Identity contract: byte-equality on the underlying ref (the
+# runtime backend identifier's content-address).
+type runtime_backend = ref
+
+# ============================================================
+# §3 The 17th #53 composed-bilateral — StageFreight-blocker resolution
+# ============================================================
+
+# === runtime_daemon_absent — the Splinter-pole discipline ===
+#
+# THE 17th INSTANCE of the #53 bilateral pattern per
+# [[architecture-property-fracture-bilateral]]. THE
+# LOAD-BEARING predicate that resolves the StageFreight-daemon
+# blocker (#540) at substrate-decl altitude.
+#
+# Names the daemonless-runtime discipline as a first-class typed
+# admissibility check. The predicate asks: does this runtime backend
+# require a central daemon process to dispatch containers? Per the
+# Splinter/Narcissus dual geometry of the Void document
+# [[reference-void-document]]:
+#
+#   Splinter-pole (`pass`) — the runtime is daemonless. Podman,
+#                            buildah, containerd-direct (via ctr(1)
+#                            without dockerd), runc-direct,
+#                            crun-direct, gvisor, kata. Each
+#                            container is spawned by a peer-to-peer
+#                            fork/exec of the runtime binary; no
+#                            central hub mediates; K_n complete-graph
+#                            topology. Admissible for dispatch through
+#                            `spawn` without requiring an @io
+#                            reachability probe against a socket.
+#
+#   Narcissus-pole (`failure`) — the runtime requires a central
+#                                daemon. Docker-with-dockerd, moby
+#                                with any hub process at a known
+#                                socket. The daemon mediates every
+#                                container operation; K_{1,n-1} star
+#                                topology; the hub is a single point
+#                                of failure. Inadmissible for
+#                                dispatch without either starting
+#                                the daemon (Narcissus-pole
+#                                self-repair) or falling back to a
+#                                Splinter-pole runtime.
+#
+#   Graded (`partial(confidence)`) — the runtime backend is
+#                                    daemonless in principle but the
+#                                    substrate cannot verify the
+#                                    invocation path at the type
+#                                    altitude (e.g. containerd
+#                                    invoked via a wrapper that
+#                                    happens to require dockerd).
+#                                    Confidence carries the
+#                                    verification magnitude. The
+#                                    realisation decides whether to
+#                                    admit at the graded floor.
+#
+# Composes structurally with `container_runnable` at family-root
+# altitude (a container is runnable only when the runtime backend
+# discharging its dispatch is admissible) but does NOT
+# re-substrate-decl the container's runnability — the two bilaterals
+# ride complementary axes: `container_runnable` observes the SPEC
+# side (is the spec conformant / rootfs present / caps bounded);
+# `runtime_daemon_absent` observes the RUNTIME side (does the
+# runtime backend require a daemon).
+#
+# Sibling composed bilaterals (16 landed): container_runnable,
+# oci_well_formed, stagefreight_addressable, cascade_well_defined,
+# audit_docblock, shatter_round_trip, third_order_coherent,
+# three_axis_coherent, shift_preserves_content (TICK 2),
+# image_shifted_from_oci (TICK 3), docker_buildable (TICK 4), plus
+# five others per Taut scout. This shard adds the 17th instance at
+# container-runtime altitude — the direct StageFreight-daemon
+# blocker resolution via Splinter-pole discipline.
+#
+# Body stays obligation-blocked (`\`): the realisation composes at
+# the substrate's three-state floor (pass / partial(confidence) /
+# failure(reason)); the runtime backend identifier is static enough
+# that the check is content-addressable at the ref altitude and does
+# not require an @io probe.
+runtime_daemon_absent(rt: runtime_backend) -> verdict { \ }
+
+# ============================================================
+# §4 The typed spawn action — process-side dispatch
+# ============================================================
+
+# === spawn — the process-side runtime dispatch ===
+#
+# THE LOAD-BEARING typed action. Consumes an `image_witness` (from
+# `@container/image` at TICK 3 `b66b280`; typed alias of
+# `shift_witness` from `@kintsugi/shift` at TICK 2 `49f0486`) plus a
+# `runtime_backend` and produces a `container_spec` (from
+# `@container` family-root at TICK 1 `aaa9a81`).
+#
+# The action IS the process-side of the runtime per recognition #55:
+# the form-side (`@container` family-root; `@container/image`
+# species) declares WHAT a container IS; `spawn` here declares HOW a
+# container RUNS. The return `container_spec` carries the runtime-
+# spec bytes of the SPAWNED container — the state observation of the
+# process-side transformation's result. The action bridges the two
+# sides of #55 by design.
+#
+# Composition trail:
+#
+#   1. Read `image_witness` at container altitude (per
+#      `@container/image`'s hardlink discipline; the OID byte-equals
+#      the OCI content-address at `@mirror/store/oci` altitude).
+#   2. Read `runtime_backend` at species altitude (the identifier of
+#      the OCI-conformant runtime binary to dispatch).
+#   3. (Admissibility gate) verify `runtime_daemon_absent(rt)`
+#      discharges PASS at the Splinter-pole (or the consumer has
+#      explicitly opted into the Narcissus-pole daemon-requiring
+#      path).
+#   4. Fork/exec the runtime binary against the materialized rootfs
+#      the image_witness resolves to (per `@container` family-root's
+#      `container_rootfs` carrier).
+#   5. Return the `container_spec` at family-root altitude — the
+#      runtime-spec bytes of the running container per OCI Runtime
+#      Spec v1.x §config.md.
+#
+# Body stays obligation-blocked (`\`): the realisation dispatches at
+# the @io boundary (fork/exec syscalls against the runtime binary;
+# cgroup fs writes; netns setup) but the substrate declares the
+# shape here.
+spawn(img: image_witness, rt: runtime_backend) -> container_spec { \ }
+
+# ============================================================
+# §5 The out clauses
+# ============================================================
+
+out @container/runtime
+out runtime_backend
+out runtime_daemon_absent
+out spawn

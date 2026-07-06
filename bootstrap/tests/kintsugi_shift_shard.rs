@@ -179,10 +179,7 @@ fn t11_shift_inherits_prism() {
 #[test]
 fn t12_shift_inherits_meta() {
     let content = read_shift_shard();
-    assert!(
-        content.contains("in @meta"),
-        "T12: must inherit `in @meta`"
-    );
+    assert!(content.contains("in @meta"), "T12: must inherit `in @meta`");
 }
 
 #[test]
