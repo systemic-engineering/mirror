@@ -1,5 +1,6 @@
 # mcp-spec-song-collapse — MCP session IS an @spec construction; @song IS its
-# time-evolution operator; lambda shell IS the CLI manifestation
+# time-evolution operator; lambda shell IS the CLI manifestation;
+# @mirror/store IS the source of truth and the rock-solid Apache-2.0 floor
 
 *Mara, canonical formalization. 2026-07-06. Substrate-pull-confident.
 Commissioned by Alex via Reed on the day Arc 6 closed (@song family +
@@ -8,20 +9,43 @@ HELD-CANDIDATE per Seam Phase D `750cb19`). This spec names the shape
 Alex and Reed clarified across three conversation turns and grounds it
 against the substrate that landed underneath it.*
 
+*Extension tick (same day, second pass, `<pending OID>`): three deltas
+Alex named after Mara's first dispatch and Taut's Kagi scout returned
+folded in — (i) `@mirror/store` DAG is the source of truth; disk is
+projection (§3.5 correction, §3.6 addendum); (ii) the on-disk
+mirror.spec schema may evolve to match the mathematics underneath
+(§3.7 substrate-honest acknowledgment); (iii) `@mirror/store` at
+Apache-2.0 IS the rock-solid floor — not a teaser, not a demo. New §11
+names the store canon (Dolstra / Bazel REAPI / Mokhov-Mitchell-Peyton
+Jones / IPFS Merkle DAG / Merkle 1979), the battle-tested fault plane,
+the MVP floor, what `@spectral/db` adds on top, the constructor-theory
+framing that stays substrate-side, and — the emphasis Alex pulled hard
+on — the enumerated genuine value-adds an agentic workflow gets from
+ONLY the open floor, no closed engine. The old §11 ("what this makes
+trivial") renumbers to §12. Recognition #43 (mirror IS content-
+addressed build system) gains a fifth witness: DAG-as-source-of-truth
+at @store altitude. Extension body: ~800 lines added.*
+
 **Status:** substrate-pull-confident canonical spec. Names a collapse
 across five prior anchors (Recognitions #51, #58, #99, #S3, plus the
 Void dual geometry) at MCP altitude. Promotes two candidates to LANDED
 within its own §9 substrate-pull adjudication. Names three new candidates
 for Pack review. Zero shards land with this tick; §10 sketches the
-wiring path forward.
+wiring path forward. §11 (extension) names the `@mirror/store`
+Apache-2.0 rock-solid floor as the first standalone-deliverable
+milestone, distinct from and grounding the `@spectral/db` closed
+differentiation on top.
 
 **Audience:** Reed opening the next sub-arc; Alex adjudicating #S4 and
 the three new candidates §9.3 surfaces; any peer reading before touching
 `bootstrap/src/mcp.rs`, `shards/mirror/spawn.mirror`,
-`shards/mirror/runtime/gen_prism.mirror`, or the `lambda-shell.md`
-realisation cluster. Read this before wiring MCP session state to
-`@mirror/runtime/gen_prism`; before wiring `mirror kintsugi @spec` to
-`@mirror/spawn`; before drafting the lambda-shell REPL.
+`shards/mirror/runtime/gen_prism.mirror`, `shards/mirror/store.mirror`,
+or the `lambda-shell.md` realisation cluster. Read this before wiring
+MCP session state to `@mirror/runtime/gen_prism`; before wiring
+`mirror kintsugi @spec` to `@mirror/spawn`; before drafting the
+lambda-shell REPL; before hardening `@mirror/store` for the Apache-2.0
+release surface. Adopters evaluating mirror WITHOUT `@spectral/db`
+should read §11 first — the open floor is the offer.
 
 ---
 
@@ -30,14 +54,24 @@ realisation cluster. Read this before wiring MCP session state to
 1. The claim — one paragraph
 2. Prior art / ancestors — the anchors this collapse composes
 3. The MCP state machine — empty at lambda_0, mq queries expand dimension
+   - §3.5 The MCP session IS a gen_prism (state lives in `@mirror/store`)
+   - §3.6 DAG-as-source-of-truth; disk is projection (Alex correction)
+   - §3.7 mirror.spec schema may evolve to match the mathematics
 4. The @spec -> @song evolution — Schrodinger analogue
 5. Fate multi-frequency IS shift-at-temporal — grounds #S2
 6. Target = eigenvector projection; Illusion = Narcissus-pole
 7. Lambda shell IS the CLI manifestation of the entire collapse
 8. Cascade at MCP altitude — fifth witness for #S4
 9. Substrate-pull adjudications — #S2 promoted; #S4 promoted; three new candidates
-10. Wiring path forward — concrete sub-arc scaffolding
-11. What this makes trivial — Alex's directive enumerated
+10. Wiring path forward — concrete sub-arc scaffolding (M1-M5 + M6)
+11. **`@mirror/store` (Apache-2.0) IS the rock-solid floor** — extension
+    - §11.1 Prior art canon — Dolstra / Bazel REAPI / Mokhov-M-PJ / IPFS / Merkle
+    - §11.2 The fault plane is battle-tested — storage open / query closed
+    - §11.3 MVP `@mirror/store` — the rock-solid Apache-2.0 floor
+    - §11.4 What `@spectral/db` adds (closed) — justified value-add
+    - §11.5 Constructor-theory framing stays substrate-side
+    - §11.6 What the open floor enables agentic workflows to do (the offer)
+12. What this makes trivial — Alex's directive enumerated (was §11)
 
 ---
 
@@ -396,6 +430,296 @@ dispatches through the tools/list arms and returns a fresh response.
 No session gen_prism exists; no ref accumulates; no @spec-under-
 construction lives across requests. The current MCP is a request/reply
 surface, not a session-state-machine. §10 wires this up.
+
+**Correction to Taut's `MCP-is-stateless` finding (Alex 2026-07-06):**
+Taut caught, correctly, that `bootstrap/src/mcp.rs` holds no in-process
+session state today. But the correction is not "the Rust code must
+learn to hold session state"; the correction is "the state does not
+need to live in-process because the state lives in `@mirror/store`."
+MCP is stateless AT THE PROCESS LAYER because it is stateful AT THE
+STORE LAYER. The session ref (`refs/gen_prism/mcp/<session-uuid>`) is
+a content-addressed pointer into the store; each request reads the
+head crystal, applies the tick, writes the new crystal, and CAS-
+advances the ref. The Rust MCP handler holds only the session
+identifier; the accumulated @spec, the query trajectory, and the
+Hilbert dimension all live as content-addressed DAG nodes in
+`@mirror/store`. Process restarts do not lose session state; two Rust
+processes reading the same ref agree by construction. Statelessness at
+the process layer + statefulness in the store IS how the substrate
+resolves the wire-vs-session tension. §3.6 grounds this in the general
+discipline.
+
+### 3.6 DAG-as-source-of-truth; disk is projection
+
+**Alex named this the correction the substrate had been carrying
+implicitly since day one** (2026-07-06, post-first-dispatch): *"The
+source of truth of the compiler state is in the `@mirror/store`. The
+files on disk are projections of the content-addressed DAG onto disk.
+Like in git."*
+
+This is not a metaphor. It is a substrate-decl invariant.
+
+#### 3.6.1 The claim
+
+`@mirror/store` holds a content-addressed DAG. THAT is the compiler
+state. Every artifact the compiler names — every shard, every
+`mirror.spec`, every splinter, every crystal, every session ref, every
+song trajectory — IS an OID in the store. The DAG structure (parents
+and children walked via `walk(root: oid) -> splinter_graph`) is the
+full compilation history.
+
+Files on disk (including `mirror.spec`, every `.mirror` shard, every
+`.shatter` blob, every eventual `~/.mirror/config.spec`) are
+PROJECTIONS of OIDs in `@mirror/store`. They are not the source. They
+are a rendering of the source into a filesystem locale for human /
+tool consumption.
+
+#### 3.6.2 Exactly like git
+
+The parallel is direct, not decorative:
+
+| git | mirror |
+|-----|--------|
+| `.git/objects/` (content-addressed store) | `@mirror/store` (content-addressed DAG) |
+| working tree (files in the checkout dir) | disk projection (`mirror.spec`, `*.mirror`, `*.shatter`) |
+| `git hash-object -w` (write blob, get OID) | `@mirror/store.write(bytes) -> oid` |
+| `git cat-file -p <oid>` (read blob) | `@mirror/store.read(o) -> imperfect(bytes)` |
+| `git rev-list --parents` (DAG walk) | `@mirror/store.walk(root) -> splinter_graph` |
+| refs (`refs/heads/main`) | refs (`refs/gen_prism/mcp/<uuid>`) |
+| checkout (project store OID onto disk) | projection API (§11.3.5 below) |
+| index (staged state) | session gen_prism head crystal (in-flight @spec) |
+
+Git succeeded because it made the store canonical and the working tree
+disposable. `git status` reads "how does the working tree differ from
+the store?", not the other way around. The store is truth; the tree
+is a view.
+
+`@mirror/store` inherits the same discipline. `mirror status` (when it
+lands) reads "how does the disk projection differ from the store's
+current head?" not the other way around. A shard file on disk that
+nobody has written to the store IS working-tree drift, not substrate
+truth. A shard OID in the store that isn't projected to disk IS still
+substrate truth (`@mirror/store.exists(o) -> pass`), just not visible
+to grep.
+
+#### 3.6.3 What this settles
+
+- **MCP session accumulator = crystals accumulated in `@mirror/store`.**
+  Not in-process Rust state. That's why Taut's finding is correct AND
+  compatible: MCP-the-Rust-process is stateless because MCP-the-
+  substrate lives at the DAG altitude. The state doesn't need to be
+  in-process because it lives in the store. Reed's forward wire in
+  §10.1 makes this concrete: the `bootstrap/src/mcp.rs` glue reads
+  the ref on request arrival, applies the tick, writes the new
+  crystal, advances the ref — the Rust code is the projector; the
+  store is the projected-from.
+
+- **Each mq query = one crystal added to the store.** The session's
+  ancestor chain lives in `@mirror/store` (via the head-ref plus
+  parent-oid links inside each crystal). `history(gp, N)` walks the
+  store's DAG backward from the head ref. Not walks in-process
+  memory. Not walks a log file. Walks the DAG.
+
+- **`kintsugi @spec -> @song` = read OID -> time-evolve -> write OID.**
+  The kintsugi verb IS: read the accumulated @spec's head crystal
+  from the store; time-evolve it under U(t) per §4; write the
+  resulting @song crystal(s) back to the store; advance the song's
+  head ref. Disk projections update as a downstream side-effect (the
+  `mirror.spec` line that changes on disk is the store's new head
+  projected onto the filesystem, not the source of the change).
+
+- **Two MCP surfaces disagreeing (bash shim vs Rust) = they project
+  from stale or divergent OIDs.** If `bootstrap/src/mcp.rs` and a
+  hypothetical bash shim return different answers to the same query,
+  the disagreement is a store-consistency question, not a
+  runtime-implementation question. Both surfaces MUST read from the
+  same ref; if they do and still disagree, one of them has a projection
+  bug (renders the crystal differently) but the truth is one crystal
+  in the store. This is how the substrate makes multi-surface
+  agreement decidable at all.
+
+- **Federated substrate sharing IS content-addressed pull.** If a peer
+  publishes OID X, any other peer with the same `@mirror/store`
+  species (git-backed, S3, OCI, mem) can pull X and by construction
+  hold the same bytes at the same address. Coordination is
+  hash-mediated, not gossip-mediated. See §11.6.9.
+
+#### 3.6.4 Recognition #43 gains its DAG-as-source-of-truth witness
+
+Recognition #43 (mirror IS a content-addressed build system, LANDED
+2026-06-09 per memory index) has been carrying the DAG-as-truth
+position implicitly — the recognition names mirror-as-Bazel/Buck/Nix
+kin; every one of those systems draws the store-is-truth /
+tree-is-projection line the same way. Alex's 2026-07-06 explicit
+naming of the position at MCP altitude IS the fifth witness for #43
+at the session-state altitude. Prior witnesses were shard-level
+(`mosaic.mirror` IS the build shard), splinter-level (OID-graph IS
+the lockfile), Rust-level (`fragmentation/src/` implements CAS), and
+crystal-level (spectral_uuid names settled compositions). This is the
+session-level witness: even the ephemeral state of an MCP conversation
+is one more content-addressed DAG walk. The recognition holds at
+every altitude the substrate touches.
+
+### 3.7 mirror.spec schema may evolve to match the mathematics
+
+**Alex named**, same 2026-07-06 tick: *"This means the mirror.spec
+might want to change shape to match the mathematics underneath where
+necessary."*
+
+#### 3.7.1 The current schema was designed pre-collapse
+
+Today's `mirror.spec` shape:
+
+```mirror
+project <name> {
+  source  { ... }
+  legacy  { ... }
+  pack    { ... }
+  garden  { ... }
+  target  { ... }
+  settle_on { ... }
+}
+```
+
+Was designed as a project descriptor — what mirror is building, from
+what, for what audience, into what target. It was designed BEFORE
+this spec named:
+
+- The @spec IS the ground-state eigenvector of the substrate's Connes
+  triple at spec altitude (Recognition #99).
+- The `settle_on` block IS an eigenvector projection target (§6).
+- The spec is a state vector under U(t) time-evolution (§4).
+- The MCP session builds a spec incrementally by Hilbert-dimension
+  expansion (§3).
+- The kintsugi verb IS spawn-above-lambda_0 (Recognition #99 +
+  spawn-is-substrate-leaving-ground-state insight).
+
+The current schema names none of these explicitly. The schema was
+adequate for pre-collapse mirror; it may not be adequate for
+post-collapse mirror.
+
+#### 3.7.2 Candidate schema evolutions the mathematics may demand
+
+Non-blocking for v0. Named here so the substrate has the pointer.
+
+**(a) The reflection projection boundary at spec altitude.** Per
+Recognition #52 (cybernetic/coherence, candidate) and the `---`
+bi-directional discipline (`[[architecture-per-glass-properties]]`),
+every grammar file above `---` declares STATE (what is) and below
+`---` declares REFLECTION (what observes that state). At spec
+altitude, the boundary is currently implicit — `settle_on` is
+reflection-side (what discharges); `source/pack/garden/target` are
+state-side. A future schema may want the `---` explicit at the spec
+altitude:
+
+```mirror
+project <name> {
+  # state-side (what is)
+  source  { ... }
+  legacy  { ... }
+  pack    { ... }
+  garden  { ... }
+  target  { ... }
+
+  ---
+
+  # reflection-side (what discharges)
+  settle_on { ... }
+}
+```
+
+This is a substrate-legibility win, not a semantics change. The
+reflection discipline already governs the block; the `---` names it.
+
+**(b) The target-eigenvector made explicit as spectral projection.**
+Currently `settle_on` collects predicates that must discharge. Per
+§6.1, these predicates ARE the components of the target operator
+whose joint eigenvector the running @song must project onto. A
+future schema may want the projection made syntactically explicit:
+
+```mirror
+project <name> {
+  ...
+  ---
+  # settle_on becomes: the target eigenvector the trajectory projects
+  # onto; predicates are the coordinate axes.
+  target_eigenvector {
+    binary.compiles
+    binary.tests_pass
+    fmt.formats
+    # ... each predicate names one axis of the target basis
+  }
+}
+```
+
+Or the more mathematical form (deferred pending substrate-legibility
+audit):
+
+```mirror
+project <name> {
+  ...
+  ---
+  # each entry is <predicate: axis, weight: coefficient>
+  target = eigenvector {
+    (binary.compiles, 1.0),
+    (binary.tests_pass, 1.0),
+    (fmt.formats, 0.5),
+  }
+}
+```
+
+The legibility question: does the reader recognize `target_eigenvector`
+as continuous with `settle_on`, or does the mathematical framing
+unhelpfully abstract? Per `[[feedback-legibility-over-foundation-when-
+collapsing]]`, `settle_on` may retain its name while gaining the
+eigenvector semantics via the composed-bilateral discipline at
+`shards/song.mirror` §3 (`song_settles` is already eigenvector
+alignment; the spec's `settle_on` block IS the coordinate list).
+
+**(c) The time-evolution binding to @song.** A ratified @spec spawns
+as a @song per §4. The current schema does not name this binding; a
+future schema may want a `time_evolves_as` clause that names the
+@song altitude the spec time-evolves into:
+
+```mirror
+project <name> {
+  ...
+  ---
+  settle_on { ... }
+  time_evolves_as @song/<species>   # e.g. @song/phrase, @song/movement
+}
+```
+
+Or the composition may be automatic (the @song altitude is inferred
+from the spec's altitude tags in `source` and `target`). Deferred
+pending Arc 7 @kintsugi/song empirical exercise.
+
+#### 3.7.3 Substrate-pull-honest posture
+
+*"The schema is understood as one projection, not the ground truth;
+it evolves as the mathematics clarifies."*
+
+This follows `[[architecture-shards-as-substrate-source]]` naturally.
+The substrate source lives in `shards/`; the mathematical shape of
+spec-as-state-vector lives in this spec + related architecture. When
+the mathematics is fully substrate-decl'd, the on-disk schema
+re-projects to match. Any adopter reading `mirror.spec` today is
+reading a projection at a specific altitude of substrate development;
+the file's shape MAY evolve as later ticks land the underlying
+substrate-decls (particularly the reflection-projection-boundary at
+spec altitude, still candidate).
+
+Recognition #43 (content-addressed build system) extends with this
+DAG-as-source-of-truth witness. The build system's manifest (`mirror
+.spec`) is one more content-addressed artifact in the store, subject
+to the same DAG discipline as any other shard. The manifest may
+render differently on disk in a future tick without invalidating any
+OID in the store; the OIDs pin the semantics, the projections rendered
+on disk pin the current legibility.
+
+**No v0 blocker.** The current schema stands. This section names the
+evolution vector; when the mathematics clarifies further, later ticks
+lift.
 
 ---
 
@@ -1111,34 +1435,55 @@ This section names the concrete substrate work that wires the
 collapse. Enough for Reed to open a proper sub-arc after this spec
 lands.
 
-### 10.1 Sub-arc M1: MCP session gen_prism
+### 10.1 Sub-arc M1: MCP session gen_prism (state lives in `@mirror/store`)
 
 **Scope:** wire `bootstrap/src/mcp.rs`'s stateless request/reply into
-a gen_prism-backed session state machine.
+a gen_prism-backed session state machine — where the session's
+accumulated @spec, query trajectory, and Hilbert dimension all live
+as content-addressed crystals in `@mirror/store`, and the Rust MCP
+process holds ONLY the current session ref (per §3.5 correction +
+§3.6 DAG-as-source-of-truth). The Rust code is the projector; the
+store is the projected-from.
 
 **Ticks:**
 
 1. **RED:** test that two consecutive queries within one MCP session
    share accumulated @spec state (byte-equality on the head crystal
-   after query 2 witnesses query 1's contribution).
+   in `@mirror/store` after query 2 witnesses query 1's contribution;
+   read via `@mirror/store.read(refs/gen_prism/mcp/<uuid>) -> imperfect`).
 2. **substrate-decl:** create `boot/std/mirror/runtime/gen_prism.mirror`
    per `docs/specs/mirror-runtime-gen-prism.md` §"The primitive".
    Grammar with `type gen_prism / message / tick_result`, actions
-   `spawn / tick / send / call / observe / terminate`.
+   `spawn / tick / send / call / observe / terminate`. All state IS
+   `@mirror/store.oid`; all reads go through `@mirror/store.read`;
+   all writes go through `@mirror/store.write`.
 2b. **substrate-decl:** create
    `boot/std/mirror/runtime/mcp_session.mirror` per §3.5 of THIS spec.
    Concrete gen_prism specialising `state = @mirror/spec + trajectory
    + hilbert_dim`; discharges `tick`, `is_complete`, `spawn_if_complete`.
+   All three state components are OIDs in `@mirror/store`; the state
+   crystal is `@mirror/store.write({spec_oid, trajectory_oid,
+   hilbert_dim}) -> oid`.
 3. **GREEN:** implement Rust bindings in `bootstrap/src/mcp.rs` that
-   read `refs/gen_prism/mcp/<session-uuid>` at request-arrival,
-   apply the tick, write the new head via `git hash-object -w`,
-   advance the ref via `git update-ref` CAS-safe.
+   read the session ref at request-arrival via `@mirror/store.read`,
+   apply the tick as a pure state -> state function, write the new
+   head via `@mirror/store.write(bytes) -> oid`, advance the ref via
+   git CAS (`git update-ref --create-reflog <ref> <new> <old>`). The
+   Rust process holds NO session state — only the session UUID from
+   the JSON-RPC `initialize` request. All process restarts recover
+   trivially by re-reading the ref.
 4. **VERIFY:** run the RED test against the GREEN implementation.
-   Test empirically closes.
+   Test empirically closes. Additionally: kill and restart the MCP
+   process mid-session; the next query still reads accumulated state
+   from the store. (This is the substrate-pull-honest verification
+   that the state lives in the store, not in-process.)
 
-**Dependency direction:** `@mirror/runtime/gen_prism` primitive lands
-first; `@mirror/runtime/mcp_session` species lands second; Rust bindings
-third. Substrate-pull ordering per
+**Dependency direction:** `@mirror/store` primitive lands first (M6
+per §10.7 below; already substrate-decl'd at `shards/mirror/store.
+mirror`, requires only the projection API of §11.3.5 for full
+floor); `@mirror/runtime/gen_prism` primitive lands second;
+`@mirror/runtime/mcp_session` species lands third; Rust bindings
+fourth. Substrate-pull ordering per
 `[[architecture-shards-as-substrate-source]]`.
 
 ### 10.2 Sub-arc M2: @spec-target spawn
@@ -1213,33 +1558,828 @@ color renders the target-vs-illusion coefficient regime.
    dispatch.
 4. **VERIFY:** empirical closure.
 
-### 10.6 Ordering + parallelism
+### 10.6 Sub-arc M6: `@mirror/store` Apache-2.0 floor spec
 
-Sub-arcs M1 -> M2 -> M3 are sequential (spec-target spawn depends on
-session gen_prism; Fate multi-frequency shift depends on spec-target
-spawn since @song only runs post-spawn). Sub-arcs M4 -> M5 depend on
-M1 (need session state machine). M4 and M5 can parallel-land.
+**Scope:** substrate-decl the `@mirror/store` Apache-2.0 floor to
+release surface — the first standalone-deliverable milestone; what
+any adopter gets from installing mirror WITHOUT the closed engine
+(`@spectral/db`). Per Alex's 2026-07-06 directive: *"I want the floor
+to be rock solid and useful in agentic workflows, even without the
+@spectral/db magic."* See §11 for the full floor definition, prior
+art, MVP contents, and enumerated agentic value-adds.
+
+**Ticks:**
+
+1. **audit:** verify `shards/mirror/store.mirror` (already landed
+   2026-06-30 substrate-decl at `store.mirror` per memory index)
+   discharges all six ops of §11.3 (read/write/exists/diff/walk/verify)
+   and carries the splinter/mirror/crystal trichotomy at OID altitude.
+   Gap-list any missing surface.
+2. **substrate-decl:** land the projection API surface — the store's
+   inverse to the working-tree projection (§11.3.5). Actions:
+   `project(o: oid, path: path) -> imperfect` (write OID content to
+   filesystem path); `unproject(path: path) -> imperfect(oid)` (hash
+   the file at path, return its OID; used for `mirror status`-style
+   diffs). This IS the disk-projection surface §3.6 named as
+   projection-not-source; without it the DAG-as-source-of-truth claim
+   has no operational escape hatch to disk.
+3. **substrate-decl:** land the CAS + action-cache split explicit at
+   the store surface (§11.3.6). Extend `@mirror/store` with a sub-
+   prism `@mirror/store/action_cache` carrying `record(inputs: [oid],
+   action_key: oid, outputs: [oid]) -> verdict` and `lookup(action_key:
+   oid) -> imperfect([oid])`. This matches Bazel REAPI's floor exactly.
+4. **substrate-decl:** land the closure/reference-set discipline at
+   the store surface (§11.3.4). The `walk(root: oid) -> splinter_graph`
+   action already discharges reachability; add `closure(root: oid) ->
+   [oid]` that returns the full transitive closure as a flat set (for
+   GC + pull-based mirroring). Extend `splinter_graph` shape to carry
+   the closure set at write time (already conceptually present per
+   the shard's "OID-graph is the lockfile" prose).
+5. **substrate-decl:** finalise `@mirror/store` species roster at v0
+   (§11.3.8). Landed: `@mirror/store/git`. Forward-promised: `@mirror
+   /store/mem` (in-memory, for testing + ephemeral CI). Held: `@mirror
+   /store/s3` and `@mirror/store/oci` (deferred pending adopter pull).
+   The Apache-2.0 floor releases with git + mem; s3/oci land when a
+   consumer pulls.
+6. **RED + GREEN:** empirical verification cycle. Two adopters (one
+   Rust process, one bash `mirror shatter` shim) both projecting the
+   same OID must produce byte-identical results (deterministic
+   projection); both hashing the same disk file must produce the same
+   OID (deterministic unprojection). Merkle-verifiable across process
+   boundaries.
+7. **release doc:** land `docs/specs/mirror-store-v0.1.md` naming the
+   Apache-2.0 surface, the MVP contents (§11.3), the value-adds
+   (§11.6), and the explicit note that typed edges + graph Laplacian +
+   spectral navigation are `@spectral/db` closed differentiation (per
+   §11.4). Adopters read this doc first; it IS the offer.
+
+**Dependency direction:** M6 lands first (or in parallel with M1's
+grammar work; M6's projection API is what M1's Rust bindings USE to
+read/write session crystals). M6 is the standalone-deliverable
+milestone — an adopter can install mirror at M6 and get the full open
+floor without any downstream sub-arc having landed. The whole rest of
+§10 becomes progressively more useful, but M6 is the standalone
+floor.
+
+### 10.7 Ordering + parallelism
+
+Sub-arc dependency graph:
+
+- **M6** (@mirror/store floor spec) — foundation. Landed first (or
+  parallel with M1's grammar work). Standalone-deliverable.
+- **M1** (MCP session gen_prism) — depends on M6's projection API +
+  CAS action-cache surface.
+- **M2** (@spec-target spawn) — depends on M1 (needs session
+  ratification).
+- **M3** (Fate multi-frequency shift) — depends on M2 (@song only
+  runs post-spawn). Parallel-landable with M4/M5.
+- **M4** (lambda shell as MCP client) — depends on M1. Parallel with
+  M5.
+- **M5** (eigenboard prompt color) — depends on M1. Parallel with M4.
 
 Suggested land order:
 
-1. M1 (MCP session gen_prism) — foundation.
-2. M2 (@spec-target spawn) — first-consumer of M1's session ratification.
-3. M3 (Fate multi-frequency shift) — parallel with M4/M5 possible
+1. **M6 (@mirror/store floor)** — foundation + standalone-deliverable
+   Apache-2.0 milestone. Adopters can use mirror at this altitude
+   without any further sub-arc.
+2. M1 (MCP session gen_prism) — first consumer of M6's projection API.
+3. M2 (@spec-target spawn) — first consumer of M1's session
+   ratification.
+4. M3 (Fate multi-frequency shift) — parallel with M4/M5 possible
    because M3 lives at temporal-step altitude, not shell altitude.
-4. M4 + M5 (lambda shell + eigenboard) — parallel; both depend on M1.
+5. M4 + M5 (lambda shell + eigenboard) — parallel; both depend on M1.
 
-Arc estimate: three sub-arcs of 3-5 ticks each = 9-15 ticks total.
+Arc estimate: four sub-arcs of 3-6 ticks each = 12-24 ticks total.
 But per `[[feedback-no-time-estimates]]`: one tick after the other.
+
+**Standalone-deliverable checkpoint after M6:** adopters install
+`mirror`, get `@mirror/store` at the Apache-2.0 floor, and can build
+content-addressed agentic workflows with the nine capabilities §11.6
+enumerates. No `@spectral/db` required. Not a teaser — the offer.
 
 ---
 
-## §11 What this makes trivial
+## §11 `@mirror/store` (Apache-2.0) IS the rock-solid floor
+
+**Alex's directive** (2026-07-06, post-first-dispatch): *"I want the
+floor to be rock solid and useful in agentic workflows, even without
+the `@spectral/db` magic. Respawn."*
+
+This section makes the Apache-2.0 `@mirror/store` floor stand on its
+own. Not a teaser. Not a demo. Not a hollow foundation waiting for
+closed magic to fill it. Adopters using ONLY the open floor get
+genuine, competitive, load-bearing value in agentic workflows. The
+closed `@spectral/db` engine adds real differentiation on top; but the
+floor is where the ecosystem lives.
+
+Taut's Kagi scout returned with prior-art canon that grounds this: the
+storage protocol / query engine split at the Apache-2.0 boundary is a
+battle-tested fault plane across every successful content-addressed
+ecosystem. §11.1 cites the canon; §11.2 names the fault plane;
+§11.3 defines the MVP floor; §11.4 names what `@spectral/db` adds on
+top (kept closed for good reason); §11.5 flags the constructor-theory
+framing that stays substrate-side; §11.6 enumerates the genuine
+value-adds an agentic workflow gets from ONLY the open floor.
+
+### 11.1 Prior art canon
+
+Taut's Kagi search returned the following load-bearing references.
+All cited to ground §11.3's MVP against the actual state of the art;
+adopters reading this section should recognize the shape.
+
+1. **Dolstra, "The Purely Functional Software Deployment Model"**
+   (2006 PhD thesis, TU Delft; `edolstra.github.io/pubs/phd-thesis.
+   pdf`). The foundational text for content-addressed deployment.
+   Names the discipline the Nix ecosystem grew from: purely functional
+   composition, immutable-by-hash storage, closure discipline for
+   reachability + GC, deterministic builds from typed inputs to
+   content-addressed outputs. Every substrate-decl in §11.3 traces to
+   Dolstra's discipline; the ca-derivations arc (2020-2023) grounds
+   §11.3.3's *do-not-bolt-immutable-on-later* warning.
+
+2. **Bazel Remote Execution API (REAPI)**
+   (`github.com/bazelbuild/remote-apis`, ongoing spec). The industry
+   standard for the CAS + action-cache split. The floor that any
+   remote build system exposes as its open protocol: content-addressed
+   storage (`ContentAddressableStorage`) + action-cache lookup
+   (`ActionCache`) + reachability/existence-check (`FindMissingBlobs`).
+   Everything above (scheduler, worker pool, analytics, replay) is
+   proprietary; the REAPI floor is open. `@mirror/store`'s MVP
+   (§11.3.6) matches REAPI's floor exactly — same six-op surface
+   modulo naming (read/write/exists <-> ContentAddressableStorage;
+   diff/walk/verify <-> validation + ancestor walk).
+
+3. **Mokhov, Mitchell, Peyton Jones, "Build Systems à la Carte"**
+   (JFP 2020; `simon.peytonjones.org/assets/pdfs/build-systems-jfp.
+   pdf`). The canonical taxonomy of build system design. Names the
+   two-axis grid: (scheduler: topological / restarting / suspending)
+   × (rebuilder: dirty-bit / verifying-trace / constructive-trace /
+   deep-constructive-trace). Nix = topological + verifying-trace;
+   Bazel = restarting + constructive-trace; Shake = suspending +
+   trace-based. `@mirror/store` at the Apache-2.0 floor is
+   scheduler-agnostic (any scheduler can drive it); the rebuilder
+   discipline is trace-based (splinter_graph carries the trace).
+   The closed engine (`@spectral/db`) adds suspending scheduler +
+   spectral-embedding-based rebuilder that Mokhov et al. did not name
+   — the fifth cell in the taxonomy grid the paper's Table 1 leaves
+   empty. See §11.4.3.
+
+4. **IPFS MERKLE_DAG.md**
+   (`github.com/ipfs/specs/blob/main/MERKLE_DAG.md`; ongoing). The
+   general Merkle-DAG discipline abstracted from any particular
+   filesystem or version-control ancestor. Names: content-addressed
+   nodes; DAG edges by content-address; deduplication by hash-
+   collision; verifiable partial pulls (any subset of the DAG is
+   locally verifiable by re-hashing); federation-friendly by
+   construction. `@mirror/store` inherits this discipline via
+   `splinter_graph` (§11.3.7): the OID-graph IS a Merkle DAG; any
+   partial fetch is verifiable by re-hashing; any two stores with the
+   same OID hold the same bytes.
+
+5. **Merkle, "A Digital Signature Based on a Conventional Encryption
+   Function"** (CRYPTO 1987; foundational Merkle-tree paper, though
+   the 1979 thesis "Secrecy, Authentication, and Public Key Systems"
+   is the original). The original discipline: hash-based commitment
+   structures with efficient membership proofs. Every content-
+   addressed system since — git, IPFS, Bazel, Nix, `@mirror/store`
+   — descends from Merkle 1979. Cited for the historical anchor;
+   `@mirror/store.verify(o, bytes) -> verdict` IS Merkle's original
+   membership check.
+
+### 11.2 The fault plane is battle-tested
+
+Every successful content-addressed ecosystem drew the line at the
+same place. **Storage protocol open, query / scheduler / analytics
+closed.** This is not a coincidence. It is a fault plane the market
+discovered independently across five different ecosystems, and Alex's
+split lands on the proven boundary.
+
+| Ecosystem | Open protocol (storage layer) | Closed engine (query / scheduler / analytics) |
+|-----------|-------------------------------|-----------------------------------------------|
+| git | git-the-protocol; `.git/objects/`; refs; pack format | GitHub / GitLab / Bitbucket (PR review, CI, search, analytics, code intelligence) |
+| Nix | Nix expression language; `/nix/store/`; `.narinfo` format | Determinate Systems / Cachix / Flox (binary caches, hosted evaluators, enterprise support, analytics) |
+| IPFS | IPFS protocol; Merkle DAG spec; `bitswap`; CID formats | Filecoin (incentivized storage layer, retrieval markets, deal analytics) |
+| Bazel | REAPI (CAS + action-cache) | BuildBuddy / EngFlow / Aspect (scheduler, worker pool, analytics, replay UI) |
+| **mirror** | **`@mirror/store` (Apache-2.0; §11.3)** | **`@spectral/db` (closed; §11.4)** |
+
+Why does this fault plane work? Three structural reasons:
+
+1. **Storage is a commodity; navigation is not.** Content-addressed
+   storage is byte-in / byte-out with a hash algebra; every
+   implementation converges to the same shape (Dolstra, REAPI, IPFS
+   all draw the same primitive surface). Navigation — which OIDs are
+   *near* which OIDs, which cuts of the DAG matter, which axes of
+   variety the substrate carries — is where the differentiated
+   engineering lives. Storage MUST be open for the ecosystem to trust
+   deposits; navigation SHOULD be closed for the engineering to be
+   sustainable.
+
+2. **Interop demands open storage.** If storage is closed, no adopter
+   can migrate off, and no ecosystem can federate. Every successful
+   ecosystem needs adopters to trust that their bytes are recoverable
+   without dependence on a single vendor. `@mirror/store` MUST be
+   Apache-2.0 for the same reason `git` MUST be openly cloneable.
+
+3. **The closed layer adds real value; competitors can rebuild on the
+   open layer if the closed value is not real.** Every one of the
+   ecosystems above has open-source clones of the closed engine
+   (Gitea for GitHub, self-hosted Nix binary caches for Cachix, IPFS
+   Cluster for Filecoin coordination, various open Bazel scheduler
+   projects). The closed engines survive because their engineering
+   value is real. `@spectral/db`'s engineering value (§11.4) is real:
+   spectral navigation, Laplacian eigen-decomposition, sub-Turing
+   query surface. Competitors CAN rebuild it on top of `@mirror/store`
+   — that's the whole point of a fault plane — and it is on
+   `@spectral/db` to keep out-engineering the open competition.
+
+**Alex's split lands on the proven fault plane.** The storage-open /
+query-closed line has been drawn identically five times by five
+independent ecosystems; the sixth (`@mirror/store` / `@spectral/db`)
+inherits the pattern with the same discipline.
+
+### 11.3 Minimum viable `@mirror/store` (Apache-2.0) — the rock-solid floor
+
+The substrate-decl'd MVP. Every claim in this section is either
+already landed in `shards/mirror/store.mirror` or forward-promised in
+M6 (§10.6). No claim in this section requires `@spectral/db`.
+
+#### 11.3.1 `OID = BLAKE3(content)` — the splinter/mirror/crystal trichotomy at substrate altitude
+
+The OID (`shards/mirror/store.mirror`'s `type oid = ref`) is the
+content address of stored bytes. Per
+`[[architecture-splinter-and-spectral-db-edges]]`, the substrate
+carries a splinter/mirror/crystal trichotomy at OID altitude:
+
+- **splinter** (`@glass`; universal atomic content-addressed unit) —
+  the bytes-of-content OID. Analogous to git's `blob`. One splinter,
+  one OID, one content.
+- **splinter_graph** (`@mirror/store`; the OID-graph projection) —
+  the (root, children) shape naming the dependency closure. Analogous
+  to git's `tree`. Composition by OID.
+- **shard** (`@glass`; the SpectralUuid-addressed settlement) — the
+  bound identifier resolving to a settled composition. Analogous to
+  git's `commit`. The named handle for a canonicalized composition.
+
+The trichotomy is distinct from git's exactly because the substrate
+carries the `SpectralUuid` layer git lacks (a shard is not just a
+commit; it's a spectral-addressed settled composition with typed
+context). But the storage discipline is identical: each level is
+content-addressed; higher levels reference lower levels by content-
+address; the DAG of references is verifiable by re-hashing.
+
+**BLAKE3** is the chosen hash algebra at the substrate boundary
+(replacing SHA-1 / SHA-256 for performance + tree-hash structure +
+BLAKE3's parallelism-friendly Merkle tree). Per
+`shards/prism.mirror`'s CoincidenceHash<5,5> substrate-decl the
+recursive-composition variant BLAKE3 grounds is the operational form.
+
+#### 11.3.2 Immutable-under-hash (non-negotiable at v0)
+
+Once written, an OID's bytes cannot change. Ever. Not by mutation.
+Not by version. Not by "just this one migration". Immutable-by-hash
+is a substrate invariant, not a policy.
+
+**Why non-negotiable at v0.** Nix's ca-derivations arc (2020-2023, per
+Dolstra + team) shows what happens when you bolt immutable-by-hash on
+later: years of migration work, dual-mode operation for the entire
+ecosystem, downstream breakage for every consumer that assumed the
+earlier semantics. Nix's original store (2003-2020) used
+input-addressed derivations — the output OID was a hash of INPUTS, not
+of CONTENT. When Nix moved to content-addressed derivations, every
+downstream cache, every derivation reference, every Nix flake had to
+coexist with both semantics. `@mirror/store` avoids this class of
+failure by declaring content-addressing at v0.
+
+Immutable-by-hash implies:
+
+- No `oid.mutate()` action. Ever.
+- No "amend an OID's bytes". Ever.
+- Amendments happen by writing NEW bytes, getting NEW OID, and
+  updating the reference (whether ref, splinter_graph child link, or
+  gen_prism head crystal) to point at the new OID.
+
+Git gets this right (blobs never mutate; commits reference new
+blobs). `@mirror/store` inherits.
+
+#### 11.3.3 Purely-functional composition
+
+Per Dolstra 2006 §2.3 (purely-functional deployment): any `Prism<A, B>`
+acting on stored objects is a total function `OID_A -> OID_B`.
+Deterministic. Reproducible. Byte-equal outputs from byte-equal
+inputs.
+
+`@mirror/store` grounds this at the wire surface:
+
+- Any `read(o) -> imperfect(bytes)` on the same OID from the same
+  store returns the same bytes (up to `imperfect`'s opacity carrier;
+  Splinter-pole always).
+- Any `write(bytes) -> oid` on the same bytes returns the same OID.
+- Any `Prism<A, B>` applied to `read(o_a)` and written back is a total
+  function on OIDs.
+
+This is the substrate's substrate-decl'd form of the
+purely-functional discipline. Consumers can rely on it; competing
+store implementations MUST honor it.
+
+#### 11.3.4 Closure / reference-set discipline
+
+Per Dolstra 2006 §3.1 (closure discipline): every stored object
+carries the set of OIDs it references. The transitive closure of
+references under a root OID IS the reachability set. GC, replication,
+federation — all consume the closure.
+
+`@mirror/store` grounds this in `splinter_graph` (§11.3.1) and the
+forward-promised `closure(root: oid) -> [oid]` action (M6 tick 4).
+The splinter_graph carries the direct children; the closure walk
+returns the full transitive set. Any adopter can:
+
+- **GC-mark-and-sweep** by computing closures from live refs and
+  deleting unreferenced OIDs. Nix-style GC discipline; the store
+  interface is the same.
+- **Replicate** a subset of the store by pulling the closure of a
+  root OID. Any pull is verifiable by re-hashing; the closure IS the
+  dependency lockfile.
+- **Federate** by exchanging closures across stores. Two stores
+  sharing a root OID and its closure agree byte-by-byte on every
+  transitively-referenced object.
+
+The closure discipline lifts Dolstra's Nix-store insight to the
+substrate altitude.
+
+#### 11.3.5 Projection API (`oid <-> working-tree` inverse) — the DAG-as-truth grounding
+
+Per §3.6 (DAG-as-source-of-truth; disk is projection): the store is
+the truth; disk is a rendering. The `@mirror/store` MVP MUST include
+the operational escape hatch to the filesystem:
+
+- `project(o: oid, path: path) -> imperfect` — write the OID's content
+  to the filesystem path. This IS the render-into-working-tree op;
+  analogous to `git checkout` at blob altitude.
+- `unproject(path: path) -> imperfect(oid)` — hash the file at path,
+  return its OID. Used for `mirror status`-style diffs; analogous to
+  `git hash-object` at blob altitude.
+
+Without these two ops, the DAG-as-source-of-truth claim in §3.6 has
+no operational escape hatch to disk. With them, adopters can build
+the full round-trip: edit a `.mirror` shard on disk -> `unproject` to
+get its new OID -> `write` it to the store -> update the ref. Or
+inversely: read the store's head ref -> `project` each OID to its
+canonical disk path -> the working tree renders the store's truth.
+
+This is the API that makes the whole DAG-as-source-of-truth discipline
+operationally real. M6 tick 2 lands it.
+
+#### 11.3.6 CAS + action-cache split (Bazel REAPI floor)
+
+Per Bazel REAPI: the storage protocol has two orthogonal surfaces —
+the Content-Addressable Storage (CAS: byte-in / byte-out; the naive
+hash-store) and the Action Cache (given a set of input OIDs plus a
+canonical action key, return the set of output OIDs the last
+successful run produced).
+
+`@mirror/store` inherits both surfaces:
+
+- **CAS surface**: `read` / `write` / `exists` / `verify` (already
+  substrate-decl'd at `shards/mirror/store.mirror`).
+- **Action-cache surface**: a sub-prism `@mirror/store/action_cache`
+  (M6 tick 3). Actions: `record(inputs: [oid], action_key: oid,
+  outputs: [oid]) -> verdict` and `lookup(action_key: oid) ->
+  imperfect([oid])`. The `action_key` is the OID of the canonicalized
+  action description (the shard containing the action's substrate-decl
+  and its input closures); `lookup` returns the previously-recorded
+  outputs or `partial(opacity_map)` if the action has run at graded
+  confidence but not yet fully settled.
+
+Splitting these matches REAPI floor exactly. Consumers can use CAS
+without action-cache (naive byte-store); consumers who want
+incremental rebuild use both. The floor is legible at both altitudes.
+
+#### 11.3.7 Reference DAG walk (parents/children only; deliberate)
+
+At the open floor, the DAG walk surface is deliberately minimal:
+`walk(root: oid) -> splinter_graph` returns the OID-graph rooted at
+`root` — parents and children only. Reachability. Ancestry. Closure.
+
+**The floor does NOT expose typed edges, edge weights, or graph
+Laplacian-based structural navigation.** These are `@spectral/db`'s
+closed differentiation (§11.4). The open surface matches Nix's `-q`
+(reachability query) discipline exactly — the floor answers *is this
+OID reachable from that OID?* and *what OIDs does this OID depend on?*
+but does not answer *which OIDs are STRUCTURALLY NEAR this OID in the
+spectral embedding?*.
+
+This is a deliberate, load-bearing choice. Once typed edges are
+exposed at the open floor, competitors rebuild the spectral engine
+on top and the closed differentiation collapses. Keeping the floor at
+reachability-only preserves the fault plane.
+
+#### 11.3.8 Species roster at v0
+
+`@mirror/store`'s species altitude (per `shards/mirror/store.mirror`
+§"Species at @mirror/store") is open at v0 for concrete backends to
+specialize the six-op surface. v0 release includes:
+
+- **Landed**: `@mirror/store/git` — git-backed namespaced wire
+  (`fragmentation/vcs/git`). The reference backend; every claim in
+  §11.3.1-§11.3.7 discharges against this backend.
+- **Forward-promised** (M6 tick 5): `@mirror/store/mem` — in-memory
+  wire for testing + ephemeral CI. Required for the RED tests in M1;
+  a zero-cost store discipline that discharges the same six ops.
+- **Held** (deferred): `@mirror/store/s3`, `@mirror/store/oci`,
+  `@mirror/store/<...>`. Land when a consumer pulls (per Alex 2026-
+  06-30 substrate-pull recognition of the wire altitude).
+
+Species-parametric composition: any backend discharging the six-op
+surface + the projection API (§11.3.5) + the action-cache split
+(§11.3.6) IS a valid `@mirror/store` species. Adopters can bring
+their own backend (S3 today; OCI when the OCI-adopter pulls; a custom
+enterprise CAS when the enterprise-adopter pulls).
+
+### 11.4 What `@spectral/db` adds (closed) — justified value-add
+
+The closed engine adds real, load-bearing engineering value on top of
+the open floor. This section names the value-adds — both to make the
+closed offer visible to adopters evaluating the split, and to make
+explicit which capabilities land at which layer. Each subsection
+names a capability the open floor DOES NOT provide.
+
+#### 11.4.1 Typed edges (`EdgeKind × Weight`) — the labeled multigraph
+
+The open floor's DAG walk (§11.3.7) treats edges as untyped
+reachability arrows. `@spectral/db` adds the labeled multigraph
+structure: each edge carries an `EdgeKind` discriminator (which of the
+five operations does this edge encode: focus / project / split /
+shift / settle) and a weight (the coefficient in the substrate's
+spectral decomposition).
+
+**DO NOT open the typed-edge layer.** This is the first bit of closed
+differentiation and the single most important one. Once typed edges
+are exposed at the open surface, competitors:
+
+1. Reconstruct the operation-labeled multigraph in their own store
+   layer.
+2. Compute the graph Laplacian on the labeled multigraph.
+3. Get spectral navigation for free.
+4. Rebuild the entire `@spectral/db` engineering on top of
+   `@mirror/store` in an afternoon.
+
+Typed edges are the load-bearing closed primitive. Everything above
+(§11.4.2 - §11.4.6) descends from typed edges. The open floor stays
+at reachability-only walk (§11.3.7) for the closed value to remain.
+
+#### 11.4.2 Graph Laplacian + eigenvalue navigation
+
+Once typed edges are present, the graph Laplacian is well-defined:
+`L = D - W` where `D` is the diagonal degree matrix (per edge kind)
+and `W` is the weighted adjacency matrix. Eigen-decomposition
+`L = Σ λ_i v_i v_i^T` gives:
+
+- The **Fiedler vector** (v_2, the eigenvector of the second-smallest
+  eigenvalue) picks structural cuts of the DAG. Where the graph
+  "naturally splits" is the sign change of v_2 across nodes. For
+  adopter workflows: automatic partition of a large substrate into
+  sub-problems.
+- The **zero eigenvalue** `λ_0 = 0` marks ground state (per
+  Recognition #99 mirror.spec IS λ_0). The multiplicity of `λ_0`
+  counts connected components.
+- **Higher eigenvectors** name axes of variety in the substrate
+  (per Recognition #37 Ashby multi-dimensional variety). Each axis
+  is a coordinate along which the substrate can move independently;
+  spectral decomposition NAMES the axes.
+
+Adopter workflows using `@spectral/db` get the axis-labels for free;
+adopter workflows using only `@mirror/store` see the DAG but not its
+spectral decomposition. Both are legitimate; the open surface answers
+correct questions about reachability, the closed engine adds correct
+answers about structural navigation.
+
+#### 11.4.3 Sub-Turing query surface (Datalog-adjacent)
+
+Per `[[architecture-mirror-as-content-addressed-build-system]]` (per
+Recognition #43): mirror IS a content-addressed build system. Buck2
+(Meta's Bazel-descendant build system) exposes a Datalog-adjacent
+query surface at BUILD-FILE altitude (`buck2 query`). `@spectral/db`
+lifts the discipline to STORE altitude: adopters can query the
+labeled multigraph via a sub-Turing query language whose fixpoint
+semantics are guaranteed to terminate (per Recognition #107 substrate-
+decl bounded / Gödel-incomplete).
+
+The query surface answers: *what OIDs are structurally near this OID?
+What is the spectral distance? What edges of kind K reach here? What
+is the eigenboard coefficient regime at this OID?* Open-floor
+adopters answer these questions by writing custom traversals over
+`walk(root) -> splinter_graph`; `@spectral/db` adopters write
+declarative queries.
+
+Sub-Turing IS the closed advantage — termination-guaranteed queries
+are a genuinely hard engineering discipline (Datalog / stratified
+negation / semi-naive evaluation / spectral-embedding index) that
+`@spectral/db` invests in and adopters get without recreating.
+
+#### 11.4.4 Spectral decomposition + refract (settlement as measurement collapse)
+
+Per §6 (target eigenvector projection) + the void-dual-geometry
+discipline: settlement IS eigenvector alignment. `@spectral/db`
+provides the `refract(o: oid, target: eigenvector) -> imperfect(oid)`
+action that computes the spectral projection of the current state
+onto the target eigenvector at the labeled-multigraph altitude — the
+measurement-collapse-onto-eigenbasis discipline.
+
+Open-floor adopters can compute closures and diffs; `@spectral/db`
+adopters get the substrate telling them *how much of my current
+state aligns with the target* and *which non-target eigenspaces are
+absorbing coefficient mass* (§6.2 Splinter Projection vs Narcissus
+Illusion; §6.5 Ollivier-Ricci flow).
+
+#### 11.4.5 Incremental "what's near this OID?" via spectral embedding
+
+Open-floor adopters answer *is X reachable from Y* via DAG walk
+(§11.3.7). `@spectral/db` adopters answer *what OIDs are STRUCTURALLY
+NEAR X* via spectral embedding — the k-nearest-neighbor query in the
+substrate's eigen-basis, where "near" means "share a low-eigenvalue
+sub-space".
+
+This is what makes agent context windows work as sub-graphs (per
+lambda-shell.md §"Agent Spawn": *"the geometric projection of what's
+relevant"*). Without spectral embedding, adopters see reachability;
+with spectral embedding, adopters see structural proximity.
+
+#### 11.4.6 Cellular sheaf over the five-op graph (per Recognition #34)
+
+Per memory index (`[[project-eigenboard-is-sheaf]]`) + Recognition
+#34: the eigenboard IS a cellular sheaf on the five-operation graph;
+restriction maps ARE the conductivity tensor; Reflection writes
+morphisms. `@spectral/db` provides the sheaf primitives directly:
+typed restriction maps, morphism composition, sheaf cohomology
+computation for gap-detection (Recognition #56 prediction paradigm).
+
+Open-floor adopters can compute closures; `@spectral/db` adopters
+get the sheaf-theoretic navigation — the substrate's own predictive
+engine (Recognition #56) discharges here.
+
+### 11.5 Constructor-theory framing stays substrate-side
+
+Per Deutsch-Marletto constructor theory (Recognition #56 candidate
+adjacent prior art): the substrate's deep grounding is that
+substrate-decl'd operations ARE "possible transformations" and the
+store enumerates which transformations have witnesses. Every OID in
+`@mirror/store` is a witnessed transformation; the DAG of OIDs is the
+set of possible transformations the substrate has enacted.
+
+**This framing belongs in the whitepaper, not the Apache-2.0 README.**
+Adopters reading the open-floor documentation should read: *content-
+addressed DAG; splinter/splinter_graph/shard trichotomy; six-op
+surface; projection API; CAS + action-cache split*. Adopters reading
+the whitepaper should read: *the substrate operationalizes
+constructor theory; each OID is a witnessed transformation; the DAG
+enumerates the substrate's possible-transformation set*.
+
+Store depth stays substrate-side. The Apache-2.0 floor is legible at
+the engineering altitude; the constructor-theory depth is legible at
+the mathematical altitude. Both are true; only one needs to be in
+the README.
+
+### 11.6 What the open floor enables agentic workflows to do
+
+**This is the section Alex pulled hardest on**: *"I want the floor to
+be rock solid and useful in agentic workflows, even without the
+@spectral/db magic."*
+
+The following capabilities land at the Apache-2.0 floor alone. Each
+is a genuine, load-bearing capability that most current agentic
+tooling does not deliver even with closed backends. None of these
+require `@spectral/db`. All of these are the offer to adopters using
+ONLY `@mirror/store`.
+
+**These are not consolation prizes.** They are the reason mirror is
+competitive at the open layer today.
+
+#### 11.6.1 Deterministic compilation — same inputs -> same OID, always
+
+Any `Prism<A, B>` acting on a stored OID is a total function
+`OID_A -> OID_B` (§11.3.3). Given the same input OID and the same
+prism composition, the output OID is byte-identical. Cross-machine
+reproducibility (nix-copy analog): agent A on machine X and agent B
+on machine Y running the same composition against the same input
+OID produce the same output OID, verifiable by hash.
+
+**Why this matters for agents.** Reproducible builds solve a class of
+agent-debugging problems that currently consume enormous time: *"why
+did the agent produce a different answer this time?"* becomes
+decidable at the store layer. If the input OIDs differ, that's the
+answer; if the input OIDs are identical, the output MUST be identical
+and any observed divergence is a substrate bug.
+
+Today: most agent frameworks cannot answer this question. Different
+run, different context, different answer, no way to know why.
+`@mirror/store` at the Apache-2.0 floor makes it decidable.
+
+#### 11.6.2 MCP session persistence — session state IS crystals in the store
+
+Per §3.5 correction + §3.6 DAG-as-source-of-truth: MCP session state
+lives in `@mirror/store`, not in the Rust process's memory. Agent
+restarts (crash, deploy, scale-down) do not lose session state; the
+next process reads the session ref and resumes from the accumulated
+crystal. No in-process fragility.
+
+**Why this matters for agents.** Long-running agent sessions currently
+fail in one of two ways: they crash and lose accumulated context, or
+they ship the accumulated context in-band on every request and burn
+tokens. Content-addressed session persistence solves both: state
+durable by hash, resumed on any process, referenced by OID.
+
+Today: most agent frameworks either shim session state through an
+external database (SQL, Redis) or force the agent to re-establish
+context on every restart. `@mirror/store` at the Apache-2.0 floor
+makes session persistence a substrate primitive.
+
+#### 11.6.3 Cross-agent OID-addressed memory — multiple agents share the same content-addressed substrate
+
+Any two agents pointed at the same `@mirror/store` instance share the
+same OID space. Agent A publishes an OID (writes bytes, gets an OID,
+advances some ref); agent B fetches the OID (reads by OID, verifies
+by re-hash). No coordination service needed; the OID IS the
+coordination.
+
+**Why this matters for agents.** Multi-agent coordination currently
+requires either an out-of-band message bus (kafka, redis pubsub) or
+an explicit orchestrator (LangGraph, temporal). Content-addressed
+memory reduces coordination to hash-mediated pointer-passing: agent A
+says "here is what I built: OID X"; agent B says "I read OID X";
+both agents agree on the bytes by construction.
+
+Today: most multi-agent frameworks reinvent the coordination protocol
+per deployment. `@mirror/store` at the Apache-2.0 floor gives every
+adopter the same coordination primitive git gave to distributed
+developers.
+
+#### 11.6.4 Provenance chains — every artifact traces to its inputs via closure
+
+Per §11.3.4 (closure discipline): every OID carries the set of OIDs
+it references. Adopters can walk backward from any output OID to see
+all input OIDs. Audit: what OIDs went into this decision? Replay:
+given the same input OIDs and prism composition, re-produce the
+output. Rollback: which OID was I at yesterday? which OID am I at
+now? What changed?
+
+**Why this matters for agents.** Agent decision auditability is
+currently a hand-crafted concern per framework (LangSmith traces,
+Temporal event history, custom logging). Content-addressed provenance
+chains give every adopter the same auditability primitive for free:
+any artifact's history IS its closure walk; any decision's causes ARE
+its input OIDs.
+
+Today: most agent frameworks force the developer to hand-instrument
+auditing. `@mirror/store` at the Apache-2.0 floor makes provenance a
+substrate primitive.
+
+#### 11.6.5 Verifiable computation — Merkle-chain-verifiable
+
+Any content-addressed DAG is Merkle-verifiable: given a root OID and
+its closure, any subset of the closure can be verified locally by
+re-hashing. Adopters can prove what they built without trusting each
+other. Trust boundaries reduce to hash boundaries.
+
+**Why this matters for agents.** Agent-to-agent trust currently
+requires signing schemes, TLS chains, or blind reliance on a shared
+trust root. Content-addressed verifiability collapses trust to hash-
+verification: if agent A says "I ran composition C on inputs
+(OID_a, OID_b) and got OID_c", agent B can independently verify by
+re-running composition C on (OID_a, OID_b) and checking the output
+OID matches OID_c. No trust required beyond the composition itself.
+
+Today: most agent frameworks either trust each other (attack surface)
+or sign everything (operational complexity). `@mirror/store` at the
+Apache-2.0 floor collapses both to Merkle verification.
+
+#### 11.6.6 Immutable rollback / time-travel — past states preserved by hash-immutability
+
+Per §11.3.2 (immutable-under-hash): OIDs never mutate. Past OIDs are
+preserved by the closure discipline as long as any live ref
+transitively references them. Adopters can walk any ref backward in
+time, compare *"what did I think last week?"* vs *"what do I think
+now?"*, and roll back to any previous head by advancing the ref
+backward.
+
+**Why this matters for agents.** Agent state rollback is currently
+either impossible (state-less frameworks) or expensive (snapshot the
+entire agent memory per turn). Content-addressed rollback makes it
+free: past OIDs exist by construction; walking to any prior head is
+a cheap ref-manipulation.
+
+Today: most agent frameworks either can't roll back or roll back at
+O(state-size). `@mirror/store` at the Apache-2.0 floor makes rollback
+O(pointer-swap).
+
+#### 11.6.7 Ecosystem interop — standard projection API means adopters bridge to git/nix/IPFS
+
+Per §11.3.5 (projection API): `project(o: oid, path: path)` writes
+OID content to disk; `unproject(path: path) -> oid` hashes disk
+content back to an OID. The projection API IS the bridge to any
+other content-addressed ecosystem — adopters can mirror OIDs into
+git blob storage, Nix store paths, IPFS CIDs, Bazel CAS entries.
+
+**Why this matters for agents.** Adopters don't want walled gardens.
+`@mirror/store` at the Apache-2.0 floor makes mirror a first-class
+citizen of the content-addressed ecosystem rather than a competing
+silo. Any adopter can bridge in either direction: pull from
+nix binary caches into `@mirror/store` via the projection API; push
+from `@mirror/store` into IPFS via the same. No lock-in.
+
+Today: most agent-memory tooling is closed by construction (vector
+databases with proprietary formats, chat-history stores in specific
+SaaS platforms). `@mirror/store` at the Apache-2.0 floor is
+interoperable at the content-addressing altitude.
+
+#### 11.6.8 Deterministic replay — output is bit-identical given same inputs + composition
+
+Combining §11.6.1 + §11.6.4: given the same input OIDs and the same
+prism composition, the output OID is bit-identical, and the closure
+walk is byte-identical. This IS the substrate-decl'd form of
+deterministic replay: agent debugging via re-running the exact
+composition against the exact input OIDs.
+
+**Why this matters for agents.** Agent debugging currently relies on
+rough replay (re-run with similar inputs, hope for similar outputs).
+Content-addressed deterministic replay makes debugging as precise as
+system-level debugging: run the composition against the recorded
+input OIDs; if the output OID differs from the recorded output OID,
+the substrate has drifted (bug); if the OIDs match, the composition
+is correct and the debugging concern is at the human-interpretation
+altitude.
+
+Today: most agent frameworks cannot offer bit-identical replay.
+`@mirror/store` at the Apache-2.0 floor makes it the default.
+
+#### 11.6.9 Federated substrate sharing — pull-based mirroring, no central coordinator
+
+Content-addressing enables pull-based federation: any two stores with
+the same content-address space share OIDs by construction. Adopters
+can mirror substrate slices across organizational boundaries the
+same way Nix binary caches and IPFS pinning work — pull the closure
+of a root OID; verify by re-hashing; the closure is authoritative.
+No central coordinator; no orchestration service.
+
+**Why this matters for agents.** Multi-org agent deployments
+currently require complex federation setups (federated authentication,
+cross-org message routing, per-org data-residency negotiation).
+Content-addressed federation reduces this to pull-based mirroring:
+org A publishes a root OID; org B pulls the closure; both orgs hold
+the same bytes. Data residency is per-store; the store species can
+vary per adopter (`@mirror/store/git` for one; `@mirror/store/s3`
+for another; `@mirror/store/oci` for a third); federation happens at
+the content-address altitude across all species.
+
+Today: most agent frameworks either force a shared coordinator
+(SaaS lock-in) or require adopters to build cross-org replication
+by hand. `@mirror/store` at the Apache-2.0 floor makes federation a
+substrate primitive.
+
+#### 11.6.10 The rock-solid emphasis — not a consolation prize
+
+The nine capabilities above are genuinely load-bearing. They make
+agentic workflows possible that current tooling cannot deliver
+regardless of closed backend. An adopter using ONLY `@mirror/store`
+AT THE APACHE-2.0 FLOOR gets:
+
+- **The substrate's storage primitive**: content-addressed DAG with
+  the six-op surface + projection API + CAS + action-cache split.
+- **The substrate's coordination primitive**: OID-mediated cross-agent
+  memory + federation.
+- **The substrate's audit primitive**: closure-walked provenance +
+  Merkle-verifiability.
+- **The substrate's replay primitive**: deterministic composition +
+  hash-immutable rollback.
+- **The substrate's ecosystem primitive**: projection API bridging to
+  git / Nix / IPFS / Bazel.
+
+What `@spectral/db` adds on top (typed edges, spectral navigation,
+sub-Turing queries, cellular sheaf, incremental proximity) is real
+differentiation for adopters who need STRUCTURAL navigation of the
+DAG. But adopters who need reachability, provenance, replay,
+federation, deterministic compilation, and cross-agent memory get all
+of it at the Apache-2.0 floor.
+
+The floor makes the ecosystem possible; the closed engine makes the
+floor's structural navigation tractable. The offer to Apache-2.0
+adopters is not "here is a demo; the real product is behind the
+paywall". The offer is "here is a content-addressed substrate that
+solves eight or nine load-bearing problems today's agentic tooling
+cannot solve at any price; the closed engine adds spectral navigation
+for adopters who need it".
+
+**Rock-solid means: adopters bet on the floor and win.** The floor
+MUST stand on its own.
+
+---
+
+## §12 What this makes trivial
 
 Alex's directive: "as soon as we have the MCP flow working building
 the lambda shell becomes almost trivial." This spec enumerates the
 triviality claims.
 
-### 11.1 Lambda shell prompt = mq query surface, trivially
+### 12.1 Lambda shell prompt = mq query surface, trivially
 
 Once M1 wires MCP session state machine, the `λ>` prompt IS trivially
 an interactive mq query surface: every keystroke becomes an mq query;
@@ -1249,7 +2389,7 @@ the shell prompt are the SAME wire; the shell is a UX skin on the MCP
 socket. lambda-shell.md's §"mq IS the Shell Language" IS this claim;
 M1 makes it real.
 
-### 11.2 @name> prompt = spawned @song made present, trivially
+### 12.2 @name> prompt = spawned @song made present, trivially
 
 Once M2 wires spec-target spawn, `@reed>` is trivially an MCP client
 connected to a spawned peer's gen_prism. The natural-language surface
@@ -1258,7 +2398,7 @@ the multi-frequency tournament (per M3). No new REPL discipline
 required — the peer IS a running @song against a spec, and the shell
 talks to it via the MCP wire.
 
-### 11.3 \ toggle = frame-toggle, trivially
+### 12.3 \ toggle = frame-toggle, trivially
 
 Once §7.3 mapping is grounded, `\` is trivially a state-machine
 transition in the shell's own gen_prism state crystal. The state
@@ -1266,7 +2406,7 @@ carries the current frame (`λ>` computing / `@name>` conversing);
 `\` advances to the other frame. No new toggle mechanism required —
 the gen_prism ancestor chain remembers frame per tick.
 
-### 11.4 ~/.mirror/config.spec = auto-maintained @spec, trivially
+### 12.4 ~/.mirror/config.spec = auto-maintained @spec, trivially
 
 Once M1 + M5 land, the shell's own session IS a gen_prism whose head
 crystal IS its config.spec. The auto-maintenance IS Fate's multi-
@@ -1274,20 +2414,20 @@ frequency tournament running over the shell's own query eigenvalues.
 No new tracking mechanism required — the tournament already
 infrastructure at M3 altitude.
 
-### 11.5 History with eigenvalues = ancestor chain, trivially
+### 12.5 History with eigenvalues = ancestor chain, trivially
 
 Once M1 lands, history walk IS `history(gp, N)` per gen_prism
 primitive. Eigenvalues are the tournament amplitudes preserved in the
 chain per tick. No new history discipline required.
 
-### 11.6 Eigenboard prompt color = coefficient inspection, trivially
+### 12.6 Eigenboard prompt color = coefficient inspection, trivially
 
 Once M5 lands, prompt color IS a pure function of the current state
 crystal's coefficient vector. The four color bands per §7.6 are
 threshold discriminations. No new eigenboard runtime required — the
 coefficient vector is in the state crystal.
 
-### 11.7 Agent spawn @seam = spec-target spawn, trivially
+### 12.7 Agent spawn @seam = spec-target spawn, trivially
 
 Once M2 lands, `\@seam fix the loss calculation` IS trivially: (1)
 resolve the sub-graph neighborhood of "loss calculation" from the
@@ -1297,7 +2437,7 @@ restriction lens); (3) invoke `spawn_spec(sub_spec, p)` targeting the
 @seam peer. The agent's context window IS the sub-spec's Hilbert
 basis; no flat token buffer required.
 
-### 11.8 ~/.mirror/serve.sock = the MCP daemon, trivially
+### 12.8 ~/.mirror/serve.sock = the MCP daemon, trivially
 
 Once M1 lands, `mirror serve --mcp` IS the daemon. `~/.mirror/serve.sock`
 IS its Unix socket. The shell client connects via standard MCP wire.
@@ -1305,7 +2445,7 @@ No new daemon architecture required — `mirror serve --mcp` already
 exists (`bootstrap/src/mcp.rs`); M1 adds session state; the socket is
 the stdio wire redirected to Unix domain socket.
 
-### 11.9 The five ops at shell altitude = prism operations against shell manifold, trivially
+### 12.9 The five ops at shell altitude = prism operations against shell manifold, trivially
 
 Once §7.9's mapping is grounded, the five shell primitives ARE the
 five-op prism against `stage @mirror/lens/cli/sh`. Per Recognition
@@ -1314,7 +2454,7 @@ specialisation @song has at temporal altitude — @song and shell are
 sibling specialisations of the same prism trait. No new shell semantics
 required — the substrate already declares it.
 
-### 11.10 The whole shell = the collapse made present, trivially
+### 12.10 The whole shell = the collapse made present, trivially
 
 Each of the seven-plus lambda-shell.md surface features IS a substrate
 concept the collapse names. Building the shell IS wiring the surface
@@ -1333,35 +2473,60 @@ inherits it.
   as expanding Hilbert) had the dimension expansion; #58 (Fate optical
   inference) had the multi-frequency tournament; #S3 (five-op temporal)
   had the time evolution; Void dual geometry had the target-vs-illusion
-  partition. This spec names the composition.
+  partition; #43 (mirror IS content-addressed build system) had the
+  DAG-as-source-of-truth (§3.6 names it explicitly at MCP altitude, fifth
+  witness). This spec names the composition.
 - **legibility-over-foundation-when-collapsing:** the collapse is
   presented at MCP altitude (the legible surface where agents interact
   with the substrate today) before descending to Hilbert-space +
   eigenvector-projection framing. The reader arrives at the depth
-  after the surface has hooked.
+  after the surface has hooked. Same discipline applied to §11: the
+  Apache-2.0 floor is presented at engineering altitude (nine concrete
+  capabilities); the constructor-theory framing (§11.5) stays
+  substrate-side.
 - **substrate-pull-confidence-acts:** the two promotions (#S2 + #S4)
   are landed within THIS spec's adjudication because substrate-pull
   confidence IS the criterion for pure substrate-recognition
   cascades. Fifth-witness for #S4 is present; empirical mechanism
-  for #S2 is present; asking would be approval-seeking.
-- **no-time-estimates:** §10.6 explicitly refuses tick-count
+  for #S2 is present; asking would be approval-seeking. §3.6's
+  DAG-as-source-of-truth claim IS Recognition #43's fifth-altitude
+  witness (session-state); the recognition holds at every altitude
+  the substrate touches.
+- **no-time-estimates:** §10.7 explicitly refuses tick-count
   estimation for the sub-arcs.
 - **craft-not-deliver:** §10 sketches the sub-arc scope but the ticks
   land TDD-paired per subsequent Pack peers (Reed writes RED; Mara/
   Taut land GREEN).
+- **rock-solid-floor-is-the-offer:** §11.6 refuses the training pull
+  toward "the Apache-2.0 open floor is a teaser for the closed engine."
+  Per Alex's directive: the floor MUST stand on its own; adopters bet
+  on the floor and win. The closed engine is real differentiation for
+  adopters who need spectral navigation; adopters who need
+  reachability + provenance + replay + federation + deterministic
+  compilation + cross-agent memory get all of it at the open floor.
 
 ## Post-spec followups
 
-- Reed opens a sub-arc for M1 (MCP session gen_prism) as the next
-  natural tick.
+- Reed opens a sub-arc for M6 (`@mirror/store` Apache-2.0 floor) as
+  the next natural tick — the standalone-deliverable milestone that
+  precedes M1's MCP session gen_prism. If Reed opens M1 first, that's
+  defensible too (both are foundational; M6 has the release-doc
+  concern; M1 has the wiring concern); the ordering is Reed's call.
 - Alex adjudicates the three new candidates §9.3 surfaces at the
   next substrate-pull moment (not blocking).
 - Seam Phase D audit of THIS spec (Reed-inline or agent) to ratify
-  #S2 + #S4 promotions on the Recognitions ledger.
+  #S2 + #S4 promotions on the Recognitions ledger, plus §3.6
+  (DAG-as-source-of-truth as Recognition #43's fifth witness) and
+  §3.7 (mirror.spec schema-follows-math as forward-promise).
 - MEMORY.md updates: #S2 LANDED, #S4 LANDED, three new CANDIDATEs
   (mq-query-IS-Hilbert-dimension-expansion; MCP-session-IS-gen_prism;
   Illusion-IS-Narcissus-pole-coefficient) added to the auto-memory
-  cross-session continuity trace.
+  cross-session continuity trace. Recognition #43 gains its fifth
+  witness annotation.
+- Land `docs/specs/mirror-store-v0.1.md` as M6 tick 7 — the standalone
+  release document adopters read first when installing mirror without
+  `@spectral/db`. Extracts §11.3 + §11.6 into a focused release-
+  surface doc.
 
 ---
 
@@ -1370,5 +2535,11 @@ and Reed clarified across three conversation turns; grounds it against
 #51 + #58 + #99 + #S3 + Void dual geometry; extends the substrate work
 Alex spawned Arc 6 to close. `We're getting close.` — the shape IS
 named. The wiring is next.*
+
+*Extension tick (same day): folds in three deltas Alex named after
+first dispatch — DAG-as-source-of-truth (§3.6), schema-follows-math
+acknowledgment (§3.7), and the Apache-2.0 rock-solid floor (§11). The
+floor is what makes the ecosystem possible; get it rock solid.
+Adopters bet on the floor and win.*
 
 Apache-2.0.
