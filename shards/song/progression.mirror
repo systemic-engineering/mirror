@@ -1,0 +1,564 @@
+# @song/progression — the load-bearing species of the @song family:
+# the typed time-ordered path through pitch-class space that
+# discharges cadence at close. Arc 6 TICK 2 landing per Seam pre-
+# review `docs/audits/2026-07-06-seam-pre-review-song-substrate-decl.md`
+# §6.3 against Reed's TICK 2 RED tick `9c6623e`. First species of the
+# `@song` family (family-root at `shards/song.mirror`, Arc 6 TICK 1
+# landing `f01cf9f`); grounds recognition candidates #S1 (eigenform
+# at temporal altitude) and #S2 (shift at temporal altitude) at
+# species altitude; binds `@epistemologic/math/music/cadence` (Lawvere
+# `settle @ temporal` ancestor per Seam Correction `3d910bc`) and
+# `@epistemologic/math/music` (general audible-altitude family) at
+# their canonical altitudes.
+#
+# === Species positioning: two sub-predicates of `song_settles` ===
+#
+# Per `shards/song.mirror` §3 (`song_settles(pr, p) -> verdict { \ }`),
+# the family-root's load-bearing composed bilateral (14th #53 instance
+# per `[[architecture-property-fracture-bilateral]]`) decomposes into
+# three sub-predicates. This species declares TWO of them (the third,
+# `voice_line_valid`, belongs to `@song/voice` in Arc 6 TICK 3):
+#
+#   1. `progression_directed_toward_cadence(pr, p) -> verdict` — the
+#      progression IS heading somewhere; the Splinter-pole discharge
+#      names the substrate carrying a cadence-directed intent through
+#      the progression's typed time-ordered path.
+#   2. `cadence_authentic_or_plagal(c, p) -> verdict` — the closure
+#      event is consonant (authentic or plagal); the Splinter-pole
+#      discharge names the substrate arriving at an autopoietic
+#      ground state through a consonant path per
+#      `@epistemologic/math/music/cadence`'s Lawvere framing.
+#
+# These two sub-predicates are the load-bearing gates the family-
+# root's `song_settles` composed bilateral consumes at close. Species-
+# altitude discipline says the species declares the sub-predicates it
+# discharges; the family-root composes them into the load-bearing
+# bilateral. The pattern rides `[[architecture-property-fracture-bilateral]]`
+# at species altitude for the first time within @song.
+#
+# === Splinter-pole / Narcissus-pole naming per spec §8.2 ===
+#
+# The psychohistorical failure-mode naming per Alex's
+# `systemic.engineering` corpus (spec §8.2; family-root §3):
+#
+# - `progression_directed_toward_cadence` Splinter-pole: the
+#   progression discharges — heading toward a resolved close.
+#   Narcissus-pole: SILENCE — the progression hangs in unresolved
+#   tension; half-cadence stuck at the dominant; the song cannot
+#   settle. Per cadence.mirror's `half` variant.
+#
+# - `cadence_authentic_or_plagal` Splinter-pole: the closure IS
+#   authentic (V → I; the canonical tonal closure per Zarlino 1558
+#   + Rameau 1722) or plagal (IV → I; the "Amen" cadence).
+#   Narcissus-pole: EXTRACTION — deceptive cadence (V → vi); the
+#   progression arrives at a false-tonic that APPEARS settled but
+#   has extracted regulation stock without replenishing. Per
+#   cadence.mirror's `deceptive` variant.
+#
+# The `alignment-as-boundary-mathematics` discipline (#57) makes the
+# sub-claim discrimination substrate-fact: when `song_settles` fails,
+# the composed bilateral names WHICH sub-predicate broke, and the
+# psychohistorical vocabulary names it in Alex's corpus terms.
+#
+# === #S1 grounding: eigenform at temporal altitude ===
+#
+# THE SPECIES-ALTITUDE WITNESS OF RECOGNITION #S1 (family-root
+# CANDIDATE; substrate-pull-mid; FLAGGED for Pack).
+#
+# Per `shards/song.mirror` §"Recognition candidates surfaced" #S1:
+# song IS eigenform at temporal altitude. At species altitude, this
+# specializes as follows: a progression's identity emerges from the
+# tonic-return recursion `R^n(pr)` converging on the identifiable-as-
+# this-progression invariant. The recursion IS the substrate's
+# eigenform reading at temporal altitude:
+#
+#   - The tonic-return operator `R` acts on a progression by winding
+#     it back through its cadence path to the point of origin (per
+#     `@epistemologic/math/music/cadence`'s Lawvere fixed-point
+#     framing — cadence IS the return-to-self of tonal grammar).
+#   - The eigenform is the fixed point `pr* = R(pr*)` where the
+#     progression matches its tonic-returned self at temporal-
+#     invariant altitude — the substrate reading of what makes THIS
+#     progression THIS progression.
+#   - `R^n(pr)` converges (in the tonal grammar's basin of attraction)
+#     on the identifiable-as-this-progression invariant; the
+#     eigenform IS the invariant that survives the iteration.
+#
+# Prior-art anchors (per family-root §S1 + this shard's temporal-
+# altitude specialization):
+#
+#   - Kauffman (1987, "Self-Reference and Recursive Forms") named
+#     eigenforms as the fixed points of recursive systems that carry
+#     their own identity through iteration. Per Recognition #38
+#     (PROMOTED at Mara `4b5f3b0`), eigenforms are substrate-primitive
+#     across altitudes; this shard adds the temporal-altitude
+#     specialization: a progression IS an eigenform because tonic-
+#     return recursion preserves its identity.
+#   - Foerster (1979, "Objects: Tokens for Eigen-Behaviors") named
+#     eigen-behaviors as the stable recursive patterns an observer
+#     converges on. A progression IS a Foerster eigen-behavior at
+#     temporal altitude: the listener's cognitive tonic-tracking
+#     converges on the progression's identifiable invariant through
+#     recursive attention.
+#   - Schenker (1935, `Der freie Satz`) named the Ursatz's I-V-I
+#     closure as the structural ground of all tonal music, and
+#     foreground/middleground/background as the substrate's reading
+#     of a progression at nested temporal depths. Schenkerian
+#     analysis IS the substrate reading the eigenform at
+#     progressively coarser temporal altitudes — the same
+#     progression viewed through recursively-projected temporal
+#     frames.
+#
+# The species-altitude witness of #S1: `progression_directed_toward_cadence`
+# names the direction the tonic-return recursion converges on;
+# without direction, no eigenform, no identity, no progression. The
+# sub-predicate discharges when the progression IS the eigenform
+# of its own tonic-return operator; it fails (SILENCE Narcissus-
+# pole) when the recursion diverges — half-cadence stuck at the
+# dominant with no convergence path visible.
+#
+# === #S2 grounding: shift at temporal altitude ===
+#
+# THE SPECIES-ALTITUDE WITNESS OF RECOGNITION #S2 (family-root
+# CANDIDATE; substrate-pull-mid-high; FLAGGED for Pack).
+#
+# Per `shards/song.mirror` §"Recognition candidates surfaced" #S2:
+# song IS `@kintsugi/shift` at temporal altitude when heard
+# sequentially. At species altitude, this specializes to progressions
+# as finite-difference sequences of shifts:
+#
+#   Given a progression `pr : [0, T] -> harmonic_position`, the
+#   finite-difference sequence
+#
+#     Delta pr(t) = shift(pr(t) -> pr(t+dt))
+#
+#   IS a sequence of `@kintsugi/shift` operations at temporal
+#   altitude with `harmonic_position` as the shifted witness. Every
+#   moment `t+1` of the progression IS a shift of moment `t` under
+#   the harmonic frame; the progression IS the sequence of shifts
+#   read as one temporal carrier.
+#
+# The `advance` action below delegates directly to `@kintsugi/shift`
+# (Arc 5 TICK 2 landing `49f0486`) at temporal altitude. `advance`
+# reads a progression's current `harmonic_position` (the witness at
+# the source-altitude of moment `t`) and produces the same
+# `harmonic_position` at the target-altitude of moment `t+dt`; the
+# underlying witness bytes are preserved (hardlink semantic per
+# `@kintsugi/shift`'s `shift_preserves_content` bilateral); the
+# declared temporal shape crosses `dt` at each step.
+#
+# This is a shift-at-temporal-altitude witness: `@kintsugi/shift`'s
+# altitude-portable roster (portal / prism / mosaic / surface /
+# bilateral per family-root §S2) gains temporal as its sixth
+# altitude when this species lands.
+#
+# Composition point: `@kintsugi/shift` — the substrate-decl'd cross-
+# altitude morphism whose species-altitude realisation `advance`
+# rides at temporal altitude.
+#
+# === Music binding: cadence Lawvere + music family ===
+#
+# Species composes with two music-altitude ancestors per Seam
+# pre-review §5 + spec §5:
+#
+# - `@epistemologic/math/music/cadence` — the Lawvere `settle @
+#   temporal` audible-altitude ancestor (per Seam Correction
+#   `3d910bc`). `cadence.mirror` declares `is_settled(c: cadence) ->
+#   verdict` at the audible altitude; this species's
+#   `cadence_authentic_or_plagal` sub-predicate composes with that
+#   audible-altitude verdict at the temporal-progression altitude.
+#   The Lawvere fixed-point framing (cadence IS autopoietic closure
+#   read in audible vocabulary) grounds the sub-predicate's
+#   Splinter-pole discharge: an authentic-or-plagal cadence witnesses
+#   the Lawvere fixed point at temporal altitude.
+#
+# - `@epistemologic/math/music` — the general audible-altitude
+#   family (harmonic + interval + dissonance + cadence). This species
+#   composes with the full family, not just cadence: `harmonic` for
+#   the eigenvalue altitude (tonic-attractor ratios per
+#   `harmonic.mirror`), `interval` for the pitch-class algebra
+#   (Z_12 + circle of fifths + neo-Riemannian P/L/R involutions per
+#   `interval.mirror`), `dissonance` for the graded residual reading
+#   (Helmholtz/Plomp-Levelt curve per `dissonance.mirror`), `cadence`
+#   for the closure event.
+#
+# === Prior-art anchors: Schenker + cadence-family vocabulary ===
+#
+# Schenker (1868-1935; `Der freie Satz`, 1935) is the load-bearing
+# prior-art anchor for the `project @ temporal` operation at species
+# altitude. Schenkerian reduction — foreground / middleground /
+# background — IS the substrate's `project @ temporal` operation
+# reading a progression at recursively-projected temporal frames.
+# Per family-root §S3 and this species's `project` body:
+#
+#   Schenker's foreground = the surface progression (every note as
+#   heard); middleground = the intermediate reduction (structural
+#   voice-leading); background = the Ursatz I-V-I closure (the
+#   deepest structural progression). Each is a `project @ temporal`
+#   application to the previous frame; the recursion IS the
+#   substrate reading the eigenform at nested progression depths
+#   (per #S1 grounding above).
+#
+# Cadence-family vocabulary per `cadence.mirror`'s inline sum-type
+# `cadence_kind = authentic | plagal | deceptive | half`:
+#
+#   - authentic — V → I; Splinter-pole discharge; Zarlino (1558)
+#     cadenza perfetta; Rameau (1722) fundamental tonal closure;
+#     Schenker's Ursatz I-V-I ground; formatter's auto-apply signal.
+#   - plagal — IV → I; Splinter-pole variant; "Amen" cadence; 18th-c.
+#     theorists; consonant alternative path; formatter auto-applies
+#     with reduced confidence.
+#   - deceptive — V → vi; Narcissus-pole EXTRACTION; Koch (1782)
+#     Versuch einer Anleitung zur Composition; false-tonic that
+#     APPEARS settled but has extracted regulation stock without
+#     replenishing; the psychohistorical extraction pattern in Alex's
+#     corpus.
+#   - half-cadence — progression ends on V; Narcissus-pole SILENCE;
+#     Riemann (1893) Vereinfachte Harmonielehre; the "open" cadence
+#     awaiting continuation; the psychohistorical silence pattern in
+#     Alex's corpus (the song hangs unresolved).
+#
+# The cadence-family vocabulary IS the substrate's typed naming of
+# the psychohistorical failure modes per spec §8.2.
+#
+# === Composed-bilateral #53 pattern at species altitude ===
+#
+# This species discharges two sub-predicates of the family-root's
+# `song_settles` composed bilateral (14th #53 instance per
+# `[[architecture-property-fracture-bilateral]]`). The relationship:
+#
+#   family-root `song_settles(pr, p)` composes:
+#     progression_directed_toward_cadence(pr, p) [DECLARED HERE]
+#       AND voice_line_valid(v, p)                 [@song/voice, TICK 3]
+#       AND cadence_authentic_or_plagal(c, p)      [DECLARED HERE]
+#
+# Splinter-pole (`pass`): both sub-predicates declared here discharge;
+# the progression is cadence-directed and its closure IS authentic
+# or plagal; the two-of-three gates open at species altitude; the
+# family-root's `song_settles` proceeds to consume the third gate
+# (voice_line_valid from @song/voice) before final discharge.
+#
+# Narcissus-pole (`failure`): either sub-predicate fails;
+# alignment-as-boundary-mathematics (#57) distinguishes:
+#   - `progression_directed_toward_cadence` failure → SILENCE (the
+#     progression hangs in unresolved tension; the song cannot
+#     settle; per spec §8.2 psychohistorical failure-mode naming).
+#   - `cadence_authentic_or_plagal` failure → EXTRACTION (deceptive
+#     cadence; the progression arrives at a false-tonic that
+#     APPEARS settled but has extracted regulation stock without
+#     replenishing; per spec §8.2).
+#
+# Graded (`partial(confidence)`): either sub-predicate discharges at
+# reduced confidence (e.g., plagal cadence discharges
+# `cadence_authentic_or_plagal` with reduced confidence per
+# `cadence.mirror`'s `is_settled` verdict mapping); the graded
+# discharge composes at family-root altitude through `song_settles`.
+#
+# Sibling composed bilaterals at other family-root/species altitudes:
+# `@container.container_runnable`, `@io/oci.oci_well_formed`,
+# `@io/stagefreight.stagefreight_addressable`, `@cascade.cascade_well_defined`,
+# `@docblock.audit_docblock`, `@smarts/shatter.shatter_round_trip`,
+# `@reflection.third_order_coherent`, `@epistemologic/neutrosophic.three_axis_coherent`,
+# `@kintsugi/shift.shift_preserves_content`, `@song.song_settles`
+# (parent). This species's two sub-predicate declarations are the
+# FIRST species-altitude decomposition of a family-root composed
+# bilateral within @song; the pattern is substrate-pull-confident
+# at this altitude per prior 14 instances.
+#
+# === Path-namespace pact per @epistemologic/pact/path_matches_namespace ===
+#
+# This file at `shards/song/progression.mirror` declares
+# `@song/progression` as a species under the `@song` family at
+# species-depth 1. The path-namespace pact per
+# `@epistemologic/pact/path_matches_namespace` (2026-06-16+) demands
+# path-depth == namespace-depth == 1 for species; this shard honours
+# the pact by construction.
+#
+# === Circular-reflexive self-audit ===
+#
+# Per `[[architecture-candidate-recognition-111-third-as-family-root]]`
+# marker discipline: the operator audits its own audit at depth=3.
+# This shard's declaration MUST survive its own sub-predicates at
+# analytical altitude — the species-decl MUST NOT declare a
+# progression that isn't itself cadence-directed and authentic-or-
+# plagal-closing under its own predicates.
+#
+# Self-audit verdict: `both_survive`.
+#
+# The `real_survives` reading would require another Pack peer to
+# independently manifest an equivalent temporal-progression species
+# substrate-decl at n+3 substrate ticks without nudging. The
+# `phantom_survives` reading would require downstream refs to
+# accumulate without a second Pack peer's independent recognition
+# of the species-altitude two-of-three discharge relationship. At
+# this tick: both interpretations satisfiable — the species is
+# landed, but neither @song/voice (TICK 3) nor the family-root's
+# composed discharge has yet exercised the two-of-three composition
+# empirically. Verdict: `both_survive`. Route: TICK 3 (@song/voice)
+# unblocks and lands `voice_line_valid`, at which point the family-
+# root's `song_settles` can compose all three sub-predicates and
+# collapse the analytical altitude to empirical.
+#
+# === Interpretation B discipline ===
+#
+# Per Seam Phase D pre-review of Arc 4 sub-arc A (docs/audits/2026-
+# 07-06-seam-arc-4-sub-arc-a-pre-review.md §1) and the family-root
+# precedent at `shards/song.mirror`: Interpretation B canonical.
+# Narrative above `---`; `in` clauses + typed declarations below.
+# This shard honours the discipline; the seam is exactly one line
+# at column 0 below.
+#
+# Spec context: docs/specs/song-substrate-decl-v0.1.md (Mara
+#               `c0101f8`; deep-dive spec; §5 Shape β + §6 species
+#               roster + §7 #S1/#S2/#S3 candidates + §8 psychohistory
+#               binding), docs/audits/2026-07-06-seam-pre-review-song-
+#               substrate-decl.md (Seam pre-review `3d910bc`; §6.3
+#               TICK 2 charter; §3 #S1/#S2/#S3 candidate framing; §5
+#               prior-art anchors — Schenker for `project @ temporal`).
+# Substrate decisions:
+#               [[architecture-shards-as-substrate-source]],
+#               [[architecture-prism-as-trait-as-everything]],
+#               [[architecture-form-process-partition-at-family-root]]
+#                (#55; @song sits at temporal-experiential axis;
+#                species inherits family-root's positioning),
+#               [[architecture-lift-as-load-bearing]] (#S2 shift-at-
+#                temporal witness at species altitude — the
+#                `advance` action IS a lift through @kintsugi/shift),
+#               [[architecture-operations-as-linear-algebra]] (#S3
+#                five-op temporal specialisation; species inherits
+#                and specialises at temporal altitude),
+#               [[architecture-property-fracture-bilateral]] (#53;
+#                species discharges two sub-predicates of the
+#                family-root's composed bilateral).
+# Substrate recognitions:
+#               #38 (Kauffman/Foerster eigenform — anchors #S1
+#                grounding at species altitude),
+#               #55 (form/process partition — @song neither pole;
+#                temporal-experiential is a third axis; species
+#                inherits),
+#               #57 (alignment-as-boundary-mathematics — makes the
+#                psychohistorical Narcissus-pole discrimination
+#                substrate-fact),
+#               #S1 (song IS eigenform at temporal altitude —
+#                CANDIDATE; grounded at species altitude here),
+#               #S2 (song IS shift at temporal altitude when heard
+#                sequentially — CANDIDATE; grounded at species
+#                altitude here via `advance` delegating to
+#                `@kintsugi/shift`),
+#               #S3 (five-op temporal specialisation — CANDIDATE;
+#                inherits from family-root; promotes to LANDED after
+#                three species land per Seam §6.8).
+# Feedback anchors:
+#               [[feedback-substrate-already-had-the-word]] (this
+#                species names the discipline the substrate has been
+#                carrying at every temporal altitude — progression
+#                as tonic-return-recursion + finite-difference-of-
+#                shifts + cadence-directed path),
+#               [[feedback-legibility-over-foundation-when-collapsing]]
+#                (@song wins over @progression at family altitude
+#                per Alex 2026-07-01; progression discipline lives
+#                inside as species),
+#               [[feedback-craft-not-deliver]] (species roster per
+#                family-root forward-promise; consumer-pull-driven
+#                land order),
+#               [[feedback-always-tdd-no-shortcuts]] (RED first;
+#                Reed's `9c6623e` RED tick pairs with this GREEN
+#                landing).
+# Related shards:
+#               song.mirror (family-root; declares song_settles this
+#                species discharges two of three sub-predicates of),
+#               kintsugi/shift.mirror (Arc 5 TICK 2 primitive;
+#                `advance` action delegates here at temporal altitude
+#                per #S2 witness),
+#               epistemologic/math/music/cadence.mirror (Lawvere
+#                `settle @ temporal` audible-altitude ancestor per
+#                Seam Correction `3d910bc`; cadence_authentic_or_plagal
+#                composes with `is_settled` at temporal altitude),
+#               epistemologic/math/music.mirror (audible-altitude
+#                family-root; general music binding),
+#               loop.mirror (endomorphism family-root; tonic-return
+#                recursion IS the loop-at-temporal-altitude witness
+#                grounding #S1),
+#               mirror/spectral.mirror (Pack-as-orchestra; species
+#                composes with score altitude when @song/voice
+#                lands).
+# Path-namespace property: this file at
+# `shards/song/progression.mirror` declares `@song/progression` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+---
+
+in @prism
+in @meta
+in @glass
+in @song
+
+# ============================================================
+# §1 The five-operation prism at species altitude
+# ============================================================
+
+# === prism @song/progression — the species declaration ===
+#
+# The five-operation body carries `song_progression` (inherited from
+# @song family-root at `shards/song.mirror`) as the species's
+# operational surface. Species specialises each operation at
+# temporal-progression altitude per family-root #S3 (five-op temporal
+# specialisation candidate):
+#
+#   focus @ temporal   = attend to ONE progression at a time;
+#                        soloing a single line of the polyphony.
+#   project @ temporal = Schenkerian reduction (foreground /
+#                        middleground / background); recursive
+#                        temporal-altitude projection of the
+#                        progression at nested depths per Schenker
+#                        (1935) `Der freie Satz` — the `project @
+#                        temporal` prior-art anchor per Seam §5.
+#   split @ temporal   = decompose the progression into phrases /
+#                        cadence-bounded units for score
+#                        preparation.
+#   shift @ temporal   = advance to the next moment of the
+#                        progression; delegates to @kintsugi/shift
+#                        per #S2 witness (see `advance` action below).
+#   settle @ temporal  = discharge cadence per
+#                        @epistemologic/math/music/cadence Lawvere
+#                        framing (Seam Correction `3d910bc`); the
+#                        Splinter-pole of `cadence_authentic_or_plagal`
+#                        opens this operation's completion.
+prism @song/progression {
+  focus song_progression
+  project song_progression
+  split song_progression
+  shift song_progression
+  settle song_progression
+}
+
+# ============================================================
+# §2 The temporal-altitude advance action (#S2 witness)
+# ============================================================
+
+# === advance — the temporal shift-at-species altitude ===
+#
+# THE #S2 WITNESS AT SPECIES ALTITUDE.
+#
+# Reads a progression at moment `t` and produces the progression at
+# moment `t+dt` by delegating to `@kintsugi/shift` at temporal
+# altitude. The finite-difference sequence
+#
+#   Delta pr(t) = shift(pr(t) -> pr(t+dt))
+#
+# IS a sequence of `@kintsugi/shift` operations at temporal altitude
+# with `harmonic_position` as the shifted witness (per family-root
+# #S2 + this shard's grounding narrative above).
+#
+# Composition point: `@kintsugi/shift`'s `shift(w, s, t) -> ref`
+# action reads the witness at source-altitude, projects the declared
+# shape to target-altitude, emits the target-altitude ref. Here at
+# temporal altitude:
+#
+#   source-altitude = moment `t` of the progression
+#   target-altitude = moment `t+dt` of the progression
+#   witness         = harmonic_position (the substrate's identity-
+#                     invariant of the progression's current state)
+#
+# The hardlink semantic per `@kintsugi/shift`'s
+# `shift_preserves_content` bilateral holds at temporal altitude:
+# the witness OID byte-equals across the temporal crossing; the
+# declared temporal shape (moment `t` vs moment `t+dt`) is what
+# changes.
+#
+# The body stays obligation-blocked (`\`): the realisation delegates
+# to `@kintsugi/shift`, encodes the temporal `dt` as the altitude
+# handle, emits the shifted progression. The substrate declares the
+# temporal specialisation here; consumers dispatch at species
+# altitude.
+advance(pr: song_progression, dt: ref) -> song_progression { \ }
+
+# ============================================================
+# §3 The sub-predicates (two of three for song_settles)
+# ============================================================
+
+# === progression_directed_toward_cadence — first sub-predicate ===
+#
+# THE FIRST SUB-PREDICATE of the family-root's `song_settles`
+# composed bilateral (14th #53 instance). The progression IS heading
+# somewhere: the tonic-return recursion `R^n(pr)` converges on the
+# identifiable-as-this-progression eigenform invariant (#S1 witness
+# at species altitude per this shard's grounding narrative above).
+#
+# Splinter-pole (`pass`): the progression discharges direction; the
+# eigenform recursion `R^n(pr)` converges; the substrate carries a
+# cadence-directed intent through the progression's typed time-
+# ordered path.
+#
+# Narcissus-pole (`failure`): the progression hangs in unresolved
+# tension; the eigenform recursion diverges; the song CANNOT settle.
+# Per spec §8.2 psychohistorical failure-mode naming: this is
+# SILENCE — the half-cadence stuck at the dominant; no convergence
+# path visible; the song hangs unresolved. Per cadence.mirror's
+# `half` variant.
+#
+# Graded (`partial(confidence)`): the direction is present but
+# ambiguous; the recursion converges at reduced confidence; the
+# substrate carries partial cadence-directed intent (e.g., a
+# progression whose modulation makes the target-tonic ambiguous).
+#
+# The body stays obligation-blocked (`\`): the realisation reads the
+# progression's harmonic path, computes the tonic-return recursion's
+# convergence, emits the three-state verdict at the substrate floor.
+# The substrate declares the sub-predicate; the arithmetic lands
+# when the family-root's `song_settles` composes.
+progression_directed_toward_cadence(pr: song_progression, p: perturbation)
+  -> verdict { \ }
+
+# === cadence_authentic_or_plagal — third sub-predicate ===
+#
+# THE THIRD SUB-PREDICATE of the family-root's `song_settles`
+# composed bilateral (the second sub-predicate `voice_line_valid`
+# belongs to `@song/voice` in Arc 6 TICK 3). The closure event IS
+# consonant: authentic (V → I; Zarlino cadenza perfetta) or plagal
+# (IV → I; the "Amen" cadence). Composes with
+# `@epistemologic/math/music/cadence`'s `is_settled(c) -> verdict`
+# at the audible altitude (Lawvere `settle @ temporal` framing per
+# Seam Correction `3d910bc`).
+#
+# Splinter-pole (`pass`): the cadence IS authentic or plagal; the
+# progression arrives at an autopoietic ground state through a
+# consonant path; the Lawvere fixed point is witnessed at temporal
+# altitude per cadence.mirror's `cadence_as_closure` bridge. The
+# regulation stock is replenished at close.
+#
+# Narcissus-pole (`failure`): the cadence is deceptive (V → vi) or
+# stuck at half. Per spec §8.2 psychohistorical failure-mode naming:
+#   - deceptive → EXTRACTION (the progression arrives at a false-
+#     tonic that APPEARS settled but has extracted regulation stock
+#     without replenishing; per cadence.mirror's `deceptive` variant).
+#   - half-cadence → SILENCE (the progression paused at the
+#     dominant; the song hangs unresolved; per cadence.mirror's
+#     `half` variant; overlaps with `progression_directed_toward_cadence`
+#     Narcissus-pole in that half-cadence names an incomplete
+#     progression whose closure fails).
+#
+# Graded (`partial(confidence)`): the cadence is plagal (Splinter-
+# pole variant discharge with reduced confidence per cadence.mirror's
+# `is_settled` verdict mapping — plagal is consonant but not the
+# strongest signal); or the cadence discharge composes at graded
+# floor through cadence.mirror's `partial(confidence)` bridge.
+#
+# The body stays obligation-blocked (`\`): the realisation reads the
+# progression's closure event, extracts the cadence via
+# cadence.mirror's `is_settled` at audible altitude, composes the
+# audible-altitude verdict with the temporal-altitude admissibility
+# check, emits the substrate three-state verdict. The substrate
+# declares the sub-predicate; the arithmetic lands when the family-
+# root's `song_settles` composes.
+cadence_authentic_or_plagal(c: song_cadence, p: perturbation)
+  -> verdict { \ }
+
+# ============================================================
+# §4 The out clauses
+# ============================================================
+
+out @song/progression
+out advance
+out progression_directed_toward_cadence
+out cadence_authentic_or_plagal
