@@ -6,6 +6,7 @@ in @pack
 in @peer
 in @spectral/supervisor
 in @song
+in @fate
 
 # @mirror/spawn — the `mirror spawn ~peer'<home>'` cli-surface
 # substrate-decl.
@@ -49,9 +50,13 @@ in @song
 #   @pack.spawn primitive this shard wraps
 # - #58 (Fate IS optical inference; promoted): @fate IS the inference
 #   primitive; cascade/code/* species discharge the loop. NO @io/llm.
-#   This shard does NOT declare `in @fate` because @fate is the
-#   runtime substrate, not a substrate-decl prism (per Taut Phase F
-#   anti-pattern correction 2026-06-24).
+#   This shard DOES declare `in @fate` per the hinge composition
+#   discipline landed at M3 TICK 1 (Alex correction 2026-07-06). See
+#   the "@fate substrate-decl landing (supersedes Phase F)" and
+#   "@fate as the hinge between runtime and compiletime" sections
+#   below for the current authority; see "Historical note: Taut Phase
+#   F correction (2026-06-24) is SUPERSEDED" for the retained audit
+#   trail on the prior framing.
 # - #99 (mirror.spec IS λ₀; Alex-named, Mara canonical d0b6519):
 #   spawn at the cli surface is an EXCITATION above λ₀ — the substrate
 #   moves out of ground state to produce a runtime peer. The spawn
@@ -130,6 +135,74 @@ in @song
 #   the spawn action IS the CAS-advance from empty session ref to peer-
 #   initialized ref. M6 store (floor) → M1 mcp_session (accumulator) →
 #   M2 spawn (peer-launcher) forms the rock-solid stack.
+#
+# === Historical note: Taut Phase F correction (2026-06-24) is SUPERSEDED ===
+#
+# The 2026-06-24 Phase F correction (Taut) stated "@fate is the
+# runtime substrate, not a substrate-decl prism" and refused
+# `in @fate` at species altitude on grounds that composing with
+# @fate would be an anti-pattern. That claim was accurate at
+# 2026-06-24 but is now STALE / SUPERSEDED / historical: the @fate
+# substrate-decl LANDED 2026-06-30 (see next section). This shard
+# now declares `in @fate` per the hinge discipline established at
+# M3 TICK 1 (Alex correction 2026-07-06). The Phase F framing is
+# retained here in the audit trail — not asserted as current
+# authority — per substrate-honest posture on flagged corrections.
+#
+# === @fate substrate-decl landing (supersedes Phase F) ===
+#
+# The substrate reality that supersedes Taut Phase F:
+#
+# - `shards/fate.mirror` (LANDED 2026-06-30, 42.1KB) declares
+#   `prism @fate` with the full five-operation body. @fate is the
+#   substrate-decl'd family-root that binds Fate optical inference
+#   at compiletime altitude.
+# - `shards/fate/tournament.mirror` (LANDED 2026-06-30, 41.5KB)
+#   declares `prism @fate/tournament` — the multi-frequency
+#   tournament species that supplies the frequency-selection
+#   arithmetic at each runtime step per Recognition #58.
+#
+# Both landed SIX DAYS AFTER Taut's 2026-06-24 Phase F correction,
+# making @fate substrate-decl load-bearing across the substrate.
+# The prior "@fate is the runtime substrate, not a substrate-decl
+# prism" claim is superseded by these landings.
+#
+# === @fate as the hinge between runtime and compiletime ===
+#
+# Alex correction 2026-07-06 (verbatim): *"If @fate is not defined
+# it needs to be defined. It's the GLUE between runtime and
+# compiletime. You're omitting the hinge right now."*
+#
+# @fate IS the hinge between runtime and compiletime. The @fate
+# substrate-decl at `shards/fate.mirror` binds:
+#
+#   - runtime altitude    — peer processes running Fate optical
+#                           inference (5-layer D²NN + active Fabry-
+#                           Perot resonator + Reck/Clements unitary
+#                           mesh per Recognition #58 LANDED)
+#   - compiletime altitude — the substrate-decl of `prism @fate`
+#                            and species `prism @fate/tournament`
+#                            that make the runtime mechanism
+#                            addressable at species-composition
+#                            altitude
+#
+# The hinge discipline: declaring `in @fate` at species altitude
+# COMPOSES with the substrate-decl'd `prism @fate` — that IS the
+# hinge binding, NOT an anti-pattern. @mirror/spawn IS the runtime
+# spawn action that fires Fate optical inference; the runtime-
+# compiletime hinge composition must be structurally visible at
+# the species's ancestry line-starts, not only at narrative
+# altitude. This shard declares `in @fate` (see §0 ancestry above)
+# so the hinge binding is structurally addressable at composition
+# altitude.
+#
+# M3 TICK 1 correction cascade (grounding this shard's enrichment):
+# `shards/song/progression.mirror` (Mara `f10bdbb`) landed the first
+# species-altitude witness of the hinge discipline; Seam Phase D
+# closed the pattern at `21241f6` as substrate-decl. This M-CLEAN
+# TICK 1 landing extends the discipline to `@mirror/spawn` — the
+# cli-surface substrate whose runtime-compiletime hinge composition
+# was previously masked by the stale Phase F quote.
 #
 # === Return-type upgrade (2026-07-06) ===
 #
