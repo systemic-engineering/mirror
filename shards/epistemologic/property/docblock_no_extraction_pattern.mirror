@@ -1,0 +1,332 @@
+# @epistemologic/property/docblock_no_extraction_pattern — third
+# of the trio of #53 property/fracture bilateral instances at
+# doc-claim altitude. Sixth #53 family overall (third-of-trio
+# slot); landed per Seam Phase D ratification chain:
+#   - `820a451` TICK 1 `shards/docblock.mirror` family-root RATIFY
+#   - `3283de4` TICK 2 `shards/epistemologic/liquid_extraction.mirror`
+#     sibling family-root RATIFY
+#   - `ff53d46` TICK 3 `docblock_grounded` (first-of-trio declarative
+#     half) RATIFY-WITH-CORRECTIONS
+#   - `9b0aeb5` TICK 4 `@kintsugi/fracture/docblock_ungrounded`
+#     (first-of-trio operational half) RATIFY
+#   - `83bbdc8` TICK 5 `docblock_coherent` (second-of-trio
+#     declarative half) RATIFY
+#   - `caab92f` TICK 6 `@kintsugi/fracture/docblock_incoherent`
+#     (second-of-trio operational half) RATIFY
+# Interpretation B canonical per Seam pre-review
+# `docs/audits/2026-07-06-seam-arc-4-sub-arc-a-pre-review.md` §1:
+# narrative ABOVE `---`; `in` clauses + typed declarations BELOW.
+#
+# This shard is the DECLARATIVE HALF of the docblock extraction-
+# pattern audit. The OPERATIONAL HALF lands at TICK 8 as
+# `@kintsugi/fracture/docblock_extractive` per Mara spec
+# `docs/specs/doc-code-seam-shards.md` §8. Bilateral discipline
+# per recognition #53: the property side names WHAT it means for
+# a docblock to be free of extractive patterns; the fracture side
+# names WHAT TO DO when a docblock's claims exhibit an extractive
+# shape (three-way routing per §8 forward-promise below).
+#
+# === Sixth #53 family; third-of-trio at doc-claim altitude ===
+#
+# Recognition #53 (`[[architecture-property-fracture-bilateral]]`)
+# names a substrate pattern: declarative property at
+# `@epistemologic/property/<predicate>` + operational fracture body
+# at `@kintsugi/fracture/<predicate>`, bridged by the kintsugi loop.
+# The docblock trio (`docblock_grounded`, `docblock_coherent`,
+# `docblock_no_extraction_pattern`) IS the sixth #53 family
+# expressed as three property/fracture bilateral pairs; each pair
+# lands atomically per the #53 discipline.
+#
+# Trio slot ordering per Mara spec §3/§5/§7:
+#
+# - `docblock_grounded` (TICK 3 declarative `ff53d46`; TICK 4
+#   operational `9b0aeb5`) — first-of-trio, ancestry check.
+# - `docblock_coherent` (TICK 5 declarative `83bbdc8`; TICK 6
+#   operational `caab92f`) — second-of-trio, non-contradiction
+#   check.
+# - `docblock_no_extraction_pattern` — THIS SHARD (declarative
+#   half; TICK 7). Operational half at TICK 8
+#   (`@kintsugi/fracture/docblock_extractive`) forward-promised
+#   with three-way routing.
+#
+# The three bilaterals are INDEPENDENT at the declarative altitude:
+# `docblock_grounded` composes over ancestor-existence;
+# `docblock_coherent` composes over pairwise-non-contradiction plus
+# below-seam-non-contradiction; `docblock_no_extraction_pattern`
+# composes over four sub-checks (superlatives, hedges, citation-
+# content-match, claim-size-match). Aggregation into
+# `docblock_well_audited` happens at @docblock's family-root
+# (TICK 1). Each declarative property's fracture body routes
+# independently through `@kintsugi/surface` on the class the
+# specific failure names — with THIS predicate's fracture body
+# uniquely routing THREE-WAY per §8 (one class per sub-check
+# plus a kind-reclassification path).
+#
+# This shard imports `@epistemologic/liquid_extraction` because
+# extraction-pattern decidability lifts through the extractor's
+# output shape: each of the four sub-checks reads either the
+# extracted predicate text (sub-checks 1, 2) or the citation
+# resolution (sub-check 3) or the below-seam declaration size
+# (sub-check 4). The `in @epistemologic/liquid_extraction` grounds
+# the sibling coupling to TICK 2's sibling family-root (`3283de4`);
+# the extractor's `extract_predicate` output surface IS the input
+# to all four sub-checks.
+#
+# === Predicate substance per Mara spec §7 ===
+#
+# The docblock-no-extraction-pattern predicate answers: is every
+# extracted predicate in `d` free of the four extractive shapes
+# the substrate rejects? In substrate narrative:
+#
+#   docblock_no_extraction_pattern(d) ⇔
+#     no_unmarked_superlatives(d)
+#   ∧ hedged_claims_marked_defer(d)
+#   ∧ citations_content_match(d)
+#   ∧ claim_size_matches_landing_size(d)
+#
+# ALL FOUR sub-checks must bound. Any one unbounded ⇒ predicate
+# unbounded ⇒ `audit_docblock` routes to `overreach` — the
+# unique verdict class the @docblock family-root reserves for
+# extraction-pattern failure (per TICK 1's landed
+# `docblock_verdict` type carrier's `overreach` variant). This
+# is the load-bearing routing property: `overreach` is the
+# substrate's name for a docblock that OVER-CLAIMS what its
+# landing evidence bounds — the extractive shape #53 catches
+# at this altitude.
+#
+# Four composed sibling predicates (one per sub-check):
+#
+# - `no_unmarked_superlatives(d)` reads each extracted predicate's
+#   text for superlative shape ("best", "always", "never",
+#   "guaranteed", "cannot fail", "perfect", "complete", etc.).
+#   The sub-check fires when a superlative appears WITHOUT a
+#   substrate-honoring marker (`motivating_claim` kind exemption,
+#   or an adjacent forward-promise, or a citation whose ancestor
+#   content matches the superlative bound). Marked superlatives
+#   pass; unmarked superlatives fail. Failure routes via
+#   `ashby_mismatch` (compiler-error-surface §3.1): the doc
+#   channel claims more variety than the code channel can absorb
+#   — Ashby's requisite variety violated at doc-claim altitude,
+#   with the doc side over-claiming the axis-space the landed
+#   code covers.
+#
+# - `hedged_claims_marked_defer(d)` reads each extracted predicate
+#   for hedge shape ("might", "may", "could", "possibly",
+#   "perhaps", "seems to", etc.). Hedges are LEGITIMATE at
+#   substrate altitude — the substrate honors uncertainty as
+#   first-class content — but hedged claims MUST carry a `defer`
+#   marker naming the future tick at which the hedge closes
+#   (either promotes to `grounded_claim` or retracts). Unmarked
+#   hedges are the extractive shape: the doc side leaves the
+#   substrate uncertain about when the substrate can decide.
+#   This sub-check DOES NOT route to a surface class; it routes
+#   to `@epistemologic/liquid_extraction` for
+#   kind-reclassification (per Mara spec §8: deterministic
+#   rewrite; no reader-frame surfacing needed because the fix
+#   is mechanical — add the `defer` marker and specify the
+#   closure tick).
+#
+# - `citations_content_match(d)` reads each extracted predicate's
+#   citation and verifies the cited ancestor's content bytes
+#   ground the claim's assertion. This is the sharper form of
+#   `docblock_grounded`'s citation content match — but where
+#   `docblock_grounded` asks whether the citation EXISTS and
+#   MATCHES, this sub-check asks whether the citation is IN-BAND
+#   for the claim it grounds. An out-of-band citation is one
+#   where the ancestor exists and the content matches the claim
+#   at surface but the ancestor's content is at a different
+#   altitude, or different scope, or different frame than the
+#   claim's grounding requires. Failure routes via `out_of_band`
+#   (compiler-error-surface §3.4): the citation opens a channel
+#   the substrate cannot bind at the frame the claim needs.
+#
+# - `claim_size_matches_landing_size(d)` compares the extracted
+#   predicate's claim scope against the below-seam landing scope
+#   on the shard. A claim that names "the substrate's foundational
+#   discipline" grounded by a single below-seam type declaration
+#   is a size mismatch: the claim's variety-axis-space exceeds
+#   the landing's variety-axis-space. Failure routes via
+#   `contradiction` (compiler-error-surface §3.2): the doc-side
+#   claim and the code-side landing contradict at scope-arithmetic
+#   altitude — the two channels cannot simultaneously hold on the
+#   same shard because the claim's implicit universal quantifier
+#   fires success while the landing's below-seam declarations
+#   witness only a proper subset of what the claim covers.
+#
+# === Three-way routing per Mara spec §8 (forward-promise) ===
+#
+# The operational half `@kintsugi/fracture/docblock_extractive`
+# at TICK 8 routes DIFFERENTLY per sub-check — the substrate's
+# first three-way routing fracture body:
+#
+# - Sub-check 1 (`no_unmarked_superlatives` unbounded) →
+#   `ashby_mismatch` per compiler-error-surface §3.1.
+# - Sub-check 3 (`citations_content_match` unbounded) →
+#   `out_of_band` per compiler-error-surface §3.4.
+# - Sub-check 4 (`claim_size_matches_landing_size` unbounded) →
+#   `contradiction` per compiler-error-surface §3.2.
+# - Sub-check 2 (`hedged_claims_marked_defer` unbounded) →
+#   `@epistemologic/liquid_extraction` kind-reclassification
+#   (deterministic rewrite; no reader-frame surfacing).
+#
+# This three-way plus one is structural: `overreach` is the
+# @docblock family-root's single routing verdict, but the fracture
+# body operationalizes it as FOUR distinct kintsugi loops — three
+# through `@kintsugi/surface` and one through the liquid-extraction
+# rewrite path. The trio's first two bilaterals routed one-way
+# (docblock_ungrounded → ashby_mismatch; docblock_incoherent →
+# contradiction); this bilateral is the first to route three-way
+# on the surface side and to add a fourth deterministic-rewrite
+# path. Bilateral pattern #53 absorbs this variance without new
+# structural primitives — the fracture body is still a single
+# @kintsugi/fracture/* action; the routing surface at
+# @kintsugi/surface still names each class; the substrate's
+# ashby_variety_match still discharges each dispatch.
+#
+# === Sibling coupling to @docblock + @epistemologic/liquid_extraction ===
+#
+# This shard's `in @docblock` grounds the sibling-coupling to
+# TICK 1's family-root (`5c0f5ba` + `820a451` RATIFY): the
+# `docblock` carrier the property predicate takes as input is
+# exactly @docblock's typed carrier, and the `overreach` verdict
+# variant is the routing target this predicate's unbounded case
+# reserves. The `in @epistemologic/liquid_extraction` grounds
+# the sibling-coupling to TICK 2's family-root (`32a1e2a` +
+# `3283de4` RATIFY): the extractor's output shape
+# (`predicate_shape` splinter(ast) fragment) is the surface all
+# four sub-checks discharge over. Both sibling family-roots are
+# COUPLED via this shard: extraction-pattern audit is a question
+# the substrate can only ask at the intersection of the doc-claim
+# carrier and the liquid-extraction surface.
+#
+# This shard also imports `in @epistemologic/property` (species-
+# family path) per the six sibling properties already landed at
+# that altitude: `cold_compile_within_tolerance`,
+# `dark_count_monotone`, `restart_intensity_well_formed`,
+# `docblock_grounded`, and `docblock_coherent`. The path-namespace
+# pact carries the depth-2 discipline for all species members.
+#
+# === Path-namespace property ===
+#
+# This file at
+# `shards/epistemologic/property/docblock_no_extraction_pattern.mirror`
+# declares `@epistemologic/property/docblock_no_extraction_pattern`
+# at species-depth 2 under @epistemologic per
+# `@epistemologic/pact/path_matches_namespace`. The depth mirrors
+# the six landed siblings at `@epistemologic/property/{
+# cold_compile_within_tolerance, dark_count_monotone,
+# restart_intensity_well_formed, docblock_grounded,
+# docblock_coherent}`: this shard sits in the same species column
+# and is subject to the same path-namespace pact.
+#
+# === Circular-reflexive self-audit ===
+#
+# Per Mara's projection-surface spec `63bdecc` §6 the operator
+# must audit its own audit at depth=3. This shard's own docblock
+# is subject to `docblock_no_extraction_pattern(this_docblock)`
+# at logical altitude. Substrate-honest verdict at THIS shard's
+# state on all four sub-checks:
+#
+# - Sub-check 1 (`no_unmarked_superlatives`): the narrative above
+#   uses "load-bearing" and "canonical" but each appears in a
+#   substrate-honoring frame (`load-bearing predicate` names the
+#   substrate's own load-bearing discipline; `Interpretation B
+#   canonical` cites the Seam pre-review document that ratifies
+#   the discipline). "First three-way routing fracture body"
+#   names a factual first — not a superlative on quality but a
+#   count on the substrate's routing surface. No unmarked
+#   superlative fires at analytical altitude.
+#
+# - Sub-check 2 (`hedged_claims_marked_defer`): the narrative
+#   above hedges on TICK 8's exact routing shape ("first
+#   three-way routing fracture body"). The hedge is anchored to
+#   a `forward_promise` naming TICK 8 as the closure tick; the
+#   substrate's `defer` marker is the forward-promise itself
+#   per @docblock's carrier surface. No unmarked hedge fires.
+#
+# - Sub-check 3 (`citations_content_match`): the narrative above
+#   cites seven ratification commits (`820a451`, `3283de4`,
+#   `ff53d46`, `9b0aeb5`, `83bbdc8`, `caab92f`, and the two
+#   sibling family-root landings `5c0f5ba`, `32a1e2a`), plus
+#   substrate document paths (Mara spec §7, §8; compiler-error-
+#   surface §3.1, §3.2, §3.4; projection-surface §6; Seam
+#   pre-review §1). Each citation resolves to an ancestor on
+#   main; each ancestor's content grounds the claim it appears
+#   in at the frame the claim needs (spec sections cited by
+#   number map to the spec's actual sections; commit OIDs cited
+#   are the Seam ratification chain preceding this landing).
+#   Concrete byte-match awaits the extractor body (TICK 2
+#   forward-promise).
+#
+# - Sub-check 4 (`claim_size_matches_landing_size`): the
+#   narrative above makes claims at three scopes: (i) claims
+#   about THIS shard's below-seam declarations (the prism block
+#   and predicate signature); (ii) claims about the trio's
+#   internal ordering (grounded by the six preceding ratification
+#   commits); (iii) claims about the sixth #53 family membership
+#   (grounded by the five preceding #53 family instances).
+#   Each claim's scope matches its landing size: (i) matches the
+#   below-seam prism + predicate; (ii) matches the six Seam
+#   ratification commits; (iii) matches the five prior family
+#   citations. No claim exceeds its landing.
+#
+# Verdict: `both_survive` — the shard's docblock passes real
+# survival on all four sub-checks at analytical altitude but
+# phantom survival is also non-empty (the extractor body has not
+# landed; concrete byte-match on citations cannot fire until it
+# does; sub-check 3's in-band check cannot concretely discriminate
+# out-of-band citations at the current altitude). Promotion to
+# `real_survives` awaits: extractor body (TICK 2 forward-promise)
+# + fracture body at TICK 8 with three-way routing + Seam
+# second-witness audit at analytical altitude on all four
+# sub-checks. Per Mara spec §Cross-cutting: this is the honest
+# verdict at THIS shard's state. If this docblock returned
+# `real_survives` from its own self-audit here, that WOULD BE
+# the phantom failure mode the discipline exists to catch.
+
+---
+
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/property
+in @epistemologic/liquid_extraction
+in @docblock
+
+prism @epistemologic/property/docblock_no_extraction_pattern {
+  focus docblock_no_extraction_pattern
+  project docblock_no_extraction_pattern
+  split docblock_no_extraction_pattern
+  shift docblock_no_extraction_pattern
+  settle docblock_no_extraction_pattern
+}
+
+# === docblock_no_extraction_pattern predicate (declarative half) ===
+#
+# THE LOAD-BEARING PREDICATE. Returns verdict that every extracted
+# predicate in `d` is free of all four extractive shapes the
+# substrate rejects. Per Mara spec §7 predicate substance:
+#
+#   docblock_no_extraction_pattern(d) ⇔
+#     no_unmarked_superlatives(d)
+#   ∧ hedged_claims_marked_defer(d)
+#   ∧ citations_content_match(d)
+#   ∧ claim_size_matches_landing_size(d)
+#
+# All four sub-checks must bound. Any one unbounded ⇒ predicate
+# unbounded ⇒ `audit_docblock` routes to `overreach` (the
+# @docblock family-root's reserved routing verdict for
+# extraction-pattern failure).
+#
+# Body discharges at splinter(ast) altitude via the liquid-
+# extraction surface's `extract_predicate` output; the operational
+# half at `@kintsugi/fracture/docblock_extractive` (TICK 8
+# forward-promise per Mara spec §8) routes THREE-WAY per sub-check
+# (sub-check 1 → `ashby_mismatch`, sub-check 3 → `out_of_band`,
+# sub-check 4 → `contradiction`; sub-check 2 → kind-reclassification
+# through `@epistemologic/liquid_extraction` deterministic rewrite).
+docblock_no_extraction_pattern(d: docblock) -> verdict { \ }
+
+out @epistemologic/property/docblock_no_extraction_pattern
+out docblock_no_extraction_pattern
