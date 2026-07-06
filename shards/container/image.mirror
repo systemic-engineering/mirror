@@ -1,0 +1,340 @@
+# @container/image — first empirical witness of the @kintsugi/shift
+# primitive. Arc 5 TICK 3 GREEN landing per Reed RED at `5c67af3`
+# against the shift species promoted at Arc 5 TICK 2 Mara `49f0486`
+# (Seam Phase D RATIFY `963f4c5`).
+#
+# === What this shard IS ===
+#
+# `@container/image` names the container-altitude view of an OCI
+# image. Substrate-honest positioning: `@container/image` is NOT a
+# new substrate-decl of OCI content — it is a *lens*, a *hardlink*,
+# a *mount*, an *alias* onto the OCI content the substrate already
+# declares at `@mirror/store/oci` altitude.
+#
+# Concretely: `@container/image` = `shift(@mirror/store/oci →
+# @container altitude)`. Same OID at two altitudes; zero content
+# duplication. This is the first empirical witness of the
+# `@kintsugi/shift` primitive promoted at TICK 2 as a first-class
+# substrate-decl — the primitive was promoted with four altitudes
+# of prior art (portal, prism keyword, mosaic, kintsugi/surface); the
+# discipline said "the substrate has been running shift for weeks."
+# This shard is the first substrate-decl species that uses `shift`
+# as its own load-bearing composition — not as an operation-name in
+# the five-op body, but as the *shape* of the species itself. The
+# species IS a shift; the species DECLARES what a shift produces at
+# the target altitude.
+#
+# === Resolves Seam Correction #1 (`c9e153d`) via shift-form ===
+#
+# The Seam pre-review `c9e153d` §3 flagged Correction #1: `drop
+# @container/image because it overlaps @mirror/store/oci` (would
+# duplicate OCI content substrate-decl at two family-roots; violates
+# the substrate's DRY discipline; risks Rice-hazard on parallel
+# reinvention). The original correction was reasonable *given* the
+# then-implicit assumption that `@container/image` would be a
+# parallel substrate-decl of OCI content.
+#
+# Alex's 2026-07-06 correction: the substrate already had the word.
+# `shift` IS the answer. `@container/image` does NOT duplicate
+# `@mirror/store/oci` — it points AT it via `@kintsugi/shift`. The
+# hardlink framing carries the discipline directly:
+#
+#   - Same OID (byte-equality on the underlying `shift_witness` ref;
+#     the OCI content-address IS the container-altitude image's
+#     identity; nothing is copied).
+#   - Two altitudes (source: `@mirror/store/oci`, where OCI content
+#     lives; target: `@container`, where the runtime consumes an
+#     image as a rootfs source).
+#   - Different reader-frame (the OCI shard sees a manifest + layer
+#     descriptors; the container shard sees a materialization source
+#     for `container_rootfs`).
+#
+# The `shift`-form resolution keeps the SURFACE the container
+# runtime needs (`@container/image` as a named handle at container
+# altitude, so `@container/runtime` species can compose against it
+# without reaching across into `@mirror/store`) WITHOUT duplicating
+# the substrate-decl of OCI content. The shift IS the composition;
+# the composition IS the resolution.
+#
+# === Load-bearing recognition: shift as first-class species-shape ===
+#
+# This species stresses the substrate at the shape altitude. Every
+# prior species has been a five-operation prism whose body carries a
+# species-native carrier (`container_spec`, `oci_manifest`, `crystal`,
+# `wasm_artifact`, etc.). @container/image inverts that: the body
+# carries `image_witness` — a typed alias of `shift_witness` from
+# `@kintsugi/shift` — because the species IS what a shift produces at
+# the target altitude. The five operations read/produce witnesses;
+# the substrate's altitude discipline rides the witness carrier; the
+# species does not invent its own opaque type.
+#
+# This is the substrate finding out whether `@kintsugi/shift` composes
+# as a species-shape and not just as an operation-name. The RED test
+# suite (Reed `5c67af3`, T1-T15) drives that discipline: T7 refuses
+# duplicate OCI substrate-decl at this altitude; T5 admits either a
+# fresh `image_witness` type or a direct reuse of `shift_witness`;
+# T6 requires the 15th composed-bilateral asserting the hardlink;
+# T3+T4 require the shift-form to cite both the primitive and the
+# source altitude.
+#
+# === Recognition ancestry ===
+#
+# - #26 `shift(oid, T)` at `@mirror/spectral/portal` (Reed 2026-06-08):
+#   the transport-altitude precursor of shift-as-typed-capability.
+#   The portal's three `shift(oid, T)` fields carry witnesses across
+#   the transport altitude; this shard carries the witness across
+#   the runtime altitude.
+# - #53 property/fracture bilateral pattern: this shard's
+#   `image_shifted_from_oci` is the 15th composed-bilateral instance
+#   (14th was `shift_preserves_content` at TICK 2; 13th was
+#   `container_runnable` at TICK 1). Substrate-pull-confident.
+# - #55 form/process partition: `@container` is form-side (state
+#   observation: what a container image IS at runtime altitude);
+#   `@kintsugi/shift` is process-side (the transformation that
+#   crosses altitudes). The shift itself lives at process-side; the
+#   witness it produces lives at form-side. This species names the
+#   witness at the form-side target altitude.
+# - #58 substrate IS Connes (A, H, D): the shift IS D (the Dirac /
+#   gradient operator) crossing altitude on H (the void document);
+#   `@container/image` names the projection of that gradient onto
+#   the container-runtime subspace.
+# - #98 candidate content-addressing cross-altitude composition:
+#   this shard is a direct empirical exercise of that recognition —
+#   the SHA256 OID that identifies OCI content at `@mirror/store/oci`
+#   altitude is byte-identical to the OID that identifies the
+#   container-altitude image; the scoping discipline differs (OCI
+#   scopes to manifest+layer descriptors; container scopes to
+#   rootfs-materialization source); the function is shared.
+# - `substrate-already-had-the-word` (55th+ instance): the substrate
+#   already had `shift`; this shard uses it rather than inventing
+#   `image_lift`, `image_view`, `image_alias`, `image_ref`, or any
+#   other parallel name.
+#
+# === Pre-AI prior art ===
+#
+#   POSIX hardlink (link(2), 1988+)   two directory entries, one inode.
+#                                     Exact substrate-decl of the
+#                                     shift semantic at filesystem
+#                                     altitude.
+#   OverlayFS lower dirs (Linux 3.18) container-altitude read-only
+#                                     mount of a lower filesystem;
+#                                     the runtime's own hardlink of
+#                                     an image's rootfs.
+#   containerd snapshotter            content-addressed snapshots
+#                                     that hardlink into the OCI
+#                                     content store; the industry's
+#                                     operational form of the same
+#                                     discipline.
+#   Nix store gc-roots                symlink into the CAS store;
+#                                     content stays at one address,
+#                                     the reader-frame differs.
+#   git worktree                      one repository, many working-
+#                                     tree views; same OID discipline.
+#
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-operations-as-linear-algebra]],
+#                      [[architecture-lift-as-load-bearing]],
+#                      [[architecture-form-process-partition-at-family-root]],
+#                      [[architecture-property-fracture-bilateral]],
+#                      [[feedback-substrate-already-had-the-word]],
+#                      [[feedback-no-bare-types]],
+#                      [[feedback-explicit-over-implicit]],
+#                      [[feedback-composition-claims-need-empirical-test]].
+# Recognition ancestry: #26, #53, #55, #58, #98 candidate.
+# Related shards: container.mirror (family-root; TICK 1 `aaa9a81`),
+#                 kintsugi/shift.mirror (species; TICK 2 `49f0486`),
+#                 io/oci.mirror (the @io distribution surface;
+#                 sibling to @mirror/store/oci which is the storage
+#                 surface this shard's shift points at; forward-
+#                 promised as a substrate-decl species).
+# Path-namespace property: this file at `shards/container/image.mirror`
+# declares `@container/image` per `@epistemologic/pact/path_matches_namespace`.
+#
+# === Circular-reflexive self-audit ===
+#
+# Does this shard use its own vocabulary correctly?
+#
+#   `shift` — used as: (1) species-shape (`@container/image` IS a
+#   shift-form of `@mirror/store/oci`); (2) five-operation body
+#   member (per prism.mirror §L38-45, basis-transformation on H);
+#   (3) composed-bilateral vocabulary (`image_shifted_from_oci`
+#   asserts the shift's hardlink invariant). All three uses agree:
+#   same operation at three altitudes.
+#
+#   `witness` — the shift's altitude-invariant carrier per
+#   @kintsugi/shift's `shift_witness`. `image_witness` is a typed
+#   alias per [[feedback-explicit-over-implicit]] — the semantic slot
+#   `image at container altitude` deserves its own name even though
+#   it byte-equals `shift_witness`. Explicit typing beats reuse of
+#   the general carrier; the two names byte-equal at the ref altitude.
+#
+#   `hardlink` — used only in narrative; the substrate carries the
+#   semantic through the shift's `shift_preserves_content` bilateral
+#   plus this species's `image_shifted_from_oci` composed-bilateral.
+#   No new substrate keyword invented; the discipline rides existing
+#   carriers.
+#
+# Verdict: pass. Substrate-pull-realize discipline honored; no
+# parallel substrate-decl invented; the shift primitive carries the
+# empirical load.
+
+---
+
+in @prism
+in @meta
+in @glass
+in @container
+in @kintsugi/shift
+in @mirror/store
+
+# ============================================================
+# §1 The five-operation prism at species altitude
+# ============================================================
+
+# === prism @container/image — the species declaration ===
+#
+# The five-operation body carries `image_witness` — a typed alias of
+# `shift_witness` from `@kintsugi/shift`. Every operation on the
+# species reads/produces witnesses at the container-altitude view
+# of an OCI image. The substrate's altitude discipline rides the
+# witness carrier; the species does not carry an opaque
+# container-native content type (that would duplicate
+# `@mirror/store/oci`; see T7).
+prism @container/image {
+  focus image_witness
+  project image_witness
+  split image_witness
+  shift image_witness
+  settle image_witness
+}
+
+# ============================================================
+# §2 The witness carrier
+# ============================================================
+
+# === image_witness — the shift_witness at container-altitude ===
+#
+# THE LOAD-BEARING carrier. `image_witness` names the semantic slot
+# `container-altitude view of an OCI image` per
+# [[feedback-explicit-over-implicit]]. It byte-equals
+# `shift_witness` at the ref altitude (the OID is the same; the
+# hardlink semantic guarantees the underlying bytes are shared with
+# whatever the source altitude `@mirror/store/oci` handle carries)
+# but the typed name distinguishes reader-frame at consumer sites.
+#
+# The source altitude (`@mirror/store/oci`) sees the same OID as
+# `oci_content_witness` (forward-promised at that species's TDD
+# tick); the target altitude sees it as `image_witness`. The two
+# type names are two views of one OID; the substrate's altitude
+# discipline is what distinguishes them.
+#
+# Composes with `@kintsugi/shift`'s `shift_witness` at the ref
+# altitude: `image_witness = shift_witness` per Alex's hardlink
+# framing. The realisation stores one OID; the type system reads it
+# as `image_witness` at consumer sites in `@container/*` species
+# (forthcoming `@container/runtime` species will consume
+# `image_witness` as the rootfs materialization source).
+#
+# Identity contract: byte-equality on the underlying ref (the OCI
+# content-address). The OID byte-equals across the shift crossing;
+# this is exactly the `shift_preserves_content` invariant
+# `@kintsugi/shift` carries at species altitude.
+type image_witness = shift_witness
+
+# ============================================================
+# §3 The typed shift action at container altitude
+# ============================================================
+
+# === image — read an image at container altitude via shift ===
+#
+# THE LOAD-BEARING typed action. Consumes an `image_witness` (the
+# container-altitude view of the OCI content-address) and produces
+# a `container_spec` — the runtime configuration a conformant OCI
+# runtime (runc / crun / gvisor / kata) admits.
+#
+# The realisation reads the OCI content at `@mirror/store/oci`
+# altitude via the underlying OID, projects it onto the container
+# altitude (basis transformation on H per
+# [[architecture-operations-as-linear-algebra]]), and emits the
+# `container_spec` at the target altitude. The projection composes
+# with `@container`'s `container_spec` carrier (declared at
+# `shards/container.mirror` §2); the shift preserves the underlying
+# bytes (per `shift_preserves_content` at TICK 2) so the returned
+# spec is content-addressed and byte-verifiable at the container
+# altitude.
+#
+# Body stays obligation-blocked (`\`): the realisation dispatches at
+# the @io boundary (reading OCI content from `@mirror/store/oci`'s
+# storage backend) but the substrate declares the shape here.
+image(w: image_witness) -> container_spec { \ }
+
+# ============================================================
+# §4 The 15th #53 composed-bilateral
+# ============================================================
+
+# === image_shifted_from_oci — the hardlink invariant ===
+#
+# THE 15th INSTANCE of the #53 bilateral pattern per
+# [[architecture-property-fracture-bilateral]]. Names the load-bearing
+# invariant that resolves Seam Correction #1: the container-altitude
+# image IS the shift'd view of the OCI-storage-altitude content; the
+# OID persists across the altitude crossing (hardlink semantic); no
+# content duplication.
+#
+# Composes two sub-predicates whose species-altitude realisations
+# discharge the discipline:
+#
+#   1. `shift_preserves_content(w, @mirror/store/oci, @container, p)`
+#      — the 14th composed-bilateral from `@kintsugi/shift` at
+#      TICK 2. Guarantees the underlying OID byte-equals across the
+#      shift (witness_oid_byte_equal sub-predicate) and both
+#      altitudes are substrate-declared refs
+#      (altitude_declaration_admissible sub-predicate).
+#   2. `image_admissible_as_container_source(w, p)` — the shifted
+#      witness is admissible as a rootfs-materialization source at
+#      container altitude (composes with `container_runnable` from
+#      TICK 1; the image content the shift resolves to must be
+#      consumable by a conformant OCI runtime).
+#
+# Splinter-pole (`pass`): both sub-predicates discharge; the image
+# at container altitude IS the OCI content at storage altitude
+# (byte-identical); the runtime can admit it as a rootfs source;
+# the hardlink is honest.
+#
+# Narcissus-pole (`failure`): either sub-predicate fails;
+# alignment-as-boundary-mathematics (#57) distinguishes:
+#   - `shift_preserves_content` failure → the operation mutated
+#     bytes; not a shift; belongs at `@kintsugi/morphism` or higher.
+#   - `image_admissible_as_container_source` failure → the OCI
+#     content is present but not consumable by an OCI runtime
+#     (malformed image config, missing rootfs layers, mediaType
+#     mismatch); the container altitude cannot admit it as an image
+#     source pending image repair at the OCI altitude.
+#
+# Graded (`partial(confidence)`): byte-equality holds modulo an
+# OCI-spec-declared representation normalisation (e.g. manifest
+# canonicalisation, layer compression roundtrip); confidence
+# carries the normalisation magnitude. The realisation decides
+# whether to admit at the graded floor.
+#
+# This is the 15th altitude instance of the #53 bilateral pattern
+# (following container_runnable, oci_well_formed,
+# stagefreight_addressable, cascade_well_defined, audit_docblock,
+# shatter_round_trip, third_order_coherent, three_axis_coherent,
+# and shift_preserves_content, plus five others per Taut scout).
+# The pattern is substrate-pull-confident.
+#
+# Body stays obligation-blocked (`\`): the realisation composes the
+# two sub-predicate verdicts at the substrate's three-state floor
+# (pass / partial(confidence) / failure(reason)).
+image_shifted_from_oci(w: image_witness) -> verdict { \ }
+
+# ============================================================
+# §5 The out clauses
+# ============================================================
+
+out @container/image
+out image_witness
+out image
+out image_shifted_from_oci
