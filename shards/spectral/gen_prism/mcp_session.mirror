@@ -1,0 +1,602 @@
+# @spectral/gen_prism/mcp_session — the MCP-session species of the
+# @spectral/gen_prism family: a per-session gen_prism specialisation
+# whose observable state IS an accumulated @spec crystal in
+# @mirror/store, addressed by a content-addressed session ref, mutated
+# by a read-head-crystal → apply-mq-tick → write-new-crystal →
+# CAS-advance-ref loop. M1 TICK 1 landing per Reed's RED tick
+# `e8378ca` (bootstrap/tests/spectral_gen_prism_mcp_session_shard.rs)
+# and per collapse spec `docs/specs/mcp-spec-song-collapse.md` §3.5
+# (MCP-as-state-machine narrative), §3.6 (statelessness at process /
+# statefulness at store), §10.1 (M1 charter), §11.6.3 (session
+# persistence agentic value-add).
+#
+# === Substrate-canonical placement rationale ===
+#
+# This species lives at `shards/spectral/gen_prism/mcp_session.mirror`
+# — declaring `@spectral/gen_prism/mcp_session` under the
+# @spectral/gen_prism family root — NOT at
+# `shards/mirror/runtime/mcp_session.mirror` (the collapse spec §3.5
+# grammar name). Rationale per Taut scout finding + per
+# `[[feedback-substrate-already-had-the-word]]`: the gen_prism family
+# ALREADY lives at @spectral (per `shards/spectral/gen_prism.mirror`
+# `227c0e0`-era landing); the runtime specialisation cascade is
+# @spectral's cascade; MCP session IS a gen_prism specialisation
+# (per collapse spec §9.3 candidate "MCP session IS gen_prism"), so
+# it lives where the gen_prism family lives. The alternative
+# @mirror/runtime placement would require inventing a parallel
+# runtime family root that the substrate does not carry. The
+# substrate-canonical location wins; the spec grammar name is
+# superseded by structural placement (per Alex 2026-07-01 legibility-
+# over-foundation discipline generalised to placement).
+#
+# === Species contract: gen_prism specialised for MCP JSON-RPC wire ===
+#
+# Per `shards/spectral/gen_prism.mirror` §"State surface — shard_ref"
+# and §"Tool surface — the five-op block": every gen_prism carries
+# three surfaces — identity (uuid_spectral), state (shard_ref into
+# @mirror/store), tool surface (the five-op block IS the wire
+# protocol). This species specialises each surface for MCP:
+#
+#   - identity: `uuid_spectral` — the session identifier; ACTIVE 48
+#     bits route the session in the substrate's spectral manifold
+#     (Fate reads through this for session-scoped routing); DARK 80
+#     bits identify the session content-addressably for the ref
+#     lookup and cross-daemon-restart persistence.
+#   - state: `shard_ref` — the head crystal of the accumulated @spec
+#     the session has been building. State lives in @mirror/store;
+#     the Rust MCP handler at `bootstrap/src/mcp.rs` holds ONLY the
+#     session-uuid, NEVER the accumulated @spec content itself.
+#   - tool surface: the five-op block from @spectral/gen_prism,
+#     specialised as the mq (mirror query language, per
+#     `boot/std/code/mq.mirror`) wire vocabulary — MCP JSON-RPC
+#     requests translate directly to mq queries; each request IS
+#     one tick of the session's mq trajectory.
+#
+# === Session ref discipline — refs/gen_prism/mcp/<session-uuid> ===
+#
+# Per collapse spec §3.6: the session ref is a content-addressed
+# pointer at `refs/gen_prism/mcp/<session-uuid>` inside @mirror/store,
+# pointing at the head crystal of the accumulated @spec. The ref
+# pattern is:
+#
+#   refs/gen_prism/mcp/<session-uuid>  →  <crystal-oid>
+#
+# where <session-uuid> is the session's `uuid_spectral` and
+# <crystal-oid> is the BLAKE3-content-address of the head @spec
+# crystal.
+#
+# The ref is stable across process restarts because it lives in
+# @mirror/store (git-backed at the M6 TICK 1 Apache-2.0 rock-solid
+# floor per `884f433`). A daemon restart re-reads the ref by
+# session-uuid; the accumulated @spec content is intact because
+# every intermediate crystal is content-addressed in the store's
+# DAG. This IS the M6 floor's first-order capability specialised
+# at MCP altitude — the mcp_session species is the first substrate
+# consumer of Recognition #43 (mirror IS content-addressed build
+# system) at a runtime-facing altitude.
+#
+# The CAS (compare-and-swap) advance semantic is the substrate's
+# session-mutation primitive: the tick body reads the ref's
+# current head, computes the new crystal, and CAS-advances the ref
+# from old-head to new-head. Concurrent-request contention is
+# resolved at the ref-advance edge (git-ref-style; the losing tick
+# retries).
+#
+# === State-lives-in-@mirror/store discipline ===
+#
+# Per collapse spec §3.6: MCP is STATELESS AT THE PROCESS LAYER
+# BECAUSE it is STATEFUL AT THE STORE LAYER. This inversion IS the
+# species's load-bearing discipline. The Rust MCP handler
+# (`bootstrap/src/mcp.rs`) never holds session state; every
+# observable session transition is a content-addressed crystal
+# in @mirror/store. Consequences:
+#
+#   - the accumulated @spec IS a chain of crystals in the store's
+#     DAG; each mq query produces one new crystal linked to its
+#     predecessor;
+#   - the query trajectory IS the crystal ancestor chain — replay
+#     and audit come for free from the store's DAG structure;
+#   - the Hilbert dimension of the accumulated recognitions IS the
+#     ancestor-chain depth (per Recognition #51 mirror-as-expanding-
+#     Hilbert-space; each mq query lifts the dimension by one);
+#   - session persistence across daemon restart IS free (no
+#     serialization; the store IS the serialization);
+#   - concurrent read-only queries never conflict (crystals are
+#     immutable-under-hash per @mirror/store Recognition #43);
+#   - write conflicts resolve at ref-advance-by-CAS (git-ref
+#     semantic).
+#
+# The species is thus the first-order consumer that proves the M6
+# TICK 1 Apache-2.0 rock-solid floor. If any of these consequences
+# fail to hold, the floor is wrong. If they all hold, the floor
+# stands ratified — not analytically, but empirically through
+# consumer discharge.
+#
+# === Tick semantics — read / apply mq / write / CAS-advance ===
+#
+# Per collapse spec §3.6 + §10.1: each MCP request drives one tick
+# of the session's state machine. The tick's four phases:
+#
+#   1. READ. Look up `refs/gen_prism/mcp/<session-uuid>` in
+#      @mirror/store; resolve to the head crystal-oid; read the
+#      crystal's content into the tick body as the input @spec.
+#   2. APPLY. Decode the MCP JSON-RPC request as an mq query
+#      (per `boot/std/code/mq.mirror`); apply the query against
+#      the input @spec; produce the output @spec + the response
+#      payload.
+#   3. WRITE. Content-address the output @spec; write the new
+#      crystal to @mirror/store; get back the new-head crystal-oid.
+#   4. CAS-ADVANCE. Compare-and-swap the session ref from
+#      old-head-oid → new-head-oid. On success, emit the response;
+#      on conflict, retry from step 1 (contention resolves at the
+#      ref-advance edge).
+#
+# The tick IS the substrate-decl of the MCP session's mutation
+# primitive. Rust wiring lands in a follow-on M1 tick; this shard
+# declares the vocabulary the wiring will consume.
+#
+# === Tool surface — mq five-op wire specialised for JSON-RPC ===
+#
+# Per @spectral/gen_prism §"Tool surface — the five-op block": the
+# five operations at runtime altitude specialise as follows for MCP:
+#
+#   focus @ mcp    project the head crystal's λ₀ eigenvalue — the
+#                  canonical observable state of the session (what
+#                  IS the session, right now, in one reading?).
+#   project @ mcp  filter the head @spec to the caller-relevant
+#                  subspace — the JSON-RPC response is an mq
+#                  projection of the accumulated @spec through the
+#                  request's field mask.
+#   split @ mcp    orthogonal decomposition — split the accumulated
+#                  @spec into constituent recognitions / candidates /
+#                  ratifications (matches the spec DAG's edge
+#                  classes).
+#   shift @ mcp    basis transformation — same content, different
+#                  altitude (e.g. render the accumulated @spec at
+#                  the @io/oci altitude for a container-runnable
+#                  view of the session).
+#   settle @ mcp   measurement collapse — the session's settle_on
+#                  ratifies the accumulated @spec and (per collapse
+#                  spec §3.3) mirror kintsugi @spec spawns @song;
+#                  the session enters its closure state.
+#
+# The tool surface IS the wire protocol (per @spectral/gen_prism
+# discipline: external callers speak through the five-op surface;
+# there is no out-of-band API). For MCP specifically, the wire IS
+# JSON-RPC 2.0 (per collapse spec §3.5); each JSON-RPC method
+# dispatches to one of the five ops through the mq query surface.
+#
+# === Accumulator discipline — session builds @spec across queries ===
+#
+# Per collapse spec §3.2: each mq query IS one substrate-pull
+# dimension expansion. The session ACCUMULATES an @spec across
+# queries — the head crystal at any tick carries the composed
+# result of every prior query in the session. After N queries, the
+# session's head crystal IS a partial @spec with N recognition-
+# equivalent dimensions. When settle_on ratifies (per spec §3.3),
+# mirror kintsugi @spec spawns @song and the accumulated content
+# crystallises out of the session into the persistent @spec DAG.
+#
+# The accumulator discipline distinguishes MCP-session gen_prism
+# from stateless RPC:
+#
+#   - stateless RPC: each request/reply is independent; no cross-
+#     request accumulation;
+#   - MCP session: each request advances the session's head crystal;
+#     the accumulated @spec grows monotonically until settle_on
+#     ratifies or the session closes without ratification (in which
+#     case the accumulated intermediate crystals remain in the
+#     store's DAG as a query trajectory but are not lifted to a
+#     ratified @spec).
+#
+# The accumulator IS the substrate's answer to spec §3.2's "each
+# mq query = one substrate-pull dimension expansion": dimension
+# expansion happens at the session level; the accumulated @spec
+# IS the Hilbert-space state carrying the session's recognitions.
+#
+# === Session persistence across daemon restart (§11.6.3) ===
+#
+# Per collapse spec §11.6.3: session persistence IS an agentic
+# value-add of the MCP-as-gen_prism collapse. Because the session
+# state lives in @mirror/store (not in-process), a daemon restart
+# does not lose the accumulated @spec. The client re-connects with
+# the same session-uuid; the daemon reads the head crystal from
+# `refs/gen_prism/mcp/<session-uuid>` and resumes tick from the
+# restored head. The client experiences no session interruption
+# other than transport-layer reconnect.
+#
+# This survives:
+#   - daemon crash + supervised restart (per @spectral/supervisor);
+#   - deliberate daemon rollout (SIGTERM + fresh spawn);
+#   - process boundary crossings (client reconnect to a different
+#     daemon instance in a supervised cluster reads the same ref);
+#   - machine reboot (the store's git-backed persistence survives).
+#
+# The persistence IS a first-order consequence of the state-lives-
+# in-@mirror/store discipline. NOT an extra feature; the natural
+# consequence of naming state properly.
+#
+# === Query trajectory replay + audit via ancestor chain ===
+#
+# Per collapse spec §6.4: the session's ancestor chain — the DAG
+# path from the current head crystal back through every prior mq
+# query's crystal — IS the query trajectory. Replay reconstructs
+# any historical session state by walking the chain back to the
+# desired ancestor; audit reads the chain to explain WHY the
+# session's current head has the content it does. This composes
+# with the M6 floor's provenance-chain value-add at MCP altitude:
+#
+#   - replay: any prior head crystal can be re-materialised as the
+#     session state; the tick body is deterministic under the
+#     store's content-addressed reads;
+#   - audit: the ancestor chain names every mq query the session
+#     applied, in order; the audit reader can reconstruct the
+#     dialogue that produced the accumulated @spec;
+#   - branching: alternative timelines (e.g. what would this
+#     session's @spec look like if the third query had been
+#     different?) fork off any ancestor; the DAG carries multiple
+#     heads without contention because crystals are immutable-
+#     under-hash.
+#
+# The query trajectory IS thus the audit trail. NOT a separate
+# logging system; the substrate's DAG structure carries it by
+# construction.
+#
+# === Prior art anchors — BEAM gen_server, nix-daemon, git ref advance ===
+#
+# The species inherits its ancestor recognition from three
+# canonical prior-art traditions:
+#
+#   - BEAM gen_server / OTP (Ericsson 1986; Erlang/OTP standard
+#     library since Erlang 5.0, 2000): the canonical stateful-
+#     process-with-typed-message-surface pattern; each gen_server
+#     handles messages in an isolated process with private state;
+#     supervisors own the lifecycle. `@spectral/gen_prism` IS
+#     the substrate's gen_server analogue (per gen_prism family
+#     root docblock); this species specialises the analogue for
+#     MCP JSON-RPC-driven session state.
+#
+#   - nix-daemon (NixOS 2005+; C++/Nix): the persistent-session-
+#     via-socket-plus-store pattern. The nix-daemon holds no
+#     build state itself; every build product is content-
+#     addressed in the Nix store; the daemon is a thin dispatcher
+#     that reads and writes the store on behalf of clients. Session
+#     resumption across restart works because the store IS the
+#     state. Dolstra 2006 (thesis) grounds the content-addressed
+#     build system discipline that Recognition #43 lifted to
+#     substrate altitude at M6 TICK 1.
+#
+#   - git ref advance-by-CAS (Torvalds 2005; git core): the CAS
+#     ref-advance semantic. `git update-ref --create-reflog
+#     <ref> <new> <old>` atomically advances the ref only if the
+#     current value equals <old>; concurrent writes to the same
+#     ref conflict at this edge and one loses. The MCP session
+#     tick's step 4 IS this pattern specialised for
+#     `refs/gen_prism/mcp/<session-uuid>` inside @mirror/store.
+#
+# All three prior-art traditions carry the same structural
+# insight: STATE LIVES IN THE STORE, NOT IN THE PROCESS. The
+# substrate lifts this to the mcp_session species by construction.
+#
+# === Recognition binding ===
+#
+# This species is a first-order consumer of Recognition #43
+# (`[[architecture-mirror-as-content-addressed-build-system]]`;
+# LANDED at M6 TICK 1 `884f433`). Every property Recognition #43
+# names — content-addressed storage, immutable-under-hash keys,
+# provenance-chain audit, session persistence via store — is
+# consumed here at MCP altitude. If Recognition #43 stands, this
+# species discharges cleanly. If any property of Recognition #43
+# fails empirically at this consumer, the recognition needs
+# refinement. The species IS thus the floor's first empirical
+# proof at a runtime-facing altitude.
+#
+# Sub-recognition candidate flagged (NOT numbered): "MCP session
+# IS gen_prism" per collapse spec §9.3. The recognition would say:
+# the MCP JSON-RPC session concept and the @spectral/gen_prism
+# worker-with-typed-surface concept are the SAME structural
+# object viewed from different altitudes (protocol altitude vs
+# runtime altitude). Promotion criterion pending Seam adjudication.
+#
+# === Circular-reflexive self-audit ===
+#
+# Per `[[architecture-candidate-recognition-111-third-as-family-root]]`
+# marker discipline: the species-decl MUST survive the discipline
+# it declares. Each of this shard's own recognitions:
+#
+#   - state lives in @mirror/store: this shard's authored content
+#     lives at shards/spectral/gen_prism/mcp_session.mirror inside
+#     the mirror repo, which IS the @mirror/store git-backed floor.
+#     Discipline: pass.
+#   - content-addressed identity: the shard's blob has a BLAKE3
+#     content address at write; the gen_prism species named here
+#     is content-addressable by its declaration OID. Discipline:
+#     pass.
+#   - tick semantics: the substrate-decl IS the specification;
+#     downstream ticks read this shard, apply mq queries to derive
+#     the Rust wiring, produce new shards; the meta-loop IS the
+#     tick semantic applied to the substrate's own evolution.
+#     Discipline: pass.
+#
+# Self-audit verdict: `both_survive`.
+#
+# === Interpretation B discipline ===
+#
+# Per Seam Phase D pre-review of the arc and per sibling species
+# precedent (`shards/song/voice.mirror` `d5ea3f8`-era landing):
+# Interpretation B canonical. Narrative-docblock ABOVE `---`;
+# `in @` clauses BELOW. The seam is exactly one line at column 0
+# below.
+#
+# Spec context: docs/specs/mcp-spec-song-collapse.md (Mara
+#               `2cfd2a7`; §3.5 MCP-as-state-machine narrative;
+#               §3.6 statelessness-at-process/statefulness-at-
+#               store; §10.1 M1 charter; §11.6.3 session
+#               persistence agentic value-add; §3.2 each mq
+#               query = one substrate-pull dimension; §3.3
+#               settle_on ratification spawns @song; §6.4
+#               ancestor chain IS query trajectory; §9.3 MCP
+#               session IS gen_prism recognition candidate).
+# Substrate decisions:
+#               [[architecture-shards-as-substrate-source]],
+#               [[architecture-prism-as-trait-as-everything]],
+#               [[architecture-shard-as-crdt]] (state surface IS
+#                a shard; state changes ARE lattice ascent),
+#               [[architecture-operations-as-linear-algebra]]
+#                (runtime reading of the five ops; MCP altitude
+#                specialisation),
+#               [[architecture-hamilton-scheduler]] (per-shard
+#                memory manager owns MCP session storage lifecycle),
+#               [[architecture-three-tier-stack]] (mirror /
+#                spectral / spectral-db separation; MCP session
+#                sits at spectral altitude),
+#               [[architecture-pq-as-mcp-surface]] (18 MCP tools
+#                collapse to 3; stateless wire; session-implicit
+#                shard — this species IS the substrate-decl of
+#                that session-implicit shard),
+#               [[architecture-shard-ref-as-prism]] (ShardRef IS
+#                the typed session handle; the species state
+#                surface is exactly this),
+#               [[architecture-mirror-as-content-addressed-build-
+#                system]] (#43 first-order consumer; the species
+#                discharges the M6 TICK 1 rock-solid floor).
+# Substrate recognitions:
+#               #43 (mirror IS content-addressed build system;
+#                LANDED at M6 TICK 1; this species IS the first
+#                empirical consumer at a runtime-facing altitude),
+#               #46 (path-syntax property; `glass` per depth-1
+#                discipline under @spectral),
+#               #51 (mirror IS expanding Hilbert space; each mq
+#                query IS one dimension expansion in the session's
+#                accumulated @spec),
+#               #55 (form/process partition — @spectral/gen_prism
+#                sits at the process side; the species inherits),
+#               #58 (Fate IS optical inference; the session's
+#                Fate-reads for routing decisions land here at
+#                MCP-session altitude when the gen_prism spawns
+#                inside a bench),
+#               #99 (λ₀ ground state — focus @ mcp reads the
+#                head crystal's λ₀ as the session's canonical
+#                observable),
+#               #S3 candidate (five-op temporal specialisation —
+#                the MCP altitude reading of the five ops here
+#                composes with the family-root cascade).
+# Feedback anchors:
+#               [[feedback-substrate-already-had-the-word]] (the
+#                gen_prism family already lives at @spectral;
+#                MCP session IS gen_prism; the species goes here,
+#                not at a parallel @mirror/runtime family root
+#                that does not exist),
+#               [[feedback-legibility-over-foundation-when-
+#                collapsing]] (substrate-canonical placement
+#                over spec grammar name),
+#               [[feedback-composition-claims-need-empirical-
+#                test]] (the CAS-advance semantic MUST be
+#                empirically tested when Rust wiring lands; the
+#                substrate-decl declares the discipline but the
+#                proof lives at the wiring altitude),
+#               [[feedback-always-tdd-no-shortcuts]] (RED first
+#                per Reed's `e8378ca`; this GREEN landing pairs
+#                with it).
+# Related shards:
+#               spectral/gen_prism.mirror (family root; declares
+#                the three surfaces — identity / state / tool —
+#                this species specialises for MCP),
+#               mirror/store.mirror (state carrier; the M6 TICK 1
+#                Apache-2.0 rock-solid floor this species is a
+#                first-order consumer of),
+#               mirror/au.mirror (proposed-shard carrier for
+#                terminate's return; MCP session close settles
+#                the accumulated @spec through au),
+#               uuid/spectral.mirror (identity carrier;
+#                session-uuid IS uuid_spectral),
+#               spectral/supervisor.mirror (forward-promised;
+#                the parent of MCP session gen_prisms; carries
+#                the restart-strategy invariant for daemon-
+#                restart persistence),
+#               spectral/portal.mirror (sibling species; the
+#                portal IS the frame-stream side of the MCP
+#                surface; mcp_session IS the state-machine side).
+# Realisation reference: bootstrap/src/mcp.rs (the current
+#               stateless MCP handler; M1 wires this substrate-
+#               decl into a session-state-machine at a follow-on
+#               tick; the Rust wiring is NOT part of this tick),
+#               boot/std/code/mq.mirror (the mq query language
+#               this species's tool surface consumes),
+#               docs/specs/spectral-runtime.md §2 (the gen_prism
+#               shape this species specialises).
+# Path-namespace property: this file at
+# `shards/spectral/gen_prism/mcp_session.mirror` declares
+# `@spectral/gen_prism/mcp_session` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+---
+
+in @prism
+in @glass
+in @meta
+in @spectral
+in @uuid/spectral
+in @mirror/store
+
+# ============================================================
+# §1 The five-op tool surface at MCP session altitude
+# ============================================================
+
+# === glass @spectral/gen_prism/mcp_session — species declaration ===
+#
+# Per @spectral/gen_prism family root: `glass` is the substrate
+# keyword for gen_prism-species specialisations (NOT a new keyword;
+# per recognition #46 path-syntax property and per
+# `shards/spectral.mirror`'s depth->=1 discipline).
+#
+# The five ops specialise at MCP altitude per family-root discipline
+# (see docblock §"Tool surface — mq five-op wire specialised for
+# JSON-RPC" above). The wire protocol IS JSON-RPC 2.0 dispatching
+# through mq queries; external MCP clients speak to the session
+# through this surface exclusively.
+glass @spectral/gen_prism/mcp_session {
+  focus mcp_session
+  project mcp_session
+  split mcp_session
+  shift mcp_session
+  settle mcp_session
+}
+
+# ============================================================
+# §2 The MCP session record — three surfaces specialised
+# ============================================================
+
+# === mcp_session — the session-state-machine record ===
+#
+# Inherits the gen_prism three-surface shape from the family root,
+# specialised for MCP:
+#
+#   identity  — session_uuid: uuid_spectral. ACTIVE 48 bits route
+#               the session in the substrate's spectral manifold;
+#               DARK 80 bits identify it content-addressably for
+#               session ref lookup and cross-restart persistence.
+#   state     — shard_ref pointing at the head crystal of the
+#               accumulated @spec inside @mirror/store. Resolution
+#               through @mirror/store.read. State changes ARE
+#               settles into a new shard (lattice ascent per
+#               [[architecture-shard-as-crdt]]).
+#   parent    — supervisor gen_prism's uuid_spectral. The parent
+#               is the MCP-session supervisor (a
+#               @spectral/supervisor specialisation; forward-
+#               promised at `shards/spectral/supervisor.mirror`);
+#               owns restart-strategy on daemon crash.
+#
+# The session ref (`refs/gen_prism/mcp/<session-uuid>`) is not a
+# record field; it is a store-side ref that names this record by
+# its `session_uuid` identity. The ref advances by CAS as the
+# session ticks; the record's `state` field IS the current head
+# crystal-oid the ref resolves to.
+type mcp_session = {
+  session_uuid: uuid_spectral,
+  state:        shard_ref,
+  parent:       uuid_spectral,
+}
+
+# ============================================================
+# §3 The tick action — read head, apply mq, write, CAS-advance
+# ============================================================
+
+# === tick — the session's mutation primitive ===
+#
+# Reads the session's head crystal from
+# `refs/gen_prism/mcp/<session-uuid>`, applies an mq query (the
+# decoded JSON-RPC request), writes the resulting new crystal to
+# @mirror/store, and CAS-advances the ref from the old head oid
+# to the new head oid.
+#
+# Per collapse spec §3.6 tick semantics:
+#
+#   1. READ. Resolve `refs/gen_prism/mcp/<session-uuid>` to the
+#      head crystal-oid; read the crystal content as the input
+#      @spec.
+#   2. APPLY. Decode the JSON-RPC request as an mq query per
+#      `boot/std/code/mq.mirror`; apply the query against the
+#      input @spec; produce the output @spec + JSON-RPC response
+#      payload.
+#   3. WRITE. Content-address the output @spec; write the crystal
+#      to @mirror/store; receive back the new crystal-oid.
+#   4. CAS-ADVANCE. Compare-and-swap the ref from old-head-oid to
+#      new-head-oid. On success, the session's head advances by
+#      one lattice element (per [[architecture-shard-as-crdt]])
+#      and the response is emitted. On conflict (another concurrent
+#      tick advanced the ref first), retry from step 1.
+#
+# The tick body stays obligation-blocked (`\`): the realisation
+# lands as Rust wiring at a follow-on M1 tick (per collapse spec
+# §10.1). This tick declares the substrate-decl vocabulary the
+# wiring consumes.
+#
+# The tick IS this species's specialisation of the family-root's
+# `settle @ runtime` — measurement collapse driving pending au
+# into a new shard through the property chain. At MCP altitude,
+# each JSON-RPC request drives one tick; the session's state
+# surface advances by one lattice element per request; the
+# accumulated @spec grows monotonically until settle_on ratifies.
+tick(s: mcp_session, request: ref) -> mcp_session { \ }
+
+# ============================================================
+# §4 The read-head action — resolve the session's head crystal
+# ============================================================
+
+# === read_head — resolve the session's current head crystal ===
+#
+# Given a session_uuid, resolve `refs/gen_prism/mcp/<session-uuid>`
+# to the current head crystal-oid and read the crystal content.
+# This IS step 1 of the tick, extracted as a first-class action
+# because:
+#
+#   - read-only queries dispatch here without needing to advance
+#     the ref (many MCP calls are pure reads);
+#   - session-resume-after-daemon-restart reads through this
+#     action to reconstruct the pre-restart session state;
+#   - replay reads any ancestor crystal in the query trajectory
+#     through this action with a different oid.
+#
+# Composes with @mirror/store's read primitive at the ref-lookup
+# altitude. Body obligation-blocked (`\`).
+read_head(session_uuid: uuid_spectral) -> shard_ref { \ }
+
+# ============================================================
+# §5 The advance-ref action — CAS the session ref
+# ============================================================
+
+# === advance_ref — CAS-advance the session ref ===
+#
+# The CAS (compare-and-swap) primitive: advance
+# `refs/gen_prism/mcp/<session-uuid>` from `old_head` to
+# `new_head` atomically. Returns `pass` if the ref currently
+# equals `old_head` and the advance succeeded; `failure` if the
+# ref has been advanced by another tick (contention; caller
+# retries from step 1 of the tick).
+#
+# The advance-by-CAS semantic IS the substrate's session-mutation
+# primitive per collapse spec §3.6 and per git-ref prior art
+# (Torvalds 2005; `git update-ref --create-reflog <ref> <new>
+# <old>`). Contention resolves at the ref-advance edge; no
+# in-process locking is required because @mirror/store carries
+# the atomicity at the git-backed floor.
+#
+# Body obligation-blocked (`\`); the realisation delegates to
+# @mirror/store's ref-advance primitive when the Rust wiring
+# lands.
+advance_ref(
+  session_uuid: uuid_spectral,
+  old_head:     shard_ref,
+  new_head:     shard_ref,
+) -> verdict { \ }
+
+# ============================================================
+# §6 The out clauses
+# ============================================================
+
+out @spectral/gen_prism/mcp_session
+out mcp_session
+out tick
+out read_head
+out advance_ref
