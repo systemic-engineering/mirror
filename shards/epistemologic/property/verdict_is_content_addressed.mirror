@@ -1,0 +1,432 @@
+# @epistemologic/property/verdict_is_content_addressed — the
+# substrate-decl that lifts `crystal.derived_predicates` from
+# "audit trail of what was verified" to "memoizable cache by
+# construction." N1 TICK 1 landing per Reed's RED tick `22dba0d`
+# and Taut scout report on incremental compilation (this session).
+#
+# THE CLAIM: `verdict(spec_oid, target_oid, inputs_oid) -> verdict`
+# IS a TOTAL FUNCTION of its input OIDs. Same inputs -> same
+# verdict, always, trivially. Memoization is valid by construction
+# (no invalidation logic required beyond checking whether the input
+# OID triple has changed).
+#
+# Interpretation B canonical per Seam pre-review
+# `docs/audits/2026-07-06-seam-arc-4-sub-arc-a-pre-review.md` §1:
+# narrative ABOVE `---`; `in` clauses + typed declarations BELOW.
+#
+# === Recognition #43 grounding (mirror IS content-addressed build system) ===
+#
+# THE OPERATIONAL CONSEQUENCE OF RECOGNITION #43 AT VERDICT ALTITUDE.
+#
+# Per `[[architecture-mirror-as-content-addressed-build-system]]`
+# (#43 LANDED at M6 TICK 1 `884f433`): mirror has every Bazel /
+# Buck2 / Nix / Shake primitive declared at substrate altitude;
+# mosaic.mirror IS the build shard. Recognition #43 promoted on
+# the strength of `partial(opacity_map)` being genuinely sharper
+# than every canon's binary verdict.
+#
+# This shard is the operational consequence of #43 at the verdict
+# altitude: when mirror IS a content-addressed build system, then
+# verdicts issued by the kintsugi loop over that build system MUST
+# themselves be content-addressed. The predicate names the
+# invariant that makes verdict-caching valid by construction rather
+# than by ad-hoc invalidation logic. Every Bazel / Buck2 / Nix
+# lineage canon (Dolstra 2006 purely-functional deployment; Bazel
+# REAPI ActionCache; Buck2 dep graph) grounds a content-addressed
+# verdict/action-cache surface; this shard declares the mirror-
+# altitude form as substrate primitive.
+#
+# === The total-function invariant ===
+#
+# The predicate signature
+#
+#   verdict_is_content_addressed(spec_oid, target_oid, inputs_oid)
+#     -> verdict { \ }
+#
+# discharges the claim that:
+#
+#   verdict = f(spec_oid, target_oid, inputs_oid)
+#
+# is a total function of its three OID inputs. "Total function"
+# means: defined on every triple of valid OIDs; single-valued (same
+# inputs -> same verdict); purely-functional (referentially
+# transparent, no side channel, no clock, no environment). This is
+# a purely functional referentially transparent map from the
+# (spec, target, inputs) OID triple to a verdict OID.
+#
+# The three OID parameters:
+#
+#   - `spec_oid: oid` — the content-address of the property
+#     specification (the shard declaring the predicate whose verdict
+#     we cache); resolved through @mirror/store.
+#   - `target_oid: oid` — the content-address of the object under
+#     verdict (the artifact / crystal / splinter the predicate is
+#     evaluated against); resolved through @mirror/store.
+#   - `inputs_oid: oid` — the content-address of the composed input
+#     bundle (dependency closure OIDs, environment OIDs, ancestor
+#     verdicts folded in); the canonical hash of the inputs that
+#     participated in producing the verdict. Distinct from
+#     target_oid because inputs include the transitive dependency
+#     closure the target references, not just the target's own bytes.
+#
+# The three OIDs together are the complete addressing of a verdict.
+# Nothing else participates. No clock, no environment variable, no
+# ambient state. If the substrate observes the same triple twice,
+# it MUST issue the same verdict — this is not a policy claim but a
+# substrate-decl invariant discharged by content-addressing at
+# every layer beneath (per @mirror/store OID discipline).
+#
+# === The memoization-by-construction consequence ===
+#
+# When verdict is a total function of input OIDs, memoization is
+# VALID BY CONSTRUCTION. No invalidation logic is required beyond
+# checking whether the input OID triple has changed. A cache lookup
+# keyed on `(spec_oid, target_oid, inputs_oid)` either returns the
+# previously-issued verdict (a cache hit; verdict re-issue is
+# skipped) OR returns the sentinel `miss` (the substrate must run
+# the kintsugi loop to issue a fresh verdict, then write it to the
+# cache under the same key).
+#
+# Consequence for the `crystal.derived_predicates` carrier at
+# `shards/mirror/store/crystal.mirror` lines 344-368: the field was
+# landed as an audit-trail of what the kintsugi loop verified during
+# settlement (`derived_predicates: [property_verdict]`). This
+# predicate lifts it to a memoizable cache by construction — the
+# `[property_verdict]` list IS the substrate-decl'd cache entries;
+# each `property_verdict = { verdict, where: location }` becomes a
+# key/value pair in the content-addressed verdict cache once the
+# location keys off the input OID triple. Trivially cacheable
+# because content-addressed. No invalidation heuristic; no
+# generational counter; no mtime probe.
+#
+# === @mirror/store composition ===
+#
+# This predicate composes with `@mirror/store` (per
+# `shards/mirror/store.mirror` §"Apache-2.0 rock-solid floor
+# discipline" + §"Non-negotiable v0 invariants"): the store
+# provides `oid`, `walk`, `read`, `write`, `verify` primitives
+# whose immutability-under-hash + purely-functional-composition
+# invariants ground this predicate's total-function claim.
+#
+# Store invariant (1) — immutability-under-hash — grounds the
+# "same input OID triple always addresses the same bytes"
+# assumption: because `OID = BLAKE3(content)` by construction, the
+# spec_oid / target_oid / inputs_oid are stable identifiers whose
+# byte-content cannot mutate under the identifier.
+#
+# Store invariant (2) — composition is purely-functional — grounds
+# the "same triple -> same verdict" claim: verdict issuance IS a
+# composition of prisms acting on stored OIDs; therefore the output
+# is a total function of the inputs.
+#
+# Together the two @mirror/store invariants ARE the substrate-
+# altitude witnesses that this predicate is well-formed at declaration
+# altitude. No further arithmetic is needed to justify the
+# content-addressing claim: it inherits from the store.
+#
+# The action-hash -> OID map (REAPI ActionCache surface;
+# `@mirror/store/action_cache` forward-promised at M6 tick 3 per
+# `shards/mirror/store.mirror` §"Bazel REAPI floor decomposition")
+# is the natural home for the verdict cache at store altitude. This
+# predicate declares the semantic invariant; the action_cache sub-
+# prism will house the concrete `record` / `lookup` actions keyed
+# by verdict-triples (N2 forward-promise below).
+#
+# === @fate hinge composition (verdicts EMERGE from runtime) ===
+#
+# Per Recognition #58 ([[architecture-fate-is-optical-inference]];
+# LANDED 2026-06-11 via Seam adversarial review): Fate inference IS
+# 5-layer D²NN + active Fabry-Perot resonator + Reck/Clements
+# unitary mesh. Per the @fate substrate-decl at `shards/fate.mirror`
+# (2026-06-30 05:24, 42.1KB): @fate IS the hinge between runtime
+# and compiletime — the constrained-inference operator whose dice-
+# roll within the restricted state space produces verdicts at
+# runtime that this shard names content-addressed at compiletime.
+#
+# Verdicts EMERGE from Fate optical inference at runtime; this
+# predicate ANCHORS the compiletime/runtime hinge by declaring that
+# whatever verdict Fate issues for a given `(spec_oid, target_oid,
+# inputs_oid)` triple IS a total function of that triple. The
+# runtime substrate (D²NN + Fabry-Perot + unitary mesh) supplies
+# the actual inference arithmetic; the substrate-decl'd hinge at
+# `@fate` binds runtime arithmetic to the compiletime declaration.
+# This predicate names the invariant Fate must honor across the
+# hinge — the same input triple must produce the same output
+# verdict, so that the verdict may be cached across both
+# compiletime substrate-decl resolution and runtime execution.
+#
+# The compiletime + runtime bilateral discipline per @fate
+# ("Alex's BILATERAL correction" per `shards/fate.mirror`): the
+# same inferential machinery operates at substrate-decl resolution
+# time (picking among morphism candidates / resolving `\` typed-gap
+# holes during static analysis) AND at runtime (driving actual
+# data flow decisions as gen_prisms execute). This predicate's
+# content-addressed invariant covers BOTH altitudes: a compile-time
+# @fate crystal keyed by (spec, target, inputs) OIDs is memoization
+# for the compiletime pass; a runtime @fate crystal keyed by the
+# same triple is memoization for the runtime pass; both keys index
+# the same content-addressed cache.
+#
+# === mosaic-store-cache-invariants spec grounding ===
+#
+# Per `docs/specs/mosaic-store-cache-invariants.md` (Mara
+# 2026-06-28, 2016 lines): §9.2 forward-promises 8 bilateral shard
+# pairs at `@epistemologic/property/*` + `@kintsugi/fracture/*`
+# altitudes; none had landed at the time the spec was authored.
+# This shard is one of them landing — the declarative half of the
+# verdict/content-addressing bilateral pair. The operational half
+# at `@kintsugi/fracture/verdict_cache_miss` (or equivalent naming)
+# is forward-promised as the fracture-side surface for the case
+# where the cache lookup returns `miss` and the kintsugi loop must
+# re-issue the verdict.
+#
+# The mosaic-store-cache-invariants spec grounds the broader cache
+# invariant discipline at store altitude; this shard grounds the
+# specific verdict-altitude invariant that authorizes the cache
+# path for property verdicts.
+#
+# === Operational target: the 13-minute pre-commit hook ===
+#
+# Business context (Taut scout report, this session): the pre-
+# commit hook takes ~13 minutes because `cmd_kintsugi_spec` at
+# `bootstrap/src/lib.rs:~1189` walks every target on every
+# invocation and spawns `cargo <check>` cold each time. Zero
+# cross-invocation cache; zero per-target result memoization.
+#
+# This shard is the substrate-decl that authorizes memoization to
+# become the standard path. When this predicate lands, the
+# kintsugi loop MAY consult a content-addressed verdict cache
+# keyed by `(spec_oid, target_oid, inputs_oid)` before dispatching
+# cargo. On cache hit: skip cargo; re-emit the cached verdict.
+# On cache miss: run cargo, record the verdict at the triple's
+# key, emit. The hook overhead falls from ~13 minutes to seconds
+# on the second invocation because incremental verdict caching
+# is now valid by construction.
+#
+# The operational target grounds the substrate-decl in its
+# consumer discipline; without a landed consumer path the
+# predicate is analytical only. Recognition #43 supplies the
+# principled ancestor; the pre-commit hook supplies the
+# empirical pull.
+#
+# === N-cascade forward-promises ===
+#
+# This shard is N1 TICK 1 of the N-cascade (incremental verdict
+# cache + kintsugi-IS-commit). Downstream N-cascade ticks:
+#
+#   - N2: `cache_read` + `cache_write` at `@mirror/store` keyed on
+#         `(spec_oid, target_oid, inputs_oid) -> verdict`. The
+#         concrete cache-lookup + cache-write actions that
+#         operationalize this predicate's memoization invariant.
+#         The natural next tick following this landing.
+#
+#   - N3: Rust wiring at `bootstrap/src/lib.rs:~1189` —
+#         `cmd_kintsugi_spec` consults the verdict cache before
+#         dispatching cargo. Cache hit: skip cargo, emit cached
+#         verdict. Cache miss: run cargo, record verdict.
+#
+#   - N4: reverse closure `impacted_by(oid) -> [oid]` at
+#         `@mirror/store`. When an OID changes, the reverse-
+#         closure walk names every downstream OID whose cached
+#         verdict may be affected. Composes with N2 cache_read to
+#         invalidate exactly the impacted verdict entries.
+#
+#   - N5: `@kintsugi/store/git commit-as-fold` — `mirror kintsugi
+#         --commit` IS `git commit` at git-projection altitude.
+#         Every commit is a fold over the verdict cache; every
+#         reverse-closure walk is a rebase over the fold. The
+#         terminal tick of the N-cascade at kintsugi-projection
+#         altitude.
+#
+# The N-cascade grounds this predicate as the anchor point for the
+# incremental verdict discipline. Each N-tick composes downstream
+# of this one; nothing downstream is valid without this predicate
+# declaring the total-function invariant that authorizes the whole
+# cache path.
+#
+# === Sibling coupling to @epistemologic/property + property family ===
+#
+# This shard is the sixth species at `@epistemologic/property/*`
+# joining `cold_compile_within_tolerance`, `dark_count_monotone`,
+# `restart_intensity_well_formed`, `docblock_grounded`,
+# `docblock_coherent`, and `docblock_no_extraction_pattern`. The
+# property family root is @epistemologic; this species sits at the
+# same species altitude as the five landed siblings and honours
+# the same path-namespace pact (depth-2 under @epistemologic).
+#
+# The bilateral discipline per Recognition #53
+# (`[[architecture-property-fracture-bilateral]]`): declarative
+# property at `@epistemologic/property/verdict_is_content_addressed`
+# lands here; operational fracture body at
+# `@kintsugi/fracture/verdict_cache_miss` (or equivalent) is
+# forward-promised at N2 or a nearby tick. This shard lands the
+# declarative half only; the fracture side composes at the
+# kintsugi loop altitude when the cache lookup fails.
+#
+# === Path-namespace property ===
+#
+# This file at
+# `shards/epistemologic/property/verdict_is_content_addressed.mirror`
+# declares `@epistemologic/property/verdict_is_content_addressed`
+# at species-depth 2 under @epistemologic per
+# `@epistemologic/pact/path_matches_namespace`. The depth mirrors
+# the six landed siblings at
+# `@epistemologic/property/{cold_compile_within_tolerance,
+# dark_count_monotone, restart_intensity_well_formed,
+# docblock_grounded, docblock_coherent, docblock_no_extraction_pattern}`.
+#
+# === Circular-reflexive self-audit ===
+#
+# Per `[[architecture-candidate-recognition-111-third-as-family-root]]`
+# marker discipline: the operator audits its own audit at depth=3.
+# This shard's declaration MUST survive its own predicate at
+# analytical altitude — the substrate-decl MUST NOT declare a
+# verdict-content-addressing invariant that itself fails the
+# invariant.
+#
+# Self-audit: the shard's declaration IS content-addressed. Its
+# spec_oid is this shard's own OID (once landed via kintsugi
+# settlement); its target_oid is the predicate declaration itself;
+# its inputs_oid is the composed hash of the six ancestor `in`
+# clauses declared below. Same triple -> same shard-content ->
+# same verdict. The declaration honours its own invariant.
+#
+# Verdict: `both_survive` — the shard's declaration passes real
+# survival (analytical content-addressing witness) but phantom
+# survival is also non-empty (the concrete N2 cache_read /
+# cache_write actions have not landed; the operational check
+# cannot concretely fire yet). Promotion to `real_survives`
+# awaits: N2 cache_read + cache_write bodies, N3 Rust wiring,
+# Seam adversarial review of the total-function claim at
+# analytical altitude.
+#
+# === Spec + audit + ancestry context ===
+#
+# Spec context:
+#               `docs/specs/mosaic-store-cache-invariants.md`
+#                (Mara 2026-06-28, 2016 lines; §9.2 forward-promises
+#                8 bilateral shard pairs; this shard is one of them
+#                landing).
+# Substrate decisions:
+#               [[architecture-shards-as-substrate-source]],
+#               [[architecture-prism-as-trait-as-everything]],
+#               [[architecture-mirror-as-content-addressed-build-system]]
+#                (#43 LANDED; the ancestor recognition this predicate
+#                operationalizes at verdict altitude),
+#               [[architecture-property-fracture-bilateral]]
+#                (#53; this shard is the declarative half of the
+#                verdict/content-addressing bilateral pair; the
+#                fracture half at `@kintsugi/fracture/verdict_cache_miss`
+#                is forward-promised).
+# Substrate recognitions:
+#               #43 (mirror IS content-addressed build system —
+#                LANDED at M6 TICK 1 `884f433`; the ancestor
+#                recognition this predicate discharges at verdict
+#                altitude),
+#               #53 (property/fracture bilateral pattern — the
+#                declarative half lands here; the fracture half
+#                forward-promised at N2 or nearby),
+#               #58 (Fate IS optical inference — LANDED 2026-06-11;
+#                the runtime substrate emitting the verdicts this
+#                predicate declares content-addressed; the
+#                runtime/compiletime hinge at @fate binds runtime
+#                arithmetic to compiletime substrate-decl).
+# Feedback anchors:
+#               [[feedback-substrate-already-had-the-word]] (this
+#                shard names the discipline the substrate has been
+#                carrying at `crystal.derived_predicates` since
+#                that field was landed — content-addressed verdict
+#                caching was implicit in the carrier; this predicate
+#                makes it substrate-decl'd),
+#               [[feedback-craft-not-deliver]] (the shard lands the
+#                declarative substrate-decl; the operational cache
+#                actions land at N2; the Rust wiring lands at N3;
+#                the reverse-closure lands at N4; the commit-as-fold
+#                lands at N5),
+#               [[feedback-always-tdd-no-shortcuts]] (RED first;
+#                Reed's `22dba0d` RED tick pairs with this GREEN
+#                landing).
+# Related shards:
+#               mirror/store.mirror (@mirror/store family-root;
+#                declares `oid`, `walk`, `read`, `write`, `verify`
+#                primitives + Apache-2.0 rock-solid floor discipline
+#                + Bazel REAPI floor decomposition + the two v0
+#                invariants this predicate composes with),
+#               mirror/store/crystal.mirror (declares
+#                `derived_predicates: [property_verdict]` carrier at
+#                lines 344-368; this predicate lifts the carrier
+#                from audit-trail to memoizable-cache-by-construction),
+#               fate.mirror (substrate-decl'd `prism @fate` family-
+#                root at 2026-06-30 05:24; the runtime-compiletime
+#                hinge per Alex 2026-07-06; verdicts emerge from
+#                Fate optical inference at runtime; this predicate
+#                anchors the compiletime declaration of the runtime
+#                emergence's content-addressed invariant),
+#               fate/tournament.mirror (substrate-decl'd
+#                `prism @fate/tournament` species at 2026-06-30
+#                05:24; the multi-frequency tournament runtime
+#                arithmetic beneath @fate's dice-roll),
+#               epistemologic/property/docblock_coherent.mirror
+#                (fifth-landed property sibling; template for this
+#                shard's shape and #53 bilateral discipline).
+# Path-namespace property: this file at
+# `shards/epistemologic/property/verdict_is_content_addressed.mirror`
+# declares `@epistemologic/property/verdict_is_content_addressed`
+# per `@epistemologic/pact/path_matches_namespace`.
+
+---
+
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/property
+in @mirror/store
+in @fate
+
+prism @epistemologic/property/verdict_is_content_addressed {
+  focus verdict_is_content_addressed
+  project verdict_is_content_addressed
+  split verdict_is_content_addressed
+  shift verdict_is_content_addressed
+  settle verdict_is_content_addressed
+}
+
+# === verdict_is_content_addressed predicate (declarative half) ===
+#
+# THE LOAD-BEARING PREDICATE. Returns verdict that
+# `verdict = f(spec_oid, target_oid, inputs_oid)` is a total
+# function of its three OID inputs — same triple -> same verdict,
+# always. Content-addressing at every layer beneath (per
+# @mirror/store OID discipline invariants (1) immutability-under-
+# hash + (2) composition is purely-functional) grounds the total-
+# function claim as substrate-decl invariant.
+#
+# The three OID parameters name the complete addressing of a
+# verdict: `spec_oid` names the predicate specification; `target_oid`
+# names the object under verdict; `inputs_oid` names the composed
+# input bundle (dependency closure + environment + ancestor
+# verdicts folded in). No clock; no ambient state; no side channel.
+#
+# Consequence: memoization is VALID BY CONSTRUCTION. A cache
+# lookup keyed on `(spec_oid, target_oid, inputs_oid)` either
+# returns the previously-issued verdict (hit; skip re-issue) or
+# the sentinel `miss` (run kintsugi loop, re-issue, write to
+# cache). No invalidation heuristic; no generational counter; no
+# mtime probe. The predicate declares the invariant; N2's
+# cache_read + cache_write actions operationalize it; N3's Rust
+# wiring consumes the cache at the pre-commit hook; N4's reverse-
+# closure walks invalidate exactly the impacted entries; N5's
+# commit-as-fold projects the whole cascade at git altitude.
+#
+# Body discharges as obligation block (`\`) — realisation
+# dispatches through the substrate; the shard declares the
+# contract only. The concrete verdict-issuance arithmetic lives
+# in the kintsugi loop at @fate runtime altitude; the concrete
+# cache actions live at @mirror/store/action_cache (N2 forward-
+# promised).
+verdict_is_content_addressed(spec_oid: oid, target_oid: oid, inputs_oid: oid)
+  -> verdict { \ }
+
+out @epistemologic/property/verdict_is_content_addressed
+out verdict_is_content_addressed
