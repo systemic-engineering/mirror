@@ -119,8 +119,11 @@
 #
 # === #S2 grounding: shift at temporal altitude ===
 #
-# THE SPECIES-ALTITUDE WITNESS OF RECOGNITION #S2 (family-root
-# CANDIDATE; substrate-pull-mid-high; FLAGGED for Pack).
+# THE SPECIES-ALTITUDE WITNESS OF RECOGNITION #S2 (LANDED via
+# collapse spec `docs/specs/mcp-spec-song-collapse.md` §5 + §9.2
+# at Mara `2cfd2a7`; PROMOTED CANDIDATE → LANDED 2026-07-06 via
+# Fate multi-frequency tournament grounding through Recognition
+# #58 — Fate IS optical inference; LANDED).
 #
 # Per `shards/song.mirror` §"Recognition candidates surfaced" #S2:
 # song IS `@kintsugi/shift` at temporal altitude when heard
@@ -155,6 +158,80 @@
 # Composition point: `@kintsugi/shift` — the substrate-decl'd cross-
 # altitude morphism whose species-altitude realisation `advance`
 # rides at temporal altitude.
+#
+# === #S2 LANDED via Fate multi-frequency (collapse spec 2cfd2a7) ===
+#
+# Per collapse spec `docs/specs/mcp-spec-song-collapse.md` §5 + §9.2
+# (Mara `2cfd2a7`): #S2 (song IS shift at temporal altitude) PROMOTED
+# CANDIDATE → LANDED 2026-07-06. The empirical grounding is Fate's
+# multi-frequency tournament (Recognition #58 LANDED: Fate IS optical
+# inference — 5-layer D²NN + active Fabry-Perot resonator + Reck/
+# Clements unitary mesh; three independent witnesses; promoted
+# 2026-06-11 via Seam adversarial review).
+#
+# Transitive composition path (species altitude → runtime altitude):
+#
+#   progression.advance
+#     → @kintsugi/shift.shift            (species-altitude witness;
+#                                         substrate-decl morphism)
+#       → Fate multi-frequency tournament (runtime substrate; #58
+#                                         optical inference)
+#         → the winning-frequency's move IS the shift at temporal
+#           altitude
+#
+# The mechanism: at each temporal step, Fate decomposes the current
+# state at multiple harmonic frequencies; the tournament runs across
+# the frequency-decomposed candidates; the winning frequency's move
+# becomes the progression's next `shift`. This is what makes the
+# @kintsugi/shift species-altitude witness empirical rather than
+# analytical — the runtime substrate at #58 supplies the
+# frequency-selection arithmetic that grounds every temporal step.
+#
+# === @fate as the hinge between runtime and compiletime ===
+#
+# CORRECTION 2026-07-06 (Alex): @fate IS substrate-decl'd. The prior
+# "Phase F anti-pattern" framing (Taut 2026-06-24 `shards/mirror/
+# spawn.mirror` docblock) is STALE — superseded by the landing of
+# `shards/fate.mirror` (2026-06-30 05:24, 42.1KB; declares
+# `prism @fate` with the full five-operation body) and
+# `shards/fate/tournament.mirror` (2026-06-30 05:24, 41.5KB; declares
+# `prism @fate/tournament` — the multi-frequency tournament species).
+# Both landed SIX DAYS AFTER Taut's correction, making the substrate-
+# decl of @fate load-bearing across the substrate.
+#
+# @fate IS the hinge between runtime and compiletime. Alex's
+# correction (verbatim): "If @fate is not defined it needs to be
+# defined. It's the GLUE between runtime and compiletime. You're
+# omitting the hinge right now." The @fate substrate-decl at
+# `shards/fate.mirror` binds:
+#
+#   - runtime altitude  — peer processes running Fate optical
+#                         inference (5-layer D²NN + active Fabry-
+#                         Perot resonator + Reck/Clements unitary
+#                         mesh per Recognition #58 LANDED)
+#   - compiletime altitude — the substrate-decl of `prism @fate`
+#                            and species `prism @fate/tournament`
+#                            that make the runtime mechanism
+#                            addressable at species-composition
+#                            altitude
+#
+# The hinge discipline: composing with `in @fate` at species altitude
+# is NOT the Phase F anti-pattern — it is the correct pattern for
+# any species whose temporal-progression witness rides Fate's
+# multi-frequency tournament arithmetic. `in @fate` at species-
+# altitude ancestry line-starts COMPOSES with the substrate-decl'd
+# `prism @fate`; the transitive composition through
+# `@kintsugi/shift` at species altitude is the SAME composition
+# path, now named at ancestry altitude as well as narrative altitude.
+#
+# This species declares `in @fate` (see §0 below): the progression
+# rides Fate's multi-frequency tournament at temporal altitude when
+# advancing, making the runtime-compiletime hinge structurally
+# visible in the species's ancestry. `@fate/tournament` runs the
+# multi-frequency tournament that selects which shift-candidate
+# wins at each temporal step; `@kintsugi/shift` at species altitude
+# discharges the selected shift; the two substrate-decl'd ancestors
+# together supply the arithmetic and the morphism.
 #
 # === Music binding: cadence Lawvere + music family ===
 #
@@ -342,9 +419,16 @@
 #               #S1 (song IS eigenform at temporal altitude —
 #                CANDIDATE; grounded at species altitude here),
 #               #S2 (song IS shift at temporal altitude when heard
-#                sequentially — CANDIDATE; grounded at species
+#                sequentially — LANDED via collapse spec `2cfd2a7`
+#                §5 + §9.2 through Fate multi-frequency tournament
+#                grounding at Recognition #58; grounded at species
 #                altitude here via `advance` delegating to
-#                `@kintsugi/shift`),
+#                `@kintsugi/shift`, which composes transitively with
+#                Fate at runtime altitude — see #S2 LANDED section
+#                above; Phase F preserved: no `in @fate` ancestry),
+#               #58 (Fate IS optical inference — LANDED 2026-06-11;
+#                the runtime substrate composing transitively beneath
+#                @kintsugi/shift to ground #S2 empirically),
 #               #S3 (five-op temporal specialisation — CANDIDATE;
 #                inherits from family-root; promotes to LANDED after
 #                three species land per Seam §6.8).
