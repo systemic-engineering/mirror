@@ -89,15 +89,46 @@ fn t04_progression_sub_predicates_preserved() {
 }
 
 #[test]
-fn t05_progression_no_in_fate_anti_pattern() {
+fn t05_progression_declares_in_fate_hinge_composition() {
     let content = read_progression_shard();
-    // Taut Phase F correction 2026-06-24: `in @fate` at substrate-decl
-    // altitude is anti-pattern; @fate is runtime substrate, not
-    // substrate-decl prism. This tick MUST NOT introduce that anti-pattern.
+    // **Alex correction 2026-07-06**: the Phase F correction Reed inherited
+    // from `shards/mirror/spawn.mirror`'s docblock (Taut 2026-06-24: "@fate
+    // is runtime substrate, not substrate-decl prism") is STALE. Substrate
+    // reality: `shards/fate.mirror` (42.1KB, LANDED 2026-06-30) declares
+    // `prism @fate`; `shards/fate/tournament.mirror` (41.5KB, LANDED
+    // 2026-06-30) declares `prism @fate/tournament`. Both landed SIX DAYS
+    // AFTER Taut's Phase F correction and SUPERSEDE it.
+    //
+    // @fate IS the hinge between compiletime (@song, @kintsugi/shift,
+    // @mirror/store — typed declarations) and runtime (peer processes,
+    // tournament, spawn output). `in @fate` at species altitude COMPOSES
+    // with that substrate-decl — that's the hinge binding, not an
+    // anti-pattern. Alex's exact words: *"If @fate is not defined it
+    // needs to be defined. It's the GLUE between runtime and compiletime.
+    // You're omitting the hinge right now."*
+    //
+    // Recorded in [[feedback-verify-substrate-freshness-of-flagged-
+    // corrections]]: docblock decays; substrate reality authoritative.
     let has_in_fate_ancestry = content.lines().any(|l| l.trim() == "in @fate");
     assert!(
-        !has_in_fate_ancestry,
-        "T5: shard MUST NOT declare `in @fate` at species altitude — Phase F anti-pattern per Taut 2026-06-24. `@fate` is runtime substrate. Cite in narrative only; compose transitively through @kintsugi/shift."
+        has_in_fate_ancestry,
+        "T5 (REVERSED per Alex correction 2026-07-06): shard MUST declare `in @fate` at species altitude — the hinge composition binding. @fate is substrate-decl'd at shards/fate.mirror (LANDED 2026-06-30) which SUPERSEDES Taut's stale Phase F correction (2026-06-24). Progression composes with @fate at temporal altitude by declaring `in @fate`; this IS the hinge between compiletime and runtime."
+    );
+}
+
+#[test]
+fn t05b_progression_cites_fate_substrate_decl_landing() {
+    let content = read_progression_shard();
+    // Explicit citation of the @fate substrate-decl landings that supersede
+    // Taut's Phase F correction. Either shard reference works.
+    let has_fate_shard_citation = content.contains("shards/fate.mirror")
+        || content.contains("shards/fate/tournament.mirror")
+        || content.contains("@fate/tournament")
+        || content.contains("fate.mirror")
+        || content.contains("prism @fate");
+    assert!(
+        has_fate_shard_citation,
+        "T5b (new per Alex correction 2026-07-06): shard MUST cite the @fate substrate-decl LANDING — either `shards/fate.mirror` (LANDED 2026-06-30, 42.1KB `prism @fate`), `shards/fate/tournament.mirror` (LANDED 2026-06-30, 41.5KB `prism @fate/tournament`), `@fate/tournament`, or `prism @fate`. Grounds `in @fate` composition (T5) in the actual substrate-decl'd ancestor, not just runtime narrative."
     );
 }
 
@@ -123,13 +154,12 @@ fn t06_progression_narrative_marks_s2_landed() {
 #[test]
 fn t07_progression_cites_fate_multi_frequency() {
     let content = read_progression_shard();
-    let has_fate = (content.contains("@fate")
-        || content.contains("Fate")
-        || content.contains("fate"))
-        && (content.contains("multi-frequency")
-            || content.contains("multi frequency")
-            || content.contains("tournament")
-            || content.contains("optical inference"));
+    let has_fate =
+        (content.contains("@fate") || content.contains("Fate") || content.contains("fate"))
+            && (content.contains("multi-frequency")
+                || content.contains("multi frequency")
+                || content.contains("tournament")
+                || content.contains("optical inference"));
     assert!(
         has_fate,
         "T7: shard narrative MUST cite Fate multi-frequency tournament (OR `tournament` OR `optical inference` composition). Per collapse spec §5: Fate's multi-frequency decomposition IS the mechanism grounding #S2 at temporal altitude — the winning-frequency move IS the shift."
@@ -152,8 +182,8 @@ fn t08_progression_cites_recognition_58() {
 #[test]
 fn t09_progression_cites_collapse_spec() {
     let content = read_progression_shard();
-    let has_collapse = content.contains("mcp-spec-song-collapse")
-        || content.contains("collapse spec");
+    let has_collapse =
+        content.contains("mcp-spec-song-collapse") || content.contains("collapse spec");
     assert!(
         has_collapse,
         "T9: shard MUST cite collapse spec `docs/specs/mcp-spec-song-collapse.md` — the canonical spec that promoted #S2 CANDIDATE → LANDED at Mara `2cfd2a7`. Links substrate-decl to promotion authority."
