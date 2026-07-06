@@ -256,6 +256,79 @@ in @uuid/spectral
 # — but does not answer *which OIDs are STRUCTURALLY NEAR this OID
 # in the spectral embedding*.
 #
+# === Reverse-closure at family-root: walk + impacted_by ===
+#
+# Forward closure alone is half the reachability algebra. `walk(root:
+# oid) -> splinter_graph` answers "what does this OID reach?" — the
+# forward transitive closure of children under a root. The reverse
+# question — "what reaches this OID?" — is equally load-bearing at
+# build-system altitude and has an equally-canonical prior-art shape:
+# Bazel's `bazel query 'rdeps(//..., //target:foo)'` — the reverse-
+# dependency query — is the industry-standard vocabulary. This shard
+# declares that surface at family-root as `impacted_by(oid: oid) ->
+# [oid]`, the reverse-closure complement of `walk`. Together the two
+# actions close the reachability algebra of the OID-graph at family-
+# root altitude; every downstream question (invalidation, provenance,
+# blast radius, dependency inversion) decomposes into one of the two.
+#
+# The pair also names the substrate's reverse-dependency query in
+# vocabulary older than Bazel: Karen Spärck Jones (1972, `A Statistical
+# Interpretation of Term Specificity and its Application in Retrieval`)
+# grounds reverse-lookup as the second half of any content-addressed
+# retrieval discipline — the forward index answers "what does this
+# document contain?"; the reverse (inverted) index answers "what
+# documents contain this term?". `impacted_by` IS the OID-graph
+# analog: given an OID, name the OIDs whose forward closure contains
+# it. Reverse-frequency + content-address + typed reverse-lookup is
+# the whole discipline; the substrate carries it end-to-end.
+#
+# === N-cascade composition — impacted_by is the invalidation key ===
+#
+# Per the N-cascade landed 2026-07-05 through 2026-07-06:
+#
+#   - N1 (`2857fb1`): `@epistemologic/property/verdict_is_content_addressed`
+#     — the predicate that memoization of verdicts is valid by
+#     construction. The property discharges once inputs are content-
+#     addressed and composition is purely-functional (both invariants
+#     of this shard, above).
+#   - N2 (`0a72c42`): `@mirror/store/action_cache` species — the
+#     concrete cache surface with `cache_read` / `cache_write` /
+#     `cache_exists` at the three-OID key (action-oid, input-oid,
+#     context-oid). This IS REAPI's `ActionCache` in the floor
+#     decomposition above.
+#   - N3 (`756f2f7`): the Rust wiring in `cmd_kintsugi_spec` at
+#     `bootstrap/src/lib.rs` — `cache_read` before cargo, `cache_write`
+#     after. Consumer chain at SEVEN per Seam audit `09b850c`.
+#   - **N4 (this shard's enrichment)**: `impacted_by(oid: oid) ->
+#     [oid]` at family-root — the REVERSE closure that makes the
+#     action_cache surgically invalidatable. On a git diff of any
+#     touched OID, `impacted_by` names the downstream OIDs whose
+#     cached action-verdicts at N2 `@mirror/store/action_cache` may
+#     need to be re-verdicted; only those entries invalidate, not the
+#     whole cache. Without `impacted_by`, invalidation degenerates to
+#     "flush everything on any diff" (the Nix ca-derivations pre-2020
+#     failure mode); with it, invalidation is surgical.
+#   - N5 (forward-promised): `@kintsugi/store/git` commit-as-fold —
+#     the composition that folds a batch of writes into a single
+#     content-addressed settlement.
+#
+# The composition N4 -> N2 is the substrate's operational witness
+# for candidate recognition `cross-species-discharge-is-first-class`
+# (needs 2 more witnesses per Seam registry): `impacted_by` at
+# @mirror/store family-root discharges the N2 action_cache species'
+# invalidation contract without either action naming the other in
+# body — the composition is first-class at the substrate-decl surface
+# where both agree on `oid`. `verdict_is_content_addressed` (N1)
+# grounds the composition semantically; N3 wires it operationally;
+# N4 makes the wiring surgical.
+#
+# Recognition #43 ([[architecture-mirror-as-content-addressed-build-system]];
+# mirror IS content-addressed build system) grounds the whole cascade:
+# `impacted_by` is the substrate's declared surface for the same
+# reverse-dependency query Bazel/Buck2/Nix/Shake all expose at their
+# respective build-system altitudes. The substrate already had the
+# word (Bazel `rdeps`); this tick names it in-substrate.
+#
 # === Projection API (oid <-> working-tree) ===
 #
 # Per collapse spec §11.3.5: the store is the truth; the disk is a
@@ -438,6 +511,22 @@ diff(a: oid, b: oid) -> imperfect { \ }
 # lockfile; walk IS the resolution.
 walk(root: oid) -> splinter_graph { \ }
 
+# impacted_by(oid) — the REVERSE closure complement of walk. Given
+# an oid, enumerate the OIDs whose forward `walk` closure contains
+# it — the substrate's declared reverse-dependency query surface
+# (Bazel `rdeps` analog at store altitude, Karen Spärck Jones 1972
+# inverted-index discipline at the OID-graph altitude). Returns a
+# flat `[oid]`; the caller composes further (e.g. against N2
+# `@mirror/store/action_cache` `cache_exists` for surgical
+# invalidation of cached verdicts whose input closure crossed the
+# argument oid). `walk` + `impacted_by` together close the OID-graph
+# reachability algebra at family-root: forward closure ("what does
+# this OID reach?") + reverse closure ("what reaches this OID?").
+# Realisation lives in fragmentation (per
+# [[architecture-fragmentation-is-the-rust-substrate]]); family-root
+# declares the contract, obligation body discharges at @io.
+impacted_by(oid: oid) -> [oid] { \ }
+
 # verify(oid, bytes) — re-hash the bytes; verdict on whether
 # the result equals the claimed oid. The substrate's integrity
 # check; the Merkle property per
@@ -477,4 +566,5 @@ out write
 out exists
 out diff
 out walk
+out impacted_by
 out verify
