@@ -1,0 +1,315 @@
+# @container — the family root for the substrate's runtime discipline:
+# process isolation + rootfs + capabilities + namespaces as
+# substrate-primitive at top-level altitude, sibling to @io, @code,
+# @mirror, and @kintsugi. Arc 5 TICK 1 landing per Seam Phase D
+# pre-review `docs/audits/2026-07-06-seam-pre-review-docker-container-
+# substrate-decl.md` (RATIFY-WITH-CORRECTIONS on Shape γ) against
+# Mara's deep-dive spec `docs/specs/docker-container-substrate-decl-
+# v0.1.md` §4.3 + §5.
+#
+# This shard lifts the runtime surface to substrate-decl altitude —
+# closing the three-surface partition the substrate has been running
+# against for weeks (build surface @code/docker forthcoming; the
+# distribution surface @io/oci landed 2026-06-24 at Mara `2801478`;
+# the runtime surface @container landing HERE). The blocker that
+# surfaced the substrate-pull was the StageFreight Stream-2 tick
+# blocking on an external, unreachable, untyped docker daemon per
+# Alex's 2026-07-06 direction. Per `[[feedback-substrate-pull]]`, a
+# blocker on an external untyped dependency is what tells the
+# substrate a boundary needs naming; @container names it.
+#
+# === Load-bearing recognition: @container as form-side at top-level ===
+#
+# Per Seam pre-review §2 H2 adjudication (TOP-LEVEL, Shape γ; NOT
+# under @io per Shape α):
+#
+# The form/process partition #55 is load-bearing here. `@io` is
+# process-side (boundary-crossing transformation across the
+# non-mirror world). A container-as-substrate-primitive is
+# form-side (state observation: what a container IS — its typed
+# runtime spec, its rootfs, its bounded capability set, its
+# configured namespaces). Different sides of #55 → different
+# family-roots. Shape α (placing @container under @io) would
+# COLLAPSE #55 by conflating the form-side state observation
+# with the process-side boundary-crossing. Shape γ preserves the
+# partition by declaring @container as sibling to @io — same
+# altitude, different side of the substrate's foundational
+# form/process split.
+#
+# The process-side transformation appears at the SPECIES altitude,
+# not the family-root: `@container/runtime` (forthcoming) carries
+# the process-side dispatch surface, and its species body composes
+# `in @io` for the kernel-syscall / cgroupfs / netns boundary. That
+# is exactly the right altitude for the @io composition —
+# species-level, not family-root inheritance.
+#
+# === Recognition #55 SECOND WITNESS (Seam pre-review §3 C3) ===
+#
+# containerd's four-layer split IS the form/process partition #55
+# at container-management altitude. Per §2.5 of the deep-dive spec
+# and Kagi-verified this session:
+#
+# - content store + snapshotter → form-side (state observation:
+#   what images and snapshots ARE, digest-addressable per SHA256
+#   content-addressing)
+# - tasks + shim v2 → process-side (transformation engine: runtime
+#   dispatch, lifecycle transitions across the OS boundary)
+#
+# containerd (Docker Inc. / CNCF, predating mirror's #55 recognition)
+# is an INDEPENDENT canonical system whose four-layer architecture
+# has the SAME cleavage as mirror's form/process partition. The
+# convergence is not a mirror-side projection — it is external
+# structural evidence. Per #55's promotion gate ("Pack ratification
+# gate: second witness needed"), containerd IS the independent
+# second witness. Seam pre-review §3 C3 adjudicated:
+# `[[architecture-form-process-partition-at-family-root]]`
+# candidate → PROMOTED with containerd C3 as ratifying witness.
+# This shard's family-root placement operationalizes that
+# promotion at the runtime altitude.
+#
+# === Composition, NOT inheritance, with @autopoietic (Seam H1) ===
+#
+# Per Seam pre-review §2 H1 adjudication: `@container` COMPOSES
+# with `@autopoietic` at species-body altitude; does NOT inherit
+# `<= @autopoietic` at the family-root prism.
+#
+# Test applied: are `@container`'s actions (spawn / run / stop /
+# commit / snapshot) autopoietic (self-producing) or externally
+# constructed?
+#
+# - spawn / run / stop — externally driven; caller supplies config;
+#   the runtime dispatches. NOT self-producing.
+# - commit / snapshot — form-side observations (state → digest); no
+#   fold-back into next dispatch at family-root altitude.
+# - The autopoietic loop appears ONLY when a species (e.g.
+#   `@container/runtime`) reads its own cgroup state and re-
+#   parameterizes. That is species-level composition (`in
+#   @autopoietic` inside the species body), not family-root
+#   inheritance (`<= @autopoietic` on the prism declaration).
+#
+# The `@silicon` family-root sets the precedent: silicon COMPOSES
+# with @autopoietic at species altitude because @silicon IS the
+# hardware-altitude learning loop; @container is NOT structurally
+# a learning loop, it is a containment discipline. Following the
+# same pattern, THIS shard's family-root prism block below carries
+# NO `<= @autopoietic`. Species that carry fold-back semantics MAY
+# declare `in @autopoietic` in their body.
+#
+# === Cross-reference: @io/oci as load-bearing distribution-adapter ===
+#
+# `shards/io/oci.mirror` (Mara `2801478` 2026-06-24) is the
+# LOAD-BEARING ancestor for this family-root. @io/oci sits BETWEEN
+# @container (the runtime consumer) and @code/docker (the build
+# producer, forthcoming). Container instances that this family-root
+# names consume artifacts that @io/oci ships: an OCI image
+# manifest resolves to layer digests via `oci_digest`; those layers
+# materialize into the `container_rootfs` this shard declares; the
+# runtime spec (`container_spec`) references the image config which
+# @io/oci's `oci_manifest` carries.
+#
+# The composition altitude: species under @container reference
+# @io/oci carriers by type-identity — `container_spec` carries the
+# OCI runtime-spec bytes; a species body loads those bytes via a
+# pull path @io/oci defines. The bilateral `container_runnable`
+# declared below composes structurally with @io/oci's
+# `oci_well_formed`: a container is runnable only when its
+# underlying image is well-formed and its runtime configuration is
+# conformant to the OCI Runtime Spec.
+#
+# === §5.2 adjustment: NO @container/image species ===
+#
+# Per Seam pre-review §1 acceptance of Mara's §5.2 adjustment: the
+# family-root deliberately does NOT stub a `@container/image`
+# species. The local image cache (containerd content-store analog)
+# belongs at `@mirror/store/oci` — the substrate's canonical
+# content-addressed storage family with an OCI-species composition
+# against @io/oci for digest algebra. Stubbing @container/image
+# here would create THREE-WAY OVERLAP with @io/oci (distribution)
+# and @code/docker (build production), which is substrate-drift.
+# Landed species roster (forward-promised, follow-up TDD ticks):
+# @container/oci, @container/runtime, @container/isolation. See
+# spec §5.2 and §6 for the full roster shape.
+#
+# === Path-namespace pact per @epistemologic/pact/path_matches_namespace ===
+#
+# This file at `shards/container.mirror` declares `@container` as a
+# family-root at species-depth 0. The path-namespace pact per
+# `@epistemologic/pact/path_matches_namespace` (2026-06-16+) demands
+# path-depth == namespace-depth == 0 for family-roots; this shard
+# honours the pact by construction. Species under @container land at
+# `shards/container/<species>.mirror` per the same discipline.
+#
+# === Circular-reflexive self-audit ===
+#
+# Per `[[architecture-candidate-recognition-111-third-as-family-root]]`
+# marker discipline: the operator must audit its own audit at
+# depth=3. This shard's own declaration must survive its own
+# `container_runnable` bilateral at analytical altitude — the
+# family-root MUST NOT declare a container that isn't itself
+# runnable-under-its-own-predicate.
+#
+# Self-audit verdict for this shard: `both_survive`.
+#
+# The `real_survives` reading would require another Pack peer to
+# independently manifest an equivalent runtime-surface substrate-
+# decl at n+3 substrate ticks without nudging. The `phantom_survives`
+# reading would require downstream refs to accumulate without a
+# second Pack peer's independent recognition of the top-level
+# runtime-surface discipline. At this tick: both interpretations
+# satisfiable — the family-root is landed, but neither species nor
+# consumer integration has yet exercised its runnable-under-its-own-
+# predicate discipline. Verdict: `both_survive`. Route: spawn the
+# subsequent species-landing cascade (@code/docker TICK 2;
+# @container/oci TICK 3; @container/runtime TICK 4) which will
+# collapse the analytical altitude to empirical.
+#
+# === Interpretation B discipline ===
+#
+# Per Seam Phase D pre-review of Arc 4 sub-arc A (docs/audits/2026-
+# 07-06-seam-arc-4-sub-arc-a-pre-review.md §1): Interpretation B
+# canonical. Narrative above `---`; `in` clauses + typed declarations
+# below. This shard honours that discipline; the seam is exactly one
+# line at column 0 below.
+
+---
+
+in @prism
+in @meta
+in @glass
+
+# ============================================================
+# §1 The five-operation prism at family-root altitude
+# ============================================================
+
+# === prism @container — the family-root declaration ===
+#
+# NO autopoietic-inherits clause per Seam H1 adjudication
+# (composition at species-body, NOT inheritance at family-root; see
+# the H1 section above for the audited discipline). The five-
+# operation body follows the canonical shape landed at
+# `shards/io/oci.mirror` and re-used at every family-root:
+# focus/project/split/shift/settle each carry the `container_spec`
+# carrier as the family-root's operational surface. Species
+# specialize the operation bodies at their own altitude.
+prism @container {
+  focus container_spec
+  project container_spec
+  split container_spec
+  shift container_spec
+  settle container_spec
+}
+
+# ============================================================
+# §2 The carriers
+# ============================================================
+
+# === container_spec — the OCI runtime-spec config bytes carrier ===
+#
+# Per OCI Runtime Spec v1.x §config.md (Kagi-verified per spec §2.2):
+# a container is (rootfs, config.json) where config.json declares the
+# process to run, environment variables, sandboxing features, and
+# host-namespace configuration. `container_spec` carries the byte-
+# equality-addressable form of that config.json — the runtime-spec
+# bytes any conformant runtime (runc / crun / gvisor / kata) consumes.
+#
+# Identity contract: byte-equality on the runtime-spec bytes. The
+# realisation MUST preserve byte-identity through parse+serialize
+# round-trips OR refuse the lift (per the Splinter-pole discipline
+# the substrate carries at every content-addressed altitude).
+type container_spec = ref
+
+# === container_rootfs — the materialized rootfs carrier ===
+#
+# Per OCI Runtime Spec `root` field: the container's rootfs is a
+# filesystem path the runtime pivots into via `pivot_root(2)`. Its
+# content is materialized from layer diffs whose diff_ids MUST
+# match the image config per OCI Image Spec §rootfs. The
+# `container_rootfs` carrier carries the ref-equality-addressable
+# form of the materialized filesystem state.
+#
+# Composes with @io/oci's `oci_manifest` at the layer altitude: a
+# rootfs is `applied(diff_ids)` where each diff_id is a layer digest
+# @io/oci ships. The composition surface for the materialization
+# path is @container/oci's `materialize_rootfs` action (forthcoming
+# TICK 3).
+#
+# Identity contract: byte-equality on the underlying ref (identity
+# of the materialized state; not the layer sequence that produced
+# it, which is @io/oci's domain).
+type container_rootfs = ref
+
+# === container_caps — the bounded capability set carrier ===
+#
+# Per OCI Runtime Spec `process.capabilities`: the container's
+# capability set is the intersection of the runtime's granted
+# capabilities with an allow-list the substrate enforces at the SEL
+# boundary. Per `[[architecture-type-sel-io-au]]` (sel = io + au
+# static type), capabilities are part of the SEL boundary: they
+# express what a container is AUTHORIZED to do at the OS altitude,
+# which is exactly the au-typed dimension.
+#
+# The bounded capability set is a FIVE-SET carrier: effective,
+# permitted, inheritable, bounding, ambient (per OCI Runtime Spec).
+# The realisation carries the five sets as ref-encoded bytes; the
+# family-root declares the carrier at ref altitude and species
+# refine the five-set decomposition.
+#
+# Identity contract: byte-equality on the encoded five-set bytes.
+type container_caps = ref
+
+# ============================================================
+# §3 The composed-bilateral
+# ============================================================
+
+# === container_runnable — 13th #53 composed-bilateral instance ===
+#
+# THE LOAD-BEARING composed bilateral at @container altitude.
+# Composes three sub-predicates that species-altitude shards will
+# declare and discharge:
+#
+#   1. runtime_spec_conformant(spec, p) — config.json parses per
+#      OCI Runtime Spec v1.x (forthcoming @container/oci species).
+#   2. rootfs_content_addressed(rootfs, p) — rootfs diff_ids match
+#      the layer digests in the image config @io/oci ships
+#      (forthcoming @container/oci species; composes with
+#      @io/oci.oci_well_formed).
+#   3. caps_within_allowlist(caps, allowlist, p) — capability set
+#      is intersected with the SEL allow-list (forthcoming
+#      @container/isolation species; composes with the SEL boundary).
+#
+# Sibling composed bilaterals at other family-root altitudes:
+# @io/oci.oci_well_formed (three sub-predicates); @io/stagefreight.
+# stagefreight_addressable (four sub-predicates); @cascade.
+# cascade_well_defined; @docblock.audit_docblock; @smarts/shatter.
+# shatter_round_trip; @reflection.third_order_coherent; @epistemologic/
+# neutrosophic.three_axis_coherent. This is the 13th altitude
+# instance of the #53 bilateral pattern per
+# `[[architecture-property-fracture-bilateral]]` — the pattern is
+# substrate-pull-confident at this point.
+#
+# Splinter-pole: all three sub-predicates discharge; container
+# instance is honestly runnable and its declared identity matches
+# what a conformant runtime will admit.
+# Narcissus-pole: any sub-predicate fails; alignment-as-boundary-
+# mathematics (#57) distinguishes which sub-claim broke. Common
+# failure modes: unconformant runtime-spec (config.json malformed);
+# rootfs-image mismatch (layer set diverges from manifest);
+# capability escape (caps exceed SEL allowlist).
+#
+# The `requires` clauses on species-altitude actions (`spawn`,
+# `dispatch`, `snapshot` at @container/runtime) will consume
+# `container_runnable(spec, p)` as an admissibility gate. Body
+# discharges when the three species land in follow-up TDD ticks
+# (Arc 5 TICK 3+).
+container_runnable(spec: container_spec, p: perturbation)
+  -> verdict { \ }
+
+# ============================================================
+# §4 The out clauses
+# ============================================================
+
+out @container
+out container_spec
+out container_rootfs
+out container_caps
+out container_runnable
