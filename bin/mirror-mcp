@@ -1,14 +1,41 @@
 #!/usr/bin/env bash
-# MCP server for Claude Code — thin wrapper around mirror binary
-# Reads JSON-RPC from stdin, dispatches through mirror commands.
-# When mirror supports `mirror <input> <mq>`, this becomes:
-#   exec ~/.local/bin/mirror /dev/stdin "@mcp.serve"
+# MCP server for Claude Code — thin wrapper around mirror binary.
+#
+# Reads JSON-RPC from stdin, dispatches through mirror commands. The
+# tool advertisements MIRROR the substrate cli-block at mirror.spec
+# (target binary { cli { ... } }); adding a new command here requires
+# a corresponding cli-block declaration in mirror.spec first (substrate
+# leads, wrapper follows).
+#
+# Substrate-honest flag names win at the schema surface. Where the
+# binary's current arg-parse lags (e.g. `--task` today, `--mission`
+# per substrate-decl), the wrapper translates: schema key = substrate
+# name, dispatched flag = current binary name. When the Rust arg-parse
+# rename ticks land, only the dispatch line changes; the MCP surface
+# stays stable.
+#
+# When mirror supports `mirror <input> <mq>` and grows `@mcp.serve`,
+# this file collapses to:
+#     exec ~/.local/bin/mirror /dev/stdin "@mcp.serve"
+# Until then, this bash wrapper is the bridge — task #386.
 set -euo pipefail
 
 MIRROR_HOME="${MIRROR_HOME:-/Users/alexwolf/dev/projects/mirror}"
 cd "$MIRROR_HOME"
 
 MIRROR="${MIRROR_BIN:-$HOME/.local/bin/mirror}"
+
+# Tools/list JSON. Six tools advertised — matches mirror.spec cli-block
+# at `1e45c50`: compile / kintsugi / shatter / craft / init / recall /
+# spawn. Kept as one line to satisfy the JSON-RPC single-line reply
+# discipline; readability suffers, but the substrate is legible in
+# mirror.spec and this file just mirrors it.
+read -r -d '' TOOLS_LIST <<'JSON' || true
+[{"name":"mirror_compile","description":"focus: tokenize one .mirror file through grammar lens. Returns SHA-256 hash on success.","inputSchema":{"type":"object","properties":{"file":{"type":"string","description":"Path to .mirror file"}},"required":["file"]}},{"name":"mirror_craft","description":"split: converge a target directory to lambda_0. --target-kind emits code (binary|rust|gleam). --reflect verifies properties without emission.","inputSchema":{"type":"object","properties":{"target":{"type":"string","description":"Build target directory (e.g. boot)"},"target_kind":{"type":"string","description":"Emit backend (substrate name --target-kind; binary today --target)","enum":["binary","rust","gleam"]},"reflect":{"type":"boolean","description":"If true, verify only (no emission)"}},"required":["target"]}},{"name":"mirror_kintsugi","description":"settle: kintsugi a .mirror file. --liquid writes inferred properties below ---. --shatter N seeds N cracks. `--ci` walks a corpus. Returns canonical source or typed verdict envelope.","inputSchema":{"type":"object","properties":{"file":{"type":"string","description":"Path to .mirror file or directory"},"liquid":{"type":"boolean","description":"Write inferred properties"},"shatter":{"type":"integer","description":"Seed N cracks"}},"required":["file"]}},{"name":"mirror_init","description":"init: mirror-native store bootstrap. Splinter + insert_persistent + set_ref(HEAD). Substrate: @mirror/init (docs/specs/mirror-init.md). Returns JSON envelope { spec_version, operation, repo, store, indexed, bytes_total, root_oid, hooks_installed, verdict }.","inputSchema":{"type":"object","properties":{"path":{"type":"string","description":"Repo path (~d) to initialize as mirror-native store"},"install_hooks":{"type":"boolean","description":"Install pre-commit / commit-msg hooks. Default: false."}},"required":["path"]}},{"name":"mirror_recall","description":"recall: inbound-trajectory dual of spawn. Observer returns to substrate in excited state asking for trajectory. Four payloads: cascade / pack_trail / pull_frontier / dogfood. Substrate: @mirror/recall (docs/specs/mirror-recall.md).","inputSchema":{"type":"object","properties":{"spec_dir":{"type":"string","description":"Spec directory to recall trajectory from"}},"required":["spec_dir"]}},{"name":"mirror_spawn","description":"spawn: the peer HAS a torus. @song/movement.enter at cli altitude — frame-entry action of a temporal-bounded epoch at runtime. Returns @song envelope with peer identity, content-addressed spec_oid, peer_recall (4 sheaf sections), composition_pieces (7 substrate anchors). --hello-world emits structured JSON; default emits text. --mission carries a peer-side task file. Substrate: @mirror/spawn (shards/mirror/spawn.mirror action-decl `spawn(...) -> @song`).","inputSchema":{"type":"object","properties":{"peer_home":{"type":"string","description":"Peer home directory (~d). Must contain mirror.spec."},"hello_world":{"type":"boolean","description":"Emit structured JSON envelope. Default false = text envelope."},"mission":{"type":"string","description":"Mission file path (~f). Substrate name --mission; binary today --task. Optional; substrate-absent when omitted."}},"required":["peer_home"]}}]
+JSON
+
+# Compact tools/list to single line for JSON-RPC.
+TOOLS_LIST_COMPACT=$(printf '%s' "$TOOLS_LIST" | tr -d '\n')
 
 while IFS= read -r line; do
   # Skip empty lines
@@ -25,20 +52,27 @@ while IFS= read -r line; do
       # no response needed
       ;;
     "tools/list")
-      # Only mirror_compile, mirror_craft, and mirror_kintsugi are advertised
-      # here — those are what the Rust bootstrap actually implements. mirror_run
-      # and mirror_fate will return once the bootstrap supports `run` and
-      # `fate` subcommands (see road-to-1.0.md, Cluster D).
-      echo '{"jsonrpc":"2.0","id":'"$id"',"result":{"tools":[{"name":"mirror_compile","description":"focus: tokenize one .mirror file through grammar lens. Returns SHA-256 hash on success.","inputSchema":{"type":"object","properties":{"file":{"type":"string","description":"Path to .mirror file"}},"required":["file"]}},{"name":"mirror_craft","description":"split: converge a target to lambda_0. --target emits code (binary|rust|gleam). --reflect verifies properties without emission.","inputSchema":{"type":"object","properties":{"target":{"type":"string","description":"Build target directory (e.g. boot)"},"emit_target":{"type":"string","description":"Optional --target value: binary, rust, or gleam","enum":["binary","rust","gleam"]},"reflect":{"type":"boolean","description":"If true, pass --reflect (verify only, no emission)"}},"required":["target"]}},{"name":"mirror_kintsugi","description":"refract: settle a .mirror file, write canonical. --liquid writes inferred properties below ---. --shatter N recursively settles N levels deep.","inputSchema":{"type":"object","properties":{"file":{"type":"string","description":"Path to .mirror file"},"liquid":{"type":"boolean","description":"If true, pass --liquid (project inferred properties below ---)"},"shatter":{"type":"integer","description":"If set, pass --shatter N (recursive settle N levels)"}},"required":["file"]}}]}}'
+      echo '{"jsonrpc":"2.0","id":'"$id"',"result":{"tools":'"$TOOLS_LIST_COMPACT"'}}'
       ;;
     "tools/call")
       tool=$(echo "$line" | grep -o '"name":"[^"]*"' | head -1 | cut -d'"' -f4 || true)
+
+      # Argument extraction — one grep per known arg name. Substrate
+      # names (peer_home, target_kind, install_hooks, spec_dir, mission,
+      # hello_world) are the schema-surface keys; some dispatch to
+      # different binary flag names until Rust arg-parse ticks land.
       file=$(echo "$line" | grep -o '"file":"[^"]*"' | cut -d'"' -f4 || true)
       target=$(echo "$line" | grep -o '"target":"[^"]*"' | cut -d'"' -f4 || true)
-      emit_target=$(echo "$line" | grep -o '"emit_target":"[^"]*"' | cut -d'"' -f4 || true)
+      target_kind=$(echo "$line" | grep -o '"target_kind":"[^"]*"' | cut -d'"' -f4 || true)
       reflect=$(echo "$line" | grep -o '"reflect":[a-z]*' | cut -d: -f2 || true)
       liquid=$(echo "$line" | grep -o '"liquid":[a-z]*' | cut -d: -f2 || true)
       shatter=$(echo "$line" | grep -o '"shatter":[0-9]*' | cut -d: -f2 || true)
+      path=$(echo "$line" | grep -o '"path":"[^"]*"' | cut -d'"' -f4 || true)
+      install_hooks=$(echo "$line" | grep -o '"install_hooks":[a-z]*' | cut -d: -f2 || true)
+      spec_dir=$(echo "$line" | grep -o '"spec_dir":"[^"]*"' | cut -d'"' -f4 || true)
+      peer_home=$(echo "$line" | grep -o '"peer_home":"[^"]*"' | cut -d'"' -f4 || true)
+      hello_world=$(echo "$line" | grep -o '"hello_world":[a-z]*' | cut -d: -f2 || true)
+      mission=$(echo "$line" | grep -o '"mission":"[^"]*"' | cut -d'"' -f4 || true)
 
       case "$tool" in
         "mirror_compile")
@@ -46,7 +80,8 @@ while IFS= read -r line; do
           ;;
         "mirror_craft")
           craft_args=("craft" "$target")
-          [ -n "$emit_target" ] && craft_args+=("--target" "$emit_target")
+          # Substrate --target-kind → binary --target (rename tick pending).
+          [ -n "$target_kind" ] && craft_args+=("--target" "$target_kind")
           [ "$reflect" = "true" ] && craft_args+=("--reflect")
           result=$("$MIRROR" "${craft_args[@]}" 2>&1) || true
           ;;
@@ -56,13 +91,31 @@ while IFS= read -r line; do
           [ -n "$shatter" ] && kintsugi_args+=("--shatter" "$shatter")
           result=$("$MIRROR" "${kintsugi_args[@]}" 2>&1) || true
           ;;
+        "mirror_init")
+          init_args=("init" "$path")
+          [ "$install_hooks" = "true" ] && init_args+=("--install-hooks")
+          result=$("$MIRROR" "${init_args[@]}" 2>&1) || true
+          ;;
+        "mirror_recall")
+          result=$("$MIRROR" recall "$spec_dir" 2>&1) || true
+          ;;
+        "mirror_spawn")
+          spawn_args=("spawn" "$peer_home")
+          [ "$hello_world" = "true" ] && spawn_args+=("--hello-world")
+          # Substrate --mission → binary --task (rename tick pending).
+          [ -n "$mission" ] && spawn_args+=("--task" "$mission")
+          result=$("$MIRROR" "${spawn_args[@]}" 2>&1) || true
+          ;;
         *)
           result="unknown tool: $tool"
           ;;
       esac
 
-      # Escape for JSON
-      result_escaped=$(printf '%s' "$result" | sed 's/\\/\\\\/g; s/"/\\"/g; s/	/\\t/g' | tr '\n' '\r' | sed 's/\r/\\n/g')
+      # Escape for JSON. Preserves envelope byte-for-byte inside the
+      # text content — the observer parses the inner JSON as needed.
+      # (Mathematical fidelity: peer's @song envelope survives the
+      # transport intact.)
+      result_escaped=$(printf '%s' "$result" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\t/\\t/g' | tr '\n' '\r' | sed 's/\r/\\n/g')
       echo '{"jsonrpc":"2.0","id":'"$id"',"result":{"content":[{"type":"text","text":"'"$result_escaped"'"}]}}'
       ;;
   esac
