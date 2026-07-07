@@ -3034,15 +3034,20 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
         "spawn" => match positional {
             Some(p) => {
                 let hello_world = args.iter().any(|a| a == "--hello-world");
-                let task = args
+                // Substrate-honest name (mirror.spec 1e45c50 cli-block declares
+                // `flag mission: ~f`) is --mission. --task remains as backward-
+                // compat alias per two-tick discipline. First-match wins if
+                // both are given; the internal name is `mission` regardless of
+                // which flag the operator typed.
+                let mission = args
                     .iter()
-                    .position(|a| a == "--task")
+                    .position(|a| a == "--mission" || a == "--task")
                     .and_then(|i| args.get(i + 1))
                     .map(|s| s.as_str());
-                cmd_spawn(p, hello_world, task, ctx)
+                cmd_spawn(p, hello_world, mission, ctx)
             }
             None => {
-                merr!("usage: mirror spawn <peer-home> [--hello-world] [--task <mission-file>]");
+                merr!("usage: mirror spawn <peer-home> [--hello-world] [--mission <mission-file> | --task <mission-file>]");
                 1
             }
         },
