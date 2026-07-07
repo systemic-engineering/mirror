@@ -97,6 +97,74 @@ project mirror.spec {
         arg oid: content_address
         arg out: ~f
       }
+
+      # === craft — grammar-directory settlement to lambda_0 ===
+      #
+      # Closes cli-block drift for the running binary's `craft` verb
+      # (bootstrap/src/lib.rs cmd_craft). `target` positional is the
+      # source directory; `target_kind` is the emit backend selector.
+      # The name disambiguates today's binary collision (`--target` at
+      # positional AND flag positions); the binary's arg-parse
+      # collapse-to-`target_kind` is a follow-up TDD tick.
+      command craft {
+        arg target: ~d
+        flag target_kind: str = "binary"
+        flag reflect: bool = false
+      }
+
+      # === init — mirror-native store bootstrap ===
+      #
+      # Wires @mirror/init (docs/specs/mirror-init.md, spec `fe215bd` →
+      # `14dd043`; P4 GREEN `6b36808`) into the cli-block. The bridge
+      # command that makes declared substrate operational at the storage
+      # altitude: NamespacedGitStore::open + project::project + per-file
+      # Splinter + store.insert_persistent + root_oid via set_ref.
+      command init {
+        arg path: ~d
+        flag install_hooks: bool = false
+      }
+
+      # === recall — inbound-trajectory dual of spawn ===
+      #
+      # Wires @mirror/recall (docs/specs/mirror-recall.md `b034a60`,
+      # Seam P2 review `88f8428`) into the cli-block. Recall IS the
+      # dual of spawn at substrate altitude: spawn = substrate leaving
+      # lambda_0; recall = observer returning to substrate in excited
+      # state, asking for trajectory. Four payloads compose:
+      # cascade / pack_trail / pull_frontier / dogfood.
+      command recall {
+        arg spec_dir: ~d
+      }
+
+      # === spawn — @song/movement.enter at cli altitude ===
+      #
+      # Wires @mirror/spawn (shards/mirror/spawn.mirror) into the
+      # cli-block. `mirror spawn ~peer'<home>'` IS @song/movement.enter
+      # at cli altitude — the frame-entry action of a temporal-bounded
+      # epoch at runtime. The peer's runtime trajectory IS a
+      # song_voice — time-indexed unfolding through the spec.
+      #
+      # Return type is @song per shards/mirror/spawn.mirror line 264:
+      # `spawn(...) -> @song`. Carried in the action-decl, NOT the
+      # cli-block — @mirror/lens/cli's `command(name) -> prism` grammar
+      # has no return-type slot today (adding one is a lens-grammar
+      # extension, deferred).
+      #
+      # `mission` is the substrate-honest flag name (matches
+      # @song/movement's frame-entry semantics); the binary's current
+      # `--task` is a follow-up Rust arg-parse rename (RED-first).
+      # No default = substrate-absent when omitted; grammar composition
+      # of flag(name, t) + optional default(name, t, value) makes any
+      # flag without an accompanying default optional-absent.
+      #
+      # `arg peer_home: ~d` — the semantic type is `peer`, but `peer`
+      # is not in @mirror/lens/cli's type vocabulary today. Two-tick
+      # forward-promise: lens vocabulary extension lifts `~d` to `peer`.
+      command spawn {
+        arg peer_home: ~d
+        flag hello_world: bool = false
+        flag mission: ~f
+      }
     }
   }
 
