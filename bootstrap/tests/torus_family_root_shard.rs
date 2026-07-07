@@ -166,7 +166,8 @@ fn t06_declares_winding_type_as_integer_pair() {
 fn t07_declares_spawn_or_torus_action_producing_torus() {
     let content = read_torus_shard();
     // Every peer gets a torus at spawn; the action produces the carrier.
-    let has_action = content.contains("spawn") || content.contains("torus(") || content.contains("traverse");
+    let has_action =
+        content.contains("spawn") || content.contains("torus(") || content.contains("traverse");
     let has_obligation = content.contains("{ \\ }");
     assert!(
         has_action && has_obligation,
@@ -200,7 +201,9 @@ fn t09_cites_recognition_42_bateson_ancestor() {
 #[test]
 fn t10_cites_recognition_58_fate_optical() {
     let content = read_torus_shard();
-    let has_58 = content.contains("#58") || content.contains("Fate IS optical inference") || content.contains("optical inference");
+    let has_58 = content.contains("#58")
+        || content.contains("Fate IS optical inference")
+        || content.contains("optical inference");
     assert!(
         has_58,
         "T10: MUST cite Recognition #58 (Fate IS optical inference) — Fate settles the toroidal flow toward critical points."
@@ -211,7 +214,10 @@ fn t10_cites_recognition_58_fate_optical() {
 fn t11_cites_recognition_99_with_altitude_discipline() {
     let content = read_torus_shard();
     // #99 mirror.spec IS λ₀ with altitude-discipline correction per Mara jspace §4
-    let has_99 = content.contains("#99") || content.contains("λ₀") || content.contains("lambda_0") || content.contains("mirror.spec IS");
+    let has_99 = content.contains("#99")
+        || content.contains("λ₀")
+        || content.contains("lambda_0")
+        || content.contains("mirror.spec IS");
     let has_altitude_discipline = content.contains("altitude") || content.contains("discipline");
     assert!(
         has_99 && has_altitude_discipline,
@@ -225,8 +231,12 @@ fn t11_cites_recognition_99_with_altitude_discipline() {
 fn t12_cites_foerster_understanding_understanding_verbatim() {
     let content = read_torus_shard();
     // Four verbatim citation pages: 238, 244, 256, 282
-    let has_foerster = content.contains("Foerster") || content.contains("Understanding Understanding");
-    let has_page_cites = content.contains("238") || content.contains("244") || content.contains("256") || content.contains("282");
+    let has_foerster =
+        content.contains("Foerster") || content.contains("Understanding Understanding");
+    let has_page_cites = content.contains("238")
+        || content.contains("244")
+        || content.contains("256")
+        || content.contains("282");
     assert!(
         has_foerster && has_page_cites,
         "T12: MUST cite von Foerster *Understanding Understanding* (2003) with specific page(s) from {{238, 244, 256, 282}}. Foerster wrote the torus verbatim; not summarize the summary."
@@ -248,7 +258,10 @@ fn t13_cites_kauffman_eigenform_bridge() {
 fn t14_cites_cubical_hott_native_carrier() {
     let content = read_torus_shard();
     // Cubical HoTT (Coquand 2018) has T² as native HIT; substrate-pull requirement
-    let has_hott = content.contains("HoTT") || content.contains("cubical") || content.contains("Coquand") || content.contains("HIT");
+    let has_hott = content.contains("HoTT")
+        || content.contains("cubical")
+        || content.contains("Coquand")
+        || content.contains("HIT");
     assert!(
         has_hott,
         "T14: MUST cite Cubical HoTT (Coquand 2018) or T² HIT as native carrier for the toroidal type. Substrate-pull requirement per Taut O2 §4-B + Mara reframe signal 5."
@@ -261,7 +274,10 @@ fn t14_cites_cubical_hott_native_carrier() {
 fn t15_forward_promises_reflection_deprecation_at_o5() {
     let content = read_torus_shard();
     // Two-tick discipline: O3-O4 lands this positive move; O5 collapses @reflection
-    let has_deprecation = content.contains("@reflection") || content.contains("reflection") || content.contains("naming artifact") || content.contains("O5");
+    let has_deprecation = content.contains("@reflection")
+        || content.contains("reflection")
+        || content.contains("naming artifact")
+        || content.contains("O5");
     assert!(
         has_deprecation,
         "T15: narrative MUST forward-promise @reflection deprecation at O5 (two-tick discipline per feedback-legibility-over-foundation-when-collapsing). The torus doesn't erase @reflection at this tick; it names the naming artifact for the follow-up collapse."

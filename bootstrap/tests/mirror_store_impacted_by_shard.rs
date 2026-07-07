@@ -92,7 +92,9 @@ fn t04_impacted_by_body_is_obligation_block() {
     let has_body = content
         .lines()
         .filter(|l| l.contains("impacted_by("))
-        .any(|l| l.contains("{ \\ }") || l.trim_end().ends_with("{ \\") || l.trim_end().ends_with("\\ }"));
+        .any(|l| {
+            l.contains("{ \\ }") || l.trim_end().ends_with("{ \\") || l.trim_end().ends_with("\\ }")
+        });
     let has_body_multiline = content.contains("impacted_by(") && content.contains("{ \\ }");
     assert!(
         has_body || has_body_multiline,
