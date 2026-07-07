@@ -7,12 +7,13 @@
 # a corresponding cli-block declaration in mirror.spec first (substrate
 # leads, wrapper follows).
 #
-# Substrate-honest flag names win at the schema surface. Where the
-# binary's current arg-parse lags (e.g. `--task` today, `--mission`
-# per substrate-decl), the wrapper translates: schema key = substrate
-# name, dispatched flag = current binary name. When the Rust arg-parse
-# rename ticks land, only the dispatch line changes; the MCP surface
-# stays stable.
+# Substrate-honest flag names win at the schema surface AND the
+# dispatch surface. As of 2026-07-08 (commits 8d6e9af + 59c7fd0),
+# the binary accepts substrate names (--mission, --target-kind)
+# directly; legacy flags (--task, --target) remain as backward-compat
+# aliases per two-tick discipline. The wrapper now uses substrate
+# names in both schema and dispatch — the substrate/impl drift is
+# closed.
 #
 # When mirror supports `mirror <input> <mq>` and grows `@mcp.serve`,
 # this file collapses to:
@@ -31,7 +32,7 @@ MIRROR="${MIRROR_BIN:-$HOME/.local/bin/mirror}"
 # discipline; readability suffers, but the substrate is legible in
 # mirror.spec and this file just mirrors it.
 read -r -d '' TOOLS_LIST <<'JSON' || true
-[{"name":"mirror_compile","description":"focus: tokenize one .mirror file through grammar lens. Returns SHA-256 hash on success.","inputSchema":{"type":"object","properties":{"file":{"type":"string","description":"Path to .mirror file"}},"required":["file"]}},{"name":"mirror_craft","description":"split: converge a target directory to lambda_0. --target-kind emits code (binary|rust|gleam). --reflect verifies properties without emission.","inputSchema":{"type":"object","properties":{"target":{"type":"string","description":"Build target directory (e.g. boot)"},"target_kind":{"type":"string","description":"Emit backend (substrate name --target-kind; binary today --target)","enum":["binary","rust","gleam"]},"reflect":{"type":"boolean","description":"If true, verify only (no emission)"}},"required":["target"]}},{"name":"mirror_kintsugi","description":"settle: kintsugi a .mirror file. --liquid writes inferred properties below ---. --shatter N seeds N cracks. `--ci` walks a corpus. Returns canonical source or typed verdict envelope.","inputSchema":{"type":"object","properties":{"file":{"type":"string","description":"Path to .mirror file or directory"},"liquid":{"type":"boolean","description":"Write inferred properties"},"shatter":{"type":"integer","description":"Seed N cracks"}},"required":["file"]}},{"name":"mirror_init","description":"init: mirror-native store bootstrap. Splinter + insert_persistent + set_ref(HEAD). Substrate: @mirror/init (docs/specs/mirror-init.md). Returns JSON envelope { spec_version, operation, repo, store, indexed, bytes_total, root_oid, hooks_installed, verdict }.","inputSchema":{"type":"object","properties":{"path":{"type":"string","description":"Repo path (~d) to initialize as mirror-native store"},"install_hooks":{"type":"boolean","description":"Install pre-commit / commit-msg hooks. Default: false."}},"required":["path"]}},{"name":"mirror_recall","description":"recall: inbound-trajectory dual of spawn. Observer returns to substrate in excited state asking for trajectory. Four payloads: cascade / pack_trail / pull_frontier / dogfood. Substrate: @mirror/recall (docs/specs/mirror-recall.md).","inputSchema":{"type":"object","properties":{"spec_dir":{"type":"string","description":"Spec directory to recall trajectory from"}},"required":["spec_dir"]}},{"name":"mirror_spawn","description":"spawn: the peer HAS a torus. @song/movement.enter at cli altitude — frame-entry action of a temporal-bounded epoch at runtime. Returns @song envelope with peer identity, content-addressed spec_oid, peer_recall (4 sheaf sections), composition_pieces (7 substrate anchors). --hello-world emits structured JSON; default emits text. --mission carries a peer-side task file. Substrate: @mirror/spawn (shards/mirror/spawn.mirror action-decl `spawn(...) -> @song`).","inputSchema":{"type":"object","properties":{"peer_home":{"type":"string","description":"Peer home directory (~d). Must contain mirror.spec."},"hello_world":{"type":"boolean","description":"Emit structured JSON envelope. Default false = text envelope."},"mission":{"type":"string","description":"Mission file path (~f). Substrate name --mission; binary today --task. Optional; substrate-absent when omitted."}},"required":["peer_home"]}}]
+[{"name":"mirror_compile","description":"focus: tokenize one .mirror file through grammar lens. Returns SHA-256 hash on success.","inputSchema":{"type":"object","properties":{"file":{"type":"string","description":"Path to .mirror file"}},"required":["file"]}},{"name":"mirror_craft","description":"split: converge a target directory to lambda_0. --target-kind emits code (binary|rust|gleam). --reflect verifies properties without emission.","inputSchema":{"type":"object","properties":{"target":{"type":"string","description":"Build target directory (e.g. boot)"},"target_kind":{"type":"string","description":"Emit backend (substrate-honest name; binary accepts both --target-kind and --target)","enum":["crystal","binary","rust","gleam"]},"reflect":{"type":"boolean","description":"If true, verify only (no emission)"}},"required":["target"]}},{"name":"mirror_kintsugi","description":"settle: kintsugi a .mirror file. --liquid writes inferred properties below ---. --shatter N seeds N cracks. `--ci` walks a corpus. Returns canonical source or typed verdict envelope.","inputSchema":{"type":"object","properties":{"file":{"type":"string","description":"Path to .mirror file or directory"},"liquid":{"type":"boolean","description":"Write inferred properties"},"shatter":{"type":"integer","description":"Seed N cracks"}},"required":["file"]}},{"name":"mirror_init","description":"init: mirror-native store bootstrap. Splinter + insert_persistent + set_ref(HEAD). Substrate: @mirror/init (docs/specs/mirror-init.md). Returns JSON envelope { spec_version, operation, repo, store, indexed, bytes_total, root_oid, hooks_installed, verdict }.","inputSchema":{"type":"object","properties":{"path":{"type":"string","description":"Repo path (~d) to initialize as mirror-native store"},"install_hooks":{"type":"boolean","description":"Install pre-commit / commit-msg hooks. Default: false."}},"required":["path"]}},{"name":"mirror_recall","description":"recall: inbound-trajectory dual of spawn. Observer returns to substrate in excited state asking for trajectory. Four payloads: cascade / pack_trail / pull_frontier / dogfood. Substrate: @mirror/recall (docs/specs/mirror-recall.md).","inputSchema":{"type":"object","properties":{"spec_dir":{"type":"string","description":"Spec directory to recall trajectory from"}},"required":["spec_dir"]}},{"name":"mirror_spawn","description":"spawn: the peer HAS a torus. @song/movement.enter at cli altitude — frame-entry action of a temporal-bounded epoch at runtime. Returns @song envelope with peer identity, content-addressed spec_oid, peer_recall (4 sheaf sections), composition_pieces (7 substrate anchors). --hello-world emits structured JSON; default emits text. --mission carries a peer-side task file. Substrate: @mirror/spawn (shards/mirror/spawn.mirror action-decl `spawn(...) -> @song`).","inputSchema":{"type":"object","properties":{"peer_home":{"type":"string","description":"Peer home directory (~d). Must contain mirror.spec."},"hello_world":{"type":"boolean","description":"Emit structured JSON envelope. Default false = text envelope."},"mission":{"type":"string","description":"Mission file path (~f). Substrate-honest name; binary accepts both --mission and --task. Optional; substrate-absent when omitted."}},"required":["peer_home"]}}]
 JSON
 
 # Compact tools/list to single line for JSON-RPC.
@@ -80,8 +81,9 @@ while IFS= read -r line; do
           ;;
         "mirror_craft")
           craft_args=("craft" "$target")
-          # Substrate --target-kind → binary --target (rename tick pending).
-          [ -n "$target_kind" ] && craft_args+=("--target" "$target_kind")
+          # Substrate name --target-kind is now the binary flag too;
+          # binary accepts --target as backward-compat alias.
+          [ -n "$target_kind" ] && craft_args+=("--target-kind" "$target_kind")
           [ "$reflect" = "true" ] && craft_args+=("--reflect")
           result=$("$MIRROR" "${craft_args[@]}" 2>&1) || true
           ;;
@@ -102,8 +104,9 @@ while IFS= read -r line; do
         "mirror_spawn")
           spawn_args=("spawn" "$peer_home")
           [ "$hello_world" = "true" ] && spawn_args+=("--hello-world")
-          # Substrate --mission → binary --task (rename tick pending).
-          [ -n "$mission" ] && spawn_args+=("--task" "$mission")
+          # Substrate name --mission is now the binary flag too;
+          # binary accepts --task as backward-compat alias.
+          [ -n "$mission" ] && spawn_args+=("--mission" "$mission")
           result=$("$MIRROR" "${spawn_args[@]}" 2>&1) || true
           ;;
         *)
