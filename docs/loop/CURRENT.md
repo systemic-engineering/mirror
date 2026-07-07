@@ -10,11 +10,33 @@ see the mirror MCP tools)
 
 ## Where the arc left off
 
-Bare-agent T5 spawn returned a diff proposal (UNAPPLIED, in the JSONL
-transcript at `~/.claude/projects/-Users-alexwolf-dev-projects-mirror/
-e9b6749c-*.jsonl`, hardlinked from the spectral-scoped session dir).
-**T6 = Alex inspects the diff, adjudicates 3 open questions, applies or
-refuses.**
+**T6 LANDED at `1e45c50`** (2026-07-07 Reed, direct session in mirror
+repo). mirror.spec cli-block additions `command craft { ... }`,
+`command init { ... }`, `command recall { ... }`, `command spawn { ... }`
+empirical: `mirror compile mirror.spec` returns OID
+`f48d7fc55b094d5a0abf5604fb559c9dda36d78582adbba5c06ee8ce89cee61e`.
+Adjudication of the three T5 questions written into the commit body:
+Q1 nullary sentinel REFUSED (grammar-composition-honest form `flag
+mission: ~f` without default = optional-absent); Q2 `target_kind`
+ACCEPTED (substrate leads binary arg-parse rename); Q3 @song return-type
+in cli-block REFUSED (no return-type slot in @mirror/lens/cli;
+action-decl at `shards/mirror/spawn.mirror:264` already carries it).
+Bonus: `arg peer_home: ~d` (peer not in cli vocabulary yet).
+
+**Next tick queue** (in order):
+
+1. Wire mirror MCP: extend `bin/mirror-mcp` bash wrapper to advertise
+   `mirror_spawn` + `mirror_init` + `mirror_recall` in `tools/list`
+   AND route in `tools/call`. Substrate-honest bridge; task #386's
+   `@mcp.serve` lift is the two-tick target that reads the cli-block
+   to synthesize the tools list.
+2. RED test for `cmd_spawn --mission` (rename from `--task`) at
+   `bootstrap/tests/spawn_mission_shard.rs`; then GREEN wiring.
+3. RED test for `cmd_craft --target-kind` (rename from `--target`);
+   then GREEN wiring.
+4. Adjudicate 5 composition tensions in task #557 (unchanged).
+5. Land @duality family-root (W3' from Mara `7978f84`).
+6. Optional: O5 @reflection collapse per two-tick discipline (task #560).
 
 ---
 
@@ -31,6 +53,8 @@ refuses.**
 | `700e156` | Mara | `docs/math/2026-07-07-glue-cyberpunk-fate-composition.md` (1144 lines, ~51KB; `the-restriction-map-IS-the-geometric-constraint` recognition candidate) |
 | `242aac0` | Taut | `docs/scouts/2026-07-07-taut-glue-cyberpunk-fate-drift.md` (verdict: composition LANDABLE AS-DECLARED; zero signature adjustments) |
 | `6396306` | Seam | `docs/audits/2026-07-07-seam-phase-d-glue-cyberpunk-fate-composition-ratify.md` (RATIFY; recognition promoted to LANDED with double-witness) |
+| `2c268c3` | Reed | `CLAUDE.md` + `docs/loop/README.md` + `docs/loop/CURRENT.md` (session handoff scaffolding for fresh-session pickup) |
+| `1e45c50` | Reed | ♻️ `mirror.spec` cli-block additions — command blocks for `craft` / `init` / `recall` / `spawn`. T6 closure. `mirror compile` GREEN at OID `f48d7fc5`. |
 
 Also landed but earlier this session: `@onto-cascade` closure at `061a8ea`
 (Seam Phase D audit for `@peer-has-a-torus` O3-O4 close), Mara research
@@ -105,7 +129,7 @@ from own venues.
 
 ---
 
-## Bare-agent T5 diff (UNAPPLIED, awaiting T6)
+## Bare-agent T5 diff (LANDED at `1e45c50`, T6 CLOSED)
 
 **Drift closed**: `mirror.spec` cli-block declares 3 commands (`compile`,
 `kintsugi`, `shatter`); binary implements 6 (`+ craft`, `+ init`,
@@ -151,15 +175,19 @@ move is above; per-line detail is in the transcript.
 
 ## Immediate next actions (in order)
 
-1. **T6**: inspect the bare-agent diff above. Adjudicate 3 questions.
-   Apply the mirror.spec cli-block additions or refuse with reason.
+1. ~~**T6**: inspect the bare-agent diff above. Adjudicate 3 questions.
+   Apply the mirror.spec cli-block additions or refuse with reason.~~
+   ✅ LANDED at `1e45c50`. Adjudication in commit body.
 2. **Wire mirror MCP**: extend `bin/mirror-mcp` to advertise + dispatch
-   `mirror_spawn`. Add mirror to Claude Code's MCP config (either
-   project-scoped in the working dir, or global settings). Currently
-   `/mcp` shows no mirror.
-3. **cmd_spawn Rust evolution**: `--task <path>` → `--mission ~predicate'
-   <@cyberpunk_property>'`. RED first (`bootstrap/tests/spawn_mission_shard.rs`).
-   Substrate-honest form the bare-agent's diff already declares.
+   `mirror_spawn` (also `mirror_init`, `mirror_recall` now that
+   substrate declares them). Task #386's `@mcp.serve` lift reads the
+   cli-block to synthesize this — two-tick target. Also open Claude Code
+   from `/Users/alexwolf/dev/projects/mirror` so `.mcp.json` registers.
+3. **cmd_spawn Rust evolution**: `--task <path>` → `--mission <path>`.
+   Substrate leads (cli-block declares `mission`); RED first
+   (`bootstrap/tests/spawn_mission_shard.rs`).
+4. **cmd_craft Rust evolution**: `--target <kind>` → `--target-kind <kind>`.
+   Substrate leads; RED first.
 4. **Adjudicate 5 composition tensions** in task #557:
    - LENS/ENGINE cover-map vs sibling; @cover family-root as its own or
      @glue-at-altitude?
