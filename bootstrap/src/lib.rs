@@ -621,7 +621,7 @@ fn usage() {
     merr!("  mirror <command> [args...]            (legacy subcommand surface)");
     merr!("  mirror '<mq-query>' < input           (mq pipeline over stdin)");
     merr!("  mirror <input> '<mq-query>'           (mq pipeline over input file)");
-    merr!("commands: compile [--strict] <file>, craft [--strict] [--target <crystal|binary>] <target>, kintsugi [--ci [--out @data/json|@data/mirror|@io/dir('path')]] [--shatter N] <file|dir>, init [--install-hooks] <repo-path>, recall <spec-dir>, spawn [--hello-world] <peer-home>");
+    merr!("commands: compile [--strict] <file>, craft [--strict] [--target-kind <crystal|binary>] <target>, kintsugi [--ci [--out @data/json|@data/mirror|@io/dir('path')]] [--shatter N] <file|dir>, init [--install-hooks] <repo-path>, recall <spec-dir>, spawn [--hello-world] [--mission <mission-file>] <peer-home>");
     merr!("examples:");
     merr!("  cat mirror.ll | mirror '@code/llvm/ir |> @mirror/kintsugi |> @mirror/butterfly'");
 }
@@ -2871,24 +2871,33 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
             no_cache = true;
         } else if a == "--strict" {
             strict = true;
-        } else if a == "--target" {
+        } else if a == "--target" || a == "--target-kind" {
+            // Substrate-honest name (mirror.spec 1e45c50 cli-block declares
+            // `flag target_kind: str = "binary"`) is --target-kind. --target
+            // remains as backward-compat alias per two-tick discipline.
+            // The disambiguation matters at substrate altitude because
+            // craft's positional is also called `target`; the flag name
+            // `target_kind` prevents the same-name collision.
             if i + 1 >= args.len() {
-                merr!("--target requires a value (crystal|binary|rust|gleam)");
+                merr!("--target-kind requires a value (crystal|binary|rust|gleam)");
                 return 1;
             }
             match parse_target(&args[i + 1]) {
                 Some(k) => target_kind = k,
                 None => {
-                    merr!("unknown --target value: {}", args[i + 1]);
+                    merr!("unknown --target-kind value: {}", args[i + 1]);
                     return 1;
                 }
             }
             i += 1;
-        } else if let Some(rest) = a.strip_prefix("--target=") {
+        } else if let Some(rest) = a
+            .strip_prefix("--target-kind=")
+            .or_else(|| a.strip_prefix("--target="))
+        {
             match parse_target(rest) {
                 Some(k) => target_kind = k,
                 None => {
-                    merr!("unknown --target value: {}", rest);
+                    merr!("unknown --target-kind value: {}", rest);
                     return 1;
                 }
             }
@@ -2963,7 +2972,12 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
         let mut found: Option<&str> = None;
         while j < args.len() {
             let a = &args[j];
-            if a == "--target" || a == "--shatter" || a == "--transform" || a == "--out" {
+            if a == "--target"
+                || a == "--target-kind"
+                || a == "--shatter"
+                || a == "--transform"
+                || a == "--out"
+            {
                 j += 2;
                 continue;
             }
@@ -2995,7 +3009,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
         "craft" => match positional {
             Some(p) => cmd_craft_with(p, no_cache, target_kind, strict, ctx),
             None => {
-                merr!("usage: mirror craft [--strict] [--target <crystal|binary>] <target>");
+                merr!("usage: mirror craft [--strict] [--target-kind <crystal|binary>] <target>");
                 1
             }
         },
