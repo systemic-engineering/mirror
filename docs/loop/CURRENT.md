@@ -23,20 +23,39 @@ in cli-block REFUSED (no return-type slot in @mirror/lens/cli;
 action-decl at `shards/mirror/spawn.mirror:264` already carries it).
 Bonus: `arg peer_home: ~d` (peer not in cli vocabulary yet).
 
+**Iteration 2 landings (2026-07-08 Reed, `/loop wire up the mirror
+spawn MCP with mathematical fidelity`):**
+
+- `5887ce2` 🔧 `bin/mirror-mcp` extended to 6 tools (adds mirror_spawn,
+  mirror_init, mirror_recall; renames craft's emit_target → target_kind).
+  Substrate-honest schema surface; dispatch translates to current binary
+  flags where Rust arg-parse rename ticks pending.
+- Empirical **@torus loop closure** verified: `mirror spawn . --hello-world`
+  emits @song envelope with `spec_oid: 7edbde80...`, five of seven
+  composition_pieces REAL, four-payload peer_recall. MCP round-trip
+  preserves envelope byte-for-byte (4479 bytes).
+- Empirical **@torus DOUBLE closure** verified
+  (`docs/insights/2026-07-08-torus-double-closure-empirical.md`):
+  spawn.peer_recall ≡ recall envelope byte-equal on all four sheaf
+  sections. Foerster's "doubly closed, recursively computing torus,
+  regulates its own regulation" (p. 238) made empirical. Adjudication
+  candidate: `spawn-recall-byte-equal-at-origin` as second witness for
+  `the-restriction-map-IS-the-geometric-constraint`.
+
 **Next tick queue** (in order):
 
-1. Wire mirror MCP: extend `bin/mirror-mcp` bash wrapper to advertise
-   `mirror_spawn` + `mirror_init` + `mirror_recall` in `tools/list`
-   AND route in `tools/call`. Substrate-honest bridge; task #386's
-   `@mcp.serve` lift is the two-tick target that reads the cli-block
-   to synthesize the tools list.
+1. ~~Wire mirror MCP: extend `bin/mirror-mcp`.~~ ✅ LANDED at `5887ce2`.
 2. RED test for `cmd_spawn --mission` (rename from `--task`) at
    `bootstrap/tests/spawn_mission_shard.rs`; then GREEN wiring.
 3. RED test for `cmd_craft --target-kind` (rename from `--target`);
    then GREEN wiring.
-4. Adjudicate 5 composition tensions in task #557 (unchanged).
-5. Land @duality family-root (W3' from Mara `7978f84`).
-6. Optional: O5 @reflection collapse per two-tick discipline (task #560).
+4. Phase H: close composition_pieces 5 (supervisor.start_child) and 6
+   (@fate.roll) from stub/partial to REAL. Reaches 7/7 REAL.
+5. Torus winding advance test: divergence axis when a commit lands
+   between spawn and recall (breaks byte-equality at (1,0) or (0,1)).
+6. Adjudicate 5 composition tensions in task #557 (unchanged).
+7. Land @duality family-root (W3' from Mara `7978f84`).
+8. Optional: O5 @reflection collapse per two-tick discipline (task #560).
 
 ---
 
@@ -55,6 +74,9 @@ Bonus: `arg peer_home: ~d` (peer not in cli vocabulary yet).
 | `6396306` | Seam | `docs/audits/2026-07-07-seam-phase-d-glue-cyberpunk-fate-composition-ratify.md` (RATIFY; recognition promoted to LANDED with double-witness) |
 | `2c268c3` | Reed | `CLAUDE.md` + `docs/loop/README.md` + `docs/loop/CURRENT.md` (session handoff scaffolding for fresh-session pickup) |
 | `1e45c50` | Reed | ♻️ `mirror.spec` cli-block additions — command blocks for `craft` / `init` / `recall` / `spawn`. T6 closure. `mirror compile` GREEN at OID `f48d7fc5`. |
+| `4829dea` | Reed | 📝 `docs/loop/CURRENT.md` T6-landed cascade + next-tick queue |
+| `5887ce2` | Reed | 🔧 `bin/mirror-mcp` — all 6 tools advertised; substrate-honest schema surface; mirror_spawn empirical loop closure (spec_oid `7edbde80`) |
+| — | Reed | 📝 `docs/insights/2026-07-08-torus-double-closure-empirical.md` — spawn.peer_recall ≡ recall envelope byte-equal (Foerster's doubly-closed torus made empirical) |
 
 Also landed but earlier this session: `@onto-cascade` closure at `061a8ea`
 (Seam Phase D audit for `@peer-has-a-torus` O3-O4 close), Mara research
