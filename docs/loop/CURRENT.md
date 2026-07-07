@@ -23,7 +23,7 @@ in cli-block REFUSED (no return-type slot in @mirror/lens/cli;
 action-decl at `shards/mirror/spawn.mirror:264` already carries it).
 Bonus: `arg peer_home: ~d` (peer not in cli vocabulary yet).
 
-**Iteration 2 landings (2026-07-08 Reed, `/loop wire up the mirror
+**Iteration 1-3 landings (2026-07-07/08 Reed, `/loop wire up the mirror
 spawn MCP with mathematical fidelity`):**
 
 - `5887ce2` 🔧 `bin/mirror-mcp` extended to 6 tools (adds mirror_spawn,
@@ -41,21 +41,36 @@ spawn MCP with mathematical fidelity`):**
   regulates its own regulation" (p. 238) made empirical. Adjudication
   candidate: `spawn-recall-byte-equal-at-origin` as second witness for
   `the-restriction-map-IS-the-geometric-constraint`.
+- Empirical **@torus AXIS ISOLATION** verified
+  (`docs/insights/2026-07-08-torus-axis-isolation-meridian.md` +
+  reflexive `39bfa14` commit as the winding advance):
+  meridian sections (pack_trail + dogfood) diverged; longitude
+  sections (cascade + pull_frontier) stayed byte-equal. 2/2 meridian,
+  0/2 longitude. The recall envelope's four-field factoring maps
+  Foerster's motor↔sensory + neural↔hormonal derivation onto the
+  substrate's git-vs-recognition-content distinction. Not by design;
+  by substrate-pull. π₁(T²) = ℤ × ℤ generator structure IS the
+  recall envelope structure.
 
 **Next tick queue** (in order):
 
 1. ~~Wire mirror MCP: extend `bin/mirror-mcp`.~~ ✅ LANDED at `5887ce2`.
-2. RED test for `cmd_spawn --mission` (rename from `--task`) at
+2. ~~Torus winding advance test: divergence axis when a commit lands
+   between spawn and recall.~~ ✅ LANDED at `39bfa14` (iteration 3).
+3. Pure longitude test: touch `docs/specs/recognitions/*.md` without
+   commit OR land a recognition/candidate file. Cascade / pull_frontier
+   advance in isolation. Iteration 4 candidate.
+4. Higher-winding divergence scaling: |m| + |n| ≥ 2. Cross-peer
+   divergence via @glue morphism.
+5. RED test for `cmd_spawn --mission` (rename from `--task`) at
    `bootstrap/tests/spawn_mission_shard.rs`; then GREEN wiring.
-3. RED test for `cmd_craft --target-kind` (rename from `--target`);
+6. RED test for `cmd_craft --target-kind` (rename from `--target`);
    then GREEN wiring.
-4. Phase H: close composition_pieces 5 (supervisor.start_child) and 6
+7. Phase H: close composition_pieces 5 (supervisor.start_child) and 6
    (@fate.roll) from stub/partial to REAL. Reaches 7/7 REAL.
-5. Torus winding advance test: divergence axis when a commit lands
-   between spawn and recall (breaks byte-equality at (1,0) or (0,1)).
-6. Adjudicate 5 composition tensions in task #557 (unchanged).
-7. Land @duality family-root (W3' from Mara `7978f84`).
-8. Optional: O5 @reflection collapse per two-tick discipline (task #560).
+8. Adjudicate 5 composition tensions in task #557 (unchanged).
+9. Land @duality family-root (W3' from Mara `7978f84`).
+10. Optional: O5 @reflection collapse per two-tick discipline (task #560).
 
 ---
 
@@ -76,7 +91,8 @@ spawn MCP with mathematical fidelity`):**
 | `1e45c50` | Reed | ♻️ `mirror.spec` cli-block additions — command blocks for `craft` / `init` / `recall` / `spawn`. T6 closure. `mirror compile` GREEN at OID `f48d7fc5`. |
 | `4829dea` | Reed | 📝 `docs/loop/CURRENT.md` T6-landed cascade + next-tick queue |
 | `5887ce2` | Reed | 🔧 `bin/mirror-mcp` — all 6 tools advertised; substrate-honest schema surface; mirror_spawn empirical loop closure (spec_oid `7edbde80`) |
-| — | Reed | 📝 `docs/insights/2026-07-08-torus-double-closure-empirical.md` — spawn.peer_recall ≡ recall envelope byte-equal (Foerster's doubly-closed torus made empirical) |
+| `0ab0040` | Reed | 📝 `docs/insights/2026-07-08-torus-double-closure-empirical.md` — spawn.peer_recall ≡ recall envelope byte-equal (Foerster's doubly-closed torus made empirical) |
+| `39bfa14` | Reed | 📝 `docs/insights/2026-07-08-torus-axis-isolation-meridian.md` — meridian axis isolated (2/2 diverged, 0/2 longitude), reflexive commit as the winding advance |
 
 Also landed but earlier this session: `@onto-cascade` closure at `061a8ea`
 (Seam Phase D audit for `@peer-has-a-torus` O3-O4 close), Mara research
