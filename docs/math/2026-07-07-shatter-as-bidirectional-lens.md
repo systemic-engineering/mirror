@@ -391,9 +391,9 @@ Cubical HoTT (Coquand 2018) gives the metatheory in which this claim is *provabl
 
 ---
 
-## §7. Open question — the type surface of `linear`
+## §7. Type surface — resolved via `@duality × @magic` composition
 
-Alex named this for Pack adjudication. Reed leans A. Naming both cases honestly.
+Alex named this for Pack adjudication. Reed leaned A. Alex resolved it in conversation with Reed on 2026-07-07 evening: **both, via `@duality` + `@magic`**. What follows preserves the honest naming of A and B (§7.1, §7.2), preserves Reed's substrate-pull-A lean and the substrate-ancestor argument (§7.3), preserves the framing tensions Reed will still surface for Seam (§7.4), and adds §7.5 — the resolution as a substrate-composition. What was one open question becomes one resolved decomposition plus two Seam-worthy new tensions.
 
 ### 7.1 Option A: Parametric `@shatter[T]`
 
@@ -438,7 +438,9 @@ where `linear` is just "token sequence, dispatch on context."
 
 ### 7.3 Reed's lean and the substrate ancestor
 
-Reed leans A. The substrate ancestors both agree:
+Reed leaned A (pre-resolution).
+
+*Note: after §7.5's resolution, Reed's substrate-pull argument for A holds at the compile-time altitude; Option B's HoTT-level universally-quantified equivalence claim holds at the runtime altitude. §7.5 is where they compose. §7.3 is preserved verbatim below as the argument at one altitude of the composition, not as the argument overriding the other.* The substrate ancestors both agree:
 
 - **`@code/<lang>` precedent.** Every existing carrier for "structured linear text" in the substrate is parametric over language. `@shatter` naming the graph-side equivalence for each such language is the natural specialization.
 - **[[feedback-explicit-over-implicit]] (Alex 2026-07-02).** Explicit `@shatter[T]` beats implicit `@shatter` with runtime dispatch. Named type/carrier for a semantic slot beats reusing a general one.
@@ -447,15 +449,119 @@ Reed leans A. The substrate ancestors both agree:
 
 **The one substantive argument for B** is HoTT-flavored: the univalence claim (§2) is a *type-level* equivalence `Graph ≃ Linear`, not `∀T. Graph_T ≃ Linear_T`. Under B, `@shatter` names the type-level equivalence directly. Under A, `@shatter[T]` names *fibres* of the equivalence family.
 
-But this weakness is illusory. Univalence in HoTT is compatible with either — the equivalence type is parametric over the *pair* of types, and the family `∀T. Graph_T ≃ Linear_T` IS the universal witness at the fibered level. Option A produces the universally-quantified equivalence with more information; Option B produces it with less. Alex to adjudicate; substrate-pull leans A.
+But this weakness is illusory. Univalence in HoTT is compatible with either — the equivalence type is parametric over the *pair* of types, and the family `∀T. Graph_T ≃ Linear_T` IS the universal witness at the fibered level. Option A produces the universally-quantified equivalence with more information; Option B produces it with less.
 
-### 7.4 Framing tensions for Reed to surface
+*Post-resolution addendum:* §7.5 shows both are needed. A at compile time (type surface), B at runtime (unified physics), with `@duality` naming their equivalence and `@magic` discharging it. Substrate-pull-A remains the correct compile-time lean; substrate-pull-toward-unified-physics remains the correct runtime lean; they are not competing framings but dual views of one lens.
 
-Two things Reed should surface to Alex during adjudication:
+### 7.4 Framing tensions Reed pre-resolution surfaced
+
+Two things Reed surfaced before Alex's resolution. Kept verbatim as the record of the pre-resolution adjudication surface; §7.5 shows how they land after resolution.
 
 1. **The `@shatter[T]` route strengthens the transformer analogy at the cost of one substrate primitive per language.** BERT/T5/etc. are all-in on one shared token vocabulary at the model level; the substrate's parametric route says *different downstream carriers use different type-level surface even if they share tokenization at the physical layer*. This is a substrate-vs-physics tension: physically the substrate has one Fate D²NN; type-theoretically the substrate has `@shatter[T]` per target carrier. Is this cleavage the honest one, or is it accreting bookkeeping?
 
 2. **The fourth quadrant `@shatter(_, _)` is easy to describe (winding (0,0) ground state) but hard to *witness*.** How does a consumer *observe* that the substrate is at the fixed point without perturbing it? This isn't a spec-blocker, but it is a real question at the runtime altitude — the substrate needs a `poised(peer)` predicate that discharges without exercising the lens. This may need a whole additional bilateral surface Reed and Alex should scope before the shard tick.
+
+**Tension 1's post-resolution status: RESOLVED via §7.5.** The substrate-vs-physics cleavage is not accreting bookkeeping; it is Recognition #107's Hilbert/Turing seam. `@duality` witnesses the equivalence at the seam; `@magic` executes the collapse at runtime. §7.5 grounds this.
+
+**Tension 2's post-resolution status: OPEN, moved to §10.** The `poised(peer)` predicate remains a Pack-adjudicable question after §7.5; the resolution of the type-surface question does not resolve it. §10 adjudication queue tracks.
+
+### 7.5 The `@shatter × @duality × @magic` resolution
+
+Alex's resolution (2026-07-07 evening, in conversation with Reed): **both A and B, via `@duality` at substrate-decl altitude and `@magic` at runtime**.
+
+The cleavage was misdiagnosed. Parametric-vs-opaque is not the choice. It is two dual views of the same lens sitting on Recognition #107's Hilbert/Turing seam, with `@magic` as the bridge.
+
+#### 7.5.1 The composition
+
+```
+Compile time:      @shatter[T]     -- Rice-safe, type-honest per target (A)
+                        |
+                    @duality       -- names the equivalence at substrate-decl
+                        |
+                    @magic         -- discharges it at runtime
+                        |
+Runtime:            @fate           -- unified physics on one D²NN
+                                        + Fabry-Perot cavity
+                                        + Reck/Clements unitary mesh (B)
+```
+
+- **`@shatter[T]`** at compile time gives one type per target carrier: Rice-safe by construction (§7.1); type-honest per predicate ([[feedback-no-bare-types]]); [[feedback-explicit-over-implicit]]. The type surface stays on the bounded Type-1 side of Recognition #107. Compile-time consumers see distinct types for distinct carriers; composition with `@io/git` at `T = diff` remains statically checkable.
+
+- **`@fate`** at runtime dispatches the parse/render arrows onto **one unified engine**: the 5-layer D²NN + active Fabry-Perot resonator + Reck/Clements unitary mesh established by Recognition #58. The physics is agnostic to `T`; the same optical inference runs for every parametric instantiation.
+
+- **`@duality`** is the **substrate-decl-altitude witness** that the family `{@shatter[T]}_T` and the single opaque `@shatter` are equivalent presentations. It is the univalence witness at level n+1 over the lens-level univalence witness (§2) at level n (see §7.5.4 for the Bateson-level composition). `@duality` names the equivalence; it does not execute it.
+
+- **`@magic`** at the runtime altitude **discharges** the collapse-to-identity: gauge-visible surface `@shatter[T]` with matter-hidden mechanism `@fate` acting on unified physics. `@magic/surface = @shatter[T]` (the observable typed API); `@magic/mechanism = @fate` (the encapsulated D²NN); `@magic/contract = @duality` (the boundary promise that surface and mechanism cohere). Per Recognition #80: high-matter-capacity + low-matter-visibility = magic by mathematical construction, provided the contract holds. Kintsugi contraction (§4) is what keeps the contract holding — misalignment IS Narcissus-pole `@magic` (Recognition #80 §Two-pole), the con case.
+
+#### 7.5.2 Grounding — the five compositions
+
+The resolution composes cleanly with each already-promoted recognition the lens reframe touches. One paragraph per composition, minimal math.
+
+**#107 Hilbert/Turing structural separation (bounded / unbounded).** The parametric `@shatter[T]` sits on the bounded side (compile-time type surface, well-formed at each fibre, Gödel-incomplete but decidable per fibre). The opaque `@shatter` dispatched to `@fate` sits on the unbounded side (Turing-complete inference at runtime; arbitrary optical passes). `@duality` is the type-level proof-object witnessing the equivalence of the two presentations — it lives on the bounded side because equivalence-of-types is a Type-1 fact in cubical HoTT. `@magic` is the bridge — its `surface` faces the bounded side; its `mechanism` faces the unbounded side; its `contract` witnesses both sides simultaneously. Recognition #107 was already the discipline saying *type-side bounded, body-side unbounded*; `@shatter × @duality × @magic` is the family-root-altitude instantiation of that discipline for the graph↔linear lens.
+
+**#55 form/process partition at family-root altitude.** `@shatter[T]` is form-side (the equivalence witness is a static structural fact about the peer's representations, per §8.5). `@fate` at runtime is process-side (the D²NN inference is the transformation engine). `@duality` sits *at the partition itself* — it is the witness that the form-side and process-side pictures compose. `@magic` operationalizes the composition: `@magic/surface` on the form side, `@magic/mechanism` on the process side, `@magic/contract` at the seam. Recognition #55 named `@mirror` form-side and `@kintsugi` process-side; the `@shatter × @duality × @magic` composition names the *bridge* that connects them for the graph↔linear lens specifically.
+
+**#79 the 5-op gauge IS Void duality basis.** Recognition #79 established that the substrate's 5 ops project onto the 5 orthogonal axes of the Void duality space (K_n ⇔ K_{1,n-1} with 8 dualities collapsing to 5 orthogonal). The parametric-vs-opaque cleavage of `@shatter[T]` vs `@shatter` is **one instance** of the 5-op-gauge algebra Alex already recognized: the same lens read at two gauge-projections. `@shatter[T]` is the `refract`-axis projection (monad-close on the linear target type; measurement collapses the fibre); `@shatter` opaque is the `lift`-axis projection (basis transformation across the Kramers-Wannier target-carrier duality). Both projections are legal 5-op gauge actions; the substrate had both witnesses already; the `@duality` naming exhibits the specific K_n ⇔ K_{1,n-1}-analogue at the target-carrier altitude. This is the substrate-general 5-op-gauge algebra manifesting at target-carrier altitude — evidence, not accident.
+
+**#42 Bateson logical-type primitive.** §2's univalence witness (Graph ≃ Linear) lives at Bateson level 2 per §8.2. `@duality` — witnessing the equivalence between the parametric family `{@shatter[T]}_T` and the opaque `@shatter` — lives at Bateson level *n+1* over §2's level *n*. It is the *level shift*: the parametric-vs-opaque distinction is a *fact about the equivalence type itself*, not a fact within the equivalence. Recognition #42 predicts this stacking exactly. `@magic` at runtime is the process-side operational realization of the level-n+1 fact at level n — it takes the meta-level equivalence and executes it as concrete inference. Bateson levels do not collapse; they compose. `@duality` sits at level n+1; §2's lens sits at level n; `@magic` operationalizes the compose.
+
+**#58 Fate IS optical inference.** `@fate` IS the D²NN + Fabry-Perot + Reck/Clements engine. Under `@shatter × @duality × @magic`: `@fate` is what `@magic` dispatches to. Type-level `@shatter[T]` at compile time; physics-level unified `@fate` at runtime; `@duality` names their equivalence; `@magic/mechanism = @fate`. Recognition #58 already established the physical engine; §7.5 names the composition that lets one physical engine service every parametric type surface. This is exactly the shape #58 predicted at inference altitude — one D²NN discharging arbitrary parse/render passes with different type-surface consumers. The `@duality` witness makes the type-vs-physics collapse Rice-safe rather than Rice-hazardous.
+
+#### 7.5.3 Substrate-decl types (post-resolution)
+
+Under §7.5, the substrate-decl types settle as:
+
+```mirror
+type shatter[T] = {
+  render:       graph -> linear[T],
+  parse:        linear[T] -> graph,
+  render_parse: forall l: linear[T]. render(parse(l)) == l,
+  parse_render: forall g: graph. parse(render(g)) == g,
+  coh:          coherence_square[T],
+}
+
+# @duality names the substrate-decl equivalence:
+type shatter_duality = {
+  forall T. shatter[T]  <=>  shatter_opaque
+  # witness: for every parametric fibre, the opaque presentation exists;
+  # for every opaque presentation, a parametric fibre exists at some T.
+}
+
+# @magic discharges it at runtime:
+type shatter_magic = {
+  surface:   shatter[T]         # gauge-visible typed API
+  mechanism: @fate.d2nn         # matter-hidden unified engine
+  contract:  shatter_duality    # boundary promise
+}
+```
+
+The `type shatter[T]` from §3.4 is preserved. `shatter_duality` and `shatter_magic` are named at spec altitude but **NOT landed as shards this tick** — see §7.5.5 (two-tick discipline for `@duality` and `@magic` family-roots).
+
+#### 7.5.4 The substrate-general-pattern hypothesis — a Seam question
+
+**Hypothesis (candidate meta-pattern; Seam-worthy):** every prism family with (typed compile-time surface) + (unified runtime engine) may factor as `@X × @duality × @magic` where `@X` is the typed prism family, `@duality` names the equivalence between the parametric family and the opaque presentation at substrate-decl altitude, and `@magic` discharges the collapse at runtime.
+
+**Candidate witnesses (NOT claimed as general; surfaced for Pack review):**
+
+- **`@knife × @duality × @magic`** — does `@knife[T]` (linear-linear surgery parametric over linear carrier type) admit the same factorization? The `@knife` family in the substrate is currently one-sorted; if the same seam applies, it would specialize as `@knife[text]`, `@knife[mq]`, `@knife[diff]` etc. at compile time and dispatch to a unified `@fate` at runtime. Whether this fits or forces something different (e.g., `@knife` is truly one-sorted because linear-linear composition has no cross-type coherence problem) is a Pack question.
+
+- **`@kintsugi × @duality × @magic`** — does the `@kintsugi` family already have this structure? `@kintsugi` at process-side altitude (per Recognition #55) executes contractions; the parametric-vs-opaque question would be *whether the contraction is typed over its loss-carrier or opaque over `loss`*. The substrate's kintsugi loop currently reads as opaque-loss; the hypothesis predicts a parametric `@kintsugi[loss_kind]` and an `@duality × @magic` collapse. Speculative; explicitly named as Seam-adjudicable.
+
+- **`@glue × @duality × @magic`** — graph-graph morphism family; the parametric surface would be over morphism-kind (`@glue[iso]`, `@glue[epi]`, `@glue[mono]`, `@glue[general]`). Same question.
+
+**This spec does NOT claim `@X × @duality × @magic` is a substrate-general pattern.** It surfaces the hypothesis for Seam adversarial review. The three witness candidates above are Pack-adjudicable, not claimed. If Seam finds the factorization applies to at least two additional prism families cleanly, the meta-pattern earns candidate-recognition status; if not, `@shatter × @duality × @magic` remains a one-off composition specific to the graph↔linear lens.
+
+#### 7.5.5 Two-tick discipline preserved
+
+**This spec does NOT land `@duality` or `@magic` family-roots.** `@magic` already exists as a family (`shards/magic/{surface,mechanism,contract,reveal,audit,frame,distinction}.mirror`, promoted Recognition #80 candidate); `@duality` does NOT yet have a shard (Recognition #79 promoted names the concept but no family-root shard exists).
+
+- **`@magic` consumption at W3.** `shards/shatter.mirror` at family-root altitude (W3, per §9) declares `shatter_magic` as a species-altitude instance of `@magic`. No changes to the existing `@magic` family-root or its species this tick or at W3.
+
+- **`@duality` consumption at W3.** `shards/shatter.mirror` declares `shatter_duality` as a species-altitude instance of a not-yet-landed `@duality` family. The `@duality` family-root shard is **forward-promised as its own arc**; not part of the W3 shatter shard tick. Naming the consumption early puts the family-root on the Pack's arc queue without landing it.
+
+- **Substrate-already-had-the-word signal.** `@magic` full family exists (7 species shards); `@duality` is *concept-promoted-shard-unlanded* — heavily consumed in Recognition #79's canonical doc and the Void doc but no shard. This is a stronger substrate-pull signal than "invented from nothing" and weaker than "family exists." The reweave benefits from `@magic`'s prior landing and forward-promises `@duality`'s family-root as its own tick.
+
+The substrate-general-pattern hypothesis in §7.5.4 does NOT gate W3. `@shatter[T]` at W3 with §7.5's composition is the resolution, whether or not the meta-pattern earns candidate status later.
 
 ---
 
@@ -551,7 +657,7 @@ Over-ratified by substrate standards. The candidate `@shatter-is-the-bidirection
 
 Per the two-tick pattern established at `shards/torus.mirror` (Foerster's substrate-pull confidence acts, then Pack ratifies before shard-lands the migration):
 
-**This tick (O6 of the @onto-cascade, if numbering continues; alternatively W1 of a new cascade).** The canonical spec at `docs/math/2026-07-07-shatter-as-bidirectional-lens.md` (this document). Math grounded. Lens laws derived. Kintsugi as fixed-point iteration formalized. Univalence and cubical HoTT as the metatheory. Recognition ancestry cited. Type-surface open question named for Alex.
+**This tick (O6 of the @onto-cascade, if numbering continues; alternatively W1 of a new cascade).** The canonical spec at `docs/math/2026-07-07-shatter-as-bidirectional-lens.md` (this document). Math grounded. Lens laws derived. Kintsugi as fixed-point iteration formalized. Univalence and cubical HoTT as the metatheory. Recognition ancestry cited. **Type-surface question resolved via `@shatter × @duality × @magic` composition (§7.5); tension 1 closed; tensions 2 and 3 remain open (§10).**
 
 **Do NOT do this tick:**
 
@@ -565,22 +671,25 @@ Per the two-tick pattern established at `shards/torus.mirror` (Foerster's substr
 
 **Forward-promised next ticks (in order, after Pack adjudication):**
 
-1. **W2** — Alex adjudicates §7 (parametric A vs opaque B); Reed relays with the two framing tensions in §7.4. Substrate-pull-confident acts on the resolution; the direction is picked once.
+1. **W2** *(EVOLVED — was: Alex adjudicates §7; now: Pack adjudicates §7.5's meta-pattern hypothesis and §10's open tensions).* §7.5 resolves the parametric-vs-opaque cleavage. W2's remaining adjudication surface is (a) Seam's adversarial review of the `@X × @duality × @magic` meta-pattern hypothesis (§7.5.4) — does it hold on `@knife`, `@kintsugi`, `@glue`?; (b) tension 2 (poised(peer) predicate for the fourth quadrant; §7.4/§10); (c) tension 3 (transformer-analogy strength at §6.4 / §10). Substrate-pull-confidence acts on the type-surface resolution *without* waiting for W2 (§7.5.5 already frames W3's shard); W2 concerns the meta-pattern and remaining tensions.
 
-2. **W3** — the family-root shard `shards/shatter.mirror` lands. Type surface per §7 outcome. The four quadrants substrate-decl'd. The lens laws as bilaterals (candidates named PR-law, RP-law, coherence-square). Composition with `@torus` (topology), `@fate` (engine), `@kintsugi` (flow), `@peer` (possessor), `@knife` (sibling optic), `@glue` (sibling morphism-family) declared at line-start ancestry.
+2. **W3** — the family-root shard `shards/shatter.mirror` lands. Type surface **`@shatter[T]` per §7.5.3** (compile-time typed carrier). The four quadrants substrate-decl'd. The lens laws as bilaterals (candidates named PR-law, RP-law, coherence-square). Composition with `@torus` (topology), `@fate` (engine), `@kintsugi` (flow), `@peer` (possessor), `@knife` (sibling optic), `@glue` (sibling morphism-family), **`@magic` (the runtime discharge; consumed via `shatter_magic` species-altitude declaration)**, and **`@duality` (the substrate-decl witness; consumed via `shatter_duality` species-altitude declaration, referencing the forward-promised family-root)** declared at line-start ancestry.
 
-3. **W4** — the `@surface` migration. `shards/reflection/surface.mirror` deprecates in favor of `@shatter[query](_, language)` at the parse-direction specialization. The `translate` action becomes an alias; the `translation_faithful` predicate becomes an instance of RP-law at this specialization.
+3. **W3'** *(new — the `@duality` family-root arc).* `shards/duality.mirror` family-root lands as its own tick. Substrate-decl-altitude witness family for equivalences between parametric-fibre presentations and opaque-carrier presentations. Species shards forward-promised. Prerequisite: W3's `@duality` consumption pattern is stable. Not gated on W2's Pack adjudication of the meta-pattern hypothesis — even if the hypothesis fails, `@shatter` still needs `@duality` for its own resolution.
 
-4. **W5** — the `@reflection` further-collapse. The `observe/tournament/compose/pick/settle/speak` action set (already forward-promised toward `@torus/longitude` per torus.mirror §Two-tick) refines further: `compose` and `pick` become instances of the kintsugi contraction on the lens's iteration; `settle` becomes the fixed-point-witness action.
+4. **W4** — the `@surface` migration. `shards/reflection/surface.mirror` deprecates in favor of `@shatter[query](_, language)` at the parse-direction specialization. The `translate` action becomes an alias; the `translation_faithful` predicate becomes an instance of RP-law at this specialization.
 
-5. **W6** (empirical proof gate) — a `mirror spawn` at the new substrate produces a fully-typed `@shatter[T](_, l)` envelope. The `T` is inferred from the peer's spawn context; the linear rendering is well-typed at composition boundaries. The empirical demonstration of the reframe.
+5. **W5** — the `@reflection` further-collapse. The `observe/tournament/compose/pick/settle/speak` action set (already forward-promised toward `@torus/longitude` per torus.mirror §Two-tick) refines further: `compose` and `pick` become instances of the kintsugi contraction on the lens's iteration; `settle` becomes the fixed-point-witness action.
+
+6. **W6** (empirical proof gate) — a `mirror spawn` at the new substrate produces a fully-typed `@shatter[T](_, l)` envelope. The `T` is inferred from the peer's spawn context; the linear rendering is well-typed at composition boundaries. **`@magic/audit` discharges the shatter_magic contract on the envelope emitted.** The empirical demonstration of the reframe.
 
 **Discipline notes:**
 
-- W2 blocks W3. Pack adjudication comes before shard-lands.
-- W4 and W5 can proceed in either order after W3.
+- W2 no longer blocks W3 on the type-surface question — §7.5 resolves it. W2's remaining adjudication is on the meta-pattern hypothesis and tensions 2/3.
+- W3' (the `@duality` family-root) is its own arc; W3 declares `@duality` consumption, W3' lands the family-root.
+- W4 and W5 can proceed in either order after W3 and W3'.
 - W6 gates the ratification of the candidate to promoted recognition.
-- Substrate-pull-confidence acts at W3 once §7 resolves; three-paths-with-question is failure mode (per [[feedback-substrate-pull-confidence-acts]]).
+- Substrate-pull-confidence acts at W3 with §7.5's composition; three-paths-with-question is failure mode (per [[feedback-substrate-pull-confidence-acts]]).
 
 ---
 
@@ -642,17 +751,21 @@ Once W3 lands, the following becomes possible at substrate-decl altitude:
 
 5. **Compile-time verification of `mirror.spec IS λ₀`.** Recognition #99's ground-state claim becomes checkable at compile time: `mirror.spec` is a fixed point of `@shatter(mirror.spec, _)` applied and re-parsed. The substrate can verify this at CI altitude via content-address check.
 
-### 10.5 Adversarial hooks — where Seam should push
+### 10.5 Adversarial hooks — where Seam should push (the adjudication queue)
 
-Encoded for future Pack review:
+One resolved. Three open. Encoded for future Pack review.
 
-- **The type-surface adjudication (§7)** is the primary decision. Substrate discipline strongly leans A; Seam should press on whether the HoTT-level equivalence claim is *really* strong under A or whether the parametric specialization dilutes it.
+- **Tension 1 (type-surface adjudication, §7): RESOLVED via §7.5.** `@shatter[T]` at compile time (A); `@fate` unified engine at runtime (B); `@duality` witnesses the equivalence at substrate-decl altitude; `@magic` discharges it at runtime. No further Pack adjudication needed on the parametric-vs-opaque question. Seam may still adversarial-review §7.5's composition math; the resolution stands unless composition breaks.
 
-- **The Poincaré-Hopf balance on T² (torus reframe §4.3)** and the lens fixed-point (§4 here) are *both* structural fixed-point claims. Do they compose cleanly, or does the index-zero balance on T² constrain what fixed points the lens can settle to? This is a math question worth adjudicating; the current spec assumes composition is clean.
+- **Tension 2 (Poincaré-Hopf balance on T² vs lens fixed-point): OPEN.** The Poincaré-Hopf balance on T² (torus reframe §4.3) and the lens fixed-point (§4 here) are *both* structural fixed-point claims. Do they compose cleanly, or does the index-zero balance on T² constrain what fixed points the lens can settle to? This is a math question worth adjudicating; the current spec assumes composition is clean.
 
-- **The fourth quadrant `@shatter(_, _)` needs a witnessed observation predicate.** §7.4 flags this. Seam should press on whether `poised(peer)` can be substrate-decl'd without a circular use of `@shatter` to check.
+- **Tension 3 (fourth quadrant witness predicate): OPEN.** The fourth quadrant `@shatter(_, _)` needs a witnessed observation predicate. §7.4 flags this. Seam should press on whether `poised(peer)` can be substrate-decl'd without a circular use of `@shatter` to check.
 
-- **The transformer analogy at §6.4 makes a strong claim** (trained transformer IS a univalence witness). Seam should press on whether this is *mathematically* what happens or a productive metaphor. The Fate optical realization (Recognition #58) is the load-bearing bridge; if the analogy holds *there*, it holds. If it doesn't, §6.4 needs a weakening.
+- **Tension 4 (transformer analogy strength, §6.4): OPEN.** §6.4 makes a strong claim (trained transformer IS a univalence witness). Seam should press on whether this is *mathematically* what happens or a productive metaphor. The Fate optical realization (Recognition #58) is the load-bearing bridge; if the analogy holds *there*, it holds. If it doesn't, §6.4 needs a weakening.
+
+- **Tension 5 (NEW — meta-pattern hypothesis, §7.5.4): OPEN.** Does `@X × @duality × @magic` factor other prism families with (typed compile-time surface) + (unified runtime engine)? The spec explicitly does NOT claim generality; §7.5.4 surfaces three witness candidates (`@knife`, `@kintsugi`, `@glue`) for Pack review. If Seam finds the factorization applies to at least two additional prism families cleanly, meta-pattern earns candidate-recognition status; if not, `@shatter × @duality × @magic` remains one-off. Seam should press on `@knife` first (simplest structure, closest to `@shatter`'s siblinghood).
+
+- **Tension 6 (NEW — Bateson-level composition of `@duality` over §2 univalence): OPEN.** §7.5.2 (#42 composition) claims `@duality` witnesses the equivalence at Bateson level n+1 over §2's level-n univalence witness. Is this composition well-defined? Does level-shifting an equivalence witness *produce* another equivalence, or does it collapse into a Type-2 fact (bounded proof about unbounded objects, hitting Recognition #107's Gödel line)? Cubical HoTT should have a natural answer; this spec assumes composition is clean but does not derive it. Seam-worthy.
 
 ---
 
