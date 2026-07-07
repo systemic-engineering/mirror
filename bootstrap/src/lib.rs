@@ -1552,7 +1552,76 @@ fn cmd_kintsugi_spec(spec_path: &str, format: CiFormat, ctx: &Ctx) -> i32 {
                 cmd.arg("-f").arg(lock);
             }
         }
-        let out = cmd.output();
+        // spawn + wait + threaded drain via mpsc channels with a
+        // recv_timeout safety net. Fixes the classic `.output()` hang:
+        // cargo spawns descendants (rustc, linker) that inherit
+        // stdout/stderr fds; when cargo exits its own fd copies are
+        // closed, but descendants keep the write-ends alive, so
+        // `read_to_end` on the parent side waits for EOF forever.
+        //
+        // The recv_timeout after child.wait() bounds this wait: we
+        // give descendants a 5-second grace window to drain any
+        // remaining output, then move on with whatever we captured.
+        // Correctness impact: the tool_unavailable heuristic below
+        // reads the first 200 chars of stderr; a truncated stderr
+        // still exposes the "no such command" marker for cargo audit,
+        // which is the only currently-consumed detail.
+        //
+        // Discovered 2026-07-07 by Taut scout during N-cascade
+        // deadlock diagnosis (task #558); Alex adjudicated "fuller
+        // refactor" path.
+        use std::io::Read as _;
+        use std::process::Stdio;
+        use std::sync::mpsc;
+        use std::time::Duration;
+
+        cmd.stdin(Stdio::null())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped());
+
+        let spawn_result = cmd.spawn();
+        let out = match spawn_result {
+            Ok(mut child) => {
+                let stdout_pipe = child.stdout.take();
+                let stderr_pipe = child.stderr.take();
+
+                let (stdout_tx, stdout_rx) = mpsc::channel::<Vec<u8>>();
+                let (stderr_tx, stderr_rx) = mpsc::channel::<Vec<u8>>();
+
+                if let Some(mut r) = stdout_pipe {
+                    std::thread::spawn(move || {
+                        let mut buf = Vec::new();
+                        let _ = r.read_to_end(&mut buf);
+                        let _ = stdout_tx.send(buf);
+                    });
+                }
+                if let Some(mut r) = stderr_pipe {
+                    std::thread::spawn(move || {
+                        let mut buf = Vec::new();
+                        let _ = r.read_to_end(&mut buf);
+                        let _ = stderr_tx.send(buf);
+                    });
+                }
+
+                match child.wait() {
+                    Ok(status) => {
+                        let stdout = stdout_rx
+                            .recv_timeout(Duration::from_secs(5))
+                            .unwrap_or_default();
+                        let stderr = stderr_rx
+                            .recv_timeout(Duration::from_secs(5))
+                            .unwrap_or_default();
+                        Ok(std::process::Output {
+                            status,
+                            stdout,
+                            stderr,
+                        })
+                    }
+                    Err(e) => Err(e),
+                }
+            }
+            Err(e) => Err(e),
+        };
         let (verdict, objective, dark, label_path) = match out {
             Ok(o) if o.status.success() => (
                 "success",
