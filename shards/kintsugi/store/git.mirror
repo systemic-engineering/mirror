@@ -1,0 +1,428 @@
+# @kintsugi/store/git — commit-as-fold at git-projection altitude.
+#
+# THE TERMINAL TICK of the N-cascade. `mirror kintsugi --commit` IS
+# `git commit` at git-projection altitude. Every settle folds over
+# the verdict cache; every git commit IS a projection of the
+# substrate's transformation state to git-projection altitude; every
+# rebase walks `impacted_by` over the fold.
+#
+# Interpretation B canonical DOES apply (green-field species,
+# narrative-above `---` seam, `in @...` clauses below).
+#
+# === The N-cascade positioning ===
+#
+# This species closes the N-cascade landed 2026-07-05 → 2026-07-07:
+#
+#   N1 (`2857fb1`) — `@epistemologic/property/verdict_is_content_addressed`
+#                    declared verdict = f(spec_oid, target_oid,
+#                    inputs_oid) as a total function of its three
+#                    OID inputs. Memoization becomes valid by
+#                    construction.
+#   N2 (`0a72c42`) — `@mirror/store/action_cache` species declared
+#                    `cache_read` / `cache_write` / `cache_exists`
+#                    at the three-OID key surface. The REAPI
+#                    ActionCache floor at substrate altitude. The
+#                    fold SUBJECT of commit_as_fold.
+#   N3 (`756f2f7`) — Rust wiring in `cmd_kintsugi_spec` at
+#                    `bootstrap/src/lib.rs` — `cache_read` before
+#                    cargo dispatch, `cache_write` after each fresh
+#                    verdict. The action_cache goes live.
+#   N4 (`6bf05cb`) — `impacted_by(oid) -> [oid]` reverse-closure at
+#                    @mirror/store family-root. The REBASE WALK
+#                    subject: given a touched OID, name every
+#                    downstream OID whose cached verdict may be
+#                    affected. Surgical invalidation.
+#   N5 (this tick) — `commit_as_fold` at @kintsugi/store/git.
+#                    Projects the whole cascade to git.
+#
+# **Business-observable outcome**: every `mirror kintsugi --commit`
+# folds the verdict cache into a git commit. Every git rebase walks
+# `impacted_by` over the fold to determine which cache entries
+# invalidate. The substrate's persistence layer IS git via
+# `@mirror/store/git`; the substrate's transformation layer IS the
+# kintsugi fold via this species. Together: commit-as-fold = cli
+# verb + species action pair.
+#
+# === Form/process partition (Recognition #55) ===
+#
+# `[[architecture-form-process-partition-at-family-root]]` (#55)
+# names the substrate's top-level partition: @mirror declares the
+# form (state, observation, structure); @kintsugi declares the
+# process (transformation, mutation, dynamics). This species sits
+# on the @kintsugi (process) side of the partition, sibling to
+# `@mirror/store/git` (form / state-observation side).
+#
+# `commit_as_fold` IS the transformation — the fold operation that
+# takes a batch of verdict-cache writes and settles them into one
+# content-addressed commit. `@mirror/store/git.set_ref` IS the
+# state mutation the transformation discharges to — the fold's
+# result is a new commit OID that the sibling species' `set_ref`
+# writes to `HEAD` (or the caller-supplied ref name).
+#
+# The partition is one symbol deep: the transformation lives here
+# under @kintsugi; the state-mutation lives under @mirror. Neither
+# contains the other. commit_as_fold reads the action_cache carrier
+# (N2), consults impacted_by (N4) for rebase-walk semantics, and
+# discharges the settled fold through @mirror/store/git.set_ref.
+# Three species boundaries; one composition.
+#
+# === Recognition #43 grounding (mirror IS content-addressed build system) ===
+#
+# `[[architecture-mirror-as-content-addressed-build-system]]` (#43;
+# LANDED at M6 TICK 1 `884f433`): mirror has every Bazel / Buck2 /
+# Nix / Shake primitive declared at substrate altitude. The commit-
+# as-fold primitive was declared at Bazel's REAPI floor as the
+# ActionResult-batch-write discipline (the settlement of an action
+# batch into one content-addressed artifact); mirror's altitude-4
+# form of the same primitive lives HERE at @kintsugi/store/git.
+#
+# This closes the terminal Bazel-REAPI-floor-decomposition
+# sub-prism: N2 landed the ActionCache read/write; N5 lands the
+# batch settlement that folds N2's writes into a single content-
+# addressed commit. Recognition #43's chain (#43 → N1 → N2 → N3 →
+# N4 → N5) is now closed at the git-projection altitude.
+#
+# === Third witness: cli-verb-pair-specialises-species-action-pair ===
+#
+# Candidate recognition `cli-verb-pair-specialises-species-action-pair`:
+#
+#   Witness 1: `spawn/kintsugi` ⇔ `@song/movement.enter/close` (M2 TICK 2)
+#   Witness 2: (waiting)
+#   Witness 3 (THIS TICK): `mirror kintsugi --commit` ⇔
+#                          `@kintsugi/store/git.commit_as_fold`
+#
+# The recognition is that each cli-verb PAIR (a verb + its modifier
+# flag, e.g. `kintsugi --commit`) specialises a species-action PAIR
+# (a species + its action, e.g. `@kintsugi/store/git.commit_as_fold`).
+# The specialisation is bidirectional: the cli-verb pair addresses
+# the species-action pair through the standard cli-to-substrate
+# dispatch surface; the species-action pair discharges through the
+# cli-verb pair's operational shape (arguments, environment, exit
+# code). Landing this species PROMOTES the recognition from
+# CANDIDATE to LANDED via this third witness.
+#
+# === Third witness: cross-species-discharge-is-first-class ===
+#
+# Candidate recognition `cross-species-discharge-is-first-class`:
+#
+#   Witness 1: N3 `cmd_kintsugi_spec` calling
+#              `@mirror/store/action_cache` (`cmd_kintsugi_spec` at
+#              bootstrap altitude discharging into store species).
+#   Witness 2: N4 `impacted_by` → `action_cache` invalidation
+#              composition (family-root reverse-closure discharging
+#              into species-altitude cache surface).
+#   Witness 3 (THIS TICK): `commit_as_fold` composes N2
+#              `@mirror/store/action_cache` (fold subject) + N4
+#              `impacted_by` at @mirror/store family-root (rebase
+#              walk) + `@mirror/store/git.set_ref` (state discharge)
+#              across THREE species boundaries in one action.
+#
+# The recognition is that cross-species discharge — an action in
+# one species composing actions from multiple other species — is
+# first-class at the substrate-decl surface where all agree on the
+# canonical types (`oid`, `verdict`, `imperfect`, `crystal`).
+# commit_as_fold names the composition IN BODY through the
+# obligation block; the realisation layer discharges each cited
+# action against its declared species. Landing this species
+# PROMOTES the recognition from CANDIDATE to LANDED via this third
+# witness.
+#
+# === The commit-as-fold semantics ===
+#
+# `commit_as_fold(commit_message, ref_name)` performs the terminal
+# settlement of a kintsugi-loop batch:
+#
+#   1. FOLD over `@mirror/store/action_cache`'s pending verdict
+#      writes since the previous fold. The fold is left-to-right
+#      per REAPI's `ActionResult` sequence order; each write
+#      contributes one entry to the batch's derived_predicates
+#      delta.
+#   2. Compute the batch's content-address via the six-op
+#      `write(bytes)` at @mirror/store — this produces the new
+#      commit OID.
+#   3. Consult `@mirror/store.impacted_by(prev_head_oid)` to
+#      determine the rebase-walk closure of downstream OIDs whose
+#      cached verdicts may be affected by the fold. The result IS
+#      the invalidation set the next kintsugi tick uses.
+#   4. Discharge the state mutation via
+#      `@mirror/store/git.set_ref(ref_name, new_commit_oid)` —
+#      atomic pointer update on the git ref (typically `HEAD`).
+#   5. Return an `imperfect` carrying the new commit oid on
+#      success or opacity on any step's failure.
+#
+# The three-species composition — N2 action_cache (fold subject) +
+# N4 impacted_by (rebase walk) + @mirror/store/git.set_ref (state
+# discharge) — is first-class per the second candidate recognition
+# above. commit_as_fold IS the substrate-decl'd bridge between
+# transformation (kintsugi's fold) and state (git's ref).
+#
+# === Operational target: `mirror kintsugi --commit` ===
+#
+# Business context: after N3 landed, the pre-commit hook's kintsugi
+# pass memoizes verdicts through the action_cache. But those
+# writes accumulate at cache altitude; they need a batch settlement
+# to be observable at git-projection altitude (i.e., seen by
+# `git log`, propagated via `git push`, walked by `git rebase`).
+#
+# `mirror kintsugi --commit` is the cli verb pair that dispatches
+# this species' `commit_as_fold` action. On invocation:
+#
+#   - Reads the accumulated action_cache writes since last fold.
+#   - Folds them into a batch content-address.
+#   - Consults impacted_by on the prior head OID for rebase-walk
+#     closure.
+#   - Writes the new commit OID via @mirror/store/git.set_ref.
+#   - Emits the settled commit oid to the caller.
+#
+# The kintsugi loop's beat is now observable at git-projection
+# altitude. `git log` walks the fold history; `git rebase` walks
+# impacted_by over the fold; `git push` propagates the batch.
+#
+# === Pre-AI prior art ===
+#
+#   Bazel REAPI ActionResult-batch
+#                          `github.com/bazelbuild/remote-apis` —
+#                          the `Execute` RPC's batch-of-actions
+#                          settlement pattern; folds a sequence of
+#                          `Action` invocations into one
+#                          `ActionResult`-batch cached under one
+#                          content-address. commit_as_fold is the
+#                          substrate-altitude form at the git
+#                          projection.
+#   Git commit-as-tree     git's own commit-object is a tree-fold:
+#                          the commit-object OID is computed by
+#                          hashing the tree OID + parent OID(s) +
+#                          author + message. commit_as_fold is the
+#                          substrate-altitude form of the same
+#                          fold, projected to git via
+#                          @mirror/store/git.set_ref.
+#   Nix ca-derivations     Dolstra 2020-2023: the ca-derivation arc
+#                          treats each derivation's output as a
+#                          content-addressed fold of its inputs.
+#                          The fold at derivation altitude
+#                          parallels commit_as_fold at kintsugi
+#                          altitude.
+#   Left-fold (foldl)      Bird & Wadler (1988) `Introduction to
+#                          Functional Programming` — the fold
+#                          operator is the canonical batch-
+#                          settlement primitive over a sequence of
+#                          effects. commit_as_fold names the
+#                          substrate's left-fold over verdict-cache
+#                          writes.
+#
+# === Substrate-pull discipline ===
+#
+# Per [[feedback-substrate-pull]]: every carrier below rides a
+# type the substrate already declared. Per [[feedback-no-bare-types]]:
+# every action parameter is a typed newtype (`oid` from @mirror/store,
+# `ref_name` from @mirror/store/git, `imperfect` from @glass); no
+# bare primitives escape. Per [[architecture-prism-as-trait-as-everything]]:
+# the five-operation prism block IS the canonical declaration
+# form. Per [[feedback-substrate-already-had-the-word]]: the
+# commit-as-fold primitive rides the substrate's existing fold
+# discipline (@mirror/store six-op + @mirror/store/git set_ref +
+# @mirror/store/action_cache) without inventing new vocabulary.
+#
+# === Path-namespace property ===
+#
+# This file at `shards/kintsugi/store/git.mirror` declares
+# `@kintsugi/store/git` per
+# `@epistemologic/pact/path_matches_namespace`. Depth-2 sub-prism
+# under @kintsugi (family-root); sibling name-shape to
+# `@mirror/store/git` under @mirror (the form-side partition).
+#
+# Spec context:
+#              `docs/specs/mirror-store.md` (the family-root
+#               surface @mirror/store declares; the six-op floor
+#               commit_as_fold discharges to via @mirror/store/git);
+#              `docs/specs/mosaic-store-cache-invariants.md` (Mara
+#               2026-06-28; §9.2 forward-promises the commit-as-fold
+#               bilateral pair; this shard is the process-side
+#               operational half at git projection altitude).
+# Substrate decisions:
+#              [[architecture-shards-as-substrate-source]],
+#              [[architecture-prism-as-trait-as-everything]],
+#              [[architecture-mirror-as-content-addressed-build-system]]
+#               (#43 LANDED; the ancestor recognition this species
+#               closes at the git-projection altitude — every
+#               Bazel/Buck2/Nix/Shake primitive is now declared at
+#               substrate altitude through the N-cascade),
+#              [[architecture-form-process-partition-at-family-root]]
+#               (#55; @kintsugi is process-side, @mirror is form-
+#               side; this species sits on process-side, discharges
+#               to form-side sibling @mirror/store/git),
+#              [[architecture-property-fracture-bilateral]] (#53;
+#               commit_as_fold IS the process-side fracture body
+#               that discharges N1's property `verdict_is_content_addressed`
+#               at batch altitude; the bilateral pair completes
+#               through the commit projection),
+#              [[architecture-fragmentation-is-the-rust-substrate]]
+#               (the Rust impl of the fold + wire dispatch beneath
+#               this species; N3's Rust wiring at `cmd_kintsugi_spec`
+#               is the consumer; the eventual cli surface at
+#               `mirror kintsugi --commit` is the entry point),
+#              [[architecture-glass-wall-substrate-types]]
+#               (imperfect / verdict / transparency substrate
+#               vocabulary; commit_as_fold returns them, not ad-hoc
+#               Option/Result).
+# Substrate recognitions:
+#              #43 (mirror IS content-addressed build system — the
+#               ancestor; this shard is its commit-as-fold altitude
+#               form; closes the N-cascade recognition chain),
+#              #50 (Bateson form/behaviour partition — grounds the
+#               partition at the @substrate altitude; commit_as_fold
+#               is behaviour-side, discharges to form-side
+#               @mirror/store/git),
+#              #51 (mirror as expanding Hilbert space; kintsugi as
+#               coherence-preservation mechanism — commit_as_fold
+#               is the observability moment where the expanding
+#               Hilbert dimension becomes projectable to git
+#               observers),
+#              #55 (form/process partition at family-root altitude
+#               — @mirror form-side, @kintsugi process-side; this
+#               shard witnesses the partition at species altitude),
+#              #53 (property/fracture bilateral — commit_as_fold
+#               is the fracture-body half at batch altitude for
+#               N1's property).
+# Recognition promotions (this tick):
+#              cli-verb-pair-specialises-species-action-pair —
+#               third-witness; PROMOTES from CANDIDATE to LANDED
+#               via `mirror kintsugi --commit ⇔ commit_as_fold`.
+#              cross-species-discharge-is-first-class — third-
+#               witness; PROMOTES from CANDIDATE to LANDED via
+#               commit_as_fold's three-species composition
+#               (N2 action_cache + N4 impacted_by + @mirror/store/git.set_ref).
+# Feedback anchors:
+#              [[feedback-substrate-already-had-the-word]] (the
+#               commit-as-fold primitive was declared implicitly
+#               through git's own commit-object fold; this species
+#               names the access surface at substrate altitude),
+#              [[feedback-craft-not-deliver]] (this shard lands
+#               the terminal N-cascade tick; one tick after the
+#               other — N1 → N2 → N3 → N4 → N5),
+#              [[feedback-always-tdd-no-shortcuts]] (RED first;
+#               Reed's `4f98b61` RED tick pairs with this GREEN
+#               landing),
+#              [[feedback-no-bare-types]] (parameters are typed
+#               `oid` + `ref_name`; no bare primitives escape the
+#               commit_as_fold action signature).
+# Related shards:
+#              kintsugi.mirror (@kintsugi family-root; the process-
+#               side sibling that grounds this species; declares
+#               the form/process partition #55 at family-root
+#               altitude),
+#              mirror/store.mirror (@mirror/store family-root; the
+#               form-side counterpart declaring the six-op surface
+#               + `impacted_by` (N4) this species discharges
+#               through),
+#              mirror/store/git.mirror (@mirror/store/git; the form-
+#               side sibling at the git wire altitude; declares
+#               `set_ref` this species' commit_as_fold discharges
+#               to for the atomic ref update),
+#              mirror/store/action_cache.mirror (N2 @mirror/store/action_cache;
+#               declares the derived_predicates verdict-cache
+#               surface this species folds over; the fold subject
+#               of commit_as_fold),
+#              epistemologic/property/verdict_is_content_addressed.mirror
+#               (N1 predicate — the invariant that authorizes the
+#               fold's memoization by construction; landed at
+#               `2857fb1`),
+#              glass.mirror (verdict / imperfect / transparency —
+#               the substrate vocabulary commit_as_fold returns).
+# Path-namespace property: this file at
+# `shards/kintsugi/store/git.mirror` declares `@kintsugi/store/git`
+# per `@epistemologic/pact/path_matches_namespace`.
+
+---
+
+in @prism
+in @meta
+in @glass
+in @kintsugi
+in @mirror/store
+in @mirror/store/git
+in @mirror/store/action_cache
+
+# === The @kintsugi/store/git sub-prism ===
+#
+# Per the form/process partition (#55): @kintsugi is process-side
+# (transformation, mutation, dynamics); @mirror/store/git is form-
+# side (state observation at git-wire altitude). This species
+# inherits from @kintsugi at family-root altitude. Sibling name-
+# shape to @mirror/store/git under @mirror.
+#
+# The five-operation gauge action at this species' altitude
+# operates over `commit_fold` — the typed handle for one open
+# batch-fold session bridging the action_cache to the git wire.
+prism @kintsugi/store/git <= @kintsugi {
+  focus commit_fold
+  project commit_fold
+  split commit_fold
+  shift commit_fold
+  settle commit_fold
+}
+
+# === The commit_fold handle ===
+#
+# A typed reference per [[feedback-no-bare-types]] naming one open
+# batch-fold session. Bridges the action_cache carrier (fold
+# subject) to the git wire (state discharge). Realisation layer
+# binds the underlying carrier.
+#
+# Construction: implicit via the family-root's `settle` at this
+# altitude once a crystal head + git store are bound. Equality is
+# realisation-instance identity, not content-identity.
+type commit_fold = ref
+
+# === commit_message — the batch settlement description ===
+#
+# The message string attached to the fold's resulting git commit.
+# Lifted from the substrate scalar floor as a typed reference per
+# the [[feedback-no-bare-types]] discipline; naming distinguishes
+# commit-message strings from arbitrary strings at the type level.
+type commit_message = ref(scalar/string)
+
+# === commit_as_fold — THE TERMINAL N-CASCADE ACTION ===
+#
+# THE FOLD-AND-COMMIT SUBSTRATE PRIMITIVE. Given a batch settlement
+# request (commit message + target ref name), perform the terminal
+# settlement of the kintsugi-loop batch:
+#
+#   1. FOLD over @mirror/store/action_cache's pending verdict
+#      writes since the previous fold. The fold IS a content-
+#      address computation: writes → new derived_predicates oid.
+#   2. Consult @mirror/store.impacted_by on the prior head OID to
+#      determine the rebase-walk closure of downstream OIDs whose
+#      cached verdicts may be affected. Names the invalidation set.
+#   3. Discharge state mutation via
+#      @mirror/store/git.set_ref(ref_name, new_commit_oid). Atomic
+#      pointer update at the git wire altitude.
+#
+# The composition — N2 action_cache (fold subject) + N4
+# impacted_by (rebase walk) + @mirror/store/git.set_ref (state
+# discharge) — is first-class at the substrate-decl surface where
+# all three species agree on `oid`. Cross-species discharge is
+# first-class per the third-witness recognition promoted this tick.
+#
+# The wire's standard imperfect return per @glass's `imperfect(a,
+# e, l)` floor:
+#
+#   success(commit_oid: oid) — FOLD SETTLED. The new commit oid
+#                              is live at the target ref; git log
+#                              observers see it.
+#   partial(opacity_map)     — FOLD PARTIAL. Some writes settled
+#                              but ref-update contended (rare;
+#                              parallels @mirror/store.write
+#                              semantics).
+#   failure(reason)          — FOLD FAILED. Caller retries or
+#                              bails; the action_cache carrier is
+#                              unchanged (transactional invariant).
+#
+# The obligation block `{ \ }` discharges at the realisation
+# boundary through the three cited actions.
+commit_as_fold(msg: commit_message, ref: ref_name) -> imperfect { \ }
+
+out @kintsugi/store/git
+out commit_fold
+out commit_message
+out commit_as_fold
