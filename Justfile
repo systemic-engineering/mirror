@@ -139,7 +139,15 @@ pre-commit:
     # Saves 30-60s per commit. JSON gate retained for verdict fidelity
     # (Win 3 grep-based gate deferred; needs care around dark verdicts).
     just build-debug
-    {{MIRROR_BIN_DEBUG}} kintsugi mirror.spec | tee /tmp/mirror-spec-verdict.mirror
+    # Redirect to file then cat instead of `| tee` — the tee pipeline
+    # causes cargo descendants to inherit the read-end and hold it open,
+    # deadlocking mirror kintsugi's spawn+wait+drain even with the
+    # bootstrap/src/lib.rs `.output()` → spawn+wait+threaded-drain fix
+    # (912c33c). Discovered 2026-07-07 by Taut deep-dive during N-cascade
+    # N5 debugging. The redirect keeps the same operator-visible output
+    # via the subsequent `cat`, without the pipe hold.
+    {{MIRROR_BIN_DEBUG}} kintsugi mirror.spec > /tmp/mirror-spec-verdict.mirror
+    cat /tmp/mirror-spec-verdict.mirror
     {{MIRROR_BIN_DEBUG}} kintsugi --out=@data/json mirror.spec > /tmp/mirror-spec-verdict.json
     jq -e '.verdict != "failure"' /tmp/mirror-spec-verdict.json > /dev/null || ( \
         echo "✖ mirror kintsugi mirror.spec: verdict failure — see /tmp/mirror-spec-verdict.mirror" >&2; \
