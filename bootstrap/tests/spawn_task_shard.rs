@@ -91,16 +91,14 @@ fn t02_task_missing_file_errors_nonzero_with_readable_stderr() {
 fn t03_envelope_carries_mission_field_when_task_set() {
     let out = run_spawn(&[TEST_PEER, "--task", TEST_MISSION, "--hello-world"]);
     let stdout = String::from_utf8_lossy(&out.stdout);
-    let envelope: serde_json::Value = serde_json::from_str(stdout.trim())
-        .expect("envelope must be valid JSON");
-    let mission = envelope["mission"]
-        .as_str()
-        .unwrap_or_else(|| {
-            panic!(
-                "envelope.mission must be a string when --task is set; got:\n{}",
-                stdout
-            )
-        });
+    let envelope: serde_json::Value =
+        serde_json::from_str(stdout.trim()).expect("envelope must be valid JSON");
+    let mission = envelope["mission"].as_str().unwrap_or_else(|| {
+        panic!(
+            "envelope.mission must be a string when --task is set; got:\n{}",
+            stdout
+        )
+    });
     // Fixture mission contains the distinctive substring "collapse the
     // substrate". Match on that so the assertion is content-anchored to the
     // fixture (any drift between fixture and assertion is caught here).
@@ -115,8 +113,8 @@ fn t03_envelope_carries_mission_field_when_task_set() {
 fn t04_no_mission_field_without_task_flag() {
     let out = run_spawn(&[TEST_PEER, "--hello-world"]);
     let stdout = String::from_utf8_lossy(&out.stdout);
-    let envelope: serde_json::Value = serde_json::from_str(stdout.trim())
-        .expect("envelope must be valid JSON");
+    let envelope: serde_json::Value =
+        serde_json::from_str(stdout.trim()).expect("envelope must be valid JSON");
     assert!(
         envelope.get("mission").is_none(),
         "spawn without --task must NOT include a 'mission' field; got:\n{}",
@@ -128,8 +126,8 @@ fn t04_no_mission_field_without_task_flag() {
 fn t05_mission_composes_with_peer_recall_both_present() {
     let out = run_spawn(&[TEST_PEER, "--task", TEST_MISSION, "--hello-world"]);
     let stdout = String::from_utf8_lossy(&out.stdout);
-    let envelope: serde_json::Value = serde_json::from_str(stdout.trim())
-        .expect("envelope must be valid JSON");
+    let envelope: serde_json::Value =
+        serde_json::from_str(stdout.trim()).expect("envelope must be valid JSON");
     assert!(
         envelope["mission"].is_string(),
         "envelope.mission must be present as a string"
@@ -155,8 +153,8 @@ fn t06_envelope_mission_and_composition_pieces_coexist() {
     // named stub — v0 does NOT dispatch through @fate on the mission text.
     let out = run_spawn(&[TEST_PEER, "--task", TEST_MISSION, "--hello-world"]);
     let stdout = String::from_utf8_lossy(&out.stdout);
-    let envelope: serde_json::Value = serde_json::from_str(stdout.trim())
-        .expect("envelope must be valid JSON");
+    let envelope: serde_json::Value =
+        serde_json::from_str(stdout.trim()).expect("envelope must be valid JSON");
     let pieces = envelope["composition_pieces"]
         .as_object()
         .expect("composition_pieces present");

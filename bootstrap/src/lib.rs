@@ -3034,10 +3034,15 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
         "spawn" => match positional {
             Some(p) => {
                 let hello_world = args.iter().any(|a| a == "--hello-world");
-                cmd_spawn(p, hello_world, ctx)
+                let task = args
+                    .iter()
+                    .position(|a| a == "--task")
+                    .and_then(|i| args.get(i + 1))
+                    .map(|s| s.as_str());
+                cmd_spawn(p, hello_world, task, ctx)
             }
             None => {
-                merr!("usage: mirror spawn <peer-home> [--hello-world]");
+                merr!("usage: mirror spawn <peer-home> [--hello-world] [--task <mission-file>]");
                 1
             }
         },
@@ -3810,7 +3815,7 @@ fn parse_settle_on_predicates(body: &str) -> Vec<String> {
 ///   - No membership-side-effects (spawn does NOT add members to the pack).
 ///   - No stateless-return (envelope acknowledges persisted state even
 ///     though v0 does not yet store it; Phase H wires storage).
-fn cmd_spawn(peer_home: &str, hello_world: bool, ctx: &Ctx) -> i32 {
+fn cmd_spawn(peer_home: &str, hello_world: bool, task: Option<&str>, ctx: &Ctx) -> i32 {
     // Piece 1 (insight §2.1): cli surface. The peer-home argument is the
     // single positional. Context (frame, repository, pack) is resolved
     // FROM peer-home, not passed in. Resolve via ctx so relative
@@ -3862,6 +3867,38 @@ fn cmd_spawn(peer_home: &str, hello_world: bool, ctx: &Ctx) -> i32 {
     let lead_str = pack_lead.unwrap_or_else(|| "<no-lead>".to_string());
 
     if hello_world {
+        // T1 GREEN — bare-agent collapse arc: read the mission file (if
+        // `--task <path>` was supplied) and carry the text into the
+        // envelope as `mission`. Structural discipline:
+        //   - The mission is filesystem-path-shaped (@f); resolve via
+        //     ctx.resolve so relative paths honor dispatch context.
+        //   - Read failure exits with code 3 (distinct from spec-read=1
+        //     and store-open=2) so downstream can discriminate.
+        //   - Envelope key `mission` is emitted only when task is
+        //     Some(_); absent (no null, no empty string) otherwise, so
+        //     the pre-existing 5 spawn envelopes stay byte-identical.
+        //   - No @fate dispatch at v0. Recognition #58's inference piece
+        //     stays `partial@recall` in composition_pieces; the mission
+        //     enters the envelope as linear at winding (0,0) per
+        //     `@shatter(_, mission)`. Phase H wires @fate.roll.
+        let mission_text: Option<String> = match task {
+            None => None,
+            Some(path) => {
+                let mission_path = ctx.resolve(path);
+                match fs::read_to_string(&mission_path) {
+                    Ok(s) => Some(s),
+                    Err(e) => {
+                        merr!(
+                            "spawn: cannot read mission task {}: {}",
+                            mission_path.display(),
+                            e
+                        );
+                        return 3;
+                    }
+                }
+            }
+        };
+
         let source_decl =
             extract_spec_source_decl(&source).unwrap_or_else(|| "<no-source-decl>".to_string());
 
@@ -4008,7 +4045,7 @@ fn cmd_spawn(peer_home: &str, hello_world: bool, ctx: &Ctx) -> i32 {
             )
         };
 
-        let envelope = serde_json::json!({
+        let mut envelope = serde_json::json!({
             "spec_version": "v0.1.0",
             "spawn": "hello_world",
             "peer": peer_name,
@@ -4028,6 +4065,15 @@ fn cmd_spawn(peer_home: &str, hello_world: bool, ctx: &Ctx) -> i32 {
             },
             "peer_recall": peer_recall,
         });
+        // T4 backward-compat: `mission` key is emitted ONLY when task
+        // is Some(_). Absent (not null, not empty) otherwise so the
+        // pre-existing 5 spawn envelopes stay byte-identical.
+        if let Some(mission) = mission_text {
+            envelope
+                .as_object_mut()
+                .expect("spawn envelope is a JSON object")
+                .insert("mission".to_string(), serde_json::Value::String(mission));
+        }
         let s = format!("{}\n", envelope);
         _raw_stdout(s.as_bytes());
         return 0;
