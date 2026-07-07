@@ -1,0 +1,10 @@
+collapse the substrate state space to a stable @torus architecture.
+
+first empirical witness of `@shatter(_, mission)` at winding (0,0) on the
+mirror-project peer's torus. the observation returns to the operator as a
+proposed diff.
+
+rules:
+- read the corpus state (envelope + shards + docs).
+- propose the smallest unified diff that closes observed drift.
+- do not commit. return diff to stdout for reed+alex inspection.
