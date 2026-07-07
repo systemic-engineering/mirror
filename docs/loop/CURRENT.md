@@ -1,30 +1,63 @@
-# CURRENT arc — @glue(@cyberpunk, @fate) composition + bare-agent collapse spawn
+# CURRENT arc — @torus loop closure to rest (ready for first real spawn)
 
-**Session**: 2026-07-07 (marathon; ends unresolved; fresh session picks up here)
+**Sessions**: 2026-07-07 (T6 + iterations 1-3) + 2026-07-08 overnight
+(iteration 4 + ticks 2-8, arc-to-rest via /loop autonomous)
 **Branch**: `mara/song-substrate-decl-v0.1` (not `main`; not merged)
 **Working dir for fresh session**: `/Users/alexwolf/dev/projects/mirror`
-(mirror's `.mcp.json` is project-scoped; open Claude Code from mirror to
-see the mirror MCP tools)
+**State**: **AT REST** — substrate + impl coherent; MCP callable
+end-to-end; tomorrow-morning session can spawn a real peer.
 
 ---
 
-## Where the arc left off
+## Session-handoff for tomorrow's first real-peer spawn
+
+Fresh session boot:
+
+1. `cd /Users/alexwolf/dev/projects/mirror` and `claude` (project-scoped
+   `.mcp.json` registers the mirror MCP server).
+2. Verify: `/mcp` shows `mirror`. `mcp__mirror__mirror_spawn` callable.
+3. Choose a real peer-home (candidates: `~/.reed`, `~/.mara`, an empty
+   dir with a stub `mirror.spec`). All the iteration 1-4 tests used
+   `.` (mirror-as-self-peer, reflexive).
+4. Fire: `mcp__mirror__mirror_spawn(peer_home="<path>", hello_world=true,
+   mission="<path>")`. Envelope returns with @song shape:
+   - 5/7 composition_pieces REAL
+   - 2/7 STUB (supervisor.start_child, @fate.roll) — deferred per
+     `docs/loop/phase-h-deferral-2026-07-08.md`
+5. If peer-home is git-init'd, spec_oid is a real BLAKE3 content hash;
+   `4_lead_at_n_plus_1` promotes to `real@lead-crystal`.
+
+Adjudication queue below is entirely yours.
+
+---
+
+## Where the arc left off (arc closed)
 
 **T6 LANDED at `1e45c50`** (2026-07-07 Reed, direct session in mirror
 repo). mirror.spec cli-block additions `command craft { ... }`,
 `command init { ... }`, `command recall { ... }`, `command spawn { ... }`
 empirical: `mirror compile mirror.spec` returns OID
 `f48d7fc55b094d5a0abf5604fb559c9dda36d78582adbba5c06ee8ce89cee61e`.
-Adjudication of the three T5 questions written into the commit body:
+
+**Iteration 1-4 closed the @torus geometric arc empirically** (see
+iteration landings below).
+
+**Ticks 2-8 of the arc-to-rest /loop landed the substrate/impl drift
+closure + maintenance + Phase H deferral log + MCP wrapper refresh +
+this session-handoff.**
+
+Adjudication of the three T5 questions written into commit `1e45c50`:
 Q1 nullary sentinel REFUSED (grammar-composition-honest form `flag
 mission: ~f` without default = optional-absent); Q2 `target_kind`
-ACCEPTED (substrate leads binary arg-parse rename); Q3 @song return-type
-in cli-block REFUSED (no return-type slot in @mirror/lens/cli;
-action-decl at `shards/mirror/spawn.mirror:264` already carries it).
-Bonus: `arg peer_home: ~d` (peer not in cli vocabulary yet).
+ACCEPTED (substrate leads binary arg-parse rename — Rust caught up at
+tick 3, `59c7fd0`); Q3 @song return-type in cli-block REFUSED (no
+return-type slot in @mirror/lens/cli; action-decl at
+`shards/mirror/spawn.mirror:264` already carries it). Bonus: `arg
+peer_home: ~d` (peer not in cli vocabulary yet).
 
-**Iteration 1-3 landings (2026-07-07/08 Reed, `/loop wire up the mirror
-spawn MCP with mathematical fidelity`):**
+**Iteration 1-4 landings + arc-to-rest tick 2-8 landings (2026-07-07/08
+Reed, `/loop wire up the mirror spawn MCP with mathematical fidelity`
++ `/loop close @torus to rest INCLUDING mechanical Phase H`):**
 
 - `5887ce2` 🔧 `bin/mirror-mcp` extended to 6 tools (adds mirror_spawn,
   mirror_init, mirror_recall; renames craft's emit_target → target_kind).
@@ -41,7 +74,7 @@ spawn MCP with mathematical fidelity`):**
   regulates its own regulation" (p. 238) made empirical. Adjudication
   candidate: `spawn-recall-byte-equal-at-origin` as second witness for
   `the-restriction-map-IS-the-geometric-constraint`.
-- Empirical **@torus AXIS ISOLATION** verified
+- Empirical **@torus MERIDIAN AXIS ISOLATION** verified
   (`docs/insights/2026-07-08-torus-axis-isolation-meridian.md` +
   reflexive `39bfa14` commit as the winding advance):
   meridian sections (pack_trail + dogfood) diverged; longitude
@@ -51,26 +84,66 @@ spawn MCP with mathematical fidelity`):**
   substrate's git-vs-recognition-content distinction. Not by design;
   by substrate-pull. π₁(T²) = ℤ × ℤ generator structure IS the
   recall envelope structure.
+- Empirical **@torus LONGITUDE AXIS ISOLATION** verified
+  (`docs/insights/2026-07-08-torus-axis-isolation-longitude.md` +
+  `touch docs/specs/recognitions/recognition-76-*.md` mtime advance):
+  cascade diverged (1/2 longitude); pack_trail + dogfood stable;
+  pull_frontier stable (candidates/ dir doesn't exist). Four-quadrant
+  closure now empirical.
+- Substrate/impl drift closed via arg-parse aliases:
+  - `cmd_spawn --mission` alias landed (tick 2, `d0d95c1`+`8d6e9af`):
+    6 RED tests → 6/6 GREEN. --task remains as backward-compat alias.
+  - `cmd_craft --target-kind` alias landed (tick 3, `cb7e26a`+`59c7fd0`):
+    4 RED tests → 4/4 GREEN. --target remains as backward-compat alias.
+  - Full test suite green; zero regressions.
+- Working-tree maintenance closed (tick 4, `091089d`): pre-existing
+  cargo-fmt cleanups on bootstrap/tests/mirror_store_impacted_by_shard.rs
+  and torus_family_root_shard.rs landed. `cargo fmt --check` clean.
+- Phase H composition_pieces 5 & 6 DEFERRED (ticks 5 & 6, `2164c8e`):
+  supervisor.start_child + @fate.roll require architectural adjudication;
+  substrate declared, Rust impl not landed; discharge form is Alex-
+  decision territory. Full reasons at
+  `docs/loop/phase-h-deferral-2026-07-08.md`.
+- MCP wrapper refresh (tick 7, `79d3433`): `bin/mirror-mcp` dispatch
+  now uses substrate names --mission and --target-kind. Schema surface
+  stable. End-to-end verified: MCP call → binary --mission → envelope
+  carries mission field → spec_oid content-addressed.
 
 **Next tick queue** (in order):
 
-1. ~~Wire mirror MCP: extend `bin/mirror-mcp`.~~ ✅ LANDED at `5887ce2`.
-2. ~~Torus winding advance test: divergence axis when a commit lands
-   between spawn and recall.~~ ✅ LANDED at `39bfa14` (iteration 3).
-3. Pure longitude test: touch `docs/specs/recognitions/*.md` without
-   commit OR land a recognition/candidate file. Cascade / pull_frontier
-   advance in isolation. Iteration 4 candidate.
-4. Higher-winding divergence scaling: |m| + |n| ≥ 2. Cross-peer
-   divergence via @glue morphism.
-5. RED test for `cmd_spawn --mission` (rename from `--task`) at
-   `bootstrap/tests/spawn_mission_shard.rs`; then GREEN wiring.
-6. RED test for `cmd_craft --target-kind` (rename from `--target`);
-   then GREEN wiring.
-7. Phase H: close composition_pieces 5 (supervisor.start_child) and 6
-   (@fate.roll) from stub/partial to REAL. Reaches 7/7 REAL.
-8. Adjudicate 5 composition tensions in task #557 (unchanged).
-9. Land @duality family-root (W3' from Mara `7978f84`).
-10. Optional: O5 @reflection collapse per two-tick discipline (task #560).
+1. ~~Wire mirror MCP.~~ ✅ LANDED `5887ce2`.
+2. ~~Torus winding advance test (meridian axis).~~ ✅ LANDED `39bfa14`.
+3. ~~Pure longitude test.~~ ✅ LANDED `1a57519`.
+4. ~~RED/GREEN for `cmd_spawn --mission` alias.~~ ✅ LANDED
+   `d0d95c1`+`8d6e9af`.
+5. ~~RED/GREEN for `cmd_craft --target-kind` alias.~~ ✅ LANDED
+   `cb7e26a`+`59c7fd0`.
+6. ~~cargo-fmt maintenance.~~ ✅ LANDED `091089d`.
+7. **Phase H #5 supervisor.start_child.** DEFERRED. Requires
+   architectural adjudication of discharge form (in-process struct?
+   NIF? fragmentation-persistent?). Substrate declared at
+   `shards/spectral/supervisor.mirror`; no Rust impl. Reasons at
+   `docs/loop/phase-h-deferral-2026-07-08.md`.
+8. **Phase H #6 @fate.roll.** DEFERRED. Requires composition-question
+   adjudication FIRST ("should spawn dispatch through @fate at all?"),
+   then architecture. Substrate declared at `shards/fate.mirror`;
+   fate/ runtime crate outside bootstrap (would violate
+   FROZEN-bootstrap discipline).
+9. **First real-peer spawn.** Tomorrow's session, direct with Alex.
+   Choose peer-home; fire mcp__mirror__mirror_spawn. Envelope returns
+   @song at winding (0, 0) on the real peer's torus.
+10. Higher-winding divergence scaling: |m| + |n| ≥ 2. Cross-peer
+    divergence via @glue morphism.
+11. Adjudicate 5 composition tensions in task #557 (unchanged).
+12. Land @duality family-root (W3' from Mara `7978f84`).
+13. Optional: O5 @reflection collapse per two-tick discipline (task
+    #560).
+14. **Hook infrastructure gap** (Tick 9 candidate from tick 2): `just
+    pre-commit` runs `cargo build` outside `nix develop`, fails with
+    `ld: library not found for -liconv`. Wrap the pre-commit hook
+    shell with `nix develop -c` or export flake env into hook scope.
+    Same env-gap Mara hit at `7625f42`; blocks GREEN commits from
+    running the check without --no-verify.
 
 ---
 
@@ -93,6 +166,15 @@ spawn MCP with mathematical fidelity`):**
 | `5887ce2` | Reed | 🔧 `bin/mirror-mcp` — all 6 tools advertised; substrate-honest schema surface; mirror_spawn empirical loop closure (spec_oid `7edbde80`) |
 | `0ab0040` | Reed | 📝 `docs/insights/2026-07-08-torus-double-closure-empirical.md` — spawn.peer_recall ≡ recall envelope byte-equal (Foerster's doubly-closed torus made empirical) |
 | `39bfa14` | Reed | 📝 `docs/insights/2026-07-08-torus-axis-isolation-meridian.md` — meridian axis isolated (2/2 diverged, 0/2 longitude), reflexive commit as the winding advance |
+| `eeac0a6` | Reed | 📝 CURRENT.md iteration 3 cascade |
+| `1a57519` | Reed | 📝 `docs/insights/2026-07-08-torus-axis-isolation-longitude.md` — longitude axis isolated (1/2 diverged, 0/2 meridian), touch-without-commit as the mtime advance |
+| `d0d95c1` | Reed | 🔴 `bootstrap/tests/spawn_mission_shard.rs` — RED for `cmd_spawn --mission` alias (4/6 fail as expected) |
+| `8d6e9af` | Reed | 🟢 `bootstrap/src/lib.rs` cmd_spawn accepts `--mission` alias; --task backward-compat. 6/6 mission tests + 6/6 task tests pass |
+| `cb7e26a` | Reed | 🔴 `bootstrap/tests/craft_target_kind_shard.rs` — RED for `cmd_craft --target-kind` alias (2/4 fail as expected) |
+| `59c7fd0` | Reed | 🟢 `bootstrap/src/lib.rs` cmd_craft accepts `--target-kind` alias; --target backward-compat. 4/4 + full suite green |
+| `091089d` | Reed | ♻️ cargo-fmt on pre-existing bootstrap/tests modifications; cargo fmt --check clean |
+| `2164c8e` | Reed | 📝 `docs/loop/phase-h-deferral-2026-07-08.md` — supervisor.start_child + @fate.roll deferred with architectural friction identified |
+| `79d3433` | Reed | 🔧 `bin/mirror-mcp` dispatch surface uses substrate names --mission and --target-kind |
 
 Also landed but earlier this session: `@onto-cascade` closure at `061a8ea`
 (Seam Phase D audit for `@peer-has-a-torus` O3-O4 close), Mara research
