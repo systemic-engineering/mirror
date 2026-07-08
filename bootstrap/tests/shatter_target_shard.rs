@@ -144,7 +144,12 @@ fn t03_target_flag_parsed_without_dispatch_layer_error() {
 
 #[test]
 fn t04_target_with_unknown_ref_rejects_substrate_honestly() {
-    let out = run_shatter(&[TEST_OID, &tmp_out_path("t04"), "--target", "@nonexistent/nope"]);
+    let out = run_shatter(&[
+        TEST_OID,
+        &tmp_out_path("t04"),
+        "--target",
+        "@nonexistent/nope",
+    ]);
     let stderr = String::from_utf8_lossy(&out.stderr);
     assert_ne!(
         out.status.code(),

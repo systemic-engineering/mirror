@@ -621,7 +621,7 @@ fn usage() {
     merr!("  mirror <command> [args...]            (legacy subcommand surface)");
     merr!("  mirror '<mq-query>' < input           (mq pipeline over stdin)");
     merr!("  mirror <input> '<mq-query>'           (mq pipeline over input file)");
-    merr!("commands: compile [--strict] <file>, craft [--strict] [--target-kind <crystal|binary>] <target>, kintsugi [--ci [--out @data/json|@data/mirror|@io/dir('path')]] [--shatter N] <file|dir>, init [--install-hooks] <repo-path>, recall <spec-dir>, spawn [--hello-world] [--mission <mission-file>] <peer-home>");
+    merr!("commands: compile [--strict] <file>, craft [--strict] [--target-kind <crystal|binary>] <target>, kintsugi [--ci [--out @data/json|@data/mirror|@io/dir('path')]] [--shatter N] <file|dir>, init [--install-hooks] <repo-path>, recall <spec-dir>, spawn [--hello-world] [--mission <mission-file>] <peer-home>, shatter <oid> <out> [--target @data/json|@data/mirror|auto]");
     merr!("examples:");
     merr!("  cat mirror.ll | mirror '@code/llvm/ir |> @mirror/kintsugi |> @mirror/butterfly'");
 }
@@ -1826,6 +1826,28 @@ impl Default for CiFormat {
 /// glasses live at `shards/mirror/data/<X>.mirror` (Mara's T16 cascade);
 /// this hardcoded dispatch is the @io floor that a future tick lifts to
 /// a substrate-driven registry via the cross-shard resolver.
+///
+/// ## Lifted from kintsugi-scoped to shatter-scoped (Tick 0 Landing 3)
+///
+/// Per Taut LRM scout `1658b95` + mirror.spec cli-block `flag target: str`
+/// (Landing 1, OID
+/// `796f3289629835f2e05cb1ac98559b5584fae8b2b76c2c9167eb91f4921cefb8`):
+/// this helper is now the shared parser for BOTH consumers:
+///
+/// - `cmd_kintsugi_single` / `dispatch_out_substrate_ref` — the existing
+///   `--out @data/json` chain that maps the substrate ref to `CiFormat`
+///   for the kintsugi @ci envelope emission.
+/// - `cmd_shatter` — the Tick 0 Landing 2 consumer that routes
+///   `--target @data/<X>` for @shatter's codomain per
+///   `docs/specs/shatter-is-the-io-linearization-operator.md` §4.1
+///   (Mara `583b939`).
+///
+/// The two consumers share the same substrate-ref vocabulary (the same
+/// receiver glasses at `shards/mirror/data/<X>.mirror`), so the parse
+/// function is the right composition surface — not a per-command
+/// dispatch table. Substrate-already-had-the-word: the function was
+/// generic-shaped from day one; the lift is a documentation clarification
+/// + the shatter consumer wiring.
 fn parse_substrate_ref_to_format(s: &str) -> Option<CiFormat> {
     match s {
         "@data/json" => Some(CiFormat::Json),
@@ -2864,6 +2886,15 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
     let mut out_dir: Option<String> = None;
     let mut ci = false;
     let mut ci_format: CiFormat = CiFormat::default();
+    // Tick 0 Landing 2 — `mirror shatter --target <substrate-ref>`. When
+    // args[1] == "shatter", `--target` names @shatter's codomain per
+    // `docs/specs/shatter-is-the-io-linearization-operator.md` §4.1
+    // (`583b939`) + mirror.spec cli-block `flag target: str = "auto"`
+    // (Landing 1, OID
+    // `796f3289629835f2e05cb1ac98559b5584fae8b2b76c2c9167eb91f4921cefb8`).
+    // Otherwise `--target` remains craft's `--target-kind` alias.
+    let subcommand_is_shatter = args[1] == "shatter";
+    let mut shatter_target: String = "auto".to_string();
     let mut i = 2;
     while i < args.len() {
         let a = &args[i];
@@ -2871,6 +2902,42 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
             no_cache = true;
         } else if a == "--strict" {
             strict = true;
+        } else if subcommand_is_shatter && (a == "--target" || a.starts_with("--target=")) {
+            // Shatter-scoped: `--target` is a substrate-ref selector,
+            // NOT craft's `--target-kind` alias. Routes through the
+            // lifted `parse_substrate_ref_to_format` (Landing 3) — the
+            // same helper the kintsugi `--out` chain uses. The `"auto"`
+            // sentinel is the default from mirror.spec's cli-block and
+            // is accepted without a substrate-ref parse.
+            let value: String = if a == "--target" {
+                if i + 1 >= args.len() {
+                    merr!("--target requires a substrate ref (e.g. @data/json or @data/mirror) or `auto`");
+                    return 1;
+                }
+                i += 1;
+                args[i].clone()
+            } else {
+                // strip_prefix path — already includes the value after `=`.
+                a["--target=".len()..].to_string()
+            };
+            if value == "auto" {
+                shatter_target = value;
+            } else if value.starts_with('@') {
+                if parse_substrate_ref_to_format(&value).is_none() {
+                    merr!(
+                        "no projection registered for shatter target substrate ref: {} (try @data/json or @data/mirror)",
+                        value
+                    );
+                    return 1;
+                }
+                shatter_target = value;
+            } else {
+                merr!(
+                    "--target requires a substrate ref (@<X>) or `auto`; got: {}",
+                    value
+                );
+                return 1;
+            }
         } else if a == "--target" || a == "--target-kind" {
             // Substrate-honest name (mirror.spec 1e45c50 cli-block declares
             // `flag target_kind: str = "binary"`) is --target-kind. --target
@@ -3065,12 +3132,90 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                 1
             }
         },
+        "shatter" => {
+            // Tick 0 Landing 2 — `mirror shatter <oid> <out> [--target
+            // <substrate-ref>]`. Per mirror.spec cli-block (Landing 1;
+            // OID
+            // `796f3289629835f2e05cb1ac98559b5584fae8b2b76c2c9167eb91f4921cefb8`)
+            // and `docs/specs/shatter-is-the-io-linearization-operator.md`
+            // §4.1 (Mara `583b939`).
+            //
+            // Two positional args (oid + out) — extract the second
+            // positional inline since the shared `positional` helper
+            // above only returns the first.
+            let mut positionals: Vec<&str> = Vec::new();
+            let mut j = 2;
+            while j < args.len() && positionals.len() < 2 {
+                let a = &args[j];
+                if a == "--target"
+                    || a == "--target-kind"
+                    || a == "--shatter"
+                    || a == "--transform"
+                    || a == "--out"
+                {
+                    j += 2;
+                    continue;
+                }
+                if a.starts_with("--") {
+                    j += 1;
+                    continue;
+                }
+                positionals.push(a.as_str());
+                j += 1;
+            }
+            if positionals.len() < 2 {
+                merr!("usage: mirror shatter <oid> <out> [--target @data/json|@data/mirror|auto]");
+                1
+            } else {
+                cmd_shatter(positionals[0], positionals[1], &shatter_target, ctx)
+            }
+        }
         other => {
             merr!("unknown: {}", other);
             1
         }
     };
     rc
+}
+
+// ───────────────────────────────────────────────────────────────────────────────
+// `mirror shatter <oid> <out> [--target <substrate-ref>]` — Tick 0 Landing 2
+// stub for the cli surface prerequisite of the 6-tick cascade (path α).
+// ───────────────────────────────────────────────────────────────────────────────
+
+/// `mirror shatter <oid> <out> [--target <substrate-ref>]` — Tick 0
+/// Landing 2 stub.
+///
+/// Per Taut LRM scout `1658b95` + Mara `583b939` (@shatter × @io
+/// canonical spec §4.1) + mirror.spec cli-block Landing 1 (OID
+/// `796f3289629835f2e05cb1ac98559b5584fae8b2b76c2c9167eb91f4921cefb8`):
+/// this dispatch arm names the arg surface (positional oid + positional
+/// out + `--target` substrate-ref selector). The real projection
+/// emission — @shatter's codomain body per §4.1 — is forward-promised
+/// for a follow-up tick.
+///
+/// Substrate-honest: v0 body returns exit 2 with a diagnostic naming
+/// which target was requested and that the emission wiring is not yet
+/// discharged. Consumers pull. The arg-parse layer routing IS the
+/// load-bearing landing for this tick — that's what the 6-tick cascade
+/// discharge depends on per Taut's scout.
+///
+/// The `--target` value has already been validated at the arg-parse
+/// layer (either `"auto"` or a substrate ref that
+/// `parse_substrate_ref_to_format` recognized). This function assumes
+/// well-formed input.
+fn cmd_shatter(oid: &str, out: &str, target: &str, _ctx: &Ctx) -> i32 {
+    // Substrate-honest v0: name the state so consumers see the pull
+    // frontier at the @io boundary. The next-tick discharge routes
+    // through `parse_substrate_ref_to_format` (Landing 3, already
+    // callable) to select the projection emission machinery.
+    merr!(
+        "mirror shatter: target `{}` for oid={} out={} not yet wired at v0 (substrate-honest stub per Tick 0 Landing 2; the projection emission body is forward-promised)",
+        target,
+        oid,
+        out
+    );
+    2
 }
 
 // ───────────────────────────────────────────────────────────────────────────────
