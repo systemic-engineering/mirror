@@ -21,6 +21,51 @@ in @mirror/lens
 #      altitude — no separate handler reference (spec §10.1).
 #      The substrate-pull collapses dispatch into structure.
 #
+# Tick 1 landing (2026-07-08 evening, Mara — the 6-tick cascade):
+#   4. `command X { command Y { ... } }` — subcommand nesting IS the
+#      recursive `command` head. Depth-2 was RESERVED but not minted
+#      per docs/specs/cli-as-prism.md §3.2; it is now MINTED. The
+#      grammar admits `command` inside a `command` body directly
+#      (Option A: recursive same-keyword nesting). See §keywords /
+#      subcommand nesting below. Sitting on top of Reed's synthesis
+#      at docs/specs/beam-as-substrate-primitive.md §3.4 (b6358c1)
+#      which forward-promised a `subcommand(name)` head; Mara-choice
+#      at collapse chose the recursive-command form for these reasons:
+#      (a) Recognition #35 (cli-as-prism) frames sub-stages as
+#          prism-in-prism — SAME algebra recursively, not a distinct
+#          kind; the grammar-head noun should recur too.
+#      (b) Two-tick discipline (readable name over foundational):
+#          `command peer { command beam { ... } }` reads as
+#          command-nested-in-command directly. No new keyword to
+#          learn.
+#      (c) `substrate-already-had-the-word`: the substrate already
+#          has `command`; minting a new `subcommand` noun for the
+#          SAME shape (a sub-prism of the enclosing scope) violates
+#          the discipline. Alex ground-truth: subcommand nesting is
+#          geometric — the geometry is prism-in-prism at cli
+#          altitude, and prism-in-prism is command-in-command.
+#      (d) `cli-as-prism.md` §1.2 already says "every named verb is
+#          a stage" — same shape at every depth. The grammar matches
+#          by keeping the head noun stable across depths.
+#      Cascade forward-promised at consumer landing time: Reed's
+#      `subcommand(name)` sketch in beam-as-substrate-primitive.md
+#      §3.4 gets a Mara-authored amendment note when Tick 3 or
+#      Tick 4 lands the `mirror peer beam` consumer.
+#      Two-tick discipline: this tick lands the substrate-decl
+#      grammar admissibility; a follow-up tick lands the first
+#      consumer (`command peer { command beam { ... } }` in
+#      mirror.spec's cli-block, per the 6-tick cascade sequence)
+#      and the parser realization at bootstrap altitude. Alex
+#      ground-truth policy (feedback-cli-subcommand-nesting-is-
+#      geometric-ground-truth memory, 2026-07-07): subcommand
+#      nesting is geometric ground truth at cli altitude — not an
+#      admissibility question at consumer time. This tick lands
+#      the geometry.
+#      Predecessors: Mara `77fe92d` (peer-as-pain-driven-bounded-
+#      ontological-navigator), `b6358c1` (Reed beam-substrate-
+#      primitive synthesis §3), Taut `bd837cd` (drift-scout — rename
+#      landable with fault-plane shifts + cascade).
+#
 # === Family placement ===
 #
 # This is the first species of @mirror/lens (the family root at
@@ -76,10 +121,42 @@ prism @mirror/lens/cli {
 # binary target's cli block (per spec §6).
 
 # command(name) — a sub-prism of the cli scoped to one verb.
-# The body declares args, flags, and `#` help. Per the dispatch
+# The body declares args, flags, `#` help, AND (per this tick's
+# depth-2 minting) nested `command` declarations. Per the dispatch
 # collapse: `command X { ... }` IS the action `X` at this cli's
 # altitude; mosaic binds X to the runtime handler of the same name
 # in the enclosing target's grammar (e.g. @mirror.compile).
+#
+# Subcommand nesting (recursive-command grammar; landed 2026-07-08,
+# Tick 1 of the 6-tick cascade). The body of `command X { ... }`
+# admits nested `command Y { ... }` declarations directly. The
+# recursion is prism-in-prism at cli altitude per Recognition #35
+# (cli-as-prism); each nested `command` is a sub-glass on the outer
+# `command`'s prism. Same head noun at every depth — the algebra
+# recurses, and the grammar's admissible content is the SAME set
+# at every altitude:
+#
+#   command peer {
+#     # peer-scope help
+#     command beam {
+#       # peer beam subcommand — beam + persistent-identity-context
+#       arg peer_home: ~d
+#       flag mission: ~f
+#     }
+#     command spawn {
+#       # two-tick alias of peer beam (backward-compat)
+#       arg peer_home: ~d
+#       flag mission: ~f
+#     }
+#   }
+#
+# Depth policy (per cli-as-prism.md §3.2, rule now MINTED not
+# reserved): depth-N is admitted iff the sub-sub-manifold has its
+# own algebra distinct from the parent's algebra restricted to it.
+# The grammar does not enforce this bound — it is a substrate-
+# discipline convention discharged at spec-review time. The grammar
+# admits recursion; the discipline names when the recursion earns
+# its keep.
 command(name) -> prism { \ }
 
 # arg(name, type) — a positional argument of the enclosing command.
@@ -130,6 +207,13 @@ type list(t) = [t]
 # (~d, ~f), the rhs MUST be a sigil literal of the same form
 # (e.g. `~f'./mirror.spec'`).
 default(name, t: type, value: t) -> prism { \ }
+
+# === subcommand nesting exported as part of `command` ===
+#
+# There is no separate `out subcommand` — the recursive-command form
+# means `command` already exports the nested-command surface. A
+# consumer that writes `command X { command Y { ... } }` uses only
+# the `out command` export at both depths.
 
 out @mirror/lens/cli
 out command
