@@ -144,7 +144,11 @@ fails at any winding above the origin, the divergence AXIS is data.
 - [[shards/torus.mirror]] — the family-root Reed landed 2026-07-07 with
   the seven Foerster/Kauffman/HoTT/Blum witnesses
 - [[shards/mirror/spawn.mirror]] — action-decl `spawn(...) -> @song`
-  and the peer-side recall composition (P4.5 GREEN)
+  and the peer-side recall composition (P4.5 GREEN). NOTE: renamed
+  2026-07-08 Tick 2 (`9de2226`) to `shards/mirror/peer/beam.mirror`
+  with action `beam(...) -> @song`; the closure claim above holds
+  under the rename (both windings still traverse the basepoint at
+  the origin).
 - [[docs/specs/mirror-recall.md]] — Mara canonical spec `b034a60` for
   the four-payload envelope
 - [[docs/audits/2026-07-07-seam-phase-d-glue-cyberpunk-fate-composition-ratify.md]]
