@@ -1,40 +1,91 @@
-# CURRENT arc — pain-driven-bounded-ontological-navigator cascade (post-at-rest late-session extension)
+# CURRENT arc — beam-refactor cascade (Ticks 0-3 LANDED, Tick 4 docs sweep IN PROGRESS)
 
 **Sessions**: 2026-07-07 (T6 + iterations 1-3) + 2026-07-08 overnight
 (iteration 4 + ticks 2-8, arc-to-rest via /loop autonomous) + 2026-07-08
 late morning-to-evening (the-peer-IS-a-pain-driven-bounded-ontological-
-navigator cascade landing).
+navigator cascade landing) + 2026-07-08 evening (beam-refactor cascade
+Ticks 0-3).
 **Branch**: `mara/song-substrate-decl-v0.1` (not `main`; not merged)
 **Working dir for fresh session**: `/Users/alexwolf/dev/projects/mirror`
-**State**: **CASCADE LANDED, ADJUDICATION PENDING** — 4 non-contested
-substrate species landings closed (Mara `0d78c0c` `966890b` `cdc6533`
-+ no-op on peer.eigenboard); recognition cascade doc `1e8a02b`; contested
-substrate items (peer.observe/alter, @edge fault-plane, @knife, @onto
-refusal, O5 timing, @magic/level_shift) HELD for Alex direct-session.
-**Real-peer spawn conversation IN PROGRESS** — substrate now supports
-depth-parameterized bounded-ontological-navigator spawn per landed
-late-session cascade.
+**State**: **BEAM-REFACTOR TICKS 0-3 LANDED; TICK 4 DOCS SWEEP IN
+PROGRESS.** The `@mirror/spawn` cli-surface substrate-decl collapsed to
+`@mirror/peer/beam` (per `docs/specs/beam-as-substrate-primitive.md`)
+via four ticks: (0) `@shatter --target substrate`; (1) subcommand nesting
+grammar depth-2; (2) atomic substrate-decl rename
+`shards/mirror/spawn.mirror` → `shards/mirror/peer/beam.mirror` +
+`spawn(...) -> @song` → `beam(...) -> @song`; (3) mirror.spec cli-block
+`command peer { command beam }` + top-level `command beam` + Rust
+dispatch `cmd_peer_beam` + `cmd_beam` + MCP schema `mirror_peer_beam` +
+`mirror_beam` + deprecated `mirror_spawn` alias. Adjudications: none
+pending. Blockers: none. `@shatter` fold DEFERRED (Taut LRM `1658b95`
+β shallow path).
+
+**Prior cascade (2026-07-08 late-session, before beam-refactor)**: 4
+non-contested substrate species landings closed (Mara `0d78c0c` `966890b`
+`cdc6533` + no-op on peer.eigenboard); recognition cascade doc `1e8a02b`;
+contested substrate items (peer.observe/alter, @edge fault-plane, @knife,
+@onto refusal, O5 timing, @magic/level_shift) HELD for Alex direct-
+session.
 
 ---
 
-## Session-handoff — real spawn conversation in progress
+## Beam-refactor cascade (2026-07-08 evening) — Ticks 0-3 LANDED
 
-The overnight arc-to-rest handoff (below) framed tomorrow-morning's first
-real-peer spawn against 5/7 real composition_pieces. Late-session extension
-tonight (2026-07-08) reframed the picture entirely: the peer is a
-pain-driven bounded ontological navigator; spawn now takes a winding
-parameter; @cyberpunk/reframe LANDED as the shared glass; @onto stays
-refused (would re-introduce Foerster's ladder); @edge fault-plane HELD
-for Alex adjudication.
+The `mirror spawn ~peer'<home>'` cli surface was named substrate-honestly
+as `mirror peer beam ~peer'<home>'` (peer beam = beam + persistent-
+identity-context; anonymous variant `mirror beam <mission>` when no
+peer-home is available). Rename cascade landed atomically across four
+ticks:
 
-**Real spawn conversation opened by Alex 2026-07-08 late session:**
-> "land the cascade, then we talk about the real spawn"
+**Tick 0** (`fe2d1dc` / `aee32b9` / `30d045e` / `05bac44`) — `@shatter
+--target substrate` groundwork (Reed + Mara).
 
-### Substrate now supports (post-cascade):
+**Tick 1** (`fe82500` / `9974c58` / `a6c7447`) — subcommand nesting
+grammar depth-2 landed at the cli-lens altitude (`command peer { command
+beam }` composition admitted; kintsugi_song_shard T11 formatter follow-
+up `2a826ff`).
 
-- `spawn(mirror_spawn_request { peer_home, winding: (int, int), ... }) -> @song`
+**Tick 2** (`9de2226` / `2a826ff`) — atomic substrate-decl rename:
+`shards/mirror/spawn.mirror` → `shards/mirror/peer/beam.mirror` +
+`prism @mirror/spawn` → `prism @mirror/peer/beam` +
+`mirror_spawn_request` → `mirror_peer_beam_request` +
+`spawn(...) -> @song` action → `beam(...) -> @song`.
+
+**Tick 3** (`96aa752` / `c5d65ef` / `b012d3f` / `4f4a257`) — mirror.spec
+cli-block `command peer { command beam }` + top-level `command beam` +
+Rust dispatch `cmd_peer_beam` + `cmd_beam` + MCP schema
+`mirror_peer_beam` + `mirror_beam` + deprecated `mirror_spawn` alias
+(bin/mirror-mcp).
+
+**Tick 4** (this doc sweep) — IN PROGRESS. Update current-facing docs
+to name `@mirror/peer/beam` at first mention (with rename annotation for
+two-tick discipline); preserve dated historical audits/scouts intact.
+
+**Tick 5** — `mirror beam` top-level expansion / no-op verification
+(likely no-op since Tick 1+2 already landed the depth-2 grammar).
+
+**Tick 6** — `@mcp.serve` lift (task #386): synthesize MCP tool schema
+directly from cli-block instead of hand-maintained bin/mirror-mcp bash.
+
+**Deferred**: `@shatter` fold (Taut LRM `1658b95` β shallow path).
+
+---
+
+## Late-session cascade (2026-07-08) — pain-driven-bounded-ontological-navigator
+
+Late-session extension (2026-07-08 evening pre-beam-refactor) landed the
+peer-as-pain-driven-bounded-ontological-navigator cascade: the peer is a
+pain-driven bounded ontological navigator; the beam action (élit spawn)
+takes a winding parameter; @cyberpunk/reframe LANDED as the shared glass;
+@onto stays refused (would re-introduce Foerster's ladder); @edge fault-
+plane collapsed into one surface (Mara `7b32d27` + `19f6d86` + `6ef5117`).
+
+### Substrate now supports (post-cascade + post-beam-refactor):
+
+- `beam(mirror_peer_beam_request { peer_home, winding: (int, int), ... }) -> @song`
   — winding parameterizes bounded observation depth per
-  `77fe92d` §2 + Mara `cdc6533`.
+  `77fe92d` §2 + Mara `cdc6533` (extended, then Tick 2 renamed the
+  request-type + action-name).
 - `@cyberpunk/reframe.reframe(peer, level_K: winding, pain_δ: f64) -> reframe_result`
   — the pain-authorized level-shift ceremony (Mara `0d78c0c`).
 - `@cyberpunk/algedonic.sample_pleasure/sample_pain(eigenboard: ref) -> f64`
@@ -44,22 +95,32 @@ for Alex adjudication.
 - Peer's `eigenboard: shard` field already typed per glass.mirror
   three-layer recognition (verified no-op).
 
-### Real spawn options for Alex:
+### Real spawn options for Alex (post-beam-refactor: use `mirror peer beam` / `mirror beam`):
 
-- **Path A: spawn at winding (0, 0)** — identical to iteration 1-4 empirical
-  runs; envelope returns @song at origin; validates end-to-end MCP still
-  works post-cascade. Zero risk of substrate re-hydration blocking spawn.
-- **Path B: spawn at winding (1, 0) or (0, 1)** — first-order observation
-  bounded to one traversal along meridian OR longitude axis. Requires
-  binary rebuild to pick up the new `winding` field in `mirror_spawn_request`.
-  Envelope shape may drift (backward-compat forward-promised).
-- **Path C: spawn against a REAL peer-home** (`~/.reed` or `~/.mara`) at
-  winding (0, 0) — the first non-reflexive spawn. Requires the peer-home
-  to have a `mirror.spec` file (may need to create for `~/.reed` or
-  `~/.mara`).
-- **Path D: spawn with mission and observe @cyberpunk/reframe engagement** —
-  requires Phase H #6 wiring (@fate.roll + reframe integration) which was
-  triply-vestigial per today's arc; not tonight-scope.
+- **Path A: `mirror peer beam <home> --winding 0,0`** — identical to
+  iteration 1-4 empirical runs; envelope returns @song at origin;
+  validates end-to-end MCP still works post-cascade. Zero risk of
+  substrate re-hydration blocking. (Formerly `mirror spawn`; renamed
+  2026-07-08 Tick 2 `9de2226`.)
+- **Path B: `mirror peer beam <home> --winding 1,0` or `0,1`** — first-
+  order observation bounded to one traversal along meridian OR longitude
+  axis. Requires binary rebuild to pick up the `winding` field in
+  `mirror_peer_beam_request`. Envelope shape may drift (backward-compat
+  forward-promised).
+- **Path C: `mirror peer beam ~/.reed` or `~/.mara`** at winding (0, 0)
+  — the first non-reflexive beam. Requires the peer-home to have a
+  `mirror.spec` file (may need to create for `~/.reed` or `~/.mara`).
+- **Path D: `mirror peer beam <home> --mission <mission-file>` and
+  observe @cyberpunk/reframe engagement** — requires Phase H #6 wiring
+  (@fate.roll + reframe integration) which was triply-vestigial per
+  today's arc; not tonight-scope.
+- **Path E** (post-beam-refactor NEW): **`mirror beam <mission-file>`**
+  — anonymous inference dispatch; no persistent-identity context; fires
+  `@fate::select` on Shape B features. Per Alex's guidance: "the first
+  spawn without a peer home. We need to first be able to spawn an agent
+  that actually delivers something without a persistent identity before
+  we can add the persistent identity layer on top." This is Tick 3's
+  substrate landing (`b012d3f` cmd_beam + `4f4a257` mirror_beam MCP).
 
 Adjudication queue below is entirely yours.
 
@@ -153,31 +214,48 @@ Reed, `/loop wire up the mirror spawn MCP with mathematical fidelity`
 5. ~~RED/GREEN for `cmd_craft --target-kind` alias.~~ ✅ LANDED
    `cb7e26a`+`59c7fd0`.
 6. ~~cargo-fmt maintenance.~~ ✅ LANDED `091089d`.
-7. **Phase H #5 supervisor.start_child.** DEFERRED. Requires
-   architectural adjudication of discharge form (in-process struct?
-   NIF? fragmentation-persistent?). Substrate declared at
-   `shards/spectral/supervisor.mirror`; no Rust impl. Reasons at
-   `docs/loop/phase-h-deferral-2026-07-08.md`.
-8. **Phase H #6 @fate.roll.** DEFERRED. Requires composition-question
-   adjudication FIRST ("should spawn dispatch through @fate at all?"),
-   then architecture. Substrate declared at `shards/fate.mirror`;
-   fate/ runtime crate outside bootstrap (would violate
-   FROZEN-bootstrap discipline).
-9. **First real-peer spawn.** Tomorrow's session, direct with Alex.
-   Choose peer-home; fire mcp__mirror__mirror_spawn. Envelope returns
-   @song at winding (0, 0) on the real peer's torus.
-10. Higher-winding divergence scaling: |m| + |n| ≥ 2. Cross-peer
+7. ~~Beam-refactor Ticks 0-3.~~ ✅ LANDED (see Beam-refactor cascade
+   section above): Tick 0 (`fe2d1dc`/`aee32b9`/`30d045e`/`05bac44`);
+   Tick 1 (`fe82500`/`9974c58`/`a6c7447`); Tick 2 (`9de2226`/`2a826ff`);
+   Tick 3 (`96aa752`/`c5d65ef`/`b012d3f`/`4f4a257`).
+8. **Tick 4: docs sweep.** IN PROGRESS (this doc). Sweep current-facing
+   docs from `@mirror/spawn` → `@mirror/peer/beam` (adding rename
+   annotation per two-tick discipline). Preserve dated historical
+   audits/scouts intact.
+9. **Tick 5: `mirror beam` top-level verification.** Likely no-op
+   since Tick 1+2 landed depth-2 grammar and Tick 3 landed `cmd_beam`
+   dispatch.
+10. **Tick 6: `@mcp.serve` lift (task #386).** Synthesize MCP tool
+    schema directly from cli-block instead of hand-maintained
+    bin/mirror-mcp bash. Two-tick target.
+11. **Phase H #5 supervisor.start_child.** DEFERRED. Requires
+    architectural adjudication of discharge form (in-process struct?
+    NIF? fragmentation-persistent?). Substrate declared at
+    `shards/spectral/supervisor.mirror`; no Rust impl. Reasons at
+    `docs/loop/phase-h-deferral-2026-07-08.md`.
+12. **Phase H #6 @fate.roll.** DEFERRED. Requires composition-question
+    adjudication FIRST ("should beam dispatch through @fate at all?"),
+    then architecture. Substrate declared at `shards/fate.mirror`;
+    fate/ runtime crate outside bootstrap (would violate
+    FROZEN-bootstrap discipline).
+13. **First real-peer beam.** Direct session with Alex. Choose peer-
+    home; fire `mcp__mirror__mirror_peer_beam` or `mirror__mirror_beam`
+    (anonymous). Envelope returns @song at winding (0, 0) on the real
+    peer's torus.
+14. Higher-winding divergence scaling: |m| + |n| ≥ 2. Cross-peer
     divergence via @glue morphism.
-11. Adjudicate 5 composition tensions in task #557 (unchanged).
-12. Land @duality family-root (W3' from Mara `7978f84`).
-13. Optional: O5 @reflection collapse per two-tick discipline (task
+15. Adjudicate 5 composition tensions in task #557 (unchanged).
+16. Land @duality family-root (W3' from Mara `7978f84`).
+17. Optional: O5 @reflection collapse per two-tick discipline (task
     #560).
-14. **Hook infrastructure gap** (Tick 9 candidate from tick 2): `just
-    pre-commit` runs `cargo build` outside `nix develop`, fails with
-    `ld: library not found for -liconv`. Wrap the pre-commit hook
+18. **Hook infrastructure gap** (Tick 9 candidate from prior tick 2):
+    `just pre-commit` runs `cargo build` outside `nix develop`, fails
+    with `ld: library not found for -liconv`. Wrap the pre-commit hook
     shell with `nix develop -c` or export flake env into hook scope.
     Same env-gap Mara hit at `7625f42`; blocks GREEN commits from
     running the check without --no-verify.
+19. **`@shatter` fold DEFERRED** (Taut LRM `1658b95` β shallow path).
+    Held for future arc.
 
 ---
 
@@ -292,7 +370,7 @@ from own venues.
 **Substrate-honest naming correction in the spawn block**:
 
 ```mirror
-command spawn {
+command spawn {  # renamed 2026-07-08 Tick 3 `96aa752` to `command peer { command beam }` + top-level `command beam`
   arg target: peer
   flag hello_world: bool = false
   flag mission: ~predicate = ~predicate'@cyberpunk/property/none'
@@ -318,9 +396,10 @@ substrate for existing binary implementations.
 2. `craft`'s `--target-kind` flag mirrors the binary literally; if craft
    collapses to kintsugi, this flag disappears — decide at declaration
    time?
-3. Should `spawn`'s return-type `@song` (per
-   `shards/mirror/spawn.mirror:270`) surface in the cli-block? The
-   cli-block has no return-type slot today.
+3. Should `spawn`'s return-type `@song` (per then-`shards/mirror/spawn.mirror:270`;
+   renamed 2026-07-08 Tick 2 `9de2226` to `shards/mirror/peer/beam.mirror`
+   carrying `beam(...) -> @song`) surface in the cli-block? The cli-block
+   has no return-type slot today.
 
 **Full diff**: recoverable from session JSONL. The essential structural
 move is above; per-line detail is in the transcript.
@@ -435,7 +514,7 @@ destinations. Alex-verbatim: "This IS what @reflection wanted to be."
 | `1e8a02b` | Reed | 📝 `docs/insights/2026-07-08-recognition-cascade-peer-as-navigator.md` — META + 3 subs + O5 consumption catalog |
 | `0d78c0c` | Mara | 🔧 `shards/epistemologic/cybernetic/reframe.mirror` NEW — the pain-authorized level-shift glass (204 lines; OID `6cd74265`) |
 | `966890b` | Mara | ♻️ `shards/epistemologic/cybernetic/algedonic.mirror` EXTEND — sample_pleasure/sample_pain + algedonic_signal carrier (OID `237a3ec6`) |
-| `cdc6533` | Mara | ♻️ `shards/mirror/spawn.mirror` EXTEND — mirror_spawn_request.winding field; `in @torus` composition (OID `045e9e20`) |
+| `cdc6533` | Mara | ♻️ `shards/mirror/spawn.mirror` EXTEND — mirror_spawn_request.winding field; `in @torus` composition (OID `045e9e20`). NOTE: `shards/mirror/spawn.mirror` renamed 2026-07-08 Tick 2 `9de2226` to `shards/mirror/peer/beam.mirror`; `mirror_spawn_request` → `mirror_peer_beam_request`. |
 | — (no-op) | Mara | `boot/std/peer.mirror` — eigenboard already typed as `shard` per glass.mirror three-layer recognition; no edit needed |
 | `eec00d0` | Reed | 📝 `docs/loop/CURRENT.md` — late-session cascade capture + real-spawn Path A/B/C/D options |
 | `a823438` | Reed | 📝 cascade catalog update: numeric-IDs #108-112 + Reed adjudications A/B/C/D (Alex delegation "your call, I'm not interested in assigning numbers") |
@@ -517,16 +596,20 @@ See `1e8a02b` § Alex-adjudication queue for full context.
 - `shards/cyberpunk.mirror` (family-root)
 - `shards/glue.mirror` (line-comments explicitly name @fate at the
   restriction slot)
-- `shards/mirror/spawn.mirror:270` (spawn action, return type `@song`)
+- `shards/mirror/peer/beam.mirror` (beam action, return type `@song`;
+  formerly `shards/mirror/spawn.mirror`; renamed 2026-07-08 Tick 2
+  `9de2226`)
 - `shards/epistemologic/cybernetic/*` (13 species; the Foerster mapping
   lives here)
 - `shards/magic.mirror` + 7 species
 
-**Bootstrap Rust**:
-- `bootstrap/src/lib.rs:3811` — `cmd_spawn` (Phase G v0)
-- `bootstrap/src/lib.rs:3032` — spawn dispatch match arm
-- `bootstrap/tests/spawn_task_shard.rs` — 6 RED tests, all GREEN at
-  `7625f42`
+**Bootstrap Rust** (post-beam-refactor Ticks 0-3):
+- `bootstrap/src/lib.rs` — `cmd_peer_beam` + `cmd_beam` dispatch
+  (Tick 3 GREEN `b012d3f`). Formerly `cmd_spawn` at Phase G v0.
+- `bootstrap/src/lib.rs` — `peer_beam` + `beam` match arms in top-level
+  dispatch
+- `bootstrap/tests/spawn_task_shard.rs` — 6 tests, all GREEN at `7625f42`
+  (backward-compat alias preserved during rename)
 - `bootstrap/tests/fixtures/spawn-task-mission.txt` — the a901e50
   minimal-prose mission fixture (T5 empirical fired against this)
 
