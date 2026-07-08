@@ -93,7 +93,43 @@ while IFS= read -r line; do
           result=$("$MIRROR" "${craft_args[@]}" 2>&1) || true
           ;;
         "mirror_kintsugi")
-          kintsugi_args=("kintsugi" "$file")
+          # Landing 3 of @shatter fold per Taut LRM scout `1658b95` β
+          # shallow path; @shatter × @io = linearization operator per
+          # Recognition #58 dual (Mara `583b939` canonical spec at
+          # `docs/specs/shatter-is-the-io-linearization-operator.md` §4.1).
+          #
+          # The wrapper does NOT re-shatter — the substrate does. Passing
+          # `--ci --out @data/json` routes kintsugi through
+          # `emit_ci_verdict_json` (bootstrap/src/lib.rs), producing a
+          # JSON envelope at the @io boundary. The MCP wrapper's
+          # transport-frame escape (line ~145 below) then wraps that
+          # already-JSON payload in the JSON-RPC content envelope
+          # verbatim. The substrate is the linearizer; the wrapper is
+          # the transport-framer. Two altitudes, one composition.
+          #
+          # `--ci` is co-required today: the JSON emission path
+          # (`emit_ci_verdict_json`) is gated on `--ci` in
+          # `cmd_kintsugi` (bootstrap/src/lib.rs). Without `--ci`,
+          # `--out @data/json` is silently ignored on `.mirror` files
+          # (falls through to `cmd_kintsugi_single` which emits settled
+          # text). Substrate-honestly: for the wrapper to DISCHARGE the
+          # linearization at all, both flags fire together. This is
+          # the shape existing tests lock (`kintsugi_ci.rs`
+          # `ci_format_json_*`; `kintsugi_out_substrate_ref.rs`
+          # `out_at_data_json_*`); the wrapper follows that shape.
+          #
+          # Behavior change: the return payload shifts from
+          # canonical-source text (T19 settle branch) to typed verdict
+          # envelope (T11.2 shape) — verdict / target / objective /
+          # iterations / dark_count. The tool's original description
+          # already names both shapes: "Returns canonical source OR
+          # typed verdict envelope."
+          #
+          # Wire-level contract locked by `kintsugi_out_json_shard.rs`
+          # (Landing 2, `d394ba4`): T1 accepts flag; T2 valid JSON;
+          # T3 envelope has verdict/target/objective; T4/T4b default
+          # mirror-text preserved (backward-compat guard).
+          kintsugi_args=("kintsugi" "--ci" "--out" "@data/json" "$file")
           [ "$liquid" = "true" ] && kintsugi_args+=("--liquid")
           [ -n "$shatter" ] && kintsugi_args+=("--shatter" "$shatter")
           result=$("$MIRROR" "${kintsugi_args[@]}" 2>&1) || true
