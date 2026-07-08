@@ -291,25 +291,92 @@ substrate — saying "this stage's produced prism implements the five
 operations" five times in a row is the **structure-equals-structure**
 point. The repetition is the proof that the recursion held.
 
-### 3.2 Depth-2 (when it's earned)
+### 3.2 Depth-2 (LANDED 2026-07-08, Mara — Tick 1 of the 6-tick cascade)
 
-The recursion can go deeper, but **only when the algebra demands it**.
-Sketch of where depth-2 might land:
+**Status update (2026-07-08 evening, Mara `[substrate-pull:realize]`
+Tick 1).** Depth-2 is no longer "reserved but not minted." The
+grammar admissibility landed at `shards/mirror/lens/cli.mirror` —
+the `command(name) -> prism { \ }` body now admits nested `command`
+declarations directly (recursive-command grammar; Option A of the
+tick's Mara-choice).
+
+**Grammar shape (LANDED):**
+
+```mirror
+# Depth-1 (existing, unchanged): a command scoped to one verb.
+command(name) -> prism { \ }
+
+# Depth-2 (LANDED this tick): a command inside a command body IS
+# the same head noun recursively. The recursion is prism-in-prism
+# per Recognition #35 (cli-as-prism); each nested command is a
+# sub-glass on the outer command's prism.
+#
+# Illustrative consumer form (lands with Tick 3 or Tick 4 of the
+# 6-tick cascade, e.g. `command peer { command beam { ... } }` per
+# beam-as-substrate-primitive.md §3.2):
+#
+#   command peer {
+#     command beam { arg peer_home: ~d ... }
+#     command spawn { arg peer_home: ~d ... }   # two-tick alias
+#   }
+```
+
+**Mara-choice at collapse: Option A (recursive-command) over Option B
+(new `subcommand` head).** Reed's synthesis at
+`docs/specs/beam-as-substrate-primitive.md` §3.4 (`b6358c1`)
+forward-promised a `subcommand(name)` head; the Tick 1 landing chose
+recursive-command instead. Rationale (recorded in the shard docblock
+at `shards/mirror/lens/cli.mirror`):
+
+1. **Recognition #35 (cli-as-prism) frames sub-stages as
+   prism-in-prism.** SAME algebra recursively; not a distinct kind.
+   The grammar-head noun should recur too.
+2. **Two-tick discipline (readable name over foundational).**
+   `command peer { command beam { ... } }` reads as command-nested-in-
+   command directly. No new keyword to learn.
+3. **substrate-already-had-the-word.** The substrate already has
+   `command`; minting a new `subcommand` noun for the SAME shape
+   violates the discipline. Alex ground-truth
+   (feedback-cli-subcommand-nesting-is-geometric-ground-truth
+   memory, 2026-07-07): subcommand nesting is geometric — the
+   geometry is prism-in-prism, and prism-in-prism is command-in-
+   command.
+4. **§1.2 already says "every named verb is a stage."** Same shape
+   at every depth. The grammar matches by keeping the head noun
+   stable across depths.
+
+A cascade note lands in `docs/specs/beam-as-substrate-primitive.md`
+§3.4 when the consumer lands (Tick 3/4): Reed's `subcommand(name)`
+sketch is replaced by the recursive-`command` form.
+
+**Directory-layout reading (unchanged).** Where a nested command
+earns its own shard, the on-disk placement follows the path-namespace
+property:
 
 ```
-shards/mirror/lens/cli/sh/
-  reed.mirror              # stage @mirror/lens/cli/sh/reed
-  alex.mirror              # stage @mirror/lens/cli/sh/alex
+shards/mirror/lens/cli/peer.mirror        # stage @mirror/lens/cli/peer
+shards/mirror/lens/cli/peer/
+  beam.mirror                             # stage @mirror/lens/cli/peer/beam
+  spawn.mirror                            # stage @mirror/lens/cli/peer/spawn (deprecation alias)
 ```
 
-…would make each peer a sub-stage. **This is NOT proposed for v0.1.**
-Peers are dynamic; baking them into the on-disk structure is wrong. Instead,
-`mirror sh @reed` passes `@reed` as an argument to the
-`@mirror/lens/cli/sh` stage's default op (`settle` — enter; see §7).
-Depth-2 directories are **reserved** but not minted.
+**The prior sh-per-peer sketch (`sh/reed.mirror`, `sh/alex.mirror`)
+is still NOT proposed for v0.1** — peers are dynamic; baking them
+into the on-disk structure is wrong. The distinction between
+substrate-fact depth-2 (peer beam, kintsugi beam) and dynamic-arg
+depth-2 (peer-instance names) holds unchanged: static structure for
+substrate facts; dynamic args for runtime values.
 
-The CLI directory tree is **as deep as the substrate has reason to be**.
-Static structure for substrate facts; dynamic args for runtime values.
+**Depth policy (per §4.6 rule, now applied):** depth-N is admitted
+iff the sub-sub-manifold has its own algebra distinct from the
+parent's algebra restricted to it. The grammar does not enforce this
+bound — it is a substrate-discipline convention discharged at
+spec-review time. The grammar admits recursion; the discipline names
+when the recursion earns its keep.
+
+The CLI directory tree remains **as deep as the substrate has reason
+to be**. Static structure for substrate facts; dynamic args for
+runtime values.
 
 ---
 
