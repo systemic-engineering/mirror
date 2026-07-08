@@ -151,34 +151,70 @@ project mirror.spec {
         arg spec_dir: ~d
       }
 
-      # === spawn — @song/movement.enter at cli altitude ===
+      # === beam — @song/movement.enter at cli altitude (anonymous variant) ===
       #
-      # Wires @mirror/spawn (shards/mirror/spawn.mirror) into the
-      # cli-block. `mirror spawn ~peer'<home>'` IS @song/movement.enter
-      # at cli altitude — the frame-entry action of a temporal-bounded
-      # epoch at runtime. The peer's runtime trajectory IS a
-      # song_voice — time-indexed unfolding through the spec.
+      # Wires @mirror/peer/beam (shards/mirror/peer/beam.mirror, renamed
+      # 2026-07-08 Tick 2 from shards/mirror/spawn.mirror) into the
+      # cli-block. `mirror beam <mission>` IS the anonymous variant per
+      # docs/specs/beam-as-substrate-primitive.md §3 composition table:
+      # beam-without-persistent-identity — the primitive form where the
+      # substrate accepts a mission and returns a @song without binding
+      # the trajectory to a peer-home. Both variants dispatch to the
+      # same substrate action @mirror/peer/beam.beam; runtime
+      # differentiation is on positional-arg shape (mission-file vs
+      # peer-home) per beam-as-substrate-primitive.md §3.4.
       #
-      # Return type is @song per shards/mirror/spawn.mirror line 264:
-      # `spawn(...) -> @song`. Carried in the action-decl, NOT the
+      # Return type @song per shards/mirror/peer/beam.mirror:310
+      # (`beam(r, p) -> @song`). Carried in the action-decl, NOT the
       # cli-block — @mirror/lens/cli's `command(name) -> prism` grammar
       # has no return-type slot today (adding one is a lens-grammar
       # extension, deferred).
+      command beam {
+        arg mission: ~f
+        flag hello_world: bool = false
+      }
+
+      # === peer — persistent-identity beam wrapper (recursive-command depth-2) ===
       #
-      # `mission` is the substrate-honest flag name (matches
-      # @song/movement's frame-entry semantics); the binary's current
-      # `--task` is a follow-up Rust arg-parse rename (RED-first).
-      # No default = substrate-absent when omitted; grammar composition
-      # of flag(name, t) + optional default(name, t, value) makes any
-      # flag without an accompanying default optional-absent.
+      # Wires @mirror/peer/beam (shards/mirror/peer/beam.mirror) into
+      # the cli-block via the recursive-command grammar landed at
+      # @mirror/lens/cli Tick 1 (`fe82500`). `mirror peer beam
+      # ~peer'<home>'` IS the persistent-identity variant per
+      # beam-as-substrate-primitive.md §3 composition table:
+      # beam-with-persistent-identity — the substrate binds the returned
+      # @song trajectory to the resolved peer's home. Both `mirror beam`
+      # (above) and `mirror peer beam` dispatch to @mirror/peer/beam.beam
+      # at substrate altitude.
+      #
+      # Depth-2 grammar via Tick 1 recursive-command form: `command peer
+      # { command beam { ... } }` reads as command-nested-in-command
+      # directly; no new keyword. Per @mirror/lens/cli docblock §Tick 1:
+      # depth-2 was RESERVED, is now MINTED, and this cli-block is its
+      # first consumer.
       #
       # `arg peer_home: ~d` — the semantic type is `peer`, but `peer`
       # is not in @mirror/lens/cli's type vocabulary today. Two-tick
       # forward-promise: lens vocabulary extension lifts `~d` to `peer`.
-      command spawn {
-        arg peer_home: ~d
-        flag hello_world: bool = false
-        flag mission: ~f
+      #
+      # `mission` is the substrate-honest flag name (matches
+      # @song/movement's frame-entry semantics). No default = substrate-
+      # absent when omitted; grammar composition of flag(name, t) +
+      # optional default(name, t, value) makes any flag without an
+      # accompanying default optional-absent.
+      #
+      # Backward-compat alias (two-tick discipline): `mirror spawn
+      # ~peer'<home>'` continues to dispatch to the same substrate
+      # action with a deprecation warning; the cli-verb rename is the
+      # substrate-honest surface. `spawn` at @pack altitude
+      # (shards/pack.mirror:263) is unchanged — the pack primitive keeps
+      # its name; the cli-surface wrapper is what's renamed. Fault-plane
+      # divergence preserved per Taut scout (`bd837cd` §Fault-plane #1).
+      command peer {
+        command beam {
+          arg peer_home: ~d
+          flag hello_world: bool = false
+          flag mission: ~f
+        }
       }
     }
   }
