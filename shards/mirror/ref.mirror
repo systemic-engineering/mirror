@@ -2,6 +2,7 @@ in @prism
 in @meta
 in @glass
 in @magic
+in @edge
 in @loop
 in @reflection
 in @reflection/mirror
@@ -229,23 +230,16 @@ type graph_ref = imperfect(graph_handle, query_error, transparency(@mirror/ref))
 # layer recognition (mosaic-as-type-system.md §1B).
 type node_ref = ref
 
-# === edge_kind variant (substrate-discriminated) ===
+# === edge_kind variant (upstream at @edge; consumed here) ===
 #
-# Per Seam C4 closure pattern (variants over bare ref-with-documented-
-# values): typed substrate variant naming the seven first-class edge
-# kinds. Same-shape different-meaning forbidden per
-# [[feedback-no-bare-types]].
-#
-# Per Elixir's mix xref typed-edge precedent: each kind discriminates
-# how the substrate's compiler treats the edge at recompilation time.
-type edge_kind =
-  | in_edge               # the substrate ancestry header
-  | callers_edge          # action-to-action call site
-  | pact_edge             # property -> fracture discharge
-  | fracture_edge         # fracture body -> morphism emission
-  | kintsugi_bridge_edge  # cross-shard kintsugi loop binding
-  | reflection_predecessor_edge  # @reflection.observe temporal link
-  | ast_child_edge        # splinter(ast) AST altitude descent
+# Per Alex adjudication 2026-07-08 "collapse into one surface" for the
+# @edge fault-plane: edge_kind lifted to `shards/edge.mirror` as
+# family-root substrate-decl. This shard CONSUMES edge_kind via `in
+# @edge` above; it does NOT re-declare. The seven variants (in_edge /
+# callers_edge / pact_edge / fracture_edge / kintsugi_bridge_edge /
+# reflection_predecessor_edge / ast_child_edge) remain substrate-
+# canonical at @edge; @mirror/ref carries the vocabulary at
+# navigation altitude as species-refinement of the family-root.
 
 # === edge_ref carrier ===
 #
@@ -422,7 +416,6 @@ interface_authored_by_human(s: splinter(@meta/ast)) -> verdict { \ }
 out @mirror/ref
 out graph_ref
 out node_ref
-out edge_kind
 out edge_ref
 out query_phi
 out graph_handle
