@@ -4,9 +4,71 @@ in @data/json
 in @mirror/compile
 in @beam
 
+# @mcp — MCP transport primitive at boot altitude.
+#
+# Reads JSON-RPC from stdin, dispatches per mirror.spec's cli-block,
+# writes JSON-RPC to stdout. The transport twin of `@cli` at
+# boot/std/cli.mirror: same five-op algebra, different notation.
+# Per docs/specs/the-convergence.md §2.1 (each porcelain verb on the
+# cli has a matching MCP tool call; same algebraic expression, four
+# notations — cli argv / mcp json / shell / lsp).
+#
+# Sibling family placement: `shards/mirror/lens/mcp.mirror` declares
+# the lens species under `@mirror/lens` (transport-side, agent
+# audience). THIS file is the boot-altitude primitive that Path B of
+# the mirror binary (`bootstrap/src/lib.rs:2858`, `mirror <file> <mq>`
+# form) consumes via `mirror /dev/stdin @mcp.serve`.
+#
+# === Substrate closure (Tick 6, 2026-07-08 Mara) ===
+#
+# The `dispatch` + `tools` actions carry \-crack bodies at the action
+# altitude AND `requires` clauses at grammar altitude naming the
+# bilateral-predicate contracts that the Rust runtime discharges
+# against. Option A per Taut scout `cf5ab8c` LRM verdict: name the
+# semantic contract via `requires <predicate>(...)` (matching landed
+# substrate discipline at `boot/std/spectral/portal.mirror` +
+# `boot/std/mirror/shard.mirror`) rather than invent unwitnessed
+# `@mirror/cli.reflect_dispatch` surface (Option B — deferred until
+# a consumer pulls).
+#
+# The three bilateral predicates named here declare the substrate
+# contracts the transport primitive obeys structurally:
+#
+#   * dispatches_to_cli_block  — every incoming request.method
+#                                resolves to a cli-block command in
+#                                mirror.spec (or the JSON-RPC standard
+#                                framing verbs: initialize, tools/list,
+#                                tools/call). Dispatch is total on
+#                                well-formed requests; malformed
+#                                requests surface as JSON-RPC error
+#                                envelopes per protocol.
+#   * tools_reflects_cli_block — the tool listing synthesizes from
+#                                mirror.spec's cli-block: one tool
+#                                entry per `command <name>` in the
+#                                cli-block; args + flags become the
+#                                tool schema properties; `#`-comments
+#                                become the tool description (per
+#                                @nl.mirror + @mirror/lens/cli's
+#                                nl_literal semantics). NOT a
+#                                hardcoded dispatch table.
+#   * frame_relativity          — inherited from `shard`; the MCP
+#                                transport carries the observer's
+#                                shard frame in each response,
+#                                consistent with peer identity across
+#                                the wire.
+#
+# Two-tick discipline: Tick 6 (this) closes the substrate-decl at
+# grammar altitude. Tick 6.5/7 (deferred) collapses `bin/mirror-mcp`
+# (149 lines of bash) to `exec ~/.local/bin/mirror /dev/stdin
+# @mcp.serve` once the Rust runtime discharges the bilateral-predicate
+# contracts through the cli-block reflection surface.
+#
+# Predecessors: `bd837cd` (beam-refactor cascade scout precedent),
+#               `cf5ab8c` (Taut LRM scout for @mcp.serve lift scope),
+#               `boot/std/spectral/portal.mirror` (bilateral-predicate
+#               closure pattern this shard follows).
+
 grammar @mcp {
-  # MCP server as mirror grammar.
-  # reads JSON-RPC from stdin, dispatches, writes to stdout.
   type request = { method: text, params: json, id: json }
   type response = { result: json, id: json }
 
@@ -14,14 +76,61 @@ grammar @mcp {
     @io.read(stdin) |> @data/json.parse |> dispatch |> @data/json.emit |> @io.write(stdout)
   }
 
+  # dispatch — route a request to the substrate action named by
+  # request.method. Per `requires dispatches_to_cli_block` (below):
+  # the method-name space is exactly the cli-block commands in
+  # mirror.spec, extended with the JSON-RPC framing verbs
+  # (initialize, tools/list, tools/call). Body is \-cracked at the
+  # action altitude; the semantic contract is discharged at grammar
+  # altitude by the bilateral predicate.
   dispatch(request) -> response { \ }
 
-  # tool listing
+  # tools — synthesize the tool listing from mirror.spec's cli-block.
+  # Per `requires tools_reflects_cli_block` (below): the JSON emitted
+  # here reflects the cli-block's command / arg / flag structure; it
+  # is NOT a hardcoded dispatch table. One tool per `command <name>`;
+  # schema properties from `arg` + `flag`; description from `#`-help
+  # comments (per @nl.mirror's nl_literal lifting).
   tools -> json { \ }
 
   # fate: resolve a \ hole, store at refs/fate/<hole_oid>.
-  # Reflection's perturbation surface — any agent with MCP can seed the eigenboard.
+  # Reflection's perturbation surface — any agent with MCP can seed
+  # the eigenboard.
   fate(hole_oid: text, resolution: text) -> imperfect { \ }
+
+  # === bilateral-predicate contracts (Option A closure) ===
+  #
+  # These `requires` clauses discharge the semantic contracts named
+  # in the docblock. They compose at grammar altitude, not action-body
+  # altitude — matching landed substrate discipline at
+  # `boot/std/spectral/portal.mirror` (`requires content_addressed(portal)`,
+  # `requires halts(portal)`, etc.) and `boot/std/mirror/shard.mirror`
+  # (`requires autopoietic(shard)`, etc.).
+  #
+  # The predicates themselves are declared in @epistemologic/property/*
+  # substrate (forward-promised for the Tick 6.5/7 consumer landing;
+  # the substrate-pull tightens the predicate bodies when the runtime
+  # discharge lands — same shape as the `requires monoidal(frame)`
+  # forward-promise pattern at `boot/std/fragmentation/frame.mirror`
+  # which held until `@epistemologic/property/laws/monoidal.mirror`
+  # landed).
+  #
+  # dispatch_reflects_cli_block: every request.method that dispatch
+  #   accepts resolves to a `command <name>` in mirror.spec's cli-block
+  #   (or a JSON-RPC framing verb). Dispatch synthesizes the routing
+  #   table from cli-block reflection, not from a hardcoded case.
+  #
+  # tools_reflects_cli_block: the JSON blob tools emits synthesizes
+  #   from mirror.spec's cli-block. Adding a `command` to the cli-block
+  #   adds a tool entry; the two surfaces cannot drift.
+  #
+  # frame_relativity: MCP responses carry the observer's shard frame
+  #   consistent with peer identity across the wire (inherited
+  #   discipline from `@mirror/shard` — the observer that answers
+  #   MCP calls is a peer with a shard).
+  requires dispatch_reflects_cli_block(dispatch)
+  requires tools_reflects_cli_block(tools)
+  requires frame_relativity(response)
 }
 
 out serve
