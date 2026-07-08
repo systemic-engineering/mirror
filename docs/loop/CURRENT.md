@@ -405,18 +405,18 @@ move is above; per-line detail is in the transcript.
 
 Held for Alex numeric-ID assignment.
 
-**META candidate:**
-`the-peer-IS-a-pain-driven-bounded-ontological-navigator`
+**Numeric-IDs assigned (Reed adjudication per Alex delegation):**
 
-**Three sub-recognitions promoting alongside:**
-- `algedonic-gradient-is-navigation-surface`
-- `depth-is-winding-is-spawn-parameter`
-- `@magic-is-level-shift-ceremony`
+| ID | Candidate | Status |
+|---|---|---|
+| **#108** | `the-peer-IS-a-pain-driven-bounded-ontological-navigator` | META |
+| **#109** | `algedonic-gradient-is-navigation-surface` | sub |
+| **#110** | `depth-is-winding-is-spawn-parameter` | sub |
+| **#111** | `@magic-is-level-shift-ceremony` | sub |
+| **#112** | `@reflection-was-naming-artifact` | O5 consumption tick |
 
-**Consumes at O5 (candidate cleanup):**
-- `@reflection-was-naming-artifact` — Taut `0fc8589` verified all 6
-  @reflection actions have LANDED destinations. Alex-verbatim:
-  "This IS what @reflection wanted to be."
+Taut `0fc8589` verified all 6 @reflection actions have LANDED
+destinations. Alex-verbatim: "This IS what @reflection wanted to be."
 
 **Adjacent promotions from prior arc (strengthened case, still candidates):**
 - `@peer-has-a-torus` (this session 2026-07-07)
@@ -437,39 +437,46 @@ Held for Alex numeric-ID assignment.
 | `966890b` | Mara | ♻️ `shards/epistemologic/cybernetic/algedonic.mirror` EXTEND — sample_pleasure/sample_pain + algedonic_signal carrier (OID `237a3ec6`) |
 | `cdc6533` | Mara | ♻️ `shards/mirror/spawn.mirror` EXTEND — mirror_spawn_request.winding field; `in @torus` composition (OID `045e9e20`) |
 | — (no-op) | Mara | `boot/std/peer.mirror` — eigenboard already typed as `shard` per glass.mirror three-layer recognition; no edit needed |
+| `eec00d0` | Reed | 📝 `docs/loop/CURRENT.md` — late-session cascade capture + real-spawn Path A/B/C/D options |
+| `a823438` | Reed | 📝 cascade catalog update: numeric-IDs #108-112 + Reed adjudications A/B/C/D (Alex delegation "your call, I'm not interested in assigning numbers") |
+| `7b32d27` | Mara | 🔧 `shards/edge.mirror` NEW — the collapse under @magic (Alex #4 "one surface"); 295 lines; 5 carrier fields per @magic species (OID `9a6226bc`) |
+| `19f6d86` | Mara | ♻️ `shards/mirror/ref.mirror` — Path α collapse; edge_kind lifted from local decl to `in @edge` import (OID `c17dac11`) |
+| `6ef5117` | Mara | ♻️ `shards/mirror/store.mirror` — typed-edges deferral removed; cites @edge as the fault-plane collapse (OID `0dc58ef4`) |
 
 ## Alex-adjudication queue — late-session cascade additions
 
 Appended to the existing queue (which persists from the arc-to-rest session).
 See `1e8a02b` § Alex-adjudication queue for full context.
 
-1. **Numeric-ID assignment for META candidate** `the-peer-IS-a-pain-driven-
-   bounded-ontological-navigator` — given scope (composes ~10 prior
-   recognitions; consumes @reflection at O5; introduces intrinsic-motivation
-   as substrate primitive), may deserve special ID or a cluster.
-2. **Numeric-ID assignments for the 3 sub-recognitions** — cluster with META
-   or space per usual discipline?
-3. **O5 tick timing** — land @reflection consumption alongside META promotion,
-   or hold O5 for separate cleanup tick after substrate settles?
-4. **Mara-Taut divergence on `peer.observe`/`peer.alter`** — composition-
-   discharge (Mara `77fe92d` §6) or explicit `@peer` actions (Taut `0fc8589`
-   §2 item d)?
-5. **`@edge` fault-plane resolution** — `shards/mirror/ref.mirror:232-248`
-   already declares `edge_kind` variant with 7 values, undercutting
-   `shards/mirror/store.mirror:250-256`'s reservation to @spectral/db.
-   Land `@edge` under @magic (aligns with ref.mirror) or revert ref.mirror's
-   edge_kind (holds to store.mirror's deferral)?
-6. **`@knife` substrate declaration** — family-root, or species of @magic
-   (specifically `distinction`), or species of @shatter, or remain
-   doc-only Taut-primitive?
-7. **`@onto` refusal confirmation** — Mara + Taut converged on rejecting
-   @onto family-root (would re-introduce Foerster's refused ladder).
-   Confirm rejection with feedback memory:
-   `@onto-family-root-is-the-ladder-Foerster-refused`?
-8. **Real spawn Path selection** (from Session-handoff above) — A (winding
-   (0,0) reflexive validation), B (winding (1,0) or (0,1) first-order
-   traversal), C (real peer-home like ~/.reed), or D (mission-driven
-   reframe engagement, requires Phase H #6 which is tomorrow-scope)?
+**Alex-answered (2026-07-08 late session):**
+1. ~~Numeric-ID assignment for META~~ ✅ Delegated to Reed; #108-112 assigned
+2. ~~Numeric-ID assignments for 3 subs~~ ✅ Delegated; contiguous cluster
+3. **O5 tick timing** — STILL OPEN. Land @reflection consumption alongside
+   META promotion, or hold O5 for separate cleanup tick after substrate
+   settles?
+4. ~~Mara-Taut divergence on `peer.observe`/`peer.alter`~~ ✅ Alex "let's
+   see what emerges"; Reed adjudication: hold; composition-discharge
+5. ~~`@edge` fault-plane resolution~~ ✅ Alex "collapse into one surface";
+   LANDED Mara `7b32d27` + `19f6d86` + `6ef5117`
+6. ~~`@knife` substrate declaration~~ ✅ Alex delegated; Reed adjudication:
+   doc-only Taut-primitive; NOT family-root; promote when second consumer
+   PULLS
+7. ~~`@onto` refusal confirmation~~ ✅ Feedback memory landed:
+   `feedback-onto-family-root-is-the-ladder-Foerster-refused`
+8. **Real spawn Path selection** (from Session-handoff above) — STILL OPEN.
+   Alex answered: "the first spawn without a peer home. We need to first
+   be able to spawn an agent that actually delivers something without a
+   persistent identity before we can add the persistent identity layer on
+   top." Reed asked for architectural clarification: Shape A (anonymous
+   envelope only), Shape B (anonymous inference dispatch, blocked by fate
+   API drift), Shape C (anonymous sub-agent dispatch via Agent tool),
+   Shape D (split into `mirror invoke` + `mirror spawn` verbs). AWAITING
+   Alex direction.
+
+**Housekeeping still open:**
+- Fate WIP stash at `stash@{0}` — keep as anchor for tomorrow, or drop?
+- O5 tick timing (from #3 above)
+- Real spawn architecture (from #8 above)
 
 ## Feedback memory added this session
 
