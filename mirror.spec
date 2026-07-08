@@ -94,8 +94,23 @@ project mirror.spec {
 
       command shatter {
         # Project a settled shard to .shatter format.
+        #
+        # `flag target: str` parameterizes @shatter's codomain per
+        # `docs/specs/shatter-is-the-io-linearization-operator.md` §4.1
+        # (Mara `583b939`): @shatter IS the @io linearization operator;
+        # each `--target @<X>` selects one of the (possibly many)
+        # @data/* / @code/* / @io/* projections the operator wants
+        # linearized. Default "auto" preserves the pre-target-flag
+        # behavior (emit the substrate's default .shatter projection).
+        # Substrate-honest form: the target is a str carrier at the
+        # cli-block altitude (grammar today has no first-class `ref`
+        # value-type at flag position); the runtime dispatch parses the
+        # substrate ref via the same `parse_substrate_ref_to_format`
+        # helper the kintsugi `--out` chain uses, lifted from
+        # kintsugi-scoped to shatter-scoped in the same tick.
         arg oid: content_address
         arg out: ~f
+        flag target: str = "auto"
       }
 
       # === craft — grammar-directory settlement to lambda_0 ===
