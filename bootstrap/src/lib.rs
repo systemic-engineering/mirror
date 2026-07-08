@@ -2819,6 +2819,23 @@ fn hex_oid(oid: &[u8; 32]) -> String {
     s
 }
 
+/// Whether the head of an mq pipeline is `@mcp.serve` (the MCP transport
+/// primitive at `boot/std/mcp.mirror`). Both `@mcp.serve` (the action-
+/// qualified form used by the substrate-decl) and `@mcp` (bare grammar
+/// ref, historical / speculative) route to `mcp::serve_loop`. All other
+/// heads fall through to `execute_pipeline` per the pre-Tick 6.5 dispatch.
+///
+/// Substrate-honest naming: this predicate names the *runtime discharge
+/// point* for `dispatch_reflects_cli_block(dispatch)` and
+/// `tools_reflects_cli_block(tools)` (per `boot/std/mcp.mirror`).
+fn is_mcp_serve_head(segs: &[crate::pipeline::Segment]) -> bool {
+    if let Some(first) = segs.first() {
+        let r = first.r#ref.as_str();
+        return r == "@mcp.serve" || r == "@mcp";
+    }
+    false
+}
+
 /// Pure subcommand dispatch — returns an exit code instead of calling
 /// `std::process::exit`. The real binary entry point in `src/main.rs`
 /// wraps this with `std::process::exit(dispatch(&args))`; the library
@@ -2842,6 +2859,25 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
             merr!("empty query");
             return 1;
         }
+        // Tick 6.5 (2026-07-08 Mara) — @mcp.serve Rust runtime discharge.
+        // The `boot/std/mcp.mirror` substrate closure (Mara Tick 6 `d4c9a32`)
+        // landed bilateral-predicate contracts `dispatch_reflects_cli_block`
+        // + `tools_reflects_cli_block`. This special-case IS the runtime
+        // discharge: `@mcp.serve` at the head of the pipeline routes to
+        // `mcp::serve_loop` (the lifted MCP server at `bootstrap/src/mcp.rs`)
+        // which reads stdin line-by-line as JSON-RPC and writes JSON-RPC
+        // responses. `mcp::serve_loop` does its own stdin read — do NOT
+        // slurp stdin here before dispatch; the pipeline's `read_stdin_all`
+        // would consume the JSON-RPC frames.
+        //
+        // Substrate-honest naming: the runtime discharge point IS the
+        // dispatch surface — no new substrate coined. Per
+        // `docs/scouts/2026-07-08-taut-mcp-serve-lift-scope.md` LRM verdict
+        // (Taut `cf5ab8c`) + Landing 1 RED (bootstrap/tests/
+        // mcp_serve_runtime_shard.rs).
+        if is_mcp_serve_head(&segs) {
+            return crate::mcp::serve_loop();
+        }
         let source = match read_stdin_all() {
             Ok(s) => s,
             Err(e) => {
@@ -2860,6 +2896,16 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
         if segs.is_empty() {
             merr!("empty query");
             return 1;
+        }
+        // Tick 6.5 — same runtime discharge as Path A, for the `mirror
+        // /dev/stdin @mcp.serve` invocation shape named in the substrate
+        // decl at `boot/std/mcp.mirror` (`# Path B of the mirror binary`).
+        // The `/dev/stdin` file argument is a substrate-honest carrier of
+        // "the transport-frame source" that `mcp::serve_loop` reads via
+        // its own `std::io::stdin().lock()` — identical byte-source, no
+        // duplicate slurp needed.
+        if is_mcp_serve_head(&segs) {
+            return crate::mcp::serve_loop();
         }
         let resolved = ctx.resolve(&args[1]);
         let source = match fs::read(&resolved) {
