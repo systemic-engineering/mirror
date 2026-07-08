@@ -7,6 +7,7 @@ in @peer
 in @spectral/supervisor
 in @song
 in @fate
+in @torus
 
 # @mirror/spawn — the `mirror spawn ~peer'<home>'` cli-surface
 # substrate-decl.
@@ -239,7 +240,7 @@ prism @mirror/spawn {
 
 # === The mirror_spawn_request carrier ===
 #
-# The typed cli-surface request shape. Two fields:
+# The typed cli-surface request shape. Three fields:
 #
 #   target  — the peer to spawn (resolved via @peer.load from the
 #             ~peer'<home>' cli argument). REQUIRED at cli altitude.
@@ -249,10 +250,32 @@ prism @mirror/spawn {
 #             --hello-world for the Phase H empirical proof gate,
 #             --detach / --foreground, --restart-strategy override).
 #
-# Identity contract: byte-equality on the (target, options) tuple.
+#   winding — the bounded-observation depth per Mara `77fe92d` §2
+#             (Extension 2). Parameterises the spawn's ontological
+#             recursion depth cap AND the reachable π₁(T²) winding
+#             classes on the spawned peer's torus (|m|+|n| ≤ depth
+#             derived from winding). Substrate-honest name is
+#             `winding` per shards/torus.mirror:434 two-tick
+#             discipline — NOT `depth`, NOT `N`. The type IS
+#             shards/torus.mirror's LANDED `winding` carrier
+#             (meridian_count: int, longitude_count: int).
+#             Default `(0, 0)` = single-order observation
+#             (backward-compat with the pre-extension signature).
+#
+# Substrate-decl authorities cited (2026-07-08 extension):
+#   - `77fe92d` Mara spec §2 — the peer-as-pain-driven-bounded-
+#     ontological-navigator canonical spec; §3.2 Extension 2 names
+#     the spawn depth parameter
+#   - shards/torus.mirror:434 — the LANDED winding carrier from the
+#     @torus family-root; substrate-already-had-the-word applied
+#   - `0fc8589` Taut scout §2 — LANDABLE verdict for Landing 3
+#
+# Identity contract: byte-equality on the (target, options, winding)
+# triple.
 type mirror_spawn_request = {
   target:  peer,
   options: ref,
+  winding: winding,
 }
 
 # === spawn — the cli-surface action ===
