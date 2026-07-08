@@ -955,8 +955,9 @@ formalizes it.
 - [[feedback-legibility-over-foundation-when-collapsing]] — the
   discipline preserving `@loop` (readable) over `@moi` (foundational).
 - [[feedback-substrate-already-had-the-word]] — `@spawn` was
-  already carried implicitly by `@loop` + `@mirror/spawn` + budget-
-  adjacent vocabulary.
+  already carried implicitly by `@loop` + `@mirror/peer/beam`
+  (formerly `@mirror/spawn`; renamed 2026-07-08 Tick 2 `9de2226`) +
+  budget-adjacent vocabulary.
 - [[feedback-no-bare-types]] — `budget = ref`, not `budget = u32`.
 - `docs/math/provenance/un-cite-ability-theorem.md` — the
   trajectory is un-cite-able.
@@ -968,7 +969,9 @@ formalizes it.
   the peer's trajectory is differentiation into individual
   experience.
 - `shards/loop.mirror` — the family-root.
-- `shards/mirror/spawn.mirror` — the cli-surface consumer.
+- `shards/mirror/peer/beam.mirror` — the cli-surface consumer
+  (formerly `shards/mirror/spawn.mirror`; renamed 2026-07-08 Tick 2
+  `9de2226`).
 - `shards/peer.mirror` — the `peer` carrier.
 - `boot/00-prism.mirror` — the associativity-is-free proof.
 

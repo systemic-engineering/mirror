@@ -1758,9 +1758,11 @@ asymmetry.
   lift.
 - `shards/loop.mirror` — the family-root the restart intensity
   inherits its budget from.
-- `shards/mirror/spawn.mirror` — the cli-surface substrate-decl the
-  supervision tree is anchored through; composes with
-  `@spectral/supervisor` per that shard's peer-ACL §2.4 note.
+- `shards/mirror/peer/beam.mirror` — the cli-surface substrate-decl
+  the supervision tree is anchored through (formerly
+  `shards/mirror/spawn.mirror`; renamed 2026-07-08 Tick 2 `9de2226`);
+  composes with `@spectral/supervisor` per that shard's peer-ACL
+  §2.4 note.
 - `shards/peer.mirror` — the parametric peer carrier; grounds the
   registry residual at cli boundary (§2.13).
 - `shards/mirror.mirror` — the form-side family-root.

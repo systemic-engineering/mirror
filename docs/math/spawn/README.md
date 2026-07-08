@@ -154,15 +154,17 @@ download is a separate tick.
   experience along a bounded curve.
 - `shards/loop.mirror` — the family-root `@spawn` refines with
   bounded reductions.
-- `shards/mirror/spawn.mirror` — the cli-surface consumer; NOT the
-  substrate-decl `@spawn` this cluster proposes (two altitudes,
-  substrate-honest per @pack G2).
+- `shards/mirror/peer/beam.mirror` — the cli-surface consumer
+  (formerly `shards/mirror/spawn.mirror`; renamed 2026-07-08 Tick 2
+  `9de2226`); NOT the substrate-decl `@spawn` this cluster proposes
+  (two altitudes, substrate-honest per @pack G2).
 - `shards/peer.mirror` — the `peer` carrier the spawn is *of*.
 - `[[feedback-legibility-over-foundation-when-collapsing]]` — the
   discipline that kept `@loop` as the family-root; `@spawn` extends
   it rather than replacing it.
 - `[[feedback-substrate-already-had-the-word]]` — the substrate had
-  `@loop` + `@mirror/spawn` + `bounded_below` + `terminal_check` +
+  `@loop` + `@mirror/peer/beam` (formerly `@mirror/spawn`, renamed
+  2026-07-08 Tick 2 `9de2226`) + `bounded_below` + `terminal_check` +
   `pact_respected`; this cluster is one name recognizing that
   `@spawn` IS the specialization the substrate had been implicitly
   carrying.
@@ -189,8 +191,10 @@ download is a separate tick.
 - **Not a scheduler spec.** Runtime lifecycle stays at
   `shards/spectral/supervisor.mirror`; @spawn declares the *shape*
   of the loop, not the OS-level spawn primitive.
-- **Not the cli surface.** `shards/mirror/spawn.mirror` remains the
-  `mirror spawn ~peer'<home>'` surface. Two altitudes; the cli
+- **Not the cli surface.** `shards/mirror/peer/beam.mirror` (formerly
+  `shards/mirror/spawn.mirror`; renamed 2026-07-08 Tick 2 `9de2226`)
+  remains the `mirror peer beam ~peer'<home>'` surface (with `mirror
+  beam <mission>` as the anonymous variant). Two altitudes; the cli
   wraps the substrate-decl.
 - **Not a solve for spectral.engineer cloud deployment.**
   Explicitly per Alex 2026-07-02: spectral is the prototype;

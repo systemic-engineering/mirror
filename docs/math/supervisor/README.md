@@ -206,9 +206,10 @@ Not extracting speculatively.
 - `shards/code/beam.mirror` — the BEAM-as-`@code`-species prior art.
 - `shards/loop.mirror` — the family-root the restart intensity
   inherits its budget from.
-- `shards/mirror/spawn.mirror` — the cli-surface substrate-decl the
-  supervision tree is anchored through.
-- `shards/mirror/spawn.mirror` composes with `@spectral/supervisor`
+- `shards/mirror/peer/beam.mirror` — the cli-surface substrate-decl
+  the supervision tree is anchored through (formerly
+  `shards/mirror/spawn.mirror`; renamed 2026-07-08 Tick 2 `9de2226`).
+- `shards/mirror/peer/beam.mirror` composes with `@spectral/supervisor`
   per that shard's peer-ACL §2.4 note.
 - `[[architecture-hamilton-scheduler]]` — the per-shard memory
   manager named for Margaret Hamilton (Apollo 1202); the supervision
