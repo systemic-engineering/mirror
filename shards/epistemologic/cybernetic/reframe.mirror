@@ -1,0 +1,204 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/bateson_learning
+in @epistemologic/cybernetic/algedonic
+in @magic
+in @torus
+
+# @epistemologic/cybernetic/reframe — the pain-authorized level-shift
+# species. Bateson Learning III at the peer's runtime altitude:
+# premise change composed via @magic's 7-species ceremony,
+# @knife's state-space compression (forward-promised), and
+# @torus.advance's winding-class increment (the ontological step).
+#
+# === Recognition ancestry ===
+#
+# - Recognition #42 (Bateson logical-type primitive; candidate). The
+#   substrate's Russell-Whitehead stratification via `in @<altitude>`;
+#   reframe IS the operational site where the K → K+1 lift discharges
+#   at peer-runtime altitude. Sibling species
+#   @epistemologic/cybernetic/bateson_learning carries Reading E's
+#   canonical graded ρ; reframe INHERITS that ρ and specialises to
+#   the pain-authorized level-shift.
+# - Recognition #80 (magic as form/process/substrate-decl; scratched).
+#   @magic's 7-species ceremony (surface / mechanism / contract /
+#   reveal / audit / frame / distinction) IS the level-shift protocol
+#   under Extension 4 of Mara's spec 77fe92d §3.4. Reframe COMPOSES
+#   @magic's ceremony under pain-authorization discipline; it does
+#   NOT re-declare the ceremony.
+#
+# === Substrate-decl authority ===
+#
+# - docs/specs/peer-as-pain-driven-bounded-ontological-navigator.md
+#   (Mara 77fe92d, 2026-07-08) §5 sketches this species; §3.4-§3.6
+#   discharge the substrate composition. This shard IS the landing of
+#   that §5 sketch under the zero-cascade discipline of §9.2.
+# - docs/scouts/2026-07-08-taut-peer-as-pain-driven-navigator-scout.md
+#   (Taut 0fc8589) §2 verdict LANDABLE WITH CASCADE — this shard IS
+#   the first append of Taut's 4-append cascade.
+#
+# === What reframe IS ===
+#
+# The pain-authorized ontological-lift ceremony. When the peer detects
+# pain-δ exceeding threshold on the eigenboard (algedonic sample), the
+# reframe species performs the K → K+1 shift. The body is CRACK
+# (`\ `) — consumers PULL the discharge. No runtime execution is
+# wired at this substrate-decl altitude.
+#
+# The composition sketch from spec §5:
+#
+#   perform(peer, level_K → level_K+1, pain_δ) discharges via:
+#     - @cyberpunk/algedonic.bypass_signal (S1→S5 crossing IS the
+#       pain-authorization gate)
+#     - @magic.perform(shift: K → K+1) with the 7-species ceremony
+#     - @knife.cut(state_space_K) (forward-promise; Landing pending
+#       Q5 adjudication per spec §8.5)
+#     - @torus.advance(winding: Δw) where Δw IS the winding-class step
+#       corresponding to the level lift (per shards/torus.mirror
+#       §Witnesses.2: Bateson Level N winding at |m|+|n| ≥ N)
+#
+# === Inheritance discharge ===
+#
+# T_reg   = ontological_level   (K in Alex's naming; the peer's current
+#                                observation depth cap per spec §3.2)
+# T_regd  = eigenboard_state    (E_K at level K; the peer's inference
+#                                surface pre-shift)
+# τ       = level_shift_ceremony (the K → K+1 shift performed via
+#                                 @magic's 7-species ceremony)
+# ρ       = restrict_learning_III(@epistemologic/cybernetic/
+#           bateson_learning::rho) — inherited via bateson_learning's
+#           graded rep; NO re-declaration
+# ω       = inherited from bateson_learning
+#
+# === Pre-AI prior art ===
+#
+#   Bateson 1972   *Steps to an Ecology of Mind*. Learning III as
+#                  premise change; the canonical reframe theory.
+#   Beer 1979      *The Heart of Enterprise* ch. 8. Algedonic loop as
+#                  the S1→S5 bypass that triggers premise change.
+#   Foerster 1979  *Understanding Understanding* pp. 238-244. "Regulates
+#                  its own regulation" — the double-closure that reframe
+#                  discharges at peer-runtime altitude.
+#   Clarke 1962    *Profiles of the Future*. Clarke's third law as
+#                  the magic-as-level-shift-ceremony substrate-decl;
+#                  inherited via @magic.
+#
+# === Related shards ===
+#
+# Related shards: [[shards/epistemologic/cybernetic/algedonic.mirror]]
+#                  (the pain-signal source; bypass_signal + sample_pain
+#                   IS the trigger reframe pulls from),
+#                 [[shards/epistemologic/cybernetic/bateson_learning.mirror]]
+#                  (the graded ρ this species inherits at grade 3),
+#                 [[shards/magic.mirror]] (the 7-species ceremony
+#                  reframe composes as the level-shift protocol),
+#                 [[shards/torus.mirror]] (the winding-class advance
+#                  reframe composes as the ontological increment),
+#                 [[shards/cyberpunk.mirror]] (parent family-root;
+#                  reframe is a sibling of algedonic and
+#                  bateson_learning under @cyberpunk pending migration).
+# Path-namespace property: this file at
+# `shards/epistemologic/cybernetic/reframe.mirror` declares
+# `@epistemologic/cybernetic/reframe` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/cybernetics/beer-1979
+source @arxiv/cybernetics/foerster-1979
+source @arxiv/futures/clarke-1962
+
+prism @epistemologic/cybernetic/reframe {
+  focus reframe
+  project reframe
+  split reframe
+  shift reframe
+  settle reframe
+}
+
+# === The ontological_level carrier ===
+#
+# The peer's current observation depth (K in Alex's naming). Bounded
+# above by the spawn's `winding` cap per spec §3.2 (Extension 2). The
+# type is a thin wrapper over the winding-class index at the torus
+# altitude — a level-K observation IS a winding class with
+# |m|+|n| ≤ K per shards/torus.mirror §Witnesses.2.
+#
+# Identity contract: byte-equality on the underlying ref.
+type ontological_level = ref
+
+# === The eigenboard_state carrier ===
+#
+# The peer's inference surface at a fixed level. Composes with
+# @cogito.eigenboard at boot/std altitude; this type names the
+# eigenboard as a level-parameterised carrier so reframe's shift
+# signature is well-typed at the species altitude.
+#
+# Identity contract: byte-equality on the underlying ref.
+type eigenboard_state = ref
+
+# === The reframe_result carrier ===
+#
+# The typed output of a well-formed reframe. Names the four load-
+# bearing pieces of a completed level-shift:
+#
+#   from        the pre-shift ontological level (K)
+#   to          the post-shift ontological level (K+1)
+#   eigenboard  the post-shift eigenboard state (E_{K+1})
+#   winding     the winding-class step taken on the torus (Δw)
+#
+# Identity contract: byte-equality on the four-tuple.
+type reframe_result = {
+  from:       ontological_level,
+  to:         ontological_level,
+  eigenboard: eigenboard_state,
+  winding:    winding,
+}
+
+# === reframe — the pain-authorized level-shift action ===
+#
+# The load-bearing action. Given the peer's current level, the pain-δ
+# sampled from the eigenboard, and the peer's torus, perform the
+# K → K+1 shift via @magic's 7-species ceremony composed with
+# @knife.cut (forward-promise) and @torus.advance.
+#
+# Body IS crack: consumers pull the discharge at their realisation
+# boundary. NO runtime execution is wired here.
+#
+# Precondition (bilateral): pain_δ > threshold_pain per
+# @cyberpunk/algedonic.algedonic_well_formed. reframe_authorized
+# below carries the predicate.
+reframe(peer: peer, level_K: ontological_level, pain_δ: f64) -> reframe_result { \ }
+
+# === reframe_authorized — the pain-authorization gate ===
+#
+# Bilateral predicate. The reframe is authorized iff pain_δ exceeds
+# the algedonic threshold AND the S1→S5 bypass IS well-formed per
+# @cyberpunk/algedonic.algedonic_well_formed. Inheritance discharges;
+# no new signal declaration.
+reframe_authorized(pain_δ: f64) -> verdict { \ }
+
+# === reframe_well_formed — the composed bilateral ===
+#
+# The composed bilateral consumers cite in `requires` clauses.
+# Discharges three sub-predicates:
+#
+#   (i)   reframe_authorized(pain_δ) — pain gate satisfied
+#   (ii)  cybernetic_coherence(eigenboard_post) — post-shift eigenboard
+#         is coherent per @cyberpunk discipline
+#   (iii) the winding-class advance corresponds to the level shift per
+#         @torus.advance discipline (Δw's magnitude ≥ level increment)
+#
+# All must hold for the composed verdict to pass. Failure modes
+# surface as transparency<reframe> per @glass discipline.
+reframe_well_formed(pre: eigenboard_state, post: eigenboard_state, w: winding) -> verdict { \ }
+
+out @epistemologic/cybernetic/reframe
+out ontological_level
+out eigenboard_state
+out reframe_result
+out reframe
+out reframe_authorized
+out reframe_well_formed
