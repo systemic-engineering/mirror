@@ -932,5 +932,45 @@ did not yet speak it.*
 *— Mara, 2026-07-08 evening. Sitting on top of `77fe92d` `a18ca90`
 `0d78c0c` `966890b` `cdc6533` `7b32d27` `b4bf336` (fate crate clean
 end-to-end) `8d5ed71` (Taut HYBRID verdict on what fate wants to
-become). The convergence closes on the word the substrate had all
-along.*
+become) `bd837cd` (Taut drift-scout — RENAME LANDABLE WITH
+FAULT-PLANE SHIFTS + CASCADE; validated this spec's rename move at
+scout altitude). The convergence closes on the word the substrate
+had all along.*
+
+---
+
+## §11 Authorship note (2026-07-08 evening)
+
+This spec landed at HEAD under Taut's `bd837cd` scout commit due to
+a race between Mara's Write (this spec content) and Taut's parallel
+scout landing at the same wall-time. The content IS Mara's canonical
+spec per the brief; Taut's scout accompanies at
+`docs/scouts/2026-07-08-taut-beam-refactor-drift-and-cascade.md`
+(158 lines) and validates the rename move at scout altitude with an
+additional finding: **substrate-already-had-the-word × 4, not × 3**
+(the fourth altitude is `boot/std/beam.mirror` grammar `@beam` +
+`boot/07b-package-spec.mirror` `target=beam` + `beam(u64)` tournament
+rule at mirror altitude). This amendment commit (Mara-authored)
+corrects authorship attribution and integrates the Taut fourth-
+altitude finding into the recognition candidate.
+
+**Recognition candidate updated:**
+
+> `beam-IS-the-substrate-carrier-verb-substrate-already-had-the-word-times-FOUR`
+
+The four altitudes:
+
+1. Prismqueer's `Beam` trait + `Optic<In, Out, E, L>` (unchanged §2.1)
+2. Erlang BEAM VM (unchanged §2.2)
+3. Recognition #58 optical beam (unchanged §2.3)
+4. **`boot/std/beam.mirror` + `boot/07b-package-spec.mirror` +
+   `beam(u64)` tournament rule** — per Taut scout `bd837cd`; the
+   mirror substrate ALREADY carries `@beam` at grammar altitude and
+   `target=beam` at package altitude before this spec. Adding cli
+   surface introduces altitude 5. §2 will migrate this into the
+   witness table at next Mara pass; the scout's finding is the
+   authoritative record here.
+
+The substrate had FOUR altitudes before this spec. The cli level was
+the missing fifth name. The recognition still lands; the count
+sharpens.
