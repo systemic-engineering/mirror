@@ -73,6 +73,9 @@ bootstrap:
 # Format Rust sources via rustfmt. Idempotent; safe to run on every commit.
 # The commit-msg hook's auto_format calls this and re-stages the changes.
 format:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    [ -n "${IN_NIX_SHELL:-}" ] || exec nix develop --command just format
     cargo fmt --manifest-path {{MANIFEST_PATH}} --all
 
 # Pre-commit gate — substrate-native settlement of the pre-commit
@@ -119,6 +122,15 @@ format:
 pre-commit:
     #!/usr/bin/env bash
     set -euo pipefail
+    # Nix env guard — cargo transitively links libiconv (via git2 → libgit2),
+    # LAPACK/BLAS (via prismqueer feature-lapack), and gfortran runtime.
+    # These libs live in the nix store; the linker finds them via NIX_LDFLAGS
+    # set by the flake devShell. When the commit-msg hook (or any external
+    # invoker) runs this recipe from a shell without direnv-nix loaded, the
+    # cargo build fails with `ld: library not found for -liconv`. Guard
+    # re-execs inside `nix develop` to restore the env; no-op when direnv
+    # already keeps the shell warm.
+    [ -n "${IN_NIX_SHELL:-}" ] || exec nix develop --command just pre-commit
     # Diff-closure intersection: the @io closure of `mirror kintsugi mirror.spec`
     # at this tick is the Rust crate. Compute the staged-diff intersection;
     # short-circuit when empty.
@@ -156,8 +168,11 @@ pre-commit:
 # Pre-push gate. Re-runs the suite (coverage tooling not wired yet — when it
 # is, this recipe migrates to cargo-llvm-cov + a threshold check).
 pre-push:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    [ -n "${IN_NIX_SHELL:-}" ] || exec nix develop --command just pre-push
     cargo test --manifest-path {{MANIFEST_PATH}}
-    @echo "(coverage enforcement: TODO — cargo-llvm-cov + threshold)"
+    echo "(coverage enforcement: TODO — cargo-llvm-cov + threshold)"
 
 # ──────────────────────────────────────────────────────────────────────────
 # Build the mirror binary
@@ -165,10 +180,16 @@ pre-push:
 
 # Release build. Produces {{MIRROR_BIN_RELEASE}}.
 build:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    [ -n "${IN_NIX_SHELL:-}" ] || exec nix develop --command just build
     cargo build --release --manifest-path {{MANIFEST_PATH}}
 
 # Debug build — faster iteration, produces {{MIRROR_BIN_DEBUG}}.
 build-debug:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    [ -n "${IN_NIX_SHELL:-}" ] || exec nix develop --command just build-debug
     cargo build --manifest-path {{MANIFEST_PATH}}
 
 # Install the release binary to {{INSTALL_DIR}}/mirror.
