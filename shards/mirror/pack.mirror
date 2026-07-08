@@ -32,7 +32,7 @@ in @spectral/supervisor
 # C, dissolves peer-ACL §2.4 hedge (`in @spectral/supervisor`
 # composition typechecks against the existing glass declaration at
 # `shards/spectral/supervisor.mirror:322`), and unblocks the
-# downstream phases (peer identity-substrate loader; @mirror/spawn
+# downstream phases (peer identity-substrate loader; @mirror/peer/beam
 # refinement; the mirror MCP `mirror_spawn` Phase G).
 #
 # Substrate-pull-confidence HIGH per Taut; landed by Reed per

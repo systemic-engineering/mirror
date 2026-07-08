@@ -15,7 +15,7 @@
 //! - MCP session (M1 `01443b3`) accumulates @spec via mq queries
 //! - `mirror kintsugi @spec` (this tick) fires tournament; `settle` action
 //!   ratifies @spec's `settle_on` conditions
-//! - Ratified @spec OID passes to `@mirror/spawn.spawn` (M2 TICK 1 `63ea934`)
+//! - Ratified @spec OID passes to `@mirror/peer/beam.beam` (M2 TICK 1 `63ea934`; renamed 2026-07-08 Tick 2 from `@mirror/spawn.spawn`)
 //! - `spawn` returns `@song` — the running peer's time-evolution operator
 //!
 //! **Enrichment discipline** (matches M6/M1/M2-TICK-1 pattern):
@@ -119,7 +119,7 @@ fn t05_kintsugi_declares_in_song_ancestry() {
     let content = read_cli_kintsugi_shard();
     assert!(
         content.contains("in @song"),
-        "T5: shard MUST declare `in @song` ancestry — kintsugi's settle action feeds into @mirror/spawn which returns @song. Composition requires the song family binding."
+        "T5: shard MUST declare `in @song` ancestry — kintsugi's settle action feeds into @mirror/peer/beam (renamed from @mirror/spawn Tick 2) which returns @song. Composition requires the song family binding."
     );
 }
 
@@ -146,7 +146,9 @@ fn t06_kintsugi_narrative_binds_song_movement_close() {
 fn t07_kintsugi_narrative_names_spawn_composition() {
     let content = read_cli_kintsugi_shard();
     // The kintsugi → spawn → @song composition chain must be named.
-    let has_spawn_binding = content.contains("@mirror/spawn")
+    let has_spawn_binding = content.contains("@mirror/peer/beam")
+        || content.contains("beam.beam")
+        || content.contains("@mirror/spawn")
         || content.contains("spawn.spawn")
         || content.contains("mirror spawn")
         || content.contains("spawn a @song")
@@ -155,7 +157,7 @@ fn t07_kintsugi_narrative_names_spawn_composition() {
         || content.contains("spawns a @song");
     assert!(
         has_spawn_binding,
-        "T7: shard narrative MUST name the @mirror/spawn composition — kintsugi's settle action feeds a ratified @spec OID into @mirror/spawn.spawn which returns @song (M2 TICK 1 landed the return-type upgrade at `63ea934`)."
+        "T7: shard narrative MUST name the @mirror/peer/beam composition (renamed 2026-07-08 Tick 2 from @mirror/spawn) — kintsugi's settle action feeds a ratified @spec OID into @mirror/peer/beam.beam which returns @song (M2 TICK 1 landed the return-type upgrade at `63ea934`)."
     );
 }
 
@@ -211,7 +213,7 @@ fn t10_kintsugi_cites_recognition_43() {
 fn t11_kintsugi_cites_m_cascade_sibling_wiring() {
     let content = read_cli_kintsugi_shard();
     // The M-cascade context: M6 store enrichment, M1 mcp_session, M2 spawn.
-    let has_m_cascade = (content.contains("@mirror/store") && content.contains("@mirror/spawn"))
+    let has_m_cascade = (content.contains("@mirror/store") && (content.contains("@mirror/peer/beam") || content.contains("@mirror/spawn")))
         || (content.contains("mcp_session") || content.contains("MCP session"))
         || content.contains("M-cascade")
         || content.contains("M6")
@@ -219,7 +221,7 @@ fn t11_kintsugi_cites_m_cascade_sibling_wiring() {
         || content.contains("M2");
     assert!(
         has_m_cascade,
-        "T11: shard narrative MUST reference M-cascade siblings (@mirror/store + @mirror/spawn OR @spectral/gen_prism/mcp_session OR direct M6/M1/M2 references). The wiring chain: session accumulates @spec → kintsugi settles it → spawn produces @song."
+        "T11: shard narrative MUST reference M-cascade siblings (@mirror/store + @mirror/peer/beam OR @spectral/gen_prism/mcp_session OR direct M6/M1/M2 references; @mirror/peer/beam renamed 2026-07-08 Tick 2 from @mirror/spawn). The wiring chain: session accumulates @spec → kintsugi settles it → beam produces @song."
     );
 }
 

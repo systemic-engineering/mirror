@@ -1,4 +1,4 @@
-//! M-CLEAN TICK 1 RED — `shards/mirror/spawn.mirror` @fate hinge composition
+//! M-CLEAN TICK 1 RED — `shards/mirror/peer/beam.mirror` (renamed 2026-07-08 Tick 2 from shards/mirror/spawn.mirror) @fate hinge composition
 //! (removes stale Phase F quote; adds `in @fate` per M3 TICK 1 correction).
 //!
 //! **Substrate-pull correction cascade** (M3 TICK 1 close `21241f6`):
@@ -11,7 +11,7 @@
 //! declares `prism @fate` with full five-op body; `shards/fate/tournament.mirror`
 //! (41.5KB, LANDED 2026-06-30) declares `prism @fate/tournament`. Both landed
 //! SIX DAYS AFTER Taut's Phase F correction (2026-06-24) that
-//! `shards/mirror/spawn.mirror`'s docblock quotes as authority. **The quote
+//! `shards/mirror/peer/beam.mirror`'s docblock quotes as authority. **The quote
 //! is stale.**
 //!
 //! **Cascade delta**: spawn.mirror should:
@@ -38,26 +38,26 @@ fn repo_root() -> PathBuf {
         .to_path_buf()
 }
 
-fn read_spawn_shard() -> String {
-    let path = repo_root().join("shards/mirror/spawn.mirror");
+fn read_peer_beam_shard() -> String {
+    let path = repo_root().join("shards/mirror/peer/beam.mirror");
     std::fs::read_to_string(&path)
-        .unwrap_or_else(|e| panic!("read shards/mirror/spawn.mirror at {:?}: {}", path, e))
+        .unwrap_or_else(|e| panic!("read shards/mirror/peer/beam.mirror at {:?}: {}", path, e))
 }
 
 // === T1-T4: regression guards (existing substrate preserved) ===
 
 #[test]
 fn t01_spawn_family_root_declaration_preserved() {
-    let content = read_spawn_shard();
+    let content = read_peer_beam_shard();
     assert!(
-        content.contains("prism @mirror/spawn"),
-        "T1: `prism @mirror/spawn` family-root declaration must remain load-bearing (regression guard)"
+        content.contains("prism @mirror/peer/beam"),
+        "T1: `prism @mirror/peer/beam` family-root declaration must remain load-bearing (regression guard; renamed 2026-07-08 Tick 2 from `prism @mirror/spawn`)"
     );
 }
 
 #[test]
 fn t02_spawn_existing_ancestry_preserved() {
-    let content = read_spawn_shard();
+    let content = read_peer_beam_shard();
     for req in [
         "in @prism",
         "in @mirror/cli",
@@ -77,7 +77,7 @@ fn t02_spawn_existing_ancestry_preserved() {
 
 #[test]
 fn t03_spawn_song_return_type_preserved() {
-    let content = read_spawn_shard();
+    let content = read_peer_beam_shard();
     // M2 TICK 1 landed spawn's return type as @song (or a @song species
     // carrier). Preserve.
     let has_song_return = content.contains("-> @song")
@@ -94,7 +94,7 @@ fn t03_spawn_song_return_type_preserved() {
 
 #[test]
 fn t04_spawn_in_song_ancestry_preserved() {
-    let content = read_spawn_shard();
+    let content = read_peer_beam_shard();
     assert!(
         content.contains("in @song"),
         "T4: `in @song` ancestry must remain (M2 TICK 1 regression guard; hinge to @song family)"
@@ -105,7 +105,7 @@ fn t04_spawn_in_song_ancestry_preserved() {
 
 #[test]
 fn t05_spawn_declares_in_fate_hinge_ancestry() {
-    let content = read_spawn_shard();
+    let content = read_peer_beam_shard();
     // Per M3 TICK 1 correction: species that touch the runtime hinge MUST
     // declare `in @fate`. Spawn IS the runtime spawn action that fires
     // Fate optical inference — quintessentially a hinge composer.
@@ -118,7 +118,7 @@ fn t05_spawn_declares_in_fate_hinge_ancestry() {
 
 #[test]
 fn t06_spawn_cites_fate_substrate_decl_landing() {
-    let content = read_spawn_shard();
+    let content = read_peer_beam_shard();
     // Cite the @fate substrate-decl LANDING that supersedes the stale
     // Phase F correction.
     let has_fate_citation = content.contains("shards/fate.mirror")
@@ -134,7 +134,7 @@ fn t06_spawn_cites_fate_substrate_decl_landing() {
 
 #[test]
 fn t07_spawn_no_stale_phase_f_anti_pattern_claim() {
-    let content = read_spawn_shard();
+    let content = read_peer_beam_shard();
     // The stale Phase F quote ("@fate is runtime substrate, not a
     // substrate-decl prism") should be REMOVED or REFORMULATED. If the
     // shard still asserts this claim as current authority, that's the
@@ -161,7 +161,7 @@ fn t07_spawn_no_stale_phase_f_anti_pattern_claim() {
 
 #[test]
 fn t08_spawn_cites_m3_tick_1_correction_or_hinge_discipline() {
-    let content = read_spawn_shard();
+    let content = read_peer_beam_shard();
     // Cite the M3 TICK 1 correction context OR the hinge discipline
     // narrative that grounds `in @fate` composition.
     let has_hinge_narrative = content.contains("hinge")
@@ -179,7 +179,7 @@ fn t08_spawn_cites_m3_tick_1_correction_or_hinge_discipline() {
 
 #[test]
 fn t09_spawn_preserves_recognition_ancestry_84_58_99() {
-    let content = read_spawn_shard();
+    let content = read_peer_beam_shard();
     let has_84 = content.contains("#84") || content.contains("@pack multi-repo");
     let has_58 = content.contains("#58")
         || content.contains("Fate IS optical inference")
@@ -197,7 +197,7 @@ fn t09_spawn_preserves_recognition_ancestry_84_58_99() {
 
 #[test]
 fn t10_spawn_preserves_peer_acl_10_lead_semantics_and_spectral_supervisor() {
-    let content = read_spawn_shard();
+    let content = read_peer_beam_shard();
     let has_lead = content.contains("peer-ACL")
         || content.contains("lead")
         || content.contains("N+1 observer");

@@ -1,10 +1,10 @@
-//! M2 TICK 1 RED — `shards/mirror/spawn.mirror` return type upgrade.
+//! M2 TICK 1 RED — `shards/mirror/peer/beam.mirror` (renamed 2026-07-08 Tick 2 from shards/mirror/spawn.mirror) return type upgrade.
 //!
 //! Per collapse spec `docs/specs/mcp-spec-song-collapse.md` §10 (Mara `2cfd2a7`)
-//! + Taut composition-points scout (`shards/mirror/spawn.mirror` predates @song
+//! + Taut composition-points scout (`shards/mirror/peer/beam.mirror` predates @song
 //! by 11 days; 2026-06-25 vs @song landing 2026-07-06):
 //!
-//! **@mirror/spawn return type upgrade**: opaque `runtime` → typed `@song`. The
+//! **@mirror/peer/beam return type upgrade**: opaque `runtime` → typed `@song`. The
 //! spawned peer IS a `@song` — the peer's temporal-progression trajectory through
 //! their spec's state space (per collapse spec §5.1: `@song = spec's time-
 //! evolution operator applied to a peer`).
@@ -17,8 +17,8 @@
 //! spawn to it.
 //!
 //! **Enrichment discipline** (matches M6 TICK 1 pattern):
-//! - 5 regression guards: existing prism @mirror/spawn family-root, ancestry,
-//!   mirror_spawn_request type, peer_well_known predicate, recognition ancestry
+//! - 5 regression guards: existing prism @mirror/peer/beam family-root, ancestry,
+//!   mirror_peer_beam_request type, peer_well_known predicate, recognition ancestry
 //! - 10 enrichment items: `in @song` ancestry; return type @song; song/movement
 //!   composition; song/voice binding; collapse spec citation; @spectral/gen_prism/
 //!   mcp_session (M1 LANDED); Recognition #43 first-order consumer citation;
@@ -38,26 +38,26 @@ fn repo_root() -> PathBuf {
         .to_path_buf()
 }
 
-fn read_spawn_shard() -> String {
-    let path = repo_root().join("shards/mirror/spawn.mirror");
+fn read_peer_beam_shard() -> String {
+    let path = repo_root().join("shards/mirror/peer/beam.mirror");
     std::fs::read_to_string(&path)
-        .unwrap_or_else(|e| panic!("read shards/mirror/spawn.mirror at {:?}: {}", path, e))
+        .unwrap_or_else(|e| panic!("read shards/mirror/peer/beam.mirror at {:?}: {}", path, e))
 }
 
 // === T1-T5: regression guards (existing substrate must remain) ===
 
 #[test]
 fn t01_spawn_family_root_declaration_present() {
-    let content = read_spawn_shard();
+    let content = read_peer_beam_shard();
     assert!(
-        content.contains("prism @mirror/spawn"),
-        "T1: `prism @mirror/spawn` family-root declaration must remain load-bearing (regression guard)"
+        content.contains("prism @mirror/peer/beam"),
+        "T1: `prism @mirror/peer/beam` family-root declaration must remain load-bearing (regression guard; renamed 2026-07-08 Tick 2 from `prism @mirror/spawn`)"
     );
 }
 
 #[test]
 fn t02_spawn_existing_ancestry_preserved() {
-    let content = read_spawn_shard();
+    let content = read_peer_beam_shard();
     // Existing ancestry from 2026-06-25 landing
     for req in [
         "in @prism",
@@ -77,17 +77,17 @@ fn t02_spawn_existing_ancestry_preserved() {
 }
 
 #[test]
-fn t03_spawn_mirror_spawn_request_type_preserved() {
-    let content = read_spawn_shard();
+fn t03_peer_beam_mirror_peer_beam_request_type_preserved() {
+    let content = read_peer_beam_shard();
     assert!(
-        content.contains("type mirror_spawn_request") || content.contains("mirror_spawn_request = {"),
-        "T3: `mirror_spawn_request` type declaration must remain (regression guard). Two-field record with target: peer + options: ref per @peer.load composition."
+        content.contains("type mirror_peer_beam_request") || content.contains("mirror_peer_beam_request = {"),
+        "T3: `mirror_peer_beam_request` type declaration must remain (regression guard; renamed 2026-07-08 Tick 2 from `mirror_spawn_request`). Three-field record with target: peer + options: ref + winding: winding per @peer.load composition + torus depth extension."
     );
 }
 
 #[test]
 fn t04_spawn_peer_well_known_predicate_preserved() {
-    let content = read_spawn_shard();
+    let content = read_peer_beam_shard();
     assert!(
         content.contains("peer_well_known"),
         "T4: `peer_well_known` sub-bilateral predicate must remain (regression guard; #53 family lifted to `requires` clause per 2026-06-25 landing)."
@@ -96,7 +96,7 @@ fn t04_spawn_peer_well_known_predicate_preserved() {
 
 #[test]
 fn t05_spawn_recognition_ancestry_84_58_99_preserved() {
-    let content = read_spawn_shard();
+    let content = read_peer_beam_shard();
     let has_84 = content.contains("#84") || content.contains("@pack multi-repo");
     let has_58 = content.contains("#58")
         || content.contains("Fate IS optical inference")
@@ -116,7 +116,7 @@ fn t05_spawn_recognition_ancestry_84_58_99_preserved() {
 
 #[test]
 fn t06_spawn_declares_in_song_ancestry() {
-    let content = read_spawn_shard();
+    let content = read_peer_beam_shard();
     assert!(
         content.contains("in @song"),
         "T6: shard MUST declare `in @song` ancestry — spawn's return type upgrade to @song requires the family binding. Arc 6 (`eb50a61`) landed @song family root + 5 species; spawn now composes."
@@ -125,10 +125,10 @@ fn t06_spawn_declares_in_song_ancestry() {
 
 #[test]
 fn t07_spawn_return_type_is_song_not_runtime() {
-    let content = read_spawn_shard();
+    let content = read_peer_beam_shard();
     // Return-type upgrade: opaque `runtime` → typed `@song` (or a song-
     // family carrier: song_voice / song_progression / song_movement).
-    // The signature line `spawn(r: mirror_spawn_request, p: perturbation) -> ?`
+    // The signature line `beam(r: mirror_peer_beam_request, p: perturbation) -> ?`
     // must have @song or song_* as the return type.
     let has_song_return = content.contains("-> @song")
         || content.contains("-> song_voice")
@@ -144,7 +144,7 @@ fn t07_spawn_return_type_is_song_not_runtime() {
 
 #[test]
 fn t08_spawn_narrative_binds_song_movement_enter() {
-    let content = read_spawn_shard();
+    let content = read_peer_beam_shard();
     // spawn IS `@song/movement.enter` at cli altitude — the frame-entry
     // action of a temporal-bounded epoch at runtime.
     let has_movement_binding = content.contains("@song/movement")
@@ -162,7 +162,7 @@ fn t08_spawn_narrative_binds_song_movement_enter() {
 
 #[test]
 fn t09_spawn_cites_song_voice_binding_for_spawned_peer() {
-    let content = read_spawn_shard();
+    let content = read_peer_beam_shard();
     // The spawned peer IS a @song/voice — the *when* on top of
     // @mirror/spectral/voice's *what/who*. This is the peer-as-actor
     // binding at temporal altitude.
@@ -182,7 +182,7 @@ fn t09_spawn_cites_song_voice_binding_for_spawned_peer() {
 
 #[test]
 fn t10_spawn_cites_collapse_spec_or_song_promotions() {
-    let content = read_spawn_shard();
+    let content = read_peer_beam_shard();
     let has_binding = content.contains("mcp-spec-song-collapse")
         || content.contains("collapse spec")
         || content.contains("#S2")
@@ -196,7 +196,7 @@ fn t10_spawn_cites_collapse_spec_or_song_promotions() {
 
 #[test]
 fn t11_spawn_cites_mcp_session_gen_prism_as_related_species() {
-    let content = read_spawn_shard();
+    let content = read_peer_beam_shard();
     let has_mcp_session = content.contains("@spectral/gen_prism/mcp_session")
         || content.contains("mcp_session")
         || content.contains("MCP session")
@@ -209,7 +209,7 @@ fn t11_spawn_cites_mcp_session_gen_prism_as_related_species() {
 
 #[test]
 fn t12_spawn_cites_recognition_43_first_order_consumer() {
-    let content = read_spawn_shard();
+    let content = read_peer_beam_shard();
     let has_43 = content.contains("#43")
         || content.contains("content-addressed build system")
         || content.contains("architecture-mirror-as-content-addressed");
@@ -221,7 +221,7 @@ fn t12_spawn_cites_recognition_43_first_order_consumer() {
 
 #[test]
 fn t13_spawn_names_type_mismatch_resolution_narrative() {
-    let content = read_spawn_shard();
+    let content = read_peer_beam_shard();
     // Taut flagged spawn's return type `runtime` as an 11-day-old
     // mismatch predating @song. The shard should acknowledge the
     // resolution (either narratively naming the upgrade or citing
@@ -244,20 +244,20 @@ fn t13_spawn_names_type_mismatch_resolution_narrative() {
 
 #[test]
 fn t14_spawn_preserves_peer_acl_10_lead_semantics() {
-    let content = read_spawn_shard();
+    let content = read_peer_beam_shard();
     let has_lead = content.contains("peer-ACL")
         || content.contains("peer ACL")
         || content.contains("lead")
         || content.contains("N+1 observer");
     assert!(
         has_lead,
-        "T14: peer-ACL §10 lead semantics (spawn-and-probe relation; N+1 observer) must remain preserved in narrative (regression guard). The spawn side is what @mirror/spawn discharges; the lead's ongoing spectral-Tomm-probe handling is the runtime side (unchanged)."
+        "T14: peer-ACL §10 lead semantics (spawn-and-probe relation; N+1 observer) must remain preserved in narrative (regression guard). The spawn side is what @mirror/peer/beam discharges (renamed 2026-07-08 Tick 2 from @mirror/spawn); the lead's ongoing spectral-Tomm-probe handling is the runtime side (unchanged)."
     );
 }
 
 #[test]
 fn t15_spawn_preserves_spectral_supervisor_lifecycle_composition() {
-    let content = read_spawn_shard();
+    let content = read_peer_beam_shard();
     let has_supervisor = content.contains("@spectral/supervisor")
         || content.contains("spectral/supervisor")
         || content.contains("start_child")

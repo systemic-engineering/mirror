@@ -9,8 +9,25 @@ in @song
 in @fate
 in @torus
 
-# @mirror/spawn — the `mirror spawn ~peer'<home>'` cli-surface
+# @mirror/peer/beam — the `mirror peer beam ~peer'<home>'` cli-surface
 # substrate-decl.
+#
+# Renamed 2026-07-08 (Tick 2 of the beam-refactor cascade) from
+# @mirror/spawn per the path-namespace property + the beam-as-substrate-
+# primitive canonical spec (`docs/specs/beam-as-substrate-primitive.md`;
+# Reed b6358c1 + Mara). The cli-verb `mirror peer beam` lands at Tick 3
+# (cli-block + bootstrap + MCP schema). Historical composition prose
+# below still names the cli-verb `mirror spawn` where accurate to the
+# pre-Tick-3 cli surface; substrate-decl names use @mirror/peer/beam.
+#
+# Substrate-decl composition ancestry preserved atomic under rename:
+# - @pack.spawn primitive (shards/pack.mirror:263) — unchanged; @pack
+#   keeps `spawn` as the substrate primitive at pack altitude. The
+#   cli-surface wrapper is what's renamed; the pack primitive is not.
+# - @song return-type upgrade (M2 TICK 1 `63ea934`) — preserved.
+# - @fate hinge composition (M-CLEAN TICK 1 `680a039`) — preserved.
+# - @song/movement.enter binding — preserved; the frame-entry semantics
+#   are altitude-invariant under the cli-verb rename.
 #
 # Phase D close per the LOCAL-PACK loop. Lifts @pack.spawn (the
 # load-bearing primitive at @pack altitude per recognition #84,
@@ -230,12 +247,12 @@ in @torus
 # (which of the 5 species applies at any given consumer altitude)
 # happens at the consumer, not here.
 
-prism @mirror/spawn {
-  focus mirror_spawn_request
-  project mirror_spawn_request
-  split mirror_spawn_request
-  shift mirror_spawn_request
-  settle mirror_spawn_request
+prism @mirror/peer/beam {
+  focus mirror_peer_beam_request
+  project mirror_peer_beam_request
+  split mirror_peer_beam_request
+  shift mirror_peer_beam_request
+  settle mirror_peer_beam_request
 }
 
 # === The mirror_spawn_request carrier ===
@@ -272,7 +289,7 @@ prism @mirror/spawn {
 #
 # Identity contract: byte-equality on the (target, options, winding)
 # triple.
-type mirror_spawn_request = {
+type mirror_peer_beam_request = {
   target:  peer,
   options: ref,
   winding: winding,
@@ -290,7 +307,7 @@ type mirror_spawn_request = {
 # a @song — the peer's time-evolution operator applied to their spec.
 # Composes with @spectral/supervisor for lifecycle (start_child kicks
 # the spawn; restart_strategy owned by supervisor).
-spawn(r: mirror_spawn_request, p: perturbation) -> @song
+beam(r: mirror_peer_beam_request, p: perturbation) -> @song
 requires peer_well_known(r.target, p)
 { \ }
 
@@ -310,11 +327,11 @@ peer_well_known(p: peer, perturbation) -> verdict { \ }
 #     When `mirror spawn` runs without explicit target, resolve to the
 #     CURRENT spec's pack{}.lead. Closes the no-arg cli invocation.
 #
-# - mirror_spawn_coherent(r: mirror_spawn_request, p: perturbation) -> verdict
+# - mirror_peer_beam_coherent(r: mirror_peer_beam_request, p: perturbation) -> verdict
 #     Composed bilateral per recognition #53 family (15th altitude lift
 #     when it lands).
 
-out @mirror/spawn
-out mirror_spawn_request
-out spawn
+out @mirror/peer/beam
+out mirror_peer_beam_request
+out beam
 out peer_well_known

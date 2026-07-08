@@ -108,7 +108,7 @@ in @song
 # altitude without dilution: the kintsugi verb IS the frame-shift ON
 # the frame, discharged at the shell.
 #
-# === Composition with @mirror/spawn (kintsugi → spawn → @song) ===
+# === Composition with @mirror/peer/beam (kintsugi → beam → @song) ===
 #
 # Composition chain at the M-cascade wire boundary:
 #
@@ -117,13 +117,13 @@ in @song
 #   `mirror kintsugi @spec` (this stage; M2 TICK 2) fires tournament;
 #   `settle` action ratifies @spec's `settle_on` conditions
 #     ↓
-#   Ratified @spec OID passes to `@mirror/spawn.spawn` (M2 TICK 1
+#   Ratified @spec OID passes to `@mirror/peer/beam.beam` (M2 TICK 1
 #   `63ea934`; return-type upgrade runtime → @song)
 #     ↓
 #   `spawn` returns @song — the running peer's time-evolution operator
 #
 # The kintsugi.settle action feeds a ratified @spec OID into
-# @mirror/spawn.spawn which returns @song. The @song emerges at the
+# @mirror/peer/beam.beam which returns @song. The @song emerges at the
 # spawn boundary post-tournament, NOT at kintsugi's return boundary —
 # kintsugi's actions keep their `imperfect` return type (they may
 # partial per recognition #306); the typed temporal frame surfaces at
@@ -148,7 +148,7 @@ in @song
 #   kintsugi.settle (this stage; one tournament iteration ratifies
 #   `settle_on` conditions per the @fate variety-maintenance contract)
 #     ↓
-#   @mirror/spawn (M2 TICK 1) consumes the ratified @spec OID
+#   @mirror/peer/beam (M2 TICK 1) consumes the ratified @spec OID
 #     ↓
 #   @song (post-tournament typed temporal frame at the peer's
 #   trajectory altitude)
@@ -165,7 +165,7 @@ in @song
 #
 # - Collapse spec `docs/specs/mcp-spec-song-collapse.md` §5, §10 (Mara
 #   2cfd2a7): the MCP session → @spec construction → kintsugi @spec
-#   ratification → @mirror/spawn → @song wire. This shard IS the
+#   ratification → @mirror/peer/beam → @song wire. This shard IS the
 #   kintsugi-@spec verb dispatch at cli altitude. Composes with #S2
 #   (shift-at-temporal, LANDED), #S3 (five-op temporal specialisation,
 #   LANDED at Seam Phase D `10c34cf`), #S4 (cascade-shape altitude-
@@ -176,7 +176,7 @@ in @song
 #   substrate. The MCP session gen_prism IS the state machine that
 #   accumulates @spec across mq queries; this stage IS the substrate
 #   that consumes the ratified @spec via `settle`. Together with
-#   @mirror/spawn (M2 TICK 1 LANDED at `63ea934`) they close the mq
+#   @mirror/peer/beam (M2 TICK 1 LANDED at `63ea934`) they close the mq
 #   → @spec → @song wiring: M1 accumulates the spec, M2 TICK 2 (this
 #   stage) ratifies the spec through the tournament, M2 TICK 1 spawns
 #   the peer whose trajectory IS the spec's time-evolution.
@@ -198,7 +198,7 @@ in @song
 #
 # Second-witness landing per M2 TICK 1 Seam Phase D `b50fedc` §3.
 # First witness: `mirror spawn` IS `@song/movement.enter` at cli
-# altitude (M2 TICK 1 `63ea934`; shards/mirror/spawn.mirror
+# altitude (M2 TICK 1 `63ea934`; shards/mirror/peer/beam.mirror (renamed 2026-07-08 Tick 2)
 # "Composition with @song/movement" section). This tick lands the
 # second witness: `mirror kintsugi @spec` IS `@song/movement.close`
 # at cli altitude.
@@ -223,10 +223,10 @@ in @song
 # Original 2026-06-12 landing: kintsugi actions return
 # `imperfect(settled-graph-ref)`. Arc 6 close (`eb50a61`) landed the
 # @song family + 5 species (movement, voice, progression, narrative,
-# phrase); M2 TICK 1 (`63ea934`) upgraded @mirror/spawn to return
+# phrase); M2 TICK 1 (`63ea934`) upgraded @mirror/peer/beam (fmr @mirror/spawn) to return
 # @song. This tick (M2 TICK 2) names the composition: when kintsugi
 # settles an @spec whose `settle_on` ratifies, the ratified OID feeds
-# @mirror/spawn.spawn which returns @song. The kintsugi actions
+# @mirror/peer/beam.beam which returns @song. The kintsugi actions
 # themselves keep their `imperfect` return type (they may partial per
 # recognition #306); the @song emerges at the spawn boundary post-
 # tournament, not at kintsugi's boundary. The typed temporal frame
@@ -240,7 +240,7 @@ in @song
 # post-@song, the ratified @spec OID feeds a spawn action whose
 # @song return names the peer's temporal-evolution trajectory. The
 # shard's return type does NOT change; what changes is that its
-# downstream composition (via the @mirror/spawn wire) now surfaces
+# downstream composition (via the @mirror/peer/beam wire) now surfaces
 # @song at the M-cascade boundary.
 
 stage @mirror/lens/cli/kintsugi {
