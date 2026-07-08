@@ -3113,25 +3113,124 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
             }
         },
         "spawn" => match positional {
+            // Tick 3 Landing 2 — `mirror spawn` is preserved as a
+            // backward-compat alias for `mirror peer beam` per two-tick
+            // discipline. The cli-verb rename lands at substrate altitude
+            // (mirror.spec `96aa752`); this alias emits a deprecation
+            // notice on stderr while keeping stdout envelope byte-equal
+            // for round-trip stability. Fault-plane #1 preserved:
+            // @pack.spawn at pack altitude (shards/pack.mirror:263) is
+            // unchanged — only the cli-surface wrapper is renamed.
             Some(p) => {
+                merr!(
+                    "note: `mirror spawn` is a deprecated alias for `mirror peer beam` (two-tick discipline; substrate-honest surface is `mirror peer beam <peer-home>` per mirror.spec cli-block)"
+                );
                 let hello_world = args.iter().any(|a| a == "--hello-world");
-                // Substrate-honest name (mirror.spec 1e45c50 cli-block declares
-                // `flag mission: ~f`) is --mission. --task remains as backward-
-                // compat alias per two-tick discipline. First-match wins if
-                // both are given; the internal name is `mission` regardless of
-                // which flag the operator typed.
                 let mission = args
                     .iter()
                     .position(|a| a == "--mission" || a == "--task")
                     .and_then(|i| args.get(i + 1))
                     .map(|s| s.as_str());
-                cmd_spawn(p, hello_world, mission, ctx)
+                cmd_peer_beam(p, hello_world, mission, ctx)
             }
             None => {
-                merr!("usage: mirror spawn <peer-home> [--hello-world] [--mission <mission-file> | --task <mission-file>]");
+                merr!("usage: mirror spawn <peer-home> [--hello-world] [--mission <mission-file> | --task <mission-file>]  (deprecated alias for `mirror peer beam`)");
                 1
             }
         },
+        "peer" => {
+            // Tick 3 Landing 2 — `mirror peer beam <peer-home>` (recursive-
+            // command depth-2 dispatch per @mirror/lens/cli Tick 1 grammar
+            // `fe82500`). Substrate-decl at mirror.spec Landing 1
+            // (`96aa752`) declares `command peer { command beam { ... } }`;
+            // this arm walks the nested command via args[2] and finds the
+            // sub-positional starting at args[3].
+            //
+            // Only sub-command today is `beam`. Future sub-commands
+            // (per beam-as-substrate-primitive.md §3 composition table)
+            // land under this arm as additional match branches.
+            if args.len() < 3 {
+                merr!("usage: mirror peer beam <peer-home> [--hello-world] [--mission <mission-file>]");
+                1
+            } else {
+                match args[2].as_str() {
+                    "beam" => {
+                        // Sub-positional finder starting at args[3] —
+                        // mirrors the outer `positional` helper but
+                        // offset by one for the nested command.
+                        let sub_positional: Option<&str> = {
+                            let mut j = 3;
+                            let mut found: Option<&str> = None;
+                            while j < args.len() {
+                                let a = &args[j];
+                                if a == "--mission" || a == "--task" {
+                                    j += 2;
+                                    continue;
+                                }
+                                if a.starts_with("--") {
+                                    j += 1;
+                                    continue;
+                                }
+                                found = Some(a.as_str());
+                                break;
+                            }
+                            found
+                        };
+                        match sub_positional {
+                            Some(p) => {
+                                let hello_world = args.iter().any(|a| a == "--hello-world");
+                                let mission = args
+                                    .iter()
+                                    .position(|a| a == "--mission" || a == "--task")
+                                    .and_then(|i| args.get(i + 1))
+                                    .map(|s| s.as_str());
+                                cmd_peer_beam(p, hello_world, mission, ctx)
+                            }
+                            None => {
+                                merr!("usage: mirror peer beam <peer-home> [--hello-world] [--mission <mission-file>]");
+                                1
+                            }
+                        }
+                    }
+                    other => {
+                        merr!("unknown: peer {}", other);
+                        1
+                    }
+                }
+            }
+        }
+        "beam" => {
+            // Tick 3 Landing 2 — `mirror beam <mission-file>` (anonymous
+            // variant per docs/specs/beam-as-substrate-primitive.md §3
+            // composition table: beam-without-persistent-identity).
+            // Substrate-decl at mirror.spec Landing 1 (`96aa752`) declares
+            // top-level `command beam { arg mission: ~f }`. Both `mirror
+            // beam` and `mirror peer beam` dispatch to the same substrate
+            // action (@mirror/peer/beam.beam); runtime differentiation is
+            // on positional-arg shape (mission-file vs peer-home).
+            //
+            // v0 body: anonymous variant defers to cmd_peer_beam with a
+            // sentinel peer-home. Substrate-honest — the anonymous
+            // variant's persistent-identity slot is empty by construction;
+            // envelope shape reflects that at the cli surface. Full
+            // anonymous body (mission-driven @song without peer-home
+            // binding) is a follow-up tick.
+            match positional {
+                Some(p) => {
+                    let hello_world = args.iter().any(|a| a == "--hello-world");
+                    // The anonymous variant's positional IS the mission
+                    // file per Landing 1. Pass it through as the mission
+                    // argument to cmd_peer_beam with the current dir as
+                    // sentinel peer-home; the substrate action is the
+                    // same, only the operator-facing arg-shape differs.
+                    cmd_peer_beam(".", hello_world, Some(p), ctx)
+                }
+                None => {
+                    merr!("usage: mirror beam <mission-file> [--hello-world]");
+                    1
+                }
+            }
+        }
         "shatter" => {
             // Tick 0 Landing 2 — `mirror shatter <oid> <out> [--target
             // <substrate-ref>]`. Per mirror.spec cli-block (Landing 1;
@@ -3979,7 +4078,7 @@ fn parse_settle_on_predicates(body: &str) -> Vec<String> {
 ///   - No membership-side-effects (spawn does NOT add members to the pack).
 ///   - No stateless-return (envelope acknowledges persisted state even
 ///     though v0 does not yet store it; Phase H wires storage).
-fn cmd_spawn(peer_home: &str, hello_world: bool, task: Option<&str>, ctx: &Ctx) -> i32 {
+fn cmd_peer_beam(peer_home: &str, hello_world: bool, task: Option<&str>, ctx: &Ctx) -> i32 {
     // Piece 1 (insight §2.1): cli surface. The peer-home argument is the
     // single positional. Context (frame, repository, pack) is resolved
     // FROM peer-home, not passed in. Resolve via ctx so relative
