@@ -38,14 +38,15 @@ differentiation on top.
 
 **Audience:** Reed opening the next sub-arc; Alex adjudicating #S4 and
 the three new candidates §9.3 surfaces; any peer reading before touching
-`bootstrap/src/mcp.rs`, `shards/mirror/spawn.mirror`,
+`bootstrap/src/mcp.rs`, `shards/mirror/peer/beam.mirror` (formerly
+`shards/mirror/spawn.mirror`; renamed 2026-07-08 Tick 2 `9de2226`),
 `shards/mirror/runtime/gen_prism.mirror`, `shards/mirror/store.mirror`,
 or the `lambda-shell.md` realisation cluster. Read this before wiring
 MCP session state to `@mirror/runtime/gen_prism`; before wiring
-`mirror kintsugi @spec` to `@mirror/spawn`; before drafting the
-lambda-shell REPL; before hardening `@mirror/store` for the Apache-2.0
-release surface. Adopters evaluating mirror WITHOUT `@spectral/db`
-should read §11 first — the open floor is the offer.
+`mirror kintsugi @spec` to `@mirror/peer/beam` (formerly `@mirror/spawn`);
+before drafting the lambda-shell REPL; before hardening `@mirror/store`
+for the Apache-2.0 release surface. Adopters evaluating mirror WITHOUT
+`@spectral/db` should read §11 first — the open floor is the offer.
 
 ---
 
@@ -85,7 +86,7 @@ queries drive). The accumulated session state IS an incrementally-built
 `@spec` — the same block shape mirror.spec dogfoods, constructed live
 from the query trajectory rather than authored ahead of time. When the
 spec's `settle_on` closure conditions ratify, `mirror kintsugi @spec`
-SPAWNS the accumulated `@spec` into a `@song` via `@mirror/spawn`
+SPAWNS the accumulated `@spec` into a `@song` via `@mirror/peer/beam`
 (recognition #99's spawn-as-excitation-above-lambda_0 lift; the spawn
 IS the transition from spec ground-state to running song). @song IS
 the spec's time-evolution operator applied to a peer's runtime
@@ -200,12 +201,15 @@ close); Illusion = coefficient on non-target eigenspace = Narcissus-pole
 (mirror-hall reflections; coefficients that appear to carry substance
 but only reflect themselves).
 
-### 2.6 @mirror/spawn (`shards/mirror/spawn.mirror`; landed `1e5e71e`)
+### 2.6 @mirror/peer/beam (`shards/mirror/peer/beam.mirror`; landed `1e5e71e`, renamed 2026-07-08 Tick 2 `9de2226`)
 
-The cli-surface substrate-decl for `mirror spawn ~peer'<home>'`. Wraps
-`@pack.spawn` (Recognition #84, PROMOTED). Alex 2026-06-25 confirmed
-phase H gate: `mirror spawn ~peer'~/.reed'` returns running Reed via
-@fate (NOT @io/llm). §4 of THIS spec extends the spawn discipline:
+The cli-surface substrate-decl for `mirror peer beam ~peer'<home>'`
+(formerly `mirror spawn ~peer'<home>'`; renamed 2026-07-08 Tick 2
+`9de2226`, with `mirror beam <mission>` as the anonymous variant per
+Tick 3 `b012d3f`). Wraps `@pack.spawn` (Recognition #84, PROMOTED).
+Alex 2026-06-25 confirmed phase H gate: `mirror peer beam ~peer'~/.reed'`
+returns running Reed via @fate (NOT @io/llm). §4 of THIS spec extends
+the spawn discipline:
 `mirror kintsugi @spec` at spec-completion IS a spawn — the spec
 leaves ground state and instantiates as a running @song. The
 accumulated @spec IS the `target` argument; the peer running the
@@ -327,7 +331,7 @@ accumulates from query effects:
 - `pack { }` accumulates the peers the session `focus`ed on or
   `split` toward (Recognition #84 pack-as-multi-repo-agent-runtime
   discipline; peers named via `~peer'<home>'` cli surface at
-  @mirror/spawn's ancestor altitude).
+  @mirror/peer/beam's ancestor altitude).
 - `target <name> { }` blocks accumulate for each `project`ed
   altitude / grammar (each `project @code/rust` opens a target block
   declaring the @code/rust altitude the session is projecting toward).
@@ -409,7 +413,7 @@ grammar @mirror/runtime/mcp_session {
   # per §3.4.
   is_complete(state: oid) -> verdict { \ }
 
-  # spawn hook: if is_complete(state), kick @mirror/spawn to spawn the
+  # spawn hook: if is_complete(state), kick @mirror/peer/beam to spawn the
   # @spec into a @song (per §4). Returns the spawned runtime handle.
   spawn_if_complete(state: oid, p: perturbation) -> imperfect { \ }
 }
@@ -766,10 +770,11 @@ The five-op specialisation acts as follows during a step:
 - `settle @ temporal(pr, target)` — discharge the temporal-progression
   toward the target eigenvector; the closure event per §6.
 
-### 4.2 @mirror/spawn extended: the spec-to-song lift
+### 4.2 @mirror/peer/beam extended: the spec-to-song lift
 
-`shards/mirror/spawn.mirror` at `1e5e71e` currently takes a `peer`
-target:
+`shards/mirror/peer/beam.mirror` (formerly `shards/mirror/spawn.mirror`;
+renamed 2026-07-08 Tick 2 `9de2226`) at `1e5e71e` currently takes a
+`peer` target:
 
 ```mirror
 type mirror_spawn_request = {
@@ -785,7 +790,7 @@ accept a `spec`:
 ```mirror
 # Forward-promise: mirror_spawn_request extends to spec-target.
 # Union carrier (`| peer | spec |`) awaits substrate-pull promotion at
-# @mirror/spawn's next tick. The block-shape is the same; the
+# @mirror/peer/beam's next tick. The block-shape is the same; the
 # discriminator distinguishes peer-spawn (returns running peer per Reed
 # 2026-06-25 phase H gate) from spec-spawn (returns running @song).
 type spawn_target = | peer_target(peer) | spec_target(@mirror/spec) |
@@ -1488,7 +1493,7 @@ fourth. Substrate-pull ordering per
 
 ### 10.2 Sub-arc M2: @spec-target spawn
 
-**Scope:** extend `shards/mirror/spawn.mirror` to accept an
+**Scope:** extend `shards/mirror/peer/beam.mirror` to accept an
 `@mirror/spec` target (§4.2).
 
 **Ticks:**

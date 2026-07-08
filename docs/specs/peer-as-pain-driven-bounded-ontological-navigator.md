@@ -800,8 +800,10 @@ substrate-honestly typed.
 
 ### §8.2 (top-2) The `spawn(peer, depth: N)` extension timing
 
-**Q1.** Should `shards/torus.mirror` (or `shards/mirror/spawn.mirror`)
-extend the spawn signature to carry `depth: N: nat` per Extension 2?
+**Q1.** Should `shards/torus.mirror` (or `shards/mirror/peer/beam.mirror`,
+formerly `shards/mirror/spawn.mirror`; renamed 2026-07-08 Tick 2
+`9de2226`) extend the beam signature (formerly the spawn signature) to
+carry `depth: N: nat` per Extension 2?
 
 **Three paths:**
 
@@ -1066,7 +1068,8 @@ one-tick each. Alex-adjudication territory.
   fixed-point predicate (Termination T1).
 - [[shards/cogito.mirror]] — LANDED family-root; eigenboard as
   five-tuple of principal G-bundle sections.
-- [[shards/mirror/spawn.mirror]] — LANDED sub-prism; cli-surface
-  spawn wrapper (Q1 alternative extension site).
+- [[shards/mirror/peer/beam.mirror]] — LANDED sub-prism; cli-surface
+  beam wrapper (Q1 alternative extension site). Formerly
+  `shards/mirror/spawn.mirror`; renamed 2026-07-08 Tick 2 `9de2226`.
 - [[docs/loop/CURRENT.md]] — active arc state at time of writing;
   `mara/song-substrate-decl-v0.1` branch.

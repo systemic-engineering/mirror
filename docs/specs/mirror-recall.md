@@ -12,7 +12,7 @@ Reads from / depends on:
 - `docs/scouts/2026-06-26-taut-graph-dependency-dag-scout.md` (Taut, `d4749c0`; the `in <X>` arrows point from consumer UP to grounding; the invariant `@mirror/recall` must respect)
 - `docs/scouts/2026-06-26-taut-psychohistory-cohomology-scout.md` (Taut, `3a385fd`; the peer-ACL §10.1 explicit exclusion: lead→member is NOT a sheaf restriction map; flagged here, not collided with)
 - `bootstrap/src/mcp.rs` (the current MCP surface — six tools: `compile`, `craft`, `kintsugi`, `prisms`, `verdict`, `spawn`; `prisms` is the existing introspection primitive this family-root composes WITH, not replaces)
-- `shards/mirror/spawn.mirror` (the outbound family-root counterparty; signature pattern this spec mirrors symmetrically)
+- `shards/mirror/peer/beam.mirror` (the outbound family-root counterparty; signature pattern this spec mirrors symmetrically; formerly `shards/mirror/spawn.mirror`; renamed 2026-07-08 Tick 2 `9de2226`)
 - `shards/mirror/store.mirror` (the OPEN content-addressed gate; the payload anchor surface)
 - `shards/mirror/ref.mirror` (the navigable surface of A; recall composes WITH ref at the trajectory altitude)
 - `shards/mirror/bench.mirror` (`bench_crystal`, `monotone_non_increasing`; recall's dogfood-state payload reads bench surface)
@@ -44,7 +44,7 @@ Forward references (this spec unblocks):
 
 ## 1. Statement — what the family-root IS
 
-**`@mirror/recall` IS the substrate's inbound surface family-root — the typed family-root prism that exposes the substrate's own trajectory state to a returning agent as content-addressed views, composed across the substrate-decl, observation, probe, and Pack sheaves Mara's psychohistory insight names (`d00f553` §3.7), anchored at OID/commit/state content-addresses rather than synthesized at call time, and lifted through the MCP wire as the symmetric dual of `@mirror/spawn`'s outbound counterparty surface.**
+**`@mirror/recall` IS the substrate's inbound surface family-root — the typed family-root prism that exposes the substrate's own trajectory state to a returning agent as content-addressed views, composed across the substrate-decl, observation, probe, and Pack sheaves Mara's psychohistory insight names (`d00f553` §3.7), anchored at OID/commit/state content-addresses rather than synthesized at call time, and lifted through the MCP wire as the symmetric dual of `@mirror/peer/beam`'s outbound counterparty surface (formerly `@mirror/spawn`; renamed 2026-07-08 Tick 2 `9de2226`).**
 
 Six load-bearing pieces in that sentence, each grounded in a landed substrate-decl, a Pack-banked insight, or a substrate discipline:
 
@@ -58,9 +58,9 @@ Six load-bearing pieces in that sentence, each grounded in a landed substrate-de
 
 5. **Anchored at OID/commit/state content-addresses rather than synthesized at call time.** The forbidden-primitives gate from `b10f00c` §4 rules out stateless-return-at-runtime, idempotent-at-runtime, and identity-mint. Every recall response is anchored — same git ref produces structurally equivalent recall payloads; the substrate's content-addressing discipline at every scope (recognition #98) provides the anchoring for free.
 
-6. **Symmetric dual of `@mirror/spawn`.** Per Reed's `c0acf41` §5 forward-promise: spawn is the substrate's outbound-counterparty surface (excitation above λ₀ per #99); recall is the substrate's inbound-rehydrating-counterparty surface (returning to ground state with knowledge of what moved while away). Same architectural altitude — both compose at the @mirror family-root altitude with the same prism vocabulary; opposite direction — spawn instantiates a runtime peer outward; recall projects substrate trajectory inward to a returning peer.
+6. **Symmetric dual of `@mirror/peer/beam`** (formerly `@mirror/spawn`; renamed 2026-07-08 Tick 2 `9de2226`). Per Reed's `c0acf41` §5 forward-promise: the outbound family-root is the substrate's outbound-counterparty surface (excitation above λ₀ per #99); recall is the substrate's inbound-rehydrating-counterparty surface (returning to ground state with knowledge of what moved while away). Same architectural altitude — both compose at the @mirror family-root altitude with the same prism vocabulary; opposite direction — the outbound family-root instantiates a runtime peer outward; recall projects substrate trajectory inward to a returning peer.
 
-Collapsing the six pieces back into one sentence: **`@mirror/recall` is the typed family-root prism a returning agent invokes to read the substrate's trajectory state — across the four stacked sheaves of its own development — as content-addressed views anchored at the substrate's existing OID/commit/state addresses, the symmetric dual of `@mirror/spawn` at the same architectural altitude, the opposite direction.**
+Collapsing the six pieces back into one sentence: **`@mirror/recall` is the typed family-root prism a returning agent invokes to read the substrate's trajectory state — across the four stacked sheaves of its own development — as content-addressed views anchored at the substrate's existing OID/commit/state addresses, the symmetric dual of `@mirror/peer/beam` (formerly `@mirror/spawn`) at the same architectural altitude, the opposite direction.**
 
 This IS the statement. §§2-10 work out the motivation, the four payloads, the dependency direction, the forbidden-primitives gate, the name selection, the cross-altitude connections, the empirical consequences of the round-trip test drive, the open hedges, and the Pack trail.
 
@@ -400,7 +400,7 @@ out spec_resolves
 out since_content_addressed
 ```
 
-The signature mirrors `@mirror/spawn`'s shape (one positional argument; contextual resolution inside the body; bilateral predicates at the `requires` clauses; forward-promised composed bilateral). This IS the symmetric-dual structural pattern at the substrate-decl altitude.
+The signature mirrors `@mirror/peer/beam`'s shape (one positional argument; contextual resolution inside the body; bilateral predicates at the `requires` clauses; forward-promised composed bilateral). This IS the symmetric-dual structural pattern at the substrate-decl altitude.
 
 ---
 
@@ -440,7 +440,7 @@ in @peer          # the peer carrier for pack_tick records
 
 `@mirror/pack` grounds the pack{} block shape recall reads in §3.2. `@pack` grounds the underlying carrier and the pack-coherent discipline. `@peer` grounds the per-record peer field. Direction correct: recall consumes pack vocabulary; pack vocabulary doesn't import recall.
 
-The symmetry with `@mirror/spawn`'s import block is exact: spawn imports `@mirror/pack + @pack + @peer` to dispatch outward; recall imports the same three to read inward. Both consume the same pack-altitude vocabulary; both occupy the same architectural altitude.
+The symmetry with `@mirror/peer/beam`'s import block is exact: the outbound family-root imports `@mirror/pack + @pack + @peer` to dispatch outward; recall imports the same three to read inward. Both consume the same pack-altitude vocabulary; both occupy the same architectural altitude.
 
 ### 4.4 Trajectory + supervision layer
 
@@ -469,7 +469,7 @@ in @epistemologic/reality/time    # the time altitude for since-resolution
 
 | NOT imported | Why |
 |---|---|
-| `@fate` | @fate is the runtime substrate, not a substrate-decl prism (per Taut's Phase F anti-pattern correction 2026-06-24; same exclusion as @mirror/spawn). |
+| `@fate` | @fate is the runtime substrate, not a substrate-decl prism (per Taut's Phase F anti-pattern correction 2026-06-24; same exclusion as @mirror/peer/beam). |
 | `@io/llm` | Forbidden per b10f00c §4.2 (and the substrate has no @io/llm family). |
 | `@io/git` (directly) | @mirror/store transitively composes with @io/git; recall consumes @mirror/store. Direct @io/git import would be a structural collision with the addressing layer's encapsulation. |
 | `@os/process` / `@os/thread` | Forbidden per b10f00c §4.1; recall is a read path, not a process-fork path. |
@@ -682,8 +682,8 @@ Alex 2026-06-26 authorized a /loop terminating at empirical test drive of `mirro
 
 With the six existing MCP tools (compile / craft / kintsugi / prisms / verdict / spawn), the round-trip outbound half IS testable:
 
-- `mirror spawn ~peer'~/.reed' --hello-world` runs the cli-surface action per `shards/mirror/spawn.mirror` (1e5e71e); the Phase G v0.5 wiring at `bootstrap/src/mcp.rs` (03541db) emits an envelope naming all seven composition pieces.
-- The empirical assertion testable today: the spawn envelope is well-formed; the seven composition pieces resolve; the @peer carrier types correctly.
+- `mirror peer beam ~peer'~/.reed' --hello-world` (formerly `mirror spawn ~peer'~/.reed' --hello-world`; renamed 2026-07-08 Tick 3 `96aa752`) runs the cli-surface action per `shards/mirror/peer/beam.mirror` (1e5e71e, later renamed 2026-07-08 Tick 2 `9de2226`); the Phase G v0.5 wiring at `bootstrap/src/mcp.rs` (03541db) emits an envelope naming all seven composition pieces.
+- The empirical assertion testable today: the beam envelope is well-formed; the seven composition pieces resolve; the @peer carrier types correctly.
 
 What is NOT testable today: the INBOUND half. The spawned Reed has no substrate-aware way to read what happened in the mirror substrate between when it was spawned and now (a degenerate case at Phase G v0.5, where "now" is immediate; a load-bearing case at Phase H where the spawn lifetime is meaningful). Reed at the spawned-altitude can read `mirror.spec`'s static fields; Reed cannot read the substrate's TRAJECTORY because no inbound surface exists.
 
@@ -757,7 +757,7 @@ Three flags from §5 + three from §3 + two structural opens land here. Per the 
 
 **Flag #7: Whether `@mirror/recall` is the right family-root or a species under an existing family-root.** The substrate-already-had-the-word discipline pulls strongly toward existing vocabulary. Three existing family-roots could plausibly host recall as a species: `@mirror/ref` (the navigable surface; recall is a temporal-projection navigation), `@reflection` (the observation altitude; recall is the substrate's observable trajectory), `@mirror/store` (the content-addressed gate; recall reads anchored payloads). This spec proposes recall as a NEW family-root because the four-payload composition does not fit cleanly under any of the three existing ones (ref is at decl altitude; reflection is at one-tick-delay altitude; store is at addressing altitude — none subsumes the trajectory altitude across four sheaves). But the call admits adversarial review. Open to Mara/Seam/Alex.
 
-**Flag #8: Whether the @mirror/recall <-> @mirror/spawn pair admits a parent family-root.** If the spawn↔recall symmetry promotes (second witness lands), the pair MAY belong under a `@mirror/<something>` parent family-root that the substrate-pull surfaces. Today: speculative; no parent family-root is proposed; the pair lives as siblings at the @mirror altitude. Open to substrate-pull at a future cascade.
+**Flag #8: Whether the @mirror/recall <-> @mirror/peer/beam pair admits a parent family-root.** If the outbound↔recall symmetry promotes (second witness lands), the pair MAY belong under a `@mirror/<something>` parent family-root that the substrate-pull surfaces. Today: speculative; no parent family-root is proposed; the pair lives as siblings at the @mirror altitude. Open to substrate-pull at a future cascade.
 
 ### 9.4 The honest framing-limit
 

@@ -92,7 +92,8 @@ mirror craft    → @mirror/craft
 mirror kintsugi → @mirror/kintsugi
 mirror bench    → @mirror/bench
 mirror translate → @mirror/translate
-mirror spawn    → @mirror/spawn
+mirror peer beam → @mirror/peer/beam    # renamed 2026-07-08 Tick 2 (formerly @mirror/spawn)
+mirror beam     → @mirror/peer/beam    # anonymous variant; same substrate root
 ```
 
 The `mirror` binary is:
