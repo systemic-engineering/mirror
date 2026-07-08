@@ -8,6 +8,29 @@
 // operating at Bateson Level III at cybernetic-VSM altitude. Premise-
 // change collapsing N-many regulated layers in one signal.
 //
+// === 2026-07-08 extension: pleasure/pain gradient substrate-decl ===
+//
+// Per Mara's spec docs/specs/peer-as-pain-driven-bounded-ontological-
+// navigator.md (`77fe92d`) §2 typed pseudocode: the algedonic signal has
+// TWO empirical read-out sites at the peer's eigenboard — a pleasure
+// gradient AND a pain gradient sampled per-tick against the peer's
+// current winding class. Sample actions + typed carrier (algedonic_signal)
+// substrate-decl'd here so consumers (@cyberpunk/reframe, spec §5, LANDED
+// this session) can pull the sampling composition without re-declaring
+// the projection surface.
+//
+// Recognition ancestry cited for the extension:
+//   - Recognition #42 (Bateson logical-type primitive; candidate) — the
+//     algedonic signal IS Bateson Level III at cybernetic-VSM altitude
+//     (Beer 1979 ch. 8); pleasure/pain sampling IS the operational
+//     surface at which the graded ρ discharges to real-valued readouts.
+//   - Beer VSM literature (Beer 1972, 1979) — the algedonic-as-learning-
+//     signal ancestry inherited via the base declaration above.
+//
+// Substrate-decl consumer: `77fe92d` §2 wires
+// `sample_algedonic(E_K_prime)` into the pain-authorized reframe loop.
+// The extension below lands the substrate-decl form of that call.
+//
 // T_reg   = Premise            (Bateson Level III — the premise that the
 //                               regulated S1-S4 hierarchy is operating under)
 // T_regd  = RegulatedPremise   (the regulated S1-S4 layers — the operational
@@ -77,4 +100,51 @@ prism algedonic <= cybernetic_species {
     // coincides with the Beer-VSM bypass morphism. Inheritance discharges.
     \splinter(ast)
   }
+
+  // ── 2026-07-08 extension: gradient sampling surface ──────────────
+  //
+  // Per Mara `77fe92d` §2 typed pseudocode: pleasure/pain sampled from
+  // the peer's eigenboard IS the algedonic-gradient readout. These
+  // actions are CRACK — consumers pull the discharge at the peer's
+  // realisation boundary.
+
+  sample_pleasure(eigenboard: ref) -> f64 { \
+    // Read the pleasure-δ at the current tick. Projects the eigenboard's
+    // valence-carrying component (per Anthropic 2026 arXiv:2604.07729
+    // PC1 valence = 26% variance) to a real-valued gradient reading.
+    // Discharge is the composition π_affect ∘ valence_projection at
+    // docs/math/affect/affect-and-eigenboard.md §2.2.
+    \splinter(ast)
+  }
+
+  sample_pain(eigenboard: ref) -> f64 { \
+    // Read the pain-δ at the current tick. The dual of sample_pleasure:
+    // projects the eigenboard's aversive-valence component to a real-
+    // valued gradient reading. When this crosses threshold, the peer's
+    // navigation IS in a corner; @cyberpunk/reframe (LANDED this
+    // session at shards/epistemologic/cybernetic/reframe.mirror) pulls
+    // this signal as the level-shift authorization gate.
+    \splinter(ast)
+  }
+}
+
+# === The algedonic_signal carrier (2026-07-08 extension) ===
+#
+# The typed record naming the pleasure/pain gradient sampled at a
+# given winding class. Per Mara `77fe92d` §2: the peer samples this
+# at every tick; pain_δ exceeding threshold IS the corner-detection
+# signal that authorizes @cyberpunk/reframe.
+#
+# Three fields:
+#   pleasure_δ    the pleasure gradient at this tick (valence component)
+#   pain_δ        the pain gradient at this tick (aversive component)
+#   at_winding    the winding class (m, n) at which the sample was taken
+#                 (the tuple is (meridian_count, longitude_count) per
+#                  shards/torus.mirror's winding carrier)
+#
+# Identity contract: byte-equality on the three-tuple.
+type algedonic_signal = {
+  pleasure_δ: f64,
+  pain_δ:     f64,
+  at_winding: (int, int),
 }
