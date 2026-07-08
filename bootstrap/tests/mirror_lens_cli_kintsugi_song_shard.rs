@@ -213,7 +213,8 @@ fn t10_kintsugi_cites_recognition_43() {
 fn t11_kintsugi_cites_m_cascade_sibling_wiring() {
     let content = read_cli_kintsugi_shard();
     // The M-cascade context: M6 store enrichment, M1 mcp_session, M2 spawn.
-    let has_m_cascade = (content.contains("@mirror/store") && (content.contains("@mirror/peer/beam") || content.contains("@mirror/spawn")))
+    let has_m_cascade = (content.contains("@mirror/store")
+        && (content.contains("@mirror/peer/beam") || content.contains("@mirror/spawn")))
         || (content.contains("mcp_session") || content.contains("MCP session"))
         || content.contains("M-cascade")
         || content.contains("M6")
