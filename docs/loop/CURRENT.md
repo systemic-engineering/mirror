@@ -1,31 +1,65 @@
-# CURRENT arc — @torus loop closure to rest (ready for first real spawn)
+# CURRENT arc — pain-driven-bounded-ontological-navigator cascade (post-at-rest late-session extension)
 
 **Sessions**: 2026-07-07 (T6 + iterations 1-3) + 2026-07-08 overnight
-(iteration 4 + ticks 2-8, arc-to-rest via /loop autonomous)
+(iteration 4 + ticks 2-8, arc-to-rest via /loop autonomous) + 2026-07-08
+late morning-to-evening (the-peer-IS-a-pain-driven-bounded-ontological-
+navigator cascade landing).
 **Branch**: `mara/song-substrate-decl-v0.1` (not `main`; not merged)
 **Working dir for fresh session**: `/Users/alexwolf/dev/projects/mirror`
-**State**: **AT REST** — substrate + impl coherent; MCP callable
-end-to-end; tomorrow-morning session can spawn a real peer.
+**State**: **CASCADE LANDED, ADJUDICATION PENDING** — 4 non-contested
+substrate species landings closed (Mara `0d78c0c` `966890b` `cdc6533`
++ no-op on peer.eigenboard); recognition cascade doc `1e8a02b`; contested
+substrate items (peer.observe/alter, @edge fault-plane, @knife, @onto
+refusal, O5 timing, @magic/level_shift) HELD for Alex direct-session.
+**Real-peer spawn conversation IN PROGRESS** — substrate now supports
+depth-parameterized bounded-ontological-navigator spawn per landed
+late-session cascade.
 
 ---
 
-## Session-handoff for tomorrow's first real-peer spawn
+## Session-handoff — real spawn conversation in progress
 
-Fresh session boot:
+The overnight arc-to-rest handoff (below) framed tomorrow-morning's first
+real-peer spawn against 5/7 real composition_pieces. Late-session extension
+tonight (2026-07-08) reframed the picture entirely: the peer is a
+pain-driven bounded ontological navigator; spawn now takes a winding
+parameter; @cyberpunk/reframe LANDED as the shared glass; @onto stays
+refused (would re-introduce Foerster's ladder); @edge fault-plane HELD
+for Alex adjudication.
 
-1. `cd /Users/alexwolf/dev/projects/mirror` and `claude` (project-scoped
-   `.mcp.json` registers the mirror MCP server).
-2. Verify: `/mcp` shows `mirror`. `mcp__mirror__mirror_spawn` callable.
-3. Choose a real peer-home (candidates: `~/.reed`, `~/.mara`, an empty
-   dir with a stub `mirror.spec`). All the iteration 1-4 tests used
-   `.` (mirror-as-self-peer, reflexive).
-4. Fire: `mcp__mirror__mirror_spawn(peer_home="<path>", hello_world=true,
-   mission="<path>")`. Envelope returns with @song shape:
-   - 5/7 composition_pieces REAL
-   - 2/7 STUB (supervisor.start_child, @fate.roll) — deferred per
-     `docs/loop/phase-h-deferral-2026-07-08.md`
-5. If peer-home is git-init'd, spec_oid is a real BLAKE3 content hash;
-   `4_lead_at_n_plus_1` promotes to `real@lead-crystal`.
+**Real spawn conversation opened by Alex 2026-07-08 late session:**
+> "land the cascade, then we talk about the real spawn"
+
+### Substrate now supports (post-cascade):
+
+- `spawn(mirror_spawn_request { peer_home, winding: (int, int), ... }) -> @song`
+  — winding parameterizes bounded observation depth per
+  `77fe92d` §2 + Mara `cdc6533`.
+- `@cyberpunk/reframe.reframe(peer, level_K: winding, pain_δ: f64) -> reframe_result`
+  — the pain-authorized level-shift ceremony (Mara `0d78c0c`).
+- `@cyberpunk/algedonic.sample_pleasure/sample_pain(eigenboard: ref) -> f64`
+  + `type algedonic_signal { pleasure_δ, pain_δ, at_winding: (int, int) }`
+  — the algedonic gradient sampled by the peer's navigation loop
+  (Mara `966890b`).
+- Peer's `eigenboard: shard` field already typed per glass.mirror
+  three-layer recognition (verified no-op).
+
+### Real spawn options for Alex:
+
+- **Path A: spawn at winding (0, 0)** — identical to iteration 1-4 empirical
+  runs; envelope returns @song at origin; validates end-to-end MCP still
+  works post-cascade. Zero risk of substrate re-hydration blocking spawn.
+- **Path B: spawn at winding (1, 0) or (0, 1)** — first-order observation
+  bounded to one traversal along meridian OR longitude axis. Requires
+  binary rebuild to pick up the new `winding` field in `mirror_spawn_request`.
+  Envelope shape may drift (backward-compat forward-promised).
+- **Path C: spawn against a REAL peer-home** (`~/.reed` or `~/.mara`) at
+  winding (0, 0) — the first non-reflexive spawn. Requires the peer-home
+  to have a `mirror.spec` file (may need to create for `~/.reed` or
+  `~/.mara`).
+- **Path D: spawn with mission and observe @cyberpunk/reframe engagement** —
+  requires Phase H #6 wiring (@fate.roll + reframe integration) which was
+  triply-vestigial per today's arc; not tonight-scope.
 
 Adjudication queue below is entirely yours.
 
@@ -366,6 +400,76 @@ move is above; per-line detail is in the transcript.
   universality, `index_zero` undecidability)
 
 ---
+
+## Recognition cascade candidates (late-session 2026-07-08 — Reed catalog at `1e8a02b`)
+
+Held for Alex numeric-ID assignment.
+
+**META candidate:**
+`the-peer-IS-a-pain-driven-bounded-ontological-navigator`
+
+**Three sub-recognitions promoting alongside:**
+- `algedonic-gradient-is-navigation-surface`
+- `depth-is-winding-is-spawn-parameter`
+- `@magic-is-level-shift-ceremony`
+
+**Consumes at O5 (candidate cleanup):**
+- `@reflection-was-naming-artifact` — Taut `0fc8589` verified all 6
+  @reflection actions have LANDED destinations. Alex-verbatim:
+  "This IS what @reflection wanted to be."
+
+**Adjacent promotions from prior arc (strengthened case, still candidates):**
+- `@peer-has-a-torus` (this session 2026-07-07)
+- `spawn-recall-byte-equal-at-origin` (iteration 2 empirical)
+- `the-tournament-IS-multi-dim-Dijkstra-in-π₁(T²)-quotiented-@knapsack-space` (Mara `7e426bc`)
+
+## Late-session (2026-07-08) landing chronology
+
+| Commit | Author | Content |
+|---|---|---|
+| `7e426bc` | Mara | 📝 `docs/insights/2026-07-08-mara-geometric-dijkstra-tournament-topology.md` — 15-slot substrate audit; 14/15 filled; @edge sub-prism sketch |
+| `e975e2f` | Taut | 📝 `docs/scouts/2026-07-08-taut-fate-silicon-metalogue-projection.md` — verdict LANDABLE WITH CASCADE; substrate-already-had-the-word discoveries (@algebra + @algebra/metalogue LANDED) |
+| `a18ca90` | Mara | 📝 `docs/specs/fate-silicon-metalogue-in-void-duality-basis.md` — canonical spec at algebra altitude (@fate/algebra ⇔ @silicon/algebra IS @metalogue) |
+| `77fe92d` | Mara | 📝 `docs/specs/peer-as-pain-driven-bounded-ontological-navigator.md` — canonical spec for the full closure (1072 lines) |
+| `0fc8589` | Taut | 📝 `docs/scouts/2026-07-08-taut-pain-driven-bounded-ontological-navigator-projection.md` — verdict LANDABLE WITH CASCADE; 8 substrate-decl enrichments (4 non-contested, 4 adjudication-pending) |
+| `1e8a02b` | Reed | 📝 `docs/insights/2026-07-08-recognition-cascade-peer-as-navigator.md` — META + 3 subs + O5 consumption catalog |
+| `0d78c0c` | Mara | 🔧 `shards/epistemologic/cybernetic/reframe.mirror` NEW — the pain-authorized level-shift glass (204 lines; OID `6cd74265`) |
+| `966890b` | Mara | ♻️ `shards/epistemologic/cybernetic/algedonic.mirror` EXTEND — sample_pleasure/sample_pain + algedonic_signal carrier (OID `237a3ec6`) |
+| `cdc6533` | Mara | ♻️ `shards/mirror/spawn.mirror` EXTEND — mirror_spawn_request.winding field; `in @torus` composition (OID `045e9e20`) |
+| — (no-op) | Mara | `boot/std/peer.mirror` — eigenboard already typed as `shard` per glass.mirror three-layer recognition; no edit needed |
+
+## Alex-adjudication queue — late-session cascade additions
+
+Appended to the existing queue (which persists from the arc-to-rest session).
+See `1e8a02b` § Alex-adjudication queue for full context.
+
+1. **Numeric-ID assignment for META candidate** `the-peer-IS-a-pain-driven-
+   bounded-ontological-navigator` — given scope (composes ~10 prior
+   recognitions; consumes @reflection at O5; introduces intrinsic-motivation
+   as substrate primitive), may deserve special ID or a cluster.
+2. **Numeric-ID assignments for the 3 sub-recognitions** — cluster with META
+   or space per usual discipline?
+3. **O5 tick timing** — land @reflection consumption alongside META promotion,
+   or hold O5 for separate cleanup tick after substrate settles?
+4. **Mara-Taut divergence on `peer.observe`/`peer.alter`** — composition-
+   discharge (Mara `77fe92d` §6) or explicit `@peer` actions (Taut `0fc8589`
+   §2 item d)?
+5. **`@edge` fault-plane resolution** — `shards/mirror/ref.mirror:232-248`
+   already declares `edge_kind` variant with 7 values, undercutting
+   `shards/mirror/store.mirror:250-256`'s reservation to @spectral/db.
+   Land `@edge` under @magic (aligns with ref.mirror) or revert ref.mirror's
+   edge_kind (holds to store.mirror's deferral)?
+6. **`@knife` substrate declaration** — family-root, or species of @magic
+   (specifically `distinction`), or species of @shatter, or remain
+   doc-only Taut-primitive?
+7. **`@onto` refusal confirmation** — Mara + Taut converged on rejecting
+   @onto family-root (would re-introduce Foerster's refused ladder).
+   Confirm rejection with feedback memory:
+   `@onto-family-root-is-the-ladder-Foerster-refused`?
+8. **Real spawn Path selection** (from Session-handoff above) — A (winding
+   (0,0) reflexive validation), B (winding (1,0) or (0,1) first-order
+   traversal), C (real peer-home like ~/.reed), or D (mission-driven
+   reframe engagement, requires Phase H #6 which is tomorrow-scope)?
 
 ## Feedback memory added this session
 
