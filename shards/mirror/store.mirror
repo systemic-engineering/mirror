@@ -236,8 +236,7 @@ in @uuid/spectral
 # === What @spectral/db adds (closed) — the deliberate fault plane ===
 #
 # Per collapse spec §11.4: @spectral/db (the closed engine) adds
-# typed edges (EdgeKind × Weight labeled multigraph) + graph
-# Laplacian eigenvalue navigation + sub-Turing Datalog-adjacent
+# graph Laplacian eigenvalue navigation + sub-Turing Datalog-adjacent
 # query surface + spectral-embedding-based structural proximity +
 # cellular sheaf primitives (per Recognition #34 eigenboard-is-sheaf).
 # These are OPTIONAL on top of the open floor; @mirror/store MUST
@@ -249,12 +248,35 @@ in @uuid/spectral
 # BuildBuddy discovered independently — five ecosystems drew the
 # line at the same place; @mirror/store inherits.
 #
-# The open surface deliberately does NOT expose typed edges, edge
-# weights, or Laplacian-based navigation (§11.3.7). These live in
-# @spectral/db. `walk(root: oid) -> splinter_graph` answers
-# reachability + ancestry + closure — Nix's `-q` discipline exactly
-# — but does not answer *which OIDs are STRUCTURALLY NEAR this OID
-# in the spectral embedding*.
+# === Typed edges declared at @edge (fault-plane collapse) ===
+#
+# Per Alex adjudication 2026-07-08 "collapse into one surface" for the
+# @edge fault-plane: typed edges are declared at `shards/edge.mirror`
+# (@edge; LANDED 2026-07-08) as substrate-decl of edges as @magic
+# instances. The prior deferral text ("typed edges are reserved for
+# @spectral/db") was structurally incoherent: `shards/mirror/ref.mirror`
+# had already declared `edge_kind` as a seven-variant substrate
+# discriminant at navigation altitude, and the store's `walk` /
+# `impacted_by` closure algebra was already consuming edge instances
+# implicitly via `splinter_graph`. The collapse names the shape
+# honestly at family-root altitude.
+#
+# What @spectral/db specializes on TOP of the shared @edge surface:
+# the NUMERICAL DIMENSIONS of `edge_weight` (Laplacian matrix entries,
+# eigenvalue-navigation coefficients, spectral-embedding coordinates)
+# per the @magic/mechanism mapping at @edge — the weight field is
+# matter-hidden at @edge altitude; @spectral/db is the closed
+# specialization that opens the mechanism at its private altitude.
+# The open floor gets the typed carrier + kind discriminant + walk
+# closure algebra; the closed engine gets the numerical spectral
+# navigation on top of the shared substrate.
+#
+# `walk(root: oid) -> splinter_graph` answers reachability + ancestry
+# + closure at the OID-graph altitude — Nix's `-q` discipline exactly.
+# It walks @edge instances implicitly (the (root, children)
+# projection); it does not answer *which OIDs are STRUCTURALLY NEAR
+# this OID in the spectral embedding* — that requires the numerical
+# specialization of edge_weight that lives in @spectral/db.
 #
 # === Reverse-closure at family-root: walk + impacted_by ===
 #
