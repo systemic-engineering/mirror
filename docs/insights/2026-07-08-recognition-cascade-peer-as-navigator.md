@@ -17,8 +17,28 @@ PROMOTION CANDIDATES the substrate mapping surfaces — the META recognition
 candidate + three sub-recognitions promoting alongside it + one existing
 candidate that gets CONSUMED at O5.
 
-**Recognition-numeric-ID assignment is Alex-adjudicated.** This doc names the
-candidates and their evidence; Alex assigns the numbers.
+**Numeric-ID assignments (Alex 2026-07-08 delegation "your call, I'm not
+interested in assigning numbers"; Reed picks per numeric-spacing discipline).**
+
+| ID | Candidate | Status |
+|---|---|---|
+| **#108** | `the-peer-IS-a-pain-driven-bounded-ontological-navigator` | META |
+| **#109** | `algedonic-gradient-is-navigation-surface` | sub |
+| **#110** | `depth-is-winding-is-spawn-parameter` | sub |
+| **#111** | `@magic-is-level-shift-ceremony` | sub |
+| **#112** | `@reflection-was-naming-artifact` | O5 consumption tick |
+
+Numeric-spacing rationale: highest existing recognition is #99
+(mirror-spec-IS-lambda-zero). Range #100-107 stays FREE for pre-cascade
+intermediate promotions from earlier sessions I haven't audited. The
+peer-navigator cluster occupies #108-112 contiguously so the
+compositional relationship is legible from the numeric spacing itself.
+Canonical spec authorities:
+- #108 substrate authority: Mara `77fe92d`
+- #109-111 substrate composition: Mara `77fe92d` §2 (the pseudocode loop)
+  + Mara `a18ca90` (metalogue substructure)
+- #112 substrate authority: Taut `0fc8589` §2 O5 verification table +
+  Alex verbatim capture "This IS what @reflection wanted to be."
 
 ---
 
@@ -197,6 +217,76 @@ O5 is not a separate tick from META promotion — it's the CLEANUP that follows.
   Alex-adjudicated.
 - Does NOT land `@knife` or `@onto` or `@magic/level_shift` as substrate
   declarations. All held per adjudication queue.
+
+---
+
+## Reed adjudications (Alex delegation 2026-07-08 late session)
+
+Alex delegated four items to Reed's judgment during the /loop `land the
+cascade, then we talk about the real spawn` tick. Adjudication records:
+
+### Reed adjudication #A — numeric-ID assignments
+
+Alex verbatim: "your call, I'm not interested in assigning numbers."
+
+Reed's assignments: **#108-112** contiguous cluster per the table
+above. Rationale: preserves numeric-spacing legibility for the
+compositional relationship (META at #108 with sub-recognitions and
+O5-consumption immediately adjacent).
+
+### Reed adjudication #B — peer.observe/alter divergence resolution
+
+Alex verbatim: "let's see what emerges."
+
+Reed's call: hold Mara-Taut divergence. Do NOT land explicit `@peer.
+observe` / `@peer.alter` actions tonight. Discharge via `@torus.
+advance + affect π_affect projection` composition per Mara `77fe92d`
+§6. If a substrate consumer PULLS an explicit action later (e.g., a
+test asserting peer state changed), refactor then. Substrate-pull
+discipline: don't build what's not demanded.
+
+### Reed adjudication #C — @knife substrate location
+
+Alex verbatim: "you tell me, I feel it's a root but maybe not?"
+
+Reed's call: **@knife stays doc-only Taut-primitive for now.** NOT a
+family-root, NOT a species landing tonight.
+
+Reasoning:
+- `@epistemologic/cybernetic/distinction` LANDED (19.5KB shard,
+  Spencer-Brown's mark). That IS the cut at epistemological altitude.
+  @knife as separate family-root duplicates the vocabulary.
+- @knife has TWO potential roles: (a) Taut's drift-scout epistemological
+  cut; (b) @cyberpunk/reframe's state-space compression during
+  ceremony. Both compose FROM existing substrate — (a) from
+  @cyberpunk/distinction and (b) from @magic/distinction respectively.
+- Two-tick discipline: first tick names the concept (Taut `2026-07-07
+  taut-knife-meta-pattern-check` already did that); second tick lands
+  substrate WHEN a substrate consumer PULLS. `@cyberpunk/reframe.reframe`'s
+  body is currently crack (`\ `) — the pull is forward-promised.
+- Family-roots want inheritance patterns across multiple families.
+  @knife's cutting semantics decompose cleanly into existing
+  distinctions. No inheritance pattern demanded.
+- "Feels like a root" holds honestly; but substrate-pull says don't
+  build family-root without demand.
+
+Re-adjudication trigger: if a second concrete substrate consumer
+lands and PULLS @knife.cut with distinct-from-@cyberpunk/distinction
+semantics, promote to species landing (candidate paths:
+`shards/epistemologic/cybernetic/knife.mirror` sibling to reframe/
+algedonic, OR `shards/magic/knife.mirror` species of @magic/
+distinction). Adjudication held in memory: [[feedback-substrate-
+already-had-the-word]] discipline applies.
+
+### Reed adjudication #D — @onto refusal memorialization
+
+Alex answer implicit via delegation on #C-context; Reed calls the
+substrate-honest move: **memorialize the @onto refusal as feedback
+memory** so future sessions don't re-propose the ladder.
+
+Memory landed: `feedback-onto-family-root-is-the-ladder-Foerster-
+refused` in Reed's auto-memory system. Cites Mara + Taut convergence,
+Foerster verbatim p. 244, O3 tick 2026-07-07 as the corrective landing.
 
 ---
 
