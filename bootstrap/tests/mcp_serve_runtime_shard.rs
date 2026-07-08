@@ -175,10 +175,12 @@ fn t03_tools_list_returns_tool_array() {
     // Runtime discharges tools_reflects_cli_block: any Rust-lifted tool
     // set is admissible for this tick (Simple approach). Exact schema
     // reflection to mirror.spec cli-block is future substrate-motion.
+    // Mara iter-15 (2026-07-08) schema reconciliation: tool names now
+    // carry the `mirror_` prefix per bin/mirror-mcp byte-parity.
     let names: Vec<&str> = tools.iter().filter_map(|t| t["name"].as_str()).collect();
     assert!(
-        names.iter().any(|n| *n == "compile"),
-        "T3: tools/list MUST advertise `compile` (the load-bearing verb per mirror.spec cli-block); got: {:?}",
+        names.iter().any(|n| *n == "mirror_compile"),
+        "T3: tools/list MUST advertise `mirror_compile` (the load-bearing verb per mirror.spec cli-block, `mirror_`-prefixed per bin/mirror-mcp); got: {:?}",
         names
     );
 }
@@ -191,7 +193,7 @@ fn t04_tools_call_compile_dispatches_returns_oid() {
     let target = root.join("boot/std/mcp.mirror");
     let target_str = target.to_string_lossy().replace('\\', "\\\\");
     let req = format!(
-        "{{\"jsonrpc\":\"2.0\",\"id\":4,\"method\":\"tools/call\",\"params\":{{\"name\":\"compile\",\"arguments\":{{\"file\":\"{}\"}}}}}}\n",
+        "{{\"jsonrpc\":\"2.0\",\"id\":4,\"method\":\"tools/call\",\"params\":{{\"name\":\"mirror_compile\",\"arguments\":{{\"file\":\"{}\"}}}}}}\n",
         target_str
     );
     let Some((stdout, stderr, _code)) = run_mcp_serve(req.as_bytes()) else {
@@ -209,7 +211,7 @@ fn t04_tools_call_compile_dispatches_returns_oid() {
     let is_error = v["result"]["isError"].as_bool().unwrap_or(false);
     assert!(
         !is_error,
-        "T4: `compile` of boot/std/mcp.mirror MUST succeed (Tick 6 landed substrate closure); got: {}",
+        "T4: `mirror_compile` of boot/std/mcp.mirror MUST succeed (Tick 6 landed substrate closure; Mara iter-15 rename); got: {}",
         v
     );
     let text = v["result"]["content"][0]["text"]

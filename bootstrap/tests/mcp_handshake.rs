@@ -85,96 +85,103 @@ fn unknown_method_silent_drop() {
 }
 
 #[test]
-fn seven_tools_advertised() {
+fn eight_tools_advertised() {
     let req = read_fixture("tools_list.req.json");
     let resp = mcp::handle_request(req.trim()).expect("tools/list must respond");
     let v: serde_json::Value = serde_json::from_str(&resp).expect("valid JSON");
     let tools = v["result"]["tools"].as_array().expect("tools array");
-    assert_eq!(tools.len(), 7);
+    assert_eq!(tools.len(), 8);
     let names: Vec<&str> = tools.iter().map(|t| t["name"].as_str().unwrap()).collect();
-    // Tick 17 (2026-06-19): added `prisms` substrate-introspection
-    // primitive for substrate-driven tool registration foundation.
-    // Phase G v0 (2026-06-26): added `spawn` cli-surface tool per
-    // Mara's spawn-semantics insight (b10f00c).
-    // P3 RED (2026-06-26): added `recall` inbound trajectory surface
-    // tool per Mara's @mirror/recall spec (b034a60) + Seam Discharge C
-    // (88f8428). Dual of spawn per insight b10f00c §2.5.
+    // Mara iter-15 schema reconciliation (2026-07-08): byte-parity
+    // alignment with `bin/mirror-mcp` 8-tool schema. Tick 3 rename
+    // (`4f4a257`): mirror_spawn → mirror_peer_beam + top-level
+    // mirror_beam. Tick 7 shatter fold (`ffba2a7`): mirror_kintsugi
+    // now always routes `--ci --out @data/json`. All tools carry the
+    // `mirror_` prefix. Stale `prisms` + `verdict` (pre-Tick-3, no
+    // matching cli-block) are removed as part of the reconciliation.
     assert_eq!(
         names,
-        vec!["compile", "craft", "kintsugi", "prisms", "verdict", "recall", "spawn"]
+        vec![
+            "mirror_compile",
+            "mirror_craft",
+            "mirror_kintsugi",
+            "mirror_init",
+            "mirror_recall",
+            "mirror_peer_beam",
+            "mirror_beam",
+            "mirror_spawn",
+        ]
     );
 }
 
-/// P3 RED (2026-06-26): the recall tool routes to cmd_recall, returns
-/// non-empty response, isError absent on valid dir input.
+/// Mara iter-15 (2026-07-08): renamed `recall` → `mirror_recall`; arg
+/// `dir` → `spec_dir` per bin/mirror-mcp schema. Routes to `cmd_recall`,
+/// returns non-empty response, isError absent on valid dir input.
 #[test]
-fn recall_tool_routes_to_cmd_recall() {
+fn mirror_recall_tool_routes_to_cmd_recall() {
     let dir = concat!(env!("CARGO_MANIFEST_DIR"), "/..");
     let req = format!(
-        r#"{{"jsonrpc":"2.0","id":701,"method":"tools/call","params":{{"name":"recall","arguments":{{"dir":"{}"}}}}}}"#,
+        r#"{{"jsonrpc":"2.0","id":701,"method":"tools/call","params":{{"name":"mirror_recall","arguments":{{"spec_dir":"{}"}}}}}}"#,
         dir
     );
-    let resp = mcp::handle_request(&req).expect("recall must respond");
+    let resp = mcp::handle_request(&req).expect("mirror_recall must respond");
     let v: serde_json::Value = serde_json::from_str(&resp).expect("valid JSON");
     let is_error = v["result"]["isError"].as_bool().unwrap_or(false);
     assert!(
         !is_error,
-        "recall must not lift isError on valid dir; got: {}",
+        "mirror_recall must not lift isError on valid dir; got: {}",
         resp
     );
     let text = v["result"]["content"][0]["text"]
         .as_str()
         .expect("text payload");
-    assert!(!text.is_empty(), "recall envelope must be non-empty");
+    assert!(!text.is_empty(), "mirror_recall envelope must be non-empty");
 }
 
-/// P3 RED (2026-06-26): the recall envelope MUST carry the four
-/// payloads from Mara's @mirror/recall spec §3 (b034a60):
-/// cascade / pack_trail / pull_frontier / dogfood. Stub returns
-/// placeholder JSON without these keys; this test fails RED until
-/// the GREEN impl lands.
+/// The mirror_recall envelope MUST carry the four payloads from Mara's
+/// @mirror/recall spec §3 (b034a60): cascade / pack_trail /
+/// pull_frontier / dogfood.
 #[test]
-fn recall_envelope_carries_four_payload_keys() {
+fn mirror_recall_envelope_carries_four_payload_keys() {
     let dir = concat!(env!("CARGO_MANIFEST_DIR"), "/..");
     let req = format!(
-        r#"{{"jsonrpc":"2.0","id":702,"method":"tools/call","params":{{"name":"recall","arguments":{{"dir":"{}"}}}}}}"#,
+        r#"{{"jsonrpc":"2.0","id":702,"method":"tools/call","params":{{"name":"mirror_recall","arguments":{{"spec_dir":"{}"}}}}}}"#,
         dir
     );
-    let resp = mcp::handle_request(&req).expect("recall must respond");
+    let resp = mcp::handle_request(&req).expect("mirror_recall must respond");
     let v: serde_json::Value = serde_json::from_str(&resp).expect("valid JSON");
     let text = v["result"]["content"][0]["text"]
         .as_str()
         .expect("text payload");
     let envelope: serde_json::Value =
-        serde_json::from_str(text).expect("recall envelope text must be JSON");
+        serde_json::from_str(text).expect("mirror_recall envelope text must be JSON");
     for key in &["cascade", "pack_trail", "pull_frontier", "dogfood"] {
         assert!(
             envelope.get(*key).is_some(),
-            "recall envelope must carry '{}' payload key per Mara spec §3; got: {}",
+            "mirror_recall envelope must carry '{}' payload key per Mara spec §3; got: {}",
             key,
             text
         );
     }
 }
 
-/// P3 RED (2026-06-26): Seam Discharge C (88f8428) — pack_trail records
-/// MUST use `last_seen_commit: content_address` (content-addressed),
-/// NOT `in_flight: bool` (stateless-return at runtime, forbidden by
-/// b10f00c §4). This test pins the Discharge C contract.
+/// Seam Discharge C (88f8428) — pack_trail records MUST use
+/// `last_seen_commit: content_address`, NOT `in_flight: bool`
+/// (stateless-return at runtime, forbidden by b10f00c §4).
 #[test]
-fn recall_pack_trail_uses_last_seen_commit_not_in_flight() {
+fn mirror_recall_pack_trail_uses_last_seen_commit_not_in_flight() {
     let dir = concat!(env!("CARGO_MANIFEST_DIR"), "/..");
     let req = format!(
-        r#"{{"jsonrpc":"2.0","id":703,"method":"tools/call","params":{{"name":"recall","arguments":{{"dir":"{}"}}}}}}"#,
+        r#"{{"jsonrpc":"2.0","id":703,"method":"tools/call","params":{{"name":"mirror_recall","arguments":{{"spec_dir":"{}"}}}}}}"#,
         dir
     );
-    let resp = mcp::handle_request(&req).expect("recall must respond");
+    let resp = mcp::handle_request(&req).expect("mirror_recall must respond");
     let v: serde_json::Value = serde_json::from_str(&resp).expect("valid JSON");
     let text = v["result"]["content"][0]["text"]
         .as_str()
         .expect("text payload");
     let envelope: serde_json::Value =
-        serde_json::from_str(text).expect("recall envelope text must be JSON");
+        serde_json::from_str(text).expect("mirror_recall envelope text must be JSON");
     let pack_trail = envelope["pack_trail"]
         .as_array()
         .expect("pack_trail must be an array");
@@ -194,17 +201,15 @@ fn recall_pack_trail_uses_last_seen_commit_not_in_flight() {
     }
 }
 
-/// Tick 17 (2026-06-19): the substrate-introspection contract.
-///
-/// The `prisms` tool walks a directory recursively for .mirror files
-/// and returns structured JSON listing of (path, prism, ops) for each.
-/// This is the foundation for substrate-driven tool registration: a
-/// future tick uses this output to generate MCP tool surface from
-/// substrate-declared prisms rather than hardcoded Rust dispatch.
-///
-/// Empirical contract: invoke `prisms` on the @magic family directory
-/// and verify the response contains all 6 species + family-root.
-#[test]
+// Mara iter-15 (2026-07-08): the `prisms` + `verdict` tools are gone
+// (pre-Tick-3, no matching cli-block; removed as part of the byte-
+// parity reconciliation with `bin/mirror-mcp`). Their
+// substrate-introspection + verdict-envelope contracts do not need to
+// re-land here; a future tick lands introspection under a
+// substrate-declared prism (task #312 / #310). Reference-only tests
+// gated behind `cfg(all(false))` so they document the prior contract
+// without executing.
+#[cfg(all(false))]
 fn prisms_enumerates_magic_family() {
     let dir = concat!(env!("CARGO_MANIFEST_DIR"), "/../shards/magic");
     if !std::path::Path::new(dir).exists() {
@@ -250,13 +255,9 @@ fn prisms_enumerates_magic_family() {
 }
 
 /// Tick 18 (2026-06-19): the `requires` clause introspection contract.
-///
-/// The substrate's bilateral predicate discipline (recognition #37
-/// Pask agreement) lives in `requires <pred>(args)` clauses. Surfacing
-/// these at MCP altitude is the verifier-sharpening Loki's discipline
-/// names: same tool, more substantive output, substrate doesn't get
-/// smarter.
-#[test]
+/// Retired as part of Mara iter-15 schema reconciliation (2026-07-08)
+/// — the `prisms` tool is not part of the bin/mirror-mcp 8-tool schema.
+#[cfg(all(false))]
 fn prisms_surfaces_requires_clauses() {
     let dir = concat!(env!("CARGO_MANIFEST_DIR"), "/../shards/magic");
     if !std::path::Path::new(dir).exists() {
@@ -294,7 +295,8 @@ fn prisms_surfaces_requires_clauses() {
 }
 
 /// Tick 19 (2026-06-19): the action-name introspection contract.
-#[test]
+/// Retired as part of Mara iter-15 (2026-07-08).
+#[cfg(all(false))]
 fn prisms_surfaces_action_names() {
     let dir = concat!(env!("CARGO_MANIFEST_DIR"), "/../shards/magic");
     if !std::path::Path::new(dir).exists() {
@@ -343,10 +345,9 @@ fn prisms_surfaces_action_names() {
 }
 
 /// Tick 22 (2026-06-19) per Seam #5 closure: `requires` clauses are
-/// now attached to their guarding action, not flat at prism level.
-/// Verifies `reveal` action carries its 3 `requires` clauses
-/// (audited + mechanism_intact old + mechanism_intact new per tick 21).
-#[test]
+/// now attached to their guarding action. Retired as part of Mara
+/// iter-15 (2026-07-08).
+#[cfg(all(false))]
 fn prisms_attaches_requires_to_actions() {
     let dir = concat!(env!("CARGO_MANIFEST_DIR"), "/../shards/magic");
     if !std::path::Path::new(dir).exists() {
@@ -411,21 +412,21 @@ fn audit_emission_gated_by_env_var() {
     assert_eq!(v["result"]["isError"], serde_json::Value::Bool(true));
 }
 
-/// Tick 5 (2026-06-18): the settle/verdict prism split.
+/// Mara iter-15 (2026-07-08): the settle/verdict prism split collapses
+/// back into `mirror_kintsugi`. Per Tick 7 shatter fold (`ffba2a7`) the
+/// wrapper ALWAYS routes kintsugi through `--ci --out @data/json`, so
+/// the same isError-lift contract now lives on `mirror_kintsugi`:
+/// `cmd_kintsugi_ci_single` returns `exit_code = 0` regardless of
+/// verdict.label (workflow YAML decides pass per lib.rs:855 contract);
+/// MCP parses the JSON envelope's `verdict` field and lifts {partial,
+/// failure} → isError directly.
 ///
-/// Per Seam's adversarial review of tick 4: `cmd_kintsugi_ci_single`
-/// returns `exit_code = 0` regardless of verdict.label (workflow YAML
-/// decides pass per lib.rs:855 contract). The previous `ci: boolean`
-/// flag on `kintsugi` claimed isError composition that never fired in
-/// practice. The split into `verdict` parses the JSON envelope's
-/// verdict field and lifts {partial, failure} → isError.
-///
-/// Smoke test: invoke `verdict` on a path that doesn't exist. The
-/// substrate emits `verdict: "failure"` for unreadable files
+/// Smoke test: invoke `mirror_kintsugi` on a path that doesn't exist.
+/// The substrate emits `verdict: "failure"` for unreadable files
 /// (lib.rs:`emit_ci_verdict_json` failure branch). MCP must lift this
 /// to `isError: true` so agent clients can branch programmatically.
 #[test]
-fn verdict_failure_lifts_to_is_error() {
+fn kintsugi_failure_lifts_to_is_error() {
     let bogus = format!(
         "/tmp/mirror-mcp-nonexistent-{}-{}.mirror",
         std::process::id(),
@@ -435,10 +436,10 @@ fn verdict_failure_lifts_to_is_error() {
             .unwrap_or(0)
     );
     let req = format!(
-        r#"{{"jsonrpc":"2.0","id":33,"method":"tools/call","params":{{"name":"verdict","arguments":{{"file":"{}"}}}}}}"#,
+        r#"{{"jsonrpc":"2.0","id":33,"method":"tools/call","params":{{"name":"mirror_kintsugi","arguments":{{"file":"{}"}}}}}}"#,
         bogus
     );
-    let resp = mcp::handle_request(&req).expect("verdict must respond");
+    let resp = mcp::handle_request(&req).expect("mirror_kintsugi must respond");
     let v: serde_json::Value = serde_json::from_str(&resp).expect("valid JSON envelope");
     let text = v["result"]["content"][0]["text"]
         .as_str()
@@ -452,7 +453,7 @@ fn verdict_failure_lifts_to_is_error() {
     );
     assert!(
         text.contains("failure"),
-        "verdict body should contain 'failure' label; got: {}",
+        "kintsugi body should contain 'failure' label; got: {}",
         text
     );
 }
@@ -513,17 +514,17 @@ fn parse_verdict_label_returns_none_on_garbage() {
     );
 }
 
+/// Mara iter-15 (2026-07-08): renamed `spawn` → `mirror_spawn`. The
+/// tool is now a DEPRECATED backward-compat alias per two-tick
+/// discipline; it routes through the cli `spawn` alias (b012d3f
+/// Landing 2) which emits a stderr deprecation notice. The envelope
+/// shape (naming spawned peer + pack{}.lead) is preserved.
 #[test]
-fn spawn_tool_routes_to_cmd_spawn() {
-    // Phase G v0 MCP wiring: tools/call `spawn` with `peer_home` must
-    // route to `cmd_spawn` (via `run_mirror`) and emit the envelope
-    // naming all seven composition pieces. Per Mara's spawn-semantics
-    // insight (b10f00c) the response must name the spawned peer + the
-    // pack{}.lead extracted from the home's mirror.spec.
+fn mirror_spawn_tool_routes_to_cmd_spawn() {
     let manifest = env!("CARGO_MANIFEST_DIR");
     let fixture_abs = format!("{}/tests/fixtures/spawn-test-peer", manifest);
     let req = format!(
-        r#"{{"jsonrpc":"2.0","id":99,"method":"tools/call","params":{{"name":"spawn","arguments":{{"peer_home":"{}"}}}}}}"#,
+        r#"{{"jsonrpc":"2.0","id":99,"method":"tools/call","params":{{"name":"mirror_spawn","arguments":{{"peer_home":"{}"}}}}}}"#,
         fixture_abs
     );
     let resp = mcp::handle_request(req.trim()).expect("tools/call must respond");
@@ -531,7 +532,7 @@ fn spawn_tool_routes_to_cmd_spawn() {
     assert_ne!(
         v["result"]["isError"],
         Value::Bool(true),
-        "spawn must not error on valid fixture peer; got: {}",
+        "mirror_spawn must not error on valid fixture peer; got: {}",
         resp
     );
     let text = v["result"]["content"][0]["text"]
@@ -539,12 +540,12 @@ fn spawn_tool_routes_to_cmd_spawn() {
         .expect("content[0].text is a string");
     assert!(
         text.contains("test-peer"),
-        "spawn response must name the spawned peer (test-peer); got:\n{}",
+        "mirror_spawn response must name the spawned peer (test-peer); got:\n{}",
         text
     );
     assert!(
         text.contains("test-lead"),
-        "spawn response must mention the lead from pack{{}} (test-lead); got:\n{}",
+        "mirror_spawn response must mention the lead from pack{{}} (test-lead); got:\n{}",
         text
     );
 }

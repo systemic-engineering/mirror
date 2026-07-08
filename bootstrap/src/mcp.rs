@@ -23,27 +23,37 @@
 //!
 //! ## Tools advertised
 //!
-//! Tool names omit the `mirror_` prefix because the MCP server itself
-//! is `mirror` — the server name IS the namespace per Alex's
-//! 2026-06-18 correction. Agent-side invocation is
-//! `mcp__mirror__compile`, not `mcp__mirror__mirror_compile`.
+//! Eight `mirror_`-prefixed tools per Mara iter-15 schema
+//! reconciliation (2026-07-08): the Rust `tools_list_result` +
+//! `dispatch_tool_call` are now byte-parity with the ground-truth
+//! `bin/mirror-mcp` bash wrapper (post-Tick-3 rename + Tick 7 shatter
+//! fold). Agent-side invocation is `mcp__mirror__mirror_compile` etc.
 //!
-//! - `compile`  — `focus`:   tokenize one `.mirror` file.
-//! - `craft`    — `split`:   converge a target to lambda_0.
-//! - `kintsugi` — `refract`: settle a `.mirror` file (mutates).
-//! - `verdict`  — `focus`:   render a structured verdict envelope
-//!                          (read-only inspection).
+//! - `mirror_compile`   — tokenize one `.mirror` file (SHA-256 hash).
+//! - `mirror_craft`     — converge a target directory to lambda_0.
+//! - `mirror_kintsugi`  — settle a `.mirror` file; ALWAYS `--ci --out
+//!                        @data/json` per Tick 7 fold (`ffba2a7`);
+//!                        returns typed verdict envelope.
+//! - `mirror_init`      — mirror-native store bootstrap.
+//! - `mirror_recall`    — inbound-trajectory dual of peer beam.
+//! - `mirror_peer_beam` — beam through a peer's persistent-identity
+//!                        context (Tick 3 rename `4f4a257`).
+//! - `mirror_beam`      — anonymous inference primitive (top-level).
+//! - `mirror_spawn`     — DEPRECATED alias for `mirror_peer_beam`
+//!                        (two-tick discipline).
 //!
-//! `kintsugi` and `verdict` are TWO prisms, not one tool with a flag. The substrate distinction is: `kintsugi` writes
-//! canonical output (effect at @io); `verdict` returns structured
-//! observation (pure focus). Per Seam's adversarial review of tick 4,
-//! collapsing them under a `ci: boolean` flag hid the substrate-pull
-//! partition at the MCP wire altitude. The split closes the verdict
-//! exit-code contract: `mirror_verdict` parses `verdict.label` and
-//! lifts `label ∈ {partial, failure}` to MCP `isError: true`, since
-//! the underlying `--ci` invocation always exits 0 by design (the
-//! workflow YAML, not the binary, decides what verdict counts as pass
-//! per cmd_kintsugi_ci_single's contract at lib.rs:855).
+//! `kintsugi` no longer splits into a separate `verdict` tool at MCP
+//! altitude. Per Tick 7 shatter fold (`ffba2a7`) the wrapper always
+//! routes kintsugi through `--ci --out @data/json`, so the substrate
+//! is the linearizer and the wrapper is the transport-framer. This
+//! module preserves the verdict-label lift: on the JSON envelope's
+//! `verdict` field, `label ∈ {partial, failure}` lifts to MCP
+//! `isError: true` (the underlying `--ci` invocation always exits 0
+//! by design; per `cmd_kintsugi_ci_single`'s contract at lib.rs:855).
+//! `parse_verdict_label` is preserved for that lift.
+//!
+//! The stale `prisms` + `verdict` tools (pre-Tick-3, no matching
+//! cli-block) are removed as part of the reconciliation.
 //!
 //! ## Wire shape
 //!
@@ -80,15 +90,22 @@ fn initialize_result() -> Value {
 
 /// Build the response value for the MCP `tools/list` request.
 ///
-/// Three tools, identical to the bash wrapper's hand-rolled string.
-/// Per Seam's review (§2.5.A): this is the surface the loop's later
-/// ticks extend. Each new row of `the-convergence.md` §2.1's table
-/// becomes a new entry here plus a match arm in `dispatch_tool_call`.
+/// Eight `mirror_`-prefixed tools, byte-parity with `bin/mirror-mcp`
+/// (Mara iter-15 schema reconciliation, 2026-07-08). Each new row of
+/// mirror.spec's cli-block table becomes a new entry here plus a match
+/// arm in `dispatch_tool_call`.
+///
+/// **Substrate frame**: the schema mirrors the bash wrapper verbatim
+/// (descriptions, inputSchemas, `required` sets). The reflective form
+/// (parse mirror.spec at runtime) is a heavier substrate-motion left
+/// for a future tick — this landing discharges the
+/// `tools_reflects_cli_block` bilateral predicate at
+/// hardcoded-schema altitude.
 fn tools_list_result() -> Value {
     json!({
         "tools": [
             {
-                "name": "compile",
+                "name": "mirror_compile",
                 "description": "focus: tokenize one .mirror file through grammar lens. Returns SHA-256 hash on success.",
                 "inputSchema": {
                     "type": "object",
@@ -99,72 +116,87 @@ fn tools_list_result() -> Value {
                 }
             },
             {
-                "name": "craft",
-                "description": "split: converge a target to lambda_0. --target emits code (binary|rust|gleam). --reflect verifies properties without emission.",
+                "name": "mirror_craft",
+                "description": "split: converge a target directory to lambda_0. --target-kind emits code (binary|rust|gleam). --reflect verifies properties without emission.",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
                         "target":      { "type": "string", "description": "Build target directory (e.g. boot)" },
-                        "emit_target": { "type": "string", "description": "Optional --target value: binary, rust, or gleam", "enum": ["binary", "rust", "gleam"] },
-                        "reflect":     { "type": "boolean", "description": "If true, pass --reflect (verify only, no emission)" }
+                        "target_kind": { "type": "string", "description": "Emit backend (substrate-honest name; binary accepts both --target-kind and --target)", "enum": ["crystal", "binary", "rust", "gleam"] },
+                        "reflect":     { "type": "boolean", "description": "If true, verify only (no emission)" }
                     },
                     "required": ["target"]
                 }
             },
             {
-                "name": "kintsugi",
-                "description": "refract: settle a .mirror file, write canonical. --liquid writes inferred properties below ---. --shatter N recursively settles N levels deep. Mutates the file. For read-only verdict inspection use `verdict`.",
+                "name": "mirror_kintsugi",
+                "description": "settle: kintsugi a .mirror file. --liquid writes inferred properties below ---. --shatter N seeds N cracks. `--ci` walks a corpus. Returns canonical source or typed verdict envelope.",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
-                        "file":    { "type": "string", "description": "Path to .mirror file" },
-                        "liquid":  { "type": "boolean", "description": "If true, pass --liquid (project inferred properties below ---)" },
-                        "shatter": { "type": "integer", "description": "If set, pass --shatter N (recursive settle N levels)" }
+                        "file":    { "type": "string", "description": "Path to .mirror file or directory" },
+                        "liquid":  { "type": "boolean", "description": "Write inferred properties" },
+                        "shatter": { "type": "integer", "description": "Seed N cracks" }
                     },
                     "required": ["file"]
                 }
             },
             {
-                "name": "prisms",
-                "description": "focus: enumerate prism declarations across a directory of .mirror files. Returns structured JSON listing of (path, prism_name, ops, requires, actions). Substrate-introspection primitive for substrate-driven tool registration (task #312 / lens-server gen_prism MVP per task #310). Tick 18 added `requires` clauses (bilateral predicates); tick 19 added `actions` (action names per prism).",
+                "name": "mirror_init",
+                "description": "init: mirror-native store bootstrap. Splinter + insert_persistent + set_ref(HEAD). Substrate: @mirror/init (docs/specs/mirror-init.md). Returns JSON envelope { spec_version, operation, repo, store, indexed, bytes_total, root_oid, hooks_installed, verdict }.",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
-                        "dir": { "type": "string", "description": "Path to directory containing .mirror files (recursive walk)" }
+                        "path":          { "type": "string",  "description": "Repo path (~d) to initialize as mirror-native store" },
+                        "install_hooks": { "type": "boolean", "description": "Install pre-commit / commit-msg hooks. Default: false." }
                     },
-                    "required": ["dir"]
+                    "required": ["path"]
                 }
             },
             {
-                "name": "verdict",
-                "description": "focus: render a structured PASS/REJECT verdict envelope for a .mirror file or directory (corpus mode). Read-only — does NOT modify the file. Returns the substrate's JSON verdict envelope (fields: verdict, target, objective, iterations, dark_count). isError lifts to true when verdict.label ∈ {partial, failure}; success returns isError absent.",
+                "name": "mirror_recall",
+                "description": "recall: inbound-trajectory dual of peer beam. Observer returns to substrate in excited state asking for trajectory. Four payloads: cascade / pack_trail / pull_frontier / dogfood. Substrate: @mirror/recall (docs/specs/mirror-recall.md).",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
-                        "file":    { "type": "string", "description": "Path to .mirror file or directory (corpus mode)" },
-                        "shatter": { "type": "integer", "description": "If set, pass --shatter N (recursive verdict N levels)" }
+                        "spec_dir": { "type": "string", "description": "Spec directory to recall trajectory from" }
                     },
-                    "required": ["file"]
+                    "required": ["spec_dir"]
                 }
             },
             {
-                "name": "recall",
-                "description": "split: substrate's inbound trajectory surface for returning agents. Returns 4-payload envelope: cascade (recent ratified recognitions) + pack_trail (Pack-attributed commits with last_seen_commit per Seam Discharge C 88f8428) + pull_frontier (candidate recognitions awaiting witnesses) + dogfood (mirror.spec settle_on verdict). Content-addressed reads; never synthesizes fresh state. Per docs/specs/mirror-recall.md (Mara b034a60). Dual of spawn at substrate altitude per insight b10f00c §2.5.",
+                "name": "mirror_peer_beam",
+                "description": "peer beam: the peer HAS a torus. Beam through a peer's persistent-identity context. @song/movement.enter at cli altitude — frame-entry action of a temporal-bounded epoch at runtime. Returns @song envelope with peer identity, content-addressed spec_oid, peer_recall (4 sheaf sections), composition_pieces (7 substrate anchors). --hello-world emits structured JSON; default emits text. --mission carries a peer-side task file. Substrate: @mirror/peer/beam (shards/mirror/peer/beam.mirror action-decl `beam(...) -> @song`; renamed 2026-07-08 Tick 2 from @mirror/spawn).",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
-                        "dir": { "type": "string", "description": "Path to spec directory containing mirror.spec to read trajectory from" }
+                        "peer_home":   { "type": "string",  "description": "Peer home directory (~d). Must contain mirror.spec." },
+                        "hello_world": { "type": "boolean", "description": "Emit structured JSON envelope. Default false = text envelope." },
+                        "mission":     { "type": "string",  "description": "Mission file path (~f). Substrate-honest name; binary accepts both --mission and --task. Optional; substrate-absent when omitted." }
                     },
-                    "required": ["dir"]
+                    "required": ["peer_home"]
                 }
             },
             {
-                "name": "spawn",
-                "description": "shift: spawn a peer from its home directory. Reads <home>/mirror.spec; extracts project name + pack{}.lead; emits an envelope naming all seven composition pieces. Phase G v0: pieces 1-3 are real reads; pieces 4-7 are logged stubs the envelope names by anchor. See docs/insights/2026-06-26-spawn-is-substrate-leaving-ground-state.md.",
+                "name": "mirror_beam",
+                "description": "beam: anonymous inference primitive. NO persistent-identity context. Fires @fate::select on Shape B features and emits a beam envelope. Substrate: @mirror/beam (mirror.spec top-level `command beam`; 96aa752 Tick 3 Landing 1). Per beam-as-substrate-primitive.md §3 composition table: `mirror beam <mission>` primitive; `mirror peer beam <peer_home>` persistent-identity (use mirror_peer_beam for the latter).",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
-                        "peer_home": { "type": "string", "description": "Filesystem path to the peer's home directory containing mirror.spec" }
+                        "mission": { "type": "string", "description": "Mission file path (~f). Substrate-honest name; binary accepts both --mission and --task." }
+                    },
+                    "required": ["mission"]
+                }
+            },
+            {
+                "name": "mirror_spawn",
+                "description": "DEPRECATED (2026-07-08): use mirror_peer_beam instead. Backward-compat alias per two-tick discipline; routes through the cli `spawn` alias which now emits a stderr deprecation notice (b012d3f Landing 2). Substrate: renamed to @mirror/peer/beam at 9de2226 (Tick 2 atomic substrate-decl move). This tool will be removed in a subsequent tick.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "peer_home":   { "type": "string",  "description": "Peer home directory (~d). Must contain mirror.spec." },
+                        "hello_world": { "type": "boolean", "description": "Emit structured JSON envelope. Default false = text envelope." },
+                        "mission":     { "type": "string",  "description": "Mission file path (~f). Substrate-honest name; binary accepts both --mission and --task. Optional; substrate-absent when omitted." }
                     },
                     "required": ["peer_home"]
                 }
@@ -226,169 +258,14 @@ fn emit_audit_record(tool: &str, args: &Value, is_error: bool) {
     }
 }
 
-/// Walk `dir` recursively for `.mirror` files; for each, extract the
-/// prism declaration line of shape `prism @path { ... }` plus the
-/// five-op signature lines. Return structured JSON.
-///
-/// Tick 17 (substrate-introspection primitive). The smallest viable
-/// substrate-driven tool registration foundation per task #310/#312.
-/// Uses simple text matching — the prism declaration form is regular
-/// enough that full grammar parse isn't required at this altitude.
-fn list_prisms_in_dir(dir: &str) -> String {
-    let mut prisms: Vec<Value> = Vec::new();
-    walk_for_prisms(std::path::Path::new(dir), &mut prisms);
-    let envelope = json!({ "dir": dir, "count": prisms.len(), "prisms": prisms });
-    serde_json::to_string(&envelope).expect("prisms envelope is serializable")
-}
-
-/// Recursively walk `path` for `.mirror` files; extract each file's
-/// prism declaration into `acc`.
-fn walk_for_prisms(path: &std::path::Path, acc: &mut Vec<Value>) {
-    let entries = match std::fs::read_dir(path) {
-        Ok(e) => e,
-        Err(_) => return,
-    };
-    for entry in entries.flatten() {
-        let p = entry.path();
-        if p.is_dir() {
-            walk_for_prisms(&p, acc);
-        } else if p.extension().and_then(|e| e.to_str()) == Some("mirror") {
-            if let Some(prism) = extract_prism_declaration(&p) {
-                acc.push(prism);
-            }
-        }
-    }
-}
-
-/// Extract the prism declaration from one `.mirror` file. Returns
-/// `Some(json)` with shape `{ path, prism, ops }` on success.
-///
-/// Substrate convention: prism declarations look like
-/// ```text
-/// prism @path/to/prism {
-///   focus name
-///   project name
-///   split name
-///   shift name
-///   settle name
-/// }
-/// ```
-fn extract_prism_declaration(path: &std::path::Path) -> Option<Value> {
-    let content = std::fs::read_to_string(path).ok()?;
-    let mut prism_name: Option<String> = None;
-    let mut ops: Vec<String> = Vec::new();
-    // Tick 22 (2026-06-19) per Seam retrospective gap #5: `requires`
-    // clauses are now attached to the action they guard, not flat at
-    // the prism level. Substrate-driven dispatch consumers can now
-    // tell which clause guards which action.
-    //
-    // actions is a vec of (name, requires_clauses). The parser tracks
-    // the "current action under inspection" as it scans the file:
-    // when it sees an action signature line, that becomes the current
-    // action; any subsequent `requires` lines attach to it; the body
-    // marker `{ \` ends the current action's requires-collection.
-    let mut actions: Vec<(String, Vec<String>)> = Vec::new();
-    let mut current_action: Option<usize> = None;
-    let mut in_prism_block = false;
-    for line in content.lines() {
-        let trimmed = line.trim();
-        if trimmed.starts_with('#') {
-            continue;
-        }
-        if let Some(rest) = trimmed.strip_prefix("prism @") {
-            let name = rest.split('{').next().unwrap_or(rest).trim();
-            prism_name = Some(format!("@{}", name));
-            in_prism_block = true;
-            current_action = None;
-            continue;
-        }
-        if let Some(rest) = trimmed.strip_prefix("requires ") {
-            let clause = rest
-                .trim_end_matches(|c: char| c.is_whitespace() || c == '{')
-                .trim();
-            if !clause.is_empty() {
-                if let Some(idx) = current_action {
-                    // Attach to the action under inspection.
-                    actions[idx].1.push(clause.to_string());
-                }
-                // Requires outside an action context are silently
-                // dropped: substrate convention is that requires
-                // clauses follow an action signature. A future tick
-                // could surface them as parse warnings.
-            }
-            continue;
-        }
-        // Body marker `{ \ }` (or just `{`) ends the action context.
-        if trimmed.starts_with('{') {
-            current_action = None;
-            continue;
-        }
-        if in_prism_block {
-            if trimmed.starts_with('}') {
-                in_prism_block = false;
-                continue;
-            }
-            for op in &["focus", "project", "split", "shift", "settle"] {
-                if let Some(rest) = trimmed.strip_prefix(*op) {
-                    let target = rest.trim();
-                    if !target.is_empty() {
-                        ops.push(format!("{} {}", op, target));
-                    }
-                }
-            }
-            continue;
-        }
-        // Outside the prism block, look for action signatures.
-        // Substrate convention:
-        //   snake_case_name(params) -> return_type
-        if let Some(open) = trimmed.find('(') {
-            let head = &trimmed[..open];
-            if !head.is_empty()
-                && head
-                    .chars()
-                    .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '_')
-            {
-                let after_open = &trimmed[open..];
-                if let Some(close) = after_open.find(')') {
-                    let after_close = after_open[close + 1..].trim_start();
-                    if after_close.starts_with("->") {
-                        actions.push((head.to_string(), Vec::new()));
-                        current_action = Some(actions.len() - 1);
-                    }
-                }
-            }
-        }
-    }
-    let name = prism_name?;
-    // Build the actions JSON array as { name, requires: [...] }.
-    let actions_json: Vec<Value> = actions
-        .into_iter()
-        .map(|(n, r)| json!({ "name": n, "requires": r }))
-        .collect();
-    // Backward-compat: also emit a flat `requires` list at the prism
-    // level so existing consumers don't break. Future tick removes it
-    // once downstream consumers migrate to action-level requires.
-    let flat_requires: Vec<String> = actions_json
-        .iter()
-        .flat_map(|a| {
-            a["requires"]
-                .as_array()
-                .map(|arr| {
-                    arr.iter()
-                        .filter_map(|v| v.as_str().map(|s| s.to_string()))
-                        .collect::<Vec<_>>()
-                })
-                .unwrap_or_default()
-        })
-        .collect();
-    Some(json!({
-        "path": path.to_string_lossy(),
-        "prism": name,
-        "ops": ops,
-        "requires": flat_requires,
-        "actions": actions_json,
-    }))
-}
+// NOTE (Mara iter-15 schema reconciliation, 2026-07-08): the `prisms`
+// tool + its walker helpers (`list_prisms_in_dir`, `walk_for_prisms`,
+// `extract_prism_declaration`) were removed as part of the byte-parity
+// alignment with `bin/mirror-mcp`. The 8-tool bash schema has no
+// `prisms` entry; introspection is out of scope for the Rust runtime
+// discharge at this altitude. Future substrate-introspection ticks
+// re-land the walker under a substrate-declared prism (task #312 /
+// #310) rather than the hardcoded MCP arm.
 
 /// Parse a `mirror kintsugi --ci --out @data/json` stdout payload and
 /// extract the `verdict.label` field. Returns `Some(label)` when the
@@ -490,16 +367,31 @@ fn run_mirror(args: &[&str], ctx: &Ctx) -> (String, i32) {
 
 /// Dispatch a `tools/call` request to the appropriate mirror invocation.
 ///
-/// Mirrors the bash wrapper's `case "$tool" in ... esac` block:
+/// Mirrors the bash wrapper's `case "$tool" in ... esac` block — the
+/// 8-tool schema post-Tick-3 rename (`4f4a257`) + Tick 7 shatter fold
+/// (`ffba2a7`), byte-parity with `bin/mirror-mcp` as of Mara iter-15
+/// schema reconciliation (2026-07-08):
 ///
-/// - `mirror_compile` → `mirror compile <file>`
-/// - `mirror_craft`   → `mirror craft <target> [--target <emit>] [--reflect]`
-/// - `mirror_kintsugi`→ `mirror kintsugi <file> [--liquid] [--shatter N]`
+/// - `mirror_compile`   → `mirror compile <file>`
+/// - `mirror_craft`     → `mirror craft <target> [--target-kind <k>] [--reflect]`
+/// - `mirror_kintsugi`  → `mirror kintsugi --ci --out @data/json <file> [--liquid] [--shatter N]`
+///                        (always `--ci --out @data/json` per Tick 7 fold;
+///                        the substrate linearizes at @io, the wrapper is
+///                        the transport-framer; `verdict.label ∈
+///                        {partial, failure}` lifts to `isError: true`.)
+/// - `mirror_init`      → `mirror init <path> [--install-hooks]`
+/// - `mirror_recall`    → `mirror recall <spec_dir>`
+/// - `mirror_peer_beam` → `mirror peer beam <peer_home> [--hello-world] [--mission <f>]`
+/// - `mirror_beam`      → `mirror beam --mission <mission>`
+/// - `mirror_spawn`     → `mirror spawn <peer_home> [--hello-world] [--mission <f>]`
+///                        (DEPRECATED alias per two-tick discipline;
+///                        cli-side `spawn` alias emits stderr notice per
+///                        `b012d3f` Landing 2.)
 ///
 /// Returns `(text, is_error)`. `is_error` lifts to MCP's `isError` flag
 /// in the `tools/call` response so clients can programmatically
-/// distinguish substrate failure (kintsugi REJECT, compile error) from
-/// success without scraping stderr text.
+/// distinguish substrate failure (kintsugi REJECT, compile error, unknown
+/// tool) from success without scraping stderr text.
 fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
     let s =
         |k: &str| -> Option<String> { args.get(k).and_then(|v| v.as_str()).map(|s| s.to_string()) };
@@ -507,16 +399,19 @@ fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
     let i = |k: &str| -> Option<i64> { args.get(k).and_then(|v| v.as_i64()) };
 
     let (text, exit_code) = match tool {
-        "compile" => {
+        "mirror_compile" => {
             let file = s("file").unwrap_or_default();
             run_mirror(&["compile", &file], ctx)
         }
-        "craft" => {
+        "mirror_craft" => {
             let target = s("target").unwrap_or_default();
             let mut argv: Vec<String> = vec!["craft".into(), target];
-            if let Some(emit) = s("emit_target") {
-                argv.push("--target".into());
-                argv.push(emit);
+            // Substrate-honest name `target_kind` maps to the binary's
+            // `--target-kind` flag (per bin/mirror-mcp; the binary
+            // accepts `--target` as a backward-compat alias).
+            if let Some(kind) = s("target_kind") {
+                argv.push("--target-kind".into());
+                argv.push(kind);
             }
             if b("reflect") {
                 argv.push("--reflect".into());
@@ -524,55 +419,28 @@ fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
             let refs: Vec<&str> = argv.iter().map(String::as_str).collect();
             run_mirror(&refs, ctx)
         }
-        "kintsugi" => {
-            // Settle prism: mutates the file. Read-only verdict
-            // inspection lives in `verdict` below (tick 5 split).
-            let file = s("file").unwrap_or_default();
-            let mut argv: Vec<String> = vec!["kintsugi".into(), file];
-            if b("liquid") {
-                argv.push("--liquid".into());
-            }
-            if let Some(n) = i("shatter") {
-                argv.push("--shatter".into());
-                argv.push(n.to_string());
-            }
-            let refs: Vec<&str> = argv.iter().map(String::as_str).collect();
-            run_mirror(&refs, ctx)
-        }
-        "prisms" => {
-            // Substrate-introspection primitive (tick 17). Walks the
-            // given directory recursively for .mirror files; reads
-            // each file's prism declaration via simple text matching;
-            // returns structured JSON list. Does NOT use full mirror
-            // grammar parse — the prism declaration form
-            // `prism @path { focus N project N split N shift N settle N }`
-            // is regular enough to extract via regex match without
-            // dragging the grammar load path through MCP dispatch.
-            //
-            // Per task #310 (lens-server gen_prism MVP) and task #312
-            // (MCP substrate-driven tool registration): this is the
-            // foundation for the L of MCP+LSP. Future ticks build on
-            // this output to generate MCP tool surface from substrate-
-            // declared prisms rather than hardcoded Rust dispatch.
-            let dir = s("file").or_else(|| s("dir")).unwrap_or_default();
-            let json = list_prisms_in_dir(&dir);
-            return (json, false);
-        }
-        "verdict" => {
-            // Verdict prism: read-only observation. Per Seam tick 4
-            // review: the substrate's `cmd_kintsugi_ci_*` always exits
-            // 0 (the workflow YAML decides pass; lib.rs:855 contract);
-            // so isError lift via exit_code alone is insufficient. We
-            // parse verdict.label from the JSON envelope and lift
-            // {partial, failure} → isError directly.
+        "mirror_kintsugi" => {
+            // Tick 7 shatter fold (`ffba2a7`): the wrapper ALWAYS routes
+            // kintsugi through `--ci --out @data/json` — substrate is the
+            // linearizer, wrapper is the transport-framer. The `--ci`
+            // path emits the typed verdict envelope per
+            // `emit_ci_verdict_json` (lib.rs). `verdict.label ∈
+            // {partial, failure}` lifts to `isError: true` via
+            // `parse_verdict_label`, since the underlying `--ci`
+            // invocation always exits 0 by design (the workflow YAML
+            // decides pass per `cmd_kintsugi_ci_single`'s contract at
+            // lib.rs:855).
             let file = s("file").unwrap_or_default();
             let mut argv: Vec<String> = vec![
                 "kintsugi".into(),
-                file,
                 "--ci".into(),
                 "--out".into(),
                 "@data/json".into(),
+                file,
             ];
+            if b("liquid") {
+                argv.push("--liquid".into());
+            }
             if let Some(n) = i("shatter") {
                 argv.push("--shatter".into());
                 argv.push(n.to_string());
@@ -587,31 +455,60 @@ fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
             };
             return (text, is_error);
         }
-        "recall" => {
-            // P3 RED (2026-06-26): the cli-surface tool for the
-            // recall operation. Per Mara's @mirror/recall canonical
-            // spec (b034a60) + Seam P2 Discharge C (88f8428): recall
-            // is the substrate's inbound trajectory surface for
-            // returning agents — dual of spawn at substrate altitude
-            // per insight b10f00c §2.5. Routes through `mirror recall
-            // <dir>` (cmd_recall, lib.rs). Stub returns placeholder
-            // envelope without the four payload keys; GREEN tick
-            // wires the real cascade/pack_trail/pull_frontier/dogfood
-            // reads.
-            let dir = s("dir").unwrap_or_default();
-            run_mirror(&["recall", &dir], ctx)
+        "mirror_init" => {
+            let path = s("path").unwrap_or_default();
+            let mut argv: Vec<String> = vec!["init".into(), path];
+            if b("install_hooks") {
+                argv.push("--install-hooks".into());
+            }
+            let refs: Vec<&str> = argv.iter().map(String::as_str).collect();
+            run_mirror(&refs, ctx)
         }
-        "spawn" => {
-            // Phase G v0 MCP wiring (2026-06-26): the cli-surface tool
-            // for the spawn operation. Per Mara's spawn-semantics
-            // insight (b10f00c): spawn IS the substrate's controlled
-            // excitation above λ₀. Routes through `mirror spawn
-            // <peer_home>` (cmd_spawn, lib.rs) which reads the home's
-            // mirror.spec, extracts pack{}.lead, and emits an envelope
-            // naming the seven composition pieces. Exit_code lifts to
-            // isError per the established tools/call contract.
+        "mirror_recall" => {
+            // Substrate-honest arg name is `spec_dir` (per
+            // bin/mirror-mcp); routes to `mirror recall <dir>`.
+            let spec_dir = s("spec_dir").unwrap_or_default();
+            run_mirror(&["recall", &spec_dir], ctx)
+        }
+        "mirror_peer_beam" => {
+            // Tick 3 Landing 1 (`96aa752` mirror.spec cli-block `command
+            // peer { command beam }`) + Landing 2 (`b012d3f` cli dispatch
+            // cmd_peer_beam). Substrate-honest `--mission` name; binary
+            // accepts `--task` as backward-compat alias.
             let peer_home = s("peer_home").unwrap_or_default();
-            run_mirror(&["spawn", &peer_home], ctx)
+            let mut argv: Vec<String> = vec!["peer".into(), "beam".into(), peer_home];
+            if b("hello_world") {
+                argv.push("--hello-world".into());
+            }
+            if let Some(mission) = s("mission") {
+                argv.push("--mission".into());
+                argv.push(mission);
+            }
+            let refs: Vec<&str> = argv.iter().map(String::as_str).collect();
+            run_mirror(&refs, ctx)
+        }
+        "mirror_beam" => {
+            // Tick 3 Landing 1 top-level `command beam` in mirror.spec +
+            // Landing 2 top-level dispatch (`b012d3f`). Anonymous variant:
+            // no persistent-identity context; requires mission.
+            let mission = s("mission").unwrap_or_default();
+            run_mirror(&["beam", "--mission", &mission], ctx)
+        }
+        "mirror_spawn" => {
+            // DEPRECATED backward-compat alias. Routes through the cli
+            // `spawn` alias (b012d3f Landing 2 dispatch alias arm) which
+            // emits a stderr deprecation notice. Two-tick removal window.
+            let peer_home = s("peer_home").unwrap_or_default();
+            let mut argv: Vec<String> = vec!["spawn".into(), peer_home];
+            if b("hello_world") {
+                argv.push("--hello-world".into());
+            }
+            if let Some(mission) = s("mission") {
+                argv.push("--mission".into());
+                argv.push(mission);
+            }
+            let refs: Vec<&str> = argv.iter().map(String::as_str).collect();
+            run_mirror(&refs, ctx)
         }
         other => return (format!("unknown tool: {}", other), true),
     };
@@ -829,25 +726,35 @@ mod tests {
     }
 
     #[test]
-    fn tools_list_advertises_seven_tools() {
-        // P3 RED (2026-06-26): added `recall` inbound trajectory
-        // surface tool per Mara's @mirror/recall spec (b034a60) +
-        // Seam P2 Discharge C (88f8428), expanding to seven
-        // (compile / craft / kintsugi / prisms / verdict / spawn /
-        // recall). Recall is the dual of spawn per insight b10f00c
-        // §2.5; the round-trip closes one altitude of the
-        // outbound/inbound symmetric pair.
+    fn tools_list_advertises_eight_tools() {
+        // Mara iter-15 schema reconciliation (2026-07-08): byte-parity
+        // alignment with `bin/mirror-mcp` 8-tool schema — post-Tick-3
+        // rename (`4f4a257` mirror_spawn → mirror_peer_beam +
+        // top-level mirror_beam) + Tick 7 shatter fold (`ffba2a7`
+        // kintsugi always `--ci --out @data/json`). The stale `prisms`
+        // + `verdict` tools (pre-Tick-3, no matching cli-block) were
+        // removed as part of the reconciliation. All tools carry the
+        // `mirror_` prefix per bin/mirror-mcp.
         let req = r#"{"jsonrpc":"2.0","id":42,"method":"tools/list","params":{}}"#;
         let resp_line = handle_request(req).expect("tools/list must respond");
         let resp: Value = serde_json::from_str(&resp_line).expect("valid JSON");
         let tools = resp["result"]["tools"]
             .as_array()
             .expect("tools is an array");
-        assert_eq!(tools.len(), 7);
+        assert_eq!(tools.len(), 8);
         let names: Vec<&str> = tools.iter().map(|t| t["name"].as_str().unwrap()).collect();
         assert_eq!(
             names,
-            vec!["compile", "craft", "kintsugi", "prisms", "verdict", "recall", "spawn"]
+            vec![
+                "mirror_compile",
+                "mirror_craft",
+                "mirror_kintsugi",
+                "mirror_init",
+                "mirror_recall",
+                "mirror_peer_beam",
+                "mirror_beam",
+                "mirror_spawn",
+            ]
         );
     }
 }
