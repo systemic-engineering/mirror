@@ -1,0 +1,295 @@
+in @prism
+in @meta
+in @glass
+in @magic
+in @fragmentation
+in @mirror/store
+
+# @edge — the substrate-decl of typed edges as @magic instances.
+#
+# Recognition #80 (@magic as form/process substrate-decl; LANDED per
+# shards/magic.mirror) grounds this shard. The recognition cascade of
+# 2026-07-08 (`1e8a02b` insight; Reed peer-as-navigator META + 3 subs)
+# names the peer as a pain-driven bounded-ontological-navigator on
+# @torus under algedonic gradient; the edges the navigator traverses
+# are the substrate-decl'd carrier this shard names.
+#
+# Alex adjudication 2026-07-08 (late session): "collapse into one
+# surface" for the @edge fault-plane question. Two prior surfaces
+# existed:
+#
+# (1) `shards/mirror/ref.mirror:232-248` declared `edge_kind` as a
+#     seven-variant substrate discriminant (in_edge, callers_edge,
+#     pact_edge, fracture_edge, kintsugi_bridge_edge,
+#     reflection_predecessor_edge, ast_child_edge) — the operational
+#     surface at navigation altitude.
+# (2) `shards/mirror/store.mirror:236-257` reserved typed edges +
+#     weights + Laplacian navigation for @spectral/db (closed engine),
+#     with the open floor deliberately omitting them.
+#
+# The two surfaces were substrate-honestly in tension: ref.mirror
+# already TYPED the edge vocabulary at the open floor; store.mirror's
+# deferral read as prose-only. Per Taut scout `0fc8589` and Alex's
+# collapse-into-one-surface directive: land @edge as the single
+# canonical substrate-decl; ref.mirror's edge_kind is a species-
+# refinement UNDER @edge; store.mirror's deferral becomes a citation
+# to @edge.
+#
+# === Why @edge and not another name ===
+#
+# Per [[feedback-substrate-already-had-the-word]] (56th+ instance):
+# the substrate already carries `edge_kind` (ref.mirror), `edge_ref`
+# (ref.mirror), `walk` / `impacted_by` (store.mirror; the reachability
+# algebra that consumes edges), and `splinter_graph` (store.mirror; the
+# OID-graph whose typed edges @edge lifts). Graph theory since Euler
+# 1735 uses "edge" as the load-bearing name for the relation between
+# vertices; every dependency system (Bazel, Nix, Buck2) uses "edge" or
+# "dep-edge" at the same altitude. The substrate had the word; this
+# shard names it at family-root.
+#
+# Alternatives considered:
+#
+# - `@link`: hyperlink connotation; misses the typed-relation math
+#   at graph-theory altitude.
+# - `@arrow`: category-theory connotation; conflicts with the
+#   morphism vocabulary at @meta and @algebra.
+# - `@relation`: too broad; @edge is a specific two-vertex relation
+#   at graph altitude, not the general relational algebra.
+# - `@dep`: too narrow; the substrate carries edges that are not
+#   dependencies (reflection_predecessor_edge, ast_child_edge).
+#
+# === @edge as @magic instance (the five-species mapping) ===
+#
+# Per Alex's fault-plane collapse: @edge inherits @magic's substrate
+# structure. The five @magic species (surface/mechanism/contract/
+# reveal/audit) plus @magic/distinction and @magic/frame each carry a
+# specific role in the edge's semantic surface:
+#
+# - `source` / `target` = @magic/surface. The gauge-visible interface
+#   of the edge — what an observer of the graph sees. Two splinter
+#   endpoints; content-addressed identity by construction; the
+#   observation carries no matter beyond the endpoints.
+# - `kind` = @magic/distinction. Spencer-Brown's mark at edge
+#   altitude — the load-bearing distinction between one kind of edge
+#   and another (in_edge is not callers_edge is not pact_edge).
+#   Discharges the seven-variant discriminant lifted from ref.mirror.
+# - `weight` = @magic/mechanism. The matter-hidden numerical cost.
+#   Opaque at @edge altitude; @spectral/db (closed engine) specializes
+#   the numerical dimensions (Laplacian entries, eigenvalue-navigation
+#   coefficients). The mechanism stays encapsulated behind the
+#   substrate-decl'd carrier so the open floor names the shape without
+#   naming the closed specialization.
+# - `frame` = @magic/frame. The π₁(T²) winding admissibility per
+#   @torus's meridian/longitude structure. Which windings the edge
+#   carries; which bounded commutator holds.
+#
+# The remaining @magic species (contract, reveal, audit) compose
+# downstream: an @edge instance's honesty at @io IS its @magic/contract
+# instance; reveal / audit consume @edge instances at debugging /
+# provenance altitude.
+#
+# === Substrate-already-had-the-word cross-references ===
+#
+# Four load-bearing instances of @edge's structural shape already
+# operational in the substrate:
+#
+# 1. `edge_kind` at `shards/mirror/ref.mirror:232-248` (Seam C4
+#    closure). Seven typed variants; declared at ref-altitude but
+#    substrate-canonical per the collapse. This shard lifts it to
+#    family-root; ref.mirror re-exports (Path α).
+# 2. `walk(root: oid) -> splinter_graph` at `shards/mirror/store.mirror:
+#    508-512`. The forward closure of the OID-graph's edges;
+#    @mirror/store consumes @edge to compute reachability.
+# 3. `impacted_by(oid: oid) -> [oid]` at `shards/mirror/store.mirror:
+#    514-528`. The reverse closure; Bazel `rdeps` at store altitude.
+#    Both closures walk @edge instances; family-root declares the
+#    carrier they walk.
+# 4. `splinter_graph = { root: oid, children: [oid] }` at
+#    `shards/mirror/store.mirror:434-437`. The (root, children)
+#    projection IS a list of unweighted @edge instances at @store
+#    altitude; @edge names the carrier @store already implicitly
+#    manipulates.
+#
+# === Pre-AI prior art ===
+#
+#   Euler 1735 (Königsberg bridges)  The original graph edge; the
+#                                    load-bearing math ancestor.
+#   Spencer-Brown 1969 Laws of Form  The mark IS distinction; @edge's
+#                                    kind field IS the mark at edge
+#                                    altitude.
+#   Bazel query `deps`/`rdeps`       Google 2016+. Typed edges at
+#                                    dependency-graph altitude.
+#   Elixir mix xref (typed edges)    Valim 2016. compile-connected /
+#                                    exports / runtime — the seven-
+#                                    variant discriminant precedent.
+#   Sussman-Steele constraint nets   1980. Edges carry directionality
+#                                    (@edge.reverse below).
+#   Yang-Mills 1954 (gauge fields)   The gauge/matter partition
+#                                    @magic inherits from at physics
+#                                    altitude; @edge inherits from
+#                                    @magic at graph altitude.
+#
+# Spec context: docs/insights/2026-07-08-recognition-cascade-peer-
+#               as-navigator.md (cascade grounding).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]],
+#                      [[architecture-splinter-and-spectral-db-edges]]
+#                       (the peer-to-spectral-db edge structure @edge
+#                        family-root declares),
+#                      [[architecture-fragmentation-is-the-rust-
+#                       substrate]] (edge_write / edge_walk /
+#                       edge_reverse realise in fragmentation),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (56th+ instance).
+# Related shards: [[shards/magic.mirror]] (the family @edge inherits
+#                  from; surface / mechanism / distinction / frame
+#                  carriers ARE @edge's field types semantically),
+#                 [[shards/mirror/store.mirror]] (the OID-graph @edge
+#                  populates; walk / impacted_by consume @edge),
+#                 [[shards/mirror/ref.mirror]] (edge_kind lives here
+#                  as species-refinement per Path α re-export),
+#                 [[shards/torus.mirror]] (the π₁(T²) frame carrier;
+#                  @edge.frame is a torus winding admissibility),
+#                 [[docs/insights/2026-07-08-recognition-cascade-
+#                  peer-as-navigator]] (the cascade grounding this
+#                  landing tick).
+# Path-namespace property: this file at `shards/edge.mirror` declares
+# `@edge` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/math/euler-1735
+source @arxiv/logic/spencer-brown-1969
+source @arxiv/programming/valim-2016
+
+prism @edge {
+  focus edge
+  project edge
+  split edge
+  shift edge
+  settle edge
+}
+
+# === edge_weight carrier ===
+#
+# A typed reference per [[feedback-no-bare-types]] naming the matter-
+# hidden numerical cost of an edge. Per the @magic/mechanism mapping
+# above: opaque at @edge altitude; @spectral/db (closed engine)
+# specializes the numerical dimensions (Laplacian entries, eigenvalue-
+# navigation coefficients). The mechanism stays encapsulated.
+#
+# Identity contract: byte-equality on the underlying ref.
+type edge_weight = ref
+
+# === edge_walk_rule carrier ===
+#
+# A typed reference per [[feedback-no-bare-types]] naming the
+# traversal predicate an edge_walk consumes. Substrate-typed so the
+# walk rule is not a bare string / opaque callback at the boundary.
+#
+# Identity contract: byte-equality on the underlying ref.
+type edge_walk_rule = ref
+
+# === edge_kind variant (lifted from ref.mirror per fault-plane collapse) ===
+#
+# Per Alex adjudication 2026-07-08 "collapse into one surface": this
+# variant lifts here from `shards/mirror/ref.mirror:232-248`. The seven
+# variants ARE the substrate's typed discrimination of graph edges;
+# ref.mirror re-exports from @edge (Path α) so the vocabulary has one
+# canonical source.
+#
+# Per Seam C4 closure pattern (variants over bare ref-with-documented-
+# values): typed substrate variant naming the seven first-class edge
+# kinds. Same-shape different-meaning forbidden per
+# [[feedback-no-bare-types]].
+#
+# Per @magic/distinction mapping: the kind field IS the Spencer-Brown
+# mark at edge altitude — the load-bearing distinction that makes
+# `in_edge` not `callers_edge` not `pact_edge`.
+type edge_kind =
+  | in_edge               # the substrate ancestry header
+  | callers_edge          # action-to-action call site
+  | pact_edge             # property -> fracture discharge
+  | fracture_edge         # fracture body -> morphism emission
+  | kintsugi_bridge_edge  # cross-shard kintsugi loop binding
+  | reflection_predecessor_edge  # @reflection.observe temporal link
+  | ast_child_edge        # splinter(ast) AST altitude descent
+
+# === edge carrier (the load-bearing substrate-decl) ===
+#
+# A typed record naming the edge as @magic instance. Five fields; each
+# discharges to a specific @magic species per Alex's fault-plane
+# collapse:
+#
+# - `source` / `target` — @magic/surface. The gauge-visible endpoints
+#   (what the graph observer sees). Splinter references; content-
+#   addressed identity by construction.
+# - `kind`               — @magic/distinction. The Spencer-Brown mark
+#   discriminating one edge species from another. Consumes edge_kind.
+# - `weight`             — @magic/mechanism. The matter-hidden numerical
+#   cost. Opaque at @edge altitude; @spectral/db specializes downstream.
+# - `frame`              — @magic/frame. The π₁(T²) winding admissibility
+#   per @torus's meridian/longitude structure.
+#
+# Identity contract: byte-equality on the quintuple. Two edges ARE
+# the same @edge instance iff all five carriers are byte-equal.
+type edge = {
+  source: splinter,
+  target: splinter,
+  kind:   edge_kind,
+  weight: edge_weight,
+  frame:  winding,
+}
+
+# === edge_write action ===
+#
+# The substrate-vocabulary action that constructs an edge from source,
+# target, and kind. Weight and frame default per the realisation
+# (opaque unit weight; identity winding) unless supplied by a downstream
+# species that specializes them.
+#
+# Per @magic/surface expose pattern: edge_write IS what the graph
+# observer sees as edge-creation; the matter (weight computation,
+# frame determination) stays encapsulated behind the substrate-decl.
+#
+# Body discharges at the realisation boundary.
+edge_write(source: splinter, target: splinter, kind: edge_kind) -> edge { \ }
+
+# === edge_walk action ===
+#
+# The substrate-vocabulary action that walks the graph from a root
+# splinter under a walk rule, producing the list of edges the rule
+# admits. The root's OID-graph closure at @mirror/store consumes
+# edge_walk to compute `walk` / `impacted_by`; @edge names the carrier
+# they walk.
+#
+# Per @magic/reveal composition (forward-promised): edge_walk IS the
+# controlled disclosure operation at edge altitude — the substrate-
+# pull-correct reveal sequence for what edges the graph admits under a
+# rule.
+#
+# Body discharges at the realisation boundary.
+edge_walk(root: splinter, rule: edge_walk_rule) -> [edge] { \ }
+
+# === edge_reverse action (meridian↔longitude symmetry) ===
+#
+# The substrate-vocabulary action that flips an edge's direction:
+# swap source and target; preserve kind, weight, frame. Per @torus's
+# meridian/longitude structure: the reversal IS the symmetry the
+# torus's π₁(T²) admits when the winding is invertible.
+#
+# Per `impacted_by` (reverse closure at @mirror/store): edge_reverse IS
+# the atomic operation whose closure IS the Bazel `rdeps` surface at
+# store altitude. Family-root declares the atom; store composes it
+# into the reverse-closure surface.
+#
+# Body discharges at the realisation boundary.
+edge_reverse(edge: edge) -> edge { \ }
+
+out @edge
+out edge_weight
+out edge_walk_rule
+out edge_kind
+out edge
+out edge_write
+out edge_walk
+out edge_reverse
