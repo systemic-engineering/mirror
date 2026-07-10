@@ -1,0 +1,371 @@
+in @prism
+in @glass
+in @meta
+in @nl
+in @optics/lens
+in @io
+in @kintsugi/consent
+in @mirror/store
+
+# @optics/lens/diff — the first species under @optics/lens.
+#
+# The FIRST substrate-decl species discharging Foster's `put`
+# direction with autopoietic semantics. Where the parent family-root
+# `@optics/lens` (Mara iter-25, `b0427fd`) declares the abstract
+# (get, put) pair with three Foster bilaterals as `\ {}` stubs at
+# family altitude, this species FIXES the linear carrier to unified-
+# diff bytes and the semantic carrier to a peer's `@bauchladen.tray`
+# state — the two carriers whose lens-pairing closes Blocker 2
+# (peer_beam returns an envelope, not the diff bytes an operator
+# can actually edit) at substrate-decl altitude.
+#
+# === Blocker 2 CLOSED at substrate-decl altitude ===
+#
+# Alex directive 2026-07-11 (parent shard docblock, iter-25):
+#
+#   "The gap between @fate and linear formats like the diff are
+#    @shatter. From where I'm standing we merely need @shatter/
+#    lenses and the first is @shatter/lens/diff"
+#
+# Reed grep-check refactored the family placement: no @shatter
+# family-root exists at prism altitude; the parent that carries
+# Foster-lens semantics IS @optics; hence @optics/lens (Mara iter-25,
+# `b0427fd`) as sub-family, and THIS species as the first
+# discharge. At substrate-decl altitude, the composition already
+# typechecks:
+#
+#   focus  bauchladen_state -> diff_bytes           (linearize)
+#   settle diff_bytes + bauchladen_state -> new_bauchladen_state  (integrate)
+#
+# The Rust runtime realization (bootstrap/src/optics/lens/diff.rs
+# against `peer_beam`'s envelope carrier) is ONE FURTHER TICK per
+# Mara iter-24 spec §7 Tick 4 (`55221c1`); at substrate-decl altitude,
+# Blocker 2 is CLOSED here.
+#
+# === Composition with @mirror/peer/beam ===
+#
+# Per Mara iter-24 spec §3 (`55221c1`), the full pipeline this species
+# closes:
+#
+#   Forward (peer_beam runtime -> operator terminal):
+#     mission
+#       |> @fate.select                 # candidate ganglion walk (#58)
+#       |> @bauchladen.tray.append      # enqueue L/P fiber pair on peer
+#       |> @kintsugi.settle             # fixed-point contract on fracture
+#       |> @optics/lens/diff.focus      # get: bauchladen_state -> diff_bytes
+#       |> @io.write(stdout)            # operator reads
+#
+#   Feedback (operator edit -> next inference iteration):
+#     (edited_diff, old_bauchladen)
+#       |> @optics/lens/diff.settle     # put: diff_bytes + base -> new bauchladen
+#       |> @bauchladen.tray.update      # commit new fiber state; L(p) updated
+#       |> @fate.select                 # next candidate incorporates the correction
+#
+# The two directions form the closed autopoietic loop. `focus` returns
+# `diff_bytes` (linear, @io-crossable); `settle` accepts
+# `diff_bytes + bauchladen_state` and returns a fresh `bauchladen_state`.
+# The peer_beam runtime envelope is no longer opaque at substrate-decl
+# altitude — it linearizes through THIS lens.
+#
+# === The put direction IS autopoietic closure ===
+#
+# Per Mara iter-24 spec §4 (`55221c1`), the load-bearing recognition:
+# the `get` direction alone (a one-way projection from @fate to bytes)
+# does not close the peer's learning loop. It renders state; it does
+# not integrate correction. The `put` direction — `settle(edited_diff,
+# base) -> new_bauchladen` — IS the autopoietic hinge. It is the point
+# where operator judgment re-enters the substrate as a first-class
+# semantic update.
+#
+# Per Reed math (`docs/math/2026-07-07-shatter-as-bidirectional-lens.md`
+# §4.1), the kintsugi flow is Banach-contractive on the substrate state
+# space; each `put` supplies a fresh basepoint for the next iteration
+# of `Φ = parse ∘ render`. Without `put`, the peer's fixed-point
+# iteration runs ONLY over its own priors; WITH `put`, the operator's
+# edit is a boundary condition that reshapes the attractor.
+#
+# This is Foerster's observation-of-observation discharged at the lens
+# boundary: the operator sees what the peer produced, edits it, and
+# the edit re-enters as a semantic update whose next linearization the
+# operator will see. Two loops close through one lens — and this
+# species IS the first substrate-decl carrier of that closure.
+#
+# === Relationship to @shatter (Taut iter-12 Q3 verdict) ===
+#
+# Per Taut iter-12 boundary scout (`5222333`) and parent iter-25 shard:
+# `@shatter` species remain load-bearing at THEIR altitude. The render
+# and parse operation pair in `shards/mirror/shatter.mirror` and
+# `shards/smarts/shatter.mirror` witness the Foster laws THIS species
+# declares — they are one instance of the (get, put) pair whose family
+# altitude @optics/lens carries. The autopoietic-closure discharge that
+# @optics/lens/diff carries at BYTES-projection altitude is
+# structurally the same shape @shatter carries at GRAPH-projection
+# altitude; the family-root's laws apply to both by construction.
+#
+# === Ancestry rationale ===
+#
+# - `in @prism`             the five-op algebra ancestor (every species).
+# - `in @glass`             `verdict` carrier for the Foster bilaterals;
+#                           the autopoietic_closure witness returns
+#                           `verdict` too (bilateral property discipline).
+# - `in @meta`              substrate-decl altitude.
+# - `in @nl`                `# <text>` -> nl_literal for docblock terms.
+# - `in @optics/lens`       PARENT family-root (`b0427fd`); this species
+#                           specializes the abstract (get, put) pair.
+# - `in @io`                the linearization crossing; `focus` returns
+#                           `diff_bytes` which cross the @io fault plane
+#                           (Mara iter-6 `583b939`).
+# - `in @kintsugi/consent`  morphism carrier — the operator's edit is a
+#                           consent event; `settle`'s input `edited:
+#                           diff_bytes` IS a consent-morphism payload
+#                           per the consent-shard's morphism.content =
+#                           splinter(ast) pattern.
+# - `in @mirror/store`      the content-address altitude at which
+#                           byte-equality on OIDs (Reed math §3.2)
+#                           witnesses the Foster laws AND the
+#                           autopoietic-closure fixed-point.
+#
+# Spec context: docs/specs/optics-lens-family-and-diff-species.md
+#               (Mara iter-24, `55221c1`; §2 the diff species shape,
+#               §3 peer_beam composition, §4 put direction IS
+#               autopoietic closure).
+# Parent shard: shards/optics/lens.mirror (Mara iter-25, `b0427fd`;
+#               family-root declaration + type carriers + bilateral heads).
+# Substrate decisions:
+#   [[architecture-shards-as-substrate-source]],
+#   [[architecture-prism-as-trait-as-everything]] (species IS a sub-prism
+#      specialization of the family),
+#   [[architecture-alignment-as-boundary-mathematics]] (recognition
+#      #57; the @io boundary the linear side crosses),
+#   [[architecture-bateson-form-behaviour-partition]] (`focus` = form-
+#      side render; `settle` = process-side autopoietic integration).
+# Foster math: docs/math/2026-07-07-shatter-as-bidirectional-lens.md
+#              §3.1 (symmetric-lens adaptation),
+#              §3.2 (OID-equality at content-address altitude),
+#              §4.1 (Banach fixed-point iteration; the autopoietic-
+#              closure convergence witness).
+# Boundary scout: Taut iter-12 (`5222333`) — Q5 verdict "diff name
+#              FREE" (no naming collision at species altitude); Q6
+#              verdict "put/feedback GENUINE GAP" (this species IS the
+#              closure of that gap at substrate-decl altitude).
+# Related shards: optics/lens.mirror (parent family-root, `b0427fd`),
+#                 bauchladen.mirror (the tray whose L(p)/P(p) fibers
+#                   `focus` linearizes and `settle` updates),
+#                 kintsugi/consent.mirror (morphism carrier for the
+#                   operator's edit),
+#                 mirror/store.mirror (OID content-address altitude),
+#                 mirror/peer/beam.mirror (the composition site whose
+#                   envelope this species linearizes to bytes),
+#                 mirror/shatter.mirror (sibling render/parse witness
+#                   at graph-projection altitude).
+# Path-namespace property: this file at `shards/optics/lens/diff.mirror`
+# declares `@optics/lens/diff` and only that.
+
+prism @optics/lens/diff {
+  focus diff
+  project diff
+  split diff
+  shift diff
+  settle diff
+}
+
+# === Type carriers (species specialization of parent family-root) ===
+#
+# Parent `@optics/lens` (b0427fd) declares:
+#   type lens_get     = ref
+#   type lens_put     = ref
+#   type lens_witness = ref
+#
+# This species FIXES the linear-carrier concretely as `diff_bytes` —
+# the unified-diff byte-carrier that crosses the @io fault plane.
+# The semantic-carrier is inherited implicitly via `@bauchladen.tray`
+# refs; the species does not re-declare the semantic type because
+# `@bauchladen` (shards/bauchladen.mirror) already homes it at
+# content-address altitude via `in @mirror/store`.
+#
+# Per Reed math §3.2, equality is byte-equality on `@mirror/store` OIDs
+# at content-address altitude — this species inherits that discipline
+# via `in @mirror/store` above. `diff_bytes` is a `ref` because a
+# unified-diff literal is a content-addressed handle in the store,
+# not an inline byte-sequence at substrate-decl altitude.
+
+type diff_bytes = ref
+
+# === Actions (species specialization of parent get / put) ===
+#
+# Parent `@optics/lens` (b0427fd) declares:
+#   get(semantic: ref) -> ref { \ {} }
+#   put(linear: ref, old_semantic: ref) -> ref { \ {} }
+#
+# This species specializes the SEMANTIC ref to `@bauchladen` state and
+# the LINEAR ref to `diff_bytes`. Both bodies are `\ {}` stubs at
+# substrate-decl altitude per two-tick discipline; the Rust runtime
+# discharge (bootstrap/src/optics/lens/diff.rs) is one further tick per
+# Mara iter-24 §7 Tick 4.
+#
+# `get(bauchladen)` — linearize the peer's L(p)/P(p) fibered state
+# (per Mara iter-18 `129f618` L(p) = learned fiber, P(p) = produced
+# fiber over T(p) target) into a reviewable unified-diff byte-carrier.
+# This is `focus` in the five-op mapping (parent shard `settle` prose):
+# focus in physical optics names the converging pass, bauchladen fibers
+# -> single byte-carrier = converge onto one linear artifact for the
+# operator's terminal.
+#
+# `put(edited, old_bauchladen)` — integrate operator edits back into
+# @bauchladen.tray, producing a new_bauchladen with updated L(p)
+# fibers. This is `settle` in the five-op mapping: settle names the
+# reflecting-back-and-stabilizing pass, edited_diff + base -> new
+# bauchladen = autopoietic-closure fixed-point iteration. THIS IS the
+# put direction that closes Blocker 2. Per Mara iter-24 §6 Q5, the
+# `settle` action MAY update BOTH L(p) AND P(p) fibers — the
+# operator's edit is training signal for L AND production signal for
+# P — but that adjudication is deferred to shard-landing Tick 4
+# (Rust altitude) per two-tick discipline.
+
+get(bauchladen: ref) -> diff_bytes { \ {} }
+put(edited: diff_bytes, old_bauchladen: ref) -> ref { \ {} }
+
+# === Bilateral properties (Foster laws specialized to diff) ===
+#
+# Parent `@optics/lens` (b0427fd) declares three abstract Foster
+# bilaterals returning `verdict`:
+#   put_get(l: lens_witness, s: ref, v: ref) -> verdict { \ {} }
+#   get_put(l: lens_witness, s: ref) -> verdict { \ {} }
+#   put_put(l: lens_witness, s: ref, v: ref, v_prime: ref) -> verdict { \ {} }
+#
+# This species specializes the linear-arg type to `diff_bytes`; the
+# semantic-arg stays as `ref` (inherited @bauchladen tray refs). The
+# lens_witness carrier is inherited from parent unchanged. All bodies
+# `\ {}` stubs per two-tick discipline.
+#
+# `put_get_diff` — PutGet at diff altitude. `get(put(v, s)) == v`
+# for all diff_bytes v and bauchladen s: putting a diff v into a
+# base bauchladen and then getting the linearization recovers v.
+# The lens's forward arrow is right-inverse of backward. Foster
+# 2007 §3 "acceptance" law: the lens accepts operator edits without
+# silent modification of what will be re-linearized.
+#
+# `get_put_diff` — GetPut at diff altitude. `put(get(s), s) == s`
+# for all bauchladen s: getting the diff of s and then putting it
+# back into s unchanged leaves s unchanged. The round-trip on an
+# unedited view is identity. Foster 2007 §3 "stability" law: the
+# lens does not spuriously reshape the peer's tray when the operator
+# made no edit.
+#
+# `put_put_diff` — PutPut at diff altitude. `put(v', put(v, s)) ==
+# put(v', s)` for all diff_bytes v, v' and bauchladen s: successive
+# operator edits collapse to the last edit. Foster 2007 §3 "very
+# well-behaved" law: the lens's autopoietic-closure semantics are
+# insensitive to intermediate edit history — only the final edit
+# reshapes the attractor.
+#
+# Equality on the RHS is byte-equality on `@mirror/store` OIDs per
+# Reed math §3.2; the `in @mirror/store` ancestry above licenses this
+# reading at species altitude.
+
+put_get_diff(l: lens_witness, s: ref, v: diff_bytes) -> verdict { \ {} }
+get_put_diff(l: lens_witness, s: ref) -> verdict { \ {} }
+put_put_diff(l: lens_witness, s: ref, v: diff_bytes, v_prime: diff_bytes) -> verdict { \ {} }
+
+# === Autopoietic closure (Mara iter-24 spec §4 additional bilateral) ===
+#
+# The load-bearing witness this species carries that the parent
+# family-root does NOT declare: `autopoietic_closure` — verdict that
+# repeated (get, put) cycles converge toward an operator-satisfaction
+# fixed-point per Reed math §4.1 Banach contraction.
+#
+# Per Mara iter-24 spec §4 (`55221c1`), the Foster laws alone
+# (put_get, get_put, put_put) are NECESSARY but NOT SUFFICIENT for
+# autopoietic closure at the diff altitude. The Foster laws witness
+# that the (get, put) pair is well-behaved LOCALLY (round-trips
+# preserve identity, edits are accepted, history collapses); the
+# autopoietic_closure bilateral witnesses that the ITERATED loop
+# CONVERGES — that under a specified edit-trace perturbation regime,
+# the sequence of (get, put, get, put, ...) reaches an operator-
+# satisfaction fixed-point in finite iterations.
+#
+# This is Bateson II (learning-about-learning) operationalized at
+# diff altitude: the peer's L(p) fiber updates via `put` are the
+# substrate learning FROM the operator; the operator's diminishing
+# edit-magnitude across iterations IS the fixed-point witness. Per
+# [[architecture-bateson-form-behaviour-partition]], `get`/`put`
+# discharge the form-side round-trips; `autopoietic_closure`
+# discharges the process-side convergence dynamics that make the
+# form-side round-trips a LEARNING loop rather than a passive
+# equivalence.
+#
+# The `edit_trace` argument is a `ref` handle into `@mirror/store`
+# carrying the sequence of operator-edits across a bounded epoch
+# (per @song/movement bounded-frame discipline); the bilateral
+# returns `pass` when the trace's edit-magnitudes contract toward
+# zero within tolerance, `partial(confidence)` when contraction is
+# soft/slow, `failure(reason)` when the trace diverges or oscillates.
+#
+# Body `\ {}` stub per two-tick discipline; Seam Phase D adversarial
+# audit gates the discharge (Mara iter-24 §7 Tick 5).
+
+autopoietic_closure(l: lens_witness, edit_trace: ref) -> verdict { \ {} }
+
+# === Exports ===
+
+out @optics/lens/diff
+out diff_bytes
+out get
+out put
+out put_get_diff
+out get_put_diff
+out put_put_diff
+out autopoietic_closure
+
+# === Gaps ===
+#
+# Not landed this tick (per two-tick discipline and Mara iter-24
+# spec §7-§8):
+#
+# - The Rust runtime discharge (bootstrap/src/optics/lens/diff.rs).
+#   Per Mara iter-24 §7 Tick 4: the `focus`/`settle` bodies against
+#   `peer_beam`'s existing envelope carrier land at the Rust
+#   altitude one further tick from here. Blocker 2 is CLOSED at
+#   substrate-decl altitude by THIS shard; the runtime hop is a
+#   separate landing.
+#
+# - Seam Phase D adversarial audit on the Foster-law predicates
+#   against `@mirror/store` OID-equality (Mara iter-24 §7 Tick 5).
+#   Verify `put_get_diff` and `get_put_diff` hold as byte-equality
+#   at content-address altitude per Reed math §3.2.
+#
+# - The autopoietic_closure convergence witness against a concrete
+#   edit-trace corpus. This shard declares the bilateral head; the
+#   Banach contraction constant + tolerance thresholds are deferred
+#   to Seam audit + runtime discharge.
+#
+# - Whether `settle` updates L(p), P(p), or BOTH fibers on the
+#   peer's `@bauchladen.tray` (Mara iter-24 §6 Q5). The
+#   autopoietic-closure reading of §4 wants BOTH; adjudication
+#   deferred to Rust altitude.
+#
+# - The multi-path @cyberpunk × @kintsugi hook (Mara iter-24 §6 Q3).
+#   Named in spec; not designed at species altitude. A follow-on
+#   species `@optics/lens/diff/multi-path` accepting `list(diff_bytes)`
+#   with weight annotations would discharge tournament-based
+#   integration; NOT the first-species scope.
+#
+# - The 2-cell coherence square (Reed math §3.3). Parent shard
+#   already flagged this gap at family altitude; this species
+#   inherits the deferral.
+#
+# - Sibling species `@optics/lens/shatter` (compositional rehoming
+#   of `@shatter`'s render/parse pair as one instance of the family
+#   laws at graph-projection altitude). Follow-on Mara/Seam tick.
+#
+# - The @io/stagefreight wire-transport siblings (`@optics/lens/mcp`,
+#   `@optics/lens/lsp`) named in Mara iter-24 §6.
+#
+# - The obligation-block bodies of `get`, `put`, three Foster
+#   bilaterals, and `autopoietic_closure` are `\ {}` stubs at this
+#   substrate-decl altitude; discharge lands at Rust altitude.
+#
+# Two-tick discipline: THIS tick lands the FIRST species discharging
+# Foster's `put` direction with autopoietic semantics at substrate-
+# decl altitude, closing Blocker 2 at that altitude. The Rust
+# runtime hop past this is one further tick.
