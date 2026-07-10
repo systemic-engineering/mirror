@@ -3,7 +3,50 @@ in @epistemologic
 in @epistemologic/math/bundle
 in @beam
 
-# @epistemologic/math/spectral-triple — Connes' (A, H, D) as grammar.
+# @epistemologic/spectral_triple — Connes' (A, H, D) as grammar.
+#
+# === First empirical witness of the self-migration architecture ===
+#
+# This shard is the manual discharge of the substrate-self-migration
+# machinery landed across Ticks 1-4. It IS what the autonomous loop
+# (kintsugi/fracture/relocate + epistemologic/pact/is_load_bearing_in_std)
+# would perform once wired to @io — performed by hand this tick as the
+# Tick 5 WITNESS, proving the machinery's shape before the loop runs it.
+#
+# Migration provenance:
+#   Source: boot/std/epistemologic/math/spectral-triple.mirror
+#           (declared grammar @epistemologic/math/spectral-triple)
+#   Destination: shards/epistemologic/spectral_triple.mirror
+#           (declares grammar @epistemologic/math/spectral-triple —
+#            keyword preserved per Seam Q3 qualification; namespace
+#            path elevation is Tick 6+ refactor)
+#
+# Elevated OUT of /math/ per Alex 2026-07-10: the spectral triple is
+# substrate-typing discipline, not just math. Underscore over hyphen
+# per shards/ convention (sheaf_laplacian.mirror, bateson_learning.mirror,
+# liquid_extraction.mirror).
+#
+# Cited landings:
+#   e764a32 — Mara canonical spec (docs/specs/substrate-self-migration-
+#             via-spectral-typing.md)
+#   8a3b0a4 — Taut boundary scout: 0 non-dangling consumers of
+#             `in @epistemologic/math/spectral-triple`; 1 orphan
+#             (@epistemologic/math/connes_spectral_triple in
+#             coherence-parametric.mirror) that never resolved
+#   2b56977 — Seam Phase D ratify (with Q3 qualification: keyword
+#             preservation this tick)
+#   3870201 — Reed Tick 2 PREREQ-1 (spectral keyword admittance in
+#             bootstrap)
+#   5c12808 — Mara Tick 3 PREREQ-2 (@kintsugi/fracture/relocate
+#             operational)
+#   2f1041f — Mara Tick 4 PREREQ-3 (@epistemologic/pact/
+#             is_load_bearing_in_std declarative)
+#
+# The autonomous loop discharge is Post-Tick-5 (per Alex HOLD). This
+# shard's existence at this path IS the empirical proof that the
+# machinery's shape holds under a real migration.
+#
+# === Original docblock ===
 #
 # A spectral triple in Alain Connes' framework is the data (A, H, D):
 # an involutive algebra A acting on a Hilbert space H together with a
@@ -53,6 +96,7 @@ in @beam
 #     contextuality index κ as cycle-averaged holonomy.
 #
 # Spec: docs/specs/spectral-triple-grammar.md
+# Migration spec: docs/specs/substrate-self-migration-via-spectral-typing.md
 
 grammar @epistemologic/math/spectral-triple {
 

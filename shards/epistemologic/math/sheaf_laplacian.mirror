@@ -134,9 +134,11 @@ in @epistemologic/math/bundle
 #                      [[feedback-substrate-already-had-the-word]] (the
 #                      18th-instance recognition: dirac_op, spectrum, and
 #                      optic already named this).
-# Related shards: boot/std/epistemologic/math/spectral-triple.mirror
+# Related shards: shards/epistemologic/spectral_triple.mirror
 #                 (the abstract (A, H, D) triple this shard's discrete
-#                 realisation lives one altitude beneath),
+#                 realisation lives one altitude beneath;
+#                 relocated from boot/std/epistemologic/math/ per
+#                 Tick 5 WITNESS of substrate-self-migration),
 #                 boot/std/epistemologic/math/bundle.mirror (the
 #                 principal-G tower whose connection-squared IS this
 #                 shard's operator),
