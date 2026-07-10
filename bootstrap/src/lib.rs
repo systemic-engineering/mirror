@@ -2139,12 +2139,18 @@ fn collect_declared_namespaces(dir: &str, out: &mut std::collections::HashSet<St
             if line.starts_with('#') {
                 continue;
             }
-            // Match `glass `, `prism `, `grammar ` prefixes.
+            // Match `glass `, `prism `, `grammar `, `spectral ` prefixes.
+            // `spectral ` admitted 2026-07-11 (Tick 2 PREREQ-1) per
+            // substrate self-migration architecture (Mara e764a32 +
+            // Taut 8a3b0a4 + Seam 2b56977). The Connes (A, H, D)
+            // triple's declaration form at consumer altitude.
             let rest = if let Some(r) = line.strip_prefix("glass ") {
                 r
             } else if let Some(r) = line.strip_prefix("prism ") {
                 r
             } else if let Some(r) = line.strip_prefix("grammar ") {
+                r
+            } else if let Some(r) = line.strip_prefix("spectral ") {
                 r
             } else {
                 continue;

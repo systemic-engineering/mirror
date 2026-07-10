@@ -140,9 +140,7 @@ fn t01_spectral_head_recognized_by_collect_declared_namespaces() {
         })
         .unwrap_or_else(|| panic!("T1: per_file must include b_consumer.mirror; got: {v}"));
 
-    let b_dark = b_consumer_record["dark_count"]
-        .as_u64()
-        .unwrap_or(u64::MAX);
+    let b_dark = b_consumer_record["dark_count"].as_u64().unwrap_or(u64::MAX);
     let b_verdict = b_consumer_record["verdict"].as_str().unwrap_or("<absent>");
 
     assert_eq!(
