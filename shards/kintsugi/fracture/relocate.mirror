@@ -1,0 +1,409 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @kintsugi/consent
+in @kintsugi/morphism
+in @magic/distinction
+in @edge
+in @mirror/store
+
+# @kintsugi/fracture/relocate — the kintsugi fracture body that resolves
+# a WHOLE-SHARD load-bearing opacity at legacy altitude (`boot/std/…`)
+# to the shards/ equivalent, emitting the morphism that names the new
+# path AND the cross-corpus ancestry propagation needed to keep every
+# `in @<legacy>` consumer resolving after the byte-level move.
+#
+# THE OPERATIONAL HALF of the self-migration bilateral. The declarative
+# half forward-promises at
+# `@epistemologic/pact/is_load_bearing_in_std` (PREREQ-3 landing per
+# Mara canonical spec §8 Tick 4); this shard names the auto-fracture the
+# kintsugi loop applies when that property's transparency surfaces a
+# whole-shard opacity. Per Alex's 2026-07-10 directive:
+#
+#   "@kintsugi + @knife compose into a LOOP that migrates any
+#    load-bearing declaration from boot/std to shards/ — substrate
+#    collapses itself to minimal complexity surface using its own
+#    math. No agent needed. The build system's math IS the migration
+#    engine."
+#
+# Load-bearing spec:
+#   docs/specs/substrate-self-migration-via-spectral-typing.md §3
+#     (Mara e764a32; the relocate fracture species named at spec
+#      altitude), §5 (the self-migration loop as sheaf-Laplacian
+#      gradient descent on the corpus graph);
+#   docs/scouts/2026-07-10-taut-self-migration-substrate-boundary-scout.md
+#     §3 (Taut 8a3b0a4; the whole-shard atomic mv+import-rewrite
+#      morphism as a NEW species — SUPERSET of per-file splinter(ast))
+#     §6 (min-cut sequence; relocate lands at Tick 3);
+#   docs/audits/2026-07-10-seam-phase-d-self-migration-ratification.md
+#     §Q1/§Q4 (Seam 2b56977; the relocate species ratified as
+#      substrate-honest generalisation of the sibling per-file
+#      species; no invention).
+#
+# === The generalisation: per-file → whole-shard ===
+#
+# `@kintsugi/fracture/gate` and `@kintsugi/fracture/keyword` handle
+# SINGLE-SITE rewrites: opacity → morphism whose `content` field is a
+# `splinter(ast)` at ONE file. The AST-altitude rewrite is expressive
+# enough for keyword swaps (prism ↔ glass) and run-set swaps
+# (over-running ↔ diff-closure intersection); it is NOT expressive
+# enough for FILESYSTEM-LEVEL moves that require cross-corpus ancestry
+# propagation. Whole-shard migration is a SUPERSET that reads a
+# WHOLE-SHARD opacity (one file at legacy altitude, load-bearing per
+# the Spencer-Brown mark) and emits ONE morphism whose content proposes
+# BOTH:
+#
+#   1. The shards/ destination path (git mv at @io altitude).
+#   2. The N ancestry rewrites at every `in @<legacy>` consumer whose
+#      splinter_graph closure crosses the migrated shard's OID.
+#
+# The substrate names the proposal at the WHOLE-SHARD altitude via
+# `splinter(ast)` at the target path plus the impacted_by-closure of
+# the source OID; @io realises the byte-level mv + rewrites in a
+# separate operational tick. The discipline gate line ~90 of
+# `shards/kintsugi/fracture/gate.mirror` — "The substrate names the
+# proposal; @io applies it" — generalises unchanged: instead of
+# proposing an in-file AST rewrite, this species proposes a
+# filesystem-level move plus a cross-shard ancestry propagation.
+#
+# === Substrate-pull-correct home ===
+#
+# Per the form/process partition (recognition #55; landed 2026-06-10):
+# @kintsugi is the process-side family root. Fracture bodies emit
+# morphisms the kintsugi loop applies — process-side by structure.
+# Home: @kintsugi/fracture/relocate under the (forward-promised)
+# @kintsugi/fracture family root. Sibling to @kintsugi/fracture/gate
+# and @kintsugi/fracture/keyword; same bilateral shape.
+#
+# Substrate-pull alternative considered: @kintsugi/fracture/migrate
+# (naming the ARC — Alex's own directive verb). Rejected: the bilateral
+# pattern's signature is `@kintsugi/fracture/<subject>` where the
+# subject is the noun in the predicate's subject position. The
+# predicate is `is_load_bearing_in_std` — the subject is "the shard's
+# location"; the fracture RELOCATES it. Parallel: keyword_matches_depth
+# → fracture keyword (swap the keyword); is_load_bearing_in_std →
+# fracture relocate (move the shard).
+#
+# Substrate-pull alternative considered: @kintsugi/fracture/knife.
+# Rejected per Taut iter-11 §2: `@knife` is
+# substrate-already-had-the-word — `@magic/distinction` (Spencer-Brown
+# mark) carries the load-bearing filter. This shard imports
+# `@magic/distinction` for the mark surface and names its species
+# `relocate` for the ACTION the fracture takes.
+#
+# === The fracture body ===
+#
+# Input: `opacity` (from `@glass`) — one located fact surfaced by
+# `is_load_bearing_in_std(shard) -> transparency`'s `failure(opacity_
+# map)` verdict. Each opacity names ONE offending shard: a file at
+# `boot/std/…` whose Spencer-Brown mark reads "load-bearing" (has real
+# `in @<path>` consumers, per Taut §3 minimum-cut).
+#
+# Output: `morphism` (from `@kintsugi/consent`) — the typed candidate
+# the kintsugi loop's `active_pass` reads and proposes through
+# `query_phi`. The morphism's `content` ref names the WHOLE-SHARD
+# proposal (destination path + ancestry rewrites); its `score` carries
+# the dissonance reading (a legacy-altitude load-bearing shard is a
+# fixed, low-curvature dissonance — the substrate's typing floor
+# demands the shard live at shards/); its `expected` carries the
+# cadence_kind the loop anticipates (authentic — the substrate settles
+# cleanly once the shard lives at its substrate-honest altitude and
+# every consumer's `in @<path>` resolves without the boot/std/ hop).
+#
+# Spectrally: this fracture body IS one step along the sheaf-Laplacian
+# gradient descent Mara §5 named. The substrate's curvature at a
+# legacy-altitude load-bearing shard is the (legacy-altitude \
+# shards-altitude) dark_count excess; the negative-curvature direction
+# IS the relocation; the resolved corpus has zero curvature at this
+# altitude (the shard lives where its typing floor requires). Per
+# `dissonance.mirror`'s `dissonance_as_holonomy`, the morphism's score
+# IS the holonomy decrease the relocation produces.
+#
+# Audibly: this fracture body IS the audible-altitude V → I cadence at
+# the corpus-organisation altitude. The pre-move state holds the
+# dominant tension (legacy-altitude typing); the post-move state
+# resolves to the tonic (substrate-honest altitude); the cadence is
+# authentic (the Spencer-Brown mark reads "load-bearing", not
+# "residual"; residuals stay at boot/std/ per Mara §7 S5).
+#
+# === Substrate-pull discipline ===
+#
+# Per `@glass`, `opacity` is the substrate's located-fact carrier; this
+# shard reads it directly. Per `@kintsugi/consent`, `morphism` is the
+# substrate's typed-candidate carrier; this shard emits it directly.
+# Per `@kintsugi/morphism`, `morphism_context` is the per-candidate
+# slice; this shard's emitted morphism is consumed by the loop AND
+# lifted into a morphism_context via `paired(oscillation.anchor, m)` at
+# the active_pass altitude. Per `@magic/distinction`, the Spencer-Brown
+# mark is the substrate's carrier for load-bearing/residual partition;
+# the (forward-promised) `@epistemologic/pact/is_load_bearing_in_std`
+# is the pact that surfaces the opacities this body resolves; the pact
+# rides `@magic/distinction`'s `distinction_well_formed` predicate for
+# the Spencer-Brown well-formedness of the mark. Per `@edge`,
+# `edge_kind = in_edge` is the substrate's discriminant for the
+# ancestry-header relation this fracture rewrites. Per `@mirror/store`,
+# `impacted_by(oid) -> [oid]` names the reverse-closure the ancestry
+# propagation reads to enumerate every consumer whose `in @<legacy>`
+# clause must rewrite.
+#
+# NO new verdict carrier; NO leading-`|` workarounds; NO opaque-`ref`
+# carriers where structured types are available (per
+# [[feedback-no-bare-types]]). The fracture body reads typed opacity,
+# emits typed morphism — the substrate's vocabulary throughout.
+#
+# === Substrate gaps surfaced honestly ===
+#
+#   - `resolve_relocate` reads one opacity at a time. The pact's
+#     `failure(opacity_map)` carries [opacity] (one per load-bearing
+#     shard at legacy altitude); the kintsugi loop iterates the map and
+#     calls `resolve_relocate` per opacity. The substrate names the
+#     per-shard relocation; the iteration is the loop's concern.
+#
+#   - The morphism's `content: ref` carries the substrate handle to the
+#     WHOLE-SHARD proposal. The realisation layer produces a splinter
+#     naming (a) the shards/ destination path and (b) the ancestry
+#     rewrites at every impacted_by consumer; the content ref names
+#     that splinter's @mirror/store handle. The BYTE-LEVEL git mv +
+#     N-consumer file rewrites are @io's concern (Taut territory) — NOT
+#     touched here. The substrate names the shape of the proposal; @io
+#     writes bytes.
+#
+#   - The ancestry propagation reads `impacted_by(shard.oid)` to
+#     enumerate every downstream OID whose splinter_graph closure
+#     crosses the migrated shard. Each impacted OID's `in @<legacy>`
+#     clause rewrites to `in @<shards>` per the same edge_kind
+#     (`in_edge`); the splinter names the rewrite set, @io applies.
+#     The substrate carries the reverse-closure algebra at
+#     `@mirror/store` altitude — this fracture body composes through
+#     it; no new machinery invented.
+#
+#   - The `expected: cadence_kind` field is `authentic` for this
+#     fracture body — the migration rule is deterministic: legacy
+#     altitude shard + load-bearing mark → substrate-honest altitude
+#     shard + preserved consumer resolution. The substrate names the
+#     cadence anticipation; the kintsugi loop's `read_consent` bridges
+#     (pass, authentic) to `settled` for this opacity.
+#
+#   - Path resolution: the shards/ destination path is derived from the
+#     source path by a substrate rule (strip `boot/std/` prefix; apply
+#     any `/math/` elevation per Mara spec §1). The rule itself is
+#     realisation-layer; the substrate names the shape of the
+#     splinter's destination field; @io applies the byte-level move.
+#
+# === Pre-AI prior art ===
+#
+#   relocation             Wegner (1968) programming linguistics; the
+#                          relocatable-object semantics — a compilation
+#                          unit whose external references rebind when
+#                          the unit moves.
+#   git mv                 Torvalds (2005) git; the atomic move-plus-
+#                          rename that preserves content-address across
+#                          the filesystem transition.
+#   reverse-dependency     Karen Spärck Jones (1972) inverted index;
+#                          substrate's reading Bazel `rdeps` (already
+#                          cited at `@mirror/store`'s `impacted_by`).
+#   mark-of-distinction    Spencer-Brown (1969) Laws of Form ch.1; the
+#                          load-bearing/residual partition IS a
+#                          Spencer-Brown mark.
+#
+# The substrate's contribution is *typing* the whole-shard relocation
+# so the kintsugi loop reads it. No invention.
+#
+# Spec context: docs/specs/substrate-self-migration-via-spectral-
+#               typing.md §3 (this species named), §5 (the
+#               self-migration loop's fixed-point IS ker(D) per
+#               spectral-triple.mirror; relocate is one gradient step);
+#               docs/scouts/2026-07-10-taut-self-migration-substrate-
+#               boundary-scout.md §3 (the whole-shard morphism as
+#               SUPERSET of per-file splinter(ast)); §6 (min-cut Tick
+#               3); docs/audits/2026-07-10-seam-phase-d-self-
+#               migration-ratification.md (§Q1/§Q4 ratification of the
+#               generalisation).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]],
+#                      [[architecture-kintsugi-bias-lift]] (legacy-to-
+#                      shards migration IS the substrate-pull
+#                      gradient at the corpus-organisation altitude),
+#                      [[architecture-kintsugi-variety-io]] (Ashby's
+#                      requisite variety — the load-bearing/residual
+#                      partition partitions boot/std/ into
+#                      migrate-classes),
+#                      [[architecture-property-fracture-bilateral]]
+#                      (THIRD instance — keyword, gate, relocate —
+#                      lifts the pattern to load-bearing at family-
+#                      root altitude),
+#                      [[feedback-no-bare-types]],
+#                      [[feedback-substrate-already-had-the-word]]
+#                      (@magic/distinction had the mark; @mirror/store
+#                      had impacted_by; @edge had in_edge; nothing
+#                      invented).
+# Forward-promise to consumers: `@kintsugi/oscillate`'s `active_pass`
+#                  reads this fracture body when the candidate
+#                  morphism_set is composed from
+#                  `is_load_bearing_in_std`-surfaced opacities; the
+#                  binding lands when the kintsugi loop substrate-
+#                  pulls (Tick 5 witness per Mara §8 discharge). This
+#                  shard does NOT pull `@kintsugi/oscillate` or
+#                  `@mirror/spectral/score`; the substrate-altitude
+#                  arrow points inward (this fracture body IS
+#                  consumed by the loop).
+# Forward-promise to PREREQ-3 (Tick 4): the pact
+#                  `@epistemologic/pact/is_load_bearing_in_std` is
+#                  NAMED in this docblock and CITED as the declarative
+#                  half of the bilateral; the ancestry link is
+#                  ancestry-forward. When PREREQ-3 lands, the pact's
+#                  `in @epistemologic/pact/is_load_bearing_in_std`
+#                  can be added to this shard's ancestry header via
+#                  a sibling-tick sweep, closing the bilateral. This
+#                  shard stays additive against that landing per
+#                  keyword.mirror's own bilateral discipline (which
+#                  imports its pact ancestry-forward).
+# Related shards: epistemologic/pact/is_load_bearing_in_std.mirror
+#                 (PREREQ-3 forward-promise; the declarative half of
+#                 the bilateral; surfaces the opacities this body
+#                 resolves via the Spencer-Brown mark),
+#                 kintsugi/fracture/keyword.mirror (the FIRST
+#                 INSTANCE of bilateral pattern #53; per-file
+#                 keyword swap),
+#                 kintsugi/fracture/gate.mirror (the SECOND
+#                 INSTANCE; per-file gate rewrite),
+#                 magic/distinction.mirror (the Spencer-Brown mark
+#                 carrier the pact rides; the load-bearing/residual
+#                 partition IS a mark drawn at the corpus-
+#                 organisation altitude),
+#                 edge.mirror (the graph structure whose in_edge
+#                 kind names the ancestry-header relation this
+#                 fracture rewrites),
+#                 mirror/store.mirror (the reverse-closure algebra
+#                 the ancestry propagation composes through;
+#                 impacted_by(shard.oid) enumerates the rewrite set),
+#                 glass.mirror (the substrate floor; opacity,
+#                 location, transparency, verdict, splinter(ast)),
+#                 kintsugi/consent.mirror (the morphism carrier this
+#                 body emits; query_phi gates it),
+#                 kintsugi/morphism.mirror (the morphism_context
+#                 carrier; the per-candidate slice the loop pairs
+#                 this fracture's morphism with its pre-anchor).
+# Out-of-scope (handed to @io / Taut's territory): the byte-level
+#                 `git mv` at the destination path; the N-consumer
+#                 in-place rewrite of `in @<legacy>` clauses to
+#                 `in @<shards>`; the flat-namespace resolver's
+#                 verification that every consumer resolves post-move.
+#                 The substrate names the typed proposal; @io applies
+#                 the byte-level filesystem operations in a separate
+#                 operational tick per Mara §1's zero-content-byte
+#                 property.
+# Path-namespace property: this file at
+# `shards/kintsugi/fracture/relocate.mirror` declares
+# `@kintsugi/fracture/relocate` as a species under the (forward-
+# promised) @kintsugi/fracture family.
+# Keyword/depth property: this declaration is depth-2 from the
+# @kintsugi family root; per recognition #46 it uses `glass`. The
+# shard applies the first-instance bilateral's rule by birth.
+
+glass @kintsugi/fracture/relocate {
+  focus relocate
+  project relocate
+  split relocate
+  shift relocate
+  settle relocate
+}
+
+# === resolve_relocate — the fracture body ===
+#
+# THE AUTO-FRACTURE: given an opacity site naming a WHOLE SHARD at
+# `boot/std/…` whose Spencer-Brown mark reads "load-bearing", emit the
+# morphism that proposes the shards/ destination path AND the ancestry
+# propagation at every impacted_by consumer.
+#
+# Reads an opacity (one element of
+# `is_load_bearing_in_std(shard).failure(opacity_map)`'s opacity_map);
+# emits a candidate morphism the kintsugi loop proposes through
+# `query_phi`. The morphism's three fields:
+#
+#   content   — substrate ref to the WHOLE-SHARD proposal splinter.
+#                The realisation layer produces a splinter at the
+#                shards/ destination path whose content preserves the
+#                source shard's OID (identity_preserving via
+#                @uuid/spectral's DARK 80 bits; the content-addressed
+#                storage decouples identity from path); alongside, the
+#                splinter names the ancestry-rewrite set via
+#                impacted_by(opacity.location.file). The content ref
+#                names that whole-shard splinter's @mirror/store
+#                handle. @io applies the byte-level git mv +
+#                N-consumer `in @<legacy>` → `in @<shards>` rewrites.
+#   score     — dissonance reading. Legacy-altitude load-bearing
+#                shards are fixed-curvature dissonances; the score
+#                reads `dissonance.is_pareto` cleanly (the relocated
+#                arrangement strictly Pareto-dominates the legacy
+#                arrangement under the sheaf-Laplacian energy
+#                functional per Mara §5); partials counts the number
+#                of in_edge ancestry-header rewrites (one per
+#                impacted_by consumer plus one for the moved shard's
+#                own path-namespace property).
+#   expected  — cadence_kind anticipation. Always `authentic` for this
+#                fracture body — the relocation fully resolves the
+#                opacity at this altitude; the loop's `dark_pass` will
+#                confirm identity preservation (the moved shard's OID
+#                stays byte-equal; only its path shifts); the loop's
+#                `read_consent` bridges (pass, authentic) to the
+#                `settled` oscillation_state for this opacity.
+#
+# The body is FULLY DECLARATIVE — substrate-pull-correct via
+# `splinter(ast)` (declared at shards/glass.mirror's tick-2 carrier).
+# The morphism's `content` field carries a content-addressed splinter
+# at the @meta/ast altitude: the shards/ destination path plus the
+# ancestry-rewrite set. The substrate's compiler verifies the
+# construction is deterministic and well-typed; the kintsugi loop's
+# `active_pass` reads the splinter as the morphism's proposed content
+# and applies it through `query_phi`.
+#
+# Field-by-field substrate-pull reading:
+#
+#   content.content     — `opacity.location.file` (the located-fact
+#                          ref at the source shard at legacy altitude);
+#                          rewritten AST content-addressed at shards/
+#                          per substrate path-derivation (strip
+#                          `boot/std/`; apply `/math/` elevation per
+#                          Mara §1).
+#   content.ast         — `@meta/ast`; the shard's declaration line
+#                          and every impacted_by consumer's
+#                          `in @<legacy>` clause rewrite at AST
+#                          altitude.
+#   content.transparency — `success` — residual-set shards stay at
+#                          legacy altitude by design (Mara §7 S5);
+#                          those return `pass` and are NOT surfaced
+#                          as opacities.
+#   score.roughness     — `opacity.property` (the @nl description of
+#                          the shard's load-bearing nature; the
+#                          Spencer-Brown mark's textual carrier).
+#   score.partials      — declared 1 at the substrate-decl surface
+#                          per the sibling species convention;
+#                          semantically the per-site partials count
+#                          equals 1 + |impacted_by(opacity.location.
+#                          file)| (moved shard + N consumer in_edge
+#                          rewrites); the realisation layer projects
+#                          the reverse-closure count into dissonance
+#                          arithmetic.
+#   expected            — `authentic` (the V → I cadence at the
+#                          corpus-organisation altitude; authentic →
+#                          pass → auto-apply once @io binds).
+resolve_relocate(opacity: opacity) -> morphism {
+  morphism {
+    content: splinter(ast) {
+      content:      opacity.location.file,
+      ast:          @meta/ast,
+      transparency: success,
+    },
+    score: dissonance {
+      roughness: opacity.property,
+      partials:  1,
+    },
+    expected: authentic,
+  }
+}
+
+out @kintsugi/fracture/relocate
+out resolve_relocate
