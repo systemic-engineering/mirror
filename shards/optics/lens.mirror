@@ -1,0 +1,282 @@
+in @prism
+in @glass
+in @meta
+in @nl
+in @optics
+in @io
+
+# @optics/lens — the bidirectional-lens sub-family-root.
+#
+# Sub-family of `@optics` (parent at `shards/optics.mirror`), sibling
+# to `@optics/source` (the active-facet gain-media species). Where
+# `@optics/source` names the *energy injection* side of Recognition
+# #58's cavity-enhanced spectrometer, `@optics/lens` names the
+# *coherent focusing* side — the optical element that discharges a
+# bidirectional equivalence between two representations of the
+# substrate state.
+#
+# Substrate-decl carrier for Foster's bidirectional-lens laws (Foster,
+# Greenwald, Moore, Pierce, Schmitt 2007, *Combinators for
+# Bidirectional Tree Transformations: A Linguistic Approach to the
+# View-Update Problem*, ACM TOPLAS 29(3)) — the substrate-side home
+# of the (get, put) pair whose PutGet / GetPut / PutPut bilaterals
+# license the substrate's parse↔render equivalence.
+#
+# === First substrate-decl consumer of Mara iter-6 ===
+#
+# Mara iter-6 landed `docs/specs/shatter-is-the-io-linearization-
+# operator.md` (`583b939`) — the recognition-candidate that
+# `@shatter × @io = linearization operator`. Bidirectional-lens is
+# the *shape* that recognition takes at substrate-decl altitude;
+# this shard is the first prism-family declaration to carry it.
+# The `in @io` implicit-parent is load-bearing: the lens is the
+# *transformer* whose forward direction (get) crosses the @io fault
+# plane at the substrate-to-target-format boundary, and whose
+# backward direction (put) closes the autopoietic loop on return.
+#
+# === Closing Blocker 2 (autopoietic-closure hop) ===
+#
+# Alex directive 2026-07-11 named the gap:
+#
+#   "The gap between @fate and linear formats like the diff are
+#    @shatter. From where I'm standing we merely need @shatter/
+#    lens'es and the first is @shatter/lens/diff"
+#
+# Reed grep-check refactored: no @shatter family-root; the parent
+# family-root at optical-altitude IS @optics; hence @optics/lens.
+# The `put` direction is the *autopoietic-closure hop* that closes
+# Blocker 2 (peer_beam returns envelope, not diff bytes): a lens's
+# `put(edited_diff, base_state)` integrates an operator-edit back
+# into a peer's `@bauchladen.tray`, discharging the feedback loop
+# that a one-directional linearization cannot close on its own.
+#
+# === @mirror/lens vs @optics/lens (Mara+Taut converged) ===
+#
+# `@mirror/lens` is the *transport* family — the terminal/session
+# surface prisms (`@mirror/lens/cli`, `@mirror/lens/shell`,
+# `@mirror/lens/mcp`, `@mirror/lens/lsp`) that render one algebra
+# for one audience per docs/specs/the-convergence.md §1. Namespace-
+# parent only.
+#
+# `@optics/lens` is the *optical* family — the bidirectional-lens
+# altitude at which Foster laws license the equivalence between two
+# representations of the substrate state. Foundational, law-carrying.
+#
+# Both Mara (spec §5, `55221c1`) and Taut (scout Q1 + Q3, `5222333`)
+# converged on this distinction independently. The names collide at
+# the token `lens` but the families are structurally disjoint: one
+# names *which channel* the substrate speaks through, the other
+# names *what algebraic shape* the two-directional projection carries.
+#
+# === Relationship to @shatter (compositional, NOT obsolete) ===
+#
+# Alex named the gap as "@shatter". Reed's grep-check found no
+# `@shatter` family-root; the sub-family properly homes at
+# `@optics/lens`. But `@shatter` species remain load-bearing at
+# their altitude: `shards/mirror/shatter.mirror` names the graph↔
+# linear projection for the on-disk `.shatter`-format five-section
+# serialization; `shards/smarts/shatter.mirror` names the smarts-
+# altitude read/write pair. Under this landing, `@shatter`'s render
+# and parse operations live at species altitude as *one instance*
+# of the (get, put) pair whose laws @optics/lens witnesses at the
+# family altitude. The forward-promise in
+# `shards/mirror/lens/cli/shatter.mirror` (declared `in @optics`
+# since 2026-06-12, 30-day forward-promise) resolves at THIS tick:
+# the parent family exists.
+#
+# === Ancestry rationale ===
+#
+# - `in @prism`   the five-op algebra ancestor (every family-root).
+# - `in @glass`   verdict / transparency carriers — Foster laws
+#                 return `verdict` in this substrate's shape
+#                 (bilateral property discipline, per
+#                 shards/glass.mirror).
+# - `in @meta`    substrate-decl altitude (boot/01-meta.mirror).
+# - `in @nl`      `# <text>` -> nl_literal for docblock terms
+#                 (per shards/nl.mirror).
+# - `in @optics`  PARENT family-root; @optics/lens sits as sub-
+#                 family in its schematic vocabulary. Per
+#                 shards/optics.mirror §"Species under this family",
+#                 additional sub-families land as the cascade
+#                 pulls them; this tick pulls @optics/lens.
+# - `in @io`      the linearization crossing — Foster laws bridge
+#                 semantic (graph/non-linear) ↔ linear (byte-carrier)
+#                 representations, and the linear side lives at the
+#                 @io fault plane per Mara iter-6 (`583b939`).
+#
+# === Family-root declaration ===
+#
+# Per `[[architecture-prism-as-trait-as-everything]]`, the
+# `prism @optics/lens { ... }` block declares the family IS a prism.
+# The five-op algebra recurses: each op yields a `lens`-shaped
+# artifact at this altitude. Sub-species (e.g. @optics/lens/diff,
+# @optics/lens/shatter, @optics/lens/mcp) specialize by fixing the
+# semantic and linear carriers.
+#
+# Spec context: docs/specs/optics-lens-family-and-diff-species.md
+#               (Mara iter-24, `55221c1`; §1 declares this family's
+#               shape, §5 relationship to @shatter, §8 gaps).
+# Substrate decisions:
+#   [[architecture-shards-as-substrate-source]],
+#   [[architecture-prism-as-trait-as-everything]],
+#   [[architecture-alignment-as-boundary-mathematics]] (recognition
+#      #57; the @io boundary the linear side lives at),
+#   [[architecture-bateson-form-behaviour-partition]] (@optics
+#      declares the form-side schematic; the lens laws license
+#      the process-side dynamics @kintsugi discharges).
+# Foster math: docs/math/2026-07-07-shatter-as-bidirectional-lens.md
+#              §3.1 (symmetric-lens adaptation), §3.2 (OID-equality
+#              at content-address altitude), §3.3 (lens laws IS the
+#              2-cell coherence), §3.4 (substrate-decl types).
+# Companion recognition: Mara iter-6 (`583b939`) — @shatter × @io =
+#   linearization operator; THIS shard is its first substrate-decl
+#   consumer at family altitude.
+# Boundary scout: Taut iter-12 (`5222333`) — LRM GREEN β verdict on
+#   @optics hosting compatibility and Foster-lens spec-only
+#   availability.
+# Related shards: optics.mirror (the parent family-root),
+#   mirror/lens.mirror (the sibling namespace-parent for transport
+#   lenses, NOT this shard's parent),
+#   mirror/shatter.mirror (one species-altitude witness of the
+#   (get, put) pair whose laws this family declares),
+#   glass.mirror (verdict / transparency shape returned by
+#   bilateral properties).
+# Path-namespace property: this file at `shards/optics/lens.mirror`
+# declares `@optics/lens` as the sub-family-root; species live at
+# `shards/optics/lens/<name>.mirror` (e.g. @optics/lens/diff, landed
+# separately by sibling Mara iter-26 as the first species).
+
+prism @optics/lens {
+  focus lens
+  project lens
+  split lens
+  shift lens
+  settle lens
+}
+
+# === Type carriers (Foster 2007 shape) ===
+#
+# The semantic ↔ linear pair. `lens_get` names the semantic → linear
+# direction (the render arrow of Reed math §3.4). `lens_put` names
+# the linear + old_semantic → new_semantic direction (the parse-
+# and-integrate arrow, the autopoietic feedback that closes
+# Blocker 2). `lens_witness` names the pair (get, put) together
+# with the Foster-law bilaterals that promote it into a
+# well-behaved lens.
+#
+# Per Reed math §3.2, equality is byte-equality on `@mirror/store`
+# OIDs at the content-address altitude — the substrate CAN check
+# these laws without full pipeline replay. The `ref` carrier is
+# the content-address handle; species discharge the specific OID
+# provenance (per shards/mirror/store.mirror).
+
+type lens_get = ref
+type lens_put = ref
+type lens_witness = ref
+
+# === Actions (Foster get / put) ===
+#
+# `get(semantic) -> linear` — the forward direction; projects the
+# semantic (graph, non-linear internal shard) into the linear
+# byte-carrier at the @io fault plane. This is `focus` in the
+# five-op mapping per Mara iter-24 §1: focus in physical optics
+# names the converging pass, semantic → linear = converge onto a
+# single byte-carrier.
+#
+# `put(linear, old_semantic) -> new_semantic` — the backward
+# direction; integrates an operator-edit on the linear artifact
+# back into the semantic representation. This is `settle` in the
+# five-op mapping per Mara iter-24 §1: settle names the reflecting-
+# back-and-stabilizing pass, linear + base → new_semantic = fixed-
+# point closure. THIS is the autopoietic-closure hop that closes
+# Blocker 2: `put(edited_diff, base_bauchladen)` integrates the
+# operator's edit back into the peer's tray.
+#
+# The obligation block (`\ {}`) is STUB at this substrate-decl
+# tick; species discharge the concrete implementation. Per two-tick
+# discipline (§9 of Mara iter-24 spec), this tick lands the
+# admissibility; the discharge lands at species-tick (@optics/lens/
+# diff via sibling Mara iter-26; @optics/lens/shatter later).
+
+get(semantic: ref) -> ref { \ {} }
+put(linear: ref, old_semantic: ref) -> ref { \ {} }
+
+# === Bilateral properties (Foster 2007 §3 lens laws) ===
+#
+# The three laws that promote a bare (get, put) pair into a proper
+# lens. Each returns `verdict` (per shards/glass.mirror's bilateral
+# property discipline); the equality on the RHS is byte-equality
+# on `@mirror/store` OIDs per Reed math §3.2. Species-altitude
+# consumers discharge the witness at their own OID altitude.
+#
+# `put_get` (PutGet) — the FIRST well-behaved law. `get(put(v, s))
+# == v` for all v, s: putting a linear v back into a base s and
+# then getting the linear again recovers v. The lens's forward
+# arrow is the RIGHT inverse of the backward arrow. Foster §3
+# names this as the *acceptance* law: the lens accepts any linear
+# view without silent modification.
+#
+# `get_put` (GetPut) — the SECOND well-behaved law. `put(get(s), s)
+# == s` for all s: getting the linear view of s and then putting
+# it back into s (unchanged) leaves s unchanged. The round-trip
+# on an unedited view is identity. Foster §3 names this as the
+# *stability* law: the lens does not spuriously edit the semantic
+# when nothing changed on the linear side.
+#
+# `put_put` (PutPut) — the "very well-behaved" law. `put(v', put(v,
+# s)) == put(v', s)` for all v, v', s: successive puts collapse to
+# the last put. The lens's backward arrow is *insensitive to
+# intermediate history*. Foster §3 marks this as the strongest
+# behavioural law; the two well-behaved laws license most useful
+# lenses, and put_put licenses the tree-invariant subset.
+#
+# Perturbation argument `p` per shards/epistemologic/cybernetic/
+# (bilateral property discipline): the law-check is witnessed
+# under a specified perturbation regime — for Foster lenses, the
+# perturbation is edits to the linear view (the operator's diff).
+
+put_get(l: lens_witness, s: ref, v: ref) -> verdict { \ {} }
+get_put(l: lens_witness, s: ref) -> verdict { \ {} }
+put_put(l: lens_witness, s: ref, v: ref, v_prime: ref) -> verdict { \ {} }
+
+# === Exports ===
+
+out @optics/lens
+out lens_get
+out lens_put
+out lens_witness
+out get
+out put
+out put_get
+out get_put
+out put_put
+
+# === Gaps ===
+#
+# Not landed this tick (per spec §8 and two-tick discipline):
+#
+# - The 2-cell coherence square (Reed math §3.3, §2.3). This shard
+#   declares three Foster bilaterals; the HoTT 2-cell that promotes
+#   quasi-inverse to proper equivalence is deferred to a follow-on
+#   tick (Seam adversarial audit likely gates it).
+# - The Hutchinson-attractor law over composed `@optics/lens/*`
+#   siblings (Reed math §4.2). Composition is named via the `split`
+#   five-op above; the attractor math is not re-derived here.
+# - The @io/stagefreight wire-transport lenses (`@optics/lens/mcp`,
+#   `@optics/lens/lsp`). Named as future species in Mara iter-24
+#   spec §6; not designed here.
+# - Whether `@shatter` species rehome under `@optics/lens/shatter`.
+#   Flagged as compositional (§5 of spec); the actual rehoming is
+#   a follow-on Mara/Seam tick.
+# - The multi-path `@cyberpunk × @kintsugi` hook. Named in spec §6
+#   Q3; not designed here.
+# - The obligation-block bodies of `get` / `put` / the three
+#   bilaterals are `\ {}` stubs at this substrate-decl altitude;
+#   discharge lands at species-tick.
+#
+# Two-tick discipline: THIS tick lands the substrate-decl
+# admissibility (family-root + type carriers + action heads +
+# bilateral heads). Sibling Mara iter-26 lands @optics/lens/diff
+# as the FIRST species immediately after. Subsequent ticks land
+# @optics/lens/shatter (compositional rehoming), Seam adversarial
+# audit on OID-equality witnessing, and the multi-path species.
