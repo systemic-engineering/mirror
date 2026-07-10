@@ -1,0 +1,214 @@
+in @glass
+in @magic/distinction
+in @mirror/store
+
+# Property: a shard whose Spencer-Brown mark reads "load-bearing" MUST
+# live under `shards/`, not `boot/std/`. This property names the rule
+# that drives the WHOLE-SHARD `boot/std/*` → `shards/*` migration via
+# the kintsugi loop, at the altitude the sibling per-declaration
+# `@epistemologic/pact/substrate_source_in_shards` cannot reach.
+#
+# THE DECLARATIVE HALF of the self-migration bilateral (recognition
+# #53 THIRD instance — the load-bearing-at-family-root instance).
+# The operational half landed at
+# `@kintsugi/fracture/relocate` (Mara `5c12808`, PREREQ-2, Tick 3 per
+# the canonical spec §8 landing sequence); this shard names the pact
+# whose `failure(opacity_map)` verdict the operational half consumes.
+# Per Mara §4 of the canonical spec, per Taut §2 of the boundary
+# scout (@knife → @magic/distinction substrate-already-had-the-word),
+# per Seam §Q4 Phase D ratification (the bilateral is substrate-honest
+# generalisation, not invention).
+#
+# === The load-bearing distinction ===
+#
+# Not every shard under `boot/std/` needs to move. The sibling pact
+# `@epistemologic/pact/substrate_source_in_shards` names the
+# per-declaration migration rule ("every declaration lives in
+# shards/") — succeeds vacuously for shards with no consumers, but
+# the corpus-organisation altitude question is different: WHICH
+# `boot/std/*` shards are load-bearing enough that leaving them at
+# legacy altitude carries real cost?
+#
+# The Spencer-Brown mark (`@magic/distinction`) partitions the
+# `boot/std/` corpus into two states via one drawn boundary:
+#
+#   - marked_state   = load-bearing. Real `in @<path>` consumers
+#                      elsewhere in shards/; the shard's OID appears
+#                      in some downstream shard's `impacted_by`
+#                      closure. Migration surfaces as opacity.
+#   - unmarked_state = residual. No shards/ consumers cross the
+#                      shard's OID; the shard is legacy scaffolding
+#                      the substrate can leave in place per Mara §7
+#                      S5 (residual-set discipline). No opacity.
+#
+# The mark rides `@magic/distinction`'s `distinction_well_formed`
+# predicate for Spencer-Brown well-formedness (condensation +
+# cancellation axioms). The pact composes:
+#
+#   surface_as_mark(shard.location) = mark
+#   mechanism_as_distinction_space(shard.impacted_by_closure)
+#                                  = distinction_space
+#
+# The mark is well-formed iff the load-bearing/residual partition is
+# non-degenerate at this shard — a shard with impacted_by closure
+# strictly containing shards/ OIDs is load-bearing; a shard whose
+# closure is empty or contains only boot/std/ OIDs is residual.
+#
+# === Substrate-pull discipline ===
+#
+# Per `@glass`, `transparency` is the verdict carrier and `opacity`
+# names one located fact. Per `@magic/distinction`, the mark is the
+# substrate's carrier for the load-bearing/residual partition —
+# @knife was NOT invented (Taut scout §2). Per `@mirror/store`,
+# `impacted_by(oid) -> [oid]` names the reverse-closure the mark
+# reads to distinguish load-bearing from residual. Substrate had
+# every carrier before this pact landed; this pact NAMES the
+# composition.
+#
+# === Bilateral shape ===
+#
+# Bilateral with `@kintsugi/fracture/relocate` (the operational
+# half; Mara `5c12808`). Same shape as prior instances:
+#
+#   1st  `keyword_matches_depth` + `@kintsugi/fracture/keyword`
+#   2nd  `gate_matches_diff_closure` + `@kintsugi/fracture/gate`
+#   3rd  `is_load_bearing_in_std` + `@kintsugi/fracture/relocate`
+#
+# THIRD INSTANCE lifts the pattern to LOAD-BEARING at family-root
+# altitude: the prior instances rewrite ONE SITE per opacity; this
+# instance MIGRATES A WHOLE SHARD per opacity, with cross-corpus
+# ancestry propagation via `impacted_by(shard.oid)`. Per Seam §Q1,
+# the generalisation is substrate-honest — the fracture body reads
+# `impacted_by` at family-root, no new machinery invented.
+#
+# === Verdict surface ===
+#
+# Verdict surface is transparency<p>:
+#   success              -- every load-bearing shard lives under
+#                          shards/. No load-bearing shards remain at
+#                          boot/std/ altitude. Residual shards MAY
+#                          remain at boot/std/ (they are NOT
+#                          load-bearing; no opacity).
+#   failure(opacity_map) -- one or more load-bearing shards live
+#                          under `boot/std/`; each opacity names ONE
+#                          offending shard (its OID + legacy path)
+#                          plus its impacted_by closure — the
+#                          ancestry-propagation payload the
+#                          operational half consumes.
+#   partial(opacity_map) -- mixed corpus state — some load-bearing
+#                          shards migrated, some pending. Typically
+#                          mid-cascade.
+#
+# Located transparency (not @glass.verdict): the kintsugi loop
+# consumes the opacity_map to direct migration; each opacity names
+# ONE shard and the operational half emits ONE morphism (a
+# whole-shard splinter naming shards/ destination + N ancestry
+# rewrites). The property names the rule; the fracture realises it;
+# the kintsugi loop is the bridge.
+#
+# === Composition with sibling pact ===
+#
+# `substrate_source_in_shards` (per-declaration; landed 2026-06-17)
+# is a LOWER BOUND: it surfaces every boot/std declaration
+# uniformly, load-bearing or not. This pact (whole-shard; load-
+# bearing filtered) is the UPPER BOUND that drives the actual
+# migration order — load-bearing shards migrate FIRST because their
+# opacity carries the ancestry-propagation cost; residuals stay
+# until the corpus is otherwise clean. The two pacts compose:
+# `substrate_source_in_shards` names WHAT could migrate; this pact
+# names WHAT MUST migrate to unblock the corpus.
+#
+# === Pre-AI prior art ===
+#
+#   mark-of-distinction    Spencer-Brown 1969 Laws of Form ch.1; the
+#                          load-bearing/residual partition IS a mark.
+#   reverse-dependency     Karen Spärck Jones 1972 inverted index /
+#                          Bazel `rdeps`; the substrate reads
+#                          `impacted_by(oid)` for the filter.
+#
+# The substrate's contribution is *typing* the load-bearing filter at
+# the pact altitude so the kintsugi loop reads it. No invention.
+#
+# Spec context: docs/specs/substrate-self-migration-via-spectral-
+#               typing.md §4 (Mara e764a32);
+#               docs/scouts/2026-07-10-taut-self-migration-substrate-
+#               boundary-scout.md §2 (Taut 8a3b0a4);
+#               docs/audits/2026-07-10-seam-phase-d-self-migration-
+#               ratification.md §Q4 (Seam 2b56977).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-property-fracture-bilateral]]
+#                       (THIRD instance — keyword, gate, relocate),
+#                      [[architecture-kintsugi-bias-lift]],
+#                      [[feedback-substrate-already-had-the-word]].
+# Related shards: kintsugi/fracture/relocate.mirror (operational half;
+#                 consumes the opacity_map this pact emits),
+#                 epistemologic/pact/substrate_source_in_shards.mirror
+#                 (per-declaration lower bound this pact refines),
+#                 epistemologic/pact/gate_matches_diff_closure.mirror
+#                 (bilateral SECOND instance),
+#                 epistemologic/pact/keyword_matches_depth.mirror
+#                 (bilateral FIRST instance),
+#                 magic/distinction.mirror (Spencer-Brown adapter),
+#                 mirror/store.mirror (impacted_by reverse-closure).
+# Path-namespace property: this file at
+# `shards/epistemologic/pact/is_load_bearing_in_std.mirror` declares
+# `@epistemologic/pact/is_load_bearing_in_std` per
+# `@epistemologic/pact/path_matches_namespace`.
+# Keyword/depth property: this declaration is depth-2 from the
+# @epistemologic family root; per recognition #46 it uses `pact`.
+
+pact @epistemologic/pact/is_load_bearing_in_std {
+  # The impacted_by closure at the shard's OID — the set of
+  # downstream OIDs whose forward closure crosses the argument
+  # shard. The load-bearing filter reads this closure: non-empty
+  # containing shards/-rooted OIDs => load-bearing; empty or
+  # containing only boot/std/-rooted OIDs => residual.
+  #
+  # Composes through `@mirror/store`'s `impacted_by(oid) -> [oid]`
+  # at family-root altitude; no new machinery invented per the
+  # substrate-already-had-the-word discipline.
+  impacted_closure(shard: ref) -> [ref] { \ }
+
+  # The load-bearing mark at the shard. Reads
+  # `surface_as_mark(shard.location)` and
+  # `mechanism_as_distinction_space(impacted_closure(shard))` from
+  # `@magic/distinction`; the Spencer-Brown mark is well-formed
+  # iff the shard's impacted_closure contains at least one
+  # shards/-rooted OID.
+  #
+  # Verdict:
+  #   marked_state    -- load-bearing. Migration is warranted.
+  #   unmarked_state  -- residual. Migration is NOT warranted;
+  #                      the shard stays at boot/std/ per Mara §7
+  #                      S5 residual-set discipline.
+  load_bearing_mark(shard: ref) -> ref { \ }
+
+  # The combined property: `is_load_bearing_in_std(shard)` is
+  # failure iff:
+  #   (a) `load_bearing_mark(shard)` reads marked_state
+  #       (the shard IS load-bearing), AND
+  #   (b) shard's source path is rooted at `boot/std/`
+  #       (the shard is NOT yet at substrate-honest altitude).
+  #
+  # Both conditions together are the migration precondition; the
+  # `failure(opacity_map)` verdict surfaces the shard AND its
+  # impacted_closure so the operational half (`@kintsugi/fracture/
+  # relocate`) can emit the whole-shard morphism with correct
+  # ancestry propagation.
+  #
+  # Verdict surface is transparency<p>:
+  #   success              -- shard is either residual (unmarked)
+  #                          or already at shards/ altitude. Fine.
+  #   failure(opacity_map) -- shard is load-bearing AND at
+  #                          boot/std/; opacity names the shard's
+  #                          OID + legacy path + impacted_closure.
+  #   partial(opacity_map) -- multiple shards under evaluation;
+  #                          some fail, some pass (typical
+  #                          mid-cascade corpus verdict).
+  is_load_bearing_in_std(shard: ref) -> transparency { \ }
+}
+
+out impacted_closure
+out load_bearing_mark
+out is_load_bearing_in_std
+out @epistemologic/pact/is_load_bearing_in_std
