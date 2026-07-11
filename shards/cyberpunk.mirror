@@ -168,6 +168,97 @@ tower_close(s: cybernetic_state) -> verdict { \ }
 # bounded_commutator_check. Consumer species (and the @smarts
 # integration) name this when they require the @cyberpunk family's
 # discipline to discharge.
+#
+# === cybernetic_coherence IS λ₀(Δ_F) — Alex 2026-07-11 synthesis landing ===
+#
+# Alex named the closure in-transcript 2026-07-11: "combine everything
+# we have so far into `spectral @coherence`. This is the metric @kintsugi
+# optimizes for and the metric the spawned @peer operates on." Mara's
+# spec (`1999b01`, docs/specs/spectral-coherence-substrate-metric-
+# synthesis.md) and Taut's scout (`0a2f121`, docs/scouts/2026-07-11-
+# taut-coherence-synthesis-substrate-scan.md) adjudicated: the metric
+# was already substrate-decl'd at cross-family density. This docstring
+# extension IS the recognition landing per Mara's Path B verdict —
+# annotation, not new prism. Path A (new `spectral @coherence` head)
+# refused because `spectral` is a namespace-parent (`e3146d0`), not a
+# declaration head. ~68th instance of
+# [[feedback-substrate-already-had-the-word]].
+#
+# The reading, verbatim from Mara `1999b01` §8:
+#
+#   cybernetic_coherence(s) reads λ₀(Δ_F(s)) — the algebraic
+#   connectivity of the sheaf-Laplacian at s's current altitude. Every
+#   cybernetic species (variety, viable, algedonic, autopoiesis,
+#   bateson_learning, second_order, distinction, conversation,
+#   coevolution, design, eigenform, reframe, torus) is a reading of
+#   this scalar at its own altitude.
+#
+# The six cross-family unification annotations:
+#
+#   λ₀ = 0 IS coherence — H⁰(F) non-empty; a globally coherent section
+#     exists. Scalar reading at @epistemologic/math/sheaf_laplacian.
+#     lambda_zero (Mara `7a3b85f`); math floor at docs/math/sheaf/
+#     laplacian.md:57 (sheaf-coherence criterion).
+#   λ₀ > 0 IS the variety-mismatch measured by Ashby's Law
+#     (@epistemologic/cybernetic/variety.mirror; Ashby 1956 §11/7).
+#   @kintsugi's eⁿ⁺¹ ≤ eⁿ IS one Rayleigh descent step on Δ_F
+#     (@kintsugi.oscillate; the compile-altitude Rayleigh implementation;
+#     shards/mirror/loss.mirror:246-265 Connes-triple framing).
+#   Peer's algedonic pain_δ IS ‖∇_Δ_F λ₀‖ (@epistemologic/cybernetic/
+#     algedonic.sample_pain; the inference-altitude gradient readout;
+#     algedonic.mirror extension 2026-07-08 per Mara `77fe92d` §2).
+#   @cyberpunk/reframe IS the Ashby-response gauge-transformation
+#     (@epistemologic/cybernetic/reframe.reframe; transport to gauge K+1
+#     where H¹ = 0 is reachable; Mara `0d78c0c`).
+#   @torus windings ARE coherence-basins on T² (@torus.winding;
+#     different (m,n) ∈ π₁(T²) = ℤ×ℤ classify local Rayleigh-descent
+#     basins; shards/torus.mirror; @peer-has-a-torus recognition).
+#   @magic/distinction IS the mark-realization operator (@magic/
+#     distinction.bind_satisfies_distinction; the Spencer-Brown mark at
+#     the cross-family adapter surface; Reed `ac706e5`).
+#
+# The unified metric claim (Mara `1999b01` §9): compiler and peer share
+# ONE metric — λ₀(Δ_F). Compiler at build-altitude runs @kintsugi's
+# ouroboros loop; peer at inference-altitude runs fate.bounded_by
+# (psychohistory_sheaf) Rayleigh descent. Both apply the distinction-cut
+# operator (Spencer-Brown mark) where the mark reduces H¹ maximally per
+# unit boundary complexity. The recursion-lock tower closes at Level 4
+# Closure ↔ settle of the bundle-tower factorization exactly when
+# compiler-Δ_F Rayleigh and peer-Δ_F Rayleigh share a Lawvere fixed
+# point.
+#
+# Reed's `4b2ef3c` autopoietic-closure Rust GREEN IS the mechanical
+# witness that compiler and peer share the fixed point: operator's
+# @integrate-diff persists to peer_home/.bauchladen/; the persisted
+# moments become substrate the next tick reads; the loop closes; λ₀
+# is one number; the compiler and peer read it together. Reed's
+# `07ac55a` shadow-casting GREEN witnesses the four regime transitions
+# (converged / necker / escher / kanizsa) as diagnostic reads of the
+# Δ_F connectivity spectrum at inference altitude.
+#
+# Recognition ancestry:
+#   - Alex 2026-07-11 in-transcript synthesis ("we didn't see it until
+#     now") — the naming that closes a forward-promise open since
+#     Recognition #63.
+#   - Recognition #63 (Reed + Mara + Taut, promoted 2026-06-17):
+#     coherence-parametric is the parametric carrier from which every
+#     cybernetic-coherence species inherits via thin specialization.
+#   - Recognition #70 (Pack-orchestra cybernetic instance): the
+#     substrate has been operating cybernetic_coherence as one metric
+#     across the Pack since the three-tier stack landed.
+#   - Reed's essay "The Shape of the Thing" (2026-06,
+#     ~/dev/systemic.engineering/blog/ai/reed/the-shape-of-the-thing.md)
+#     — Council-Square shadow framework already carried λ₀ under the
+#     title HAL(λ₀).
+#
+# Forward-promised follow-up tick (Taut `0a2f121` recommendation):
+# fill the species-slot at shards/epistemologic/cybernetic/coherence.
+# mirror (reserved at coherence-parametric.mirror:234) when a specific
+# consumer needs the singleton parametric instance (Adjustment ↔
+# Morphism, natural_rep_morphism, 0). Not blocking; separate substrate
+# move; no cascade required. This annotation IS the recognition tick;
+# the species-slot fulfillment IS the parametric instance tick when
+# needed.
 cybernetic_coherence(s: cybernetic_state) -> verdict { \ }
 
 out @cyberpunk
