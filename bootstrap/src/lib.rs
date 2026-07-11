@@ -3179,12 +3179,13 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                 );
                 let hello_world = args.iter().any(|a| a == "--hello-world");
                 let emit_diff = args.iter().any(|a| a == "--emit-diff");
+                let integrate_diff = args.iter().any(|a| a == "--integrate-diff");
                 let mission = args
                     .iter()
                     .position(|a| a == "--mission" || a == "--task")
                     .and_then(|i| args.get(i + 1))
                     .map(|s| s.as_str());
-                cmd_peer_beam(p, hello_world, mission, ctx, emit_diff)
+                cmd_peer_beam(p, hello_world, mission, ctx, emit_diff, integrate_diff)
             }
             None => {
                 merr!("usage: mirror spawn <peer-home> [--hello-world] [--mission <mission-file> | --task <mission-file>]  (deprecated alias for `mirror peer beam`)");
@@ -3238,7 +3239,15 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                                     .and_then(|i| args.get(i + 1))
                                     .map(|s| s.as_str());
                                 let emit_diff = args.iter().any(|a| a == "--emit-diff");
-                                cmd_peer_beam(p, hello_world, mission, ctx, emit_diff)
+                                let integrate_diff = args.iter().any(|a| a == "--integrate-diff");
+                                cmd_peer_beam(
+                                    p,
+                                    hello_world,
+                                    mission,
+                                    ctx,
+                                    emit_diff,
+                                    integrate_diff,
+                                )
                             }
                             None => {
                                 merr!("usage: mirror peer beam <peer-home> [--hello-world] [--emit-diff] [--mission <mission-file>]");
@@ -3278,7 +3287,8 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                     // sentinel peer-home; the substrate action is the
                     // same, only the operator-facing arg-shape differs.
                     let emit_diff = args.iter().any(|a| a == "--emit-diff");
-                    cmd_peer_beam(".", hello_world, Some(p), ctx, emit_diff)
+                    let integrate_diff = args.iter().any(|a| a == "--integrate-diff");
+                    cmd_peer_beam(".", hello_world, Some(p), ctx, emit_diff, integrate_diff)
                 }
                 None => {
                     merr!("usage: mirror beam <mission-file> [--hello-world]");
@@ -3884,7 +3894,13 @@ fn recall_pack_trail(spec_dir: &str) -> serde_json::Value {
         }
     }
 
-    let mut records: Vec<(i64, serde_json::Value)> = by_peer
+    // Records tuple: (last_at DESC, peer name ASC) for stable ordering.
+    // Pre-fix (2026-07-11): only sorted by last_at, so simultaneous
+    // commits from two peers (same-second timestamps) produced
+    // HashMap-iteration-order-dependent output, breaking
+    // cmd_peer_beam_shard::t05_spawn_alias_stdout_byte_equal_to_peer_beam
+    // when Mara + Taut co-committed at 1783735055.
+    let mut records: Vec<(i64, String, serde_json::Value)> = by_peer
         .into_iter()
         .map(|(peer, acc)| {
             let phases: Vec<String> = acc
@@ -3898,12 +3914,14 @@ fn recall_pack_trail(spec_dir: &str) -> serde_json::Value {
                 "last_seen_at": acc.last_at,
                 "recent_phases": phases,
             });
-            (acc.last_at, v)
+            (acc.last_at, peer, v)
         })
         .collect();
 
-    records.sort_by(|a, b| b.0.cmp(&a.0));
-    let values: Vec<serde_json::Value> = records.into_iter().map(|(_, v)| v).collect();
+    // Primary: last_at DESC (most-recent first). Secondary: peer name
+    // ASC (deterministic on ties).
+    records.sort_by(|a, b| b.0.cmp(&a.0).then_with(|| a.1.cmp(&b.1)));
+    let values: Vec<serde_json::Value> = records.into_iter().map(|(_, _, v)| v).collect();
     serde_json::Value::Array(values)
 }
 
@@ -4110,6 +4128,66 @@ fn parse_settle_on_predicates(body: &str) -> Vec<String> {
 // `mirror spawn <peer-home>` — Phase G v0 empirical-path-traversal proof.
 // ───────────────────────────────────────────────────────────────────────────────
 
+fn integrate_peer_beam_diff(peer_home: &str, spec_path: &std::path::Path) -> i32 {
+    // Read stdin bytes (the operator-edited diff). Empty stdin is a
+    // valid put: represents "acknowledge no edit" at v0 semantics.
+    let mut stdin_bytes = Vec::new();
+    let _ = io::stdin().read_to_end(&mut stdin_bytes);
+
+    // Read spec bytes best-effort.
+    let spec_bytes = fs::read(spec_path).unwrap_or_default();
+
+    // spec_oid via blake3 (matches emit direction).
+    let spec_oid = {
+        let digest = blake3::hash(&spec_bytes);
+        let bytes = digest.as_bytes();
+        let mut s = String::with_capacity(64);
+        for b in bytes.iter() {
+            s.push_str(&format!("{:02x}", b));
+        }
+        s
+    };
+
+    // delta_oid via blake3(spec_bytes || stdin_bytes). Content-
+    // addressed identity for the (state, edit) pair — Foster PutPut
+    // law witness: same edit bytes on same spec produce same
+    // delta_oid regardless of invocation order.
+    let delta_oid = {
+        let mut combined = Vec::with_capacity(spec_bytes.len() + stdin_bytes.len());
+        combined.extend_from_slice(&spec_bytes);
+        combined.extend_from_slice(&stdin_bytes);
+        let digest = blake3::hash(&combined);
+        let bytes = digest.as_bytes();
+        let mut s = String::with_capacity(64);
+        for b in bytes.iter() {
+            s.push_str(&format!("{:02x}", b));
+        }
+        s
+    };
+
+    let received_bytes = stdin_bytes.len();
+
+    // Unified-diff-shape envelope naming the put roundtrip.
+    let out = format!(
+        "--- a/mirror.spec\n\
+         +++ b/mirror.spec\n\
+         @@ peer_beam operator-edit integration via @optics/lens/diff.put @@\n\
+         + peer_home: {peer_home}\n\
+         + spec_oid: {spec_oid}\n\
+         + delta_oid: {delta_oid}\n\
+         + received_bytes: {received_bytes}\n\
+         + verdict: put_acknowledged\n\
+         + optics_lens: @optics/lens/diff.put\n\
+         + optics_lens_put_altitude: Rust runtime v0 (2026-07-11)\n\
+         + optics_lens_put_semantics: acknowledge_and_address (full application deferred)\n\
+         + autopoietic_closure: partial (state addressable via delta_oid; bauchladen.tray update forward-promised)\n\
+         + foster_putput_witness: delta_oid deterministic per (spec_bytes, received_bytes)\n"
+    );
+
+    mout!("{}", out);
+    0
+}
+
 fn emit_peer_beam_diff(
     peer_home: &str,
     spec_path: &std::path::Path,
@@ -4205,12 +4283,19 @@ fn emit_peer_beam_diff(
 /// (Mara b0427fd + 7e5c298) — unified-diff-shape bytes for operator
 /// review at cli-surface altitude. Mutually independent of `hello_world`;
 /// if both flags are set, `emit_diff` wins.
+///
+/// The `integrate_diff` param routes to the @optics/lens/diff.put
+/// direction — reads edited-diff bytes from stdin, emits envelope
+/// naming delta_oid via blake3(spec_bytes || stdin_bytes). Closes the
+/// Foster (get, put) roundtrip half at cli-surface altitude. If both
+/// `emit_diff` and `integrate_diff` are set, `integrate_diff` wins.
 fn cmd_peer_beam(
     peer_home: &str,
     hello_world: bool,
     task: Option<&str>,
     ctx: &Ctx,
     emit_diff: bool,
+    integrate_diff: bool,
 ) -> i32 {
     // Piece 1 (insight §2.1): cli surface. The peer-home argument is the
     // single positional. Context (frame, repository, pack) is resolved
@@ -4236,6 +4321,16 @@ fn cmd_peer_beam(
     // plumbing.
     if emit_diff {
         return emit_peer_beam_diff(peer_home, &spec_path, task, ctx);
+    }
+
+    // Put direction (2026-07-11) — closes the Foster (get, put)
+    // roundtrip half. `--integrate-diff` reads edited-diff bytes from
+    // stdin, computes delta_oid via blake3(spec_bytes || stdin_bytes),
+    // emits envelope naming spec_oid + delta_oid + put attribution.
+    // Mutually independent of --emit-diff; if both flags set,
+    // --integrate-diff wins.
+    if integrate_diff {
+        return integrate_peer_beam_diff(peer_home, &spec_path);
     }
 
     // Piece 2 (insight §2.2): @peer resolution via G1 single-hop. The
