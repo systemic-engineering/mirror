@@ -4425,8 +4425,7 @@ fn fate_bounded_shadow_peer_beam(
     fate_engine.selectors = selectors_from_psychohistory_root(&psychohistory_root_oid);
 
     // Cast 5 shadows (one per Model) + compute regime.
-    let (base_decision, hypotheticals, impacts) =
-        cast_shadows_over_models(&fate_engine, &features);
+    let (base_decision, hypotheticals, impacts) = cast_shadows_over_models(&fate_engine, &features);
     let (regime, distinct_modes) = shadow_regime(&base_decision, &hypotheticals, &impacts);
 
     let model_label = |m: fate::Model| -> &'static str {
