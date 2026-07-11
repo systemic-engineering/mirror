@@ -70,7 +70,9 @@ fn peer_beam_integrate_diff(edit_bytes: &[u8]) -> (Output, PathBuf) {
 
     {
         let stdin = child.stdin.as_mut().expect("child stdin");
-        stdin.write_all(edit_bytes).expect("write edit bytes to stdin");
+        stdin
+            .write_all(edit_bytes)
+            .expect("write edit bytes to stdin");
     }
 
     let out = child.wait_with_output().expect("child output");
@@ -142,7 +144,11 @@ fn t03_peer_beam_integrate_diff_delta_oid_is_deterministic() {
     // Extract delta_oid from both.
     let extract_delta = |s: &str| -> Option<String> {
         for line in s.lines() {
-            if let Some(rest) = line.trim_start_matches("+").trim().strip_prefix("delta_oid:") {
+            if let Some(rest) = line
+                .trim_start_matches("+")
+                .trim()
+                .strip_prefix("delta_oid:")
+            {
                 return Some(rest.trim().to_string());
             }
         }
