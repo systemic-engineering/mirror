@@ -5,6 +5,9 @@ in @fate
 in @bauchladen
 in @autopoietic
 in @uuid/spectral
+in @epistemologic/math/sheaf_laplacian
+in @song/narrative
+in @frame
 
 # @fate/tournament — the selection mechanism over the Bauchladen.
 # The substrate-decl form of the cache-coherent selector that browses
@@ -807,6 +810,193 @@ tournament_autopoietic(record: ref) -> verdict { \ }
 # per-rule sub-shards follow when consumers pull.
 tournament_well_formed(round: tournament_round) -> verdict { \ }
 
+# ============================================================
+# §Tick-2 bounded-by-sheaf: the psychohistory-sheaf-consuming
+#                          bounded tournament species
+# ============================================================
+#
+# Taut §Landing sequence Tick 2 landing (2026-07-11) per iter-15 scout
+# `e90daf1` §Q5 verdict: NO `Fate::bounded` existed in substrate;
+# `@loop` has `terminal_check` + budget shape (adjacent, not colliding);
+# naming space open; verb recommendation `bounded_by`. THIS section
+# discharges Tick 2 at the tournament-species altitude — bounded_by IS
+# a tournament round whose candidate_set is the sheaf's H⁰ basis and
+# whose selection_rule is Rayleigh descent on Δ_F.
+#
+# === Substrate-honest home: tournament, not fate family-root ===
+#
+# Taut Q5 recommended `shards/fate.mirror`; substrate ground truth
+# refused: `@fate/tournament` already declares `in @fate`, so an
+# import from `@fate.mirror` to `@fate/tournament` would create a
+# cycle. Two-tick discipline (per `[[feedback-substrate-already-had-
+# the-word]]`): the readable name over foundational — `bounded_by`
+# lands where `tournament_result` already lives (the tournament species
+# altitude), which is exactly Mara iter-30 §7-forward-promise's
+# alternative reading ("Bounded may be a specialization of tournament,
+# or a sibling"). Landing as tournament-species specialization is the
+# substrate-honest resolution.
+#
+# === Landing anchors ===
+#
+# Taut iter-15 scout `e90daf1` §Landing sequence Tick 2 + Q5 verdict
+# (naming space open; verb recommendation `bounded_by`).
+#
+# Mara iter-30 canonical spec `docs/specs/fate-bounded-psychohistory-
+# sheaf-cohomology.md` (`96ff532`):
+#   - §1 bundle-tower composition (five levels playing one config;
+#     Level 3 Transport = holonomy_ceiling; Level 4 Closure = depth_cap);
+#   - §3 cohomology navigation = Rayleigh descent on Δ_F (the
+#     `lambda_zero(op)` consumer altitude that IS this section's
+#     descent-direction scalar);
+#   - §4 @bauchladen ↔ @mirror/store shared-fragmentation (bounded_by
+#     reads through the shared storage layer; no impedance mismatch);
+#   - §5 the signature and derivation (BoundedConfig struct's five
+#     fields ↔ bundle-tower levels 0-4);
+#   - §6-S1 (resolve was already Rayleigh descent; bounded_by types
+#     the mechanism against the correct operator);
+#   - §6-S6 (traverse ≡ bounded on the peer-torus; Seam fold-hazard
+#     forward-promised).
+#
+# Sibling Mara iter-31 landing in `shards/song/narrative.mirror`:
+# declared `type psychohistory_sheaf = ref` +
+# `psychohistory_from_tray(tray: bauchladen_tray, p: perturbation) ->
+# psychohistory_sheaf` + `psychohistory_consistent(sheaf, p) -> verdict`.
+# THIS section consumes the sibling's `psychohistory_sheaf` carrier
+# directly — the substrate-decl composition lands via `in @song/
+# narrative` at the imports block above.
+#
+# Reed `9cf1e3b` (fate wiring GREEN, `Features::default()` per Seam
+# Adj 1): the Rust-runtime consumer that discharges this action's `\`
+# body at species boundary. Per Mara iter-30 §6-S4: `Features::default()`
+# IS the temporary zero-section of F (the trivial global section when
+# the tray is empty); the v1 that reads the tray is the generic case.
+#
+# `@epistemologic/math/sheaf_laplacian`: `operator` (Δ_F, δ*δ assembly)
+# + `lambda_zero(op) -> eigenvalue` (the algebraic-connectivity scalar
+# consumed as the Rayleigh descent direction).
+#
+# === Composition with the existing tournament shape ===
+#
+# `bounded_by` factors through the four-step tournament pattern (per
+# §6.1 spec `docs/specs/bauchladen-autopoietic-fate.md`):
+#
+#   1. read the sheaf's current-edge candidate_set (browse) — the
+#      fibers reachable from the current `psychohistory_moment`;
+#   2. rank via Rayleigh descent on Δ_F (per Mara iter-30 §3) — the
+#      direction that most decreases ⟨ψ | Δ_F | ψ⟩ / ⟨ψ | ψ⟩ subject
+#      to orthogonality with the current H⁰ basis;
+#   3. select the winner (a dice_roll via @fate.roll at the underlying
+#      inference altitude; the winner IS the selection_witness of one
+#      tournament_round);
+#   4. record via @bauchladen.crystallize (the winning crystal joins
+#      the tray under @fate/algebra/* the same way every tournament
+#      selection does).
+#
+# THIS section's `bounded_by` NAMES the composed action; the four steps
+# above are the compositional decomposition into the pre-existing
+# tournament vocabulary. Bounded IS-A tournament round with a specific
+# selection_rule (Rayleigh descent) over a specific candidate_set
+# (sheaf-fiber neighborhood) with specific termination bilaterals
+# (holonomy_ceiling + depth_cap).
+#
+# === The @bauchladen ↔ @mirror/store shared-fragmentation reading ===
+#
+# Per Mara iter-30 §4: `@bauchladen` and `@mirror/store` are two
+# consumer altitudes on ONE content-addressed DAG; `fragmentation`'s
+# `ContentAddressed` + `TreeShaped` traits ARE the shared primitive.
+# THIS action reads THROUGH that shared storage layer via the sheaf's
+# already-assembled fibers (per sibling Mara's `psychohistory_from_tray`
+# which threads the tray's OID-addressed deltas through the substrate's
+# trajectory graph). No separate reader for inference state; no
+# impedance mismatch.
+#
+# === bounded_by — the sheaf-consuming tournament action ===
+#
+# Reads a `psychohistory_sheaf` (declared at `@song/narrative` per
+# sibling Mara iter-31 landing) plus a `perturbation` (the local
+# neighborhood the inference operates within per `frame.mirror`'s
+# perturbation carrier), consumes `lambda_zero` from
+# `@epistemologic/math/sheaf_laplacian` as the descent-direction scalar,
+# and emits a `tournament_result` naming the winning crystal + cache-hit
+# discriminator + consulted-OIDs provenance trail.
+#
+# The body stays obligation-blocked (`\`): the realisation reads the
+# sheaf's operator Δ_F (already assembled at construction via
+# `sheaf_laplacian([restriction]) -> operator`), reads `lambda_zero(op)`
+# for the descent-direction eigenvalue, browses the current-edge
+# candidate_set from the sheaf's fiber-neighborhood, applies the
+# Rayleigh-descent selection_rule, and emits the winner as a
+# `tournament_result` with `cache_hit` verdict + `consulted_oids`
+# provenance trail per the shard's existing tournament shape.
+#
+# Consecutive rounds compose along the sheaf's trajectory graph until
+# EITHER `lambda_zero(op) = 0` at machine tolerance (autopoietic
+# closure — Lawvere fixed-point at Level 4 per Mara iter-30 §1) OR the
+# Level-3 holonomy ceiling rejects the cumulative Δ_F magnitude (per
+# `bounded_by_respects_holonomy` below).
+#
+# Landing Tick 3 (Reed, forward-promised): the Rust discharge at
+# `fate/src/bounded.rs` implements `impl Fate { pub fn bounded(cfg:
+# BoundedConfig) -> Fate }` per Mara iter-30 §5's signature; the
+# `BoundedConfig` struct's five fields (weights / connection / gauge /
+# holonomy_ceiling / depth_cap) type-align to the bundle-tower levels
+# 0-4; the `from_sheaf` constructor lifts a `psychohistory_sheaf` into
+# a `BoundedConfig` at the Rust altitude.
+bounded_by(sheaf: psychohistory_sheaf, p: perturbation) -> tournament_result { \ }
+
+# === bounded_by_respects_holonomy — the Level 3 Transport bilateral ===
+#
+# Per Mara iter-30 §1 bundle-tower Level 3 (Transport / holonomy): the
+# cumulative Δ_F magnitude across the bounded selection's traversal
+# MUST stay below the holonomy_ceiling naming the peer's rejection
+# threshold. This bilateral is the substrate-decl witness that a
+# `bounded_by` result honored the Level 3 rejection curvature.
+#
+# Splinter-pole (`pass`): the tournament_result's traversal accumulated
+# Δ_F magnitude ≤ holonomy_ceiling; the selection stayed within the
+# Level 3 rejection-curvature bound; the winning crystal is
+# transport-admissible.
+#
+# Narcissus-pole (`failure`): the accumulated Δ_F exceeded the ceiling
+# before the selection reached its winner; the substrate-pull repair
+# fires via Metropolis-hopping into a wider basin (per Mara iter-30
+# §3's ceiling-triggered basin escape).
+#
+# Body discharges per-realisation at Reed's Rust altitude (Tick 3
+# forward-promise): the discharge reads the tournament_result's
+# `consulted_oids`, walks the sheaf-Laplacian assembly across those
+# edges via `sheaf_laplacian([restriction]) -> operator`, and checks
+# the accumulated magnitude against the config's holonomy_ceiling
+# field (Level 3 of the bundle-tower per Mara iter-30 §1).
+bounded_by_respects_holonomy(sheaf: psychohistory_sheaf, result: tournament_result) -> verdict { \ }
+
+# === bounded_by_below_lawvere_depth — the Level 4 Closure bilateral ===
+#
+# Per Mara iter-30 §1 bundle-tower Level 4 (Closure / Lawvere): the
+# bounded selection's recursion depth MUST stay below the depth_cap
+# naming the Lawvere fixed-point bound. This bilateral is the
+# substrate-decl witness that a `bounded_by` result terminated within
+# the Level 4 recursion bound.
+#
+# Splinter-pole (`pass`): the tournament_result reached its winner
+# within depth_cap recursions; the selection witnessed the Lawvere
+# fixed-point at Level 4 (or terminated at the cap without diverging);
+# `fragmentation` closes Rice at this altitude per Mara iter-30 §6-S3
+# (every OID is the hash of a bounded body; every walk terminates at
+# a Merkle leaf; `depth_cap` is enforceable).
+#
+# Narcissus-pole (`failure`): the recursion hit the depth_cap without
+# reaching a fixed-point; the sheaf's H⁰ was not fully consistent at
+# the current altitude; the substrate-pull repair fires via bundle-
+# tower re-configuration (weights / connection / gauge fields adjust
+# per Mara iter-30 §1 Level 0-2; the depth_cap itself is a Level 4
+# invariant and NOT re-negotiated at this altitude).
+#
+# Body discharges per-realisation at Reed's Rust altitude: reads the
+# tournament_result's `consulted_oids` length as the recursion depth
+# witness, compares against the config's depth_cap field.
+bounded_by_below_lawvere_depth(sheaf: psychohistory_sheaf, result: tournament_result) -> verdict { \ }
+
 out @fate/tournament
 out tournament_round
 out candidate_set
@@ -824,3 +1014,6 @@ out bauchladen_browse_well_typed
 out selection_respects_restrictions
 out tournament_autopoietic
 out tournament_well_formed
+out bounded_by
+out bounded_by_respects_holonomy
+out bounded_by_below_lawvere_depth
