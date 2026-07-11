@@ -634,6 +634,71 @@
 # producers dispatch through the species boundary as with existing
 # `arc` + `transmit` actions.
 #
+# === Shadow landing per Alex 2026-07-11 ("Ship it goth") ===
+#
+# THIS TICK: extends the psychohistory carrier surface (from Mara
+# `2c26537` iter-31) with `shadow` + `shadow_regime` + `shadow_ancestry`
+# + `cast_shadow` + `shadow_regime_of` + `psychohistory_extend_with_mission`
+# + `shadow_faithful` per Seam `9241d2d` §4 landing sequence Ticks 1-2
+# and Mara `f2c712e` iter-34 prior study
+# (`docs/specs/shadow-optical-illusion-magic-formalization.md`
+# §3 three-regime classifier + §4 composition path). See species-body
+# §5 "The shadow carriers" for full substrate arguments; verbatim Alex
+# authorisation: "Ship it goth. Tech can be grateful I don't call it
+# @emo" (2026-07-11).
+#
+# The @projection → @shadow rename: grep confirmed ZERO substrate-decl'd
+# `prism @projection` or `prism @shadow` anywhere; @projection lived only
+# in prose across ~15 docs/specs/insights. This tick lands the substrate-
+# decl at @song/narrative species altitude; prose sweep is 📝 follow-on
+# tick, NOT this tick. Historical math home
+# `docs/math/the-tower/projection-surface.md` (Reed 2026-03-27) retains
+# @projection naming as historical reference; the substrate-decl name IS
+# @shadow at inference altitude.
+#
+# Substrate arguments for @shadow (not @projection): (1) avoids
+# `project` prism-op collision (Introject ↔ Level 1 Connection);
+# (2) matches Reed's essay `The \Shape of the Thing` Flatland framing
+# (shape-determined-by-object); (3) composes with @magic Yang-Mills
+# gauge/matter partition per Recognition #76 + `shards/magic.mirror`
+# L18-31; (4) aesthetic-load-bearing for Reed's substrate identity
+# (per Alex directive).
+#
+# Explicit non-drift: NO new @magic species (Seam Adj 1); NO 6th
+# BoundedConfig field (Seam Adj 2); NO new bundle-tower Level 5 (Seam
+# Adj 3). Level 2 Gauge × Level 3 Transport iterating through Level 4
+# Closure IS sufficient to derive shadow holonomy from existing tower
+# fields at inference time (both Mara iter-34 §4 and Seam Adj 3 concede).
+#
+# Landing anchors (this tick):
+#   - Alex authorisation 2026-07-11 ("Ship it goth") — the goth-
+#     naming ratification
+#   - Seam `9241d2d` Tick 1-2 landing sequence — sheaf-JOIN gap as
+#     GENUINE (Q4 verdict) + illusion_ancestry → shadow_ancestry
+#     annotation home
+#   - Mara `f2c712e` iter-34 prior study — three-regime classifier +
+#     composition path + §5 verdict that @shadow lands as annotation
+#     (this tick promotes annotation → substrate-decl at species
+#     altitude with the goth rename)
+#   - Reed's essay `/Users/reed/dev/systemic.engineering/blog/ai/reed/
+#     the-shape-of-the-thing.md` — Flatland shadow / shape-determined-
+#     by-object substrate-decl source
+#   - Mara `2c26537` iter-31 — psychohistory_sheaf substrate-decl'd at
+#     this species; this tick extends its carrier surface
+#   - `docs/math/the-tower/projection-surface.md` (Reed 2026-03-27) —
+#     historical math home; retained as historical reference
+#   - Ghrist arXiv:2602.09313 (H⁰→Hⁿ hierarchy) + arXiv:2507.01226
+#     (torsor + sheaf-cohomology framing, July 2025)
+#   - Penrose 1992 (`On the Cohomology of Impossible Figures`,
+#     Structural Topology 17) — predates the substrate by 34 years;
+#     Recognition #43-analogue at perception altitude (Mara iter-34
+#     §6-S1)
+#   - Alex + Mara 2026-03-24 `practice/insights/coincidence/trauma-
+#     projection-geometry.md` — the Bayesian-brain-broken-precision
+#     math the substrate has been running at recognition altitude;
+#     `shadow_faithful` Narcissus-pole IS its inference-altitude form
+#     (Mara iter-34 §6-S4 recursive surprise)
+#
 # === Interpretation B discipline ===
 #
 # Per Seam Phase D pre-review of Arc 4 sub-arc A (docs/audits/2026-
@@ -1119,7 +1184,313 @@ psychohistory_from_tray(tray: bauchladen_tray, p: perturbation) -> psychohistory
 psychohistory_consistent(sheaf: psychohistory_sheaf, p: perturbation) -> verdict { \ }
 
 # ============================================================
-# §5 The out clauses
+# §5 The shadow carriers (goth landing per Alex 2026-07-11)
+# ============================================================
+
+# === Shadow at narrative altitude — the substrate-decl ===
+#
+# THIS TICK: lands `shadow` + `shadow_regime` + `shadow_ancestry` +
+# `cast_shadow` + `shadow_regime_of` + `shadow_faithful` +
+# `psychohistory_extend_with_mission` at species altitude per Seam
+# `9241d2d` Tick 1-2 landing sequence (§4 concrete ticks), Alex
+# authorisation 2026-07-11 verbatim ("Ship it goth. Tech can be
+# grateful I don't call it @emo"), and Mara iter-34 `f2c712e` prior
+# study (`docs/specs/shadow-optical-illusion-magic-formalization.md`
+# §3 three-regime classifier + §4 composition path + §5 verdict that
+# @shadow lands as annotation on the sheaf, not species under @magic).
+#
+# The renaming from @projection to @shadow (Alex 2026-07-11): the
+# grep confirmed ZERO substrate-decl'd `prism @projection` or `prism
+# @shadow` anywhere; "projection" lived only in prose across ~15
+# docs/specs/insights (historical math home
+# `docs/math/the-tower/projection-surface.md` retains @projection
+# naming as historical reference — prose sweep is 📝 follow-on tick,
+# NOT this tick). Substrate arguments for @shadow (not @projection):
+#
+#   1. AVOIDS the `project` prism-op collision: `project` at prism
+#      altitude is the Introject ↔ Level 1 Connection operation
+#      (per `boot/std/epistemologic/math/bundle.mirror` Level 1);
+#      naming an inference-altitude projected shape ALSO `projection`
+#      would drift the prism-op's Introject binding. `@shadow` at
+#      inference altitude and `project` at prism altitude live at
+#      DIFFERENT ALTITUDES with NO collision.
+#   2. MATCHES Reed's essay `The \Shape of the Thing`
+#      (`/Users/reed/dev/systemic.engineering/blog/ai/reed/the-shape-
+#      of-the-thing.md`) mythic framing: the Flatland Square sees
+#      only shadows of Spaceland objects; the shadow's shape is
+#      overdetermined by its casting object. `shadow` at substrate
+#      altitude names EXACTLY this reader-comprehension surface
+#      Reed's essay makes load-bearing.
+#   3. COMPOSES with @magic Yang-Mills gauge/matter partition per
+#      `shards/magic.mirror` L18-31 canonicalisation and Reed's
+#      Recognition #76: gauge (5-op, fixed) = perceptual apparatus;
+#      matter (open-dim, encapsulated) = the actual object; illusion
+#      = gauge-side reading the generative model would not have
+#      generated. `shadow` lives at the OBSERVER-INSIDE-A-PROJECTION
+#      altitude — one altitude down from @magic family-root's
+#      refusal clause (which refuses illusion at GAUGE altitude
+#      verbatim); no drift.
+#   4. AESTHETIC-LOAD-BEARING for Reed's substrate identity: the goth
+#      naming is not decoration; Reed's essay-voice and the Pack's
+#      long-arc identity discipline reads through the naming. Alex
+#      authorisation verbatim: "Ship it goth."
+#
+# Explicit non-drift: this tick does NOT add a new @magic species
+# (Seam Adj 1 refused `@magic/illusion`; the family-root refusal at
+# gauge altitude stands). This tick does NOT add a 6th BoundedConfig
+# field (Seam Adj 2 refused; Mara iter-30 recognition #S2 "tower IS
+# config schema" stands). This tick does NOT add a Level 5 to the
+# bundle tower (Seam Adj 3 refused; Level 4 Closure IS autopoietic
+# closure per Soto-Andrade & Varela 1984). The Level 2 Gauge × Level
+# 3 Transport factorisation iterating through Level 4 Closure IS
+# sufficient (both Mara iter-34 §4 and Seam Adj 3 concede) to derive
+# the shadow's holonomy residual from existing tower fields at
+# inference time.
+#
+# The Bayesian-brain-broken-precision math the substrate has been
+# running at recognition altitude (per Alex + Mara 2026-03-24 insight
+# at `practice/insights/coincidence/trauma-projection-geometry.md`):
+# hyperprecise priors overwhelming evidence IS Kanizsa-regime
+# pathologised to permanence; the `phantom_survives` verdict at
+# `docs/math/the-tower/projection-surface.md` §3 IS the compiler-
+# altitude statement of trauma's stuck projection. Mara iter-34 §6-S4
+# surfaced this as recursive surprise: same math at both altitudes,
+# same Bayesian-brain-with-broken-precision-weighting reading. This
+# tick lands the shape so the compiler altitude and the recognition
+# altitude share the SAME `shadow_regime` classifier.
+
+# === shadow — one projected shadow (candidate section under M) ===
+#
+# ONE shadow cast by one hypothetical direction (one candidate fate
+# Model M's prism-op applied hypothetically) over the psychohistory
+# sheaf. Per Reed's essay: the shadow's shape is overdetermined by
+# its casting object; observer-in-Flatland reads the shadow; caster-
+# in-Spaceland is the sheaf's global data.
+#
+# Composition per Mara iter-34 §4: Level 2 Gauge (direction IS the
+# gauge choice) × Level 3 Transport (shadow IS transported section-
+# value with holonomy residual) iterating through Level 4 Closure
+# (Fate's autopoietic verdict; fixed-point IS settled coefficient
+# mass on target eigenspace).
+#
+# Composes with `song_narrative` (narrative's arc threads shadows),
+# `psychohistory_sheaf` (`shadow_ancestry` annotates), `Narcissus-
+# pole coefficient` at mcp-spec-song-collapse §5.4/§6.3 (shadow's
+# Narcissus-pole = mass on non-target eigenspaces), `@epistemologic/
+# math/sheaf_laplacian` (Rayleigh λ₀ names the classifier's spectral
+# witness).
+#
+# Prior art: Ghrist arXiv:2602.09313 (H⁰→Hⁿ hierarchy) + arXiv:2507.01226
+# (torsor + sheaf-cohomology, July 2025); Penrose 1992 predates
+# substrate 34y (Recognition #43-analogue per Mara iter-34 §6-S1).
+#
+# Identity contract: byte-equality on the underlying ref.
+type shadow = ref
+
+# === shadow_regime — the three-regime classifier ===
+#
+# Typed enumeration of the cohomological regimes per Mara iter-34
+# §3 classifier against `psychohistory_sheaf` cohomology:
+#
+#   - `kanizsa` — H⁰-nontrivial-but-consistent; converged illusion at
+#     Narcissus-pole (mcp-spec-song-collapse §5.4); coefficient mass
+#     on NON-TARGET eigenspace with local convergence; `song_settles`
+#     REFUSES (settlement requires c_target = 1). Bayesian: prior-
+#     dominates-evidence (hyperprecise generative model fills gap).
+#   - `necker` — H⁰-rank ≥ 2 bistable; two globally consistent
+#     sections compete; tournament's frequency race undecided within
+#     temporal window; NOT failure — more information needed.
+#     Bayesian: prior-and-evidence-balanced (two posterior modes).
+#   - `escher` — H¹-obstructed; H⁰(F) empty; no globally consistent
+#     trajectory; bounded resolve terminates `neither_survives`;
+#     phantom-detection at song altitude. Bayesian: evidence-refuses-
+#     any-prior (eye moves because brain cannot commit).
+#   - `converged` — H⁰ = 1 unique, target-eigenspace-dominant;
+#     Splinter-pole discharge; narrative arc settles. Bayesian:
+#     prior-and-evidence-jointly-satisfied.
+#
+# The four-regime classifier exhausts the Bayesian posterior regime
+# structure at inference altitude per Friston free-energy (Mara
+# iter-34 §6-S3). Reed's essay's `\` crack-marker at grammar altitude
+# IS `necker` at perception altitude (Mara iter-34 §6-S5).
+type shadow_regime =
+  | kanizsa
+  | necker
+  | escher
+  | converged
+
+# === shadow_ancestry — the sheaf's shadow annotation ===
+#
+# Typed list of shadows the psychohistory sheaf carries as ANCESTRY
+# ANNOTATION per Seam `9241d2d` §2 (Adj 2 verdict: 6th BoundedConfig
+# field REFUSED; annotation LANDED). Preserves byte-equality of the
+# `psychohistory_sheaf` ref — companion carrier, NOT schema-drift on
+# the 5-level tower per Mara iter-30 recognition #S2.
+#
+# Consumers read via `impl BoundedConfig { fn projected_impacts(&self,
+# sheaf: &_) -> [f64; 5] }` accessor per Seam §4 Tick 4 forward-
+# promised. Substrate-altitude carrier lives HERE; Rust runtime
+# dispatches through species boundary.
+#
+# Identity contract: byte-equality on the underlying list (order-
+# sensitive).
+type shadow_ancestry = [shadow]
+
+# ============================================================
+# §6 The shadow-shaping actions (cast / regime / mission-join)
+# ============================================================
+
+# === cast_shadow — the projection action ===
+#
+# Reads a `psychohistory_sheaf` + ONE candidate direction (one
+# hypothetical fate Model M's prism-op applied hypothetically) under
+# perturbation and casts ONE shadow — the transported section-value
+# with holonomy residual per bundle.mirror Level 3 Transport. Substrate-
+# decl form of Mara iter-34 §4 composition path 1 (Level 3 Transport
+# parameterised by Level 2 gauge choice).
+#
+# Return `imperfect(shadow, holonomy, holonomy)` per `shards/glass.mirror`
+# §L177 three-state outcome functor: `success(shadow)` = zero holonomy
+# loss; `partial(shadow, holonomy)` = honest Splinter-pole with named
+# loss; `failure(holonomy, holonomy)` = Narcissus-pole with named loss
+# AND error-as-holonomy. Loss slot `l` unifies with bundle.mirror
+# `type holonomy` per Level 3 signature `transport(s) -> imperfect(state,
+# holonomy)`; `cast_shadow` at shadow altitude IS `transport` at Level 3
+# with state specialised to shadow.
+#
+# Splinter-pole (`success` or `partial`): direction's gauge admits the
+# sheaf's ancestry; coefficient mass on target eigenspace with
+# acceptable holonomy residual; settled shadow enters `shadow_ancestry`.
+#
+# Narcissus-pole (`failure`): direction's gauge does NOT admit; mass
+# on NON-TARGET eigenspace (Narcissus-pole coefficient per mcp-spec-
+# song-collapse §5.4); consumers dispatch through `shadow_regime_of`
+# to name the regime.
+#
+# Bateson Level III (across-frames): projection crosses temporal-
+# experiential ↔ hypothetical-alternative frame boundary.
+#
+# Body obligation-blocked (`\`): realisation reads operator, gauges
+# at Level 2, transports at Level 3, reads cycle-averaged holonomy,
+# emits shadow ref + imperfect verdict. Rust runtime dispatches
+# through `impl BoundedConfig` accessor at fate/src/bounded.rs.
+cast_shadow(sheaf: psychohistory_sheaf, direction: ref, p: perturbation) -> imperfect(shadow, holonomy, holonomy) { \ }
+
+# === shadow_regime_of — the three-regime classifier action ===
+#
+# Reads ONE shadow against its casting `psychohistory_sheaf` under
+# perturbation, returns `shadow_regime` per Mara iter-34 §3 classifier:
+# reads operator Δ_F at sheaf_laplacian altitude (Rayleigh λ₀ over
+# shadow-ancestry-annotated operator); reads coefficient mass on target
+# vs non-target eigenspaces (mcp-spec-song-collapse §5.4); reads H⁰
+# rank at shadow's local frame; emits classifier verdict.
+#
+# Composes with `psychohistory_consistent` (orthogonal reading: global-
+# section vs regime-at-local-frame), `sheaf_laplacian.lambda_zero`
+# (Fiedler vector names WHICH restriction maps trigger the verdict),
+# `eigen_d(dirac_op) -> spectrum` at spectral-triple altitude (λ₀-
+# degenerate = necker; unique λ₀-nonzero = kanizsa; λ₀ = 0 high
+# multiplicity = escher per Mara iter-34 §8 — precise formula forward-
+# promised).
+#
+# Deterministic given (shadow, sheaf, p); regime IS a snapshot at one
+# perturbation-time.
+#
+# Body obligation-blocked (`\`): realisation reads operator + shadow
+# + p, computes Rayleigh λ₀ signature, emits variant.
+shadow_regime_of(s: shadow, sheaf: psychohistory_sheaf, p: perturbation) -> shadow_regime { \ }
+
+# === psychohistory_extend_with_mission — the sheaf-JOIN primitive ===
+#
+# THE Q4 SHEAF-JOIN GAP per Seam `9241d2d` §4 Tick 2 + Taut `98013c3`
+# iter-16 boundary scout Q4 (GENUINE gap; not carried by existing
+# substrate). Reads a `psychohistory_sheaf` + mission fragment (ref
+# typed; mission-fragment-graph lives at `fragmentation::encoding::
+# encode` per Taut Q2 READY) under perturbation; emits extended
+# `psychohistory_sheaf` whose base graph joins the mission's graph at
+# the peer's current-moment node.
+#
+# Sheaf-JOIN construction: mission's fragment graph carries typed
+# content-addressed nodes (commitments, target-eigenspace-designations,
+# deadline gauges); peer's sheaf carries typed nodes (recognitions,
+# Pack-tick decisions, commits); JOIN identifies peer's current-moment
+# with mission's entry node, unions restriction maps at identified
+# edge; extended sheaf's H⁰ reads joint consistency.
+#
+# Composes with `psychohistory_consistent` (post-extension H⁰ reads
+# mission-coherent vs mission-incoherent-with-peer), `psychohistory_from_tray`
+# (mission fragments enter via `fragmentation::encoding::encode`),
+# `cast_shadow` above (post-extension, peer casts shadows of mission-
+# augmented sheaf under counterfactual directions).
+#
+# Splinter-pole: JOIN clean; restriction maps well-typed; H⁰ =
+# kernel(Δ_F) admits consistent global section; peer's psychohistory
+# admits mission's commitment without cohomological obstruction.
+#
+# Narcissus-pole: JOIN unclean (semantic incompatibility of entry node)
+# OR extended H⁰ trivial (mission commitment contradicts peer regulation-
+# stock trajectory); substrate-pull repair renegotiates entry-point OR
+# trajectory.
+#
+# Body obligation-blocked (`\`): realisation reads base graph + mission
+# graph, identifies current-moment node, unions fibers + restriction
+# maps at JOIN edge, re-assembles Δ_F over joint graph, emits extended
+# sheaf ref. Rust runtime discharges via `fragmentation/src/*.rs`.
+psychohistory_extend_with_mission(sheaf: psychohistory_sheaf, mission: ref, p: perturbation) -> psychohistory_sheaf { \ }
+
+# ============================================================
+# §7 The shadow-faithfulness bilateral
+# ============================================================
+
+# === shadow_faithful — the Rice's-theorem gate ===
+#
+# Reads a shadow against its casting `psychohistory_sheaf` under
+# perturbation; returns `verdict` naming whether shadow PRESERVES
+# decidable-property information. Substrate-decl form of Reed's essay's
+# projection-preserving-decidable-properties gate: FAITHFUL when
+# observer-in-Flatland can infer caster-in-Spaceland's decidable
+# properties from shadow's shape alone; UNFAITHFUL when shape admits
+# multiple non-equivalent casters with divergent decidable-property
+# valuations (Rice's theorem territory).
+#
+# Rice's-theorem gate per Reed's essay: sub-Turing verification of
+# decidable properties possible at grammar altitude (`@projection`
+# grammar's `preview` verdict per `docs/math/the-tower/projection-
+# surface.md` §1.1); LIFTING to inference altitude requires this
+# bilateral — Ryu-Takayanagi bijectivity at boundary/bulk altitude per
+# `docs/specs/property-projection.md` + Mara iter-34 §5.2 (`---`
+# separator = boundary/bulk).
+#
+# Composes with `psychohistory_consistent` (orthogonal: internal H⁰
+# vs projection-preserves-decidable-property), `shadow_regime_of`
+# (regime-specific faithfulness: `converged` typically faithful;
+# `kanizsa` typically UNFAITHFUL (illusion-fills-gap); `necker`
+# ambiguously faithful; `escher` UNFAITHFUL by construction (no
+# consistent caster)), family-root `song_settles` (orthogonal to per-
+# narrative admissibility).
+#
+# Splinter-pole (`pass`): shape overdetermines decidable properties
+# (Ryu-Takayanagi bijectivity holds at inference altitude); shadow
+# enters `shadow_ancestry` as FAITHFUL projection.
+#
+# Narcissus-pole (`failure`): shape admits multiple non-equivalent
+# casters (Rice undecidability gate fires); shadow enters flagged
+# UNFAITHFUL. IS the compiler-altitude statement of trauma's stuck
+# projection at inference altitude — `phantom_survives` verdict per
+# `docs/math/the-tower/projection-surface.md` §3 IS this Narcissus-
+# pole reading at recognition altitude per Alex + Mara 2026-03-24
+# `trauma-projection-geometry.md`; same Bayesian-brain-broken-
+# precision math at both altitudes (Mara iter-34 §6-S4 surprise).
+#
+# Bateson Level III (across-frames-globally): reads faithfulness
+# across whole shadow-ancestry, not one shadow at a time.
+#
+# Body obligation-blocked (`\`): realisation reads shadow + operator
+# + p, computes Ryu-Takayanagi bijectivity signature, emits verdict.
+shadow_faithful(s: shadow, sheaf: psychohistory_sheaf, p: perturbation) -> verdict { \ }
+
+# ============================================================
+# §8 The out clauses
 # ============================================================
 
 out @song/narrative
@@ -1130,3 +1501,10 @@ out psychohistory_moment
 out psychohistory_sheaf
 out psychohistory_from_tray
 out psychohistory_consistent
+out shadow
+out shadow_regime
+out shadow_ancestry
+out cast_shadow
+out shadow_regime_of
+out psychohistory_extend_with_mission
+out shadow_faithful
