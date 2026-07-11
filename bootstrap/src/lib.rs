@@ -3178,12 +3178,13 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                     "note: `mirror spawn` is a deprecated alias for `mirror peer beam` (two-tick discipline; substrate-honest surface is `mirror peer beam <peer-home>` per mirror.spec cli-block)"
                 );
                 let hello_world = args.iter().any(|a| a == "--hello-world");
+                let emit_diff = args.iter().any(|a| a == "--emit-diff");
                 let mission = args
                     .iter()
                     .position(|a| a == "--mission" || a == "--task")
                     .and_then(|i| args.get(i + 1))
                     .map(|s| s.as_str());
-                cmd_peer_beam(p, hello_world, mission, ctx)
+                cmd_peer_beam(p, hello_world, mission, ctx, emit_diff)
             }
             None => {
                 merr!("usage: mirror spawn <peer-home> [--hello-world] [--mission <mission-file> | --task <mission-file>]  (deprecated alias for `mirror peer beam`)");
@@ -3236,10 +3237,11 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                                     .position(|a| a == "--mission" || a == "--task")
                                     .and_then(|i| args.get(i + 1))
                                     .map(|s| s.as_str());
-                                cmd_peer_beam(p, hello_world, mission, ctx)
+                                let emit_diff = args.iter().any(|a| a == "--emit-diff");
+                                cmd_peer_beam(p, hello_world, mission, ctx, emit_diff)
                             }
                             None => {
-                                merr!("usage: mirror peer beam <peer-home> [--hello-world] [--mission <mission-file>]");
+                                merr!("usage: mirror peer beam <peer-home> [--hello-world] [--emit-diff] [--mission <mission-file>]");
                                 1
                             }
                         }
@@ -3275,7 +3277,8 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                     // argument to cmd_peer_beam with the current dir as
                     // sentinel peer-home; the substrate action is the
                     // same, only the operator-facing arg-shape differs.
-                    cmd_peer_beam(".", hello_world, Some(p), ctx)
+                    let emit_diff = args.iter().any(|a| a == "--emit-diff");
+                    cmd_peer_beam(".", hello_world, Some(p), ctx, emit_diff)
                 }
                 None => {
                     merr!("usage: mirror beam <mission-file> [--hello-world]");
@@ -4107,6 +4110,73 @@ fn parse_settle_on_predicates(body: &str) -> Vec<String> {
 // `mirror spawn <peer-home>` — Phase G v0 empirical-path-traversal proof.
 // ───────────────────────────────────────────────────────────────────────────────
 
+fn emit_peer_beam_diff(
+    peer_home: &str,
+    spec_path: &std::path::Path,
+    task: Option<&str>,
+    ctx: &Ctx,
+) -> i32 {
+    // Read spec bytes (best-effort — empty for partial peer).
+    let spec_bytes = match fs::read(spec_path) {
+        Ok(b) => b,
+        Err(_) => Vec::new(),
+    };
+
+    // spec_oid via blake3 (matches the substrate's content-address
+    // idiom at bootstrap/src/lib.rs's blake3::hash sites). Empty spec
+    // still produces a well-defined content-address so the diff shape
+    // is stable across peer maturity levels.
+    let spec_oid = {
+        let digest = blake3::hash(&spec_bytes);
+        let bytes = digest.as_bytes();
+        let mut s = String::with_capacity(64);
+        for b in bytes.iter() {
+            s.push_str(&format!("{:02x}", b));
+        }
+        s
+    };
+
+    // Mission line — first line of the mission file, if present.
+    let mission_line = match task {
+        None => "+ mission: <absent>".to_string(),
+        Some(path) => {
+            let mission_path = ctx.resolve(path);
+            match fs::read_to_string(&mission_path) {
+                Ok(text) => {
+                    let first = text.lines().next().unwrap_or("").trim();
+                    if first.is_empty() {
+                        "+ mission: <empty>".to_string()
+                    } else {
+                        format!("+ mission: {}", first)
+                    }
+                }
+                Err(_) => "+ mission: <unreadable>".to_string(),
+            }
+        }
+    };
+
+    // Unified-diff-shape envelope. Real diff signature lines (---, +++,
+    // @@) so downstream tooling (patch, git apply, review UIs) can
+    // parse the shape without knowing the substrate. The + lines carry
+    // the peer's substrate observation.
+    let out = format!(
+        "--- a/mirror.spec\n\
+         +++ b/mirror.spec\n\
+         @@ peer_beam substrate observation via @optics/lens/diff.get @@\n\
+         + peer_home: {peer_home}\n\
+         + spec_oid: {spec_oid}\n\
+         + verdict: substrate_observation\n\
+         + optics_lens: @optics/lens/diff\n\
+         + optics_lens_get_altitude: substrate-decl (Mara b0427fd + 7e5c298)\n\
+         + optics_lens_put_altitude: forward-promise (Rust runtime is next tick)\n\
+         + fate_altitude: partial@recall (@fate wiring is subsequent tick)\n\
+         {mission_line}\n"
+    );
+
+    mout!("{}", out);
+    0
+}
+
 /// `mirror spawn <peer-home>` — v0 empirical-path-traversal proof.
 ///
 /// Per Mara's spawn-semantics insight (`docs/insights/2026-06-26-spawn-is-
@@ -4130,13 +4200,43 @@ fn parse_settle_on_predicates(body: &str) -> Vec<String> {
 ///   - No membership-side-effects (spawn does NOT add members to the pack).
 ///   - No stateless-return (envelope acknowledges persisted state even
 ///     though v0 does not yet store it; Phase H wires storage).
-fn cmd_peer_beam(peer_home: &str, hello_world: bool, task: Option<&str>, ctx: &Ctx) -> i32 {
+///
+/// The `emit_diff` param routes to the @optics/lens/diff.get direction
+/// (Mara b0427fd + 7e5c298) — unified-diff-shape bytes for operator
+/// review at cli-surface altitude. Mutually independent of `hello_world`;
+/// if both flags are set, `emit_diff` wins.
+fn cmd_peer_beam(
+    peer_home: &str,
+    hello_world: bool,
+    task: Option<&str>,
+    ctx: &Ctx,
+    emit_diff: bool,
+) -> i32 {
     // Piece 1 (insight §2.1): cli surface. The peer-home argument is the
     // single positional. Context (frame, repository, pack) is resolved
     // FROM peer-home, not passed in. Resolve via ctx so relative
     // peer-home honors the dispatch context.
     let peer_home_resolved = ctx.resolve(peer_home);
     let spec_path = peer_home_resolved.join("mirror.spec");
+
+    // Blocker 2 Rust runtime discharge (2026-07-11) —
+    // `--emit-diff` routes through the @optics/lens/diff.get direction
+    // per Mara iter-25 `b0427fd` (@optics/lens family-root, Foster laws)
+    // + Mara iter-26 `7e5c298` (@optics/lens/diff first species,
+    // autopoietic_closure bilateral). This is the FIRST Rust runtime
+    // discharge of the Foster (get, put) triple that Mara iter-6
+    // `583b939` @shatter × @io spec named at spec altitude.
+    //
+    // v0 substrate observation: emits unified-diff-shape bytes carrying
+    // spec_oid (content-addressed via blake3) + peer_home + composition
+    // attribution + mission (if present). Real bytes, real substrate
+    // flow. @fate optical inference that would produce COMPUTED
+    // candidates from mission text lands at a subsequent tick that
+    // wires the fate crate to the dispatch path; this tick lands the
+    // plumbing.
+    if emit_diff {
+        return emit_peer_beam_diff(peer_home, &spec_path, task, ctx);
+    }
 
     // Piece 2 (insight §2.2): @peer resolution via G1 single-hop. The
     // `~peer'<path>'` sigil at substrate altitude is G1-composed with
