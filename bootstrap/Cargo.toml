@@ -88,6 +88,26 @@ libc = "0.2"
 [dependencies.fragmentation]
 path = "../../fragmentation"
 
+# fate — optical inference at cli-surface altitude for cmd_peer_beam.
+# Five-model selector (Abyss / Introject / Cartographer / Explorer /
+# Fate) bound to prism operations via boot/std/epistemologic/math/
+# bundle.mirror. Uses `prism = { package = "prismqueer" }` — same
+# prismqueer bootstrap already carries; no version conflict.
+#
+# Composes with Mara `f3af5b4` @optics/lens/features species (which
+# reuses graph_observation from @mirror/spectral/observation as its
+# 16-dim carrier, byte-compatible with fate::Features). Seam `d9b7c35`
+# Adj 1: v0 Rust discharge uses Features::default() (all zeros —
+# "no observation yet" state) until the shards/magic/nl.mirror
+# adapter cascade lands the @nl-driven encoder.
+#
+# `mirror peer beam <home> --fate-select` invokes Fate::excited()
+# .resolve(&features, 5) — real optical inference from real Rust
+# runtime; emits selected Model + mapped prism-op in unified-diff-
+# shape envelope.
+[dependencies.fate]
+path = "../../fate"
+
 # fragmentation-git — the git-transport workspace member of
 # fragmentation (`vcs/git/`, package name `fragmentation-git`).
 # Companion edge to `fragmentation` above; the two together surface

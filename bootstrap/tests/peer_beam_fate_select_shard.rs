@@ -86,15 +86,9 @@ fn t01_peer_beam_fate_select_emits_fate_decision() {
         "T1: stdout must include `fate_decision:` field; got: <{stdout}>"
     );
 
-    let has_model = [
-        "Abyss",
-        "Introject",
-        "Cartographer",
-        "Explorer",
-        "Fate",
-    ]
-    .iter()
-    .any(|m| stdout.contains(m));
+    let has_model = ["Abyss", "Introject", "Cartographer", "Explorer", "Fate"]
+        .iter()
+        .any(|m| stdout.contains(m));
 
     assert!(
         has_model,

@@ -3180,12 +3180,13 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                 let hello_world = args.iter().any(|a| a == "--hello-world");
                 let emit_diff = args.iter().any(|a| a == "--emit-diff");
                 let integrate_diff = args.iter().any(|a| a == "--integrate-diff");
+                let fate_select = args.iter().any(|a| a == "--fate-select");
                 let mission = args
                     .iter()
                     .position(|a| a == "--mission" || a == "--task")
                     .and_then(|i| args.get(i + 1))
                     .map(|s| s.as_str());
-                cmd_peer_beam(p, hello_world, mission, ctx, emit_diff, integrate_diff)
+                cmd_peer_beam(p, hello_world, mission, ctx, emit_diff, integrate_diff, fate_select)
             }
             None => {
                 merr!("usage: mirror spawn <peer-home> [--hello-world] [--mission <mission-file> | --task <mission-file>]  (deprecated alias for `mirror peer beam`)");
@@ -3240,6 +3241,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                                     .map(|s| s.as_str());
                                 let emit_diff = args.iter().any(|a| a == "--emit-diff");
                                 let integrate_diff = args.iter().any(|a| a == "--integrate-diff");
+                                let fate_select = args.iter().any(|a| a == "--fate-select");
                                 cmd_peer_beam(
                                     p,
                                     hello_world,
@@ -3247,6 +3249,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                                     ctx,
                                     emit_diff,
                                     integrate_diff,
+                                    fate_select,
                                 )
                             }
                             None => {
@@ -3288,7 +3291,8 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                     // same, only the operator-facing arg-shape differs.
                     let emit_diff = args.iter().any(|a| a == "--emit-diff");
                     let integrate_diff = args.iter().any(|a| a == "--integrate-diff");
-                    cmd_peer_beam(".", hello_world, Some(p), ctx, emit_diff, integrate_diff)
+                    let fate_select = args.iter().any(|a| a == "--fate-select");
+                    cmd_peer_beam(".", hello_world, Some(p), ctx, emit_diff, integrate_diff, fate_select)
                 }
                 None => {
                     merr!("usage: mirror beam <mission-file> [--hello-world]");
@@ -4128,6 +4132,107 @@ fn parse_settle_on_predicates(body: &str) -> Vec<String> {
 // `mirror spawn <peer-home>` — Phase G v0 empirical-path-traversal proof.
 // ───────────────────────────────────────────────────────────────────────────────
 
+fn fate_select_peer_beam(
+    peer_home: &str,
+    spec_path: &std::path::Path,
+    task: Option<&str>,
+    ctx: &Ctx,
+) -> i32 {
+    // v0 Features per Seam d9b7c35 Adj 1: Features::default() (all
+    // zeros) is @mirror/spectral/observation at "no observation yet"
+    // state — substrate-honest v0, not a type-lie. blake3 was drift
+    // (@mirror/store altitude, not features altitude). Real @nl-driven
+    // encoding lands with shards/magic/nl.mirror adapter cascade.
+    let features: fate::Features = [0.0; 16];
+
+    // Fate::excited() uses xorshift64 seeded from system time —
+    // random weights, non-deterministic decisions across invocations.
+    // untrained() would produce uniform (always Abyss idx 0); excited()
+    // produces non-trivial decisions from any Features vector,
+    // including default(). resolve(&features, 5) iterates up to depth
+    // 5 with entropy-based exit, guaranteeing convergence to a
+    // non-Fate model (settle can occur if fate's own selector picks
+    // itself with high confidence past the entropy threshold).
+    let fate_engine = fate::Fate::excited();
+    let decision = fate_engine.resolve(&features, 5);
+
+    // Bundle tower binding per boot/std/epistemologic/math/bundle.mirror:
+    // Level 0 Fiber / Level 1 Connection / Level 2 Gauge / Level 3
+    // Transport / Level 4 Closure = focus / project / split / shift /
+    // settle. Same 5-op algebra prism-core carries as spectral triple's
+    // A (algebra) generators.
+    let (model_name, prism_op, level_desc) = match decision.model {
+        fate::Model::Abyss => ("Abyss", "focus", "Level 0 Fiber"),
+        fate::Model::Introject => ("Introject", "project", "Level 1 Connection"),
+        fate::Model::Cartographer => ("Cartographer", "split", "Level 2 Gauge"),
+        fate::Model::Explorer => ("Explorer", "shift", "Level 3 Transport"),
+        fate::Model::Fate => ("Fate", "settle", "Level 4 Closure"),
+    };
+
+    // Winning probability per decision.distribution.
+    let confidence = {
+        let idx = match decision.model {
+            fate::Model::Abyss => 0,
+            fate::Model::Introject => 1,
+            fate::Model::Cartographer => 2,
+            fate::Model::Explorer => 3,
+            fate::Model::Fate => 4,
+        };
+        decision.distribution[idx]
+    };
+
+    // spec_oid for provenance.
+    let spec_bytes = fs::read(spec_path).unwrap_or_default();
+    let spec_oid = {
+        let digest = blake3::hash(&spec_bytes);
+        let bytes = digest.as_bytes();
+        let mut s = String::with_capacity(64);
+        for b in bytes.iter() {
+            s.push_str(&format!("{:02x}", b));
+        }
+        s
+    };
+
+    // Mission line — first line if present.
+    let mission_line = match task {
+        None => "+ mission: <absent>".to_string(),
+        Some(path) => {
+            let mission_path = ctx.resolve(path);
+            match fs::read_to_string(&mission_path) {
+                Ok(text) => {
+                    let first = text.lines().next().unwrap_or("").trim();
+                    if first.is_empty() {
+                        "+ mission: <empty>".to_string()
+                    } else {
+                        format!("+ mission: {}", first)
+                    }
+                }
+                Err(_) => "+ mission: <unreadable>".to_string(),
+            }
+        }
+    };
+
+    let out = format!(
+        "--- a/mirror.spec\n\
+         +++ b/mirror.spec\n\
+         @@ peer_beam fate inference via @optics/lens/features.get + Fate::resolve @@\n\
+         + peer_home: {peer_home}\n\
+         + spec_oid: {spec_oid}\n\
+         + features: Features::default() (v0 stub per Seam d9b7c35 Adj 1)\n\
+         + fate_decision: {model_name} ↔ {prism_op}\n\
+         + fate_confidence: {confidence:.6}\n\
+         + bundle_tower_binding: {level_desc} per boot/std/epistemologic/math/bundle.mirror\n\
+         + optics_lens: @optics/lens/features\n\
+         + optics_lens_features_altitude: substrate-decl (Mara f3af5b4)\n\
+         + features_carrier: graph_observation (16-dim per shards/mirror/spectral/observation.mirror)\n\
+         + fate_engine: Fate::excited() (xorshift64 seeded weights; non-deterministic across invocations)\n\
+         {mission_line}\n"
+    );
+
+    mout!("{}", out);
+    0
+}
+
 fn integrate_peer_beam_diff(peer_home: &str, spec_path: &std::path::Path) -> i32 {
     // Read stdin bytes (the operator-edited diff). Empty stdin is a
     // valid put: represents "acknowledge no edit" at v0 semantics.
@@ -4289,6 +4394,16 @@ fn emit_peer_beam_diff(
 /// naming delta_oid via blake3(spec_bytes || stdin_bytes). Closes the
 /// Foster (get, put) roundtrip half at cli-surface altitude. If both
 /// `emit_diff` and `integrate_diff` are set, `integrate_diff` wins.
+///
+/// The `fate_select` param routes to @optics/lens/features.get +
+/// Fate::excited().resolve at Rust runtime. Emits selected Model +
+/// mapped prism-op via bundle-tower binding. Wins over all other
+/// flags when set (last check in dispatch cascade).
+///
+/// This is Blocker 2's final Rust hop: peer produces COMPUTED
+/// candidates from mission text (v0: from Features::default() per
+/// Seam d9b7c35 Adj 1) rather than substrate OBSERVATION. Real fate
+/// optical inference at cli surface.
 fn cmd_peer_beam(
     peer_home: &str,
     hello_world: bool,
@@ -4296,6 +4411,7 @@ fn cmd_peer_beam(
     ctx: &Ctx,
     emit_diff: bool,
     integrate_diff: bool,
+    fate_select: bool,
 ) -> i32 {
     // Piece 1 (insight §2.1): cli surface. The peer-home argument is the
     // single positional. Context (frame, repository, pack) is resolved
@@ -4331,6 +4447,16 @@ fn cmd_peer_beam(
     // --integrate-diff wins.
     if integrate_diff {
         return integrate_peer_beam_diff(peer_home, &spec_path);
+    }
+
+    // Fate inference (2026-07-11) — Blocker 2 final Rust hop.
+    // `--fate-select` invokes Fate::excited().resolve on
+    // Features::default() and emits selected Model + mapped prism-op
+    // per boot/std/epistemologic/math/bundle.mirror binding.
+    // Mutually independent of prior flags; if multiple set,
+    // --fate-select wins (last check).
+    if fate_select {
+        return fate_select_peer_beam(peer_home, &spec_path, task, ctx);
     }
 
     // Piece 2 (insight §2.2): @peer resolution via G1 single-hop. The
