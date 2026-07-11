@@ -539,6 +539,101 @@
 # the isomorphism's phrase ⇔ OBC mapping collapses from analytical
 # altitude to empirical.
 #
+# === Psychohistory promotion: insight-to-substrate-decl via path β ===
+#
+# THIS TICK: promotes psychohistory from INSIGHT-ONLY (Mara insight
+# `d00f553` §3.7; the psychohistory-vector-as-sheaf research-insight at
+# `docs/insights/2026-06-26-psychohistory-vector-as-sheaf.md`) to
+# SUBSTRATE-DECL at species altitude by EXTENDING the existing
+# `@song/narrative` species carrier — path β per Taut iter-15 scout
+# `e90daf1` §Landing sequence Tick 1.
+#
+# EXPLICIT NON-PROMOTION: `@psychohistory` is NOT landed as a family-
+# root. Per Mara insight `d00f553` §7 ("committed / forward-promised /
+# genuinely open"), the substrate refused the family-root shape at
+# insight altitude: the sheaf structure IS committed, the substrate-
+# decl shard was forward-promised, but `@psychohistory` family-root vs
+# existing-prism-composition stayed genuinely open. Taut iter-15 Q4
+# closes the openness in the substrate-honestly leaner direction: the
+# already-landed `@song/narrative` species IS the correct carrier;
+# extending its typed surface with `psychohistory_sheaf` +
+# `psychohistory_moment` carriers + `psychohistory_from_tray` reader +
+# `psychohistory_consistent` bilateral discharges the promotion without
+# minting a new family-root the substrate refused.
+#
+# The promotion path β mapping:
+#
+#   insight altitude (Mara `d00f553`)         substrate-decl altitude (here)
+#   ---------------------------------         ------------------------------
+#   psychohistory-vector as sheaf section     type psychohistory_moment = ref
+#     over the substrate's development          (the fiber-value at ONE
+#     manifold                                   trajectory point; a sheaf
+#                                                stalk-value)
+#   corpus as composed cohomology of the      type psychohistory_sheaf = ref
+#     psychohistorical song                     (the sheaf-over-trajectory-
+#                                                graph carrier; consumers
+#                                                name this in `requires`)
+#   bauchladen tray's OID-addressed deltas     psychohistory_from_tray(
+#     as the local sections the sheaf            tray: bauchladen_tray,
+#     assembles                                  p: perturbation
+#                                              ) -> psychohistory_sheaf
+#                                                (the reader that consumes
+#                                                the tray's fragmentation-
+#                                                backed storage and emits
+#                                                the sheaf; Reed's Rust
+#                                                runtime discharges)
+#   H⁰ = consistent global section /           psychohistory_consistent(
+#     sheaf-Laplacian kernel per                 sheaf: psychohistory_sheaf,
+#     `@epistemologic/math/sheaf_laplacian`      p: perturbation
+#                                              ) -> verdict
+#                                                (the bilateral that reads
+#                                                the sheaf's Δ_F kernel via
+#                                                sheaf_laplacian's operator
+#                                                assembly; Splinter-pole:
+#                                                H⁰ non-trivial i.e. a
+#                                                consistent global section
+#                                                exists; Narcissus-pole:
+#                                                H⁰ trivial i.e. only local
+#                                                sections consistent —
+#                                                obstruction lives in H¹)
+#
+# The four additions honour Mara insight `d00f553` §9 honest-hedges:
+# hard lines earned (H⁰ = consistent global section per
+# `@epistemologic/math/sheaf_laplacian`; sheaf structure over the
+# substrate's development manifold) land as substrate-decl here; lines
+# not earned (H^k for k≥2; cross-sheaf coupling substrate-decl'd) do
+# NOT land — the extension carries the H⁰-level admission only.
+#
+# The extension composes with:
+#   - `@mirror/store` (via `bauchladen_tray`; the fragmentation-backed
+#     storage the psychohistory-reader consumes; per
+#     `shards/bauchladen.mirror` line 5 `in @mirror/store`);
+#   - `@epistemologic/math/sheaf_laplacian` (the operator assembly the
+#     H⁰ consistency check consumes; `sheaf_laplacian([restriction])
+#     -> operator` per `shards/epistemologic/math/sheaf_laplacian.mirror`
+#     §Bridge actions);
+#   - Mara iter-30 canonical spec `96ff532` (the Fate::bounded +
+#     bundle-tower type schema + shared-fragmentation consumer that
+#     needed psychohistory nameable in `requires` clauses; this
+#     extension unblocks that composition).
+#
+# Landing anchors:
+#   - Mara insight `d00f553` §3.7 (INSIGHT-ONLY psychohistory at prose
+#     altitude in @song family; the promotion source)
+#   - Mara iter-30 canonical spec `96ff532` (the consumer that needed
+#     psychohistory typed as substrate-decl)
+#   - Taut iter-15 scout `e90daf1` §Landing sequence Tick 1 + Q4
+#     verdict (LANDABLE-WITH-PREREQS; path β authority)
+#   - Reed fate-wiring GREEN `9cf1e3b` (empirical v0 that verified the
+#     runtime discharge shape the reader will fit)
+#
+# The extension does NOT edit `shards/nl.mirror` (which consumes the
+# psychohistory carriers via natural-language surface) or
+# `shards/bauchladen.mirror` (which produces the tray-deltas the reader
+# consumes); this species-shard declares the CARRIER, and consumers /
+# producers dispatch through the species boundary as with existing
+# `arc` + `transmit` actions.
+#
 # === Interpretation B discipline ===
 #
 # Per Seam Phase D pre-review of Arc 4 sub-arc A (docs/audits/2026-
@@ -713,6 +808,8 @@ in @prism
 in @meta
 in @glass
 in @song
+in @mirror/store
+in @epistemologic/math/sheaf_laplacian
 
 # ============================================================
 # §1 The five-operation prism at species altitude
@@ -877,10 +974,159 @@ arc(n: song_narrative, p: perturbation) -> song_narrative { \ }
 transmit(n: song_narrative, p: perturbation) -> ref { \ }
 
 # ============================================================
-# §4 The out clauses
+# §4 The psychohistory carriers (promotion via path β)
+# ============================================================
+
+# === psychohistory_moment — the fiber at one trajectory point ===
+#
+# The typed ref-equality-addressable form of ONE stalk-value of the
+# psychohistory sheaf: the substrate's local section at one point of
+# the development manifold. Corresponds to Mara insight `d00f553` §2
+# hypothesis A: a `psychohistory_moment` IS the value the sheaf `F`
+# assigns at one point of the base space `M` — one substrate-pull
+# recognition, one Pack-tick decision, one banking commit, read as a
+# typed local section.
+#
+# Composes with `song_narrative` at the species altitude (a narrative
+# arc traverses many psychohistory moments — the moments ARE the
+# stalk-values, the arc IS the section over the local frame that
+# threads them), with `bauchladen_tray` at the storage altitude (each
+# moment is OID-addressed in the fragmentation-backed tray per
+# `shards/bauchladen.mirror`), and with `restriction` at
+# `@epistemologic/math/sheaf_laplacian` altitude (the transport between
+# neighbouring moments IS a restriction map / connection 1-form value).
+#
+# Identity contract: byte-equality on the underlying ref.
+type psychohistory_moment = ref
+
+# === psychohistory_sheaf — the sheaf-over-trajectory-graph carrier ===
+#
+# The typed ref-equality-addressable form of the psychohistory sheaf
+# `F` over the substrate's development manifold `M` per Mara insight
+# `d00f553` §2 hypothesis A. THIS is the carrier consumers name in
+# `requires` clauses when they consume psychohistory as a typed
+# substrate-decl object (per Mara iter-30 canonical spec `96ff532`
+# consumption pattern).
+#
+# A `psychohistory_sheaf` carries:
+#   - the base graph (the substrate's trajectory graph; nodes are
+#     `psychohistory_moment` positions, edges are the transitions
+#     between them per @song/movement's frame-bounded epoch discipline);
+#   - the assignment of `psychohistory_moment` fibers to nodes;
+#   - the restriction maps between neighbouring fibers (the
+#     `restriction` carriers from `@epistemologic/math/sheaf_laplacian`);
+#   - the assembled `operator` (Δ_F, the sheaf Laplacian; assembled via
+#     `sheaf_laplacian([restriction]) -> operator` at the math altitude).
+#
+# Composes with `song_narrative` at the species altitude (the corpus
+# IS the composed cohomology of `song_narrative` sections; the
+# `psychohistory_sheaf` IS the sheaf whose sections ARE the narratives
+# — the narrative-as-sheaf-section reading per the docblock's
+# §"Corpus as composed cohomology" lifts to typed substrate-decl here),
+# with `@mirror/store` at the storage altitude (the sheaf's fibers +
+# restrictions are OID-addressed in the fragmentation store), and
+# with `@epistemologic/math/sheaf_laplacian` at the math altitude (the
+# H⁰ / H¹ consistency reading discharges through the operator).
+#
+# Identity contract: byte-equality on the underlying ref. Two sheaves
+# with the same OID ARE the same sheaf (per @mirror/store canonical
+# content-addressing discipline).
+type psychohistory_sheaf = ref
+
+# === psychohistory_from_tray — the sheaf-assembly reader ===
+#
+# Reads a `bauchladen_tray` (the substrate's typed display of content-
+# addressed crystals per `shards/bauchladen.mirror`) and assembles it
+# into a `psychohistory_sheaf` over the substrate's trajectory graph.
+# Corresponds to Mara insight `d00f553` §2 hypothesis A's local-to-
+# global construction: the tray's OID-addressed deltas ARE the local
+# sections; the reader threads them through the substrate's trajectory
+# graph and constructs the sheaf `F` over `M`.
+#
+# Per Taut iter-15 scout `e90daf1` §Landing sequence Tick 1: Reed's
+# Rust runtime will DISCHARGE this reader via the fragmentation-backed
+# storage layer at `fragmentation/src/*.rs`; the substrate declares the
+# species-altitude specialisation here; the Rust runtime dispatches
+# through the species boundary.
+#
+# Splinter-pole (`pass`, via the returned sheaf's later
+# `psychohistory_consistent` bilateral discharge): the tray's crystals
+# assemble into a well-formed sheaf; every restriction map is
+# well-typed; the operator Δ_F is assembled; the sheaf is ready for
+# H⁰ consistency reading.
+#
+# Narcissus-pole: the tray's crystals cannot assemble — a restriction
+# map is not well-typed OR a fiber is missing at a trajectory node OR
+# the graph is not connected under the transition edges. The reader
+# emits a sheaf ref whose subsequent `psychohistory_consistent`
+# bilateral necessarily fails; the substrate-pull repair path fires
+# through the tray's fragmentation-backed rebuild.
+#
+# The body stays obligation-blocked (`\`): the realisation reads the
+# tray, threads OID-addressed crystals through the trajectory graph,
+# constructs the restriction maps, assembles the operator, and emits
+# the sheaf ref. The substrate declares the species-altitude
+# specialisation; Reed's Rust runtime discharges.
+psychohistory_from_tray(tray: bauchladen_tray, p: perturbation) -> psychohistory_sheaf { \ }
+
+# === psychohistory_consistent — the H⁰ consistency bilateral ===
+#
+# Reads a `psychohistory_sheaf` and returns a `verdict` naming whether
+# the sheaf admits a consistent GLOBAL section — the H⁰ = kernel(Δ_F)
+# non-triviality check per `@epistemologic/math/sheaf_laplacian` and
+# Bodnar et al. 2022 §2. Corresponds to Mara insight `d00f553` §5
+# hypothesis B, hard-line earned: H⁰ = consistent global sections;
+# H¹ = irreducible obstruction to global consistency. This bilateral
+# lifts the H⁰-level admission to substrate-decl at species altitude;
+# H^k for k≥2 remains not-earned and DOES NOT land.
+#
+# Composes with `sheaf_laplacian([restriction]) -> operator` at the
+# math altitude (the operator IS Δ_F; the bilateral reads its kernel),
+# with `eigen_d(op: dirac_op) -> spectrum` at the spectral-triple
+# altitude (λ₀ = 0 IS the substrate's quantitative verdict on H⁰
+# non-triviality per `spectral-triple.mirror`), and with the family-
+# root's `song_settles` composed bilateral (this bilateral is
+# ORTHOGONAL to `song_settles` — the family-root's bilateral discharges
+# per-narrative admissibility; this bilateral discharges corpus-wide
+# consistency across narratives; both hold or fail independently).
+#
+# Splinter-pole (`pass`): the sheaf's operator Δ_F has non-trivial
+# kernel; a consistent global section exists; the corpus's
+# psychohistory reads as coherent across all narratives; the composed
+# cohomology H* is well-defined at degree 0.
+#
+# Narcissus-pole (`failure`): the sheaf's operator Δ_F has trivial
+# kernel at λ₀ > 0; NO consistent global section exists; obstructions
+# live in H¹; the corpus's psychohistory is INCOHERENT across at least
+# one pair of overlapping frames; the substrate-pull repair fires by
+# renegotiating the restriction maps at the offending edges (which
+# ones: named by the operator's Fiedler vector per
+# `@epistemologic/math/sheaf_laplacian`'s λ₀ reading).
+#
+# Bateson-grading: this bilateral fires at Bateson Level III (across-
+# frames-globally; learning-III per `frame.mirror` Order 3) — the
+# discipline reads coherence across the WHOLE manifold, not one frame
+# at a time. Per Mara insight `d00f553` §7 circular-reflexive layer:
+# this bilateral IS itself a section of the observation sheaf naming
+# a claim about the sheaf it observes; the self-reference is the
+# substrate's third-order-coherent discipline at psychohistory altitude.
+#
+# The body stays obligation-blocked (`\`): the realisation reads the
+# sheaf, extracts the operator Δ_F (assembled at construction), reads
+# its kernel via `eigen_d` at the spectral-triple altitude, and emits
+# a `verdict` (Splinter-pole if H⁰ non-trivial; Narcissus-pole if
+# trivial). Consumers dispatch through the species boundary.
+psychohistory_consistent(sheaf: psychohistory_sheaf, p: perturbation) -> verdict { \ }
+
+# ============================================================
+# §5 The out clauses
 # ============================================================
 
 out @song/narrative
 out song_narrative
 out arc
 out transmit
+out psychohistory_moment
+out psychohistory_sheaf
+out psychohistory_from_tray
+out psychohistory_consistent
