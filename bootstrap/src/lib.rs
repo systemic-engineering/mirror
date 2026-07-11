@@ -3181,6 +3181,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                 let emit_diff = args.iter().any(|a| a == "--emit-diff");
                 let integrate_diff = args.iter().any(|a| a == "--integrate-diff");
                 let fate_select = args.iter().any(|a| a == "--fate-select");
+                let from_psychohistory = args.iter().any(|a| a == "--from-psychohistory");
                 let mission = args
                     .iter()
                     .position(|a| a == "--mission" || a == "--task")
@@ -3194,6 +3195,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                     emit_diff,
                     integrate_diff,
                     fate_select,
+                    from_psychohistory,
                 )
             }
             None => {
@@ -3250,6 +3252,8 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                                 let emit_diff = args.iter().any(|a| a == "--emit-diff");
                                 let integrate_diff = args.iter().any(|a| a == "--integrate-diff");
                                 let fate_select = args.iter().any(|a| a == "--fate-select");
+                                let from_psychohistory =
+                                    args.iter().any(|a| a == "--from-psychohistory");
                                 cmd_peer_beam(
                                     p,
                                     hello_world,
@@ -3258,6 +3262,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                                     emit_diff,
                                     integrate_diff,
                                     fate_select,
+                                    from_psychohistory,
                                 )
                             }
                             None => {
@@ -3300,6 +3305,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                     let emit_diff = args.iter().any(|a| a == "--emit-diff");
                     let integrate_diff = args.iter().any(|a| a == "--integrate-diff");
                     let fate_select = args.iter().any(|a| a == "--fate-select");
+                    let from_psychohistory = args.iter().any(|a| a == "--from-psychohistory");
                     cmd_peer_beam(
                         ".",
                         hello_world,
@@ -3308,6 +3314,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                         emit_diff,
                         integrate_diff,
                         fate_select,
+                        from_psychohistory,
                     )
                 }
                 None => {
@@ -4148,6 +4155,245 @@ fn parse_settle_on_predicates(body: &str) -> Vec<String> {
 // `mirror spawn <peer-home>` — Phase G v0 empirical-path-traversal proof.
 // ───────────────────────────────────────────────────────────────────────────────
 
+/// Walk `peer_home` recursively, blake3-hashing each file's content
+/// as a `moment_oid`, then aggregating all moment_oids into a
+/// deterministic `psychohistory_root_oid`. Substrate-honest stub for
+/// the sheaf-Laplacian Δ_F Rayleigh direction on the peer's
+/// psychohistory sheaf (Mara `2c26537` + `ce9745f` + `96ff532`); the
+/// v0 blake3 mapping is the same-altitude realization idiom used at
+/// `@bauchladen`-lifts-`@mirror/store` per Taut `e90daf1` Q1.
+///
+/// Returns (root_oid_hex, moment_count). Skips `.git`, `target`,
+/// `.mirror` (action cache), `node_modules`, and hidden dirs deeper
+/// than one level to keep the walk bounded.
+fn psychohistory_root_from_peer_home(peer_home: &std::path::Path) -> (String, usize) {
+    let mut moment_oids: Vec<[u8; 32]> = Vec::new();
+
+    fn walk(dir: &std::path::Path, out: &mut Vec<[u8; 32]>, depth: usize) {
+        if depth > 8 {
+            return;
+        }
+        let entries = match fs::read_dir(dir) {
+            Ok(e) => e,
+            Err(_) => return,
+        };
+        for entry in entries.flatten() {
+            let path = entry.path();
+            let name = entry.file_name();
+            let name_str = name.to_string_lossy();
+            if matches!(
+                name_str.as_ref(),
+                ".git" | "target" | ".mirror" | "node_modules" | ".cargo-target"
+            ) {
+                continue;
+            }
+            let file_type = match entry.file_type() {
+                Ok(t) => t,
+                Err(_) => continue,
+            };
+            if file_type.is_dir() {
+                walk(&path, out, depth + 1);
+            } else if file_type.is_file() {
+                if let Ok(bytes) = fs::read(&path) {
+                    let digest = blake3::hash(&bytes);
+                    let mut oid = [0u8; 32];
+                    oid.copy_from_slice(digest.as_bytes());
+                    out.push(oid);
+                }
+            }
+        }
+    }
+
+    walk(peer_home, &mut moment_oids, 0);
+
+    // Deterministic ordering across walks (fs read_dir order varies).
+    moment_oids.sort_unstable();
+
+    // Aggregate: blake3 over concatenation of sorted moment_oids.
+    let mut agg = Vec::with_capacity(moment_oids.len() * 32);
+    for oid in &moment_oids {
+        agg.extend_from_slice(oid);
+    }
+    let root_digest = blake3::hash(&agg);
+    let root_bytes = root_digest.as_bytes();
+    let mut root_hex = String::with_capacity(64);
+    for b in root_bytes.iter() {
+        root_hex.push_str(&format!("{:02x}", b));
+    }
+
+    (root_hex, moment_oids.len())
+}
+
+/// Derive `Fate::selectors` from a psychohistory root oid via a
+/// deterministic xorshift64 stream seeded from the first 8 bytes of
+/// the root. Substrate-honest v1 stub for the full sheaf-Laplacian
+/// Rayleigh direction extraction — same shape as `Fate::excited()`'s
+/// randomization but with the seed grounded in peer content instead
+/// of wall-clock time.
+///
+/// Weight ranges match `Fate::excited()`:
+/// - biases: [0.0, 20.0]
+/// - feature weights: [0.0, 5.0]
+/// - depth weights: [0.0, 5.0]
+fn selectors_from_psychohistory_root(root_hex: &str) -> [fate::ModelWeights; 5] {
+    // Parse first 8 bytes of the 64-hex-char root as u64 seed.
+    let seed: u64 = {
+        let bytes = root_hex.as_bytes();
+        let mut s: u64 = 0;
+        let take = bytes.len().min(16);
+        for i in 0..take {
+            let c = bytes[i];
+            let nibble = if c.is_ascii_digit() {
+                c - b'0'
+            } else if (b'a'..=b'f').contains(&c) {
+                c - b'a' + 10
+            } else {
+                0
+            };
+            s = s.wrapping_shl(4).wrapping_add(nibble as u64);
+        }
+        if s == 0 {
+            0x1234_5678_9abc_def0
+        } else {
+            s
+        }
+    };
+
+    let mut state = seed;
+    let mut next = || -> u64 {
+        state ^= state.wrapping_shl(13);
+        state ^= state.wrapping_shr(7);
+        state ^= state.wrapping_shl(17);
+        state
+    };
+
+    let mut make_selector = || -> fate::ModelWeights {
+        let mut w = [[0.0f64; fate::FEATURE_DIM]; 5];
+        let mut b = [0.0f64; 5];
+        let mut depth_w = [0.0f64; 5];
+        for i in 0..5 {
+            for j in 0..fate::FEATURE_DIM {
+                // Uniform in [0.0, 5.0].
+                let r = (next() as f64) / (u64::MAX as f64);
+                w[i][j] = r * 5.0;
+            }
+            let rb = (next() as f64) / (u64::MAX as f64);
+            b[i] = rb * 20.0;
+            let rd = (next() as f64) / (u64::MAX as f64);
+            depth_w[i] = rd * 5.0;
+        }
+        fate::ModelWeights { w, b, depth_w }
+    };
+
+    [
+        make_selector(),
+        make_selector(),
+        make_selector(),
+        make_selector(),
+        make_selector(),
+    ]
+}
+
+fn fate_bounded_by_psychohistory_peer_beam(
+    peer_home: &str,
+    spec_path: &std::path::Path,
+    task: Option<&str>,
+    ctx: &Ctx,
+) -> i32 {
+    // Build psychohistory root from peer_home content.
+    let peer_home_resolved = ctx.resolve(peer_home);
+    let (psychohistory_root_oid, moments_count) =
+        psychohistory_root_from_peer_home(&peer_home_resolved);
+
+    // Features remain Features::default() per Seam d9b7c35 Adj 1 —
+    // the v0→v1 lift here is on the WEIGHTS (bounded by psychohistory
+    // per Mara 96ff532 + ce9745f), not the input features. Real @nl-
+    // driven feature encoding lands with the @magic/nl adapter
+    // discharge (subsequent tick).
+    let features: fate::Features = [0.0; 16];
+
+    // Base Fate::untrained() for the private connection field, then
+    // overwrite public `selectors` with psychohistory-derived weights.
+    // This is `Fate::bounded(config)` where config.weights is derived
+    // from the peer's psychohistory sheaf via deterministic stub
+    // (v1); v2 will replace with sheaf-Laplacian Δ_F Rayleigh direction.
+    let mut fate_engine = fate::Fate::untrained();
+    fate_engine.selectors = selectors_from_psychohistory_root(&psychohistory_root_oid);
+    let decision = fate_engine.resolve(&features, 5);
+
+    let (model_name, prism_op, level_desc) = match decision.model {
+        fate::Model::Abyss => ("Abyss", "focus", "Level 0 Fiber"),
+        fate::Model::Introject => ("Introject", "project", "Level 1 Connection"),
+        fate::Model::Cartographer => ("Cartographer", "split", "Level 2 Gauge"),
+        fate::Model::Explorer => ("Explorer", "shift", "Level 3 Transport"),
+        fate::Model::Fate => ("Fate", "settle", "Level 4 Closure"),
+    };
+
+    let confidence = {
+        let idx = match decision.model {
+            fate::Model::Abyss => 0,
+            fate::Model::Introject => 1,
+            fate::Model::Cartographer => 2,
+            fate::Model::Explorer => 3,
+            fate::Model::Fate => 4,
+        };
+        decision.distribution[idx]
+    };
+
+    // spec_oid for provenance.
+    let spec_bytes = fs::read(spec_path).unwrap_or_default();
+    let spec_oid = {
+        let digest = blake3::hash(&spec_bytes);
+        let bytes = digest.as_bytes();
+        let mut s = String::with_capacity(64);
+        for b in bytes.iter() {
+            s.push_str(&format!("{:02x}", b));
+        }
+        s
+    };
+
+    let mission_line = match task {
+        None => "+ mission: <absent>".to_string(),
+        Some(path) => {
+            let mission_path = ctx.resolve(path);
+            match fs::read_to_string(&mission_path) {
+                Ok(text) => {
+                    let first = text.lines().next().unwrap_or("").trim();
+                    if first.is_empty() {
+                        "+ mission: <empty>".to_string()
+                    } else {
+                        format!("+ mission: {}", first)
+                    }
+                }
+                Err(_) => "+ mission: <unreadable>".to_string(),
+            }
+        }
+    };
+
+    let out = format!(
+        "--- a/mirror.spec\n\
+         +++ b/mirror.spec\n\
+         @@ peer_beam fate.bounded_by(psychohistory_sheaf) via @fate/tournament.bounded_by @@\n\
+         + peer_home: {peer_home}\n\
+         + spec_oid: {spec_oid}\n\
+         + psychohistory_root_oid: {psychohistory_root_oid}\n\
+         + psychohistory_moments_count: {moments_count}\n\
+         + features: Features::default() (v0 stub per Seam d9b7c35 Adj 1; →@nl adapter is subsequent tick)\n\
+         + fate_decision: {model_name} ↔ {prism_op}\n\
+         + fate_confidence: {confidence:.6}\n\
+         + bundle_tower_binding: {level_desc} per boot/std/epistemologic/math/bundle.mirror\n\
+         + optics_lens: @optics/lens/features\n\
+         + optics_lens_features_altitude: substrate-decl (Mara f3af5b4)\n\
+         + bounded_by_altitude: @fate/tournament.bounded_by (Mara ce9745f)\n\
+         + psychohistory_altitude: @song/narrative.psychohistory_sheaf (Mara 2c26537)\n\
+         + weights_derivation: v1 stub — xorshift64 seeded from psychohistory_root_oid; v2 → sheaf-Laplacian Δ_F Rayleigh direction on trajectory graph\n\
+         {mission_line}\n"
+    );
+
+    mout!("{}", out);
+    0
+}
+
 fn fate_select_peer_beam(
     peer_home: &str,
     spec_path: &std::path::Path,
@@ -4428,6 +4674,7 @@ fn cmd_peer_beam(
     emit_diff: bool,
     integrate_diff: bool,
     fate_select: bool,
+    from_psychohistory: bool,
 ) -> i32 {
     // Piece 1 (insight §2.1): cli surface. The peer-home argument is the
     // single positional. Context (frame, repository, pack) is resolved
@@ -4472,6 +4719,9 @@ fn cmd_peer_beam(
     // Mutually independent of prior flags; if multiple set,
     // --fate-select wins (last check).
     if fate_select {
+        if from_psychohistory {
+            return fate_bounded_by_psychohistory_peer_beam(peer_home, &spec_path, task, ctx);
+        }
         return fate_select_peer_beam(peer_home, &spec_path, task, ctx);
     }
 
