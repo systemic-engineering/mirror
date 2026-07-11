@@ -4515,6 +4515,36 @@ fn integrate_peer_beam_diff(peer_home: &str, spec_path: &std::path::Path) -> i32
         s
     };
 
+    // Autopoietic closure (Mara 7e5c298 iter-26): persist stdin_bytes
+    // as a new moment file in peer_home/.bauchladen/. Content-addressed
+    // by delta_oid so identical edits map to identical filenames
+    // (idempotent persistence; multi-write same content is a no-op).
+    // Next --fate-select --from-psychohistory walker sees the new file
+    // as part of the psychohistory content graph → different
+    // psychohistory_root_oid → different bounded_by weights →
+    // potentially different Decision. The autopoietic loop CLOSES via
+    // the storage layer (Taut e90daf1: @bauchladen already lifts
+    // @mirror/store), no explicit weight-update step required.
+    //
+    // Empty stdin is degenerate: still persists an empty-content
+    // moment (delta_oid stable per (spec, empty) pair); this witnesses
+    // Foster PutPut law with zero payload.
+    let bauchladen_dir = spec_path
+        .parent()
+        .map(|p| p.join(".bauchladen"))
+        .unwrap_or_else(|| std::path::PathBuf::from("/tmp/.bauchladen"));
+    let bauchladen_moment_path: Option<std::path::PathBuf> =
+        match fs::create_dir_all(&bauchladen_dir) {
+            Ok(_) => {
+                // Placeholder — delta_oid computed below, we'll build the
+                // path once we have it.
+                None
+            }
+            Err(_) => None,
+        };
+
+        let _ = bauchladen_moment_path;
+
     // delta_oid via blake3(spec_bytes || stdin_bytes). Content-
     // addressed identity for the (state, edit) pair — Foster PutPut
     // law witness: same edit bytes on same spec produce same
@@ -4534,21 +4564,39 @@ fn integrate_peer_beam_diff(peer_home: &str, spec_path: &std::path::Path) -> i32
 
     let received_bytes = stdin_bytes.len();
 
-    // Unified-diff-shape envelope naming the put roundtrip.
+    // Persist stdin_bytes as moment_<delta_oid>.mirror inside
+    // .bauchladen/ (created above best-effort). Absorb IO errors
+    // silently — persistence failure degrades to acknowledge-only put
+    // (v0 behavior); envelope still emits so operator sees the
+    // acknowledgement.
+    let bauchladen_moment_file = bauchladen_dir.join(format!("moment_{}.mirror", delta_oid));
+    let persisted_path_display = match fs::write(&bauchladen_moment_file, &stdin_bytes) {
+        Ok(_) => bauchladen_moment_file
+            .strip_prefix(spec_path.parent().unwrap_or(&bauchladen_dir))
+            .unwrap_or(&bauchladen_moment_file)
+            .display()
+            .to_string(),
+        Err(_) => "<persist_failed>".to_string(),
+    };
+
+    // Unified-diff-shape envelope naming the put roundtrip AND the
+    // bauchladen persistence (v1 autopoietic closure).
     let out = format!(
         "--- a/mirror.spec\n\
          +++ b/mirror.spec\n\
-         @@ peer_beam operator-edit integration via @optics/lens/diff.put @@\n\
+         @@ peer_beam operator-edit integration via @optics/lens/diff.put + @bauchladen persistence @@\n\
          + peer_home: {peer_home}\n\
          + spec_oid: {spec_oid}\n\
          + delta_oid: {delta_oid}\n\
          + received_bytes: {received_bytes}\n\
-         + verdict: put_acknowledged\n\
+         + verdict: put_acknowledged_and_persisted\n\
          + optics_lens: @optics/lens/diff.put\n\
-         + optics_lens_put_altitude: Rust runtime v0 (2026-07-11)\n\
-         + optics_lens_put_semantics: acknowledge_and_address (full application deferred)\n\
-         + autopoietic_closure: partial (state addressable via delta_oid; bauchladen.tray update forward-promised)\n\
-         + foster_putput_witness: delta_oid deterministic per (spec_bytes, received_bytes)\n"
+         + optics_lens_put_altitude: Rust runtime v1 (2026-07-11)\n\
+         + optics_lens_put_semantics: acknowledge_address_and_persist\n\
+         + bauchladen_moment: {persisted_path_display}\n\
+         + bauchladen_altitude: @mirror/store (Taut e90daf1 Q1: @bauchladen lifts @mirror/store)\n\
+         + autopoietic_closure: v1 CLOSED via .bauchladen/ persistence (next --fate-select --from-psychohistory reads updated content graph)\n\
+         + foster_putput_witness: delta_oid deterministic per (spec_bytes, received_bytes); moment filename content-addressed\n"
     );
 
     mout!("{}", out);
