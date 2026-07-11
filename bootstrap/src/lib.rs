@@ -4543,7 +4543,7 @@ fn integrate_peer_beam_diff(peer_home: &str, spec_path: &std::path::Path) -> i32
             Err(_) => None,
         };
 
-        let _ = bauchladen_moment_path;
+    let _ = bauchladen_moment_path;
 
     // delta_oid via blake3(spec_bytes || stdin_bytes). Content-
     // addressed identity for the (state, edit) pair — Foster PutPut
