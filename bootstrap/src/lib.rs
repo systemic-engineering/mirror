@@ -3186,7 +3186,15 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                     .position(|a| a == "--mission" || a == "--task")
                     .and_then(|i| args.get(i + 1))
                     .map(|s| s.as_str());
-                cmd_peer_beam(p, hello_world, mission, ctx, emit_diff, integrate_diff, fate_select)
+                cmd_peer_beam(
+                    p,
+                    hello_world,
+                    mission,
+                    ctx,
+                    emit_diff,
+                    integrate_diff,
+                    fate_select,
+                )
             }
             None => {
                 merr!("usage: mirror spawn <peer-home> [--hello-world] [--mission <mission-file> | --task <mission-file>]  (deprecated alias for `mirror peer beam`)");
@@ -3292,7 +3300,15 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                     let emit_diff = args.iter().any(|a| a == "--emit-diff");
                     let integrate_diff = args.iter().any(|a| a == "--integrate-diff");
                     let fate_select = args.iter().any(|a| a == "--fate-select");
-                    cmd_peer_beam(".", hello_world, Some(p), ctx, emit_diff, integrate_diff, fate_select)
+                    cmd_peer_beam(
+                        ".",
+                        hello_world,
+                        Some(p),
+                        ctx,
+                        emit_diff,
+                        integrate_diff,
+                        fate_select,
+                    )
                 }
                 None => {
                     merr!("usage: mirror beam <mission-file> [--hello-world]");

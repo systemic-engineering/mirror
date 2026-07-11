@@ -1,0 +1,297 @@
+in @prism
+in @meta
+in @glass
+in @magic
+in @magic/contract
+in @nl
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @magic/nl — the text-altitude adapter species. Bridges the @magic
+# family (form/process at substrate altitude, #80) with the @nl family
+# (raw unstructured natural language + Connes spectral primitives,
+# per `shards/nl.mirror` Phase B lift) honestly via the adapter
+# pattern, NOT decorative inheritance.
+#
+# Substrate-decl tick 2026-07-11 (post-fate-wiring landing).
+# Operationalizes "@nl IS @magic at text altitude" the way
+# @magic/frame (tick 23) operationalized "@frame IS @magic at
+# cognitive altitude." Doubled-bilateral discipline; triple-carrier
+# mapping.
+#
+# CRQ: how to discharge the "@nl IS @magic at text altitude"
+# structural identity claim mechanically WITHOUT decorative
+# inheritance (Seam C3, tick 7-10) and WITHOUT editing
+# `shards/nl.mirror` (the family remains a floor + spectral
+# primitives; the lift lives at adapter altitude)?
+#
+# Answer: the doubled-bilateral adapter pattern @magic/frame
+# demonstrated. Take @nl carriers; MAP them to @magic carriers;
+# declare a bilateral predicate that discharges BOTH family verdicts
+# in one clause. Structural inheritance lives in the explicit map
+# plus the doubled bilateral, not in an `in` clause that buys
+# namespace ancestry without carrier flow.
+#
+# === The gauge-theoretic recognition (Reed grounding 2026-07-11) ===
+#
+# @magic at substrate altitude IS Yang-Mills gauge theory with a
+# 5-op observable interface and matter-hidden mechanism (per
+# magic.mirror lines 27-56). At text altitude the same shape is
+# already operational:
+#
+#   text tokens (gauge-visible surface)         ↔ magic_surface
+#   semantic content (matter-hidden meaning)    ↔ magic_mechanism
+#   grammar / parse rules (invariant binding)   ↔ magic_invariant
+#   language choice (cognitive frame)           ↔ @magic/frame
+#   translation (atomic gauge swap)             ↔ @magic/reveal
+#                                                 (forward-promised)
+#
+# The reader observes text (surface); semantic content is
+# encapsulated behind Porter2 stemming + IDF weighting + the Dirac
+# operator's spectral machinery (mechanism); grammar and parse rules
+# bind the two via a named invariant. This adapter closes the
+# surface / mechanism / invariant crossing at text altitude.
+# Frame-crossing and reveal-crossing land at their respective
+# adapters.
+#
+# === The adapter pattern (triple-carrier, per @magic/frame §2.2) ===
+#
+# Substrate-pull-correct mapping (triple-carrier, in @magic/frame's
+# shape, not the single-carrier @magic/distinction shape):
+#
+#   nl (surface text)           ↔ magic_surface
+#   spectral_triple (mechanism) ↔ magic_mechanism
+#   corpus (invariant binding)  ↔ magic_invariant
+#
+# - Text-as-surface: `nl` is a content-addressed typed ref
+#   (byte-equality). `magic_surface` is the same shape. Lift IS the
+#   typed reframe.
+# - Spectral-triple-as-mechanism: the (A, H, D) triple encapsulates
+#   semantic content — token OID algebra, ℓ² Hilbert space, Dirac
+#   operator all matter-side, hidden behind the corpus's opaque ref.
+# - Corpus-as-invariant: Firth 1957: "you shall know a word by the
+#   company it keeps." Meaning IS carried by the corpus, not by any
+#   isolated token; the spectral triple's structure IS determined by
+#   the corpus that constructed it.
+#
+# === The doubled-bilateral structural shape ===
+#
+# @magic/distinction (tick 15) discharges ONE parent-family predicate.
+# @magic/frame (tick 23) discharges TWO. @magic/nl inherits the
+# doubled shape:
+#
+#   1. `invariant_preserved` (@magic/contract line 163): boundary
+#      harness at @io audits per recognition #57.
+#   2. `nl_measurement_well_formed` (@nl family-root, per nl.mirror
+#      lines 205-210): composed bilateral at @nl-measurement altitude;
+#      corpus structurally valid for spectral triple construction
+#      (non-empty vocabulary; IDF computed; Porter2-stemmed).
+#
+# Both must hold for the contract to satisfy @magic at text altitude.
+# The signature takes a comparison corpus and a perturbation as
+# explicit typed parameters per [[feedback-no-bare-types]] because
+# `nl_measurement_well_formed` is measurement-bilateral (needs two
+# corpora); the single-contract lift extracts one corpus via the
+# invariant field and the consumer names the second at the boundary.
+#
+# === Why this adapter does NOT edit `shards/nl.mirror` ===
+#
+# Adapter pattern per @magic/distinction and @magic/frame: decoration
+# lives at adapter altitude. Parent family-root shard stays as-is.
+# Consumers wanting @magic's discipline at text altitude route
+# through this adapter; consumers wanting @nl alone route around it.
+#
+# === Pre-AI prior art ===
+#
+#   adapter pattern (GoF)       Gamma-Helm-Johnson-Vlissides 1994
+#                               (*Design Patterns*). Inherited via
+#                               @magic/distinction tick 15 and
+#                               @magic/frame tick 23.
+#   Yang-Mills gauge theory     Yang-Mills 1954. The physics ancestor
+#                               of gauge-visible-with-matter-hidden.
+#   Connes spectral triple      Connes 1985, 1994. The (A, H, D)
+#                               structure @nl lifts to text altitude.
+#   Firth distributional        Firth 1957 ("A synopsis of linguistic
+#      hypothesis                theory"). Grounds corpus-as-invariant.
+#
+# === What this adapter does NOT do ===
+#
+# 1. Adapter is opt-in. Not every @nl is automatically a @magic.
+# 2. Does NOT absorb @nl into @magic. Families remain distinct.
+# 3. Does NOT edit `shards/nl.mirror`.
+# 4. Does NOT discharge language-choice-as-frame (@magic/frame).
+# 5. Does NOT discharge translation-as-gauge-swap (@magic/reveal,
+#    forward-promised).
+# 6. Does NOT lift `affect_profile` (species altitude).
+#
+# === Landing arc (cited by SHA) ===
+#
+# - b0427fd: @nl family-root Phase B lift (Connes spectral primitives).
+# - 7e5c298: @docs.compose consumes @nl measurement.
+# - f3af5b4: @optics/lens/features 16-dim graph_observation.
+# - d9b7c35: Seam Adj 3 — the authority forward-promising this
+#            adapter (fate-wiring landing's follow-on: Features::default()
+#            v0 stub cmd_peer_beam lifts to real @nl-driven encoder
+#            once @magic/nl is available).
+#
+# Once this lands: cmd_peer_beam v0's Features::default() can lift
+# to a real @nl-driven encoder in a future Rust tick. Encoder invokes
+# @nl to extract semantic-content-from-text (`ingest` + `build_triple`),
+# @magic/nl to lift the spectral_triple to a magic_mechanism,
+# @magic/contract.bind to compose surface+mechanism+invariant, then
+# mosaic(feature) to structure into the 16-dim graph_observation.
+# All existing substrate, no new families.
+#
+# Spec context: docs/specs/adapter-magic-frame-spec.md (adapter-
+#               pattern precedent this shard inherits).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-form-process-partition-at-
+#                       family-root]] (@magic form-side, @nl process-
+#                       side; adapter threads them at text crossing),
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (#57; @io keeps surface/
+#                       mechanism honest under lift),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (Firth + Connes + Yang-Mills + GoF),
+#                      [[feedback-composition-claims-need-empirical-
+#                       test]] (bilateral discharges "IS" empirically),
+#                      [[feedback-no-bare-types]] (comparison corpus
+#                       and perturbation typed).
+# Related shards: magic.mirror (@magic family-root; form-side parent),
+#                 nl.mirror (@nl family-root; text-altitude
+#                  specialization; UNMODIFIED by this adapter),
+#                 magic/distinction.mirror (single-bilateral adapter
+#                  precedent, tick 15),
+#                 magic/frame.mirror (doubled-bilateral adapter
+#                  precedent, tick 23; this shard inherits its
+#                  triple-carrier shape),
+#                 magic/contract.mirror (consumer of the
+#                  invariant_preserved predicate this adapter routes),
+#                 magic/reveal.mirror (translation-as-gauge-swap
+#                  composes here; forward-promised),
+#                 optics/lens/features.mirror (the shard this unlocks
+#                  v0→v1 for; Features::default() lifts to real
+#                  @nl-driven encoder).
+# Path-namespace property: this file at `shards/magic/nl.mirror`
+# declares `@magic/nl` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming/gamma-helm-johnson-vlissides-1994
+source @arxiv/physics/yang-mills-1954
+source @arxiv/physics/connes-1994
+source @arxiv/linguistics/firth-1957
+
+prism @magic/nl {
+  focus nl
+  project nl
+  split nl
+  shift nl
+  settle nl
+}
+
+# === text_as_surface adapter ===
+#
+# Substrate-vocabulary adapter action lifting an @nl term to a
+# @magic gauge-visible surface. Both are content-addressed typed
+# refs with byte-equality identity; the lift IS the typed reframe.
+# Body discharges at the realisation boundary.
+text_as_surface(t: nl) -> magic_surface { \ }
+
+# === triple_as_mechanism adapter ===
+#
+# Substrate-vocabulary adapter action lifting a spectral_triple to a
+# @magic mechanism. The Connes (A, H, D) triple IS the matter-hidden
+# mechanism giving text its spectral structure — token OID algebra,
+# ℓ² Hilbert space, Dirac operator all matter-side, hidden behind
+# the corpus's opaque `ref` identity. Encapsulation discipline
+# inherited at @magic altitude (OID seal / parametric type / sheaf
+# locality). Body discharges at the realisation boundary.
+triple_as_mechanism(t: spectral_triple) -> magic_mechanism { \ }
+
+# === corpus_as_invariant adapter ===
+#
+# Substrate-vocabulary adapter action lifting a corpus to a @magic
+# named invariant. Corpus IS what binds surface and mechanism per
+# Firth 1957. Splinter-pole: corpus honestly represents the text's
+# provenance and the triple honestly preserves the corpus's spectral
+# structure. Narcissus-pole: corpus is manipulated (cherry-picked,
+# adversarially perturbed) to make surface text appear to satisfy
+# the invariant while the underlying spectral distance fails; the
+# boundary harness at @io audits the discrimination per #57.
+# Body discharges at the realisation boundary.
+corpus_as_invariant(c: corpus) -> magic_invariant { \ }
+
+# === text_from_surface inverse adapter ===
+#
+# Type-relabeling inverse of `text_as_surface`, per @magic/frame §2.3
+# (the `frame_from_surface` precedent): the inverse exists because
+# both `nl` and `magic_surface` are typed refs with byte-equality
+# identity. Round-trip identity (falsification check):
+#   text_as_surface(text_from_surface(s)) = s
+# for compatible surfaces. Failure = adapter mis-implemented.
+# Body discharges at the realisation boundary.
+text_from_surface(s: magic_surface) -> nl { \ }
+
+# === nl_satisfies_magic bilateral predicate ===
+#
+# THE DOUBLED-BILATERAL cross-family predicate at text altitude.
+# Substrate-pull-correct way to mechanically discharge the structural
+# identity claim "@nl IS @magic at text altitude" without decorative
+# inheritance.
+#
+# Two `requires` clauses, both load-bearing:
+#
+#   1. invariant_preserved(c, corpus_as_invariant(comparison_corpus))
+#      — @magic/contract-family predicate. Discharges that the corpus
+#      (lifted to magic_invariant) is preserved by the contract; the
+#      boundary harness at @io audits this per recognition #57.
+#
+#   2. nl_measurement_well_formed(comparison_corpus, comparison_corpus,
+#                                  perturbation)
+#      — @nl-family composed bilateral (per shards/nl.mirror lines
+#      205-210). Discharges that the corpus is structurally valid for
+#      spectral triple construction. Measurement-side well-formedness.
+#
+# Both must hold for the contract to satisfy @magic at text altitude.
+# The signature takes a comparison corpus and a perturbation as
+# explicit typed parameters per [[feedback-no-bare-types]] because
+# `nl_measurement_well_formed` is measurement-bilateral (needs two
+# corpora); the single-contract lift extracts one corpus via the
+# invariant field and the consumer names the second at the boundary.
+#
+# Consumer species (forward-promised @nl/english, @nl/markdown,
+# @nl/german; the future Rust cmd_peer_beam v1 lifting
+# Features::default() to real @nl-driven encoder per d9b7c35 Adj 3;
+# alignment-at-text-altitude audits; spectral.engineer case-studies
+# composing text-measurement with @magic-audit) name this predicate
+# when their operation requires cross-family discharge.
+nl_satisfies_magic(c: magic_contract, comparison_corpus: corpus, p: perturbation) -> verdict
+requires invariant_preserved(c, corpus_as_invariant(comparison_corpus))
+requires nl_measurement_well_formed(comparison_corpus, comparison_corpus, p)
+{ \ }
+
+# === Honest hedge per @magic/frame tick 28 review precedent ===
+#
+# Closed by this adapter:
+#  - @nl term ↔ magic_surface round-trips via `text_as_surface` /
+#    `text_from_surface`.
+#  - spectral_triple ↔ magic_mechanism via `triple_as_mechanism`.
+#  - corpus ↔ magic_invariant via `corpus_as_invariant`.
+#  - Bilateral `nl_satisfies_magic` discharges BOTH family predicates
+#    (invariant_preserved AND nl_measurement_well_formed).
+#
+# Not closed (forward-promised):
+#  - Language-choice-as-frame (composes via @magic/frame's
+#    `frame_as_surface`).
+#  - Translation-as-gauge-swap (composes via @magic/reveal).
+#  - affect_profile lift (species altitude).
+#  - Round-trip identity at magic_contract-as-whole altitude (same
+#    hedge @magic/frame preserved at tick 28: given magic_contract c,
+#    `text_from_surface(c.surface)` DISCARDS c.mechanism and c.promise).
+
+out @magic/nl
+out text_as_surface
+out triple_as_mechanism
+out corpus_as_invariant
+out text_from_surface
+out nl_satisfies_magic

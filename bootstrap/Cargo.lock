@@ -137,6 +137,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "fate"
+version = "0.1.0"
+dependencies = [
+ "prismqueer 0.1.1",
+]
+
+[[package]]
 name = "find-msvc-tools"
 version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -420,6 +427,7 @@ name = "mirror"
 version = "0.1.1"
 dependencies = [
  "blake3",
+ "fate",
  "fragmentation",
  "fragmentation-git",
  "libc",
