@@ -63,8 +63,11 @@ fn make_peer_home() -> PathBuf {
         "target binary {\n  cli {\n    command beam { arg mission: ~f }\n  }\n}\n",
     )
     .expect("write mirror.spec");
-    std::fs::write(dir.join("observation.txt"), "initial substrate observation\n")
-        .expect("write observation");
+    std::fs::write(
+        dir.join("observation.txt"),
+        "initial substrate observation\n",
+    )
+    .expect("write observation");
     dir
 }
 

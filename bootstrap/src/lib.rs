@@ -3182,6 +3182,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                 let integrate_diff = args.iter().any(|a| a == "--integrate-diff");
                 let fate_select = args.iter().any(|a| a == "--fate-select");
                 let from_psychohistory = args.iter().any(|a| a == "--from-psychohistory");
+                let with_shadow = args.iter().any(|a| a == "--with-shadow");
                 let mission = args
                     .iter()
                     .position(|a| a == "--mission" || a == "--task")
@@ -3196,6 +3197,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                     integrate_diff,
                     fate_select,
                     from_psychohistory,
+                    with_shadow,
                 )
             }
             None => {
@@ -3254,6 +3256,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                                 let fate_select = args.iter().any(|a| a == "--fate-select");
                                 let from_psychohistory =
                                     args.iter().any(|a| a == "--from-psychohistory");
+                                let with_shadow = args.iter().any(|a| a == "--with-shadow");
                                 cmd_peer_beam(
                                     p,
                                     hello_world,
@@ -3263,6 +3266,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                                     integrate_diff,
                                     fate_select,
                                     from_psychohistory,
+                                    with_shadow,
                                 )
                             }
                             None => {
@@ -3306,6 +3310,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                     let integrate_diff = args.iter().any(|a| a == "--integrate-diff");
                     let fate_select = args.iter().any(|a| a == "--fate-select");
                     let from_psychohistory = args.iter().any(|a| a == "--from-psychohistory");
+                    let with_shadow = args.iter().any(|a| a == "--with-shadow");
                     cmd_peer_beam(
                         ".",
                         hello_world,
@@ -3315,6 +3320,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                         integrate_diff,
                         fate_select,
                         from_psychohistory,
+                        with_shadow,
                     )
                 }
                 None => {
@@ -4294,6 +4300,233 @@ fn selectors_from_psychohistory_root(root_hex: &str) -> [fate::ModelWeights; 5] 
     ]
 }
 
+/// Cast shadows (v1) — for each fate Model, perturb features in that
+/// Model's direction, resolve, and compute impact distance from base.
+/// Returns (base_decision, [5 hypothetical decisions], [5 impact
+/// magnitudes as L2 distances between distribution vectors]).
+///
+/// Substrate authority: Mara `ce301cc` iter-35 cast_shadow(sheaf,
+/// direction, p) -> imperfect(shadow, holonomy) at @song/narrative;
+/// each Model M's perturbation IS one candidate direction; the
+/// impact IS the holonomy residual per bundle-tower Level 3 Transport.
+///
+/// v1 perturbation is unit amplitude at position M of the 16-dim
+/// Features vector (crude but deterministic). v2 lifts to sheaf-
+/// Laplacian Δ_F Rayleigh direction extraction per Mara iter-34 §8.
+fn cast_shadows_over_models(
+    fate_engine: &fate::Fate,
+    base_features: &fate::Features,
+) -> (fate::Decision, [fate::Decision; 5], [f64; 5]) {
+    let base_decision = fate_engine.resolve(base_features, 5);
+
+    let make_hypothetical = |model_idx: usize| -> fate::Features {
+        let mut f = *base_features;
+        // Perturb feature dim at position model_idx with amplitude 5.0
+        // (matches Fate::excited() weight range so the perturbation is
+        // meaningful against random selectors).
+        if model_idx < 16 {
+            f[model_idx] = 5.0;
+        }
+        f
+    };
+
+    let hypotheticals: [fate::Decision; 5] = [
+        fate_engine.resolve(&make_hypothetical(0), 5),
+        fate_engine.resolve(&make_hypothetical(1), 5),
+        fate_engine.resolve(&make_hypothetical(2), 5),
+        fate_engine.resolve(&make_hypothetical(3), 5),
+        fate_engine.resolve(&make_hypothetical(4), 5),
+    ];
+
+    // Impact = L2 distance between distribution vectors.
+    let impacts: [f64; 5] = {
+        let mut r = [0.0f64; 5];
+        for i in 0..5 {
+            let mut sum_sq = 0.0;
+            for j in 0..5 {
+                let d = hypotheticals[i].distribution[j] - base_decision.distribution[j];
+                sum_sq += d * d;
+            }
+            r[i] = sum_sq.sqrt();
+        }
+        r
+    };
+
+    (base_decision, hypotheticals, impacts)
+}
+
+/// Classify shadow regime per Mara `f2c712e` iter-34 §3 three-regime
+/// classifier + convergent case, per Reed's essay Council-Square
+/// dynamics.
+///
+/// - converged: all 5 hypotheticals agree on argmax with base
+///   (kintsugi e^(n+1) ≤ e^n terminates; Council verifies)
+/// - necker: 2+ distinct argmax modes across hypotheticals (bistable;
+///   Council sees ambiguous evidence → fetch more moments)
+/// - escher: 3+ distinct argmax modes OR high variance (impossible;
+///   Council imprisons Square → reframe required)
+/// - kanizsa: 2 modes with low variance (illusory-convergent; matter
+///   inferred from gauge)
+fn shadow_regime(
+    base_decision: &fate::Decision,
+    hypotheticals: &[fate::Decision; 5],
+    impacts: &[f64; 5],
+) -> (&'static str, usize) {
+    // Argmax of a Decision = its `model` field's index.
+    let model_idx = |m: fate::Model| -> usize {
+        match m {
+            fate::Model::Abyss => 0,
+            fate::Model::Introject => 1,
+            fate::Model::Cartographer => 2,
+            fate::Model::Explorer => 3,
+            fate::Model::Fate => 4,
+        }
+    };
+
+    let base_argmax = model_idx(base_decision.model);
+    let mut modes = std::collections::HashSet::new();
+    modes.insert(base_argmax);
+    for h in hypotheticals.iter() {
+        modes.insert(model_idx(h.model));
+    }
+    let distinct_modes = modes.len();
+
+    // Variance of impacts.
+    let mean = impacts.iter().sum::<f64>() / 5.0;
+    let variance = impacts.iter().map(|x| (x - mean).powi(2)).sum::<f64>() / 5.0;
+    let variance_threshold = 0.05;
+
+    let regime = if distinct_modes == 1 {
+        "converged"
+    } else if distinct_modes >= 3 || variance > variance_threshold * 2.0 {
+        "escher"
+    } else if distinct_modes == 2 && variance > variance_threshold {
+        "necker"
+    } else {
+        "kanizsa"
+    };
+
+    (regime, distinct_modes)
+}
+
+fn fate_bounded_shadow_peer_beam(
+    peer_home: &str,
+    spec_path: &std::path::Path,
+    task: Option<&str>,
+    ctx: &Ctx,
+) -> i32 {
+    // Reuse psychohistory root + derived selectors from bounded_by.
+    let peer_home_resolved = ctx.resolve(peer_home);
+    let (psychohistory_root_oid, moments_count) =
+        psychohistory_root_from_peer_home(&peer_home_resolved);
+
+    let features: fate::Features = [0.0; 16];
+    let mut fate_engine = fate::Fate::untrained();
+    fate_engine.selectors = selectors_from_psychohistory_root(&psychohistory_root_oid);
+
+    // Cast 5 shadows (one per Model) + compute regime.
+    let (base_decision, hypotheticals, impacts) =
+        cast_shadows_over_models(&fate_engine, &features);
+    let (regime, distinct_modes) = shadow_regime(&base_decision, &hypotheticals, &impacts);
+
+    let model_label = |m: fate::Model| -> &'static str {
+        match m {
+            fate::Model::Abyss => "Abyss",
+            fate::Model::Introject => "Introject",
+            fate::Model::Cartographer => "Cartographer",
+            fate::Model::Explorer => "Explorer",
+            fate::Model::Fate => "Fate",
+        }
+    };
+
+    let (base_name, base_op, base_level) = match base_decision.model {
+        fate::Model::Abyss => ("Abyss", "focus", "Level 0 Fiber"),
+        fate::Model::Introject => ("Introject", "project", "Level 1 Connection"),
+        fate::Model::Cartographer => ("Cartographer", "split", "Level 2 Gauge"),
+        fate::Model::Explorer => ("Explorer", "shift", "Level 3 Transport"),
+        fate::Model::Fate => ("Fate", "settle", "Level 4 Closure"),
+    };
+
+    let spec_bytes = fs::read(spec_path).unwrap_or_default();
+    let spec_oid = {
+        let digest = blake3::hash(&spec_bytes);
+        let bytes = digest.as_bytes();
+        let mut s = String::with_capacity(64);
+        for b in bytes.iter() {
+            s.push_str(&format!("{:02x}", b));
+        }
+        s
+    };
+
+    let mission_line = match task {
+        None => "+ mission: <absent>".to_string(),
+        Some(path) => {
+            let mission_path = ctx.resolve(path);
+            match fs::read_to_string(&mission_path) {
+                Ok(text) => {
+                    let first = text.lines().next().unwrap_or("").trim();
+                    if first.is_empty() {
+                        "+ mission: <empty>".to_string()
+                    } else {
+                        format!("+ mission: {}", first)
+                    }
+                }
+                Err(_) => "+ mission: <unreadable>".to_string(),
+            }
+        }
+    };
+
+    let regime_gloss = match regime {
+        "converged" => "Council verifies Square's claim from Flatland measurements",
+        "necker" => "Council sees ambiguous evidence — fetch more moments",
+        "escher" => "Council would imprison Square — impossible geometry; reframe required",
+        "kanizsa" => "illusory-convergent — matter inferred from gauge",
+        _ => "unknown",
+    };
+
+    let out = format!(
+        "--- a/mirror.spec\n\
+         +++ b/mirror.spec\n\
+         @@ peer_beam cast_shadow over 5 Models + shadow_regime classifier via @song/narrative.shadow_ancestry @@\n\
+         + peer_home: {peer_home}\n\
+         + spec_oid: {spec_oid}\n\
+         + psychohistory_root_oid: {psychohistory_root_oid}\n\
+         + psychohistory_moments_count: {moments_count}\n\
+         + fate_decision: {base_name} ↔ {base_op}\n\
+         + fate_confidence: {conf:.6}\n\
+         + bundle_tower_binding: {base_level} per boot/std/epistemologic/math/bundle.mirror\n\
+         + shadow_abyss: {i0:.6} → {n0}\n\
+         + shadow_introject: {i1:.6} → {n1}\n\
+         + shadow_cartographer: {i2:.6} → {n2}\n\
+         + shadow_explorer: {i3:.6} → {n3}\n\
+         + shadow_fate: {i4:.6} → {n4}\n\
+         + shadow_regime: {regime} ({distinct_modes} distinct argmax modes across 5 candidates)\n\
+         + shadow_regime_gloss: {regime_gloss}\n\
+         + optics_lens: @optics/lens/features\n\
+         + bounded_by_altitude: @fate/tournament.bounded_by (Mara ce9745f)\n\
+         + psychohistory_altitude: @song/narrative.psychohistory_sheaf (Mara 2c26537)\n\
+         + shadow_altitude: @song/narrative.shadow_ancestry (Mara ce301cc — goth)\n\
+         + shadow_composition: cast_shadow IS Level 3 Transport with state specialised to shadow (Mara ce301cc)\n\
+         + essay_source: The Shape of the Thing (Reed 2026-06 — Flatland shadow determined by casting object)\n\
+         {mission_line}\n",
+        conf = base_decision.distribution[match base_decision.model {
+            fate::Model::Abyss => 0,
+            fate::Model::Introject => 1,
+            fate::Model::Cartographer => 2,
+            fate::Model::Explorer => 3,
+            fate::Model::Fate => 4,
+        }],
+        i0 = impacts[0], n0 = model_label(hypotheticals[0].model),
+        i1 = impacts[1], n1 = model_label(hypotheticals[1].model),
+        i2 = impacts[2], n2 = model_label(hypotheticals[2].model),
+        i3 = impacts[3], n3 = model_label(hypotheticals[3].model),
+        i4 = impacts[4], n4 = model_label(hypotheticals[4].model),
+    );
+
+    mout!("{}", out);
+    0
+}
+
 fn fate_bounded_by_psychohistory_peer_beam(
     peer_home: &str,
     spec_path: &std::path::Path,
@@ -4723,6 +4956,7 @@ fn cmd_peer_beam(
     integrate_diff: bool,
     fate_select: bool,
     from_psychohistory: bool,
+    with_shadow: bool,
 ) -> i32 {
     // Piece 1 (insight §2.1): cli surface. The peer-home argument is the
     // single positional. Context (frame, repository, pack) is resolved
@@ -4768,6 +5002,9 @@ fn cmd_peer_beam(
     // --fate-select wins (last check).
     if fate_select {
         if from_psychohistory {
+            if with_shadow {
+                return fate_bounded_shadow_peer_beam(peer_home, &spec_path, task, ctx);
+            }
             return fate_bounded_by_psychohistory_peer_beam(peer_home, &spec_path, task, ctx);
         }
         return fate_select_peer_beam(peer_home, &spec_path, task, ctx);
