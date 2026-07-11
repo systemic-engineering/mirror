@@ -1,0 +1,365 @@
+in @prism
+in @glass
+in @meta
+in @nl
+in @optics/lens
+in @mirror/spectral/observation
+in @io
+
+# @optics/lens/features — second species under @optics/lens.
+#
+# The SECOND substrate-decl species discharging Foster's (get, put)
+# pair; sibling to @optics/lens/diff (`7e5c298`). Where diff fixes the
+# linear carrier to unified-diff bytes and the semantic carrier to a
+# peer's @bauchladen.tray (closing the operator-visible arm of Blocker
+# 2), THIS species fixes the semantic carrier to `graph_observation` —
+# the 16-dim structured record declared at `@mirror/spectral/
+# observation` — and closes the fate-consumable arm: mission_text
+# bytes lens-project to the observation Fate's 5-layer D²NN reads at
+# input-layer altitude (recognition #58).
+#
+# === Substrate-decl authority ===
+#
+# Canonical spec:  Mara iter-27, `ec6dbaa` —
+#   `docs/specs/optics-lens-features-species.md` (species shape,
+#   composition, v0 stub semantics, gauge-theoretic recognition
+#   §6: @nl IS @magic at text altitude).
+# Adjudication:    Seam Phase D, `d9b7c35` —
+#   `docs/audits/2026-07-11-seam-phase-d-optics-lens-features-
+#   adjudication.md`. Seam's three verdicts SUPERSEDE parts of iter-27;
+#   THIS shard honors them verbatim.
+# Boundary scout:  Taut iter-14, `b5619ab` — Q2 graph_observation
+#   reuse (58th+ substrate-already-had-the-word instance) + Q3
+#   adapter-cascade pattern evidence.
+# Family root:     `b0427fd` Mara iter-25 (shards/optics/lens.mirror).
+# Sibling species: `7e5c298` Mara iter-26 (shards/optics/lens/
+#   diff.mirror; the shape pattern this species mirrors).
+#
+# === Seam-honoring (verbatim from `d9b7c35`) ===
+#
+# **Adj 1 — v0 stub:** REJECT blake3-as-Features. Blake3 IS @magic at
+# `@mirror/store` altitude (sealing content-identity via the
+# Merkle-DAG), NOT at `@mirror/spectral/observation` altitude
+# (structured semantic observation). Casting `blake3(text)` as a
+# `graph_observation` is a type-lie: the resulting 16 f64s witness
+# neither `query_intensity` nor `partition_risk` nor any of the 14
+# other NAMED quadrants. Substrate-honest v0 IS `Features::default()`
+# — all zeros ≡ Fate::untrained baseline ≡ "no observation yet". The
+# Rust discharge (`bootstrap/src/optics/lens/features.rs`) returns
+# `Features::default()` at v0.
+#
+# **Adj 2 — carrier:** REUSE `graph_observation` from
+# `@mirror/spectral/observation`. The 16-dim structured record with
+# four NAMED semantic quadrants (settlement / crystal / query /
+# spectral, four features each) IS the substrate-altitude form of
+# Fate's `Features = [f64; 16]` per recognition #58 v1 closure
+# (observation.mirror line 30). Declaring `type feature_vector = ref`
+# in parallel would be the 58th+ instance of substrate-already-had-
+# the-word drift; THIS species refuses.
+#
+# **Adj 3 — @nl-imports-@magic composition:** ADAPTER cascade,
+# separate landing. `@nl IS @magic at text altitude` (iter-27 spec §6)
+# DOES NOT justify decorating `shards/nl.mirror` with `in @magic` —
+# the same decorative-inheritance pattern Seam refused at tick 15
+# (@magic/distinction) and tick 23+ (@magic/frame). The correct
+# composition IS a follow-on adapter at `shards/magic/nl.mirror`,
+# matching @magic/{distinction,frame} shape verbatim. THAT adapter is
+# NOT this shard's burden. Consequently THIS shard does NOT declare
+# `in @magic/contract` — the extractor pipeline composes THROUGH the
+# adapter cascade at v1 encoder tick, not through decorative parents.
+#
+# === Blocker 2 fate-consumable arm ===
+#
+# Alex directive (parent shard iter-25): @fate ↔ linear format gap.
+# Sibling diff closes the operator-visible arm (bauchladen ↔ diff_bytes
+# at @io altitude). THIS species closes the fate-consumable arm
+# (mission_text ↔ graph_observation at @mirror/spectral/observation
+# altitude). Together they form the closed autopoietic loop:
+#
+#   Forward:
+#     mission_text
+#       |> @optics/lens/features.get  # text -> graph_observation
+#       |> @fate.select               # 5-layer D²NN reads 16 quadrants (#58)
+#       |> Decision.model             # bundle-tower binding -> prism-op
+#       |> @optics/lens/diff.get      # bauchladen -> diff_bytes
+#       |> @io.write(stdout)          # operator reads
+#
+#   Feedback:
+#     (edited_observation, old_mission_text)
+#       |> @optics/lens/features.put  # observation + text -> text'
+#       |> @fate.select               # next candidate re-reads observation
+#
+# The `put` direction is the autopoietic-closure hop at text altitude:
+# operator edits a quadrant on the eigenboard (e.g. raises
+# `query_intensity`), `put` re-projects that as revised mission-text,
+# `get` re-extracts, fixed-point iteration converges under the
+# specified edit-trace regime.
+#
+# === Sibling relationship ===
+#
+# Same parent, disjoint carriers, dual altitudes.
+#
+#   Aspect              | @optics/lens/diff       | @optics/lens/features
+#   --------------------|-------------------------|-----------------------
+#   Semantic carrier    | bauchladen_state (peer) | graph_observation (Fate)
+#   Linear carrier      | diff_bytes              | mission_text (ref)
+#   Consumer            | operator terminal (@io) | fate.select (matter-side)
+#   Autopoietic closure | diff-edit convergence   | dimension-edit convergence
+#
+# Both witness Foster laws; both discharge autopoietic closure via a
+# species-specific bilateral parallel to but distinct from the parent's
+# three abstract bilaterals. The sibling-pair is the second point on
+# the Hutchinson attractor the parent flags at §Gaps; the actual
+# `split`-composition attractor witness is a follow-on tick.
+#
+# === Ancestry rationale ===
+#
+# - `in @prism`                       five-op algebra ancestor.
+# - `in @glass`                       verdict carrier for Foster
+#                                     bilaterals + autopoietic closure.
+# - `in @meta`                        substrate-decl altitude.
+# - `in @nl`                          `# <text>` -> nl_literal for
+#                                     docblock terms (SAME role as
+#                                     parent family-root; NOT the
+#                                     extractor-pipeline surface —
+#                                     that composes through the
+#                                     adapter cascade per Seam Adj 3).
+# - `in @optics/lens`                 PARENT family-root (`b0427fd`).
+# - `in @mirror/spectral/observation` source of `graph_observation`
+#                                     per Seam Adj 2.
+# - `in @io`                          linearization crossing at INPUT
+#                                     side; mission_text bytes cross
+#                                     the @io fault plane when Fate
+#                                     reads them (@io is bidirectional).
+#
+# Notably NOT declared per Seam Adj 3:
+# - NOT `in @magic/contract` — the surface↔mechanism bind lives at the
+#   @magic/nl adapter cascade (forward-promised), not on this species.
+# - NOT decorating `shards/nl.mirror` with `in @magic` — the
+#   decorative-inheritance route Seam refused at ticks 15 + 23+.
+#
+# Spec context: docs/specs/optics-lens-features-species.md (Mara
+#               iter-27, `ec6dbaa`).
+# Parent shard: shards/optics/lens.mirror (Mara iter-25, `b0427fd`).
+# Sibling shard: shards/optics/lens/diff.mirror (Mara iter-26,
+#               `7e5c298`).
+# Carrier shard: shards/mirror/spectral/observation.mirror
+#               (recognition #58 v1 closure).
+# Adjudication:  docs/audits/2026-07-11-seam-phase-d-optics-lens-
+#               features-adjudication.md (Seam `d9b7c35`).
+# Boundary scout: docs/scouts/2026-07-11-taut-optics-lens-features-
+#               family-scout.md (Taut `b5619ab`).
+# Substrate decisions:
+#   [[architecture-shards-as-substrate-source]],
+#   [[architecture-prism-as-trait-as-everything]],
+#   [[architecture-alignment-as-boundary-mathematics]] (#57),
+#   [[architecture-bateson-form-behaviour-partition]],
+#   [[architecture-fate-is-optical-inference]] (#58; the D²NN input-
+#      layer observation this species supplies),
+#   [[feedback-substrate-already-had-the-word]] (Seam Adj 2 58th+
+#      instance),
+#   [[architecture-glass-wall-substrate-types]] (Seam Adj 1: v0 =
+#      Features::default(), NOT type-lie via blake3).
+# Related shards: optics/lens.mirror (parent),
+#                 optics/lens/diff.mirror (sibling),
+#                 mirror/spectral/observation.mirror (carrier),
+#                 mirror/store.mirror (blake3 lives HERE at content-
+#                   address altitude per Seam Adj 1 — NOT here),
+#                 magic/distinction.mirror + magic/frame.mirror
+#                   (adapter-cascade precedent for @magic/nl),
+#                 nl.mirror (surface source; NOT decorated with
+#                   in @magic per Seam Adj 3).
+# Path-namespace: shards/optics/lens/features.mirror declares
+# `@optics/lens/features` and only that.
+
+prism @optics/lens/features {
+  focus features
+  project features
+  split features
+  shift features
+  settle features
+}
+
+# === Type carriers (Seam Adj 2 — reuse graph_observation) ===
+#
+# Parent `@optics/lens` (`b0427fd`) declares:
+#   type lens_get     = ref
+#   type lens_put     = ref
+#   type lens_witness = ref
+#
+# Sibling `@optics/lens/diff` fixes the linear-carrier as
+# `type diff_bytes = ref`.
+#
+# THIS species reuses `graph_observation` from
+# `@mirror/spectral/observation` (imported above) — the 16-dim
+# structured record with four NAMED semantic quadrants (settlement /
+# crystal / query / spectral). Per Seam Adj 2, declaring
+# `type feature_vector = ref` in parallel would be substrate-already-
+# had-the-word drift; refused. The mission_text linear-carrier is
+# inherited as `ref` from the parent's lens_get / lens_put shape.
+#
+# Equality on Foster-law RHS: mission_text = byte-equality on
+# `@mirror/store` OIDs per Reed math §3.2; observation = field-wise
+# unit_interval equality inherited from `@mirror/spectral/observation`.
+
+# === Actions (specialize parent get / put) ===
+#
+# Parent declares `get(semantic: ref) -> ref` and `put(linear: ref,
+# old_semantic: ref) -> ref` with `\ {}` stubs. This species
+# specializes the SEMANTIC carrier to `graph_observation` and keeps
+# the LINEAR mission_text as `ref`. Bodies `\ {}` stubs per two-tick
+# discipline; Rust discharge (`bootstrap/src/optics/lens/features.rs`)
+# is one further tick.
+#
+# `get(mission_text) -> graph_observation` — extract the 16-dim
+# structured observation from mission-text bytes. `focus` in the
+# five-op mapping: converging pass, text -> single 16-dim record for
+# Fate's D²NN input layer (recognition #58).
+#
+# Per Seam Adj 1, the v0 Rust discharge returns `Features::default()`
+# (all zeros ≡ Fate::untrained baseline ≡ "no observation yet"). THIS
+# is the substrate-honest v0 at `@mirror/spectral/observation`
+# altitude. Blake3 lives at `@mirror/store` altitude — a different
+# @magic instance at a different altitude; type-lie here. The v0 -> v1
+# lift populates the 16 quadrants from named text-signals (Seam §4
+# Tick D: one quadrant per landing tick — `query_intensity` from
+# token count, `partition_risk` from spec_oid collision test, etc.)
+# once the @magic/nl adapter cascade lands.
+#
+# `put(observed, mission_text) -> mission_text'` — integrate operator-
+# adjusted observation back into revised mission-text bytes. `settle`
+# in the five-op mapping: reflecting-back-and-stabilizing pass,
+# observation + base -> new text = autopoietic-closure fixed-point at
+# text altitude. THIS closes the fate-consumable arm of Blocker 2.
+# Under v0, `put` returns identity(mission_text) — `Features::default()`
+# has no non-trivial inverse; operator observation-edits are DROPPED
+# at v0. V1 encoder discharges `put` operationally.
+
+get(mission_text: ref) -> graph_observation { \ {} }
+put(observed: graph_observation, mission_text: ref) -> ref { \ {} }
+
+# === Bilateral properties (Foster laws specialized) ===
+#
+# Parent declares three abstract Foster bilaterals returning
+# `verdict`; this species specializes the OBSERVATION-arg type to
+# `graph_observation` (mission_text stays `ref`). Bodies `\ {}` stubs
+# per two-tick discipline. `lens_witness` inherited unchanged.
+#
+# `put_get_features` (PutGet, "acceptance"): `get(put(v, s)) == v` for
+# all graph_observation v and mission_text s — putting an observation
+# and re-getting recovers it. Lens forward = right-inverse of backward.
+#
+# `get_put_features` (GetPut, "stability"): `put(get(s), s) == s` —
+# round-trip on an unedited observation is text-identity; lens does
+# not spuriously rewrite the operator's mission when no observation
+# edit was made.
+#
+# `put_put_features` (PutPut, "very well-behaved"): `put(v', put(v,
+# s)) == put(v', s)` — successive observation-edits collapse to the
+# last edit; autopoietic-closure semantics insensitive to intermediate
+# history.
+
+put_get_features(l: lens_witness, s: ref, v: graph_observation) -> verdict { \ {} }
+get_put_features(l: lens_witness, s: ref) -> verdict { \ {} }
+put_put_features(l: lens_witness, s: ref, v: graph_observation, v_prime: graph_observation) -> verdict { \ {} }
+
+# === Autopoietic closure (parallel to sibling diff) ===
+#
+# Foster laws are NECESSARY but NOT SUFFICIENT for autopoietic closure
+# at species altitude. This bilateral witnesses that the ITERATED loop
+# CONVERGES — that under a specified edit-trace regime, the sequence
+# (get, put, get, put, ...) at features altitude reaches an operator-
+# satisfaction fixed-point in finite iterations.
+#
+# Where sibling `@optics/lens/diff.autopoietic_closure` (`7e5c298`)
+# witnesses substrate learning through diff-edits, THIS bilateral
+# witnesses substrate learning through dimension-edits (operator
+# moves a quadrant slider on the eigenboard; observation feeds Fate;
+# Fate's Decision reshapes the next mission_text). Same shape, dual
+# altitudes: diff at @io altitude, features at text↔observation
+# altitude. Per Reed math §4.1 (Banach contraction), each `put`
+# supplies a fresh basepoint for `Φ = extract ∘ integrate`.
+#
+# The `edit_trace` argument is a `ref` handle into `@mirror/store`
+# carrying the sequence of operator-edits at observation altitude
+# across a bounded epoch; returns `pass` when edit-magnitudes contract
+# toward zero within tolerance, `partial(confidence)` when contraction
+# is soft/slow, `failure(reason)` when the trace diverges or oscillates.
+#
+# Body `\ {}` stub per two-tick discipline; Seam Phase E audit gates
+# the discharge once @magic/nl adapter + v1 encoder land.
+
+features_autopoietic_closure(l: lens_witness, edit_trace: ref) -> verdict { \ {} }
+
+# === Exports ===
+
+out @optics/lens/features
+out get
+out put
+out put_get_features
+out get_put_features
+out put_put_features
+out features_autopoietic_closure
+
+# === Gaps ===
+#
+# Not landed this tick (per two-tick discipline, Mara iter-27 §8,
+# and Seam `d9b7c35` §4 landing sequence):
+#
+# - **@magic/nl adapter species (Seam Adj 3 follow-on cascade).**
+#   `shards/magic/nl.mirror` matching @magic/distinction + @magic/frame
+#   pattern verbatim: four lift actions (`nl_as_surface`,
+#   `nl_content_as_mechanism`, `nl_from_surface`) + one bilateral
+#   `nl_satisfies_magic`. SEPARATE landing per Seam Adj 3; THIS species
+#   does not depend on it at v0.
+#
+# - **Rust runtime discharge (Seam §4 Tick B).**
+#   `bootstrap/src/optics/lens/features.rs` — `encode_mission_to_
+#   features(text: &str) -> fate::Features` body returns
+#   `Features::default()` per Seam Adj 1. Wired at `cmd_peer_beam`
+#   after the `emit_diff` branch.
+#
+# - **v1 encoder (Seam §4 Tick D).** Populate `graph_observation`
+#   quadrants from named text-signals — one quadrant per landing tick,
+#   two-tick discipline preserved. Candidate pairings: `query_intensity`
+#   from token count, `partition_risk` from spec_oid collision test,
+#   `pressure_load` from unresolved-symbol density, `mutation_rate`
+#   from edit-frequency. Adjudication deferred.
+#
+# - **Seam Phase E adversarial audit (Seam §4 Tick E).** Adversarial
+#   review on Foster bilaterals once v1 encoder discharges
+#   `features_autopoietic_closure` non-trivially. Under v0
+#   `Features::default()`, Foster laws hold TRIVIALLY (get is constant,
+#   put is identity); v1 makes them substantive.
+#
+# - **`features_autopoietic_closure` under v0 is trivial.** All-zeros
+#   is a fixed-point of `Φ = extract ∘ integrate` under any edit-trace
+#   because `put` under v0 is identity(mission_text) and `get` under
+#   v0 is constant. Non-trivial contraction requires v1 encoder +
+#   operator-edit corpus.
+#
+# - **Casimir invariant preservation.** The v1 pipeline's promise
+#   `casimir_invariant_preserved` (iter-27 §6) requires the @magic/nl
+#   adapter's `magic_invariant` OID to materialize; forward-promised.
+#
+# - **`split`-composition with @optics/lens/diff (Hutchinson
+#   attractor).** Named in iter-27 §5; this species is the SECOND
+#   point on the attractor. Actual `split`-composition witness per
+#   Reed math §4.2 is a follow-on tick.
+#
+# - **Language-gauge choice site.** English vs. German vs. markdown IS
+#   the gauge choice at @magic altitude per iter-27 §6. Which sub-shard
+#   of `@nl` provides the concrete classifier is forward-promised;
+#   species is language-agnostic at v0.
+#
+# - **Obligation-block bodies** of `get`, `put`, three Foster
+#   bilaterals, and `features_autopoietic_closure` are `\ {}` stubs at
+#   substrate-decl altitude; Rust discharge one further tick.
+#
+# Two-tick discipline: THIS tick lands the SECOND species discharging
+# Foster's (get, put) pair at features altitude, closing the fate-
+# consumable arm of Blocker 2 at substrate-decl altitude while honoring
+# Seam's three adjudications verbatim (v0 = Features::default(),
+# carrier = graph_observation, no in @magic/contract). The Rust runtime
+# hop past this is one further tick; the @magic/nl adapter cascade is
+# a SEPARATE tick per Seam Adj 3.
