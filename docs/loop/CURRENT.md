@@ -1,3 +1,47 @@
+# CURRENT arc — mara/song-substrate-decl-v0.1 ratified 2026-07-12, merge pending
+
+## 2026-07-12 addition — flags-as-lenses forward promises (per Seam `211665f` Q4)
+
+Session arc closed (`mara/song-substrate-decl-v0.1`, 201 commits ahead
+of main, Seam Phase D audit `211665f` verdict: RATIFY-WITH-
+QUALIFICATIONS). Q1-Q4 addressed in this tick. Q5 needs Alex
+adjudication. Q6 deferrable. Pre-merge forward-promised follow-on
+ticks tracked here:
+
+1. **Flags-as-lenses §10 dep #2 — `stage @mirror/lens/cli/peer/beam` shard mint**
+   Depth-2 stage at `shards/mirror/lens/cli/peer/beam.mirror` per Mara
+   `caf461f` §4 recommendation + Taut `b8fe820` scout §R2. Blocks on
+   Pack ratification. Referenced at `cli-as-prism.md` §3.2 depth-2
+   reservation; recursive-command grammar unblocked at `fe82500`. Not
+   landed this branch.
+
+2. **Flags-as-lenses §10 dep #6 — `mosaic.mirror` docstring cascade**
+   Add `mosaic(@mirror/lens/cli)` altitude specialization docstring on
+   `shards/mirror/mosaic.mirror` per Mara `caf461f` §6.2. Substrate-
+   correct name over `@spectral/mosaic` (refused per Taut `b8fe820` §R1
+   + landed parametric operator at `mosaic.mirror:60`). 📝 follow-on
+   tick.
+
+3. **Flags-as-lenses §9.5 Q1+Q2 — Alex adjudication** (Seam Q5)
+   Two unresolvable ambiguities before Reed's Option (c) runtime
+   default-flip: (Q1) `--with-shadow` ∘ `--emit-diff` composition
+   ordering (substrate says shadow-BEFORE-diff; runtime short-circuits
+   emit-diff FIRST); (Q2) anonymous-form `mirror beam <mission>`
+   shadow-cast dispatch shape (sentinel peer-home scaffold vs intended).
+   Not blocking merge; blocking runtime-flip tick.
+
+4. **MCP schema `requires` clauses** (Seam Q6)
+   `bootstrap/src/mcp.rs:mirror_peer_beam` inputSchema declares
+   `from_psychohistory` requires `fate_select`, `with_shadow` requires
+   both, in prose descriptions but NOT encoded via `allOf` +
+   `dependentRequired` JSON Schema clauses. Deferrable to `@mcp.serve`
+   lift (task #386) or follow-on schema tick.
+
+**Merge shape:** fast-forward `mara/song-substrate-decl-v0.1` → `main`
+once Q1-Q4 land. Q5 post-merge acceptable. Q6 backlog-tracked.
+
+---
+
 # CURRENT arc — beam-refactor cascade (Ticks 0-3 LANDED, Tick 4 docs sweep IN PROGRESS)
 
 **Sessions**: 2026-07-07 (T6 + iterations 1-3) + 2026-07-08 overnight

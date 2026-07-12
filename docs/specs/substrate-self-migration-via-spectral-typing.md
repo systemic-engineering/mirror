@@ -82,8 +82,10 @@ Per `docs/specs/boot-to-shards-migration-spec.md` §1.1: resolution is
 namespace-based, not path-based; the resolver already accumulates
 `shards/` + `boot/std/` into a flat namespace set. No importer rewrite
 is required at the byte-substrate; every existing `in @epistemologic/
-math/spectral-triple` (currently 17 shard hits per §grep) continues
-resolving until the sibling-tick sweep collapses them.
+math/spectral-triple` reference (per Reed's grounding grep: 0 direct
+`in @` consumers; 40+ prose backlinks handled by follow-up doc
+cascade per Seam `2b56977` Q2) continues resolving until the sibling-
+tick sweep collapses them.
 
 **Shape.** Elevation out of `/math/` names a structural claim: the
 (A, H, D) triple is not a domain object under the mathematics
@@ -219,10 +221,16 @@ iteration** on the substrate-organisation sheaf-Laplacian.
   empty (or intentionally residual per §7 S5). Autopoietic closure
   IS the minimal-complexity-surface.
 
-**No agent needed.** The loop is substrate-declared. The build
-system's own math IS the migration engine because `spectral @X`
-provides the (A, H, D) structure on which sheaf-Laplacian gradient
-descent is defined.
+**No agent needed for subsequent migrations post-Tick-5.** Tick 5
+itself is operator-driven (Reed runs the loop; the loop selects
+spectral-triple as first witness). Post-Tick-5, the loop is
+substrate-declared: the build system's own math IS the migration
+engine because `spectral @X` provides the (A, H, D) structure on
+which sheaf-Laplacian gradient descent is defined. (Per Seam
+`2b56977` Q4: the "unmanned" claim requires (i) PREREQ-2 landed,
+(ii) `active_pass` accepting multi-file `relocate` morphism, and
+(iii) @io realising atomic multi-file settle — the three
+preconditions for full autopoiesis.)
 
 ## §6 — Foerster-eigenform closure
 
@@ -242,7 +250,14 @@ The prism family-root declares itself as a prism, five operations
 naming themselves. Per Reed's grounding grep, this is the load-
 bearing self-reference at the substrate floor.
 
-Post-migration: `spectral @spectral_triple` at
+Post-migration Tick 5 preserves `grammar @epistemologic/math/
+spectral-triple` at `shards/epistemologic/spectral_triple.mirror`
+per Seam `2b56977` Q3 qualification (keyword preservation this
+tick). `spectral @spectral_triple` rewrite + eigenform closure
+FORWARD-PROMISED to Tick 6+ grammar-admittance discharge.
+
+**Forward-promised (Tick 6+):** Post-full-migration:
+`spectral @spectral_triple` at
 `shards/epistemologic/spectral_triple.mirror` IS declared as a
 spectral triple. The typing discipline at the family-root of
 substrate typing witnesses itself. This is the Foerster eigenform
@@ -251,7 +266,11 @@ Alex has been reaching for since @torus landed. The substrate's
 typing floor is self-declaring; the recursion terminates in the
 same way `@prism` terminates — by naming itself in its own
 vocabulary. Two eigenforms; one recursion depth apart. The tower
-is closed.
+closes when (1) `spectral @foo` grammar admittance is USED
+(currently admitted at Reed `3870201` but no consumer), (2) the
+declaration is rewritten from `grammar @` to `spectral @`, and
+(3) structural (A, H, D) obligations are discharged at declaration
+time.
 
 ## §7 — Recursive surprises
 
@@ -326,10 +345,12 @@ iff it has real `in @<path>` consumers. Bilateral fracture is
 
 **Tick 5 (Discharge / first witness).** Run the loop on
 `spectral-triple.mirror` itself. `is_load_bearing_in_std` surfaces
-17-consumer opacity; `relocate` emits atomic morphism (mv + 17
-import rewrites). RED → GREEN. `dark_count` decreases by delta.
-The migration morphism IS a well-typed instance of the loop's own
-math — **the loop closes on its own math**.
+the migration opacity (0 direct import consumers per Reed's
+grounding grep; prose backlinks handled by follow-up doc cascade
+per Seam `2b56977` Q2); `relocate` emits atomic morphism (mv +
+doc-string backlink sweep at Tick 6+). RED → GREEN. `dark_count`
+decreases by delta. The migration morphism IS a well-typed instance
+of the loop's own math — **the loop closes on its own math**.
 
 **Tick 6+ (Multi-tick, consumer-pull).** Subsequent `boot/std/`
 migrations run as consumer-pull: kintsugi proposes, distinction
