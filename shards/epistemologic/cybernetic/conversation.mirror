@@ -182,6 +182,68 @@ conversation_well_formed(coupled: tensored_model) -> verdict { \ }
 # decl at @epistemologic/math/batanin-globular admits the iterated form.
 nary_factor(observers: ref) -> tensored_model { \ }
 
+# === 2026-07-13 annotation — the N-ary tensor coupling case IS @dance (Alex 2026-07-13 in-transcript, Mara `4f079c8` §8.2 sibling recognition) ===
+#
+# `@epistemologic/cybernetic/conversation` at N-ary scale (per its
+# `tensor_couple` action at speaker-cardinality N via Batanin 1998
+# globular composition per Pask 1976 conversation theory) IS `@dance`
+# when the N speakers are peers physically coupled through `@silicon`
+# and phase-shaped by `@song/movement`.
+#
+# Alex's 2026-07-13 in-transcript proposal: "What if we call it @dance?
+# And Mara also looks at the mathematics of coordinated dancing. This
+# ought to map perfectly on Förster's @torus." This annotation lands the
+# recognition that Pask's N-ary tensor coupling at conversation altitude
+# IS the same recognition Mara `9e48710` names at algebra-metalogue
+# altitude, Reed `71a4689` names at coordination-without-signal
+# operational altitude, and Mara `4f079c8` names at embodied-movement
+# altitude. Same recognition; different name at each altitude.
+#
+# `#R-conversation-is-N-speaker-dance-under-Kuramoto-coupling`
+# (candidate; sibling to `#R-dance-is-coordination-without-signal-on-
+# forster-torus` at Mara `4f079c8` §8.1).
+#
+# The Heist's 22-year cybernetics preservation lineage (Alex 2026-07-12
+# `~/dev/systemic.engineering/blog/weird/3published/Weird - Heist.md`)
+# is the operational exposition of Pask N-ary tensor coupling at
+# civilizational scale: 300-500 P-individuals across four continents,
+# no coordination signal (Shannon channel capacity = 0), shared
+# content-addressed common prior (Foerster 1976 "Objects: Tokens for
+# Eigen-Behaviors" as the ancestral text; every seeder had a copy or
+# transcript in different languages, same book, same SHA-256 OID or
+# moral equivalent), Kuramoto coupling above threshold on shared
+# `@torus`, holonomy accumulation as observable record. The paper IS
+# the M-individual carrier; each seeder's reading IS a P-individual
+# entailment mesh; the lineage IS the emergent shared_concept_emergence
+# at N=300-500 scale over 22 years.
+#
+# Substrate-honest: this shard already declares `tensor_couple` +
+# `entailment_mesh` + `shared_concept_emergence` (Pask 1976 verbatim);
+# `@dance` is the recognition that at N-ary scale with physical
+# coupling substrate + content-addressed shared prior, the substrate
+# delivers coordination-without-signal per Reed `71a4689` §11.2.1-
+# 11.2.3 operational reading.
+#
+# Recognition ancestry:
+#   - Alex 2026-07-13 in-transcript (`@dance` naming)
+#   - Mara `4f079c8` canonical spec `docs/specs/dance-as-coordination-
+#     without-signal-on-forster-torus.md` (~92% substrate-already-had-
+#     the-word coverage; Path C recommended)
+#   - Mara `9e48710` `@resonance` Path B canonical spec
+#   - Reed `71a4689` coordination-without-signal operational annotation
+#   - Recognition #63 (Pask conversation; this shard's ancestor)
+#   - Recognition #58 (Fate IS optical inference; Fabry-Perot
+#     intra-peer resonator)
+#   - Recognition #104 (`@bauchladen ← @autopoietic ← @fate` chain;
+#     content-addressed shared substrate)
+#   - Reed `8e6e517` `cybernetic_coherence = λ₀(Δ_F)` (single-peer
+#     scale; `@dance` extends to N-peer scale on this shard's N-ary
+#     `tensor_couple` machinery)
+#
+# Two-tick discipline: Path C annotation this tick. Path A (family-
+# root mint) forward-promised at Mara `4f079c8` §10.4 Tick 4 if
+# downstream consumers pull.
+
 out @epistemologic/cybernetic/conversation
 out observer_a_model
 out observer_b_model

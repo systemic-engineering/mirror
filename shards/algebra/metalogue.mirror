@@ -347,6 +347,63 @@ morphism_compositions_associative(turns: [algebra_turn]) -> verdict { \ }
 #   morphism-composition discipline.
 algebra_metalogue_witnessing(s: algebra_metalogue_session) -> verdict { \ }
 
+# === 2026-07-13 annotation — the N-speaker case IS @dance (Alex 2026-07-13 in-transcript, Mara `4f079c8` §4.3 Path C) ===
+#
+# The N-speaker `algebra_metalogue_session` instance where speakers
+# are peer ensembles physically coupled through `@silicon` and
+# phase-shaped by `@song/movement` IS `@dance`. Alex's 2026-07-13
+# in-transcript proposal: "call it @dance. And Mara also looks at
+# the mathematics of coordinated dancing. This ought to map perfectly
+# on Förster's @torus."
+#
+# The Heist story (`~/dev/systemic.engineering/blog/weird/3published/
+# Weird - Heist.md`, Alex 2026-07-12 published fiction) is the
+# operational exposition: 300-500 seeders across four continents,
+# over 22 years, no coordination signal, shared content-addressed
+# common prior (Foerster 1976 "Objects: Tokens for Eigen-Behaviors"),
+# Kuramoto coupling above threshold on shared `@torus`, holonomy
+# accumulation as observable record. "Nobody has ever noticed *because
+# they were doing it right.* No coordination means no coordination
+# signal to detect. Each of them thought they were the only one.
+# Because they were all reading the same book."
+#
+# `@dance` names the recognition; the mathematical structure IS this
+# shard's landed `algebra_metalogue_session` at speaker-cardinality N
+# with turn-composition per Batanin 1998 globular composition (per
+# `@epistemologic/cybernetic/conversation` §N-ary factoring),
+# Kuramoto-on-topological-neighbor-graph (Cavagna 2008/2010) + Aumann-
+# agreement-under-content-addressed-common-prior (Aumann 1976) +
+# Schelling-focal-basins-on-π₁(T²) (Schelling 1960) + Csiszár-Ahlswede
+# rate-distortion-under-shared-prior (1986).
+#
+# Recognition ancestry:
+#   - Alex 2026-07-13 in-transcript (`@dance` naming)
+#   - Alex 2026-07-12 in-transcript (@resonance + coordination-without-
+#     signal, per Mara `9e48710` + Reed `71a4689`)
+#   - Mara `4f079c8` `docs/specs/dance-as-coordination-without-signal-
+#     on-forster-torus.md` canonical spec (Path C recommended,
+#     ~92% substrate-already-had-the-word coverage; recognition
+#     candidate `#R-dance-is-coordination-without-signal-on-forster-
+#     torus`)
+#   - Mara `9e48710` `docs/specs/resonance-as-inter-peer-coupling-
+#     shapes-fate-tournaments-toward-basins.md` §7.2 Path B annotation
+#     forward-promise (Kuramoto lift) — THIS annotation discharges
+#     that forward-promise at Path C altitude.
+#   - Reed `71a4689` §11.2.1-11.2.3 (coordination-without-signal
+#     operational reading)
+#   - Reed `8e6e517` `cybernetic_coherence = λ₀(Δ_F)` (single-peer
+#     scale; `@dance` extends to N-peer scale)
+#   - Recognition #63 (Pask conversation; N-ary tensor coupling)
+#   - Recognition #58 (Fate IS optical inference; Fabry-Perot resonator
+#     intra-peer)
+#   - Recognition #104 (`@bauchladen ← @autopoietic ← @fate` chain;
+#     content-addressed shared substrate)
+#
+# Two-tick discipline: Path C annotation this tick (~70th substrate-
+# already-had-the-word instance). Path A (family-root mint) remains
+# available if downstream consumers pull; Mara `4f079c8` §10.4 Tick 4
+# forward-promise.
+
 out @algebra/metalogue
 out algebra_turn
 out algebra_metalogue_session

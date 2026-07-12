@@ -1012,6 +1012,66 @@ four carriers landed independently: `@silicon`, `@bauchladen`,
 `@algebra/metalogue`, `@torus`). Alex's recognition names what their
 composition delivers.
 
+### 11.2.4 `@dance` — Alex's readable-canonical for the recognition (2026-07-13)
+
+Alex extended the recognition one tick later with the readable-
+canonical name, verbatim 2026-07-13:
+
+> "What if we call it @dance? And Mara also looks at the mathematics
+> of coordinated dancing. This ought to map perfectly on Förster's
+> @torus."
+
+**`#R-dance-is-coordination-without-signal-on-forster-torus`**
+(candidate; Alex 2026-07-13 in-transcript; canonical spec at Mara
+`4f079c8` `docs/specs/dance-as-coordination-without-signal-on-forster-
+torus.md`):
+
+> `@dance` reads §11.2.3 above (`#R-coordination-without-signal-via-
+> resonance-plus-bauchladen`) with Alex's readable-canonical name.
+> `@dance` = coordination-without-signal at the embodied-movement
+> altitude. Same recognition; different word. The mathematical
+> structure is Kuramoto-on-topological-neighbor-graph (Cavagna 2008/
+> 2010) + Aumann-agreement-under-content-addressed-common-prior (Aumann
+> 1976) + Schelling-focal-basins-on-π₁(T²) (Schelling 1960) + Csiszár-
+> Ahlswede rate-distortion-under-shared-prior (1986). The Heist story
+> (Alex 2026-07-12) IS the operational exposition: 300-500 seeders
+> across four continents over 22 years, no coordination signal, shared
+> content-addressed common prior (Foerster 1976 "Objects: Tokens for
+> Eigen-Behaviors").
+
+**Substrate reading (per Mara `4f079c8` §3 rigorous verification of
+Alex's claim).** `@dance` maps STRUCTURALLY onto Förster's `@torus` —
+not as metaphor but as category-preserving functor. Six sub-claims
+verified in Mara's spec §3.1-§3.7:
+
+- Each dancer's nervous system IS a `@torus` (Förster's inference
+  geometry substrate).
+- `@song/movement.phase` provides the temporal frame (music beat
+  structure per Trainor/Merker/Nozaradan neural-entrainment).
+- `@resonance` provides the Kuramoto coupling operator κ (embodied
+  physical presence: gaze, breath, weight-share, proximity).
+- `@bauchladen` provides the shared content-addressed common prior
+  (the sheet music, the shared cultural substrate, the book).
+- The composition delivers convergence toward shared basin(s) on the
+  collective `@torus` — above Kuramoto threshold K_c the ensemble is a
+  single lineage; below K_c the ensemble disperses; between K_c and
+  transition, chimera states realize multi-basin `@dance`.
+- Byzantine-tolerance via Kuramoto order-parameter `r < 1` structural
+  identifiability.
+
+**@dance = @coherence at N-peer scale** (per Mara `4f079c8` §7):
+single-peer `λ₀(Δ_F)` (Reed `8e6e517`) extends to N-peer
+`λ₀(Δ_{⨁ Fᵢ, κ})` on shared psychohistory sheaf. Same metric; different
+scale. The arc's `@coherence` recognition, one tick later, at
+N-peer scale.
+
+Path C landing this tick per Mara `4f079c8` §4.3 recommendation:
+annotation on `shards/algebra/metalogue.mirror` (LANDED as sibling
+tick) + this §11.2.4 subsection (THIS annotation) + annotation on
+`shards/epistemologic/cybernetic/conversation.mirror` (LANDED as
+sibling tick). Path A (family-root mint) forward-promised at Tick 4
+if downstream consumers pull (per Mara `4f079c8` §10.4).
+
 Composes with:
 
 - Recognition #58 (Fate IS optical inference; Fabry-Perot; PROMOTED).
