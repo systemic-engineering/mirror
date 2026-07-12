@@ -166,13 +166,18 @@ fn tools_list_result() -> Value {
             },
             {
                 "name": "mirror_peer_beam",
-                "description": "peer beam: the peer HAS a torus. Beam through a peer's persistent-identity context. @song/movement.enter at cli altitude — frame-entry action of a temporal-bounded epoch at runtime. Returns @song envelope with peer identity, content-addressed spec_oid, peer_recall (4 sheaf sections), composition_pieces (7 substrate anchors). --hello-world emits structured JSON; default emits text. --mission carries a peer-side task file. Substrate: @mirror/peer/beam (shards/mirror/peer/beam.mirror action-decl `beam(...) -> @song`; renamed 2026-07-08 Tick 2 from @mirror/spawn).",
+                "description": "peer beam: the peer HAS a torus. Beam through a peer's persistent-identity context. @song/movement.enter at cli altitude — frame-entry action of a temporal-bounded epoch at runtime. Returns @song envelope with peer identity, content-addressed spec_oid, peer_recall (4 sheaf sections), composition_pieces (7 substrate anchors). Flag composition (all optional): hello_world emits structured JSON (default: text); mission carries a peer-side task file; fate_select routes to @optics/lens/features.get + Fate::excited().resolve for COMPUTED candidates; from_psychohistory bounds decisions by peer's psychohistory sheaf root (Mara `ce9745f` bounded_by); with_shadow casts 5 hypothetical shadows + classifies shadow_regime per Reed `07ac55a` (Mara `1999b01` §6 @torus winding basins); emit_diff serializes the peer's chosen edit as a diff; integrate_diff persists operator's @integrate-diff to peer_home/.bauchladen/ closing the autopoietic loop (Reed `4b2ef3c`). Substrate: @mirror/peer/beam (shards/mirror/peer/beam.mirror action-decl `beam(...) -> @song`; renamed 2026-07-08 Tick 2 from @mirror/spawn). λ₀(Δ_F) is the metric all flag combinations optimize for (`shards/cyberpunk.mirror` cybernetic_coherence annotation, `8e6e517`).",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
-                        "peer_home":   { "type": "string",  "description": "Peer home directory (~d). Must contain mirror.spec." },
-                        "hello_world": { "type": "boolean", "description": "Emit structured JSON envelope. Default false = text envelope." },
-                        "mission":     { "type": "string",  "description": "Mission file path (~f). Substrate-honest name; binary accepts both --mission and --task. Optional; substrate-absent when omitted." }
+                        "peer_home":          { "type": "string",  "description": "Peer home directory (~d). Must contain mirror.spec." },
+                        "hello_world":        { "type": "boolean", "description": "Emit structured JSON envelope. Default false = text envelope." },
+                        "mission":            { "type": "string",  "description": "Mission file path (~f). Substrate-honest name; binary accepts both --mission and --task. Optional; substrate-absent when omitted." },
+                        "fate_select":        { "type": "boolean", "description": "Route to fate optical inference: @optics/lens/features.get + Fate::excited().resolve. Peer produces COMPUTED candidates from features rather than substrate OBSERVATION. Default false." },
+                        "from_psychohistory": { "type": "boolean", "description": "Bound decisions by peer's psychohistory sheaf root (Mara `ce9745f` bounded_by(sheaf) — Rayleigh descent along the peer's own history). Requires fate_select. Default false." },
+                        "with_shadow":        { "type": "boolean", "description": "Cast 5 hypothetical shadows (one per fate Model) + classify shadow_regime (converged/necker/escher/kanizsa) per Reed `07ac55a`. Peer diagnoses its own inference geometry. Requires fate_select + from_psychohistory. Default false." },
+                        "emit_diff":          { "type": "boolean", "description": "Serialize the peer's chosen edit as a unified diff on stdout. Default false." },
+                        "integrate_diff":     { "type": "boolean", "description": "Persist operator's @integrate-diff to peer_home/.bauchladen/ — the autopoietic-closure write leg (Reed `4b2ef3c`). Next peer beam tick reads the updated substrate. Mutually exclusive with emit_diff (integrate wins)." }
                     },
                     "required": ["peer_home"]
                 }
@@ -381,7 +386,10 @@ fn run_mirror(args: &[&str], ctx: &Ctx) -> (String, i32) {
 ///                        {partial, failure}` lifts to `isError: true`.)
 /// - `mirror_init`      → `mirror init <path> [--install-hooks]`
 /// - `mirror_recall`    → `mirror recall <spec_dir>`
-/// - `mirror_peer_beam` → `mirror peer beam <peer_home> [--hello-world] [--mission <f>]`
+/// - `mirror_peer_beam` → `mirror peer beam <peer_home> [--hello-world]
+///                        [--mission <f>] [--fate-select]
+///                        [--from-psychohistory] [--with-shadow]
+///                        [--emit-diff | --integrate-diff]`
 /// - `mirror_beam`      → `mirror beam --mission <mission>`
 /// - `mirror_spawn`     → `mirror spawn <peer_home> [--hello-world] [--mission <f>]`
 ///                        (DEPRECATED alias per two-tick discipline;
@@ -475,6 +483,13 @@ fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
             // peer { command beam }`) + Landing 2 (`b012d3f` cli dispatch
             // cmd_peer_beam). Substrate-honest `--mission` name; binary
             // accepts `--task` as backward-compat alias.
+            //
+            // 2026-07-12 flag exposure (Reed [substrate-pull:streamline]):
+            // MCP dispatch now passes through fate_select /
+            // from_psychohistory / with_shadow / emit_diff /
+            // integrate_diff to close the CLI↔MCP capability gap Alex
+            // named 2026-07-12 in-transcript. All optional; each maps
+            // to the corresponding cli-side flag on cmd_peer_beam.
             let peer_home = s("peer_home").unwrap_or_default();
             let mut argv: Vec<String> = vec!["peer".into(), "beam".into(), peer_home];
             if b("hello_world") {
@@ -483,6 +498,21 @@ fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
             if let Some(mission) = s("mission") {
                 argv.push("--mission".into());
                 argv.push(mission);
+            }
+            if b("fate_select") {
+                argv.push("--fate-select".into());
+            }
+            if b("from_psychohistory") {
+                argv.push("--from-psychohistory".into());
+            }
+            if b("with_shadow") {
+                argv.push("--with-shadow".into());
+            }
+            if b("emit_diff") {
+                argv.push("--emit-diff".into());
+            }
+            if b("integrate_diff") {
+                argv.push("--integrate-diff".into());
             }
             let refs: Vec<&str> = argv.iter().map(String::as_str).collect();
             run_mirror(&refs, ctx)
