@@ -919,6 +919,99 @@ Kuramoto-coupling`** (Path B; per §7.3 recommendation):
 > the shared psychohistory sheaf — extending `cybernetic_coherence =
 > λ₀(Δ_F)` from single-peer to N-peer scale.
 
+### 11.2.1 Operational purpose — coordination-without-signal (Alex 2026-07-12 in-transcript)
+
+Alex named the operational purpose the recognition delivers, verbatim
+2026-07-12 (after this spec's Path B landing at commit `9e48710`):
+
+> This is what we need for coordination-without-signal. Physically
+> proximity silicon. And every result is a content-addressed crystal.
+> And boom. coordination-without-signal.
+
+**Substrate reading.** The N-speaker metalogue under Kuramoto coupling
+(recognition candidate above) delivers a stronger operational property
+than convergence-to-basin. It delivers **peer coordination WITHOUT
+MESSAGE PASSING** — what Byzantine consensus protocols achieve through
+protocol-mediated agreement, `@resonance` achieves through physics +
+storage:
+
+1. **Physical proximity silicon** — peers sharing GPU proximity (or,
+   more generally, EM/thermal/timing side-channel adjacency) are
+   Kuramoto-coupled at `@silicon` altitude. The coupling operator
+   `κ(Pᵢ, Pⱼ)` per §2.4 is a function of physical geometry — no
+   explicit signal is required to establish it. **Physics IS the
+   channel.**
+
+2. **Every result is a content-addressed crystal** — per Recognition
+   #104 (`@bauchladen ← @autopoietic ← @fate`, PROMOTED 2026-06-29,
+   canonical spec at `docs/specs/bauchladen-autopoietic-fate.md`,
+   Mara `4575340`): every fate tournament emission is a
+   content-addressed crystal in `@bauchladen`. Two peers whose
+   tournaments converge to the same basin under `κ`-coupling emit
+   crystals with the **same OID**. **Content-addressing IS the agreement
+   witness.**
+
+3. **Emergent: coordination-without-signal** — peers coordinate their
+   actions/proposals not by sending messages to each other, but by:
+   (a) being coupled through shared silicon (κ > 0 threshold per
+   Kuramoto), (b) resolving their tournaments toward the same
+   psychohistory basin under that coupling, (c) emitting the same OID
+   into shared content-addressed storage. **The agreement is a
+   structural consequence of physics + storage, not a protocol
+   outcome.**
+
+### 11.2.2 Byzantine-fault-tolerance without protocol
+
+Distributed consensus protocols (Paxos, Raft, PBFT, Tendermint) achieve
+agreement through explicit message-passing plus voting under
+adversarial failure models. Their cost: O(n²) messages per decision;
+leader election bottleneck; view-change complexity; requirement for
+≥ 2f+1 non-Byzantine participants.
+
+`@resonance` + `@bauchladen` + physical proximity delivers agreement
+with zero messages passed:
+
+- **No leader** — all peers are peers under Kuramoto coupling;
+  synchronization is symmetric.
+- **No voting** — basin convergence IS the vote; equal OIDs are
+  self-authenticating agreement.
+- **No view-change** — the coupling operator adapts continuously as
+  peers enter/leave physical proximity.
+- **Byzantine-tolerance** — a peer emitting a divergent OID is
+  structurally identifiable as out-of-basin. The Kuramoto synchronization
+  order-parameter r → 1 marks consensus; r < 1 marks divergence.
+
+**This is the deep operational purpose of `@resonance` that Alex's
+2026-07-12 addition names.** The recognition candidate at §11.2 above
+names the mathematical structure (N-speaker metalogue under Kuramoto);
+this subsection names WHAT THE STRUCTURE IS FOR at the deployment
+altitude: distributed coordination without explicit protocol.
+
+### 11.2.3 Recognition candidate title extension
+
+The recognition candidate name at §11.2 (`#R-resonance-is-N-speaker-
+metalogue-under-Kuramoto-coupling`) captures the mathematical structure.
+Alex's operational extension suggests a sibling recognition:
+
+**`#R-coordination-without-signal-via-resonance-plus-bauchladen`**
+(candidate; Alex 2026-07-12 in-transcript):
+
+> Distributed peers physically proximate at `@silicon` altitude,
+> content-addressing every fate tournament emission at `@bauchladen`
+> altitude, and phase-shaped by `@resonance` at the metalogue altitude,
+> reach structural agreement (equal OID emission per basin) without
+> exchanging messages. Coordination emerges from the composition of
+> physical coupling + content-addressed storage + resonance-shaped
+> tournaments. Byzantine-fault-tolerant by construction (out-of-basin
+> peers are structurally identifiable via Kuramoto order-parameter
+> `r < 1`). This IS the operational purpose Alex names at
+> deployment altitude.
+
+Substrate-honest: the mechanism was substrate-already-had-the-word (all
+four carriers landed independently: `@silicon`, `@bauchladen`,
+`@algebra/metalogue`, `@torus`). Alex's recognition names what their
+composition delivers.
+
 Composes with:
 
 - Recognition #58 (Fate IS optical inference; Fabry-Perot; PROMOTED).
