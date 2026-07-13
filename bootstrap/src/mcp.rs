@@ -177,7 +177,10 @@ fn tools_list_result() -> Value {
                         "from_psychohistory": { "type": "boolean", "description": "Bound decisions by peer's psychohistory sheaf root (Mara `ce9745f` bounded_by(sheaf) — Rayleigh descent along the peer's own history). Requires fate_select. Default false." },
                         "with_shadow":        { "type": "boolean", "description": "Cast 5 hypothetical shadows (one per fate Model) + classify shadow_regime (converged/necker/escher/kanizsa) per Reed `07ac55a`. Peer diagnoses its own inference geometry. Requires fate_select + from_psychohistory. Default false." },
                         "emit_diff":          { "type": "boolean", "description": "Serialize the peer's chosen edit as a unified diff on stdout. Default false." },
-                        "integrate_diff":     { "type": "boolean", "description": "Persist operator's @integrate-diff to peer_home/.bauchladen/ — the autopoietic-closure write leg (Reed `4b2ef3c`). Next peer beam tick reads the updated substrate. Mutually exclusive with emit_diff (integrate wins)." }
+                        "integrate_diff":     { "type": "boolean", "description": "Persist operator's @integrate-diff to peer_home/.bauchladen/ — the autopoietic-closure write leg (Reed `4b2ef3c`). Next peer beam tick reads the updated substrate. Mutually exclusive with emit_diff (integrate wins)." },
+                        "song":               { "type": "string",  "description": "Song file path (~f). Rung 1 @song/beat runtime dispatch per Mara `94e55eb` sixth species; Rung 2 line-per-beat phrase parsing; Rung 3 mirror-native tokenize+AST walk (nested song/movement/voice/progression/narrative/phrase blocks per Mara `d29d45e` Path B). Fires @kintsugi/oscillate ACTIVE/DARK pulse per beat; emits per-block envelope naming @song + species substrate authorities." },
+                        "dance_with":         { "type": "string",  "description": "Second peer-home for Rung 4 multi-peer @dance coupling (requires song). Both peers execute the shared song; runtime computes Kuramoto order parameter + Aumann agreement + shared_root_oid + convergence_verdict per Mara `417ec25` Scope B narrowed to coherence phase-lock. Envelope names @dance + @resonance + @cyberpunk + @bauchladen authorities. Coherence stub at Rung 4; λ₀(Δ_F) actual computation forward-promised to Rung 4.5." },
+                        "deploy_to":          { "type": "string",  "description": "Rung 5 mycelial-envelope-declared deployment target (requires song + dance_with) per Mara `9c4ef5b` Scope A. Composes over Rung 4 dance shared_root_oid; emits deployment envelope naming @spectral/garden + @spectral/garden/nix + @bauchladen + @dance + @mirror/mosaic + @song/beat substrate authorities. Target is URL-shaped string (may be spectral.engineer, file://, or any string — target is declarative not operationally verified at Rung 5). Actual nix build forward-promised to Rung 5.5; actual mycelial gossip forward-promised to Rung 6." }
                     },
                     "required": ["peer_home"]
                 }
@@ -513,6 +516,25 @@ fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
             }
             if b("integrate_diff") {
                 argv.push("--integrate-diff".into());
+            }
+            // Rungs 1-5 (2026-07-13) @song ladder-climb dispatch flags
+            // per Reed's ladder-climb session: --song (Rung 1-3), --dance-
+            // with (Rung 4), --deploy-to (Rung 5). All optional; each maps
+            // to the corresponding cli-side flag on cmd_peer_beam. When
+            // all three are present, dispatch cascades: --deploy-to fires
+            // first (Rung 5), else --dance-with (Rung 4), else --song
+            // (Rung 1-3), else the base peer beam envelope.
+            if let Some(song_path) = s("song") {
+                argv.push("--song".into());
+                argv.push(song_path);
+            }
+            if let Some(dance_with) = s("dance_with") {
+                argv.push("--dance-with".into());
+                argv.push(dance_with);
+            }
+            if let Some(deploy_to) = s("deploy_to") {
+                argv.push("--deploy-to".into());
+                argv.push(deploy_to);
             }
             let refs: Vec<&str> = argv.iter().map(String::as_str).collect();
             run_mirror(&refs, ctx)
