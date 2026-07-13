@@ -1,6 +1,27 @@
 # CURRENT arc — @song/beat ladder-climb 2026-07-13 (Rungs 0 landed, 1 in progress)
 
-## Rung 9 coherence loop closure IN-FLIGHT (2026-07-13, per Alex "ship it friend, Reed. We're making history.")
+## Rung 8+9 unification: SpectralCoordinate<5> substrate measurement lands (2026-07-13)
+
+Alex 2026-07-13: "I'm surprised the index doesn't do that. The 5 dimensions
+are already part of the SpectralUUID which is part of every fragment, no?"
++ "Can't we just inline it into fragmentation? Feels easier." + "let's ship
+substrate-honest history."
+
+**LANDINGS:**
+- Mara `c753d5b` — Rung 8+9 unification canonical spec (1278 LOC).
+  Direction convention DISSOLVES under SC<5>: loss = ||sc||₂ (unambiguous).
+  identity_preserved = angle(sc_after, sc_before) (topological, O(1)).
+- Reed `22b52ad` (fragmentation repo) — fragmentation-spectral workspace
+  member. Pulled 6 modules from coincidence/. Zero new bootstrap deps.
+- Reed Landing 8+9.3 (this session) — bootstrap/Cargo.toml +
+  contribute.rs SC<5> emission. Empirical: 977/1320 hex chars differ on
+  docstring-append (74%). Substrate coordinate CHANGED.
+
+**Landing 8+9.4-10** (Reed forward-promise): retire EigenvalueProfile via
+CLI/MCP renames; harmonic_distance L² formula per Alex §10.1 adjudication;
+query_phi_coherence full body; @knife lands per §10.3 empirical observation.
+
+## Rung 9 coherence loop closure LANDED (2026-07-13, per Alex "ship it friend, Reed. We're making history.")
 
 Fabry-Perot cavity round-trip operationalized at peer-contribute altitude.
 Mara `c59a5ac` canonical spec (1278 LOC) + Taut `862db12` scout (Path C
