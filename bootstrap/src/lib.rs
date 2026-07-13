@@ -46,6 +46,7 @@ pub mod property;
 pub mod realisation;
 pub mod score;
 pub mod sheaf_laplacian;
+pub mod song;
 pub mod spectral;
 pub mod tensor;
 pub mod tokenize;
@@ -3188,6 +3189,11 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                     .position(|a| a == "--mission" || a == "--task")
                     .and_then(|i| args.get(i + 1))
                     .map(|s| s.as_str());
+                let song = args
+                    .iter()
+                    .position(|a| a == "--song")
+                    .and_then(|i| args.get(i + 1))
+                    .map(|s| s.as_str());
                 cmd_peer_beam(
                     p,
                     hello_world,
@@ -3198,6 +3204,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                     fate_select,
                     from_psychohistory,
                     with_shadow,
+                    song,
                 )
             }
             None => {
@@ -3230,7 +3237,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                             let mut found: Option<&str> = None;
                             while j < args.len() {
                                 let a = &args[j];
-                                if a == "--mission" || a == "--task" {
+                                if a == "--mission" || a == "--task" || a == "--song" {
                                     j += 2;
                                     continue;
                                 }
@@ -3257,6 +3264,11 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                                 let from_psychohistory =
                                     args.iter().any(|a| a == "--from-psychohistory");
                                 let with_shadow = args.iter().any(|a| a == "--with-shadow");
+                                let song = args
+                                    .iter()
+                                    .position(|a| a == "--song")
+                                    .and_then(|i| args.get(i + 1))
+                                    .map(|s| s.as_str());
                                 cmd_peer_beam(
                                     p,
                                     hello_world,
@@ -3267,6 +3279,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                                     fate_select,
                                     from_psychohistory,
                                     with_shadow,
+                                    song,
                                 )
                             }
                             None => {
@@ -3311,6 +3324,11 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                     let fate_select = args.iter().any(|a| a == "--fate-select");
                     let from_psychohistory = args.iter().any(|a| a == "--from-psychohistory");
                     let with_shadow = args.iter().any(|a| a == "--with-shadow");
+                    let song = args
+                        .iter()
+                        .position(|a| a == "--song")
+                        .and_then(|i| args.get(i + 1))
+                        .map(|s| s.as_str());
                     cmd_peer_beam(
                         ".",
                         hello_world,
@@ -3321,6 +3339,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                         fate_select,
                         from_psychohistory,
                         with_shadow,
+                        song,
                     )
                 }
                 None => {
@@ -4956,6 +4975,7 @@ fn cmd_peer_beam(
     fate_select: bool,
     from_psychohistory: bool,
     with_shadow: bool,
+    song: Option<&str>,
 ) -> i32 {
     // Piece 1 (insight §2.1): cli surface. The peer-home argument is the
     // single positional. Context (frame, repository, pack) is resolved
@@ -4963,6 +4983,18 @@ fn cmd_peer_beam(
     // peer-home honors the dispatch context.
     let peer_home_resolved = ctx.resolve(peer_home);
     let spec_path = peer_home_resolved.join("mirror.spec");
+
+    // Rung 1 (2026-07-13) — `--song` early dispatch per Taut `c54740c`
+    // §5.2 ladder. When --song is present, the peer's @song/beat runtime
+    // takes over: fire ONE @kintsugi/oscillate ACTIVE/DARK pulse per
+    // beat, emit beat-envelope naming @song/beat + @kintsugi/oscillate
+    // substrate authorities. Byte-equality preserved for non-`--song`
+    // paths via `if let Some(...)` guard; other flags don't fire when
+    // song dispatches. Rung 2+ multi-beat phrase execution layers on
+    // this dispatch shape.
+    if let Some(song_path) = song {
+        return crate::song::single_beat_peer_beam(peer_home, &spec_path, song_path, ctx);
+    }
 
     // Blocker 2 Rust runtime discharge (2026-07-11) —
     // `--emit-diff` routes through the @optics/lens/diff.get direction

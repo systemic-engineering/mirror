@@ -214,6 +214,20 @@ project mirror.spec {
           arg peer_home: ~d
           flag hello_world: bool = false
           flag mission: ~f
+          # === Rung 1 addition (2026-07-13) — @song/beat runtime dispatch ===
+          #
+          # `--song <file>` triggers @song/beat runtime dispatch via
+          # `crate::song::single_beat_peer_beam` at bootstrap/src/song.rs.
+          # Fires ONE @kintsugi/oscillate ACTIVE/DARK pulse; emits
+          # beat-envelope naming @song/beat + @kintsugi/oscillate
+          # substrate authorities. Per Taut `c54740c` §5.2 ladder Rung 1;
+          # Mara `94e55eb` `shards/song/beat.mirror` sixth species mint
+          # (Rung 0 prerequisite).
+          #
+          # Byte-equality preserved for non-`--song` paths via
+          # `if let Some(song_path) = song` guard at cmd_peer_beam
+          # dispatch entry. Follows `flag mission: ~f` pattern verbatim.
+          flag song: ~f
         }
       }
     }
