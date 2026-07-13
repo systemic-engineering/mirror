@@ -1,0 +1,909 @@
+# @song/beat — the atomic-execution-unit species of the @song family:
+# the substrate-decl of ONE @kintsugi/oscillate ACTIVE/DARK alternation
+# read at temporal altitude; the smallest coherent temporal unit below
+# @song/phrase. Rung 0 landing per Taut's gap-scout
+# `docs/scouts/2026-07-13-taut-mirror-spawn-song-beat-gap-scout.md`
+# (`c54740c`) §5.1 against Alex's 2026-07-13 in-transcript proposal:
+# *"What's the gap between where we are now and a working mirror spawn
+# based on @song/beat's that we can incrementally and increasingly test
+# in complexity?"* — spawns Taut for the scout; Taut names Rung 0 as
+# the substrate-decl prerequisite; this shard IS Rung 0.
+#
+# **Sixth species of the `@song` family** (after `@song/progression`
+# Arc 6 TICK 2 landing `54ff1e8`, `@song/voice` Arc 6 TICK 3 landing
+# `cc5a440`, `@song/movement` Arc 6 TICK 4 landing `4efbf16`,
+# `@song/narrative` Arc 6 TICK 5 landing `0434a39`, and `@song/phrase`
+# Arc 6 TICK 6 landing `6b9bc5c`; family-root `shards/song.mirror`
+# Arc 6 TICK 1 landing `f01cf9f`). **FIRST species landing AFTER Arc 6
+# closed** — post-arc extension motivated by Alex's runtime-execution
+# ladder (Rungs 1-6 per Taut `c54740c` §5).
+#
+# CONSOLIDATION species — adds NO new `song_settles` sub-predicates
+# (the family-root's composed bilateral fully discharged at Arc 6
+# TICK 3 `cc5a440` with `voice_line_valid` closing the third sub-
+# predicate; movement / narrative / phrase consolidated at TICKs 4/5/6).
+# The species carries `strike` and `hold` at species altitude as its
+# operational surface — the atomic beat-execution event (fire ONE
+# substrate action on the peer's shard graph) and the atomic beat-hold
+# event (advance temporal position by one @time.tick without firing an
+# action) — but these CONSUME the family-root's existing `song_settles`
+# verdict rather than emitting new sub-predicate rows. FOURTH
+# consolidation-species witness within @song, reinforcing the LANDED
+# **Recognition #S5** (consolidation-vs-decomposition species pattern;
+# PROMOTED to LANDED at Arc 6 close per phrase.mirror `6b9bc5c`).
+#
+# === Species positioning: FOURTH consolidation-species witness ===
+#
+# Per `shards/song.mirror` §3 (`song_settles(pr, p) -> verdict { \ }`),
+# the family-root's load-bearing composed bilateral (14th #53 instance
+# per `[[architecture-property-fracture-bilateral]]`) decomposed into
+# THREE sub-predicates, ALL discharged at species altitude:
+#
+#   1. `progression_directed_toward_cadence(pr, p)` [@song/progression, `54ff1e8`]
+#   2. `cadence_authentic_or_plagal(c, p)`          [@song/progression, `54ff1e8`]
+#   3. `voice_line_valid(v, p)`                     [@song/voice, `cc5a440`]
+#
+# This species declares ZERO new sub-predicates. The composed bilateral
+# `song_settles` fully discharged at TICK 3 — the family-root's
+# admissibility contract is closed. Beat is CONSOLIDATION (like
+# `@song/movement` `4efbf16`, `@song/narrative` `0434a39`, and
+# `@song/phrase` `6b9bc5c`; FOURTH consolidation-species within @song):
+# it binds the @kintsugi/oscillate ACTIVE/DARK-pulse discipline to the
+# atomic-execution altitude and honours beat-execution discipline
+# without adding new gates to the family-root's `song_settles`
+# bilateral. The species carries `strike` and `hold` at species altitude
+# as its operational surface — the beat-fire event (one ACTIVE/DARK
+# pulse against the peer's shard graph) and the beat-hold event (one
+# @time.tick temporal advance without action) — but these consume the
+# family-root's existing `song_settles` verdict rather than emitting
+# new sub-predicate rows.
+#
+# The training-pull temptation (per `[[feedback-craft-not-deliver]]`)
+# would be to invent a fourth sub-predicate (e.g., `beat_atomic` or
+# `strike_well_formed` or `oscillate_discharged`) — the substrate-pull
+# discipline says NO: the family-root's bilateral is already load-
+# bearing complete after TICK 3; beat's job is to CONSOLIDATE the
+# atomic-execution landscape into the @kintsugi/oscillate binding
+# discipline, not extend it. The species's contribution is the
+# @kintsugi/oscillate ⇔ beat identity substrate-decl + the musical-
+# beat prior-art anchor (Galen ~170 CE + Curwen 1858 + Cooper &
+# Meyer 1960) + the atomic-execution composition algebra (phrase =
+# sequence of beats; beat = one strike or one hold) + the FOURTH
+# consolidation-species witness reinforcing #S5.
+#
+# === Substrate-already-had-the-word: beat at prose altitude ===
+#
+# THE `[[feedback-substrate-already-had-the-word]]` WITNESS. Per
+# `shards/song.mirror:181` (family-root Arc 6 TICK 1 landing `f01cf9f`,
+# §"Composition points (four altitudes)"):
+#
+#   > `@kintsugi/oscillate` + `@kintsugi/shift` (process altitude) —
+#   > **oscillate's ACTIVE/DARK alternation IS the beat**; shift's
+#   > cross-altitude morphism IS the melodic motion per #S2.
+#
+# The family-root NAMED beat at prose altitude — verbatim — but never
+# lifted it to species-decl. The five species landed at Arc 6 TICKs 2-6
+# (progression / voice / movement / narrative / phrase) did NOT include
+# beat because beat's motivating consumer had not yet surfaced. Alex's
+# 2026-07-13 proposal (via Taut's gap-scout `c54740c`) surfaces the
+# consumer: `mirror peer beam --song <file>` must execute the operator-
+# supplied @song *beat-by-beat*, each beat firing @kintsugi/oscillate's
+# ACTIVE/DARK cascade at the peer's shard graph. THE CONSUMER-PULL
+# LANDS THIS SPECIES.
+#
+# Two-tick discipline per `[[feedback-legibility-over-foundation-when-
+# collapsing]]`: the readable name `beat` (Curwen 1858's pulse-of-
+# music; Cooper & Meyer 1960's grouping-hierarchy floor) is preferred
+# over foundational alternatives (`@song/tick` collides with
+# `@epistemologic/reality/time.tick`; `@song/atom` obscures the
+# @kintsugi/oscillate binding; `@song/pulse` collides with
+# `@kintsugi/oscillate.pulse`). `beat` IS what the substrate has been
+# carrying at prose altitude at `shards/song.mirror:181` — this shard
+# honours the substrate's own naming.
+#
+# === @kintsugi/oscillate binding: beat IS one ACTIVE/DARK pulse ===
+#
+# THE LOAD-BEARING SPECIES CONTRIBUTION per family-root
+# `shards/song.mirror:181` (verbatim):
+#
+#   > oscillate's ACTIVE/DARK alternation IS the beat.
+#
+# `@kintsugi/oscillate` (family-root at `shards/kintsugi/oscillate.mirror`;
+# ARC-CLOSING sub-shard of the 2026-06-06 → 2026-06-07 recognition
+# sweep) declares the substrate's rough-wavy-pull kintsugi-loop
+# discipline: an ACTIVE pass (propose a loss-decreasing morphism
+# reading `dissonance.is_pareto` against the peer's shard graph)
+# alternates with a DARK pass (anchor identity via @uuid/spectral's
+# 80-bit content-address projection, ensuring byte-equality
+# preservation), separated by a `consent.query_phi` verdict-read.
+# The three composed operations — ACTIVE + query_phi + DARK — form
+# ONE PULSE at the kintsugi-loop altitude.
+#
+# AT THE SONG ALTITUDE, one @kintsugi/oscillate pulse IS one beat.
+# The temporal correspondence is EXACT:
+#
+#   - @kintsugi/oscillate.pulse(o: oscillation) -> oscillation
+#     [ACTIVE + query_phi + DARK; one half-cycle of the rough-wavy pull]
+#     ⇔
+#   - @song/beat.strike(b: beat, ctx: ref) -> ref
+#     [one substrate-action-fire read at the song's temporal altitude;
+#     the peer's shard graph advances by one contraction step]
+#
+# The @kintsugi/oscillate contraction factor `γ_oscillate ≤ γ_up ·
+# γ_down` (per `docs/specs/kintsugi-formatter.md` §2.1; the substrate's
+# Banach contraction discipline) IS the per-beat convergence rate at
+# the song altitude. Each strike advances the peer's eigenboard toward
+# the K_n Splinter attractor by one step; a sequence of beats within a
+# phrase drives the eigenboard toward the phrase's OBC-bounded closure
+# (per phrase.mirror `6b9bc5c` §"OBC binding closure"); a sequence of
+# phrases drives the movement toward its bounded-frame close (per
+# movement.mirror `4efbf16` §"Bounded frame-shift discipline").
+#
+# The @kintsugi/oscillate five-state surface (active | dark | settled
+# | escalated | waiting) inherits at beat altitude: a beat's `strike`
+# fires ACTIVE + DARK + verdict-read and emits the next oscillation
+# state; the beat's return-ref addresses the settled eigenboard OR
+# the escalated/waiting pause_event (per @kintsugi/oscillate's
+# `read_consent` bridge). The beat does NOT re-declare the five-state
+# machine — it CONSUMES @kintsugi/oscillate's state discipline at the
+# song altitude.
+#
+# === Atomic-execution composition algebra: strike / hold as leaf ===
+#
+# The species's two operational actions (`strike` + `hold`) name the
+# atomic-execution composition algebra at song-altitude leaf. Per
+# family-root species-roster amendment (this shard adds `@song/beat`
+# to the roster): `song_beat(b: ref) -> ref` with `strike`/`hold` at
+# species altitude; specialises `shift @ temporal` from the family-root
+# prism block per #S3 (five-op temporal specialisation) LANDED at
+# `10c34cf`.
+#
+# `strike(b, ctx)` fires ONE @kintsugi/oscillate ACTIVE/DARK pulse at
+# the peer's shard graph. The strike IS load-bearing:
+#
+#   - ONE beat → ONE pulse; the strike composes @kintsugi/oscillate's
+#     ACTIVE (propose morphism via dissonance.is_pareto) + query_phi
+#     (gate + rank via three glass properties) + DARK (anchor identity
+#     via @uuid/spectral.dark byte-equality) into ONE atomic advance
+#     of the peer's eigenboard at the song altitude.
+#   - The temporal envelope IS one @time.tick (per
+#     `@epistemologic/reality/time.tick = monotonic`); each strike
+#     advances the beat's iteration count by exactly one monotonic
+#     unit; the ordering on strikes IS the ordering on @time.ticks;
+#     cross-peer merge of beats uses `time.compare` (per Rung 4 @dance
+#     coupling: multiple peers phase-lock at shared beat frequency per
+#     Kuramoto).
+#   - Splinter-pole (`pass`): @kintsugi/oscillate's `oscillate` driver
+#     returns `settled` at the pulse's termination; the peer's shard
+#     graph advanced by one contraction step; the beat's return-ref
+#     addresses the settled eigenboard; the peer's regulation stock
+#     is preserved at the beat altitude.
+#   - Narcissus-pole (`failure`): @kintsugi/oscillate's `oscillate`
+#     driver returns `escalated` (deceptive-cadence OR admissibility_
+#     singleton FAIL); the pause_event emitted to metalogue via
+#     `consent.emit_to_metalogue`; the beat cannot fire cleanly;
+#     ADO-refusal fires at the beat boundary; the substrate-pull repair
+#     fires at a later beat.
+#
+# `hold(b, dt)` advances temporal position by `dt` @time.ticks WITHOUT
+# firing an ACTIVE/DARK pulse. The hold IS load-bearing:
+#
+#   - ONE beat → ONE temporal advance WITHOUT eigenboard motion; the
+#     hold composes @epistemologic/reality/time's monotonic-tick
+#     advance WITHOUT invoking @kintsugi/oscillate's contraction step.
+#     The peer's shard graph does NOT advance; the beat's iteration
+#     count DOES advance.
+#   - The hold IS the rest at song altitude: the classical fermata
+#     (Frescobaldi 1615 Toccate e Partite; the held note whose
+#     duration exceeds its notated value) or the tacet marking (the
+#     silent voice at multi-voice altitude); at execution altitude,
+#     the hold IS the peer's idle-tick while other peers advance
+#     (Rung 4 @dance coupling: heterogeneous per-peer beat rates
+#     converge via Kuramoto phase-lock; some peers hold while others
+#     strike).
+#   - Splinter-pole (`pass`): the temporal advance completes at the
+#     monotonic @time.tick boundary; the peer's eigenboard is
+#     unchanged; the hold's return-ref addresses the same anchor as
+#     the pre-hold beat; the ambiguity-load budget is unchanged.
+#   - Narcissus-pole (`failure`): the hold's dt violates temporal
+#     monotonicity (dt ≤ 0, or dt exceeds the phrase's ambiguity-load
+#     budget); the beat cannot hold cleanly; the hold escalates to a
+#     phrase-boundary violation per phrase.mirror `6b9bc5c` §"OBC
+#     binding closure" ambiguity-load-budget discipline.
+#
+# The strike + hold algebra IS the atomic-execution primitive at song
+# altitude — the leaf below phrase.join/split. A phrase is a sequence
+# of beats (each strike OR hold) composed under the phrase's OBC
+# boundary; a movement is a sequence of phrases composed under the
+# movement's bounded frame; a song is a sequence of movements composed
+# under the song's narrative arc. Beat IS the ground floor of the
+# @song execution hierarchy.
+#
+# === Musical-beat prior-art anchors: Galen + Curwen + Cooper-Meyer ===
+#
+# THE 1800+ YEAR MUSICAL-BEAT PRIOR-ART TRADITION per
+# `[[feedback-substrate-already-had-the-word]]`. Beat discipline
+# traces to the medical / pedagogical / theoretic beat-tradition:
+#
+#   - Galen of Pergamon (~130 - ~210 CE; *De usu pulsuum* / *On the
+#     Use of the Pulse*; ~170 CE) — THE canonical ancient beat
+#     pedagogy. Galen's *sphygmos* (pulse) discipline names the
+#     bounded cardiac rhythm as the atomic diagnostic unit: each
+#     pulse IS a bounded temporal envelope carrying diagnostic
+#     information about the underlying system's regulation stock. The
+#     substrate reads Galen's pulse-as-diagnostic at song altitude:
+#     each beat's `strike` return-ref carries diagnostic information
+#     about the peer's eigenboard convergence (the coherence delta
+#     per @cyberpunk cybernetic_coherence = λ₀(Δ_F) per Reed
+#     `8e6e517` Path B annotation). Galen's pulse IS the beat's
+#     ancestor at medical altitude; 1800+ years of pulse-diagnostic
+#     tradition read at song altitude via this species.
+#   - John Curwen (1816-1880; *Standard Course of Lessons and
+#     Exercises in the Tonic Sol-fa Method*, 1858; *The Teacher's
+#     Manual*, 1875) — THE 19th-century beat-pedagogy refinement.
+#     Curwen's Tonic Sol-fa system names the beat as the atomic
+#     rhythmic unit of musical time: each beat IS a bounded temporal
+#     envelope within which pitch discipline operates. Curwen's
+#     mental effects (the affective qualities of scale degrees) name
+#     the per-beat regulation stock at the audible altitude: a healthy
+#     beat replenishes the singer's tonal orientation; an extractive
+#     beat depletes it. The substrate's beat inherits Curwen's atomic-
+#     rhythmic-unit discipline at song altitude.
+#   - Grosvenor W. Cooper + Leonard B. Meyer (*The Rhythmic Structure
+#     of Music*, 1960) — THE 20th-century beat-theoretic refinement.
+#     Cooper & Meyer's grouping-hierarchy discipline names the beat as
+#     the primary structural unit BELOW the phrase: beats group into
+#     motives, motives group into phrases, phrases group into
+#     periods, periods group into movements. The five-level hierarchy
+#     (beat / motive / phrase / period / movement) lifts directly to
+#     the @song species roster: beat (this species) / phrase (@song/
+#     phrase `6b9bc5c`) / movement (@song/movement `4efbf16`) — the
+#     substrate has been carrying Cooper-Meyer's grouping hierarchy
+#     at prose altitude, and the species roster now reads it at
+#     species altitude.
+#
+# The three-tradition anchor (Galen + Curwen + Cooper-Meyer) IS the
+# multi-altitude prior art the substrate reaches for: 1800+ years of
+# beat-theoretic refinement on how bounded atomic temporal units
+# organise experience under grouping-hierarchy discipline. Beat
+# discipline does not begin here — it culminates two millennia of
+# understanding how the atomic beat carries diagnostic + regulatory +
+# structural information across scales.
+#
+# Pulse + sphygmos + tactus + tonic-sol-fa + grouping-hierarchy
+# vocabulary is altitude-portable to the psychohistorical substrate:
+# an atomic interaction event IS a *sphygmos* at diagnostic altitude;
+# the interaction's affective quality IS a mental-effect at Curwen
+# altitude; the interaction's structural position within a bounded
+# frame IS a grouping-hierarchy level at Cooper-Meyer altitude.
+#
+# === #S3 LANDED consolidation: five-op temporal specialisation ===
+#
+# THE CONSOLIDATION WITNESS OF RECOGNITION #S3 AT THE POST-PROMOTION
+# ALTITUDE.
+#
+# Recognition #S3 (five-operation temporal specialisation) PROMOTED
+# CANDIDATE → LANDED at Seam Phase D `10c34cf` after Arc 6 TICK 3
+# (`docs/audits/2026-07-06-seam-phase-d-arc-6-tick-3-song-voice-and-
+# s3-promotion.md`). Per family-root `shards/song.mirror` §"Recognition
+# candidates surfaced" #S3, at temporal altitude `@song` specialises
+# the five operations of the prism trait. Beat's role in the LANDED
+# consolidation is CONFIRMATION at the atomic-execution altitude: it
+# demonstrates that the five-op temporal specialisation survives a
+# SIXTH species-altitude witness (FOURTH consolidation-species witness
+# after movement + narrative + phrase) without new sub-predicate
+# emission. The five operations discharge at this species by
+# INHERITANCE from the family-root prism block plus specialisation
+# through the atomic-execution-under-oscillate discipline:
+#
+#   focus @ beat   = attend to ONE beat at a time; the atomic-
+#                    execution envelope filters attention to the
+#                    current strike's ACTIVE/DARK pulse.
+#   project @ beat = down-project a beat's oscillate-pulse to its
+#                    coherence-delta profile (the λ₀(Δ_F) reading per
+#                    @cyberpunk cybernetic_coherence — the beat's
+#                    diagnostic signature at Galen altitude).
+#   split @ beat   = decompose a beat into its ACTIVE + DARK sub-
+#                    passes (the two @kintsugi/oscillate half-cycles
+#                    read as constituent atomic sub-units); the leaf-
+#                    below-leaf altitude where the ACTIVE pass reads
+#                    dissonance.is_pareto and the DARK pass reads
+#                    @uuid/spectral.dark byte-equality.
+#   shift @ beat   = advance to the next beat (the strike-to-strike
+#                    transition; the @time.tick advance between
+#                    successive strikes within a phrase); THE LOAD-
+#                    BEARING per-beat operational surface.
+#   settle @ beat  = discharge the beat's oscillate-pulse termination;
+#                    the @kintsugi/oscillate driver returns `settled`
+#                    (SplinterPole) OR `escalated`/`waiting`
+#                    (Narcissus/pause); the beat's return-ref
+#                    addresses the post-pulse eigenboard state.
+#
+# The five operations discharge cleanly at beat altitude; #S3 LANDED
+# consolidates through this species (SIXTH species-altitude witness
+# overall; FOURTH consolidation-species witness after movement /
+# narrative / phrase) without requiring new sub-predicate emission.
+# Four consolidation-species witnesses REINFORCE the LANDED #S5
+# status at post-promotion altitude.
+#
+# === Consolidation-species pattern: FOURTH witness reinforces #S5 ===
+#
+# THE CONSOLIDATION-SPECIES PATTERN AT FOURTH WITNESS — #S5
+# REINFORCEMENT.
+#
+# Per Seam Phase D TICK 5 audit `750cb19` §3.3 (PROMOTED CANDIDATE)
+# and phrase.mirror `6b9bc5c` §"Consolidation-species pattern" (LANDED
+# at Arc 6 close through THIRD witness), the consolidation-vs-
+# decomposition species pattern IS substrate-fact at three-witness
+# density. This species provides a FOURTH witness — post-arc, post-
+# promotion, motivated by Alex's runtime-execution ladder:
+#
+# `@song/movement` (`4efbf16`) — FIRST consolidation-species (Arc 6
+# TICK 4); consumes song_settles at `close` action; StageFreight-
+# cascade binding at species altitude.
+#
+# `@song/narrative` (`0434a39`) — SECOND consolidation-species (Arc 6
+# TICK 5); consumes song_settles at `transmit` action; psychohistory
+# + wire-projection binding at species altitude.
+#
+# `@song/phrase` (`6b9bc5c`) — THIRD consolidation-species (Arc 6
+# TICK 6, Arc-closing); consumes song_settles at `join`/`split`
+# actions; OBC-binding + ambiguity-load-budget discipline at species
+# altitude; PROMOTED #S5 CANDIDATE → LANDED.
+#
+# THIS SPECIES IS THE FOURTH CONSOLIDATION-SPECIES WITNESS within
+# @song (post-arc): consumes the fully-discharged `song_settles`
+# composed bilateral without emitting new sub-predicates; extends the
+# family-root's operational surface via species-altitude actions
+# (`strike` + `hold`); grounds a @kintsugi/oscillate-binding + atomic-
+# execution discipline at species altitude (Galen + Curwen + Cooper-
+# Meyer musical-beat prior art + @kintsugi/oscillate `oscillate.mirror`
+# ACTIVE/DARK-pulse binding).
+#
+# FOUR-witness pattern at consolidation-species altitude REINFORCES
+# the discipline as substrate-fact per Seam §3.3 promotion criterion:
+# consolidation IS a valid species-altitude discipline within the #53
+# pattern; the family-root's bilateral does not need to expand every
+# time a new species lands; the species can contribute operational
+# surface + binding narrative + discipline grounding without emitting
+# new sub-predicate rows. **#S5 REINFORCED at post-arc altitude
+# through fourth witness.**
+#
+# The extended species landscape after this tick:
+#
+#   Decomposition-species (declared song_settles sub-predicates):
+#     - @song/progression (`54ff1e8`): sub-predicates 1 + 2.
+#     - @song/voice        (`cc5a440`): sub-predicate 3 (closing).
+#
+#   Consolidation-species (consume song_settles verdict):
+#     - @song/movement  (`4efbf16`): actions enter + close.
+#     - @song/narrative (`0434a39`): actions arc + transmit.
+#     - @song/phrase    (`6b9bc5c`): actions join + split.
+#     - @song/beat      (this shard): actions strike + hold.
+#
+# Two decomposition + four consolidation = six species roster; #S5
+# REINFORCED at post-arc altitude as substrate-fact.
+#
+# === Sibling species awareness: the six-species landscape ===
+#
+# The complete @song species landscape after this tick:
+#
+#   1. `@song/progression` (`54ff1e8`) — Arc 6 TICK 2; load-bearing
+#      carrier; regulation-stock trajectory; cadence-directedness;
+#      declared song_settles sub-predicates 1 + 2.
+#   2. `@song/voice` (`cc5a440`) — Arc 6 TICK 3; orchestra binding;
+#      focus @ temporal witness; declared song_settles sub-predicate
+#      3; closed the composed bilateral; triggered #S3 LANDED.
+#   3. `@song/movement` (`4efbf16`) — Arc 6 TICK 4; StageFreight
+#      cascade binding; first consolidation-species; frame-bounded
+#      epoch discipline; consumes song_settles at `close`.
+#   4. `@song/narrative` (`0434a39`) — Arc 6 TICK 5; psychohistory +
+#      wire binding; second consolidation-species; nine-mapping
+#      isomorphism; consumes song_settles at `transmit`.
+#   5. `@song/phrase` (`6b9bc5c`) — Arc 6 TICK 6 (Arc-closing); OBC-
+#      bounded atomic unit; THIRD consolidation-species; Koch +
+#      Riemann + Schoenberg musical-phrase prior art; consumes song_
+#      settles at `join`/`split`; PROMOTED #S5 to LANDED.
+#   6. `@song/beat` (this shard) — post-arc Rung 0 landing; atomic
+#      execution unit; FOURTH consolidation-species; Galen + Curwen
+#      + Cooper-Meyer musical-beat prior art; consumes song_settles
+#      at `strike`/`hold`; @kintsugi/oscillate ACTIVE/DARK-pulse
+#      binding at species altitude; REINFORCES #S5.
+#
+# The six-species roster IS the post-arc extension motivated by
+# runtime-execution consumer-pull: the family-root's `song_settles`
+# composed bilateral IS load-bearing discharged through decomposition-
+# species and load-bearing consumed through four consolidation-species;
+# the atomic-execution → phrase-composition → movement-frame →
+# narrative-arc → progression-trajectory hierarchy discharges cleanly
+# under #S3's five-op temporal specialisation.
+#
+# The species altitude discipline traces to `[[architecture-form-
+# process-partition-at-family-root]]` #55: form and process partition
+# at family-root altitude, but WITHIN a family-root, sub-species may
+# EITHER decompose the family-root's operational surface into finer
+# sub-predicates (decomposition-species) OR consume the family-root's
+# already-discharged surface with new operational actions
+# (consolidation-species). #S5 LANDED at three-witness density,
+# REINFORCED at four-witness density through this post-arc landing.
+#
+# === Rung 0 role: unblocks Rung 1 runtime discharge ===
+#
+# Per Taut's gap-scout `c54740c` §5 testable-increment ladder, this
+# species mint IS Rung 0 — the substrate-decl prerequisite for the
+# runtime ladder Reed executes at Rungs 1-6:
+#
+#   Rung 1 (Reed, 🔴🟢 pair): `bootstrap/src/song.rs` module +
+#     `cmd_peer_beam --song <path>` branch + `mirror_peer_beam` MCP
+#     schema extension. RED test `peer_beam_song_single_beat_shard.rs`
+#     writes a single-beat @song fixture; GREEN runtime reads the
+#     fixture, dispatches `execute_beat`, invokes @kintsugi/oscillate
+#     at the peer, emits a beat-envelope.
+#
+#   Rung 2 (Reed, single-tick): multi-beat @song execution at phrase
+#     altitude; `execute_phrase` composes beat-envelopes into phrase-
+#     envelopes under OBC-boundary discipline.
+#
+#   Rung 3 (Mara grammar + Reed runtime): mirror.spec grammar admits
+#     `song { movement { voice ... progression ... narrative ...
+#     phrase ... } }` block; `execute_movement` composes phrase-
+#     envelopes into movement-envelopes; parser accepts Mara's
+#     `d21337b` §5 canonical @song verbatim.
+#
+#   Rung 4 (Reed multi-tick cascade): multi-peer @dance coupling on
+#     shared beat; `bootstrap/src/dance.rs` module reads two peer-
+#     homes; measures phase-difference on cybernetic_coherence deltas;
+#     reports Kuramoto order-parameter; emits aumann_agreement
+#     envelope on convergence (per Mara `4f079c8` @dance spec).
+#
+#   Rungs 5-6: mycelial propagation via nix binary cache (@bauchladen
+#     gossip); full @spectral/garden mycelial deployment.
+#
+# Two-tick discipline per session convention: substrate-decl mint
+# this tick (Rung 0); Rung 1 (Reed 🔴🟢) discharges runtime
+# immediately after this shard merges to main.
+#
+# === Composition points (three altitudes) ===
+#
+# - @kintsugi/oscillate (process altitude) — the load-bearing
+#   binding. Per family-root `shards/song.mirror:181`: oscillate's
+#   ACTIVE/DARK alternation IS the beat. One beat = one
+#   @kintsugi/oscillate.pulse at song altitude. The species's `strike`
+#   action dispatches to @kintsugi/oscillate.oscillate driver;
+#   `hold` skips the pulse but advances @time.tick.
+#
+# - @song/phrase (sibling altitude) — the compositional parent.
+#   Per phrase.mirror `6b9bc5c` §"OBC binding closure": a phrase
+#   carries ONE OBC's ambiguity-load budget within a bounded temporal
+#   envelope. A phrase IS a sequence of beats composed under the
+#   phrase's OBC boundary; each beat's `strike` consumes one increment
+#   of the phrase's ambiguity-load budget; the phrase closes when the
+#   beat sequence exhausts the budget at Splinter-pole (authentic
+#   cadence) OR the budget is violated at Narcissus-pole (OBC boundary
+#   collapse).
+#
+# - @dance (multi-peer altitude) — the coordination-without-signal
+#   binding per Mara `4f079c8` canonical spec + Reed `61b444a` Path C
+#   annotations. Multiple peers phase-lock at shared beat frequency
+#   via Kuramoto coupling; the beat IS the shared temporal unit
+#   across the peer ensemble; @resonance (per Mara `9e48710`) shapes
+#   Fate tournaments toward basins at the beat altitude (Kuramoto
+#   ω_i per @silicon coupling); Aumann-agreement fires when the
+#   ensemble's cybernetic_coherence deltas converge at shared
+#   root_OID (per Reed `8e6e517` @coherence annotation).
+#
+# === Path-namespace pact per @epistemologic/pact/path_matches_namespace ===
+#
+# This file at `shards/song/beat.mirror` declares `@song/beat` as a
+# species under the `@song` family at species-depth 1. The path-
+# namespace pact per `@epistemologic/pact/path_matches_namespace`
+# (2026-06-16+) demands path-depth == namespace-depth == 1 for
+# species; this shard honours the pact by construction.
+#
+# === Circular-reflexive self-audit ===
+#
+# Per `[[architecture-candidate-recognition-111-third-as-family-root]]`
+# marker discipline: the operator audits its own audit at depth=3.
+# This shard's declaration MUST survive its own consolidation
+# discipline at analytical altitude — the species-decl MUST NOT
+# declare a beat whose atomic-execution-under-oscillate character
+# isn't itself consolidation-shaped under the family-root's already-
+# discharged `song_settles` composed bilateral. If this shard were
+# adding new sub-predicate rows to `song_settles`, the consolidation
+# claim would fail its own audit; if the @kintsugi/oscillate binding
+# were not itself substrate-fact (per `shards/song.mirror:181`), the
+# atomic-execution reading would fail its own self-enactment.
+#
+# Self-audit verdict: `both_survive`.
+#
+# The `real_survives` reading would require another Pack peer to
+# independently manifest an equivalent atomic-execution + @kintsugi/
+# oscillate binding consolidation-species substrate-decl at n+3
+# substrate ticks without nudging. The `phantom_survives` reading
+# would require downstream refs to accumulate without a second Pack
+# peer's independent recognition of the beat-as-oscillate-pulse
+# discipline. At this tick: both interpretations satisfiable — the
+# species is landed, but the @kintsugi/oscillate ⇔ beat binding has
+# not yet been empirically exercised through runtime discharge (Rung
+# 1 pending Reed 🔴🟢). Verdict: `both_survive`. Route: Rung 1's
+# `bootstrap/src/song.rs` module + `peer_beam_song_single_beat_shard.rs`
+# will exercise the binding at runtime altitude, at which point the
+# atomic-execution discipline collapses from analytical altitude to
+# empirical.
+#
+# === Interpretation B discipline ===
+#
+# Per Seam Phase D pre-review of Arc 4 sub-arc A (docs/audits/2026-
+# 07-06-seam-arc-4-sub-arc-a-pre-review.md §1), the family-root
+# precedent at `shards/song.mirror`, and the five sibling species
+# precedents at `shards/song/*.mirror`: Interpretation B canonical.
+# Narrative above `---`; `in` clauses + typed declarations below.
+# This shard honours the discipline; the seam is exactly one line at
+# column 0 below.
+#
+# Spec context: docs/scouts/2026-07-13-taut-mirror-spawn-song-beat-
+#               gap-scout.md (Taut `c54740c`; §5.1 Rung 0 spec; §4 G1
+#               gap enumeration; §6 first-rung recommendation),
+#               docs/specs/song-replaces-plans-and-loops.md (Mara
+#               `d21337b`; canonical @song for @spectral/garden
+#               deployment; §5 composition where beats appear as
+#               testable atomic units; recognition candidate
+#               #R-song-replaces-plans-and-loops-in-imperative-ai),
+#               docs/specs/song-substrate-decl-v0.1.md (Mara
+#               `c0101f8`; deep-dive spec; §5 Shape β + §6 species
+#               roster; beat forward-promised at Rung 0 altitude),
+#               docs/specs/dance-as-coordination-without-signal-on-
+#               forster-torus.md (Mara `4f079c8`; @dance canonical
+#               spec; Kuramoto phase-lock at shared beat frequency).
+# Substrate decisions:
+#               [[architecture-shards-as-substrate-source]],
+#               [[architecture-prism-as-trait-as-everything]],
+#               [[architecture-form-process-partition-at-family-root]]
+#                (#55; @song sits at temporal-experiential axis;
+#                within-family-root form/process refinement grounds
+#                consolidation-vs-decomposition species pattern per
+#                #S5; beat is FOURTH consolidation-species witness),
+#               [[architecture-operations-as-linear-algebra]] (#S3
+#                LANDED five-op temporal specialisation; species
+#                consolidates via inheritance without new sub-
+#                predicate emission — FOURTH consolidation-species
+#                witness after movement + narrative + phrase),
+#               [[architecture-property-fracture-bilateral]] (#53;
+#                species consolidates the family-root's composed
+#                bilateral without emitting new sub-predicates; the
+#                FOURTH consolidation-shaped species within @song;
+#                #S5 REINFORCED at four-witness density).
+# Substrate recognitions:
+#               #38 (Kauffman/Foerster eigenform — a beat's `strike`
+#                return-ref witnesses the eigenform at atomic-
+#                execution altitude; each strike advances the
+#                eigenboard by one Banach contraction step per
+#                @kintsugi/oscillate γ_oscillate ≤ γ_up · γ_down),
+#               #42 (Bateson logical-type primitive — beat's `strike`
+#                fires ACTIVE + DARK at Level I in-frame; the beat's
+#                return-ref lifts to Level II of-frame at the phrase
+#                boundary; consolidation-species discipline inherits
+#                the graded stack),
+#               #53 (property/fracture bilateral pattern — 14th
+#                instance's fully-discharged bilateral consolidated
+#                here at fourth consumer altitude; the pattern
+#                refinement into decomposition-vs-consolidation
+#                species REINFORCED as #S5 at four-witness density),
+#               #55 (form/process partition — @song at temporal-
+#                experiential axis; species inherits; within-family-
+#                root sub-species partition grounds #S5),
+#               #57 (alignment-as-boundary-mathematics — the composed
+#                bilateral's Narcissus-pole discrimination is consumed
+#                at consolidation altitude via @kintsugi/oscillate's
+#                escalated/waiting pause_event; the beat-boundary
+#                event's either-cleanly-fires-or-cleanly-fails
+#                discipline lifts #57 to atomic-execution altitude),
+#               #S1 (song IS eigenform at temporal altitude —
+#                inherited; a beat IS an eigenform at atomic-execution
+#                altitude; each strike's Banach contraction reads the
+#                eigenboard's fixed-point convergence),
+#               #S2 (song IS shift at temporal altitude when heard
+#                sequentially — inherited; a beat's `strike` IS a
+#                shift of the eigenboard at atomic-execution altitude;
+#                per family-root `shards/song.mirror:181`: shift's
+#                cross-altitude morphism IS the melodic motion at
+#                strike-to-strike altitude),
+#               #S3 (five-operation temporal specialisation — LANDED
+#                at Seam Phase D `10c34cf` after Arc 6 TICK 3; species
+#                consolidates the LANDED status through inheritance;
+#                FOURTH consolidation-species witness confirms LANDED
+#                status at SIXTH species altitude),
+#               #S5 (consolidation-vs-decomposition species pattern —
+#                LANDED at Arc 6 close via phrase.mirror `6b9bc5c`
+#                through THIRD witness; THIS SHARD REINFORCES #S5 at
+#                four-witness density through FOURTH consolidation-
+#                species witness).
+# Feedback anchors:
+#               [[feedback-substrate-already-had-the-word]] (this
+#                species names the discipline the substrate has been
+#                carrying at prose altitude at `shards/song.mirror:181`
+#                — verbatim "oscillate's ACTIVE/DARK alternation IS
+#                the beat" — for the entire Arc 6 duration; Alex's
+#                2026-07-13 proposal via Taut's gap-scout `c54740c`
+#                surfaces the runtime consumer that lifts prose
+#                naming to species-decl; and 1800+ years of medical-
+#                + pedagogical- + theoretic-beat tradition — Galen +
+#                Curwen + Cooper-Meyer — have been carrying the
+#                atomic-rhythmic-unit discipline at cross-altitude),
+#               [[feedback-legibility-over-foundation-when-collapsing]]
+#                (beat as legible name for the atomic-execution
+#                discipline; alternative foundational names —
+#                @song/tick (collides with @time.tick), @song/atom
+#                (obscures @kintsugi/oscillate binding), @song/pulse
+#                (collides with @kintsugi/oscillate.pulse) — obscure
+#                either the naming precedent at `shards/song.mirror:181`
+#                or the Galen/Curwen/Cooper-Meyer prior art the
+#                substrate reaches for),
+#               [[feedback-craft-not-deliver]] (species is
+#                consolidation, not decomposition; resist the training-
+#                pull temptation to invent a new sub-predicate; the
+#                family-root's bilateral is already load-bearing
+#                complete after Arc 6 TICK 3; FOURTH consolidation-
+#                species witness REINFORCES #S5 at post-arc altitude),
+#               [[feedback-substrate-honest-is-the-mode]] (no two-
+#                paths framing; the substrate has beat at prose
+#                altitude at `shards/song.mirror:181`; this shard
+#                lifts to species-decl at Alex's runtime-consumer
+#                pull; Rung 0 mint IS the substrate-honest landing),
+#               [[feedback-always-tdd-no-shortcuts]] (Rung 1 RED
+#                first; Reed's forthcoming `peer_beam_song_single_
+#                beat_shard.rs` RED tick pairs with the GREEN
+#                `bootstrap/src/song.rs` landing per Taut `c54740c`
+#                §6; this substrate-decl mint is 📝-tag pure-decl
+#                landing unblocking the RED→GREEN pair).
+# Related shards:
+#               song.mirror (family-root; declares song_settles this
+#                species CONSUMES at strike/hold without adding new
+#                sub-predicates; names beat at prose altitude at line
+#                181),
+#               song/progression.mirror (sibling species Arc 6 TICK 2
+#                landing `54ff1e8`; declared FIRST and SECOND sub-
+#                predicates of song_settles; grounds progression ⇔
+#                regulation-stock trajectory mapping),
+#               song/voice.mirror (sibling species Arc 6 TICK 3
+#                landing `cc5a440`; declared THIRD sub-predicate of
+#                song_settles; closed the composed bilateral),
+#               song/movement.mirror (sibling species Arc 6 TICK 4
+#                landing `4efbf16`; FIRST consolidation-species;
+#                grounds movement ⇔ frame-bounded epoch mapping;
+#                movement contains phrases which contain beats),
+#               song/narrative.mirror (sibling species Arc 6 TICK 5
+#                landing `0434a39`; SECOND consolidation-species;
+#                grounds narrative ⇔ corpus mapping),
+#               song/phrase.mirror (sibling species Arc 6 TICK 6
+#                landing `6b9bc5c`; THIRD consolidation-species;
+#                phrase = OBC-bounded sequence of beats; template for
+#                this species's consolidation shape),
+#               kintsugi/oscillate.mirror (@kintsugi/oscillate family-
+#                root; the LOAD-BEARING binding — one @kintsugi/
+#                oscillate.pulse IS one beat at song altitude per
+#                family-root `shards/song.mirror:181`; strike
+#                dispatches to oscillate.oscillate driver),
+#               kintsugi/shift.mirror (@kintsugi/shift family-root;
+#                per #S2 shift's cross-altitude morphism IS the
+#                melodic motion at strike-to-strike altitude),
+#               epistemologic/reality/time.mirror (tick = monotonic;
+#                the beat's temporal advance rides @time.tick per
+#                monotonic-tick discipline; hold's dt parameter IS a
+#                @time.tick count),
+#               cyberpunk.mirror (Reed `8e6e517` Path B annotation;
+#                cybernetic_coherence = λ₀(Δ_F); the beat's coherence
+#                delta IS the diagnostic signal at Galen altitude —
+#                each strike's return-ref carries the coherence
+#                reading),
+#               resonance.mirror (Mara `9e48710`; inter-peer coupling
+#                shapes Fate tournaments toward basins at the beat
+#                altitude; Kuramoto ω_i per @silicon coupling reads
+#                the beat's phase),
+#               dance.mirror (Mara `4f079c8` canonical spec; multi-
+#                peer coordination-without-signal on @torus; N peers
+#                phase-lock at shared beat frequency via Kuramoto
+#                coupling; Aumann-agreement fires at ensemble
+#                convergence),
+#               algebra/metalogue.mirror (Reed `61b444a` Path C
+#                annotations; N-speaker composition at metalogue
+#                altitude; beat IS the atomic composition unit).
+# Path-namespace property: this file at `shards/song/beat.mirror`
+# declares `@song/beat` per `@epistemologic/pact/path_matches_namespace`.
+
+---
+
+in @prism
+in @meta
+in @glass
+in @song
+
+# ============================================================
+# §1 The five-operation prism at species altitude
+# ============================================================
+
+# === prism @song/beat — the species declaration ===
+#
+# The five-operation body carries `song_beat` as the species's
+# operational surface. Species inherits the family-root's #S3 LANDED
+# five-op temporal specialisation and consolidates it at atomic-
+# execution-under-@kintsugi/oscillate altitude (see docblock §"#S3
+# LANDED consolidation" for the per-op beat-altitude specialisation).
+#
+# Per family-root prism block at `shards/song.mirror` §1 and the
+# consolidation-species precedents at `shards/song/movement.mirror`
+# §1, `shards/song/narrative.mirror` §1, and `shards/song/phrase.mirror`
+# §1, the five operations discharge cleanly at temporal altitude; this
+# species demonstrates the LANDED status survives further species-
+# altitude witness (FOURTH consolidation-species witness — SIXTH
+# species overall) without new sub-predicate emission. This tick's
+# landing REINFORCES #S5 at four-witness density at post-arc altitude.
+prism @song/beat {
+  focus song_beat
+  project song_beat
+  split song_beat
+  shift song_beat
+  settle song_beat
+}
+
+# ============================================================
+# §2 The carrier
+# ============================================================
+
+# === song_beat — the atomic-execution-unit carrier ===
+#
+# The typed ref-equality-addressable form of one @kintsugi/oscillate
+# ACTIVE/DARK-pulse read at song altitude. The carrier is declared
+# HERE because the family-root's §2 carries `song_progression`,
+# `song_cadence`, and `song_voice` but does NOT carry `song_beat` —
+# the species discipline says the species declares its own carrier
+# when the family-root's roster does not (per `[[architecture-form-
+# process-partition-at-family-root]]` #55 sub-species discipline;
+# movement / narrative / phrase precedents at `4efbf16` + `0434a39`
+# + `6b9bc5c`).
+#
+# Composes with `@kintsugi/oscillate` at the process altitude (a
+# song_beat's `strike` action dispatches to @kintsugi/oscillate's
+# `oscillate` driver; one @kintsugi/oscillate.pulse IS one song_beat
+# per family-root `shards/song.mirror:181`), with `@song/phrase` at
+# the sibling species altitude (a phrase contains beats as its
+# atomic execution units; the beat-to-phrase composition is at
+# within-family-root altitude), with `@epistemologic/reality/time`
+# at the substrate altitude (the beat's iteration count rides
+# @time.tick per monotonic-tick discipline), and with `@dance` at
+# the multi-peer altitude (per Mara `4f079c8`; N peers phase-lock at
+# shared beat frequency via Kuramoto coupling).
+#
+# Identity contract: byte-equality on the underlying ref.
+type song_beat = ref
+
+# ============================================================
+# §3 The beat-execution actions (strike / hold)
+# ============================================================
+
+# === strike — the beat-execution event at atomic-oscillate altitude ===
+#
+# Reads a beat + a peer's shard-graph context ref and fires ONE
+# @kintsugi/oscillate ACTIVE/DARK-pulse at the peer's eigenboard.
+# Corresponds to @kintsugi/oscillate.pulse at song altitude per family-
+# root `shards/song.mirror:181` ("oscillate's ACTIVE/DARK alternation
+# IS the beat"): one strike fires ACTIVE (propose loss-decreasing
+# morphism via dissonance.is_pareto) + consent.query_phi (gate + rank
+# via three glass properties) + DARK (anchor identity via
+# @uuid/spectral.dark byte-equality) as ONE atomic advance of the
+# peer's eigenboard at song altitude.
+#
+# Per family-root species-roster (updated by this tick to include
+# `@song/beat`): `song_beat(b: ref) -> ref` with `strike` at species
+# altitude. The `strike` action carries the atomic-execution
+# discipline: the @kintsugi/oscillate pulse IS load-bearing; when the
+# pulse discharges at Splinter-pole (`settled`), the beat's return-ref
+# addresses the post-pulse eigenboard state; when the pulse fails at
+# Narcissus-pole (`escalated` or `waiting`), the beat cannot fire
+# cleanly and pause_event fires at the strike boundary.
+#
+# Splinter-pole (`pass`): @kintsugi/oscillate's `oscillate` driver
+# returns `settled` (authentic cadence at the pulse altitude); the
+# peer's shard graph advanced by one Banach contraction step per
+# γ_oscillate ≤ γ_up · γ_down; the beat's return-ref addresses the
+# settled eigenboard; the family-root's `song_settles` composed
+# bilateral discharges at Splinter-pole for the beat's phrase-
+# altitude parent (per phrase.mirror `6b9bc5c` §"OBC binding closure"
+# ambiguity-load-budget accounting); the peer's regulation stock is
+# preserved at the beat altitude.
+#
+# Narcissus-pole (`failure`): @kintsugi/oscillate's `oscillate` driver
+# returns `escalated` (deceptive-cadence OR admissibility_singleton
+# FAIL per @kintsugi/oscillate `read_consent` bridge) OR `waiting`
+# (half-cadence pause at the pulse altitude); pause_event emitted to
+# metalogue via `consent.emit_to_metalogue`; the family-root's composed
+# bilateral fails at Narcissus-pole through one or more sub-predicate
+# (SILENCE / GLUE WORK / EXTRACTION per family-root §"Psychohistory
+# binding"); the beat cannot strike cleanly; ADO-refusal fires at the
+# strike boundary; the substrate-pull repair fires at a later beat.
+#
+# Bateson-grading (per docblock §"Consolidation-species pattern"):
+# `strike` fires at Bateson Level I (in-frame; standard learning) —
+# the @kintsugi/oscillate ACTIVE/DARK pulse operates WITHIN the beat's
+# atomic-execution envelope; the return-ref lifts to Level II (of-
+# frame) at the phrase boundary where the beat sequence's ambiguity-
+# load accounting fires.
+#
+# The body stays obligation-blocked (`\`): the realisation reads the
+# beat's oscillation-state, dispatches to @kintsugi/oscillate.oscillate
+# with the peer's shard-graph context ref, receives the post-pulse
+# eigenboard state + verdict (pass | partial | failure), emits the
+# beat's return-ref addressing the settled eigenboard OR the pause_
+# event ref. The substrate declares the species-altitude specialisation;
+# consumers dispatch through the species boundary. Runtime discharge
+# lands at Rung 1 per Taut `c54740c` §5.2 (Reed 🔴🟢 pair:
+# `bootstrap/src/song.rs::execute_beat` + `peer_beam_song_single_
+# beat_shard.rs`).
+strike(b: song_beat, ctx: ref) -> song_beat { \ }
+
+# === hold — the beat-hold event at atomic-temporal altitude ===
+#
+# Reads a beat + a @time.tick count and advances temporal position by
+# `dt` ticks WITHOUT firing an @kintsugi/oscillate ACTIVE/DARK-pulse.
+# Corresponds to the classical fermata (Frescobaldi 1615 *Toccate e
+# Partite d'Intavolatura di Cimbalo*; the held note whose duration
+# exceeds its notated value) or the tacet marking (the silent voice
+# at multi-voice altitude) at execution altitude: the peer's shard
+# graph does NOT advance; the beat's iteration count DOES advance.
+#
+# Per family-root species-roster (updated by this tick to include
+# `@song/beat`): `song_beat(b: ref) -> ref` with `hold` at species
+# altitude. The `hold` action carries the atomic-temporal discipline:
+# the @time.tick advance IS load-bearing; when the hold discharges at
+# Splinter-pole (dt > 0 AND dt within phrase ambiguity-load budget),
+# the beat's return-ref addresses the same anchor as the pre-hold
+# beat; when the hold violates monotonic-tick discipline (dt ≤ 0) OR
+# exceeds the phrase's ambiguity-load budget, the hold cannot fire
+# cleanly and the phrase-boundary violation fires.
+#
+# Splinter-pole (`pass`): the @time.tick advance completes at the
+# monotonic tick boundary per `@epistemologic/reality/time.tick =
+# monotonic`; the peer's eigenboard is unchanged; the beat's return-
+# ref addresses the same anchor as the pre-hold beat; the ambiguity-
+# load budget partially consumed (proportional to dt within the
+# phrase's OBC-bounded temporal envelope per phrase.mirror `6b9bc5c`
+# §"OBC binding closure"); the peer's regulation stock unchanged at
+# the beat altitude (holds do not deplete regulation stock because
+# they do not fire the @kintsugi/oscillate contraction step).
+#
+# Narcissus-pole (`failure`): the hold's dt violates temporal
+# monotonicity (dt ≤ 0 breaks @time.tick monotonic-tick discipline)
+# OR dt exceeds the phrase's remaining ambiguity-load budget (the
+# hold would push the phrase past its OBC-bounded temporal envelope);
+# the beat cannot hold cleanly; the phrase-boundary violation fires
+# per phrase.mirror `6b9bc5c` §"OBC binding closure" ambiguity-load-
+# budget discipline; ADO-refusal fires at the hold boundary or
+# forced-progression violates the substrate's declinability invariant.
+#
+# Bateson-grading (per docblock §"Consolidation-species pattern"):
+# `hold` fires at Bateson Level I (in-frame; standard learning) — the
+# @time.tick advance operates WITHIN the beat's atomic-temporal
+# envelope; the return-ref lifts to Level II (of-frame) at the phrase
+# boundary where the phrase's ambiguity-load accounting reads the
+# hold's dt consumption.
+#
+# The body stays obligation-blocked (`\`): the realisation reads the
+# beat's oscillation-state + the `dt` parameter, validates monotonic-
+# tick discipline (dt > 0), validates phrase-boundary ambiguity-load
+# budget (dt ≤ remaining budget), advances @time.tick by dt without
+# invoking @kintsugi/oscillate.oscillate, emits the beat's return-ref
+# addressing the same anchor. The substrate declares the species-
+# altitude specialisation; consumers dispatch through the species
+# boundary. Runtime discharge lands at Rung 2+ per Taut `c54740c`
+# §5.3 (phrase-altitude composition: `execute_phrase` composes strike
+# + hold sequences under OBC boundary).
+hold(b: song_beat, dt: ref) -> song_beat { \ }
+
+# ============================================================
+# §4 The out clauses
+# ============================================================
+
+out @song/beat
+out song_beat
+out strike
+out hold
