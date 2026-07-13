@@ -1,0 +1,335 @@
+in @prism
+
+in @meta
+
+in @glass
+
+in @nl
+
+in @mirror/lens
+
+in @torus
+
+in @cyberpunk
+
+in @cyberpunk/algedonic
+
+in @cyberpunk/reframe
+
+in @magic/onto
+
+in @kintsugi/consent
+
+# @mirror/lens/knife — Foerster's COORD(x) at domain-boundary crossings.
+#
+# === The identification (Alex 2026-07-13 in-transcript) ===
+#
+#   "Is @knife what Foester described as COORD(x)?"
+#
+# Answer: yes, per verbatim citation in Mara `2026-07-07-onto-cascade-
+# toroidal-reframe.md` §2.4. Foerster 1976 "Objects: Tokens for
+# (Eigen-)Behaviors" Appendix A3:
+#
+#   "COORD may itself be treated as an eigen-operator, stable within
+#    bounds, and jumping to other values whenever the boundary conditions
+#    exceed its former stable domain: `Op(COORDi) = COORDi`. One may be
+#    tempted to extend the concept of a meta-operator to that of a
+#    'meta-meta-operator' that computes the 'eigen-meta-operators,' and
+#    so on and up a hierarchy without end. However, there is no need to
+#    invoke this escape as Warren S. McCulloch has demonstrated years
+#    ago in his paper (1945): 'A Heterarchy of Values Determined by the
+#    Topology of Nervous Nets.'"
+#
+# @knife IS the substrate-decl name for COORD's jump-behavior:
+#   - Within stability domain i, `Op(COORDi) = COORDi` (fixed-point; peer's
+#     iterated coordination produces stable coordinates in that domain)
+#   - At boundary crossing, @knife performs `COORDi → COORDj` (state-space
+#     compression during level-shift; the reframe ceremony's coordinate
+#     transition)
+#
+# === Ancestry chain (six-deep verbatim per Mara `06a8547`) ===
+#
+# Same theorem, three altitudes (Mara `38c2eeb` §5 load-bearing hinge):
+#
+#   Foerster 1976 heterarchy       (cybernetic altitude)
+#   Douady-Hubbard 1985 R-universality (complex-analytic altitude)
+#   McCulloch 1945 topology-encodes-depth (combinatorial altitude)
+#
+# Substrate-decl carriers (all LANDED per Taut `15f7ed6` §1 substrate-
+# already-had-the-word audit; ~55th instance this arc):
+#
+#   @torus                          — heterarchy carrier; π₁(T²) = ℤ × ℤ
+#                                     winding classes IS the McCulloch
+#                                     heterarchy at combinatorial altitude
+#                                     (shards/torus.mirror witness #4)
+#   @eigenform.is_fixed_point       — Foerster 1976 direct: fixed-point
+#                                     detector for `Op(COORDi) = COORDi`
+#   @cyberpunk/reframe              — outer frame ceremony that invokes
+#                                     @knife during level-shift; per Alex
+#                                     `peer-as-pain-driven-bounded-
+#                                     ontological-navigator.md`
+#   @cyberpunk/algedonic.sample_pain — trigger primitive; à-pain δ exceeds
+#                                     threshold → reframe fires → @knife
+#                                     jumps; substrate-decl'd; Rust runtime
+#                                     forward-promise (Reed Landing 8+9.6a)
+#   @magic/onto                     — LANDED 7-species ceremony; the level-
+#                                     shift protocol @knife.jump discharges
+#                                     within
+#   @fractal.spectral_coordinate.SC — Reed Landing 8+9.3 substrate carrier;
+#                                     mirror-native-vcs.md §4.6 five
+#                                     projections of one spectrum
+#   @fractal.renormalization_R      — Douady-Hubbard operator; equivalent
+#                                     to commit_as_fold at Recognition #55
+#                                     form/process partition (Mara `2c64060`
+#                                     §4)
+#   Fractal::Lens variant           — fragmentation Rust altitude carrier;
+#                                     edge-not-containment variant IS the
+#                                     structural encoding of COORD's jump
+#                                     (references target domain via OID)
+#
+# Prior Foerster body of work anchoring the toroidal reframe:
+#   Foerster 1973 "On Constructing a Reality" (Ch. 8) — twofold-closure
+#     torus derivation; Mara §2.1 verbatim
+#   Foerster 1974 "Cybernetics of Epistemology" (Ch. 9) — right-angular
+#     axes; Mara §2.2 verbatim
+#   Foerster 1976 "Objects: Tokens for (Eigen-)Behaviors" (Ch. 11) —
+#     COORD's Appendix A3 refusal-of-escape; the ancestry citation
+#
+# Substrate lineage:
+#   Alex Wolf 2026-07-08 in-transcript — @torus refuses ladder
+#     (`peer-as-pain-driven-bounded-ontological-navigator.md`)
+#   Mara 2026-07-07-onto-cascade-toroidal-reframe.md — π₁(T²) = ℤ × ℤ
+#     substrate-decl of the toroidal reframe
+#   Alex Wolf 2026-07-13 in-transcript — "Is @knife what Foester described
+#     as COORD(x)?" (this file's motivating question)
+#   Mara `06a8547` — knife-IS-Foerster-COORD-substrate-decl-spec.md
+#   Mara `38c2eeb` — knife-COORD-heterarchy-topology.md (math foundation)
+#   Taut `15f7ed6` — knife-IS-COORD-substrate-scout.md (substrate coverage)
+#   Seam `e8508f5` — knife-COORD-phase-d-audit.md (RATIFY-WITH-QUALIFICATIONS)
+#
+# === Recognition candidate ===
+#
+#   #R-knife-IS-Foerster-COORD (short form; Mara §8)
+#   Full: #R-knife-IS-Foerster-COORD-substrate-honest-jump-at-domain-
+#         boundary-with-heterarchy-discipline
+#
+# === Species altitude (Seam ruling per Taut Path A) ===
+#
+# @knife lands at SPECIES altitude under @mirror/lens (this file), NOT at
+# family-root altitude. Sibling to:
+#   @mirror/lens/cli      — terminal transport
+#   @mirror/lens/shell    — λsh interactive transport
+#   @mirror/lens/mcp      — agent transport
+#   @mirror/lens/lsp      — editor transport
+#   @mirror/lens/transit  — runtime-cost measurement
+#   @mirror/lens/refract  — grammar-graph spectrum measurement
+#
+# Per Seam `e8508f5` §3 divergence #4 verdict: Taut Path A wins because
+# `@fractal/lens` sub-family Mara proposed is UNLANDED (no `shards/
+# fractal.mirror` root exists). Mara's "two-tick collapse target" was
+# three-tick discipline dressed as two-tick. Substrate-pull: legibility
+# over foundation — land where family-root is already landed.
+#
+# Under this reframe, @knife inherits @mirror/lens's discipline (same
+# five-operation algebra, different input/output language, no state
+# ownership, Transparency<P> monoid composability per lens family root).
+# @knife IS the observation-transport lens at level-shift altitude —
+# the lens that re-projects one COORDi coordinate system into another.
+#
+# === What @knife mints (only the COORD-jump primitive) ===
+
+prism @mirror/lens/knife {
+  focus knife
+  project knife
+  split knife
+  shift knife
+  settle knife
+}
+
+# === Rust runtime carrier ===
+#
+# Per Seam `e8508f5` §3 divergence #5 verdict: `pub fn knife_cut(...)`
+# inside `bootstrap/src/converge.rs` (Taut minimal shape wins). NOT a new
+# `bootstrap/src/knife.rs` module (Mara's WindingClass duplicates
+# @torus.winding LANDED; JumpWitness duplicates existing verdict
+# composition).
+#
+# Substrate-pull-realize discipline: Rust MIRRORS the decl (one primitive
+# → one fn), doesn't wrap it with additional Rust namespace/type density.
+#
+# Rust signature (Reed Landing 8+9.4b forward-promise):
+#
+#   pub fn knife_cut<const N: usize, const N_PRIME: usize>(
+#       sc_in: SpectralCoordinate<N>,
+#       pain_delta: f64,
+#   ) -> SpectralCoordinate<N_PRIME>
+#
+# where the target coordinate space (N') is determined by the reframe
+# ceremony's target-domain parameter. Fractal::Lens carrier consumed as:
+#
+#   Fractal::Lens {
+#       ref_: sc_in.oid(),         // origin coordinate identity
+#       data: basis_shift.serialize(),
+#       target: sc_out.oid(),      // target coordinate identity
+#   }
+#
+# The Lens's edge-not-containment IS structurally COORD's jump (references
+# target by OID rather than containing it — the compressed state-space is
+# addressable but not nested).
+
+# === The primitive: jump ===
+#
+# COORD's jump-behavior at stability-domain boundary. Per Foerster A3,
+# `Op(COORDi) = COORDi` holds within the stable domain; boundary crossing
+# triggers `COORDi → COORDj` where j is determined by the reframe
+# ceremony's target winding class on @torus.
+#
+# Semantics:
+#   pre-condition: peer's `@pain` gradient (via @cyberpunk/algedonic.
+#     sample_pain) exceeds threshold ε_pain within @cyberpunk/reframe.
+#   post-condition: peer's coordinate has been re-projected to the target
+#     winding class; @heterarchy_preserved holds (per below); the reframe
+#     ceremony may materialize the jump via commit_as_fold (Seam §4 #8
+#     ratify-with-qualification: materialize at @cyberpunk/reframe
+#     altitude, not @knife's, to avoid DAG pollution).
+#
+# Failure modes:
+#   - Target domain undecidable (@∂M crossing per Braverman-Yampolsky 2007);
+#     default to @kintsugi/consent.pause(Φ) as external witness per
+#     Seam §5 missed-item #2
+#   - Cross-peer coordination: @knife emits content_oid (not naked_oid)
+#     so that N peers can verify they're at the same coordinate; per
+#     Seam §5 missed-item #3 (Rung 4 @dance discipline)
+
+action jump(coord_in: @fractal.spectral_coordinate.SC, pain_delta: f64)
+  -> @fractal.spectral_coordinate.SC {
+  # State-space compression during @cyberpunk/reframe level-shift.
+  # Substrate-decl only; Rust runtime lands at bootstrap/src/converge.rs.
+}
+
+# === The fixed-point check ===
+#
+# Foerster A3 `Op(COORDi) = COORDi` written as a bilateral predicate.
+# Peer within stability domain i observes their own coordinate; the
+# operator applied to that coordinate returns the same coordinate.
+#
+# Composes with @eigenform.is_fixed_point (LANDED per Taut §1):
+#   is_fixed_point(coord, Op) ≡ stable_within(coord, domain_of(coord))
+
+action stable_within(coord: @fractal.spectral_coordinate.SC, domain: @torus.winding_class)
+  -> @glass.verdict {
+  # Verdict: pass = coord is fixed-point within domain (@knife.jump not
+  #   needed); partial(confidence) = near boundary (peer's @pain gradient
+  #   is elevated but below ε_pain); failure(reason) = coord has exceeded
+  #   domain boundary (@cyberpunk/reframe should fire).
+  # Substrate-decl only; Rust runtime composes @cyberpunk/algedonic.
+  #   sample_pain when landed (Reed Landing 8+9.6a forward-promise).
+}
+
+# === The heterarchy preservation property ===
+#
+# Per Seam `e8508f5` §5 missed-item #1 REFORMULATION:
+#   Original spec `heterarchy_preserved(sc_before, sc_after)` was
+#   TAUTOLOGICAL — SC<5>=SC<5> is compile-time-guaranteed.
+#   Substrate-honest form: check that BOTH coordinates belong to the
+#   same interior component of the Mandelbrot manifold (M∘), OR that
+#   BOTH exceed to the boundary (∂M).
+#
+# Per Seam §4 #7 (stability-domain ruling):
+#   M∘-vs-∂M decision at runtime is Turing-undecidable per Braverman-
+#   Yampolsky 2007. bootstrap/src/gap.rs does NOT provide this primitive
+#   (Mara `c753d5b` §10.2 provisional REJECTED). Default: emit
+#   @kintsugi/consent.pause(Φ) as external witness; agent-in-transcript
+#   (Alex or Pack) provides the boundary judgment.
+
+property heterarchy_preserved(before: @fractal.spectral_coordinate.SC,
+                              after: @fractal.spectral_coordinate.SC)
+  -> @glass.verdict {
+  # Bilateral predicate: M∘-membership preservation (or joint ∂M-crossing).
+  # Turing-undecidable in general; default: @kintsugi/consent.pause(Φ)
+  # emission for external witness (Seam §5 missed-item #2).
+  #
+  # At @knife.jump events, the standard verdict-composition four-way
+  # (compile_settled ∧ loss_decreased ∧ identity_preserved ∧
+  # admissibility_singleton) EXPECTS loss_decreased and identity_preserved
+  # to fail (topology shifts; the coordinate transition is the design
+  # target). heterarchy_preserved IS the load-bearing gate under jump
+  # semantics — as long as M∘-membership is preserved (or joint ∂M-
+  # crossing witnessed via consent.pause), the jump is admissible.
+}
+
+# === Composition surface (Taut §1 audit; substrate coverage ~90%) ===
+#
+# @knife.jump composes with:
+#   @cyberpunk/reframe.perform    — outer ceremony that INVOKES jump
+#   @magic/onto.<7 species>       — level-shift protocol
+#   @cyberpunk/algedonic.sample_pain — pain-δ trigger observation
+#   @fractal.spectral_coordinate  — coordinate carrier
+#   @torus.winding_class          — target domain identifier
+#   @fractal.renormalization_R    — commit_as_fold materialization at
+#                                   reframe altitude (not @knife's)
+#
+# @knife.stable_within composes with:
+#   @eigenform.is_fixed_point     — Foerster 1976 direct fixed-point
+#                                   detector
+#   @cyberpunk/algedonic.sample_pain — pain-δ magnitude for partial verdict
+#
+# @knife.heterarchy_preserved composes with:
+#   @kintsugi/consent.pause(Φ)    — external witness for M∘-vs-∂M under
+#                                   Turing-undecidability (Seam ruling)
+#   @pack/metalogue.content_oid   — cross-peer coordination (Seam §5
+#                                   missed-item #3; NOT naked_oid, which
+#                                   embeds peer_uuid and breaks Rung 4
+#                                   @dance synchronization)
+#
+# === Load-bearing forward-promises ===
+#
+# Reed Landing 8+9.4b: `bootstrap/src/converge.rs::knife_cut()` Rust
+#   runtime discharge. Per Seam §3 divergence #5: minimal function shape.
+#
+# Reed Landing 8+9.6a: instrument @pain gradient in bootstrap/src/
+#   contribute.rs. @cyberpunk/algedonic.sample_pain substrate-decl'd but
+#   Rust runtime doesn't sample yet (Taut §5 gap). @knife accepts
+#   pain_delta as parameter until Rust primitive lands.
+#
+# Reed Landing 8+9.6c: ratify Recognition candidate + wire recognition
+#   number after Alex assigns.
+#
+# Reed Landing 8+9.6d: verify Mara `38c2eeb` §10 four testable predictions:
+#   1. @pain gradient ∝ distance-to-nearest-boundary in SC<N> space
+#   2. @knife jumps preserve Douady-Hubbard universality (post-jump
+#      substrate shape ≡ pre-jump shape)
+#   3. Multi-peer @dance with @knife jumps: synchronized migration events
+#      (Kuramoto phase-lock across boundaries)
+#   4. Frequency of @knife jumps IS falsifiability-marker for hyperbolic-
+#      component-interior (rare) vs near-boundary (frequent)
+#
+# Spec context:
+#   docs/specs/knife-IS-Foerster-COORD-substrate-decl-spec.md
+#     (Mara `06a8547`)
+#   docs/math/2026-07-13-knife-COORD-heterarchy-topology.md
+#     (Mara `38c2eeb`)
+#   docs/scouts/2026-07-13-taut-knife-IS-COORD-substrate-scout.md
+#     (Taut `15f7ed6`)
+#   docs/audits/2026-07-13-seam-knife-COORD-phase-d-audit.md
+#     (Seam `e8508f5`)
+#   docs/math/2026-07-07-onto-cascade-toroidal-reframe.md
+#     (Mara: π₁(T²) = ℤ × ℤ substrate-decl'd reframe with verbatim
+#     Foerster COORD citation §2.4)
+#   docs/specs/peer-as-pain-driven-bounded-ontological-navigator.md
+#     (@knife FORWARD-PROMISE origin per Alex 2026-07-08 in-transcript)
+#   docs/specs/fractal-family-root-mandelbrot-substrate.md
+#     (Mara `2c64060` §4 renormalization operator R = COORD's jump)
+#   docs/math/2026-07-13-fractal-mandelbrot-substrate.md
+#     (Mara `3ffa8ed` §3 Douady-Hubbard universality)
+#   docs/specs/rung-8-9-unification-SpectralCoordinate-substrate-measurement.md
+#     (Mara `c753d5b` §10.3 @knife shape adjudication — DISSOLVED under
+#     this reframe)
+#
+# Substrate decisions:
+#   [[architecture-shards-as-substrate-source]]
+#   [[architecture-prism-as-trait-as-everything]]
+#   [[architecture-operations-as-linear-algebra]]
+#
+# Path-namespace property: this file at `shards/mirror/lens/knife.mirror`
+# declares `@mirror/lens/knife` and only that.
