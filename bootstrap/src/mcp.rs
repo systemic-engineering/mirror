@@ -208,6 +208,19 @@ fn tools_list_result() -> Value {
                     },
                     "required": ["peer_home"]
                 }
+            },
+            {
+                "name": "mirror_index",
+                "description": "@mirror/fractal-coherence measurement: walk substrate DAG, compute graph Laplacian's top-16 eigenvalues via LAPACK dsyev, emit Fiedler value λ₀ = values[1] post-normalization. Substrate: @mirror/index (shards/mirror/index.mirror; provisional under two-tick discipline, collapses to @fractal/index after Alex adjudicates family-root shape). Rung 8 Landing 5 per Taut `77b8e14` migration mapping + Mara `317e830` substrate-decl. Pulls the coherence measurement currently emitted by mcp__spectral__spectral_index (sibling crate) into mirror's own voice per Recognition #43 (mirror IS content-addressed build system) + Recognition #55 (form/process partition; DAG is form, measurement is process; belong at same altitude). Mandelbrot correspondence per Mara `2c64060` §4: fiedler IS λ₀(Δ_F) = spectral gap of the substrate's parameter Mandelbrot (Hausdorff dim 2 ∂M per Shishikura 1998). Load-bearing empirical prediction: Fiedler stability across Douady-Hubbard-invariant refactors (already 202-commit-confirmed at 0.0612 stable). Landing 6 forward-promise: extend with Rényi entropies H_q + Legendre transform to f(α) multifractal spectrum — discharges Mara math §10 prediction #2 (framework becomes framework-with-measurement).",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "path":         { "type": "string",  "description": "Directory path (~d) to index (typically the repo root). Walked recursively; skips .git, target, node_modules, etc." },
+                        "fiedler":      { "type": "boolean", "description": "If true, emit only the Fiedler value (λ₀ as a single f64 with 4 decimal places). Default false = full envelope." },
+                        "full_profile": { "type": "boolean", "description": "If true, emit all 16 eigenvalues (one per line, indexed). Default false." }
+                    },
+                    "required": ["path"]
+                }
             }
         ]
     })
@@ -480,6 +493,21 @@ fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
             // bin/mirror-mcp); routes to `mirror recall <dir>`.
             let spec_dir = s("spec_dir").unwrap_or_default();
             run_mirror(&["recall", &spec_dir], ctx)
+        }
+        "mirror_index" => {
+            // Rung 8 Landing 5 (Scope PI-B) — `mirror_index` MCP tool.
+            // Substrate-decl at mirror.spec `command index { arg path: ~d;
+            // flag fiedler: bool; flag full_profile: bool }`.
+            let path = s("path").unwrap_or_default();
+            let mut argv: Vec<String> = vec!["index".into(), path];
+            if b("fiedler") {
+                argv.push("--fiedler".into());
+            }
+            if b("full_profile") {
+                argv.push("--full-profile".into());
+            }
+            let refs: Vec<&str> = argv.iter().map(String::as_str).collect();
+            run_mirror(&refs, ctx)
         }
         "mirror_peer_beam" => {
             // Tick 3 Landing 1 (`96aa752` mirror.spec cli-block `command
@@ -778,7 +806,7 @@ mod tests {
     }
 
     #[test]
-    fn tools_list_advertises_eight_tools() {
+    fn tools_list_advertises_nine_tools() {
         // Mara iter-15 schema reconciliation (2026-07-08): byte-parity
         // alignment with `bin/mirror-mcp` 8-tool schema — post-Tick-3
         // rename (`4f4a257` mirror_spawn → mirror_peer_beam +
@@ -793,7 +821,7 @@ mod tests {
         let tools = resp["result"]["tools"]
             .as_array()
             .expect("tools is an array");
-        assert_eq!(tools.len(), 8);
+        assert_eq!(tools.len(), 9);
         let names: Vec<&str> = tools.iter().map(|t| t["name"].as_str().unwrap()).collect();
         assert_eq!(
             names,
@@ -806,6 +834,7 @@ mod tests {
                 "mirror_peer_beam",
                 "mirror_beam",
                 "mirror_spawn",
+                "mirror_index",
             ]
         );
     }

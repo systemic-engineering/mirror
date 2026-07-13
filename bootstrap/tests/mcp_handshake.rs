@@ -85,12 +85,12 @@ fn unknown_method_silent_drop() {
 }
 
 #[test]
-fn eight_tools_advertised() {
+fn nine_tools_advertised() {
     let req = read_fixture("tools_list.req.json");
     let resp = mcp::handle_request(req.trim()).expect("tools/list must respond");
     let v: serde_json::Value = serde_json::from_str(&resp).expect("valid JSON");
     let tools = v["result"]["tools"].as_array().expect("tools array");
-    assert_eq!(tools.len(), 8);
+    assert_eq!(tools.len(), 9);
     let names: Vec<&str> = tools.iter().map(|t| t["name"].as_str().unwrap()).collect();
     // Mara iter-15 schema reconciliation (2026-07-08): byte-parity
     // alignment with `bin/mirror-mcp` 8-tool schema. Tick 3 rename
@@ -110,6 +110,7 @@ fn eight_tools_advertised() {
             "mirror_peer_beam",
             "mirror_beam",
             "mirror_spawn",
+            "mirror_index",
         ]
     );
 }
