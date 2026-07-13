@@ -245,6 +245,21 @@ project mirror.spec {
           # let (Some, Some) = (song, dance_with)` guard at cmd_peer_beam
           # dispatch entry. Follows `flag song: ~f` Rung 1 precedent.
           flag dance_with: ~f
+          # === Rung 5 addition (2026-07-13) — @spectral/garden/deployment ===
+          #
+          # `--deploy-to <target>` triggers `crate::deploy::execute_deploy`
+          # when combined with --song AND --dance-with. Composes over Rung
+          # 4 dance shared_root_oid; emits deployment envelope naming six
+          # substrate authorities: @spectral/garden + @spectral/garden/nix
+          # + @bauchladen + @dance + @mirror/mosaic + @song/beat per Mara
+          # `9c4ef5b` Scope A mycelial-envelope-declared substrate.
+          #
+          # Envelope-declared discipline: no nix build subprocess (Rung 5.5
+          # forward-promise); no spectral.engineer HTTP contact (Rung 6
+          # forward-promise). Byte-equality preserved for non-`--deploy-to`
+          # paths via `if let (Some, Some, Some) = (song, dance_with,
+          # deploy_to)` three-way narrowing.
+          flag deploy_to: ~f
         }
       }
     }

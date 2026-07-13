@@ -46,6 +46,7 @@ pub mod property;
 pub mod realisation;
 pub mod score;
 pub mod dance;
+pub mod deploy;
 pub mod sheaf_laplacian;
 pub mod song;
 pub mod spectral;
@@ -3200,6 +3201,11 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                     .position(|a| a == "--dance-with")
                     .and_then(|i| args.get(i + 1))
                     .map(|s| s.as_str());
+                let deploy_to = args
+                    .iter()
+                    .position(|a| a == "--deploy-to")
+                    .and_then(|i| args.get(i + 1))
+                    .map(|s| s.as_str());
                 cmd_peer_beam(
                     p,
                     hello_world,
@@ -3212,6 +3218,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                     with_shadow,
                     song,
                     dance_with,
+                    deploy_to,
                 )
             }
             None => {
@@ -3248,6 +3255,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                                     || a == "--task"
                                     || a == "--song"
                                     || a == "--dance-with"
+                                    || a == "--deploy-to"
                                 {
                                     j += 2;
                                     continue;
@@ -3285,6 +3293,11 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                                     .position(|a| a == "--dance-with")
                                     .and_then(|i| args.get(i + 1))
                                     .map(|s| s.as_str());
+                                let deploy_to = args
+                                    .iter()
+                                    .position(|a| a == "--deploy-to")
+                                    .and_then(|i| args.get(i + 1))
+                                    .map(|s| s.as_str());
                                 cmd_peer_beam(
                                     p,
                                     hello_world,
@@ -3297,6 +3310,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                                     with_shadow,
                                     song,
                                     dance_with,
+                                    deploy_to,
                                 )
                             }
                             None => {
@@ -3351,6 +3365,11 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                         .position(|a| a == "--dance-with")
                         .and_then(|i| args.get(i + 1))
                         .map(|s| s.as_str());
+                    let deploy_to = args
+                        .iter()
+                        .position(|a| a == "--deploy-to")
+                        .and_then(|i| args.get(i + 1))
+                        .map(|s| s.as_str());
                     cmd_peer_beam(
                         ".",
                         hello_world,
@@ -3363,6 +3382,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                         with_shadow,
                         song,
                         dance_with,
+                        deploy_to,
                     )
                 }
                 None => {
@@ -5000,6 +5020,7 @@ fn cmd_peer_beam(
     with_shadow: bool,
     song: Option<&str>,
     dance_with: Option<&str>,
+    deploy_to: Option<&str>,
 ) -> i32 {
     // Piece 1 (insight §2.1): cli surface. The peer-home argument is the
     // single positional. Context (frame, repository, pack) is resolved
@@ -5007,6 +5028,31 @@ fn cmd_peer_beam(
     // peer-home honors the dispatch context.
     let peer_home_resolved = ctx.resolve(peer_home);
     let spec_path = peer_home_resolved.join("mirror.spec");
+
+    // Rung 5 (2026-07-13) — `--deploy-to <target>` mycelial-envelope-
+    // declared dispatch per Mara `9c4ef5b` Scope A + substrate
+    // reservation. When ALL THREE of --song + --dance-with + --deploy-to
+    // are present, the peer runs Rung 4 dance state computation for
+    // shared_root_oid + emits deployment envelope naming @spectral/
+    // garden + @spectral/garden/nix + @bauchladen + @dance + @mirror/
+    // mosaic + @song/beat substrate authorities. Byte-equality preserved
+    // for two-way dance-only path via `if let (Some, Some, Some)`
+    // three-way narrowing.
+    if let (Some(song_path), Some(peer_home_2), Some(deploy_target)) =
+        (song, dance_with, deploy_to)
+    {
+        let peer_home_2_resolved = ctx.resolve(peer_home_2);
+        let spec_path_2 = peer_home_2_resolved.join("mirror.spec");
+        return crate::deploy::execute_deploy(
+            peer_home,
+            peer_home_2,
+            &spec_path,
+            &spec_path_2,
+            song_path,
+            deploy_target,
+            ctx,
+        );
+    }
 
     // Rung 4 (2026-07-13) — `--dance-with <peer-home-2>` multi-peer
     // coherence phase-lock dispatch per Mara `417ec25` Scope B narrowed
