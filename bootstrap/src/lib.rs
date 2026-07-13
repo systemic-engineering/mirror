@@ -50,6 +50,7 @@ pub mod deploy;
 pub mod sheaf_laplacian;
 pub mod song;
 pub mod spectral;
+pub mod store_branch;
 pub mod tensor;
 pub mod tokenize;
 
@@ -3206,6 +3207,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                     .position(|a| a == "--deploy-to")
                     .and_then(|i| args.get(i + 1))
                     .map(|s| s.as_str());
+                let emit_crystal = args.iter().any(|a| a == "--emit-crystal");
                 cmd_peer_beam(
                     p,
                     hello_world,
@@ -3219,6 +3221,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                     song,
                     dance_with,
                     deploy_to,
+                    emit_crystal,
                 )
             }
             None => {
@@ -3298,6 +3301,8 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                                     .position(|a| a == "--deploy-to")
                                     .and_then(|i| args.get(i + 1))
                                     .map(|s| s.as_str());
+                                let emit_crystal =
+                                    args.iter().any(|a| a == "--emit-crystal");
                                 cmd_peer_beam(
                                     p,
                                     hello_world,
@@ -3311,6 +3316,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                                     song,
                                     dance_with,
                                     deploy_to,
+                                    emit_crystal,
                                 )
                             }
                             None => {
@@ -3370,6 +3376,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                         .position(|a| a == "--deploy-to")
                         .and_then(|i| args.get(i + 1))
                         .map(|s| s.as_str());
+                    let emit_crystal = args.iter().any(|a| a == "--emit-crystal");
                     cmd_peer_beam(
                         ".",
                         hello_world,
@@ -3383,6 +3390,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                         song,
                         dance_with,
                         deploy_to,
+                        emit_crystal,
                     )
                 }
                 None => {
@@ -5021,6 +5029,7 @@ fn cmd_peer_beam(
     song: Option<&str>,
     dance_with: Option<&str>,
     deploy_to: Option<&str>,
+    emit_crystal: bool,
 ) -> i32 {
     // Piece 1 (insight §2.1): cli surface. The peer-home argument is the
     // single positional. Context (frame, repository, pack) is resolved
@@ -5028,6 +5037,21 @@ fn cmd_peer_beam(
     // peer-home honors the dispatch context.
     let peer_home_resolved = ctx.resolve(peer_home);
     let spec_path = peer_home_resolved.join("mirror.spec");
+
+    // Rung 6' (2026-07-13) — `--emit-crystal` @mirror/store-bounded
+    // peer runtime per Mara `d2de1ee` canonical spec + Taut `8e98a24`
+    // @io-minimization re-scout. Peer emits crystal OID on `refs/
+    // mirror/peer/<uuid>/HEAD` instead of stdout envelope. Substrate-
+    // inversion of Taut's prior Rung 6 @io/fs runtime trajectory: peer
+    // inference stays @magic-native; peer state = crystal OID on
+    // @mirror/store internal ref; materialization = ONE @io crossing
+    // via @kintsugi/store/git.commit_as_fold (Rung 6.1+ forward-
+    // promise). Fires BEFORE all other Rungs 1-5 dispatches when
+    // present. Byte-equality preserved for non-`--emit-crystal` paths
+    // via `if emit_crystal` guard; all prior dispatches unchanged.
+    if emit_crystal {
+        return crate::store_branch::emit_peer_crystal(peer_home, ctx);
+    }
 
     // Rung 5 (2026-07-13) — `--deploy-to <target>` mycelial-envelope-
     // declared dispatch per Mara `9c4ef5b` Scope A + substrate

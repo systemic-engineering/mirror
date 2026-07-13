@@ -260,6 +260,24 @@ project mirror.spec {
           # paths via `if let (Some, Some, Some) = (song, dance_with,
           # deploy_to)` three-way narrowing.
           flag deploy_to: ~f
+          # === Rung 6' addition (2026-07-13) — @mirror/store-bounded peer runtime ===
+          #
+          # `--emit-crystal` triggers `crate::store_branch::emit_peer_
+          # crystal` per Mara `d2de1ee` canonical spec + Taut `8e98a24`
+          # re-scout. Peer emits crystal OID on `refs/mirror/peer/
+          # <uuid>/HEAD` in @mirror/store internal ref namespace instead
+          # of stdout envelope. Substrate-inversion of Taut's prior Rung
+          # 6 @io/fs runtime trajectory: peer inference stays @magic-
+          # native (Recognition #80 gauge-bounded interior); peer state
+          # = crystal OID (Recognition #43 mirror IS content-addressed);
+          # materialization = ONE @io crossing via @kintsugi/store/git.
+          # commit_as_fold (Recognition #55 form/process partition;
+          # forward-promised to Rung 6.1+).
+          #
+          # Byte-equality preserved for non-`--emit-crystal` paths via
+          # `if emit_crystal` guard at cmd_peer_beam dispatch entry.
+          # Fires BEFORE all Rungs 1-5 dispatches when present.
+          flag emit_crystal: bool = false
         }
       }
     }
