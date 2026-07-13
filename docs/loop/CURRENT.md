@@ -1,3 +1,49 @@
+# CURRENT arc — @song/beat ladder-climb 2026-07-13 (Rungs 0 landed, 1 in progress)
+
+## 2026-07-13 addition — @song/beat testable-increment ladder
+
+Session-continuation after 202-commit substrate arc closure on 2026-07-12.
+Today's arc opened @resonance (Mara `9e48710`) + coordination-without-
+signal (Reed `71a4689`) + @dance (Mara `4f079c8` + Reed `61b444a` Path
+C annotations) + @song replaces plans-and-loops (Mara `d21337b`). Taut's
+gap-scout `c54740c` names a 7-rung testable-increment ladder from Rung 0
+(Mara mint @song/beat) through Rung 6 (production `mirror spawn --song
+--deploy-to spectral.engineer`).
+
+Alex's mandate (verbatim 2026-07-13, in-transcript /loop dynamic mode):
+"climb the ladder until unresolvable ambiguity that cannot be postponed
+further."
+
+**Rung status:**
+
+- **Rung 0 (Mara 📝):** `shards/song/beat.mirror` (909 lines) LANDED at
+  Mara `94e55eb`. Sixth species of @song; atomic-execution unit binding
+  @kintsugi/oscillate ACTIVE/DARK-pulse discipline; Galen + Curwen +
+  Cooper-Meyer prior art anchor; FOURTH consolidation-species witness
+  reinforcing #S5.
+
+- **Rung 1 (Reed 🔴🟢, in progress THIS TICK):** Grammar `flag song: ~f`
+  in mirror.spec + new `bootstrap/src/song.rs` module + `cmd_peer_beam
+  --song` dispatch branch. Test:
+  `bootstrap/tests/peer_beam_song_single_beat_shard.rs`. Hardcoded
+  single-beat @song fires @kintsugi/oscillate ACTIVE/DARK pulse; emits
+  beat-envelope naming @song/beat + @kintsugi/oscillate substrate
+  authorities. Byte-equality preserved for non-`--song` paths via same
+  `if let Some(...)` discipline as existing `--mission` at
+  `bootstrap/src/lib.rs:5254-5262`.
+
+- **Rung 2+ (Reed 🔴🟢):** Forward-promised per Taut `c54740c` §5.3+.
+  Multi-beat phrase execution (Rung 2), movement/voice/progression
+  keywords (Rung 3), multi-peer @dance runtime (Rung 4), @spectral/garden
+  mycelial nix deployment (Rung 5), production spawn --deploy-to
+  spectral.engineer (Rung 6).
+
+**Discipline:** each rung a RED→GREEN TDD cycle; each cycle land as
+separate 🔴 + 🟢 commit pair on main; each rung composes with prior
+rungs; push after each cycle.
+
+---
+
 # CURRENT arc — mara/song-substrate-decl-v0.1 ratified 2026-07-12, merge pending
 
 ## 2026-07-12 addition — flags-as-lenses forward promises (per Seam `211665f` Q4)
