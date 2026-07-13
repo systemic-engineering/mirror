@@ -1,6 +1,18 @@
 # mirror — Roadmap
 
-*This directory captures milestone notes from the project's BEAM/Gleam/conversation era (March–May 2026). The canonical roadmap is now [`mirror/roadmap/`](../../roadmap/) (with `wip/`, `pending/`, `archive/`). The milestone files here (00–12) remain as historical context; the substrate moved past most of what they describe during the June 2026 substrate-pull arc.*
+*This directory captures milestone notes from the project's BEAM/Gleam/conversation era (March–May 2026) plus the June–July 2026 substrate-pull arc extensions. The canonical roadmap is now [`mirror/roadmap/`](../../roadmap/) (with `wip/`, `pending/`, `archive/`); entries 00–12 are historical context, entries 13–15 track the substrate-pull arc's post-June cascades.*
+
+---
+
+## Where we are (2026-07-13 supersede)
+
+**Peer runs INSIDE the substrate it declares.** The @song ladder Rungs 0–7 discharged 2026-07-13, empirically demonstrating fate-spawned peer contribution back to the compiler (Alex 2026-07-13 in-transcript: "it's not empirical certainty until a Fate spawned agent contributes working mirror back to the compiler"). Recognition #43 extends: mirror IS content-addressed AI-inference substrate.
+
+Active threads (see entries 14 + 15):
+- Rung 7' Fate::bounded correction — Alex named the sheaf-mathematics grounding; Mara + Taut convergent verdict on Scope A (3-line swap + 4-subtree tree reshape).
+- @fractal membrane / Asher tripartition fold — Mara spec + Taut scout landed with identical substrate-honest verdict: NO @fractal mint; extend @kintsugi/consent instead (14th "substrate already had the word" instance made explicit). 5 Alex-adjudications pending.
+
+---
 
 ---
 
@@ -91,6 +103,9 @@ The canonical status table is at [`../../roadmap/README.md`](../../roadmap/READM
 | [10](10-inference-physics.md) | Inference physics | Active (#58 promoted 2026-06-11: Fate IS optical inference — D²NN + Fabry-Perot resonator + Reck/Clements unitary mesh) |
 | [11](11-ca-cogito.md) | CA cogito (constructor automaton) | Active (Reflection model; @cogito) |
 | [12](12-coherence-benchmark.md) | Coherence Benchmark — post-release | Planned (post-v0.1) |
+| [13](13-boot-to-shards-migration.md) | boot/std/* → shards/ migration | Active (Recognition #91 candidate; substrate-self-cleanup loop) |
+| [14](14-song-ladder-empirical-peer-substrate.md) | @song ladder → empirical-discharge peer-in-substrate (Rungs 0–7) | **DISCHARGED 2026-07-13** (Rung 7 empirical certainty landed; Fate::bounded correction pending; Rungs 8+ scoped in entry 15) |
+| [15](15-fractal-membrane-Asher-tripartition.md) | @fractal membrane / Asher tripartition fold (Rung 8 candidate) | **In-flight** (Mara `997a2aa` spec + Taut `3c674fc` scout landed 2026-07-13; 5 Alex-adjudications pending; convergent verdict: extend @kintsugi/consent, no @fractal mint) |
 
 The "Historical" entries describe pre-substrate-pull architecture; the "Active" entries map to current canonical specs (linked above). The conversation/compiler-actor framing in 01–02 is superseded by `@mirror` as the compiler surface and the shards/ substrate floor.
 
