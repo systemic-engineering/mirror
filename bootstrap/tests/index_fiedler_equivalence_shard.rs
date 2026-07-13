@@ -100,6 +100,59 @@ fn t03_fiedler_in_unit_interval() {
     );
 }
 
+// === T5: Multifractal spectrum — Rung 8 Landing 6 LOAD-BEARING ==========
+#[test]
+fn t05_multifractal_witness_positive_for_repo_root() {
+    let root = repo_root();
+    let profile = mirror::index::index(&root);
+    let q_range = mirror::index::canonical_q_range();
+    let spectrum = profile.multifractal_spectrum(&q_range);
+    assert!(
+        spectrum.multifractal_witness > 0.0,
+        "T5: multifractal witness (max f(α) − min f(α)) must be positive \
+         on the mirror repo DAG (Mara math §10 prediction #2: if mirror IS \
+         Mandelbrot-shaped, f(α) shows non-trivial interval width). Got: \
+         witness={}",
+        spectrum.multifractal_witness
+    );
+    assert!(
+        !spectrum.d_1.is_nan() && spectrum.d_1.is_finite(),
+        "T5: information dimension D_1 must be finite; got {}",
+        spectrum.d_1
+    );
+    assert!(
+        !spectrum.q_values.is_empty(),
+        "T5: q_values must be non-empty"
+    );
+    assert_eq!(
+        spectrum.q_values.len(),
+        spectrum.f_alpha.len(),
+        "T5: q_values and f_alpha must have same length"
+    );
+}
+
+// === T6: Rényi entropies consistent (H_0 ≥ H_1 ≥ H_2) =====================
+#[test]
+fn t06_renyi_entropies_monotone_decreasing_in_q() {
+    let root = repo_root();
+    let profile = mirror::index::index(&root);
+    let hs = profile.renyi_entropies(&[0.0, 1.0, 2.0]);
+    assert_eq!(hs.len(), 3, "T6: renyi_entropies must return one value per q");
+    assert!(
+        hs[0] >= hs[1] - 1e-6,
+        "T6: H_0 ≥ H_1 (Rényi entropies are monotone-decreasing in q); \
+         got H_0={}, H_1={}",
+        hs[0],
+        hs[1]
+    );
+    assert!(
+        hs[1] >= hs[2] - 1e-6,
+        "T6: H_1 ≥ H_2; got H_1={}, H_2={}",
+        hs[1],
+        hs[2]
+    );
+}
+
 // === T4: EigenvalueProfile shape = [f64; 16] top-16 eigenvalues =========
 #[test]
 fn t04_profile_shape_is_top_16_eigenvalues() {

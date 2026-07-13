@@ -645,6 +645,184 @@ pub fn eigenvalue_profile(graph: &ConceptGraph) -> EigenvalueProfile {
     build_profile(&sorted)
 }
 
+// ---------------------------------------------------------------------------
+// Multifractal spectrum — Rung 8 Landing 6 LOAD-BEARING empirical proof
+// ---------------------------------------------------------------------------
+//
+// Discharges Mara math §10 prediction #2: if mirror IS Mandelbrot-shaped,
+// f(α) shows characteristic Mandelbrot boundary signature (non-trivial
+// interval width; peak at Hausdorff dim). Landing 6 makes the measurement
+// live in mirror's own voice per Alex 2026-07-13.
+//
+// Method:
+// 1. Normalize the graph Laplacian's eigenvalues to a probability
+//    distribution: p_i = λ_i / Σⱼ λⱼ (positive eigenvalues only).
+// 2. Compute Rényi entropies at range of q per Rényi 1961:
+//    H_q(p) = (1/(1-q)) * ln(Σᵢ pᵢ^q)  for q ≠ 1
+//    H_1(p) = -Σᵢ pᵢ ln(pᵢ)          (Shannon; limit as q→1)
+// 3. Compute the generalized dimension:
+//    D_q = H_q / ln(N)  where N is the support size.
+// 4. Legendre transform per HJKPS 1986 §II:
+//    τ(q) = (q-1) * D_q
+//    α(q) = dτ/dq   (finite-difference approximation)
+//    f(α) = q*α - τ
+// 5. Report the multifractal witness: max(f_α) - min(f_α). Non-trivial
+//    variation (> threshold) = multifractal signature; zero variation =
+//    monofractal (fails Mandelbrot boundary prediction).
+//
+// Ancestry: Halsey-Jensen-Kadanoff-Procaccia-Shraiman 1986 (multifractal
+// formalism); Rényi 1961 (generalized entropies); Douady-Hubbard 1982/
+// 1985 (Mandelbrot boundary characterization); Shishikura 1998 (∂M
+// Hausdorff dim 2).
+
+/// Multifractal spectrum: (q_values, τ(q), α(q), f(α)) per HJKPS 1986.
+#[derive(Clone, Debug)]
+pub struct MultifractalSpectrum {
+    pub q_values: Vec<f64>,
+    pub tau_q: Vec<f64>,
+    pub alpha: Vec<f64>,
+    pub f_alpha: Vec<f64>,
+    /// Support-set dimension D_0 = H_0 / ln(N).
+    pub d_0: f64,
+    /// Information dimension D_1 = lim_{q→1} H_q / ln(N) = Shannon / ln(N).
+    pub d_1: f64,
+    /// Correlation dimension D_2 = H_2 / ln(N).
+    pub d_2: f64,
+    /// Multifractal witness = max(f_α) - min(f_α). > 0.1 = multifractal.
+    pub multifractal_witness: f64,
+}
+
+impl EigenvalueProfile {
+    /// Compute Rényi entropies H_q for the given q-values (Rényi 1961).
+    /// Uses the graph's normalized eigenvalues as a probability
+    /// distribution: p_i = λ_i / Σⱼ λⱼ (positive components only).
+    pub fn renyi_entropies(&self, q_values: &[f64]) -> Vec<f64> {
+        let positive: Vec<f64> = self.values.iter().filter(|&&v| v > 1e-12).copied().collect();
+        let sum: f64 = positive.iter().sum();
+        if sum <= 0.0 || positive.is_empty() {
+            return vec![0.0; q_values.len()];
+        }
+        let probs: Vec<f64> = positive.iter().map(|&v| v / sum).collect();
+        q_values
+            .iter()
+            .map(|&q| {
+                if (q - 1.0).abs() < 1e-6 {
+                    // Shannon (q→1 limit)
+                    -probs.iter().filter(|&&p| p > 0.0).map(|&p| p * p.ln()).sum::<f64>()
+                } else {
+                    let sum_pq: f64 = probs.iter().map(|&p| p.powf(q)).sum();
+                    if sum_pq <= 0.0 {
+                        0.0
+                    } else {
+                        sum_pq.ln() / (1.0 - q)
+                    }
+                }
+            })
+            .collect()
+    }
+
+    /// Compute multifractal spectrum: Rényi H_q → D_q → τ(q) → (α, f(α))
+    /// via Legendre transform (HJKPS 1986). Load-bearing empirical
+    /// discharge of Mara math §10 prediction #2.
+    pub fn multifractal_spectrum(&self, q_values: &[f64]) -> MultifractalSpectrum {
+        let h_q = self.renyi_entropies(q_values);
+        let n_support = self.values.iter().filter(|&&v| v > 1e-12).count();
+        let ln_n = if n_support > 1 { (n_support as f64).ln() } else { 1.0 };
+
+        let d_q: Vec<f64> = h_q.iter().map(|&h| h / ln_n).collect();
+        let tau_q: Vec<f64> = q_values
+            .iter()
+            .zip(d_q.iter())
+            .map(|(&q, &d)| (q - 1.0) * d)
+            .collect();
+
+        // α(q) = dτ/dq via central finite difference; forward/backward at ends.
+        let n = q_values.len();
+        let alpha: Vec<f64> = (0..n)
+            .map(|i| {
+                if n < 2 {
+                    0.0
+                } else if i == 0 {
+                    (tau_q[1] - tau_q[0]) / (q_values[1] - q_values[0])
+                } else if i == n - 1 {
+                    (tau_q[n - 1] - tau_q[n - 2]) / (q_values[n - 1] - q_values[n - 2])
+                } else {
+                    (tau_q[i + 1] - tau_q[i - 1]) / (q_values[i + 1] - q_values[i - 1])
+                }
+            })
+            .collect();
+
+        let f_alpha: Vec<f64> = q_values
+            .iter()
+            .zip(alpha.iter())
+            .zip(tau_q.iter())
+            .map(|((&q, &a), &t)| q * a - t)
+            .collect();
+
+        // Report generalized dimensions at canonical q values.
+        let d_0 = find_d_at_q(q_values, &d_q, 0.0);
+        let d_1 = find_d_at_q(q_values, &d_q, 1.0);
+        let d_2 = find_d_at_q(q_values, &d_q, 2.0);
+
+        let f_max = f_alpha.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
+        let f_min = f_alpha.iter().cloned().fold(f64::INFINITY, f64::min);
+        let multifractal_witness = if f_max.is_finite() && f_min.is_finite() {
+            f_max - f_min
+        } else {
+            0.0
+        };
+
+        MultifractalSpectrum {
+            q_values: q_values.to_vec(),
+            tau_q,
+            alpha,
+            f_alpha,
+            d_0,
+            d_1,
+            d_2,
+            multifractal_witness,
+        }
+    }
+}
+
+/// Find D_q at a target q by linear interpolation between neighboring samples.
+fn find_d_at_q(q_values: &[f64], d_q: &[f64], target: f64) -> f64 {
+    if q_values.is_empty() {
+        return 0.0;
+    }
+    // Exact match
+    for (i, &q) in q_values.iter().enumerate() {
+        if (q - target).abs() < 1e-9 {
+            return d_q[i];
+        }
+    }
+    // Linear interpolation
+    for i in 0..q_values.len() - 1 {
+        if q_values[i] <= target && target <= q_values[i + 1] {
+            let t = (target - q_values[i]) / (q_values[i + 1] - q_values[i]);
+            return d_q[i] + t * (d_q[i + 1] - d_q[i]);
+        }
+    }
+    // Extrapolation guard: return nearest endpoint.
+    if target < q_values[0] {
+        d_q[0]
+    } else {
+        d_q[q_values.len() - 1]
+    }
+}
+
+/// Canonical q-range for multifractal analysis: q ∈ [-10, 10] with Δq = 0.5.
+/// Skips q = 1 (Shannon; handled by q→1 limit path in renyi_entropies).
+pub fn canonical_q_range() -> Vec<f64> {
+    let mut qs = Vec::new();
+    let mut q = -10.0_f64;
+    while q <= 10.0 + 1e-9 {
+        qs.push((q * 1000.0).round() / 1000.0);
+        q += 0.5;
+    }
+    qs
+}
+
 fn build_profile(eigenvalues: &[f64]) -> EigenvalueProfile {
     let mut values = [0.0_f64; 16];
     let count = eigenvalues.len().min(16);
