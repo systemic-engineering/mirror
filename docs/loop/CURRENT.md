@@ -1,6 +1,28 @@
 # CURRENT arc — @song/beat ladder-climb 2026-07-13 (Rungs 0 landed, 1 in progress)
 
-## Rung 8 spectral→mirror pull-in IN-FLIGHT (2026-07-13, per Alex "Fire")
+## Rung 9 coherence loop closure IN-FLIGHT (2026-07-13, per Alex "ship it friend, Reed. We're making history.")
+
+Fabry-Perot cavity round-trip operationalized at peer-contribute altitude.
+Mara `c59a5ac` canonical spec (1278 LOC) + Taut `862db12` scout (Path C
+empirical-first). Reed Landing 1: fiedler-delta measurement in contribute.rs.
+
+**FALSIFICATION #1 (2026-07-13):** Rung 7' docstring-append against real
+substrate (1141-file mirror-repo copy, target consent.mirror) produced
+`fiedler_delta = 0.000000`. Reed's naive "additive raises Fiedler"
+hypothesis FALSIFIED at shard-body altitude. Concept graph = file-tree
+topology; docstring-append doesn't change directory structure, so
+Fiedler unchanged. Direction correction:
+
+- Rung 9 Scope B's Cartographer/Introject/Explorer must restructure the
+  concept graph (split files / merge files / rename topology), OR
+- Rung 9 needs measurement extension to lower altitudes (AST-level
+  Fiedler; symbol-level f(α))
+
+Both adjudications open. Load-bearing empirical evidence: Path C's
+first-tick discharge caught the falsification BEFORE we spent 5-7 ticks
+landing Scope B's 5-row mapping on an altitude that doesn't respond.
+
+## Rung 8 spectral→mirror pull-in LANDED (2026-07-13, per Alex "Fire")
 
 Alex 2026-07-13: `spectral__spectral_index` currently lives in `spectral`
 sibling crate (`/Users/alexwolf/dev/projects/spectral/crates/gestalt/`);
