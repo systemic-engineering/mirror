@@ -310,6 +310,73 @@ fn t09_peer_commit_tree_contains_peer_crystal_blob() {
     );
 }
 
+// === T10: parent chain — second invocation chains from first ==========
+//
+// Rung 6.2a collapse: @mirror/store IS a DAG per Recognition #43 +
+// splinter_graph trichotomy. Peer beams should CHAIN via git commit
+// parent linkage. Test: two --emit-crystal invocations on the same
+// peer_home; second commit's parent should be first commit.
+#[test]
+fn t10_second_invocation_chains_from_parent() {
+    let dir = make_peer_home("parent-chain");
+    // First invocation — creates root commit (no parent).
+    let out1 = run_emit_crystal(&dir);
+    let stdout1 = String::from_utf8_lossy(&out1.stdout).to_string();
+    let ref_name = extract_field(&stdout1, "ref_name").expect("ref_name field");
+    let commit1 = Command::new("git")
+        .arg("-C")
+        .arg(&dir)
+        .arg("rev-parse")
+        .arg(ref_name)
+        .output()
+        .expect("rev-parse");
+    let commit1_sha = String::from_utf8_lossy(&commit1.stdout).trim().to_string();
+    assert!(!commit1_sha.is_empty(), "T10: first invocation must produce commit");
+
+    // Second invocation — must chain from first commit.
+    let out2 = run_emit_crystal(&dir);
+    let stdout2 = String::from_utf8_lossy(&out2.stdout).to_string();
+    assert!(
+        out2.status.success(),
+        "T10: second invocation must succeed; stdout=<{stdout2}>"
+    );
+    let commit2 = Command::new("git")
+        .arg("-C")
+        .arg(&dir)
+        .arg("rev-parse")
+        .arg(ref_name)
+        .output()
+        .expect("rev-parse");
+    let commit2_sha = String::from_utf8_lossy(&commit2.stdout).trim().to_string();
+    // Note: identical inputs → deterministic content → identical crystals.
+    // The blob/tree are byte-equal to first invocation, but the commit
+    // itself has a parent pointer so its SHA differs.
+    assert_ne!(
+        commit1_sha, commit2_sha,
+        "T10: second commit must differ from first (has parent pointer per \
+         Rung 6.2a chain); got commit1={commit1_sha}, commit2={commit2_sha}"
+    );
+    // Verify parent linkage: second commit's parent IS first commit.
+    let parents = Command::new("git")
+        .arg("-C")
+        .arg(&dir)
+        .arg("rev-list")
+        .arg("--parents")
+        .arg("-n")
+        .arg("1")
+        .arg(&commit2_sha)
+        .output()
+        .expect("rev-list --parents");
+    let parents_stdout = String::from_utf8_lossy(&parents.stdout)
+        .trim()
+        .to_string();
+    assert!(
+        parents_stdout.contains(&commit1_sha),
+        "T10: second commit's parent must be first commit (@mirror/store IS \
+         a DAG per Recognition #43); got: <{parents_stdout}>"
+    );
+}
+
 // === T5: no --emit-crystal preserves Rungs 1-5 backward-compat =========
 #[test]
 fn t05_no_emit_crystal_preserves_backward_compat() {

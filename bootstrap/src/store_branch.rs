@@ -245,18 +245,46 @@ fn materialize_crystal(
         );
     }
 
-    // 3b: commit-tree with substrate-honest commit message.
+    // 3b (Rung 6.2a collapse): read parent commit if peer branch ref
+    // already exists (@mirror/store IS a DAG per Recognition #43 +
+    // splinter_graph trichotomy; peer beams chain per Alex 2026-07-13
+    // in-transcript). If parent exists, pass `-p <parent>` to
+    // commit-tree so peer's crystal history is a real git DAG.
+    let ref_name_probe = format!("refs/mirror/peer/{}/HEAD", peer_uuid);
+    let parent_hash = Command::new("git")
+        .args(["rev-parse", "--verify", &ref_name_probe])
+        .current_dir(peer_home)
+        .stderr(Stdio::null())
+        .output()
+        .ok()
+        .and_then(|o| {
+            let s = String::from_utf8_lossy(&o.stdout).trim().to_string();
+            if o.status.success() && !s.is_empty() { Some(s) } else { None }
+        });
+
+    // 3c: commit-tree with substrate-honest commit message.
     let commit_msg = format!(
-        "peer beam materialize crystal {}\n\ncommit_as_fold discharge per Mara `d2de1ee` Scope B + Recognition #55.\npeer_uuid: {}\npeer_home: {}\ncrystal_oid: {}\nblob_hash: {}\ntree_hash: {}\n",
+        "peer beam materialize crystal {}\n\ncommit_as_fold discharge per Mara `d2de1ee` Scope B + Recognition #55.\npeer_uuid: {}\npeer_home: {}\ncrystal_oid: {}\nblob_hash: {}\ntree_hash: {}\nparent: {}\n",
         &crystal_oid[..16.min(crystal_oid.len())],
         peer_uuid,
         peer_home.display(),
         crystal_oid,
         blob_hash,
-        tree_hash
+        tree_hash,
+        parent_hash.as_deref().unwrap_or("<root>")
     );
+    let mut commit_args: Vec<String> = vec![
+        "commit-tree".to_string(),
+        tree_hash.clone(),
+    ];
+    if let Some(ref parent) = parent_hash {
+        commit_args.push("-p".to_string());
+        commit_args.push(parent.clone());
+    }
+    commit_args.push("-m".to_string());
+    commit_args.push(commit_msg.clone());
     let mut commit_child = match Command::new("git")
-        .args(["commit-tree", &tree_hash, "-m", &commit_msg])
+        .args(&commit_args)
         .current_dir(peer_home)
         .env("GIT_AUTHOR_NAME", "peer")
         .env("GIT_AUTHOR_EMAIL", "peer@mirror.local")
