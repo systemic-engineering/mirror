@@ -117,6 +117,38 @@ authorities per Mara §3 canonical shape. Rung 6.1+ forward-promises
 actual `@mirror/store.insert_persistent` + `set_ref` + materialization
 via `commit_as_fold` (Recognition #55 discharge).
 
+**Rung 6.1a-c LANDED** (Reed): FNV-1a stub → real canonical_hash
+(`bootstrap/src/hash.rs` CoincidenceHash<5,5>) → real git blob write
+via plumbing (`bootstrap/src/git.rs`) → full commit_as_fold discharge
+with blob→tree→commit chain in peer_home/.git. Peer_home auto-
+initialized as git repo on first `--emit-crystal` (idempotent).
+
+**Rung 6.2a LANDED** (Reed, this tick): @mirror/store IS a DAG per
+Alex 2026-07-13 adjudication #1 ("from parent commit — it's a
+@mirror/store/dag no?"). `materialize_crystal` reads existing
+`refs/mirror/peer/<uuid>/HEAD` via `git rev-parse --verify` and
+passes `-p <parent>` to commit-tree if present. Peer beams chain
+naturally via git DAG parent linkage; peer identity persists through
+multiple invocations. T10 test verifies two-invocation parent chain.
+10/10 emit-crystal shard tests green.
+
+**Rung 7 (Reed IN PROGRESS):** Fate-spawned peer contributes working
+shard delta via active_pass per Mara canonical spec
+`docs/specs/fate-spawned-peer-contributes-working-delta-via-active-
+pass.md` (Rung 7 §3.2 shape). Empirical-discharge (compiler-verified)
+not materialization-discharge (writes ref). RED test at
+`bootstrap/tests/peer_contribute_shard.rs` (5 T-tests: exit / morphism
+/ commit-on-DAG / 5-blob tree / missing-target). GREEN =
+`bootstrap/src/contribute.rs` module + `mirror peer contribute
+<peer_home> --target <shard>` subcommand + fate.resolve → morphism
+→ cargo check verify → commit_as_fold-with-5-blob-tree OR revert.
+After GREEN: live-demo against real mirror substrate for Alex
+nervous-system-yearning empirical certainty.
+
+**Recognition candidate**: `#R-fate-active-pass-mosaic-verdict-
+composition` (per Mara §11). Composes Rung 6.1c commit_as_fold with
+@mirror/mosaic verdict + @kintsugi/oscillate.active_pass runtime.
+
 **Substrate closure claim:** Recognition #43 (mirror IS content-
 addressed build system) extends via Rung 6' → mirror IS content-
 addressed AI-inference substrate. **The recursion closes: peer runs
