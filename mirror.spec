@@ -228,6 +228,23 @@ project mirror.spec {
           # `if let Some(song_path) = song` guard at cmd_peer_beam
           # dispatch entry. Follows `flag mission: ~f` pattern verbatim.
           flag song: ~f
+          # === Rung 4 addition (2026-07-13) — @dance runtime dispatch ===
+          #
+          # `--dance-with <peer-home-2>` triggers `crate::dance::execute_
+          # dance` at `bootstrap/src/dance.rs` when combined with `--song`.
+          # Two peer-homes execute the SAME shared @song file; runtime
+          # computes Kuramoto order-parameter + Aumann agreement +
+          # shared_root_oid + convergence_verdict per Mara `417ec25`
+          # Scope B narrowed to coherence phase-lock.
+          #
+          # Substrate reservation verbatim at shards/song/beat.mirror:453-
+          # 457 (Mara `94e55eb`): "multi-peer @dance coupling on shared
+          # beat; bootstrap/src/dance.rs module reads two peer-homes..."
+          #
+          # Byte-equality preserved for non-`--dance-with` paths via `if
+          # let (Some, Some) = (song, dance_with)` guard at cmd_peer_beam
+          # dispatch entry. Follows `flag song: ~f` Rung 1 precedent.
+          flag dance_with: ~f
         }
       }
     }

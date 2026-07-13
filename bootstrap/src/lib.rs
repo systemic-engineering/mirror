@@ -45,6 +45,7 @@ pub mod portal;
 pub mod property;
 pub mod realisation;
 pub mod score;
+pub mod dance;
 pub mod sheaf_laplacian;
 pub mod song;
 pub mod spectral;
@@ -3194,6 +3195,11 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                     .position(|a| a == "--song")
                     .and_then(|i| args.get(i + 1))
                     .map(|s| s.as_str());
+                let dance_with = args
+                    .iter()
+                    .position(|a| a == "--dance-with")
+                    .and_then(|i| args.get(i + 1))
+                    .map(|s| s.as_str());
                 cmd_peer_beam(
                     p,
                     hello_world,
@@ -3205,6 +3211,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                     from_psychohistory,
                     with_shadow,
                     song,
+                    dance_with,
                 )
             }
             None => {
@@ -3237,7 +3244,11 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                             let mut found: Option<&str> = None;
                             while j < args.len() {
                                 let a = &args[j];
-                                if a == "--mission" || a == "--task" || a == "--song" {
+                                if a == "--mission"
+                                    || a == "--task"
+                                    || a == "--song"
+                                    || a == "--dance-with"
+                                {
                                     j += 2;
                                     continue;
                                 }
@@ -3269,6 +3280,11 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                                     .position(|a| a == "--song")
                                     .and_then(|i| args.get(i + 1))
                                     .map(|s| s.as_str());
+                                let dance_with = args
+                                    .iter()
+                                    .position(|a| a == "--dance-with")
+                                    .and_then(|i| args.get(i + 1))
+                                    .map(|s| s.as_str());
                                 cmd_peer_beam(
                                     p,
                                     hello_world,
@@ -3280,6 +3296,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                                     from_psychohistory,
                                     with_shadow,
                                     song,
+                                    dance_with,
                                 )
                             }
                             None => {
@@ -3329,6 +3346,11 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                         .position(|a| a == "--song")
                         .and_then(|i| args.get(i + 1))
                         .map(|s| s.as_str());
+                    let dance_with = args
+                        .iter()
+                        .position(|a| a == "--dance-with")
+                        .and_then(|i| args.get(i + 1))
+                        .map(|s| s.as_str());
                     cmd_peer_beam(
                         ".",
                         hello_world,
@@ -3340,6 +3362,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                         from_psychohistory,
                         with_shadow,
                         song,
+                        dance_with,
                     )
                 }
                 None => {
@@ -4976,6 +4999,7 @@ fn cmd_peer_beam(
     from_psychohistory: bool,
     with_shadow: bool,
     song: Option<&str>,
+    dance_with: Option<&str>,
 ) -> i32 {
     // Piece 1 (insight §2.1): cli surface. The peer-home argument is the
     // single positional. Context (frame, repository, pack) is resolved
@@ -4983,6 +5007,28 @@ fn cmd_peer_beam(
     // peer-home honors the dispatch context.
     let peer_home_resolved = ctx.resolve(peer_home);
     let spec_path = peer_home_resolved.join("mirror.spec");
+
+    // Rung 4 (2026-07-13) — `--dance-with <peer-home-2>` multi-peer
+    // coherence phase-lock dispatch per Mara `417ec25` Scope B narrowed
+    // + substrate reservation at shards/song/beat.mirror:453-457. When
+    // BOTH --song AND --dance-with are present, the peer executes
+    // `execute_dance` which reads both peer-homes' coherence sequences
+    // and emits Kuramoto order-parameter + Aumann agreement +
+    // shared_root_oid + convergence_verdict envelope. Byte-equality
+    // preserved for non-`--dance-with` paths via `if let (Some, Some)`
+    // guard; Rungs 1-3 all continue working identically.
+    if let (Some(song_path), Some(peer_home_2)) = (song, dance_with) {
+        let peer_home_2_resolved = ctx.resolve(peer_home_2);
+        let spec_path_2 = peer_home_2_resolved.join("mirror.spec");
+        return crate::dance::execute_dance(
+            peer_home,
+            peer_home_2,
+            &spec_path,
+            &spec_path_2,
+            song_path,
+            ctx,
+        );
+    }
 
     // Rung 1 (2026-07-13) — `--song` early dispatch per Taut `c54740c`
     // §5.2 ladder. When --song is present, the peer's @song/beat runtime
