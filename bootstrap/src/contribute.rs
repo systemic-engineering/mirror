@@ -216,17 +216,27 @@ pub fn peer_contribute(peer_home: &str, target_shard: &Path, _ctx: &Ctx) -> i32 
             println!("+ sc_moved:      {} (substrate coordinate {} between pre- and post-morphism states)", sc_moved, if sc_moved { "CHANGED" } else { "UNCHANGED" });
             println!("+ substrate_measurement_carrier: fragmentation::SpectralCoordinate<5> (mirror-native-vcs.md §4.6; five projections of one spectrum; λ₀=0 is void axis = harmonic ground state = origin of manifold)");
 
-            // Rung 8+9 Landing 8+9.6a: @knife instrumentation per Reed
-            // `0a267ce` (species substrate-decl) + `18b5828` (Rust runtime).
-            // Plumbs Foerster COORD primitives into the peer altitude.
-            // pain_gradient uses sc_hamming ratio as PROXY per Seam §4 #6
-            // (empirical calibration required first per Asher; forward-
-            // promise: Landing 8+9.6d verifies Mara math §10 prediction #1).
-            let pain_gradient = if sc_hex_before.is_empty() {
+            // Rung 8+9 Landing 8+9.6b: substrate-honest pain gradient via
+            // @cyberpunk/algedonic.pain_gradient (retires the sc_hamming
+            // ratio proxy Reed used in Landing 8+9.6a per Taut `15f7ed6`
+            // §5 gap). Rust runtime at bootstrap/src/algedonic.rs mirrors
+            // the substrate-decl at shards/cyberpunk/algedonic.mirror.
+            //
+            // Substrate-honest interpretation: Shannon entropy of SC<5>
+            // hex distribution; higher entropy = less-recognizable
+            // structure = peer near boundary = higher pain (Foerster A3).
+            //
+            // sc_hamming preserved as diagnostic emission alongside
+            // pain_gradient until Landing 8+9.6d empirical calibration
+            // determines which is substrate-honest.
+            let pain_gradient_hamming = if sc_hex_before.is_empty() {
                 0.0
             } else {
                 sc_hamming as f64 / sc_hex_before.len() as f64
             };
+            let pain_gradient = crate::algedonic::pain_gradient(&sc_before, &sc_after).abs();
+            let pain_before = crate::algedonic::sample_pain(&sc_before);
+            let pain_after = crate::algedonic::sample_pain(&sc_after);
             const EPSILON_PAIN_INSTRUMENTATION: f64 = 0.5;
             let knife_verdict = crate::converge::stable_within(
                 &sc_after,
@@ -249,7 +259,10 @@ pub fn peer_contribute(peer_home: &str, target_shard: &Path, _ctx: &Ctx) -> i32 
                 (None, None)
             };
             println!("+ lens_knife: @mirror/lens/knife (Foerster 1976 COORD(x); Reed `0a267ce` substrate-decl + `18b5828` Rust runtime; Seam `e8508f5` ratification)");
-            println!("+ pain_gradient: {:.4} (sc_hamming ratio proxy; empirical calibration forward-promise Landing 8+9.6d)", pain_gradient);
+            println!("+ pain_before: {:.4} (@cyberpunk/algedonic.sample_pain; Shannon entropy of SC<5> hex; Landing 8+9.6b Rust runtime)", pain_before);
+            println!("+ pain_after: {:.4}", pain_after);
+            println!("+ pain_gradient: {:.4} (@cyberpunk/algedonic.pain_gradient; substrate-honest; retires sc_hamming proxy per Taut §5 gap)", pain_gradient);
+            println!("+ pain_gradient_hamming: {:.4} (Landing 8+9.6a proxy; preserved as diagnostic; empirical calibration Landing 8+9.6d)", pain_gradient_hamming);
             println!("+ epsilon_pain_instrumentation: {:.4} (placeholder; Seam §4 #6 rejects default; call-site value)", EPSILON_PAIN_INSTRUMENTATION);
             println!("+ knife_verdict: {:?} (Foerster A3 stable_within; @kintsugi/consent verdict floor forward-promise)", knife_verdict);
             if let (Some(jumped_hex), Some(het)) = (sc_jumped_hex.as_ref(), heterarchy_verdict.as_ref()) {

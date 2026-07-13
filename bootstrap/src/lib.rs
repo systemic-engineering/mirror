@@ -48,6 +48,7 @@ pub mod score;
 pub mod dance;
 pub mod deploy;
 pub mod sheaf_laplacian;
+pub mod algedonic;
 pub mod contribute;
 pub mod converge;
 pub mod index;
