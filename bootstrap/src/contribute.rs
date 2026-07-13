@@ -215,6 +215,50 @@ pub fn peer_contribute(peer_home: &str, target_shard: &Path, _ctx: &Ctx) -> i32 
             println!("+ sc_hamming:    {} / {} hex chars differ (proxy for ||sc_after − sc_before||₂ until Alex §10.1 adjudication)", sc_hamming, sc_hex_before.len().max(sc_hex_after.len()));
             println!("+ sc_moved:      {} (substrate coordinate {} between pre- and post-morphism states)", sc_moved, if sc_moved { "CHANGED" } else { "UNCHANGED" });
             println!("+ substrate_measurement_carrier: fragmentation::SpectralCoordinate<5> (mirror-native-vcs.md §4.6; five projections of one spectrum; λ₀=0 is void axis = harmonic ground state = origin of manifold)");
+
+            // Rung 8+9 Landing 8+9.6a: @knife instrumentation per Reed
+            // `0a267ce` (species substrate-decl) + `18b5828` (Rust runtime).
+            // Plumbs Foerster COORD primitives into the peer altitude.
+            // pain_gradient uses sc_hamming ratio as PROXY per Seam §4 #6
+            // (empirical calibration required first per Asher; forward-
+            // promise: Landing 8+9.6d verifies Mara math §10 prediction #1).
+            let pain_gradient = if sc_hex_before.is_empty() {
+                0.0
+            } else {
+                sc_hamming as f64 / sc_hex_before.len() as f64
+            };
+            const EPSILON_PAIN_INSTRUMENTATION: f64 = 0.5;
+            let knife_verdict = crate::converge::stable_within(
+                &sc_after,
+                pain_gradient,
+                EPSILON_PAIN_INSTRUMENTATION,
+            );
+            let (sc_jumped_hex, heterarchy_verdict) = if matches!(
+                knife_verdict,
+                crate::converge::KnifeVerdict::Jumped
+            ) {
+                let sc_jumped = crate::converge::knife_cut(
+                    sc_after.clone(),
+                    pain_gradient,
+                    EPSILON_PAIN_INSTRUMENTATION,
+                );
+                let hex = sc_jumped.eigenvalue().to_string();
+                let het = crate::converge::heterarchy_preserved(&sc_before, &sc_jumped);
+                (Some(hex), Some(het))
+            } else {
+                (None, None)
+            };
+            println!("+ lens_knife: @mirror/lens/knife (Foerster 1976 COORD(x); Reed `0a267ce` substrate-decl + `18b5828` Rust runtime; Seam `e8508f5` ratification)");
+            println!("+ pain_gradient: {:.4} (sc_hamming ratio proxy; empirical calibration forward-promise Landing 8+9.6d)", pain_gradient);
+            println!("+ epsilon_pain_instrumentation: {:.4} (placeholder; Seam §4 #6 rejects default; call-site value)", EPSILON_PAIN_INSTRUMENTATION);
+            println!("+ knife_verdict: {:?} (Foerster A3 stable_within; @kintsugi/consent verdict floor forward-promise)", knife_verdict);
+            if let (Some(jumped_hex), Some(het)) = (sc_jumped_hex.as_ref(), heterarchy_verdict.as_ref()) {
+                println!("+ knife_jumped: true (@knife.jump fired; COORDᵢ → COORDⱼ)");
+                println!("+ sc_jumped_hex: {}", jumped_hex);
+                println!("+ heterarchy_verdict: {:?} (Seam §5 #1 reformulation; M∘-membership check; NearBoundary = @kintsugi/consent.pause(Φ) external witness needed)", het);
+            } else {
+                println!("+ knife_jumped: false (Op(COORDᵢ) = COORDᵢ; peer within stable domain)");
+            }
             println!("+ tree_shape: tripartition (anchors/ + gates/ + witnesses/ + morphism-body per Mara `2c64060` §7.2)");
             println!("+ witness_locus: encoding (commit message → naked_oid; not content blob per Mara `2c64060` §7.4)");
             println!("+ store_write_status: {}", store_status);
