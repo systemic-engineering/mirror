@@ -4303,7 +4303,7 @@ fn parse_settle_on_predicates(body: &str) -> Vec<String> {
 /// Returns (root_oid_hex, moment_count). Skips `.git`, `target`,
 /// `.mirror` (action cache), `node_modules`, and hidden dirs deeper
 /// than one level to keep the walk bounded.
-fn psychohistory_root_from_peer_home(peer_home: &std::path::Path) -> (String, usize) {
+pub fn psychohistory_root_from_peer_home(peer_home: &std::path::Path) -> (String, usize) {
     let mut moment_oids: Vec<[u8; 32]> = Vec::new();
 
     fn walk(dir: &std::path::Path, out: &mut Vec<[u8; 32]>, depth: usize) {
@@ -4372,7 +4372,7 @@ fn psychohistory_root_from_peer_home(peer_home: &std::path::Path) -> (String, us
 /// - biases: [0.0, 20.0]
 /// - feature weights: [0.0, 5.0]
 /// - depth weights: [0.0, 5.0]
-fn selectors_from_psychohistory_root(root_hex: &str) -> [fate::ModelWeights; 5] {
+pub fn selectors_from_psychohistory_root(root_hex: &str) -> [fate::ModelWeights; 5] {
     // Parse first 8 bytes of the 64-hex-char root as u64 seed.
     let seed: u64 = {
         let bytes = root_hex.as_bytes();

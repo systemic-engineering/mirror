@@ -40,7 +40,8 @@ use std::process::{Command, Stdio};
 /// 5. On settle: commit_as_fold with 5-blob tree on peer's DAG.
 ///    On imperfect: revert target bytes; exit non-zero.
 pub fn peer_contribute(peer_home: &str, target_shard: &Path, _ctx: &Ctx) -> i32 {
-    // T5: refusal path when target missing.
+    // Refusal path when target missing (Asher membrane-conservatism: refuse
+    // to write when substrate lacks the anchor).
     if !target_shard.exists() {
         eprintln!(
             "@@ peer contribute refused: target shard not found: {} @@",
@@ -52,15 +53,18 @@ pub fn peer_contribute(peer_home: &str, target_shard: &Path, _ctx: &Ctx) -> i32 
     let peer_home_path = Path::new(peer_home);
     let peer_uuid = stub_peer_uuid(peer_home);
 
-    // Step 1: features observation (v0 = zeros per store_branch pattern;
-    // real @nl-driven encoding lands with shards/magic/nl.mirror adapter
-    // cascade).
+    // Rung 7' Error 1 correction (Fate::excited → Fate::bounded per Alex
+    // 2026-07-13 + Mara `2c64060` §7.1): reuse the composed-idiom pattern
+    // `Fate::untrained() + selectors_from_psychohistory_root` that already
+    // discharges `Fate::bounded` at `fate_bounded_by_psychohistory_peer_beam`.
+    // Sheaf-Laplacian Δ_F Rayleigh descent along peer's psychohistory sheaf
+    // (Bodnar 2022; v1 xorshift stub keyed on psychohistory_root_oid; v2
+    // lifts to actual sheaf eigenvector).
+    let (psychohistory_root_oid, moments_count) =
+        crate::psychohistory_root_from_peer_home(peer_home_path);
     let features: fate::Features = [0.0; 16];
-
-    // Step 2: Fate::excited().resolve. Model + prism_op selection is
-    // non-deterministic per invocation (xorshift64 seeded from system
-    // time); this IS @magic-native optical inference.
-    let fate_engine = fate::Fate::excited();
+    let mut fate_engine = fate::Fate::untrained();
+    fate_engine.selectors = crate::selectors_from_psychohistory_root(&psychohistory_root_oid);
     let decision = fate_engine.resolve(&features, 5);
     let (model_name, prism_op_name) = bundle_tower_binding(decision.model);
 
@@ -100,8 +104,11 @@ pub fn peer_contribute(peer_home: &str, target_shard: &Path, _ctx: &Ctx) -> i32 
 
     match settle_verdict {
         SettleVerdict::Settled(stdout) => {
-            // Step 7: commit_as_fold with 5-blob tree per Mara §3.3.
-            let (store_status, ref_status, ref_name) = materialize_morphism(
+            // Rung 7' Errors 2 + 4 correction: 4-subtree tripartition
+            // (anchors/gates/witnesses/morphism-body per Mara `2c64060`
+            // §7.2) with fate metadata folded into commit message
+            // (naked_oid via git plumbing) rather than tree blob.
+            let (store_status, ref_status, ref_name) = materialize_morphism_tripartition(
                 peer_home_path,
                 &peer_uuid,
                 &pre_bytes,
@@ -110,44 +117,54 @@ pub fn peer_contribute(peer_home: &str, target_shard: &Path, _ctx: &Ctx) -> i32 
                 &stdout,
                 model_name,
                 prism_op_name,
+                &psychohistory_root_oid,
+                moments_count,
             );
 
             println!(
-                "@@ peer contribute discharge @mirror/mosaic.settle green (peer produces working morphism; compiler verifies delta) (Rung 7) @@"
+                "@@ peer contribute discharge @mirror/mosaic.settle green (Rung 7' Fate::bounded + tripartition; @fractal-family-root; Mandelbrot-substrate) @@"
             );
             println!("+ peer_home: {}", peer_home);
             println!("+ peer_uuid: {}", peer_uuid);
             println!("+ target_shard: {}", target_shard.display());
             println!("+ ref_name: {}", ref_name);
+            println!("+ fate_source: bounded (psychohistory-derived; sheaf-Laplacian Rayleigh v1 stub per Bodnar 2022)");
             println!("+ fate_model: {}", model_name);
             println!("+ fate_prism_op: {}", prism_op_name);
-            println!("+ morphism_kind: docstring-append (Mara `4e69066` §4 Scope A)");
+            println!("+ psychohistory_root_oid: {}", psychohistory_root_oid);
+            println!("+ psychohistory_moments_count: {}", moments_count);
+            println!("+ morphism_kind: docstring-append (Mara `2c64060` §7 Scope A')");
             println!("+ pre_anchor_bytes: {}", pre_bytes.len());
             println!("+ post_anchor_bytes: {}", post_bytes.len());
             println!("+ settle_verdict: settled (cargo check green)");
+            println!("+ tree_shape: tripartition (anchors/ + gates/ + witnesses/ + morphism-body per Mara `2c64060` §7.2)");
+            println!("+ witness_locus: encoding (commit message → naked_oid; not content blob per Mara `2c64060` §7.4)");
             println!("+ store_write_status: {}", store_status);
             println!("+ ref_write_status: {}", ref_status);
             println!(
                 "+ discharge_mode: empirical (compiler-verified; not ceremonial per Alex 2026-07-13)"
             );
             println!(
-                "+ store_authority: @mirror/store (Recognition #43; DAG per splinter_graph trichotomy; parent chain per Rung 6.2a)"
+                "+ fractal_family_root: @fractal (Alex 2026-07-13 outside-view correction; fragmentation::Fractal Rust altitude ancestry; consent emerges from Fractal not vice-versa)"
             );
             println!(
-                "+ kintsugi_authority: @kintsugi/oscillate.active_pass (shards/kintsugi/oscillate.mirror:456 substrate-decl; runtime discharges here)"
+                "+ mandelbrot_correspondence: f_c=@kintsugi/oscillate ACTIVE/DARK; c=(shard, ctx, psychohistory_root); M∘=@magic (Rec #80); ∂M=@io (Rec #107); R=commit_as_fold (Rec #55)"
             );
             println!(
-                "+ mosaic_authority: @mirror/mosaic.settle (cargo check IS the settle at @code/rust altitude)"
+                "+ store_authority: @mirror/store (Recognition #43; DAG per splinter_graph trichotomy; Rung 6.2a parent chain)"
             );
             println!(
-                "+ fate_authority: @magic (Recognition #58; Fate optical inference; Model + prism_op selection)"
+                "+ kintsugi_authority: @kintsugi/oscillate.active_pass; @kintsugi/store/git.commit_as_fold (Rec #55 renormalization operator)"
             );
             println!(
-                "+ commit_as_fold_authority: @kintsugi/store/git.commit_as_fold (Rung 6.1c + 6.2a discharge; 5-blob tree per Mara §3.3)"
+                "+ mosaic_authority: @mirror/mosaic.settle (cargo check IS the settle at @code/rust altitude; Mandelbrot-membership query at c=(shard,ctx))"
             );
-            println!("+ ladder_rung: 7 (Reed GREEN discharging Mara `4e69066` §3.2)");
             println!(
-                "+ recognition_candidate: #R-fate-active-pass-mosaic-verdict-composition"
+                "+ fate_authority: @magic Fate::bounded (Recognition #58 optical inference; sheaf-Laplacian Rayleigh descent along psychohistory sheaf)"
+            );
+            println!("+ ladder_rung: 7' (Reed GREEN discharging Mara `2c64060` §7 Scope A')");
+            println!(
+                "+ recognition_candidate: #R-fractal-is-mandelbrot-substrate"
             );
             0
         }
@@ -233,18 +250,29 @@ fn apply_docblock_morphism(pre_bytes: &[u8], morphism_line: &str) -> Vec<u8> {
     post
 }
 
-/// commit_as_fold with 5-blob tree per Mara `4e69066` §3.3:
-/// - pre-anchor: target shard bytes BEFORE morphism.
-/// - post-anchor: target shard bytes AFTER morphism.
-/// - morphism-body: the morphism line itself (the delta).
-/// - settle-verdict: cargo check stdout/stderr (compiler witness).
-/// - fate-witness: fate decision provenance (model + prism_op).
+/// Rung 7' materialize with 4-subtree tripartition per Mara `2c64060` §7:
 ///
-/// Discharge composes over Rung 6.1c (blob→tree→commit chain) + Rung
-/// 6.2a (parent-linked DAG). Returns (store_status, ref_status,
-/// ref_name) for envelope emission.
+/// ```text
+/// tree/
+/// ├── anchors/
+/// │   ├── pre           (blob: pre-morphism target bytes)
+/// │   └── post          (blob: post-morphism target bytes)
+/// ├── gates/
+/// │   └── settle-verdict (blob: cargo check verdict)
+/// ├── witnesses/
+/// │   └── asher-forward-promise (blob: Asher 5-axis Rung 7.5+ stub)
+/// └── morphism-body      (blob: the delta line itself)
+/// ```
+///
+/// Fate metadata (fate_model, fate_prism_op, psychohistory_root_oid) folds
+/// into the COMMIT MESSAGE (part of naked_oid via git plumbing) rather than
+/// a tree blob. Preserves "same content, different witness, different commit,
+/// same tree OID" per fragmentation::NakedSingularity discipline.
+///
+/// Composes over Rung 6.1c (blob→tree→commit chain) + Rung 6.2a (parent-
+/// linked DAG). Returns (store_status, ref_status, ref_name).
 #[allow(clippy::too_many_arguments)]
-fn materialize_morphism(
+fn materialize_morphism_tripartition(
     peer_home: &Path,
     peer_uuid: &str,
     pre_bytes: &[u8],
@@ -253,6 +281,8 @@ fn materialize_morphism(
     settle_stdout: &str,
     fate_model: &str,
     fate_prism_op: &str,
+    psychohistory_root_oid: &str,
+    moments_count: usize,
 ) -> (String, String, String) {
     let ref_name = format!("refs/mirror/peer/{}/HEAD", peer_uuid);
 
@@ -273,80 +303,71 @@ fn materialize_morphism(
         }
     }
 
-    // Write 5 blobs via `git hash-object -w --stdin`.
+    // Write substantive-content blobs via `git hash-object -w --stdin`.
+    // Fate metadata is NOT a blob — it goes into the commit message per
+    // Mara §7.4 witness-in-encoding correction.
     let pre_blob = match hash_object(peer_home, pre_bytes) {
         Some(h) => h,
-        None => {
-            return (
-                "pre-anchor blob write failed".to_string(),
-                "skipped".to_string(),
-                ref_name,
-            );
-        }
+        None => return ("pre blob write failed".to_string(), "skipped".to_string(), ref_name),
     };
     let post_blob = match hash_object(peer_home, post_bytes) {
         Some(h) => h,
-        None => {
-            return (
-                "post-anchor blob write failed".to_string(),
-                "skipped".to_string(),
-                ref_name,
-            );
-        }
+        None => return ("post blob write failed".to_string(), "skipped".to_string(), ref_name),
     };
     let morphism_blob = match hash_object(peer_home, morphism_line.as_bytes()) {
         Some(h) => h,
-        None => {
-            return (
-                "morphism-body blob write failed".to_string(),
-                "skipped".to_string(),
-                ref_name,
-            );
-        }
+        None => return ("morphism-body write failed".to_string(), "skipped".to_string(), ref_name),
     };
-    let verdict_blob = match hash_object(peer_home, settle_stdout.as_bytes()) {
+    let settle_blob = match hash_object(peer_home, settle_stdout.as_bytes()) {
         Some(h) => h,
-        None => {
-            return (
-                "settle-verdict blob write failed".to_string(),
-                "skipped".to_string(),
-                ref_name,
-            );
-        }
+        None => return ("settle-verdict write failed".to_string(), "skipped".to_string(), ref_name),
     };
-    let fate_witness_bytes = format!(
-        "fate_model: {}\nfate_prism_op: {}\npeer_uuid: {}\n",
-        fate_model, fate_prism_op, peer_uuid
+    let asher_stub = format!(
+        "Asher 5-axis forward-promise (Rung 7.5+ per Mara `2c64060` §7.3):\n\
+         - temporal_persistence: unwitnessed (Rung 7.5)\n\
+         - geometric_coherence: unwitnessed (Rung 7.5)\n\
+         - contextual_recurrence: unwitnessed (Rung 7.5)\n\
+         - perturbational_stability: unwitnessed (Rung 7.5)\n\
+         - representational_mismatch: unwitnessed (Rung 7.5)\n\
+         non_redundance_predicate: forward-promised (@fractal.non_redundance; adjudication #2)\n"
     );
-    let fate_blob = match hash_object(peer_home, fate_witness_bytes.as_bytes()) {
+    let witness_stub_blob = match hash_object(peer_home, asher_stub.as_bytes()) {
         Some(h) => h,
-        None => {
-            return (
-                "fate-witness blob write failed".to_string(),
-                "skipped".to_string(),
-                ref_name,
-            );
-        }
+        None => return ("asher-forward-promise write failed".to_string(), "skipped".to_string(), ref_name),
     };
 
-    // Build tree with 5 blob entries via `git mktree`.
-    let tree_entries = format!(
-        "100644 blob {}\tpre-anchor\n\
-         100644 blob {}\tpost-anchor\n\
-         100644 blob {}\tmorphism-body\n\
-         100644 blob {}\tsettle-verdict\n\
-         100644 blob {}\tfate-witness\n",
-        pre_blob, post_blob, morphism_blob, verdict_blob, fate_blob
+    // Build tripartition subtrees via `git mktree` (three sub-trees,
+    // then top-level tree with mode 040000 tree entries).
+    let anchors_entries = format!(
+        "100644 blob {}\tpre\n100644 blob {}\tpost\n",
+        pre_blob, post_blob
     );
-    let tree_hash = match mktree(peer_home, &tree_entries) {
+    let anchors_tree = match mktree(peer_home, &anchors_entries) {
         Some(h) => h,
-        None => {
-            return (
-                "mktree-failed (5-blob tree)".to_string(),
-                "skipped".to_string(),
-                ref_name,
-            );
-        }
+        None => return ("anchors mktree failed".to_string(), "skipped".to_string(), ref_name),
+    };
+    let gates_entries = format!("100644 blob {}\tsettle-verdict\n", settle_blob);
+    let gates_tree = match mktree(peer_home, &gates_entries) {
+        Some(h) => h,
+        None => return ("gates mktree failed".to_string(), "skipped".to_string(), ref_name),
+    };
+    let witnesses_entries = format!("100644 blob {}\tasher-forward-promise\n", witness_stub_blob);
+    let witnesses_tree = match mktree(peer_home, &witnesses_entries) {
+        Some(h) => h,
+        None => return ("witnesses mktree failed".to_string(), "skipped".to_string(), ref_name),
+    };
+
+    // Top-level tree: 3 sub-trees + morphism-body blob at root.
+    let top_entries = format!(
+        "040000 tree {}\tanchors\n\
+         040000 tree {}\tgates\n\
+         040000 tree {}\twitnesses\n\
+         100644 blob {}\tmorphism-body\n",
+        anchors_tree, gates_tree, witnesses_tree, morphism_blob
+    );
+    let tree_hash = match mktree(peer_home, &top_entries) {
+        Some(h) => h,
+        None => return ("top-tree mktree failed".to_string(), "skipped".to_string(), ref_name),
     };
 
     // Read parent commit if peer branch exists (Rung 6.2a DAG chain).
@@ -365,15 +386,23 @@ fn materialize_morphism(
             }
         });
 
+    // Rung 7' Error 4 correction: commit MESSAGE carries witness
+    // metadata (fate_model, fate_prism_op, peer_uuid,
+    // psychohistory_root_oid, moments_count). git commit-tree folds this
+    // into the commit's naked_oid (`hash(tree_oid ++ parent_oid ++
+    // author ++ committer ++ message)`). Different witness → different
+    // commit_oid; SAME tree_oid if content is byte-identical.
     let content_digest = canonical_hash(post_bytes);
     let commit_msg = format!(
-        "peer contribute morphism {}\n\ncommit_as_fold discharge per Mara `4e69066` §3.3 (Rung 7 empirical).\npeer_uuid: {}\ntree_hash: {}\nparent: {}\nfate_model: {}\nfate_prism_op: {}\nsettle_verdict: settled\npost_anchor_digest: {}\n",
+        "peer contribute morphism {} (Rung 7' @fractal Mandelbrot substrate)\n\ncommit_as_fold renormalization operator per Recognition #55 form/process partition.\n\ntree_shape: tripartition (anchors/ + gates/ + witnesses/ + morphism-body)\ntree_hash: {}\nparent: {}\n\nwitness_locus: encoding (this message; folded into naked_oid via git plumbing)\npeer_uuid: {}\nfate_source: bounded\nfate_model: {}\nfate_prism_op: {}\npsychohistory_root_oid: {}\npsychohistory_moments_count: {}\n\nsettle_verdict: settled (cargo check green)\npost_anchor_digest: {}\n\nsubstrate_authority: @fractal (Alex 2026-07-13; fragmentation::Fractal at Rust altitude) + @kintsugi/store/git.commit_as_fold (Recognition #55) + @mirror/mosaic.settle (Mandelbrot-membership query at c=(shard,ctx))\nrecognition_candidate: #R-fractal-is-mandelbrot-substrate\n",
         &content_digest[..16.min(content_digest.len())],
-        peer_uuid,
         tree_hash,
         parent_hash.as_deref().unwrap_or("<root>"),
+        peer_uuid,
         fate_model,
         fate_prism_op,
+        psychohistory_root_oid,
+        moments_count,
         content_digest,
     );
 
