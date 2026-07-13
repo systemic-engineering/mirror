@@ -79,6 +79,15 @@ pub fn peer_contribute(peer_home: &str, target_shard: &Path, _ctx: &Ctx) -> i32 
     let profile_before_sb = crate::index::shard_body_index(target_shard);
     let fiedler_before_shard = profile_before_sb.fiedler_value();
 
+    // Rung 8+9 Landing 8+9.3: SC<5> measurement per Mara `c753d5b`.
+    // Substrate-honest carrier: fragmentation::SpectralCoordinate<5> via
+    // fragmentation-spectral's coincidence method (Bothe 1924). Retires
+    // Reed's re-invented EigenvalueProfile<16>. Emits SC<5> hex +
+    // hamming distance (proxy for ||sc||_2 until Alex adjudicates §10.1
+    // canonical serialization). Full L² harmonic distance follows.
+    let sc_before_bytes = fs::read(target_shard).unwrap_or_default();
+    let sc_before = fragmentation_spectral::hash::coordinate::<5>(&sc_before_bytes);
+
     // Step 3: pre-anchor bytes.
     let pre_bytes = match fs::read(target_shard) {
         Ok(b) => b,
@@ -125,6 +134,13 @@ pub fn peer_contribute(peer_home: &str, target_shard: &Path, _ctx: &Ctx) -> i32 
             let profile_after_sb = crate::index::shard_body_index(target_shard);
             let fiedler_after_shard = profile_after_sb.fiedler_value();
             let fiedler_shard_delta = fiedler_after_shard - fiedler_before_shard;
+            // Rung 8+9 Landing 8+9.3: SC<5> MEASURE-AFTER + delta
+            let sc_after_bytes = fs::read(target_shard).unwrap_or_default();
+            let sc_after = fragmentation_spectral::hash::coordinate::<5>(&sc_after_bytes);
+            let sc_hex_before = sc_before.eigenvalue().to_string();
+            let sc_hex_after = sc_after.eigenvalue().to_string();
+            let sc_hamming = sc_hex_before.chars().zip(sc_hex_after.chars()).filter(|(a, b)| a != b).count();
+            let sc_moved = sc_hex_before != sc_hex_after;
             // File-tree verdict (Rung 9 Landing 1)
             let loss_decreased = fiedler_delta < 0.0;
             let coherence_verdict = if fiedler_delta.abs() < 1e-6 {
@@ -193,6 +209,12 @@ pub fn peer_contribute(peer_home: &str, target_shard: &Path, _ctx: &Ctx) -> i32 
             println!("+ fiedler_shard_delta: {:.9}", fiedler_shard_delta);
             println!("+ shard_body_coherence_verdict: {} (loss_decreased={})", shard_coherence_verdict, shard_loss_decreased);
             println!("+ rung_9_direction_correction: shard-body lens per @mirror/lens/refract responds to per-line changes; file-tree lens is too coarse for docstring-append morphisms (empirical falsification #1 landed at `9044f26`); Rung 9 Landing 2 discharges Alex 2026-07-13 lens architecture directive");
+            println!("+ lens_sc5: fragmentation::SpectralCoordinate<5> via fragmentation-spectral coincidence method (Bothe 1924; Rung 8+9 Landing 8+9.3; retires EigenvalueProfile per Mara `c753d5b`)");
+            println!("+ sc_hex_before: {}", sc_hex_before);
+            println!("+ sc_hex_after:  {}", sc_hex_after);
+            println!("+ sc_hamming:    {} / {} hex chars differ (proxy for ||sc_after − sc_before||₂ until Alex §10.1 adjudication)", sc_hamming, sc_hex_before.len().max(sc_hex_after.len()));
+            println!("+ sc_moved:      {} (substrate coordinate {} between pre- and post-morphism states)", sc_moved, if sc_moved { "CHANGED" } else { "UNCHANGED" });
+            println!("+ substrate_measurement_carrier: fragmentation::SpectralCoordinate<5> (mirror-native-vcs.md §4.6; five projections of one spectrum; λ₀=0 is void axis = harmonic ground state = origin of manifold)");
             println!("+ tree_shape: tripartition (anchors/ + gates/ + witnesses/ + morphism-body per Mara `2c64060` §7.2)");
             println!("+ witness_locus: encoding (commit message → naked_oid; not content blob per Mara `2c64060` §7.4)");
             println!("+ store_write_status: {}", store_status);

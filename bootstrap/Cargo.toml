@@ -88,6 +88,25 @@ libc = "0.2"
 [dependencies.fragmentation]
 path = "../../fragmentation"
 
+# fragmentation-spectral — the rich constructor for
+# `fragmentation::SpectralCoordinate<N>`. Provides `hash::coordinate::<N>`
+# via N-independent-observer coincidence method (Bothe 1924). This is
+# the substrate-honest content-address for peer_contribute's before/after
+# measurement per Rung 8+9 unification (Mara `c753d5b`; Reed's earlier
+# `EigenvalueProfile<16>` re-invented what this crate already carries).
+#
+# Per Alex Wolf 2026-07-13 in-transcript: "Can't we just inline it into
+# fragmentation? Feels easier" + "pull over what we need to ship this.
+# No need to pull over everything." Minted at fragmentation `22b52ad` as
+# workspace member (matches vcs/git / vcs/jj / vcs/mcp pattern). Only 6
+# source modules pulled; 28 stay at /Users/alexwolf/dev/projects/coincidence.
+#
+# Zero new transitive deps (sha2 + hex + fragmentation already in mirror's
+# closure). Substrate-honest architectural cleanup that composes cleanly
+# with mirror's Rung 8+9.2+ refactor (retire EigenvalueProfile).
+[dependencies.fragmentation-spectral]
+path = "../../fragmentation/spectral"
+
 # fate — optical inference at cli-surface altitude for cmd_peer_beam.
 # Five-model selector (Abyss / Introject / Cartographer / Explorer /
 # Fate) bound to prism operations via boot/std/epistemologic/math/
