@@ -1,5 +1,31 @@
 # CURRENT arc — @song/beat ladder-climb 2026-07-13 (Rungs 0 landed, 1 in progress)
 
+## Rung 8 spectral→mirror pull-in IN-FLIGHT (2026-07-13, per Alex "Fire")
+
+Alex 2026-07-13: `spectral__spectral_index` currently lives in `spectral`
+sibling crate (`/Users/alexwolf/dev/projects/spectral/crates/gestalt/`);
+needs to be pulled into mirror so mirror owns its own @fractal-coherence
+measurement per Recognition #43 + #55. Five-landing sequence per Taut
+`77b8e14` migration mapping:
+
+- **Landing 1** (Mara `317e830`): `shards/mirror/index.mirror` substrate-decl
+  mint (508 LOC). Provisional under two-tick discipline; collapses to
+  `shards/fractal/index.mirror` after Alex adjudicates #6.
+- **Landing 2** (Reed 🔴 RED): `bootstrap/tests/index_fiedler_equivalence_shard.rs`
+  — API surface + Fiedler = 0.0612 ± 5e-2 empirical reference
+  (live-confirmed by Mara `317e830` commit-hook envelope: 1141 files, 165
+  nodes, 6676 edges).
+- **Landing 3** (Reed 🟢 GREEN NEXT): fork `spectral::gestalt` (detect +
+  graph + eigenvalue) into `bootstrap/src/index.rs`; route through
+  `sheaf_laplacian` LAPACK path.
+- **Landing 4** (Reed): CLI dispatcher `mirror index [--fiedler] <path>`.
+- **Landing 5** (Reed, PI-B): `mirror_index` MCP tool.
+- **Landing 6** (Reed): f(α) multifractal empirical proof — Mara math §10
+  prediction #2 (LOAD-BEARING; framework becomes framework-with-measurement).
+
+---
+
+
 ## 2026-07-13 addition — @song/beat testable-increment ladder
 
 Session-continuation after 202-commit substrate arc closure on 2026-07-12.
