@@ -25,7 +25,21 @@
 //! insert_persistent + set_ref via already-landed action_cache + git
 //! bindings at bootstrap/src/action_cache.rs + bootstrap/src/git.rs.
 
+use crate::hash::canonical_hash;
 use crate::Ctx;
+
+/// Compute the peer's canonical envelope bytes (the substrate-honest
+/// content the peer WOULD emit at stdout). Deterministic per peer_home;
+/// under actual @kintsugi/oscillate.active_pass (Rung 6.2+), these bytes
+/// would carry the peer's morphism proposal + shard delta.
+fn peer_envelope_bytes(peer_home: &str, peer_uuid: &str) -> Vec<u8> {
+    let mut buf = Vec::with_capacity(peer_home.len() + peer_uuid.len() + 64);
+    buf.extend_from_slice(b"@mirror/store/crystal:peer_beam:");
+    buf.extend_from_slice(peer_uuid.as_bytes());
+    buf.push(b':');
+    buf.extend_from_slice(peer_home.as_bytes());
+    buf
+}
 
 /// Emit peer crystal OID on @mirror/store internal ref. Rung 6' MVP:
 /// envelope-declared substrate discipline (same pattern as Rungs 4-5
@@ -45,12 +59,19 @@ use crate::Ctx;
 /// function is only entered when `cmd_peer_beam` observes
 /// `emit_crystal == true`.
 pub fn emit_peer_crystal(peer_home: &str, _ctx: &Ctx) -> i32 {
-    // Rung 6' stub crystal OID: FNV-1a hash of peer_home bytes as
-    // deterministic content-address stand-in. Under actual @mirror/
-    // store.insert_persistent (Rung 6.1), the peer's envelope bytes
-    // would content-address via blake3 to a real crystal OID.
+    // Rung 6.1a (2026-07-13) — real content-addressed crystal OID via
+    // `canonical_hash` (CoincidenceHash<5,5> per hash.rs; 64-hex output
+    // from SHA-256-based 5-d basis projection). Replaces Rung 6' FNV-1a
+    // stub with substrate's own canonical hash used across the arc.
+    // The peer's envelope bytes IS the content addressed; deterministic
+    // per peer_home + peer_uuid.
+    //
+    // Rung 6.1b forward-promise: actual `git_store_crystal(source_hash,
+    // crystal_oid)` writes crystal to `refs/crystals/<source_hash>` via
+    // git objects (Rung 6.2 materialization).
     let peer_uuid = stub_peer_uuid(peer_home);
-    let crystal_oid = stub_crystal_oid(peer_home);
+    let envelope_bytes = peer_envelope_bytes(peer_home, &peer_uuid);
+    let crystal_oid = canonical_hash(&envelope_bytes);
     let ref_name = format!("refs/mirror/peer/{}/HEAD", peer_uuid);
 
     println!(
@@ -105,14 +126,4 @@ fn stub_peer_uuid(peer_home: &str) -> String {
     format!("{:08x}-{:04x}-{:04x}", (h >> 32) as u32, (h >> 16) as u16, h as u16)
 }
 
-/// Rung 6' stub crystal OID: FNV-1a hex of peer_home bytes. Under
-/// actual @mirror/store.insert_persistent (Rung 6.1), this would be
-/// the blake3 content-hash of the peer's envelope bytes.
-fn stub_crystal_oid(peer_home: &str) -> String {
-    let mut h: u64 = 0xcbf29ce484222325 ^ 0x0123456789abcdef;
-    for b in peer_home.as_bytes() {
-        h ^= *b as u64;
-        h = h.wrapping_mul(0x100000001b3);
-    }
-    format!("{:016x}", h)
-}
+

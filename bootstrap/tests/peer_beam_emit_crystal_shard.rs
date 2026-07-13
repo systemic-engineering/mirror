@@ -118,11 +118,11 @@ fn t02_envelope_emits_crystal_oid_hex() {
     let oid = extract_field(&stdout, "crystal_oid")
         .expect("T2: envelope must emit `crystal_oid:` field");
     assert!(
-        oid.len() == 16 && oid.chars().all(|c| c.is_ascii_hexdigit()),
-        "T2: crystal_oid must be 16 lowercase hex digits (FNV-1a stub \
-         same discipline as Rung 4/5 dance/deploy hash pattern; Rung 6.1 \
-         lifts to actual @mirror/store.insert_persistent(bytes) -> oid); \
-         got: <{oid}>"
+        oid.len() == 64 && oid.chars().all(|c| c.is_ascii_hexdigit()),
+        "T2: crystal_oid must be 64 lowercase hex digits from `canonical_hash` \
+         (CoincidenceHash<5,5> per hash.rs; substrate's own SHA-256-based \
+         5-d basis projection used arc-wide); Rung 6.1a collapse of \
+         Rung 6' FNV-1a stub → real content-address; got: <{oid}>"
     );
 }
 
