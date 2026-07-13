@@ -1,0 +1,508 @@
+in @prism
+in @glass
+in @meta
+in @io
+in @mirror
+in @mirror/store
+in @mirror/mosaic
+in @kintsugi/consent
+in @epistemologic/math/sheaf_laplacian
+in @fate/tournament
+
+# @mirror/index — the substrate's own λ₀(Δ_F) reading on its file-tree
+# concept graph. The @fractal-coherence measurement in mirror's own
+# voice.
+#
+# THE PULL-IN: pulled from spectral::crates::gestalt into mirror-native
+# altitude per Alex 2026-07-13 in-transcript verbatim: "the
+# spectral__spectral_index is something that currently lives in spectral
+# I presume? This is something that needs to be pulled into mirror."
+# Then "Fire" — authorization for the 5-landing sequence Taut mapped.
+#
+# Substrate-authority: Taut migration-mapping scout `77b8e14`
+# (docs/scouts/2026-07-13-taut-spectral-to-mirror-migration-mapping-
+# scout.md), §5 (substrate-decl gap analysis) + §6 (Scope PI-A
+# execution plan) + §8 (5-landing sequence). This shard IS Landing 1
+# of that sequence. Reed lands 2/3/4/5.
+#
+# === PROVISIONAL under two-tick discipline (READ THIS) ===
+#
+# This shard is minted at `shards/mirror/index.mirror` as the readable
+# name (tick 1). Its foundational home is `shards/fractal/index.mirror`
+# under the `@fractal` family-root (tick 2). The collapse target is
+# NAMED explicitly here so Reed's Landing 3/4/5 wire against the stable
+# import path today; when Alex adjudicates roadmap-15 `#6` (the
+# @fractal family-root shape), the file MOVES — not the actions, not
+# the types, not the composition surface. The imports do a one-tick
+# rename; the substrate-decl content is invariant under the collapse.
+#
+# Why @mirror/index and not @spectral/index: `shards/spectral.mirror`
+# was shrunk to namespace-parent-only 2026-07-01 per Recognition #46
+# second instance (Loki §5; Seam-ratified `17f0ee5`). @spectral is a
+# runtime namespace for db/garden/portal/gen_prism — NOT the
+# observation/measurement altitude. Placing `index` under @spectral
+# would re-inflate the family root the substrate refused. @mirror is
+# the correct provisional home because Recognition #43 (mirror IS
+# content-addressed build system) grounds the DAG this shard measures.
+#
+# Why @fractal is the foundational home: Alex 2026-07-13 in-transcript
+# ("With @fractal the compiler becomes basically a Mandelbrot set"),
+# Mara `2c64060` (`docs/specs/fractal-family-root-mandelbrot-substrate.md`)
+# and Mara `3ffa8ed` (`docs/math/2026-07-13-fractal-mandelbrot-substrate.md`)
+# identify the substrate with the Mandelbrot set: `M∘` IS @magic's
+# gauge-bounded interior (#80); `∂M` IS @io's Turing-unbounded boundary
+# (#107); the three-state `verdict` closes at three because M's topology
+# closes at three. The Fiedler reading this shard names is one carrier
+# of @fractal-coherence at the file-tree altitude. Roadmap-15 `#6`
+# (`docs/roadmap/15-fractal-membrane-Asher-tripartition.md`) parks the
+# family-root mint on Alex adjudication; the collapse target is
+# `shards/fractal/index.mirror` under `prism @fractal { … }`.
+#
+# === What @mirror/index IS ===
+#
+# @mirror/index IS the substrate's own measurement of its
+# @fractal-coherence at the file-tree altitude. Given a peer_home
+# directory, it walks the file-tree, classifies files by grammar kind
+# (markdown / code / config / .mirror / asset / gestalt-native /
+# unknown), assembles a directory-node concept graph with
+# Contains / SimilarContent / CrossRef edges, and returns the
+# eigenvalue profile of the graph's sheaf-Laplacian — with the Fiedler
+# value λ₀(Δ_F) as the load-bearing scalar.
+#
+# Per Taut `b52b008` empirical scout (docs/scouts/2026-07-13-taut-
+# fiedler-as-lambda-zero-empirical-scout.md): the Fiedler 0.0612 value
+# on this repo (1138 files, 165 nodes, 6676 edges) IS λ₀(Δ_F) — 6%
+# residual H¹(F) obstruction empirically confirmed. The measurement is
+# real; the shard IS the substrate-decl of its owner altitude.
+#
+# === Form/process partition (#55) grounds this altitude ===
+#
+# Per Recognition #55 (form/process partition; DAG is form, measurement
+# is process; belong at the same altitude): the DAG (`@mirror/store`)
+# and its measurement (this shard) are sibling species under @mirror
+# provisionally, and under @fractal foundationally. The DAG carries the
+# content; the measurement reads the content's coherence. Neither
+# contains the other; both project the same five-operation algebra
+# through their own typed surface.
+#
+# Per Recognition #43 (mirror IS content-addressed build system): the
+# substrate ALREADY OWNS the content-addressed DAG (@mirror/store's
+# six-op surface). This shard closes the last gap in Bazel-REAPI-floor
+# decomposition — reads its own DAG's algebraic connectivity. Every
+# build system that names the DAG must also name the DAG's coherence
+# metric; mirror's coherence metric is λ₀(Δ_F), and this shard is where
+# the substrate names it in-substrate.
+#
+# === Composition with existing substrate ===
+#
+# Consumes `@mirror/store` graph — the walked file-tree IS the CAS's
+# splinter_graph (root, children) shape at the file-directory altitude
+# per Recognition #43. This shard reads the store's shape at
+# @io-crossing time; the store's canonical six-op surface (read /
+# write / exists / diff / walk / verify per `shards/mirror/store.mirror`)
+# is the substrate the walk projects through.
+#
+# Composes `@epistemologic/math/sheaf_laplacian.lambda_zero` — the
+# LAPACK `dsyev` primitive T8-landed at `shards/epistemologic/math/
+# sheaf_laplacian.mirror` per Bodnar et al. 2022 §2's exact δ*δ
+# construction. THIS IS THE LOAD-BEARING SUBSTRATE-PULL WIN per Taut
+# §6: mirror's numerical floor already claims the altitude; the
+# migration routes the file-directory concept-graph Laplacian THROUGH
+# `sheaf_laplacian::sheaf_laplacian` + `lambda_zero`, NOT through
+# spectral's hand-rolled Jacobi. Landing 3 discharges this composition
+# in Rust.
+#
+# Feeds `@kintsugi/consent.query_phi` verdict — the three-state floor
+# (pass | partial(confidence) | failure(reason)) IS one branch of the
+# consent surface the auto-apply boundary rides. Consent EMERGES from
+# @fractal at auto-apply altitude per Mara `2c64060` §5; this shard's
+# eigenvalue_profile is one witness that the query_phi discriminator
+# reads at the file-tree altitude (a substrate whose @mirror/index
+# fiedler is stable is a substrate whose consent surface has more
+# structural room to auto-apply; a substrate whose fiedler drifts is a
+# substrate whose consent surface is under pressure).
+#
+# Composes with `@fate/tournament.bounded_by` — the Fate::bounded
+# psychohistory sheaf's Rayleigh direction descends along the SAME
+# Δ_F this shard measures per Reed's Rung 7' landing (`4587c46` RED +
+# `829148b` GREEN). The tournament's `bounded_by` predicate reads the
+# selectors_from_psychohistory_root; the psychohistory sheaf's
+# curvature IS λ₀(Δ_F) at the fate altitude. This shard measures at
+# the file-tree altitude; @fate at the inference altitude; both are
+# readings of ONE substrate metric per Mara `1999b01` (spectral-
+# coherence-substrate-metric-synthesis; the unified metric claim).
+#
+# Composes with `@mirror/mosaic` (build settlement) — the settle_on
+# predicate MAY include `fiedler ≤ threshold` in future ticks;
+# forward-promise, not this landing. The composition surface is named
+# so consumers can pull.
+#
+# === Three-altitude Fiedler-emitting instances (per Taut §9 Signal 4) ===
+#
+# Once Landing 3 lands, mirror carries THREE Fiedler-emitting instances
+# of the same numerical primitive at three altitudes — Alex's
+# multifractal-signature prediction empirically instantiated:
+#
+#   1. `bootstrap/src/index.rs` (this shard) — file-tree concept graph.
+#      @mirror/index altitude.
+#   2. `bootstrap/src/tensor.rs::fiedler_of` — gap-tension AST graph.
+#      Existing; consumer of `sheaf_laplacian::lambda_zero`.
+#   3. `bootstrap/src/sheaf_laplacian.rs::lambda_zero` — the LAPACK
+#      substrate primitive. T8-landed.
+#
+# Same substrate primitive; three altitudes; three λ₀ readings that
+# together form a multifractal spectrum. Reading #6 below discharges
+# the empirical prediction that these three readings compose into an
+# f(α) spectrum matching Mandelbrot boundary signature.
+#
+# === Species / actions ===
+#
+# The primary discharge:
+#
+#   index(peer_home: ~d) -> eigenvalue_profile
+#     Reads the file-tree, builds the concept graph, computes λ₀
+#     via `sheaf_laplacian`, returns the top-16 eigenvalue profile
+#     with the Fiedler value at index 1. Composes walk_detected +
+#     build_concept_graph + eigenvalue_profile. The action-decl the
+#     `mirror index <path>` CLI dispatcher (Landing 4) and the
+#     `mirror_index` MCP tool (Landing 5) both discharge to.
+#
+# The shortcut readings:
+#
+#   fiedler(peer_home: ~d) -> f64
+#     Fiedler value shortcut; λ₀ of the file-tree concept-graph
+#     Laplacian. Convenience action; delegates to
+#     `index(peer_home).fiedler_value()`.
+#
+#   full_profile(peer_home: ~d) -> [f64; 16]
+#     Top-16 eigenvalues; the full profile carrier without the
+#     content-address wrapper. Consumer-of-choice for downstream
+#     spectrum analysis.
+#
+# The forward-promise (Landing 6; deferred; discharges Mara math §10
+# prediction #2):
+#
+#   multifractal(peer_home: ~d) -> multifractal_spectrum
+#     Rényi entropies + Legendre transform to f(α) multifractal
+#     spectrum on the substrate DAG. IF the resulting f(α) matches
+#     Mandelbrot boundary signature (Hausdorff dim 2 peak;
+#     characteristic interval width) THEN substrate IS Mandelbrot-
+#     shaped empirically → framework becomes framework-with-
+#     measurement → arXiv preprint gains its spine. This is the
+#     empirical end-to-end proof of the @fractal identification.
+#
+# === Substrate ancestry (citations) ===
+#
+# Alex 2026-07-13 in-transcript ("this needs to be pulled into mirror";
+# "Fire" authorization; verbatim quotes in Taut `77b8e14` §0).
+# Taut `77b8e14` migration mapping scout (Landing 1 recommendation).
+# Taut `b52b008` empirical Fiedler-as-λ₀ scout (docs/scouts/
+# 2026-07-13-taut-fiedler-as-lambda-zero-empirical-scout.md; 0.0612 =
+# 6% residual H¹(F) obstruction empirically confirmed).
+# Mara `2c64060` fractal-family-root Mandelbrot spec (the load-bearing
+# hinge; interior/boundary/complement partition).
+# Mara `3ffa8ed` fractal-Mandelbrot math foundation (§10 prediction #2
+# = multifractal f(α) empirical falsification).
+# Reed `4587c46` (Rung 7' RED) + `829148b` (Rung 7' GREEN) — Fate::
+# bounded discharge that motivates owning the measurement in mirror's
+# voice; the psychohistory sheaf's Rayleigh direction descends along
+# the SAME Δ_F this shard measures.
+# Recognition #43 (`[[architecture-mirror-as-content-addressed-build-
+# system]]`) — mirror IS content-addressed build system; grounds this
+# shard's ownership of the DAG-coherence measurement.
+# Recognition #55 (form/process partition) — DAG is form; measurement
+# is process; belong at the SAME altitude; sibling species not
+# nested.
+# Recognition #58 (`[[architecture-lift-as-load-bearing]]`) — this
+# shard's composition through sheaf_laplacian.lambda_zero IS the lift
+# discipline made substrate-fact at index altitude.
+# Recognition #80 (`[[gauge-bounded-interior-recognition]]`) — @magic
+# gauge-bounded interior IS `M∘`; this shard measures its shape.
+# Recognition #107 (`[[io-turing-unbounded-recognition]]`) — @io
+# Turing-unbounded boundary IS `∂M`; this shard's ε epsilon absorbs
+# the boundary's undecidability.
+#
+# === Prior-art anchors ===
+#
+# Fiedler 1973 (`Algebraic Connectivity of Graphs`, Czechoslovak
+# Mathematical Journal 23:298-305) — λ₀ IS algebraic connectivity;
+# the Fiedler value = the spectral gap.
+# Hansen & Ghrist 2019 (`Toward a Spectral Theory of Cellular Sheaves`,
+# arXiv:1808.01513) — cellular sheaf Laplacian extends graph Laplacian;
+# λ₀(Δ_F) IS the sheaf-theoretic algebraic connectivity.
+# Bodnar et al. 2022 (arXiv:2206.08702) — for O(d)-bundle over graph
+# the sheaf Laplacian IS the connection Laplacian; the exact δ*δ
+# construction realized in `sheaf_laplacian::sheaf_laplacian`.
+# Bazel REAPI (`github.com/bazelbuild/remote-apis`) — the ecosystem's
+# codified split between CAS and metric. mirror's split closes here.
+#
+# Spec context: docs/scouts/2026-07-13-taut-spectral-to-mirror-
+#               migration-mapping-scout.md (Landing 1 authority),
+#               docs/scouts/2026-07-13-taut-fiedler-as-lambda-zero-
+#               empirical-scout.md (empirical confirmation),
+#               docs/specs/fractal-family-root-mandelbrot-substrate.md
+#               (Mandelbrot identification; the load-bearing hinge),
+#               docs/math/2026-07-13-fractal-mandelbrot-substrate.md
+#               (multifractal f(α) empirical prediction #2),
+#               docs/roadmap/15-fractal-membrane-Asher-tripartition.md
+#               (@fractal family-root shape; adjudication #6).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-mirror-as-content-addressed-build-system]]
+#                      (Recognition #43),
+#                      [[architecture-lift-as-load-bearing]]
+#                      (Recognition #58),
+#                      [[feedback-substrate-already-had-the-word]]
+#                      (Fiedler / λ₀ / algebraic-connectivity — one
+#                      geometric fact already named at three math
+#                      altitudes; this shard doesn't invent it; it
+#                      names its owner in mirror's voice).
+# Related shards: mirror/store.mirror (the CAS this shard's walk
+#                 projects through; splinter_graph IS the file-
+#                 directory concept graph at the store altitude),
+#                 epistemologic/math/sheaf_laplacian.mirror (the
+#                 numerical primitive this shard composes through;
+#                 lambda_zero returns the eigenvalue this shard
+#                 emits as fiedler),
+#                 kintsugi/consent.mirror (the consent surface this
+#                 shard's verdict feeds; query_phi discriminator
+#                 reads eigenvalue_profile at the auto-apply altitude),
+#                 cyberpunk.mirror (cybernetic_coherence(s) reads
+#                 λ₀(Δ_F(s)) — this shard is the file-tree instance
+#                 of the same reading; Mara `1999b01` unified metric
+#                 claim),
+#                 fate/tournament.mirror (bounded_by reads the same
+#                 Δ_F this shard measures; Rung 7' composition
+#                 surface),
+#                 spectral.mirror (namespace-parent; REFUSES this
+#                 measurement altitude per Recognition #46 second
+#                 instance; the shard's own docblock names its
+#                 shrink to namespace-only).
+# Path-namespace property: this file at `shards/mirror/index.mirror`
+# declares `@mirror/index` and only that. PROVISIONAL under two-tick
+# discipline; collapse target `shards/fractal/index.mirror` naming
+# `@fractal/index` when Alex adjudicates roadmap-15 `#6`.
+
+prism @mirror/index {
+  focus   index
+  project detected_file
+  split   concept_graph
+  shift   eigenvalue_profile
+  settle  fiedler
+}
+
+# === The detected_file carrier ===
+#
+# One file classified by grammar kind, with its filesystem path. The
+# `walk` action emits a stream of these; the concept_graph consumes
+# the stream to assemble directory-nodes.
+#
+# path — the filesystem path (peer_home-relative).
+# kind — the grammar classification; drives edge inference at
+#        concept_graph assembly time.
+type detected_file = {
+  path: ~f,
+  kind: grammar_kind,
+}
+
+# === The grammar_kind discriminant ===
+#
+# The seven-variant classification the substrate's walker emits per
+# file. Migrated from spectral::gestalt::detect::GrammarKind; the
+# `.mirror` altitude uses the substrate's own name (mirror) instead
+# of spectral's namespace-parent name.
+#
+#   markdown          — .md / .markdown files.
+#   mirror            — .mirror substrate-decl files.
+#   code(str)         — source code in a named language (rust / ts /
+#                       py / go / etc.); the string carries the
+#                       language identifier per the walker's
+#                       classifier.
+#   config(str)       — configuration file in a named format (toml /
+#                       yaml / json / etc.); the string carries the
+#                       format identifier.
+#   asset             — binary / opaque; walked but not parsed.
+#   gestalt_native    — the substrate's own gestalt-scan native
+#                       format (retained for spectral-parity).
+#   unknown           — classifier cannot decide; the walker still
+#                       counts it but assigns no edges.
+type grammar_kind = markdown | mirror | code(str) | config(str) | asset | gestalt_native | unknown
+
+# === The concept_graph carrier ===
+#
+# The directory-node graph the walker assembles from the detected_file
+# stream. Nodes are directories (or the root); edges relate
+# directories by containment, content-similarity, or cross-reference.
+# Consumed by the eigenvalue_profile assembly through the
+# sheaf-Laplacian construction.
+#
+# nodes — the graph_node sequence (directory + root variants).
+# edges — the graph_edge sequence (contains / similar_content /
+#         cross_ref variants).
+type concept_graph = {
+  nodes: [graph_node],
+  edges: [graph_edge],
+}
+
+# === The graph_node variant ===
+#
+# A vertex in the concept graph. Two shapes: directory (interior) and
+# root (the peer_home).
+#
+#   directory { path: ~d, name: str, depth: u32, file_count: u32 }
+#   root      { path: ~d, file_count: u32 }
+type graph_node = directory { path: ~d, name: str, depth: u32, file_count: u32 }
+                | root      { path: ~d, file_count: u32 }
+
+# === The graph_edge variant ===
+#
+# An edge in the concept graph. Three shapes carrying the substrate's
+# three edge kinds at the file-tree altitude.
+#
+#   contains        — parent-child structural edge; weight = 1.0.
+#   similar_content — cosine-similarity edge over the directory's
+#                      type-distribution vector; weight ∈ [0, 1].
+#   cross_ref       — markdown wiki-link cross-reference edge;
+#                      weight = 1.0.
+type graph_edge = contains        { parent_idx: u32, child_idx: u32, weight: f64 }
+                | similar_content { a_idx: u32, b_idx: u32, weight: f64 }
+                | cross_ref       { source_idx: u32, target_idx: u32, weight: f64 }
+
+# === The eigenvalue_profile carrier ===
+#
+# The top-16 eigenvalue reading of the concept_graph's sheaf-Laplacian
+# Δ_F, plus the Fiedler value shortcut (values[1] = λ₀) and the
+# content-address of the profile itself.
+#
+#   values          — the top-16 eigenvalues sorted ascending.
+#                      values[0] = 0 for a connected graph;
+#                      values[1] = λ₀ = Fiedler value; the remaining
+#                      14 carry higher spectral structure for
+#                      downstream multifractal composition.
+#   fiedler         — the Fiedler value shortcut; = values[1] on
+#                      connected graphs; = first strictly-positive
+#                      eigenvalue on disconnected graphs (per
+#                      sheaf_laplacian.lambda_zero's semantics).
+#   oid             — the content-address of the profile (blake3 of
+#                      the 16-value byte encoding); routes through
+#                      @mirror/store's oid discipline for
+#                      cache-eligibility.
+type eigenvalue_profile = {
+  values:  [f64; 16],
+  fiedler: f64,
+  oid:     content_address,
+}
+
+# === The multifractal_spectrum carrier (Landing 6 forward-promise) ===
+#
+# The empirical multifractal spectrum on the substrate DAG per Mara
+# math §10 prediction #2. LOAD-BEARING for the arXiv preprint's
+# empirical spine: if f(α) matches Mandelbrot boundary signature
+# (Hausdorff dim 2 peak; characteristic interval width), the
+# substrate IS Mandelbrot-shaped empirically.
+#
+#   h_q      — Rényi entropies at moment q ∈ Q (the substrate's
+#              default Q = -10..10 at 0.5-step).
+#   f_alpha  — Legendre transform to (α, f(α)) points; the
+#              multifractal spectrum proper.
+type multifractal_spectrum = {
+  h_q:     [f64],
+  f_alpha: [(f64, f64)],
+}
+
+# === index — the primary discharge ===
+#
+# Reads the file-tree at peer_home; classifies files by grammar kind;
+# assembles the concept_graph; computes the sheaf-Laplacian Δ_F via
+# @epistemologic/math/sheaf_laplacian.sheaf_laplacian; extracts the
+# top-16 eigenvalues via @epistemologic/math/sheaf_laplacian.lambda_zero
+# (composed at the profile-assembly altitude); returns the
+# eigenvalue_profile with the Fiedler value as the load-bearing scalar.
+#
+# The substrate-honest fold per Recognition #43 + #55: the DAG lives
+# at @mirror/store; the measurement lives here; same altitude, sibling
+# species. Both project the five-operation algebra through their own
+# typed surface.
+#
+# Composes @io.filesystem_readable (the walk crossing) and
+# @epistemologic/math/sheaf_laplacian.lambda_zero (the numerical
+# reading). The @io crossing IS one Turing-unbounded ∂M-crossing per
+# Recognition #107; the sheaf_laplacian reading IS one M∘-interior
+# computation per Recognition #80. The action rides the boundary and
+# returns the interior reading.
+#
+# The body stays obligation-blocked (`\`): the realisation lives in
+# `bootstrap/src/index.rs` (Landing 3; Reed 🟢). The substrate
+# declares the obligation; the Rust body discharges it through the
+# forked-and-composed-with-sheaf_laplacian primitive.
+index(peer_home: ~d) -> eigenvalue_profile
+  requires @io.filesystem_readable(peer_home)
+  requires @epistemologic/math/sheaf_laplacian.lambda_zero.available
+{ \ }
+
+# === fiedler — the shortcut ===
+#
+# Convenience action: returns the Fiedler value λ₀(Δ_F) directly
+# without the full profile carrier. Delegates to
+# `index(peer_home).fiedler`. The `mirror index --fiedler` CLI mode
+# and the @kintsugi/consent.query_phi consumer both use this shortcut.
+#
+# The three-altitude Fiedler-emitting instances per Taut §9 Signal 4
+# (this shard at file-tree altitude; @tensor.fiedler_of at gap-tension
+# altitude; @sheaf_laplacian.lambda_zero at the primitive altitude)
+# ALL emit through this shape at their respective altitudes; the
+# substrate's coherence-metric IS one geometric fact read at three
+# altitudes.
+fiedler(peer_home: ~d) -> f64
+  requires @io.filesystem_readable(peer_home)
+{ \ }
+
+# === full_profile — the top-16 eigenvalues ===
+#
+# The top-16 eigenvalue reading without the content-address wrapper.
+# For consumers that want the raw spectrum (multifractal composition,
+# downstream visualization, RED-lock parity testing) without paying
+# for the oid computation. Delegates to `index(peer_home).values`.
+full_profile(peer_home: ~d) -> [f64; 16]
+  requires @io.filesystem_readable(peer_home)
+{ \ }
+
+# === multifractal — the empirical end-to-end proof (Landing 6 forward-promise) ===
+#
+# THE LOAD-BEARING FORWARD-PROMISE for the empirical spine of the
+# arXiv preprint. Computes Rényi entropies at moments q ∈ Q and
+# Legendre-transforms them into an (α, f(α)) multifractal spectrum
+# on the substrate DAG per Mara math §10 prediction #2.
+#
+# The prediction (Mara `3ffa8ed` §10): the substrate's multifractal
+# spectrum matches the Mandelbrot boundary signature — Hausdorff
+# dimension 2 peak (Shishikura 1991), characteristic interval width
+# ≈ 0.6 (Douady-Hubbard renormalization interval). If matched,
+# substrate IS Mandelbrot-shaped empirically; framework becomes
+# framework-with-measurement; @fractal family-root becomes
+# substrate-empirical instead of substrate-analogous.
+#
+# RED-lock reference value from Taut `77b8e14` §0 envelope capture:
+# Fiedler = 0.0612 on this repo (1138 files, 165 nodes, 6676 edges).
+# Landing 6 verifies the multifractal spectrum against this
+# empirical anchor; the substrate's own coherence-metric IS the
+# reference against which the framework tests itself.
+#
+# Landing 6; deferred; Reed lands after Landing 5 MCP wire-in.
+multifractal(peer_home: ~d) -> multifractal_spectrum
+  requires @io.filesystem_readable(peer_home)
+  requires @epistemologic/math/sheaf_laplacian.lambda_zero.available
+{ \ }
+
+out @mirror/index
+out detected_file
+out grammar_kind
+out concept_graph
+out graph_node
+out graph_edge
+out eigenvalue_profile
+out multifractal_spectrum
+out index
+out fiedler
+out full_profile
+out multifractal
