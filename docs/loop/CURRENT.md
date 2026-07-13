@@ -80,6 +80,56 @@ operational input):**
     binary cache?)
   * SSH keys / API credentials configured for target
 
+## 2026-07-13 late addition — substrate-inversion arc (Rung 6' via @io-minimization)
+
+After Rung 6 blocker surfaced, Alex proposed substrate-inversion:
+"What if a @peer spawn stayed fully outside the @io boundary and
+instead operated purely within the bounds of @mirror/store? After all
+this is the source of truth?"
+
+Spawned Mara + Taut in parallel. Convergent verdict:
+
+- **Mara `d2de1ee`** — canonical spec `docs/specs/mirror-store-
+  bounded-peer-runtime-materialization-as-single-io-crossing.md`.
+  ~92% substrate-already-had-the-word (7 landed carriers: Recognition
+  #43 + #55 + #80 + @mirror/store trichotomy + N1-N5 cascade +
+  @io family-root Recognition #107). Scope A recommended (annotation).
+  Composes with Mara `9905b60` intra-peer @dance recursion (N tracks
+  = N sub-branches natural composition).
+
+- **Taut `8e98a24`** — re-scout `docs/scouts/2026-07-13-taut-io-
+  minimization-mirror-store-peer-runtime-scout.md`. Substrate-honest
+  correction: prior scout `3e6afa8` drifted into @io/fs projections;
+  @io-minimization discipline collapses 12-rung ladder to 5-rung.
+  Every rung Reed-alone landable. 1 @io crossing per peer spawn cycle
+  (`commit_as_fold` materialization).
+
+- **Recognition candidate**: `#R-peer-inference-is-mirror-store-
+  bounded-materialization-is-single-io-crossing-via-kintsugi-commit-
+  as-fold` OR short form: `#R-peer-lives-in-mirror-store-@kintsugi-
+  materializes-to-git`.
+
+**Rung 6' (Reed IN PROGRESS this tick):** `--emit-crystal` flag on
+`mirror peer beam`; peer emits crystal OID on `refs/mirror/peer/
+<uuid>/HEAD` instead of stdout envelope. `bootstrap/src/store_branch.
+rs` new module; envelope names @mirror/store + @kintsugi substrate
+authorities per Mara §3 canonical shape. Rung 6.1+ forward-promises
+actual `@mirror/store.insert_persistent` + `set_ref` + materialization
+via `commit_as_fold` (Recognition #55 discharge).
+
+**Substrate closure claim:** Recognition #43 (mirror IS content-
+addressed build system) extends via Rung 6' → mirror IS content-
+addressed AI-inference substrate. **The recursion closes: peer runs
+INSIDE the substrate it declares.**
+
+**Rung 6' composition with prior arc:**
+- N harmonic tracks per peer (Mara `9905b60`) = N sub-branches in
+  @mirror/store
+- Multi-branch merge via Kuramoto phase-lock on shared basins (Rung 4
+  pattern operating on refs instead of peer_homes)
+- ADHD-fan-out gets first-class substrate representation via
+  @mirror/store branches
+
 **Discipline:** each rung a RED→GREEN TDD cycle; each cycle landed as
 separate 🔴 + 🟢 commit pair on main; each rung composes with prior
 rungs; push after each cycle. **All Rung 0-5 code paths byte-equal-
