@@ -195,21 +195,129 @@ fn materialize_crystal(
         );
     }
 
-    // Step 3: update-ref `refs/mirror/peer/<uuid>/HEAD` → blob hash.
+    // Step 3 (Rung 6.1c collapse): commit_as_fold discharge per
+    // Recognition #55 form/process partition + shards/kintsugi/store/
+    // git.mirror:130-152. Fold the crystal blob into a git commit
+    // (mktree → commit-tree) so peer branch is a REAL git commit, not
+    // just a ref-to-blob. This IS the substrate-honest materialization
+    // shape @kintsugi/store/git.commit_as_fold canonicalizes.
+    //
+    // 3a: build a tree object containing the crystal blob at path
+    //     `peer-crystal` via `git mktree` (stdin fed with tree-entry
+    //     line: `100644 blob <blob_hash>\tpeer-crystal`).
+    // 3b: build a commit object pointing to the tree with the peer's
+    //     substrate-honest metadata via `git commit-tree`.
+    // 3c: update-ref `refs/mirror/peer/<uuid>/HEAD` → commit hash.
+    let tree_entry = format!("100644 blob {}\tpeer-crystal\n", blob_hash);
+    let mut mktree_child = match Command::new("git")
+        .args(["mktree"])
+        .current_dir(peer_home)
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::null())
+        .spawn()
+    {
+        Ok(c) => c,
+        Err(_) => {
+            return (
+                format!("crystal blob {} at {} (mktree-spawn-failed)", &blob_hash[..16.min(blob_hash.len())], peer_home.display()),
+                "mktree-spawn-failed (envelope-declared fallback; ref points to blob only)".to_string(),
+            );
+        }
+    };
+    if let Some(stdin) = mktree_child.stdin.as_mut() {
+        let _ = stdin.write_all(tree_entry.as_bytes());
+    }
+    let tree_out = match mktree_child.wait_with_output() {
+        Ok(o) => o,
+        Err(_) => {
+            return (
+                format!("crystal blob {} at {} (mktree-wait-failed)", &blob_hash[..16.min(blob_hash.len())], peer_home.display()),
+                "mktree-wait-failed (envelope-declared fallback)".to_string(),
+            );
+        }
+    };
+    let tree_hash = String::from_utf8_lossy(&tree_out.stdout).trim().to_string();
+    if tree_hash.is_empty() {
+        return (
+            format!("crystal blob {} at {} (mktree-empty)", &blob_hash[..16.min(blob_hash.len())], peer_home.display()),
+            "mktree-empty (envelope-declared fallback)".to_string(),
+        );
+    }
+
+    // 3b: commit-tree with substrate-honest commit message.
+    let commit_msg = format!(
+        "peer beam materialize crystal {}\n\ncommit_as_fold discharge per Mara `d2de1ee` Scope B + Recognition #55.\npeer_uuid: {}\npeer_home: {}\ncrystal_oid: {}\nblob_hash: {}\ntree_hash: {}\n",
+        &crystal_oid[..16.min(crystal_oid.len())],
+        peer_uuid,
+        peer_home.display(),
+        crystal_oid,
+        blob_hash,
+        tree_hash
+    );
+    let mut commit_child = match Command::new("git")
+        .args(["commit-tree", &tree_hash, "-m", &commit_msg])
+        .current_dir(peer_home)
+        .env("GIT_AUTHOR_NAME", "peer")
+        .env("GIT_AUTHOR_EMAIL", "peer@mirror.local")
+        .env("GIT_COMMITTER_NAME", "peer")
+        .env("GIT_COMMITTER_EMAIL", "peer@mirror.local")
+        .stdout(Stdio::piped())
+        .stderr(Stdio::null())
+        .spawn()
+    {
+        Ok(c) => c,
+        Err(_) => {
+            return (
+                format!("crystal blob {} + tree {} at {}", &blob_hash[..16.min(blob_hash.len())], &tree_hash[..16.min(tree_hash.len())], peer_home.display()),
+                "commit-tree-spawn-failed (envelope-declared fallback)".to_string(),
+            );
+        }
+    };
+    let commit_out = match commit_child.wait_with_output() {
+        Ok(o) => o,
+        Err(_) => {
+            return (
+                format!("crystal blob {} + tree {} at {}", &blob_hash[..16.min(blob_hash.len())], &tree_hash[..16.min(tree_hash.len())], peer_home.display()),
+                "commit-tree-wait-failed (envelope-declared fallback)".to_string(),
+            );
+        }
+    };
+    let commit_hash = String::from_utf8_lossy(&commit_out.stdout).trim().to_string();
+    if commit_hash.is_empty() {
+        return (
+            format!("crystal blob {} + tree {} at {}", &blob_hash[..16.min(blob_hash.len())], &tree_hash[..16.min(tree_hash.len())], peer_home.display()),
+            "commit-tree-empty (envelope-declared fallback)".to_string(),
+        );
+    }
+
+    // 3c: update-ref → commit hash (not blob hash; peer branch HEAD IS
+    // a real git commit per Recognition #55 discharge).
     let ref_name = format!("refs/mirror/peer/{}/HEAD", peer_uuid);
     let ref_status = Command::new("git")
-        .args(["update-ref", &ref_name, &blob_hash])
+        .args(["update-ref", &ref_name, &commit_hash])
         .current_dir(peer_home)
         .stderr(Stdio::null())
         .stdout(Stdio::null())
         .status();
     let ref_result = match ref_status {
-        Ok(s) if s.success() => format!("written (blob {})", &blob_hash[..16.min(blob_hash.len())]),
+        Ok(s) if s.success() => format!(
+            "written (commit {} → tree {} → blob {})",
+            &commit_hash[..16.min(commit_hash.len())],
+            &tree_hash[..16.min(tree_hash.len())],
+            &blob_hash[..16.min(blob_hash.len())]
+        ),
         _ => "update-ref-failed (envelope-declared fallback)".to_string(),
     };
 
     (
-        format!("crystal blob {} at {}", &blob_hash[..16.min(blob_hash.len())], peer_home.display()),
+        format!(
+            "crystal blob {} + tree {} + commit {} at {} (commit_as_fold discharge per Recognition #55)",
+            &blob_hash[..16.min(blob_hash.len())],
+            &tree_hash[..16.min(tree_hash.len())],
+            &commit_hash[..16.min(commit_hash.len())],
+            peer_home.display()
+        ),
         ref_result,
     )
 }

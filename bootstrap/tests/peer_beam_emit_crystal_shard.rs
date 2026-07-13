@@ -196,41 +196,117 @@ fn t06_peer_branch_ref_exists_after_invocation() {
     );
 }
 
-// === T7: `git cat-file` returns the crystal_oid via peer branch ref ====
+// === T7: peer crystal content-addressable via peer branch commit =======
 //
-// Verifies the peer's crystal is content-addressable via git objects
-// (Recognition #43: mirror IS content-addressed build system; peer
-// crystals live in git object store at peer_home).
+// Rung 6.1c commit_as_fold discharge shape: peer branch HEAD IS a git
+// commit (verified in T8) whose tree contains `peer-crystal` blob
+// containing crystal_oid (verified in T9). T7 spot-checks via
+// `git show <ref>:peer-crystal` returns crystal_oid — the peer's
+// content-addressable substrate.
 #[test]
-fn t07_peer_branch_blob_contains_crystal_oid() {
-    let dir = make_peer_home("blob-content");
+fn t07_peer_crystal_content_addressable_via_commit_tree() {
+    let dir = make_peer_home("content-address");
     let out = run_emit_crystal(&dir);
     let stdout = String::from_utf8_lossy(&out.stdout).to_string();
     let ref_name = extract_field(&stdout, "ref_name").expect("ref_name field");
     let crystal_oid = extract_field(&stdout, "crystal_oid").expect("crystal_oid field");
-    let cat_out = Command::new("git")
+    let show_out = Command::new("git")
         .arg("-C")
         .arg(&dir)
-        .arg("cat-file")
-        .arg("-p")
-        .arg(ref_name)
+        .arg("show")
+        .arg(format!("{}:peer-crystal", ref_name))
         .output()
-        .expect("git cat-file");
-    let cat_stdout = String::from_utf8_lossy(&cat_out.stdout)
+        .expect("git show peer-crystal");
+    let show_stdout = String::from_utf8_lossy(&show_out.stdout)
         .trim()
         .to_string();
     assert!(
-        cat_out.status.success(),
-        "T7: `git cat-file -p {ref_name}` must succeed (Rung 6.1b: peer's \
-         crystal_oid stored as git blob in peer_home; content-addressable \
-         per Recognition #43); got: status={:?}",
-        cat_out.status
+        show_out.status.success(),
+        "T7: `git show {ref_name}:peer-crystal` must succeed (Rung 6.1c \
+         commit_as_fold discharge; peer's crystal_oid content-addressable \
+         via peer branch commit → tree → blob per Recognition #43); got: \
+         status={:?}",
+        show_out.status
     );
     assert_eq!(
-        cat_stdout, crystal_oid,
-        "T7: blob content at `{ref_name}` must equal crystal_oid \
-         (content-addressable peer crystal; Recognition #55 form-side); \
-         got blob=<{cat_stdout}>, crystal_oid=<{crystal_oid}>"
+        show_stdout, crystal_oid,
+        "T7: peer-crystal blob content must equal crystal_oid \
+         (content-addressable peer crystal); got blob=<{show_stdout}>, \
+         crystal_oid=<{crystal_oid}>"
+    );
+}
+
+// === T8: peer branch HEAD is a git commit (not blob or tree) ===========
+//
+// Rung 6.1c collapse: `commit_as_fold` discharge per Recognition #55
+// form/process partition. Peer's ref points to a REAL git commit
+// object (built via mktree + commit-tree). Verifies substrate-honest
+// materialization shape @kintsugi/store/git.commit_as_fold canonicalizes.
+#[test]
+fn t08_peer_branch_head_is_git_commit() {
+    let dir = make_peer_home("commit-shape");
+    let out = run_emit_crystal(&dir);
+    let stdout = String::from_utf8_lossy(&out.stdout).to_string();
+    let ref_name = extract_field(&stdout, "ref_name").expect("ref_name field");
+    let type_out = Command::new("git")
+        .arg("-C")
+        .arg(&dir)
+        .arg("cat-file")
+        .arg("-t")
+        .arg(ref_name)
+        .output()
+        .expect("git cat-file -t");
+    let type_str = String::from_utf8_lossy(&type_out.stdout)
+        .trim()
+        .to_string();
+    assert_eq!(
+        type_str, "commit",
+        "T8: `git cat-file -t {ref_name}` must return `commit` (Rung 6.1c: \
+         commit_as_fold discharge per Recognition #55 folds blob into \
+         tree into commit; peer branch HEAD IS a real git commit); \
+         got: <{type_str}>"
+    );
+}
+
+// === T9: peer commit tree contains crystal blob at `peer-crystal` ======
+//
+// Verifies the substrate-honest materialization shape: the peer's
+// commit tree contains one entry "peer-crystal" pointing to the blob
+// containing crystal_oid. Full form/process discharge witnessed.
+#[test]
+fn t09_peer_commit_tree_contains_peer_crystal_blob() {
+    let dir = make_peer_home("tree-shape");
+    let out = run_emit_crystal(&dir);
+    let stdout = String::from_utf8_lossy(&out.stdout).to_string();
+    let ref_name = extract_field(&stdout, "ref_name").expect("ref_name field");
+    let crystal_oid = extract_field(&stdout, "crystal_oid").expect("crystal_oid field");
+    // Read the tree via `git ls-tree`.
+    let ls_out = Command::new("git")
+        .arg("-C")
+        .arg(&dir)
+        .arg("ls-tree")
+        .arg(ref_name)
+        .output()
+        .expect("git ls-tree");
+    let ls_stdout = String::from_utf8_lossy(&ls_out.stdout).to_string();
+    assert!(
+        ls_stdout.contains("peer-crystal"),
+        "T9: `git ls-tree {ref_name}` must contain `peer-crystal` entry \
+         (Recognition #55 substrate-honest materialization); got: <{ls_stdout}>"
+    );
+    // Read the blob content via path.
+    let blob_out = Command::new("git")
+        .arg("-C")
+        .arg(&dir)
+        .arg("show")
+        .arg(format!("{}:peer-crystal", ref_name))
+        .output()
+        .expect("git show peer-crystal");
+    let blob_content = String::from_utf8_lossy(&blob_out.stdout).trim().to_string();
+    assert_eq!(
+        blob_content, crystal_oid,
+        "T9: `git show {ref_name}:peer-crystal` must equal crystal_oid; \
+         got: <{blob_content}>"
     );
 }
 
