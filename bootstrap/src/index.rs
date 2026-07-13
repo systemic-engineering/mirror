@@ -839,6 +839,103 @@ fn build_profile(eigenvalues: &[f64]) -> EigenvalueProfile {
 }
 
 // ---------------------------------------------------------------------------
+// Shard-body lens (Rung 9 Landing 2)
+// ---------------------------------------------------------------------------
+//
+// The file-tree ConceptGraph doesn't respond to shard-body morphisms
+// (docstring-append changes bytes without changing directory topology).
+// Per Alex 2026-07-13: "the peer can look at the AST through arbitrary
+// @mirror/lens es." Rung 9 Landing 2: `shard_body_index` computes Fiedler
+// on the target shard's line-adjacency graph. Same LAPACK primitive; one
+// altitude down. Substrate-honest to @fractal self-similarity.
+//
+// `@mirror/lens/refract` (shards/mirror/lens/refract.mirror) declares the
+// grammar-graph spectrum lens with 5 Void dualities (entropy / spectral /
+// cheeger / ricci / mixing). This is the `spectral` duality at the shard
+// body altitude. Other dualities forward-promised.
+//
+// Line graph shape:
+// - Nodes = non-empty lines of the target shard
+// - Edges = adjacency between consecutive non-empty lines (weight 1.0)
+// - Wiki-link edges between lines mentioning `[[X]]` and lines matching X
+//   (weight 0.5)
+//
+// This is sensitive to per-line changes: docstring-append adds a node + an
+// adjacency edge; Fiedler shifts by ~O(1/N).
+
+/// Compute the shard-body lens EigenvalueProfile: Fiedler on the target
+/// shard's line-adjacency graph. Per @mirror/lens/refract spectral duality.
+pub fn shard_body_index(shard_path: &Path) -> EigenvalueProfile {
+    let bytes = match std::fs::read(shard_path) {
+        Ok(b) => b,
+        Err(_) => return EigenvalueProfile::dark(),
+    };
+    let content = String::from_utf8_lossy(&bytes);
+    let lines: Vec<&str> = content
+        .lines()
+        .filter(|l| !l.trim().is_empty())
+        .collect();
+    let n = lines.len();
+    if n < 2 {
+        return EigenvalueProfile::dark();
+    }
+
+    // Build symmetric adjacency matrix. Nodes = non-empty lines.
+    let mut adj = vec![0.0_f64; n * n];
+
+    // Sequential adjacency edges (weight 1.0).
+    for i in 0..(n - 1) {
+        adj[i * n + (i + 1)] += 1.0;
+        adj[(i + 1) * n + i] += 1.0;
+    }
+
+    // Wiki-link edges between lines referencing `[[X]]` and lines matching X.
+    // Substrate-honest reading of @mirror/lens/refract: the grammar-graph
+    // spectrum measures cross-references, not just adjacency.
+    for (i, line_i) in lines.iter().enumerate() {
+        let mut rest = *line_i;
+        while let Some(pos) = rest.find("[[") {
+            rest = &rest[pos + 2..];
+            if let Some(end) = rest.find("]]") {
+                let target = &rest[..end];
+                let actual = target.split('|').next().unwrap_or(target).trim();
+                for (j, line_j) in lines.iter().enumerate() {
+                    if i != j && line_j.contains(actual) {
+                        adj[i * n + j] += 0.5;
+                        adj[j * n + i] += 0.5;
+                    }
+                }
+                rest = &rest[end + 2..];
+            } else {
+                break;
+            }
+        }
+    }
+
+    // Build Laplacian L = D - A.
+    let mut laplacian = vec![0.0_f64; n * n];
+    for i in 0..n {
+        let mut degree = 0.0;
+        for j in 0..n {
+            let w = adj[i * n + j];
+            if i != j {
+                laplacian[i * n + j] = -w;
+                degree += w;
+            }
+        }
+        laplacian[i * n + i] = degree;
+    }
+
+    // Route through LAPACK dsyev.
+    let mut sorted = match prismqueer::ffi::eigenvalues(n, &laplacian) {
+        Ok(v) => v,
+        Err(_) => return EigenvalueProfile::dark(),
+    };
+    sorted.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+    build_profile(&sorted)
+}
+
+// ---------------------------------------------------------------------------
 // Public entry point
 // ---------------------------------------------------------------------------
 
