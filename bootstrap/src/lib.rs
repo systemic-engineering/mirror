@@ -48,6 +48,7 @@ pub mod score;
 pub mod dance;
 pub mod deploy;
 pub mod sheaf_laplacian;
+pub mod contribute;
 pub mod song;
 pub mod spectral;
 pub mod store_branch;
@@ -2950,6 +2951,12 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
     // `796f3289629835f2e05cb1ac98559b5584fae8b2b76c2c9167eb91f4921cefb8`).
     // Otherwise `--target` remains craft's `--target-kind` alias.
     let subcommand_is_shatter = args[1] == "shatter";
+    // Rung 7 (2026-07-13) — `mirror peer contribute --target <shard>`
+    // scopes `--target` to the contribute sub-verb (analogous to the
+    // shatter carve-out above). Without this gate, Path C's craft-
+    // scoped `--target`/`--target-kind` parser eats the shard path and
+    // errors before the `"peer"` arm dispatches at all.
+    let subcommand_is_peer = args[1] == "peer";
     let mut shatter_target: String = "auto".to_string();
     let mut i = 2;
     while i < args.len() {
@@ -2993,6 +3000,13 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                     value
                 );
                 return 1;
+            }
+        } else if subcommand_is_peer && (a == "--target" || a.starts_with("--target=")) {
+            // Rung 7 peer-scoped: `mirror peer contribute --target <shard>`
+            // routes shard path through the peer/contribute arm. Skip
+            // Path C craft-parsing entirely for peer subcommands.
+            if a == "--target" {
+                i += 1;
             }
         } else if a == "--target" || a == "--target-kind" {
             // Substrate-honest name (mirror.spec 1e45c50 cli-block declares
@@ -3321,6 +3335,53 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                             }
                             None => {
                                 merr!("usage: mirror peer beam <peer-home> [--hello-world] [--emit-diff] [--mission <mission-file>]");
+                                1
+                            }
+                        }
+                    }
+                    "contribute" => {
+                        // Rung 7 (2026-07-13) — fate-spawned peer
+                        // contributes working shard delta via active_pass
+                        // per Mara `4e69066` §3.2. Empirical-discharge:
+                        // Fate proposes morphism → mirror applies to
+                        // shard → @mirror/mosaic.settle (cargo check)
+                        // verifies → commit_as_fold on peer's DAG only
+                        // if settle green. Substrate-decl at mirror.spec
+                        // `command peer { command contribute { ... } }`.
+                        //
+                        // args[3] = peer_home (positional per grammar
+                        // `arg peer_home: ~d`); --target <path> required
+                        // (per grammar `flag target: ~f`).
+                        let sub_positional: Option<&str> = {
+                            let mut j = 3;
+                            let mut found: Option<&str> = None;
+                            while j < args.len() {
+                                let a = &args[j];
+                                if a == "--target" {
+                                    j += 2;
+                                    continue;
+                                }
+                                if a.starts_with("--") {
+                                    j += 1;
+                                    continue;
+                                }
+                                found = Some(a.as_str());
+                                break;
+                            }
+                            found
+                        };
+                        let target = args
+                            .iter()
+                            .position(|a| a == "--target")
+                            .and_then(|i| args.get(i + 1))
+                            .map(|s| s.as_str());
+                        match (sub_positional, target) {
+                            (Some(p), Some(t)) => {
+                                let target_path = std::path::PathBuf::from(t);
+                                contribute::peer_contribute(p, &target_path, ctx)
+                            }
+                            _ => {
+                                merr!("usage: mirror peer contribute <peer-home> --target <shard>");
                                 1
                             }
                         }

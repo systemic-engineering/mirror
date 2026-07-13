@@ -279,6 +279,35 @@ project mirror.spec {
           # Fires BEFORE all Rungs 1-5 dispatches when present.
           flag emit_crystal: bool = false
         }
+
+        # === Rung 7 addition (2026-07-13) — fate-spawned peer contribution ===
+        #
+        # `mirror peer contribute <peer_home> --target <shard>` triggers
+        # `crate::contribute::peer_contribute` at bootstrap/src/contribute.rs.
+        # Fate::excited().resolve produces (Model, prism_op); active_pass
+        # proposes docstring-append morphism per Mara `4e69066` §4 Scope A
+        # MVP Model → prism_op mapping (Cartographer/Introject/Explorer/
+        # Fate → docstring append / citation add / test skeleton /
+        # recognition-ancestry line). @mirror/mosaic.settle verifies via
+        # `cargo check` at peer_home's workspace altitude. On settle:
+        # commit_as_fold materializes morphism to peer's DAG per Rung
+        # 6.1c + 6.2a chain (parent-linked git commit with 5-blob tree:
+        # pre-anchor / post-anchor / morphism-body / settle-verdict /
+        # fate-witness). On imperfect: revert target bytes, exit non-zero.
+        #
+        # Empirical-discharge (Alex 2026-07-13 in-transcript): not
+        # ceremonial materialization (Rung 6.1c) but compiler-verified
+        # working delta. "it's not empirical certainty until a Fate
+        # spawned agent contributes working mirror back to the compiler."
+        #
+        # `arg peer_home: ~d` — the semantic type is `peer` (two-tick
+        # forward-promise per Rung 1 pattern). `flag target: ~f`
+        # required (no default; refusal-envelope emitted when absent per
+        # Mara §3 §T5).
+        command contribute {
+          arg peer_home: ~d
+          flag target: ~f
+        }
       }
     }
   }
