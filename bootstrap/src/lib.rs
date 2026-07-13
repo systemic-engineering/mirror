@@ -3244,6 +3244,45 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                 1
             }
         },
+        "index" => {
+            // Rung 8 Landing 4 — `mirror index <path> [--fiedler]
+            // [--full-profile]`. Substrate-decl at mirror.spec
+            // `command index { arg path: ~d; flag fiedler: bool;
+            // flag full_profile: bool }`. Runtime at
+            // `bootstrap/src/index.rs::index(path) -> EigenvalueProfile`.
+            //
+            // Alex 2026-07-13 "Fire": pull spectral_index into mirror.
+            let path_arg = args.get(2).map(|s| s.as_str());
+            match path_arg {
+                Some(p) => {
+                    let path = ctx.resolve(p);
+                    let profile = crate::index::index(&path);
+                    let fiedler_only = args.iter().any(|a| a == "--fiedler");
+                    let full_profile = args.iter().any(|a| a == "--full-profile");
+                    if fiedler_only {
+                        mout!("{:.4}", profile.fiedler_value());
+                    } else if full_profile {
+                        for (i, v) in profile.values.iter().enumerate() {
+                            mout!("[{i:02}] {v:.6}");
+                        }
+                    } else {
+                        mout!("@@ mirror index @mirror/fractal-coherence measurement (Rung 8 Landing 4; Mara `317e830` substrate-decl + Taut `77b8e14` migration mapping) @@");
+                        mout!("+ path: {}", path.display());
+                        mout!("+ fiedler: {:.4}", profile.fiedler_value());
+                        mout!("+ profile: [{}]", profile.values.iter().map(|v| format!("{:.4}", v)).collect::<Vec<_>>().join(", "));
+                        mout!("+ substrate_authority: @mirror/index (shards/mirror/index.mirror; provisional under two-tick discipline; collapses to @fractal/index after Alex #6)");
+                        mout!("+ eigenvalue_backend: prismqueer::ffi::eigenvalues (LAPACK dsyev; same primitive as sheaf_laplacian::lambda_zero)");
+                        mout!("+ mandelbrot_correspondence: fiedler IS λ₀(Δ_F) = spectral gap of the substrate's parameter Mandelbrot per Mara `2c64060` §4");
+                        mout!("+ recognition_candidate: #R-fractal-is-mandelbrot-substrate");
+                    }
+                    0
+                }
+                None => {
+                    merr!("usage: mirror index <path> [--fiedler] [--full-profile]");
+                    1
+                }
+            }
+        }
         "peer" => {
             // Tick 3 Landing 2 — `mirror peer beam <peer-home>` (recursive-
             // command depth-2 dispatch per @mirror/lens/cli Tick 1 grammar

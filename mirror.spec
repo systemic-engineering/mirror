@@ -174,6 +174,33 @@ project mirror.spec {
         flag hello_world: bool = false
       }
 
+      # === index — mirror's own @fractal-coherence measurement ===
+      #
+      # `mirror index <path>` walks the substrate DAG (files as leaves,
+      # directories as internal nodes, edges from Contains + SimilarContent +
+      # CrossRef), computes the graph Laplacian's top-16 eigenvalues via
+      # `prismqueer::ffi::eigenvalues` (LAPACK dsyev), and emits the Fiedler
+      # value λ₀ = values[1] post-normalization.
+      #
+      # Rung 8 Landing 4 per Taut `77b8e14` §6 + Mara `317e830` shards/
+      # mirror/index.mirror substrate-decl. Pulls the coherence measurement
+      # currently emitted by `mcp__spectral__spectral_index` (sibling crate
+      # at `/Users/alexwolf/dev/projects/spectral/crates/gestalt/`) into
+      # mirror's own voice per Recognition #43 (mirror IS content-addressed
+      # build system) + Recognition #55 (form/process partition).
+      #
+      # `arg path: ~d` — directory to index (typically the repo root).
+      # `flag fiedler: bool` — emit only the Fiedler value (λ₀) if true.
+      # `flag full_profile: bool` — emit all 16 eigenvalues if true.
+      #
+      # Provisional under two-tick discipline (Mara `317e830`); collapses
+      # to `@fractal/index` after Alex adjudicates #6.
+      command index {
+        arg path: ~d
+        flag fiedler: bool = false
+        flag full_profile: bool = false
+      }
+
       # === peer — persistent-identity beam wrapper (recursive-command depth-2) ===
       #
       # Wires @mirror/peer/beam (shards/mirror/peer/beam.mirror) into
