@@ -27,6 +27,9 @@
 
 use crate::hash::canonical_hash;
 use crate::Ctx;
+use std::io::Write;
+use std::path::Path;
+use std::process::{Command, Stdio};
 
 /// Compute the peer's canonical envelope bytes (the substrate-honest
 /// content the peer WOULD emit at stdout). Deterministic per peer_home;
@@ -74,19 +77,26 @@ pub fn emit_peer_crystal(peer_home: &str, _ctx: &Ctx) -> i32 {
     let crystal_oid = canonical_hash(&envelope_bytes);
     let ref_name = format!("refs/mirror/peer/{}/HEAD", peer_uuid);
 
+    // Rung 6.1b (2026-07-13) — real @mirror/store crystal write per
+    // Mara `d2de1ee` Scope B forward-promise + Recognition #55 form/
+    // process partition. Materialization crossing: ONE @io crossing at
+    // peer_home's git object store (peer's own @mirror/store backing at
+    // `<peer_home>/.git/`). Subprocess git ops target peer_home via
+    // `Command::new("git").current_dir(peer_home)`; peer_home is git-
+    // initialized on first invocation if not already.
+    let peer_home_path = Path::new(peer_home);
+    let (store_status, ref_status) =
+        materialize_crystal(peer_home_path, &peer_uuid, &crystal_oid);
+
     println!(
-        "@@ peer crystal @mirror/store bounded (peer stays @magic-native; materialization is single @io crossing) (Rung 6') @@"
+        "@@ peer crystal @mirror/store bounded (peer stays @magic-native; materialization is single @io crossing) (Rung 6.1b) @@"
     );
     println!("+ peer_home: {}", peer_home);
     println!("+ peer_uuid: {}", peer_uuid);
     println!("+ crystal_oid: {}", crystal_oid);
     println!("+ ref_name: {}", ref_name);
-    println!(
-        "+ store_write_status: envelope-declared (Rung 6.1 forward-promise: actual @mirror/store.insert_persistent via action_cache::cache_write)"
-    );
-    println!(
-        "+ ref_write_status: envelope-declared (Rung 6.1 forward-promise: actual set_ref via git_store_crystal)"
-    );
+    println!("+ store_write_status: {}", store_status);
+    println!("+ ref_write_status: {}", ref_status);
     println!(
         "+ materialization_status: forward-promised (Rung 6.2: @kintsugi/store/git.commit_as_fold as single @io crossing per Recognition #55)"
     );
@@ -111,6 +121,97 @@ pub fn emit_peer_crystal(peer_home: &str, _ctx: &Ctx) -> i32 {
     );
 
     0
+}
+
+/// Materialize the peer's crystal into peer_home's git object store.
+/// Rung 6.1b implementation of Mara `d2de1ee` Scope B + Recognition
+/// #55 form/process partition: the ONE @io crossing per peer spawn.
+///
+/// Steps:
+/// 1. Ensure peer_home has `.git/` (git init if not).
+/// 2. Write crystal_oid as a git blob via `git hash-object -w --stdin`.
+/// 3. Update ref `refs/mirror/peer/<uuid>/HEAD` → blob hash.
+///
+/// Returns (store_status, ref_status) for envelope emission. Failures
+/// are non-fatal at Rung 6.1b (returns error strings; peer inference
+/// remains @magic-native even if materialization can't complete).
+fn materialize_crystal(
+    peer_home: &Path,
+    peer_uuid: &str,
+    crystal_oid: &str,
+) -> (String, String) {
+    // Step 1: ensure peer_home is a git repo (idempotent).
+    if !peer_home.join(".git").exists() {
+        let init_status = Command::new("git")
+            .args(["init", "--quiet"])
+            .current_dir(peer_home)
+            .stderr(Stdio::null())
+            .stdout(Stdio::null())
+            .status();
+        if init_status.is_err() || !init_status.map(|s| s.success()).unwrap_or(false) {
+            return (
+                "init-failed (envelope-declared fallback)".to_string(),
+                "init-failed (envelope-declared fallback)".to_string(),
+            );
+        }
+    }
+
+    // Step 2: write crystal_oid as a git blob via stdin.
+    let mut hash_child = match Command::new("git")
+        .args(["hash-object", "-w", "--stdin"])
+        .current_dir(peer_home)
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::null())
+        .spawn()
+    {
+        Ok(c) => c,
+        Err(_) => {
+            return (
+                "hash-object-spawn-failed (envelope-declared fallback)".to_string(),
+                "skipped (store write failed)".to_string(),
+            );
+        }
+    };
+    if let Some(stdin) = hash_child.stdin.as_mut() {
+        let _ = stdin.write_all(crystal_oid.as_bytes());
+    }
+    let hash_out = match hash_child.wait_with_output() {
+        Ok(o) => o,
+        Err(_) => {
+            return (
+                "hash-object-wait-failed (envelope-declared fallback)".to_string(),
+                "skipped (store write failed)".to_string(),
+            );
+        }
+    };
+    let blob_hash = String::from_utf8_lossy(&hash_out.stdout)
+        .trim()
+        .to_string();
+    if blob_hash.is_empty() {
+        return (
+            "hash-object-empty (envelope-declared fallback)".to_string(),
+            "skipped (store write failed)".to_string(),
+        );
+    }
+
+    // Step 3: update-ref `refs/mirror/peer/<uuid>/HEAD` → blob hash.
+    let ref_name = format!("refs/mirror/peer/{}/HEAD", peer_uuid);
+    let ref_status = Command::new("git")
+        .args(["update-ref", &ref_name, &blob_hash])
+        .current_dir(peer_home)
+        .stderr(Stdio::null())
+        .stdout(Stdio::null())
+        .status();
+    let ref_result = match ref_status {
+        Ok(s) if s.success() => format!("written (blob {})", &blob_hash[..16.min(blob_hash.len())]),
+        _ => "update-ref-failed (envelope-declared fallback)".to_string(),
+    };
+
+    (
+        format!("crystal blob {} at {}", &blob_hash[..16.min(blob_hash.len())], peer_home.display()),
+        ref_result,
+    )
 }
 
 /// Rung 6' stub peer UUID: FNV-1a hash of peer_home bytes; deterministic

@@ -1,4 +1,4 @@
-//! Rung 6' RED — `mirror peer beam <home> --emit-crystal` emits a
+//! Rung 6.1b test additions — `mirror peer beam <home> --emit-crystal` emits a
 //! crystal OID on @mirror/store internal ref (`refs/mirror/peer/<uuid>/
 //! HEAD`) instead of stdout envelope. Peer inference stays @magic-
 //! native; envelope-bytes-hash IS the peer's terminal crystal address;
@@ -161,6 +161,76 @@ fn t04_envelope_emits_peer_branch_ref_name() {
         ref_name.ends_with("/HEAD"),
         "T4: ref_name must end with `/HEAD` (peer's branch HEAD per \
          set_ref convention); got: <{ref_name}>"
+    );
+}
+
+// === T6: after invocation, `refs/mirror/peer/<uuid>/HEAD` exists =======
+//
+// Rung 6.1b: actual `git update-ref` writes the peer's branch HEAD to
+// peer_home's git store (Recognition #55 form/process partition; the
+// ONE @io crossing per peer spawn). Test verifies the ref exists via
+// git rev-parse from peer_home. Note: peer_home is git-initialized on
+// first --emit-crystal invocation (runtime discipline).
+#[test]
+fn t06_peer_branch_ref_exists_after_invocation() {
+    let dir = make_peer_home("ref-exists");
+    let out = run_emit_crystal(&dir);
+    let stdout = String::from_utf8_lossy(&out.stdout).to_string();
+    let ref_name = extract_field(&stdout, "ref_name").expect("ref_name field");
+    let rev_out = Command::new("git")
+        .arg("-C")
+        .arg(&dir)
+        .arg("rev-parse")
+        .arg(ref_name)
+        .output()
+        .expect("git rev-parse");
+    let rev_stdout = String::from_utf8_lossy(&rev_out.stdout)
+        .trim()
+        .to_string();
+    assert!(
+        rev_out.status.success() && !rev_stdout.is_empty(),
+        "T6: `git rev-parse {ref_name}` must succeed with non-empty output \
+         (Rung 6.1b: peer branch ref materialized to peer_home git store; \
+         Mara `d2de1ee` Scope B discharge); got: status={:?} stdout=<{rev_stdout}>",
+        rev_out.status
+    );
+}
+
+// === T7: `git cat-file` returns the crystal_oid via peer branch ref ====
+//
+// Verifies the peer's crystal is content-addressable via git objects
+// (Recognition #43: mirror IS content-addressed build system; peer
+// crystals live in git object store at peer_home).
+#[test]
+fn t07_peer_branch_blob_contains_crystal_oid() {
+    let dir = make_peer_home("blob-content");
+    let out = run_emit_crystal(&dir);
+    let stdout = String::from_utf8_lossy(&out.stdout).to_string();
+    let ref_name = extract_field(&stdout, "ref_name").expect("ref_name field");
+    let crystal_oid = extract_field(&stdout, "crystal_oid").expect("crystal_oid field");
+    let cat_out = Command::new("git")
+        .arg("-C")
+        .arg(&dir)
+        .arg("cat-file")
+        .arg("-p")
+        .arg(ref_name)
+        .output()
+        .expect("git cat-file");
+    let cat_stdout = String::from_utf8_lossy(&cat_out.stdout)
+        .trim()
+        .to_string();
+    assert!(
+        cat_out.status.success(),
+        "T7: `git cat-file -p {ref_name}` must succeed (Rung 6.1b: peer's \
+         crystal_oid stored as git blob in peer_home; content-addressable \
+         per Recognition #43); got: status={:?}",
+        cat_out.status
+    );
+    assert_eq!(
+        cat_stdout, crystal_oid,
+        "T7: blob content at `{ref_name}` must equal crystal_oid \
+         (content-addressable peer crystal; Recognition #55 form-side); \
+         got blob=<{cat_stdout}>, crystal_oid=<{crystal_oid}>"
     );
 }
 
