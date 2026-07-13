@@ -68,6 +68,15 @@ pub fn peer_contribute(peer_home: &str, target_shard: &Path, _ctx: &Ctx) -> i32 
     let decision = fate_engine.resolve(&features, 5);
     let (model_name, prism_op_name) = bundle_tower_binding(decision.model);
 
+    // Rung 9 Landing 1 Path C empirical-first: MEASURE-BEFORE.
+    // Compute mirror's own coherence measurement on peer_home DAG BEFORE
+    // applying the morphism. Composes @mirror/index (Rung 8 Landing 6)
+    // with peer_contribute (Rung 7' `829148b`) per Mara `c59a5ac` §2 step 1.
+    // Recognition #55 form/process partition: DAG measurement (form) at
+    // the same altitude as the morphism proposal (process).
+    let profile_before = crate::index::index(peer_home_path);
+    let fiedler_before = profile_before.fiedler_value();
+
     // Step 3: pre-anchor bytes.
     let pre_bytes = match fs::read(target_shard) {
         Ok(b) => b,
@@ -104,6 +113,23 @@ pub fn peer_contribute(peer_home: &str, target_shard: &Path, _ctx: &Ctx) -> i32 
 
     match settle_verdict {
         SettleVerdict::Settled(stdout) => {
+            // Rung 9 Landing 1 Path C: MEASURE-AFTER. Recompute Fiedler on
+            // peer_home DAG AFTER cargo check green (post-morphism state).
+            // Per Mara `c59a5ac` §2 step 5. If additive morphism (Rung 7'
+            // docstring-append) raises Fiedler as predicted, coherence loop
+            // closure requires Rung 9 Scope B consolidative Model mapping.
+            let profile_after = crate::index::index(peer_home_path);
+            let fiedler_after = profile_after.fiedler_value();
+            let fiedler_delta = fiedler_after - fiedler_before;
+            let loss_decreased = fiedler_delta < 0.0;
+            let coherence_verdict = if fiedler_delta.abs() < 1e-6 {
+                "unchanged"
+            } else if loss_decreased {
+                "improved"
+            } else {
+                "regressed"
+            };
+
             // Rung 7' Errors 2 + 4 correction: 4-subtree tripartition
             // (anchors/gates/witnesses/morphism-body per Mara `2c64060`
             // §7.2) with fate metadata folded into commit message
@@ -122,7 +148,7 @@ pub fn peer_contribute(peer_home: &str, target_shard: &Path, _ctx: &Ctx) -> i32 
             );
 
             println!(
-                "@@ peer contribute discharge @mirror/mosaic.settle green (Rung 7' Fate::bounded + tripartition; @fractal-family-root; Mandelbrot-substrate) @@"
+                "@@ peer contribute discharge @mirror/mosaic.settle green (Rung 7' Fate::bounded + tripartition + Rung 9 coherence-delta measurement; @fractal-family-root; Mandelbrot-substrate) @@"
             );
             println!("+ peer_home: {}", peer_home);
             println!("+ peer_uuid: {}", peer_uuid);
@@ -137,6 +163,17 @@ pub fn peer_contribute(peer_home: &str, target_shard: &Path, _ctx: &Ctx) -> i32 
             println!("+ pre_anchor_bytes: {}", pre_bytes.len());
             println!("+ post_anchor_bytes: {}", post_bytes.len());
             println!("+ settle_verdict: settled (cargo check green)");
+            // Rung 9 Landing 1 Path C empirical-first: fiedler_delta emission.
+            // Per Mara `c59a5ac` §4 query_phi_coherence composition + Taut
+            // `862db12` §6 empirical-first falsification. Measurement-only
+            // (does NOT gate commit at Landing 1); Landing 2 Scope B adds
+            // the gate + Model → consolidative-morphism mapping.
+            println!("+ fiedler_before: {:.4}", fiedler_before);
+            println!("+ fiedler_after: {:.4}", fiedler_after);
+            println!("+ fiedler_delta: {:.6}", fiedler_delta);
+            println!("+ loss_decreased: {}", loss_decreased);
+            println!("+ coherence_verdict: {}", coherence_verdict);
+            println!("+ rung_9_hypothesis: additive morphism (docstring-append) predicted to RAISE Fiedler (↷); consolidative morphism (Mara `c59a5ac` §3 5-row Model mapping, Scope B) predicted to LOWER Fiedler (↶); Rung 9 Landing 1 measurement-only — no verdict gating yet");
             println!("+ tree_shape: tripartition (anchors/ + gates/ + witnesses/ + morphism-body per Mara `2c64060` §7.2)");
             println!("+ witness_locus: encoding (commit message → naked_oid; not content blob per Mara `2c64060` §7.4)");
             println!("+ store_write_status: {}", store_status);
@@ -162,7 +199,7 @@ pub fn peer_contribute(peer_home: &str, target_shard: &Path, _ctx: &Ctx) -> i32 
             println!(
                 "+ fate_authority: @magic Fate::bounded (Recognition #58 optical inference; sheaf-Laplacian Rayleigh descent along psychohistory sheaf)"
             );
-            println!("+ ladder_rung: 7' (Reed GREEN discharging Mara `2c64060` §7 Scope A')");
+            println!("+ ladder_rung: 7' (Reed GREEN discharging Mara `2c64060` §7 Scope A') + 9 Landing 1 Path C (empirical-first fiedler-delta measurement per Mara `c59a5ac` §2)");
             println!(
                 "+ recognition_candidate: #R-fractal-is-mandelbrot-substrate"
             );
