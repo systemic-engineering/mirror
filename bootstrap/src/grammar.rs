@@ -198,6 +198,13 @@ fn companion_keyword_sources(path: &str) -> &'static [&'static str] {
         ],
         "boot/std/mirror/grammar.mirror" => &["boot/std/mirror/glass/ast/token.mirror"],
         "shards/mirror/spec.mirror" => &["shards/mirror/spec/keywords.mirror"],
+        // Rung 3b (2026-07-13) — song grammar via companion-keyword file
+        // per Mara `d29d45e` Path B: `.song` files dispatch to
+        // `shards/song.mirror` grammar; keywords are declared in this
+        // companion file (`shards/song/keywords.mirror`) as `focus X` /
+        // `project X` two-word lines, following the
+        // `shards/mirror/spec/keywords.mirror` (2026-06-09) precedent.
+        "shards/song.mirror" => &["shards/song/keywords.mirror"],
         _ => &[],
     }
 }
@@ -318,6 +325,19 @@ pub fn grammar_for_file(path: &str) -> &'static str {
             // kintsugi-spec walker walks directly, retiring the
             // hand-rolled `parse_spec_targets` byte scanner.
             "shards/mirror/spec.mirror"
+        }
+        "song" => {
+            // Rung 3b (2026-07-13) per Mara `d29d45e` Path B — `.song`
+            // files ARE mirror-native declarations. Grammar is `@song`
+            // (shards/song.mirror) with companion keyword bindings at
+            // `shards/song/keywords.mirror` (registered in
+            // `companion_keyword_sources`). song file structure:
+            // `song X { movement Y { voice Z { } progression P { } phrase Q
+            // { } beat B { action: @kintsugi/oscillate } } }`.
+            //
+            // Consumers: `bootstrap/src/song.rs::execute_song` walks the
+            // resulting AST beam-by-beat per Rung 1-3 ladder-climb.
+            "shards/song.mirror"
         }
         "mirror" | "shard" | "shatter" => {
             if Path::new("shards/mirror/grammar.mirror").exists() {

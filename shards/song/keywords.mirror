@@ -1,0 +1,94 @@
+in @prism
+in @meta
+in @glass
+in @song
+
+# @song/keywords — companion-keyword file for the `@song` grammar per
+# Mara `d29d45e` `docs/specs/song-file-is-mirror-native-grammar.md`
+# Path B verdict. Declares the tokenizer vocabulary for `.song` files
+# as `<op> <keyword>` two-word lines inside a `grammar @song("song")
+# { ... }` block, following the precedent of
+# `shards/mirror/spec/keywords.mirror` (2026-06-09).
+#
+# Registered in `bootstrap/src/grammar.rs::companion_keyword_sources`
+# as companion to `shards/song.mirror`. `bootstrap/src/lib.rs::grammar_
+# for_file`/`grammar_for_file_in` maps the `.song` file extension to
+# `shards/song.mirror`, which loads with this companion's keywords
+# merged.
+#
+# Substrate authority:
+#   - Mara `d29d45e` Path B canonical spec (§3.1-§3.4 grammar
+#     production)
+#   - Mara `94e55eb` `shards/song/beat.mirror` (Rung 0 sixth species)
+#   - Reed `c36fbf5` (Rung 1) + `70766c3` (Rung 2) + `7b7fb0b` (Rung 3
+#     RED) song-runtime discharge chain
+#   - Taut `c54740c` §5.4 (Rung 3 ladder spec)
+#   - `shards/mirror/spec/keywords.mirror` (precedent, 2026-06-09)
+#   - Alex 2026-07-13 in-transcript ladder-climb mandate
+#
+# Kinds chosen per Mara §3.1:
+#   focus   — opens a recursively-scanned brace block (song, movement,
+#             voice, progression, narrative, phrase, beat: all NAME { }
+#             composition blocks)
+#   project — single-line directive with one identifier/ref/value
+#             payload (voice:, scope:, stage:, phase:, cadence_type:,
+#             etc.: field directives inside blocks)
+#
+# Grammar-block file-suffix declaration: `("song")` binds this grammar
+# to `.song` extension per the file-extension→grammar dispatch in
+# `bootstrap/src/lib.rs::grammar_for_file`.
+
+grammar @song("song") {
+  # === boundary terminals (matches @mirror/grammar's `in` / `out`
+  # bindings; song files use `in @ref` for grammar/property imports
+  # if needed at Rung 4+ altitude) ===
+  project in
+  project out
+
+  # === top-level song composition block ===
+  focus song
+
+  # === nested species-instance blocks (five landed species + beat) ===
+  focus movement
+  focus voice
+  focus progression
+  focus narrative
+  focus phrase
+  focus beat
+
+  # === field directives inside blocks (per Mara `d29d45e` §3.2 field
+  # enumeration) ===
+  project scope
+  project stage
+  project phase
+  project from
+  project to
+  project frame
+  project coupling
+  project convergence
+  project completes_when
+  project completes
+  project predicate
+  project dark_pass
+  project active_pass
+  project propagation
+  project lines
+  project stepwise_or_leap
+  project attribution_discipline
+  project narcissus_watch
+  project directed_toward_cadence
+  project cadence_type
+  project shadow_ancestry
+  project psychohistorical_reading
+  project arc
+  project transmit
+  project wire
+  project projects
+  project substrate_vs_wire_distinction
+  project coherent
+  project bounded
+  project fits_in_working_memory
+  project obc_binding
+  project composition_algebra
+  project action
+}
