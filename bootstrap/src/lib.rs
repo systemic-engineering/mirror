@@ -49,6 +49,7 @@ pub mod dance;
 pub mod deploy;
 pub mod sheaf_laplacian;
 pub mod contribute;
+pub mod index;
 pub mod song;
 pub mod spectral;
 pub mod store_branch;
