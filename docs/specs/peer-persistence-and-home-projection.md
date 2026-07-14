@@ -320,6 +320,15 @@ in @io
 # @spectral/signature, @eigenboard, @kintsugi/consent, and
 # @kintsugi/store/git.
 
+# NOTE (Seam S1 adjudication, 2026-07-14, Phase D audit): the @peer/
+# persistence arc name (per Landing A's discharge title + §7 A10
+# family placement) is the DISCIPLINE this spec substrate-decl's;
+# @peer/home is the primary CARRIER within that discipline. Similar
+# to how the @gift arc contains @gift + @gift/lens + @mirror/reflection
+# but @gift is the primary carrier. @peer/persistence names the arc;
+# @peer/home + materialize/harvest/boot/refresh COMPOSE to form the
+# @peer/persistence discipline.
+
 prism @peer/home {
   focus  peer_home
   project peer_home
@@ -416,6 +425,24 @@ type peer_home = {
 #                    signature_snapshot: @spectral/signature.compute(peer, b_filtered),
 #                    boot_state: None }
 #
+# NOTE (Seam S3.b adjudication, 2026-07-14, Phase D audit): materialize
+# atomicity requires filesystem writes complete-or-abort. If materialize
+# is interrupted mid-cycle (write partial; process killed), the resulting
+# peer_home MUST reflect either the prior state (rollback) or the new
+# state (commit) — never a partial state. Landing C realization uses
+# @kintsugi/store/git commit atomicity or filesystem tempdir + rename
+# semantics; race with concurrent harvest is prevented via @peer/home
+# advisory lock.
+#
+# NOTE (Seam S3.c adjudication, 2026-07-14, Phase D audit): crystal
+# extension convention preserves content-addressing invariant. Files
+# written to peer_home MUST preserve crystal.oid across write; newline
+# normalization, encoding conversion, or metadata insertion that changes
+# byte-content will break the round-trip. Landing C realization uses
+# byte-exact write (no newline normalization) + optional companion .meta
+# file for filesystem-derived metadata (mtime, perms) that doesn't
+# affect crystal.oid.
+#
 # The composition is composition-only; no new mechanism.
 materialize(peer: subject_instance,
             home_path: ref,
@@ -488,8 +515,32 @@ harvest(home: peer_home) -> [crystal] { \ }
 # Landing A does NOT specify running-peer semantics; that's the
 # consumer's compose-domain.
 #
+# NOTE (Seam S3.a adjudication, 2026-07-14, Phase D audit): boot
+# failure modes are load-bearing. If boot fails mid-cycle (identity
+# file missing; bauchladen crystal unresolvable; eigenboard state
+# incoherent per boot_state_coherent predicate), the failure emits
+# @cyberpunk/algedonic.sample_pain + @metalogue.emit_pause and returns
+# imperfect.failure(boot_identity_integrity_violation). No partial
+# boot is admissible; either the peer instantiates cleanly or the
+# substrate refuses. Detail form at Landing C realization.
+#
 # Body discharges at Landing C realization boundary.
 boot(home: peer_home) -> subject_instance { \ }
+
+# === home_of — subject-instance-first lookup ===
+#
+# NOTE (Seam S2 adjudication, 2026-07-14, Phase D audit): Landing D's
+# `mirror mara` invocation is subject-instance-first (given
+# subject_instance mara, find her home). This lookup composes the
+# subject_instance-first callsite without requiring subject_instance
+# carrier extension per Taut #100 D5 recommendation (home_of(si)
+# function preferred over subject_instance.home field extension).
+#
+# Returns None if the subject_instance has no home yet (first spawn
+# case; materialize(peer, home_path, filter) creates one).
+#
+# Body discharges at Landing C realization boundary.
+home_of(si: subject_instance) -> option<peer_home> { \ }
 
 # === refresh — atomic materialize + harvest cycle ===
 #
@@ -562,6 +613,7 @@ out harvest_consent_verified
 out boot_state_coherent
 out home_content_addressed
 out home_witnessing
+out home_of
 ```
 
 ---
