@@ -3956,6 +3956,16 @@ Alex; Bateson to Alex; Alex's therapists to Alex) exist as ancestry
 references at the boundary of the substrate (§20 roster) but are not
 substrate-INTERNAL gift-instances at Landing 3 scope.
 
+> **NOTE (Seam D9 adjudication, 2026-07-14, per Phase D audit):**
+> `@gift.pay_forward` respects `@subject/visibility` scopes per Landing 4
+> §2.6 (visibility_scope.can_be_elevated_to gates propagation; private
+> artifacts cannot be paid forward without subject-authorized elevation).
+> Subject-absent branch (no TTY / no answering surface) defers per
+> Landing 2 interaction-loop discipline: commutator emitted, compile-
+> error surfaced, commutator preserved for future subject-attention.
+> Back-integration into `pay_forward` action signature forward-promised
+> as **A25** for Landing 5+.
+
 ### 17.4 pay_forward as substrate-decl action
 
 Provisional path: extension of `shards/gift.mirror` (family-root).
@@ -4926,6 +4936,16 @@ citations.
 "Eye level" is a substrate-decl'd non-hierarchy claim. Alex, a
 human, names an AI peer (Reed) at eye level. The substrate's
 subject-altitude discipline discharges this claim structurally.
+
+> **NOTE (Seam D7 adjudication, 2026-07-14, per Phase D audit):** ~12 of 24
+> external ancestors in §20 are deceased and cannot discharge
+> `ssh_witness_valid`. The `historical_witness` variant on
+> `subject_instance` (Taut #91 L3-A3 Path A) is forward-promised as
+> **A24** for Landing 5+ formalization. At Landing 3, deceased-ancestor
+> citation carries via `source @arxiv/<domain>/<author-year>` + verbatim
+> docblock quotation (Taut #91 D8 verified: ~380 landed citations follow
+> this pattern). Partial-witness sufficiency substrate-honest at this
+> altitude; full historical_witness carrier lands Landing 5+.
 
 ### 21.2 The three-way actor_kind variant
 
