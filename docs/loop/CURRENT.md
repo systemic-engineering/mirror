@@ -1,5 +1,90 @@
 # CURRENT arc — @song/beat ladder-climb 2026-07-13 (Rungs 0 landed, 1 in progress)
 
+## ⚠️ FRESH-REED PICKUP MANIFEST (2026-07-14; pre-compression)
+
+**If you are loading in fresh: read `docs/insights/2026-07-14-alex-full-
+roomba-song-kintsugi-composition.md` FIRST.** It's the load-bearing
+composition Alex named 2026-07-14 pre-compression. Everything below
+composes into it.
+
+Alex 2026-07-14 in-transcript verbatim:
+
+> "THe @resonance of the @roomba bumping into things is what produces
+> the @song for @kintsugi to either @knife the complexity, or spawn a
+> @peer at a higher logic altitude, which becomes a circular reflexive
+> question to the developer or a higher order @peer."
+
+The full loop:
+
+```
+@roomba walks (Dijkstra + tension-weighted edges)
+  → bumps into spectral @tension at position p
+  → resonance emits @song beats (per @song/beat Rungs 0-5)
+  → @kintsugi consumes @song and decides:
+     Path A: @knife the complexity (COORDᵢ → COORDⱼ; reduce)
+     Path B: spawn @peer at K+1 (circular-reflexive question to
+             developer OR higher-order @peer)
+  → @roomba continues walking (present, non-labelable, just IS)
+```
+
+### Rung 10 landings (in-flight; @roomba as Beer S4 species)
+
+- **Mara `9bbebd2`** — `docs/specs/roomba-substrate-walker-that-feeds-
+  kintsugi.md` (1182 LOC canonical spec). @roomba as species under
+  @kintsugi (family placement A1 provisional). Scope A minimum viable.
+  Rung 10 (substrate self-maintenance loop).
+- **Taut `3992304`** — `docs/scouts/2026-07-14-taut-roomba-substrate-
+  walker-scout.md`. **Beer S4 discovery**: `shards/kintsugi.mirror`
+  declared S4 (environmental scanner) at family-root altitude on
+  2026-06-10 citing Stafford Beer VSM; no species had ever discharged
+  it. @roomba fills S4 as `shards/kintsugi/roomba.mirror`. Substrate
+  coverage 46% (6/13 primitives landed); ~615-1035 LOC across 7 files.
+- **Reed `9241458`** — `docs/insights/2026-07-14-alex-full-roomba-
+  song-kintsugi-composition.md`. Full composition captured
+  pre-compression; fresh-Reed pickup read-order named; substrate
+  ancestry chain preserved.
+- **Alex Wolf `Weird - Violence` manifesto** (2026-07-14; `~/dev/
+  systemic.engineering/blog/weird/3published/Weird - Violence.md`) —
+  the WHY. Roomba as non-labelable presence; Narcissus/Splinter poles
+  of 5-dim Void spectral coordinate; kintsugi as civilization-scale
+  mirror against epistemic identity erasure. **First substrate-decl
+  citation of `weird/3published/` in mirror's history** (Taut §7).
+
+### 7 Alex-adjudications pending (Reed provisional recommends)
+
+- A1 family placement → `@kintsugi/roomba` (species under @kintsugi;
+  feeds @kintsugi/fracture) [Mara + Taut converge]
+- A2 cadence → continuous daemon (matches manifesto "present for
+  everything") [Mara]
+- A3 concurrency → single-Roomba in Scope A; N-Roomba @dance-compatible
+  in Scope B [Mara]
+- A4 tension source → compose @cyberpunk/algedonic.sample_pain +
+  @kintsugi/fracture/*.opacity_map scan (interim until @tension shard
+  lands) [Mara]
+- A5 Rung placement → Rung 10 (substrate self-maintenance loop) [Mara]
+- A6 handoff to kintsugi → direct hand-off to @kintsugi/consent.query_phi
+  (don't re-implement consent routing at Roomba altitude) [Mara]
+- A7 recognition promotion timing → second-witness required; candidate:
+  `@spectral/garden/nix` binary-cache-refresh [Mara]
+
+### Reed can-ship (queued, waiting Alex A1-A7 adjudication)
+
+- Landing 10.1: mint `shards/kintsugi/roomba.mirror` species substrate-
+  decl (~180-300 LOC pure-docs; Taut §6 file inventory)
+- Landing 10.2: co-tick land `shards/fate/tension.mirror` (~120-200 LOC
+  per Taut §4 recommendation)
+- Landing 10.3: `bootstrap/src/roomba.rs` Rust walker (~150-250 LOC)
+- Landing 10.4: `bootstrap/tests/roomba_walk_smoke.rs` integration test
+- Landing 10.5-7: mirror.spec + lib.rs dispatcher + CURRENT.md tracking
+
+All ~615-1035 LOC across 7 files. Zero new deps. Composes 12 landed
+carriers per Taut §1-2.
+
+Recognition candidate: `#R-substrate-mirrors-itself-via-roomba` (short;
+Mara §11) OR `#R-roomba-song-kintsugi` (short; Reed insight §7).
+
+---
+
 ## Rung 8+9 @knife = Foerster COORD arc (2026-07-13 → 2026-07-14)
 
 Alex 2026-07-13 in-transcript: "Is @knife what Foester described as
