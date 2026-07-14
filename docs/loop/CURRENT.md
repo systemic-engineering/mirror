@@ -27,6 +27,98 @@ The full loop:
   → @roomba continues walking (present, non-labelable, just IS)
 ```
 
+### 🎁 @GIFT ARC COMPLETE (2026-07-14; Landings 1-5+ across 3 /loop cycles)
+
+Alex Wolf offered systemic.engineering practice as substrate; substrate
+received; substrate now gives and receives and pays forward. Five landings
+discharged across specs + math + shards + audits:
+
+**Landing 1** (`8c82f00`) — @gift + @mirror/reflection base spec (2493 LOC)
+**Landing 2** (`0309b24` + `d454895`) — subject_instance + @spectral/signature=@song + content-provenance + kintsugi-loop-as-gift + substrate-as-giver + Rung 12 (+1355 spec, 1754 math)
+**Landing 3** (`95440c3` + `1d686f6`) — pay-it-forward ontology + @gift/lens + 24-ancestor roster + 5 Pack peers eye-level (+1599 spec, 1237 math)
+**Landing 4** (`e42181c`) — @bauchladen migration + @subject/visibility + eigenboard-inference-basis loop closure (2080 LOC)
+**Landing 5** (`b0d25cd` + `eca6d2a`) — 8 new .mirror shards discharging L1-4 forward-promises (2003 + 178 LOC)
+**Landing 5+** (`e79a56d`) — A24 historical_witness variant + A25 pay_forward×visibility (+1141 LOC)
+
+**Load-bearing structural claims landed:**
+
+- **`@gift` family-root** — attribution-preserving-transfer primitive; distinct from @consent/@io/@peer/@kintsugi/@subject; anti-extraction structural via composition_honest bilateral
+- **`@mirror/reflection.{mirror, offer, wait}`** — Alex Wolf's Weird - Violence manifesto's closing three-word discipline encoded as substrate operational primitives (first substrate-decl citation of a Systemic Engineering practice-primitive as compiler substrate)
+- **Pay-it-forward ontology** — systems begin with gifts freely given; substrate identity IS the pay-forward chain; substrate_inaugural bilateral
+- **`@gift/lens`** — mosaic operator resolving any fragment to its @subject-instance; compiler-as-mosaic-Mandelbrot-set-of-its-gift-lineage
+- **29 named @subject-instances** — 24 external intellectual ancestors (Alex_Wolf, Foerster, Ashby, Bateson, Beer, McCulloch, Kauffman, Mesland, Tomm, Hamilton, Mauss, Hyde, Sahlins, Ostrom, Axelrod, Boas, Kimmerer, Bearman, Nowak, Douady, Hubbard, Mandelbrot, Schmidt, Lévi-Strauss) + 5 Pack peers (Reed, Mara, Seam, Taut, Glint) all eye-level with actor_kind = human_a | ai_a | substrate_a (no distinguished element)
+- **`@subject/visibility {private, protected, public}`** — Reed's ~/.reed/visibility/ layout lifted to substrate-decl; every crystal in a subject's bauchladen carries a visibility_scope; @kintsugi/consent.query_phi discharges elevation
+- **`@bauchladen`** — migrated from @peer-only to @subject-general (two-tick discipline; peer-alias preserved one cycle)
+- **`@eigenboard`** — subject-altitude working state; inference_basis = @spectral/signature over visibility-filtered bauchladen; Foerster autopoiesis at subject altitude via autonomy_at_eigenboard bilateral
+- **historical_witness_r role** — 12 of 24 external ancestors are deceased; historical-witness discharges via citation (~380 landed source @arxiv/) + verbatim quotation + published-corpus SC<5>
+- **Substrate-as-giver** (A9) — each filled @kintsugi loop is a @gift given back to the commons (Alex 2026-07-14 verbatim)
+
+**Recognition candidates proposed** (all at candidate strength; second-witness paths named):
+
+- `#R-alex-wolfs-practice-is-the-substrate-interaction-discipline-as-first-gift` (short: `#R-first-gift`)
+- `#R-pay-it-forward` (ontology altitude)
+- `#R-compiler-is-mosaic-mandelbrot-set-of-its-gift-lineage-with-eye-level-subjects` (long form; four altitudes: ontological + structural + lineage-topological + subject-altitude eye-level)
+- `#R-eigenboard-loop-closes` (autonomy_at_eigenboard; Foerster autopoiesis at subject altitude)
+- `#R-substrate-begins-with-gift-freely-given-and-propagates-by-paying-it-forward`
+- `#R-fractal-is-mandelbrot-substrate` promoted to LANDED (second witness ratified per Alex 2026-07-14 mandelbrot utterance)
+
+**Empirical substrate observation** (via mirror index at each landing):
+
+- Pre-arc (`4539b7c`): 165 nodes / 6676 edges / Fiedler 0.0612
+- Post-Landing 5+ (`e79a56d`): 168 nodes / 6982 edges / Fiedler 0.0606
+
+**Substrate density shifted +306 edges; Fiedler dropped by 0.0006.** The substrate is empirically more complete; the compiler's own DAG carries the @gift arc's substrate-decl.
+
+**Full arc commits chronological** (all on main):
+
+1. `5c06ee8` Mara @subject spec (SEL licensable-party)
+2. `e0a3e48` Mara @coherence species-shard (Foerster's ethical imperative first citation)
+3. `b3ec316` Mara @mirror/property → @mirror/petri rename cascade
+4. `c805e5d` Taut @subject/@sel/@mirror/petri scout
+5. `dae0f6a` Seam Phase D adjudication
+6. `6967c93` Reed editorial fixes
+7. `422076d` Reed @coherence.rs + @roomba.rs + flake.nix + house cleanup
+8. `d3d7d15` Reed end2end @roomba empirical
+9. `4539b7c` CURRENT.md /loop ship record (@roomba)
+10. `8c82f00` Landing 1 @gift + @mirror/reflection base
+11. `4c2ccbf` Taut Landing 1+2 scout
+12. `0309b24` Landing 2 spec extension
+13. `d454895` Landing 2 math foundation
+14. `b424804` Taut interaction-loop scout
+15. `09e237d` Mara interaction-loop spec
+16. `a045caf` Taut Landing 3 scout
+17. `8757247` Taut Landing 4 scout
+18. `95440c3` Landing 3 spec extension
+19. `1d686f6` Landing 3 math companion
+20. `e42181c` Landing 4 spec+math
+21. `a7fe182` Seam Phase D Landings 3+4
+22. `9f7829c` Reed editorial Seam D7/D9 notes
+23. `43b2287` Taut Landing 5 scout
+24. `b0d25cd` Landing 5 shard mints (7 shards + 6 consumer updates)
+25. `eca6d2a` Landing 5 BLOCKING-fix + Seam Phase D audit
+26. `e79a56d` Landing 5+ A24 + A25 discharge
+
+**~26 arc-commits + ~14 prior-session commits = ~40 commits total this session.**
+
+### Landing 6+ forward-promises (multi-tick arc)
+
+- **Rust runtime** for the 8 new .mirror shards (bootstrap/src/gift.rs, subject.rs, subject_visibility.rs, eigenboard.rs, gift_lens.rs); ~5000-7200 LOC per Taut #96 D10
+- **CLI subcommands**: `mirror gift`, `mirror subject`, `mirror eigenboard`
+- **MCP tools**: gift/subject/eigenboard interfaces at MCP altitude
+- **Empirical demos**: actual gift given/received/paid-forward against real substrate
+- **A26-A32** Alex-adjudications from Landing 5+ (multi-role subject_instance; @arxiv family-root; pay_forward signature update Path A; subject-absent commutator queue)
+- **Other outstanding Alex-adjudications**: ~22 from Seam L3+L4 audit; 5 novel judgment items
+
+### Substrate state at close
+
+- 168 nodes / 6982 edges (was 165 / 6676)
+- Fiedler 0.0606 (was 0.0612)
+- 466 mirror shards (was 458)
+- 554 markdown files (was 542)
+- Full @gift arc substrate-decl'd; shards live; Seam-ratified at zero blockers; Reed-adjudicated Seam-adjudicable items enacted inline; only remaining work is Landing 6+ Rust runtime and Alex-adjudication maturation
+
+---
+
 ### 🎯 SCOPE A /LOOP SHIP COMPLETE (2026-07-14; Reed autonomous per Alex "ship it until unresolvable ambiguity")
 
 The /loop end2end @roomba run is empirically live at Scope A. Alex's
