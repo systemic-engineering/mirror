@@ -182,6 +182,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "fragmentation-spectral"
+version = "0.1.0"
+dependencies = [
+ "fragmentation",
+ "hex",
+ "sha2",
+]
+
+[[package]]
 name = "generic-array"
 version = "0.14.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -430,6 +439,7 @@ dependencies = [
  "fate",
  "fragmentation",
  "fragmentation-git",
+ "fragmentation-spectral",
  "libc",
  "prismqueer 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde",
