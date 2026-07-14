@@ -292,8 +292,10 @@ in @epistemologic/math/sheaf_laplacian
 #                                     preserve coherence at the lower
 #                                     altitude?" question.
 #
-#   @mirror/petri (Mara 2026-07-14 spec, pending Alex adjudication on
-#                                     rename per Taut D8)
+#   @mirror/petri (Mara 2026-07-14 spec `b3ec316`; rename adjudicated
+#                                     by Alex 2026-07-14 in-transcript
+#                                     "Rename yes. The substrate tells
+#                                     us what it wants to be called.")
 #                                   — the sub-Turing safe-region
 #                                     analyzer. Alex's 2026-07-14
 #                                     composition: coherence-climb is

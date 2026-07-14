@@ -2209,7 +2209,7 @@ LOC total.
   Covered-System dataflow). Prevents future name-drift confusion.
   Documentation only; no structural change.
 
-### 9.5 Forward-promise — mirror.spec add-target (Scope C)
+### 9.4 Forward-promise — mirror.spec add-target (Scope C)
 
 **Taut-D9 surfacing.** `mirror.spec` (445 LOC) has zero references to
 `sel`, `subject`, `property`, or `petri` today. Scope A + Scope B
@@ -2227,7 +2227,7 @@ blocking. Post-landing, mirror.spec MAY want to:
 
 All three are Scope C consumer-pull; no cascade this tick.
 
-### 9.4 Bootstrap Rust (deferred to consumer-pull)
+### 9.5 Bootstrap Rust (deferred to consumer-pull)
 
 - `bootstrap/src/subject.rs` — Rust realization of @subject carriers +
   bilaterals.
@@ -2488,7 +2488,7 @@ soft additions folded into this revision's §9.3) and adjudication
 routing (D2 confirmed A6's `@consent/enforcement` direction is
 substrate-honest per Reed-adjudicated RA1).
 
-### 11.4 Sub-Turing witness — Alex Wolf, "The Drone in the Field" (2026-07-14)
+### 11.6 Sub-Turing witness — Alex Wolf, "The Drone in the Field" (2026-07-14)
 
 Published 2026-07-14 by Alex Wolf at `~/dev/systemic.engineering/blog/
 stories/3published/Story - The Drone in the Field.md`. A sub-Turing
