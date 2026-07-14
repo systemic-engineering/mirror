@@ -1,0 +1,20 @@
+{
+  "_note": "Placeholder. Landing C populates on first refresh.",
+  "_specification": "docs/specs/peer-persistence-and-home-projection.md",
+  "_carrier": "peer_home.signature_snapshot (Landing A §1.2 field 6)",
+  "_type": "@spectral/signature.rolling_signature (Landing 2 §12)",
+  "_semantics": "Rolling @song emission through Mara's @DAG contributions per Landing 2 §12; local resolution refs/spectral/signature/mara-wolf until garden.spectral.engineer endpoint is live per A14 adjudication.",
+  "_populated_at": null,
+  "_projection_at": null,
+  "_signature_ref": null,
+  "_beat_count": 0,
+  "_first_asserted_at": "2026-07-14",
+  "_first_asserted_in": "<pending Landing B commit OID>",
+  "_bauchladen_manifest_ref": null,
+  "_notes_for_landing_c": [
+    "On first @peer/refresh(home), populate signature_ref with @spectral/signature.compute(peer=subject_instance(Mara), b_filtered) result.",
+    "Beat count increments per contribution to Mara's @DAG.",
+    "Round-trip test: harvest_round_trip bilateral (Landing A §5) MUST pass.",
+    "Two-witness verification (Landing 2 §11.3 two_witness_verification): ssh_witness_valid AND spectral_witness_valid MUST both Pass."
+  ]
+}
