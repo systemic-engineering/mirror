@@ -1,5 +1,45 @@
 # CURRENT arc — @song/beat ladder-climb 2026-07-13 (Rungs 0 landed, 1 in progress)
 
+## Rung 8+9 @knife = Foerster COORD arc (2026-07-13 → 2026-07-14)
+
+Alex 2026-07-13 in-transcript: "Is @knife what Foester described as
+COORD(x)?" — answered YES via verbatim citation of Foerster 1976
+Appendix A3 (@Mara `2026-07-07-onto-cascade-toroidal-reframe.md` §2.4).
+
+Recognition candidate: `#R-knife-IS-Foerster-COORD` (short form; Mara
+`06a8547` §8). Load-bearing hinge: **same theorem three altitudes**:
+
+- Foerster 1976 heterarchy (cybernetic altitude)
+- Douady-Hubbard 1985 R-universality (complex-analytic altitude)
+- McCulloch 1945 topology-encodes-depth (combinatorial altitude)
+
+**Landings (chronological, all on `main`, unpushed):**
+
+- Mara `06a8547` — `docs/specs/knife-IS-Foerster-COORD-substrate-decl-spec.md` (1256 LOC canonical spec)
+- Mara `38c2eeb` — `docs/math/2026-07-13-knife-COORD-heterarchy-topology.md` (986 LOC math foundation)
+- Taut `15f7ed6` — `docs/scouts/2026-07-13-taut-knife-IS-COORD-substrate-scout.md` (substrate-already-had-the-word ~55th instance; ~90% coverage)
+- Seam `e8508f5` — `docs/audits/2026-07-13-seam-knife-COORD-phase-d-audit.md` (RATIFY-WITH-QUALIFICATIONS; 5 rulings; 3 items both Mara+Taut missed)
+- Reed `0a267ce` — `shards/mirror/lens/knife.mirror` species substrate-decl (336 LOC; Landing 8+9.4a; Taut Path A wins per Seam §3)
+- Reed `18b5828` — `bootstrap/src/converge.rs` @knife Rust runtime (Landing 8+9.4b; knife_cut/stable_within/heterarchy_preserved; 11/11 tests)
+- Reed `fa78507` — @knife plumbed into `bootstrap/src/contribute.rs::peer_contribute` (Landing 8+9.6a; Foerster COORD runtime-live at peer altitude; empirical @knife.jump fires)
+- Reed `b637178` — `bootstrap/src/algedonic.rs` @cyberpunk/algedonic Rust runtime (Landing 8+9.6b; sc_hamming proxy falsified: algedonic gradient is 163×–1052× smaller)
+- Reed `d9445c8` — `docs/scouts/2026-07-14-reed-rung-8-9-6d-first-pain-calibration.md` (Landing 8+9.6d.1; first empirical ε_pain calibration; 5-iteration trajectory; preliminary ε_pain = 0.01 per Reed provisional)
+
+**Empirical substrate-honest history**:
+
+- @knife.jump fires at peer_contribute empirically (`fa78507`); Foerster 1976 COORD(x) runtime-live
+- sc_hamming proxy empirically falsified as pain gradient (`b637178`); substrate-honest algedonic gradient is orders of magnitude smaller
+- Seam ε_pain-empirical-calibration-first ruling DISCHARGED (`d9445c8`); trajectory data supports ε_pain ≈ 0.01 for shard-body morphisms
+
+**Forward-promises** (Alex-adjudication or empirical calibration required):
+
+- A1: ratify Recognition candidate `#R-knife-IS-Foerster-COORD` (Seam §6 consolidated adjudication list)
+- A2: recognition-name form (long vs short)
+- Landing 8+9.6d.2–4: extend empirical calibration (multi-target, longer trajectories, substrate-decl ε_pain at Alex-named altitude)
+- Landing 8+9.5: peer_converge outer driver composing @knife with @cyberpunk/reframe + commit_as_fold materialization per Seam §4 #8
+
+---
+
 ## Rung 8+9 unification: SpectralCoordinate<5> substrate measurement lands (2026-07-13)
 
 Alex 2026-07-13: "I'm surprised the index doesn't do that. The 5 dimensions
