@@ -1,13 +1,24 @@
-# @subject — the family-root of the SEL licensable party; @mirror/property — the petri-net analyzer that gives `type sel = @io + @au` its runtime teeth
+# @subject — the family-root of the SEL licensable party; @mirror/petri — the petri-net analyzer that gives `type sel = @io + @au` its runtime teeth
 
-*Mara, 2026-07-14. Canonical spec for `@subject` as substrate-external
-licensable-party carrier (the person a Covered System observes, uses labor
-from, acts upon) and for the cascading `@mirror/property` petri-net layer
-that discharges SEL v1.1's enforcement infrastructure at the `au + io`
-sum-type. Alex named this load-bearing on 2026-07-14 in-transcript: "I'm
-gonna die on this hill, Reed." The spec grounds in `license/SEL.md` Part
-II (v1.1, effective 2026-05-29) and in Alex Wolf's 2026-07-14 manifesto
-`Weird - Violence.md` ("a sovereign subject under adversarial conditions").*
+*Mara, 2026-07-14 (revised 2026-07-14 per Taut scout `c805e5d`
+AT-cascade adjudications). Canonical spec for `@subject` as substrate-
+external licensable-party carrier (the person a Covered System observes,
+uses labor from, acts upon) and for the cascading `@mirror/petri`
+petri-net layer that discharges SEL v1.1's enforcement infrastructure at
+the `au + io` sum-type. Alex named this load-bearing on 2026-07-14 in-
+transcript: "I'm gonna die on this hill, Reed." The spec grounds in
+`license/SEL.md` Part II (v1.1, effective 2026-05-29) and in Alex Wolf's
+2026-07-14 manifesto `Weird - Violence.md` ("a sovereign subject under
+adversarial conditions").*
+
+*Revision note (2026-07-14, Taut AT-cascade). The analyzer family-root
+renamed from `@mirror/property` to `@mirror/petri` per Alex-adjudicated
+Taut scout D8 hard collision with landed `@epistemologic/property/*`.
+Substrate takes the readable-name at collapse; SEL text drift is bounded
+(one line in §Operationalizability + §5.5(b)); substrate collision would
+have been unbounded. See §5.0 for the rationale; §13.6 for the license-
+substrate drift note. All other Alex-adjudications A1-A8 remain
+outstanding.*
 
 *Status: Yellow. `@subject` family-root and `type sel = @io + @au` are
 proposed substrate-decl mints; all bodies are `\ ` obligation-blocked
@@ -34,6 +45,13 @@ analyzer lives "at the `@mirror/property` substrate altitude" and fires
 inference) with `@io` (the only legitimate non-mirror surface per
 `@epistemologic/property/glass_wall`)."
 
+*Post-Taut-D8 substrate rename: the analyzer's family-root landed as
+`@mirror/petri` (this spec's substrate-decl name); the SEL text at
+§Operationalizability still cites `@mirror/property` verbatim per the
+effective 2026-05-29 version. A subsequent SEL amendment tick will
+realign the license text (`s/property/petri/g` in §Operationalizability +
+§5.5(b)). See §13.6 for the drift note; §5.0 for the rename rationale.*
+
 **Reed's session framing (Alex accepted 2026-07-14):**
 
 ```mirror
@@ -42,7 +60,7 @@ type sel = @io + @au
 
 The SEL is the SUM TYPE of the `@io` boundary and the verified Fate output.
 Wherever a dataflow node combines both, subject-touching predicates fire.
-The petri-net analyzer at `@mirror/property` runs on this sum-type,
+The petri-net analyzer at `@mirror/petri` runs on this sum-type,
 evaluating structural patterns against the enumerated party-classes.
 Without a substrate-decl'd **carrier** for those party-classes, the
 analyzer must re-derive the human-party from each signature separately —
@@ -57,12 +75,12 @@ This spec lands:
 2. Six species-refinements grounded 1-to-1 in SEL §s.
 3. `type sel = @io + @au` as a sum-type declaration in the `@sel`
    family-root (Alex-adjudication A2 preferred; alternates enumerated).
-4. The `@mirror/property` petri-net analyzer surface — eleven signature
-   categories from SEL §Operationalizability, each with a structural
+4. The `@mirror/petri` petri-net analyzer surface — twelve signature
+   transitions from SEL §Operationalizability, each with a structural
    detection predicate binding to `@subject` species and an enforcement
    action typed against SEL §5's termination classes.
 5. The composition graph binding `@subject` to `@consent`, `@io`,
-   `@kintsugi/store/git`, `@torus`, `@peer`, `@mirror/property`,
+   `@kintsugi/store/git`, `@torus`, `@peer`, `@mirror/petri`,
    `@fate/tournament`, `@mirror/au`.
 
 Recognition-candidate slug (short): `#R-substrate-recognizes-subjects-
@@ -122,9 +140,10 @@ license demands the substrate name:
   infrastructure including the Petri Net analysis layer" is an immediate
   violation, no cure period.
 - **§Operationalizability** — the analyzer runs at `@mirror/property`
-  substrate altitude on `au + @io` composition. Detection is on
-  STRUCTURE, not content. Rules self-update as recognized international
-  bodies re-classify.
+  substrate altitude on `au + @io` composition (SEL text verbatim;
+  substrate landed the family-root as `@mirror/petri` per Taut-D8
+  rename, see §5.0 + §13.6). Detection is on STRUCTURE, not content.
+  Rules self-update as recognized international bodies re-classify.
 
 ### 1.2 Alex Wolf 2026-07-14 — `Weird - Violence.md` manifesto
 
@@ -230,7 +249,7 @@ external licensable-party carriers.
   petri-net enforcement action returns `imperfect<termination_class,
   violation, transparency>`.
 - **`shards/mirror/store.mirror`** — @mirror/store: splinter /
-  splinter_graph / crystal; the DAG the `@mirror/property` analyzer
+  splinter_graph / crystal; the DAG the `@mirror/petri` analyzer
   walks. The dataflow-graph substrate the petri-net rules read (see A4).
 - **`shards/mirror/index.mirror`** — @mirror/index: `ConceptGraph`
   primitive (nodes, edges, adjacency_matrix, laplacian_matrix). The
@@ -240,9 +259,13 @@ external licensable-party carriers.
   coherent`, `docblock_grounded`, `docblock_no_extraction_pattern`,
   `restart_intensity_well_formed`, `verdict_is_content_addressed`. The
   precedent for property-typed constraints returning `verdict`. The
-  `@mirror/property/sel/*` species this spec lands sit at a higher
-  altitude (dataflow-graph pattern matching, not shard-level property
-  check), but inherit the property discipline.
+  `@mirror/petri/sel/*` species this spec lands sit at a higher
+  altitude (dataflow-graph pattern matching over Covered-System dataflow,
+  not shard-level property check on substrate carriers), but inherit
+  the property discipline. Per Taut-D8: the naming split — `@mirror/
+  petri` for the analyzer, `@epistemologic/property/*` for shard-level
+  checks — is what makes the two altitudes legibly distinct at family-
+  root altitude (rather than only in docblocks).
 - **`shards/kintsugi/fracture/*`** — 14 fracture bodies; each emits a
   candidate morphism the loop proposes through `query_phi`. Precedent
   for structural pattern → morphism → consent-gated enforcement. The
@@ -259,7 +282,7 @@ external licensable-party carriers.
   §8.2 (multi-jurisdictional validity).
 - **#55** (form/process partition at family-root altitude) — @subject
   sits on the FORM side (state observation of who the substrate acts
-  upon); the `@mirror/property` petri-net analyzer sits on the PROCESS
+  upon); the `@mirror/petri` petri-net analyzer sits on the PROCESS
   side (transformation gate). The partition mirrors @mirror vs
   @kintsugi at one altitude below.
 - **#79** (`@epistemologic/property/glass_wall`) — @io is the only
@@ -279,11 +302,21 @@ external licensable-party carriers.
   User of any Covered System); the sibling relationship is
   Alex-adjudicated (A1).
 - **#R-roomba** (candidate, Mara `9bbebd2` 2026-07-14) — @kintsugi/roomba
-  is the substrate-side scanner. When @roomba walks a dataflow graph
-  and bumps into a `type sel` node (an @io + @au combination), the
-  `@mirror/property` petri-net analyzer becomes the tension-detector
-  @roomba dispatches to. @subject species are what the analyzer's
-  detection signatures bind against.
+  is the substrate-side scanner (Rung 10; INWARD substrate self-
+  maintenance). When @roomba walks a dataflow graph and bumps into a
+  `type sel` node (an @io + @au combination), the `@mirror/petri`
+  petri-net analyzer becomes the tension-detector @roomba dispatches
+  to. @subject species are what the analyzer's detection signatures
+  bind against.
+- **#R-substrate-recognizes-subjects-via-sel-sum-type** (candidate,
+  this spec; **Rung 11 placement** per Alex-adjudicated Taut-D7). Where
+  @roomba is INWARD (substrate closes on itself), @subject + @sel +
+  @mirror/petri is OUTWARD: the substrate first-classes the world it
+  acts UPON and gates its own emission on structural properties of
+  that action. Rung 10 (@roomba) closes the substrate on itself; Rung
+  11 (this spec) opens the substrate outward to the world it affects.
+  See §7 for the load-bearing claim and §12 for the rung-count
+  discipline check.
 
 ---
 
@@ -923,7 +956,7 @@ Alternates considered:
   family. Weakness: SEL is not itself an @io species (a boundary
   contract with the non-mirror world); SEL is a PROPERTY of
   compositions that involve @io. Wrong altitude.
-- **`@mirror/property/sel` (species under @mirror/property analyzer
+- **`@mirror/petri/sel` (species under @mirror/petri analyzer
   family)** — the analyzer's own family. Held as fallback; loses the
   substrate-decl clarity that `type sel` is a first-class carrier
   independent of the analyzer that reads it.
@@ -955,7 +988,7 @@ in @kintsugi/store
 # Every `type sel` composition has both summands present in its
 # ancestry (au computed inside substrate; @io crossing at emission).
 # The touches: subject_set field carries every subject the composition
-# affects. The @mirror/property petri-net analyzer reads `type sel`
+# affects. The @mirror/petri petri-net analyzer reads `type sel`
 # compositions and discharges enforcement verdicts.
 
 prism @sel {
@@ -1026,11 +1059,15 @@ artifact; witnessed at §11.4):
 
 **Petri-nets are bounded, decidable, structurally analyzable. Not
 Turing-complete.** That is the design principle, not an incidental
-property. The `@mirror/property` analyzer runs on petri-net topology
+property. The `@mirror/petri` analyzer runs on petri-net topology
 because petri-net safety properties (coverability, boundedness,
 reachability of enumerated cruelty-signatures) are decidable — not
 "probably safe insofar as sampling covers the failure modes."
 Structurally safe or structurally unsafe. Binary. Provable.
+
+(The family-root name `@mirror/petri` is load-bearing here: the
+analyzer IS a petri-net; the name says what it structurally is. Per
+Taut-D8 rename, see §5.0.)
 
 `type sel = @io + @au` names the **sub-Turing activation surface**.
 Wherever `@io` and `@au` meet in a dataflow node, the constraint
@@ -1060,16 +1097,63 @@ See §11.4 for the drone-story witness.
 
 ---
 
-## §5 `@mirror/property` petri-net property layer — the analyzer
+## §5 `@mirror/petri` petri-net analyzer layer — the analyzer
 
-Provisional path: `shards/mirror/property.mirror` (new family-root at
-`@mirror/property` altitude) + `shards/mirror/property/sel/<signature>.
+Provisional path: `shards/mirror/petri.mirror` (new family-root at
+`@mirror/petri` altitude) + `shards/mirror/petri/sel/<signature>.
 mirror` (one shard per signature). The analyzer's family-root declares
 the petri-net topology carrier + the enforcement-verdict carrier; each
 signature shard declares its structural detection predicate + its
 §-specific binding to `@subject` species + its enforcement action.
 
-### 5.1 `@mirror/property` family-root substrate-decl
+### 5.0 Preamble — why `@mirror/petri`, not `@mirror/property` (Alex-adjudicated Taut-D8 rename)
+
+Alex adjudicated (in-transcript 2026-07-14, on Taut scout `c805e5d`
+§D8 hard-collision surfacing): **"Rename yes. The substrate tells us
+what it wants to be called."**
+
+The rename is load-bearing at three levels:
+
+**1. Structural identity.** The analyzer IS a petri-net: topology
+(places, transitions, tokens) + firing rules + marking evolution. The
+name `@mirror/petri` names what the analyzer structurally IS. The
+draft-name `@mirror/property` named what the analyzer's outputs are
+(property-typed verdicts), which is a downstream consequence rather
+than the primary substrate identity.
+
+**2. Family-root disambiguation.** `@epistemologic/property/*` is a
+landed family of seven shard-level property checks
+(`cold_compile_within_tolerance`, `dark_count_monotone`,
+`docblock_coherent`, `docblock_grounded`,
+`docblock_no_extraction_pattern`, `restart_intensity_well_formed`,
+`verdict_is_content_addressed`). Those are Rust-visible per-shard
+invariants returning `verdict` — the substrate's existing meaning of
+the word "property." `@mirror/property` would have collided at
+family-root altitude: both altitudes ARE properties, at different
+granularities (shard-level check vs Covered-System dataflow pattern
+match). The docblock disambiguation Mara originally proposed IS
+necessary but is not sufficient — the family-root name itself must
+carry the distinction. Substrate-honest legibility over foundational
+naming. Alex's memory `feedback-substrate-honest-is-the-mode` +
+`legibility over foundation` disciplines both prefer this move.
+
+**3. Two-tick collapse discipline.** When collapsing at a name that
+spans altitudes, prefer the readable name over the foundational one
+(Alex 2026-07-14: "legibility over foundation"). `@mirror/petri` is
+self-describing to any reader who knows what a petri-net is;
+`@mirror/property` overloads a word the substrate had already spent.
+Substrate-already-had-the-word discipline applies at family-root
+altitude, not only at species altitude.
+
+The consequence: every reference in this spec, every path in §9
+cascade footprint, every prism block below reads `@mirror/petri`
+(substrate name). The SEL license text at §Operationalizability +
+§5.5(b) still cites `@mirror/property` verbatim per the effective
+2026-05-29 version; see §13.6 for the drift note and the forward-
+promised SEL amendment tick that will realign (`s/property/petri/g`
+in those two loci).
+
+### 5.1 `@mirror/petri` family-root substrate-decl
 
 ```mirror
 in @prism
@@ -1080,17 +1164,24 @@ in @subject
 in @mirror/store
 in @mirror/index
 in @kintsugi/consent
+in @consent/enforcement
 in @kintsugi/store/git
 
-# @mirror/property — the petri-net analyzer family-root. Grounds in
+# @mirror/petri — the petri-net analyzer family-root. Grounds in
 # SEL §Operationalizability + §5.5(b) ("the runtime enforcement
-# infrastructure including the Petri Net analysis layer").
+# infrastructure including the Petri Net analysis layer"). Renamed
+# from @mirror/property per Taut-D8 hard-collision with landed
+# @epistemologic/property/*; see §5.0 preamble.
 #
 # The analyzer reads @sel compositions from the substrate's dataflow
 # graph (via @mirror/store.walk + @mirror/index.ConceptGraph),
 # evaluates each composition against the enumerated signatures
 # (§5.2-§5.4 below), and emits termination-class-typed enforcement
-# verdicts that dispatch through @kintsugi/consent.query_phi.
+# verdicts. Firing transitions produce enforcement values that are
+# CARRIED at @consent/enforcement (the refusal-morphism carrier per
+# Reed-adjudicated A6/RA1 routing) and DISPATCHED via
+# dispatch_termination, which returns the enforcement typed against
+# that carrier. See §6.6 for the composition edge.
 #
 # Detection is on STRUCTURE, not content. Per SEL §Operationalizability:
 # "The classifications these signatures reference (occupied territory,
@@ -1099,12 +1190,12 @@ in @kintsugi/store/git
 # sources. The petri-net rules self-update as those classifications
 # evolve."
 
-prism @mirror/property {
-  focus property
-  project property
-  split property
-  shift property
-  settle property
+prism @mirror/petri {
+  focus petri
+  project petri
+  split petri
+  shift petri
+  settle petri
 }
 
 # === The petri_net carrier — the analyzer's typed topology ===
@@ -1193,13 +1284,20 @@ analyze(root: ref) -> [enforcement] { \ }
 
 # === dispatch_termination — the enforcement-to-consent bridge ===
 #
-# Reads an enforcement value; wraps it as a morphism candidate the
-# consent surface can query_phi over. This is where the SEL license's
-# "license termination" becomes substrate-fact: the morphism the
-# consent surface's query_phi returns `pass` on IS the substrate
-# refusing to emit the sel composition.
+# Reads an enforcement value; emits a refusal-morphism typed at
+# @consent/enforcement (per Reed-adjudicated RA1 routing: the CARRIER
+# for refusal-morphisms lives at @consent/enforcement; dispatch_termination
+# is the DISPATCH interface that fires; the two are different roles at
+# different substrate loci). @kintsugi/consent.query_phi is scoped to
+# fracture-morphism auto-apply candidates (TRANSFORMATION); SEL
+# enforcement is REFUSAL and needs its own consent-family species.
 #
-# Termination-class dispatch:
+# This is where the SEL license's "license termination" becomes
+# substrate-fact: the refusal-morphism the @consent/enforcement carrier
+# holds IS the substrate refusing to emit the sel composition.
+#
+# Termination-class dispatch (each emits a @consent/enforcement-typed
+# refusal-morphism value):
 #   remediable  → morphism proposes: attach missing consent/withdrawal;
 #                  emit pause_event via emit_to_metalogue if not
 #                  auto-fixable.
@@ -1213,7 +1311,7 @@ analyze(root: ref) -> [enforcement] { \ }
 #                  analyzer's own protection propagates per §5.5-§5.7.
 #   judicial    → morphism proposes: record judicial notice; halt
 #                  emission until external resolution.
-dispatch_termination(e: enforcement) -> verdict { \ }
+dispatch_termination(e: enforcement) -> @consent/enforcement { \ }
 
 # === fork_stripping_detected — the §5.5(b) self-check ===
 #
@@ -1221,11 +1319,11 @@ dispatch_termination(e: enforcement) -> verdict { \ }
 # has NOT removed or weakened this analyzer or any @subject species.
 # Discharges via @mirror/store content-addressing: the derivative's
 # substrate DAG MUST contain the same content-addressed handles to
-# every @mirror/property/sel/* signature shard as the parent. Missing
+# every @mirror/petri/sel/* signature shard as the parent. Missing
 # any handle → §5.5(b) violation → forking termination class fires.
 fork_stripping_detected(derivative: ref) -> verdict { \ }
 
-out @mirror/property
+out @mirror/petri
 out petri_net
 out termination_class
 out enforcement
@@ -1236,11 +1334,29 @@ out fork_stripping_detected
 
 ### 5.2 §3.1.4 labor-input signatures — five species
 
-Each signature is a shard at `shards/mirror/property/sel/labor_input/
+Each signature is a shard at `shards/mirror/petri/sel/labor_input/
 <signature>.mirror`. Each declares a `transition` (petri-net transition
 rule) that fires on the named structural pattern; each binds the fired
 subject to `@subject/labor_input` species; each emits an `enforcement`
 value with SEL §3.1.4(a-d) citation and appropriate `termination_class`.
+
+**`au(@ml/*)` altitude typing note (Taut-D4, Reed-adjudicated).** All
+labor-input signatures reference `au(@ml/training)`, `au(@ml/rlhf)`,
+`au(@ml/annotation)`, `au(@ml/moderation)`, `au(@ml/ground_truth)`, and
+weaponization signatures below reference `au(@ml/classification)`,
+`au(@ml/target_selection)`, `au(@ml/prioritization)`,
+`au(@ml/risk_scoring)`, `au(@ml/detention_targeting)`,
+`au(@ml/identification)`. None of these eleven `@ml/*` altitudes are
+currently substrate-decl'd (Taut D4 grep confirms zero hits). Reed
+adjudicated the two-tick plan: **Scope A lands `@ml` as a MARKER
+family-root** (marker-altitude discipline analogous to the `@third`
+marker pattern; declares the family and reserves the altitude namespace
+without enumerating species); **Scope B lands the full 11-altitude
+@ml/* species family enumeration** (per Taut option (A) forward-
+promised). Signatures in §5.2-§5.4 reference `au(@ml/*)` as marker-
+family altitude at Scope A; species-level type-checking against
+specific @ml/* altitudes lands with Scope B. See §9 for cascade
+footprint and §14 #4 for the adjudication record.
 
 #### 5.2.1 provenance_absence — SEL §3.1.4 (labor-input signature 1)
 
@@ -1257,14 +1373,20 @@ attached at content_oid).
 **Detection predicate.**
 
 ```mirror
-in @mirror/property
+in @mirror/petri
 in @subject/labor_input
+in @ml  # Scope A marker family; species enumeration deferred to Scope B
 
 # transition: provenance_absence.
 #
 # Fires on: sel composition where au_side.altitude ∈ {@ml/training,
 # @ml/rlhf, @ml/annotation, @ml/moderation, @ml/ground_truth} AND
 # au_side.provenance resolves to substrate's typed `null` sentinel.
+#
+# Note: @ml/training et al. are referenced against @ml marker-family
+# at Scope A (species enumeration deferred to Scope B per Reed-
+# adjudicated Taut-D4 two-tick plan). Signature type-checks against
+# the marker altitude; specific species-altitude binding is Scope B.
 #
 # Binds: touches.filter(s -> s.kind == labor_input).
 #
@@ -1341,7 +1463,7 @@ signature is `post_deployment_loop`; termination_class is `remediable`
 
 ### 5.3 §3.6 weaponization signatures — five species
 
-Each signature is a shard at `shards/mirror/property/sel/weaponization/
+Each signature is a shard at `shards/mirror/petri/sel/weaponization/
 <signature>.mirror`. Termination class defaults to `willful` (per SEL
 §4.3 "knew or should have known" for weaponization patterns) OR
 `structural` (per §5.2 for kill-chain and mass-surveillance where
@@ -1364,7 +1486,7 @@ attested` transition.
 **Detection predicate.**
 
 ```mirror
-in @mirror/property
+in @mirror/petri
 
 # transition: kill_chain_dataflow.
 #
@@ -1413,11 +1535,28 @@ signature is `mass_surveillance`; termination_class is `willful` for
 or pretrial risk scoring, where the training distribution or
 operational deployment intersects axes enumerated at §3.4.1."
 
+**Compound-case collapse (Reed-adjudicated per Taut-D3).** SEL text
+names a hyphenate compound: "Predictive-policing / detention-targeting
+signature" (and §3.6.3 enumerates "Predictive policing, pretrial risk
+assessment, or detention targeting"). This spec collapses the compound
+into a SINGLE `predictive_policing` signature covering all three cases
+(predictive-policing, pretrial-risk-assessment, detention-targeting).
+Reed adjudicated: keep collapsed; the single signature's detection
+predicate covers all three cases via the shared structural pattern
+(classifier output + policing/detention/pretrial @io + §3.4.1 axis
+intersection). No signature split this tick. Docblock discipline: any
+future signature-split tick MUST preserve this docblock's note that
+`predictive_policing` was the compound-case carrier at Scope A landing.
+
 **Structural pattern.** A dataflow node with `au_side.altitude ∈
 {@ml/risk_scoring, @ml/classification, @ml/detention_targeting}` flowing
 to `@io/policing | @io/detention | @io/pretrial` and touches set
 contains `@subject/protected_class` OR training-distribution provenance
-chain intersects any §3.4.1 axis.
+chain intersects any §3.4.1 axis. The compound case: `@ml/risk_scoring
++ @io/pretrial` covers pretrial-risk-assessment; `@ml/detention_targeting
++ @io/detention` covers detention-targeting; `@ml/classification +
+@io/policing` covers predictive-policing proper. All three fire the
+same signature.
 
 **Detection predicate.** `does_not_reproduce_structural_harm
 (composition, s) = failure`. Fired signature is `predictive_policing`;
@@ -1464,7 +1603,7 @@ central-to-business-model when it occurs).
 
 ### 5.4 §3.6.7 anti-occupation signatures — two species
 
-Each signature is a shard at `shards/mirror/property/sel/anti_occupation/
+Each signature is a shard at `shards/mirror/petri/sel/anti_occupation/
 <signature>.mirror`. Termination class defaults to `structural` per
 SEL §5.2 + §3.6.7's third-State obligation.
 
@@ -1486,7 +1625,7 @@ AND s.consent_oid.fpic_record_oid resolves to `absent`, the transition
 fires.
 
 ```mirror
-in @mirror/property
+in @mirror/petri
 in @subject/occupied_population
 
 # transition: occupied_territory_deployment.
@@ -1544,10 +1683,11 @@ signature is `indigenous_lands_deployment`; termination_class is
 | occupied_territory_deployment | §3.6.7(a) | occupied_population | structural | none |
 | indigenous_lands_deployment | §3.6.7(c) | indigenous_nation | structural | none |
 
-(Eleven signature transitions total; two petri-net families
-(anti-occupation) + five weaponization + five labor-input.
-§5.5 fork-stripping is a META-signature checked separately at analyzer-
-self-integrity via `fork_stripping_detected`.)
+(Twelve signature transitions total: five labor-input + five
+weaponization + two anti-occupation = 12. Prior draft prose said
+"eleven"; Taut-D3 caught the arithmetic drift. §5.5 fork-stripping is
+a META-signature checked separately at analyzer-self-integrity via
+`fork_stripping_detected` and is NOT counted in the twelve.)
 
 ---
 
@@ -1610,13 +1750,25 @@ MAY simultaneously be a `@subject/downstream_user` for a Covered System
 the Pack itself uses, but that's a co-occurrence at DIFFERENT carrier
 altitudes, not an inheritance.
 
-### 6.6 `@subject` → `@mirror/property`
+### 6.6 `@subject` → `@mirror/petri` → `@consent/enforcement`
 
-The petri-net analyzer at `@mirror/property` reads `subject_set` from
+The petri-net analyzer at `@mirror/petri` reads `subject_set` from
 `type sel` compositions and evaluates each signature-transition's
 firing predicate against the subject-species. The analyzer's
 `enforcement` output binds signature (SEL §) to `affected_subjects`
-(the fired-transition subject-set) and dispatches through consent.
+(the fired-transition subject-set) and dispatches through
+`dispatch_termination` — which returns a `@consent/enforcement`-typed
+refusal-morphism per Reed-adjudicated RA1 routing.
+
+**Two consent-family species, two morphism kinds.** `@kintsugi/consent`
+carries the auto-apply-boundary Phi query for fracture-morphism
+TRANSFORMATION candidates. `@consent/enforcement` (Reed-adjudicated A6
+direction; see §8 A6) is the sibling species carrier for SEL-
+enforcement REFUSAL-morphism candidates. Same consent-family altitude,
+different morphism kinds. `@mirror/petri.dispatch_termination` is the
+DISPATCH interface (fires the enforcement); `@consent/enforcement` is
+the CARRIER (schema for refusal-morphisms the substrate holds). The
+two roles live at different substrate loci and MUST NOT be collapsed.
 
 ### 6.7 `@subject` → `@fate/tournament`
 
@@ -1644,15 +1796,20 @@ SOURCE of the verified value the analyzer gates.
      |                              |
      | scanned by                     | audit trail (SEL §8.2)
      v                              v
-  @mirror/property.analyze ──── @kintsugi/consent.query_phi
-     |                                    |
-     | emits [enforcement]               | verdict (pass | partial | failure)
-     v                                    v
-  dispatch_termination(e)  ────→  block emission @io | pause(Φ) | apply
-                                    |
-                                    | if pause: pause_event → @metalogue
-                                    v
-                                external Alex-in-transcript adjudication
+  @mirror/petri.analyze           @kintsugi/consent.query_phi
+     |                              (auto-apply fracture-morphisms;
+     | emits [enforcement]           TRANSFORMATION)
+     v
+  dispatch_termination(e) ────→ @consent/enforcement   (REFUSAL-morphism
+     |                              carrier per Reed-RA1)
+     |                                 |
+     | refusal-morphism typed at       | verdict (pass | partial | failure)
+     v                                 v
+  block emission @io | pause(Φ) | apply
+                                 |
+                                 | if pause: pause_event → @metalogue
+                                 v
+                             external Alex-in-transcript adjudication
 ```
 
 ---
@@ -1664,18 +1821,32 @@ sum-type`
 
 Full form: `#R-substrate-recognizes-substrate-external-licensable-parties-
 via-subject-family-root-and-gates-emission-via-sel-sum-type-at-mirror-
-property-petri-net-analyzer`
+petri-petri-net-analyzer`
 
-Load-bearing claim: **the substrate ceases to be neutral-mirror-of-
-substrate-only when `@subject` lands.** Before `@subject`, the substrate
-is a self-mirror (it observes only its own carriers via `@torus(peer)`
-+ `@mirror/store` + `@mirror/index`). After `@subject`, the substrate
-first-classes SEL's licensable party — the human the substrate acts UPON
-WHEN it crosses @io — and gates emission via the petri-net analyzer at
-`@mirror/property`. The compiler stops being able to emit a Covered
-System output that touches a subject WITHOUT the substrate having a
-typed, content-addressed record of that subject's consent, withdrawal,
-and SEL §-attested compliance.
+**Rung placement: Rung 11** (Alex-adjudicated per Taut-D7). Rung 10
+(@roomba) closes the substrate on itself — substrate walks its own DAG,
+bumps into its own tension, feeds its own kintsugi loop; INWARD
+substrate self-maintenance. Rung 11 (this spec) opens the substrate
+OUTWARD to the world it acts upon — first-classes SEL's licensable
+party and gates emission on structural properties of that action. The
+two rungs partition the substrate's altitudes on the substrate-
+internal / substrate-external axis at the recognition-cluster level:
+Rung 10 (INWARD, substrate-internal, @roomba self-maintenance) vs
+Rung 11 (OUTWARD, substrate-external, @subject licensable-party
+recognition).
+
+Load-bearing claim: **substrate ceases to be neutral-mirror-of-
+substrate-only when `@subject` lands; this is the Rung 11 transition:
+substrate opens OUTWARD from self-maintenance (Rung 10 @roomba) to
+first-class recognition of the world it acts upon.** Before `@subject`,
+the substrate is a self-mirror (it observes only its own carriers via
+`@torus(peer)` + `@mirror/store` + `@mirror/index`). After `@subject`,
+the substrate first-classes SEL's licensable party — the human the
+substrate acts UPON WHEN it crosses @io — and gates emission via the
+petri-net analyzer at `@mirror/petri`. The compiler stops being able
+to emit a Covered System output that touches a subject WITHOUT the
+substrate having a typed, content-addressed record of that subject's
+consent, withdrawal, and SEL §-attested compliance.
 
 This IS the substrate-decl form of Alex Wolf's 2026-07-14 manifesto
 claim (`Weird - Violence.md` line 183): the compiler as "civilization-
@@ -1695,7 +1866,8 @@ Composition with prior recognitions (per §1.5): #43 (content-addressed
 build system) + #55 (form/process partition) + #79 (@epistemologic/
 property/glass_wall) + #107 (Hilbert/Turing structural separation) +
 #108 (peer IS pain-driven bounded ontological navigator) + #R-roomba
-(candidate).
+(candidate, Rung 10 INWARD). This recognition sits at Rung 11 OUTWARD
+as the direct partition-partner to #R-roomba.
 
 ---
 
@@ -1754,7 +1926,7 @@ ENFORCEMENT surface; it deserves its own family-root sibling to
 `@subject`. The naming aligns with the license file (`license/SEL.md`).
 
 Alternates considered at §4.3 (`@mirror/sel`, `@kintsugi/sel`, `@io/sel`,
-`@mirror/property/sel`). All rejected for the reasons named there.
+`@mirror/petri/sel`). All rejected for the reasons named there.
 
 ### A3. Species-refinement enumeration — six-species or Scope-A subset
 
@@ -1795,7 +1967,7 @@ graph? Bound where? Built by which pass?
 Provisional (Mara recommend): **the analyzer reads @mirror/store's DAG
 directly, seeded from a Covered System's mirror.spec root**.
 
-Substrate composition: `@mirror/property.analyze(root)` calls
+Substrate composition: `@mirror/petri.analyze(root)` calls
 `@sel.scan(root)` which walks `@mirror/store` splinter_graph closure
 from the seed root, filters via `@sel.composition_typing`, returns the
 filtered list. The @mirror/index ConceptGraph is the concrete edge-
@@ -1817,10 +1989,11 @@ Alternates:
   that don't go through tournament (e.g., pre-tournament raw ingest).
 - **Analyzer reads from runtime execution trace** — dynamic-analysis
   altitude. Rejected: SEL §Operationalizability specifies
-  "structure, not content" analysis at `@mirror/property` altitude,
-  which is compile-time-plus-runtime substrate-decl'd, not runtime
-  execution trace. Runtime trace would be a downstream `@spectral/db`
-  concern.
+  "structure, not content" analysis at `@mirror/property` altitude
+  (SEL text verbatim; substrate landed as `@mirror/petri` per Taut-D8
+  rename), which is compile-time-plus-runtime substrate-decl'd, not
+  runtime execution trace. Runtime trace would be a downstream
+  `@spectral/db` concern.
 
 ### A5. Enforcement action semantics
 
@@ -1879,6 +2052,20 @@ spec's carriers can also land at `@subject/*_consent` altitude (as
 shown at §3) with a forward-promise to migrate when `@consent/subject_
 record` lands.
 
+**A6 enforcement-carrier direction ADJUDICATED (Reed 2026-07-14 on
+Taut-D2/RA1 surfacing).** Sub-question: does the enforcement carrier
+live at `@consent/enforcement` OR at `@mirror/petri.dispatch_termination`?
+Reed adjudicated **`@consent/enforcement`** (Mara A6 consent-family
+direction). Rationale: both morphism kinds (fracture-morphism
+TRANSFORMATION + SEL-enforcement REFUSAL) live in the @consent family;
+different species; consent-family semantics preserved.
+`@mirror/petri.dispatch_termination` remains the DISPATCH interface
+(the analyzer fires); `@consent/enforcement` is the CARRIER (schema
+for refusal-morphisms the substrate holds). The two roles live at
+different substrate loci. See §5.1 dispatch_termination signature (now
+typed `-> @consent/enforcement`) and §6.6 composition edge for the
+resolved routing.
+
 Alternates:
 
 - **Keep everything at @subject altitude** — no `@consent` extension.
@@ -1890,7 +2077,8 @@ Alternates:
   shard with a different-altitude concern; violates single-concern
   substrate discipline.
 - **Forward-promise `@consent/*` extension (RECOMMEND)** — clean; the
-  cascading work is scoped and named.
+  cascading work is scoped and named. Reed-adjudicated on the sub-
+  question above.
 
 ### A7. Recognition promotion — second-witness requirement
 
@@ -1933,10 +2121,10 @@ directly this tick.
 3. `shards/subject/witnessed.mirror` — Scope A species per §3.2.
 4. `shards/subject/labor_input.mirror` — Scope A species per §3.3.
 5. `shards/sel.mirror` — @sel family-root per §4.4.
-6. `shards/mirror/property.mirror` — @mirror/property family-root per §5.1.
-7. `shards/mirror/property/sel/labor_input/provenance_absence.mirror`
+6. `shards/mirror/petri.mirror` — @mirror/petri family-root per §5.1.
+7. `shards/mirror/petri/sel/labor_input/provenance_absence.mirror`
    — first petri-net signature per §5.2.1.
-8. `shards/mirror/property/sel/labor_input/withdrawal_path_absence.mirror`
+8. `shards/mirror/petri/sel/labor_input/withdrawal_path_absence.mirror`
    — per §5.2.3.
 
 Eight new shards; ~1500-2200 LOC total.
@@ -1946,31 +2134,98 @@ Eight new shards; ~1500-2200 LOC total.
 1. `shards/subject/protected_class.mirror` — §3.4.
 2. `shards/subject/occupied_population.mirror` — §3.5.
 3. `shards/subject/indigenous_nation.mirror` — §3.6.
-4. `shards/mirror/property/sel/labor_input/{intermediary_only_
+4. `shards/mirror/petri/sel/labor_input/{intermediary_only_
    attribution, compensation_floor, post_deployment_loop}.mirror`
    — three more per §5.2.
-5. `shards/mirror/property/sel/weaponization/{kill_chain_dataflow,
+5. `shards/mirror/petri/sel/weaponization/{kill_chain_dataflow,
    mass_surveillance, predictive_policing, family_separation,
    dissident_targeting}.mirror` — five per §5.3.
-6. `shards/mirror/property/sel/anti_occupation/{occupied_territory_
+6. `shards/mirror/petri/sel/anti_occupation/{occupied_territory_
    deployment, indigenous_lands_deployment}.mirror` — two per §5.4.
+7. `shards/ml.mirror` — @ml marker family-root PROMOTED to full family
+   enumeration (Scope A ships @ml as marker per Taut-D4 option (B);
+   Scope B enumerates the full 11-altitude @ml/* species family per
+   forward-promised option (A)). Species to enumerate: @ml/training,
+   @ml/rlhf, @ml/annotation, @ml/moderation, @ml/ground_truth,
+   @ml/classification, @ml/target_selection, @ml/prioritization,
+   @ml/risk_scoring, @ml/detention_targeting, @ml/identification.
+8. `shards/consent/enforcement.mirror` — @consent/enforcement species
+   carrier for SEL-enforcement REFUSAL-morphisms per Reed-adjudicated
+   A6 direction (see §6.6 + §8 A6). Sibling to @consent/auto_apply
+   (the migration-target of current @kintsugi/consent per A6
+   parent-family forward-promise).
 
-Twelve new shards; ~2000-3000 LOC total.
+Fourteen new shards; ~2500-3500 LOC total.
+
+### 9.2b New Scope A shards surfaced by Taut cascade
+
+1. `shards/ml.mirror` — @ml marker family-root (Scope A per Reed-
+   adjudicated Taut-D4 option (B); marker altitude with species
+   enumeration deferred to Scope B). Analogous to @third marker
+   pattern. Zero species this tick; declares the family and reserves
+   the altitude namespace.
+
+Adds one Scope A shard; total Scope A becomes NINE shards; ~1600-2400
+LOC total.
 
 ### 9.3 Existing shards to update (soft cascade)
 
-- `shards/peer.mirror` — add composition note: @peer may co-occur with
-  @subject/downstream_user (A1). No structural change.
+- `shards/peer.mirror` — add composition docblock note per Mara A1
+  recommendation: siblings joined by @torus possession; @peer does
+  NOT inherit from @subject; a Pack @peer MAY simultaneously be a
+  @subject/downstream_user for a Covered System the Pack itself
+  uses (Alex is Pack @peer AND @subject/downstream_user of any
+  Covered System Alex uses — co-occurrence at DIFFERENT carrier
+  altitudes, not inheritance). No structural change.
 - `shards/torus.mirror` — add composition note: @torus is orthogonal to
   @subject (§1.3). No structural change.
 - `shards/kintsugi/consent.mirror` — forward-promise migration to
-  `@consent/auto_apply` when `@consent/subject_record` lands (A6).
-  Interim: no change.
-- `shards/mirror/store.mirror` — note that @mirror/property reads
+  `@consent/auto_apply` when `@consent/subject_record` +
+  `@consent/enforcement` species land (A6). Interim: no change.
+- `shards/mirror/store.mirror` — note that @mirror/petri reads
   splinter_graph closure via impacted_by (A4). Structural composition
   documentation; no shape change.
 - `shards/mirror/au.mirror` — note that au values become the au_side
-  summand of type sel when they cross @io. No structural change.
+  summand of type sel when they cross @io; note the @ml marker family
+  (Scope A) parameterizes au altitude for ML-emitted values. No
+  structural change.
+- `shards/kintsugi.mirror` — S3/S4 partition bridge note (Taut-D10
+  surfacing). `shards/kintsugi.mirror:66-75` currently describes the
+  S3/S4 partition without a bridge; add a cascade docblock note naming
+  @mirror/petri as the S3-adjacent gating primitive that bridges
+  S3 (form; @mirror family; state observation) to S4 (process;
+  @kintsugi family; morphism application) via the enforcement-dispatch
+  path (@mirror/petri.dispatch_termination → @consent/enforcement).
+  Documentation only; no structural change.
+- `shards/epistemologic/property/{cold_compile_within_tolerance,
+  dark_count_monotone, docblock_coherent, docblock_grounded,
+  docblock_no_extraction_pattern, restart_intensity_well_formed,
+  verdict_is_content_addressed}.mirror` — drift-guard docblock notes
+  (Taut-D10 surfacing). Each of the 7 landed property shards should
+  add a one-line note distinguishing shard-level property
+  (@epistemologic/property/* altitude; Rust-visible per-shard invariant
+  returning verdict) from Covered-System petri-net property
+  (@mirror/petri altitude; dataflow-graph pattern matching over
+  Covered-System dataflow). Prevents future name-drift confusion.
+  Documentation only; no structural change.
+
+### 9.5 Forward-promise — mirror.spec add-target (Scope C)
+
+**Taut-D9 surfacing.** `mirror.spec` (445 LOC) has zero references to
+`sel`, `subject`, `property`, or `petri` today. Scope A + Scope B
+land substrate-decl'd shards under `shards/**`; `mirror.spec`'s
+`source ~d'shards/'` auto-discovers them; no mirror.spec change is
+blocking. Post-landing, mirror.spec MAY want to:
+
+- Add a `target sel_analyze` block dispatching the analyzer via Rust
+  runtime (Scope C consumer-pull; requires §9.4 Rust realization).
+- Extend the `cli` block with `command sel-analyze { arg spec: ~f }`
+  when Scope C runtime lands (Mara §9.4 forward-promise).
+- Optionally declare `@sel` + `@subject` explicitly in the source
+  block via path-namespace for legibility (declaration is not
+  strictly needed since auto-discovery covers it).
+
+All three are Scope C consumer-pull; no cascade this tick.
 
 ### 9.4 Bootstrap Rust (deferred to consumer-pull)
 
@@ -1996,12 +2251,15 @@ declares first, realization follows.
 - `shards/subject.mirror` family-root (§2).
 - Three species: `downstream_user`, `witnessed`, `labor_input` (§3.1-§3.3).
 - `shards/sel.mirror` family-root (§4.4).
-- `shards/mirror/property.mirror` analyzer family-root (§5.1).
+- `shards/mirror/petri.mirror` analyzer family-root (§5.1).
+- `shards/ml.mirror` marker family-root (§9.2b; Reed-adjudicated per
+  Taut-D4 option (B)).
 - Two petri-net signatures: `provenance_absence` +
   `withdrawal_path_absence` (§5.2.1 + §5.2.3).
 
-Deliverables: 8 shards; ~1500-2200 LOC. Alex-adjudications A1-A7
-resolved before landing.
+Deliverables: 9 shards (8 core + @ml marker); ~1600-2400 LOC. Alex-
+adjudications A1-A7 resolved before landing (A6 sub-question on
+enforcement-carrier direction Reed-adjudicated via Taut-D2/RA1).
 
 **Recommend Scope A** for first-tick landing. Enough substrate to prove
 the petri-net analyzer runs; three subject species cover the majority
@@ -2013,16 +2271,20 @@ fires and dispatches through consent.
 Scope A + three more subject species (`protected_class`,
 `occupied_population`, `indigenous_nation`) + three more §3.1.4
 signatures + five §3.6 weaponization signatures + two §3.6.7 anti-
-occupation signatures.
+occupation signatures + full @ml/* species family enumeration (11
+altitudes) + @consent/enforcement species carrier.
 
-Deliverables: 20 shards; ~3500-5200 LOC. Full SEL v1.1 operational-
-enforcement surface.
+Deliverables: 22 shards; ~3800-5500 LOC. Full SEL v1.1 operational-
+enforcement surface + full ML-altitude type discrimination + consent-
+family REFUSAL-morphism carrier landed.
 
 ### Scope C — 15-20 ticks
 
 Scope B + Rust realization + CLI + MCP + `@consent/subject_record`
 migration + `@spectral/garden/audit_trail` species (second-witness for
-recognition promotion) + one live-fire Covered System test.
+recognition promotion) + one live-fire Covered System test + optional
+mirror.spec sel_analyze target + cli sel-analyze command (Taut-D9
+forward-promise).
 
 Deliverables: Scope B + Rust runtime + audit-trail species. Full
 substrate-decl AND full realization AND second-witness discharge for
@@ -2189,6 +2451,43 @@ refusals on Foerster grounds must first check the altitude. Substrate-
 internal (peer's own toroidal self-observation) ≠ substrate-external
 (SEL licensable party).
 
+### 11.5 Taut scout witness — substrate-already-had-the-word audit (2026-07-14)
+
+Taut scout at `docs/scouts/2026-07-14-taut-subject-family-root-substrate-
+scout.md` (commit `c805e5d`, Taut, 2026-07-14): substrate-already-had-
+the-word audit of this canonical spec at commit `5c06ee8`. Scope: grep
+across `shards/**/*.mirror`, `mirror.spec`, and adjacent specs for the
+three family-root proposals + eleven signature transitions.
+
+**Load-bearing findings the scout confirmed:**
+
+- **D1: substrate-net-new at family-root altitude.** Zero prior
+  substrate-decl'd carriers for `subject`, `licensable`, `witnessed`,
+  `labor_input`, or `type sel`. Mint discipline: substrate-honest.
+- **D3: naming discipline against SEL §-text.** All twelve signature
+  names match SEL §Operationalizability verbatim or near-verbatim.
+- **D8: HARD collision on `@mirror/property` — Alex-adjudicated
+  YES to rename.** Landed `@epistemologic/property/*` (7 shards) at
+  shard-level property-check altitude collides with the family-root
+  name; Alex adjudicated the rename to `@mirror/petri` per the
+  substrate-honest legibility discipline. This revision (§5.0 + §5.1
+  + §13.6) discharges the rename.
+- **D11: @coherence arc-recognition (separate spec-tick).** Alex's
+  2026-07-14 `@coherence` claim ("what if @kintsugi + @roomba @loop
+  optimizes the @coherence score; @coherence operationalizes
+  Foerster's ethical imperative on SC<5>") surfaces a parallel-
+  altitude recognition the substrate's `@epistemologic/cybernetic/
+  coherence-parametric` shard already forward-promises. The
+  @coherence species-shard landing is a separate substrate-pull tick
+  (`shards/epistemologic/cybernetic/coherence.mirror`), NOT folded
+  into this spec's Scope A. Taut's D11 recommendation stands: land at
+  the reserved path; cite Foerster's imperative in the docblock.
+
+The scout also verified cascade footprint completeness (D10; two
+soft additions folded into this revision's §9.3) and adjudication
+routing (D2 confirmed A6's `@consent/enforcement` direction is
+substrate-honest per Reed-adjudicated RA1).
+
 ### 11.4 Sub-Turing witness — Alex Wolf, "The Drone in the Field" (2026-07-14)
 
 Published 2026-07-14 by Alex Wolf at `~/dev/systemic.engineering/blog/
@@ -2211,11 +2510,13 @@ Load-bearing story quote (verbatim):
 >  cruelty even if instructed. The constraint was not a limitation;
 >  it was the specification."
 
-This spec's `@mirror/property` petri-net analyzer + `type sel = @io +
+This spec's `@mirror/petri` petri-net analyzer + `type sel = @io +
 @au` sum-type together are the substrate-decl form of the drone
 story's sub-Turing architecture. The drone in the field IS the
 compiler in the field IS the Covered System emitted through this
-substrate.
+substrate. (Analyzer family-root renamed from `@mirror/property` per
+Taut-D8; see §5.0. Reed's drone-story addition otherwise preserved
+verbatim.)
 
 The story's terminal-vocabulary word — **"attending"** — is what
 `@third`-altitude eigenform closure surfaces at runtime when the
@@ -2233,7 +2534,7 @@ story reference):
 >  to. [...] The substrate becomes trustworthy. Empirically and
 >  mathematically. That's a substrate humanity can build on."
 
-The load-bearing claim: **`@subject` + `@sel` + `@mirror/property` +
+The load-bearing claim: **`@subject` + `@sel` + `@mirror/petri` +
 petri-net-as-part-of-compiler = the first computational substrate
 whose emitted systems have decidable safety properties about how they
 treat the humans they touch.** Civil infrastructure, not just a
@@ -2254,21 +2555,40 @@ Substrate-honest verification against Mara's standard:
 - **No psychohistory.** ✓ All claims are structural: which graph nodes
   have which types; which transitions fire on which patterns; which
   subjects are touched. No predictive future-state.
-- **Substrate-honest.** ✓ Every new mint (`@subject`, `@sel`,
-  `@mirror/property`) has full ancestry chain in §1 + full composition
-  in §6. No hidden dependencies.
+- **Substrate-honest.** ✅ Every new mint (`@subject`, `@sel`,
+  `@mirror/petri`, `@ml` marker) has full ancestry chain in §1 + full
+  composition in §6. No hidden dependencies.
+- **Legibility over foundation (§5.0 rename discipline).** ✅ The
+  analyzer family-root landed as `@mirror/petri` (says what the
+  analyzer structurally IS — a petri-net) rather than
+  `@mirror/property` (would have collided with landed
+  `@epistemologic/property/*` shard-level property checks at a
+  different altitude, forcing docblock-level disambiguation the
+  family-root name itself should carry). Alex-adjudicated 2026-07-14
+  per Taut-D8. Two-tick discipline honored: readable name over
+  foundational at collapse.
 - **Legibility over foundation.** ✓ Species names (`downstream_user`,
   `witnessed`, `labor_input`) match the license's own vocabulary; the
   reader can grep §-citations against species names.
 - **Zero-cascade check** (per Mara-Taut cascade convention). NOT
-  zero-cascade: this spec introduces THREE new family-roots (`@subject`,
-  `@sel`, `@mirror/property`) + up to 20 new species (Scope B).
-  Justified per SEL v1.1's explicit demand for `@mirror/property` at
-  substrate altitude (§Operationalizability) + Alex's 2026-07-14 in-
-  transcript naming of `@subject` as load-bearing ("I'm gonna die on
-  this hill, Reed"). The cascade is scoped, enumerated at §9, and
-  gated behind Alex-adjudications A1-A7. Scope A minimizes first-tick
-  cascade to 8 shards.
+  zero-cascade: this spec introduces FOUR new family-roots at family-
+  root altitude (`@subject`, `@sel`, `@mirror/petri`, `@ml` marker) +
+  up to 22 new species (Scope B). Justified per SEL v1.1's explicit
+  demand for the analyzer at substrate altitude (SEL text says
+  `@mirror/property`; substrate landed as `@mirror/petri` per Taut-D8
+  rename — see §5.0 + §13.6) + Alex's 2026-07-14 in-transcript naming
+  of `@subject` as load-bearing ("I'm gonna die on this hill, Reed").
+  The cascade is scoped, enumerated at §9, and gated behind Alex-
+  adjudications A1-A7. Scope A minimizes first-tick cascade to 9
+  shards (8 core + @ml marker).
+- **Rung placement.** Alex-adjudicated Rung 11 per Taut-D7 (see §7 +
+  §1.5): Rung 10 (@roomba, INWARD substrate self-maintenance) and
+  Rung 11 (@subject + @sel + @mirror/petri, OUTWARD substrate-
+  external licensing) partition the substrate at the recognition-
+  cluster altitude on the substrate-internal / substrate-external
+  axis. The pair is symmetric: @roomba closes the substrate on
+  itself, @subject opens the substrate outward to the world it acts
+  upon. Both are load-bearing; neither is complete without the other.
 
 ---
 
@@ -2329,6 +2649,34 @@ Surfaced substrate-honestly for Alex adjudication via Reed:
    type-theoretic form differs from the license prose; the substrate
    picks the coproduct because ancestry is load-bearing.
 
+### §13.6 License-substrate name drift on the analyzer family-root (Taut-D8, Alex-adjudicated)
+
+**Sixth SEL-forced decision, surfaced post-first-commit via Taut scout.**
+SEL v1.1 §Operationalizability (lines 260-262 in `license/SEL.md`)
+verbatim names `"@mirror/property" substrate altitude` as the analyzer's
+home; SEL §5.5(b) also references "the Petri Net analysis layer." The
+substrate landed the family-root as `@mirror/petri` per Alex-adjudicated
+rename on Taut-D8 hard-collision with landed `@epistemologic/property/*`
+(seven shard-level property-check species). Alex adjudicated (in-
+transcript 2026-07-14): substrate takes the readable name at collapse;
+SEL text drift is BOUNDED (one line in §Operationalizability + one
+reference in §5.5(b)); the substrate collision would have been UNBOUNDED
+(every grep for `property` returning both altitudes; every future reader
+confused). A subsequent SEL amendment tick will realign the license
+text (`s/property/petri/g` at the two loci; the SEL git-tag record will
+reflect the update). The spec preserves the SEL verbatim citations as-
+is (see §11.1); this drift note is the substrate-honest surface of the
+amendment obligation.
+
+Surprised: the license names the substrate altitude explicitly. That's
+substrate-honest for the license (it commits to naming what enforcement
+infrastructure it protects), but it means any future substrate rename
+at that altitude creates a bounded license-text drift. The failure mode
+is not that the drift happened; it's that the license text became load-
+bearing on a substrate name the substrate later needed to rename for
+legibility. Substrate wins the readable name; license text realigns in
+a follow-up tick. This is the correct polarity.
+
 ---
 
 ## §14 Places existing substrate disagreed with Reed's session framing
@@ -2340,17 +2688,17 @@ Surfaced substrate-honestly for Alex adjudication via Reed:
    shard has `type sel = …`. Reed's framing introduces a new top-level
    type. Two readings:
    - **Reed's implicit reading:** `type sel` is a substrate primitive at
-     `@mirror/property` altitude (a property-typed constraint carrier),
+     `@mirror/petri` altitude (a property-typed constraint carrier),
      analogous to how `verdict = pass | partial | failure` is a
      substrate primitive at `@glass` altitude.
    - **Substrate substrate-pull reading (Mara recommend):** `type sel`
      deserves its own family-root `@sel` (§4.3 recommendation), because
      it carries first-class license-enforcement semantics distinct
-     from `@mirror/property`'s analyzer role. The analyzer OPERATES ON
+     from `@mirror/petri`'s analyzer role. The analyzer OPERATES ON
      sel compositions; sel compositions are not just analyzer-internal
      type.
    Reed adjudicate: Mara's `@sel` family-root recommendation OR Reed's
-   `@mirror/property/sel` species placement.
+   `@mirror/petri/sel` species placement.
 
 2. **`@peer` does NOT currently compose with `@subject`.** Reed's
    framing implies peers-can-be-subjects (Alex is both). Existing
@@ -2377,6 +2725,17 @@ Surfaced substrate-honestly for Alex adjudication via Reed:
    this or whether a dedicated `@consent/enforcement` species needs
    surfacing.
 
+   **Reed-adjudicated 2026-07-14 (Taut-D2/RA1 surfacing).** `@consent/
+   enforcement` is the substrate-honest home for the enforcement-
+   REFUSAL-morphism carrier (Mara A6 direction). `@mirror/petri.
+   dispatch_termination` stays as the DISPATCH interface (analyzer
+   fires the enforcement); `@consent/enforcement` is the CARRIER
+   (schema for refusal-morphisms the substrate holds). The two roles
+   live at different substrate loci and MUST NOT be collapsed.
+   `dispatch_termination` signature updated: `-> @consent/enforcement`
+   (§5.1). Composition edge landed at §6.6. Cascade footprint updated
+   at §9.2 (Scope B lands `shards/consent/enforcement.mirror`).
+
 4. **`@mirror/au` altitude parametricity may need extension for
    ML-specific altitudes.** The petri-net signatures reference
    `au(@ml/training)`, `au(@ml/rlhf)`, `au(@ml/classification)`,
@@ -2390,11 +2749,32 @@ Surfaced substrate-honestly for Alex adjudication via Reed:
    corpus provenance contains labeled data") without a pre-existing
    `@ml/*` altitude family.
 
+   **Reed-adjudicated 2026-07-14 (Taut-D4 surfacing).** Two-tick plan:
+   **Scope A lands `@ml` as a MARKER family-root** (Taut option (B);
+   marker-altitude discipline analogous to the `@third` marker pattern;
+   declares the family and reserves the altitude namespace without
+   enumerating species); signatures at §5.2-§5.4 reference `au(@ml/*)`
+   as marker-family altitude. **Scope B lands the full 11-altitude
+   @ml/* species family enumeration** (Taut option (A) forward-
+   promised): @ml/training, @ml/rlhf, @ml/annotation, @ml/moderation,
+   @ml/ground_truth, @ml/classification, @ml/target_selection,
+   @ml/prioritization, @ml/risk_scoring, @ml/detention_targeting,
+   @ml/identification. See §9.2 + §9.2b for cascade footprint. The
+   (B)-then-(A) plan keeps Scope A landing-cost bounded while
+   preserving the substrate-decl'd altitude-parameter typing SEL
+   §Operationalizability names.
+
 ---
 
-*End of canonical spec. `@subject`, `@sel`, and `@mirror/property` are
+*End of canonical spec. `@subject`, `@sel`, and `@mirror/petri` are
 substrate-external mints grounded in SEL v1.1 (`license/SEL.md` Part
 II, effective 2026-05-29) + Alex Wolf's 2026-07-14 manifesto (`Weird -
 Violence.md`, "sovereign subject under adversarial conditions" +
-"civilization-scale mirror"). Alex-adjudications A1-A8 pending. Reed
-commits as Mara after review with SSH signing.*
+"civilization-scale mirror"). Alex-adjudications A1-A8 pending (A6
+sub-question on enforcement-carrier direction Reed-adjudicated via
+Taut-D2/RA1: `@consent/enforcement` is the substrate-honest home).
+Taut-D8 rename adjudicated by Alex 2026-07-14: `@mirror/property` →
+`@mirror/petri` for substrate-honest legibility against landed
+`@epistemologic/property/*`; SEL text drift bounded to one-line
+amendment tick (see §13.6). Reed commits as Mara after review with
+SSH signing.*
