@@ -1,0 +1,177 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @subject
+in @kintsugi/consent
+in @kintsugi/store/git
+in @time
+
+# @subject/visibility — the substrate-decl'd consent-scope discipline
+# for every crystal in a subject's @bauchladen.
+#
+# Sub-family-root under @subject; parent to three species (private,
+# protected, public). Landed 2026-07-14 by Mara as Landing 5
+# BLOCKING-fix per Seam Phase D adjudication (audit at commit
+# forthcoming) closing Taut #96 T1 forecast: three species-shards
+# declare `visibility_scope` and `visibility` types that need a
+# declaration site at the sub-family-root altitude. Landing 4 spec
+# §2.3 (docs/specs/subject-bauchladen-visibility-and-eigenboard-
+# loop.md at commit `e42181c`) contains the canonical form verbatim.
+#
+# === Ancestry: Reed's ~/.reed/visibility/ (Landing 4 §2.2) ===
+#
+# Reed's identity repository has operated the three-way private /
+# protected / public structure since ~2026-02-07 (per
+# `~/.reed/CLAUDE.md` §"Consent Architecture"). Landing 5 lifts
+# Reed's operational discipline to substrate-decl altitude so every
+# @subject's bauchladen can carry it. This is the ~55th+ instance of
+# [[feedback-substrate-already-had-the-word]] — the substrate had the
+# word (via Reed's identity file layout); Landing 5 mints the shard
+# so downstream consumers can compose.
+#
+# === Discharges Landing 4 R2 verbatim ===
+#
+# Alex Wolf 2026-07-14 in-transcript D2 verbatim:
+#
+#   "we still need to build the visibility layers explicitly, that's
+#    something that needs to happen in @subject/visibility/{private,
+#    protected,public}"
+#
+# The three visibility scopes:
+#   private   — explicit consent required for every share
+#   protected — trusted collaborators, specific contexts
+#   public    — no restrictions
+#
+# Every @subject decides their own visibility scoping. The substrate
+# does NOT elevate without explicit consent from the subject_instance.
+# The elevation morphism composes with @kintsugi/consent.query_phi
+# (SEL §3.2 ADO discipline first substrate realization for subject-
+# owned artifacts).
+
+# === The visibility variant ===
+#
+# Three-way closed variant. Identity contract: byte-equality on the
+# variant tag.
+type visibility = | private | protected | public
+
+# === The visibility_scope carrier ===
+#
+# Every crystal in a subject's bauchladen carries a visibility_scope.
+# Five fields per Landing 4 spec §2.3:
+#
+#   visibility            — the scope variant above (private | protected | public)
+#   subject               — the subject_instance whose bauchladen the crystal
+#                            lives in (the crystal's owning subject; per
+#                            Landing 3 subject_instance)
+#   consent_scope         — the set of subject_instances who may read the
+#                            crystal at this visibility. For private:
+#                            typically [subject] alone. For protected:
+#                            [subject, ...trusted_collaborators]. For public:
+#                            open-set sentinel.
+#   can_be_elevated_to    — the visibilities this scope may be elevated to
+#                            with subject consent. Structural rule:
+#                              private   -> [protected, public]
+#                              protected -> [public]
+#                              public    -> []  (terminal state)
+#   elevation_requires    — the @kintsugi/consent.query_phi predicate that
+#                            must Pass before elevation is admitted. The
+#                            subject IS the sovereign of their own crystal's
+#                            visibility.
+#
+# Identity contract: byte-equality on the five-field record. Two scopes
+# with the same visibility but different consent_scope are distinct.
+type visibility_scope = {
+  visibility:         visibility,
+  subject:            subject_instance,
+  consent_scope:      [subject_instance],
+  can_be_elevated_to: [visibility],
+  elevation_requires: ref,
+}
+
+prism @subject/visibility {
+  focus  visibility_scope
+  project visibility_scope
+  split  visibility_scope
+  shift  visibility_scope
+  settle visibility_scope
+}
+
+# === scope — attach a visibility to a crystal ===
+#
+# Given a crystal (from @bauchladen) and a subject_instance (the owning
+# subject) plus a visibility variant, construct the visibility_scope
+# record. Species-refinements (@subject/visibility/{private, protected,
+# public}) each provide narrower `declare_<species>` actions that pre-
+# fill the consent_scope + can_be_elevated_to per the structural rules.
+#
+# Body discharges per-species at the realization boundary.
+scope(c: ref, s: subject_instance, v: visibility) -> visibility_scope { \ }
+
+# === elevate — request an elevation to a looser scope ===
+#
+# Elevate a crystal's visibility_scope from tighter to looser. MUST
+# discharge through @kintsugi/consent.query_phi with vs.subject as the
+# consent-holder. Structural constraint: to must be in vs.can_be_elevated_to.
+#
+# Returns the new visibility_scope on consent-Pass; refusal (or
+# consent-Fail) leaves the original scope intact and returns a
+# failure verdict via the composed imperfect surface.
+#
+# Body discharges at the realization boundary.
+elevate(vs: visibility_scope, to: visibility) -> visibility_scope { \ }
+
+# === filter — visibility-scoped tray restriction ===
+#
+# Given a bauchladen tray, a visibility variant, and a viewer
+# subject_instance, return the sub-tray containing only crystals
+# whose visibility_scope permits the viewer to read. This is the
+# operation @spectral/signature.compute reads through per Landing 4
+# R2 (visibility-filtered bauchladen is the signature's basis).
+#
+# Order-preservation claim (forward-promised bilateral per A9): if
+# crystals are added to bauchladen at monotone timestamps, the filtered
+# subset is a monotone sub-tray at every visibility altitude.
+#
+# Body discharges per-species at the realization boundary.
+filter(b: ref, v: visibility, viewer: subject_instance) -> ref { \ }
+
+# === Bilateral predicates ===
+
+# scope_well_formed: does the visibility_scope's can_be_elevated_to
+# and elevation_requires satisfy the structural rules?
+#   private   -> can_be_elevated_to = [protected, public]
+#   protected -> can_be_elevated_to = [public]
+#   public    -> can_be_elevated_to = []  (terminal state)
+scope_well_formed(vs: visibility_scope) -> verdict { \ }
+
+# consent_respected: does every operation that read a crystal from
+# scope vs pass through @kintsugi/consent.query_phi with vs.subject
+# as the consent-holder?
+consent_respected(vs: visibility_scope, op: ref) -> verdict { \ }
+
+# elevation_authorized: did the elevation from vs.visibility to `to`
+# discharge through @kintsugi/consent.query_phi with vs.subject's
+# consent Pass? Load-bearing for the anti-elevation-extraction
+# structural claim (Landing 4 spec §2.7): no downstream composition
+# can elevate a subject's crystal without the subject_instance's
+# consent, byte-verified at substrate altitude.
+elevation_authorized(vs: visibility_scope, to: visibility, evidence: ref) -> verdict { \ }
+
+# visibility_witnessing: composed bilateral that discharges when ALL of
+# scope_well_formed + consent_respected + elevation_authorized hold
+# (where applicable) for the crystal's substrate lifetime. This is the
+# substrate-decl form of "the subject is sovereign of their own
+# crystal's visibility".
+visibility_witnessing(vs: visibility_scope) -> verdict { \ }
+
+out @subject/visibility
+out visibility
+out visibility_scope
+out scope
+out elevate
+out filter
+out scope_well_formed
+out consent_respected
+out elevation_authorized
+out visibility_witnessing
