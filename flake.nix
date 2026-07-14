@@ -132,7 +132,13 @@
         // pkgs.lib.optionalAttrs isDarwin {
           FLANG = "${flang}/bin/flang";
           FLANG_RT_DIR = flangRtLibDir;
-          NIX_LDFLAGS = "-L${flangRtLibDir} -L${pkgs.lapack}/lib -L${pkgs.blas}/lib";
+          # Manual NIX_LDFLAGS OVERRIDES nix's auto-computed path from buildInputs,
+          # so we must explicitly re-include every buildInput's lib path we depend
+          # on at link time. libiconv is needed for cargo test link of libz-sys /
+          # openssl-sys / libgit2-sys transitive chain (Reed + Taut 2026-07-14
+          # house-cleanup: bootstrap tests fail with `ld: library not found for
+          # -liconv` without this).
+          NIX_LDFLAGS = "-L${flangRtLibDir} -L${pkgs.lapack}/lib -L${pkgs.blas}/lib -L${pkgs.libiconv}/lib";
         });
       }
     );
