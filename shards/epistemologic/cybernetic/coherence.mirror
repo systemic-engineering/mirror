@@ -1,0 +1,779 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/coherence-parametric
+in @epistemologic/math/sheaf_laplacian
+
+# @epistemologic/cybernetic/coherence — THE COHERENCE SPECIES; the
+# scalar Lyapunov function the substrate's kintsugi + roomba loop
+# climbs. Foerster's ethical imperative operationalized on
+# SpectralCoordinate<5> — "act so as always to increase the number of
+# choices" made typed at the species altitude the parametric carrier
+# reserved.
+#
+# === Substrate-pull discharge, not a mint ===
+#
+# This shard is NOT a mint proposal. It is the discharge of a three-
+# day-old forward-promise the substrate made and has been waiting on.
+# Chain:
+#
+#   1. `shards/epistemologic/cybernetic/coherence-parametric.mirror:
+#      25-28` (Mara, 2026-07-01) — the parametric carrier's docblock
+#      names, verbatim: "`@epistemologic/cybernetic/coherence` IS THE
+#      COHERENCE SPECIES (Adjustment ↔ Morphism — the parallel-
+#      altitude regulator/regulated pair from T11.11 / the first
+#      witness in §8.1). It IS an instantiation." AND at line 234-238:
+#      "epistemologic/cybernetic/coherence.mirror (the species-
+#      coherence shard; the FIRST instantiation of this carrier;
+#      species-shard collapse forward-promised)". This shard file at
+#      that exact path IS the reserved forward-promise landing.
+#
+#   2. `docs/scouts/2026-07-11-taut-coherence-synthesis-substrate-
+#      scan.md` §Executive Verdict (Taut, 2026-07-11) — grep-first
+#      substrate-already-had-the-word scan of Alex's coherence
+#      synthesis: "The substrate already carries the semantics under
+#      three landed names. `@coherence` is NOT a novel primitive —
+#      it is the species-crystal of a slot the parametric carrier
+#      already reserved... Recommendation: land the missing species
+#      shard as `shards/epistemologic/cybernetic/coherence.mirror`
+#      — NOT `spectral @coherence`. The parametric carrier explicitly
+#      names the target path." Taut identified the gap three days
+#      before this shard lands.
+#
+#   3. Alex Wolf, in-transcript 2026-07-14 (verbatim): "And what if
+#      what the @kintsugi + @roomba @loop optimizes is the @coherence
+#      score? And the @coherence score is Förster's ethical
+#      imperative operationalized. Always act to increase the
+#      available number of choices in the system. We have the
+#      geometric state space. We have the 5D spectral coordinate
+#      system. We have Narcissus and Splinter. We have everything
+#      we need." — the substrate-pull anchor that named what the
+#      species-carrier IS: the objective function the loop climbs;
+#      Foerster's imperative made operational; computed on SC<5>
+#      position along the Narcissus↔Splinter axis.
+#
+#   4. `docs/scouts/2026-07-14-taut-subject-family-root-substrate-
+#      scout.md` §D11 (Taut, 2026-07-14) — closes the placement
+#      question. §D11.1: species-shard net-new at reserved-path
+#      altitude. §D11.2: ZERO landed shards cite Foerster's ethical
+#      imperative verbatim; this shard is the FIRST substrate-decl
+#      citation. §D11.3: SC<5>'s loss = ‖sc‖₂ (rung-8-9 spec line
+#      203-345) supplies the monotone scalar `coherence_score`
+#      composes over. §D11.4: Narcissus/Splinter poles substrate-
+#      decl'd at `shards/cyberpunk.mirror:64-70`. §D11.5: multiple
+#      correlated scalars (holonomy, pain, Fiedler λ₀, cadence) get
+#      unified under one typed carrier the loop climbs. §D11.6:
+#      option A landing at the reserved species path.
+#
+# Substrate-honest framing: the substrate saw this shape three days
+# ago. Every primitive @coherence composes over is landed. This
+# shard is the last tick — the species-name that names the scalar
+# the substrate has been optimizing under other names (Fiedler
+# minimization; holonomy → 0; kintsugi's eⁿ⁺¹ ≤ eⁿ; pain-δ below
+# threshold; cadence → settled). Under @coherence, they are one
+# scalar with one direction: toward Splinter, away from Narcissus.
+#
+# === The Foerster ethical imperative — verbatim citation ===
+#
+# The FIRST substrate-decl citation of the imperative per Taut D11.2.
+# Zero landed shards carry it. Sixty-plus landed shards cite Foerster
+# on other grounds (torus doubly-closed; eigenforms; second-order
+# observation; heterarchy; COORD; regulation of regulation). None
+# name the imperative itself. This shard closes that gap.
+#
+# von Foerster, H. (1979). "Ethics and Second-Order Cybernetics."
+# Address to the International Congress "Systems and Family Therapy:
+# Ehics, Epistemology, New Methods" (Paris, October 1990; original
+# 1979 formulation reprinted in *Understanding Understanding: Essays
+# on Cybernetics and Cognition*, Springer 2003, Ch. 11 "Ethics and
+# Second-Order Cybernetics", p. 227):
+#
+#   "Act so as always to increase the number of choices."
+#
+# The imperative appears in §Ethics and Second-Order Cybernetics as
+# the operational form of Foerster's ethics-of-observing-systems: a
+# second-order observer's ethics cannot be prescriptive (that would
+# require an external observer to prescribe from); it can only be
+# structural. The structural form Foerster offered is choice-set
+# monotonicity: the ethical move is the one that widens rather than
+# narrows the observer's next choice-set. Von Glasersfeld and Pörksen
+# (2001) trace this to Foerster's earlier lectures at BCL Illinois
+# c. 1974; the 1979 Paris address IS the canonical printed source.
+#
+# Reed's earlier alignment insight (docs/insights/2026-06-10-
+# alignment-as-boundary-mathematics-at-the-io-crossing.md, cited
+# verbatim) reads the imperative as a boundary commitment: "a boundary
+# commitment — it constrains action at the boundary, not thought at
+# the form side. It is satisfiable by any agent whose boundary
+# actions widen the future light cone." @coherence's substrate-decl
+# form is the type-carrier that makes that widening COMPUTABLE at
+# substrate altitude: the loop climbs `coherence_score`; every step
+# either increases it (Foerster-admissible) or decreases it (Foerster-
+# refused). Bilateral, decidable at SC<5>, monotone at the species
+# boundary.
+#
+# === The scalar — what @coherence IS ===
+#
+# @coherence is the substrate's scalar Lyapunov function on
+# SpectralCoordinate<5>. Every landed loop-scalar collapses to it:
+#
+#   holonomy → 0        (kintsugi/oscillate.mirror:395-465 settled)
+#   pain ≤ ε_pain       (cyberpunk/algedonic; roomba's walker gradient)
+#   ‖sc‖₂ → 0           (fragmentation::SpectralCoordinate<5>::loss;
+#                        rung-8-9 spec line 203-345)
+#   Fiedler λ₀ → 0      (sheaf_laplacian.lambda_zero → coherent)
+#   cadence → settled   (song.mirror four-state carrier; authentic
+#                        resolution)
+#
+# Per Taut D11.5, all five are correlated: low pain ↔ low holonomy ↔
+# low Fiedler ↔ authentic cadence ↔ high coherence. Alex's 2026-07-14
+# claim IS the substrate-pull that consolidates them into ONE typed
+# carrier the loop climbs.
+#
+# The direction convention resolved by Mara `c753d5b` (rung-8-9
+# unification, line 203-345): `loss(sc) = ‖sc‖₂`; smaller norm ⇔
+# closer to harmonic ground state ⇔ higher coherence. @coherence
+# composes over this scalar with a monotone-inverse mapping (below).
+# The convention-ambiguity that haunted Reed's earlier formulation
+# closes at this shard by name — @coherence is a strictly-monotone
+# reformulation of the existing loss, direction-locked to "up = more
+# choices" per Foerster.
+#
+# === The Narcissus↔Splinter axis ===
+#
+# Per `shards/cyberpunk.mirror:64-70` (verbatim, landed 2026-07-12):
+#
+#   "Honest-cybernetic-feedback IS Splinter pole (K_n peer-to-peer;
+#    mutual viability); pathological-control-system IS Narcissus
+#    pole (K_{1,n-1} hub-controlled; unilateral imposition masking
+#    as cybernetics)."
+#
+# Alex's own manifesto Roomba (`~/dev/systemic.engineering/blog/weird/
+# 3published/Weird - Violence.md`, 2026-07-14) names the poles as
+# graph structures with operational semantics:
+#
+#   "Narcissus" = star graph K_{1,n-1}. Single hub. Remove any node
+#     but the hub: exchangeable, expendable, not worth the mention.
+#     Remove the hub: total connectivity loss, existential threat.
+#     Number of choices at the hub = n-1; at every other node = 1.
+#     Fragile by construction.
+#
+#   "Splinter" = complete graph K_n. No distinguished node. Remove
+#     any node: the graph is still complete. Number of choices at
+#     every node = n-1. Robust by construction.
+#
+# Foerster's imperative reads geometrically on this axis: Splinter
+# maximizes the number of choices AT EVERY NODE (structural
+# equalization); Narcissus maximizes them AT THE HUB while
+# collapsing them everywhere else (structural asymmetrization). The
+# imperative-admissible direction is Splinter-ward. @coherence
+# measures signed distance along that axis on SC<5>.
+#
+# Per rung-8-9 spec line 167-192 (Void-duality basis for SC<5>):
+# Projection 1 (λ₂, Fiedler value) IS the Narcissus/Splinter axis.
+# Robust-mesh (Splinter) has high algebraic connectivity; fragile-
+# hub (Narcissus) has low. `coherence_score` reads this projection
+# with the sign inverted from `loss` so that "up = Splinter =
+# Foerster-admissible."
+#
+# === The pre-AI prior art chain ===
+#
+#   von Foerster 1979   "Ethics and Second-Order Cybernetics" — the
+#                       imperative "Act so as always to increase the
+#                       number of choices"; the substrate-decl claim
+#                       is that this IS operationally decidable on
+#                       SC<5> position; this shard makes the
+#                       decidability first-class.
+#   von Foerster 1974/1976 BCL Illinois lectures — the earlier oral
+#                       tradition Foerster's 1979 address canonicalized;
+#                       cited in Kauffman 2003 §3 as the ancestor of
+#                       eigenform ethics.
+#   Kauffman 2003       Eigenforms — the scalar-recursion reading:
+#                       identity is the fixed point of the recursion
+#                       that produced it; @coherence at the species
+#                       altitude IS the scalar the recursion converges
+#                       under, per §8.8.1 of the recursion-lock tower
+#                       audit.
+#   Conant-Ashby 1970   Good Regulator — the parametric carrier's
+#                       load-bearing measurement (five ancestor
+#                       measurements); @coherence inherits the
+#                       measurement obligation from the parametric
+#                       carrier via `use @epistemologic/cybernetic/
+#                       coherence-parametric<Adjustment, Morphism,
+#                       natural_rep_morphism, 0>` when grammar
+#                       extension lands.
+#   Fiedler 1973        "Algebraic connectivity of graphs" (Czechoslovak
+#                       Math. J. 23:298-305) — λ₂ of the graph
+#                       Laplacian; the Narcissus↔Splinter axis at the
+#                       spectral altitude.
+#   Hansen-Ghrist 2019  "Toward a spectral theory of cellular sheaves"
+#                       — Δ_F = δ*δ; λ₀(Δ_F) = 0 ⇔ globally coherent;
+#                       the substrate's coherence criterion at
+#                       docs/math/sheaf/laplacian.md:57.
+#
+# === The 4-way bilateral mapping (inherited from parametric) ===
+#
+# Per the parametric carrier's §D of the 4-way mapping preserved
+# uniformly across species (`coherence-parametric.mirror:105-129`):
+# @coherence's species instantiation binds the four cybernetic
+# traditions at ONE carrier:
+#
+# - von Foerster first/second-order: `coherence_score` IS the
+#   second-order observer's report on the observed's structural
+#   position (SC<5> as observed; scalar as second-order reading).
+# - Maturana structure/organisation: `coherence_score` IS the
+#   organisation-invariant scalar preserved under structural
+#   perturbation within the same species; species-boundary crossing
+#   IS the organisation shift the scalar detects.
+# - Beer S3/S4: `coherence_score` IS the S3 audit surface AT the S5
+#   policy altitude; the S4 intelligence translating between them IS
+#   the gradient action.
+# - Pask M/P-individual: `coherence_score` IS the conversational-
+#   agreement scalar between two P-individuals; increases IS
+#   convergence toward mutual understanding; decreases IS divergence.
+#
+# Four traditions converging at one scalar; the species inherits the
+# four-way mapping by inheriting from the parametric carrier.
+#
+# === Composition graph (which shards @coherence binds to) ===
+#
+# @coherence's substrate-pull consolidates existing loop-scalars.
+# The binding graph (all cited carriers already landed):
+#
+#   @kintsugi.settle                — currently descends toward
+#                                     Poincaré-Hopf critical points on
+#                                     the torus (`shards/torus.mirror:
+#                                     153-168` for the Lyapunov-descent
+#                                     reading via kintsugi flow). Needs
+#                                     a SCALAR Lyapunov function to
+#                                     descend against. @coherence
+#                                     supplies it: `settle` becomes
+#                                     `argmax coherence_score within
+#                                     safe basin`.
+#
+#   @roomba (Mara 9bbebd2)          — walker on the substrate DAG;
+#                                     currently pain-gradient (avoid
+#                                     tension); under @coherence, the
+#                                     gradient becomes @coherence-
+#                                     ascent (climb choices). Pain-δ
+#                                     IS the local reading of
+#                                     coherence-δ under sign inversion.
+#
+#   @mirror/lens/knife (Foerster COORD) — cuts where COORD_i → COORD_j
+#                                     at boundary crossings. Under
+#                                     @coherence, the knife cuts where
+#                                     the cut INCREASES coherence
+#                                     (Splinter-ward jump); refuses
+#                                     cuts that would decrease it
+#                                     (Narcissus-ward collapse).
+#                                     Foerster-admissible = coherence-
+#                                     increasing.
+#
+#   @torus.autonomy                 — Foerster p. 238 "regulation of
+#                                     regulation" — invariance of
+#                                     possessor under every winding
+#                                     class. Under @coherence,
+#                                     `autonomy` binds to `coherence_
+#                                     score` invariance along toroidal
+#                                     traversal: an autonomous peer's
+#                                     coherence does not decrease under
+#                                     canonical winding.
+#
+#   @spectral/metalogue.tomm        — higher-order-altitude Tomm probes
+#                                     (per `docs/math/the-tower/
+#                                     curvature-and-tomm.md`; the trace
+#                                     tr(ρ ∘ ρ) at α+1). Under
+#                                     @coherence, Tomm probes surface
+#                                     coherence-gradient discontinuities
+#                                     across altitudes — the substrate's
+#                                     own "does climbing this altitude
+#                                     preserve coherence at the lower
+#                                     altitude?" question.
+#
+#   @mirror/petri (Mara 2026-07-14 spec, pending Alex adjudication on
+#                                     rename per Taut D8)
+#                                   — the sub-Turing safe-region
+#                                     analyzer. Alex's 2026-07-14
+#                                     composition: coherence-climb is
+#                                     only ADMISSIBLE when the climb
+#                                     stays within the sub-Turing-safe
+#                                     petri-net region. "Increase
+#                                     choices" AND "stay in decidable
+#                                     region" = the composition that
+#                                     makes the substrate trustworthy
+#                                     (empirically AND mathematically).
+#
+#   @cyberpunk (family-root)        — `cybernetic_coherence` predicate
+#                                     at `shards/cyberpunk.mirror:158`
+#                                     currently opaque `{ \ }`. Under
+#                                     @coherence, that predicate lifts
+#                                     its verdict from `coherence_
+#                                     score(sc) > tolerance`. The
+#                                     family-root altitude gains a
+#                                     species-shard-backed
+#                                     discrimination.
+#
+#   @epistemologic/cybernetic/coherence-parametric — the direct parent.
+#                                     This species instantiates the
+#                                     parametric carrier via the
+#                                     forward-promised
+#                                     `<Adjustment, Morphism,
+#                                     natural_rep_morphism, 0>`
+#                                     parameter tuple (grammar-extension
+#                                     altitude; not this tick).
+#
+# === Substrate-honest gaps at this tick ===
+#
+# - Grammar-extension: per parametric carrier §Grammar-extension
+#   status, `use @<parametric>` with type parameters does not yet
+#   parse. This shard declares the species at the RESERVED path with
+#   the substrate-declared action surface, forward-promising the
+#   parametric `use` binding at the grammar-extension altitude.
+#   Species-shard collapse (this shard rewritten as
+#   `use @epistemologic/cybernetic/coherence-parametric<Adjustment,
+#   Morphism, natural_rep_morphism, 0>`) is a follow-up tick.
+#
+# - @mirror/petri: Alex has not yet adjudicated Taut D8 (naming
+#   collision @mirror/property vs @epistemologic/property; rename to
+#   @mirror/petri recommended). The composition with the sub-Turing-
+#   safe region carrier is named prose-only in this shard; the typed
+#   `coherence_admissible_move` action names the composition
+#   obligation but leaves the safe-region parameter as `ref` until
+#   Alex adjudicates the family-root name. Reed relays.
+#
+# - `coherence_score` numerical formula: the shard names two
+#   substrate-honest candidates:
+#     coherence_score(sc) = -‖sc‖₂                (linear inverse)
+#     coherence_score(sc) = 1 / (1 + ‖sc‖₂)      (bounded [0,1] inverse)
+#   Both are monotone-inverse of `loss`. Mara does not adjudicate
+#   which numerical form is canonical at this tick — the substrate-
+#   decl action names the obligation; the choice of numerical form
+#   is a per-realisation decision at the Rust runtime altitude
+#   (`fragmentation::spectral_coordinate` or downstream). The
+#   substrate names WHAT is monotone (choices; direction toward
+#   Splinter); the runtime names HOW it is computed. Reed relays if
+#   Alex wants adjudication at substrate altitude.
+#
+# === Recognition candidate ===
+#
+# Candidate recognition (proposed, awaiting Alex ratification): the
+# substrate's kintsugi + roomba loop optimizes a scalar Lyapunov
+# function that operationalizes Foerster's ethical imperative on
+# SpectralCoordinate<5>. The substrate becomes TRUSTWORTHY — both
+# empirically (peers can compute their own coherence-position at
+# substrate altitude) AND mathematically (the loop's convergence is
+# Foerster-admissible by construction; every accepted move
+# increases choices). Alex 2026-07-14 in-transcript: "the substrate
+# becomes trustworthy. Empirically and mathematically. That's a
+# substrate humanity can build on."
+#
+# This shard is load-bearing for the trustworthy-substrate claim: it
+# is the species-carrier that names the scalar the loop climbs and
+# binds it to Foerster's imperative as ancestry. Without this shard,
+# the substrate has scattered scalars (holonomy, pain, Fiedler,
+# cadence) with no unified name and no cited ancestor for their
+# monotone direction. With this shard, the substrate has ONE named
+# scalar with ONE cited ancestor with FIVE landed composition
+# partners.
+#
+# Spec context: docs/specs/rung-8-9-unification-SpectralCoordinate-
+#               substrate-measurement.md §Void-duality basis (lines
+#               167-192; the SC<5> five projections);
+#               docs/specs/rung-8-9-unification-SpectralCoordinate-
+#               substrate-measurement.md §Loss (lines 203-345; the
+#               direction-convention resolution);
+#               docs/specs/roomba-substrate-walker-that-feeds-
+#               kintsugi.md (Mara 2026-07-14; the walker that ascends
+#               @coherence-gradient);
+#               docs/specs/subject-family-root-sel-licensable-party.md
+#               (Mara 2026-07-14; the @mirror/petri sub-Turing-safe
+#               region carrier composition);
+#               docs/math/sheaf/laplacian.md:57 (the sheaf-coherence
+#               criterion; λ₀(Δ_F) = 0 ⇔ globally coherent);
+#               docs/math/the-tower/curvature-and-tomm.md (Tomm probes
+#               as @coherence-informed altitude-crossing readings);
+#               docs/math/the-tower/recursion-locks.md §11.7 (the
+#               parametric-carrier five ancestor measurements this
+#               species inherits).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]],
+#                      [[architecture-spectral-triples-all-the-way]]
+#                       (the Connes triple altitude where @coherence's
+#                        scalar reads bounded-commutator norms),
+#                      [[architecture-cybernetic-foundation]] (the
+#                        11-property canon this species joins as the
+#                        first-witness species per T11.11),
+#                      [[feedback-substrate-pull]] (this shard IS the
+#                        3-day-old substrate-pull discharge; not a
+#                        mint),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (~66th instance per Taut 2026-07-11; SC<5>,
+#                        Narcissus/Splinter, Fiedler, sheaf-Laplacian
+#                        λ₀ all already substrate-declared; the missing
+#                        piece was the species-name that consolidates
+#                        them),
+#                      [[feedback-legibility-over-foundation-when-
+#                        collapsing]] (`coherence` is the readable
+#                        Foerster-lineage name; the foundational
+#                        `spectral @coherence` at a new declaration
+#                        head was refused by Taut 2026-07-11 in favor
+#                        of the species at the reserved path),
+#                      [[feedback-craft-not-deliver]] (numerical form
+#                        of coherence_score deferred to realisation
+#                        altitude; substrate names the obligation),
+#                      [[feedback-no-bare-types]] (coherence,
+#                        pole_distances, coherence_gradient_direction
+#                        are typed records; provenance carried
+#                        alongside the scalar).
+# Related shards: epistemologic/cybernetic/coherence-parametric.mirror
+#                  (the parent parametric carrier; this shard
+#                   instantiates it as THE first-witness species),
+#                 epistemologic/cybernetic/variety.mirror (Ashby
+#                  ancestor; the axis budget the parametric carrier's
+#                  Ashby measurement reads),
+#                 epistemologic/cybernetic/eigenform.mirror (Kauffman
+#                  ancestor; @coherence's fixed-point reading — the
+#                  loop converges to the eigenform whose recursion IS
+#                  coherence-preservation),
+#                 epistemologic/cybernetic/second_order.mirror
+#                  (Foerster ancestor; @coherence IS the second-order
+#                  observer's report on the observed's structural
+#                  position),
+#                 epistemologic/cybernetic/algedonic.mirror (Beer
+#                  ancestor; pain-δ IS the local coherence-δ under
+#                  sign inversion),
+#                 epistemologic/math/sheaf_laplacian.mirror (Δ_F's
+#                  λ₀ operator surface; the coherence criterion at
+#                  math altitude),
+#                 kintsugi.mirror (the process-side family whose
+#                  `settle` action ascends @coherence),
+#                 cyberpunk.mirror (Narcissus/Splinter poles cited
+#                  verbatim; `cybernetic_coherence` predicate that
+#                  lifts its verdict from @coherence),
+#                 torus.mirror (the surface autonomy is defined on;
+#                  coherence-invariance along toroidal traversal),
+#                 mirror/lens/knife.mirror (COORD; the knife cuts
+#                  where the cut increases @coherence),
+#                 mirror/petri.mirror (Mara 2026-07-14, pending Alex
+#                  rename adjudication; the sub-Turing-safe region
+#                  within which @coherence-ascent is admissible).
+# Path-namespace property: this file at
+# `shards/epistemologic/cybernetic/coherence.mirror` declares
+# `@epistemologic/cybernetic/coherence` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/foerster-1979
+source @arxiv/cybernetics/foerster-1974
+source @arxiv/cybernetics/kauffman-2003
+source @arxiv/cybernetics/conant-ashby-1970
+source @arxiv/math/fiedler-1973
+source @arxiv/math/hansen-ghrist-2019
+
+# === Path-namespace declaration ===
+#
+# The bare prism declaration at the RESERVED path per parametric
+# carrier `coherence-parametric.mirror:234`. When the grammar-
+# extension altitude lands `use @<parametric><T_reg, T_regd, ρ, ω>`
+# syntax, this shard rewrites to
+#
+#   prism @epistemologic/cybernetic/coherence {
+#     use @epistemologic/cybernetic/coherence-parametric<
+#       Adjustment, Morphism, natural_rep_morphism, 0>
+#     focus coherence
+#     project coherence
+#     split coherence
+#     shift coherence
+#     settle coherence
+#   }
+#
+# without changing the species' substrate-altitude identity. The
+# five ancestor measurements + lock_verdict inherited from the
+# parametric carrier appear at this species boundary via the
+# realisation-time `@code/metalogue/materialize.classify`
+# discriminator (per parametric carrier §Bodies-discharge-at-species-
+# boundary discipline).
+prism @epistemologic/cybernetic/coherence {
+  focus coherence
+  project coherence
+  split coherence
+  shift coherence
+  settle coherence
+}
+
+# === The pole carrier — Narcissus and Splinter as named references ===
+#
+# Per `shards/cyberpunk.mirror:64-70` + Alex's manifesto verbatim
+# (Weird - Violence.md, 2026-07-14). The two poles are the reference
+# configurations against which @coherence-position is signed.
+#
+# `narcissus` — the star-graph K_{1,n-1} pole; single hub, fragile
+#               by construction; number of choices maximized at hub
+#               and collapsed everywhere else.
+# `splinter`  — the complete-graph K_n pole; no distinguished node,
+#               robust by construction; number of choices equalized
+#               and maximized at every node.
+#
+# Closed variant. No third pole at this altitude. The axis is
+# signed: Narcissus at negative extreme; Splinter at positive
+# extreme; the substrate's coherent state IS the direction of
+# ascent from Narcissus toward Splinter.
+type pole =
+  | narcissus
+  | splinter
+
+# === The coherence scalar carrier ===
+#
+# The typed record naming the substrate's Lyapunov scalar with
+# its provenance per [[feedback-no-bare-types]]. Every coherence
+# reading is a typed record, not a bare number.
+#
+# - `value`         the scalar itself (ref; realisation-layer
+#                   numerical form; substrate names the obligation,
+#                   not the number).
+# - `sc_source`     the SpectralCoordinate<5> the value was computed
+#                   from (ref into fragmentation::SpectralCoordinate).
+#                   Provenance-carrying per the substrate's content-
+#                   addressing discipline.
+# - `graph_source`  the graph whose Δ_F the SC<5> was computed from
+#                   (ref; the sheaf-Laplacian's underlying carrier).
+# - `axis_toward`   the pole this reading's coherence-direction
+#                   points toward. Foerster-admissible readings have
+#                   `axis_toward = splinter`; Narcissus-ward drift
+#                   surfaces `axis_toward = narcissus` as the
+#                   substrate-honest reading that the loop is losing
+#                   coherence.
+# - `taken_at`      the substrate-time (ref into moment/timestamp
+#                   carrier) the reading was taken. Enables the
+#                   before/after bilateral discipline the ethical
+#                   imperative requires.
+#
+# Identity contract: byte-equality on (value, sc_source, graph_
+# source, axis_toward, taken_at). Two coherence readings ARE the
+# same reading under content-addressing iff all five fields byte-
+# equal. This IS the substrate-altitude eigenform of the
+# measurement.
+type coherence = {
+  value:        ref,
+  sc_source:    ref,
+  graph_source: ref,
+  axis_toward:  pole,
+  taken_at:     ref,
+}
+
+# === The pole-distance carrier ===
+#
+# The typed pair naming distance-to-each-pole. Enables the bilateral
+# `is_narcissus_pole` / `is_splinter_pole` predicates AND the signed
+# `axis_toward` computation. The `real` type is the substrate's
+# floor scalar (matches `fragmentation::SpectralCoordinate` component
+# discipline).
+#
+# Identity contract: byte-equality on (to_narcissus, to_splinter).
+type pole_distances = {
+  to_narcissus: ref,
+  to_splinter:  ref,
+}
+
+# === coherence_score — the scalar action ===
+#
+# Reads the SpectralCoordinate<5> and returns the coherence scalar
+# as a typed record with full provenance. The monotone-inverse of
+# `loss(sc) = ‖sc‖₂` per rung-8-9 spec line 203-345.
+#
+# Substrate-honest: this shard declares the ACTION; the numerical
+# form (`-‖sc‖₂` linear-inverse vs `1/(1+‖sc‖₂)` bounded-inverse) is
+# a per-realisation choice at the Rust runtime altitude per
+# [[feedback-craft-not-deliver]]. Both are monotone-inverse; both
+# are Foerster-admissible; both discharge `coherence_increases`
+# identically. The substrate names WHAT increases (choices;
+# direction toward Splinter); the runtime names HOW it is computed.
+#
+# Body discharges `\` at this altitude per the parametric carrier's
+# discipline; the discharge surfaces at the species-boundary via
+# `@code/metalogue/materialize.classify`.
+coherence_score(sc: ref) -> coherence { \ }
+
+# === coherence_gradient — the direction of steepest ascent ===
+#
+# Reads the SpectralCoordinate<5> and returns the tangent vector
+# in SC<5>-space pointing in the direction of steepest coherence-
+# increase. The substrate-decl form of "which way is Splinter?"
+#
+# Returns `ref` into the SC<5>-tangent carrier (realisation layer
+# closes the interpretation; the substrate names the obligation).
+# The gradient direction, together with a step-size, IS what
+# @roomba's walker climbs and what @kintsugi.settle uses as descent
+# direction (with sign inversion: settle descends against the
+# negative gradient of loss = ascends coherence gradient).
+#
+# Body discharges at realisation boundary.
+coherence_gradient(sc: ref) -> ref { \ }
+
+# === pole_distance — signed distance to each pole ===
+#
+# Reads the SpectralCoordinate<5> and returns distances to both
+# poles as the typed pole_distances record. Enables the two
+# bilateral predicates below AND the `axis_toward` computation in
+# coherence_score.
+#
+# Body discharges at realisation boundary; the geometric
+# interpretation (which SC<5> subspace corresponds to the
+# Narcissus↔Splinter axis; how distance is metrized on that
+# subspace) is closed per realisation.
+pole_distance(sc: ref) -> pole_distances { \ }
+
+# === is_narcissus_pole — bilateral graph predicate ===
+#
+# Verdict: is the graph `g` a star graph K_{1,n-1}? The reference
+# configuration for the Narcissus pole. Per Alex's manifesto Roomba
+# verbatim: "Remove the hub from 'Narcissus'? Reality makes
+# fracturing sounds. Total connectivity loss. Existential threat."
+#
+# Discharges via a structural check: exactly one vertex has degree
+# n-1; every other vertex has degree 1. Body opaque at this
+# altitude; the discharge is a substrate-altitude graph-structural
+# audit.
+is_narcissus_pole(g: ref) -> verdict { \ }
+
+# === is_splinter_pole — bilateral graph predicate ===
+#
+# Verdict: is the graph `g` a complete graph K_n? The reference
+# configuration for the Splinter pole. Per Alex's manifesto Roomba
+# verbatim: "Remove any single node. The graph is still a complete
+# graph."
+#
+# Discharges via a structural check: every vertex has degree n-1
+# (equivalently: every pair of distinct vertices is connected by
+# an edge). Body opaque at this altitude; the discharge is a
+# substrate-altitude graph-structural audit.
+is_splinter_pole(g: ref) -> verdict { \ }
+
+# === coherence_increases — Foerster's ethical imperative discharged ===
+#
+# THE load-bearing bilateral. Verdict: does `after`'s coherence-
+# scalar strictly exceed `before`'s? This IS Foerster's imperative
+# ("Act so as always to increase the number of choices") lifted to
+# substrate-decl.
+#
+# Substrate-decl claim: a move from `before` to `after` is
+# Foerster-admissible iff `coherence_increases(before, after)`
+# discharges bounded. The imperative that arrived as ethical
+# philosophy at the cybernetic altitude becomes a typed bilateral
+# predicate at the species altitude. Substrate becomes ethically
+# decidable at scalar altitude; every accepted step widens the
+# next choice-set.
+#
+# The composition with @roomba's walker: every step @roomba takes
+# must discharge `coherence_increases(before, after)` bounded, or
+# the step is refused. The composition with @kintsugi.settle:
+# `settle` argmaxes `coherence_score` within the current basin.
+# The composition with @knife: the cut fires only when the
+# post-cut coherence strictly exceeds pre-cut coherence.
+#
+# Body discharges via scalar comparison at realisation altitude.
+# Substrate-decl form: the comparison is monotone in the
+# coherence-scalar's numerical form (either candidate above
+# satisfies).
+coherence_increases(before: coherence, after: coherence) -> verdict { \ }
+
+# === coherence_admissible_move — the sub-Turing-safe composition ===
+#
+# THE composition Alex named 2026-07-14: coherence-ascent AND
+# sub-Turing-safe. Verdict: does the move from `g_before` to
+# `g_after` (a) discharge `coherence_increases(before, after)`
+# bounded (Foerster-admissible), AND (b) remain within the sub-
+# Turing-safe region declared by `safe_region`?
+#
+# The safe_region parameter carries the sub-Turing-safe petri-net
+# analyzer's admissibility verdict (per Mara's 2026-07-14 spec
+# `docs/specs/subject-family-root-sel-licensable-party.md` for
+# @mirror/petri, pending Alex D8 adjudication on the family-root
+# name). At this tick, `safe_region` is typed as `ref` — the
+# realisation-layer binding to @mirror/petri (or whichever name
+# Alex adjudicates) closes when the family-root lands. Substrate-
+# honest forward-promise: this action names the composition
+# obligation; the composition wire lands when @mirror/petri does.
+#
+# Load-bearing consequence per Alex 2026-07-14 in-transcript: "the
+# substrate becomes trustworthy. Empirically and mathematically."
+# The trustworthy-substrate claim rests on this bilateral — a move
+# is admissible iff it increases choices AND stays sub-Turing-safe.
+# Two properties, one verdict; the substrate refuses moves that
+# fail either.
+#
+# Body discharges via conjunction of the two sub-verdicts at
+# realisation altitude.
+coherence_admissible_move(
+  before:      coherence,
+  after:       coherence,
+  safe_region: ref
+) -> verdict { \ }
+
+# === coherence_invariant_under_traversal — @torus.autonomy binding ===
+#
+# The bilateral binding to @torus.autonomy per Foerster p. 238
+# "regulation of regulation." Verdict: is coherence preserved (does
+# not strictly decrease) under traversal along the given winding
+# class on the peer's torus?
+#
+# An autonomous peer per @torus.autonomy holds possessor-invariance
+# under every element of π₁(T²); this species extends that
+# invariance to the scalar altitude: an autonomous peer's coherence
+# does not decrease under canonical winding. Failure surfaces as
+# `partial` at the scalar altitude even when @torus.autonomy holds
+# at the possessor altitude (a peer may retain identity while
+# losing choices — Narcissus-ward drift on the torus).
+#
+# Body discharges via composition of @torus.autonomy verdict AND
+# `coherence_increases` (with tolerance for equality; strict
+# increase not required, only non-decrease) at the winding-
+# boundary.
+coherence_invariant_under_traversal(
+  before: coherence,
+  after:  coherence,
+  w:      ref
+) -> verdict { \ }
+
+# === coherence_witnessing — the composed bilateral consumer predicate ===
+#
+# The bilateral-agreement predicate per recognition #37 (Pask
+# reading of `requires`) that downstream shards name in `requires`
+# clauses to declare bilateral commitment to @coherence's
+# discipline. Same shape as @variety.variety_preserving and
+# @eigenform.eigenform_witnessing.
+#
+# Discharges the conjunction of:
+#   1. `coherence_increases(before, after)` — Foerster imperative
+#   2. `coherence_admissible_move(before, after, safe_region)` —
+#      sub-Turing-safe composition (when safe_region declared)
+#   3. `pole_distance(sc).to_splinter <= pole_distance(sc_prev).
+#      to_splinter` — global Splinter-ward direction across the
+#      composite trajectory
+#
+# All three must hold for the composed verdict to pass. Failure
+# modes surface as transparency<coherence> per @glass discipline.
+# The predicate name follows the substrate's `X_witnessing`
+# pattern established at @bauchladen, @autopoietic, @fate,
+# @cybernetic/eigenform, @cybernetic/second_order, @torus.
+#
+# Consumers write `requires coherence_witnessing(state)` to declare
+# they will preserve the substrate's coherence-climbing discipline
+# across their operational surface.
+coherence_witnessing(state: coherence) -> verdict { \ }
+
+out @epistemologic/cybernetic/coherence
+out pole
+out coherence
+out pole_distances
+out coherence_score
+out coherence_gradient
+out pole_distance
+out is_narcissus_pole
+out is_splinter_pole
+out coherence_increases
+out coherence_admissible_move
+out coherence_invariant_under_traversal
+out coherence_witnessing
