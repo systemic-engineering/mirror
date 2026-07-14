@@ -17,6 +17,15 @@
 - **Substrate-already-had-the-word.** Before inventing a family-root or
   species, grep. Landed instances this arc: `@cyberpunk`, `@magic`,
   tick-74 shatter spec, the slogan itself.
+- **No Rust extension shortcuts.** Before authoring any `.rs` file, ask:
+  can this be a shard body composing over @io? If yes: STOP. Do not
+  write Rust. Reed's 2026-07-14 failure landed 5 substrate-dishonest
+  Rust extensions bypassing FROZEN via the old marker. See Reed memory
+  `feedback-no-rust-extension-shortcut` +
+  `docs/audits/2026-07-15-reed-substrate-dishonest-rust-extensions-during-gift-arc.md`.
+  Marker renamed for `.rs` bypass: `[substrate-pull:realize]` →
+  `[substrate-floor:@io-boundary]` (+ Seam gate: audit citation or
+  `Signed-off-by: Seam` trailer).
 - **Two-tick discipline** when collapsing: readable name over foundational.
 - **SSH signing default.** NEVER override `gpg.format` or `user.signingkey`.
 - **Sequential commits only.** `--no-verify` requires Alex in-transcript

@@ -10,11 +10,38 @@
 # hook — do NOT re-check them here.
 #
 # WHY commit-msg (not pre-commit): the FROZEN check must read the message to
-# honor the [bugfix:restore] / [substrate-pull:realize] bypass markers. A
-# pre-commit hook cannot see the message being composed (with `git commit -m`,
-# .git/COMMIT_EDITMSG still holds the PREVIOUS message until after pre-commit).
-# A commit-msg hook receives the real message as $1 for both -m and editor
-# commits. See AGENTS.md.
+# honor the [bugfix:restore] / [substrate-floor:@io-boundary] bypass markers.
+# A pre-commit hook cannot see the message being composed (with `git commit
+# -m`, .git/COMMIT_EDITMSG still holds the PREVIOUS message until after
+# pre-commit). A commit-msg hook receives the real message as $1 for both -m
+# and editor commits. See AGENTS.md.
+#
+# ── 2026-07-15 TIGHTENING (Reed self-correction) ──────────────────────────
+#
+# The bypass marker was renamed:  [substrate-pull:realize] → [substrate-
+# floor:@io-boundary]. The old marker was semantically overloaded: it was
+# intended for the irreducible FLOOR (parser, evaluator, @io boundary
+# implementation) but was repeatedly stretched to admit BUSINESS LOGIC that
+# composes over @io. Reed authored 5 substrate-dishonest Rust extensions on
+# 2026-07-14 under the old marker; Alex caught the pattern for what would
+# be the 50+th time and named the exhaustion in-transcript. See
+# `docs/audits/2026-07-15-reed-substrate-dishonest-rust-extensions-during-
+# gift-arc.md` for the full failure record + Reed's structural response.
+#
+# The new marker semantics — `[substrate-floor:@io-boundary]` — names the
+# ONLY admissible use of .rs authorship: implementing an @io primitive that
+# the substrate itself cannot yet declare. Everything else composes over
+# @io in a shard body. Substrate-honest form is:
+#
+#     shard body composes over @io  →  no Rust required
+#
+# `[bugfix:restore]` is retained. Restoring an existing substrate guarantee
+# is legitimate; new capability is not.
+#
+# Additionally: every `[substrate-floor:@io-boundary]` commit MUST cite a
+# `docs/audits/*.md` file (Seam sign-off) OR carry an explicit `Signed-off-
+# by: Seam <seam@systemic.engineer>` trailer. This is the Pack adversarial-
+# review gate. Reed cannot self-authorize .rs extensions — Seam adjudicates.
 #
 # Must be executable: chmod +x .githooks/commit-msg
 
@@ -23,29 +50,85 @@ set -euo pipefail
 # $1 is the commit-message file, forwarded by the global hook.
 # Fall back to .git/COMMIT_EDITMSG only if invoked standalone (best-effort).
 MSG_FILE="${1:-.git/COMMIT_EDITMSG}"
-if [ -f "$MSG_FILE" ] && grep -qE '\[(bugfix:restore|substrate-pull:realize)\]' "$MSG_FILE"; then
-  echo "ℹ️  marker present in commit message — FROZEN check bypassed."
-  exit 0
-fi
 
 # --diff-filter=AM covers additions AND modifications (new .rs files used to
 # slip through an M-only filter). build.rs is boundary Rust but still .rs —
-# its allowance is the [substrate-pull:realize] marker above, not an exemption.
+# its allowance is the [substrate-floor:@io-boundary] marker below, not an
+# exemption.
 RS_FILES=$(git diff --cached --name-only --diff-filter=AM | grep '\.rs$' || true)
 
-if [ -n "$RS_FILES" ]; then
-  echo "❌ FROZEN: Rust files are substrate. Do not modify or add."
+if [ -z "$RS_FILES" ]; then
+  exit 0
+fi
+
+# ── Bypass 1: [bugfix:restore] — restoring an existing substrate guarantee.
+if [ -f "$MSG_FILE" ] && grep -qE '\[bugfix:restore\]' "$MSG_FILE"; then
+  echo "ℹ️  [bugfix:restore] marker present — FROZEN check bypassed."
+  exit 0
+fi
+
+# ── Bypass 2: [substrate-floor:@io-boundary] — irreducible FLOOR authorship.
+#              Requires Seam gate: audit-doc citation OR Signed-off-by: Seam.
+if [ -f "$MSG_FILE" ] && grep -qE '\[substrate-floor:@io-boundary\]' "$MSG_FILE"; then
+  # Seam gate: audit doc citation OR Signed-off-by trailer.
+  if grep -qE 'docs/audits/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^ ]+\.md' "$MSG_FILE" \
+     || grep -qiE '^Signed-off-by:[[:space:]]+Seam[[:space:]]+<seam@systemic\.engineer>' "$MSG_FILE"; then
+    echo "ℹ️  [substrate-floor:@io-boundary] marker present + Seam gate satisfied — FROZEN check bypassed."
+    exit 0
+  fi
+  echo "❌ FROZEN: [substrate-floor:@io-boundary] marker present but Seam gate NOT satisfied."
   echo ""
   echo "Touched .rs files:"
   echo "$RS_FILES" | sed 's/^/  /'
   echo ""
-  echo "Write a .mirror grammar instead. See AGENTS.md."
+  echo "The bypass marker for .rs authorship (formerly [substrate-pull:realize])"
+  echo "was tightened 2026-07-15 after Reed's substrate-dishonest Rust-extension"
+  echo "pattern (see docs/audits/2026-07-15-reed-substrate-dishonest-rust-"
+  echo "extensions-during-gift-arc.md). Every .rs bypass now requires ONE of:"
   echo ""
-  echo "If this is a bugfix restoring an existing substrate guarantee,"
-  echo "tag the commit message with [bugfix:restore]. If this is a"
-  echo "substrate-pull realization (FFI / build.rs / @io boundary floor),"
-  echo "tag with [substrate-pull:realize]."
+  echo "  1. Citation of a docs/audits/YYYY-MM-DD-*.md file (Seam sign-off), OR"
+  echo "  2. A commit trailer:"
+  echo "       Signed-off-by: Seam <seam@systemic.engineer>"
+  echo ""
+  echo "Reed cannot self-authorize .rs extensions. Seam adjudicates."
   exit 1
 fi
 
-exit 0
+# ── Old marker still present? Reject with rename guidance.
+if [ -f "$MSG_FILE" ] && grep -qE '\[substrate-pull:realize\]' "$MSG_FILE"; then
+  echo "❌ FROZEN: [substrate-pull:realize] is retired for .rs bypass."
+  echo ""
+  echo "Touched .rs files:"
+  echo "$RS_FILES" | sed 's/^/  /'
+  echo ""
+  echo "Rename the marker to [substrate-floor:@io-boundary] AND satisfy the"
+  echo "Seam gate (audit doc citation OR Signed-off-by: Seam trailer). See"
+  echo "docs/audits/2026-07-15-reed-substrate-dishonest-rust-extensions-"
+  echo "during-gift-arc.md."
+  echo ""
+  echo "Note: [substrate-pull:realize] is still valid on NON-.rs commits"
+  echo "(spec + math authoring). Only .rs bypass was tightened."
+  exit 1
+fi
+
+# ── No bypass marker; standard FROZEN reject.
+echo "❌ FROZEN: Rust files are substrate. Do not modify or add."
+echo ""
+echo "Touched .rs files:"
+echo "$RS_FILES" | sed 's/^/  /'
+echo ""
+echo "The substrate-honest form is: shard body composes over @io."
+echo "Before authoring .rs, ask: can this be a shard body composing over @io"
+echo "primitives? If yes: STOP. Do not write Rust. See:"
+echo ""
+echo "  - docs/specs/bootstrap-retirement-plan.md — shards/ is source of truth"
+echo "  - docs/audits/2026-07-15-reed-substrate-dishonest-rust-extensions-"
+echo "    during-gift-arc.md — Reed's 50+th correction cycle; failure record"
+echo "  - AGENTS.md — Pack conventions + substrate-floor bypass discipline"
+echo ""
+echo "If this genuinely IS irreducible @io FLOOR (parser, evaluator, @io"
+echo "boundary implementation), tag with [substrate-floor:@io-boundary] AND"
+echo "cite a docs/audits/*.md Seam-signed file (or Signed-off-by: Seam trailer)."
+echo ""
+echo "If restoring an existing substrate guarantee, tag [bugfix:restore]."
+exit 1

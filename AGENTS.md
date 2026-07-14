@@ -277,8 +277,23 @@ committed 🔴. Honor the TDD boundary at the agent boundary.
 - **Combined 🔴+🟢 brief:** high-ambiguity. Stop at the 🔴/🟢 boundary if scope
   shifts; don't carry ambiguity from test-design into implementation.
 - **Stalled recovery:** read the actual staged diff first. 🔴-only staging →
-  commit as 🔴 with `[substrate-pull:realize]` naming what's deferred. Do NOT
-  synthesize a 🟢 that isn't in staging.
+  commit as 🔴 with `[substrate-floor:@io-boundary]` naming what's deferred
+  (only if the deferred content is genuine @io FLOOR authorship and Seam
+  will sign off; see the tightening note below). Do NOT synthesize a 🟢
+  that isn't in staging.
+
+**⚠️ 2026-07-15 tightening (Reed self-correction).** The Rust bypass marker
+`[substrate-pull:realize]` was retired for `.rs` files after Reed's 50+th
+correction cycle (see `docs/audits/2026-07-15-reed-substrate-dishonest-
+rust-extensions-during-gift-arc.md`). New marker: `[substrate-floor:@io-
+boundary]`. Semantics: names the ONLY admissible use of `.rs` authorship
+— implementing an @io primitive the substrate cannot yet declare. Everything
+else composes over @io in a shard body. Every `[substrate-floor:@io-
+boundary]` commit ALSO requires either a `docs/audits/*.md` citation or an
+explicit `Signed-off-by: Seam <seam@systemic.engineer>` trailer. Reed
+cannot self-authorize `.rs` extensions — Seam adjudicates. The old marker
+`[substrate-pull:realize]` remains valid on NON-`.rs` commits (spec + math
++ scout authoring).
 
 ### Phase markers
 
@@ -587,12 +602,22 @@ FFI `extern`, `build.rs` invoking flang/linker, `@io` execution boundary,
 Fortran-via-flang FFI surface — these are the floor capability stands on,
 not capability itself.
 
-Boundary-Rust commits MUST carry `[substrate-pull:realize]`. Reference what
-is realized (the FFI symbol, the build step, the `@io` wrapper) in the
-message. Pair with `🔧`, NOT `🟢` (real foot-gun). The bracket marker is
-the FROZEN-bypass token; it's not a phase marker. Standalone boundary work
-isn't a red/green pair, so `🟢` is rejected. (`🟢 [substrate-pull:realize]`
-is only correct as the green half of a real red-first FFI test pair — rare.)
+Boundary-Rust commits MUST carry `[substrate-floor:@io-boundary]` (renamed
+2026-07-15 from `[substrate-pull:realize]` — see tightening note above).
+Reference what is realized (the FFI symbol, the build step, the `@io`
+wrapper) in the message. Pair with `🔧`, NOT `🟢` (real foot-gun). The
+bracket marker is the FROZEN-bypass token; it's not a phase marker.
+Standalone boundary work isn't a red/green pair, so `🟢` is rejected.
+(`🟢 [substrate-floor:@io-boundary]` is only correct as the green half of
+a real red-first FFI test pair — rare.)
+
+**Seam gate.** Every `[substrate-floor:@io-boundary]` commit must ALSO
+either cite a `docs/audits/YYYY-MM-DD-*.md` file (Seam sign-off) OR carry
+the trailer `Signed-off-by: Seam <seam@systemic.engineer>`. The commit-msg
+hook enforces this. Reed cannot self-authorize `.rs` extensions; Seam
+adjudicates whether the proposed authorship is genuinely FLOOR or is
+substrate-dishonest capability that belongs in a shard body composing over
+@io. When uncertain, the answer is shard-body-composes-over-@io.
 
 Test: *could a `.mirror` grammar express this?* Yes → capability → frozen.
 No, because it crosses to the world → boundary → allowed, marked.
@@ -602,8 +627,12 @@ No, because it crosses to the world → boundary → allowed, marked.
 The FROZEN `.rs` guard lives in git-tracked `.githooks/commit-msg` (mode
 `100755`), run as **prelude** by the global household commit-msg hook. The
 prelude scans staged `.rs` (additions AND modifications); rejects if no
-`[bugfix:restore]` or `[substrate-pull:realize]` marker. A marked message
-bypasses; the global hook then continues with phase/sequence/test policy.
+`[bugfix:restore]` or `[substrate-floor:@io-boundary]` marker (the latter
+also requires a `docs/audits/*.md` citation OR `Signed-off-by: Seam`
+trailer). A marked-and-gated message bypasses; the global hook then
+continues with phase/sequence/test policy. The retired
+`[substrate-pull:realize]` marker on `.rs` files is now explicitly rejected
+with rename guidance in the hook output.
 
 **Why commit-msg, not pre-commit:** pre-commit can't see the message being
 composed — git passes it no argument, and `.git/COMMIT_EDITMSG` holds the
