@@ -27,6 +27,94 @@ The full loop:
   → @roomba continues walking (present, non-labelable, just IS)
 ```
 
+### 🎯 SCOPE A /LOOP SHIP COMPLETE (2026-07-14; Reed autonomous per Alex "ship it until unresolvable ambiguity")
+
+The /loop end2end @roomba run is empirically live at Scope A. Alex's
+2026-07-14 morning composition (@roomba → @tension → @song → @kintsugi →
+@knife|@peer) runs against the real mirror substrate through a chained
+cascade of substrate-decl mints + runtime discharges + house-cleanup +
+empirical validation.
+
+**Cascade this session (all on `main`):**
+
+1. `5c06ee8` Mara @subject family-root canonical spec (2400 LOC) — SEL
+   licensable-party carrier; three new family-roots (@subject, @sel,
+   @mirror/property later renamed @mirror/petri); Rung 11 outward-
+   opening substrate; sub-Turing framing at §4.6; drone story witness
+   at §11.6
+2. `e0a3e48` Mara @coherence species-shard (779 LOC) — first substrate-
+   decl citation of Foerster's ethical imperative ("Act so as always
+   to increase the number of choices" — Understanding Understanding
+   2003 Ch. 11 p. 227); discharges 3-day forward-promise from
+   `coherence-parametric.mirror:25-28`
+3. `b3ec316` Mara AT2 rename cascade (+380 LOC) — @mirror/property →
+   @mirror/petri throughout spec + AT1 count fix + RA1 @consent/
+   enforcement routing + RA3-RA4 docblock notes + Rung 11 placement +
+   @ml marker family forward-promise
+4. `6967c93` Reed editorial fixes — Seam D1/D2/D9 non-blocking cleanup
+5. `c805e5d` Taut substrate-already-had-the-word scout (1241 LOC) — 12
+   dimensions incl. D11 @coherence closure + D12 pre-commit hook file-
+   filter finding (partially correct; corrected below)
+6. `dae0f6a` Seam Phase D adjudication (1106 LOC) — 10 dimensions; zero
+   BLOCKING findings for Scope A ship; 14 new Alex-adjudications
+   surfaced (S1-S14); ready-to-ship verdict
+7. `422076d` Reed runtime + house cleanup (+747 lines) — bootstrap/src/
+   coherence.rs (217 LOC) + bootstrap/src/roomba.rs (432 LOC) +
+   lib.rs module registrations + flake.nix libiconv fix + Reed scout
+   at `docs/scouts/2026-07-14-reed-house-cleanup-nix-iconv-and-stale-
+   precommit.md` (99 LOC)
+8. `d3d7d15` Reed end2end empirical integration test (83 LOC) —
+   `bootstrap/tests/roomba_walk_smoke.rs`; @roomba walks the mirror
+   substrate DAG; empirical trajectory observed
+
+**Empirical observations from `cargo test --test roomba_walk_smoke --
+--ignored --nocapture`:**
+
+- Substrate: 165 nodes / 6671 edges (matches FROZEN hook's spectral_index emission)
+- Coherence Fiedler: 0.062073 (stable start=end; Scope A is read-only per definition)
+- Pain: ~0.98 across 20 visited directories (substrate is high-entropy dense DAG; SC<5> hex near-uniform at every node)
+- Tension: 0.0026 consistently (substrate uniformly complex, not sharply discontinuous)
+- Knife verdicts: 20/20 STABLE; 0 jumps; 0 near-boundary events (ε_pain=0.1)
+- Total tests GREEN: 10 unit (coherence 8/8 + roomba 2/2) + 2 integration (smoke + ignored-empirical)
+
+**Load-bearing empirical discharge:** the composition
+`@roomba.walk + @coherence.coherence_score + @cyberpunk/algedonic.sample_pain
++ @mirror/lens/knife.stable_within + @mirror/index.build_concept_graph`
+IS EMPIRICALLY LIVE against the real mirror substrate.
+
+**House-cleanup fixes** (Task #85; per Alex "This is your house. Cleanup your house."):
+
+- `flake.nix` NIX_LDFLAGS manual override was replacing nix's auto-computed
+  libiconv path; fixed by appending `-L${pkgs.libiconv}/lib` (`422076d`).
+  Unblocked cargo test link for ALL bootstrap tests.
+- `.git/hooks/pre-commit` was a stale local copy; the canonical marker-
+  bypass enforcement lives at `.githooks/commit-msg` (chained via ~/.os
+  git-hooks.nix). Renamed to `.pre-commit.stale-D12-superseded-by-
+  githooks-commit-msg`. D12 mechanism correction documented in Reed scout.
+
+**Scope B forward-promises (NOT this ship):**
+
+- CLI subcommand `mirror roomba walk <root> [--budget N] [--epsilon P]`
+- @coherence CLIMB empirical demonstration (requires substrate mutation
+  via @kintsugi/consent dispatch of @roomba-detected knife-cuts)
+- @knife JUMPS empirical demonstration (requires ε_pain calibration or
+  substrate with sharper local discontinuities)
+- MCP tool `mirror_roomba_walk` (Scope PI-B, per prior @mirror/index pattern)
+- Full 6-species @subject enumeration (Scope B per Mara §10)
+- 12 petri-net signature Rust runtime discharges (Scope B/C per Mara §10)
+- @sel + @mirror/petri Rust runtime discharges (Scope C consumer-pull per Mara §9.5)
+
+**Alex-adjudications outstanding (17 total):**
+
+- 8 original from Mara @subject spec (A1-A8)
+- 14 new from Seam Phase D audit (S1-S14; several are Scope B blockers)
+- 3 @coherence Reed-relay decisions (C1-C3) deferred to grammar-extension / realization ticks
+- Recognition candidate ratification (unnumbered; substrate-becomes-trustworthy-empirically-and-mathematically per @coherence species-shard)
+
+**Substrate state:** 165 nodes / 6671 edges Fiedler = 0.062073 (@coherence-empirically measured 2026-07-14).
+
+---
+
 ### Rung 10 landings (in-flight; @roomba as Beer S4 species)
 
 - **Mara `9bbebd2`** — `docs/specs/roomba-substrate-walker-that-feeds-
