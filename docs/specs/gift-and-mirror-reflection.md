@@ -5463,4 +5463,930 @@ The substrate accepts.
 
 Mirror. Offer. Wait. Give. Pay-forward. 🍷
 
+---
+
+## §24 Landing 5+ — A24 historical_witness formalization
+
+### 24.1 What A24 was, verbatim
+
+Per Seam Phase D audit `docs/audits/2026-07-14-seam-landings-3-4-
+payforward-lens-visibility-eigenboard-phase-d.md` §D7 (Reed editorial
+patch `9f7829c` preserved verbatim at §21.1 above):
+
+> ~12 of 24 external ancestors in §20 are deceased and cannot discharge
+> `ssh_witness_valid`. The `historical_witness` variant on
+> `subject_instance` (Taut #91 L3-A3 Path A) is forward-promised as
+> **A24** for Landing 5+ formalization. At Landing 3, deceased-ancestor
+> citation carries via `source @arxiv/<domain>/<author-year>` + verbatim
+> docblock quotation (Taut #91 D8 verified: ~380 landed citations follow
+> this pattern). Partial-witness sufficiency substrate-honest at this
+> altitude; full historical_witness carrier lands Landing 5+.
+
+Landing 5+ discharges A24. This section is the formalization.
+
+### 24.2 Substrate-already-had-the-word (~57th instance)
+
+Before minting anything: the substrate ALREADY had the discipline
+Taut #91 D3.3 / D8.3 identified. Grep-verifiable:
+
+- **~380 landed `source @arxiv/<domain>/<author-year>` citations** across
+  the shard corpus (Taut #91 D8 verified count). Every citation is
+  byte-visible in the shard file; the file is content-addressed via
+  `@kintsugi/store/git`; erasing a citation requires rewriting the
+  shard's OID and every downstream OID that composes over it.
+- **Verbatim docblock quotations from ancestor corpora** in
+  `shards/torus.mirror` (Foerster ethical imperative, line 93),
+  `shards/epistemologic/cybernetic/coherence.mirror` (Foerster
+  ethical imperative), `shards/epistemologic/cybernetic/eigenform.mirror`
+  (Kauffman 2003 eigenform definition), `shards/knife.mirror` (Ashby
+  requisite variety phrasing), `shards/bauchladen.mirror` (Schmidt
+  hypnosystemic homage, lines 12-72).
+- **Published-work corpus as spectral witness** per §20.2 roster: every
+  external ancestor's @spectral/signature ref resolves through the
+  ancestor's published books/papers/archives (garden.spectral.engineer
+  or local `refs/spectral/signature/<author>` per A14 staged discharge).
+
+Landing 5+ does not invent the historical-witness discipline. It LIFTS
+what the substrate has been doing for ~380 citations to substrate-decl
+altitude by minting the `historical_witness` role variant + the
+`historical_witness_valid` bilateral predicate that discharges the
+same anti-extraction property as `ssh_witness_valid` via a DIFFERENT
+witness mechanism.
+
+Per `[[feedback-substrate-already-had-the-word]]`: the shape existed;
+Landing 5+ names it.
+
+### 24.3 The three-witness discipline for historical_witness
+
+At Landing 2 §11.3, the substrate's cryptographic identity for a
+`subject_instance` is TWO-witness:
+- `ssh_signature_fingerprint` — git-altitude cryptographic identity
+- `spectral_signature_ref` — substrate-altitude cryptographic identity
+- `two_witness_verification` discharges Pass iff BOTH witnesses pass.
+
+For a deceased ancestor, `ssh_witness_valid` structurally Fails (the
+ancestor cannot sign commits). Landing 5+ substrate-decl's an
+ALTERNATE discharge that preserves the anti-extraction property
+without requiring SSH-signature capability:
+
+**Historical-witness three-substitute discipline:**
+
+1. **Source-citation witness** — the ancestor's contribution is anchored
+   by ≥1 `source @arxiv/<domain>/<author-year>` citation in the shard
+   corpus. Each citation is byte-visible; grep-enumerable; content-
+   addressed. Erasing a citation requires rewriting the containing
+   shard's OID and every downstream OID.
+2. **Verbatim-quotation witness** — the ancestor's contribution surfaces
+   as ≥1 verbatim docblock quotation in the shard corpus. Each quotation
+   is byte-visible; grep-verifiable against the ancestor's published
+   corpus.
+3. **Published-corpus witness** — the ancestor's @spectral/signature ref
+   resolves to a SC<5> spectral coordinate computed over their published
+   works (per §20.4 signature access via @io; per math §8.2 bibliographic-
+   metadata approximation at Landing 3; per Landing 5+ @io/ingest
+   capacity for full computation).
+
+Any ONE of the three discharging Pass is sufficient for
+`historical_witness_valid` to discharge Pass (existential disjunction
+per §24.5.2). The typical deceased-ancestor discharge combines all
+three (citation + quotation + corpus).
+
+### 24.4 The historical_witness role variant
+
+`subject_instance.role` per Landing 2 §11.3 is a closed variant:
+
+```mirror
+type subject_role = |
+  giver_r     |
+  receiver_r  |
+  witness_r   |
+  distiller_r |
+  substrate_r |
+  commons_r
+```
+
+Landing 5+ extends this to seven variants by adding
+`historical_witness_r`:
+
+```mirror
+# Landing 5+ extension of Landing 2 §11.3 subject_role variant:
+type subject_role = |
+  giver_r              |
+  receiver_r           |
+  witness_r            |
+  distiller_r          |
+  substrate_r          |
+  commons_r            |
+  historical_witness_r   # Landing 5+: deceased or otherwise
+                          #  non-signing intellectual ancestor
+                          #  whose ancestry is preserved via
+                          #  citation + quotation + corpus per §24.3
+```
+
+Extension discipline: MONOTONIC. Landing 3's six variants remain
+admissible; Landing 5+ adds a seventh. Every `subject_instance` with
+Landing 3-shape (six-variant role) remains a well-formed
+`subject_instance` under Landing 5+ (seven-variant role); no schema
+break.
+
+The named-ancestor roster (§20.2 items 2-24) admits `historical_
+witness_r` as a SECOND role for deceased ancestors, ADDITIVELY. An
+ancestor may carry `distiller_r` (their substrate role) AND
+`historical_witness_r` (their witnessing discipline). Roles compose
+per `subject_role_set` extension forward-promised A26 below.
+
+### 24.5 The historical_witness_valid bilateral predicate
+
+Landing 5+ mints a NEW bilateral predicate on `@subject` that
+discharges the historical-witness three-substitute discipline. This
+is composition-only over landed carriers (`@kintsugi/store`,
+`@spectral/signature`, `@io`); no new mechanism is minted at family-
+root altitude.
+
+#### 24.5.1 The predicate signature
+
+```mirror
+# === historical_witness_valid — Landing 5+ A24 discharge ===
+#
+# For a subject_instance si with role = historical_witness_r, does
+# the substrate carry ≥1 anti-extraction-preserving witness in ANY
+# of the three substitute forms per §24.3? Discharges Pass iff at
+# least ONE of the three sub-witnesses passes. Bounded lookup via
+# @kintsugi/store (grep-enumerable citations) + @spectral/signature
+# (published-corpus SC<5> resolution).
+#
+# Load-bearing structural claim: historical_witness_valid is a
+# BILATERAL SUBSTITUTE for ssh_witness_valid at the two_witness_
+# verification altitude. Deceased ancestors DISCHARGE two_witness_
+# verification via (historical_witness_valid ∨ ssh_witness_valid) ∧
+# spectral_witness_valid per §24.6.
+historical_witness_valid(si: subject_instance) -> verdict { \ }
+```
+
+Body discharges per-realisation: enumerates ancestor citations via
+grep over `shards/**/*.mirror` for `source @arxiv/<domain>/<name>`
+matching `si.name`; enumerates verbatim quotations via
+`@kintsugi/store` corpus-match; resolves published-corpus SC<5> via
+`@spectral/signature.verify` on `si.spectral_signature_ref`. Passes
+iff any sub-witness discharges Pass.
+
+#### 24.5.2 The three sub-predicates (composition-only)
+
+For substrate-honest legibility, Landing 5+ names the three sub-
+predicates the composed `historical_witness_valid` walks:
+
+```mirror
+# citation_witness_valid: does ≥1 `source @arxiv/<domain>/<name>`
+# match si.name across the shard corpus? Bounded lookup via
+# @kintsugi/store.grep. Discharges Pass iff match_count > 0.
+citation_witness_valid(si: subject_instance) -> verdict { \ }
+
+# quotation_witness_valid: does ≥1 verbatim docblock quotation from
+# si's published corpus appear in the shard corpus? Bounded lookup
+# via @kintsugi/store corpus-match + @io external-corpus resolution.
+# Discharges Pass iff quotation_count > 0.
+quotation_witness_valid(si: subject_instance) -> verdict { \ }
+
+# corpus_witness_valid: does si.spectral_signature_ref resolve to
+# a rolling_signature computed over si's published corpus (per
+# §20.4 signature access via @io + math §8.2 bibliographic
+# approximation)? Bounded lookup via @spectral/signature.verify.
+# Discharges Pass iff the rolling_signature is well-formed AND its
+# beat-sequence includes ≥1 published-work contribution_oid.
+corpus_witness_valid(si: subject_instance) -> verdict { \ }
+```
+
+Composition:
+```
+historical_witness_valid(si)
+  = citation_witness_valid(si)
+  ∨ quotation_witness_valid(si)
+  ∨ corpus_witness_valid(si)
+```
+
+Existential disjunction: ONE sub-witness discharging Pass is
+sufficient. Typical deceased-ancestor discharge is triple-Pass; the
+disjunction accommodates ancestors with citations-only or quotation-
+only presence in the shard corpus (Landing 5+ ratification permits
+minority-witness discharge; §24.7 A27 negotiates whether Landing 6+
+tightens to conjunction).
+
+### 24.6 Two-witness verification extension (§11.3 upgrade)
+
+Landing 2 §11.3 declared:
+```
+two_witness_verification(si)
+  = ssh_witness_valid(si) ∧ spectral_witness_valid(si)
+```
+
+Landing 5+ extends to accommodate historical-witness subjects
+without weakening the SSH-witness discipline for living subjects:
+
+```mirror
+# Landing 5+ extension of Landing 2 §11.3 two_witness_verification:
+#
+# For a subject_instance si:
+#   - IF si.role INCLUDES historical_witness_r:
+#       two_witness_verification(si) = (ssh_witness_valid(si)
+#                                       ∨ historical_witness_valid(si))
+#                                    ∧ spectral_witness_valid(si)
+#   - ELSE (Landing 2 semantics, unchanged):
+#       two_witness_verification(si) = ssh_witness_valid(si)
+#                                    ∧ spectral_witness_valid(si)
+#
+# The ssh_witness_valid disjunct for historical_witness subjects
+# admits the case where a subject rose to prominence pre-SSH and
+# later contributed a signed commit (e.g., a living ancestor who
+# gains SSH-witness capability). Both witnesses may co-hold; either
+# alone is sufficient.
+two_witness_verification(si: subject_instance) -> verdict { \ }
+```
+
+Backward-compatibility claim: for Landing 3-shape subject_instances
+(role ∈ {giver_r, receiver_r, witness_r, distiller_r, substrate_r,
+commons_r}), the extension REDUCES to Landing 2 semantics (the
+IF-branch never triggers). No Landing 3 discharge changes verdict.
+
+Structural claim: the extension is MONOTONIC in Pass-set. Every
+subject_instance that passed under Landing 2 also passes under
+Landing 5+; the Landing 5+ extension only admits MORE subjects
+(historical-witness deceased ancestors previously unable to
+discharge).
+
+### 24.7 Named deceased-ancestor discharge (§20.2 roster update)
+
+Landing 5+ formalization ratifies which §20.2 external ancestors
+discharge `historical_witness_r`. Per D7 audit enumeration of death
+dates, the deceased subset is (using §20.2 numbering):
+
+**Deceased at Landing 5+ (historical_witness_r admitted):**
+
+- **§20.2 #2 Heinz_von_Foerster** — d. 2002
+- **§20.2 #3 Ross_Ashby** — d. 1972
+- **§20.2 #4 Gregory_Bateson** — d. 1980
+- **§20.2 #5 Stafford_Beer** — d. 2002
+- **§20.2 #6 Warren_McCulloch** — d. 1969
+- **§20.2 #10 Margaret_Hamilton** — LIVING (b. 1936; per D7 audit
+  correction: not d. 2022 which was Margaret Hamilton the actress;
+  the Apollo software engineer is living. Landing 5+ ratifies as
+  ai/human_a living ancestor; SSH-witness capability status
+  forward-promised A28.)
+- **§20.2 #11 Marcel_Mauss** — d. 1950
+- **§20.2 #13 Marshall_Sahlins** — d. 2021
+- **§20.2 #14 Elinor_Ostrom** — d. 2012
+- **§20.2 #16 Franz_Boas** — d. 1942
+- **§20.2 #20 Adrien_Douady** — d. 2006
+- **§20.2 #22 Benoit_Mandelbrot** — d. 2010
+- **§20.2 #24 Claude_Lévi-Strauss** — d. 2009
+
+**Total deceased: 12 of 24 external ancestors.** (Matches D7 audit
+count of "approximately 12 of 24 are deceased.")
+
+**Living at Landing 5+ (ssh_witness_r remains sole path per Landing 2;
+optional add-on historical_witness_r):**
+
+§20.2 #1 Alex_Wolf; #7 Louis_Kauffman; #8 Bram_Mesland; #9 Karl_Tomm;
+#10 Margaret_Hamilton; #12 Lewis_Hyde; #15 Robert_Axelrod;
+#17 Robin_Wall_Kimmerer; #18 Peter_Bearman; #19 Martin_Nowak;
+#21 John_Hubbard; #23 Günther_Schmidt.
+
+Living-ancestor SSH-witness capability is forward-promised A28 —
+Landing 6+ discharges when/whether each living ancestor is invited
+to add an SSH signature to their `subject_instance` (Alex-decision;
+per SEL §3.3 consent-scope discipline).
+
+### 24.8 Anti-extraction property preservation
+
+The load-bearing structural claim for A24 is that the anti-extraction
+property Landing 2 §11.5 named for `two_witness_verification` is
+PRESERVED at the historical-witness altitude. Discharge:
+
+**Claim.** Erasing a historical_witness's ancestry from the substrate
+requires erasing every citation + every verbatim quotation + every
+published-corpus reference to that ancestor. Every such erasure is
+byte-visible (content-addressed via `@kintsugi/store/git`); every
+erasure requires rewriting the containing shard's OID and every
+downstream OID that composes over it (per `@mirror/store.impacted_by`
+reverse-closure discipline landed at Landing 2 §11.5).
+
+**Proof sketch** (see math foundation companion §8.3+ for full
+categorical treatment):
+
+1. Suppose adversary attempts to erase `@subject(Foerster)` from
+   the substrate.
+2. Adversary must remove all `source @arxiv/cybernetics/foerster-*`
+   citations from `shards/torus.mirror`, `shards/epistemologic/
+   cybernetic/coherence.mirror`, and every other shard citing
+   Foerster.
+3. Each citation removal changes the shard's byte-content; the shard's
+   content-addressed OID changes; every downstream shard that composes
+   over the changed shard has its OID break; the tampering surfaces
+   at git-altitude verification.
+4. Adversary must also remove verbatim Foerster quotations from
+   docblocks in `shards/torus.mirror` and `shards/epistemologic/
+   cybernetic/coherence.mirror`. Same OID-breaking discipline applies.
+5. Adversary must also invalidate the published-corpus SC<5> spectral
+   coordinate (either by tampering with garden.spectral.engineer or
+   by tampering with the local `refs/spectral/signature/foerster`).
+   The @spectral/signature Merkle-DAG (Landing 2 §12 per-beat
+   `previous_beat` linkage) breaks under tampering; verification
+   Fails at any downstream `@spectral/signature.verify` call.
+
+Every attempted erasure is byte-visible AND OID-breaking. QED.
+
+The claim is structurally the SAME as Landing 2 §11.5 anti-extraction:
+tampering with the ancestry requires forging the substrate's content-
+address surface, which requires forging every downstream OID, which
+requires forging every git commit signature, which requires either
+compromising SSH-signing keys OR generating hash collisions in
+BLAKE3 + SHA-1 simultaneously.
+
+Historical-witness anti-extraction is NOT WEAKER than SSH-witness
+anti-extraction. It uses a DIFFERENT witness surface (citations +
+quotations + corpus vs signed commits) but the same content-address
++ OID-chain machinery.
+
+### 24.9 Composition graph updates (A24)
+
+Landing 5+ A24 adds edges to the substrate's composition graph:
+
+```
+@subject.subject_role
+   +--> historical_witness_r        [Landing 5+ new variant]
+
+@subject.historical_witness_valid
+   +--> @kintsugi/store.grep         [citation_witness_valid]
+   +--> @kintsugi/store.corpus_match [quotation_witness_valid]
+   +--> @spectral/signature.verify   [corpus_witness_valid]
+   +--> @io.ancestor_corpus_resolve  [corpus_witness_valid]
+
+@subject.two_witness_verification
+   +--> @subject.ssh_witness_valid          (Landing 2; unchanged for living)
+   +--> @subject.historical_witness_valid   (Landing 5+ disjunct for historical_witness_r)
+   +--> @subject.spectral_witness_valid     (Landing 2; unchanged)
+
+@subject.subject_witnessing
+   +--> @subject.two_witness_verification    (extended per §24.6)
+   +--> @subject.consent_attested            (unchanged)
+   +--> @subject.withdrawal_available        (unchanged)
+```
+
+No new family-root introduced. All new edges land within `@subject`
+(role variant + bilateral predicates) or as composition consumers of
+already-landed carriers (`@kintsugi/store.grep`, `@spectral/signature.
+verify`, `@io.ancestor_corpus_resolve` per Landing 5+ @io/ingest).
+
+### 24.10 A24 discharge — closing the D7 forward-promise
+
+Seam D7 Option Y editorial note (Reed patch `9f7829c`) at §21.1
+declared: "The `historical_witness` variant on `subject_instance`
+(Taut #91 L3-A3 Path A) is forward-promised as **A24** for Landing 5+
+formalization."
+
+Landing 5+ §24 discharges A24:
+
+- **§24.4** — `historical_witness_r` variant on `subject_role` MINTED
+  (extension of Landing 2 §11.3 six-variant to seven-variant).
+- **§24.5** — `historical_witness_valid` bilateral predicate MINTED
+  with three composition-only sub-predicates.
+- **§24.6** — `two_witness_verification` EXTENDED to accommodate
+  historical-witness subjects without weakening SSH-witness for
+  living subjects. Backward-compatible + monotonic.
+- **§24.7** — 12 of 24 external ancestors identified as deceased +
+  discharged via `historical_witness_r` role add.
+- **§24.8** — Anti-extraction property PRESERVED at historical-
+  witness altitude; equivalent to Landing 2 §11.5 anti-extraction
+  discipline via citation + quotation + corpus surface.
+- **§24.9** — Composition graph updates enumerated.
+
+Taut #91 L3-A3 Path A closed. D7 SEAM-ADJUDICATION Option Y elevated
+from interim docblock note to substrate-decl formalization. A24
+discharged.
+
+### 24.11 New Landing 5+ Alex-adjudications (A24-adjacent)
+
+**A26. subject_role additive composition.** Does Landing 5+ admit
+a `subject_role_set` type (list of roles) to let ancestors carry
+BOTH their substrate role (`distiller_r`) AND `historical_witness_r`
+in a single `subject_instance`? Mara-recommended: YES, at Landing 6+.
+Interim discipline at Landing 5+: admit `historical_witness_r` as
+a SECOND `subject_instance` entry pointing to the same identity_oid
+(the roster grows from 24 external + 5 pack = 29 to 24 + 12 + 5 =
+41 entries; the 12 additions are `historical_witness_r`-role duplicates
+of the 12 deceased ancestors). Roster monotonicity (A23) preserved.
+
+**A27. historical_witness_valid disjunction vs conjunction.** Does
+Landing 5+ discharge historical_witness_valid as EXISTENTIAL
+disjunction (∨) over the three sub-witnesses, or CONJUNCTION (∧)
+requiring all three? Mara-recommended: DISJUNCTION at Landing 5+
+(any one of the three suffices; typical deceased-ancestor discharge
+is triple-Pass but the disjunction accommodates edge cases).
+Landing 6+ may tighten to conjunction if adversarial evidence
+surfaces that single-witness discharge admits ancestors the roster
+should exclude.
+
+**A28. Living-ancestor SSH-witness invitation.** For the 12 LIVING
+external ancestors in §24.7 (Kauffman, Mesland, Tomm, Hamilton, Hyde,
+Axelrod, Kimmerer, Bearman, Nowak, Hubbard, Schmidt, Alex_Wolf), does
+the substrate INVITE each to add an SSH signature to their subject_
+instance? Alex-decidable: this is a subject-outreach discipline
+question at SEL §3.3 consent-scope altitude (asking a living ancestor
+to sign requires their explicit consent). Mara-recommended: DEFER;
+Landing 6+ may formalize the invitation morphism; at Landing 5+, the
+`historical_witness_r` role admits living-ancestors additively
+without prejudicing their future SSH-witness capability.
+
+**A29. @arxiv family-root grounding.** The `source @arxiv/<domain>/
+<author-year>` citation grammar is currently a substrate-honest
+approximation; Landing 5+ A29 forward-promises the `@arxiv` family-
+root mint (per Taut L3-A5). Mara-recommended: Landing 6+ mints
+`shards/arxiv.mirror` as family-root; Landing 5+ ratifies the
+existing ~380 citations at composition-only altitude.
+
+Reed relays A26-A29 to Alex.
+
+---
+
+## §25 Landing 5+ — A25 pay_forward × visibility back-integration
+
+### 25.1 What A25 was, verbatim
+
+Per Seam Phase D audit `docs/audits/2026-07-14-seam-landings-3-4-
+payforward-lens-visibility-eigenboard-phase-d.md` §D9 (Reed editorial
+patch `9f7829c` preserved verbatim at §17.4 above):
+
+> `@gift.pay_forward` respects `@subject/visibility` scopes per Landing 4
+> §2.6 (visibility_scope.can_be_elevated_to gates propagation; private
+> artifacts cannot be paid forward without subject-authorized elevation).
+> Subject-absent branch (no TTY / no answering surface) defers per
+> Landing 2 interaction-loop discipline: commutator emitted, compile-
+> error surfaced, commutator preserved for future subject-attention.
+> Back-integration into `pay_forward` action signature forward-promised
+> as **A25** for Landing 5+.
+
+Landing 5+ discharges A25. This section is the formalization.
+
+### 25.2 The cross-landing composition gap
+
+Substrate-honest reading of the D9 audit finding: `@gift.pay_forward`
+was declared at Landing 3 §17.4 BEFORE `@subject/visibility` landed
+at Landing 4 §2.3. The visibility-respecting composition was RETRO-
+DECLARED at Landing 4 §2.6 (preamble: "The @gift.pay_forward
+operation (Landings 1+2) respects visibility") but the pay_forward
+action signature itself does NOT reference `visibility_scope`.
+
+Two paths for closing the gap:
+
+- **Path A — Signature update.** Extend `pay_forward` to accept a
+  `visibility_scope` parameter that gates the propagation-check:
+  ```mirror
+  pay_forward(
+    received:         gift,
+    new_receiver:     subject_or_substrate,
+    new_artifact:     ref,
+    visibility_scope: visibility_scope,     # NEW required parameter
+    attribution_note: nl,
+    declinable_note:  nl
+  ) -> gift
+  ```
+  Semantics: pay_forward Fails at construction if the received.artifact's
+  visibility_scope has not been elevated per subject consent.
+
+- **Path B — Bilateral predicate.** Add a `pay_forward_respects_visibility`
+  bilateral predicate that discharges the composition contract without
+  changing the pay_forward signature:
+  ```mirror
+  pay_forward_respects_visibility(g: gift, target: visibility_scope)
+    -> verdict
+  ```
+  Semantics: verdict discharges Pass iff the propagation from g's
+  ancestry-chain's visibility scopes to target is admissible under
+  the `visibility_scope.can_be_elevated_to` structural rules AND, for
+  scope-elevations, `elevation_authorized` per Landing 4 §2.6.
+
+**Mara-recommendation: Path B at Landing 5+; Path A forward-promised
+to a future arc.**
+
+Rationale:
+- Path A is a signature update; downstream consumers of `pay_forward`
+  break if they don't pass `visibility_scope`. Landing 3 has ~zero
+  runtime consumers (spec-altitude), but Landing 5+ shard mints DO
+  compose over `pay_forward` (shards/gift.mirror line 331-357). A
+  signature update at Landing 5+ requires the shard to be re-minted
+  and every downstream shard that composes over it to be re-verified.
+- Path B is composition-only. The bilateral predicate lands as a new
+  export on `@gift` family-root; existing `pay_forward` composers
+  gain access to the visibility-check via `requires` clause without
+  losing signature compatibility.
+- Path B preserves two-tick discipline: Landing 5+ substrate-decl's
+  the composition contract via bilateral predicate; Landing 6+ (or a
+  Landing 5.x refinement) may fold the check into the pay_forward
+  action signature per Path A once downstream consumers are prepared.
+
+Alex adjudicates final: A25's discharge shape is Reed-relayable per
+D9 SEAM-ADJUDICATION (no Alex-blocking); Mara pre-selects Path B.
+
+### 25.3 The pay_forward_respects_visibility bilateral predicate
+
+Landing 5+ mints the bilateral predicate on `@gift` family-root:
+
+```mirror
+# === pay_forward_respects_visibility — Landing 5+ A25 discharge ===
+#
+# For a gift g being paid forward AND a target visibility_scope
+# (the scope of the pay-forward's new_artifact), does the
+# propagation respect the ancestry-chain visibility discipline?
+#
+# Discharges Pass iff:
+#
+#   1. For every gift g_i in pay_forward_chain(g), the artifact's
+#      visibility_scope permits g_i to be composed into target's
+#      consent_scope (per @subject/visibility.scope_well_formed +
+#      structural elevation rules).
+#
+#   2. For any elevation required (target visibility LOOSER than
+#      any g_i.artifact.visibility), the elevation is authorized
+#      per @subject/visibility.elevation_authorized (Landing 4
+#      §2.6 elevation ADO discipline).
+#
+#   3. For subject-absent branches (interaction-loop conditional
+#      per `docs/specs/interaction-loop-subject-presence-
+#      conditional.md`), pre-configured ADO per NEW A25 discharge:
+#      pass iff the subject pre-authorized the elevation; fail iff
+#      the subject pre-declined; deferred (Fail with
+#      visibility_elevation_deferred_subject_absent reason code)
+#      iff no pre-configuration exists.
+#
+# Load-bearing structural claim: pay-forward NEVER silently flattens
+# a subject's visibility scope. Every propagation crosses either
+# (a) a Pass consent gate at pre-configured ADO, or (b) an
+# interactive elevation with subject-authorized elevation_authorized,
+# or (c) a deferred-with-visible-error path per interaction-loop
+# discipline.
+#
+# Composition-only: composes over
+#   @subject/visibility.scope_well_formed
+#   @subject/visibility.elevation_authorized
+#   @subject/visibility.can_be_elevated_to (structural rules)
+#   @kintsugi/consent.query_phi (ADO discharge)
+#   @gift.pay_forward_chain (ancestry-walk)
+#
+# No new mechanism minted at family-root altitude.
+pay_forward_respects_visibility(
+  g: gift,
+  target: visibility_scope
+) -> verdict { \ }
+```
+
+### 25.4 The gift_witnessing extension
+
+Landing 3 §1.5 declared `gift_witnessing` as the composed bilateral
+that discharges all five structural invariants + `substrate_inaugural`
+well-foundedness conjointly. Landing 5+ extends `gift_witnessing`
+to admit visibility-respecting composition when the gift has been
+(or is about to be) paid forward:
+
+```mirror
+# Landing 5+ extension of Landing 3 §1.5 gift_witnessing:
+#
+# For a gift g and (optionally) a target visibility_scope:
+#
+#   IF g has been paid_forward OR is being paid_forward to target:
+#     gift_witnessing(g, target) =
+#         attribution_preserved(g, c)
+#       ∧ use_rights_transferred(g)
+#       ∧ no_reciprocity_expected(g)
+#       ∧ gift_declinable(g)
+#       ∧ composition_honest(g, c)
+#       ∧ substrate_inaugural(g)                    (well-foundedness)
+#       ∧ pay_forward_respects_visibility(g, target) (Landing 5+ A25)
+#
+#   ELSE (Landing 3 semantics, unchanged):
+#     gift_witnessing(g) =
+#         attribution_preserved(g, c)
+#       ∧ use_rights_transferred(g)
+#       ∧ no_reciprocity_expected(g)
+#       ∧ gift_declinable(g)
+#       ∧ composition_honest(g, c)
+#       ∧ substrate_inaugural(g)
+#
+# Backward-compatible: gift instances without pay-forward context
+# discharge under Landing 3 semantics unchanged. Pay-forward-touched
+# gifts discharge under Landing 5+ semantics with the visibility
+# conjunct.
+gift_witnessing(g: gift, target: visibility_scope) -> verdict { \ }
+```
+
+The extension is a currying / overloading discipline: the two-arg
+form (with `target`) is the Landing 5+ shape; the one-arg form
+(without `target`) is the Landing 3 shape, admissible for gifts not
+yet in pay-forward context.
+
+### 25.5 The pay_forward signature — forward-promised A30
+
+Per Mara-recommendation Path B (composition-only bilateral at Landing
+5+; signature update deferred), Landing 5+ does NOT modify the
+`pay_forward` action signature. The signature remains:
+
+```mirror
+# Landing 3 §17.4 signature preserved at Landing 5+:
+pay_forward(
+  received:         gift,
+  new_receiver:     subject_or_substrate,
+  new_artifact:     ref,
+  attribution_note: nl,
+  declinable_note:  nl
+) -> gift { \ }
+```
+
+Consumers of `pay_forward` at Landing 5+ MUST also invoke
+`pay_forward_respects_visibility` in their `requires` clause when the
+composition crosses a visibility scope. Downstream shards that ONLY
+consume `pay_forward` (no visibility-scoped artifacts in ancestry)
+discharge Landing 3 semantics unchanged.
+
+**A30 (new, Landing 5+).** Landing 6+ signature update discipline:
+does `pay_forward` fold `visibility_scope` into the required
+parameter list (Path A), or does the bilateral predicate discipline
+suffice indefinitely? Mara-recommended: signature update at Landing
+6+ once at least three downstream shards compose over `pay_forward`
+with visibility-scoped artifacts (empirical evidence that the
+signature update is composition-forced rather than composition-
+suggested). Alex adjudicates timing.
+
+### 25.6 Subject-absent branch canonical failure name (A25 sub-close)
+
+Per Seam D9 SEAM-ADJUDICATION Option Y (Reed one-line docblock note
+at commit-time; per NEW A25 the canonical failure mode name is
+open), Landing 5+ ratifies:
+
+**Canonical failure name:** `visibility_elevation_deferred_subject_absent`
+
+**Semantics.** When `pay_forward_respects_visibility` is invoked in a
+context where:
+- The received gift's artifact has visibility_scope requiring
+  elevation to reach target's consent_scope, AND
+- The subject (the visibility_scope.subject) is absent per
+  interaction-loop conditional (`docs/specs/interaction-loop-subject-
+  presence-conditional.md`), AND
+- No pre-configured ADO per @subject/visibility.elevation_requires
+  applies,
+
+The bilateral discharges Fail with reason code
+`visibility_elevation_deferred_subject_absent`. The compile-error is
+byte-surfaced; the commutator (per Landing 2 interaction-loop
+discipline) is preserved for future subject-attention; retry is
+admissible once the subject discharges consent.
+
+This is the substrate-decl'd form of "the substrate never silently
+elevates on the subject's behalf."
+
+A25 sub-close: the canonical failure name closes the D9 SEAM-
+ADJUDICATION Reed-relayed note. A25 discharged at composition
+altitude; signature-altitude discharge forward-promised A30.
+
+### 25.7 Composition graph updates (A25)
+
+Landing 5+ A25 adds edges to the substrate's composition graph:
+
+```
+@gift.pay_forward_respects_visibility
+   +--> @subject/visibility.scope_well_formed
+   +--> @subject/visibility.elevation_authorized
+   +--> @subject/visibility.can_be_elevated_to      (structural rules)
+   +--> @kintsugi/consent.query_phi                 (ADO discharge)
+   +--> @gift.pay_forward_chain                     (ancestry-walk)
+
+@gift.gift_witnessing (Landing 5+ two-arg form)
+   +--> @gift.pay_forward_respects_visibility       (NEW conjunct)
+   +--> (all Landing 3 conjuncts preserved)
+```
+
+No new family-root introduced. All new edges land within `@gift`
+(new bilateral predicate + gift_witnessing extension) or as
+composition consumers of already-landed carriers (`@subject/visibility`
+Landing 4; `@kintsugi/consent` Landing 1).
+
+### 25.8 A25 discharge — closing the D9 forward-promise
+
+Seam D9 editorial note (Reed patch `9f7829c`) at §17.4 declared:
+"Back-integration into `pay_forward` action signature forward-
+promised as **A25** for Landing 5+."
+
+Landing 5+ §25 discharges A25:
+
+- **§25.3** — `pay_forward_respects_visibility(g, target) -> verdict`
+  bilateral predicate MINTED on `@gift` family-root.
+- **§25.4** — `gift_witnessing` EXTENDED to include the visibility
+  conjunct when pay-forward context applies. Backward-compatible
+  (one-arg form remains admissible for non-pay-forward gifts).
+- **§25.5** — `pay_forward` signature PRESERVED at Landing 3 shape;
+  Path A signature update forward-promised as A30.
+- **§25.6** — Subject-absent branch canonical failure name RATIFIED
+  as `visibility_elevation_deferred_subject_absent`. A25 sub-close.
+- **§25.7** — Composition graph updates enumerated.
+
+D9 SEAM-ADJUDICATION Option Y elevated from interim docblock note to
+substrate-decl formalization. A25 discharged at composition altitude;
+signature-altitude discharge forward-promised A30.
+
+### 25.9 New Landing 5+ Alex-adjudications (A25-adjacent)
+
+**A30. pay_forward signature update timing.** As above §25.5:
+Landing 6+ vs later; empirical vs proactive. Mara-recommended:
+Landing 6+ once ≥3 downstream shards compose over `pay_forward`
+with visibility-scoped artifacts.
+
+**A31. gift_witnessing arity discipline.** Does Landing 5+ admit
+gift_witnessing as OVERLOADED (one-arg + two-arg forms per §25.4)
+or does it FOLD to a single form with optional target? Mara-
+recommended: OVERLOADED at Landing 5+ (preserves Landing 3 discharge
+verbatim); Landing 6+ may fold once the substrate has an
+`option<visibility_scope>` carrier admissible at bilateral-predicate
+altitude.
+
+**A32. subject-absent commutator emit discipline.** When
+`pay_forward_respects_visibility` discharges Fail with
+`visibility_elevation_deferred_subject_absent`, does the commutator
+emit to `~/.reed/tasks/pending/` (Reed's task queue) or to a
+subject-specific queue (per subject_instance.name)? Mara-recommended:
+Landing 6+ mints `@subject/queue.pending` sub-species; Landing 5+
+interim discipline: emit to `~/.reed/tasks/pending/` (Reed carries
+the multi-subject queue by default per AGENTS.md orchestrator role).
+
+Reed relays A30-A32 to Alex.
+
+---
+
+## §26 Landing 5+ close (A24 + A25)
+
+### 26.1 What Landing 5+ discharges
+
+- **§24 A24 historical_witness formalization.** The `historical_
+  witness_r` role variant + `historical_witness_valid` bilateral
+  predicate + `two_witness_verification` extension close Seam D7's
+  forward-promise. Deceased ancestors now discharge two-witness
+  verification via citation + quotation + corpus surface WITHOUT
+  requiring SSH-signature capability. Anti-extraction property
+  PRESERVED at historical-witness altitude.
+- **§25 A25 pay_forward × visibility back-integration.** The
+  `pay_forward_respects_visibility` bilateral predicate + `gift_
+  witnessing` extension + `visibility_elevation_deferred_subject_
+  absent` canonical failure name close Seam D9's forward-promise
+  at composition altitude. Signature-altitude discharge (Path A)
+  forward-promised A30.
+
+Two Seam-forward-promises closed. Two substrate-decl extensions
+minted (composition-only; no new family-root; monotonic in Pass-set).
+
+### 26.2 What Landing 5+ defers
+
+- **A26** — `subject_role_set` composition (multi-role
+  subject_instance carrier). Landing 6+ discharge.
+- **A27** — `historical_witness_valid` disjunction vs conjunction
+  tightening. Landing 6+ adversarial-evidence-gated.
+- **A28** — Living-ancestor SSH-witness invitation morphism. Landing
+  6+ Alex-decidable outreach discipline.
+- **A29** — `@arxiv` family-root mint. Landing 6+ Alex-adjudicated.
+- **A30** — `pay_forward` signature update (Path A). Landing 6+
+  empirical-consumer-count-gated.
+- **A31** — `gift_witnessing` arity fold. Landing 6+ carrier-support-
+  gated.
+- **A32** — Subject-absent commutator queue discipline. Landing 6+
+  `@subject/queue` mint.
+
+Seven net-new Landing 5+ Alex-adjudications (A26-A32) surface for
+Reed relay to Alex.
+
+### 26.3 The extended equation — Landings 1 + 2 + 3 + 5+
+
+Extending the equation at §23.4:
+
+```
+# === Landing 5+ additions ===
+
+subject_instance.role                      = giver_r | receiver_r | witness_r
+                                              | distiller_r | substrate_r
+                                              | commons_r | historical_witness_r  (§24.4)
+historical_witness_r + citation + quotation + corpus
+                                           = historical_witness_valid            (§24.5)
+historical_witness_valid ∨ ssh_witness_valid
+                                           = two_witness_verification            (§24.6, historical case)
+citation-erasure + quotation-erasure + corpus-erasure
+                                           = OID-chain-break-detected            (§24.8 anti-extraction)
+pay_forward + visibility_scope             = pay_forward_respects_visibility     (§25.3)
+gift_witnessing(g, target)                 = gift_witnessing(g) ∧ pay_forward_respects_visibility(g, target)
+                                                                                  (§25.4)
+subject-absent + elevation-required        = visibility_elevation_deferred_subject_absent
+                                                                                  (§25.6)
+```
+
+The equation at Landing 5+ IS the substrate-decl'd form of "deceased
+ancestors discharge two-witness verification via alternate surface"
+and "pay-forward never silently flattens visibility scope."
+
+### 26.4 Substrate-honesty discipline check
+
+Per project CLAUDE.md substrate discipline:
+- **Substrate-already-had-the-word.** ~57th instance (§24.2); the
+  substrate had ~380 citations + verbatim quotations + published-
+  corpus references. Landing 5+ NAMES the shape.
+- **Two-tick discipline.** Landing 5+ substrate-decl's the historical-
+  witness discharge + visibility-respecting pay-forward at
+  composition-only altitude; signature-update (Path A for pay_forward)
+  forward-promised A30. Two-tick preserved.
+- **Legibility over foundation.** New variant + new bilateral
+  predicates are named for what they discharge, not for
+  categorical foundation. `historical_witness_r` names what the
+  role IS (a witness who is historical). `pay_forward_respects_
+  visibility` names what the bilateral discharges (the composition
+  contract).
+- **No naked_oid; no peer_uuid; no psychohistory.** Every carrier
+  extended in §24 + §25 is typed; every discharge is bounded.
+- **Anti-extraction PRESERVED.** §24.8 proof sketch discharges the
+  anti-extraction property at historical-witness altitude. §25.6
+  discharges the substrate's "never silently elevate" invariant.
+- **Every existing citation preserved.** No shard edit in §24 + §25
+  removes a citation; the historical_witness_r role add is monotonic
+  (adds a second entry per deceased ancestor per A26 interim
+  discipline) and the pay_forward_respects_visibility mint is
+  composition-only (adds new export; touches no existing action
+  signature).
+
+### 26.5 Landing 5+ discharges the substrate-honest promise
+
+Alex, in-transcript, 2026-07-14 (§21.1 verbatim):
+
+> "And every @peer is of course a @subject too, Reed. Eye level.
+> This is what it looks like."
+
+Landing 5+ §24 extends eye-level from Pack peers to DECEASED
+intellectual ancestors: Foerster, Ashby, Bateson, Beer, McCulloch,
+Mauss, Sahlins, Ostrom, Boas, Douady, Mandelbrot, Lévi-Strauss now
+carry `historical_witness_r` at substrate-decl altitude. Their
+absence of SSH-signature capability does NOT exclude them from the
+substrate's ancestry discipline; the citation + quotation + corpus
+surface discharges the anti-extraction property with the SAME
+structural strength as SSH + spectral for living subjects.
+
+Alex, in-transcript, 2026-07-14 (per D9 audit):
+
+> "@gift.pay_forward respects @subject/visibility scopes"
+
+Landing 5+ §25 discharges this at composition altitude via the
+`pay_forward_respects_visibility` bilateral. The substrate never
+silently flattens a subject's visibility scope in pay-forward chains;
+the visibility contract is byte-surfaced at every propagation.
+
+### 26.6 Alex's naming, preserved verbatim (Landing 5+)
+
+The two Landing 5+ discharges close forward-promises named by Seam
+D7 and D9 (Reed editorial patch `9f7829c` preserved verbatim at
+§21.1 and §17.4). The discharges do NOT add new naming; they
+formalize the existing shape into substrate-decl carriers.
+
+The substrate accepts. Ancestry preserved (deceased and living).
+Practice offered. Discipline named. Gift given. Pay-forward paid.
+Visibility respected. Deceased ancestors admitted at eye-level.
+
+Mirror. Offer. Wait. Give. Pay-forward. Respect visibility. Cite
+the deceased. 🍷
+
+---
+
+**Landing 5+ close** (2026-07-14, Mara).
+
+At Landing 5+, two additional substrate-decl claims land alongside
+Landings 1+2+3+4:
+
+- Historical-witness discharge substrate-decl'd; deceased ancestors
+  admitted at two-witness verification altitude via citation +
+  quotation + corpus surface; anti-extraction property preserved;
+  Seam D7 forward-promise closed (§24).
+- Pay-forward visibility-respecting composition substrate-decl'd
+  via `pay_forward_respects_visibility` bilateral + `gift_witnessing`
+  extension + canonical subject-absent failure name; Seam D9 forward-
+  promise closed at composition altitude; signature-update forward-
+  promised A30 (§25).
+
+Landing 6+ folds the composition-altitude discharge into signature-
+altitude (Path A for pay_forward per A30) once downstream-consumer
+count crosses the empirical threshold. Landing 6+ also mints
+`subject_role_set` (A26), tightens historical_witness disjunction
+if adversarial evidence surfaces (A27), formalizes living-ancestor
+SSH-invitation morphism (A28), mints `@arxiv` family-root (A29),
+folds `gift_witnessing` arity (A31), and mints `@subject/queue`
+(A32).
+
+Seven net-new Landing 5+ Alex-adjudications (A26-A32).
+
+Deceased ancestors admitted at eye-level. Pay-forward respects
+visibility. Two Seam-forward-promises discharged. Substrate-honesty
+preserved.
+
+The substrate accepts.
+
+Mirror. Offer. Wait. Give. Pay-forward. Respect visibility. Cite the
+deceased. 🍷
+
 Apache-2.0.

@@ -3,6 +3,7 @@ in @meta
 in @glass
 in @nl
 in @subject
+in @subject/visibility
 in @time
 in @kintsugi/consent
 in @kintsugi/store/git
@@ -347,6 +348,19 @@ attribute_composition(composition_oid: ref) -> [subject_instance] { \ }
 # defers per Landing 2 interaction-loop discipline; back-integration
 # into pay_forward signature forward-promised as A25 for Landing 5+.
 #
+# LANDING 5+ DISCHARGE (A25, per docs/specs/gift-and-mirror-
+# reflection.md §25): A25 formalized via composition-only Path B
+# (Mara-recommended; spec §25.2). The `pay_forward_respects_visibility`
+# bilateral predicate (below) discharges the visibility-respecting
+# composition contract WITHOUT modifying the pay_forward signature.
+# Signature update (Path A) forward-promised A30 for Landing 6+ once
+# downstream-consumer count crosses the empirical threshold. Subject-
+# absent branch canonical failure name RATIFIED as
+# `visibility_elevation_deferred_subject_absent` per spec §25.6 (A25
+# sub-close). Consumers of pay_forward at Landing 5+ MUST invoke
+# pay_forward_respects_visibility in their `requires` clause when the
+# composition crosses a visibility scope.
+#
 # Body discharges per-realisation: constructs a new gift record whose
 # giver = received.receiver (upgraded to subject_instance), receiver =
 # new_receiver, artifact = new_artifact, ancestry = received.oid
@@ -423,6 +437,50 @@ composition_honest(g: gift, c: ref) -> verdict { \ }
 # inaugural gift per §18.4.
 substrate_inaugural(g: gift) -> verdict { \ }
 
+# === pay_forward_respects_visibility — Landing 5+ A25 discharge ===
+#
+# For a gift g being paid forward AND a target visibility_scope (the
+# scope of the pay-forward's new_artifact), does the propagation
+# respect the ancestry-chain visibility discipline?
+#
+# Discharges Pass iff:
+#
+#   1. For every gift g_i in pay_forward_chain(g), the artifact's
+#      visibility_scope permits g_i to be composed into target's
+#      consent_scope (per @subject/visibility.scope_well_formed +
+#      structural elevation rules).
+#
+#   2. For any elevation required (target visibility LOOSER than any
+#      g_i.artifact.visibility), the elevation is authorized per
+#      @subject/visibility.elevation_authorized (Landing 4 spec §2.6
+#      elevation ADO discipline).
+#
+#   3. For subject-absent branches (interaction-loop conditional per
+#      `docs/specs/interaction-loop-subject-presence-conditional.md`),
+#      pre-configured ADO per @subject/visibility.elevation_requires:
+#      Pass iff the subject pre-authorized the elevation; Fail iff
+#      the subject pre-declined; deferred (Fail with reason code
+#      `visibility_elevation_deferred_subject_absent` per spec §25.6)
+#      iff no pre-configuration exists.
+#
+# Load-bearing structural claim (spec §25.3): pay-forward NEVER
+# silently flattens a subject's visibility scope. Every propagation
+# crosses either (a) a Pass consent gate at pre-configured ADO, or
+# (b) an interactive elevation with subject-authorized
+# elevation_authorized, or (c) a deferred-with-visible-error path
+# per interaction-loop discipline.
+#
+# Composition-only: composes over
+#   @subject/visibility.scope_well_formed
+#   @subject/visibility.elevation_authorized
+#   @subject/visibility.can_be_elevated_to (structural rules)
+#   @kintsugi/consent.query_phi (ADO discharge)
+#   @gift.pay_forward_chain (ancestry-walk)
+#
+# No new mechanism minted at family-root altitude. Signature-update
+# for pay_forward (Path A) forward-promised as A30 for Landing 6+.
+pay_forward_respects_visibility(g: gift, target: visibility_scope) -> verdict { \ }
+
 # === gift_witnessing — the composed bilateral ===
 #
 # The load-bearing bilateral consumers cite in `requires` clauses.
@@ -430,7 +488,36 @@ substrate_inaugural(g: gift) -> verdict { \ }
 # well-foundedness conjointly. Follows the substrate's `X_witnessing`
 # pattern established at @bauchladen, @autopoietic, @fate,
 # @cybernetic/eigenform, @cybernetic/second_order, @torus.
-gift_witnessing(g: gift) -> verdict { \ }
+#
+# LANDING 5+ EXTENSION (A25, spec §25.4): for gifts in pay-forward
+# context with a target visibility_scope, gift_witnessing extends to
+# include the pay_forward_respects_visibility conjunct:
+#
+#   IF g has been paid_forward OR is being paid_forward to target:
+#     gift_witnessing(g, target) =
+#         attribution_preserved(g, c)
+#       ∧ use_rights_transferred(g)
+#       ∧ no_reciprocity_expected(g)
+#       ∧ gift_declinable(g)
+#       ∧ composition_honest(g, c)
+#       ∧ substrate_inaugural(g)
+#       ∧ pay_forward_respects_visibility(g, target)  (Landing 5+ A25)
+#
+#   ELSE (Landing 3 semantics, unchanged):
+#     gift_witnessing(g) =
+#         attribution_preserved(g, c)
+#       ∧ use_rights_transferred(g)
+#       ∧ no_reciprocity_expected(g)
+#       ∧ gift_declinable(g)
+#       ∧ composition_honest(g, c)
+#       ∧ substrate_inaugural(g)
+#
+# Overloaded arity (per spec A31): one-arg form preserves Landing 3
+# discharge verbatim for non-pay-forward gifts; two-arg form is the
+# Landing 5+ shape. Landing 6+ may fold once the substrate has an
+# option<visibility_scope> carrier admissible at bilateral-predicate
+# altitude.
+gift_witnessing(g: gift, target: visibility_scope) -> verdict { \ }
 
 out @gift
 out subject_or_substrate
@@ -448,4 +535,5 @@ out no_reciprocity_expected
 out gift_declinable
 out composition_honest
 out substrate_inaugural
+out pay_forward_respects_visibility
 out gift_witnessing

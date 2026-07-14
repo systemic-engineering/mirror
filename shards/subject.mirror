@@ -61,34 +61,57 @@ in @time
 # on subject_instance (Taut #91 L3-A3 Path A) is forward-promised as
 # A24 for Landing 5+ formalization.
 #
+# LANDING 5+ DISCHARGE (A24, per docs/specs/gift-and-mirror-
+# reflection.md §24): A24 formalized. The `historical_witness_r` role
+# variant (below in subject_role) + the `historical_witness_valid`
+# bilateral predicate (below) close the D7 forward-promise. Deceased
+# ancestors now discharge two_witness_verification via
+# (ssh_witness_valid ∨ historical_witness_valid) ∧ spectral_witness_valid
+# per spec §24.6. Anti-extraction property PRESERVED at historical-
+# witness altitude via citation + verbatim quotation + published-corpus
+# surface (spec §24.8 proof sketch).
+#
 # Landing 3 roster enumerations (subject_instance values below
 # reference each; construction via @kintsugi/store/git at Landing 4+):
 #
-# External ancestors (role: distiller_r | giver_r; actor_kind: human_a):
+# External ancestors (role: distiller_r | giver_r; actor_kind: human_a).
+# Deceased ancestors carry ADDITIVE historical_witness_r role per
+# Landing 5+ spec §24.7 (A26 interim discipline: second subject_instance
+# entry with identical identity_oid + historical_witness_r role;
+# monotonic roster growth from 24 to 36 external entries preserved).
+# Deceased flag [†] with year-of-death per spec §24.7 audit-verified
+# enumeration.
+#
 #   1. Alex_Wolf              (first substrate-external giver; §3.1)
-#   2. Heinz_von_Foerster     (@torus; ethical imperative; @coherence)
-#   3. Ross_Ashby             (variety; requisite variety; @knife)
-#   4. Gregory_Bateson        (logical types; #42 recognition ancestor)
-#   5. Stafford_Beer          (VSM; S5 identity-transfer; @cyberpunk)
-#   6. Warren_McCulloch       (heterarchy; topology-encodes-depth)
+#   2. Heinz_von_Foerster     [† 2002] (@torus; ethical imperative; @coherence)
+#   3. Ross_Ashby             [† 1972] (variety; requisite variety; @knife)
+#   4. Gregory_Bateson        [† 1980] (logical types; #42 recognition ancestor)
+#   5. Stafford_Beer          [† 2002] (VSM; S5 identity-transfer; @cyberpunk)
+#   6. Warren_McCulloch       [† 1969] (heterarchy; topology-encodes-depth)
 #   7. Louis_Kauffman         (eigenforms; torus-knot invariants)
 #   8. Bram_Mesland           (KK-cycles; @glue Mesland correspondence)
 #   9. Karl_Tomm              (circular-reflexive questions; @metalogue)
-#  10. Margaret_Hamilton      (error-as-question; 1202 alarm)
-#  11. Marcel_Mauss           (gift 1925; three obligations)
+#  10. Margaret_Hamilton      (error-as-question; 1202 alarm;
+#                              LIVING per spec §24.7 D7 audit correction)
+#  11. Marcel_Mauss           [† 1950] (gift 1925; three obligations)
 #  12. Lewis_Hyde             (creative gift 1983; gift moves)
-#  13. Marshall_Sahlins       (Stone Age Economics 1972; generalized reciprocity)
-#  14. Elinor_Ostrom          (commons governance 1990)
+#  13. Marshall_Sahlins       [† 2021] (Stone Age Economics 1972; generalized reciprocity)
+#  14. Elinor_Ostrom          [† 2012] (commons governance 1990)
 #  15. Robert_Axelrod         (cooperation folk theorem 1984)
-#  16. Franz_Boas             (potlatch ethnography 1897)
+#  16. Franz_Boas             [† 1942] (potlatch ethnography 1897)
 #  17. Robin_Wall_Kimmerer    (serviceberry economy 2013)
 #  18. Peter_Bearman          (generalized exchange 1997; pay-forward)
 #  19. Martin_Nowak           (five rules cooperation 2006)
-#  20. Adrien_Douady          (R-universality; Mandelbrot dynamics)
+#  20. Adrien_Douady          [† 2006] (R-universality; Mandelbrot dynamics)
 #  21. John_Hubbard           (R-universality co-author)
-#  22. Benoit_Mandelbrot      (fractal geometry; self-similarity)
+#  22. Benoit_Mandelbrot      [† 2010] (fractal geometry; self-similarity)
 #  23. Günther_Schmidt        (@bauchladen homage; hypnosystemic therapy)
-#  24. Claude_Levi-Strauss    (kinship as generalized exchange 1949)
+#  24. Claude_Levi-Strauss    [† 2009] (kinship as generalized exchange 1949)
+#
+# Deceased subset (12 of 24; Landing 5+ historical_witness_r admitted):
+#   #2 Foerster, #3 Ashby, #4 Bateson, #5 Beer, #6 McCulloch,
+#   #11 Mauss, #13 Sahlins, #14 Ostrom, #16 Boas, #20 Douady,
+#   #22 Mandelbrot, #24 Lévi-Strauss.
 #
 # Pack peers (role: giver_r; actor_kind: ai_a; per §21.3):
 #  25. Reed                   (Pack orchestrator; RED-first tests)
@@ -196,30 +219,44 @@ type subject_kind = |
   occupied_population |
   indigenous_nation
 
-# === The subject_role carrier (Landing 2 §11.3, six variants) ===
+# === The subject_role carrier (Landing 2 §11.3 + Landing 5+ §24.4) ===
 #
 # The subject_instance's role in a gift-cycle or gift-adjacent
 # composition. Extensible as new gift-shaped compositions surface;
-# Landing 3 preserves the six variants without addition.
+# Landing 3 preserved six variants; Landing 5+ (spec §24.4)
+# MONOTONICALLY extends to seven variants by adding
+# historical_witness_r (A24 discharge).
 #
-#   giver_r      — subject as gift-giver (per @gift.offer)
-#   receiver_r   — subject as gift-receiver (per @gift.accept)
-#   witness_r    — subject as observer of a gift-cycle without
-#                   direct participation
-#   distiller_r  — giver-as-distiller with a deeper ancestry chain
-#                   (per A11: Alex distilling therapy / Bateson /
-#                   Foerster into mirror-offer-wait)
-#   substrate_r  — substrate itself as the instance holder (per A9
-#                   substrate-as-giver Alex-adjudicated YES)
-#   commons_r    — commons as the receiver instance holder (per §12
-#                   substrate → commons gift-flow)
+#   giver_r              — subject as gift-giver (per @gift.offer)
+#   receiver_r           — subject as gift-receiver (per @gift.accept)
+#   witness_r            — subject as observer of a gift-cycle without
+#                           direct participation
+#   distiller_r          — giver-as-distiller with a deeper ancestry chain
+#                           (per A11: Alex distilling therapy / Bateson /
+#                           Foerster into mirror-offer-wait)
+#   substrate_r          — substrate itself as the instance holder (per A9
+#                           substrate-as-giver Alex-adjudicated YES)
+#   commons_r            — commons as the receiver instance holder (per §12
+#                           substrate → commons gift-flow)
+#   historical_witness_r — Landing 5+ (spec §24.4): deceased or otherwise
+#                           non-signing intellectual ancestor whose
+#                           ancestry is preserved via citation +
+#                           verbatim quotation + published-corpus SC<5>
+#                           surface. Discharges historical_witness_valid
+#                           (below) as substitute for ssh_witness_valid
+#                           at the two_witness_verification altitude.
+#                           Anti-extraction property PRESERVED per spec
+#                           §24.8 proof sketch. Backward-compatible:
+#                           Landing 3 six-variant discharges reduce to
+#                           Landing 2 semantics unchanged.
 type subject_role = |
-  giver_r     |
-  receiver_r  |
-  witness_r   |
-  distiller_r |
-  substrate_r |
-  commons_r
+  giver_r              |
+  receiver_r           |
+  witness_r            |
+  distiller_r          |
+  substrate_r          |
+  commons_r            |
+  historical_witness_r
 
 # === The actor_kind carrier (Landing 3 §21.2) ===
 #
@@ -343,6 +380,17 @@ withdrawal_available(s: subject) -> verdict { \ }
 # Bounded lookup via git; discharges Pass iff first_asserted_in
 # resolves to a git commit, the commit is signed via SSH, and the
 # signature's public key fingerprint matches.
+#
+# LANDING 5+ EXEMPTION (A24, spec §24.6): subjects whose role INCLUDES
+# historical_witness_r are EXEMPT from ssh_witness_valid at the
+# two_witness_verification altitude. Historical witnesses discharge
+# an ALTERNATE witness via historical_witness_valid (below) that
+# discharges Pass via citation + quotation + published-corpus surface
+# without requiring SSH-signature capability. The exemption is
+# STRUCTURAL: deceased ancestors cannot sign; the substrate does not
+# demand they do. Living subjects continue to discharge ssh_witness_valid
+# per Landing 2 discipline; the exemption is monotonic in Pass-set
+# (admits MORE subjects, weakens NONE).
 ssh_witness_valid(si: subject_instance) -> verdict { \ }
 
 # spectral_witness_valid: does the spectral_signature_ref resolve to
@@ -354,9 +402,83 @@ ssh_witness_valid(si: subject_instance) -> verdict { \ }
 # first_asserted_in.
 spectral_witness_valid(si: subject_instance) -> verdict { \ }
 
+# === Landing 5+ historical_witness bilateral predicates (A24, spec §24.5) ===
+#
+# The three composition-only sub-predicates walked by
+# historical_witness_valid. Each discharges via a DIFFERENT anti-
+# extraction-preserving witness surface; any ONE discharging Pass is
+# sufficient (existential disjunction per spec §24.5.2 + A27 interim
+# discipline).
+
+# citation_witness_valid: does ≥1 `source @arxiv/<domain>/<name>`
+# citation across the shard corpus match si.name? Bounded lookup via
+# @kintsugi/store.grep over `shards/**/*.mirror`. Discharges Pass iff
+# match_count > 0. Anti-extraction: every citation is byte-visible in
+# the shard file; the file is content-addressed via @kintsugi/store/git;
+# erasing a citation changes the shard OID and every downstream OID
+# per @mirror/store.impacted_by reverse-closure discipline.
+citation_witness_valid(si: subject_instance) -> verdict { \ }
+
+# quotation_witness_valid: does ≥1 verbatim docblock quotation from
+# si's published corpus appear in the shard corpus? Bounded lookup via
+# @kintsugi/store corpus-match + @io external-corpus resolution.
+# Discharges Pass iff quotation_count > 0. Anti-extraction: verbatim
+# quotations are byte-visible; erasure is OID-breaking per the same
+# discipline as citation_witness_valid.
+quotation_witness_valid(si: subject_instance) -> verdict { \ }
+
+# corpus_witness_valid: does si.spectral_signature_ref resolve to a
+# rolling_signature computed over si's published corpus (per spec §20.4
+# signature access via @io + math §8.2 bibliographic-metadata
+# approximation)? Bounded lookup via @spectral/signature.verify.
+# Discharges Pass iff the rolling_signature is well-formed AND its
+# beat-sequence includes ≥1 published-work contribution_oid. Anti-
+# extraction: the @spectral/signature Merkle-DAG (Landing 2 §12
+# per-beat previous_beat linkage) breaks under tampering.
+corpus_witness_valid(si: subject_instance) -> verdict { \ }
+
+# historical_witness_valid: composed bilateral. Discharges Pass iff
+# at least ONE of the three sub-witnesses passes. Load-bearing
+# structural claim per spec §24.5: historical_witness_valid is a
+# BILATERAL SUBSTITUTE for ssh_witness_valid at the
+# two_witness_verification altitude. Deceased ancestors (subject_role
+# INCLUDES historical_witness_r) discharge two_witness_verification
+# via (historical_witness_valid ∨ ssh_witness_valid) ∧
+# spectral_witness_valid per spec §24.6.
+#
+# Composition:
+#   historical_witness_valid(si)
+#     = citation_witness_valid(si)
+#     ∨ quotation_witness_valid(si)
+#     ∨ corpus_witness_valid(si)
+#
+# Anti-extraction property preserved per spec §24.8 proof sketch:
+# erasing a historical_witness's ancestry requires erasing every
+# citation + every quotation + every corpus reference AND rewriting
+# every downstream shard OID. Byte-visible AND OID-chain-breaking.
+historical_witness_valid(si: subject_instance) -> verdict { \ }
+
 # two_witness_verification: BOTH witnesses independently pass?
 # THE substrate-decl of "erasure requires forging BOTH signatures."
-# Discharges Pass iff ssh_witness_valid AND spectral_witness_valid.
+#
+# Landing 2 semantics (§11.3, unchanged for non-historical subjects):
+#   Discharges Pass iff ssh_witness_valid AND spectral_witness_valid.
+#
+# Landing 5+ extension (A24, spec §24.6):
+#   For si with role INCLUDING historical_witness_r:
+#     two_witness_verification(si) = (ssh_witness_valid(si)
+#                                     ∨ historical_witness_valid(si))
+#                                  ∧ spectral_witness_valid(si)
+#
+#   For si with role NOT INCLUDING historical_witness_r (Landing 3
+#   six-variant discharge, unchanged):
+#     two_witness_verification(si) = ssh_witness_valid(si)
+#                                  ∧ spectral_witness_valid(si)
+#
+# Backward-compatible: Landing 3-shape subject_instances discharge
+# under Landing 2 semantics unchanged. Extension is MONOTONIC in
+# Pass-set (admits historical-witness subjects previously unable to
+# discharge; weakens no existing discharge).
 two_witness_verification(si: subject_instance) -> verdict { \ }
 
 # === subject_witnessing — the composed bilateral ===
@@ -364,7 +486,9 @@ two_witness_verification(si: subject_instance) -> verdict { \ }
 # Consumer shards cite in `requires` clauses per the substrate's
 # X_witnessing pattern. Discharges consent_attested +
 # withdrawal_available + (for subject_instance values)
-# two_witness_verification conjointly.
+# two_witness_verification conjointly. Under Landing 5+ extension, the
+# two_witness_verification conjunct accommodates historical-witness
+# subjects via the extended semantics above.
 subject_witnessing(s: subject) -> verdict { \ }
 
 out @subject
@@ -379,5 +503,9 @@ out consent_attested
 out withdrawal_available
 out ssh_witness_valid
 out spectral_witness_valid
+out citation_witness_valid
+out quotation_witness_valid
+out corpus_witness_valid
+out historical_witness_valid
 out two_witness_verification
 out subject_witnessing
