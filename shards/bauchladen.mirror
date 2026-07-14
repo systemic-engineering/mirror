@@ -267,6 +267,15 @@ in @epistemologic/cybernetic/autopoiesis
 # declares `@bauchladen` per
 # `@epistemologic/pact/path_matches_namespace`.
 
+# NOTE (Landing 4 soft-cascade, 2026-07-14): @bauchladen composition is
+# subject-general per Landing 4 (docs/specs/subject-bauchladen-
+# visibility-and-eigenboard-loop.md e42181c R1 migration D3); the
+# `provenance_record.producing_prism: ref` field may resolve to a
+# subject_instance under Landing 4, not just a peer. Two-tick discipline
+# preserves the peer-altitude reading for one release cycle. Schmidt
+# homage unchanged. Every subject's torus interior IS the subject's
+# bauchladen at that subject altitude.
+
 source @arxiv/cybernetics/maturana-varela-1980
 source @arxiv/cybernetics/von-foerster-1981
 source @arxiv/clinical/schmidt-1985

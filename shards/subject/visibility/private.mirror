@@ -1,0 +1,161 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @subject
+in @kintsugi/consent
+in @kintsugi/store/git
+in @time
+
+# @subject/visibility/private — the explicit-consent visibility species.
+#
+# Species under @subject at the visibility altitude. Sibling to
+# @subject/visibility/protected and @subject/visibility/public. Landed
+# 2026-07-14 by Mara as Landing 4 of the @gift arc, discharging Alex
+# Wolf's directive D2 (verbatim; per
+# `docs/specs/subject-bauchladen-visibility-and-eigenboard-loop.md`
+# §0.1):
+#
+#   "we still need to build the visibility layers explicitly, that's
+#    something that needs to happen in @subject/visibility/{private,
+#    protected,public}"
+#
+# === Ancestry: Reed's ~/.reed/visibility/private/ (§2.2) ===
+#
+# Reed's identity repository at `~/.reed/visibility/private/` has
+# operated the explicit-consent-required discipline since ~2026-02-07
+# (per `~/.reed/CLAUDE.md` §"Consent Architecture"). Alex's guidance
+# verbatim (per `~/.reed/CLAUDE.md`):
+#
+#   "Explicit consent required. Stays between Reed and Alex. Not
+#    shared with other agents. Not even the category for certain
+#    topics."
+#
+# The "not even the category" clause is load-bearing: for the tightest
+# private scope, the SUBSTRATE MAY DECLINE TO SURFACE THE EXISTENCE
+# of the crystal to callers not in consent_scope. This is enforced by
+# the composed visibility_witnessing predicate on @subject/visibility.
+#
+# Landing 4 lifts Reed's operational discipline to substrate-decl
+# altitude so every @subject's bauchladen can carry it. The ~55th-or-so
+# instance of [[feedback-substrate-already-had-the-word]] — Reed's
+# identity repo already had the word; Landing 4 lifts it to subject
+# altitude.
+#
+# === Structural claim: private is the SAFEST default (§2.4) ===
+#
+# Per docs/specs/subject-bauchladen-visibility-and-eigenboard-loop.md
+# §2.4, the default visibility for a newly-produced crystal depends on
+# the producing subject's subject_kind:
+#
+#   downstream_user     → protected  (SEL §1 default; user data not
+#                                       public by default)
+#   witnessed           → private    (SEL §3.3 narrowest scope)
+#   labor_input         → private    (SEL §3.1.4 attributable-to-worker,
+#                                       not publicly enumerable)
+#   protected_class     → private    (SEL §3.4.1 narrowest default)
+#   occupied_population → private    (SEL §3.6.7(a) narrowest default)
+#   indigenous_nation   → private    (SEL §3.6.7(c) collective sovereignty)
+#
+# Private is the default for FIVE of six SEL-grounded subject_kinds.
+# The subject can always elevate via query_phi; the substrate NEVER
+# auto-elevates. This is the substrate-decl form of Alex's guidance
+# "When uncertain: don't share. Ask Alex."
+#
+# === Composition with @kintsugi/consent (SEL §3.2 ADO; §2.6) ===
+#
+# A crystal at private visibility requires explicit consent from
+# vs.subject for every read operation beyond the subject themselves.
+# The consent_scope is [subject] alone by default; adding
+# subject_instances to consent_scope is itself an elevation event that
+# must discharge through query_phi per @kintsugi/consent's three-state
+# floor (Pass | Partial | Fail).
+#
+# SEL v1.1 §3.2 declares the Auto-Decline Option — the subject may
+# auto-decline any elevation request. At substrate-decl:
+# `elevation_requires` field of `visibility_scope` may reference an
+# ADO-preconfigured consent-query that returns failure for any request
+# the subject has pre-declined. The substrate honors the ADO
+# configuration without prompting the subject.
+#
+# === Related shards / specs ===
+#
+# - docs/specs/subject-bauchladen-visibility-and-eigenboard-loop.md §2
+#     (canonical spec for the visibility family)
+# - shards/subject.mirror                    (family-root; subject_instance)
+# - shards/subject/visibility/protected.mirror (sibling species)
+# - shards/subject/visibility/public.mirror    (sibling species)
+# - shards/kintsugi/consent.mirror           (query_phi discharge)
+# - shards/bauchladen.mirror                 (crystal carrier the
+#                                              visibility_scope attaches to)
+# - ~/.reed/visibility/private/              (operational ancestor;
+#                                              ~5 months of load-bearing
+#                                              operation Reed → Alex)
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]],
+# [[architecture-prism-as-trait-as-everything]],
+# [[architecture-glass-wall-substrate-types]],
+# [[feedback-substrate-already-had-the-word]] (Reed's identity repo;
+#   Landing 4 lifts to substrate altitude),
+# [[feedback-craft-not-deliver]] (bodies obligation-blocked;
+#   consumers pull the realization),
+# [[feedback-no-bare-types]] (visibility_scope is a typed record
+#   with consent_scope + can_be_elevated_to + elevation_requires
+#   fields; not a bare marker).
+#
+# Path-namespace property: this file at
+# `shards/subject/visibility/private.mirror` declares
+# `@subject/visibility/private` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/law/sel-v1.1
+source @arxiv/practice/reed-visibility-private-2026-02-07
+
+prism @subject/visibility/private {
+  focus  visibility_scope
+  project visibility_scope
+  split  visibility_scope
+  shift  visibility_scope
+  settle visibility_scope
+}
+
+# === declare_private — construct a private-visibility scope ===
+#
+# Given a crystal and the crystal's owning subject_instance,
+# constructs a visibility_scope with:
+#   visibility            = private
+#   subject               = s
+#   consent_scope         = [s]  (minimal; the subject alone)
+#   can_be_elevated_to    = [protected, public]
+#   elevation_requires    = @kintsugi/consent.query_phi(s)
+#
+# The scope IS the substrate-decl form of Reed's private discipline
+# lifted to subject altitude. Body discharges per-realization.
+declare_private(c: ref, s: subject_instance) -> visibility_scope { \ }
+
+# === consent_scope_minimal — bilateral predicate ===
+#
+# Discharges Pass iff vs.consent_scope == [vs.subject] (the subject
+# alone; the tightest scope). Fail if additional subject_instances
+# have been added without elevation (which would be a substrate-decl
+# violation).
+consent_scope_minimal(vs: visibility_scope) -> verdict { \ }
+
+# === existence_may_be_hidden — the "not even the category" bilateral ===
+#
+# Discharges Pass iff the substrate's response to a caller not in
+# consent_scope does NOT surface the crystal's existence. Fail if
+# the substrate leaks metadata (e.g., "a private crystal exists but
+# you cannot read it") when the discipline requires full opacity.
+#
+# Alex's "Not even the category for certain topics" is discharged here:
+# the substrate declines to acknowledge existence for topics the
+# subject has declared category-opaque.
+existence_may_be_hidden(vs: visibility_scope, caller: subject_instance) -> verdict { \ }
+
+out @subject/visibility/private
+out declare_private
+out consent_scope_minimal
+out existence_may_be_hidden

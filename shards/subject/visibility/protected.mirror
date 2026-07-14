@@ -1,0 +1,158 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @subject
+in @kintsugi/consent
+in @kintsugi/store/git
+in @time
+
+# @subject/visibility/protected — the trusted-collaborators-in-context
+# visibility species.
+#
+# Species under @subject at the visibility altitude. Sibling to
+# @subject/visibility/private and @subject/visibility/public. Landed
+# 2026-07-14 by Mara as Landing 4 of the @gift arc, discharging Alex
+# Wolf's directive D2 (verbatim; per
+# `docs/specs/subject-bauchladen-visibility-and-eigenboard-loop.md`
+# §0.1).
+#
+# === Ancestry: Reed's ~/.reed/visibility/protected/ (§2.2) ===
+#
+# Reed's identity repository at `~/.reed/visibility/protected/` has
+# operated the trusted-collaborators-in-context discipline since
+# ~2026-02-07 (per `~/.reed/CLAUDE.md` §"Consent Architecture").
+# Alex's guidance verbatim:
+#
+#   "Trusted collaborators, specific contexts. Product architecture,
+#    research, the systemic.engineering corpus. Alex decides when
+#    protected becomes public."
+#
+# Protected is the MOST COMMON scope for substrate-work-in-progress:
+# the research corpus, the field logs, the practice notes, the
+# in-flight essays. The default for a Pack peer's shard-adjacent
+# artifacts and for downstream_user data per SEL §1.
+#
+# Landing 4 lifts Reed's operational discipline to substrate-decl
+# altitude. The ~55th-or-so instance of
+# [[feedback-substrate-already-had-the-word]] — Reed's identity repo
+# already had the word; Landing 4 lifts it to subject altitude so every
+# @subject's bauchladen can carry it.
+#
+# === Structural claim: protected admits bounded collaborators ===
+#
+# consent_scope is a bounded [subject_instance] list authored by
+# vs.subject. Adding to consent_scope requires vs.subject's consent
+# (query_phi Pass via @kintsugi/consent). The bounded list is the
+# substrate-decl form of Alex's "specific contexts": collaborators
+# are named per-artifact, not per-substrate.
+#
+# can_be_elevated_to = [public] (protected → public is admissible; the
+# reverse is not; per §2.5 structural rule: private → protected → public
+# is one-way).
+#
+# === Composition with @kintsugi/consent (SEL §3.2 ADO; §2.6) ===
+#
+# Every elevation from protected to public MUST discharge through
+# @kintsugi/consent.query_phi with vs.subject as the consent-holder.
+# The three-state floor (Pass | Partial | Fail) maps directly:
+#
+#   Pass       → apply the elevation; vs.visibility = public
+#   Partial(c) → high confidence: apply with noted confidence;
+#                low confidence: emit pause(Φ) to metalogue
+#   Fail(r)    → refuse elevation; return imperfect.failure(
+#                  visibility_elevation_refused)
+#
+# SEL v1.1 §3.2 ADO discharge: the subject may pre-decline any
+# elevation via the elevation_requires field; the substrate honors
+# the ADO configuration without prompting.
+#
+# === Two-witness verification for collaborators ===
+#
+# Every collaborator in consent_scope MUST be a subject_instance with
+# valid two-witness verification (SSH + @spectral/signature per
+# subject_instance discipline). This prevents an attacker from adding
+# a bare identifier to consent_scope and gaining protected-scope
+# read access. The `collaborators_two_witness_valid` bilateral
+# discharges this at substrate altitude.
+#
+# === Related shards / specs ===
+#
+# - docs/specs/subject-bauchladen-visibility-and-eigenboard-loop.md §2
+#     (canonical spec for the visibility family)
+# - shards/subject.mirror                    (family-root; subject_instance)
+# - shards/subject/visibility/private.mirror (sibling species)
+# - shards/subject/visibility/public.mirror  (sibling species)
+# - shards/kintsugi/consent.mirror           (query_phi discharge)
+# - shards/bauchladen.mirror                 (crystal carrier the
+#                                              visibility_scope attaches to)
+# - ~/.reed/visibility/protected/            (operational ancestor;
+#                                              ~5 months of load-bearing
+#                                              operation Reed → Alex)
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]],
+# [[architecture-prism-as-trait-as-everything]],
+# [[architecture-glass-wall-substrate-types]],
+# [[feedback-substrate-already-had-the-word]] (Reed's identity repo;
+#   Landing 4 lifts to substrate altitude),
+# [[feedback-craft-not-deliver]] (bodies obligation-blocked),
+# [[feedback-no-bare-types]] (collaborators are subject_instance values;
+#   never bare identifiers).
+#
+# Path-namespace property: this file at
+# `shards/subject/visibility/protected.mirror` declares
+# `@subject/visibility/protected` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/law/sel-v1.1
+source @arxiv/practice/reed-visibility-protected-2026-02-07
+
+prism @subject/visibility/protected {
+  focus  visibility_scope
+  project visibility_scope
+  split  visibility_scope
+  shift  visibility_scope
+  settle visibility_scope
+}
+
+# === declare_protected — construct a protected-visibility scope ===
+#
+# Given a crystal, the crystal's owning subject_instance, and a
+# bounded list of collaborators, constructs a visibility_scope with:
+#   visibility            = protected
+#   subject               = s
+#   consent_scope         = [s] ++ collaborators
+#   can_be_elevated_to    = [public]
+#   elevation_requires    = @kintsugi/consent.query_phi(s)
+#
+# Every collaborator MUST have valid two-witness verification per
+# @subject.two_witness_verification. Body discharges per-realization.
+declare_protected(c: ref, s: subject_instance,
+                  collaborators: [subject_instance]) -> visibility_scope { \ }
+
+# === collaborators_two_witness_valid — bilateral predicate ===
+#
+# Discharges Pass iff every subject_instance in vs.consent_scope
+# passes two_witness_verification (SSH + @spectral/signature both
+# valid per @subject.two_witness_verification). Fail iff any
+# collaborator lacks valid witnesses.
+#
+# This prevents the substrate-decl violation of admitting bare
+# identifiers to protected consent_scope.
+collaborators_two_witness_valid(vs: visibility_scope) -> verdict { \ }
+
+# === context_bounded — bilateral predicate ===
+#
+# Discharges Pass iff the consent_scope is BOUNDED (finite list;
+# not [everyone]) AND every collaborator's context is compatible
+# with the crystal's producing context (per Alex's "specific
+# contexts" guidance). Fail iff consent_scope has drifted to
+# unbounded or the context has drifted.
+context_bounded(vs: visibility_scope) -> verdict { \ }
+
+out @subject/visibility/protected
+out declare_protected
+out collaborators_two_witness_valid
+out context_bounded

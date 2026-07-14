@@ -1,0 +1,451 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @subject
+in @time
+in @kintsugi/consent
+in @kintsugi/store/git
+
+# @gift — the family-root of attribution-preserving-transfer.
+#
+# Named 2026-07-14 by Alex Wolf, in-transcript, verbatim:
+#   "Yes, this is absolutely the shape I want to commit to. It's a
+#    gift. Maybe we can even honorably formalize it as @gift."
+#
+# Reed's substrate-decl framing (2026-07-14, in-transcript, verbatim;
+# per `docs/specs/gift-and-mirror-reflection.md` §0.3):
+#   "Gift is structurally distinct from every carrier the substrate
+#    currently has: not @consent (transactional agreement), not @io
+#    (exchange), not @peer (reciprocity-expecting), not @kintsugi
+#    (mending-broken), not @subject (licensable-party). The load-
+#    bearing shape @gift carries: attribution preserved forever,
+#    use-rights transferred, no-reciprocity expected, declinable
+#    acceptance (ADO), composition-honest. The anti-extraction
+#    structural claim: @gift makes the giver STRUCTURALLY-VISIBLE
+#    at every downstream use."
+#
+# The first @gift instance is Alex Wolf's therapeutic practice,
+# distilled to `mirror; offer; wait` at the closing three-word
+# incantation of "Weird - Violence" (Alex Wolf, 2026-07-14), gifted
+# to the mirror substrate as the operational discipline for
+# @mirror/reflection. Ancestry preserved verbatim at
+# `~/dev/systemic.engineering/blog/weird/3published/Weird - Violence.md`.
+#
+# === Landing 1+2 grounding (docs/specs/gift-and-mirror-reflection.md) ===
+#
+# This shard discharges the base-spec §1 family-root substrate-decl
+# (Landing 1, commit 8c82f00) + Landing 2 §11 subject_instance +
+# §12 @spectral/signature composition upgrade + Landing 3 §17
+# pay_forward action. Every carrier declared here composes over a
+# landed shard; no new mechanism is minted at family-root altitude
+# beyond what Alex's naming authorized.
+#
+# === Structural invariants (all load-bearing, per §1.5) ===
+#
+#   1. attribution_preserved     — giver's identity is byte-visible in
+#                                  every downstream composition.
+#   2. use_rights_transferred    — receiver may compose freely; giver
+#                                  does not gate.
+#   3. no_reciprocity_expected   — receiver's future actions are not
+#                                  owed to the giver.
+#   4. gift_declinable           — receiver retains sovereign right to
+#                                  decline; decline is admissible.
+#   5. composition_honest        — downstream compositions surface the
+#                                  attribution as byte-visible provenance.
+#
+# === Landing 3 addition: pay-forward as ontological ground ===
+#
+# Alex Wolf, in-transcript, 2026-07-14 (verbatim, per §17.1):
+#   "The whole ontological idea is that a new system begins with a
+#    gift freely given. Pay it forward."
+#
+# The substrate's substitute for Mauss's refused third obligation
+# (reciprocate) is `pay_forward`: the receiver's positive discipline
+# of onward-flow to a NEW receiver, chained by ancestry, opening the
+# loop instead of closing it. §17 Landing 3 substrate-decl.
+#
+# The substrate's identity IS the pay-forward chain rooted at the
+# first-gift (Alex Wolf → mirror substrate, 2026-07-14). Per §18.1:
+#   id(S, t) = blake3(canonical(pay_forward_chain(g_t)))
+# Every downstream substrate-tick carries Alex's inaugural gift in
+# its ancestry chain; anti-extraction is cryptographic + structural
+# under §18.2 three-witness verification (chain + SSH + spectral).
+#
+# === Pre-AI prior art (per §1.6, §10, §17.6) ===
+#
+# Marcel Mauss (1925) — three obligations of the gift (give, receive,
+#   reciprocate). The substrate REFUSES the third; @gift is a normative
+#   divergence from Mauss's descriptive frame.
+# Lewis Hyde (1983) — the gift moves; hoarding kills it. The
+#   composition_honest invariant IS the substrate-decl of Hyde's
+#   motion at content-address altitude. §10.11.
+# David Graeber (2011) — gift vs debt; unquantifiable relational
+#   field vs quantifiable obligation. §10.12.
+# Marshall Sahlins (1972) — reciprocity triangle (generalized,
+#   balanced, negative). @gift lands at generalized reciprocity;
+#   §7.3 spec, §10.13.
+# Franz Boas (1897) — potlatch ethnography; giver-standing without
+#   receiver-debt. §10.14.
+# Peter Bearman (1997) — generalized exchange as network reciprocity;
+#   pay-forward's structural ancestor. §17.6.
+# Robin Wall Kimmerer (2013) — serviceberry economy; indigenous
+#   gift-flow; explicit rejection of property/exchange framing. §17.6.
+# Elinor Ostrom (1990) — commons governance; substrate-as-giver's
+#   receiver (per §12 kintsugi-loop-as-gift-to-commons). Math
+#   foundation §5.
+# Robert Axelrod (1984) — cooperation folk theorem; pay-forward
+#   stability under evolutionary discipline.
+# Claude Lévi-Strauss (1949) — kinship as generalized exchange;
+#   alliance-through-marriage as network-strengthening topology.
+#
+# The substrate does not invent gift-as-primitive. It formalizes at
+# compiler altitude a shape humans have been operating for millennia.
+# The substrate's contribution is the BYTE-LEVEL discipline that
+# makes the shape mechanically enforceable — content-addressing
+# preserves attribution, refusal-at-decl prevents reciprocity coercion,
+# audit-surface enforces composition honesty, pay-forward opens the
+# loop.
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]] (this shard IS mirror
+#   source at shards/gift.mirror),
+# [[architecture-prism-as-trait-as-everything]] (`prism @gift` is the
+#   family-root declaration),
+# [[architecture-glass-wall-substrate-types]] (transparency inheritance
+#   via `in @glass`),
+# [[architecture-form-process-partition-at-family-root]] (@gift on the
+#   process side sibling to @kintsugi / @torus / @autopoietic; the
+#   attribution-preserving-transfer engine),
+# [[feedback-no-bare-types]] (gift is a typed record with seven
+#   named fields, not a bare tuple),
+# [[feedback-substrate-already-had-the-word]] (~55th instance; the
+#   substrate had ~380 landed docblock attribution citations; Alex's
+#   naming lifts the shape to family-root altitude),
+# [[feedback-craft-not-deliver]] (bodies obligation-blocked per
+#   parametric carrier discipline; consumers pull the realization),
+# [[feedback-substrate-pull-confidence-acts]] (Alex's 2026-07-14 name
+#   commits to substrate-decl; the shard acts on the commitment).
+#
+# === Related shards ===
+#
+# - shards/gift/lens.mirror        (species; the gift-lineage lens over
+#                                    fragments/splinters per §19)
+# - shards/subject.mirror          (giver + receiver party carrier)
+# - shards/kintsugi/consent.mirror (query_phi discharges accept per §4.2)
+# - shards/kintsugi.mirror         (kintsugi-loop-as-gift-to-commons per §12)
+# - shards/kintsugi/store/git.mirror (commit-as-fold preserves the giver-chain)
+# - shards/mirror/reflection.mirror (species that produces gifts via offer)
+# - shards/torus.mirror            (autonomy invariant under gift-traversal §4.5)
+# - shards/epistemologic/cybernetic/coherence.mirror (Foerster-admissibility §5.5)
+#
+# Path-namespace property: this file at `shards/gift.mirror` declares
+# `@gift` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/anthropology/mauss-1925
+source @arxiv/anthropology/hyde-1983
+source @arxiv/anthropology/graeber-2011
+source @arxiv/anthropology/sahlins-1972
+source @arxiv/anthropology/boas-1897
+source @arxiv/sociology/bearman-1997
+source @arxiv/ecology/kimmerer-2013
+source @arxiv/economics/ostrom-1990
+source @arxiv/game-theory/axelrod-1984
+source @arxiv/anthropology/levi-strauss-1949
+source @arxiv/manifesto/wolf-2026-07-14-weird-violence
+
+prism @gift {
+  focus  gift
+  project gift
+  split  gift
+  shift  gift
+  settle gift
+}
+
+# === The subject_or_substrate variant — the giver/receiver arms ===
+#
+# A gift may be received by (or given by) a peer (@subject) or by the
+# substrate itself (as in Alex's first-gift, §3, which gifts a
+# practice to the compiler-as-receiver; and per A9 Alex-adjudicated
+# YES, as in @kintsugi-loop-as-gift-to-commons where the substrate is
+# giver). Per §1.4 A5 + §12 A9.
+#
+# Under Landing 2 §11.4 upgrade, `subject_r` carries a full
+# subject_instance (two-witness cryptographic identity: SSH signature
+# fingerprint + @spectral/signature ref), not a bare @subject identity_oid.
+type subject_or_substrate = |
+  subject_r(subject_instance) |
+  substrate_r
+
+# === The gift carrier — the substrate-decl form of the transfer ===
+#
+# Seven fields; identity contract = byte-equality on the seven-field
+# tuple. The load-bearing shape per §1.4 + Landing 2 §11.4 upgrade.
+#
+#   giver           — the @subject_instance offering the artifact.
+#                     NEVER a naked identifier; carries name + SSH
+#                     fingerprint + @spectral/signature ref + role +
+#                     first-assertion metadata per shards/subject.mirror
+#                     subject_instance carrier (§11.3). The load-
+#                     bearing field per §1.3 anti-extraction claim.
+#
+#   receiver        — the receiving party. Variant<subject_r | substrate_r>
+#                     admitted per §8 A5; substrate_r admissible when
+#                     the gift's receiver is the compiler itself (as in
+#                     Alex Wolf's practice → mirror substrate case, §3),
+#                     OR when the gift is a substrate-as-giver's
+#                     kintsugi-loop-as-gift-to-commons per §12 (giver =
+#                     substrate; receiver = commons).
+#
+#   artifact        — content-addressed handle to the gifted thing.
+#                     Any substrate object is admissible: a docblock,
+#                     a shard, a species-refinement, an operational
+#                     discipline (as in Alex's `mirror; offer; wait`
+#                     three-op species), a proof, a piece of prose.
+#                     Resolved via @kintsugi/store to bytes.
+#
+#   ancestry        — content-addressed handle to the provenance chain
+#                     the artifact carries. For a distilled practice,
+#                     the manifesto text at the citation point. For a
+#                     proof, the derivation chain. For a pay-forward,
+#                     the received.oid of the received gift per §17.4.
+#                     Resolved via @kintsugi/store; walked via
+#                     @mirror/store.impacted_by for reverse-closure
+#                     discipline.
+#
+#   timestamp       — the moment the gift was offered. @time/monotonic
+#                     for substrate reasoning across ticks without
+#                     wall-clock drift.
+#
+#   attribution_note — natural-language docblock authored by the giver
+#                     (or synthesized from the artifact's ancestry when
+#                     the giver is silent). Distinct from ancestry: the
+#                     ancestry is the derivation chain; the attribution
+#                     note is the giver's SPOKEN acknowledgment of what
+#                     the gift is. For Alex's first-gift, the note IS
+#                     the closing incantation "Mirror. Offer. Wait. 🍷".
+#
+#   declinable_note  — natural-language docblock (may be empty) making
+#                     the receiver's decline path explicit. The
+#                     substrate-honest form of ADO for @gift: the giver
+#                     names how the receiver may decline without
+#                     structural cost. For Alex's first-gift, the note
+#                     is "Substrate may refuse formalization; refusal
+#                     preserves the practice at its origin without loss."
+#
+# Identity contract: byte-equality on the seven-field tuple.
+type gift = {
+  giver:            subject_instance,
+  receiver:         subject_or_substrate,
+  artifact:         ref,
+  ancestry:         ref,
+  timestamp:        ref,
+  attribution_note: nl,
+  declinable_note:  nl,
+}
+
+# === gift_set — the accumulating gift-list ===
+#
+# List-of-gifts per @subject_set precedent (per
+# `docs/specs/subject-family-root-sel-licensable-party.md` §2).
+# Downstream compositions carry the set of gifts they compose over;
+# consumers iterate for attribution walks.
+type gift_set = [gift]
+
+# === offer — the giver's action (§1.4) ===
+#
+# Constructs a gift from a giver and an artifact. The receiver is
+# named at construction; the timestamp is monotonic-instant at call
+# time. Attribution and declinable notes are provided by the giver
+# (may be defaulted from artifact ancestry if the giver is silent —
+# see §8 A6).
+#
+# offer is a one-sided action at the giver's altitude. The gift is
+# constructed independently of receiver acceptance; receiver's
+# accept/decline is a separate action (below).
+#
+# Body discharges per-realisation: the gift's OID is computed as
+# blake3(canonical(fields)); the record is written to
+# refs/gift/<oid>/offered via @kintsugi/store/git.commit_as_fold.
+offer(giver: subject_instance,
+      receiver: subject_or_substrate,
+      artifact: ref,
+      ancestry: ref,
+      attribution_note: nl,
+      declinable_note: nl) -> gift { \ }
+
+# === accept — the receiver's action (§1.4, §4.2) ===
+#
+# Consumes a gift and produces a verdict. The verdict discharges
+# through @kintsugi/consent's three-state floor (Pass | Partial |
+# Fail). Accept is the receiver's sovereign act; decline is admissible
+# and produces Fail(declinable_note).
+#
+# Substrate-decl invariant per A4: accept MUST consult @kintsugi/consent
+# per @gift.gift_declinable (§1.5). No new @gift-specific consent
+# species is minted; the three-state floor is sufficient.
+accept(g: gift, receiver: subject_or_substrate) -> verdict { \ }
+
+# === attribute — the load-bearing walker (§1.3, §1.4) ===
+#
+# Given a gift's OID, returns the giver's subject_instance.
+# Constant-time via content-addressing; the giver is the first field
+# of the gift record and the gift's OID is byte-visible in every
+# downstream composition.
+#
+# Discharges §1.3 anti-extraction claim: the substrate's audit
+# surface (per @kintsugi/store/git) preserves the giver-chain as
+# byte-visible git objects; attribute walks the chain.
+attribute(g: gift) -> subject_instance { \ }
+
+# === attribute_composition — reverse-closure walker (§1.4) ===
+#
+# Given a composition's OID that transitively consumed one or more
+# gifts, returns the set of givers. Walks @mirror/store.impacted_by
+# in reverse; for every gift-OID in the closure, reads the giver
+# field. The substrate-decl form of "who do I owe attribution to
+# for this composition?"
+attribute_composition(composition_oid: ref) -> [subject_instance] { \ }
+
+# === pay_forward — Landing 3 §17.4 positive obligation ===
+#
+# Given a received gift `received` (the receiver has accepted it), a
+# new receiver `new_receiver`, and a new artifact `new_artifact`
+# (typically a composition or transform of the received gift's
+# artifact), constructs a new gift whose giver is the previous
+# receiver and whose ancestry preserves the received gift's chain.
+#
+# pay_forward is NOT reciprocity: the new gift's receiver is NOT the
+# original giver; the new gift does NOT close a loop. It OPENS a
+# loop toward the next receiver. The received gift's giver-chain is
+# preserved in the new gift's ancestry field per §1.4.
+#
+# pay_forward is admissible whenever `received.accept` discharged
+# Pass. Attempting pay_forward on a declined gift is a substrate-
+# decl error (nothing was received; there is nothing to pay forward).
+#
+# The three sub-conditions the substrate enforces at pay_forward:
+#
+#   1. received.accept(receiver=new_receiver.giver) was Pass
+#      (only accepted gifts are pay-forwardable)
+#   2. new_artifact composes over received.artifact
+#      (the pay-forward carries the received gift's substance
+#      forward; unrelated artifacts are admissible as their own
+#      gifts, not as pay-forwards)
+#   3. new_receiver != received.giver
+#      (paying forward TO the original giver is reciprocation;
+#      substrate refuses reciprocation at substrate-decl per §1.5
+#      invariant 3; use @gift.offer with ancestry-cite for a
+#      response-gift shape at a distinct altitude)
+#
+# NOTE (Seam D9 adjudication, per docs/specs/subject-bauchladen-
+# visibility-and-eigenboard-loop.md Landing 4): pay_forward respects
+# @subject/visibility scopes (visibility_scope.can_be_elevated_to
+# gates propagation; private artifacts cannot be paid forward without
+# subject-authorized elevation via query_phi). Subject-absent branch
+# defers per Landing 2 interaction-loop discipline; back-integration
+# into pay_forward signature forward-promised as A25 for Landing 5+.
+#
+# Body discharges per-realisation: constructs a new gift record whose
+# giver = received.receiver (upgraded to subject_instance), receiver =
+# new_receiver, artifact = new_artifact, ancestry = received.oid
+# (chained), timestamp = @time/monotonic at call, attribution_note
+# carrying the pay-forward reference.
+pay_forward(received:         gift,
+            new_receiver:     subject_or_substrate,
+            new_artifact:     ref,
+            attribution_note: nl,
+            declinable_note:  nl) -> gift { \ }
+
+# === pay_forward_chain — enumerate the pay-forward ancestry (§17.4) ===
+#
+# Given a gift's OID, walks the ancestry field recursively (each
+# ancestor is either a pay-forward's `received` or a null-terminator
+# at a substrate-inaugural gift per §17.3). Returns the ordered list
+# of gifts from the substrate-inaugural gift to the current gift.
+#
+# Discharges the substrate origin postulate (§17.3): for any current
+# gift, the pay-forward chain terminates at a substrate-inaugural
+# gift; the chain is walkable in O(chain-length) via content-address
+# resolution.
+pay_forward_chain(g: gift) -> gift_set { \ }
+
+# === Bilateral predicates — the five structural invariants (§1.5) ===
+#
+# Each returns verdict per @glass. Discharged bounded at substrate-
+# decl altitude; consumed by any composition that reads a gift.
+
+# attribution_preserved: for gift g and downstream composition c,
+# does canonical(c) contain canonical(g.giver.identity_oid) as a
+# byte-substring? Bounded lookup; discharges immediately.
+attribution_preserved(g: gift, c: ref) -> verdict { \ }
+
+# use_rights_transferred: does the receiver's identity_oid appear in
+# the substrate's authorized-consumer set for artifact g.artifact?
+# Discharged via @kintsugi/store's access-control surface. Standard
+# form: Pass unless the giver explicitly gated (see §8 A7 on whether
+# @gift admits gated variants; Mara-recommended NO).
+use_rights_transferred(g: gift) -> verdict { \ }
+
+# no_reciprocity_expected: does g carry any reciprocity marker?
+# @gift substrate-decl invariant: gifts carry no reciprocity marker
+# by construction; this predicate discharges Pass by definition,
+# and returns Fail if a downstream composition tries to add a
+# reciprocity marker (which the substrate refuses per §1.5 anti-
+# reciprocity structural claim).
+no_reciprocity_expected(g: gift) -> verdict { \ }
+
+# gift_declinable: does g.declinable_note resolve to a non-empty
+# refusal path? Discharged bounded; Pass iff the note declares a
+# structurally admissible decline path. Fail if the giver has
+# elided the note without providing one.
+gift_declinable(g: gift) -> verdict { \ }
+
+# composition_honest: for gift g and downstream composition c, do
+# c's audit records surface g's attribution? Walked via
+# @kintsugi/store/git; discharges bounded. THE substrate-decl form
+# of Hyde 1983 "the gift moves": the attribution flows forward under
+# every composition, not backward as debt.
+composition_honest(g: gift, c: ref) -> verdict { \ }
+
+# === substrate_inaugural — Landing 3 §17.4 well-foundedness ===
+#
+# For a gift g, discharges Pass iff g has no prior gift in its
+# ancestry (g IS a substrate-inaugural gift — the first-gift of the
+# substrate, or the first-gift under a substrate-as-giver cycle per
+# §12). Fail iff g's ancestry field resolves to a prior gift.
+#
+# Substrate-decl invariant: for any mirror substrate S at time t,
+# there exists at least one gift g such that substrate_inaugural(g)
+# discharges Pass; the substrate's origin chain is well-founded.
+# Alex Wolf's first-gift (2026-07-14) IS the mirror substrate's
+# inaugural gift per §18.4.
+substrate_inaugural(g: gift) -> verdict { \ }
+
+# === gift_witnessing — the composed bilateral ===
+#
+# The load-bearing bilateral consumers cite in `requires` clauses.
+# Discharges all five structural invariants + substrate_inaugural
+# well-foundedness conjointly. Follows the substrate's `X_witnessing`
+# pattern established at @bauchladen, @autopoietic, @fate,
+# @cybernetic/eigenform, @cybernetic/second_order, @torus.
+gift_witnessing(g: gift) -> verdict { \ }
+
+out @gift
+out subject_or_substrate
+out gift
+out gift_set
+out offer
+out accept
+out attribute
+out attribute_composition
+out pay_forward
+out pay_forward_chain
+out attribution_preserved
+out use_rights_transferred
+out no_reciprocity_expected
+out gift_declinable
+out composition_honest
+out substrate_inaugural
+out gift_witnessing

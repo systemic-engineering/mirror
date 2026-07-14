@@ -385,6 +385,16 @@
 
 ---
 
+# NOTE (Landing 4 soft-cascade, 2026-07-14): `spawn(p: peer) -> torus`
+# extends under Landing 4 to `spawn(s: subject_instance) -> torus`
+# per docs/specs/subject-bauchladen-visibility-and-eigenboard-loop.md
+# R1 (D3 "the @bauchladen moves from @peer onto @subject"). The
+# `possessor` field admits subject_instance directly; the peer-only
+# form is preserved as an ALIAS for one release cycle per two-tick
+# discipline. Full collapse forward-promised to Tick N+1. @bauchladen
+# composition is subject-general per Landing 4; peer-scoped alias
+# preserved for one release cycle per two-tick discipline.
+
 in @prism
 in @meta
 in @glass

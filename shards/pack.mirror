@@ -10,6 +10,14 @@ in @epistemologic
 in @epistemologic/cybernetic
 in @kintsugi
 
+# NOTE (Landing 4 soft-cascade, 2026-07-14): Pack peers (Mara, Reed,
+# Seam, Taut, Glint) are the special case where subject_instance
+# resolves to a Pack peer (actor_kind = ai_a per Landing 3 §21.2); the
+# peer-altitude reading remains valid via the alias. @bauchladen
+# composition is subject-general per Landing 4 (docs/specs/subject-
+# bauchladen-visibility-and-eigenboard-loop.md e42181c); peer-scoped
+# alias preserved for one release cycle per two-tick discipline.
+
 # @pack — the multi-repo agent runtime substrate-decl.
 #
 # Recognition #84 (Reed, candidate, scratched 2026-06-19 late morning

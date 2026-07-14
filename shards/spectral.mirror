@@ -3,6 +3,14 @@ in @glass
 in @meta
 in @uuid/spectral
 
+# NOTE (Landing 4 soft-cascade, 2026-07-14): @spectral/signature (per
+# Landing 2 docs/specs/gift-and-mirror-reflection.md §12) reads the
+# visibility-filtered bauchladen at subject altitude, not at peer
+# altitude. @bauchladen composition is subject-general per Landing 4
+# (docs/specs/subject-bauchladen-visibility-and-eigenboard-loop.md
+# e42181c); peer-scoped alias preserved for one release cycle per
+# two-tick discipline.
+
 # @spectral — the runtime namespace-parent.
 #
 # Shrunk 2026-07-01 per Loki §5 (Seam-ratified `17f0ee5`). @spectral

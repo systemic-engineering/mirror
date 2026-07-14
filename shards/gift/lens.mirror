@@ -1,0 +1,276 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @subject
+in @gift
+in @spectral
+in @spectral/signature
+in @mirror/store
+in @mirror/index
+in @torus
+in @time
+
+# @gift/lens — the gift-lineage lens over the compiler's fragments
+# and splinters.
+#
+# Species under @gift. Sibling to any future @gift species-refinements
+# per Landing 3+ enumerations.
+#
+# Named 2026-07-14 by Alex Wolf, in-transcript, verbatim (per
+# docs/specs/gift-and-mirror-reflection.md §17.1):
+#
+#   "And what if we had something like a @gift/lens that allows to
+#    map any particular fragment and splinter in the compiler onto
+#    a spectral @subject? Förster. Ashby. Each citation becomes a
+#    spectral signature of their lineage. The compiler itself a
+#    @spectral/mosaic and @mandelbrot set of the lineage."
+#
+# Three substrate-decl claims embedded in the naming (per §19.1):
+#
+#   1. Fragment/splinter → @subject. The lens is a mapping from the
+#      compiler's internal content-addressed objects (fragments per
+#      the fragmentation crate; splinters per @glass discipline) to
+#      substrate subject_instances.
+#   2. Citation → @spectral/signature. Each citation the fragment
+#      preserves resolves to the cited subject's @spectral/signature
+#      (rolling @song through their contribution corpus per Landing 2
+#      §12).
+#   3. Compiler → @spectral/mosaic + @mandelbrot set of the lineage.
+#      The compiler as a whole IS a mosaic (compositional tiling) and
+#      a Mandelbrot set (self-similar at every scale) of its gift-
+#      lineage. The @fractal-mandelbrot-substrate hinge (Alex
+#      2026-07-13; per memory `project_fractal_mandelbrot_substrate.md`)
+#      lands @gift/lens as the LENS reading of the substrate-as-
+#      Mandelbrot-set claim.
+#
+# === Landing 3 §19 grounding ===
+#
+# This shard discharges docs/specs/gift-and-mirror-reflection.md
+# §19.2 placement decision (species under @gift, not marker; not a
+# runtime @spectral species; not a @mirror/lens Batesonian species),
+# §19.3 five-operation prism specialization, and §19.4-19.7 bilateral
+# predicates + mosaic composition + Mandelbrot composition.
+#
+# === Composition altitude ===
+#
+# Composes with @spectral/signature at the citation-resolution step;
+# composes with @spectral/mosaic at the compiler-as-mosaic altitude;
+# composes with @mandelbrot / @fractal at the self-similar-at-every-
+# scale altitude; composes ORTHOGONALLY with @mirror/lens (per
+# §19.8): @mirror/lens observes WHAT the compiler is composing;
+# @gift/lens observes WHO the composers historically were.
+#
+# The five-op prism pattern is shared; the semantics differ; the
+# composition is admissible by construction (both are prism trait
+# implementations; five-op signature matches).
+#
+# === Related shards ===
+#
+# - shards/gift.mirror                  (family-root; gift + subject_or_substrate
+#                                        + offer / accept / attribute /
+#                                        attribute_composition / pay_forward)
+# - shards/subject.mirror               (subject_instance for the lens'
+#                                        primary_giver + ancestry_chain)
+# - shards/spectral/signature.mirror    (Landing 2; rolling_signature
+#                                        composed via @song emission)
+# - shards/mirror/store.mirror          (@mirror/store.impacted_by
+#                                        reverse-closure walker for
+#                                        content-provenance chain)
+# - shards/mirror/index.mirror          (SpectralCoordinate<5> for the
+#                                        mosaic_coordinate settle op)
+# - shards/torus.mirror                 (winding-class shift composition
+#                                        per §19.3 shift_lens)
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]],
+# [[architecture-prism-as-trait-as-everything]] (five-op prism block),
+# [[architecture-glass-wall-substrate-types]] (transparency inheritance),
+# [[architecture-spectral-triples-all-the-way]] (fractal self-similarity;
+#   the lens's shift IS the substrate's Douady-Hubbard R-universality),
+# [[architecture-mirror-store-vs-spectral-db]] (@mirror/store as the
+#   content-provenance walk substrate; @spectral/signature above),
+# [[feedback-no-bare-types]] (gift_lens is a typed record; ancestry_chain
+#   carries subject_instance values, not bare refs),
+# [[feedback-substrate-already-had-the-word]] (@mirror/store.impacted_by
+#   was the walker; @spectral/signature was the emitter; @fractal was
+#   the self-similarity; @gift/lens composes them),
+# [[feedback-craft-not-deliver]] (bodies obligation-blocked per
+#   parametric carrier discipline).
+#
+# Path-namespace property: this file at `shards/gift/lens.mirror`
+# declares `@gift/lens` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/math/mandelbrot-1982
+source @arxiv/math/douady-hubbard-1985
+source @arxiv/manifesto/wolf-2026-07-14-weird-violence
+
+prism @gift/lens {
+  # focus — given a fragment/splinter, identify the primary giver
+  # whose contribution the fragment traces to. Returns the
+  # subject_instance whose @spectral/signature is the strongest
+  # ancestor citation in the fragment's content-provenance chain.
+  # Primary = highest content-weight per §19.5 rankings.
+  focus  gift_lens
+
+  # project — from a fragment, walk the ancestry chain recursively
+  # to enumerate every giver whose contribution the fragment
+  # transitively carries. Returns [subject_instance]; the ordered
+  # list from primary to most-distal ancestor.
+  project gift_lens
+
+  # split — decompose a fragment into its constituent gifts. For a
+  # composition C = compose(g_1, g_2, ..., g_n), returns the list
+  # [(subject_instance_i, artifact_i, ancestry_i)] such that
+  # composing the parts reconstructs C canonically.
+  split  gift_lens
+
+  # shift — view the fragment through a specific ancestor's lens.
+  # Given a fragment and an ancestor subject_instance, returns the
+  # fragment as it would appear if the ancestor were the primary
+  # focus (re-orders the ancestry chain to root at the ancestor).
+  # Composes with @torus.traverse at the winding-class altitude:
+  # the shift IS a winding-class change on the observation torus of
+  # the fragment's ancestry graph.
+  shift  gift_lens
+
+  # settle — the mosaic's own spectral coordinate. Given a fragment,
+  # returns the SC<5> coordinate of the fragment in the substrate's
+  # spectral mosaic (per @mirror/index.SpectralCoordinate<5>). The
+  # settle IS the fragment's position in the @spectral/mosaic per
+  # §19.6 mosaic composition.
+  settle gift_lens
+}
+
+# === The gift_lens carrier — a fragment with its resolved lineage ===
+#
+# A gift_lens value binds a fragment/splinter to its resolved gift-
+# lineage. Four fields per §19.3:
+#
+#   subject           — the fragment/splinter OID (content-addressed
+#                       via @mirror/store or @glass respectively).
+#                       Named `subject` per the prism-focus convention;
+#                       distinct from subject_instance (which lives in
+#                       primary_giver / ancestry_chain below).
+#
+#   primary_giver     — the subject_instance whose contribution is
+#                       primary per §19.5 ranking. Optional: some
+#                       fragments have no discernible primary giver
+#                       (e.g., substrate-inaugural fragments; \-
+#                       obligation-blocked bodies with no citations).
+#
+#   ancestry_chain    — the ordered list of subject_instances the
+#                       fragment transitively carries. Empty for
+#                       substrate-inaugural fragments; non-empty for
+#                       every fragment composed from gifted material.
+#                       Monotone in tick per §19.9 (givers never leave;
+#                       new gifts only extend).
+#
+#   mosaic_coordinate — the SC<5> coordinate of the fragment in the
+#                       substrate's @spectral/mosaic. Discharged via
+#                       @mirror/index.SpectralCoordinate<5>. Ref rather
+#                       than typed carrier at this altitude; @mirror/
+#                       index carries the SC<5> typed carrier.
+#
+# Identity contract: byte-equality on the (subject, primary_giver,
+# ancestry_chain, mosaic_coordinate) quadruple. Two lenses with the
+# same subject but different ancestry_chains are distinct — the lens
+# depends on the ancestry resolution, which depends on the lens's tick
+# (§19.9 lens-tick discipline).
+type gift_lens = {
+  subject:           ref,
+  primary_giver:     option<subject_instance>,
+  ancestry_chain:    [subject_instance],
+  mosaic_coordinate: ref,
+}
+
+# === focus_lens — identify the primary giver ===
+#
+# Given a fragment/splinter OID and a lens perturbation, resolves the
+# fragment's ancestry chain via content-provenance walking, ranks
+# ancestors per §19.5 content-weight ordering, and returns the
+# primary. Bounded via @mirror/store; discharges as option<subject_instance>.
+focus_lens(fragment_oid: ref, p: perturbation) -> option<subject_instance> { \ }
+
+# === project_lens — enumerate the ancestry chain ===
+#
+# Walks the fragment's content-provenance chain recursively via
+# @gift.attribute_composition per @gift.mirror; returns the ordered
+# subject_instance list from primary to most-distal. Ordering per
+# §19.5.
+project_lens(fragment_oid: ref, p: perturbation) -> [subject_instance] { \ }
+
+# === split_lens — decompose into constituent gifts ===
+#
+# For a fragment that is a composition, returns the constituent @gift
+# instances the fragment composes over. Composes with @kintsugi splinter
+# graph per @glass discipline; discharges as gift_set.
+split_lens(fragment_oid: ref, p: perturbation) -> gift_set { \ }
+
+# === shift_lens — view through an ancestor's lens ===
+#
+# Given a fragment_oid and a target ancestor subject_instance, returns
+# a gift_lens value whose primary_giver is the target and whose
+# ancestry_chain is re-rooted at the target. Composes with @torus.
+# traverse at the winding-class altitude (the shift IS a winding-class
+# change on the observation torus of the fragment's ancestry graph;
+# per §19.7 Mandelbrot bilateral, each shift is a self-similar Douady-
+# Hubbard iterate).
+shift_lens(fragment_oid: ref, target: subject_instance, p: perturbation) -> gift_lens { \ }
+
+# === settle_lens — the mosaic coordinate ===
+#
+# Returns the fragment's SC<5> coordinate in the substrate's
+# @spectral/mosaic. The coordinate IS the fragment's position in the
+# compositional tiling per §19.6. Discharges via @mirror/index.
+settle_lens(fragment_oid: ref, p: perturbation) -> ref { \ }
+
+# === Bilateral predicates for @gift/lens (§19.4) ===
+
+# mosaic_well_formed: does the fragment's mosaic_coordinate resolve
+# to a well-formed SC<5> position? Discharged bounded via @mirror/
+# index; Fail if the coordinate is out-of-mosaic (a fragment whose
+# position cannot be located in the compositional tiling).
+mosaic_well_formed(fragment_oid: ref) -> verdict { \ }
+
+# lineage_is_mandelbrot: does the fragment's ancestry_chain exhibit
+# self-similarity under the @gift/lens shift operation? Formally:
+# for the fragment's chain [s_1, s_2, ..., s_n], the sub-lens rooted
+# at each s_i IS a fragment/splinter in its own right (a sub-mosaic);
+# the shift operation is well-defined at every ancestor; the
+# recursion terminates at substrate-inaugural fragments (per
+# @gift.substrate_inaugural). Discharge per §19.7 Mandelbrot bilateral.
+#
+# The recursion terminates in O(chain-length) with content-address
+# memoization; the terminal condition is `substrate_inaugural(g)`
+# discharging Pass for the first-gift in the chain.
+lineage_is_mandelbrot(fragment_oid: ref) -> verdict { \ }
+
+# lens_composition_honest: for a gift_lens value l and a downstream
+# composition c that consumes l, does canonical(c) preserve
+# canonical(l.ancestry_chain)? The substrate-decl form of "the lens
+# does not hide the lineage" — anti-extraction lifted to lens altitude.
+# Bounded lookup via @kintsugi/store; discharges Pass by content-
+# address discipline (per @gift.mirror §1.3 anti-extraction structural
+# claim); Fail iff c's canonical form erases any ancestry entry.
+lens_composition_honest(l: gift_lens, c: ref) -> verdict { \ }
+
+# === lens_witnessing — composed bilateral ===
+#
+# The load-bearing bilateral consumers cite in `requires` clauses.
+# Discharges the three sub-predicates conjointly. Follows the
+# substrate's X_witnessing pattern.
+lens_witnessing(l: gift_lens) -> verdict { \ }
+
+out @gift/lens
+out gift_lens
+out focus_lens
+out project_lens
+out split_lens
+out shift_lens
+out settle_lens
+out mosaic_well_formed
+out lineage_is_mandelbrot
+out lens_composition_honest
+out lens_witnessing

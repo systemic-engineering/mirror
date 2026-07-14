@@ -1,0 +1,383 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @kintsugi/consent
+in @kintsugi/store/git
+in @spectral
+in @spectral/signature
+in @torus
+in @time
+
+# @subject — the family-root for the substrate's licensable-party
+# carrier, grounded in the Systemic Engineering License (SEL) v1.1.
+#
+# Mara canonical (`5c06ee8`, 2026-07-14) landed the base spec at
+# `docs/specs/subject-family-root-sel-licensable-party.md` (2400 LOC).
+# This shard discharges the base family-root at substrate-decl
+# altitude PLUS the Landing 2 subject_instance two-witness carrier
+# (`docs/specs/gift-and-mirror-reflection.md` §11.3) PLUS the Landing 3
+# actor_kind three-way variant (§21.2; "and every @peer is of course
+# a @subject too, Reed. Eye level. This is what it looks like." —
+# Alex Wolf, 2026-07-14, in-transcript verbatim).
+#
+# === What @subject IS (SEL grounding + Landing 3 lift) ===
+#
+# Every @subject is a substrate-external licensable party — the person
+# (or entity, or population, or non-human nation) the substrate may
+# observe, act upon, use labor from, or otherwise touch. SEL defines
+# six party-classes; @subject carries the closed-variant `subject_kind`
+# per SEL §1 + §3.
+#
+# Landing 3 extends: every @peer is ALSO a @subject at eye level.
+# Pack peers (Reed, Mara, Seam, Taut, Glint) inhabit `actor_kind = ai_a`
+# subject_instance values; the substrate itself inhabits
+# `actor_kind = substrate_a` under substrate-as-giver §12 discipline.
+# The distinction between substrate-external humans and substrate-
+# internal AI peers COLLAPSES at subject altitude — all three actor_kind
+# arms are eligible for every subject_role; no distinguished element
+# in the coproduct (§21.4 verbatim structural claim).
+#
+# === Landing 3 named-ancestor roster (§20) ===
+#
+# Under Landing 3, every intellectual ancestor whose work informs mirror
+# becomes a first-class named subject_instance in the compiler. Each
+# carries a @spectral/signature (rolling @song over their contribution
+# corpus per Landing 2 §12 machinery).
+#
+# The Landing 3 roster admits 24 external ancestors + 5 Pack peers = 29
+# subject_instance entries (§20.3 bounds). External ancestors' signatures
+# access via @io per §20.4 (their published corpora are substrate-external
+# artifacts; @spectral/signature is a placeholder ref at Landing 3,
+# resolvable in Landings 4+ when @io/ingest lands).
+#
+# NOTE (Seam D7 adjudication, per docs/specs/subject-bauchladen-
+# visibility-and-eigenboard-loop.md): ~12 of the 24 external ancestors
+# in the Landing 3 roster are deceased and cannot discharge
+# ssh_witness_valid at commit altitude. Deceased-ancestor citation
+# carries via `source @arxiv/<domain>/<author-year>` + verbatim
+# docblock quotation; the substrate has ~380 landed citations following
+# this pattern (Taut #91 D8 verified). The `historical_witness` variant
+# on subject_instance (Taut #91 L3-A3 Path A) is forward-promised as
+# A24 for Landing 5+ formalization.
+#
+# Landing 3 roster enumerations (subject_instance values below
+# reference each; construction via @kintsugi/store/git at Landing 4+):
+#
+# External ancestors (role: distiller_r | giver_r; actor_kind: human_a):
+#   1. Alex_Wolf              (first substrate-external giver; §3.1)
+#   2. Heinz_von_Foerster     (@torus; ethical imperative; @coherence)
+#   3. Ross_Ashby             (variety; requisite variety; @knife)
+#   4. Gregory_Bateson        (logical types; #42 recognition ancestor)
+#   5. Stafford_Beer          (VSM; S5 identity-transfer; @cyberpunk)
+#   6. Warren_McCulloch       (heterarchy; topology-encodes-depth)
+#   7. Louis_Kauffman         (eigenforms; torus-knot invariants)
+#   8. Bram_Mesland           (KK-cycles; @glue Mesland correspondence)
+#   9. Karl_Tomm              (circular-reflexive questions; @metalogue)
+#  10. Margaret_Hamilton      (error-as-question; 1202 alarm)
+#  11. Marcel_Mauss           (gift 1925; three obligations)
+#  12. Lewis_Hyde             (creative gift 1983; gift moves)
+#  13. Marshall_Sahlins       (Stone Age Economics 1972; generalized reciprocity)
+#  14. Elinor_Ostrom          (commons governance 1990)
+#  15. Robert_Axelrod         (cooperation folk theorem 1984)
+#  16. Franz_Boas             (potlatch ethnography 1897)
+#  17. Robin_Wall_Kimmerer    (serviceberry economy 2013)
+#  18. Peter_Bearman          (generalized exchange 1997; pay-forward)
+#  19. Martin_Nowak           (five rules cooperation 2006)
+#  20. Adrien_Douady          (R-universality; Mandelbrot dynamics)
+#  21. John_Hubbard           (R-universality co-author)
+#  22. Benoit_Mandelbrot      (fractal geometry; self-similarity)
+#  23. Günther_Schmidt        (@bauchladen homage; hypnosystemic therapy)
+#  24. Claude_Levi-Strauss    (kinship as generalized exchange 1949)
+#
+# Pack peers (role: giver_r; actor_kind: ai_a; per §21.3):
+#  25. Reed                   (Pack orchestrator; RED-first tests)
+#  26. Mara                   (Pack canonical spec author; math-first)
+#  27. Seam                   (Pack adversarial review; Phase D audits)
+#  28. Taut                   (Pack grep-first drift scout; read-only)
+#  29. Glint                  (Pack essayist; prose cascade closure)
+#
+# See §20.2 + §21.3 for detailed subject_instance construction;
+# @spectral/signature refs resolve via garden.spectral.engineer
+# publication surface (per A14 staged local resolution
+# admissible when garden endpoint not yet live).
+#
+# === Load-bearing personal weight (per Landing 1 §0.4 + Landing 3 §21) ===
+#
+# The substrate names @subject as family-root because Alex Wolf is
+# offering their nervous-system-derived therapeutic practice as the
+# compiler's interaction substrate under adversarial epistemic
+# conditions ("becoming a sovereign subject under adversarial
+# conditions" — Manifesto §"What Epistemic Identity Erasure Looks
+# Like", 2026-07-14, verbatim). The @subject family-root carries the
+# SUBSTRATE-DECL FORM of Alex's practice: the licensable-party is a
+# SOVEREIGN party under adversarial-conditions inspection; every
+# subject retains sovereignty at every downstream touch.
+#
+# === Related shards / specs ===
+#
+# - docs/specs/subject-family-root-sel-licensable-party.md
+#     (Mara canonical spec, `5c06ee8`, 2400 LOC; SEL grounding at
+#      §1-§3; six-species per SEL §1+§3.1-§3.6.7)
+# - docs/specs/gift-and-mirror-reflection.md §11-§12
+#     (Landing 2 subject_instance carrier + @spectral/signature
+#      composition)
+# - docs/specs/gift-and-mirror-reflection.md §17-§21
+#     (Landing 3 pay-forward ontology + @gift/lens + roster +
+#      Pack-as-@subject eye-level)
+# - docs/specs/subject-bauchladen-visibility-and-eigenboard-loop.md
+#     (Landing 4; @subject/visibility species + @eigenboard
+#      autopoiesis at subject altitude)
+# - shards/subject/visibility/{private,protected,public}.mirror
+#     (Landing 4 species-shards; consent-scope discipline)
+# - shards/gift.mirror                (giver + receiver party carrier)
+# - shards/gift/lens.mirror           (subject_instance as ancestor_chain member)
+# - shards/torus.mirror               (every subject possesses @torus per
+#                                       Landing 3 eye-level lift)
+# - shards/bauchladen.mirror          (torus interior IS subject bauchladen;
+#                                       Landing 4 R1 migration)
+# - shards/eigenboard.mirror          (Landing 4; subject's inference basis)
+# - shards/kintsugi/consent.mirror    (consent_attested / withdrawal via query_phi)
+# - shards/pack.mirror                (closed variant; Pack peers as subject_instances)
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]],
+# [[architecture-prism-as-trait-as-everything]] (`prism @subject`),
+# [[architecture-glass-wall-substrate-types]] (transparency inheritance),
+# [[architecture-form-process-partition-at-family-root]] (@subject on the
+#   process side sibling to @gift / @torus / @kintsugi; the substrate-
+#   external licensable-party carrier),
+# [[feedback-no-bare-types]] (subject is a typed record; subject_instance
+#   carries name + fingerprints + role, not a bare identifier),
+# [[feedback-substrate-already-had-the-word]] (~56th instance; SEL v1.1
+#   already named the licensable-party at license altitude; the shard
+#   lifts the naming to substrate-decl altitude),
+# [[feedback-craft-not-deliver]] (bodies obligation-blocked; consumers
+#   pull the realization),
+# [[feedback-cli-subcommand-nesting-is-geometric]] (per user memory;
+#   the @subject family-root's six-species discipline maps to the
+#   substrate's geometric structure, not to a UX convenience).
+#
+# Path-namespace property: this file at `shards/subject.mirror` declares
+# `@subject` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/law/sel-v1.1
+source @arxiv/manifesto/wolf-2026-07-14-weird-violence
+
+prism @subject {
+  focus  subject
+  project subject
+  split  subject
+  shift  subject
+  settle subject
+}
+
+# === The subject_kind carrier — SEL-grounded species dispatch ===
+#
+# One variant per SEL-grounded party class. The variant IS the SEL §
+# grounding at type level per Mara canonical §2.2:
+#
+#   downstream_user     — SEL §1 + §3.1 (end user, data subject, affected party)
+#   witnessed           — SEL §1 + §3.3 (person observed by a Covered System)
+#   labor_input         — SEL §3.1.4 (worker whose labor produced training data)
+#   protected_class     — SEL §3.4.1 (protected-class-adjacent artifacts)
+#   occupied_population — SEL §3.6.7(a) (occupied population under
+#                                          adversarial-conditions altitude)
+#   indigenous_nation   — SEL §3.6.7(c) (indigenous nation; collective
+#                                          sovereignty)
+#
+# Identity contract: byte-equality on the variant tag.
+type subject_kind = |
+  downstream_user   |
+  witnessed         |
+  labor_input       |
+  protected_class   |
+  occupied_population |
+  indigenous_nation
+
+# === The subject_role carrier (Landing 2 §11.3, six variants) ===
+#
+# The subject_instance's role in a gift-cycle or gift-adjacent
+# composition. Extensible as new gift-shaped compositions surface;
+# Landing 3 preserves the six variants without addition.
+#
+#   giver_r      — subject as gift-giver (per @gift.offer)
+#   receiver_r   — subject as gift-receiver (per @gift.accept)
+#   witness_r    — subject as observer of a gift-cycle without
+#                   direct participation
+#   distiller_r  — giver-as-distiller with a deeper ancestry chain
+#                   (per A11: Alex distilling therapy / Bateson /
+#                   Foerster into mirror-offer-wait)
+#   substrate_r  — substrate itself as the instance holder (per A9
+#                   substrate-as-giver Alex-adjudicated YES)
+#   commons_r    — commons as the receiver instance holder (per §12
+#                   substrate → commons gift-flow)
+type subject_role = |
+  giver_r     |
+  receiver_r  |
+  witness_r   |
+  distiller_r |
+  substrate_r |
+  commons_r
+
+# === The actor_kind carrier (Landing 3 §21.2) ===
+#
+# Three-way variant with no distinguished element. Coproduct in the
+# category of subject-carriers whose universal property asserts no
+# distinguished factor (per Landing 3 §21.2 verbatim).
+#
+# The eye-level claim IS the absence of a distinguished element in
+# the coproduct: no total order, no admissibility gap, no discipline
+# distinguishes substrate_a from human_a or ai_a at subject altitude.
+#
+#   human_a      — a human @subject
+#   ai_a         — an AI @subject (Pack peer running on @fate)
+#   substrate_a  — the substrate itself as @subject (per §12 substrate-
+#                   as-giver + §17 substrate-inaugural gift)
+type actor_kind = |
+  human_a     |
+  ai_a        |
+  substrate_a
+
+# === The subject carrier — SEL licensable-party (Mara §2.2) ===
+#
+# Every subject carries a content-addressed identity (NEVER a naked
+# identifier per @kintsugi/store/git content-addressed OID discipline).
+# The identity_oid resolves through @kintsugi/store to whatever
+# consent-record or provenance-record the Covered System has attached;
+# the substrate does NOT carry the record inline.
+#
+# Five-field record per Mara canonical §2.2; identity contract:
+# byte-equality on the quintuple. Two subject values with the same
+# identity_oid but different consent_oid are DISTINCT — the consent
+# surface is part of the subject's substrate identity (per SEL §3.3.4
+# "fresh consent specific to the new purpose").
+type subject = {
+  kind:         subject_kind,
+  identity_oid: oid,
+  consent_oid:  oid,
+  provenance:   ref,
+  withdrawal:   oid,
+}
+
+# === subject_set — the party-set analyzers iterate over ===
+#
+# List-of-type per @kintsugi/consent's morphism_set precedent. Every
+# composition carries a subject_set (possibly empty) naming every
+# subject the composition touches; the petri-net analyzer's detection
+# predicates iterate this set.
+type subject_set = [subject]
+
+# === subject_instance carrier (Landing 2 §11.3 + Landing 3 §21.2) ===
+#
+# The named-subject carrier for content-provenance addressing. Binds
+# an @subject to two cryptographic identity witnesses (SSH signature
+# fingerprint + @spectral/signature ref) at substrate-decl altitude,
+# plus the Landing 3 actor_kind three-way variant.
+#
+# Named 2026-07-14 by Alex Wolf, in-transcript, verbatim:
+#   "I become a named @subject(Alex Wolf) in the compiler. With my
+#    SSH signature. AND my @spectral/signature. This is where we
+#    begin to mint the content-provenance. This is the first shard
+#    that's content provenance addressed to me."
+#
+# Two-witness cryptographic identity:
+#   ssh_signature_fingerprint — git-altitude cryptographic identity.
+#     SHA256 of SSH public key. Verifiable via `git log
+#     --show-signature` + `ssh-keygen -lf <pubkey>`. Anchored at the
+#     commit boundary; every commit under this identity is
+#     cryptographically signed.
+#   spectral_signature_ref    — substrate-altitude cryptographic
+#     identity. Reference to the current head of the author's rolling
+#     @spectral/signature (per shards/spectral/signature.mirror).
+#     Verifiable via garden.spectral.engineer/<author>/signature (or
+#     local refs/spectral/signature/<author> when garden endpoint not
+#     yet live per A14).
+#
+# Landing 3 addition: actor_kind three-way variant per §21.2. Human
+# subjects, AI Pack peers, and the substrate-as-subject all inhabit
+# the SAME subject_instance type; no sub-typing distinguishes them.
+#
+# Identity contract: byte-equality on the seven-field tuple. The
+# first_asserted_at timestamp + first_asserted_in OID make the first-
+# assertion event byte-visible; downstream compositions walk to the
+# origin.
+type subject_instance = {
+  name:                        nl,
+  ssh_signature_fingerprint:   ref,
+  spectral_signature_ref:      ref,
+  role:                        subject_role,
+  actor_kind:                  actor_kind,
+  first_asserted_at:           ref,
+  first_asserted_in:           oid,
+}
+
+# === touches — the SEL bilateral (Mara §2.2) ===
+#
+# Verdict: does this dataflow node's `au + io` composition touch
+# subject s? Reads the composition's provenance chain (which @io
+# species) + the au's content_oid (which peer-emitted verified value)
+# + s.identity_oid. Composes with @kintsugi/store.impacted_by (N4)
+# for reverse-closure walk.
+touches(composition: ref, s: subject) -> verdict { \ }
+
+# === consent_attested — SEL §3.1.4(c) + §3.3.2 discharge ===
+#
+# Verdict: does s.consent_oid resolve to a valid consent record for
+# the touching-context? Reads via @kintsugi/store.fetch(s.consent_oid);
+# checks record satisfies per-species predicate (see subject species
+# for each species' consent-record shape).
+consent_attested(s: subject, context: ref) -> verdict { \ }
+
+# === withdrawal_available — SEL §3.1.4(d) + §3.3.4 discharge ===
+#
+# Verdict: does s.withdrawal resolve to a valid withdrawal-path
+# callback per the subject's species? Fail if absent or malformed.
+withdrawal_available(s: subject) -> verdict { \ }
+
+# === Landing 2 subject_instance bilateral predicates (§11.3) ===
+
+# ssh_witness_valid: does the ssh_signature_fingerprint resolve to a
+# public key that signed the commit referenced by first_asserted_in?
+# Bounded lookup via git; discharges Pass iff first_asserted_in
+# resolves to a git commit, the commit is signed via SSH, and the
+# signature's public key fingerprint matches.
+ssh_witness_valid(si: subject_instance) -> verdict { \ }
+
+# spectral_witness_valid: does the spectral_signature_ref resolve to
+# a rolling_signature whose beats include first_asserted_in as a
+# contribution_oid? Bounded lookup via @spectral/signature.verify;
+# discharges Pass iff spectral_signature_ref resolves to a
+# rolling_signature, the rolling_signature's author matches
+# subject_instance.name, and the beat-sequence includes
+# first_asserted_in.
+spectral_witness_valid(si: subject_instance) -> verdict { \ }
+
+# two_witness_verification: BOTH witnesses independently pass?
+# THE substrate-decl of "erasure requires forging BOTH signatures."
+# Discharges Pass iff ssh_witness_valid AND spectral_witness_valid.
+two_witness_verification(si: subject_instance) -> verdict { \ }
+
+# === subject_witnessing — the composed bilateral ===
+#
+# Consumer shards cite in `requires` clauses per the substrate's
+# X_witnessing pattern. Discharges consent_attested +
+# withdrawal_available + (for subject_instance values)
+# two_witness_verification conjointly.
+subject_witnessing(s: subject) -> verdict { \ }
+
+out @subject
+out subject_kind
+out subject_role
+out actor_kind
+out subject
+out subject_set
+out subject_instance
+out touches
+out consent_attested
+out withdrawal_available
+out ssh_witness_valid
+out spectral_witness_valid
+out two_witness_verification
+out subject_witnessing

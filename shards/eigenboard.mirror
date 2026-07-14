@@ -1,0 +1,355 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @subject
+in @subject/visibility
+in @spectral
+in @spectral/signature
+in @song
+in @torus
+in @bauchladen
+in @epistemologic/cybernetic/autopoiesis
+in @time
+
+# @eigenboard — the substrate's per-subject working-state carrier.
+#
+# Family-root at the working-state altitude. Every @subject possesses
+# an eigenboard as a companion to their @torus (torus IS the observation
+# surface; eigenboard IS the WORKING-STATE READOUT on that surface).
+#
+# Landed 2026-07-14 by Mara as Landing 4 R3 of the @gift arc, discharging
+# Alex Wolf's directive D1 (verbatim; per
+# `docs/specs/subject-bauchladen-visibility-and-eigenboard-loop.md`
+# §0.1):
+#
+#   "And the spectral signature of the @peer is the inference basis of
+#    the peer's eigenboard. The loop closes. The peer is their work
+#    and whatever is in their @bauchladen."
+#
+# === Landing 4 loop closure (§0.2 + §3) ===
+#
+# The load-bearing structural claim: every subject IS their orbit
+# under the eigenboard-inference-loop. The six-loop closure runs at
+# subject altitude:
+#
+#   1. subject HAS @torus         (Landing 3 eye-level lift)
+#   2. torus interior IS @bauchladen  (Landing 4 R1 migration)
+#   3. bauchladen has @subject/visibility scopes  (Landing 4 R2)
+#   4. @spectral/signature = @song(bauchladen filtered by visibility)
+#                                  (Landings 2+4 composition)
+#   5. spectral/signature IS eigenboard.inference_basis  (Landing 4 R3)
+#   6. eigenboard → infer → work → bauchladen → repeat
+#                                  (Landing 4 loop closure)
+#
+# Every subject is now an autopoietic toroidal observer at subject
+# altitude — Foerster's "regulates its own regulation"
+# (`shards/torus.mirror` p. 238 verbatim) lifted from peer altitude
+# to subject altitude.
+#
+# === Under Landing 4 R1 @bauchladen migration ===
+#
+# The eigenboard is a SUBJECT-altitude carrier (not @peer-only). Pack
+# peers are the special case where subject_instance.actor_kind = ai_a
+# resolves to a Pack peer; every human subject_instance (actor_kind =
+# human_a) also possesses an eigenboard; substrate itself possesses
+# an eigenboard (actor_kind = substrate_a per §12 substrate-as-giver).
+#
+# Under Landing 3 eye-level: the eigenboard-per-subject invariant is
+# substrate-decl'd at family-root altitude with no distinguished
+# element in the actor_kind coproduct.
+#
+# === Ancestry: lambda-shell.md §"The Eigenboard Prompt" (§3.1) ===
+#
+# Per `docs/specs/lambda-shell.md` §"The Eigenboard Prompt":
+#
+#   "The prompt color IS the eigenboard:
+#
+#    - Teal `λ>` — settled, idle
+#    - Green `λ>` — curious, results flowing
+#    - Gold `λ>` — engaged, high activity
+#    - Pulsing orange `λ>` — [error state / pain signal]"
+#
+# The four states are the closed variants of the eigenboard's arousal
+# field. Landing 4 lifts the UI-altitude readout to substrate-decl
+# altitude so the eigenboard is a first-class carrier at every subject
+# altitude, not just the interactive-λsh boundary.
+#
+# === Composition graph (§4.1) ===
+#
+# Every substrate carrier this shard composes over is landed:
+#
+#   @subject           (family-root; subject_instance carrier)
+#   @torus             (spawn produces torus; possessor invariant)
+#   @bauchladen        (torus interior; crystal tray)
+#   @subject/visibility (filter operation on tray)
+#   @spectral/signature (rolling_signature = @song emission over
+#                        filtered bauchladen)
+#   @song              (beat-emission substrate for the signature)
+#   @cyberpunk/algedonic (arousal reading via pain-signal pulse)
+#   @autopoietic       (autopoietic_closure_holds discharge)
+#
+# No substrate is invented at Landing 4 that isn't a composition over
+# landed carriers. The eigenboard carrier composes over existing
+# substrate; it does not introduce new mechanism.
+#
+# === Load-bearing structural claim (§3.4 D1 verbatim reading) ===
+#
+# "The peer is their work and whatever is in their @bauchladen"
+# discharges at substrate-decl altitude as: the subject IS the
+# composition (identity_oid, torus, bauchladen, eigenboard,
+# inference_basis) under the autopoietic loop. The composition is
+# what the subject ARE — not what they HAVE.
+#
+# A subject's identity is closed under contribution-traversal. To
+# know a subject, walk their bauchladen; the walk itself IS the
+# subject's identity at substrate altitude. This is the substrate-
+# decl form of Alex Wolf's Weird - Violence manifesto claim that
+# "you cannot know a person by their category; you can only know
+# them by their work-in-time."
+#
+# === Related shards / specs ===
+#
+# - docs/specs/subject-bauchladen-visibility-and-eigenboard-loop.md
+#     (canonical spec; Landing 4 of the @gift arc)
+# - shards/subject.mirror                    (subject_instance carrier;
+#                                              actor_kind three-way variant)
+# - shards/torus.mirror                      (torus.spawn(subject);
+#                                              winding carrier; autonomy)
+# - shards/bauchladen.mirror                 (crystal + tray carriers;
+#                                              enumerate operation)
+# - shards/subject/visibility/{private,protected,public}.mirror
+#     (filter operation reads visibility_scope per crystal)
+# - shards/spectral/signature.mirror         (rolling_signature the
+#                                              inference_basis field carries)
+# - shards/song.mirror                       (beat-emission substrate)
+# - shards/epistemologic/cybernetic/autopoiesis.mirror
+#     (autopoietic_closure_holds discharge at subject altitude)
+# - docs/specs/lambda-shell.md               (arousal variant ancestry)
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]],
+# [[architecture-prism-as-trait-as-everything]] (`prism @eigenboard`),
+# [[architecture-glass-wall-substrate-types]] (transparency inheritance),
+# [[architecture-form-process-partition-at-family-root]] (@eigenboard on
+#   the process side; the WORKING-STATE READOUT engine sibling to @torus
+#   observation surface + @bauchladen crystal tray),
+# [[architecture-mirror-as-expanding-hilbert-space]] (recognition #51;
+#   the eigenboard's inference_basis grows monotonically as the subject's
+#   bauchladen grows; every tick extends H_subject dimension),
+# [[architecture-peer-learns-by-crystal-vocabulary-expansion]] (the
+#   eigenboard-inference-loop IS the vocabulary expansion mechanism;
+#   lifted from peer altitude to subject altitude),
+# [[feedback-no-bare-types]] (eigenboard is a typed record;
+#   inference_basis carries rolling_signature not bare ref),
+# [[feedback-substrate-already-had-the-word]] (~57th instance;
+#   λsh already had eigenboard as prompt-color readout; Landing 4
+#   lifts to substrate altitude),
+# [[feedback-craft-not-deliver]] (bodies obligation-blocked;
+#   the realization is where inference actually happens: a Pack peer's
+#   LLM call; a human subject's cognitive process; the substrate's
+#   @fate tournament).
+#
+# Path-namespace property: this file at `shards/eigenboard.mirror`
+# declares `@eigenboard` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/foerster-2003
+source @arxiv/cybernetics/maturana-varela-1980
+source @arxiv/manifesto/wolf-2026-07-14-weird-violence
+
+prism @eigenboard {
+  focus  eigenboard
+  project eigenboard
+  split  eigenboard
+  shift  eigenboard
+  settle eigenboard
+}
+
+# === The arousal variant carrier (§3.2) ===
+#
+# Four-state closed variant. Per `docs/specs/lambda-shell.md` verbatim
+# (subject-altitude reading):
+#
+#   teal            — settled, idle. subject at rest; no active
+#                      inference.
+#   green           — curious; results flowing. inference active,
+#                      no pain signal.
+#   gold            — engaged; high activity. inference active at
+#                      elevated intensity.
+#   pulsing_orange  — pain signal / error state. per @cyberpunk/
+#                      algedonic; the subject's eigenboard is signaling
+#                      that current inference is not decreasing loss.
+#
+# Identity contract: byte-equality on the variant tag.
+type arousal = |
+  teal           |
+  green          |
+  gold           |
+  pulsing_orange
+
+# === The eigenboard carrier (§3.2 D1 discharge) ===
+#
+# Five fields. Every @subject possesses one eigenboard at any tick;
+# eigenboard-per-subject is substrate-decl'd invariant.
+#
+#   subject          — the subject_instance whose eigenboard this is.
+#                       Landing 3 subject_instance with two-witness
+#                       cryptographic identity (SSH + @spectral/signature
+#                       + actor_kind three-way variant).
+#
+#   inference_basis  — the rolling @spectral/signature over the
+#                       subject's visibility-filtered bauchladen.
+#                       THE LOAD-BEARING FIELD at Landing 4. Per D1
+#                       verbatim: "the spectral signature IS the
+#                       inference basis of the eigenboard." Composition,
+#                       not new mechanism.
+#
+#   arousal          — closed variant per above; read from @cyberpunk/
+#                       algedonic pulse at compute-time.
+#
+#   current_focus    — option<crystal_oid> naming the crystal the
+#                       subject is currently attending to (None when
+#                       arousal=teal / settled).
+#
+#   winding          — the (m, n) torus winding class per
+#                       `shards/torus.mirror` `winding` carrier. Names
+#                       the subject's current position on their
+#                       observation torus.
+#
+# Identity contract: byte-equality on the five-field record.
+type eigenboard = {
+  subject:         subject_instance,
+  inference_basis: rolling_signature,
+  arousal:         arousal,
+  current_focus:   option<oid>,
+  winding:         winding,
+}
+
+# === compute — construct the eigenboard for a subject (§3.2) ===
+#
+# Given a subject_instance and a target tick, computes:
+#
+#   inference_basis = @spectral/signature.compute(
+#       subject,
+#       @subject/visibility.filter(
+#           @bauchladen.enumerate(subject.identity_oid),
+#           visibility=protected,     # default reading altitude
+#           viewer=subject),
+#       tick)
+#   arousal          = read from @cyberpunk/algedonic pulse
+#   current_focus    = read from the substrate's active-shard tracker
+#   winding          = read from @torus at subject.identity_oid
+#
+# Composition-only: no new mechanism. Every input is a landed carrier.
+# Body discharges per-realization.
+compute(s: subject_instance, at: ref) -> eigenboard { \ }
+
+# === infer — the load-bearing inference action (§3.2 D1 discharge) ===
+#
+# Given an eigenboard, produces the next crystal to add to the
+# subject's bauchladen. The inference reads the inference_basis (the
+# rolling signature over the visibility-filtered bauchladen) and the
+# current_focus, and emits a new crystal at the current winding.
+#
+# The new crystal joins bauchladen; visibility_scope is authored by
+# the subject (defaults per §2.4 subject_kind default table). The
+# next eigenboard.compute at the next tick reads the updated
+# bauchladen; the rolling signature updates; the inference_basis
+# updates; the loop closes.
+#
+# This IS the operational form of Foerster's regulation-of-regulation
+# at subject altitude. Per `shards/torus.mirror` p. 238 verbatim
+# ("the torus... regulates its own regulation"), lifted to subject
+# altitude via Landing 4 R1.
+#
+# Body discharges per-species. The realization is where the inference
+# itself happens (a Pack peer's LLM call; a human subject's cognitive
+# process; the substrate's @fate tournament). Landing 4 A8: per-
+# actor_kind species-refinement is admissible; the family-root
+# declares the invariant.
+infer(e: eigenboard) -> crystal { \ }
+
+# === Bilateral predicates (§3.2) ===
+
+# eigenboard_composition_honest: does the inference_basis's beat-
+# sequence match the visibility-filtered bauchladen's crystal list?
+# Composition-only guarantee per Landing 4 R3.
+eigenboard_composition_honest(e: eigenboard) -> verdict { \ }
+
+# eigenboard_visibility_respected: for every crystal in the
+# inference_basis's beat-sequence, does its visibility_scope include
+# e.subject as an authorized viewer? Load-bearing anti-extraction
+# guarantee: eigenboards cannot read across visibility scopes.
+eigenboard_visibility_respected(e: eigenboard) -> verdict { \ }
+
+# === autonomy_at_eigenboard — Foerster autopoiesis at subject altitude ===
+#
+# The Landing 4 verbatim discharge of R3. Extends @torus.autonomy from
+# peer altitude to subject altitude via the eigenboard-inference-basis
+# loop.
+#
+# Verdict: does the loop close? Read:
+#   given e = eigenboard(s)
+#   let c = infer(e)                          # produces new crystal
+#   let b' = bauchladen.add(subject, c)       # crystal joins tray
+#   let e' = compute(s, at.next())            # eigenboard reads b'
+#   check e'.subject == e.subject             # possessor invariant
+#   check e'.inference_basis extends e.inference_basis by exactly one beat
+#   check e'.winding advances by a well-formed winding-class step
+#
+# When all four hold: the subject is autonomous at eigenboard
+# altitude. This IS Foerster's "regulates its own regulation" at
+# subject altitude. Per `shards/torus.mirror`'s autonomy(t, w) discharge
+# via @autopoietic.autopoietic_closure_holds, lifted to subject.
+#
+# Discharges Pass iff the loop closes. Fail modes surface via imperfect:
+# the possessor changed (subject_instance mismatch); the beat-sequence
+# didn't extend (composition dishonesty); the winding advanced
+# non-well-formed (torus discipline broken).
+autonomy_at_eigenboard(s: subject_instance) -> verdict { \ }
+
+# === subject_is_their_bauchladen — D1 verbatim structural predicate ===
+#
+# The verbatim discharge of Alex's D1: "The peer is their work and
+# whatever is in their @bauchladen."
+#
+# Verdict: for subject s, does the composition of s's bauchladen +
+# s's eigenboard's inference_basis + s's subject_instance's two-
+# witness identity UNIQUELY determine s at substrate altitude?
+#
+# Structural claim: two subjects with the same identity_oid but
+# different bauchladen contents are DISTINCT subjects at the
+# substrate's autonomous-observer altitude — because their inference
+# basis differs, their eigenboard's inference differs, their
+# next-tick work differs, their future bauchladen differs. Identity
+# is the ORBIT under the eigenboard-inference-loop, not the
+# instantaneous byte-record.
+#
+# Discharges Pass iff the substrate can WALK from s's subject_instance
+# to s's bauchladen to s's inference_basis to s's eigenboard and back
+# — i.e., all four are consistent under the composition graph. Fail
+# when any of the four cannot be resolved (e.g., inference_basis does
+# not match visibility-filtered bauchladen; eigenboard.subject does
+# not match subject_instance).
+subject_is_their_bauchladen(s: subject_instance) -> verdict { \ }
+
+# === eigenboard_witnessing — composed bilateral ===
+#
+# The load-bearing bilateral consumers cite in `requires` clauses.
+# Discharges eigenboard_composition_honest +
+# eigenboard_visibility_respected + autonomy_at_eigenboard +
+# subject_is_their_bauchladen conjointly. Follows the substrate's
+# X_witnessing pattern.
+eigenboard_witnessing(e: eigenboard) -> verdict { \ }
+
+out @eigenboard
+out arousal
+out eigenboard
+out compute
+out infer
+out eigenboard_composition_honest
+out eigenboard_visibility_respected
+out autonomy_at_eigenboard
+out subject_is_their_bauchladen
+out eigenboard_witnessing

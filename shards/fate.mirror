@@ -7,6 +7,14 @@ in @epistemologic/cybernetic/chirality
 in @epistemologic/cybernetic/charge_conjugation
 in @uuid/spectral
 
+# NOTE (Landing 4 soft-cascade, 2026-07-14): @fate's tournament selector
+# reads crystals from `bauchladen(subject_instance)` (not just
+# `bauchladen(peer)`); the selector's inputs remain byte-typed.
+# @bauchladen composition is subject-general per Landing 4
+# (docs/specs/subject-bauchladen-visibility-and-eigenboard-loop.md
+# e42181c); peer-scoped alias preserved for one release cycle per
+# two-tick discipline.
+
 # @fate — the substrate-decl form of the constrained-inference
 # operator. The substrate's typed dice-roll within the restricted
 # state space.
