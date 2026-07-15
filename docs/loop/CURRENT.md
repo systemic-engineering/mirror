@@ -62,18 +62,30 @@ the cracks. Six-arc retirement plan:
 22. `019ad8f` — Seam Phase D-cascade @secrets audit (595 LOC; SHIP Scenario A Mara-mintable)
 23. `9f5befa` — Mara @secrets shape proposal post-cascade repairs (SOPS Go/Python + @io/crypto lift-tick + @mirror/data verify + zero-crossings qualifier)
 24. `059cf1c` — Mara four-shard @io mint: @io/crypto lift-tick + @io/fs lift-tick + @io/secrets + @io/secrets/sops (1962 LOC across four; discharge of @sheaf forward-promise composition surface)
+25. `1f9ce72` — Reed CURRENT.md @secrets arc close (commits 20-24 tracking)
+26. `cf04628` — Reed io.mirror docblock cascade (family-root reflects new siblings @io/crypto + @io/fs + @io/secrets + @io/secrets/sops)
+27. `cec55a2` — Seam @sheaf ↔ @secrets composition-alignment audit (586 LOC; SHIP end-to-end; A1 surfaced as "genuinely unresolvable at Seam altitude")
+28. `57c5b3a` — Mara @sheaf/@secrets alignment repairs (sr→section param rename + @io/secrets/sops sheaf import)
+29. `9a5502a` — Taut A1 precedent scout (721 LOC; grep-first evidence 1/14 narrative-shorthand vs 13/14 landed constructor across 9 @io species)
+30. `e5d928e` — Seam A1 re-adjudication with Taut precedent (366 LOC; SEAM-RATIFY Position (b); "genuinely unresolvable" verdict SUPERSEDED)
+31. `64b0438` — Mara Landing 6 key_material_ref_of action + prose narrative sync (composition chain now byte-symmetric across all 5 arrows)
 
 ### Terminal state
 
 **Alex-adjudication residue: ZERO.** Everything Seam-adjudicable has
-been adjudicated across five Seam audits + Mara species-decl mints
-(@subject/visibility/sheaf + @io/secrets + @io/secrets/sops) + Mara
-companion property shard + Mara @io lift-ticks (@io/crypto + @io/fs).
-A2, A4, A6 all collapsed. Six-arc plan structurally landed at
+been adjudicated across seven Seam audits (Phase D + Phase D-cascade
+A2+A6 + A4-discharge + @secrets shape + composition-alignment + A1
+re-adjudication) + Mara species-decl mints + Mara companion property
+shard + Mara @io lift-ticks + Mara Landing 6 constructor. A2, A4, A6
+all collapsed; A1 also collapsed via composed Taut+Seam spawn (Taut
+precedent scout → Seam re-adjudication supersedes prior "unresolvable"
+verdict; substrate discipline learned that composed spawns adjudicate
+what single-spawns cannot). Six-arc plan structurally landed at
 species-decl + canonical spec + math foundation + combinator surface
-+ companion property + @io-secrets peer-key-gated projection altitudes.
-All Mara-A "alongside" forward-promises discharged; @sheaf/@secrets
-composition pair now substrate-complete.
++ companion property + @io-secrets peer-key-gated projection +
+composition-bridge constructor altitudes. All Mara-A "alongside"
+forward-promises discharged; @sheaf/@secrets composition pair now
+substrate-complete AND petri-net-completable at Arc-2.3.
 
 ### Next actions (Alex-triggered)
 
