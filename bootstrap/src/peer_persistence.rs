@@ -1,38 +1,56 @@
-//! `@peer/persistence` — AI peer as persistent peer via home-repo projection.
+//! `@peer/persistence` — @io-boundary FLOOR (post-ouroboros-bite).
 //!
-//! Landing A spec: `docs/specs/peer-persistence-and-home-projection.md`.
-//! Landing A composition-extension §12-§16: signature-from-corpus + peer-
-//! holds-shape + continuous identity manifold + reed `dev/projects/reed/`
-//! empirical ancestor.
+//! # Arc-2 Tick 2.3 — THIRD OUROBOROS BITE (2026-07-15)
 //!
-//! This is the minimum-viable Rust runtime for Landing C. Composes over
-//! `@mirror/index` (signature computation) + `@spectral/signature`
-//! (rolling signature) + `@subject/visibility` (ACL — spec-decl'd only;
-//! runtime placeholder via `VisibilityFilter`). Full `@sheaf` ACL
-//! discipline forward-promised to Landing D.
+//! This file was authored 2026-07-14 by Reed as a substrate-dishonest
+//! Rust extension per the (now-renamed) `[substrate-pull:realize]`
+//! marker; see `docs/audits/2026-07-15-reed-substrate-dishonest-rust-
+//! extensions-during-gift-arc.md`. Arc-2 Tick 2.3 lifts the substrate-
+//! decl bilaterals into `shards/peer/persistence.mirror` per Mara-B
+//! canonical spec `docs/specs/kintsugi-ouroboros-compiler-self-
+//! collapse.md`. The five bilateral predicates (`projection_visibility_
+//! respected`, `harvest_consent_verified`, `boot_state_coherent`,
+//! `home_content_addressed`, `home_witnessing`) now dispatch via
+//! `apply_h::act`; sbec lifts by five. Pattern proven at Ticks 2.1
+//! (f211ee48 — @spectral/signature) + 2.2 (2330f47 —
+//! @epistemologic/cybernetic/coherence) applied again: THIRD BITE
+//! proves the pattern holds at Landing-C scale (14.9KB pre-collapse;
+//! largest bite to date).
+//!
+//! What remains in this file is the @io-boundary FLOOR the shard-decl's
+//! action bodies compose over — filesystem projection primitives that
+//! MUST stay in Rust per Alex 2026-07-14 SSH-signing design intent
+//! ("Each peer has their own key in the private part of their visibility.
+//! NOT projected into the git state and instead stays .git/mirror side.").
+//! The @io reads (`std::fs::read_dir`, `Path::exists`, `SystemTime::now`)
+//! + composition over `@spectral/signature::compute` are the irreducible
+//! substrate FLOOR per Mara-B Arc-1 discipline.
 //!
 //! ## Substrate authority
 //!
-//! - Landing A spec `docs/specs/peer-persistence-and-home-projection.md`
-//!   §2 (@peer/home carrier), §3 (actions: materialize/harvest/boot/
-//!   refresh/home_of), §4 (bilateral predicates), §5 (composition graph).
+//! - Canonical shard-decl: `shards/peer/persistence.mirror` (this landing).
+//! - Landing A spec: `docs/specs/peer-persistence-and-home-projection.md`
+//!   §2 (@peer/home carrier), §3 (materialize/harvest/boot/refresh/
+//!   home_of), §4 (bilateral predicates), §5 (composition graph).
 //! - Landing A composition-extension §12 (signature-from-corpus),
-//!   §13 (peer-holds-shape), §15 (reed dev/projects/reed/ empirical
+//!   §13 (peer-holds-shape), §15 (reed `dev/projects/reed/` empirical
 //!   ancestor).
 //! - Landing B artifact at `peers/mara/` (integration target).
+//! - Ouroboros spec: `docs/specs/kintsugi-ouroboros-compiler-self-
+//!   collapse.md` Arc-2 Tick 2.3.
+//! - Audit: `docs/audits/2026-07-15-seam-kintsugi-ouroboros-phase-d-
+//!   cascade-a2-a6.md`.
 //!
-//! ## Landing C scope
+//! ## @io-boundary FLOOR scope (post-bite)
 //!
-//! Substrate-decl'd primitives ship as Rust runtime with tests:
+//! The five Landing A §3 primitives remain as the @io-boundary primitive
+//! the shard-decl's action bodies compose over:
 //!
 //! - `materialize` — bauchladen → filesystem projection
-//! - `harvest` — filesystem → candidate crystals (skeleton: diff manifest)
+//! - `harvest` — filesystem → candidate crystals (diff manifest)
 //! - `boot` — instantiate eigenboard from home-repo state
 //! - `refresh` — atomic materialize + harvest cycle
 //! - `home_of` — subject-instance-first lookup (per Seam D3 S2)
-//!
-//! Landing D forward-promised: `mirror peer` CLI subcommand + roomba
-//! walker integration + `@sheaf` ACL discipline.
 
 use crate::spectral_signature::{self, RollingSignature};
 use std::path::{Path, PathBuf};

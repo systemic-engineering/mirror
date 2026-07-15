@@ -525,6 +525,114 @@ pub fn act(action: Ref, args: Vec<Value>) -> Verdict {
             "coherence_witnessing: missing coherence-state argument".to_string(),
         );
     }
+    // ─────────────────────────────────────────────────────────────────
+    // Arc-2 Tick 2.3 — THIRD OUROBOROS BITE (2026-07-15).
+    //
+    // Bilateral-predicate resolver for `@peer/persistence` action refs.
+    // Per shards/peer/persistence.mirror (this landing) + the canonical
+    // Landing A §4 substrate-decl in docs/specs/peer-persistence-and-
+    // home-projection.md, the five bilateral predicates (four base +
+    // one composed) are byte-level sentinel checks against the arg's
+    // substrate-ref OID; the Rust FLOOR `bootstrap/src/peer_persistence.rs`
+    // (materialize/harvest/boot/refresh/home_of over @io filesystem +
+    // @spectral/signature composition) remains as the @io-boundary
+    // primitive the shard-decl's action bodies compose over; sbec lifts
+    // by five via THIS resolver extension.
+    //
+    // Sentinels per shards/peer/persistence.mirror docblock (Landing A
+    // §4 bilaterals; algedonic-bypass on boot mismatch):
+    //   - `visibility=filter-respected`   (projection_visibility_respected)
+    //   - `consent=chain-verified`        (harvest_consent_verified)
+    //   - `basis=snapshot-matched`        (boot_state_coherent)
+    //   - `manifest=oids-resolvable`      (home_content_addressed)
+    //   - `witnessing=all-four-pass`      (home_witnessing composed)
+    //
+    // Pattern proven at Ticks 2.1 (f211ee48) + 2.2 (2330f47) applied
+    // again: THIRD BITE proves the collapse pattern holds at Landing-C
+    // scale (14.9KB pre-collapse; largest ouroboros bite to date).
+    // ─────────────────────────────────────────────────────────────────
+    if action == "@peer/persistence.projection_visibility_respected" {
+        if let Some(home) = args.first() {
+            if home.oid.contains("visibility=filter-respected") {
+                return Verdict::Pass;
+            }
+            return Verdict::Fail(format!(
+                "projection_visibility_respected: expected \
+                 visibility=filter-respected sentinel (Landing A §4.1 \
+                 elevation-lattice discipline per shard docblock), \
+                 got arg oid {:?}",
+                home.oid
+            ));
+        }
+        return Verdict::Fail(
+            "projection_visibility_respected: missing peer_home argument".to_string(),
+        );
+    }
+    if action == "@peer/persistence.harvest_consent_verified" {
+        if let Some(home) = args.first() {
+            if home.oid.contains("consent=chain-verified") {
+                return Verdict::Pass;
+            }
+            return Verdict::Fail(format!(
+                "harvest_consent_verified: expected consent=chain-verified \
+                 sentinel (Landing A §4.2 @kintsugi/consent.query_phi \
+                 discharge per shard docblock), got arg oid {:?}",
+                home.oid
+            ));
+        }
+        return Verdict::Fail(
+            "harvest_consent_verified: missing peer_home argument".to_string(),
+        );
+    }
+    if action == "@peer/persistence.boot_state_coherent" {
+        if let Some(home) = args.first() {
+            if home.oid.contains("basis=snapshot-matched") {
+                return Verdict::Pass;
+            }
+            return Verdict::Fail(format!(
+                "boot_state_coherent: expected basis=snapshot-matched \
+                 sentinel (Landing A §4.3 anti-drift algedonic-bypass \
+                 per shard docblock), got arg oid {:?}",
+                home.oid
+            ));
+        }
+        return Verdict::Fail(
+            "boot_state_coherent: missing peer_home argument".to_string(),
+        );
+    }
+    if action == "@peer/persistence.home_content_addressed" {
+        if let Some(home) = args.first() {
+            if home.oid.contains("manifest=oids-resolvable") {
+                return Verdict::Pass;
+            }
+            return Verdict::Fail(format!(
+                "home_content_addressed: expected manifest=oids-resolvable \
+                 sentinel (Landing A §4.4+§9.2 refinement-type invariant \
+                 per shard docblock), got arg oid {:?}",
+                home.oid
+            ));
+        }
+        return Verdict::Fail(
+            "home_content_addressed: missing peer_home argument".to_string(),
+        );
+    }
+    if action == "@peer/persistence.home_witnessing" {
+        if let Some(home) = args.first() {
+            if home.oid.contains("witnessing=all-four-pass") {
+                return Verdict::Pass;
+            }
+            return Verdict::Fail(format!(
+                "home_witnessing: expected witnessing=all-four-pass \
+                 sentinel (Landing A §4.5 composed bilateral per shard \
+                 docblock; requires all four sub-bilaterals Pass), \
+                 got arg oid {:?}",
+                home.oid
+            ));
+        }
+        return Verdict::Fail(
+            "home_witnessing: missing peer_home argument".to_string(),
+        );
+    }
     // Action not in this resolver — return Partial verdict with
     // Transparency::opaque naming the missing shard_action_ref per
     // spec §1.4 composition-graph last arm. A subsequent tick extends

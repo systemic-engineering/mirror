@@ -1,0 +1,350 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @peer
+in @subject
+in @subject/visibility
+in @subject/visibility/sheaf
+in @spectral/signature
+
+# @peer/persistence — the peer-as-persistent-peer species declaring
+# the four bilateral predicates governing home-repo projection.
+#
+# Species under @peer at the persistence altitude. Landed 2026-07-15
+# by Reed as Arc-2 Tick 2.3 THIRD OUROBOROS BITE discharge, collapsing
+# `bootstrap/src/peer_persistence.rs` (Reed 2026-07-14 substrate-
+# dishonest Rust extension per Landing C forward-promise; audit at
+# `docs/audits/2026-07-15-reed-substrate-dishonest-rust-extensions-
+# during-gift-arc.md`) into substrate-honest shard-body composition.
+#
+# === Substrate authority ===
+#
+# - Canonical spec: `docs/specs/peer-persistence-and-home-projection.md`
+#   Landing A §2 (@peer/home carrier), §3 (materialize/harvest/boot/
+#   refresh/home_of actions), §4 (bilateral predicates), §5 (composition
+#   graph), §12.3 (ACL IS the sheaf structure, verbatim).
+# - Landing A composition-extension §12 (signature-from-corpus),
+#   §13 (peer-holds-shape), §15 (reed `dev/projects/reed/` empirical
+#   ancestor).
+# - Landing B artifact at `peers/mara/` (integration target).
+# - Ouroboros spec: `docs/specs/kintsugi-ouroboros-compiler-self-
+#   collapse.md` Arc-2 Tick 2.3.
+# - Audit: `docs/audits/2026-07-15-seam-kintsugi-ouroboros-phase-d-
+#   cascade-a2-a6.md`.
+#
+# === Alex 2026-07-14 SSH-signing design intent (verbatim) ===
+#
+# Peer-persistence session compaction, in-transcript:
+#
+#   "Each peer has their own key in the private part of their
+#    visibility. NOT projected into the git state and instead stays
+#    .git/mirror side. Only connected through Fractal.Lens. A pointer.
+#    Not the thing."
+#
+#   "@secrets prism and @secrets/sops to project visibility/private
+#    stuff onto disk through the Peers key."
+#
+# The four bilateral predicates below (projection_visibility_respected,
+# harvest_consent_verified, boot_state_coherent, home_content_addressed)
+# are the substrate-decl'd runtime checks that discharge at Landing C
+# realization boundary. Their bodies are `\`-obligation-blocked per
+# [[feedback-craft-not-deliver]]; Arc-1 evaluator FLOOR pending; Arc-
+# 2.3 landing composes their sentinel-checks via `apply_h::act`.
+#
+# === Substrate-already-had-the-word citation chain ===
+#
+# The four bilateral predicates were substrate-decl'd verbatim in
+# `docs/specs/peer-persistence-and-home-projection.md` §2:
+#
+#   projection_visibility_respected(home: peer_home,
+#                                   visibility_filter: visibility) -> verdict { \ }
+#   harvest_consent_verified(home: peer_home, new_crystals: [crystal]) -> verdict { \ }
+#   boot_state_coherent(home: peer_home, e: eigenboard) -> verdict { \ }
+#   home_content_addressed(home: peer_home) -> verdict { \ }
+#
+# This species lands the shard-decl form. The ~58th instance of
+# [[feedback-substrate-already-had-the-word]] on ratification — Landing
+# A's §4 already substrate-decl'd all four predicates as `\`-obligation-
+# blocked action bodies; this species mints the carrier they compose
+# over.
+#
+# === Composition graph ===
+#
+# Parents (substrate-decl):
+#   @peer                     — glass-altitude peer carrier; peer =
+#                               {home, lead_of, kind} triple; @pack.peer
+#                               closed variant realizes this at USE
+#   @subject                  — SEL licensable-party carrier; two-witness
+#                               discipline; pack.members ACL binding
+#   @subject/visibility       — visibility_scope carrier; four species
+#                               (private, protected, public, sheaf) at
+#                               altitude
+#   @subject/visibility/sheaf — sheaf_restriction + section_at_stalk
+#                               carriers; restrict + section_at actions
+#                               (Landing A §12.3 ACL IS the sheaf)
+#   @spectral/signature       — rolling_signature carrier; peer's
+#                               signature_snapshot @ projection-time
+#
+# Forward-composition surfaces (named, not imported; land at Arc-2.3+):
+#   @secrets                  — key-gated projection; discharges at
+#                               @io boundary; per Alex 2026-07-14
+#                               "@secrets prism ... project through
+#                               the Peers key"
+#   @secrets/sops             — SOPS-backed secret realization; @io
+#                               species materializing peer-key-gated
+#                               sections on disk
+#   @io                       — filesystem realization; @secrets composes
+#                               through @io at projection boundary
+#   @kintsugi/consent         — consent-discharge chain for elevation;
+#                               query_phi returns Pass for morphisms
+#   @cyberpunk/algedonic      — algedonic-bypass on boot identity-
+#                               integrity failure (Bateson VSM signal)
+#
+# Consumers (compose over this species):
+#   bootstrap/src/peer_persistence.rs
+#                             — Arc-2.3 collapse; @io-boundary FLOOR the
+#                               shard-decl's four bilateral action bodies
+#                               compose over (materialize / harvest /
+#                               boot / refresh / home_of remain as the
+#                               @io-boundary primitive per Alex 2026-07-14
+#                               SSH-signing design intent)
+#
+# === Related shards / specs ===
+#
+# - docs/specs/peer-persistence-and-home-projection.md §4
+#     (Landing A bilateral-predicate detail; verbatim substrate-decl)
+# - docs/specs/peer-persistence-and-home-projection.md §12.3
+#     (ACL IS the sheaf structure; the @subject/visibility/sheaf
+#      species this shard composes over)
+# - docs/audits/2026-07-15-seam-kintsugi-ouroboros-phase-d-cascade-a2-a6.md
+#     (Seam Phase D-cascade audit; A2 authored @subject/visibility/sheaf;
+#      A3 authored coherence.mirror; A6 lands @peer/persistence)
+# - docs/specs/kintsugi-ouroboros-compiler-self-collapse.md Arc-2 Tick 2.3
+#     (ouroboros spec; THIRD BITE landing)
+# - shards/peer.mirror
+#     (parent glass carrier; peer = {home, lead_of, kind})
+# - shards/subject.mirror
+#     (family-root; subject_instance two-witness discipline)
+# - shards/subject/visibility/sheaf.mirror
+#     (sheaf_restriction + section_at + restrict + section_at actions
+#      the peer-persistence bilaterals compose over per §12.3)
+# - shards/spectral/signature.mirror
+#     (rolling_signature carrier; signature_snapshot @ projection)
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]],
+# [[architecture-prism-as-trait-as-everything]] (`prism @peer/persistence`),
+# [[architecture-glass-wall-substrate-types]] (transparency inheritance
+#   through @peer),
+# [[architecture-form-process-partition-at-family-root]] (this species
+#   stays under @peer; persistence is process-side, not form-side),
+# [[feedback-substrate-already-had-the-word]] (~58th instance;
+#   peer-persistence §4 verbatim already declared the four bilaterals
+#   as `\`-obligation-blocked action bodies; this species mints the
+#   carrier they compose over),
+# [[feedback-no-bare-types]] (peer_home is a typed record with ref-
+#   equality identity; never bare refs),
+# [[feedback-craft-not-deliver]] (all bilateral bodies `\`-obligation-
+#   blocked; consumers pull the realization; Arc-1 evaluator FLOOR
+#   pending; Arc-2.3 landing composes sentinels via `apply_h::act`),
+# [[feedback-cli-subcommand-nesting-is-geometric]] (species-under-
+#   @peer is geometric ground truth per the substrate layout the
+#   Reed `~/.reed/` empirical ancestor demonstrated).
+#
+# Path-namespace property: this file at `shards/peer/persistence.mirror`
+# declares `@peer/persistence` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/topology/hansen-ghrist-2018
+source @arxiv/law/sel-v1.1
+source @arxiv/practice/wolf-2026-07-14-ssh-signing-design-intent
+
+prism @peer/persistence {
+  focus  peer_home
+  project peer_home
+  split  peer_home
+  shift  peer_home
+  settle peer_home
+}
+
+# === The peer_home carrier ===
+#
+# Landing A §2 canonical spec verbatim: the seven-field record
+# holding a materialized peer's projected state. Every Pack peer
+# possesses AT MOST ONE peer_home at any tick; peer_home-per-peer
+# is substrate-decl'd invariant per home_content_addressed bilateral
+# below.
+#
+# Seven fields (per Landing A §2):
+#
+#   peer                — the subject_instance whose home this is.
+#                          Landing 3 two-witness carrier (SSH +
+#                          @spectral/signature). The peer's identity
+#                          IS the identity of their home.
+#
+#   home_path           — filesystem path (ref resolves via @io) at
+#                          which the projection lives. Per §7 A1
+#                          adjudication: one-per-peer convention
+#                          (~/.mara/, ~/.reed/, etc).
+#
+#   projection_at       — timestamp of materialize() invocation.
+#
+#   harvest_at          — option<timestamp>; Some(t) when a harvest
+#                          cycle has run; None until first harvest.
+#
+#   bauchladen_manifest — list of `crystal:<name>` OIDs enumerated
+#                          from the peer's bauchladen tray.
+#
+#   signature_snapshot  — rolling_signature at projection-time. Load-
+#                          bearing for boot_state_coherent bilateral:
+#                          the eigenboard resumed from boot_state MUST
+#                          have inference_basis matching this snapshot.
+#
+#   boot_state          — option<eigenboard>. Some(e) when the home was
+#                          populated by a prior session's checkpoint.
+#
+# Identity contract: byte-equality on all seven fields.
+type peer_home = {
+  peer:                ref,
+  home_path:           ref,
+  projection_at:       ref,
+  harvest_at:          ref,
+  bauchladen_manifest: ref,
+  signature_snapshot:  ref,
+  boot_state:          ref,
+}
+
+# === projection_visibility_respected — bilateral predicate ===
+#
+# Landing A §4.1 verbatim: does the projected filesystem state respect
+# the visibility_filter that was applied at materialize? For every
+# crystal in home.bauchladen_manifest, is the crystal's visibility_
+# scope.visibility ≥ visibility_filter (in the elevation lattice
+# private < protected < public)?
+#
+# Rice-safe bound: reads only byte-visible state (crystal visibility_
+# scope; ACL byte structure; elevation lattice membership); no program
+# semantics inspection.
+#
+# Sentinel per shard docblock: `visibility=filter-respected` — the
+# byte-level substrate-decl'd marker the resolver checks. When the
+# filesystem projection matches the filter's admitted set, the
+# realization layer stamps the sentinel; discharge is byte-equality.
+#
+# Body discharges per-realisation. `\`-obligation-blocked per
+# [[feedback-craft-not-deliver]]; Arc-2.3 landing composes this via
+# `apply_h::act` sentinel-check.
+projection_visibility_respected(home: peer_home,
+                                visibility_filter: ref) -> verdict { \ }
+
+# === harvest_consent_verified — bilateral predicate ===
+#
+# Landing A §4.2 verbatim: for every crystal in the harvest result,
+# does its visibility_scope have a valid consent-discharge chain?
+# I.e., for any crystal whose visibility differs from the containing
+# directory's implied default, did @kintsugi/consent.query_phi return
+# Pass for the implied elevation morphism?
+#
+# Rice-safe bound: reads only byte-visible state (crystal visibility_
+# scope; consent-chain byte record from @kintsugi/consent.query_phi
+# result); no program semantics.
+#
+# Sentinel per shard docblock: `consent=chain-verified` — the byte-
+# level substrate-decl'd marker the resolver checks. When @kintsugi/
+# consent.query_phi returned Pass for every elevation morphism the
+# harvest surfaced, the realization layer stamps the sentinel;
+# discharge is byte-equality.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+harvest_consent_verified(home: peer_home, new_crystals: ref) -> verdict { \ }
+
+# === boot_state_coherent — bilateral predicate ===
+#
+# Landing A §4.3 verbatim: does the booted eigenboard's inference_
+# basis match home's signature_snapshot? Load-bearing anti-drift
+# guarantee: a peer resumed from home MUST resume with the same
+# inference basis they had at projection; drift is a substrate
+# violation.
+#
+# Load-bearing algedonic-bypass per Landing A §13 (Bateson VSM
+# reading): if boot detects mismatch between home.signature_snapshot
+# and the eigenboard restored from home.boot_state, the boot MUST
+# fire an algedonic signal (equivalent to `@cyberpunk/algedonic.
+# sample_pain` at pain=1.0) that halts the boot and surfaces to
+# metalogue.
+#
+# Rice-safe bound: reads only byte-visible state (rolling_signature
+# byte-equality between the eigenboard's inference_basis and the
+# home's signature_snapshot); no program semantics.
+#
+# Sentinel per shard docblock: `basis=snapshot-matched` — the byte-
+# level substrate-decl'd marker the resolver checks. When byte-equality
+# holds, the realization layer stamps the sentinel; discharge is
+# byte-equality.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+boot_state_coherent(home: peer_home, e: ref) -> verdict { \ }
+
+# === home_content_addressed — bilateral predicate ===
+#
+# Landing A §4.4 + §5 verbatim: every OID in home.bauchladen_manifest
+# is content-addressed and resolvable via @kintsugi/store/git.exists.
+# The refinement-type expression per Landing A §9.2:
+#
+#   peer_home : Type
+#      requires (∀ oid ∈ bauchladen_manifest : @kintsugi/store/git.exists(oid))
+#
+# Substrate-decl'd invariant. Any peer_home value whose manifest carries
+# an unresolvable OID is type-ill-formed; the substrate cannot construct
+# one at Landing C.
+#
+# Rice-safe bound: reads only byte-visible state (OID list membership;
+# @kintsugi/store/git.exists returns byte-boolean); no program semantics.
+#
+# Sentinel per shard docblock: `manifest=oids-resolvable` — the byte-
+# level substrate-decl'd marker the resolver checks. When every OID
+# in the manifest resolved through @kintsugi/store/git.exists at
+# realization time, the layer stamps the sentinel; discharge is
+# byte-equality.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+home_content_addressed(home: peer_home) -> verdict { \ }
+
+# === home_witnessing — composed bilateral ===
+#
+# Landing A §4.5 verbatim: the composed predicate consumers cite in
+# `requires` clauses. Passes iff projection_visibility_respected AND
+# harvest_consent_verified (for any harvest that has occurred) AND
+# home_content_addressed. When boot_state is Some(e): also AND
+# boot_state_coherent(home, e).
+#
+#   home_witnessing(home) :=
+#     home_content_addressed(home)
+#     ∧ projection_visibility_respected(home, home.visibility_filter)
+#     ∧ (harvest_at.is_some() ⇒ harvest_consent_verified(home, ...))
+#     ∧ (boot_state.is_some() ⇒ boot_state_coherent(home, boot_state))
+#
+# Rice-safe bound: composition of the four Rice-safe bilaterals above;
+# no additional program semantics inspection.
+#
+# Sentinel per shard docblock: `witnessing=all-four-pass` — the byte-
+# level substrate-decl'd marker the resolver checks. When all four
+# sub-bilaterals discharge Pass at realization time, the layer stamps
+# the sentinel; discharge is byte-equality.
+#
+# Load-bearing structural claim: home_witnessing Pass is the substrate-
+# decl form of "this peer_home is a valid persistent-peer projection
+# per Landing A §5 substrate-integrity guarantee."
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+home_witnessing(home: peer_home) -> verdict { \ }
+
+out @peer/persistence
+out peer_home
+out projection_visibility_respected
+out harvest_consent_verified
+out boot_state_coherent
+out home_content_addressed
+out home_witnessing

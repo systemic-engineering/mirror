@@ -3810,6 +3810,28 @@ fn cmd_beam_act(shard_path: &str, action: &str, args_tail: &[&str], _ctx: &Ctx) 
             "@epistemologic/cybernetic/coherence.coherence_witnessing" => vec![apply_h::Value {
                 oid: "coherence-state-cli:witness=coherence-preserving".to_string(),
             }],
+            // Arc-2 Tick 2.3 (2026-07-15) — THIRD OUROBOROS BITE. The
+            // five bilateral predicates from shards/peer/persistence.mirror
+            // (this landing) synthesize their substrate-decl'd sentinels so
+            // the empirical CLI target (`mirror beam act @peer/persistence
+            // projection_visibility_respected` etc.) hits the Pass path
+            // without operator fixtures. Per shard docblock: Landing A §4
+            // bilaterals + §4.5 composed home_witnessing.
+            "@peer/persistence.projection_visibility_respected" => vec![apply_h::Value {
+                oid: "peer-home-cli:visibility=filter-respected".to_string(),
+            }],
+            "@peer/persistence.harvest_consent_verified" => vec![apply_h::Value {
+                oid: "peer-home-cli:consent=chain-verified".to_string(),
+            }],
+            "@peer/persistence.boot_state_coherent" => vec![apply_h::Value {
+                oid: "peer-home-cli:basis=snapshot-matched".to_string(),
+            }],
+            "@peer/persistence.home_content_addressed" => vec![apply_h::Value {
+                oid: "peer-home-cli:manifest=oids-resolvable".to_string(),
+            }],
+            "@peer/persistence.home_witnessing" => vec![apply_h::Value {
+                oid: "peer-home-cli:witnessing=all-four-pass".to_string(),
+            }],
             _ => Vec::new(),
         }
     } else {
