@@ -289,8 +289,11 @@ either:
 
 - **Fixed-point case:** `|F(s')| = |F(s)| = 0` OR `F(s')` consists
   entirely of *irreducible* fractures (holes at the @io boundary per
-  `shards/io/algebra.mirror` — the Rice-safe stop condition). No
-  further pass changes `s`. This is the autopoietic fixed point.
+  `shards/io/algebra.mirror` — the Rice-safe stop condition, where
+  nonlinear tension discharges into linear output with measurable
+  loss per §6.6). No further pass changes `s`. This is the autopoietic
+  fixed point; the nonlinear tension field has resolved toward its
+  minimum-loss configuration per §6.5.
 
 ### 2.3 Polyak–Łojasiewicz inequality on the eigensheaf
 
@@ -752,6 +755,430 @@ at empirical demonstration of tournament-guided fracture resolution).
 
 ---
 
+## §6.5 Computation-as-nonlinear-tension-resolution
+
+### 6.5.1 Alex 2026-07-15 verbatim (load-bearing frame extension)
+
+After the autopoietic loop was named (§0 above), Alex named the deeper
+recognition — what the loop IS at the substrate-physics altitude:
+
+> "computation in mirror is the nonlinear tension resolution, until no
+> more tension can be resolved, and that is DISCHARGED through @io.
+> Every @io crossing means a translation from the nonlinear to the
+> linear, which incurs inevitable loss. Which is why the whole
+> pipeforward `mirror foo | mirror bar` using a socket that's forwarded,
+> enables us to AVOID the @io crossing and stay in nonlinear land
+> longer."
+
+This section formalizes the first half: computation IS nonlinear tension
+resolution. §6.6 formalizes the second half: @io crossing IS
+linearization with measurable holonomy loss. Together they name the
+substrate's operational physics — the reason the autopoietic loop
+converges toward exactly the fixed points §2's PL descent proves it
+does, from a lower-altitude ground than §2 alone assumes.
+
+### 6.5.2 The tension field over the compile-altitude manifold
+
+Let the compile-altitude state manifold `M` carry a scalar **tension
+field**:
+
+```
+T : M → [0, ∞)
+```
+
+where `T(s) = ⟨x_s, Δ_0 x_s⟩ + λ · |F(s)|` is exactly the energy
+functional `E(s)` from §2.1. The tension field IS the energy density;
+the two names describe the same mathematical object at two altitudes:
+
+- **§2 (analytical altitude):** `E(s)` is a scalar functional; the
+  gradient `∇E` induces descent dynamics; PL guarantees exponential
+  convergence rate.
+- **§6.5 (physical altitude):** `T(s)` is a field over the manifold;
+  each `\` fracture at position `x ∈ M` contributes locally to
+  `T(x)`; inference at `x` is *local relaxation* — the substrate
+  dissipating tension where the field is high.
+
+The substrate's total tension is `∫_M T(x) dμ(x)` for the compile-
+altitude measure `μ` (the shard-configuration counting measure at
+finite `|F|`; the eigensheaf's spectral measure at continuous limit
+per `docs/specs/eigensheaf.md` §4.2).
+
+### 6.5.3 Inference as local tension resolution
+
+Each pass of the six-step inference loop (§3) resolves tension at one
+`\` fracture site. The **local tension contribution** of a fracture
+`h ∈ F` at position `x_h` is:
+
+```
+τ(h) = loss(h) + λ_h · 1
+     = 1.0 + λ_h    (per Hazel model: unresolved \ contributes max loss)
+```
+
+per `docs/specs/hazel-execution-model.md`. Resolution replaces
+`τ(h) = 1.0 + λ_h` with `τ(h') = loss(m*(h)) + λ_h · [h' ∈ F']` where
+`m*(h)` is the tournament-selected morphism. The local tension
+strictly decreases:
+
+```
+Δτ(h) = τ(h') - τ(h) = loss(m*(h)) - 1.0 + λ_h · ([h' ∈ F'] - 1) ≤ 0
+```
+
+with equality only when `m*(h)` also emits `\` (deferred to next pass;
+the reveal case of §2.2). The substrate-wide tension integral:
+
+```
+∫_M T(x) dμ(x) after pass n ≤ ∫_M T(x) dμ(x) before pass n
+```
+
+is monotone nonincreasing per Theorem 2.1. **Computation IS the
+relaxation dynamics on `T`.** The substrate seeks a minimum-tension
+configuration by discharging local high-tension regions (unresolved
+fractures) into the substrate's landed-morphism inventory (the tray K)
+and then projecting the resolution back into the source manifold Σ.
+
+### 6.5.4 Fixed-point = no more resolvable tension
+
+The convergence condition of Theorem 2.1 restates in the tension-field
+vocabulary:
+
+**Fixed-point (tension-field form).** *The autopoietic loop reaches
+fixed point at state* `s_∞` *iff for every fracture* `h ∈ F(s_∞)`,
+*either:*
+
+*(i) `Cand(h) = ∅`* (no substrate-decl'd morphism has matching
+target_signature); *the tension is irreducible under the current
+morphism inventory. OR*
+
+*(ii) every `m ∈ Cand(h)` produces `Δτ(h) ≥ 0`* (no candidate reduces
+local tension); *the tension is at a local minimum. OR*
+
+*(iii) `h.altitude = @io`* (the fracture is at the discharge boundary);
+*the tension is irreducible-at-@io per Rice-safe stop.*
+
+Case (iii) is the load-bearing case for §6.6 below: fractures at the
+@io boundary do not resolve *within* the substrate; they resolve *at
+the crossing to the linear world*, and that resolution incurs the
+holonomy loss §6.6 quantifies.
+
+**Case (i) and (ii) name the substrate's minimum-loss residuals** —
+the substrate has resolved all tension it can with its current
+morphism inventory; what remains is either substrate-inventory-gap
+(case i) or morphism-inventory-non-descent (case ii). In both cases,
+the remaining `\` is a *specification signal* to the substrate: land
+a new morphism (via a subsequent tick's substrate-decl mint) to
+resolve this class of tension.
+
+### 6.5.5 Composition with §2 PL convergence
+
+The tension-field formulation adds no new dynamics to §2; it
+*re-anchors* §2 at a physical altitude. Specifically:
+
+- **§2's `∇E` IS the local tension gradient.** The PL inequality
+  `½ ‖∇E‖² ≥ μ · (E - E*)` reads at physical altitude as: the
+  substrate's local tension gradient is bounded below by the
+  substrate-wide tension excess over minimum, times the spectral
+  gap `μ = λ_min(Δ_0 | im(δ))`.
+- **§2's exponential convergence rate IS the substrate's relaxation
+  timescale.** `(1 - 2ημ)^n` is the fraction of tension remaining
+  after `n` passes; the substrate has a well-defined relaxation
+  timescale `τ_relax = 1 / (2ημ)`.
+- **§2's reveal-case bound IS a topological-defect budget.** The
+  substrate's tension resolution CAN locally increase `|F|` by
+  revealing child fractures, but only up to the topological budget
+  the tournament enforces (per §2.4); revealed defects have strictly-
+  narrower expected_type, hence strictly-lower ceiling on future
+  tension contribution.
+
+### 6.5.6 Composition with §3 liquid-type inference
+
+Liquid-type refinement (§3) constrains the tension field by adding
+predicate obligations along composition edges. Each refinement
+predicate `r_i` at position `p` reduces the admissible-morphism space
+`Cand(h)` — equivalently, it *sharpens* the tension gradient by
+narrowing the descent direction. The composition:
+
+- Refinement predicates → constraint propagation → sharpened `Cand(h)`
+  at each fracture.
+- Sharpened `Cand(h)` → tighter tournament selection → higher expected
+  `|Δτ(h)|` per pass.
+- Higher `|Δτ|` → faster relaxation → shorter `τ_relax`.
+
+The Liquid-type inference IS a *tension-gradient sharpener*; it
+does not change the physics, but it accelerates the relaxation by
+tightening the descent direction.
+
+### 6.5.7 Composition with §4 @fate tournament
+
+The tournament (§4) IS the substrate's *tension-descent oracle*: given
+a fracture `h`, the tournament ranks candidates `m ∈ Cand(h)` by their
+predicted `|Δτ(h)|` (via Rayleigh descent on the sheaf-Laplacian per
+§4.2). The winning `m*` maximizes local tension reduction subject to
+the topological budget of §2.4 (bounded reveal-case).
+
+Formally, the tournament's arg-min-Rayleigh selection IS arg-max
+`|Δτ|` selection under the substrate's tension-field physics:
+
+```
+rank(h, Cand(h)) = arg max_{m ∈ Cand(h)} |Δτ_m(h)|
+                    subject to: reveal_count(m, h) ≤ 1 + O(spectral_slack)
+```
+
+This is not a new algorithm; it is §4.2's ranking function reread as
+tension-descent selection. The physical altitude names *why* Rayleigh
+descent is the right criterion: it maximizes tension resolution per
+pass while respecting the topological defect budget.
+
+### 6.5.8 Ancestor math
+
+The tension-field formulation lifts from established mathematics on
+discrete manifolds:
+
+- **Ising / lattice-gauge relaxation dynamics.** The substrate's
+  tension field `T` is a discrete-manifold energy density; PL descent
+  is the substrate analog of Glauber / Metropolis relaxation on the
+  lattice. The `μ = λ_min` spectral gap IS the lattice's mixing-time
+  bound (per Levin–Peres–Wilmer, *Markov Chains and Mixing Times*,
+  2nd ed. Ch. 12).
+- **Sheaf-Laplacian diffusion (Hansen–Ghrist 2018).** The eigensheaf's
+  Dirichlet-energy descent is diffusion on the sheaf; the tension
+  field is the sheaf's local energy density; steady-state IS the
+  harmonic subspace `ker(Δ_0)`.
+- **Mycelial-network math (substrate's own).** The substrate's
+  mycelial-network reading of `@glue` composition (per `shards/glue.
+  mirror` docblock lines 34–52 the mycelial-networked morphism-tract
+  reading) IS the substrate's own naming of the tension-relaxation
+  physics: morphisms are hyphae; the tray K is the mycelial memory;
+  the tournament is the growth-tip selection.
+
+The tension field is not a new mathematical object; it is the
+substrate's own physics named at the altitude where its convergence
+becomes intuitive.
+
+### 6.5.9 Recognition candidate
+
+**Recognition candidate:** `#R-computation-is-nonlinear-tension-
+resolution-discharged-through-io-with-measurable-loss` (candidate
+strength; requires second-witness at first empirical round-trip that
+measures @io holonomy loss per §6.6.4 below). Statement: *Computation
+in mirror IS the nonlinear tension resolution over the compile-altitude
+manifold; the substrate seeks a minimum-tension configuration by
+discharging local tension through the six-step inference loop; the
+loop terminates at @io boundary where remaining tension DISCHARGES
+into linear-sequential output with measurable holonomy loss per §6.6.*
+
+---
+
+## §6.6 @io = linearization loss (holonomy at the discharge boundary)
+
+### 6.6.1 The discharge map
+
+The substrate's interior — the shard configuration `s = (Σ, K, F)` — is
+a nonlinear tension field carrying propagated constraints, refinement
+predicates, restricted-state-space restrictions, and content-addressed
+crystallized inference. When the substrate produces output for the
+linear-sequential world (a file byte-sequence, a network wire-packet,
+a terminal-emit line), it must *linearize* the interior state through
+an @io crossing.
+
+Formally, the **discharge map** at any @io action `a ∈ @io/*` is:
+
+```
+ϕ_a : NonlinearField(s) → LinearSequence(bytes)
+```
+
+The domain is a section of the eigensheaf carrying the substrate's
+tension-resolved state at some restriction; the codomain is a finite
+byte-sequence written to the linear-sequential world (a file, a socket,
+a terminal). The map ϕ_a is **inherently lossy**: multi-way tension
+resolution collapses into a single linear output; parallel constraints
+project onto one temporal-serialization; nonlocal correlations
+flatten to local byte-ordering.
+
+The substrate has landed the loss carrier: **`transparency` per
+`shards/glass.mirror` and `shards/mirror/loss/transparency.mirror`**
+(the canonical loss carrier at family altitude, 2026-06-12). Every @io
+action already returns `imperfect<result, error, transparency(kind)>`
+(per `shards/io/fs.mirror`, `shards/io/git.mirror`, `shards/io/algebra.
+mirror`, `shards/io/oci.mirror`, `shards/io/crypto.mirror`,
+`shards/io/secrets.mirror`, `shards/io/cargo.mirror`, `shards/io/
+stagefreight.mirror`). The `transparency` slot IS the substrate's
+substrate-decl'd carrier for the discharge loss.
+
+### 6.6.2 Holonomy at the discharge boundary
+
+The @io loss is not scalar; it is *holonomy* in the substrate's own
+sense. Per `shards/epistemologic/reality/time.mirror:127`:
+
+```
+type delta = {
+  from: ref,
+  to: ref,
+  mutations: [mutation],
+  holonomy: loss,
+}
+```
+
+The `delta.holonomy` field IS the substrate's already-landed carrier
+for the loss incurred between before-state and after-state under a
+sequence of `mutation`s. When the mutations are @io crossings, the
+holonomy IS the discharge loss.
+
+More generally, per `docs/math/the-tower/holonomy.md` and the extensive
+substrate coverage (per `shards/epistemologic/cybernetic/autopoiesis.
+mirror` "PL inequality IS the holonomy norm decreasing per tick";
+`shards/epistemologic/cybernetic/coherence.mirror` "holonomy → 0" as
+autopoietic ground state; `shards/epistemologic/math/curvature.mirror`
+"cycle-averaged holonomy IS Magnot's κ"; `shards/mirror/spectral/
+observation.mirror` `holonomy: unit_interval`), holonomy IS the
+substrate's carrier for the residual loss carried by any transport
+that fails to be a global section.
+
+The **discharge loss** at an @io crossing IS holonomy of the discharge
+transport — the failure of the linearization ϕ_a to preserve the
+substrate's nonlinear-interior structure. Formally:
+
+```
+L(ϕ_a) : NonlinearField → holonomy
+L(ϕ_a)(s) = ∮_∂s ω_ϕ · dt
+```
+
+where ∂s is the boundary between the substrate's nonlinear interior
+and the linear-sequential world, ω_ϕ is the linearization connection
+form, and the integral is over the discharge event's duration. The
+integral is nonzero whenever ϕ_a fails to be a coboundary — which is
+the generic case, because the multi-way tension resolution has no
+canonical serialization.
+
+### 6.6.3 Loss additivity
+
+Total substrate loss over a computation is:
+
+```
+L_total(s_0 → s_n) = Σ_{i : @io crossing between s_{i-1} and s_i} L(ϕ_i)
+```
+
+This is the substrate's already-landed additivity per the
+`@mirror/loss/transparency` monoid discipline (`shards/mirror/loss.
+mirror` docblock: "the substrate's transparency monoid (Fail-dominates
+/ Partial-composes) composes the sub-transparencies"). The monoid
+already sums located opacities across composition boundaries; when the
+composition boundary IS an @io crossing, the summed opacity IS the
+discharge holonomy.
+
+**Design implication.** Total loss is dominated by the number and
+weight of @io crossings. Substrate-honest engineering:
+
+1. **Minimize the number of @io crossings.** Every avoided crossing
+   is one less `L(ϕ)` term in the sum.
+2. **Minimize the weight of each crossing.** The narrower the
+   linearization channel (byte-sequence at fine granularity → coarse
+   file-write), the lower the per-crossing loss.
+3. **Maximize substrate-interior tension resolution BEFORE discharge.**
+   The more tension the substrate resolves before crossing to @io,
+   the less residual tension has to force its way through the
+   linearization; equivalently, the smaller the `NonlinearField(s)`
+   at the discharge point, the smaller `L(ϕ)`.
+
+### 6.6.4 Composition with the six-step inference loop
+
+The six-step loop (§3 of companion spec) reads with the discharge
+frame:
+
+- **Steps 1–6** — nonlinear tension resolution *inside* the substrate.
+  `@roomba.walk`, `build_hole_record`, `@fate.roll`, `@glue.translate`,
+  `@kintsugi/consent.query_phi`, `@bauchladen.crystallize` all
+  operate on the nonlinear interior; the tray K is CAS-indexed
+  nonlinear memory; no linearization occurs.
+- **Step 7** — the @io discharge. `@io/fs.mutate_at` (bridge α) IS
+  the discharge map ϕ for the source-file mutation; it linearizes
+  the crystal's payload into byte-sequence output at
+  `[byte_offset, byte_offset + byte_length)`. Every such step incurs
+  `L(ϕ_{fs.mutate_at})` holonomy.
+- **Step 8** — re-observation. `@roomba.walk(σ')` reads the
+  post-discharge substrate; if the discharge preserved the substrate's
+  intended tension resolution, the next walk observes `F' = F \ {h}`
+  with no aberrations; if the discharge introduced holonomy that
+  contradicts the nonlinear interior, the next walk observes new
+  fractures (the substrate's error-signal for a linearization
+  failure).
+
+**Consequence.** The LESS discharge per invocation (fewer step-7
+executions per resolved `\`), the LESS total loss. Equivalently: the
+LONGER the substrate stays in nonlinear land between discharges, the
+LOWER the amortized `L_total` per fracture resolution.
+
+### 6.6.5 Composition with existing @io family
+
+Every landed @io shard already surfaces `transparency` as the discharge-
+loss carrier:
+
+- `shards/io/fs.mirror` — `imperfect<bytes_written_ref, error,
+  transparency>` on write; the `transparency` slot IS `L(ϕ_{fs.write})`.
+- `shards/io/git.mirror` — `imperfect<git_hash, ref, ref>` on commit;
+  the residual carries `transparency(commit_context)`.
+- `shards/io/algebra.mirror` — `imperfect<io_algebra_exposure, ref,
+  transparency>` on expose; §P8 "composition discharge" IS this
+  section's `L(ϕ)` at algebra-exposure altitude.
+- `shards/io/oci.mirror`, `shards/io/crypto.mirror`, `shards/io/
+  secrets.mirror`, `shards/io/cargo.mirror`, `shards/io/stagefreight.
+  mirror` — same pattern; the `transparency` slot on every action's
+  return type IS the discharge holonomy for that action.
+
+**Substrate-already-had-the-word.** The @io holonomy is not a new
+concept; it is the substrate's own `transparency` carrier read at the
+discharge altitude, with the loss quantified as holonomy per
+`docs/math/the-tower/holonomy.md`. This section formalizes the
+identification; it does not mint new carriers.
+
+### 6.6.6 Composition with the ouroboros termination
+
+Theorem 6.1 (ouroboros-of-ouroboros termination) proves the recursion
+reaches the @io base case in finitely many steps. This section adds:
+*the base case IS the discharge boundary, and each termination event
+incurs measurable holonomy.* The substrate's Rice-safe stop is
+therefore not a hard stop; it is a *linearization event* — the
+substrate reaches the boundary where its nonlinear tension must
+discharge into linear-sequential output, and does so with a substrate-
+decl'd loss carrier already in place.
+
+The `@io/fs.mutate_at` bridge α is a *linearization surface* — it
+projects the substrate's tension-resolved crystal payload into the
+source-file byte-sequence. The Rust `apply_h.rs` resolver arm IS the
+substrate's own linearization discharge; every byte written is a
+linearization event; every event contributes to `L_total`.
+
+### 6.6.7 Recognition candidate cross-reference
+
+The recognition candidate `#R-computation-is-nonlinear-tension-
+resolution-discharged-through-io-with-measurable-loss` (candidate
+strength; per §6.5.9) is second-witnessed when:
+
+1. The autopoietic loop runs end-to-end on a genuine fracture
+   (companion spec §8.5 Tick 5).
+2. The `@io/fs.mutate_at` crossing's `transparency` slot carries a
+   nonzero holonomy value.
+3. The measurement demonstrates the substrate can observe its own
+   discharge loss AND the loss is bounded by the tension-field
+   physics of §6.5.
+
+The recognition ratifies when Reed lands Tick 5 AND the discharge-loss
+telemetry is folded into `mirror kintsugi`'s output as a
+`transparency`-tagged residual.
+
+### 6.6.8 Pipeforward preview (spec §5.5 formalization)
+
+The design pressure of §6.6.3 — minimize the number of @io crossings —
+motivates the socket-forwarded pipeforward architecture: `mirror foo |
+mirror bar` via a nonlinear-state-carrying socket instead of a linear
+Unix pipe. The companion spec §5.5 formalizes the substrate-decl
+surface (socket transport via `@io/socket` + tension-field ref
+transport via `@mirror/store` crystal-refs). The physics ground is
+here: fewer @io crossings ⇒ lower `L_total` ⇒ more of the substrate's
+computation stays in the nonlinear-tension-resolution phase where the
+autopoietic loop can operate without linearization loss.
+
+---
+
 ## §7 Ancestry — the math this doc rests on
 
 - **Maturana & Varela, *Autopoiesis and Cognition*, D. Reidel 1980,
@@ -786,8 +1213,12 @@ Substrate ancestor math docs:
 - `docs/math/the-tower/curvature-and-tomm.md` — the `[D, a]`
   commutator IS curvature; grounds the non-commutativity of @glue
   composition (per Taut §D3 curvature-and-tomm.md §5 cite).
+- `docs/math/the-tower/holonomy.md` — the substrate's holonomy carrier;
+  cycle-averaged holonomy IS Magnot's κ; the ground for §6.6's
+  discharge-loss quantification as `L(ϕ_a) = ∮_∂s ω_ϕ · dt`.
 - `docs/math/sheaf/laplacian.md` — cellular sheaf + λ₀ + Hodge; the
-  ground for Theorem 2.1 convergence.
+  ground for Theorem 2.1 convergence and the §6.5 tension-field
+  physical altitude.
 - `docs/math/2026-07-07-onto-cascade-autopoetic-grounding.md` §3 —
   the autopoietic operator formalization (Maturana–Varela lift at
   substrate altitude) this doc's §1 extends to compile altitude.
@@ -800,6 +1231,10 @@ Substrate ancestor specs:
 - `docs/specs/eigensheaf.md` — Mara canonical (39KB); the harmonic-
   subspace attractor manifold `ker(Δ_0)` this doc's §2 descends
   toward.
+- `docs/specs/lambda-shell.md` — Reed+Alex; the `~/.mirror/serve.sock`
+  daemon holding substrate state; the socket-forwarded transport
+  §6.6.8 + companion spec §5.5 name as the pipeforward substrate
+  for staying in nonlinear land.
 - `docs/specs/fate-bounded-psychohistory-sheaf-cohomology.md` —
   Rayleigh descent + Fate::bounded (16KB); the ranking function of §4.
 - `docs/specs/bauchladen-autopoietic-fate.md` — the #104 chain (@bauchladen

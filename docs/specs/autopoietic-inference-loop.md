@@ -716,6 +716,134 @@ itself from its own decls.
 
 ---
 
+## §5.5 Pipeforward architecture — staying in nonlinear land
+
+### §5.5.1 Alex 2026-07-15 verbatim (load-bearing frame extension)
+
+> "computation in mirror is the nonlinear tension resolution, until no
+> more tension can be resolved, and that is DISCHARGED through @io.
+> Every @io crossing means a translation from the nonlinear to the
+> linear, which incurs inevitable loss. Which is why the whole
+> pipeforward `mirror foo | mirror bar` using a socket that's forwarded,
+> enables us to AVOID the @io crossing and stay in nonlinear land
+> longer."
+
+This section names the architectural implication of `docs/math/
+autopoiesis/README.md` §6.5 (computation-as-nonlinear-tension-
+resolution) + §6.6 (@io = linearization loss with measurable holonomy).
+Every @io crossing incurs loss `L(ϕ) ≥ 0`; total substrate loss is
+`Σ L(ϕ_i)` over crossings `i`; the architectural design pressure is
+to MINIMIZE the number and rank of @io crossings by keeping composed
+operations in nonlinear tension-resolution space as long as possible.
+
+### §5.5.2 The two composition modes
+
+**Mode A — Unix pipe (two crossings; two linearizations; loss × 2):**
+
+```
+mirror foo | mirror bar
+│─ foo resolves tension in its process (nonlinear); ϕ₁ linearizes to stdout
+│─ shell buffers bytes (linear)
+│─ bar reads stdin (linear); ϕ₁⁻¹ attempts to reconstruct nonlinear state
+│─ bar resolves tension in its process (nonlinear); ϕ₂ linearizes to stdout
+└─ total loss: L(ϕ₁) + L(ϕ₂) + reconstruction-loss(ϕ₁⁻¹)
+```
+
+**Mode B — mirror socket-forwarded (zero crossings between foo and bar):**
+
+```
+mirror foo | mirror bar (via `~/.mirror/serve.sock`)
+│─ foo resolves tension in its process (nonlinear)
+│─ tension-field ref transported via @mirror/store crystal-ref over socket
+│─ bar receives ref; continues resolution in same nonlinear space
+│─ single ϕ linearizes only at final discharge (if any)
+└─ total loss: L(ϕ) once (or zero, if the pipe forwards to another mirror-mode consumer)
+```
+
+**Loss-ratio bound:** Mode A loss / Mode B loss ≥ 2 typically, and grows
+unboundedly for pipelines of length `n` (Mode A total loss scales as
+`Ω(n)`; Mode B total loss scales as `O(1)` — one crossing at final
+discharge regardless of pipeline depth).
+
+### §5.5.3 Substrate-decl surface (composition over LANDED carriers)
+
+- **Socket transport:** `@io/socket` family root LANDED at `shards/io.
+  mirror:130-140` (boot-floor `boot/std/io/socket.mirror`; species
+  substrate-decl at `shards/io/socket.mirror` forward-promised).
+- **Crystal-ref transport:** `@mirror/store` six-op CAS LANDED at
+  `shards/mirror/store.mirror`; crystals are content-addressed by
+  BLAKE3 OID; ref-transport is oid + optional lazy content-fetch on
+  demand.
+- **Session persistence:** `~/.mirror/serve.sock` daemon-mediated
+  process (per `docs/specs/lambda-shell.md` §Connection to Daemon);
+  the graph is already loaded, the eigenboard is already hot, the
+  context is already mapped between invocations.
+- **Nonlinear state carrier:** `@fate.hole_record` + partial-composition
+  `|\>` chains + `@bauchladen` tray carriers all substrate-decl'd to
+  cross a socket boundary as content-addressed refs, not as linearized
+  bytes.
+
+### §5.5.4 Architectural design pressure (every future capability)
+
+The pipeforward architecture is not an optimization applied
+retroactively; it is a **first-class design constraint** on every
+subsequent substrate capability:
+
+1. **Every new CLI verb designed for socket-forwarded composition
+   FIRST.** Only add an @io boundary crossing when the semantics
+   genuinely require linearization (e.g., final materialization to a
+   file the user reads; commit into git tree; network response to a
+   non-mirror consumer).
+2. **Every new shard-decl action returns a nonlinear ref by default;
+   linearization is an explicit `@io/*` composition step, never
+   implicit.**
+3. **Every new @io species carrier declares an `L(ϕ)` estimate in
+   its docblock** — the substrate is honest about which crossings
+   are lossless (`L = 0` under specific constraints) versus lossy.
+4. **StageFreight × spectral.engineer pipeline** composes over this
+   design pressure directly: each stage stays in nonlinear tension-
+   resolution space; only final materialization to CI logs / git tree /
+   deployment artifacts is the discharge. Per `docs/specs/kintsugi-
+   ouroboros-compiler-self-collapse.md` §Arc-5, the docker-image ship
+   preserves the mirror substrate's nonlinear state at every internal
+   boundary; discharge occurs at exactly the interface with non-mirror
+   CI infrastructure.
+
+### §5.5.5 Composition with the six-step inference loop
+
+Steps 1–6 of the inference loop (§3) all happen in nonlinear tension-
+resolution space. Step 7 (project via `@io/fs.mutate_at`) IS the
+discharge — the single @io crossing per loop iteration. Design pressure
+applies: **each loop iteration incurs one linearization loss `L(ϕ)`;
+multi-fracture batches SHOULD amortize into a single project step
+(one commit; one @io crossing) rather than N separate projects (N
+crossings; N losses).**
+
+Bridge α (`@io/fs.mutate_at`) is thus the substrate's most-scrutinized
+@io boundary carrier — it is the discharge point where the entire
+autopoietic loop's tension-resolution effort collapses into linear
+bytes on disk. Its `L(ϕ)` docblock (per §5.5.4 rule 3) MUST
+quantify the linearization loss (e.g., "lossless when replacement
+length = original length; O(byte-count) reconstruction cost when
+lengths differ").
+
+### §5.5.6 What this section does NOT propose
+
+- Does NOT eliminate @io boundaries — discharge is architecturally
+  necessary; the substrate must eventually output to non-mirror
+  consumers.
+- Does NOT require rewriting existing @io carriers — the pipeforward
+  design pressure applies to FUTURE capabilities; existing @io
+  species (`@io/cargo`, `@io/git`, `@io/oci`, `@io/fs`, etc.) stay
+  as-is.
+- Does NOT claim zero loss — claims LOSS-MINIMIZING architecture where
+  every crossing is deliberate.
+- Does NOT mint new socket-forwarding carriers — `~/.mirror/serve.
+  sock` + `@io/socket` + `@mirror/store` crystal-refs are all landed;
+  this section composes over them.
+
+---
+
 ## §6 Substrate memory: @silicon/algebra + @fate/algebra write-back
 
 ### §6.1 The write-back protocol
@@ -1068,6 +1196,12 @@ sentinel-matching to genuine shard-body dispatch).
 
 ### §9.1 Does NOT eliminate the @io boundary
 
+(Pipeforward architecture per §5.5 MINIMIZES @io crossings by keeping
+composed operations in nonlinear tension-resolution space as long as
+possible; it does not eliminate them. The @io boundary is
+architecturally necessary as the discharge interface between the
+substrate's nonlinear compile-altitude and non-mirror consumers.)
+
 The @io kernel (POSIX filesystem, BLAKE3 hash, git commit, Rust
 tokenization) stays Rust at `bootstrap/src/apply_h.rs` FLOOR per Arc-1
 discipline. The Rice-safe stop condition applies: fractures at @io
@@ -1183,6 +1317,44 @@ resolution inventory.
 
 **Strength:** Candidate (secondary; folds into #R-mirror-compiler-is-
 operationally-closed if Alex prefers).
+
+### §10.4 Candidate #R-computation-is-nonlinear-tension-resolution-discharged-through-io-with-measurable-loss
+
+**Strength:** Candidate (requires second-witness at first empirical
+round-trip that measures `L(ϕ)` at the @io discharge boundary).
+
+**Named by:** Alex Wolf 2026-07-15 verbatim.
+
+**Load-bearing claim:** Computation in mirror IS nonlinear tension
+resolution over the compile-altitude manifold; the substrate seeks a
+minimum-tension configuration by discharging local tension through the
+six-step inference loop; the loop terminates at @io boundary where
+remaining tension DISCHARGES into linear-sequential output with
+measurable holonomy loss `L(ϕ)`.
+
+**Load-bearing architectural implication:** The whole pipeforward
+architecture (§5.5) is the substrate's honest response to this
+recognition — stay in nonlinear tension-resolution space as long as
+possible; discharge through @io only when semantics require
+linearization; amortize crossings; quantify loss per carrier. Every
+future substrate capability designed for socket-forwarded composition
+first.
+
+**Second-witness path:** First empirical `mirror roomba --commit`
+run through the six-step inference loop that measures `L(ϕ)` at the
+bridge-α discharge (`@io/fs.mutate_at`) and records it in the crystal
+tray as substrate memory. That measurement IS the empirical anchor.
+
+**Ratifies at:** any implementation tick where a shard-decl action's
+docblock quantifies `L(ϕ)` per §5.5.4 rule 3.
+
+**Composition with #R-mirror-compiler-is-operationally-closed:** §10.4
+is the OPERATIONAL PHYSICS ground for §10.1's operational closure.
+§10.4 explains WHY the loop converges (tension resolution over the
+manifold), WHERE it terminates (@io boundary), and WHY the architecture
+takes the shape it does (loss-minimization pressure). Not a competing
+candidate — a substrate-primary ground for §10.1's higher-altitude
+claim.
 
 **Statement:** *The substrate's memory of learned inference patterns
 IS the content-addressed crystal tray at `.mirror/objects/`; each
