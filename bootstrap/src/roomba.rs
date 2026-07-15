@@ -1,18 +1,44 @@
-//! `@roomba` — substrate walker Rust runtime discharge.
+//! `@kintsugi/roomba` — @io-boundary FLOOR (post-ouroboros-bite).
 //!
-//! Discharges the runtime forward-promise from `docs/specs/roomba-
-//! substrate-walker-that-feeds-kintsugi.md` (Mara `9bbebd2`; Rung 10
-//! substrate self-maintenance primitive; Beer VSM S4 environmental
-//! scanner). Composes with `@coherence` (this crate's `coherence` module;
-//! Mara `e0a3e48` at `shards/epistemologic/cybernetic/coherence.mirror`)
-//! + `@knife` (this crate's `converge` module) + `@cyberpunk/algedonic`
-//! (this crate's `algedonic` module).
+//! # Arc-2 Tick 2.4 — FOURTH OUROBOROS BITE (2026-07-15)
+//!
+//! This file was authored 2026-07-14 by Reed as a substrate-dishonest
+//! Rust extension per the (now-renamed) `[substrate-pull:realize]`
+//! marker; see `docs/audits/2026-07-15-reed-substrate-dishonest-rust-
+//! extensions-during-gift-arc.md`. Arc-2 Tick 2.4 lifts the substrate-
+//! decl bilaterals into `shards/kintsugi/roomba.mirror` per Mara-B
+//! canonical spec `docs/specs/kintsugi-ouroboros-compiler-self-
+//! collapse.md`. The five bilateral predicates (`walk_terminates_cleanly`,
+//! `tension_monotone_descending`, `coherence_gradient_admissible`,
+//! `knife_verdict_bounded`, `walk_witnessing`) now dispatch via
+//! `apply_h::act`; sbec lifts by five. Pattern proven at Ticks 2.1
+//! (f211ee48 — @spectral/signature) + 2.2 (2330f47 —
+//! @epistemologic/cybernetic/coherence) + 2.3 (582cb4f —
+//! @peer/persistence) applied again: FOURTH BITE proves the collapse
+//! holds at walker altitude (15.8KB pre-collapse per Taut #108).
+//!
+//! What remains in this file is the @io-boundary FLOOR the shard-decl's
+//! action bodies compose over — Dijkstra graph walking over
+//! `crate::index::ConceptGraph` + LAPACK-backed `coherence_score`
+//! composition + `@cyberpunk/algedonic.sample_pain`/`pain_gradient`
+//! + `converge::stable_within` per pulse. Per Alex 2026-07-14 walk-IS-
+//! @io composition: the actual graph traversal IS @io/graph plumbing;
+//! keeping it in Rust is substrate-honest. `bootstrap/src/roomba_commit.rs`
+//! (the `mirror roomba --commit` composer landed 2026-07-15) remains
+//! wired to this walker's `walk`/`summarize_trajectory`/`WalkTrajectory`
+//! surface unchanged.
 //!
 //! ## Substrate authority
 //!
-//! - Mara `9bbebd2` — canonical spec `docs/specs/roomba-substrate-walker-
-//!   that-feeds-kintsugi.md` (Rung 10 substrate self-maintenance).
-//! - Taut `3992304` — Beer S4 environmental scanner discovery scout.
+//! - Canonical shard-decl: `shards/kintsugi/roomba.mirror` (this landing;
+//!   substrate-honest lift of the 2026-07-14 Reed Rust extension).
+//! - Canonical spec: `docs/specs/roomba-substrate-walker-that-feeds-
+//!   kintsugi.md` (Mara `9bbebd2`; §3 declares walker actions; §9 A1
+//!   recommends `@kintsugi/roomba` placement).
+//! - Ouroboros spec: `docs/specs/kintsugi-ouroboros-compiler-self-
+//!   collapse.md` Arc-2 Tick 2.4 (Landing 12).
+//! - Audit: `docs/audits/2026-07-15-seam-kintsugi-ouroboros-phase-d-
+//!   cascade-a2-a6.md`.
 //! - Alex Wolf 2026-07-14 in-transcript composition (`docs/insights/
 //!   2026-07-14-alex-full-roomba-song-kintsugi-composition.md`):
 //!   "@roomba walks (Dijkstra + tension-weighted edges) → bumps into
@@ -20,40 +46,24 @@
 //!   @kintsugi consumes @song and decides: Path A: @knife the complexity
 //!   (COORDᵢ → COORDⱼ; reduce); Path B: spawn @peer at K+1 (circular-
 //!   reflexive question to developer OR higher-order @peer)."
-//! - Alex Wolf 2026-07-14 in-transcript objective naming ("@coherence is
-//!   the objective function the loop climbs; operationalizes Foerster's
-//!   ethical imperative on SC<5>").
-//! - Alex Wolf 2026-07-14 "The Drone in the Field" story (sub-Turing
-//!   architecture; five primitives focus/shift/settle/project/split map
-//!   to substrate carriers per Mara @subject spec `b3ec316` §11.6).
 //!
-//! ## Scope A minimum viable (this landing)
+//! ## @io-boundary FLOOR scope (post-bite)
 //!
-//! The walker traverses the substrate's own ConceptGraph (via
-//! `crate::index::build_concept_graph`), computing SC<5> at each file
-//! node (via `fragmentation_spectral::hash::coordinate::<5>`). Tension
-//! at a position = variance of pain magnitudes across the current node
-//! and its unvisited neighbors. Walker moves toward highest-tension
-//! unvisited neighbor (bumps into things per Alex's composition).
+//! The Scope A walker primitives remain as the @io-boundary primitive
+//! the shard-decl's action bodies compose over:
 //!
-//! At each step: log the tension observed; check knife stability via
-//! `converge::stable_within`; record whether knife jump fires. Terminate
-//! when: budget exhausted, no unvisited neighbors, OR walker has
-//! visited a coherence-maximum (no neighbor increases coherence).
+//! - `walk` — traverses ConceptGraph highest-tension-unvisited-neighbor
+//! - `WalkTrajectory` — six-field record carrying the walk
+//! - `RoombaStep` — per-step record (position + tension + knife verdict)
+//! - `summarize_trajectory` — CLI-facing text summary composer
+//!
+//! The five bilateral predicates now dispatch through `apply_h::act`
+//! against substrate-decl'd sentinels named at shard docblock altitude.
 //!
 //! Scope A does NOT ship: @kintsugi Path A/B dispatch (@knife.cut fires
 //! empirically; @peer.spawn at K+1 is logged as candidate, not spawned);
 //! @song beat emission; full sheaf-cohomology of coherence gradient.
 //! Those extend to Scope B/C landings.
-//!
-//! ## The empirical claim
-//!
-//! Over a Roomba walk on the substrate's own DAG, the trajectory-
-//! averaged tension should trend downward across the walk (as the walker
-//! settles into high-coherence subgraph regions) OR the walker should
-//! visibly bump into and record high-tension boundaries where @knife
-//! stability-verdicts fire. Both patterns discharge Alex's composition
-//! empirically.
 
 use crate::algedonic::{pain_gradient, sample_pain};
 use crate::coherence::coherence_score;

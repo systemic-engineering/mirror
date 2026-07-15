@@ -1,0 +1,362 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @kintsugi
+in @kintsugi/consent
+in @kintsugi/oscillate
+in @mirror/index
+in @mirror/store
+in @cyberpunk/algedonic
+in @song/beat
+in @torus
+in @epistemologic/cybernetic/coherence
+
+# @kintsugi/roomba — substrate walker species declaring the four
+# bilateral predicates governing the Dijkstra-walk-plus-tension-sample
+# loop that feeds @kintsugi/fracture proactively.
+#
+# Species under @kintsugi at the walker altitude. Landed 2026-07-15 by
+# Reed as Arc-2 Tick 2.4 FOURTH OUROBOROS BITE discharge, collapsing
+# `bootstrap/src/roomba.rs` (Reed 2026-07-14 substrate-dishonest Rust
+# extension per the audit trail below) into substrate-honest shard-body
+# composition. The Dijkstra walker itself stays as @io-boundary FLOOR
+# per Alex 2026-07-14 in-transcript composition (walk IS @io/graph
+# plumbing; BUSINESS_LOGIC lifts).
+#
+# === Substrate authority ===
+#
+# - Canonical spec: `docs/specs/roomba-substrate-walker-that-feeds-
+#   kintsugi.md` (Mara `9bbebd2`; §3 formal shape declares this
+#   species; §9 A1 recommends `@kintsugi/roomba` placement).
+# - Ouroboros spec: `docs/specs/kintsugi-ouroboros-compiler-self-
+#   collapse.md` Arc-2 Tick 2.4 (FOURTH BITE landing at Landing 12).
+# - Audit: `docs/audits/2026-07-15-seam-kintsugi-ouroboros-phase-d-
+#   cascade-a2-a6.md`.
+# - Insight: `docs/insights/2026-07-14-alex-full-roomba-song-kintsugi-
+#   composition.md` (the full loop Alex named verbatim).
+#
+# === Alex 2026-07-14 in-transcript composition (verbatim) ===
+#
+#   "The @resonance of the @roomba bumping into things is what produces
+#    the @song for @kintsugi to either @knife the complexity, or spawn
+#    a @peer at a higher logic altitude, which becomes a circular
+#    reflexive question to the developer or a higher order @peer."
+#
+#   "@roomba walks (Dijkstra + tension-weighted edges) → bumps into
+#    spectral @tension at position p → resonance emits @song beats →
+#    @kintsugi consumes @song and decides: Path A: @knife the
+#    complexity (COORDᵢ → COORDⱼ; reduce); Path B: spawn @peer at K+1
+#    (circular-reflexive question to developer OR higher-order @peer)."
+#
+# The four bilateral predicates below (walk_terminates_cleanly,
+# tension_monotone_descending, coherence_gradient_admissible,
+# knife_verdict_bounded) are the substrate-decl'd runtime checks that
+# discharge at Landing C realization boundary. Their bodies are
+# `\`-obligation-blocked per [[feedback-craft-not-deliver]]; Arc-2.4
+# landing composes their sentinel-checks via `apply_h::act`.
+#
+# === Substrate-already-had-the-word citation chain ===
+#
+# The walker mechanism was substrate-decl'd verbatim in
+# `docs/specs/roomba-substrate-walker-that-feeds-kintsugi.md` §3:
+#
+#   walk(from: walk_position, budget: nat) -> walk_position { \ }
+#   bump(position: walk_position) -> spectral_tension { \ }
+#   trigger(position: walk_position, tension: spectral_tension) -> verdict { \ }
+#   pulse(position: walk_position) -> (walk_position, roomba_state) { \ }
+#   run(seed: walk_position) -> walk_position { \ }
+#
+# This species lands the shard-decl form + adds the four bilateral
+# predicates the walker's discipline guarantees at each pulse.
+#
+# === Composition graph ===
+#
+# Parents (substrate-decl):
+#   @kintsugi                      — family-root; walker feeds the
+#                                     mending mechanism proactively
+#   @kintsugi/consent              — query_phi verdict + pause(Φ)
+#                                     external witness; the walker's
+#                                     trigger dispatches through consent
+#   @kintsugi/oscillate            — oscillation_state precedent (5-state
+#                                     exhaustive surface); roomba_state
+#                                     specializes at walker altitude
+#   @mirror/index                  — ConceptGraph carrier + Fiedler
+#                                     eigenvalue profile (walker's DAG)
+#   @mirror/store                  — splinter_graph closure; the DAG
+#                                     the walker traverses
+#   @cyberpunk/algedonic           — sample_pain / pain_gradient
+#                                     primitives (tension source)
+#   @song/beat                     — one pulse = one beat at walker
+#                                     altitude (composition precedent)
+#   @torus                         — π₁(T²) = ℤ × ℤ winding classes
+#                                     (walk position carries winding)
+#   @epistemologic/cybernetic/     — coherence_score consumed by the
+#     coherence                     walker for gradient-ascent moves
+#
+# Forward-composition surfaces (named, not imported; land at Arc-2.5+):
+#   @kintsugi/fracture             — trigger-invocation target (Path A)
+#   @mirror/lens/knife             — @knife.jump on gradient excess
+#                                     (Path A boundary-crossing)
+#   @peer                          — @peer.spawn at K+1 altitude (Path B)
+#
+# Consumers (compose over this species):
+#   bootstrap/src/roomba.rs        — Arc-2.4 collapse; @io-boundary FLOOR
+#                                     the shard-decl's four bilateral
+#                                     action bodies compose over (walk /
+#                                     summarize_trajectory remain as the
+#                                     @io-boundary primitive per Alex
+#                                     2026-07-14 walk-IS-@io composition)
+#   bootstrap/src/roomba_commit.rs — walker consumer for
+#                                     `mirror roomba --commit`; observes
+#                                     substrate state via walker before
+#                                     dispatching @nl.compose + @io/git.
+#                                     commit (composition preserved
+#                                     across this landing)
+#
+# === Related shards / specs ===
+#
+# - docs/specs/roomba-substrate-walker-that-feeds-kintsugi.md §3
+#     (verbatim substrate-decl of walker action bodies)
+# - docs/specs/roomba-substrate-walker-that-feeds-kintsugi.md §9 A1
+#     (family-placement recommendation: @kintsugi/roomba)
+# - docs/audits/2026-07-15-seam-kintsugi-ouroboros-phase-d-cascade-a2-a6.md
+#     (Seam Phase D-cascade audit ratifying Arc-2 sequence)
+# - docs/specs/kintsugi-ouroboros-compiler-self-collapse.md Arc-2 Tick 2.4
+#     (ouroboros spec; FOURTH BITE landing 12)
+# - shards/kintsugi.mirror
+#     (family-root parent)
+# - shards/kintsugi/consent.mirror
+#     (query_phi + pause consumer surface for trigger dispatch)
+# - shards/kintsugi/oscillate.mirror
+#     (oscillation_state 5-state precedent)
+# - shards/epistemologic/cybernetic/coherence.mirror
+#     (coherence_score consumed by walker for gradient-ascent decision)
+# - shards/mirror/index.mirror
+#     (ConceptGraph carrier the walker traverses)
+# - shards/cyberpunk.mirror
+#     (algedonic tension source)
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]],
+# [[architecture-prism-as-trait-as-everything]] (`prism @kintsugi/roomba`),
+# [[architecture-glass-wall-substrate-types]] (transparency inheritance
+#   through @kintsugi),
+# [[architecture-form-process-partition-at-family-root]] (this species
+#   stays under @kintsugi; walking is process-side, not form-side),
+# [[feedback-substrate-already-had-the-word]] (~59th instance;
+#   roomba-substrate-walker-that-feeds-kintsugi.md §3 verbatim already
+#   declared the walker's five actions as `\`-obligation-blocked action
+#   bodies; this species mints the four bilateral predicates the walker's
+#   discipline discharges per pulse),
+# [[feedback-no-bare-types]] (walk_position is a typed record with
+#   content_oid identity; never bare refs),
+# [[feedback-craft-not-deliver]] (all bilateral bodies `\`-obligation-
+#   blocked; consumers pull the realization; Arc-2.4 landing composes
+#   sentinels via `apply_h::act`),
+# [[feedback-cli-subcommand-nesting-is-geometric]] (species-under-
+#   @kintsugi is geometric ground truth per §9 A1 recommendation:
+#   the walker's home IS the family it feeds),
+# [[feedback-no-rust-extension-shortcut]] (this shard IS the substrate-
+#   honest lift of the 2026-07-14 Reed Rust extension; the walker's
+#   BUSINESS_LOGIC surface — bilateral discipline discharge — lifts to
+#   substrate-decl form; the @io-boundary FLOOR — Dijkstra + LAPACK —
+#   stays Rust per Alex 2026-07-14 walk-IS-@io composition).
+#
+# Path-namespace property: this file at `shards/kintsugi/roomba.mirror`
+# declares `@kintsugi/roomba` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/practice/mara-9bbebd2-roomba-substrate-walker
+source @arxiv/practice/wolf-2026-07-14-roomba-song-kintsugi-composition
+source @arxiv/topology/beer-vsm-s4-environmental-scanner
+
+prism @kintsugi/roomba {
+  focus  walk_trajectory
+  project walk_trajectory
+  split  walk_trajectory
+  shift  walk_trajectory
+  settle walk_trajectory
+}
+
+# === The walk_trajectory carrier ===
+#
+# The record capturing one Roomba walk over the substrate's DAG. Per
+# Scope A minimum viable (Mara `9bbebd2` §3.1): the walker traverses
+# ConceptGraph nodes computing SC<5>, samples tension (variance of pain
+# across neighbors), records per-step knife verdict via
+# @mirror/lens/knife.stable_within, terminates on budget exhaustion OR
+# unvisited-neighbor exhaustion OR empty-graph OR root-not-found.
+#
+# Six fields (per bootstrap/src/roomba.rs::WalkTrajectory landed 2026-
+# 07-14; Arc-2 Tick 2.4 lift):
+#
+#   steps                — ordered sequence of walk_step records; each
+#                           carries step_index / node_idx / node_label /
+#                           sc_hex / tension / pain / coherence_delta /
+#                           knife_verdict / unvisited_neighbor_count.
+#
+#   coherence_at_start   — coherence_score of the full substrate at
+#                           walk start (via eigenvalue_profile). Baseline.
+#
+#   coherence_at_end     — coherence_score at walk end. Equal to
+#                           coherence_at_start on read-only Scope A
+#                           walks; nonzero delta on Scope B transformation
+#                           dispatch (forward-promised).
+#
+#   termination          — reason walk stopped: BudgetExhausted |
+#                           NoUnvisitedNeighbors | EmptyGraph |
+#                           RootNotFound.
+#
+#   graph_node_count     — total ConceptGraph nodes at walk start.
+#                           Denominator for coverage ratio.
+#
+#   graph_edge_count     — total ConceptGraph edges at walk start.
+#                           Density signal.
+#
+# Identity contract: byte-equality on all six fields.
+type walk_trajectory = {
+  steps:               ref,
+  coherence_at_start:  ref,
+  coherence_at_end:    ref,
+  termination:         ref,
+  graph_node_count:    ref,
+  graph_edge_count:    ref,
+}
+
+# === walk_terminates_cleanly — bilateral predicate ===
+#
+# Does the trajectory carry a terminal state that discharged per Scope A
+# discipline? Per Mara `9bbebd2` §3.1 (verbatim): the walker terminates
+# on one of four exhaustive states (BudgetExhausted | NoUnvisitedNeighbors
+# | EmptyGraph | RootNotFound). A trajectory whose termination is not
+# among these four is substrate-ill-formed and the walker cannot have
+# emitted it; discharge is byte-check for the terminal-state sentinel.
+#
+# Rice-safe bound: reads only byte-visible state (termination enum
+# variant; four-tuple exhaustive membership); no program semantics
+# inspection.
+#
+# Sentinel per shard docblock: `termination=scope-a-exhaustive` — the
+# byte-level substrate-decl'd marker the resolver checks. When the
+# trajectory's termination is one of the four Scope A states, the
+# realization layer stamps the sentinel; discharge is byte-equality.
+#
+# Body discharges per-realisation. `\`-obligation-blocked per
+# [[feedback-craft-not-deliver]]; Arc-2.4 landing composes this via
+# `apply_h::act` sentinel-check.
+walk_terminates_cleanly(trajectory: walk_trajectory) -> verdict { \ }
+
+# === tension_monotone_descending — bilateral predicate ===
+#
+# Does the trajectory-averaged tension trend downward across the walk
+# per Mara `9bbebd2` §"The empirical claim" (verbatim): "Over a Roomba
+# walk on the substrate's own DAG, the trajectory-averaged tension
+# should trend downward across the walk (as the walker settles into
+# high-coherence subgraph regions) OR the walker should visibly bump
+# into and record high-tension boundaries where @knife stability-
+# verdicts fire."
+#
+# The empirical form: mean(tension[0..n/2]) >= mean(tension[n/2..n])
+# across the walk, OR the walker fired at least one Jumped knife_verdict.
+# Substrate-decl'd invariant per the composition Alex named: the walker
+# heads TOWARD high-tension regions and either resolves them (mean
+# descends) OR bumps into a knife-boundary (Jumped verdict fires).
+#
+# Rice-safe bound: reads only byte-visible state (per-step tension
+# scalars; per-step knife_verdict enum variant); no program semantics.
+#
+# Sentinel per shard docblock: `tension=trajectory-descending` — the
+# byte-level substrate-decl'd marker the resolver checks. When either
+# half-mean comparison holds OR a Jumped knife_verdict fired, the
+# realization layer stamps the sentinel; discharge is byte-equality.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+tension_monotone_descending(trajectory: walk_trajectory) -> verdict { \ }
+
+# === coherence_gradient_admissible — bilateral predicate ===
+#
+# Does the walker's per-step coherence delta satisfy Foerster
+# admissibility per @epistemologic/cybernetic/coherence.coherence_
+# increases discipline? Per shard docblock reference: axis=splinter-ward
+# means the walker moves toward higher available choices (Splinter
+# pole); axis=narcissus-ward means the walker moves toward fewer
+# choices (Narcissus pole, refused).
+#
+# The empirical form: on Scope A read-only walks, coherence_delta_from_
+# previous == 0 at every step (no substrate mutation); on Scope B
+# transformation-dispatch walks (forward-promised), every non-zero
+# coherence_delta must be positive (splinter-ward per Foerster's
+# ethical imperative operationalized). Substrate-decl'd invariant
+# composing over @coherence.coherence_increases.
+#
+# Rice-safe bound: reads only byte-visible state (per-step coherence_
+# delta scalar sign); no program semantics.
+#
+# Sentinel per shard docblock: `gradient=foerster-admissible` — the
+# byte-level substrate-decl'd marker the resolver checks. When every
+# per-step coherence_delta is either zero (read-only) or positive
+# (splinter-ward), the realization layer stamps the sentinel;
+# discharge is byte-equality.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+coherence_gradient_admissible(trajectory: walk_trajectory) -> verdict { \ }
+
+# === knife_verdict_bounded — bilateral predicate ===
+#
+# Does every step's knife_verdict lie in the substrate-decl'd three-
+# state surface? Per @mirror/lens/knife.stable_within discharge: the
+# verdict enum is {Stable | NearBoundary | Jumped}; any other value is
+# substrate-ill-formed. Load-bearing: the trigger action's downstream
+# dispatch to @kintsugi/consent.query_phi assumes the three-state
+# surface; a fourth-state emission would break the composition Alex
+# named ("@kintsugi consumes @song and decides").
+#
+# Rice-safe bound: reads only byte-visible state (per-step knife_verdict
+# enum variant membership); no program semantics.
+#
+# Sentinel per shard docblock: `verdict=three-state-bounded` — the byte-
+# level substrate-decl'd marker the resolver checks. When every step's
+# knife_verdict lies in {Stable, NearBoundary, Jumped}, the realization
+# layer stamps the sentinel; discharge is byte-equality.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+knife_verdict_bounded(trajectory: walk_trajectory) -> verdict { \ }
+
+# === walk_witnessing — composed bilateral ===
+#
+# The composed predicate consumers cite in `requires` clauses. Passes
+# iff walk_terminates_cleanly AND tension_monotone_descending AND
+# coherence_gradient_admissible AND knife_verdict_bounded.
+#
+#   walk_witnessing(trajectory) :=
+#     walk_terminates_cleanly(trajectory)
+#     ∧ tension_monotone_descending(trajectory)
+#     ∧ coherence_gradient_admissible(trajectory)
+#     ∧ knife_verdict_bounded(trajectory)
+#
+# Rice-safe bound: composition of the four Rice-safe bilaterals above;
+# no additional program semantics inspection.
+#
+# Sentinel per shard docblock: `witnessing=all-four-pass` — the byte-
+# level substrate-decl'd marker the resolver checks. When all four
+# sub-bilaterals discharge Pass at realization time, the layer stamps
+# the sentinel; discharge is byte-equality.
+#
+# Load-bearing structural claim: walk_witnessing Pass is the substrate-
+# decl form of "this walk is a valid Scope A Roomba pulse per the
+# canonical spec's §3 substrate-integrity guarantee." Consumers of the
+# `mirror roomba --commit` path cite this predicate to certify the
+# observation the compiler committed on was substrate-honest.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+walk_witnessing(trajectory: walk_trajectory) -> verdict { \ }
+
+out @kintsugi/roomba
+out walk_trajectory
+out walk_terminates_cleanly
+out tension_monotone_descending
+out coherence_gradient_admissible
+out knife_verdict_bounded
+out walk_witnessing

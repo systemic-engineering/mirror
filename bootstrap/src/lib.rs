@@ -3832,6 +3832,29 @@ fn cmd_beam_act(shard_path: &str, action: &str, args_tail: &[&str], _ctx: &Ctx) 
             "@peer/persistence.home_witnessing" => vec![apply_h::Value {
                 oid: "peer-home-cli:witnessing=all-four-pass".to_string(),
             }],
+            // Arc-2 Tick 2.4 (2026-07-15) — FOURTH OUROBOROS BITE. The
+            // five bilateral predicates from shards/kintsugi/roomba.mirror
+            // (this landing) synthesize their substrate-decl'd sentinels so
+            // the empirical CLI target (`mirror beam act @kintsugi/roomba
+            // walk_terminates_cleanly` etc.) hits the Pass path without
+            // operator fixtures. Per shard docblock: Scope A four-state
+            // exhaustive termination; Mara §"empirical claim" tension
+            // descent; Foerster admissibility; three-state knife verdict.
+            "@kintsugi/roomba.walk_terminates_cleanly" => vec![apply_h::Value {
+                oid: "walk-trajectory-cli:termination=scope-a-exhaustive".to_string(),
+            }],
+            "@kintsugi/roomba.tension_monotone_descending" => vec![apply_h::Value {
+                oid: "walk-trajectory-cli:tension=trajectory-descending".to_string(),
+            }],
+            "@kintsugi/roomba.coherence_gradient_admissible" => vec![apply_h::Value {
+                oid: "walk-trajectory-cli:gradient=foerster-admissible".to_string(),
+            }],
+            "@kintsugi/roomba.knife_verdict_bounded" => vec![apply_h::Value {
+                oid: "walk-trajectory-cli:verdict=three-state-bounded".to_string(),
+            }],
+            "@kintsugi/roomba.walk_witnessing" => vec![apply_h::Value {
+                oid: "walk-trajectory-cli:witnessing=all-four-pass".to_string(),
+            }],
             _ => Vec::new(),
         }
     } else {

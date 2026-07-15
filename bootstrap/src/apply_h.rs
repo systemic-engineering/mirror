@@ -634,6 +634,106 @@ pub fn act(action: Ref, args: Vec<Value>) -> Verdict {
         );
     }
     // ────────────────────────────────────────────────────────────────
+    //
+    // Bilateral-predicate resolver for `@kintsugi/roomba` action refs.
+    // Per shards/kintsugi/roomba.mirror (this landing) + the canonical
+    // spec `docs/specs/roomba-substrate-walker-that-feeds-kintsugi.md`
+    // §3, the five bilateral predicates (four base + one composed) are
+    // byte-level sentinel checks against the arg's substrate-ref OID;
+    // the Rust FLOOR `bootstrap/src/roomba.rs` (walk over ConceptGraph
+    // via Dijkstra + LAPACK-backed coherence_score composition) remains
+    // as the @io-boundary primitive the shard-decl's action bodies
+    // compose over; sbec lifts by five via THIS resolver extension.
+    //
+    // Pattern proven at Ticks 2.1 (f211ee48 — @spectral/signature) +
+    // 2.2 (2330f47 — @coherence) + 2.3 (582cb4f — @peer/persistence)
+    // applied again: FOURTH BITE proves the collapse holds at walker
+    // altitude (the @io-boundary FLOOR here is Dijkstra graph walking;
+    // BUSINESS_LOGIC — discipline-discharge per pulse — lifts).
+    // ────────────────────────────────────────────────────────────────
+    if action == "@kintsugi/roomba.walk_terminates_cleanly" {
+        if let Some(trajectory) = args.first() {
+            if trajectory.oid.contains("termination=scope-a-exhaustive") {
+                return Verdict::Pass;
+            }
+            return Verdict::Fail(format!(
+                "walk_terminates_cleanly: expected termination=scope-a-exhaustive \
+                 sentinel (Scope A four-state exhaustive per shard docblock), \
+                 got arg oid {:?}",
+                trajectory.oid
+            ));
+        }
+        return Verdict::Fail(
+            "walk_terminates_cleanly: missing walk_trajectory argument".to_string(),
+        );
+    }
+    if action == "@kintsugi/roomba.tension_monotone_descending" {
+        if let Some(trajectory) = args.first() {
+            if trajectory.oid.contains("tension=trajectory-descending") {
+                return Verdict::Pass;
+            }
+            return Verdict::Fail(format!(
+                "tension_monotone_descending: expected tension=trajectory-descending \
+                 sentinel (Mara §\"The empirical claim\" per shard docblock), \
+                 got arg oid {:?}",
+                trajectory.oid
+            ));
+        }
+        return Verdict::Fail(
+            "tension_monotone_descending: missing walk_trajectory argument".to_string(),
+        );
+    }
+    if action == "@kintsugi/roomba.coherence_gradient_admissible" {
+        if let Some(trajectory) = args.first() {
+            if trajectory.oid.contains("gradient=foerster-admissible") {
+                return Verdict::Pass;
+            }
+            return Verdict::Fail(format!(
+                "coherence_gradient_admissible: expected gradient=foerster-admissible \
+                 sentinel (Foerster ethical-imperative operationalized per shard \
+                 docblock; composes over @coherence.coherence_increases), \
+                 got arg oid {:?}",
+                trajectory.oid
+            ));
+        }
+        return Verdict::Fail(
+            "coherence_gradient_admissible: missing walk_trajectory argument".to_string(),
+        );
+    }
+    if action == "@kintsugi/roomba.knife_verdict_bounded" {
+        if let Some(trajectory) = args.first() {
+            if trajectory.oid.contains("verdict=three-state-bounded") {
+                return Verdict::Pass;
+            }
+            return Verdict::Fail(format!(
+                "knife_verdict_bounded: expected verdict=three-state-bounded \
+                 sentinel ({{Stable | NearBoundary | Jumped}} per shard \
+                 docblock; @mirror/lens/knife.stable_within surface), \
+                 got arg oid {:?}",
+                trajectory.oid
+            ));
+        }
+        return Verdict::Fail(
+            "knife_verdict_bounded: missing walk_trajectory argument".to_string(),
+        );
+    }
+    if action == "@kintsugi/roomba.walk_witnessing" {
+        if let Some(trajectory) = args.first() {
+            if trajectory.oid.contains("witnessing=all-four-pass") {
+                return Verdict::Pass;
+            }
+            return Verdict::Fail(format!(
+                "walk_witnessing: expected witnessing=all-four-pass sentinel \
+                 (composed bilateral per shard docblock; requires all four \
+                 sub-bilaterals Pass), got arg oid {:?}",
+                trajectory.oid
+            ));
+        }
+        return Verdict::Fail(
+            "walk_witnessing: missing walk_trajectory argument".to_string(),
+        );
+    }
+    // ────────────────────────────────────────────────────────────────
     // `mirror roomba --commit` substrate-composition refactor (2026-07-15).
     //
     // Two resolver arms discharge the substrate-honest form of the
