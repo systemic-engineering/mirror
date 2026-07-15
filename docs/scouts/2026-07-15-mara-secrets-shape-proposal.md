@@ -266,7 +266,12 @@ memories @onto-refusal + no-Rust-extension-shortcut.
 ### 2.4 Alex SSH-signing design-intent coverage
 
 **Direct.** All five §0.2 carriers land at @io species altitude
-with zero family-root crossings:
+with zero family-root crossings on the interior composition
+chain (per Seam §D2.a micro-sharpen: one @subject → @io
+crossing occurs at the section_at → project boundary where
+@sheaf hands off its section to @io/secrets; the zero-crossings
+claim is scoped to @secrets's interior discharge, not the
+full @sheaf → @secrets composition arrow):
 
 1. **Peer-key .git/mirror boundary:** `key_material_ref` field
    resolves through @io/git plumbing (landed sibling); never
@@ -333,9 +338,11 @@ sheaf_restriction(sr) -> sops_key_group` (composition bridge:
 @sheaf ACL projects into SOPS key-group ACL).
 
 **Bound.** Does NOT re-declare YAML/JSON (composes over
-@mirror/data/yaml + @mirror/data/json); does NOT re-declare
-age/pgp/kms crypto (composes over @io/crypto); does NOT carry
-the sops binary itself (opaque per @io; carries CONTRACT).
+`shards/mirror/data/yaml.mirror` + `shards/mirror/data/
+json.mirror`, both LANDED 2026-06-07 per Seam §D8 REED-INLINE
+cascade verification); does NOT re-declare age/pgp/kms crypto
+(composes over @io/crypto); does NOT carry the sops binary
+itself (opaque per @io; carries CONTRACT).
 
 Ancestor: SOPS project (Mozilla 2017; getsops/sops). Species
 specialization pattern @io/cargo established: declare vendor-
@@ -442,7 +449,10 @@ Not family-root. Not under `@subject/visibility`. Not under
 verbatim (AGENTS.md Glass Wall): "@io is the substrate's only
 legitimate non-mirror surface. Any grammar that isn't mirror —
 Rust, Python, raw bytes, foreign blobs, vendor SDKs — must be
-under @io." SOPS is Python/YAML/vendor; peer keys are raw
+under @io." SOPS is Go/YAML/vendor (SOPS was originally written
+in Python by Julien Vehent 2016; Mozilla/CNCF migration to Go
+completed; current getsops/sops implementation is Go-authored
+per Seam §D2.a REED-INLINE cascade); peer keys are raw
 bytes; ciphertext files are foreign blobs; disk-write is POSIX
 syscall. Every load-bearing element of @secrets discipline is
 what @io family-root explicitly covers. Candidate 2 lands the
@@ -532,11 +542,18 @@ under @io/secrets." Alternatives rejected:
 5. Mara sub-species-decl mint — `shards/io/secrets/sops.mirror`
    with SOPS vendor contract; composes @io/secrets + @io/crypto
    (age backend) + @io/fs (disk write).
-6. `@io/fs` lift-tick (substrate-honest side-effect) — @io/
-   secrets landing pulls @io/fs from forward-promise to mirror-
-   altitude species-decl; `shards/io/fs.mirror` lands
-   alongside.
-7. Arc-2.3 landing — peer_persistence.rs collapse composes @io/
+6. **`@io/crypto` lift-tick** (substrate-honest side-effect per
+   Seam §D9 REED-INLINE cascade) — @io/crypto is currently
+   BOOT-FLOOR grammar altitude only; no `shards/io/crypto.
+   mirror` exists at mirror-altitude. @io/secrets landing pulls
+   @io/crypto from boot-floor to mirror-altitude species-decl;
+   `shards/io/crypto.mirror` lands alongside carrying AEAD +
+   sha2 + age + ssh-key vendor surface per io.mirror 161-162.
+7. **`@io/fs` lift-tick** (substrate-honest side-effect) — @io/
+   secrets landing pulls @io/fs from forward-promise (io.mirror
+   189-191) to mirror-altitude species-decl; `shards/io/fs.
+   mirror` lands alongside.
+8. Arc-2.3 landing — peer_persistence.rs collapse composes @io/
    secrets + @subject/visibility/sheaf + @subject/visibility
    species + @kintsugi/consent.
 
