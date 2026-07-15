@@ -158,7 +158,10 @@ in @glass
 #   @io/network    the Berkeley-primitive layer that PRODUCES
 #                   connections / listeners (connect, bind, accept).
 #   @io/crypto     hash + signature + AEAD over bytes. Vendor surface
-#                   (sha2, age, ssh-key).
+#                   (sha2, age, ssh-key). *Mirror-altitude lift-tick
+#                   landed 2026-07-15 at `shards/io/crypto.mirror` via
+#                   @io/secrets consumer pull; boot-floor decl kept
+#                   as transitional placeholder.*
 #   @io/encode     base64 / hex / multi-byte text encoding over bytes.
 #   @io/random     entropy → bytes. Kernel CSPRNG surface.
 #   @io/uri        URI parse / format / canonicalization. RFC 3986
@@ -173,6 +176,22 @@ in @glass
 #                   mirror-altitude lift named (shards/io/cargo.mirror,
 #                   2026-06-05). Per its docstring: "the @io tool the
 #                   altitude grammar @code/rust delegates to."
+#   @io/crypto     (2026-07-15; lifted from boot-floor via @io/secrets
+#                   consumer pull; carries key_material, ciphertext_
+#                   bytes, signature_bytes, aead_context + AEAD/sig/
+#                   hash actions per shards/io/crypto.mirror).
+#   @io/fs         (2026-07-15; lifted from forward-promise via @io/
+#                   secrets consumer pull; carries path, file_metadata,
+#                   dir_entry + POSIX read/write/stat/list/mkdir per
+#                   shards/io/fs.mirror).
+#   @io/secrets    (2026-07-15; Seam Phase D-cascade Scenario A;
+#                   carries key_material_ref, ciphertext_ref, secret_
+#                   projection + project/materialize/retrieve/round_trip
+#                   composing @sheaf.section_at_stalk through @io/
+#                   crypto + @io/fs).
+#   @io/secrets/sops (2026-07-15 sub-species; SOPS vendor projection
+#                   contract composing @io/secrets + @io/crypto +
+#                   @mirror/data/yaml + @mirror/data/json).
 #
 # Future species (named here so the recognition is logged; bodies
 # land when a consumer pulls):
@@ -186,9 +205,10 @@ in @glass
 #                   the substrate-altitude lift lands when
 #                   NumericalPrism backends consume it (Phase 6
 #                   Track A).
-#   @io/fs         POSIX filesystem surface (open / read / write /
-#                   stat / readdir). Lands when `@mirror/store`'s
-#                   git-backed implementation lifts its disk surface.
+#   @io/fs         *LANDED 2026-07-15 via @io/secrets consumer pull at
+#                   059cf1c (Mara @secrets arc mint). See mirror-altitude
+#                   lifted species list above. This entry retained for
+#                   docblock chronological continuity.*
 #   @io/git        git plumbing surface (the three actions already
 #                   declared at the floor — git_update_ref / git_log /
 #                   git_delete_ref — plus hash-object / cat-file /
@@ -366,9 +386,10 @@ in @glass
 #                      forward-promised; lift-ticks land when
 #                      consumers pull).
 # Forward-promise to consumers:
-#   - @io/bytes, @io/socket, @io/network, @io/crypto, @io/encode,
+#   - @io/bytes, @io/socket, @io/network, @io/encode,
 #     @io/random, @io/uri: mirror-altitude lift-ticks land when a
-#     consumer pulls each species at the mirror altitude. The boot-
+#     consumer pulls each species at the mirror altitude. (@io/crypto
+#     already lifted 2026-07-15 via @io/secrets pull.) The boot-
 #     floor declarations stay as transitional placeholders during the
 #     consumer-migration window (same pattern as @cli stayed in boot
 #     during the @mirror/lens/cli migration, and as @data/json stays
@@ -376,8 +397,9 @@ in @glass
 #   - @io/llvm, @io/flang: lift when the LLVM / flang backends
 #     consume them (`@code/llvm`'s emit target; LapackBackend's
 #     numerical kernel surface).
-#   - @io/fs, @io/git, @io/process: lift when the runtime layer's
-#     disk / git / subprocess surfaces consume them.
+#   - @io/fs (already lifted 2026-07-15 via @io/secrets pull), @io/git,
+#     @io/process: lift when the runtime layer's disk / git /
+#     subprocess surfaces consume them.
 # Related shards: code.mirror (the sibling language-grammar family;
 #                  the inside-the-substrate counterpart),
 #                  mirror/data.mirror (the sibling data-format family
