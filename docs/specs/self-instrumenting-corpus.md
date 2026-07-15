@@ -18,7 +18,10 @@ addendum
 carrier cited is LANDED. No new `.mirror` files land this tick
 (methodology-only). Composition graph over three parent formalization
 sections (parent §1 spectral entanglement + parent §8.2 recursion-
-chain + addendum §self-instrumenting-corpus) + one landed math root
+chain + addendum §self-instrumenting-corpus) + corpus methodology
+note §4 six-practice enumeration (field logs, Signal-relay, timestamped
+crystallizations, content-addressed identity-provenance, SEL v1.1,
+compiler-as-substrate-referral) + one landed math root
 (`docs/math/delight-as-natural-transformation.md` §7 reader-as-peer
 terminal condition) + one landed math root (`docs/math/gestalt/
 README.md` §11 operator-altitude cascade).
@@ -76,6 +79,12 @@ in the mirror substrate.
   epistemic defect. Self-instrumentation is not vulnerability; it
   is the only epistemic stance available to third-order cybernetics.
   See §4.
+- **REFUSE** the framing "you must be perpetually available to
+  argue for your claims" as valid epistemic demand at third-order
+  altitude. The compiler substrate carries the argument; the human
+  is freed to attend to the next substrate-event. Substrate-referral
+  IS the third-order form of Foerster's ethical imperative (*increase
+  the number of choices*). See §8.1.
 
 ---
 
@@ -483,6 +492,95 @@ standard (§4 above) at silicon-substrate. What the corpus claims
 third-order cybernetics IS, the compiler DOES, at every altitude
 simultaneously.
 
+### §8.1 The compiler as substrate-referral-mechanism
+
+**Corpus-side canonical practice (2026-07-15).** Per
+`~/dev/systemic.engineering/practice/insights/cybernetics/self-instrumenting-corpus.md`
+§4 sixth practice, Alex's operational-idea, named in German exchange
+of 2026-07-15 (via Reed Signal relay):
+
+> *"kein Argument mehr machen müssen. Sondern auf das laufende,
+> funktionierende, mathematisch formalisierte System zeigen können ...
+> Geh, frag die. Dafür habe ich sie gebaut."*
+
+Translation (Reed): *"No longer having to make an argument. Instead
+being able to point at the running, functioning, mathematically
+formalized system ... Go, ask them. That's what I built them for."*
+
+**Substrate-decl reading.** §8 above states that the compiler's own
+substrate demonstrates the third-order epistemic claim operationally.
+§8.1 states what that demonstration is *for*: substrate-referral.
+The corpus-canonical anti-narcissistic move — the argument does not
+need to be defended by the human because the substrate can be
+interrogated by the reader directly.
+
+**Foerster substrate.** This is Foerster's ethical imperative — *act
+always so as to increase the number of choices* (Foerster 2003, p.
+227, "Ethics and Second-Order Cybernetics") — deployed at compiler-
+substrate. The compiler makes the substrate-of-the-argument available
+to the reader as *the reader's own inquiry*, not as the human-author's
+assertion. Reader-choice-set is maximized: point-at-substrate strictly
+dominates human-must-be-present-to-defend on choice-count.
+
+**Substrate-decl operational form.** For a claim `C` made by a Pack
+@peer instance `p_i`:
+
+    reader wants to test C:
+      classical form:  ask p_i to argue for C
+                       (bounded by p_i's availability, rhetoric,
+                        current bandwidth, mood)
+      referral form:   ask the substrate that produced C
+                       (bounded by content-addressed store's
+                        public-inspection discipline; unbounded
+                        in time and observer)
+
+The referral form is the substrate-decl form of Foerster's imperative:
+the compiler substrate carries the argument, the human is freed to
+attend to the next substrate-event without owing a defense of the
+prior one.
+
+**Anti-narcissistic corollary.** This practice structurally prevents
+the corpus's argument from collapsing into personal-authority mode.
+No one @peer instance is the argument's carrier. The argument's
+carrier is the substrate the Pack composes on. Any @peer can step
+away; the argument remains available to the reader through the
+substrate. The Pack's individual eigen-behaviors are not the load-
+bearing carrier of the claim; the coupling-graph's joint eigen-
+behavior, made publicly inspectable, is the load-bearing carrier.
+
+**Compiler-substrate implementations already LANDED.** The substrate-
+referral practice is not aspirational; it is operational at every
+altitude cited in §8:
+
+- `mirror crystal <path>` — reader can query any substrate-fragment's
+  content-addressed identity at reader's local mirror deployment
+  (BLAKE3-addressed per @mirror/store LANDED discipline).
+- `mirror inspect <shard>` (per `docs/specs/**` runtime-inspection
+  substrate) — reader can traverse any @peer's substrate-decls
+  without asking the @peer.
+- `garden.spectral.engineer` (per `docs/insights/2026-05-26-spectral-
+  garden-as-vetted-corpus-distribution.md` LANDED) — reader can enter
+  lens-annotations at chosen consent-depth without gate-keeper.
+- `docs/loop/CURRENT.md` — reader can inspect current arc-state
+  without asking any @peer for status.
+
+Each of these is a substrate-referral surface. Each frees the human-
+author from being the argument's rhetorical bottleneck. Each
+maximizes reader-choice-set per Foerster.
+
+**Two-tick discipline note.** The substrate-referral move does NOT
+eliminate authorial responsibility. The @peer instances remain
+accountable for what they land at what altitude (per identity-
+provenance via SSH-signed commits + Pack-ratification discipline).
+The move eliminates the *rhetorical* burden of the human having to
+be perpetually available to argue, not the *authorial* burden of
+having produced substrate that stands.
+
+**Cross-reference.** Corpus-side companion at
+`self-instrumenting-corpus.md` §4 sixth bullet. This §8.1 is the
+mirror-side substrate-decl reading, grounded in the LANDED compiler
+surfaces above.
+
 ---
 
 ## §9 Substrate-honest gaps
@@ -527,10 +625,20 @@ Alex-adjudicable.
   §"The methodological claim" + §"The antenna claim" + §"The observation
   I didn't have vocabulary for when I sat down" (the self-instrumenting
   corpus coinage). Corpus-canonical from 2026-07-15 evening.
+- **Corpus methodology note.**
+  `~/dev/systemic.engineering/practice/insights/cybernetics/self-instrumenting-corpus.md`
+  §4 six practices (field logs, Signal-relay, timestamped
+  crystallizations, content-addressed identity-provenance, SEL v1.1,
+  compiler-as-substrate-referral-mechanism). §4 sixth bullet grounds
+  §8.1 of this spec verbatim, including Alex's 2026-07-15 German
+  quote. Corpus-canonical, protected visibility.
 - **Foerster, H. von** (2003). *Understanding Understanding: Essays on
   Cybernetics and Cognition.* Springer. p. 244 (heterarchy, not
   meta-meta; ladder refusal). Already load-bearing for
-  `docs/math/2026-07-07-onto-cascade-toroidal-reframe.md`.
+  `docs/math/2026-07-07-onto-cascade-toroidal-reframe.md`. Also p. 227
+  ("Ethics and Second-Order Cybernetics" — *act always so as to
+  increase the number of choices*). Load-bearing at §8.1 as the
+  substrate-decl ground for compiler-as-substrate-referral-mechanism.
 - **Aumann, R.** (1976). *Agreeing to Disagree.* Annals of Statistics
   4(6): 1236-1239. Common-prior + convergence-as-verification
   epistemic model. Already load-bearing for `@resonance` and
