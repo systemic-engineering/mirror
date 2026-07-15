@@ -74,23 +74,72 @@ the cracks. Six-arc retirement plan:
 34. `564571e` — Mara @sheaf canonical spec (1303 LOC; deferred-by-design canonical spec grounding species-decl in math + composition graph + landings; 3 recognition candidates)
 35. `ffe8f58` — Reed CURRENT.md update for commits 32-34
 36. `7d57831` — Mara @io/secrets canonical spec (2105 LOC; deferred-by-design canonical spec grounding four-shard mint + Landing 6; 5 recognition candidates with one second-witness ratified; sibling to @sheaf canonical spec)
+37. `a4238f0` — Reed CURRENT.md commit 36 addition
+
+### Post-arc etymology cascade
+
+Alex named the substrate design philosophy explicitly this arc:
+**delightfully boring — the reader ought to go "of course it's this."**
+Ancestor images: WTF/minute (Robert C. Martin folk metric; negative
+measure) + Michelangelo/marble (Vasari attribution; subtract until
+only the angel remains). Alex 2026-07-15 verbatim: "That's my whole
+philosophy of software engineering in a nutshell." Discipline
+anchored in AGENTS.md `Delightfully Boring` section.
+
+CLI condensation arc (recognized: CLI surface should represent the
+compiler's prism-composition GEOMETRY, not accumulate verbs):
+
+38. `ecdd04e` — Taut CLI geometry ground-truth scout
+39. `67260dc` — Mara CLI condensation spec (1189 LOC; 3 geometric categories: beam-shape / 5-op operation / prism-family-root; verb partition 11 → 8 + 3 dispatched under beam)
+40. `67981e5` — Seam CLI condensation Phase D (596 LOC; SHIP-with-Reed-inline; surfaced dispatch/emit conflation)
+41. `27db6c7` — Mara CLI condensation Reed-inline cascades (5 patches; execute→dispatch renames applied)
+
+Delightfully-boring anchoring in AGENTS.md:
+
+42. `ba6a9fb` — Reed Delightfully Boring section added
+43. `e34243e` — Reed anchor ancestor images (Alex verbatim + WTF/minute + Michelangelo/marble)
+
+Seamfinder audit #1 (combinator surface etymology):
+
+44. `546c2f6` — Seam seamfinder etymology audit (822 LOC; 4 combinator renames: read_ast→section; dispatch→act; emit→utter; bench_record→crystallize; dispatch/emit collapse REFUSED on 3 semantic distinctions)
+45. `d44841e` — Mara §6.2 combinator etymology cascade (4 files; +366/-222; CLI verb closure: execute → dispatch → act two-step preserved in audit trails)
+
+Seamfinder audit #2 (extended-scope shard-decl etymology):
+
+46. `5dcad39` — Seam extended-scope seamfinder audit (2166 LOC; ~45 names across 6 shards; 12 more renames)
+47. `07021b1` — Mara §5.3 shards + @sheaf spec cascade (5 files; recovery from Mara #137 stall)
+48. `daa9c14` — Reed-cascaded io-secrets-projection.md (85+ refs; recovery via Python batch + targeted Edit cleanup)
+49. `2d2cdf4` — Reed AGENTS.md extended meta-rules (§7.5 bilateral suffix + §7.6 vendor-anchoring)
+
+Session-total etymology cascade: **16 renames + 4 meta-rules + 2
+Seam audits + Mara+Reed cascades.** Every name reads "of course
+it's this."
 
 ### Terminal state
 
-**Alex-adjudication residue: ZERO.** Everything Seam-adjudicable has
-been adjudicated across seven Seam audits (Phase D + Phase D-cascade
-A2+A6 + A4-discharge + @secrets shape + composition-alignment + A1
-re-adjudication) + Mara species-decl mints + Mara companion property
-shard + Mara @io lift-ticks + Mara Landing 6 constructor. A2, A4, A6
-all collapsed; A1 also collapsed via composed Taut+Seam spawn (Taut
-precedent scout → Seam re-adjudication supersedes prior "unresolvable"
-verdict; substrate discipline learned that composed spawns adjudicate
-what single-spawns cannot). Six-arc plan structurally landed at
-species-decl + canonical spec + math foundation + combinator surface
-+ companion property + @io-secrets peer-key-gated projection +
-composition-bridge constructor altitudes. All Mara-A "alongside"
-forward-promises discharged; @sheaf/@secrets composition pair now
-substrate-complete AND petri-net-completable at Arc-2.3.
+**Alex-adjudication residue: ZERO.** Everything Seam-adjudicable
+has been adjudicated across **nine Seam audits** (Phase D + Phase
+D-cascade A2+A6 + A4-discharge + @secrets shape + composition-
+alignment + A1 re-adjudication + CLI condensation Phase D +
+seamfinder etymology + extended-scope seamfinder) + Mara species-
+decl mints + Mara companion property shard + Mara @io lift-ticks +
+Mara Landing 6 constructor + Mara @sheaf canonical spec + Mara
+@io/secrets canonical spec + Mara CLI condensation spec.
+
+A2, A4, A6 all collapsed; A1 collapsed via composed Taut+Seam
+spawn (substrate discipline learned: composed spawns adjudicate
+what single-spawns cannot); the CLI-verb name settled at `mirror
+beam act` after the substrate learned twice; 16 total etymology
+renames align the substrate to the geometric words.
+
+Six-arc plan structurally landed at species-decl + canonical spec
++ math foundation + combinator surface + companion property +
+@io-secrets peer-key-gated projection + composition-bridge
+constructor + **CLI-geometry condensation + delightfully-boring
+naming discipline + etymology cascade** altitudes. All Mara-A
+"alongside" forward-promises discharged; @sheaf/@secrets
+composition pair now substrate-complete AND petri-net-completable
+at Arc-2.3 AND etymologically substrate-honest at every altitude.
 
 ### Next actions (Alex-triggered)
 
