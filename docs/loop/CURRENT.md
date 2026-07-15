@@ -57,15 +57,23 @@ the cracks. Six-arc retirement plan:
 17. `4207800` — Mara §7.4 legibility cascade in Mara-B (reference A4 discharge audit)
 18. `04b3aea` — Mara @epistemologic/property/ouroboros_monotone companion property shard (381 LOC; Mara-A forward-promise discharge)
 19. `4897761` — Reed consumer sync: peer-persistence §12.3 pseudocode names + CURRENT.md commit list update
+20. `433d908` — Reed CURRENT.md hygiene (add commit 4897761 to list)
+21. `766d930` — Mara @secrets shape proposal (647 LOC; 4 candidates; Candidate 2 @io/secrets recommended)
+22. `019ad8f` — Seam Phase D-cascade @secrets audit (595 LOC; SHIP Scenario A Mara-mintable)
+23. `9f5befa` — Mara @secrets shape proposal post-cascade repairs (SOPS Go/Python + @io/crypto lift-tick + @mirror/data verify + zero-crossings qualifier)
+24. `059cf1c` — Mara four-shard @io mint: @io/crypto lift-tick + @io/fs lift-tick + @io/secrets + @io/secrets/sops (1962 LOC across four; discharge of @sheaf forward-promise composition surface)
 
 ### Terminal state
 
 **Alex-adjudication residue: ZERO.** Everything Seam-adjudicable has
-been adjudicated across four Seam audits + Mara species-decl mint +
-Mara companion property shard. A2, A4, A6 all collapsed. Six-arc plan
-structurally landed at species-decl + canonical spec + math foundation
-+ combinator surface + companion property altitudes. All Mara-A
-"alongside" forward-promises discharged.
+been adjudicated across five Seam audits + Mara species-decl mints
+(@subject/visibility/sheaf + @io/secrets + @io/secrets/sops) + Mara
+companion property shard + Mara @io lift-ticks (@io/crypto + @io/fs).
+A2, A4, A6 all collapsed. Six-arc plan structurally landed at
+species-decl + canonical spec + math foundation + combinator surface
++ companion property + @io-secrets peer-key-gated projection altitudes.
+All Mara-A "alongside" forward-promises discharged; @sheaf/@secrets
+composition pair now substrate-complete.
 
 ### Next actions (Alex-triggered)
 
