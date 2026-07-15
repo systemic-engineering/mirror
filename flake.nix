@@ -132,13 +132,34 @@
         // pkgs.lib.optionalAttrs isDarwin {
           FLANG = "${flang}/bin/flang";
           FLANG_RT_DIR = flangRtLibDir;
-          # Manual NIX_LDFLAGS OVERRIDES nix's auto-computed path from buildInputs,
-          # so we must explicitly re-include every buildInput's lib path we depend
-          # on at link time. libiconv is needed for cargo test link of libz-sys /
-          # openssl-sys / libgit2-sys transitive chain (Reed + Taut 2026-07-14
-          # house-cleanup: bootstrap tests fail with `ld: library not found for
-          # -liconv` without this).
-          NIX_LDFLAGS = "-L${flangRtLibDir} -L${pkgs.lapack}/lib -L${pkgs.blas}/lib -L${pkgs.libiconv}/lib";
+          # Darwin link paths for the openssl-sys / libgit2-sys / libz-sys
+          # transitive chain (libiconv) + the prismqueer LAPACK feature
+          # (lapack, blas) + the flang-rt Fortran runtime.
+          #
+          # Root cause + durability rationale (Reed + Taut root-cause
+          # 2026-07-15, superseding the 2026-07-14 house-cleanup attempt
+          # which was insufficient from the start):
+          #
+          # The prior fix set NIX_LDFLAGS = "-L... -L... -L${pkgs.libiconv}/lib"
+          # believing this OVERRODE nix's auto-computed value. It does not.
+          # nix's mkShell APPENDS the buildInputs' auto-computed library
+          # paths to any manual NIX_LDFLAGS assignment, producing a 1700+
+          # char cascade with duplicates that the cc-wrapper's validation
+          # + the darwin linker's ordering rules ultimately reject. The
+          # manual libiconv path was in the string, but the string as a
+          # whole was structurally broken.
+          #
+          # Cargo's rustc invocation does NOT consume NIX_LDFLAGS directly;
+          # it consumes RUSTFLAGS. Setting `-L <path>` in RUSTFLAGS makes
+          # cargo pass `-L <path>` to rustc, which forwards to the linker.
+          # No nix post-processing; no cascade; no ordering games. Cargo
+          # respects RUSTFLAGS verbatim.
+          #
+          # This fix is structurally durable because it addresses the
+          # actual mechanism cargo uses to find libraries (RUSTFLAGS)
+          # rather than fighting an environment variable (NIX_LDFLAGS)
+          # whose post-processing semantics the previous fix misread.
+          RUSTFLAGS = "-L ${flangRtLibDir} -L ${pkgs.lapack}/lib -L ${pkgs.blas}/lib -L ${pkgs.libiconv}/lib";
         });
       }
     );
