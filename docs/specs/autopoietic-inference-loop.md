@@ -304,7 +304,9 @@ build_hole_record(σ: ref, p: source_position) -> hole_record
 { \ }
 ```
 
-Where `source_position` is minted as (per §7 mint inventory):
+Where `source_position` is minted at `shards/glass.mirror` as an
+extension refining `@glass.location` with byte-precision splice
+fields (Alex-ratified 2026-07-15; see §4.2 rationale):
 
 ```
 type source_position = {
@@ -529,12 +531,16 @@ add resolver arm at `bootstrap/src/apply_h.rs`.
 (new action per §3.7).
 
 **Type mint (mirror side):** ~20 LOC total. `source_position` carrier
-at `shards/glass.mirror` extension OR at `shards/code/mirror/
-materialize.mirror` new sub-species. Alex-adjudicable placement (Taut
-§14); provisional recommendation: `shards/glass.mirror` extension
-because `@glass.location` (per glass.mirror lines 82–106) already
-carries `file: ref` + `span: (u32, u32)`; `source_position` refines
-`location` with `byte_offset` + `byte_length` for splice precision.
+at **`shards/glass.mirror` extension** — RATIFIED by Alex 2026-07-15
+adjudication of the post-Seam-Phase-D residue. Rationale: `@glass.
+location` (per glass.mirror lines 82–106) already carries `file:
+ref` + `span: (u32, u32)`; `source_position` refines `location` with
+`byte_offset` + `byte_length` for splice precision. Composition-only
+over the landed carrier; zero new species mint; parser output +
+mutation target share ONE substrate-altitude concept of where-in-
+source. Delightfully Boring criterion: *of course @glass carries
+where-in-source*. The alternative (mint `@code/mirror/materialize`)
+was rejected — adds altitude at the exact tick we shrink Rust FLOOR.
 
 **Rust delta:** ~50 LOC. New resolver arm at `bootstrap/src/apply_h.rs`
 per §3.7's code sketch.
@@ -844,31 +850,64 @@ which is the substrate-common case in practice.
   cross a socket boundary as content-addressed refs, not as linearized
   bytes.
 
-### §5.5.4 Architectural design pressure (every future capability)
+### §5.5.4 Architectural hard gate (every future capability)
 
-The pipeforward architecture is not an optimization applied
-retroactively; it is a **first-class design constraint** on every
-subsequent substrate capability:
+Per Alex 2026-07-15 adjudication of the post-Seam-Phase-D residue:
+the pipeforward architecture is **load-bearing on all future
+substrate** — a first-class **hard gate**, not a guiding
+recommendation. Rationale (Alex verbatim): *"The linearization only
+happens when the next process isn't a mirror process. We hold the
+shape as long as possible."* Every subsequent substrate capability
+MUST pass this gate; Seam Phase D audits are the enforcement point.
+
+**Rules (gating, not advisory):**
 
 1. **Every new CLI verb designed for socket-forwarded composition
    FIRST.** Only add an @io boundary crossing when the semantics
-   genuinely require linearization (e.g., final materialization to a
-   file the user reads; commit into git tree; network response to a
-   non-mirror consumer).
+   genuinely require linearization (final materialization to a file
+   the user reads; commit into git tree; network response to a
+   non-mirror consumer). Gate failure: capability MUST be reshaped
+   or accompany a `--collapse` escape-hatch justification (see below)
+   before landing.
 2. **Every new shard-decl action returns a nonlinear ref by default;
    linearization is an explicit `@io/*` composition step, never
-   implicit.**
+   implicit.** Gate failure: species-decl bounced at Seam Phase D.
 3. **Every new @io species carrier declares an `L(ϕ)` estimate in
    its docblock** — the substrate is honest about which crossings
    are lossless (`L = 0` under specific constraints) versus lossy.
+   Gate failure: docblock is incomplete; land tick blocked.
 4. **StageFreight × spectral.engineer pipeline** composes over this
-   design pressure directly: each stage stays in nonlinear tension-
+   hard gate directly: each stage stays in nonlinear tension-
    resolution space; only final materialization to CI logs / git tree /
    deployment artifacts is the discharge. Per `docs/specs/kintsugi-
    ouroboros-compiler-self-collapse.md` §Arc-5, the docker-image ship
    preserves the mirror substrate's nonlinear state at every internal
    boundary; discharge occurs at exactly the interface with non-mirror
    CI infrastructure.
+
+**Escape hatch — `--collapse` force option.** When a caller has
+deliberately chosen to discharge to linear form (e.g., debugging;
+interoperating with an intentionally-non-mirror downstream; producing
+a one-shot artifact for a human reader), the substrate exposes
+`--collapse` as an explicit force-linearization option at the CLI
+surface. `--collapse` semantics:
+
+- Every verb MAY accept `--collapse[=WHERE]` to force early @io
+  discharge at the named boundary (default: terminal stdout).
+- Presence of `--collapse` in the invocation is the caller's explicit
+  waiver of the hard gate — the substrate does not silently linearize;
+  the caller names the crossing.
+- `--collapse` invocations are logged as `L(ϕ)` crystals with the
+  waiver reason (per rule 3); the substrate remains honest about
+  which crossings were forced.
+- Absence of `--collapse` in a `mirror foo | mirror bar` chain MUST
+  route via socket-forwarded transport if the socket carrier is
+  available; falling back to @io/fs stdout without `--collapse` is a
+  substrate-honesty violation that Seam Phase D catches.
+
+The `--collapse` escape hatch is the substrate's way of holding the
+hard gate architecturally while remaining useful when the caller
+genuinely wants a linear artifact. Force is named, not silent.
 
 ### §5.5.5 Composition with the six-step inference loop
 
@@ -1177,9 +1216,8 @@ position-aware splice preserves surrounding bytes; POSIX-atomic write;
 `path_admissible` predicate discharges.
 
 **GREEN:** Land species-decl at `shards/io/fs.mirror` per §3.7. Add
-`source_position` carrier at `shards/glass.mirror` extension (Alex-
-adjudicable; if Alex names different placement, follow). Add resolver
-arm.
+`source_position` carrier at `shards/glass.mirror` extension per
+§4.2 (Alex-ratified 2026-07-15). Add resolver arm.
 
 **Audit:** Seam-inline audit at `docs/audits/2026-07-15-bridge-alpha-
 mutate-at.md`.
