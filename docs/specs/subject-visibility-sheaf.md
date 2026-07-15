@@ -73,8 +73,9 @@ Four load-bearing claims land in the two sentences:
    projected value through `@secrets` and `@secrets/sops` (landed
    as `@io/secrets` and `@io/secrets/sops` at 059cf1c + 64b0438 +
    57c5b3a) at the @io boundary. @sheaf's `section_at` returns the
-   `projected_value` ref; @io/secrets.project consumes the
-   section_at_stalk to materialise the key-gated ciphertext.
+   `projected_value` ref; @io/secrets.seal consumes the
+   section_at_stalk to materialise the key-gated ciphertext. [Note:
+   @io/secrets.project renamed → seal per 5dcad39 §2.5.e Q_C.]
 4. **Visibility/private is the sub-sheaf's substrate.** The
    projection reads "visibility/private stuff" — the @subject/
    visibility/private species crystals restricted through the
@@ -121,10 +122,12 @@ Per Reed's memory `feedback-no-rust-extension-shortcut`
 rust-extensions-during-gift-arc.md`: the @gift arc failure taught
 that the sheaf-restriction primitive must land as substrate-decl
 carrier — not as Rust extension. The species-decl at d1ce901
-discharges the lesson: `restrict`, `acl_project`, `section_at`
-are shard bodies at `\`-obligation-blocked altitude; realisation
-composes over @io + landed @secrets bridge, zero Rust
-authorship licensed.
+discharges the lesson: `restrict`, `section_at` are shard bodies
+at `\`-obligation-blocked altitude [Note: `acl_project` collapsed
+into `restrict` per Seam extended-scope etymology audit at 5dcad39
+§2.5.a Q_C — the peer-ACL projection IS restriction; the second
+action was CS-brain redundancy]; realisation composes over @io +
+landed @secrets bridge, zero Rust authorship licensed.
 
 ### §0.3 Seam Phase D-cascade A2 shape-proposal ratification at 7d46f32
 
@@ -303,31 +306,36 @@ C7):
 ```
 peer_visibility_materialize(peer, home, crystal, target_path):
   ACL_peer := pack.members[peer.name]                          # @mirror/pack
-  sr       := @subject/visibility/sheaf.acl_project(F_home, ACL_peer)
-                                                               # d1ce901
+  sr       := @subject/visibility/sheaf.restrict(F_home, ACL_peer)
+                                                               # d1ce901 [acl_project → restrict per 5dcad39 Q_C]
   section  := @subject/visibility/sheaf.section_at(sr, crystal)
                                                                # d1ce901
-  peer_key := @io/secrets.key_material_ref_of(peer)            # Landing 6 forward-promise
-  sp       := @io/secrets.project(section, peer_key)           # 059cf1c
-  @io/secrets.materialize(sp, target_path)                     # 059cf1c → disk
+  peer_key := @io/secrets.key_material_from_peer(peer)         # Landing 6 [renamed _of → _from_peer per 5dcad39 Q_A]
+  ss       := @io/secrets.seal(section, peer_key)              # 059cf1c [project → seal per 5dcad39 Q_C]
+  @io/secrets.materialize(ss, target_path)                     # 059cf1c → disk
 ```
 
 The chain traverses end-to-end at LANDED altitude modulo arrow-4
-(key_material_ref_of): Seam A1 re-adjudication at
+(key_material_from_peer): Seam A1 re-adjudication at
 `docs/audits/2026-07-15-seam-a1-re-adjudication-with-taut-precedent.md`
-(e5d928e) ratified Position (b) — land `key_material_ref_of(peer:
+(e5d928e) ratified Position (b) — land `key_material_from_peer(peer:
 ref) -> imperfect { \ }` as Landing 6. The forward-promise on that
 arrow is Seam-adjudicable; the composition graph is
 petri-net-complete once Landing 6 lands.
 
 Every other arrow resolves to landed substrate at the altitude the
 species-decl names. Type signatures chain byte-equal
-(`section_at` returns `section_at_stalk`; @io/secrets.project
+(`section_at` returns `section_at_stalk`; @io/secrets.seal
 accepts `section_at_stalk` as first parameter — verified at
 composition-alignment audit C1). The @sheaf species carries the
 ACL-restriction algebra the projection chain composes OVER.
 
-### §1.3 Sub-claim 3 — @sheaf.restrict / @sheaf.section_at / @sheaf.acl_project compose over @sheaf_laplacian math primitive
+### §1.3 Sub-claim 3 — @sheaf.restrict / @sheaf.section_at compose over @sheaf_laplacian math primitive
+
+[Note: `acl_project` was a distinct action prior to 5dcad39; it
+has since collapsed into `restrict` per Q_C. The peer-ACL
+projection IS restriction; the two-tick collapse removes the
+CS-brain redundancy.]
 
 Per `shards/epistemologic/math/sheaf_laplacian.mirror` (2026-07-12
 Mara, Hansen-Ghrist 2018), the discrete cellular-sheaf math primitive
@@ -364,9 +372,10 @@ Concretely at Arc-2.3 realisation:
   (`@epistemologic/pact/path_matches_namespace`).
 
 The algebra @sheaf carries is the ACL-scoped specialization of the
-mathematical primitive: restrict + section_at + acl_project are the
-three algebra operations; the math primitive is the operational
-substrate they compose over.
+mathematical primitive: restrict + section_at are the two algebra
+operations [Note: `acl_project` collapsed into `restrict` per
+5dcad39 Q_C]; the math primitive is the operational substrate they
+compose over.
 
 ---
 

@@ -15,6 +15,17 @@ in @io
 # write, stat, readdir, mkdir, unlink) discharging at the
 # realisation boundary.
 #
+# [Note: five action names dropped `fs_` prefix per Seam extended-
+# scope etymology audit at 5dcad39 §2.5.g-k Q_D — POSIX-inertia:
+# no vendor sibling (POSIX is standard-of-one for filesystem), so
+# the `fs_` prefix inside `@io/fs` was bureaucratic `fs.fs`
+# doubling. Boot floor `boot/std/io.mirror` uses bare `open/read/
+# write/close`; store.mirror uses bare `read/write`; cargo.mirror
+# uses bare `build/test/check/clippy/audit`. Bilateral `writable`
+# renamed → `path_writable` for shard-internal consistency with
+# `path_admissible`, `path_exists`. See AGENTS.md §7.6 vendor-
+# anchoring meta-rule.]
+#
 # === Landing metadata ===
 #
 # Landed 2026-07-15 by Mara as Landing 7 of the @secrets shape-
@@ -81,10 +92,10 @@ in @io
 #                               opacity + imperfect return shape.
 #
 # Consumers (compose over this species):
-#   @io/secrets               — key-gated projection; materialize
+#   @io/secrets               — key-gated sealing; materialize
 #                               action writes ciphertext to disk
-#                               via fs_write; project action reads
-#                               ciphertext from disk via fs_read.
+#                               via write; open action reads
+#                               ciphertext from disk via read.
 #   @io/secrets/sops          — SOPS sub-species; sops_encrypt +
 #                               sops_decrypt read/write .sops.yaml
 #                               files via this species.
@@ -234,7 +245,11 @@ type dir_entry = {
 # §3 The actions
 # ============================================================
 
-# === fs_read action ===
+# === read action ===
+#
+# [Note: renamed from fs_read per 5dcad39 §2.5.g Q_D POSIX-inertia
+# — bare verb matches boot/std/io.mirror precedent (open/read/
+# write/close at boot floor) and store.mirror bare read/write.]
 #
 # Read the entire contents of a file at path. Per the POSIX
 # open(O_RDONLY) + read + close sequence; substrate carries the
@@ -254,9 +269,12 @@ type dir_entry = {
 #
 # Body discharges at the realisation boundary (std::fs::read on
 # the Rust side; kernel read(2) at the syscall boundary).
-fs_read(p: path) -> imperfect { \ }
+read(p: path) -> imperfect { \ }
 
-# === fs_write action ===
+# === write action ===
+#
+# [Note: renamed from fs_write per 5dcad39 §2.5.h Q_D POSIX-inertia
+# — same bare-verb precedent as `read`.]
 #
 # Write bytes to a file at path. Creates the file if absent;
 # truncates + rewrites if present. Per POSIX open(O_WRONLY |
@@ -277,9 +295,12 @@ fs_read(p: path) -> imperfect { \ }
 # visibility/private stuff onto disk") composes over.
 #
 # Body discharges at the realisation boundary.
-fs_write(p: path, bytes: ref) -> imperfect { \ }
+write(p: path, bytes: ref) -> imperfect { \ }
 
-# === fs_stat action ===
+# === stat action ===
+#
+# [Note: renamed from fs_stat per 5dcad39 §2.5.i Q_D POSIX-inertia
+# — POSIX stat(2) is the vendor primitive.]
 #
 # POSIX stat(2). Returns file_metadata for the path; follows
 # symlinks (per stat, not lstat). For lstat semantics, a species
@@ -293,9 +314,13 @@ fs_write(p: path, bytes: ref) -> imperfect { \ }
 #   ELOOP).
 #
 # Body discharges at the realisation boundary (std::fs::metadata).
-fs_stat(p: path) -> imperfect { \ }
+stat(p: path) -> imperfect { \ }
 
-# === fs_list action ===
+# === readdir action ===
+#
+# [Note: renamed from fs_list per 5dcad39 §2.5.j Q_D — Seam-
+# preferred over `list`: matches POSIX readdir(3) vendor primitive
+# AND boot/std/io.mirror precedent naming.]
 #
 # POSIX readdir(3). Returns the list of dir_entry values for
 # entries in the directory at path (excluding . and ..).
@@ -312,9 +337,12 @@ fs_stat(p: path) -> imperfect { \ }
 #   ENOTDIR, EACCES).
 #
 # Body discharges at the realisation boundary (std::fs::read_dir).
-fs_list(p: path) -> imperfect { \ }
+readdir(p: path) -> imperfect { \ }
 
-# === fs_mkdir action ===
+# === mkdir action ===
+#
+# [Note: renamed from fs_mkdir per 5dcad39 §2.5.k Q_D POSIX-inertia
+# — POSIX mkdir(2) is the vendor primitive.]
 #
 # POSIX mkdir(2). Creates the directory at path. Idempotent-mode
 # discrimination (mkdir vs mkdir -p) is species-refinement scope;
@@ -329,7 +357,7 @@ fs_list(p: path) -> imperfect { \ }
 #   EACCES, EROFS).
 #
 # Body discharges at the realisation boundary (std::fs::create_dir).
-fs_mkdir(p: path) -> imperfect { \ }
+mkdir(p: path) -> imperfect { \ }
 
 # ============================================================
 # §4 The bilaterals (Rice-safe at whole-tick altitude)
@@ -367,30 +395,34 @@ path_admissible(p: path) -> verdict { \ }
 # can distinguish).
 path_exists(p: path) -> verdict { \ }
 
-# === writable predicate ===
+# === path_writable predicate ===
+#
+# [Note: renamed from `writable` per 5dcad39 shard-consistency —
+# matches sibling `path_admissible` / `path_exists` shard-internal
+# naming pattern; bilateral names its subject explicitly.]
 #
 # Bilateral verdict that a path is writable by the current
 # process. Per POSIX access(W_OK).
 #
-# For non-extant paths: writable iff the parent directory exists
-# AND is writable by the current process (fs_write would
+# For non-extant paths: path_writable iff the parent directory
+# exists AND is writable by the current process (write would
 # succeed to create).
 #
 # Rice-safe at whole-tick altitude: reads only byte-visible
 # permission bits + directory entries; bounded by the path's
 # depth.
 #
-# Splinter-pole: fs_write would succeed at this path.
+# Splinter-pole: write would succeed at this path.
 # Narcissus-pole: permission denied, filesystem read-only, path
 # parent missing.
-writable(p: path) -> verdict { \ }
+path_writable(p: path) -> verdict { \ }
 
 # === fs_well_formed composed bilateral ===
 #
 # THE LOAD-BEARING composed bilateral at @io/fs altitude. Composes:
 #
 #   1. path_admissible(p)
-#   2. path_exists(p) OR writable(p) — read-side OR write-side
+#   2. path_exists(p) OR path_writable(p) — read-side OR write-side
 #      admissibility per the calling action's intent.
 #
 # Sibling to @io/oci.oci_well_formed, @io/git.git_well_formed,
@@ -410,12 +442,12 @@ out @io/fs
 out path
 out file_metadata
 out dir_entry
-out fs_read
-out fs_write
-out fs_stat
-out fs_list
-out fs_mkdir
+out read
+out write
+out stat
+out readdir
+out mkdir
 out path_admissible
 out path_exists
-out writable
+out path_writable
 out fs_well_formed

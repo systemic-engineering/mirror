@@ -151,10 +151,10 @@ in @epistemologic/math/sheaf_laplacian
 #
 # Consumers (compose over this species):
 #   bootstrap/src/peer_persistence.rs
-#                             — Arc-2.3 collapse; composes acl_project
-#                               + section_at over this species +
-#                               @subject/visibility species + @kintsugi/
-#                               consent
+#                             — Arc-2.3 collapse; composes restrict
+#                               (peer-ACL specialization) + section_at
+#                               over this species + @subject/visibility
+#                               species + @kintsugi/consent
 #   @spectral/signature       — per peer-persistence §12.2, the
 #                               signature reads over visibility-
 #                               filtered bauchladen; composes with
@@ -325,23 +325,21 @@ type section_at_stalk = {
 # stalks references the sub-list of Δ_F row/column blocks the ACL's
 # `targets` slot admits.
 #
-# Body discharges per-realisation. `\`-obligation-blocked per
-# [[feedback-craft-not-deliver]]; Arc-1 evaluator FLOOR pending.
-restrict(sheaf: ref, acl: ref) -> sheaf_restriction { \ }
-
-# === acl_project — peer-ACL projection of the home sheaf ===
+# THE peer-ACL projection primitive. Per shape proposal §2.2 example
+# rewritten under the 5dcad39 collapse [Note: acl_project collapsed
+# into restrict per Seam extended-scope etymology audit at 5dcad39
+# §2.5.a Q_C — the ACL-projection variant was CS-brain redundancy;
+# `restrict(F_home, peer_acl)` IS the geometric operation]:
 #
-# The peer_persistence.rs Arc-2.3 primitive. Per shape proposal §2.2
-# example:
-#
-#   sr := @subject/visibility/sheaf.acl_project(F_home, peer.acl)
+#   sr := @subject/visibility/sheaf.restrict(F_home, peer.acl)
 #
 # Given F_home (the home-repo sheaf; ref into the substrate's
-# cellular-sheaf carrier) and the peer's ACL, project the sub-sheaf
-# the peer's key admits. The peer_ref field of the returned
-# sheaf_restriction resolves through @subject.pack.members to the
-# subject_instance the ACL binds; the two-witness discipline is
-# discharged transitively.
+# cellular-sheaf carrier) and an ACL (typically the peer's ACL for
+# Arc-2.3 peer_persistence composition), project the sub-sheaf the
+# ACL admits. When the ACL is a peer's ACL, the peer_ref field of
+# the returned sheaf_restriction resolves through @subject.pack.
+# members to the subject_instance the ACL binds; the two-witness
+# discipline is discharged transitively.
 #
 # Per Alex 2026-07-14 SSH-signing design intent: the peer's key
 # material stays .git/mirror-side; @secrets / @secrets/sops discharge
@@ -349,13 +347,14 @@ restrict(sheaf: ref, acl: ref) -> sheaf_restriction { \ }
 # Fractal.Lens (the peer_ref field) is the POINTER, not the thing.
 #
 # Composes with @subject/visibility.filter at consumer altitude:
-# once acl_project returns the sheaf_restriction, section_at reads
+# once restrict returns the sheaf_restriction, section_at reads
 # the per-crystal projected value; filter narrows the bauchladen tray
 # to crystals whose section admits the viewer.
 #
-# Body discharges per-realisation. `\`-obligation-blocked. Arc-1
-# evaluator FLOOR pending; Arc-2.3 landing composes this over @io.
-acl_project(F_home: ref, peer_acl: ref) -> sheaf_restriction { \ }
+# Body discharges per-realisation. `\`-obligation-blocked per
+# [[feedback-craft-not-deliver]]; Arc-1 evaluator FLOOR pending;
+# Arc-2.3 landing composes this over @io.
+restrict(sheaf: ref, acl: ref) -> sheaf_restriction { \ }
 
 # === section_at — the section computation ===
 #
@@ -408,39 +407,46 @@ section_at(F_A_p: sheaf_restriction, crystal_ref: ref) -> section_at_stalk { \ }
 # Body discharges per-realisation. `\`-obligation-blocked.
 restriction_admissible(sr: sheaf_restriction) -> verdict { \ }
 
-# === section_computable — bilateral predicate ===
+# === section_admissible — bilateral predicate ===
 #
-# Discharges Pass iff the section_at_stalk was computed in bounded
-# time under the section_at Rice-safe bound above. Two sub-checks:
+# [Note: renamed from section_computable per Seam extended-scope
+# etymology audit at 5dcad39 §2.5.b — `_computable` imported CS/
+# computability-theory baggage; `_admissible` preserves the
+# substrate geometric reading ("the ACL admits the stalk") AND
+# matches the landed 15+ bilateral suffix pattern per AGENTS.md
+# §7.5.]
+#
+# Discharges Pass iff the section_at_stalk is admissible under the
+# section_at Rice-safe bound above — i.e., the ACL admits the
+# crystal's stalk, so a section can be computed. Two sub-checks:
 #
 #   1. sheaf_ref resolves to a sheaf_restriction whose
 #      restriction_admissible passes (transitively verifies the
 #      restriction context).
 #
 #   2. crystal_ref's stalk is a member of sheaf_ref's
-#      admitted_stalks (the section IS computable — the ACL admits
-#      the crystal's stalk; a section over a non-admitted stalk is
-#      NOT computable at substrate altitude and returns pending-
-#      boundary per @kintsugi/consent Partial semantics).
+#      admitted_stalks (the ACL admits the crystal's stalk; a
+#      section over a non-admitted stalk is NOT admissible at
+#      substrate altitude and returns pending-boundary per
+#      @kintsugi/consent Partial semantics).
 #
 # Fail iff either sub-check fails. Rice-safe at whole-tick altitude:
 # reads only byte-visible state (transitive restriction_admissible
 # state; stalk-set membership check).
 #
-# Load-bearing structural claim: section_computable Pass is the
+# Load-bearing structural claim: section_admissible Pass is the
 # substrate-decl form of "the peer's ACL admits this crystal." A
-# section that is NOT computable is a substrate-decl refusal of the
+# section that is NOT admissible is a substrate-decl refusal of the
 # read, not an error — the peer's visibility scope at this crystal is
 # genuinely empty under the restriction.
 #
 # Body discharges per-realisation. `\`-obligation-blocked.
-section_computable(s: section_at_stalk) -> verdict { \ }
+section_admissible(s: section_at_stalk) -> verdict { \ }
 
 out @subject/visibility/sheaf
 out sheaf_restriction
 out section_at_stalk
 out restrict
-out acl_project
 out section_at
 out restriction_admissible
-out section_computable
+out section_admissible
