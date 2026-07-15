@@ -26,6 +26,7 @@
 //! run with `--test-threads=1`.
 
 pub mod action_cache;
+pub mod apply_h;
 pub mod ast;
 pub mod cholesky;
 pub mod crystallize;
