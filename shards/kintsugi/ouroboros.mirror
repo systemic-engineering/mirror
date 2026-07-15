@@ -1,0 +1,576 @@
+in @prism
+in @meta
+in @glass
+in @kintsugi
+in @code/rust/materialize
+in @fate/tournament
+in @io
+in @mirror/bench
+
+# @kintsugi/ouroboros — the substrate mends its own Rust with mirror.
+#
+# Species under @kintsugi. Every verifiable line of bootstrap/src/*.rs
+# BUSINESS_LOGIC collapses into shards/*.mirror shard body composing
+# @io. Loop invariant: monotone descent per @mirror/bench's
+# `monotone_non_increasing` template extended to four conjuncts —
+# rust_LOC ↓, test_pass_rate ↑, io_violations ↓, sbec ↑ (shard-body-
+# executable-coverage; the fraction of substrate-decl'd action bodies
+# the evaluator can dispatch).
+#
+# === Alex Wolf 2026-07-14 in-transcript verbatim naming ===
+#
+# > "What if we used this opportunity, when you return, to look at the
+# > @kintsugi ouroborous? The one that begins to collapse the @code/rust
+# > of the compiler into @code/mirror? Every verifiable line of Rust
+# > collapses into mirror."
+#
+# === Alex Wolf 2026-07-15 in-transcript verbatim scale claim ===
+#
+# > "we ship with @../StageFreight/ the executable docker image that
+# > you can just drop into your CI and that mirror-fies your CI
+# > pipeline. That's what spectral.engineer becomes. A ready-to-deploy-
+# > and-integrate pipeline. And that's why it's so important we don't
+# > take shortcuts. We need to nail this landing. This is non-joking
+# > civilization-scale infrastructure. And this bit is all still
+# > APACHE2."
+#
+# The mirror substrate (this repo) stays Apache-2.0 through the
+# ouroboros arc. StageFreight is the downstream shipping mechanism
+# (AGPL-3.0-only external CLI); the mirror docker image the arc
+# produces inherits Apache-2.0. Alex's "this bit is all still APACHE2"
+# names the substrate license discipline the arc must preserve.
+#
+# === Substrate-already-had-the-word ===
+#
+# The word `ouroboros` appears in 20+ landed shards + math docs prior
+# to this species-decl (per Taut #108 scout §D1 grep verdict, ~55th
+# instance since Alex named the discipline). Load-bearing prior sites:
+#
+#   shards/mirror/bench.mirror:37-74      "the ouroboros bites:
+#                                           kintsugi eats the Rust tests"
+#                                           (2026-07-01; Track J
+#                                           kintsugi-on-Rust cascade)
+#   shards/mirror/docs.mirror:24-134      "the cleanup ouroboros loop
+#                                           IS @kintsugi at the docs
+#                                           altitude"
+#   shards/kintsugi/fracture/dark_count_monotone.mirror:15
+#                                          "Tick 41 / first ouroboros
+#                                           bite"
+#   shards/kintsugi/fracture/cold_compile_within_tolerance.mirror:12
+#                                          "Tick 43 / second ouroboros
+#                                           bite"
+#   shards/spectral.mirror:25-84          "the ouroboros pipeline"
+#                                           (family docblock)
+#   shards/io/algebra.mirror:63           "substrate-decl-on-Nix-on-OCI-
+#                                           on-substrate ouroboros"
+#   shards/cyberpunk.mirror:229           "ouroboros loop; peer at
+#                                           inference-altitude"
+#
+# Two-tick discipline honoured: readable name `@kintsugi/ouroboros`
+# over foundational alternatives (`@kintsugi/self-compile-collapse`,
+# `@kintsugi/compiler-mending`). The word instance count is decisive.
+#
+# === Ancestry chain ===
+#
+#   docs/specs/bootstrap-retirement-plan.md
+#     Reed 2026-05-21 + Alex 2026-06-04. Names the target topology
+#     the ouroboros arc realises: parser + hash + numerics + @io
+#     primitives + AST carriers + (A,H,D) evaluator stay FLOOR;
+#     everything else lifts to shard body.
+#
+#   docs/audits/2026-07-15-reed-substrate-dishonest-rust-extensions-
+#   during-gift-arc.md
+#     Seam audit of the 5 Rust extensions Reed authored 2026-07-14
+#     (coherence.rs, roomba.rs, roomba_walk_smoke.rs,
+#     spectral_signature.rs, peer_persistence.rs). Verdict:
+#     substrate-dishonest workaround for missing evaluator FLOOR.
+#     The substrate-honest response IS the ouroboros arc.
+#
+#   docs/scouts/2026-07-15-reed-rust-extension-migration-map.md
+#     Reed migration-map §6 sequence for Arc-1 (evaluator FLOOR) +
+#     Arc-2 (per-file collapses of the 5 extensions). §5 empirical
+#     grep verified zero matches for `fn eval | fn evaluate |
+#     fn exec_body | fn run_body | fn shard_dispatch | fn
+#     action_call | fn dispatch_action` across bootstrap/src/**/*.rs.
+#     The evaluator gap IS the load-bearing blocker.
+#
+#   docs/scouts/2026-07-15-taut-kintsugi-ouroboros-substrate-scout.md
+#     Taut #108 grep-first ratification. Extends Reed's finding across
+#     ~25 additional BUSINESS_LOGIC files. §C composition graph shows
+#     all 15 required carriers landed today; §F Mara-composition-
+#     readiness verdict = READY. §D4 four-conjunct monotone_ouroboros
+#     invariant with @mirror/bench template extension. §E surfaces
+#     10 Alex-adjudication items (A1-A10); this species-decl lands
+#     under Reed provisional per A1 (species-decl mint after Arc-1
+#     Tick 1.1-1.4; Tick 1.5 slot).
+#
+# === Composition surface (15 landed carriers per Taut §C) ===
+#
+#                     @kintsugi/ouroboros
+#                              |
+#          +-------------------+----------------------+
+#          |                   |                      |
+#      @kintsugi        @code/rust/materialize    @mirror/bench
+#      (family root)    (classifier binding)      (monotone template)
+#          |
+#          +-> @kintsugi/oscillate  (loop primitive)
+#          +-> @kintsugi/consent    (settle-or-pause; query_phi)
+#          +-> @kintsugi/morphism   (typed pre/post pair)
+#          +-> @kintsugi/fracture/dark_count_monotone
+#          +-> @kintsugi/fracture/cold_compile_within_tolerance
+#          +-> @kintsugi/store/git  (crystal persistence)
+#
+#      Cross-family composition targets:
+#          +-> @io                  (boundary discipline; FLOOR)
+#          +-> @io/stagefreight     (wire-protocol transport)
+#          +-> @mirror/store        (content-addressed crystal)
+#          +-> @mirror/index        (concept-graph observation)
+#          +-> @torus               (autopoietic closure at compile
+#                                    altitude)
+#          +-> @autopoietic         (self-maintenance predicate)
+#          +-> @fate/tournament     (Arc-3 collapse-order selection)
+#
+# === The classifier IS the ouroboros iterated ===
+#
+# Per Taut §D5: @code/rust/materialize.classify reads a Rust file's
+# AST and emits `partition = boundary | substrate` + `target`. The
+# ouroboros IS this classifier iterated. Each tick:
+#
+#   parse bootstrap/src/F.rs -> code/rust.ast
+#   d := declaration(F)
+#   m := @code/rust/materialize.classify(d)
+#   case m.partition of
+#     boundary  -> F IS FLOOR; stays; Seam sign-off if new.
+#     substrate -> F IS BUSINESS_LOGIC; target = m.target
+#                  body := propose_collapse(F, m.target)
+#                  apply @kintsugi/oscillate.active_pass with body
+#                  verify ouroboros_monotone
+#                  settle via @kintsugi/consent.query_phi
+#
+# === Arc structure (per Taut §D) ===
+#
+#   Arc-1  Evaluator FLOOR  (Seam-adjudicated substrate-floor work;
+#                            Ticks 1.1-1.5; this species-decl lands
+#                            at Tick 1.5)
+#   Arc-2  Per-file migration of Reed's 5 extensions
+#                           (hardcoded order per migration-map §6)
+#   Arc-3  Cross-file scale-out
+#                           (~25 BUSINESS_LOGIC files;
+#                            @fate/tournament ranks collapse order)
+#   Arc-4  Cross-@code/X scale-out
+#                           (python, typescript, gleam, elixir,
+#                            fortran; universal species-decl)
+#   Arc-5  StageFreight × downstream CI empirical propagation
+#                           (mirror docker image ships via
+#                            StageFreight; downstream CI verifies)
+#   Arc-6  Terminal recognition landing
+#                           (#R-mirror-kintsugi-shipped-as-
+#                            stagefreight-...)
+#
+# All action bodies below are `\`-obligation-blocked. The evaluator
+# FLOOR (Arc-1) discharges the shard-body-executable-coverage
+# threshold that lets these bodies dispatch; Arc-2..N discharge the
+# bodies one tick at a time.
+
+glass @kintsugi/ouroboros {
+  focus  ouroboros
+  project ouroboros
+  split  ouroboros
+  shift  ouroboros
+  settle ouroboros
+}
+
+# === Type carriers ===
+
+# collapse_target — one Rust file the arc considers for collapse.
+#
+# rust_file      substrate ref to a bootstrap/src/*.rs file. The
+#                arc's per-tick unit of consideration.
+# mirror_target  substrate ref to shards/*.mirror or new species
+#                that will host the collapsed shard body. Per
+#                @code/rust/materialize.classify.target: names the
+#                substrate altitude that subsumes the Rust form.
+# verifiable     bool. True iff the file has test-coverage on BOTH
+#                sides — the Rust side has landed tests AND the
+#                mirror target has shard-body-executable coverage
+#                the evaluator can dispatch. Per Taut §D6
+#                verifiability fitness metric. Non-verifiable
+#                targets defer to a later Arc-1 sub-tick.
+# irreducible   bool. True iff the file IS FLOOR (@io primitive,
+#                numerics kernel, AST carrier, parser, hash). NOT
+#                collapsible; stays as Rust; requires Seam sign-off
+#                if newly added post-arc-start per
+#                [substrate-floor:@io-boundary] marker discipline.
+#
+# Identity contract: two collapse_targets are equal iff all four
+# fields match by substrate ref-equality (rust_file, mirror_target)
+# and bool-equality (verifiable, irreducible).
+type collapse_target = {
+  rust_file:      ref,
+  mirror_target:  ref,
+  verifiable:     bool,
+  irreducible:    bool,
+}
+
+# ouroboros_state — the four-conjunct measurement snapshot at one
+# arc tick.
+#
+# Composes @mirror/bench.record via the four metrics the invariant
+# ouroboros_monotone reads. Per Taut §D4: the arc's monotone descent
+# extends @mirror/bench.monotone_non_increasing (three-conjunct) by
+# adding sbec as the fourth conjunct (the shard-body-executable-
+# coverage; only ascends as Arc-1 evaluator FLOOR + Arc-2..N per-
+# file collapses land).
+#
+# targets           the set of collapse_targets under consideration
+#                   at this tick. Includes all BUSINESS_LOGIC files
+#                   still hosted in Rust; excludes FLOOR files
+#                   (irreducible = true).
+# rust_loc          total lines of Rust in bootstrap/src/*.rs at
+#                   this tick. Descent condition: n+1 ≤ n. Ratchet.
+# test_pass_rate    fraction of green tests at this tick. Ascent
+#                   condition: n+1 ≥ n. Substrate collapses green
+#                   by MOVING green from Rust-hosted to shard-body-
+#                   hosted, not by breaking green.
+# io_violations     count of shard actions reaching non-@io surfaces
+#                   at this tick. Descent condition: n+1 ≤ n.
+#                   Initial value TBD at Arc-1 landing (first grep).
+# sbec              shard-body-executable-coverage: fraction of
+#                   substrate-decl'd action bodies the evaluator
+#                   can dispatch at this tick. Ascent condition:
+#                   n+1 ≥ n. Initial value 0 (Arc-1 evaluator
+#                   FLOOR does not yet exist). Arc-1 landing lifts
+#                   to > 0 (first dispatchable body).
+# arc               arc_id identifying which arc-phase the tick
+#                   belongs to (Arc-1 through Arc-6). Used by
+#                   the discriminator to select the appropriate
+#                   admissibility bilateral.
+#
+# Identity contract: two ouroboros_states are equal iff targets are
+# element-wise equal AND all four metrics match by numeric equality
+# AND arc matches by arc_id equality.
+type ouroboros_state = {
+  targets:         [collapse_target],
+  rust_loc:        int,
+  test_pass_rate:  float,
+  io_violations:   int,
+  sbec:            float,
+  arc:             arc_id,
+}
+
+# ouroboros_verdict — the discriminator's verdict at consent
+# altitude when the arc considers a proposed collapse.
+#
+# Specialises `verdict` (from @glass) at the ouroboros altitude:
+# the arc has four distinguishable outcomes the substrate names
+# with typed variants (rather than folding into pass |
+# partial(confidence) | failure(reason)).
+#
+# collapse_admissible                — the proposed collapse
+#                                       satisfies ouroboros_monotone
+#                                       AND verifiable_at_altitude;
+#                                       the arc applies the collapse
+#                                       at the next
+#                                       @kintsugi/oscillate.active_pass.
+# collapse_refused_boundary_violation — the collapse would move
+#                                        a FLOOR file into shard body
+#                                        (violates the (A,H,D)
+#                                        boundary discipline; the
+#                                        classifier misclassified);
+#                                        Seam sign-off required to
+#                                        override.
+# collapse_refused_monotone_violation — the collapse would violate
+#                                        the four-conjunct
+#                                        ouroboros_monotone invariant
+#                                        (e.g., breaks a test,
+#                                        increases io_violations,
+#                                        adds Rust LOC without
+#                                        commensurate deletion);
+#                                        refused at consent altitude
+#                                        via @kintsugi/consent.query_phi
+#                                        returning failure(reason).
+# collapse_pending_evaluator          — the collapse's target shard
+#                                        body cannot dispatch today
+#                                        because Arc-1 evaluator
+#                                        FLOOR has not lifted the
+#                                        required combinator surface;
+#                                        defers to a later Arc-1 sub-
+#                                        tick.
+type ouroboros_verdict = variant {
+  collapse_admissible
+  collapse_refused_boundary_violation
+  collapse_refused_monotone_violation
+  collapse_pending_evaluator
+}
+
+# === Prism block ===
+#
+# @kintsugi/ouroboros IS-A @prism at species altitude. Standard
+# five-op glass block per @kintsugi family-root pattern (matches
+# @kintsugi/consent's shape). All five ops parameterised over
+# ouroboros_state — the arc's tick-snapshot carrier.
+
+prism @kintsugi/ouroboros {
+  focus  ouroboros_state
+  project ouroboros_state
+  split  ouroboros_state
+  shift  ouroboros_state
+  settle ouroboros_state
+}
+
+# === Actions ===
+#
+# All bodies obligation-blocked (`\`). Discharge via Arc-1 evaluator
+# FLOOR + Arc-2..N per-file collapses. Per Reed migration-map §6:
+# Arc-1 Tick 1.5 mints this species-decl; Arc-2 Ticks 2.1-2.5
+# discharge bodies through the first 5 collapses; Arc-3+ scale-out.
+
+# collapse — one iteration of Rust → shard body + @io.
+#
+# Reads a collapse_target and emits the arc's per-target verdict.
+# Composes:
+#
+#   @code/rust/materialize.classify(target.rust_file)
+#     -> materialised_file (partition + target + verdict)
+#   case partition of
+#     boundary  -> collapse_refused_boundary_violation
+#     substrate -> propose shard body at target.mirror_target
+#                  compose @io primitives per the classifier's target
+#                  altitude grammar
+#                  invoke @kintsugi/consent.query_phi(morphism_set)
+#                  read verdict
+#                  emit collapse_admissible | collapse_refused_*
+#
+# Per Taut §D3: this action CANNOT dispatch before Arc-1 evaluator
+# FLOOR lands. Body stays obligation-blocked at species-decl mint;
+# discharges when Arc-2 Tick 2.1 empirically proves shard-body
+# dispatch on the first collapse target.
+collapse(target: collapse_target) -> ouroboros_verdict { \ }
+
+# verify_same_output — pre-cutover verification.
+#
+# Reads a Rust ref, a mirror ref, and a test ref; runs both sides
+# on the same test-inputs; emits the verdict on output equivalence.
+# The bilateral gate the arc pulls before each cutover: no collapse
+# lands without demonstrating the mirror shard body produces the
+# SAME output as the Rust it replaces.
+#
+# Per Reed migration-map §6 Tick 2.1: spectral_signature.rs migration
+# empirically discharges this action on the first collapse — the
+# Rust byte-hash IS the mirror byte-hash on identical inputs, per
+# @spectral/signature's determinism contract.
+#
+# Composes @mirror/bench.record (both sides observed under
+# instrumentation); test outputs collapse to content-addressed
+# crystals; equality check rides byte-equality on the crystal OIDs.
+#
+# Body obligation-blocked at species-decl mint; discharges at
+# Arc-2 Tick 2.1.
+verify_same_output(rust: ref, mirror: ref, test: ref) -> verdict { \ }
+
+# cutover — replace Rust with shard body at consumer-pull.
+#
+# The atomic replacement step. Requires collapse verified (per
+# verify_same_output) AND monotone invariant preserved (per
+# ouroboros_monotone). Composes:
+#
+#   git rm bootstrap/src/F.rs
+#   git add shards/target/*.mirror   (if new shard)
+#   verify: mirror build still self-hosts
+#   verify: @torus.autonomy(compiler, cutover_winding) discharges
+#           (per Taut §D11 — every cutover that still produces a
+#            self-compiling compiler IS one longitude traversal)
+#   emit verdict
+#
+# The cutover boundary IS the arc's @kintsugi/consent.query_phi
+# threshold at ouroboros altitude. A cutover that would break
+# self-compilation returns failure(reason); the arc pauses; the
+# metalogue bridge escalates via @kintsugi/consent.emit_to_metalogue.
+#
+# Body obligation-blocked; discharges at Arc-2 Tick 2.1.
+cutover(target: collapse_target) -> verdict { \ }
+
+# ouroboros_step — one atomic collapse cycle.
+#
+# The composed step: collapse + verify_same_output + cutover in
+# sequence. Reads an ouroboros_state at tick n; emits the
+# ouroboros_state at tick n+1 with:
+#
+#   targets            updated: the just-collapsed target removed;
+#                       may add new candidates surfaced by the
+#                       reveal-during-collapse.
+#   rust_loc           decremented by the collapsed file's LOC.
+#   test_pass_rate     equal or greater (per verify_same_output
+#                       gate).
+#   io_violations      equal or less (per composition-only
+#                       discipline).
+#   sbec               incremented: one more shard body now
+#                       dispatchable.
+#   arc                unchanged (arc advances at inter-tick
+#                       boundaries, not per-step).
+#
+# The step IS the arc's per-tick unit. Composes:
+#
+#   @kintsugi/oscillate.active_pass on the arc's morphism_set
+#   @mirror/bench.record             on the pre/post state snapshots
+#   @kintsugi/consent.query_phi       on the candidate morphism_set
+#   @kintsugi/consent.settle_or_pause on the query_phi verdict
+#
+# Per Taut §D11: each ouroboros_step that still produces a
+# self-compiling compiler IS one traversal along the longitude
+# winding of the compiler's torus at compile altitude. The
+# autopoietic closure predicate discharges tick-by-tick.
+#
+# Body obligation-blocked; discharges cumulatively across Arc-2..N.
+ouroboros_step(state: ouroboros_state) -> ouroboros_state { \ }
+
+# === Bilateral predicates ===
+#
+# The arc's admissibility discipline. Each predicate returns
+# `verdict` per @glass; composes into the ouroboros_verdict variant
+# at consent altitude.
+#
+# Per Taut §E A7 (Alex-adjudication surfaced): four-conjunct
+# ouroboros_monotone lands as ONE composed bilateral with FOUR
+# sub-predicates (matching StageFreight substrate-decl pattern for
+# stagefreight_addressable). Reed provisional per migration-map:
+# sub-predicates named at species altitude; composition gate lands
+# at Arc-1 Tick 1.5 companion property shard mint (@epistemologic/
+# property/ouroboros_monotone).
+
+# collapse_admissible — Foerster-admissible under ouroboros_monotone.
+#
+# The arc's per-tick admissibility gate at consent altitude. Reads
+# before/after ouroboros_states; emits the verdict on whether the
+# candidate step preserves the four-conjunct invariant AND satisfies
+# the Foerster autopoietic closure predicate at compile-altitude.
+#
+# Composes:
+#
+#   ouroboros_monotone(before, after)              — four-conjunct
+#                                                     invariant.
+#   @autopoietic.autopoietic_closure_holds(compiler) — the substrate
+#                                                     still maintains
+#                                                     itself after
+#                                                     the step.
+#   @torus.autonomy(compiler, ouroboros_winding)    — the winding-
+#                                                     class traversal
+#                                                     preserves
+#                                                     regulation-of-
+#                                                     regulation.
+#
+# Returns:
+#
+#   pass                 — all three gates hold; the step is
+#                           collapse_admissible.
+#   partial(confidence)  — the monotone conjuncts hold but the
+#                           autopoietic gate is graded (e.g., the
+#                           compiler self-hosts but a downstream
+#                           consumer report is pending);
+#                           confidence carries the graded strength.
+#   failure(reason)      — one or more gates fail; the reason
+#                           carries WHICH gate (monotone conjunct,
+#                           autopoietic closure, or torus autonomy).
+#
+# Body obligation-blocked; discharges when the composed predicate
+# lands at Arc-1 companion property shard.
+collapse_admissible(before: ouroboros_state, after: ouroboros_state) -> verdict { \ }
+
+# ouroboros_monotone — four-conjunct invariant per Taut §D4.
+#
+# THE LOAD-BEARING BILATERAL AT SUBSTRATE ALTITUDE.
+#
+# Per Taut §D4: `e^(n+1) < e^n` at ouroboros altitude expands to
+# four simultaneous conjuncts, all of which must hold:
+#
+#   rust_LOC(n+1)                    ≤ rust_LOC(n)
+# ∧ test_pass_rate(n+1)              ≥ test_pass_rate(n)
+# ∧ io_boundary_violations(n+1)      ≤ io_boundary_violations(n)
+# ∧ shard_body_executable_cov(n+1)   ≥ shard_body_executable_cov(n)
+#
+# The four conjuncts extend @mirror/bench.monotone_non_increasing's
+# three-conjunct template (per shards/mirror/bench.mirror:394) by
+# adding the sbec conjunct. Composition is substrate-honest: the
+# arc REUSES @mirror/bench's monotone template and adds one field;
+# no new invariant machinery invented.
+#
+# Per Taut §E A7 (Alex-adjudication): sub-predicates lifted as
+# separate bilaterals at companion property shard
+# @epistemologic/property/ouroboros_monotone; this action composes
+# them via `requires`:
+#
+#   rust_loc_non_increasing(before.rust_loc, after.rust_loc)
+#   test_pass_rate_non_decreasing(before.test_pass_rate,
+#                                 after.test_pass_rate)
+#   io_violations_non_increasing(before.io_violations,
+#                                after.io_violations)
+#   sbec_non_decreasing(before.sbec, after.sbec)
+#
+# Returns:
+#
+#   pass                 — all four conjuncts hold; the tick is
+#                           admissible.
+#   partial(confidence)  — three of four hold AND the fourth is
+#                           graded (e.g., test_pass_rate drops by
+#                           one flake but recovers on re-run);
+#                           confidence carries the graded conjunct's
+#                           magnitude.
+#   failure(reason)      — one or more conjuncts fail hard;
+#                           reason carries the failing conjunct(s).
+#
+# Body obligation-blocked; discharges at Arc-1 Tick 1.5 companion
+# property shard.
+ouroboros_monotone(before: ouroboros_state, after: ouroboros_state) -> verdict { \ }
+
+# verifiable_at_altitude — target can collapse without evaluator
+# FLOOR discharge.
+#
+# Per Taut §D3: not every BUSINESS_LOGIC file can collapse before
+# Arc-1 evaluator FLOOR lands. This predicate reads a
+# collapse_target and emits whether the target's mirror_target has
+# sufficient shard-body-executable-coverage for the collapse to
+# dispatch today.
+#
+# Rice-safe check via composition:
+#
+#   test-coverage      does target.rust_file have landed tests?
+#                       (per @mirror/store crystal query)
+#   @io_composability  does target.mirror_target compose ONLY over
+#                       @io primitives + Arc-1-dispatched combinators?
+#                       (per @io/algebra membership check)
+#
+# The check does not run halting-problem-hard analysis; it reads
+# empirical crystal presence (test coverage) + syntactic composition
+# check (@io membership). Both are decidable in bounded time.
+#
+# Returns:
+#
+#   pass                 — target has test-coverage AND
+#                           @io-composability; the collapse is
+#                           verifiable at the current arc altitude.
+#   partial(confidence)  — test-coverage present but partial (e.g.,
+#                           only smoke tests, not full property
+#                           coverage); confidence carries the
+#                           coverage magnitude.
+#   failure(reason)      — test-coverage missing OR mirror_target
+#                           composes over combinators the Arc-1
+#                           evaluator has not yet lifted; reason
+#                           carries which failure.
+#
+# Body obligation-blocked; discharges at Arc-2 Tick 2.1 when the
+# first empirical verification runs.
+verifiable_at_altitude(target: collapse_target) -> verdict { \ }
+
+# === Exports ===
+
+out @kintsugi/ouroboros
+out collapse_target
+out ouroboros_state
+out ouroboros_verdict
+out collapse
+out verify_same_output
+out cutover
+out ouroboros_step
+out collapse_admissible
+out ouroboros_monotone
+out verifiable_at_altitude
