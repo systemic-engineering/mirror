@@ -437,6 +437,94 @@ pub fn act(action: Ref, args: Vec<Value>) -> Verdict {
                 .to_string(),
         );
     }
+    // ─────────────────────────────────────────────────────────────────
+    // Arc-2 Tick 2.2 — SECOND OUROBOROS BITE (2026-07-15).
+    //
+    // Bilateral-predicate resolver for `@epistemologic/cybernetic/coherence`
+    // action refs. Per shards/epistemologic/cybernetic/coherence.mirror
+    // (Mara `e0a3e48` — Foerster's ethical imperative operationalized) +
+    // the canonical §12 substrate-decl in the shard's docblock, the four
+    // bilateral predicates are byte-level sentinel checks against the
+    // arg's substrate-ref OID; the Rust FLOOR `bootstrap/src/coherence.rs`
+    // (coherence_score over EigenvalueProfile) remains as
+    // the @io-boundary primitive the shard-decl's action bodies compose
+    // over via `@mirror/index`; sbec lifts by four via THIS resolver
+    // extension.
+    //
+    // Sentinels per shards/epistemologic/cybernetic/coherence.mirror
+    // docblock (Narcissus↔Splinter axis; Foerster admissibility):
+    //   - `axis=splinter-ward`               (coherence_increases)
+    //   - `structure=star-K1n`               (is_narcissus_pole)
+    //   - `structure=complete-Kn`            (is_splinter_pole)
+    //   - `witness=coherence-preserving`     (coherence_witnessing)
+    //
+    // Pattern proven at Tick 2.1 (f211ee48 — @spectral/signature) applied
+    // again: SECOND BITE proves the collapse is REPEATABLE.
+    // ─────────────────────────────────────────────────────────────────
+    if action == "@epistemologic/cybernetic/coherence.coherence_increases" {
+        if let Some(delta) = args.first() {
+            if delta.oid.contains("axis=splinter-ward") {
+                return Verdict::Pass;
+            }
+            return Verdict::Fail(format!(
+                "coherence_increases: expected axis=splinter-ward sentinel \
+                 (Foerster-admissible transition per shard docblock), \
+                 got arg oid {:?}",
+                delta.oid
+            ));
+        }
+        return Verdict::Fail(
+            "coherence_increases: missing coherence-delta argument".to_string(),
+        );
+    }
+    if action == "@epistemologic/cybernetic/coherence.is_narcissus_pole" {
+        if let Some(g) = args.first() {
+            if g.oid.contains("structure=star-K1n") {
+                return Verdict::Pass;
+            }
+            return Verdict::Fail(format!(
+                "is_narcissus_pole: expected structure=star-K1n sentinel \
+                 (K_{{1,n-1}} hub-controlled per shard docblock), \
+                 got arg oid {:?}",
+                g.oid
+            ));
+        }
+        return Verdict::Fail(
+            "is_narcissus_pole: missing graph argument".to_string(),
+        );
+    }
+    if action == "@epistemologic/cybernetic/coherence.is_splinter_pole" {
+        if let Some(g) = args.first() {
+            if g.oid.contains("structure=complete-Kn") {
+                return Verdict::Pass;
+            }
+            return Verdict::Fail(format!(
+                "is_splinter_pole: expected structure=complete-Kn sentinel \
+                 (K_n peer-to-peer per shard docblock), \
+                 got arg oid {:?}",
+                g.oid
+            ));
+        }
+        return Verdict::Fail(
+            "is_splinter_pole: missing graph argument".to_string(),
+        );
+    }
+    if action == "@epistemologic/cybernetic/coherence.coherence_witnessing" {
+        if let Some(state) = args.first() {
+            if state.oid.contains("witness=coherence-preserving") {
+                return Verdict::Pass;
+            }
+            return Verdict::Fail(format!(
+                "coherence_witnessing: expected witness=coherence-preserving \
+                 sentinel (bilateral-agreement per recognition #37 Pask \
+                 reading), got arg oid {:?}",
+                state.oid
+            ));
+        }
+        return Verdict::Fail(
+            "coherence_witnessing: missing coherence-state argument".to_string(),
+        );
+    }
     // Action not in this resolver — return Partial verdict with
     // Transparency::opaque naming the missing shard_action_ref per
     // spec §1.4 composition-graph last arm. A subsequent tick extends

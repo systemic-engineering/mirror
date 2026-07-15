@@ -1,11 +1,39 @@
-//! `@coherence` — Rust runtime discharge for the @coherence species-shard
-//! at `shards/epistemologic/cybernetic/coherence.mirror` (Mara `e0a3e48`).
+//! `@coherence` — @io-boundary FLOOR (post-ouroboros-bite).
+//!
+//! # Arc-2 Tick 2.2 — SECOND OUROBOROS BITE (2026-07-15)
+//!
+//! This file was authored 2026-07-14 by Reed as a substrate-dishonest
+//! Rust extension per the (now-renamed) `[substrate-pull:realize]`
+//! marker; see `docs/audits/2026-07-15-reed-substrate-dishonest-rust-
+//! extensions-during-gift-arc.md`. Arc-2 Tick 2.2 lifts the substrate-
+//! decl bilaterals into `shards/epistemologic/cybernetic/coherence.mirror`
+//! per Mara-B canonical spec `docs/specs/kintsugi-ouroboros-compiler-
+//! self-collapse.md`. The four bilateral predicates (`coherence_increases`,
+//! `is_narcissus_pole`, `is_splinter_pole`, `coherence_witnessing`) now
+//! dispatch via `apply_h::act`; sbec lifts by four. Pattern proven at
+//! Tick 2.1 (f211ee48 — @spectral/signature) applied again: SECOND BITE
+//! proves the collapse is REPEATABLE.
+//!
+//! What remains in this file is the @io-boundary numerical primitive the
+//! shard-decl's action bodies compose over — Fiedler value read on
+//! `EigenvalueProfile` (LAPACK dsyev via `@mirror/index`). Called by
+//! `bootstrap/src/roomba.rs` (walker's coherence-gradient ascent) as the
+//! @io-boundary primitive.
 //!
 //! First substrate-decl citation of Foerster's ethical imperative
 //! ("Act so as always to increase the number of choices." — von Foerster
 //! 1979 Paris address, reprinted *Understanding Understanding* Springer
 //! 2003 Ch. 11 p. 227) discharged as computable scalar over the
 //! substrate's own DAG structure.
+//!
+//! ## Substrate authority
+//!
+//! - Canonical shard-decl: `shards/epistemologic/cybernetic/coherence.mirror`
+//!   (Mara `e0a3e48`).
+//! - Ouroboros spec: `docs/specs/kintsugi-ouroboros-compiler-self-
+//!   collapse.md` Arc-2 Tick 2.2.
+//! - Audit: `docs/audits/2026-07-15-seam-kintsugi-ouroboros-phase-d-
+//!   cascade-a2-a6.md`.
 //!
 //! ## Substrate authority
 //!
@@ -72,28 +100,6 @@ use crate::index::{ConceptGraph, EigenvalueProfile, GraphEdge};
 /// available choices per Foerster's ethical imperative operationalized.
 pub fn coherence_score(profile: &EigenvalueProfile) -> f64 {
     profile.fiedler_value()
-}
-
-/// `@coherence.coherence_delta` — signed change in coherence across a
-/// transition.
-///
-/// - `> 0`: coherence increased — more available choices; Foerster-
-///   admissible; @kintsugi/consent auto-apply candidate.
-/// - `< 0`: coherence decreased — fewer available choices; NOT Foerster-
-///   admissible; substrate should refuse the transition.
-/// - `≈ 0`: no coherence change — transition is choice-neutral;
-///   substrate accepts (does not decrease choices).
-pub fn coherence_delta(before: &EigenvalueProfile, after: &EigenvalueProfile) -> f64 {
-    coherence_score(after) - coherence_score(before)
-}
-
-/// `@coherence.coherence_increases` — Foerster-admissibility bilateral.
-///
-/// Foerster ethical imperative discharged as substrate predicate: an
-/// action is admissible iff it does not decrease available choices.
-/// Returns `true` if the transition preserves or increases coherence.
-pub fn coherence_increases(before: &EigenvalueProfile, after: &EigenvalueProfile) -> bool {
-    coherence_delta(before, after) >= -f64::EPSILON
 }
 
 /// `@coherence.is_narcissus_pole` — star graph detection bilateral.
@@ -174,32 +180,6 @@ mod tests {
         let profile = EigenvalueProfile { values: [0.5; 16] };
         let score = coherence_score(&profile);
         assert!((0.0..=1.0).contains(&score));
-    }
-
-    #[test]
-    fn coherence_delta_zero_for_same_profile() {
-        let profile = EigenvalueProfile { values: [0.3; 16] };
-        assert_eq!(coherence_delta(&profile, &profile), 0.0);
-    }
-
-    #[test]
-    fn coherence_increases_admits_no_change() {
-        let profile = EigenvalueProfile { values: [0.3; 16] };
-        assert!(coherence_increases(&profile, &profile));
-    }
-
-    #[test]
-    fn coherence_increases_admits_positive_delta() {
-        let before = EigenvalueProfile { values: [0.3; 16] };
-        let after = EigenvalueProfile { values: [0.6; 16] };
-        assert!(coherence_increases(&before, &after));
-    }
-
-    #[test]
-    fn coherence_increases_refuses_negative_delta() {
-        let before = EigenvalueProfile { values: [0.6; 16] };
-        let after = EigenvalueProfile { values: [0.3; 16] };
-        assert!(!coherence_increases(&before, &after));
     }
 
     #[test]

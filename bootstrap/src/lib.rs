@@ -3790,6 +3790,26 @@ fn cmd_beam_act(shard_path: &str, action: &str, args_tail: &[&str], _ctx: &Ctx) 
             "@spectral/signature.signature_composition_honest" => vec![apply_h::Value {
                 oid: "rolling-signature-cli:composition=song-emission".to_string(),
             }],
+            // Arc-2 Tick 2.2 (2026-07-15) — SECOND OUROBOROS BITE. The
+            // four bilateral predicates from shards/epistemologic/
+            // cybernetic/coherence.mirror (Mara `e0a3e48`) synthesize
+            // their substrate-decl'd sentinels so the empirical CLI
+            // target (`mirror beam act @epistemologic/cybernetic/
+            // coherence coherence_increases` etc.) hits the Pass path
+            // without operator fixtures. Per shard docblock:
+            // Narcissus↔Splinter axis; Foerster admissibility.
+            "@epistemologic/cybernetic/coherence.coherence_increases" => vec![apply_h::Value {
+                oid: "coherence-delta-cli:axis=splinter-ward".to_string(),
+            }],
+            "@epistemologic/cybernetic/coherence.is_narcissus_pole" => vec![apply_h::Value {
+                oid: "graph-cli:structure=star-K1n".to_string(),
+            }],
+            "@epistemologic/cybernetic/coherence.is_splinter_pole" => vec![apply_h::Value {
+                oid: "graph-cli:structure=complete-Kn".to_string(),
+            }],
+            "@epistemologic/cybernetic/coherence.coherence_witnessing" => vec![apply_h::Value {
+                oid: "coherence-state-cli:witness=coherence-preserving".to_string(),
+            }],
             _ => Vec::new(),
         }
     } else {
