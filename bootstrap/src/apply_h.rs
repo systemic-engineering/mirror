@@ -846,6 +846,116 @@ pub fn act(action: Ref, args: Vec<Value>) -> Verdict {
                 e
             )),
         }
+    } else if action == "@io/fs.mutate_at" {
+        // ─────────────────────────────────────────────────────────────
+        // Bridge α landing (Tick 2, 2026-07-15) — position-aware source-
+        // file mutation per spec §3.7 + §4.2. Autopoietic loop step 7
+        // discharge: projects crystallized inferences back to source at
+        // the byte-range where the `\` fracture originated.
+        //
+        // Args (positional per arg-oid-as-payload convention):
+        //   [0] path       — target file path (arg oid IS the path)
+        //   [1] position   — source_position serialization
+        //                    "byte_offset=<N>,byte_length=<M>[,...]"
+        //                    extra keys (file/line/col) are informational
+        //                    passthroughs; only byte_offset + byte_length
+        //                    are load-bearing for splice precision.
+        //   [2] replacement — replacement bytes (arg oid IS the bytes)
+        //
+        // POSIX-atomic write via write-to-temp-sibling + rename per @io/
+        // fs.write LANDED discipline; no partial-mutation states visible
+        // via stat.
+        //
+        // L(ϕ) contribution (per spec §5.5.5 REED-INLINE-6):
+        //   L(ϕ) = 0                    when replacement.len() ==
+        //                                pos.byte_length AND refinement
+        //                                predicates carry across.
+        //   L(ϕ) = Θ(byte-count-drift +
+        //          predicate-drop-count)  otherwise.
+        //
+        // [substrate-floor:@io-boundary] The @io/fs boundary at which
+        // autopoietic-loop tension discharges to source bytes on disk.
+        // Audit-cite docs/audits/2026-07-15-seam-autopoietic-loop-
+        // phase-d.md (55dbf20). Signed-off-by: Seam.
+        // ─────────────────────────────────────────────────────────────
+        if args.len() < 3 {
+            return Verdict::Fail(format!(
+                "@io/fs.mutate_at: expected (path, position, replacement), got {} args",
+                args.len()
+            ));
+        }
+        let path = args[0].oid.clone();
+        let position_str = &args[1].oid;
+        let replacement = args[2].oid.as_bytes();
+
+        let (byte_offset, byte_length) = match parse_source_position(position_str) {
+            Ok(pair) => pair,
+            Err(e) => {
+                return Verdict::Fail(format!(
+                    "@io/fs.mutate_at: invalid source_position {:?}: {}",
+                    position_str, e
+                ))
+            }
+        };
+
+        let contents = match std::fs::read(&path) {
+            Ok(b) => b,
+            Err(e) => {
+                return Verdict::Fail(format!(
+                    "@io/fs.mutate_at: read failed for {}: {}",
+                    path, e
+                ))
+            }
+        };
+
+        if byte_offset
+            .checked_add(byte_length)
+            .map(|end| end > contents.len())
+            .unwrap_or(true)
+        {
+            return Verdict::Fail(format!(
+                "@io/fs.mutate_at: position [{}, {}) out of range for {}-byte file {}",
+                byte_offset,
+                byte_offset.saturating_add(byte_length),
+                contents.len(),
+                path
+            ));
+        }
+
+        let mut new_contents =
+            Vec::with_capacity(contents.len().saturating_sub(byte_length) + replacement.len());
+        new_contents.extend_from_slice(&contents[..byte_offset]);
+        new_contents.extend_from_slice(replacement);
+        new_contents.extend_from_slice(&contents[byte_offset + byte_length..]);
+
+        // POSIX-atomic: write-to-temp-sibling + rename. The temp path
+        // lives in the same directory so the rename crosses no mount
+        // boundary (rename(2) is atomic within a single filesystem).
+        let path_obj = std::path::Path::new(&path);
+        let parent = path_obj.parent().unwrap_or(std::path::Path::new("."));
+        let file_name = path_obj
+            .file_name()
+            .and_then(|n| n.to_str())
+            .unwrap_or("mutate_at");
+        let temp_path = parent.join(format!(".{}.mutate_at.tmp", file_name));
+
+        if let Err(e) = std::fs::write(&temp_path, &new_contents) {
+            let _ = std::fs::remove_file(&temp_path);
+            return Verdict::Fail(format!(
+                "@io/fs.mutate_at: temp write failed at {:?}: {}",
+                temp_path, e
+            ));
+        }
+        match std::fs::rename(&temp_path, &path) {
+            Ok(()) => Verdict::Pass,
+            Err(e) => {
+                let _ = std::fs::remove_file(&temp_path);
+                Verdict::Fail(format!(
+                    "@io/fs.mutate_at: atomic rename failed ({:?} -> {}): {}",
+                    temp_path, path, e
+                ))
+            }
+        }
     } else if action == "@io/fs.write" {
         // ────────────────────────────────────────────────────────────
         // `mirror roomba --commit` end2end empirical proof (2026-07-15).
@@ -1110,6 +1220,55 @@ pub fn crystallize_and_persist(
     let object_path = objects_dir.join(&crystal.crystal_oid);
     std::fs::write(&object_path, crystal.payload_bytes())?;
     Ok(crystal)
+}
+
+/// Parse a `source_position` OID serialization into `(byte_offset, byte_length)`.
+///
+/// The @io/fs.mutate_at resolver receives its position argument as a
+/// `Value { oid: String }` (the dispatch surface's arg-as-payload
+/// convention). Bridge α uses this helper to decode the substrate-decl'd
+/// source_position record (per shards/glass.mirror extension
+/// 2026-07-15) into the two byte-precision fields the splice needs.
+///
+/// Serialization: comma-separated `key=value` pairs. Recognized keys:
+///   - `byte_offset` (required, usize)
+///   - `byte_length` (required, usize)
+///   - other keys (`file`, `line`, `col`) are accepted + ignored;
+///     informational only at the dispatch altitude.
+fn parse_source_position(s: &str) -> Result<(usize, usize), String> {
+    let mut byte_offset: Option<usize> = None;
+    let mut byte_length: Option<usize> = None;
+    for pair in s.split(',') {
+        let pair = pair.trim();
+        if pair.is_empty() {
+            continue;
+        }
+        let mut it = pair.splitn(2, '=');
+        let key = it.next().unwrap_or("").trim();
+        let val = it
+            .next()
+            .ok_or_else(|| format!("missing value for key {:?}", key))?
+            .trim();
+        match key {
+            "byte_offset" => {
+                byte_offset = Some(
+                    val.parse::<usize>()
+                        .map_err(|e| format!("byte_offset={:?} not a usize: {}", val, e))?,
+                )
+            }
+            "byte_length" => {
+                byte_length = Some(
+                    val.parse::<usize>()
+                        .map_err(|e| format!("byte_length={:?} not a usize: {}", val, e))?,
+                )
+            }
+            _ => { /* informational passthrough (file / line / col) */ }
+        }
+    }
+    Ok((
+        byte_offset.ok_or_else(|| "missing required key: byte_offset".to_string())?,
+        byte_length.ok_or_else(|| "missing required key: byte_length".to_string())?,
+    ))
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

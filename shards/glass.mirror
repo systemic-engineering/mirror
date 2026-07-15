@@ -111,6 +111,54 @@ type location = {
   span: (u32, u32),
 }
 
+# === source_position — byte-precision splice coordinate ===
+#
+# Refines @glass.location with byte_offset + byte_length for
+# position-aware source-file mutation. The bridge-α carrier for
+# @io/fs.mutate_at per docs/specs/autopoietic-inference-loop.md
+# §3.7 + §4.2 (Alex-ratified 2026-07-15 at 7181f5c).
+#
+# Placement rationale: @glass already carries where-in-source at
+# substrate altitude (see `location` immediately above). Byte-
+# precision splice needs the same file-reference vocabulary plus
+# byte_offset + byte_length for exact splice boundaries. Extending
+# @glass keeps parser output (per @meta.ast_location) and mutation
+# target (per @io/fs.mutate_at) sharing ONE substrate-altitude
+# concept of where-in-source — composition-only over the landed
+# carrier; zero new species mint.
+#
+# Alternative rejected 2026-07-15 (Alex adjudication of post-Seam-
+# Phase-D residue): minting a new species @code/mirror/materialize
+# was considered but rejected — adds altitude at the tick when Rust
+# FLOOR shrinks. Delightfully Boring: of course @glass carries
+# where-in-source.
+#
+# Field semantics:
+#   file        — substrate file reference (byte-equal to
+#                 location.file for the same fracture site)
+#   line / col  — human-readable coordinates for diagnostics + IDE
+#                 integration; informational passthrough at the
+#                 @io/fs.mutate_at altitude (splice does not consume
+#                 them; only byte_offset + byte_length are load-
+#                 bearing for byte-precision)
+#   byte_offset — byte position in the file where the splice begins
+#                 (inclusive)
+#   byte_length — number of bytes to replace (from byte_offset;
+#                 exclusive upper bound is byte_offset + byte_length)
+#
+# Round-trip / correctness contract: for a file whose length is L
+# at the moment of splice, the invariant `byte_offset + byte_length
+# ≤ L` MUST hold; the @io/fs.mutate_at resolver enforces this and
+# emits a failure verdict without touching the file otherwise (per
+# the POSIX-atomic write-to-temp + rename discipline).
+type source_position = {
+  file: ref,
+  line: u32,
+  col: u32,
+  byte_offset: u32,
+  byte_length: u32,
+}
+
 # === tick — the substrate's temporal-coordinate carrier ===
 #
 # A monotone temporal coordinate (a substrate-ref naming the position
@@ -400,6 +448,7 @@ type shard(altitude) = {
 out @glass
 out glass
 out location
+out source_position
 out tick
 out hole
 out opacity

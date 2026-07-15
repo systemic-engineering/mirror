@@ -297,6 +297,62 @@ read(p: path) -> imperfect { \ }
 # Body discharges at the realisation boundary.
 write(p: path, bytes: ref) -> imperfect { \ }
 
+# === mutate_at action ===
+#
+# Position-aware source-file mutation at a `\` fracture site.
+# Reads file bytes; splices `replacement` at `[byte_offset,
+# byte_offset + byte_length)`; rewrites the file POSIX-atomically
+# via write-to-temp-sibling + rename; preserves all surrounding
+# content byte-identically.
+#
+# The α bridge carrier per docs/specs/autopoietic-inference-loop.md
+# §3.7 + §4.2 (Alex-ratified 2026-07-15 at 7181f5c). Consumer:
+# bootstrap/src/apply_h.rs resolver arm writing crystallized
+# inferences back to source per the autopoietic-loop step 7
+# (project via @io/fs.mutate_at).
+#
+# Composes over: @glass.source_position (the carrier the position
+# argument shapes to per shards/glass.mirror extension
+# 2026-07-15).
+#
+# requires path_admissible(p): the path MUST be well-formed per
+#   POSIX pathname discipline.
+# requires position_well_formed(pos): the invariant
+#   `pos.byte_offset + pos.byte_length ≤ file_length_at_read_time`
+#   MUST hold. The resolver enforces this + emits `failure` without
+#   touching the file if violated.
+#
+# L(ϕ) contribution (per spec §5.5.4 rule 3 architectural gate):
+#   L(ϕ) = 0                          when replacement.len() ==
+#                                     pos.byte_length AND refinement
+#                                     predicates carry across (the
+#                                     equal-length lossless case).
+#   L(ϕ) = Θ(|byte-count-drift| +
+#          |predicate-drop-count|)    otherwise (length-changing or
+#                                     predicate-shedding splice).
+#
+# Per spec §5.5.5, bridge α is the substrate's most-scrutinized @io
+# boundary carrier — it is the discharge point where the entire
+# autopoietic loop's tension-resolution effort collapses into linear
+# bytes on disk. Multi-fracture batches SHOULD amortize to ONE
+# project step (one commit; one bridge-α crossing) rather than N
+# separate projects.
+#
+# Returns imperfect<ref, ref, ref>:
+# - success — mutation applied atomically; surrounding bytes
+#   byte-identical; file mode preserved (via std::fs::rename
+#   preserving inode metadata on POSIX).
+# - partial — mutation applied but with residual (e.g., file mode
+#   drift on non-POSIX filesystem; fsync failure without corruption).
+# - failure — mutation NOT applied; file bytes preserved (e.g.,
+#   path missing; position out of range; temp write failed; rename
+#   failed). POSIX-atomic invariant: no partial-mutation state
+#   visible via stat.
+#
+# Body discharges at the realisation boundary (std::fs::read +
+# std::fs::write + std::fs::rename on the Rust side).
+mutate_at(p: path, pos: source_position, replacement: bytes) -> imperfect { \ }
+
 # === stat action ===
 #
 # [Note: renamed from fs_stat per 5dcad39 §2.5.i Q_D POSIX-inertia
