@@ -1380,6 +1380,21 @@ Each candidate names a substrate-decl'd landing target; each
 ratification is empirical (not further-adjudicable). Alex names
 candidates now; Pack ratifies at empirical witness.
 
+**Post-cascade closing note (Seam Phase D-cascade A4 discharge,
+`docs/audits/2026-07-15-seam-kintsugi-ouroboros-phase-d-cascade-
+a4-recognition-candidates.md`, 9fb83a6).** A4 was initially triaged
+as Alex-adjudication ("recognition-naming is Alex's authority"). On
+re-adjudication Seam ratified: A4 is **discharged by construction**
+via (i) recognition NAMING already discharged at §0.1 Alex verbatim
++ §0.3 ancestry, (ii) Alex REJECTION-WINDOW authority preserved
+throughout dwelltime (soft-state per AGENTS.md 2026-06-10 dwelltime
+cascade), (iii) Pack RATIFICATION at empirical second-witness at
+named Arc ticks. The reading "Alex-nod-per-candidate-NOW" was the
+substrate-dishonest conflation of NAMING with RATIFICATION. Correct
+reading: candidates hold at candidate strength; no active Alex-nod
+needed until second-witness fires (Arc-1 Tick 1.3 for §6.2; Arc-2
+Tick 2.1 for §6.1; Arc-3+ for §6.3; Arc-6 for §6.4).
+
 ### §7.5 A5 — StageFreight license clarification
 
 **Question.** Per Taut §D7: mirror Apache-2.0; StageFreight
