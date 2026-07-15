@@ -17,7 +17,7 @@ in @mirror/bench
 # executable-coverage; the fraction of substrate-decl'd action bodies
 # the evaluator can dispatch).
 #
-# === Alex Wolf 2026-07-14 in-transcript verbatim naming ===
+# === Alex Wolf 2026-07-15 in-transcript verbatim naming ===
 #
 # > "What if we used this opportunity, when you return, to look at the
 # > @kintsugi ouroborous? The one that begins to collapse the @code/rust
@@ -489,8 +489,9 @@ collapse_admissible(before: ouroboros_state, after: ouroboros_state) -> verdict 
 # ∧ shard_body_executable_cov(n+1)   ≥ shard_body_executable_cov(n)
 #
 # The four conjuncts extend @mirror/bench.monotone_non_increasing's
-# three-conjunct template (per shards/mirror/bench.mirror:394) by
-# adding the sbec conjunct. Composition is substrate-honest: the
+# three-conjunct template (per shards/mirror/bench.mirror:40-54
+# template definition + shards/mirror/bench.mirror:363 action-decl)
+# by adding the sbec conjunct. Composition is substrate-honest: the
 # arc REUSES @mirror/bench's monotone template and adds one field;
 # no new invariant machinery invented.
 #

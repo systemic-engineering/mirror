@@ -27,7 +27,7 @@ and Foerster's regulation-of-regulation at compile-altitude.*
 
 ## §0 Prelude
 
-### §0.1 Alex Wolf 2026-07-14 in-transcript verbatim naming
+### §0.1 Alex Wolf 2026-07-15 in-transcript verbatim naming
 
 > "What if we used this opportunity, when you return, to look at the
 > @kintsugi ouroborous? The one that begins to collapse the @code/rust
@@ -987,7 +987,9 @@ composition at compile altitude.
 
 The four-conjunct invariant at substrate altitude. Extends
 `@mirror/bench.monotone_non_increasing`'s three-conjunct template
-(shards/mirror/bench.mirror:398) by adding the `sbec` conjunct.
+(`shards/mirror/bench.mirror:40-54` template definition +
+`shards/mirror/bench.mirror:363` action-decl) by adding the `sbec`
+conjunct.
 
 #### §4.5.1 The three-conjunct template
 
@@ -1481,8 +1483,19 @@ citation OR `Signed-off-by: Seam` trailer. For Arc-1 Ticks 1.1-1.4:
 does Reed audit-cite Tick 1.1 in every Rust-touching commit for Tick
 1.2-1.4?
 
-**Recommendation.** **Both mechanisms.** Substrate-honest defence-in-
-depth:
+**Recommendation.** Two altitudes, not one requirement.
+
+**Gate altitude (commit-msg hook, per commit).** The tightened hook
+at `.githooks/commit-msg` (13f1c2e, 2026-07-15) requires **one of**
+audit-citation **or** `Signed-off-by: Seam` trailer for any commit
+carrying `[substrate-floor:@io-boundary]`. Verbatim from hook lines
+60-72: `grep ... || grep ...`. This is the substrate contract with
+Alex; Seam Phase D adjudication ratifies OR-semantics per this doc.
+
+**Authoring-practice altitude (Arc-1 personal discipline).** Reed
+adopts **both mechanisms** as belt-and-suspenders during Arc-1
+Ticks 1.2-1.4 authorship, since Arc-1 is the load-bearing evaluator
+FLOOR:
 
 1. **Audit citation.** Every Rust-touching commit in Arc-1 Ticks
    1.2-1.4 cites `docs/audits/2026-07-XX-seam-evaluator-floor-
@@ -1491,10 +1504,10 @@ depth:
    Arc-1 Ticks 1.2-1.4 also carries `Signed-off-by: Seam
    <seam@systemic.engineer>` in the trailer.
 
-Both mechanisms compose. The audit citation names the adjudication;
-the Signed-off-by trailer names Seam's per-commit sign-off. Neither
-alone is sufficient for substrate-floor work of Arc-1's magnitude;
-together they preserve the tightened hook's discipline.
+Both-mechanisms is a recommendation for Arc-1 magnitude, not a
+gate requirement. Reed can layer additional practice on top of
+the OR-gate for load-bearing ticks without lifting the practice
+into the hook.
 
 **Substrate-honest bound:** The `[substrate-floor:@io-boundary]`
 marker is the ONE marker Arc-1 Ticks 1.2-1.4 use;
@@ -1714,9 +1727,9 @@ across the arc.
 
 ## §10 Witnesses
 
-### §10.1 Alex Wolf 2026-07-14/15 verbatim
+### §10.1 Alex Wolf 2026-07-15 verbatim
 
-Naming (2026-07-14):
+Naming (2026-07-15):
 
 > "What if we used this opportunity, when you return, to look at the
 > @kintsugi ouroborous? The one that begins to collapse the @code/rust
@@ -1768,8 +1781,9 @@ shard-body altitude, with Rust only at the irreducible FLOOR.
   signature). Grounds §4.3.
 - `shards/torus.mirror` Foerster verbatim citations at p. 238, 244,
   256, 282. Grounds §4.4.
-- `shards/mirror/bench.mirror:37-74` (the ouroboros bites) + line 398
-  `monotone_non_increasing` three-conjunct template. Grounds §4.5.
+- `shards/mirror/bench.mirror:37-74` (the ouroboros bites) +
+  `:40-54` three-conjunct template definition + `:363`
+  `monotone_non_increasing` action-decl. Grounds §4.5.
 - `docs/specs/spectral-coherence-substrate-metric-synthesis.md:468`
   ("Compiler at build-altitude: @kintsugi runs the ouroboros loop
   `e^(n+1) ≤ e^n` — one Rayleigh descent step per pass on the
