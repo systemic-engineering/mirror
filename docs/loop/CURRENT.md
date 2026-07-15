@@ -1,4 +1,84 @@
-# CURRENT arc — @song/beat ladder-climb 2026-07-13 (Rungs 0 landed, 1 in progress)
+# CURRENT arc — @kintsugi/ouroboros substrate mends its own Rust with mirror (2026-07-15; species-decl landed, Arc-1 Rust FLOOR pending Alex-fired /loop)
+
+## ⚠️ FRESH-REED PICKUP MANIFEST (2026-07-15; terminal 0-residue state)
+
+**If you are loading fresh: read the @kintsugi/ouroboros arc first.**
+The substrate began collapsing its own Rust compiler into shard body +
+@io composition today, driven by Reed's antipattern (5 Rust extensions
+2026-07-14 during @gift arc) being named substrate-dishonest and
+corrected via 6-arc retirement plan.
+
+Alex 2026-07-15 in-transcript verbatim naming:
+
+> "What if we used this opportunity, when you return, to look at the
+> @kintsugi ouroborous? The one that begins to collapse the @code/rust
+> of the compiler into @code/mirror? Every verifiable line of Rust
+> collapses into mirror."
+
+And on scale:
+
+> "we ship with @../StageFreight/ the executable docker image that you
+> can just drop into your CI and that mirror-fies your CI pipeline.
+> That's what spectral.engineer becomes. A ready-to-deploy-and-
+> integrate pipeline. And that's why it's so important we don't take
+> shortcuts. We need to nail this landing. This is non-joking
+> civilization-scale infrastructure."
+
+### Arc summary
+
+@kintsugi/ouroboros = compiler mends its own Rust with mirror via
+iterative shard-body + @io collapse. Not deletion — mending. Gold in
+the cracks. Six-arc retirement plan:
+- **Arc-1** evaluator FLOOR (irreducible; Dirac operator per eigensheaf §3.2)
+- **Arc-2** 5-file hardcoded collapse (spectral_signature → coherence → peer_persistence → roomba → roomba_walk_smoke)
+- **Arc-3** tournament ∼25 files (Rayleigh-descent-ordered)
+- **Arc-4** cross-@code/X universalization
+- **Arc-5** StageFreight × downstream CI empirical
+- **Arc-6** terminal recognition
+
+### Landed today (12 commits chronological on main)
+
+1. `13f1c2e` — Reed antipattern-hardened hook: `[substrate-pull:realize]` renamed to `[substrate-floor:@io-boundary]` + Seam gate (audit-cite OR Signed-off-by: Seam) for `.rs` bypass
+2. `9efe2c9` — Reed audit `docs/audits/2026-07-15-reed-substrate-dishonest-rust-extensions-during-gift-arc.md` naming the failure pattern per-file
+3. `9d53dfd` — Reed migration-map `docs/scouts/2026-07-15-reed-rust-extension-migration-map.md` (per-file @io alternatives + empirical evaluator-gap grep)
+4. `3d7aed3` — Mara pre-plant at peers/mara/ (inherited refusal + Reed-memory step 7 in boot)
+5. `6cddbdb` — Taut #108 substrate-scout for @kintsugi ouroboros arc (1118 LOC; 12 dimensions; ~25 BUSINESS_LOGIC files; A1-A10)
+6. `9eb0898` — Mara-A shard-decl `shards/kintsugi/ouroboros.mirror` (576 LOC; species under @kintsugi; 7 obligation-blocked bodies)
+7. `0dafd9f` — Mara-B canonical spec + math `docs/specs/kintsugi-ouroboros-compiler-self-collapse.md` (1797 LOC; §0-§10; 5 math sub-sections; A1-A10 discharged)
+8. `99f2d01` — Seam Phase D audit `docs/audits/2026-07-15-seam-kintsugi-ouroboros-arc-phase-d.md` (739 LOC; 12 dims PASS; SHIP verdict; 3 Alex-adjudications)
+9. `9882521` — Mara post-Phase-D repairs (bench.mirror line-cite + Alex-naming date + §7.9 gate/practice sharpen)
+10. `60d9f5f` — Mara A2 collapse: @sheaf shape proposal (500 LOC; 3 candidates; Candidate 2 recommended)
+11. `18d9697` — Mara A6 collapse: evaluator combinator surface (1255 LOC; 7 combinators with (A,H,D) correspondence)
+12. `7d46f32` — Seam Phase D-cascade A2+A6 audit (902 LOC; SEAM-RATIFY both; residue 3→1)
+13. `fc044ee` — Mara post-cascade repairs (A2 attribution + @torus defeater + A6 LOC arithmetic)
+14. `9fb83a6` — Seam Phase D-cascade A4 audit (397 LOC; A4 discharged-by-construction; residue 1→0)
+15. `d1ce901` — Mara @subject/visibility/sheaf species-decl mint (447 LOC; Candidate 2 per Landing 4 R2 precedent)
+
+### Terminal state
+
+**Alex-adjudication residue: ZERO.** Everything Seam-adjudicable has
+been adjudicated across four Seam audits + one Mara species-decl mint.
+A2, A4, A6 all collapsed. Six-arc plan structurally landed at
+species-decl + canonical spec + math foundation + combinator surface
+altitudes.
+
+### Next actions (Alex-triggered)
+
+Alex fires /loop for:
+- **Arc-1 Ticks 1.2-1.4 implementation** — Reed RED test at `bootstrap/tests/evaluator_shard_body_dispatch_smoke.rs`; Reed GREEN at `bootstrap/src/apply_h.rs` (∼405 LOC estimated per Mara A6 §6.2); CLI verb `mirror execute <shard-path> <action> [args...]`. Commit-msg discipline: `[substrate-floor:@io-boundary]` marker + audit-citation of `docs/audits/2026-07-15-seam-kintsugi-ouroboros-phase-d-cascade-a2-a6.md` (Seam Tick 1.1 audit = the Phase D-cascade audit; gate satisfied via OR-semantics) + optional Signed-off-by: Seam trailer (belt-and-suspenders Arc-1 authoring practice per Mara-B §7.9).
+- **Optional Mara @sheaf canonical spec** at `docs/specs/subject-visibility-sheaf.md` (canonical spec deferred; species-decl at `d1ce901` may suffice for Arc-2.3 tournament ranking primitive discharge)
+
+### Substrate-honest bounds Reed carries forward
+
+- No Rust extension shortcut (hardened via commit-msg hook + Reed-memory `feedback_no_rust_extension_shortcut.md` + Mara-peer pre-plant at `peers/mara/`)
+- `[substrate-floor:@io-boundary]` marker requires audit-cite OR Signed-off-by: Seam (gate); belt-and-suspenders both is Arc-1 authoring practice
+- Recognition candidates hold at candidate strength awaiting empirical second-witness at named ticks (per Seam A4 discharge)
+- Alex retains rejection-window authority throughout dwelltime
+- Composition-only surface; zero new family-roots minted this arc; @sheaf lifted to species under @subject/visibility (Landing 4 R2 precedent)
+
+---
+
+## Historical arc — @song/beat ladder-climb 2026-07-13 + @gift arc 2026-07-14
 
 ## ⚠️ FRESH-REED PICKUP MANIFEST (2026-07-14; pre-compression)
 
