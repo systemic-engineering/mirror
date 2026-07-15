@@ -1,0 +1,421 @@
+in @prism
+in @meta
+in @glass
+in @io
+
+# @io/fs — the POSIX filesystem @io species (mirror-altitude lift-
+# tick of the forward-promise at io.mirror 189-191).
+#
+# Sibling to @io/cargo (2026-06-05), @io/stagefreight (2026-06-23),
+# @io/oci (2026-06-24), @io/git (2026-06-24), @io/algebra
+# (2026-06-30), @io/crypto (2026-07-15; landed alongside this
+# tick per Seam §D9 REED-INLINE cascade). Same @io species shape
+# at the POSIX filesystem altitude: typed contract the mirror side
+# sees; opaque non-mirror body (kernel syscalls: open, read,
+# write, stat, readdir, mkdir, unlink) discharging at the
+# realisation boundary.
+#
+# === Landing metadata ===
+#
+# Landed 2026-07-15 by Mara as Landing 7 of the @secrets shape-
+# proposal sequence (companion audit: `docs/audits/2026-07-15-
+# seam-secrets-shape-proposal-phase-d-cascade.md` at 019ad8f,
+# ratifying Candidate 2 as Mara-mintable per @io/{cargo, git,
+# oci, stagefreight, algebra} precedent chain + @io/git lift-tick
+# precedent 2026-06-24 grounding Scenario A). Companion shape-
+# proposal at `docs/scouts/2026-07-15-mara-secrets-shape-
+# proposal.md` §5.5 step 7.
+#
+# === The lift-tick recognition ===
+#
+# `shards/io.mirror` 189-191 verbatim forward-promised this shard:
+#
+#   "@io/fs         POSIX filesystem surface (open / read / write /
+#                    stat / readdir). Lands when `@mirror/store`'s
+#                    git-backed implementation lifts its disk
+#                    surface."
+#
+# And io.mirror 380 verbatim (family-root's forward-promise
+# aggregate): "@io/fs, @io/git, @io/process: lift when the runtime
+# layer's disk / git / subprocess surfaces consume them." @io/git
+# lifted 2026-06-24 (commit 2801478 sibling); Mara-mintable per
+# @io family-root discipline. @io/fs discharges the disk-side
+# clause of the same forward-promise.
+#
+# The consumer that pulls @io/fs at this landing: Arc-2.3
+# peer_persistence.rs (bootstrap/src/peer_persistence.rs) via
+# @io/secrets.materialize's disk-write. Alex 2026-07-14 SSH-
+# signing design intent ("project visibility/private stuff onto
+# disk through the Peers key") IS a `@mirror/store` disk-surface
+# consumer per the forward-promise language.
+#
+# === Substrate-already-had-the-word citation chain ===
+#
+# The word `@io/fs` is substrate-decl'd across three altitudes
+# with the primitive already operationally present:
+#
+#   1. `shards/io.mirror` 189-191 + 380 verbatim — family-root
+#      forward-promise naming the POSIX filesystem primitives at
+#      species altitude.
+#
+#   2. `boot/std/io.mirror` (2026-06-01) — boot-floor grammar
+#      already declares open / close / read / write per the
+#      UNIX file-descriptor discipline (io.mirror 12-14 verbatim:
+#      "read / write / open / close").
+#
+#   3. `bootstrap/src/*.rs` — Rust bootstrap has been calling
+#      std::fs primitives since T1; the mirror-altitude species
+#      names the typed contract those Rust calls have been
+#      implicitly discharging.
+#
+# The ~62nd instance of [[feedback-substrate-already-had-the-
+# word]] on landing — POSIX filesystem primitives have been
+# operational since bootstrap era; this shard names the mirror-
+# altitude species that consumers already assumed existed.
+#
+# === Composition graph ===
+#
+# Parents (substrate-decl):
+#   @io                       — family-root; the boundary-with-non-
+#                               mirror discipline; five-op prism +
+#                               opacity + imperfect return shape.
+#
+# Consumers (compose over this species):
+#   @io/secrets               — key-gated projection; materialize
+#                               action writes ciphertext to disk
+#                               via fs_write; project action reads
+#                               ciphertext from disk via fs_read.
+#   @io/secrets/sops          — SOPS sub-species; sops_encrypt +
+#                               sops_decrypt read/write .sops.yaml
+#                               files via this species.
+#   @io/git                   — future re-route: git object
+#                               database read/write (currently
+#                               shell-bridged; future gitoxide
+#                               composition would pull this shard).
+#   @mirror/store             — git-backed storage the forward-
+#                               promise named as the pulling
+#                               consumer.
+#
+# === Cross-wall-kintsugi candidacy partition ===
+#
+# Per @io family-root discipline (io.mirror 80-92; glass-wall
+# insight): POSIX filesystem primitives are PERMANENT @io. Kernel-
+# managed file descriptors, blocking reads, filesystem-metadata
+# caching are structurally non-foldable into mirror altitude —
+# they stay in @io forever. No cross-wall-kintsugi candidacy at
+# this species; all sub-actions inherit permanent-@io status.
+#
+# === Related shards / specs ===
+#
+# - shards/io.mirror 189-191 + 380 (family-root forward-promise
+#   this shard discharges).
+# - boot/std/io.mirror (boot-floor read/write/open/close grammar;
+#   retained transitional).
+# - shards/io/git.mirror (sibling lift-tick precedent from
+#   2026-06-24; same forward-promise language governs both).
+# - shards/io/crypto.mirror (sibling lift-tick landed alongside
+#   this tick per Seam §D9).
+# - shards/io/secrets.mirror (primary consumer landed alongside
+#   this tick).
+# - docs/scouts/2026-07-15-mara-secrets-shape-proposal.md §5.5
+#   step 7 (the landing sequence this shard discharges).
+# - docs/audits/2026-07-15-seam-secrets-shape-proposal-phase-d-
+#   cascade.md §D7 (Scenario B collapses to Scenario A via
+#   @io/git precedent; @io/fs is Mara-mintable).
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]],
+# [[architecture-prism-as-trait-as-everything]] (`prism @io/fs`),
+# [[architecture-glass-wall-substrate-types]] (transparency inheritance
+#   through @io),
+# [[architecture-lift-as-load-bearing]] (forward-promise-altitude
+#   → mirror-altitude species; same lift that gave @io/git),
+# [[feedback-substrate-already-had-the-word]] (~62nd instance;
+#   POSIX filesystem has been operational since bootstrap era),
+# [[feedback-substrate-pull]] (the species pulls @io/fs from
+#   forward-promise to mirror altitude; no invention, only lift),
+# [[feedback-no-bare-types]] (path, file_metadata, dir_entry are
+#   typed carriers; never bare strings/scalars at the boundary),
+# [[feedback-craft-not-deliver]] (all action bodies `\`-obligation-
+#   blocked; consumers pull the realization; Arc-1 evaluator FLOOR
+#   pending).
+#
+# Path-namespace property: this file at `shards/io/fs.mirror`
+# declares `@io/fs` per `@epistemologic/pact/path_matches_
+# namespace`.
+
+prism @io/fs {
+  focus  fs
+  project fs
+  split  fs
+  shift  fs
+  settle fs
+}
+
+# ============================================================
+# §2 The carriers
+# ============================================================
+
+# === The path carrier ===
+#
+# Typed reference for a POSIX filesystem path. Per POSIX.1-2017
+# §3.271 (Pathname): a null-terminated character string admitting
+# an absolute (leading /) or relative (no leading /) form; path
+# components separated by /; total length bounded by PATH_MAX
+# (typically 4096 on Linux; 1024 on Darwin).
+#
+# Two-field record:
+#
+#   segments    — typed ref to the path's segments (per @io/uri
+#                 the substrate's canonical path-decomposition
+#                 discipline; the segment list is byte-visible).
+#   is_absolute — bool discriminating absolute vs relative;
+#                 byte-visible from the leading-/ check.
+#
+# Identity contract: byte-equality on (segments, is_absolute).
+# Two path values with the same segment sequence and same absolute-
+# ness are the same path under content-addressing.
+type path = {
+  segments:    ref,
+  is_absolute: bool,
+}
+
+# === The file_metadata carrier ===
+#
+# POSIX file metadata per stat(2). Typed record of the load-bearing
+# fields; the raw stat_t struct is opaque per @io discipline; this
+# carrier surfaces the fields substrate consumers read.
+#
+# Four-field record:
+#
+#   size         — file size in bytes (u64 per POSIX).
+#   file_type    — typed ref discriminating file / directory /
+#                  symlink / other (per S_IFMT + S_ISREG / S_ISDIR /
+#                  S_ISLNK); byte-visible from the mode word.
+#   permissions  — typed ref carrying the POSIX permission bits
+#                  (rwx per user/group/other + sticky/setuid/setgid);
+#                  9-bit or 12-bit representation.
+#   mtime        — modification timestamp (typed ref to the
+#                  seconds+nanoseconds pair per struct timespec).
+#
+# Identity contract: byte-equality on (size, file_type,
+# permissions, mtime).
+type file_metadata = {
+  size:        ref,
+  file_type:   ref,
+  permissions: ref,
+  mtime:       ref,
+}
+
+# === The dir_entry carrier ===
+#
+# Per-entry record from readdir(3). Typed record naming a directory
+# entry's substrate-visible fields.
+#
+# Two-field record:
+#
+#   name       — typed ref to the entry's filename (relative to
+#                the enclosing directory; UTF-8 byte sequence per
+#                the substrate's text convention; POSIX admits
+#                arbitrary bytes but this carrier constrains to
+#                UTF-8 for substrate legibility).
+#   file_type  — typed ref discriminating file / directory /
+#                symlink / other (parallels file_metadata.file_type
+#                for early-typed dispatch without a stat call).
+#
+# Identity contract: byte-equality on (name, file_type).
+type dir_entry = {
+  name:      ref,
+  file_type: ref,
+}
+
+# ============================================================
+# §3 The actions
+# ============================================================
+
+# === fs_read action ===
+#
+# Read the entire contents of a file at path. Per the POSIX
+# open(O_RDONLY) + read + close sequence; substrate carries the
+# whole-file byte sequence as ref.
+#
+# requires path_admissible(p): the path MUST be well-formed per
+# POSIX pathname discipline.
+#
+# Returns imperfect<ref, ref, ref>:
+# - success(bytes_ref) — read complete; bytes_ref resolves to
+#   the file's content bytes.
+# - partial(bytes_ref, transparency) — read complete with residual
+#   (e.g., partial read on interrupt; short read; readable but
+#   read-through-truncation).
+# - failure(error, transparency) — read failed (ENOENT, EACCES,
+#   EIO, file too large for whole-file read).
+#
+# Body discharges at the realisation boundary (std::fs::read on
+# the Rust side; kernel read(2) at the syscall boundary).
+fs_read(p: path) -> imperfect { \ }
+
+# === fs_write action ===
+#
+# Write bytes to a file at path. Creates the file if absent;
+# truncates + rewrites if present. Per POSIX open(O_WRONLY |
+# O_CREAT | O_TRUNC) + write + close.
+#
+# requires path_admissible(p): the path MUST be well-formed.
+#
+# Returns imperfect<ref, ref, ref>:
+# - success(bytes_written_ref) — write complete; ref resolves to
+#   the count of bytes written (u64).
+# - partial(bytes_written_ref, transparency) — partial write
+#   (short write; disk-full recovery admitted).
+# - failure(error, transparency) — write failed (EACCES, ENOSPC,
+#   EROFS, path parent missing).
+#
+# THE LOAD-BEARING action for @io/secrets.materialize: the disk-
+# write surface that Alex 2026-07-14's design intent ("project
+# visibility/private stuff onto disk") composes over.
+#
+# Body discharges at the realisation boundary.
+fs_write(p: path, bytes: ref) -> imperfect { \ }
+
+# === fs_stat action ===
+#
+# POSIX stat(2). Returns file_metadata for the path; follows
+# symlinks (per stat, not lstat). For lstat semantics, a species
+# refinement can land.
+#
+# requires path_admissible(p): the path MUST be well-formed.
+#
+# Returns imperfect<file_metadata, ref, ref>:
+# - success(file_metadata) — stat complete; carrier populated.
+# - failure(error, transparency) — stat failed (ENOENT, EACCES,
+#   ELOOP).
+#
+# Body discharges at the realisation boundary (std::fs::metadata).
+fs_stat(p: path) -> imperfect { \ }
+
+# === fs_list action ===
+#
+# POSIX readdir(3). Returns the list of dir_entry values for
+# entries in the directory at path (excluding . and ..).
+#
+# requires path_admissible(p): the path MUST be well-formed.
+#
+# Returns imperfect<ref, ref, ref>:
+# - success(entries_ref) — readdir complete; entries_ref resolves
+#   to the list of dir_entry values (byte-visible list; unordered
+#   per POSIX).
+# - partial(entries_ref, transparency) — readdir complete with
+#   residual (e.g., some entries had unreadable metadata).
+# - failure(error, transparency) — readdir failed (ENOENT,
+#   ENOTDIR, EACCES).
+#
+# Body discharges at the realisation boundary (std::fs::read_dir).
+fs_list(p: path) -> imperfect { \ }
+
+# === fs_mkdir action ===
+#
+# POSIX mkdir(2). Creates the directory at path. Idempotent-mode
+# discrimination (mkdir vs mkdir -p) is species-refinement scope;
+# this action creates ONE directory and fails if any parent is
+# absent.
+#
+# requires path_admissible(p): the path MUST be well-formed.
+#
+# Returns imperfect<ref, ref, ref>:
+# - success(created_ref) — mkdir complete.
+# - failure(error, transparency) — mkdir failed (EEXIST, ENOENT,
+#   EACCES, EROFS).
+#
+# Body discharges at the realisation boundary (std::fs::create_dir).
+fs_mkdir(p: path) -> imperfect { \ }
+
+# ============================================================
+# §4 The bilaterals (Rice-safe at whole-tick altitude)
+# ============================================================
+
+# === path_admissible predicate ===
+#
+# Bilateral verdict that a path is well-formed per POSIX pathname
+# discipline:
+#
+#   1. Total length within PATH_MAX (byte-visible from segments
+#      length).
+#   2. No embedded NUL bytes in segments (POSIX pathname rules).
+#   3. Each segment within NAME_MAX (typically 255).
+#
+# Rice-safe at whole-tick altitude per Mara-B §4.5.5: reads only
+# byte-visible path structure; no filesystem I/O required.
+#
+# Splinter-pole: path is POSIX-well-formed; syscalls accept it.
+# Narcissus-pole: path exceeds bounds or contains NUL; syscalls
+# would reject.
+path_admissible(p: path) -> verdict { \ }
+
+# === path_exists predicate ===
+#
+# Bilateral verdict that a path resolves to an extant filesystem
+# entry. Per POSIX access(F_OK); discharges at the @io boundary.
+#
+# Rice-safe at whole-tick altitude: reads only the filesystem's
+# byte-visible directory entries; no program semantics.
+#
+# Splinter-pole: path exists; stat would succeed.
+# Narcissus-pole: path does not exist OR path has an unreadable
+# parent (indistinguishable at this bilateral; species refinements
+# can distinguish).
+path_exists(p: path) -> verdict { \ }
+
+# === writable predicate ===
+#
+# Bilateral verdict that a path is writable by the current
+# process. Per POSIX access(W_OK).
+#
+# For non-extant paths: writable iff the parent directory exists
+# AND is writable by the current process (fs_write would
+# succeed to create).
+#
+# Rice-safe at whole-tick altitude: reads only byte-visible
+# permission bits + directory entries; bounded by the path's
+# depth.
+#
+# Splinter-pole: fs_write would succeed at this path.
+# Narcissus-pole: permission denied, filesystem read-only, path
+# parent missing.
+writable(p: path) -> verdict { \ }
+
+# === fs_well_formed composed bilateral ===
+#
+# THE LOAD-BEARING composed bilateral at @io/fs altitude. Composes:
+#
+#   1. path_admissible(p)
+#   2. path_exists(p) OR writable(p) — read-side OR write-side
+#      admissibility per the calling action's intent.
+#
+# Sibling to @io/oci.oci_well_formed, @io/git.git_well_formed,
+# @io/algebra.io_algebra_well_formed, @io/crypto.crypto_well_formed
+# — the composed-bilateral pattern at @io species altitude (per
+# Seam tick 68 C4/C9 closure).
+#
+# Splinter-pole: path is well-formed AND admissible for the
+# intended operation.
+# Narcissus-pole: any sub-check fails; alignment-as-boundary-
+# mathematics (#57) distinguishes which claim broke.
+fs_well_formed(p: path) -> verdict
+requires path_admissible(p)
+{ \ }
+
+out @io/fs
+out path
+out file_metadata
+out dir_entry
+out fs_read
+out fs_write
+out fs_stat
+out fs_list
+out fs_mkdir
+out path_admissible
+out path_exists
+out writable
+out fs_well_formed

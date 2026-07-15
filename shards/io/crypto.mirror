@@ -1,0 +1,553 @@
+in @prism
+in @meta
+in @glass
+in @io
+
+# @io/crypto — the cryptographic-primitive @io species (mirror-
+# altitude lift-tick of the boot-floor grammar).
+#
+# Sibling to @io/cargo (2026-06-05; the first mirror-altitude @io
+# species), @io/stagefreight (2026-06-23), @io/oci (2026-06-24),
+# @io/git (2026-06-24), @io/algebra (2026-06-30). Same species
+# shape at the crypto-primitive altitude: typed contract the mirror
+# side sees; opaque non-mirror body (vendor crypto: sha2, sha1,
+# ed25519-dalek, age, ssh-key) discharging at the realisation
+# boundary.
+#
+# === Landing metadata ===
+#
+# Landed 2026-07-15 by Mara as Landing 6 of the @secrets shape-
+# proposal sequence (companion audit: `docs/audits/2026-07-15-seam-
+# secrets-shape-proposal-phase-d-cascade.md` at 019ad8f, ratifying
+# Candidate 2 as Mara-mintable per @io/{cargo, git, oci,
+# stagefreight, algebra} five-instance precedent chain). Companion
+# shape-proposal at `docs/scouts/2026-07-15-mara-secrets-shape-
+# proposal.md` §5.5 revised step 6 (Seam §D9 REED-INLINE
+# addition).
+#
+# === The lift-tick recognition ===
+#
+# @io/crypto has been declared at BOOT-FLOOR grammar altitude only:
+# `boot/std/io/crypto.mirror` (2026-06-01) carries `grammar
+# @io/crypto` with sha1 / sha256 / ed25519_sign / ed25519_verify
+# primitives. `shards/io.mirror` 161-162 verbatim names the
+# discipline at family-root altitude:
+#
+#   "@io/crypto     hash + signature + AEAD over bytes. Vendor
+#                    surface (sha2, age, ssh-key)."
+#
+# But no `shards/io/crypto.mirror` mirror-altitude species-decl
+# existed. Seam's Phase D-cascade §D9 surfaced the cite drift:
+# @io/secrets/sops requires @io/crypto at mirror-altitude for its
+# age-backend composition (per `docs/scouts/2026-07-15-mara-
+# secrets-shape-proposal.md` §2.7); boot-floor grammar cannot
+# compose-from-mirror-altitude as a species (grammar-vs-species
+# altitude type-shape mismatch).
+#
+# This shard is the substrate-honest lift-tick: pull @io/crypto
+# from boot-floor grammar to mirror-altitude species-decl,
+# preserving the boot-floor's four primitives, extending to the
+# AEAD + age + ssh-key vendor surface io.mirror 161-162 named. The
+# boot shard is RETAINED, not retired (same pattern as
+# @mirror/data/json + boot/std/data/json.mirror; consumer-pull
+# migration is a separate tick).
+#
+# === Substrate-already-had-the-word citation chain ===
+#
+# The word `@io/crypto` is substrate-decl'd across four altitudes
+# with landed carriers:
+#
+#   1. `boot/std/io/crypto.mirror` (2026-06-01) — boot-floor
+#      `grammar @io/crypto` with sha1, sha256, ed25519_sign,
+#      ed25519_verify primitives; the operational floor since the
+#      bootstrap era.
+#
+#   2. `shards/io.mirror` 161-162 verbatim — family-root
+#      substrate-decl naming the discipline ("hash + signature +
+#      AEAD over bytes. Vendor surface (sha2, age, ssh-key).").
+#
+#   3. `docs/insights/2026-05-26-glass-wall-and-cross-wall-
+#      kintsugi.md` §"What stays in @io permanently" — SHA-1 named
+#      as permanent @io resident for git interop; SHA-256 lives at
+#      the boundary because canonical impl is vendor crypto
+#      (sha2 crate intrinsics); ed25519 is permanent @io (field
+#      arithmetic is opaque vendor code by necessity).
+#
+#   4. Alex 2026-07-14 SSH-signing design intent (verbatim from
+#      `shards/subject/visibility/sheaf.mirror` 21-32): "Each peer
+#      has their own key ... Only connected through Fractal.Lens."
+#      Peer keys ARE ssh-key vendor surface; @io/crypto lifts the
+#      typed contract for that surface at mirror altitude.
+#
+# The ~61st instance of [[feedback-substrate-already-had-the-
+# word]] on landing — the primitive has been operational since
+# 2026-06-01; this shard names the mirror-altitude species that
+# consumers already assumed existed.
+#
+# === Composition graph ===
+#
+# Parents (substrate-decl):
+#   @io                       — family-root; the boundary-with-non-
+#                               mirror discipline; five-op prism +
+#                               opacity + imperfect return shape.
+#
+# Consumers (compose over this species):
+#   @io/secrets               — key-gated projection; consumes
+#                               ssh_key / age_key material via
+#                               key_material_ref carriers.
+#   @io/secrets/sops          — SOPS vendor sub-species; consumes
+#                               age + pgp + kms recipients via
+#                               aead_encrypt / aead_decrypt +
+#                               signature primitives.
+#   @io/git                   — git object hashing (per @io/git
+#                               hash_well_formed sub-bilateral);
+#                               composes sha1 (SHA1-mode repos) +
+#                               sha256 (SHA256-mode repos).
+#   @fragmentation            — content-addressing via sha256 (per
+#                               boot floor docstring: future
+#                               re-route deferred).
+#
+# === Cross-wall-kintsugi candidacy partition ===
+#
+# Per `docs/insights/2026-05-26-glass-wall-and-cross-wall-
+# kintsugi.md` and @io family-root discipline (io.mirror 80-92):
+#
+#   - PERMANENT @io: sha1 (git interop; SHAttered 2017 collisions
+#     do not remove interop need); ed25519 primitives (constant-
+#     time field arithmetic is crate-internal); age_encrypt /
+#     age_decrypt (age is vendor crypto by construction);
+#     aead_seal / aead_open (AEAD primitives depend on constant-
+#     time platform intrinsics).
+#   - CROSS-WALL-KINTSUGI CANDIDATE: sha256 (byte-level pure;
+#     structurally-verified Rust impl imaginable per
+#     [[architecture-cross-wall-kintsugi-candidate]]; fold deferred).
+#
+# Species shards under @io/crypto MAY refine the partition per
+# specific primitive (forward-promised at species-altitude
+# refinement).
+#
+# === Related shards / specs ===
+#
+# - boot/std/io/crypto.mirror (2026-06-01; the boot-floor grammar
+#   this species lifts; retained as transitional placeholder
+#   during consumer migration per the @cli + @mirror/data/json
+#   precedent).
+# - shards/io.mirror 161-162 (family-root vendor-surface naming).
+# - shards/io/git.mirror (consumer; git object hashing).
+# - shards/io/secrets.mirror (consumer; landed alongside this
+#   lift-tick as Landing 4 of the @secrets shape-proposal
+#   sequence).
+# - shards/io/secrets/sops.mirror (consumer; landed alongside as
+#   Landing 5; consumes age vendor backend).
+# - docs/insights/2026-05-26-glass-wall-and-cross-wall-kintsugi.md
+#   (the partition this species inherits).
+# - docs/scouts/2026-07-15-mara-secrets-shape-proposal.md §5.5
+#   step 6 (the landing sequence this shard discharges).
+# - docs/audits/2026-07-15-seam-secrets-shape-proposal-phase-d-
+#   cascade.md §D9 (the REED-INLINE cascade that named this
+#   lift-tick as substrate-honest prerequisite).
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]],
+# [[architecture-prism-as-trait-as-everything]] (`prism @io/crypto`),
+# [[architecture-glass-wall-substrate-types]] (transparency inheritance
+#   through @io),
+# [[architecture-lift-as-load-bearing]] (grammar-altitude @io/crypto
+#   → mirror-altitude @io/crypto species; the same lift that gave
+#   @cli → @mirror/lens/cli and @data/json → @mirror/data/json),
+# [[feedback-substrate-already-had-the-word]] (~61st instance;
+#   boot-floor grammar named the primitive since 2026-06-01; the
+#   mirror-altitude species names what consumers already assumed
+#   existed),
+# [[feedback-substrate-pull]] (the family root pulls @io/crypto
+#   from boot floor to mirror altitude; no invention, only lift),
+# [[feedback-no-bare-types]] (key_material, ciphertext_bytes,
+#   signature_bytes, aead_context are typed carriers; never bare
+#   byte-refs at the boundary),
+# [[feedback-craft-not-deliver]] (all action bodies `\`-obligation-
+#   blocked; consumers pull the realization; Arc-1 evaluator FLOOR
+#   pending).
+#
+# Path-namespace property: this file at `shards/io/crypto.mirror`
+# declares `@io/crypto` per `@epistemologic/pact/path_matches_
+# namespace`.
+
+prism @io/crypto {
+  focus  crypto
+  project crypto
+  split  crypto
+  shift  crypto
+  settle crypto
+}
+
+# ============================================================
+# §2 The carriers
+# ============================================================
+
+# === The key_material carrier ===
+#
+# Typed reference for cryptographic key material at the @io
+# boundary. Per @io opacity discipline (io.mirror 66-72): the key
+# BYTES are opaque by construction; the carrier holds a REF that
+# resolves at the realisation boundary against out-of-substrate
+# storage (.git/mirror-side per Alex 2026-07-14 SSH-signing intent).
+#
+# Two-field record:
+#
+#   algorithm    — typed ref naming the key algorithm (ed25519,
+#                  age, ssh-rsa, ssh-ed25519, pgp, kms-recipient).
+#                  The realisation dispatches on this field.
+#   material_ref — typed ref into out-of-substrate key storage
+#                  (.git/mirror-side per Fractal.Lens pointer
+#                  discipline; NEVER projected into the git working
+#                  tree; NEVER carried in-substrate as bytes).
+#
+# Identity contract: byte-equality on (algorithm, material_ref).
+type key_material = {
+  algorithm:    ref,
+  material_ref: ref,
+}
+
+# === The ciphertext_bytes carrier ===
+#
+# Typed reference for AEAD-produced ciphertext + associated data
+# at the @io boundary. Opaque foreign blob per @io family-root
+# discipline (io.mirror 37-40 Glass Wall: "foreign blobs ... must
+# be under @io").
+#
+# Three-field record:
+#
+#   nonce         — the AEAD nonce (typed ref; per-scheme byte-
+#                   length: 12 bytes for ChaCha20-Poly1305; 12 or
+#                   16 for AES-GCM per scheme spec).
+#   ciphertext    — the encrypted bytes + authentication tag
+#                   (typed ref; AEAD-scheme-dependent tag layout).
+#   associated_data — the authenticated-but-not-encrypted context
+#                   (typed ref; empty ref admissible).
+#
+# Identity contract: byte-equality on (nonce, ciphertext,
+# associated_data).
+type ciphertext_bytes = {
+  nonce:           ref,
+  ciphertext:      ref,
+  associated_data: ref,
+}
+
+# === The signature_bytes carrier ===
+#
+# Typed reference for a cryptographic signature at the @io
+# boundary. Opaque per @io opacity discipline.
+#
+# Three-field record:
+#
+#   algorithm  — typed ref naming the signature scheme (ed25519,
+#                ecdsa-p256, rsa-pss, ssh-rsa). Per Alex
+#                2026-07-14 SSH-signing design intent + Pack
+#                commit convention: ed25519 is the substrate's
+#                default; ssh-ed25519 is the substrate's SSH
+#                signing surface.
+#   signature  — the signature bytes (typed ref; scheme-dependent
+#                length: 64 bytes for ed25519; variable for RSA).
+#   public_key — the public-key material used to verify (typed
+#                ref; ssh-key vendor surface per io.mirror 161-
+#                162; carried alongside the signature for
+#                Fractal.Lens pointer preservation — verification
+#                does not require a separate key lookup).
+#
+# Identity contract: byte-equality on (algorithm, signature,
+# public_key).
+type signature_bytes = {
+  algorithm:  ref,
+  signature:  ref,
+  public_key: ref,
+}
+
+# === The aead_context carrier ===
+#
+# Typed reference for an AEAD-cipher context (algorithm + key +
+# associated_data policy) at the @io boundary. Consumed by
+# aead_seal / aead_open to name the cipher configuration a
+# projection uses.
+#
+# Three-field record:
+#
+#   algorithm      — typed ref naming the AEAD scheme
+#                    (chacha20-poly1305, aes-256-gcm, xchacha20-
+#                    poly1305).
+#   key            — key_material ref (the encryption key; MUST
+#                    have algorithm matching an AEAD-compatible
+#                    keygen scheme per the vendor library).
+#   ad_policy      — typed ref naming the associated-data policy
+#                    (empty, project_ref, per-realisation).
+#
+# Identity contract: byte-equality on (algorithm, key, ad_policy).
+type aead_context = {
+  algorithm: ref,
+  key:       key_material,
+  ad_policy: ref,
+}
+
+# ============================================================
+# §3 The actions
+# ============================================================
+
+# === sha1 action ===
+#
+# 20-byte SHA-1 digest. Lifted verbatim from boot/std/io/crypto.
+# mirror. Retained per glass-wall recognition: SHA-1 is permanent
+# @io (git interop; SHAttered 2017 collisions do not remove
+# interop need). Total; every byte input has a canonical SHA-1.
+#
+# Body discharges at the realisation boundary (sha1 crate).
+sha1(bytes: ref) -> ref { \ }
+
+# === sha256 action ===
+#
+# 32-byte SHA-256 digest. Lifted verbatim from boot floor. The
+# substrate's structural content-addressing function (per
+# @fragmentation, @io/oci digest, Nix derivation hash; recognition
+# #98 candidate territory).
+#
+# Cross-wall-kintsugi candidate (per the byte-level-pure partition
+# in glass-wall insight); fold deferred; species shards may pull
+# a structurally-verified impl when the substrate's analyzability
+# matures.
+#
+# Body discharges at the realisation boundary (sha2 crate).
+sha256(bytes: ref) -> ref { \ }
+
+# === ed25519_sign action ===
+#
+# Ed25519 signature over msg under secret key. Output is 64-byte
+# (R || s) per RFC 8032. Lifted verbatim from boot floor. Total
+# at the signature layer; the signature is deterministic given
+# (key, msg).
+#
+# Body discharges at the realisation boundary (ed25519-dalek).
+ed25519_sign(key: key_material, msg: ref) -> signature_bytes { \ }
+
+# === ed25519_verify action ===
+#
+# Verify sig against (pub_key, msg). Returns imperfect: success()
+# iff signature is valid; failure with diagnostic iff malformed
+# inputs (wrong length pub_key/sig, non-canonical encoding) or
+# invalid signature. Lifted verbatim from boot floor.
+#
+# Body discharges at the realisation boundary (ed25519-dalek).
+ed25519_verify(sig: signature_bytes, msg: ref) -> imperfect { \ }
+
+# === aead_seal action ===
+#
+# AEAD-authenticated encryption. Given an aead_context (algorithm
+# + key + ad_policy) and plaintext bytes, produces ciphertext_bytes
+# carrying (nonce, ciphertext+tag, associated_data). Nonce is
+# generated per-invocation at the realisation boundary via
+# @io/random.
+#
+# requires key_material_admissible(ctx.key): the AEAD context's
+# key MUST be well-formed for the named algorithm.
+#
+# Returns imperfect<ciphertext_bytes, ref, ref>:
+# - success(ciphertext_bytes) — encryption complete; ciphertext
+#   is authenticated + decryptable by the corresponding open.
+# - partial(ciphertext_bytes, transparency) — encryption complete
+#   with residual (e.g., nonce reuse warning at realisation).
+# - failure(error, transparency) — encryption failed (key mismatch,
+#   algorithm unsupported, entropy source unavailable).
+#
+# Body discharges at the realisation boundary (aes-gcm /
+# chacha20poly1305 crates; permanent-@io per crate-internal
+# constant-time discipline).
+aead_seal(ctx: aead_context, plaintext: ref) -> imperfect { \ }
+
+# === aead_open action ===
+#
+# AEAD-authenticated decryption. Inverse of aead_seal. Verifies
+# the authentication tag against the ciphertext + associated_data;
+# returns the recovered plaintext on success.
+#
+# requires key_material_admissible(ctx.key): the AEAD context's
+# key MUST be well-formed for the named algorithm.
+#
+# Returns imperfect<ref, ref, ref>:
+# - success(plaintext) — decryption complete; authentication tag
+#   verified.
+# - failure(error, transparency) — tag verification failed
+#   (ciphertext tampering, wrong key, wrong associated_data,
+#   wrong nonce).
+#
+# The Splinter/Narcissus discipline at AEAD altitude: aead_open
+# MUST refuse to return plaintext when tag verification fails.
+# A Narcissus-pole implementation that returns unauthenticated
+# plaintext violates the AEAD contract.
+#
+# Body discharges at the realisation boundary.
+aead_open(ctx: aead_context, ct: ciphertext_bytes) -> imperfect { \ }
+
+# === age_encrypt action ===
+#
+# The age vendor surface at @io/crypto altitude (per io.mirror
+# 161-162 verbatim: "age" named as vendor surface). Encrypts
+# plaintext bytes to one or more age recipients (age-encryption.org
+# format; Valsorda 2019+). Composed by @io/secrets/sops's sops_
+# encrypt when age is the key-group backend.
+#
+# requires recipients_admissible(recipients): the recipient list
+# MUST be well-formed age recipients (X25519 public keys or
+# ssh-ed25519 keys; refuses malformed recipients).
+#
+# Returns imperfect<ciphertext_bytes, ref, ref>:
+# - success(ciphertext_bytes) — encryption complete; ciphertext
+#   is decryptable by any recipient's private key.
+# - failure(error, transparency) — encryption failed (recipient
+#   parse error, algorithm unsupported).
+#
+# Body discharges at the realisation boundary (age crate).
+# Permanent-@io per glass-wall partition (age IS vendor crypto).
+age_encrypt(recipients: ref, plaintext: ref) -> imperfect { \ }
+
+# === age_decrypt action ===
+#
+# Inverse of age_encrypt. Decrypts an age-format ciphertext under
+# an identity (age secret key or ssh-ed25519 key). Composed by
+# @io/secrets/sops's sops_decrypt when age is the key-group
+# backend.
+#
+# requires key_material_admissible(identity): the decryption
+# identity MUST be a well-formed age identity.
+#
+# Returns imperfect<ref, ref, ref>:
+# - success(plaintext) — decryption complete; recipient identity
+#   matched.
+# - failure(error, transparency) — decryption failed (identity
+#   not in recipient list, ciphertext parse error, format
+#   mismatch).
+#
+# Body discharges at the realisation boundary (age crate).
+age_decrypt(identity: key_material, ct: ciphertext_bytes) -> imperfect { \ }
+
+# === ssh_key_material action ===
+#
+# Load ssh-key vendor material (openssh-format public/private
+# keys) as key_material carrier. Per io.mirror 161-162 verbatim
+# ("ssh-key" named as vendor surface) + Alex 2026-07-14 SSH-
+# signing design intent (peer keys are ssh-key vendor material
+# stored .git/mirror-side).
+#
+# The material_ref carried on the returned key_material resolves
+# through out-of-substrate storage per @io opacity discipline;
+# the substrate NEVER carries the raw key bytes in-tree.
+#
+# requires ssh_key_ref_admissible(ref): the ref MUST resolve to a
+# .git/mirror-side ssh key path.
+#
+# Returns imperfect<key_material, ref, ref>.
+#
+# Body discharges at the realisation boundary (ssh-key crate).
+ssh_key_material(ssh_key_ref: ref) -> imperfect { \ }
+
+# ============================================================
+# §4 The bilaterals (Rice-safe at whole-tick altitude)
+# ============================================================
+
+# === key_material_admissible predicate ===
+#
+# Bilateral verdict that a key_material carrier is well-formed:
+#
+#   1. algorithm resolves to a supported scheme (ed25519, age,
+#      ssh-rsa, ssh-ed25519, pgp, kms-recipient).
+#   2. material_ref resolves through out-of-substrate storage
+#      (per @io opacity discipline; refuses in-tree key refs).
+#   3. algorithm ↔ material shape agrees (ed25519 keys are 32
+#      bytes; age recipients are X25519 or ssh-ed25519).
+#
+# Rice-safe at whole-tick altitude per Mara-B §4.5.5: reads only
+# byte-visible empirical state (algorithm string; ref-resolution
+# byte-length; scheme lookup); no program semantics.
+#
+# Splinter-pole: key material is well-formed; loadable by the
+# named vendor crypto backend.
+# Narcissus-pole: algorithm mismatch, in-tree key ref, malformed
+# key bytes; loading would fail or (worse) silently succeed with
+# wrong-key semantics.
+key_material_admissible(km: key_material) -> verdict { \ }
+
+# === recipients_admissible predicate ===
+#
+# Bilateral verdict that an age-encryption recipient list is
+# well-formed:
+#
+#   1. Every recipient parses as either an X25519 public key
+#      (age1... format) or an ssh-ed25519 public key.
+#   2. The list is non-empty (empty recipient list would produce
+#      undecryptable ciphertext; substrate-decl refuses).
+#
+# Rice-safe at whole-tick altitude: reads only byte-visible
+# recipient strings; no program semantics.
+#
+# Splinter-pole: every recipient is a valid age recipient;
+# encryption produces decryptable ciphertext.
+# Narcissus-pole: malformed recipients; empty list; encryption
+# would silently produce ciphertext no one can open.
+recipients_admissible(recipients: ref) -> verdict { \ }
+
+# === signature_valid predicate ===
+#
+# Bilateral verdict that a signature_bytes carrier verifies
+# against a message:
+#
+#   1. algorithm ↔ signature length agrees (ed25519 = 64 bytes;
+#      scheme-dependent for other algorithms).
+#   2. public_key ↔ algorithm agrees.
+#   3. verify(sig, msg) discharges Pass at the realisation
+#      boundary.
+#
+# Rice-safe at whole-tick altitude: reads only byte-visible
+# signature + message state; verification is a bounded
+# cryptographic operation.
+#
+# Splinter-pole: signature verifies against msg under pub_key.
+# Narcissus-pole: verification fails or is bypassed.
+signature_valid(sig: signature_bytes, msg: ref) -> verdict { \ }
+
+# === crypto_well_formed composed bilateral ===
+#
+# THE LOAD-BEARING composed bilateral at @io/crypto altitude for
+# aead-projection contexts. Composes:
+#
+#   1. key_material_admissible(ctx.key)
+#   2. algorithm-appropriate parameter shape (algorithm-specific
+#      nonce length, tag length, key length agreement)
+#
+# Sibling to @io/oci.oci_well_formed, @io/git.git_well_formed,
+# @io/algebra.io_algebra_well_formed — the composed-bilateral
+# pattern at @io species altitude (per Seam tick 68 C4/C9
+# closure).
+#
+# Splinter-pole: context is well-formed; aead_seal / aead_open
+# discharge cleanly.
+# Narcissus-pole: any sub-check fails; alignment-as-boundary-
+# mathematics (#57) distinguishes which claim broke.
+crypto_well_formed(ctx: aead_context) -> verdict
+requires key_material_admissible(ctx.key)
+{ \ }
+
+out @io/crypto
+out key_material
+out ciphertext_bytes
+out signature_bytes
+out aead_context
+out sha1
+out sha256
+out ed25519_sign
+out ed25519_verify
+out aead_seal
+out aead_open
+out age_encrypt
+out age_decrypt
+out ssh_key_material
+out key_material_admissible
+out recipients_admissible
+out signature_valid
+out crypto_well_formed
