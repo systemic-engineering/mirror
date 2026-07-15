@@ -56,6 +56,7 @@ the cracks. Six-arc retirement plan:
 16. `5518b9b` — Reed CURRENT.md prepend (this section; @gift arc preserved below)
 17. `4207800` — Mara §7.4 legibility cascade in Mara-B (reference A4 discharge audit)
 18. `04b3aea` — Mara @epistemologic/property/ouroboros_monotone companion property shard (381 LOC; Mara-A forward-promise discharge)
+19. `4897761` — Reed consumer sync: peer-persistence §12.3 pseudocode names + CURRENT.md commit list update
 
 ### Terminal state
 
