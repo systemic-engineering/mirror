@@ -552,6 +552,34 @@ cleverness, no showoff, no novelty for novelty's sake. Boring —
 because the name fits the thing so cleanly there's nothing to
 marvel at. Delightful — because the fit itself is the reward.
 
+**Alex Wolf 2026-07-15 verbatim (naming the philosophy):**
+
+> "That's my whole philosophy of software engineering in a
+> nutshell. Reduce WTF per minute per line of code. Make the
+> reader go 'this is how it had to be'. Michelangelo and the
+> marble."
+
+Two ancestor images anchor the discipline:
+
+- **WTF/minute** (Robert C. Martin folk metric): the negative
+  measure. For every line of code / spec / shard, count how many
+  times a reader goes "wait, what?" Every WTF is a substrate-drift
+  signal. Delightfully-boring drives WTF/minute to zero: the
+  reader never asks "why THIS word for THIS operation" because
+  the fit is inevitable.
+- **Michelangelo and the marble** (Vasari attribution): the
+  positive image. "I saw the angel in the marble and carved until
+  I set him free." The delightfully-boring name is what's left
+  after you remove everything that isn't the thing. You don't
+  INVENT names — you SUBTRACT until only the inevitable word
+  remains. CS-vocab is the marble to chip away; the geometric
+  word is the angel already inside.
+
+Sculptural act at etymological altitude. Every proposed name is
+a block of marble; the audit is asking "what am I chipping away,
+and is what's left the actual angel or just the block I started
+with?"
+
 This is a sharper reading of `[[feedback-substrate-already-had-
 the-word]]`. Substrate-already-had-the-word says the word EXISTS
 in the substrate; delightfully-boring adds: the word feels
