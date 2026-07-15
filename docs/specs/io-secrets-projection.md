@@ -168,8 +168,8 @@ species-decl before Landing 4.
   lands when `@mirror/store`'s git-backed implementation lifts
   its disk surface"). Lift-tick at `shards/io/fs.mirror` (059cf1c)
   discharges the forward-promise; adds `path`, `file_metadata`,
-  `dir_entry` carriers + `fs_read` / `fs_write` / `fs_stat` /
-  `fs_list` / `fs_mkdir` actions the @io/secrets materialize
+  `dir_entry` carriers + `read` / `write` / `stat` /
+  `readdir` / `mkdir` actions the @io/secrets materialize
   composes over.
 
 The two lift-ticks land as SIBLING species alongside @io/secrets
@@ -245,7 +245,7 @@ D-cascade REED-INLINE additions):
 4. Landing 4 — @io/secrets species-decl at 059cf1c (LANDED).
 5. Landing 5 — @io/secrets/sops sub-species + @io/crypto lift-
    tick + @io/fs lift-tick at 059cf1c (LANDED alongside).
-6. Landing 6 — @io/secrets.key_material_ref_of composition-
+6. Landing 6 — @io/secrets.key_material_from_peer composition-
    bridge action at 64b0438 per Seam A1 re-adjudication (LANDED).
 7. Landing 7 — this canonical spec (LANDED at commit-in-flight).
 8. Landing 8 — Arc-2.3 peer_persistence.rs collapse consumer
@@ -283,7 +283,7 @@ Seven dimensions land the cascade:
   — PASS. @io/git lift-tick 2026-06-24 grounds Mara-mint authority
   for concurrent @io/fs + @io/crypto lift-ticks.
 - **D8 (SOPS sub-species scope-fit)** — PASS. Sub-species
-  specializes secret_projection as sops_file_ref; specializes
+  specializes sealed_section as sops_file_ref; specializes
   project as sops_encrypt; specializes retrieve as sops_decrypt.
 - **D9 (@io/crypto lift-tick prerequisite recognition)** — PASS.
   @io/secrets/sops age-backend composition requires @io/crypto at
@@ -330,7 +330,7 @@ INLINE cascades and one Alex-adjudication residue:
 The audit ratified the composition graph modulo A1; the arrow
 chain traverses end-to-end at LANDED altitude (@sheaf.section_at
 → @io/secrets.project → @io/crypto.aead_seal / age_encrypt →
-@io/secrets.materialize → @io/fs.fs_write; every arrow chains
+@io/secrets.materialize → @io/fs.write; every arrow chains
 byte-equal on type per C1-C9).
 
 ### §0.7 Taut precedent scout at 9a5502a + Seam A1 re-adjudication at e5d928e
@@ -396,7 +396,7 @@ Cross-composition surface between the two canonical specs:
 
 - **@sheaf UPSTREAM.** `@subject/visibility/sheaf.section_at`
   produces `section_at_stalk`; @io/secrets.project consumes it.
-  `@subject/visibility/sheaf.acl_project` produces
+  `@subject/visibility/sheaf.restrict` produces
   `sheaf_restriction`; @io/secrets/sops.sops_key_group_from_
   sheaf_restriction consumes it.
 - **@sheaf spec §3.4** names the arrow chain
@@ -404,8 +404,10 @@ Cross-composition surface between the two canonical specs:
   inverse direction (@io/secrets consumer surface).
 - **@sheaf spec §6 recognition candidate #3** (composition-
   bridge arrows land as substrate-decl actions) has SECOND
-  WITNESS at Landing 6 (key_material_ref_of); this spec §6 lists
-  the second-witness candidate as ratified.
+  WITNESS at Landing 6 (key_material_from_peer; originally minted
+  as `key_material_ref_of`, renamed per Seam extended-scope audit
+  5dcad39 Q_A); this spec §6 lists the second-witness candidate
+  as ratified.
 
 Both canonical specs land in the same substrate arc. The two
 files compose cleanly: any downstream reader (Arc-2.3
@@ -456,7 +458,7 @@ sections cite ancestors by path).
 
 Per Alex 2026-07-14 verbatim (§0.1 above), the peer-key stays
 `.git/mirror`-side; @secrets and @secrets/sops project through
-the Peers key. The species-decl's `secret_projection` carrier
+the Peers key. The species-decl's `sealed_section` carrier
 (`shards/io/secrets.mirror:324-329`) makes this substrate-
 observable via four-field record:
 
@@ -514,9 +516,9 @@ the materialize composes over:
 - `file_metadata` carrier — POSIX stat surface (size + file_type
   + permissions + mtime).
 - `dir_entry` carrier — readdir surface (name + file_type).
-- Actions: `fs_read` (whole-file byte sequence); `fs_write` (the
-  materialize disk-write surface); `fs_stat`; `fs_list`;
-  `fs_mkdir`.
+- Actions: `read` (whole-file byte sequence); `write` (the
+  materialize disk-write surface); `stat`; `readdir`;
+  `mkdir`.
 
 Both species retain their boot-floor grammar declarations as
 transitional placeholders during consumer migration per
@@ -529,9 +531,9 @@ name the typed contracts consumers already assumed existed.
 Per shape-proposal §2.7 + Seam D-cascade §D8: SOPS is the first
 concrete projection method Alex named
 (`@secrets prism and @secrets/sops`). Sub-species specializes
-`secret_projection` as `sops_file_ref` (four-field record on-
+`sealed_section` as `sops_file_ref` (four-field record on-
 disk-path + wire-format + metadata + ciphertext-bytes);
-specializes `project` as `sops_encrypt`; specializes `retrieve`
+specializes `project` as `sops_encrypt`; specializes `open`
 as `sops_decrypt`; adds the composition-bridge action
 `sops_key_group_from_sheaf_restriction` (the arrow that connects
 @subject/visibility/sheaf ACL structure to SOPS recipient list).
@@ -545,7 +547,7 @@ Additional @io/secrets/sops carriers:
 
 Sub-species composes over four parents:
 - @io (family-root discipline).
-- @io/secrets (parent species; specializes secret_projection).
+- @io/secrets (parent species; specializes sealed_section).
 - @io/crypto (age vendor surface for age-backend recipients).
 - @mirror/data/yaml + @mirror/data/json (SOPS wire format
   parents; both landed 2026-06-07 per Seam D-cascade REED-INLINE
@@ -563,7 +565,7 @@ Connect API). Each sub-species specializes the parent's carrier
 for one vendor backend; sub-species enumeration is bounded by
 Arc-2.3 evidence per two-tick discipline.
 
-### §1.4 Sub-claim 4 — key_material_ref_of is the substrate-mechanical peer→key bridge
+### §1.4 Sub-claim 4 — key_material_from_peer is the substrate-mechanical peer→key bridge
 
 Per Landing 6 (64b0438) landing per Seam A1 re-adjudication
 (e5d928e) SEAM-RATIFY Position (b): the peer→key composition-
@@ -572,7 +574,7 @@ shorthand-constructor. Species-decl at
 `shards/io/secrets.mirror:374`:
 
 ```
-key_material_ref_of(peer: ref) -> imperfect { \ }
+key_material_from_peer(peer: ref) -> imperfect { \ }
 ```
 
 Per Seam A1 re-adjudication §3 R3: the realisation body composes
@@ -613,10 +615,10 @@ File: `shards/io/secrets.mirror`.
 #### §2.1.1 Prism declaration (species-decl 221-227)
 
 `prism @io/secrets { focus/project/split/shift/settle
-secret_projection }`.
+sealed_section }`.
 
 Five-op prism per `[[architecture-prism-as-trait-as-everything]]`:
-every prism-op consumes and produces `secret_projection` at the
+every prism-op consumes and produces `sealed_section` at the
 altitude the species mounts.
 
 #### §2.1.2 Carriers (species-decl 258-329)
@@ -631,7 +633,7 @@ Three typed records:
   typed reference for on-disk encrypted content; opaque foreign
   blob per @io Glass Wall. Identity contract: byte-equality on
   (ciphertext, on_disk_path, recipient_keys).
-- `secret_projection { section_ref, key_material_ref, ciphertext_
+- `sealed_section { section_ref, key_material_ref, ciphertext_
   bytes, projection_path }` — THE LOAD-BEARING carrier at
   @io/secrets altitude; names the peer-key-gated projection of a
   @sheaf section onto disk. Identity contract: byte-equality on
@@ -645,7 +647,7 @@ values; no bare types per `[[feedback-no-bare-types]]`.
 Five actions, all bodies `\`-obligation-blocked per
 `[[feedback-craft-not-deliver]]`:
 
-- `key_material_ref_of(peer: ref) -> imperfect` — Landing 6
+- `key_material_from_peer(peer: ref) -> imperfect` — Landing 6
   composition-bridge action; resolves peer → key_material_ref via
   @io/crypto.ssh_key_material + record literal.
 - `project(section: section_at_stalk, k: key_material_ref) ->
@@ -653,12 +655,12 @@ Five actions, all bodies `\`-obligation-blocked per
   seal over section's projected_value under peer's key. Parameter
   renamed sr → section per composition-alignment REED-INLINE #1
   at 57c5b3a.
-- `materialize(sp: secret_projection) -> imperfect` — LOAD-
-  BEARING disk-write action; composes @io/fs.fs_write over
-  sp.ciphertext_bytes.ciphertext + sp.projection_path.
+- `materialize(ss: sealed_section) -> imperfect` — LOAD-
+  BEARING disk-write action; composes @io/fs.write over
+  ss.ciphertext_bytes.ciphertext + ss.projection_path.
 - `retrieve(cr: ciphertext_ref, k: key_material_ref) ->
   imperfect` — inverse of materialize + project; composes
-  @io/fs.fs_read + @io/crypto.aead_open (or age_decrypt).
+  @io/fs.read + @io/crypto.aead_open (or age_decrypt).
 - `round_trip(section: section_at_stalk, k: key_material_ref) ->
   imperfect` — discipline action; project + materialize +
   retrieve; verifies recovered plaintext byte-equals original.
@@ -671,12 +673,12 @@ altitude per Mara-B §4.5.5:
 - `key_admits(k: key_material_ref, sr: sheaf_restriction) ->
   verdict` — composes @subject two-witness discipline +
   @io/crypto key_material_admissible + peer_ref byte-equality.
-- `projection_valid(sp: secret_projection) -> verdict` —
-  composes section_computable + key_admits + AEAD verifiability.
+- `projection_valid(ss: sealed_section) -> verdict` —
+  composes section_admissible + key_admits + AEAD verifiability.
 - `round_trip_preserved(section, k) -> verdict` — verifies
   project ∘ materialize ∘ retrieve returns byte-equal plaintext.
-- `secrets_well_formed(sp: secret_projection) -> verdict
-  requires projection_valid(sp) requires fs_well_formed(sp.
+- `secrets_well_formed(ss: sealed_section) -> verdict
+  requires projection_valid(ss) requires fs_well_formed(ss.
   projection_path)` — LOAD-BEARING composed bilateral; sibling
   to @io/oci.oci_well_formed, @io/git.git_well_formed,
   @io/algebra.io_algebra_well_formed, @io/crypto.crypto_well_
@@ -691,7 +693,7 @@ The species-decl marks nine landed substrate-decisions:
 - `[[architecture-glass-wall-substrate-types]]` — transparency
   inheritance through @io.
 - `[[architecture-fractal-lens-pointer-thing-partition]]` —
-  peer_key is the POINTER; secret_projection after materialize
+  peer_key is the POINTER; sealed_section after materialize
   is the THING.
 - `[[architecture-form-process-partition-at-family-root]]` —
   species stays under @io; peer-key-gated projection is
@@ -701,7 +703,7 @@ The species-decl marks nine landed substrate-decisions:
 - `[[feedback-onto-family-root-is-the-ladder-Foerster-refused]]`
   — parallel refusal for @secrets-family-root; @io already
   carries the altitude.
-- `[[feedback-no-bare-types]]` — secret_projection is typed
+- `[[feedback-no-bare-types]]` — sealed_section is typed
   record with ref-equality identity.
 - `[[feedback-craft-not-deliver]]` — all action bodies `\`-
   obligation-blocked.
@@ -722,7 +724,7 @@ Imports:
 - `@io` — family-root.
 - `@io/crypto` — sibling species; provides key_material +
   aead + age + ssh_key_material.
-- `@io/fs` — sibling species; provides path + fs_write + fs_read.
+- `@io/fs` — sibling species; provides path + write + read.
 - `@subject/visibility/sheaf` — upstream producer; provides
   sheaf_restriction + section_at_stalk (verified at composition-
   alignment audit C4).
@@ -732,9 +734,9 @@ Imports:
 Exports:
 - Namespace: `@io/secrets`.
 - Carriers: `key_material_ref`, `ciphertext_ref`,
-  `secret_projection`.
-- Actions: `key_material_ref_of`, `project`, `materialize`,
-  `retrieve`, `round_trip`.
+  `sealed_section`.
+- Actions: `key_material_from_peer`, `project`, `materialize`,
+  `open`, `round_trip`.
 - Bilaterals: `key_admits`, `projection_valid`,
   `round_trip_preserved`, `secrets_well_formed`.
 
@@ -748,7 +750,7 @@ File: `shards/io/secrets/sops.mirror`.
 sops_file_ref }`.
 
 Five-op prism per the same discipline as parent; sub-species
-specializes the carrier from `secret_projection` to
+specializes the carrier from `sealed_section` to
 `sops_file_ref` at the vendor-tool altitude.
 
 #### §2.2.2 Carriers (species-decl 199-264)
@@ -782,7 +784,7 @@ Four actions, all bodies `\`-obligation-blocked:
   @subject/visibility/sheaf ACL structure to SOPS recipient
   list. Landing precedent for A1 Position (b) per Taut scout at
   9a5502a; this arrow LANDED first, motivating the parallel
-  landing of @io/secrets.key_material_ref_of at Landing 6.
+  landing of @io/secrets.key_material_from_peer at Landing 6.
 - `sops_round_trip(section, key_group, k) -> imperfect` —
   discipline action per @io/secrets.round_trip pattern.
 
@@ -885,18 +887,18 @@ Carriers (species-decl 179-231):
 - `dir_entry { name, file_type }` — readdir surface.
 
 Actions (species-decl 257-332):
-- `fs_read(p: path) -> imperfect` — whole-file read.
-- `fs_write(p: path, bytes: ref) -> imperfect` — LOAD-BEARING
+- `read(p: path) -> imperfect` — whole-file read.
+- `write(p: path, bytes: ref) -> imperfect` — LOAD-BEARING
   disk-write; the @io/secrets.materialize surface consumer.
-- `fs_stat(p: path) -> imperfect` — POSIX stat.
-- `fs_list(p: path) -> imperfect` — POSIX readdir.
-- `fs_mkdir(p: path) -> imperfect` — single-directory create.
+- `stat(p: path) -> imperfect` — POSIX stat.
+- `readdir(p: path) -> imperfect` — POSIX readdir.
+- `mkdir(p: path) -> imperfect` — single-directory create.
 
 Bilaterals (species-decl 354-407):
 - `path_admissible(p: path) -> verdict` — POSIX pathname
   discipline (PATH_MAX, no NUL, NAME_MAX).
 - `path_exists(p: path) -> verdict` — POSIX access(F_OK).
-- `writable(p: path) -> verdict` — POSIX access(W_OK).
+- `path_writable(p: path) -> verdict` — POSIX access(W_OK).
 - `fs_well_formed(p: path) -> verdict requires
   path_admissible(p)` — composed bilateral.
 
@@ -942,7 +944,7 @@ Four load-bearing consequences for the mint:
 - **Disk write as POSIX syscall is @io by construction.** open +
   write + close is a kernel-managed file descriptor boundary;
   the vfs layer is non-foldable per glass-wall insight (2026-05-
-  26). @io/fs.fs_write declares the typed contract; the kernel
+  26). @io/fs.write declares the typed contract; the kernel
   discharges it.
 
 The Glass Wall discipline is the substrate-decl form of Bateson's
@@ -984,7 +986,7 @@ Four structural corollaries the identification carries:
   bytes. Loading resolves through @io/crypto.ssh_key_material at
   the realisation boundary; the substrate never materializes the
   bytes as substrate-decl carrier.
-- **Peer-key gating is per-projection.** The secret_projection
+- **Peer-key gating is per-projection.** The sealed_section
   carrier (species-decl 324-329) has a `key_material_ref` field;
   a projection is IDENTIFIED by the key that gated it. Two
   projections of the same section under different peer keys are
@@ -998,7 +1000,7 @@ Four structural corollaries the identification carries:
   inherited transitively; the @io/secrets species does not
   duplicate the witness check.
 
-The species-decl's key_material_ref_of action (Landing 6 at
+The species-decl's key_material_from_peer action (Landing 6 at
 species-decl 374) discharges the pointer resolution
 substrate-mechanically: given a peer_ref, construct the
 key_material_ref carrier by resolving the peer's ssh key
@@ -1050,21 +1052,23 @@ arrow chain @sheaf.section_at → @io/secrets.project traverses
 end-to-end at LANDED altitude. Reproduced from Seam composition-
 alignment audit at cec55a2 C1-C7:
 
-- `acl_project(F_home: ref, peer_acl: ref) -> sheaf_restriction`
-  (sheaf.mirror:358) — TYPE-CHECKS at ACL_peer boundary.
+- `restrict(sheaf: ref, acl: ref) -> sheaf_restriction`
+  (sheaf.mirror:358; renamed from `acl_project` per Seam
+  extended-scope audit 5dcad39 Q_C collapse) — TYPE-CHECKS at
+  ACL_peer boundary.
 - `section_at(F_A_p: sheaf_restriction, crystal_ref: ref) ->
   section_at_stalk` (sheaf.mirror:382) — TYPE-CHECKS on sr flow.
-- `key_material_ref_of(peer: ref) -> imperfect`
+- `key_material_from_peer(peer: ref) -> imperfect`
   (secrets.mirror:374; Landing 6 at 64b0438) — TYPE-CHECKS on
   peer flow.
 - `project(section: section_at_stalk, k: key_material_ref) ->
   imperfect` (secrets.mirror:407; parameter renamed sr → section
   per REED-INLINE #1 at 57c5b3a) — TYPE-CHECKS on section flow
   BYTE-EQUAL to section_at output.
-- `materialize(sp: secret_projection) -> imperfect`
-  (secrets.mirror:430) — TYPE-CHECKS on secret_projection
+- `materialize(ss: sealed_section) -> imperfect`
+  (secrets.mirror:430) — TYPE-CHECKS on sealed_section
   carrier.
-- Composition to `@io/fs.fs_write(p: path, bytes: ref) ->
+- Composition to `@io/fs.write(p: path, bytes: ref) ->
   imperfect` (fs.mirror:280) — TYPE-CHECKS on projection_path +
   ciphertext_bytes carriers.
 
@@ -1091,13 +1095,13 @@ D-cascade §D2.a; reproduced verbatim at secrets.mirror:149-162):
 ```
 peer_visibility_materialize(peer, home, crystal, target_path):
   ACL_peer := pack.members[peer.name]                           # @mirror/pack
-  sr       := @subject/visibility/sheaf.acl_project(F_home, ACL_peer)
+  sr       := @subject/visibility/sheaf.restrict(F_home, ACL_peer)
                                                                 # d1ce901
   section  := @subject/visibility/sheaf.section_at(sr, crystal)
                                                                 # d1ce901
-  peer_key := @io/secrets.key_material_ref_of(peer)             # Landing 6 at 64b0438
-  sp       := @io/secrets.project(section, peer_key)            # 059cf1c
-  @io/secrets.materialize(sp, target_path)                      # 059cf1c → disk
+  peer_key := @io/secrets.key_material_from_peer(peer)             # Landing 6 at 64b0438
+  ss       := @io/secrets.seal(section, peer_key)            # 059cf1c
+  @io/secrets.materialize(ss, target_path)                      # 059cf1c → disk
 ```
 
 Every arrow resolves to landed substrate at species-decl
@@ -1137,8 +1141,8 @@ handling: a section over a non-admitted stalk is NOT computable
 at substrate altitude and returns pending-boundary per
 @kintsugi/consent Partial semantics. Similarly at @io/secrets:
 a projection over a key that does not admit the section
-(key_admits Fail) returns Fail; a projection over a section
-that is not computable (section_computable Fail) returns Fail
+(key_admits Fail) returns Fail; a seal over a section
+that is not admissible (section_admissible Fail) returns Fail
 transitively via projection_valid.
 
 Splinter-pole across the discipline chain: bytes round-trip
@@ -1207,7 +1211,7 @@ refusal of the projection's soundness claim.
 ### §4.3 Downstream (consumers)
 
 - **@io/secrets/sops.** Sub-species; landed alongside as Landing
-  5 (059cf1c + 57c5b3a). Specializes secret_projection as
+  5 (059cf1c + 57c5b3a). Specializes sealed_section as
   sops_file_ref; specializes project as sops_encrypt; specializes
   retrieve as sops_decrypt; adds composition-bridge action
   sops_key_group_from_sheaf_restriction. Imports @io/secrets +
@@ -1215,8 +1219,8 @@ refusal of the projection's soundness claim.
 
 - **bootstrap/src/peer_persistence.rs (Arc-2.3 collapse target;
   Landing 8 forward-promise).** Currently Rust FLOOR; collapse
-  target composes @sheaf.acl_project + @sheaf.section_at +
-  @io/secrets.key_material_ref_of + @io/secrets.project +
+  target composes @sheaf.restrict + @sheaf.section_at +
+  @io/secrets.key_material_from_peer + @io/secrets.seal +
   @io/secrets.materialize + @kintsugi/consent.query_phi. Alex-
   triggered Reed FLOOR work; awaits composition-only shard body
   landing after Landing 7.
@@ -1239,7 +1243,7 @@ refusal of the projection's soundness claim.
 
 - **@mirror/pack ACL surface composes upstream via @sheaf.**
   Pack.members[peer] → ACL binding altitude (per mirror-spec-
-  peer-acl-surface.md §5); @sheaf.acl_project consumes ACL_peer
+  peer-acl-surface.md §5); @sheaf.restrict consumes ACL_peer
   to produce sheaf_restriction; @io/secrets consumes
   section_at_stalk (derived from sheaf_restriction) via project.
   The composition arrow @mirror/pack → @sheaf → @io/secrets is
@@ -1263,7 +1267,7 @@ refusal of the projection's soundness claim.
 - **@gift/lens Fractal.Lens pointer/thing partition.**
   Orthogonal WHO-composed carrier; the peer_ref field of
   key_material_ref IS the Fractal.Lens POINTER; the
-  secret_projection after materialize IS the THING. Per
+  sealed_section after materialize IS the THING. Per
   `[[architecture-fractal-lens-pointer-thing-partition]]`.
 
 ### §4.5 Composition graph — arrow-by-arrow resolution
@@ -1274,21 +1278,21 @@ Enumerated for Rice-safe petri-net analysis:
 | Producer | Arrow | Consumer | Landed at |
 |---|---|---|---|
 | @subject | subject_instance | @io/secrets.key_material_ref.peer_ref | shards/subject.mirror |
-| @subject | subject_instance | @io/secrets.key_material_ref_of (input) | shards/io/secrets.mirror:374 |
-| @io/crypto | ssh_key_material | @io/secrets.key_material_ref_of (composition) | shards/io/crypto.mirror:448 |
+| @subject | subject_instance | @io/secrets.key_material_from_peer (input) | shards/io/secrets.mirror:374 |
+| @io/crypto | ssh_key_material | @io/secrets.key_material_from_peer (composition) | shards/io/crypto.mirror:448 |
 | @io/crypto | key_material | @io/secrets.key_material_ref.key_carrier | shards/io/secrets.mirror:258-261 |
-| @io/crypto | ciphertext_bytes | @io/secrets.secret_projection.ciphertext_bytes | shards/io/secrets.mirror:324-329 |
-| @io/fs | path | @io/secrets.secret_projection.projection_path | shards/io/secrets.mirror:324-329 |
-| @sheaf | section_at_stalk | @io/secrets.project (input) | shards/io/secrets.mirror:407 |
+| @io/crypto | ciphertext_bytes | @io/secrets.sealed_section.ciphertext_bytes | shards/io/secrets.mirror:324-329 |
+| @io/fs | path | @io/secrets.sealed_section.projection_path | shards/io/secrets.mirror:324-329 |
+| @sheaf | section_at_stalk | @io/secrets.seal (input) | shards/io/secrets.mirror:407 |
 | @sheaf | sheaf_restriction | @io/secrets/sops.sops_key_group_from_sheaf_restriction | shards/io/secrets/sops.mirror:349 |
-| @io/secrets | secret_projection | @io/secrets.materialize | shards/io/secrets.mirror:430 |
-| @io/secrets | materialize (output) | @io/fs.fs_write | shards/io/fs.mirror:280 |
+| @io/secrets | sealed_section | @io/secrets.materialize | shards/io/secrets.mirror:430 |
+| @io/secrets | materialize (output) | @io/fs.write | shards/io/fs.mirror:280 |
 | @io/secrets | project (output) | @io/crypto.aead_seal or age_encrypt | shards/io/crypto.mirror:362 / 408 |
-| @io/secrets | retrieve (input) | @io/fs.fs_read | shards/io/fs.mirror:257 |
+| @io/secrets | retrieve (input) | @io/fs.read | shards/io/fs.mirror:257 |
 | @io/secrets | retrieve (composition) | @io/crypto.aead_open or age_decrypt | shards/io/crypto.mirror:386 / 428 |
 | @io/secrets/sops | sops_file_ref | @io/secrets/sops.sops_decrypt | shards/io/secrets/sops.mirror:318 |
 | @io/secrets/sops | sops_encrypt (output) | @io/crypto.age_encrypt (age backend) | shards/io/crypto.mirror:408 |
-| @io/secrets/sops | sops_encrypt (output) | @io/fs.fs_write (via wrapping) | shards/io/fs.mirror:280 |
+| @io/secrets/sops | sops_encrypt (output) | @io/fs.write (via wrapping) | shards/io/fs.mirror:280 |
 | @mirror/data/yaml | YAML wire format | @io/secrets/sops.sops_file_ref.wire_format | shards/io/secrets/sops.mirror:199-204 |
 | @mirror/data/json | JSON wire format | @io/secrets/sops.sops_file_ref.wire_format | shards/io/secrets/sops.mirror:199-204 |
 
@@ -1349,12 +1353,12 @@ Three concurrent species-decl mints:
 The four-shard @io mint at 059cf1c is one substrate landing per
 shape-proposal §5.5 revised landing sequence.
 
-### §5.6 Landing 6 — LANDED at 64b0438 (key_material_ref_of composition-bridge)
+### §5.6 Landing 6 — LANDED at 64b0438 (key_material_from_peer composition-bridge; originally minted as `key_material_ref_of`, renamed per Seam extended-scope audit 5dcad39 Q_A)
 
 Composition-bridge action at `shards/io/secrets.mirror:374`:
 
 ```
-key_material_ref_of(peer: ref) -> imperfect { \ }
+key_material_from_peer(peer: ref) -> imperfect { \ }
 ```
 
 Landed per Seam A1 re-adjudication SEAM-RATIFY Position (b) at
@@ -1374,9 +1378,10 @@ through §4.
 
 `bootstrap/src/peer_persistence.rs` currently Rust FLOOR;
 collapse target composes:
-- @sheaf.acl_project — the Arc-2.3 sheaf primitive.
+- @sheaf.restrict — the Arc-2.3 sheaf primitive (renamed from
+  `acl_project` per Seam extended-scope audit 5dcad39 Q_C collapse).
 - @sheaf.section_at — the per-crystal section reader.
-- @io/secrets.key_material_ref_of — Landing 6 composition-bridge.
+- @io/secrets.key_material_from_peer — Landing 6 composition-bridge.
 - @io/secrets.project — the peer-key-gated projection.
 - @io/secrets.materialize — the disk-side materialization.
 - @kintsugi/consent.query_phi — the elevation discharge (per
@@ -1486,7 +1491,7 @@ record literal; 8/9 species zero narrative-shorthand. Seam A1
 re-adjudication at e5d928e ratified Position (b).
 
 **SECOND WITNESS (LANDED at 64b0438).** Landing 6
-@io/secrets.key_material_ref_of at species-decl 374 discharges
+@io/secrets.key_material_from_peer at species-decl 374 discharges
 the singleton narrative-shorthand instance; the substrate's
 pattern now holds at 14/14 sites landed. The recognition
 candidate extends from @sheaf canonical spec §6.3 (first-
@@ -1533,7 +1538,7 @@ verbatim round_trip discipline.
 **Candidate strength.** The Fractal.Lens pointer/thing partition
 per `[[architecture-fractal-lens-pointer-thing-partition]]`
 applies at @io/secrets altitude: the peer_ref field of
-key_material_ref IS the POINTER; the secret_projection after
+key_material_ref IS the POINTER; the sealed_section after
 materialize IS the THING. The @io/secrets species substrate-
 decls the partition at the peer-key-gated-projection altitude;
 extends the pattern from @gift/lens.
@@ -1657,9 +1662,9 @@ Per Seam A1 re-adjudication at e5d928e: SEAM-RATIFY Position
 (b) as Landing 6. Landed at 64b0438. Sub-choices deferred to
 Landing 6 (NOT Alex-adjudication per re-adjudication §8):
 
-- Exact name (`key_material_ref_of` vs `key_material_ref_
+- Exact name (`key_material_from_peer` vs `key_material_ref_
   from_peer` vs `peer_key_material_ref`) — RESOLVED at Landing
-  6 as `key_material_ref_of` per readable-over-foundational
+  6 as `key_material_from_peer` per readable-over-foundational
   Pack convention (attested composition-arrow suffix `_of` per
   precedent `manifest_for`, `oid_to_digest`).
 - Whether to update composition-chain narrative prose at
@@ -1694,8 +1699,8 @@ canonical spec scope. This spec introduces no A-series items.
 
 ### §8.1 Rice-safety at whole-tick altitude
 
-All five @io/secrets actions (key_material_ref_of, project,
-materialize, retrieve, round_trip) are Rice-safe at whole-tick
+All five @io/secrets actions (key_material_from_peer, seal,
+materialize, open, round_trip) are Rice-safe at whole-tick
 altitude per Mara-B §4.5.5 template. All four bilaterals
 (key_admits, projection_valid, round_trip_preserved, secrets_
 well_formed) are Rice-safe at whole-tick altitude. Bounded
@@ -1706,13 +1711,13 @@ inspection. No unbounded recursion.
 
 Concrete bounds per-action:
 
-- `key_material_ref_of(peer)`: O(1) subject_instance witness
+- `key_material_from_peer(peer)`: O(1) subject_instance witness
   lookup + O(|ssh_key|) key material load at realisation
   boundary (bounded by ssh-key vendor library key size).
 - `project(section, k)`: O(|section.projected_value|) AEAD
   seal cost (bounded by plaintext byte length + constant-time
   platform intrinsics per glass-wall insight).
-- `materialize(sp)`: O(|sp.ciphertext_bytes|) POSIX write cost
+- `materialize(ss)`: O(|ss.ciphertext_bytes|) POSIX write cost
   (bounded by ciphertext byte length + kernel write throughput).
 - `retrieve(cr, k)`: O(|cr.ciphertext|) POSIX read + AEAD open
   cost (bounded parallel to project).
@@ -1721,14 +1726,14 @@ Concrete bounds per-action:
   retrieve).
 - `key_admits(k, sr)`: O(1) subject_instance witness reads +
   O(1) key algorithm lookup + O(1) peer_ref byte-equality.
-- `projection_valid(sp)`: O(1) transitive section_computable +
-  O(1) transitive key_admits + O(|sp.ciphertext_bytes|) AEAD
+- `projection_valid(ss)`: O(1) transitive section_admissible +
+  O(1) transitive key_admits + O(|ss.ciphertext_bytes|) AEAD
   verifiability decrypt-and-compare.
 - `round_trip_preserved(section, k)`: O(|section.projected_
   value|) byte-compare after round_trip discharge.
-- `secrets_well_formed(sp)`: O(1) transitive projection_valid +
+- `secrets_well_formed(ss)`: O(1) transitive projection_valid +
   O(depth) transitive fs_well_formed (bounded by path depth per
-  @io/fs writable bilateral).
+  @io/fs path_writable bilateral).
 
 @io/secrets/sops actions parallel per sub-species discipline;
 all Rice-safe at whole-tick altitude per shape-proposal §2.7
@@ -1840,13 +1845,13 @@ ENTIRELY over @io at realisation boundary; zero Rust extension
 authorship licensed. Realisation paths per Seam A1 re-
 adjudication §3 R3:
 
-- `key_material_ref_of` realisation: @io/crypto.ssh_key_material
+- `key_material_from_peer` realisation: @io/crypto.ssh_key_material
   + record literal. NO Rust extension.
 - `project` realisation: @io/crypto.aead_seal (or age_encrypt)
   over section.projected_value. NO Rust extension.
-- `materialize` realisation: @io/fs.fs_write over sp.ciphertext_
-  bytes.ciphertext + sp.projection_path. NO Rust extension.
-- `retrieve` realisation: @io/fs.fs_read + @io/crypto.aead_open
+- `materialize` realisation: @io/fs.write over ss.ciphertext_
+  bytes.ciphertext + ss.projection_path. NO Rust extension.
+- `open` realisation: @io/fs.read + @io/crypto.aead_open
   (or age_decrypt). NO Rust extension.
 - `round_trip` realisation: project + materialize + retrieve
   composition. NO Rust extension.
@@ -1941,7 +1946,7 @@ the substrate's established @io family pattern for composition-
 bridge arrows. 1/14 sites narrative-shorthand; 13/14 landed
 constructor or consumer record literal; 8/9 species zero
 narrative-shorthand. Direct precedent for Landing 6
-substrate-decl of @io/secrets.key_material_ref_of.
+substrate-decl of @io/secrets.key_material_from_peer.
 
 Taut's read-only discipline (grep-first; no shard authorship;
 no Rust) grounded the A1 re-adjudication empirically. The
@@ -1993,7 +1998,7 @@ The witness cascade for this canonical spec:
 13. **Mara @sheaf canonical spec** (564571e) — sibling
     canonical spec ancestor.
 14. **Landing 6 composition-bridge landing** (64b0438) —
-    key_material_ref_of substrate-decl'd.
+    key_material_from_peer substrate-decl'd.
 15. **This canonical spec** (commit-in-flight) — Landing 7.
     Composition-only; grounds the four-shard mint + Landing 6
     in the ancestry chain above.
@@ -2092,7 +2097,7 @@ composition chain at operational altitude. The substrate has the
 word; the substrate now also has the carriers and the grounding.
 Peer-key-gated projection through @io/secrets is substrate-
 mechanical from Alex 2026-07-14 design intent to disk write per
-@io/fs.fs_write, arrow-by-arrow, without intermediate narrative-
+@io/fs.write, arrow-by-arrow, without intermediate narrative-
 shorthand.
 
 The bowl is one thing. The Peers key stays .git/mirror side.
