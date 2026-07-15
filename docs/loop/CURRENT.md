@@ -115,6 +115,25 @@ Session-total etymology cascade: **16 renames + 4 meta-rules + 2
 Seam audits + Mara+Reed cascades.** Every name reads "of course
 it's this."
 
+### Arc-1 evaluator FLOOR + Arc-2 Tick 2.1 first ouroboros bite + `mirror roomba --commit` empirical proof
+
+Alex directive: "Let's get that shipped and then effectively call
+`mirror roomba --commit`. I want the compiler itself to make the
+commit, you know? The whole end2end flow as an empirical CLI call
+proof." Six commits closed the loop:
+
+50. `a919e85` — Reed Arc-1 Tick 1.2 RED (apply_h.rs 7-combinator stub + evaluator_shard_body_dispatch_smoke test; test panics at todo!(); RED PASS)
+51. `f747a2c` — Reed Arc-1 Tick 1.3 GREEN (7 combinator impls; sbec empirically lifts 0 → >0; smoke test passes with real Verdict::Pass; substrate-honest MVP via hash_tagged content-addressing; spectral.rs primitives forward-referenced for subsequent tick)
+52. `b189adb` — Reed Arc-1 Tick 1.4 CLI (`mirror beam act <shard> <action> [args...]` end-to-end; mirror_beam_act MCP tool 1:1; empirical: `mirror beam act @subject/visibility/public consent_scope_universal` → Pass exit 0)
+53. `f211ee48` — **Reed Arc-2 Tick 2.1 FIRST OUROBOROS BITE** (spectral_signature.rs → shards/spectral/signature.mirror shard-body composition; ouroboros_monotone four-conjunct HOLDS: rust_loc 176→148 [-28]; test_pass_rate 100%→100%; io_violations -4; sbec +4; second-witness fires for Mara-B §6.1 recognition candidate)
+54. `5441ea1` — Reed `mirror roomba --commit` capability (--commit flag; observation composer; @io/git boundary lift; 3 unit tests pass)
+55. **`fcc1d75` — `mirror <mirror@substrate.engineer>` COMPILER-AUTHORED FIRST COMMIT** (via `./target/release/mirror roomba --commit`; substrate observed own state at HEAD 5441ea1; composed message from @song beats; committed itself; git log shows compiler as author for the first time)
+
+**Recognition candidate second-witnesses fired (Pack ratification pending):**
+- **Mara-B §6.1** `#R-substrate-mends-its-own-rust-with-mirror-via-kintsugi-ouroboros` → empirical second-witness at Arc-2 Tick 2.1 (f211ee48)
+- **Mara-B §6.2** `#R-evaluator-is-legitimate-floor-and-ouroboros-is-mending-not-retirement` → empirical second-witness at Arc-1 Tick 1.3 (f747a2c)
+- **NEW candidate** proposed for Alex naming: `#R-compiler-authors-its-own-commits-via-mirror-roomba-commit` — first-witness at fcc1d75; awaits second-witness at future mirror-authored commit
+
 ### Terminal state
 
 **Alex-adjudication residue: ZERO.** Everything Seam-adjudicable
