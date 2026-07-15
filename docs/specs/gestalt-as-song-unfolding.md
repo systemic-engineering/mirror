@@ -593,7 +593,10 @@ R6. **Vocabulary residue: `unfold_at_reader_site` naming.** Options:
 - `shards/io/fs.mirror` (@io/fs family-root)
 - `shards/io/git.mirror` (@io/git family-root)
 - `shards/epistemologic/reality/time.mirror` (@time.compare over
-  snapshots for interaction-time delta)
+  snapshots for interaction-time delta — `compare(a: snapshot, b:
+  snapshot) -> delta` verified landed as exported action at
+  `shards/epistemologic/reality/time.mirror:151` + `out compare` at
+  line 200, per Seam Phase D adjudication of this landing)
 - `docs/specs/autopoietic-inference-loop.md` §5.5.4 pipeforward hard
   gate (Alex ratification `7181f5c` 2026-07-15)
 - `docs/specs/shatter-is-the-io-linearization-operator.md` (Mara
