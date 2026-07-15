@@ -358,7 +358,7 @@ annotate(state: unfolding_state, content: ref,
 #                   discards temporal ordering)
 #   Fail          — required carrier missing (e.g., pdf render without
 #                   `mode = pdf` in doc.modes)
-render(doc: gestalt_document, target: mode, out: ref) -> ref { \ }
+render(doc: gestalt_document, target: mode, out: ref) -> imperfect { \ }
 
 # === Bilateral predicates (dispatchable via apply_h::act) ===
 
