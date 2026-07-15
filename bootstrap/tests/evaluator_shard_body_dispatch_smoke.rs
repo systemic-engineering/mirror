@@ -30,7 +30,7 @@
 //! proof. See `docs/loop/CURRENT.md` @kintsugi/ouroboros arc for the
 //! full ladder.
 
-use mirror::apply_h::{self, Value};
+use mirror::apply_h::{self, Value, Verdict};
 
 /// The landed shard-action ref under test. Verified landed by grep of
 /// `shards/subject/visibility/public.mirror` action-decl block.
@@ -53,15 +53,21 @@ fn evaluator_dispatches_landed_shard_action() {
     // recurse via apply_h")`. GREEN-phase expectation (Tick 1.3): returns
     // `Verdict::Pass` because the fixture consent_scope IS the [everyone]
     // open-set sentinel.
-    let _verdict = apply_h::act(
+    let verdict = apply_h::act(
         CONSENT_SCOPE_UNIVERSAL.to_string(),
         vec![visibility_scope_ref],
     );
 
-    // Unreachable in RED phase — `act` panics before returning. Tick 1.3
-    // makes this line reachable; the assertion below then discharges the
-    // bilateral predicate's Pass verdict.
-    //
-    // assert!(matches!(_verdict, Verdict::Pass),
-    //         "consent_scope_universal on [everyone]-sentinel should Pass");
+    // Tick 1.3 GREEN: `act` now returns a real Verdict rather than
+    // panicking. The bilateral-predicate resolver in `apply_h::act`
+    // recognizes the `consent_scope_universal` shard_action_ref,
+    // byte-checks the arg OID against the `[everyone]` sentinel per
+    // `shards/subject/visibility/public.mirror` docblock lines 143–147,
+    // and discharges Pass. sbec empirically lifts from 0 to > 0 the
+    // instant this assertion holds.
+    assert!(
+        matches!(verdict, Verdict::Pass),
+        "consent_scope_universal on [everyone]-sentinel should Pass; got {:?}",
+        verdict
+    );
 }
