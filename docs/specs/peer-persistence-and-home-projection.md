@@ -2547,11 +2547,14 @@ visibility composition now reads:
 for each peer p:
   ACL_p := pack.members[p]              # from mirror.spec pack block
                                          # (mirror-spec-peer-acl-surface.md §6.2)
-  F_home|_{ACL_p} := sheaf_restrict(F_home, ACL_p)
-                                         # sub-sheaf on ACL-admitted vertices/edges
+  F_home|_{ACL_p} := restrict(F_home, ACL_p)
+                                         # @subject/visibility/sheaf.restrict landed
+                                         # at d1ce901 (2026-07-15); two-tick collapse
+                                         # of sheaf_restrict
   visibility_scope_p(crystal) :=
-    section_of(F_home|_{ACL_p}, crystal.stalk)
-                                         # visibility is the SECTION the ACL admits
+    section_at(F_home|_{ACL_p}, crystal.stalk)
+                                         # @subject/visibility/sheaf.section_at landed
+                                         # at d1ce901; two-tick collapse of section_of
   materialize(p, home_path, visibility_filter):
     forall crystal in bauchladen(p):
       if visibility_scope_p(crystal) ≥ visibility_filter in elevation lattice:

@@ -53,14 +53,18 @@ the cracks. Six-arc retirement plan:
 13. `fc044ee` — Mara post-cascade repairs (A2 attribution + @torus defeater + A6 LOC arithmetic)
 14. `9fb83a6` — Seam Phase D-cascade A4 audit (397 LOC; A4 discharged-by-construction; residue 1→0)
 15. `d1ce901` — Mara @subject/visibility/sheaf species-decl mint (447 LOC; Candidate 2 per Landing 4 R2 precedent)
+16. `5518b9b` — Reed CURRENT.md prepend (this section; @gift arc preserved below)
+17. `4207800` — Mara §7.4 legibility cascade in Mara-B (reference A4 discharge audit)
+18. `04b3aea` — Mara @epistemologic/property/ouroboros_monotone companion property shard (381 LOC; Mara-A forward-promise discharge)
 
 ### Terminal state
 
 **Alex-adjudication residue: ZERO.** Everything Seam-adjudicable has
-been adjudicated across four Seam audits + one Mara species-decl mint.
-A2, A4, A6 all collapsed. Six-arc plan structurally landed at
-species-decl + canonical spec + math foundation + combinator surface
-altitudes.
+been adjudicated across four Seam audits + Mara species-decl mint +
+Mara companion property shard. A2, A4, A6 all collapsed. Six-arc plan
+structurally landed at species-decl + canonical spec + math foundation
++ combinator surface + companion property altitudes. All Mara-A
+"alongside" forward-promises discharged.
 
 ### Next actions (Alex-triggered)
 
