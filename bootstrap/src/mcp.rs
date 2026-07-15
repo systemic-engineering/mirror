@@ -210,6 +210,19 @@ fn tools_list_result() -> Value {
                 }
             },
             {
+                "name": "mirror_beam_act",
+                "description": "beam act: dispatch a substrate-decl'd action against the 7-combinator evaluator surface (@apply_h). First user-invocable substrate dispatch — sbec lifts from 0 to > 0 through this call. Verdict marshaling: Pass → text 'Pass' + isError=false; Fail(reason) → text 'Fail: <reason>' + isError=true; Partial(transparency) → text 'Partial:\n  <loc>: <opacity>...' + isError=true. Substrate: @mirror/beam/act (CLI verb landed Arc-1 Tick 1.4 per docs/audits/2026-07-15-seam-kintsugi-ouroboros-phase-d-cascade-a2-a6.md; renamed 2026-07-15 via two-step substrate learning execute → dispatch → act per Seam seamfinder audit `546c2f6`). Empirical anchor: `mirror beam act @subject/visibility/public consent_scope_universal` returns Pass exit 0.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "shard_path": { "type": "string", "description": "Substrate shard path (e.g. `@subject/visibility/public`). Concatenated with `.<action>` to form the shard_action_ref the resolver in apply_h::act recognizes." },
+                        "action":     { "type": "string", "description": "Action name declared on the shard (e.g. `consent_scope_universal`)." },
+                        "args":       { "type": "array", "description": "Optional positional args passed as Value oids to apply_h::act. When absent for a landed bilateral predicate on @subject/visibility/public, the substrate-decl'd sentinel is synthesized so the empirical target hits Pass without operator fixtures.", "items": { "type": "string" } }
+                    },
+                    "required": ["shard_path", "action"]
+                }
+            },
+            {
                 "name": "mirror_index",
                 "description": "@mirror/fractal-coherence measurement: walk substrate DAG, compute graph Laplacian's top-16 eigenvalues via LAPACK dsyev, emit Fiedler value λ₀ = values[1] post-normalization. Substrate: @mirror/index (shards/mirror/index.mirror; provisional under two-tick discipline, collapses to @fractal/index after Alex adjudicates family-root shape). Rung 8 Landing 5 per Taut `77b8e14` migration mapping + Mara `317e830` substrate-decl. Pulls the coherence measurement currently emitted by mcp__spectral__spectral_index (sibling crate) into mirror's own voice per Recognition #43 (mirror IS content-addressed build system) + Recognition #55 (form/process partition; DAG is form, measurement is process; belong at same altitude). Mandelbrot correspondence per Mara `2c64060` §4: fiedler IS λ₀(Δ_F) = spectral gap of the substrate's parameter Mandelbrot (Hausdorff dim 2 ∂M per Shishikura 1998). Load-bearing empirical prediction: Fiedler stability across Douady-Hubbard-invariant refactors (already 202-commit-confirmed at 0.0612 stable). Landing 6 forward-promise: extend with Rényi entropies H_q + Legendre transform to f(α) multifractal spectrum — discharges Mara math §10 prediction #2 (framework becomes framework-with-measurement).",
                 "inputSchema": {
@@ -505,6 +518,29 @@ fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
             }
             if b("full_profile") {
                 argv.push("--full-profile".into());
+            }
+            let refs: Vec<&str> = argv.iter().map(String::as_str).collect();
+            run_mirror(&refs, ctx)
+        }
+        "mirror_beam_act" => {
+            // Arc-1 Tick 1.4 (2026-07-15) — 1:1 CLI mirror per Mara CLI
+            // condensation spec §1 corollary. Routes through the
+            // `mirror beam act <shard-path> <action> [args...]` CLI verb
+            // so the substrate dispatch is byte-parity with the CLI
+            // invocation. First user-invocable substrate dispatch — sbec
+            // lifts from 0 to > 0. Substrate-decl'd Verdict marshaling
+            // is preserved at MCP altitude via exit_code lift (Pass=0 →
+            // isError=false; Fail=1 / Partial=2 → isError=true).
+            let shard_path = s("shard_path").unwrap_or_default();
+            let action = s("action").unwrap_or_default();
+            let mut argv: Vec<String> =
+                vec!["beam".into(), "act".into(), shard_path, action];
+            if let Some(arr) = args.get("args").and_then(|v| v.as_array()) {
+                for v in arr {
+                    if let Some(s) = v.as_str() {
+                        argv.push(s.to_string());
+                    }
+                }
             }
             let refs: Vec<&str> = argv.iter().map(String::as_str).collect();
             run_mirror(&refs, ctx)

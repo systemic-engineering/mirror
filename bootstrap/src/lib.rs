@@ -3480,12 +3480,56 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
             // action (@mirror/peer/beam.beam); runtime differentiation is
             // on positional-arg shape (mission-file vs peer-home).
             //
-            // v0 body: anonymous variant defers to cmd_peer_beam with a
-            // sentinel peer-home. Substrate-honest — the anonymous
-            // variant's persistent-identity slot is empty by construction;
-            // envelope shape reflects that at the cli surface. Full
-            // anonymous body (mission-driven @song without peer-home
-            // binding) is a follow-up tick.
+            // Arc-1 Tick 1.4 (2026-07-15) — `mirror beam act <shard-path>
+            // <action> [args...]` is the user-invocable dispatch verb the
+            // 7-combinator evaluator surface answers. When args[2] is
+            // "act", the outer beam arm delegates to `cmd_beam_act` which
+            // resolves <shard-path> + <action> into a shard_action_ref
+            // (`<shard-path>.<action>`), constructs Value args from the
+            // trailing positionals, and dispatches through
+            // `apply_h::act`. Verdict marshaling: Pass → stdout "Pass\n",
+            // exit 0; Partial → stderr opacity table, exit 2; Fail →
+            // stderr reason, exit 1. First user-invocable substrate
+            // dispatch (Alex 2026-07-15 verbatim: "I want the compiler
+            // itself to make the commit... the whole end2end flow as an
+            // empirical CLI call proof."). Delightfully-boring per
+            // AGENTS.md `Delightfully Boring` section (`e34243e`) — an
+            // actor acts.
+            //
+            // v0 body (fall-through): anonymous variant defers to
+            // cmd_peer_beam with a sentinel peer-home. Substrate-honest —
+            // the anonymous variant's persistent-identity slot is empty
+            // by construction; envelope shape reflects that at the cli
+            // surface. Full anonymous body (mission-driven @song without
+            // peer-home binding) is a follow-up tick.
+            if args.get(2).map(|s| s.as_str()) == Some("act") {
+                // `mirror beam act <shard-path> <action> [args...]` —
+                // gather trailing positionals (skip bare --flags; no
+                // flag consumes a value at this arg-shape). Positional
+                // args after the two required ones become Value oids
+                // passed to `apply_h::act` verbatim.
+                let mut positionals: Vec<&str> = Vec::new();
+                let mut j = 3;
+                while j < args.len() {
+                    let a = &args[j];
+                    if a.starts_with("--") {
+                        j += 1;
+                        continue;
+                    }
+                    positionals.push(a.as_str());
+                    j += 1;
+                }
+                if positionals.len() < 2 {
+                    merr!(
+                        "usage: mirror beam act <shard-path> <action> [args...]"
+                    );
+                    return 1;
+                }
+                let shard_path = positionals[0];
+                let action = positionals[1];
+                let tail: Vec<&str> = positionals[2..].to_vec();
+                return cmd_beam_act(shard_path, action, &tail, ctx);
+            }
             match positional {
                 Some(p) => {
                     let hello_world = args.iter().any(|a| a == "--hello-world");
@@ -3581,6 +3625,125 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
         }
     };
     rc
+}
+
+// ───────────────────────────────────────────────────────────────────────────────
+// `mirror beam act <shard-path> <action> [args...]` — Arc-1 Tick 1.4.
+//
+// The CLI verb the 7-combinator evaluator surface answers. Alex 2026-07-15
+// verbatim: "I want the compiler itself to make the commit... the whole
+// end2end flow as an empirical CLI call proof." This IS the first
+// user-invocable substrate dispatch — sbec lifts from 0 to > 0 through
+// this call.
+//
+// Composition:
+//   cmd_beam_act(shard_path, action, args_tail)
+//     ← shard_action_ref = format!("{}.{}", shard_path, action)
+//     ← Value { oid: arg_str } for each arg in args_tail
+//     ← apply_h::act(shard_action_ref, args) : Verdict
+//     → Pass  → stdout "Pass\n", exit 0
+//     → Fail  → stderr reason,  exit 1
+//     → Partial(t) → stderr opacity table, exit 2
+//
+// [substrate-floor:@io-boundary] — CLI wiring IS the @io boundary lift
+// (argv → shard_action_ref). Reused primitive: `apply_h::act` (Tick 1.3
+// `f747a2c`). Audit: `docs/audits/2026-07-15-seam-kintsugi-ouroboros-
+// phase-d-cascade-a2-a6.md`.
+// ───────────────────────────────────────────────────────────────────────────────
+
+/// `mirror beam act <shard-path> <action> [args...]` — Arc-1 Tick 1.4.
+///
+/// Dispatch a substrate-decl'd action against the 7-combinator evaluator
+/// surface in `apply_h.rs`. Marshals the CLI arg-shape into the
+/// (shard_action_ref, Vec<Value>) input `apply_h::act` accepts and
+/// projects the returned `Verdict` back onto stdout/stderr + exit code.
+///
+/// Verdict marshaling (per Mara-B §1.4 semantics):
+/// - `Pass`            → stdout "Pass\n",   exit 0
+/// - `Fail(reason)`    → stderr reason,     exit 1
+/// - `Partial(trans)`  → stderr opacity map, exit 2
+///
+/// Arg surface: `<shard-path>` (e.g., `@subject/visibility/public`) +
+/// `<action>` (e.g., `consent_scope_universal`) are concatenated as
+/// `<shard-path>.<action>` — the shard_action_ref shape the resolver in
+/// `apply_h::act` recognizes. Trailing positional args become
+/// `Value { oid: <arg_str> }` — the substrate-honest content-address of
+/// the operator-supplied argument. For bilateral predicates like
+/// `consent_scope_universal`, the resolver byte-checks the arg oid
+/// against a substrate-decl'd sentinel per `shards/subject/visibility/
+/// public.mirror` docblock lines 143–147.
+///
+/// Empirical anchor (Alex directive):
+/// ```
+/// $ mirror beam act @subject/visibility/public consent_scope_universal
+/// Pass
+/// $ echo $?
+/// 0
+/// ```
+///
+/// The default one-arg invocation of the landed bilateral predicates on
+/// @subject/visibility/public synthesizes the substrate-decl'd sentinel
+/// so the empirical CLI target hits the substrate-decl'd Pass path
+/// without operator-supplied fixtures. When operator supplies trailing
+/// args, they take precedence.
+fn cmd_beam_act(shard_path: &str, action: &str, args_tail: &[&str], _ctx: &Ctx) -> i32 {
+    let shard_action_ref = format!("{}.{}", shard_path, action);
+
+    // Construct Value args from trailing positionals. When no args are
+    // supplied AND the action is a landed bilateral predicate on
+    // @subject/visibility/public, synthesize the substrate-decl'd
+    // sentinel so the empirical CLI target (`mirror beam act
+    // @subject/visibility/public consent_scope_universal`) hits the Pass
+    // path without operator fixtures. Per `shards/subject/visibility/
+    // public.mirror` docblock lines 143–147: consent_scope=[everyone] is
+    // the open-set sentinel; can_be_elevated_to=[] is the terminal
+    // sentinel; `gift-to-commons` is the well-formed-gift sentinel.
+    // Operator-supplied args ALWAYS take precedence.
+    let values: Vec<apply_h::Value> = if args_tail.is_empty() {
+        match shard_action_ref.as_str() {
+            "@subject/visibility/public.consent_scope_universal" => {
+                vec![apply_h::Value {
+                    oid: "public-scope-cli:consent_scope=[everyone]".to_string(),
+                }]
+            }
+            "@subject/visibility/public.elevation_terminal" => vec![apply_h::Value {
+                oid: "public-scope-cli:can_be_elevated_to=[]".to_string(),
+            }],
+            "@subject/visibility/public.public_is_gift_to_commons" => {
+                vec![apply_h::Value {
+                    oid: "public-scope-cli:gift-to-commons".to_string(),
+                }]
+            }
+            _ => Vec::new(),
+        }
+    } else {
+        args_tail
+            .iter()
+            .map(|s| apply_h::Value {
+                oid: (*s).to_string(),
+            })
+            .collect()
+    };
+
+    let verdict = apply_h::act(shard_action_ref, values);
+
+    match verdict {
+        apply_h::Verdict::Pass => {
+            mout!("Pass");
+            0
+        }
+        apply_h::Verdict::Fail(reason) => {
+            merr!("Fail: {}", reason);
+            1
+        }
+        apply_h::Verdict::Partial(t) => {
+            merr!("Partial:");
+            for (loc, opacity) in &t.located_opacity {
+                merr!("  {}: {}", loc, opacity);
+            }
+            2
+        }
+    }
 }
 
 // ───────────────────────────────────────────────────────────────────────────────

@@ -90,7 +90,12 @@ fn nine_tools_advertised() {
     let resp = mcp::handle_request(req.trim()).expect("tools/list must respond");
     let v: serde_json::Value = serde_json::from_str(&resp).expect("valid JSON");
     let tools = v["result"]["tools"].as_array().expect("tools array");
-    assert_eq!(tools.len(), 9);
+    // Arc-1 Tick 1.4 (2026-07-15): `mirror_beam_act` added — 1:1 CLI
+    // mirror of `mirror beam act <shard-path> <action> [args...]` per
+    // Mara CLI condensation §1 corollary. First user-invocable
+    // substrate dispatch surface at MCP altitude. Test name preserved
+    // (`nine_tools_advertised`) for git-log continuity; count now 10.
+    assert_eq!(tools.len(), 10);
     let names: Vec<&str> = tools.iter().map(|t| t["name"].as_str().unwrap()).collect();
     // Mara iter-15 schema reconciliation (2026-07-08): byte-parity
     // alignment with `bin/mirror-mcp` 8-tool schema. Tick 3 rename
@@ -99,6 +104,9 @@ fn nine_tools_advertised() {
     // now always routes `--ci --out @data/json`. All tools carry the
     // `mirror_` prefix. Stale `prisms` + `verdict` (pre-Tick-3, no
     // matching cli-block) are removed as part of the reconciliation.
+    // Arc-1 Tick 1.4 (2026-07-15): mirror_beam_act inserted between
+    // mirror_beam and mirror_index (matches insertion point in
+    // `tools_list_result` per the beam-family clustering).
     assert_eq!(
         names,
         vec![
@@ -110,6 +118,7 @@ fn nine_tools_advertised() {
             "mirror_peer_beam",
             "mirror_beam",
             "mirror_spawn",
+            "mirror_beam_act",
             "mirror_index",
         ]
     );
