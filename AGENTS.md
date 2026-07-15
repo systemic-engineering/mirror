@@ -620,17 +620,33 @@ finds the seam. Seam surfaces the drift; Mara proposes the
 replacement; Alex holds naming authority for the deepest
 substrate-decl coinages.
 
-**Example (2026-07-15 recognition).** The 7-combinator evaluator
-surface landed with `dispatch` (combinator #4) as the shard-body-
-invocation primitive. CS-brain accepted it uncritically because
-"dispatch" is what every VM calls this operation. But dispatch is
-bureaucratic jargon (dispatchers dispatch; beams don't). At the
-photonic substrate altitude the operation IS emission — the source
-emits a beam into a channel. Both `dispatch` (combinator #4) and
-`emit` (combinator #6) may collapse into one `emit(channel, ...)`
-parametric on channel type. Seam seamfinder audit at
-`docs/audits/2026-07-15-seam-combinator-etymology-audit.md` is the
-discharge.
+**Example (2026-07-15 recognition + discharge).** The 7-combinator
+evaluator surface landed with `dispatch` (combinator #4) as the
+shard-body-invocation primitive. CS-brain accepted it uncritically
+because "dispatch" is what every VM calls this operation. But
+dispatch is bureaucratic jargon (dispatchers dispatch; beams don't).
+Seam seamfinder audit at
+`docs/audits/2026-07-15-seam-combinator-etymology-audit.md` (546c2f6)
+interrogated all four CS-vocab-contaminated combinator names against
+the delightfully-boring criterion. Alex ratified ("I like Seam's
+suggestions") the four per-combinator renames plus the meta-rules.
+The closed cascade:
+
+| # | Old (CS-vocab) | New (substrate-native) | Grounding |
+|---|---|---|---|
+| 1 | `read_ast` | `section` | eigensheaf.md §3.2 verbatim (elements of A) |
+| 4 | `dispatch` | `act` | algebra-native short verb; an actor acts |
+| 6 | `emit` | `utter` | Bateson 1972 metalogue verbatim at `shards/metalogue.mirror:5` |
+| 7 | `bench_record` | `crystallize` | eigensheaf.md §4.9 verbatim (eigenmode formation) |
+
+The three delightfully-boring names — `coboundary`, `fold`, `settle`
+— stayed (math/physics/substrate had them first). The CLI verb
+closed via two-step cascade: `mirror execute` → `mirror beam
+dispatch` (Seam Phase D-cascade) → `mirror beam act` (seamfinder
+discharge). Meta-rules landed: (§3.1) readable wins where readable
+is landed AT SIBLING ALTITUDE FOR SAME OPERATION; (§3.3) accept
+`_valid`/`_admissible`/`_admits`/`_well_formed` as consistent
+bilateral suffix, reject `_record` on constructors as CS-vocab.
 
 ---
 

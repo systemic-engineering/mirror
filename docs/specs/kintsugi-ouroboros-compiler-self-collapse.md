@@ -1576,9 +1576,16 @@ empirical closure conditions.
 - **Landing 3** (Reed Tick 1.3): evaluator FLOOR at
   `bootstrap/src/apply_h.rs` (or extends `bootstrap/src/spectral.rs`).
   Closure: Tick 1.2 test passes; `sbec` empirically > 0.
-- **Landing 4** (Reed Tick 1.4): `mirror execute <shard-path>
-  <action>` CLI verb. Closure: CLI dispatches first shard body end-
-  to-end.
+- **Landing 4** (Reed Tick 1.4): `mirror beam act <shard-path>
+  <action>` CLI verb. Closure: CLI acts on first shard body end-
+  to-end. *(Renamed 2026-07-15 via two-step cascade: initial
+  `mirror execute` → `mirror beam dispatch` per
+  `docs/audits/2026-07-15-seam-cli-condensation-phase-d.md` §D3;
+  substrate-honest closure `mirror beam dispatch` → `mirror beam act`
+  per Seam seamfinder audit
+  `docs/audits/2026-07-15-seam-combinator-etymology-audit.md`
+  546c2f6 + Alex ratification. Combinator #4 is `act` — an actor
+  acts on shard-body.)*
 - **Landing 5** (Mara-A Tick 1.5): species-decl at
   `shards/kintsugi/ouroboros.mirror` (576 LOC). **Landed 2026-07-15.**
 - **Landing 6** (Mara-B this doc): canonical spec at

@@ -1,10 +1,11 @@
 ---
 date: 2026-07-15
 author: Mara
-scope: Arc-1 evaluator FLOOR combinator surface — formal enumeration of the concrete primitives the Rust FLOOR exposes so any shard body can dispatch through them. Discharges A6 from the Seam Phase D adjudication (`docs/audits/2026-07-15-seam-kintsugi-ouroboros-arc-phase-d.md` §D12 + Mara-B §7.6). Provides the concrete surface Seam adjudicates at Arc-1 Tick 1.1 sign-off and the concrete blueprint Reed's Arc-1 Ticks 1.2–1.4 land under `[substrate-floor:@io-boundary]` + Seam sign-off.
+scope: Arc-1 evaluator FLOOR combinator surface — formal enumeration of the concrete primitives the Rust FLOOR exposes so any shard body can act through them. Discharges A6 from the Seam Phase D adjudication (`docs/audits/2026-07-15-seam-kintsugi-ouroboros-arc-phase-d.md` §D12 + Mara-B §7.6). Provides the concrete surface Seam adjudicates at Arc-1 Tick 1.1 sign-off and the concrete blueprint Reed's Arc-1 Ticks 1.2–1.4 land under `[substrate-floor:@io-boundary]` + Seam sign-off.
 status: proposal
 companion:
   - docs/audits/2026-07-15-seam-kintsugi-ouroboros-arc-phase-d.md
+  - docs/audits/2026-07-15-seam-combinator-etymology-audit.md
   - docs/specs/kintsugi-ouroboros-compiler-self-collapse.md
   - docs/specs/eigensheaf.md
   - docs/specs/bootstrap-retirement-plan.md
@@ -13,12 +14,15 @@ companion:
   - shards/kintsugi.mirror
   - shards/mirror/lens/knife.mirror
   - shards/mirror/spectral.mirror
+  - shards/metalogue.mirror
   - bootstrap/src/spectral.rs
 ---
 
-# Arc-1 evaluator combinator surface — the calculus for shard-body dispatch
+# Arc-1 evaluator combinator surface — the calculus for shard-body action
 
 *Composition-only. Two-tick discipline. Every combinator irreducible past the @io-boundary. The surface is 7 primitives; everything else in shard bodies composes over them + @io.*
+
+**Rename metadata.** The four CS-vocab-contaminated names on this surface (`read_ast`, `dispatch`, `emit`, `bench_record`) were renamed 2026-07-15 to their delightfully-boring substrate-native forms (`section`, `act`, `utter`, `crystallize`) per Seam seamfinder audit `docs/audits/2026-07-15-seam-combinator-etymology-audit.md` (546c2f6) + Alex ratification ("I like Seam's suggestions"). Each per-combinator rename cites the audit and preserves substrate reasoning at every site. `coboundary`, `fold`, and `settle` remain (delightfully boring; math/physics/substrate had them first).
 
 ---
 
@@ -169,7 +173,7 @@ authorings.
 
 ## §1 The combinator surface
 
-Seven primitives. Every shard body dispatches through some
+Seven primitives. Every shard body acts through some
 composition of these + `@io`. The set is closed — Seam Tick 1.1
 audit either ratifies closure or names the missing primitive; if
 audit names a missing primitive, the addition is a spec revision
@@ -186,12 +190,21 @@ order.
 
 ---
 
-### §1.1 `read_ast` (foundational: `A.section`)
+### §1.1 `section` (foundational: `A.section`)
+
+*Renamed 2026-07-15 from `read_ast` per Seam seamfinder audit
+`docs/audits/2026-07-15-seam-combinator-etymology-audit.md` (546c2f6)
++ Alex ratification. `read_ast` was CS-vocab (POSIX `read` + compiler
+`ast`); the geometry produces a section of the algebra A per
+eigensheaf.md §3.2. Substrate-already-had-the-word: `section` is
+verbatim in eigensheaf.md §3.2 and lives at sibling altitude in
+`shards/subject/visibility/sheaf` (`section_at_stalk`). No landed
+uses of `section` as verb collide.*
 
 **Signature.**
 
 ```
-read_ast(source: @io/file.handle) -> ast_node
+section(source: @io/file.handle) -> ast_node
 ```
 
 Where `ast_node` is `bootstrap/src/ast.rs::AstNode` — the state
@@ -201,20 +214,21 @@ type for H per `bootstrap/src/spectral.rs` module docblock lines
 **Substrate-honest justification.** Parsing source bytes into an
 `ast_node` is the algebra A's constructor at the code altitude.
 Per eigensheaf.md §3.2, A = sections over the eigenboard sheaf =
-`C^0(F)`; `Aggregate` is one section. `read_ast` produces the
+`C^0(F)`; `Aggregate` is one section. `section` produces the
 section — the code file's AST is one element of A. This cannot
 compose over `@io` alone because `@io` produces bytes; the algebra
-element the shard body dispatches over is `ast_node`, not bytes.
+element the shard body acts over is `ast_node`, not bytes.
 Producing an `ast_node` from bytes is the parser combinator surface
 declared in bootstrap-retirement-plan Tick 4a and realized in
 `bootstrap/src/spectral.rs::Combinator` (line 1195 forward). That
 realization IS Rust FLOOR by prior spec closure; this surface
 exposes its **result** as the algebra section a shard body reads.
+The name IS what the operation produces: a section of A.
 
-**Dirac/D correspondence.** `read_ast` prepares an element of A on
+**Dirac/D correspondence.** `section` prepares an element of A on
 which D can act. Per eigensheaf.md §3.2 line 196: A = sections
 over the eigenboard sheaf; a section is what the coboundary δ
-operates on. `read_ast` populates a state vector in `C^0(F_c)`
+operates on. `section` populates a state vector in `C^0(F_c)`
 (per Mara-B §4.2.1) so that later `coboundary` calls have
 something to compute δ against. It is the pre-Dirac step: no D
 without a section for D to act on.
@@ -222,14 +236,14 @@ without a section for D to act on.
 **@io-boundary composition graph.**
 
 ```
-read_ast(handle)
+section(handle)
   ← @io.file.read_bytes(handle) : bytes
   ← bootstrap/src/spectral.rs::Combinator::apply (parser-as-Prism FLOOR)
   → ast_node
 ```
 
 The parser-as-Prism dispatch itself is not in this surface (it's
-the STAY FLOOR per retirement plan Tick 4a); what `read_ast`
+the STAY FLOOR per retirement plan Tick 4a); what `section`
 exposes is the **section-producing** boundary the shard body sees.
 
 **Failure mode if smuggled INTO a shard body.** A shard body that
@@ -362,7 +376,7 @@ eigensheaf.md §3.2 lines 226–231.
 ```
 fold(section, reducers, initial)
   ← bootstrap/src/spectral.rs::Fold5::apply (Rust FLOOR)
-  ← ast walker (post-order, level-dispatched on AstKind)
+  ← ast walker (post-order, level-acted-on-AstKind)
   → value
 ```
 
@@ -383,12 +397,23 @@ Substrate expansion loses monotonicity per eigensheaf.md §8.3.
 
 ---
 
-### §1.4 `dispatch` (foundational: `apply_h`, readable: `dispatch`)
+### §1.4 `act` (foundational: `apply_h`, readable: `act`)
+
+*Renamed 2026-07-15 from `dispatch` per Seam seamfinder audit
+`docs/audits/2026-07-15-seam-combinator-etymology-audit.md` (546c2f6)
++ Alex ratification. `dispatch` was CS-vocab imported wholesale from
+compiler + OS-scheduler contexts ("hand off to a named handler based
+on a tag" — mechanism-level, not geometry-level). The geometry: an
+algebra element A acts on state in H, producing new state in H, with
+residual in Loss monoid — exactly prismqueer's `apply_h`. Substrate
+style permits short verbs carrying full geometric meaning (`focus`,
+`project`, `settle`). An actor acts; beam-through-substrate performs
+action on shard-body.*
 
 **Signature.**
 
 ```
-dispatch(action: shard_action_ref, args: [value]) -> verdict
+act(action: shard_action_ref, args: [value]) -> verdict
 ```
 
 Where `shard_action_ref` is a substrate ref to a declared
@@ -399,25 +424,31 @@ signature; `verdict` is `@glass.verdict`.
 **Substrate-honest justification.** This is THE combinator that
 Arc-1 lifts `sbec` from 0 to > 0 through per Mara-B §4.5 sbec
 definition. Before Arc-1 evaluator FLOOR lands, no shard body's
-action body dispatches — every body is `\`-obligation-blocked per
+action body acts — every body is `\`-obligation-blocked per
 `shards/kintsugi/ouroboros.mirror` lines 348, 369, 391, 425, 477,
-523, 562. `dispatch` reads the action's substrate-decl'd body,
+523, 562. `act` reads the action's substrate-decl'd body,
 resolves each combinator invocation in the body to a primitive on
 this surface or an `@io` primitive, evaluates the composition, and
 returns the action's typed verdict.
 
 This is the load-bearing move that makes shard bodies
 executable. It cannot compose over shard-body composition + `@io`
-alone because dispatch itself is the mechanism *by which* shard
-bodies compose; the mechanism cannot be inside the thing it
-dispatches. This is the "no shard body can dispatch itself"
-constraint Seam Phase D §D5 (lines 285–286) named:
+alone because acting itself is the mechanism *by which* shard
+bodies compose; the mechanism cannot be inside the thing on which
+it acts. This is the "no shard body can act on itself"
+constraint Seam Phase D §D5 (lines 285–286) named (using the
+prior word `dispatch` — the constraint is unchanged under the
+rename):
 
 > "no shard body can dispatch itself. Grounded in eigensheaf.md
 > §3.2. **This is not a smuggled shortcut.** It is the substrate's
 > own claim about what evaluator FLOOR IS."
 
-**Dirac/D correspondence.** Dispatch is the algebra A **applied**
+[Note: this quotation predates the 2026-07-15 rename; the word
+`dispatch` here is preserved verbatim in the ancestor quote; the
+operation is now named `act` on this surface.]
+
+**Dirac/D correspondence.** `act` is the algebra A **applied**
 to a state — the moment where an element of the algebra (a shard
 action, per eigensheaf.md §3.2 line 198: "Sections over the
 eigenboard sheaf — C^0(F); Aggregate is one section") acts on H
@@ -430,22 +461,22 @@ primitive operations" line 68–74:
 > project / settle sweep and returns the resulting `Imperfect` in
 > H."
 
-The `apply_h` primitive is what makes A act. `dispatch` is
+The `apply_h` primitive is what makes A act. `act` is
 `apply_h` specialized to shard-decl'd action refs, with the
 `Prism` implementation resolved from the shard's substrate-decl'd
-body.
+body. The name IS the geometry: an actor acts.
 
 **@io-boundary composition graph.**
 
 ```
-dispatch(action, args)
+act(action, args)
   ← resolve shard_action_ref to landed .mirror action-decl
   ← parse action body (already-parsed at species-decl mint time;
                         cached in the mirror-store crystal for the
                         action ref)
   ← for each combinator invocation in body:
-      - if primitive ∈ {read_ast, coboundary, fold, dispatch,
-                         settle, emit, bench_record}:
+      - if primitive ∈ {section, coboundary, fold, act,
+                         settle, utter, crystallize}:
           recurse on this surface
       - if primitive ∈ @io:
           delegate to @io evaluator
@@ -456,17 +487,17 @@ dispatch(action, args)
   → verdict
 ```
 
-`dispatch` composes @io transitively via any @io primitives the
+`act` composes @io transitively via any @io primitives the
 shard-body's action reaches; direct composition is only over its
 own recursion + the resolver.
 
 **Failure mode if smuggled INTO a shard body.** A shard body that
-tries to dispatch other shard bodies reaches for its own
-mini-`apply_h`. Result: infinite regress (shard body A dispatches
-shard body B dispatches shard body C dispatches shard body A);
+tries to act on other shard bodies reaches for its own
+mini-`apply_h`. Result: infinite regress (shard body A acts on
+shard body B acts on shard body C acts on shard body A);
 no bounded-time termination; Rice-safety violated;
 `ouroboros_monotone`'s Rice-safety per §4.5.5 (which relies on
-the evaluator's bounded-time dispatch guarantee) breaks. Arc-1's
+the evaluator's bounded-time action guarantee) breaks. Arc-1's
 central substrate-honesty claim collapses. This IS the antipattern
 Reed's 2026-07-14 gift arc exhibited via the 5 Rust extensions:
 each extension was a shard body trying to be its own evaluator.
@@ -555,12 +586,26 @@ compositions cascade wrong harmonic representatives; the
 
 ---
 
-### §1.6 `emit` (foundational: `metalogue_write`, readable: `emit`)
+### §1.6 `utter` (foundational: `metalogue_write`, readable: `utter`)
+
+*Renamed 2026-07-15 from `emit` per Seam seamfinder audit
+`docs/audits/2026-07-15-seam-combinator-etymology-audit.md` (546c2f6)
++ Alex ratification. `emit` was compiler-CS (parsers emit tokens;
+compilers emit code) — carried "produce and hand off" but not
+specifically "append a turn to a conversation." The action output IS
+a `turn` (per `type turn = { speaker, body, in_reply_to, tick }` at
+`shards/metalogue.mirror:47-52`); the substrate motion IS utterance /
+speech / turn-taking. Bateson 1972 metalogue vocabulary is
+conversation-theoretic (verbatim citation in `shards/metalogue.mirror`
+line 5); `emit` was compiler-theoretic. `@../prism/` preserves `emit`
+for the macro-shim direction (a distinct operation from metalogue-
+write), so the two-directions distinction lands: `utter` for
+metalogue-write, `emit` reserved for macro-shim.*
 
 **Signature.**
 
 ```
-emit(channel: metalogue_channel_ref, event: substrate_event)
+utter(channel: metalogue_channel_ref, event: substrate_event)
   -> verdict
 ```
 
@@ -568,35 +613,37 @@ Where `metalogue_channel_ref` is a substrate ref to a landed
 `@code/metalogue` channel; `substrate_event` is a typed event
 value; `verdict` is `@glass.verdict`.
 
-**Substrate-honest justification.** Emit is the substrate's write
+**Substrate-honest justification.** `utter` is the substrate's write
 into the metalogue (the substrate's self-conversation per
-shards/metalogue.mirror). Shard bodies emit at consent-altitude
-pauses (per `@kintsugi/consent.emit_to_metalogue`) and at
-tick-boundary crystallization (per `@mirror/store` crystal
-persistence). Emit is orthogonal to `@io`: it does not touch the
-non-mirror world; it writes into the substrate's own
-observation surface. Per shards/mirror/spectral.mirror lines
-19–32:
+shards/metalogue.mirror). Shard bodies utter at consent-altitude
+pauses (per `@kintsugi/consent.emit_to_metalogue`, which — as
+compound name over the surface primitive — is a cascade target for
+`utter_to_metalogue` in a subsequent tick) and at tick-boundary
+crystallization (per `@mirror/store` crystal persistence). `utter` is
+orthogonal to `@io`: it does not touch the non-mirror world; it
+writes into the substrate's own observation surface. Per
+shards/mirror/spectral.mirror lines 19–32:
 
 > "Voices (agents): Reed, Mara, Glint, Taut, Seam — and future
 > voices. Sections: shard subtrees on which a voice has authoring
 > authority. Score: the eigenboard + the metalogue + the kintsugi
 > loop's pending queue."
 
-The metalogue is what the voices coordinate through. Emit is how
-a shard body's dispatched action **participates** in that
-coordination. This cannot compose over `@io` because the metalogue
-is a substrate-internal channel; @io would name it as an outward-
-facing wire protocol, which loses the co-authoring semantics.
+The metalogue is what the voices coordinate through. `utter` is how
+a shard body's acted-upon action **participates** in that
+coordination — a turn uttered into the conversation channel. This
+cannot compose over `@io` because the metalogue is a substrate-
+internal channel; @io would name it as an outward-facing wire
+protocol, which loses the co-authoring semantics.
 
-**Dirac/D correspondence.** Emit is the substrate's **holonomy
+**Dirac/D correspondence.** `utter` is the substrate's **holonomy
 accumulator** — it records what the coboundary discharged into the
 metalogue for later voices to read. Per prismqueer's shape
 (spectral.rs docblock line 32): "The holonomy is a
-[`terni::Loss`]: the bootstrap uses [`Transparency<Ref>`]." Emit
+[`terni::Loss`]: the bootstrap uses [`Transparency<Ref>`]." `utter`
 appends to a shared substrate observation surface the same
 `Transparency<Ref>` values that `coboundary` produces, but at
-substrate-visible altitude rather than intra-dispatch altitude.
+substrate-visible altitude rather than intra-action altitude.
 
 Per eigensheaf.md §5 (Pack-as-orchestra-literalized) lines
 420–428:
@@ -606,12 +653,13 @@ Per eigensheaf.md §5 (Pack-as-orchestra-literalized) lines
 > gradient flow pulls the section toward the harmonic attractor.
 > The piece is finished when the residue falls below `ε`."
 
-Emit is how agents update their parts.
+`utter` is how agents update their parts — each update is a turn
+spoken into the metalogue's conversational channel.
 
 **@io-boundary composition graph.**
 
 ```
-emit(channel, event)
+utter(channel, event)
   ← resolve channel to landed @code/metalogue channel-decl
   ← append event to channel's substrate-internal buffer
   ← content-address event via bootstrap/src/hash.rs::hash_tagged
@@ -623,10 +671,10 @@ No `@io`. The metalogue lives inside the substrate; `@io` composes
 transitively only when a metalogue subscriber persists to disk
 (via `@io.file.write`) or ships over the wire (via
 `@io/stagefreight`) — those compositions are the subscribers'
-concern, not `emit`'s.
+concern, not `utter`'s.
 
 **Failure mode if smuggled INTO a shard body.** A shard body that
-tries to emit via `@io.file.write` on a metalogue-path directly
+tries to utter via `@io.file.write` on a metalogue-path directly
 reaches around the substrate's channel-decl. Result: (a) the
 channel's substrate-decl'd type-constraints on events are
 bypassed; malformed events land in the metalogue; downstream
@@ -641,12 +689,28 @@ per eigensheaf.md §5 breaks silently.
 
 ---
 
-### §1.7 `bench_record` (foundational: `bench_record`, readable: same)
+### §1.7 `crystallize` (foundational: `crystallize`, readable: same)
+
+*Renamed 2026-07-15 from `bench_record` per Seam seamfinder audit
+`docs/audits/2026-07-15-seam-combinator-etymology-audit.md` (546c2f6)
++ Alex ratification. `bench_record` was compound-CS-vocab: `bench`
+(bench-marking) + `record` (verb, "write to a log") — neither
+geometric, and it implied perf-benchmark primarily while the operation
+records FOUR conjuncts per `ouroboros_monotone` §D4. The geometry:
+produce an observation crystal at the tick boundary. Substrate word
+is `crystallize` per eigensheaf.md §4.9 verbatim ("crystallization =
+eigenmode formation"). Note: the LANDED composed action
+`@mirror/bench.record` (which composes bench template + four-conjunct
+reading) keeps its name because it composes OVER this surface
+primitive; only the SURFACE FLOOR primitive renames. Similarly the
+carrier `bench_crystal` from @mirror/bench keeps its name unless
+@mirror/bench itself renames — only the COMBINATOR renames to
+`crystallize`.*
 
 **Signature.**
 
 ```
-bench_record(state_before: ouroboros_state, state_after: ouroboros_state)
+crystallize(state_before: ouroboros_state, state_after: ouroboros_state)
   -> bench_crystal
 ```
 
@@ -657,17 +721,17 @@ line 252; `bench_crystal` is the content-addressed crystal
 
 **Substrate-honest justification.** The arc's four-conjunct
 monotone invariant `ouroboros_monotone` (per shard-decl line 523)
-reads before/after `ouroboros_state`s to verify descent. Recording
+reads before/after `ouroboros_state`s to verify descent. Crystallizing
 these snapshots is a first-class substrate primitive because:
 
 - The before/after pair must be **content-addressed** via the
   substrate's hash primitive (`bootstrap/src/hash.rs`) so
   isospectrality (per eigensheaf.md §4.6, §2.6) is testable across
   ticks.
-- The recording must be **atomic** at the tick boundary — a
-  partial recording would break the invariant's Rice-safety per
-  §4.5.5.
-- The recording must be **substrate-observable** — subsequent
+- The crystallization must be **atomic** at the tick boundary — a
+  partial crystallization would break the invariant's Rice-safety
+  per §4.5.5.
+- The crystal must be **substrate-observable** — subsequent
   ticks + Pack members + downstream verifiers must be able to
   read the crystal without going through `@io.file.read` (they
   read via `@mirror/store` per composition graph §5.6).
@@ -677,32 +741,32 @@ crystals; crystal construction requires the (A,H,D) evaluator's
 content-OID computation per bootstrap-retirement-plan Tick 1. It
 cannot compose over §1.1–§1.6 alone because those act on `ast_node`
 + `transparency`; `ouroboros_state` is a substrate-typed record
-whose recording surface is bench-specific.
+whose crystallization surface is bench-specific.
 
-**Dirac/D correspondence.** `bench_record` is the **crystallization
-step** for the tick-observation. Per eigensheaf.md §4.9:
-"crystallization = eigenmode formation. A crystallized `.mirror`
-file is one whose section lies in `ker(Δ_0)` of its eigensheaf."
-The bench crystal is the tick's crystallized observation — the
-eigenmode of the tick's `ouroboros_state`. `bench_record` writes
-the crystal, making the tick's spectral state a substrate object
-subsequent ticks can compare against.
+**Dirac/D correspondence.** `crystallize` IS the **crystallization
+step** for the tick-observation — the name says what the geometry
+does. Per eigensheaf.md §4.9: "crystallization = eigenmode formation.
+A crystallized `.mirror` file is one whose section lies in `ker(Δ_0)`
+of its eigensheaf." The bench crystal is the tick's crystallized
+observation — the eigenmode of the tick's `ouroboros_state`.
+`crystallize` writes the crystal, making the tick's spectral state a
+substrate object subsequent ticks can compare against.
 
 Two roles simultaneously:
 
-- Records the section-at-tick-n and section-at-tick-n+1 as
-  crystallized (H^0-landed) observations.
+- Crystallizes the section-at-tick-n and section-at-tick-n+1 as
+  (H^0-landed) observations.
 - Makes the descent `e^(n+1) < e^n` observable at the substrate
   altitude rather than trapped in transient in-memory state.
 
 **@io-boundary composition graph.**
 
 ```
-bench_record(before, after)
+crystallize(before, after)
   ← bootstrap/src/spectral.rs::apply_h_content (compute content OIDs
     for before, after)
   ← @mirror/bench.record (compose bench template + four-conjunct
-    reading)
+    reading; composes OVER this surface primitive)
   ← @mirror/store.write_crystal (persist via git via @io transitively;
     but the primitive is @mirror/store's crystal-write, not raw @io)
   → bench_crystal (content-addressed; ref for later verifiability)
@@ -712,21 +776,21 @@ bench_record(before, after)
 persistence — the surface primitive is bench-specific.
 
 **Failure mode if smuggled INTO a shard body.** A shard body that
-tries to record its own tick observations writes to `@io.file.write`
-with hand-computed OIDs. Result: (a) the OIDs disagree with
-substrate-computed OIDs per §1.6 failure mode (a); (b) the
-tick-crystal is not indexable by `@mirror/index` (per composition
-graph §5.6) because the substrate doesn't know it exists; (c)
-subsequent ticks reading via `@mirror/store` don't see the smuggled
-crystal; the four-conjunct invariant `ouroboros_monotone` reads
-inconsistent before/after pairs; **the monotone descent guarantee
-breaks silently** — the arc appears to be ratcheting when it is
-not. Arc-2..N discharge with false-positive verdicts. The whole
-ouroboros arc's empirical trust collapses.
+tries to crystallize its own tick observations writes to
+`@io.file.write` with hand-computed OIDs. Result: (a) the OIDs
+disagree with substrate-computed OIDs per §1.6 failure mode (a);
+(b) the tick-crystal is not indexable by `@mirror/index` (per
+composition graph §5.6) because the substrate doesn't know it
+exists; (c) subsequent ticks reading via `@mirror/store` don't see
+the smuggled crystal; the four-conjunct invariant
+`ouroboros_monotone` reads inconsistent before/after pairs; **the
+monotone descent guarantee breaks silently** — the arc appears to be
+ratcheting when it is not. Arc-2..N discharge with false-positive
+verdicts. The whole ouroboros arc's empirical trust collapses.
 
 ---
 
-## §2 Composition semantics — how a shard body dispatches through the surface
+## §2 Composition semantics — how a shard body acts through the surface
 
 A shard body's action-decl declares its signature and its body
 composition. The body's composition is a syntactic tree over:
@@ -734,28 +798,28 @@ composition. The body's composition is a syntactic tree over:
 - The 7 combinators declared in §1.
 - The `@io` primitive family (per shards/io.mirror).
 - Substrate refs to other shard actions (which resolve via §1.4
-  `dispatch` recursively).
+  `act` recursively).
 - Substrate-decl'd type carriers (constants + carrier
   constructors).
 
-**Dispatch semantics** (Rust FLOOR realization, informal):
+**Action semantics** (Rust FLOOR realization, informal):
 
-1. When an action is dispatched (§1.4 `dispatch` at the entry
-   point, either from the CLI verb `mirror execute <shard-path>
+1. When an action is acted upon (§1.4 `act` at the entry
+   point, either from the CLI verb `mirror beam act <shard-path>
    <action>` per shard-decl Arc-1 Tick 1.4 or from another shard's
-   `dispatch`), the evaluator resolves the action-decl from the
+   `act`), the evaluator resolves the action-decl from the
    substrate ref.
 2. The evaluator walks the action's body-tree post-order via §1.3
    `fold` with reducers per combinator:
-   - `read_ast` → reads bytes via @io + parses via FLOOR
-     `Combinator::apply`, emits `ast_node`.
+   - `section` → reads bytes via @io + parses via FLOOR
+     `Combinator::apply`, produces `ast_node`.
    - `coboundary` → computes δ via FLOOR
-     `apply_h(coboundary_prism, section)`, emits `transparency`.
+     `apply_h(coboundary_prism, section)`, produces `transparency`.
    - `fold` → recursively invokes `Fold5::apply` with reducers.
-   - `dispatch` → recurses on the referenced action.
-   - `settle` → runs descent loop, emits `settled_verdict`.
-   - `emit` → appends to metalogue channel.
-   - `bench_record` → writes crystal.
+   - `act` → recurses on the referenced action.
+   - `settle` → runs descent loop, produces `settled_verdict`.
+   - `utter` → appends to metalogue channel.
+   - `crystallize` → writes crystal.
    - `@io.<primitive>` → delegates to the `@io` evaluator.
 3. Each combinator's verdict composes into the next via
    `compose_a` (per spectral.rs line 1037) — the algebra
@@ -771,7 +835,7 @@ over §1 + `@io` alone has the following guarantees:
 - **Termination.** Every combinator terminates in bounded time on
   bounded input (per §3 Rice-safety). Composition preserves
   termination because `fold` recursion is post-order over a
-  finite `ast_node`, `dispatch` recursion terminates because the
+  finite `ast_node`, `act` recursion terminates because the
   substrate-decl graph is a DAG (species-decls do not
   self-reference; the ancestral chain is well-founded per
   substrate-pull discipline).
@@ -793,13 +857,13 @@ The bound per combinator:
 
 | # | Combinator     | Bound                                        | Justification |
 |---|----------------|----------------------------------------------|---------------|
-| 1 | `read_ast`     | O(bytes) time; O(ast_size) space             | Parser-as-Prism is bounded per bootstrap-retirement-plan Tick 4a; every combinator variant is O(input_bytes). |
+| 1 | `section`      | O(bytes) time; O(ast_size) space             | Parser-as-Prism is bounded per bootstrap-retirement-plan Tick 4a; every combinator variant is O(input_bytes). |
 | 2 | `coboundary`   | O(ast_size × |target_ref|) time; O(opacity_map) space | `apply_h_content` is O(node_count) per `bootstrap/src/spectral.rs`; the ref-resolution is bounded by substrate-decl DAG depth. |
 | 3 | `fold`         | O(ast_size × reducer_cost) time              | Post-order walk visits each node once; reducer cost is closure-parameter bound. |
-| 4 | `dispatch`     | O(action_body_size × max_recursion_depth)    | Body size bounded at substrate-decl mint time; recursion depth bounded by DAG depth (finite substrate). |
+| 4 | `act`          | O(action_body_size × max_recursion_depth)    | Body size bounded at substrate-decl mint time; recursion depth bounded by DAG depth (finite substrate). |
 | 5 | `settle`       | O((1/μ) × log(‖x‖/ε)) time                   | Polyak-Łojasiewicz per property-and-inference-collapse.md §11.2 gives exponential convergence rate μ = λ_min(Δ_0 \| im(δ)). |
-| 6 | `emit`         | O(event_size + subscriber_count) time        | Append is O(1) amortized; subscriber notification is O(k) for k subscribers. |
-| 7 | `bench_record` | O(state_size) time                           | Content-OID computation is O(state_size) per `apply_h_content`. |
+| 6 | `utter`        | O(event_size + subscriber_count) time        | Append is O(1) amortized; subscriber notification is O(k) for k subscribers. |
+| 7 | `crystallize`  | O(state_size) time                           | Content-OID computation is O(state_size) per `apply_h_content`. |
 
 **Substrate-honest bound.** Every combinator's bound is decidable
 without solving halting-problem-hard analyses. The bounds compose:
@@ -810,7 +874,8 @@ composition tree is finite, the whole dispatch is bounded.
 This is the **Rice-safety floor** for the four-conjunct
 `ouroboros_monotone` invariant per shard-decl §D6: each conjunct
 reads empirical crystal state, decided in bounded time via
-composition of the 7 combinators + @io.
+composition of the 7 combinators (`section`, `coboundary`, `fold`,
+`act`, `settle`, `utter`, `crystallize`) + @io.
 
 ---
 
@@ -833,7 +898,7 @@ If smuggled: same failure mode as above.
 **No `equivalent(shard_body_1, shard_body_2) -> bool`.** Program
 equivalence is undecidable in the general case. What the surface
 DOES support is `isospectral(section_1, section_2) -> bool` via
-`bench_record` + comparison of resulting bench_crystal OIDs; this
+`crystallize` + comparison of resulting bench_crystal OIDs; this
 is bounded-time byte-equality on content-addressed observations,
 not general program equivalence. The distinction matters: two
 shard bodies that produce equal Transparency<Ref> values on equal
@@ -896,31 +961,32 @@ Each Connes element grounded in specific combinators.
 
 ### §5.1 A — algebra of sections over the eigenboard sheaf
 
-**Realized by:** `read_ast` (§1.1), `fold` (§1.3), `dispatch`
+**Realized by:** `section` (§1.1), `fold` (§1.3), `act`
 (§1.4).
 
 Together, these three combinators construct, traverse, and act on
 elements of `C^0(F_c)` — the section space over the eigenboard
-sheaf. `read_ast` produces sections (algebra elements). `fold`
+sheaf. `section` produces sections (algebra elements). `fold`
 composes reducers over their structure (the compositional algebra
-of A). `dispatch` applies substrate-decl'd action Prism impls to
+of A). `act` applies substrate-decl'd action Prism impls to
 sections (A × H → H, the algebra action).
 
 Per eigensheaf.md §3.2 line 198: "**A** (algebra) — Sections over
 the eigenboard sheaf — `C^0(F)`; `Aggregate` is one section."
-Every dispatched shard action IS an element of A; every shard body
+Every acted-upon shard action IS an element of A; every shard body
 composition IS a composition in A.
 
 ### §5.2 H — harmonic sections ker(Δ_0) = H^0(F)
 
-**Realized by:** `settle` (§1.5), with `bench_record` (§1.7) as
+**Realized by:** `settle` (§1.5), with `crystallize` (§1.7) as
 the crystallization witness that a section landed in H.
 
 `settle` iterates the P-Ł descent until the section lands in
-`ker(Δ_0)` (or the pending-boundary is reached). `bench_record`
+`ker(Δ_0)` (or the pending-boundary is reached). `crystallize`
 crystallizes the harmonic representative as a bench crystal —
 observable substrate state that a subsequent tick can read to
-verify the descent landed.
+verify the descent landed. The name IS the geometry per
+eigensheaf.md §4.9 ("crystallization = eigenmode formation").
 
 Per eigensheaf.md §3.2 line 199: "**H** (Hilbert space) —
 Harmonic sections `ker(Δ_0) = H^0(F)` — the attractor manifold of
@@ -928,24 +994,24 @@ Harmonic sections `ker(Δ_0) = H^0(F)` — the attractor manifold of
 
 ### §5.3 D — sheaf coboundary δ / Dirac operator
 
-**Realized by:** `coboundary` (§1.2), with `emit` (§1.6) as the
+**Realized by:** `coboundary` (§1.2), with `utter` (§1.6) as the
 metalogue-side accumulator that records what D discharged.
 
-`coboundary` IS δ per eigensheaf.md §3.2 line 200. `emit`
+`coboundary` IS δ per eigensheaf.md §3.2 line 200. `utter`
 propagates δ's output into the substrate-observable surface so the
 Pack-as-orchestra (per eigensheaf.md §5) can coordinate over the
-discharge.
+discharge — each turn uttered into the metalogue channel.
 
 ### §5.4 The whole triple
 
 | Connes | Combinator(s)                       |
 |--------|-------------------------------------|
-| **A**  | `read_ast`, `fold`, `dispatch`      |
-| **H**  | `settle`, `bench_record`            |
-| **D**  | `coboundary`, `emit`                |
+| **A**  | `section`, `fold`, `act`            |
+| **H**  | `settle`, `crystallize`             |
+| **D**  | `coboundary`, `utter`               |
 
 7 primitives / 3 Connes elements. Every primitive grounds in
-exactly one element (though `bench_record` and `emit` play
+exactly one element (though `crystallize` and `utter` play
 supporting roles at their respective altitudes). The correspondence
 is exact and minimal.
 
@@ -969,14 +1035,14 @@ shard-decl §3.1: `shards/subject/visibility/public.mirror.query_phi`
 
 **Combinators exercised in Tick 1.2's RED test:**
 
-- `read_ast` — parse the shard file to `ast_node`.
-- `dispatch` — resolve `query_phi` action ref + walk its body.
+- `section` — produce the shard file's `ast_node` (algebra section).
+- `act` — resolve `query_phi` action ref + walk its body.
 - `coboundary` — compute δ at the query_phi target.
 - `settle` — settle the coboundary's opacity to `SettledClean` or
   `SettledPending`.
-- `emit` — record the dispatch outcome to the metalogue channel.
+- `utter` — utter the action outcome into the metalogue channel.
 
-`fold` and `bench_record` may be exercised depending on
+`fold` and `crystallize` may be exercised depending on
 `query_phi`'s body composition; Tick 1.2 authors the test with
 minimal-viable combinator coverage and defers full coverage to
 Tick 1.4 (CLI verb ratification).
@@ -990,23 +1056,23 @@ belt-and-suspenders).
 Rust FLOOR of the 7 combinators lands in
 `bootstrap/src/apply_h.rs` (new file, per shard-decl §3.1) OR
 extends `bootstrap/src/spectral.rs`. Recommendation: new file
-`bootstrap/src/apply_h.rs` for the shard-body-dispatch entry
-points (`read_ast`, `dispatch`, `settle`, `emit`, `bench_record`),
+`bootstrap/src/apply_h.rs` for the shard-body-action entry
+points (`section`, `act`, `settle`, `utter`, `crystallize`),
 reusing existing `spectral.rs` primitives (`Fold5` for `fold`,
 `compose_a` for the algebra composition, `apply_h` for the
-Prism dispatch, `Combinator` for `read_ast`'s parser-as-Prism).
+Prism action, `Combinator` for `section`'s parser-as-Prism).
 
 **Per-combinator implementation cost estimate:**
 
 | # | Combinator     | Rust LOC (estimated) | Reuses                                    |
 |---|----------------|-----------------------|-------------------------------------------|
-| 1 | `read_ast`     | ~30 LOC               | `spectral.rs::Combinator::apply` (landed) |
+| 1 | `section`      | ~30 LOC               | `spectral.rs::Combinator::apply` (landed) |
 | 2 | `coboundary`   | ~80 LOC               | `spectral.rs::apply_h_content` (landed)   |
 | 3 | `fold`         | ~15 LOC               | `spectral.rs::Fold5::apply` (landed)      |
-| 4 | `dispatch`     | ~150 LOC              | `spectral.rs::apply_h` + new action resolver |
+| 4 | `act`          | ~150 LOC              | `spectral.rs::apply_h` + new action resolver |
 | 5 | `settle`       | ~60 LOC               | `spectral.rs::eigen_d` + new descent loop |
-| 6 | `emit`         | ~40 LOC               | new metalogue channel primitive           |
-| 7 | `bench_record` | ~30 LOC               | `@mirror/bench.record` (landed)           |
+| 6 | `utter`        | ~40 LOC               | new metalogue channel primitive           |
+| 7 | `crystallize`  | ~30 LOC               | `@mirror/bench.record` (landed)           |
 
 **Total estimate:** ~405 LOC of new Rust in `apply_h.rs`
 (30 + 80 + 15 + 150 + 60 + 40 + 30 = 405; Seam Phase D-cascade
@@ -1019,14 +1085,21 @@ Marker: `[substrate-floor:@io-boundary]` + `Signed-off-by: Seam
 <seam@systemic.engineer>` trailer (per Mara-B §7.9 belt-and-
 suspenders).
 
-### §6.3 Tick 1.4 (`mirror beam dispatch <shard-path> <action>` CLI verb)
+### §6.3 Tick 1.4 (`mirror beam act <shard-path> <action>` CLI verb)
 
-*(Renamed 2026-07-15 per Seam Phase D-cascade at
-`docs/audits/2026-07-15-seam-cli-condensation-phase-d.md` §D3 +
-Mara CLI condensation at `docs/specs/cli-as-geometry-
-condensation.md` §4.2.2. Prior name `mirror execute` was not a
-mirror word; `dispatch` is combinator #4 of this surface —
-substrate-already-had-the-word.)*
+*(Two-tick cascade closure 2026-07-15. Initial condensation renamed
+`mirror execute` → `mirror beam dispatch` per Seam Phase D-cascade at
+`docs/audits/2026-07-15-seam-cli-condensation-phase-d.md` §D3 + Mara
+CLI condensation at `docs/specs/cli-as-geometry-condensation.md`
+§4.2.2 — which correctly rejected `execute` as CS-vocab but landed
+on `dispatch` (also CS-vocab). The substrate-honest resolution
+landed 2026-07-15 in Seam seamfinder audit at
+`docs/audits/2026-07-15-seam-combinator-etymology-audit.md` §2.4
+(546c2f6) + Alex ratification: combinator #4 is `act` — the
+algebra-native short verb; an actor acts. The two-step cascade
+(`execute` → `dispatch` → `act`) was the substrate-honest resolution,
+not the initial `dispatch` rename. The CLI verb speaks the same word
+the FLOOR primitive uses.)*
 
 CLI verb wires through the 7-combinator surface. Empirically
 ratifies Tick 1.3.
@@ -1034,7 +1107,7 @@ ratifies Tick 1.3.
 **CLI shape:**
 
 ```
-mirror beam dispatch <shard-path> <action> [<arg1> <arg2> ...]
+mirror beam act <shard-path> <action> [<arg1> <arg2> ...]
 ```
 
 Where `<shard-path>` is a substrate ref (e.g.,
@@ -1042,10 +1115,10 @@ Where `<shard-path>` is a substrate ref (e.g.,
 (e.g., `query_phi`). Args are typed per the action's declared
 signature.
 
-**Dispatch flow (Tick 1.4 realization):**
+**Action flow (Tick 1.4 realization):**
 
 1. Parse CLI args → resolve to `shard_action_ref` + typed args.
-2. Invoke `dispatch(shard_action_ref, args)`.
+2. Invoke `act(shard_action_ref, args)`.
 3. Marshal the returned verdict to CLI output (stdout for success,
    stderr for opacity map, exit code from verdict variant).
 
@@ -1053,19 +1126,18 @@ Marker: `[substrate-floor:@io-boundary]` + Seam sign-off (both
 mechanisms per Mara-B §7.9 authoring practice).
 
 **Empirical ratification.** Tick 1.4 is complete when
-`mirror beam dispatch @subject/visibility/public query_phi <args>`
+`mirror beam act @subject/visibility/public query_phi <args>`
 runs end-to-end and returns the expected verdict, matching the RED
-test
-in Tick 1.2. `sbec` lifts from 0 to > 0 at this tick's landing.
+test in Tick 1.2. `sbec` lifts from 0 to > 0 at this tick's landing.
 
 ### §6.4 Discharge summary table
 
 | Tick | Discharge                                          | Combinators landed |
 |------|----------------------------------------------------|--------------------|
 | 1.1  | This spec (surface enumeration)                    | (all 7 named)      |
-| 1.2  | RED test asserting dispatch                        | (all 7 exercised in test) |
+| 1.2  | RED test asserting shard-body action               | (all 7 exercised in test) |
 | 1.3  | Rust FLOOR realization (`apply_h.rs`)              | (all 7 implemented) |
-| 1.4  | CLI verb `mirror execute`                          | (all 7 wired to CLI) |
+| 1.4  | CLI verb `mirror beam act`                         | (all 7 wired to CLI) |
 | 1.5  | @kintsugi/ouroboros species-decl mint              | LANDED 2026-07-15 Mara-A |
 
 ---
@@ -1099,24 +1171,30 @@ combinator:
 
 | # | Chosen name    | Alternative                    | Reason |
 |---|----------------|--------------------------------|--------|
-| 1 | `read_ast`     | `A.section` / `parse`          | Readable; `read_ast` is the substrate's word for parser-as-Prism (retirement plan Tick 4a). |
+| 1 | `section`      | `read_ast` / `A.section` / `parse` | Foundational-verbatim; eigensheaf.md §3.2 minted `section` for elements of A. `read_ast` (CS-vocab: POSIX `read` + compiler `ast`) rejected 2026-07-15 per Seam seamfinder audit §2.1 + Alex ratification: the geometry produces a section of A, not "the bytes." |
 | 2 | `coboundary`   | `D` / `witness`                | Foundational; eigensheaf.md §3.2 minted `δ` / coboundary first. `witness` reads too broadly (Reed uses it for many things). |
 | 3 | `fold`         | `Fold5` / `walk`               | Readable; `Fold5` is the Rust concrete (spectral.rs line 382), `fold` is the surface primitive. |
-| 4 | `dispatch`     | `apply_h`                      | Readable; `apply_h` is the Rust concrete, `dispatch` is what shards call it. |
+| 4 | `act`          | `dispatch` / `apply_h`         | Readable; `act` is the algebra-native short verb (an actor acts). `dispatch` (CS-vocab from compiler + OS-scheduler) rejected 2026-07-15 per Seam seamfinder audit §2.4 + Alex ratification. Substrate style permits short verbs carrying full geometric meaning (`focus`, `project`, `settle`). |
 | 5 | `settle`       | `Hodge_project`                | Readable; substrate-had-first via shards/mirror/spectral, shards/kintsugi/consent. |
-| 6 | `emit`         | `metalogue_write`              | Readable; `emit` is the substrate's word (shards/metalogue uses it). |
-| 7 | `bench_record` | `crystallize_tick_observation` | Readable; `@mirror/bench.record` is the landed action (shards/mirror/bench.mirror). |
+| 6 | `utter`        | `emit` / `metalogue_write` / `speak` | Readable; Bateson 1972 verbatim at `shards/metalogue.mirror:5` (a metalogue is a conversation where structure IS content); utterances into a conversation channel. `emit` (compiler-CS: parsers emit tokens) rejected 2026-07-15 per Seam seamfinder audit §2.6 + Alex ratification. `@../prism/` retains `emit` for the macro-shim direction (distinct operation from metalogue-write). |
+| 7 | `crystallize`  | `bench_record` / `crystallize_tick_observation` | Foundational-verbatim; eigensheaf.md §4.9 ("crystallization = eigenmode formation") minted `crystallize` for the eigenmode formation of a substrate observation. `bench_record` (compound-CS-vocab: `bench` + `record`) rejected 2026-07-15 per Seam seamfinder audit §2.7 + Alex ratification. Note: `@mirror/bench.record` (the composed action) keeps its landed name; only the SURFACE primitive renames. |
 
 **Substrate-already-had-the-word check.** All 7 names are present
 in landed substrate today (grep-verifiable per Taut discipline).
 This is the 19th–25th substrate-already-had-the-word instance (per
 eigensheaf.md §7 table extended); the surface INVENTS nothing.
+Four of the seven were renamed 2026-07-15 to the substrate-native
+word the delightfully-boring criterion demanded (`section`, `act`,
+`utter`, `crystallize`) per Seam seamfinder audit 546c2f6 + Alex
+ratification. The stronger readable-wins rule (§3.1 of that audit,
+extending Mara-B §7.3): readable wins where readable is landed AT
+SIBLING ALTITUDE FOR SAME OPERATION.
 
 ### §7.4 @io-composability
 
 Every combinator is orthogonal to `@io` at the surface altitude.
 `@io` compositions happen INSIDE combinator realizations (e.g.,
-`read_ast` calls `@io.file.read_bytes` transitively), not
+`section` calls `@io.file.read_bytes` transitively), not
 alongside them at the surface. Shard bodies compose the 7
 primitives + `@io.<primitive>` calls; the two families do not
 overlap or shadow each other.
