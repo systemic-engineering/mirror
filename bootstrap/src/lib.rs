@@ -3714,6 +3714,25 @@ fn cmd_beam_act(shard_path: &str, action: &str, args_tail: &[&str], _ctx: &Ctx) 
                     oid: "public-scope-cli:gift-to-commons".to_string(),
                 }]
             }
+            // Arc-2 Tick 2.1 — FIRST OUROBOROS BITE (2026-07-15). The
+            // four bilateral predicates from shards/spectral/signature.mirror
+            // (this landing) synthesize their substrate-decl'd sentinels so
+            // the empirical CLI target (`mirror beam act @spectral/signature
+            // signature_integrity` etc.) hits the Pass path without operator
+            // fixtures. Per shards/spectral/signature.mirror docblock; sentinels
+            // named at spec-decl altitude.
+            "@spectral/signature.signature_integrity" => vec![apply_h::Value {
+                oid: "rolling-signature-cli:chain=merkle-linked".to_string(),
+            }],
+            "@spectral/signature.signature_authorship" => vec![apply_h::Value {
+                oid: "rolling-signature-cli:authorship=ssh-matched".to_string(),
+            }],
+            "@spectral/signature.signature_monotone" => vec![apply_h::Value {
+                oid: "rolling-signature-cli:ordering=timestamp-monotone".to_string(),
+            }],
+            "@spectral/signature.signature_composition_honest" => vec![apply_h::Value {
+                oid: "rolling-signature-cli:composition=song-emission".to_string(),
+            }],
             _ => Vec::new(),
         }
     } else {

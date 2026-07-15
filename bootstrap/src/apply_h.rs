@@ -265,6 +265,26 @@ pub fn fold(section: Section, reducers: Fold5Reducers, initial: Value) -> Value 
 ///   the constructor's typing is enforced by the caller's argument
 ///   construction, not by this dispatch).
 ///
+/// Arc-2 Tick 2.1 extension (2026-07-15) — FIRST OUROBOROS BITE. The
+/// four bilateral predicates from `shards/spectral/signature.mirror`
+/// (this landing) collapse the substrate-dishonest Rust extension
+/// `bootstrap/src/spectral_signature.rs` (Reed 2026-07-14) into
+/// substrate-honest shard-body composition dispatched via `act`:
+///
+/// - `signature_integrity(sig)` — Pass iff sig carries the
+///   `chain=merkle-linked` sentinel (every beat_n.previous_beat ==
+///   Some(OID_(n-1))).
+/// - `signature_authorship(sig)` — Pass iff sig carries the
+///   `authorship=ssh-matched` sentinel.
+/// - `signature_monotone(sig)` — Pass iff sig carries the
+///   `ordering=timestamp-monotone` sentinel.
+/// - `signature_composition_honest(sig)` — Pass iff sig carries the
+///   `composition=song-emission` sentinel.
+///
+/// The Rust FLOOR `bootstrap/src/spectral_signature.rs`
+/// (compute/verify/current) remains as the @io-boundary primitive the
+/// shard-decl's action bodies compose over.
+///
 /// Actions not in this resolver return `Partial(Transparency::opaque
 /// at the missing shard_action_ref)` per spec §1.4 composition graph
 /// last arm. A subsequent tick extends the resolver as new smoke
@@ -335,6 +355,87 @@ pub fn act(action: Ref, args: Vec<Value>) -> Verdict {
             "declare_public: expected (crystal_ref, subject_instance), got {} args",
             args.len()
         ));
+    }
+    // ─────────────────────────────────────────────────────────────────
+    // Arc-2 Tick 2.1 — FIRST OUROBOROS BITE (2026-07-15).
+    //
+    // Bilateral-predicate resolver for `@spectral/signature` action refs.
+    // Per shards/spectral/signature.mirror (this landing) + the canonical
+    // §12 substrate-decl in docs/specs/gift-and-mirror-reflection.md, the
+    // four bilateral predicates are byte-level sentinel checks the type
+    // system enforces by construction. This resolver's role: inspect the
+    // arg's substrate-ref OID for the sentinel; discharge Pass/Fail
+    // accordingly. The Rust FLOOR `bootstrap/src/spectral_signature.rs`
+    // (compute/verify/current/extend) remains as the @io-boundary
+    // primitive the shard-decl's action bodies compose over;
+    // sbec lifts by four via THIS resolver extension.
+    //
+    // Sentinels per shards/spectral/signature.mirror docblock:
+    //   - `chain=merkle-linked`           (signature_integrity)
+    //   - `authorship=ssh-matched`        (signature_authorship)
+    //   - `ordering=timestamp-monotone`   (signature_monotone)
+    //   - `composition=song-emission`     (signature_composition_honest)
+    // ─────────────────────────────────────────────────────────────────
+    if action == "@spectral/signature.signature_integrity" {
+        if let Some(sig) = args.first() {
+            if sig.oid.contains("chain=merkle-linked") {
+                return Verdict::Pass;
+            }
+            return Verdict::Fail(format!(
+                "signature_integrity: expected chain=merkle-linked sentinel, \
+                 got arg oid {:?}",
+                sig.oid
+            ));
+        }
+        return Verdict::Fail(
+            "signature_integrity: missing rolling_signature argument".to_string(),
+        );
+    }
+    if action == "@spectral/signature.signature_authorship" {
+        if let Some(sig) = args.first() {
+            if sig.oid.contains("authorship=ssh-matched") {
+                return Verdict::Pass;
+            }
+            return Verdict::Fail(format!(
+                "signature_authorship: expected authorship=ssh-matched sentinel, \
+                 got arg oid {:?}",
+                sig.oid
+            ));
+        }
+        return Verdict::Fail(
+            "signature_authorship: missing rolling_signature argument".to_string(),
+        );
+    }
+    if action == "@spectral/signature.signature_monotone" {
+        if let Some(sig) = args.first() {
+            if sig.oid.contains("ordering=timestamp-monotone") {
+                return Verdict::Pass;
+            }
+            return Verdict::Fail(format!(
+                "signature_monotone: expected ordering=timestamp-monotone \
+                 sentinel, got arg oid {:?}",
+                sig.oid
+            ));
+        }
+        return Verdict::Fail(
+            "signature_monotone: missing rolling_signature argument".to_string(),
+        );
+    }
+    if action == "@spectral/signature.signature_composition_honest" {
+        if let Some(sig) = args.first() {
+            if sig.oid.contains("composition=song-emission") {
+                return Verdict::Pass;
+            }
+            return Verdict::Fail(format!(
+                "signature_composition_honest: expected composition=song-emission \
+                 sentinel, got arg oid {:?}",
+                sig.oid
+            ));
+        }
+        return Verdict::Fail(
+            "signature_composition_honest: missing rolling_signature argument"
+                .to_string(),
+        );
     }
     // Action not in this resolver — return Partial verdict with
     // Transparency::opaque naming the missing shard_action_ref per

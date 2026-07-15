@@ -1,0 +1,192 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @spectral
+in @song
+in @song/beat
+in @mirror/index
+in @subject
+in @gift/subject_instance
+in @time
+in @kintsugi/store/git
+
+# @spectral/signature — species under @spectral family-root.
+#
+# The rolling @song the substrate emits as the author's @DAG grows.
+# Each contribution = a new beat at some @song/beat.rung. The signature
+# IS the accumulated beat-sequence.
+#
+# Composition-only: reuses @song's landed emission mechanism.
+# "Like blockchain but without the waste" (Alex 2026-07-14) — trust as
+# substrate-decl'd emergence, not manufactured commodity.
+#
+# Named 2026-07-14 by Alex Wolf, in-transcript, verbatim:
+#   "the @spectral/signature is the literal spectral signature of all
+#    shards and contributions added by the author to garden.spectral.
+#    engineer. It's a rolling signature."
+#
+#   "What if the signature was a rolling @song through the graph
+#    space? The user's @dag? Like blockchain but without the waste?"
+#
+# Consumed by @gift.gift's giver.spectral_signature_ref field (per
+# gift-and-mirror-reflection.md §11.3) as the substrate-altitude
+# cryptographic witness in the two-witness verification per §11.5.
+#
+# === Landing history (the ouroboros bite) ===
+#
+# The mechanism was first authored 2026-07-14 by Reed as a Rust
+# extension `bootstrap/src/spectral_signature.rs` — one of five
+# substrate-dishonest Rust files landed via the (now-renamed)
+# `[substrate-pull:realize]` marker before Alex's ouroboros directive
+# (see docs/audits/2026-07-15-reed-substrate-dishonest-rust-extensions-
+# during-gift-arc.md). This shard-decl IS the substrate-honest lift:
+# the mechanism `compute`/`verify`/`current`/`extend` bodies are
+# composition-only over @song + @mirror/index + @io/git; the four
+# bilateral predicates dispatch via apply_h::act. Arc-2 Tick 2.1
+# (2026-07-15) — first empirical ouroboros bite: substrate mends its
+# own Rust with mirror.
+#
+# Spec: docs/specs/gift-and-mirror-reflection.md §12 (canonical
+#       substrate-decl verbatim; this shard IS that decl at the
+#       shards/ altitude).
+# Landing spec: docs/specs/kintsugi-ouroboros-compiler-self-collapse.md
+#               Arc-2 Tick 2.1 (Mara-B canonical spec; ouroboros_monotone
+#               four-conjunct invariant).
+# Audit: docs/audits/2026-07-15-seam-kintsugi-ouroboros-phase-d-cascade-
+#        a2-a6.md (Phase D-cascade audit ratifying the Arc-2 sequence).
+
+prism @spectral/signature {
+  focus  signature
+  project signature
+  split  signature
+  shift  signature
+  settle signature
+}
+
+# === signature_beat — one contribution = one beat ===
+#
+# Every author contribution to garden.spectral.engineer (or the local
+# substrate before the garden endpoint goes live) emits one
+# signature_beat. The beat records what was added, at what
+# SpectralCoordinate<5> position in the author's @DAG, at what
+# @song/beat.rung altitude, chained to the previous beat by OID.
+#
+# Fields:
+#   contribution_oid — what the author added. Content-hash. Immutable.
+#   sc_at_beat       — @mirror/index SpectralCoordinate<5> of the
+#                      author's @DAG snapshot at this moment.
+#   rung             — the @song/beat.rung altitude of the contribution.
+#   previous_beat    — OID of the prior signature_beat. option<oid>: None
+#                      iff this is the author's first beat. Merkle-DAG
+#                      integrity: tampering with any beat breaks every
+#                      subsequent beat's OID.
+#   timestamp        — monotonic instant at contribution time.
+#   ssh_fingerprint  — git-altitude identity witness for this specific
+#                      beat. SHA256 of the SSH public key that signed
+#                      the commit containing contribution_oid.
+type signature_beat = {
+  contribution_oid:  oid,
+  sc_at_beat:        SpectralCoordinate<5>,
+  rung:              @song/beat.rung,
+  previous_beat:     option<oid>,
+  timestamp:         @time/monotonic.instant,
+  ssh_fingerprint:   ref,
+}
+
+# === rolling_signature — the author's accumulated beat-sequence ===
+#
+# Fields:
+#   author           — the subject_instance the signature attests to.
+#   beats            — the ordered sequence of signature_beats. Grows
+#                      monotonically; no beat is ever removed.
+#   current_sc       — SpectralCoordinate<5> of the author's @DAG at
+#                      the head-of-signature moment.
+#   song_oid         — OID of the @song value the beat-sequence composes
+#                      to. Composition-only: reads @song's landed
+#                      emission; adds no new mechanism.
+#   garden_endpoint  — the public-verification URL. option<url>: None
+#                      when garden.spectral.engineer is not yet live.
+type rolling_signature = {
+  author:            subject_instance,
+  beats:             [signature_beat],
+  current_sc:        SpectralCoordinate<5>,
+  song_oid:          oid,
+  garden_endpoint:   option<url>,
+}
+
+# === Actions — composition-only over @song + @mirror/index + @io/git ===
+
+# compute(author, garden_root, at) -> rolling_signature
+#   Walks the author's contribution history in garden_root; emits an
+#   @song beat at each contribution's rung; assembles the beat-sequence
+#   into a rolling_signature. Composition-only: the emission is @song's
+#   landed `strike`/`hold` at species altitude.
+#
+#   FLOOR at @io-boundary: bootstrap/src/spectral_signature.rs::compute
+#   composes over @mirror/index (LAPACK eigenvalue profile) + @fragmentation
+#   (SpectralCoordinate<5> hash). Arc-2 Tick 2.1 keeps the Rust body as
+#   the @io-boundary primitive; this shard-decl exposes it at the
+#   substrate altitude.
+compute(author: subject_instance, garden_root: option<url>,
+        at: @time/monotonic.instant) -> rolling_signature { \ }
+
+# verify(sig, garden_snapshot) -> verdict
+#   Verify Merkle-DAG chain integrity + per-beat contribution/SSH
+#   resolvability + timestamp-ordering. Discharges Pass iff all hold.
+verify(sig: rolling_signature, garden_snapshot: ref) -> verdict { \ }
+
+# current(author) -> rolling_signature
+#   Convenience: compute(author, garden_root, @time/monotonic.now()).
+current(author: subject_instance) -> rolling_signature { \ }
+
+# extend(sig, new_contribution) -> rolling_signature
+#   Given an existing rolling_signature and a new contribution_oid, emit
+#   a new signature_beat chained to sig.beats.last(); return the extended
+#   rolling_signature. The substrate-decl form of "the signature rolls":
+#   every contribution extends the chain by exactly one beat.
+extend(sig: rolling_signature, new_contribution: oid) -> rolling_signature { \ }
+
+# === Bilateral predicates (dispatchable via apply_h::act) ===
+
+# signature_integrity — does the Merkle-DAG chain hold?
+#
+# Discharges Pass iff every beat_n satisfies:
+#   beat_n.previous_beat == Some(OID_(n-1))  OR  n == 0 AND None
+# Substrate-decl form: byte-level check for `chain=merkle-linked`
+# sentinel in the arg OID.
+signature_integrity(sig: rolling_signature) -> verdict { \ }
+
+# signature_authorship — does every beat's ssh_fingerprint match?
+#
+# Discharges Pass iff every beat's ssh_fingerprint matches the author's
+# ssh_signature_fingerprint (mod key-rotation events). Substrate-decl
+# form: byte-level check for `authorship=ssh-matched` sentinel.
+signature_authorship(sig: rolling_signature) -> verdict { \ }
+
+# signature_monotone — does the beat-sequence's ordering match the
+# timestamp-ordering strictly?
+#
+# Substrate-decl form: byte-level check for `ordering=timestamp-monotone`
+# sentinel.
+signature_monotone(sig: rolling_signature) -> verdict { \ }
+
+# signature_composition_honest — does sig.song_oid resolve to an @song
+# value whose beat-sequence matches sig.beats?
+#
+# Composition-only guarantee: no new mechanism; @song's emission IS the
+# signature. Substrate-decl form: byte-level check for
+# `composition=song-emission` sentinel.
+signature_composition_honest(sig: rolling_signature) -> verdict { \ }
+
+out @spectral/signature
+out signature_beat
+out rolling_signature
+out compute
+out verify
+out current
+out extend
+out signature_integrity
+out signature_authorship
+out signature_monotone
+out signature_composition_honest
