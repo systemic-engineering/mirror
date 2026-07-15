@@ -1,0 +1,446 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @subject
+in @subject/visibility
+in @epistemologic/math/sheaf_laplacian
+
+# @subject/visibility/sheaf — the sheaf-restriction species that
+# admits the visibility scope; sibling to @subject/visibility/private,
+# @subject/visibility/protected, @subject/visibility/public.
+#
+# Species under @subject at the visibility altitude. Landed 2026-07-15
+# by Mara as Landing 4 R2 discharge of the @gift arc + Seam Phase
+# D-cascade adjudication (audit at `docs/audits/2026-07-15-seam-
+# kintsugi-ouroboros-phase-d-cascade-a2-a6.md`, verdict SEAM-RATIFY
+# Candidate 2 as Mara-mintable species-decl per Landing 4 R2 precedent).
+# Companion shape-proposal at `docs/scouts/2026-07-15-mara-sheaf-
+# shape-proposal.md` §4.2 (three-grounds recommendation).
+#
+# === Alex 2026-07-14 SSH-signing design intent (verbatim) ===
+#
+# Peer-persistence session compaction, in-transcript:
+#
+#   "Each peer has their own key in the private part of their
+#    visibility. NOT projected into the git state and instead stays
+#    .git/mirror side. Only connected through Fractal.Lens. A pointer.
+#    Not the thing."
+#
+#   "@secrets prism and @secrets/sops to project visibility/private
+#    stuff onto disk through the Peers key."
+#
+# This species carries the sheaf-restriction primitive the design
+# intent presupposes: the peer's ACL projects a sub-sheaf of the
+# home-repo sheaf; Fractal.Lens IS the section-at-stalk lookup; the
+# peer's key material stays .git/mirror-side (out of substrate-decl);
+# @secrets / @secrets/sops (forward-promised composition surfaces at
+# @io boundary) discharge the key-gated projection when Arc-2.3 lands.
+#
+# === Substrate-already-had-the-word citation chain ===
+#
+# Every altitude, carrier name, and composition edge below cites
+# landed substrate or landed spec. The word `sheaf` is substrate-
+# decl'd across THREE altitudes with landed carriers:
+#
+#   1. `docs/specs/peer-persistence-and-home-projection.md` §12.3
+#      (verbatim, load-bearing):
+#
+#        "The ACL IS the SHEAF STRUCTURE. For each peer p ∈
+#         pack.members: the peer's ACL A_p defines a SUB-SHEAF
+#         F_home|_{A_p} — the restriction of F_home to the
+#         vertices/edges the ACL admits. The peer's visibility scope
+#         for a given crystal is the SECTION of F_home|_{A_p} at that
+#         crystal's stalk."
+#
+#      And explicitly: "Landing A's four visibility species (per
+#      Landing 4 R2) ARE the sections of the four canonical ACL
+#      restrictions the pack block defines. The substrate always had
+#      the word."
+#
+#   2. `docs/specs/mirror-spec-peer-acl-surface.md` §5 substrate-decls
+#      the pack.members ACL type surface. The current-state framing
+#      of §10 (mirror-spec) reframed sheaf → spawn-and-probe per Alex
+#      2026-06-24; the load-bearing "ACL IS the sheaf" language lives
+#      at peer-persistence §12.3 (unretracted), NOT at mirror-spec
+#      §6.2 (self-naming rule) or §10 (retracted sheaf framing).
+#
+#   3. `shards/epistemologic/math/sheaf_laplacian.mirror` (species
+#      under @epistemologic/math; Hansen-Ghrist 2018 δ*δ + λ₀
+#      Fiedler discrete cellular-sheaf primitive; math-primitive
+#      altitude that this species composes OVER for spectral
+#      discharge, does NOT re-declare).
+#
+#   4. `docs/specs/eigensheaf.md` §2.4 verbatim: "The substrate IS
+#      its eigensheaf. What it can sustain — what it can generate
+#      without friction, what it can verify, what it can settle to —
+#      is exactly what its eigenbasis spans." Eigensheaf altitude
+#      lives at spec (`docs/specs/eigensheaf.md`); this species
+#      neither displaces nor lifts it.
+#
+# The ~57th instance of [[feedback-substrate-already-had-the-word]]
+# on ratification — the visibility species (Landing 4 R2) already
+# compose over the sheaf-restriction implicitly; this species names
+# the carrier they compose over.
+#
+# === Reed-recursive ancestry (why THIS mount, not family-root) ===
+#
+# A2 originated in Mara-B §7.2 as "mint @sheaf as family-root before
+# Arc-2.3." Seam Phase D §D12 triaged as Alex-adjudication on family-
+# root mint authority grounds. Alex re-fired /loop; Mara authored the
+# three-candidate shape proposal; Seam Phase D-cascade ratified
+# Candidate 2 (this shard's mount point) as Mara-mintable on three
+# structural grounds (companion shape-proposal §4.2):
+#
+#   Ground 1. substrate-already-had-the-word: peer-persistence §12.3
+#             verbatim locates the ACL-sheaf altitude at
+#             @subject/visibility species altitude. Candidate 2 lands
+#             the carrier where the substrate already put it.
+#             Candidates 1 (family-root) and 3 (@epistemologic/sheaf)
+#             would lift the carrier to altitudes the substrate did
+#             NOT substrate-decl.
+#
+#   Ground 2. @onto refusal precedent (Reed memory
+#             `feedback-onto-family-root-is-the-ladder-Foerster-
+#             refused`). @sheaf family-root would need altitude that
+#             @subject/visibility doesn't already carry. It doesn't.
+#             The load-bearing carrier @sheaf-family-root would cross
+#             is @subject/visibility (grep of shards/torus.mirror
+#             surfaces zero sheaf tokens; @torus carries Foerster
+#             doubly-closed autonomy, not sheaf-restriction).
+#
+#   Ground 3. Alex SSH-signing design intent match: peer key is
+#             @subject-scoped (subject_instance.ssh_signature_
+#             fingerprint); ACL binding is @subject-scoped
+#             (pack.members[peer]); visibility species are @subject-
+#             scoped. The sheaf-restriction binding them belongs at
+#             the altitude those bindings live. Zero family-root
+#             crossings at Arc-2.3 peer_persistence collapse.
+#
+# === Composition graph ===
+#
+# Parents (substrate-decl):
+#   @subject                  — SEL licensable-party carrier; two-witness
+#                               discipline; pack.members ACL binding
+#   @subject/visibility       — sub-family-root; visibility_scope + the
+#                               three sibling species (private, protected,
+#                               public); scope_well_formed / consent_
+#                               respected / elevation_authorized bilaterals
+#
+# Math ancestors (composed OVER, not re-declared):
+#   @epistemologic/math/sheaf_laplacian
+#                             — Hansen-Ghrist 2018 δ*δ; restriction +
+#                               operator + eigenvalue carriers; lambda_
+#                               zero for spectral discharge
+#   docs/specs/eigensheaf.md §2.4
+#                             — the substrate-IS-eigensheaf spec (lives
+#                               at spec altitude; this species neither
+#                               displaces nor lifts it)
+#
+# Forward-composition surfaces (named, not imported; land at Arc-2.3+):
+#   @secrets                  — key-gated projection; discharges at
+#                               @io boundary; per Alex 2026-07-14
+#                               "@secrets prism ... project through
+#                               the Peers key"
+#   @secrets/sops             — SOPS-backed secret realization; @io
+#                               species that materializes the peer-
+#                               key-gated section on disk
+#   @io                       — filesystem realization; @secrets and
+#                               @secrets/sops compose through @io at
+#                               the projection boundary
+#
+# Consumers (compose over this species):
+#   bootstrap/src/peer_persistence.rs
+#                             — Arc-2.3 collapse; composes acl_project
+#                               + section_at over this species +
+#                               @subject/visibility species + @kintsugi/
+#                               consent
+#   @spectral/signature       — per peer-persistence §12.2, the
+#                               signature reads over visibility-
+#                               filtered bauchladen; composes with
+#                               section_at at the crystal boundary
+#
+# === Related shards / specs ===
+#
+# - docs/scouts/2026-07-15-mara-sheaf-shape-proposal.md
+#     (companion shape proposal; three candidates + Candidate 2
+#      recommendation on three structural grounds)
+# - docs/audits/2026-07-15-seam-kintsugi-ouroboros-phase-d-cascade-a2-a6.md
+#     (Seam ratification; SEAM-RATIFY Candidate 2 as Mara-mintable)
+# - docs/specs/peer-persistence-and-home-projection.md §12.3
+#     (verbatim substrate-decl; ACL IS the sheaf structure)
+# - docs/specs/mirror-spec-peer-acl-surface.md §5
+#     (pack.members ACL type surface)
+# - docs/specs/eigensheaf.md §2.4
+#     (the substrate IS its eigensheaf; sheaf-plus-eigenbasis carrier
+#      at spec altitude)
+# - docs/specs/subject-bauchladen-visibility-and-eigenboard-loop.md §2
+#     (canonical spec for @subject/visibility family; three species
+#      landed via Landing 4 R2)
+# - shards/subject.mirror
+#     (family-root; subject_instance two-witness discipline;
+#      pack.members peer→ACL binding altitude)
+# - shards/subject/visibility.mirror
+#     (sub-family-root; visibility_scope five-field record)
+# - shards/subject/visibility/private.mirror
+#     (sibling species; consent_scope minimal; existence hiding)
+# - shards/subject/visibility/protected.mirror
+#     (sibling species; bounded collaborators; two-witness required)
+# - shards/subject/visibility/public.mirror
+#     (sibling species; terminal state; gift-to-commons discipline)
+# - shards/epistemologic/math/sheaf_laplacian.mirror
+#     (math primitive: restriction, operator, eigenvalue; δ*δ + λ₀)
+# - shards/mirror/pack.mirror
+#     (pack.members ACL type + peer-ACL grammar; acl = ref)
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]],
+# [[architecture-prism-as-trait-as-everything]] (`prism
+#   @subject/visibility/sheaf`),
+# [[architecture-glass-wall-substrate-types]] (transparency inheritance
+#   through @subject/visibility),
+# [[architecture-form-process-partition-at-family-root]] (this species
+#   stays under @subject; sheaf-restriction is process-side, not
+#   form-side),
+# [[feedback-substrate-already-had-the-word]] (~57th instance;
+#   peer-persistence §12.3 verbatim already located the altitude;
+#   this species mints the carrier the substrate already used),
+# [[feedback-no-bare-types]] (sheaf_restriction and section_at_stalk
+#   are typed records with ref-equality identity; never bare refs),
+# [[feedback-craft-not-deliver]] (all action bodies `\`-obligation-
+#   blocked; consumers pull the realization; Arc-1 evaluator FLOOR
+#   pending),
+# [[feedback-onto-family-root-is-the-ladder-Foerster-refused]] (this
+#   species is the parallel refusal for @sheaf-family-root; @subject/
+#   visibility already carries the altitude),
+# [[feedback-cli-subcommand-nesting-is-geometric]] (species-under-
+#   @subject/visibility is geometric ground truth per the substrate
+#   layout Reed's ~/.reed/visibility/ pioneered).
+#
+# Path-namespace property: this file at
+# `shards/subject/visibility/sheaf.mirror` declares
+# `@subject/visibility/sheaf` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/topology/hansen-ghrist-2018
+source @arxiv/law/sel-v1.1
+source @arxiv/practice/wolf-2026-07-14-ssh-signing-design-intent
+
+prism @subject/visibility/sheaf {
+  focus  sheaf_restriction
+  project sheaf_restriction
+  split  sheaf_restriction
+  shift  sheaf_restriction
+  settle sheaf_restriction
+}
+
+# === The sheaf_restriction carrier ===
+#
+# The sub-sheaf F_home|_{A_p} per peer-persistence §12.3 verbatim:
+# the restriction of the home-repo sheaf to the vertices/edges the
+# peer's ACL admits.
+#
+# Three fields:
+#
+#   peer_ref     — the subject_instance whose ACL defines the restriction.
+#                  Ref into @subject; carries the two-witness discipline
+#                  transitively (ssh_signature_fingerprint +
+#                  spectral_signature_ref both required for the peer to
+#                  be a licensable-party against whom a restriction is
+#                  named). Per Alex 2026-07-14: the peer-key stays
+#                  .git/mirror-side; this ref is the Fractal.Lens
+#                  POINTER, not the key material.
+#
+#   acl          — the ACL admitting the sub-sheaf. Ref into @mirror/pack;
+#                  acl is `type acl = ref` per pack.mirror line 123.
+#                  The ACL structure (ops + targets + predicates per
+#                  peer-ACL §5) determines which vertices/edges of the
+#                  base graph the restriction admits.
+#
+#   admitted_stalks — the substrate-observable list of stalks the
+#                  restriction admits. Ref into the base graph's
+#                  stalk set filtered by the ACL; the byte-visible
+#                  record of "what the peer can compute a section
+#                  over." @epistemologic/math/sheaf_laplacian.
+#                  restriction carriers compose OVER this at the
+#                  realisation layer (each admitted stalk contributes
+#                  one row/column block to the assembled Δ_F).
+#
+# Identity contract: byte-equality on the (peer_ref, acl,
+# admitted_stalks) triple. Two sheaf_restriction values with the
+# same peer_ref + acl but different admitted_stalks are DISTINCT —
+# the admitted-stalk set is part of the substrate identity because
+# it makes the sub-sheaf's admissible region byte-visible.
+type sheaf_restriction = {
+  peer_ref:        ref,
+  acl:             ref,
+  admitted_stalks: ref,
+}
+
+# === The section_at_stalk carrier ===
+#
+# The peer's computable visibility at one crystal's stalk under the
+# restriction. Per peer-persistence §12.3 verbatim: "the peer's
+# visibility scope for a given crystal is the SECTION of
+# F_home|_{A_p} at that crystal's stalk."
+#
+# Three fields:
+#
+#   crystal_ref  — the crystal (@bauchladen) whose stalk the section
+#                  reads. Ref into the crystal store; identity is
+#                  content-addressed (per @kintsugi/store/git).
+#
+#   sheaf_ref    — the sheaf_restriction the section was computed
+#                  UNDER. Ref-equality on this field binds the
+#                  section to its ACL context; a section computed
+#                  under a different restriction is a DIFFERENT
+#                  section_at_stalk value even if the crystal_ref is
+#                  identical.
+#
+#   projected_value — the section's projected value at the stalk.
+#                  Ref carrying the substrate-observable content the
+#                  peer's ACL admits; the realisation layer
+#                  materialises the concrete bytes when @secrets /
+#                  @secrets/sops discharge the key-gated projection
+#                  through @io at Arc-2.3.
+#
+# Identity contract: byte-equality on the (crystal_ref, sheaf_ref,
+# projected_value) triple.
+type section_at_stalk = {
+  crystal_ref:     ref,
+  sheaf_ref:       ref,
+  projected_value: ref,
+}
+
+# === restrict — the restriction operation ===
+#
+# Given a sheaf (ref into the substrate's cellular-sheaf carrier at
+# @epistemologic/math/sheaf_laplacian) and an ACL, construct the
+# sheaf_restriction admitting the ACL's substructure.
+#
+# Substrate-decl form of peer-persistence §12.3's F|_A construction.
+# Composes over @epistemologic/math/sheaf_laplacian.restriction at
+# the realisation layer: the returned sheaf_restriction.admitted_
+# stalks references the sub-list of Δ_F row/column blocks the ACL's
+# `targets` slot admits.
+#
+# Body discharges per-realisation. `\`-obligation-blocked per
+# [[feedback-craft-not-deliver]]; Arc-1 evaluator FLOOR pending.
+restrict(sheaf: ref, acl: ref) -> sheaf_restriction { \ }
+
+# === acl_project — peer-ACL projection of the home sheaf ===
+#
+# The peer_persistence.rs Arc-2.3 primitive. Per shape proposal §2.2
+# example:
+#
+#   sr := @subject/visibility/sheaf.acl_project(F_home, peer.acl)
+#
+# Given F_home (the home-repo sheaf; ref into the substrate's
+# cellular-sheaf carrier) and the peer's ACL, project the sub-sheaf
+# the peer's key admits. The peer_ref field of the returned
+# sheaf_restriction resolves through @subject.pack.members to the
+# subject_instance the ACL binds; the two-witness discipline is
+# discharged transitively.
+#
+# Per Alex 2026-07-14 SSH-signing design intent: the peer's key
+# material stays .git/mirror-side; @secrets / @secrets/sops discharge
+# the key-gated projection through @io at the realisation layer;
+# Fractal.Lens (the peer_ref field) is the POINTER, not the thing.
+#
+# Composes with @subject/visibility.filter at consumer altitude:
+# once acl_project returns the sheaf_restriction, section_at reads
+# the per-crystal projected value; filter narrows the bauchladen tray
+# to crystals whose section admits the viewer.
+#
+# Body discharges per-realisation. `\`-obligation-blocked. Arc-1
+# evaluator FLOOR pending; Arc-2.3 landing composes this over @io.
+acl_project(F_home: ref, peer_acl: ref) -> sheaf_restriction { \ }
+
+# === section_at — the section computation ===
+#
+# Given a sheaf_restriction and a crystal_ref, compute the section
+# at the crystal's stalk under the restriction. Per §12.3 verbatim:
+#
+#   visibility_scope_p(crystal) := section_of(F_home|_{ACL_p},
+#                                              crystal.stalk)
+#
+# Returns a section_at_stalk carrying the crystal_ref (identity),
+# the sheaf_ref (which restriction the section was computed under),
+# and the projected_value (the substrate-observable content the ACL
+# admits at that stalk).
+#
+# Rice-safe bound: reads the admitted_stalks list (byte-visible list
+# lookup); reads the base sheaf's per-stalk value (byte-visible ref
+# resolution); no program semantics inspection required. Bounded in
+# O(|admitted_stalks|) worst case; O(log |admitted_stalks|) with
+# indexed lookup at the realisation layer.
+#
+# Body discharges per-realisation. `\`-obligation-blocked. Arc-2.3
+# landing composes this over @secrets / @secrets/sops for key-gated
+# projected_value materialisation.
+section_at(F_A_p: sheaf_restriction, crystal_ref: ref) -> section_at_stalk { \ }
+
+# === restriction_admissible — bilateral predicate ===
+#
+# Discharges Pass iff the sheaf_restriction is substrate-honest per
+# peer-persistence §12.3 discipline. Three sub-checks (whole-tick
+# altitude):
+#
+#   1. peer_ref resolves to a subject_instance whose
+#      two_witness_verification passes (@subject discipline). A
+#      restriction against a non-witnessed peer is refused at
+#      substrate altitude.
+#
+#   2. acl resolves to a well-formed acl value per @mirror/pack
+#      grammar (ops + targets + predicates slots parseable; per
+#      peer-ACL §10 composition rules satisfied).
+#
+#   3. admitted_stalks is a SUB-set of the base sheaf's stalk set
+#      (the ACL cannot admit stalks the base sheaf does not carry;
+#      substrate-decl refuses hallucinated stalks).
+#
+# Fail iff any sub-check fails. Rice-safe at whole-tick altitude per
+# Mara-B §4.5.5: reads only byte-visible empirical state (subject
+# witness records, ACL byte structure, stalk set membership); no
+# program semantics.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+restriction_admissible(sr: sheaf_restriction) -> verdict { \ }
+
+# === section_computable — bilateral predicate ===
+#
+# Discharges Pass iff the section_at_stalk was computed in bounded
+# time under the section_at Rice-safe bound above. Two sub-checks:
+#
+#   1. sheaf_ref resolves to a sheaf_restriction whose
+#      restriction_admissible passes (transitively verifies the
+#      restriction context).
+#
+#   2. crystal_ref's stalk is a member of sheaf_ref's
+#      admitted_stalks (the section IS computable — the ACL admits
+#      the crystal's stalk; a section over a non-admitted stalk is
+#      NOT computable at substrate altitude and returns pending-
+#      boundary per @kintsugi/consent Partial semantics).
+#
+# Fail iff either sub-check fails. Rice-safe at whole-tick altitude:
+# reads only byte-visible state (transitive restriction_admissible
+# state; stalk-set membership check).
+#
+# Load-bearing structural claim: section_computable Pass is the
+# substrate-decl form of "the peer's ACL admits this crystal." A
+# section that is NOT computable is a substrate-decl refusal of the
+# read, not an error — the peer's visibility scope at this crystal is
+# genuinely empty under the restriction.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+section_computable(s: section_at_stalk) -> verdict { \ }
+
+out @subject/visibility/sheaf
+out sheaf_restriction
+out section_at_stalk
+out restrict
+out acl_project
+out section_at
+out restriction_admissible
+out section_computable
