@@ -48,7 +48,7 @@ spec's spawn:
 
 1. **`mirror beam` as root command family** — the substrate's
    transit verb. Everything else that beams is a subcommand shape
-   (`mirror beam peer`, `mirror beam emit`, `mirror beam mission`,
+   (`mirror beam peer`, `mirror beam dispatch`, `mirror beam mission`,
    etc.). Not "beam is a top-level verb"; **beam is a
    family-shaped verb-noun** whose subcommands are the
    specializations of the carrier through different context types.
@@ -56,12 +56,20 @@ spec's spawn:
 2. **`execute` is not a mirror word.** The 7-combinator surface
    (Mara A6 landing at `18d9697`, per
    `docs/specs/kintsugi-ouroboros-arc-1-evaluator-combinator-surface.md`)
-   has `emit` as combinator #6 (D-side of the (A,H,D) Dirac
-   correspondence). Substrate-already-had-the-word: dispatch IS
-   emission. Arc-1 Tick 1.4's forward-promised CLI verb
-   `mirror execute <shard-path> <action>` becomes
-   `mirror beam emit <shard> <action>` — the CLI-user speaks the
-   same word the FLOOR primitive uses.
+   has `dispatch` as combinator #4 (A-side of the (A,H,D)
+   correspondence — the algebra section that invokes shard-body
+   dispatch via `apply_h`). Substrate-already-had-the-word:
+   `dispatch` IS the shard-body invocation primitive. Arc-1 Tick
+   1.4's forward-promised CLI verb `mirror execute <shard-path>
+   <action>` becomes `mirror beam dispatch <shard> <action>` — the
+   CLI-user speaks the same word the FLOOR primitive uses.
+
+   *(Correction per Seam Phase D-cascade at
+   `docs/audits/2026-07-15-seam-cli-condensation-phase-d.md`
+   §D3: initial condensation draft conflated `emit` (combinator
+   #6, metalogue-write) with `dispatch` (combinator #4, shard-body
+   invocation). Seam surfaced the conflation; `dispatch` is the
+   substrate-honest CLI verb.)*
 
 3. **`@../prism/` at `/Users/alexwolf/dev/projects/prism/`** IS the
    physical light-through-optics substrate mirror represents. Three
@@ -177,7 +185,7 @@ of this spec commits to that.
 
 ### 2.2 The three-op physical Prism trait
 
-Per `prism/prismqueer/src/lib.rs:126-159`:
+Per `prism/prismqueer/src/lib.rs:126-142` (trait declaration; blanket impl at 143-160 not included per Seam Phase D-cascade §D8 REED-INLINE):
 
 ```rust
 pub trait Prism {
@@ -230,11 +238,23 @@ collapse to three-op (that would lose the recursion + altitude
 machinery). The 5-op / 3-op pair IS the substrate-vs-physics
 lift, and it is load-bearing.
 
-The CLI surface honors both: `mirror beam` (§4.1) is a 3-op prism
-(focus/project/settle, matching the physical `Prism`) because it
-carries a `Beam` — the physical altitude; every family-root prism
-under `@mirror/lens/cli/*` is 5-op because it operates in
-substrate composition space.
+The CLI surface honors both, at distinct altitudes:
+
+- **CLI-user-visible surface altitude** (what the CLI user types):
+  `mirror beam` (§4.1) presents as 3-op
+  (focus/project/settle) because it carries a `Beam` — the physical
+  altitude the CLI user is invoking.
+- **Substrate-decl altitude** (per `shards/mirror/peer/beam.mirror:
+  250-256`): the beam species-decl exposes the full 5-op prism
+  (`focus/project/split/shift/settle`) because it operates in
+  substrate composition space where `split` + `shift` are
+  load-bearing (recursive substrate walking + altitude shift). The
+  CLI user does not type these ops directly; they are consumed by
+  the compositional machinery under the hood.
+
+The 3-op ceiling on `mirror beam` is a CLI-surface projection of
+the 5-op substrate-decl — not a downgrade. Sharpen per Seam Phase
+D-cascade §D2 REED-INLINE.
 
 ---
 
@@ -251,7 +271,7 @@ its subcommand shape, and its geometric justification.
 |---|---|---|---|---|
 | `mirror beam <mission>` | (a) family-root | `@mirror/peer/beam` (anonymous variant) | zero subcommands; positional mission | Physical `Beam` semantics; anonymous transit; no persistent context |
 | `mirror beam peer <peer_home>` | (a) specialization | `@mirror/peer/beam` (persistent variant) | positional peer_home + mission/song/dance/deploy flags | Beam + persistent-identity(peer) — this IS `spawn` under substrate-honest naming |
-| `mirror beam emit <shard> <action>` | (a) specialization | `@kintsugi/ouroboros` evaluator | shard-path + action name + args | Beam + shard-body-dispatch; combinator #6 (D-side of A,H,D per A6 spec §1.6). Supersedes forward-promised `mirror execute` |
+| `mirror beam dispatch <shard> <action>` | (a) specialization | `@kintsugi/ouroboros` evaluator | shard-path + action name + args | Beam + shard-body-dispatch; combinator #4 (A-side of A,H,D per A6 spec §1.4). Supersedes forward-promised `mirror execute` |
 | `mirror beam contribute <peer_home>` | (a) specialization | `@mirror/peer/contribute` | peer_home + target flag | Beam + fate-authored morphism proposal (Rung 7). Currently `mirror peer contribute`; migrates to beam family for geometric consistency |
 
 **Category (c) — Prism-family root (produces its own 5-op prism):**
@@ -281,7 +301,7 @@ Each row proposes a rename/removal with geometric justification.
 | Before | After | Reason |
 |---|---|---|
 | `mirror peer beam <peer_home>` | `mirror beam peer <peer_home>` | Two-tick discipline: readable name over foundational. `beam` is the family-root verb; `peer` is the specialization. The current order is beam-in-peer (peer scope's beam), which reverses the geometry — beam IS the primitive, peer IS the context. See §3.3. |
-| `mirror execute <shard> <action>` (Arc-1 Tick 1.4 forward-promise) | `mirror beam emit <shard> <action>` | Substrate-already-had-the-word: `emit` is combinator #6 of the 7-combinator evaluator surface (Mara A6). CLI users speak the same word the FLOOR speaks. `execute` is not a mirror word. |
+| `mirror execute <shard> <action>` (Arc-1 Tick 1.4 forward-promise) | `mirror beam dispatch <shard> <action>` | Substrate-already-had-the-word: `dispatch` is combinator #4 of the 7-combinator evaluator surface (Mara A6 §1.4; A-side of (A,H,D); the shard-body invocation primitive). CLI users speak the same word the FLOOR speaks. `execute` is not a mirror word. |
 | `mirror peer contribute <peer_home>` | `mirror beam contribute <peer_home>` | Same rationale as beam peer: beam is the family-root, contribute is the specialization (fate-authored morphism proposal). Two-tick migration. |
 | `mirror spawn <peer_home>` (deprecated alias, per `b012d3f`) | REMOVED at Tick 2 of two-tick discipline | Per beam-as-substrate-primitive.md §6. `spawn` at cli altitude was the compat alias for `peer beam`; after `beam peer` lands, sunset. |
 | `mirror peer` (recursive-command wrapper) | REMOVED | The `peer` wrapper existed to house `peer beam` + `peer contribute`. Both migrate to `beam peer` + `beam contribute`. The wrapper dissolves; `peer` returns to being a context-arg noun, not a verb-scope. |
@@ -316,7 +336,7 @@ Per two-tick discipline (readable name over foundational):
 - **Tick 1** — Land `beam` as top-level with two forms:
   - `mirror beam <mission>` (anonymous, existing)
   - `mirror beam peer <peer_home>` (persistent-identity, NEW)
-  - `mirror beam emit <shard> <action>` (shard-body dispatch, NEW)
+  - `mirror beam dispatch <shard> <action>` (shard-body dispatch, NEW)
   - `mirror beam contribute <peer_home>` (fate-morphism, NEW)
 
   Keep `mirror peer beam` + `mirror peer contribute` as
@@ -332,8 +352,8 @@ Per two-tick discipline (readable name over foundational):
     `shards/mirror/beam/peer.mirror` at Tick 2.
   - `shards/mirror/beam.mirror` (family-root, NEW) lands at Tick 1
     per beam-as-substrate-primitive §10 forward-promise.
-  - `shards/mirror/beam/emit.mirror` (NEW) lands at Tick 1 as the
-    Arc-1 Tick 1.4 substrate-decl.
+  - `shards/mirror/beam/dispatch.mirror` (NEW) lands at Tick 1 as
+    the Arc-1 Tick 1.4 substrate-decl.
   - `shards/mirror/beam/contribute.mirror` migrates from
     `shards/mirror/peer/contribute.mirror` at Tick 2.
 
@@ -396,21 +416,23 @@ returned trajectory to a `@song`.
   sub-species (`beam peer song`, `beam peer dance`,
   `beam peer deploy`); others remain as adverb-shaped flags.
 
-#### 4.2.2 `mirror beam emit <shard-path> <action> [args...]` — shard-body dispatch
+#### 4.2.2 `mirror beam dispatch <shard-path> <action> [args...]` — shard-body dispatch
 
 Beam + shard-body-dispatch through the 7-combinator surface. The
 CLI user speaks the same word the FLOOR primitive uses (combinator
-§1.6). SUPERSEDES the Arc-1 Tick 1.4 forward-promised
-`mirror execute` verb per §0.2 recognition.
+§1.4 `dispatch`, foundational `apply_h`). SUPERSEDES the Arc-1
+Tick 1.4 forward-promised `mirror execute` verb per §0.2
+recognition.
 
-- Substrate-decl: `shards/mirror/beam/emit.mirror` (NEW, forward-
-  promise from this spec)
+- Substrate-decl: `shards/mirror/beam/dispatch.mirror` (NEW,
+  forward-promise from this spec)
 - Composition:
   ```
-  mirror beam emit @subject/visibility/public query_phi <args>
-    ← evaluator apply_h(coboundary_prism, section)
-    ← 7-combinator surface: read_ast → coboundary → dispatch → ...
-      → emit(channel, event) → settled_verdict
+  mirror beam dispatch @subject/visibility/public query_phi <args>
+    ← evaluator dispatch(shard_action_ref, args)  [combinator #4]
+    ← 7-combinator surface: read_ast → dispatch → fold → settle
+      (with coboundary / emit / bench_record composed as sub-arrows)
+      → settled_verdict
     → beam_envelope { settled_verdict, channel_reads, provenance }
   ```
 - Return type: `beam_envelope` (NOT `@song` — anonymous inference;
@@ -420,22 +442,29 @@ CLI user speaks the same word the FLOOR primitive uses (combinator
   Reed (audit-cite the Seam Phase D-cascade A2+A6 audit).
 
 **Substrate-honest justification for the rename** (execute → beam
-emit):
+dispatch):
 
-1. **`emit` is a substrate word.** It is combinator #6 in the
+1. **`dispatch` is a substrate word.** It is combinator #4 in the
    evaluator surface (`docs/specs/kintsugi-ouroboros-arc-1-
-   evaluator-combinator-surface.md §1.6`). The metalogue channel
-   IS the substrate's self-conversation; the CLI verb that fires
-   shard-body dispatch and emits into the metalogue should speak
-   the same word.
+   evaluator-combinator-surface.md §1.4`). The shard-body
+   invocation primitive IS `dispatch`; foundational `apply_h`. The
+   A-side of the (A,H,D) Connes triple — the algebra section that
+   acts on the substrate.
 2. **`execute` is not a substrate word.** Grep across
    `shards/**/*.mirror` for `execute` returns zero substrate-decl
-   uses; `emit` returns dozens.
+   uses; `dispatch` returns many (combinator surface + shard-body-
+   dispatch semantics throughout).
 3. **Beam family houses the composition naturally.** Shard-body
    dispatch IS a beam through the evaluator; wrapping it under
-   `beam emit` matches the geometry: beam is the carrier, emit is
-   what the carrier fires into (the metalogue channel that carries
-   the dispatched action's participation).
+   `beam dispatch` matches the geometry: beam is the carrier;
+   dispatch is the operation that resolves the shard-action-ref
+   and invokes its body through the 7-combinator surface.
+4. **Distinguished from `emit`.** `emit` (combinator #6,
+   `metalogue_write`) writes an event to a channel — different
+   semantic altitude from `dispatch`. Seam Phase D-cascade at
+   `docs/audits/2026-07-15-seam-cli-condensation-phase-d.md` §D3
+   surfaced this conflation in the initial condensation draft;
+   corrected here.
 
 #### 4.2.3 `mirror beam contribute <peer_home>` — fate-morphism
 
@@ -470,7 +499,7 @@ composition IS specialization of a shared carrier through a
 different context? If yes: family. If no: top-level.
 
 Beam passes: `beam <mission>` (anonymous), `beam peer <p>`
-(persistent), `beam emit <s>` (shard-body), `beam contribute <p>`
+(persistent), `beam dispatch <s>` (shard-body), `beam contribute <p>`
 (fate-morphism) — same carrier (Beam), four context types
 (none/peer/shard/fate-morphism). The family shape is not a
 convenience — it is the geometry.
@@ -719,8 +748,8 @@ Substrate-decl:
 1. Land `shards/mirror/beam.mirror` (family-root; migrates the
    family-header from `shards/mirror/peer/beam.mirror` while
    preserving the peer-species content in place).
-2. Land `shards/mirror/beam/emit.mirror` (NEW; Arc-1 Tick 1.4
-   substrate-decl for `mirror beam emit`).
+2. Land `shards/mirror/beam/dispatch.mirror` (NEW; Arc-1 Tick 1.4
+   substrate-decl for `mirror beam dispatch`).
 3. Preserve `shards/mirror/peer/beam.mirror` in place as the peer-
    specialization body; two-tick migration to `shards/mirror/beam/
    peer.mirror` at Tick 2.
@@ -755,6 +784,18 @@ Rust dispatch:
     optional Signed-off-by: Seam trailer.
 
 ### 8.2 Tick 2 — Deprecation-alias removal
+
+**Consumer-migration-check preamble** (per Seam Phase D-cascade
+§D5 REED-INLINE + `beam-as-substrate-primitive.md §6.2`
+precedent). Before removing any Tick 1 deprecation alias, verify:
+(a) grep across `shards/**/*.mirror` + `docs/**/*.md` +
+`bootstrap/src/**/*.rs` + external consumers Alex names, confirming
+zero live references to the deprecated form; (b) minimum one
+`@song` cycle has elapsed with the deprecation stderr notice active
+so downstream Pack peers observe the sunset; (c) `mirror` binary
+CHANGELOG entry names each removed alias with its replacement. If
+any check fails, extend Tick 2 by one cycle. This preserves the
+two-tick discipline substrate-honestly.
 
 11. Remove `mirror peer beam`, `mirror peer contribute`,
     `mirror spawn`, `mirror_peer_beam` (MCP), `mirror_spawn` (MCP)
@@ -807,6 +848,13 @@ already exists implicitly at the four altitudes named in §2.1;
 this spec surfaces it. The other verbs preserved (`compile`,
 `kintsugi`, `shatter`, `craft`, `init`, `recall`, `index`) already
 have or will gain sub-stage shard-decls; none are new family-roots.
+
+**Cleanup cascade target** (per Seam Phase D-cascade §D6
+REED-INLINE): `shards/epistemologic/spectral_triple.mirror:4`
+carries an orphan `in @beam` import that predates the family-root
+surfacing. Fold to `in @mirror/beam` at Tick 1 alongside the beam
+family-root landing. Small cascade; no ripple beyond that single
+import line.
 
 **Zero new keywords.** The recursive-command grammar
 (`command X { command Y { ... } }`) already carries subcommand
@@ -1031,8 +1079,8 @@ a stage after the migration).
 - `shards/mirror/beam.mirror` — family-root; lands Tick 1.
 - `shards/mirror/beam/peer.mirror` — migrates from
   `shards/mirror/peer/beam.mirror` at Tick 2.
-- `shards/mirror/beam/emit.mirror` — Arc-1 Tick 1.4 substrate-decl;
-  lands Tick 1.
+- `shards/mirror/beam/dispatch.mirror` — Arc-1 Tick 1.4 substrate-
+  decl; lands Tick 1.
 - `shards/mirror/beam/contribute.mirror` — migrates from
   `shards/mirror/peer/contribute.mirror` (if it exists) at Tick 2.
 - `shards/mirror/beam/song.mirror`, `shards/mirror/beam/dance.mirror`,
@@ -1098,8 +1146,10 @@ Predecessor specs cited:
   recursive-command grammar; §6 two-tick discipline discharged
   by §3.3 + §8 of this spec
 - `docs/specs/kintsugi-ouroboros-arc-1-evaluator-combinator-surface.md`
-  — 7-combinator surface; §1.6 `emit` combinator supersedes
-  `execute` verb; §6.3 Tick 1.4 CLI verb is `mirror beam emit`
+  — 7-combinator surface; §1.4 `dispatch` combinator IS the shard-
+  body-invocation primitive; §6.3 Tick 1.4 CLI verb is `mirror beam
+  dispatch` (per Seam Phase D-cascade correction at
+  `docs/audits/2026-07-15-seam-cli-condensation-phase-d.md` §D3)
 - `docs/specs/the-convergence.md` — four-transport lens table;
   MCP mirrors CLI corollary
 - `docs/specs/shatter-is-the-io-linearization-operator.md` — Mara

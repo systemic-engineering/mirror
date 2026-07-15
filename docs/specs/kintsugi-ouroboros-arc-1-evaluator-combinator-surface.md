@@ -1019,7 +1019,14 @@ Marker: `[substrate-floor:@io-boundary]` + `Signed-off-by: Seam
 <seam@systemic.engineer>` trailer (per Mara-B §7.9 belt-and-
 suspenders).
 
-### §6.3 Tick 1.4 (`mirror execute <shard-path> <action>` CLI verb)
+### §6.3 Tick 1.4 (`mirror beam dispatch <shard-path> <action>` CLI verb)
+
+*(Renamed 2026-07-15 per Seam Phase D-cascade at
+`docs/audits/2026-07-15-seam-cli-condensation-phase-d.md` §D3 +
+Mara CLI condensation at `docs/specs/cli-as-geometry-
+condensation.md` §4.2.2. Prior name `mirror execute` was not a
+mirror word; `dispatch` is combinator #4 of this surface —
+substrate-already-had-the-word.)*
 
 CLI verb wires through the 7-combinator surface. Empirically
 ratifies Tick 1.3.
@@ -1027,7 +1034,7 @@ ratifies Tick 1.3.
 **CLI shape:**
 
 ```
-mirror execute <shard-path> <action> [<arg1> <arg2> ...]
+mirror beam dispatch <shard-path> <action> [<arg1> <arg2> ...]
 ```
 
 Where `<shard-path>` is a substrate ref (e.g.,
@@ -1046,8 +1053,9 @@ Marker: `[substrate-floor:@io-boundary]` + Seam sign-off (both
 mechanisms per Mara-B §7.9 authoring practice).
 
 **Empirical ratification.** Tick 1.4 is complete when
-`mirror execute @subject/visibility/public query_phi <args>` runs
-end-to-end and returns the expected verdict, matching the RED test
+`mirror beam dispatch @subject/visibility/public query_phi <args>`
+runs end-to-end and returns the expected verdict, matching the RED
+test
 in Tick 1.2. `sbec` lifts from 0 to > 0 at this tick's landing.
 
 ### §6.4 Discharge summary table
