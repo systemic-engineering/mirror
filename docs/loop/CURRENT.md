@@ -69,6 +69,9 @@ the cracks. Six-arc retirement plan:
 29. `9a5502a` — Taut A1 precedent scout (721 LOC; grep-first evidence 1/14 narrative-shorthand vs 13/14 landed constructor across 9 @io species)
 30. `e5d928e` — Seam A1 re-adjudication with Taut precedent (366 LOC; SEAM-RATIFY Position (b); "genuinely unresolvable" verdict SUPERSEDED)
 31. `64b0438` — Mara Landing 6 key_material_ref_of action + prose narrative sync (composition chain now byte-symmetric across all 5 arrows)
+32. `1e9a268` — Reed CURRENT.md A1 arc close (commits 25-31 tracking)
+33. `c41e6b7` — Reed session insight doc: composed Taut→Seam adjudicates what single-Seam cannot (133 LOC; Pack coordination discipline note)
+34. `564571e` — Mara @sheaf canonical spec (1303 LOC; deferred-by-design canonical spec grounding species-decl in math + composition graph + landings; 3 recognition candidates)
 
 ### Terminal state
 
