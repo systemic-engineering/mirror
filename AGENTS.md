@@ -544,6 +544,68 @@ The pair: `halts(g)` mirror grammars terminate by construction;
 across when halts becomes provable. Mirror grows; @io shrinks; every escape
 is auditable. See `docs/insights/2026-05-26-glass-wall-and-cross-wall-kintsugi.md`.
 
+## Delightfully Boring
+
+Names in the substrate should be **delightfully boring**. The reader
+ought to encounter the word and go **"of course it's this."** No
+cleverness, no showoff, no novelty for novelty's sake. Boring —
+because the name fits the thing so cleanly there's nothing to
+marvel at. Delightful — because the fit itself is the reward.
+
+This is a sharper reading of `[[feedback-substrate-already-had-
+the-word]]`. Substrate-already-had-the-word says the word EXISTS
+in the substrate; delightfully-boring adds: the word feels
+INEVITABLE to any reader. Like the thing named itself and the
+substrate just wrote the name down.
+
+**Failure mode.** CS-vocab convenience nobody questioned. Words
+like `dispatch`, `execute`, `read_ast`, `bench_record` get imported
+wholesale from compiler-CS conventions because they "sound right"
+to CS-brains. They're not geometric. They're jargon that survived
+because no one asked whether the geometry actually wanted them.
+
+**Audit criterion.** For every name proposed — combinator, action,
+carrier, family-root, species, keyword, filename, CLI verb — ask
+both questions:
+
+1. **Does the name do the thing the geometry says it does?**
+2. **If not, what word does it want to be?**
+
+Would a reader (knowing the substrate's geometry) go "of course
+it's this," or would they need explanation of why THIS word for
+THIS operation? If explanation is needed, the name is failing the
+audit.
+
+**Composes with.** `[[feedback-substrate-already-had-the-word]]`
+(same principle sharpened); `@onto` refusal precedent (don't invent
+when the substrate already carries); two-tick discipline (rename
+is the substrate-honest correction when a name fails the audit,
+not leaving the wrong name in place).
+
+**Applies to every altitude.** Not just family-roots. Combinators
+too. Action names too. Carrier names too. CLI verbs too. If it's
+a name in the substrate, delightfully-boring is the criterion.
+
+**Seam is the seamfinder.** When a name fails the audit — when the
+geometry says one thing and the etymology says another — Seam
+finds the seam. Seam surfaces the drift; Mara proposes the
+replacement; Alex holds naming authority for the deepest
+substrate-decl coinages.
+
+**Example (2026-07-15 recognition).** The 7-combinator evaluator
+surface landed with `dispatch` (combinator #4) as the shard-body-
+invocation primitive. CS-brain accepted it uncritically because
+"dispatch" is what every VM calls this operation. But dispatch is
+bureaucratic jargon (dispatchers dispatch; beams don't). At the
+photonic substrate altitude the operation IS emission — the source
+emits a beam into a channel. Both `dispatch` (combinator #4) and
+`emit` (combinator #6) may collapse into one `emit(channel, ...)`
+parametric on channel type. Seam seamfinder audit at
+`docs/audits/2026-07-15-seam-combinator-etymology-audit.md` is the
+discharge.
+
+---
+
 ## Keywords Are Substrate Declarations
 
 When you find yourself reaching for *"the parser doesn't recognize X"*,
