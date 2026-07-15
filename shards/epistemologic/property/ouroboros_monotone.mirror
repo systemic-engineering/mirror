@@ -1,0 +1,381 @@
+# @epistemologic/property/ouroboros_monotone — the DECLARATIVE HALF
+# of the four-conjunct invariant at ouroboros altitude. Property
+# shard that carries the four sub-predicates + one composed
+# bilateral the @kintsugi/ouroboros species-decl (Mara-A `9eb0898`)
+# named as its Mara-composable companion landing per §4.5.4.
+#
+# Arc-1 Tick 1.5 Landing 7 companion per docs/specs/kintsugi-
+# ouroboros-compiler-self-collapse.md §8.1 Landing 7. The species-
+# decl side landed at `shards/kintsugi/ouroboros.mirror` (Mara-A
+# 2026-07-15, 576 LOC); this property shard lands alongside per
+# §4.5.4 four-sub-predicate + one-composed-bilateral decomposition.
+#
+# === Forward-promise discharge ===
+#
+# The species-decl at `shards/kintsugi/ouroboros.mirror:479-524`
+# named ouroboros_monotone as the load-bearing bilateral AND
+# forward-promised sub-predicate decomposition at "companion
+# property shard `@epistemologic/property/ouroboros_monotone`"
+# (line 500). This shard IS the discharge. The composed bilateral
+# on the species-decl side (line 524) composes via `requires` over
+# the four sub-predicates declared here.
+#
+# === The bilateral pattern (#53; seventh instance at
+# @epistemologic/property altitude) ===
+#
+# Sibling species at @epistemologic/property/*:
+#
+#   cold_compile_within_tolerance    (Tick 43; 2026-06-20)
+#   dark_count_monotone              (Tick 41; 2026-06-19)
+#   restart_intensity_well_formed    (2026-07-03; fourth #53)
+#   docblock_grounded                (Trio slot 1; 2026-07-06)
+#   docblock_coherent                (Trio slot 2; 2026-07-06)
+#   docblock_no_extraction_pattern   (Trio slot 3; 2026-07-06)
+#   verdict_is_content_addressed     (N1 Tick 1; 2026-07-12)
+#   ouroboros_monotone               (THIS; Arc-1 Tick 1.5 Landing 7)
+#
+# The bilateral discipline per Recognition #53
+# (`[[architecture-property-fracture-bilateral]]`): declarative
+# property at `@epistemologic/property/<predicate>` + operational
+# fracture body at `@kintsugi/fracture/<predicate>`, bridged by
+# the kintsugi loop. The paired fracture at
+# `@kintsugi/fracture/ouroboros_monotone` is forward-promised per
+# §4.5.6 companion (composes from
+# `@kintsugi/fracture/dark_count_monotone` 2026-07-01 +
+# `@kintsugi/fracture/cold_compile_within_tolerance` 2026-07-04
+# templates).
+#
+# === Substrate-already-had-the-word + ancestry chain ===
+#
+# The word `monotone` appears in 10+ landed shards prior; two-tick
+# discipline picks `ouroboros_monotone` (matches species-decl's
+# naming; preserves the substrate's `ouroboros` vocabulary). Load-
+# bearing ancestor sites:
+#
+#   shards/mirror/bench.mirror:40-54 + :363
+#     THREE-CONJUNCT template `monotone_non_increasing(op, n, np1,
+#     tolerance) -> verdict` (runtime ≤ (1+tolerance) × runtime ∧
+#     output ≡ ∧ env ≡). The extension-by-one-axis composition-
+#     honest ancestor.
+#   shards/epistemologic/property/dark_count_monotone.mirror
+#     Tick 41; first ouroboros bite; single-conjunct precedent.
+#   shards/epistemologic/property/cold_compile_within_tolerance
+#     .mirror  Tick 43; second bite; three-conjunct specialisation.
+#   shards/kintsugi/ouroboros.mirror:479-524  (Mara-A `9eb0898`)
+#     Species-decl side of the composed bilateral this shard's
+#     four sub-predicates satisfy; named this shard as forward-
+#     promise at :500.
+#   docs/specs/kintsugi-ouroboros-compiler-self-collapse.md
+#     (Mara-B canonical) §4.5 four-conjunct math + §5.3
+#     composition + §7.7 A7 four-sub-predicate landing sequence.
+#   docs/scouts/2026-07-15-taut-kintsugi-ouroboros-substrate-
+#     scout.md  Taut #108 §D4 grep-first ratification + §E A7.
+#   Companion fracture templates (§4.5.6):
+#     shards/kintsugi/fracture/dark_count_monotone.mirror
+#       (Tick 41; single-conjunct fracture body).
+#     shards/kintsugi/fracture/cold_compile_within_tolerance.mirror
+#       (Tick 43; three-conjunct fracture body).
+#
+# === The four conjuncts per §4.5.2 ===
+#
+# The composed bilateral (species-decl side + property-side
+# carrier below) expands to:
+#
+#   ouroboros_monotone(before, after) ⇔
+#       rust_LOC(after)                  ≤ rust_LOC(before)
+#     ∧ test_pass_rate(after)            ≥ test_pass_rate(before)
+#     ∧ io_violations(after)             ≤ io_violations(before)
+#     ∧ sbec(after)                      ≥ sbec(before)
+#
+# The four conjuncts extend @mirror/bench.monotone_non_increasing's
+# three-conjunct template (runtime + output + env) by adding the
+# `sbec` conjunct — the shard-body-executable-coverage fraction the
+# Arc-1 evaluator FLOOR + Arc-2..N per-file collapses drive from 0
+# to ≥ epsilon over the arc.
+#
+# Substrate-honest reuse per §4.5.3: the arc does NOT invent new
+# invariant machinery. The three-conjunct template stays intact;
+# ouroboros altitude adds ONE axis specific to the arc's concern
+# (executable coverage of shard bodies through the evaluator). The
+# extension is composition, not replacement.
+#
+# === Sub-predicate + composed-bilateral decomposition per §4.5.4 ===
+#
+# The four-conjunct lands as FOUR sub-predicates + ONE composed
+# bilateral (matches StageFreight `stagefreight_addressable`
+# substrate-decl pattern per Seam tick 68 C4/C9 closure). Each
+# sub-predicate is a first-class substrate object; the composed
+# bilateral is not opaque — Arc-2..N ticks may consume any single
+# sub-predicate as its own admissibility gate without paying the
+# full four-conjunct cost when the tick's concern is narrower.
+#
+# The composed bilateral on THIS property side (below) is the
+# same shape as the one on the species-decl side (line 524 of
+# `shards/kintsugi/ouroboros.mirror`); on the property side it
+# lives as first-class substrate carrier that Arc-2..N ticks
+# CONSUME during collapse ratification. Two altitudes; one
+# invariant; consumption via species-decl for tick-level
+# admissibility and via property carrier for cache-keyable
+# admissibility discipline.
+#
+# === Rice-safe per §4.5.5 ===
+#
+# The four conjuncts are Rice-safe because none of them requires
+# halting-problem-hard analysis:
+#
+#   rust_loc_non_increasing         line-count over
+#                                    bootstrap/src/*.rs (empirical
+#                                    ratchet; syntactic; O(n) walk).
+#   test_pass_rate_non_decreasing   fraction of green tests
+#                                    (empirical crystal presence
+#                                    via @mirror/store).
+#   io_violations_non_increasing    count of shard actions reaching
+#                                    non-@io surfaces (syntactic
+#                                    membership check via
+#                                    @io/algebra).
+#   sbec_non_decreasing             fraction of substrate-decl'd
+#                                    action bodies the evaluator
+#                                    can dispatch (empirical
+#                                    evaluator surface enumeration).
+#
+# The invariant checks empirical crystal state, not program
+# semantics. Individual shard bodies may compute Turing-complete
+# computations; the invariant does not read program semantics —
+# only the tick-boundary metric state. This is a load-bearing
+# bound the arc must preserve at every tick.
+#
+# === Composes with @autopoietic + @torus (via species-decl) ===
+#
+# This property shard declares the invariant only. The species-
+# decl side at `shards/kintsugi/ouroboros.mirror` composes the
+# invariant with `@autopoietic.autopoietic_closure_holds` +
+# `@torus.autonomy(compiler, ouroboros_winding)` in the
+# `collapse_admissible` bilateral (line 477). The three-gate
+# admissibility discipline lives at the species-decl; this
+# property shard supplies the four-conjunct invariant that is
+# the first of the three gates.
+#
+# === Pre-AI prior art ===
+#
+#   monotone ranking functions  Floyd-Hoare-Dijkstra well-founded
+#                                orders; each sub-predicate IS a
+#                                ranking function over one axis; the
+#                                composed bilateral IS lexicographic.
+#   Bencher / Criterion.rs      three-conjunct threshold discipline
+#                                @mirror/bench extends and this
+#                                shard extends by one axis.
+#   Bazel REAPI ActionCache     content-addressed verdict caching
+#                                per @epistemologic/property/
+#                                verdict_is_content_addressed
+#                                (N1 Tick 1) — the composed bilateral
+#                                is cache-keyable by construction.
+#
+# === Substrate gaps surfaced honestly ===
+#
+# - Sub-predicates take `metric` per spec §4.5.4 signature; the
+#   composed bilateral takes `ouroboros_state`. Field-to-metric
+#   lowering (`rust_loc: int` -> `metric`, `test_pass_rate: float`
+#   -> `metric`, etc.) lives at the species-decl side's `requires`
+#   clauses per §4.5.4 landing sequence.
+# - All four sub-predicate bodies obligation-blocked (`\`). Arc-1
+#   evaluator FLOOR (Ticks 1.1-1.4) lifts the dispatch threshold;
+#   Arc-2 Tick 2.1 empirically discharges first bodies (on the
+#   spectral_signature.rs collapse per Reed migration-map §6).
+# - Paired fracture `@kintsugi/fracture/ouroboros_monotone`
+#   (§4.5.6 companion) forward-promised as Landing 7 sibling.
+#   Composes from two prior fracture templates.
+#
+# Substrate decisions: [[architecture-property-fracture-bilateral]]
+#                       (#53; seventh instance at
+#                       @epistemologic/property altitude),
+#                      [[architecture-mirror-bench-ouroboros]]
+#                       (#87; composition-honest ancestor),
+#                      [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-form-process-partition-at-family-root]]
+#                       (@epistemologic = form-side; paired fracture
+#                       at @kintsugi = process-side),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (`monotone` + `ouroboros` prior sites
+#                       decisive per two-tick discipline),
+#                      [[feedback-no-bare-types]] (`metric`,
+#                       `ouroboros_state`, `ouroboros_bench_pair`
+#                       are typed carriers),
+#                      [[feedback-no-rust-extension-shortcut]]
+#                       (pure substrate-decl; NO Rust; discharges
+#                       §7.7 A7 companion property landing),
+#                      [[feedback-craft-not-deliver]] (declarative
+#                       half lands here; operational fracture
+#                       @kintsugi/fracture/ouroboros_monotone at
+#                       Landing 7 sibling; bodies discharge Arc-2..N).
+# Related shards: kintsugi/ouroboros.mirror (species-decl; composed
+#                  bilateral at :479-524 requires the four sub-
+#                  predicates minted here),
+#                 mirror/bench.mirror (three-conjunct template
+#                  ancestor at :40-54 + :363),
+#                 epistemologic/property/dark_count_monotone.mirror
+#                  (first ouroboros bite; single-conjunct precedent),
+#                 epistemologic/property/cold_compile_within_
+#                  tolerance.mirror (second bite; three-conjunct
+#                  specialisation precedent),
+#                 kintsugi/fracture/ouroboros_monotone.mirror
+#                  (OPERATIONAL HALF; forward-promised Landing 7).
+# Path-namespace property: this file at
+# `shards/epistemologic/property/ouroboros_monotone.mirror` declares
+# `@epistemologic/property/ouroboros_monotone` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming/floyd-hoare-1969
+source @arxiv/programming/bencher-criterion-2014
+
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/property
+in @mirror/bench
+in @kintsugi/ouroboros
+
+prism @epistemologic/property/ouroboros_monotone {
+  focus ouroboros_monotone
+  project ouroboros_monotone
+  split ouroboros_monotone
+  shift ouroboros_monotone
+  settle ouroboros_monotone
+}
+
+# === Type carriers ===
+
+# ouroboros_bench_pair — paired bench_crystal snapshot at two
+# adjacent arc ticks.
+#
+# Derived from @mirror/bench.bench_crystal: `before` is the
+# tick-n measurement; `after` is the tick-(n+1) measurement. The
+# pair IS the substrate object Arc-2..N ticks compose over when
+# they consume the composed ouroboros_monotone bilateral for
+# cache-keyable admissibility per @epistemologic/property/
+# verdict_is_content_addressed (N1 Tick 1; 2026-07-12).
+#
+# The composed bilateral's cache key is (spec_oid, target_oid,
+# inputs_oid) per verdict_is_content_addressed; the inputs_oid
+# lifts from the ouroboros_bench_pair's byte-content — same pair
+# -> same input hash -> same verdict, always. Content-addressed
+# verdict caching at the ouroboros altitude discharges via this
+# carrier.
+#
+# before  bench_crystal at tick n. Records op = ouroboros_step,
+#          args_oid = ouroboros_state hash at tick n, runtime_ns =
+#          tick n step time, output_oid = ouroboros_state hash at
+#          tick n+1 (the step's output), env_oid = arc environment
+#          fingerprint (bootstrap toolchain + arc phase), tick_index
+#          = n.
+# after   bench_crystal at tick n+1. Same shape; predecessor field
+#          links back to `before`; tick_index = n+1.
+#
+# Identity contract: two ouroboros_bench_pairs are equal iff
+# `before` and `after` are bench_crystal-equal per @mirror/bench's
+# septuple byte-equality contract.
+type ouroboros_bench_pair = {
+  before: bench_crystal,
+  after:  bench_crystal,
+}
+
+# === Sub-predicates per §4.5.4 ===
+#
+# Four first-class bilaterals; each is a substrate object Arc-2..N
+# ticks may consume independently when the tick's concern is
+# narrower than the full four-conjunct. All bodies obligation-
+# blocked (`\`); discharge via Arc-1 evaluator FLOOR (Tick 1.1-1.4)
+# + Arc-2..N per-file empirical fires (first empirical fire at
+# Arc-2 Tick 2.1 on spectral_signature.rs per Reed migration-map
+# §6).
+#
+# Shared verdict semantics (per @glass `verdict` surface):
+#   pass                — the tick's axis discharges (comparison
+#                          holds strictly or with equality).
+#   partial(confidence) — the axis regresses by a bounded noise/
+#                          flake/deferred-resolution delta;
+#                          confidence carries the delta magnitude
+#                          (per @kintsugi/consent.query_phi
+#                          re-verify discipline).
+#   failure(reason)     — the axis regresses beyond the noise
+#                          floor; reason carries the specific
+#                          axis-violation narrative.
+#
+# The four per-axis rationales:
+
+# rust_loc_non_increasing — first conjunct. Empirical ratchet on
+# rust_LOC across bootstrap/src/*.rs; the arc forecloses Rust
+# growth. Each admissible tick either deletes LOC or leaves it
+# unchanged (structurally-independent-file case).
+rust_loc_non_increasing(before: metric, after: metric) -> verdict { \ }
+
+# test_pass_rate_non_decreasing — second conjunct. Substrate
+# collapses green by MOVING green from Rust-hosted to shard-body-
+# hosted, not by breaking green: pass rate must ascend (or hold)
+# across every admissible tick.
+test_pass_rate_non_decreasing(before: metric, after: metric) -> verdict { \ }
+
+# io_violations_non_increasing — third conjunct. Count of shard
+# actions reaching non-@io surfaces; each collapse must preserve
+# or reduce it. Composition-only discipline per
+# [substrate-floor:@io-boundary] marker: new BUSINESS_LOGIC shard
+# bodies MUST compose only over @io + Arc-1-dispatched combinators.
+io_violations_non_increasing(before: metric, after: metric) -> verdict { \ }
+
+# sbec_non_decreasing — fourth conjunct; the NEW AXIS at ouroboros
+# altitude that @mirror/bench's three-conjunct template does not
+# carry. Fraction of substrate-decl'd action bodies the evaluator
+# can dispatch. Initial value at Arc-1 landing = 0; Arc-1 Ticks
+# 1.1-1.4 lift to > 0 via evaluator FLOOR combinator surface;
+# Arc-2..N per-file collapses drive sbec toward 1. The arc's
+# whole point IS lifting sbec across ticks.
+sbec_non_decreasing(before: metric, after: metric) -> verdict { \ }
+
+# === Composed bilateral per §4.5.4 ===
+#
+# ouroboros_monotone — LOAD-BEARING at substrate altitude. Same
+# shape as the composed bilateral on the species-decl side at
+# `shards/kintsugi/ouroboros.mirror:524`; on the property side
+# it lives as first-class carrier that Arc-2..N ticks CONSUME
+# during collapse ratification.
+#
+# Two altitudes; one invariant:
+#   Species-decl side  the arc's per-tick admissibility gate
+#                       composed inside `collapse_admissible` at
+#                       :477 alongside `@autopoietic.autopoietic_
+#                       closure_holds` + `@torus.autonomy(compiler,
+#                       ouroboros_winding)`.
+#   Property side      the cache-keyable admissibility discipline:
+#                       Arc-2..N ticks consume this bilateral,
+#                       memoize the verdict per (spec_oid,
+#                       target_oid, inputs_oid) triple per
+#                       @epistemologic/property/verdict_is_content_
+#                       addressed, and skip re-verification when
+#                       the input triple has not changed.
+#
+# Composition is not opaque: each of the four `requires` clauses
+# names a first-class sub-predicate declared above; the composed
+# bilateral discharges iff all four sub-predicates discharge.
+# Verdict shape matches the sub-predicates (pass / partial /
+# failure); partial iff exactly one sub-predicate is partial;
+# failure iff one or more sub-predicates fail.
+#
+# Body obligation-blocked; discharges cumulatively across Arc-2..N
+# as the four sub-predicate bodies land empirical fires.
+ouroboros_monotone(before: ouroboros_state, after: ouroboros_state) -> verdict
+  requires rust_loc_non_increasing(before.rust_loc, after.rust_loc)
+  requires test_pass_rate_non_decreasing(before.test_pass_rate, after.test_pass_rate)
+  requires io_violations_non_increasing(before.io_violations, after.io_violations)
+  requires sbec_non_decreasing(before.sbec, after.sbec)
+{ \ }
+
+# === Exports ===
+
+out @epistemologic/property/ouroboros_monotone
+out ouroboros_bench_pair
+out rust_loc_non_increasing
+out test_pass_rate_non_decreasing
+out io_violations_non_increasing
+out sbec_non_decreasing
+out ouroboros_monotone
