@@ -259,8 +259,14 @@ substrate-decl choice-point of whether `η` fires (metabolize
 outside `V_p`) or whether `μ` fires (be consumed by `V_p`).
 
 Composition-only: `η` does not introduce a new consent primitive; it
-IS the categorical form of what `@kintsugi/consent.consent_scope`
-already discharges.
+IS the categorical form of what `@kintsugi/consent.query_phi`
+(LANDED action at `shards/kintsugi/consent.mirror:616`) already
+discharges. The `consent_scope` field lives on `visibility_scope`
+at `shards/subject/visibility.mirror` — it is a carrier field
+@kintsugi/consent's `query_phi` reads, not itself an action.
+(Cite corrected per Seam Phase D 2026-07-16 substrate-already-had-
+the-word audit; the naming discipline the action carries is
+`query_phi(candidates: morphism_set) -> verdict`.)
 
 ### §5.2 @torus as the substrate-decl object-class
 
