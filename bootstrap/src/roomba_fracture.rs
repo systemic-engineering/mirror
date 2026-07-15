@@ -62,7 +62,7 @@
 //! module bites itself first (ouroboros pattern) — substrate observed;
 //! substrate self-observed; substrate self-mended.
 //!
-//! To invoke `mirror execute` on a shard-action-ref, the compiler now
+//! To invoke `mirror beam act` on a shard-action-ref, the compiler now
 //! routes via `mirror beam act` per Arc-1 Tick 1.4 CLI landing.
 //! (The `mirror execute` phrasing above is the intentional first
 //! sentinel the detector finds and mends on empirical demo run.)
