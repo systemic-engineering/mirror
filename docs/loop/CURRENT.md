@@ -72,6 +72,8 @@ the cracks. Six-arc retirement plan:
 32. `1e9a268` — Reed CURRENT.md A1 arc close (commits 25-31 tracking)
 33. `c41e6b7` — Reed session insight doc: composed Taut→Seam adjudicates what single-Seam cannot (133 LOC; Pack coordination discipline note)
 34. `564571e` — Mara @sheaf canonical spec (1303 LOC; deferred-by-design canonical spec grounding species-decl in math + composition graph + landings; 3 recognition candidates)
+35. `ffe8f58` — Reed CURRENT.md update for commits 32-34
+36. `7d57831` — Mara @io/secrets canonical spec (2105 LOC; deferred-by-design canonical spec grounding four-shard mint + Landing 6; 5 recognition candidates with one second-witness ratified; sibling to @sheaf canonical spec)
 
 ### Terminal state
 
