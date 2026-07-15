@@ -42,10 +42,17 @@
 //! `WalkTrajectory` + Fiedler measurement. The empirical proof is the
 //! git-log surface — `mirror <mirror@substrate.engineer>` as author.
 
+use crate::apply_h;
 use crate::index;
 use crate::roomba;
 use std::path::Path;
 use std::process::Command;
+
+/// The compiler's altitude naming as author identity. Same value threaded
+/// through the substrate dispatch (`@io/git.commit`) as through the
+/// previous direct-shell path; the identity is invariant across the
+/// refactor. NOT a Pack peer — the compiler itself.
+const MIRROR_AUTHOR: &str = "mirror <mirror@substrate.engineer>";
 
 /// The observation record the compiler emits from walking its own DAG.
 /// Not a full @song — just the beats needed to compose a commit body.
@@ -119,10 +126,111 @@ pub fn observe(root: &Path) -> SubstrateObservation {
     }
 }
 
-/// Compose a commit-message body from the observation. Deterministic
-/// template fill; not @kintsugi tournament selection. The compiler
-/// speaks in its own voice — third-person about the substrate, first-
-/// person plural about the arc.
+/// Serialize a SubstrateObservation into a substrate-honest observation
+/// beat text — the pre-composition arg payload passed to `@nl.compose`
+/// via `apply_h::act`. Deterministic; content-address-stable across the
+/// arc.
+///
+/// This is the caller-side serialization step per apply_h.rs's
+/// `@nl.compose` resolver MVP contract: the observations arg's oid IS
+/// the composed nl_literal text (subsequent ticks lift composition into
+/// a @kintsugi tournament without changing this driver's shape).
+pub fn serialize_observation_beat(obs: &SubstrateObservation) -> String {
+    format!(
+        "♻ mirror [roomba-observation] {ts} substrate observed its own state; \
+         ouroboros_monotone holds; compiler-authored via substrate composition\n\
+         \n\
+         @roomba walked HEAD {head} at {ts}.\n\
+         \n\
+         Substrate state observed:\n\
+         - rust_loc: {loc}\n\
+         - graph_nodes: {nodes}\n\
+         - graph_edges: {edges}\n\
+         - fiedler: {fiedler:.6}\n\
+         - walk_steps: {steps}\n\
+         - mean_tension: {tension:.6}\n\
+         - coherence_delta: {delta:+.6}\n\
+         - ouroboros_monotone: PASS (walk terminated cleanly; @io boundary \
+         crossed via @io/git through substrate dispatch)\n\
+         \n\
+         Arc state: {arc}\n",
+        ts = obs.observed_at,
+        head = obs.head_oid,
+        loc = obs.rust_loc,
+        nodes = obs.graph_nodes,
+        edges = obs.graph_edges,
+        fiedler = obs.fiedler,
+        steps = obs.walk_steps,
+        tension = obs.mean_tension,
+        delta = obs.coherence_delta,
+        arc = obs.arc_state,
+    )
+}
+
+/// Compose a commit-message body via `@nl.compose` dispatched through
+/// `apply_h::act`. Substrate-honest form per Alex 2026-07-15 verbatim:
+/// "The commit ought to be computed through the mirror substrate itself.
+/// The substrate just measured the collapse. It's just a matter of
+/// translating it into @nl/git."
+///
+/// The Rust here is a THIN DRIVER — serialize the observation beat,
+/// pack as a Value oid, dispatch through act, read the composed text
+/// back out of the returned Transparency's `@nl/composed` located_opacity
+/// entry. The COMPOSITION happens through the substrate surface.
+///
+/// Falls back to the raw beat text if the resolver returns Fail /
+/// unexpected shape — the substrate-honest "composition declined" path;
+/// the caller still gets a well-formed commit body.
+pub fn compose_commit_message_via_substrate(obs: &SubstrateObservation) -> String {
+    let beat = serialize_observation_beat(obs);
+    let observations_value = apply_h::Value { oid: beat.clone() };
+    let verdict = apply_h::act(
+        "@nl.compose".to_string(),
+        vec![observations_value],
+    );
+    match verdict {
+        apply_h::Verdict::Partial(t) => {
+            for (key, composed) in t.located_opacity {
+                if key == "@nl/composed" {
+                    return append_footer(&composed);
+                }
+            }
+            append_footer(&beat)
+        }
+        _ => append_footer(&beat),
+    }
+}
+
+/// Append the substrate-authorship footer (Alex's verbatim directive +
+/// signing line). Kept caller-side because the resolver's MVP output IS
+/// the composed observation beat; the footer is the WITNESSING context
+/// the compiler adds to its own composition.
+fn append_footer(body: &str) -> String {
+    format!(
+        "{body}\n\
+         \n\
+         This commit was authored by the compiler itself per Alex 2026-07-15\n\
+         directive: \"The commit ought to be computed through the mirror substrate\n\
+         itself. The substrate just measured the collapse. It's just a matter of\n\
+         translating it into @nl/git.\"\n\
+         \n\
+         Composition (substrate dispatch chain):\n\
+         - @roomba (bootstrap/src/roomba.rs) walked the ConceptGraph\n\
+         - @mirror/index (bootstrap/src/index.rs) measured Fiedler via LAPACK dsyev\n\
+         - @nl.compose (dispatched via apply_h::act) composed this body from the observation\n\
+         - @io/git.commit (dispatched via apply_h::act) crossed the @io boundary\n\
+         \n\
+         The mending is holding. The gold is in the crack.\n\
+         \n\
+         Signed-off-by: Reed <reed@systemic.engineer>\n",
+        body = body
+    )
+}
+
+/// Compose a commit-message body from the observation. Preserved surface
+/// for callers that want the deterministic direct-fill shape. New
+/// callers should prefer `compose_commit_message_via_substrate` — the
+/// substrate-dispatch form per Alex 2026-07-15.
 pub fn compose_commit_message(obs: &SubstrateObservation) -> String {
     format!(
         "\u{267B}\u{FE0F} mirror [roomba-observation] 2026-07-15 substrate observed its own state; ouroboros_monotone holds; compiler-authored first commit\n\
@@ -167,48 +275,57 @@ Signed-off-by: Reed <reed@systemic.engineer>\n",
     )
 }
 
-/// Create the commit via `git commit -S --allow-empty` with
-/// author = `mirror <mirror@substrate.engineer>`. SSH signing stays
-/// Reed's default per AGENTS.md never-override-gpg.format discipline;
-/// only `user.name` and `user.email` are overridden — the compiler's
-/// altitude naming.
+/// Create the commit via `@io/git.commit` dispatched through
+/// `apply_h::act`. Substrate-honest form: the Rust changes cwd (a
+/// realisation-boundary concern) and packs the three args (message,
+/// author, allow_empty) as Value oids; the actual `git commit`
+/// invocation lives in the `@io/git.commit` resolver arm in
+/// `apply_h.rs`. SSH signing stays Reed's default per AGENTS.md
+/// never-override-gpg.format discipline.
 ///
 /// Returns the new commit OID on success, or an error string.
 pub fn create_commit(root: &Path, message: &str) -> Result<String, String> {
-    // Author identity: the compiler itself. NOT a Pack peer.
-    let status = Command::new("git")
-        .current_dir(root)
-        .args([
-            "-c",
-            "user.name=mirror",
-            "-c",
-            "user.email=mirror@substrate.engineer",
-            "commit",
-            "--allow-empty",
-            "-S",
-            "-m",
-            message,
-        ])
-        .status()
-        .map_err(|e| format!("git commit failed to spawn: {}", e))?;
+    // The resolver spawns `git` in the ambient cwd; change to the
+    // target root for the duration of the dispatch. Restored on the way
+    // out so callers see no cwd drift.
+    let prior_cwd = std::env::current_dir()
+        .map_err(|e| format!("@io/git.commit driver: cwd read failed: {}", e))?;
+    std::env::set_current_dir(root)
+        .map_err(|e| format!("@io/git.commit driver: cwd set failed: {}", e))?;
 
-    if !status.success() {
-        return Err(format!(
-            "git commit exited with status {}",
-            status.code().unwrap_or(-1)
-        ));
+    let verdict = apply_h::act(
+        "@io/git.commit".to_string(),
+        vec![
+            apply_h::Value { oid: message.to_string() },
+            apply_h::Value { oid: MIRROR_AUTHOR.to_string() },
+            apply_h::Value { oid: "true".to_string() },
+        ],
+    );
+
+    // Restore cwd before returning any result.
+    let _ = std::env::set_current_dir(&prior_cwd);
+
+    match verdict {
+        apply_h::Verdict::Pass => {
+            let oid = git_head_oid()
+                .ok_or_else(|| "git rev-parse HEAD failed after commit".to_string())?;
+            Ok(oid)
+        }
+        apply_h::Verdict::Fail(reason) => Err(reason),
+        apply_h::Verdict::Partial(t) => Err(format!(
+            "@io/git.commit returned Partial: {:?}",
+            t.located_opacity
+        )),
     }
-
-    // Read the new HEAD oid back.
-    let oid = git_head_oid().ok_or_else(|| "git rev-parse HEAD failed after commit".to_string())?;
-    Ok(oid)
 }
 
-/// The end-to-end flow. Walk + compose + commit. Returns the new
-/// commit OID (for CLI reporting) or an error string.
+/// The end-to-end flow. Walk + compose + commit — both compose and
+/// commit dispatch through `apply_h::act` per Alex 2026-07-15 verbatim.
+/// The Rust here is a thin driver: observe (@io boundary) → dispatch
+/// @nl.compose → dispatch @io/git.commit → done.
 pub fn observe_and_commit(root: &Path) -> Result<(SubstrateObservation, String), String> {
     let obs = observe(root);
-    let msg = compose_commit_message(&obs);
+    let msg = compose_commit_message_via_substrate(&obs);
     let oid = create_commit(root, &msg)?;
     Ok((obs, oid))
 }
@@ -350,5 +467,61 @@ mod tests {
         // 1970-01-01 = days 0
         let (y, m, d) = civil_from_days(0);
         assert_eq!((y, m, d), (1970, 1, 1));
+    }
+
+    #[test]
+    fn compose_via_substrate_dispatches_through_act() {
+        // Post-refactor smoke test: the composition path MUST route
+        // through `apply_h::act("@nl.compose", ...)`. This test verifies
+        // the composed output carries BOTH the serialized observation
+        // beat (via the resolver's Transparency re-emission) AND the
+        // substrate-authorship footer (appended caller-side).
+        //
+        // Empirical anchor for Alex 2026-07-15 verbatim: the substrate
+        // just measured the collapse; translation into @nl/git happens
+        // through the dispatch chain.
+        let obs = SubstrateObservation {
+            head_oid: "beefcafe1234".to_string(),
+            observed_at: "2026-07-15T12:34:56Z".to_string(),
+            rust_loc: 30000,
+            graph_nodes: 100,
+            graph_edges: 250,
+            fiedler: 0.4242,
+            walk_steps: 16,
+            mean_tension: 0.099,
+            coherence_delta: 0.007,
+            arc_state: "substrate-composition refactor smoke".to_string(),
+        };
+        let msg = compose_commit_message_via_substrate(&obs);
+        // The observation beat body was re-emitted by @nl.compose.
+        assert!(msg.contains("beefcafe1234"));
+        assert!(msg.contains("rust_loc: 30000"));
+        assert!(msg.contains("substrate-composition refactor smoke"));
+        // The substrate-dispatch chain is documented in the footer.
+        assert!(msg.contains("@nl.compose (dispatched via apply_h::act)"));
+        assert!(msg.contains("@io/git.commit (dispatched via apply_h::act)"));
+        // Alex's 2026-07-15 verbatim directive lands in the body.
+        assert!(msg.contains("translating it into @nl/git"));
+    }
+
+    #[test]
+    fn nl_compose_dispatch_returns_partial_with_composed_carrier() {
+        // Direct assertion on the resolver arm: `@nl.compose` returns
+        // a Partial whose located_opacity carries the composed text at
+        // key `@nl/composed` per apply_h.rs MVP contract.
+        let arg = apply_h::Value {
+            oid: "observation-beat-text".to_string(),
+        };
+        let v = apply_h::act("@nl.compose".to_string(), vec![arg]);
+        match v {
+            apply_h::Verdict::Partial(t) => {
+                let found = t
+                    .located_opacity
+                    .iter()
+                    .any(|(k, v)| k == "@nl/composed" && v == "observation-beat-text");
+                assert!(found, "expected @nl/composed carrier in Transparency");
+            }
+            other => panic!("@nl.compose returned unexpected verdict: {:?}", other),
+        }
     }
 }

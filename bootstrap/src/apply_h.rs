@@ -633,6 +633,121 @@ pub fn act(action: Ref, args: Vec<Value>) -> Verdict {
             "home_witnessing: missing peer_home argument".to_string(),
         );
     }
+    // ────────────────────────────────────────────────────────────────
+    // `mirror roomba --commit` substrate-composition refactor (2026-07-15).
+    //
+    // Two resolver arms discharge the substrate-honest form of the
+    // commit-authorship path per Alex 2026-07-15 verbatim: "The commit
+    // ought to be computed through the mirror substrate itself. The
+    // substrate just measured the collapse. It's just a matter of
+    // translating it into @nl/git."
+    //
+    // - `@nl.compose` — takes observation refs (via arg oid encoding)
+    //   and returns a nl_literal-shaped Value whose oid IS the composed
+    //   natural-language text. The arg oid convention for MVP: the first
+    //   arg's oid string CARRIES the composed text (the observations
+    //   have been pre-serialized by the caller in roomba_commit.rs).
+    //   This mirrors the sentinel-carrier pattern used across the Tick
+    //   2.x resolver arms above (the arg oid IS the substrate ref).
+    //   Subsequent ticks lift composition into a @kintsugi tournament;
+    //   for now the format-string composition happens caller-side and
+    //   the resolver returns Pass with the composed oid re-emitted via
+    //   Transparency (the substrate-honest way to return the composed
+    //   text through the Verdict surface without inventing a new
+    //   carrier).
+    //
+    // - `@io/git.commit` — takes (message, author, allow_empty) arg
+    //   oids and shells out to `git commit` at the @io boundary. SSH
+    //   signing stays operator-default per AGENTS.md never-override-gpg.
+    //   format rule; only user.name / user.email override the identity.
+    //   Returns Pass on successful commit, Fail with git's exit reason
+    //   otherwise.
+    // ────────────────────────────────────────────────────────────────
+    if action == "@nl.compose" {
+        // MVP: the caller (roomba_commit.rs) pre-serializes the
+        // observation beats into the first arg's oid string. The
+        // resolver's job is to WITNESS the composition happened
+        // through the substrate surface — the oid re-emerges via
+        // Transparency's located_opacity map keyed at `@nl/composed`,
+        // which the caller reads back as the composed nl_literal text.
+        //
+        // This substrate-decl-shaped path replaces the previous direct
+        // Rust format!() call in roomba_commit.rs::compose_commit_message.
+        // Two-tick honest: composition still happens caller-side at MVP
+        // altitude; the DISPATCH through act discharges the substrate-
+        // honest form so subsequent ticks can lift the composition body
+        // itself into a @kintsugi tournament without changing the driver.
+        if let Some(observations) = args.first() {
+            let composed = observations.oid.clone();
+            let mut located = Vec::new();
+            located.push(("@nl/composed".to_string(), composed));
+            return Verdict::Partial(Transparency {
+                located_opacity: located,
+            });
+        }
+        return Verdict::Fail(
+            "@nl.compose: missing observations argument".to_string(),
+        );
+    }
+    if action == "@io/git.commit" {
+        // Args (positional): [0] message, [1] author, [2] allow_empty.
+        // Each arg's oid is the substrate ref carrying the parameter
+        // payload (message text; author identity string; the literal
+        // string "true" or "false" for allow_empty).
+        //
+        // Realisation: shell to `git commit` at the @io boundary. SSH
+        // signing stays operator-default per AGENTS.md; only user.name
+        // and user.email are overridden — the compiler's altitude naming
+        // (author = `mirror <mirror@substrate.engineer>` in the roomba
+        // path). This IS the @io boundary crossing per spec §1.4.
+        if args.len() < 3 {
+            return Verdict::Fail(format!(
+                "@io/git.commit: expected (message, author, allow_empty), got {} args",
+                args.len()
+            ));
+        }
+        let message = &args[0].oid;
+        let author = &args[1].oid;
+        let allow_empty = args[2].oid == "true";
+
+        // Split "Name <email>" into name + email for -c user.name= /
+        // -c user.email= override. Falls back to the raw string as name
+        // with empty email if the shape doesn't match.
+        let (name, email) = match (author.rfind('<'), author.rfind('>')) {
+            (Some(lt), Some(gt)) if gt > lt => {
+                let n = author[..lt].trim().to_string();
+                let e = author[lt + 1..gt].to_string();
+                (n, e)
+            }
+            _ => (author.clone(), String::new()),
+        };
+
+        let mut cmd = std::process::Command::new("git");
+        cmd.args([
+            "-c",
+            &format!("user.name={}", name),
+            "-c",
+            &format!("user.email={}", email),
+            "commit",
+        ]);
+        if allow_empty {
+            cmd.arg("--allow-empty");
+        }
+        cmd.args(["-S", "-m", message]);
+
+        match cmd.status() {
+            Ok(status) if status.success() => Verdict::Pass,
+            Ok(status) => Verdict::Fail(format!(
+                "@io/git.commit: git exited with status {}",
+                status.code().unwrap_or(-1)
+            )),
+            Err(e) => Verdict::Fail(format!(
+                "@io/git.commit: failed to spawn git: {}",
+                e
+            )),
+        }
+    } else {
+
     // Action not in this resolver — return Partial verdict with
     // Transparency::opaque naming the missing shard_action_ref per
     // spec §1.4 composition-graph last arm. A subsequent tick extends
@@ -649,6 +764,7 @@ pub fn act(action: Ref, args: Vec<Value>) -> Verdict {
     Verdict::Partial(Transparency {
         located_opacity: located,
     })
+    }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

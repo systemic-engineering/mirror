@@ -326,6 +326,42 @@ commit_object(repo: git_repository, tree: git_hash,
   -> imperfect(git_hash, ref, ref)
 { \ }
 
+# === commit action ===
+#
+# Compose a git commit with the given message and author identity at
+# the @io boundary. Wraps `git commit` (libgit2 / gitoxide / shelling
+# to the git binary at realisation); substrate-decl surface is the
+# composition contract.
+#
+# This is the SIBLING of `commit_object` at a different altitude:
+# `commit_object` takes typed (tree, parents, message) and returns a
+# git_hash — the plumbing form. `commit` takes a repository-scoped
+# (message, author, allow_empty) triple and returns a Verdict — the
+# porcelain form the compiler's self-authorship path composes over.
+# Both cross the @io boundary; both remain within the git protocol
+# adapter's Splinter/Narcissus discipline.
+#
+# `allow_empty`: true → `--allow-empty` (observation commits with no
+#   file changes are admissible; the observation IS the change record
+#   per @roomba self-narration semantics).
+# `author`: author identity ref (e.g., `mirror <mirror@substrate.
+#   engineer>`); the compiler's altitude naming. SSH signing key stays
+#   Reed's per AGENTS.md never-override-gpg.format discipline; only
+#   user.name / user.email are overridden.
+# `message`: composed nl_literal or text ref — typically the output
+#   of `@nl.compose` over observation beats.
+#
+# Returns Verdict:
+# - Pass    — commit created; HEAD advanced; new oid resolvable.
+# - Fail    — git rejected the commit (signing failure, hook rejection,
+#             empty commit without --allow-empty, etc.).
+# - Partial — commit created with recoverable warnings (transparency
+#             carrier names the sub-issue).
+#
+# Body discharges at the realisation boundary via `apply_h::act` per
+# spec §1.4 dispatch.
+commit(message: ref, author: ref, allow_empty: bool) -> verdict { \ }
+
 # === hash_to_oid action ===
 #
 # THE LOAD-BEARING BRIDGE ACTION grounding recognition #98 candidate
@@ -561,6 +597,7 @@ out fetch
 out read_object
 out resolve_ref
 out commit_object
+out commit
 out hash_to_oid
 out git_reachable
 out git_repository_open

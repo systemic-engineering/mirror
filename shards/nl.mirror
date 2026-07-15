@@ -196,6 +196,32 @@ corpus_well_formed(c: corpus, p: perturbation) -> verdict { \ }
 triples_compatible(t1: spectral_triple, t2: spectral_triple, p: perturbation)
   -> verdict { \ }
 
+# === compose action ===
+#
+# Compose observation-beats into natural-language text. Given a list
+# of observation refs (bench crystals; @song beats; roomba walk
+# summaries; Fiedler measurements; etc.), produce a human-readable
+# natural-language composition suitable for commit messages, docblocks,
+# metalogue events, or any downstream @nl consumer.
+#
+# The composition IS the substrate speaking about itself. Where
+# `ingest` takes exogenous text into corpus and `render` lifts an
+# nl_literal into the prism, `compose` runs in the opposite direction:
+# it takes typed substrate observations and returns their nl_literal
+# projection. The @nl surface that authors commits, docblocks, and
+# metalogue entries about the substrate's own state — the substrate-
+# vocabulary primitive for self-narration.
+#
+# v0.1 MVP: format-string composition at the realisation boundary
+# (bootstrap/src/apply_h.rs `@nl.compose` resolver arm). Forward-
+# promised: @kintsugi tournament composition (rank candidate phrasings
+# per Fate ratio; return the ratified nl_literal) discharges at species
+# altitude when a smoke test demands it.
+#
+# Body discharges at the realisation boundary via `apply_h::act` per
+# spec §1.4 dispatch.
+compose(observations: [ref]) -> nl_literal { \ }
+
 # === nl_measurement_well_formed composed bilateral ===
 #
 # The composed bilateral at @nl-measurement altitude. Per the
@@ -222,6 +248,7 @@ out build_triple
 out connes_distance
 out measure_affect
 out compare
+out compose
 out project_measurement
 out corpus_well_formed
 out triples_compatible
