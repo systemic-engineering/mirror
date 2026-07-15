@@ -648,6 +648,78 @@ is landed AT SIBLING ALTITUDE FOR SAME OPERATION; (§3.3) accept
 `_valid`/`_admissible`/`_admits`/`_well_formed` as consistent
 bilateral suffix, reject `_record` on constructors as CS-vocab.
 
+**Extended-scope discharge (2026-07-15).** Seam extended-scope
+seamfinder audit at
+`docs/audits/2026-07-15-seam-extended-scope-etymology-audit.md`
+(5dcad39) applied the same discipline to today's shard-decl action
++ carrier names. Alex-triggered cascade landed 12 more renames at
+`daa9c14`:
+
+- `@sheaf`: `acl_project` → `restrict` (collapse); `section_computable`
+  → `section_admissible` (bilateral suffix)
+- `@io/secrets`: `key_material_ref_of` → `key_material_from_peer`;
+  `project` → `seal` (AEAD); `retrieve` → `open` (AEAD);
+  `secret_projection` carrier → `sealed_section`
+- `@io/fs`: `fs_read/write/stat/list/mkdir` → bare `read/write/stat/
+  readdir/mkdir`; `writable` → `path_writable`
+
+Zero renames on vendor-anchored shards (@io/secrets/sops,
+@io/crypto) or math-vocab shards (@epistemologic/property/
+ouroboros_monotone). Two meta-rules ratified below.
+
+### Bilateral suffix vocabulary
+
+Bilateral predicates in the substrate consistently take one of
+six accepted suffixes:
+
+- `_valid` — the thing is well-formed at this altitude
+- `_admissible` — the substrate admits this at this stage
+- `_admits` — the acting party admits (e.g., `key_admits`)
+- `_well_formed` — composed bilateral over sub-predicates
+- `_preserved` — an invariant held across an operation
+- `_exists` — empirically present
+
+Rejected suffixes (CS-vocab chipped away by prior discharges):
+
+- `_record` — bureaucratic; `bench_record` renamed to `crystallize`
+- `_computable` — CS/computability-theory import; use `_admissible`
+  instead (preserves geometric reading: the ACL admits the stalk)
+
+When proposing a new bilateral, use one of the six accepted
+suffixes OR justify the departure explicitly. Consistency creates
+delightful-boringness — 15+ landed bilaterals across today's arc
+follow the pattern.
+
+### Vendor-anchoring vs POSIX-inertia
+
+Name prefixes carry meaning only when they disambiguate. Rule:
+
+> **Prefix load-bearing IFF vendor is one-of-many.**
+
+**Vendor-anchored (KEEP PREFIX)** — name pins to a specific
+external algorithm or tool where the substrate is ONE OF MANY
+vendors. Prefix disambiguates from sibling vendors.
+
+- `sops_encrypt` — SOPS is one of {sops, age, vault, 1password}
+  future siblings
+- `sha256` — SHA-256 is one algorithm among many crypto primitives
+- `age_encrypt` — age is one of {age, pgp, kms} recipient formats
+- `ed25519_sign` — ed25519 is one of many signature algorithms
+
+**POSIX-inertia (DROP PREFIX)** — name inherits a jargon prefix
+from a standard-of-one where the substrate has no sibling vendors.
+Inside its own family the prefix reads as doubled naming.
+
+- `fs_read` inside `@io/fs` reads as bureaucratic `fs.fs_read`
+  doubling; POSIX is the standard-of-one for filesystem; renamed
+  to bare `read` per boot/std/io.mirror precedent
+- `bench_record` had only one benchmark shape in the substrate;
+  renamed to `crystallize`
+
+Application: before landing a prefixed name, ask whether siblings
+named `<other_vendor>_<verb>` are plausibly forward-promised. If
+yes, prefix is vendor-anchored. If no, prefix is inertia (drop).
+
 ---
 
 ## Keywords Are Substrate Declarations
