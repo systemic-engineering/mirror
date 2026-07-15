@@ -210,6 +210,21 @@ invariant + Foerster autopoietic closure predicate) via @fate
 tournament. The operator is inside the system it operates on. (A3) is
 reflexively discharged.
 
+**Mutually-recursive termination note (Seam Phase D-cascade REED-INLINE-1).**
+The recursion terminates in ALL cases including mutually-recursive
+shard-decls whose fracture bodies infer over each other. When actions
+`A.f = { \ }` and `B.g = { \ }` reference each other through
+composition, the loop resolves in dependency order: (i) if the
+Rayleigh descent on the joint (A.f + B.g) hole-record space finds a
+joint minimum, both bodies infer simultaneously in one pass; (ii) if
+no joint minimum exists AND single-body resolution would require the
+other's body, the loop enters *stuck-pair* state — both fractures
+remain as `\` with a substrate-decl annotation naming the mutual
+dependency. Stuck pairs are Rice-safely detected in bounded time
+(finite mutual-reference cycle in the composition graph) and count
+as irreducible residuals per §6.5.4 case (iii). @io boundary is not
+the only base case; mutual-reference-cycle is a second.
+
 ### 1.4 The load-bearing claim
 
 **Theorem 1.1 (Compile-altitude autopoiesis).** *The tuple*

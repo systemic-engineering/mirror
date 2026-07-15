@@ -555,6 +555,42 @@ observable.
 `Hole` AST nodes; add `resolve_hole` function at
 `bootstrap/src/apply_h.rs` to dispatch the six-step loop.
 
+**Anti-recidivism discipline (Seam Phase D-cascade REED-INLINE-3;
+load-bearing).** Bridge β is the HIGHEST-ROI recidivism risk of the
+three bridges. Prior Reed failure mode Alex named ("Rust-with-
+substrate-lipstick"): apply_h.rs sentinel-matching that hardcodes
+decisions in Rust while pretending to dispatch through substrate.
+Bridge β MUST NOT recreate this failure. Explicit dispatch discipline:
+
+1. `resolve_hole(hole)` constructs `hole_record` from surrounding
+   geometry — then IMMEDIATELY dispatches via
+   `apply_h::act("@fate.roll", vec![hole_record_value])` for candidate
+   ranking. NOT first-match in Rust; NOT hardcoded arm; NOT
+   "@fate/tournament.rank returns Pass if input matches sentinel X".
+   The tournament ranking IS the substrate operation; Rust IS the
+   driver that packs args + reads the returned verdict.
+2. Selected candidate dispatches via
+   `apply_h::act("@glue.translate", vec![candidate_value, hole_record_value])`
+   for morphism application. Same discipline: Rust packs; substrate
+   decides.
+3. Crystallization dispatches via
+   `apply_h::act("crystallize", vec![resolved_body_value])` — the
+   crystallize combinator IS the substrate operation; Rust IS the
+   driver.
+4. Projection dispatches via
+   `apply_h::act("@io/fs.mutate_at", vec![path, position, resolved_body])`.
+5. **Explicit test to verify the discipline holds:** the resolver
+   MUST NOT contain any `if action == "..." || match on landed-shard-
+   name` inside `resolve_hole`. Only `apply_h::act(...)` calls +
+   Rust arg-marshaling + Rust return-unpacking. If a review finds
+   sentinel-matching creeping in, the bridge has recidivism-drifted;
+   revert + refactor.
+
+The test: does `resolve_hole` decide anything about which candidate
+to select, which morphism to apply, which crystal to store, or where
+to project? If YES: recidivism. If NO (substrate decides via
+dispatch chain; Rust only marshals): substrate-honest.
+
 **Substrate-decl (mirror side):** ~50 LOC. New action at
 `shards/fate.mirror` (per §3.2 build_hole_record). New action at
 `shards/apply_h.mirror` or equivalent evaluator-shard (per §3.3
@@ -593,7 +629,16 @@ resolved `\` is a no-op (the `\` no longer exists at the position).
 
 ### §4.4 Cumulative delta
 
-Total LOC estimate (per Taut §12.4 + this spec's refinement):
+**LOC ceiling discipline (Seam Phase D-cascade REED-INLINE-7).** Hard
+ceiling on bridge-implementation Rust: **500 Rust / 300 mirror**. If
+a bridge exceeds its target LOC by >25% at implementation time, Reed
+STOPS + commits partial + reports the shape of the overrun (typically
+signals substrate-lipstick recidivism creeping in: hardcoded decision
+logic in Rust that should be substrate dispatch). Per AGENTS.md
+2026-06-10 Mara/Reed-stall pattern discipline.
+
+Total LOC estimate (per Taut §12.4 + this spec's refinement; ceiling
+applies to any deviation):
 
 - **~50 Rust** for γ (crystallization persistence)
 - **~50 Rust + ~50 mirror** for α (mutate_at + species mint)
@@ -760,16 +805,32 @@ mirror foo | mirror bar (via `~/.mirror/serve.sock`)
 └─ total loss: L(ϕ) once (or zero, if the pipe forwards to another mirror-mode consumer)
 ```
 
-**Loss-ratio bound:** Mode A loss / Mode B loss ≥ 2 typically, and grows
-unboundedly for pipelines of length `n` (Mode A total loss scales as
-`Ω(n)`; Mode B total loss scales as `O(1)` — one crossing at final
-discharge regardless of pipeline depth).
+**Loss-ratio bound (typical-case; Seam Phase D-cascade REED-INLINE-5):**
+Mode A loss / Mode B loss ≥ 2 in the typical case where both foo and
+bar carry nonlinear state worth preserving across the pipeline
+boundary. Grows unboundedly for pipelines of length `n` under the
+typical case (Mode A total loss scales as `Ω(n)`; Mode B total loss
+scales as `O(1)` — one crossing at final discharge regardless of
+pipeline depth). The bound is not universal: for pipelines where
+downstream consumers require only the linearized output (final byte-
+stream is the only substrate-consumable form), Mode A and Mode B are
+equivalent — the linearization was going to happen regardless of
+internal composition. Design pressure applies to the typical case,
+which is the substrate-common case in practice.
 
 ### §5.5.3 Substrate-decl surface (composition over LANDED carriers)
 
-- **Socket transport:** `@io/socket` family root LANDED at `shards/io.
-  mirror:130-140` (boot-floor `boot/std/io/socket.mirror`; species
-  substrate-decl at `shards/io/socket.mirror` forward-promised).
+- **Socket transport:** `@io/socket` FORWARD-PROMISED (Seam Phase D-
+  cascade REED-INLINE-4 clarification). The boot-floor grammar at
+  `boot/std/io/socket.mirror` LANDED; the family-root at
+  `shards/io.mirror:130-140` NAMES `@io/socket` in its forward-
+  promise list; the SPECIES substrate-decl at `shards/io/socket.mirror`
+  is NOT YET LANDED. This section composes over the forward-promise
+  — the socket-forwarded pipeforward mode requires the species
+  landing as a prerequisite. Substrate-decl mint of
+  `shards/io/socket.mirror` is a subsequent tick's forward-promise
+  discharge (per Reed migration-map + @io lift-tick pattern; sibling
+  to @io/fs lift-tick landed 2026-07-15).
 - **Crystal-ref transport:** `@mirror/store` six-op CAS LANDED at
   `shards/mirror/store.mirror`; crystals are content-addressed by
   BLAKE3 OID; ref-transport is oid + optional lazy content-fetch on
@@ -812,12 +873,38 @@ subsequent substrate capability:
 ### §5.5.5 Composition with the six-step inference loop
 
 Steps 1–6 of the inference loop (§3) all happen in nonlinear tension-
-resolution space. Step 7 (project via `@io/fs.mutate_at`) IS the
-discharge — the single @io crossing per loop iteration. Design pressure
-applies: **each loop iteration incurs one linearization loss `L(ϕ)`;
-multi-fracture batches SHOULD amortize into a single project step
-(one commit; one @io crossing) rather than N separate projects (N
-crossings; N losses).**
+resolution space AT INFERENCE ALTITUDE. However, per Seam Phase D-
+cascade REED-INLINE-2 substrate-honesty correction: the ACTUAL
+@io-crossing count per loop iteration is 3–4, not 1. Enumerated:
+
+1. Step 1 (@roomba walks): reads source files via @io/fs.read —
+   crossing #1 (initial state σ loaded from disk)
+2. Steps 2–5 (build_hole_record → @fate.roll → @glue.translate):
+   pure substrate; no crossings
+3. Step 6 (crystallize): writes crystal to `.mirror/objects/<OID>`
+   via @mirror/store.write_crystal — crossing #2 (memory persists
+   to disk)
+4. Step 7 (project via `@io/fs.mutate_at`): writes source file at
+   position — crossing #3 (the primary discharge; L(ϕ) measured here
+   per §6.6.7 REED-INLINE-6 estimate below)
+5. Step 8 (re-observation before next iteration): reads source file
+   post-mutation — crossing #4 (state σ' loaded; may be amortized
+   with next iteration's step 1 if iterating within same process)
+
+**L(ϕ) implementable estimate (REED-INLINE-6):** loss at bridge α
+discharge measurable via `context_before != context_after` byte-count
+difference + refinement-predicate-count difference. When replacement
+length = original length AND refinement predicates carry across, L(ϕ)
+→ 0 (near-lossless). When lengths differ OR predicates drop, L(ϕ) =
+Θ(byte-count-drift + predicate-drop-count). Bridge α docblock MUST
+emit an L(ϕ) crystal at each invocation for empirical measurement.
+
+Design pressure still applies: multi-fracture batches SHOULD amortize
+to ONE project step (one commit; one bridge-α crossing) rather than
+N separate projects (N crossings). The remaining crossings (walk-
+read, crystal-write, re-observation-read) are structurally required
+by the loop but each has its own L(ϕ) contribution to `Σ L(ϕ_i)`
+total loss.
 
 Bridge α (`@io/fs.mutate_at`) is thus the substrate's most-scrutinized
 @io boundary carrier — it is the discharge point where the entire
