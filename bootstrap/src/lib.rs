@@ -57,6 +57,7 @@ pub mod index;
 pub mod peer_persistence;
 pub mod roomba;
 pub mod roomba_commit;
+pub mod roomba_fracture;
 pub mod spectral_signature;
 pub mod song;
 pub mod spectral;
@@ -3644,8 +3645,13 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
             let commit_flag = args.iter().any(|a| a == "--commit");
             let root = ctx.cwd().to_path_buf();
             if commit_flag {
-                match crate::roomba_commit::observe_and_commit(&root) {
-                    Ok((obs, oid)) => {
+                // The FULL end2end empirical proof pipeline per Alex
+                // 2026-07-15 verbatim: walk → detect fracture → kintsugi
+                // resolve → @io/fs.write → @nl.compose from delta →
+                // @io/git.commit (real blobs). Falls back to observation-
+                // only commit if no fracture found (backward compat).
+                match crate::roomba_commit::observe_and_commit_with_resolve(&root) {
+                    Ok((obs, fracture_opt, oid)) => {
                         mout!("@@ mirror roomba --commit: substrate observed its own state @@");
                         mout!("+ HEAD (pre-commit): {}", obs.head_oid);
                         mout!("+ observed_at: {}", obs.observed_at);
@@ -3658,7 +3664,19 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                         mout!("+ coherence_delta: {:+.6}", obs.coherence_delta);
                         mout!("+ arc_state: {}", obs.arc_state);
                         mout!("");
-                        mout!("\u{2713} commit {} authored by mirror <mirror@spectral.engineer>", oid);
+                        if let Some(f) = fracture_opt {
+                            mout!("@@ fracture detected + resolved @@");
+                            mout!("+ file: {}", f.file_path.display());
+                            mout!("+ line: {}", f.line_no);
+                            mout!("+ stale_name: {}", f.stale_name);
+                            mout!("+ canonical_name: {}", f.canonical_name);
+                            mout!("+ @io/fs.write applied the delta on disk");
+                            mout!("");
+                            mout!("\u{2713} commit {} (REAL blobs; delta committed) authored by mirror <mirror@spectral.engineer>", oid);
+                        } else {
+                            mout!("@@ no fracture detected — fallback to observation-only commit @@");
+                            mout!("\u{2713} commit {} (observation-only; --allow-empty) authored by mirror <mirror@spectral.engineer>", oid);
+                        }
                         mout!("  the compiler observed itself; the compiler composed the message; the compiler made the commit");
                         0
                     }

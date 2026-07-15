@@ -846,6 +846,89 @@ pub fn act(action: Ref, args: Vec<Value>) -> Verdict {
                 e
             )),
         }
+    } else if action == "@io/fs.write" {
+        // ────────────────────────────────────────────────────────────
+        // `mirror roomba --commit` end2end empirical proof (2026-07-15).
+        //
+        // Resolver arm for @io/fs.write per shards/io/fs.mirror:278-297
+        // — the load-bearing action for the theorem's APPLY stage. Alex
+        // 2026-07-15 verbatim: "the DELTA of that resolution translated
+        // into @nl language and of course as the blobs in the commit
+        // tree, actually committed to disk."
+        //
+        // This IS the disk-write @io boundary crossing. Args (positional):
+        //   [0] path      — the target file path (arg oid IS the path)
+        //   [1] bytes     — the new file contents (arg oid IS the bytes)
+        //
+        // Returns Pass on successful write; Fail with std::io::Error
+        // reason otherwise. Substrate-decl semantics per fs.mirror:
+        // creates if absent; truncates + rewrites if present (POSIX
+        // open(O_WRONLY|O_CREAT|O_TRUNC)+write+close).
+        // ────────────────────────────────────────────────────────────
+        if args.len() < 2 {
+            return Verdict::Fail(format!(
+                "@io/fs.write: expected (path, bytes), got {} args",
+                args.len()
+            ));
+        }
+        let path = &args[0].oid;
+        let bytes = &args[1].oid;
+        match std::fs::write(path, bytes.as_bytes()) {
+            Ok(()) => Verdict::Pass,
+            Err(e) => Verdict::Fail(format!(
+                "@io/fs.write: failed to write {}: {}",
+                path, e
+            )),
+        }
+    } else if action == "@epistemologic/reality/time.compare" {
+        // ────────────────────────────────────────────────────────────
+        // `mirror roomba --commit` end2end empirical proof (2026-07-15).
+        //
+        // Resolver arm for @epistemologic/reality/time.compare per
+        // shards/epistemologic/reality/time.mirror:151-152 (Mara 2026-
+        // 06-06). Substrate-already-had-the-word for the theorem's
+        // DELTA carrier:
+        //
+        //   type mutation = insert(ref) | remove(ref) | replace(ref, ref)
+        //   type delta = { from, to, mutations, holonomy }
+        //   compare(a: snapshot, b: snapshot) -> delta
+        //
+        // MVP contract mirrors @nl.compose (arg-oid-as-payload): the
+        // caller (roomba_commit.rs) pre-serializes the before/after
+        // snapshot pair into the arg oids; this resolver re-emerges the
+        // composed delta via Transparency's located_opacity map keyed
+        // at `@epistemologic/reality/time/delta`. Two-tick honest: the
+        // full snapshot-bridge (filesystem-state → snapshot.oid) lifts
+        // in a subsequent tick when a smoke test needs it.
+        //
+        // Args (positional):
+        //   [0] before   — snapshot serialization (arg oid carries it)
+        //   [1] after    — snapshot serialization (arg oid carries it)
+        // ────────────────────────────────────────────────────────────
+        if args.len() < 2 {
+            return Verdict::Fail(format!(
+                "@epistemologic/reality/time.compare: expected (before, after), got {} args",
+                args.len()
+            ));
+        }
+        let before = &args[0].oid;
+        let after = &args[1].oid;
+        // Substrate-honest delta serialization: the caller-serialized
+        // mutation-list is packed as `before|after` and re-emerged as a
+        // located-opacity entry the driver reads back. Subsequent tick
+        // lifts to full snapshot-diffing via @mirror/store.get_persistent.
+        let composed_delta = format!(
+            "delta{{from={};to={};holonomy=fiedler}}",
+            before, after
+        );
+        let mut located = Vec::new();
+        located.push((
+            "@epistemologic/reality/time/delta".to_string(),
+            composed_delta,
+        ));
+        return Verdict::Partial(Transparency {
+            located_opacity: located,
+        });
     } else {
 
     // Action not in this resolver — return Partial verdict with
