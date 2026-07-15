@@ -119,12 +119,20 @@ routing surface LANDED across:
   substrate.md` (LANDED spec) — the mycelial routing substrate
   through which @peer instances coordinate.
 - `docs/specs/resonance-as-inter-peer-coupling-shapes-fate-
-  tournaments-toward-basins.md` (LANDED spec, Mara `9e48710`) — the
-  @resonance inter-peer coupling operator κ that shapes the joint
+  tournaments-toward-basins.md` (LANDED **spec**, Mara `9e48710`) —
+  the @resonance inter-peer coupling operator κ that shapes the joint
   eigen-structure per parent formalization §1.
 - `docs/specs/dance-runtime-rung-4-multi-peer-coherence-phase-lock.
-  md` (LANDED spec, Rung 4 GREEN `0cc4e11`) — the @dance runtime
+  md` (LANDED **spec**, Rung 4 GREEN `0cc4e11`) — the @dance runtime
   primitive measuring K_n Kuramoto phase-lock across peer homes.
+
+**Note on spec-vs-shard landing altitude.** The `@resonance` and
+`@dance` substrate above is LANDED at **spec altitude** (canonical
+specs authored by Mara), NOT at **shard-decl altitude** (`shards/
+resonance.mirror` and `shards/dance.mirror` are not yet minted).
+The compiler's shard-composition of the operator-altitude cascade
+(per `docs/math/gestalt/README.md` §11) forward-promises these
+shard-mints. Alex-adjudicable at ALEX-Q1 per Seam Phase D 2026-07-16.
 
 **Substrate-decl claim.** The compiler's multi-@peer architecture is
 not a "design choice for a compiler that models coupled cognition."
@@ -421,10 +429,13 @@ which this coupling operates:
   `shards/gestalt.mirror`) — construct the reader-site runtime state.
 - `@gestalt.annotate(state, content, vs)` (LANDED action) — reader
   contributes annotation at their chosen visibility_scope.
-- `@subject/visibility/sheaf.filter` (LANDED action at
-  `shards/subject/visibility/sheaf.mirror`) — the section-at-stalk
-  projection admitting only annotations the reader's consent-depth
-  admits.
+- `@subject/visibility/sheaf.restrict` (LANDED action at
+  `shards/subject/visibility/sheaf.mirror:356`) — the section-at-
+  stalk restriction admitting only annotations the reader's consent-
+  depth admits. (Cite corrected per Seam Phase D 2026-07-16
+  substrate-already-had-the-word audit; the load-bearing action is
+  `restrict`, with companion `section_at` at line 380 for stalk-
+  section retrieval.)
 
 **Governance-substrate note (per parent formalization §Q6, addendum
 extension).** The paper's own COORD operator on the reader is
