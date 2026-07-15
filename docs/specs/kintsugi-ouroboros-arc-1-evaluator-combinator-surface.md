@@ -1008,10 +1008,12 @@ Prism dispatch, `Combinator` for `read_ast`'s parser-as-Prism).
 | 6 | `emit`         | ~40 LOC               | new metalogue channel primitive           |
 | 7 | `bench_record` | ~30 LOC               | `@mirror/bench.record` (landed)           |
 
-**Total estimate:** ~400 LOC of new Rust in `apply_h.rs`, all
-under `[substrate-floor:@io-boundary]` + Seam sign-off. This is
-consistent with retirement plan §"End state" §File-list line
-`spectral.rs (~1000 LOC; the evaluator + all retired Prism impls)`.
+**Total estimate:** ~405 LOC of new Rust in `apply_h.rs`
+(30 + 80 + 15 + 150 + 60 + 40 + 30 = 405; Seam Phase D-cascade
+§A6.9 REED-INLINE reconcile), all under
+`[substrate-floor:@io-boundary]` + Seam sign-off. This is consistent
+with retirement plan §"End state" §File-list line `spectral.rs
+(~1000 LOC; the evaluator + all retired Prism impls)`.
 
 Marker: `[substrate-floor:@io-boundary]` + `Signed-off-by: Seam
 <seam@systemic.engineer>` trailer (per Mara-B §7.9 belt-and-

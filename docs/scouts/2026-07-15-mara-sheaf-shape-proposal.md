@@ -63,12 +63,17 @@ shape proposal, Seam re-adjudicates whether family-root is warranted
 Grep across the substrate for prior @sheaf-adjacent language reveals
 three landed carriers:
 
-1. **`docs/specs/mirror-spec-peer-acl-surface.md` §6.2** substrate-
-   decl'd `pack { members { peer => ACL } }` with the paraphrase:
-
-   > "the pack members block associates each peer with an ACL; the
-   > ACL IS the sheaf structure; visibility is the section the peer
-   > can COMPUTE given the restriction."
+1. **`docs/specs/mirror-spec-peer-acl-surface.md` §5** substrate-
+   decl's the pack.members ACL type surface (§6.2 carries the
+   self-naming rule, distinct from sheaf structure). The
+   "ACL IS the sheaf structure" language is not at §6.2 — that
+   was a Mara mis-attribution corrected by Seam Phase D-cascade
+   audit at `docs/audits/2026-07-15-seam-kintsugi-ouroboros-
+   phase-d-cascade-a2-a6.md` §A2.1. Mirror-spec §10 sheaf framing
+   was reframed sheaf → spawn-and-probe per Alex 2026-06-24 and
+   is retracted. The load-bearing verbatim substrate-decl of
+   "ACL IS the sheaf structure" lives at bullet 2 below
+   (peer-persistence §12.3, verbatim, load-bearing).
 
 2. **`docs/specs/peer-persistence-and-home-projection.md` §12.3**
    verbatim:
@@ -120,11 +125,16 @@ section`, `sheaf_witnessing(F) -> verdict`.
 
 ### 1.1 Substrate-already-had-the-word check
 
-Existing carriers at family-root altitude carrying sheaf-adjacent
-structure: `@torus` (Foerster doubly-closed observation surface;
-π₁(T²) = ℤ × ℤ), `@subject` (SEL-licensable party), `@epistemologic/
-math/sheaf_laplacian` (Hansen-Ghrist math primitive),
-`docs/specs/eigensheaf.md` §2.4 ("the substrate IS its eigensheaf").
+Load-bearing defeater carrier that @sheaf-family-root would cross:
+**`@subject/visibility`** (species altitude under @subject family-
+root; carries the ACL-sheaf-restriction altitude per peer-
+persistence §12.3 verbatim). `shards/torus.mirror` carries zero
+sheaf tokens on grep (per Seam Phase D-cascade §A2.3 confirmation);
+@torus does NOT carry sheaf-adjacent structure. Other adjacent
+carriers at non-defeating altitudes: `@subject` (SEL-licensable
+party; parent of visibility), `@epistemologic/math/sheaf_laplacian`
+(Hansen-Ghrist math primitive), `docs/specs/eigensheaf.md` §2.4
+("the substrate IS its eigensheaf").
 
 The word `sheaf` is used across THREE substrate altitudes; each has a
 landed carrier. Adding `@sheaf` at family-root would need to name
