@@ -443,19 +443,31 @@ depend on each others' fixed points" (parent §1.1 verbatim).
 
 **Substrate-decl correspondence.**
 
-- The vertices of `G` are exactly the `@peer` instances (LANDED as
-  `shards/peer.mirror`) participating in the K_n partnership. One
-  observer per peer.
+- The vertices of `G` are exactly the `@peer` instances (LANDED
+  shard at `shards/peer.mirror`) participating in the K_n
+  partnership. One observer per peer.
 - The edges of `G` — with weights `ε_{ij}` — are exactly the
   `@resonance` inter-peer coupling operator κ substrate LANDED at
-  `docs/specs/resonance-as-inter-peer-coupling-shapes-fate-
-  tournaments-toward-basins.md` §2.4 (Mara `9e48710`). No new mint.
+  **spec altitude** (`docs/specs/resonance-as-inter-peer-coupling-
+  shapes-fate-tournaments-toward-basins.md` §2.4, Mara `9e48710`).
+  Shard-decl at `shards/resonance.mirror` is forward-promised
+  pending Alex adjudication (see §11.6 Landing Condition 0).
 - The joint operator `C` is the K_n-lift of `@dance`'s Kuramoto
-  coupling operator LANDED at `docs/specs/dance-as-coordination-
-  without-signal-on-forster-torus.md` §2 (Mara `4f079c8`).
+  coupling operator LANDED at **spec altitude** (`docs/specs/
+  dance-as-coordination-without-signal-on-forster-torus.md` §2,
+  Mara `4f079c8`) with Rust runtime LANDED at `bootstrap/src/dance.
+  rs` (Rung 4 GREEN `dfac8fe`). Shard-decl at `shards/dance.mirror`
+  is forward-promised pending Alex adjudication (see §11.6 Landing
+  Condition 0).
 
 Composition-only: `@gestalt` at operator altitude introduces no new
-family-root. Every carrier is landed.
+family-root. The math foundation composes over spec-landed
+carriers; shard-composition of `@gestalt.p_ent` requires the
+forward-promised shard-mints (see §11.6). Distinction per Seam
+Phase D 2026-07-16 substrate-already-had-the-word audit: **spec-
+landing ≠ shard-landing**; the operator-altitude cascade's math
+is substrate-honest at math altitude regardless, but shard-
+composition awaits Alex's ALEX-Q1 adjudication.
 
 ### §11.2 Product vs non-product eigen-behaviors
 
@@ -579,6 +591,12 @@ joint state, socket-shaped per pipeforward §5.5.4 rule 1.
 
 **Landing conditions** (all Alex-adjudicable):
 
+0. `shards/resonance.mirror` + `shards/dance.mirror` land as
+   shard-decl species (currently spec-landed at `docs/specs/
+   resonance-as-...md` + `docs/specs/dance-as-...md`; shard-mints
+   forward-promised at Alex-adjudicable scope, ALEX-Q1 per Seam
+   Phase D 2026-07-16). Prerequisite for coupling_graph carrier
+   well-typedness (per R-M1 Candidate 2 ratification).
 1. `@dance` Rung 5+ multi-peer coherence phase-lock lands (per
    `docs/specs/dance-runtime-rung-4-multi-peer-coherence-phase-lock.
    md` §8 forward-promise for N > 2 peers).
