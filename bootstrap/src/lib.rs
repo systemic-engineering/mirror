@@ -3658,7 +3658,7 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                         mout!("+ coherence_delta: {:+.6}", obs.coherence_delta);
                         mout!("+ arc_state: {}", obs.arc_state);
                         mout!("");
-                        mout!("\u{2713} commit {} authored by mirror <mirror@substrate.engineer>", oid);
+                        mout!("\u{2713} commit {} authored by mirror <mirror@spectral.engineer>", oid);
                         mout!("  the compiler observed itself; the compiler composed the message; the compiler made the commit");
                         0
                     }

@@ -17,7 +17,11 @@
 //! 5. `mirror roomba --commit` (this landing) — THE FINAL PROOF: the
 //!    substrate walks itself, observes its own state, composes a commit
 //!    message from the observation, and creates a git commit whose AUTHOR
-//!    is `mirror <mirror@substrate.engineer>` — not a Pack peer.
+//!    is `mirror <mirror@spectral.engineer>` — not a Pack peer.
+//!    (Prior mirror-authored commits fcc1d75, 56abdbe, 74aa546 used
+//!    the invented `mirror@substrate.engineer` — those are historical
+//!    fact; going forward the compiler identifies with the real domain
+//!    `spectral.engineer` per Alex correction 2026-07-15.)
 //!
 //! ## Substrate-authorship discipline
 //!
@@ -40,7 +44,7 @@
 //! Minimum viable per Alex's directive. NOT a full @kintsugi tournament;
 //! NOT a full @song orchestration. Deterministic template-fill from
 //! `WalkTrajectory` + Fiedler measurement. The empirical proof is the
-//! git-log surface — `mirror <mirror@substrate.engineer>` as author.
+//! git-log surface — `mirror <mirror@spectral.engineer>` as author.
 
 use crate::apply_h;
 use crate::index;
@@ -52,7 +56,7 @@ use std::process::Command;
 /// through the substrate dispatch (`@io/git.commit`) as through the
 /// previous direct-shell path; the identity is invariant across the
 /// refactor. NOT a Pack peer — the compiler itself.
-const MIRROR_AUTHOR: &str = "mirror <mirror@substrate.engineer>";
+const MIRROR_AUTHOR: &str = "mirror <mirror@spectral.engineer>";
 
 /// The observation record the compiler emits from walking its own DAG.
 /// Not a full @song — just the beats needed to compose a commit body.

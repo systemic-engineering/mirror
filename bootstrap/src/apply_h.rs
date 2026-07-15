@@ -698,7 +698,7 @@ pub fn act(action: Ref, args: Vec<Value>) -> Verdict {
         // Realisation: shell to `git commit` at the @io boundary. SSH
         // signing stays operator-default per AGENTS.md; only user.name
         // and user.email are overridden — the compiler's altitude naming
-        // (author = `mirror <mirror@substrate.engineer>` in the roomba
+        // (author = `mirror <mirror@spectral.engineer>` in the roomba
         // path). This IS the @io boundary crossing per spec §1.4.
         if args.len() < 3 {
             return Verdict::Fail(format!(
