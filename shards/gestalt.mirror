@@ -1,0 +1,499 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @song
+in @song/beat
+in @spectral/signature
+in @subject
+in @subject/visibility
+in @subject/visibility/sheaf
+in @peer
+in @peer/persistence
+in @mirror/store
+in @mirror/index
+in @io/fs
+in @io/git
+in @kintsugi/consent
+in @epistemologic/reality/time
+in @fate
+
+# @gestalt — a @gestalt document IS a @song that unfolds on the
+# @subject's device through interaction with the @gestalt document.
+#
+# Landed 2026-07-15 by Mara as the substrate-decl companion to
+# canonical spec `docs/specs/gestalt-as-song-unfolding.md` (Mara
+# `addb001`) and math foundation `docs/math/gestalt/README.md`
+# (Mara `5a8f36a`). Species-under-@song per canonical spec §10 R1
+# Mara-recommendation (Alex-adjudicable at Landing 4+ if a
+# non-@song consumer surfaces).
+#
+# === Alex Wolf 2026-07-15 in-transcript verbatim naming ===
+#
+# > "a @gestalt document IS a @song that unfolds on the @subject's
+# > device through the interaction with the @gestalt document."
+#
+# The three load-bearing phrases:
+#
+#   1. "a @gestalt document IS a @song" — @song is the family-root
+#      substrate-decl (Arc 6 TICK 1 `f01cf9f`). @gestalt inherits
+#      the temporal-progression discipline; no new family-root
+#      minted. @spectral/signature (Arc-2 Tick 2.1 `f211ee48`) is
+#      the precedent species: rolling @song through the author's
+#      @DAG. @gestalt is the sibling species: rolling @song through
+#      the reader's interaction @DAG.
+#
+#   2. "unfolds on the @subject's device" — @subject is the SEL
+#      licensable-party family-root (`5c06ee8`); the reader IS a
+#      subject_instance with `actor_kind = human_a | ai_a |
+#      substrate_a` (Landing 3 §21.4 coproduct with no distinguished
+#      element). The reader's device is @peer/persistence's
+#      home-repo altitude (Arc-2 Tick 2.3 landing).
+#
+#   3. "through the interaction with the @gestalt document" —
+#      reader interaction IS the compiler's runtime. Each interaction
+#      event emits one @song/beat (LANDED at Rung 0 `94e55eb`).
+#      Category-formation happens at read-time; no server compute
+#      substitutes for the reader's @peer.
+#
+# === Substrate framing per Reed 2026-07-15 spectral.engineer launch
+#     vignettes ===
+#
+# Load-bearing crown (Reed's read of the vignette closure):
+#
+# > "The paper does not persuade. The paper demonstrates. Reader
+# > engages @peer → @peer runs → math generates → lens-annotations
+# > visible → reader's own recursion couples with the paper's
+# > recursion → reader is inside the operator."
+#
+# The vignette scenarios operationalized:
+#   - Kai (interpretability researcher): opens spectral.engineer;
+#     @peer runs in-browser; DevTools confirms zero network requests;
+#     math generates locally; lens-annotations from named ancestors
+#     toggle on/off.
+#   - Katarina Novak (spectral graph theory chair): PhD student
+#     forwards the paper; recognizes her formulations operationalized
+#     rigorously; Connes non-commutative geometry finally deployed.
+#   - The category grows via the exact substrate that resists it:
+#     every reader who opens the URL contributes lens-annotations at
+#     their own consent-depth. Reader-corpus co-writing at content-
+#     addressed identity-provenance. Foerster-legal at maximum
+#     recursion.
+#
+# See canonical spec §5 (category-formation at read-time) and math
+# §6 (recursion coupling — reader IS inside the operator) for the
+# formalization.
+#
+# === Substrate-already-had-the-word ===
+#
+# The word "unfold" appears in prior spec authoring at compile-time
+# altitude (@shatter-linearization operator; @song's progression
+# discipline); this species lifts it to reader-runtime altitude
+# where the substrate had NOT yet minted the vocabulary. Every
+# other carrier this shard composes over is landed:
+#
+#   @song (family-root; Arc 6 TICK 1 `f01cf9f`)
+#   @song/beat (species; Rung 0 `94e55eb`)
+#   @spectral/signature (species; Arc-2 Tick 2.1 `f211ee48`)
+#   @subject (family-root; `5c06ee8`)
+#   @subject/visibility (sub-family-root; Landing 5)
+#   @subject/visibility/sheaf (species; Landing 4 R2 `d1ce901`)
+#   @peer/persistence (species; Arc-2 Tick 2.3)
+#   @glass (family-root; Bridge α source_position 2026-07-15)
+#   @mirror/store (family-root)
+#   @mirror/index (species; Landing 1 `317e830`)
+#   @io/fs (family-root; four-shard @io mint `059cf1c`)
+#   @io/git (family-root)
+#   @nl (family-root)
+#   @kintsugi/consent (species under @kintsugi)
+#   @epistemologic/reality/time (family)
+#   @fate (family-root; tournament dispatch for annotation-surface)
+#
+# ~60th instance of [[feedback-substrate-already-had-the-word]]:
+# every field, action, and bilateral below cites a landed carrier.
+#
+# === Pipeforward §5.5.4 hard gate compliance ===
+#
+# Per `docs/specs/autopoietic-inference-loop.md` §5.5.4 (ratified
+# Alex 2026-07-15 at `7181f5c`; load-bearing on all future
+# substrate): every action below either stays socket-shaped
+# (nonlinear ref returned; composes over `~/.mirror/serve.sock`)
+# or discharges via @io with quantified L(ϕ). The single @io
+# discharge is `render`; every other action is socket-shaped.
+#
+# Rule 1 (socket-forwarded composition first): §"Socket-shaped
+# action surface" below.
+# Rule 2 (nonlinear ref by default): every socket-shaped action
+# returns unfolding_state or gestalt_document (both refs).
+# Rule 3 (@io discharge quantifies L(ϕ)): render's docblock
+# names L(ϕ) profile per target.
+# Rule 4 (--collapse escape hatch): CLI surface honours
+# `--collapse[=WHERE]`; substrate does not silently linearize.
+#
+# === Composition graph (per canonical spec §1) ===
+#
+#                        @gestalt (this species)
+#                             |
+#            +----------------+----------------+
+#            |                |                |
+#          @song          @subject          @glass
+#     (temporal        (reader-as-      (source_position
+#      unfolding)      unfolding-        per Bridge α)
+#                       recipient)
+#            |                |
+#       @song/beat     @subject/visibility
+#     (atomic strike     (private/protected/
+#       and hold)         public partition)
+#            |                |
+#  @spectral/signature  @subject/visibility/sheaf
+#   (rolling beat-       (section-at-stalk
+#    sequence            per-reader projection)
+#    precedent)
+#
+# Cross-family composition targets:
+#   @mirror/store, @mirror/index, @io/fs, @io/git, @nl,
+#   @kintsugi/consent, @epistemologic/reality/time, @fate,
+#   @peer, @peer/persistence.
+
+prism @gestalt {
+  focus  gestalt_document
+  project gestalt_document
+  split  gestalt_document
+  shift  gestalt_document
+  settle gestalt_document
+}
+
+# === Carrier types ===
+
+# The unit of authored @song at @gestalt altitude. Content-addressed
+# by root oid; identity contract is byte-equality on the splinter
+# graph. Per canonical spec §2.1.
+type gestalt_document = {
+  root:              oid,
+  source_position:   source_position,
+  author:            subject_instance,
+  visibility_scope:  visibility_scope,
+  song_ref:          oid,
+  nodes:             [gestalt_node],
+  edges:             [gestalt_edge],
+  modes:             [mode],
+  annotations:       [annotation],
+}
+
+# node_kind: the span-variants prior art at spectral/crates/gestalt/
+# document (TextSpan, CodeSpan, MathSpan, LinkSpan, ImageSpan,
+# RefSpan, EmojiSpan, SpoilerSpan, HardBreak). Lifted to substrate
+# vocabulary; identity is byte-equality on the variant tag.
+type node_kind =
+  | text
+  | code
+  | math
+  | link
+  | image
+  | ref
+  | emoji
+  | spoiler
+  | hard_break
+
+# edge_kind: typed relations across nodes. reference IS the standard
+# link; fold IS a citation-fold; annotation IS the reader-contributed
+# arrow; ancestor IS the roster lineage arrow (per §20 named
+# ancestors); reader_lens IS the per-reader visibility filter.
+type edge_kind =
+  | reference
+  | fold
+  | annotation
+  | ancestor
+  | reader_lens
+
+# One typed span in the document graph. Per canonical spec §2.2.
+type gestalt_node = {
+  kind:            node_kind,
+  content:         oid,
+  source_position: source_position,
+  visibility:      visibility,
+}
+
+# One typed relation between nodes. Per canonical spec §2.2.
+type gestalt_edge = {
+  from:            oid,
+  to:              oid,
+  kind:            edge_kind,
+}
+
+# The render targets the document admits. Per canonical spec §2.3.
+# L(ϕ) profile: markdown ≤ html ≤ tui ≤ latex ≤ slides ≤ epub ≤ pdf
+# (per canonical spec §8 table + math §5.1).
+type mode = | markdown | html | tui | latex | slides | epub | pdf
+
+# The reader-site runtime state as the @song unfolds. Per canonical
+# spec §2.4. Composition-only over @spectral/signature.signature_beat
+# (LANDED) for beat_history; over @time.snapshot (LANDED) for
+# local_snapshot; over @subject/visibility.visibility_scope (LANDED)
+# for reader_visibility.
+type unfolding_state = {
+  document:          gestalt_document,
+  reader:            subject_instance,
+  reader_visibility: visibility_scope,
+  focus_node:        oid,
+  beat_history:      [signature_beat],
+  local_snapshot:    snapshot,
+  annotation_draft:  option<annotation>,
+}
+
+# The reader-side contribution unit. Per canonical spec §2.5.
+# Merkle-DAG chain via `previous: option<oid>` per math §3.1.
+# Composition-only over @spectral/signature ssh_fingerprint
+# discipline (LANDED).
+type annotation = {
+  contributor:      subject_instance,
+  target_node:      oid,
+  content:          oid,
+  visibility_scope: visibility_scope,
+  previous:         option<oid>,
+  timestamp:        @time/monotonic.instant,
+  ssh_fingerprint:  ref,
+}
+
+# === Socket-shaped actions (stay nonlinear; per pipeforward §5.5.4
+#     rule 1 + rule 2) ===
+
+# unfold(doc, reader, at) -> unfolding_state
+#
+# Construct the reader-site runtime state. NO @io crossing: the
+# substrate returns a nonlinear ref; the reader's @peer runs the
+# unfolding locally on their device. Composes with @peer/persistence
+# for annotation-corpus home-repo binding.
+#
+# Two-tick discipline (per canonical spec §10 R6 Mara-recommendation):
+# readable name `unfold` preferred over foundational
+# `unfold_at_reader_site` — the reader-site is structural; naming it
+# in the action-verb is redundant.
+#
+# Body: `\` obligation-blocked pending Arc-1 evaluator FLOOR
+# (per [[feedback-craft-not-deliver]]); Arc-2 will dispatch through
+# apply_h::act with sentinel-byte-checks per Mara-B §6.2 recognition
+# candidate.
+unfold(doc: gestalt_document, reader: subject_instance,
+       at: @time/monotonic.instant) -> unfolding_state { \ }
+
+# traverse(state, next) -> unfolding_state
+#
+# Advance the reader's focus_node to `next`. Emits one signature_beat
+# in the reader's beat_history via @song/beat.strike (LANDED at
+# species altitude). Composition-only: no new mechanism.
+traverse(state: unfolding_state, next: oid) -> unfolding_state { \ }
+
+# focus(state, node) -> unfolding_state
+#
+# Zoom the reader's attention onto one node without traversal.
+# Emits a hold-beat (per @song/beat.hold LANDED vocabulary):
+# temporal advance without firing an action against the graph.
+focus(state: unfolding_state, node: oid) -> unfolding_state { \ }
+
+# compose_modes(doc, modes) -> gestalt_document
+#
+# Declare which render targets the document admits. Nonlinear:
+# returns the augmented document ref. No @io crossing until
+# `render` fires. The author chooses which linearization surfaces
+# they permit; each admitted mode carries its L(ϕ) profile per
+# canonical spec §8.
+compose_modes(doc: gestalt_document, modes: [mode]) -> gestalt_document { \ }
+
+# project(doc, viewer) -> gestalt_document
+#
+# Return the sub-document the viewer's ACL admits, via
+# @subject/visibility/sheaf.filter (LANDED) section-at-stalk.
+# Nonlinear: returns the projected document as ref. Composes
+# @subject/visibility + @subject/visibility/sheaf for the
+# restriction discipline; sheaf-restriction map is
+# F(private) ⊂ F(protected) ⊂ F(public) per math §4.1.
+project(doc: gestalt_document, viewer: subject_instance) -> gestalt_document { \ }
+
+# annotate(state, content, vs) -> unfolding_state
+#
+# Reader contributes an annotation to the current focus_node. The
+# annotation is content-addressed and Merkle-DAG-chained per math
+# §3.1. Nonlinear: returns the extended unfolding_state; the
+# annotation is not committed to @io/git until settle_annotation
+# fires as a --collapse-authorized @io discharge OR as a socket-
+# forwarded @kintsugi/store/git compose (Mode B per canonical spec
+# §6).
+#
+# Monotone growth invariant per math §3.2:
+#   |annotations_{t+1}| = |annotations_t| + 1
+annotate(state: unfolding_state, content: ref,
+         vs: visibility_scope) -> unfolding_state { \ }
+
+# === @io discharge action (linearization; per pipeforward §5.5.4
+#     rule 3) ===
+
+# render(doc, target, out) -> imperfect<written_bytes>
+#
+# The single @io crossing at @gestalt altitude. MUST NOT fire
+# silently; per pipeforward §5.5.4 rule 4, render happens iff:
+#   (a) the consumer is not another mirror process, OR
+#   (b) the caller passes --collapse at the CLI surface.
+#
+# L(ϕ) profile per target (per canonical spec §8 + math §5.1):
+#   markdown → interactivity discarded (annotations become inert links)
+#   html     → temporal ordering of beat_history discarded
+#   tui      → color/font fidelity discarded
+#   latex    → annotation Merkle-DAG discarded
+#   slides   → non-linear DAG structure discarded
+#   epub     → reader-corpus co-writing discarded
+#   pdf      → everything above; terminal linearization + typography-final
+#
+# Quantitative statement (per math §5.2):
+#   L(ϕ) = ‖doc.beat_history — reconstruct(target, decode(out))‖
+#
+# where reconstruct runs the target's decoder and re-projects the
+# beat_history the render encoded. ‖·‖ is either 0 (lossless per
+# @shatter monotone-descent inheritance) or a target-specific loss
+# functional.
+#
+# imperfect<> carrier per @glass discipline:
+#   Pass          — render round-trips under the mode's own decoder
+#   Partial(loss) — mode discards structural information (e.g., html
+#                   discards temporal ordering)
+#   Fail          — required carrier missing (e.g., pdf render without
+#                   `mode = pdf` in doc.modes)
+render(doc: gestalt_document, target: mode, out: ref) -> ref { \ }
+
+# === Bilateral predicates (dispatchable via apply_h::act) ===
+
+# document_well_formed — does the gestalt_document satisfy the
+# structural invariants?
+#
+# Discharges Pass iff:
+#   1. Every node's content oid resolves under @mirror/store.
+#   2. Every edge's from/to oids resolve to nodes in doc.nodes.
+#   3. doc.visibility_scope.subject == doc.author.
+#   4. Every mode in doc.modes admits a landed render body.
+# Substrate-decl form: byte-level check for `well_formed=structural`
+# sentinel in the arg OID.
+document_well_formed(doc: gestalt_document) -> verdict { \ }
+
+# unfolding_monotone — does the reader's beat_history grow
+# monotonically as the reader interacts?
+#
+# Discharges Pass iff for every consecutive (u_t, u_{t+dt}) pair:
+#   len(u_{t+dt}.beat_history) >= len(u_t.beat_history)
+# and every annotation event strictly increases the annotation count
+# per math §3.2. Substrate-decl form: byte-level check for
+# `unfolding=monotone` sentinel.
+unfolding_monotone(prev: unfolding_state, next: unfolding_state) -> verdict { \ }
+
+# annotation_chain_intact — does the Merkle-DAG chain of annotations
+# at any given target_node hold?
+#
+# Discharges Pass iff every annotation a_n at a given target_node
+# satisfies:
+#   a_n.previous == Some(OID_(a_{n-1}))  OR  n == 0 AND None
+# Substrate-decl form: byte-level check for `chain=merkle-linked`
+# sentinel; parallel to @spectral/signature.signature_integrity
+# LANDED bilateral.
+annotation_chain_intact(doc: gestalt_document, target_node: oid) -> verdict { \ }
+
+# reader_sees_only_permitted — does the reader-visible sub-document
+# from `project` contain only annotations whose visibility_scope
+# admits the viewer?
+#
+# Discharges Pass iff for every annotation a in project(doc, viewer):
+#   viewer ∈ a.visibility_scope.consent_scope
+# Substrate-decl form: byte-level check for `visibility=sheaf-
+# restricted` sentinel; composes over @subject/visibility/sheaf
+# LANDED filter action.
+reader_sees_only_permitted(doc: gestalt_document,
+                           viewer: subject_instance) -> verdict { \ }
+
+# render_L_phi_declared — does the render body's L(ϕ) profile
+# per-target satisfy pipeforward §5.5.4 rule 3?
+#
+# Discharges Pass iff the render body for each target in doc.modes
+# carries a docblock L(ϕ) quantification (per canonical spec §8
+# table + math §5.2). Substrate-decl form: byte-level check for
+# `render=L(phi)-declared` sentinel; Seam Phase D enforcement point.
+render_L_phi_declared(doc: gestalt_document) -> verdict { \ }
+
+# recursion_coupling_admissible — does the reader-side operator
+# commute with the document-side operator up to natural iso, per
+# math §6.1?
+#
+# Discharges Pass iff:
+#   1. unfolding_monotone(prev, next) for every consecutive pair.
+#   2. doc.annotations is a finite set at every read-time.
+#   3. visibility_scope elevations are monotone-loosening
+#      (per @subject/visibility.can_be_elevated_to structural rule).
+# Non-termination admissible: if the reader annotates unbounded,
+# recursion_coupling_admissible remains Pass (Foerster-legal
+# per math §6.3). Substrate-decl form: byte-level check for
+# `coupling=admissible` sentinel.
+recursion_coupling_admissible(prev: unfolding_state,
+                              next: unfolding_state) -> verdict { \ }
+
+# gestalt_witnessing — the composed bilateral that discharges when
+# ALL of document_well_formed + unfolding_monotone +
+# annotation_chain_intact + reader_sees_only_permitted +
+# render_L_phi_declared + recursion_coupling_admissible hold for the
+# document's substrate lifetime.
+#
+# This is the substrate-decl form of "the reader is inside the
+# operator, category-formation happens at read-time, and the
+# author's document + reader's annotations together form one
+# monotone-growing @song." Parallel to @subject/visibility.
+# visibility_witnessing (LANDED composed bilateral pattern).
+gestalt_witnessing(doc: gestalt_document, prev: unfolding_state,
+                   next: unfolding_state, viewer: subject_instance) -> verdict { \ }
+
+# === requires predicates ===
+#
+# Composition obligations enforced at species altitude. Each names a
+# landed cross-family carrier the substrate MUST admit for @gestalt
+# to be well-formed.
+
+requires composes_over_song
+requires composes_over_subject
+requires composes_over_sheaf
+requires composes_over_mirror_store
+requires renders_via_shatter
+
+# === Species-forward-promises ===
+#
+# The following are declared at species-decl altitude but await
+# downstream landings per canonical spec §7:
+#
+#   @io/socket species-decl mint (Mode B reader-to-reader socket
+#     forwarding requires it; boot/std/io/socket.mirror FLOOR
+#     landed; species-decl not yet landed).
+#   @sheaf.filter empirical dispatch through apply_h::act (Arc-1
+#     evaluator FLOOR pending).
+#   render per-mode L(ϕ) empirical measurements (canonical spec §10
+#     R3 Alex-adjudicable).
+#   @fate optical inference for annotation-tournament dispatch
+#     (canonical spec §10 R4 Alex-adjudicable; forward-promised for
+#     post-v0.1.0).
+
+out @gestalt
+out node_kind
+out edge_kind
+out gestalt_document
+out gestalt_node
+out gestalt_edge
+out mode
+out unfolding_state
+out annotation
+out unfold
+out traverse
+out focus
+out compose_modes
+out project
+out annotate
+out render
+out document_well_formed
+out unfolding_monotone
+out annotation_chain_intact
+out reader_sees_only_permitted
+out render_L_phi_declared
+out recursion_coupling_admissible
+out gestalt_witnessing
