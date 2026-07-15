@@ -56,6 +56,7 @@ pub mod converge;
 pub mod index;
 pub mod peer_persistence;
 pub mod roomba;
+pub mod roomba_commit;
 pub mod spectral_signature;
 pub mod song;
 pub mod spectral;
@@ -3617,6 +3618,62 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                 1
             } else {
                 cmd_shatter(positionals[0], positionals[1], &shatter_target, ctx)
+            }
+        }
+        "roomba" => {
+            // FINAL TICK (Alex 2026-07-15) — `mirror roomba [--commit]`.
+            //
+            // `--commit` is the load-bearing flag: the compiler observes
+            // its own state (via @roomba walk + @mirror/index Fiedler),
+            // composes a commit message from the observation, and creates
+            // a git commit whose AUTHOR is `mirror <mirror@substrate.
+            // engineer>` — not a Pack peer. The whole end-to-end proof
+            // arc closes here. Per Alex verbatim: "I want the compiler
+            // itself to make the commit, you know? The whole end2end
+            // flow as an empirical CLI call proof."
+            //
+            // Without `--commit`, emits the trajectory summary + Fiedler
+            // observation to stdout (read-only walk; existing @roomba
+            // Scope A behavior; substrate-honest observation without
+            // authorship).
+            //
+            // [substrate-floor:@io-boundary] — the @io/git boundary
+            // lift IS the FLOOR the compiler crosses to author its
+            // observation. Audit: docs/audits/2026-07-15-seam-kintsugi-
+            // ouroboros-phase-d-cascade-a2-a6.md.
+            let commit_flag = args.iter().any(|a| a == "--commit");
+            let root = ctx.cwd().to_path_buf();
+            if commit_flag {
+                match crate::roomba_commit::observe_and_commit(&root) {
+                    Ok((obs, oid)) => {
+                        mout!("@@ mirror roomba --commit: substrate observed its own state @@");
+                        mout!("+ HEAD (pre-commit): {}", obs.head_oid);
+                        mout!("+ observed_at: {}", obs.observed_at);
+                        mout!("+ rust_loc: {}", obs.rust_loc);
+                        mout!("+ graph_nodes: {}", obs.graph_nodes);
+                        mout!("+ graph_edges: {}", obs.graph_edges);
+                        mout!("+ fiedler: {:.6}", obs.fiedler);
+                        mout!("+ walk_steps: {}", obs.walk_steps);
+                        mout!("+ mean_tension: {:.6}", obs.mean_tension);
+                        mout!("+ coherence_delta: {:+.6}", obs.coherence_delta);
+                        mout!("+ arc_state: {}", obs.arc_state);
+                        mout!("");
+                        mout!("\u{2713} commit {} authored by mirror <mirror@substrate.engineer>", oid);
+                        mout!("  the compiler observed itself; the compiler composed the message; the compiler made the commit");
+                        0
+                    }
+                    Err(e) => {
+                        merr!("mirror roomba --commit: {}", e);
+                        1
+                    }
+                }
+            } else {
+                // Read-only walk. Preserves Scope A @roomba behavior:
+                // walk + summarize, no substrate mutation, no commit.
+                let trajectory = crate::roomba::walk(&root, 32, 0.1);
+                let summary = crate::roomba::summarize_trajectory(&trajectory);
+                mout!("{}", summary);
+                0
             }
         }
         other => {
