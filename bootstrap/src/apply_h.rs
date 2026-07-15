@@ -1033,18 +1033,83 @@ pub fn settle(verdict: Transparency, tolerance: f64) -> SettledVerdict {
 /// the crystal on-disk; the crystal OID computation itself is FLOOR at
 /// this altitude via `hash_tagged`.
 pub fn crystallize(before: OuroborosState, after: OuroborosState) -> BenchCrystal {
-    let mut buf: Vec<u8> = Vec::new();
-    buf.extend_from_slice(b"before:");
-    buf.extend_from_slice(before.oid.as_bytes());
-    buf.push(b'|');
-    buf.extend_from_slice(b"after:");
-    buf.extend_from_slice(after.oid.as_bytes());
-    let crystal_oid = crate::hash::hash_tagged("bench_crystal", &buf);
+    let payload = bench_crystal_payload(&before.oid, &after.oid);
+    let crystal_oid = crate::hash::hash_tagged("bench_crystal", &payload);
     BenchCrystal {
         before_oid: before.oid,
         after_oid: after.oid,
         crystal_oid,
     }
+}
+
+/// Compose the pre-hash payload bytes for a bench crystal.
+///
+/// Extracted so bridge γ persistence can re-emit the same bytes it hashed —
+/// the content-address round-trip law (`hash_tagged("bench_crystal", read(path(oid))) == oid`)
+/// depends on the persisted bytes being byte-identical to the pre-hash payload.
+fn bench_crystal_payload(before_oid: &str, after_oid: &str) -> Vec<u8> {
+    let mut buf: Vec<u8> = Vec::with_capacity(
+        "before:".len() + before_oid.len() + 1 + "after:".len() + after_oid.len(),
+    );
+    buf.extend_from_slice(b"before:");
+    buf.extend_from_slice(before_oid.as_bytes());
+    buf.push(b'|');
+    buf.extend_from_slice(b"after:");
+    buf.extend_from_slice(after_oid.as_bytes());
+    buf
+}
+
+impl BenchCrystal {
+    /// Re-emit the pre-hash payload bytes this crystal was hashed from.
+    /// Bridge γ uses this at persist time to write the CAS-invariant
+    /// content at `<root>/.mirror/objects/<crystal_oid>`.
+    pub fn payload_bytes(&self) -> Vec<u8> {
+        bench_crystal_payload(&self.before_oid, &self.after_oid)
+    }
+}
+
+/// Bridge γ landing (Tick 1, 2026-07-15) — crystallization persistence at
+/// `<root>/.mirror/objects/<crystal_oid>`. Extends `crystallize()` with the
+/// autopoietic-loop step 6 discharge per Alex 2026-07-15 adjudication
+/// (`7181f5c`) of post-Seam-Phase-D residues (`b82945b`).
+///
+/// Composition graph:
+/// ```text
+/// crystallize_and_persist(before, after, root)
+///   ← crystallize(before, after)                        (pure content-address)
+///   ← std::fs::create_dir_all(root/.mirror/objects)     (@io/fs boundary)
+///   ← std::fs::write(objects/<crystal_oid>, payload)    (@io/fs boundary)
+///   → BenchCrystal
+/// ```
+///
+/// **L(ϕ) = 0** by construction: the persisted bytes ARE the pre-hash
+/// content, so the round-trip law
+/// `hash_tagged("bench_crystal", read(path(oid))) == oid` holds
+/// exactly. Per spec §5.5.5 (crossing #2 in the six-step loop) and
+/// §5.5.4 rule 3 (L(ϕ) declared in-docblock).
+///
+/// **Idempotency:** re-persisting the same crystal is safe. Same OID
+/// → same path → same content → `std::fs::write` overwrites with
+/// byte-identical bytes. No lock; no atomic-rename dance needed because
+/// the write is deterministic (contrast bridge α `@io/fs.mutate_at`
+/// which MUST be POSIX-atomic since it splices arbitrary bytes at a
+/// position within a file whose surrounding content it does not own).
+///
+/// [substrate-floor:@io-boundary] — the @io/fs boundary at which
+/// nonlinear crystal state discharges to disk bytes. Audit-cite
+/// `docs/audits/2026-07-15-seam-autopoietic-loop-phase-d.md` (`55dbf20`).
+/// Signed-off-by: Seam.
+pub fn crystallize_and_persist(
+    before: OuroborosState,
+    after: OuroborosState,
+    root: &std::path::Path,
+) -> std::io::Result<BenchCrystal> {
+    let crystal = crystallize(before, after);
+    let objects_dir = root.join(".mirror").join("objects");
+    std::fs::create_dir_all(&objects_dir)?;
+    let object_path = objects_dir.join(&crystal.crystal_oid);
+    std::fs::write(&object_path, crystal.payload_bytes())?;
+    Ok(crystal)
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
