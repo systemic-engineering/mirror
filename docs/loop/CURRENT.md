@@ -144,8 +144,9 @@ at Arc-2.3 AND etymologically substrate-honest at every altitude.
 ### Next actions (Alex-triggered)
 
 Alex fires /loop for:
-- **Arc-1 Ticks 1.2-1.4 implementation** — Reed RED test at `bootstrap/tests/evaluator_shard_body_dispatch_smoke.rs`; Reed GREEN at `bootstrap/src/apply_h.rs` (∼405 LOC estimated per Mara A6 §6.2); CLI verb `mirror execute <shard-path> <action> [args...]`. Commit-msg discipline: `[substrate-floor:@io-boundary]` marker + audit-citation of `docs/audits/2026-07-15-seam-kintsugi-ouroboros-phase-d-cascade-a2-a6.md` (Seam Tick 1.1 audit = the Phase D-cascade audit; gate satisfied via OR-semantics) + optional Signed-off-by: Seam trailer (belt-and-suspenders Arc-1 authoring practice per Mara-B §7.9).
-- **Optional Mara @sheaf canonical spec** at `docs/specs/subject-visibility-sheaf.md` (canonical spec deferred; species-decl at `d1ce901` may suffice for Arc-2.3 tournament ranking primitive discharge)
+- **Arc-1 Ticks 1.2-1.4 implementation** — Reed RED test at `bootstrap/tests/evaluator_shard_body_dispatch_smoke.rs`; Reed GREEN at `bootstrap/src/apply_h.rs` (∼405 LOC estimated per Mara A6 §6.2); CLI verb **`mirror beam act <shard-path> <action> [args...]`** (renamed from `mirror execute` via two-step substrate learning: execute → dispatch → act; delightfully boring per AGENTS.md discipline). Commit-msg discipline: `[substrate-floor:@io-boundary]` marker + audit-citation of `docs/audits/2026-07-15-seam-kintsugi-ouroboros-phase-d-cascade-a2-a6.md` (Seam Tick 1.1 audit = the Phase D-cascade audit; gate satisfied via OR-semantics) + optional Signed-off-by: Seam trailer (belt-and-suspenders Arc-1 authoring practice per Mara-B §7.9).
+- **@sheaf canonical spec LANDED** at `docs/specs/subject-visibility-sheaf.md` (`564571e`); **@io/secrets canonical spec LANDED** at `docs/specs/io-secrets-projection.md` (`7d57831` + `daa9c14` etymology cascade). Both deferred-by-design specs now complete.
+- **Arc-5 StageFreight × downstream CI canonical spec** deferred per Alex directive ("nail this landing").
 
 ### Substrate-honest bounds Reed carries forward
 
