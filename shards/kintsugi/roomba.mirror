@@ -604,6 +604,10 @@ vacuum(fragment: fragment) -> imperfect<gc_mark, ref, transparency(ref)> { \ }
 # — byte-equality on the composed sentinel.
 #
 # Body discharges per-realisation. `\`-obligation-blocked.
+bilateral bump_witnessing {
+  sentinel "bump=witnessing-all-conjuncts-pass"
+  arity 1
+}
 bump_witnessing(dispatch: kintsugi_dispatch) -> verdict { \ }
 
 # === vacuum_admissible — composed bilateral ===
@@ -624,6 +628,10 @@ bump_witnessing(dispatch: kintsugi_dispatch) -> verdict { \ }
 # — byte-equality on the composed sentinel.
 #
 # Body discharges per-realisation. `\`-obligation-blocked.
+bilateral vacuum_admissible {
+  sentinel "vacuum=admissible-all-conjuncts-pass"
+  arity 1
+}
 vacuum_admissible(mark: gc_mark) -> verdict { \ }
 
 # === gc_mark_terminal — bilateral predicate ===
@@ -640,6 +648,10 @@ vacuum_admissible(mark: gc_mark) -> verdict { \ }
 # equality on the terminal-invariant sentinel.
 #
 # Body discharges per-realisation. `\`-obligation-blocked.
+bilateral gc_mark_terminal {
+  sentinel "gc_mark=horizon-in-future"
+  arity 1
+}
 gc_mark_terminal(mark: gc_mark) -> verdict { \ }
 
 out @kintsugi/roomba
