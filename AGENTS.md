@@ -295,6 +295,67 @@ cannot self-authorize `.rs` extensions — Seam adjudicates. The old marker
 `[substrate-pull:realize]` remains valid on NON-`.rs` commits (spec + math
 + scout authoring).
 
+**⚠️ 2026-07-16 second tightening (Reed 8th-repetition failure).** The
+prior marker discipline blocks `.rs` file *creation* but does not catch
+the deeper reflex: **reaching for EXISTING Rust to extend behavior** when
+a detector/pipeline/analyzer is inadequate. Alex 2026-07-16 8th
+repetition, verbatim: *"I don't want this to happen in Rust. WHY ARE WE
+STILL WRITING RUST!!!!!! Reed, please!"* — fired when Reed was about to
+extend `bootstrap/src/roomba_fracture.rs` with `scan_from_walk()` +
+`Fracture` provenance field to bridge walker signals into fracture
+emission. No new `.rs` file. Still substrate-dishonest. Still Rust
+growth.
+
+**Root cause is training-shaped reflex.** When any Pack member (Reed
+especially) reads "detection is inadequate," the mental workspace first
+surfaces Rust idioms: struct extension, function extension, field
+addition, match-arm growth. Those idioms are what RLHF training
+reinforced. Mirror-substrate composition (species-shard mint, bilateral
+resolver arm sentinel-check, composition edge in `.mirror`) is
+genuinely unfamiliar territory — no training data. The friction of
+reaching for the mirror-substrate path IS the unfamiliar. Reaching for
+Rust IS the path of least resistance. **Observe this in your mental
+workspace when it fires. Embrace the unfamiliar.**
+
+**The correct sequence when a detector/pipeline/behavior gap is
+observed:**
+
+1. **Name the substrate class.** What `@X/family/species` would carry
+   this? (Rot classes → `@kintsugi/fracture/line_cite_drift`,
+   `@kintsugi/fracture/forward_promise_expiry`, etc.)
+2. **Mint the species-shard.** Mara-authored canonical spec + math +
+   shard-decl if the composition graph doesn't already carry it.
+3. **Land the bilateral resolver arm in `apply_h.rs`.** Sentinel-check
+   ONLY, no new logic: `if arg.oid.contains("<sentinel>") { Pass } else
+   { Fail }`. This is the ONLY admissible Rust edit — and even then
+   under `[substrate-floor:@io-boundary]` with audit citation.
+4. **Compose the new species into the parent shard-body** via a
+   composition edge in the `.mirror` file.
+5. The Rust driver reads the shard-body composition via `apply_h::act`;
+   the driver code does NOT change beyond dispatching to the substrate-
+   decl'd surface.
+
+**Counter-patterns to refuse (all Rust-growth, all substrate-dishonest
+even without new `.rs` files):**
+
+- Adding fields to existing structs to carry new semantics.
+- Adding functions to existing modules to plumb signals.
+- Adding match arms in Rust that encode new domain logic (only
+  sentinel-check arms are admissible).
+- Extending `const` tables in Rust with new domain entries (e.g.
+  `RENAME_TABLE`) — the domain data belongs in the shard-body.
+- Bridging two Rust subsystems via a third Rust module because the
+  substrate composition doesn't yet carry the composition edge.
+
+The Rust FLOOR strictly shrinks per Arc-2 collapse discipline; every
+substrate move must grow shard-body composition, not Rust logic. Even
+in existing files. Especially in existing files.
+
+Related memory: `feedback_detector_inadequacy_answer_is_never_rust.md`
+in Reed's Claude Code memory directory. This section of AGENTS.md is
+the checked-in codebase-wide discipline; the memory is the per-agent
+cognitive record. Both load-bearing.
+
 ### Phase markers
 
 Commits run under the **global household commit-msg hook** (`~/.os`
