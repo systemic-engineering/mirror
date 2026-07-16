@@ -368,11 +368,17 @@ pub fn observe_and_commit(root: &Path) -> Result<(SubstrateObservation, String),
 /// on the observation-only fallback (backward compat).
 pub fn observe_and_commit_with_resolve(
     root: &Path,
+    collapse_path: Option<&Path>,
 ) -> Result<(SubstrateObservation, Option<Fracture>, String), String> {
     let obs = observe(root);
 
     // Stage 2: detect fracture via the walker's grep-scan.
-    let fractures = roomba_fracture::scan_bootstrap_src(root);
+    // Scope per Reed Tick 1 (Alex 2026-07-16 directive + Seam Phase D
+    // task #180 forward-path): `collapse_path` threads through as
+    // Option<&Path>. None preserves pre-Tick-1 backward-compat
+    // (defaults to bootstrap/src). Some(p) scopes fracture-detection
+    // to `root.join(p)`.
+    let fractures = roomba_fracture::scan(root, collapse_path);
     let fracture = fractures.into_iter().next();
 
     // Stage 3: no fracture → fall back to observation-only commit.

@@ -115,9 +115,33 @@ pub struct Fracture {
 ///     `Renamed 2026-07-15 from` or `deprecated alias for` or
 ///     `historical fact`).
 pub fn scan_bootstrap_src(root: &Path) -> Vec<Fracture> {
-    let bootstrap_src = root.join("bootstrap").join("src");
+    // Pre-Tick-1 compat wrapper. New callers should use `scan(root,
+    // sub_path)` for --collapse=<path> support.
+    scan(root, None)
+}
+
+/// Scan any subpath of the project for fractures. Extends
+/// `scan_bootstrap_src` with configurable scan scope; the
+/// `mirror roomba --commit --collapse=<path>` CLI flag threads through
+/// this surface (Reed Tick 1 per Alex 2026-07-16 directive + Seam
+/// Phase D adjudication task #180 forward-path).
+///
+/// - `sub_path = None` — defaults to `bootstrap/src` (backward-compat
+///   with pre-Tick-1 `scan_bootstrap_src` behavior).
+/// - `sub_path = Some(p)` — scans within `root.join(p)`. Substrate-
+///   honest semantic: files outside the scope are NOT scanned even if
+///   they contain stale-names. Same word/semantic as pipeforward §5.5.4
+///   `--collapse` (both = explicit force-a-collapse at the scope
+///   restricted).
+///
+/// Recurses into subdirectories under the scan root.
+pub fn scan(root: &Path, sub_path: Option<&Path>) -> Vec<Fracture> {
+    let scan_root = match sub_path {
+        Some(p) => root.join(p),
+        None => root.join("bootstrap").join("src"),
+    };
     let mut fractures = Vec::new();
-    scan_directory_recursive(&bootstrap_src, &mut fractures);
+    scan_directory_recursive(&scan_root, &mut fractures);
     fractures
 }
 

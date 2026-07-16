@@ -3643,6 +3643,14 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
             // observation. Audit: docs/audits/2026-07-15-seam-kintsugi-
             // ouroboros-phase-d-cascade-a2-a6.md.
             let commit_flag = args.iter().any(|a| a == "--commit");
+            // Tick 1 (Alex 2026-07-16 + Seam Phase D task #180 forward-
+            // path): `--collapse=<path>` scope-restrictor for the
+            // Rust→mirror ouroboros discharge. Same word/semantic as
+            // pipeforward §5.5.4 --collapse (explicit force-a-collapse).
+            // Absent = pre-Tick-1 backward-compat (scan bootstrap/src).
+            let collapse_path: Option<PathBuf> = args
+                .iter()
+                .find_map(|a| a.strip_prefix("--collapse=").map(PathBuf::from));
             let root = ctx.cwd().to_path_buf();
             if commit_flag {
                 // The FULL end2end empirical proof pipeline per Alex
@@ -3650,7 +3658,10 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                 // resolve → @io/fs.write → @nl.compose from delta →
                 // @io/git.commit (real blobs). Falls back to observation-
                 // only commit if no fracture found (backward compat).
-                match crate::roomba_commit::observe_and_commit_with_resolve(&root) {
+                match crate::roomba_commit::observe_and_commit_with_resolve(
+                    &root,
+                    collapse_path.as_deref(),
+                ) {
                     Ok((obs, fracture_opt, oid)) => {
                         mout!("@@ mirror roomba --commit: substrate observed its own state @@");
                         mout!("+ HEAD (pre-commit): {}", obs.head_oid);
