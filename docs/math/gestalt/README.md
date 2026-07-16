@@ -597,6 +597,22 @@ joint state, socket-shaped per pipeforward §5.5.4 rule 1.
    forward-promised at Alex-adjudicable scope, ALEX-Q1 per Seam
    Phase D 2026-07-16). Prerequisite for coupling_graph carrier
    well-typedness (per R-M1 Candidate 2 ratification).
+
+   **2026-07-16 Q1 reshape** (Mara `f782362`; math foundation
+   `docs/math/uuid/spectral-time.md` §6). The `@resonance` +
+   `@dance` shard-mints are DECOUPLED from `gestalt-as-song-
+   unfolding.md` §10 R4 (annotation-tournament dispatch — now
+   CLOSED by the `@uuid/spectral/time` species-decl landing).
+   Annotation-altitude dispatch is byte-comparison on
+   `active_prefix(uuid_spectral_time)` by construction; no shard-
+   altitude coupling-graph carrier is required for R4 v0.1.0.
+   The shard-mints stay forward-promised at THIS Landing Condition
+   0 for operator-altitude `@gestalt.p_ent` (n≥2 tori), which has
+   genuinely different substrate requirements — the coupling-
+   graph carrier is needed to compose `P_ent` over K_n coupled
+   tori, unrelated to annotation-altitude dispatch. The two
+   altitudes are now visibly independent in the Landing-gate
+   scope.
 1. `@dance` Rung 5+ multi-peer coherence phase-lock lands (per
    `docs/specs/dance-runtime-rung-4-multi-peer-coherence-phase-lock.
    md` §8 forward-promise for N > 2 peers).

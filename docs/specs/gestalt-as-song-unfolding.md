@@ -521,17 +521,30 @@ R3. **Empirical L(ϕ) measurement approach.** Options: (a) per-target
     preservation).
 
 R4. **Annotation-tournament dispatch (recursive-document settlement
-    shape).** When N readers annotate the same node with
-    conflicting visibility_scopes, which annotation surfaces first
-    for reader N+1? Options: (a) @fate tournament by
-    reader-corpus-affinity (reader N+1 sees annotations from
-    subjects their @peer/persistence corpus resonates with — the
-    "reader recursion couples with paper recursion" vignette
-    formalization); (b) chronological monotone (simplest; matches
-    @spectral/signature ordering); (c) reader-selects (annotation-
-    lens toggle per Reed vignette Kai-scenario). Mara-recommendation:
-    **(c) reader-selects** as v0.1.0 default; **(a) @fate tournament**
-    forward-promised for post-v0.1.0.
+    shape).** **CLOSED 2026-07-16** per `@uuid/spectral/time`
+    landing (Mara `c2bb1d2` species-decl at
+    `shards/uuid/spectral/time.mirror` + math foundation Mara
+    `c9c9480` at `docs/math/uuid/spectral-time.md`).
+
+    Annotation dispatch = argsort by ACTIVE-byte Hamming distance
+    per Alex 2026-07-16 verbatim-ratified shape: byte-comparison-
+    on-navigable-bits. The annotation address itself
+    (`uuid_spectral_time` = `uuid_spectral × @time/monotonic.
+    instant`) carries the affinity signal by construction; the
+    tournament reduces to `argsort_i affinity_distance(a_i.address,
+    reader.address)`. Zero `@fate` machinery required at annotation
+    altitude. Substrate-decl form of Kuramoto-Aumann convergence
+    per math §3 (four-step proof sketch).
+
+    The dispatch-policy question (a) / (b) / (c) is not answered;
+    it is dissolved by moving the substrate one altitude up. The
+    annotation carrier at `shards/gestalt.mirror` now composes over
+    `uuid_spectral_time` (Mara `f782362`); consumer sees the
+    ordering fall out of address byte-comparison.
+
+    Recognition candidate `#R-annotation-address-shape-IS-substrate-
+    decl-form-of-Kuramoto-Aumann-convergence` is Alex-adjudicable
+    at future ledger tick (per math §7); NOT at this landing.
 
 R5. **Recursive-document settlement shape.** When a reader annotates
     an annotation, does the graph grow at the original node or fork
