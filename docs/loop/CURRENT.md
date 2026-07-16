@@ -239,6 +239,52 @@ docblock forward-promises don't drift into de-facto independence:
   promised at `docs/math/delight-as-natural-transformation.md` §8
   Gap D1 second-consumer landing.
 
+### First-order autopoietic compile loop arc (Mara+Reed 2026-07-16)
+
+Mara `d457501` + `17697e6` + `a19fea2` — canonical spec + math
+foundation + shard-decl cascades naming the Roomba's two motions
+(bump + vacuum) as first-order substrate primitives + @mirror/store
+gc primitives (walk_dangling / mark_unreachable / prune). Seam
+Phase D task #180 SHIP-WITH-REED-INLINE (10 dimensions pass; 3
+cascades applied).
+
+**Deferred landings from Seam adjudication:**
+
+- **Alex-Q1 Recognition ratification** `#R-vacuum-preserves-fiedler-
+  measurement-honesty` — first-witness LANDED at
+  `docs/math/kintsugi/roomba/bump-and-vacuum.md` §4.2; second-witness
+  requires empirical bootstrap-collapse run (Tick 4). Pack
+  ratification deferred pending second-witness.
+
+- **Alex-Q2 Recognition ratification** `#R-roomba-two-motions-are-
+  first-order-autopoietic-baseline` — first-witness at
+  `docs/specs/roomba-bump-and-vacuum-as-first-order-autopoietic-
+  motions.md` §10.4; second-witness Tick 4. Pack ratification
+  deferred.
+
+- **Alex-Q3 fifth conjunct λ₂ at ouroboros_monotone** — does the
+  substrate WANT `λ₂(live(after)) ≥ λ₂(live(before))` as a fifth
+  conjunct alongside rust_loc/test_pass_rate/io_violations/sbec at
+  `shards/epistemologic/property/ouroboros_monotone.mirror:87-91`?
+  Or should Fiedler-honesty stay a `@mirror/store`-level property
+  (composed under bilateral, not into ouroboros_monotone)? Math
+  foundation §5.1 proposes; substrate-decl landing deferred pending
+  Alex adjudication.
+
+- **Alex-Q4 cold-storage timing** — `@mirror/store/cold` species
+  Alex "future music" per 2026-07-16 verbatim; consumer-driven
+  pull vs substrate-priming mint. Default: consumer-driven per
+  "future music" phrasing.
+
+- **Tick 4 empirical algedonic pilot** — `mirror roomba --commit
+  --collapse=bootstrap/` first-order autopoietic compile loop
+  demonstration on `bootstrap/src/algedonic.rs`. Blocked pending
+  Reed Tick 1 (CLI flag) + Tick 3 (resolver arms). Falsification
+  criteria at spec §9.3: Fiedler ascent OR dead-fraction decrease
+  OR composable metalogue turns; any single failure surfaces to
+  Seam Phase D. Second-witness for BOTH Recognition candidates
+  lands here.
+
 ---
 
 ## Historical arc — @song/beat ladder-climb 2026-07-13 + @gift arc 2026-07-14
