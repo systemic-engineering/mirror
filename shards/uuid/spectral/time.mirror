@@ -1,0 +1,438 @@
+in @prism
+in @meta
+in @glass
+in @uuid
+in @uuid/spectral
+in @epistemologic/reality/time
+in @epistemologic/property/content_addressed
+
+# @uuid/spectral/time — the annotation-address species.
+#
+# Sub-species under @uuid/spectral. Composes the LANDED
+# `uuid_spectral` identity (128 bits; @glass three-layer contract
+# intact) with a trailing `@time/monotonic.instant` facet. The
+# resulting carrier IS the substrate-decl form of annotation-address
+# byte-comparison for R4 dispatch: argsort by hamming distance on the
+# 48-bit ACTIVE prefix IS the tournament ordering. Zero @fate
+# machinery required.
+#
+# Path-namespace: sub-species under @uuid/spectral. Sibling-of-family
+# precedent: `@subject/visibility/sheaf` under `@subject/visibility`
+# (Landing 4 R2 discharge; `shards/subject/visibility/sheaf.mirror`).
+#
+# === Alex 2026-07-16 verbatim ratification ===
+#
+# In-transcript exchange (annotation-address discovery):
+#
+#   Alex saw R4 was choosing between three dispatch policies for
+#   annotation-tournament ordering. Alex noticed the annotation-
+#   *address structure itself* could carry the affinity signal, so
+#   the tournament becomes byte-comparison on the navigable bits.
+#   Zero @fate infrastructure needed for the affinity computation.
+#
+#   "This is literally the addressation ground EVERYTHING stands on."
+#
+# The ratified shape (verbatim):
+#
+#   type uuid_spectral_time = {
+#     identity: uuid_spectral,             // 128 bits; @glass
+#                                          // three-layer contract intact
+#     time:     @time/monotonic.instant,   // full precision; already
+#                                          // used by @gestalt.annotation.
+#                                          // timestamp + @spectral/
+#                                          // signature.signature_beat.
+#                                          // timestamp
+#   }
+#
+# Byte layout when serialized:
+#
+#   [ ACTIVE 48 | DARK 80 | time N ]
+#
+# where identity (128 bits) preserves @glass shard.id contract and
+# time trails as a facet.
+#
+# Semantics (verbatim):
+#
+#   1. Identity for content-address dedup = 128-bit uuid_spectral
+#      prefix only. Storage layer dedups on prefix; two writes of
+#      the same content collapse regardless of time. @mirror/store
+#      unchanged.
+#   2. Time is a facet, NOT part of identity. Trailing bytes; used
+#      for tie-breakers + causal ordering; does NOT participate in
+#      dedup.
+#   3. ACTIVE (leading 48 bits) drives @resonance/@fate byte-
+#      comparison — pure, unmodified; peer-coupling geometry
+#      unchanged.
+#   4. R4-(a) dispatch = argsort by byte-distance on ACTIVE. No new
+#      machinery. Substrate-decl form of Kuramoto-Aumann convergence
+#      at annotation altitude.
+#
+# Algedonic form: byte-distance on ACTIVE = pain/pleasure gradient
+# at address altitude. `@cyberpunk/algedonic` composition surface
+# (currently entropy-based per `bootstrap/src/algedonic.rs`) can
+# compose over this for future extension. NOT this arc.
+#
+# === Substrate-already-had-the-word citation chain ===
+#
+# Both fields of `uuid_spectral_time` LANDED. Grep-verified prior
+# to authorship:
+#
+#   1. `@uuid/spectral` LANDED at `shards/uuid/spectral.mirror`
+#      (2026-06-06 second tick; Mara). Carries the 48/128 golden-
+#      ratio-adjacent split (48 ACTIVE quantized SpectralCoordinate<5>
+#      + 80 DARK BLAKE3-truncated content hash; 48/128 ≈ 0.375 vs
+#      1/φ² ≈ 0.382). Big-endian on ACTIVE: byte-wise sort IS
+#      lexicographic sort over the navigable coordinate. Range
+#      scans on the 48-bit space compose with byte-wise sort.
+#      Semantic types `route_signal` + `identity_signal` compose
+#      into the record. Realized at `prism/core/src/spectral_uuid.rs`.
+#
+#   2. `@time/monotonic.instant` LANDED at
+#      `shards/epistemologic/reality/time.mirror:151` (the `instant`
+#      type at line 89 + broader `monotonic` frame carriers). Full
+#      precision u64 nanoseconds; ~584 years of range; matches
+#      BEAM's `erlang:monotonic_time(:nanosecond)` native unit.
+#      Already composed OVER by `@gestalt.annotation.timestamp`
+#      (`shards/gestalt.mirror:~253`) + `@spectral/signature.
+#      signature_beat.timestamp` (`shards/spectral/signature.mirror:
+#      ~89`). This species lifts the composition edge those consumers
+#      already implicitly carried.
+#
+# Zero UUIDv5 / UUIDv7 / timestamped-UUID precedent in the corpus
+# (Taut scout task #172). This species IS the novel substrate
+# addressation ground. RFC 9562 §6 (UUIDv7 semantics) is a
+# structural cousin — trailing time bytes as tie-breaker, dedup on
+# identity prefix — but the substrate carries neither the RFC's byte
+# layout nor its clock discipline; the substrate carries
+# `@time/monotonic.instant` (its own time carrier) folded as a
+# facet over its own `uuid_spectral` (its own identity carrier).
+# Delightfully-boring: the compiler already knew.
+#
+# The ~61st instance of [[feedback-substrate-already-had-the-word]]:
+# every field, action, and bilateral below cites LANDED carriers.
+#
+# === Reed-recursive ancestry (why THIS mount as sub-species) ===
+#
+# R4 in `docs/specs/gestalt-as-song-unfolding.md` §10 asked which
+# annotation-tournament dispatch policy to land: (a) @fate
+# reader-corpus-affinity, (b) chronological monotone, or (c)
+# reader-selects. Alex saw the annotation-*address* could carry the
+# affinity signal by construction — one altitude up from the policy
+# question. The tournament dissolves into byte-comparison on
+# `active_prefix(uuid_spectral_time)`. No `@fate` machinery. No
+# adjudication between (a) / (b) / (c).
+#
+# The dispatch-policy question is not answered; it is dissolved. R4
+# becomes CLOSED, not "documented end-state." @resonance + @dance
+# shard-mints (previously R4-gating per `docs/math/gestalt/README.md`
+# §11.6 Landing Condition 0) DECOUPLE from R4 v0.1.0. They stay
+# forward-promised at `@gestalt.p_ent` operator-altitude (n≥2 tori)
+# per the Landing Condition, but no longer block R4.
+#
+# The R4-dissolution move IS the addressation ground the compiler
+# already knew about. The species-decl below writes it down.
+#
+# === Composition graph ===
+#
+# Parents (substrate-decl):
+#   @uuid                     — root prism; universal 128-bit
+#                               identifier discipline; equals + parse
+#                               + format at the root altitude
+#   @uuid/spectral            — sub-prism; carries route_signal (48
+#                               bits ACTIVE) + identity_signal (80
+#                               bits DARK); monoidal(uuid_spectral)
+#                               property; @glass shard.id contract
+#   @epistemologic/reality/time
+#                             — family; carries duration + monotonic
+#                               + wall + instant + tick + snapshot;
+#                               nanosecond precision; leap-second-free
+#
+# Consumers (compose over this species; landed in Deliverable 3):
+#   shards/gestalt.mirror     — annotation.address: uuid_spectral_time
+#   shards/spectral/signature.mirror
+#                             — signature_beat address facet;
+#                               Alex-adjudicable cascade shape
+#
+# Forward-composition surfaces (named, not imported):
+#   @resonance                — inter-peer coupling operator (spec-
+#                               landed; shard-mint forward-promised
+#                               per @gestalt.p_ent Landing Condition 0
+#                               — DECOUPLED from R4 v0.1.0 by this
+#                               species)
+#   @dance                    — Kuramoto phase-lock; spec-landed;
+#                               shard-mint forward-promised at same
+#                               Landing Condition
+#   @cyberpunk/algedonic      — pain/pleasure gradient at address
+#                               altitude; composition surface for
+#                               byte-distance-on-ACTIVE (future arc)
+#   @fate                     — tournament dispatch; dispatch policy
+#                               (a) IS argsort by
+#                               affinity_distance(a, H_R) at address
+#                               altitude; no new machinery required
+#
+# === Related shards / specs ===
+#
+# - shards/uuid.mirror
+#     (root prism; universal 128-bit identifier discipline)
+# - shards/uuid/spectral.mirror
+#     (sub-prism; 48 ACTIVE + 80 DARK; monoidal + content_addressed)
+# - shards/epistemologic/reality/time.mirror
+#     (@epistemologic/reality/time family; instant + monotonic + tick)
+# - shards/gestalt.mirror
+#     (consumer: annotation carrier composes over this species)
+# - shards/spectral/signature.mirror
+#     (consumer: signature_beat carries address facet)
+# - docs/specs/gestalt-as-song-unfolding.md §10 R4
+#     (the residue this species CLOSES by construction)
+# - docs/math/gestalt/README.md §11.6 Landing Condition 0
+#     (@resonance + @dance shard-mints — DECOUPLED from R4 by this
+#      species; stay forward-promised for operator-altitude n≥2 tori)
+# - docs/math/uuid/spectral-time.md
+#     (companion math foundation; categorical-product proof +
+#      Kuramoto-Aumann convergence formalization + dedup semantics)
+# - docs/scouts/2026-07-16-taut-spectral-uuid-timestamped-shape.md
+#     (Taut scout confirming LANDED carriers + zero timestamped-UUID
+#      precedent in corpus; task #172)
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]],
+# [[architecture-prism-as-trait-as-everything]] (`glass
+#   @uuid/spectral/time`),
+# [[architecture-glass-wall-substrate-types]] (transparency
+#   inheritance through @uuid/spectral),
+# [[architecture-shard-as-crdt]] (uuid_spectral IS the CRDT-shape
+#   identity; the facet extension preserves the dedup contract),
+# [[feedback-substrate-already-had-the-word]] (~61st instance; both
+#   fields LANDED; this species names the carrier the substrate
+#   already implicitly used at @gestalt.annotation +
+#   @spectral/signature.signature_beat),
+# [[feedback-no-bare-types]] (uuid_spectral_time is a typed record
+#   with byte-equality on the (identity, time) pair identity),
+# [[feedback-craft-not-deliver]] (all action bodies `\`-obligation-
+#   blocked; consumers pull the realization; Arc-1 evaluator FLOOR
+#   pending),
+# [[feedback-cli-subcommand-nesting-is-geometric]] (sub-species under
+#   @uuid/spectral is geometric ground truth per the path-namespace
+#   discipline; sibling-of-family precedent = @subject/visibility/
+#   sheaf under @subject/visibility).
+#
+# Path-namespace property: this file at
+# `shards/uuid/spectral/time.mirror` declares `@uuid/spectral/time`
+# per `@epistemologic/pact/path_matches_namespace`.
+
+# Sub-species under @uuid/spectral. The glass keyword (per @glass)
+# marks this as a sub-prism scoped to the @uuid/spectral parent.
+glass @uuid/spectral/time {
+  focus  uuid_spectral_time
+  project uuid_spectral_time
+  split  uuid_spectral_time
+  shift  uuid_spectral_time
+  settle uuid_spectral_time
+}
+
+# === uuid_spectral_time — the annotation-address carrier ===
+#
+# The categorical product of `uuid_spectral × @time/monotonic.instant`
+# with identity-projection preserving the @glass shard.id contract.
+# Per docs/math/uuid/spectral-time.md §1 (composition proof, Mac Lane
+# §III on categorical products).
+#
+# Two fields:
+#
+#   identity — the 128-bit uuid_spectral. @glass three-layer contract
+#              intact. Content-address dedup at @mirror/store reads
+#              THIS field only. The 48-bit ACTIVE prefix within
+#              `identity` drives @resonance/@fate byte-comparison
+#              (peer-coupling geometry unchanged; the substrate's
+#              existing route_signal handle is what tournament
+#              dispatch reads through).
+#
+#   time     — the @time/monotonic.instant facet. Full precision;
+#              nanoseconds; leap-second-free. Trailing bytes when
+#              serialized. Used for tie-breakers + causal ordering;
+#              does NOT participate in dedup. Already composed OVER
+#              by @gestalt.annotation.timestamp + @spectral/signature.
+#              signature_beat.timestamp; this species lifts the
+#              composition edge those consumers implicitly carried.
+#
+# Identity contract for content-address dedup: byte-equality on
+# the `identity` field ONLY. Two uuid_spectral_time values with
+# byte-equal `identity` but distinct `time` are dedup-equivalent at
+# @mirror/store; storage collapses them. This is the substrate-decl
+# form of "time is a facet, NOT part of identity."
+#
+# Identity contract for tournament ordering: byte-comparison on the
+# 48-bit ACTIVE prefix of `identity`. Argsort by
+# `affinity_distance(a, H_R)` IS the R4-(a) dispatch permutation.
+# Per docs/math/uuid/spectral-time.md §3 (R4-affinity-by-construction
+# theorem; substrate-decl form of Kuramoto-Aumann convergence at
+# annotation altitude).
+type uuid_spectral_time = {
+  identity: uuid_spectral,
+  time:     @time/monotonic.instant,
+}
+
+# === compose — the constructor ===
+#
+# Given a uuid_spectral (identity) and a @time/monotonic.instant
+# (facet), construct the uuid_spectral_time carrier. Substrate-decl
+# form of the categorical-product pair construction.
+#
+# The compose direction is monotone in both fields: two composes
+# with byte-equal (identity, time) pairs produce byte-equal
+# uuid_spectral_time. Composition-only over LANDED carriers; no new
+# mechanism. Body deferred per [[feedback-craft-not-deliver]].
+compose(identity: uuid_spectral, time: @time/monotonic.instant) -> uuid_spectral_time { \ }
+
+# === identity_of — the dedup projection ===
+#
+# Project the identity out of a uuid_spectral_time. Substrate-decl
+# form of the categorical-product first-projection homomorphism
+# preserving @mirror/store dedup equivalence (per docs/math/uuid/
+# spectral-time.md §4).
+#
+# @mirror/store composes over this action to keep the storage layer
+# unchanged: `store.put(a: uuid_spectral_time)` reduces to
+# `store.put(identity_of(a))` at the dedup boundary. Two writes
+# with the same content collapse regardless of time. Body deferred.
+identity_of(a: uuid_spectral_time) -> uuid_spectral { \ }
+
+# === active_prefix — the tournament-ordering handle ===
+#
+# Extract the 48-bit ACTIVE prefix of the identity's uuid_spectral.
+# This IS the byte-comparison handle @resonance / @fate tournament
+# dispatch reads through. Big-endian on ACTIVE: byte-wise sort IS
+# lexicographic sort over the SpectralCoordinate<5> Fate's mycelial
+# routing navigates. Range scans on the 48-bit space compose with
+# byte-wise sort.
+#
+# Composition-only over @uuid/spectral.active (LANDED): this action
+# is `active(identity_of(a))` at the substrate composition-graph
+# altitude. Named at species altitude to make the tournament-
+# ordering surface first-class in the annotation-address vocabulary.
+# Body deferred.
+active_prefix(a: uuid_spectral_time) -> ref { \ }
+
+# === time_of — the tie-break projection ===
+#
+# Project the time facet out of a uuid_spectral_time. Used for
+# tournament tie-breakers when two annotation addresses have byte-
+# equal ACTIVE prefixes (rare at 48 bits; possible under high-
+# volume peer-coupling scenarios). @fate's per-basin tie-break
+# discipline composes over this action.
+#
+# The time facet is orthogonal to identity (per
+# docs/math/uuid/spectral-time.md §4 orthogonality lemma); storage
+# layer commutes with time-facet variation. Body deferred.
+time_of(a: uuid_spectral_time) -> @time/monotonic.instant { \ }
+
+# === affinity_distance — the algedonic-form gradient ===
+#
+# Hamming distance between the 48-bit ACTIVE prefixes of two
+# uuid_spectral_time values. Returns a numeric ref (bit-count in
+# the XOR of the two ACTIVE prefixes). Substrate-decl form of the
+# annotation-tournament coupling weight per docs/math/uuid/
+# spectral-time.md §3 (Kuramoto phase-locking reads inter-peer
+# coordinate distance as coupling weight; argsort by this distance
+# IS the ordering that accelerates convergence per Aumann 1976
+# common-prior model).
+#
+# Algedonic form (per docs/math/uuid/spectral-time.md §5): byte-
+# distance on ACTIVE IS the pain/pleasure gradient at address
+# altitude. Small distance ↔ affinity ↔ pleasure; large distance ↔
+# discord ↔ pain. @cyberpunk/algedonic composition surface can
+# compose over this action for future extension; the composition
+# is algedonic-form-compatible by construction. Not this arc.
+#
+# R4 dispatch discharge: for any reader H_R and annotation set
+# A(v) = [a_1, …, a_N], the tournament permutation is
+#
+#   σ = argsort_i affinity_distance(a_i, H_R.address)
+#
+# where H_R.address IS the reader's own uuid_spectral_time carrier.
+# No @fate machinery required at annotation altitude; the substrate
+# carries the ordering by construction. Body deferred.
+affinity_distance(a: uuid_spectral_time, b: uuid_spectral_time) -> ref { \ }
+
+# === Bilateral predicates (dispatchable via apply_h::act) ===
+
+# identity_contract_preserved — does the identity field satisfy the
+# @glass shard.id contract?
+#
+# Discharges Pass iff `identity_of(a)` is a well-formed uuid_spectral
+# (128 bits; route_signal + identity_signal fields both present per
+# @uuid/spectral record shape; content_addressed(uuid_spectral)
+# property held). Substrate-decl form: byte-level check for
+# `identity=uuid-spectral-well-formed` sentinel; composes over
+# @uuid/spectral's LANDED content_addressed property.
+#
+# Load-bearing structural claim: the facet extension does NOT
+# weaken @glass's three-layer contract on the identity field. Every
+# consumer that previously read shard.id: uuid_spectral can read
+# identity_of(a) with identical semantics.
+identity_contract_preserved(a: uuid_spectral_time) -> verdict { \ }
+
+# time_facet_admissible — is the time field a well-formed
+# @time/monotonic.instant?
+#
+# Discharges Pass iff `time_of(a)` is a well-formed
+# @time/monotonic.instant (shift(duration) frame; non-negative
+# nanoseconds by construction per settle-witness at @epistemologic/
+# reality/time.mirror:71). Substrate-decl form: byte-level check
+# for `time=monotonic-instant-well-formed` sentinel.
+#
+# Rice-safe at whole-tick altitude: reads only byte-visible state
+# (the settle-witness on the duration base carrier).
+time_facet_admissible(a: uuid_spectral_time) -> verdict { \ }
+
+# dedup_ignores_time — do two carriers with byte-equal identity
+# dedup to the same @mirror/store entry regardless of time?
+#
+# Discharges Pass iff for any (a, b) with
+# `identity_of(a) == identity_of(b)` (byte-equal 128-bit prefix),
+# @mirror/store treats them as dedup-equivalent (single storage
+# entry). Substrate-decl form of the storage-layer invariant per
+# docs/math/uuid/spectral-time.md §4 (identity_of is a projection
+# homomorphism preserving @mirror/store dedup equivalence).
+#
+# Load-bearing structural claim: the time facet is orthogonal to
+# identity at the storage boundary. @mirror/store remains unchanged
+# by this species landing. Consumer cascades (Deliverable 3) can
+# add the facet to annotation + signature_beat carriers without
+# touching storage discipline.
+dedup_ignores_time(a: uuid_spectral_time, b: uuid_spectral_time) -> verdict { \ }
+
+# uuid_spectral_time_witnessing — the composed bilateral that
+# discharges when ALL of identity_contract_preserved +
+# time_facet_admissible + dedup_ignores_time hold across the
+# substrate lifetime of the address.
+#
+# Parallel to @subject/visibility/sheaf.sheaf_witnessing and
+# @gestalt.gestalt_witnessing composed-bilateral precedent. This is
+# the substrate-decl form of "the annotation address is well-formed
+# at every altitude: identity-side @glass contract intact; time
+# facet is a valid monotonic instant; the storage layer treats the
+# facet as orthogonal to identity."
+uuid_spectral_time_witnessing(a: uuid_spectral_time,
+                               b: uuid_spectral_time) -> verdict { \ }
+
+# === requires predicates ===
+#
+# Composition obligations enforced at species altitude. Each names
+# a landed cross-family carrier the substrate MUST admit for
+# @uuid/spectral/time to be well-formed.
+
+requires content_addressed(uuid_spectral)
+
+out @uuid/spectral/time
+out uuid_spectral_time
+out compose
+out identity_of
+out active_prefix
+out time_of
+out affinity_distance
+out identity_contract_preserved
+out time_facet_admissible
+out dedup_ignores_time
+out uuid_spectral_time_witnessing
