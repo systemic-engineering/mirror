@@ -132,6 +132,271 @@ pub struct Fold5Reducers {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Reflective bilateral corpus — the substrate-honest form of the
+// ~30 hand-typed apply_h::act arms. Per Mara canonical spec 9a77361
+// (docs/specs/bilateral-predicate-substrate-shape.md) + math
+// foundation 701828a (docs/math/epistemologic/pact/bilateral-
+// sentinel.md). Alex 2026-07-16 verbatim: "Q1. Let's mint it then.
+// Properly. Seems like it's load-bearing."
+//
+// The loader line-scans `shards/**/*.mirror` for `bilateral <name>
+// { sentinel "..." arity <n> require <ref> }` blocks. The reflective
+// evaluator `discharge` implements spec §5.2 pseudocode: base
+// bilaterals byte-check every arg's oid for sentinel containment;
+// composed bilaterals AND-conjunct sub-bilaterals on the same args.
+//
+// ADDITIVE: `act` checks the reflective corpus FIRST, falling
+// through to the legacy hand-typed arms if not found. No arm is
+// modified. Landing 5 (separate future tick) retires arms as their
+// bilateral blocks land in shards.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// One `bilateral` declaration extracted from a shard file. Fields
+/// follow the typed carrier at shards/epistemologic/pact/bilateral.mirror.
+#[derive(Debug, Clone)]
+pub struct BilateralDecl {
+    /// Predicate name (e.g. "signature_integrity").
+    pub name: String,
+    /// Sentinel byte-string (e.g. "chain=merkle-linked").
+    pub sentinel: String,
+    /// Number of args expected (1 base; 2+ composed).
+    pub arity: usize,
+    /// Sub-bilateral names for composed bilaterals (empty for base).
+    /// Each entry is either a bare predicate name (resolved within the
+    /// same shard ref) or a full `@shard/ref.predicate` action ref.
+    pub require: Vec<String>,
+    /// Full action ref (e.g. "@spectral/signature.signature_integrity").
+    pub full_action_ref: String,
+}
+
+/// Extract bilateral declarations from `.mirror` file source. Line-scans
+/// for `bilateral <name> { ... }` blocks. Tokenizer note: the current
+/// bootstrap tokenizer's Project reader stops at non-identifier chars,
+/// so `sentinel "foo=bar"` doesn't round-trip through the AST cleanly;
+/// this loader reads raw bytes to capture the sentinel string. Landing
+/// 2 grammar registration still admits the block so downstream OIDs
+/// don't surface as Dark regions.
+fn extract_bilaterals(source: &str, shard_ref: &str) -> Vec<BilateralDecl> {
+    let mut out = Vec::new();
+    let mut lines = source.lines().peekable();
+    while let Some(line) = lines.next() {
+        let trimmed = line.trim_start();
+        if trimmed.starts_with('#') {
+            continue;
+        }
+        let rest = match trimmed.strip_prefix("bilateral ") {
+            Some(r) => r,
+            None => continue,
+        };
+        let name_part = match rest.split_once('{') {
+            Some((n, _)) => n.trim(),
+            None => continue,
+        };
+        if name_part.is_empty() {
+            continue;
+        }
+        let name = name_part.to_string();
+        let mut sentinel = String::new();
+        let mut arity: usize = 1;
+        let mut require: Vec<String> = Vec::new();
+        for body_line in lines.by_ref() {
+            let bt = body_line.trim();
+            if bt.starts_with('}') {
+                break;
+            }
+            if let Some(v) = bt.strip_prefix("sentinel ") {
+                let v = v.trim();
+                sentinel = v
+                    .strip_prefix('"')
+                    .and_then(|s| s.strip_suffix('"'))
+                    .unwrap_or(v)
+                    .to_string();
+            } else if let Some(v) = bt.strip_prefix("arity ") {
+                if let Ok(n) = v.trim().parse::<usize>() {
+                    arity = n;
+                }
+            } else if let Some(v) = bt.strip_prefix("require ") {
+                require.push(v.trim().to_string());
+            }
+        }
+        if sentinel.is_empty() && require.is_empty() {
+            eprintln!(
+                "bilateral_corpus: skipping ill-formed decl {}.{} (empty sentinel + no require)",
+                shard_ref, name
+            );
+            continue;
+        }
+        let full_action_ref = format!("{}.{}", shard_ref, name);
+        out.push(BilateralDecl {
+            name,
+            sentinel,
+            arity,
+            require,
+            full_action_ref,
+        });
+    }
+    out
+}
+
+/// Derive the enclosing shard's @-ref from a `.mirror` file's source.
+/// Prefers a top-level `prism @X/Y {}` declaration; falls back to the
+/// file path (stripped of `shards/` prefix and `.mirror` suffix).
+fn shard_ref_from_source(source: &str, path: &std::path::Path) -> String {
+    for line in source.lines() {
+        let t = line.trim_start();
+        if t.starts_with('#') {
+            continue;
+        }
+        if let Some(rest) = t.strip_prefix("prism ") {
+            let rest = rest.trim_start();
+            if let Some(at) = rest.strip_prefix('@') {
+                let end = at
+                    .find(|c: char| c == ' ' || c == '\t' || c == '{' || c == '\n')
+                    .unwrap_or(at.len());
+                if end > 0 {
+                    let mut s = String::with_capacity(end + 1);
+                    s.push('@');
+                    s.push_str(&at[..end]);
+                    return s;
+                }
+            }
+        }
+    }
+    let p_string = path.to_string_lossy().into_owned();
+    let mut p: &str = p_string.as_ref();
+    if let Some(idx) = p.find("shards/") {
+        p = &p[idx + "shards/".len()..];
+    }
+    let p = p.strip_suffix(".mirror").unwrap_or(p);
+    format!("@{}", p)
+}
+
+/// Recursively walk `root` collecting all `.mirror` files. Errors are
+/// logged via eprintln and swallowed — partial corpus is better than
+/// panic per substrate-honesty.
+fn walk_mirror_files(root: &std::path::Path, out: &mut Vec<std::path::PathBuf>) {
+    let entries = match std::fs::read_dir(root) {
+        Ok(e) => e,
+        Err(e) => {
+            eprintln!("bilateral_corpus: cannot read_dir {:?}: {}", root, e);
+            return;
+        }
+    };
+    for entry in entries.flatten() {
+        let path = entry.path();
+        if path.is_dir() {
+            walk_mirror_files(&path, out);
+        } else if path.extension().and_then(|e| e.to_str()) == Some("mirror") {
+            out.push(path);
+        }
+    }
+}
+
+/// Load the bilateral corpus rooted at `root/shards/`. Skips well-
+/// known non-carriers (grammar.mirror, pact/keywords.mirror). Errors
+/// per-file are logged and swallowed. Uncached path: callers get a
+/// fresh HashMap each call. Use [`bilateral_corpus`] for the process-
+/// cached path.
+pub fn load_bilateral_corpus(
+    root: &std::path::Path,
+) -> std::collections::HashMap<String, BilateralDecl> {
+    let mut corpus = std::collections::HashMap::new();
+    let shards_root = root.join("shards");
+    if !shards_root.is_dir() {
+        return corpus;
+    }
+    let mut files = Vec::new();
+    walk_mirror_files(&shards_root, &mut files);
+    for path in files {
+        let rel = path.strip_prefix(root).unwrap_or(&path);
+        let rel_str = rel.to_string_lossy();
+        if rel_str == "shards/mirror/grammar.mirror"
+            || rel_str == "shards/epistemologic/pact/keywords.mirror"
+        {
+            continue;
+        }
+        let source = match std::fs::read_to_string(&path) {
+            Ok(s) => s,
+            Err(e) => {
+                eprintln!("bilateral_corpus: cannot read {:?}: {}", path, e);
+                continue;
+            }
+        };
+        let shard_ref = shard_ref_from_source(&source, &path);
+        for decl in extract_bilaterals(&source, &shard_ref) {
+            corpus.insert(decl.full_action_ref.clone(), decl);
+        }
+    }
+    corpus
+}
+
+/// Process-cached bilateral corpus, populated on first call using
+/// `std::env::current_dir()` as root. Subsequent calls reuse the
+/// cached map. Per spec §5.2 the corpus is grammar-time state;
+/// caching mirrors that altitude.
+pub fn bilateral_corpus() -> &'static std::collections::HashMap<String, BilateralDecl> {
+    static CORPUS: std::sync::OnceLock<std::collections::HashMap<String, BilateralDecl>> =
+        std::sync::OnceLock::new();
+    CORPUS.get_or_init(|| {
+        let root = std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from("."));
+        load_bilateral_corpus(&root)
+    })
+}
+
+/// Reflective evaluator per Mara canonical spec 9a77361 §5.2. Given
+/// a parsed bilateral decl + the concrete args the dispatcher
+/// received, discharges the byte-level sentinel check + composed-
+/// bilateral recursion.
+pub fn discharge(decl: &BilateralDecl, args: &[Value]) -> Verdict {
+    if decl.arity != args.len() {
+        return Verdict::Fail(format!(
+            "{}: expected {} args, got {}",
+            decl.name,
+            decl.arity,
+            args.len()
+        ));
+    }
+    if !decl.require.is_empty() {
+        let corpus = bilateral_corpus();
+        for sub_name in &decl.require {
+            let sub_ref = if sub_name.contains('.') {
+                sub_name.clone()
+            } else {
+                let prefix = decl
+                    .full_action_ref
+                    .rsplit_once('.')
+                    .map(|(p, _)| p.to_string())
+                    .unwrap_or_default();
+                format!("{}.{}", prefix, sub_name)
+            };
+            let sub_decl = match corpus.get(&sub_ref) {
+                Some(d) => d,
+                None => {
+                    return Verdict::Fail(format!(
+                        "{}: sub-bilateral {:?} not in corpus",
+                        decl.name, sub_ref
+                    ))
+                }
+            };
+            match discharge(sub_decl, args) {
+                Verdict::Pass => continue,
+                other => return other,
+            }
+        }
+        return Verdict::Pass;
+    }
+    for arg in args {
+        if !arg.oid.contains(&decl.sentinel) {
+            return Verdict::Fail(format!(
+                "{}: expected sentinel {:?} in arg oid, got {:?}",
+                decl.name, decl.sentinel, arg.oid
+            ));
+        }
+    }
+    Verdict::Pass
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // §1.1 A-side: `section` — the algebra element the coboundary acts on.
 //
 // Renamed 2026-07-15 from `read_ast` per Seam seamfinder audit
@@ -290,6 +555,15 @@ pub fn fold(section: Section, reducers: Fold5Reducers, initial: Value) -> Value 
 /// last arm. A subsequent tick extends the resolver as new smoke
 /// tests demand — the resolver surface IS the sbec-lift ladder.
 pub fn act(action: Ref, args: Vec<Value>) -> Verdict {
+    // Reflective dispatch — check the bilateral corpus first.
+    // Per Mara canonical spec 9a77361 §5.2. Additive: falls through
+    // to legacy hand-typed arms if action not in reflective corpus.
+    // Landing 5 (separate future tick) retires arms as their shard
+    // files gain `bilateral <name> { sentinel "..." arity <n> }`
+    // blocks that the corpus loader picks up.
+    if let Some(decl) = bilateral_corpus().get(action.as_str()) {
+        return discharge(decl, &args);
+    }
     // Bilateral-predicate resolver for @subject/visibility/public
     // action refs. Per public.mirror docblock, each predicate is a
     // byte-level check the type system enforces by construction; the
