@@ -250,6 +250,10 @@ type walk_trajectory = {
 # Body discharges per-realisation. `\`-obligation-blocked per
 # [[feedback-craft-not-deliver]]; Arc-2.4 landing composes this via
 # `apply_h::act` sentinel-check.
+bilateral walk_terminates_cleanly {
+  sentinel "termination=scope-a-exhaustive"
+  arity 1
+}
 walk_terminates_cleanly(trajectory: walk_trajectory) -> verdict { \ }
 
 # === tension_monotone_descending — bilateral predicate ===
@@ -277,6 +281,10 @@ walk_terminates_cleanly(trajectory: walk_trajectory) -> verdict { \ }
 # realization layer stamps the sentinel; discharge is byte-equality.
 #
 # Body discharges per-realisation. `\`-obligation-blocked.
+bilateral tension_monotone_descending {
+  sentinel "tension=trajectory-descending"
+  arity 1
+}
 tension_monotone_descending(trajectory: walk_trajectory) -> verdict { \ }
 
 # === coherence_gradient_admissible — bilateral predicate ===
@@ -305,6 +313,10 @@ tension_monotone_descending(trajectory: walk_trajectory) -> verdict { \ }
 # discharge is byte-equality.
 #
 # Body discharges per-realisation. `\`-obligation-blocked.
+bilateral coherence_gradient_admissible {
+  sentinel "gradient=foerster-admissible"
+  arity 1
+}
 coherence_gradient_admissible(trajectory: walk_trajectory) -> verdict { \ }
 
 # === knife_verdict_bounded — bilateral predicate ===
@@ -326,6 +338,10 @@ coherence_gradient_admissible(trajectory: walk_trajectory) -> verdict { \ }
 # layer stamps the sentinel; discharge is byte-equality.
 #
 # Body discharges per-realisation. `\`-obligation-blocked.
+bilateral knife_verdict_bounded {
+  sentinel "verdict=three-state-bounded"
+  arity 1
+}
 knife_verdict_bounded(trajectory: walk_trajectory) -> verdict { \ }
 
 # === walk_witnessing — composed bilateral ===
@@ -355,6 +371,14 @@ knife_verdict_bounded(trajectory: walk_trajectory) -> verdict { \ }
 # observation the compiler committed on was substrate-honest.
 #
 # Body discharges per-realisation. `\`-obligation-blocked.
+bilateral walk_witnessing {
+  sentinel "witnessing=all-four-pass"
+  arity 1
+  require walk_terminates_cleanly
+  require tension_monotone_descending
+  require coherence_gradient_admissible
+  require knife_verdict_bounded
+}
 walk_witnessing(trajectory: walk_trajectory) -> verdict { \ }
 
 # ═══════════════════════════════════════════════════════════════════
