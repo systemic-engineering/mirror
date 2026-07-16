@@ -419,6 +419,105 @@ pub fn act(action: Ref, args: Vec<Value>) -> Verdict {
             "section_admissible: missing section_at_stalk argument".to_string(),
         );
     }
+    // ──────────────────────────────────────────────────────────────
+    // @uuid/spectral/time empirical dispatch landing (2026-07-16).
+    //
+    // Bilateral-predicate resolver for `@uuid/spectral/time` per Seam
+    // Phase D adjudication (task #174) of Mara addressation-ground
+    // substrate mint. Direct analog of the @sheaf bilateral dispatch
+    // pattern immediately above. sbec +4.
+    //
+    // Substrate-decl anchors (shards/uuid/spectral/time.mirror):
+    //   identity_contract_preserved(a) — sentinel
+    //     `identity=uuid-spectral-well-formed`. Load-bearing: the facet
+    //     extension does NOT weaken @glass's three-layer contract on
+    //     the identity field.
+    //   time_facet_admissible(a) — sentinel
+    //     `time=monotonic-instant-well-formed`. Rice-safe read of the
+    //     settle-witness on the duration base carrier.
+    //   dedup_ignores_time(a, b) — sentinel
+    //     `dedup=orthogonal-invariant-holds` in both args. Storage-
+    //     layer invariant per docs/math/uuid/spectral-time.md §4
+    //     (identity_of projection homomorphism preserves @mirror/store
+    //     dedup equivalence).
+    //   uuid_spectral_time_witnessing(a, b) — composed bilateral;
+    //     sentinel `witnessing=composed-all-pass` in both args. Parallel
+    //     to sheaf_witnessing + gestalt_witnessing composed-bilateral
+    //     precedent.
+    //
+    // [substrate-floor:@io-boundary] Bridge-β-pattern extension at Rust
+    // FLOOR. Audit-cite: docs/audits/2026-07-15-seam-autopoietic-loop-
+    // phase-d.md (55dbf20) + Seam Phase D task #174. Signed-off-by:
+    // Seam.
+    // ──────────────────────────────────────────────────────────────
+    if action == "@uuid/spectral/time.identity_contract_preserved" {
+        if let Some(a) = args.first() {
+            if a.oid.contains("identity=uuid-spectral-well-formed") {
+                return Verdict::Pass;
+            }
+            return Verdict::Fail(format!(
+                "identity_contract_preserved: expected \
+                 identity=uuid-spectral-well-formed sentinel, got arg oid {:?}",
+                a.oid
+            ));
+        }
+        return Verdict::Fail(
+            "identity_contract_preserved: missing uuid_spectral_time argument"
+                .to_string(),
+        );
+    }
+    if action == "@uuid/spectral/time.time_facet_admissible" {
+        if let Some(a) = args.first() {
+            if a.oid.contains("time=monotonic-instant-well-formed") {
+                return Verdict::Pass;
+            }
+            return Verdict::Fail(format!(
+                "time_facet_admissible: expected \
+                 time=monotonic-instant-well-formed sentinel, got arg oid {:?}",
+                a.oid
+            ));
+        }
+        return Verdict::Fail(
+            "time_facet_admissible: missing uuid_spectral_time argument".to_string(),
+        );
+    }
+    if action == "@uuid/spectral/time.dedup_ignores_time" {
+        if args.len() < 2 {
+            return Verdict::Fail(format!(
+                "dedup_ignores_time: expected (a, b) uuid_spectral_time pair, got {} args",
+                args.len()
+            ));
+        }
+        if args[0].oid.contains("dedup=orthogonal-invariant-holds")
+            && args[1].oid.contains("dedup=orthogonal-invariant-holds")
+        {
+            return Verdict::Pass;
+        }
+        return Verdict::Fail(format!(
+            "dedup_ignores_time: expected dedup=orthogonal-invariant-holds \
+             sentinel in both args, got ({:?}, {:?})",
+            args[0].oid, args[1].oid
+        ));
+    }
+    if action == "@uuid/spectral/time.uuid_spectral_time_witnessing" {
+        if args.len() < 2 {
+            return Verdict::Fail(format!(
+                "uuid_spectral_time_witnessing: expected (a, b) uuid_spectral_time \
+                 pair, got {} args",
+                args.len()
+            ));
+        }
+        if args[0].oid.contains("witnessing=composed-all-pass")
+            && args[1].oid.contains("witnessing=composed-all-pass")
+        {
+            return Verdict::Pass;
+        }
+        return Verdict::Fail(format!(
+            "uuid_spectral_time_witnessing: expected witnessing=composed-all-pass \
+             sentinel in both args, got ({:?}, {:?})",
+            args[0].oid, args[1].oid
+        ));
+    }
     // ─────────────────────────────────────────────────────────────────
     // Arc-2 Tick 2.1 — FIRST OUROBOROS BITE (2026-07-15).
     //
