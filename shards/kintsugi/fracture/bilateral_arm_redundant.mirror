@@ -1,0 +1,632 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @kintsugi
+in @kintsugi/consent
+in @kintsugi/morphism
+in @kintsugi/fracture
+in @kintsugi/roomba
+in @epistemologic
+in @epistemologic/pact
+in @epistemologic/pact/bilateral
+in @io
+in @io/fs
+in @io/git
+in @apply_h
+
+# @kintsugi/fracture/bilateral_arm_redundant — the OPERATIONAL fracture
+# species that names the pattern "a `bilateral` block was declared in
+# a shard AND the reflective evaluator would handle its dispatch, but
+# a hand-typed arm at `bootstrap/src/apply_h.rs` still discharges the
+# same action ref by direct `if action == "@X/Y.name" { ... contains(
+# "<sentinel>") ... }` string-check." The arm's continued existence
+# IS the fracture; its byte-range deletion IS the resolution; the
+# roomba composition dispatches the resolution as one turn in the
+# @roomba × @kintsugi @metalogue at @algebra/metalogue altitude.
+#
+# Species under @kintsugi/fracture at reflective-corpus altitude.
+# Fifteenth landed sibling to the fourteen existing fracture bodies
+# (angle_to_paren, cold_compile_within_tolerance, dark_count_monotone,
+# docblock_extractive, docblock_incoherent, docblock_ungrounded, gate,
+# keyword, operator_match, parent_cycle, partials_align, relocate,
+# restart_storm, symbol_lift). Same shape: typed carrier + detect
+# action + resolution action + composed bilateral discipline.
+#
+# === Substrate authority ===
+#
+# - Alex 2026-07-16 /loop directive verbatim (session-crystallizing):
+#     "collapse the Rust surface using mirror's roomba. Minimal
+#      surface in rust/. Then the roomba starts to eat the bootstrap
+#      for breakfast and grows the substrate. That's the roomba
+#      commit diffs I wanna see. Deleted Rust. Added mirror."
+#
+#   The compiler authors the deletion commit itself. `mirror`
+#   <mirror@spectral.engineer>, not Reed. This species is the
+#   fracture-body substrate the roomba walks into and mends.
+#
+# - Canonical spec: `docs/specs/kintsugi-fracture-bilateral-arm-
+#   redundant.md` (Mara THIS-tick; the detection algorithm +
+#   resolution algorithm + composition graph + landing plan for
+#   Reed's follow-up).
+#
+# - Math foundation: `docs/math/kintsugi/fracture/bilateral-arm-
+#   redundant.md` (Mara THIS-tick; the formal redundancy predicate +
+#   retirement invariants + termination proof + Connes-triple angle).
+#
+# === Audit chain ===
+#
+# The bilateral-arm retirement arc has landed six ticks ahead of this
+# species; this species names the fracture whose per-arm resolution
+# closes the arc:
+#
+#   1. `a0f4d3f/9a77361/701828a` (Mara) — the
+#      `@epistemologic/pact/bilateral` shape: bilateral typed carrier +
+#      canonical spec + math foundation naming the reflective corpus
+#      shape the ~30 hand-typed apply_h::act arms shadow.
+#
+#   2. `61c9051/21fc211` (Reed via subagent) — the reflective
+#      evaluator + corpus loader in `bootstrap/src/apply_h.rs`. The
+#      bilateral corpus is checked FIRST; the resolver falls through
+#      to the legacy hand-typed arms only when the corpus misses.
+#      This is the substrate-honest half of the retirement: the
+#      floor now dispatches reflectively.
+#
+#   3. `71bb9b2` (Mara) — Landing 1 bite 1: four `bilateral` blocks
+#      added to `shards/spectral/signature.mirror` naming the four
+#      predicates' sentinels + arities in shard-decl form.
+#
+#   4. `06f14f5` (Reed via subagent) — Landing 5 bite 1: retired the
+#      four `@spectral/signature` hand-typed arms from
+#      `bootstrap/src/apply_h.rs`. Reflective dispatch handled them;
+#      6/6 tests passed; net -32 LOC. First empirical witness that
+#      the retirement discipline works.
+#
+# THIS TICK closes the substrate-honest loop: the six preceding ticks
+# established that Reed can retire arms manually with subagent help;
+# this species mints the fracture body the roomba detects + resolves
+# autonomously. Reed-authored retirement was Alex-authoring by proxy.
+# `mirror <mirror@spectral.engineer>` authoring — the compiler-as-
+# author — is the terminal shape. This species is the substrate the
+# terminal shape composes over.
+#
+# === The load-bearing claim ===
+#
+# For every entry `(action_ref, sentinel)` in the bilateral corpus
+# `load_bilateral_corpus(ctx)` returns:
+#
+#   IF there exists a hand-typed arm in `bootstrap/src/apply_h.rs`
+#   matching `if action == "<action_ref>" { ... .contains("<sentinel>") ... }`
+#
+#   THEN that arm IS a `bilateral_arm_redundant` fracture:
+#     - its work is done by the reflective corpus (61c9051/21fc211)
+#     - its continued existence is duplication of the shard-decl
+#     - its discharge (Pass|Fail on the same argument list) is
+#       byte-equal to the reflective evaluator's discharge
+#     - its byte-range deletion strictly decreases `rust_loc(after)`
+#       while preserving `sbec(after) = sbec(before)` and
+#       `test_pass_rate(after) = test_pass_rate(before) = 100%`
+#
+# The species names this fracture pattern at reflective-corpus
+# altitude. The detect action reads the bilateral corpus + `apply_h.rs`
+# bytes and emits a `[redundant_arm_record]` naming every arm the
+# resolver can safely delete. The collapse action reads one record,
+# byte-deletes the arm's line range via `@io/fs.mutate_at` (with
+# empty replacement), commits via `@io/git.commit` as `mirror
+# <mirror@spectral.engineer>`.
+#
+# === substrate-already-had-the-word discovery ===
+#
+# The `@io/fs.mutate_at(p: path, pos: source_position, replacement:
+# bytes) -> imperfect` action landed 2026-07-15 at Mara Landing 7 IS
+# already the byte-boundary-precision splice primitive this species
+# needs. Line-range deletion IS `mutate_at` with:
+#
+#   pos.byte_offset  = start of the arm's `if action == ...` line
+#   pos.byte_length  = end of the closing `}` — start
+#   replacement      = "" (empty bytes)
+#
+# The word was there. No `@nl.line_range_delete` mint is needed;
+# @io/fs.mutate_at at empty-replacement altitude IS line-range
+# deletion. Substrate-honest per [[feedback-substrate-already-had-
+# the-word]] (~73rd landed instance).
+#
+# === The detection surface ===
+#
+# The `detect` action reads the corpus + `apply_h.rs` bytes; for each
+# `(action_ref, sentinel)` in the corpus, greps for the arm pattern.
+# When found, emits a `redundant_arm_record` naming:
+#
+#   action_ref       — the shard-decl'd action string (e.g.,
+#                       "@spectral/signature.signature_integrity")
+#   apply_h_path     — the file the arm lives in
+#                       ("bootstrap/src/apply_h.rs")
+#   arm_line_start   — the first line of the arm's if-block
+#   arm_line_end     — the last line of the arm's closing `}`
+#   sentinel         — the shard-decl'd sentinel byte-string; MUST
+#                       equal the `.contains(...)` argument on the
+#                       arm's guard line (bilateral discipline)
+#   arm_bytes        — the arm's byte-range content (audit trail;
+#                       what the resolver deletes)
+#
+# The detect action's return is a `[redundant_arm_record]` — one
+# record per redundant arm; empty list when the fixed-point holds
+# (no arm shadows any bilateral in the corpus).
+#
+# === The resolution surface ===
+#
+# The `collapse` action reads one `redundant_arm_record`; discharges:
+#
+#   1. Read `apply_h.rs` bytes via `@io/fs.read(record.apply_h_path)`.
+#   2. Compute `source_position` from arm_line_start/arm_line_end
+#      byte offsets (line-to-byte via the byte-visible line table).
+#   3. Call `@io/fs.mutate_at(apply_h_path, source_position, empty_bytes)`
+#      to byte-delete the arm; POSIX-atomic write-to-temp + rename
+#      preserves the file's other bytes.
+#   4. Call `@io/git.commit(message, "mirror <mirror@spectral.engineer>",
+#      allow_empty=false)` with a commit message naming the retired
+#      arm + the shard-decl'd bilateral it shadows + the byte-count
+#      delta.
+#
+# The verdict returned is `@glass.verdict`:
+#   pass                 — arm deleted; file rewritten byte-atomically;
+#                           commit landed under mirror-authorship.
+#   partial(confidence)  — arm deleted but with residual (e.g.,
+#                           surrounding whitespace drift; needs cargo
+#                           fmt in follow-up tick; commit landed).
+#   failure(reason)      — deletion NOT applied; file preserved
+#                           byte-identically (path missing; position
+#                           out of range; git commit refused). No
+#                           substrate mutation.
+#
+# === Composition graph ===
+#
+# Parents (substrate-decl):
+#   @kintsugi/fracture          — family-root; fifteenth sibling
+#                                   species under the fracture pattern
+#   @kintsugi/consent           — verdict authority per
+#                                   `[[feedback-morphism-carrier-per-
+#                                   feedback]]`; collapse emits verdict
+#                                   the outer kintsugi loop reads
+#   @kintsugi/morphism          — the morphism carrier the fracture
+#                                   emits (deletion morphism at byte
+#                                   altitude)
+#   @epistemologic/pact/bilateral — the corpus this species reads;
+#                                   the sentinel-per-arm-verification
+#                                   discipline
+#   @kintsugi/roomba            — the walker that dispatches this
+#                                   species' detect action per pulse;
+#                                   composition edge lands in Reed
+#                                   follow-up tick A
+#   @io/fs                       — mutate_at at empty-replacement =
+#                                   line-range deletion; the byte-
+#                                   boundary substrate
+#   @io/git                      — commit under mirror-authorship;
+#                                   the deletion is authored by the
+#                                   compiler, not by Reed
+#   @apply_h                     — the resolver whose hand-typed arms
+#                                   are the fracture sites
+#
+# Consumers (compose over this species):
+#   @kintsugi/roomba             — Reed tick A adds one composition
+#                                    edge: on walk-step where a
+#                                    `bilateral` block is encountered,
+#                                    dispatch this species' detect
+#                                    action
+#   `mirror roomba --commit --collapse=bootstrap/src/apply_h.rs`
+#                                — Reed tick C empirical run; the
+#                                    compiler authors the deletion
+#                                    commit itself
+#
+# === Substrate-already-had-the-word citation chain (this landing) ===
+#
+# 1. `@io/fs.mutate_at` (2026-07-15 Landing 7 by Mara) — the byte-
+#    boundary splice primitive. Line-range deletion = empty
+#    replacement; no `@nl.line_range_delete` mint needed.
+#
+# 2. `@io/git.commit(message, author, allow_empty)` (2026-06-24 by
+#    Mara; @io/git species) — the commit surface. Authoring identity
+#    is a first-class argument; `mirror <mirror@spectral.engineer>`
+#    fits without new mechanism.
+#
+# 3. `@epistemologic/pact/bilateral.discharge(decl, args) -> verdict`
+#    (a0f4d3f Mara this session) — the reflective evaluator surface.
+#    The corpus lookup key IS the `action_ref` this species stores
+#    in `redundant_arm_record`.
+#
+# 4. `@kintsugi/roomba.bump(position) -> kintsugi_dispatch`
+#    (roomba.mirror additive cascade Alex 2026-07-16) — the walker's
+#    fracture-emission trigger. This species is one target species
+#    the bump dispatches to via `fracture_species` open enum.
+#
+# 5. `@glass.source_position` (2026-07-15 Landing per Mara ff8fbb1) —
+#    the byte-precision splice-coordinate carrier the `collapse`
+#    action passes to `mutate_at`.
+#
+# The word was there for every primitive this species composes over.
+# ZERO new substrate machinery beyond the three artifacts
+# (shard-decl + spec + math).
+#
+# === Bilateral discipline: this species dogfoods the shape it enforces ===
+#
+# Per Alex 2026-07-16 substrate-honest self-reference: the three
+# bilateral predicates below use the `bilateral <name> { sentinel
+# "..." arity 1 }` shape landed at `a0f4d3f`. This IS the mint
+# consuming its own product — the species that resolves shadow arms
+# declares its own predicates through the shape whose reflective
+# dispatch REPLACES shadow arms. Substrate-honest self-reference at
+# reflective-corpus altitude.
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]] — this species IS a
+#   shard-decl; the roomba composition edge reads the shard at parse
+#   time via the reflective loader.
+# [[architecture-glass-wall-substrate-types]] — verdict is
+#   `@glass.verdict`; source_position is `@glass.source_position`;
+#   both types inherit through the glass wall.
+# [[architecture-property-fracture-bilateral]] — this species IS the
+#   operational half; the declarative half is
+#   `@epistemologic/pact/bilateral.bilateral_well_formed(decl) ∧
+#   arm_shadows_decl(arm, decl)` — the predicate the compiler checks
+#   before dispatching collapse.
+# [[architecture-prism-as-trait-as-everything]] — `prism
+#   @kintsugi/fracture/bilateral_arm_redundant` declares the species
+#   IS a prism.
+# [[feedback-substrate-already-had-the-word]] (~73rd landed instance)
+#   — every primitive this species composes over was already landed;
+#   ZERO new mechanism.
+# [[feedback-craft-not-deliver]] — action bodies (detect, collapse)
+#   discharge at realisation via the reflective evaluator + the @io
+#   boundary; the substrate names the obligation.
+# [[feedback-no-rust-extension-shortcut]] — this species is a
+#   shard-decl + spec + math triad; ZERO new Rust. The Reed follow-up
+#   tick A adds ONE roomba composition-edge line; the empirical tick C
+#   runs the compiler on itself and the compiler authors the deletion
+#   commit. Rust net delta at completion: strongly negative (arm
+#   bytes removed per fixed-point iteration).
+# [[feedback-cli-subcommand-nesting-is-geometric]] — species-under-
+#   @kintsugi/fracture is geometric ground truth; this shard sits in
+#   the same column as the fourteen landed siblings.
+# [[feedback-legibility-over-foundation-when-collapsing]] — the shape
+#   name `bilateral_arm_redundant` is the readable Alex-lineage word;
+#   the foundational `shadow_arm_of_reflective_corpus_entry` alternate
+#   was refused in favor of the readable substrate-decl'd word Alex
+#   used verbatim in the tick prompt ("redundant fracture").
+#
+# === Related shards / specs ===
+#
+# - docs/specs/kintsugi-fracture-bilateral-arm-redundant.md
+#     (Mara THIS-tick canonical spec; detection + resolution + landing
+#      plan for Reed follow-up ticks A/B/C)
+# - docs/math/kintsugi/fracture/bilateral-arm-redundant.md
+#     (Mara THIS-tick math foundation; redundancy predicate +
+#      retirement invariants + termination)
+# - shards/epistemologic/pact/bilateral.mirror
+#     (a0f4d3f Mara this session; the reflective-corpus shape this
+#      species reads)
+# - shards/spectral/signature.mirror
+#     (71bb9b2 Mara this session; first shard with `bilateral` blocks)
+# - shards/kintsugi/roomba.mirror
+#     (Reed follow-up tick A adds composition edge here; do not
+#      touch this tick)
+# - shards/io/fs.mirror
+#     (2026-07-15 Mara Landing 7; @io/fs.mutate_at IS the byte-
+#      boundary primitive; empty replacement = line-range deletion)
+# - shards/io/git.mirror
+#     (2026-06-24 Mara; @io/git.commit is the compiler-authorship
+#      surface; author argument accepts "mirror <mirror@spectral.
+#      engineer>" without new mechanism)
+# - shards/glass.mirror
+#     (ff8fbb1 Mara 2026-07-15; source_position at glass altitude)
+# - bootstrap/src/apply_h.rs
+#     (Reed follow-up tick C empirical target; hand-typed arms shadow
+#      the reflective corpus; each arm is one fracture site)
+#
+# Path-namespace property: this file at
+# `shards/kintsugi/fracture/bilateral_arm_redundant.mirror` declares
+# `@kintsugi/fracture/bilateral_arm_redundant` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/practice/wolf-2026-07-16-loop-collapse-rust-surface-using-roomba
+source @arxiv/practice/mara-a0f4d3f-bilateral-typed-carrier
+source @arxiv/practice/reed-06f14f5-first-bilateral-arm-retirement
+
+prism @kintsugi/fracture/bilateral_arm_redundant {
+  focus  redundant_arm
+  project redundant_arm
+  split  redundant_arm
+  shift  redundant_arm
+  settle redundant_arm
+}
+
+# === The redundant_arm_record carrier ===
+#
+# The typed record naming one hand-typed apply_h.rs arm shadowed by a
+# bilateral corpus entry. Consumed by the `collapse` action; produced
+# by the `detect` action. The unit-of-repair for the roomba's per-
+# pulse fracture-emission at reflective-corpus altitude.
+#
+# Six fields (per the resolution surface's argument closure):
+#
+#   action_ref       — the shard-decl'd action string the arm and the
+#                       corpus both dispatch on (e.g.,
+#                       "@spectral/signature.signature_integrity").
+#                       Content-addressed identity: two records with
+#                       the same action_ref name the same fracture.
+#
+#   apply_h_path     — the file the arm lives in
+#                       ("bootstrap/src/apply_h.rs" for the current
+#                       arc; species accepts any future resolver
+#                       file per composition).
+#
+#   arm_line_start   — the first line of the arm's `if action == ...`
+#                       guard. Byte-visible from the source; the
+#                       resolver reads via `@io/fs.read` at collapse
+#                       time.
+#
+#   arm_line_end     — the last line of the arm's closing `}`. The
+#                       inclusive end of the byte range to delete.
+#
+#   sentinel         — the shard-decl'd sentinel byte-string; MUST
+#                       equal the `.contains(...)` argument on the
+#                       arm's guard line. Bilateral discipline: the
+#                       arm's runtime check IS the sentinel check;
+#                       redundancy IS byte-equality between the
+#                       arm's inline sentinel and the shard-decl'd
+#                       sentinel.
+#
+#   arm_bytes        — the arm's byte-range content (audit trail;
+#                       what the resolver deletes). Content-addressed
+#                       for the roomba's kintsugi_dispatch record's
+#                       morphism.content field.
+#
+# Identity contract: byte-equality on (action_ref, apply_h_path,
+# arm_line_start, arm_line_end, sentinel, arm_bytes). Two records
+# name the same fracture iff all six fields byte-match.
+type redundant_arm_record = {
+  action_ref:      ref,
+  apply_h_path:    ref,
+  arm_line_start:  u32,
+  arm_line_end:    u32,
+  sentinel:        ref,
+  arm_bytes:       ref,
+}
+
+# === arm_is_in_reflective_corpus — bilateral predicate (arity 1) ===
+#
+# Does the record's action_ref name a key in the bilateral corpus?
+# The FIRST redundancy conjunct: if the reflective evaluator's corpus
+# does NOT contain the arm's action ref, the arm is NOT redundant
+# (its dispatch is uniquely served by the arm; deletion would break
+# the resolver). The predicate discharges Pass iff the corpus lookup
+# succeeds for the record's action_ref.
+#
+# Rice-safe at whole-tick altitude: reads only byte-visible state
+# (the corpus keyset via `load_bilateral_corpus(ctx)`; the record's
+# action_ref field); no program semantics inspection.
+#
+# Sentinel per shard docblock: `arm=in-reflective-corpus` — the byte-
+# level substrate-decl'd marker. When the record's action_ref
+# resolves to a bilateral declaration via the corpus loader, the
+# realization layer stamps the sentinel; discharge is byte-equality
+# on the ref.oid containment check per
+# `@epistemologic/pact/bilateral.discharge`.
+#
+# Body `\`-obligation-blocked per [[feedback-craft-not-deliver]];
+# Reed follow-up tick B composes this via `apply_h::act` (the
+# reflective evaluator handles this bilateral through its own corpus
+# lookup by construction; the arm-is-in-corpus check IS a corpus
+# `contains_key(action_ref)` operation lifted to bilateral altitude).
+bilateral arm_is_in_reflective_corpus {
+  sentinel "arm=in-reflective-corpus"
+  arity    1
+}
+arm_is_in_reflective_corpus(record: redundant_arm_record) -> verdict { \ }
+
+# === arm_matches_sentinel — bilateral predicate (arity 1) ===
+#
+# Does the record's `sentinel` field byte-equal the shard-decl'd
+# sentinel the arm's `.contains(...)` line checks against? The SECOND
+# redundancy conjunct: the reflective evaluator's discharge byte-
+# equals the arm's discharge ONLY IF both check against the same
+# sentinel. If the arm checks a DIFFERENT sentinel than the shard-
+# decl declares, deletion would silently change the resolver's
+# verdict on the same input — substrate-dishonest.
+#
+# The predicate discharges Pass iff:
+#   corpus[record.action_ref].sentinel == record.sentinel   (byte-equality)
+#
+# The record's sentinel field IS the arm's inline `.contains(...)`
+# argument extracted at detect time. Byte-equality between it and the
+# corpus entry's sentinel is the guarantee that the arm's semantics
+# IS the corpus entry's semantics.
+#
+# Rice-safe at whole-tick altitude: reads only byte-visible state
+# (two byte-strings compared for byte-equality); no program
+# semantics.
+#
+# Sentinel per shard docblock: `arm=matches-shard-sentinel` — the
+# byte-level substrate-decl'd marker. When byte-equality holds, the
+# realization layer stamps the sentinel; discharge is byte-equality.
+#
+# Body `\`-obligation-blocked; realized by the reflective evaluator.
+bilateral arm_matches_sentinel {
+  sentinel "arm=matches-shard-sentinel"
+  arity    1
+}
+arm_matches_sentinel(record: redundant_arm_record) -> verdict { \ }
+
+# === arm_is_redundant_witnessing — composed bilateral (arity 1) ===
+#
+# THE LOAD-BEARING composed bilateral. Passes iff BOTH sub-bilaterals
+# discharge Pass on the same record:
+#
+#   arm_is_redundant_witnessing(record) :=
+#     arm_is_in_reflective_corpus(record)
+#     ∧ arm_matches_sentinel(record)
+#
+# Sibling to walk_witnessing at @kintsugi/roomba, home_witnessing at
+# @peer/persistence, coherence_witnessing at @epistemologic/cybernetic/
+# coherence — the composed-bilateral pattern at species-witnessing
+# altitude. Two conjuncts (not four) because redundancy IS byte-
+# equality between two byte-strings + one keyset-membership check;
+# the substrate does not need a wider conjunction to name it.
+#
+# Rice-safe at whole-tick altitude: composition of two Rice-safe
+# bilaterals; no additional program semantics.
+#
+# Sentinel per shard docblock: `witnessing=all-two-pass` — the byte-
+# level substrate-decl'd marker. When both sub-bilaterals discharge
+# Pass on the same record, the realization layer stamps the sentinel;
+# discharge is byte-equality.
+#
+# Load-bearing structural claim: `arm_is_redundant_witnessing(record)
+# = Pass` is the substrate-decl form of "this arm's discharge is
+# byte-equal to the reflective evaluator's discharge on the same
+# argument list; deletion is safe under the retirement invariant."
+# The `collapse` action reads this verdict before dispatching the
+# `@io/fs.mutate_at` + `@io/git.commit` composition; failure short-
+# circuits deletion + preserves file bytes.
+#
+# Body `\`-obligation-blocked; realized reflectively via the
+# discharge action's `require` closure over the two sub-bilaterals.
+bilateral arm_is_redundant_witnessing {
+  sentinel "witnessing=all-two-pass"
+  arity    1
+  require  arm_is_in_reflective_corpus
+  require  arm_matches_sentinel
+}
+arm_is_redundant_witnessing(record: redundant_arm_record) -> verdict { \ }
+
+# === detect action (fracture-emission surface) ===
+#
+# THE LOAD-BEARING DETECTION ACTION. Reads the bilateral corpus + the
+# apply_h.rs bytes; emits one `redundant_arm_record` per hand-typed
+# arm shadowed by a corpus entry. Returns empty list when the fixed-
+# point holds (no arm shadows any bilateral in the corpus).
+#
+# Algorithm (per docs/specs/kintsugi-fracture-bilateral-arm-redundant.md
+# §3 detection pseudocode):
+#
+#   detect(apply_h_bytes, corpus):
+#     records = []
+#     for (action_ref, decl) in corpus.entries():
+#       arm_range = grep_for_arm(apply_h_bytes, action_ref)
+#       if arm_range is None:
+#         continue  # no shadow arm; corpus entry is already terminal
+#       arm_sentinel = extract_contains_argument(
+#         apply_h_bytes, arm_range
+#       )
+#       record = redundant_arm_record {
+#         action_ref:     action_ref,
+#         apply_h_path:   "bootstrap/src/apply_h.rs",
+#         arm_line_start: arm_range.line_start,
+#         arm_line_end:   arm_range.line_end,
+#         sentinel:       decl.sentinel,
+#         arm_bytes:      apply_h_bytes[arm_range.byte_start..
+#                                        arm_range.byte_end],
+#       }
+#       if arm_is_redundant_witnessing(record) == Pass:
+#         records.append(record)
+#     return records
+#
+# Composition surface:
+#   @io/fs.read(apply_h_path)                   — read the resolver bytes
+#   @epistemologic/pact/bilateral.load_corpus   — the reflective corpus
+#   arm_is_redundant_witnessing(record)         — witnessing conjunction
+#
+# Rice-safe bound at whole-tick altitude: reads only byte-visible
+# state (corpus keyset; apply_h.rs bytes; substring containment); no
+# program semantics.
+#
+# Body `\`-obligation-blocked; Reed follow-up tick A wires the
+# roomba composition edge that dispatches this action per bump-
+# pulse. The realisation composes over `@io/fs.read` + the corpus
+# loader; grep_for_arm + extract_contains_argument are byte-level
+# substring operations at @nl altitude.
+detect(apply_h_bytes: ref, corpus: ref) -> ref { \ }
+
+# === collapse action (fracture-resolution surface) ===
+#
+# THE LOAD-BEARING RESOLUTION ACTION. Reads one `redundant_arm_record`;
+# byte-deletes the arm via `@io/fs.mutate_at` (empty replacement);
+# commits the deletion via `@io/git.commit` under mirror-authorship.
+# Returns `@glass.verdict`.
+#
+# Algorithm (per docs/specs/kintsugi-fracture-bilateral-arm-redundant.md
+# §4 resolution pseudocode):
+#
+#   collapse(record):
+#     # Guard: only proceed if the witnessing bilateral passes
+#     if arm_is_redundant_witnessing(record) != Pass:
+#       return failure("redundancy witnessing failed; arm preserved")
+#
+#     # Read current file bytes
+#     bytes = @io/fs.read(record.apply_h_path)
+#     if bytes.status != success:
+#       return failure("apply_h.rs read failed")
+#
+#     # Compute byte-precision splice coordinates from line-range
+#     position = line_range_to_source_position(
+#       bytes,
+#       record.arm_line_start,
+#       record.arm_line_end,
+#     )
+#
+#     # POSIX-atomic byte-range deletion (mutate_at with empty replacement)
+#     mutate = @io/fs.mutate_at(
+#       record.apply_h_path,
+#       position,
+#       empty_bytes,  # deletion = empty replacement
+#     )
+#     if mutate.status != success:
+#       return failure("mutate_at refused; file preserved")
+#
+#     # Compile-check post-deletion (composition; not this species'
+#     # obligation — the outer roomba's kintsugi loop invariants read
+#     # walk_terminates_cleanly + tension_monotone_descending after
+#     # each collapse)
+#
+#     # Commit under mirror-authorship
+#     message = compose_commit_message(record)
+#     commit = @io/git.commit(
+#       message,
+#       "mirror <mirror@spectral.engineer>",
+#       allow_empty: false,
+#     )
+#     if commit != pass:
+#       return failure("commit refused; file mutated but not committed")
+#
+#     return pass
+#
+# Composition surface:
+#   @io/fs.read(record.apply_h_path)
+#   @io/fs.mutate_at(path, source_position, empty_bytes)
+#   @io/git.commit(message, author, allow_empty)
+#   arm_is_redundant_witnessing(record)   [guard]
+#
+# The `empty_bytes` ref is content-addressed to the empty byte
+# sequence; substrate handles the empty-replacement altitude via
+# `@io/fs.mutate_at`'s general splice semantics (no new mechanism).
+#
+# The mirror-authorship string "mirror <mirror@spectral.engineer>"
+# passes through `@io/git.commit`'s author argument unmodified;
+# `[[architecture-shards-as-substrate-source]]` at the git commit
+# altitude: the compiler is a first-class author identity.
+#
+# Body `\`-obligation-blocked; Reed follow-up tick C empirical run
+# composes this via `apply_h::act` per the roomba's bump-pulse
+# dispatch. The realisation composes over @io/fs + @io/git + the
+# witnessing bilateral.
+collapse(record: redundant_arm_record) -> verdict
+requires arm_is_redundant_witnessing(record)
+{ \ }
+
+out @kintsugi/fracture/bilateral_arm_redundant
+out redundant_arm_record
+out arm_is_in_reflective_corpus
+out arm_matches_sentinel
+out arm_is_redundant_witnessing
+out detect
+out collapse
