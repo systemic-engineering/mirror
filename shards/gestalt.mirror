@@ -16,6 +16,7 @@ in @io/fs
 in @io/git
 in @kintsugi/consent
 in @epistemologic/reality/time
+in @uuid/spectral/time
 in @fate
 
 # @gestalt — a @gestalt document IS a @song that unfolds on the
@@ -245,6 +246,29 @@ type unfolding_state = {
 # Merkle-DAG chain via `previous: option<oid>` per math §3.1.
 # Composition-only over @spectral/signature ssh_fingerprint
 # discipline (LANDED).
+#
+# === 2026-07-16 address-facet cascade ===
+#
+# `address: uuid_spectral_time` composition edge (Mara `c2bb1d2`
+# species-decl landing). The annotation IS content-addressed by
+# uuid_spectral (128-bit identity: dedup at @mirror/store) with a
+# trailing time facet (tie-break + causal ordering). Byte-layout:
+# [ACTIVE 48 | DARK 80 | time N]. Per docs/math/uuid/spectral-
+# time.md §1 (categorical product) + §3 (R4-affinity-by-construction
+# theorem).
+#
+# R4 dispatch dissolves here: for annotation set A(v) at node v, the
+# tournament ordering IS argsort by
+# `@uuid/spectral/time.affinity_distance(a.address, reader.address)`.
+# No @fate machinery required at annotation altitude; the substrate
+# carries the ordering by construction. R4 CLOSED per docs/specs/
+# gestalt-as-song-unfolding.md §10 (updated at this cascade).
+#
+# Backward-compat: `timestamp` field retained. `address.time` and
+# `timestamp` may collapse to a single facet at a future Alex-
+# adjudicable tick; both readers (canonical spec §2.5, math §3.1)
+# already assume nanosecond-precision monotonic instants, so the
+# collapse is semantically null when it lands. Not this arc.
 type annotation = {
   contributor:      subject_instance,
   target_node:      oid,
@@ -253,6 +277,7 @@ type annotation = {
   previous:         option<oid>,
   timestamp:        @time/monotonic.instant,
   ssh_fingerprint:  ref,
+  address:          uuid_spectral_time,
 }
 
 # === Socket-shaped actions (stay nonlinear; per pipeforward §5.5.4
