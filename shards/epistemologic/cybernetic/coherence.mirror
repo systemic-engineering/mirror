@@ -638,6 +638,10 @@ pole_distance(sc: ref) -> pole_distances { \ }
 # n-1; every other vertex has degree 1. Body opaque at this
 # altitude; the discharge is a substrate-altitude graph-structural
 # audit.
+bilateral is_narcissus_pole {
+  sentinel "structure=star-K1n"
+  arity 1
+}
 is_narcissus_pole(g: ref) -> verdict { \ }
 
 # === is_splinter_pole — bilateral graph predicate ===
@@ -651,6 +655,10 @@ is_narcissus_pole(g: ref) -> verdict { \ }
 # (equivalently: every pair of distinct vertices is connected by
 # an edge). Body opaque at this altitude; the discharge is a
 # substrate-altitude graph-structural audit.
+bilateral is_splinter_pole {
+  sentinel "structure=complete-Kn"
+  arity 1
+}
 is_splinter_pole(g: ref) -> verdict { \ }
 
 # === coherence_increases — Foerster's ethical imperative discharged ===
@@ -679,6 +687,10 @@ is_splinter_pole(g: ref) -> verdict { \ }
 # Substrate-decl form: the comparison is monotone in the
 # coherence-scalar's numerical form (either candidate above
 # satisfies).
+bilateral coherence_increases {
+  sentinel "axis=splinter-ward"
+  arity 1
+}
 coherence_increases(before: coherence, after: coherence) -> verdict { \ }
 
 # === coherence_admissible_move — the sub-Turing-safe composition ===
@@ -764,6 +776,10 @@ coherence_invariant_under_traversal(
 # Consumers write `requires coherence_witnessing(state)` to declare
 # they will preserve the substrate's coherence-climbing discipline
 # across their operational surface.
+bilateral coherence_witnessing {
+  sentinel "witness=coherence-preserving"
+  arity 1
+}
 coherence_witnessing(state: coherence) -> verdict { \ }
 
 out @epistemologic/cybernetic/coherence
