@@ -174,6 +174,10 @@ extend(sig: rolling_signature, new_contribution: oid) -> rolling_signature { \ }
 #   beat_n.previous_beat == Some(OID_(n-1))  OR  n == 0 AND None
 # Substrate-decl form: byte-level check for `chain=merkle-linked`
 # sentinel in the arg OID.
+bilateral signature_integrity {
+  sentinel "chain=merkle-linked"
+  arity 1
+}
 signature_integrity(sig: rolling_signature) -> verdict { \ }
 
 # signature_authorship — does every beat's ssh_fingerprint match?
@@ -181,6 +185,10 @@ signature_integrity(sig: rolling_signature) -> verdict { \ }
 # Discharges Pass iff every beat's ssh_fingerprint matches the author's
 # ssh_signature_fingerprint (mod key-rotation events). Substrate-decl
 # form: byte-level check for `authorship=ssh-matched` sentinel.
+bilateral signature_authorship {
+  sentinel "authorship=ssh-matched"
+  arity 1
+}
 signature_authorship(sig: rolling_signature) -> verdict { \ }
 
 # signature_monotone — does the beat-sequence's ordering match the
@@ -188,6 +196,10 @@ signature_authorship(sig: rolling_signature) -> verdict { \ }
 #
 # Substrate-decl form: byte-level check for `ordering=timestamp-monotone`
 # sentinel.
+bilateral signature_monotone {
+  sentinel "ordering=timestamp-monotone"
+  arity 1
+}
 signature_monotone(sig: rolling_signature) -> verdict { \ }
 
 # signature_composition_honest — does sig.song_oid resolve to an @song
@@ -196,6 +208,10 @@ signature_monotone(sig: rolling_signature) -> verdict { \ }
 # Composition-only guarantee: no new mechanism; @song's emission IS the
 # signature. Substrate-decl form: byte-level check for
 # `composition=song-emission` sentinel.
+bilateral signature_composition_honest {
+  sentinel "composition=song-emission"
+  arity 1
+}
 signature_composition_honest(sig: rolling_signature) -> verdict { \ }
 
 out @spectral/signature
