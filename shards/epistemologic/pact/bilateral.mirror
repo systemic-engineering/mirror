@@ -1,0 +1,454 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @epistemologic
+in @epistemologic/pact
+in @kintsugi/consent
+in @apply_h
+
+# @epistemologic/pact/bilateral — the substrate-decl'd shape of a
+# bilateral predicate. Species under @epistemologic/pact at the
+# machine-readable-shape altitude.
+#
+# Species under @pact declaring the TYPED CARRIER for what the ~30
+# hand-written apply_h::act arms across 8 shard groups (Arc-2 Ticks
+# 2.1-2.4 + @sheaf + @uuid/spectral/time + @roomba bump/vacuum +
+# @mirror/store gc + @gestalt.annotation) currently duplicate as
+# docblock prose + Rust `if action == "X" && arg.oid.contains("Y")`
+# arms.
+#
+# === Substrate authority ===
+#
+# - Alex 2026-07-16 in-transcript verbatim (ratification):
+#     "Q1. Let's mint it then. Properly. Seems like it's load-bearing."
+#
+# - Taut Q1 substrate-truth scout (this session, 2026-07-16 evening):
+#     NO grammar-decl'd `bilateral <name> { sentinel: "..." }` shape
+#     exists. Sentinel string lives in docblock prose ONLY — not
+#     extractable via grammar. Closest extensible carrier is
+#     `shards/epistemologic/pact/*.mirror` — @pact family already
+#     carries "bilateral predicate that holds or fails" as first-class
+#     at family altitude. ~30 duplicate arms across 8 shard groups in
+#     `bootstrap/src/apply_h.rs` (~700 LOC of duplication of what shard
+#     docblock prose already declares).
+#
+# - Canonical spec: `docs/specs/bilateral-predicate-substrate-shape.md`
+#   (Mara THIS-tick; §0-§10; the substrate-decl'd shape + retirement
+#   contract + landing plan pointer for Reed's follow-up).
+#
+# - Math foundation:
+#   `docs/math/epistemologic/pact/bilateral-sentinel.md`
+#   (Mara THIS-tick; sentinel-as-content-addressed-witness + Connes-
+#   triple correspondence for the reflective evaluator).
+#
+# === Substrate-already-had-the-word citation chain ===
+#
+# The bilateral pattern was substrate-decl'd verbatim across the four
+# COLLAPSED Rust files' shard-decl replacements (all landed 2026-07-15
+# to 2026-07-16 under Arc-2 Tick 2.1-2.4):
+#
+#   1. `shards/spectral/signature.mirror` (Arc-2 Tick 2.1 FIRST BITE;
+#      commit f211ee48) — 4 bilateral predicates:
+#        signature_integrity            → chain=merkle-linked
+#        signature_authorship           → authorship=ssh-matched
+#        signature_monotone             → ordering=timestamp-monotone
+#        signature_composition_honest   → composition=song-emission
+#
+#   2. `shards/epistemologic/cybernetic/coherence.mirror` (Arc-2 Tick
+#      2.2 SECOND BITE; Mara e0a3e48) — 4 bilateral predicates:
+#        coherence_increases            → axis=splinter-ward
+#        is_narcissus_pole              → structure=star-K1n
+#        is_splinter_pole               → structure=complete-Kn
+#        coherence_witnessing           → witness=coherence-preserving
+#
+#   3. `shards/peer/persistence.mirror` (Arc-2 Tick 2.3 THIRD BITE) —
+#      5 bilateral predicates (4 base + 1 composed):
+#        projection_visibility_respected → visibility=filter-respected
+#        harvest_consent_verified        → consent=chain-verified
+#        boot_state_coherent             → basis=snapshot-matched
+#        home_content_addressed          → identity=content-addressed
+#        home_witnessing                 → witnessing=all-four-pass
+#
+#   4. `shards/kintsugi/roomba.mirror` (Arc-2 Tick 2.4 FOURTH BITE) —
+#      5 bilateral predicates (4 base + 1 composed):
+#        walk_terminates_cleanly         → termination=scope-a-exhaustive
+#        tension_monotone_descending     → tension=trajectory-descending
+#        coherence_gradient_admissible   → gradient=foerster-admissible
+#        knife_verdict_bounded           → verdict=three-state-bounded
+#        walk_witnessing                 → witnessing=all-four-pass
+#
+# Additional siblings (Reed 2026-07-16 Bridge-β extensions):
+#   5. `shards/subject/visibility/sheaf.mirror` — 4 bilateral arms
+#   6. `shards/uuid/spectral/time.mirror` — 4 bilateral arms (Reed
+#      substrate-floor c10a3bd; sbec +4)
+#   7. `shards/kintsugi/roomba.mirror` bump/vacuum additive cascade —
+#      3+ bilateral arms
+#   8. `shards/mirror/store.mirror` gc_reachability_closure_second_
+#      witness — 1 bilateral arm
+#
+# ~30 arms total across 8 shard groups; ~15 LOC per arm direct
+# duplication + ~250 LOC error-message prose = ~700 LOC cruft in
+# `bootstrap/src/apply_h.rs`. This species names the substrate-decl'd
+# shape whose reflective evaluator (Reed follow-up tick) replaces the
+# entire cruft with ~50 LOC of grammar-loader-composed dispatch.
+#
+# === The load-bearing claim ===
+#
+# Every one of the ~30 arms follows the SAME shape:
+#
+#   if action == "<shard-ref>.<predicate-name>" {
+#       if let Some(arg) = args.first() {
+#           if arg.oid.contains("<sentinel-string>") {
+#               return Verdict::Pass;
+#           }
+#           return Verdict::Fail(format!(
+#               "<predicate-name>: expected <sentinel-string> \
+#                sentinel ... got arg oid {:?}", arg.oid,
+#           ));
+#       }
+#       return Verdict::Fail("<predicate-name>: missing argument");
+#   }
+#
+# The only per-arm variability is:
+#   (a) the action ref string
+#   (b) the sentinel byte-string
+#   (c) the human-readable predicate name in the error message
+#   (d) the argument arity (1-arg base OR 2-arg composed OR N-arg)
+#
+# All three (a-c) are ALREADY declared in the shard-decl's docblock
+# prose. Only (d) is structural. Making (a-c) machine-readable via a
+# typed `bilateral { sentinel: "..." arity: N }` carrier reduces the
+# resolver to: grammar-loader reads the shard-decl at parse time,
+# extracts every bilateral's sentinel + arity, dispatches generically.
+#
+# One general Rust implementation (~50 LOC) replaces the ~700 LOC of
+# hand-typed arms. sbec neutral (same Pass/Fail verdicts fire against
+# the same sentinels); io_violations neutral (no @io); rust_loc -650
+# net. ouroboros_monotone four-conjunct HOLDS by construction.
+#
+# === Grammar-decl'd shape (machine-readable via existing loader) ===
+#
+# Two new companion keywords via `shards/epistemologic/pact/keywords.
+# mirror` registered in `bootstrap/src/grammar.rs::companion_keyword_
+# sources` for `shards/mirror/grammar.mirror`:
+#
+#   focus bilateral    — opens a recursively-scanned brace block
+#                         carrying the predicate's typed fields
+#                         (sentinel, arity, predicate-name, error-
+#                         message-template). Same AstKind::Focus
+#                         precedent as `focus project` in @mirror/spec.
+#
+#   project sentinel   — single-line directive whose payload is the
+#                         byte-string sentinel the predicate checks
+#                         for. Same AstKind::Project precedent as
+#                         `project source` in @mirror/spec.
+#
+# The bilateral block body:
+#
+#   bilateral <predicate_name> {
+#     sentinel  "<byte-string>"
+#     arity     <nat>          -- 1 for base | 2 for composed pairs
+#                              --   | N for N-arg bilaterals
+#     require   <sub-bilateral>  -- optional; for composed bilaterals
+#     require   <sub-bilateral>  --   naming the sub-predicates whose
+#                              --   AND-conjunction discharges Pass
+#   }
+#
+# The grammar loader parses the bilateral block into an AST node with
+# `sentinel` / `arity` / `require` children. `apply_h::act` reads the
+# corpus of parsed bilateral declarations at boot; dispatches by
+# looking up `action` against the declared bilateral name; extracts
+# `sentinel` + `arity`; byte-checks; discharges. Composed bilaterals
+# recursively evaluate their `require` children.
+#
+# === The bilateral species carrier ===
+#
+# Per this species: `bilateral` IS the shape a predicate declares to
+# be dispatchable via `apply_h::act` reflectively. The shape carries
+# four typed fields at declaration time:
+#
+#   name       — the predicate's identifier; string-shaped;
+#                 concatenated with the enclosing shard's @-ref to
+#                 form the full action ref the resolver dispatches on.
+#
+#   sentinel   — the byte-string the predicate checks for containment
+#                 of in the argument's ref.oid. Content-addressed
+#                 witness per docs/math/epistemologic/pact/bilateral-
+#                 sentinel.md §1. Empty string is substrate-ill-formed
+#                 (the predicate would trivially Pass on every arg).
+#
+#   arity      — the number of arguments the predicate takes. Currently
+#                 the substrate's ~30 landed bilaterals cover:
+#                   arity 1: 24 base bilaterals (single-arg sentinel
+#                            check on the sole arg's oid)
+#                   arity 2: 2 composed pairs (both args must witness
+#                            the same sentinel — precedent per
+#                            @mirror/store.gc_reachability_closure_
+#                            second_witness at Reed 2026-07-16 Bridge-β)
+#                   arity N: 4 composed bilaterals discharging the AND
+#                            of N sub-bilaterals (`require` field
+#                            carries the sub-predicate references).
+#
+#   require    — optional list of sub-bilateral references (typed
+#                 as `[ref]` — each element resolves to another
+#                 bilateral by name). Non-empty when this bilateral is
+#                 composed. The reflective evaluator recursively
+#                 evaluates each `require` entry; Pass iff all sub-
+#                 bilaterals discharge Pass on the same argument.
+
+prism @epistemologic/pact/bilateral {
+  focus  bilateral
+  project bilateral
+  split  bilateral
+  shift  bilateral
+  settle bilateral
+}
+
+# === Typed carrier ===
+#
+# The record shape carrying one bilateral declaration. Consumed by the
+# reflective `apply_h::act` evaluator (Reed follow-up tick per the
+# canonical spec's retirement contract §5).
+#
+# Fields:
+#   name          — predicate identifier. Concatenated with enclosing
+#                    shard's @-ref (`{shard_ref}.{name}`) forms the
+#                    action ref the resolver dispatches on.
+#   sentinel      — byte-string content-addressed witness. The
+#                    predicate discharges Pass iff every argument's
+#                    ref.oid contains this substring. Non-empty
+#                    substrate-invariant per shard docblock discipline.
+#   arity         — non-negative integer; number of args the predicate
+#                    takes. `1` for base; `2` for two-witness composed;
+#                    `N` for N-way composed with `require` populated.
+#   require       — optional list of sub-bilateral refs (`[ref]`);
+#                    non-empty iff this bilateral composes over the
+#                    AND-conjunction of the referenced sub-predicates.
+#                    None|Empty for base bilaterals.
+type bilateral = {
+  name:       ref,
+  sentinel:   ref,
+  arity:      nat,
+  require:    [ref],
+}
+
+# === Verdict-discharge action (reflective evaluator surface) ===
+#
+# The action `apply_h::act` calls reflectively per this species'
+# canonical retirement contract. Given the parsed bilateral declaration
+# + the concrete arguments the dispatcher received, discharges the
+# byte-level sentinel check + composed-bilateral recursion.
+#
+# Semantics (per docs/specs/bilateral-predicate-substrate-shape.md
+# §5.2 reflective evaluator pseudocode):
+#
+#   discharge(decl, args):
+#     if decl.arity != len(args):
+#       return Fail(format!("{}: expected {} args, got {}",
+#                           decl.name, decl.arity, len(args)))
+#     if !decl.require.is_empty():
+#       # Composed bilateral: recursively evaluate each sub-bilateral
+#       # on the SAME argument list; AND-conjunct verdicts.
+#       for sub_ref in decl.require:
+#         sub_decl = lookup_bilateral(sub_ref)
+#         sub_verdict = discharge(sub_decl, args)
+#         if sub_verdict != Pass:
+#           return sub_verdict  // first Fail wins; preserves error origin
+#       return Pass
+#     # Base bilateral: byte-check every arg's oid for sentinel
+#     # containment.
+#     for arg in args:
+#       if !arg.oid.contains(decl.sentinel):
+#         return Fail(format!("{}: expected sentinel {:?} in arg oid, \
+#                              got {:?}", decl.name, decl.sentinel, arg.oid))
+#     return Pass
+#
+# Body `\`-obligation-blocked per [[feedback-craft-not-deliver]]; the
+# Rust FLOOR at `bootstrap/src/apply_h.rs` (Reed follow-up tick per
+# retirement contract §5.3) composes this action over the grammar
+# loader's bilateral-declaration corpus.
+discharge(decl: bilateral, args: [ref]) -> verdict { \ }
+
+# === Bilateral-shape well-formedness ===
+#
+# Meta-bilateral: is a `bilateral` declaration itself well-formed at
+# the substrate altitude? Discharges Pass iff:
+#   (a) name is non-empty
+#   (b) sentinel is non-empty (empty sentinel would trivially Pass on
+#       every arg — substrate-ill-formed)
+#   (c) arity >= 1 (arity 0 = no-arg bilateral has no verdict surface)
+#   (d) require is either empty OR every entry resolves to another
+#       declared bilateral in the enclosing corpus
+#   (e) if require is non-empty, arity must match the sub-bilaterals'
+#       arity by construction (all sub-bilaterals evaluate on the same
+#       argument tuple)
+#
+# Sentinel per shard docblock: `bilateral=well-formed` — the byte-
+# level substrate-decl'd marker for this meta-bilateral.
+#
+# This IS the "bilateral shape checks itself" — the load-bearing
+# self-witnessing that makes the substrate substrate-honest at the
+# reflective altitude. Meta-bilateral is arity 1 (checks one bilateral
+# decl per invocation); the composed corpus-wide check `all_
+# bilaterals_well_formed` is a Reed follow-up if empirical need arises.
+#
+# Body `\`-obligation-blocked; realized reflectively by the Rust FLOOR.
+bilateral_well_formed(decl: bilateral) -> verdict { \ }
+
+# === Composition surface (Taut Q1 substrate-truth scout coverage) ===
+#
+# @epistemologic/pact/bilateral composes with:
+#
+#   @kintsugi/consent      — verdict authority per shard docblock
+#                              discipline; discharge returns
+#                              @glass.verdict (Pass|Partial|Fail) which
+#                              @kintsugi/consent.query_phi may consume
+#                              at higher altitude
+#   @glass                  — sentinel source-position (verdict lives at
+#                              @glass; the sentinel-string is a `@nl`
+#                              byte-string content-addressed at @glass
+#                              altitude)
+#   @apply_h                — evaluator surface; the reflective
+#                              dispatcher IS the substrate-honest form
+#                              of the ~30 hand-typed arms this species
+#                              retires
+#   @nl                     — sentinel string carrier at natural-
+#                              language altitude (the sentinel IS a
+#                              @nl byte-string; its containment in the
+#                              argument's OID IS the evaluation)
+#
+# Consumers (compose over this species; all Arc-2 bites):
+#   shards/spectral/signature.mirror        — 4 predicates
+#   shards/epistemologic/cybernetic/
+#     coherence.mirror                      — 4 predicates
+#   shards/peer/persistence.mirror          — 5 predicates (4 base + 1 composed)
+#   shards/kintsugi/roomba.mirror           — 5 predicates (4 base + 1 composed)
+#   shards/subject/visibility/sheaf.mirror  — 4 predicates
+#   shards/uuid/spectral/time.mirror        — 4 predicates
+#   shards/mirror/store.mirror              — gc_reachability_closure_
+#                                              second_witness (arity 2)
+#   shards/gestalt.mirror                   — annotation bilaterals
+#                                              (post-cascade Reed
+#                                              additive discharge)
+#
+# === The RETIREMENT contract (Reed follow-up tick) ===
+#
+# Per docs/specs/bilateral-predicate-substrate-shape.md §5.3:
+#
+# 1. Each existing shard's action declarations of the form
+#    `predicate_name(args) -> verdict { \ }` add a `bilateral` block
+#    ABOVE the action decl declaring name + sentinel + arity + optional
+#    require. The action body stays `\`-obligation-blocked; the
+#    reflective evaluator reads the `bilateral` block, not the action
+#    body.
+#
+# 2. `bootstrap/src/grammar.rs` gains ONE registration line in
+#    `companion_keyword_sources` mapping `shards/epistemologic/pact/
+#    bilateral.mirror` (this file) as a companion keyword source for
+#    `shards/mirror/grammar.mirror`. This adds `bilateral` (focus) +
+#    `sentinel` (project) + `arity` (project) + `require` (project) to
+#    the tokenizer's keyword table WITHOUT modifying any Rust parser
+#    logic. The already-landed AstKind::Focus / AstKind::Project
+#    variants carry the shape.
+#
+# 3. `bootstrap/src/apply_h.rs::act` REPLACES its ~30 hand-typed arms
+#    with a single reflective dispatch (~50 LOC per retirement §5.2):
+#
+#      let corpus = load_bilateral_corpus(ctx);          // grammar-time
+#      if let Some(decl) = corpus.get(action.as_str()) {
+#          return discharge(decl, args);
+#      }
+#      // fall through to non-bilateral action dispatch
+#
+# 4. Net: ~700 LOC of duplication -> ~50 LOC reflective evaluator +
+#    per-shard `bilateral { sentinel: "..." }` blocks (~5 LOC per
+#    predicate, ~150 LOC across the corpus) = ~500 LOC net savings.
+#    Empirical ouroboros_monotone four-conjunct HOLDS by construction
+#    (rust_loc -650 net; test_pass_rate 100%→100%; io_violations 0→0;
+#    sbec neutral — same Pass/Fail verdicts fire against same
+#    sentinels).
+#
+# NOT this tick — reed follow-up. This shard's role is MINTING the
+# shape; the retirement is Reed's realization work.
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]] — the bilateral shape
+#   IS a shard-decl; the reflective evaluator READS the shard.
+# [[architecture-prism-as-trait-as-everything]] — `prism
+#   @epistemologic/pact/bilateral` declares the species IS a prism.
+# [[architecture-glass-wall-substrate-types]] — sentinel string is a
+#   `@nl` byte-string; the verdict is `@glass.verdict`; both types
+#   inherit through the prism composition.
+# [[architecture-property-fracture-bilateral]] — this species IS the
+#   canonical form the bilateral pattern takes at family-shape
+#   altitude; the ~30 landed arms are its instances.
+# [[feedback-substrate-already-had-the-word]] (~72nd landed instance)
+#   — every Arc-2 Tick 2.1-2.4 shard-decl already declared the
+#   sentinel string in docblock prose + the action name in the action
+#   decl; this shape names those two facts as typed fields on ONE
+#   carrier. The word was there thirty times over.
+# [[feedback-craft-not-deliver]] — action bodies discharge at
+#   realisation via the reflective evaluator; the substrate names the
+#   obligation.
+# [[feedback-no-rust-extension-shortcut]] — this species is a shard-
+#   decl + spec + math triad; ZERO new Rust; the follow-up retirement
+#   is Rust-negative (LOC subtraction, not addition). Reed's marker on
+#   the follow-up is `[substrate-floor:@io-boundary]` per the tightened
+#   hook because it modifies `.rs` files, but the CHANGE is deletion +
+#   ~50 LOC evaluator, not new mechanism.
+# [[feedback-legibility-over-foundation-when-collapsing]] — the shape
+#   name `bilateral` is the readable Foerster/Pask-lineage word; the
+#   foundational `binary-witness-predicate` alternate was refused in
+#   favor of the readable substrate-decl'd word Alex has used across
+#   all four Arc-2 bites.
+#
+# === Related shards / specs ===
+#
+# - docs/specs/bilateral-predicate-substrate-shape.md
+#     (Mara THIS-tick canonical spec; §0-§10 + retirement contract)
+# - docs/math/epistemologic/pact/bilateral-sentinel.md
+#     (Mara THIS-tick math foundation; sentinel-as-content-addressed-
+#     witness + Connes-triple angle)
+# - shards/epistemologic/pact/*.mirror
+#     (13 sibling pact species; this species declares the shape they
+#     inherit at family altitude)
+# - shards/spectral/signature.mirror
+#     (FIRST COLLAPSED witness; Arc-2 Tick 2.1; 4 bilaterals)
+# - shards/epistemologic/cybernetic/coherence.mirror
+#     (SECOND COLLAPSED witness; Arc-2 Tick 2.2; 4 bilaterals)
+# - shards/peer/persistence.mirror
+#     (THIRD COLLAPSED witness; Arc-2 Tick 2.3; 5 bilaterals)
+# - shards/kintsugi/roomba.mirror
+#     (FOURTH COLLAPSED witness; Arc-2 Tick 2.4; 5 bilaterals + bump/
+#     vacuum additive cascade)
+# - shards/subject/visibility/sheaf.mirror
+#     (fifth witness; Bridge-β Reed 2026-07-16)
+# - shards/uuid/spectral/time.mirror
+#     (sixth witness; Bridge-β Reed c10a3bd)
+# - shards/mirror/store.mirror
+#     (gc_reachability_closure_second_witness; the arity-2 witness)
+# - shards/epistemologic/pact.mirror (family-root; not landed as
+#     bare file — inferred from sibling namespace declarations)
+# - bootstrap/src/apply_h.rs (the ~700 LOC retirement target; Reed
+#     follow-up)
+# - bootstrap/src/grammar.rs (companion_keyword_sources; the ONE
+#     registration line Reed's follow-up adds)
+#
+# Path-namespace property: this file at
+# `shards/epistemologic/pact/bilateral.mirror` declares
+# `@epistemologic/pact/bilateral` per
+# `@epistemologic/pact/path_matches_namespace`.
+#
+# Keyword/path-root property: this declaration uses `prism` at the
+# top-level namespace declaration (per shards/epistemologic/pact/
+# keyword_matches_path_root.mirror the pact keyword rule ranges over
+# `pact` bindings; this shape declaration uses `prism` at file
+# altitude — the `bilateral` keyword itself is Sub-pact scope
+# declared via companion-keyword file).
+
+out @epistemologic/pact/bilateral
+out bilateral
+out discharge
+out bilateral_well_formed

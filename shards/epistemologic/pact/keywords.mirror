@@ -1,0 +1,88 @@
+in @prism
+
+# @epistemologic/pact keyword bindings — the substrate-decl'd shape
+# of the `bilateral <name> { sentinel "..." arity <n> require ... }`
+# block.
+#
+# Companion to shards/epistemologic/pact/bilateral.mirror (which
+# declares the @epistemologic/pact/bilateral prism + the typed record
+# carrier + the reflective evaluator action). The bootstrap's keyword
+# harvester (bootstrap/src/grammar.rs::merge_keyword_sources +
+# companion_keyword_sources) reads `<op> <keyword>` 2-word lines
+# inside a `grammar { ... }` block to build the tokenizer's keyword
+# table; this file is the substrate-altitude declaration of those
+# bindings for the bilateral shape.
+#
+# Same precedent as shards/mirror/spec/keywords.mirror (companion to
+# @mirror/spec) and shards/song/keywords.mirror (companion to @song),
+# tracked by `companion_keyword_sources` in bootstrap/src/grammar.rs.
+#
+# Without these bindings, the tokenizer would surface every bilateral
+# block — `bilateral name { sentinel "..." arity 1 }` — as a Dark
+# region (unknown construct with a `{ ... }` body), and the AST walker
+# would have nothing structural to walk. The bindings let the existing
+# tokenize+parse infrastructure produce a typed AST that the reflective
+# `apply_h::act` evaluator (Reed follow-up per
+# docs/specs/bilateral-predicate-substrate-shape.md §5.3) walks
+# directly, retiring the ~30 hand-typed `if action == "X" &&
+# arg.oid.contains("Y")` arms in bootstrap/src/apply_h.rs.
+#
+# === Grammar-decl'd registration (Reed follow-up tick) ===
+#
+# Per docs/specs/bilateral-predicate-substrate-shape.md §5.3 step 2:
+# Reed adds ONE line to `bootstrap/src/grammar.rs::companion_keyword_
+# sources` mapping this file as a companion source for
+# `shards/mirror/grammar.mirror`. That's the ONLY Rust change the
+# retirement contract requires beyond the reflective evaluator itself
+# (~50 LOC in apply_h.rs).
+#
+# === Kinds chosen so the tokenizer's existing per-kind path produces
+# === the right shape:
+#
+#   focus    — opens a recursively-scanned brace block. Top-level
+#              `bilateral NAME { ... }` uses this so the four inner
+#              directives (sentinel / arity / require) parse as child
+#              AST nodes of the bilateral declaration.
+#              Same precedent as `focus project` / `focus target` /
+#              `focus cli` in shards/mirror/spec/keywords.mirror.
+#
+#   project  — single-line directive that consumes one identifier /
+#              string-literal / integer as its `name` field, no brace
+#              block. Used for `sentinel "..."` / `arity <n>` /
+#              `require <ref>`.
+#              Same precedent as `project source` / `project altitude`
+#              / `project emit` in shards/mirror/spec/keywords.mirror.
+#
+# These bindings are the dispatch surface the bootstrap's reflective
+# evaluator will read; bilateral.mirror's typed record carrier + the
+# `discharge(decl, args) -> verdict { \ }` action ARE the substrate's
+# settled declaration of what the shape MEANS. Both surfaces coexist
+# by design — the keyword bindings are the grammar-loader's parse
+# surface; the shard-decl is the substrate's semantic surface.
+
+grammar @epistemologic/pact("bilateral") {
+  # === bilateral block (recursively scanned body) ===
+  #
+  # Top-level `bilateral <name> { ... }` block declaring a bilateral
+  # predicate that dispatches reflectively via apply_h::act.
+  focus bilateral
+
+  # === bilateral fields (single-line directives inside the block) ===
+  #
+  # `sentinel "<byte-string>"` — the content-addressed witness the
+  # predicate checks for containment of in each argument's ref.oid.
+  # Non-empty substrate-invariant. Value is the double-quoted string.
+  project sentinel
+
+  # `arity <nat>` — the number of arguments the predicate takes.
+  # 1 for base bilaterals; 2 for two-witness composed pairs; N for
+  # N-way composed with `require` populated.
+  project arity
+
+  # `require <bilateral-ref>` — optional; when composed, names one
+  # sub-bilateral this composition AND-conjuncts over. Multiple
+  # `require` lines allowed inside one bilateral block; the reflective
+  # evaluator recursively evaluates each and returns Fail on first
+  # non-Pass.
+  project require
+}
