@@ -53,6 +53,7 @@ pub mod algedonic;
 pub mod coherence;
 pub mod contribute;
 pub mod converge;
+pub mod bilateral_arm_collapse;
 pub mod index;
 pub mod peer_persistence;
 pub mod roomba;
@@ -3652,6 +3653,50 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                 .iter()
                 .find_map(|a| a.strip_prefix("--collapse=").map(PathBuf::from));
             let root = ctx.cwd().to_path_buf();
+            // Route: when --collapse points at a .rs file, dispatch
+            // through the bilateral-arm collapse capability (2026-07-16
+            // Reed [substrate-floor:@io-boundary] per Mara canonical
+            // spec `docs/specs/kintsugi-fracture-bilateral-arm-
+            // redundant.md` fa569ce/6c534c6/0998001). When --collapse
+            // is a directory (or absent), preserve the pre-Tick-1
+            // fracture-scan behavior.
+            let collapse_is_rs = collapse_path
+                .as_deref()
+                .map(|p| p.extension().and_then(|s| s.to_str()) == Some("rs"))
+                .unwrap_or(false);
+            if commit_flag && collapse_is_rs {
+                let target = collapse_path.as_deref().expect("collapse_is_rs implies Some");
+                match crate::bilateral_arm_collapse::collapse_bilateral_arms(&root, target) {
+                    Ok(report) => {
+                        mout!("@@ mirror roomba --commit --collapse=<rs-file>: bilateral-arm collapse @@");
+                        mout!("+ target: {}", report.target.display());
+                        mout!("+ arms_detected: {}", report.arms.len());
+                        for arm in &report.arms {
+                            mout!("+   - {} (sentinel: {})", arm.action_ref, arm.sentinel);
+                        }
+                        mout!("+ bytes_before: {}", report.bytes_before);
+                        mout!("+ bytes_after: {}", report.bytes_after);
+                        let delta = report.bytes_before as i64 - report.bytes_after as i64;
+                        mout!("+ byte_delta: -{}", delta);
+                        match report.commit_oid {
+                            Some(oid) => {
+                                mout!("");
+                                mout!("\u{2713} commit {} authored by mirror <mirror@spectral.engineer>", oid);
+                                mout!("  the compiler observed the shadow arms; the compiler composed the deletion; the compiler made the commit");
+                            }
+                            None => {
+                                mout!("");
+                                mout!("= no arms detected; fixed-point holds (no shadow arm exists for any corpus entry in {})", report.target.display());
+                            }
+                        }
+                        return 0;
+                    }
+                    Err(e) => {
+                        merr!("mirror roomba --commit --collapse={}: {}", target.display(), e);
+                        return 1;
+                    }
+                }
+            }
             if commit_flag {
                 // The FULL end2end empirical proof pipeline per Alex
                 // 2026-07-15 verbatim: walk → detect fracture → kintsugi
