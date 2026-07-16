@@ -175,6 +175,70 @@ Alex fires /loop for:
 - Alex retains rejection-window authority throughout dwelltime
 - Composition-only surface; zero new family-roots minted this arc; @sheaf lifted to species under @subject/visibility (Landing 4 R2 precedent)
 
+### Follow-up landings queued (post-Seam-Phase-D 2026-07-16)
+
+Deferred-by-Alex-adjudication landings tracked here so in-file
+docblock forward-promises don't drift into de-facto independence:
+
+- **Alex-adjudicable timestamp collapse tick** — after Mara `f782362`
+  (2026-07-16 additive cascade of `address: uuid_spectral_time` on
+  `@gestalt.annotation` + `@spectral/signature.signature_beat`),
+  `annotation.timestamp` and `annotation.address.time` are
+  semantically-null equivalent; same for `signature_beat.timestamp`
+  and `signature_beat.address.time`. Collapse to a single facet is
+  deferred until Alex ratifies. Track here so the redundancy doesn't
+  drift into de-facto independence. See `shards/gestalt.mirror`
+  lines 264–269 + `shards/spectral/signature.mirror` lines 88–98
+  for in-file docblock forward-promise. Seam Phase D adjudication
+  (task #174) ratified additive-now-collapse-later on two-tick
+  discipline grounds.
+
+- **Alex-adjudicable Recognition candidate landing** —
+  `#R-annotation-address-shape-IS-substrate-decl-form-of-Kuramoto-
+  Aumann-convergence`. Names the paradigm-level structural insight
+  Mara `c9c9480` §3 formalizes: R4 dispatch-policy questions dissolve
+  when the address carrier is a categorical product with a navigable
+  affinity signal. Deferred to future ledger tick per Pack ratification-
+  synthesis discipline (Mara post-landing recommendation + Seam Phase
+  D task #174 concurrence).
+
+- **Alex-adjudicable math §3 Aumann-rate phrasing softening** — the
+  `docs/math/uuid/spectral-time.md` §3 step (iv) framing "IS the
+  ordering that accelerates Aumann convergence" is slightly stronger
+  than Aumann 1976 strictly gives (Aumann proves fixed-point equality;
+  rate framing is Kuramoto-bridging heuristic). Sketch label carries
+  most of the load. Alex may want softening ("heuristic bridge" /
+  "conjecture") or judge the sketch label sufficient. Seam Phase D
+  task #174 flagged as non-blocking Alex-adjudicable.
+
+- **@resonance + @dance shard-mints (post-v0.1.0)** — forward-
+  promised at `docs/math/gestalt/README.md` §11.6 Landing Condition
+  0 for `@gestalt.p_ent` operator-altitude (n≥2 tori). Decoupled
+  from R4 v0.1.0 gating post-`@uuid/spectral/time` landing (task
+  #173).
+
+- **`@gestalt.p_ent` operator-altitude action** — forward-promised
+  at `docs/math/gestalt/README.md` §11.6 with three landing
+  conditions (Landing Condition 0 above + Rung 5+ @dance multi-peer
+  coherence + second-citation-site + empirical apply_h::act dispatch
+  for coupled-torus carriers).
+
+- **R-M4 falsifier operationalization (post-v0.1.0)** —
+  `docs/specs/multi-deployment-transcription-check.md` when a second
+  mirror deployment materializes. What constitutes "independent K_n
+  partnership": strict (two independent Pack instances) vs weak (same
+  Pack different starts). Seam adjudication reserved for landing tick.
+
+- **R-M5 convergence-phenomenology instrumentation (post-v0.1.0)** —
+  `docs/specs/convergence-phenomenology-instrumentation.md` when
+  cross-partnership coordination substrate exists. Field-log-as-
+  measurement-instrument protocol per Mara addendum.
+
+- **Delight D1 adjunction structure** — whether (F_aggression,
+  F_humor) form adjoint pair with η as unit + dual for μ. Forward-
+  promised at `docs/math/delight-as-natural-transformation.md` §8
+  Gap D1 second-consumer landing.
+
 ---
 
 ## Historical arc — @song/beat ladder-climb 2026-07-13 + @gift arc 2026-07-14
