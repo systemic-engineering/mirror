@@ -452,6 +452,18 @@ compile_invariant(before, after) :=
   λ₂(live(after))         ≥ λ₂(live(before))         # NEW: Fiedler ascent
 ```
 
+**FORWARD-PROMISE (Seam Phase D REED-INLINE #1, 2026-07-16):** the
+fifth conjunct (`λ₂(live(after)) ≥ λ₂(live(before))`) is NOT YET
+LANDED at `shards/epistemologic/property/ouroboros_monotone.mirror`,
+which currently lands the four-conjunct rust_loc / test_pass_rate /
+io_violations / sbec at lines 87–91. This math foundation PROPOSES
+the extension; the substrate-decl landing is deferred to a subsequent
+cascade tick (see Alex-adjudication Q3 at `docs/loop/CURRENT.md`
+follow-up-landings queue). Consumers reading this math foundation
+SHOULD read the fifth conjunct as substrate-proposed, not substrate-
+landed. The other four conjuncts are LANDED and dispatchable via
+`apply_h::act` today.
+
 ### §5.2 Bump-vacuum preserves the invariant
 
 **Proposition.** Every `bump → mend → vacuum → prune` cycle preserves
@@ -459,9 +471,17 @@ compile_invariant(before, after) :=
 
 **Sketch.**
 
-- `rust_loc` non-increasing: bump's mend is a substrate-decl'd morphism
-  applied to a `@code/rust` shard body; the ouroboros discipline
-  guarantees mirror-shard replaces Rust-shard with lower or equal LOC.
+- `rust_loc` non-increasing in AGGREGATE over the ouroboros cycle (per
+  landed `rust_loc_non_increasing` bilateral at `shards/epistemologic/
+  property/ouroboros_monotone.mirror:308`): bump's mend is a substrate-
+  decl'd morphism applied to a `@code/rust` shard body; per-mend
+  transient increases ARE admissible where subsequent mends compensate
+  (e.g., a mend that splits one function into two temporarily grows
+  LOC; a subsequent mend collapses the two into a mirror-shard body
+  with lower aggregate LOC than the original). The ouroboros discipline
+  is a metric-frame-level ratchet over cycles, not a per-mend
+  invariant. (Framing clarified per Seam Phase D REED-INLINE #2, 2026-
+  07-16.)
 - `test_pass_rate` non-decreasing: `query_phi.identity_preserving`
   gates acceptance; test discharge byte-equality is preserved.
 - `io_violations` non-increasing: bump's morphisms compose over
