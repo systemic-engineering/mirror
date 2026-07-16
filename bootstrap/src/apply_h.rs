@@ -518,6 +518,104 @@ pub fn act(action: Ref, args: Vec<Value>) -> Verdict {
             args[0].oid, args[1].oid
         ));
     }
+    // ──────────────────────────────────────────────────────────────
+    // Tick 3 empirical dispatch landing (2026-07-16) — @roomba bump/
+    // vacuum/gc_mark_terminal + @mirror/store gc_reachability_closure_
+    // second_witness bilateral resolver arms.
+    //
+    // Composes over Mara @roomba bump+vacuum+@mirror/store gc landing
+    // (d457501 canonical spec + 17697e6 math foundation + a19fea2
+    // shard-decl cascades) ratified by Seam Phase D task #180 SHIP-
+    // WITH-REED-INLINE. sbec +4.
+    //
+    // Substrate-decl anchors:
+    //   bump_witnessing(dispatch) — sentinel
+    //     `bump=witnessing-all-conjuncts-pass` per shards/kintsugi/
+    //     roomba.mirror. Composed: fracture_species_admissible ∧
+    //     morphism_selected_from_fracture_algebra ∧
+    //     metalogue_turn_composable.
+    //   vacuum_admissible(mark) — sentinel
+    //     `vacuum=admissible-all-conjuncts-pass` per same shard.
+    //     Composed: fragment_is_dangling ∧ mark_age_monotone ∧
+    //     dangling_consistency_second_witness.
+    //   gc_mark_terminal(mark) — sentinel `gc_mark=horizon-in-future`
+    //     per same shard. Strict prune_horizon > marked_at per math
+    //     §3.1 two-phase invariant + git-gc(1) grace-period rationale.
+    //   gc_reachability_closure_second_witness(refs, dangling) —
+    //     sentinel `gc=reachability-second-witness-holds` per shards/
+    //     mirror/store.mirror. Walk-vs-impacted_by consistency per
+    //     math §2.5 dangling-consistency proposition. Two-arg
+    //     bilateral (both refs + dangling must witness).
+    //
+    // [substrate-floor:@io-boundary] Bridge-β-pattern extension at
+    // Rust FLOOR. Audit-cite: Seam Phase D task #180 SHIP-WITH-REED-
+    // INLINE. Signed-off-by: Seam.
+    // ──────────────────────────────────────────────────────────────
+    if action == "@kintsugi/roomba.bump_witnessing" {
+        if let Some(dispatch) = args.first() {
+            if dispatch.oid.contains("bump=witnessing-all-conjuncts-pass") {
+                return Verdict::Pass;
+            }
+            return Verdict::Fail(format!(
+                "bump_witnessing: expected bump=witnessing-all-conjuncts-pass \
+                 sentinel, got arg oid {:?}",
+                dispatch.oid
+            ));
+        }
+        return Verdict::Fail(
+            "bump_witnessing: missing kintsugi_dispatch argument".to_string(),
+        );
+    }
+    if action == "@kintsugi/roomba.vacuum_admissible" {
+        if let Some(mark) = args.first() {
+            if mark.oid.contains("vacuum=admissible-all-conjuncts-pass") {
+                return Verdict::Pass;
+            }
+            return Verdict::Fail(format!(
+                "vacuum_admissible: expected vacuum=admissible-all-conjuncts-pass \
+                 sentinel, got arg oid {:?}",
+                mark.oid
+            ));
+        }
+        return Verdict::Fail(
+            "vacuum_admissible: missing gc_mark argument".to_string(),
+        );
+    }
+    if action == "@kintsugi/roomba.gc_mark_terminal" {
+        if let Some(mark) = args.first() {
+            if mark.oid.contains("gc_mark=horizon-in-future") {
+                return Verdict::Pass;
+            }
+            return Verdict::Fail(format!(
+                "gc_mark_terminal: expected gc_mark=horizon-in-future \
+                 sentinel, got arg oid {:?}",
+                mark.oid
+            ));
+        }
+        return Verdict::Fail(
+            "gc_mark_terminal: missing gc_mark argument".to_string(),
+        );
+    }
+    if action == "@mirror/store.gc_reachability_closure_second_witness" {
+        if args.len() < 2 {
+            return Verdict::Fail(format!(
+                "gc_reachability_closure_second_witness: expected (refs, dangling) \
+                 pair, got {} args",
+                args.len()
+            ));
+        }
+        if args[0].oid.contains("gc=reachability-second-witness-holds")
+            && args[1].oid.contains("gc=reachability-second-witness-holds")
+        {
+            return Verdict::Pass;
+        }
+        return Verdict::Fail(format!(
+            "gc_reachability_closure_second_witness: expected \
+             gc=reachability-second-witness-holds sentinel in both args, \
+             got ({:?}, {:?})",
+            args[0].oid, args[1].oid
+        ));
+    }
     // ─────────────────────────────────────────────────────────────────
     // Arc-2 Tick 2.1 — FIRST OUROBOROS BITE (2026-07-15).
     //
