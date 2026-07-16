@@ -88,8 +88,9 @@ in @epistemologic/property/content_addressed
 #      into the record. Realized at `prism/core/src/spectral_uuid.rs`.
 #
 #   2. `@time/monotonic.instant` LANDED at
-#      `shards/epistemologic/reality/time.mirror:151` (the `instant`
-#      type at line 89 + broader `monotonic` frame carriers). Full
+#      `shards/epistemologic/reality/time.mirror:89` (the `instant`
+#      type; `monotonic` frame at line 79; `duration` settle-witness
+#      at line 71). Full
 #      precision u64 nanoseconds; ~584 years of range; matches
 #      BEAM's `erlang:monotonic_time(:nanosecond)` native unit.
 #      Already composed OVER by `@gestalt.annotation.timestamp`
