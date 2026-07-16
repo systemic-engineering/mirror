@@ -736,6 +736,10 @@ prune(store: store_ref, before: tick) -> verdict { \ }
 #
 # Body `\`-obligation-blocked. Consumers cite in `requires` clauses when
 # invoking walk_dangling to certify the enumeration is dangling-consistent.
+bilateral gc_reachability_closure_second_witness {
+  sentinel "gc=reachability-second-witness-holds"
+  arity 2
+}
 gc_reachability_closure_second_witness(refs: [oid], dangling: [fragment]) -> verdict { \ }
 
 out @mirror/store
