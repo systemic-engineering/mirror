@@ -397,6 +397,10 @@ render(doc: gestalt_document, target: mode, out: ref) -> imperfect { \ }
 #   4. Every mode in doc.modes admits a landed render body.
 # Substrate-decl form: byte-level check for `well_formed=structural`
 # sentinel in the arg OID.
+bilateral document_well_formed {
+  sentinel "well_formed=structural"
+  arity 1
+}
 document_well_formed(doc: gestalt_document) -> verdict { \ }
 
 # unfolding_monotone — does the reader's beat_history grow
@@ -407,6 +411,10 @@ document_well_formed(doc: gestalt_document) -> verdict { \ }
 # and every annotation event strictly increases the annotation count
 # per math §3.2. Substrate-decl form: byte-level check for
 # `unfolding=monotone` sentinel.
+bilateral unfolding_monotone {
+  sentinel "unfolding=monotone"
+  arity 2
+}
 unfolding_monotone(prev: unfolding_state, next: unfolding_state) -> verdict { \ }
 
 # annotation_chain_intact — does the Merkle-DAG chain of annotations
@@ -418,6 +426,10 @@ unfolding_monotone(prev: unfolding_state, next: unfolding_state) -> verdict { \ 
 # Substrate-decl form: byte-level check for `chain=merkle-linked`
 # sentinel; parallel to @spectral/signature.signature_integrity
 # LANDED bilateral.
+bilateral annotation_chain_intact {
+  sentinel "chain=merkle-linked"
+  arity 2
+}
 annotation_chain_intact(doc: gestalt_document, target_node: oid) -> verdict { \ }
 
 # reader_sees_only_permitted — does the reader-visible sub-document
@@ -429,6 +441,10 @@ annotation_chain_intact(doc: gestalt_document, target_node: oid) -> verdict { \ 
 # Substrate-decl form: byte-level check for `visibility=sheaf-
 # restricted` sentinel; composes over @subject/visibility/sheaf
 # LANDED filter action.
+bilateral reader_sees_only_permitted {
+  sentinel "visibility=sheaf-restricted"
+  arity 2
+}
 reader_sees_only_permitted(doc: gestalt_document,
                            viewer: subject_instance) -> verdict { \ }
 
@@ -439,6 +455,10 @@ reader_sees_only_permitted(doc: gestalt_document,
 # carries a docblock L(ϕ) quantification (per canonical spec §8
 # table + math §5.2). Substrate-decl form: byte-level check for
 # `render=L(phi)-declared` sentinel; Seam Phase D enforcement point.
+bilateral render_L_phi_declared {
+  sentinel "render=L(phi)-declared"
+  arity 1
+}
 render_L_phi_declared(doc: gestalt_document) -> verdict { \ }
 
 # recursion_coupling_admissible — does the reader-side operator
@@ -454,6 +474,10 @@ render_L_phi_declared(doc: gestalt_document) -> verdict { \ }
 # recursion_coupling_admissible remains Pass (Foerster-legal
 # per math §6.3). Substrate-decl form: byte-level check for
 # `coupling=admissible` sentinel.
+bilateral recursion_coupling_admissible {
+  sentinel "coupling=admissible"
+  arity 2
+}
 recursion_coupling_admissible(prev: unfolding_state,
                               next: unfolding_state) -> verdict { \ }
 
@@ -468,6 +492,16 @@ recursion_coupling_admissible(prev: unfolding_state,
 # author's document + reader's annotations together form one
 # monotone-growing @song." Parallel to @subject/visibility.
 # visibility_witnessing (LANDED composed bilateral pattern).
+bilateral gestalt_witnessing {
+  sentinel "witnessing=composed-all-pass"
+  arity 4
+  require document_well_formed
+  require unfolding_monotone
+  require annotation_chain_intact
+  require reader_sees_only_permitted
+  require render_L_phi_declared
+  require recursion_coupling_admissible
+}
 gestalt_witnessing(doc: gestalt_document, prev: unfolding_state,
                    next: unfolding_state, viewer: subject_instance) -> verdict { \ }
 
