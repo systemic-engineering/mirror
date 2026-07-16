@@ -97,25 +97,52 @@ pub struct SubstrateObservation {
 
 /// Walk the substrate + measure Fiedler + gather LOC. The full
 /// observation composed as one record.
-pub fn observe(root: &Path) -> SubstrateObservation {
+///
+/// Composition-gap fix per Taut root-cause 2026-07-16 (task #184):
+/// build_concept_graph + eigenvalue_profile are hoisted to the
+/// composer here so both consumers (roomba::walk + fiedler_value)
+/// share the single computation. Prior implementation invoked the two
+/// O(N³) operations twice, causing SIGKILL-at-2min-timeout empirical
+/// hang. Substrate-honest fix: single graph build, single eigenvalue
+/// decomposition, both consumers read the shared instances.
+///
+/// Tick 4 extension (2026-07-16 per Taut #184 §6): `collapse_path`
+/// scopes the graph-build too (not just fracture-detection). Empirical
+/// runs on the current substrate (~500 shards + docs + tests) exceed
+/// the 2min timeout even with single-compute hoist; scoping the graph
+/// to a subtree is substrate-honest — the --collapse flag names the
+/// measurement boundary the caller opts into, not a hide-the-problem
+/// patch. Absent collapse_path preserves pre-Tick-1 full-root behavior.
+pub fn observe(root: &Path, collapse_path: Option<&Path>) -> SubstrateObservation {
     let head_oid = git_head_oid().unwrap_or_else(|| "<unknown>".to_string());
     let observed_at = iso8601_now();
     let rust_loc = count_rust_loc(root);
 
-    // Roomba walk — 32-step budget is enough to sample the substrate
-    // without dominating wall-time; epsilon_pain=0.1 is the knife
-    // stability threshold the walker was landed with.
-    let trajectory = roomba::walk(root, 32, 0.1);
+    // Graph root: scoped per collapse_path if Some, else full root.
+    // Fiedler + coherence are measured over the scoped substrate; the
+    // measurement boundary is the caller's explicit scope.
+    let graph_root: std::path::PathBuf = match collapse_path {
+        Some(p) => root.join(p),
+        None => root.to_path_buf(),
+    };
+
+    // Single graph build + single eigenvalue decomposition. Both
+    // consumers (walker + Fiedler measurement) share these.
+    let (graph, _files, _breakdown) =
+        crate::index::build_concept_graph(&graph_root);
+    let profile = crate::index::eigenvalue_profile(&graph);
+    let fiedler = profile.fiedler_value();
+
+    // Roomba walk — 32-step budget; epsilon_pain=0.1 knife stability
+    // threshold. Uses pre-built graph + profile per composition-gap fix.
+    let trajectory =
+        roomba::walk_from_graph_and_profile(&graph, &profile, 32, 0.1);
     let mean_tension = if trajectory.steps.is_empty() {
         0.0
     } else {
         trajectory.steps.iter().map(|s| s.tension).sum::<f64>()
             / trajectory.steps.len() as f64
     };
-
-    // Fiedler at repo root via the landed @mirror/index primitive.
-    let profile = index::index(root);
-    let fiedler = profile.fiedler_value();
 
     SubstrateObservation {
         head_oid,
@@ -337,7 +364,9 @@ pub fn create_commit(root: &Path, message: &str) -> Result<String, String> {
 ///   @epistemologic/reality/time.compare → @nl.compose from delta →
 ///   @io/git.commit (REAL blobs, NOT --allow-empty).
 pub fn observe_and_commit(root: &Path) -> Result<(SubstrateObservation, String), String> {
-    let obs = observe(root);
+    // Observation-only path: no collapse scope; full-root graph build
+    // (pre-Tick-1 backward-compat).
+    let obs = observe(root, None);
     let msg = compose_commit_message_via_substrate(&obs);
     let oid = create_commit(root, &msg)?;
     Ok((obs, oid))
@@ -370,7 +399,7 @@ pub fn observe_and_commit_with_resolve(
     root: &Path,
     collapse_path: Option<&Path>,
 ) -> Result<(SubstrateObservation, Option<Fracture>, String), String> {
-    let obs = observe(root);
+    let obs = observe(root, collapse_path);
 
     // Stage 2: detect fracture via the walker's grep-scan.
     // Scope per Reed Tick 1 (Alex 2026-07-16 directive + Seam Phase D

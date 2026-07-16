@@ -69,7 +69,7 @@ use crate::algedonic::{pain_gradient, sample_pain};
 use crate::coherence::coherence_score;
 use crate::converge::{stable_within, KnifeVerdict};
 use crate::index::{
-    build_concept_graph, eigenvalue_profile, ConceptGraph, GraphNode,
+    build_concept_graph, eigenvalue_profile, ConceptGraph, EigenvalueProfile, GraphNode,
 };
 use fragmentation::spectral_coordinate::SpectralCoordinate;
 use fragmentation_spectral::hash;
@@ -152,9 +152,39 @@ pub enum WalkTermination {
 /// through @kintsugi/consent.query_phi to trigger real substrate
 /// transformations.
 pub fn walk(root: &Path, budget: usize, epsilon_pain: f64) -> WalkTrajectory {
+    // Backward-compat wrapper. Builds graph + profile then delegates to
+    // `walk_from_graph_and_profile`. Callers that already have graph +
+    // profile in hand (e.g. `roomba_commit::observe`) MUST use
+    // `walk_from_graph_and_profile` directly to avoid duplicate
+    // build_concept_graph + eigenvalue_profile invocations — both are
+    // O(N³) LAPACK-heavy operations that individually take ~30sec on
+    // the current mirror substrate (~165 nodes / 6676 edges). Duplicate
+    // invocation caused SIGKILL-at-2min-timeout empirical hang per
+    // Taut root-cause 2026-07-16 (task #184).
     let (graph, _files, _breakdown) = build_concept_graph(root);
     let initial_profile = eigenvalue_profile(&graph);
-    let coherence_at_start = coherence_score(&initial_profile);
+    walk_from_graph_and_profile(&graph, &initial_profile, budget, epsilon_pain)
+}
+
+/// Walk from pre-built ConceptGraph + pre-computed EigenvalueProfile.
+///
+/// Per Taut root-cause 2026-07-16 (task #184): the observe() pipeline
+/// composed roomba::walk (which internally called build_concept_graph +
+/// eigenvalue_profile) with index::index (which called both AGAIN).
+/// Duplicate invocation caused >60sec wall-time and SIGKILL-at-timeout.
+/// Fix: hoist graph + profile computation to the composition site
+/// (observe()); walkers accept pre-built inputs.
+///
+/// Substrate-honest: composition-gap fix, not algorithmic patch. The
+/// walker's semantics are unchanged; only the ownership of the shared
+/// graph + profile shifts to the composer.
+pub fn walk_from_graph_and_profile(
+    graph: &ConceptGraph,
+    initial_profile: &EigenvalueProfile,
+    budget: usize,
+    epsilon_pain: f64,
+) -> WalkTrajectory {
+    let coherence_at_start = coherence_score(initial_profile);
 
     if graph.nodes.is_empty() {
         return WalkTrajectory {
@@ -167,7 +197,7 @@ pub fn walk(root: &Path, budget: usize, epsilon_pain: f64) -> WalkTrajectory {
         };
     }
 
-    let root_idx = match find_root_node(&graph) {
+    let root_idx = match find_root_node(graph) {
         Some(idx) => idx,
         None => {
             return WalkTrajectory {
@@ -181,7 +211,7 @@ pub fn walk(root: &Path, budget: usize, epsilon_pain: f64) -> WalkTrajectory {
         }
     };
 
-    let adjacency = build_adjacency(&graph);
+    let adjacency = build_adjacency(graph);
     let sc_cache: Vec<SpectralCoordinate<5>> = graph
         .nodes
         .iter()
@@ -225,7 +255,7 @@ pub fn walk(root: &Path, budget: usize, epsilon_pain: f64) -> WalkTrajectory {
             .unwrap_or(0.0);
         let knife_verdict = stable_within(sc, pain_delta, epsilon_pain);
 
-        let coherence_here = coherence_score(&initial_profile);
+        let coherence_here = coherence_score(initial_profile);
         let coherence_delta_from_previous = coherence_here - previous_coherence;
 
         steps.push(RoombaStep {
@@ -261,7 +291,7 @@ pub fn walk(root: &Path, budget: usize, epsilon_pain: f64) -> WalkTrajectory {
             .unwrap_or(current_idx);
     };
 
-    let coherence_at_end = coherence_score(&initial_profile);
+    let coherence_at_end = coherence_score(initial_profile);
 
     WalkTrajectory {
         steps,
