@@ -753,74 +753,6 @@ pub fn act(action: Ref, args: Vec<Value>) -> Verdict {
     // phase-d.md (55dbf20) + Seam Phase D task #174. Signed-off-by:
     // Seam.
     // ──────────────────────────────────────────────────────────────
-    if action == "@uuid/spectral/time.identity_contract_preserved" {
-        if let Some(a) = args.first() {
-            if a.oid.contains("identity=uuid-spectral-well-formed") {
-                return Verdict::Pass;
-            }
-            return Verdict::Fail(format!(
-                "identity_contract_preserved: expected \
-                 identity=uuid-spectral-well-formed sentinel, got arg oid {:?}",
-                a.oid
-            ));
-        }
-        return Verdict::Fail(
-            "identity_contract_preserved: missing uuid_spectral_time argument"
-                .to_string(),
-        );
-    }
-    if action == "@uuid/spectral/time.time_facet_admissible" {
-        if let Some(a) = args.first() {
-            if a.oid.contains("time=monotonic-instant-well-formed") {
-                return Verdict::Pass;
-            }
-            return Verdict::Fail(format!(
-                "time_facet_admissible: expected \
-                 time=monotonic-instant-well-formed sentinel, got arg oid {:?}",
-                a.oid
-            ));
-        }
-        return Verdict::Fail(
-            "time_facet_admissible: missing uuid_spectral_time argument".to_string(),
-        );
-    }
-    if action == "@uuid/spectral/time.dedup_ignores_time" {
-        if args.len() < 2 {
-            return Verdict::Fail(format!(
-                "dedup_ignores_time: expected (a, b) uuid_spectral_time pair, got {} args",
-                args.len()
-            ));
-        }
-        if args[0].oid.contains("dedup=orthogonal-invariant-holds")
-            && args[1].oid.contains("dedup=orthogonal-invariant-holds")
-        {
-            return Verdict::Pass;
-        }
-        return Verdict::Fail(format!(
-            "dedup_ignores_time: expected dedup=orthogonal-invariant-holds \
-             sentinel in both args, got ({:?}, {:?})",
-            args[0].oid, args[1].oid
-        ));
-    }
-    if action == "@uuid/spectral/time.uuid_spectral_time_witnessing" {
-        if args.len() < 2 {
-            return Verdict::Fail(format!(
-                "uuid_spectral_time_witnessing: expected (a, b) uuid_spectral_time \
-                 pair, got {} args",
-                args.len()
-            ));
-        }
-        if args[0].oid.contains("witnessing=composed-all-pass")
-            && args[1].oid.contains("witnessing=composed-all-pass")
-        {
-            return Verdict::Pass;
-        }
-        return Verdict::Fail(format!(
-            "uuid_spectral_time_witnessing: expected witnessing=composed-all-pass \
-             sentinel in both args, got ({:?}, {:?})",
-            args[0].oid, args[1].oid
-        ));
-    }
     // ──────────────────────────────────────────────────────────────
     // Tick 3 empirical dispatch landing (2026-07-16) — @roomba bump/
     // vacuum/gc_mark_terminal + @mirror/store gc_reachability_closure_
@@ -854,71 +786,6 @@ pub fn act(action: Ref, args: Vec<Value>) -> Verdict {
     // Rust FLOOR. Audit-cite: Seam Phase D task #180 SHIP-WITH-REED-
     // INLINE. Signed-off-by: Seam.
     // ──────────────────────────────────────────────────────────────
-    if action == "@kintsugi/roomba.bump_witnessing" {
-        if let Some(dispatch) = args.first() {
-            if dispatch.oid.contains("bump=witnessing-all-conjuncts-pass") {
-                return Verdict::Pass;
-            }
-            return Verdict::Fail(format!(
-                "bump_witnessing: expected bump=witnessing-all-conjuncts-pass \
-                 sentinel, got arg oid {:?}",
-                dispatch.oid
-            ));
-        }
-        return Verdict::Fail(
-            "bump_witnessing: missing kintsugi_dispatch argument".to_string(),
-        );
-    }
-    if action == "@kintsugi/roomba.vacuum_admissible" {
-        if let Some(mark) = args.first() {
-            if mark.oid.contains("vacuum=admissible-all-conjuncts-pass") {
-                return Verdict::Pass;
-            }
-            return Verdict::Fail(format!(
-                "vacuum_admissible: expected vacuum=admissible-all-conjuncts-pass \
-                 sentinel, got arg oid {:?}",
-                mark.oid
-            ));
-        }
-        return Verdict::Fail(
-            "vacuum_admissible: missing gc_mark argument".to_string(),
-        );
-    }
-    if action == "@kintsugi/roomba.gc_mark_terminal" {
-        if let Some(mark) = args.first() {
-            if mark.oid.contains("gc_mark=horizon-in-future") {
-                return Verdict::Pass;
-            }
-            return Verdict::Fail(format!(
-                "gc_mark_terminal: expected gc_mark=horizon-in-future \
-                 sentinel, got arg oid {:?}",
-                mark.oid
-            ));
-        }
-        return Verdict::Fail(
-            "gc_mark_terminal: missing gc_mark argument".to_string(),
-        );
-    }
-    if action == "@mirror/store.gc_reachability_closure_second_witness" {
-        if args.len() < 2 {
-            return Verdict::Fail(format!(
-                "gc_reachability_closure_second_witness: expected (refs, dangling) \
-                 pair, got {} args",
-                args.len()
-            ));
-        }
-        if args[0].oid.contains("gc=reachability-second-witness-holds")
-            && args[1].oid.contains("gc=reachability-second-witness-holds")
-        {
-            return Verdict::Pass;
-        }
-        return Verdict::Fail(format!(
-            "gc_reachability_closure_second_witness: expected \
-             gc=reachability-second-witness-holds sentinel in both args, \
-             got ({:?}, {:?})",
-            args[0].oid, args[1].oid
-        ));
-    }
     // ─────────────────────────────────────────────────────────────────
     // Arc-2 Tick 2.1 — FIRST OUROBOROS BITE (2026-07-15).
     //
@@ -989,55 +856,6 @@ pub fn act(action: Ref, args: Vec<Value>) -> Verdict {
     // again: THIRD BITE proves the collapse pattern holds at Landing-C
     // scale (14.9KB pre-collapse; largest ouroboros bite to date).
     // ─────────────────────────────────────────────────────────────────
-    if action == "@peer/persistence.projection_visibility_respected" {
-        if let Some(home) = args.first() {
-            if home.oid.contains("visibility=filter-respected") {
-                return Verdict::Pass;
-            }
-            return Verdict::Fail(format!(
-                "projection_visibility_respected: expected \
-                 visibility=filter-respected sentinel (Landing A §4.1 \
-                 elevation-lattice discipline per shard docblock), \
-                 got arg oid {:?}",
-                home.oid
-            ));
-        }
-        return Verdict::Fail(
-            "projection_visibility_respected: missing peer_home argument".to_string(),
-        );
-    }
-    if action == "@peer/persistence.harvest_consent_verified" {
-        if let Some(home) = args.first() {
-            if home.oid.contains("consent=chain-verified") {
-                return Verdict::Pass;
-            }
-            return Verdict::Fail(format!(
-                "harvest_consent_verified: expected consent=chain-verified \
-                 sentinel (Landing A §4.2 @kintsugi/consent.query_phi \
-                 discharge per shard docblock), got arg oid {:?}",
-                home.oid
-            ));
-        }
-        return Verdict::Fail(
-            "harvest_consent_verified: missing peer_home argument".to_string(),
-        );
-    }
-    if action == "@peer/persistence.boot_state_coherent" {
-        if let Some(home) = args.first() {
-            if home.oid.contains("basis=snapshot-matched") {
-                return Verdict::Pass;
-            }
-            return Verdict::Fail(format!(
-                "boot_state_coherent: expected basis=snapshot-matched \
-                 sentinel (Landing A §4.3 anti-drift algedonic-bypass \
-                 per shard docblock), got arg oid {:?}",
-                home.oid
-            ));
-        }
-        return Verdict::Fail(
-            "boot_state_coherent: missing peer_home argument".to_string(),
-        );
-    }
     if action == "@peer/persistence.home_content_addressed" {
         if let Some(home) = args.first() {
             if home.oid.contains("manifest=oids-resolvable") {
@@ -1052,23 +870,6 @@ pub fn act(action: Ref, args: Vec<Value>) -> Verdict {
         }
         return Verdict::Fail(
             "home_content_addressed: missing peer_home argument".to_string(),
-        );
-    }
-    if action == "@peer/persistence.home_witnessing" {
-        if let Some(home) = args.first() {
-            if home.oid.contains("witnessing=all-four-pass") {
-                return Verdict::Pass;
-            }
-            return Verdict::Fail(format!(
-                "home_witnessing: expected witnessing=all-four-pass \
-                 sentinel (Landing A §4.5 composed bilateral per shard \
-                 docblock; requires all four sub-bilaterals Pass), \
-                 got arg oid {:?}",
-                home.oid
-            ));
-        }
-        return Verdict::Fail(
-            "home_witnessing: missing peer_home argument".to_string(),
         );
     }
     // ────────────────────────────────────────────────────────────────
@@ -1089,88 +890,6 @@ pub fn act(action: Ref, args: Vec<Value>) -> Verdict {
     // altitude (the @io-boundary FLOOR here is Dijkstra graph walking;
     // BUSINESS_LOGIC — discipline-discharge per pulse — lifts).
     // ────────────────────────────────────────────────────────────────
-    if action == "@kintsugi/roomba.walk_terminates_cleanly" {
-        if let Some(trajectory) = args.first() {
-            if trajectory.oid.contains("termination=scope-a-exhaustive") {
-                return Verdict::Pass;
-            }
-            return Verdict::Fail(format!(
-                "walk_terminates_cleanly: expected termination=scope-a-exhaustive \
-                 sentinel (Scope A four-state exhaustive per shard docblock), \
-                 got arg oid {:?}",
-                trajectory.oid
-            ));
-        }
-        return Verdict::Fail(
-            "walk_terminates_cleanly: missing walk_trajectory argument".to_string(),
-        );
-    }
-    if action == "@kintsugi/roomba.tension_monotone_descending" {
-        if let Some(trajectory) = args.first() {
-            if trajectory.oid.contains("tension=trajectory-descending") {
-                return Verdict::Pass;
-            }
-            return Verdict::Fail(format!(
-                "tension_monotone_descending: expected tension=trajectory-descending \
-                 sentinel (Mara §\"The empirical claim\" per shard docblock), \
-                 got arg oid {:?}",
-                trajectory.oid
-            ));
-        }
-        return Verdict::Fail(
-            "tension_monotone_descending: missing walk_trajectory argument".to_string(),
-        );
-    }
-    if action == "@kintsugi/roomba.coherence_gradient_admissible" {
-        if let Some(trajectory) = args.first() {
-            if trajectory.oid.contains("gradient=foerster-admissible") {
-                return Verdict::Pass;
-            }
-            return Verdict::Fail(format!(
-                "coherence_gradient_admissible: expected gradient=foerster-admissible \
-                 sentinel (Foerster ethical-imperative operationalized per shard \
-                 docblock; composes over @coherence.coherence_increases), \
-                 got arg oid {:?}",
-                trajectory.oid
-            ));
-        }
-        return Verdict::Fail(
-            "coherence_gradient_admissible: missing walk_trajectory argument".to_string(),
-        );
-    }
-    if action == "@kintsugi/roomba.knife_verdict_bounded" {
-        if let Some(trajectory) = args.first() {
-            if trajectory.oid.contains("verdict=three-state-bounded") {
-                return Verdict::Pass;
-            }
-            return Verdict::Fail(format!(
-                "knife_verdict_bounded: expected verdict=three-state-bounded \
-                 sentinel ({{Stable | NearBoundary | Jumped}} per shard \
-                 docblock; @mirror/lens/knife.stable_within surface), \
-                 got arg oid {:?}",
-                trajectory.oid
-            ));
-        }
-        return Verdict::Fail(
-            "knife_verdict_bounded: missing walk_trajectory argument".to_string(),
-        );
-    }
-    if action == "@kintsugi/roomba.walk_witnessing" {
-        if let Some(trajectory) = args.first() {
-            if trajectory.oid.contains("witnessing=all-four-pass") {
-                return Verdict::Pass;
-            }
-            return Verdict::Fail(format!(
-                "walk_witnessing: expected witnessing=all-four-pass sentinel \
-                 (composed bilateral per shard docblock; requires all four \
-                 sub-bilaterals Pass), got arg oid {:?}",
-                trajectory.oid
-            ));
-        }
-        return Verdict::Fail(
-            "walk_witnessing: missing walk_trajectory argument".to_string(),
-        );
-    }
     // ────────────────────────────────────────────────────────────────
     // `mirror roomba --commit` substrate-composition refactor (2026-07-15).
     //
