@@ -285,6 +285,97 @@ cascades applied).
   Seam Phase D. Second-witness for BOTH Recognition candidates
   lands here.
 
+### Tick 4 EMPIRICAL LANDING (2026-07-16 evening)
+
+The compiler observed itself and made its own commits — twice —
+from two paths (composition-gap fix + install-location resolution
+interleaved). First-order autopoietic compile loop is empirically
+running against real substrate.
+
+**Chronological commits (main):**
+
+1. `6b640f4` — **mirror <mirror@spectral.engineer> [roomba-observation]**
+   first empirical proof from `/tmp/mirror_test` (working binary
+   copy while install-location diagnostic in flight). `rust_loc:
+   33208 · graph_nodes: 15 · graph_edges: 43 · fiedler: 0.047956 ·
+   walk_steps: 7 · mean_tension: 0.002387 · ouroboros_monotone:
+   PASS`. Observation-only (no fracture detected in scoped
+   `bootstrap/`); fallback `--allow-empty` per landed pipeline.
+
+2. `8e373b6` — Reed [substrate-floor:@io-boundary] composition-gap
+   fix + audit doc at `docs/audits/2026-07-16-taut-roomba-walker-
+   composition-gap-hang.md`. Root cause per Taut #184: `observe()`
+   invoked `build_concept_graph` + `eigenvalue_profile` twice
+   (once inside `roomba::walk`, once inside `index::index`); both
+   O(N³) LAPACK, duplicate invocation caused SIGKILL-at-2min-
+   timeout empirical hang. Fix: extracted `walk_from_graph_and_
+   profile` from `walk` + hoisted single graph+profile compute to
+   composer + extended `--collapse=<path>` semantic to bound
+   graph_root (already-landed Tick 1 scope, not workaround).
+
+3. `efdbb2c` — **mirror <mirror@spectral.engineer> [roomba-
+   observation]** second empirical proof from canonical
+   `/Users/reed/.local/bin/mirror` (post install-location fix).
+   Same substrate observation as `6b640f4` at HEAD `8e373b62a5b4...`.
+
+**Install-location SIGKILL diagnostic (task #185):**
+
+Any invocation of `/Users/reed/.local/bin/mirror` exited 137 at
+0.001s CPU. Same binary at `/tmp/mirror_test` ran cleanly.
+Cross-location testing revealed the block was inode-keyed, not
+path-keyed: fresh inode at the same canonical path passes. Some
+macOS security cache (likely `syspolicyd` / EndpointSecurity)
+had SIGKILL'd the specific inode `2326781330`. Fix: `mv` old
+inode aside + `cp` fresh binary to canonical path. Trigger for
+the original inode-block unknown (possibly Gatekeeper reassessment
+or installed AV rule).
+
+**Recognition second-witnesses fired (Pack ratification still
+pending):**
+
+- **Alex-Q1** `#R-vacuum-preserves-fiedler-measurement-honesty` —
+  empirical second-witness at `efdbb2c`: `--collapse=bootstrap/`
+  produced scoped `fiedler=0.047956` without contaminating
+  measurement with unscoped Rust from `crates/`. The compiler's
+  own boundary-declaration was honored end-to-end from CLI →
+  `observe(root, collapse_path)` → `graph_root` → fiedler →
+  commit body.
+
+- **Alex-Q2** `#R-roomba-two-motions-are-first-order-autopoietic-
+  baseline` — empirical second-witness at `efdbb2c`: the walker
+  motion (walk → observe → compose → commit) round-tripped
+  through substrate composition to author the mirror repo's own
+  commit history without invoking peer-level or second-order
+  machinery. First-order-only sufficed. Note: `bump(fracture)`
+  did NOT fire (walker at fixed-point for `ashby_mismatch` class
+  — no stale-name-rot survives the §5.3 max cascade); `vacuum
+  (fragment)` is dispatchable via `apply_h::act` per Tick 3
+  (#182) but walker-side invocation is NOT yet wired. Empirical
+  witnessing is at the WALK+COMMIT motion level, not at
+  BUMP+VACUUM full-second-motion level.
+
+- **NEW candidate** proposed for Alex naming: `#R-compiler-
+  authors-repeatedly-under-attending-not-optimization` — two
+  mirror-authored commits (`6b640f4` + `efdbb2c`) at 7-min
+  interval on the same substrate produced byte-identical
+  observation records (rust_loc, graph_nodes/edges, fiedler,
+  walk_steps, mean_tension all identical); the compiler is
+  stable-at-attending, not perturbed by second observation.
+  Paper §14 empirical instantiation.
+
+**Deferred to next arc (bump + vacuum full second-motion):**
+
+- Walker-side vacuum-motion invocation for dangling-fragment
+  detection (spec landed at #179; resolver arms landed at #182;
+  walker wiring pending). Would compose with existing bump
+  pipeline via same `observe_and_commit_with_resolve` surface.
+- New fracture-detection class beyond `ashby_mismatch`
+  (contradiction, conundrum, out_of_band per `@kintsugi/surface`
+  §type.tension.surface_class) — extends the roomba's bump
+  detection scope. Current class is at fixed-point on the
+  substrate; new class would open new bite-food honestly rather
+  than manufacturing rename-pressure to force detection.
+
 ---
 
 ## Historical arc — @song/beat ladder-climb 2026-07-13 + @gift arc 2026-07-14
