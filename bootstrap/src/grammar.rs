@@ -195,6 +195,12 @@ fn companion_keyword_sources(path: &str) -> &'static [&'static str] {
         "shards/mirror/grammar.mirror" => &[
             "shards/mirror/glass/ast/token.mirror",
             "boot/std/mirror/glass/ast/token.mirror",
+            // @epistemologic/pact/bilateral companion (Reed 2026-07-16
+            // per Mara canonical spec at 9a77361 §5.3 step 2). Registers
+            // `focus bilateral` + `project sentinel` + `project arity` +
+            // `project require` for the `bilateral <name> { ... }` block
+            // shape the reflective apply_h::act evaluator dispatches on.
+            "shards/epistemologic/pact/keywords.mirror",
         ],
         "boot/std/mirror/grammar.mirror" => &["boot/std/mirror/glass/ast/token.mirror"],
         "shards/mirror/spec.mirror" => &["shards/mirror/spec/keywords.mirror"],
