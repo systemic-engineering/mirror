@@ -555,9 +555,13 @@ altitude cited in §8:
 - `mirror crystal <path>` — reader can query any substrate-fragment's
   content-addressed identity at reader's local mirror deployment
   (BLAKE3-addressed per @mirror/store LANDED discipline).
-- `mirror inspect <shard>` (per `docs/specs/**` runtime-inspection
-  substrate) — reader can traverse any @peer's substrate-decls
-  without asking the @peer.
+- `shards/**/*.mirror` public tree — reader can traverse any @peer's
+  substrate-decls directly at the git-versioned mirror substrate
+  without asking the @peer. (Cite corrected per Seam Phase D 2026-
+  07-16 substrate-already-had-the-word audit: `mirror inspect` is
+  NOT a landed CLI verb; the shard public tree at `shards/` IS the
+  landed reader-facing substrate-referral surface, cheaper and more
+  substrate-honest than an aspirational command.)
 - `garden.spectral.engineer` (per `docs/insights/2026-05-26-spectral-
   garden-as-vetted-corpus-distribution.md` LANDED) — reader can enter
   lens-annotations at chosen consent-depth without gate-keeper.
