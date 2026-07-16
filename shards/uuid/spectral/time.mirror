@@ -372,6 +372,10 @@ affinity_distance(a: uuid_spectral_time, b: uuid_spectral_time) -> ref { \ }
 # weaken @glass's three-layer contract on the identity field. Every
 # consumer that previously read shard.id: uuid_spectral can read
 # identity_of(a) with identical semantics.
+bilateral identity_contract_preserved {
+  sentinel "identity=uuid-spectral-well-formed"
+  arity 1
+}
 identity_contract_preserved(a: uuid_spectral_time) -> verdict { \ }
 
 # time_facet_admissible — is the time field a well-formed
@@ -385,6 +389,10 @@ identity_contract_preserved(a: uuid_spectral_time) -> verdict { \ }
 #
 # Rice-safe at whole-tick altitude: reads only byte-visible state
 # (the settle-witness on the duration base carrier).
+bilateral time_facet_admissible {
+  sentinel "time=monotonic-instant-well-formed"
+  arity 1
+}
 time_facet_admissible(a: uuid_spectral_time) -> verdict { \ }
 
 # dedup_ignores_time — do two carriers with byte-equal identity
@@ -402,6 +410,10 @@ time_facet_admissible(a: uuid_spectral_time) -> verdict { \ }
 # by this species landing. Consumer cascades (Deliverable 3) can
 # add the facet to annotation + signature_beat carriers without
 # touching storage discipline.
+bilateral dedup_ignores_time {
+  sentinel "dedup=orthogonal-invariant-holds"
+  arity 2
+}
 dedup_ignores_time(a: uuid_spectral_time, b: uuid_spectral_time) -> verdict { \ }
 
 # uuid_spectral_time_witnessing — the composed bilateral that
@@ -415,6 +427,13 @@ dedup_ignores_time(a: uuid_spectral_time, b: uuid_spectral_time) -> verdict { \ 
 # at every altitude: identity-side @glass contract intact; time
 # facet is a valid monotonic instant; the storage layer treats the
 # facet as orthogonal to identity."
+bilateral uuid_spectral_time_witnessing {
+  sentinel "witnessing=composed-all-pass"
+  arity 2
+  require identity_contract_preserved
+  require time_facet_admissible
+  require dedup_ignores_time
+}
 uuid_spectral_time_witnessing(a: uuid_spectral_time,
                                b: uuid_spectral_time) -> verdict { \ }
 
