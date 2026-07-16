@@ -405,6 +405,10 @@ section_at(F_A_p: sheaf_restriction, crystal_ref: ref) -> section_at_stalk { \ }
 # program semantics.
 #
 # Body discharges per-realisation. `\`-obligation-blocked.
+bilateral restriction_admissible {
+  sentinel "peer=witnessed + acl=resolves + stalks=bounded"
+  arity 1
+}
 restriction_admissible(sr: sheaf_restriction) -> verdict { \ }
 
 # === section_admissible — bilateral predicate ===
@@ -441,6 +445,11 @@ restriction_admissible(sr: sheaf_restriction) -> verdict { \ }
 # genuinely empty under the restriction.
 #
 # Body discharges per-realisation. `\`-obligation-blocked.
+bilateral section_admissible {
+  sentinel "sheaf=admissible + stalk=admitted"
+  arity 1
+  require restriction_admissible
+}
 section_admissible(s: section_at_stalk) -> verdict { \ }
 
 out @subject/visibility/sheaf
