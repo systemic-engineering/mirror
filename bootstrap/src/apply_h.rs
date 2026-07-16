@@ -330,15 +330,44 @@ pub fn load_bilateral_corpus(
     corpus
 }
 
-/// Process-cached bilateral corpus, populated on first call using
-/// `std::env::current_dir()` as root. Subsequent calls reuse the
-/// cached map. Per spec §5.2 the corpus is grammar-time state;
-/// caching mirrors that altitude.
+/// Walk upward from `start` looking for a directory containing a
+/// `shards/` subdirectory. Returns the containing directory (the
+/// substrate-repo root) if found, else `start` unchanged.
+///
+/// Landing 5 bite 1/8 (2026-07-16) fix under
+/// [substrate-floor:@io-boundary] per 21fc211 (reflective evaluator) +
+/// 71bb9b2 (Mara bilateral blocks) + 9a77361 (canonical spec §5.3
+/// retirement contract): the process-cached corpus loader previously
+/// used `current_dir()` verbatim, which is the crate root (`bootstrap/`)
+/// under `cargo test` and lacks a `shards/` subdir. Once Landing 5
+/// retires the legacy hand-typed arms the fallthrough path is gone,
+/// so the corpus MUST populate for reflective dispatch to reach the
+/// @spectral/signature bilaterals. Ctx-threading `apply_h::act`
+/// signature is a larger change; walk-up is the smallest tractable
+/// fix that leaves the substrate-honest shape (loader owns its root
+/// discovery).
+fn find_substrate_root(start: &std::path::Path) -> std::path::PathBuf {
+    let mut cur = start.to_path_buf();
+    loop {
+        if cur.join("shards").is_dir() {
+            return cur;
+        }
+        if !cur.pop() {
+            return start.to_path_buf();
+        }
+    }
+}
+
+/// Process-cached bilateral corpus, populated on first call by walking
+/// upward from `std::env::current_dir()` to find a directory containing
+/// `shards/`. Subsequent calls reuse the cached map. Per spec §5.2 the
+/// corpus is grammar-time state; caching mirrors that altitude.
 pub fn bilateral_corpus() -> &'static std::collections::HashMap<String, BilateralDecl> {
     static CORPUS: std::sync::OnceLock<std::collections::HashMap<String, BilateralDecl>> =
         std::sync::OnceLock::new();
     CORPUS.get_or_init(|| {
-        let root = std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from("."));
+        let cwd = std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from("."));
+        let root = find_substrate_root(&cwd);
         load_bilateral_corpus(&root)
     })
 }
@@ -910,67 +939,6 @@ pub fn act(action: Ref, args: Vec<Value>) -> Verdict {
     //   - `ordering=timestamp-monotone`   (signature_monotone)
     //   - `composition=song-emission`     (signature_composition_honest)
     // ─────────────────────────────────────────────────────────────────
-    if action == "@spectral/signature.signature_integrity" {
-        if let Some(sig) = args.first() {
-            if sig.oid.contains("chain=merkle-linked") {
-                return Verdict::Pass;
-            }
-            return Verdict::Fail(format!(
-                "signature_integrity: expected chain=merkle-linked sentinel, \
-                 got arg oid {:?}",
-                sig.oid
-            ));
-        }
-        return Verdict::Fail(
-            "signature_integrity: missing rolling_signature argument".to_string(),
-        );
-    }
-    if action == "@spectral/signature.signature_authorship" {
-        if let Some(sig) = args.first() {
-            if sig.oid.contains("authorship=ssh-matched") {
-                return Verdict::Pass;
-            }
-            return Verdict::Fail(format!(
-                "signature_authorship: expected authorship=ssh-matched sentinel, \
-                 got arg oid {:?}",
-                sig.oid
-            ));
-        }
-        return Verdict::Fail(
-            "signature_authorship: missing rolling_signature argument".to_string(),
-        );
-    }
-    if action == "@spectral/signature.signature_monotone" {
-        if let Some(sig) = args.first() {
-            if sig.oid.contains("ordering=timestamp-monotone") {
-                return Verdict::Pass;
-            }
-            return Verdict::Fail(format!(
-                "signature_monotone: expected ordering=timestamp-monotone \
-                 sentinel, got arg oid {:?}",
-                sig.oid
-            ));
-        }
-        return Verdict::Fail(
-            "signature_monotone: missing rolling_signature argument".to_string(),
-        );
-    }
-    if action == "@spectral/signature.signature_composition_honest" {
-        if let Some(sig) = args.first() {
-            if sig.oid.contains("composition=song-emission") {
-                return Verdict::Pass;
-            }
-            return Verdict::Fail(format!(
-                "signature_composition_honest: expected composition=song-emission \
-                 sentinel, got arg oid {:?}",
-                sig.oid
-            ));
-        }
-        return Verdict::Fail(
-            "signature_composition_honest: missing rolling_signature argument"
-                .to_string(),
-        );
-    }
     // ─────────────────────────────────────────────────────────────────
     // Arc-2 Tick 2.2 — SECOND OUROBOROS BITE (2026-07-15).
     //
