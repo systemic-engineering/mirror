@@ -236,6 +236,10 @@ type peer_home = {
 # Body discharges per-realisation. `\`-obligation-blocked per
 # [[feedback-craft-not-deliver]]; Arc-2.3 landing composes this via
 # `apply_h::act` sentinel-check.
+bilateral projection_visibility_respected {
+  sentinel "visibility=filter-respected"
+  arity 1
+}
 projection_visibility_respected(home: peer_home,
                                 visibility_filter: ref) -> verdict { \ }
 
@@ -258,6 +262,10 @@ projection_visibility_respected(home: peer_home,
 # discharge is byte-equality.
 #
 # Body discharges per-realisation. `\`-obligation-blocked.
+bilateral harvest_consent_verified {
+  sentinel "consent=chain-verified"
+  arity 1
+}
 harvest_consent_verified(home: peer_home, new_crystals: ref) -> verdict { \ }
 
 # === boot_state_coherent — bilateral predicate ===
@@ -285,6 +293,10 @@ harvest_consent_verified(home: peer_home, new_crystals: ref) -> verdict { \ }
 # byte-equality.
 #
 # Body discharges per-realisation. `\`-obligation-blocked.
+bilateral boot_state_coherent {
+  sentinel "basis=snapshot-matched"
+  arity 1
+}
 boot_state_coherent(home: peer_home, e: ref) -> verdict { \ }
 
 # === home_content_addressed — bilateral predicate ===
@@ -310,6 +322,10 @@ boot_state_coherent(home: peer_home, e: ref) -> verdict { \ }
 # byte-equality.
 #
 # Body discharges per-realisation. `\`-obligation-blocked.
+bilateral home_content_addressed {
+  sentinel "identity=content-addressed"
+  arity 1
+}
 home_content_addressed(home: peer_home) -> verdict { \ }
 
 # === home_witnessing — composed bilateral ===
@@ -339,6 +355,14 @@ home_content_addressed(home: peer_home) -> verdict { \ }
 # per Landing A §5 substrate-integrity guarantee."
 #
 # Body discharges per-realisation. `\`-obligation-blocked.
+bilateral home_witnessing {
+  sentinel "witnessing=all-four-pass"
+  arity 1
+  require projection_visibility_respected
+  require harvest_consent_verified
+  require boot_state_coherent
+  require home_content_addressed
+}
 home_witnessing(home: peer_home) -> verdict { \ }
 
 out @peer/persistence
