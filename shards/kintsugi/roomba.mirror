@@ -5,11 +5,15 @@ in @nl
 in @kintsugi
 in @kintsugi/consent
 in @kintsugi/oscillate
+in @kintsugi/morphism
+in @kintsugi/fracture
 in @mirror/index
 in @mirror/store
+in @algebra/metalogue
 in @cyberpunk/algedonic
 in @song/beat
 in @torus
+in @epistemologic/reality/time
 in @epistemologic/cybernetic/coherence
 
 # @kintsugi/roomba — substrate walker species declaring the four
@@ -353,6 +357,267 @@ knife_verdict_bounded(trajectory: walk_trajectory) -> verdict { \ }
 # Body discharges per-realisation. `\`-obligation-blocked.
 walk_witnessing(trajectory: walk_trajectory) -> verdict { \ }
 
+# ═══════════════════════════════════════════════════════════════════
+# 2026-07-16 ADDITIVE CASCADE — bump + vacuum first-order motions
+# ═══════════════════════════════════════════════════════════════════
+#
+# Alex 2026-07-16 in-transcript verbatim (session-crystallizing):
+#
+#   "Oh and what if the @roomba literally had a `bump` action which
+#    triggers the kintsugi loop? And what if it also had a `vacuum`
+#    action which marks a `fragment` for garbage collection (like in
+#    git, based on a git like dangling objects gc surface; that's also
+#    where, in the long run, we can configure moving gc fragments into
+#    cold storage, but that's future music)"
+#
+# Preceding load-bearing crystallization (same session):
+#
+#   "This is a reproducible action. This is not even a peer level.
+#    What if this is a @metalogue between @roomba and @kintsugi? The
+#    @roomba bumps into low connectivity rust code and the @kintsugi
+#    loop collapses it through the @fate inference metalogue into
+#    mirror. This is FIRST ORDER. We don't need second and third order
+#    for this. What if there was a @kintsugi/algebra (or is this the
+#    @kintsugi/fractures? I think it is. The fractures ARE kintsugi's
+#    algebra.)?"
+#
+#   "Oh I like this. Combine this with the whole mycelial math and the
+#    'gold flows into the cracks and increases the conductivity' and
+#    this IS the first-order autopoetic baseline compile loop."
+#
+# === Load-bearing recognition ===
+#
+# The first-order autopoietic baseline compile loop = @roomba ×
+# @kintsugi @metalogue at @algebra/metalogue altitude. NOT peer-
+# altitude. NOT second/third order. The Roomba mascot's two physical
+# motions ARE the substrate: bump = fracture-emission triggering
+# @kintsugi dispatch; vacuum = dangling-fragment marking for two-phase
+# gc per git-scm precedent (grace-period retention + prune-past-horizon).
+#
+# Canonical spec: `docs/specs/roomba-bump-and-vacuum-as-first-order-
+# autopoietic-motions.md` (Mara `d457501`; 12 sections + 10 Alex-
+# adjudicable residues + Kagi-cited git-scm two-phase gc + Shannon
+# entropy grounding).
+#
+# Math foundation: `docs/math/kintsugi/roomba/bump-and-vacuum.md`
+# (Mara `17697e6`; bump-as-morphism-emission over fracture algebra F +
+# vacuum-as-reachability-walk on OID DAG + two-phase gc formal
+# semantics + Fiedler-preservation claim).
+#
+# === Substrate-already-had-the-word (~71st landed instance) ===
+#
+# `bump` was already substrate-decl'd at
+# `docs/specs/roomba-substrate-walker-that-feeds-kintsugi.md` §3
+# (Mara `9bbebd2`, 2026-07-14) as the MEASUREMENT arity:
+#
+#   bump(position: walk_position) -> spectral_tension { \ }
+#
+# Alex's 2026-07-16 crystallization LIFTS this pre-existing action to
+# the fracture-emission trigger arity below. Path A (arity overload)
+# per canonical spec §10.1 Mara-recommendation: the physical Roomba's
+# bumper serves both measurement AND signal; the substrate honors that
+# ambiguity through arity dispatch.
+#
+# === The fracture carrier ===
+#
+# The typed observation @roomba emits when its walk-pulse detects
+# spectral_tension above the fracture-emission threshold (knife_verdict
+# = Jumped per landed knife_verdict_bounded discipline). Each fracture
+# names the site + the species whose morphism can mend it.
+#
+# Composition ancestry:
+#   opacity              (@glass; the located-fact carrier)
+#   spectral_tension     (@kintsugi/roomba per-pulse scalar)
+#   fracture_species     (discriminator over the 14 landed
+#                          @kintsugi/fracture/* families)
+#   tick                 (@epistemologic/reality/time)
+type fracture = {
+  site:            ref,
+  tension:         spectral_tension,
+  species:         fracture_species,
+  observed_at:     tick,
+}
+
+# === The fracture_species discriminator ===
+#
+# Open enum via species-parametric dispatch (per canonical spec §10.2
+# Mara-recommendation). Matches @io/* and @mirror/store/* species-
+# dispatch pattern; new fracture species land without touching this
+# type. The discriminator IS a species handle at @kintsugi/fracture/*
+# altitude; realization dispatches through apply_h::act.
+type fracture_species = ref
+
+# === The kintsugi_dispatch carrier ===
+#
+# What bump returns when the collision IS the fracture-emission.
+# Load-bearing: this record IS one turn in the @roomba × @kintsugi
+# @metalogue at @algebra/metalogue altitude (per canonical spec §4).
+# algebra_metalogue_session.turns append this record.
+type kintsugi_dispatch = {
+  fracture:        fracture,
+  morphism:        morphism,
+  metalogue_turn:  algebra_turn,
+}
+
+# === The fragment carrier ===
+#
+# A dangling content-addressed unit the vacuum motion marks for gc.
+# Alex 2026-07-16 verbatim: "marks a `fragment` for garbage collection."
+# Distinct from wire-altitude `fractal` at @mirror/store/git and atomic
+# `splinter` at @glass — those are LIVE carriers; a `fragment` is what
+# those carriers become when no live root reaches them.
+#
+# Composition ancestry:
+#   oid                  (@mirror/store; content-address)
+#   walk_position        (@kintsugi/roomba; walker discovery point)
+#   tick                 (@epistemologic/reality/time; mark-age origin
+#                          for two-phase prune horizon)
+type fragment = {
+  oid:              oid,
+  observed_at:      tick,
+  discovered_by:    walk_position,
+}
+
+# === The gc_mark carrier ===
+#
+# What vacuum emits when @mirror/store registers the fragment in its
+# gc surface. The mark IS the record; prune reads mark.prune_horizon
+# to decide deletion per git-scm two-phase discipline.
+type gc_mark = {
+  fragment:         fragment,
+  marked_at:        tick,
+  prune_horizon:    tick,
+}
+
+# === bump — the fracture-emission trigger (Alex 2026-07-16) ===
+#
+# The physical Roomba's collision, lifted to substrate. When the
+# walker's pulse detects spectral_tension above the fracture-emission
+# threshold (currently: knife_verdict = Jumped per landed
+# knife_verdict_bounded), the collision IS the fracture-emission;
+# @kintsugi is dispatched at the same tick as one turn in the
+# @roomba × @kintsugi @metalogue.
+#
+# Composition over LANDED carriers:
+#   @kintsugi/fracture/*        — 14 landed morphism species (algebra F)
+#   @kintsugi/oscillate         — ACTIVE/DARK pass dispatch
+#   @kintsugi/consent           — query_phi auto-apply boundary
+#   @kintsugi/store/git         — terminal @io projection
+#   @cyberpunk/algedonic        — sample_pain / pain_gradient primitives
+#   @epistemologic/cybernetic/coherence — coherence_gradient_admissible
+#                                          discharge
+#   @algebra/metalogue          — algebra_turn substrate-decl'd home
+#
+# Sentinel per shard docblock: `bump=fracture-emission-dispatched` —
+# the byte-level marker the resolver checks. Discharge is byte-equality
+# on the kintsugi_dispatch record's algebra_turn.tick match to the
+# canonical time surface.
+#
+# Path A arity overload per canonical spec §10.1 Mara-recommendation:
+# the substrate ALREADY has `bump(position: walk_position) ->
+# spectral_tension` at the measurement arity (per Mara `9bbebd2` §3).
+# This second arity fires on the emission side; apply_h::act dispatches
+# per-arity via the input-type discriminator.
+#
+# Body discharges per-realisation. `\`-obligation-blocked per
+# [[feedback-craft-not-deliver]]; consumers pull the realization;
+# apply_h::act composes the sentinel-check.
+bump(fracture: fracture) -> imperfect<kintsugi_dispatch, ref, transparency(ref)> { \ }
+
+# === vacuum — the dangling-fragment gc mark (Alex 2026-07-16) ===
+#
+# The physical Roomba's dust-collection motion, lifted to substrate.
+# When the walker observes a fragment that no longer reaches from any
+# live root (dangling), the vacuum motion marks it for two-phase gc
+# per @mirror/store's dangling-object discipline (git-scm precedent).
+#
+# Composition over LANDED carriers (post this-cascade + companion
+# @mirror/store cascade in same tick):
+#   @mirror/store.walk          — forward-closure per live ref
+#   @mirror/store.impacted_by   — reverse-closure (dangling-consistency
+#                                  second-witness per math §2.5)
+#   @mirror/store.walk_dangling — enumeration (companion cascade;
+#                                  same tick)
+#   @mirror/store.mark_unreachable — mark-phase discharge (companion
+#                                     cascade; same tick)
+#
+# Two-phase discipline per git-scm.com/docs/git-prune (retrieved
+# 2026-07-16): vacuum MARKS the fragment; subsequent @mirror/store.prune
+# with `before` argument DELETES fragments whose
+# gc_mark.prune_horizon <= before. Grace-period grounds concurrent-writer
+# safety window per git-gc(1) rationale.
+#
+# Sentinel per shard docblock: `vacuum=mark-recorded` — the byte-level
+# marker the resolver checks. Discharge is byte-equality on
+# gc_mark.marked_at match to the canonical time surface + fragment.oid
+# non-membership in impacted_by(live-refs).
+#
+# Cold-storage forward-promise (per Alex 2026-07-16 "future music"):
+# a future @mirror/store/cold species will extend the two-phase
+# discipline with a THIRD phase (migrate_to_cold) between vacuum-mark
+# and prune-delete. Substrate names extension surface here; does NOT
+# land it this arc.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+vacuum(fragment: fragment) -> imperfect<gc_mark, ref, transparency(ref)> { \ }
+
+# === bump_witnessing — composed bilateral ===
+#
+# The composed predicate consumers cite when the fracture-emission
+# arity is dispatched. Passes iff the emitted kintsugi_dispatch
+# satisfies all three sub-conjuncts:
+#
+#   bump_witnessing(dispatch) :=
+#     fracture_species_admissible(dispatch.fracture)
+#     ∧ morphism_selected_from_fracture_algebra(dispatch.morphism)
+#     ∧ metalogue_turn_composable(dispatch.metalogue_turn)
+#
+# Rice-safe bound: reads only byte-visible state (fracture.species
+# handle membership; morphism origin-species handle; algebra_turn tick
+# monotone).
+#
+# Sentinel per shard docblock: `bump=witnessing-all-conjuncts-pass`
+# — byte-equality on the composed sentinel.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+bump_witnessing(dispatch: kintsugi_dispatch) -> verdict { \ }
+
+# === vacuum_admissible — composed bilateral ===
+#
+# The composed predicate consumers cite when the vacuum arity is
+# dispatched. Passes iff the emitted gc_mark satisfies all three
+# sub-conjuncts:
+#
+#   vacuum_admissible(mark) :=
+#     fragment_is_dangling(mark.fragment)                # via impacted_by
+#     ∧ mark_age_monotone(mark)                          # prune_horizon >= marked_at + grace
+#     ∧ dangling_consistency_second_witness(mark.fragment)  # per math §2.5
+#
+# Rice-safe bound: reads only byte-visible state (fragment.oid membership
+# in impacted_by; tick arithmetic; DAG reachability closure check).
+#
+# Sentinel per shard docblock: `vacuum=admissible-all-conjuncts-pass`
+# — byte-equality on the composed sentinel.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+vacuum_admissible(mark: gc_mark) -> verdict { \ }
+
+# === gc_mark_terminal — bilateral predicate ===
+#
+# Does the gc_mark's prune_horizon lie in the FUTURE relative to the
+# canonical time surface at mark-time? Per math §3.1: the two-phase
+# invariant requires prune_horizon > marked_at strictly — a zero
+# grace-period would collapse the two phases into one, forfeiting the
+# concurrent-writer safety window git-gc(1) documents as its rationale.
+#
+# Rice-safe bound: reads only byte-visible state (tick scalar arithmetic).
+#
+# Sentinel per shard docblock: `gc_mark=horizon-in-future` — byte-
+# equality on the terminal-invariant sentinel.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+gc_mark_terminal(mark: gc_mark) -> verdict { \ }
+
 out @kintsugi/roomba
 out walk_trajectory
 out walk_terminates_cleanly
@@ -360,3 +625,13 @@ out tension_monotone_descending
 out coherence_gradient_admissible
 out knife_verdict_bounded
 out walk_witnessing
+out fracture
+out fracture_species
+out kintsugi_dispatch
+out fragment
+out gc_mark
+out bump
+out vacuum
+out bump_witnessing
+out vacuum_admissible
+out gc_mark_terminal

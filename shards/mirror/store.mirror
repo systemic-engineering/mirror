@@ -2,6 +2,8 @@ in @prism
 in @glass
 in @meta
 in @uuid/spectral
+in @epistemologic/reality/time
+in @kintsugi/roomba
 
 # @mirror/store — the fragmentation store interface.
 #
@@ -577,6 +579,165 @@ verify(o: oid, content: bytes) -> verdict { \ }
 # now a declared altitude of the substrate, not implementation detail
 # routed around the substrate-decl surface.
 
+# ═══════════════════════════════════════════════════════════════════
+# 2026-07-16 ADDITIVE CASCADE — dangling-fragment two-phase gc surface
+# ═══════════════════════════════════════════════════════════════════
+#
+# Companion cascade to `shards/kintsugi/roomba.mirror` (same tick)
+# discharging Alex 2026-07-16 in-transcript crystallization: the
+# @roomba's `vacuum` action marks a `fragment` for garbage collection
+# per git-scm two-phase discipline. This @mirror/store cascade mints
+# the family-root gc primitives vacuum composes over.
+#
+# Canonical spec: `docs/specs/roomba-bump-and-vacuum-as-first-order-
+# autopoietic-motions.md` §5 (Mara `d457501`; the three gc primitives
+# named + git-scm two-phase precedent + IPFS pin-as-reachability
+# alternate discipline).
+#
+# Math foundation: `docs/math/kintsugi/roomba/bump-and-vacuum.md` §2-3
+# (Mara `17697e6`; walk_dangling O(|V|+|E|) + mark_unreachable
+# idempotency + prune safety invariant + Shannon-entropy grounding
+# for two-phase gc as bounded-entropy operation).
+#
+# === Substrate-already-had-the-word ===
+#
+# `walk_dangling` is the git-fsck --dangling surface at family-root
+# altitude; `mark_unreachable` is the mark-phase per canonical mark-
+# and-sweep (McCarthy 1960); `prune` is git-gc's --prune=<duration>
+# semantics verbatim. Delightfully-boring per AGENTS.md §Delightfully
+# Boring: every reader who has run `git gc` already knows what these
+# actions do.
+#
+# === Composition with existing walk / impacted_by ===
+#
+# The two closures LANDED at family-root close the reachability algebra:
+#   walk(root) -> splinter_graph        forward closure (LANDED)
+#   impacted_by(oid) -> [oid]           reverse closure (LANDED, N4)
+#
+# The three new primitives BELOW extend the algebra with the
+# dangling/mark/prune discipline:
+#   walk_dangling(refs) -> [fragment]    live-root-set complement enumeration
+#   mark_unreachable(fragment) -> imperfect<gc_mark>   two-phase gc mark phase
+#   prune(store, before) -> verdict                    two-phase gc delete phase
+#
+# A fragment is safely vacuum-able iff `impacted_by(f.oid) ∩ L(R) = ∅`
+# where L(R) = ⋃_{r ∈ refs} walk(r). Per math §2.5 dangling-consistency
+# proposition: this is equivalent (in the store's DAG) to `f.oid ∉ L(R)`
+# — the reverse-check IS the second-witness of dangling-status.
+
+# === walk_dangling — enumerate dangling fragments ===
+#
+# Enumerate the OIDs in the store whose forward reachability from ANY
+# live ref is zero. The complement of the union of walk(ref) closures
+# over all named refs. Realizes the git-fsck "dangling objects" surface
+# at family-root altitude.
+#
+# refs: the set of live named-ref oids the store considers roots.
+#        Empty list means "no live roots" — every OID is dangling.
+#
+# Returns: list of fragment records, each carrying the dangling OID +
+# the tick the walker observed it dangling + the walker position at
+# discovery.
+#
+# Realisation lives in fragmentation (per
+# [[architecture-fragmentation-is-the-rust-substrate]]); family-root
+# declares the contract; obligation body discharges at @io.
+#
+# Complexity per math §2.3: O(|V| + |E|) on the reachable subgraph,
+# plus O(|V|) for the set-difference. Dominant cost is the enumeration
+# of V \ reachable for the fragment list construction.
+#
+# Body `\`-obligation-blocked per [[feedback-craft-not-deliver]].
+# === store_ref — the family-root open-store handle ===
+#
+# Substrate-family-root-honest typed handle naming one open @mirror/store
+# instance. Species-altitude wire handles (e.g., @mirror/store/git's
+# git_store) specialize this carrier at their altitude; the family-root
+# actions (walk_dangling / mark_unreachable / prune) take store_ref so
+# any @mirror/store species can dispatch through the same surface.
+#
+# Realisation lives in fragmentation; family-root declares the typed
+# handle; species-altitude realises per its wire discipline.
+type store_ref = ref
+
+walk_dangling(refs: [oid]) -> [fragment] { \ }
+
+# === mark_unreachable — record dangling observation ===
+#
+# Record the fragment's dangling observation in the store's gc metadata.
+# Idempotent on fragment.oid: re-marking the same OID within a single
+# prune-horizon window is a no-op on the mark-age (preserves the
+# earliest observation per math §3.1 idempotency clause).
+#
+# The gc_mark returned carries:
+#   marked_at        — canonical tick at store-recording time
+#   prune_horizon    — marked_at + configured grace-period
+#
+# The grace-period is configured per-store at open-time; the substrate
+# names the shape at family-root altitude. Per canonical spec §5.3:
+# default 2 weeks (git-gc precedent); configurable to zero (IPFS-style
+# aggressive collection) or infinity (pin-forever).
+#
+# Body `\`-obligation-blocked.
+mark_unreachable(fragment: fragment) -> imperfect<gc_mark, ref, transparency(ref)> { \ }
+
+# === prune — two-phase gc delete phase ===
+#
+# Delete every fragment whose gc_mark.prune_horizon is strictly less
+# than `before`. Two-phase discipline: this is the DELETE phase; marks
+# are the MARK phase. Realizes git-gc's `--prune=<duration>` semantics.
+#
+# before: cutoff tick. Fragments whose gc_mark.prune_horizon < before
+#          are pruned; fragments whose prune_horizon >= before survive.
+#
+# Safety invariant per math §3.2: no fragment is deleted whose
+# `impacted_by(oid) ∩ L(R) ≠ ∅` at prune-time (the mark phase
+# established dangling-status; the grace-period bounds the concurrent-
+# writer safety window per git-gc(1) rationale).
+#
+# @io discharge point (the single linearization crossing this cascade
+# adds; pipeforward §5.5.4 hard-gate satisfied by construction: bump +
+# vacuum + mark_unreachable + walk_dangling stay nonlinear; only prune
+# crosses).
+#
+# L(ϕ) profile per pipeforward §5.5.4 rule 3:
+# - Lossless for all fragments whose gc_mark.prune_horizon >= before
+#   (unchanged bytes on disk).
+# - Lossy by construction for all fragments whose gc_mark.prune_horizon
+#   < before (content deleted from local store; may be recoverable from
+#   remotes if @spectral/db replication enabled; forward-promised
+#   recoverable via cold-storage tier per canonical spec §3.4).
+#
+# Body `\`-obligation-blocked; discharge is @io/fs delete on the store's
+# on-disk objects directory (`.git/<namespace>/objects/` per
+# @mirror/store/git wire species).
+#
+# store: a family-root-typed handle to an open @mirror/store instance;
+#         species-altitude wire handles (e.g., @mirror/store/git's
+#         git_store) specialize this carrier at their altitude and
+#         discharge prune through their per-species delete surface.
+prune(store: store_ref, before: tick) -> verdict { \ }
+
+# === gc_reachability_closure_second_witness — bilateral predicate ===
+#
+# Does the dangling-set the walker enumerated match the reverse-closure
+# verdict? Per math §2.5 dangling-consistency: for any o in the returned
+# [fragment] list, `impacted_by(o.oid) ∩ L(R) = ∅` MUST hold. The
+# forward-walk enumeration + reverse-closure check are two witnesses
+# of the same property; discharge is the intersection-empty verdict
+# at every returned fragment.
+#
+# Rice-safe bound: reads only byte-visible state (fragment.oid membership
+# check against impacted_by output; set-intersection cardinality).
+#
+# Sentinel per shard docblock: `gc=reachability-second-witness-holds`
+# — the byte-level substrate-decl'd marker. Discharge is byte-equality
+# on the composed sentinel across all returned fragments.
+#
+# Body `\`-obligation-blocked. Consumers cite in `requires` clauses when
+# invoking walk_dangling to certify the enumeration is dangling-consistent.
+gc_reachability_closure_second_witness(refs: [oid], dangling: [fragment]) -> verdict { \ }
+
 out @mirror/store
 out @mirror/store/oid
 out oid
@@ -590,3 +751,8 @@ out diff
 out walk
 out impacted_by
 out verify
+out store_ref
+out walk_dangling
+out mark_unreachable
+out prune
+out gc_reachability_closure_second_witness
