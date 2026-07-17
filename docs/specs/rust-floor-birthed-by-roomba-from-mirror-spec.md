@@ -553,8 +553,10 @@ discipline: subtract two flags into one; substrate dispatches on what
 vacuum finds when it enters the directory.
 
 **Substrate-already-had-the-word:** `vacuum` is the walker's landed
-motion name at `shards/kintsugi/roomba.mirror` (Reed `914799b` fourth
-first-order motion cascade). `--vacuum=~dir` reads "the walker's
+motion name at `shards/kintsugi/roomba.mirror:585` (Mara `a19fea2`
+2026-07-16 SECOND first-order motion cascade — bump/vacuum-mark-then-
+prune/gc landing; pivot as FOURTH first-order motion followed at
+Mara `914799b` 2026-07-17). `--vacuum=~dir` reads "the walker's
 vacuum motion, scoped to directory `~dir`."
 
 ### §7.2 The kintsugi.roomba block (Alex's sketch, canonicalized)
@@ -719,8 +721,10 @@ re-declare. Composition anchors:
 
 ### §9.1 Substrate carriers (LANDED)
 
-- `shards/kintsugi/roomba.mirror` (Reed 2026-07-15 species-decl +
-  `914799b:566` fourth first-order motion) — §7.4 dispatch composes.
+- `shards/kintsugi/roomba.mirror` (Mara species-decl + Mara `a19fea2:585`
+  2026-07-16 SECOND first-order motion vacuum landing + Mara
+  `914799b:566` 2026-07-17 FOURTH first-order motion pivot landing) —
+  §7.4 dispatch composes.
 - `shards/kintsugi/surface.mirror` (Mara `09a77e8` fifth surface_
   class dispatch_ambiguity) — §7.4 pivot dispatch composes.
 - `shards/peer.mirror:531-534` (Mara `d8b149c` @peer.audhd + audhd_
