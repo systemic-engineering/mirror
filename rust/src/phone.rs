@@ -171,6 +171,34 @@ pub(crate) fn read_file(path: &Path) -> io::Result<String> {
     fs::read_to_string(path)
 }
 
+/// Append `contents` to `path` — @io/fs.append at terminal-floor
+/// altitude. Creates the file if it does not exist. Substrate-honest
+/// firing surface of the M-vacuum pheromone-deposit tick per Mara
+/// `95c0e4a` (canonical spec) + Mara `d7ff58e` (math root §5): the
+/// walker's observation crystal is deposited by appending a markdown
+/// entry to `docs/bauchladen/mirror-observations.md`. The rolling
+/// signature (§5.2 holonomy trace) is the SHA-256 of the observation
+/// blob computed at the caller altitude.
+pub(crate) fn append_to(path: &Path, contents: &str) -> io::Result<()> {
+    use std::io::Write;
+    let mut f = fs::OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(path)?;
+    f.write_all(contents.as_bytes())
+}
+
+/// Create `path` and all missing parents — @io/fs.mkdir_p at terminal-
+/// floor altitude. Idempotent per `std::fs::create_dir_all` semantics.
+pub(crate) fn mkdir_p(path: &Path) -> io::Result<()> {
+    fs::create_dir_all(path)
+}
+
+/// Return `true` iff `path` names an extant filesystem entry.
+pub(crate) fn path_exists(path: &Path) -> bool {
+    path.exists()
+}
+
 /// Stage `abs_path` for commit under repo rooted at `repo_root`.
 /// Substrate-honest @io/git.add crossing at terminal floor.
 ///

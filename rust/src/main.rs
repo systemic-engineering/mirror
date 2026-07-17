@@ -342,7 +342,378 @@ fn cmd_roomba(rest: &[String]) -> ExitCode {
     println!("(materialize / translate / pivot / dock still forward-promised;");
     println!("land at M7-M8 co-ticks.)");
 
+    // ---------------------------------------------------------------
+    // Pheromone-deposit tick per Mara `95c0e4a` canonical spec +
+    // Mara `d7ff58e` math root §5 (Baez-Schreiber holonomy trace).
+    // Seam `c1775f1` 12/12 SHIP ratification.
+    //
+    // The walker's passive path memory (what it walked, what it
+    // classified, what it retired) becomes substrate-visible by
+    // (a) appending an observation crystal to `docs/bauchladen/
+    // mirror-observations.md` and (b) committing that file as
+    // `mirror <mirror@spectral.engineer>`. Content-addressed
+    // signature (first 16 hex of SHA-256 of the observation blob)
+    // IS the rolling holonomy trace per math §5.2.
+    // ---------------------------------------------------------------
+    match deposit_observation_crystal(
+        &substrate_root,
+        dir,
+        entries.len(),
+        dirs,
+        rust_files,
+        mirror_shards,
+        docs,
+        other,
+        retired_total,
+        commits_landed,
+    ) {
+        Ok(deposit) => {
+            println!();
+            println!(
+                "pheromone deposit: appended {} bytes to {}",
+                deposit.bytes_appended,
+                deposit.observations_path.display()
+            );
+            println!("walker signature: {}", deposit.signature);
+            match deposit.commit_oid.as_deref() {
+                Some(oid) => println!("crystal committed as mirror <mirror@spectral.engineer>: {}", oid),
+                None => println!("crystal APPENDED but no commit landed (no enclosing git repo)."),
+            }
+        }
+        Err(e) => {
+            eprintln!();
+            eprintln!("pheromone deposit FAILED: {}", e);
+        }
+    }
+
     ExitCode::SUCCESS
+}
+
+/// Outcome of one observation-crystal deposit.
+struct CrystalDeposit {
+    observations_path: std::path::PathBuf,
+    bytes_appended: usize,
+    signature: String,
+    commit_oid: Option<String>,
+}
+
+/// Deposit one observation crystal per Mara `95c0e4a` §0 (Executive
+/// summary move #3) + math root §5 (rolling holonomy trace).
+///
+/// Composition (substrate dispatch chain, rust/ altitude):
+/// - build observation blob (deterministic serialization; path +
+///   ISO-8601 timestamp + counts).
+/// - SHA-256 the blob; first 16 hex chars = walker signature.
+/// - @io/fs.mkdir_p ensures `docs/bauchladen/` exists.
+/// - @io/fs.append_to appends the markdown observation entry.
+/// - @io/git.stage + @io/git.commit crosses @io as
+///   `mirror <mirror@spectral.engineer>`.
+fn deposit_observation_crystal(
+    substrate_root: &std::path::Path,
+    vacuum_dir: &str,
+    entries_total: usize,
+    dirs: usize,
+    rust_files: usize,
+    mirror_shards: usize,
+    docs_count: usize,
+    other: usize,
+    retired_total: usize,
+    commits_landed: usize,
+) -> Result<CrystalDeposit, String> {
+    let timestamp = current_utc_timestamp();
+    // Deterministic observation blob shape per Mara math §5 (content-
+    // addressed hashing must be deterministic — same inputs → same OID).
+    // Order is fixed; whitespace is fixed; no locale-dependent formatting.
+    let blob = format!(
+        "vacuum={}\ntimestamp={}\nentries={}\ndirs={}\nrs={}\nmirror={}\nmd={}\nother={}\narms_retired={}\ncommits_landed={}\n",
+        vacuum_dir,
+        timestamp,
+        entries_total,
+        dirs,
+        rust_files,
+        mirror_shards,
+        docs_count,
+        other,
+        retired_total,
+        commits_landed,
+    );
+    let full_hex = sha256_hex(blob.as_bytes());
+    let signature: String = full_hex.chars().take(16).collect();
+
+    let bauchladen_dir = substrate_root.join("docs").join("bauchladen");
+    phone::mkdir_p(&bauchladen_dir)
+        .map_err(|e| format!("@io/fs.mkdir_p {}: {}", bauchladen_dir.display(), e))?;
+
+    let observations_path = bauchladen_dir.join("mirror-observations.md");
+    let is_new_file = !phone::path_exists(&observations_path);
+
+    // Compose the markdown entry per Mara spec observation-crystal shape.
+    let mut entry = String::new();
+    if is_new_file {
+        entry.push_str("# mirror observations — walker pheromone trail\n\n");
+        entry.push_str("Append-only observation log per Mara `95c0e4a` (canonical\n");
+        entry.push_str("stigmergy spec) + Mara `d7ff58e` (math root §5 rolling holonomy\n");
+        entry.push_str("trace) + Seam `c1775f1` (12/12 SHIP ratification). Each entry is\n");
+        entry.push_str("one @kintsugi/roomba walk-pulse; the walker signature is the first\n");
+        entry.push_str("16 hex chars of SHA-256 over the observation blob (deterministic\n");
+        entry.push_str("serialization of path + timestamp + counts).\n\n");
+    }
+    entry.push_str(&format!(
+        "## {} — vacuum walked {}\n\n",
+        timestamp, vacuum_dir
+    ));
+    entry.push_str(&format!("- entries: {}\n", entries_total));
+    entry.push_str(&format!("- directories: {}\n", dirs));
+    entry.push_str(&format!(
+        "- .rs (arm-collapse candidates): {}\n",
+        rust_files
+    ));
+    entry.push_str(&format!(
+        "- .mirror (materialize candidates; M7): {}\n",
+        mirror_shards
+    ));
+    entry.push_str(&format!(
+        "- .md (docs; cascade-invisible): {}\n",
+        docs_count
+    ));
+    entry.push_str(&format!("- other: {}\n", other));
+    entry.push_str(&format!("- arms retired: {}\n", retired_total));
+    entry.push_str(&format!("- commits landed: {}\n\n", commits_landed));
+    entry.push_str(&format!("Walker signature: {}\n\n", signature));
+
+    let bytes_appended = entry.len();
+    phone::append_to(&observations_path, &entry)
+        .map_err(|e| format!("@io/fs.append_to {}: {}", observations_path.display(), e))?;
+
+    // Cross the @io boundary at git — determine enclosing repo of the
+    // observations file (not the vacuum target; the observations live
+    // in substrate_root's repo).
+    let repo_root = match find_git_root(&observations_path) {
+        Some(r) => r,
+        None => {
+            return Ok(CrystalDeposit {
+                observations_path,
+                bytes_appended,
+                signature,
+                commit_oid: None,
+            });
+        }
+    };
+
+    phone::git_add(&repo_root, &observations_path)
+        .map_err(|e| format!("@io/git.add {}: {}", observations_path.display(), e))?;
+
+    let message = compose_pheromone_commit_message(
+        &timestamp,
+        vacuum_dir,
+        entries_total,
+        rust_files,
+        mirror_shards,
+        &signature,
+    );
+
+    let commit_oid = phone::git_commit_as(
+        &repo_root,
+        "mirror",
+        "mirror@spectral.engineer",
+        &message,
+    )
+    .map_err(|e| format!("@io/git.commit: {}", e))?;
+
+    Ok(CrystalDeposit {
+        observations_path,
+        bytes_appended,
+        signature,
+        commit_oid: Some(commit_oid),
+    })
+}
+
+/// Compose the pheromone-deposit commit message body per Reed task-
+/// message shape. Author is `mirror <mirror@spectral.engineer>`; the
+/// `Signed-off-by: Reed <reed@systemic.engineer>` trailer is legitimate
+/// attribution (Reed is human-adjacent author; mirror is compiler-
+/// altitude committer).
+fn compose_pheromone_commit_message(
+    timestamp: &str,
+    vacuum_dir: &str,
+    entries_total: usize,
+    rust_files: usize,
+    mirror_shards: usize,
+    signature: &str,
+) -> String {
+    format!(
+        "♻ mirror [pheromone-deposit] {ts} — first observation crystal deposited per Mara stigmergy spec 95c0e4a + Seam ratification c1775f1; walker's passive path memory becomes substrate-visible\n\
+         \n\
+         Vacuum walked {dir}.\n\
+         {n} entries; {rs} arm-collapse candidates; {sh} materialize\n\
+         candidates. Substrate observation crystallized to\n\
+         docs/bauchladen/mirror-observations.md at rolling signature {sig}.\n\
+         \n\
+         Composition (substrate dispatch chain):\n\
+         - @kintsugi/roomba (main.rs::cmd_roomba) walked the directory\n\
+         - @io/fs.read_dir (phone.rs) enumerated entries\n\
+         - @kintsugi/roomba.classify byte-checked per Mara §7.4\n\
+         - @io/fs.append_to (phone.rs; NEW) appended observation to bauchladen\n\
+         - @io/git.stage + @io/git.commit crossed @io boundary via std::process::Command\n\
+         \n\
+         FIRST pheromone deposit from rust/ altitude. Substrate memory now\n\
+         visible in git history AND at content-addressed path AND at rolling-\n\
+         signature holonomy trace.\n\
+         \n\
+         Signed-off-by: Reed <reed@systemic.engineer>\n",
+        ts = timestamp,
+        dir = vacuum_dir,
+        n = entries_total,
+        rs = rust_files,
+        sh = mirror_shards,
+        sig = signature,
+    )
+}
+
+/// Format the current UTC time as ISO-8601 `YYYY-MM-DDTHH:MM:SSZ`.
+/// Composes over `std::time::SystemTime` at rust/ altitude; no chrono
+/// dep per Cargo.toml discipline (M0 zero-dep floor).
+fn current_utc_timestamp() -> String {
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap_or_default();
+    let secs = now.as_secs();
+    format_utc_iso8601(secs)
+}
+
+/// Convert Unix epoch seconds to ISO-8601 UTC (`YYYY-MM-DDTHH:MM:SSZ`).
+/// Proleptic Gregorian; no leap-second correction (Unix time already
+/// smears them).
+fn format_utc_iso8601(mut secs: u64) -> String {
+    let sec = (secs % 60) as u32;
+    secs /= 60;
+    let min = (secs % 60) as u32;
+    secs /= 60;
+    let hour = (secs % 24) as u32;
+    let mut days = secs / 24;
+
+    // Days since 1970-01-01 — walk forward through years.
+    let mut year: u32 = 1970;
+    loop {
+        let dy = if is_leap(year) { 366 } else { 365 };
+        if days < dy {
+            break;
+        }
+        days -= dy;
+        year += 1;
+    }
+    let month_lengths = if is_leap(year) {
+        [31u64, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    } else {
+        [31u64, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    };
+    let mut month: u32 = 1;
+    for &ml in &month_lengths {
+        if days < ml {
+            break;
+        }
+        days -= ml;
+        month += 1;
+    }
+    let day = (days as u32) + 1;
+    format!(
+        "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}Z",
+        year, month, day, hour, min, sec
+    )
+}
+
+fn is_leap(y: u32) -> bool {
+    (y % 4 == 0 && y % 100 != 0) || (y % 400 == 0)
+}
+
+/// SHA-256 of `input`, returned as lowercase hex. Self-contained (no
+/// external crate) per Cargo.toml zero-dep floor. Implementation
+/// follows FIPS 180-4 §6.2.
+fn sha256_hex(input: &[u8]) -> String {
+    const K: [u32; 64] = [
+        0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1,
+        0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
+        0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786,
+        0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+        0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147,
+        0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13,
+        0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85, 0xa2bfe8a1, 0xa81a664b,
+        0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+        0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a,
+        0x5b9cca4f, 0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208,
+        0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2,
+    ];
+    let mut h: [u32; 8] = [
+        0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c,
+        0x1f83d9ab, 0x5be0cd19,
+    ];
+
+    // Pre-processing: pad message to multiple of 512 bits.
+    let bit_len: u64 = (input.len() as u64) * 8;
+    let mut msg: Vec<u8> = Vec::with_capacity(input.len() + 72);
+    msg.extend_from_slice(input);
+    msg.push(0x80);
+    while msg.len() % 64 != 56 {
+        msg.push(0);
+    }
+    msg.extend_from_slice(&bit_len.to_be_bytes());
+
+    // Process each 512-bit block.
+    for chunk in msg.chunks(64) {
+        let mut w = [0u32; 64];
+        for i in 0..16 {
+            w[i] = u32::from_be_bytes([
+                chunk[i * 4],
+                chunk[i * 4 + 1],
+                chunk[i * 4 + 2],
+                chunk[i * 4 + 3],
+            ]);
+        }
+        for i in 16..64 {
+            let s0 = w[i - 15].rotate_right(7) ^ w[i - 15].rotate_right(18) ^ (w[i - 15] >> 3);
+            let s1 = w[i - 2].rotate_right(17) ^ w[i - 2].rotate_right(19) ^ (w[i - 2] >> 10);
+            w[i] = w[i - 16]
+                .wrapping_add(s0)
+                .wrapping_add(w[i - 7])
+                .wrapping_add(s1);
+        }
+        let (mut a, mut b, mut c, mut d, mut e, mut f, mut g, mut hh) =
+            (h[0], h[1], h[2], h[3], h[4], h[5], h[6], h[7]);
+        for i in 0..64 {
+            let s1 = e.rotate_right(6) ^ e.rotate_right(11) ^ e.rotate_right(25);
+            let ch = (e & f) ^ ((!e) & g);
+            let temp1 = hh
+                .wrapping_add(s1)
+                .wrapping_add(ch)
+                .wrapping_add(K[i])
+                .wrapping_add(w[i]);
+            let s0 = a.rotate_right(2) ^ a.rotate_right(13) ^ a.rotate_right(22);
+            let mj = (a & b) ^ (a & c) ^ (b & c);
+            let temp2 = s0.wrapping_add(mj);
+            hh = g;
+            g = f;
+            f = e;
+            e = d.wrapping_add(temp1);
+            d = c;
+            c = b;
+            b = a;
+            a = temp1.wrapping_add(temp2);
+        }
+        h[0] = h[0].wrapping_add(a);
+        h[1] = h[1].wrapping_add(b);
+        h[2] = h[2].wrapping_add(c);
+        h[3] = h[3].wrapping_add(d);
+        h[4] = h[4].wrapping_add(e);
+        h[5] = h[5].wrapping_add(f);
+        h[6] = h[6].wrapping_add(g);
+        h[7] = h[7].wrapping_add(hh);
+    }
+
+    let mut out = String::with_capacity(64);
+    for word in &h {
+        out.push_str(&format!("{:08x}", word));
+    }
+    out
 }
 
 /// Arm-collapse dispatch for one `.rs` file. Composes phone.rs's
