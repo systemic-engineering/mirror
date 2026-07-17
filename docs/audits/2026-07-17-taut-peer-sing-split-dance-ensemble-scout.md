@@ -19,6 +19,23 @@
 > (Koch Einschnitt temporal) / prism-op `split X` slots are DIFFERENT altitudes;
 > those names remain unchanged.
 
+> **Staleness correction 2026-07-17 post-BEAM-arc** (Reed applied per Mara
+> discovery in `610c6d6` / `fee2727` BEAM-runtime bundle-tower cascade):
+> §5 Q5 body + §7 alignment + §9 recognition candidate
+> `#R-viable-mirror-forward-promise-VSM-recursion-at-peer-altitude` all
+> reference `shards/viable.mirror` as "does NOT exist" / "forward-promised
+> but not landed". Correct landed path is `shards/epistemologic/cybernetic/
+> viable.mirror` — the shard IS LANDED with Beer VSM S1-S5 + Read A
+> homeostat + Read B recursive viability + Read D temporal lock. Taut
+> grep at scout-time did not walk into `epistemologic/cybernetic/` under
+> the `shards/viable*` name-pattern search. Correction: the Beer VSM
+> recursion primitive is already in-substrate; the recognition candidate's
+> "forward-promise" framing is superseded by the landed shard. @dance +
+> gen_prism + supervisor + viable now cross-cite the bundle-tower math
+> root at `docs/math/the-tower/beam-runtime.md` (Mara `610c6d6`).
+> Consumers: use `shards/epistemologic/cybernetic/viable.mirror` for VSM
+> composition going forward.
+
 *2026-07-17. Taut. Six-question grep-first ground-truth scout for Alex's*
 *2026-07-17 in-session architectural extension of the errors-as-questions*
 *composition edge: the @peer chooses response cardinality — sing one @song*
