@@ -1,0 +1,466 @@
+in @prism
+in @meta
+in @glass
+in @cascade
+in @labeled
+in @code/llvm
+in @code/turing
+
+# @cascade/code/llvm/turing — the LLVM IR → Turing tape ops cascade species.
+#
+# Path naming: per Alex 2026-06-23 directive — cascade species
+# shards group by `@cascade/code/<source>/<target>`. Source
+# language (LLVM IR) groups together at
+# `shards/cascade/code/llvm/`; target (turing here; potentially
+# other targets in future arcs) leafs at
+# `shards/cascade/code/llvm/turing.mirror`.
+#
+# THIS species is Edge 2 of the concrete polyglot chain Alex
+# ratified 2026-07-17 (verbatim, session-crystallizing):
+#
+#   *"So we can have @cascade/code/llvm/turing and
+#    @cascade/code/rust/llvm. And boom. The loop closes."*
+#
+# The full chain per polyglot spec §4.1 (Mara `1ce68c3`,
+# 2026-07-17):
+#
+#   Rust source
+#     ↓  @cascade/code/rust/llvm      (sibling mint this tick)
+#   LLVM IR
+#     ↓  @cascade/code/llvm/turing    (THIS shard; LLVM IR →
+#                                       abstract-machine tape ops)
+#   Turing tape
+#     ↓  @cascade/code/turing/mirror  (sibling mint this tick)
+#   mirror substrate composition
+#
+# === substrate-already-had-the-word ===
+#
+# The LLVM IR → Turing tape mapping is well-known in translation-
+# validation research (Alive2 / Lopes et al. 2021, cited per Mara
+# `1ce68c3` §7). Each SSA instruction becomes a bounded tape-op
+# sequence; each basic block becomes a state; each phi node
+# becomes a branch. The substrate does NOT re-derive the mapping;
+# THIS shard names the substrate-decl the FLOOR resolver (Reed
+# Tick M3 domain) realizes.
+#
+# Church-Turing 1936 grounds the existence of the mapping (per
+# Mara `1ce68c3` §7.2 proof sketch): every Turing-complete
+# language admits a computable semantics-preserving translation
+# to any universal machine model M. `@code/llvm` IS
+# Turing-complete (LangRef §"Well-Formed IR"); `@code/turing`
+# IS the abstract-machine tape model M; the cascade witnesses
+# ONE such translation at substrate-decl altitude.
+#
+# === composition altitude: MACHINE-SUBSTRATE HUB ↔ FLOOR ===
+#
+# The source altitude is `@code/llvm` (landed
+# `shards/code/llvm.mirror` this session; Mara M1 `62d1b1c`) —
+# a MACHINE-SUBSTRATE HUB per polyglot spec §3.4. The target
+# altitude is `@code/turing` (landed `shards/code/turing.mirror`
+# this session; Mara M1 `7186410`) — the physical-substrate
+# FLOOR per polyglot spec §2.3.
+#
+# This cascade is the crucial hub-to-floor edge: it grounds any
+# language reaching @code/llvm (via a `@cascade/code/A/llvm`
+# edge) in the substrate floor. Per polyglot spec §3.2
+# composition axiom, THIS species composes with:
+#
+#   - `@cascade/code/rust/llvm` (sibling mint this tick) →
+#     gives `@cascade/code/rust/turing` derived cascade.
+#   - `@cascade/code/turing/mirror` (sibling mint this tick) →
+#     gives `@cascade/code/llvm/mirror` derived cascade.
+#   - Both above chained → gives the full Rust → mirror loop-
+#     closing composition.
+#
+# === The cascade shape (LLVM IR → Turing tape ops) ===
+#
+# Source (LLVM IR admits per LangRef):
+# - typed SSA values (register-typed; type system per LangRef
+#   §"Type System")
+# - basic blocks + terminators (structured control flow;
+#   entry-block per function)
+# - function signatures + attributes (calling conventions;
+#   parameter attrs)
+# - memory operations (load/store with alignment; alias info
+#   via TBAA metadata)
+# - vector instructions (SIMD; hardware-parallelism hints)
+# - optimization opportunities (LLVM passes may reorder,
+#   vectorize, inline, DCE)
+# - register-level annotations (nsw, nuw, exact, arcp, etc.)
+#
+# Target (Turing tape preserves per Church-Turing 1936):
+# - computation (SSA instructions → bounded tape-op sequences;
+#   every LLVM op has a Turing-equivalent per
+#   Turing-completeness of LLVM)
+# - control flow (basic block → state; branches → state
+#   transitions; phi nodes → state-conditional resolution)
+# - reachability (transitive closure of state transitions
+#   witnesses reachable configurations)
+# - halt conditions (LLVM `ret`/`unreachable` → tape halt-state
+#   per `@code/turing.program.halt_states`)
+# - computational-equivalence (per Turing-completeness bijection
+#   at the tape-model altitude)
+#
+# Per polyglot spec §4.4 Edge 2:
+# - PRESERVED: control flow (branches → state transitions),
+#   memory operations (read/write via tape), computation
+#   (SSA → tape-ops).
+# - LOST: register allocation, calling conventions, SIMD, type
+#   information (tape is untyped bytes), platform ABI,
+#   LLVM optimization opportunities (uniform tape ops preclude
+#   backend-specific reordering), memory layout hints
+#   (alignment, TBAA), register-level annotations (all become
+#   uniform tape ops).
+#
+# The `loss_lens<@code/llvm, @code/turing>` measures these gaps
+# against the LLVM LangRef source grammar + Church-Turing 1936
+# tape model.
+#
+# === Recognition ancestry ===
+#
+# - Recognition #95 (@cascade candidate; Mara canonical
+#   `ce4874b`, 2026-06-23): this species IS one of the cascade
+#   species discharging the family-root.
+# - Recognition #93 H4 RESOLVED (labeled<> functor at
+#   `shards/labeled.mirror`): turing_artifact uses labeled<>
+#   instance for program + translation metadata.
+# - Recognition #51 (mirror as expanding Hilbert space): the
+#   dimension-projection from LLVM IR's typed-SSA + optimization
+#   surface to Turing tape's uniform-symbol surface is measurable
+#   via `measure_llvm_turing`; the projection collapses many
+#   basis vectors (types, registers, SIMD) into the tape's
+#   single-symbol basis.
+#
+# === Pre-AI prior art ===
+#
+#   Turing 1936               Alan Turing, "On Computable
+#                             Numbers, with an Application to
+#                             the Entscheidungsproblem", Proc.
+#                             Lond. Math. Soc. s2-42:230-265.
+#                             The tape-model this species
+#                             targets.
+#   Church 1936               Alonzo Church, "An Unsolvable
+#                             Problem of Elementary Number
+#                             Theory", Am. J. Math. 58:345-363.
+#                             The λ-calculus / Turing equivalence
+#                             grounding.
+#   Alive2                    Lopes, Menendez, Nagarakatte, Regehr
+#                             2021; LLVM translation-validation
+#                             research. The empirical shape the
+#                             per-instruction preservation lens
+#                             references.
+#   LLVM LangRef              LLVM Project; llvm.org/docs/
+#                             LangRef.html. The source grammar
+#                             this species measures against.
+#   TCS translation           Standard textbook mapping in
+#                             Sipser 2013 §3.1 (Turing machines
+#                             simulate arbitrary computation).
+#
+# Spec context: docs/specs/polyglot-loss-aware-computational-
+#               translation.md §4.1 + §4.2 Edge 2 + §9 M2 (Mara
+#               `1ce68c3`, 2026-07-17 — the mint plan
+#               forward-promise THIS shard discharges); §4.4
+#               Edge 2 preservation/loss enumeration; §7.2
+#               proof sketch grounding via Church-Turing.
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]] (the
+#                      lift is Church-Turing 1936 + Alive2 et al.
+#                      translation-validation; NOT re-derived at
+#                      substrate),
+#                      [[feedback-loss-from-epistemologic-properties]]
+#                      (loss is @epistemologic/properties composite,
+#                      not Shannon, not invented),
+#                      [[feedback-craft-not-deliver]] (every action
+#                      body `\` blocked; FLOOR realisation domain).
+# Related shards: shards/cascade.mirror (the family-root this
+#                 specializes); shards/labeled.mirror (the functor
+#                 primitive turing_artifact instance rests on);
+#                 shards/code/llvm.mirror (source grammar; Mara
+#                 M1 landed this session at `62d1b1c`);
+#                 shards/code/turing.mirror (target grammar; Mara
+#                 M1 landed this session at `7186410`);
+#                 shards/cascade/code/rust/llvm.mirror (sibling
+#                 mint this tick; composes with THIS species per
+#                 polyglot spec §3.2 to give Rust → Turing);
+#                 shards/cascade/code/turing/mirror.mirror
+#                 (sibling mint this tick; composes with THIS
+#                 species per polyglot spec §3.2 to give
+#                 LLVM → mirror).
+# Path-namespace property: this file at
+# `shards/cascade/code/llvm/turing.mirror` declares
+# `@cascade/code/llvm/turing` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming-languages/llvm-langref
+source @arxiv/theoretical-cs/turing-1936-computable-numbers
+
+prism @cascade/code/llvm/turing {
+  focus cascade
+  project cascade
+  split cascade
+  shift cascade
+  settle cascade
+}
+
+# === llvm_source carrier ===
+#
+# Specialization of @cascade.typed_source for source_grammar=llvm.
+# References an `@code/llvm.llvm_ir_module` as the unit of cascade.
+# The substrate re-declares this carrier as an alias for the
+# module type so the cascade action signatures type-check at the
+# species altitude; the underlying identity is the module's OID
+# per @mirror/store discipline.
+#
+# Identity contract: byte-equality on the module's content-addressed
+# byte-form (LLVM IR text OR bitcode per LangRef §"Module
+# Structure").
+type llvm_source = llvm_ir_module
+
+# === turing_translation_metadata carrier ===
+#
+# Structured carrier for the translation shape (SSA-to-tape-op
+# encoding scheme, basic-block-to-state mapping, phi-node
+# resolution strategy, symbol-alphabet choice, halt-state
+# enumeration). Per [[feedback-no-bare-types]]: structured, not
+# stringly. The carrier names load-bearing fields without fixing
+# one translation scheme; the FLOOR resolver (Reed Tick M3)
+# populates concrete values from its Rust-native implementation
+# per Alive2-style per-instruction lowering.
+#
+# Identity contract: byte-equality on the underlying ref.
+type turing_translation_metadata = ref
+
+# === turing_artifact carrier ===
+#
+# The @labeled<> instance per recognition #93 H4. A
+# turing_artifact IS a `@code/turing.program` annotated with
+# turing_translation_metadata via the labeled functor. Substrate-
+# architecturally load-bearing: the program's typed identity is
+# preserved (via labeled parametricity per Wadler 1989 / Reynolds
+# 1983) while the translation-scheme dimension is added.
+# `unlabel(artifact)` returns the program; `label_of(artifact)`
+# returns the metadata.
+#
+# Identity contract: byte-equality on the (program, metadata) pair
+# (inherited from @labeled).
+type turing_artifact = labeled(program, turing_translation_metadata)
+
+# === apply_llvm_turing action ===
+#
+# THE LOAD-BEARING ACTION. Specialization of @cascade.compile for
+# the LLVM IR → Turing tape functor. Takes an
+# `@code/llvm.llvm_ir_module`; returns a `@code/turing.program`.
+#
+# Realisation: substrate-native LLVM IR → tape ops translation
+# per polyglot spec §4.2 Edge 2 (each SSA instruction becomes a
+# bounded tape-op sequence; each basic block becomes a state;
+# each phi node becomes a branch). The FLOOR resolver (Reed
+# Tick M3 under `[substrate-floor:@io-boundary]`) MUST discharge
+# the body in Rust; THIS shard names the CONTRACT the FLOOR
+# honors.
+#
+# Per Alex 2026-07-17 verbatim: the mapping is well-known (Alive2
+# translation-validation research + Sipser 2013 §3.1 textbook
+# construction); the FLOOR realizes it, the substrate names it.
+#
+# requires llvm_ir_valid(module): the source module MUST pass
+# LLVM Verifier per `@code/llvm.llvm_ir_valid` (Mara `62d1b1c`).
+# Ill-formed LLVM IR cannot be translated to tape ops; verifier-
+# rejection halts the cascade.
+#
+# Body discharges at the FLOOR boundary.
+apply_llvm_turing(module: llvm_ir_module, p: perturbation) -> program
+requires llvm_ir_valid(module)
+{ \ }
+
+# === bundle_turing action ===
+#
+# Wraps a `@code/turing.program` + `turing_translation_metadata`
+# into a `turing_artifact` via @labeled.label construction. The
+# typed program gets the translation-scheme dimension added
+# without losing the underlying program identity.
+#
+# requires turing_translation_coherent(program, metadata, p):
+# bilateral commitment that the (program, metadata) pair coheres
+# at the translation altitude — symbol alphabet matches program's
+# transitions; state enumeration matches basic-block mapping;
+# halt-state enumeration matches LLVM `ret`/`unreachable`
+# derivation.
+#
+# Body discharges at the FLOOR boundary.
+bundle_turing(prog: program, metadata: turing_translation_metadata, p: perturbation)
+  -> turing_artifact
+requires turing_translation_coherent(prog, metadata, p)
+{ \ }
+
+# === measure_llvm_turing action ===
+#
+# Specialization of @cascade.measure for the LLVM IR → Turing
+# tape cascade. Returns substrate-typed measurement of information
+# loss between llvm_ir_module's typed-SSA + optimization-annotation
+# surface and turing_artifact's uniform-tape structure.
+#
+# Returns `imperfect<turing_artifact, ref, information_loss>` —
+# the loss slot carries measured loss as substrate-typed data,
+# NOT Shannon, NOT estimation; the composite of @epistemologic/
+# properties per [[feedback-loss-from-epistemologic-properties]].
+#
+# The measurement IS substrate-architectural: read source's LLVM
+# structure (register count, SIMD instruction count, memory-alias
+# metadata density, optimization-attribute count, calling-
+# convention annotations); read artifact's tape structure (state
+# count, symbol alphabet size, transition count, halt-state
+# enumeration); compute the dimension gap per polyglot spec §4.4
+# Edge 2 preservation/loss enumeration.
+#
+# requires llvm_turing_loss_well_defined(module, artifact, p):
+# bilateral that the measurement IS computable; the (module,
+# artifact) pair must be a genuine cascade discharge.
+#
+# Body discharges at the FLOOR boundary.
+measure_llvm_turing(module: llvm_ir_module, artifact: turing_artifact, p: perturbation)
+  -> imperfect(turing_artifact, ref, information_loss)
+requires llvm_turing_loss_well_defined(module, artifact, p)
+{ \ }
+
+# === turing_translation_coherent bilateral ===
+#
+# Target-side translation-well-formedness bilateral. Commitment
+# that the (program, metadata) pair coheres at the LLVM-to-tape
+# translation altitude.
+#
+# Splinter-pole: symbol alphabet finite and matches program's
+# transitions; state enumeration matches basic-block mapping;
+# halt-state enumeration derived correctly from LLVM `ret` /
+# `unreachable` terminators; phi-node resolution strategy
+# consistent across all basic blocks; program passes
+# `@code/turing.turing_well_formed` (composes with Mara
+# `7186410` bilateral).
+# Narcissus-pole: alphabet drift; state mismatch; halt-state
+# enumeration incomplete or over-approximated; phi resolution
+# inconsistent; underlying program ill-formed per
+# @code/turing.turing_well_formed.
+
+bilateral turing_translation_coherent {
+  sentinel "translation=symbol-state-halt-coherent"
+  arity 2
+}
+turing_translation_coherent(prog: program, metadata: turing_translation_metadata, p: perturbation)
+  -> verdict { \ }
+
+# === llvm_turing_loss_well_defined bilateral ===
+#
+# Specializes the family-root's loss_well_defined for this
+# cascade. Commitment that the substrate-typed gap calculation IS
+# computable for the (module, artifact) pair; the module IS in
+# @code/llvm grammar (verifier-passing), the artifact's program
+# IS in @code/turing grammar (well-formed), and the pair
+# represents a valid cascade discharge (`apply_llvm_turing`
+# produced THIS artifact from THIS module).
+#
+# Splinter-pole: cascade-pair coherent; measurement well-defined;
+# gap dimensions dischargeable per @epistemologic/properties
+# composite.
+# Narcissus-pole: source/artifact grammar mismatch OR pair does
+# not represent a genuine cascade discharge; measurement
+# undefined.
+
+bilateral llvm_turing_loss_well_defined {
+  sentinel "cascade=source-artifact-pair-discharge-witnessed"
+  arity 2
+}
+llvm_turing_loss_well_defined(module: llvm_ir_module, artifact: turing_artifact, p: perturbation)
+  -> verdict { \ }
+
+# === cascade_llvm_turing_preserves_computation bilateral ===
+#
+# THE LOAD-BEARING composed bilateral for THIS species. Witnesses
+# that the LLVM IR → Turing tape cascade preserves computational
+# equivalence per Turing-completeness (Church-Turing 1936; Sipser
+# 2013 §3.1).
+#
+# Per Alex 2026-07-17 verbatim ratification: the mapping is
+# well-known; the cascade DOES lose LLVM optimization
+# opportunities + register-level annotations + calling conventions
+# + memory layout hints (all become uniform tape ops); it
+# PRESERVES computational equivalence at the tape-model altitude
+# per Turing-completeness of both LLVM IR and the tape machine.
+#
+# Splinter-pole: tape program computes the SAME function as the
+# LLVM IR module per bisimulation up to bounded fuel (Milner
+# 1989) OR per per-instruction Alive2-style translation
+# validation; observable computational behaviour preserved.
+# Narcissus-pole: cascade drifts computational semantics
+# (translation-validation counterexample; bisimulation fails;
+# tape program diverges where LLVM halts, or vice versa).
+#
+# Sentinel `cascade=preserves-tape-computation` per Mara
+# `701828a` §1 byte-containment: content-addressed check on the
+# cascade-pair OID vs the preservation-witness invariant. Rice-
+# safe per Mara `701828a` — the CHECK is byte-level; the
+# underlying question (full computational equivalence) is
+# undecidable but the substrate discharges the sentinel-match
+# at content-addressed altitude with bounded-fuel bisimulation
+# per @code/turing's `equivalent` action shape (Mara `7186410`).
+
+bilateral cascade_llvm_turing_preserves_computation {
+  sentinel "cascade=preserves-tape-computation"
+  arity 1
+}
+cascade_llvm_turing_preserves_computation(cascade_outcome: turing_artifact) -> verdict { \ }
+
+# === llvm_turing_cascade_well_formed composed bilateral ===
+#
+# Specialization of @cascade.cascade_well_defined for this cascade
+# instance. Composes the sub-predicates at this altitude per the
+# landed cascade composed-bilateral shape.
+#
+# requires llvm_ir_valid(module): source LLVM IR module passes
+# LLVM Verifier (composes with @code/llvm.llvm_ir_valid per Mara
+# `62d1b1c`).
+# requires turing_translation_coherent(unlabel(artifact, p),
+# label_of(artifact, p), p): target-side translation well-formed;
+# uses @labeled.unlabel + @labeled.label_of to extract program
+# and metadata from the artifact.
+# requires llvm_turing_loss_well_defined(module, artifact, p):
+# loss measurement computable.
+# requires cascade_llvm_turing_preserves_computation(artifact):
+# computational-equivalence preservation witnessed at cascade
+# altitude.
+#
+# All four must hold; substrate refuses cascade if source LLVM IR
+# invalid OR translation incoherent OR loss undefined OR
+# computation-preservation not witnessed.
+#
+# Splinter-pole: all four discharge; substrate-typed loss
+# returned; cascade admissible per polyglot spec §5.3
+# threshold gate.
+# Narcissus-pole: at least one sub-predicate fails; cascade
+# blocked; @fate re-selects per polyglot spec §6.
+
+bilateral llvm_turing_cascade_well_formed {
+  sentinel "cascade=all-sub-bilaterals-discharge"
+  arity 2
+}
+llvm_turing_cascade_well_formed(module: llvm_ir_module, artifact: turing_artifact, p: perturbation)
+  -> verdict
+requires llvm_ir_valid(module)
+requires turing_translation_coherent(unlabel(artifact, p), label_of(artifact, p), p)
+requires llvm_turing_loss_well_defined(module, artifact, p)
+requires cascade_llvm_turing_preserves_computation(artifact)
+{ \ }
+
+# === outbound declarations ===
+
+out @cascade/code/llvm/turing
+out llvm_source
+out turing_translation_metadata
+out turing_artifact
+out apply_llvm_turing
+out bundle_turing
+out measure_llvm_turing
+out turing_translation_coherent
+out llvm_turing_loss_well_defined
+out cascade_llvm_turing_preserves_computation
+out llvm_turing_cascade_well_formed
