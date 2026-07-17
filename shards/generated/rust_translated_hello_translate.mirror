@@ -1,0 +1,57 @@
+# @code/turing/mirror.value — polyglot cascade Tick M3 landing.
+# Substrate-decl'd wrap of a @code/turing.program per
+# shards/cascade/code/turing/mirror.mirror (Mara 3322825).
+# Audit: Mara 1ce68c3 §9 M3; Alex 2026-07-17 ratification.
+# value_oid: ac30b4cfdc61053a0576c2e1dc5898850681d50360d33c584246f717f2c5d6de
+
+in @code/mirror
+in @glass
+
+focus @code/turing/mirror/value {
+  project @code/turing/program {
+    # Dark region — tape-program bytes verbatim.
+    dark <<END_TURING_PROGRAM
+@code/turing.program {
+  initial_state: q0
+  halt_states: [q_halt]
+  transitions: [
+    (q0, "; ModuleID = 'hello_translate.5f2f1b194ff70856-cgu.0'") -> (q1, "; ModuleID = 'hello_translate.5f2f1b194ff70856-cgu.0'", right),
+    (q1, "source_filename = \"hello_translate.5f2f1b194ff70856-cgu.0\"") -> (q2, "source_filename = \"hello_translate.5f2f1b194ff70856-cgu.0\"", right),
+    (q2, "target datalayout = \"e-m:o-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-n32:64-S128-Fn32\"") -> (q3, "target datalayout = \"e-m:o-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-n32:64-S128-Fn32\"", right),
+    (q3, "target triple = \"arm64-apple-macosx11.0.0\"") -> (q4, "target triple = \"arm64-apple-macosx11.0.0\"", right),
+    (q4, "@alloc_e42b85368cf0afa6f12bd80b7c4cfe35 = private unnamed_addr constant [24 x i8] c\"/tmp/hello_translate.rs\\00\", align 1") -> (q5, "@alloc_e42b85368cf0afa6f12bd80b7c4cfe35 = private unnamed_addr constant [24 x i8] c\"/tmp/hello_translate.rs\\00\", align 1", right),
+    (q5, "@alloc_2237830a34616d657bd9895d8f898c23 = private unnamed_addr constant <{ ptr, [16 x i8] }> <{ ptr @alloc_e42b85368cf0afa6f12bd80b7c4cfe35, [16 x i8] c\"\\17\\00\\00\\00\\00\\00\\00\\00\\01\\00\\00\\00%\\00\\00\\00\" }>, align 8") -> (q6, "@alloc_2237830a34616d657bd9895d8f898c23 = private unnamed_addr constant <{ ptr, [16 x i8] }> <{ ptr @alloc_e42b85368cf0afa6f12bd80b7c4cfe35, [16 x i8] c\"\\17\\00\\00\\00\\00\\00\\00\\00\\01\\00\\00\\00%\\00\\00\\00\" }>, align 8", right),
+    (q6, "; hello_translate::add") -> (q7, "; hello_translate::add", right),
+    (q7, "; Function Attrs: uwtable") -> (q8, "; Function Attrs: uwtable", right),
+    (q8, "define i32 @_ZN15hello_translate3add17h60181b2a0ca89a7eE(i32 %a, i32 %b) unnamed_addr #0 {") -> (q9, "define i32 @_ZN15hello_translate3add17h60181b2a0ca89a7eE(i32 %a, i32 %b) unnamed_addr #0 {", right),
+    (q9, "start:") -> (q10, "start:", right),
+    (q10, "%0 = call { i32, i1 } @llvm.sadd.with.overflow.i32(i32 %a, i32 %b)") -> (q11, "%0 = call { i32, i1 } @llvm.sadd.with.overflow.i32(i32 %a, i32 %b)", right),
+    (q11, "%_3.0 = extractvalue { i32, i1 } %0, 0") -> (q12, "%_3.0 = extractvalue { i32, i1 } %0, 0", right),
+    (q12, "%_3.1 = extractvalue { i32, i1 } %0, 1") -> (q13, "%_3.1 = extractvalue { i32, i1 } %0, 1", right),
+    (q13, "br i1 %_3.1, label %panic, label %bb1") -> (q14, "br i1 %_3.1, label %panic, label %bb1", right),
+    (q14, "bb1:                                              ; preds = %start") -> (q15, "bb1:                                              ; preds = %start", right),
+    (q15, "ret i32 %_3.0") -> (q16, "ret i32 %_3.0", right),
+    (q16, "panic:                                            ; preds = %start") -> (q17, "panic:                                            ; preds = %start", right),
+    (q17, "; call core::panicking::panic_const::panic_const_add_overflow") -> (q18, "; call core::panicking::panic_const::panic_const_add_overflow", right),
+    (q18, "call void @_ZN4core9panicking11panic_const24panic_const_add_overflow17h9a54dd2018fe28a5E(ptr align 8 @alloc_2237830a34616d657bd9895d8f898c23) #3") -> (q19, "call void @_ZN4core9panicking11panic_const24panic_const_add_overflow17h9a54dd2018fe28a5E(ptr align 8 @alloc_2237830a34616d657bd9895d8f898c23) #3", right),
+    (q19, "unreachable") -> (q20, "unreachable", right),
+    (q20, "}") -> (q21, "}", right),
+    (q21, "; Function Attrs: nocallback nofree nosync nounwind speculatable willreturn memory(none)") -> (q22, "; Function Attrs: nocallback nofree nosync nounwind speculatable willreturn memory(none)", right),
+    (q22, "declare { i32, i1 } @llvm.sadd.with.overflow.i32(i32, i32) #1") -> (q23, "declare { i32, i1 } @llvm.sadd.with.overflow.i32(i32, i32) #1", right),
+    (q23, "; core::panicking::panic_const::panic_const_add_overflow") -> (q24, "; core::panicking::panic_const::panic_const_add_overflow", right),
+    (q24, "; Function Attrs: cold noinline noreturn uwtable") -> (q25, "; Function Attrs: cold noinline noreturn uwtable", right),
+    (q25, "declare void @_ZN4core9panicking11panic_const24panic_const_add_overflow17h9a54dd2018fe28a5E(ptr align 8) unnamed_addr #2") -> (q26, "declare void @_ZN4core9panicking11panic_const24panic_const_add_overflow17h9a54dd2018fe28a5E(ptr align 8) unnamed_addr #2", right),
+    (q26, "attributes #0 = { uwtable \"frame-pointer\"=\"non-leaf\" \"probe-stack\"=\"inline-asm\" \"target-cpu\"=\"apple-m1\" }") -> (q27, "attributes #0 = { uwtable \"frame-pointer\"=\"non-leaf\" \"probe-stack\"=\"inline-asm\" \"target-cpu\"=\"apple-m1\" }", right),
+    (q27, "attributes #1 = { nocallback nofree nosync nounwind speculatable willreturn memory(none) }") -> (q28, "attributes #1 = { nocallback nofree nosync nounwind speculatable willreturn memory(none) }", right),
+    (q28, "attributes #2 = { cold noinline noreturn uwtable \"frame-pointer\"=\"non-leaf\" \"probe-stack\"=\"inline-asm\" \"target-cpu\"=\"apple-m1\" }") -> (q29, "attributes #2 = { cold noinline noreturn uwtable \"frame-pointer\"=\"non-leaf\" \"probe-stack\"=\"inline-asm\" \"target-cpu\"=\"apple-m1\" }", right),
+    (q29, "attributes #3 = { noinline noreturn }") -> (q30, "attributes #3 = { noinline noreturn }", right),
+    (q30, "!llvm.module.flags = !{!0}") -> (q31, "!llvm.module.flags = !{!0}", right),
+    (q31, "!llvm.ident = !{!1}") -> (q32, "!llvm.ident = !{!1}", right),
+    (q32, "!0 = !{i32 8, !\"PIC Level\", i32 2}") -> (q33, "!0 = !{i32 8, !\"PIC Level\", i32 2}", right),
+    (q33, "!1 = !{!\"rustc version 1.94.0 (4a4ef493e 2026-03-02)\"}") -> (q34, "!1 = !{!\"rustc version 1.94.0 (4a4ef493e 2026-03-02)\"}", right),
+    (q34, "") -> (q_halt, "", stay),
+  ]
+}
+END_TURING_PROGRAM
+  }
+}
