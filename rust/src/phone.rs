@@ -104,3 +104,89 @@ pub(crate) fn open_peer_socket(_peer_home: &str) -> ! {
          (consumer-pull mirror-altitude lift of boot/std/io/socket.mirror)"
     )
 }
+
+// ---------------------------------------------------------------------
+// M-vacuum surface (this file) — @io/fs directory walker.
+// ---------------------------------------------------------------------
+//
+// Per Mara §3.2 item 1 (@io/fs file descriptor management) + Mara §7
+// (`roomba --vacuum=~dir` unified motion flag) + §7.4 dispatch matrix
+// (walker's fracture table): the ONE @io crossing the vacuum motion
+// makes is `list_dir` — recursive directory read yielding path handles.
+// Dispatch classification lives at main.rs (`@`-operator dispatch
+// altitude); phone.rs holds ONLY the socket-handover altitude read.
+//
+// M-vacuum uses `std::fs` directly per the delightfully-boring shortest
+// path: the @io/fs sub-species at `boot/std/io/fs.mirror` is
+// boot-altitude sufficient (glass-wall recognition: blocking syscall
+// behavior is irreducibly non-mirror). Mirror-altitude @io/fs lift-tick
+// remains forward-promised at `shards/io.mirror:389-390`; land when a
+// downstream consumer (M6+ walker composition through gen_prism)
+// pulls it.
+
+use std::fs;
+use std::io;
+use std::path::{Path, PathBuf};
+
+/// One walker-visited path with a byte-check on file-kind. Discovered
+/// classification is left to main.rs's `@`-operator dispatch per Mara
+/// §7.4 (dispatch is byte-check on directory content shape). phone.rs
+/// returns raw path + is_dir bit; nothing more.
+#[derive(Debug)]
+pub(crate) struct WalkEntry {
+    pub(crate) path: PathBuf,
+    pub(crate) is_dir: bool,
+}
+
+/// Recursively walk `root` and yield every file + directory found.
+/// Skips `.git/` (per landed roomba walker precedent — walker observes
+/// substrate, not its VCS metadata). Skips `target/` (Rust build
+/// artifact directory; not substrate). Follows symlinks NOT (per
+/// boot-altitude @io/fs discipline — symlink traversal is a distinct
+/// motion, not the vacuum's default read).
+///
+/// Returns entries in depth-first order. Errors bubble up as `io::Error`;
+/// the caller (main.rs `@roomba` dispatch arm) decides walker-halt vs
+/// walker-continue per @kintsugi/roomba.vacuum_admissible bilateral
+/// (forward-promised at Reed M7 co-tick per Mara §9.1).
+pub(crate) fn list_dir_recursive(root: &Path) -> io::Result<Vec<WalkEntry>> {
+    let mut out = Vec::new();
+    walk_into(root, &mut out)?;
+    Ok(out)
+}
+
+fn walk_into(dir: &Path, out: &mut Vec<WalkEntry>) -> io::Result<()> {
+    // Skip walker-invisible directories at the @io boundary — .git and
+    // target/ are substrate-invisible per walker discipline. NOT a
+    // policy decision; both are non-substrate by construction (VCS
+    // metadata; build artifacts).
+    if let Some(name) = dir.file_name().and_then(|n| n.to_str()) {
+        if name == ".git" || name == "target" {
+            return Ok(());
+        }
+    }
+
+    for entry in fs::read_dir(dir)? {
+        let entry = entry?;
+        let path = entry.path();
+        let file_type = entry.file_type()?;
+        let is_dir = file_type.is_dir();
+
+        // Skip symlinks by not descending into them and not emitting
+        // them (they materialize elsewhere; the vacuum reads content,
+        // not aliases).
+        if file_type.is_symlink() {
+            continue;
+        }
+
+        out.push(WalkEntry {
+            path: path.clone(),
+            is_dir,
+        });
+
+        if is_dir {
+            walk_into(&path, out)?;
+        }
+    }
+    Ok(())
+}
