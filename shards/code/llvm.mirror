@@ -1,0 +1,280 @@
+in @prism
+in @glass
+in @meta
+in @nl
+in @code
+
+# @code/llvm — the LLVM IR altitude grammar.
+#
+# The register-allocation-adjacent machine-substrate altitude. Per
+# Alex 2026-07-17 (verbatim, session-crystallizing):
+#
+#   *"So we can have @cascade/code/llvm/turing and
+#    @cascade/code/rust/llvm. And boom. The loop closes."*
+#
+# @code/llvm IS the LLVM intermediate-representation altitude — the
+# linear-SSA surface between imperative-language front-ends
+# (@code/rust, @code/fortran, @code/c) and target-specific
+# backends. Per docs/specs/craft-binary-target.md, mirror ALREADY
+# consumes LLVM IR for its own binary (OID = SHA-256(LLVM IR text);
+# IR is deterministic-from-grammar); this shard NAMES the
+# substrate-decl the consumer implicitly relies on.
+#
+# === substrate-already-had-the-word ===
+#
+# `@code/llvm` appears in docblocks across the corpus (per
+# shards/code.mirror line 30, line 41, line 57; shards/io.mirror;
+# shards/code/mirror.mirror lines 12, 24, 51; shards/reality/
+# algebra/silicon.mirror). The family-root discipline names it as
+# adjacent-altitude sibling to @code/rust; @code/llvm/ir is
+# empirically consumed via bootstrap/mirror.ll ~700 lines. But no
+# species-decl file existed. This shard mints the file the corpus
+# already assumed.
+#
+# Taut audit `d0572cd` §1.1 listed 10 landed @code/* species;
+# @code/llvm was NOT in that list despite ubiquitous reference.
+# Per Alex ratification for the polyglot spec §4.1 (Rust → LLVM
+# → Turing → mirror chain), @code/llvm MUST be species-decl'd for
+# the cascade species @cascade/code/rust/llvm and
+# @cascade/code/llvm/turing (Mara §9.2 M2 forward-promise) to
+# have a target altitude to compose against.
+#
+# === composition altitude: MACHINE-SUBSTRATE HUB ===
+#
+# @code/llvm is one machine-substrate hub (per Mara canonical spec
+# §3.4 polyglot theorem). Sits BELOW @code/rust, @code/fortran,
+# @code/c source-language altitudes; sits ABOVE @code/turing tape
+# floor. The polyglot theorem's O(2N) coverage-through-hub proof
+# requires @code/llvm as one of the three hubs (`@code/llvm`,
+# `@code/wasm`, `@code/turing`) covering the ~10 landed
+# `@code/*` languages.
+#
+# Empirical consumer: bootstrap/mirror.ll — mirror's own binary IR
+# (~700 lines; deterministic-from-grammar; round-trip validated
+# per docs/specs/craft-binary-target.md §3). The `emit` stage of
+# `craft --target binary` (per docs/specs/craft-binary-target.md
+# §"eight stages") ALREADY discharges the mirror→LLVM projection;
+# THIS shard names the target-altitude that emission lands into.
+#
+# === typed carriers for LLVM IR values ===
+#
+# Small vocabulary (~10 species per §9 sibling-species discipline):
+# llvm_ir_module, basic_block, instruction, register, ir_type,
+# attribute, function, terminator. Each carrier is a
+# substrate-typed ref so cascade species can construct/consume via
+# @mirror/store OID discipline. LLVM IR is TEXTUAL (deterministic
+# byte-form per craft-binary-target.md §"OID discipline"); the
+# substrate representation is content-addressed.
+#
+# === spec context ===
+#
+# docs/specs/polyglot-loss-aware-computational-translation.md §4.1
+# (Mara `1ce68c3`, 2026-07-17) — Edge 2 of the concrete Rust →
+# LLVM → Turing → mirror chain names `@cascade/code/llvm/turing`;
+# THIS species is the source altitude of that cascade edge and
+# target altitude of `@cascade/code/rust/llvm`.
+#
+# docs/specs/craft-binary-target.md — the empirical prior-art;
+# @code/llvm/ir sub-species implicitly landed via bootstrap/
+# mirror.ll consumption. THIS shard makes the parent altitude
+# explicit at family-root discipline.
+#
+# docs/specs/numerical-substrate-via-fortran.md §1-3 — Fortran →
+# LLVM → mirror pathway; @code/fortran cascade source-side needs
+# @code/llvm as target altitude. THIS shard discharges that
+# adjacency.
+#
+# arXiv 2409.18824 — flang architectural discussion; grounds the
+# LLVM-as-common-substrate framing.
+#
+# === substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]] — this file IS the
+# substrate declaration; nothing higher.
+# [[architecture-prism-as-trait-as-everything]] — five-op prism at
+# family-root; typed carriers below.
+# [[architecture-lift-as-load-bearing]] — the lift is the LLVM
+# spec (llvm.org/docs/LangRef.html) referenced NOT restated;
+# every carrier's typed shape defers to LLVM's own grammar.
+# [[feedback-substrate-already-had-the-word]] — the word was
+# EVERYWHERE in the corpus (grep-count high); this shard names
+# what the corpus already assumed.
+# [[feedback-craft-not-deliver]] — every action body `\` blocked.
+#
+# === related shards ===
+#
+# shards/code.mirror — family root (@code discipline).
+# shards/code/rust.mirror — sibling species precedent for five-op
+# + typed-carrier + build-property surface shape.
+# shards/code/wasm.mirror — sibling machine-substrate hub precedent.
+# shards/code/turing.mirror — sibling tape-floor altitude (this
+# session's paired mint per Mara §9.1 M1).
+# shards/cascade.mirror — the family-root that will target-grammar
+# THIS species via `@cascade/code/rust/llvm` (Mara §9.2 M2 forward
+# promise; Reed follow-up domain).
+#
+# Path-namespace property: this file at `shards/code/llvm.mirror`
+# declares `@code/llvm` per `@epistemologic/pact/path_matches_
+# namespace`. The `@code/llvm/ir` sub-species (per craft-binary-
+# target.md OID discipline) lives at `shards/code/llvm/ir.mirror`
+# when a consumer pulls; not landed this tick per scope.
+
+prism @code/llvm {
+  focus llvm
+  project llvm
+  split llvm
+  shift llvm
+  settle llvm
+}
+
+# === typed carriers for LLVM IR ===
+#
+# Small vocabulary per §9.2 M2 sibling-species discipline. Each
+# carrier's typed shape defers to LLVM's own grammar (llvm.org/
+# docs/LangRef.html) rather than re-declaring the type system at
+# substrate altitude. The substrate carries STRUCTURAL
+# discriminators; the per-instance byte-form is content-addressed
+# via @mirror/store OID.
+
+# `llvm_ir_module` — the top-level compilation unit. A ref to the
+# module's content-addressed byte-form (LLVM IR text OR bitcode;
+# both are supported by the grammar per LangRef §"Module Structure").
+type llvm_ir_module = ref
+
+# `basic_block` — the straight-line-code unit; ends with exactly
+# one terminator per LangRef §"Terminator Instructions". Substrate-
+# typed ref carrying the block's label + instruction sequence.
+type basic_block = ref
+
+# `instruction` — one SSA operation. Discriminated by opcode per
+# LangRef §"Instructions"; the discriminator is opcode-typed
+# (arithmetic, memory, cast, control, vector, aggregate). Ref
+# to instruction's byte-form for content-addressing.
+type instruction = ref
+
+# `register` — one SSA-name-bound value. Substrate-typed ref
+# carrying (name, ir_type) pair. SSA discipline (single-static-
+# assignment) enforced as a well-formedness obligation on
+# `basic_block`, not a floor primitive.
+type register = ref
+
+# `ir_type` — one LLVM IR type. Discriminated per LangRef §"Type
+# System" (primitive: void, integer, floating-point; derived:
+# array, function, pointer, structure, vector; opaque). Ref for
+# content-addressing.
+type ir_type = ref
+
+# `attribute` — one instruction/function attribute per LangRef
+# §"Function Attributes" / §"Parameter Attributes". Substrate-
+# typed ref; each attribute's semantics defer to LLVM.
+type attribute = ref
+
+# `function` — one LLVM IR function definition. Substrate-typed
+# ref carrying signature + basic-block sequence + attributes.
+# The entry-block discipline (first basic_block IS the entry
+# point) enforced as well-formedness on `function`.
+type function = ref
+
+# `terminator` — the last instruction of a basic_block. Discriminated
+# per LangRef §"Terminator Instructions" (ret, br, switch,
+# indirectbr, invoke, resume, catchswitch, catchret, cleanupret,
+# unreachable). Ref for content-addressing.
+type terminator = ref
+
+# === actions on LLVM IR ===
+#
+# All actions `\` obligation-blocked per [[feedback-craft-not-
+# deliver]]. Realisation per cascade species
+# (@cascade/code/rust/llvm, @cascade/code/llvm/turing, @io
+# invocations of `llc`/`opt`/`llvm-as`/`llvm-dis`).
+
+# `parse` — LLVM IR text or bitcode → llvm_ir_module. Realisation
+# shells to `llvm-as` at @io boundary OR uses the LLVM C API for
+# in-process parsing. Substrate-decl'd shape only.
+parse(source: ref) -> llvm_ir_module { \ }
+
+# `emit` — llvm_ir_module → LLVM IR text or bitcode. Realisation
+# shells to `llvm-dis` at @io boundary OR uses the LLVM C API for
+# in-process emission. THIS is the action `craft --target binary`
+# emit stage discharges per craft-binary-target.md §3.
+emit(module: llvm_ir_module) -> ref { \ }
+
+# `basic_block_of` — instruction → basic_block. Pure lookup on the
+# module's structural graph. Used by cascade species to reify
+# LLVM IR control flow at the target altitude (e.g.,
+# @cascade/code/llvm/turing translates basic blocks → tape states).
+basic_block_of(i: instruction) -> basic_block { \ }
+
+# `terminator_of` — basic_block → terminator. Pure lookup; each
+# basic_block has exactly one terminator per LangRef §"Basic
+# Blocks" invariant. Enforced by `llvm_ir_valid` bilateral.
+terminator_of(b: basic_block) -> terminator { \ }
+
+# `type_of` — register → ir_type. Pure lookup; SSA name-to-type
+# binding per module's typing discipline. Used by cascade species
+# to preserve type information across altitude boundaries
+# (e.g., @cascade/code/llvm/turing may erase types to bytes per
+# its loss-lens; the erasure IS the substrate-typed loss).
+type_of(r: register) -> ir_type { \ }
+
+# === dogfood bilaterals (per Mara `a0f4d3f` shape mint) ===
+#
+# Multi-line format per Reed remediation `1ad8bb5`.
+
+# `llvm_ir_valid` — module is well-formed LLVM IR per LangRef
+# §"Well-Formed IR" invariants: SSA discipline, terminator per
+# basic block, entry block per function, type consistency,
+# attribute compatibility. Realisation shells to `llvm-lint` at
+# @io boundary OR uses LLVM's Verifier pass in-process. Sentinel
+# content-addressed check per LLVM Verifier's byte-level pass/fail.
+
+bilateral llvm_ir_valid {
+  sentinel "module=verifier-passes"
+  arity 1
+}
+llvm_ir_valid(m: llvm_ir_module) -> verdict { \ }
+
+# `llvm_module_halts` — every function in module m halts on all
+# inputs. UNDECIDABLE in general (Rice); realisation per cascade
+# species is APPROXIMATE — bounded-fuel simulation, structural
+# termination analysis (e.g., LLVM's LoopAnalysis + recursion
+# guards), or explicit annotation. Sentinel names the
+# substrate-floor structural check; Rice-safe per Mara `701828a`
+# byte-containment (the CHECK is content-addressed; the underlying
+# question deferred to the loss-lens).
+
+bilateral llvm_module_halts {
+  sentinel "computation=halts-under-fuel-bound"
+  arity 1
+}
+llvm_module_halts(m: llvm_ir_module) -> verdict { \ }
+
+# `basic_block_ssa_valid` — every register in basic_block b is
+# defined exactly once (SSA discipline). Structural check on the
+# block's byte-form; Rice-safe by construction.
+
+bilateral basic_block_ssa_valid {
+  sentinel "structure=ssa-single-assignment"
+  arity 1
+}
+basic_block_ssa_valid(b: basic_block) -> verdict { \ }
+
+# === outbound declarations ===
+
+out @code/llvm
+out llvm_ir_module
+out basic_block
+out instruction
+out register
+out ir_type
+out attribute
+out function
+out terminator
+out parse
+out emit
+out basic_block_of
+out terminator_of
+out type_of
+out llvm_ir_valid
+out llvm_module_halts
+out basic_block_ssa_valid
