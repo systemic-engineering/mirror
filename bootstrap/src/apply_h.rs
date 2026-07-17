@@ -611,69 +611,6 @@ pub fn act(action: Ref, args: Vec<Value>) -> Verdict {
         ));
     }
     // ──────────────────────────────────────────────────────────────
-    // Bridge β empirical dispatch landing (Tick 3, 2026-07-16).
-    //
-    // Bilateral-predicate resolver for `@subject/visibility/sheaf`
-    // per Seam Phase D adjudication (tasks #164 + #168 + #170) shifting
-    // Bridge β from autopoietic-loop parser extension to @sheaf
-    // empirical dispatch. Unblocks @gestalt.project (which composes
-    // over @subject/visibility/sheaf.restrict for reader-ACL
-    // restriction per canonical spec docs/specs/gestalt-as-song-
-    // unfolding.md §5.4).
-    //
-    // Substrate-decl anchors (shards/subject/visibility/sheaf.mirror):
-    //   restriction_admissible — sr Pass iff
-    //     peer two-witness pass + acl resolves + admitted_stalks bounded.
-    //     Byte-check: `peer=witnessed + acl=resolves + stalks=bounded`.
-    //   section_admissible — s Pass iff sheaf_ref transitively
-    //     restriction_admissible + crystal_ref's stalk ∈ admitted_stalks.
-    //     Byte-check: `sheaf=admissible + stalk=admitted`.
-    //
-    // Constructor actions (restrict, section_at) remain `\`-obligation-
-    // blocked at substrate-decl altitude per craft-not-deliver; their
-    // bodies discharge at consumer altitude via bootstrap/src/peer_
-    // persistence.rs (Arc-2.3 landing).
-    //
-    // [substrate-floor:@io-boundary] — Bridge β dispatch surface at
-    // Rust FLOOR. Audit-cite: docs/audits/2026-07-15-seam-autopoietic-
-    // loop-phase-d.md (55dbf20) + Seam Phase D adjudications tasks
-    // #164/#168/#170. Signed-off-by: Seam.
-    // ──────────────────────────────────────────────────────────────
-    if action == "@subject/visibility/sheaf.restriction_admissible" {
-        if let Some(sr) = args.first() {
-            if sr.oid.contains("peer=witnessed")
-                && sr.oid.contains("acl=resolves")
-                && sr.oid.contains("stalks=bounded")
-            {
-                return Verdict::Pass;
-            }
-            return Verdict::Fail(format!(
-                "restriction_admissible: expected peer=witnessed + acl=resolves + \
-                 stalks=bounded sentinel, got arg oid {:?}",
-                sr.oid
-            ));
-        }
-        return Verdict::Fail(
-            "restriction_admissible: missing sheaf_restriction argument".to_string(),
-        );
-    }
-    if action == "@subject/visibility/sheaf.section_admissible" {
-        if let Some(sec) = args.first() {
-            if sec.oid.contains("sheaf=admissible") && sec.oid.contains("stalk=admitted")
-            {
-                return Verdict::Pass;
-            }
-            return Verdict::Fail(format!(
-                "section_admissible: expected sheaf=admissible + stalk=admitted \
-                 sentinel, got arg oid {:?}",
-                sec.oid
-            ));
-        }
-        return Verdict::Fail(
-            "section_admissible: missing section_at_stalk argument".to_string(),
-        );
-    }
-    // ──────────────────────────────────────────────────────────────
     // @uuid/spectral/time empirical dispatch landing (2026-07-16).
     //
     // Bilateral-predicate resolver for `@uuid/spectral/time` per Seam
