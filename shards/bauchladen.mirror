@@ -280,6 +280,7 @@ source @arxiv/cybernetics/maturana-varela-1980
 source @arxiv/cybernetics/von-foerster-1981
 source @arxiv/clinical/schmidt-1985
 source @arxiv/crypto/merkle-1979
+source @arxiv/biology/grasse-1959
 
 prism @bauchladen {
   focus crystal
