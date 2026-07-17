@@ -1,17 +1,21 @@
-//! Arc 3 TICK 2 RED — `@epistemologic/liquid_extraction` sibling family-root.
+//! Arc 3 TICK 2 (originally `@epistemologic/liquid_extraction` sibling
+//! family-root; MIGRATED 2026-07-17 to `@epistemologic/liquid/extraction`
+//! subspecies under `@epistemologic/liquid` theory per Alex 2026-07-17
+//! arbitration of Taut Q-C from `docs/audits/2026-07-17-taut-liquid-
+//! epistemologic-silicon-scout.md`; see `shards/epistemologic/liquid.mirror`
+//! Mara THIS-tick `cc816f9` theory species-decl + `shards/epistemologic/
+//! liquid/extraction.mirror` Mara THIS-tick migrated subspecies).
 //!
-//! Per Seam Phase D pre-review at `43aaadd` §5 canonical execution: TICK 2
-//! follows TICK 1 (`5c0f5ba` docblock.mirror RATIFIED at `820a451`) as the
-//! sibling family-root at the logical altitude. Interpretation B canonical shape
+//! Original Arc 3 TICK 2 context preserved: per Seam Phase D pre-review at
+//! `43aaadd` §5 canonical execution TICK 2 followed TICK 1 (`5c0f5ba`
+//! docblock.mirror RATIFIED at `820a451`); Interpretation B canonical shape
 //! (narrative above `---`; `in`+declarations below) enforced.
 //!
 //! T1-T8 canonical per Mara's spec `docs/specs/doc-code-seam-shards.md` §2
 //! RED test targets. T9-T14 Interpretation B structural discipline mirroring
-//! TICK 1 T15-T20.
-//!
-//! RED phase: `shards/epistemologic/liquid_extraction.mirror` does not yet
-//! exist. Text-check tests fail on file absence. Pattern mirrors
-//! `bootstrap/tests/docblock_shard.rs` (Reed `18db8b7`).
+//! TICK 1 T15-T20. Post-migration: T1 asserts the new prism-decl name
+//! `@epistemologic/liquid/extraction`; file path is now
+//! `shards/epistemologic/liquid/extraction.mirror`.
 //!
 //! Closes: task #535 sub-arc A TICK 2 entry point. Mara 🟢 dispatched post-RED.
 
@@ -25,10 +29,10 @@ fn repo_root() -> PathBuf {
 }
 
 fn read_liquid_extraction_shard() -> String {
-    let path = repo_root().join("shards/epistemologic/liquid_extraction.mirror");
+    let path = repo_root().join("shards/epistemologic/liquid/extraction.mirror");
     std::fs::read_to_string(&path).unwrap_or_else(|e| {
         panic!(
-            "read shards/epistemologic/liquid_extraction.mirror at {:?}: {}",
+            "read shards/epistemologic/liquid/extraction.mirror at {:?}: {}",
             path, e
         )
     })
@@ -40,8 +44,8 @@ fn read_liquid_extraction_shard() -> String {
 fn t01_liquid_extraction_declares_prism() {
     let content = read_liquid_extraction_shard();
     assert!(
-        content.contains("prism @epistemologic/liquid_extraction"),
-        "T1: liquid_extraction.mirror must declare `prism @epistemologic/liquid_extraction` per Mara spec §2"
+        content.contains("prism @epistemologic/liquid/extraction"),
+        "T1: extraction.mirror must declare `prism @epistemologic/liquid/extraction` per Mara spec §2 + Q-C migration cascade 2026-07-17"
     );
 }
 

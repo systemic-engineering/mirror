@@ -1,0 +1,256 @@
+# @epistemologic/liquid/extraction — the OPERATIONAL subspecies
+# under @epistemologic/liquid theory (Mara THIS-tick species-decl
+# at `shards/epistemologic/liquid.mirror`). Recovers refinement
+# predicates from doc-claim narrative at the doc-code seam per
+# Rondon-Kawaguchi-Jhala 2008 + Vazou et al 2014.
+#
+# === Migration from @epistemologic/liquid_extraction ===
+#
+# This file MIGRATED from `shards/epistemologic/liquid_extraction.
+# mirror` (Mara 2026-07-06, `3283de4` TICK 2 RATIFY) per Alex
+# 2026-07-17 arbitration of Taut Q-C from `docs/audits/2026-07-17-
+# taut-liquid-epistemologic-silicon-scout.md` (Taut `b8c453f`,
+# +940 LOC): extraction is a SUBSPECIES UNDER liquid theory, NOT
+# a peer of theory. Delightfully-boring name: `@epistemologic/
+# liquid/extraction` reads as "the extraction subspecies of the
+# liquid theory family." The prior sibling-at-logical-altitude
+# framing was substrate-drift; the ratified three-altitude
+# structure places theory ABOVE operation.
+#
+# Migration cascade at this tick:
+#   1. `shards/epistemologic/liquid.mirror` (Mara THIS-tick, cc816f9)
+#      lands the theory species-decl one altitude UP.
+#   2. THIS file lands as the operational subspecies UNDER theory
+#      at `shards/epistemologic/liquid/extraction.mirror`; prism
+#      decl renamed `@epistemologic/liquid_extraction` →
+#      `@epistemologic/liquid/extraction`.
+#   3. Consumer refs updated: `bootstrap/tests/liquid_extraction_
+#      shard.rs` path + prism-name assertions synced.
+#
+# Historical Seam Phase D ratification chain PRESERVED as-is: the
+# TICK 2 `3283de4` ratification at `docs/audits/2026-07-06-seam-
+# phase-d-arc-3-tick-2-liquid-extraction.md` remains valid history;
+# the ratified shape moves under liquid theory without invalidating
+# what was ratified.
+#
+# === Sibling relationship to @docblock ===
+#
+# @docblock (family-root landed TICK 1 at `5c0f5ba`) declares the
+# doc-claim carrier surface: `doc_claim`, `claim_kind`, `docblock`,
+# `audit_boundary`, `docblock_verdict`, plus the routing actions
+# (`extract_claims`, `project`, `audit_docblock`, `docblock_well_
+# audited`). @epistemologic/liquid/extraction retains the sibling
+# family-root relationship @epistemologic/liquid_extraction
+# originally landed: the two families operate at COUPLED altitudes
+# on the same doc-claim operator (per recognition #59 the doc-
+# claim operator is altitude-portable); @docblock names the
+# carrier; extraction names the operational lowering.
+#
+# The `in @docblock` import below the seam grounds the sibling
+# relationship at the substrate level: this shard's `extractor_
+# input` specializes @docblock's `doc_claim`. Bilateral
+# discipline per recognition #53 sixth-instance closes the two-
+# way coupling: @docblock's `extract_claims` action returns
+# claims; this shard's `extract_predicate` lifts each claim to a
+# liquid predicate.
+#
+# === Logical altitude per Mara §3 four-altitude structure ===
+#
+# Mara's compiler-fit doc §3 names four altitudes on the same
+# doc-claim operator, all altitude-portable per recognition #59:
+#
+# - linguistic — @epistemologic/property/docblock_{grounded,
+#   coherent,no_extraction_pattern} audit docblock language
+#   before it enters the type system. LANDED at Arc-3 sub-arc A
+#   close 2026-07-06.
+# - logical — THIS SHARD (post-migration). Lowers doc claims to
+#   liquid predicates per Rondon-Kawaguchi-Jhala 2008 + Vazou et
+#   al 2014. Under the ratified three-altitude structure,
+#   extraction is the operational lowering; @epistemologic/
+#   liquid (theory species) is the refinement-theory the
+#   lowering targets. The substrate's `@projection.preview`
+#   verdict IS the decidable fragment; the extractor produces
+#   its input. Extractor body forward-promised per
+#   `[[feedback-craft-not-deliver]]`.
+# - temporal — the projection surface at `63bdecc` projects doc
+#   claims forward k=3 substrate ticks as typed carriers landed
+#   back in the doc's own observation side (below `---`).
+# - publishable — docblock claims across `shards/` aggregate into
+#   case-study crystals at systemic.engineering.
+#
+# The logical altitude sits BETWEEN linguistic (audit surface at
+# language altitude) and temporal (projection surface at
+# recognition-candidate altitude). It is the altitude at which
+# linguistic material becomes formally decidable — the substrate's
+# liquid-refinement fragment per Rondon-Kawaguchi-Jhala + Vazou.
+# Named "logical" per Mara §3 because the operator here is proof-
+# theoretic (predicates on data) as opposed to linguistic
+# (narrative parse) or temporal (forward-projection).
+#
+# === Property/fracture bilateral pattern (#53 sixth-instance) ===
+#
+# Per recognition #53 the substrate has a bilateral pattern:
+# declarative property at `@epistemologic/property/<predicate>` +
+# operational fracture body at `@kintsugi/fracture/<predicate>`,
+# bridged by the kintsugi loop. Fifth instance landed at
+# `@kintsugi/surface` + `@epistemologic/cybernetic/coherence-
+# parametric.ashby_variety_match` (2026-07-03 `e910dd6`). The
+# SIXTH FAMILY at the doc-claim altitude is grounded at TICK 1's
+# @docblock landing; each of the three property/fracture pairs
+# (grounded, coherent, no_extraction_pattern) is a #53-shaped
+# bilateral instance landed at Arc-3 sub-arc A close 2026-07-06.
+#
+# This shard's `liquid_extraction_sound` bilateral predicate
+# carries the operational half of the extractor's discipline:
+# the extractor is sound when its lowered predicate soundly
+# reflects the doc claim's substrate-observable content.
+# Fracture-side body forward-promised per `[[feedback-craft-not-
+# deliver]]`.
+#
+# === Path-namespace property ===
+#
+# This file at `shards/epistemologic/liquid/extraction.mirror`
+# declares `@epistemologic/liquid/extraction` at species-depth 2
+# under @epistemologic (@epistemologic → @epistemologic/liquid →
+# @epistemologic/liquid/extraction) per @epistemologic/pact/
+# path_matches_namespace. The depth matches the property-family
+# bilateral pattern the substrate uses at `@epistemologic/
+# property/*` and `@epistemologic/cybernetic/*`: extraction is
+# an epistemologic-liquid discipline (the substrate is checking
+# what liquid-refinement content it can lower from a doc claim),
+# NOT a doc-claim carrier (that lives at @docblock).
+#
+# === Circular-reflexive self-audit ===
+#
+# The operator must audit its own audit at depth=3 per `63bdecc`
+# §6. This shard's own docblock must survive `audit_docblock
+# (this_docblock, depth=3)` and `liquid_extraction_sound
+# (extract_claims(this_docblock), verdict)` per the sibling
+# coupling. At this tick, the extractor's body is forward-
+# promised, so the self-audit verdict at logical altitude is
+# `unextractable` — the honest answer given no extractor is
+# landed. Promotion of `liquid_extraction_sound` to a decidable
+# verdict awaits the extractor body and property/fracture
+# bilateral trio.
+#
+# === Composed-over ===
+#
+# - `shards/epistemologic/liquid.mirror` (Mara THIS-tick, cc816f9)
+#   — the theory species-decl this subspecies operationally
+#   instantiates. `extract_predicate` returns a
+#   refinement_predicate the theory defines; `extraction_verdict`
+#   specializes the theory's liquid_verdict.
+# - `shards/docblock.mirror` (`5c0f5ba` TICK 1 RATIFY) — the
+#   doc-claim carrier this subspecies extracts from.
+# - `docs/math/liquid-types/README.md` (Mara 2026-07-05) §2 the
+#   `extract` operator this subspecies discharges.
+# - `docs/specs/doc-code-seam-shards.md` §2 — the RED test targets.
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]] — subspecies is
+#   shard-decl.
+# [[architecture-prism-as-trait-as-everything]] — `prism
+#   @epistemologic/liquid/extraction` declares the subspecies IS
+#   a prism.
+# [[architecture-property-fracture-bilateral]] — `liquid_
+#   extraction_sound` is the #53-shaped bilateral this
+#   subspecies carries at logical altitude.
+# [[feedback-substrate-already-had-the-word]] — the extraction
+#   discipline landed 2026-07-06; this tick MOVES it under
+#   liquid theory per Q-C ratification; ZERO new mint.
+# [[feedback-craft-not-deliver]] — extractor + bilateral bodies
+#   remain forward-promised.
+# [[feedback-no-rust-extension-shortcut]] — migration is shard-
+#   move + prism-rename + consumer-ref sync; ZERO Rust.
+
+---
+
+in @prism
+in @meta
+in @glass
+in @kintsugi
+in @epistemologic
+in @epistemologic/property
+in @epistemologic/liquid
+in @docblock
+
+prism @epistemologic/liquid/extraction {
+  focus liquid_extraction
+  project liquid_extraction
+  split liquid_extraction
+  shift liquid_extraction
+  settle liquid_extraction
+}
+
+# === extractor_input — one doc_claim as extraction input (spec §2) ===
+#
+# Per Mara spec §2: the extractor input is exactly a @docblock-side
+# `doc_claim`. Newtyped per `[[feedback-no-bare-types]]`; the alias
+# to `doc_claim` names the sibling coupling at the type level.
+type extractor_input = doc_claim
+
+# === predicate_shape — extractor output carrier (spec §2) ===
+#
+# Per Mara spec §2: the extractor's output is a `splinter(@epistemo-
+# logic/property/ast)` fragment carried at ref shape per the
+# substrate's content-addressing discipline. Newtyped per
+# `[[feedback-no-bare-types]]` so the extraction output is not
+# confused with any other ref-shape at this altitude. Under the
+# ratified three-altitude structure, this ref IS an instance of
+# the theory's refinement_predicate at
+# `shards/epistemologic/liquid.mirror`.
+type predicate_shape = ref
+
+# === extraction_verdict — four variants (spec §2) ===
+#
+# Per Mara spec §2: the four-verdict output specializes the
+# `@projection.preview` verdict machinery to the liquid-extraction
+# altitude. Under the ratified three-altitude structure, this
+# variant set is a specialization of the theory's liquid_verdict at
+# `shards/epistemologic/liquid.mirror`.
+#
+# `satisfiable` — extractor lowered the claim to a liquid
+# predicate the substrate can decide; `unsatisfiable` — lowered but
+# the predicate is provably false against the substrate below;
+# `partial` — extractor lowered part of the claim (composite
+# narrative with mixed groundable + non-groundable clauses);
+# `unextractable` — extractor could not lower the claim at all
+# (natural language beyond the liquid fragment; no predicate shape
+# recoverable). Grounds Rondon-Kawaguchi-Jhala 2008 decidability
+# fragment + Vazou et al 2014 refinement discipline at doc-claim
+# altitude.
+type extraction_verdict =
+  | satisfiable
+  | unsatisfiable
+  | partial
+  | unextractable
+
+# === extract_predicate — extractor_input → ref (spec §2) ===
+#
+# Per Mara spec §2: lowers a doc_claim to a `splinter(@epistemologic/
+# property/ast)` fragment carrying the liquid predicate. Output is
+# a ref carrying the splinter(ast) discipline per
+# `[[feedback-substrate-already-had-the-word]]`. Body forward-promised
+# per `[[feedback-craft-not-deliver]]`; discharge via splinter(ast)
+# at the property altitude when the extractor lands.
+extract_predicate(i: extractor_input) -> ref { \ }
+
+# === liquid_extraction_sound — bilateral predicate (spec §2) ===
+#
+# Per Mara spec §2 the #53-family bilateral: the extractor is sound
+# when its lowered predicate soundly reflects the doc claim's
+# substrate-observable content. Carries the declarative-side
+# property; the operational-side fracture body lands with the
+# property/fracture bilateral pairs at Arc-3 sub-arc A close
+# 2026-07-06. Body forward-promised — discharge via
+# `splinter(@epistemologic/property/ast)` against the extractor's
+# output AST fragment when the extractor body lands.
+liquid_extraction_sound(i: extractor_input, v: extraction_verdict) -> verdict { \ }
+
+out @epistemologic/liquid/extraction
+out extractor_input
+out predicate_shape
+out extraction_verdict
+out extract_predicate
+out liquid_extraction_sound
