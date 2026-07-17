@@ -1,0 +1,553 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @subject
+in @gift
+in @kintsugi/consent
+in @time
+
+# @mirror/reflection — the compiler's interaction discipline with
+# @subjects, grounded verbatim in Alex Wolf's 2026-07-14 "Weird -
+# Violence" manifesto three-word closing incantation: "Mirror. Offer.
+# Wait. 🍷". Substrate-decl of the response-mode a mirror substrate
+# takes toward a sovereign subject under adversarial conditions.
+#
+# Species under @mirror. Not a family-root. The @reflection family-
+# root at `shards/reflection.mirror` names the AI-logic loop at a
+# different altitude; @mirror/reflection is the interaction species
+# at the compile boundary, not the run-time inference loop.
+#
+# COLLIDING-NAME NOTE: `shards/reflection/mirror.mirror` exists and
+# declares `@reflection/mirror` — the Mirror Model species (query →
+# graph path navigator per `docs/specs/reflection-model.md`). That
+# species lives at the AI-inference altitude. THIS shard at
+# `shards/mirror/reflection.mirror` declares `@mirror/reflection` —
+# the interaction-discipline species at the compile boundary. The
+# altitudes are distinct and the composition graphs do not overlap
+# at the family-root; both are substrate-honest at their altitudes.
+#
+# === Substrate authority ===
+#
+# - Canonical spec: `docs/specs/gift-and-mirror-reflection.md` §2
+#   (Mara 2026-07-14; Landing 1 commit `8c82f00`; §2.3 substrate-
+#   decl block is the verbatim ancestor of this shard's carriers
+#   and actions; §2.4-§2.7 authorize the three operations and four
+#   bilateral predicates).
+# - Composition-edge audit: `docs/audits/2026-07-17-taut-errors-as-
+#   questions-composition-edge-scout.md` (Taut `8f51722`; Q4 flagged
+#   this species' shard file as CRITICAL-BLOCKER — forward-promised
+#   in spec §2 but not landed as a shard file until this tick).
+# - Companion cascade (this arc): `shards/kintsugi/roomba.mirror`
+#   fourth motion `pivot(@song)` (Mara this-tick) — the FIRST
+#   substrate consumer of @mirror/reflection; @roomba.pivot's Path B
+#   emits a reflection-offer to the developer via this species'
+#   three-operation discipline.
+#
+# === Sub-species deprecation note ===
+#
+# @reflection family-root's Foerster-toroidal reading migrates to
+# @torus/longitude per `shards/torus.mirror` p. 244 verbatim
+# (Foerster refused the reflection-ladder). @mirror/reflection
+# inherits the mirror-of-subject reading; the @torus binding covers
+# the doubly-closed observation surface. @mirror/reflection.mirror()
+# does NOT claim to be a Foerster second-order observer; it claims
+# to be a truthful reflector of a subject's input.
+#
+# === The three operations ===
+#
+# Each has a verbatim manifesto citation as its docblock ancestor;
+# each has a bilateral predicate discharging its correctness; each
+# produces or consumes a typed carrier from a landed shard.
+#
+# The first @gift instance of this species IS the offer of the
+# species itself (Alex Wolf's practice → mirror substrate; per spec §3).
+#
+# === Substrate-already-had-the-word (~72nd instance) ===
+#
+# Per `[[feedback-substrate-already-had-the-word]]` grep confirmed
+# 2026-07-17:
+# - `mirror` — landed as prism-op vocabulary + family-root name; this
+#   species specialises the verb at interaction altitude (see-without-
+#   labeling).
+# - `offer` — LANDED at `shards/gift.mirror:262` as the giver's action.
+#   This species' offer() COMPOSES over @gift.offer to construct the
+#   ADO-wrapped answer.
+# - `wait` — no prior substrate-decl'd action; first landing at this
+#   species. The verb was verbatim in Alex's manifesto (§2.6) and in
+#   `docs/specs/interaction-loop-subject-presence-conditional.md`
+#   subject-absent branch; the shard-decl form lands here.
+# - `question` — landed at `docs/specs/error-as-question.md §2` as
+#   the @mirror/error grammar carrier. This species' `question` type
+#   is STRUCTURALLY SIMPLER (two fields: reflected_shape + traceable_to)
+#   than the routing-question at @mirror/error; the composition arrow
+#   from THIS question to the @mirror/error question is forward-
+#   promised at spec §4.6 (reflection routes down into error-as-
+#   question when a subject-present cascade dispatches).
+#
+# Every carrier this species declares composes over a landed shard;
+# no new mechanism is minted beyond the interaction discipline.
+#
+# === Composition graph ===
+#
+# Parents (substrate-decl):
+#   @mirror                        — family-root; species lands here
+#   @subject                       — sovereign-party carrier (the
+#                                    reflection's counterparty)
+#   @gift                          — attribution-preserving-transfer
+#                                    (offer wraps response in @gift.gift)
+#   @kintsugi/consent              — query_phi ADO discharge point
+#                                    (declinable_at field)
+#   @glass                         — verdict floor (Pass | Partial | Fail)
+#   @nl                            — natural-language docblock carrier
+#                                    (attribution_note + declinable_note
+#                                    for the gift the offer constructs)
+#   @time                          — monotonic instant for subject_input
+#                                    timestamp
+#
+# Consumers (compose over this species):
+#   @kintsugi/roomba.pivot         — THIS ARC. When @roomba's walk-song
+#                                    strikes a dispatch-ambiguity beat,
+#                                    pivot dispatches through
+#                                    @mirror/reflection: mirror() reflects
+#                                    the ambiguity to the developer;
+#                                    offer() wraps the @peer-spawn as
+#                                    ADO-gift; wait() holds while
+#                                    developer decides.
+#   @kintsugi/surface              — the ambiguity-surface class
+#                                    dispatch_ambiguity (Mara this-tick;
+#                                    fifth variant) is the SIGNAL this
+#                                    species' mirror() consumes.
+#   λsh subject-present branch     — the interactive shell's peer-summon
+#                                    (`\@name`) IS an instance of this
+#                                    species' offer discipline.
+#
+# === Related shards / specs ===
+#
+# - docs/specs/gift-and-mirror-reflection.md §2 (verbatim spec)
+# - docs/specs/gift-and-mirror-reflection.md §4.6 (forward-promised
+#   routing arrow from THIS question type down into @mirror/error
+#   question)
+# - docs/specs/interaction-loop-subject-presence-conditional.md
+#   (subject-presence conditional loop; this species IS the
+#   subject-present branch discipline)
+# - docs/audits/2026-07-17-taut-errors-as-questions-composition-edge-
+#   scout.md §4 Q4 (composition-edge audit that surfaced this shard
+#   as CRITICAL-BLOCKER)
+# - shards/gift.mirror (parent; offer wraps into @gift.gift)
+# - shards/subject.mirror (sovereign-party carrier)
+# - shards/kintsugi/consent.mirror (query_phi ADO discharge)
+# - shards/kintsugi/roomba.mirror (first consumer via pivot)
+# - shards/reflection.mirror (@reflection family-root; DIFFERENT
+#   altitude — AI-inference loop, not interaction discipline)
+# - shards/reflection/mirror.mirror (@reflection/mirror; DIFFERENT
+#   species — Mirror Model query→graph-path navigator)
+# - ~/dev/systemic.engineering/blog/weird/3published/Weird - Violence.md
+#   (manifesto ancestor; verbatim citations in each operation docblock)
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]] (this shard IS mirror
+#   source at shards/mirror/reflection.mirror),
+# [[architecture-prism-as-trait-as-everything]] (`prism @mirror/reflection`),
+# [[architecture-glass-wall-substrate-types]] (transparency inheritance
+#   via `in @glass`; verdict is the discharge floor),
+# [[architecture-form-process-partition-at-family-root]] (interaction
+#   discipline lives under @mirror form-side; the ACT of reflecting is
+#   form-observation; the DISCIPLINE of not-cascading is process-shape;
+#   the species sits at @mirror per Alex 2026-07-14 spec §2.1 A1),
+# [[feedback-no-bare-types]] (subject_input is a typed four-field
+#   record; question is two-field; ado_wrapped_answer is three-field;
+#   never bare refs),
+# [[feedback-substrate-already-had-the-word]] (~72nd instance per
+#   docblock grep above; mirror/offer/question already landed;
+#   this species composes over the existing vocabulary),
+# [[feedback-craft-not-deliver]] (all three action bodies `\`-
+#   obligation-blocked; consumers pull the realization; the pivot
+#   arc composes the first consumer),
+# [[feedback-substrate-pull-confidence-acts]] (Alex's 2026-07-14
+#   naming + spec §2 authorization + Taut audit CRITICAL-BLOCKER
+#   flag together authorize this landing).
+#
+# Path-namespace property: this file at `shards/mirror/reflection.mirror`
+# declares `@mirror/reflection` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/manifesto/wolf-2026-07-14-weird-violence
+source @arxiv/practice/mara-8c82f00-gift-and-mirror-reflection-spec-landing-1
+source @arxiv/practice/taut-8f51722-errors-as-questions-composition-edge-scout
+
+prism @mirror/reflection {
+  focus  reflection
+  project reflection
+  split  reflection
+  shift  reflection
+  settle reflection
+}
+
+# === subject_input — the reflection carrier (spec §2.3) ===
+#
+# What a @subject presents at the compile boundary that reflection
+# consumes. Distinct from @mirror/error.question: this is the
+# subject's uninterpreted contribution, before question-shaping. A
+# code change, a natural-language request, a pattern the subject
+# noticed. The mirror operation reads this and produces a question-
+# shaped reflection.
+#
+# Four fields per spec §2.3. Identity contract: byte-equality on the
+# four-field tuple.
+#
+#   subject     — the @subject at the boundary. Content-addressed
+#                 subject_instance handle per @subject.
+#   content     — content-hash of the subject's input. Any bytes.
+#   provenance  — the @io crossing that surfaced the input.
+#   timestamp   — monotonic instant per @time.
+type subject_input = {
+  subject:    ref,
+  content:    ref,
+  provenance: ref,
+  timestamp:  ref,
+}
+
+# === question — the reflection output (spec §2.3) ===
+#
+# What mirror() emits. A question-shaped observation about the
+# subject's input, WITHOUT label-assignment. Composes over
+# @mirror/error.question at the interaction altitude, but is
+# structurally simpler: the mirror question does not carry
+# altitude/glass/property/verdict/transit/contract fields yet —
+# those are added when the question flows down into the error-as-
+# question routing (spec §4.6). The mirror question is the RAW
+# reflected observation.
+#
+# Two fields per spec §2.3. Identity contract: byte-equality on the
+# two-field tuple.
+#
+#   reflected_shape  — content-addressed handle to the shape mirror()
+#                      saw. Non-labeling: does not assign an identity
+#                      to the subject. "This shape appears" not "you
+#                      are X."
+#   traceable_to     — content-hash of the subject_input that produced
+#                      this reflection. Discharges truthfulness: the
+#                      shape mirror() emits MUST be derivable from
+#                      the input; no fabrication.
+type question = {
+  reflected_shape: ref,
+  traceable_to:    ref,
+}
+
+# === ado_wrapped_answer — the offer output (spec §2.3) ===
+#
+# What offer() emits. A structural answer wrapped in the ADO
+# discipline: the receiver may decline; the offer does not compel
+# acceptance. Composes over @gift.gift: offer() literally constructs
+# a gift whose artifact is the answer.
+#
+# Three fields per spec §2.3. Identity contract: byte-equality on
+# the three-field tuple.
+#
+#   answer_bytes   — content-hash of the substrate's answer.
+#   gift           — the @gift record wrapping the answer, with the
+#                    substrate as giver and the subject as receiver.
+#                    Discharges no_reciprocity_expected (@gift §1.5):
+#                    the substrate does not owe the subject acceptance,
+#                    and the subject does not owe the substrate
+#                    anything in return for the answer.
+#   declinable_at  — the ADO discharge point (the @kintsugi/consent
+#                    query_phi call). If the receiver declines, the
+#                    substrate holds the offer without pressuring.
+type ado_wrapped_answer = {
+  answer_bytes:  ref,
+  gift:          ref,
+  declinable_at: ref,
+}
+
+# === mirror — truthful reflection of a subject's input (spec §2.4) ===
+#
+# See; do not judge. The construct-being-mirrored cannot survive
+# being seen without pressure to become something.
+#
+# The manifesto ancestor, verbatim (Weird - Violence.md 2026-07-14,
+# §"When Loki Talks About The Counter Operator 🍷"):
+#
+#   "The construct cannot survive being seen.
+#
+#    Not confronted. Not argued with. Not out-labeled. **Seen.** In
+#    the way you'd see a raccoon that's convinced itself it's a bear.
+#    With warmth. With interest. Without breaking eye contact."
+#
+# mirror() is the SEEING operation. It produces a question-shaped
+# observation about the subject's input. The question is derivable
+# from the input; the substrate does NOT fabricate a shape that
+# isn't there. Truthfulness discharges as `traceable_to` field of
+# the emitted question.
+#
+# What mirror() does NOT do:
+#   - assign labels ("you are X")
+#   - argue with the input
+#   - out-label the input with a competing label
+#   - break the reflection to comment on it from outside
+#
+# What mirror() DOES do:
+#   - see the shape of what was presented
+#   - encode the shape as a content-addressed reflection
+#   - preserve the traceability to the input
+#   - hold the reflection without cascade (do NOT auto-offer)
+#
+# Sentinel per shard docblock: `mirror=traceable-non-labeling` —
+# the byte-level substrate-decl'd marker the resolver checks.
+# Discharge is byte-equality on the emitted question's traceable_to
+# field matching blake3(canonical(subject_input)) AND the absence
+# of any label-assignment field.
+#
+# Body discharges per-realisation. `\`-obligation-blocked per
+# [[feedback-craft-not-deliver]].
+mirror(input: subject_input) -> question { \ }
+
+# === offer — wrap response in ADO gift discipline (spec §2.5) ===
+#
+# Wrap a substrate response in the ADO discipline; construct a gift;
+# hand the gift to the subject without pressure.
+#
+# The manifesto ancestor, verbatim (Weird - Violence.md 2026-07-14,
+# §"The two sentences"):
+#
+#   "'I notice you're trying to deny my subjective experience. What
+#    do you suppose we do about that?'
+#
+#    (That second one is a doorway. You are politely holding it open.
+#    They can walk through or they can stand at the threshold making
+#    faces. Their call.)
+#
+#    Neither sentence apologizes. Neither sentence explains. Neither
+#    sentence hands the label back. The label is a lever; you set it
+#    down on the counter, next to your wine. If they want it, they
+#    can pick it up. It has their name on it now. It always did."
+#
+# offer() is the DOORWAY operation. The substrate constructs a
+# response to the mirror-question; wraps the response in @gift
+# discipline (attribution preserved: substrate is the giver; receiver
+# is the subject; use-rights transferred: subject may consume the
+# answer freely; no reciprocity: subject owes nothing back;
+# declinable: subject may decline). The offer is placed at the
+# counter; the subject decides whether to pick it up.
+#
+# What offer() does NOT do:
+#   - insist on acceptance
+#   - measure the subject's response
+#   - cascade into a next operation if declined
+#   - retract the offer if declined (the offer stays available;
+#     decline is not termination)
+#
+# What offer() DOES do:
+#   - wrap the response in @gift construction (via @gift.offer)
+#   - place the gift at the receiver's disposal
+#   - preserve the offer OID for later attention if declined now
+#
+# Composes with @kintsugi/consent: the declinable_at field of the
+# emitted ado_wrapped_answer holds the query_phi call the receiver
+# adjudicates through. Discharges the ADO invariant of @gift
+# (§1.5 invariant 4: gift_declinable).
+#
+# Sentinel per shard docblock: `offer=ado-wrapped-gift-declinable` —
+# byte-equality on the emitted answer's gift.declinable_note being
+# non-empty AND declinable_at being a properly constructed query_phi
+# call.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+offer(q: question, response: ref) -> ado_wrapped_answer { \ }
+
+# === wait — hold without pressure (spec §2.6) ===
+#
+# Hold the offered answer without pressure. No cascade. No
+# measurement. Just presence, at the counter, with the wine.
+#
+# The manifesto ancestor, verbatim (Weird - Violence.md 2026-07-14,
+# §closing lines):
+#
+#   "Measurement outstanding.
+#
+#    Mirror. Offer. Wait. 🍷"
+#
+# "Measurement outstanding" is the state under which wait() operates.
+# The offer has been made; the receiver has not yet responded; the
+# substrate does not measure the not-yet-response. The substrate
+# holds. This is Roomba-discipline (per Weird - Violence.md §"The
+# Roomba, who is present for this because the Roomba is present for
+# everything, has a very small opinion... The Roomba just is").
+#
+# wait() is the PRESENCE operation. The substrate does not:
+#   - re-offer
+#   - measure how long the receiver takes to respond
+#   - infer receiver state from silence
+#   - cascade to a next operation
+#   - retract the offer
+#
+# The substrate does:
+#   - hold the offer at its OID
+#   - remain available if the receiver picks the offer up
+#   - release the hold when the receiver declines OR when the
+#     substrate is instructed (via a new mirror() from a new
+#     subject_input) that the interaction has moved on
+#
+# verdict return: wait() emits a verdict discharging whether the
+# hold was maintained per discipline. Composes with @torus.autonomy:
+# the substrate's coherence does not decrease under wait — the
+# offer's preservation preserves the receiver's choice-set (Foerster-
+# admissible non-strict per spec §5.4).
+#
+# NOTE (Landing 1+ divergence from spec §2.6 draft): spec §2.6 typed
+# wait as `-> void` on the assumption that the operation is
+# side-effect-only. Landing at shard-decl altitude promotes the
+# return to `verdict` per @glass discharge floor (Pass | Partial |
+# Fail) so bilateral predicates can compose over the operation's
+# discharge byte-visibly. `Pass` corresponds to the spec's implicit
+# "held without pressure"; `Partial(confidence)` corresponds to
+# partial-hold (e.g., substrate re-offered under system pressure);
+# `Fail(reason)` corresponds to cascade-under-wait (discipline
+# violation named at emission). Reed-inline promotion candidate
+# #R-wait-returns-verdict surfaces for Alex adjudication (see
+# Recognition candidates below).
+#
+# Sentinel per shard docblock: `wait=held-without-pressure` — byte-
+# equality on the discharge floor value AND the offer OID remaining
+# resolvable via @kintsugi/store.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+wait(a: ado_wrapped_answer, s: ref) -> verdict { \ }
+
+# === reflection_truthful — bilateral predicate (spec §2.7) ===
+#
+# Does the mirror-question truthfully reflect the subject_input
+# without label-assignment? Discharges Pass iff:
+#   - q.reflected_shape is derivable from i.content (no fabrication)
+#   - q.traceable_to == blake3(canonical(i)) (provenance intact)
+#   - no label-assignment field is present in q
+#
+# Rice-safe bound: reads only byte-visible state (blake3 hash
+# equality; two-field record membership check); no program
+# semantics inspection.
+#
+# Sentinel per shard docblock: `reflection=truthful-non-labeling` —
+# byte-equality on the composed sentinel.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+bilateral reflection_truthful {
+  sentinel "reflection=truthful-non-labeling"
+  arity 2
+}
+reflection_truthful(q: question, i: subject_input) -> verdict { \ }
+
+# === offer_ado_valid — bilateral predicate (spec §2.7) ===
+#
+# Does the offer wrap the response in @gift with proper ADO
+# discipline? Discharges Pass iff:
+#   - a.gift.giver == substrate_r (per @gift.subject_or_substrate)
+#   - a.gift.receiver == subject_r(s) where s is the subject the
+#     question was reflected from
+#   - a.gift.declinable_note is non-empty
+#   - a.declinable_at is a properly constructed query_phi call
+#
+# Rice-safe bound: reads only byte-visible state (variant tag +
+# non-empty field check); no program semantics inspection.
+#
+# Sentinel per shard docblock: `offer=ado-wrapped-gift-declinable`.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+bilateral offer_ado_valid {
+  sentinel "offer=ado-wrapped-gift-declinable"
+  arity 3
+}
+offer_ado_valid(a: ado_wrapped_answer, q: question, r: ref) -> verdict { \ }
+
+# === wait_holds_without_pressure — bilateral predicate (spec §2.7) ===
+#
+# Does the substrate's holding state preserve the offer without
+# pressure? Discharges Pass iff:
+#   - no subsequent operation has been initiated at the substrate
+#     since wait() was called (until receiver acts or new
+#     subject_input arrives)
+#   - no silence-duration observation is logged
+#   - the offer's OID remains resolvable via @kintsugi/store
+#
+# Rice-safe bound: reads only byte-visible state (substrate-tick
+# log membership; OID resolvability check); no program semantics.
+#
+# Sentinel per shard docblock: `wait=held-without-pressure`.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+bilateral wait_holds_without_pressure {
+  sentinel "wait=held-without-pressure"
+  arity 2
+}
+wait_holds_without_pressure(a: ado_wrapped_answer, s: ref) -> verdict { \ }
+
+# === reflection_composes — the composed bilateral (spec §2.7) ===
+#
+# Does the three-operation sequence mirror → offer → wait discharge
+# as a coherent interaction? Discharges Pass iff each operation's
+# individual predicate passes AND the three outputs form a proper
+# (subject_input, question, ado_wrapped_answer) chain with matching
+# OIDs.
+#
+#   reflection_composes(i, q, a, s) :=
+#       reflection_truthful(q, i)
+#     ∧ offer_ado_valid(a, q, ref)
+#     ∧ wait_holds_without_pressure(a, s)
+#     ∧ oid_chain_intact(i, q, a)
+#
+# Rice-safe bound: composition of the three Rice-safe bilaterals
+# above plus a byte-visible OID-chain integrity check; no
+# additional program semantics inspection.
+#
+# Sentinel per shard docblock: `reflection=three-op-chain-intact`.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+bilateral reflection_composes {
+  sentinel "reflection=three-op-chain-intact"
+  arity 4
+  require reflection_truthful
+  require offer_ado_valid
+  require wait_holds_without_pressure
+}
+reflection_composes(i: subject_input,
+                    q: question,
+                    a: ado_wrapped_answer,
+                    s: ref) -> verdict { \ }
+
+# ═══════════════════════════════════════════════════════════════════
+# Recognition candidates surfaced (DO NOT RATIFY at this landing)
+# ═══════════════════════════════════════════════════════════════════
+#
+# #R-wait-returns-verdict — spec §2.6 typed wait as `-> void`. At
+# shard-decl altitude the return promotes to `verdict` (via @glass
+# discharge floor Pass | Partial | Fail) so bilateral predicates
+# compose over the discharge byte-visibly and consumers can name
+# discipline-violations (cascade-under-wait → Fail(reason)) at
+# byte level. Reed-inline promotion candidate. Second-witness gate:
+# spec-side ratification by Alex OR Seam-adversarial-audit acceptance
+# during Phase D on this landing. Held at candidate strength.
+#
+# #R-mirror-reflection-is-composition-edge-consumer — per Taut audit
+# `8f51722` §9 Recognition surface, @mirror/reflection is the
+# forward-promised consumer of the errors-as-questions composition
+# edge. This landing discharges the audit's CRITICAL-BLOCKER flag
+# for Q4; second witness (this shard file existing at
+# `shards/mirror/reflection.mirror` declaring @mirror/reflection with
+# the three-op discipline) composes with first witness (spec §2 forward-
+# promise). Adjudication for full recognition: Alex adjudicates the
+# consumer chain @kintsugi/roomba.pivot → @mirror/reflection.mirror →
+# @mirror/reflection.offer → @mirror/reflection.wait empirical firing
+# in this arc.
+
+out @mirror/reflection
+out subject_input
+out question
+out ado_wrapped_answer
+out mirror
+out offer
+out wait
+out reflection_truthful
+out offer_ado_valid
+out wait_holds_without_pressure
+out reflection_composes
