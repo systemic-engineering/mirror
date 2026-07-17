@@ -1,3 +1,12 @@
+> **Terminal-form map (Mara 2026-07-17):** the two-flag → one-flag
+> condensation `--collapse` + `--translate` → `--vacuum=~dir`
+> extending this spec's discipline into the roomba motion vocabulary
+> is documented at
+> `docs/specs/rust-floor-birthed-by-roomba-from-mirror-spec.md`
+> (Mara `2519f83`) §3. STAY-CANONICAL as the CLI-condensation
+> discipline authority; the terminal-form spec composes over
+> two-tick migration §3.3.
+
 # CLI as Geometry — Condensing the Surface to the Compiler's Prism-Composition
 
 *2026-07-15. Mara. Canonical spec. Condensation under Alex Wolf's

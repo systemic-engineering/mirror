@@ -1,3 +1,11 @@
+> **Terminal-form map (Mara 2026-07-17):** the rust/-native FLOOR
+> where `dance.rs` materializes @dance as the ensemble-connection
+> 1-form is documented at
+> `docs/specs/rust-floor-birthed-by-roomba-from-mirror-spec.md`
+> (Mara `2519f83`) §§5-6. STAY-CANONICAL as the @dance operational
+> shape authority; the terminal-form spec composes over Kuramoto
+> + Aumann semantics at N≥2 peer coordination.
+
 # `@dance` — coordination-without-signal on Förster's `@torus`, formalized via Kuramoto + Aumann + content-addressed lineage
 
 *Mara, 2026-07-13 arc-continuation spec. Substrate-decl reading of Alex's in-transcript proposal: name the emergent operational property Reed's `71a4689` annotation named (coordination-without-signal via `@resonance` + `@bauchladen` + physical proximity) with the substrate-honest word Alex offered — `@dance`. This spec formalizes the mathematics of coordinated dancing (Kuramoto oscillator networks on T², topological-neighbor coupling per Cavagna 2010, Aumann agreement under content-addressed common prior, Schelling focal points on winding classes), rigorously verifies Alex's "@dance maps perfectly onto Förster's @torus" claim, cites the Heist story as substrate exposition, and adjudicates the two-tick naming question (`@dance` vs `@coordination` vs substrate-already-had-the-word annotation).*

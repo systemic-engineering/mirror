@@ -1,3 +1,12 @@
+> **Terminal-form map (Mara 2026-07-17):** the rust/-native FLOOR
+> for `dance.rs` (moving from `bootstrap/src/dance.rs` to
+> `rust/src/dance.rs` per Alex 2026-07-17 detach-bootstrap
+> directive) is documented at
+> `docs/specs/rust-floor-birthed-by-roomba-from-mirror-spec.md`
+> (Mara `2519f83`) §5.2. STAY-CANONICAL as the @dance runtime
+> Rung 4 semantic authority; the terminal-form spec composes over
+> the Rung 4 shape at rust/ altitude.
+
 # `@dance` runtime Rung 4 — multi-peer coherence phase-lock via `bootstrap/src/dance.rs`
 
 *Mara, 2026-07-13 arc-continuation spec. Substrate-decl reading of Reed's

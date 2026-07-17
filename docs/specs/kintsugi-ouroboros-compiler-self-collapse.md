@@ -1,3 +1,11 @@
+> **Terminal-form map (Mara 2026-07-17):** the concrete `rust/`-
+> materialization destination for cascades 2+3 of the six-arc
+> retirement plan lives at
+> `docs/specs/rust-floor-birthed-by-roomba-from-mirror-spec.md`
+> (Mara `2519f83`). STAY-CANONICAL as the six-arc retirement plan
+> authority; the terminal-form spec cites §4 cascade 3 as its
+> substrate-decl'd cascade catalog anchor.
+
 ---
 date: 2026-07-15
 author: Mara

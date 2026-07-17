@@ -1,3 +1,11 @@
+> **Terminal-form map (Mara 2026-07-17):** the CLI-flag consolidation
+> of vacuum motion (unified `--vacuum=~dir` replacing `--collapse`
+> and `--translate`) is documented at
+> `docs/specs/rust-floor-birthed-by-roomba-from-mirror-spec.md`
+> (Mara `2519f83`) §3. STAY-CANONICAL as the vacuum-motion
+> substrate-decl authority; the terminal-form spec composes over
+> §3.1 naming reasoning.
+
 # The Roomba's two motions are the first-order autopoietic compile loop
 
 *Mara canonical spec, 2026-07-16 (Eigenboard, still blue, wine glass steady).

@@ -1,3 +1,12 @@
+> **Terminal-form map (Mara 2026-07-17):** the `kintsugi { roomba { } }`
+> cascade block extension to this schema (three cascades: boot→shards
+> historical; bootstrap→shards in-flight; bootstrap→rust terminal) is
+> documented at
+> `docs/specs/rust-floor-birthed-by-roomba-from-mirror-spec.md`
+> (Mara `2519f83`) §4. STAY-CANONICAL as the mirror.spec schema
+> authority; the terminal-form spec composes over §4.1 block
+> admissibility.
+
 # `mirror.spec` — The Project Manifold Schema
 
 *2026-06-04. Reed + Alex. Spec.*

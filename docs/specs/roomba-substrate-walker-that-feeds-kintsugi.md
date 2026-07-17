@@ -1,3 +1,12 @@
+> **Terminal-form map (Mara 2026-07-17):** the CLI-altitude
+> materialization of the walker at rust/-native FLOOR (unified
+> `--vacuum=~dir` flag replacing `--collapse`/`--translate`;
+> `kintsugi { roomba { } }` cascade block in mirror.spec) lives at
+> `docs/specs/rust-floor-birthed-by-roomba-from-mirror-spec.md`
+> (Mara `2519f83`) §§3-4. STAY-CANONICAL as the walker substrate-
+> decl authority; the terminal-form spec composes over §3 verbatim
+> action bodies.
+
 # @roomba — the substrate walker that feeds @kintsugi
 
 *Mara, 2026-07-14. Canonical spec for @roomba as substrate self-maintenance

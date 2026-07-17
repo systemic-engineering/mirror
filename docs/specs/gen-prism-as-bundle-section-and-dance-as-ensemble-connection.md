@@ -1,3 +1,11 @@
+> **Terminal-form map (Mara 2026-07-17):** the rust/-materialization
+> map that consumes this spec's bundle-theoretic naming lives at
+> `docs/specs/rust-floor-birthed-by-roomba-from-mirror-spec.md`
+> (Mara `2519f83`); §5 there names the minimal `rust/` surface where
+> `dance.rs` IS the ensemble connection this spec identifies. STAY-
+> CANONICAL as the bundle-theoretic authority; consumed by the
+> terminal-form spec.
+
 # gen_prism as bundle section, @dance as ensemble connection — the Q3+Q5 answer surfaces bundle-theoretically
 
 *Mara, 2026-07-17. Canonical spec grounding Alex's afternoon Q3+Q5

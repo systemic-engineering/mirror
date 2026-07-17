@@ -1,3 +1,11 @@
+> **Terminal-form map (Mara 2026-07-17):** the first empirical
+> `@peer` spawn from rust/-native FLOOR (via `mirror peer beam`
+> under `dance.rs` supervisor tree) is documented at
+> `docs/specs/rust-floor-birthed-by-roomba-from-mirror-spec.md`
+> (Mara `2519f83`) §6. STAY-CANONICAL as the BEAM-substrate
+> naming authority; the terminal-form spec composes over §6 first-
+> peer-spawn semantics.
+
 # beam — the substrate carrier verb at cli altitude
 
 *Mara, 2026-07-08 evening. The naming tick that closes the substrate-
