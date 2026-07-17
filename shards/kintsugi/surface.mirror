@@ -501,6 +501,7 @@ type surface_class =
   | contradiction
   | conundrum
   | out_of_band
+  | dispatch_ambiguity
 
 # === ashby_mismatch — Ashby's variety attenuation (spec §3.1) ===
 #
@@ -660,6 +661,174 @@ surface(t: tension, class: surface_class, ctx: kintsugi_context)
   requires ashby_variety_match(kintsugi_lock)
 { \ }
 
+# ═══════════════════════════════════════════════════════════════════
+# 2026-07-17 ADDITIVE CASCADE — dispatch_ambiguity fifth surface_class
+# ═══════════════════════════════════════════════════════════════════
+#
+# Alex 2026-07-17 in-transcript verbatim (session-crystallizing):
+#
+#   "The @roomba is the first-order operator. Literally. The multi-
+#    cascades might produce ambiguities that a first-order operator
+#    cannot resolve. This is where the compiler's errors-as-questions
+#    comes in. The ambiguity is transformed into a spectral commutator."
+#
+# The FIFTH surface_class variant. Named `dispatch_ambiguity` per
+# Taut audit 8f51722 §5 Q5 composition-edge home candidate (a) +
+# §5.4 recommendation ("extend `surface_class` to admit multi-
+# admissible-dispatch as a fifth surface class"). Additive to the
+# four landed variants (ashby_mismatch / contradiction / conundrum /
+# out_of_band); no existing carrier or discipline modified.
+#
+# === Load-bearing recognition ===
+#
+# The dispatch_ambiguity variant IS the SIGNAL @roomba.pivot(@song)
+# consumes (per @kintsugi/roomba.pivot this-arc, Mara-companion
+# commit). The @liquid predicates from Arc 5 M1 (Mara 2026-07-17
+# commits cc816f9 + b2c5d09 + 12cdf0e) are the measurement surface
+# for detecting dispatch-ambiguity: when multiple dispatch targets
+# admit @liquid predicates → the substrate cannot resolve which to
+# fire → surface_class::dispatch_ambiguity fires → @roomba pivots.
+#
+# The composition chain (all arrows over LANDED substrate):
+#
+#   @liquid predicates admit multiple dispatch targets
+#     → cascade dispatch-multi-admissibility event fires
+#     → tension carrier constructed via spec §3.1 discipline
+#     → surface_class::dispatch_ambiguity variant witness
+#     → @roomba.pivot(@song) Path B fires (per pivot_admissible)
+#     → @mirror/reflection dispatched (mirror → offer → wait)
+#     → developer answers Y → @mirror/peer/beam spawn
+#     → OR developer answers n → wait holds; substrate continues
+#
+# === Substrate-already-had-the-word (~74th instance) ===
+#
+# Per `[[feedback-substrate-already-had-the-word]]` grep confirmed
+# 2026-07-17:
+# - `dispatch_ambiguity` — ZERO prior substrate-decl'd hits (per
+#   Taut audit 8f51722 §1 verbatim: "dispatch_ambigu = 0 hits").
+#   First landing. The ancestor pattern was named at
+#   `docs/specs/parse-as-fate-tournament.md §2.5` — "Parse-ambiguity.
+#   Type-inference-ambiguity. Dispatch-ambiguity. Kintsugi-fracture-
+#   resolution. All are tournament-shaped." — but no shard-decl
+#   species had lifted it.
+# - `multi_admissible` / `admits_multiple` — ZERO prior hits (per
+#   Taut audit §1). This variant's `admissible_dispatches` field is
+#   the first substrate-decl'd carrier for the multi-admissibility
+#   observation.
+# - `@liquid` — LANDED at `shards/liquid.mirror` + `shards/
+#   epistemologic/liquid/*.mirror` (Mara 2026-07-17 Arc 5 M1 commits
+#   cc816f9 + b2c5d09 + 12cdf0e). The measurement surface for
+#   detecting dispatch-multi-admissibility.
+# - `@roomba.pivot` — LANDING this-arc (Mara companion commit
+#   914799b) as the CONSUMER of this surface_class variant.
+#
+# === dispatch_ambiguity — the fifth carrier (Alex 2026-07-17) ===
+#
+# Fires when the substrate's dispatch resolution across a multi-
+# cascade event admits MULTIPLE targets simultaneously per landed
+# @liquid predicate discipline. The first-order operator (@roomba)
+# cannot resolve which target to fire; the ambiguity IS a `[D, a]`
+# commutator failure at the dispatch-resolution altitude where the
+# substrate's algebra has multiple admissible resolutions but the
+# tie-breaking discipline is exhausted.
+#
+# Sub-frame descriptor at dispatch-resolution axis of the curvature
+# 2-form Ω. MOTIVATING per spec §4.1 discipline (pending per-class
+# projection-operator derivation).
+#
+# Tomm shape: STRATEGIC (per spec §5.5 out_of_band precedent) —
+# the observer (developer) chooses which structural future the
+# substrate takes among the admissible dispatch targets. The
+# @roomba.pivot's Path B offer surfaces the choice to the developer
+# per @mirror/reflection interaction discipline.
+#
+# Five fields per additive substrate-decl discipline. Identity
+# contract: byte-equality on the five-field tuple.
+#
+#   base                       — the underlying tension (per spec §3
+#                                 discipline; every surface_class
+#                                 carrier composes `base: tension`).
+#   admissible_dispatches      — list of dispatch-target OIDs, each
+#                                 admitted by a @liquid predicate;
+#                                 length >= 2 (single admissible is
+#                                 not ambiguous).
+#   liquid_predicate_witnesses — list of @liquid predicate OIDs, one
+#                                 per admissible dispatch, discharging
+#                                 admissibility for that target.
+#   tie_breaking_exhausted     — verdict discharging that the
+#                                 substrate's ordinary tie-breaking
+#                                 discipline (deterministic ordering,
+#                                 pact-priority, etc.) has fired and
+#                                 failed to resolve.
+#   pivot_song_handle          — content-addressed handle to the
+#                                 @song carrier the @roomba consumed
+#                                 at pivot-time (per @kintsugi/
+#                                 roomba.pivot). Load-bearing: this
+#                                 field IS the observation Alex named
+#                                 as "the current compilation state"
+#                                 that the @peer receives at Y-branch
+#                                 spawn.
+type dispatch_ambiguity = {
+  base:                       tension,
+  admissible_dispatches:      ref,
+  liquid_predicate_witnesses: ref,
+  tie_breaking_exhausted:     ref,
+  pivot_song_handle:          ref,
+}
+
+# === dispatch_ambiguity_admissible — bilateral predicate ===
+#
+# Does the dispatch_ambiguity carrier discharge admissibility per the
+# five-field discipline above? Discharges Pass iff:
+#
+#   - admissible_dispatches has length >= 2 (single admissible IS
+#     NOT ambiguity)
+#   - liquid_predicate_witnesses has length equal to admissible_
+#     dispatches (one-to-one correspondence per @liquid discipline)
+#   - tie_breaking_exhausted discharge floor is Pass
+#   - pivot_song_handle resolves via @kintsugi/store to a @song beat
+#
+# Rice-safe bound: reads only byte-visible state (list length; OID
+# resolvability; verdict floor value); no program semantics
+# inspection.
+#
+# Sentinel per shard docblock: `dispatch_ambiguity=all-fields-
+# admissible` — byte-equality on the composed sentinel.
+#
+# Body discharges per-realisation. `\`-obligation-blocked per
+# [[feedback-craft-not-deliver]].
+bilateral dispatch_ambiguity_admissible {
+  sentinel "dispatch_ambiguity=all-fields-admissible"
+  arity 1
+}
+dispatch_ambiguity_admissible(da: dispatch_ambiguity) -> verdict { \ }
+
+# ═══════════════════════════════════════════════════════════════════
+# Recognition candidates surfaced (DO NOT RATIFY at this landing)
+# ═══════════════════════════════════════════════════════════════════
+#
+# #R-dispatch-ambiguity-is-fifth-surface-class — per Taut audit
+# 8f51722 §5 recommendation (a) verbatim: "extend `shards/kintsugi/
+# surface.mirror` `surface` action to admit multi-admissible-dispatch
+# as a fifth surface class". This landing discharges the audit's
+# recommendation additively (fifth variant of surface_class enum;
+# carrier + bilateral). Second witness: Taut audit + this shard-decl
+# together. Adjudication for full recognition: Alex adjudicates OQ1
+# from the audit ("Would `dispatch_ambiguity` be a FIFTH variant OR
+# a species `@kintsugi/surface/dispatch_ambiguity` extending the
+# base?"). This landing chose FIFTH VARIANT per additive-in-family
+# discipline (matches the four-variant precedent; no new species
+# needed).
+#
+# #R-liquid-predicates-measure-dispatch-ambiguity — the @liquid
+# predicates from Arc 5 M1 (Mara 2026-07-17 cc816f9 + b2c5d09 +
+# 12cdf0e) ARE the measurement surface for detecting dispatch-multi-
+# admissibility. The liquid_predicate_witnesses field carries the
+# per-target admissibility witnesses byte-visibly. Second-witness
+# gate: @liquid Arc 5 M1 landing + this shard-decl. Adjudication:
+# Alex adjudicates whether the @liquid → dispatch_ambiguity → pivot
+# composition arc constitutes a Recognition per two-witness gate.
+
 out @kintsugi/surface
 out tension
 out surface_class
@@ -667,5 +836,7 @@ out ashby_mismatch
 out contradiction
 out conundrum
 out out_of_band
+out dispatch_ambiguity
 out kintsugi_context
 out surface
+out dispatch_ambiguity_admissible
