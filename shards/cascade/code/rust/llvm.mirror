@@ -1,0 +1,440 @@
+in @prism
+in @meta
+in @glass
+in @cascade
+in @labeled
+in @code/rust
+in @code/llvm
+
+# @cascade/code/rust/llvm — the Rust → LLVM IR cascade species.
+#
+# Path naming: per Alex 2026-06-23 directive — cascade species
+# shards group by `@cascade/code/<source>/<target>`. Source
+# language (Rust) groups together; targets (llvm here; wasm at
+# the sibling `shards/cascade/code/rust/wasm.mirror`) are leaves.
+#
+# THIS species is Edge 1 of the concrete polyglot chain Alex
+# ratified 2026-07-17 (verbatim, session-crystallizing):
+#
+#   *"So we can have @cascade/code/llvm/turing and
+#    @cascade/code/rust/llvm. And boom. The loop closes."*
+#
+# The full chain per polyglot spec §4.1 (Mara `1ce68c3`,
+# 2026-07-17):
+#
+#   Rust source
+#     ↓  @cascade/code/rust/llvm      (THIS shard; shells to
+#                                       rustc --emit=llvm-ir)
+#   LLVM IR
+#     ↓  @cascade/code/llvm/turing    (sibling mint this tick)
+#   Turing tape
+#     ↓  @cascade/code/turing/mirror  (sibling mint this tick)
+#   mirror substrate composition
+#
+# === substrate-already-had-the-word ===
+#
+# The rustc `--emit=llvm-ir` capability is upstream-landed
+# tooling since 2015; the substrate does NOT re-implement it. The
+# `apply_rust_llvm` action shells to it at @io boundary per
+# `[[feedback-craft-not-deliver]]`. `bootstrap/src/lib.rs`
+# ALREADY carries the plumbing for shelling to rustc (per polyglot
+# spec §5 loss-aware note); THIS shard names the substrate-decl
+# the FLOOR resolver (Reed Tick M3 domain) discharges against.
+#
+# === composition altitude: SOURCE-ADJACENT ===
+#
+# The source altitude is `@code/rust` (landed
+# `shards/code/rust.mirror`). The target altitude is `@code/llvm`
+# (landed `shards/code/llvm.mirror` this session; Mara M1
+# `62d1b1c`). This species is the ADJACENT-ALTITUDE morphism
+# between them; per polyglot spec §3.2 composition axiom, it
+# composes with `@cascade/code/llvm/turing` (sibling mint) to
+# give O(N)-authored coverage of O(N²) translation pairs through
+# the @code/llvm machine-substrate hub.
+#
+# === The cascade shape (Rust → LLVM IR) ===
+#
+# Source (Rust admits):
+# - lifetimes (ownership tracking; erased at monomorphization)
+# - generics (monomorphized at compile time; erased)
+# - trait objects (partial preservation via vtable; most erased)
+# - macros (expanded before IR emission; source-level erased)
+# - type inference decisions (elaborated to concrete types)
+# - borrow-checker proofs (used to gate emission; not preserved
+#   as data in the LLVM IR output)
+#
+# Target (LLVM IR preserves per LangRef):
+# - typed SSA values (LLVM's type system per LangRef §"Type
+#   System"; concrete after monomorphization)
+# - control flow (basic blocks + terminators per LangRef
+#   §"Terminator Instructions"; structured after Rust's
+#   surface control flow is lowered)
+# - function signatures (typed; calling convention annotated)
+# - attributes (function/parameter attributes per LangRef
+#   §"Function Attributes"; some Rust safety info preserved
+#   as attributes e.g. `noalias`, `nonnull`)
+# - metadata (debug info, TBAA, loop hints; optional)
+# - target datalayout + triple (bound at compile time)
+#
+# Per polyglot spec §4.4 Edge 1:
+# - PRESERVED: types (via LLVM type system), function
+#   signatures, control flow (structured), basic operations.
+# - LOST: lifetimes (erased at monomorphization), generics
+#   (monomorphized), macros (expanded), trait objects (partial
+#   via vtables), high-level ownership discipline.
+#
+# The `loss_lens<@code/rust, @code/llvm>` measures these gaps
+# against the rustc emission + the LLVM LangRef target grammar.
+#
+# === Recognition ancestry ===
+#
+# - Recognition #95 (@cascade candidate; Mara canonical
+#   `ce4874b`, 2026-06-23): this species IS one of the cascade
+#   species discharging the family-root.
+# - Recognition #93 H4 RESOLVED (labeled<> functor at
+#   `shards/labeled.mirror`): llvm_artifact uses labeled<>
+#   instance for module + emission metadata.
+# - Recognition #51 (mirror as expanding Hilbert space): the
+#   dimension-projection from Rust's typed-feature surface to
+#   LLVM's typed-SSA surface is measurable via
+#   `measure_rust_llvm`.
+#
+# === Pre-AI prior art ===
+#
+#   rustc --emit=llvm-ir     Rust Project 2015-present; the
+#                            canonical rustc flag that emits LLVM
+#                            IR at any compilation stage. Load-
+#                            bearing external tooling this species
+#                            dispatches at @io boundary.
+#   LLVM LangRef             LLVM Project; llvm.org/docs/
+#                            LangRef.html. The target grammar
+#                            this species measures against.
+#   Alive2                   Lopes et al. 2021; translation-
+#                            validation research grounding
+#                            per-instruction semantic-preservation
+#                            proofs; the empirical shape the
+#                            loss-lens references.
+#   MIR (Rust)               Rust Project 2016-present; the
+#                            mid-level IR rustc lowers to before
+#                            LLVM emission. Rust's source-level
+#                            information is progressively erased
+#                            through HIR → MIR → LLVM IR; this
+#                            species measures the terminal-hop
+#                            erasure.
+#
+# Spec context: docs/specs/polyglot-loss-aware-computational-
+#               translation.md §4.1 + §4.2 Edge 1 + §9 M2 (Mara
+#               `1ce68c3`, 2026-07-17 — the mint plan
+#               forward-promise THIS shard discharges); §4.4
+#               Edge 1 preservation/loss enumeration; §5 loss-
+#               aware note on rustc `--emit=llvm-ir` as the
+#               FLOOR dispatch target.
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]] (the
+#                      lift is LLVM LangRef + rustc emission
+#                      contract; NOT re-derived at substrate),
+#                      [[feedback-loss-from-epistemologic-properties]]
+#                      (loss is @epistemologic/properties composite,
+#                      not Shannon, not invented),
+#                      [[feedback-craft-not-deliver]] (every action
+#                      body `\` blocked; FLOOR realisation domain).
+# Related shards: shards/cascade.mirror (the family-root this
+#                 specializes); shards/labeled.mirror (the functor
+#                 primitive llvm_artifact instance rests on);
+#                 shards/code/rust.mirror (source grammar);
+#                 shards/code/llvm.mirror (target grammar; Mara
+#                 M1 landed this session at `62d1b1c`);
+#                 shards/cascade/code/rust/wasm.mirror (sibling
+#                 dual-target species with same source);
+#                 shards/cascade/code/llvm/turing.mirror (sibling
+#                 mint this tick; composes with THIS species per
+#                 polyglot spec §3.2 to give Rust → Turing via
+#                 @code/llvm hub).
+# Path-namespace property: this file at
+# `shards/cascade/code/rust/llvm.mirror` declares
+# `@cascade/code/rust/llvm` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming-languages/rust-2024-edition
+source @arxiv/programming-languages/llvm-langref
+
+prism @cascade/code/rust/llvm {
+  focus cascade
+  project cascade
+  split cascade
+  shift cascade
+  settle cascade
+}
+
+# === rust_source carrier ===
+#
+# Specialization of @cascade.typed_source for source_grammar=rust.
+# References a Rust crate (Cargo.toml + src/*) as the unit of
+# cascade. SHARED SHAPE with the sibling
+# `shards/cascade/code/rust/wasm.mirror` :123 rust_source carrier;
+# intentional duplication at substrate-decl altitude — the property
+# is the same and discharges identically across dual-target
+# siblings.
+#
+# Identity contract: byte-equality on the source-tree content hash.
+type rust_source = ref
+
+# === llvm_emission_metadata carrier ===
+#
+# Structured carrier for the rustc emission shape (target triple,
+# optimization level, codegen units, LTO mode, debug info level,
+# emission-time diagnostics). Per [[feedback-no-bare-types]]:
+# structured, not stringly. The carrier names load-bearing fields
+# without fixing one rustc release shape; the FLOOR resolver
+# (Reed Tick M3) populates concrete values from the invocation.
+#
+# Identity contract: byte-equality on the underlying ref.
+type llvm_emission_metadata = ref
+
+# === llvm_artifact carrier ===
+#
+# The @labeled<> instance per recognition #93 H4. An llvm_artifact
+# IS a `@code/llvm.llvm_ir_module` annotated with
+# llvm_emission_metadata via the labeled functor. Substrate-
+# architecturally load-bearing: the module's typed identity is
+# preserved (via labeled parametricity per Wadler 1989 / Reynolds
+# 1983) while the emission-context dimension is added.
+# `unlabel(artifact)` returns the module; `label_of(artifact)`
+# returns the metadata.
+#
+# Identity contract: byte-equality on the (module, metadata) pair
+# (inherited from @labeled).
+type llvm_artifact = labeled(llvm_ir_module, llvm_emission_metadata)
+
+# === apply_rust_llvm action ===
+#
+# THE LOAD-BEARING ACTION. Specialization of @cascade.compile for
+# the Rust → LLVM IR functor. Takes a rust_source; returns the
+# `@code/llvm.llvm_ir_module`.
+#
+# Realisation shells to `rustc --emit=llvm-ir` at the @io boundary
+# (per polyglot spec §5 loss-aware note; bootstrap/src/lib.rs
+# already carries the plumbing). The FLOOR resolver (Reed Tick M3
+# under `[substrate-floor:@io-boundary]`) MUST discharge the body;
+# THIS shard names the CONTRACT the FLOOR honors.
+#
+# Per Alex 2026-07-17 verbatim: *"So we can have @cascade/code/
+# llvm/turing and @cascade/code/rust/llvm. And boom. The loop
+# closes."* — this action IS the first edge that closes the loop.
+#
+# requires rust_well_typed(source, p): the substrate forecloses
+# emission against type errors. rustc runs the typing discipline;
+# the bilateral verdict reflects what it reports. (SHARED bilateral
+# shape with the sibling rust/wasm cascade species per polyglot
+# spec §4.2 Edge 1.)
+#
+# Body discharges at the FLOOR boundary.
+apply_rust_llvm(source: rust_source, p: perturbation) -> llvm_ir_module
+requires rust_well_typed(source, p)
+{ \ }
+
+# === bundle_llvm action ===
+#
+# Wraps an `llvm_ir_module` + `llvm_emission_metadata` into an
+# `llvm_artifact` via @labeled.label construction. The typed
+# module gets the emission-context dimension added without losing
+# the underlying module identity.
+#
+# requires llvm_emission_coherent(module, metadata, p): bilateral
+# commitment that the (module, metadata) pair coheres at the
+# emission altitude — target triple matches datalayout;
+# optimization level consistent with emitted attributes; debug
+# info level matches emitted metadata nodes.
+#
+# Body discharges at the FLOOR boundary.
+bundle_llvm(module: llvm_ir_module, metadata: llvm_emission_metadata, p: perturbation)
+  -> llvm_artifact
+requires llvm_emission_coherent(module, metadata, p)
+{ \ }
+
+# === measure_rust_llvm action ===
+#
+# Specialization of @cascade.measure for the Rust → LLVM IR
+# cascade. Returns substrate-typed measurement of information
+# loss between rust_source's typing/lifetime/generic/macro
+# discipline and llvm_artifact's typed-SSA runtime-preserved
+# structure.
+#
+# Returns `imperfect<llvm_artifact, ref, information_loss>` — the
+# loss slot carries measured loss as substrate-typed data, NOT
+# Shannon, NOT estimation; the composite of @epistemologic/
+# properties per [[feedback-loss-from-epistemologic-properties]].
+#
+# The measurement IS substrate-architectural: read source's
+# typing-discipline use (lifetime-annotation sites, generic
+# parameter count, macro-invocation count, trait-object usage,
+# borrow-checker proof density); read artifact's LLVM IR module
+# structure (function signatures, basic-block graph, attribute
+# annotations, metadata density); compute the dimension gap per
+# polyglot spec §4.4 Edge 1.
+#
+# requires rust_llvm_loss_well_defined(source, artifact, p):
+# bilateral that the measurement IS computable; the (source,
+# artifact) pair must be a genuine cascade discharge (rustc
+# emitted THIS module from THIS source).
+#
+# Body discharges at the FLOOR boundary.
+measure_rust_llvm(source: rust_source, artifact: llvm_artifact, p: perturbation)
+  -> imperfect(llvm_artifact, ref, information_loss)
+requires rust_llvm_loss_well_defined(source, artifact, p)
+{ \ }
+
+# === rust_well_typed bilateral ===
+#
+# Source-side typing-discipline bilateral. Specializes the family-
+# root's grammar_coherent at source_grammar=rust. SHARED shape
+# with the sibling `shards/cascade/code/rust/wasm.mirror` :217
+# rust_well_typed bilateral; intentional duplication at
+# substrate-decl altitude — the property discharges identically
+# regardless of downstream target choice (rustc's typer runs the
+# same discipline for llvm and wasm emission).
+#
+# Splinter-pole: source passes rustc typecheck; borrow checker
+# clears; trait bounds satisfied; monomorphization succeeds.
+# Narcissus-pole: type errors OR lifetime errors OR unsatisfied
+# trait bounds OR monomorphization failures. Emission cannot
+# proceed.
+rust_well_typed(source: rust_source, p: perturbation) -> verdict { \ }
+
+# === llvm_emission_coherent bilateral ===
+#
+# Target-side emission-well-formedness bilateral. Commitment that
+# the (module, metadata) pair coheres at LLVM emission altitude.
+#
+# Splinter-pole: target triple matches datalayout; optimization
+# level consistent with emitted attributes; debug info nodes
+# match emission metadata; module passes LLVM Verifier
+# (composes with `@code/llvm.llvm_ir_valid` per Mara `62d1b1c`).
+# Narcissus-pole: triple/datalayout mismatch; attributes drift
+# from optimization level; debug info incoherent; Verifier
+# rejects.
+
+bilateral llvm_emission_coherent {
+  sentinel "emission=triple-datalayout-attrs-coherent"
+  arity 2
+}
+llvm_emission_coherent(module: llvm_ir_module, metadata: llvm_emission_metadata, p: perturbation)
+  -> verdict { \ }
+
+# === rust_llvm_loss_well_defined bilateral ===
+#
+# Specializes the family-root's loss_well_defined for this
+# cascade. Commitment that the substrate-typed gap calculation IS
+# computable for the (source, artifact) pair; the source IS in
+# @code/rust grammar, the artifact's module IS in @code/llvm
+# grammar, and the pair represents a valid cascade discharge
+# (rustc `--emit=llvm-ir` produced THIS artifact from THIS source).
+#
+# Splinter-pole: cascade-pair coherent; measurement well-defined;
+# gap dimensions dischargeable per @epistemologic/properties
+# composite.
+# Narcissus-pole: source/artifact grammar mismatch OR pair does
+# not represent a genuine cascade discharge; measurement
+# undefined.
+
+bilateral rust_llvm_loss_well_defined {
+  sentinel "cascade=source-artifact-pair-discharge-witnessed"
+  arity 2
+}
+rust_llvm_loss_well_defined(source: rust_source, artifact: llvm_artifact, p: perturbation)
+  -> verdict { \ }
+
+# === cascade_rust_llvm_preserves_semantics bilateral ===
+#
+# THE LOAD-BEARING composed bilateral for THIS species. Witnesses
+# that the Rust → LLVM IR cascade preserves runtime semantics per
+# LLVM's translation guarantees (per polyglot spec §7 admissibility
+# proof-sketch; Church-Turing grounding).
+#
+# Per Alex 2026-07-17 verbatim ratification (`1ce68c3` + this
+# session's continuation): the cascade DOES lose Rust source-level
+# information (comments, formatting, macro-expansion history,
+# type-inference decisions, borrow-checker proofs); it PRESERVES
+# runnable-semantics per LLVM's translation-validation research
+# (Alive2 et al.). This bilateral names that split.
+#
+# Splinter-pole: LLVM IR module discharges the SAME runtime
+# semantics as the Rust source per rustc's guarantee; loss is
+# bounded to source-level dimensions (comments / formatting /
+# macro-expansion-history / type-inference-decisions / borrow-
+# checker-proofs); runnable execution preserves observable
+# behaviour.
+# Narcissus-pole: cascade drifts runtime semantics (rustc emission
+# bug; LLVM datalayout mismatch; UB-triggering optimization
+# introduced at emission); observable behaviour diverges between
+# source and artifact.
+#
+# Sentinel `cascade=preserves-runnable-semantics` per Mara
+# `701828a` §1 byte-containment: content-addressed check on the
+# cascade-pair OID vs the preservation-witness invariant. Rice-
+# safe per Mara `701828a` — the CHECK is byte-level; the
+# underlying question (full semantic equivalence) is undecidable
+# but the substrate discharges the sentinel-match at content-
+# addressed altitude.
+
+bilateral cascade_rust_llvm_preserves_semantics {
+  sentinel "cascade=preserves-runnable-semantics"
+  arity 1
+}
+cascade_rust_llvm_preserves_semantics(cascade_outcome: llvm_artifact) -> verdict { \ }
+
+# === rust_llvm_cascade_well_formed composed bilateral ===
+#
+# Specialization of @cascade.cascade_well_defined for this cascade
+# instance. Composes the sub-predicates at this altitude per the
+# landed cascade composed-bilateral shape (rust/wasm :268,
+# gleam/beam, etc.).
+#
+# requires rust_well_typed(source, p): source-side typing
+# discipline coherent.
+# requires llvm_emission_coherent(unlabel(artifact, p),
+# label_of(artifact, p), p): target-side emission well-formed;
+# uses @labeled.unlabel + @labeled.label_of to extract module
+# and metadata from the artifact.
+# requires rust_llvm_loss_well_defined(source, artifact, p):
+# loss measurement computable.
+# requires cascade_rust_llvm_preserves_semantics(artifact):
+# runtime-semantics preservation witnessed at cascade altitude.
+#
+# All four must hold; substrate refuses cascade if source has
+# type errors OR emission incoherent OR loss undefined OR
+# semantics-preservation not witnessed.
+#
+# Splinter-pole: all four discharge; substrate-typed loss
+# returned; cascade admissible per polyglot spec §5.3
+# threshold gate.
+# Narcissus-pole: at least one sub-predicate fails; cascade
+# blocked; @fate re-selects per polyglot spec §6.
+
+bilateral rust_llvm_cascade_well_formed {
+  sentinel "cascade=all-sub-bilaterals-discharge"
+  arity 2
+}
+rust_llvm_cascade_well_formed(source: rust_source, artifact: llvm_artifact, p: perturbation)
+  -> verdict
+requires rust_well_typed(source, p)
+requires llvm_emission_coherent(unlabel(artifact, p), label_of(artifact, p), p)
+requires rust_llvm_loss_well_defined(source, artifact, p)
+requires cascade_rust_llvm_preserves_semantics(artifact)
+{ \ }
+
+# === outbound declarations ===
+
+out @cascade/code/rust/llvm
+out rust_source
+out llvm_emission_metadata
+out llvm_artifact
+out apply_rust_llvm
+out bundle_llvm
+out measure_rust_llvm
+out rust_well_typed
+out llvm_emission_coherent
+out rust_llvm_loss_well_defined
+out cascade_rust_llvm_preserves_semantics
+out rust_llvm_cascade_well_formed
