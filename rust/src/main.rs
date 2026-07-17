@@ -50,6 +50,7 @@
 //! each to gen_prism actor spawn under supervisor. The 10 verbs below
 //! ARE the M0 shadow of that dispatch table.
 
+mod collapse;
 // M0 module wiring — declare the two sibling altitudes so the terminal-
 // geometry three-file discipline is byte-visible in `rust/src/` and
 // `cargo build` compiles ALL THREE files even while the bodies are
@@ -239,10 +240,81 @@ fn cmd_roomba(rest: &[String]) -> ExitCode {
     println!();
     println!("found {} entries:", entries.len());
     println!("  {:>4} directories", dirs);
-    println!("  {:>4} .rs      (arm-collapse candidates; M7 dispatch)", rust_files);
+    println!("  {:>4} .rs      (arm-collapse candidates)", rust_files);
     println!("  {:>4} .mirror  (materialize candidates; M7 dispatch)", mirror_shards);
     println!("  {:>4} .md      (docs; cascade-invisible)", docs);
     println!("  {:>4} other    (unclassified; walker enumerates only)", other);
+
+    // Arm-collapse dispatch per Mara §7.4 dispatch matrix row 1:
+    // `.rs` → arm-collapse. Loads the bilateral corpus from the
+    // enclosing substrate-repo root (walk up from cwd until a
+    // `shards/` sibling appears); for each .rs file, byte-scans for
+    // hand-typed arms shadowed by a landed shard-decl; splices;
+    // writes; commits under `mirror <mirror@spectral.engineer>`.
+    let cwd = std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from("."));
+    let substrate_root = phone::find_substrate_root(&cwd);
+    let corpus = collapse::load_bilateral_corpus(&substrate_root);
+
+    println!();
+    println!(
+        "loaded bilateral corpus: {} declarations from {}/shards/",
+        corpus.len(),
+        substrate_root.display()
+    );
+
+    let mut retired_total = 0usize;
+    let mut commits_landed = 0usize;
+    for entry in &entries {
+        if entry.is_dir {
+            continue;
+        }
+        if classify(&entry.path) != FileKind::RustFile {
+            continue;
+        }
+        match dispatch_arm_collapse(&substrate_root, &entry.path, &corpus) {
+            Ok(report) => {
+                if report.arms.is_empty() {
+                    println!("  [.rs      ] {} — no redundant arms", entry.path.display());
+                } else {
+                    retired_total += report.arms.len();
+                    match report.commit_oid.as_deref() {
+                        Some(oid) => {
+                            commits_landed += 1;
+                            println!(
+                                "  [.rs ✔    ] {} — {} arm(s) retired ({} → {} bytes); commit {}",
+                                entry.path.display(),
+                                report.arms.len(),
+                                report.bytes_before,
+                                report.bytes_after,
+                                oid,
+                            );
+                            for arm in &report.arms {
+                                println!("              ↳ {} (sentinel: {})", arm.action_ref, arm.sentinel);
+                            }
+                        }
+                        None => {
+                            println!(
+                                "  [.rs ⚠    ] {} — {} arm(s) detected + spliced but no commit landed",
+                                entry.path.display(),
+                                report.arms.len(),
+                            );
+                        }
+                    }
+                }
+            }
+            Err(e) => {
+                eprintln!("  [.rs ✗    ] {} — dispatch error: {}", entry.path.display(), e);
+            }
+        }
+    }
+
+    if rust_files > 0 {
+        println!();
+        println!(
+            "arm-collapse dispatch summary: {} arm(s) retired across {} commit(s)",
+            retired_total, commits_landed
+        );
+    }
 
     // Sample enumeration: first 10 non-directory entries with their
     // classification. Empirical readability > exhaustive dump.
@@ -266,11 +338,153 @@ fn cmd_roomba(rest: &[String]) -> ExitCode {
     }
 
     println!();
-    println!("Per Mara §7.4 dispatch matrix: full per-file dispatch");
-    println!("(arm-collapse / materialize / translate / pivot / dock)");
-    println!("lands at M6-M7 co-ticks. M-vacuum enumerates + classifies.");
+    println!("Per Mara §7.4 dispatch matrix: arm-collapse landed above.");
+    println!("(materialize / translate / pivot / dock still forward-promised;");
+    println!("land at M7-M8 co-ticks.)");
 
     ExitCode::SUCCESS
+}
+
+/// Arm-collapse dispatch for one `.rs` file. Composes phone.rs's
+/// @io/fs + @io/git primitives with collapse.rs's byte-analysis.
+///
+/// Substrate-honest boundary: if NO arms detected, returns an empty
+/// report + `commit_oid = None` (no substrate delta; the caller
+/// reports "no redundant arms"). If arms detected: splice + write +
+/// stage + commit; returns `commit_oid = Some(oid)`.
+///
+/// The commit crosses the @io boundary at `mirror <mirror@spectral.
+/// engineer>` authorship — the compiler names itself in git per
+/// Alex 2026-07-16 /loop directive verbatim ("Deleted Rust. Added
+/// mirror."). SSH signing stays operator-default.
+fn dispatch_arm_collapse(
+    substrate_root: &std::path::Path,
+    rs_path: &std::path::Path,
+    corpus: &std::collections::HashMap<String, collapse::BilateralDecl>,
+) -> Result<collapse::CollapseReport, String> {
+    let source = phone::read_file(rs_path)
+        .map_err(|e| format!("@io/fs.read {}: {}", rs_path.display(), e))?;
+    let arms = collapse::find_redundant_arms(&source, corpus);
+    let bytes_before = source.len();
+
+    if arms.is_empty() {
+        return Ok(collapse::CollapseReport {
+            target: rs_path.to_path_buf(),
+            arms,
+            bytes_before,
+            bytes_after: bytes_before,
+            commit_oid: None,
+        });
+    }
+
+    let mended = collapse::apply_deletions(&source, &arms);
+    let bytes_after = mended.len();
+
+    phone::write_file(rs_path, &mended)
+        .map_err(|e| format!("@io/fs.write {}: {}", rs_path.display(), e))?;
+
+    // Determine the enclosing git repo. The vacuum may target a
+    // directory in a repo distinct from `substrate_root` (test
+    // corpora, etc.). Walk up from the .rs file looking for `.git/`.
+    let repo_root = find_git_root(rs_path).ok_or_else(|| {
+        format!(
+            "no enclosing git repo for {} — cannot commit",
+            rs_path.display()
+        )
+    })?;
+
+    phone::git_add(&repo_root, rs_path)
+        .map_err(|e| format!("@io/git.add {}: {}", rs_path.display(), e))?;
+
+    let message = compose_collapse_commit_message(rs_path, &arms, bytes_before, bytes_after);
+
+    let commit_oid = phone::git_commit_as(
+        &repo_root,
+        "mirror",
+        "mirror@spectral.engineer",
+        &message,
+    )
+    .map_err(|e| format!("@io/git.commit: {}", e))?;
+
+    let _ = substrate_root; // reserved for future reflective composer.
+
+    Ok(collapse::CollapseReport {
+        target: rs_path.to_path_buf(),
+        arms,
+        bytes_before,
+        bytes_after,
+        commit_oid: Some(commit_oid),
+    })
+}
+
+/// Walk upward from `start` looking for a directory containing `.git`.
+fn find_git_root(start: &std::path::Path) -> Option<std::path::PathBuf> {
+    let mut cur = start.canonicalize().ok()?;
+    if cur.is_file() {
+        cur.pop();
+    }
+    loop {
+        if cur.join(".git").exists() {
+            return Some(cur);
+        }
+        if !cur.pop() {
+            return None;
+        }
+    }
+}
+
+/// Compose the commit message body naming what was retired. Direct
+/// format at rust/ altitude; substrate-honest lift to `@nl.compose`
+/// dispatch is a follow-up tick once the composer is wired at rust/
+/// altitude (M7+).
+fn compose_collapse_commit_message(
+    target: &std::path::Path,
+    arms: &[collapse::RedundantArm],
+    bytes_before: usize,
+    bytes_after: usize,
+) -> String {
+    let arm_list = arms
+        .iter()
+        .map(|a| format!("- {} (sentinel: {})", a.action_ref, a.sentinel))
+        .collect::<Vec<_>>()
+        .join("\n");
+    let delta = bytes_before.saturating_sub(bytes_after);
+    format!(
+        "\u{1F9F9} mirror [substrate-floor:@io-boundary] bilateral-arm collapse — retired {n} hand-typed arm{s} shadowed by reflective corpus\n\
+         \n\
+         @kintsugi/fracture/bilateral_arm_redundant.collapse discharged {n} arm{s} from {file}:\n\
+         \n\
+         {arms}\n\
+         \n\
+         Byte delta: -{delta} bytes ({before} → {after}).\n\
+         \n\
+         Retirement invariant per math foundation \
+         `docs/math/kintsugi/fracture/bilateral-arm-redundant.md`:\n\
+         - sbec preserved (reflective corpus dispatches same verdicts)\n\
+         - rust_loc strictly decreased\n\
+         - io_violations = 0 (no new @io introduced)\n\
+         \n\
+         Composition (substrate dispatch chain, rust/ altitude):\n\
+         - `collapse::find_redundant_arms` detected arms via byte-analysis\n\
+         - `phone::write_file` (@io/fs.write) applied the deletion on disk\n\
+         - `phone::git_commit_as` (@io/git.commit) crossed the @io boundary\n\
+         \n\
+         Audit chain:\n\
+         - Mara `81294b3` §7.4 dispatch matrix (walker's fracture table)\n\
+         - Seam `9c34ec4` M0 gating ratification\n\
+         - Seam `c1775f1` stigmergy witnessed computation 12/12 SHIP\n\
+         - this commit — first arm-collapse from rust/ terminal floor\n\
+         \n\
+         The compiler authored this commit itself per Alex 2026-07-16 /loop directive:\n\
+         \"That's the roomba commit diffs I wanna see. Deleted Rust. Added mirror.\"\n",
+        n = arms.len(),
+        s = if arms.len() == 1 { "" } else { "s" },
+        file = target.display(),
+        arms = arm_list,
+        delta = delta,
+        before = bytes_before,
+        after = bytes_after,
+    )
 }
 
 /// Hand-rolled argv dispatch. Deliberately does NOT reach for clap; the

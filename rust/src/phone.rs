@@ -155,6 +155,115 @@ pub(crate) fn list_dir_recursive(root: &Path) -> io::Result<Vec<WalkEntry>> {
     Ok(out)
 }
 
+/// Write `contents` to `path` — substrate-honest @io/fs.write at
+/// terminal-floor altitude. M-vacuum arm-collapse tick empirical firing
+/// per Mara §7.4 dispatch matrix (walker's fracture table row 1:
+/// `.rs` → arm-collapse dispatch).
+///
+/// Errors bubble as `io::Error`; caller decides retry vs halt per
+/// `@kintsugi/roomba.vacuum_admissible` bilateral.
+pub(crate) fn write_file(path: &Path, contents: &str) -> io::Result<()> {
+    fs::write(path, contents)
+}
+
+/// Read `path` bytes as UTF-8 — @io/fs.read at terminal-floor altitude.
+pub(crate) fn read_file(path: &Path) -> io::Result<String> {
+    fs::read_to_string(path)
+}
+
+/// Stage `abs_path` for commit under repo rooted at `repo_root`.
+/// Substrate-honest @io/git.add crossing at terminal floor.
+///
+/// Non-zero git exit surfaces as `io::Error::other` with stderr body.
+pub(crate) fn git_add(repo_root: &Path, abs_path: &Path) -> io::Result<()> {
+    let rel = abs_path.strip_prefix(repo_root).unwrap_or(abs_path);
+    let out = std::process::Command::new("git")
+        .args(["add", "--"])
+        .arg(rel)
+        .current_dir(repo_root)
+        .output()?;
+    if !out.status.success() {
+        return Err(io::Error::other(format!(
+            "git add failed: {}",
+            String::from_utf8_lossy(&out.stderr)
+        )));
+    }
+    Ok(())
+}
+
+/// Commit staged changes under `repo_root` authored as `author_name
+/// <author_email>`. SSH signing stays operator-default (never override
+/// `gpg.format` or `user.signingkey` per CLAUDE.md substrate
+/// discipline). Message piped over stdin via `-F -`.
+///
+/// Returns the HEAD OID after successful commit.
+pub(crate) fn git_commit_as(
+    repo_root: &Path,
+    author_name: &str,
+    author_email: &str,
+    message: &str,
+) -> io::Result<String> {
+    use std::io::Write;
+    use std::process::{Command, Stdio};
+
+    let mut child = Command::new("git")
+        .args([
+            "-c",
+            &format!("user.name={}", author_name),
+            "-c",
+            &format!("user.email={}", author_email),
+            "commit",
+            "-F",
+            "-",
+        ])
+        .current_dir(repo_root)
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()?;
+    if let Some(stdin) = child.stdin.as_mut() {
+        stdin.write_all(message.as_bytes())?;
+    }
+    let out = child.wait_with_output()?;
+    if !out.status.success() {
+        return Err(io::Error::other(format!(
+            "git commit failed: {}\n{}",
+            String::from_utf8_lossy(&out.stdout),
+            String::from_utf8_lossy(&out.stderr)
+        )));
+    }
+    git_head_oid(repo_root)
+}
+
+/// Read HEAD OID via `git rev-parse HEAD`.
+pub(crate) fn git_head_oid(repo_root: &Path) -> io::Result<String> {
+    let out = std::process::Command::new("git")
+        .args(["rev-parse", "HEAD"])
+        .current_dir(repo_root)
+        .output()?;
+    if !out.status.success() {
+        return Err(io::Error::other(format!(
+            "git rev-parse HEAD failed: {}",
+            String::from_utf8_lossy(&out.stderr)
+        )));
+    }
+    Ok(String::from_utf8_lossy(&out.stdout).trim().to_string())
+}
+
+/// Walk upward from `start` looking for a directory containing `shards/`.
+/// Returns the substrate-repo root if found, else `start` unchanged.
+pub(crate) fn find_substrate_root(start: &Path) -> PathBuf {
+    let mut cur = start.to_path_buf();
+    loop {
+        if cur.join("shards").is_dir() {
+            return cur;
+        }
+        if !cur.pop() {
+            return start.to_path_buf();
+        }
+    }
+}
+
 fn walk_into(dir: &Path, out: &mut Vec<WalkEntry>) -> io::Result<()> {
     // Skip walker-invisible directories at the @io boundary — .git and
     // target/ are substrate-invisible per walker discipline. NOT a
