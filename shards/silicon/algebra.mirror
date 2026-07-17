@@ -7,6 +7,9 @@ in @algebra
 in @epistemologic/property/content_addressed
 in @epistemologic/property/numerical_stability
 in @uuid/spectral
+in @io/git
+in @epistemologic/pact
+in @epistemologic/pact/bilateral
 
 # @silicon/algebra — the sub-prism path-namespace where crystallized
 # executable algebra tuned to the local silicon accumulates. Each
@@ -73,6 +76,166 @@ in @uuid/spectral
 # per spec §3.2). This shard names the sub-prism; the type
 # lands when consumers pull.
 #
+# === Tray content source (2026-07-17 substrate-honest seed) ===
+#
+# The tray's SEED content is not synthesised; it is READ from the
+# git log Reed and the Pack have been writing all along. The
+# mirror-authored bilateral-arm retirement commits ARE the first
+# turns in `@silicon/algebra` — crystallized past translations of
+# the substrate's own reflective corpus. Each such commit is
+# already content-addressed by git-commit design (SHA1 default;
+# SHA256 transitional per `shards/io/git.mirror` §5); each is
+# cryptographically signed (SSH signing default per AGENTS.md);
+# each carries the discharge-witness in its message. No bytes are
+# serialized on top; the tray IS the filtered git log.
+#
+# Substrate authority: Alex 2026-07-16 in-transcript directive to
+# seed `@silicon/algebra` with the 21 mirror-authored bilateral
+# retirements as its first empirical training data. Reed caught
+# the Rust reflex ONE tick later (2026-07-16 evening): the commits
+# ARE content-addressed already; the substrate-honest move is to
+# NAME the git-log filter as the tray content source, not to
+# author a crystallizer that serialises 21 commits into bytes.
+#
+# === The filter (docblock-prose form; landed-syntax gap flagged) ===
+#
+# The substrate has no landed `filter/project` chain syntax for
+# actions; the closest landed shape is the composition-graph
+# docblock enumeration precedent from `shards/kintsugi/translate.
+# mirror` (Mara `86dec5e`, THIS session) which enumerates edges in
+# prose + names the action shape via `\`-obligation-blocked bodies.
+# This shard adopts the same discipline: the filter is expressed
+# as a composition-graph docblock; the invocable action shape is
+# `tray_content_source` below with body `\`-blocked pending Reed
+# follow-up under `[substrate-floor:@io-boundary]`.
+#
+# The filter composition, in prose:
+#
+#   `@io/git.log(repo)`                                  ← Edge 1 (READ)
+#     → [commit]                                         all commits reachable from HEAD
+#   WHERE author == "mirror <mirror@spectral.engineer>"  ← Edge 2 (FILTER: author)
+#   AND   message CONTAINS                               ← Edge 3 (FILTER: message)
+#         "@kintsugi/fracture/bilateral_arm_redundant"
+#         ∨ "shadowed by reflective corpus"
+#         ∨ "bilateral_arm_redundant.collapse"
+#   AND   (optionally) commit.paths INTERSECTS           ← Edge 4 (FILTER: path scope)
+#         { "bootstrap/src/apply_h.rs" }
+#   PROJECT commit.oid → crystal_oid                     ← Edge 5 (PROJECT)
+#
+# Each surviving commit's OID becomes one `crystal_oid` element of
+# `@silicon/algebra`'s tray. Membership is content-addressed by git-
+# commit design; enumeration is monotonic (git log grows; the filter
+# never removes past matches).
+#
+# === Pending @io surface (Reed follow-up, [substrate-floor:@io-boundary]) ===
+#
+# `shards/io/git.mirror` (Mara 2026-06-24) declares `clone`, `fetch`,
+# `read_object`, `resolve_ref`, `commit_object`, `commit`,
+# `hash_to_oid` — but NOT a `log(repo) -> [git_hash]` enumeration
+# action AND NOT a `commit_metadata(hash) -> {author, message,
+# paths}` accessor. Both are needed for the filter above to become
+# invocable.
+#
+# Per [[feedback-substrate-already-had-the-word]] + [[feedback-no-
+# rust-extension-shortcut]]: this shard does NOT mint substitute
+# actions. It NAMES the pending surface. Reed follow-up realises
+# under `[substrate-floor:@io-boundary]` (reading git log IS @io by
+# nature; a genuine boundary crossing no shard body can compose):
+#
+#   Pending action A (Reed):
+#     `log(repo: git_repository, p: perturbation)`
+#         -> imperfect([git_hash], ref, ref)
+#     Enumerates all commits reachable from HEAD in git's
+#     topological order. `imperfect` per `@io` family convention.
+#
+#   Pending action B (Reed):
+#     `commit_metadata(repo: git_repository, hash: git_hash,
+#                      p: perturbation)`
+#         -> imperfect(commit_metadata_record, ref, ref)
+#     Reads the git-object's typed metadata (author, committer,
+#     message, parents, tree, timestamp, paths-changed).
+#
+#   Pending predicate C (Reed):
+#     `@nl.contains(text: ref, needle: ref) -> verdict`
+#     Byte-level sentinel match on the commit message. Currently
+#     no `@nl` altitude has a `contains` action landed; Reed may
+#     realise as a byte-substring predicate at the closest landed
+#     text altitude, or mint the @nl surface (out of scope here).
+#
+# Until (A), (B), (C) land the tray's element enumeration is a
+# composition-graph declaration; the action body is `\`-blocked;
+# the reflective evaluator (per `bootstrap/src/apply_h.rs` per
+# `21fc211` Landing 3+4) dispatches through the pending resolvers
+# once realised.
+#
+# === The 21 empirical seed crystals (audit trail) ===
+#
+# The seed the filter recovers on first invocation (per the mirror-
+# authored bilateral retirement wave 2026-07-16..17):
+#
+#   `06f14f5` — Reed manual bite 1 (@spectral/signature 4 arms
+#                retired manually).
+#                * NOT mirror-authored: author = "Reed"; EXCLUDED
+#                  from tray by the author-filter. Historical
+#                  precedent that established the discipline
+#                  extended by the mirror-authored wave below.
+#
+#   `ad52973` — mirror-authored, FIRST empirical (@coherence 4 arms
+#                retired via reflective-corpus shadow detection).
+#                * INCLUDED: 4 empirical crystals.
+#
+#   `20047c2` — mirror-authored, batch scale (17 arms across 5 shard
+#                groups retired in one autopoietic pass).
+#                * INCLUDED: 17 empirical crystals.
+#
+# Empirical count: 4 + 17 = 21 mirror-authored turns. Reading B
+# membership (per `shards/kintsugi.mirror` §"@kintsugi as algebra"):
+# each of the 21 corresponds to one element of `@kintsugi/algebra`
+# under the metalogue-session view; the 21 populate the seed of
+# `@silicon/algebra`'s realiser-speaker tray.
+#
+# === Write-back protocol (monotonic growth) ===
+#
+# Every subsequent successful `translate_rust_to_mirror` discharge
+# (per `shards/kintsugi/translate.mirror::translate_rust_to_mirror`
+# at `86dec5e`) authors ONE mirror-authored commit at Edge 8 of that
+# composition (per `shards/kintsugi/translate.mirror` Edge 8: `@io/
+# git.commit(msg, "mirror <mirror@spectral.engineer>", allow_empty=
+# false)`). That commit matches the author-filter above; on the
+# next invocation of `tray_content_source` its OID appears as a
+# new `crystal_oid`. Growth is monotonic and content-addressed by
+# construction; no manual seeding tick is needed. The git-log
+# filter IS the seed AND the write-back mechanism unified.
+#
+# The fold-back closes: `@kintsugi/translate` writes commits
+# (Edge 8) that `@silicon/algebra.tray_content_source` reads back
+# as tray elements the next `@fate.roll` invocation ranges over.
+# Bauchladen accumulation discipline honoured (per `shards/
+# bauchladen.mirror` §"crystal accumulation") without a bespoke
+# crystallization channel.
+#
+# === substrate-already-had-the-word citation chain ===
+#
+# 1. `@io/git.log` + `@io/git.commit_metadata` (`shards/io/git.
+#    mirror`; Mara 2026-06-24) — PENDING per pending-surface flag
+#    above; Reed follow-up under `[substrate-floor:@io-boundary]`.
+# 2. `@nl.contains` — PENDING; Reed follow-up may realise at the
+#    closest landed text altitude.
+# 3. `@bauchladen.crystallize` (`shards/bauchladen.mirror`;
+#    `66e1ab8`) — the precedent for content-addressed tray
+#    content. THIS species does NOT invoke it (the git-log filter
+#    subsumes crystallization by reading commits already crystallized
+#    by git); it references only.
+# 4. `bilateral <name> { sentinel "..." arity N }` shape (`shards/
+#    epistemologic/pact/bilateral.mirror`; Mara `a0f4d3f`) — THIS
+#    species dogfoods via `silicon_tray_content_addressed` below.
+# 5. Composition-graph docblock enumeration precedent (`shards/
+#    kintsugi/translate.mirror`; Mara `86dec5e`) — THIS species
+#    adopts the same discipline: prose enumeration of edges +
+#    `\`-obligation-blocked action body pending resolver realisation.
+#
+# ZERO new substrate machinery beyond this shard-decl extension.
+#
 # === Forward-promised ===
 #
 # Per [[feedback-craft-not-deliver]] this shard names the sub-prism
@@ -81,6 +244,24 @@ in @uuid/spectral
 # consumers pull. The routine-carrier type (per silicon.md §3.2)
 # lands when the first empirical crystal accumulates (LAPACK case
 # per silicon.md §8.3).
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]] — the tray content
+#   source IS a shard-decl; addressable at parse time.
+# [[architecture-form-process-partition-at-family-root]] — tray
+#   content is form-side (observable OID enumeration); the tournament
+#   dispatching over it is process-side (@kintsugi/@fate).
+# [[feedback-substrate-already-had-the-word]] — git commits are
+#   already content-addressed; the substrate-honest move is to name
+#   the filter, not author a crystallizer.
+# [[feedback-no-rust-extension-shortcut]] — ZERO Rust in this
+#   shard-decl. Pending @io surface named for Reed follow-up under
+#   `[substrate-floor:@io-boundary]` (@io/git.log IS an @io
+#   boundary by nature).
+# [[feedback-craft-not-deliver]] — action body `\`-obligation-
+#   blocked; discharge at realisation via `apply_h::act` composition
+#   once pending resolvers land.
 
 prism @silicon/algebra <= @bauchladen {
   focus algebra
@@ -90,4 +271,75 @@ prism @silicon/algebra <= @bauchladen {
   settle algebra
 }
 
+# === silicon_tray_content_addressed — bilateral predicate (arity 1) ===
+#
+# Bilateral predicate discharging that a tray content source is a
+# well-formed git-log-filter composition per the docblock above.
+# Pass iff the source reference resolves to a `tray_content_source`-
+# shaped action whose composition graph names (A) an `@io/git.log`
+# enumeration edge + (B) an author-filter edge on `mirror <mirror@
+# spectral.engineer>` + (C) a message-filter edge containing the
+# bilateral_arm_redundant sentinel + (D) a projection edge onto
+# `commit.oid`. Discharge is byte-check on the composition graph's
+# sentinel per the shard docblock; NOT program-semantics inspection.
+#
+# Sentinel per shard docblock: `tray_content=git-log-filter-holds`.
+#
+# Sibling to:
+#   - `kintsugi_algebra_witnessing(binding)` at `shards/kintsugi.
+#     mirror` :263-267 (algebra-binding well-formedness bilateral;
+#     THIS shard's tray populates the `@silicon/algebra` speaker
+#     that binding names).
+#   - `translation_witnessing(outcome)` at `shards/kintsugi/
+#     translate.mirror` :450-453 (translation-outcome well-
+#     formedness; the composition that writes back to THIS tray).
+#
+# Substrate-decl'd shape per `shards/epistemologic/pact/bilateral.
+# mirror` (`a0f4d3f`, 2026-07-16). Arity 1 (checks one source ref
+# per invocation). Body `\`-obligation-blocked; the reflective
+# evaluator at `bootstrap/src/apply_h.rs` (per `21fc211` Landing
+# 3+4) discharges via corpus lookup + sentinel byte-check per the
+# same dispatch discipline `translation_witnessing` uses.
+#
+# Rice-safe: pure sentinel-byte-check on a composition graph ref;
+# no program-semantics inspection.
+bilateral silicon_tray_content_addressed {
+  sentinel "tray_content=git-log-filter-holds"
+  arity    1
+}
+silicon_tray_content_addressed(source: ref) -> verdict { \ }
+
+# === tray_content_source — the composition action ===
+#
+# THE LOAD-BEARING tray-enumeration action. Given a `@io/git`
+# repository ref, composes the 5-edge filter per the docblock
+# composition graph above and returns the sequence of `crystal_oid`
+# refs that constitute `@silicon/algebra`'s tray content.
+#
+# The action body is `\`-obligation-blocked per [[feedback-craft-
+# not-deliver]]. Reed follow-up (per pending @io surface flags
+# above) realises the composition edges through `apply_h::act`
+# dispatch after `@io/git.log` + `@io/git.commit_metadata` +
+# `@nl.contains` resolvers land under `[substrate-floor:@io-
+# boundary]`.
+#
+# The `requires silicon_tray_content_addressed(self)` clause names
+# the discharge condition per recognition #37 (Pask-agreement
+# reading of `requires`): the action commits to producing a tray
+# whose composition graph satisfies the git-log-filter shape;
+# consumers surface violations at the species boundary.
+#
+# Identity contract for the action's outcome: byte-equality on
+# (repo.oid, filter.author, filter.message_sentinels, filter.
+# path_scope). Two invocations against a byte-equal repository
+# state with byte-equal filter parameters produce byte-equal
+# `crystal_oid` sequences under content-addressing (monotonic
+# growth means future invocations produce SUPERSETS — the seed
+# 21 remain forever).
+tray_content_source(repo: ref) -> ref
+requires silicon_tray_content_addressed(source)
+{ \ }
+
 out @silicon/algebra
+out silicon_tray_content_addressed
+out tray_content_source
