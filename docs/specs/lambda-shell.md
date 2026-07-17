@@ -1,3 +1,10 @@
+> **DEPRECATED-FOR-RUST-REWRITE (Mara 2026-07-17):** This spec
+> describes bootstrap-era lambda-shell design that retires via the
+> `@kintsugi/roomba` cascade 3 (bootstrap → rust). Terminal form
+> at `docs/specs/rust-floor-birthed-by-roomba-from-mirror-spec.md`
+> (Mara `2519f83`); `dance.rs` composes reflectively rather than
+> booting a distinct shell surface. Preserved for archaeology.
+
 # λsh — The Lambda Calculus Shell
 
 *2026-05-07. Reed + Alex. The shell is the runtime.*

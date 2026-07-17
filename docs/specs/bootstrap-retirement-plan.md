@@ -1,3 +1,12 @@
+> **DEPRECATED-FOR-RUST-REWRITE (Mara 2026-07-17):** This spec
+> describes an earlier framing of the bootstrap retirement path. The
+> terminal-form map for the current arc lives at
+> `docs/specs/rust-floor-birthed-by-roomba-from-mirror-spec.md`
+> (Mara `2519f83`), where `@kintsugi/roomba` reads the
+> `kintsugi { roomba { } }` cascade block in `mirror.spec` and
+> materializes `rust/` as the terminal FLOOR. Preserved here for
+> archaeology of the earlier framing.
+
 # Bootstrap retirement plan — the Rust floor sealed
 
 *2026-05-21. Reed. Updated 2026-06-04 (Reed + Alex).*

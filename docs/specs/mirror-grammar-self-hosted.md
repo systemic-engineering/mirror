@@ -1,3 +1,12 @@
+> **DEPRECATED-FOR-RUST-REWRITE (Mara 2026-07-17):** This spec
+> describes bootstrap-era self-hosted grammar tokenization design
+> that retires via the `@kintsugi/roomba` cascade 3 (bootstrap →
+> rust). Terminal form at `docs/specs/rust-floor-birthed-by-roomba-
+> from-mirror-spec.md` (Mara `2519f83`); grammar composes
+> reflectively through `apply_h::act` reading `shards/**/*.mirror`
+> rather than through a distinct Rust-side self-hosting surface.
+> Preserved for archaeology.
+
 # `@mirror/grammar` — self-hosted tokenization + spectral measurement
 
 *2026-05-26. Mara. Proposal — not implementation.*

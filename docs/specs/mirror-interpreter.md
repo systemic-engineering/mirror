@@ -1,3 +1,11 @@
+> **DEPRECATED-FOR-RUST-REWRITE (Mara 2026-07-17):** This spec
+> describes bootstrap-era interpreter design that retires via the
+> `@kintsugi/roomba` cascade 3 (bootstrap → rust). Terminal form
+> documented at `docs/specs/rust-floor-birthed-by-roomba-from-mirror-
+> spec.md` (Mara `2519f83`) where `dance.rs` IS the reflective
+> evaluator via `apply_h::act` combinator surface. Preserved for
+> archaeology.
+
 # The Mirror Interpreter — one Rust function, grammars all the way down
 
 *2026-05-14. Reed + Alex. Spec.*

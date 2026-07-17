@@ -1,3 +1,11 @@
+> **DEPRECATED-FOR-RUST-REWRITE (Mara 2026-07-17):** This spec
+> describes bootstrap-era `craft --target binary` pipeline detail
+> that retires via the `@kintsugi/roomba` cascade 3 (bootstrap →
+> rust). Terminal form documented at
+> `docs/specs/rust-floor-birthed-by-roomba-from-mirror-spec.md`
+> (Mara `2519f83`). Preserved for archaeology; not the operational
+> reference post-dock.
+
 # craft --target binary
 
 *2026-05-19. Reed. The binary production pipeline as grammar.*
