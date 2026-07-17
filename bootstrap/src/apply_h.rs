@@ -598,55 +598,6 @@ pub fn act(action: Ref, args: Vec<Value>) -> Verdict {
     // byte-level check the type system enforces by construction; the
     // resolver's role is to inspect the arg's substrate-ref OID for
     // the sentinel and discharge Pass/Fail accordingly.
-    if action == "@subject/visibility/public.consent_scope_universal" {
-        if let Some(vs) = args.first() {
-            // The [everyone] open-set sentinel per public.mirror
-            // "consent_scope = [everyone] (open-set sentinel)".
-            if vs.oid.contains("consent_scope=[everyone]") {
-                return Verdict::Pass;
-            }
-            return Verdict::Fail(format!(
-                "consent_scope_universal: expected [everyone] sentinel, \
-                 got arg oid {:?}",
-                vs.oid
-            ));
-        }
-        return Verdict::Fail(
-            "consent_scope_universal: missing visibility_scope argument"
-                .to_string(),
-        );
-    }
-    if action == "@subject/visibility/public.elevation_terminal" {
-        if let Some(vs) = args.first() {
-            if vs.oid.contains("can_be_elevated_to=[]") {
-                return Verdict::Pass;
-            }
-            return Verdict::Fail(format!(
-                "elevation_terminal: expected can_be_elevated_to=[] sentinel, \
-                 got arg oid {:?}",
-                vs.oid
-            ));
-        }
-        return Verdict::Fail(
-            "elevation_terminal: missing visibility_scope argument".to_string(),
-        );
-    }
-    if action == "@subject/visibility/public.public_is_gift_to_commons" {
-        if let Some(vs) = args.first() {
-            if vs.oid.contains("gift-to-commons") {
-                return Verdict::Pass;
-            }
-            return Verdict::Fail(format!(
-                "public_is_gift_to_commons: expected gift-to-commons sentinel, \
-                 got arg oid {:?}",
-                vs.oid
-            ));
-        }
-        return Verdict::Fail(
-            "public_is_gift_to_commons: missing visibility_scope argument"
-                .to_string(),
-        );
-    }
     if action == "@subject/visibility/public.declare_public" {
         // Constructor; substrate-decl body is `\`-obligation-blocked.
         // The typing is enforced by the caller's argument construction;
