@@ -229,10 +229,12 @@ load(dir: ref, p: perturbation) -> imperfect(peer, ref, ref) { \ }
 #    cybernetic/bateson_learning.mirror) — the peer's N+1 altitude
 #    sits on Level III (premises of regulation change); K tracks sit
 #    on Level II (context-generalisation) (spec §2.3).
-# 6. @fate 5-mode Fabry-Perot (shards/cyberpunk.mirror lines 32-35;
-#    shards/fate.mirror lines 199-203; Recognition #58) — K tracks =
-#    K coupled cavities = HYPER-multi-modal 5K-dimensional resonator
-#    (spec §5.4).
+# 6. @fate 5-mode Fabry-Perot (shards/cyberpunk.mirror §"The recognition
+#    ancestry" — Recognition #58 Fate-IS-optical-inference; shards/
+#    fate.mirror §"Three altitudes of one mechanism" table Optical
+#    row — `Fabry-Perot mode selection (gain-pumped cavity)`) — K
+#    tracks = K coupled cavities = HYPER-multi-modal 5K-dimensional
+#    resonator (spec §5.4).
 # 7. @epistemologic/math/music/harmonic (shards/epistemologic/math/
 #    music/harmonic.mirror) — κ_intra harmonic-ratio structure per
 #    Pythagorean integer-ratio consonance; Kepler 1619; Helmholtz
@@ -496,8 +498,14 @@ type audhd_context = {
 # sentinel-check is the shape; NO Rust extension).
 #
 # Sentinel per shard docblock: `audhd=cognition-fanout-k-track-
-# harmonic` — the byte-level substrate-decl'd marker the resolver
-# checks.
+# harmonic` — the byte-level substrate-decl'd marker consumers of
+# the ACTION's output check (naming the completed-fanout state).
+# Distinct from the bilateral sentinel `audhd=admissible-k-track-
+# context` immediately below (which names the admissibility-verdict
+# state on the (peer, ctx) input pair). Both are correct + both
+# substrate-honest; the two-sentinel discipline separates operation-
+# completed (action) from admissibility-witnessed (bilateral) per
+# Seam Phase D adjudication 2fdc9c1 §5.4 REED-INLINE #2 cascade.
 audhd(p: peer, ctx: audhd_context) -> imperfect(ref, ref, ref)
 requires audhd_admissible(p, ctx)
 { \ }
