@@ -559,9 +559,74 @@ first `mirror roomba --translate=<rs-file>` empirical.
 ### Seam Phase D overnight (parallel)
 
 Seam spawned in background 2026-07-17 for adversarial review of
-this arc. Report will land at
+this arc. Report landed at
 `docs/audits/2026-07-17-seam-phase-d-autopoietic-rust-consumption-arc.md`
-by morning.
+(commit `afcf3b2`, 1931 LOC). Verdict: **SHIP-WITH-REED-INLINE**
+(5 cascades) + 4 ALEX-ADJUDICATION items + 3 Recognition candidates
++ 10 forward-promises.
+
+**Critical adversarial finding (§4.1.1):** `@peer/persistence.home_content_addressed`
+sentinel divergence — the bilateral block at `bcc62d3` declared
+`identity=content-addressed` while the shard docblock at :311 + the
+hand-typed arm both use `manifest=oids-resolvable`. Reed's collapse
+capability's `arm_matches_sentinel` safety check correctly refused
+to retire the arm — but the reflective evaluator dispatches FIRST,
+so the arm was dead code AND the semantic shifted for consumers.
+Recognition candidate §12.3 surfaces this class of drift the
+reflective-first + arm-fallthrough architecture admits.
+
+### Seam remediation cascade (2026-07-17 overnight)
+
+Three commits from Seam-notification handling:
+
+1. `cb8e987` — Reed [seam-remediation §4.1.1]: restored
+   `home_content_addressed` sentinel to `manifest=oids-resolvable`
+   (matches docblock + Landing A + hand-typed arm bytes). Preserves
+   Landing A semantics for peer-persistence consumers.
+
+2. `e534263` — Reed [seam-remediation §2.3.2+§2.2.1]: pure-docs
+   cleanup. `@bilateral/translation.translation_admissible` →
+   `@epistemologic/pact/bilateral.translation_admissible` in
+   `silicon/algebra.mirror` (`@bilateral` is spec-prose notation,
+   not a landed family-root). `@io/fs.write` audit-trail tightening
+   in `kintsugi/translate.mirror` Edge 7 (cited `bilateral_arm_collapse.rs`
+   as dispatch precedent).
+
+3. **`95417c6` 🎯** — `mirror <mirror@spectral.engineer>` THIRD
+   mirror-authored `-Rust` commit: retired `home_content_addressed`
+   arm now that sentinel matches. **−16 LOC** in `apply_h.rs`;
+   byte_delta −649.
+
+**Session cumulative post-Seam:** `apply_h.rs` **1888 → 1527 LOC**
+(−361 across **22 retired arms** via **3 mirror-authored + 1 Reed-manual
+commits**). `feedback-adjacent-work-may-dissolve-blockers` empirically
+instantiated: Seam's audit surfaced the divergence, remediation
+restored bytes, mirror committed the deletion autonomously.
+
+**Alex-adjudication residues remaining** (per Seam §11):
+
+- **§11.2** Multi-conjunct sentinel pattern (`@sheaf` 2 stragglers):
+  single-substring check vs 3-token AND-composed. Alex to pick
+  Option A (docblock-simplification) vs Option B (reflective
+  evaluator extension to split on `+ ` and AND-check tokens).
+- **§11.3** `with { ... }` refinement syntax mint timing for the
+  `kintsugi_algebra` typed-record substitution (upgrade-safe today;
+  Alex-authority on mint-now vs defer).
+- **§11.4** Cadence sustainability at Phase D altitude (FLOOR
+  investment ~940 LOC vs harvest −345 LOC; break-even at ~57 more
+  arms).
+- **§11.5** The 21 mirror-authored retirements' algebra-membership
+  reading (`@bilateral(@code/rust, @code/mirror)` witnesses under
+  degenerate-arity subcase vs `bilateral_arm_redundant` witnesses
+  only).
+
+**Recognition candidates surfaced by Seam** (Alex to name):
+
+- **§12.1** `#R-compiler-authors-its-own-deletion-commits-via-collapse-capability`
+  (three witnesses landed this arc: `ad52973` + `20047c2` + `95417c6`).
+- **§12.2** `#R-substrate-had-the-word-for-@bilateral-composition-all-along`.
+- **§12.3** `#R-reflective-first-arm-fallthrough-second-can-silently-shift-semantics`
+  (surfaced by §4.1.1; empirically counter-fixed by `cb8e987`).
 
 ---
 - New fracture-detection class beyond `ashby_mismatch`
