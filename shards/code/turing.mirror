@@ -1,0 +1,361 @@
+in @prism
+in @glass
+in @meta
+in @nl
+in @code
+
+# @code/turing — the abstract-machine tape altitude.
+#
+# THE PHYSICAL SUBSTRATE FLOOR of the polyglot cascade. Per Alex
+# 2026-07-17 (verbatim, session-crystallizing):
+#
+#   *"Ground the translation in the physical substrate. If we know
+#    what the machine does at the substrate level, the languages on
+#    top become flavours. Not categorical new grammar."*
+#
+#   *"@code/turing as tape floor."*
+#
+#   *"@code/turing/rust as species means Rust IS a lens on the tape."*
+#
+# @code/turing IS the abstract-machine tape altitude — the ONE
+# altitude at which Church-Turing 1936 grounds every Turing-complete
+# language as a specialization over the same physical substrate. The
+# tape is the linear-symbol surface of the abstract machine; states
+# are the machine's discrete configurations; transitions are the
+# per-step deterministic move. Every higher-altitude language
+# (@code/rust, @code/mirror, @code/gleam, @code/wasm, ...) becomes
+# a lens on this floor rather than a categorically-new grammar.
+#
+# === Church-Turing 1936 as substrate authority ===
+#
+# Reference (per docs/math/polyglot-loss-aware-computational-
+# translation.md §3.4 sub-theorem 3.4 universal-hub existence):
+# Turing 1936 *"On Computable Numbers, with an Application to the
+# Entscheidungsproblem"* (Proc. Lond. Math. Soc. s2-42:230-265) and
+# Church 1936 *"An Unsolvable Problem of Elementary Number Theory"*
+# (Am. J. Math. 58:345-363). The equivalence establishes: every
+# Turing-complete language is inter-simulatable with the tape
+# machine model. Hence @code/turing is a candidate machine-substrate
+# hub for any (source_lang, target_lang) polyglot pair.
+#
+# === substrate-already-had-the-word ===
+#
+# Per shards/code.mirror docblock: "@code/llvm, @code/fortran each
+# declare the same five-op block at their altitude." The substrate
+# ALREADY named @code/turing as adjacent-altitude candidate via
+# Alex's 2026-07-17 ratification. This shard NAMES what the substrate
+# already carries at family-root discipline; MINTS the species-decl
+# per Mara canonical spec `1ce68c3` §9.1 M1 forward-promise.
+#
+# Taut audit `d0572cd` §1.3 grep-verified ABSENT: 0 matches for
+# `@code/turing`, `@code/assembler`, `@code/asm`, `turing.tape`,
+# `universal.tape`. No substrate-already-had-the-word conflict.
+# Small vocabulary (~10-15 species per §9.1); the mint is the FLOOR
+# of the cascade chain, not the top.
+#
+# === composition altitude: FLOOR ===
+#
+# Every other @code/X species sits ABOVE this altitude. The typed
+# carriers (symbol, state, tape, head_position, transition, program)
+# are the substrate the higher-altitude grammars SPECIALIZE via
+# their own cascade species. The five-op prism at family-root
+# altitude declares the discipline; the typed carriers below declare
+# the substrate the discipline COMPOSES OVER.
+#
+# The dogfood bilateral `turing_well_formed` (per Mara `a0f4d3f`
+# bilateral-shape mint) witnesses that a candidate `program` (set
+# of transitions + initial state) is a well-formed Turing machine
+# — deterministic transition function, halt-state well-defined,
+# tape-alphabet finite. This is the substrate-floor admissibility
+# check every higher-altitude cascade routes through when it
+# discharges to the tape floor.
+#
+# === spec context ===
+#
+# docs/specs/polyglot-loss-aware-computational-translation.md §9.1
+# M1 (Mara `1ce68c3`, 2026-07-17) — the mint plan forward-promise
+# THIS shard discharges. §2.3 (tape as serialization target, not
+# master) grounds the altitude framing. §4.1 (concrete instantiation
+# chain) names @code/turing as the middle hub in the Rust →
+# LLVM → Turing → mirror loop.
+#
+# docs/math/polyglot-loss-aware-computational-translation.md §3.4
+# (Mara `dc4ad4c`, 2026-07-17) — Church-Turing citation grounding
+# universal-hub existence for arbitrary (A, B) pair. §1.1 places
+# @code/turing as one object in the `Cascade_@code` category.
+#
+# boot/01-meta.mirror (Taut audit `d0572cd` §1.5) — the universal
+# AST parameterized by grammar sits at ADJACENT altitude (boot-
+# grammar altitude, above tape floor). The tape-floor grammar is
+# the physical-substrate ground; the boot-grammar AST is one
+# altitude up (language-agnostic symbolic surface); each `@code/X`
+# is another altitude further up.
+#
+# === substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]] — this file IS the
+# substrate declaration; nothing lives above it as authority for
+# what @code/turing carries.
+# [[architecture-prism-as-trait-as-everything]] — five-op prism
+# discipline at family-root; typed carriers below.
+# [[architecture-lift-as-load-bearing]] — the lift is Church-Turing
+# 1936 → substrate-decl (not re-derivation).
+# [[feedback-substrate-already-had-the-word]] — the word already
+# lived in the substrate via Alex's ratification; this shard names
+# what was implicit.
+# [[feedback-craft-not-deliver]] — every action body `\` blocked;
+# realisation per-consumer, not pre-committed here.
+#
+# === related shards ===
+#
+# shards/code.mirror — family root (@code discipline).
+# shards/code/rust.mirror — sibling species precedent for five-op
+# + typed-carrier + build-property surface shape.
+# shards/code/wasm.mirror — sibling machine-substrate hub precedent.
+# shards/cascade.mirror — the family-root that will target-grammar
+# THIS species via `@cascade/code/llvm/turing`,
+# `@cascade/code/turing/mirror`, `@cascade/code/rust/turing` per
+# Mara §9.2 M2 forward-promise (Reed follow-up domain).
+#
+# Path-namespace property: this file at `shards/code/turing.mirror`
+# declares `@code/turing` per `@epistemologic/pact/path_matches_
+# namespace`.
+
+prism @code/turing {
+  focus turing
+  project turing
+  split turing
+  shift turing
+  settle turing
+}
+
+# === typed carriers for the tape substrate ===
+#
+# Small vocabulary per §9.1 M1: symbol, state, tape, head_position,
+# transition, program. The head_move discriminator + halt_condition
+# variant admit the deterministic-transition + halt-state
+# vocabulary Church-Turing 1936 requires. Every carrier is a
+# substrate-typed ref so higher-altitude cascade species can
+# construct/consume via @mirror/store OID discipline.
+
+# `symbol` — one cell's contents on the tape. Substrate-typed ref
+# so the tape-alphabet is species-configurable per cascade (LLVM IR
+# → tape uses byte-typed symbols; mirror-composition → tape uses
+# OID-typed symbols). The tape-alphabet finiteness is a
+# well-formedness obligation on `program`, not a floor constraint.
+type symbol = ref
+
+# `state` — one discrete machine configuration. Substrate-typed ref
+# so states can carry per-species metadata (basic-block index for
+# LLVM cascade, node OID for mirror cascade, byte-offset for raw
+# assembly cascade). The state-set finiteness is a
+# well-formedness obligation on `program`.
+type state = ref
+
+# `tape` — the linear-symbol surface. A sequence of symbols;
+# unbounded to either side per Turing 1936 (the finite-tape
+# constraint is a per-cascade admissibility choice, not a
+# floor constraint). Each cascade species may add its own
+# tape-length bound via loss-lens.
+type tape = [symbol]
+
+# `head_position` — offset into tape. Signed integer so unbounded-
+# to-either-side tape has natural representation (0 = initial;
+# negative = extended-left; positive = extended-right). The
+# tape-position discipline (linear or content-addressed) is a
+# cascade-species choice per §4.4 (mirror-cascade reifies positions
+# as edge-labels since mirror altitude has no linear addresses).
+type head_position = ref
+
+# `head_move` — discriminator on transition's head-motion field.
+# Three variants per Turing 1936: left one cell, right one cell,
+# stay. The stay variant is admitted because higher-altitude
+# languages (LLVM SSA, mirror composition) have branches that
+# don't advance the tape — the cascade species may erase stays
+# in its loss-lens if the target grammar is strict-move only.
+type head_move = move_left | move_right | move_stay
+
+# `transition` — one rule of the transition function. Per
+# Turing 1936 δ : (state, symbol) → (state, symbol, head_move).
+# Deterministic: at most one transition per (state, symbol) pair;
+# non-determinism is enforced-absent by `turing_well_formed`.
+type transition = {
+  from_state: state,
+  read_symbol: symbol,
+  to_state: state,
+  write_symbol: symbol,
+  move: head_move,
+}
+
+# `program` — the full Turing machine. Transitions + initial state
+# + halt-state set. Non-deterministic programs are ill-formed
+# (bilateral `turing_well_formed` rejects). Finite-state and
+# finite-alphabet constraints admitted at construction time via
+# the substrate's typed-carrier discipline; enforced at
+# `turing_well_formed` discharge.
+type program = {
+  transitions: [transition],
+  initial_state: state,
+  halt_states: [state],
+}
+
+# `configuration` — a machine at one instant. State + tape + head.
+# The dynamic runtime object per cascade species'
+# `apply_transition` action; snapshotted at each step. Used by
+# higher-altitude cascades to reason about intermediate
+# computations (e.g., @cascade/code/turing/mirror reifies each
+# configuration as one substrate-composition node).
+type configuration = {
+  current_state: state,
+  tape: tape,
+  head: head_position,
+}
+
+# `verdict_kind` — discriminator on halt_check output. Distinguishes
+# halted (in halt_states), running (not yet halted), or ill-formed
+# (state not in program's state-set). Higher-altitude cascades
+# use this to route their own halt-witnessing per their loss-lens.
+type verdict_kind = halted | running | ill_formed
+
+# === actions on the tape substrate ===
+#
+# All actions `\` obligation-blocked per [[feedback-craft-not-
+# deliver]]. The discipline is declared HERE; the realisation per
+# cascade species (@cascade/code/A/turing, @cascade/code/turing/B)
+# provides the actual byte-level implementation. Each action's
+# signature is the CONTRACT the cascade must honor.
+
+# `read` — byte-level tape read. Returns the symbol at head_position
+# on tape. Pure function on (tape, head_position). Extension
+# semantics: reading beyond tape bounds returns the tape-alphabet's
+# blank symbol per cascade species' convention (blank is not a
+# floor primitive; it's a species choice at construction time).
+read(t: tape, h: head_position) -> symbol { \ }
+
+# `write` — byte-level tape write. Returns a NEW tape with the
+# symbol at head_position replaced. Pure function on (tape,
+# head_position, symbol). Tapes are immutable at substrate
+# altitude; mutation is realized at @io boundary by cascade
+# species (LLVM cascade uses register writes; mirror cascade
+# creates new content-addressed nodes).
+write(t: tape, h: head_position, s: symbol) -> tape { \ }
+
+# `move_left` — decrement head_position by one cell. Pure.
+# Unbounded-left tape admitted; the position may become negative.
+# Each cascade species' loss-lens may bound the tape and surface
+# left-underflow as loss.
+move_left(h: head_position) -> head_position { \ }
+
+# `move_right` — increment head_position by one cell. Pure. Same
+# unbounded-right admission as `move_left`.
+move_right(h: head_position) -> head_position { \ }
+
+# `apply_transition` — one step of the machine. Reads the current
+# symbol at head, matches against program's transition-set,
+# applies the write + move, transitions the state. Returns the
+# new configuration. Pure function on (program, configuration);
+# realisation per cascade species reads its concrete transition
+# encoding (LLVM basic-block dispatch, mirror graph traversal).
+apply_transition(p: program, c: configuration) -> configuration { \ }
+
+# `halt_check` — bilateral predicate: is this configuration halted?
+# Discriminator over verdict_kind. Higher-altitude cascades use
+# this to witness computation termination per their own loss-lens
+# — cascade may report `halted` as loss=0, `running` as
+# loss=continuation-cost, `ill_formed` as loss=unbounded per §5
+# admissibility discipline.
+halt_check(p: program, c: configuration) -> verdict_kind { \ }
+
+# `equivalent` — bilateral predicate: do two programs compute the
+# same function? UNDECIDABLE in general per Rice's theorem (per
+# docs/math/epistemologic/pact/bilateral-sentinel.md §Rice-safety);
+# realisation per cascade species is APPROXIMATE — cascade may
+# discharge via structural bisimulation (Milner 1989), trace
+# equivalence up to bounded fuel, or bytecode-hash-equality per
+# its loss-lens choice. The verdict shape is universal; the
+# per-cascade approximation is species-local. Content-addressed
+# check per Mara `701828a` §1 remains Rice-safe.
+equivalent(p1: program, p2: program) -> verdict { \ }
+
+# === dogfood bilateral (per Mara `a0f4d3f` shape mint) ===
+#
+# Multi-line format per Reed remediation `1ad8bb5` — single-line
+# `bilateral X { sentinel "..." arity N }` is SKIPPED by the corpus
+# loader. Every bilateral below uses the multi-line block.
+#
+# `turing_well_formed` witnesses that `program` is a valid Turing
+# machine per Turing 1936:
+#   - transition function is DETERMINISTIC (at most one transition
+#     per (state, symbol) pair)
+#   - halt_states ⊆ state-set (every halt state is reachable via
+#     transitions or IS the initial state)
+#   - alphabet is finite (implicit via substrate-typed refs; the
+#     bilateral's byte-composite sentinel enforces the check)
+#   - state-set is finite (same discipline as alphabet)
+#
+# Sentinel `tape=well-formed-machine-state` per the substrate's
+# canonical form: content-addressed byte-check on the program's
+# structural OID vs the well-formed-Turing-machine invariants.
+# Rice-safe per Mara `701828a` §1 byte-containment discipline
+# (structural check on program OID; no semantic introspection).
+
+bilateral turing_well_formed {
+  sentinel "tape=well-formed-machine-state"
+  arity 1
+}
+turing_well_formed(p: program) -> verdict { \ }
+
+# `turing_halts_on` — bilateral predicate: does program p halt when
+# started on tape t at initial state? UNDECIDABLE in general per
+# Halting Problem (Turing 1936). Realisation per cascade species
+# is APPROXIMATE — bounded-fuel simulation, structural termination
+# analysis, or explicit annotation per species' loss-lens.
+# Sentinel names the substrate-floor structural invariant checked
+# at discharge; Rice-safety per Mara `701828a` (the CHECK is
+# content-addressed even if the underlying question is undecidable
+# — the bilateral discharges IFF the sentinel matches; sentinel
+# match is byte-level containment).
+
+bilateral turing_halts_on {
+  sentinel "computation=halts-under-fuel-bound"
+  arity 2
+}
+turing_halts_on(p: program, t: tape) -> verdict { \ }
+
+# `configuration_reachable` — bilateral predicate: is configuration
+# `c` reachable from program p's initial configuration via zero or
+# more applications of apply_transition? Substrate-floor reachability
+# check used by higher-altitude cascades to witness intermediate
+# computation state (e.g., @cascade/code/mirror/turing reifies each
+# reachable configuration as a substrate-composition node).
+# Sentinel: reachability-under-transitive-closure content-check.
+# Rice-safe under bounded-fuel realisation per Mara `701828a`.
+
+bilateral configuration_reachable {
+  sentinel "reachability=transitive-closure-under-fuel"
+  arity 2
+}
+configuration_reachable(p: program, c: configuration) -> verdict { \ }
+
+# === outbound declarations ===
+
+out @code/turing
+out symbol
+out state
+out tape
+out head_position
+out head_move
+out transition
+out program
+out configuration
+out verdict_kind
+out read
+out write
+out move_left
+out move_right
+out apply_transition
+out halt_check
+out equivalent
+out turing_well_formed
+out turing_halts_on
+out configuration_reachable
