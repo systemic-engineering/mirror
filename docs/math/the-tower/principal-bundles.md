@@ -183,3 +183,8 @@ this math has a name. The substrate uses the existing names.
   bundle data.
 - `crystals-as-sections.md`: the substrate's content-addressed
   crystals ARE bundle sections, accumulating monotonically.
+- `beam-runtime.md`: the BEAM/Erlang/OTP runtime as an instance of
+  the tower; supervision tree = simplicial Lie group tower; actors
+  = sections; message-passing = parallel transport; let-it-crash
+  = autopoietic closure; Alex + Reed 2026-04-08 cascade + Baez-
+  Schreiber 2004 formal ground.

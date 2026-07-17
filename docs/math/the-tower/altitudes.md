@@ -11,12 +11,15 @@ with their bundle data — is:
 
 | Altitude | Fiber | Connection | Holonomy |
 |----------|-------|------------|----------|
+| BEAM process (n=−1) | `gen_server_state` | `handle_call`/`cast`/`info` callbacks | mailbox residual (`Imperfect<Out, E, L>`) |
+| supervision level k (n=−1+k) | registry shard (`shard_ref = uuid_spectral`) | `restart_strategy` | restart intensity (`max_restarts`/`max_seconds`) |
 | compiler | source text | KernelSpec | MirrorLoss |
 | peer pulse | spectral triple `(A_peer, H_peer, D_peer)` | five-op composition | `transparency<p>` |
 | reflection (N+1) | candidate morphism | altitude selection | `α·loss + β·contradictions` |
 | librarian (N+1) | crystal topology | perturbation choice | query latency · sheaf-coherence |
 | home | repo collection | cross-repo lens | inter-repo cost |
 | federation | home cluster | federation lens | cross-home cost |
+| distributed BEAM cluster | local node bundle patch | ETF over TCP | net-split / recovery holonomy |
 | … | … | … | … |
 
 Each row's structure group is the gauge group of unitary basis
@@ -25,6 +28,41 @@ five-op algebra applied at that altitude. Each row's holonomy is the
 altitude-specific loss carrier.
 
 ## §2 Reading the rows
+
+**BEAM process altitude (n=−1, below compiler)**
+
+- Fiber: `gen_server_state` — the encapsulated per-process state
+  (matter-side per @magic; per `shards/code/beam.mirror:279-289`).
+- Base: the sequence of received messages (each message is a base
+  point at which the section-state may transition).
+- Structure group: OTP behaviour callbacks (`handle_call/3`,
+  `handle_cast/2`, `handle_info/2`) determining how parallel
+  transport updates the state.
+- Connection: the callback dispatch; the message-passing algebra IS
+  the connection 1-form at this altitude (see `beam-runtime.md` §2.3).
+- Holonomy: mailbox residual — the pending-message queue reads as
+  the accumulated holonomy of transports not yet absorbed.
+- Reference: `beam-runtime.md` §2.2 (actors as sections);
+  `shards/spectral/gen_prism.mirror`; Armstrong 2003 ch.3.
+
+**Supervision level k altitude (n=−1+k, layered above BEAM process)**
+
+- Fiber: the supervisor's registry shard — a content-addressed
+  index from child `uuid_spectral` to child `shard_ref` (per
+  `shards/spectral/supervisor.mirror:406-430`).
+- Base: the set of child specifications the supervisor governs.
+- Structure group: `restart_strategy` closed sum (`one_for_one` |
+  `one_for_all` | `rest_for_one`) — the BEAM/OTP three-variant
+  precedent; substrate-pull decision dropped `simple_one_for_one`
+  (see `shards/spectral/supervisor.mirror:373-377`).
+- Connection: the child specification + the automatic restart
+  kintsugi morphism firing on abnormal terminate-au (per
+  `supervisor.mirror:206-214`).
+- Holonomy: `restart_intensity` — `max_restarts` per `max_seconds`
+  circuit-breaker gating the automatic restart loop (per
+  `shards/spectral/restart_intensity.mirror`).
+- Reference: `beam-runtime.md` §2.1 (supervision as simplicial Lie
+  group tower); Baez-Schreiber 2004 §3 compatibility theorem.
 
 **Compiler altitude (n=0)**
 
