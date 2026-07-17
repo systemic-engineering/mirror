@@ -1,0 +1,47 @@
+[package]
+# Terminal FLOOR of the mirror compiler. Per Mara `81294b3` §2.2 M0 +
+# Seam `9c34ec4` ratification: standalone Cargo project (Taut `e0572f7`
+# OQ5 resolved-by-construction — rust/ owns its own Cargo.toml, NOT a
+# workspace member, until post-dock workspace lift MAY land).
+#
+# Three files. Three altitudes. Every altitude has exactly one file:
+#   src/main.rs   — supervisor boot + @-operator addressing (Mara §5)
+#   src/phone.rs  — @io socket-handover altitude          (Mara §3)
+#   src/matrix.rs — sub-Turing FLANG emit + LAPACK/BLAS   (Mara §4)
+#
+# M0 authors ONLY the minimum surface so `mirror --help` empirically
+# fires. LAPACK / FLANG / @io/socket accept / reflective tools/list /
+# @-operator dispatch land at M2-M8 per Mara §2.2 dependency graph.
+# Michelangelo/marble at implementation altitude too — the marble is
+# whittled only far enough for M0 to breathe.
+name = "mirror"
+version = "0.1.0"
+edition = "2021"
+description = "mirror compiler — terminal-geometry Rust FLOOR (M0 scaffold)"
+license = "MIT OR Apache-2.0"
+
+[[bin]]
+name = "mirror"
+path = "src/main.rs"
+
+# M0 dependencies — the minimum for `mirror --help` empirical firing.
+#
+# NO clap. NO structopt. NO serde. Hand-rolled argv parse of --help /
+# --version keeps the M0 surface honest — the reflective cli-block
+# reader (Mara §5.2 item 4) lands at M2 and reads mirror.spec directly;
+# introducing clap now would breed abstraction the substrate hasn't
+# asked for (Loki `b53aeeb` §5 cut #2: fixed vocabulary, not generic).
+#
+# LAPACK / FLANG dependencies land at M4-M5 co-tick when matrix.rs
+# empirically fires (Mara §2.2 M5). Peer socket / @io/socket deps land
+# at M8 (Taut `7f4307f` §Q2: boot-altitude sufficiency for M4 stdio).
+[dependencies]
+
+[profile.release]
+# Match bootstrap's release profile shape for byte-parity of the
+# eventual dock-motion binary swap (Mara §2.2 dock condition).
+opt-level = "z"
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"
