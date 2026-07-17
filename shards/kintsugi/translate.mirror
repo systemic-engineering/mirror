@@ -128,6 +128,16 @@ in @epistemologic/pact/bilateral
 #                                                                                                     bilateral_arm_redundant precedent
 #                                                                                                     (author = "mirror <mirror@spectral.engineer>")
 #
+# Note on Edge 7 (@io/fs.write): dispatched-through-apply_h::act
+# precedent exists at bootstrap/src/bilateral_arm_collapse.rs (commit
+# ba848ca; collapse_bilateral_arms invokes apply_h::act("@io/fs.write",
+# ...) after building new byte-payload). The `@io/fs.mutate_at` variant
+# is landed at Mara Landing 7 for empty-replacement / byte-range-delete;
+# whole-file write is the mutate_at file-full-replacement altitude which
+# @io/fs.write formalizes. Reed follow-up C may consolidate or clarify
+# the two surfaces. Audit-trail tightening applied 2026-07-17 per Seam
+# Phase D §2.2.1 (afcf3b2).
+#
 # === Composition-graph enumeration (docblock; the action body is
 #     `\`-obligation-blocked per craft-not-deliver) ===
 #

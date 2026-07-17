@@ -129,9 +129,16 @@ in @epistemologic/pact/bilateral
 #   WHERE crystal.author == "mirror <mirror@spectral.engineer>"
 #                                                       ← Edge 2 (FILTER: author-crystal)
 #   AND   crystal.discharges                            ← Edge 3 (FILTER: bilateral discharge)
-#         @bilateral/translation.translation_admissible
+#         @epistemologic/pact/bilateral.translation_admissible
+#         (per f74086e Mara landing at :456-475; @bilateral is
+#          spec-prose notation, NOT a landed @-family-root; the
+#          general-case instance lives under @epistemologic/pact/
+#          bilateral per the reframe spec 9336074 §5.2)
 #         (or the degenerate-arity subcase at
 #          @kintsugi/fracture/bilateral_arm_redundant)
+# Ref-notation drift corrected 2026-07-17 per Seam Phase D §2.3.2
+# (docs/audits/2026-07-17-seam-phase-d-autopoietic-rust-consumption-arc.md;
+# commit afcf3b2).
 #   PROJECT crystal.oid → crystal_oid                   ← Edge 4 (PROJECT)
 #
 # Each surviving crystal's OID becomes one `crystal_oid` element of
