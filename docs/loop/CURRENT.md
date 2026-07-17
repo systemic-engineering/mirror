@@ -619,21 +619,28 @@ Where:
 - `@liquid(@silicon)` = refined physical machine (ownership + lifetimes + Send/Sync as first-class refinements; recovers invariants LLVM erased)
 - `@epistemologic/silicon` = silicon-knowledge-extraction lens (Alex says exists; alignment gap flagged)
 
-**Taut scout in flight** (background subagent `afd8c0ef9dffba425`) grounding six questions:
-- Q1 @liquid primitive presence
-- Q2 @epistemologic/liquid species presence
-- Q3 @epistemologic/silicon lens presence
-- Q4 silicon↔epistemologic alignment gap
-- Q5 `---` liquid syntax landed connection (mirror surface uses `---` per paper autopoietic-loop section)
-- Q6 corpus + Kagi on refinement/liquid/verified-translation (LiquidHaskell/F*/Alive2/CompCert/Curry-Howard-Lambek)
+**Taut scout LANDED at `b8c453f`** (`docs/audits/2026-07-17-taut-liquid-epistemologic-silicon-scout.md`, +940 LOC):
+- **Q1 @liquid family-root:** ABSENT. Three closest shapes: `@mirror/liquid` grammar (Reed 2026-06-04, `boot/std/mirror/liquid.mirror`); `@epistemologic/liquid_extraction` (Mara 2026-07-06); `@epistemologic/pact/bilateral` degenerate byte-check refinement.
+- **Q2 @epistemologic/liquid species:** ABSENT. But math foundation LANDED at `docs/math/liquid-types/README.md` (Mara 2026-07-05, 30.3KB); grammar shape drafted at `docs/specs/liquid-types-for-mirror.md` §6.2 (Reed 2026-06-04, 41.7KB).
+- **Q3 @epistemologic/silicon:** substrate-truth is `@epistemologic/reality/silicon` (three-hop; moved 2026-06-06 in Mara's reality-family migration). Four species landed (arch, memory, compute_bound, flake_ref). Alex-brief drifted to two-hop.
+- **Q4 silicon↔epistemologic alignment gaps (three):** (a) naming inconsistency (two-hop vs three-hop); (b) unidirectional composition — @silicon consumes properties but no bilateral witnessing; (c) altitude-mismatch — @silicon crystallizes measured-execution routines, NOT source-language liquid invariants.
+- **Q5 `---` liquid syntax:** LANDED at three levels — 28 shard uses of `^---$` separator; grammar-decl'd `type separator` at `boot/std/mirror/liquid.mirror:13`; tokenizer AST-node emission at `bootstrap/src/tokenize.rs` (Reed `ee7903e` 2026-07-04). Back-projection action body `\`-blocked.
+- **Q6 corpus + Kagi (5 searches / 25 sources):** mirror's math foundation matches or exceeds SOTA in every dimension EXCEPT extraction-from-binary direction (Kagi search 5 for ownership recovery surfaced NO dominant SOTA — same gap the polyglot MVP bytes-opaque result exhibits).
 
-Reports to `docs/audits/2026-07-17-taut-liquid-epistemologic-silicon-scout.md`.
+**Three Alex-arbitration questions (parked; block Arc 5 landing):**
+- **Q-A Naming:** Is substrate-truth `@epistemologic/reality/silicon` (three-hop) correct, or should `@epistemologic/liquid` land parallel to `@epistemologic/reality` at the epistemologic altitude with `@liquid(@silicon)` using TOP-LEVEL `@silicon` (autopoietic family-root, not property altitude)?
+- **Q-B Novelty:** Kagi surfaced no canonical SOTA for recovering liquid/ownership types from LLVM/machine code. Does `@liquid(@silicon)` name a NOVEL discipline (matches Reed §8 novelty enumeration), or does Alex have a specific paper/system in mind?
+- **Q-C Altitude:** Is `@epistemologic/liquid` a sibling species to `@epistemologic/liquid_extraction`, or one altitude UP as theory-carrier that `liquid_extraction` operationally instantiates?
+
+**Structural finding:** substrate already has almost every piece — math theory (Mara 2026-07-05), grammar shape (Reed 2026-06-04 §6.2), logical-altitude extractor (Mara 2026-07-06), `---` seam typed (Reed 2026-06-04), autopoietic silicon loop (Alex 2026-07-05), silicon algebra crystallization (2026-07-17). What's missing: the shard-decl landing of `@epistemologic/liquid` theory carrier + the `@liquid(@X)` refinement-operator lens + the bilateral binding between property-observed silicon and learned-algebra crystals. §8 forward-promises six shapes (NOT proposed mints).
+
+**Arc 5 status:** parked on Q-A/Q-B/Q-C awaiting Alex. Reed continues adjacent postponed work per feedback-adjacent-work-may-dissolve-blockers.
 
 **Four-arc deferred queue (Alex-ratified at various altitudes, awaiting sequential execution):**
 - Arc 2: `@sre` family-root + `@sre(@code/X)` species pattern (measurement substrate for code-under-load)
 - Arc 3: `@peer.eigenboard` + `@roomba(@code/X)` polyglot walker (peer's perceptual apparatus)
 - Arc 4: `@peer.sing(@song)` third-order cognition (peer's ONE primitive; song = intent-language; roomba = execution mechanism)
-- Arc 5: `@liquid` + `@epistemologic/liquid` + `@epistemologic/silicon` composition (Taut scout in flight; grounds semantic-preservation for translation)
+- Arc 5: `@liquid` + `@epistemologic/liquid` + `@epistemologic/silicon` composition (Taut scout LANDED `b8c453f`; parked on Alex Q-A/Q-B/Q-C for naming + novelty + altitude arbitration; grounds semantic-preservation for translation)
 
 ---
 
