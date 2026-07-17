@@ -1,0 +1,514 @@
+in @prism
+in @meta
+in @glass
+in @cascade
+in @labeled
+in @code/turing
+in @code/mirror
+
+# @cascade/code/turing/mirror — the Turing tape → mirror substrate
+# value cascade species.
+#
+# Path naming: per Alex 2026-06-23 directive — cascade species
+# shards group by `@cascade/code/<source>/<target>`. Source
+# language (Turing tape) groups together at
+# `shards/cascade/code/turing/`; target (mirror here; potentially
+# other targets in future arcs) leafs at
+# `shards/cascade/code/turing/mirror.mirror`.
+#
+# THIS species is Edge 3 of the concrete polyglot chain Alex
+# ratified 2026-07-17 (verbatim, session-crystallizing):
+#
+#   *"So we can have @cascade/code/llvm/turing and
+#    @cascade/code/rust/llvm. And boom. The loop closes."*
+#
+# The full chain per polyglot spec §4.1 (Mara `1ce68c3`,
+# 2026-07-17):
+#
+#   Rust source
+#     ↓  @cascade/code/rust/llvm      (sibling mint this tick)
+#   LLVM IR
+#     ↓  @cascade/code/llvm/turing    (sibling mint this tick)
+#   Turing tape
+#     ↓  @cascade/code/turing/mirror  (THIS shard; tape → mirror
+#                                       substrate composition)
+#   mirror substrate composition
+#
+# === substrate-already-had-the-word ===
+#
+# Per Alex 2026-07-17 verbatim (polyglot spec §4.2 Edge 3
+# grounding):
+#
+#   *"mirror itself treats tapes as just one linear serialization
+#    target"*
+#
+# The mirror substrate ALREADY consumes tape-shaped byte-sequences
+# as one of its landed linear-serialization forms (per
+# `docs/specs/craft-binary-target.md` §"eight stages" — the
+# concat stage consumes linear byte sequences; the store stage
+# content-addresses them). THIS shard names the substrate-decl
+# for tape-op consumption at cascade altitude — making the
+# implicit tape-consumption explicit at family-root discipline.
+#
+# The FLOOR resolver (Reed Tick M3 domain) shells to substrate-
+# native tape → mirror composition; each tape-op becomes a
+# substrate fragment; state transitions become composition edges;
+# the whole tape becomes a `@mirror/store`-content-addressed
+# graph.
+#
+# === composition altitude: FLOOR ↔ SUBSTRATE-NATIVE ===
+#
+# The source altitude is `@code/turing` (landed
+# `shards/code/turing.mirror` this session; Mara M1 `7186410`) —
+# the physical-substrate FLOOR per polyglot spec §2.3. The target
+# altitude is `@code/mirror` (landed `shards/code/mirror.mirror`
+# 2026-06-07) — mirror's own instance of `@code` at the mirror
+# altitude.
+#
+# THIS cascade is the loop-closing edge: it lifts the Turing tape
+# floor back into the substrate the compiler operates at. Per
+# polyglot spec §3.2 composition axiom, THIS species composes
+# with:
+#
+#   - `@cascade/code/llvm/turing` (sibling mint this tick) →
+#     gives `@cascade/code/llvm/mirror` derived cascade.
+#   - Chained further with `@cascade/code/rust/llvm` (sibling
+#     mint this tick) → gives the full Rust → mirror loop-
+#     closing composition Alex ratified.
+#   - Composable via `@glue.compose` (per `shards/glue.mirror`)
+#     with existing mirror substrate carriers (@glass, @nl,
+#     @prism) at their own altitudes.
+#
+# === The cascade shape (Turing tape → mirror substrate value) ===
+#
+# Source (Turing tape admits per Church-Turing 1936 +
+# `@code/turing` M1):
+# - linear symbol sequence (tape as `[symbol]`)
+# - deterministic transition function (per Turing 1936 §1)
+# - finite state-set (per `turing_well_formed`)
+# - finite alphabet (per `turing_well_formed`)
+# - halt-state enumeration
+# - reachability graph (transitive closure of transitions per
+#   `configuration_reachable` bilateral)
+#
+# Target (mirror substrate preserves per @code/mirror + @mirror/
+# store):
+# - content-addressed graph nodes (OID-typed refs per
+#   @mirror/store discipline)
+# - composition edges (per @glue.compose morphism composition)
+# - typed carriers (per @glass verdict + @nl language surface +
+#   @prism five-op discipline)
+# - substrate-native composition (per @code/mirror's
+#   grammar/render sub-species)
+# - identity-contract preservation (byte-equality on OID)
+#
+# Per polyglot spec §4.4 Edge 3:
+# - PRESERVED: computational semantics (every tape-op has a
+#   substrate-decl'd equivalent), reachability graph, halt
+#   conditions.
+# - LOST: (potentially) the tape's linear-address discipline —
+#   mirror's content-addressed graph altitude doesn't have linear
+#   addresses; the cascade must reify tape-positions as
+#   edge-labels.
+#
+# The `loss_lens<@code/turing, @code/mirror>` measures these gaps
+# against the Turing 1936 tape model + mirror's substrate-decl
+# graph altitude.
+#
+# === How mirror consumes tape as substrate value ===
+#
+# Per polyglot spec §4.2 Edge 3: "tape-op → mirror composition —
+# `mirror` consumes tape ops as one linear serialization form."
+# Concrete substrate-consumption:
+#
+#   1. Each `@code/turing.symbol` on the tape becomes a substrate
+#      fragment (content-addressed ref per @mirror/store).
+#   2. Each `@code/turing.state` becomes a composition node in
+#      the mirror graph (typed carrier per @glass discipline).
+#   3. Each `@code/turing.transition` becomes a composition edge
+#      (morphism per @glue.compose shape at
+#      `shards/glue.mirror`).
+#   4. Each `@code/turing.head_position` becomes an edge label
+#      (mirror has no linear addresses; positions reify as
+#      graph-edge annotations).
+#   5. The whole `@code/turing.program` becomes a
+#      `@mirror/store`-content-addressed graph.
+#
+# The resulting ref IS a mirror-native substrate value composable
+# via `@glue.compose` (per Mara canonical @glue spec) with
+# existing mirror substrate carriers (@glass verdicts, @nl
+# strings, @prism five-op prisms).
+#
+# === Recognition ancestry ===
+#
+# - Recognition #95 (@cascade candidate; Mara canonical
+#   `ce4874b`, 2026-06-23): this species IS one of the cascade
+#   species discharging the family-root.
+# - Recognition #93 H4 RESOLVED (labeled<> functor at
+#   `shards/labeled.mirror`): mirror_artifact uses labeled<>
+#   instance for substrate-value + consumption metadata.
+# - Recognition #51 (mirror as expanding Hilbert space): the
+#   dimension-projection from Turing tape's linear-symbol basis
+#   to mirror's content-addressed-graph basis is measurable via
+#   `measure_turing_mirror`; the projection REBASES the tape's
+#   linear surface into mirror's graph altitude while preserving
+#   computational semantics.
+# - Recognition #104 chain P5 (@glue family-root at
+#   `shards/glue.mirror`, Mara `fdcba31`): THIS cascade
+#   discharges via `@glue.compose` to lift its outcome into the
+#   mirror-substrate composition altitude; the composed outcome
+#   participates in future @glue.translate invocations.
+#
+# === Pre-AI prior art ===
+#
+#   Turing 1936               Alan Turing, "On Computable
+#                             Numbers, with an Application to
+#                             the Entscheidungsproblem", Proc.
+#                             Lond. Math. Soc. s2-42:230-265.
+#                             The source tape-model this species
+#                             lifts.
+#   Content-addressed         Merkle 1979 (dissertation);
+#   storage                   git 2005; IPFS 2014. The substrate
+#                             discipline @mirror/store implements
+#                             and this cascade delivers into.
+#   Category theory of        Mac Lane 1971 §I.1 categorical
+#   composition               composition; the mathematical
+#                             ground for @glue.compose lifting
+#                             tape into graph altitude.
+#   craft-binary-target.md    Reed 2026-05-19; the reverse-chain
+#                             (mirror → LLVM → runnable) prior
+#                             art; grounds mirror's ALREADY-
+#                             LANDED tape-linear-consumption
+#                             disposition at concat/store stages.
+#
+# Spec context: docs/specs/polyglot-loss-aware-computational-
+#               translation.md §4.1 + §4.2 Edge 3 + §9 M2 (Mara
+#               `1ce68c3`, 2026-07-17 — the mint plan
+#               forward-promise THIS shard discharges); §4.4
+#               Edge 3 preservation/loss enumeration; §1.1
+#               verbatim on tape-as-linear-serialization-target
+#               (Alex 2026-07-17). docs/specs/craft-binary-
+#               target.md §"eight stages" (Reed 2026-05-19; the
+#               empirical prior art for mirror's tape-linear
+#               consumption at concat/store).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]] (the
+#                      lift is Alex's verbatim ratification +
+#                      mirror's already-landed tape-linear-
+#                      consumption at concat/store; NOT re-derived),
+#                      [[feedback-loss-from-epistemologic-properties]]
+#                      (loss is @epistemologic/properties composite,
+#                      not Shannon, not invented),
+#                      [[feedback-craft-not-deliver]] (every action
+#                      body `\` blocked; FLOOR realisation domain).
+# Related shards: shards/cascade.mirror (the family-root this
+#                 specializes); shards/labeled.mirror (the functor
+#                 primitive mirror_artifact instance rests on);
+#                 shards/code/turing.mirror (source grammar; Mara
+#                 M1 landed this session at `7186410`);
+#                 shards/code/mirror.mirror (target grammar);
+#                 shards/glue.mirror (the compose action THIS
+#                 species discharges into; Mara `fdcba31`);
+#                 shards/cascade/code/llvm/turing.mirror (sibling
+#                 mint this tick; composes with THIS species per
+#                 polyglot spec §3.2 to give LLVM → mirror).
+# Path-namespace property: this file at
+# `shards/cascade/code/turing/mirror.mirror` declares
+# `@cascade/code/turing/mirror` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/theoretical-cs/turing-1936-computable-numbers
+
+prism @cascade/code/turing/mirror {
+  focus cascade
+  project cascade
+  split cascade
+  shift cascade
+  settle cascade
+}
+
+# === turing_source carrier ===
+#
+# Specialization of @cascade.typed_source for source_grammar=turing.
+# References a `@code/turing.program` as the unit of cascade. The
+# substrate re-declares this carrier as an alias for the program
+# type so the cascade action signatures type-check at the species
+# altitude; the underlying identity is the program's content-
+# addressed OID per @mirror/store discipline.
+#
+# Identity contract: byte-equality on the program's content-
+# addressed byte-form (transitions + initial_state + halt_states
+# per Mara `7186410` `@code/turing.program`).
+type turing_source = program
+
+# === mirror_consumption_metadata carrier ===
+#
+# Structured carrier for the tape → mirror consumption shape
+# (position-to-edge-label mapping strategy, symbol-to-fragment
+# encoding, state-to-node mapping, transition-to-morphism
+# construction). Per [[feedback-no-bare-types]]: structured, not
+# stringly. The carrier names load-bearing fields without fixing
+# one consumption scheme; the FLOOR resolver (Reed Tick M3)
+# populates concrete values from its Rust-native implementation
+# of the tape-to-graph lifting per polyglot spec §4.2 Edge 3.
+#
+# Identity contract: byte-equality on the underlying ref.
+type mirror_consumption_metadata = ref
+
+# === mirror_artifact carrier ===
+#
+# The @labeled<> instance per recognition #93 H4. A
+# mirror_artifact IS a mirror-substrate-value ref annotated with
+# mirror_consumption_metadata via the labeled functor. Substrate-
+# architecturally load-bearing: the substrate-value's typed
+# identity is preserved (via labeled parametricity per Wadler
+# 1989 / Reynolds 1983) while the consumption-scheme dimension
+# is added. `unlabel(artifact)` returns the substrate-value;
+# `label_of(artifact)` returns the metadata.
+#
+# The underlying substrate-value is a `ref` (content-addressed
+# per @mirror/store discipline; composable via `@glue.compose`
+# with existing mirror substrate carriers at their own altitudes).
+#
+# Identity contract: byte-equality on the (substrate-value,
+# metadata) pair (inherited from @labeled).
+type mirror_artifact = labeled(ref, mirror_consumption_metadata)
+
+# === apply_turing_mirror action ===
+#
+# THE LOAD-BEARING ACTION. Specialization of @cascade.compile for
+# the Turing tape → mirror substrate value functor. Takes a
+# `@code/turing.program`; returns a mirror-native substrate value
+# (ref content-addressed per @mirror/store).
+#
+# Per Alex 2026-07-17 verbatim (polyglot spec §1.1 grounding):
+# *"mirror itself treats tapes as just one linear serialization
+# target"*. The realisation lifts the tape into mirror's graph
+# altitude per polyglot spec §4.2 Edge 3 five-step consumption:
+#
+#   1. Each symbol → substrate fragment (content-addressed ref).
+#   2. Each state → composition node (typed carrier).
+#   3. Each transition → composition edge (morphism per
+#      @glue.compose).
+#   4. Each head_position → edge label (reified since mirror
+#      has no linear addresses).
+#   5. Whole program → @mirror/store-content-addressed graph.
+#
+# The FLOOR resolver (Reed Tick M3 under
+# `[substrate-floor:@io-boundary]`) MUST discharge the body in
+# Rust; THIS shard names the CONTRACT the FLOOR honors.
+#
+# requires turing_well_formed(prog): the source program MUST pass
+# `@code/turing.turing_well_formed` per Mara `7186410`.
+# Ill-formed tape programs cannot be lifted into mirror
+# substrate; the well-formedness bilateral gates the cascade.
+#
+# The result is composable via `@glue.compose` (per
+# `shards/glue.mirror`) with existing mirror substrate carriers.
+#
+# Body discharges at the FLOOR boundary.
+apply_turing_mirror(prog: program, p: perturbation) -> ref
+requires turing_well_formed(prog)
+{ \ }
+
+# === bundle_mirror action ===
+#
+# Wraps a mirror-substrate-value ref + mirror_consumption_metadata
+# into a mirror_artifact via @labeled.label construction. The
+# typed substrate-value gets the consumption-scheme dimension
+# added without losing the underlying substrate-value identity.
+#
+# requires mirror_consumption_coherent(substrate_value, metadata, p):
+# bilateral commitment that the (substrate-value, metadata) pair
+# coheres at the tape-to-graph consumption altitude — position-
+# to-edge-label mapping consistent; symbol-to-fragment encoding
+# reversible; state-to-node mapping bijective; transition-to-
+# morphism construction discharges via @glue.compose.
+#
+# Body discharges at the FLOOR boundary.
+bundle_mirror(substrate_value: ref, metadata: mirror_consumption_metadata, p: perturbation)
+  -> mirror_artifact
+requires mirror_consumption_coherent(substrate_value, metadata, p)
+{ \ }
+
+# === measure_turing_mirror action ===
+#
+# Specialization of @cascade.measure for the Turing tape → mirror
+# substrate cascade. Returns substrate-typed measurement of
+# information loss between turing_source's linear-symbol tape
+# surface and mirror_artifact's content-addressed-graph structure.
+#
+# Returns `imperfect<mirror_artifact, ref, information_loss>` —
+# the loss slot carries measured loss as substrate-typed data,
+# NOT Shannon, NOT estimation; the composite of @epistemologic/
+# properties per [[feedback-loss-from-epistemologic-properties]].
+#
+# The measurement IS substrate-architectural: read source's tape
+# structure (symbol count, state count, transition count, halt-
+# state enumeration, head-position range); read artifact's graph
+# structure (node count, edge count, edge-label reification
+# count, content-addressed-fragment count); compute the dimension
+# gap per polyglot spec §4.4 Edge 3 preservation/loss enumeration.
+#
+# Substrate-honest note: this cascade's loss profile is
+# ARCHITECTURALLY SHALLOW — Turing tape and mirror substrate
+# are both Turing-complete altitudes; the primary loss is the
+# linear-address discipline reification, not computational
+# semantics.
+#
+# requires turing_mirror_loss_well_defined(prog, artifact, p):
+# bilateral that the measurement IS computable; the (program,
+# artifact) pair must be a genuine cascade discharge.
+#
+# Body discharges at the FLOOR boundary.
+measure_turing_mirror(prog: program, artifact: mirror_artifact, p: perturbation)
+  -> imperfect(mirror_artifact, ref, information_loss)
+requires turing_mirror_loss_well_defined(prog, artifact, p)
+{ \ }
+
+# === mirror_consumption_coherent bilateral ===
+#
+# Target-side consumption-well-formedness bilateral. Commitment
+# that the (substrate-value, metadata) pair coheres at the tape-
+# to-graph consumption altitude.
+#
+# Splinter-pole: position-to-edge-label mapping consistent
+# across all reified positions; symbol-to-fragment encoding
+# reversible (fragment OID → symbol byte-form retrievable);
+# state-to-node mapping bijective (each state corresponds to
+# exactly one graph node); transition-to-morphism construction
+# discharges via @glue.compose; substrate-value composable with
+# existing @glass/@nl/@prism carriers.
+# Narcissus-pole: mapping inconsistency; encoding non-reversible;
+# state-node correspondence broken (multiple states → one node
+# OR one state → multiple nodes); morphism construction fails
+# @glue.compose discharge; substrate-value incomposable at
+# @glass/@nl/@prism altitude.
+
+bilateral mirror_consumption_coherent {
+  sentinel "consumption=position-symbol-state-morphism-coherent"
+  arity 2
+}
+mirror_consumption_coherent(substrate_value: ref, metadata: mirror_consumption_metadata, p: perturbation)
+  -> verdict { \ }
+
+# === turing_mirror_loss_well_defined bilateral ===
+#
+# Specializes the family-root's loss_well_defined for this
+# cascade. Commitment that the substrate-typed gap calculation IS
+# computable for the (program, artifact) pair; the program IS in
+# @code/turing grammar (well-formed), the artifact's substrate-
+# value IS content-addressed per @mirror/store discipline, and
+# the pair represents a valid cascade discharge
+# (`apply_turing_mirror` produced THIS artifact from THIS program).
+#
+# Splinter-pole: cascade-pair coherent; measurement well-defined;
+# gap dimensions dischargeable per @epistemologic/properties
+# composite.
+# Narcissus-pole: source/artifact grammar mismatch OR pair does
+# not represent a genuine cascade discharge; measurement
+# undefined.
+
+bilateral turing_mirror_loss_well_defined {
+  sentinel "cascade=source-artifact-pair-discharge-witnessed"
+  arity 2
+}
+turing_mirror_loss_well_defined(prog: program, artifact: mirror_artifact, p: perturbation)
+  -> verdict { \ }
+
+# === cascade_turing_mirror_admissible bilateral ===
+#
+# THE LOAD-BEARING composed bilateral for THIS species. Witnesses
+# that the Turing tape → mirror substrate cascade produces a
+# mirror-substrate-consumable outcome — that is, the resulting
+# ref IS composable via @glue.compose with existing mirror
+# substrate carriers at their own altitudes (@glass verdicts,
+# @nl strings, @prism five-op prisms).
+#
+# Per Alex 2026-07-17 verbatim ratification: mirror ALREADY
+# treats tapes as one linear serialization target; the cascade
+# lifts the tape into mirror's graph altitude such that the
+# outcome participates in mirror substrate composition natively.
+# The admissibility check is whether the outcome IS substrate-
+# consumable at the mirror altitude — not a semantic-preservation
+# claim (that's discharged at earlier edges), but a substrate-
+# composition claim.
+#
+# Splinter-pole: mirror_artifact.substrate_value IS content-
+# addressed per @mirror/store; IS composable via @glue.compose
+# with @glass/@nl/@prism carriers; participates natively in
+# mirror substrate composition; no pre-processing required by
+# downstream consumers.
+# Narcissus-pole: substrate-value not properly content-
+# addressed; @glue.compose discharge fails; incomposable with
+# mirror-native carriers; downstream consumers require ad-hoc
+# lifting.
+#
+# Sentinel `cascade=mirror-substrate-consumable` per Mara
+# `701828a` §1 byte-containment: content-addressed check on the
+# cascade-outcome OID vs the substrate-consumption invariant.
+# Rice-safe per Mara `701828a` — the CHECK is byte-level; the
+# check discharges by structural inspection of the outcome ref's
+# composability with @glue.compose signature (per
+# `shards/glue.mirror`).
+
+bilateral cascade_turing_mirror_admissible {
+  sentinel "cascade=mirror-substrate-consumable"
+  arity 1
+}
+cascade_turing_mirror_admissible(cascade_outcome: mirror_artifact) -> verdict { \ }
+
+# === turing_mirror_cascade_well_formed composed bilateral ===
+#
+# Specialization of @cascade.cascade_well_defined for this cascade
+# instance. Composes the sub-predicates at this altitude per the
+# landed cascade composed-bilateral shape.
+#
+# requires turing_well_formed(prog): source tape program passes
+# @code/turing.turing_well_formed per Mara `7186410`.
+# requires mirror_consumption_coherent(unlabel(artifact, p),
+# label_of(artifact, p), p): target-side consumption well-formed;
+# uses @labeled.unlabel + @labeled.label_of to extract substrate-
+# value and metadata from the artifact.
+# requires turing_mirror_loss_well_defined(prog, artifact, p):
+# loss measurement computable.
+# requires cascade_turing_mirror_admissible(artifact): outcome
+# mirror-substrate-consumable per @glue.compose composability.
+#
+# All four must hold; substrate refuses cascade if source tape
+# program ill-formed OR consumption incoherent OR loss undefined
+# OR outcome not mirror-substrate-consumable.
+#
+# Splinter-pole: all four discharge; substrate-typed loss
+# returned; cascade admissible per polyglot spec §5.3
+# threshold gate; outcome enters mirror substrate composition
+# natively.
+# Narcissus-pole: at least one sub-predicate fails; cascade
+# blocked; @fate re-selects per polyglot spec §6.
+
+bilateral turing_mirror_cascade_well_formed {
+  sentinel "cascade=all-sub-bilaterals-discharge"
+  arity 2
+}
+turing_mirror_cascade_well_formed(prog: program, artifact: mirror_artifact, p: perturbation)
+  -> verdict
+requires turing_well_formed(prog)
+requires mirror_consumption_coherent(unlabel(artifact, p), label_of(artifact, p), p)
+requires turing_mirror_loss_well_defined(prog, artifact, p)
+requires cascade_turing_mirror_admissible(artifact)
+{ \ }
+
+# === outbound declarations ===
+
+out @cascade/code/turing/mirror
+out turing_source
+out mirror_consumption_metadata
+out mirror_artifact
+out apply_turing_mirror
+out bundle_mirror
+out measure_turing_mirror
+out mirror_consumption_coherent
+out turing_mirror_loss_well_defined
+out cascade_turing_mirror_admissible
+out turing_mirror_cascade_well_formed
