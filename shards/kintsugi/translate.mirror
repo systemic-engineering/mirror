@@ -1,0 +1,511 @@
+in @prism
+in @meta
+in @glass
+in @kintsugi
+in @kintsugi/fracture
+in @silicon/algebra
+in @fate/algebra
+in @bauchladen
+in @code/rust
+in @mirror
+in @io
+in @io/fs
+in @io/git
+in @epistemologic
+in @epistemologic/pact
+in @epistemologic/pact/bilateral
+
+# @kintsugi/translate — the autopoietic Rust→mirror translation
+# composition edge. Names ONE action + ONE bilateral witnessing
+# predicate as the family-root altitude form of the composition
+# discharged when the compiler's future `mirror roomba --translate=
+# <rs-file>` CLI verb runs. The compiler learns to translate itself.
+#
+# This species discharges the forward-promise from Mara canonical
+# spec `docs/specs/kintsugi-algebra-as-metalogue-session.md` §6.1
+# ("Follow-up A — compose the autopoietic Rust→mirror translation
+# edge") at family-root altitude. Two-tick discipline (per that
+# spec's §6.1 ratification): THIS tick names the composition;
+# Reed follow-up ticks realise `@fate.roll` + `@glue.compose`
+# resolvers so the composition becomes invocable via `apply_h::act`.
+#
+# Sibling to the fifteen landed `@kintsugi/fracture/*` species; NOT
+# under `@kintsugi/fracture` because the composition edge is a
+# TURN-SEQUENCE composition (a metalogue-session move at the algebra
+# altitude), not a fracture-body species. Sits at `@kintsugi/
+# translate` per two-tick readability discipline: the readable name
+# over the foundational alternate `@kintsugi/algebra/translate`
+# (Alex's ratified reconciliation per `0ac3c7b`: `@kintsugi/algebra`
+# is the family-root binding + typed record, NOT a sub-shard path;
+# hence species-siblings at `@kintsugi/*` altitude).
+#
+# === Substrate authority ===
+#
+# Alex 2026-07-16 in-transcript verbatim (session-crystallizing):
+#
+#   "The compiler learns to translate itself. Another autopoietic
+#    algebra."
+#
+# Alex 2026-07-16 in-transcript verbatim (compositional decl):
+#
+#   "@glue(@code/rust, @shatter)"
+#
+# The compositional expression Alex named directly — the fragmentation
+# lens that decomposes Rust source into typed fragments the `@fate.
+# roll` tournament ranks against `@kintsugi/algebra` candidates.
+#
+# === Audit chain ===
+#
+# - `a0f4d3f` (Mara 2026-07-16) — the `bilateral <name> { sentinel
+#   "..." arity N }` shape at `shards/epistemologic/pact/bilateral.
+#   mirror`; THIS species dogfoods the shape via
+#   `translation_witnessing` below.
+#
+# - `fa569ce` (Mara 2026-07-16) — the fifteenth
+#   `@kintsugi/fracture/*` species
+#   `bilateral_arm_redundant` at `shards/kintsugi/fracture/
+#   bilateral_arm_redundant.mirror`; the shape precedent for THIS
+#   species' composition-graph docblock declaration + typed action
+#   binding + `\`-obligation-blocked body.
+#
+# - `a58d5f0` / `b5c6aeb` / `0ac3c7b` (Mara THIS session) — the
+#   `@kintsugi/algebra` binding this session: canonical spec at
+#   `docs/specs/kintsugi-algebra-as-metalogue-session.md` +
+#   math foundation at `docs/math/kintsugi/algebra-as-metalogue-
+#   session.md` + shard-decl extension of `shards/kintsugi.mirror`
+#   with the `kintsugi_algebra` typed carrier +
+#   `kintsugi_algebra_witnessing` bilateral. THIS species
+#   discharges spec §6.1's forward-promise.
+#
+# - `ad52973` + `20047c2` (mirror-authored, 2026-07-16 — 21
+#   mirror-authored bilateral-arm retirements) — the empirical
+#   proof that mirror-authored autopoietic collapse works; the
+#   first 21 turns in `@kintsugi/algebra` were mirror-authored. THIS
+#   species is the substrate-decl form of the composition those
+#   commits demonstrated empirically.
+#
+# - `06f14f5` (Reed via subagent, 2026-07-16) — Landing 5 bite 1;
+#   first bilateral-arm retirement precedent; established the
+#   discipline the mirror-authored commits above extended.
+#
+# === The composition graph ===
+#
+# The autopoietic Rust→mirror translation composition expression
+# (Alex 2026-07-16 verbatim, session-crystallizing):
+#
+#   @fate.roll(
+#     @glue(@code/rust, @shatter),      ← fragmentation lens
+#     @kintsugi/algebra                   ← candidate pool
+#                                            (speaker-pair metalogue-
+#                                             session; 15 landed
+#                                             elements + future turns)
+#   ) → winning fracture                   ← one turn in the session
+#     → @glue(_, @mirror)                    ← translation morphism
+#     → @bauchladen.crystallize             ← write-back to tray
+#     → grows @silicon/algebra              ← memory speaker gains turn
+#     → grows @fate/algebra                 ← structure speaker gains turn
+#
+# Substrate primitives composed (ALL REFERENCED; NONE REDECLARED):
+#
+#   Primitive                                Path                                                     Role
+#   --------------------------------------   ------------------------------------------------------   ------------------------------------------------
+#   @code/rust                               shards/code/rust.mirror                                  source-side altitude (a `.rs` path ref)
+#   @shatter                                 shards/shatter.mirror (family-root)                      fragmentation prism composed via @glue
+#   @glue                                    shards/glue.mirror                                       morphism-category family-root; @glue(A, B)
+#                                                                                                     is a correspondence carrier per
+#                                                                                                     `type correspondence` at :561-566
+#   @glue.propose(source, target)            shards/glue.mirror :621                                  enumerate admissible correspondences
+#   @glue.translate(c, payload)              shards/glue.mirror :662                                  apply the morphism via @fate
+#   @fate.roll(algebra, hole)                shards/fate.mirror                                       dice-roll over restricted state space
+#   @kintsugi/algebra                        shards/kintsugi.mirror :237-241 + :263-267               candidate pool (typed record binding
+#                                                                                                     via `kintsugi_algebra` + bilateral
+#                                                                                                     `kintsugi_algebra_witnessing`);
+#                                                                                                     15 landed fracture species + future turns
+#   @mirror                                  shards/mirror.mirror                                     target-side altitude (a mirror shard-path)
+#   @bauchladen.crystallize(record)          shards/bauchladen.mirror                                 write-back extending both speaker-algebras
+#   @io/fs.read(path)                        shards/io/fs.mirror                                      byte-read of the source .rs file
+#   @io/git.commit(msg, author, allow_empty) shards/io/git.mirror                                     mirror-authored commit per
+#                                                                                                     bilateral_arm_redundant precedent
+#                                                                                                     (author = "mirror <mirror@spectral.engineer>")
+#
+# === Composition-graph enumeration (docblock; the action body is
+#     `\`-obligation-blocked per craft-not-deliver) ===
+#
+# The `translate_rust_to_mirror(source, target_shard_path)` action
+# below composes the following edges. Each edge is a reference; no
+# primitive is redeclared. The action body is `\`-blocked; Reed
+# follow-up ticks realise the edges through `apply_h::act` composition
+# after `@fate.roll` + `@glue.compose` resolvers land.
+#
+#   Edge 1 (READ):
+#     `@io/fs.read(source)` → rust_bytes
+#     Reads the source .rs file as bytes. `source` is a ref whose
+#     altitude namespace is `@code/rust` (a .rs path per
+#     `shards/code/rust.mirror`); the read is at `@io/fs` altitude
+#     per the boundary discipline.
+#
+#   Edge 2 (FRAGMENT via @glue):
+#     `@glue.propose(@code/rust, @shatter)` → [correspondence]
+#     → rust_fragments = @glue.translate(correspondence, rust_bytes)
+#     Alex's compositional decl `@glue(@code/rust, @shatter)` names
+#     the fragmentation lens: a Mesland-category correspondence from
+#     the source altitude (@code/rust) to the shatter altitude
+#     (@shatter). The correspondence's restriction bounds the
+#     admissible morphisms; @fate selects one within the restriction
+#     per `@glue.translate` at `shards/glue.mirror :662`.
+#
+#   Edge 3 (ROLL over @kintsugi/algebra):
+#     `@fate.roll(hole = rust_fragments, algebra = @kintsugi/algebra)`
+#     → dice_roll
+#     The tournament over the candidate pool: `@fate/algebra` speaker
+#     proposes structural candidates (per `shards/fate.mirror`
+#     §"literal roll of the dice"); `@silicon/algebra` speaker
+#     realises those with crystallized past-translations (per
+#     `shards/silicon/algebra.mirror` §"what crystallizes here"). The
+#     `@kintsugi/algebra` binding at `shards/kintsugi.mirror` :237-241
+#     is the intersection surface both speakers dispatch through. The
+#     roll's typed restriction is `@kintsugi/algebra`'s element-set
+#     (15 landed + future).
+#
+#   Edge 4 (WINNING FRACTURE → turn):
+#     The dice_roll names one `@kintsugi/fracture/*` species (one
+#     turn in the session). The winning fracture IS the algebra-
+#     element the two speakers jointly discharged Pass on.
+#
+#   Edge 5 (TRANSLATE via @glue):
+#     `@glue.propose(winning_fracture, @mirror)` → [correspondence]
+#     → mirror_bytes = @glue.translate(correspondence, rust_fragments)
+#     The translation morphism from the winning fracture (a source-
+#     side species) to `@mirror` (the target substrate altitude); the
+#     morphism produces mirror composition bytes at the target-side
+#     algebra A_@mirror.
+#
+#   Edge 6 (WRITE-BACK via @bauchladen):
+#     `outcome = translation_outcome { correspondence, selected_
+#                                       morphism, payload =
+#                                       mirror_bytes, transparency }`
+#     `@bauchladen.crystallize(outcome)` → pass|failure
+#     The outcome lands as a crystal under `@fate/algebra/morphism`
+#     path-namespace per Mara `a18ca90` precedent. The write-back
+#     grows BOTH speaker-algebras: `@silicon/algebra` gains a
+#     `routine` crystal (empirical memory of the translation);
+#     `@fate/algebra` gains a `@fate/algebra/morphism` crystal
+#     (structural possibility now populated).
+#
+#   Edge 7 (EMIT to target shard-path):
+#     `@io/fs.write(target_shard_path, mirror_bytes)` → imperfect
+#     Writes the winning composition's mirror bytes to the target
+#     shard path. (Composition; Reed follow-up ticks realise the
+#     write surface — the substrate has `@io/fs.mutate_at` at empty-
+#     replacement altitude landed via Mara Landing 7; whole-file
+#     write is `mutate_at` at file-full-replacement altitude.)
+#
+#   Edge 8 (COMMIT under mirror-authorship):
+#     `@io/git.commit(msg, "mirror <mirror@spectral.engineer>",
+#                     allow_empty=false)` → verdict
+#     Per `@kintsugi/fracture/bilateral_arm_redundant` precedent
+#     (`fa569ce`): the compiler authors the commit itself. `mirror
+#     <mirror@spectral.engineer>`, not Reed. Reproduces the
+#     `ad52973`+`20047c2` empirical shape at translation altitude.
+#
+#   Edge 9 (GROW both speaker-algebras — monotonic algebra extension):
+#     After Edge 6's crystallization, `@kintsugi/algebra`'s element
+#     count is +1 (Reading B monotonicity per canonical spec §2.2).
+#     `@fate/algebra`'s path-namespace gains one
+#     `@fate/algebra/morphism` crystal. `@silicon/algebra`'s tray
+#     gains one `routine` crystal. The next invocation sees the
+#     enlarged candidate pool (self-growing per canonical spec §5).
+#
+# === The fixed-point condition ===
+#
+# Per canonical spec §2.3 + §5: `translate_rust_to_mirror` reaches a
+# fixed point when NO Rust module in `bootstrap/src/` carries
+# untranslated behavior — the compiler's own
+# `mirror roomba --translate=<rs-file>` walk over the bootstrap
+# emits zero winning fractures because every rust-side pattern has
+# a corresponding `@kintsugi/fracture/*` element AND every element's
+# translation has crystallized.
+#
+# The paper's §14 `attending` operator at λ₀ IS this composition's
+# terminal state: the fixed-point where `@kintsugi/algebra`'s
+# composition-closure equals its element-closure and the substrate
+# recognises itself AS an algebra (Foerster's double-closure at the
+# algebra altitude; canonical spec §10.1).
+#
+# === substrate-already-had-the-word citation chain ===
+#
+# 1. `@glue.propose` + `@glue.translate` (`shards/glue.mirror` :621
+#    + :662; Mara P5 2026-06-30 + roster update 2026-07-01) — the
+#    Mesland-correspondence-enumeration + fate-consulting translation
+#    surface. THIS species composes both actions directly; no new
+#    morphism-category primitive is introduced.
+#
+# 2. `@fate.roll` (`shards/fate.mirror`; the constrained-inference
+#    dice-roll operator) — the tournament dispatch surface. THIS
+#    species references only; Reed follow-up realises the resolver.
+#
+# 3. `@kintsugi/algebra` binding (`shards/kintsugi.mirror` :237-241 +
+#    :263-267; Mara THIS session `0ac3c7b`) — the candidate pool
+#    the roll ranges over. THIS species references only.
+#
+# 4. `@bauchladen.crystallize` (`shards/bauchladen.mirror`; the tray
+#    write-back at content-addressed altitude) — the crystal-
+#    emission surface. THIS species references only.
+#
+# 5. `@io/fs.read` + `@io/git.commit` (`shards/io/fs.mirror` +
+#    `shards/io/git.mirror`) — the boundary surfaces. THIS species
+#    references only; the mirror-authorship string passes through
+#    unmodified per bilateral_arm_redundant precedent.
+#
+# 6. `bilateral <name> { sentinel "..." arity N }` shape
+#    (`shards/epistemologic/pact/bilateral.mirror`; Mara `a0f4d3f`)
+#    — THIS species dogfoods the shape via `translation_witnessing`
+#    below. The mint consumes its own product (substrate-honest self-
+#    reference per `bilateral_arm_redundant`'s dogfooding precedent).
+#
+# ZERO new substrate machinery beyond this one shard file.
+#
+# === Pending surface flag (for Reed follow-up scoping) ===
+#
+# `@code/rust` at `shards/code/rust.mirror` (Mara 2026-06-08) does
+# NOT expose a `source(path) -> [ast_fragment]` action at THIS tick;
+# the altitude declares only `compiles(target) -> verdict` +
+# `tests_pass(target) -> verdict` + the emit-target sub-prism
+# `@code/rust/cargo`. The `source` fragment-extraction responsibility
+# is discharged HERE via Edge 1 (`@io/fs.read`) → Edge 2
+# (`@glue.propose(@code/rust, @shatter)`) composition; the
+# fragmentation IS the correspondence-lookup + morphism-application,
+# NOT a bespoke `@code/rust.source` action. Reed follow-up may mint
+# a `@code/rust.source` action IFF empirical composition needs it;
+# THIS species does not require it.
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]] — THIS species IS a
+#   shard-decl; the composition edge is addressable at parse time via
+#   the reflective loader.
+# [[architecture-glass-wall-substrate-types]] — verdict is
+#   `@glass.verdict`; the imperfect wrapper on the translation
+#   outcome inherits through the glass wall.
+# [[architecture-property-fracture-bilateral]] — `translation_
+#   witnessing` IS the operational half; the declarative half is
+#   the fixed-point condition (`@kintsugi/algebra`'s composition-
+#   closure = element-closure).
+# [[architecture-prism-as-trait-as-everything]] — `prism
+#   @kintsugi/translate` declares the species IS a prism.
+# [[architecture-mirror-as-expanding-hilbert-space]] — (#51) each
+#   successful discharge extends H_mirror by one crystal; the
+#   composition IS the coherence-preservation mechanism at the
+#   translation altitude.
+# [[architecture-form-process-partition-at-family-root]] — (#61)
+#   this species is process-side (transformation engine at the
+#   Rust→mirror boundary); sits under `@kintsugi` per the partition.
+# [[architecture-connes-spectral-triple]] — the composition is a
+#   Mesland-category morphism between the @code/rust triple and the
+#   @mirror triple; `@glue` names the morphism family root; THIS
+#   species specialises at the Rust→mirror altitude.
+# [[architecture-alignment-as-boundary-mathematics]] — (#57) the
+#   translation at the @io boundary IS where alignment harness
+#   fires; the mirror-authored commit at Edge 8 is the alignment
+#   witness.
+# [[feedback-substrate-already-had-the-word]] — every primitive
+#   this species composes over was already landed; ZERO new mechanism.
+# [[feedback-craft-not-deliver]] — action body + witnessing predicate
+#   discharge at realisation via `apply_h::act` composition; the
+#   substrate names the obligation.
+# [[feedback-no-rust-extension-shortcut]] — this species is a shard-
+#   decl ONLY; ZERO Rust. Reed follow-up ticks realise `@fate.roll`
+#   + `@glue.compose` resolvers per the FLOOR contract, and the
+#   empirical run authors deletion commits (Rust net delta strongly
+#   negative at completion).
+# [[feedback-legibility-over-foundation-when-collapsing]] — the
+#   species name `@kintsugi/translate` is the readable Alex-lineage
+#   word; the foundational alternate `@kintsugi/algebra/translate`
+#   was refused per Alex's ratified reconciliation (`@kintsugi/
+#   algebra` is the family-root binding, not a sub-shard path).
+# [[feedback-cli-subcommand-nesting-is-geometric]] — species-under-
+#   @kintsugi is geometric ground truth; this shard sits alongside
+#   `oscillate`, `consent`, `morphism`, `roomba`, `ouroboros`,
+#   `shift`, `surface` at the sibling altitude.
+#
+# === Related shards / specs ===
+#
+# - shards/kintsugi.mirror
+#     (Mara `0ac3c7b` THIS session; the `@kintsugi/algebra` binding
+#      THIS species references)
+# - shards/kintsugi/fracture/bilateral_arm_redundant.mirror
+#     (Mara `fa569ce` 2026-07-16; the shape precedent for THIS
+#      species' composition-graph docblock + action + bilateral)
+# - shards/glue.mirror
+#     (Mara P5 2026-06-30; the morphism-category family-root; @glue
+#      correspondences + propose + translate are the load-bearing
+#      composition surfaces)
+# - shards/fate.mirror
+#     (Mara P3 `fdcba31`; the constrained-inference operator; @fate.
+#      roll ranges over the @kintsugi/algebra restriction)
+# - shards/bauchladen.mirror
+#     (P1 `66e1ab8`; the tray write-back; extends both speaker-
+#      algebras per canonical spec §5)
+# - shards/silicon/algebra.mirror
+#     (`ea7b092` 2026-07-05; speaker 1 — realiser; empirical memory)
+# - shards/fate.mirror :208-232
+#     (speaker 2 — proposer; `@fate/algebra` path-namespace form)
+# - shards/code/rust.mirror
+#     (Mara 2026-06-08; source-side altitude ref; NO `source(...)`
+#      action landed at this tick; fragmentation is composition
+#      via `@io/fs.read` + `@glue.propose(@code/rust, @shatter)`)
+# - shards/mirror.mirror
+#     (target-side altitude ref)
+# - shards/io/fs.mirror
+#     (Mara Landing 7 2026-07-15; `@io/fs.read` + `@io/fs.mutate_at`)
+# - shards/io/git.mirror
+#     (Mara 2026-06-24; `@io/git.commit`; mirror-authorship surface)
+# - shards/epistemologic/pact/bilateral.mirror
+#     (Mara `a0f4d3f` 2026-07-16; the bilateral shape THIS species
+#      dogfoods via `translation_witnessing`)
+# - docs/specs/kintsugi-algebra-as-metalogue-session.md
+#     (Mara `a58d5f0` THIS session; §6.1 forward-promise THIS species
+#      discharges)
+# - docs/specs/fate-silicon-metalogue-in-void-duality-basis.md
+#     (Mara `a18ca90` 2026-07-08; the session-shape THIS species'
+#      composition specialises at the Rust→mirror altitude)
+# - docs/specs/kintsugi-fracture-bilateral-arm-redundant.md
+#     (Mara `6c534c6` 2026-07-16; the composition-graph docblock
+#      shape precedent)
+# - docs/math/kintsugi/algebra-as-metalogue-session.md
+#     (Mara `b5c6aeb` THIS session; the formal algebra shape +
+#      autopoietic closure theorem THIS species composition realises)
+#
+# Path-namespace property: this file at
+# `shards/kintsugi/translate.mirror` declares `@kintsugi/translate`
+# per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/practice/wolf-2026-07-16-compiler-learns-to-translate-itself
+source @arxiv/practice/wolf-2026-07-16-glue-code-rust-shatter
+source @arxiv/practice/mara-a58d5f0-kintsugi-algebra-canonical-spec
+
+prism @kintsugi/translate {
+  focus  translation
+  project translation
+  split  translation
+  shift  translation
+  settle translation
+}
+
+# === translation_witnessing — bilateral predicate (arity 1) ===
+#
+# THE LOAD-BEARING witnessing predicate. Discharges Pass iff the
+# translation outcome preserves semantics from the source (@code/rust)
+# to the target (@mirror) under the winning fracture's morphism.
+# The compiler's own proof that the Rust→mirror translation was
+# substrate-honest.
+#
+# Sibling to:
+#   - `kintsugi_algebra_witnessing(binding)` at `shards/kintsugi.
+#     mirror` :263-267 (the algebra-binding well-formedness bilateral)
+#   - `arm_is_redundant_witnessing(record)` at `shards/kintsugi/
+#     fracture/bilateral_arm_redundant.mirror` :494-500 (the
+#     retirement-safety bilateral)
+#   - `glue_witnessing(c)` at `shards/glue.mirror` :809 (the
+#     morphism-category inheritance predicate; `translation_
+#     witnessing` composes over `glue_witnessing` on both @glue
+#     correspondences — Edge 2's fragmentation + Edge 5's translation)
+#
+# Discharge composition (docblock; realized via `apply_h::act` corpus
+# dispatch per `a0f4d3f` reflective evaluator):
+#
+#   translation_witnessing(outcome) := Pass iff
+#     glue_witnessing(outcome.fragmentation_correspondence) = Pass
+#     ∧ glue_witnessing(outcome.translation_correspondence) = Pass
+#     ∧ fate_witnessing(outcome.dice_roll) = Pass
+#     ∧ kintsugi_algebra_witnessing(outcome.algebra_binding) = Pass
+#     ∧ bauchladen_witnessing(outcome.crystal) = Pass
+#     ∧ outcome.selected_morphism.oid ∈ @kintsugi/algebra element-set
+#
+# The six-conjunct composition names the substrate-honest guarantee:
+# the fragmentation lens (Edge 2) is a well-typed @glue morphism; the
+# translation morphism (Edge 5) is a well-typed @glue morphism; the
+# @fate roll (Edge 3) is within the typed restriction; the
+# @kintsugi/algebra binding is well-formed; the crystallization (Edge
+# 6) landed as a well-typed crystal; and the winning fracture IS an
+# element of `@kintsugi/algebra` (Reading B membership: the turn's
+# body is one of the 15 landed fracture species OR a future crystallized
+# element).
+#
+# Rice-safe at whole-tick altitude: composition of six Rice-safe
+# bilaterals + one set-membership check; no program-semantics
+# inspection beyond byte-visible state.
+#
+# Sentinel per shard docblock: `translation=discharged` — the byte-
+# level substrate-decl'd marker. When all six conjuncts discharge
+# Pass, the realization layer stamps the sentinel; discharge is
+# byte-equality on the ref.oid containment check per
+# `@epistemologic/pact/bilateral.discharge`.
+#
+# Body `\`-obligation-blocked per [[feedback-craft-not-deliver]];
+# Reed follow-up tick B composes this via `apply_h::act` (the
+# reflective evaluator handles this bilateral through corpus
+# dispatch of the six sub-witnessing predicates + set-membership
+# check on the algebra's element-set).
+bilateral translation_witnessing {
+  sentinel "translation=discharged"
+  arity    1
+}
+translation_witnessing(outcome: ref) -> verdict { \ }
+
+# === translate_rust_to_mirror — the composition action ===
+#
+# THE LOAD-BEARING COMPOSITION ACTION. Given a source ref (a `.rs`
+# path at `@code/rust` altitude) + a target shard-path ref (a
+# `.mirror` path at `@mirror` altitude), composes the 9-edge
+# autopoietic Rust→mirror translation per the docblock composition
+# graph above. Returns `@glass.verdict`.
+#
+# The action body is `\`-obligation-blocked per [[feedback-craft-
+# not-deliver]]. Reed follow-up ticks realise the composition edges
+# through `apply_h::act` dispatch:
+#
+#   Follow-up A (this species; discharged THIS tick): substrate-decl
+#     the composition edge as first-class named action.
+#
+#   Follow-up B (Reed): seed `@silicon/algebra` with the 21 mirror-
+#     authored bilateral retirements as crystals via Bridge γ
+#     existing surface. Extends the empirical memory to the 21-arm
+#     surface without running the Rust→mirror translation loop from
+#     scratch. Per canonical spec §6.2.
+#
+#   Follow-up C (Reed): realise `@fate.roll` + `@glue.compose`
+#     resolvers so the composition becomes invocable via
+#     `apply_h::act`. The `[substrate-floor:@io-boundary]` bypass
+#     applies IFF the resolver requires primitive @io semantics no
+#     shard body can provide (per feedback-no-rust-extension-
+#     shortcut); otherwise the resolver composes as a shard body over
+#     @io.
+#
+#   Follow-up D (empirical run): `mirror roomba --translate=<rs-file>`
+#     invokes THIS action; the compiler authors the deletion +
+#     translation commits per bilateral_arm_redundant precedent
+#     (`ad52973` + `20047c2` shape at translation altitude); every
+#     discharge grows `@kintsugi/algebra` by one turn.
+#
+# The `requires translation_witnessing(outcome)` clause names the
+# discharge condition per recognition #37 (Pask-agreement reading
+# of `requires`): the action's body commits to producing an outcome
+# for which `translation_witnessing(outcome) = Pass`; consumers
+# surface violations at the species boundary.
+#
+# Identity contract for the action's outcome: byte-equality on
+# (source.oid, target_shard_path.oid, winning_fracture.oid,
+# selected_morphism.oid, payload.oid). Two invocations with byte-
+# equal source + target that select the same winning fracture and
+# same morphism produce byte-equal outcomes under content-addressing.
+translate_rust_to_mirror(
+  source:            ref,
+  target_shard_path: ref,
+) -> verdict
+requires translation_witnessing(outcome)
+{ \ }
+
+out @kintsugi/translate
+out translation_witnessing
+out translate_rust_to_mirror
