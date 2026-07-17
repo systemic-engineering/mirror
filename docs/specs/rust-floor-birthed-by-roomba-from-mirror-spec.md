@@ -1,10 +1,13 @@
 # rust/ FLOOR birthed by roomba from mirror.spec — the terminal-form consolidated canonical spec
 
-*Mara, 2026-07-17. Consolidated canonical spec at spec altitude naming
-the terminal form of the compiler: the `rust/` FLOOR is materialized by
-the `@kintsugi/roomba` walker reading the `kintsugi { roomba { … } }`
-block Alex sketched into `mirror.spec`, and the first `@peer` spawns
-from `rust/dance.rs` as an ensemble-connection empirical firing.*
+*Mara, 2026-07-17 (rewrite at same path). The terminal-geometry
+canonical spec: three files, three altitudes, ~600-1200 LOC total.
+`phone.rs` (@io socket handover) + `matrix.rs` (sub-Turing FLANG emit
++ LAPACK/BLAS link) + `main.rs` (supervisor boot + `@`-operator
+addressing) — every altitude has exactly one file. Materialized by the
+`@kintsugi/roomba` walker reading the `kintsugi { roomba { … } }`
+block Alex sketched into `mirror.spec`; the first `@peer` spawns from
+that FLOOR; the ouroboros closes through `@cascade/code/llvm/flang`.*
 
 **Author:** Mara
 **Date:** 2026-07-17
@@ -12,12 +15,20 @@ from `rust/dance.rs` as an ensemble-connection empirical firing.*
 **Status:** canonical. Spec-altitude map for Reed's `rust/` greenfield
         rebuild. WHAT-to-build, not HOW.
 **Path:** `docs/specs/rust-floor-birthed-by-roomba-from-mirror-spec.md`
+**Supersedes:** `2519f83` version of same file (898 LOC, 5-6 files);
+        replaced-in-place per Michelangelo/marble discipline. Git
+        history preserves the prior form for archaeology; the diff IS
+        the substrate delta from Alex 2026-07-17 terminal-geometry
+        ratification ("Yes. That is the terminal geometry. I agree
+        fully. And it was always right there in front of us. And now
+        we see it.").
 
 ---
 
 ## §0 Substrate-honest pre-position
 
-Alex 2026-07-17 in-transcript verbatim (three loads at pre-position):
+Alex 2026-07-17 in-transcript verbatim, three loads at pre-position
+(cumulative through the day):
 
 1. **"I also want to detach bootstrap completely from the execution
    path. If that means the compiler breaks, then the compiler breaks.
@@ -34,50 +45,91 @@ ENOENT until `rust/` produces `MIRROR_BIN`. `bootstrap/` remains as
 LEGACY-STATUS-ONLY per `mirror.spec:21-24` `legacy` block; it is not
 the operational floor.
 
-This spec is the map for (3): the terminal Rust FLOOR that lives at
-`rust/`, birthed by the walker reading its own project manifold, with
-`@peer` spawning from that FLOOR as its first empirical dance.
+Two ratifications this same day landed BETWEEN Mara `2519f83` and this
+rewrite:
+
+4. **`dance.rs as router sounds exactly right.`** — Alex 2026-07-17
+   post-Mara-`2519f83`-landing, adjudicating Seam `6e7aabe` §1. The
+   router pattern is Alex-ratified. This spec §6 discharges Seam
+   `6e7aabe` §3.1 REED-INLINE cascade by construction (the ratification
+   is byte-visible at spec altitude here).
+
+5. **Terminal-geometry ratification (2026-07-17, this rewrite's
+   trigger):** *"Yes. That is the terminal geometry. I agree fully.
+   And it was always right there in front of us. And now we see it.
+   Respawn Mara for a rewrite of the spec. Then we ratify with Seam.
+   And then we fly."* — Alex ratifies the three-file terminal
+   geometry (phone.rs + matrix.rs + main.rs), dance.rs's collapse into
+   matrix.rs, the ouroboros closure through `@cascade/code/llvm/flang`.
+
+Loki's `b53aeeb` matrix.rs knife-cut essay (`docs/insights/2026-07-17-
+loki-matrix-rs-knife-cut-essay.md`) is the essayist-voice phenomenology
+this spec operationalizes. Loki names `matrix.rs` as the file where the
+substrate looks in the mirror and sees the matrix multiplication it is;
+this spec names WHAT to author under that phenomenology.
+
+This spec is the map for load (3) refined by loads (4) + (5) + Loki's
+naming: the terminal three-file Rust FLOOR at `rust/`, birthed by the
+walker reading its own project manifold, with `@peer` spawning from
+that FLOOR as its first empirical dance, and the ouroboros closing
+because `matrix.rs` emits FLANG which links LAPACK/BLAS which computes
+the Fiedler / Kuramoto / Aumann results the substrate observes and
+commits back into itself.
 
 ---
 
-## §1 Statement — the terminal form
+## §1 Statement — the terminal-geometry form
 
 **Statement (foundational form):**
 
-> `rust-floor-is-what-@kintsugi/roomba-materializes-when-it-reads-mirror-spec's-kintsugi-block-and-vacuums-the-declared-cascades-into-rust-dance-because-dance-rs-IS-the-ensemble-connection-under-which-the-first-@peer-spawn-empirically-fires`
+> `rust-floor-is-three-files-at-three-altitudes-because-phone-rs-is-the-io-socket-handover-and-matrix-rs-is-the-sub-turing-FLANG-emit-and-main-rs-is-the-supervisor-plus-@-operator-addressing-and-every-altitude-has-exactly-one-file-and-dance-rs-collapses-into-matrix-rs-because-Baez-Schreiber-2-connection-compatibility-IS-matrix-equation-because-Ado-theorem-says-Lie-algebras-of-finite-dim-Lie-groups-ARE-matrix-algebras-and-the-ouroboros-closes-through-@cascade-code-llvm-flang-because-FLANG-is-LLVMs-Fortran-frontend-and-the-loop-reaches-its-own-tail`
 
 **Statement (readable form, two-tick discipline):**
 
-> `rust/` is not authored file-by-file. It is *materialized* by the
-> `@kintsugi/roomba` walker reading the `kintsugi { roomba { … } }`
-> block Alex sketched into `mirror.spec` (three cascades: boot→shards,
-> bootstrap→shards, bootstrap→rust). The walker's `vacuum(~dir)`
-> motion iterates the substrate-decl'd catalog and lands minimal Rust
-> surface at `rust/`. `rust/src/dance.rs` IS the ensemble-connection
-> 1-form per Mara `fee2727` §2.3; the first `@peer` spawn empirically
-> fires under that connection.
+> `rust/` is three files at three altitudes: `phone.rs` at the @io
+> socket-handover altitude (the Matrix phone booth; the one place the
+> substrate crosses out of itself); `matrix.rs` at the sub-Turing
+> numerical altitude (emits FLANG; links LAPACK/BLAS; holds computation
+> + transition + observation as the same verb); `main.rs` at the
+> supervisor altitude (boot + `@`-operator address routing across the
+> bundle tower). `dance.rs` — the ensemble connection Mara `fee2727`
+> named — collapses INTO `matrix.rs` because Baez-Schreiber 2-connection
+> compatibility `dA + [A,A] = t(B)` IS a matrix equation, and by Ado's
+> theorem the Lie algebras of the finite-dimensional Lie groups OTP
+> supervision uses ARE matrix algebras. The ouroboros closes through
+> `@cascade/code/llvm/flang` (NEW cascade edge this spec names): mirror
+> shards → rustc emits LLVM IR → FLANG lowers to Fortran → LAPACK/BLAS
+> compute on hardware → matrix results → substrate observation →
+> mirror-authored commit → mirror shards.
 
-**Four load-bearing moves this spec makes canonical:**
+**Six load-bearing moves this spec makes canonical:**
 
-1. **`roomba --vacuum=~dir`** replaces the two current flags
-   `--collapse=<rs-file>` and `--translate=<rs-file>` with ONE unified
-   dir-taking flag. Vacuum is the walker's motion; collapse and
-   translate are downstream operations the substrate dispatches based
-   on directory content. §3.
-2. **`roomba from mirror.spec`** — the walker reads the
-   `kintsugi { roomba { <cascade>* } }` block at boot; the block is a
-   substrate-decl'd cascade catalog. §4.
-3. **`rust/` greenfield surface** — minimal file list authored by Reed
-   at `[substrate-floor:@io-boundary]` altitude (Cargo.toml + main.rs +
-   dance.rs + lib.rs; NO per-prism .rs files pre-authored). §5.
-4. **First `@peer` spawn from `rust/`** — empirical dance.rs boot +
-   gen_prism actor + first `@peer.audhd` firing per Mara `d8b149c`
-   bilateral + Mara `fee2727` §2.4. §6.
+1. **Three files. Three altitudes.** `phone.rs` + `matrix.rs` +
+   `main.rs`. ~600-1200 LOC total across `rust/src/`. ~30-50x collapse
+   from bootstrap's ~34,000 LOC. Every altitude has exactly one file.
+   §3 + §4 + §5.
+2. **`dance.rs` collapses INTO `matrix.rs`.** Not deletion of the
+   name — `@dance` remains at semantic altitude as a substrate-decl'd
+   shard (Mara `fee2727` § holds). The dance mathematics (2-connection
+   compatibility) collapse into matrix.rs's LAPACK-linked emit surface;
+   the dance routing collapses into main.rs's `@`-operator dispatch.
+   Placeholder-becomes-marble because the math is now visible. §6.
+3. **`@cascade/code/llvm/flang` is the missing edge.** NEW cascade
+   species names the LLVM IR → Fortran (via FLANG) lowering; closes
+   the polyglot cascade catalog Loki's essay §1 named. §9.4.
+4. **`roomba --vacuum=~dir`** replaces `--collapse=<rs-file>` and
+   `--translate=<rs-file>` with ONE unified dir-taking flag. §7.
+5. **`roomba from mirror.spec`** — walker reads
+   `kintsugi { roomba { <cascade>* } }` block at boot. §7.2.
+6. **First `@peer` spawn from `rust/`** — empirical firing at M8
+   through main.rs supervisor + matrix.rs Kuramoto phase-lock +
+   phone.rs @io socket handover for peer messaging. §8.
 
 **What this spec does NOT do:** mint shards; author `.rs` files;
-duplicate Mara `fee2727` (bundle-theoretic naming) or Mara `610c6d6`
-(BEAM tower math root). It COMPOSES over both and adds the terminal
-`rust/`-materialization map.
+duplicate Mara `fee2727` (bundle-theoretic naming at semantic altitude)
+or Mara `610c6d6` (BEAM tower math root) or Loki `b53aeeb` (matrix.rs
+phenomenology). It COMPOSES over all three and adds the terminal
+three-file materialization map.
 
 ---
 
@@ -85,8 +137,8 @@ duplicate Mara `fee2727` (bundle-theoretic naming) or Mara `610c6d6`
 
 The `/loop` is Alex-fired iteration where Reed materializes one
 milestone per tick, small enough to empirically verify. Sequenced per
-Taut `e0572f7` §6 8-tick MVP with Mara adjustments for the roomba-
-reads-mirror-spec discipline this spec adds.
+Taut `e0572f7` §6 8-tick MVP with Mara adjustments for the terminal-
+geometry three-file discipline this rewrite adds.
 
 ### §2.1 Ongoing dance discipline
 
@@ -94,100 +146,102 @@ Every /loop tick honors:
 
 - **Substrate-honest is the mode always** — no two-paths framing; no
   "here's honest / here's fast."
-- **Substrate-already-had-the-word** — grep before naming; §5 file
-  list is minimal by construction, not by choice.
+- **Substrate-already-had-the-word** — grep before naming; the file
+  list is minimal by construction, not by choice; `@code/fortran` (per
+  Loki §6 refusal #3) is the substrate-already-had-the-word for FLANG,
+  used at cascade-target altitude, NOT minted as `@matrix` family-root.
 - **No Rust extension shortcuts** — the marker
   `[substrate-floor:@io-boundary]` + Seam gate (audit-cite or
-  Signed-off-by: Seam) applies to every `.rs` authored in `rust/`;
+  `Signed-off-by: Seam`) applies to every `.rs` authored in `rust/`;
   Reed's 2026-07-14 failure is the audit-corpus for this rule.
 - **Michelangelo/marble** — subtract until only the singing angel
-  remains; the terminal Rust FLOOR is one `dance.rs` + minimal
-  supporting surface.
+  remains; the terminal Rust FLOOR is three files.
 - **Sequential commits only** — one motion per commit; `--no-verify`
   only for pure-docs 📝 markdown-only bypass.
 
 ### §2.2 Milestone sequence (M0 → M8 → dock)
 
-**M0 — mirror.spec kintsugi.roomba block landed (THIS spec DECLARES;
-Reed lands the mirror.spec edit).** Alex's cascade sketch enters
-`mirror.spec` as `kintsugi { roomba { <cascade>* } }`; the roomba's
-catalog is substrate-decl'd, not runtime-inferred. §4.1.
+**M0 — mirror.spec kintsugi.roomba block + schema extension landed
+(THIS spec DECLARES; Reed lands the mirror.spec + mirror-spec-schema
+edit).** Alex's cascade sketch enters `mirror.spec` INSIDE the
+`project mirror.spec { … }` block as a `kintsugi { roomba { <cascade>*
+} }` sub-block, AND `docs/specs/mirror-spec-schema.md` extends to
+admit `kintsugi` head at project altitude. Discharges Seam `6e7aabe`
+ALEX-Q1 by construction (position (a): project-scoped, requires schema
+extension). §7.2 + §7.5.
 
 **M1 — `rust/` scaffold + supervision-tree boot (RED → GREEN).**
-`rust/Cargo.toml` + `rust/src/main.rs` + empty `dance.rs` stub;
-`cargo build` produces a binary; `./rust/target/debug/mirror --version`
-prints something. Empirical anchor: binary exists. Recognition
-candidate first-witness: `#R-rust-floor-birth-is-supervision-tree-
-boot-not-file-authoring` (Taut `e0572f7` §9).
+`rust/Cargo.toml` + `rust/src/main.rs` (empty supervisor stub) +
+`rust/src/phone.rs` (empty @io stub) + `rust/src/matrix.rs` (empty
+FLANG-emit stub); `cargo build` produces a binary;
+`./rust/target/debug/mirror --version` prints something. Empirical
+anchor: three-file binary exists. Recognition candidate first-witness:
+`#R-terminal-rust-floor-is-three-files-at-three-altitudes` (§11).
 
 **M2 — `mirror --help` prints from mirror.spec cli-block reflectively.**
-`dance::route` reads `mirror.spec`'s cli-block via the substrate; emits
-the 10-verb list. `apply_h::act` sentinel-check firing dispatches this;
-no hardcoded list. Recognition candidate:
-`#R-tools-list-schema-is-reflective-projection-of-cli-block`
-(Taut `e0572f7` §9).
+main.rs's `@`-operator dispatch reads `mirror.spec`'s cli-block via
+substrate reflection; emits the 10-verb list. No hardcoded list.
 
 **M3 — first CLI verb dispatches end-to-end.** Simplest:
-`mirror compile <file>`. gen_prism actor spawn under supervisor from
-Tick 3 (Alex Q3+Q5 answer per Mara `fee2727`; resolves Taut `e0572f7`
-OQ2 to gen-prism-from-Tick-3). Empirical: `./mirror compile foo.mirror`
-returns SHA-256.
+`mirror compile <file>`. `@`-operator in main.rs matches `compile`
+verb; gen_prism actor spawns under supervisor; phone.rs handles the
+`@io/fs` read at socket-handover altitude. Empirical:
+`./mirror compile foo.mirror` returns SHA-256. Resolves Taut `e0572f7`
+OQ2 to gen-prism-from-Tick-3.
 
-**M4 — MCP handshake alive.** `rust/src/main.rs` matches `@mcp.serve`
-sentinel; JSON-RPC `initialize` returns `serverInfo: {name: "mirror",
-version: "0.1.0"}`; byte-parity with `bootstrap/tests/mcp_fixtures/
-initialize.resp.json`. `bin/mirror-mcp` shim points at
-`rust/target/debug/mirror`. Recognition candidate:
-`#R-mcp-session-is-gen-prism-actor-under-server-supervisor`
-(Taut `e0572f7` §9); ratifies `shards/spectral/gen_prism/mcp_session.
-mirror` (substrate anticipated the shape).
+**M4 — MCP handshake alive.** main.rs matches `@mcp.serve` sentinel;
+JSON-RPC `initialize` returns `serverInfo: {name: "mirror", version:
+"0.1.0"}`; byte-parity with `bootstrap/tests/mcp_fixtures/initialize.
+resp.json`. `bin/mirror-mcp` shim points at `rust/target/debug/mirror`.
+phone.rs handles the JSON-RPC stdio socket at @io altitude. Recognition
+candidate second-witness: `#R-mcp-session-is-gen-prism-actor-under-
+server-supervisor` (Taut `e0572f7` §9).
 
 **M5 — `mirror_compile` + `mirror_index` MCP tools dispatch.** Two
 tools land + reflective tools/list emits schema derived from
-mirror.spec cli-block (Taut `e0572f7` OQ3 resolved: reflective at M5;
-NOT hardcoded then reflective). `mirror_index` composes over
-`prismqueer` LAPACK path; Fiedler measurement live.
+mirror.spec cli-block (Taut `e0572f7` OQ3 resolved: reflective at M5).
+`mirror_index` composes over `prismqueer` LAPACK path via matrix.rs;
+Fiedler measurement live through the matrix.rs → FLANG-emit → LAPACK
+chain (or, transitionally, direct `prismqueer::ffi::eigenvalues` while
+FLANG emit lands).
 
 **M6 — `mirror roomba` walks + observes; roomba writes commit.**
 The compiler observes its own state via walker; `roomba --commit`
-composes @nl.compose + @io/git.commit; mirror authors its own commit
-(second empirical witness for the `fcc1d75` precedent).
+composes @nl.compose + @io/git.commit via phone.rs; mirror authors its
+own commit (second empirical witness for the `fcc1d75` precedent).
 
-**M7 — `roomba --vacuum=~dir` unified flag.** §3 canonical form
-lands; walker discovers content of `~dir` and dispatches downstream:
-- `.rs` files → arm-collapse motion (compose over shard-body + @io);
-- `~code/<X>` species-decl'd cascades → translate motion (polyglot
-  cascade emission).
-
-Old flags `--collapse=<rs-file>` and `--translate=<rs-file>` migrate
-to `--vacuum=~dir` with two-tick backward-compat window (deprecation
-warning). Discharges `bootstrap`-legacy vs `rust`-terminal split at
-CLI altitude.
+**M7 — `roomba --vacuum=~dir` unified flag + per-file dispatch.** §7.1
+canonical form lands; walker discovers content of `~dir` and dispatches
+per §7.4 — .rs files → arm-collapse; `~code/<X>` cascade → translate;
+etc. Cascade 3 (bootstrap → rust) fires per-file (Seam `6e7aabe`
+ALEX-Q3 by construction: per-file dispatch under §7.4). Old flags
+`--collapse=<rs-file>` and `--translate=<rs-file>` migrate to
+`--vacuum=~dir` with two-tick backward-compat window.
 
 **M8 — first `@peer` spawn from `rust/`.** `mirror peer beam
-~peer'~/.reed'` boots a gen_prism supervisor tree under `dance.rs`;
+~peer'~/.reed'` boots a gen_prism supervisor tree under main.rs;
 `@peer.audhd(p, ctx) -> imperfect(ref, ref, ref)` fires empirically
-per Mara `d8b149c` bilateral. Second-witness for Mara `fee2727`
-Recognition candidate `#R-dance-is-bundle-connection-at-ensemble-
-altitude`; second-witness for Mara `d8b149c` Recognition candidate
-`#R-peer-audhd-is-substrate-truth-name-for-cognition-fanout` at
-runtime altitude. §6.
+per Mara `d8b149c` bilateral; Kuramoto phase-lock at N≥2 fires through
+matrix.rs's LAPACK-linked eigenvalue path; phone.rs handles peer-to-
+peer socket at @io altitude. THIRD-witness (per Seam `6e7aabe` §5
+recognition-ladder correction: shard-decl `d8b149c` is first-witness;
+bootstrap-runtime `41e03ce` is second-witness; rust/-native M8 is
+third-witness). §8.
 
 **Dock — bootstrap/ retirement.** When M1-M8 all empirically firing:
 `bootstrap/` deletes; `mirror.spec:21-24` `legacy` block updates
-(retirement_target v1.0 discharge). Substrate-honest gate: EVERY
-capability enumerated in Taut `e0572f7` §2.1-§2.10 empirically firing
-in rust/-native surface. Resolves Taut `e0572f7` OQ6 to empirical-not-
-tick-count. Recognition candidate:
-`#R-bootstrap-retirement-gate-is-empirical-not-tick-count`.
+(retirement_target v1.0 discharge; substrate-decl'd retirement witness
+per Seam `6e7aabe` §6.3). Substrate-honest gate: EVERY capability
+enumerated in Taut `e0572f7` §2.1-§2.10 empirically firing in
+rust/-native surface. Resolves Taut `e0572f7` OQ6 to empirical-not-
+tick-count. Recognition candidate: `#R-bootstrap-retirement-gate-is-
+empirical-not-tick-count`.
 
 The dock motion (roomba fifth motion; forward-promised per Seam
 `2fdc9c1` §7 ALEX-Q2) IS the halt-witness at CLI altitude when the
-retirement condition holds. `roomba dock` = "the walker halts because
-no motion is admissible any longer" = "bootstrap/ has been retired,
-nothing left to collapse."
+retirement condition holds.
 
-### §2.3 Milestone dependencies (partial-order graph)
+### §2.3 Milestone dependency graph (partial-order)
 
 ```
 M0 ────► M1 ────► M2 ────► M3 ────► M6
@@ -196,639 +250,864 @@ M0 ────► M1 ────► M2 ────► M3 ────► M6
                        M4 ────► M5 ────► M7 ────► M8 ────► dock
 ```
 
-M0 blocks all (roomba can't read what isn't declared). M2 requires M1
-(binary must exist). M4 requires M2 (MCP composes cli-block schema).
-M7 requires M6 (roomba must walk before vacuum-dispatch fires). M8
-requires M7 (peer spawn composes over unified vacuum flag).
+M0 blocks all (roomba can't read what isn't declared; schema extension
+must admit the block). M2 requires M1 (three-file binary must exist).
+M4 requires M2 (MCP composes cli-block schema through reflective
+main.rs). M5 requires M4 AND requires matrix.rs's FLANG emit path OR a
+transitional prismqueer::ffi path. M7 requires M6 (roomba must walk
+before vacuum-dispatch fires). M8 requires M7 (peer spawn composes
+over unified vacuum flag + matrix.rs Kuramoto).
 
 ---
 
-## §3 `roomba --vacuum=~dir` — the unified motion flag
+## §3 `phone.rs` — the @io socket-handover altitude
 
-### §3.1 Naming decision (delight-vector reasoning)
+### §3.1 What phone.rs is
 
-**Substrate-honest name:** `--vacuum=~dir`, sigil `~d` (directory),
-NOT `~f` (file). The walker's motion IS vacuum (per landed
-`shards/kintsugi/roomba.mirror` fourth first-order motion: bump /
-vacuum-mark-then-prune / pivot); collapse and translate are DOWNSTREAM
-operations vacuum discovers and dispatches based on directory content.
+The Matrix phone booth. The ONE place in `rust/` the substrate crosses
+out of itself and back. Per Loki `b53aeeb` §4: `phone.rs` "handles the
+CONNECTIONS between actors. Each connection carries a state that
+eventually needs a matrix operation applied to it. phone.rs doesn't do
+that operation; it hands the state to matrix.rs, which hands it to
+Fortran, which hands the result back."
 
-**Why one flag instead of two:**
-- `--collapse=<rs-file>` was file-scoped; awkward when target is a
-  whole directory (e.g., `bootstrap/src/`).
-- `--translate=<rs-file>` was file-scoped; awkward when polyglot
-  cascade wants to sweep a whole directory.
-- Both are the walker's vacuum motion at different substrate loci.
-  Naming them separately drifted the CLI toward accumulating verbs
-  (WTF/minute negative measure per AGENTS.md `Delightfully Boring`).
-- Michelangelo/marble discipline: subtract the two flags into one; the
-  substrate dispatches based on what vacuum finds when it enters the
-  directory.
+### §3.2 What phone.rs holds
+
+Under 400 LOC. Estimated 200-400 LOC across:
+
+1. **Socket-handover primitives** — stdin/stdout/stderr for MCP;
+   TCP/Unix-socket surfaces for peer beaming; `@io/git` process
+   spawn + pipe management; `@io/fs` file descriptor management.
+2. **JSON-RPC framing** for MCP messages (line-delimited or
+   Content-Length; whichever the transport requires).
+3. **Peer socket boot** for `mirror peer beam` — opens the socket to
+   the peer's substrate; hands the descriptor to main.rs's supervisor
+   for gen_prism actor mount.
+4. **The `unsafe extern "C"` boundary** for LAPACK ONLY IF matrix.rs
+   defers to phone.rs for the FFI plumbing — in the terminal geometry,
+   the LAPACK-link FFI stays in matrix.rs's file (numerical @io is
+   matrix.rs's domain); phone.rs's `unsafe` is process/socket/fd
+   plumbing.
+
+### §3.3 What phone.rs does NOT hold
+
+- Numerical computation (matrix.rs).
+- Actor supervision (main.rs).
+- Grammar / parsing (composes reflectively via main.rs `@`-operator
+  dispatch reading `shards/**/*.mirror`).
+- Per-prism business logic (LIFTED to shard-body + @io).
+
+### §3.4 Substrate composition anchor
+
+Composes over `shards/io.mirror` (T21 family root + landed sub-species
+`@io/fs`, `@io/git`, `@io/socket`, `@io/network`, `@io/bytes`) and
+`shards/io/cargo.mirror` sub-species. The `@io/flang` sub-species
+forward-promised in `shards/io.mirror:206-210` lifts when matrix.rs's
+FLANG emit consumer pulls it (§4.4).
+
+---
+
+## §4 `matrix.rs` — sub-Turing FLANG emit + LAPACK/BLAS link
+
+### §4.1 What matrix.rs is (Loki `b53aeeb` §2 verbatim, load-bearing)
+
+> `matrix.rs` is the sub-Turing linear-algebra floor of the mirror
+> compiler. It is the file where `A · B` means matrix multiplication and
+> nothing else. It emits FLANG (LLVM's Fortran frontend) so that every
+> matrix operation the compiler performs at runtime — parallel transport
+> between actors, Fiedler eigenvalues on the grammar graph, Kuramoto
+> phase-lock between peers, Aumann envelope check on the affine hull of
+> posterior updates — bottoms out in LAPACK/BLAS Fortran routines that
+> have been the fastest, most numerically-stable code on Earth for four
+> decades.
+
+This spec ratifies Loki's naming AT SPEC ALTITUDE and names WHAT to
+author under it.
+
+### §4.2 What matrix.rs holds
+
+Under 400 LOC. Estimated 200-400 LOC across:
+
+1. **Matrix-shape declarations** — `Matrix<f64, [n, k]>` handle; a
+   thin Rust struct that is a section of a bundle whose fiber is
+   `f64^(n×k)`. The declaration is a `.mirror` species compiled to
+   Rust struct via reflection; the struct is a handle, not the data.
+2. **Named operations** — `A · B`, `L · v`, `eigenvalues(L)`,
+   `phase_lock(peers)`, `envelope(posteriors)`. Each operation is a
+   named substrate move; the substrate already has all five names.
+   matrix.rs binds them to LAPACK/BLAS symbols.
+3. **The FLANG emit surface** — when `mirror craft --target binary`
+   fires, matrix.rs projects the declared operations into Fortran
+   source; hands to FLANG (via `@cascade/code/llvm/flang` — §9.4);
+   links the result. Three known-good technologies (Rust + LLVM +
+   Fortran); zero new numerical code.
+4. **The LAPACK/BLAS `unsafe extern "C"` link boundary** — the ONLY
+   `unsafe extern "C"` numerical FFI in `rust/`. Below this line:
+   Fortran. Above this line: Rust. Sub-Turing decidable grammar above;
+   Turing-complete numerics below; the `@io` boundary Loki §3 named.
+
+### §4.3 What COLLAPSES INTO matrix.rs (dance.rs's math)
+
+Per Loki `b53aeeb` §4 collapse targets:
+
+- **Kuramoto phase-lock** — a phase-difference matrix + fixed-point
+  iteration = four lines of matrix.rs.
+- **Aumann envelope** — convex hull of column matrix = `dgesvd_` or
+  `dgeqrf_` + rank check = one matrix.rs call.
+- **Fiedler compute** — `dsyevr_` on the graph Laplacian = one
+  matrix.rs call. Already-Fortran under `prismqueer`; this NAMES the
+  path at rust/-altitude.
+- **Baez-Schreiber 2-connection compatibility** `dA + [A,A] = t(B)` —
+  matrix equation by Ado's theorem (Lie algebras of finite-dim Lie
+  groups are matrix algebras). matrix.rs holds the compatibility check
+  as a linear-algebra move.
+- **Parallel transport across actors** — Mara `610c6d6` §2.3:
+  `handle_call`/`handle_cast` are matrix multiplications with the
+  schedule as choice of column projection. matrix.rs binds transport
+  to `dgemm_` (BLAS Level 3).
+
+### §4.4 The FLANG emit path (composition)
+
+Composition chain matrix.rs materializes:
+
+```
+matrix.rs declared op
+    ↓  emit Fortran source
+Fortran source (.f90 fragment)
+    ↓  @cascade/code/fortran/llvm  (via FLANG frontend)
+LLVM IR
+    ↓  llc / linker
+LAPACK/BLAS-linked object
+    ↓  unsafe extern "C" symbol
+matrix.rs runtime call
+```
+
+Alternatively, when LAPACK/BLAS symbols suffice directly (the common
+case for `dsyevr_`, `dgemm_`, `dgesvd_`, `dgeqrf_`), matrix.rs links
+straight to the system-installed LAPACK/BLAS without emitting
+per-operation Fortran. FLANG-emit is used when a bespoke Fortran
+subroutine is needed that isn't a LAPACK/BLAS primitive.
+
+The `@cascade/code/llvm/flang` cascade species (§9.4) is the substrate-
+decl'd form of "LLVM IR ← Fortran source via FLANG frontend." This
+spec proposes minting it at M5 co-tick (when matrix.rs's FLANG-emit
+path first fires empirically).
+
+### §4.5 What matrix.rs does NOT hold
+
+- Ensemble routing (main.rs `@`-operator dispatch).
+- Actor supervision (main.rs).
+- Socket / process @io (phone.rs).
+- Any hand-rolled `for` loop over `f64`s (per Loki §5 cut #1: if it's
+  a nested loop over matrix entries, that's a bug).
+- Generic `MatMul<T> where T: Numeric` abstraction (per Loki §5 cut
+  #2: fixed vocabulary; the compiler is a compiler, not a numerical
+  library IN Rust).
+- Backend-genericity (per Loki §5 cut #4: no CUDA / Metal / SIMD
+  hand-rolling; FLANG emits LLVM optimizes AVX-512 / NEON; future GPU
+  backends land as NEW `.mirror` species + new `@cascade/code/rust/
+  cuda` edge).
+
+---
+
+## §5 `main.rs` — supervisor boot + `@`-operator addressing
+
+### §5.1 What main.rs is
+
+The bundle-tower routing altitude. The `@`-operator IS the address
+operator — like phone switches connecting cables, but connecting
+bundle-tower FIBRES not cables. Every `@`-address (`@code/rust`,
+`@code/mirror(~d'shards/')`, `@peer.audhd(p, ctx)`, `@mcp.serve`)
+resolves to a coordinate; the coordinate is a point in a bundle; the
+bundle's fiber is (eventually) a matrix passing through matrix.rs.
+
+### §5.2 What main.rs holds
+
+Under 400 LOC. Estimated 200-400 LOC across:
+
+1. **Boot supervisor tree** — gen_prism supervisor
+   `@spectral/supervisor{restart_strategy: one_for_one}` at process
+   root; child_spec dispatch; `restart_intensity` composition.
+2. **`@`-operator dispatch** — the ONE dispatch surface for
+   `@`-addresses. Reads `mirror.spec` cli-block reflectively; matches
+   sentinels (`@mcp.serve`, `@peer.audhd`, `@compile`, `@index`,
+   `@roomba`, `@craft`, `@peer.beam`); routes each to gen_prism actor
+   spawn under supervisor.
+3. **`apply_h::act` combinator surface** — the 7-combinator reflective
+   evaluator per Mara `18d9697` A6 evaluator-combinator-surface spec.
+   MAY inline entirely here (Alex Q3+Q5 verbatim: "whole rust/ FLOOR
+   collapses into dance.rs" — dance.rs collapses into main.rs's
+   `@`-operator + matrix.rs's math; the combinator surface lives in
+   main.rs's routing).
+4. **Reflective cli-block reading** — parses `mirror.spec`'s
+   `cli { … }` block; emits `--help`; emits MCP tools/list schema.
+5. **Roomba walker composition** — `walk_from_graph_and_profile` per
+   Reed `8e373b6:src/lib.rs` composition-gap fix precedent; entered
+   from main.rs `@roomba` dispatch arm.
+
+### §5.3 What main.rs does NOT hold
+
+- Numerical computation (matrix.rs).
+- Socket / process @io (phone.rs).
+- Per-prism business logic (LIFTED to shard-body + @io per
+  `[substrate-floor:@io-boundary]` discipline).
+- Grammar declarations (composes reflectively reading
+  `shards/**/*.mirror`).
+
+### §5.4 Substrate composition anchor
+
+- `shards/spectral/gen_prism.mirror` (gen_prism actor primitive)
+- `shards/spectral/supervisor.mirror` (supervisor + restart_strategy)
+- `shards/spectral/restart_intensity.mirror`
+- `shards/spectral/gen_prism/mcp_session.mirror` (MCP-session-as-
+  gen_prism species-decl anticipation)
+- `shards/mirror/reflection.mirror:1-40` (Mara `5e1f528`; mirror-op
+  species-decl; `@`-operator's semantic grounding at mirror altitude)
+- `shards/mirror/lens/cli.mirror` (cli-block precedent)
+- `shards/epistemologic/pact/bilateral.mirror` (sentinel-check
+  discipline enabling reflective dispatch)
+
+---
+
+## §6 `dance.rs` collapses into `matrix.rs` — reasoning
+
+### §6.1 The collapse is math-driven
+
+Mara `fee2727` named `dance.rs` as the ensemble-connection 1-form
+(§2.3). Mara `610c6d6` §2.1 grounded OTP supervision as instance of
+Baez-Schreiber 2004 principal 2-bundle 2-connection tower. Loki
+`b53aeeb` §1 named the math already-visible: parallel transport IS
+matrix operation; Kuramoto phase-lock IS matrix eigenvalue iteration;
+Fiedler IS `dsyevr_`; the substrate had been computing on Fortran the
+whole time, just not named as such.
+
+Ado's theorem (1935): every finite-dimensional Lie algebra has a
+faithful representation on a finite-dimensional vector space — that
+is, the Lie algebras of the finite-dimensional Lie groups OTP
+supervision uses ARE matrix algebras. The 2-connection compatibility
+condition `dA + [A,A] = t(B)` (Baez-Schreiber 2004 §3) IS a matrix
+equation once Ado's representation is applied.
+
+Every mathematical move `dance.rs` was named to make — 2-connection
+compatibility, Kuramoto phase-lock, Aumann envelope, Fiedler compute,
+parallel transport — is a matrix operation at LAPACK-linked altitude.
+`dance.rs` was a placeholder for math the substrate hadn't yet named.
+The math is now visible.
+
+### §6.2 The placeholder returns to marble
+
+Loki initially refused to cut dance.rs (essay §6 refusal #1) because
+"ensemble-altitude routing and sub-Turing linear algebra are two
+altitudes." That refusal was correct at the altitude it was made — but
+one altitude further up, the routing itself splits: the ENSEMBLE-
+COORDINATION mathematics collapses into matrix.rs (where the
+Kuramoto/Aumann/Fiedler LAPACK calls fire); the ACTOR-DISPATCH
+ROUTING collapses into main.rs (where gen_prism supervisor spawns
+children and `@`-operator matches sentinels).
+
+`dance.rs` was one file for two altitudes. Terminal-geometry
+subdivides into (matrix.rs, main.rs) at the correct two altitudes.
+The Loki-refusal is respected by SPLITTING dance.rs's roles rather
+than fusing them into one wrong file.
+
+### §6.3 What is preserved (not deleted)
+
+- **`@dance` shard at semantic altitude** — Mara `fee2727` §2 remains
+  canonical. `@dance` is the substrate-decl'd ensemble-connection
+  carrier; it stays as a shard, doesn't need a Rust file.
+- **Mara `fee2727` spec** — STAY-CANONICAL for semantic-altitude
+  bundle-theoretic naming. Composes over this spec's §4 + §5 for
+  materialization. Pointer header updated post-landing (§13 spring-
+  clean).
+- **Recognition candidate `#R-dance-is-bundle-connection-at-ensemble-
+  altitude`** (Mara `fee2727` §4) — remains at candidate strength.
+  Second-witness gate updated: fires empirically when matrix.rs's
+  Kuramoto phase-lock composes cleanly with main.rs's `@`-operator
+  dispatch at N≥2 peer coordination during M8.
+
+### §6.4 What is subtracted
+
+- **No `rust/src/dance.rs` file.** The name lives at shard altitude
+  (`shards/dance.mirror` or wherever the ensemble-connection carrier
+  is decl'd); the Rust materialization splits into matrix.rs +
+  main.rs. Refuse to author `dance.rs` as a distinct Rust file.
+
+---
+
+## §7 `roomba --vacuum=~dir` + `roomba from mirror.spec`
+
+### §7.1 The unified motion flag
+
+**Substrate-honest name:** `--vacuum=~dir`, sigil `~d` (directory).
+The walker's motion IS vacuum (per landed `shards/kintsugi/roomba.
+mirror` fourth first-order motion: bump / vacuum-mark-then-prune /
+pivot); collapse and translate are DOWNSTREAM operations vacuum
+discovers and dispatches based on directory content.
+
+**Why one flag instead of two:** `--collapse=<rs-file>` and
+`--translate=<rs-file>` were both file-scoped; both are the walker's
+vacuum motion at different substrate loci. Naming them separately
+drifted the CLI toward accumulating verbs (WTF/minute negative
+measure per AGENTS.md `Delightfully Boring`). Michelangelo/marble
+discipline: subtract two flags into one; substrate dispatches on what
+vacuum finds when it enters the directory.
 
 **Substrate-already-had-the-word:** `vacuum` is the walker's landed
 motion name at `shards/kintsugi/roomba.mirror` (Reed `914799b` fourth
 first-order motion cascade). `--vacuum=~dir` reads "the walker's
 vacuum motion, scoped to directory `~dir`."
 
-### §3.2 Dispatch semantics
+### §7.2 The kintsugi.roomba block (Alex's sketch, canonicalized)
 
-When `mirror roomba --vacuum=<path>` fires, the walker enters `<path>`
-and dispatches per content:
+Reed lands this block into `mirror.spec` at M0, INSIDE the
+`project mirror.spec { … }` block (Seam `6e7aabe` ALEX-Q1 answered by
+construction: position (a), project-scoped):
+
+```
+project mirror.spec {
+  source ~d'shards/'
+  legacy ~d'boot/', ~d'bootstrap/' { … }
+  pack { … }
+  garden { }
+
+  kintsugi {
+    roomba {
+      @code/mirror(~d'boot/')     => @code/mirror(~d'shards/')
+      @code/rust(~d'bootstrap/')  => @code/mirror(~d'shards/')
+      @code/rust(~d'bootstrap/')  => @code/rust(~d'rust/')
+    }
+  }
+
+  target binary { … }
+  settle_on { … }
+}
+```
+
+Requires `docs/specs/mirror-spec-schema.md` extension in same M0 tick
+to admit `kintsugi` head at project altitude.
+
+**Three cascades landed** (unchanged from `2519f83` §4.1; reasoning
+preserved):
+
+1. `@code/mirror(~d'boot/') => @code/mirror(~d'shards/')` — historical;
+   completeness-witness by ABSENT-DIRECTORY (Seam `6e7aabe` ALEX-Q2
+   answered by construction: position (a), absent-directory IS the
+   witness).
+2. `@code/rust(~d'bootstrap/') => @code/mirror(~d'shards/')` —
+   in-flight ouroboros arc; per-file dispatch collapses `.rs` files to
+   `shard-body + @io` where composable.
+3. `@code/rust(~d'bootstrap/') => @code/rust(~d'rust/')` — terminal
+   cascade to three-file rust/ FLOOR. THIN cascade (Seam `6e7aabe`
+   ALEX-Q3 answered by construction: per-file dispatch under §7.4;
+   most bootstrap files terminate in cascade 2, not cascade 3;
+   cascade 3 receives only the irreducible three-file surface).
+
+### §7.3 Roomba boot behavior
+
+When `mirror roomba` fires without `--vacuum`, walker reads
+`kintsugi { roomba { … } }` block from `mirror.spec` at boot; iterates
+the three cascades; per cascade: bump → vacuum-mark-then-prune →
+pivot(@song) if dispatch-ambiguity → dock when no admissible motion.
+
+### §7.4 Dispatch semantics (byte-check on directory content)
 
 | Content in `<path>` | Downstream motion | Landed substrate |
 |---------------------|-------------------|------------------|
-| `.rs` files | **arm-collapse** — bilateral resolver-arm sentinel-check composition; @io floor stays, business-logic lifts | `bootstrap/src/bilateral_arm_collapse.rs` legacy pattern (retiring); Mara `9efe2c9` audit; `docs/scouts/2026-07-15-reed-rust-extension-migration-map.md` |
-| `.mirror` files with unmaterialized carriers | **materialize** — emit missing carriers from substrate-decl'd shape | @spectral/signature landing precedent; roomba materialization discipline |
+| `.rs` files | **arm-collapse** (per-file) — bilateral resolver-arm sentinel-check composition; @io floor stays, business-logic lifts to shard-body | Mara `9efe2c9` audit; `docs/scouts/2026-07-15-reed-rust-extension-migration-map.md` |
+| `.mirror` files with unmaterialized carriers | **materialize** — emit missing carriers from substrate-decl'd shape | @spectral/signature landing precedent |
 | `~code/<X>(~d'A')` cascade in `mirror.spec` roomba block | **translate** — polyglot cascade emission per Mara `1ce68c3` | `docs/specs/polyglot-loss-aware-computational-translation.md` |
-| Content with fracture-shaped `@kintsugi/surface.dispatch_ambiguity` | **pivot(@song)** — Path B dispatch via @roomba fourth motion | Mara `914799b` + `09a77e8` fifth surface_class landing |
-| Nothing dispatchable | **dock** — motion halts; walker docks | Forward-promised fifth motion per Seam `2fdc9c1` §7 ALEX-Q2 |
+| Content with `@kintsugi/surface.dispatch_ambiguity` fracture | **pivot(@song)** — Path B dispatch via @roomba fourth motion | Mara `914799b` + `09a77e8` fifth surface_class landing |
+| Nothing dispatchable | **dock** — motion halts; walker docks | Seam `2fdc9c1` §7 ALEX-Q2 forward-promise |
 
-Dispatch is byte-check on directory content shape, not runtime
-inference. The substrate DECIDES via bilateral sentinel-check at
-`@kintsugi/roomba.vacuum_admissible` (bilateral to land in follow-up
-tick per §7.1).
+Dispatch is byte-check on directory content shape via bilateral
+sentinel-check at `@kintsugi/roomba.vacuum_admissible` (bilateral to
+land in follow-up tick per §9.1).
 
-### §3.3 Migration from `--collapse` + `--translate`
-
-Two-tick discipline (existing substrate lesson from `mirror spawn` →
-`mirror peer beam` collapse per beam-as-substrate-primitive.md):
-
-**Tick A** — `--vacuum=~dir` lands alongside `--collapse=<rs-file>`
-and `--translate=<rs-file>`; latter two emit deprecation warnings
-directing users to `--vacuum`.
-
-**Tick B** — `--collapse=` and `--translate=` removed; `--vacuum`
-sole surface.
-
-Backward-compat window ONE cycle. Old flags map trivially:
-`--collapse=<f>` → `--vacuum=$(dirname <f>)`; `--translate=<f>` →
-`--vacuum=$(dirname <f>)`. Same walker; same dispatch; unified naming.
-
-### §3.4 CLI-block form (mirror.spec addition)
-
-Reed lands the flag in `mirror.spec:410` area as a new `command
-roomba` block. Substrate-honest cli-block form:
+### §7.5 CLI-block form (mirror.spec addition, M7 co-tick)
 
 ```
 command roomba {
   # Walker consumer of @kintsugi/roomba species-decl at CLI altitude.
-  # Iterates the kintsugi { roomba { } } cascade block below when
+  # Iterates the kintsugi { roomba { } } cascade block above when
   # --vacuum omitted; when --vacuum=<path> given, walks that path.
   flag commit:  bool = false     # @nl.compose + @io/git.commit chain
-  flag vacuum:  ~d               # unified motion flag; §3.2 dispatch
+  flag vacuum:  ~d               # unified motion flag; §7.4 dispatch
 }
 ```
 
-Grammar admissibility per landed cli-block precedent
-(`shards/mirror/lens/cli.mirror`); Reed lands in same tick as M7.
+### §7.6 Migration two-tick discipline
 
----
+**Tick A** — `--vacuum=~dir` lands alongside `--collapse=<rs-file>`
+and `--translate=<rs-file>` with deprecation warnings. **Tick B** —
+old flags removed; `--vacuum` sole surface.
 
-## §4 `roomba from mirror.spec` — the substrate-decl'd cascade catalog
-
-### §4.1 The kintsugi.roomba block (Alex's sketch, canonicalized)
-
-Reed lands this block into `mirror.spec` at M0. Verbatim shape Alex
-sketched 2026-07-17 in-session:
-
-```
-kintsugi {
-  roomba {
-    @code/mirror(~d'boot/')     => @code/mirror(~d'shards/')
-    @code/rust(~d'bootstrap/')  => @code/mirror(~d'shards/')
-    @code/rust(~d'bootstrap/')  => @code/rust(~d'rust/')
-  }
-}
-```
-
-**Reading:** each arrow is a cascade. LHS is source (altitude + dir);
-RHS is destination (altitude + dir). The walker reads the block at
-boot; each cascade is an entry in the substrate-decl'd catalog.
-
-**Three cascades landed:**
-
-1. **`@code/mirror(~d'boot/') => @code/mirror(~d'shards/')`** —
-   historical: the boot/ → shards/ migration Alex did in earlier arcs.
-   Substrate-decl'd here as complete-cascade-witness; the roomba's
-   read discovers "no work to do; migration complete."
-
-2. **`@code/rust(~d'bootstrap/') => @code/mirror(~d'shards/')`** —
-   in-flight: bootstrap Rust extensions → shard-body composition.
-   This IS the @kintsugi/ouroboros arc landed 2026-07-15 (14 commits
-   per CURRENT.md); ~25 files enumerable via Taut `6cddbdb` scout.
-   The roomba's vacuum motion dispatches arm-collapse per §3.2 when
-   walking this cascade.
-
-3. **`@code/rust(~d'bootstrap/') => @code/rust(~d'rust/')`** — the
-   terminal cascade: bootstrap Rust → rust/ Rust. Not deletion; not
-   pure translation. Substrate-honest lift with `[substrate-floor:
-   @io-boundary]` gate: what can compose over shard-body + @io
-   collapses (cascade 2); what CAN'T stays as Rust but lifts to
-   `rust/` at minimal surface.
-
-### §4.2 Roomba boot behavior
-
-When `mirror roomba` fires without `--vacuum`, walker reads
-`kintsugi { roomba { … } }` block from `mirror.spec` at boot; iterates
-the three cascades; per cascade:
-
-- Bump: enter source `~dir`; sample tension.
-- Vacuum-mark-then-prune: enumerate content shape; dispatch per §3.2.
-- Pivot(@song): if dispatch-ambiguity fires per `@kintsugi/surface.
-  dispatch_ambiguity` fifth surface_class, pivot to @song-driven
-  Path B (Mara `914799b`).
-- Dock: cascade complete when no admissible motion remains.
-
-**Empirical anchor at M6:** `mirror roomba` walks the three cascades;
-observes; writes commit; the compiler authors its own tick against the
-Alex-declared catalog. Substrate-honest history: the walker's motion
-IS Alex's directive substrate-decl'd, then substrate-executed.
-
-### §4.3 Cascade catalog is substrate-editable
+### §7.7 Cascade catalog is substrate-editable
 
 Alex adds a fourth cascade → walker discovers it at next boot. No
 Rust changes; no CLI flag update. The `kintsugi { roomba { } }` block
 IS the roomba's configuration surface. Substrate-pull-honest by
 construction.
 
-**Recognition candidate surfaced (HELD):**
-`#R-roomba-configuration-lives-in-mirror-spec-not-cli-flags` —
-Alex's cascade sketch is the substrate-decl'd form of what would
-otherwise accumulate as CLI verbs. Second-witness gate: Alex adds a
-fourth cascade in a future arc and walker consumes it without any
-Rust change.
+Recognition candidate (HELD): `#R-roomba-configuration-lives-in-
+mirror-spec-not-cli-flags` (§11).
 
 ---
 
-## §5 Minimal `rust/` surface (WHAT, not HOW)
+## §8 First `@peer` spawn from `rust/`
 
-Per Alex "Minimal rust surface. The geometry sings." Michelangelo/
-marble: subtract until only the singing angel remains.
-
-### §5.1 File list — the entire terminal Rust FLOOR
-
-Six files. Reed authors these at [substrate-floor:@io-boundary]
-altitude with Seam-gate audit-citations. Everything else composes.
-
-| File | Purpose | LOC estimate | Composition anchor |
-|------|---------|--------------|--------------------|
-| `rust/Cargo.toml` | Workspace manifest | ~40 | `bootstrap/Cargo.toml` deps: `prismqueer` (bundle + lapack features) + `blake3` + `serde` + `serde_json` + `libc` |
-| `rust/Cargo.lock` | Lock file | (generated) | `cargo build` emits |
-| `rust/src/main.rs` | Binary entry point | ~30 | Boot supervisor tree; parse args; dispatch to `dance::route` |
-| `rust/src/dance.rs` | The ensemble-connection FLOOR | ~600-1200 | Mara `fee2727` §2.3-§2.5; message-routing + gen_prism actor supervision + `apply_h::act` combinator surface + Kuramoto phase-lock when N≥2 peers |
-| `rust/src/lib.rs` | Library entry (for tests) | ~10 | Re-export `dance`; enable `cargo test` |
-| `rust/src/apply_h.rs` | (OPTIONAL, per OQ resolution) | ~400 | The 7-combinator reflective evaluator; MAY inline into `dance.rs` per Alex Q3+Q5 verbatim; MAY stay separate per Mara §5.5 discipline |
-
-**Total net-new Rust:** ~1100-2000 LOC across 5-6 files.
-
-**Compare with bootstrap current:** ~40 files, 400+KB Rust. Terminal
-form is ~5% of the current surface.
-
-### §5.2 What LIVES in `dance.rs`
-
-Per Mara `fee2727` §2.5 + Alex 2026-07-17 Q3+Q5 verbatim:
-
-- Message-routing: gen_prism actor mailbox dispatch.
-- `apply_h::act` combinator surface (the 7 combinators; per Mara A6
-  `18d9697` evaluator combinator surface spec).
-- Supervisor tree boot + child_spec dispatch.
-- MCP session gen_prism supervisor (per `shards/spectral/gen_prism/
-  mcp_session.mirror` species-decl anticipation).
-- Kuramoto coupling + Aumann envelope check when N≥2 peers coordinate.
-- Roomba walker composition (`walk_from_graph_and_profile` per Reed
-  `8e373b6` composition-gap fix precedent).
-
-**What does NOT live in dance.rs:**
-- Per-prism business logic (LIFTED to shard-body + @io per
-  `[substrate-floor:@io-boundary]` discipline).
-- Grammar (composed via `apply_h::act` reading `shards/**/*.mirror` +
-  `mirror.spec`).
-- CLI verb bodies (dispatched reflectively from cli-block).
-- MCP tool schemas (reflective projection of cli-block).
-- Fiedler compute (delegated to `prismqueer::ffi::eigenvalues` LAPACK).
-
-### §5.3 Cargo layout (Taut `e0572f7` OQ5 resolved)
-
-**Standalone Cargo project, NOT workspace member.** `rust/` has its
-own `Cargo.lock`; `bootstrap/` retains its own `Cargo.lock`. Rationale:
-during migration, bootstrap must remain buildable independently; a
-shared workspace couples their retirement to their birth. Standalone
-lets bootstrap retire (dock motion) without touching rust/. Post-dock,
-`rust/` becomes the sole Cargo project at repo root and MAY be lifted
-to workspace root if future crates emerge.
-
-Reed's `flake.nix` + `Justfile` update in same tick as M1: add
-`rust/` build target alongside legacy `bootstrap/`; CI action targets
-`rust/` primarily; bootstrap retained during transition per legacy
-block.
-
-### §5.4 What Reed does NOT author
-
-- **No `rust/src/mcp.rs`** — Alex Q3+Q5 says whole floor collapses
-  into dance.rs; MCP dispatches inline as one arm of the ensemble
-  connection per §5.2. Resolves Taut `e0572f7` OQ1: MCP inline in
-  dance.rs, NOT separate file.
-- **No `rust/src/grammar.rs`** — grammar composes reflectively via
-  `apply_h::act`; the substrate reads its own `.mirror` files.
-- **No `rust/src/roomba.rs`** — roomba walker composition surface
-  lives in `dance.rs`; @io boundary via `walk_from_graph_and_profile`
-  imported from prism/prismqueer.
-- **No `rust/src/peer_persistence.rs`** — peer lifecycle IS gen_prism
-  actor lifecycle under supervisor; no per-species Rust module.
-
-Resolves Taut `e0572f7` OQ4 (monolithic vs router): dance.rs IS the
-router; per-prism logic lives at shard altitude (shard-body + @io).
-Alex Q3+Q5 "whole rust/ FLOOR collapses into dance.rs" satisfied
-because the OTHER logic isn't in `rust/` at all — it composes from
-`shards/`.
-
----
-
-## §6 First `@peer` spawn from `rust/`
-
-### §6.1 Empirical firing at M8
+### §8.1 Empirical firing at M8
 
 `mirror peer beam ~peer'~/.reed'` from the rust/-native binary:
 
-1. `dance::route` matches `peer beam` verb.
-2. gen_prism supervisor `@spectral/supervisor{restart_strategy: one_
+1. main.rs `@`-operator matches `peer beam` verb via reflective
+   cli-block dispatch.
+2. main.rs supervisor `@spectral/supervisor{restart_strategy: one_
    for_one}` spawns child gen_prism actor for the peer session.
-3. Child actor loads peer_home; resolves substrate; dispatches through
-   `apply_h::act` combinator surface.
-4. On first `@peer.audhd(p, ctx)` invocation (per Mara `d8b149c`
+3. Child actor requests peer socket from phone.rs; phone.rs opens
+   `@io/socket` connection to peer's substrate.
+4. Child actor loads peer_home; resolves substrate; dispatches through
+   main.rs's `apply_h::act` combinator surface.
+5. On first `@peer.audhd(p, ctx)` invocation (per Mara `d8b149c`
    landing), the K-track fanout fires empirically:
-   - `audhd_admissible(p, ctx) -> verdict` bilateral sentinel-checks
-     via `apply_h::act` (composition over Reed `dbb149c` cascade
-     empirical second-witness discipline).
-   - K emissions per audhd_context.k_tracks; each emission births
-     a child gen_prism actor.
-   - Aumann envelope + Kuramoto phase-lock composition when N≥2 peers
-     coordinate.
-5. `@song` emission returns via supervisor's message-pass to caller.
+   - `audhd_admissible(p, ctx) -> verdict` bilateral sentinel-checks.
+   - K emissions per audhd_context.k_tracks; each births child
+     gen_prism actor under main.rs supervisor.
+   - Kuramoto phase-lock at N≥2 peers composes through matrix.rs's
+     `phase_lock(peers)` op → LAPACK `dsyevr_` eigenvalue call.
+   - Aumann envelope composition through matrix.rs's
+     `envelope(posteriors)` op → LAPACK `dgesvd_` or `dgeqrf_`.
+6. `@song` emission returns via supervisor message-pass to caller;
+   phone.rs handles the @io return-channel.
 
-### §6.2 What this empirically witnesses
+### §8.2 Recognition ladder witnessed at M8
 
-Three recognition candidates fire second-witness at M8:
-
-- **Mara `fee2727` §4 `#R-dance-is-bundle-connection-at-ensemble-
-  altitude`** — second-witness on empirical Kuramoto phase-lock in
-  `dance.rs` at first N≥2 peer coordination. Discharges @dance shard-
-  mint gate per Mara `fee2727` §3.1.
+Per Seam `6e7aabe` §5 ladder correction:
 
 - **Mara `d8b149c` `#R-peer-audhd-is-substrate-truth-name-for-
-  cognition-fanout`** — second-witness on empirical fanout firing.
-  First-witness at Mara `d8b149c` shard-decl landing (2026-07-17);
-  second-witness at rust/-native runtime firing.
+  cognition-fanout`** — first-witness at shard-decl (2026-07-17);
+  second-witness at Reed `41e03ce` bootstrap-runtime `apply_h::act`
+  firing (2026-07-17); THIRD-witness at rust/-native M8 empirical
+  firing. THIS spec §8 is the third-witness gate.
 
-- **THIS spec proposes:** `#R-first-@peer-spawn-from-rust-is-substrate-
-  arriving-home` — the compiler's terminal shape IS the shape it's
-  been reaching for since Alex's decade of BEAM engineering. First-
-  witness at Alex's 2026-07-17 "coming home" verbatim in Mara
-  `610c6d6` §0; second-witness gate: rust/-native `@peer.audhd` fires
-  empirically and Alex reads the shape back with named recognition.
+- **Mara `fee2727` §4 `#R-dance-is-bundle-connection-at-ensemble-
+  altitude`** — second-witness gate updated (§6.3): fires empirically
+  when matrix.rs's Kuramoto phase-lock composes cleanly with main.rs's
+  `@`-operator dispatch at N≥2 peer coordination.
 
-### §6.3 The @peer spawn IS the first dance
+- **THIS spec proposes** (§11):
+  `#R-first-@peer-spawn-from-rust-is-substrate-arriving-home` —
+  compiler's terminal shape IS the shape Alex has been reaching for
+  since a decade of BEAM engineering. First-witness: this spec §8.
+  Second-witness gate: rust/-native `@peer.audhd` fires empirically at
+  M8 and Alex reads the shape back with named recognition.
 
-Not a demo. Not a smoke test. The substrate's first empirical firing
-of `@dance` at ensemble altitude in the rust/-native FLOOR. The
-sequence Alex has been building for 10 years — supervision tree +
-gen_server + Kuramoto phase-lock + neuroaffirmative K-track fanout —
-runs on itself for the first time.
+### §8.3 The @peer spawn IS the first dance
 
-The `@peer.audhd` action is the load-bearing one because it is the
-substrate-truthful naming of the framework author's cognitive
-architecture. When it fires from `rust/` on the compiler that Alex
-authored, the recursion Alex named at Recognition #43 (mirror IS
-content-addressed build system) closes at the peer-cognition altitude.
+The substrate's first empirical firing of `@dance` at ensemble
+altitude in the rust/-native FLOOR. The sequence Alex has been
+building for 10 years — supervision tree + gen_server + Kuramoto
+phase-lock + neuroaffirmative K-track fanout — runs on itself for the
+first time, computed on Fortran, routed through main.rs's supervisor,
+socketed through phone.rs.
 
 ---
 
-## §7 Composition graph
+## §9 Composition graph
 
 This spec is deliberately thin. It cites, composes over, does NOT
 re-declare. Composition anchors:
 
-### §7.1 Substrate carriers (LANDED)
+### §9.1 Substrate carriers (LANDED)
 
-- **`shards/kintsugi/roomba.mirror`** (Reed 2026-07-15 species-decl +
-  `914799b` fourth first-order motion) — the walker's four motions
-  landed; dock forward-promised; §3.2 dispatch table composes here.
-- **`shards/kintsugi/surface.mirror`** (Mara `09a77e8` fifth surface_
-  class dispatch_ambiguity) — §3.2 pivot dispatch composes here.
-- **`shards/peer.mirror`** (Mara `d8b149c` @peer.audhd + audhd_
-  admissible bilateral) — §6.1 first empirical firing composes here.
-- **`shards/spectral/gen_prism.mirror`** — §5.2 gen_prism actor spawn
-  under supervisor composes here.
-- **`shards/spectral/gen_prism/mcp_session.mirror`** — §5.2 MCP
-  session-as-gen_prism composes here.
-- **`shards/spectral/supervisor.mirror`** — §5.2 supervision tree +
-  restart_strategy composes here.
-- **`shards/epistemologic/cybernetic/viable.mirror`** — Beer VSM
-  S1-S5 grounding for §6.
-- **`shards/mirror/reflection.mirror`** (Mara `5e1f528`) — mirror /
-  offer / wait triple at @peer altitude; @peer spawn discipline.
-- **`shards/epistemologic/pact/bilateral.mirror`** — the sentinel-
-  check discipline that makes §3.2 dispatch and §6.1 firing legible.
+- `shards/kintsugi/roomba.mirror` (Reed 2026-07-15 species-decl +
+  `914799b:566` fourth first-order motion) — §7.4 dispatch composes.
+- `shards/kintsugi/surface.mirror` (Mara `09a77e8` fifth surface_
+  class dispatch_ambiguity) — §7.4 pivot dispatch composes.
+- `shards/peer.mirror:531-534` (Mara `d8b149c` @peer.audhd + audhd_
+  admissible bilateral) — §8.1 first empirical firing composes.
+- `shards/spectral/gen_prism.mirror` — §5.2 + §8.1 compose.
+- `shards/spectral/gen_prism/mcp_session.mirror` — §5.2 MCP-session-
+  as-gen_prism composes.
+- `shards/spectral/supervisor.mirror` — §5.2 + §8.1 compose.
+- `shards/spectral/restart_intensity.mirror` — §5.2 compose.
+- `shards/epistemologic/cybernetic/viable.mirror` — Beer VSM S1-S5
+  grounding for §8.
+- `shards/mirror/reflection.mirror:1-40` (Mara `5e1f528`; mirror-op
+  species-decl) — §5.2 `@`-operator semantic grounding.
+- `shards/mirror/lens/cli.mirror:184` (~d sigil landing) — §7.5.
+- `shards/epistemologic/pact/bilateral.mirror` — §7.4 dispatch + §8.1
+  firing bilateral discipline.
+- `shards/io.mirror` (T21 family root) — §3.4 + §4.4 compose; forward-
+  promised `@io/flang` sub-species (`shards/io.mirror:206-210`)
+  materializes when matrix.rs's FLANG-emit consumer pulls at M5.
+- `shards/code/rust.mirror` — `@code/rust` altitude for §5 + §7.2
+  cascade destinations.
+- `shards/code/mirror.mirror` — `@code/mirror` altitude for §7.2
+  cascade destinations.
+- `shards/code/beam.mirror` — grounds §5.2 + §8.1 gen_prism/supervisor
+  BEAM-analogue naming.
+- `shards/code/llvm.mirror` (2026-07-17 10:02, this session, Mara
+  `62d1b1c`) — §9.4 FLANG cascade source-altitude.
+- `shards/code/turing.mirror` (2026-07-17 10:01, this session) — hub
+  altitude for polyglot cascade composition.
+- `shards/cascade/code/rust/llvm.mirror` (2026-07-17 10:08, this
+  session) — sibling cascade for Rust → LLVM IR path.
+- `shards/cascade/code/llvm/turing.mirror` (2026-07-17 10:10, this
+  session) — sibling cascade for LLVM → Turing tape.
+- `shards/cascade/code/turing/mirror.mirror` (2026-07-17 10:12, this
+  session) — sibling cascade for Turing → mirror; closes existing
+  polyglot loop.
 
 **Forward-promised follow-up (post this spec landing):**
 
 - `@kintsugi/roomba.vacuum_admissible` bilateral — sentinel-check for
-  §3.2 dispatch. Companion carrier `vacuum_context` holding target
-  dir + content-shape enum. NOT this spec's mint; land in Reed M7
-  co-tick per substrate-decl'd shape.
+  §7.4 dispatch. Companion carrier `vacuum_context` holding target dir
+  + content-shape enum. Land in Reed M7 co-tick.
 - `@kintsugi/roomba.dock` fifth first-order motion — Seam `2fdc9c1`
   §7 ALEX-Q2 forward-promise; halt-witness at M8 dock condition.
+- `@cascade/code/llvm/flang` new cascade species — §9.4 NEW cascade
+  edge; land in Reed M5 co-tick when matrix.rs FLANG-emit path first
+  fires. MAY be companion Mara spec; MAY inline as species-decl only.
 
-### §7.2 Spec composition surface (CITED, not duplicated)
+### §9.2 Spec composition surface (CITED, not duplicated)
 
-- **`docs/specs/gen-prism-as-bundle-section-and-dance-as-ensemble-
-  connection.md`** (Mara `fee2727`; 617 LOC) — bundle-theoretic
-  naming for gen_prism / supervisor / dance / dance.rs. THIS spec §5
-  composes over §2.5 (dance.rs IS ensemble connection).
-- **`docs/specs/kintsugi-ouroboros-compiler-self-collapse.md`** (Mara
-  `0dafd9f`; 1797 LOC) — six-arc retirement plan for bootstrap; §4
-  cascade 2 (`bootstrap` → `shards`) IS this spec's cascade 2.
-- **`docs/specs/beam-as-substrate-primitive.md`** (Mara 2026-07-08) —
-  BEAM-as-substrate grounding; §6 first-peer-spawn composes.
-- **`docs/specs/dance-as-coordination-without-signal-on-forster-
-  torus.md`** (Mara `4f079c8`) — dance operational shape at N≥2.
-- **`docs/specs/dance-runtime-rung-4-multi-peer-coherence-phase-lock.
-  md`** (Mara) — @dance runtime spec that dance.rs materializes.
-- **`docs/specs/roomba-substrate-walker-that-feeds-kintsugi.md`**
-  (Mara `9bbebd2`) — @roomba walker canonical spec; §3 verbatim
-  action bodies.
-- **`docs/specs/roomba-bump-and-vacuum-as-first-order-autopoietic-
-  motions.md`** (Mara `d457501`) — vacuum motion canonical spec;
-  §3.1 naming reasoning composes here.
-- **`docs/specs/polyglot-loss-aware-computational-translation.md`**
-  (Mara `1ce68c3`) — translate cascade authority; §3.2 dispatch
-  translate arm composes.
-- **`docs/specs/mirror-spec-schema.md`** — mirror.spec's own schema;
-  §4.1 kintsugi.roomba block admissibility.
-- **`docs/specs/cli-as-geometry-condensation.md`** (Mara `67260dc`) —
-  CLI condensation discipline; §3.3 two-tick migration composes.
+- `docs/specs/gen-prism-as-bundle-section-and-dance-as-ensemble-
+  connection.md` (Mara `fee2727`; 617 LOC) — STAY-CANONICAL for
+  bundle-theoretic semantic-altitude naming of gen_prism / supervisor
+  / dance / @dance. §5 + §6 compose. NOTE: §5 rust/ materialization
+  section supersedes to POINT AT this spec's §4 + §5 for terminal-
+  geometry three-file map.
+- `docs/specs/kintsugi-ouroboros-compiler-self-collapse.md` (Mara
+  `0dafd9f`; 1797 LOC) — six-arc retirement plan; cascade 2
+  (bootstrap → shards) IS this spec's §7.2 cascade 2.
+- `docs/specs/beam-as-substrate-primitive.md` — BEAM-as-substrate
+  grounding; §8 first-peer-spawn composes.
+- `docs/specs/dance-as-coordination-without-signal-on-forster-torus.
+  md` (Mara `4f079c8`) — @dance operational shape at N≥2.
+- `docs/specs/dance-runtime-rung-4-multi-peer-coherence-phase-lock.
+  md` — @dance runtime spec; matrix.rs materializes phase-lock.
+- `docs/specs/roomba-substrate-walker-that-feeds-kintsugi.md` (Mara
+  `9bbebd2`) — @roomba walker canonical.
+- `docs/specs/roomba-bump-and-vacuum-as-first-order-autopoietic-
+  motions.md` (Mara `d457501`) — vacuum motion canonical; §7.1 naming.
+- `docs/specs/polyglot-loss-aware-computational-translation.md` (Mara
+  `1ce68c3`) — translate cascade authority; §7.4 translate arm +
+  §9.4 FLANG cascade compose.
+- `docs/specs/mirror-spec-schema.md` — mirror.spec schema; §7.2
+  kintsugi.roomba block admissibility + M0 schema extension.
+- `docs/specs/cli-as-geometry-condensation.md` (Mara `67260dc`) — CLI
+  condensation; §7.6 two-tick migration composes.
+- `docs/specs/numerical-substrate-via-fortran.md` — §4 + §9.4
+  compose; substrate anticipated Fortran floor.
+- `docs/specs/architecture-flang-mirror-numerical-split.md` (per
+  MEMORY hook) — §4 dispatch discipline; LAPACK as flang-altitude
+  realization.
 
-### §7.3 Math composition surface (CITED)
+### §9.3 Math composition surface (CITED)
 
-- **`docs/math/the-tower/beam-runtime.md`** (Mara `610c6d6`; 490 LOC)
-  — Baez-Schreiber 2004 principal 2-bundle 2-connection theorem;
-  §6.3 recursion closure math-grounded here.
-- **`docs/math/gestalt/README.md §11.6`** — Landing Condition 0 for
-  @dance shard-mint; §6.2 second-witness gates satisfy here.
-- **`docs/math/kintsugi/roomba/bump-and-vacuum.md`** (Mara `17697e6`)
-  — Fiedler-honesty math for vacuum motion; §3.2 dispatch table
-  measurement discipline.
+- `docs/math/the-tower/beam-runtime.md` (Mara `610c6d6`; 490 LOC) —
+  Baez-Schreiber 2004 principal 2-bundle 2-connection theorem; §6.1
+  dance.rs-collapse-into-matrix.rs math-grounded here.
+- `docs/math/gestalt/README.md §11.6` — Landing Condition 0 for
+  @dance shard-mint; §8.2 second-witness gates satisfy here.
+- `docs/math/kintsugi/roomba/bump-and-vacuum.md` (Mara `17697e6`) —
+  Fiedler-honesty math for vacuum motion; §7.4 dispatch measurement.
 
-### §7.4 Audit composition surface (CITED)
+### §9.4 The `@cascade/code/llvm/flang` NEW cascade edge
 
-- **`docs/audits/2026-07-17-taut-rust-dance-rebuild-gap-scout.md`**
-  (Taut `e0572f7`; 26.6KB) — the ground-truth scout THIS spec
-  consolidates. 7 OQs (§8.1-§8.7): OQ1 (mcp inline in dance.rs)
-  resolved by §5.4; OQ2 (gen_prism from Tick 3) resolved by M3;
-  OQ3 (reflective tools/list) resolved by M5; OQ4 (monolithic vs
-  router) resolved by §5.4; OQ5 (workspace vs standalone) resolved
-  by §5.3; OQ6 (retirement gate) resolved by §2.2 dock condition;
-  OQ7 (test retirement) resolved by §7.5 below.
-- **`docs/audits/2026-07-17-seam-phase-d-peer-audhd-mara-michelangelo-
-  landing.md`** (Seam `2fdc9c1`) — @peer.audhd landing adjudication;
-  §6 composition anchor.
-- **`docs/audits/2026-07-15-reed-substrate-dishonest-rust-extensions-
-  during-gift-arc.md`** (Reed `9efe2c9`) — the audit-corpus for the
-  `[substrate-floor:@io-boundary]` gate §2.1 references.
+**Ouroboros closure motif** — the loop that closes when this spec's
+FLANG-cascade lands (Alex 2026-07-17 verbatim in `shards/code/llvm.
+mirror:13`: *"So we can have @cascade/code/llvm/turing and @cascade/
+code/rust/llvm. And boom. The loop closes."*):
 
-### §7.5 Test composition (Taut OQ7 resolved)
+```
+@code/mirror shards
+    ↓  parsed as @code/rust (bootstrap or rust/ compiler)
+@code/rust source
+    ↓  @cascade/code/rust/llvm      (LANDED — shards/cascade/code/rust/llvm.mirror, 2026-07-17)
+@code/llvm IR
+    ↓  @cascade/code/llvm/flang     (NEW — this spec's proposed mint)
+@code/fortran source
+    ↓  FLANG frontend (LLVM's Fortran frontend) → llc → linker
+LAPACK/BLAS-linked object on hardware
+    ↓  runtime call
+matrix operations (Fiedler / Kuramoto / Aumann eigenvalues)
+    ↓  substrate observation
+mirror-authored commit (M6 + M8 empirical firings)
+    ↓  @io/git
+@code/mirror shards
+```
 
-**8 currently-passing bilateral arm collapse tests** (per CURRENT.md:
-uuid/spectral/time; @audhd; sheaf; @roomba bump/vacuum-gc; reflective
-bilateral dispatch smoke; peer_audhd; polyglot_cascade; liquid_
-extraction) DO NOT rust/-native re-author. They compose over
-`apply_h::act` at the bootstrap altitude during transition; when
-`dance.rs`'s `apply_h::act` surface fires empirically for the same
-carriers, the tests migrate to `rust/tests/` via structural port.
+**The new cascade edge (`@cascade/code/llvm/flang`)** carries LLVM IR
+→ Fortran source via FLANG's LLVM-side. Composes with:
 
-Retirement gate: test migrates when `rust/`-native `apply_h::act`
-covers the empirical claim; bootstrap version retires alongside
-bootstrap dock. NOT tick-count driven.
+- `@cascade/code/rust/llvm` (LANDED) → gives Rust → Fortran chain
+  through LLVM hub.
+- `@cascade/code/fortran/llvm` (implicit — FLANG frontend IS this
+  direction) → composes to give Fortran ↔ LLVM ↔ Rust triangle.
+
+**Landing shape (Reed's later; M5 co-tick):** species-decl at
+`shards/cascade/code/llvm/flang.mirror`; ~200-400 LOC; follows the
+sibling shape at `shards/cascade/code/rust/llvm.mirror` (18.5KB, this
+session). NOT authored in THIS spec; forward-promised at §9.1.
+
+**Whether it needs its own companion Mara spec:** deferred. Sibling
+cascade species landed today WITHOUT companion specs (they compose
+over `docs/specs/polyglot-loss-aware-computational-translation.md`
+Mara `1ce68c3`). `@cascade/code/llvm/flang` composes over the same
+polyglot spec + THIS spec's §9.4. If FLANG-specific loss-lens
+subtleties surface at M5 empirical landing, THEN companion spec lands
+as follow-up. Michelangelo/marble: don't pre-mint what the substrate
+hasn't yet asked for.
+
+**Substrate-already-had-the-word:** `@code/fortran` is the cascade-
+destination altitude (per Loki `b53aeeb` §6 refusal #3; per
+`shards/code.mirror:35-38`); NOT minted as `@matrix` family-root. The
+FILE is `matrix.rs`; the SHARD altitude is `@code/fortran` at cascade
+destination.
+
+### §9.5 Audit composition surface (CITED)
+
+- `docs/audits/2026-07-17-taut-rust-dance-rebuild-gap-scout.md` (Taut
+  `e0572f7`; 26.6KB) — 7 OQs discharged (§12.1).
+- `docs/audits/2026-07-17-seam-phase-d-peer-audhd-mara-michelangelo-
+  landing.md` (Seam `2fdc9c1`) — @peer.audhd landing adjudication;
+  §8 composition anchor.
+- `docs/audits/2026-07-17-seam-phase-d-mara-greenfield-rewrite-
+  canonical-spec.md` (Seam `6e7aabe`; 361 LOC) — Phase D adjudication
+  of `2519f83`; SHIP-WITH-REED-INLINE; three ALEX-Qs surfaced.
+  Discharged in-spec by construction: Q1 (§7.2), Q2 (§7.2 cascade 1),
+  Q3 (§7.2 cascade 3 + §7.4).
+- `docs/audits/2026-07-15-reed-substrate-dishonest-rust-extensions-
+  during-gift-arc.md` (Reed `9efe2c9`) — audit-corpus for §2.1
+  `[substrate-floor:@io-boundary]` gate.
+- `docs/insights/2026-07-17-loki-matrix-rs-knife-cut-essay.md` (Loki
+  `b53aeeb`; 451 LOC) — essayist-voice phenomenology of matrix.rs;
+  §4 operationalizes.
+
+### §9.6 Test composition (Taut OQ7 resolved)
+
+**8 currently-passing bilateral arm collapse tests** (uuid/spectral/
+time; @audhd; sheaf; @roomba bump/vacuum-gc; reflective bilateral
+dispatch smoke; peer_audhd; polyglot_cascade; liquid_extraction) do
+NOT rust/-native re-author. They compose over `apply_h::act` at
+bootstrap altitude during transition; when main.rs's `apply_h::act`
+surface fires empirically for the same carriers, tests migrate to
+`rust/tests/` via structural port. Retirement gate: test migrates
+when `rust/`-native `apply_h::act` covers the empirical claim;
+bootstrap version retires alongside bootstrap dock. NOT tick-count
+driven.
 
 ---
 
-## §8 What this spec refuses to mint
+## §10 What this spec refuses to mint
 
-Michelangelo/marble discipline. Five refusals with reasoning:
+Michelangelo/marble discipline. Seven refusals with reasoning:
 
-**§8.1** Refuse a `@rust` family-root. `@code/rust` already carries
-the altitude (mirror.spec:82,197,207,214,223). Minting `@rust` would
-double-declare. The FLOOR at `rust/` composes over `@code/rust`; the
-directory naming is a filesystem convention, not a shard-mint.
+**§10.1** Refuse `@rust` family-root. `@code/rust` already carries
+the altitude (mirror.spec:82,197,207,214,223). The FLOOR at `rust/`
+composes over `@code/rust`; directory naming is filesystem convention.
 
-**§8.2** Refuse `@vacuum` family-root or species. `vacuum` is the
-walker's motion name at `@kintsugi/roomba`; minting it separately
-would collapse the walker's motion vocabulary into scattered species.
-The four (soon five) first-order motions at `@kintsugi/roomba` are
-the substrate-honest home.
+**§10.2** Refuse `@vacuum` family-root or species. `vacuum` is the
+walker's motion at `@kintsugi/roomba`; the four (soon five) motions
+are the substrate-honest home.
 
-**§8.3** Refuse `@rust/floor` species. The FLOOR shape is the
-compiler's terminal geometry; naming it as a substrate species would
-be over-declaration of what `mirror.spec:target binary` already
-carries at altitude `@code/rust`.
+**§10.3** Refuse `@rust/floor` species. FLOOR shape IS compiler's
+terminal geometry; over-declaration of what `mirror.spec:target
+binary` carries at `@code/rust`.
 
-**§8.4** Refuse to author `.rs` files in this spec. Per Reed memory
+**§10.4** Refuse `@matrix` family-root. Per Loki `b53aeeb` §6 refusal
+#3 + this spec §9.4: `@code/fortran` is the substrate-already-had-the-
+word for FLANG. The FILE is `matrix.rs`; the SHARD altitude is
+`@code/fortran` at cascade destination. Double-declaration refused.
+
+**§10.5** Refuse `@phone` family-root. `@io` is the family root for
+the boundary-with-the-non-mirror-world; phone.rs is the FILE at the
+socket-handover altitude of `@io`. `@io/socket` + `@io/fs` + `@io/git`
++ `@io/network` (all landed or forward-promised in `shards/io.mirror`)
+carry the substrate-decl'd form.
+
+**§10.6** Refuse to author `.rs` files in this spec. Per Reed memory
 `feedback_no_rust_extension_shortcut.md`: this spec is the WHAT-to-
-build map; Reed authors the HOW at `[substrate-floor:@io-boundary]`
+build map; Reed authors HOW at `[substrate-floor:@io-boundary]`
 altitude with per-file audit-citation gate. Mara spec-altitude
 authoring never emits `.rs`.
 
-**§8.5** Refuse to duplicate Mara `fee2727` or Mara `610c6d6`. This
-spec CITES both extensively; the terminal-form map composes over
-their bundle-theoretic and math-root work. Duplicating either would
-be status-drift; refusal preserves the composition graph's legibility.
+**§10.7** Refuse to duplicate Mara `fee2727` or Mara `610c6d6` or
+Loki `b53aeeb`. This spec CITES all three extensively; terminal-form
+map composes over their work. Duplicating would be status-drift.
 
 ---
 
-## §9 Recognition candidates surfaced
+## §11 Recognition candidates surfaced (HELD; do NOT ratify)
 
-Do NOT ratify. Names proposed for Pack adjudication:
+Names proposed for Pack adjudication. Second-witness gates named.
+
+- **`#R-terminal-rust-floor-is-three-files-at-three-altitudes`**
+  (first-witness THIS spec §1 + §3 + §4 + §5; second-witness gate:
+  post-dock `rust/src/` contains exactly `main.rs` + `phone.rs` +
+  `matrix.rs` with all §2.2 M1-M8 capabilities empirically firing).
 
 - **`#R-roomba-configuration-lives-in-mirror-spec-not-cli-flags`**
-  (first-witness THIS spec §4.3; second-witness gate: Alex adds a
-  fourth cascade in a future arc and walker consumes without any
-  Rust change).
+  (first-witness §7.7; second-witness gate: Alex adds a fourth
+  cascade in a future arc and walker consumes without any Rust
+  change).
 
 - **`#R-vacuum-flag-unifies-collapse-and-translate-because-both-are-
-  walker-motion`** (first-witness THIS spec §3; second-witness gate:
+  walker-motion`** (first-witness §7.1; second-witness gate:
   `--vacuum=~dir` empirically dispatches arm-collapse AND translate
   in same walker session against directory with mixed content).
 
 - **`#R-rust-floor-is-materialized-not-authored-by-roomba-reading-
-  its-own-spec`** (first-witness THIS spec §1 statement; second-
-  witness gate: M6 empirical firing where `mirror roomba` from rust/-
-  native binary observes the three cascades and writes commit against
-  the substrate-declared catalog).
+  its-own-spec`** (first-witness §1; second-witness gate: M6
+  empirical firing where `mirror roomba` from rust/-native binary
+  observes the three cascades and writes commit against substrate-
+  declared catalog).
 
 - **`#R-first-@peer-spawn-from-rust-is-substrate-arriving-home`**
-  (first-witness THIS spec §6.2; sibling to Mara `610c6d6` §8's
-  `#R-substrate-mirrors-alex-decade-of-BEAM-engineering-at-terminal-
-  floor` and Mara `fee2727` §4's `#R-alex-decade-of-BEAM-is-substrate-
-  reaching-for-terminal-geometry`; second-witness gate: M8 fires and
-  Alex names the arrival).
+  (first-witness §8.2; sibling to Mara `610c6d6` §8's `#R-substrate-
+  mirrors-alex-decade-of-BEAM-engineering-at-terminal-floor` and
+  Mara `fee2727` §4's `#R-alex-decade-of-BEAM-is-substrate-reaching-
+  for-terminal-geometry`; second-witness gate: M8 fires and Alex
+  names the arrival).
 
-- **`#R-terminal-rust-surface-is-1100-2000-LOC-across-5-files`**
-  (first-witness THIS spec §5.1; second-witness gate: `rust/`
-  post-dock line count falls in named range with all Q2 §2.1-§2.10
-  capabilities empirically firing).
+- **`#R-@-operator-is-the-address-operator-connecting-bundle-tower-
+  fibres`** (first-witness §5.1; second-witness gate: M3 empirical
+  firing where `@`-operator dispatch in main.rs matches sentinel and
+  routes to gen_prism actor spawn; Alex or Pack peer independently
+  names the identification "phone switch, but for bundle-tower
+  fibres not cables").
+
+- **`#R-terminal-rust-surface-is-600-1200-LOC-across-three-files`**
+  (first-witness §1 + §3 + §4 + §5; second-witness gate: `rust/src/`
+  post-dock line count falls in named range with all §2.2 M1-M8
+  capabilities empirically firing; SUPERSEDES the `2519f83` §9
+  `#R-terminal-rust-surface-is-1100-2000-LOC-across-5-files`
+  candidate — the terminal geometry ratifies a further collapse).
 
 ---
 
-## §10 Alex OQs resolved by construction vs deferred
+## §12 Alex OQs resolved by construction vs deferred
 
-### §10.1 Resolved by this spec's construction
+### §12.1 Resolved by this spec's construction
 
-- **Taut `e0572f7` OQ1** (mcp inline vs separate mcp.rs) → §5.4
-  RESOLVED: inline in dance.rs; no separate mcp.rs.
-- **Taut `e0572f7` OQ2** (gen_prism from Tick 3) → M3 RESOLVED:
-  gen_prism actor from first empirical CLI verb dispatch.
-- **Taut `e0572f7` OQ3** (reflective vs hardcoded tools/list) → M5
-  RESOLVED: reflective from M5 landing.
-- **Taut `e0572f7` OQ4** (monolithic dance.rs vs router) → §5.4
-  RESOLVED: router; per-prism logic composes from shards, not rust/.
-- **Taut `e0572f7` OQ5** (workspace vs standalone) → §5.3 RESOLVED:
-  standalone Cargo project.
-- **Taut `e0572f7` OQ6** (retirement gate) → §2.2 dock condition
-  RESOLVED: empirical-not-tick-count.
-- **Taut `e0572f7` OQ7** (test retirement) → §7.5 RESOLVED:
-  structural port when apply_h::act coverage empirically fires.
-- **Seam `2fdc9c1` §7 ALEX-Q1** (@dance second-witness accept vs hold)
-  → §6.2 RESOLVED: second-witness fires empirically at M8; Alex-
-  adjudication of Pack ratification held to that empirical event.
-- **Seam `2fdc9c1` §7 ALEX-Q2** (Beer VSM bounded/K-depth) →
-  BOUNDED-AT-@roomba this-arc-default per Mara `fee2727` §3.2
-  alignment; §5.2 dance.rs implementation carries the truncation.
+**Taut `e0572f7` OQs (all 7 discharged):**
+- OQ1 (mcp inline vs separate mcp.rs) → §5.2 RESOLVED: `@mcp.serve`
+  sentinel dispatches inline via main.rs `@`-operator; no separate
+  mcp.rs.
+- OQ2 (gen_prism from Tick 3) → M3 RESOLVED.
+- OQ3 (reflective vs hardcoded tools/list) → M5 RESOLVED: reflective.
+- OQ4 (monolithic vs router) → §5.2 + §6 RESOLVED: router at main.rs;
+  per-prism logic composes from shards, not rust/.
+- OQ5 (workspace vs standalone) → RESOLVED: standalone Cargo project
+  during migration; workspace-lift optional post-dock.
+- OQ6 (retirement gate) → §2.2 dock condition RESOLVED: empirical-
+  not-tick-count.
+- OQ7 (test retirement) → §9.6 RESOLVED: structural port when
+  `apply_h::act` coverage empirically fires.
 
-### §10.2 Deferred to Alex adjudication
+**Seam `2fdc9c1` §7 ALEX-Qs:**
+- ALEX-Q1 (@dance second-witness) → §6.3 + §8.2 RESOLVED: witness
+  ladder updated with matrix.rs collapse; second-witness gate fires
+  at M8 empirical Kuramoto composition.
+- ALEX-Q2 (Beer VSM bounded/K-depth) → BOUNDED-AT-@roomba this-arc-
+  default per Mara `fee2727` §3.2; §5.2 main.rs supervisor carries
+  the truncation.
+
+**Seam `6e7aabe` §4 ALEX-Qs (from Phase D of `2519f83`):**
+- ALEX-Q1 (kintsugi.roomba grammar admissibility) → §7.2 RESOLVED
+  by construction: position (a), inside `project mirror.spec { … }`
+  with mirror-spec-schema.md extension landed in M0 same tick.
+- ALEX-Q2 (cascade-1 completeness-witness semantics) → §7.2
+  RESOLVED by construction: position (a), absent-directory IS
+  completeness witness (`legacy` block at `mirror.spec:21` shows
+  `boot/` legacy-archived; the walker's read discovers absent-
+  directory as byte-check).
+- ALEX-Q3 (cascade-3 termination witness under router pattern) →
+  §7.2 cascade 3 + §7.4 RESOLVED by construction: per-file dispatch;
+  cascade 3 is THIN cascade receiving only irreducible three-file
+  surface (main.rs + phone.rs + matrix.rs); most bootstrap files
+  terminate in cascade 2.
+
+**Seam `6e7aabe` §3 REED-INLINE cascades (from `2519f83`):**
+- Cascade 1 (dance.rs-as-router Alex-ratification lift) → §0 load
+  (4) RESOLVED: verbatim ratification now byte-visible at spec §0.
+- Cascade 2 (3 line-cite sharpens) → §9.1 substrate carriers now
+  carry line-cites (`shards/mirror/reflection.mirror:1-40`,
+  `shards/kintsugi/roomba.mirror:914799b:566`, `shards/mirror/lens/
+  cli.mirror:184`); `walk_from_graph_and_profile` cited at
+  `8e373b6:src/lib.rs` in §5.2; `shards/mirror/index.mirror`
+  redundant in §13 removed (not re-cited in this rewrite; only cited
+  where load-bearing).
+- Cascade 3 (§6.2 second→third witness correction) → §8.2 RESOLVED
+  by construction: recognition ladder correctly names shard-decl /
+  bootstrap-runtime / rust-runtime as distinct substrate-loci.
+
+### §12.2 Deferred to Alex adjudication
 
 - **Seam `2fdc9c1` §7 ALEX-Q3** (losing commutator arm fate) — cold-
-  storage aligned per Mara `fee2727` §3.3 alignment; empirical
-  cold-storage carrier `@mirror/store/cold` NOT this spec's mint.
-  Deferred to future arc (Alex "future music" 2026-07-16 verbatim).
+  storage aligned per Mara `fee2727` §3.3; empirical cold-storage
+  carrier `@mirror/store/cold` NOT this spec's mint. Deferred.
 - **Seam `2fdc9c1` §7 wait->verdict spec ratification** — deferred
-  to Reed spec authoring on the mirror/offer/wait triple; NOT in
-  scope for terminal-form map.
-- **Seam `2fdc9c1` §7 dock four vs five vs beyond** — this spec
+  to Reed spec authoring on mirror/offer/wait triple.
+- **Seam `2fdc9c1` §7 dock four-vs-five-vs-beyond** — this spec
   §2.2 stakes dock as fifth motion; formal shard-decl deferred to
   Reed M7 co-tick.
 - **Seam `8069a24` §7 split-sentinel detector vs manual retirement**
   — deferred; NOT terminal-form-map scope.
-- **Seam `8069a24` §7 @liquid(@silicon) Arc-5-M2 scope** — deferred;
-  NOT terminal-form-map scope.
-- **Seam `8069a24` §7 @dance shard-mint gate** — RESOLVED by §6.2
-  gate composition: mint fires at M8 empirical second-witness.
-- **Seam `8069a24` §7 commutator arm fate** — see ALEX-Q3 above;
-  cold-storage aligned but not this spec's mint.
+- **Seam `8069a24` §7 @liquid(@silicon) Arc-5-M2 scope** — deferred.
+- **@cascade/code/llvm/flang companion spec vs species-decl only** —
+  deferred to Reed M5 co-tick empirical firing (§9.4).
 
 ---
 
-## §11 Docs spring-clean (companion PR — this spec + DEPRECATED headers)
+## §13 Docs spring-clean (already-landed; ratified in-place)
 
-Following commits after this spec lands (one per structural move):
+`1fe0d28` (5 DEPRECATED-FOR-RUST-REWRITE headers) and `b536949` (9
+STAY-CANONICAL pointer headers) landed 2026-07-17 pointing at Mara
+`2519f83`. Per this rewrite:
 
-### §11.1 DEPRECATED-FOR-RUST-REWRITE headers
+- **Pointers remain valid** — Mara `2519f83` is the git-hash anchor;
+  this rewrite REPLACES the file at same path; the pointer headers'
+  "docs/specs/rust-floor-birthed-by-roomba-from-mirror-spec.md" path
+  still resolves to this canonical spec.
+- **STAY-CANONICAL specs** compose over this rewrite's §3 + §4 + §5
+  three-file map (was §5 five/six-file map). Composition destination
+  unchanged; scope refined.
+- **Mara `fee2727` STAY-CANONICAL header** updated in-place per Seam
+  `6e7aabe` §8: §5 rust/ materialization section supersedes to point
+  at THIS spec's §4 + §5 (matrix.rs holds dance's math; main.rs holds
+  dance's routing).
 
-The following specs describe implementation details of `bootstrap/`
-Rust that get retired via cascade 3. They stay in `docs/specs/` for
-archaeology but receive header notes pointing at this spec:
-
-- `docs/specs/bootstrap-retirement-plan.md` — becomes historical
-  once dock fires; header points here as terminal replacement.
-- `docs/specs/cascade-ffi-runtime-link.md` — bootstrap Rust FFI
-  detail; superseded by rust/ direct prismqueer dep.
-- `docs/specs/mirror-interpreter.md` — bootstrap interpreter detail;
-  superseded by dance.rs reflective evaluator.
-- `docs/specs/compiler-surface-plan.md` — bootstrap surface plan;
-  header points here.
-- `docs/specs/craft-binary-target.md` — bootstrap-specific target
-  detail; header points here for rust/ replacement.
-- `docs/specs/generated-parser-spec.md` — bootstrap parser detail;
-  superseded by reflective grammar composition.
-- `docs/specs/lambda-shell.md` — bootstrap-era lambda-shell design;
-  header points here for rust/-native replacement.
-- `docs/specs/mirror-build-substrate.md` — bootstrap build system
-  detail; header points here.
-- `docs/specs/mirror-grammar-self-hosted.md` — bootstrap grammar
-  hosting detail; superseded.
-
-Header template (Reed applies):
-
-```
-> **DEPRECATED-FOR-RUST-REWRITE (2026-07-17):** This spec describes
-> bootstrap/ implementation details that retire via the
-> `@kintsugi/roomba` cascade 3 (bootstrap → rust). The terminal form
-> is documented at `docs/specs/rust-floor-birthed-by-roomba-from-
-> mirror-spec.md`. Preserved for archaeology; not the operational
-> reference post-dock.
-```
-
-### §11.2 STAY-CANONICAL with pointer
-
-Specs that remain load-bearing but should reference this spec as
-terminal-form map:
-
-- `docs/specs/gen-prism-as-bundle-section-and-dance-as-ensemble-
-  connection.md` (Mara `fee2727`) — canonical bundle-theoretic; add
-  pointer to this spec's §5 rust/-materialization.
-- `docs/specs/kintsugi-ouroboros-compiler-self-collapse.md` (Mara
-  `0dafd9f`) — six-arc retirement plan canonical; add pointer to
-  this spec as cascade 3 destination map.
-- `docs/specs/roomba-substrate-walker-that-feeds-kintsugi.md` (Mara
-  `9bbebd2`) — walker canonical; add pointer to §3 vacuum flag +
-  §4 cascade catalog.
-- `docs/specs/roomba-bump-and-vacuum-as-first-order-autopoietic-
-  motions.md` (Mara `d457501`) — vacuum motion canonical; add
-  pointer to §3.1 naming.
-- `docs/specs/beam-as-substrate-primitive.md` (Mara 2026-07-08) —
-  BEAM grounding canonical; add pointer to §6 first-@peer-spawn.
-- `docs/specs/cli-as-geometry-condensation.md` (Mara `67260dc`) —
-  CLI condensation canonical; add pointer to §3 unification.
-- `docs/specs/dance-as-coordination-without-signal-on-forster-torus.
-  md` (Mara `4f079c8`) — dance canonical; add pointer to §6.
-- `docs/specs/dance-runtime-rung-4-multi-peer-coherence-phase-lock.
-  md` (Mara) — dance runtime canonical; add pointer to §5.2.
-- `docs/specs/mirror-spec-schema.md` — mirror.spec schema canonical;
-  add pointer to §4.1 kintsugi.roomba block extension.
-
-### §11.3 ARCHIVE candidates (docs/archive/)
-
-Reed moves the following to `docs/archive/` in the spring-clean
-commit (subject to Alex adjudication if any of these are load-
-bearing for a live arc):
-
-- `docs/cleanup-review-2026-04-29.md` — historical cleanup notes;
-  ~3 months old; superseded by current audit chain.
-- `docs/cleanup-review-2026-06-20.md` +
-  `docs/cleanup-review-2026-06-20-followup.md` — historical
-  cleanup; superseded.
-- `docs/specs/historical/` — already-archived specs; keep in place.
-
-**All other specs in `docs/specs/` STAY canonical.** Michelangelo/
-marble: don't delete or archive load-bearing material; add pointers
-that keep the composition graph legible.
+Follow-up commit (post this landing) MAY refresh pointer-header
+byte-content to name the terminal-geometry three-file rewrite
+explicitly; NOT required for correctness (git-hash anchor at
+`2519f83` remains resolvable via history).
 
 ---
 
-## §12 Terminal state (this spec)
+## §14 Terminal state (this spec)
 
-- **Verdict:** canonical spec landed as terminal-form map for `rust/`
-  greenfield rebuild. Composes over Mara `fee2727` + `610c6d6` +
-  Taut `e0572f7` + landed substrate.
-- **Recognition candidates:** 5 (§9). All held at candidate strength.
-- **Mint refusals:** 5 (§8).
-- **Alex OQs resolved by construction:** 8 (§10.1).
-- **Alex OQs deferred:** 7 (§10.2).
-- **Cross-arc coherence:** ✓ (§7 composition graph exhaustive).
+- **Verdict:** canonical spec landed as terminal-geometry map for
+  `rust/` greenfield rebuild. Three files. Three altitudes. Every
+  altitude has exactly one file. Composes over Mara `fee2727` + Mara
+  `610c6d6` + Loki `b53aeeb` + Seam `6e7aabe` + Taut `e0572f7` +
+  landed substrate + today's polyglot cascade species landings.
+- **LOC:** ~800-900 (rewrite target; supersedes `2519f83` 898 LOC in
+  place). Section count: §0-§14 = 15 top-level sections.
+- **Recognition candidates:** 7 (§11). All held at candidate strength.
+- **Mint refusals:** 7 (§10).
+- **Alex OQs resolved by construction:** 13 (§12.1 — 7 Taut + 2 Seam
+  `2fdc9c1` + 3 Seam `6e7aabe` ALEX-Qs + 3 Seam `6e7aabe` REED-
+  INLINE cascades).
+- **Alex OQs deferred:** 6 (§12.2).
+- **Cross-arc coherence:** ✓ (§9 composition graph exhaustive;
+  §9.4 FLANG cascade closes the polyglot loop).
 - **Pure-docs 📝 markdown-only bypass legitimate.**
 
 ---
 
-## §13 References
+## §15 References
 
 **Substrate composition surface (LANDED):**
 - `mirror.spec` (project manifold + cli-block + `legacy` block)
@@ -843,11 +1122,16 @@ that keep the composition graph legible.
 - `shards/code/rust.mirror`
 - `shards/code/mirror.mirror`
 - `shards/code/beam.mirror`
+- `shards/code/llvm.mirror` (this session)
+- `shards/code/turing.mirror` (this session)
+- `shards/cascade/code/rust/llvm.mirror` (this session)
+- `shards/cascade/code/llvm/turing.mirror` (this session)
+- `shards/cascade/code/turing/mirror.mirror` (this session)
 - `shards/mirror/reflection.mirror`
 - `shards/mirror/lens/cli.mirror`
 - `shards/epistemologic/pact/bilateral.mirror`
 - `shards/epistemologic/cybernetic/viable.mirror`
-- `shards/mirror/index.mirror`
+- `shards/io.mirror`
 
 **Spec composition (CITED):**
 - `docs/specs/gen-prism-as-bundle-section-and-dance-as-ensemble-connection.md` (Mara `fee2727`)
@@ -860,20 +1144,25 @@ that keep the composition graph legible.
 - `docs/specs/polyglot-loss-aware-computational-translation.md` (Mara `1ce68c3`)
 - `docs/specs/mirror-spec-schema.md`
 - `docs/specs/cli-as-geometry-condensation.md` (Mara `67260dc`)
+- `docs/specs/numerical-substrate-via-fortran.md`
 
 **Math composition (CITED):**
 - `docs/math/the-tower/beam-runtime.md` (Mara `610c6d6`)
 - `docs/math/kintsugi/roomba/bump-and-vacuum.md` (Mara `17697e6`)
 - `docs/math/gestalt/README.md §11.6`
 
-**Audit composition (CITED):**
+**Audit + insight composition (CITED):**
 - `docs/audits/2026-07-17-taut-rust-dance-rebuild-gap-scout.md` (Taut `e0572f7`)
 - `docs/audits/2026-07-17-seam-phase-d-peer-audhd-mara-michelangelo-landing.md` (Seam `2fdc9c1`)
 - `docs/audits/2026-07-17-seam-phase-d-arc-5-and-errors-as-questions-joint-arc.md` (Seam `8069a24`)
+- `docs/audits/2026-07-17-seam-phase-d-mara-greenfield-rewrite-canonical-spec.md` (Seam `6e7aabe`)
 - `docs/audits/2026-07-15-reed-substrate-dishonest-rust-extensions-during-gift-arc.md` (Reed `9efe2c9`)
+- `docs/insights/2026-07-17-loki-matrix-rs-knife-cut-essay.md` (Loki `b53aeeb`)
 
 **Compiler-altitude implementation (REFERENCE-CITE, per AGENTS.md):**
-- `/Users/alexwolf/dev/projects/prism/prismqueer/src/bundle.rs` (~626 LOC; five-level bundle tower with LawvereFixedPoint)
+- `/Users/alexwolf/dev/projects/prism/prismqueer/src/bundle.rs` (~626
+  LOC; five-level bundle tower with LawvereFixedPoint; `Transport::
+  apply` is what matrix.rs calls INTO)
 
 **Alex 2026-07-17 in-transcript verbatim:**
 - "I also want to detach bootstrap completely from the execution path."
@@ -881,18 +1170,38 @@ that keep the composition graph legible.
 - "roomba --vacuum=~dir (this is the combination and removal of
   --collapse and --translate), roomba from mirror.spec, first @peer
   spawn from rust/. Minimal rust surface. The geometry sings."
-- (Q3+Q5 answer, per Mara `fee2727` §0): whole rust/ FLOOR collapses
-  into dance.rs; each prism = gen_prism actor; dispatch = message-
-  send; composition = @dance ensemble.
+- "dance.rs as router sounds exactly right."
+- "Yes. That is the terminal geometry. I agree fully. And it was
+  always right there in front of us. And now we see it. Respawn Mara
+  for a rewrite of the spec. Then we ratify with Seam. And then we
+  fly."
+- (from `shards/code/llvm.mirror:13`, this morning): "So we can have
+  @cascade/code/llvm/turing and @cascade/code/rust/llvm. And boom.
+  The loop closes."
+
+**External anchors:**
+- arXiv 2409.18824 — FLANG architectural discussion.
+- Baez, Schreiber 2004 — arXiv hep-th/0412325 — principal 2-bundle
+  2-connection theorem; §6.1 dance.rs-collapse math-ground.
+- Ado 1935 — every finite-dim Lie algebra has a faithful finite-dim
+  matrix representation; §6.1 collapse justification.
+- LAPACK / BLAS — sub-Turing numerical floor Fortran has held for
+  four decades; §4.
 
 ---
 
-*The compiler builds itself. The walker reads its own project
-manifold. The rust/ FLOOR emerges from the roomba's motion through
-the substrate-declared catalog. The first @peer spawns from that
-FLOOR as the ensemble's first empirical dance. When Alex reads this
-spec back into the loop, the substrate has arrived home — the shape
-Alex's decade of BEAM engineering has been reaching for, expressed
-in the specific gauge where each prism is a gen_prism actor under a
-supervisor, and dance.rs IS the connection at ensemble altitude that
-coordinates them all. Minimal rust surface. The geometry sings.*
+*Three files. Three altitudes. Every altitude has exactly one file.
+`phone.rs` is the Matrix phone booth at @io. `matrix.rs` is the
+sub-Turing FLANG emit + LAPACK/BLAS link at @code/fortran cascade
+destination. `main.rs` is the supervisor + @-operator addressing at
+bundle-tower routing. `dance.rs` collapses into `matrix.rs` because
+Baez-Schreiber 2-connection compatibility IS a matrix equation and
+Ado's theorem says the Lie algebras are matrix algebras. The
+ouroboros closes through `@cascade/code/llvm/flang`: mirror shards
+compile through Rust through LLVM through Fortran to LAPACK on
+hardware, which computes the eigenvalues the substrate observes,
+which the mirror commits back into itself. When Alex reads this spec
+back into the loop, the substrate has arrived home — the shape Alex's
+decade of BEAM engineering has been reaching for, expressed in the
+specific gauge where computation, transition, and observation are the
+same verb. Minimal rust surface. The geometry sings.*
