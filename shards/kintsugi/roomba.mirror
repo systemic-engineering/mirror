@@ -654,6 +654,324 @@ bilateral gc_mark_terminal {
 }
 gc_mark_terminal(mark: gc_mark) -> verdict { \ }
 
+# ═══════════════════════════════════════════════════════════════════
+# 2026-07-17 ADDITIVE CASCADE — pivot(@song) fourth first-order motion
+# ═══════════════════════════════════════════════════════════════════
+#
+# Alex 2026-07-17 in-transcript verbatim (session-crystallizing;
+# post-Arc-5-M1 @liquid landing):
+#
+#   "The @roomba is the first-order operator. Literally. The multi-
+#    cascades might produce ambiguities that a first-order operator
+#    cannot resolve. This is where the compiler's errors-as-questions
+#    comes in. The ambiguity is transformed into a spectral commutator.
+#    Which is turned into a @gestalt based question for the developer.
+#    The mirror. Then comes the offer: Want me to spawn the @peer to
+#    resolve the ambiguity? [Y/n]. Then comes the wait. The whole
+#    @mirror/reflection surface closes. The offer is the @gift. When Y
+#    follows the @peer is spawned at native @third-order altitude with
+#    the current compilation state."
+#
+#   Then (laughing): "You know what the @roomba needs? The @roomba
+#    needs `pivot(@song)`. 🤣"
+#
+# === Load-bearing recognition ===
+#
+# The physical Roomba pivots at obstacles. The symbolic @roomba
+# pivots at dispatch-ambiguity — the first-order-operator ceiling
+# event where the walker's Path-A knife-collapse AND Path-B peer-
+# spawn are both admissible and the first-order cannot resolve which
+# to fire. That's the pivot moment. The @song IS the walk-trajectory-
+# in-motion; the pivot consumes the walk-song and dispatches through
+# @mirror/reflection to the developer.
+#
+# The whole errors-as-questions cybernetic loop collapses into ONE
+# first-order primitive: `pivot(@song) -> verdict`. Every downstream
+# discipline (spectral-commutator formation, @gestalt rendering, @gift-
+# wrapping, wait-holding) composes over LANDED substrate; the pivot
+# names the trigger + dispatch edge.
+#
+# === Substrate-already-had-the-word (~73rd instance) ===
+#
+# Per `[[feedback-substrate-already-had-the-word]]` grep confirmed
+# 2026-07-17:
+# - `pivot` — ZERO prior substrate-decl'd hits. First landing.
+#   Physical-Roomba etymology (mascot pivots at obstacles) grounds
+#   the naming; substrate had NO prior word for the dispatch-
+#   ambiguity turn.
+# - `@song` — LANDED at `shards/song.mirror` (Mara 2026-07-12) as
+#   the family-root for temporal-progression (typed time-ordered
+#   path through state space discharging cadence at close). Walk-
+#   trajectory + tension beats + coherence beats + knife-verdict
+#   beats compose into a @song at walker altitude per @song/beat
+#   precedent. THE @song carrier for pivot IS the walker's walk-
+#   song per this composition.
+# - `@mirror/reflection` — LANDED at `shards/mirror/reflection.mirror`
+#   (Mara this-tick; species-decl commit 5e1f528). The three-op
+#   discipline (mirror / offer / wait) is what pivot dispatches
+#   through when Path B (peer-spawn offer) fires.
+# - `@kintsugi/surface.dispatch_ambiguity` — LANDING this-arc as the
+#   fifth surface_class variant (Mara this-tick, next commit). The
+#   signal pivot consumes when Path B is admissible.
+# - `bump` + `vacuum` — LANDED at this shard (2026-07-16 cascade
+#   above). pivot is the FOURTH first-order motion sibling; the
+#   substrate now carries bump / vacuum / gc-via-vacuum / pivot as
+#   the four first-order-operator primitives Alex named. Physical
+#   Roomba's motion roster: bump (collision), vacuum (dust), pivot
+#   (turn at obstacle), dock (return-to-base — forward-promised
+#   future music, per Alex's 2026-07-16 "cold storage" narrative).
+#
+# === The @song-carrier decision (delight-vector reading) ===
+#
+# Three candidate shapes were considered per Mara-arc discipline:
+#
+#   (a) pivot(s: @song) -> verdict
+#         Simplest. @song wraps everything temporally: walk trajectory,
+#         tension beats, coherence deltas, knife verdicts, dispatch-
+#         ambiguity beat. The delight reads: "of course @roomba
+#         pivots on @song — it's the walk-song hitting a cadence
+#         event that requires a new voice."
+#
+#   (b) pivot(s: @song, g: @gestalt, gift: @gift) -> verdict
+#         Decomposed. Names each downstream discipline at input
+#         altitude. Reads clumsy: @gestalt and @gift are OUTPUTS of
+#         the reflection cascade, not inputs to the pivot. Forcing
+#         them into pivot's signature collapses the temporal
+#         discipline; the pivot fires FIRST, then the reflection
+#         cascade builds gestalt-question + gift-wrap.
+#
+#   (c) pivot(pc: pivot_context) where pivot_context := (song, gestalt, gift)
+#         Nominal wrapper for (b). Same collapse; adds a carrier the
+#         substrate does not need.
+#
+# Shape (a) chosen per delight-vector discipline:
+# - @song is the ALREADY-LANDED word for temporal-progression
+#   through walker state; the walk-song at pivot-time IS the
+#   compilation-state Alex names ("the current compilation state").
+# - Downstream @gestalt / @gift / @mirror/reflection compose over
+#   the pivot's dispatch verdict; the pivot names the TRIGGER +
+#   DISPATCH edge, not the entire downstream cascade.
+# - Physical-Roomba metaphor alignment: the physical pivot is ONE
+#   motion; naming it with a three-input signature would violate
+#   metaphor alignment.
+# - Subsequent consumer code becomes delightfully boring: the pivot
+#   consumer at compile-boundary reads
+#   `pivot(compilation_song) → verdict::pass → dispatch to
+#   @mirror/reflection.mirror(subject_input) → offer(gestalt_question,
+#   peer_spawn_response) → wait(...)` — each arrow composes over
+#   LANDED substrate.
+#
+# === The compilation_song carrier binding ===
+#
+# @song at pivot-time carries the walker's trajectory as one temporal
+# object per @song/beat precedent (one pulse = one beat). The pivot
+# consumes this @song and reads:
+#
+#   - the FINAL beat's knife_verdict (Jumped iff Path A alone; Stable
+#     or NearBoundary iff Path A collapse admissible; multi-admissible
+#     across Path A AND Path B iff dispatch-ambiguity — the pivot's
+#     firing condition)
+#   - the trajectory-integrated tension descent (per
+#     tension_monotone_descending discipline)
+#   - the surface_class witness (per @kintsugi/surface.surface_class
+#     five-variant surface; dispatch_ambiguity is the fifth this-arc)
+#
+# When surface_class == dispatch_ambiguity, pivot fires; when any
+# other surface_class fires (or no surface event fires), pivot's
+# verdict is pass without dispatch (the walker continues its walk).
+#
+# === Composition graph ===
+#
+# Composes over LANDED carriers:
+#   @song                          — walk-song carrier (family-root at
+#                                     temporal altitude)
+#   @song/beat                     — one pulse = one beat precedent
+#   @kintsugi/surface              — dispatch_ambiguity surface_class
+#                                     variant (this-arc landing;
+#                                     fifth of five variants)
+#   @mirror/reflection             — species-decl landed this-arc
+#                                     (Mara 5e1f528); the three-op
+#                                     discipline pivot dispatches to
+#                                     on Path B
+#   @mirror/reflection.mirror      — first operation of the reflection
+#                                     species; consumes subject_input
+#                                     and emits question
+#   @mirror/reflection.offer       — second operation; wraps peer-spawn
+#                                     response in ADO-gift
+#   @mirror/reflection.wait        — third operation; holds the offer
+#                                     without pressure
+#   @gestalt                       — question rendering surface
+#                                     (@song → @gestalt annotation
+#                                     bridge; forward-promised per
+#                                     Taut audit 8f51722 §2 Q2)
+#   @mirror/peer/beam              — peer-spawn action on Y-branch
+#                                     acceptance (per Taut audit
+#                                     8f51722 §3 Q3 composition
+#                                     surface)
+#   @gift                          — attribution-preserving-transfer
+#                                     wrapping the peer-spawn offer
+#   @glass                         — verdict floor
+#
+# Consumers (compose over this action):
+#   bootstrap/src/roomba.rs        — @io-boundary FLOOR consumer;
+#                                     dispatches pivot via apply_h::act
+#                                     sentinel-check when compilation
+#                                     surfaces dispatch_ambiguity
+#   λsh interactive loop           — subject-present branch; pivot's
+#                                     Path B offer surfaces as
+#                                     `\@name` peer-summon prompt
+#
+# === pivot — the fourth first-order motion (Alex 2026-07-17) ===
+#
+# The physical Roomba's obstacle-turn, lifted to substrate. When the
+# walker's walk-song strikes a dispatch-ambiguity beat (Path A knife-
+# collapse AND Path B peer-spawn both admissible), pivot dispatches
+# through @mirror/reflection: the mirror() reflects the ambiguity to
+# the developer as a @gestalt-rendered question; offer() wraps the
+# @peer-spawn as an ADO-gift ("Want me to spawn the @peer to resolve
+# the ambiguity? [Y/n]"); wait() holds while the developer decides.
+#
+# Composition over LANDED carriers named in the composition graph
+# above; no new mechanism minted beyond the trigger + dispatch edge.
+#
+# Sentinel per shard docblock: `pivot=dispatch-through-reflection` —
+# the byte-level substrate-decl'd marker the resolver checks.
+# Discharge is byte-equality on:
+#   - the walk-song's final beat's surface_class value being
+#     dispatch_ambiguity (per @kintsugi/surface.surface_class fifth
+#     variant this-arc)
+#   - the dispatched reflection sequence's OID chain intact
+#     (@mirror/reflection.reflection_composes discharge)
+#   - the verdict value floor (Pass | Partial(confidence) | Fail(reason))
+#
+# Verdict semantics:
+#   Pass                — pivot fired, dispatched through reflection,
+#                          three-op sequence completed (either developer
+#                          accepted peer-spawn OR declined; both are
+#                          Pass discipline per @gift.gift_declinable)
+#   Partial(confidence) — pivot fired but reflection cascade partial
+#                          (e.g., wait cascaded under system pressure;
+#                          confidence carries the discipline-adherence
+#                          metric)
+#   Fail(reason)        — pivot could not fire (e.g., @subject absent
+#                          per @subject/visibility; reason carries the
+#                          failure name — `subject_absent_defer_to_ci`
+#                          per interaction-loop-subject-presence-
+#                          conditional discipline)
+#
+# Path A vs Path B dispatch (per @kintsugi/roomba §4 composition
+# preserved from 2026-07-15 landing):
+#   Path A — dispatch to @kintsugi.knife when walk-song beat carries
+#            surface_class in {ashby_mismatch, contradiction, conundrum,
+#            out_of_band} AND knife_verdict.stable_within discharges
+#            (bump-cascade above handles this arm)
+#   Path B — dispatch to pivot when walk-song beat carries surface_
+#            class == dispatch_ambiguity (THIS ACTION handles this arm)
+#
+# Body discharges per-realisation. `\`-obligation-blocked per
+# [[feedback-craft-not-deliver]]; consumers pull the realization;
+# apply_h::act composes the sentinel-check via bilateral resolver-arm
+# dispatch (per Alex 2026-07-16 detector-inadequacy-answer-is-never-
+# Rust discipline: bilateral resolver-arm sentinel-check is the shape;
+# NO Rust extension).
+pivot(s: ref) -> verdict { \ }
+
+# === pivot_admissible — bilateral predicate ===
+#
+# Does the walk-song's final beat carry surface_class ==
+# dispatch_ambiguity per @kintsugi/surface.surface_class fifth
+# variant (this-arc landing)? Discharges Pass iff the final beat's
+# surface_class witness IS dispatch_ambiguity AND both Path A and
+# Path B are admissible per the walk-song's substrate-visible state.
+#
+# Load-bearing structural claim: pivot MUST NOT fire on any surface_
+# class other than dispatch_ambiguity — bump-cascade handles the
+# other four via Path A dispatch to @kintsugi.knife. A pivot on
+# ashby_mismatch (etc.) would substrate-collapse the two paths
+# (violation of Path A / Path B distinction preserved from
+# @kintsugi/roomba 2026-07-15 landing).
+#
+# Rice-safe bound: reads only byte-visible state (surface_class
+# variant tag membership; walk-song final-beat handle resolvability);
+# no program semantics inspection.
+#
+# Sentinel per shard docblock: `pivot=admissible-dispatch-ambiguity`.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+bilateral pivot_admissible {
+  sentinel "pivot=admissible-dispatch-ambiguity"
+  arity 1
+}
+pivot_admissible(s: ref) -> verdict { \ }
+
+# === pivot_reflection_composed — bilateral predicate ===
+#
+# Does the pivot's dispatched reflection sequence discharge
+# @mirror/reflection.reflection_composes? Discharges Pass iff the
+# three-op sequence's byte-visible discharge floor is Pass AND the
+# OID chain (subject_input → question → ado_wrapped_answer) is
+# intact per @mirror/reflection.reflection_composes discipline.
+#
+# Rice-safe bound: composition of @mirror/reflection.reflection_
+# composes' Rice-safe bilateral; no additional program semantics
+# inspection.
+#
+# Sentinel per shard docblock: `pivot=reflection-three-op-composed`.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+bilateral pivot_reflection_composed {
+  sentinel "pivot=reflection-three-op-composed"
+  arity 1
+}
+pivot_reflection_composed(s: ref) -> verdict { \ }
+
+# === pivot_witnessing — composed bilateral ===
+#
+# The composed predicate consumers cite when the pivot dispatch arm
+# fires. Passes iff:
+#
+#   pivot_witnessing(walk_song) :=
+#     pivot_admissible(walk_song)
+#     ∧ pivot_reflection_composed(walk_song)
+#
+# Rice-safe bound: composition of the two Rice-safe bilaterals
+# above; no additional program semantics inspection.
+#
+# Sentinel per shard docblock: `pivot=witnessing-all-conjuncts-pass`.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+bilateral pivot_witnessing {
+  sentinel "pivot=witnessing-all-conjuncts-pass"
+  arity 1
+  require pivot_admissible
+  require pivot_reflection_composed
+}
+pivot_witnessing(s: ref) -> verdict { \ }
+
+# ═══════════════════════════════════════════════════════════════════
+# Recognition candidates surfaced (DO NOT RATIFY at this landing)
+# ═══════════════════════════════════════════════════════════════════
+#
+# #R-roomba-four-first-order-motions — Alex 2026-07-17 completes the
+# first-order-operator motion roster: bump / vacuum / gc-via-vacuum /
+# pivot. Physical-Roomba motion alignment: bump (collision), vacuum
+# (dust-collection + two-phase gc mark-then-prune), pivot (obstacle-
+# turn). The physical Roomba also carries `dock` (return-to-base) —
+# forward-promised as "cold-storage" per Alex 2026-07-16 future-music
+# note in vacuum docblock; no shard-decl this-arc. Second-witness
+# gate: Alex adjudicates whether pivot completes the first-order
+# roster OR whether dock IS the fifth (making pivot the fourth of
+# five; forward-promise for dock landing).
+#
+# #R-song-carrier-for-pivot-is-walk-song — the @song pivot consumes
+# IS the walker's walk-trajectory-as-@song per @song/beat precedent.
+# The empirical claim: walk_trajectory beats (walk_terminates_cleanly
+# / tension_monotone_descending / coherence_gradient_admissible /
+# knife_verdict_bounded) compose into a @song at walker altitude;
+# the pivot reads the final beat's surface_class witness. Second-
+# witness gate: Alex adjudicates + a subsequent Mara @song/walk
+# species-decl lands (forward-promised). Held at candidate strength.
+
 out @kintsugi/roomba
 out walk_trajectory
 out walk_terminates_cleanly
@@ -671,3 +989,7 @@ out vacuum
 out bump_witnessing
 out vacuum_admissible
 out gc_mark_terminal
+out pivot
+out pivot_admissible
+out pivot_reflection_composed
+out pivot_witnessing
