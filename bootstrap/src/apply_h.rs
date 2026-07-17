@@ -856,22 +856,6 @@ pub fn act(action: Ref, args: Vec<Value>) -> Verdict {
     // again: THIRD BITE proves the collapse pattern holds at Landing-C
     // scale (14.9KB pre-collapse; largest ouroboros bite to date).
     // ─────────────────────────────────────────────────────────────────
-    if action == "@peer/persistence.home_content_addressed" {
-        if let Some(home) = args.first() {
-            if home.oid.contains("manifest=oids-resolvable") {
-                return Verdict::Pass;
-            }
-            return Verdict::Fail(format!(
-                "home_content_addressed: expected manifest=oids-resolvable \
-                 sentinel (Landing A §4.4+§9.2 refinement-type invariant \
-                 per shard docblock), got arg oid {:?}",
-                home.oid
-            ));
-        }
-        return Verdict::Fail(
-            "home_content_addressed: missing peer_home argument".to_string(),
-        );
-    }
     // ────────────────────────────────────────────────────────────────
     //
     // Bilateral-predicate resolver for `@kintsugi/roomba` action refs.
