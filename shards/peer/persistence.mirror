@@ -322,8 +322,18 @@ boot_state_coherent(home: peer_home, e: ref) -> verdict { \ }
 # byte-equality.
 #
 # Body discharges per-realisation. `\`-obligation-blocked.
+# Sentinel restored 2026-07-17 per Seam Phase D §4.1.1
+# (docs/audits/2026-07-17-seam-phase-d-autopoietic-rust-consumption-arc.md):
+# the bilateral block was minted at bcc62d3 with sentinel
+# `identity=content-addressed` which diverged from the shard docblock
+# prose (:311 `manifest=oids-resolvable`) AND from the hand-typed arm
+# in bootstrap/src/apply_h.rs which never retired (Reed's collapse
+# capability's arm_matches_sentinel safety check correctly refused).
+# Consumers producing docblock-shape peer_home OIDs failed the
+# reflective dispatch until this restoration; composed home_witnessing
+# (retired at 20047c2) propagates the fix via require chain.
 bilateral home_content_addressed {
-  sentinel "identity=content-addressed"
+  sentinel "manifest=oids-resolvable"
   arity 1
 }
 home_content_addressed(home: peer_home) -> verdict { \ }
