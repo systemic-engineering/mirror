@@ -1082,6 +1082,269 @@ pub fn act(action: Ref, args: Vec<Value>) -> Verdict {
                 path, e
             )),
         }
+    } else if action == "@cascade/code/rust/llvm.apply_rust_llvm" {
+        // ────────────────────────────────────────────────────────────
+        // Tick M3 landing (2026-07-17) — polyglot cascade Edge 1.
+        //
+        // Resolver arm for @cascade/code/rust/llvm.apply_rust_llvm per
+        // shards/cascade/code/rust/llvm.mirror:232-234 (Mara `eee446b`).
+        // Signature (spec): apply_rust_llvm(source: rust_source,
+        // p: perturbation) -> llvm_ir_module. At Tick M3 MVP we accept
+        // only the source arg; the perturbation slot lifts in a
+        // subsequent tick when a smoke test dispatches it.
+        //
+        // Realisation shells to `rustc --emit=llvm-ir --crate-type=lib`
+        // at the @io boundary per polyglot spec §5 loss-aware note. The
+        // arg oid IS the filesystem path to the Rust source file (arg-
+        // oid-as-payload convention, mirroring @io/fs.write).
+        //
+        // Return shape: Verdict::Partial(Transparency) with the emitted
+        // LLVM IR bytes located at key "@code/llvm/llvm_ir_module" —
+        // the downstream Edge 2 resolver reads that key back as its
+        // input arg. Verdict::Fail on rustc failure (stderr carried in
+        // the reason string).
+        //
+        // Audit chain: Mara `1ce68c3` polyglot-loss-aware-translation
+        // spec §9 M3 + Mara `7186410` + `62d1b1c` M1 endpoints + Mara
+        // `eee446b` M2 cascade species. Alex 2026-07-17 verbatim
+        // ratification: `*So we can have @cascade/code/llvm/turing and
+        // @cascade/code/rust/llvm. And boom. The loop closes.*`
+        //
+        // [substrate-floor:@io-boundary] — this arm IS the @io/exec
+        // boundary at which the substrate lifts a Rust source into
+        // the LLVM IR hub. MVP: no perturbation slot; bytes-first
+        // pass-through; semantic correctness of the emission delegated
+        // to rustc (per polyglot spec §5 external-tooling convention).
+        // ────────────────────────────────────────────────────────────
+        if args.is_empty() {
+            return Verdict::Fail(
+                "@cascade/code/rust/llvm.apply_rust_llvm: expected (source), got 0 args".to_string(),
+            );
+        }
+        let source_path = args[0].oid.clone();
+
+        // Emit the LLVM IR next to the source file so cleanup is
+        // colocated with the input (deterministic path derivation).
+        let source_pb = std::path::Path::new(&source_path).to_path_buf();
+        let ll_path = {
+            let stem = source_pb
+                .file_stem()
+                .and_then(|s| s.to_str())
+                .unwrap_or("rust_source");
+            let parent = source_pb.parent().unwrap_or(std::path::Path::new("."));
+            parent.join(format!("{}.ll", stem))
+        };
+
+        let out = std::process::Command::new("rustc")
+            .args([
+                "--emit=llvm-ir",
+                "--crate-type=lib",
+                "-o",
+            ])
+            .arg(&ll_path)
+            .arg(&source_path)
+            .output();
+        let output = match out {
+            Ok(o) => o,
+            Err(e) => {
+                return Verdict::Fail(format!(
+                    "@cascade/code/rust/llvm.apply_rust_llvm: failed to spawn rustc: {}",
+                    e
+                ));
+            }
+        };
+        if !output.status.success() {
+            let stderr = String::from_utf8_lossy(&output.stderr).into_owned();
+            return Verdict::Fail(format!(
+                "@cascade/code/rust/llvm.apply_rust_llvm: rustc exit {}: {}",
+                output.status.code().unwrap_or(-1),
+                stderr.trim()
+            ));
+        }
+        let ir_bytes = match std::fs::read(&ll_path) {
+            Ok(b) => b,
+            Err(e) => {
+                return Verdict::Fail(format!(
+                    "@cascade/code/rust/llvm.apply_rust_llvm: read {} failed: {}",
+                    ll_path.display(),
+                    e
+                ));
+            }
+        };
+        // Bytes-first: pack the emitted IR text into the Transparency
+        // carrier. Downstream Edge 2 reads this key as its input arg.
+        let ir_text = String::from_utf8_lossy(&ir_bytes).into_owned();
+        let mut located = Vec::new();
+        located.push((
+            "@code/llvm/llvm_ir_module".to_string(),
+            ir_text,
+        ));
+        return Verdict::Partial(Transparency {
+            located_opacity: located,
+        });
+    } else if action == "@cascade/code/llvm/turing.apply_llvm_turing" {
+        // ────────────────────────────────────────────────────────────
+        // Tick M3 landing (2026-07-17) — polyglot cascade Edge 2.
+        //
+        // Resolver arm for @cascade/code/llvm/turing.apply_llvm_turing
+        // per shards/cascade/code/llvm/turing.mirror:270-272 (Mara
+        // `c9328ec`). Signature (spec): apply_llvm_turing(module:
+        // llvm_ir_module, p: perturbation) -> program. MVP accepts
+        // only the module arg (arg-oid IS the LLVM IR text bytes).
+        //
+        // MVP lowering (bytes-first per Reed Tick M3 brief): DO NOT
+        // parse the LLVM IR structurally. Treat it as an ordered
+        // sequence of instruction lines and emit a @code/turing.program
+        // as a serialized sequence of `transition` records — one LLVM
+        // IR text line → one tape transition (identity mapping;
+        // semantic correctness of the LLVM→Turing lowering lifts in
+        // a subsequent tick, per polyglot spec §4.2 Edge 2 the
+        // per-instruction Alive2-style translation-validation is the
+        // long-arc target).
+        //
+        // The point of MVP: demonstrate the composition chain works
+        // end-to-end. The resulting Turing program carries the LLVM IR
+        // structure LINE-FOR-LINE as a straight tape encoding so the
+        // Edge 3 resolver has something well-typed to consume.
+        //
+        // Return: Verdict::Partial(Transparency) with the serialized
+        // tape-program bytes located at "@code/turing/program".
+        //
+        // Audit chain: Mara `1ce68c3` spec §9 M3 + Mara `c9328ec` M2
+        // cascade species. Alex 2026-07-17 verbatim ratification
+        // (session-crystallizing polyglot chain).
+        //
+        // [substrate-floor:@io-boundary] — bytes-first lowering, no
+        // @io boundary crossed at Tick M3; the substrate-decl'd
+        // FLOOR resolver body per shard's `{ \ }` block.
+        // ────────────────────────────────────────────────────────────
+        if args.is_empty() {
+            return Verdict::Fail(
+                "@cascade/code/llvm/turing.apply_llvm_turing: expected (module), got 0 args"
+                    .to_string(),
+            );
+        }
+        let module_bytes = &args[0].oid;
+
+        // Straight-line MVP lowering: each non-empty LLVM IR line
+        // becomes one tape transition. Serialization format is a
+        // substrate-honest @code/turing.program witness — one
+        // transition per line, `state N: read=<line> write=<line>
+        // move=right` — that the Edge 3 resolver consumes verbatim.
+        let mut program = String::new();
+        program.push_str("@code/turing.program {\n");
+        program.push_str("  initial_state: q0\n");
+        program.push_str("  halt_states: [q_halt]\n");
+        program.push_str("  transitions: [\n");
+        let mut idx: usize = 0;
+        for line in module_bytes.lines() {
+            let trimmed = line.trim();
+            if trimmed.is_empty() {
+                continue;
+            }
+            // Escape backslashes + quotes so the serialization stays
+            // parseable at the next altitude.
+            let esc: String = trimmed
+                .chars()
+                .flat_map(|c| match c {
+                    '\\' => vec!['\\', '\\'],
+                    '"' => vec!['\\', '"'],
+                    other => vec![other],
+                })
+                .collect();
+            program.push_str(&format!(
+                "    (q{}, \"{}\") -> (q{}, \"{}\", right),\n",
+                idx,
+                esc,
+                idx + 1,
+                esc
+            ));
+            idx += 1;
+        }
+        program.push_str(&format!(
+            "    (q{}, \"\") -> (q_halt, \"\", stay),\n",
+            idx
+        ));
+        program.push_str("  ]\n");
+        program.push_str("}\n");
+
+        let mut located = Vec::new();
+        located.push(("@code/turing/program".to_string(), program));
+        return Verdict::Partial(Transparency {
+            located_opacity: located,
+        });
+    } else if action == "@cascade/code/turing/mirror.apply_turing_mirror" {
+        // ────────────────────────────────────────────────────────────
+        // Tick M3 landing (2026-07-17) — polyglot cascade Edge 3.
+        //
+        // Resolver arm for @cascade/code/turing/mirror.apply_turing_
+        // mirror per shards/cascade/code/turing/mirror.mirror:310-312
+        // (Mara `3322825`). Signature (spec): apply_turing_mirror(
+        // prog: program, p: perturbation) -> ref. MVP accepts only
+        // the program arg (arg-oid IS the tape-program bytes).
+        //
+        // Behavior: wrap the tape-program bytes as a mirror-substrate
+        // value. MVP shape: emit a substrate-honest @glass-compatible
+        // Focus AstNode serialization with the tape-program bytes as
+        // a Dark region + a @code/turing/program type-tag on a Project
+        // child. Content-address the whole under `hash_tagged("@code/
+        // turing/mirror.value", ...)`. The resulting ref IS the
+        // mirror-substrate-value ref the driver serializes to disk.
+        //
+        // Return: Verdict::Partial(Transparency) with the mirror-
+        // substrate-value ref located at "@code/mirror/value".
+        //
+        // Audit chain: Mara `1ce68c3` spec §9 M3 + Mara `3322825` M2
+        // cascade species. Alex 2026-07-17 verbatim ratification.
+        //
+        // [substrate-floor:@io-boundary] — the mirror-value wrap +
+        // content-address IS the substrate-decl'd FLOOR resolver body
+        // per shard's `{ \ }` block. No @io boundary at Tick M3;
+        // downstream driver crosses @io/fs.write with the resulting
+        // ref bytes.
+        // ────────────────────────────────────────────────────────────
+        if args.is_empty() {
+            return Verdict::Fail(
+                "@cascade/code/turing/mirror.apply_turing_mirror: expected (program), got 0 args"
+                    .to_string(),
+            );
+        }
+        let prog_bytes = &args[0].oid;
+
+        // Substrate-honest wrap: emit a Focus/Project AstNode-shaped
+        // serialization the mirror bootstrap can round-trip.
+        // Deterministic (content-addressed on prog_bytes).
+        let value_oid = crate::hash::hash_tagged(
+            "@code/turing/mirror.value",
+            prog_bytes.as_bytes(),
+        );
+        let mut mirror_value = String::new();
+        mirror_value.push_str("# @code/turing/mirror.value — polyglot cascade Tick M3 landing.\n");
+        mirror_value.push_str("# Substrate-decl'd wrap of a @code/turing.program per\n");
+        mirror_value.push_str("# shards/cascade/code/turing/mirror.mirror (Mara 3322825).\n");
+        mirror_value.push_str("# Audit: Mara 1ce68c3 §9 M3; Alex 2026-07-17 ratification.\n");
+        mirror_value.push_str(&format!("# value_oid: {}\n", value_oid));
+        mirror_value.push_str("\n");
+        mirror_value.push_str("in @code/mirror\n");
+        mirror_value.push_str("in @glass\n");
+        mirror_value.push_str("\n");
+        mirror_value.push_str("focus @code/turing/mirror/value {\n");
+        mirror_value.push_str("  project @code/turing/program {\n");
+        mirror_value.push_str("    # Dark region — tape-program bytes verbatim.\n");
+        mirror_value.push_str("    dark <<END_TURING_PROGRAM\n");
+        mirror_value.push_str(prog_bytes);
+        if !prog_bytes.ends_with('\n') {
+            mirror_value.push('\n');
+        }
+        mirror_value.push_str("END_TURING_PROGRAM\n");
+        mirror_value.push_str("  }\n");
+        mirror_value.push_str("}\n");
+
+        let mut located = Vec::new();
+        located.push(("@code/mirror/value".to_string(), mirror_value));
+        return Verdict::Partial(Transparency {
+            located_opacity: located,
+        });
     } else if action == "@epistemologic/reality/time.compare" {
         // ────────────────────────────────────────────────────────────
         // `mirror roomba --commit` end2end empirical proof (2026-07-15).
