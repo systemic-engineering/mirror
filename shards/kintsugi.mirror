@@ -1,11 +1,35 @@
 in @prism
 in @glass
 in @meta
+in @algebra
+in @algebra/metalogue
+in @silicon/algebra
+in @fate/algebra
+in @kintsugi/fracture
+in @bauchladen
 
 # @kintsugi — the family root for the process-side of mirror's
 # substrate: the transformation engine that operates ON the form-side
 # state @mirror declares. The form/process partition made
 # substrate-fact.
+#
+# THE 2026-07-17 ALGEBRA BINDING TICK: @kintsugi (as algebra) is
+# the speaker-pair specialisation of @algebra/metalogue's
+# `algebra_metalogue_session` with speakers (@silicon/algebra,
+# @fate/algebra). Each element of the algebra IS a
+# @kintsugi/fracture/* species (a turn in the session).
+# @fate/algebra proposes candidate fractures (structural
+# possibility); @silicon/algebra realises those that discharge
+# Pass (empirical memory of what worked). The mending IS the
+# metalogue. See §"@kintsugi as algebra" below and the canonical
+# spec `docs/specs/kintsugi-algebra-as-metalogue-session.md` +
+# math foundation `docs/math/kintsugi/algebra-as-metalogue-
+# session.md` (both Mara THIS-tick). Substrate authority: Alex
+# 2026-07-16 in-transcript verbatim (`shards/kintsugi/roomba.
+# mirror:400-406`) — *"we can even do `in @algebra` here"* +
+# *"the fractures ARE kintsugi's algebra"* + *"What if
+# `@kintsugi/algebra` is the `@metalogue(@silicon/algebra,
+# @fate/algebra)`."*
 #
 # THE FAMILY-ROOT MIGRATION TICK closing the form/process partition
 # Mara2 classified clean (2026-06-10): oscillate/morphism/consent are
@@ -151,6 +175,97 @@ in @meta
 #                                (recognition #53) that would lift it
 #                                from candidate to recognised.
 #
+# === @kintsugi as algebra (2026-07-17 speaker-pair specialisation) ===
+#
+# Alex 2026-07-16 in-transcript verbatim (roomba shard :400-406,
+# session-crystallizing): *"What if there was a @kintsugi/algebra
+# (or is this the @kintsugi/fractures? I think it is. The fractures
+# ARE kintsugi's algebra.)?"* and (immediately following the
+# `algebra_metalogue_session` binding): *"we can even do `in @algebra`
+# here."* And in this session: *"What if `@kintsugi/algebra` is the
+# `@metalogue(@silicon/algebra, @fate/algebra)`."*
+#
+# The reconciliation Alex ratified (2026-07-16 evening): @kintsugi/
+# algebra is the algebra whose ELEMENTS are the 14 landed
+# @kintsugi/fracture/* species PLUS the 15th `bilateral_arm_
+# redundant` (`fa569ce`, 2026-07-16) PLUS every future mirror-
+# authored translation. Each element (fracture) is a TURN in the
+# `algebra_metalogue_session` between the two speaker-algebras.
+# @fate/algebra proposes candidate fractures (structural
+# possibility per `shards/fate.mirror` §"literal roll of the dice");
+# @silicon/algebra realises those that discharge Pass (empirical
+# memory per `shards/silicon/algebra.mirror` §"what crystallizes
+# here"). The mending IS the metalogue.
+#
+# The two readings on `@kintsugi/algebra` reconciled at this
+# altitude: reading A (metalogue-produced session carrier) +
+# reading B (`@kintsugi/algebra ≡ @kintsugi/fracture`, the 14
+# species collectively per Alex's roomba spec) are the SAME shape
+# viewed from two boundaries. The metalogue PRODUCES the fractures
+# (reading A); the fractures COMPRISE the algebra (reading B). One
+# algebra, two witnessing surfaces.
+#
+# Option 2 ratified (Alex 2026-07-16 evening): the family IS the
+# algebra; NO new `shards/kintsugi/algebra.mirror` file. The
+# family-root shard-decl carries the shape via the typed binding
+# below plus the `in @algebra` clause above. Two-tick discipline:
+# a species-file `shards/kintsugi/algebra.mirror` may follow when
+# consumers pull; this tick names the algebra at family-root
+# altitude.
+#
+# Precedent: Mara `a18ca90` (2026-07-08) canonical spec
+# `docs/specs/fate-silicon-metalogue-in-void-duality-basis.md`
+# already declared *"`@silicon/algebra ` ↔ `@fate/algebra` IS a
+# `@metalogue` in void-duality-basis coordinates"* via speaker-pair
+# specialisation of `algebra_metalogue_session`. THIS binding LIFTS
+# the a18ca90 session-shape into a NAMED algebra binding at the
+# @kintsugi family-root altitude — the mending IS the metalogue
+# reading Alex named 8 days later.
+#
+# The `kintsugi_algebra` typed binding is a speaker-pair
+# specialisation record over `@algebra/metalogue.algebra_metalogue_
+# session`; substrate has no landed `with { ... }` refinement syntax
+# so the binding is expressed as a typed record whose fields NAME
+# the specialisation (speakers as an ordered pair of algebra_carrier
+# refs; turns as the ref of the @kintsugi/fracture family; session
+# as the underlying `algebra_metalogue_session` the binding
+# specialises).
+#
+# Identity contract: byte-equality on (speakers, turns, session).
+# Two kintsugi_algebra bindings with byte-equal fields ARE the same
+# specialisation under content-addressing.
+type kintsugi_algebra = {
+  speakers: [algebra_carrier],
+  turns:    ref,
+  session:  algebra_metalogue_session,
+}
+
+# === kintsugi_algebra_witnessing bilateral (well-formedness) ===
+#
+# Bilateral predicate discharging that a `kintsugi_algebra` binding
+# is well-formed as a speaker-pair specialisation:
+#   (a) speakers has cardinality 2 and its members are exactly
+#       (@silicon/algebra, @fate/algebra) as algebra_carrier refs;
+#   (b) turns resolves to `@kintsugi/fracture` (the family whose
+#       species enumerate the algebra's elements);
+#   (c) session satisfies `algebra_metalogue_witnessing(session)`
+#       (delegates to `@algebra/metalogue`'s inheritance predicate);
+#   (d) every turn t in session.turns has t.body of species
+#       @kintsugi/fracture/* (each element IS a fracture).
+#
+# Sentinel per shard docblock: `algebra=speaker-pair-fractures`.
+#
+# Substrate-decl'd shape per `shards/epistemologic/pact/bilateral.
+# mirror` (`a0f4d3f`, 2026-07-16). Arity 1 (checks one binding per
+# invocation). Body `\`-obligation-blocked; the reflective evaluator
+# at `bootstrap/src/apply_h.rs` (per `21fc211` Landing 3+4) discharges
+# via corpus lookup + sentinel byte-check.
+bilateral kintsugi_algebra_witnessing {
+  sentinel  "algebra=speaker-pair-fractures"
+  arity     1
+}
+kintsugi_algebra_witnessing(binding: kintsugi_algebra) -> verdict { \ }
+
 # === Path-syntax discipline ===
 #
 # @kintsugi sub-shards at depth >= 1 use `glass` per recognition #46;
@@ -230,3 +345,5 @@ prism @kintsugi {
 }
 
 out @kintsugi
+out kintsugi_algebra
+out kintsugi_algebra_witnessing
