@@ -1,0 +1,327 @@
+# @liquid — the refinement-OPERATOR family-root at composition
+# altitude. Composable operator sibling to @sre, @shatter, @glue.
+# Substrate-decl'd lens `@liquid(@X)` that lenses over any @X
+# substrate to add refinement (parallel structural pattern to
+# `@sre(@code/rust)`, `@shatter(@X)`, `@glue(@A, @B)`).
+# Composition operator; NOT theory itself (theory lives at
+# @epistemologic/liquid; Mara THIS-tick `cc816f9`).
+#
+# Landed per Alex 2026-07-17 arbitration of Taut Q-A/Q-B/Q-C from
+# `docs/audits/2026-07-17-taut-liquid-epistemologic-silicon-scout.md`
+# (Taut `b8c453f`, +940 LOC). Ratified answers:
+#   - Q-A: @epistemologic/reality/silicon (three-hop) stays; @liquid
+#          is a separate epistemologic species; the operator @liquid
+#          at this file uses TOP-LEVEL @silicon (autopoietic family-
+#          root), not property-altitude @epistemologic/reality/silicon.
+#   - Q-B: Novel discipline confirmed. Kagi surfaced no canonical
+#          SOTA for recovering liquid/ownership types from LLVM/
+#          machine code. The `@liquid(@silicon)` composition names
+#          this novel discipline; matches Reed spec §8 novelty
+#          enumeration.
+#   - Q-C: Three-altitude landing. @liquid family-root at composition
+#          altitude (THIS FILE); @epistemologic/liquid species at
+#          theory altitude; @epistemologic/liquid/extraction
+#          subspecies at operational altitude.
+#
+# === Composition altitude — sibling to @sre / @shatter / @glue ===
+#
+# Composition-altitude operators are family-roots that take one or
+# more substrate carriers as arguments and produce a substrate lens.
+# They do NOT declare a WHAT-IS species (that's property/reality
+# altitude); they declare an OPERATION that transforms a substrate
+# view.
+#
+# Landed composition-altitude precedents grep-verified this tick:
+#
+#   Operator       Shape                    Substrate-decl site
+#   ---------      ---------------------    ------------------------------------
+#   @shatter       @shatter(@X)             `boot/03-shatter.mirror` grammar-decl
+#                                            :4-8; io materialize/crystallize/
+#                                            learn actions; the loss-tolerance
+#                                            operator (fracture-tolerating lens
+#                                            over any substrate)
+#   @glue          @glue(A, B)              `shards/glue.mirror` (Mara P5,
+#                                            2026-07-01, 43.5KB); the morphism-
+#                                            category correspondence carrier
+#                                            (Mesland spectral-triple morphism
+#                                            operator)
+#   @sre           @sre(@code/X)            per Reed research prose citing SRE
+#                                            operator pattern (not landed as
+#                                            standalone family-root file; the
+#                                            operator pattern is corpus-attested
+#                                            through `@code/*` × `@sre`
+#                                            composition citations)
+#
+# `@liquid` joins this altitude as the refinement-lens operator:
+# `@liquid(@X)` produces a substrate view where every @X carrier
+# admits a refinement_predicate (defined at @epistemologic/liquid
+# theory altitude).
+#
+# === Substrate-already-had-the-word citation chain ===
+#
+# The word `liquid` was substrate-decl'd across FOUR landed altitudes
+# BEFORE this composition-operator family-root. This tick lifts the
+# operator IN-BETWEEN the four to name the composition pattern they
+# ALREADY share:
+#
+#   1. `boot/std/mirror/liquid.mirror` (Reed 2026-06-04) — grammar-
+#      decl `@mirror/liquid` with `type separator` at :13. The
+#      mirror-altitude specialization of what a generalized @liquid
+#      operator would be. Carries the `---` seam ownership +
+#      infer/project pair AT mirror-file altitude. Under this tick's
+#      landing, `@mirror/liquid` IS `@liquid(@mirror)` — the
+#      composition-operator specialized to the @mirror substrate.
+#
+#   2. `docs/math/liquid-types/README.md` (Mara 2026-07-05, 30.3KB)
+#      — the load-bearing math foundation. §2 operator `refine`,
+#      `extract`, `prove`, `route` at theory altitude. This tick's
+#      @liquid operator IS the substrate-decl'd form these math
+#      operators presume; theory (@epistemologic/liquid) provides
+#      the algebra @liquid composes over.
+#
+#   3. `docs/specs/liquid-types-for-mirror.md` (Reed 2026-06-04,
+#      41.7KB) — research spec grounding SOTA (LiquidHaskell / Flux /
+#      F* / Rondon-Kawaguchi-Jhala) + §5 spectral alternative + §6.2
+#      :733-758 grammar shape forward-promise. This tick lands what
+#      §6.2 shape draft named at composition altitude.
+#
+#   4. `shards/epistemologic/liquid_extraction.mirror` → migrated
+#      2026-07-17 to `shards/epistemologic/liquid/extraction.mirror`
+#      (Mara THIS-tick migration cascade `12cdf0e` per Q-C
+#      arbitration) — the operational subspecies extracting
+#      refinement predicates from doc claims. Under this tick's
+#      landing, extraction is `@liquid(@docblock).extract` — the
+#      composition-operator specialized to the @docblock substrate
+#      via its extract action.
+#
+# The composition-operator pattern was thus substrate-decl'd across
+# four altitudes without a family-root anchor. This tick lands the
+# anchor.
+#
+# === @liquid(@silicon) — the ratified novel discipline ===
+#
+# Per Alex 2026-07-17 in-transcript verbatim (per Taut scout §0
+# preamble):
+#
+#   > "Route through @silicon + @epistemologic instead of directly
+#   > to mirror. Physical machine execution + knowledge/type
+#   > extraction preserves the semantic invariants LLVM erases
+#   > (borrow-check, ownership, lifetimes = liquid types recovered
+#   > at silicon altitude)."
+#
+# `@liquid(@silicon)` names the extraction-from-binary discipline
+# the Kagi state-of-the-art scan (Taut scout §6.1 Search 5,
+# 5 sources) found NO canonical dominant discipline for:
+#
+#   - LiquidHaskell (Vazou 2014): refinement AT source altitude
+#   - Flux (Lehmann 2023): refinement AT source altitude
+#   - F*: refinement AT source altitude
+#   - CompCert (Leroy): semantic preservation, no refinement
+#     recovery
+#   - Alive2 (Regehr): translation validation, no refinement
+#     recovery
+#
+# `@liquid(@silicon)` recovers liquid refinements (borrow-check,
+# ownership, lifetimes) FROM silicon-observed execution
+# properties (@epistemologic/reality/silicon/* carriers), back-
+# projecting via `@mirror/liquid.project` to source. Novel per
+# Alex 2026-07-17 Q-B arbitration + Reed spec §8 novelty
+# enumeration.
+#
+# This tick DECLARES @liquid; empirical @liquid(@silicon)
+# discharge is future arc work (the extraction bilateral between
+# @epistemologic/reality/silicon and @silicon/algebra will discharge
+# through the reflective evaluator).
+#
+# === Parametric-lens discipline ===
+#
+# Per Taut scout §7.2 the substrate ALREADY dogfoods the
+# lens-composition pattern this operator declares:
+#
+#   - `@sre(@code/X)` per corpus references
+#   - `@bilateral(@code/A, @code/B)` per `shards/epistemologic/pact/
+#     bilateral.mirror` :456-475 + polyglot spec §5.2 + the
+#     `translation_admissible` bilateral at bilateral.mirror
+#     :677-681
+#   - `@bilateral(@silicon/algebra, @fate/algebra)` per bilateral.
+#     mirror :530 — kintsugi/algebra reframe
+#
+# `@liquid(@X)` extends the parametric-lens discipline the substrate
+# already dogfoods; zero substrate-authority tension per Taut §7.2.
+#
+# === Path-namespace property ===
+#
+# This file at `shards/liquid.mirror` declares `@liquid` at family-
+# root altitude per @epistemologic/pact/path_matches_namespace.
+# Sibling family-roots at the same depth (composition altitude):
+# @shatter (boot/03-shatter.mirror), @glue (shards/glue.mirror),
+# and the corpus-attested @sre operator.
+#
+# === Recognition candidates surfaced (NOT ratified) ===
+#
+# Hold at candidate strength; await Alex adjudication at future tick:
+#
+#   - #R-liquid-is-refinement-operator-at-family-root-altitude-
+#     parallel-to-sre-shatter-glue — this shard's altitude claim.
+#   - #R-mirror-liquid-is-liquid-mirror-specialization — the
+#     `@mirror/liquid` mirror-altitude grammar-decl at
+#     `boot/std/mirror/liquid.mirror` IS the composition
+#     `@liquid(@mirror)` specialized to the @mirror substrate.
+#     Retroactive-collapse candidate.
+#   - #R-extraction-is-liquid-docblock-extract-specialization —
+#     `@epistemologic/liquid/extraction` IS the composition
+#     `@liquid(@docblock).extract` specialized to the @docblock
+#     substrate via its extract action. Retroactive-collapse
+#     candidate.
+#   - #R-liquid-silicon-is-the-novel-extraction-from-binary-
+#     discipline — the `@liquid(@silicon)` composition names the
+#     novel discipline Kagi found no SOTA for. Per Q-B ratification.
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]] — composition-operator
+#   is shard-decl at family-root altitude.
+# [[architecture-prism-as-trait-as-everything]] — `prism @liquid`
+#   declares the operator IS a prism at composition altitude.
+# [[architecture-lift-as-load-bearing]] — the lift from four
+#   scattered `liquid`-word substrate-decls (mirror-altitude,
+#   math-altitude, spec-altitude, operational-subspecies-altitude)
+#   to composition-operator family-root IS the load-bearing move
+#   this tick discharges.
+# [[feedback-substrate-already-had-the-word]] — the word `liquid`
+#   substrate-decl'd across four altitudes BEFORE this composition-
+#   operator anchor; this tick lands the operator IN-BETWEEN the
+#   four to name what they collectively already share.
+# [[feedback-craft-not-deliver]] — the operator carriers +
+#   composition axioms discharge at the deferred-by-design canonical
+#   spec + spec-altitude landings + empirical `@liquid(@silicon)`
+#   discharge (future arc).
+# [[feedback-no-rust-extension-shortcut]] — composition-operator
+#   family-root is shard-decl composition ONLY; ZERO Rust.
+# [[feedback-legibility-over-foundation-when-collapsing]] — the
+#   name `@liquid` per Alex 2026-07-17 verbatim is the readable,
+#   substrate-decl'd name for the refinement operator; alternate
+#   foundational names (`@refinement`, `@refine`) were not
+#   proposed because the substrate already had the word `liquid`.
+#
+# === Related shards + specs + math ===
+#
+# - `shards/epistemologic/liquid.mirror` (Mara THIS-tick `cc816f9`;
+#     the theory species-decl this operator composes over)
+# - `shards/epistemologic/liquid/extraction.mirror` (Mara THIS-tick
+#     `12cdf0e` migration cascade; the operational subspecies IS
+#     `@liquid(@docblock).extract` per recognition candidate above)
+# - `boot/std/mirror/liquid.mirror` (Reed 2026-06-04; grammar-decl
+#     `@mirror/liquid` IS `@liquid(@mirror)` per recognition
+#     candidate above)
+# - `shards/glue.mirror` (Mara P5 2026-07-01; sibling composition-
+#     altitude operator; morphism-category correspondence carrier)
+# - `boot/03-shatter.mirror` (2026-05-19; sibling composition-
+#     altitude operator; loss-tolerance operator)
+# - `shards/epistemologic/pact/bilateral.mirror` (Mara `a0f4d3f`;
+#     degenerate-liquid discipline at pact altitude; the byte-check
+#     subspecies of @liquid per recognition candidate at
+#     shards/epistemologic/liquid.mirror)
+# - `shards/silicon.mirror` (Alex 2026-07-05, top-level family-root;
+#     the target substrate for the ratified `@liquid(@silicon)`
+#     novel extraction discipline per Q-A + Q-B arbitration)
+# - `shards/epistemologic/reality/silicon.mirror` (Mara 2026-06-06;
+#     the property-altitude carriers `@liquid(@silicon)` extraction
+#     recovers refinements FROM)
+# - `docs/math/liquid-types/README.md` (Mara 2026-07-05, 30.3KB;
+#     the load-bearing math §2 operator this operator substrate-
+#     decl's grounds)
+# - `docs/specs/liquid-types-for-mirror.md` (Reed 2026-06-04,
+#     41.7KB; §6.2 grammar shape forward-promise + §8 novelty
+#     enumeration)
+# - `docs/audits/2026-07-17-taut-liquid-epistemologic-silicon-
+#     scout.md` (Taut `b8c453f`; the scout Alex arbitrated to
+#     dispatch this tick's landings)
+
+---
+
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/liquid
+
+prism @liquid {
+  focus liquid
+  project liquid
+  split liquid
+  shift liquid
+  settle liquid
+}
+
+# === liquid_lens — the parametric refinement lens carrier ===
+#
+# The typed carrier for one @liquid(@X) specialization. Per
+# `[[feedback-no-bare-types]]` the operator's produce a typed lens,
+# not a bare ref. Fields:
+#
+#   substrate  — the @X substrate the lens specializes to
+#                 (ref to a family-root or species shard-decl).
+#   theory     — the @epistemologic/liquid theory-carrier the lens
+#                 composes refinements from (ref to the theory
+#                 species-decl at `shards/epistemologic/liquid.
+#                 mirror`).
+#   qualifier_set
+#              — the finite set Q of liquid_qualifiers the lens
+#                 admits at the substrate's altitude. Per math §2.2
+#                 Q_mirror = landed `@epistemologic/property/*` +
+#                 `@epistemologic/pact/*` predicates (~40 as of
+#                 2026-07-05); for other @X substrates the
+#                 qualifier_set is specialization-specific.
+type liquid_lens = {
+  substrate:      ref,
+  theory:         ref,
+  qualifier_set:  ref,
+}
+
+# === compose — the @liquid(@X) composition action ===
+#
+# Per the parametric-lens discipline: given a substrate @X, produce
+# a liquid_lens specializing @epistemologic/liquid theory to @X.
+# The composition IS the operator's substrate-decl'd application.
+# Body forward-promised per `[[feedback-craft-not-deliver]]`;
+# discharge at the deferred-by-design canonical spec + spec-altitude
+# landings.
+compose(x: ref) -> liquid_lens { \ }
+
+# === refine — lift a refinement predicate through the lens ===
+#
+# Given a liquid_lens (a specialized @liquid(@X)) and a
+# refinement_predicate at the theory altitude, produce the
+# substrate-specific refinement the lens carries. Body forward-
+# promised.
+refine(lens: liquid_lens, p: ref) -> ref { \ }
+
+# === extract — pull refinement predicates FROM the substrate ===
+#
+# Given a liquid_lens (a specialized @liquid(@X)) and a substrate
+# observation (a ref to bytes/state at the @X altitude), produce
+# the refinement_predicate the substrate carries. This IS the
+# recovery direction Alex 2026-07-17 named as `@liquid(@silicon)`
+# for the extraction-from-binary novel discipline; more generally
+# it names the recovery direction across all @liquid(@X) lenses.
+# Body forward-promised; discharge at spec-altitude + empirical
+# @liquid(@silicon) landing at future arc.
+extract(lens: liquid_lens, observation: ref) -> ref { \ }
+
+# === project — back-project refinements onto the substrate ===
+#
+# Given a liquid_lens and a refinement_predicate the lens carries,
+# project the predicate ONTO the substrate view. Companion action
+# to extract; when composed as `extract |> project` produces the
+# @mirror/liquid.project(file, [ref]) → imperfect pattern at
+# mirror altitude (Reed 2026-06-04 grammar-decl at
+# `boot/std/mirror/liquid.mirror:27-28`). Body forward-promised.
+project(lens: liquid_lens, p: ref) -> ref { \ }
+
+out @liquid
+out liquid_lens
+out compose
+out refine
+out extract
+out project
