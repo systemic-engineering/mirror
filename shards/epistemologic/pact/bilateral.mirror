@@ -448,7 +448,259 @@ bilateral_well_formed(decl: bilateral) -> verdict { \ }
 # altitude — the `bilateral` keyword itself is Sub-pact scope
 # declared via companion-keyword file).
 
+# =====================================================================
+# === 2026-07-17 PARADIGMATIC REFRAME — @bilateral(A, B) as composition
+# =====================================================================
+#
+# Alex 2026-07-17 in-transcript verbatim (session-crystallizing;
+# Path A ratified — refactor at spec altitude; existing shape stays
+# valid as degenerate case; no reflective-evaluator changes):
+#
+#   "What if `@bilateral` became a composition on top of `@glue` and
+#    `@metalogue`. And then `@bilateral(@code/rust, @code/mirror)`
+#    becomes the floor the translation surface stands on."
+#
+# Canonical spec: `docs/specs/bilateral-as-glue-metalogue-composition.md`
+# (Mara THIS-tick; §0-§10; the paradigmatic reframing + landing plan +
+# fixed-point condition).
+#
+# === The reframing ===
+#
+# Every landed `bilateral <name> { sentinel "..." arity N }` block
+# above (~30 landed arms across 8 shard groups) IS the DEGENERATE CASE
+# (A = B) of a more general shape:
+#
+#   @bilateral(A, B) ≡ the witnessing predicate that
+#                       @glue(A, B) produces admissible turns in the
+#                       @metalogue(A, B) session
+#
+# Two readings converge on the SAME shape:
+#
+#   - A = B (degenerate case): identity morphism, monologue-session,
+#     sentinel-byte-check. The shape THIS species originally minted at
+#     grammar-decl altitude (per the entire preceding docblock through
+#     line 449). Every one of the ~30 landed downstream blocks is
+#     `@bilateral(self_shard, self_shard)` via sentinel matching.
+#     ZERO retirement changes needed.
+#
+#   - A ≠ B (general case, translation floor): real semantic-
+#     preservation check that a morphism from A to B preserves meaning.
+#     Concrete first instance: `@bilateral(@code/rust, @code/mirror)`
+#     — the floor the Rust→mirror translation surface stands on (per
+#     `shards/kintsugi/translate.mirror::translate_rust_to_mirror` at
+#     Mara `86dec5e`). Declared BELOW as `translation_admissible`
+#     dogfooding the shape from `a0f4d3f`.
+#
+# === Substrate-already-had-the-word citation chain ===
+#
+# `@bilateral(A, B)` is NOT a new `@`-namespace family-root. There is
+# no `shards/bilateral.mirror`; there is no `prism @bilateral { ... }`.
+# `@bilateral(A, B)` in spec-prose notation reads as: "the bilateral
+# witnessing predicate over the composition of `@glue(A, B)` and
+# `@metalogue(A, B)`." Concrete instances of `@bilateral(A, B)` for
+# specific (A, B) pairs are declared via the SAME grammar-decl'd
+# `bilateral <name> { sentinel "..." arity 1 }` shape this species
+# minted at `a0f4d3f`.
+#
+# The composition is over LANDED primitives ONLY. Zero new substrate
+# machinery introduced by the reframe:
+#
+#   Primitive                                Path                                                     Role
+#   --------------------------------------   ------------------------------------------------------   ------------------------------------------------
+#   @glue                                    shards/glue.mirror (Mara P5 2026-06-30)                  Mesland-category family-root; @glue(A, B)
+#                                                                                                     is a `correspondence` carrier
+#   @glue.propose(A, B)                      shards/glue.mirror :621                                  enumerate admissible correspondences
+#   @glue.translate(c, payload)              shards/glue.mirror :662                                  apply the morphism via @fate
+#   glue_witnessing(c)                       shards/glue.mirror :809                                  correspondence well-formedness inheritance
+#   @metalogue                               shards/metalogue.mirror (2026-06-05)                     NL-altitude metalogue family-root
+#   @algebra/metalogue                       shards/algebra/metalogue.mirror (2026-06-30)             algebra-altitude metalogue;
+#                                                                                                     `algebra_metalogue_session` is the
+#                                                                                                     underlying session carrier
+#   algebra_metalogue_witnessing(s)          shards/algebra/metalogue.mirror :348                     session well-formedness inheritance
+#   @code/rust                               shards/code/rust.mirror (Mara 2026-06-08)                source-side altitude for the first
+#                                                                                                     general-case instance
+#   @code/mirror                             shards/code/mirror.mirror (Mara 2026-06-07)              target-side altitude for the first
+#                                                                                                     general-case instance
+#   @kintsugi/translate                      shards/kintsugi/translate.mirror (Mara `86dec5e`)        the translation surface
+#                                                                                                     @bilateral(@code/rust, @code/mirror)
+#                                                                                                     floors
+#
+# === Connection to @kintsugi/algebra ===
+#
+# Per Mara `0ac3c7b` (`shards/kintsugi.mirror` §"@kintsugi as algebra"
+# :178-241): `@kintsugi/algebra` binds the `algebra_metalogue_session`
+# between speaker-algebras (`@silicon/algebra`, `@fate/algebra`). Under
+# the reframe, THIS binding IS the special case:
+#
+#   @kintsugi/algebra  ≡  @bilateral(@silicon/algebra, @fate/algebra)
+#
+# The `kintsugi_algebra_witnessing` bilateral at `shards/kintsugi.
+# mirror :263-267` (sentinel `algebra=speaker-pair-fractures`) IS the
+# grammar-decl'd witness for this composition, discharged via the same
+# reflective evaluator this species' degenerate-case predicates use.
+# The mending IS the bilateral between the two speaker-algebras.
+#
+# === The general case at family-shape altitude ===
+#
+# The formal composition diagram (per canonical spec §2.2):
+#
+#              @glue(A, B)                    @metalogue(A, B)
+#                 ↓                                  ↓
+#          correspondence                   algebra_metalogue_session
+#                                                    ↑
+#                                          [algebra_turn]
+#                                                    ↑
+#                                          @glue.translate(c, payload)
+#                                                    ↑
+#                             ┌──────────────────────┴──────────────────────┐
+#                             │                                             │
+#                     glue_witnessing(c)          algebra_metalogue_witnessing(s)
+#                             │                                             │
+#                             └──────────────────────┬──────────────────────┘
+#                                                    ↓
+#                                           @bilateral(A, B)
+#                                           (the CONJUNCTION;
+#                                            the witnessing predicate
+#                                            over the composition)
+#
+# `@bilateral(A, B)(t)` discharges Pass iff both bracketed predicates
+# discharge Pass on `t`. Rice-safe per the two sub-witnessings' Rice-
+# safety (both operate on byte-visible morphism data + turn-composition
+# structure, not program semantics).
+#
+# === Deliverable 2 THIS TICK: the first general-case instance ===
+#
+# Concrete first general-case instance per Alex 2026-07-17 verbatim:
+# `@bilateral(@code/rust, @code/mirror)` — the floor the translation
+# surface (Mara `86dec5e`) stands on.
+#
+# Declared below as `translation_admissible` — a grammar-decl'd
+# `bilateral <name> { sentinel "..." arity 1 }` block at THIS shard.
+# The block dogfoods the shape this species minted at `a0f4d3f`; the
+# arity-1 discharge form checks one translation_pair outcome per
+# invocation. The body is `\`-obligation-blocked per craft-not-deliver;
+# Reed follow-up realises via `apply_h::act` composition after the
+# `@glue.compose` + `@fate.roll` FLOOR resolvers land.
+#
+# The 21 mirror-authored bilateral-arm retirements landed 2026-07-16..
+# 17 (`ad52973` + `20047c2` + ancestors) are the first 21 witnesses of
+# `@bilateral(@code/rust, @code/mirror)` at the degenerate-arity
+# subcase (single-file-in-bootstrap-src). Every future
+# `translate_rust_to_mirror` discharge (per `shards/kintsugi/translate.
+# mirror::translate_rust_to_mirror` at `86dec5e`) adds a witness.
+#
+# === translation_pair typed carrier ===
+#
+# The record shape carrying one Rust→mirror translation outcome the
+# `translation_admissible` bilateral witnesses. Fields:
+#
+#   rust_source        — the @code/rust ref (a .rs file's bytes; the
+#                         source-side altitude ref per shards/code/
+#                         rust.mirror altitude discipline).
+#   mirror_target      — the @code/mirror ref (a .mirror composition's
+#                         bytes; the target-side altitude ref per
+#                         shards/code/mirror.mirror altitude discipline).
+#   discharge_verdict  — the @glass.verdict from the translation's
+#                         semantic-preservation check (Pass|Partial|
+#                         Fail); the bilateral's discharge output at
+#                         the outcome-check altitude.
+#
+# Identity contract: byte-equality on (rust_source, mirror_target,
+# discharge_verdict). Two translation_pairs with byte-equal fields ARE
+# the same outcome under content-addressing (per Mesland-category
+# morphism identity: same source + same target + same verdict IS the
+# same translation-turn in the @metalogue(@code/rust, @code/mirror)
+# session).
+type translation_pair = {
+  rust_source:       ref,
+  mirror_target:     ref,
+  discharge_verdict: ref,
+}
+
+# === translation_admissible — bilateral predicate (arity 1) ===
+#
+# THE FIRST GENERAL-CASE INSTANCE of `@bilateral(A, B)` at this species'
+# altitude. Names `@bilateral(@code/rust, @code/mirror)` as a grammar-
+# decl'd bilateral (arity 1; single-outcome check).
+#
+# Discharges Pass iff the Rust→mirror translation preserves meaning
+# under the composition of:
+#   - `@glue(@code/rust, @code/mirror)` — the correspondence carrier
+#     from source altitude to target altitude
+#   - `@metalogue(@code/rust, @code/mirror)` — the session carrier
+#     the winning turn joins
+#
+# Semantically: for each successful `translate_rust_to_mirror`
+# discharge (per `shards/kintsugi/translate.mirror::translate_rust_to_
+# mirror` at Mara `86dec5e`), the outcome IS a turn in the
+# `@metalogue(@code/rust, @code/mirror)` session AND witnesses this
+# predicate.
+#
+# The reflective evaluator dispatches this bilateral via the corpus
+# lookup + sentinel byte-check discipline established at `a0f4d3f`
+# (Reed `21fc211` Landing 3+4 realisation). Once the composition
+# machinery lands (Reed follow-up: `@glue.compose` + `@fate.roll` FLOOR
+# resolvers), each Pass discharge composes into a Reading B
+# `@kintsugi/algebra` element per Mara `0ac3c7b` monotonicity.
+#
+# Sibling to:
+#   - `translation_witnessing(outcome)` at `shards/kintsugi/translate.
+#     mirror:450-453` (the 6-conjunct composition-outcome bilateral;
+#     `translation_admissible` is the FLOOR predicate that `translation_
+#     witnessing` composes over at the @bilateral(A, B) altitude).
+#   - `kintsugi_algebra_witnessing(binding)` at `shards/kintsugi.mirror
+#     :263-267` (the algebra-binding well-formedness bilateral; THIS
+#     bilateral's fixed-point-set at empirical run IS the algebra
+#     that binding names).
+#   - `glue_witnessing(c)` at `shards/glue.mirror:809` (the morphism-
+#     category inheritance predicate; `translation_admissible`
+#     composes over `glue_witnessing` on the source-target
+#     correspondence).
+#
+# Sentinel per shard docblock: `translation=preserves-meaning` — the
+# byte-level substrate-decl'd marker for `@bilateral(@code/rust,
+# @code/mirror)` discharge. When the composition machinery discharges
+# Pass, the realization layer stamps the sentinel on the outcome ref;
+# discharge is byte-equality on ref.oid containment per
+# `@epistemologic/pact/bilateral.discharge`.
+#
+# Rice-safe: pure sentinel-byte-check on the outcome ref; no program-
+# semantics inspection at this altitude. The semantic-preservation
+# content lives in the composition of `glue_witnessing` +
+# `algebra_metalogue_witnessing` per canonical spec §4.1 (1)+(2)+(3);
+# this bilateral is the FLOOR predicate marking the composition's
+# terminal-outcome discharge byte.
+#
+# Body `\`-obligation-blocked per [[feedback-craft-not-deliver]]; the
+# reflective evaluator handles this bilateral through corpus dispatch
+# per the same discipline the ~30 landed degenerate-case arms use.
+bilateral translation_admissible {
+  sentinel "translation=preserves-meaning"
+  arity    1
+}
+translation_admissible(pair: translation_pair) -> verdict { \ }
+
+# === Related spec + math for the reframe ===
+#
+# - docs/specs/bilateral-as-glue-metalogue-composition.md
+#   (Mara THIS-tick canonical spec; §0-§10 + landing plan + fractal
+#    self-similarity across altitudes)
+# - docs/math/bilateral-as-glue-metalogue-composition.md
+#   (Mara DEFERRED; math foundation for the general A≠B composition;
+#    Rice-safety proof + decidability + fixed-point convergence for
+#    the Rust→mirror translation loop)
+# - shards/kintsugi/translate.mirror (Mara `86dec5e`, THIS session) —
+#   the translation surface `@bilateral(@code/rust, @code/mirror)`
+#   floors; `translation_witnessing` composes over `translation_
+#   admissible` at outcome-check altitude
+# - shards/kintsugi.mirror :178-241 (Mara `0ac3c7b`, 2026-07-16) —
+#   the `@kintsugi/algebra` binding this reframe generalises one
+#   altitude up (`@kintsugi/algebra` ≡ `@bilateral(@silicon/algebra,
+#   @fate/algebra)`)
+
 out @epistemologic/pact/bilateral
 out bilateral
 out discharge
 out bilateral_well_formed
+out translation_pair
+out translation_admissible
