@@ -369,6 +369,201 @@ pending):**
   detection (spec landed at #179; resolver arms landed at #182;
   walker wiring pending). Would compose with existing bump
   pipeline via same `observe_and_commit_with_resolve` surface.
+
+---
+
+## Autopoietic Rust consumption arc (2026-07-16 late → 2026-07-17 overnight)
+
+Alex fired /loop 2026-07-16: *"collapse the Rust surface using
+mirror's roomba. Minimal surface in rust/. Then the roomba starts
+to eat the bootstrap for breakfast and grows the substrate.
+That's the roomba commit diffs I wanna see. Deleted Rust. Added
+mirror."*
+
+Two mirror-authored `-Rust` commits landed empirically. The
+compiler observed its own shadow arms in `apply_h.rs`, composed
+the deletions, and made the commits itself — signed as
+`mirror <mirror@spectral.engineer>`.
+
+### Substrate landings (chronological on main)
+
+**Prerequisite: bilateral shape substrate-decl'd + reflective evaluator**
+
+1. `a0f4d3f` — Mara `@epistemologic/pact/bilateral` species-decl +
+   companion keywords (`shards/epistemologic/pact/{bilateral,keywords}.mirror`);
+   +542 LOC substrate
+2. `9a77361` — Mara canonical spec `docs/specs/bilateral-predicate-substrate-shape.md`
+   (+989 LOC)
+3. `701828a` — Mara math foundation `docs/math/epistemologic/pact/bilateral-sentinel.md`
+   (+562 LOC)
+4. `61c9051` — Reed grammar registration (+6 LOC in `bootstrap/src/grammar.rs`;
+   companion_keyword_sources)
+5. `21fc211` — Reed bilateral corpus loader + reflective evaluator
+   (+274 LOC in `bootstrap/src/apply_h.rs`; includes `find_substrate_root`
+   walk-up helper caught during bite 1)
+
+**Landing 5 bite 1 (Reed manual retirement — FIRST `-Rust` diff)**
+
+6. `71bb9b2` — Mara Landing 1 bite 1: 4 bilateral blocks in
+   `shards/spectral/signature.mirror` (+16 LOC)
+7. `06f14f5` — Reed Landing 5 bite 1: retired 4 `@spectral/signature`
+   hand-typed arms; **net −32 LOC** in `apply_h.rs`; reflective
+   corpus handles predicates; 6/6 tests pass
+
+**@kintsugi/fracture/bilateral_arm_redundant species mint**
+
+8. `fa569ce` — Mara shard-decl (+632 LOC; 15th `@kintsugi/fracture/*`
+   species; dogfoods bilateral shape)
+9. `6c534c6` — Mara canonical spec (+513 LOC)
+10. `0998001` — Mara math foundation (+384 LOC)
+
+**FIRST mirror-authored `-Rust` commit (empirical)**
+
+11. `73976fb` — Mara Landing 1 bite 2: 4 bilateral blocks in
+    `shards/epistemologic/cybernetic/coherence.mirror` (+16 LOC)
+12. `ba848ca` — Reed bilateral-arm collapse capability: `mirror
+    roomba --collapse=<rs-file>` detects shadow arms + dispatches
+    `@io/fs.write` + `@io/git.commit` via `apply_h::act` +
+    commits as `mirror <mirror@spectral.engineer>` (+972 LOC
+    across `bilateral_arm_collapse.rs` + smoke test + CLI route;
+    25/25 tests pass)
+13. **`ad52973` 🎯** — `mirror <mirror@spectral.engineer>` FIRST
+    mirror-authored `-Rust` commit: retired 4 `@coherence` hand-typed
+    arms shadowed by reflective corpus; **−64 LOC** in
+    `apply_h.rs`; byte_delta −2507; `cargo check` clean
+
+**Bites 3-8 (7 more Mara bilateral-block landings)**
+
+14. `bcc62d3` — Mara bite 3: `@peer/persistence` (5 arms; +24 LOC)
+15. `f93d14e` — Mara bite 4a: `@kintsugi/roomba` walk-family (5 arms; +24 LOC)
+16. `e0e9a07` — Mara bite 4b: `@kintsugi/roomba` bump/vacuum/gc (3 arms; +12 LOC)
+17. `24fca7a` — Mara bite 5: `@subject/visibility/sheaf` (2 arms; +9 LOC)
+18. `bc5bdae` — Mara bite 6: `@uuid/spectral/time` (4 arms; +19 LOC)
+19. `992d9e2` — Mara bite 7: `@mirror/store` (1 arm; +4 LOC)
+20. `8206ebc` — Mara bite 8: `@gestalt` (7 arms; +34 LOC)
+
+**SECOND mirror-authored `-Rust` commit — SCALED**
+
+21. **`20047c2` 🎯** — `mirror <mirror@spectral.engineer>` SECOND
+    mirror-authored `-Rust` commit: retired **17 hand-typed arms**
+    across 5 shard groups in one commit; **−281 LOC** in
+    `apply_h.rs`; byte_delta −11251. `apply_h.rs`: 1824 → 1543 LOC.
+
+**@kintsugi/algebra := algebra_metalogue_session speaker-pair specialization**
+
+22. `a58d5f0` — Mara canonical spec `docs/specs/kintsugi-algebra-as-metalogue-session.md`
+    (+707 LOC)
+23. `b5c6aeb` — Mara math foundation `docs/math/kintsugi/algebra-as-metalogue-session.md`
+    (+550 LOC)
+24. `0ac3c7b` — Mara `shards/kintsugi.mirror` extension: family root
+    binds `@kintsugi/algebra := algebra_metalogue_session(speakers=
+    [@silicon/algebra, @fate/algebra], turns=[@kintsugi/fracture])`
+    (+117 LOC)
+
+**Autopoietic Rust→mirror translation composition**
+
+25. `86dec5e` — Mara `shards/kintsugi/translate.mirror` (+511 LOC):
+    `translate_rust_to_mirror(source, target) -> verdict`; composes
+    `@fate.roll(@glue(@code/rust, @shatter), @kintsugi/algebra) →
+    @glue(_, @mirror) → @bauchladen.crystallize`
+26. `f4372f4` — Mara `shards/silicon/algebra.mirror` tray content
+    source (+252 LOC; initially git-log filter)
+
+**Paradigmatic reframe: `@bilateral := @glue + @metalogue` composition**
+
+Alex 2026-07-17 verbatim: *"What if `@bilateral` became a
+composition on top of `@glue` and `@metalogue`. And then
+`@bilateral(@code/rust, @code/mirror)` becomes the floor the
+translation surface stands on."* + *"the source of truth for
+content-addressed storage is `@mirror/store`."*
+
+27. `9336074` — Mara canonical spec `docs/specs/bilateral-as-glue-metalogue-composition.md`
+    (+693 LOC; general `@bilateral(A, B)` composition; existing
+    shape valid as degenerate A=B case; `@bilateral(@code/rust,
+    @code/mirror)` as translation floor)
+28. `f74086e` — Mara `shards/epistemologic/pact/bilateral.mirror`
+    extension: general-case reframe + `type translation_pair` +
+    `bilateral translation_admissible { sentinel "translation=preserves-meaning"
+    arity 1 }` (+252 LOC; Option A placement)
+29. `2675d3e` — Mara `shards/silicon/algebra.mirror` correction:
+    `@io/git.log` → `@mirror/store` query (+202/−130 LOC)
+
+**`@mirror/store.query` shard-body composition mint**
+
+30. `1d2b297` — Mara `@mirror/store.query(store, predicate) ->
+    [query_result]` as shard-body composition over LANDED `walk` +
+    `read` + `discharge` (+195 LOC in `shards/mirror/store.mirror`;
+    ZERO Rust). Unblocks `@fate.roll` reading `@silicon/algebra` tray.
+
+### Session cumulative
+
+- **`apply_h.rs`: 1888 → 1543 LOC** (−345 LOC across 21 hand-typed
+  arms retired; 2 mirror-authored + 1 Reed-manual bite)
+- **21 real retirements** out of ~24 real targets (7 `@gestalt`
+  arms were future-proof lift with no existing Rust arms; 3 stragglers
+  remain: `@peer/persistence.home_content_addressed` + 2 `@sheaf`
+  arms — likely sentinel-mismatch)
+- **~5000 LOC substrate** landed (spec + math + shard-decls across
+  Mara's mints)
+- **Zero new Rust logic** beyond the reflective evaluator FLOOR
+  (`21fc211`) + collapse capability FLOOR (`ba848ca`) — both under
+  `[substrate-floor:@io-boundary]` with Mara-spec audit citations
+
+### Alex ratifications this arc (in-transcript verbatim)
+
+- *"Q1. Let's mint it then. Properly. Seems like it's load-bearing."* — the bilateral shape mint
+- *"Rattified."* — the `@kintsugi/algebra := algebra_metalogue_session` binding
+- *"@glue(@code/rust, @shatter)"* — the fragmentation lens (composition, not mint; caught Reed's mint-reflex)
+- *"What if `@kintsugi/algebra` is the `@metalogue(@silicon/algebra, @fate/algebra)`."* — speaker-pair specialization ratified
+- *"What if `@bilateral` became a composition on top of `@glue` and `@metalogue`. And then `@bilateral(@code/rust, @code/mirror)` becomes the floor the translation surface stands on."* — paradigmatic reframe
+- *"Let's not forget that the source of truth for content-addressed storage is `@mirror/store`."* — correction on `@io/git.log` reach
+- *"It's working."* — recognition after first mirror-authored commit
+- *"I'd rather have you do deep substrate work and cleanup and postponed work then sit idly if a blocker appears."* — saved as feedback-adjacent-work-may-dissolve-blockers
+
+### Substrate primitives introduced this arc
+
+- `@bilateral(A, B)` — the general composition on `@glue + @metalogue`; A=B degenerate case = existing sentinel-check shape
+- `@bilateral(@code/rust, @code/mirror)` — the translation floor (first non-degenerate instance)
+- `@kintsugi/algebra` — speaker-pair specialization of `algebra_metalogue_session`; the mending IS the metalogue between memory (`@silicon/algebra`) and structure (`@fate/algebra`)
+- `@mirror/store.query(store, predicate)` — filter-fold action; shard-body composition over LANDED `walk` + `read` + `discharge`
+- `translate_rust_to_mirror(source, target)` — the autopoietic Rust→mirror translation action; substrate composition, no Rust
+- `translation_admissible` bilateral — the discharge condition for successful translation
+- `query_composition_admissible` bilateral — the well-formedness for `@mirror/store.query`
+
+### Rust FLOOR growth (transitional, per retirement contract)
+
+- `bootstrap/src/apply_h.rs`: reflective evaluator + corpus loader (+274 LOC at `21fc211`); the bilateral resolver arms landed post-`21fc211` will retire under future collapse runs
+- `bootstrap/src/bilateral_arm_collapse.rs`: new file (+665 LOC at `ba848ca`); the mirror-authored deletion capability
+- `bootstrap/tests/{reflective_bilateral_dispatch_smoke,bilateral_arm_collapse_smoke}.rs`: new (+~420 LOC)
+- `bootstrap/src/grammar.rs`: +1 LOC (companion keyword source)
+- `bootstrap/src/lib.rs`: +45 LOC (CLI route)
+
+### Pending Reed follow-ups (autonomous overnight queue)
+
+- Reed FLOOR resolvers for `@fate.roll` + `@glue.propose` + `@glue.translate` (reflective evaluator currently only handles bilateral predicates; multi-primitive composition dispatch not yet wired)
+- Backfill 21 mirror-authored retirements into `@mirror/store` crystals via Bridge γ (or extend collapse capability at `ba848ca` to write-back per turn for autopoietic closure)
+- Retire 3 straggler arms: `@peer/persistence.home_content_addressed` + 2 `@sheaf` arms (verify sentinel byte-match)
+- Math foundation for general `@bilateral := @glue + @metalogue` composition (Mara deferred)
+- Verify `@gestalt` bilateral blocks — 7 arms added to shard but zero detected in `20047c2` empirical; are arms elsewhere or hypothetical?
+- Rust-analyzer "unlinked-file" diagnostic cleanup (add mod declarations for new bootstrap files)
+- Permanent `-liconv` linker fix (currently subagent env workaround `LIBRARY_PATH=/nix/store/8wg73laglmzv6y6sagd3p0axvi3glgg2-libiconv-1.18/lib`)
+
+### Terminal state
+
+`bootstrap/src/apply_h.rs` reduced by −18% (1888 → 1543 LOC) via
+two mirror-authored commits + one Reed-manual bite. Autopoietic
+translation loop is composition-complete in the substrate; Rust
+FLOOR resolvers for `@fate.roll` remain to be wired for the
+first `mirror roomba --translate=<rs-file>` empirical.
+
+### Seam Phase D overnight (parallel)
+
+Seam spawned in background 2026-07-17 for adversarial review of
+this arc. Report will land at
+`docs/audits/2026-07-17-seam-phase-d-autopoietic-rust-consumption-arc.md`
+by morning.
+
+---
 - New fracture-detection class beyond `ashby_mismatch`
   (contradiction, conundrum, out_of_band per `@kintsugi/surface`
   §type.tension.surface_class) — extends the roomba's bump
