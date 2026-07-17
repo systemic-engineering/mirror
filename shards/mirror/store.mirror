@@ -551,6 +551,198 @@ walk(root: oid) -> splinter_graph { \ }
 # declares the contract, obligation body discharges at @io.
 impacted_by(oid: oid) -> [oid] { \ }
 
+# ═══════════════════════════════════════════════════════════════════
+# === query(store, predicate) — the filter-fold action ===
+# ═══════════════════════════════════════════════════════════════════
+#
+# Mint per Mara 2026-07-17 (`[substrate-pull:realize]` composition-only
+# mint; ZERO Rust). Consumer-pulled by `@silicon/algebra.tray_content_
+# source` (`shards/silicon/algebra.mirror` :164-202 pending flag) which
+# reads @mirror/store's mirror-authored bilateral-retirement crystals
+# as the seed of `@silicon/algebra`'s tray under the composition graph
+# at :113-141.
+#
+# Alex 2026-07-17 in-transcript verbatim (session-crystallizing):
+#
+#   "the source of truth for content-addressed storage is
+#    @mirror/store."
+#
+# THIS action IS the substrate-honest realisation of that authority at
+# the query surface. No `@io/git.log` bypass; no side-channel enumeration;
+# the store IS the query surface.
+#
+# === Substrate-honest composition over LANDED primitives ===
+#
+# query is NOT a new @io primitive. It IS a shard-body composition over
+# THREE already-landed substrate primitives:
+#
+#   1. walk(root: oid) -> splinter_graph           :532-536 above
+#        enumerate the OID-graph closure reachable from root
+#   2. read(o: oid) -> imperfect                   :505-509 above
+#        fetch content bytes at an OID
+#   3. discharge(decl: bilateral, args: [ref]) -> verdict
+#        `shards/epistemologic/pact/bilateral.mirror` :271 (Mara
+#        `a0f4d3f` 2026-07-16); the reflective evaluator's byte-level
+#        sentinel-check on the predicate declaration + args
+#
+# The fold: for each OID reachable via `walk(store_root_of(store))`,
+# `read(oid)` to obtain content, resolve `predicate` (a ref) to its
+# `bilateral` declaration in the corpus, `discharge(decl, [content_
+# ref])`; collect OIDs where verdict is Pass. Return the filtered
+# `[query_result]` sequence.
+#
+# ZERO new Rust needed at query-action altitude. The reflective
+# evaluator (`bootstrap/src/apply_h.rs` per Reed `21fc211` Landing 3+4)
+# already dispatches `walk` / `read` / `discharge` via @io primitives;
+# the fold-body composes them per the shard-body discipline (per
+# `shards/glue/fold_back.mirror` fold-over-tray precedent).
+#
+# === Consumer chain (composition graph forward-promises) ===
+#
+# 1. `@silicon/algebra.tray_content_source` (`shards/silicon/algebra.
+#    mirror` :164-202) — reads mirror-authored bilateral-arm retirement
+#    crystals as `@silicon/algebra`'s tray seed. Filter predicate is
+#    `@bilateral(@code/rust, @code/mirror).translation_admissible`
+#    (per `shards/epistemologic/pact/bilateral.mirror` :677-681, the
+#    first general-case `@bilateral(A, B)` instance).
+#
+# 2. `@fate.roll` reads `@silicon/algebra`'s tray via this action per
+#    the composition graph at `shards/silicon/algebra.mirror` :246-266
+#    (write-back protocol). Each `translate_rust_to_mirror` discharge
+#    (`shards/kintsugi/translate.mirror::translate_rust_to_mirror` at
+#    Mara `86dec5e`) writes a NEW mirror-authored crystal at Edge 6;
+#    next `query` invocation returns the enlarged tray (bauchladen-
+#    monotonic per `shards/bauchladen.mirror` §"crystal accumulation").
+#
+# 3. `@fate.tournament` reads `@fate/algebra`'s path-namespace via
+#    this action (composition-graph forward-promise; the tournament
+#    dispatcher enumerates ranked outcomes as filtered @mirror/store
+#    query results).
+#
+# === Audit chain ===
+#
+# Substrate-already-had-the-word citation chain THIS mint composes over:
+#
+#   - `2675d3e` (Mara THIS session; `shards/silicon/algebra.mirror` tray
+#      source pending flag) — the consumer that surfaced the missing
+#      query surface + the composition graph the fold discharges
+#   - `a0f4d3f` (Mara 2026-07-16; `shards/epistemologic/pact/bilateral.
+#      mirror` grammar-decl'd shape) — the `bilateral` typed carrier
+#      + `discharge` action THIS query composes the predicate side over
+#   - `86dec5e` (Mara THIS session; `shards/kintsugi/translate.mirror`
+#      translate composition) — the write-back producer whose Edge-6
+#      crystals THIS query reads back
+#   - Alex 2026-07-17 verbatim: "the source of truth for content-
+#      addressed storage is @mirror/store" — the substrate authority
+#      landing THIS query at @mirror/store, not @io/git.log
+#
+# === Substrate-decl'd query_result carrier ===
+#
+# The per-element result carrier. Each surviving OID + the discharge
+# verdict that certified its survival (Pass by construction; Fail-
+# verdicts filter out during the fold and never appear in the output
+# sequence, but the field is retained so downstream consumers may
+# introspect the verdict shape for provenance).
+#
+# Identity contract: byte-equality on (oid, verdict). Two query_results
+# are equal iff their oid and verdict fields both match. The realisation
+# layer enforces.
+type query_result = {
+  oid:     oid,      # the crystal OID satisfying the predicate
+  verdict: verdict,  # the discharge verdict (Pass by construction; Fail-
+                     # verdicts are filtered out during the fold and do
+                     # not appear in the output sequence)
+}
+
+# === query_composition_admissible — bilateral predicate (arity 1) ===
+#
+# Bilateral predicate discharging that a `query` invocation's action
+# ref is a well-formed composition over LANDED walk + read + discharge
+# per the docblock composition graph above. Pass iff the action
+# reference resolves to a `query`-shaped composition whose fold-body
+# names (A) an `@mirror/store.walk` enumeration edge + (B) an
+# `@mirror/store.read` per-element fetch edge + (C) an
+# `@epistemologic/pact/bilateral.discharge` per-element predicate
+# discharge edge + (D) a filter-projection edge onto Pass-verdict
+# elements. Discharge is byte-check on the composition graph's sentinel
+# per THIS shard's docblock; NOT program-semantics inspection.
+#
+# Sentinel per shard docblock: `query=walks-reads-discharges-composed`.
+#
+# Dogfoods the grammar-decl'd bilateral shape from `a0f4d3f`. Arity 1
+# (checks one composition-source ref per invocation). Body `\`-
+# obligation-blocked; the reflective evaluator (per `21fc211` Landing
+# 3+4) discharges via corpus lookup + sentinel byte-check per the same
+# discipline `silicon_tray_content_addressed` (`shards/silicon/algebra.
+# mirror` :337-379) uses.
+#
+# Rice-safe: pure sentinel-byte-check on a composition graph ref; no
+# program-semantics inspection.
+#
+# Sibling to:
+#   - `silicon_tray_content_addressed(source)` at `shards/silicon/
+#     algebra.mirror` :337-379 — the consumer bilateral that certifies
+#     the tray_content_source composition graph. THIS predicate
+#     certifies the query action THAT composition composes over.
+#   - `gc_reachability_closure_second_witness(refs, dangling)` at
+#     :739-743 above — the arity-2 sibling on THIS same family root.
+bilateral query_composition_admissible {
+  sentinel "query=walks-reads-discharges-composed"
+  arity    1
+}
+query_composition_admissible(source: ref) -> verdict { \ }
+
+# === query — the filter-fold action ===
+#
+# THE LOAD-BEARING filter-fold. Given an @mirror/store `store_ref` +
+# a bilateral predicate ref, folds `walk(store_root) → read → discharge`
+# over the OID-graph closure; returns the filtered `[query_result]`
+# sequence of OIDs whose bytes discharge `predicate` Pass.
+#
+# store:      family-root-typed handle to an open @mirror/store instance
+#              (species-altitude wire handles like `@mirror/store/git`'s
+#              `git_store` specialize at their altitude and discharge
+#              through their per-species walk + read surface).
+# predicate:  ref resolving to a `bilateral` declaration in the corpus
+#              (per `shards/epistemologic/pact/bilateral.mirror` :229-234
+#              typed carrier). The reflective evaluator resolves the ref
+#              at dispatch time and passes the declaration to `discharge`.
+#
+# Returns: `[query_result]` — sequence of surviving OIDs each paired
+# with their Pass-verdict. Order follows walk-traversal order (per the
+# underlying `walk` action's OID-graph enumeration discipline);
+# consumers requiring canonical-sort project further.
+#
+# The `requires query_composition_admissible(self)` clause names the
+# discharge condition per recognition #37 (Pask-agreement reading of
+# `requires`): the action commits to producing results whose composition
+# graph satisfies the walk+read+discharge shape; consumers surface
+# violations at the species boundary.
+#
+# Identity contract for the action's outcome: byte-equality on
+# (store.oid, predicate.oid). Two invocations against a byte-equal
+# @mirror/store state with a byte-equal predicate ref produce byte-equal
+# `[query_result]` sequences under content-addressing. Monotonic growth
+# (per @mirror/store §"Non-negotiable v0 invariants" immutability-under-
+# hash + bauchladen crystal accumulation): future invocations produce
+# SUPERSETS as new crystals accumulate; past matches persist.
+#
+# Body `\`-obligation-blocked per [[feedback-craft-not-deliver]]; the
+# reflective evaluator composes the fold over LANDED walk + read +
+# discharge primitives — ZERO Rust extension at query-action altitude.
+#
+# Realisation dispatch:
+#   walk_result   = walk(store_root_of(store))       // :532 above
+#   for each oid in walk_result.children:
+#     content_ref = read(oid)                        // :509 above
+#     verdict     = discharge(predicate_decl,        // bilateral.mirror :271
+#                             [content_ref])
+#     if verdict is Pass:
+#       yield query_result { oid, verdict }
+query(store: store_ref, predicate: ref) -> [query_result]
+requires query_composition_admissible(source)
+{ \ }
+
 # verify(oid, bytes) — re-hash the bytes; verdict on whether
 # the result equals the claimed oid. The substrate's integrity
 # check; the Merkle property per
@@ -754,6 +946,9 @@ out exists
 out diff
 out walk
 out impacted_by
+out query_result
+out query_composition_admissible
+out query
 out verify
 out store_ref
 out walk_dangling
