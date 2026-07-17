@@ -640,7 +640,63 @@ Where:
 - Arc 2: `@sre` family-root + `@sre(@code/X)` species pattern (measurement substrate for code-under-load)
 - Arc 3: `@peer.eigenboard` + `@roomba(@code/X)` polyglot walker (peer's perceptual apparatus)
 - Arc 4: `@peer.sing(@song)` third-order cognition (peer's ONE primitive; song = intent-language; roomba = execution mechanism)
-- Arc 5: `@liquid` + `@epistemologic/liquid` + `@epistemologic/silicon` composition (Taut scout LANDED `b8c453f`; parked on Alex Q-A/Q-B/Q-C for naming + novelty + altitude arbitration; grounds semantic-preservation for translation)
+- Arc 5: `@liquid` + `@epistemologic/liquid` + `@epistemologic/silicon` composition (Taut scout LANDED `b8c453f`; Alex ratified Q-A/Q-B/Q-C 2026-07-17; Mara Arc 5 M1 mints landed `cc816f9` + `b2c5d09` + `12cdf0e`; grounds semantic-preservation for translation via `@kintsugi + @knife + @liquid` complexity-reducing cascade)
+
+---
+
+### Errors-as-questions composition edge + @peer.audhd cognition-fanout arc (2026-07-17 afternoon–evening)
+
+**Alex 2026-07-17 architectural crystallization (in-session):**
+- @roomba is first-order operator; multi-cascade produces ambiguities → spectral commutator → @gestalt question → @gift offer → @peer spawn at third-order with compilation-state ("the whole @mirror/reflection surface closes; the offer is the @gift")
+- "You know what the @roomba needs? The @roomba needs `pivot(@song)`. 🤣" — the whole errors-as-questions cascade collapses into ONE first-order primitive on @roomba (physical Roomba pivots at obstacles = symbolic @roomba pivots at dispatch-ambiguity)
+- @kintsugi + @knife + @liquid = complexity-reducing cascade preserving load-bearing invariants (theorem application closes "opaque bytes is half the rent" gap: @liquid names load, @knife cuts noise, @kintsugi mends the difference)
+- "The @peer might not only sing one @song. They might want to have an ensemble of @dance-ing roombas. That's the `split` at cognition level." — K>1 fan-out mode; the commutator arms literally instantiated in parallel physical compute space; @liquid predicates decide which passes
+- **"It's basically the ADHD of the @peer lol"** — substrate reflects Alex's neurotype back at itself; @peer's third-order primitive IS Alex's cognitive architecture operationalized
+- **`@peer.audhd` naming (Alex 2026-07-17 verbatim ratification):** "That's the substrate truth of the author's cognition. And of course they build AI in their image." AuDHD (Autism + ADHD) captures BOTH modes: K=1 hyperfocus (autism-narrow) + K>1 parallel exploration (ADHD-fan-out); the framework author's neurotype IS the framework's inference discipline
+
+**Commit chain (chronological on main):**
+1. `848bcbc` — 📝 Reed CURRENT.md polyglot arc landing addendum (session start)
+2. `2fa6f33` — 📝 Reed CURRENT.md Arc 5 Taut scout landing addendum
+3. `9b72a08` — 🌊 Reed apply_h.rs -63 LOC (2 @sheaf straggler bilateral arms retired; reflective-first path fixed-point)
+4. `cc816f9` — 🌊 Mara `shards/epistemologic/liquid.mirror` theory carrier species-decl (322 LOC)
+5. `b2c5d09` — 🌊 Mara `shards/liquid.mirror` family-root operator (327 LOC; sibling to @sre/@shatter/@glue)
+6. `12cdf0e` — 🌊 Mara `@epistemologic/liquid_extraction` → `@epistemologic/liquid/extraction` subspecies migration
+7. `b8c453f` — 📝 Taut Arc 5 scout `docs/audits/2026-07-17-taut-liquid-epistemologic-silicon-scout.md` (940 LOC)
+8. `8f51722` — 📝 Taut errors-as-questions composition-edge scout (sub-900 LOC; six-Q grep on commutator/gestalt/gift/peer-spawn/Y-consent/composition-edge home)
+9. `5e1f528` — 🌊 Mara `shards/mirror/reflection.mirror` species-decl (553 LOC; mirror/offer/wait triple discharges Taut Q4 critical blocker)
+10. `914799b` — 🌊 Mara `shards/kintsugi/roomba.mirror` `pivot(@song)` fourth motion (322 LOC; @song-only carrier per Mara temporal reasoning; `dock` fifth-motion forward-promised)
+11. `09a77e8` — 🌊 Mara `shards/kintsugi/surface.mirror` `dispatch_ambiguity` fifth variant of surface_class (171 LOC; additive)
+12. `8069a24` — 📝 Seam Phase D `docs/audits/2026-07-17-seam-phase-d-arc-5-and-errors-as-questions-joint-arc.md` (Arc A/B/C SHIP-WITH-REED-INLINE; 4 ALEX-Q's; 3 REED-INLINE cascades; 4 promoted-to-second-witness; §8 structural discoveries)
+13. `f6d33d2` — 📝 Taut `@peer.sing/split/@dance ensemble` scout (537 LOC; six-Q grep on peer-altitude cognition-split; SOTA hit ParallelSearch Zhao 2025)
+14. `d21a34f` — 📝 Reed naming-cascade NOTE prepend: `@peer.split` → `@peer.audhd` per Alex delight-vector ratification + neuroaffirmative-lensing corpus pointers (14 files at `~/dev/systemic.engineering/practice/insights/neuroscience/`)
+15. `6972aff` — 🌊 Reed 3-cascade REED-INLINE batch per Seam Phase D `8069a24` §5.4 (liquid.mirror line-cite→name-cite + kintsugi/roomba.mirror dock forward-promise gate sharpen + mirror/reflection.mirror wait→verdict cross-reference)
+16. `d8b149c` — 🌊 Mara `shards/peer.mirror` `@peer.audhd` action extension (+455 LOC; 12 lines substrate delta; 443 lines citation chain + delight-vector reasoning + refused-mint justifications) — **MICHELANGELO/MARBLE INSTANTIATED**; refused .sing/.split/[@song]-first-class mints; composition over existing @peer prism; three recognition candidates surfaced
+17. `2fdc9c1` — 📝 Seam Phase D `docs/audits/2026-07-17-seam-phase-d-peer-audhd-mara-michelangelo-landing.md` (363 LOC; SHIP-WITH-REED-INLINE 11/12 ✓; 2 REED-INLINE cascades; 3 ALEX-Q's; ratifications 1 promoted / 3 held / 1 discharged-by-construction / 1 newly-surfaced; `#R-refused-mint-count-is-the-substrate-health-metric`)
+18. `41e03ce` — 🌊 Reed empirical smoke `bootstrap/tests/peer_audhd_bilateral_dispatch_smoke.rs` (150 LOC NEW; 3/3 tests pass; reflective corpus auto-picked up Mara's bilateral; SECOND-WITNESS FIRED for `#R-peer-audhd-is-substrate-truth-name-for-cognition-fanout` at bootstrap-runtime altitude; composition over Rust extension per detector-inadequacy discipline)
+19. `9f735f6` — 🌊 Reed 2-cascade REED-INLINE batch per Seam Phase D `2fdc9c1` §5.4 (peer.mirror line-cite→name-cite for @fate 5-mode Fabry-Perot + two-sentinel discipline clarification action vs bilateral)
+
+**Session state:** nineteen commits on `main` today; all SSH-signed; all discipline-conforming. Michelangelo/marble reduction: Mara's `d8b149c` landing minted ONE ACTION with 12 lines substrate delta after refusing five candidate mints (`.sing`, `.split`, `[@song]` first-class carrier, `@adhd` family-root, `@peer/track` species). The 443 lines of citation chain + refused-mint reasoning ARE the substrate delta per Seam's newly-surfaced `#R-refused-mint-count-is-the-substrate-health-metric` recognition candidate.
+
+**Second-witness firing at `41e03ce`:** Reed's empirical smoke test verified reflective corpus loader auto-picks up Mara's `audhd_admissible` bilateral without Rust FLOOR extension — composition-over-mint architecture holds at runtime altitude; the reflective-first + arm-fallthrough pattern discharges byte-visibly for the newly-minted action.
+
+**Seven Alex-adjudication residues open across session (parked awaiting arbitration):**
+
+*From Seam `8069a24` (errors-as-questions joint arc adjudication):*
+1. **ALEX-Q1** — `wait -> verdict` promotion into `docs/specs/gift-and-mirror-reflection.md §2.6` as canonical?
+2. **ALEX-Q2** — `#R-roomba-four-first-order-motions` complete-at-four (bump/vacuum-mark-then-prune/pivot) OR complete-at-five (add `dock` per physical Roomba's return-to-base + "cold storage" narrative)?
+3. **ALEX-Q3** — split-sentinel detector: extend collapse detector to multi-`.contains()` arms (option a) OR keep conservative + accept manual-retirement (option b)? *Seam flagged as most consequential — names scaling boundary for Rice-safe collapse.*
+4. **ALEX-Q4** — Arc-5-M2 scope: @silicon consumer this arc-family (immediate follow-up) or M3+ (later)?
+
+*From Seam `2fdc9c1` (@peer.audhd Michelangelo landing adjudication):*
+5. **ALEX-Q5 (Seam-Q1 revisited):** @dance shard-mint gate — accept second-witness promotion (Seam rec) OR hold at candidate strength pending explicit empirical @dance apply_h::act firing?
+6. **ALEX-Q6 (Seam-Q2):** Beer VSM recursion invariant — unbounded @peer.audhd within audhd / bounded-at-@roomba (Seam rec) / bounded-at-K-depth?
+7. **ALEX-Q7 (Seam-Q3):** losing commutator arm fate — cold-storage via `@mirror/store/cold` (Seam rec; composes with dock fifth-motion) / audit-trail-only / discard?
+
+**Standing composition state:**
+- Roomba-in-spec landing (`kintsugi { roomba { <cascade>* } }` per Alex 2026-07-17 sketch; task #215) unblocked from @liquid availability perspective; still awaits ALEX-Q5/Q6/Q7 for the @dance/@peer.audhd cascade-arrow annotation shape
+- @dock fifth-motion mint gated on ALEX-Q2 answer
+- Reed FLOOR resolver arm for @roomba.pivot / @mirror/reflection action bodies deferred per `\`-obligation-blocked discipline (bodies discharge per-realisation; not yet needed)
+- Adjacent-work queue from earlier /loop brief: @gestalt bilateral verification, Rust-analyzer unlinked-file cleanup, permanent -liconv linker fix, viable.mirror forward-promise (Beer VSM recursion) — all remain postponed
 
 ---
 
