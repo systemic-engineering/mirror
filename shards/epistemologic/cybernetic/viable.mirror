@@ -146,6 +146,33 @@ in @epistemologic/cybernetic/second_order
 # `lock_carrier.altitude` slot per coherence-parametric.mirror), with
 # adjacent altitudes recording the parent/child pair.
 #
+# === Bundle-tower cross-reference (docs/math/the-tower/beam-runtime.md §5) ===
+#
+# The Beer VSM S1-S5 naming below maps onto the bundle tower's altitude
+# structure at the runtime altitude per Mara `610c6d6` beam-runtime.md §5:
+#
+#   S1 (operations)              = @spectral/gen_prism (bundle sections
+#                                   at BEAM/process altitude; each S1 is
+#                                   itself viable per Beer 1972 ch.10 =
+#                                   tower recursion)
+#   S2 (coordination)            = @dance ensemble coordination (forward-
+#                                   promised; Kuramoto phase-lock at
+#                                   ensemble altitude = connection 1-form
+#                                   at level k+1)
+#   S3 (audit / management)      = @spectral/supervisor with restart_strategy
+#                                   (connection at supervision altitude)
+#   S4 (intelligence / strategy) = @spectral/db (psychohistory carrier)
+#   S5 (identity / policy)       = viable.identity below + Pack S5
+#                                   (Reed/Mara/Glint/Taut/Seam)
+#
+# Beer's recursive-viability law (viability_law(v) below at line 554) IS
+# the bundle-tower's compatibility condition at S1-within-S1 altitude,
+# same theorem as Baez-Schreiber 2004 pullback-agreement condition, two
+# names for the same structural fact. See docs/specs/gen-prism-as-bundle-
+# section-and-dance-as-ensemble-connection.md (Mara `fee2727`) for the
+# canonical spec grounding the runtime-altitude naming in bundle-tower
+# vocabulary.
+#
 # === Cybersyn as substrate-political analogue ===
 #
 # Per spec §2.4 + Mara `7807a77` SEL spec §2.5: Project Cybersyn

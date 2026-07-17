@@ -277,7 +277,18 @@ in @epistemologic/reality/time
 #                                          (gen_prism specialisation
 #                                          carrying the frame stream).
 #
-# Spec context: docs/specs/spectral-runtime.md (the ouroboros
+# Spec context: docs/math/the-tower/beam-runtime.md §2.1 (supervision
+#               tree ≅ simplicial Lie group tower; restart_strategy IS
+#               the structure group at supervision altitude; the three-
+#               variant closed sum below matches Baez-Schreiber 2004
+#               compatibility theorem's finite-level admissibility;
+#               Mara `610c6d6`),
+#               docs/specs/gen-prism-as-bundle-section-and-dance-as-
+#               ensemble-connection.md §2.2 (canonical spec naming
+#               @spectral/supervisor as bundle connection at supervision
+#               altitude; restart_intensity IS the compatibility condition
+#               operationalized; Mara `fee2727`),
+#               docs/specs/spectral-runtime.md (the ouroboros
 #               spec; §3 supervision tree; §8 cascade map),
 #               boot/std/beam.mirror (the @beam-altitude strategy /
 #               supervisor precedent at the BEAM altitude that this

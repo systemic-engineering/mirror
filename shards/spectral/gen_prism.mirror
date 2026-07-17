@@ -180,7 +180,17 @@ in @mirror/au
 # realisation through `@code/metalogue/materialize` (per the
 # ouroboros pipeline in docs/specs/spectral-runtime.md §5).
 #
-# Spec context: docs/specs/spectral-runtime.md (the ouroboros
+# Spec context: docs/math/the-tower/beam-runtime.md §2.2 (actors as
+#               sections of a principal bundle; the gen_prism carrier
+#               below IS the substrate-altitude section at BEAM/process
+#               altitude; identity=uuid_spectral autopoietic fixed
+#               point per Lawvere; state=shard_ref settles lattice
+#               ascent; parent=uuid_spectral parallel-transport base;
+#               Mara `610c6d6`);
+#               docs/specs/gen-prism-as-bundle-section-and-dance-as-
+#               ensemble-connection.md §2.1 (canonical spec naming
+#               gen_prism as bundle section; Mara `fee2727`);
+#               docs/specs/spectral-runtime.md (the ouroboros
 #               spec; §2 gen_prism shape; §3 supervision tree;
 #               §8 cascade map).
 # Substrate decisions: [[architecture-shards-as-substrate-source]],

@@ -157,7 +157,22 @@ in @magic/audit
 #                               carries the same discipline at the
 #                               coordination altitude.
 #
-# Spec context: docs/math/the-tower/recognition-80-magic-as-form-
+# Spec context: docs/math/the-tower/beam-runtime.md §2 (BEAM as
+#               principal bundle tower instance; the four carriers
+#               declared below map to bundle-theoretic objects:
+#               module_version=connection-update handle;
+#               code_change_msg=connection-update carrier;
+#               supervisor=connection at supervision altitude;
+#               gen_server_state=section state at fiber; Mara
+#               `610c6d6` cascade of the beam-elixir insights doc
+#               into mirror math root grounds this shard's carriers
+#               in Baez-Schreiber 2004 compatibility theorem);
+#               docs/specs/gen-prism-as-bundle-section-and-dance-as-
+#               ensemble-connection.md (Mara `fee2727`; canonical
+#               spec naming @spectral/gen_prism as section,
+#               @spectral/supervisor as supervision connection, @dance
+#               as ensemble connection);
+#               docs/math/the-tower/recognition-80-magic-as-form-
 #               process-substrate-decl.md (Reed's scratch; the @magic
 #               family this glass species composes with);
 #               body/ (Reed's BEAM body — inspiration; NOT a runtime
