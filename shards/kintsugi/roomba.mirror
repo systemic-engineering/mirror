@@ -718,8 +718,14 @@ gc_mark_terminal(mark: gc_mark) -> verdict { \ }
 #   substrate now carries bump / vacuum / gc-via-vacuum / pivot as
 #   the four first-order-operator primitives Alex named. Physical
 #   Roomba's motion roster: bump (collision), vacuum (dust), pivot
-#   (turn at obstacle), dock (return-to-base — forward-promised
-#   future music, per Alex's 2026-07-16 "cold storage" narrative).
+#   (turn at obstacle), dock (return-to-base — FORWARD-PROMISED
+#   per Alex's 2026-07-16 "cold storage" narrative; landing gate:
+#   (a) @cold-storage species-decl or @mirror/store/cold variant
+#   landed AND (b) second-witness for #R-roomba-four-first-order-
+#   motions promoted-to-second-witness OR reframed as #R-roomba-
+#   five-motions with dock composed — both conditions fire before
+#   dock species-decl mint per Seam Phase D adjudication 8069a24
+#   §5.4 REED-INLINE #2 cascade).
 #
 # === The @song-carrier decision (delight-vector reading) ===
 #

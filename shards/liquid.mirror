@@ -140,11 +140,13 @@
 #
 #   - `@sre(@code/X)` per corpus references
 #   - `@bilateral(@code/A, @code/B)` per `shards/epistemologic/pact/
-#     bilateral.mirror` :456-475 + polyglot spec §5.2 + the
-#     `translation_admissible` bilateral at bilateral.mirror
-#     :677-681
+#     bilateral.mirror` (§"@bilateral generalization" — Alex
+#     2026-07-17 verbatim reframe) + polyglot spec §5.2 + the
+#     `translation_admissible` bilateral block at bilateral.mirror
+#     (sentinel `"translation=preserves-meaning"`, arity 1)
 #   - `@bilateral(@silicon/algebra, @fate/algebra)` per bilateral.
-#     mirror :530 — kintsugi/algebra reframe
+#     mirror (§"Connection to @kintsugi/algebra" — reframe binding
+#     algebra_metalogue_session between speaker-algebras)
 #
 # `@liquid(@X)` extends the parametric-lens discipline the substrate
 # already dogfoods; zero substrate-authority tension per Taut §7.2.

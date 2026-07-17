@@ -409,6 +409,13 @@ offer(q: question, response: ref) -> ado_wrapped_answer { \ }
 # #R-wait-returns-verdict surfaces for Alex adjudication (see
 # Recognition candidates below).
 #
+# Seam Phase D adjudication `8069a24` (docs/audits/2026-07-17-seam-
+# phase-d-arc-5-and-errors-as-questions-joint-arc.md) PROMOTED-TO-
+# SECOND-WITNESS this recognition candidate; ratification-final
+# awaits Alex answer to ALEX-Q1 (accept `wait -> verdict` promotion
+# into spec §2.6 as canonical). REED-INLINE #3 cross-reference
+# applied per Seam §5.4 cascade recommendation.
+#
 # Sentinel per shard docblock: `wait=held-without-pressure` — byte-
 # equality on the discharge floor value AND the offer OID remaining
 # resolvable via @kintsugi/store.
