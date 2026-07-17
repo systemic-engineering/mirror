@@ -140,6 +140,7 @@ declare_public(c: ref, s: subject_instance) -> visibility_scope { \ }
 # terminal state). Fail if the elevation morphism has drifted
 # (should never happen at substrate-decl altitude; the predicate
 # is a byte-level check the type system enforces by construction).
+bilateral elevation_terminal { sentinel "can_be_elevated_to=[]" arity 1 }
 elevation_terminal(vs: visibility_scope) -> verdict { \ }
 
 # === consent_scope_universal — bilateral predicate ===
@@ -147,6 +148,7 @@ elevation_terminal(vs: visibility_scope) -> verdict { \ }
 # Discharges Pass iff vs.consent_scope resolves to the [everyone]
 # open-set sentinel. Fail if the scope has been narrowed (which
 # would be a substrate-decl violation: public cannot be narrowed).
+bilateral consent_scope_universal { sentinel "consent_scope=[everyone]" arity 1 }
 consent_scope_universal(vs: visibility_scope) -> verdict { \ }
 
 # === public_is_gift_to_commons — bilateral predicate ===
@@ -159,6 +161,7 @@ consent_scope_universal(vs: visibility_scope) -> verdict { \ }
 #
 # The predicate is composed by @gift.gift_witnessing when the
 # receiver is commons_r; consumers may cite either predicate.
+bilateral public_is_gift_to_commons { sentinel "gift-to-commons" arity 1 }
 public_is_gift_to_commons(vs: visibility_scope) -> verdict { \ }
 
 out @subject/visibility/public
