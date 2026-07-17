@@ -969,6 +969,273 @@ fn find_bootstrap_ll(deps_dir: &std::path::Path) -> Option<PathBuf> {
     best.map(|(_, p)| p)
 }
 
+// ────────────────────────────────────────────────────────────────────────
+// `mirror roomba --commit --translate=<rs-file>` — polyglot cascade Tick M3.
+//
+// Composes the three landed cascade `apply` resolver arms in
+// `bootstrap/src/apply_h.rs` (Reed `7a962ab`) with @io/fs.write +
+// @io/git.commit to close the polyglot chain end-to-end:
+//
+//   Rust source
+//     ↓  @cascade/code/rust/llvm.apply_rust_llvm       (Edge 1)
+//   LLVM IR
+//     ↓  @cascade/code/llvm/turing.apply_llvm_turing   (Edge 2)
+//   Turing tape program
+//     ↓  @cascade/code/turing/mirror.apply_turing_mirror (Edge 3)
+//   mirror-substrate-value ref
+//     ↓  @io/fs.write
+//   .mirror bytes on disk at shards/generated/rust_translated_<basename>.mirror
+//     ↓  @io/git.commit
+//   commit oid authored by mirror <mirror@spectral.engineer>
+//
+// The source .rs file is NOT deleted at Tick M3 (translation-with-
+// deletion lifts in a subsequent tick via a bilateral_arm_collapse-
+// like mechanism). The empirical is safe by construction.
+//
+// Audit chain: Mara `1ce68c3` polyglot-loss-aware-translation spec
+// §9 M3 + Mara `7186410`/`62d1b1c` M1 endpoints + Mara `eee446b`/
+// `c9328ec`/`3322825` M2 cascade species + Reed `7a962ab` M3
+// FLOOR resolvers + Alex 2026-07-17 verbatim ratification.
+//
+// [substrate-floor:@io-boundary]
+// ────────────────────────────────────────────────────────────────────────
+
+/// Report emitted by the `--translate=<rs-file>` cascade route.
+///
+/// Names the byte-level metrics observable at each cascade edge, plus
+/// the final commit oid iff the write + git commit succeeded. Consumed
+/// by the CLI printer at the `roomba` match arm.
+pub struct TranslateReport {
+    /// Rust source path (the `--translate=<rs-file>` argument).
+    pub source: PathBuf,
+    /// Target .mirror path under `shards/generated/`.
+    pub target: PathBuf,
+    /// Byte-count of the emitted LLVM IR (Edge 1 output).
+    pub llvm_bytes: usize,
+    /// Byte-count of the emitted Turing tape program (Edge 2 output).
+    pub turing_bytes: usize,
+    /// Byte-count of the emitted mirror-substrate-value (Edge 3 output).
+    pub mirror_bytes: usize,
+    /// Commit oid if the git commit succeeded; None if translate ran
+    /// but the commit step was skipped or unresolvable.
+    pub commit_oid: Option<String>,
+}
+
+/// Run the polyglot cascade for a Rust source file per the Tick M3
+/// composition graph. Returns a `TranslateReport` on success, or a
+/// human-readable error string on any dispatch failure.
+///
+/// Called from the `roomba` match arm in `dispatch()` when
+/// `--commit --translate=<rs-file>` is present.
+pub fn run_translate_cascade(
+    root: &std::path::Path,
+    rs_path: &std::path::Path,
+) -> Result<TranslateReport, String> {
+    // Normalize the source path to absolute so rustc + fs::read see
+    // the same bytes regardless of cwd.
+    let source_abs = if rs_path.is_absolute() {
+        rs_path.to_path_buf()
+    } else {
+        root.join(rs_path)
+    };
+    if !source_abs.is_file() {
+        return Err(format!(
+            "--translate: source file not found at {}",
+            source_abs.display()
+        ));
+    }
+
+    // Edge 1: Rust source → LLVM IR (shells to rustc at the @io boundary).
+    let v1 = apply_h::act(
+        "@cascade/code/rust/llvm.apply_rust_llvm".to_string(),
+        vec![apply_h::Value {
+            oid: source_abs.to_string_lossy().into_owned(),
+        }],
+    );
+    let llvm_ir = extract_located(&v1, "@code/llvm/llvm_ir_module")
+        .ok_or_else(|| format!("cascade Edge 1 (rust→llvm) verdict shape: {:?}", v1))?;
+
+    // Edge 2: LLVM IR → Turing tape program.
+    let v2 = apply_h::act(
+        "@cascade/code/llvm/turing.apply_llvm_turing".to_string(),
+        vec![apply_h::Value {
+            oid: llvm_ir.clone(),
+        }],
+    );
+    let turing_program = extract_located(&v2, "@code/turing/program")
+        .ok_or_else(|| format!("cascade Edge 2 (llvm→turing) verdict shape: {:?}", v2))?;
+
+    // Edge 3: Turing tape program → mirror-substrate-value ref.
+    let v3 = apply_h::act(
+        "@cascade/code/turing/mirror.apply_turing_mirror".to_string(),
+        vec![apply_h::Value {
+            oid: turing_program.clone(),
+        }],
+    );
+    let mirror_value = extract_located(&v3, "@code/mirror/value")
+        .ok_or_else(|| format!("cascade Edge 3 (turing→mirror) verdict shape: {:?}", v3))?;
+
+    // Derive the target path under shards/generated/ for the emitted
+    // .mirror bytes. Basename comes from the source stem so re-runs are
+    // deterministic.
+    let stem = source_abs
+        .file_stem()
+        .and_then(|s| s.to_str())
+        .unwrap_or("rust_translated");
+    let generated_dir = root.join("shards").join("generated");
+    if let Err(e) = std::fs::create_dir_all(&generated_dir) {
+        return Err(format!(
+            "--translate: failed to mkdir {}: {}",
+            generated_dir.display(),
+            e
+        ));
+    }
+    let target_path = generated_dir.join(format!("rust_translated_{}.mirror", stem));
+
+    // @io/fs.write — persist the mirror-substrate-value bytes on disk.
+    let write_verdict = apply_h::act(
+        "@io/fs.write".to_string(),
+        vec![
+            apply_h::Value {
+                oid: target_path.to_string_lossy().into_owned(),
+            },
+            apply_h::Value {
+                oid: mirror_value.clone(),
+            },
+        ],
+    );
+    match &write_verdict {
+        apply_h::Verdict::Pass => {}
+        apply_h::Verdict::Fail(reason) => {
+            return Err(format!("@io/fs.write dispatch failed: {}", reason));
+        }
+        apply_h::Verdict::Partial(t) => {
+            return Err(format!(
+                "@io/fs.write dispatch returned Partial: {:?}",
+                t.located_opacity
+            ));
+        }
+    }
+
+    // @io/git.commit — authored by the compiler itself. `git add` the
+    // new file first (the @io/git.commit resolver arm shells `git commit`;
+    // it does not stage — mirrors the roomba_commit.rs::stage_all_changes
+    // pattern).
+    let stage_status = std::process::Command::new("git")
+        .current_dir(root)
+        .args(["add"])
+        .arg(&target_path)
+        .status();
+    match stage_status {
+        Ok(s) if s.success() => {}
+        Ok(s) => {
+            return Err(format!(
+                "--translate: git add exited {} for {}",
+                s.code().unwrap_or(-1),
+                target_path.display()
+            ));
+        }
+        Err(e) => {
+            return Err(format!("--translate: git add spawn failed: {}", e));
+        }
+    }
+
+    // Compose the commit message per Reed Tick M3 brief.
+    let msg = format!(
+        "\u{1F331} mirror [translation-cascade] 2026-07-17 first empirical translation \
+         via @cascade/code/rust/llvm → @cascade/code/llvm/turing → \
+         @cascade/code/turing/mirror; source: {source}; target: {target}; \
+         loss-lens per Mara 1ce68c3 §4.4 recorded in .mirror docblock\n\n\
+         Edge byte-metrics:\n\
+         - llvm_ir_bytes: {llvm}\n\
+         - turing_program_bytes: {turing}\n\
+         - mirror_value_bytes: {mirror}\n\n\
+         Composition graph:\n\
+         - @cascade/code/rust/llvm.apply_rust_llvm    (Edge 1; rustc shellout)\n\
+         - @cascade/code/llvm/turing.apply_llvm_turing (Edge 2; bytes-first line lowering)\n\
+         - @cascade/code/turing/mirror.apply_turing_mirror (Edge 3; @glass wrap)\n\
+         - @io/fs.write   — mirror-substrate-value → disk\n\
+         - @io/git.commit — authored by mirror <mirror@spectral.engineer>\n\n\
+         Audit chain: Mara 1ce68c3 spec §9 M3 + Mara 7186410/62d1b1c M1 endpoints \
+         + Mara eee446b/c9328ec/3322825 M2 species + Reed 7a962ab M3 FLOOR + \
+         Alex 2026-07-17 verbatim ratification (session-crystallizing polyglot chain).\n",
+        source = source_abs.display(),
+        target = target_path.display(),
+        llvm = llvm_ir.len(),
+        turing = turing_program.len(),
+        mirror = mirror_value.len(),
+    );
+
+    let prior_cwd = std::env::current_dir()
+        .map_err(|e| format!("--translate: cwd read failed: {}", e))?;
+    std::env::set_current_dir(root)
+        .map_err(|e| format!("--translate: cwd set failed: {}", e))?;
+    let commit_verdict = apply_h::act(
+        "@io/git.commit".to_string(),
+        vec![
+            apply_h::Value {
+                oid: msg.clone(),
+            },
+            apply_h::Value {
+                oid: "mirror <mirror@spectral.engineer>".to_string(),
+            },
+            apply_h::Value {
+                oid: "false".to_string(),
+            },
+        ],
+    );
+    let _ = std::env::set_current_dir(&prior_cwd);
+
+    let commit_oid = match commit_verdict {
+        apply_h::Verdict::Pass => {
+            // Resolve the freshly-created HEAD to surface the commit oid.
+            std::process::Command::new("git")
+                .current_dir(root)
+                .args(["rev-parse", "HEAD"])
+                .output()
+                .ok()
+                .and_then(|o| {
+                    if o.status.success() {
+                        Some(String::from_utf8_lossy(&o.stdout).trim().to_string())
+                    } else {
+                        None
+                    }
+                })
+        }
+        apply_h::Verdict::Fail(reason) => {
+            return Err(format!("@io/git.commit dispatch failed: {}", reason));
+        }
+        apply_h::Verdict::Partial(t) => {
+            return Err(format!(
+                "@io/git.commit dispatch returned Partial: {:?}",
+                t.located_opacity
+            ));
+        }
+    };
+
+    Ok(TranslateReport {
+        source: source_abs,
+        target: target_path,
+        llvm_bytes: llvm_ir.len(),
+        turing_bytes: turing_program.len(),
+        mirror_bytes: mirror_value.len(),
+        commit_oid,
+    })
+}
+
+/// Extract the value for a given key from a `Verdict::Partial(Transparency)`.
+/// Returns None if the verdict isn't Partial or the key isn't present.
+fn extract_located(verdict: &apply_h::Verdict, key: &str) -> Option<String> {
+    match verdict {
+        apply_h::Verdict::Partial(t) => t
+            .located_opacity
+            .iter()
+            .find(|(k, _)| k == key)
+            .map(|(_, v)| v.clone()),
+        _ => None,
+    }
+}
+
 /// Count Dark AST nodes — the cheapest loss surface for the kintsugi loop.
 ///
 /// Per `docs/specs/strict-and-total-classification.md` §"dark_count as loss
@@ -3664,6 +3931,60 @@ pub fn dispatch(args: &[String], ctx: &Ctx) -> i32 {
                 .as_deref()
                 .map(|p| p.extension().and_then(|s| s.to_str()) == Some("rs"))
                 .unwrap_or(false);
+            // Tick M3 landing (Reed 2026-07-17 under
+            // [substrate-floor:@io-boundary]) — polyglot cascade CLI
+            // route. `--translate=<rs-file>` dispatches through the
+            // three landed cascade `apply` resolver arms in
+            // `bootstrap/src/apply_h.rs` (Reed `7a962ab`):
+            //
+            //   1. @cascade/code/rust/llvm.apply_rust_llvm    (Edge 1)
+            //   2. @cascade/code/llvm/turing.apply_llvm_turing (Edge 2)
+            //   3. @cascade/code/turing/mirror.apply_turing_mirror (Edge 3)
+            //   4. @io/fs.write   — persist mirror-substrate-value ref
+            //   5. @io/git.commit — authored by mirror <mirror@spectral.engineer>
+            //
+            // The source .rs file is NOT deleted at Tick M3 (translation-
+            // with-deletion lifts in a subsequent tick via a
+            // bilateral_arm_collapse-like mechanism). Empirical target:
+            // `mirror roomba --commit --translate=<rs-file>` closes the
+            // polyglot chain end-to-end.
+            //
+            // Audit chain: Mara `1ce68c3` polyglot spec §9 M3 + Mara
+            // `7186410`/`62d1b1c` M1 endpoints + Mara `eee446b`/
+            // `c9328ec`/`3322825` M2 cascade species + Reed `7a962ab`
+            // M3 FLOOR resolvers.
+            let translate_path: Option<PathBuf> = args
+                .iter()
+                .find_map(|a| a.strip_prefix("--translate=").map(PathBuf::from));
+            if commit_flag && translate_path.is_some() {
+                let rs_path = translate_path.as_deref().unwrap();
+                match run_translate_cascade(&root, rs_path) {
+                    Ok(report) => {
+                        mout!("@@ mirror roomba --commit --translate=<rs-file>: polyglot cascade @@");
+                        mout!("+ source: {}", report.source.display());
+                        mout!("+ target: {}", report.target.display());
+                        mout!("+ llvm_ir_bytes: {}", report.llvm_bytes);
+                        mout!("+ turing_program_bytes: {}", report.turing_bytes);
+                        mout!("+ mirror_value_bytes: {}", report.mirror_bytes);
+                        mout!("");
+                        match report.commit_oid {
+                            Some(oid) => {
+                                mout!("\u{2713} commit {} authored by mirror <mirror@spectral.engineer>", oid);
+                                mout!("  Rust source → LLVM IR → Turing tape → mirror substrate value");
+                                mout!("  loss-lens per Mara 1ce68c3 §4.4 recorded in .mirror docblock");
+                            }
+                            None => {
+                                mout!("= translation produced no commit (write skipped)");
+                            }
+                        }
+                        return 0;
+                    }
+                    Err(e) => {
+                        merr!("mirror roomba --commit --translate={}: {}", rs_path.display(), e);
+                        return 1;
+                    }
+                }
+            }
             if commit_flag && collapse_is_rs {
                 let target = collapse_path.as_deref().expect("collapse_is_rs implies Some");
                 match crate::bilateral_arm_collapse::collapse_bilateral_arms(&root, target) {
