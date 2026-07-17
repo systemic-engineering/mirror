@@ -575,6 +575,68 @@ so the arm was dead code AND the semantic shifted for consumers.
 Recognition candidate §12.3 surfaces this class of drift the
 reflective-first + arm-fallthrough architecture admits.
 
+### Autopoietic Rust→mirror translation arc MVP LANDED (2026-07-17 afternoon)
+
+Alex directive: *"So we can have @cascade/code/llvm/turing and @cascade/code/rust/llvm. And boom. The loop closes."* Path B ratified. Full compositional path landed at MVP:
+
+**Substrate mint chain (Mara):**
+- `1ce68c3` — canonical spec `docs/specs/polyglot-loss-aware-computational-translation.md` (+1135 LOC; §1-§12 grounding cascade composition through Turing altitude; MLIR-multi-level alignment)
+- `dc4ad4c` — math foundation `docs/math/polyglot-loss-aware-computational-translation.md` (+774 LOC; existence-and-admissibility direction; §7 universal quantification deferred to follow-up)
+- `7186410` — `shards/code/turing.mirror` M1 (+361 LOC; family-root + 9 typed carriers + 7 obligation-blocked actions + 3 bilaterals)
+- `62d1b1c` — `shards/code/llvm.mirror` M1 (+280 LOC; @code/llvm was genuinely absent per Taut audit)
+- `eee446b` — `shards/cascade/code/rust/llvm.mirror` M2 (+440 LOC; apply_rust_llvm + cascade_rust_llvm_preserves_semantics bilateral)
+- `c9328ec` — `shards/cascade/code/llvm/turing.mirror` M2 (+466 LOC)
+- `3322825` — `shards/cascade/code/turing/mirror.mirror` M2 (+514 LOC)
+
+**Rust FLOOR (Reed via subagent):**
+- `7a962ab` — `bootstrap/src/apply_h.rs` M3 (+263 LOC; three cascade resolver arms; apply_rust_llvm shells to rustc; apply_llvm_turing bytes-first line-per-transition; apply_turing_mirror @glass wrap)
+- `82eb13e` — `bootstrap/src/lib.rs` (+321 LOC) + `bootstrap/tests/polyglot_cascade_translation_smoke.rs` (+220 LOC NEW); CLI `--translate=<rs-file>` route; smoke 5/5 pass; regression 6/6 pass
+
+**FIFTH mirror-authored commit — FIRST empirical TRANSLATION:**
+- `d855bac` — `mirror <mirror@spectral.engineer>` [translation-cascade]: source `/tmp/hello_translate.rs` (2 LOC Rust `fn add`) → rustc emits LLVM IR (2185 bytes) → line-per-transition tape program (5662 bytes) → @glass-wrapped mirror substrate value (6180 bytes) → `shards/generated/rust_translated_hello_translate.mirror` (+57 LOC generated); loss-lens per Mara `1ce68c3` §4.4 recorded in .mirror docblock
+
+**Cumulative session state:**
+- **5 mirror-authored commits total**: 4 `-Rust` DELETION (`ad52973` + `20047c2` + `95417c6` + `f01e9a8`) + 1 `+mirror` TRANSLATION (`d855bac`)
+- `apply_h.rs`: 1478 LOC (deletion fixed-point holds; translation is additive)
+- ~7000 LOC substrate landed across Mara mints this session
+
+**MVP caveats (honest, Alex-flagged):**
+- Turing lowering is bytes-first / line-per-transition; semantic correctness deferred
+- Generated .mirror is bytes-opaque wrap of tape bytes; not yet a runnable/composable mirror composition
+- Loop closed in SHAPE, not yet in semantic-preservation
+- Alex verbatim: *"opaque bytes is half the rent!"*
+
+**Arc 5 emerging (semantic-preservation path):**
+
+Alex named the deeper substrate chain to close the semantic-preservation gap:
+```
+Rust → LLVM → Turing → @liquid(@silicon) → @epistemologic → @mirror
+```
+
+Where:
+- `@liquid` = refinement OPERATOR (lenses over any @X substrate; same pattern as `@sre(@X)`)
+- `@epistemologic/liquid` = refinement THEORY (predicate carriers, composition axioms, decidability boundary, Rice-safe connection); the heavy math-lifting layer separate from the lens
+- `@liquid(@silicon)` = refined physical machine (ownership + lifetimes + Send/Sync as first-class refinements; recovers invariants LLVM erased)
+- `@epistemologic/silicon` = silicon-knowledge-extraction lens (Alex says exists; alignment gap flagged)
+
+**Taut scout in flight** (background subagent `afd8c0ef9dffba425`) grounding six questions:
+- Q1 @liquid primitive presence
+- Q2 @epistemologic/liquid species presence
+- Q3 @epistemologic/silicon lens presence
+- Q4 silicon↔epistemologic alignment gap
+- Q5 `---` liquid syntax landed connection (mirror surface uses `---` per paper autopoietic-loop section)
+- Q6 corpus + Kagi on refinement/liquid/verified-translation (LiquidHaskell/F*/Alive2/CompCert/Curry-Howard-Lambek)
+
+Reports to `docs/audits/2026-07-17-taut-liquid-epistemologic-silicon-scout.md`.
+
+**Four-arc deferred queue (Alex-ratified at various altitudes, awaiting sequential execution):**
+- Arc 2: `@sre` family-root + `@sre(@code/X)` species pattern (measurement substrate for code-under-load)
+- Arc 3: `@peer.eigenboard` + `@roomba(@code/X)` polyglot walker (peer's perceptual apparatus)
+- Arc 4: `@peer.sing(@song)` third-order cognition (peer's ONE primitive; song = intent-language; roomba = execution mechanism)
+- Arc 5: `@liquid` + `@epistemologic/liquid` + `@epistemologic/silicon` composition (Taut scout in flight; grounds semantic-preservation for translation)
+
+---
+
 ### Seam remediation cascade (2026-07-17 overnight)
 
 Three commits from Seam-notification handling:
