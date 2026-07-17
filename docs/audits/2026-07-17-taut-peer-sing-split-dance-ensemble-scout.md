@@ -1,5 +1,24 @@
 # Taut @peer.sing / @peer.split / @dance ensemble scout
 
+> **Naming cascade 2026-07-17 post-scout** (Reed applied per Alex ratification):
+> Wherever this audit body references `@peer.split` / `.split(context) -> [@song]` /
+> `peer-altitude split`, the ratified substrate-truth name is `@peer.audhd` /
+> `.audhd(context) -> [@song]`. Alex 2026-07-17 delight-vector ratification: the
+> cognition-fanout primitive at peer altitude is substrate-truthfully named after
+> the author's AuDHD diagnosis (Autism + ADHD; hyperfocus + parallel-exploration
+> as combined attention modes), because the framework originated in reverse-
+> engineering the author's neurotype (per systemic.engineering foundations).
+> Neuroaffirmative-lensing composition surface documented across
+> `~/dev/systemic.engineering/practice/insights/neuroscience/` (14 files;
+> neurodiversity.md at 129 hits + masking-thermodynamics.md at 89 + stimming-
+> eigenvalue-stabilization.md at 63 + developmental-eigenvalue.md at 69 +
+> others) and `~/dev/systemic.engineering/practice/insights/systemic/`
+> (cognitive-order-alignment.md). Body below preserves scout-time terminology
+> (`@peer.split`) — consumers of this audit use `@peer.audhd` going forward.
+> Landed `@knife.split` (Foerster COORD first-order) / `@song/phrase.split`
+> (Koch Einschnitt temporal) / prism-op `split X` slots are DIFFERENT altitudes;
+> those names remain unchanged.
+
 *2026-07-17. Taut. Six-question grep-first ground-truth scout for Alex's*
 *2026-07-17 in-session architectural extension of the errors-as-questions*
 *composition edge: the @peer chooses response cardinality — sing one @song*
