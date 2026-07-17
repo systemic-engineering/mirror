@@ -118,6 +118,79 @@ fn discharge_fails_on_arity_mismatch() {
 }
 
 #[test]
+fn discharge_cross_shard_require_uses_full_ref_as_is() {
+    // §4.3.1 verification per Seam Phase D audit `afcf3b2`
+    // (docs/audits/2026-07-17-seam-phase-d-autopoietic-rust-consumption-arc.md).
+    // When `require` field contains a `.` (cross-shard ref like
+    // "@X/Y.foo"), `discharge()` must use it AS-IS for corpus lookup
+    // (NOT prefix-mangled with enclosing shard). Verify by Fail-path:
+    // the sub-bilateral isn't in the cached corpus, so `discharge()`
+    // returns Fail naming the FULL cross-shard ref in the error message.
+    let decl = BilateralDecl {
+        name: "composed_predicate".to_string(),
+        sentinel: "composed=matches".to_string(),
+        arity: 1,
+        require: vec!["@test/other_shard.other_predicate".to_string()],
+        full_action_ref: "@test/composed_shard.composed_predicate".to_string(),
+    };
+    let verdict = apply_h::discharge(
+        &decl,
+        &[Value {
+            oid: "fixture:composed=matches".to_string(),
+        }],
+    );
+    match verdict {
+        Verdict::Fail(msg) => {
+            assert!(
+                msg.contains("@test/other_shard.other_predicate"),
+                "sub-bilateral not in corpus MUST name FULL cross-shard \
+                 ref as-is (contains '.'); got msg: {}",
+                msg
+            );
+        }
+        other => panic!(
+            "expected Fail for missing sub-bilateral; got {:?}",
+            other
+        ),
+    }
+}
+
+#[test]
+fn discharge_same_shard_require_prefixes_bare_name() {
+    // §4.3.1 verification companion: when `require` field is bare-name
+    // (no `.`), `discharge()` MUST prefix with the enclosing shard's
+    // @-ref (extracted from `full_action_ref` via rsplit_once('.')).
+    // Verify by Fail-path with expected prefix-mangled ref in message.
+    let decl = BilateralDecl {
+        name: "composed_predicate".to_string(),
+        sentinel: "composed=matches".to_string(),
+        arity: 1,
+        require: vec!["bare_sub_name".to_string()],
+        full_action_ref: "@test/composed_shard.composed_predicate".to_string(),
+    };
+    let verdict = apply_h::discharge(
+        &decl,
+        &[Value {
+            oid: "fixture:composed=matches".to_string(),
+        }],
+    );
+    match verdict {
+        Verdict::Fail(msg) => {
+            assert!(
+                msg.contains("@test/composed_shard.bare_sub_name"),
+                "same-shard require MUST prefix with enclosing shard's \
+                 @-ref; got msg: {}",
+                msg
+            );
+        }
+        other => panic!(
+            "expected Fail for missing sub-bilateral; got {:?}",
+            other
+        ),
+    }
+}
+
+#[test]
 fn loader_skips_grammar_and_pact_keywords_files() {
     let root = temp_root("skips");
     // The skip-list files: if we put a bilateral block in these,
