@@ -335,6 +335,7 @@ fn find_matching_close(bytes: &str, open_brace_pos: usize) -> Option<usize> {
     if open_brace_pos >= ch_bytes.len() || ch_bytes[open_brace_pos] != b'{' {
         return None;
     }
+
     let mut depth: i32 = 0;
     let mut i = open_brace_pos;
     let mut in_string = false;
@@ -375,4 +376,270 @@ fn find_matching_close(bytes: &str, open_brace_pos: usize) -> Option<usize> {
         i += 1;
     }
     None
+}
+
+// ────────────────────────────────────────────────────────────────────
+// Property tests grounded in @epistemologic/property/ouroboros_monotone.
+// ────────────────────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod prop_tests {
+    //! Property tests for `collapse.rs` grounded in
+    //! `shards/epistemologic/property/ouroboros_monotone.mirror`
+    //! (Mara `04b3aea`), the DECLARATIVE HALF of the four-conjunct
+    //! invariant at ouroboros altitude.
+    //!
+    //! The species-decl at `shards/kintsugi/ouroboros.mirror:479-524`
+    //! (Mara-A `9eb0898`) names `ouroboros_monotone` as the
+    //! load-bearing bilateral for arc-2 collapse ticks. The four
+    //! conjuncts:
+    //!
+    //! ```text
+    //! ouroboros_monotone(before, after) ⇔
+    //!     rust_LOC(after)          ≤ rust_LOC(before)
+    //!   ∧ test_pass_rate(after)    ≥ test_pass_rate(before)
+    //!   ∧ io_violations(after)     ≤ io_violations(before)
+    //!   ∧ sbec(after)              ≥ sbec(before)
+    //! ```
+    //!
+    //! At `apply_deletions` altitude these project to byte-level
+    //! monotonicity: `apply_deletions(s, arms).len() ≤ s.len()`. That
+    //! IS `rust_loc_non_increasing` at the finest granularity substrate
+    //! admits — one collapse tick over one source file, byte-visible.
+    //!
+    //! These tests witness the byte-altitude projection empirically
+    //! plus the ouroboros idempotence at compilation-loop altitude:
+    //! once a bilateral arm has been mended, re-running the mender
+    //! produces no new arms. Composes over `terni::PropertyVerdict`
+    //! for verdict marshaling (byte shrinkage isn't a commutator, so
+    //! not full prismqueer::liquid pillar).
+    //!
+    //! Ouroboros loop continued from prism `2b70d17` + `ac50d79`
+    //! (prismqueer::liquid + Perm3/PermBundle) into mirror/rust/
+    //! altitude — the second layer of the property ouroboros.
+
+    use super::*;
+    use terni::{Diagnostic, PropertyVerdict};
+
+    /// Golden fixture: one bilateral arm shadowed by a landed sentinel.
+    fn fixture_source() -> String {
+        r#"fn dispatch(action: &str, args: &[&str]) -> Result<(), ()> {
+    if action == "@spectral/signature.integrity_check" {
+        let chain = args[0];
+        if chain.contains("merkle-linked") {
+            return Ok(());
+        }
+    }
+    Ok(())
+}
+"#
+        .to_string()
+    }
+
+    /// Fixture corpus matching the arm in `fixture_source`.
+    fn fixture_corpus() -> HashMap<String, BilateralDecl> {
+        let mut c = HashMap::new();
+        c.insert(
+            "@spectral/signature.integrity_check".to_string(),
+            BilateralDecl {
+                name: "integrity_check".into(),
+                sentinel: "merkle-linked".into(),
+                arity: 1,
+                full_action_ref: "@spectral/signature.integrity_check".into(),
+            },
+        );
+        c
+    }
+
+    #[test]
+    /// Sanity witness: the fixture actually triggers arm detection.
+    /// If this fails, subsequent tests carry no signal — fix the
+    /// fixture before interpreting other failures.
+    fn fixture_sanity_produces_one_arm() {
+        let source = fixture_source();
+        let corpus = fixture_corpus();
+        let arms = find_redundant_arms(&source, &corpus);
+        assert_eq!(
+            arms.len(),
+            1,
+            "fixture must produce exactly one arm; got {}: {arms:#?}",
+            arms.len(),
+        );
+    }
+
+    #[test]
+    /// Empty arm list → identity. `apply_deletions(s, &[])` is `s`.
+    /// The base case of the byte-monotonicity projection.
+    fn apply_deletions_empty_arms_is_identity() {
+        let source = fixture_source();
+        let out = apply_deletions(&source, &[]);
+        assert_eq!(out, source, "empty arm list must be identity");
+    }
+
+    #[test]
+    /// **rust_loc_non_increasing at byte altitude.** After
+    /// `apply_deletions` with any valid non-empty arm list,
+    /// `bytes_after < bytes_before`. This is the FIRST CONJUNCT of
+    /// `ouroboros_monotone` at the finest granularity substrate
+    /// admits.
+    fn apply_deletions_shrinks_source_when_arms_non_empty() {
+        let source = fixture_source();
+        let corpus = fixture_corpus();
+        let arms = find_redundant_arms(&source, &corpus);
+        assert!(!arms.is_empty(), "fixture must produce at least one arm");
+        let out = apply_deletions(&source, &arms);
+        assert!(
+            out.len() < source.len(),
+            "byte monotonicity failed: {} !< {}",
+            out.len(),
+            source.len(),
+        );
+    }
+
+    #[test]
+    /// Determinism: `apply_deletions` is a pure function. Same
+    /// inputs, same output every call. Required for cache-keyable
+    /// admissibility per `@epistemologic/property/
+    /// verdict_is_content_addressed`.
+    fn apply_deletions_is_deterministic() {
+        let source = fixture_source();
+        let corpus = fixture_corpus();
+        let arms = find_redundant_arms(&source, &corpus);
+        let out1 = apply_deletions(&source, &arms);
+        let out2 = apply_deletions(&source, &arms);
+        assert_eq!(out1, out2, "apply_deletions must be deterministic");
+    }
+
+    #[test]
+    /// Corpus conservativity: `find_redundant_arms` only returns
+    /// arms whose `action_ref` is a key in the corpus. Cannot
+    /// invent new refs; cannot return arms for shard-decls that
+    /// haven't landed.
+    fn find_redundant_arms_is_corpus_conservative() {
+        let source = fixture_source();
+        let corpus = fixture_corpus();
+        let arms = find_redundant_arms(&source, &corpus);
+        assert!(!arms.is_empty());
+        for arm in &arms {
+            assert!(
+                corpus.contains_key(&arm.action_ref),
+                "arm action_ref {:?} not in corpus",
+                arm.action_ref,
+            );
+        }
+    }
+
+    #[test]
+    /// Empty corpus → zero arms. Vacuous case of corpus
+    /// conservativity: no shard-decls landed → nothing to shadow.
+    fn find_redundant_arms_empty_corpus_produces_no_arms() {
+        let source = fixture_source();
+        let empty_corpus: HashMap<String, BilateralDecl> = HashMap::new();
+        let arms = find_redundant_arms(&source, &empty_corpus);
+        assert!(arms.is_empty(), "empty corpus must return zero arms");
+    }
+
+    #[test]
+    /// Byte-range validity: `0 ≤ byte_start < byte_end ≤ source.len()`
+    /// for every returned arm. Contract required by `apply_deletions`.
+    fn find_redundant_arms_byte_ranges_are_valid() {
+        let source = fixture_source();
+        let corpus = fixture_corpus();
+        let arms = find_redundant_arms(&source, &corpus);
+        assert!(!arms.is_empty());
+        for arm in &arms {
+            assert!(arm.byte_start < arm.byte_end, "byte_start >= byte_end");
+            assert!(
+                arm.byte_end <= source.len(),
+                "byte_end > source.len(): {} > {}",
+                arm.byte_end,
+                source.len(),
+            );
+        }
+    }
+
+    #[test]
+    /// Sort invariant: arms are returned sorted by `byte_start`
+    /// ascending (contract required by `apply_deletions`, which
+    /// walks arms in order and would produce garbled output on
+    /// unsorted input).
+    fn find_redundant_arms_are_sorted() {
+        let source = fixture_source();
+        let corpus = fixture_corpus();
+        let arms = find_redundant_arms(&source, &corpus);
+        for pair in arms.windows(2) {
+            assert!(
+                pair[0].byte_start <= pair[1].byte_start,
+                "arms not sorted: {} > {}",
+                pair[0].byte_start,
+                pair[1].byte_start,
+            );
+        }
+    }
+
+    #[test]
+    /// **Ouroboros idempotence at byte altitude.** Mending the same
+    /// code twice for the same corpus is equivalent to mending
+    /// once. Once a bilateral arm has been spliced out, running
+    /// the mender again produces no new arms. This is the
+    /// substrate-honest closure of the compilation loop: the
+    /// walker converges.
+    fn ouroboros_idempotence_at_byte_altitude() {
+        let source = fixture_source();
+        let corpus = fixture_corpus();
+        let arms_first = find_redundant_arms(&source, &corpus);
+        assert!(!arms_first.is_empty());
+        let mended = apply_deletions(&source, &arms_first);
+        let arms_second = find_redundant_arms(&mended, &corpus);
+        assert!(
+            arms_second.is_empty(),
+            "mender must be idempotent: second pass returned {} arms",
+            arms_second.len(),
+        );
+    }
+
+    #[test]
+    /// Verdict composition: report the mending as a
+    /// `terni::PropertyVerdict`. `Pass` when at least one arm was
+    /// mended; `Fail(Diagnostic)` when nothing matched. Composes over
+    /// the same `PropertyVerdict` machinery `prismqueer::liquid::
+    /// pillar` returns — unified verdict marshaling across the
+    /// property-testing ouroboros.
+    fn mending_composes_to_property_verdict() {
+        let source = fixture_source();
+        let corpus = fixture_corpus();
+        let arms = find_redundant_arms(&source, &corpus);
+        let verdict = if arms.is_empty() {
+            PropertyVerdict::Fail(Diagnostic::new(
+                "no bilateral arms matched corpus",
+            ))
+        } else {
+            PropertyVerdict::Pass
+        };
+        assert!(
+            matches!(verdict, PropertyVerdict::Pass),
+            "expected Pass on fixture, got {verdict:?}",
+        );
+    }
+
+    #[test]
+    /// Bytes-shrinkage exact accounting: `s.len() - out.len()`
+    /// equals the sum of arm sizes. The byte-level witness that
+    /// `apply_deletions` splices exactly the recorded ranges — no
+    /// over-cut, no under-cut.
+    fn apply_deletions_accounts_for_exact_arm_bytes() {
+        let source = fixture_source();
+        let corpus = fixture_corpus();
+        let arms = find_redundant_arms(&source, &corpus);
+        let out = apply_deletions(&source, &arms);
+        let expected_delta: usize = arms.iter()
+            .map(|a| a.byte_end - a.byte_start)
+            .sum();
+        let actual_delta = source.len() - out.len();
+        assert_eq!(
+            actual_delta, expected_delta,
+            "byte accounting: source.len={} out.len={} delta={} expected={}",
+            source.len(), out.len(), actual_delta, expected_delta,
+        );
+    }
 }

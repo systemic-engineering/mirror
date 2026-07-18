@@ -1,4 +1,69 @@
-# CURRENT arc — prismqueer::liquid ouroboros DEEPENED with non-abelian S3 witness (2026-07-18 Reed /loop iteration 2)
+# CURRENT arc — property discipline PROJECTS INTO mirror/rust/collapse.rs (2026-07-18 Reed /loop iteration 3)
+
+## Iteration 3 delta (2026-07-18 03:44 UTC; task #251 GREEN)
+
+The ouroboros of property testing flows FROM prismqueer INTO mirror.
+Iter 1 landed the surface (prismqueer::liquid); iter 2 deepened the
+machinery (Perm3 non-abelian gauge); iter 3 projects the discipline
+OUT of prismqueer into `rust/src/collapse.rs` — the ONE piece of
+rust/src/* that does real substrate work.
+
+**Landed in mirror repo:**
+
+1. `rust/src/collapse.rs` gets `#[cfg(test)] mod prop_tests` — 11
+   property tests grounded in `shards/epistemologic/property/
+   ouroboros_monotone.mirror` (Mara `04b3aea`). The four-conjunct
+   invariant projects to byte altitude as `apply_deletions(s, arms)
+   .len() ≤ s.len()` — `rust_loc_non_increasing` at the finest
+   granularity substrate admits. **11/11 GREEN.**
+
+**Property witnesses (all rooted in the shard):**
+
+- Fixture sanity (arm detection triggers)
+- Empty-arm identity (`apply_deletions(s, &[]) = s`)
+- Byte-monotonicity (`apply_deletions` shrinks source; rust_loc_
+  non_increasing at finest granularity)
+- Determinism (pure function; required for content-addressed
+  cache-key admissibility per `@epistemologic/property/
+  verdict_is_content_addressed`)
+- Corpus conservativity (`find_redundant_arms` only returns arms
+  in corpus — cannot invent refs)
+- Empty corpus → zero arms (vacuous conservativity)
+- Byte-range validity (`0 ≤ byte_start < byte_end ≤ source.len()`)
+- Sort invariant (arms ordered by byte_start; `apply_deletions`
+  contract)
+- **Ouroboros idempotence** — the walker converges; running the
+  mender twice with the same corpus produces zero new arms after
+  the first pass. This is the substrate-honest closure of the
+  compilation loop at byte altitude.
+- Verdict composition via `terni::PropertyVerdict` (`Pass`/`Fail
+  (Diagnostic)` — same machinery `prismqueer::liquid::pillar`
+  returns; unified across the ouroboros)
+- Byte-shrinkage exact accounting (`s.len() - out.len()` = sum of
+  arm sizes; no over-cut, no under-cut)
+
+**Substrate flow:**
+
+```
+prismqueer/src/liquid.rs    — machinery (iter 1)
+       ↓
+prismqueer/tests/liquid_ouroboros.rs  — 32 self-tests (iter 1+2)
+       ↓
+rust/src/collapse.rs::prop_tests  — 11 mirror-side (iter 3)
+       ↓
+(iter 4+ target: rust/src/main.rs @-dispatch tests + full FLOOR coverage)
+```
+
+**Pre-existing RED tests unaffected:**
+
+`rust/tests/red_spec_claims.rs` remains 14/19 RED — those tests
+expose main.rs/phone.rs/matrix.rs still-lying claims (@-operator
+dispatch, LAPACK/BLAS, socket handovers, etc.). This iter 3 tick
+touched only `collapse.rs` (which does not lie); the pre-existing
+REDs against `main.rs/phone.rs/matrix.rs` remain valid substrate-
+honest RED debt for future iterations.
+
+---
 
 ## Iteration 2 delta (2026-07-18 03:00 UTC; task #250 GREEN)
 
