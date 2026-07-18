@@ -907,6 +907,66 @@ mod prop_tests {
         assert_eq!(decl.full_action_ref, "@spectral/signature.integrity_check");
     }
 
+    // ────────────────────────────────────────────────────────────
+    // Multi-tick verdict composition via PropertyVerdict::merge_with.
+    // ────────────────────────────────────────────────────────────
+
+    #[test]
+    /// **Multi-tick unified algedonic verdict via merge_with.**
+    /// Fold K single-tick algedonic verdicts via
+    /// `PropertyVerdict::merge_with`. All-positive shrinkage →
+    /// unified Pass. Beer audit-channel semantics: the loop's
+    /// overall algedonic health is Pass iff every tick contributed
+    /// positive signal.
+    fn merged_algedonic_verdicts_pass_when_all_ticks_positive() {
+        let k = 3;
+        let theta = ScalarLoss::new(0.0); // Pass gate at any positive.
+        let mut unified = PropertyVerdict::Pass;
+        for _ in 0..k {
+            let magnitude = single_tick_shrinkage();
+            let v = pillar::algedonic_of_magnitude(&magnitude, &theta);
+            unified.merge_with(&v);
+        }
+        assert!(
+            matches!(unified, PropertyVerdict::Pass),
+            "expected Pass across {k} positive ticks, got {unified:?}",
+        );
+    }
+
+    #[test]
+    /// **Any zero-shrinkage tick forces merged verdict to Fail.**
+    /// The substrate-honest algedonic signal: if any tick produced
+    /// no shrinkage (Fail per iter 6), the merged compile-loop
+    /// health is Fail. Fail dominates per merge_with contract.
+    fn any_zero_shrinkage_tick_forces_merged_verdict_to_fail() {
+        let theta = ScalarLoss::new(0.0);
+        let mut unified = PropertyVerdict::Pass;
+
+        // Two positive ticks + one zero-shrinkage tick (via empty corpus).
+        let positive = single_tick_shrinkage();
+        let v_positive_1 = pillar::algedonic_of_magnitude(&positive, &theta);
+        unified.merge_with(&v_positive_1);
+
+        // Zero-shrinkage tick.
+        let empty_corpus: HashMap<String, BilateralDecl> = HashMap::new();
+        let source = fixture_source();
+        let zero_arms = find_redundant_arms(&source, &empty_corpus);
+        let zero_magnitude: usize = zero_arms.iter().map(|a| a.byte_end - a.byte_start).sum();
+        let zero_loss = ScalarLoss::new(zero_magnitude as f64);
+        let theta_positive = ScalarLoss::new(1.0);
+        let v_zero = pillar::algedonic_of_magnitude(&zero_loss, &theta_positive);
+        unified.merge_with(&v_zero);
+
+        // Another positive tick after the Fail — Fail should persist.
+        let v_positive_2 = pillar::algedonic_of_magnitude(&positive, &theta);
+        unified.merge_with(&v_positive_2);
+
+        assert!(
+            matches!(unified, PropertyVerdict::Fail(_)),
+            "Fail must dominate merged verdict, got {unified:?}",
+        );
+    }
+
     #[test]
     /// **Corpus grows monotonically as shards are added.** Add one
     /// shard, load, add another, load again — second load has

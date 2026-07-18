@@ -1,4 +1,71 @@
-# CURRENT arc — tempdir tests close fs-dependent load_bilateral_corpus coverage (2026-07-18 Reed /loop iteration 7)
+# CURRENT arc — PropertyVerdict::merge_with composition witnesses close the verdict layer (2026-07-18 Reed /loop iteration 8)
+
+## Iteration 8 delta (2026-07-18 06:43 UTC; task #256 GREEN)
+
+Iter 4 + iter 6 gave us both `viability_of_magnitudes` and
+`algedonic_of_magnitude` (any Loss magnitude composes into either
+pillar). Iter 8 closes the LAYER ABOVE: how do multiple
+`PropertyVerdict`s **combine** into a single unified verdict?
+
+**Per `terni::PropertyVerdict::merge_with`:**
+
+- `Fail` dominates — absorbs the other side.
+- `Pass` is the **neutral element** (Pass ∪ X == X == X ∪ Pass).
+- `Partial + Partial` → min confidence, union diagnostics (Beer
+  audit-channel semantics: chain only as strong as weakest link).
+
+**Landed in prism repo:**
+
+1. `prismqueer/tests/verdict_composition.rs` (NEW, 224 LOC, 11 tests):
+   - `merge_pass_with_pass_stays_pass` (identity law)
+   - `merge_pass_with_partial_yields_partial` +
+     `merge_partial_with_pass_stays_partial` (Pass = neutral)
+   - `merge_pass_with_fail_yields_fail` +
+     `merge_fail_with_pass_stays_fail` +
+     `merge_partial_with_fail_yields_fail` +
+     `merge_fail_with_fail_stays_fail` (Fail dominates)
+   - `merge_partial_partial_takes_min_confidence_and_unions_diagnostics`
+   - `merge_fail_left_wins_diagnostic_asymmetric` (semantic pin:
+     left Fail's diagnostic persists when right is also Fail)
+   - `folded_all_pass_verdicts_stay_pass`
+   - `folded_pass_verdicts_with_one_fail_yields_fail`
+
+**Landed in mirror repo:**
+
+2. `rust/src/collapse.rs` prop_tests extended with **2 new** tests
+   (24 GREEN total, up from 22):
+   - `merged_algedonic_verdicts_pass_when_all_ticks_positive` —
+     fold K single-tick algedonic verdicts via `merge_with`;
+     all-positive shrinkage → unified Pass.
+   - `any_zero_shrinkage_tick_forces_merged_verdict_to_fail` —
+     Beer audit-channel: if any tick fails, unified verdict = Fail.
+     Fail dominates per merge_with contract; subsequent Pass ticks
+     do not restore.
+
+**Total: 94 property tests across 4 substrate altitudes.**
+
+```
+prism_laws.rs        — OPTIC BASE      (iter 5: 9)
+verdict_composition.rs — VERDICT LAYER (iter 8: 11)
+liquid_ouroboros.rs  — BUNDLE/LIQUID   (iter 1+2+4+6: 39)
+collapse.rs prop_tests — COLLAPSE      (iter 3+4+6+7+8: 24)
+```
+
+**Composition surface at prismqueer::liquid — now complete across
+three axes:**
+
+| Axis         | Iter | Landing                              |
+|--------------|------|--------------------------------------|
+| Value type   | 4+6  | Loss + PartialOrd magnitude variants |
+| Time scale   | 4+6  | single-tick + multi-tick pillars     |
+| Verdict fold | 8    | merge_with (Fail dominates)          |
+
+Any sequence of substrate-specific measurements can flow into
+prismqueer::liquid via ANY of these three composition surfaces,
+and end up as a single unified `PropertyVerdict` that composes
+further via `merge_with`.
+
+---
 
 ## Iteration 7 delta (2026-07-18 06:12 UTC; task #255 GREEN)
 
