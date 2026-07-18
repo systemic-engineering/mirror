@@ -58,6 +58,7 @@ mod collapse;
 // when its M-tick lands.
 mod matrix;
 mod phone;
+mod void;
 
 use std::env;
 use std::process::ExitCode;
