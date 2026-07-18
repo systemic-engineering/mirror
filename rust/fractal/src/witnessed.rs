@@ -6,8 +6,11 @@
 //! Verbatim migration from `fragmentation/src/witnessed.rs` per Mara
 //! `2760c2a` canonical migration spec §6 step 2. Zero changes; the
 //! shape already IS the substrate-decl'd identity-provenance carrier
-//! `shards/subject.mirror` was written to declare. This migration is
-//! the syntactic edit making the semantic identity visible.
+//! `shards/subject.mirror:5-19` was written to declare (family-root
+//! altitude for the substrate's licensable-party carrier + SEL
+//! grounding + Landing 3 lift naming every @peer as ALSO a @subject).
+//! This migration is the syntactic edit making the semantic identity
+//! visible.
 //!
 //! Preserved per Alex 2026-07-18 Q2: Author ≠ Committer split is
 //! MARA doctrine at crypto-substrate. `Witnessed` bundles both because
