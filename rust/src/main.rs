@@ -861,6 +861,161 @@ fn compose_collapse_commit_message(
     )
 }
 
+/// The @-operator dispatch surface at rust/ altitude — the sidestep
+/// through rust/ per Alex 2026-07-18 direct-transcript ("bootstrap/
+/// is going to die soon"). Recognizes `@io/<family>.<action>` action-
+/// refs and routes them to phone.rs primitives at the terminal FLOOR.
+///
+/// This is the pattern shard bodies (Mara authorship territory) will
+/// eventually compose over. Instead of per-species resolver arms in
+/// bootstrap/apply_h.rs (which grows the FLOOR contrary to ouroboros),
+/// EVERY new species with an @io-composing body dispatches through
+/// this ONE function — no arm-mint required per new species.
+///
+/// String-in, `Result<String, String>` out — simplest possible
+/// carrier at foothold altitude. Args are positional; each route
+/// documents its expected arity. Typed carriers (Path, Subject,
+/// bytes) get wrapped/unwrapped as strings until the reflective
+/// body-composition runtime (currently forward-promised) lands a
+/// typed dispatch surface.
+///
+/// Landed routes (5 @io/fs primitives; @io/git deferred pending
+/// fractal::Subject string-serialization decision):
+///   `@io/fs.list_dir(path)`         → list of entry paths (LF-joined)
+///   `@io/fs.read(path)`             → file contents (UTF-8)
+///   `@io/fs.write(path, contents)`  → "" on success
+///   `@io/fs.append(path, contents)` → "" on success
+///   `@io/fs.mkdir_p(path)`          → "" on success
+///
+/// Errors surface as `Err(String)` describing the @io failure. This
+/// mirrors phone.rs's `io::Result<_>` shape at the string-carrier
+/// altitude.
+pub(crate) fn at_operator(action_ref: &str, args: &[String]) -> Result<String, String> {
+    use std::path::Path;
+
+    match action_ref {
+        "@io/fs.list_dir" => {
+            let path = args
+                .first()
+                .ok_or_else(|| "@io/fs.list_dir: expected 1 arg (path)".to_string())?;
+            let entries = phone::list_dir_recursive(Path::new(path))
+                .map_err(|e| format!("@io/fs.list_dir({}): {}", path, e))?;
+            Ok(entries
+                .iter()
+                .map(|e| e.path.display().to_string())
+                .collect::<Vec<_>>()
+                .join("\n"))
+        }
+        "@io/fs.read" => {
+            let path = args
+                .first()
+                .ok_or_else(|| "@io/fs.read: expected 1 arg (path)".to_string())?;
+            phone::read_file(Path::new(path))
+                .map_err(|e| format!("@io/fs.read({}): {}", path, e))
+        }
+        "@io/fs.write" => {
+            let path = args
+                .first()
+                .ok_or_else(|| "@io/fs.write: expected 2 args (path, contents)".to_string())?;
+            let contents = args
+                .get(1)
+                .ok_or_else(|| "@io/fs.write: expected 2 args (path, contents)".to_string())?;
+            phone::write_file(Path::new(path), contents)
+                .map(|_| String::new())
+                .map_err(|e| format!("@io/fs.write({}): {}", path, e))
+        }
+        "@io/fs.append" => {
+            let path = args
+                .first()
+                .ok_or_else(|| "@io/fs.append: expected 2 args (path, contents)".to_string())?;
+            let contents = args
+                .get(1)
+                .ok_or_else(|| "@io/fs.append: expected 2 args (path, contents)".to_string())?;
+            phone::append_to(Path::new(path), contents)
+                .map(|_| String::new())
+                .map_err(|e| format!("@io/fs.append({}): {}", path, e))
+        }
+        "@io/fs.mkdir_p" => {
+            let path = args
+                .first()
+                .ok_or_else(|| "@io/fs.mkdir_p: expected 1 arg (path)".to_string())?;
+            phone::mkdir_p(Path::new(path))
+                .map(|_| String::new())
+                .map_err(|e| format!("@io/fs.mkdir_p({}): {}", path, e))
+        }
+        _ => Err(format!(
+            "@-operator: unknown action-ref `{}` (landed: @io/fs.{{list_dir,read,write,append,mkdir_p}}; @io/git deferred pending fractal::Subject string-serialization decision)",
+            action_ref
+        )),
+    }
+}
+
+#[cfg(test)]
+mod at_operator_tests {
+    use super::*;
+    use std::io::Write;
+
+    #[test]
+    fn unknown_action_ref_returns_err_with_landed_list() {
+        let result = at_operator("@io/fs.unknown", &[]);
+        assert!(result.is_err());
+        let msg = result.unwrap_err();
+        assert!(msg.contains("unknown action-ref"));
+        assert!(msg.contains("list_dir"));
+        assert!(msg.contains("@io/git deferred"));
+    }
+
+    #[test]
+    fn fs_read_round_trips_through_tempfile() {
+        let td = tempfile::tempdir().unwrap();
+        let f = td.path().join("round-trip.txt");
+        std::fs::File::create(&f)
+            .unwrap()
+            .write_all(b"hello mirror")
+            .unwrap();
+        let result = at_operator(
+            "@io/fs.read",
+            &[f.display().to_string()],
+        )
+        .unwrap();
+        assert_eq!(result, "hello mirror");
+    }
+
+    #[test]
+    fn fs_write_then_read_composes() {
+        let td = tempfile::tempdir().unwrap();
+        let f = td.path().join("composed.txt");
+        at_operator(
+            "@io/fs.write",
+            &[f.display().to_string(), "substrate flows".to_string()],
+        )
+        .unwrap();
+        let read_back = at_operator(
+            "@io/fs.read",
+            &[f.display().to_string()],
+        )
+        .unwrap();
+        assert_eq!(read_back, "substrate flows");
+    }
+
+    #[test]
+    fn fs_mkdir_p_is_idempotent() {
+        let td = tempfile::tempdir().unwrap();
+        let nested = td.path().join("a/b/c/d");
+        let arg = nested.display().to_string();
+        at_operator("@io/fs.mkdir_p", &[arg.clone()]).unwrap();
+        at_operator("@io/fs.mkdir_p", &[arg]).unwrap();
+        assert!(nested.is_dir());
+    }
+
+    #[test]
+    fn missing_arg_surfaces_arity_error() {
+        let result = at_operator("@io/fs.read", &[]);
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("expected 1 arg"));
+    }
+}
+
 /// Hand-rolled argv dispatch. Deliberately does NOT reach for clap; the
 /// M2 reflective cli-block reader (Mara §2.2) IS the real dispatch
 /// surface. Adding clap now would breed abstraction the substrate has
