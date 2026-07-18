@@ -162,9 +162,27 @@
 ///   symmetric) — @coherence witness at rust/ altitude
 #[allow(dead_code)]
 pub(crate) fn eigenvalues(_n: usize, _matrix: &[f64]) -> Vec<f64> {
+    // M0.5 GREEN transition BLOCKED (Reed diagnostic 2026-07-18):
+    // prismqueer's `lapack` feature declares `extern "C"` symbols
+    // (`spectral_eigenvalues` etc.) but prismqueer/build.rs compiles
+    // ONLY Brainfuck sources — no C/Fortran LAPACK dsyev wrapper is
+    // built. Result: `_spectral_eigenvalues` undefined at link time.
+    //
+    // Two follow-ups to unblock GREEN:
+    //   (A) Extend prism/prismqueer/build.rs to compile a small C
+    //       wrapper calling dsyev_ from LAPACK (~30 LOC C + build.rs
+    //       cc invocation + cargo:rustc-link-lib=lapack + blas).
+    //   (B) Interim pure-Rust QR/Jacobi eigenvalue for small dense
+    //       matrices (~80 LOC in matrix.rs; test n=2..5 covered);
+    //       swap to prismqueer::ffi when (A) lands.
+    //
+    // Held RED this tick; matrix.rs 5 property tests will continue
+    // to Fail per catch_unwind wrapper, documenting the invariants
+    // the M0.5 GREEN body must satisfy when (A) or (B) lands.
     unimplemented!(
-        "M0.5 GREEN tick: delegate to prismqueer::ffi::eigenvalues per docblock line 40 \
-         (transitional path while @cascade/code/llvm/flang lands at M5)"
+        "M0.5 GREEN BLOCKED: prismqueer's `lapack` feature declares extern \
+         symbols but doesn't compile the wrapper (prism-repo fix needed). \
+         See docblock; two paths (A) fix prism build.rs, (B) pure-Rust interim."
     )
 }
 
