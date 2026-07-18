@@ -135,19 +135,36 @@
 //!   through Reed's craft-binary pipeline.
 
 // ---------------------------------------------------------------------
-// M0 module stub. No implementations; signatures are forward-promises.
-// Bodies land at M5 co-tick when matrix.rs's FLANG-emit path first
-// empirically fires (Fiedler compute through the LAPACK chain, OR
-// transitional `prismqueer::ffi::eigenvalues` while FLANG lands).
+// M0.5 transitional shape (Alex 2026-07-18 "the full statespace covered
+// liquid floor boards" + "Ratified. That's why the properties are load
+// bearing. Slow is fast. RED before GREEN."). Signatures updated to
+// real shape per docblock §4.3; bodies remain unimplemented!() until
+// M0.5 GREEN tick lands the prismqueer::ffi::eigenvalues transitional
+// delegate per docblock line 40. Property tests are the load-bearing
+// contract Void's default @peer stands on — they document what these
+// functions MUST satisfy for the compiler to be @coherence-monotone.
 // ---------------------------------------------------------------------
 
-/// Fiedler eigenvalue of the graph Laplacian. Binds to LAPACK
-/// `dsyevr_`. M5 forward-promise per Mara §4.3 + §2.2.
+/// Fiedler eigenvalue compute on a real symmetric `n×n` matrix (row-
+/// major). Returns eigenvalues in ascending order.
+///
+/// **RED state**: `unimplemented!()` — body lands at M0.5 GREEN tick via
+/// `prismqueer::ffi::eigenvalues(n, matrix).expect("LAPACK convergence")`
+/// per docblock line 40 transitional path (M5 replaces with FLANG-emit
+/// when @cascade/code/llvm/flang lands).
+///
+/// **Property contract** (verified in `#[cfg(test)] mod prop_tests`):
+/// - Returns `n` eigenvalues for an `n×n` matrix
+/// - Values are finite (no NaN, no Inf) — real by construction on
+///   symmetric input
+/// - Values in ascending order
+/// - Non-negative for PSD graph Laplacian (`L = D - W`, `W >= 0`
+///   symmetric) — @coherence witness at rust/ altitude
 #[allow(dead_code)]
-pub(crate) fn eigenvalues() -> ! {
+pub(crate) fn eigenvalues(_n: usize, _matrix: &[f64]) -> Vec<f64> {
     unimplemented!(
-        "M5 forward-promise: LAPACK dsyevr_ via @cascade/code/llvm/flang \
-         (transitional path: prismqueer::ffi::eigenvalues)"
+        "M0.5 GREEN tick: delegate to prismqueer::ffi::eigenvalues per docblock line 40 \
+         (transitional path while @cascade/code/llvm/flang lands at M5)"
     )
 }
 
@@ -168,4 +185,223 @@ pub(crate) fn envelope() -> ! {
     unimplemented!(
         "M8 forward-promise: Aumann envelope via dgesvd_ / dgeqrf_ + rank"
     )
+}
+
+// =====================================================================
+// Property tests — the load-bearing contract Void's default @peer stands
+// on at rust/ altitude.
+//
+// RED state: bodies unimplemented!(); property tests use catch_unwind
+// to convert panic → Fail verdict; each test's assert! failure names
+// the exact GREEN transition required.
+//
+// Alex 2026-07-18 ratification (verbatim):
+// > "Ratified. That's why the properties are load bearing. Slow is
+// >  fast. RED before GREEN. Let's move towards 100% coverage."
+//
+// The compiler is a Void-metalogue-density optimizer (#R-void-is-the-
+// basis, PROMOTED). Fiedler eigenvalue on the peer coupling graph IS
+// the @coherence measure. Every operation the compiler emits must
+// preserve @coherence monotone-non-decreasing; matrix::eigenvalues is
+// the empirical measurement instrument for that invariant.
+// =====================================================================
+
+#[cfg(test)]
+mod prop_tests {
+    use super::*;
+    use prismqueer::liquid::pillar::{forall, Arbitrary, Sample};
+    use std::panic::{catch_unwind, AssertUnwindSafe};
+    use terni::{Diagnostic, PropertyVerdict};
+
+    /// A small symmetric graph-Laplacian sampled from a `Sample`.
+    /// Row-major `n×n`; L = D - W where W is a random non-negative
+    /// symmetric adjacency (small dims for fast prop-testing).
+    struct SymLaplacian {
+        n: usize,
+        data: Vec<f64>,
+    }
+
+    impl Arbitrary for SymLaplacian {
+        fn arbitrary(sample: &mut Sample) -> Self {
+            // Small dims keep property tests fast; 2–5 covers connected
+            // + disconnected + degenerate cases without LAPACK cost.
+            let n = sample.draw_integer(2, 5) as usize;
+            // Random non-negative symmetric adjacency W in [0, 3].
+            let mut w = vec![0.0f64; n * n];
+            for i in 0..n {
+                for j in (i + 1)..n {
+                    let weight = sample.draw_integer(0, 3) as f64;
+                    w[i * n + j] = weight;
+                    w[j * n + i] = weight;
+                }
+            }
+            // Laplacian L = D - W; D_ii = sum_j W_ij.
+            let mut l = vec![0.0f64; n * n];
+            for i in 0..n {
+                let deg: f64 = (0..n).map(|j| w[i * n + j]).sum();
+                for j in 0..n {
+                    l[i * n + j] = if i == j { deg } else { -w[i * n + j] };
+                }
+            }
+            Self { n, data: l }
+        }
+    }
+
+    /// Wrap the possibly-panicking eigenvalues() call so property tests
+    /// return `Fail` verdicts rather than propagating the panic.
+    fn safe_eigenvalues(l: &SymLaplacian) -> Result<Vec<f64>, String> {
+        catch_unwind(AssertUnwindSafe(|| eigenvalues(l.n, &l.data)))
+            .map_err(|_| {
+                "matrix::eigenvalues panicked (M0.5 body unimplemented; \
+                 land prismqueer::ffi::eigenvalues delegate per docblock line 40)"
+                    .to_string()
+            })
+    }
+
+    // =============================================================
+    // Property 1: Correct output cardinality
+    // =============================================================
+    #[test]
+    fn eigenvalues_returns_n_values_for_nxn_input() {
+        let v = forall::<SymLaplacian, _>(20, |l: SymLaplacian| {
+            let expected = l.n;
+            match safe_eigenvalues(&l) {
+                Ok(evals) if evals.len() == expected => PropertyVerdict::Pass,
+                Ok(evals) => PropertyVerdict::Fail(Diagnostic::new(&format!(
+                    "expected {expected} eigenvalues for {expected}×{expected} matrix, got {}",
+                    evals.len()
+                ))),
+                Err(msg) => PropertyVerdict::Fail(Diagnostic::new(&msg)),
+            }
+        });
+        assert!(
+            matches!(v, PropertyVerdict::Pass),
+            "RED (matrix.rs §4.3 property 1): eigenvalues must return n values for n×n matrix. \
+             GREEN transition: land body delegating to prismqueer::ffi::eigenvalues. \
+             Verdict: {v:?}"
+        );
+    }
+
+    // =============================================================
+    // Property 2: Finite values (no NaN, no Inf)
+    // =============================================================
+    #[test]
+    fn eigenvalues_are_finite() {
+        let v = forall::<SymLaplacian, _>(20, |l: SymLaplacian| {
+            match safe_eigenvalues(&l) {
+                Ok(evals) => {
+                    if evals.iter().all(|x| x.is_finite()) {
+                        PropertyVerdict::Pass
+                    } else {
+                        PropertyVerdict::Fail(Diagnostic::new(
+                            "eigenvalues contained non-finite value (NaN or Inf)",
+                        ))
+                    }
+                }
+                Err(msg) => PropertyVerdict::Fail(Diagnostic::new(&msg)),
+            }
+        });
+        assert!(
+            matches!(v, PropertyVerdict::Pass),
+            "RED (matrix.rs §4.3 property 2): eigenvalues must be finite (real symmetric input). \
+             GREEN transition: land body delegating to prismqueer::ffi::eigenvalues. \
+             Verdict: {v:?}"
+        );
+    }
+
+    // =============================================================
+    // Property 3: Ascending order (per LAPACK dsyev convention)
+    // =============================================================
+    #[test]
+    fn eigenvalues_are_in_ascending_order() {
+        let v = forall::<SymLaplacian, _>(20, |l: SymLaplacian| {
+            match safe_eigenvalues(&l) {
+                Ok(evals) => {
+                    let sorted = evals.windows(2).all(|w| w[0] <= w[1]);
+                    if sorted {
+                        PropertyVerdict::Pass
+                    } else {
+                        PropertyVerdict::Fail(Diagnostic::new(
+                            "eigenvalues not in ascending order (LAPACK dsyev convention)",
+                        ))
+                    }
+                }
+                Err(msg) => PropertyVerdict::Fail(Diagnostic::new(&msg)),
+            }
+        });
+        assert!(
+            matches!(v, PropertyVerdict::Pass),
+            "RED (matrix.rs §4.3 property 3): eigenvalues must be in ascending order. \
+             GREEN transition: land body delegating to prismqueer::ffi::eigenvalues \
+             (LAPACK dsyev returns ascending by construction). \
+             Verdict: {v:?}"
+        );
+    }
+
+    // =============================================================
+    // Property 4: Non-negative for PSD graph Laplacian
+    // (the @coherence witness — Fiedler value λ_2 >= 0)
+    // =============================================================
+    #[test]
+    fn eigenvalues_are_non_negative_for_graph_laplacian() {
+        let v = forall::<SymLaplacian, _>(20, |l: SymLaplacian| {
+            match safe_eigenvalues(&l) {
+                Ok(evals) => {
+                    // Small numerical tolerance for LAPACK roundoff.
+                    let all_non_neg = evals.iter().all(|&x| x >= -1e-9);
+                    if all_non_neg {
+                        PropertyVerdict::Pass
+                    } else {
+                        PropertyVerdict::Fail(Diagnostic::new(
+                            "graph Laplacian eigenvalues must be non-negative (PSD by construction)",
+                        ))
+                    }
+                }
+                Err(msg) => PropertyVerdict::Fail(Diagnostic::new(&msg)),
+            }
+        });
+        assert!(
+            matches!(v, PropertyVerdict::Pass),
+            "RED (matrix.rs §4.3 property 4 — @coherence witness): \
+             graph Laplacian eigenvalues must be non-negative (Fiedler λ_2 >= 0 IS @coherence). \
+             This property IS the @coherence-monotone invariant the compiler must preserve. \
+             GREEN transition: land body delegating to prismqueer::ffi::eigenvalues. \
+             Verdict: {v:?}"
+        );
+    }
+
+    // =============================================================
+    // Property 5: Smallest eigenvalue is (approximately) zero for
+    // any graph Laplacian — the λ_0 = 0 ground state per
+    // Recognition #79 (5-op void-duality; focus axis =
+    // Ricci curvature ground state)
+    // =============================================================
+    #[test]
+    fn smallest_eigenvalue_of_graph_laplacian_is_zero() {
+        let v = forall::<SymLaplacian, _>(20, |l: SymLaplacian| {
+            match safe_eigenvalues(&l) {
+                Ok(evals) if evals.is_empty() => {
+                    PropertyVerdict::Fail(Diagnostic::new("empty eigenvalue vector"))
+                }
+                Ok(evals) => {
+                    let smallest = evals[0]; // ascending order → [0] is smallest
+                    if smallest.abs() < 1e-9 {
+                        PropertyVerdict::Pass
+                    } else {
+                        PropertyVerdict::Fail(Diagnostic::new(&format!(
+                            "smallest eigenvalue must be ≈ 0 for graph Laplacian; got {smallest}"
+                        )))
+                    }
+                }
+                Err(msg) => PropertyVerdict::Fail(Diagnostic::new(&msg)),
+            }
+        });
+        assert!(
+            matches!(v, PropertyVerdict::Pass),
+            "RED (matrix.rs §4.3 property 5 — λ_0 = 0 ground state per Recognition #79): \
+             smallest eigenvalue of any graph Laplacian is 0 (constant vector in kernel). \
+             GREEN transition: land body delegating to prismqueer::ffi::eigenvalues. \
+             Verdict: {v:?}"
+        );
+    }
 }
