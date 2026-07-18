@@ -37,6 +37,16 @@ path = "src/main.rs"
 # at M8 (Taut `7f4307f` §Q2: boot-altitude sufficiency for M4 stdio).
 [dependencies]
 
+# Dev-dependencies for property-based RED tests grounded in Mara
+# 3cd9a42 (grounding spec) + 5d3040d (math foundation). These are
+# test-only; the binary at src/main.rs stays zero-dep until M4-M5.
+# Path-deps to sibling crates (workspace-adjacent) so RED tests can
+# reference the actual prismqueer::liquid + fate::Fate + terni::
+# PropertyVerdict shapes Taut 058b892 verified.
+[dev-dependencies]
+prismqueer = { path = "../../prism/prismqueer", features = ["bundle"] }
+terni      = { path = "../../prism/imperfect" }
+
 [profile.release]
 # Match bootstrap's release profile shape for byte-parity of the
 # eventual dock-motion binary swap (Mara §2.2 dock condition).
