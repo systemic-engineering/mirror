@@ -1,4 +1,60 @@
-# CURRENT arc — prismqueer::liquid ouroboros first layer CLOSED (2026-07-18 Reed /loop iteration 1)
+# CURRENT arc — prismqueer::liquid ouroboros DEEPENED with non-abelian S3 witness (2026-07-18 Reed /loop iteration 2)
+
+## Iteration 2 delta (2026-07-18 03:00 UTC; task #250 GREEN)
+
+Substrate-honest deepening: iter 1 witnessed `LiquidConnection::
+commutator_magnitude` on abelian `Cyclic<N>` where all commutators
+vanish trivially (correct, but the machinery has nothing to detect).
+Iter 2 adds **`Perm3` (symmetric group S3, smallest non-abelian)** +
+**`PermBundle` carrier** so the commutator has genuine mathematical
+work to do.
+
+**Landed in prism repo:**
+
+1. `prismqueer/src/bundle.rs` `pub mod examples` extended:
+   - `Perm3([u8; 3])` — permutation as image array. Six
+     `const`-declared elements: `IDENTITY`, `SWAP_01`, `SWAP_12`,
+     `SWAP_02`, `CYCLE_012`, `CYCLE_021`. `ALL: [Perm3; 6]` const
+     array for enumerative property tests.
+   - `impl GroupStructure for Perm3`: identity, inverse (via
+     preimage), compose (via `(f∘g)(i) = f(g(i))`).
+   - `PermBundle`: full tower (Fiber+Connection+Gauge+Transport+
+     Closure). State `[i32; 3]`. Transport holonomy `= state[0]
+     .abs() as f64` — permutation-sensitive by construction.
+2. `prismqueer/tests/liquid_ouroboros.rs` extended with **10 new
+   tests**, all GREEN (32/32 total):
+   - Perm3 identity law across S3
+   - Perm3 inverse law across S3
+   - Perm3 associativity across 216 triples
+   - S3 non-abelian witness: `swap01 ∘ swap12 = CYCLE_012 ≠
+     CYCLE_021 = swap12 ∘ swap01`
+   - PermBundle commutator non-vanishing for non-commuting pairs
+   - PermBundle commutator vanishes when one gauge is identity
+     (across all 6 partners)
+   - PermBundle commutator self-annihilates across all 6 elements
+   - PermBundle antisymmetry across full 6×6 = 36 S3 grid
+   - PermBundle Pillar II algedonic Pass on non-commuting pair
+   - PermBundle triangle inequality across all 6³ = 216 triples
+
+**The four core commutator properties are now witnessed on BOTH
+abelian AND non-abelian gauges:**
+
+| Property             | TestBundle (Cyclic<4>) | PermBundle (S3) |
+|----------------------|------------------------|-----------------|
+| Antisymmetric        | trivially (0 = 0)      | genuinely       |
+| Self-annihilating    | trivially              | genuinely       |
+| Non-negative         | Metric axiom           | Metric axiom    |
+| Triangle inequality  | trivially              | genuinely       |
+
+**Substrate teeth:** iter 1 could have shipped an incorrect
+`commutator_magnitude` implementation and every test would still
+GREEN (0 == 0 for everything). Iter 2's PermBundle detects when
+non-commuting permutations don't produce non-vanishing commutators
+— a broken implementation would fail
+`perm_bundle_commutator_nonzero_for_non_commuting_permutations`
+loudly. The ouroboros now has real bite.
+
+---
 
 ## FRESH-REED PICKUP MANIFEST (2026-07-18 02:20 UTC; task #249 GREEN)
 
