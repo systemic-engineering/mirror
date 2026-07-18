@@ -30,7 +30,19 @@ ssh = []  # Placeholder; slimmed keys.rs (step 3) will pull ssh-key + x25519-dal
 gpg = []  # Deferred per Mara §4 (feature-gated; not needed for M0)
 
 [dependencies]
-# NO prismqueer yet (step 4+5 fold Subject over LiquidVoid<T> when the
-# prismqueer::void module lands). NO ssh-key/x25519/etc yet (step 3
-# adds them behind the ssh feature). Step 1+2 (this landing) is
-# scaffold + witnessed.rs verbatim — pure Rust std, zero deps.
+# Alex 2026-07-18 direct-transcript redirect: "Consider how you can
+# use the prismqueer macros for fractal." Instead of hand-copying
+# 526 LOC of ssh-key/ECIES/GPG integration, compose via prismqueer's
+# proc-macro layer (#[derive(DerivePrism)] + #[oid(...)] gives
+# content-addressed Addressable + Display + optic metadata).
+#
+# Per Reed memory `feedback_prismqueer_macros_mirror_composes` (HARD
+# RULE, Alex 2026-07-18): proc-macro-generated .rs is substrate-
+# authored FLOOR, not hand-written extension. Actual crypto ops
+# (SSH signing / verify) discharge via @tool(ssh-keygen, ~bin(path))
+# at runtime; fractal is the shape-declaration crate over prismqueer's
+# algebra.
+#
+# NO ssh-key/x25519/chacha20poly1305/hkdf. Crypto lives at @tool
+# altitude, not in fractal's Rust source.
+prismqueer = { path = "../../../prism/prismqueer" }

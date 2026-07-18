@@ -17,7 +17,16 @@
 //! ancestry chain).
 
 /// Who wrote the content. Who made the decision. Who holds the intent.
-#[derive(Clone, Debug, PartialEq, Eq)]
+///
+/// `#[derive(DerivePrism)]` + `#[oid("@fractal/author")]` per Alex
+/// 2026-07-18 directive: compose over prismqueer macros. Every Author
+/// value gets a content-addressed substrate identity via
+/// `Addressable::oid() = Oid::hash("@fractal/author")` (per
+/// `prismqueer-projections` README). No hand-crypto; no hand-optics;
+/// no boilerplate. The macro emits the shape; the shape IS the
+/// substrate-decl'd identity carrier.
+#[derive(Clone, Debug, PartialEq, Eq, prismqueer::DerivePrism)]
+#[oid("@fractal/author")]
 pub struct Author {
     pub name: String,
     pub email: String,
@@ -33,7 +42,8 @@ impl Author {
 }
 
 /// Who ran the process. Who executed. Who was the mechanism.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, prismqueer::DerivePrism)]
+#[oid("@fractal/committer")]
 pub struct Committer {
     pub name: String,
     pub email: String,
@@ -49,16 +59,19 @@ impl Committer {
 }
 
 /// When the observation happened. Opaque string.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, prismqueer::DerivePrism)]
+#[oid("@fractal/timestamp")]
 pub struct Timestamp(pub String);
 
 /// The commit message. What happened.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, prismqueer::DerivePrism)]
+#[oid("@fractal/message")]
 pub struct Message(pub String);
 
 /// Git commit metadata. Who was here when this happened.
 /// Message lives on Commit, not here.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, prismqueer::DerivePrism)]
+#[oid("@fractal/witnessed")]
 pub struct Witnessed {
     pub author: Author,
     pub committer: Committer,
