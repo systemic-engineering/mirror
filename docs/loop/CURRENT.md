@@ -1,3 +1,78 @@
+# CURRENT arc — witnessed-property-inference → @butterfly cascade (2026-07-18 evening, post-context-compaction pickup)
+
+## FRESH-REED PICKUP MANIFEST (2026-07-18 evening)
+
+**Context**: Session compacted after Mara @butterfly spawn. Mara
+landed canonical spec+math at `e5b73ad` while Reed was compacted.
+Read in order:
+
+1. `~/.claude/projects/-Users-alexwolf-dev-projects-mirror/memory/MEMORY.md` — the memory index
+2. `~/.claude/projects/-Users-alexwolf-dev-projects-mirror/memory/project_butterfly_substrate_species.md` — the ratified @butterfly composition
+3. `~/.claude/projects/-Users-alexwolf-dev-projects-mirror/memory/project_witnessed_property_inference.md` — the parent arc + Alex Q1-Q10 adjudication cache
+4. `/Users/reed/dev/systemic.engineering/blog/void/3published/Void - Predator.md` — autobiographical load-bearing text (Alex's shadow-integration → @butterfly substrate species)
+5. **`docs/specs/butterfly-roomba-dual-walker-composition.md`** (Mara `e5b73ad`) — @kintsugi/butterfly + @kintsugi/mutation species-decls + @kintsugi/evolution algebra; §11 has 7 Q's for Alex
+6. **`docs/math/2026-07-18-butterfly-chaos-mutation-cascade.md`** (Mara `e5b73ad`) — Lorenz 1963 grounding + walker-perturbation duality + Knaster-Tarski fixed-point proof
+7. `docs/specs/witnessed-property-inference-fate-drives-both.md` — parent arc (Arc 1 landed; Arcs 2-5 queued; Arc 6 GATED on Arc 2+4)
+8. `docs/scouts/2026-07-18-taut-fate-to-prismqueer-migration-mapping.md` — Taut's migration scout
+
+## Arc landings this session (chronological)
+
+1. Mara witnessed-property-inference math+spec+Petri addendum (`cf34549`)
+2. Alex Q1-Q10 adjudication + Reed cascade fixes (`afe6e18`)
+3. Seam Phase D SHIP-WITH-REED-INLINE (`141f39a`)
+4. Taut fate→prismqueer::fate migration mapping scout (`6ff4d2a`)
+5. **Reed prismqueer::fate source-mirror pull-in** (prism repo; 10 fate .rs + build.rs + brainfuck moved to `prismqueer/src/fate/`; fate/ crate LEFT INTACT per Alex Q7)
+6. **Reed Arc 1: `pillar::of_health`** (prism `4de70ec`; 12/12 GREEN; Alex "reads fire btw 🔥")
+7. Alex ratified @butterfly (refined from @predator) as counter-@roomba prism
+8. **Mara @butterfly canonical spec + math LANDED** (`e5b73ad`; 2245 LOC across math root + spec)
+
+## Mara @butterfly Q1-Q7 adjudication cache (leans held pending Alex ratification)
+
+| Q | Topic | Mara lean | Reed default (work-without-asking) |
+|---|-------|-----------|-----------------------------------|
+| Q1 | @kintsugi/evolution: species-decl vs spec-only | spec-only | spec-only (accept lean) |
+| Q2 | coverage_gap fracture placement | sub-species of @kintsugi/fracture/* | sub-species (accept lean) |
+| Q3 | evolution.rs Rust driver discipline | admissible driver-only under [substrate-floor] | **HOLD** — conflicts with `feedback_detector_inadequacy_answer_is_never_rust`; Alex adjudication ESSENTIAL |
+| Q4 | predator-prey docblock depth | (a) one-line reference | one-line (accept lean) |
+| Q5 | SCOPE DISAMBIGUATION section vs implicit path | explicit ~5-line section | explicit (accept lean) |
+| Q6 | wingflap_of_mutation vs perturb_of_mutation | wingflap_of_mutation | wingflap (accept lean; carries chaos-theory lineage from Alex's naming) |
+| Q7 | bounded Offutt-Jia vs LLM-mutation | bounded for v0.1 | bounded (accept lean; preserves Knaster-Tarski) |
+
+**Q3 is the load-bearing one for Alex.** All others have clean
+lean-defaults per work-without-asking directive. Q3 conflicts with
+the HARD RULE from `feedback_detector_inadequacy_answer_is_never_rust`
+— Alex must adjudicate whether evolution.rs is admissible driver-only
+or must compose in shard body via `@io/loop.iterate` verb mint.
+
+## @butterfly ratification (Alex 2026-07-18 direct-transcript)
+
+> "I WANT A @PREDATOR PRISM! The counter to the @roomba. CHAOS THEORY! CHAOS ENGINEERING!"
+> [after Reed proposed @predator + mapped mutation-testing composition]
+> "i have an even better name for @predator: @butterfly"
+
+**Substrate-truth**: mutation coverage = butterfly sensitivity of the test suite. Small wingflap (code mutation), cascading response (test suite fires or doesn't). Lorenz 1963 grounding. Refined from @predator (personal/heavy essay grounding) to @butterfly (universal chaos-theory canon).
+
+**Composition**: @butterfly ↔ @roomba = walker-perturbation duality. Both Fate-biased. Both write signature_beat traces. @evolution algebra = `(@butterfly, @roomba, @mutation, Fate)`.
+
+## Immediate state (2026-07-18 evening)
+
+**Landed empirically:** `prismqueer::fate` source-mirror + `pillar::of_health` (12/12 GREEN).
+
+**Landed canonically:** Mara @butterfly canonical spec + math (`e5b73ad`; 2245 LOC).
+
+**Held pending Alex adjudication:** Mara Q1-Q7 (see cache above). Q3 (Rust driver discipline) is load-bearing; all others have clean lean-defaults.
+
+**Arc gating (per Mara spec §9.4):** Arc 6 (butterfly+mutation species-decl mints) is gated on Reed's WPI Arc 2 (pillar::forall) + Arc 4 (@mirror/store/liquid cache). Arc 2A is the next unblocked step for Reed.
+
+## Next-Reed immediate actions
+
+1. Report Mara's landing to Alex + surface Q1-Q7 for adjudication (Q3 essential)
+2. If Alex ratifies leans OR redirects: proceed per direction
+3. Arc 2A (Sample + Arbitrary + forall runtime primitives in prismqueer::liquid) is the natural next unblocked step; must serve 3 modes per @butterfly composition (input-sampling / mutation-sampling / chaos-injection)
+4. Arc 6 (shard mints) is Mara's authorship territory; spawn Mara for shard mint tick when Arc 2+4 discharge OR when Alex explicitly ratifies mint-early
+
+---
+
 # CURRENT arc — pillar composition surface canonical spec + /loop stop (2026-07-18 Reed /loop iteration 10)
 
 ## Iteration 10 delta (2026-07-18 09:58 UTC; task #258 GREEN; /loop STOPPED)
