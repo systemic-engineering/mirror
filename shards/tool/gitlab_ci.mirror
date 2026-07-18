@@ -1,0 +1,367 @@
+in @prism
+in @meta
+in @glass
+in @tool
+in @io
+
+# @tool/gitlab_ci — the FIRST-order tech tool species wrapping the
+# GitLab CI toolchain (GitLab 2015+; the CI-config-validator +
+# CI-run-dispatcher binary wrapper, primarily via the `glab` CLI
+# and/or GitLab REST API).
+#
+# Species under @tool at the family-root altitude landed this tick
+# in `shards/tool.mirror` per Mara closure canonical spec
+# `docs/specs/2026-07-18-the-compiler-in-one-sentence.md` §3.4 +
+# `docs/specs/2026-07-18-stagefreight-delivery.md` §3.3 (Mara this
+# tick; StageFreight Delivery Arc 1 Tick 4).
+#
+# === Naming convention note ===
+#
+# Filename uses underscore (`gitlab_ci.mirror`) per substrate-decl
+# path-namespace convention. `tool_id` variant tag uses underscore
+# (`gitlab_ci`). Prism family path spells `@tool/gitlab_ci`. In
+# prose consumers may write `@tool/gitlab-ci` (hyphenated to match
+# upstream product name); substrate reads the underscored form
+# canonically per `@epistemologic/pact/path_matches_namespace`.
+#
+# === What @tool/gitlab_ci IS ===
+#
+# The IDENTITY + VERSION + CONTRACT + PROVENANCE wrapper for
+# gitlab-ci-adjacent invocations at TWO surfaces:
+#
+#   1. The `glab ci` CLI binary (upstream GitLab go-CLI) — porcelain
+#      surface for lint + pipeline management + MR interaction.
+#   2. The GitLab REST API — direct HTTP dispatch for CI operations
+#      when the glab CLI is not pinned or when programmatic access
+#      needs richer response bodies than the CLI surfaces.
+#
+# The species-body multiplexes per binary availability: prefer
+# `glab` when present; fall through to REST API via @io/http when
+# glab is absent.
+#
+# Composition direction (dual dispatch — StageFreight spec §3.3):
+#
+#   @tool/gitlab_ci(lint, [.gitlab-ci.yml])
+#     ─specializes─▶ @tool.exec(tool_invocation{tool_id: gitlab_ci, ...})
+#       ─dispatches (a) glab pinned─▶ @io.exec("glab", ["ci", "lint", ...])
+#       ─dispatches (b) REST fallback─▶ @io/http.post(gitlab_api, {yaml: <...>})
+#         ─crosses─▶ glab binary process spawn OR HTTPS request
+#
+# === Substrate-already-had-the-word ===
+#
+# Grep verdict clean:
+#   - `gitlab-ci` / `gitlab_ci` word does not appear at family-root
+#     altitude in existing shards.
+#   - `@tool/gitlab_ci` DOES NOT EXIST prior to this tick.
+#   - `@io/git/forge/gitlab` FORWARD-PROMISED (per @io/git §6
+#     forge-adapter forward-promise); DIFFERENT altitude — the
+#     git-forge adapter handles PR/issue/release surfaces via git
+#     protocol, whereas THIS species handles CI-config validation
+#     + CI-run dispatch via REST+YAML altitude.
+#
+# Per StageFreight spec §8 composition surprise #2: @tool/gitlab_ci
+# is ORTHOGONAL to @io/git/forge/gitlab. Two GitLab-adjacent species
+# emerge — git-forge adapter (git protocol; forward-promised) vs
+# ci-validator + ci-dispatcher (REST+YAML; this tick). Different
+# mechanisms; different altitudes; both needed.
+#
+# === REST+YAML altitude — orthogonal to @tool/git ===
+#
+# @tool/git dispatches through the git protocol (SSH / HTTPS git
+# transport). @tool/gitlab_ci dispatches through GitLab's REST API
+# (HTTPS JSON) + YAML validation. These are orthogonal transports:
+# an invocation may compose BOTH (push commits via @tool/git.
+# push_signed, then trigger pipeline via @tool/gitlab_ci.pipeline_
+# create) but neither IS the other.
+#
+# === Substrate authority ===
+#
+# - Family-root: `shards/tool.mirror` (this session).
+# - Canonical spec (species): `docs/specs/2026-07-18-stagefreight-
+#   delivery.md` §3.3 (Mara this tick; shape substrate-decl'd there
+#   and lifted to substrate here verbatim).
+# - Canonical spec (family): `docs/specs/2026-07-18-the-compiler-in-
+#   one-sentence.md` §3.4 (Mara `2dd8ddb`).
+# - Orthogonal sibling forward-promises: `shards/io/git/forge/
+#   gitlab.mirror` (git-protocol forge adapter; NOT this tick).
+# - Mechanism-fallthrough sibling: `shards/io/http.mirror` (forward-
+#   promised @io/http species; REST fallback path composes here).
+# - Recognition #55 (form/process partition): @tool/gitlab_ci is
+#   process-side (the invocation of glab or REST endpoint); the
+#   `.gitlab-ci.yml` form-side lives at future `@code/gitlab_ci`
+#   or `@code/yaml` refinement (forward-promised).
+# - Recognition #98 candidate (content-addressing across scopes):
+#   pipeline_id + job_trace hashes compose with the existing four
+#   witnesses (git OID, nix derivation, cargo Cargo.lock, OCI
+#   manifest, Go go.sum) as sixth altitude of content-addressing.
+
+prism @tool/gitlab_ci {
+  focus tool_invocation
+  project tool_invocation
+  split tool_invocation
+  shift tool_invocation
+  settle tool_invocation
+}
+
+# ============================================================
+# §2 The carriers
+# ============================================================
+
+# === The gitlab_ci_subcommand carrier ===
+#
+# Closed variant naming the gitlab-ci subcommand set the substrate
+# admits at the porcelain altitude (`glab ci ...` + `glab mr ...`
+# surface). Extensible via mint; the FLOOR set below covers the
+# subcommands StageFreight delivery + PR verification actually
+# invoke.
+#
+# Identity contract: byte-equality on the underlying tag.
+type gitlab_ci_subcommand =
+  | lint                 # gitlab-ci-lint .gitlab-ci.yml (or glab ci lint)
+  | pipeline_create      # trigger pipeline via API
+  | pipeline_status      # query pipeline status
+  | job_trace            # fetch job trace/logs
+  | artifact_download    # download job artifacts
+  | mr_create            # create merge request (via glab CLI)
+  | mr_status            # query MR status
+  | mr_diff              # fetch MR diff
+
+# === The gitlab_ci_pipeline_config carrier ===
+#
+# Species-decl'd descriptor for a GitLab CI pipeline configuration.
+# Composition-primitive naming per
+# `feedback_composition_primitive_naming_convention` (Alex
+# 2026-07-18): the config IS a composition-primitive over the
+# (yaml_path, project_id, include_refs, variables) input-shape.
+#
+# Identity contract: byte-equality on the (yaml_path, project_id,
+# include_refs, variables) quadruple.
+type gitlab_ci_pipeline_config = {
+  yaml_path: ref,            # e.g. "./.gitlab-ci.yml"
+  project_id: ref,           # e.g. "12345" or "gitlab.com/foo/proj"
+  include_refs: ref,         # e.g. ["main", "develop"]
+  variables: ref,            # map of CI variable name → value
+}
+
+# === The gitlab_ci_pipeline_handle carrier ===
+#
+# Typed handle for a triggered pipeline — the (project_id,
+# pipeline_id, ref, sha) tuple that gitlab API responses carry.
+# Composes with @tool/gitlab_ci.pipeline_status for status-poll
+# operations.
+#
+# Identity contract: byte-equality on the (project_id, pipeline_id,
+# ref, sha) quadruple.
+type gitlab_ci_pipeline_handle = {
+  project_id: ref,
+  pipeline_id: ref,
+  ref: ref,              # git ref that triggered the pipeline
+  sha: ref,              # git sha at trigger
+}
+
+# === The gitlab_ci_pipeline_status carrier ===
+#
+# Closed variant enumerating the terminal + transient states GitLab
+# CI pipelines occupy. Load-bearing for the
+# `gitlab_ci_pipeline_terminates` bilateral gate.
+#
+# Identity contract: byte-equality on the underlying tag.
+type gitlab_ci_pipeline_status =
+  | pending
+  | running
+  | success             # terminal
+  | failed              # terminal
+  | canceled            # terminal
+  | skipped             # terminal
+  | manual              # transient
+  | scheduled           # transient
+
+# ============================================================
+# §3 The actions
+# ============================================================
+
+# === exec action — specialization of @tool.exec ===
+#
+# Dispatch a gitlab_ci subcommand invocation. Body multiplexes:
+#
+#   - `glab` binary present + pinned  ─▶ @io.exec("glab", ...)
+#   - `glab` absent OR REST preferred ─▶ @io/http.post/get/put(gitlab_api, ...)
+#
+# The multiplex decision is made per-invocation at dispatch time;
+# species-body composes @tool/nix.resolve_pin for glab presence
+# check.
+exec(subcommand: gitlab_ci_subcommand, args: ref, invocation: tool_invocation)
+  -> tool { \ }
+
+# === lint_config action — YAML-schema-validation load-bearing dispatch ===
+#
+# Specialization of exec for CI YAML lint. THE gate action for
+# StageFreight PR delivery per spec §4.3 (@roomba emits `@tool
+# (gitlab_ci, [lint, .gitlab-ci.yml])` in the invocation sequence).
+#
+# Discharges via `glab ci lint --config <path>` OR REST API
+# `POST /api/v4/ci/lint` per the multiplex.
+#
+# Splinter-pole: YAML parses; schema validates; no schema drift
+# diagnostics; exit_code / API response indicates VALID.
+# Narcissus-pole: YAML parse error; schema violation diagnostics;
+# deprecated syntax warnings surface as candidate bugfixes per
+# spec §6.5 GitLab CI schema drift.
+lint_config(config: gitlab_ci_pipeline_config, invocation: tool_invocation)
+  -> verdict { \ }
+
+# === pipeline_create action ===
+#
+# Trigger a new pipeline against `(project_id, ref, variables)`.
+# Discharges via `glab ci run` OR REST API `POST /api/v4/projects/
+# :id/pipeline` per multiplex. Returns a gitlab_ci_pipeline_handle.
+pipeline_create(config: gitlab_ci_pipeline_config, invocation: tool_invocation)
+  -> gitlab_ci_pipeline_handle { \ }
+
+# === pipeline_status action ===
+#
+# Query the current status of a pipeline handle. Discharges via
+# `glab ci status` OR REST API `GET /api/v4/projects/:id/pipelines/
+# :pipeline_id` per multiplex. Returns gitlab_ci_pipeline_status.
+pipeline_status(handle: gitlab_ci_pipeline_handle, invocation: tool_invocation)
+  -> gitlab_ci_pipeline_status { \ }
+
+# === version_of action ===
+#
+# Resolve the pinned glab CLI version. Reads tools{} block pin OR
+# discharges through @io/nix (sibling @tool/nix species) OR
+# through system PATH. For the REST-fallback path, version_of
+# reads the GitLab-Version response header from `GET /api/v4/
+# metadata`.
+version_of(pin: ref) -> ref { \ }
+
+# ============================================================
+# §4 The bilaterals
+# ============================================================
+
+# === gitlab_ci_subcommand_admissible sub-bilateral ===
+#
+# Bilateral verdict that a gitlab_ci_subcommand + args combination
+# is admissible per glab CLI's own grammar OR REST API's schema.
+#
+# Splinter-pole: subcommand parses; args are valid for that
+# subcommand under the active multiplex (CLI vs REST).
+# Narcissus-pole: unknown subcommand; args violate schema.
+gitlab_ci_subcommand_admissible(subcommand: gitlab_ci_subcommand, args: ref,
+                                p: perturbation) -> verdict { \ }
+
+# === gitlab_ci_config_valid composed bilateral ===
+#
+# THE LOAD-BEARING bilateral for StageFreight PR verification.
+# Commitment that the `.gitlab-ci.yml` file parses AND validates
+# per GitLab's active-instance schema.
+#
+# Splinter-pole: YAML parses cleanly; schema validation passes;
+# no deprecated syntax warnings; all `include` / `extends` /
+# `!reference` chains resolve; job graph is well-formed.
+# Narcissus-pole: YAML parse error; schema drift diagnostics
+# (deprecated `only:` / `except:` when GitLab has moved to
+# `rules:`; missing required fields); unresolved `include` refs;
+# job graph cycles.
+#
+# Per StageFreight spec §6.5: schema drift IS a candidate bugfix
+# mirror surfaces in Marcus's StageFreight repo via THIS bilateral.
+bilateral gitlab_ci_config_valid {
+  sentinel "tool=gitlab-ci-yaml-parses-and-validates-per-schema"
+  arity 2
+}
+gitlab_ci_config_valid(invocation: tool_invocation, p: perturbation)
+  -> verdict { \ }
+
+# === gitlab_ci_pipeline_terminates composed bilateral ===
+#
+# Bilateral commitment that a triggered pipeline reaches a terminal
+# state (success / failed / canceled / skipped) within a bounded
+# time budget — does NOT hang indefinitely in pending / running /
+# manual / scheduled states.
+#
+# Splinter-pole: pipeline reaches terminal state within budget;
+# terminal state captured via pipeline_status polling; witness
+# signed via @trust chain.
+# Narcissus-pole: pipeline stuck in transient state past budget;
+# manual gate not triggered; scheduled state not resolved;
+# infinite-poll condition detected.
+bilateral gitlab_ci_pipeline_terminates {
+  sentinel "tool=pipeline-reaches-terminal-state-not-stuck"
+  arity 2
+}
+gitlab_ci_pipeline_terminates(handle: gitlab_ci_pipeline_handle,
+                              p: perturbation) -> verdict { \ }
+
+# === gitlab_ci_invocation_well_formed composed bilateral ===
+#
+# Composes:
+#   1. gitlab_ci_subcommand_admissible(subcommand, args, p)
+#   2. tool_invocation_admissible(invocation, p) — inherited from
+#      @tool family-root
+#   3. gitlab_ci_config_valid(invocation, p) — WHEN subcommand
+#      is `lint` (lint paths are config-validity-load-bearing)
+#   4. gitlab_ci_pipeline_terminates(handle, p) — WHEN subcommand
+#      is `pipeline_create` / `pipeline_status` (dispatch paths
+#      are termination-load-bearing)
+#
+# The composed bilateral lifts the family-root discipline to the
+# gitlab_ci species. Nth altitude of composed-bilateral pattern
+# per @io/git.git_well_formed + @tool/cargo.cargo_invocation_
+# well_formed + @tool/go.go_invocation_well_formed + @tool/docker.
+# docker_invocation_well_formed (this session).
+bilateral gitlab_ci_invocation_well_formed {
+  sentinel "tool=gitlab-ci-subcommand-admissible-config-valid-pipeline-terminates"
+  arity 4
+}
+gitlab_ci_invocation_well_formed(invocation: tool_invocation, p: perturbation)
+  -> verdict
+requires gitlab_ci_subcommand_admissible(invocation, invocation, p)
+requires tool_invocation_admissible(invocation, invocation, p)
+{ \ }
+
+# ============================================================
+# §5 Forward-promised
+# ============================================================
+#
+# 1. `@io/http` mint at `shards/io/http.mirror` — the mechanism-
+#    side @io species for HTTPS dispatch that the REST-fallback
+#    multiplex composes over. Currently forward-promised.
+# 2. `@io/git/forge/gitlab` mint at `shards/io/git/forge/gitlab.
+#    mirror` — the ORTHOGONAL git-forge adapter for PR/issue/
+#    release surfaces via git protocol (per @io/git §6 forward-
+#    promise). Distinct altitude from THIS species.
+# 3. `@code/gitlab_ci` mint at `shards/code/gitlab_ci.mirror` —
+#    the form-side `.gitlab-ci.yml` declarative grammar. Would
+#    compose with @code/yaml (LANDED at `shards/mirror/data/yaml.
+#    mirror`) as species-refinement.
+# 4. `@tool/glab` refinement — the glab CLI itself has its own
+#    subcommand tree (glab issue / glab mr / glab api / etc.);
+#    per-glab-subcommand refinements MAY need species-refinement
+#    if the CI multiplex isn't the only glab usage.
+# 5. Cross-forge equivalents — `@tool/github_actions` (GitHub
+#    Actions workflows), `@tool/gitea_actions` (Gitea equivalent),
+#    `@tool/circleci` (CircleCI CLI). Sibling species mints
+#    forward-promised as consumers pin them.
+# 6. Pipeline-graph reasoning — the `.gitlab-ci.yml` job graph IS a
+#    substrate-decl'd DAG; `@spectral/mosaic.read(pipeline_config)`
+#    forward-promised composition for CI-topology observation.
+# 7. Secret-management composition — CI variables (especially
+#    protected variables) compose with @io/secrets (LANDED at
+#    `shards/io/secrets.mirror`); species-decl'd sibling forward-
+#    promised.
+
+out @tool/gitlab_ci
+out gitlab_ci_subcommand
+out gitlab_ci_pipeline_config
+out gitlab_ci_pipeline_handle
+out gitlab_ci_pipeline_status
+out exec
+out lint_config
+out pipeline_create
+out pipeline_status
+out version_of
+out gitlab_ci_subcommand_admissible
+out gitlab_ci_config_valid
+out gitlab_ci_pipeline_terminates
+out gitlab_ci_invocation_well_formed

@@ -1,0 +1,302 @@
+in @prism
+in @meta
+in @glass
+in @tool
+in @io
+
+# @tool/go — the FIRST-order tech tool species wrapping the Go
+# toolchain (Google 2009+; the `go` binary that fronts build/test/
+# vet/mod/fmt/generate/doc/run/install/tool subcommands over Go
+# source packages).
+#
+# Species under @tool at the family-root altitude landed this tick
+# in `shards/tool.mirror` per Mara closure canonical spec
+# `docs/specs/2026-07-18-the-compiler-in-one-sentence.md` §3.4 +
+# `docs/specs/2026-07-18-stagefreight-delivery.md` §3.1 (Mara this
+# tick; StageFreight Delivery Arc 1 Tick 1-2).
+#
+# === What @tool/go IS ===
+#
+# The IDENTITY + VERSION + CONTRACT + PROVENANCE wrapper for `go`
+# invocations. Specializes @tool.exec via the go subcommand grammar
+# (test, vet, build, mod tidy, mod download, fmt, doc, run, install,
+# generate, tool). Each go subcommand IS a specialization of exec
+# at go altitude.
+#
+# Composition direction (closure §3.3):
+#   @tool/go(test, [./...])
+#     ─specializes─▶ @tool.exec(tool_invocation{tool_id: go, ...})
+#       ─dispatches─▶ @io.exec("go", ["test", "./..."])
+#         ─crosses─▶ go binary process spawn
+#
+# === Alex directive: polyglot delivery to Marcus ===
+#
+# Alex 2026-07-18 direct-transcript verbatim (to Marcus,
+# StageFreight maintainer): *"I'll apply it to StageFreight itself.
+# When that's done you'll receive the full PR with the polyglot
+# build verification. Including any bugfixes the compiler
+# discovered in the StageFreight verification."*
+#
+# THIS species IS the substrate-decl vehicle for that verification.
+# When @roomba emits `@tool(go, [test, ./...])` sequences against
+# Marcus's StageFreight repo, dispatch discharges through THIS
+# species → @io.exec → the go binary. The tool_result is signed
+# via @trust chain terminating at @alex root; PR delivery composes
+# through `@tool/git.push_signed` (sibling landed this session).
+#
+# === Substrate-already-had-the-word ===
+#
+# Grep verdict clean:
+#   - `@tool/go` DOES NOT EXIST at any altitude prior to this tick.
+#   - `go` word appears in URL/module-path contexts only in prior
+#     shards (e.g., `github.com/...` references in docblocks).
+#   - `@code/go` DOES NOT EXIST at code family-species altitude
+#     (forward-promised).
+#   - `@io/go` DOES NOT EXIST at io family-species altitude
+#     (forward-promised; falls through to `@io.exec` in the interim).
+#
+# The go subcommand grammar is upstream-canonical (Google 2009+);
+# the substrate does not re-implement it. Each subcommand tag in
+# `go_subcommand` below mirrors an upstream-documented go binary
+# subcommand.
+#
+# === Substrate authority ===
+#
+# - Family-root: `shards/tool.mirror` (this session).
+# - Canonical spec (species): `docs/specs/2026-07-18-stagefreight-
+#   delivery.md` §3.1 (Mara this tick; shape substrate-decl'd there
+#   and lifted to substrate here verbatim).
+# - Canonical spec (family): `docs/specs/2026-07-18-the-compiler-in-
+#   one-sentence.md` §3.4 (Mara `2dd8ddb`).
+# - Cascade sibling: `shards/cascade/code/rust/go.mirror` (this
+#   tick; the source-adjacent Rust → Go loss-lens species). Both
+#   species compose in StageFreight delivery: cascade emits the Go
+#   source; @tool/go invokes the go binary against it.
+# - Recognition #43 (pre-commit chain IS five settlements): the go
+#   subcommand vocabulary (test/vet/build/fmt/generate) is the
+#   substrate-decl'd action set this species specializes.
+# - Recognition #98 candidate (content-addressing across scopes):
+#   Go's go.sum + go.mod content-addressing composes with the four
+#   existing witnesses (git OID, nix derivation, OCI manifest, cargo
+#   Cargo.lock). Fifth altitude of the pattern.
+
+prism @tool/go {
+  focus tool_invocation
+  project tool_invocation
+  split tool_invocation
+  shift tool_invocation
+  settle tool_invocation
+}
+
+# ============================================================
+# §2 The carriers
+# ============================================================
+
+# === The go_subcommand carrier ===
+#
+# Closed variant naming the go subcommand set the substrate admits.
+# Extensible via mint; the FLOOR set below covers the subcommands
+# StageFreight delivery + the compiler + Pack agents actually invoke.
+#
+# Identity contract: byte-equality on the underlying tag.
+type go_subcommand =
+  | test           # go test ./...
+  | vet            # go vet ./...
+  | build          # go build ./...
+  | mod_tidy       # go mod tidy
+  | mod_download   # go mod download
+  | fmt            # go fmt ./...
+  | doc            # go doc
+  | run            # go run <pkg>
+  | install        # go install
+  | generate       # go generate ./...
+  | tool           # go tool <toolname>
+
+# === The go_workspace_target carrier ===
+#
+# Go workspaces (Go 1.18+) admit `-C <dir>` + `-workspace` flags;
+# species-decl'd for multi-module StageFreight-style repos.
+# Composition-primitive naming per
+# `feedback_composition_primitive_naming_convention` (Alex
+# 2026-07-18 ratified): the target IS a composition-primitive over
+# the (module_path, package_selector, build_tags) input-shape.
+#
+# Identity contract: byte-equality on the (module_path,
+# package_selector, build_tags) triple.
+type go_workspace_target = {
+  module_path: ref,       # e.g. "gitlab.com/foo/stagefreight"
+  package_selector: ref,  # e.g. "./..." or "./internal/scheduler"
+  build_tags: ref,        # e.g. ["integration", "linux"]
+}
+
+# ============================================================
+# §3 The actions
+# ============================================================
+
+# === exec action — specialization of @tool.exec ===
+#
+# Dispatch a go subcommand invocation. Body composes through
+# @io.exec at the mechanism boundary (falling through until
+# `@io/go` species-shard lands per §6 forward-promise 2).
+#
+# Splinter-pole: go subcommand admits the invocation; version
+# pin resolves; stdout/stderr surfaced as typed tool_result;
+# witnessed_run signed via @trust.
+# Narcissus-pole: subcommand fails silently, version pin drifts,
+# stdout truncated without admission.
+exec(subcommand: go_subcommand, args: ref, invocation: tool_invocation)
+  -> tool { \ }
+
+# === test_all action — the StageFreight-verification load-bearing dispatch ===
+#
+# Specialization of exec for `go test ./...` — the load-bearing
+# invocation for StageFreight PR polyglot verification. Discharges
+# with go_workspace_target-specific selectors + build tags.
+#
+# Splinter-pole: all tests pass; race-detector clean when
+# `-race` build-tag included; coverage report emitted; witness
+# signed via @trust chain.
+# Narcissus-pole: tests fail silently; race conditions surface
+# under `-race` without witness capture; coverage report
+# missing/truncated.
+test_all(target: go_workspace_target, invocation: tool_invocation)
+  -> tool { \ }
+
+# === vet_all action — static-analysis load-bearing dispatch ===
+#
+# Specialization of exec for `go vet ./...`. Composes with
+# `go_vet_clean` bilateral (§4) to gate PR delivery on clean vet.
+#
+# Splinter-pole: no vet diagnostics emitted across target;
+# tool_result stdout empty; exit_code 0.
+# Narcissus-pole: vet emits diagnostics that are silently
+# discarded; exit_code non-zero without diagnostic capture.
+vet_all(target: go_workspace_target, invocation: tool_invocation)
+  -> verdict { \ }
+
+# === version_of action ===
+#
+# Resolve the pinned go version. Reads tools{} block pin OR
+# discharges through @io/nix (sibling @tool/nix species) OR
+# through @io/env for GOROOT resolution.
+version_of(pin: ref) -> ref { \ }
+
+# ============================================================
+# §4 The bilaterals
+# ============================================================
+
+# === go_subcommand_admissible sub-bilateral ===
+#
+# Bilateral verdict that a go_subcommand + args combination is
+# admissible per go's own grammar. Discharges via `go help
+# <subcommand>` OR by checking against a cached grammar.
+#
+# Splinter-pole: subcommand parses; args are valid for that
+# subcommand.
+# Narcissus-pole: unknown subcommand; args violate subcommand's
+# schema.
+go_subcommand_admissible(subcommand: go_subcommand, args: ref,
+                         p: perturbation) -> verdict { \ }
+
+# === go_test_output_witnessed composed bilateral ===
+#
+# THE LOAD-BEARING bilateral for StageFreight PR verification. The
+# tool_result from `go test ./...` carries a valid witnessed_run
+# per @kintsugi/roomba's content-addressed run-provenance
+# discipline.
+#
+# Splinter-pole: witness field carries a substrate-decl'd
+# witnessed_run; test output stream OID round-trips through
+# @mirror/store; test verdict provable from witness alone.
+# Narcissus-pole: witness field is bare `ref` with no provenance
+# chain; test output stream OID does not round-trip; verdict
+# claimed without witness backing.
+bilateral go_test_output_witnessed {
+  sentinel "tool=go-test-output-carries-witnessed-run"
+  arity 2
+}
+go_test_output_witnessed(invocation: tool_invocation, p: perturbation)
+  -> verdict { \ }
+
+# === go_vet_clean composed bilateral ===
+#
+# Bilateral commitment that `go vet` returned zero diagnostics
+# across the target's package selector. Gate for PR delivery.
+#
+# Splinter-pole: vet diagnostic count = 0; exit_code = 0;
+# tool_result signed.
+# Narcissus-pole: vet emits at least one diagnostic; diagnostics
+# surface as candidate bugs (per StageFreight spec §6.1 type-lens
+# loss surfaces).
+bilateral go_vet_clean {
+  sentinel "tool=go-vet-clean-no-diagnostics"
+  arity 2
+}
+go_vet_clean(invocation: tool_invocation, p: perturbation)
+  -> verdict { \ }
+
+# === go_invocation_well_formed composed bilateral ===
+#
+# Composes:
+#   1. go_subcommand_admissible(subcommand, args, p)
+#   2. tool_invocation_admissible(invocation, p) — inherited from
+#      @tool family-root
+#   3. go_test_output_witnessed(invocation, p) — WHEN subcommand
+#      is `test` (test paths are witness-load-bearing)
+#   4. go_vet_clean(invocation, p) — WHEN subcommand is `vet`
+#      (vet paths are cleanliness-load-bearing)
+#
+# The composed bilateral lifts the family-root discipline to the
+# go species. Nth altitude of composed-bilateral pattern per
+# @io/git.git_well_formed + @tool/cargo.cargo_invocation_well_formed
+# (this session). The count is Mara-counted-from-brief; Pack-
+# altitude verification deferred.
+bilateral go_invocation_well_formed {
+  sentinel "tool=go-subcommand-args-admissible-witnessed-clean"
+  arity 4
+}
+go_invocation_well_formed(invocation: tool_invocation, p: perturbation)
+  -> verdict
+requires go_subcommand_admissible(invocation, invocation, p)
+requires tool_invocation_admissible(invocation, invocation, p)
+{ \ }
+
+# ============================================================
+# §5 Forward-promised
+# ============================================================
+#
+# 1. `@io/go` mint at `shards/io/go.mirror` — the mechanism-side
+#    @io species for Go tool subprocess dispatch. Would replace
+#    the `@io.exec("go", ...)` fall-through with typed
+#    `@io/go.exec(...)`. Sibling of `@io/cargo`, `@io/git`, etc.
+# 2. `@code/go` mint at `shards/code/go.mirror` — the target
+#    grammar family-species for Go source. Would compose with
+#    `@cascade/code/rust/go` (sibling this tick) to remove the
+#    inline `ref` carrier declarations there.
+# 3. Per-subcommand species refinements (@tool/go/test,
+#    @tool/go/build, ...) if per-subcommand contract specialization
+#    becomes load-bearing.
+# 4. Rustup-analogue toolchain composition — Go's `GOTOOLCHAIN`
+#    env-var mechanism admits per-project version overrides
+#    (Go 1.21+); species-decl'd carrier `go_toolchain_selector`
+#    forward-promised.
+# 5. Workspace-aware invocation refinement — `go work sync` +
+#    `go work use` are workspace-management subcommands not in
+#    the FLOOR variant; forward-promised at species-refinement
+#    altitude.
+# 6. Cgo-aware invocation refinement — CGO_ENABLED + CGO_CFLAGS
+#    + CGO_LDFLAGS are FFI-cascade-load-bearing; forward-promised
+#    at species-refinement altitude paired with
+#    `@cascade/code/rust/go/cgo` forward-promise.
+
+out @tool/go
+out go_subcommand
+out go_workspace_target
+out exec
+out test_all
+out vet_all
+out version_of
+out go_subcommand_admissible
+out go_test_output_witnessed
+out go_vet_clean
+out go_invocation_well_formed

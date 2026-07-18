@@ -1,0 +1,338 @@
+in @prism
+in @meta
+in @glass
+in @tool
+in @io
+
+# @tool/docker — the FIRST-order tech tool species wrapping the
+# docker CLI binary (Docker Inc. 2013+; the porcelain command
+# fronting build/run/push/pull/compose/image/container subcommands
+# over the Docker Engine + OCI-format artifact production).
+#
+# Species under @tool at the family-root altitude landed this tick
+# in `shards/tool.mirror` per Mara closure canonical spec
+# `docs/specs/2026-07-18-the-compiler-in-one-sentence.md` §3.4 +
+# `docs/specs/2026-07-18-stagefreight-delivery.md` §3.2 (Mara this
+# tick; StageFreight Delivery Arc 1 Tick 3).
+#
+# === What @tool/docker IS ===
+#
+# The IDENTITY + VERSION + CONTRACT + PROVENANCE wrapper for
+# `docker` CLI invocations. Specializes @tool.exec via the docker
+# subcommand grammar (build, run, push, pull, image ls, container
+# ls, compose up/down, login, tag). Each docker subcommand IS a
+# specialization of exec at docker altitude.
+#
+# Composition direction (dual dispatch — closure §3.3 + StageFreight
+# spec §3.2):
+#
+# - Build path: @tool/docker(build, .)
+#     ─specializes─▶ @tool.exec(tool_invocation{tool_id: docker, ...})
+#       ─dispatches─▶ @io/oci.build(...)   [mechanism-side, artifact production]
+#         ─crosses─▶ docker binary invocation → BuildKit build graph
+#
+# - Run path: @tool/docker(run, <image>)
+#     ─specializes─▶ @tool.exec(tool_invocation{tool_id: docker, ...})
+#       ─dispatches─▶ @container.spawn(...)  [mechanism-side, runtime]
+#         ─crosses─▶ docker binary invocation → containerd runtime
+#
+# === Substrate-already-had-the-word — the FOUR-altitude partition ===
+#
+# THREE docker-adjacent shards already exist at different altitudes:
+#
+#   1. `@code/docker` (LANDED at `shards/code/docker.mirror`; 18.2KB)
+#      — the DOCKERFILE-AS-DECLARATIVE-CODE altitude. The Dockerfile
+#      IS declarative code at code altitude; form-side (what the
+#      Dockerfile IS as source).
+#
+#   2. `@io/oci` (LANDED at `shards/io/oci.mirror`; 25.6KB) — the
+#      OCI-FORMAT-TRANSPORT altitude. Wire format + distribution
+#      contract for image artifacts; mechanism-side transport.
+#
+#   3. `@container` (LANDED at `shards/container.mirror`; family-root
+#      + `shards/container/{image,runtime}.mirror` species) — the
+#      RUNTIME altitude. Container image handles + runtime spawn;
+#      form-side runtime state observation.
+#
+# @tool/docker sits at a FOURTH altitude — the PORCELAIN-CLI-
+# INVOCATION altitude. Sibling of @tool/cargo + @tool/git + @tool/
+# nix, NOT sibling of @code/docker / @io/oci / @container. The
+# porcelain surface (@tool/docker) DISPATCHES through mechanism
+# (@io/oci for artifact-side, @container/runtime for runtime-side);
+# it does NOT replace any of the three existing altitudes.
+#
+# Per StageFreight spec §8 composition surprise #1: substrate
+# honesty required naming the fourth altitude explicitly; the risk
+# was collapsing @tool/docker into any of the three existing
+# altitudes. This shard NAMES the fourth altitude.
+#
+# === Parallel geometry to @tool/nix (build cache altitude) ===
+#
+# @tool/nix and @tool/docker both discharge at "build cache
+# altitude" but for DIFFERENT cache substrates:
+#
+#   @tool/nix    ─▶ content-addressed store paths (Dolstra 2003)
+#   @tool/docker ─▶ content-addressed OCI images (BuildKit 2018)
+#
+# Structural parallel: both wrap a CLI binary that fronts a
+# content-addressed build cache. `resolve_pin` at @tool/nix maps
+# `(tool_id, version) → nix_store_path`; `build_image` at @tool/
+# docker maps `(dockerfile_path, build_context, tag) → oci_manifest`.
+# Both cache substrates admit content-addressed reproducibility as
+# their bilateral gate.
+#
+# === Substrate authority ===
+#
+# - Family-root: `shards/tool.mirror` (this session).
+# - Canonical spec (species): `docs/specs/2026-07-18-stagefreight-
+#   delivery.md` §3.2 (Mara this tick; shape substrate-decl'd there
+#   and lifted to substrate here verbatim).
+# - Canonical spec (family): `docs/specs/2026-07-18-the-compiler-in-
+#   one-sentence.md` §3.4 (Mara `2dd8ddb`).
+# - Three-altitude siblings NOT to be collapsed with: `shards/code/
+#   docker.mirror` (form-side declarative code); `shards/io/oci.
+#   mirror` (mechanism-side transport); `shards/container.mirror` +
+#   `shards/container/{image,runtime}.mirror` (form-side runtime).
+# - Recognition #55 (form/process partition): @tool/docker is
+#   process-side (the invocation of the docker binary); the three
+#   siblings above are form-side at their respective altitudes.
+# - Recognition #98 candidate (content-addressing across scopes):
+#   BuildKit's LLB content-addressing composes with the four
+#   existing witnesses (git OID, nix derivation, cargo Cargo.lock,
+#   OCI manifest) — @tool/docker is the invocation-altitude anchor
+#   for the OCI-manifest witness.
+
+prism @tool/docker {
+  focus tool_invocation
+  project tool_invocation
+  split tool_invocation
+  shift tool_invocation
+  settle tool_invocation
+}
+
+# ============================================================
+# §2 The carriers
+# ============================================================
+
+# === The docker_subcommand carrier ===
+#
+# Closed variant naming the docker CLI subcommand set the substrate
+# admits at the porcelain altitude. Extensible via mint; the FLOOR
+# set below covers the subcommands the compiler + Pack agents +
+# StageFreight verification actually invoke.
+#
+# Identity contract: byte-equality on the underlying tag.
+type docker_subcommand =
+  | build          # docker build .
+  | run            # docker run <image>
+  | push           # docker push <image>:<tag>
+  | pull           # docker pull <image>:<tag>
+  | image_ls       # docker image ls
+  | container_ls   # docker container ls
+  | compose_up     # docker compose up
+  | compose_down   # docker compose down
+  | login          # docker login <registry>
+  | tag            # docker tag <source> <target>
+
+# === The docker_image_target carrier ===
+#
+# Species-decl'd target descriptor for `docker build`. Composition-
+# primitive naming per `feedback_composition_primitive_naming_
+# convention` (Alex 2026-07-18): the target IS a composition-
+# primitive over the (dockerfile_path, build_context, tag,
+# build_args, target_stage) input-shape.
+#
+# Identity contract: byte-equality on the (dockerfile_path,
+# build_context, tag, build_args, target_stage) quintuple.
+type docker_image_target = {
+  dockerfile_path: ref,       # e.g. "./Dockerfile" or "./ci/Dockerfile.test"
+  build_context: ref,         # e.g. "." or "./service"
+  tag: ref,                   # e.g. "registry.gitlab.com/foo/svc:main"
+  build_args: ref,            # map of --build-arg key=value
+  target_stage: ref,          # multi-stage build target
+}
+
+# === The docker_image_reference carrier ===
+#
+# Typed handle for a docker image identity — the (registry, name,
+# tag_or_digest) triple that PORCELAIN docker commands accept.
+# COMPOSES with @io/oci's oci_manifest at mechanism altitude:
+# porcelain surface here holds the human-readable reference;
+# mechanism surface at @io/oci holds the content-addressed manifest.
+#
+# Identity contract: byte-equality on the underlying ref (a
+# content-addressed digest reference is byte-deterministic; a
+# tag reference is byte-deterministic modulo mutable-tag drift
+# which the bilateral gate below flags).
+type docker_image_reference = ref
+
+# ============================================================
+# §3 The actions
+# ============================================================
+
+# === exec action — specialization of @tool.exec ===
+#
+# Dispatch a docker subcommand invocation. Body composes through
+# @io.exec at the mechanism boundary, with dispatch multiplexing
+# per subcommand tag:
+#
+#   - build/push/pull/tag/image_ls    ─▶ @io/oci.<action>
+#   - run/container_ls/compose_up/    ─▶ @container.<action>
+#     compose_down
+#   - login/other-cli-side            ─▶ @io.exec("docker", ...)
+exec(subcommand: docker_subcommand, args: ref, invocation: tool_invocation)
+  -> tool { \ }
+
+# === build_image action — the OCI-artifact-production dispatch ===
+#
+# Specialization of exec for `docker build`. Discharges through
+# @io/oci.build at mechanism altitude for BuildKit-driven content-
+# addressed image production.
+#
+# Splinter-pole: image built; OCI manifest content-addressed;
+# manifest digest deterministic across invocations with identical
+# inputs; witness signed via @trust chain.
+# Narcissus-pole: image built but manifest non-deterministic
+# across invocations (timestamp leakage, ADD from URL leaks,
+# non-reproducible base image drift); manifest digest changes
+# without corresponding input change.
+build_image(target: docker_image_target, invocation: tool_invocation)
+  -> tool { \ }
+
+# === push_image action ===
+#
+# Push a docker_image_reference to a remote registry. Composes
+# with @io/oci at mechanism altitude for OCI-distribution-spec-
+# compliant push. Species-decl'd for the @trust-chain-aware
+# variant that signs the push via @tool/git-analogous
+# credential composition (forward-promised).
+push_image(reference: docker_image_reference, registry: ref,
+           invocation: tool_invocation) -> verdict { \ }
+
+# === version_of action ===
+#
+# Resolve the pinned docker version. Reads tools{} block pin OR
+# discharges through @io/nix (sibling @tool/nix species) OR
+# through system PATH for docker-daemon-attached-CLI cases where
+# the CLI version is bound to the daemon protocol.
+version_of(pin: ref) -> ref { \ }
+
+# ============================================================
+# §4 The bilaterals
+# ============================================================
+
+# === docker_subcommand_admissible sub-bilateral ===
+#
+# Bilateral verdict that a docker_subcommand + args combination is
+# admissible per docker's own grammar. Discharges via `docker help
+# <subcommand>` OR by checking against a cached grammar.
+#
+# Splinter-pole: subcommand parses; args are valid for that
+# subcommand.
+# Narcissus-pole: unknown subcommand; args violate subcommand's
+# schema.
+docker_subcommand_admissible(subcommand: docker_subcommand, args: ref,
+                             p: perturbation) -> verdict { \ }
+
+# === docker_build_reproducible composed bilateral ===
+#
+# THE LOAD-BEARING bilateral for StageFreight PR verification.
+# Content-addressed image production discipline: repeated invocation
+# of `docker build` against identical (dockerfile_path, build_
+# context, tag, build_args, target_stage) tuple MUST produce
+# byte-equal OCI manifest digests.
+#
+# Splinter-pole: manifest digest byte-deterministic across repeat
+# invocations; OCI manifest content-hashes per OCI spec §content-
+# addressing; layer digests preserved through cache hits.
+# Narcissus-pole: manifest digest drifts across repeat invocations
+# (timestamp injection, ADD-from-URL fetch drift, non-pinned base
+# image drift); layer digests differ despite identical inputs.
+#
+# Per StageFreight spec §6.6: docker build non-determinism IS a
+# candidate bugfix mirror surfaces in Marcus's StageFreight repo
+# via THIS bilateral.
+bilateral docker_build_reproducible {
+  sentinel "tool=docker-build-produces-content-addressed-image"
+  arity 2
+}
+docker_build_reproducible(invocation: tool_invocation, p: perturbation)
+  -> verdict { \ }
+
+# === docker_image_reference_valid sub-bilateral ===
+#
+# Bilateral verdict that a docker_image_reference resolves at the
+# porcelain surface. Splits over tag-reference vs digest-reference:
+# a digest reference is byte-deterministic and always valid if the
+# manifest exists; a tag reference is subject to mutable-tag drift
+# and the bilateral flags stale-tag conditions.
+#
+# Splinter-pole: reference resolves to an OCI manifest at the
+# registry; digest reference byte-matches manifest; tag reference
+# resolves to a digest AND registered-at witness present.
+# Narcissus-pole: reference does not resolve; manifest absent;
+# tag reference points to a digest that has since drifted.
+docker_image_reference_valid(reference: docker_image_reference,
+                             p: perturbation) -> verdict { \ }
+
+# === docker_invocation_well_formed composed bilateral ===
+#
+# Composes:
+#   1. docker_subcommand_admissible(subcommand, args, p)
+#   2. tool_invocation_admissible(invocation, p) — inherited from
+#      @tool family-root
+#   3. docker_build_reproducible(invocation, p) — WHEN subcommand
+#      is `build` (build paths are reproducibility-load-bearing)
+#   4. docker_image_reference_valid(reference, p) — WHEN subcommand
+#      is `push` / `pull` / `run` / `tag` (reference-consuming
+#      paths are validity-load-bearing)
+#
+# The composed bilateral lifts the family-root discipline to the
+# docker species. Nth altitude of composed-bilateral pattern per
+# @io/git.git_well_formed + @tool/cargo.cargo_invocation_well_
+# formed + @tool/go.go_invocation_well_formed (this session).
+bilateral docker_invocation_well_formed {
+  sentinel "tool=docker-subcommand-admissible-reproducible-reference-valid"
+  arity 4
+}
+docker_invocation_well_formed(invocation: tool_invocation, p: perturbation)
+  -> verdict
+requires docker_subcommand_admissible(invocation, invocation, p)
+requires tool_invocation_admissible(invocation, invocation, p)
+{ \ }
+
+# ============================================================
+# §5 Forward-promised
+# ============================================================
+#
+# 1. Per-subcommand species refinements (@tool/docker/build,
+#    @tool/docker/compose) if per-subcommand contract specialization
+#    becomes load-bearing (docker compose has its own subcommand
+#    tree that MAY need species-refinement altitude).
+# 2. BuildKit-specific composition — the `docker buildx` variant
+#    admits multi-platform + advanced-cache-mount features that MAY
+#    need species-refinement (`@tool/docker/buildx`).
+# 3. Container-runtime-alternatives composition — `@tool/podman`
+#    is docker-compatible at porcelain altitude (mostly); species-
+#    decl'd sibling forward-promised for the podman case.
+# 4. Registry-authentication composition — `docker login` composes
+#    with @io/secrets (LANDED at `shards/io/secrets.mirror`) for
+#    credential resolution; species-decl'd sibling forward-promised.
+# 5. Compose-file grammar mint — `docker-compose.yml` / `compose.
+#    yml` IS declarative code at compose-file altitude; sibling
+#    `@code/docker/compose` forward-promised (would live at
+#    `shards/code/docker/compose.mirror`) with its own bilateral
+#    grammar-conformance discipline mirroring @code/docker.
+
+out @tool/docker
+out docker_subcommand
+out docker_image_target
+out docker_image_reference
+out exec
+out build_image
+out push_image
+out version_of
+out docker_subcommand_admissible
+out docker_build_reproducible
+out docker_image_reference_valid
+out docker_invocation_well_formed

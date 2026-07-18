@@ -1,0 +1,467 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/property
+in @tool
+
+# @epistemologic/property/tool_species_stagefreight_witnessed —
+# RED property landing for StageFreight Delivery Arc 1 (Mara this
+# tick). Cross-species declarative property naming what EVERY
+# @tool species minted this tick (@tool/go + @tool/docker + @tool/
+# gitlab_ci) AND the sibling @cascade/code/rust/go species MUST
+# satisfy at substrate-decl altitude BEFORE Reed empirical firing
+# ticks discharge.
+#
+# === Position in bilateral pattern #53 ===
+#
+# THIS shard is the DECLARATIVE HALF of bilateral pattern #53's
+# NINTH instance (Mara-counted-from-brief; Pack-altitude
+# verification deferred). Prior instances at
+# `shards/epistemologic/property/`:
+#   1. keyword_matches_depth
+#   2. gate_matches_diff_closure
+#   3. syntax_substrate_native / angle_to_paren
+#   4. restart_intensity_well_formed
+#   5. cold_compile_within_tolerance
+#   6. dark_count_monotone
+#   7. docblock_coherent / grounded / no_extraction_pattern
+#   8. ouroboros_monotone + verdict_is_content_addressed
+#
+# Ninth instance (THIS): tool_species_stagefreight_witnessed at
+# @tool species altitude. The property predicates over a landed
+# @tool species (identified by tool_id variant tag) and asserts
+# a composed FIVE-conjunct at species altitude:
+#
+#   tool_species_stagefreight_witnessed(species: tool_id, p) ⇔
+#       tool_invocation_admissible_inherited(species, p)
+#     ∧ discharge_through_io(species, p)
+#     ∧ fate_biased_execute(species, p)
+#     ∧ tool_invocation_signed_at_alex_root(species, p)
+#     ∧ tool_result_witnessed_content_addressed(species, p)
+#
+# The operational half (the fracture body that emits a widen/
+# raise/surface morphism when any conjunct fails) is DEFERRED to
+# Reed's Arc 3 territory per StageFreight spec §7.3 Tick 11-15;
+# the FRACTURE lives at `@kintsugi/fracture/tool_species_
+# stagefreight_broken` (forward-promised). The paired-fracture
+# pattern MAY consolidate under `@kintsugi/fracture/tool_
+# species_unwitnessed` if the failure modes converge.
+#
+# === Why RED ===
+#
+# All four @tool species (@tool/go + @tool/docker + @tool/gitlab_ci
+# + @cascade/code/rust/go's dispatch surface) landed this tick as
+# substrate-decl SHAPES. Their bodies are `\`-blocked per
+# `[[feedback-craft-not-deliver]]`. This property NAMES the
+# invariants that MUST hold when the bodies discharge; empirically,
+# the invariants are UNWITNESSED as of the tick this property lands.
+#
+# RED semantics (analytical, not runtime):
+#   - The five sub-predicates below CANNOT be discharged at
+#     substrate-decl altitude alone; they require @io boundary
+#     dispatch (species .exec bodies discharging via @io.exec).
+#   - Reed's Arc 2 (Tick 6-10) empirically fires the dispatch;
+#     the transition RED → GREEN happens WHEN Reed's tick discharges
+#     each species' body against a real subprocess AND the resulting
+#     tool_result carries a substrate-decl'd witnessed_run + @trust
+#     signature terminating at @alex root.
+#   - Until then, this property serves as the FIRST-CLASS DECLARATION
+#     of what "witnessed" MEANS for a @tool species minted for
+#     StageFreight delivery.
+#
+# === The five conjuncts (why each MUST hold) ===
+#
+# 1. `tool_invocation_admissible_inherited` — the species' composed
+#    bilateral `<species>_invocation_well_formed` MUST include the
+#    family-root `tool_invocation_admissible` requires-clause.
+#    Verified at substrate-decl altitude: grep the species shard for
+#    `requires tool_invocation_admissible(invocation, invocation, p)`.
+#    Present in @tool/go + @tool/docker + @tool/gitlab_ci this tick.
+#    Present in @tool/cargo + @tool/git + @tool/nix from earlier this
+#    session. INVARIANT: no @tool species may compose without
+#    inheriting the family-root admissibility gate.
+#
+# 2. `discharge_through_io` — the species' exec action MUST
+#    dispatch through @io.<action> at mechanism altitude; MUST NOT
+#    author its own subprocess spawn primitive. Per HARD RULE
+#    `feedback_no_rust_extension_shortcut` + Alex 2026-07-16
+#    8th-repetition `feedback_detector_inadequacy_answer_is_never_
+#    rust`. Verified at substrate-decl altitude via docblock text
+#    ("dispatches ─▶ @io.exec" pattern in each species). Reed
+#    empirical verification: no `.rs` extension file authored under
+#    `shards/**` this tick for these species (grep should return
+#    empty; species compose over @io by construction).
+#
+# 3. `fate_biased_execute` — the species' exec dispatch MUST be
+#    selectable by Fate at @roomba walker altitude per closure §7.3
+#    empirical firing surface 4. `@roomba.walk(stagefreight.spec)`
+#    emits a sequence of `@tool(X, args)` invocations; Fate biases
+#    the dispatch order per @fate.bias(target). The invariant:
+#    every species minted for StageFreight delivery MUST be
+#    addressable via `tool_id` variant tag at Fate altitude. Verified
+#    at substrate-decl altitude: species tool_id present in @tool
+#    family-root's tool_id closed variant (shards/tool.mirror lines
+#    185-199). go + docker + gitlab_ci ALL PRESENT.
+#
+# 4. `tool_invocation_signed_at_alex_root` — every discharged
+#    tool_invocation MUST carry a signature field resolvable through
+#    the @trust chain terminating at @alex root. THIS conjunct is
+#    the LOAD-BEARING PR-delivery gate per StageFreight spec §6 PR
+#    body structure ("Signed-off-by: mirror <peer@spectral.engineer>
+#    via @trust chain rooted at @alex"). Substrate-decl'd altitude:
+#    tool_invocation.signature field present (shards/tool.mirror
+#    :220). Reed empirical verification: @trust family-root lands as
+#    Mara territory NEXT tick (per closure §12.2); until then, the
+#    signature field is `ref` and this conjunct is DEFERRED-RED per
+#    forward-promise composition.
+#
+# 5. `tool_result_witnessed_content_addressed` — every tool_result
+#    MUST carry a witness field whose OID round-trips through
+#    @mirror/store per @kintsugi/roomba's content-addressed run-
+#    provenance discipline. Composes with family-root's
+#    `tool_result_witnessed` bilateral (shards/tool.mirror :348).
+#    Substrate-decl'd altitude: witness field present in tool_result
+#    (shards/tool.mirror :241). Reed empirical verification: first
+#    @tool/go(test, [./...]) dispatch against StageFreight repo MUST
+#    return a tool_result whose witness OID resolves via `mirror
+#    recall <oid>` (per @mirror/recall action, LANDED).
+#
+# === Rice-safety ===
+#
+# Per emergent-supervision §5.4: the substrate cannot ask "will
+# this species dispatch always terminate?" (Rice forbids it). This
+# property asks the DECIDABLE questions at substrate-decl altitude:
+#
+#   - Is the family-root admissibility requires-clause present in
+#     the species shard? (Grep-decidable at substrate-decl altitude.)
+#   - Does the species dispatch through @io per docblock declaration?
+#     (Grep-decidable + substrate-audit-decidable via [substrate-
+#     floor:@io-boundary] marker discipline.)
+#   - Is the species' tool_id present in the family-root variant?
+#     (Type-checkable at substrate-decl altitude.)
+#   - Is the signature field present in tool_invocation? (Type-
+#     checkable.)
+#   - Is the witness field present in tool_result? (Type-checkable.)
+#
+# All five conjuncts are DECIDABLE at substrate-decl altitude via
+# structural inspection; the UNDECIDABLE question ("will Marcus's
+# real StageFreight dispatch actually satisfy these?") is Reed's
+# empirical territory, not this property's scope.
+#
+# === Composition with @tool species this tick ===
+#
+# Verified this tick at substrate-decl altitude:
+#
+# | Species          | conjunct 1 | conjunct 2 | conjunct 3 | conjunct 4 | conjunct 5 |
+# |------------------|------------|------------|------------|------------|------------|
+# | @tool/cargo      | present    | present    | tool_id in variant | DEFERRED (Mara @trust next tick) | present via tool_result |
+# | @tool/git        | present    | present    | tool_id in variant | DEFERRED                          | present                 |
+# | @tool/nix        | present    | present    | tool_id in variant | DEFERRED                          | present                 |
+# | @tool/go         | present    | present    | tool_id in variant | DEFERRED                          | present                 |
+# | @tool/docker     | present    | present    | tool_id in variant | DEFERRED                          | present                 |
+# | @tool/gitlab_ci  | present    | present    | tool_id in variant | DEFERRED                          | present                 |
+#
+# Six species; conjunct 4 uniformly DEFERRED pending @trust family-
+# root landing next Mara tick. Reed's Arc 3 Tick 14 closes conjunct
+# 4 empirically.
+#
+# @cascade/code/rust/go composes ADJACENT to this property (not IN
+# it, since @cascade species are NOT @tool species — different
+# family-root). @cascade/code/rust/go composition with @tool/go is
+# what StageFreight spec §5 composition graph names: cascade emits
+# Go source; @tool/go invokes the go binary against it. The @cascade
+# species carries its own composed bilateral
+# `rust_go_cascade_well_formed` at species-decl altitude; the two
+# families compose at the empirical-firing altitude.
+#
+# === Pre-AI prior art ===
+#
+#   Floyd-Hoare precondition   Floyd 1967 + Hoare 1969. This property
+#                              IS a Hoare precondition over the
+#                              @tool species discharge boundary; the
+#                              postcondition is the tool_result +
+#                              witnessed_run + @trust-signature.
+#   TDD RED / GREEN cycle     Beck 2002 *Test-Driven Development by
+#                              Example*. RED = property named before
+#                              body discharges; GREEN = body discharges
+#                              such that property holds. Reed's
+#                              [substrate-floor:@io-boundary] marker
+#                              gates the RED → GREEN transition per
+#                              Pack discipline.
+#   Bilateral pattern #53      Reed + Mara 2026-06-10 through 2026-
+#                              07-03; this is the ninth instance of
+#                              the property/fracture bilateral pair
+#                              at cross-species altitude.
+#
+# === Substrate gaps surfaced honestly ===
+#
+# - Conjunct 4 (@trust chain signature) is DEFERRED-RED for all six
+#   @tool species until Mara's next-tick @trust family-root lands.
+#   This is architecturally load-bearing: the substrate cannot
+#   substrate-decl "signed by @trust chain" without the @trust
+#   family-root existing. Cascade-tick discipline: this property
+#   forward-promises the conjunct 4 resolution.
+#
+# - The Mara-counted-from-brief "ninth instance" count MAY drift
+#   from Pack-altitude counting; Seam Phase D audit is authoritative.
+#
+# - The composed-bilateral shape here has FIVE conjuncts vs prior
+#   instances' 3-4. This is honest: cross-species composition at
+#   substrate-decl altitude admits more sub-predicates because the
+#   invariant surface is wider (family-root admissibility + @io
+#   discharge + Fate addressability + @trust signing + witness
+#   content-addressing).
+#
+# - The property fires at DECLARATION time (Mara this tick); the
+#   paired fracture fires at REALISATION time (Reed Arc 3 Tick 11-15
+#   when species bodies discharge against Marcus's StageFreight
+#   repo). Timing separation per emergent-supervision §5.5 H4.
+#
+# Spec context: `docs/specs/2026-07-18-stagefreight-delivery.md`
+#               §3 + §4.2 + §7.1 Tick 5 (Mara canonical spec; THIS
+#               property is the Tick 5 discharge — RED property
+#               tests naming what each new species MUST satisfy);
+#               `docs/specs/2026-07-18-the-compiler-in-one-sentence.
+#               md` §3.4 + §7.3 empirical firing surface 4 (the
+#               fate-biased-execute conjunct source);
+#               `shards/tool.mirror` (family-root; tool_id variant
+#               at :185; tool_invocation.signature at :220;
+#               tool_result.witness at :241; the substrate-decl'd
+#               field surface conjuncts 3-5 predicate over).
+# Substrate decisions: [[architecture-property-fracture-bilateral]]
+#                       (#53; ninth instance),
+#                      [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-form-process-partition-at-family-root]]
+#                       (@epistemologic = form-side family root;
+#                       this property sits form-side; the paired
+#                       fracture at @kintsugi will sit process-side),
+#                      [[architecture-lift-as-load-bearing]] (the
+#                       property's decidability rests on landed
+#                       tool_id + tool_invocation + tool_result
+#                       carriers at @tool family-root),
+#                      [[feedback-no-bare-types]] (conjuncts predicate
+#                       over typed species carriers, not stringly-
+#                       compared species names),
+#                      [[feedback-no-rust-extension-shortcut]]
+#                       (conjunct 2 is the direct grep-audit of THIS
+#                       HARD RULE at cross-species altitude — every
+#                       @tool species discharges through @io; NO Rust
+#                       extension authorship this tick),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (grep 2026-07-18 this tick confirmed no
+#                       `tool_species_stagefreight` precedent; the
+#                       ninth-instance naming follows the eight prior
+#                       instances' substrate-decl vocabulary).
+# Related shards: shards/tool.mirror (family-root; conjuncts 3-5
+#                  predicate over carriers landed here),
+#                 shards/tool/cargo.mirror + shards/tool/git.mirror +
+#                 shards/tool/nix.mirror (three species from earlier
+#                  in this session; all six species this property
+#                  ranges over),
+#                 shards/tool/go.mirror + shards/tool/docker.mirror +
+#                 shards/tool/gitlab_ci.mirror (three species minted
+#                  this tick; StageFreight-delivery-specific range),
+#                 shards/cascade/code/rust/go.mirror (adjacent
+#                  species; @cascade family-root NOT @tool; composes
+#                  at empirical-firing altitude per StageFreight
+#                  spec §5 composition graph),
+#                 shards/epistemologic/property/restart_intensity_
+#                  well_formed.mirror (sibling in @epistemologic/
+#                  property; fourth instance whose docblock shape
+#                  THIS property mirrors — same conjunct discipline,
+#                  same Rice-safety framing, same RED discipline
+#                  before empirical discharge),
+#                 shards/epistemologic/property/verdict_is_content_
+#                  addressed.mirror (sibling; conjunct 5 composes
+#                  over this sibling's content-addressed-verdict
+#                  discipline at witness altitude).
+# Path-namespace property: this file at
+# `shards/epistemologic/property/tool_species_stagefreight_
+# witnessed.mirror` declares
+# `@epistemologic/property/tool_species_stagefreight_witnessed`
+# per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming/floyd-hoare-1969
+source @arxiv/testing/beck-2002-tdd
+
+prism @epistemologic/property/tool_species_stagefreight_witnessed {
+  focus tool_species_witness
+  project tool_species_witness
+  split tool_species_witness
+  shift tool_species_witness
+  settle tool_species_witness
+}
+
+# ============================================================
+# §2 Sub-predicates (the five conjuncts)
+# ============================================================
+
+# === tool_invocation_admissible_inherited ===
+#
+# Verdict that the species' composed bilateral
+# `<species>_invocation_well_formed` includes the family-root
+# `tool_invocation_admissible` requires-clause.
+#
+# Splinter-pole: `requires tool_invocation_admissible(invocation,
+# invocation, p)` clause present in species' composed bilateral.
+# Narcissus-pole: species composes without inheriting family-root
+# admissibility gate; @tool/X.<action>_well_formed does not
+# require the family-root check → species-level admissibility
+# claim MAY drift from family-root discipline.
+tool_invocation_admissible_inherited(species: tool_id, p: perturbation)
+  -> verdict { \ }
+
+# === discharge_through_io ===
+#
+# Verdict that the species' exec action dispatches through @io.
+# <action> at mechanism altitude and does NOT author its own
+# subprocess spawn primitive.
+#
+# Splinter-pole: species docblock declares "dispatches ─▶ @io.
+# <action>" composition direction; no `.rs` extension file authored
+# under `shards/**` for this species this tick; [substrate-floor:
+# @io-boundary] marker discipline honored.
+# Narcissus-pole: species authors its own subprocess spawn;
+# species extends Rust extension directly for dispatch; HARD RULE
+# `feedback_no_rust_extension_shortcut` violated.
+discharge_through_io(species: tool_id, p: perturbation)
+  -> verdict { \ }
+
+# === fate_biased_execute ===
+#
+# Verdict that the species' exec dispatch is selectable by Fate at
+# @roomba walker altitude — the species' `tool_id` variant tag IS
+# present in @tool family-root's tool_id closed variant enumeration.
+#
+# Splinter-pole: species' tool_id tag present in `shards/tool.
+# mirror` :185-199 tool_id variant enumeration; @roomba can emit
+# `@tool(<tag>, args)` for this species; Fate can bias dispatch
+# ordering per closure §7.3 empirical firing surface 4.
+# Narcissus-pole: species tool_id absent from family-root variant
+# enumeration → @roomba cannot dispatch → Fate cannot bias →
+# empirical firing surface 4 broken at this species.
+fate_biased_execute(species: tool_id, p: perturbation)
+  -> verdict { \ }
+
+# === tool_invocation_signed_at_alex_root ===
+#
+# Verdict that every discharged tool_invocation carries a
+# signature field resolvable through the @trust chain terminating
+# at @alex root.
+#
+# Splinter-pole: tool_invocation.signature field present at family-
+# root altitude (SUBSTRATE-DECL'd); species inherit the field; when
+# @trust family-root lands (Mara next tick), the signature field
+# resolves through the chain; @alex root terminates the chain per
+# StageFreight spec §6 PR delivery structure.
+# Narcissus-pole: signature field missing; @trust chain absent;
+# @alex root not terminating; PR delivery cannot be signed per
+# StageFreight commitment to Marcus.
+#
+# NOTE: this conjunct is DEFERRED-RED until @trust family-root
+# lands next Mara tick. The signature FIELD is present at family-
+# root altitude this tick; the CHAIN discharge is forward-promised.
+tool_invocation_signed_at_alex_root(species: tool_id, p: perturbation)
+  -> verdict { \ }
+
+# === tool_result_witnessed_content_addressed ===
+#
+# Verdict that every tool_result carries a witness field whose OID
+# round-trips through @mirror/store per @kintsugi/roomba's content-
+# addressed run-provenance discipline.
+#
+# Splinter-pole: tool_result.witness field present at family-root
+# altitude; witness carries a witnessed_run per @kintsugi/roomba;
+# witness OID resolves via `mirror recall <oid>`; composes with
+# family-root's `tool_result_witnessed` bilateral (shards/tool.
+# mirror :348).
+# Narcissus-pole: witness field is bare `ref` with no provenance
+# chain; witness OID does not round-trip through @mirror/store;
+# tool_result claimed without witness backing.
+tool_result_witnessed_content_addressed(species: tool_id, p: perturbation)
+  -> verdict { \ }
+
+# ============================================================
+# §3 The composed property
+# ============================================================
+
+# === witnessed composed bilateral ===
+#
+# THE LOAD-BEARING composed predicate. Returns verdict that the
+# @tool species IS StageFreight-witnessed — all five sub-conjuncts
+# hold at substrate-decl altitude (with conjunct 4 admissible-as-
+# deferred until @trust family-root lands).
+#
+# Body discharges at the realisation boundary; the @kintsugi loop's
+# active_pass reads this predicate during Reed's Arc 3 empirical
+# firing tick. The operational half (the fracture body that emits
+# a widen/raise/surface morphism when this predicate fails) is
+# forward-promised to Reed's Arc 3 territory.
+#
+# Verdict semantics:
+#   success            — all five conjuncts hold (or conjunct 4
+#                        admissibly-deferred per @trust forward-
+#                        promise); species is StageFreight-witnessed;
+#                        empirical firing may proceed.
+#   failure(opacity_map)
+#                      — at least one conjunct fails; the opacity_map
+#                        names the offending conjunct (and, for
+#                        conjunct 2, the specific `.rs` extension
+#                        file that violated the HARD RULE). The
+#                        paired fracture body reads one opacity at
+#                        a time; conjunct-2 failures ROLL BACK to
+#                        the @tool species altitude and refuse the
+#                        landing per Seam Phase D audit discipline.
+bilateral tool_species_stagefreight_witnessed {
+  sentinel "property=tool-species-admissible-io-fate-signed-witnessed"
+  arity 5
+}
+tool_species_stagefreight_witnessed(species: tool_id, p: perturbation)
+  -> verdict
+requires tool_invocation_admissible_inherited(species, p)
+requires discharge_through_io(species, p)
+requires fate_biased_execute(species, p)
+requires tool_result_witnessed_content_addressed(species, p)
+{ \ }
+
+# ============================================================
+# §4 Forward-promised
+# ============================================================
+#
+# 1. Conjunct 4 (`tool_invocation_signed_at_alex_root`) requires-
+#    clause promotion — currently omitted from the composed
+#    predicate's requires-list because @trust family-root has not
+#    landed. NEXT MARA TICK: @trust lands; the requires-clause
+#    inserts here without shape change.
+# 2. Operational fracture pair — `@kintsugi/fracture/tool_species_
+#    stagefreight_broken` OR `@kintsugi/fracture/tool_species_
+#    unwitnessed` (naming decision at Reed Arc 3 tick). Emits
+#    widen/raise/surface morphisms per compiler-error-surface §8
+#    three-mode algebra when this property fails at empirical
+#    firing altitude.
+# 3. Sixth conjunct forward-promise — `@coherence_rises_after_
+#    dispatch` — the tool_result MUST compose into a peer-graph
+#    @coherence measurement whose Fiedler λ_2 rises after landing
+#    (per StageFreight spec §4.2 step 6). Currently OUT of this
+#    property's substrate-decl range because @coherence measurement
+#    is per-invocation-sequence, not per-species. Composes at
+#    higher altitude in Reed's Arc 3 Tick 13.
+# 4. Cross-arc property — `tool_species_polyglot_witnessed` at
+#    cross-language altitude (per StageFreight recognition candidate
+#    #R-the-compiler-delivers-across-languages). Would range over
+#    (species, cascade_species) pairs; forward-promised at Reed's
+#    Arc 3 Tick 15 landing.
+
+# ============================================================
+# §5 Outbound declarations
+# ============================================================
+
+out @epistemologic/property/tool_species_stagefreight_witnessed
+out tool_invocation_admissible_inherited
+out discharge_through_io
+out fate_biased_execute
+out tool_invocation_signed_at_alex_root
+out tool_result_witnessed_content_addressed
+out tool_species_stagefreight_witnessed

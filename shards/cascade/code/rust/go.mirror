@@ -1,0 +1,574 @@
+in @prism
+in @meta
+in @glass
+in @cascade
+in @labeled
+in @code/rust
+
+# @cascade/code/rust/go — the Rust → Go cascade species.
+#
+# Path naming: per Alex 2026-06-23 directive — cascade species
+# shards group by `@cascade/code/<source>/<target>`. Source
+# language (Rust) groups together; targets (llvm, wasm — sibling
+# ticks landed; go — this tick) are leaves.
+#
+# THIS species is the FIFTH cascade-family instance landing under
+# @cascade/code/rust/ + sibling paths. Predecessors:
+# `@cascade/code/rust/llvm` (LANDED, Mara `62d1b1c`),
+# `@cascade/code/rust/wasm` (LANDED, Mara pre-existing),
+# `@cascade/code/gleam/beam`, `@cascade/code/gleam/js`,
+# `@cascade/code/purescript/js`, `@cascade/code/formal/prose`,
+# `@cascade/code/llvm/turing`, `@cascade/code/turing/mirror`.
+#
+# === Q1 first-witness closure — Mara self-ratifies (a) ===
+#
+# Per `docs/specs/2026-07-18-stagefreight-delivery.md` §10 Q1 +
+# §4.1: two candidate species-placements were proposed:
+#
+#   (a) `@cascade/code/rust/go`     — direct Rust → Go species
+#   (b) `@cascade/code/llvm/go`     — Rust → LLVM → Go composed chain
+#
+# **Mara authoring THIS shard = first-witness closure on candidate
+# (a).** Reasoning re-stated at species-decl altitude:
+#
+#   1. Go's runtime is antithetical to LLVM's monomorphized-static
+#      model. Go's GC + goroutines + duck-typed interfaces do NOT
+#      survive LLVM lowering cleanly (unlike Rust → LLVM which
+#      preserves typed SSA; unlike LLVM → Turing which preserves
+#      tape-computation semantics).
+#   2. Loss lens through the LLVM hop would AMPLIFY: Rust → LLVM
+#      already erases lifetimes + generics + macros; then LLVM → Go
+#      would need to REINTRODUCE GC + goroutines from a substrate
+#      where they were never expressed. Net loss lens = source
+#      erasure + target reintroduction; measuring both hops is
+#      substrate-dishonest counting.
+#   3. Direct Rust → Go species measures the target grammar's
+#      features (GC, goroutines, duck-typed interfaces, packages
+#      not modules, defer, panic/recover) as loss against the
+#      source grammar's typed features (lifetimes, generics, traits,
+#      Result<T,E>, ?) ONCE. Simpler; more honest; single-species
+#      cost.
+#
+# The substrate-decl authorship of THIS shard IS the first-witness
+# closure Alex ratifies (or redirects, later, if Alex reads the
+# landing and disagrees; the substrate is honest that Q1 was self-
+# adjudicated in-tick). Direct-transcript signal: this shard exists
+# → candidate (a) landed → Q1 closes at candidate strength for
+# future recognition promotion.
+#
+# === substrate-already-had-the-word ===
+#
+# Grep verdict clean at species altitude:
+#   - `@cascade/code/rust/go` DOES NOT EXIST at any altitude.
+#   - `@code/go` DOES NOT EXIST at family-root-species altitude
+#     (would live at `shards/code/go.mirror`; forward-promised
+#     mint).
+#   - Go's `--emit` capability is upstream-canonical; the substrate
+#     does not re-implement Go's compiler.
+#
+# === composition altitude: SOURCE-ADJACENT ===
+#
+# The source altitude is `@code/rust` (LANDED at
+# `shards/code/rust.mirror`). The target altitude is `@code/go`
+# (FORWARD-PROMISED at `shards/code/go.mirror`; this cascade
+# species DECLARES the target-grammar carriers internally as `ref`
+# until the target grammar shard lands). Per the sibling
+# `@cascade/code/rust/llvm` at :193 which declares
+# `llvm_emission_metadata` internally without a separate grammar
+# shard: same discipline holds.
+#
+# === The cascade shape (Rust → Go) ===
+#
+# Source (Rust admits):
+# - lifetimes (ownership tracking; erased at Go handoff)
+# - generics (monomorphized at Rust compile; Go generics via
+#   Go 1.18+ MAY preserve some; net erasure)
+# - trait objects (partial preservation via Go interfaces — DUCK-
+#   TYPED at Go; STATIC-DISPATCHED at Rust; direction of typing
+#   INVERTS across the cascade)
+# - macros (expanded at Rust compile; erased at Go source)
+# - type inference decisions (elaborated at Rust; Go's inference
+#   is weaker; some elaboration lost)
+# - borrow-checker proofs (used to gate emission; erased entirely
+#   at Go source — Go has no borrow checker)
+# - Result<T, E> / Option<T> types (Go uses (T, error) tuples;
+#   erasure of error-in-type-system → error-as-return-value)
+#
+# Target (Go admits per go/spec 2024):
+# - packages (Go's compilation unit; DIFFERENT from Rust crates)
+# - goroutines (concurrency primitive; NO Rust source equivalent;
+#   Go REINTRODUCES a runtime feature not present in source)
+# - GC (Go runtime; NO Rust source equivalent; Go REINTRODUCES)
+# - defer / panic / recover (Go control flow; NO Rust source
+#   equivalent; Go REINTRODUCES)
+# - duck-typed interfaces (Go's interface satisfaction is
+#   structural at compile; Rust's trait satisfaction is nominal;
+#   direction of typing INVERTS)
+# - explicit error returns (Go's (T, error) idiom; erasure of
+#   Rust's Result<T, E> type-system encoding)
+#
+# Per closure spec §4.4 Edge (Rust → Go):
+# - PRESERVED: control flow (structured on both sides), function
+#   signatures (up to generic monomorphization), basic operations,
+#   type identity at monomorphized altitude.
+# - LOST: lifetimes (Go has no borrow discipline), Rust generics
+#   at HIGHER-KINDED altitude (Go generics are simpler kind),
+#   macros (Go has no macro system; go generate is a different
+#   altitude), borrow-checker proofs (entirely absent from Go),
+#   Result<T, E> encoding (Go uses tuple returns).
+# - REINTRODUCED: goroutines, GC, defer/panic/recover, duck-
+#   typed interface satisfaction. THIS is what makes the LLVM
+#   hop dishonest per Q1 reasoning — LLVM has no home for GC
+#   or goroutines, so the intermediate would create phantom
+#   loss on the Rust → LLVM leg and phantom gain on the LLVM →
+#   Go leg. Direct Rust → Go measures BOTH the erasure AND the
+#   reintroduction ONCE against the source.
+#
+# The `loss_lens<@code/rust, @code/go>` measures these gaps
+# against the rustc emission surface + the Go 2024 spec grammar.
+#
+# === StageFreight application ===
+#
+# This cascade species is the LOAD-BEARING bridge for StageFreight
+# delivery per `docs/specs/2026-07-18-stagefreight-delivery.md`
+# §4.1 (Q1 answer this tick). The property-testing pipeline reads:
+#
+#   Rust-authored property spec (mirror substrate)
+#     → @cascade/code/rust/go.apply_rust_go
+#     → Go source (property-test corpus in Go grammar)
+#     → @tool/go(test, [./...]) empirical run
+#     → tool_result signed via @trust
+#     → prismqueer::liquid pillar verdicts
+#     → @butterfly mutation coverage against Go source
+#     → PR to Marcus with bugfixes discovered by the loss lens
+#
+# The loss lens is what SURFACES bugs in Marcus's StageFreight
+# codebase: Rust's typed inference at HIGHER altitude than Go's
+# type system → mirror types `option(T)` non-null where Go tolerates
+# nil-pointer patterns → gap surfaced → candidate bugfix. Every
+# reintroduction gap (goroutine race, unhandled panic, ignored
+# error return) is a candidate coverage gap the @butterfly walker
+# expands.
+#
+# === Recognition ancestry ===
+#
+# - Recognition #95 (@cascade candidate; Mara canonical `ce4874b`,
+#   2026-06-23): THIS species is one of the cascade species
+#   discharging the family-root. Fifth landing under @cascade/code/
+#   rust/ + siblings.
+# - Recognition #93 H4 RESOLVED (labeled<> functor at
+#   `shards/labeled.mirror`): go_artifact uses labeled<> instance
+#   for module + emission metadata (mirror of llvm_artifact shape).
+# - Recognition #51 (mirror as expanding Hilbert space): the
+#   dimension-projection from Rust's typed-feature surface to Go's
+#   simpler-type-system surface is measurable via measure_rust_go.
+# - Recognition candidate #R-the-compiler-delivers-across-
+#   languages (per StageFreight delivery §11): THIS species is
+#   substrate-decl'd first-witness anchor at the cross-language
+#   altitude.
+#
+# === Pre-AI prior art ===
+#
+#   Go spec 2024                Google 2009+; the target grammar
+#                               this species measures against.
+#   rustc / cargo               Rust Project; the source-side
+#                               compilation infrastructure.
+#   Alive2                      Lopes et al. 2021; translation-
+#                               validation research grounding
+#                               per-instruction semantic-preservation
+#                               proofs; the empirical shape the
+#                               loss-lens references (adapted from
+#                               llvm sibling species).
+#   FFI cross-language surveys  substantial pre-AI literature on
+#                               typed → dynamic-runtime cascade
+#                               loss (Purescript→JS, Elm→JS,
+#                               Scala→JVM survey shape from
+#                               Mara `ecc471a`).
+#
+# Spec context: `docs/specs/2026-07-18-stagefreight-delivery.md`
+#               §3 + §4.1 + §10 Q1 (Mara canonical spec);
+#               `docs/specs/2026-07-18-the-compiler-in-one-
+#               sentence.md` §3.4 (parent closure);
+#               `docs/research/2026-06-23-typed-alternatives-
+#               cascade-survey.md` (Mara survey; @cascade/code/rust/
+#               go entry forward-promised).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]] (the
+#                      lift is Go spec 2024 + rustc emission
+#                      contract; NOT re-derived at substrate),
+#                      [[feedback-loss-from-epistemologic-properties]]
+#                      (loss is @epistemologic/properties composite,
+#                      not Shannon, not invented),
+#                      [[feedback-craft-not-deliver]] (every action
+#                      body `\` blocked; FLOOR realisation domain),
+#                      [[feedback-no-rust-extension-shortcut]] (this
+#                      shard composes over sibling cascade species +
+#                      forward @io/go boundary; NO Rust extension
+#                      authored at this species).
+# Related shards: shards/cascade.mirror (the family-root this
+#                 specializes); shards/labeled.mirror (the functor
+#                 primitive go_artifact instance rests on);
+#                 shards/code/rust.mirror (source grammar);
+#                 shards/cascade/code/rust/llvm.mirror (sibling
+#                 with same source; carrier + bilateral pattern
+#                 mirrored here);
+#                 shards/cascade/code/rust/wasm.mirror (sibling
+#                 with same source; second reference for the
+#                 dual-target-cascade pattern per @cascade.mirror
+#                 §"dual-target cascade");
+#                 shards/tool/go.mirror (invocation-altitude
+#                 sibling this tick; @cascade discharges through
+#                 @tool/go at empirical firing).
+# Path-namespace property: this file at
+# `shards/cascade/code/rust/go.mirror` declares
+# `@cascade/code/rust/go` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/programming-languages/rust-2024-edition
+source @arxiv/programming-languages/go-2024-spec
+
+prism @cascade/code/rust/go {
+  focus cascade
+  project cascade
+  split cascade
+  shift cascade
+  settle cascade
+}
+
+# ============================================================
+# §2 The carriers
+# ============================================================
+
+# === rust_source carrier ===
+#
+# Specialization of @cascade.typed_source for source_grammar=rust.
+# References a Rust crate (Cargo.toml + src/*) as the unit of
+# cascade. SHARED SHAPE with the sibling
+# `shards/cascade/code/rust/llvm.mirror` :181 rust_source carrier
+# AND `shards/cascade/code/rust/wasm.mirror` :123 rust_source
+# carrier; intentional triplication at substrate-decl altitude —
+# the property is the same and discharges identically across the
+# three sibling cascades from Rust source.
+#
+# Identity contract: byte-equality on the source-tree content hash.
+type rust_source = ref
+
+# === go_source carrier ===
+#
+# Specialization of @cascade.compiled_artifact for target_grammar=go.
+# The .go file(s) + go.mod + go.sum produced from the cascade.
+# Substrate-decl'd here inline because `@code/go` is forward-
+# promised (would live at `shards/code/go.mirror`). Per the sibling
+# `@cascade/code/rust/llvm` :193 `llvm_emission_metadata` carrier
+# declared inline without target-grammar-shard prerequisite.
+#
+# Identity contract: byte-equality on the go source-tree content
+# hash (module_path + package tree + go.mod content).
+type go_source = ref
+
+# === go_emission_metadata carrier ===
+#
+# Structured carrier for the Rust → Go emission shape: Go version
+# target (1.22, 1.23, 1.24, ...), Go workspace mode (single-module
+# vs multi-module workspace), build tags, cgo-enabled flag,
+# generics-preservation strategy (monomorphized-eager vs type-
+# parameter-preserved), error-encoding convention (naked-return
+# vs errors.Wrap-style vs multierr).
+#
+# Identity contract: byte-equality on the underlying ref.
+type go_emission_metadata = ref
+
+# === go_artifact carrier ===
+#
+# The @labeled<> instance per recognition #93 H4 (mirror of
+# `@cascade/code/rust/llvm` :208 `llvm_artifact` shape). A
+# go_artifact IS a go_source annotated with go_emission_metadata
+# via the labeled functor. Substrate-architecturally load-bearing:
+# the source module's typed identity is preserved (via labeled
+# parametricity per Wadler 1989 / Reynolds 1983) while the
+# emission-context dimension is added. `unlabel(artifact)` returns
+# the go_source; `label_of(artifact)` returns the metadata.
+#
+# Identity contract: byte-equality on the (source, metadata) pair
+# (inherited from @labeled).
+type go_artifact = labeled(go_source, go_emission_metadata)
+
+# ============================================================
+# §3 The actions
+# ============================================================
+
+# === apply_rust_go action ===
+#
+# THE LOAD-BEARING ACTION. Specialization of @cascade.compile for
+# the Rust → Go functor. Takes a rust_source; returns the
+# go_source.
+#
+# Realisation shells to a rustc-based typed-inference pass PLUS a
+# substrate-authored Go emitter at the @io boundary. Substrate-
+# authored because Rust's typed inference does NOT emit Go natively
+# (unlike LLVM IR emission via `--emit=llvm-ir` which is upstream-
+# canonical). The Go emitter reads mirror-substrate typing decisions
+# and dispatches at the @io boundary as `go source generation from
+# typed mirror IR`.
+#
+# FLOOR realisation dispatched under `[substrate-floor:@io-boundary]`
+# per HARD RULE `feedback_no_rust_extension_shortcut`: the Go
+# emitter body composes via shard body + @io boundary; no new
+# Rust extension authored beyond the FLOOR trait discharge.
+#
+# Per Q1 first-witness closure (Mara this tick): the direct cascade
+# is the substrate-honest path; the LLVM detour would AMPLIFY loss.
+#
+# requires rust_well_typed(source, p): the substrate forecloses
+# emission against Rust type errors. rustc's typer runs the same
+# discipline for Go emission as for LLVM / WASM emission; the
+# bilateral verdict reflects what rustc reports. (SHARED bilateral
+# shape with the sibling cascade species per closure §4.4 Edge
+# convention.)
+#
+# Body discharges at the FLOOR boundary.
+apply_rust_go(source: rust_source, p: perturbation) -> go_source
+requires rust_well_typed(source, p)
+{ \ }
+
+# === bundle_go action ===
+#
+# Wraps a `go_source` + `go_emission_metadata` into a `go_artifact`
+# via @labeled.label construction. The typed source gets the
+# emission-context dimension added without losing the underlying
+# source identity.
+#
+# requires go_emission_coherent(source, metadata, p): bilateral
+# commitment that the (source, metadata) pair coheres at the
+# emission altitude — Go version target matches emitted syntax;
+# generics-preservation-strategy consistent with monomorphization
+# depth in the source; error-encoding convention consistent across
+# the emitted package.
+#
+# Body discharges at the FLOOR boundary.
+bundle_go(source: go_source, metadata: go_emission_metadata, p: perturbation)
+  -> go_artifact
+requires go_emission_coherent(source, metadata, p)
+{ \ }
+
+# === measure_rust_go action ===
+#
+# Specialization of @cascade.measure for the Rust → Go cascade.
+# Returns substrate-typed measurement of information loss between
+# rust_source's typing/lifetime/generic/macro/borrow-checker
+# discipline and go_artifact's simpler-type-system-with-runtime-
+# reintroduction structure.
+#
+# Returns `imperfect<go_artifact, ref, information_loss>` — the
+# loss slot carries measured loss as substrate-typed data, NOT
+# Shannon, NOT estimation; the composite of @epistemologic/
+# properties per [[feedback-loss-from-epistemologic-properties]].
+#
+# The measurement IS substrate-architectural: read source's
+# typing-discipline use (lifetime-annotation sites, generic
+# parameter count, macro-invocation count, trait-object usage,
+# borrow-checker proof density, Result/Option encoding count);
+# read artifact's Go source structure (package graph, goroutine-
+# spawn count, interface-satisfaction count, defer/panic/recover
+# usage count, tuple-error-return convention density); compute
+# the dimension gap per closure §4.4 Edge (Rust → Go).
+#
+# The Go side carries BOTH erasure AND reintroduction; the loss
+# lens measures both against the source ONCE (per Q1 reasoning:
+# no LLVM hop double-counting).
+#
+# requires rust_go_loss_well_defined(source, artifact, p):
+# bilateral that the measurement IS computable; the (source,
+# artifact) pair must be a genuine cascade discharge (mirror's
+# Rust → Go emitter produced THIS artifact from THIS source).
+#
+# Body discharges at the FLOOR boundary.
+measure_rust_go(source: rust_source, artifact: go_artifact, p: perturbation)
+  -> imperfect(go_artifact, ref, information_loss)
+requires rust_go_loss_well_defined(source, artifact, p)
+{ \ }
+
+# ============================================================
+# §4 The bilaterals
+# ============================================================
+
+# === rust_well_typed bilateral ===
+#
+# Source-side typing-discipline bilateral. Specializes the family-
+# root's grammar_coherent at source_grammar=rust. SHARED shape
+# with the sibling `shards/cascade/code/rust/llvm.mirror` :303
+# rust_well_typed bilateral AND `shards/cascade/code/rust/wasm.
+# mirror` :218 rust_well_typed bilateral; intentional triplication
+# at substrate-decl altitude — the property discharges identically
+# regardless of downstream target choice (rustc's typer runs the
+# same discipline for llvm and wasm and go emission).
+#
+# Splinter-pole: source passes rustc typecheck; borrow checker
+# clears; trait bounds satisfied; monomorphization succeeds.
+# Narcissus-pole: type errors OR lifetime errors OR unsatisfied
+# trait bounds OR monomorphization failures. Emission cannot
+# proceed.
+rust_well_typed(source: rust_source, p: perturbation) -> verdict { \ }
+
+# === go_emission_coherent bilateral ===
+#
+# Target-side emission-well-formedness bilateral. Commitment that
+# the (source, metadata) pair coheres at Go emission altitude.
+#
+# Splinter-pole: Go version target matches emitted syntax; emitted
+# generics use consistent monomorphization strategy per metadata;
+# error-encoding convention uniform across emitted package;
+# emitted source passes `go vet` + `go build`.
+# Narcissus-pole: version target / syntax mismatch; generics
+# strategy drifts within a single emission; error-encoding
+# convention inconsistent; emitted source fails `go vet` or
+# `go build`.
+bilateral go_emission_coherent {
+  sentinel "emission=go-version-syntax-generics-errors-coherent"
+  arity 2
+}
+go_emission_coherent(source: go_source, metadata: go_emission_metadata, p: perturbation)
+  -> verdict { \ }
+
+# === rust_go_loss_well_defined bilateral ===
+#
+# Specializes the family-root's loss_well_defined for this
+# cascade. Commitment that the substrate-typed gap calculation IS
+# computable for the (source, artifact) pair; the source IS in
+# @code/rust grammar, the artifact's go_source IS in @code/go
+# grammar (forward-promised shard; grammar validated via `go vet`
+# at @io boundary in the interim), and the pair represents a
+# valid cascade discharge (mirror's Rust → Go emitter produced
+# THIS artifact from THIS source).
+#
+# Splinter-pole: cascade-pair coherent; measurement well-defined;
+# gap dimensions dischargeable per @epistemologic/properties
+# composite.
+# Narcissus-pole: source/artifact grammar mismatch OR pair does
+# not represent a genuine cascade discharge; measurement
+# undefined.
+bilateral rust_go_loss_well_defined {
+  sentinel "cascade=source-artifact-pair-discharge-witnessed"
+  arity 2
+}
+rust_go_loss_well_defined(source: rust_source, artifact: go_artifact, p: perturbation)
+  -> verdict { \ }
+
+# === cascade_rust_go_preserves_semantics bilateral ===
+#
+# THE LOAD-BEARING composed bilateral for THIS species. Witnesses
+# that the Rust → Go cascade preserves runtime semantics per Go's
+# translation guarantees (per closure §7 admissibility proof-
+# sketch; Church-Turing grounding).
+#
+# Splinter-pole: Go source discharges the SAME runtime semantics
+# as the Rust source per mirror's emission contract; loss is
+# bounded to source-level dimensions (lifetimes / borrow proofs /
+# Rust-generics-higher-kinds) plus target-level reintroductions
+# (goroutines / GC / defer_panic_recover / duck-typed interfaces);
+# runnable execution preserves observable behaviour up to the
+# reintroduction axis (goroutines can introduce nondeterminism the
+# source did not admit — this is measured, not hidden).
+# Narcissus-pole: cascade drifts runtime semantics (mirror emitter
+# bug; Go GC introduces observation the source assumed absent;
+# UB-triggering pattern introduced at Go emission); observable
+# behaviour diverges between source and artifact in ways NOT
+# accounted for by the reintroduction axis.
+#
+# Sentinel `cascade=preserves-runnable-semantics-modulo-
+# reintroduction` per Mara `701828a` §1 byte-containment: content-
+# addressed check on the cascade-pair OID vs the preservation-
+# witness invariant. Rice-safe per Mara `701828a` — the CHECK is
+# byte-level; the underlying question (full semantic equivalence
+# across the goroutine-nondeterminism boundary) is undecidable
+# but the substrate discharges the sentinel-match at content-
+# addressed altitude modulo the reintroduction-axis annotation.
+bilateral cascade_rust_go_preserves_semantics {
+  sentinel "cascade=preserves-runnable-semantics-modulo-reintroduction"
+  arity 1
+}
+cascade_rust_go_preserves_semantics(cascade_outcome: go_artifact) -> verdict { \ }
+
+# === rust_go_cascade_well_formed composed bilateral ===
+#
+# Specialization of @cascade.cascade_well_defined for this cascade
+# instance. Composes the sub-predicates at this altitude per the
+# landed cascade composed-bilateral shape (rust/wasm :268,
+# rust/llvm :420, gleam/beam, etc.).
+#
+# requires rust_well_typed(source, p): source-side typing
+# discipline coherent.
+# requires go_emission_coherent(unlabel(artifact, p),
+# label_of(artifact, p), p): target-side emission well-formed;
+# uses @labeled.unlabel + @labeled.label_of to extract source
+# and metadata from the artifact.
+# requires rust_go_loss_well_defined(source, artifact, p):
+# loss measurement computable.
+# requires cascade_rust_go_preserves_semantics(artifact):
+# runtime-semantics preservation witnessed at cascade altitude
+# (modulo the reintroduction-axis annotation).
+#
+# All four must hold; substrate refuses cascade if source has
+# type errors OR emission incoherent OR loss undefined OR
+# semantics-preservation not witnessed.
+#
+# Splinter-pole: all four discharge; substrate-typed loss
+# returned; cascade admissible per closure §5.3 threshold gate.
+# Narcissus-pole: at least one sub-predicate fails; cascade
+# blocked; @fate re-selects per closure §6.
+bilateral rust_go_cascade_well_formed {
+  sentinel "cascade=all-sub-bilaterals-discharge"
+  arity 2
+}
+rust_go_cascade_well_formed(source: rust_source, artifact: go_artifact, p: perturbation)
+  -> verdict
+requires rust_well_typed(source, p)
+requires go_emission_coherent(unlabel(artifact, p), label_of(artifact, p), p)
+requires rust_go_loss_well_defined(source, artifact, p)
+requires cascade_rust_go_preserves_semantics(artifact)
+{ \ }
+
+# ============================================================
+# §5 Forward-promised
+# ============================================================
+#
+# 1. `@code/go` mint at `shards/code/go.mirror` — the target
+#    grammar family-species this cascade forward-promises. When
+#    landed, `in @code/go` import can replace the inline `ref`
+#    carriers here (mirror of sibling `@cascade/code/rust/llvm`
+#    :7 `in @code/llvm` composition).
+# 2. `@io/go` mint at `shards/io/go.mirror` — the @io mechanism
+#    altitude for Go tool subprocess dispatch. `@tool/go.exec`
+#    (sibling shard this tick) forward-promises this @io species
+#    for the mechanism-side realisation; until landed, dispatch
+#    falls through to `@io.exec("go", ...)` at the generic @io
+#    surface.
+# 3. Per-target-Go-version refinements (@cascade/code/rust/go/
+#    v1_22, @cascade/code/rust/go/v1_23) if per-Go-version emission
+#    contract specialization becomes load-bearing (e.g., generics
+#    preservation strategy varies across Go versions).
+# 4. Cgo-aware cascade — the special case where the emitted Go
+#    source uses cgo to call into Rust FFI; forward-promised at
+#    species-refinement altitude (@cascade/code/rust/go/cgo).
+# 5. Go workspace-mode composition — Go workspaces (Go 1.18+) admit
+#    multi-module coordination via `go.work` file; species-decl'd
+#    carrier `go_workspace_context` forward-promised.
+
+# ============================================================
+# §6 Outbound declarations
+# ============================================================
+
+out @cascade/code/rust/go
+out rust_source
+out go_source
+out go_emission_metadata
+out go_artifact
+out apply_rust_go
+out bundle_go
+out measure_rust_go
+out rust_well_typed
+out go_emission_coherent
+out rust_go_loss_well_defined
+out cascade_rust_go_preserves_semantics
+out rust_go_cascade_well_formed
