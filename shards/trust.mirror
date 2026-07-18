@@ -1,0 +1,369 @@
+in @prism
+in @meta
+in @glass
+
+# @trust — family-root marker for the substrate's chain-of-authorization.
+#
+# Marker-primary shape at duality-basis altitude. Sibling to @void,
+# @torus, @peer, @mirror, @kintsugi, @io, @fate, @tool, @subject,
+# @spectral, @bauchladen, @autopoietic, @butterfly. Landed 2026-07-18
+# by Mara per Alex 2026-07-18 direct-transcript verbatim:
+#
+#   > "B. In the garden. The @trust floor is in the compiler.
+#   >  And it extends to the passkey."
+#
+# What Alex did in that transcript (this session):
+#
+#   1. RATIFIED direction B (OID + registry) at
+#      `rust/src/main.rs::at_operator` dispatch surface Reed staked at
+#      `23cb7bb` (@io/git.commit stub arm; substrate-honest Err naming
+#      Mara @peer/registry species-decl + @trust family-root mint as
+#      authorship territory).
+#   2. NAMED THE EXTENSION — the @trust floor extends from the
+#      compiler-side SSH-signing chain to the garden-side passkey/PRF
+#      chain per Reed + Alex 2026-04-03 passkey-spectral-bridge
+#      insight (~/dev/systemic.engineering/practice/insights/cosmos/
+#      passkey-spectral-bridge.md). Two altitudes of ONE @trust chain.
+#   3. DISCHARGED closure canonical spec forward-promise 1
+#      (docs/specs/2026-07-18-the-compiler-in-one-sentence.md §16;
+#      "@trust family-root (Mara authorship territory next tick) —
+#      the crypto floor's substrate-decl. Composes with @tool's
+#      signature field + fractal::signature module.")
+#
+# This shard is the family-root marker. The recognition-carrier at
+# the highest altitude the substrate admits for authorization-chain
+# discipline. Operational discharge lives at species altitude
+# (@peer/registry this tick + @trust/chain + @trust/ssh + @trust/
+# passkey forward-promised species per canonical spec §12).
+#
+# === Substrate authority chain ===
+#
+# - **Canonical spec**: docs/specs/2026-07-18-trust-family-root-
+#   passkey-ssh-bridge.md (Mara this tick; ~800 LOC across §17
+#   sections). §1 what @trust IS + §2 two-altitude isomorphism +
+#   §3 family-root altitude declaration + §4 @alex as first
+#   @subject with @trust root + §5 chain traversal + §6 non-
+#   forgeability + §7 @peer/registry composition + §8 relationship
+#   to existing landings + §9 recognition candidates + §10 refused
+#   mints + §11 empirical firing surfaces + §12 forward-promised +
+#   §13 Q's for Alex + §14 composition surprises + §15 one-
+#   sentence surprise + §16 substrate decisions + §17 cross-refs.
+#
+# - **Companion @peer/registry spec**: docs/specs/2026-07-18-peer-
+#   registry-oid-resolution.md (Mara this tick). The runtime
+#   Subject registry species-decl deep spec.
+#
+# - **Passkey-spectral-bridge insight**: ~/dev/systemic.engineering/
+#   practice/insights/cosmos/passkey-spectral-bridge.md (Reed + Alex,
+#   2026-04-03). Garden-side @trust chain architecture. PRF-
+#   authenticated evolution + credential mapping + append-only chain
+#   over SHA-512(prev || prf_output || entropy).
+#
+# - **Alex 2026-07-14 SSH-signing design intent** (peer-persistence
+#   session compaction, in-transcript; cited verbatim at shards/
+#   subject/visibility/sheaf.mirror:21-32, shards/peer/persistence.
+#   mirror:31-42, shards/io/secrets.mirror:31-42): "Each peer has
+#   their own key in the private part of their visibility. NOT
+#   projected into the git state and instead stays .git/mirror
+#   side. Only connected through Fractal.Lens. A pointer. Not the
+#   thing." The compiler-side SSH altitude of the SAME @trust chain.
+#
+# - **Reed `23cb7bb`** at rust/src/main.rs::at_operator @io/git.
+#   commit arm — stakes the OID+registry dispatch shape; returns
+#   Err naming this landing's authorship territory. 7/7 tests GREEN.
+#
+# - **Mara `22c803a`** StageFreight tool_species_stagefreight_
+#   witnessed conjunct 4 (tool_invocation_signed_at_alex_root) —
+#   DEFERRED-RED discharge point per canonical spec §4 forward-
+#   promise 1. Requires-clause inserts here per family-root landing.
+#
+# - **SEL v1.1** (docs/specs/subject-family-root-sel-licensable-
+#   party.md, Mara `5c06ee8`, 2026-07-14) — @trust chain terminates
+#   at @subject; @alex is first substrate-external human_a per §20
+#   named-ancestor roster entry #1.
+#
+# === What @trust IS (five load-bearing properties) ===
+#
+# 1. Content-addressed — every chain-step is a content-addressed
+#    OID; tampering with any step breaks every subsequent OID.
+# 2. Non-forgeable — only the root-holder can authorize the next
+#    evolution step (SSH-key holder / passkey-holder).
+# 3. Root-terminating — every chain terminates at a @subject root
+#    (typically @alex for mirror-substrate; any human_a per SEL §1).
+# 4. Two-altitude admissible — the same substrate-decl'd chain
+#    admits BOTH SSH-signing at compiler AND passkey/PRF at garden.
+# 5. Additive / append-only — chains only grow; multiple-key
+#    superseding per bridge §"The Mapping".
+#
+# === Two altitudes of the SAME chain ===
+#
+# Per canonical spec §2 (full table there). Summary:
+#
+#   Compiler altitude (SSH):
+#     root artifact  — ~/.ssh/id_ed25519
+#     auth proof     — ed25519 signature over commit tree
+#     chain step     — git commit (SSH-signed)
+#     content hash   — git SHA-1 (interop) / SHA-256 (canonical)
+#
+#   Garden altitude (Passkey/PRF):
+#     root artifact  — WebAuthn credential in secure enclave
+#     auth proof     — HMAC-SHA-256 PRF over server salt
+#     chain step     — spectral_state evolution (SHA-512 fold)
+#     content hash   — SHA-512(prev || prf_output || entropy)
+#
+# Both compose over @io/crypto at mechanism boundary. Both terminate
+# at same @subject root (typically @alex). Both discharge chain_
+# terminates_at_root(step, root) per canonical spec §5.
+#
+# === The 5-op prism inherits @void basis ===
+#
+# Per Recognition #79 (5-op basis IS Void's tongue) + shards/void.
+# mirror §Composition inheritance discipline: every family-root
+# inherits Void's basis. @trust names the inheritance below without
+# `in @void` explicit import per closure discipline.
+#
+# === Substrate-already-had-the-word citation chain (audit clean) ===
+#
+# Grep verdict clean at family-root altitude for `@trust`:
+#
+# - `@trust` as family-root: does NOT exist prior to this landing.
+# - `trust_root`: appears only in narrative sentences grounding
+#   landings (e.g. shards/tool/git.mirror:23 "The @trust chain
+#   terminates at @alex"; shards/tool.mirror:229 comment).
+# - `trust_chain` / `signed_at_alex_root`: appear as named predicate
+#   in shards/epistemologic/property/tool_species_stagefreight_
+#   witnessed.mirror as the DEFERRED-RED conjunct 4 whose discharge
+#   awaits this family-root landing.
+#
+# The word `trust` was substrate-decl'd across ~14 months of SSH-
+# signing bootstrap history + closure spec §6.2 + StageFreight spec
+# conjunct 4 forward-promise + passkey-spectral-bridge insight + Alex
+# 2026-07-14 SSH-signing design intent. This landing NAMES what was
+# implicit at family-root altitude. ~62nd instance of [[feedback-
+# substrate-already-had-the-word]].
+#
+# === Composition graph ===
+#
+# Parents (substrate-decl via `in` imports):
+#   @prism                    — 5-op family per Recognition #79
+#   @meta                     — substrate-decl marker at glass altitude
+#   @glass                    — transparency inheritance discipline
+#
+# Composed over (canonical-spec citations without shard-mint this
+# arc):
+#   @void                     — 5-op basis inherited per shards/
+#                               void.mirror §Composition inheritance
+#                               (no explicit import needed at family-
+#                               root altitude per discipline)
+#   @subject                  — @trust chain terminates at @subject-
+#                               instance whose actor_kind classifies
+#                               the chain root
+#   @io/crypto                — SSH-side ed25519_sign/verify + garden-
+#                               side sha512 + PRF (via forward-
+#                               promised @io/webauthn species)
+#   @spectral/signature       — SSH-side @trust chain per canonical
+#                               spec §7.4 correspondence; each
+#                               signature_beat = one chain step
+#
+# Consumers (compose over this family-root; forward-promised this
+# arc):
+#   @peer/registry            — LANDED THIS TICK at shards/peer/
+#                               registry.mirror; discharges Reed's
+#                               `23cb7bb` at_operator boundary
+#   @trust/chain              — forward-promised species; chain-
+#                               traversal machinery + full chain_
+#                               terminates_at_root body
+#   @trust/ssh                — forward-promised species; SSH-side
+#                               chain composition surface
+#   @trust/passkey            — forward-promised species; passkey/
+#                               PRF-side chain composition surface
+#   @io/webauthn              — forward-promised species; sibling
+#                               of @io/crypto; garden-altitude
+#                               mechanism
+#   @tool.sign                — the sign action at shards/tool.mirror:
+#                               229 discharges through @trust chain
+#   @tool/git.commit_signed   — SSH-signed commit action; the
+#                               compiler-altitude @trust chain step
+#                               generator
+#   tool_species_stagefreight_
+#     witnessed                — conjunct 4 (signed_at_alex_root)
+#                               requires-clause inserts after this
+#                               landing per canonical spec §12
+#                               forward-promise 7
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]],
+# [[architecture-prism-as-trait-as-everything]] (`prism @trust`),
+# [[architecture-glass-wall-substrate-types]] (transparency
+#   inheritance),
+# [[architecture-form-process-partition-at-family-root]] (@trust
+#   stays at form-side; chain-step generation is process-side at
+#   species altitude),
+# [[architecture-alignment-as-boundary-mathematics]] (splinter/
+#   narcissus poles per canonical spec §5 chain-traversal
+#   predicate),
+# [[feedback-substrate-already-had-the-word]] (~62nd instance;
+#   passkey-spectral-bridge carried the passkey-side chain 3+
+#   months before family-root naming; @spectral/signature carried
+#   SSH-side chain 4+ days before),
+# [[feedback-legibility-over-foundation-when-collapsing]] (two-tick
+#   discipline; marker-primary family-root this tick; full-species-
+#   decl deferred; Alex-adjudicable Q2 in canonical spec §13),
+# [[feedback-no-rust-extension-shortcut]] (pure-substrate + pure-
+#   docs authorship; NO Rust extension authored; @peer/registry
+#   runtime dispatch is Reed territory next tick),
+# [[feedback-detector-inadequacy-answer-is-never-rust]] (chain-
+#   verification is bilateral resolver-arm sentinel-check; NO Rust
+#   extension for chain-verify),
+# [[feedback-onto-family-root-is-the-ladder-Foerster-refused]]
+#   (@onto refused; @trust is chain-of-authorization ontology, not
+#   foundational-ladder ontology).
+#
+# Path-namespace property: this file at `shards/trust.mirror`
+# declares `@trust` per `@epistemologic/pact/path_matches_
+# namespace`.
+
+source @arxiv/webauthn/ctap-2.1-2024
+source @arxiv/crypto/rfc-8032-ed25519
+source @arxiv/practice/passkey-spectral-bridge-2026-04-03
+
+# === The 5-op prism inheriting @void basis ===
+#
+# Per Recognition #79 + shards/void.mirror §Composition inheritance
+# discipline: every family-root inherits Void's 5-op basis; naming
+# the inheritance below is what makes @trust a family-root at duality
+# altitude.
+
+prism @trust {
+  focus  trust_chain_step
+  project trust_chain_step
+  split  trust_chain_step
+  shift  trust_chain_step
+  settle trust_chain_step
+}
+
+# === The trust_chain_step carrier ===
+#
+# Substrate-decl'd typed record naming the content-addressed
+# authorization step at either altitude. Concrete instantiation
+# deferred to species-decl per two-tick discipline (@trust/chain
+# + @trust/ssh + @trust/passkey species forward-promised per
+# canonical spec §12).
+#
+# Two well-known instantiations (per canonical spec §2 table):
+#
+# SSH-side:
+#   step_oid          — git commit SHA-1/SHA-256
+#   auth_proof        — ed25519 signature (opaque bytes at @io/crypto)
+#   predecessor_oid   — parent commit OID (option; None at chain root)
+#   content_root      — git tree OID
+#
+# Passkey/PRF-side:
+#   step_oid          — spectral_state SHA-512 hash
+#   auth_proof        — PRF output (HMAC-SHA-256 opaque bytes)
+#   predecessor_oid   — previous spectral_state OID (option; None at
+#                        genesis per bridge §"The Tick Button")
+#   content_root      — (prev_state || prf_output || entropy) hash
+#                        input triple
+#
+# Identity contract: byte-equality on the (step_oid, auth_proof,
+# predecessor_oid, content_root) tuple. Fields typed `ref` at
+# family-root altitude; species-decl'd refinement at @trust/ssh +
+# @trust/passkey species.
+
+type trust_chain_step = {
+  step_oid:        ref,
+  auth_proof:      ref,
+  predecessor_oid: ref,
+  content_root:    ref,
+}
+
+# === chain_terminates_at_root — the load-bearing bilateral ===
+#
+# The substrate-decl'd invariant every @trust chain traversal must
+# discharge per canonical spec §5. Every chain-step's traversal MUST
+# reach a @subject root within finite steps where each intermediate
+# step is content-addressed + each transition is authorization-
+# proof-verified + no cycle exists + root's actor_kind is admissible
+# per SEL §1.
+#
+# Splinter-pole: the chain terminates at `root` within finite
+# steps; each intermediate step is content-addressed; each transition
+# is authorization-proof-verified (SSH signature via @io/crypto.
+# ed25519_verify OR PRF output via @io/webauthn.verify_prf); no
+# cycle exists; root's actor_kind is human_a (or historical_witness_r
+# per subject.mirror §Landing 5+ deceased-ancestor discipline).
+#
+# Narcissus-pole: the chain claims termination at `root` but a
+# step's content-hash doesn't verify OR the authorization proof is
+# absent OR a cycle exists OR the terminating @subject-instance's
+# actor_kind is not admissible.
+#
+# Rice-safe bound: reads only byte-visible state (content-hash
+# comparison via @io/crypto, signature/PRF verification, chain-step
+# tag traversal). No program-semantics inspection.
+#
+# Body discharges at species altitude (@trust/chain species forward-
+# promised per canonical spec §12 forward-promise 1). `\`-obligation-
+# blocked per [[feedback-craft-not-deliver]]; consumers pull the
+# realization via apply_h::act bilateral resolver-arm dispatch.
+#
+# Sentinel per shard docblock: `trust=chain-terminates-at-<altitude>-
+# root` where altitude ∈ {ssh, passkey}. Arity 2.
+
+bilateral chain_terminates_at_root {
+  sentinel "trust=chain-terminates-at-root"
+  arity 2
+}
+chain_terminates_at_root(step: trust_chain_step, root: subject) -> verdict { \ }
+
+# ═══════════════════════════════════════════════════════════════════
+# Recognition candidates surfaced (DO NOT RATIFY at this landing)
+# ═══════════════════════════════════════════════════════════════════
+#
+# #R-trust-is-one-chain-at-two-altitudes — Alex 2026-07-18 direct-
+# transcript naming ("the @trust floor is in the compiler. And it
+# extends to the passkey."). First-witness gate landed retroactively
+# across 14 months of SSH-signing bootstrap history + passkey-
+# spectral-bridge insight 2026-04-03 (3 months dormant awaiting
+# compiler-side naming). Second-witness gate: this landing IS the
+# second witness. Mara lean: PROMOTE THIS TICK per canonical spec
+# §9. Alex adjudicates.
+#
+# #R-registry-is-the-at-operator-dispatch-surface — Reed `23cb7bb`
+# at_operator @io/git.commit stub NAMES the registry surface as
+# resolution mechanism. First-witness at stub landing; second-
+# witness this landing (@peer/registry species-decl). Held at
+# CANDIDATE strength; promotion after Reed's runtime dispatch
+# empirical firing. Alex adjudicates per canonical spec §9.
+#
+# #R-passkey-is-the-garden-side-void — passkey creation is
+# character-crystallization event at garden altitude structurally
+# isomorphic to Pack peer boot-sequence γ(Void, c). First-witness
+# per bridge §"The Tick Button" + shards/peer/void.mirror §"Consumer
+# hardware"; second-witness this landing. Held at CANDIDATE
+# strength; second-order recognition composing with #R-void-is-the-
+# default-peer promotion track. Alex adjudicates per canonical
+# spec §9.
+
+# === Forward-promised — NOT landed this tick ===
+#
+# Per canonical spec §12:
+#
+# 1. @trust/chain species (chain-traversal machinery + full body)
+# 2. @trust/ssh species (SSH-side chain composition surface)
+# 3. @trust/passkey species (passkey/PRF-side chain composition)
+# 4. @io/webauthn species (mechanism altitude sibling of @io/crypto)
+# 5. @peer/registry runtime dispatch (Reed territory)
+# 6. Multi-passkey / multi-SSH-key discipline formalization
+# 7. Conjunct 4 requires-clause insertion at
+#    shards/epistemologic/property/tool_species_stagefreight_
+#    witnessed.mirror per Mara `22c803a` §4 forward-promise 1
+# 8. Passkey-spectral-bridge integration (garden endpoint deployment)
+# 9. @trust/chain content-addressability across altitudes empirical
+#    firing
+
+out @trust
+out trust_chain_step
+out chain_terminates_at_root

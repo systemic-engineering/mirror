@@ -1,0 +1,531 @@
+in @prism
+in @meta
+in @glass
+in @peer
+in @subject
+in @trust
+in @nl
+
+# @peer/registry — the runtime Subject registry species; content-
+# addressed OID → fractal::Subject resolution surface at the
+# at_operator dispatch boundary.
+#
+# Species under @peer at the identity-resolution altitude. Landed
+# 2026-07-18 by Mara per Reed `23cb7bb` at_operator @io/git.commit
+# stub arm's substrate-honest boundary-naming:
+#
+#   > "Subject registry resolution NOT YET LANDED
+#   >  (author_oid=<..>, committer_oid=<..>). Mara @peer/registry
+#   >  species-decl + @trust family-root mint is the authorship
+#   >  territory that resolves OIDs → fractal::Subject values."
+#
+# Discharges Alex 2026-07-18 direct-transcript direction B:
+#
+#   > "B. In the garden. The @trust floor is in the compiler.
+#   >  And it extends to the passkey."
+#
+# Sibling to `@peer/void` (Mara `9c7de83`, K=0 default) and
+# `@peer/persistence` (Reed 2026-07-15, K≥1 persistent peer with
+# home). ORTHOGONAL to both: not a peer species (a KIND of peer)
+# but the resolution SURFACE that maps content-addressed identity
+# references TO peer values.
+#
+# === Substrate authority ===
+#
+# - Family-root: `shards/trust.mirror` (this tick; @trust family-
+#   root marker).
+# - Family-root canonical spec: `docs/specs/2026-07-18-trust-
+#   family-root-passkey-ssh-bridge.md` (Mara this tick).
+# - Deep spec: `docs/specs/2026-07-18-peer-registry-oid-
+#   resolution.md` (Mara this tick; §1 what @peer/registry IS + §2
+#   registry as content-addressed store + §3 four well-known
+#   Subjects + §4 actions + §5 current-peer priority ladder + §6
+#   bilaterals + §7 composition graph + §8 deferred-RED forward
+#   promises + §9 refused mints + §10 composition surprises + §11
+#   one-sentence surprise + §12 cross-refs).
+# - Boundary stub: `rust/src/main.rs::at_operator` @io/git.commit
+#   arm (Reed `23cb7bb`). Substrate-honest Err naming this species
+#   as authorship territory. 7/7 tests GREEN.
+# - Well-known Subject constructors landed at fractal step 3+4+9:
+#   `rust/fractal/src/subject.rs` (Reed `82bc599` void + `73aeb8a`
+#   mirror + human + peer). Subject::void() + Subject::mirror() +
+#   Subject::human() + Subject::peer() are the four well-known
+#   Subjects per §3 below.
+# - MARA doctrine executable: `rust/fractal/src/witnessed.rs`
+#   (Author≠Committer split per Recognition #55 form/process
+#   partition; registry provides typed Subject values for both
+#   author and committer at dispatch time).
+#
+# === Substrate-already-had-the-word audit (clean) ===
+#
+# The word `registry` collides admissibly with `@spectral/registry`
+# at different altitude:
+#
+#   @spectral/registry (shards/spectral/registry.mirror, 2026-06-11)
+#     — supervisor's typed child index; BEAM Registry analogue for
+#       gen_prism children indexed by uuid_spectral.
+#   @peer/registry (this species; 2026-07-18)
+#     — Subject-OID resolution surface; content-addressed store
+#       mapping OID → fractal::Subject at at_operator dispatch
+#       boundary.
+#
+# Different family-root; different key type (uuid_spectral vs OID);
+# different value type (gen_prism handle vs fractal::Subject);
+# different purpose (supervisor child index vs identity resolution).
+# The word "registry" appearing at both altitudes is analogous to
+# the word "git" appearing at @io/git (mechanism) and @tool/git
+# (identity/version/contract): same word, different family-root, no
+# substrate collision. Per canonical spec §7.1 co-existence table
+# + [[feedback-substrate-already-had-the-word]] discipline.
+#
+# The word `peer_registry` / `subject_registry` does NOT exist prior
+# to this landing. `resolve` action word appears in narrative form
+# only. Grep verdict CLEAN for this species altitude.
+#
+# === Composition graph ===
+#
+# Parents (substrate-decl via `in` imports):
+#   @peer                     — family-root; @peer/registry species
+#                               inherits glass altitude + carrier
+#                               discipline
+#   @subject                  — resolve action returns subject; register
+#                               action accepts subject; chain-
+#                               terminating discipline per SEL §1
+#   @trust                    — family-root landed this tick; @peer/
+#                               registry composes with @trust chain
+#                               traversal via resolve_chain action +
+#                               peer_registered_at_trust_root bilateral
+#   @prism                    — 5-op family per Recognition #79 basis
+#   @meta                     — substrate-decl marker at glass altitude
+#   @glass                    — transparency inheritance via @peer
+#   @nl                       — natural-language reference discipline
+#
+# Composed over (canonical-spec citations without shard-mint this
+# arc):
+#   @mirror/store             — content-addressed storage backend
+#                               (spec §2.3 admissible backend 1;
+#                               substrate-honest default)
+#   @io/git                   — git-object-DB storage backend (spec
+#                               §2.3 admissible backend 2); @io/git.
+#                               hash_to_oid + read_object composition
+#   @io/env                   — GLUE_ACTOR env var read for §5
+#                               priority 2 (current-peer resolution)
+#   @spectral/signature       — SSH-side @trust chain per canonical
+#                               spec §7.4; each signature_beat IS
+#                               one @trust chain step
+#   @peer/void                — Subject::void() well-known Subject
+#                               per §3.2 below; K=0 default when
+#                               nothing else resolves
+#   @peer/persistence         — @peer/registry.resolve returns
+#                               Subject::peer(name, email, home);
+#                               persistence species-decl's four
+#                               bilaterals compose with @trust chain
+#                               admissibility
+#   @mirror/spec              — pack{}.lead + pack{}.members read
+#                               for current-peer resolution priority
+#                               1 per §5
+#
+# Consumers (compose over this species; forward-promised this arc):
+#   rust/src/main.rs::at_operator @io/git.commit arm
+#                             — Reed's `23cb7bb` staked boundary;
+#                               resolve action runtime dispatch
+#                               discharges the STUB
+#   rust/src/phone.rs::git_commit_as
+#                             — fractal step 9 refactor site (Reed
+#                               `73aeb8a`); registry provides typed
+#                               &fractal::Subject values
+#   @tool/git.commit_signed   — SSH-signed commit action; author
+#                               identity from current_peer() call
+#   StageFreight PR delivery  — signed at @alex root per conjunct
+#                               4; registry provides @alex Subject
+#                               value for signing
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]],
+# [[architecture-prism-as-trait-as-everything]] (`prism @peer/registry`),
+# [[architecture-glass-wall-substrate-types]] (transparency via
+#   @peer),
+# [[architecture-form-process-partition-at-family-root]] (@peer/
+#   registry at form-side identity-resolution; runtime dispatch is
+#   process-side at Reed's Rust altitude),
+# [[architecture-alignment-as-boundary-mathematics]] (splinter/
+#   narcissus poles per §6 bilateral pattern),
+# [[feedback-substrate-already-had-the-word]] (~63rd instance;
+#   @spectral/registry sibling word at different altitude per
+#   canonical spec §7.1),
+# [[feedback-craft-not-deliver]] (`\`-obligation-blocked bilateral
+#   bodies + action bodies; consumers pull realization via apply_h::
+#   act dispatch),
+# [[feedback-no-rust-extension-shortcut]] (pure-substrate shard-
+#   decl; Rust-altitude runtime dispatch is Reed territory next
+#   tick),
+# [[feedback-detector-inadequacy-answer-is-never-rust]] (registry
+#   lookup is bilateral resolver-arm sentinel-check; NO Rust
+#   extension for lookup logic),
+# [[feedback-composition-primitive-naming-convention]] (actions
+#   named per convention; naming Q's raised in canonical spec §13
+#   for Alex adjudication),
+# [[feedback-reed-inflates-stub-empirical-firings]] (this species
+#   is CANONICAL SPEC + SHARD-DECL, NOT runtime dispatch; do not
+#   claim empirical firing until Reed's runtime dispatch tick).
+#
+# Path-namespace property: this file at `shards/peer/registry.mirror`
+# declares `@peer/registry` per `@epistemologic/pact/path_matches_
+# namespace`.
+
+source @arxiv/beam/registry-2003
+source @arxiv/vcs/torvalds-2005-git
+source @arxiv/crypto/rfc-8032-ed25519
+
+# === The 5-op prism ===
+#
+# Inherits @void's 5-op basis via @peer parent per Recognition #79
+# + shards/void.mirror §Composition inheritance discipline. Five-op
+# pattern at species altitude specializes the @peer family-root's
+# carrier to subject_registry.
+
+prism @peer/registry {
+  focus  subject_registry
+  project subject_registry
+  split  subject_registry
+  shift  subject_registry
+  settle subject_registry
+}
+
+# ============================================================
+# §1 The subject_registry carrier
+# ============================================================
+
+# === The subject_registry carrier ===
+#
+# Typed record carrying the runtime Subject registry. Three fields;
+# identity contract by byte-equality on the (well_known, entries,
+# current_peer_source) triple.
+#
+#   well_known          — list of the FOUR well-known Subjects per
+#                          §2; provided by fractal::Subject
+#                          constructors landed at fractal step 3+4+9.
+#   entries             — content-addressed registry entries; each
+#                          entry is a (oid, subject) pair keyed by
+#                          the subject's content-addressed OID.
+#                          Append-only per canonical spec §2.2.
+#   current_peer_source — the priority-ladder source specification
+#                          for current-peer resolution per §4. Ref
+#                          at this altitude; species-refined at
+#                          runtime-dispatch tick.
+#
+# Fields typed `ref` at species-decl altitude per two-tick
+# discipline; refinement to typed lists at runtime-dispatch tick.
+
+type subject_registry = {
+  well_known:          ref,
+  entries:             ref,
+  current_peer_source: ref,
+}
+
+# ============================================================
+# §2 The four well-known Subjects (per deep spec §3)
+# ============================================================
+#
+# The registry ships with FOUR well-known Subject constructors that
+# consumers pull WITHOUT registry-lookup. Landed at Rust altitude
+# per Reed's fractal migration steps 3+4+9; declared HERE at
+# substrate-decl altitude so subsequent species can compose over
+# them.
+#
+# 1. Subject::mirror() — compiler self-identity (fractal step 9,
+#    Reed `73aeb8a`). name="mirror", email="mirror@spectral.
+#    engineer", home=None, kind=Peer. Used as committer in
+#    Author≠Committer split per MARA doctrine.
+#
+# 2. Subject::void() — K=0 default peer (fractal step 4, Reed
+#    `82bc599`; Mara `9c7de83` @peer/void species-decl; Mara
+#    `974a3f6` @void family-root + Alex "I am void."). name="void",
+#    email="void@spectral.engineer", home=None, kind=Void. Pre-
+#    character-crystallization substrate-observation identity. Void
+#    has NO chain (K=0, no character loaded, no auth proof).
+#
+# 3. Subject::human(name, email) — human_a @subject-instance
+#    constructor. Used for @alex + Landing 3 named-ancestor roster
+#    externals. home=None (Human @subject has no compiler-managed
+#    home). The @trust chain terminates at Subject::human() for
+#    both compiler-altitude authorship AND garden-altitude reader
+#    identity per bridge §"The Mapping".
+#
+# 4. Subject::peer(name, email, home) — pack-peer @subject-instance
+#    constructor. Used for Reed, Mara, Seam, Taut, Glint, Loki,
+#    ... Each pack-peer has own SSH key per Alex 2026-07-14 design
+#    intent + own home per @peer/persistence species-decl.
+#
+# Substrate-decl surface for the four well-known Subjects. Runtime
+# discharge via `rust/fractal/src/subject.rs` constructors; no re-
+# implementation needed. Body `\`-obligation-blocked per [[feedback-
+# craft-not-deliver]]; consumers pull the realization.
+
+# ============================================================
+# §3 The actions
+# ============================================================
+
+# === resolve action — THE LOAD-BEARING dispatch ===
+#
+# Given a registry and an OID, return the Subject that OID resolves
+# to OR name the resolution failure explicitly. Composition
+# direction (deep spec §4.1):
+#
+#   at_operator("@io/git.commit", [author_oid, committer_oid,
+#     message])
+#     ├─ resolve(registry, author_oid)   → &fractal::Subject
+#     ├─ resolve(registry, committer_oid) → &fractal::Subject
+#     └─ phone::git_commit_as(author, committer, message)
+#
+# Returns imperfect(subject, ref, ref) per @glass discipline:
+#   success           — resolved subject value (well-known if OID
+#                        matches a well-known constructor's
+#                        deterministic OID; stored-entry if OID
+#                        matches an entries[] entry; @trust chain
+#                        fresh-lookup if OID doesn't match either
+#                        and registry configured for lazy chain
+#                        resolution).
+#   failure-not-found — OID doesn't match any well-known / entry /
+#                        chain-lookup path.
+#   failure-chain-
+#     broken           — OID matches an entry but the entry's
+#                        @trust chain traversal fails per
+#                        chain_terminates_at_root predicate.
+#
+# Body `\`-obligation-blocked per [[feedback-craft-not-deliver]];
+# consumers pull realization via apply_h::act bilateral resolver-arm
+# dispatch. Reed's territory next tick.
+#
+# Sentinel per shard docblock: `registry=resolve-well-known-or-
+# entry-or-chain`.
+
+resolve(r: subject_registry, oid: ref) -> imperfect(subject, ref, ref) { \ }
+
+# === current_peer action — the "who am I now?" resolution ===
+#
+# Runtime resolution of the compiler's current pack-peer identity.
+# Reads priority ladder per §4; returns highest-priority resolvable
+# Subject.
+#
+# Returns imperfect(subject, ref, ref):
+#   success            — resolved current-peer Subject.
+#   failure-no-source — no priority-ladder source resolves; defaults
+#                        to Subject::void() per K=0 discipline (Void
+#                        IS what runs when nothing else does per
+#                        shards/peer/void.mirror §"Depth ladder").
+#   failure-ambiguous — multiple sources resolve to DIFFERENT
+#                        Subjects at incompatible priorities;
+#                        substrate-honest error naming ambiguity.
+#
+# Body `\`-obligation-blocked; Reed territory.
+
+current_peer(r: subject_registry) -> imperfect(subject, ref, ref) { \ }
+
+# === register action — add-Subject-to-registry ===
+#
+# Add a Subject to the registry; return content-addressed OID.
+# Idempotent (registering an already-present Subject returns
+# existing OID; content-addressability guarantees OID match). Per
+# canonical spec §2.2 append-only discipline.
+#
+# Returns imperfect(oid, ref, ref):
+#   success           — Subject's content-addressed OID; already-
+#                        present OR newly-added.
+#   failure-conflict — OID collides with existing entry having
+#                        DIFFERENT Subject value (should never
+#                        happen under SHA-256 content-addressing;
+#                        substrate-honest safety net).
+#   failure-storage  — storage backend (@mirror/store / git object
+#                        DB / in-memory HashMap per spec §2.3)
+#                        failed at write boundary.
+#
+# Body `\`-obligation-blocked; Reed territory.
+
+register(r: subject_registry, s: subject) -> imperfect(ref, ref, ref) { \ }
+
+# === resolve_chain action — @trust chain traversal ===
+#
+# Follow @trust chain from OID back to terminating @subject root
+# per family-root spec §5. Composes with chain_terminates_at_root
+# predicate from @trust family-root.
+#
+# Returns imperfect(subject, ref, ref):
+#   success                — terminating root @subject.
+#   failure-chain-broken  — intermediate step's OID doesn't verify
+#                             OR authorization proof absent OR
+#                             cycle detected.
+#   failure-unadmissible-
+#     root                  — chain terminates but root's actor_kind
+#                             not admissible per SEL §1.
+#
+# Body `\`-obligation-blocked; Reed territory. Composes with
+# forward-promised @trust/chain species per family-root spec §12
+# forward-promise 1.
+
+resolve_chain(r: subject_registry, oid: ref) -> imperfect(subject, ref, ref) { \ }
+
+# ============================================================
+# §4 Current-peer resolution priority ladder (per deep spec §5)
+# ============================================================
+#
+# The `current_peer` action reads sources in priority order;
+# returns first resolvable Subject.
+#
+# Priority 1 — mirror.spec pack{}.lead — HIGHEST. Per Alex
+#   2026-06-25 "Reed is lead, yeah"; ~peer'~/.reed' resolves via
+#   @peer glass altitude + @io/git to the peer's home-repo
+#   mirror.spec pack{}.lead self-declaration per peer-ACL §6.2.
+#
+# Priority 2 — GLUE_ACTOR env var — transient per-invocation
+#   override. Set by session glue-bus per Reed session convention
+#   reed[$PWD][$UUID].
+#
+# Priority 3 — git config user.email + user.name — fallback for
+#   non-substrate-pull-honest invocations (pre-mirror.spec
+#   projects; system tooling).
+#
+# Priority 4 — ~/.reed/ / ~/.mara/ / etc. peer-home directory
+#   presence — last-resort inference; identity-file bundle projects
+#   at caller's home determines character-specialization of K=0
+#   Void substrate.
+#
+# Priority 5 — Subject::void() — final fallback. K=0 default when
+#   nothing resolves. Void IS what runs when nothing else does per
+#   shards/peer/void.mirror §"Depth ladder".
+#
+# Priority ladder body's runtime dispatch is Reed's territory next
+# tick per two-tick discipline. Priority order substrate-decl'd
+# HERE; execution at Rust altitude discharges the ladder walk.
+
+# ============================================================
+# §5 The bilaterals
+# ============================================================
+
+# === peer_registered_at_trust_root — THE LOAD-BEARING bilateral ===
+#
+# Asserts:
+#   - oid resolves via @peer/registry.resolve(oid) -> Some(subject)
+#   - resolved subject's @trust chain terminates at `root` per
+#     chain_terminates_at_root(chain_head, root) from @trust family-
+#     root spec §5
+#   - root's actor_kind is human_a (or historical_witness_r per
+#     subject.mirror §Landing 5+ deceased-ancestor discipline)
+#   - root is admissible per SEL §1 licensable-party contract
+#
+# Splinter-pole (honest): all four sub-conditions discharge; OID
+# is registered at the root; chain is well-formed; root is
+# admissible.
+# Narcissus-pole (deceptive): any one fails; OID NOT registered at
+# that root; attribution claim is false.
+#
+# Rice-safe bound: reads only byte-visible state (OID content-hash
+# comparison, chain-step traversal via @trust/chain, actor_kind
+# variant-tag comparison). No program-semantics inspection.
+#
+# Body `\`-obligation-blocked; consumers pull realization via
+# apply_h::act bilateral resolver-arm dispatch.
+#
+# Sentinel per shard docblock: `peer=registered-at-trust-root-
+# <altitude>` where altitude ∈ {ssh, passkey}. Arity 2.
+
+bilateral peer_registered_at_trust_root {
+  sentinel "peer=registered-at-trust-root"
+  arity 2
+}
+peer_registered_at_trust_root(oid: ref, root: subject) -> verdict { \ }
+
+# === registry_content_addressed — sub-bilateral ===
+#
+# Asserts: every entry in r.entries satisfies oid = content_hash(
+# subject); well_known Subjects satisfy their deterministic OID
+# contracts per §2; no entry collides with a well-known OID with a
+# different Subject value.
+#
+# Splinter-pole: registry entries all content-addressed; well-known
+# deterministic OIDs match constructors; no collisions.
+# Narcissus-pole: at least one entry's stored OID doesn't hash-
+# match its Subject; content-addressability contract broken; every
+# lookup suspect.
+#
+# Sentinel: `registry=all-entries-content-addressed`. Arity 1.
+
+bilateral registry_content_addressed {
+  sentinel "registry=all-entries-content-addressed"
+  arity 1
+}
+registry_content_addressed(r: subject_registry) -> verdict { \ }
+
+# === current_peer_priority_respected — sub-bilateral ===
+#
+# Asserts: `resolved` Subject came from HIGHEST-PRIORITY resolvable
+# source in §4 priority ladder; no lower-priority source silently
+# overrode a higher-priority source.
+#
+# Splinter-pole: priority ladder respected; resolved Subject IS
+# highest-priority match.
+# Narcissus-pole: lower-priority source's Subject returned; higher-
+# priority source was resolvable but ignored.
+#
+# Sentinel: `current-peer=highest-priority-source-respected`.
+# Arity 2.
+
+bilateral current_peer_priority_respected {
+  sentinel "current-peer=highest-priority-source-respected"
+  arity 2
+}
+current_peer_priority_respected(r: subject_registry, resolved: subject) -> verdict { \ }
+
+# ============================================================
+# §6 Forward-promised (per deep spec §8)
+# ============================================================
+#
+# 1. Runtime resolution body — resolve/current_peer/register/
+#    resolve_chain action bodies at Rust altitude (Reed territory
+#    next tick). Marker: [substrate-floor:@io-boundary].
+#
+# 2. Storage backend selection — three admissible backends per
+#    deep spec §2.3 (@mirror/store default OR git object DB OR
+#    in-memory HashMap). Alex adjudicates OR Reed picks in-memory
+#    as bootstrap default.
+#
+# 3. @trust chain body — resolve_chain composes with @trust/chain
+#    species forward-promised per family-root spec §12 forward-
+#    promise 1. Until @trust/chain lands, resolve_chain returns
+#    imperfect(_, chain_species_not_landed, _).
+#
+# 4. Passkey-side registry integration — garden-altitude @peer/
+#    registry (WebAuthn credential_id → spectral_state chain-head
+#    → subject_instance) integrates when @trust/passkey species
+#    lands per family-root spec §12 forward-promise 3.
+#
+# 5. Conjunct 4 discharge across six @tool species — per family-
+#    root spec §11 empirical firing 4. When @peer/registry.resolve
+#    + @trust chain discharge land, the tool_invocation_signed_
+#    at_alex_root conjunct's requires-clause inserts into
+#    shards/epistemologic/property/tool_species_stagefreight_
+#    witnessed.mirror per Mara `22c803a` §4 forward-promise 1. Six
+#    species (@tool/cargo, /git, /nix, /go, /docker, /gitlab_ci)
+#    discharge simultaneously.
+
+# ============================================================
+# §7 Recognition candidates (per deep spec §10 + family-root spec §9)
+# ============================================================
+#
+# #R-registry-is-the-at-operator-dispatch-surface (family-root
+# spec §9 second candidate; deep spec §10 composition surprise 1)
+# — Reed `23cb7bb` at_operator @io/git.commit stub NAMES the
+# registry surface as resolution mechanism. First-witness at stub
+# landing; second-witness this landing. Held at CANDIDATE strength;
+# promotion after Reed's runtime dispatch empirical firing.
+
+out @peer/registry
+out subject_registry
+out resolve
+out current_peer
+out register
+out resolve_chain
+out peer_registered_at_trust_root
+out registry_content_addressed
+out current_peer_priority_respected
