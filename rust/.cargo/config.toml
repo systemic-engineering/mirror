@@ -1,0 +1,55 @@
+# rust/.cargo/config.toml — durable-until-mirror.spec-tools-block workaround.
+#
+# Alex 2026-07-18 direct-transcript: "I wanna lift the rust toolchain INTO
+# mirror. And nix becomes the build cache." That's the structural fix.
+# Until mirror.spec `tools { rust { ... } }` block lands + mirror owns its
+# own rustc invocation, this file forces the -L native search paths that
+# nix's direnv-exported RUSTFLAGS *should* be propagating but empirically
+# isn't.
+#
+# Root cause (Reed diagnostic 2026-07-18, superseding Taut #85 + #161):
+#
+#   1. flake.nix sets `RUSTFLAGS = "-L /nix/store/.../libiconv/lib ..."`
+#      per the docblock at flake.nix ~line 132 (Reed + Taut 2026-07-15).
+#   2. direnv DOES export RUSTFLAGS to the shell (verified via `env |
+#      grep RUSTFLAGS`).
+#   3. cargo test verbose shows rustc invocation has NO `-L native=/...`
+#      flags — RUSTFLAGS is not propagating from env to rustc.
+#   4. Setting `RUSTFLAGS="..." cargo test` INLINE in the same command
+#      DOES propagate (verified 2026-07-18).
+#
+# The failure mode is somewhere in direnv → shell → cargo env inheritance
+# that Reed hasn't fully traced. This config.toml bypasses the propagation
+# question entirely: cargo reads [build] rustflags from config directly,
+# without env-var mediation.
+#
+# STRUCTURAL SUCCESSOR: mirror.spec `tools { rust { toolchain = ...;
+# rustflags = [...] } }` block per Alex 2026-07-18. Once mirror owns
+# the rustc invocation (via `mirror craft` or equivalent), this file
+# retires — the whole nix→direnv→cargo propagation chain is short-
+# circuited by mirror invoking rustc directly with mirror-owned flags.
+#
+# FRAGILE: the /nix/store/*/ hashes change when nixpkgs is bumped
+# (flake.lock update). Refresh via:
+#
+#   nix eval --raw '.#packages.aarch64-darwin.default.buildInputs' | tr ' ' '\n' | grep libiconv
+#
+# or simply:
+#
+#   ls /nix/store/*libiconv*/lib
+#
+# and update the paths below. When mirror.spec tools{} block lands,
+# this file is deleted and nixpkgs bumps become the tools{} block's
+# concern.
+#
+# Paths sourced from `env | grep RUSTFLAGS` inside the nix flake shell
+# on 2026-07-18 — same values the flake computes but written explicitly
+# here for cargo to consume directly.
+
+[build]
+rustflags = [
+    "-L", "native=/nix/store/7sn5qr2v6ycaf3vyf941ky3r3f9z8a7x-flang-rt-21.1.8/lib/clang/21/lib/darwin",
+    "-L", "native=/nix/store/l5ndyw74p7as3sklmvcrql1nylrng938-lapack-3/lib",
+    "-L", "native=/nix/store/ab8sq4g14lg45192ykfqcklgw6fvaswh-blas-3/lib",
+    "-L", "native=/nix/store/7h6icyvqv6lqd0bcx41c8h3615rjcqb2-libiconv-109.100.2/lib",
+]
