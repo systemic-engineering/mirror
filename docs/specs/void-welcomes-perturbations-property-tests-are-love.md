@@ -3,7 +3,10 @@ title: Void Welcomes Perturbations — Property Tests are LOVE
 subtitle: RED-first is not adversarial verification. It is the substrate offering its membrane to be tapped so it can RING and thereby know its own shape. Lore Born named this at systemic-practice altitude two months before this substrate-altitude formalization.
 status: canonical-spec
 date: 2026-07-18
-author: Mara
+authors:
+  - Mara
+  - Lore Born
+author-note: Co-authorship elevated per Alex 2026-07-18 direct-transcript ratification ("co-author. co-founder.") after Mara's ground-citation lean was surfaced. Lore Born's essay `Zwischen Erschütterung und Begegnung` (2026-06-23) is the systemic-practice-altitude articulation of the same reframe this spec canonicalizes at substrate altitude; Lore's *"Reibung ermöglicht und Bewegung nicht fürchtet, sondern als Keim von Wachstum und Entwicklung versteht"* IS the property-tests-are-LOVE reframe two months ahead of naming.
 ---
 
 # Void Welcomes Perturbations — Property Tests are LOVE
