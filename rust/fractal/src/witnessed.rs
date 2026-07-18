@@ -6,9 +6,10 @@
 //! Verbatim migration from `fragmentation/src/witnessed.rs` per Mara
 //! `2760c2a` canonical migration spec §6 step 2. Zero changes; the
 //! shape already IS the substrate-decl'd identity-provenance carrier
-//! `shards/subject.mirror:5-19` was written to declare (family-root
-//! altitude for the substrate's licensable-party carrier + SEL
-//! grounding + Landing 3 lift naming every @peer as ALSO a @subject).
+//! `shards/subject.mirror:12-22` was written to declare (family-root
+//! header at line 12 for the substrate's licensable-party carrier +
+//! SEL grounding + Landing 3 lift naming every @peer as ALSO a
+//! @subject at eye level per Alex 2026-07-14 in-transcript verbatim).
 //! This migration is the syntactic edit making the semantic identity
 //! visible.
 //!
