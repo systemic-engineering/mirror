@@ -123,12 +123,21 @@ operations, sampled at each tick. The load-bearing carrier is
 
 ```
 signature_beat = {
-  witness:         subject_instance,
-  sc_at_beat:      SpectralCoordinate<5>,
-  previous_beat:   option<oid>,
-  rung:            rung_id,
-  content_oid:     oid,          // observer-independent
+  contribution_oid:  oid,                      // observer-independent content-address
+  sc_at_beat:        SpectralCoordinate<5>,
+  rung:              @song/beat.rung,
+  previous_beat:     option<oid>,
+  timestamp:         @time/monotonic.instant,
+  ssh_fingerprint:   ref,                      // observer identity — different signer, different beat
+  address:           uuid_spectral_time,
 }
+
+// Ground truth: shards/spectral/signature.mirror:106-114 (Reed f211ee48, 2026-07-16)
+// Post-cf34549 REED-INLINE cascade: field names corrected from math-root
+// draft's `witness: subject_instance` (→ ssh_fingerprint: ref) and
+// `content_oid: oid` (→ contribution_oid: oid). Semantic distinction the
+// draft named — observer-dependent identity vs observer-independent content —
+// preserved; substrate carrier is ssh_fingerprint + contribution_oid.
 ```
 
 Each beat is a content-addressed observation of one Prism-tick.
@@ -205,9 +214,10 @@ w(t) := witness_of(t)
 
 where `commit_of : Features × FateOutput → T → T` extends the trace
 by one Fate-selected `signature_beat` under the discipline of
-`fragmentation::Witnessed`: the beat carries the `witness`
-(different observer, different commit); the beat's `content_oid`
-carries the CONTENT (same content, same tree OID).
+`fragmentation::Witnessed`: the beat carries the `ssh_fingerprint`
+(different signer, different commit); the beat's `contribution_oid`
+carries the CONTENT (same content, same tree OID). Per
+`shards/spectral/signature.mirror:106-114` (Reed `f211ee48`).
 
 **The fixed-point claim:**
 
@@ -390,11 +400,20 @@ not change. QED (composition).
 
 The idempotence property is stronger than caching: once a trace is
 witnessed, no re-witness computation is required. The `crystal.
-derived_predicates` field (`shards/mirror/store/crystal.mirror:344-
-368`) stores the witnessed verdicts; the `verdict_is_content_
+derived_predicates` field (`shards/mirror/store/crystal.mirror:356`)
+stores the witnessed verdicts; the `verdict_is_content_
 addressed` predicate makes this cache authoritative. **The
 substrate does not merely cache property verdicts — it PROVES
 they need not be recomputed.**
+
+**Post-cf34549 Alex-ratification (Q10):** the cache location upgrades
+from `crystal.derived_predicates` (transitional; matches iter 1-10
+substrate) to a new species-decl `@mirror/store/liquid` composing
+`@mirror/store` with the `@liquid` family-root (Arc 5 M1 at
+`cc816f9`). Mara mints `shards/mirror/store/liquid.mirror` before
+Arc 4 empirical landing. Cache semantics unchanged; substrate
+location upgraded to name what the field IS — refined `@mirror/
+store` per `@liquid` refinement discipline.
 
 This is the "beautiful" at mechanical altitude: the property, the
 inference, and the trace are one Merkle-content-addressed object.
@@ -655,7 +674,7 @@ Names REFUSED as too-clever or as-DSL-macro:
 |----------|-----|----------------|
 | `Arbitrary` (type-class) | Too Haskell; not delightfully-boring; and `arbitrary` is only used as English in substrate | Prefer `sample_of` verb; skip the type-class layer |
 | `Strategy` monad | proptest legacy; new DSL layer; accretion | Substrate's `Fate` already IS the strategy |
-| `#[proptest]` macro | Test-body sugar hides the type-witness surface | Keep `#[test] fn foo() { assert!(matches!(pillar::forall(...), PropertyVerdict::Pass)) }` |
+| `#[proptest]` macro | ~~Test-body sugar hides the type-witness surface~~ **Alex 2026-07-18 ratified YES:** proc-macro test-body layer is substrate-authored FLOOR, not hand-written extension. Prismqueer's `declaration!{}` at `prismqueer/src/lib.rs:70` is the `@code/rust/macro.shim_type` T23 reception entry point; mirror composes on top. See Reed memory `feedback_prismqueer_macros_mirror_composes` (2026-07-18). | **COMPOSE** — test-body macros generated FROM shard-body decls |
 | `Shrink` trait | Duplicates shrinker logic; QuickCheck's known failure mode | Byte-buffer reduction of `signature_beat` chain IS the shrinker |
 | `Range<T>` | Hedgehog legacy; not delightfully-boring | The `sample_of` verb takes an origin scalar; no wrapper struct needed |
 | `Gen a` | Distribution functor; discards witness | `sample_of` returns a value AND emits a `signature_beat`; no functor sugar |

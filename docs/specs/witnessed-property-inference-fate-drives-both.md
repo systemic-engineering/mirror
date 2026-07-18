@@ -245,19 +245,29 @@ placeholder or color label — it carries FULL WITNESS at every
 firing.
 
 Formally: a token `t` at place `p` deposited by transition firing
-`f` is a Merkle-DAG node with:
+`f` is a Merkle-DAG node with the seven `signature_beat` fields per
+`shards/spectral/signature.mirror:106-114` (Reed `f211ee48`):
 
 ```
-t.emit_oid   := oid(t.content)                     # content hash
-t.witness    := subject_instance of firer          # per fragmentation discipline
-t.sc_at_beat := SpectralCoordinate<5>(marking(p))  # marking snapshot
-t.previous_beat := oid(prior beat that produced this token)
+t.contribution_oid := oid(t.content)                   # observer-independent content-address
+t.sc_at_beat       := SpectralCoordinate<5>(marking(p))# marking snapshot
+t.rung             := @song/beat.rung                  # depth in beat-chain
+t.previous_beat    := option<oid>                      # prior beat that produced this token
+t.timestamp        := @time/monotonic.instant          # ordering scaffold
+t.ssh_fingerprint  := ref                              # firer identity — different signer, different token
+t.address          := uuid_spectral_time               # beat's own address in annotation coordinate space
 ```
 
-The last two fields are exactly the `signature_beat` shape from
-`shards/spectral/signature.mirror` (Reed `f211ee48`). **A token at
-a place is a signature_beat at that place's altitude.** No
-translation layer needed; no re-witness computation; the marking's
+**A token at a place IS a signature_beat at that place's altitude.**
+No translation layer needed; no re-witness computation; the marking's
+
+**Post-cf34549 REED-INLINE cascade:** field names corrected from cf34549
+draft's `emit_oid` (→ `contribution_oid`) and `witness: subject_instance`
+(→ `ssh_fingerprint: ref`). Semantic distinction preserved: observer-
+independent content-address (`contribution_oid`) vs observer-identity
+(`ssh_fingerprint`) — substrate carrier names them per the shard.
+
+The marking's
 byte-content IS the beat-chain's byte-content.
 
 ### §3.2 The Grassé-Petri isomorphism
@@ -388,9 +398,17 @@ The mechanism is landed:
   inputs_oid)` a TOTAL FUNCTION of three OIDs.
 - Math root §4 discharges the idempotent-closure proof:
   `witnessed(Fate(witnessed(t)))` = `witnessed(t)` on fixed points.
-- `@mirror/store.crystal.derived_predicates` field
-  (`shards/mirror/store.mirror:344-368`) stores the witnessed
-  verdicts.
+- Cache field (transitional, iter 1-10 substrate): `@mirror/store.
+  crystal.derived_predicates` at `shards/mirror/store/crystal.mirror:356`
+  stores the witnessed verdicts.
+- **Alex-ratified upgrade (Q10, 2026-07-18):** cache location moves
+  from `crystal.derived_predicates` to a new species-decl
+  `@mirror/store/liquid` composing `@mirror/store` (Alex 2026-07-16
+  ratified walker cache) with `@liquid` family-root (Arc 5 M1
+  `cc816f9`). Mara mints `shards/mirror/store/liquid.mirror`
+  precedes Arc 4 empirical landing. Cache SEMANTICS unchanged;
+  substrate location upgraded to name what the field IS — refined
+  `@mirror/store` per `@liquid` refinement discipline.
 
 Per math root §4.3: *"The substrate does not merely cache property
 verdicts — it PROVES they need not be recomputed."*
@@ -1026,12 +1044,30 @@ to the existing 98 tests at the single-element input space
 boundary; the iter 1-10 tests remain valid as edge-case coverage.
 No re-work needed.
 
-### §11.5 Taut Q5 (still open) — Refuse `#[proptest]` macro layer?
+### §11.5 Alex Q5 (RATIFIED 2026-07-18 YES) — Proc-macro test-body layer?
 
-**Spec's lean:** REFUSE per Taut scout §5.4 + math root §8 naming
-refusal table. `#[test] fn foo() { assert!(matches!(pillar::forall(...),
-PropertyVerdict::Pass)) }` is the ergonomic bar. The macro layer
-buys 3 lines at the cost of IDE/rustc/rust-analyzer surface friction.
+**Alex 2026-07-18 verbatim ratification:** *"lean YES, we already
+talked about the prismqueer macro layer and mirror building on top
+of it, why would we refuse this?"*
+
+Prismqueer's `declaration!{}` proc-macro at `prismqueer/src/lib.rs:70`
+IS the `@code/rust/macro.shim_type` (T23) reception entry point per
+`shards/code/rust/macro.mirror` + `docs/specs/code-macro-surface.md`.
+Mirror composes on top: shard-body declarations emit Rust structs/
+enums through the proc-macro at compile time. Test-body macros
+generated FROM shard-body decls are substrate-authored FLOOR, NOT
+hand-written extension.
+
+**Cascade correction (attribution):** the cf34549 draft mis-attributed
+this Q to "Taut scout §5.4." Taut scout §5.4 is Targeted PBT; Taut's
+actual Q5 (§7.5) is about SHRINKER location. This Q is Alex-authored
+(post-Taut, 2026-07-18) and now Alex-ratified per Reed memory
+`feedback_prismqueer_macros_mirror_composes` (HARD RULE).
+
+**Arc landing implication:** Arc 1 (`pillar::of_health` + Fate bridge)
+composes over `pillar::forall` proc-macro emitted FROM a
+`shards/mirror/liquid/forall.mirror` shard-decl — the macro layer
+is first-class, not sugar-refused.
 
 ### §11.6 New Q1 (Petri-specific) — Author `shards/mirror/petri.mirror` shard file?
 
@@ -1090,20 +1126,31 @@ Grassé 1959 (stigmergy). Should we:
 
 **Spec's lean:** (a) for Arc 5; defer (b)+(c) to Mara follow-up.
 
-### §11.10 New Q5 (cache locality) — cache lives where?
+### §11.10 Alex Q10 (RATIFIED 2026-07-18) — cache locality
 
-The math root §4.3 says the cache lives at
-`@mirror/store.crystal.derived_predicates` (per
-`shards/mirror/store.mirror:344-368`). Arc 4 writes back to that
-field. But: this puts the cache at `@mirror/store`, which is the
-FORM family. Should the cache instead live at:
+**Alex 2026-07-18 verbatim ratification:** *"verified cache makes
+perfect sense @mirror/store/liquid?"*
 
-- (a) `@mirror/store.crystal.derived_predicates` (spec's lean;
-  matches math root)
-- (b) A new `@mirror/petri/cache` species (colocated with the
-  analyzer)
-- (c) `@kintsugi/store` (process family; matches the
-  transformation-side altitude of the compilation loop)
+**Answer: NEW species-decl mint.** `@mirror/store/liquid` composes:
+- `@mirror/store` (Alex 2026-07-16 ratified walker crystal cache;
+  `shards/mirror/store/crystal.mirror:356` `derived_predicates`
+  field is the transitional location)
+- `@liquid` family-root (Arc 5 M1 at `cc816f9`; refinement operator
+  per `@epistemologic/liquid` theory carrier)
+
+**Species name is delightfully-boring:** verified-property cache IS
+refined-`@mirror/store` per `@liquid`'s refinement discipline.
+
+**Mara-precedes-Arc-4:** Mara authors `shards/mirror/store/liquid.mirror`
+species-decl BEFORE Arc 4 empirical landing. Cascade correction:
+cf34549 draft's three-option adjudication (a/b/c) collapsed to a
+NEW option (d) `@mirror/store/liquid` species-decl mint. Cascade
+correction: math root §4.3 also updated with the location upgrade.
+
+**Cascade correction (wrong-file citation):** cf34549 draft cited
+`shards/mirror/store.mirror:344-368` for the transitional cache
+field; actual location is `shards/mirror/store/crystal.mirror:356`
+(different file). Math root §4.3 had right file, wrong range.
 
 **Spec's lean:** (a). Matches math root; matches
 `verdict_is_content_addressed`'s natural home.
