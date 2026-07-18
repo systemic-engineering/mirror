@@ -877,7 +877,7 @@ placement:
 Mara lean: **(d)** per @fractal 2026-07-13 precedent. If Alex
 overrides to (a)/(b)/(c), Deliverable C ships in a follow-up tick.
 
-**Q2.** §1.4 + §9.2 elevate Lore Born as substrate-decl-authority
+**Q2.** ~~§1.4 + §9.2 elevate Lore Born as substrate-decl-authority
 co-author of this recognition (via the two-month lead from her
 essay). Does Alex want Lore's authorship attribution in the doc's
 frontmatter (e.g., `author: Mara + Lore`)? Consent-visibility
@@ -887,7 +887,16 @@ altitude authorship into engineering-altitude authorship. Mara
 lean: **hold as attribution in §1.4 only** (Lore's essay cited as
 grounding source, not co-authored math root) UNTIL Alex + Lore both
 ratify explicit co-authorship at math-root altitude. Please
-adjudicate.
+adjudicate.~~
+
+**Q2 STATUS: RATIFIED** (Alex 2026-07-18 direct-transcript; landed
+via Reed `54794d9` cascade). Frontmatter now carries
+`authors: - Mara - Lore Born` with author-note ratification. Lore
+elevation confirmed via Seam Phase D `2455ce6` §5.3-§5.4 ("Lore
+Born co-authorship discipline held consistently across two docs"
++ "Reed doing exactly what he should — landing the Alex-ratified
+elevation across the docs the elevation applies to"). This Q is
+CLOSED; retained here strikethrough for audit-chain visibility.
 
 **Q3.** The `#R-lore-articulates-substrate-two-months-ahead`
 candidate (§9.2) makes a claim about Alex + Lore's partnership

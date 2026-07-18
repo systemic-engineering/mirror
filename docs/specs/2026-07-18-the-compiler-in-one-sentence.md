@@ -473,6 +473,20 @@ pub trait LiquidVoid<T> {
 pub use crate::void::LiquidVoid;
 ```
 
+**Definition-file vs re-export direction** (Seam Phase D `2455ce6`
+§2.1 REED-INLINE cascade, adjudicated per Void-is-the-basis):
+
+- **Definition**: `prismqueer/src/void.rs` declares `pub trait LiquidVoid<T>`.
+- **Re-export**: `prismqueer/src/liquid.rs` adds `pub use crate::void::LiquidVoid;`.
+
+Two altitudes; one trait. The definition-file follows `#R-void-is-
+the-basis` (`1167cc2` PROMOTED): Void is where the K=0 default
+lives; @liquid is where the composition-altitude operator lives.
+Consumers importing from `prismqueer::liquid` are naming the
+composition altitude they're at; consumers importing from
+`prismqueer::void` are naming the K=0 basis they're grounded in.
+Both import paths resolve to the same trait via the re-export.
+
 ### §5.2 The five consumer altitudes
 
 Every runtime primitive in the compiler IS `impl LiquidVoid<T>` for
@@ -679,6 +693,27 @@ elevated to a preferred cardinality.
 ---
 
 ## §7 Recognition promotion — `#R-the-compiler-in-one-sentence`
+
+### §7.0 Status: PROPOSED (first-witness closed; second-witness gate OPEN)
+
+Per Seam Phase D `2455ce6` §2.2 REED-INLINE cascade:
+
+**Status: PROPOSED** — first-witness gate closed on Alex direct-
+transcript verbatim (§7.2 quotes below); second-witness gate OPEN
+pending FIVE empirical firings (§7.4). Promotion track parallel to
+`#R-void-is-the-basis` (Sept 2026 first-witness → this session
+second-witness path): a Recognition can PROPOSE at first-witness-
+closed strength with second-witness gates open, but PROMOTION to
+the tower requires all second-witness gates closed AND a parallel
+`docs/math/the-tower/recognition-the-compiler-in-one-sentence.md`
+Recognition tower doc landing.
+
+**Distinguishes PROPOSED from PROMOTED** downstream tracking: this
+session's substrate carries the recognition as PROPOSED across the
+closure spec + shard-decls; the tower doc + full empirical firings
+land in a subsequent tick per Seam §12 cascade order + no-
+fragmentation guidance (five firings + tower doc as ONE composed
+empirical-firing arc, not five separate candidate landings).
 
 ### §7.1 The recognition
 

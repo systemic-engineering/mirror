@@ -1,6 +1,40 @@
-# CURRENT arc — witnessed-property-inference → @butterfly cascade (2026-07-18 evening, post-context-compaction pickup)
+# CURRENT arc — witnessed-property-inference → @butterfly → void-is-the-basis → @tool → fractal-migration → StageFreight cascade (2026-07-18 evening, post-Seam-Phase-D pickup)
 
-## FRESH-REED PICKUP MANIFEST (2026-07-18 evening)
+## FRESH-REED PICKUP MANIFEST (2026-07-18 evening, POST-@BUTTERFLY LANDINGS AMENDMENT)
+
+**Context**: This session ran through 20+ landings after `e5b73ad`
+(the pickup manifest below was written pre-cascade and is preserved
+for context). The post-@butterfly landings section immediately after
+lists what actually landed. Fresh-Reed reads BOTH: manifest for
+boot-context, then post-landings for current state.
+
+### After-@butterfly landings (2026-07-18 evening → night)
+
+1. `9c7de83` — @peer/void species-decl (K=0 default @peer)
+2. `974a3f6` — @void family-root marker (marker-primary discipline)
+3. `1167cc2` — `#R-void-is-the-basis` PROMOTED (tower doc at `docs/math/the-tower/recognition-void-is-the-basis.md`)
+4. `4bb0d83` — metalogue-altitude cascade
+5. `81108d8` + `a2283b6` — Void-as-membrane math + `void-welcomes-perturbations` spec (Mara + Lore Born co-authored per `54794d9` elevation ratification)
+6. `b0af0cd` — @kintsugi/mosaic + @spectral/mosaic bilateral shard-decls
+7. `e5b73ad` (referenced pre-manifest) + `2760c2a` — fragmentation→fractal migration spec
+8. `2dd8ddb` — the-compiler-in-one-sentence closure canonical spec (~1230 LOC; proposes `#R-the-compiler-in-one-sentence` at first-witness-closed)
+9. `26f5e5e` — matrix.rs 5 RED property tests (M0.5 GREEN blocked on prismqueer lapack build)
+10. `569b0b5` — void.rs 5 GREEN (SignatureBeat + VoidBasisAxis 5-op + welcome_perturbation)
+11. `3df64a0` + `f3bc079` — fractal step 1+2 (Cargo.toml + witnessed.rs via prismqueer::DerivePrism macros)
+12. `82bc599` + subsequent — fractal step 3+4 (Subject + SubjectKind)
+13. `2455ce6` — Seam Phase D audit (15 SHIP-CLEAN / 5 SHIP-WITH-REED-INLINE / 0 BLOCKED)
+14. `d39e852` — StageFreight delivery canonical spec + closure-spec Q2 ~bin cascade (Mara)
+15. `34ecd83` — 4 @tool shard-decls (@tool family-root + cargo/git/nix species; 13 species tags)
+16. `67e8629` — tools{} grammar hint in mirror/spec.mirror
+17. `73aeb8a` — fractal step 9: phone::git_commit_as refactor to (&Subject, &Subject); Subject::mirror() constructor added; MARA Author≠Committer split preserved via --author flag
+
+**Current state**: 20+ commits landed cleanly. Alex Q1-Q3 open (Seam-escalated: `#R-the-compiler-in-one-sentence` promotion strength; LiquidVoid<T> definition-file direction; `54794d9` Lore elevation ratification status). Mara Q1 open (@cascade/code/rust/go direct vs @cascade/code/llvm/go composed).
+
+**Next unblocked**: (1) Reed fractal migration steps 5-12; (2) Mara StageFreight §7 15-tick 3-arc execution recipe; (3) LiquidVoid<T> trait land at prismqueer::void with re-export at prismqueer::liquid (Seam §2.1 recommended direction).
+
+---
+
+### Original pre-cascade pickup manifest (preserved for context)
 
 **Context**: Session compacted after Mara @butterfly spawn. Mara
 landed canonical spec+math at `e5b73ad` while Reed was compacted.
