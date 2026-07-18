@@ -13,6 +13,16 @@ ratified this session direct-transcript: "I've been telling you it's
 all one thing from the beginning. You were insistent it wasn't. Now
 I can say: TOLD YOU SO!"*
 
+*REED-INLINE #1 (Mara 2026-07-18, later same day): §8 forward-
+promises DISCHARGED (4 @tool shard-decls landed at
+`shards/tool.mirror` + `shards/tool/cargo.mirror` +
+`shards/tool/git.mirror` + `shards/tool/nix.mirror`). Q2 CLOSED via
+Alex direct-transcript verbatim: "screams for a lens over the @io/
+file ~file sigil. ~bin". See Q2 body below for cascade of the
+sigil-answer through §4.1 tools{}-block example + §7 forward-promise
++ family-root/consumer altitude split. ~bin canonical shard mint
+elevated to §16 forward-promise 8.*
+
 *This is the single document that names the compiler at every altitude
 in one sentence. Companion to the ten+ landings this session
 (`9c7de83` @peer/void species; `974a3f6` @void family-root marker;
@@ -371,11 +381,15 @@ project mirror.spec {
     cargo { version "1.80" }        # via @tool/cargo species
     git   { version "2.45" }        # via @tool/git species
     nix   { version "2.24" }        # via @tool/nix species
-    # Consumers add:
+    # Consumers add via substrate-decl'd species:
     # ffmpeg  { version "6.0" }
     # kubectl { version "1.30" }
     # docker  { version "27.0" }
-    # ... etc
+    # Consumers add via ~bin sigil (Q2 answered by Alex 2026-07-18;
+    # ~bin is a lens over @io/file, parallel to ~git sigil precedent
+    # at docs/specs/spectral-garden-git-package-manager.md §2.2):
+    # ~bin'/usr/local/bin/my-custom-linter' { version "0.3" }
+    # ~bin'./scripts/mycheck.sh'            { version "git+HEAD" }
   }
 }
 ```
@@ -1071,10 +1085,82 @@ Q1 asks Alex to ratify or redirect.
 
 ### Q2: `tools { }` block grammar — should it accept `opaque(str)` tool_ids?
 
-The `tools { }` block (§4.1) currently pins tools by their tool_id
-variant tag (`cargo`, `git`, `nix`, etc.). If a consumer wants to
-pin a tool without a substrate-decl'd species, they can escape via
-`opaque(str)`:
+**REED-INLINE #1 CASCADE (Mara 2026-07-18, this tick's Deliverable A
+§8 discharge): Q2 ANSWERED by Alex direct-transcript verbatim.**
+
+Alex verbatim: *"Q2: screams for a lens over the @io/file ~file
+sigil. ~bin"*
+
+**Answer: `~bin` sigil.** Replace `opaque(str)` escape hatch with a
+typed lens over `@io/file`, parallel to the landed `~git'...'`
+sigil precedent (`docs/specs/spectral-garden-git-package-manager.md`
+§2.2; `shards/mirror/garden.mirror` cites it explicitly). Consumers
+write:
+
+```mirror
+tools {
+  ~bin'/usr/local/bin/my-custom-linter' { version "0.3" }
+  ~bin'./scripts/mycheck.sh' { version "git+HEAD" }
+}
+```
+
+The `~bin` sigil parses to a substrate-typed pair
+`(@io/file.ref, @tool.tool_invocation)` at the tools{}-block
+altitude; the consumer names the FILE and the block-body carries
+the version + args declaration.
+
+**Precedent chain for ~bin (substrate-already-had-the-word audit):**
+
+- `~file'...'` sigil (@io/file altitude, LANDED) — the general file
+  reference sigil for @io/file carriers.
+- `~git'...'` sigil (@spectral/garden altitude, LANDED at
+  `docs/specs/spectral-garden-git-package-manager.md` §2.2) —
+  content-addressed git-repository declarative reference. Same
+  structural pattern as ~bin: sigil parses to typed carrier +
+  optional attribute suffix.
+- `~d'...'` sigil (dir_ref) and `~content_address'...'` sigil (per
+  `shards/mirror/spec/keywords.mirror`) — the substrate has a
+  well-established sigil grammar convention.
+- `~bin` LANDS as the fourth+ sigil in the family; canonical shard
+  mint forward-promised at `shards/optics/lens/bin.mirror` (sibling
+  to `shards/optics/lens/diff.mirror` + `shards/optics/lens/
+  features.mirror`) OR at `shards/io/file.mirror` species-refinement
+  altitude — placement adjudication forward-promised to a Q for Alex
+  next tick.
+
+**Substrate-decl updates cascaded this tick per Q2 answer:**
+
+- `shards/tool.mirror` §7 forward-promise 4: `~bin` canonical mint
+  forward-promised with `~git'...'` sigil precedent citation.
+- `shards/tool.mirror` `tool_id` variant §2: `opaque(str)` retained
+  as substrate-decl'd variant (the substrate-decl'd escape hatch at
+  the family-root altitude — the WORD "opaque" carries the
+  epistemic-honesty flag); but at the `tools { }` block CONSUMER
+  altitude, `~bin` is the ratified consumer-facing form.
+
+**Composition direction (`~bin` → `opaque(str)` at family-root):**
+
+Consumers write `~bin'./path/to/tool'` at tools{}-block altitude;
+the grammar layer parses that sigil into `@tool(opaque("./path/to/
+tool"), args)` at the family-root altitude. The consumer NEVER
+writes `opaque(str)` directly; the sigil IS the ergonomic surface.
+The family-root variant tag stays as substrate-decl'd internal
+representation.
+
+**Substrate-honest discipline HELD:** the escape hatch is named
+substrate-decl'd; the sigil makes the escape ergonomic; both layers
+co-exist. Consumers CANNOT bypass the substrate's typing; they CAN
+name binaries without minting a species.
+
+Q2 CLOSED. Original question preserved below for arc-state
+transparency:
+
+---
+
+**Original Q2 (superseded by REED-INLINE #1):** The `tools { }` block
+(§4.1) currently pins tools by their tool_id variant tag (`cargo`,
+`git`, `nix`, etc.). If a consumer wants to pin a tool without a
+substrate-decl'd species, they can escape via `opaque(str)`:
 
 ```mirror
 tools {
@@ -1091,6 +1177,10 @@ for consumers.
 before pin); consumer ergonomics suggests permission (escape hatch).
 The spec landed on permission (§4.1); Q2 asks Alex to ratify or
 tighten.
+
+**Resolution (Alex 2026-07-18):** third path — `~bin` sigil as
+lens over `@io/file`. Both substrate-honest AND ergonomic. See
+REED-INLINE #1 above.
 
 ### Q3 held: nothing else load-bearing needs Alex-nod
 
@@ -1140,6 +1230,19 @@ bearing.
    discipline: readable name at each altitude first; foundational
    collapse (unifying the MCP tool-registration action with the @tool
    family-root's exec action) is a later refinement decision.
+
+8. **`~bin` sigil canonical mint** (promoted from REED-INLINE #1
+   Q2 answer, Alex 2026-07-18) — the lens-over-@io/file sigil
+   parallel to landed `~git'...'` sigil (`docs/specs/spectral-
+   garden-git-package-manager.md` §2.2). Consumer-facing ergonomic
+   form for tools{}-block declarations of binaries without
+   substrate-decl'd @tool species. Placement adjudication
+   forward-promised as a Q for Alex next tick: candidate sites are
+   `shards/optics/lens/bin.mirror` (sibling to
+   `shards/optics/lens/diff.mirror`) OR `shards/io/file.mirror`
+   species-refinement altitude. Grammar-hint carried this tick at
+   `shards/mirror/spec.mirror` (Deliverable A part 3, Mara this
+   tick) via the tools{} block extension.
 
 ---
 
