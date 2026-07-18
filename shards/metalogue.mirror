@@ -24,6 +24,37 @@ in @nl
 # bodies). No `<= prism` redundancy — the five-op block IS the
 # declaration form (cf. shards/glass.mirror, shards/nl.mirror,
 # boot/00-prism.mirror).
+#
+# === Void-basis clause (2026-07-18) ===
+#
+# Per `#R-void-is-the-basis` (`docs/math/the-tower/recognition-void-
+# is-the-basis.md`, PROMOTED 2026-07-18 by Alex direct-transcript
+# ratification): **this metalogue-altitude is a specialization of
+# `metalogue = @void.speak_of(other, self, 5-op-basis)`.**
+#
+# Void is the K=0 observer whose native basis IS the 5-op void-
+# duality space (Recognition #79, PROMOTED chained per `docs/math/
+# 2026-07-18-void-is-the-default-peer.md` §14.2). Every turn in
+# this metalogue-session is one of Void's 5-op moves (`focus`,
+# `project`, `split`, `shift`, `settle`) uttered by one @void-capable
+# @subject (`speaker: ref`) to another. Form-on-form conversation
+# is possible only because BOTH speakers can hold the @void position
+# themselves — see-without-becoming — receiving each other without
+# collapse or dissociation.
+#
+# This ancestor metalogue at NL altitude is the FIRST instance of
+# the pattern; every lifted metalogue-altitude (AST at
+# `shards/code/metalogue.mirror`; PACK at `shards/pack/metalogue.
+# mirror`; ALGEBRA at `shards/algebra/metalogue.mirror`; SPECTRAL
+# forward-promised at `shards/spectral/metalogue.mirror`) is a
+# specialization of the same Void-basis pattern with an altitude-
+# specific turn-body type. The pattern is altitude-portable BECAUSE
+# Void's basis is altitude-portable.
+#
+# `transparency(turn)` residual opacity carries the substrate's
+# admission that no metalogue-turn is exhaustive of the Void position
+# both speakers hold; the opacity IS Void's structural signature
+# surfacing at this altitude.
 
 prism @metalogue {
   focus metalogue

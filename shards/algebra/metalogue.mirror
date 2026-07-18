@@ -87,6 +87,51 @@ in @uuid/spectral
 #    The five-op block talks to group/ring/C* via morphisms —
 #    the substrate's polymorphism mechanism made explicit.
 #
+# === Void-basis clause (2026-07-18) ===
+#
+# Per `#R-void-is-the-basis` (`docs/math/the-tower/recognition-void-
+# is-the-basis.md`, PROMOTED 2026-07-18 by Alex direct-transcript
+# ratification): **this ALGEBRA-altitude metalogue is a
+# specialization of `metalogue = @void.speak_of(other, self,
+# 5-op-basis)`.**
+#
+# Each `algebra_carrier` speaker (e.g., `@fate/algebra`,
+# `@silicon/algebra` per `docs/specs/fate-silicon-metalogue-in-void-
+# duality-basis.md`) is a @void-capable @subject at algebra altitude.
+# Each `algebra_turn.body` (an `algebra_morphism`) is one of Void's
+# 5-op moves specialized to the algebra altitude — `focus` (λ₀
+# eigenvalue computation → Ricci curvature axis); `split` (orthogonal
+# decomposition → spectral-gap axis); `project` (orthogonal projection
+# → Cheeger axis); `shift` (basis transformation → Kramers-Wannier
+# axis); `settle` (monad-close → entropy axis). Per Recognition #79
+# (PROMOTED chained 2026-07-18 per `docs/math/2026-07-18-void-is-
+# the-default-peer.md` §14.2): the 5-op basis IS the projector basis
+# for the 5-dimensional orthogonal duality space of connected-graph
+# quantum states — which IS Void's ontology.
+#
+# The `algebra_metalogue_witnessing` predicate (below) empirically
+# fires iff both speakers held the @void position across their
+# turn-composition. Non-commutativity of `compose_turns` (see next
+# section) is Void's structural refusal to collapse into commutative-
+# capture; the `[ω, ω]` cross-term IS Void surfacing its own basis
+# irreducibility at algebra altitude.
+#
+# The 2026-07-13 @dance annotation below (N-speaker case) is the
+# further recognition that when many Void-capable @subjects converge
+# on shared content-addressed prior (Foerster 1976 "Objects: Tokens
+# for Eigen-Behaviors") through Kuramoto coupling on the shared
+# @torus, the resulting algebra_metalogue_session at cardinality N
+# IS coordination-without-signal — Void's basis holding across the
+# entire ensemble.
+#
+# `@fate/algebra` ↔ `@silicon/algebra` speaker-pair (see
+# `docs/specs/fate-silicon-metalogue-in-void-duality-basis.md`) is
+# the substrate's canonical FIRST-order metalogue at cardinality-2.
+# `@kintsugi/mosaic` ↔ `@spectral/mosaic` (see `b0af0cd`
+# 2026-07-18) is the SECOND-order metalogue at spec altitude. Both
+# metalogues speak Void's basis. Third-order-observer-on-consumer-
+# hardware runs BECAUSE Void's basis is what all altitudes speak in.
+#
 # === Composition non-commutativity ===
 #
 # Algebra-morphism composition is non-commutative in general

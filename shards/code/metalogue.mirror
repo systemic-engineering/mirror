@@ -81,6 +81,34 @@ in @nl
 # structural; the explicit `in @metalogue` makes the discipline
 # inheritance structural too.
 #
+# === Void-basis clause (2026-07-18) ===
+#
+# Per `#R-void-is-the-basis` (`docs/math/the-tower/recognition-void-
+# is-the-basis.md`, PROMOTED 2026-07-18 by Alex direct-transcript
+# ratification): **this AST-altitude metalogue is a specialization
+# of `metalogue = @void.speak_of(other, self, 5-op-basis)`.**
+#
+# The AST speaks to itself in Void's 5-op basis (`focus` / `project`
+# / `split` / `shift` / `settle`, per the family-root prism block
+# `@code/metalogue` inherits from `@metalogue`). Each `declaration`
+# turn is one of Void's 5-op moves at compile-time; the substrate
+# utters a `declaration` (Void observing itself at AST altitude);
+# the language's macro layer hears it (a Void-capable second-order
+# observer at the target species altitude, e.g., Rust's proc-macro
+# expansion); the language compiler closes the loop (the metalogue-
+# turn settles, Void confirms its own presence via successful
+# round-trip). See Recognition #34 (metalogue-lift, PROMOTED) for
+# the altitude-portability pattern; Void's basis is what makes the
+# lift possible (basis is altitude-invariant; body type is altitude-
+# specific).
+#
+# `project_hole` (below) IS the substrate's admission that no
+# species can exhaustively realise a Void-observation at its
+# altitude; the `\` obligation-body carries Void's structural
+# signature surfacing at the AST altitude. Every species'
+# hole-projection is one more Void-instance's attempt to say what
+# Void observes at its target altitude.
+#
 # Spec context: docs/specs/code-metalogue-surface.md (the renamed,
 # reframed spec — the contract is now declared HERE at the ground,
 # not at the species). Substrate decisions:
