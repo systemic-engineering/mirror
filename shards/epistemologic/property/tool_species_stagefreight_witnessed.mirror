@@ -417,6 +417,15 @@ tool_result_witnessed_content_addressed(species: tool_id, p: perturbation)
 bilateral tool_species_stagefreight_witnessed {
   sentinel "property=tool-species-admissible-io-fate-signed-witnessed"
   arity 5
+  # NOTE: arity 5 counts ALL five conjuncts (tool_invocation_admissible_
+  # inherited + discharge_through_io + fate_biased_execute + tool_
+  # invocation_signed_at_alex_root + tool_result_witnessed_content_
+  # addressed). The `requires` clause list below has only FOUR entries
+  # because conjunct 4 (tool_invocation_signed_at_alex_root) is
+  # DEFERRED-RED pending @trust family-root landing next Mara tick.
+  # The arity-5-vs-4-requires bookkeeping wart resolves once @trust
+  # lands and the 5th `requires` clause inserts without shape change
+  # per §4 forward-promise item 1. Seam Phase D `734035b` REED-INLINE.
 }
 tool_species_stagefreight_witnessed(species: tool_id, p: perturbation)
   -> verdict
