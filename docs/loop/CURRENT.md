@@ -1,4 +1,69 @@
-# CURRENT arc — pillar::fold formalizes the verdict-fold composition primitive (2026-07-18 Reed /loop iteration 9)
+# CURRENT arc — pillar composition surface canonical spec + /loop stop (2026-07-18 Reed /loop iteration 10)
+
+## Iteration 10 delta (2026-07-18 09:58 UTC; task #258 GREEN; /loop STOPPED)
+
+Ten /loop iterations landed 98 property tests across 4 substrate
+altitudes + six pillar primitives at `prismqueer::liquid::pillar`.
+The original directive ("implement the prismqueer::liquid property
+testing surface and close the loop by testing prismqueer itself with
+it") is fully discharged. Iter 10 documents the surface as a
+canonical spec + stops the /loop for Alex-checkpoint review.
+
+**Landed in mirror repo:**
+
+1. `docs/specs/prismqueer-liquid-pillar-composition-surface.md`
+   (NEW, ~250 LOC, 📝 pure-docs 📝 bypass): canonical spec grounding
+   the iter 1-9 arc. Contents:
+   - §1 Four substrate altitudes + double ouroboros closure
+   - §2 Six pillar primitives (signatures + semantics)
+   - §3 Three composition axes (value type / time scale / verdict fold)
+   - §4 Example flow from mirror/rust/collapse.rs → pillar
+   - §5 Mathematical grounding (spectral commutator four pillars)
+   - §6 Iteration history table (iter 1-9 landings + commits)
+   - §7 Forward promises (Pillar IV, RED debt, wider gauges,
+     LawvereFixedPoint witnesses, composition-theorem witness)
+   - §8 Reading order for next Reed pickup
+
+**Iter 10 is the natural Alex-checkpoint.** Nine substantive
+iterations of property-testing arc work — ratcheting up coverage,
+deepening the ouroboros through non-abelian gauges, projecting into
+mirror altitude, generalizing pillars to raw magnitudes, formalizing
+verdict-fold — have produced a composition surface stable enough to
+document. Further iterations without Alex direction risk diminishing
+returns. The /loop stops here for review.
+
+**Total across the arc: 98 property tests + 1 canonical spec doc.**
+
+**Loop summary for Alex-review:**
+
+| Iter | Landing                                              | Tests |
+|------|------------------------------------------------------|-------|
+| 1    | prismqueer::liquid module + ouroboros first layer    | 22    |
+| 2    | Perm3 + PermBundle non-abelian S3 witness            | +10   |
+| 3    | rust/src/collapse.rs prop_tests                      | 11    |
+| 4    | pillar::viability_of_magnitudes + collapse compose   | +7    |
+| 5    | prism_laws.rs — IdentityPrism monoid identity        | 9     |
+| 6    | pillar::algedonic_of_magnitude + collapse compose    | +6    |
+| 7    | Tempdir-based load_bilateral_corpus tests            | +5    |
+| 8    | PropertyVerdict::merge_with composition witnesses    | 11+2  |
+| 9    | pillar::fold verdict-fold primitive                  | +4    |
+| 10   | Pillar composition surface canonical spec + /loop stop | (docs)|
+
+**Six pillar primitives at prismqueer::liquid::pillar:**
+
+- `dispatch_ambiguity` (Pillar I byte-visible)
+- `algedonic` / `algedonic_of_magnitude` (Pillar II single-tick)
+- `viability` / `viability_of_magnitudes` (Pillar III multi-tick)
+- `fold` (verdict-fold primitive)
+
+**Substrate closure across four altitudes** documented in §1 of the
+new spec.
+
+**Forward-promised territory** documented in §7 of the new spec
+(Pillar IV audhd fanout, RED debt, wider gauges, LawvereFixedPoint
+witnesses).
+
+---
 
 ## Iteration 9 delta (2026-07-18 07:30 UTC; task #257 GREEN)
 
