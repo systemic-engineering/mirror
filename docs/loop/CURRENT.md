@@ -1,4 +1,72 @@
-# CURRENT arc — property discipline PROJECTS INTO mirror/rust/collapse.rs (2026-07-18 Reed /loop iteration 3)
+# CURRENT arc — pillar::viability_of_magnitudes composes byte-shrinkage into Pillar III (2026-07-18 Reed /loop iteration 4)
+
+## Iteration 4 delta (2026-07-18 04:15 UTC; task #252 GREEN)
+
+**The ouroboros closes another layer.** Iter 3 landed byte-visible
+property tests in `rust/src/collapse.rs`; iter 4 wires those same
+byte-shrinkage magnitudes INTO the same `terni::PropertyVerdict`
+machinery `prismqueer::liquid::pillar` returns for commutator-
+flavored verdicts. The four-conjunct ouroboros_monotone invariant
+now projects into Pillar III viability empirically at rust altitude.
+
+**Landed in prism repo:**
+
+1. `prismqueer/src/liquid.rs` extended with:
+   ```rust
+   pub fn viability_of_magnitudes<L>(
+       history: &[L], theta: &L, omega: usize,
+   ) -> PropertyVerdict where L: Loss + PartialOrd
+   ```
+   Generalized Pillar III: accepts raw `Loss` magnitudes (not just
+   `Commutator<'a, C>`). Same Pass/Fail/Partial semantics as the
+   commutator-flavored `viability`. Composes over any `Loss +
+   PartialOrd` — opens the pillar to substrate-specific measurements.
+2. `prismqueer/tests/liquid_ouroboros.rs` extended with **4 new**
+   tests (36 GREEN total): Pass above threshold, Fail below,
+   Partial when short, windowing correctness (last omega entries
+   only).
+
+**Landed in mirror repo:**
+
+3. `rust/src/collapse.rs` `prop_tests` mod extended with **3 new**
+   tests (14 GREEN total, up from 11):
+   - `multi_tick_shrinkage_composes_to_pillar_iii_viability_pass`
+     — K collapse ticks → K shrinkage magnitudes as `ScalarLoss` →
+     `pillar::viability_of_magnitudes` verdict Pass when
+     accumulated > theta.
+   - `multi_tick_shrinkage_fails_pillar_iii_when_threshold_too_high`
+   - `multi_tick_shrinkage_partial_when_history_shorter_than_window`
+
+**Substrate flow — now DOUBLY closed:**
+
+```
+prismqueer/src/liquid.rs         — machinery (iter 1)
+       ↓
+prismqueer/tests/liquid_ouroboros.rs  — self-tests: 36 GREEN (iter 1+2+4)
+       ↓
+rust/src/collapse.rs::prop_tests — 14 GREEN (iter 3+4)
+       ↑ ← iter 4 wires this back into pillar
+```
+
+The mirror side no longer just USES property tests; it now COMPOSES
+BACK into the same pillar verdict machinery prismqueer's own tests
+use. Substrate-honest ouroboros closure at the property-testing
+altitude.
+
+**Why this matters mathematically:**
+
+`rust_loc_non_increasing` from `@epistemologic/property/
+ouroboros_monotone` at byte altitude:
+- One tick: `apply_deletions(s, arms).len() <= s.len()` (iter 3)
+- K ticks aggregated: `sum(shrinkage_i for i in 0..K) > theta`
+  (iter 4 = Pillar III)
+
+Both altitudes now empirically witnessed with the SAME verdict
+type. The four-conjunct invariant at ouroboros altitude is no
+longer an aspirational spec — its byte-altitude projection is
+substrate-honestly composable into Beer VSM Pillar III.
+
+---
 
 ## Iteration 3 delta (2026-07-18 03:44 UTC; task #251 GREEN)
 

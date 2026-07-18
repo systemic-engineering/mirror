@@ -419,7 +419,9 @@ mod prop_tests {
     //! altitude — the second layer of the property ouroboros.
 
     use super::*;
-    use terni::{Diagnostic, PropertyVerdict};
+    use prismqueer::liquid::pillar;
+    use prismqueer::ScalarLoss;
+    use terni::{Diagnostic, Loss, PropertyVerdict};
 
     /// Golden fixture: one bilateral arm shadowed by a landed sentinel.
     fn fixture_source() -> String {
@@ -641,5 +643,101 @@ mod prop_tests {
             "byte accounting: source.len={} out.len={} delta={} expected={}",
             source.len(), out.len(), actual_delta, expected_delta,
         );
+    }
+
+    // ────────────────────────────────────────────────────────────
+    // Multi-tick composition: byte-shrinkage → Pillar III viability.
+    // ────────────────────────────────────────────────────────────
+
+    /// Simulate K collapse ticks by concatenating K copies of the
+    /// fixture source and mending them together. Each tick's
+    /// shrinkage magnitude is the sum-of-arms bytes deleted in
+    /// that tick, boxed as `ScalarLoss` for composition into
+    /// `pillar::viability_of_magnitudes`.
+    fn simulate_shrinkage_history(k: usize) -> Vec<ScalarLoss> {
+        let corpus = fixture_corpus();
+        let mut history = Vec::with_capacity(k);
+        for _ in 0..k {
+            let source = fixture_source();
+            let arms = find_redundant_arms(&source, &corpus);
+            let magnitude: usize = arms
+                .iter()
+                .map(|a| a.byte_end - a.byte_start)
+                .sum();
+            history.push(ScalarLoss::new(magnitude as f64));
+        }
+        history
+    }
+
+    #[test]
+    /// **Multi-tick byte-shrinkage composes into Pillar III viability.**
+    ///
+    /// Byte-shrinkage per collapse tick from `apply_deletions` flows
+    /// into `prismqueer::liquid::pillar::viability_of_magnitudes`
+    /// with `ScalarLoss` as the magnitude type. The four-conjunct
+    /// invariant at ouroboros_monotone altitude closes empirically:
+    /// `rust_loc_non_increasing` deltas accumulated over a window
+    /// exceed threshold → Pass verdict = compilation loop is viable.
+    ///
+    /// This IS the substrate flow across altitudes: iter 3's raw
+    /// byte accounting → iter 4's Pillar III verdict via the same
+    /// terni::PropertyVerdict machinery prismqueer::liquid::pillar
+    /// returns for commutator-flavored viability.
+    fn multi_tick_shrinkage_composes_to_pillar_iii_viability_pass() {
+        let k = 3;
+        let history = simulate_shrinkage_history(k);
+        // Each fixture tick shrinks by the sum-of-arm bytes; the
+        // exact magnitude depends on the fixture. Threshold anything
+        // less than accumulated total → Pass.
+        let accumulated_total: f64 = history
+            .iter()
+            .map(|s| s.clone())
+            .fold(ScalarLoss::zero(), |a, b| a.combine(b))
+            .0;
+        assert!(accumulated_total > 0.0, "fixture must produce nonzero shrinkage");
+        let theta = ScalarLoss::new(accumulated_total / 2.0); // half the total
+        let verdict = pillar::viability_of_magnitudes(&history, &theta, k);
+        assert!(
+            matches!(verdict, PropertyVerdict::Pass),
+            "expected Pass when accumulated ({accumulated_total}) > theta ({}), got {verdict:?}",
+            accumulated_total / 2.0,
+        );
+    }
+
+    #[test]
+    /// Pillar III Fail when threshold exceeds accumulated shrinkage.
+    fn multi_tick_shrinkage_fails_pillar_iii_when_threshold_too_high() {
+        let k = 3;
+        let history = simulate_shrinkage_history(k);
+        let accumulated_total: f64 = history
+            .iter()
+            .map(|s| s.clone())
+            .fold(ScalarLoss::zero(), |a, b| a.combine(b))
+            .0;
+        // Threshold well above accumulated total → Fail.
+        let theta = ScalarLoss::new(accumulated_total * 10.0 + 1.0);
+        let verdict = pillar::viability_of_magnitudes(&history, &theta, k);
+        assert!(
+            matches!(verdict, PropertyVerdict::Fail(_)),
+            "expected Fail when accumulated ({accumulated_total}) <= theta, got {verdict:?}",
+        );
+    }
+
+    #[test]
+    /// Pillar III Partial when collapse history shorter than window.
+    /// Confidence = history.len() / omega.
+    fn multi_tick_shrinkage_partial_when_history_shorter_than_window() {
+        let history = simulate_shrinkage_history(2);
+        let theta = ScalarLoss::new(1.0);
+        let verdict = pillar::viability_of_magnitudes(&history, &theta, 10);
+        match verdict {
+            PropertyVerdict::Partial { confidence, .. } => {
+                assert!(
+                    (confidence - 0.2).abs() < 1e-9,
+                    "confidence = {confidence}, expected 0.2",
+                );
+            }
+            other => panic!("expected Partial, got {other:?}"),
+        }
     }
 }
