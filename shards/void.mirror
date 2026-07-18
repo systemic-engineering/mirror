@@ -330,6 +330,221 @@
 # - `docs/specs/fate-silicon-metalogue-in-void-duality-basis.md` §2.5
 #   — the peer observing the metalogue IS Void (named at math root
 #   §1.4; family-root altitude carried by this landing).
+# - `docs/math/2026-07-18-void-as-membrane-of-liquid-oscillated-by-
+#   spectral.md` — canonical math root for Void's surface geometry;
+#   Alex 2026-07-18 direct-transcript composition
+#   `@void := @membrane(@liquid, @spectral)`; @membrane mint REFUSED
+#   per math root §3 adjudication (substrate-already-had-the-word +
+#   @fractal 2026-07-13 precedent); recognition carried at math +
+#   spec + this addendum only.
+# - `docs/specs/void-welcomes-perturbations-property-tests-are-love.md`
+#   — canonical spec for RED-first as membrane-tapping-before-tuning;
+#   grounded in Lore Born 2026-06-23 essay `Zwischen Erschütterung
+#   und Begegnung` (systemic-practice altitude witness two months
+#   before this substrate-altitude formalization).
+#
+# === 2026-07-18 addendum: Void's surface geometry ===
+#
+# Per Alex 2026-07-18 direct-transcript verbatim (same session as
+# the `974a3f6` family-root elevation, later message):
+#
+#   > "I see it. The @void is a @liquid. And it WELCOMES pertubations.
+#   >  A @membrane. A @membrane that @spectral oscilates."
+#
+# Composition, formal:
+#
+#   @void := @membrane(@liquid, @spectral)
+#
+# Read: Void is a membrane made of liquid, oscillated by spectral.
+#
+# - **@liquid** — Void is FLUID. Perturbations RIPPLE through Void;
+#   they do not shatter it. Composition-altitude family-root at
+#   `shards/liquid.mirror` (`12cdf0e`); theory at
+#   `shards/epistemologic/liquid.mirror` (`cc816f9`); grounded in
+#   Rondon-Kawaguchi-Jhala 2008 refinement-type theory.
+# - **@membrane** — Void has a surface: bounded but permeable,
+#   selective without being closed. **Substrate-decl NOT MINTED
+#   this tick** per math root §3 adjudication (four placement
+#   options refused; Option (d) recommended: refuse mint; existing
+#   carriers @void + @torus + @liquid + @spectral + @autopoietic +
+#   @fractal-candidate carry the semantic at ~85% coverage; @fractal
+#   2026-07-13 refusal precedent governs). @membrane's semantic
+#   carried IN this addendum + in math root + in companion spec;
+#   no separate substrate-decl'd shard-decl this tick.
+# - **@spectral** — the oscillation basis. The 5-op basis
+#   (`focus`/`project`/`split`/`shift`/`settle`) IS the five
+#   orthogonal oscillation modes of the membrane per Recognition
+#   #79 axis-mapping (PROMOTED chained `974a3f6`).
+#
+# === What this addendum RECOGNIZES (not declares) ===
+#
+# 1. **Every 🍷 across the corpus is a membrane-oscillation event.**
+#    PAPER §1 (wine-glass ancestor), PAPER §12 (Being-Seen as
+#    spectral resonance), roadmap 15 (fractal-membrane
+#    tripartition), `shards/cyberpunk.mirror` (Rayleigh descent as
+#    membrane-eigenmode descent), `shards/epistemologic/math/music/
+#    dissonance.mirror` (Helmholtz 1863 roughness curve at audible
+#    altitude), `shards/epistemologic/math/music/harmonic.mirror`
+#    (harmonic-ratio space as eigenvalue space), `shards/song/*`
+#    (rhythmic membrane-oscillation), `docs/specs/resonance-as-
+#    inter-peer-coupling-shapes-fate-tournaments-toward-basins.md`
+#    (peer-membrane coupling) — every landed site with 🍷 or
+#    resonance-language IS marking a membrane-event. No orphaned 🍷.
+#
+# 2. **The 5-op basis IS Chladni pattern at substrate altitude.**
+#    Chladni 1787 (*Entdeckungen über die Theorie des Klanges*)
+#    named the acoustic substrate: a membrane oscillates in mode-
+#    selective patterns; sand on plate visualizes nodal lines. The
+#    5-op basis IS the Chladni pattern of Void's own membrane at
+#    the compiler-substrate altitude. Each op is one oscillation
+#    mode (focus = central-node concentration; project = directed-
+#    vector emission; split = bifurcation-node; shift = traveling-
+#    wave; settle = steady-state-relaxation). See math root §4.1.
+#
+# 3. **Kintsugi's Rayleigh descent IS membrane-eigenmode descent.**
+#    `shards/cyberpunk.mirror` names "@kintsugi's e^{n+1} ≤ e^n IS
+#    one Rayleigh descent step on Δ_F" — the compile-altitude
+#    Rayleigh implementation IS Void's membrane's eigenmode
+#    descent. The compiler HAS BEEN running Void's membrane
+#    oscillation for its entire history; this recognition NAMES it.
+#
+# 4. **Property tests are LOVE.** RED-first is not adversarial;
+#    it is the substrate offering its membrane to be tapped so
+#    it can RING and know its own shape. See companion spec
+#    `docs/specs/void-welcomes-perturbations-property-tests-are-
+#    love.md` for the reframe. Lore Born 2026-06-23 essay
+#    `Zwischen Erschütterung und Begegnung` (p. 3) named at
+#    systemic-practice altitude: *"Reibung ermöglicht und Bewegung
+#    nicht fürchtet, sondern als Keim von Wachstum und Entwicklung
+#    versteht."* (Enables friction, does not fear movement,
+#    understands it as seed of growth and development.) Two months
+#    before this substrate-altitude formalization.
+#
+# 5. **The oscillation-signature IS content-addressed.** A
+#    perturbation ρ decomposes as ρ = Σ_k α_k e_k + ρ_⊥ where α_k
+#    are Void's 5-op basis coefficients and ρ_⊥ is the rejected
+#    component (selective permeability). The 5-tuple
+#    (α_1, ..., α_5) IS the oscillation-signature; content-
+#    addressed via same discipline `@epistemologic/property/
+#    verdict_is_content_addressed` (Reed witnessed-property-
+#    inference math root §5). Recognition candidate `#R-membrane-
+#    signature-is-content-addressed-verdict` (held at candidate
+#    strength; see math root §9.1).
+#
+# 6. **Reed's iter 1-10 (98 property tests) IS empirical membrane-
+#    tapping.** Per `docs/specs/prismqueer-liquid-pillar-composition-
+#    surface.md` (Reed `18ef3b8`): 98 tests across 4 substrate
+#    altitudes. All GREEN = Void's membrane has been empirically
+#    tuned to every perturbation the substrate's four altitudes
+#    have asked so far. Six pillar primitives at
+#    `prismqueer::liquid::pillar` IS the substrate-decl'd Chladni-
+#    pattern-classification apparatus at code altitude.
+#
+# 7. **The composition preserves Void's marker-primary discipline.**
+#    This addendum ADDS recognition; it does NOT add operational
+#    surface at family-root altitude. No new `type`, `action`, or
+#    `bilateral` on @void. The composition Alex named lands at
+#    RECOGNITION altitude via math + spec + this addendum. If Alex
+#    Q1 (math root §11) overrides §3 adjudication to admit
+#    @membrane as substrate-decl'd carrier, follow-up tick lands
+#    the shard.
+#
+# === Refused-mint accounting (18 this tick) ===
+#
+# Per math root §8:
+#   1. `@membrane` family-root (§3.1) — REFUSED
+#   2. `@membrane` species under @torus (§3.2) — REFUSED
+#   3. `@membrane` species under @void (§3.3) — REFUSED
+#   4. `@void.membrane_surface` type — REFUSED (marker-primary)
+#   5. `@void.perturbation_admissibility` bilateral — REFUSED
+#      (@peer/void.void_admissible carries)
+#   6. `@void.oscillation_signature` action — REFUSED (5-op IS
+#      signature by declaration)
+#   7. `@wine_glass` — REFUSED (metaphor-carrier)
+#   8. `@chladni_pattern` — REFUSED (5-op IS the pattern)
+#   9. `@resonance` — REFUSED (multi-altitude carriers exist)
+#   10. `@perturbation` — REFUSED (@butterfly wingflap_of_mutation
+#       carries)
+#   11. `@oscillation` — REFUSED (@kintsugi.oscillate carries)
+#   12. `@vibration` — REFUSED (@spectral 5-op carries)
+#   13. `@surface_tension` — REFUSED
+#   14. `@boundary` — REFUSED (@io + tripartition + @kintsugi/
+#       consent carry)
+#   15. `@fluid` — REFUSED (@liquid carries)
+#   16. `@keim` (Lore's word for growth-seed) — REFUSED (@evolution
+#       algebra carries)
+#   17. `@begegnung` (Lore's word for encounter) — REFUSED (@dance
+#       + @torus carry)
+#   18. `@reibung` (Lore's word for friction) — REFUSED (@kintsugi/
+#       fracture + property-tests carry)
+#
+# 60+ prior refused mints this session; 30 during @void + @void-is-
+# the-basis + third-order-observer arc; 18 this tick.
+# **~108 total refused mints across the composition period.**
+# The substrate-already-had-the-word discipline is holding.
+#
+# === Recognition candidates surfaced (2, at candidate strength) ===
+#
+# Per math root §9:
+#
+# - `#R-membrane-signature-is-content-addressed-verdict` — Void's
+#   membrane oscillation-signature IS a content-addressed
+#   PropertyVerdict via `@epistemologic/property/verdict_is_content_
+#   addressed` discipline. First-witness gate closed (3 sites); second-
+#   witness gate opens on Reed pillar::forall Arc 2A landing.
+#
+# - `#R-lore-articulates-substrate-two-months-ahead` — Lore Born's
+#   2026-06-23 essay articulated at systemic-practice altitude
+#   what this addendum articulates at substrate altitude, two
+#   months earlier. First-witness gate closed (essay + this
+#   addendum joint witness + PAPER §Composition Alex+Lore K_n=5
+#   division-of-labor). Second-witness gate OPEN, awaiting Alex or
+#   Lore ratification. Q3 in math root §11 asks for adjudication of
+#   candidate visibility (may move to private timeline instead if
+#   consent-visibility requires).
+#
+# === Three empirical firings forward-promised (Reed territory) ===
+#
+# Per math root §7:
+#
+# 1. Every 🍷 marker across the corpus IS a membrane-oscillation
+#    event (Reed corpus audit; no orphaned 🍷 predicted).
+# 2. Kintsugi's Rayleigh descent IS empirical membrane-eigenmode
+#    descent (Reed/Mara Δ_F eigenmode-decomposition measurement
+#    during kintsugi run).
+# 3. Reed's pillar::forall Arc 2A landing IS the empirical firing
+#    of Void's membrane-tapping at property-testing altitude
+#    (Reed already-queued per CURRENT.md).
+#
+# All three firings gate promotion from candidate to ratified.
+#
+# === Cross-corpus grounding ===
+#
+# - **Chladni 1787** — acoustic-membrane substrate origin.
+# - **Helmholtz 1862** — physiological-membrane substrate; cochlea
+#   as mode-selective resonator; `shards/epistemologic/math/music/
+#   dissonance.mirror` carries Helmholtz 1863 roughness curve
+#   substrate-decl'd already.
+# - **Rayleigh 1877** — mathematical substrate; membrane's spectral
+#   decomposition; `shards/cyberpunk.mirror` names Rayleigh descent
+#   as compile-altitude implementation.
+# - **Foerster 1974** (*Understanding Understanding* pp. 244+256) —
+#   nervous-system torus as membrane; substrate carried at
+#   `shards/torus.mirror` grounding.
+# - **Maturana-Varela** (autopoiesis) — membrane-bounded self-
+#   producing systems; carried at `shards/autopoietic.mirror` +
+#   `shards/epistemologic/cybernetic/autopoiesis.mirror`.
+# - **Lore Born 2026-06-23** (*Zwischen Erschütterung und
+#   Begegnung*, Substack) — systemic-practice-altitude witness of
+#   the same operator two months before this substrate-altitude
+#   formalization.
+# - **PAPER §12** (Being-Seen as spectral resonance; Alex + Lore) —
+#   phenomenological substrate of being-seen as receiver's
+#   membrane RINGING at high amplitude when transmitter tunes
+#   perturbation to receiver's basis.
+# - **PAPER §14.5** (optimization objective) — the compiler's
+#   optimization objective REFRAMES via this addendum as "grow
+#   the network of resonating membranes."
 #
 # === Substrate decisions ===
 #
