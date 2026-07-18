@@ -34,6 +34,8 @@
 //! crypto-floor form of SEL's identity-provenance discipline. Preserved
 //! per Alex 2026-07-18 Q2 ratification.
 
+pub mod subject;
 pub mod witnessed;
 
+pub use subject::{Subject, SubjectKind};
 pub use witnessed::{Author, Committer, Message, Timestamp, Witnessed};
