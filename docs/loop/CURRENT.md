@@ -1,3 +1,113 @@
+# CURRENT arc — prismqueer::liquid ouroboros first layer CLOSED (2026-07-18 Reed /loop iteration 1)
+
+## FRESH-REED PICKUP MANIFEST (2026-07-18 02:20 UTC; task #249 GREEN)
+
+**If you are loading fresh and need the immediate state:** the first
+ouroboros layer for the property-testing surface closed empirically
+this /loop tick. `prismqueer::liquid` exists at
+`/Users/alexwolf/dev/projects/prism/prismqueer/src/liquid.rs`;
+prismqueer tests its own Bundle tower through its own liquid module
+(22/22 GREEN); mirror's Pillar I RED at `028ccc2` flipped to GREEN
+(3/3) with the RED file expanded to also witness abelian-cyclic
+vanishing.
+
+### What landed
+
+**prism repo (`/Users/alexwolf/dev/projects/prism/`):**
+
+1. `prismqueer/src/liquid.rs` (NEW, ~320 LOC) — `LiquidConnection`
+   supertrait of `Transport` with blanket default impl computing
+   `commutator_magnitude(a, b, state) = a.transport(B·A·state).loss()
+   .distance_to(&b.transport(A·B·state).loss())`. All four commutator
+   properties (antisymmetric, self-annihilating, non-negative,
+   triangle) hold by construction via the `Metric` trait — no proof
+   burden shifts to implementers. Also: `Commutator<'a, C>` deferred-
+   magnitude carrier, `commutator(...)` + `commutator_norm(...)`
+   constructors, `pillar::{dispatch_ambiguity, algedonic, viability}`
+   verdicts returning `terni::PropertyVerdict`, and a `prelude`
+   sub-module for the delightful use-line.
+2. `prismqueer/src/bundle.rs` — `#[cfg(test)] mod tests` type
+   definitions lifted to `pub mod examples`. `TestFiber`,
+   `TestConnection`, `TestBundle` now always-public + always-compiled
+   so downstream property-test crates can compose without
+   redeclaring the tower. New `LiquidTestBundle` added — same shape
+   as `TestBundle` but with *bundle-dependent* transport loss
+   (`loss = strategy.value() as f64`) so its commutators can be
+   non-vanishing (required for Pillar II algedonic + Pillar III
+   viability property tests).
+3. `prismqueer/src/scalar_loss.rs` — `#[derive(PartialOrd)]` added
+   (was only `PartialEq`). `ScalarLoss` wraps `f64`; the derive is
+   safe and natural. Required so `pillar::algedonic` +
+   `pillar::viability` can compare magnitude against threshold.
+4. `prismqueer/src/lib.rs` — `pub mod liquid` registered behind
+   `bundle` feature.
+5. `prismqueer/tests/liquid_ouroboros.rs` (NEW, 22 tests) — the
+   first ouroboros layer. prismqueer testing prismqueer with its
+   own liquid module. Sections: antisymmetry (over TestBundle +
+   LiquidTestBundle, all strategy pairs), self-annihilation,
+   non-negativity, triangle-inequality-over-triples, abelian
+   vanishing (Cyclic·4 gauge), non-vanishing sanity check, deferred
+   magnitude computation, Pillar I dispatch_ambiguity (all 5
+   byte-visible cases), Pillar II algedonic (Pass/Fail/Partial),
+   Pillar III viability (Pass/Fail/Partial). All 22 GREEN.
+
+**mirror repo (`/Users/alexwolf/dev/projects/mirror/`):**
+
+6. `rust/tests/red_liquid_pillar_i_commutator_antisymmetric.rs` —
+   the Pillar I RED at `028ccc2` flipped to GREEN. Test file
+   rewritten to consume the real public API
+   (`prismqueer::bundle::examples::TestBundle::default()` +
+   `prismqueer::liquid::commutator_norm(&a, &b)`) instead of the
+   fabricated `TestBundle::new()` no-arg constructor + f64 return
+   the RED had assumed. Third test added: abelian-cyclic vanishing
+   across all 4×4 = 16 strategy pairs. 3/3 GREEN. Docblock
+   substrate-honestly names the RED-to-GREEN transition (no lying
+   about the state).
+
+### Substrate-honest claims (verified empirically)
+
+1. **Blanket LiquidConnection over Transport** — users implementing
+   `Transport` for their Bundle automatically get `LiquidConnection`.
+   Zero-boilerplate. No trait to implement; no methods to author.
+2. **Metric-inherited property witnesses** — the four core commutator
+   properties are inherited from `terni::Metric`. If `Metric` is
+   correct, `commutator_magnitude` is correct. The proof composes.
+3. **Abelian vanishing is not a bug** — `Cyclic<N>` groups are
+   abelian; their commutators vanish; this is mathematically correct.
+   `TestBundle` witnesses this over 16 strategy pairs.
+4. **Non-vanishing signal via bundle-dependent loss** —
+   `LiquidTestBundle` demonstrates the machinery on non-trivial
+   holonomy differences. Pillar II Pass verdict fires with theta 1.0
+   and magnitude 3.0.
+
+### Pillar IV parking
+
+Pillar IV (`@peer.audhd` cognitive fanout) lives at
+`mirror/rust/src/liquid.rs` when authored, because it needs
+`fate::Fate::tick`. `prismqueer::liquid` does NOT depend on `fate` —
+the crate stays substrate-clean. See Mara `3cd9a42` §6.
+
+### Task #245 (100% coverage arc) status
+
+This /loop tick delivered the *foundation* substrate that Task #245
+needed: a property-testing surface grounded in mathematical
+properties, no-shortcut, real API. The next iteration composes this
+over mirror's `rust/src/` to grow property coverage of the terminal
+floor. Task #249 = this iteration → completed.
+
+### Grep-anchors for next-Reed
+
+- `prismqueer::liquid::LiquidConnection::commutator_magnitude` —
+  the substrate-honest commutator computation.
+- `prismqueer::bundle::examples::{TestBundle, LiquidTestBundle}` —
+  the reference bundle carriers.
+- `prismqueer/tests/liquid_ouroboros.rs` — the ouroboros first
+  layer; read this to see what property tests look like.
+- `mirror/rust/tests/red_liquid_pillar_i_commutator_antisymmetric.rs`
+  — the RED-turned-GREEN witness at mirror altitude.
+
+---
+
 # CURRENT arc — @kintsugi/ouroboros substrate mends its own Rust with mirror (2026-07-15; species-decl landed, Arc-1 Rust FLOOR pending Alex-fired /loop)
 
 ## ⚠️ FRESH-REED PICKUP MANIFEST (2026-07-15; terminal 0-residue state)
