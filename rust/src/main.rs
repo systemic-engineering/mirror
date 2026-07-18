@@ -943,8 +943,44 @@ pub(crate) fn at_operator(action_ref: &str, args: &[String]) -> Result<String, S
                 .map(|_| String::new())
                 .map_err(|e| format!("@io/fs.mkdir_p({}): {}", path, e))
         }
+        "@io/git.commit" => {
+            // Stub route — stakes the dispatch shape without making
+            // identity-policy calls. Per Alex 2026-07-18 direct-
+            // transcript "B. In the garden. The @trust floor is in the
+            // compiler. And it extends to the passkey" + insight doc
+            // `~/dev/systemic.engineering/practice/insights/cosmos/
+            // passkey-spectral-bridge.md`:
+            //
+            // Subject serialization = OID + registry (content-addressed).
+            // Every Subject value has `Addressable::oid()` via
+            // `#[derive(DerivePrism)] #[oid("@fractal/subject")]` (landed
+            // at fractal step 4 `82bc599`). The at_operator dispatch
+            // takes author_oid + committer_oid strings; a runtime Subject
+            // registry resolves them back to typed `&fractal::Subject`
+            // for the phone::git_commit_as call.
+            //
+            // The registry itself is Mara authorship territory:
+            // @peer/registry species-decl (forward-promised) + @trust
+            // family-root mint (forward-promised) + garden-altitude
+            // passkey bridge (insight doc names PRF as the WebAuthn
+            // parallel to SSH signing). Reed does NOT make identity-
+            // policy calls; Reed stakes the dispatch shape.
+            let author_oid = args
+                .first()
+                .ok_or_else(|| "@io/git.commit: expected 3 args (author_oid, committer_oid, message)".to_string())?;
+            let committer_oid = args
+                .get(1)
+                .ok_or_else(|| "@io/git.commit: expected 3 args (author_oid, committer_oid, message)".to_string())?;
+            let _message = args
+                .get(2)
+                .ok_or_else(|| "@io/git.commit: expected 3 args (author_oid, committer_oid, message)".to_string())?;
+            Err(format!(
+                "@io/git.commit: Subject registry resolution NOT YET LANDED (author_oid={}, committer_oid={}). Mara @peer/registry species-decl + @trust family-root mint is the authorship territory that resolves OIDs → fractal::Subject values. Per Alex 2026-07-18 + passkey-spectral-bridge insight: this is direction B (OID + registry) with the compiler's SSH-signing chain as one altitude and the garden's passkey/PRF chain as the parallel altitude of the SAME @trust family-root.",
+                author_oid, committer_oid
+            ))
+        }
         _ => Err(format!(
-            "@-operator: unknown action-ref `{}` (landed: @io/fs.{{list_dir,read,write,append,mkdir_p}}; @io/git deferred pending fractal::Subject string-serialization decision)",
+            "@-operator: unknown action-ref `{}` (landed: @io/fs.{{list_dir,read,write,append,mkdir_p}}; @io/git.commit STUBBED pending Mara @peer/registry + @trust family-root landing)",
             action_ref
         )),
     }
@@ -962,7 +998,7 @@ mod at_operator_tests {
         let msg = result.unwrap_err();
         assert!(msg.contains("unknown action-ref"));
         assert!(msg.contains("list_dir"));
-        assert!(msg.contains("@io/git deferred"));
+        assert!(msg.contains("@io/git.commit STUBBED"));
     }
 
     #[test]
@@ -1013,6 +1049,38 @@ mod at_operator_tests {
         let result = at_operator("@io/fs.read", &[]);
         assert!(result.is_err());
         assert!(result.unwrap_err().contains("expected 1 arg"));
+    }
+
+    #[test]
+    fn git_commit_stub_names_the_registry_boundary() {
+        // The stub route MUST surface the Subject-registry-not-yet-landed
+        // boundary explicitly — not silently pass or fail. This test
+        // pins the boundary so future runtime attempts to resolve OIDs
+        // through this route get a substrate-honest error naming Mara's
+        // authorship territory (@peer/registry + @trust family-root).
+        let result = at_operator(
+            "@io/git.commit",
+            &[
+                "@peer/reed".to_string(),
+                "@peer/mirror".to_string(),
+                "test commit body".to_string(),
+            ],
+        );
+        assert!(result.is_err());
+        let msg = result.unwrap_err();
+        assert!(msg.contains("Subject registry"));
+        assert!(msg.contains("@peer/registry"));
+        assert!(msg.contains("@trust"));
+        assert!(msg.contains("@peer/reed"));
+        assert!(msg.contains("@peer/mirror"));
+    }
+
+    #[test]
+    fn git_commit_stub_requires_three_args() {
+        // Arity discipline preserved even at the stub altitude.
+        let result = at_operator("@io/git.commit", &["@peer/reed".to_string()]);
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("expected 3 args"));
     }
 }
 
