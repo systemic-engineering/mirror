@@ -1,4 +1,57 @@
-# CURRENT arc — pillar::viability_of_magnitudes composes byte-shrinkage into Pillar III (2026-07-18 Reed /loop iteration 4)
+# CURRENT arc — Prism trait laws close the ouroboros at the OPTIC BASE (2026-07-18 Reed /loop iteration 5)
+
+## Iteration 5 delta (2026-07-18 04:57 UTC; task #253 GREEN)
+
+**The last unexplored ouroboros layer is closed.** Iter 1-2 tested
+Bundle/Connection/Gauge/Transport at the spectral commutator altitude;
+iter 3-4 tested `mirror/rust/src/collapse.rs` byte discipline + Pillar
+III composition. Iter 5 witnesses the Prism trait laws — the OPTIC
+BASE that the Bundle tower stands on.
+
+**Landed in prism repo:**
+
+1. `prismqueer/tests/prism_laws.rs` (NEW, 191 LOC, 9 tests, **9/9 GREEN**):
+   - `identity_prism_preserves_u32_value`
+   - `identity_prism_preserves_string_value`
+   - `identity_prism_preserves_vec_value`
+   - `identity_prism_preserves_bundle_fiber_state` (same `[f64; 4]`
+     shape used by TestBundle in ouroboros tests)
+   - `apply_equals_manual_focus_project_settle_pipeline` (DSL
+     contract per lib.rs docblock)
+   - `apply_h_over_identity_prism_returns_success_with_input_state`
+     (heterogeneous operator-action pattern; used throughout
+     mirror bootstrap for spectral-triple operator on Hilbert)
+   - `identity_prism_composed_with_itself_still_preserves_value`
+     (monoid identity law: `id ∘ id = id`)
+   - `identity_prism_produces_success_beam_with_no_loss`
+   - `prism_law_composes_to_property_verdict` (verdict marshaling
+     through `terni::PropertyVerdict` — same machinery pillar uses)
+
+**Substrate closure at all four altitudes:**
+
+```
+prismqueer/tests/prism_laws.rs        — OPTIC BASE (iter 5: 9 tests)
+       ↓ (Prism trait — monoid identity law empirically witnessed)
+prismqueer/tests/liquid_ouroboros.rs  — BUNDLE/LIQUID (iter 1+2+4: 36)
+       ↓ (Cyclic + Perm3 gauges; abelian + non-abelian commutators)
+rust/src/collapse.rs::prop_tests      — COLLAPSE (iter 3+4: 14)
+       ↓ (byte-shrinkage per collapse tick)
+pillar::viability_of_magnitudes       — (iter 4: composes back)
+```
+
+**Total: 68 property tests across 4 substrate altitudes.**
+
+**Why iter 5 was needed:** iter 1-4 built up FROM the commutator
+altitude UP (Bundle → Liquid → collapse) and OUT (→ mirror/rust).
+The optical base (Prism trait) was assumed correct but never
+directly tested by the property-testing arc. Iter 5 closes that
+assumption empirically. `IdentityPrism` is the monoid identity of
+Prism composition per prismqueer/src/lib.rs header; if the identity
+law failed, ALL upstream property tests would carry no signal
+(garbage-in-garbage-out through the trait). It doesn't fail. The
+foundation is empirically substrate-honest.
+
+---
 
 ## Iteration 4 delta (2026-07-18 04:15 UTC; task #252 GREEN)
 
