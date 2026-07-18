@@ -1,0 +1,307 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @spectral
+in @third
+in @mirror/mosaic
+in @mirror/store
+in @algebra
+in @algebra/metalogue
+in @io/fs
+in @code/rust
+in @code/typescript
+in @code/python
+
+# @spectral/mosaic — the READ-side species over the parametric
+# mosaic(altitude) form; types an existing filesystem repository
+# into a mosaic(@repo) splinter-graph.
+#
+# Species under @spectral (namespace-parent per Loki §5 shrink at
+# shards/spectral.mirror:14-40). Named by Alex Wolf 2026-07-18
+# direct-transcript verbatim: "Ah, it's @spectral/mosaic and I
+# presume now also @kintsugi/mosaic. Fitting!" Dual of
+# @kintsugi/mosaic; together the two speak the @mosaic/algebra
+# second-order metalogue at SPEC altitude.
+#
+# === Substrate authority ===
+#
+# - Canonical spec: `docs/specs/kintsugi-mosaic-spectral-mosaic-
+#   bilateral-third-order-observer.md` (Mara 2026-07-18; §3
+#   declares this species).
+# - Canonical math: `docs/math/2026-07-18-third-order-observer-
+#   on-consumer-hardware.md` (Mara 2026-07-18; §2.1 signature +
+#   §3.1 bilateral + §3.2 Knaster-Tarski fixed-point proof).
+# - Parent algebra: `docs/specs/mosaic-as-type-system.md` (Mara
+#   2026-06-06); this species IS the RUNTIME application of the
+#   type-system algebra to an existing repo.
+# - Precedent for algebra shape: @kintsugi/algebra (Mara
+#   2026-07-17 canonical spec + math); this species is the SPEC-
+#   altitude sibling of the FRACTURE-altitude algebra.
+#
+# === Alex 2026-07-18 in-transcript composition (verbatim) ===
+#
+#   "Ah, it's @spectral/mosaic and I presume now also
+#    @kintsugi/mosaic. Fitting!"
+#
+#   "And I think now we have the source of @third for the peer.
+#    The @peer observes the first-order @metalogue(@silicon/
+#    algebra, @fate/algebra). And the second-order @metalogue
+#    (@kintsugi/mosaic, @spectral/mosaic) and we have a @third
+#    order observer. On consumer hardware."
+#
+# The bilateral predicate below (`mosaic_bilateral_witnessing`)
+# is the substrate-decl'd runtime check discharged at Arc 6+
+# realization boundary (Reed forward-promised territory under
+# `[substrate-floor:@io-boundary]` marker + Seam gate). Body is
+# `\`-obligation-blocked; Arc 6 landing composes sentinel-check
+# via apply_h::act.
+#
+# === Substrate-already-had-the-word citation chain ===
+#
+# Every carrier below cites an existing landing:
+#
+#   mosaic(altitude)              — shards/mirror/mosaic.mirror:94 (LANDED)
+#   splinter                      — @glass (LANDED; universal atom)
+#   splinter_graph                — @mirror/store (LANDED; mosaic
+#                                    (@store) shape)
+#   @io/fs.read_at, walk_at       — @io family-root (LANDED)
+#   @code/rust, @code/typescript,
+#   @code/python                  — @code family (LANDED)
+#   algebra_metalogue_session     — @algebra/metalogue (LANDED)
+#   algebra_carrier               — @algebra (LANDED)
+#   observation_depth             — @third (LANDED)
+#   apply_h::act resolver-arm     — bootstrap/src/apply_h.rs
+#                                    (LANDED Reed `21fc211` Landing
+#                                    3+4)
+#
+# === @spectral/mosaic ↔ @kintsugi/mosaic bilateral ===
+#
+# @spectral/mosaic READS (type_of_repo: ref_repo → mosaic(@repo));
+# @kintsugi/mosaic WRITES (back_project_of_type: mosaic(@repo) →
+# ref_spec). The pair is adjoint on the mosaic-typing lattice per
+# Knaster-Tarski fixed-point (canonical math §3.2 proof). Every
+# existing repo lies in the basin of some fixed-point (industry-
+# scale claim).
+#
+# The bilateral discharge predicate is `mosaic_bilateral_
+# witnessing` declared at both species (this species + @kintsugi/
+# mosaic); consumers cite one or the other symmetrically. Substrate
+# honours byte-equal declaration across shards.
+#
+# === @mosaic/algebra second-order metalogue ===
+#
+# @spectral/mosaic is ONE speaker in the @mosaic/algebra second-
+# order metalogue (SPEC-ONLY concept per canonical spec §11 Q1
+# lean; parallel to @kintsugi/algebra Option 2 ratified by Alex
+# 2026-07-16):
+#
+#   @mosaic/algebra := algebra_metalogue_session(
+#     speakers = { @kintsugi/mosaic, @spectral/mosaic }
+#   )
+#
+# @spectral/mosaic PROPOSES structural typings (reading; empirical-
+# material state); @kintsugi/mosaic REALISES those that discharge
+# Pass on round-trip byte-equality (writing; the .spec that
+# reproduces). The spec IS the metalogue at algebra-of-repos
+# altitude.
+#
+# No `shards/mosaic/algebra.mirror` this tick. Species-decl status
+# is Alex adjudication per two-tick discipline.
+#
+# === @third opt-in ===
+#
+# @spectral/mosaic imports `in @third` because it PARTICIPATES in
+# the depth-3 observation @peer makes when apply_h::act dispatches
+# BOTH mosaic_bilateral_witnessing (spec altitude, second-order)
+# AND kintsugi_algebra_witnessing (fracture altitude, first-order)
+# in one tick. Von Foerster 1974 third-order operationalised on
+# consumer hardware.
+#
+# L2 layout per Seam 2026-07-03 audit §Q1 (species-file-scoped
+# conditional import; parallel to kintsugi/surface Mara `e910dd6`).
+# @spectral family-root does NOT import `in @third` at the family-
+# root altitude (Loki §5 shrink preserved).
+#
+# Species-refinement forward-promise (per @third canonical spec §9
+# pattern; parallel to @reflection.third_order_observation):
+#
+#   @mosaic.round_trip_third_order <: observation_depth
+#
+# Refinement shard NOT landed this tick per two-tick discipline;
+# forward-promise landed here + at @kintsugi/mosaic docblock.
+# Placement per canonical spec §11 Q2 Mara lean: NEW namespace
+# `shards/mosaic/round_trip_third_order.mirror` (refinement
+# carries composed bilateral pair; both species contribute).
+#
+# === Cascade to StageFreight (first empirical target) ===
+#
+# type_of_repo(gitlab.prplanit.com/PrPlanIT/stagefreight) walks
+# the Go repo, produces τ_sf ∈ mosaic(@repo). @kintsugi/mosaic.
+# back_project_of_type consumes τ_sf; produces stagefreight.spec.
+# PR to StageFreight repo per Pack multi-repo discipline (Glint
+# 2026-06-22 essay). PR IS the observation.
+#
+# === Refused mints (canonical math §9) ===
+#
+# @repo family-root, @mosaic family-root, @spectral/typer,
+# type_of/back_project_of unqualified, spec_writer/synthesizer/
+# generator, @third_order family-root, @compilation/@authorship/
+# @roundtrip, @peer/third_order, @mosaic/algebra species-decl
+# this tick, @kintsugi/mosaic/classifier as species-decl. 10
+# refused mints total per substrate-health metric.
+#
+# === Composition surface ===
+#
+#   type_of_repo(path: ref) -> mosaic(@repo)
+#     — the READ operator; produces the splinter-graph typing.
+#     Read-only; no I/O beyond file-walker + parser.
+#
+#   classify_of_repo(path: ref) -> classification
+#     — INTERNAL sub-action of type_of_repo; language + build-
+#     system + dependency detection. NOT a separate species per
+#     canonical math §10 adjudication (grep-first: no @classifier
+#     in substrate; @spectral/mosaic action body suffices).
+#
+#   mosaic_bilateral_witnessing(R: ref_repo, σ: ref_spec) -> verdict
+#     — the round-trip byte-equality discharge; declared at both
+#     species for symmetry.
+#
+# === Spec context ===
+#
+# Canonical spec: `docs/specs/kintsugi-mosaic-spectral-mosaic-
+#   bilateral-third-order-observer.md` (this tick).
+# Canonical math: `docs/math/2026-07-18-third-order-observer-on-
+#   consumer-hardware.md` (this tick).
+# Substrate decisions:
+#   [[architecture-mirror-store-vs-spectral-db]] (open foundation
+#     / closed engine business-model boundary; @mirror/store is
+#     open; @spectral/db is the engine on top; @spectral/mosaic
+#     lives on the runtime side per same partition),
+#   [[architecture-prism-as-trait-as-everything]] (parametric
+#     mosaic(altitude) form; this species specialises to @repo),
+#   [[architecture-lift-as-load-bearing]] (shift verb lifts across
+#     altitude; @spectral/mosaic uses focus+project+split reading;
+#     @kintsugi/mosaic uses shift+settle writing),
+#   [[feedback-substrate-already-had-the-word]] (mosaic altitude
+#     parametric form was already substrate-decl'd; this species
+#     specialises to @repo without inventing new algebra).
+# Substrate recognitions:
+#   recognition #46 (path-syntax discipline; @spectral/mosaic at
+#     `shards/spectral/mosaic.mirror` declares @spectral/mosaic),
+#   recognition #51 (mirror as expanding Hilbert space; this
+#     species adds mosaic(@repo) dimension),
+#   candidate #55 (form/process partition at family-root altitude;
+#     @spectral (runtime observation) / @kintsugi (transformation)
+#     partition holds at species altitude too).
+# Related shards:
+#   spectral.mirror (namespace-parent; declares @spectral),
+#   mirror/mosaic.mirror (parametric algebra; this species
+#     specialises the READ-side),
+#   kintsugi/mosaic.mirror (dual species; the WRITE-side; this
+#     species' round-trip partner),
+#   third.mirror (marker; observation-depth carrier this species
+#     opts in to),
+#   algebra/metalogue.mirror (algebra_metalogue_session; this
+#     species is one speaker in @mosaic/algebra spec-only concept),
+#   mirror/spec.mirror (the project shape @kintsugi/mosaic
+#     produces; @spectral/mosaic reads REPOS not SPECS).
+# Path-namespace property: this file at `shards/spectral/mosaic.
+# mirror` declares `@spectral/mosaic` and only that.
+
+glass @spectral/mosaic {
+  focus  repo         # ref_repo (path)   -> mosaic(@repo) typing
+  project splinters   # typing            -> filtered splinter set
+  split  languages    # splinter set      -> [(@code/*, splinters)]
+  shift  altitudes    # [(@code/*, ...)] + altitude -> emitter
+  settle typing       # emitter           -> mosaic(@repo) fixed
+}
+
+# === classification carrier ===
+#
+# Language + build-system + dependency detection record. Internal
+# to type_of_repo per canonical math §10 adjudication.
+type classification = {
+  languages: [ref],       # @code/rust, @code/typescript, ...
+  build_systems: [ref],   # @io/cargo, @io/npm, @io/poetry, ...
+  dependencies: [ref],    # cross-splinter arrows from manifests
+}
+
+# === type_of_repo action ===
+#
+# The READ operator. Given a filesystem path resolving to a
+# repository root, produce the mosaic(@repo) splinter-graph typing.
+#
+# Composition:
+#   1. file-walker enumerates repo contents (@io/fs.walk_at);
+#   2. parser dispatch per detected language (@code/rust,
+#      @code/typescript, @code/python, ...);
+#   3. build-manifest parse (Cargo.toml, package.json, pyproject.
+#      toml, flake.nix, ...);
+#   4. dependency-edge extraction from manifests;
+#   5. splinter-graph construction per @mirror/store discipline;
+#   6. content-address closure per uuid_spectral;
+#   7. mosaic(@repo) typing produced.
+#
+# Read-only: no `.spec` file need exist. Defined on ANY repo the
+# file walker can enumerate.
+#
+# Round-trip discipline enforced at the boundary via the
+# postcondition on mosaic_bilateral_witnessing — the substrate
+# refuses to settle if the produced typing does NOT round-trip
+# against back_project_of_type.
+type_of_repo(path: ref) -> mosaic(@repo) { \ }
+
+# === classify_of_repo INTERNAL sub-action ===
+#
+# Language + build-system + dependency detection. INTERNAL to
+# type_of_repo per canonical math §10 adjudication (grep-first:
+# no @classifier in substrate; @spectral/mosaic action body
+# suffices; species-decl for classifier would double the
+# machinery for content type_of_repo's parser composition already
+# produces).
+#
+# Per Detector-inadequacy-answer-is-never-Rust rule (Alex
+# 2026-07-16 8th repetition; memory `feedback-detector-
+# inadequacy-answer-is-never-rust`): the answer to insufficient
+# classification is NOT a new Rust classifier; it is composition
+# in @spectral/mosaic's action body via existing @code/* parsers.
+classify_of_repo(path: ref) -> classification { \ }
+
+# === mosaic_bilateral_witnessing bilateral (well-formedness) ===
+#
+# Bilateral predicate discharging that (R, σ) is a well-formed
+# mosaic round-trip pair:
+#
+#   (a) σ = @kintsugi/mosaic.back_project_of_type(type_of_repo(R))
+#       (structural derivation from R);
+#   (b) type_of_repo(@mirror/mosaic.settle(@mirror/mosaic.focus(σ)))
+#       = type_of_repo(R)
+#       (round-trip byte-equality of typing);
+#   (c) both type_of_repo and back_project_of_type invocations
+#       discharged under @kintsugi/oscillate.is_settled(authentic)
+#       (convergence, not exhaustion).
+#
+# Sentinel per shard docblock: `mosaic=repo-spec-adjoint-round-trip`.
+#
+# Substrate-decl'd shape per `shards/epistemologic/pact/bilateral.
+# mirror` (`a0f4d3f`, 2026-07-16). Arity 2 (checks one bilateral
+# pair per invocation). Body `\`-obligation-blocked; the reflective
+# evaluator at `bootstrap/src/apply_h.rs` (per Reed `21fc211`
+# Landing 3+4) discharges via corpus lookup + sentinel byte-check.
+#
+# Declared at BOTH species (this species + @kintsugi/mosaic);
+# consumers cite either symmetrically per parallel to how
+# verdict_is_content_addressed is declared at multiple call-site
+# species.
+bilateral mosaic_bilateral_witnessing {
+  sentinel  "mosaic=repo-spec-adjoint-round-trip"
+  arity     2
+}
+mosaic_bilateral_witnessing(R: ref, sigma: ref) -> verdict { \ }
+
+out @spectral/mosaic
+out type_of_repo
+out classify_of_repo
+out classification
+out mosaic_bilateral_witnessing
