@@ -822,4 +822,128 @@ mod prop_tests {
             other => panic!("expected Partial, got {other:?}"),
         }
     }
+
+    // ────────────────────────────────────────────────────────────
+    // Filesystem-dependent: load_bilateral_corpus over tempdir.
+    // ────────────────────────────────────────────────────────────
+    // Iter 3 deferred these; iter 7 closes the gap. Each test uses
+    // `tempfile::TempDir` for a unique-per-test scratch dir; cleanup
+    // on drop so no leaked state. Tests witness that
+    // `load_bilateral_corpus` correctly walks `<root>/shards/**/*.mirror`,
+    // parses bilateral blocks, populates BilateralDecl fields, and
+    // grows monotonically as shards land.
+
+    #[test]
+    /// Missing shards/ dir under root → empty corpus (silently, per
+    /// bootstrap precedent). Substrate-honest: no shards, nothing
+    /// to shadow.
+    fn missing_shards_dir_returns_empty_corpus() {
+        let tmp = tempfile::TempDir::new().expect("tempdir");
+        // Do NOT create a shards/ subdir under tmp.
+        let corpus = load_bilateral_corpus(tmp.path());
+        assert!(corpus.is_empty(), "missing shards dir must return empty corpus");
+    }
+
+    #[test]
+    /// Empty shards/ dir under root → empty corpus. Vacuous
+    /// walker: nothing to enumerate.
+    fn empty_shards_dir_returns_empty_corpus() {
+        let tmp = tempfile::TempDir::new().expect("tempdir");
+        std::fs::create_dir_all(tmp.path().join("shards")).expect("create shards dir");
+        let corpus = load_bilateral_corpus(tmp.path());
+        assert!(corpus.is_empty(), "empty shards dir must return empty corpus");
+    }
+
+    /// Helper: write a minimal .mirror shard file at
+    /// `<root>/shards/<rel_path>` with one bilateral block.
+    fn write_shard(root: &std::path::Path, rel_path: &str, shard_ref: &str, name: &str, sentinel: &str) {
+        let full = root.join("shards").join(rel_path);
+        if let Some(parent) = full.parent() {
+            std::fs::create_dir_all(parent).expect("create parent");
+        }
+        let content = format!(
+            "prism {shard_ref} {{\n}}\n\nbilateral {name} {{\n  sentinel \"{sentinel}\"\n  arity 1\n}}\n"
+        );
+        std::fs::write(&full, content).expect("write shard file");
+    }
+
+    #[test]
+    /// Single .mirror file with one bilateral → corpus has exactly
+    /// one entry keyed on `<shard_ref>.<name>`.
+    fn single_mirror_file_produces_one_corpus_entry() {
+        let tmp = tempfile::TempDir::new().expect("tempdir");
+        write_shard(
+            tmp.path(),
+            "spectral/signature.mirror",
+            "@spectral/signature",
+            "integrity_check",
+            "merkle-linked",
+        );
+        let corpus = load_bilateral_corpus(tmp.path());
+        assert_eq!(corpus.len(), 1, "got {} entries, expected 1", corpus.len());
+        let key = "@spectral/signature.integrity_check";
+        assert!(corpus.contains_key(key), "corpus missing key {key:?}");
+    }
+
+    #[test]
+    /// BilateralDecl fields populate correctly from the .mirror
+    /// source: name, sentinel, arity, full_action_ref.
+    fn bilateral_decl_fields_populated_from_mirror_source() {
+        let tmp = tempfile::TempDir::new().expect("tempdir");
+        write_shard(
+            tmp.path(),
+            "spectral/signature.mirror",
+            "@spectral/signature",
+            "integrity_check",
+            "merkle-linked",
+        );
+        let corpus = load_bilateral_corpus(tmp.path());
+        let decl = corpus
+            .get("@spectral/signature.integrity_check")
+            .expect("decl must exist for the written shard");
+        assert_eq!(decl.name, "integrity_check");
+        assert_eq!(decl.sentinel, "merkle-linked");
+        assert_eq!(decl.arity, 1);
+        assert_eq!(decl.full_action_ref, "@spectral/signature.integrity_check");
+    }
+
+    #[test]
+    /// **Corpus grows monotonically as shards are added.** Add one
+    /// shard, load, add another, load again — second load has
+    /// strictly more entries. This is the fs-altitude analog of
+    /// `rust_loc_non_increasing` for the corpus-space: shard count
+    /// only ratchets up.
+    fn corpus_grows_monotonically_when_shards_added() {
+        let tmp = tempfile::TempDir::new().expect("tempdir");
+
+        write_shard(
+            tmp.path(),
+            "a.mirror",
+            "@a",
+            "predicate_one",
+            "sentinel-one",
+        );
+        let corpus_after_one = load_bilateral_corpus(tmp.path());
+        assert_eq!(corpus_after_one.len(), 1);
+
+        write_shard(
+            tmp.path(),
+            "nested/b.mirror",
+            "@nested/b",
+            "predicate_two",
+            "sentinel-two",
+        );
+        let corpus_after_two = load_bilateral_corpus(tmp.path());
+        assert!(
+            corpus_after_two.len() > corpus_after_one.len(),
+            "corpus must grow monotonically: {} !> {}",
+            corpus_after_two.len(),
+            corpus_after_one.len(),
+        );
+
+        // Second .mirror was under nested/ — witnesses recursive
+        // walker; both entries must be present.
+        assert!(corpus_after_two.contains_key("@a.predicate_one"));
+        assert!(corpus_after_two.contains_key("@nested/b.predicate_two"));
+    }
 }

@@ -1,4 +1,56 @@
-# CURRENT arc — pillar::algedonic_of_magnitude completes symmetric Pillar II+III generalization (2026-07-18 Reed /loop iteration 6)
+# CURRENT arc — tempdir tests close fs-dependent load_bilateral_corpus coverage (2026-07-18 Reed /loop iteration 7)
+
+## Iteration 7 delta (2026-07-18 06:12 UTC; task #255 GREEN)
+
+Iter 3's docblock explicitly deferred filesystem-dependent tests
+for `load_bilateral_corpus`. Iter 7 closes that gap with 5 new
+tempdir-backed tests — the walker's fs behavior is now empirically
+witnessed.
+
+**Landed in mirror repo:**
+
+1. `rust/Cargo.toml` gains `tempfile = "3"` as dev-dep (unique-per-test
+   scratch dirs, cleanup on drop).
+2. `rust/src/collapse.rs` prop_tests extended with **5 new** tests
+   (22 GREEN total, up from 17):
+   - `missing_shards_dir_returns_empty_corpus` — base case: no
+     shards/ subdir → empty corpus (silent per bootstrap precedent).
+   - `empty_shards_dir_returns_empty_corpus` — vacuous walker.
+   - `single_mirror_file_produces_one_corpus_entry` — positive smoke.
+   - `bilateral_decl_fields_populated_from_mirror_source` —
+     witnesses parser: name, sentinel, arity, full_action_ref
+     populate correctly from written .mirror source.
+   - `corpus_grows_monotonically_when_shards_added` — the fs-altitude
+     analog of `rust_loc_non_increasing`: shard count only
+     ratchets up. Also witnesses recursive walker (nested subdir).
+
+Plus helper `write_shard(root, rel_path, shard_ref, name, sentinel)`
+that authors a minimal .mirror shard file inline for tests.
+
+**Total: 79 property tests across 4 substrate altitudes.**
+
+```
+prism_laws.rs        — OPTIC BASE      (iter 5: 9)
+liquid_ouroboros.rs  — BUNDLE/LIQUID   (iter 1+2+4+6: 39)
+collapse.rs prop_tests — COLLAPSE      (iter 3+4+6+7: 22)
+                       ↑ composes back via BOTH pillars +
+                         load_bilateral_corpus fs coverage
+```
+
+**Substrate closure at collapse.rs altitude — complete:**
+
+| Function            | Coverage |
+|---------------------|----------|
+| apply_deletions     | ✅ empty, monotone, deterministic, exact accounting |
+| find_redundant_arms | ✅ sorted, byte-range valid, conservative, idempotent |
+| load_bilateral_corpus | ✅ missing, empty, single, fields, monotone (iter 7) |
+
+All three public functions in `collapse.rs` are now property-
+covered end-to-end. The single remaining gap is intentional —
+composition test (find → apply → find again) IS witnessed by
+`ouroboros_idempotence_at_byte_altitude` from iter 3.
+
+---
 
 ## Iteration 6 delta (2026-07-18 05:29 UTC; task #254 GREEN)
 

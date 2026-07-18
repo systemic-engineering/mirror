@@ -46,6 +46,11 @@ path = "src/main.rs"
 [dev-dependencies]
 prismqueer = { path = "../../prism/prismqueer", features = ["bundle"] }
 terni      = { path = "../../prism/imperfect" }
+# tempfile: unique-per-test scratch dirs for filesystem-dependent
+# tests in `collapse.rs::prop_tests` (iter 7 — covers
+# `load_bilateral_corpus` which walks `<root>/shards/**/*.mirror`).
+# Cleanup on TempDir drop; no leaked state.
+tempfile = "3"
 
 [profile.release]
 # Match bootstrap's release profile shape for byte-parity of the
