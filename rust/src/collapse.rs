@@ -740,4 +740,86 @@ mod prop_tests {
             other => panic!("expected Partial, got {other:?}"),
         }
     }
+
+    // ────────────────────────────────────────────────────────────
+    // Single-tick composition: byte-shrinkage → Pillar II algedonic.
+    // ────────────────────────────────────────────────────────────
+
+    /// Compute byte-shrinkage magnitude for one collapse tick over
+    /// the fixture source — the atomic unit consumed by
+    /// `pillar::algedonic_of_magnitude`.
+    fn single_tick_shrinkage() -> ScalarLoss {
+        let source = fixture_source();
+        let corpus = fixture_corpus();
+        let arms = find_redundant_arms(&source, &corpus);
+        let bytes: usize = arms
+            .iter()
+            .map(|a| a.byte_end - a.byte_start)
+            .sum();
+        ScalarLoss::new(bytes as f64)
+    }
+
+    #[test]
+    /// **Single-tick byte-shrinkage composes into Pillar II
+    /// algedonic Pass.** One collapse tick's shrinkage magnitude
+    /// exceeds a low-signal threshold → Pass verdict = the
+    /// compilation loop is producing algedonic feedback.
+    ///
+    /// Parallel to `multi_tick_shrinkage_composes_to_pillar_iii_
+    /// viability_pass` (iter 4) at single-tick granularity.
+    fn single_tick_shrinkage_composes_to_pillar_ii_algedonic_pass() {
+        let magnitude = single_tick_shrinkage();
+        assert!(!magnitude.is_zero(), "fixture must produce nonzero shrinkage");
+        // theta = 0 opens Pass gate on any positive magnitude.
+        let theta = ScalarLoss::new(0.0);
+        let verdict = pillar::algedonic_of_magnitude(&magnitude, &theta);
+        assert!(
+            matches!(verdict, PropertyVerdict::Pass),
+            "expected Pass on positive shrinkage ({}), got {verdict:?}",
+            magnitude.as_f64(),
+        );
+    }
+
+    #[test]
+    /// Pillar II Fail when a tick produces no shrinkage (e.g. empty
+    /// corpus → no arms → no bytes deleted). Substrate-honest
+    /// verdict: no signal, no algedonic feedback.
+    fn single_tick_no_shrinkage_composes_to_pillar_ii_algedonic_fail() {
+        let source = fixture_source();
+        let empty_corpus: HashMap<String, BilateralDecl> = HashMap::new();
+        let arms = find_redundant_arms(&source, &empty_corpus);
+        let bytes: usize = arms
+            .iter()
+            .map(|a| a.byte_end - a.byte_start)
+            .sum();
+        let magnitude = ScalarLoss::new(bytes as f64);
+        assert!(magnitude.is_zero(), "empty corpus must produce zero shrinkage");
+        let theta = ScalarLoss::new(1.0);
+        let verdict = pillar::algedonic_of_magnitude(&magnitude, &theta);
+        assert!(
+            matches!(verdict, PropertyVerdict::Fail(_)),
+            "expected Fail on zero shrinkage, got {verdict:?}",
+        );
+    }
+
+    #[test]
+    /// Pillar II Partial when a tick produces some shrinkage but
+    /// below threshold — signal present but not decisive.
+    fn single_tick_shrinkage_composes_to_pillar_ii_algedonic_partial() {
+        let magnitude = single_tick_shrinkage();
+        assert!(!magnitude.is_zero());
+        // Threshold well above magnitude → Partial (positive signal
+        // below theta).
+        let theta = ScalarLoss::new(magnitude.as_f64() * 100.0 + 1.0);
+        let verdict = pillar::algedonic_of_magnitude(&magnitude, &theta);
+        match verdict {
+            PropertyVerdict::Partial { confidence, .. } => {
+                assert!(
+                    (confidence - 0.5).abs() < 1e-9,
+                    "expected confidence 0.5, got {confidence}",
+                );
+            }
+            other => panic!("expected Partial, got {other:?}"),
+        }
+    }
 }

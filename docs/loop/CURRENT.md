@@ -1,4 +1,66 @@
-# CURRENT arc — Prism trait laws close the ouroboros at the OPTIC BASE (2026-07-18 Reed /loop iteration 5)
+# CURRENT arc — pillar::algedonic_of_magnitude completes symmetric Pillar II+III generalization (2026-07-18 Reed /loop iteration 6)
+
+## Iteration 6 delta (2026-07-18 05:29 UTC; task #254 GREEN)
+
+Parallel to iter 4's `viability_of_magnitudes`: **iter 6 adds
+`algedonic_of_magnitude`** so single-tick byte-shrinkage from
+`mirror/rust/src/collapse.rs` can trigger Pillar II verdicts,
+symmetric to iter 4's multi-tick Pillar III composition.
+
+**Landed in prism repo:**
+
+1. `prismqueer/src/liquid.rs` extended with:
+   ```rust
+   pub fn algedonic_of_magnitude<L>(magnitude: &L, theta: &L)
+       -> PropertyVerdict where L: Loss + PartialOrd
+   ```
+   Same Pass (m > theta) / Partial (0 < m <= theta) / Fail (m == 0)
+   semantics as commutator-flavored `algedonic`. Completes the
+   symmetric generalization of Pillar II + Pillar III to
+   substrate-specific `Loss` values.
+2. `prismqueer/tests/liquid_ouroboros.rs` extended with **3 new**
+   tests (39 GREEN total): Pass above threshold, Fail on zero,
+   Partial below threshold with confidence 0.5.
+
+**Landed in mirror repo:**
+
+3. `rust/src/collapse.rs` prop_tests extended with **3 new** tests
+   (17 GREEN total, up from 14):
+   - `single_tick_shrinkage_composes_to_pillar_ii_algedonic_pass`
+     — one collapse tick's byte-shrinkage triggers Pass
+   - `single_tick_no_shrinkage_composes_to_pillar_ii_algedonic_fail`
+     — empty corpus → zero magnitude → Fail
+   - `single_tick_shrinkage_composes_to_pillar_ii_algedonic_partial`
+     — magnitude below high threshold → Partial
+
+**Substrate closure at all four altitudes — fully symmetric pillar
+composition:**
+
+```
+prism_laws.rs        — OPTIC BASE      (iter 5: 9)
+liquid_ouroboros.rs  — BUNDLE/LIQUID   (iter 1+2+4+6: 39)
+collapse.rs prop_tests — COLLAPSE      (iter 3+4+6: 17)
+                       ↑ composes back via BOTH:
+                         - pillar::algedonic_of_magnitude (single-tick, iter 6)
+                         - pillar::viability_of_magnitudes (multi-tick, iter 4)
+```
+
+**Total: 74 property tests across 4 substrate altitudes.**
+
+**Symmetric composition witness:**
+
+| Time scale  | Pillar | Mirror composition                     |
+|-------------|--------|----------------------------------------|
+| Single-tick | II     | algedonic_of_magnitude (iter 6)        |
+| Multi-tick  | III    | viability_of_magnitudes (iter 4)       |
+
+Both pillars now accept raw `Loss` magnitudes symmetrically. Byte-
+shrinkage from `apply_deletions` composes via BOTH temporal
+granularities into the same PropertyVerdict machinery prismqueer
+uses internally. The property-testing ouroboros is now fully
+symmetric across the temporal axis.
+
+---
 
 ## Iteration 5 delta (2026-07-18 04:57 UTC; task #253 GREEN)
 
