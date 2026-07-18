@@ -128,6 +128,8 @@ use std::fs;
 use std::io;
 use std::path::{Path, PathBuf};
 
+use fractal::Subject;
+
 /// One walker-visited path with a byte-check on file-kind. Discovered
 /// classification is left to main.rs's `@`-operator dispatch per Mara
 /// §7.4 (dispatch is byte-check on directory content shape). phone.rs
@@ -219,28 +221,42 @@ pub(crate) fn git_add(repo_root: &Path, abs_path: &Path) -> io::Result<()> {
     Ok(())
 }
 
-/// Commit staged changes under `repo_root` authored as `author_name
-/// <author_email>`. SSH signing stays operator-default (never override
-/// `gpg.format` or `user.signingkey` per CLAUDE.md substrate
+/// Commit staged changes under `repo_root` with author (WHO-INTENDED)
+/// and committer (WHO-EXECUTED) supplied as `fractal::Subject` values
+/// per Mara `2760c2a` fractal migration spec step 9 + MARA doctrine
+/// (Author≠Committer split preserved through the type-level chain per
+/// Alex Q2 ratification). SSH signing stays operator-default (never
+/// override `gpg.format` or `user.signingkey` per CLAUDE.md substrate
 /// discipline). Message piped over stdin via `-F -`.
+///
+/// The committer identity flows through `git -c user.name/email`; the
+/// author identity flows through `--author="Name <email>"`. When
+/// author and committer are the same @subject (common case: mirror
+/// authoring pheromone deposits) the two projections coincide but the
+/// carrier remains type-level distinct.
 ///
 /// Returns the HEAD OID after successful commit.
 pub(crate) fn git_commit_as(
     repo_root: &Path,
-    author_name: &str,
-    author_email: &str,
+    author: &Subject,
+    committer: &Subject,
     message: &str,
 ) -> io::Result<String> {
     use std::io::Write;
     use std::process::{Command, Stdio};
 
+    let author_arg = format!("--author={} <{}>", author.name, author.email);
+    let user_name_arg = format!("user.name={}", committer.name);
+    let user_email_arg = format!("user.email={}", committer.email);
+
     let mut child = Command::new("git")
         .args([
             "-c",
-            &format!("user.name={}", author_name),
+            &user_name_arg,
             "-c",
-            &format!("user.email={}", author_email),
+            &user_email_arg,
             "commit",
+            &author_arg,
             "-F",
             "-",
         ])

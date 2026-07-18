@@ -513,10 +513,11 @@ fn deposit_observation_crystal(
         &signature,
     );
 
+    let mirror_subject = fractal::Subject::mirror();
     let commit_oid = phone::git_commit_as(
         &repo_root,
-        "mirror",
-        "mirror@spectral.engineer",
+        &mirror_subject,
+        &mirror_subject,
         &message,
     )
     .map_err(|e| format!("@io/git.commit: {}", e))?;
@@ -770,10 +771,11 @@ fn dispatch_arm_collapse(
 
     let message = compose_collapse_commit_message(rs_path, &arms, bytes_before, bytes_after);
 
+    let mirror_subject = fractal::Subject::mirror();
     let commit_oid = phone::git_commit_as(
         &repo_root,
-        "mirror",
-        "mirror@spectral.engineer",
+        &mirror_subject,
+        &mirror_subject,
         &message,
     )
     .map_err(|e| format!("@io/git.commit: {}", e))?;

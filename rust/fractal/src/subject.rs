@@ -115,6 +115,24 @@ impl Subject {
         }
     }
 
+    /// Construct the Mirror @subject — the compiler-as-@peer per Alex
+    /// 2026-07-18 identity-attribution architecture (`mirror
+    /// <peer@spectral.engineer>` pattern). Used when the compiler
+    /// itself authors substrate deltas (pheromone deposits, arm
+    /// collapses, autopoietic write-backs).
+    ///
+    /// Deterministic: name = "mirror"; email = "mirror@spectral.engineer";
+    /// home = None (mirror runs where invoked; no persistent-peer
+    /// home directory in the @peer/persistence sense); kind = Peer.
+    pub fn mirror() -> Self {
+        Subject {
+            name: "mirror".to_string(),
+            email: "mirror@spectral.engineer".to_string(),
+            home: None,
+            kind: SubjectKind::Peer,
+        }
+    }
+
     /// Project to an Author (WHO-INTENDED axis of the Witnessed split).
     pub fn as_author(&self) -> Author {
         Author::new(self.name.clone(), self.email.clone())
@@ -231,5 +249,27 @@ mod tests {
         assert_ne!(void, reed);
         assert_ne!(void, alex);
         assert_ne!(reed, alex);
+    }
+
+    #[test]
+    /// Mirror-as-@subject is deterministic and distinct from Void
+    /// and any named peer. Compiler-authorship deltas attribute to
+    /// this identity per Alex 2026-07-18 identity-attribution arch.
+    fn subject_mirror_is_deterministic_and_distinct() {
+        let m1 = Subject::mirror();
+        let m2 = Subject::mirror();
+        assert_eq!(m1, m2, "Subject::mirror() must be deterministic");
+        assert_eq!(m1.name, "mirror");
+        assert_eq!(m1.email, "mirror@spectral.engineer");
+        assert_eq!(m1.home, None, "Mirror has no persistent-peer home");
+        assert_eq!(m1.kind, SubjectKind::Peer);
+        assert!(m1.is_peer());
+        assert!(!m1.is_void());
+        assert!(!m1.is_human());
+        assert_ne!(m1, Subject::void());
+        assert_ne!(
+            m1,
+            Subject::peer("reed", "reed@spectral.engineer", "/Users/reed"),
+        );
     }
 }
