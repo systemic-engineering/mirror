@@ -35,7 +35,15 @@ path = "src/main.rs"
 # LAPACK / FLANG dependencies land at M4-M5 co-tick when matrix.rs
 # empirically fires (Mara §2.2 M5). Peer socket / @io/socket deps land
 # at M8 (Taut `7f4307f` §Q2: boot-altitude sufficiency for M4 stdio).
+#
+# Fractal migration step 1+2 landing per Mara `2760c2a` canonical
+# spec: fractal is the crate-adjacent identity/subject/signing/witnessed
+# substrate (Mandelbrot projection of multi-dim inference per Alex
+# 2026-07-18). Subject/SubjectKind + Witnessed + signing chain lives
+# there; mirror/rust consumes it as thin API-passthrough via subject.rs
+# wrapper (step 10). Steps 3-12 follow in sequential ticks.
 [dependencies]
+fractal = { path = "fractal" }
 
 # Dev-dependencies for property-based RED tests grounded in Mara
 # 3cd9a42 (grounding spec) + 5d3040d (math foundation). These are

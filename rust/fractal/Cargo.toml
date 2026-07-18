@@ -1,0 +1,36 @@
+# fractal — the compiler's Mandelbrot set at rust/ altitude.
+#
+# Per Alex 2026-07-18 direct-transcript: "fractal IS what does all of
+# this. fractal is the mandelbrot set of the compiler. That takes the
+# multidimensional inference and projects it into whatever. fractal.rs
+# is the @io discharge. phone.rs connects fractal fibres."
+#
+# Migrated from `/Users/alexwolf/dev/projects/fragmentation/` per Mara
+# `2760c2a` canonical spec (`docs/specs/2026-07-18-fragmentation-to-
+# rust-fractal-migration.md`). Fragmentation IS what fractal was always
+# meant to become; today the syntactic edit makes the semantic identity
+# visible (Mara's one-sentence surprise).
+#
+# Publishable to crates.io eventually per Alex directive. First step of
+# migration: scaffold + witnessed.rs verbatim. Steps 3-12 follow in
+# sequential ticks per Mara §6 recipe.
+
+[package]
+name = "fractal"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "The compiler's Mandelbrot set — multi-dim inference projection substrate. Identity envelope + signing chain + witnessed provenance. Migrated from fragmentation."
+keywords = ["mirror", "fractal", "identity", "provenance", "signing"]
+categories = ["cryptography"]
+
+[features]
+default = ["ssh"]
+ssh = []  # Placeholder; slimmed keys.rs (step 3) will pull ssh-key + x25519-dalek + chacha20poly1305 + hkdf per Mara §4
+gpg = []  # Deferred per Mara §4 (feature-gated; not needed for M0)
+
+[dependencies]
+# NO prismqueer yet (step 4+5 fold Subject over LiquidVoid<T> when the
+# prismqueer::void module lands). NO ssh-key/x25519/etc yet (step 3
+# adds them behind the ssh feature). Step 1+2 (this landing) is
+# scaffold + witnessed.rs verbatim — pure Rust std, zero deps.
