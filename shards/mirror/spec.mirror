@@ -127,6 +127,70 @@ cli(body: cli) -> cli_decl { \ }
 # settlements.
 needs(targets: [ref]) -> needs_decl { \ }
 
+# === tools { } block — @tool species pinning (forward-promise) ===
+#
+# Grammar extension parallel to `cli { }`, `pack { }`, `garden { }`,
+# `kintsugi { }`. Substrate-decl'd at Mara's closure canonical spec
+# `docs/specs/2026-07-18-the-compiler-in-one-sentence.md` §4 (the
+# `tools { }` block); prose sketch this tick per §12.1 Deliverable A
+# part 3 (Mara 2026-07-18); full grammar-mutation admission
+# forward-promised to Reed post-landing Tick M3 territory (§12.1
+# tick 3: "grammar-extension tick + species-decl tick + dispatch
+# tick + dogfood tick = 4 ticks").
+#
+# Shape (per closure §4.1):
+#
+#   project mirror.spec {
+#     ...
+#     tools {
+#       cargo { version "1.80" }        # via @tool/cargo species
+#       git   { version "2.45" }        # via @tool/git species
+#       nix   { version "2.24" }        # via @tool/nix species
+#       ~bin'./scripts/mycheck.sh' { version "git+HEAD" }
+#                                       # via ~bin sigil (Q2 answer;
+#                                       # Alex 2026-07-18 direct-transcript)
+#     }
+#     ...
+#   }
+#
+# Per closure §4.2: sits at the SAME altitude as `garden { }`. Both
+# are @io-adjacent surface areas; both discharge via typed adapters
+# (@io/git for garden; @tool(X, args) for tools); both admit empty-
+# blocks as substrate-pull-honest explicit-emptiness. EMPTY
+# `tools { }` is admissible (a project declaring "no external tool
+# dependencies pinned"), though mirror itself ships cargo + git +
+# nix as FLOOR species pins.
+#
+# Per closure §4.3: at dispatch time, `@roomba.walk` reads the
+# tools{} block, resolves each pinned tool_id to its concrete version
+# (via `@tool/<X>.version_of` or nix-pin via @tool/nix.resolve_pin),
+# and biases Fate's next @tool(X, args) selection to the pinned set.
+# Consumers CANNOT invoke an unpinned tool — the compiler's grammar
+# refuses at settle-time. Consumers CAN escape via `~bin'<path>'` for
+# tools without substrate-decl'd species.
+#
+# Forward-promised (Reed post-landing territory per closure §12.1):
+#
+#   tools(body: tool_pins_block) -> tool_pins_decl { \ }
+#
+# Where `tool_pins_block` is the substrate-decl'd carrier for the
+# parsed block (list of tool_pin entries), and each `tool_pin` is a
+# labeled(tool_id, tool_pin_body) carrier where tool_pin_body carries
+# the `version` field + optional `args`, `env`, `working_dir`
+# override fields.
+#
+# Companion species-decl `shards/mirror/tools.mirror` FORWARD-
+# PROMISED (sibling of `shards/mirror/garden.mirror` +
+# `shards/mirror/pack.mirror`; substrate-decls the block-body typed
+# carrier + parse action + `tools_block_coherent` composed
+# bilateral). Per closure §12.1: species-decl tick lands with
+# grammar-extension tick.
+#
+# Companion keyword binding in `shards/mirror/spec/keywords.mirror`
+# FORWARD-PROMISED: add `focus tools` (recursively-scanned brace
+# block, parallel to `focus cli` + `settle settle_on`) at Reed
+# post-landing Tick M3.
+
 # check <action-ref> — names the @io action the target dispatches
 # (the cargo subcommand at @code/rust altitude). Optional; when
 # omitted, the target dispatches the altitude's default (cargo check
