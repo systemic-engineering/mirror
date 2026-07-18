@@ -1,0 +1,171 @@
+in @prism
+in @meta
+in @glass
+in @tool
+in @io
+in @io/cargo
+
+# @tool/cargo — the FIRST-order tech tool species wrapping Cargo
+# (Rust package manager + build orchestrator; upstream since 2014).
+#
+# Species under @tool at the family-root altitude landed this tick
+# in `shards/tool.mirror` per Mara closure canonical spec
+# `docs/specs/2026-07-18-the-compiler-in-one-sentence.md` §3.4
+# (Reed post-landing territory §12.1 discharge, promoted to Mara
+# authorship this tick per §8 forward-promise).
+#
+# === What @tool/cargo IS ===
+#
+# The IDENTITY + VERSION + CONTRACT + PROVENANCE wrapper for
+# `cargo` invocations. Specializes @tool.exec via cargo's
+# subcommand grammar (check, build, test, clippy, fmt, bench,
+# audit, doc, run, install, publish, ...). Each cargo subcommand
+# IS a specialization of exec at cargo altitude.
+#
+# Composition direction (closure §3.3):
+#   @tool/cargo(subcommand, args)
+#     ─specializes─▶ @tool.exec(tool_invocation{tool_id: cargo, ...})
+#       ─dispatches─▶ @io/cargo.exec(subcommand, args)
+#         ─crosses─▶ cargo binary process spawn
+#
+# === Alex directive: "lift the rust toolchain INTO mirror" ===
+#
+# Alex 2026-07-18 direct-transcript verbatim: "I wanna lift the
+# rust toolchain INTO mirror. And nix becomes the build cache."
+#
+# This species IS the substrate-decl vehicle for that lift. When
+# consumers declare `tools { cargo { version "1.80" } }` in
+# `mirror.spec`, the substrate reads that as a @tool/cargo pin;
+# @tool/nix (sibling species) resolves the pin via nix; @roomba
+# dispatches @tool(cargo, [...]) sequences that discharge through
+# THIS species.
+#
+# === Substrate-already-had-the-word ===
+#
+# `@io/cargo` (LANDED at `shards/io/cargo.mirror`) is the
+# MECHANISM altitude. This species is the IDENTITY+CONTRACT
+# altitude. Composition, not replacement: @tool/cargo wraps
+# @io/cargo. Both are needed at their respective altitudes; the
+# two-altitude split is the closure spec's §3.3 form/mechanism
+# discipline.
+#
+# === Substrate authority ===
+#
+# - Family-root: `shards/tool.mirror` (this tick).
+# - Canonical spec: `docs/specs/2026-07-18-the-compiler-in-one-
+#   sentence.md` §3.4 (Mara `2dd8ddb`).
+# - Mechanism sibling: `shards/io/cargo.mirror`.
+# - Recognition #43 (pre-commit chain IS five settlements): the
+#   cargo subcommand vocabulary (check/test/build/fmt/clippy/audit)
+#   is the substrate-decl'd action set this species specializes.
+
+prism @tool/cargo {
+  focus tool_invocation
+  project tool_invocation
+  split tool_invocation
+  shift tool_invocation
+  settle tool_invocation
+}
+
+# === The cargo_subcommand carrier ===
+#
+# Closed variant naming the cargo subcommand set the substrate
+# admits. Extensible via mint; the FLOOR set below mirrors
+# `shards/io/cargo.mirror`'s declared action list plus the
+# publishing/install subcommands StageFreight delivery arc needs.
+#
+# Identity contract: byte-equality on the underlying tag.
+type cargo_subcommand =
+  | check
+  | build
+  | test
+  | fmt_check
+  | clippy
+  | audit
+  | bench
+  | doc
+  | run
+  | install
+  | publish
+  | update
+  | tree
+  | metadata
+
+# ============================================================
+# §2 The actions
+# ============================================================
+
+# === exec action — specialization of @tool.exec ===
+#
+# Dispatch a cargo subcommand invocation. Body composes through
+# @io/cargo.exec at the mechanism boundary.
+#
+# Splinter-pole: cargo subcommand admits the invocation; version
+# pin resolves; stdout/stderr surfaced as typed tool_result;
+# witnessed_run signed via @trust.
+# Narcissus-pole: subcommand fails silently, version pin drifts,
+# stdout truncated without admission.
+exec(subcommand: cargo_subcommand, args: ref, invocation: tool_invocation)
+  -> tool { \ }
+
+# === version_of action — specialization of @tool.version_of ===
+#
+# Resolve the pinned cargo version. Reads tools{} block pin OR
+# discharges through @io/nix (sibling @tool/nix species) OR
+# through @io/cargo.version if no pin is declared.
+version_of(pin: ref) -> ref { \ }
+
+# ============================================================
+# §3 The bilaterals
+# ============================================================
+
+# === cargo_subcommand_admissible sub-bilateral ===
+#
+# Bilateral verdict that a cargo_subcommand + args combination is
+# admissible per cargo's own grammar. Discharges via `cargo help
+# <subcommand>` OR by checking against a cached grammar.
+#
+# Splinter-pole: subcommand parses; args are valid for that
+# subcommand.
+# Narcissus-pole: unknown subcommand; args violate subcommand's
+# schema.
+cargo_subcommand_admissible(subcommand: cargo_subcommand, args: ref,
+                            p: perturbation) -> verdict { \ }
+
+# === cargo_invocation_well_formed composed bilateral ===
+#
+# Composes:
+#   1. cargo_subcommand_admissible(subcommand, args, p)
+#   2. tool_invocation_admissible(invocation, p) — inherited from
+#      @tool family-root
+#
+# The composed bilateral lifts the family-root discipline to the
+# cargo species.
+cargo_invocation_well_formed(invocation: tool_invocation, p: perturbation)
+  -> verdict
+requires cargo_subcommand_admissible(invocation, invocation, p)
+requires tool_invocation_admissible(invocation, invocation, p)
+{ \ }
+
+# ============================================================
+# §4 Forward-promised
+# ============================================================
+#
+# 1. Per-subcommand species refinements (@tool/cargo/check,
+#    @tool/cargo/build, ...) if per-subcommand contract
+#    specialization becomes load-bearing.
+# 2. Rustup toolchain composition — the multi-toolchain case
+#    (stable/beta/nightly + per-project overrides via
+#    `rust-toolchain.toml`). Forward-promised at species-of-species
+#    altitude.
+# 3. Workspace-aware invocation — cargo workspaces admit
+#    `--workspace` / `--package <name>` / `--exclude <name>` flags
+#    that change semantics; species-decl'd carrier
+#    `cargo_workspace_target` forward-promised.
+
+out @tool/cargo
+out cargo_subcommand
+out exec
+out version_of
+out cargo_subcommand_admissible
+out cargo_invocation_well_formed

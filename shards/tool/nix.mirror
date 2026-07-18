@@ -1,0 +1,227 @@
+in @prism
+in @meta
+in @glass
+in @tool
+in @io
+
+# @tool/nix — the FIRST-order tech tool species wrapping nix
+# (Dolstra 2003; content-addressed functional package manager +
+# build cache).
+#
+# Species under @tool at the family-root altitude landed this tick
+# in `shards/tool.mirror` per Mara closure canonical spec
+# `docs/specs/2026-07-18-the-compiler-in-one-sentence.md` §3.4.
+#
+# === What @tool/nix IS ===
+#
+# The IDENTITY + VERSION + CONTRACT + PROVENANCE wrapper for `nix`
+# invocations. Specializes @tool.exec via nix's subcommand grammar
+# (build, run, develop, shell, flake, hash, store, path-info, ...).
+#
+# Additionally: THE BUILD CACHE. Per Alex 2026-07-18 direct-
+# transcript verbatim ("I wanna lift the rust toolchain INTO
+# mirror. And nix becomes the build cache"), @tool/nix carries a
+# DUAL role — invocation wrapper AND cache-substrate. Every other
+# @tool species can OPTIONALLY discharge through @tool/nix when a
+# pinned version is requested.
+#
+# Composition direction (closure §3.3 + §4.4):
+#   @tool/nix(build, [.#mirror])
+#     ─specializes─▶ @tool.exec(tool_invocation{tool_id: nix, ...})
+#       ─dispatches─▶ @io.exec("nix", ["build", ".#mirror"])
+#         ─crosses─▶ nix binary process spawn
+#
+# Additionally as CACHE resolver:
+#   @tool/cargo.version_of("1.80")
+#     ─delegates─▶ @tool/nix.resolve_pin("cargo", "1.80")
+#       ─dispatches─▶ nix flake resolution
+#         ─returns─▶ store path with pinned cargo binary
+#
+# === Alex directive: "nix becomes the build cache" ===
+#
+# This species IS the vehicle for the cache-as-substrate lift. The
+# `tools { }` block in `mirror.spec` (closure §4.1) declares pins;
+# @tool/nix resolves the pins to store paths; @roomba dispatches
+# invocations against the resolved store paths for content-
+# addressed determinism.
+#
+# === Substrate authority ===
+#
+# - Family-root: `shards/tool.mirror` (this tick).
+# - Canonical spec: `docs/specs/2026-07-18-the-compiler-in-one-
+#   sentence.md` §3.4 + §4.4 (Mara `2dd8ddb`).
+# - Recognition #98 (content-addressing across scopes): nix
+#   derivation hash is one of the FOUR content-addressing witnesses
+#   (SHA256 on build inputs / ca outputs). @tool/nix operates
+#   AT the derivation-hash altitude natively.
+# - Precedent: `shards/mirror/pack.mirror` composes with nix at
+#   package altitude; @tool/nix composes at invocation altitude;
+#   sibling altitudes of the same nix-substrate.
+
+prism @tool/nix {
+  focus tool_invocation
+  project tool_invocation
+  split tool_invocation
+  shift tool_invocation
+  settle tool_invocation
+}
+
+# === The nix_subcommand carrier ===
+#
+# Closed variant naming the nix subcommand set the substrate
+# admits. Extensible via mint; the FLOOR set below covers the
+# subcommands the compiler + Pack agents + tools{}-block resolution
+# actually invoke.
+#
+# Identity contract: byte-equality on the underlying tag.
+type nix_subcommand =
+  | build
+  | run
+  | develop
+  | shell
+  | flake_check     # `nix flake check`
+  | flake_lock      # `nix flake lock`
+  | flake_update    # `nix flake update`
+  | hash_file       # `nix hash file`
+  | hash_path       # `nix hash path`
+  | store_verify    # `nix store verify`
+  | store_gc        # `nix store gc`
+  | path_info
+  | copy
+  | eval
+
+# === The nix_pin carrier ===
+#
+# Typed pin declaration for a specific tool version resolved via
+# nix. The `tools { }` block in `mirror.spec` (closure §4.1)
+# generates nix_pin values at parse time; @tool/nix.resolve_pin
+# discharges them to store paths.
+#
+# Identity contract: byte-equality on the (tool_id, version, flake_ref)
+# triple.
+type nix_pin = {
+  tool_id: tool_id,
+  version: ref,       # e.g. "1.80" for cargo
+  flake_ref: ref,     # e.g. "nixpkgs#cargo_1_80" or "github:oxalica/rust-overlay/..."
+}
+
+# === The nix_store_path carrier ===
+#
+# A resolved store path — the substrate-decl'd handle for a
+# content-addressed store entry. Contents are byte-deterministic
+# per nix's derivation-hash discipline.
+#
+# Identity contract: byte-equality on the underlying ref (nix
+# store paths are already content-addressed by hash).
+type nix_store_path = ref
+
+# ============================================================
+# §2 The actions
+# ============================================================
+
+# === exec action — specialization of @tool.exec ===
+#
+# Dispatch a nix subcommand invocation. Body composes through
+# @io.exec at the mechanism boundary.
+exec(subcommand: nix_subcommand, args: ref, invocation: tool_invocation)
+  -> tool { \ }
+
+# === resolve_pin action — THE CACHE-AS-SUBSTRATE dispatch ===
+#
+# Resolve a nix_pin to a nix_store_path. THE substrate-vocabulary
+# primitive for cache-backed tool version resolution.
+#
+# Splinter-pole: pin resolves to a store path; store path exists;
+# path contents byte-hash to the derivation hash.
+# Narcissus-pole: pin resolves to a non-existent path; path
+# contents drift from the derivation hash; cache silently
+# returns stale content.
+resolve_pin(pin: nix_pin, p: perturbation) -> nix_store_path { \ }
+
+# === version_of action ===
+#
+# Resolve the nix version itself. Reads system PATH; nix is
+# expected to be substrate-boot-installed (chicken-and-egg
+# discipline: nix bootstraps everything else including nix
+# itself, but the first nix must come from outside the substrate).
+version_of(pin: ref) -> ref { \ }
+
+# === build_target action ===
+#
+# Build a nix flake target (e.g., `nix build .#mirror`). Returns
+# the store path of the built output. Discharges through @io.exec
+# at the mechanism boundary; composes with @tool/nix.resolve_pin
+# for target-dependency resolution.
+build_target(flake_ref: ref, target: ref, p: perturbation)
+  -> nix_store_path { \ }
+
+# ============================================================
+# §3 The bilaterals
+# ============================================================
+
+# === nix_pin_resolvable sub-bilateral ===
+#
+# Bilateral verdict that a nix_pin resolves to a store path.
+#
+# Splinter-pole: flake_ref evaluates; version matches; store path
+# realizes.
+# Narcissus-pole: flake_ref eval fails; version drifts silently;
+# store path claim without realization.
+nix_pin_resolvable(pin: nix_pin, p: perturbation) -> verdict { \ }
+
+# === nix_store_content_addressed sub-bilateral ===
+#
+# Bilateral verdict that a nix_store_path's contents byte-hash to
+# the path's declared derivation hash — nix's own content-
+# addressing discipline.
+#
+# Splinter-pole: contents match the derivation hash.
+# Narcissus-pole: contents drift from the derivation hash (cache
+# corruption, hand-modified store path, mismatched CA output).
+nix_store_content_addressed(path: nix_store_path, p: perturbation)
+  -> verdict { \ }
+
+# === nix_invocation_well_formed composed bilateral ===
+#
+# Composes:
+#   1. tool_invocation_admissible(invocation, p) — inherited from
+#      @tool family-root
+#   2. nix_pin_resolvable(pin, p) — WHEN invocation resolves a pin
+#   3. nix_store_content_addressed(path, p) — WHEN invocation
+#      produces a store path
+nix_invocation_well_formed(invocation: tool_invocation, p: perturbation)
+  -> verdict
+requires tool_invocation_admissible(invocation, invocation, p)
+{ \ }
+
+# ============================================================
+# §4 Forward-promised
+# ============================================================
+#
+# 1. Flake registry integration — declarative resolution of
+#    `nixpkgs`, `rust-overlay`, `flake-utils` prefixes to their
+#    canonical flake refs. Forward-promised at species-refinement
+#    altitude.
+# 2. Store-GC discipline — the tools{}-block-declared pins pin the
+#    store paths against garbage collection; @tool/nix.pin_root
+#    action forward-promised.
+# 3. Remote-store composition — `nix copy --to <cache>` and
+#    `nix copy --from <cache>` for shared build caches across
+#    peers. Composes with @spectral/garden/nix (forward-promised
+#    package-manager species per `docs/specs/spectral-garden-git-
+#    package-manager.md` §6 4-root partition).
+# 4. IFD (import-from-derivation) admissibility — nix's IFD is
+#    load-bearing for @roomba's dynamic dispatch; species-decl'd
+#    bilateral `nix_ifd_admissible` forward-promised.
+
+out @tool/nix
+out nix_subcommand
+out nix_pin
+out nix_store_path
+out exec
+out resolve_pin
+out version_of
+out build_target
+out nix_pin_resolvable
+out nix_store_content_addressed
+out nix_invocation_well_formed

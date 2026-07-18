@@ -1,0 +1,221 @@
+in @prism
+in @meta
+in @glass
+in @tool
+in @io
+in @io/git
+in @peer
+
+# @tool/git — the FIRST-order tech tool species wrapping git
+# (Torvalds 2005; content-addressed VCS + SSH-signed commit chain).
+#
+# Species under @tool at the family-root altitude landed this tick
+# in `shards/tool.mirror` per Mara closure canonical spec
+# `docs/specs/2026-07-18-the-compiler-in-one-sentence.md` §3.4.
+#
+# === What @tool/git IS ===
+#
+# The IDENTITY + VERSION + CONTRACT + PROVENANCE wrapper for `git`
+# invocations. Specializes @tool.exec via git's subcommand grammar
+# (checkout, commit, push, pull, tag, status, log, ...). Each git
+# subcommand IS a specialization of exec at git altitude.
+#
+# Composition direction (closure §3.3):
+#   @tool/git(subcommand, args)
+#     ─specializes─▶ @tool.exec(tool_invocation{tool_id: git, ...})
+#       ─dispatches─▶ @io/git.<action>(...)
+#         ─crosses─▶ git binary process spawn
+#
+# === The @trust chain terminates at @alex ===
+#
+# Per closure spec §6.2: git commits signed via @trust chain
+# terminating at @alex root. `@tool/git.commit_signed` (below)
+# specializes `@io/git.commit` by ENFORCING SSH signing per
+# AGENTS.md never-override-gpg.format discipline. The signer
+# argument binds to `peer`; the peer's SSH signing key discharges
+# at the realisation boundary (~/.ssh/id_ed25519 for Reed's
+# identity per `~/.reed/04-TECH.md`).
+#
+# === Substrate-already-had-the-word ===
+#
+# `@io/git` (LANDED at `shards/io/git.mirror`; 25.9KB, rich
+# substrate-decl for clone/fetch/commit/resolve_ref/hash_to_oid)
+# is the MECHANISM altitude. This species is the IDENTITY+
+# CONTRACT altitude. Composition, not replacement.
+#
+# The subcommand set at THIS altitude is DIFFERENT from
+# `shards/io/git.mirror`'s action set: @io/git names the PLUMBING
+# actions (clone, fetch, read_object, resolve_ref, commit_object,
+# hash_to_oid) and the PORCELAIN action (commit); @tool/git names
+# the PORCELAIN SUBCOMMAND SET that consumers actually type at
+# the shell. Both altitudes co-exist; @tool/git dispatches through
+# @io/git.
+#
+# === Substrate authority ===
+#
+# - Family-root: `shards/tool.mirror` (this tick).
+# - Canonical spec: `docs/specs/2026-07-18-the-compiler-in-one-
+#   sentence.md` §3.4 (Mara `2dd8ddb`).
+# - Mechanism sibling: `shards/io/git.mirror`.
+# - Recognition #98 (content-addressing across scopes): @tool/git
+#   composes git_hash at the porcelain altitude the same way
+#   @io/git composes it at the plumbing altitude.
+# - AGENTS.md "SSH signing default" discipline: NEVER override
+#   `gpg.format` or `user.signingkey`. `commit_signed` action
+#   below discharges through @io/git.commit with author identity
+#   override ONLY (name + email); signing key stays the caller's
+#   SSH key.
+
+prism @tool/git {
+  focus tool_invocation
+  project tool_invocation
+  split tool_invocation
+  shift tool_invocation
+  settle tool_invocation
+}
+
+# === The git_subcommand carrier ===
+#
+# Closed variant naming the git subcommand set the substrate
+# admits at the porcelain altitude. Extensible via mint; the FLOOR
+# set below covers the subcommands the compiler + Pack agents
+# actually invoke.
+#
+# Identity contract: byte-equality on the underlying tag.
+type git_subcommand =
+  | status
+  | log
+  | diff
+  | show
+  | checkout
+  | branch
+  | tag
+  | commit
+  | commit_signed        # commit with `-S` — ENFORCED via species contract
+  | push
+  | pull
+  | fetch
+  | clone
+  | init
+  | add
+  | reset
+  | rebase
+  | merge
+  | stash
+  | worktree
+  | config_read          # `git config <key>` — READ ONLY per AGENTS.md
+                         # never-modify-gpg-config discipline
+
+# ============================================================
+# §2 The actions
+# ============================================================
+
+# === exec action — specialization of @tool.exec ===
+#
+# Dispatch a git subcommand invocation. Body composes through
+# @io/git.<action> at the mechanism boundary. Which @io/git action
+# receives dispatch depends on the subcommand; the species-body
+# multiplexes per subcommand tag.
+exec(subcommand: git_subcommand, args: ref, invocation: tool_invocation)
+  -> tool { \ }
+
+# === commit_signed action — SSH-signed commit chain ===
+#
+# THE LOAD-BEARING commit action for @trust chain integration.
+# Overrides ONLY author name + email (per AGENTS.md); signing key
+# stays the caller's SSH key (`~/.ssh/id_ed25519`).
+#
+# Discharges through @io/git.commit at the porcelain altitude with
+# `-S` flag enforced. Signer peer's identity per pack.reed |
+# pack.mara | pack.seam | pack.glint | pack.taut species altitude.
+#
+# Splinter-pole: commit created; HEAD advanced; SSH signature
+# verifies; author name/email match `<peer>@systemic.engineer`
+# convention; commit hash byte-deterministically derived.
+# Narcissus-pole: signing bypassed (via --no-gpg-sign or config
+# override — REFUSED at species contract); author name overridden
+# without email; commit hash claimed without recomputation.
+commit_signed(message: ref, signer: peer, allow_empty: ref)
+  -> verdict { \ }
+
+# === push_signed action ===
+#
+# Push signed commits to a remote. Composes through @io/git at
+# mechanism altitude; species-decl'd for the @trust-chain-aware
+# variant that verifies signatures before push.
+push_signed(remote: ref, ref: ref, signer: peer) -> verdict { \ }
+
+# === version_of action ===
+#
+# Resolve the pinned git version. Reads tools{} block pin OR
+# discharges through @io/nix (sibling @tool/nix species) OR
+# through system PATH.
+version_of(pin: ref) -> ref { \ }
+
+# ============================================================
+# §3 The bilaterals
+# ============================================================
+
+# === git_subcommand_admissible sub-bilateral ===
+#
+# Bilateral verdict that a git_subcommand + args combination is
+# admissible per git's own grammar.
+git_subcommand_admissible(subcommand: git_subcommand, args: ref,
+                          p: perturbation) -> verdict { \ }
+
+# === commit_signing_ssh_only sub-bilateral ===
+#
+# THE LOAD-BEARING discipline bilateral. Verdict that the commit
+# path stays SSH-signing-only per AGENTS.md discipline. Rejects
+# GPG-format overrides, missing signing keys, --no-verify without
+# authorization.
+#
+# Splinter-pole: gpg.format = ssh; user.signingkey points at
+# ~/.ssh/id_ed25519 (or peer-equivalent); commit succeeds with
+# SSH signature.
+# Narcissus-pole: gpg.format = openpgp; --no-gpg-sign present;
+# key config overridden; commit succeeds unsigned.
+commit_signing_ssh_only(invocation: tool_invocation, p: perturbation)
+  -> verdict { \ }
+
+# === git_invocation_well_formed composed bilateral ===
+#
+# Composes:
+#   1. git_subcommand_admissible(subcommand, args, p)
+#   2. commit_signing_ssh_only(invocation, p) — WHEN subcommand
+#      is commit or commit_signed
+#   3. tool_invocation_admissible(invocation, p) — inherited from
+#      @tool family-root
+git_invocation_well_formed(invocation: tool_invocation, p: perturbation)
+  -> verdict
+requires git_subcommand_admissible(invocation, invocation, p)
+requires commit_signing_ssh_only(invocation, p)
+requires tool_invocation_admissible(invocation, invocation, p)
+{ \ }
+
+# ============================================================
+# §4 Forward-promised
+# ============================================================
+#
+# 1. Per-subcommand species refinements (@tool/git/commit,
+#    @tool/git/rebase) if per-subcommand contract specialization
+#    becomes load-bearing.
+# 2. Forge-adapter composition (@tool/git/github, @tool/git/gitlab,
+#    @tool/git/gitea, @tool/git/codeberg) lifting PR + issue +
+#    release surfaces to substrate vocabulary. Sibling of
+#    `shards/io/git/forge/<forge>.mirror` per @io/git §6.
+# 3. `~git'...'` sigil composition — the `garden { source
+#    ~git'...' }` sigil (LANDED at `docs/specs/spectral-garden-git-
+#    package-manager.md` §2.2) is the DECLARATION altitude;
+#    @tool/git is the INVOCATION altitude. Sibling composition
+#    forward-promised.
+
+out @tool/git
+out git_subcommand
+out exec
+out commit_signed
+out push_signed
+out version_of
+out git_subcommand_admissible
+out commit_signing_ssh_only
+out git_invocation_well_formed

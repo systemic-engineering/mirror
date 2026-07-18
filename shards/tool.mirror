@@ -1,0 +1,450 @@
+in @prism
+in @meta
+in @glass
+in @io
+in @labeled
+in @peer
+
+# @tool — the family-root for FIRST-ORDER TECH TOOL identity, version,
+# contract, and provenance. Sibling of @io, @mirror, @kintsugi, @torus,
+# @peer, @void, @fate, @spectral, @bauchladen, @autopoietic,
+# @butterfly, @cybernetic/*.
+#
+# Landed 2026-07-18 as §8 forward-promise discharge of Mara's closure
+# canonical spec `docs/specs/2026-07-18-the-compiler-in-one-sentence.md`
+# (§3.4 + §12.1). Substrate-decl'd this tick under `[substrate-floor:
+# @io-boundary]` marker: this shard COMPOSES over existing @io/X
+# mechanism adapters; no Rust extension authored. Per Alex 2026-07-14
+# feedback `feedback_no_rust_extension_shortcut` + Alex 2026-07-16
+# 8th-repetition feedback `feedback_detector_inadequacy_answer_is_
+# never_rust`, the detector answer is NEVER Rust; @tool composes via
+# shard-body over @io.
+#
+# === Substrate authority ===
+#
+# - Canonical spec: `docs/specs/2026-07-18-the-compiler-in-one-
+#   sentence.md` §3 (Mara `2dd8ddb`; §3.1 audit + §3.2 mint + §3.3
+#   altitude split against @io + §3.4 species list + §3.5 parametric
+#   shape).
+# - Alex 2026-07-18 direct-transcript verbatim: "We might want a
+#   @tool prism. Maybe." → "I was thinking that @tool is the wrapper
+#   for any first-order tech tool on the planet." → "Yes, now you see
+#   it. And then it becomes a wrapper for the type system:
+#   `@tool(cargo ..)` `@tool(git ..)`. The @roomba probably discharges
+#   into a sequence of @tool calls."
+# - Recognition promotion #R-the-compiler-in-one-sentence (closure
+#   spec §7 PROMOTED via Alex direct-transcript first-witness gate
+#   close): the compiler IS a Fate-biased @roomba discharging @tool(X,
+#   args) sequences over @io through fractal projections.
+#
+# === Substrate-already-had-the-word audit (closure §3.1) ===
+#
+# Grep verdict clean at family-root altitude:
+#
+#   - `tool` word appears at `shards/mirror/lens/mcp.mirror:57` as an
+#     ACTION verb (`tool(name, args: ref) -> mcp { \ }`) — MCP
+#     server's own vocabulary for tool registration. DIFFERENT
+#     ALTITUDE (MCP-facing) with DIFFERENT CARRIER (mcp vs
+#     tool_invocation).
+#   - `@tool` as family-root DOES NOT EXIST elsewhere. Verified via
+#     grep across all `shards/*.mirror` and `docs/**/*.md`.
+#
+# Two altitudes co-exist admissibly per closure spec §16
+# forward-promise 7 (two-tick collapse deferred). Readable-name-at-
+# each-altitude first; foundational unification is a later decision.
+#
+# === What @tool IS ===
+#
+# The IDENTITY + VERSION + CONTRACT + PROVENANCE altitude for any
+# first-order tech tool. WHICH tool, WHAT version, signed by WHOM,
+# invoked WHERE, against WHAT nix-pin. Not the mechanism. Not the
+# bytes-crossing-the-syscall-boundary. Those live at @io/X.
+#
+# @tool(X, args) is the substrate-decl'd wrapper the compiler
+# reasons about BEFORE touching @io; @io/X.exec is the mechanism
+# the wrapper discharges INTO at dispatch time.
+#
+# === What @tool is NOT ===
+#
+# 1. NOT the mechanism altitude. That's @io/X. Composition direction
+#    is @tool(X, args) → @io/X.exec; NEVER the reverse.
+# 2. NOT a species under @io. Different altitude → different family-
+#    root. Per closure spec §3.3: composing over @io does not mean
+#    collapsing into @io.
+# 3. NOT the MCP action-verb `tool`. That's a JSON-RPC action at
+#    @mirror/lens/mcp:57; different altitude, different carrier.
+#    Two-tick collapse forward-promised.
+# 4. NOT a Rust extension. This shard composes; no `.rs` authorship
+#    beyond `prismqueer::void::LiquidVoid<ToolInvocation>` per
+#    closure §5.4 (which is trait FLOOR, not extension).
+# 5. NOT a package manager. @tool wraps INVOCATION; @spectral/garden
+#    wraps DEPENDENCY-DECLARATION; siblings, not composed.
+#
+# === Composition direction (closure spec §3.3) ===
+#
+#   @tool(X, args)  ─dispatches─▶  @io/X.exec  ─crosses─▶  syscall
+#         │                              │                      │
+#     inference                     mechanism              actual bytes
+#     altitude                      altitude               (outside world)
+#         │                              │
+#         └─ compiler reasons here ──────┘
+#                                        │
+#                        realisation discharges here
+#
+# The compiler NEVER reasons directly about @io/X.exec bytes; it
+# reasons about @tool(X, args) invocations and lets @io discharge.
+#
+# === The 5-op prism inherits from @void (closure §10) ===
+#
+# Per `shards/void.mirror` §Composition inheritance: every family-
+# root prism declaration `prism @X { focus/project/split/shift/settle
+# X }` at family-root altitude IS the substrate-decl saying "this
+# family inherits Void's basis." @tool's 5-op pattern below carries
+# that inheritance; no `in @void` explicit import needed today per
+# `shards/void.mirror` §Composition inheritance discipline.
+#
+# === Pre-AI prior art ===
+#
+#   POSIX exec (1988)          the substrate ancestor of process
+#                              invocation; @tool's `exec` action
+#                              maps to POSIX exec at the @io/X
+#                              boundary.
+#   Cargo (Rust 2014)          per-tool subcommand grammar; @tool/
+#                              cargo species specializes this.
+#   Nix (Dolstra 2003)         content-addressed tool pinning;
+#                              @tool.version_of + tools{} block +
+#                              @tool/nix species compose this into
+#                              the substrate.
+#   BuildKit (Docker 2018)     content-addressed action cache with
+#                              per-tool identity; sibling structural
+#                              pattern at container altitude.
+#   Bazel (Google 2015)        toolchain declaration + hermetic
+#                              invocation; the tools{} block is
+#                              structurally adjacent.
+#
+# Spec context: `docs/specs/2026-07-18-the-compiler-in-one-
+#               sentence.md` §3 + §4 + §12.1;
+#               `docs/specs/2026-07-18-stagefreight-delivery.md`
+#               (Mara, this tick; @tool/go + @tool/docker + @tool/
+#               gitlab-ci as first cross-language species);
+#               `docs/specs/roomba-substrate-walker-that-feeds-
+#               kintsugi.md` (the @roomba consumer that emits
+#               @tool sequences).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-alignment-as-boundary-mathematics]],
+#                      [[feedback-no-rust-extension-shortcut]],
+#                      [[feedback-detector-inadequacy-answer-is-never-rust]],
+#                      [[feedback-composition-primitive-naming-convention]],
+#                      [[feedback-substrate-already-had-the-word]].
+# Recognition ancestry: #R-the-compiler-in-one-sentence (PROMOTED),
+#                       #79 (5-op basis IS Void's tongue),
+#                       #55 (form/process partition — @tool form-side,
+#                       @io process-side),
+#                       #98 candidate (content-addressing across scopes
+#                       — @tool.version pins compose with the four
+#                       existing witnesses).
+# Related shards: io.mirror (mechanism altitude sibling),
+#                 io/git.mirror (composed by @tool/git species),
+#                 io/cargo.mirror (composed by @tool/cargo species),
+#                 tool/cargo.mirror + tool/git.mirror +
+#                 tool/nix.mirror (FLOOR species this tick),
+#                 mirror/lens/mcp.mirror (co-altitude vocabulary,
+#                 two-tick collapse forward-promised),
+#                 void.mirror (5-op basis parent).
+# Path-namespace property: this file at `shards/tool.mirror`
+# declares `@tool` and only that.
+
+source @arxiv/exec/posix-1988
+source @arxiv/build-systems/cargo-2014
+source @arxiv/package-managers/dolstra-2003-nix
+
+prism @tool {
+  focus tool_invocation
+  project tool_invocation
+  split tool_invocation
+  shift tool_invocation
+  settle tool_invocation
+}
+
+# ============================================================
+# §2 The carriers
+# ============================================================
+
+# === The tool_id carrier ===
+#
+# Closed variant + `opaque(str)` escape hatch. Each concrete species
+# (@tool/cargo, @tool/git, @tool/nix, ...) surfaces its own tag; the
+# `opaque(str)` escape admits tools without substrate-decl'd species.
+#
+# Q2 (closure §15) held permissive: `opaque(str)` admissible at
+# tools{} block level; substrate-honesty discipline reads: "consumers
+# CAN escape, but the substrate NAMES the escape so it's visible."
+#
+# Identity contract: byte-equality on the underlying tag.
+type tool_id =
+  | cargo             # @tool/cargo species (this tick)
+  | git               # @tool/git species (this tick)
+  | nix               # @tool/nix species (this tick)
+  | ffmpeg            # forward-promised species
+  | kubectl           # forward-promised species
+  | docker            # forward-promised (StageFreight delivery, Mara this tick)
+  | npm               # forward-promised species
+  | pip               # forward-promised species
+  | sqlite            # forward-promised species
+  | curl              # forward-promised species
+  | jq                # forward-promised species
+  | go                # forward-promised (StageFreight delivery, Mara this tick)
+  | gitlab_ci         # forward-promised (StageFreight delivery, Mara this tick)
+  | opaque(str)       # escape hatch for tools without substrate-decl'd species
+
+# === The tool_invocation carrier ===
+#
+# The typed record @tool(X, args) resolves to. Substrate-decl'd
+# per closure spec §3.2. Every field carries typed provenance.
+#
+# Identity contract: byte-equality on the (tool_id, args, invoker,
+# working_dir, env) tuple. `signature` and `version` are late-bound
+# (resolved at dispatch); they do NOT contribute to identity for
+# addressability but DO contribute for admissibility (per
+# tool_invocation_admissible bilateral below).
+type tool_invocation = {
+  # X — the tool identity per tool_id variant
+  tool_id: tool_id,
+  # args — the tool's argument vector (structured, not opaque str)
+  args: ref,
+  # provenance — the substrate-decl'd witness of who invoked
+  invoker: peer,
+  # signature — the @trust chain's signature over (tool_id, args, invoker)
+  # (forward-promised @trust family-root; carrier substrate-decl'd here)
+  signature: ref,
+  # version — the tool's version, resolved via @io/X.version or nix pin
+  version: ref,
+  # working_dir — the @io/fs cwd for the invocation
+  working_dir: ref,
+  # env — the @io/env variable set for the invocation
+  env: ref,
+}
+
+# === The tool_result carrier ===
+#
+# The substrate-decl'd outcome of one @tool(X, args) call. The
+# @io/X.exec discharge lifts to this shape at return-time.
+#
+# Identity contract: byte-equality on the (exit_code, stdout,
+# stderr, duration, witness) tuple.
+type tool_result = {
+  exit_code: ref,     # int at species-refinement altitude
+  stdout: ref,        # bytes at species-refinement altitude
+  stderr: ref,        # bytes at species-refinement altitude
+  duration: ref,      # duration at @epistemologic/reality/time altitude
+  witness: ref,       # witnessed_run per @kintsugi/roomba
+}
+
+# === The tool_artifact carrier ===
+#
+# Per @labeled (recognition #93 H4 RESOLVED 2026-06-23): the
+# deliverable tool-artifact is a labeled pair (tool_result,
+# tool_invocation). Composes structurally with @io/oci's
+# oci_artifact = labeled(ref, oci_manifest) and @io/git's
+# git_artifact = labeled(git_object, git_ref_metadata).
+#
+# Identity contract: byte-equality on the labeled pair.
+type tool_artifact = labeled(tool_result, tool_invocation)
+
+# ============================================================
+# §3 The actions
+# ============================================================
+
+# === exec action — THE LOAD-BEARING dispatch ===
+#
+# Invoke the tool via @io/X.exec (mechanism altitude); returns
+# tool_result at the substrate-decl'd contract level. The
+# realisation discharges through the concrete @io/X species
+# (@io/cargo, @io/git, @io/nix, ...) at the mechanism boundary.
+#
+# Composition direction (closure §3.3):
+#   @tool.exec(invocation)
+#     ─dispatches─▶ @io/<invocation.tool_id>.exec(args, env, cwd)
+#       ─crosses─▶ syscall / actual process spawn
+#
+# Body discharges at species altitude per each @tool/<X> species'
+# specialization. Family-root exec is the general dispatch surface.
+exec(invocation: tool_invocation) -> tool { \ }
+
+# === sign action — @trust chain integration ===
+#
+# The @trust chain signs the invocation BEFORE dispatch. Forward-
+# promised @trust family-root (Mara territory next tick); this
+# action names the substrate-decl surface the future @trust family
+# lands into.
+#
+# Per closure spec §12.2 + §16 forward-promise 1: @trust family-root
+# lands next Mara tick; this shard NAMES the composition point.
+sign(invocation: tool_invocation, signer: peer) -> tool { \ }
+
+# === verify action — @trust chain verification at dispatch ===
+#
+# The @trust chain verifies the invocation's signature at dispatch
+# time. Companion to sign; both discharge through the forward-
+# promised @trust family-root.
+verify(invocation: tool_invocation) -> verdict { \ }
+
+# === version_of action — nix/system pin resolution ===
+#
+# Resolve the version pin (nix or system) for a tool_id. Reads the
+# tools{} block declared version pin (per @mirror/tools species
+# grammar, forward-promised) OR discharges through @io/nix at the
+# mechanism altitude to resolve the system-installed version.
+#
+# Body discharges at species altitude per each @tool/<X> species'
+# specialization of version detection.
+version_of(id: tool_id) -> ref { \ }
+
+# ============================================================
+# §4 The bilaterals
+# ============================================================
+
+# === tool_invocation_admissible composed bilateral ===
+#
+# THE LOAD-BEARING composed bilateral at @tool altitude. Composes
+# four sub-predicates:
+#
+#   1. invocation_well_formed(invocation, p) — tool_id resolves,
+#      args are a valid vector, working_dir is a real ref
+#   2. invocation_signed(invocation, p) — @trust chain signature
+#      present and verifies
+#   3. invocation_versioned(invocation, p) — version field pins to
+#      a resolvable nix-pin or system-version
+#   4. invocation_species_admissible(invocation, p) — the concrete
+#      @tool/<X> species admits this specific invocation per its
+#      species-decl bounds
+#
+# This is the Nth altitude lift of the composed-bilateral pattern
+# per Mara @io/git.git_well_formed + Mara @io/oci.oci_well_formed +
+# etc. The count is Mara-counted-from-brief; Pack-altitude
+# verification deferred.
+#
+# Splinter-pole (honest): all four sub-predicates discharge; the
+# invocation is well-formed AND signed AND version-resolved AND
+# admissible per species.
+# Narcissus-pole (deceptive): any one fails; alignment-as-boundary-
+# mathematics (#57) distinguishes which sub-claim broke.
+bilateral tool_invocation_admissible {
+  sentinel "tool=invocation-well-formed-signed-versioned-admissible"
+  arity    4
+}
+
+# === tool_result_witnessed composed bilateral ===
+#
+# The tool_result carries a valid witnessed_run — the @kintsugi/
+# roomba discipline for content-addressed run-provenance.
+#
+# Splinter-pole: witness field carries a substrate-decl'd
+# witnessed_run per @kintsugi/roomba conventions.
+# Narcissus-pole: witness field is bare `ref` with no provenance
+# chain, or the witness OID does not round-trip through
+# @mirror/store.
+bilateral tool_result_witnessed {
+  sentinel "tool=result-carries-witnessed-run"
+  arity    2
+}
+
+# ============================================================
+# §5 The parametric shape `@tool(X, args)`
+# ============================================================
+#
+# `@tool(X, args)` is NOT a new grammar form. It's the substrate-
+# decl shorthand for a `tool_invocation` value where:
+#
+#   - X binds to `tool_id` (a substrate-decl'd variant tag or
+#     opaque str)
+#   - args binds to `list(str)` (the tool's argument vector)
+#
+# Consumers write `@tool(cargo, [check, --workspace])` and the
+# substrate reads that as:
+#
+#   tool_invocation {
+#     tool_id:     cargo,
+#     args:        ["check", "--workspace"],
+#     invoker:     <current-peer>,
+#     signature:   <resolved-at-dispatch>,
+#     version:     <resolved-via-@tool/cargo.version_of>,
+#     working_dir: <resolved-via-cwd>,
+#     env:         <resolved-via-env-substrate-decl>,
+#   }
+#
+# The parametric surface IS the wrapper. The wrapper IS the type.
+# The type IS what the compiler reasons about before touching @io.
+#
+# Q1 (closure §15) held parametric-shorthand form per Alex verbatim
+# ("`@tool(cargo ..)` `@tool(git ..)`"). Species-form (`@tool/
+# cargo(args)`) co-exists at species altitude but is NOT the
+# canonical consumer-facing surface.
+
+# ============================================================
+# §6 Naming convention (closure §8)
+# ============================================================
+#
+# Per `feedback_composition_primitive_naming_convention` (Alex
+# 2026-07-18 ratified): value-type generalizations follow
+# `<primitive>_of_<input-shape>` with const-declared finite-set +
+# ALL array.
+#
+# Application at @tool altitude:
+#
+#   - tool_of_id_args           the parametric shape @tool(X, args)
+#   - exec_of_tool_invocation   the exec action per tool_id variant
+#   - sign_of_tool_invocation   the @trust sign action per invocation
+#   - verify_of_tool_signature  the @trust verify action per signature
+#
+# The primitive is @tool; the input-shape is the parametric binding
+# (X, args); the finite-set is the tool_id closed variant + opaque
+# (str) escape hatch; the ALL array is [cargo, git, nix, ffmpeg,
+# kubectl, docker, npm, pip, sqlite, curl, jq, go, gitlab_ci]
+# (all substrate-decl'd species; extensible via mint).
+#
+# Delightfully boring naming. No metaphor. No allusion. @tool is a
+# tool. @tool(X, args) is a tool invocation. tool_result is what
+# comes back. Every word means what it says.
+
+# ============================================================
+# §7 Forward-promised
+# ============================================================
+#
+# Not landed this tick; named for future ticks:
+#
+# 1. @trust family-root (Mara territory next tick) — the crypto
+#    floor's substrate-decl. Composes with @tool's `signature` field
+#    + fractal::signature module. `tool.sign` + `tool.verify`
+#    discharge through @trust at that altitude.
+# 2. Additional @tool species as consumers pin them (@tool/ffmpeg,
+#    @tool/kubectl, @tool/npm, @tool/pip, @tool/sqlite, @tool/curl,
+#    @tool/jq, @tool/go, @tool/docker, @tool/gitlab-ci).
+#    @tool/go + @tool/docker + @tool/gitlab-ci minted at
+#    `docs/specs/2026-07-18-stagefreight-delivery.md` §3 (Mara this
+#    tick); shard-decl files forward-promised for StageFreight
+#    delivery arc.
+# 3. Two-tick collapse of @mirror/lens/mcp's `tool` action-verb
+#    into @tool family-root — currently co-exist at different
+#    altitudes per closure §16 forward-promise 7.
+# 4. `~bin` sigil canonical mint — the lens-over-@io/file escape
+#    hatch that replaces `opaque(str)` at consumer-facing altitude.
+#    Alex 2026-07-18 direct-transcript verbatim (Q2 answer):
+#    "screams for a lens over the @io/file ~file sigil. ~bin".
+#    Precedent: `~git'...'` sigil at `docs/specs/spectral-garden-
+#    git-package-manager.md` §2.2. Forward-promised shard/species
+#    location TBD (likely `shards/optics/lens/bin.mirror` sibling
+#    to `shards/optics/lens/diff.mirror`).
+
+out @tool
+out tool_id
+out tool_invocation
+out tool_result
+out tool_artifact
+out exec
+out sign
+out verify
+out version_of
+out tool_invocation_admissible
+out tool_result_witnessed
