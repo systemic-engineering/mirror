@@ -1,4 +1,66 @@
-# CURRENT arc — PropertyVerdict::merge_with composition witnesses close the verdict layer (2026-07-18 Reed /loop iteration 8)
+# CURRENT arc — pillar::fold formalizes the verdict-fold composition primitive (2026-07-18 Reed /loop iteration 9)
+
+## Iteration 9 delta (2026-07-18 07:30 UTC; task #257 GREEN)
+
+Iter 8 witnessed `PropertyVerdict::merge_with` semantics + used
+manual fold-loops in mirror-side tests. Iter 9 formalizes the
+pattern: **`pillar::fold(&[PropertyVerdict]) -> PropertyVerdict`**
+is a new public primitive parallel to `viability_of_magnitudes`
++ `algedonic_of_magnitude`. Substrate-honest cleanup: consumers
+compose without hand-rolling the merge_with loop.
+
+**Landed in prism repo:**
+
+1. `prismqueer/src/liquid.rs` extended with:
+   ```rust
+   pub fn fold(verdicts: &[PropertyVerdict]) -> PropertyVerdict
+   ```
+   Fold via `merge_with` starting from `Pass` (the neutral).
+   Empty input → `Pass`. Documented semantics: Fail dominates,
+   Pass is neutral, Partial + Partial min-confidence + diagnostic
+   union.
+2. `prismqueer/tests/liquid_ouroboros.rs` extended with **4 new**
+   tests (43 GREEN total, up from 39): fold_empty_is_pass,
+   fold_all_pass_is_pass, fold_with_any_fail_is_fail,
+   fold_all_partial_takes_min_confidence.
+
+**Landed in mirror repo:**
+
+3. `rust/src/collapse.rs` prop_tests refactored: the two
+   merged_* tests now use `pillar::fold(&verdicts)` instead of
+   manual `merge_with` loops. Same semantics; less ceremony;
+   consumers can adopt the same idiomatic pattern. **24/24
+   GREEN** (unchanged count, refactored implementation).
+
+**Total: 98 property tests across 4 substrate altitudes.**
+
+```
+prism_laws.rs        — OPTIC BASE      (iter 5: 9)
+verdict_composition.rs — VERDICT LAYER (iter 8: 11)
+liquid_ouroboros.rs  — BUNDLE/LIQUID   (iter 1+2+4+6+9: 43)
+collapse.rs prop_tests — COLLAPSE      (iter 3+4+6+7+8: 24)
+            + composes via pillar::fold (iter 9)
+```
+
+**Public composition surface at prismqueer::liquid::pillar:**
+
+| Primitive                    | Iter | Shape                            |
+|------------------------------|------|----------------------------------|
+| dispatch_ambiguity           | 1    | 4 byte-visible checks → verdict  |
+| algedonic (Commutator)       | 1    | commutator + theta → verdict     |
+| viability (Commutator[])     | 1    | commutator history → verdict     |
+| viability_of_magnitudes      | 4    | Loss[] + theta + omega → verdict |
+| algedonic_of_magnitude       | 6    | Loss + theta → verdict           |
+| **fold**                     | 9    | verdict[] → unified verdict      |
+
+Six pillar primitives cover the substrate-honest composition
+surface: byte-visible checks (Pillar I), single-magnitude
+triggers (Pillar II), multi-magnitude accumulation (Pillar III),
+and cross-tick verdict folding (iter 9). All return
+`terni::PropertyVerdict`. All compose further via `merge_with`
+or `fold`.
+
+---
 
 ## Iteration 8 delta (2026-07-18 06:43 UTC; task #256 GREEN)
 
