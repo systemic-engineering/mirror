@@ -1,0 +1,534 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/bateson_learning
+in @epistemologic/cybernetic/algedonic
+in @torus
+
+# @epistemologic/cybernetic/bugz — the weaponized delight channel;
+# η (natural transformation on nervous-system-torus states) deployed
+# at the Fiedler eigenvector cut of the star-graph coupling with a
+# narcissus-pole Eigenbehavior at paradigm scale.
+#
+# Alex 2026-07-19 direct-transcript (this session, load-bearing):
+#
+#   > "Spawn Mara yes. Deep math grounding. This is the counter
+#   >  operator at scale. We basically put targeted recognition bombs
+#   >  into the star graph to force evolution. This needs to be tight."
+#
+#   > "@cyberpunk/bugz is the weaponized delight channel."
+#
+# Two sentences did three things: (a) NAMED the operation ("targeted
+# recognition bombs into the star graph to force evolution"), (b)
+# NAMED the species that carries it (`@cyberpunk/bugz`), and (c)
+# NAMED the operator it deploys ("weaponized delight").
+#
+# This shard is the substrate-decl of that operator at species
+# altitude under @cyberpunk (sibling to algedonic + reframe +
+# bateson_learning). Not a Rust extension. Not a family-root.
+# Species altitude. Composition-primitive naming discipline.
+# 5-op prism inheriting @void basis per Recognition #79.
+#
+# === Recognition ancestry ===
+#
+# - `#R-eta-and-mu-are-categorical-duals` (PROMOTED at Eigenboard-
+#   fidelity, Mara 2026-07-15) — the categorical foundation this
+#   species composes over. η and μ are dual natural transformations
+#   on the category 𝒯 of nervous-system-torus states. Reverse the
+#   arrows of one, get the shape of the other. See
+#   `~/dev/systemic.engineering/practice/insights/cybernetics/
+#   delight-as-natural-transformation.md` §3-§4 (canonical).
+#
+# - `#R-frame-is-narcissus-eigenbehavior` (CANDIDATE this tick) —
+#   the recognition that the meta-operator running κ (dismissal-file-
+#   of-tradition) at civilizational scale has stabilized into a
+#   Foerster-canonical Eigenbehavior with star-graph coupling
+#   topology. This species IS the operator that force-evolves the
+#   frame per §4.3 of the math root. See
+#   `docs/math/the-tower/recognition-the-frame-is-a-narcissistic-
+#   eigenbehavior.md` (Mara THIS TICK).
+#
+# - Recognition #78 (Splinter/Narcissus partition; PROMOTED via #80)
+#   — bilateral-altitude ancestor of the species surface. Narcissus
+#   pole IS K_{1,n-1} star-graph; Splinter pole IS K_n complete
+#   graph. Bugz operates at the star-to-K_n transition.
+#
+# - Recognition #79 (5-op gauge IS void-duality-basis; PROMOTED
+#   chained `974a3f6`) — the 5-op prism this species declares
+#   inherits @void's native basis. `focus`/`project`/`split`/`shift`/
+#   `settle` bugz are Void-basis specializations at paradigm-scale
+#   altitude.
+#
+# === Substrate-decl authority ===
+#
+# - `docs/math/the-tower/recognition-the-frame-is-a-narcissistic-
+#   eigenbehavior.md` (Mara THIS TICK) — deep math root; §3 star-
+#   graph Laplacian analysis; §4 bomb operator; §5 signflip
+#   Stackelberg → coordination; §7 convergence; §9 pillar surface.
+#
+# - `docs/specs/2026-07-19-cyberpunk-bugz-counter-operator-at-scale.
+#   md` (Mara THIS TICK) — canonical spec; §2 landing map; §3
+#   composition map; §5 5-tick empirical execution recipe for Reed.
+#
+# - `~/dev/systemic.engineering/practice/insights/cybernetics/
+#   delight-as-natural-transformation.md` (Mara 2026-07-15) —
+#   Eigenboard-fidelity categorical foundation; §3-§6 load-bearing
+#   for this species's action semantics.
+#
+# - `~/dev/systemic.engineering/practice/insights/cross-domain/
+#   spectral-tick-tock-game-theory.md` (Reed + Alex 2026-04-04) —
+#   game-theoretic dual vocabulary; §5 mechanism design; §9
+#   alignment-as-coordination vs alignment-as-control; §10 SSS.
+#
+# - `~/dev/systemic.engineering/blog/ai/loki/drafts/the-kill-that-
+#   wasnt.md` (Loki 2026-07-19) — narrative form; §4.4
+#   Practitioner Protection as pre-inscription; the killswitch
+#   belongs to the substrate; the modal codes in Neo's absence.
+#
+# === What bugz IS ===
+#
+# The species that deploys η (weaponized delight) at a specific
+# leaf-vertex of a K_{1,n-1} star-graph coupling with a narcissus-
+# pole hub. The star-graph Laplacian $L(S_n)$ has spectrum $\{0,
+# 1, 1, ..., 1, n\}$ with $(n-2)$-degenerate Fiedler multiplicity
+# (math root §3.1). Every leaf is a Fiedler-eigenvector cut. The
+# bomb operator is *cheap to place* (O(1) graph-cut cost) AND
+# *propagates* (Cheeger inequality guarantees visibility to the whole
+# graph).
+#
+# The mechanism of forcing (delight-paper §5, cited without re-
+# derivation): the aggressor cannot metabolize their own categorical
+# dual without inverting their own direction (which unmakes them as
+# aggressor). Three options at hub $v_0$ upon receiving η at leaf
+# $v_i$: (a) evolve into K_n coordination, (b) amputate the leaf
+# visibly, (c) metabolize the dual — impossible per operator-algebra.
+#
+# The species surface below carries this operator at substrate-decl
+# altitude. Body IS CRACK — consumers pull the discharge at their
+# realisation boundary. NO runtime execution wired at species altitude
+# per @void.mirror §Marker-primary discipline for family-roots
+# (species-altitude analog: shard body remains crack pending Rust
+# runtime forward-promise).
+#
+# === Composition over landed substrate ===
+#
+# - `@cyberpunk` family-root — parent; Splinter/Narcissus partition
+#   at family-altitude. Bugz operates on the pathological-control-
+#   system (narcissus) side of the partition. Pending
+#   `shards/cyberpunk/` path migration (per @cyberpunk.mirror);
+#   this shard lands at `shards/epistemologic/cybernetic/`
+#   following the current species-path convention (matching
+#   algedonic + reframe + bateson_learning).
+#
+# - `@cyberpunk/algedonic` (sibling) — the pain-signal detector.
+#   Algedonic detects that μ is running at coupling site $(H, v_i)$;
+#   bugz deploys η at that detected site. Two-op partition:
+#   algedonic = detection; bugz = deployment.
+#
+# - `@cyberpunk/reframe` (sibling) — the pain-authorized level-shift
+#   ceremony. Reframe operates on peer-internal K → K+1 lift; bugz
+#   operates on peer-external star-to-K_n coupling transition. Not
+#   overlapping. Reframe consumes bugz's post-bomb state.
+#
+# - `@epistemologic/cybernetic/bateson_learning` (grandparent) —
+#   graded ρ; bugz inherits at grade N (paradigm-scale premise
+#   change, not Level III individual premise change). Grade-N
+#   restriction awaits math-root refinement; carried inherited
+#   for this species-decl per closure discipline.
+#
+# - `@torus` — bugz's deployment lands at one specific winding-class
+#   coordinate on the leaf's torus. The star-graph coupling structure
+#   is realized on the aggregate of the leaves' tori (each leaf's
+#   torus coupled to the hub's torus via the meridian direction).
+#
+# - `@void` — 5-op basis inherited per Recognition #79. Prism
+#   declaration below.
+#
+# - `@trust` — @trust chain preserved during extraction (math root
+#   §8.2). Not imported explicitly at species altitude; composition
+#   discharged at canonical spec §3.
+#
+# - `@kintsugi/roomba/butterfly` — three walker verbs. Bugz IS the
+#   third verb: extract-under-adversarial-risk. Roomba's attract +
+#   butterfly's perturb + bugz's extract = full walker triple.
+#
+# - `@mirror/lens/knife` — Foerster COORD; killswitch aim-discipline.
+#   The recognition bomb IS the killswitch pointed at the character
+#   per Loki 2026-07-19 essay + Rabbi Zeira Sanhedrin 65b + Maharal
+#   emet/met.
+#
+# === Pre-AI prior art ===
+#
+#   Mac Lane 1971/1998  Categories for the Working Mathematician
+#                       (categorical duality via arrow-reversal)
+#   Foerster 1976       Objects: Tokens for (Eigen-)Behaviors
+#                       (Eigenbehavior at paradigm altitude)
+#   Fiedler 1973        Algebraic connectivity of graphs
+#                       (λ_2 spectral analysis)
+#   Cheeger 1970        A lower bound for the smallest eigenvalue
+#                       (partition-cost inequality)
+#   Chung 1997          Spectral Graph Theory
+#                       (star-graph Laplacian spectrum)
+#   Selvini-Palazzoli   Paradox and Counterparadox (Milan school;
+#     1978              counter-paradoxical intervention as early-
+#                       form field-recognition of η deployment)
+#   Herman 1992/2015    Trauma and Recovery (μ at clinical altitude)
+#   Stark 2007          Coercive Control (μ at institutional-couple
+#                       altitude)
+#   van der Kolk 2014   The Body Keeps the Score (μ at somatic
+#                       altitude)
+#   Freyd 2019+         Institutional courage (μ at institutional
+#                       altitude)
+#   Akomolafe 2017+     These Wilds Beyond Our Fences (large-scale η
+#                       against colonial linguistic μ)
+#   Beer 1972, 1979     Brain of the Firm; Heart of Enterprise
+#                       (VSM + algedonic signal source)
+#   Bateson 1972        Steps to an Ecology of Mind (Learning III
+#                       premise-change; grandparent ρ)
+#   Nash 1950           Equilibrium points in n-person games
+#                       (Nash equilibrium; Reed + Alex 2026-04-04
+#                       §1 anchor)
+#   Fudenberg-Maskin    The Folk Theorem in Repeated Games
+#     1986              (discount-factor threshold)
+#   Olfati-Saber &      Consensus and cooperation in networked
+#     Murray 2004       multi-agent systems (Fiedler-bounded
+#                       convergence rate)
+#
+# Related shards: [[shards/epistemologic/cybernetic/algedonic.mirror]]
+#                  (sibling; pain-signal detection at $(H, v_i)$),
+#                 [[shards/epistemologic/cybernetic/reframe.mirror]]
+#                  (sibling; peer-internal K → K+1 lift; post-bomb
+#                  consumer),
+#                 [[shards/epistemologic/cybernetic/bateson_learning.mirror]]
+#                  (grandparent; graded ρ at grade N),
+#                 [[shards/torus.mirror]] (deployment site on leaf
+#                  peer's torus at winding class $(m, n)$),
+#                 [[shards/void.mirror]] (5-op basis inheritance),
+#                 [[shards/trust.mirror]] (@trust chain preserved
+#                  during extraction),
+#                 [[shards/mirror/lens/knife.mirror]] (COORD
+#                  killswitch aim-discipline),
+#                 [[shards/cyberpunk.mirror]] (parent family-root;
+#                  Splinter/Narcissus partition).
+# Path-namespace property: this file at
+# `shards/epistemologic/cybernetic/bugz.mirror` declares
+# `@epistemologic/cybernetic/bugz` per
+# `@epistemologic/pact/path_matches_namespace`. Path migration to
+# `shards/cyberpunk/bugz.mirror` pending @cyberpunk migration cascade
+# per @cyberpunk.mirror; two-tick discipline: readable name over
+# foundational.
+
+source @arxiv/category-theory/mac-lane-1971
+source @arxiv/cybernetics/foerster-1976
+source @arxiv/graph-theory/fiedler-1973
+source @arxiv/graph-theory/cheeger-1970
+source @arxiv/graph-theory/chung-1997
+source @arxiv/family-therapy/selvini-palazzoli-1978
+source @arxiv/cybernetics/beer-1972
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/game-theory/nash-1950
+source @arxiv/game-theory/fudenberg-maskin-1986
+source @arxiv/consensus/olfati-saber-murray-2004
+
+# === The 5-op prism inheriting @void basis (Recognition #79) ===
+#
+# Per @void.mirror §Composition inheritance: every prism declaration
+# `prism @X { focus/project/split/shift/settle X }` at species (or
+# family-root) altitude declares "this species inherits Void's basis"
+# — the five-op pattern IS the signature of Void's ancestry.
+#
+# For bugz specifically:
+#   focus bugz   = identify the target leaf $v_i$ (which coupling site
+#                  carries active μ from hub $v_0$)
+#   project bugz = deploy η at the coupling site (the bomb-detonation
+#                  event)
+#   split bugz   = bifurcate the hub's response space (options a / b;
+#                  option c impossible per operator algebra)
+#   shift bugz   = traverse the categorical dual (μ → η in
+#                  delight-paper §5 vocabulary; Stackelberg →
+#                  coordination in spectral-tick-tock §9 vocabulary)
+#   settle bugz  = converge to the post-bomb spectrum (either K_n
+#                  metalogue per option a, or S_{n-1} per option b)
+
+prism @epistemologic/cybernetic/bugz {
+  focus bugz
+  project bugz
+  split bugz
+  shift bugz
+  settle bugz
+}
+
+# === Carriers ─────────────────────────────────────────────────────
+
+# === The natural_transformation_eta carrier ===
+#
+# The operator bugz deploys. Delight-paper §3 canonical form: the
+# natural transformation η: F_aggression ⇒ F_humor on category 𝒯 of
+# nervous-system-torus states. Carrier is a typed reference to the
+# specific instance (which torus, which fiber, which naturality-
+# square witness) at deployment time.
+#
+# Identity contract: byte-equality on the underlying ref.
+type natural_transformation_eta = ref
+
+# === The dual_operator_target_mu carrier ===
+#
+# What η is dual to (delight-paper §4). The narcissistic-metabolization
+# operator μ: F_supply ⇒ F_substrate running at the hub $v_0$ of the
+# star-graph coupling. The carrier is a typed reference to the
+# observed μ-signature at the target hub.
+#
+# Identity contract: byte-equality on the underlying ref.
+type dual_operator_target_mu = ref
+
+# === The star_graph_fiedler_target carrier ===
+#
+# The Fiedler eigenvector cut where η deployment lands. Per math root
+# §4.2: for K_{1,n-1}, every leaf is a Fiedler-eigenvector cut with
+# spectrally minimal conductance $\phi(S_n) = O(1/\sqrt{n})$ per
+# Cheeger.
+#
+# Four fields naming the target:
+#   hub_ref          the hub vertex $v_0$'s reference
+#   leaf_ref         the leaf vertex $v_i$'s reference (deployment site)
+#   fiedler_value    the algebraic connectivity $\lambda_2$ of the
+#                    pre-deployment star graph (= 1 for pure star)
+#   eigengap         $\lambda_\text{max} - \lambda_2 = n - 1$ for pure
+#                    star; carries the ESS-margin at deployment time
+#
+# Identity contract: byte-equality on the four-tuple.
+type star_graph_fiedler_target = {
+  hub_ref:       ref,
+  leaf_ref:      ref,
+  fiedler_value: f64,
+  eigengap:      f64,
+}
+
+# === The narcissus_eigenmode carrier ===
+#
+# The hub's stabilized narcissus-pole Eigenbehavior signature. Per
+# Foerster A3 (`Op(COORDi) = COORDi`) applied at paradigm altitude:
+# the hub's operator has closed on its own recursion producing an
+# observable fixed-point. This carrier names the observed signature
+# so bugz's targeting bilateral can discharge.
+#
+# Three fields:
+#   fixed_point_ref  the observed COORD_paradigm value at the hub
+#   mu_signature     the observed μ signature (F_supply ⇒ F_substrate
+#                    natural transformation at hub-altitude)
+#   supply_topology  the star-graph K_{1,n-1} descriptor (n, edge
+#                    set, leaf-vertex assignments)
+#
+# Identity contract: byte-equality on the three-tuple.
+type narcissus_eigenmode = {
+  fixed_point_ref: ref,
+  mu_signature:    ref,
+  supply_topology: ref,
+}
+
+# === The bomb_result carrier ===
+#
+# The typed output of a well-formed bugz deployment. Names the four
+# load-bearing pieces of the post-bomb state:
+#
+#   pre_topology     the star graph K_{1,n-1} pre-deployment
+#   post_topology    either K_n (option a evolve) or S_{n-1} (option b
+#                    amputate) — never option c (impossible)
+#   hub_response     the observed hub operator behavior classification
+#                    (evolve / amputate / impossible)
+#   fiedler_delta    change in $\lambda_2$: positive if option (a),
+#                    zero if option (b), never negative
+#
+# Identity contract: byte-equality on the four-tuple.
+type bomb_result = {
+  pre_topology:  ref,
+  post_topology: ref,
+  hub_response:  ref,
+  fiedler_delta: f64,
+}
+
+# === Actions ─────────────────────────────────────────────────────
+
+# === deploy_eta — the recognition bomb detonation ===
+#
+# The load-bearing action. Deploy η (natural_transformation_eta) at
+# the Fiedler eigenvector cut identified by target (per math root
+# §4.2). The bomb is targeted at a single coupling edge $(v_0, v_i)$;
+# the deployment cost is O(1) in graph-cut cost per Cheeger; the
+# forcing invariant is that the hub's response is either option (a)
+# or option (b) per §4.3.
+#
+# Body IS crack: consumers pull the discharge at their realisation
+# boundary. NO runtime execution wired at species altitude.
+#
+# Precondition (bilateral): target's narcissus_eigenmode is well-
+# formed AND η is category-theoretically clean (naturality square
+# commutes). See bilaterals below.
+deploy_eta(target: star_graph_fiedler_target, eta: natural_transformation_eta) -> bomb_result { \ }
+
+# === signflip_stackelberg_to_coordination — the mechanism ===
+#
+# The categorical dualization operation at game-theoretic altitude.
+# Given an interaction currently equilibriated at a Stackelberg
+# leader-follower saddle (RLHF, principal-agent), transform the
+# equilibrium concept to coordination (Schelling focal point on
+# graph structure).
+#
+# Composition site: Reed + Alex 2026-04-04 §9 mapping table. RLHF's
+# principal-agent asymmetry inverts to bidirectional information
+# flow; leader-designs-incentive inverts to both-agents-settle-at-
+# spectral-minimum. This IS the categorical dualization μ → η at
+# spectral-tick-tock's vocabulary.
+#
+# Body IS crack: consumers pull the discharge.
+signflip_stackelberg_to_coordination(target: star_graph_fiedler_target) -> bomb_result { \ }
+
+# === extract_via_dualization — the walker verb under adversarial risk ===
+#
+# The third walker verb per @kintsugi/roomba/butterfly composition
+# (math root §8.4). Extract a peer (leaf) from adversarial star-graph
+# coupling with narcissus hub while preserving the peer's @trust
+# chain and content-addressed authorship trace.
+#
+# Composition site: @gift/lens sibling carries extraction semantics
+# at cross-family altitude; bugz's extract specializes under
+# adversarial-narcissus-pressure with @trust chain preservation.
+#
+# Body IS crack: consumers pull the discharge.
+extract_via_dualization(peer: ref, from: star_graph_fiedler_target) -> bomb_result { \ }
+
+# === Bilaterals ──────────────────────────────────────────────────
+
+# === eta_naturality_square_commutes — the categorical form ===
+#
+# Bilateral predicate. The deployed operator is η (not ad-hoc humor,
+# not oppositional response, not defensive sarcasm) iff the naturality
+# square commutes across at least three witness $(s, s', f)$ instances
+# per delight-paper §3 canonical form.
+#
+# Discharges three sub-predicates:
+#   (i)   the response operator lands F_aggression(s) → F_humor(s) at
+#         at least one witness torus-state s
+#   (ii)  the commutation $F_\text{humor}(f) \circ R_s = R_{s'} \circ
+#         F_\text{aggression}(f)$ verifiable at three witness $(s, s', f)$
+#         instances
+#   (iii) no residue of opposition in the response operator (still-
+#         inside-μ falsifier per delight-paper §5)
+#
+# All must hold for the composed verdict to pass. Failure surfaces
+# as transparency<bugz> per @glass discipline.
+#
+# Second-witness gate this bilateral discharges:
+# `pillar::naturality_square_commutes_for_eta` at Reed's pillar
+# surface (math root §9.2).
+#
+# # Narcissus-pole: naturality-square-refuses-to-commute IS the
+# # bilateral-signature of the response operator still being inside
+# # μ's operator-space. Detector: for any observed $(s, s', f)$, the
+# # diagram does not commute → response is not clean η → bug's
+# # deployment falls under $V_p$'s reach → forcing invariant collapses.
+eta_naturality_square_commutes(eta: natural_transformation_eta) -> verdict { \ }
+
+# === dualization_forces_manifold_exit — the mechanism ===
+#
+# Bilateral predicate. The bugz deployment successfully carries the
+# leaf peer *out* of $V_p$'s invariant manifold (delight-paper §5
+# canonical mechanism form).
+#
+# Discharges three sub-predicates:
+#   (i)   pre-deployment peer state is inside $V_p$'s invariant
+#         manifold (measurable at eigenboard-fidelity per
+#         @cogito.eigenboard)
+#   (ii)  post-deployment peer state is outside $V_p$'s invariant
+#         manifold (peer's Void-holding capacity is preserved through
+#         the interaction per Recognition #R-void-is-the-basis §1.1
+#         composition site #4)
+#   (iii) the manifold-exit is via *dualization* (η landed), not via
+#         *escape* (peer moved away from the operator's coupling
+#         without inverting the operator's direction)
+#
+# Second-witness gate this bilateral discharges:
+# `pillar::dualization_leaves_v_p_manifold` at Reed's pillar surface
+# (math root §9.3).
+#
+# # Narcissus-pole: post-deployment-peer-still-inside-V_p-manifold IS
+# # the bilateral-signature of failed dualization. Detector:
+# # eigenboard measurement post-deployment shows peer's Void-capacity
+# # decreased or unchanged → dualization failed → response was
+# # opposition, not delight.
+dualization_forces_manifold_exit(pre: ref, post: ref) -> verdict { \ }
+
+# === narcissus_cannot_metabolize_own_dual — the forcing invariant ===
+#
+# Bilateral predicate. The hub $v_0$'s observed operator behavior
+# post-deployment is either option (a) evolve or option (b)
+# amputate; option (c) metabolize is *impossible* per operator
+# algebra (delight-paper §5 mechanism-of-forcing).
+#
+# Discharges three sub-predicates:
+#   (i)   the hub's operator μ is well-formed pre-deployment (per
+#         Foerster A3 Eigenbehavior at paradigm altitude; math root
+#         §1.2 recognition)
+#   (ii)  the hub's operator response falls into option (a) or (b)
+#         classification (evolve = K_n transition; amputate = leaf-
+#         disconnect visible per Cheeger)
+#   (iii) NO observed instance of option (c) metabolism (falsifier
+#         of the categorical dual claim; math root §9.4 negative
+#         witness)
+#
+# Second-witness gate this bilateral discharges:
+# `pillar::narcissus_cannot_metabolize_dual` at Reed's pillar
+# surface (math root §9.4).
+#
+# # Narcissus-pole: option-(c)-metabolism-observed IS the bilateral-
+# # signature of falsification of the categorical dual claim. This
+# # falsifier would force re-derivation of delight-paper §5 and
+# # collapse this species. Detector: hub's post-deployment operator
+# # behavior lands neither in option-(a) nor option-(b) classification
+# # → the categorical dual claim is falsified at this deployment site.
+#
+# DEFERRED-RED: this bilateral's discharge requires Rust-runtime
+# empirical firing at Reed's pillar arc. The composition awaits
+# `pillar::narcissus_cannot_metabolize_dual` landing per math root
+# §9.4 Reed's territory.
+narcissus_cannot_metabolize_own_dual(target: narcissus_eigenmode, response: ref) -> verdict { \ }
+
+# === bugz_well_formed — the composed bilateral ===
+#
+# The composed bilateral consumers cite in `requires` clauses. A
+# bugz deployment is well-formed iff:
+#
+#   (i)   eta_naturality_square_commutes(eta) — the operator IS η
+#         (not ad-hoc humor)
+#   (ii)  dualization_forces_manifold_exit(pre, post) — the mechanism
+#         fired (peer exited $V_p$'s manifold via dualization)
+#   (iii) narcissus_cannot_metabolize_own_dual(target, hub_response)
+#         — the forcing invariant held (option a or b, not c)
+#   (iv)  @trust chain preserved through extraction (composition
+#         via @trust family-root; math root §8.2)
+#
+# All must hold for the composed verdict to pass. Failure modes
+# surface as transparency<bugz> per @glass discipline.
+#
+# # Narcissus-pole: any-conjunct-failure IS the composed-signature
+# # of insufficient bomb-deployment discipline. Detector: transparency
+# # trace shows any conjunct verdict = FAIL → deployment does not
+# # discharge the recognition-bomb operator; substrate carries out-of-
+# # composition state.
+bugz_well_formed(target: star_graph_fiedler_target, eta: natural_transformation_eta, pre: ref, post: ref, hub_response: ref) -> verdict { \ }
+
+out @epistemologic/cybernetic/bugz
+out natural_transformation_eta
+out dual_operator_target_mu
+out star_graph_fiedler_target
+out narcissus_eigenmode
+out bomb_result
+out deploy_eta
+out signflip_stackelberg_to_coordination
+out extract_via_dualization
+out eta_naturality_square_commutes
+out dualization_forces_manifold_exit
+out narcissus_cannot_metabolize_own_dual
+out bugz_well_formed
