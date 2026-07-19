@@ -1,0 +1,303 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/pact
+
+# @mirror/spec/property — the substrate-decl'd shape of a spec-native
+# `property <name> { verifies { <expr> } domain @<T> samples <n>
+# defer? <msg> }` block.
+#
+# Companion to shards/mirror/spec.mirror (which declares the @mirror/spec
+# prism + top-level `project NAME { ... }` grammar). Registers the
+# spec-body `property` block as a first-class grammar construct so
+# mirror.spec files can carry spec-native property declarations
+# consumed by the rust/src/liquid.rs runtime (per Mara 2026-07-19
+# canonical spec docs/specs/2026-07-19-mirror-spec-is-the-fixpoint-
+# liquid-is-the-runtime.md §3.3 Step 1).
+#
+# The bootstrap's keyword harvester (bootstrap/src/grammar.rs::
+# merge_keyword_sources + companion_keyword_sources) reads `<op>
+# <keyword>` 2-word lines inside a `grammar { ... }` block to build
+# the tokenizer's keyword table; this file is the substrate-altitude
+# declaration of those bindings for the spec-native property shape.
+#
+# === Substrate authority ===
+#
+# - Alex 2026-07-19 in-transcript verbatim (ratification):
+#     "The mirror.spec is already the fixpoint. This means you can
+#      shape the geometry of the project by writing the properties
+#      into the spec. [...] the properties [...] want to be wired
+#      into liquid.rs into the matrix.rs and become basically the
+#      RUNTIME that parses the mirror.spec and infers and verifies
+#      the shape of the geometry."
+#
+# - Canonical spec: docs/specs/2026-07-19-mirror-spec-is-the-fixpoint-
+#   liquid-is-the-runtime.md (Mara 2026-07-19; §2.5 Q5 answer + §3.3
+#   registration plan + §3.1 property carrier syntax).
+#
+# - Math foundation: docs/math/the-tower/recognition-mirror-spec-is-
+#   the-fixpoint-and-liquid-is-the-runtime.md (Mara 2026-07-19; §10
+#   formal property carrier notation + §2 fixpoint theorem + §3 `---`
+#   separator as boundary operator).
+#
+# === Substrate-already-had-the-word citation chain ===
+#
+# The `property` vocabulary was already substrate-decl'd across 9+
+# LANDED property shards under shards/epistemologic/property/*:
+#
+#   cold_compile_within_tolerance    (Tick 43; 2026-06-20)
+#   dark_count_monotone              (Tick 41; 2026-06-19)
+#   docblock_grounded                (Trio slot 1; 2026-07-06)
+#   docblock_coherent                (Trio slot 2; 2026-07-06)
+#   docblock_no_extraction_pattern   (Trio slot 3; 2026-07-06)
+#   restart_intensity_well_formed    (2026-07-03)
+#   verdict_is_content_addressed     (N1 Tick 1; 2026-07-12)
+#   ouroboros_monotone               (Arc-1 Tick 1.5 Landing 7; 2026-07-15)
+#   tool_species_stagefreight_witnessed  (2026-07-18)
+#
+# All follow the docblock + species-decl + `<name>(args) -> verdict
+# { \ }` obligation-blocked action shape. This companion extends the
+# vocabulary to spec-body altitude — where a project's mirror.spec
+# names the properties that project's settlement must satisfy.
+#
+# The vocabulary is NOT new. What's new is admitting it inside a
+# spec-body block. The two altitudes coexist:
+#
+#   shards/epistemologic/property/<name>.mirror    — substrate-decl'd
+#                                                    at family altitude;
+#                                                    declares WHAT the
+#                                                    property means.
+#   mirror.spec `property <name> { ... }` block    — project-declared
+#                                                    at spec altitude;
+#                                                    declares that THIS
+#                                                    project's settlement
+#                                                    must satisfy the
+#                                                    named property (or
+#                                                    a spec-local
+#                                                    predicate defined
+#                                                    inline).
+#
+# === Relation to bilateral (Q2 answer — BOTH coexisting) ===
+#
+# Per Mara 2026-07-19 canonical spec §2.2: bilateral is the degenerate
+# case of property (single sentinel-containment `verifies` expression);
+# property is the general form. The 30 landed bilateral declarations
+# at shards/**/*.mirror continue to work unchanged; their
+# `bilateral <name> { sentinel "..." arity N require <ref>* }` shape
+# parses under shards/epistemologic/pact/keywords.mirror (LANDED
+# 2026-07-16) at shard-body altitude. This property companion carrier
+# admits the general property form at spec-body altitude.
+#
+# Coexistence is permanent. The choice between bilateral (shard-body,
+# byte-substring-check) and property (spec-body, algebraic/parametric/
+# defer) is ergonomic, not semantic — both dispatch through the same
+# generic dispatch(addr, args) -> Verdict (per math root §5 three-
+# dispatcher collapse theorem).
+#
+# === Companion-source registration (Reed post-landing tick) ===
+#
+# Per canonical spec §3.3 Step 2: Reed adds ONE line to
+# bootstrap/src/grammar.rs::companion_keyword_sources's match arm for
+# "shards/mirror/spec.mirror":
+#
+#   "shards/mirror/spec.mirror" => &[
+#       "shards/mirror/spec/keywords.mirror",
+#       "shards/mirror/spec/property.mirror",   // NEW
+#   ],
+#
+# The extension is additive per merge_keyword_sources's missing-file-
+# is-not-fatal semantics (bootstrap/src/grammar.rs line 244); removing
+# the companion regresses cleanly. Same precedent as shards/mirror/
+# spec/keywords.mirror (2026-06-09) and shards/song/keywords.mirror
+# (2026-07-13, Path B).
+#
+# === Kinds chosen so the tokenizer's existing per-kind path produces
+# === the right shape:
+#
+#   focus    — opens a recursively-scanned brace block. Top-level
+#              `property NAME { ... }` uses this so the four inner
+#              directives (verifies / domain / samples / defer) parse
+#              as child AST nodes of the property declaration.
+#              `verifies { <expr> }` itself opens a nested brace block
+#              (the obligation body); focus-kind admits the recursive
+#              descent.
+#              Same precedent as `focus project` / `focus target` /
+#              `focus cli` in shards/mirror/spec/keywords.mirror and
+#              `focus bilateral` in shards/epistemologic/pact/
+#              keywords.mirror.
+#
+#   project  — single-line directive that consumes one identifier /
+#              string-literal / integer / ref as its `name` field, no
+#              brace block. Used for `domain @<Type>` /
+#              `samples <n>` / `defer <msg>`.
+#              Same precedent as `project sentinel` / `project arity` /
+#              `project require` in shards/epistemologic/pact/
+#              keywords.mirror.
+#
+# These bindings are the dispatch surface the runtime reads;
+# property_decl (below) is the substrate's semantic surface. Both
+# coexist by design — the keyword bindings are the grammar-loader's
+# parse surface; the shard-decl is the substrate's typed carrier the
+# runtime consumes.
+
+grammar @mirror/spec/property {
+  # === property block (recursively scanned body) ===
+  #
+  # Top-level `property <name> { ... }` block declaring a spec-native
+  # property whose runtime obligation dispatches to prismqueer::liquid::
+  # pillar primitives (per canonical spec §2.3 Q3 answer).
+  #
+  # Scope: valid inside a top-level `project NAME { ... }` block only;
+  # invalid at file top-level. Enforced by property_decl_placement_
+  # coherent bilateral below.
+  focus property
+
+  # === property fields ===
+  #
+  # `verifies { <expression-tree> }` — the obligation body. An
+  # expression tree in the bounded sub-Turing fragment (per
+  # docs/math/liquid-types/README.md §1.1 Rondon-Kawaguchi-Jhala 2008
+  # decidability grounding). Evaluates to a boolean (Pass/Fail) or a
+  # PropertyVerdict value (Pass / Fail / Partial).
+  # `focus` kind so the `{ ... }` body parses as child AST nodes of
+  # the property declaration; the expression-tree grammar itself is
+  # sketched at canonical spec §3.2 (v0.1 minimum: boolean literals +
+  # composition, equality on Metric-valued expressions, sentinel-
+  # containment, method calls on domain-typed values, universally-
+  # quantified sub-loops, pillar-primitive direct calls).
+  focus verifies
+
+  # `domain @<Type>` — the domain of universally-quantified variables
+  # in the verifies expression. `@TestBundle`, `@Signature`, `@Byte`,
+  # `@Source`, `@Perm3`, etc. Domains are substrate-decl'd types; the
+  # domain-ref resolves to the type's Arbitrary witness (per
+  # prism/prismqueer/src/liquid.rs::Sample; substrate-decl'd counterpart
+  # forward-promised per canonical spec Q-Mara-E).
+  project domain
+
+  # `samples <n>` — the number of sampled instances the runtime
+  # quantifies over. Passed to pillar::forall(n, f). Bounded above by
+  # a substrate-decl'd budget (per @resource-budget/* forward-promise).
+  # Integer literal; positive; bounded above by budget-decl'd max.
+  project samples
+
+  # `defer <message>` — optional. Marks the property as operationally-
+  # deferred: runtime issues Partial(defer, message) verdicts until
+  # the substrate can discharge. Per Reed's `defer()`-mode pattern in
+  # prism/prismqueer/tests/red_trust_chain_liquid_void.rs (`560ea67`)
+  # + red_narcissus_battery_five_op_collapse.rs (`60df742`).
+  # String literal payload; explanatory message for the deferral.
+  project defer
+}
+
+# === typed carrier: property_decl ===
+#
+# The substrate-decl'd carrier for a parsed `property <name> { ... }`
+# block. Extracted by rust/src/liquid.rs::extract_properties (Reed
+# post-landing per canonical spec §8.2 Tick M1) from mirror.spec via
+# the standard bootstrap grammar path (line-scan header parsing,
+# body-line consumption, brace-tracking — mirrors bootstrap/src/apply_h.
+# rs::extract_bilaterals line 209 pattern).
+#
+# Fields per canonical spec §3.1:
+#
+#   name                     — identifier; unique across spec + shard corpus
+#   verifies_expression_tree — the parsed verifies block (bounded
+#                              sub-Turing fragment per §3.2)
+#   domain_type_witness      — ref to substrate-decl'd type with
+#                              Arbitrary witness
+#   samples_count            — positive integer; bounded by
+#                              @resource-budget/*
+#   defer_annotation         — option(str); Some(msg) marks property as
+#                              deferred with the given message
+#
+# Consumer: rust/src/liquid.rs::dispatch_property (Reed post-landing
+# per canonical spec §8.3 Tick M2) matches the verifies expression
+# shape to a pillar primitive (dispatch table at math root §4.2), then
+# invokes primitive with domain-sampled args.
+property_decl(
+  name: identifier,
+  verifies_expression_tree: expression_tree,
+  domain_type_witness: ref,
+  samples_count: nat,
+  defer_annotation: option(str)
+) -> property_decl { \ }
+
+# === well-formedness bilateral ===
+#
+# `property_decl_well_formed` — the base bilateral gating admissibility
+# of a parsed property_decl. Sentinel byte-string encodes the four
+# admissibility criteria (name-unique + verifies-non-empty + domain-
+# resolvable + samples-positive) as a single content-addressed witness.
+#
+# Base bilateral (arity 1); dispatched by apply_h::act (or its rust/
+# successor per canonical spec §5.2) via the standard reflective
+# corpus-lookup path (bootstrap/src/apply_h.rs::load_bilateral_corpus
+# + discharge). No `require` clauses — the four criteria are checked
+# by the sentinel-containment path on the property_decl's oid.
+bilateral property_decl_well_formed {
+  sentinel "property-decl=name-unique-verifies-nonempty-domain-resolvable-samples-positive"
+  arity 1
+}
+property_decl_well_formed(p: property_decl) -> verdict { \ }
+
+# === scope bilateral ===
+#
+# `property_decl_placement_coherent` — a base bilateral gating the
+# STRUCTURAL scope invariant: a `property <name> { ... }` block is
+# valid inside a top-level `project NAME { ... }` block only; invalid
+# at .spec file top-level or nested inside a `target NAME { ... }`
+# block.
+#
+# Rationale: properties are project-level concerns per canonical spec
+# §2.1 Q1 answer (spec-native primary, shard-decl secondary). Nesting
+# discipline mirrors `focus cli` placement (target-body only) and
+# `focus tools` forward-promise placement (project-body only).
+#
+# Sentinel byte-string encodes the placement invariant as a single
+# content-addressed witness; dispatched via the standard reflective
+# corpus path.
+bilateral property_decl_placement_coherent {
+  sentinel "property-decl=project-body-scoped-not-target-body-not-file-top"
+  arity 1
+}
+property_decl_placement_coherent(p: property_decl) -> verdict { \ }
+
+# === composed admissibility bilateral ===
+#
+# `property_decl_admissible` — the composed bilateral gating full
+# admissibility of a parsed property_decl. AND-conjuncts:
+#
+#   property_decl_well_formed(p)         — four-criterion admissibility
+#   property_decl_placement_coherent(p)  — scope invariant
+#
+# Per canonical spec §5.2 discharge pseudocode: composed bilaterals
+# AND-conjunct sub-bilaterals via `require`; return Fail on first
+# non-Pass. Same pattern as shards/peer/persistence.mirror's
+# `home_witnessing` (5-conjunct composed) and shards/kintsugi/roomba.
+# mirror's `walk_witnessing` (5-conjunct composed).
+#
+# Consumer: mirror.spec dispatcher (rust/src/liquid.rs::extract_
+# properties) invokes property_decl_admissible on every parsed
+# property_decl BEFORE runtime dispatch to pillar; ill-formed or
+# ill-placed declarations fail admissibility and emit a diagnostic
+# instead of dispatching a runtime discharge.
+bilateral property_decl_admissible {
+  sentinel "property-decl=well-formed-and-placement-coherent"
+  arity 1
+  require property_decl_well_formed
+  require property_decl_placement_coherent
+}
+property_decl_admissible(p: property_decl) -> verdict { \ }
+
+out @mirror/spec/property
+out property
+out verifies
+out domain
+out samples
+out defer
+out property_decl
+out property_decl_well_formed
+out property_decl_placement_coherent
+out property_decl_admissible
