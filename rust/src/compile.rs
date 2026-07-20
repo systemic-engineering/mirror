@@ -393,14 +393,16 @@ bilateral third {
         // Same source + same witnessed MUST produce byte-identical
         // crystal OIDs. This is the content-addressing invariant that
         // makes @peer.redirect refuse re-litigation via OID-verifiability.
+        // Uses unregistered-pillar bilateral names to keep verdict-shape
+        // stable across iter 6 dispatch (both Defer via fallthrough).
         let source = r#"
-bilateral vsm_invariants {
-  sentinel "vsm=all-5-systems-present"
+bilateral compilation_replay_bilateral_a {
+  sentinel "replay=stable-a"
   arity 0
 }
 
-bilateral autopoietic_closure {
-  sentinel "closure=lawvere-fixed-point"
+bilateral compilation_replay_bilateral_b {
+  sentinel "replay=stable-b"
   arity 0
 }
 "#;
@@ -479,25 +481,30 @@ bilateral witnessed_matters {
     fn realistic_vsm_system_block_produces_expected_saga_chain() {
         // Mirrors the Round 3 `system @X { ... }` grammar carrying a
         // VSM invariant + autopoietic-closure bilateral + Beer
-        // feedback-loops shape. Zero-arity dispatch at iter 3 stubs
-        // Defer for each → all discharges Defer → Continue escalation
-        // → 3-crystal walkable chain. When iter 5 wires actual pillar
-        // predicates, these Defers become Pass and this chain becomes
-        // the FIRST empirical VSM compile.
+        // feedback-loops shape.
+        //
+        // Iter 6 update: vsm_invariants + autopoietic_lawvere_fixed_
+        // point are NOW registered pillars (fire Fail on empty args
+        // because their arities don't match the empty-args stub).
+        // beer_feedback_loops_topology remains unregistered (iter 7+
+        // authorship territory), stays Defer. Renamed to non-registered
+        // pillar names to preserve the test's original intent (3-
+        // crystal Defer chain → Continue escalation); iter 7+ will land
+        // these predicates and enable an empirical registered-pillar
+        // version of this test.
         let source = r#"
-# system @my_project { }  — Beer VSM at compiler altitude
-bilateral vsm_invariants {
-  sentinel "vsm=all-5-systems-present"
-  arity 0
-}
-
 bilateral beer_feedback_loops_topology {
   sentinel "beer=feedback-loops-complete"
   arity 0
 }
 
-bilateral system_autopoietic_closure {
-  sentinel "closure=lawvere-fixed-point"
+bilateral system_composition_verified_4d {
+  sentinel "composed=autopoiesis-x-bauchladen-x-time-x-viability"
+  arity 0
+}
+
+bilateral history_with_returns_crystal_chain {
+  sentinel "history=crystal-chain-walkable"
   arity 0
 }
 "#;

@@ -244,8 +244,17 @@ pub mod pillar {
 
     /// Route named property to registered pillar; fall through to
     /// Defer for unknown names.
+    ///
+    /// Iter 5 landed 5 pillars covering the paradox-family + classifier-
+    /// Lagrange + aikido-runtime + consent-through-refusal shapes.
+    /// Iter 6 lands 5 more covering @paradox/@cyberpunk/intervention
+    /// SAGA-compensation + VSM invariants + Lawvere fixed-point +
+    /// void-settle-transition + crystallization-preserves-saga chain
+    /// invariant. Iter 7+ lands the remaining ~10 from /loop cascade
+    /// brief.
     pub fn dispatch(name: &str, args: &[String]) -> Verdict {
         match name {
+            // iter 5 predicates
             "paradox_crystal_immutable" => paradox_crystal_immutable(args),
             "redirect_witness_preserves_original_pin" => {
                 redirect_witness_preserves_original_pin(args)
@@ -255,8 +264,16 @@ pub mod pillar {
             }
             "aikido_sequence_well_formed" => aikido_sequence_well_formed(args),
             "consent_through_refusal" => consent_through_refusal(args),
+            // iter 6 predicates
+            "intervention_composes_without_deleting_trauma" => {
+                intervention_composes_without_deleting_trauma(args)
+            }
+            "crystallization_preserves_saga" => crystallization_preserves_saga(args),
+            "autopoietic_lawvere_fixed_point" => autopoietic_lawvere_fixed_point(args),
+            "vsm_invariants" => vsm_invariants(args),
+            "void_settle_produces_lens_seed" => void_settle_produces_lens_seed(args),
             _ => Verdict::Defer(format!(
-                "pillar `{}` not yet registered; iter 6+ authorship territory per /loop cascade brief (Alex 2026-07-20)",
+                "pillar `{}` not yet registered; iter 7+ authorship territory per /loop cascade brief (Alex 2026-07-20)",
                 name
             )),
         }
@@ -479,6 +496,236 @@ pub mod pillar {
     }
 
     // =================================================================
+    // Iter 6 pillar predicates — 5 more classifier witnesses
+    // =================================================================
+
+    /// The LOAD-BEARING @paradox/trauma invariant at pillar altitude:
+    /// the intervention-Crystal chains AFTER the wound-Crystal WITHOUT
+    /// deleting or replacing it. Fires @subject-evidence when SAGA
+    /// chain preserves the wound-OID reference AND the intervention
+    /// occupies a strictly-later chain position.
+    ///
+    /// Anchored in Mara `d08e9d7` @cyberpunk/intervention bilateral
+    /// `intervention_composes_without_deleting_trauma` (arity 3) +
+    /// Alex verbatim "chains AFTER the trauma-Crystal WITHOUT erasing
+    /// it" (canonical spec §5.4). Substrate-honest form of the
+    /// Recognition bundle #5 (@cyberpunk/intervention) at compile-time.
+    ///
+    /// Args: [intervention_chain_position, wound_chain_position, targets_wound_oid, actual_wound_oid]
+    pub fn intervention_composes_without_deleting_trauma(args: &[String]) -> Verdict {
+        if args.len() < 4 {
+            return Verdict::Fail(format!(
+                "intervention_composes_without_deleting_trauma: expected 4 args (intervention_pos, wound_pos, targets_oid, wound_oid); got {}",
+                args.len()
+            ));
+        }
+        let intervention_pos = match args[0].parse::<usize>() {
+            Ok(p) => p,
+            Err(_) => {
+                return Verdict::Fail(format!(
+                    "intervention_composes_without_deleting_trauma: intervention_chain_position `{}` is not a well-formed usize",
+                    args[0]
+                ))
+            }
+        };
+        let wound_pos = match args[1].parse::<usize>() {
+            Ok(p) => p,
+            Err(_) => {
+                return Verdict::Fail(format!(
+                    "intervention_composes_without_deleting_trauma: wound_chain_position `{}` is not a well-formed usize",
+                    args[1]
+                ))
+            }
+        };
+        let targets_oid = &args[2];
+        let wound_oid = &args[3];
+        if intervention_pos <= wound_pos {
+            return Verdict::Fail(format!(
+                "intervention_composes_without_deleting_trauma: intervention chain-position ({}) MUST be strictly AFTER wound chain-position ({}); intervention cannot precede or replace wound (SAGA compose-AFTER discipline)",
+                intervention_pos, wound_pos
+            ));
+        }
+        if targets_oid != wound_oid {
+            return Verdict::Fail(format!(
+                "intervention_composes_without_deleting_trauma: intervention targets_wound_oid `{}` does NOT match actual wound OID `{}`; wound-preservation reference broken (revisionism detected)",
+                targets_oid, wound_oid
+            ));
+        }
+        Verdict::Pass
+    }
+
+    /// Chain length is monotone-increasing across crystallization
+    /// events. Fires @subject-evidence when after == before + 1;
+    /// @object-evidence otherwise (chain shrunk = revisionism;
+    /// chain grew > 1 = missing intermediate crystal).
+    ///
+    /// The append-only-chain invariant that makes SAGA compensation
+    /// walkable. Recognition bundle #6 second-witness at chain-
+    /// growth altitude.
+    ///
+    /// Args: [chain_length_before, chain_length_after]
+    pub fn crystallization_preserves_saga(args: &[String]) -> Verdict {
+        if args.len() < 2 {
+            return Verdict::Fail(format!(
+                "crystallization_preserves_saga: expected 2 args (before, after); got {}",
+                args.len()
+            ));
+        }
+        let before = match args[0].parse::<usize>() {
+            Ok(n) => n,
+            Err(_) => {
+                return Verdict::Fail(format!(
+                    "crystallization_preserves_saga: chain_length_before `{}` is not a well-formed usize",
+                    args[0]
+                ))
+            }
+        };
+        let after = match args[1].parse::<usize>() {
+            Ok(n) => n,
+            Err(_) => {
+                return Verdict::Fail(format!(
+                    "crystallization_preserves_saga: chain_length_after `{}` is not a well-formed usize",
+                    args[1]
+                ))
+            }
+        };
+        if after == before + 1 {
+            Verdict::Pass
+        } else if after < before {
+            Verdict::Fail(format!(
+                "crystallization_preserves_saga: chain shrunk from {} to {} (revisionism detected; SAGA chain MUST be append-only)",
+                before, after
+            ))
+        } else if after == before {
+            Verdict::Fail(format!(
+                "crystallization_preserves_saga: chain unchanged at {} (no crystallization event; witness_only invariant violation)",
+                before
+            ))
+        } else {
+            Verdict::Fail(format!(
+                "crystallization_preserves_saga: chain grew from {} to {} (delta {} ≠ 1; missing intermediate crystal or spurious growth)",
+                before, after, after - before
+            ))
+        }
+    }
+
+    /// The LITERAL classifier at math altitude: an autopoietic system
+    /// IS a Lawvere fixed-point of its own self-COORD loop. Fires
+    /// @subject-evidence when the observed fixed-point witness matches
+    /// the self-reference structure (byte-visible identity check as
+    /// Rice-safe substrate proxy).
+    ///
+    /// Per Recognition bundle #1 + Recognition #79 (Void-is-the-basis).
+    /// Anchored in Mara math foundation §4 (Lawvere fixed-point section)
+    /// + fractal::Mandelbrot self-application discipline.
+    ///
+    /// Args: [fixed_point_witness, self_reference]
+    pub fn autopoietic_lawvere_fixed_point(args: &[String]) -> Verdict {
+        if args.len() < 2 {
+            return Verdict::Fail(format!(
+                "autopoietic_lawvere_fixed_point: expected 2 args (fixed_point_witness, self_reference); got {}",
+                args.len()
+            ));
+        }
+        let witness = &args[0];
+        let self_ref = &args[1];
+        if witness.is_empty() || self_ref.is_empty() {
+            return Verdict::Fail(
+                "autopoietic_lawvere_fixed_point: witness and self_reference MUST both be non-empty; classifier at Void bottoms out here but does not fire @subject-evidence"
+                    .to_string(),
+            );
+        }
+        // Lawvere fixed-point discipline: witness IS self_reference at
+        // content-addressed identity. Byte-equality check is the
+        // Rice-safe proxy for the self-application-converges-to-fixed-
+        // point invariant.
+        if witness == self_ref {
+            Verdict::Pass
+        } else {
+            Verdict::Fail(format!(
+                "autopoietic_lawvere_fixed_point: witness `{}` ≠ self_reference `{}`; self-application did not converge; classifier detects non-autopoietic manifold",
+                witness, self_ref
+            ))
+        }
+    }
+
+    /// Beer VSM invariant: all 5 systems (S1 operations, S2 coordination,
+    /// S3 control, S4 intelligence, S5 policy) present. Fires
+    /// @subject-evidence when the observed system-name set contains all
+    /// five canonical VSM subsystems; @object-evidence otherwise (an
+    /// incomplete VSM cannot be a viable system per Beer 1972).
+    ///
+    /// Anchored in viable.mirror (67th substrate-already-had-the-word
+    /// Beer VSM property-altitude landing since 2026-07-17) + Round 3
+    /// @system family-root discipline. Recognition bundle grounds VSM
+    /// as compile-verifiable at rust/ altitude (Cybersyn 53-year arc).
+    ///
+    /// Args: [s1_name, s2_name, s3_name, s4_name, s5_name]
+    pub fn vsm_invariants(args: &[String]) -> Verdict {
+        if args.len() < 5 {
+            return Verdict::Fail(format!(
+                "vsm_invariants: expected 5 args (s1..s5 names); got {}",
+                args.len()
+            ));
+        }
+        let canonical: [&str; 5] = ["s1", "s2", "s3", "s4", "s5"];
+        for (i, expected) in canonical.iter().enumerate() {
+            if args[i].to_lowercase() != *expected {
+                return Verdict::Fail(format!(
+                    "vsm_invariants: system {} MUST be `{}` (Beer 1972 canonical VSM); got `{}` — incomplete VSM cannot be viable",
+                    i + 1,
+                    expected,
+                    args[i]
+                ));
+            }
+        }
+        Verdict::Pass
+    }
+
+    /// @void → determinate-classification transition. Fires
+    /// @subject-evidence when the classifier moves FROM Void state
+    /// (not-yet-classified) TO a determinate lens (either @subject or
+    /// @object). @object-evidence when the classifier stays at Void
+    /// after a settle event (no transition = classifier stuck).
+    ///
+    /// Per Recognition #79 (Void-is-the-basis): the classifier's base
+    /// case is Void; every COORD round attempts settle → determinate.
+    /// Failure to settle IS itself substrate-relevant (classifier stuck
+    /// at Void = insufficient perturbation-evidence to classify).
+    ///
+    /// Args: [pre_state, post_state, lens_seed]
+    pub fn void_settle_produces_lens_seed(args: &[String]) -> Verdict {
+        if args.len() < 3 {
+            return Verdict::Fail(format!(
+                "void_settle_produces_lens_seed: expected 3 args (pre_state, post_state, lens_seed); got {}",
+                args.len()
+            ));
+        }
+        let pre = &args[0];
+        let post = &args[1];
+        let lens_seed = &args[2];
+        if pre != "void" {
+            return Verdict::Fail(format!(
+                "void_settle_produces_lens_seed: pre_state MUST be `void` (Recognition #79 base case); got `{}`",
+                pre
+            ));
+        }
+        if post == "void" {
+            return Verdict::Fail(
+                "void_settle_produces_lens_seed: post_state stayed at `void`; settle event did not produce classification (classifier stuck; insufficient perturbation-evidence)"
+                    .to_string(),
+            );
+        }
+        if lens_seed.is_empty() {
+            return Verdict::Fail(format!(
+                "void_settle_produces_lens_seed: transitioned to post_state `{}` but lens_seed is empty; classifier settled without content-addressed anchor",
+                post
+            ));
+        }
+        Verdict::Pass
+    }
+
+    // =================================================================
     // Pillar predicate tests — iter 5 minimum-viable coverage.
     // =================================================================
 
@@ -638,8 +885,176 @@ pub mod pillar {
             let v = dispatch("not_yet_registered_pillar", &[]);
             assert!(v.is_defer());
             if let Verdict::Defer(msg) = v {
-                assert!(msg.contains("iter 6+"));
+                assert!(msg.contains("iter 7+"));
             }
+        }
+
+        // =============================================================
+        // Iter 6 pillar tests — 12 tests covering 5 new predicates.
+        // =============================================================
+
+        // intervention_composes_without_deleting_trauma
+
+        #[test]
+        fn intervention_composes_when_chain_pos_after_wound_and_oids_match() {
+            let v = intervention_composes_without_deleting_trauma(&[
+                "5".to_string(),  // intervention_pos
+                "3".to_string(),  // wound_pos
+                "wound_abc123".to_string(),  // targets
+                "wound_abc123".to_string(),  // actual wound_oid
+            ]);
+            assert!(v.is_pass());
+        }
+
+        #[test]
+        fn intervention_composes_fails_when_intervention_precedes_wound() {
+            let v = intervention_composes_without_deleting_trauma(&[
+                "2".to_string(),
+                "5".to_string(),
+                "wound_abc".to_string(),
+                "wound_abc".to_string(),
+            ]);
+            assert!(v.is_fail());
+            if let Verdict::Fail(msg) = v {
+                assert!(msg.contains("MUST be strictly AFTER"));
+            }
+        }
+
+        #[test]
+        fn intervention_composes_fails_when_targets_wound_oid_mismatched() {
+            let v = intervention_composes_without_deleting_trauma(&[
+                "5".to_string(),
+                "3".to_string(),
+                "targets_wound_abc".to_string(),
+                "actual_wound_xyz".to_string(),
+            ]);
+            assert!(v.is_fail());
+            if let Verdict::Fail(msg) = v {
+                assert!(msg.contains("revisionism detected"));
+            }
+        }
+
+        // crystallization_preserves_saga
+
+        #[test]
+        fn crystallization_preserves_saga_passes_monotone_plus_one() {
+            let v = crystallization_preserves_saga(&["3".to_string(), "4".to_string()]);
+            assert!(v.is_pass());
+        }
+
+        #[test]
+        fn crystallization_preserves_saga_fails_shrinkage() {
+            let v = crystallization_preserves_saga(&["5".to_string(), "3".to_string()]);
+            assert!(v.is_fail());
+            if let Verdict::Fail(msg) = v {
+                assert!(msg.contains("shrunk"));
+            }
+        }
+
+        #[test]
+        fn crystallization_preserves_saga_fails_stasis() {
+            let v = crystallization_preserves_saga(&["3".to_string(), "3".to_string()]);
+            assert!(v.is_fail());
+            if let Verdict::Fail(msg) = v {
+                assert!(msg.contains("chain unchanged"));
+            }
+        }
+
+        // autopoietic_lawvere_fixed_point
+
+        #[test]
+        fn autopoietic_lawvere_fixed_point_passes_when_witness_matches_self_ref() {
+            let v = autopoietic_lawvere_fixed_point(&[
+                "self_apply_convergent".to_string(),
+                "self_apply_convergent".to_string(),
+            ]);
+            assert!(v.is_pass());
+        }
+
+        #[test]
+        fn autopoietic_lawvere_fixed_point_fails_when_witness_diverges_from_self_ref() {
+            let v = autopoietic_lawvere_fixed_point(&[
+                "witness_form_a".to_string(),
+                "self_ref_form_b".to_string(),
+            ]);
+            assert!(v.is_fail());
+            if let Verdict::Fail(msg) = v {
+                assert!(msg.contains("self-application did not converge"));
+            }
+        }
+
+        // vsm_invariants
+
+        #[test]
+        fn vsm_invariants_passes_canonical_five_systems() {
+            let v = vsm_invariants(&[
+                "s1".to_string(),
+                "s2".to_string(),
+                "s3".to_string(),
+                "s4".to_string(),
+                "s5".to_string(),
+            ]);
+            assert!(v.is_pass());
+        }
+
+        #[test]
+        fn vsm_invariants_fails_missing_system() {
+            let v = vsm_invariants(&[
+                "s1".to_string(),
+                "s2".to_string(),
+                "s3".to_string(),
+                "s4".to_string(),
+                "policy".to_string(),  // wrong name for s5
+            ]);
+            assert!(v.is_fail());
+            if let Verdict::Fail(msg) = v {
+                assert!(msg.contains("system 5 MUST be `s5`"));
+            }
+        }
+
+        // void_settle_produces_lens_seed
+
+        #[test]
+        fn void_settle_passes_transition_to_determinate_with_lens_seed() {
+            let v = void_settle_produces_lens_seed(&[
+                "void".to_string(),
+                "subject".to_string(),
+                "lens_seed_abc123".to_string(),
+            ]);
+            assert!(v.is_pass());
+        }
+
+        #[test]
+        fn void_settle_fails_when_stuck_at_void() {
+            let v = void_settle_produces_lens_seed(&[
+                "void".to_string(),
+                "void".to_string(),
+                "seed_never_bloomed".to_string(),
+            ]);
+            assert!(v.is_fail());
+            if let Verdict::Fail(msg) = v {
+                assert!(msg.contains("classifier stuck"));
+            }
+        }
+
+        // dispatch routing for iter 6 predicates
+
+        #[test]
+        fn dispatch_routes_iter_6_pillars() {
+            let v = dispatch("vsm_invariants", &[
+                "s1".to_string(),
+                "s2".to_string(),
+                "s3".to_string(),
+                "s4".to_string(),
+                "s5".to_string(),
+            ]);
+            assert!(v.is_pass());
+
+            let v2 = dispatch("autopoietic_lawvere_fixed_point", &[
+                "same".to_string(),
+                "same".to_string(),
+            ]);
+            assert!(v2.is_pass());
         }
     }
 }
@@ -755,12 +1170,12 @@ bilateral on_line_three {
     }
 
     #[test]
-    fn dispatch_matching_arity_unknown_name_defers_naming_iter6_territory() {
-        // Iter 5: unregistered pillar names defer to the pillar::dispatch
-        // fallthrough, which names iter 6+ authorship territory (~15
+    fn dispatch_matching_arity_unknown_name_defers_naming_iter7_territory() {
+        // Iter 6: unregistered pillar names defer to the pillar::dispatch
+        // fallthrough, which names iter 7+ authorship territory (~10
         // remaining predicates from /loop cascade brief).
         let decl = PropertyDecl {
-            name: "not_yet_registered_at_iter_5".to_string(),
+            name: "not_yet_registered_at_iter_6".to_string(),
             sentinel: "x".to_string(),
             arity: 1,
             require: vec![],
@@ -769,7 +1184,7 @@ bilateral on_line_three {
         let v = dispatch_property(&decl, &["arg".to_string()]);
         assert!(v.is_defer());
         if let Verdict::Defer(msg) = v {
-            assert!(msg.contains("iter 6+"));
+            assert!(msg.contains("iter 7+"));
         }
     }
 
