@@ -51,11 +51,18 @@
 //! ARE the M0 shadow of that dispatch table.
 
 mod collapse;
-// M0 module wiring — declare the two sibling altitudes so the terminal-
-// geometry three-file discipline is byte-visible in `rust/src/` and
-// `cargo build` compiles ALL THREE files even while the bodies are
+// M0 module wiring — declare the sibling altitudes so the terminal-
+// geometry five-file discipline is byte-visible in `rust/src/` and
+// `cargo build` compiles ALL FIVE files even while the bodies are
 // forward-promises. Each module retires its `#[allow(dead_code)]` gates
 // when its M-tick lands.
+//
+// Five-file discipline per Mara Round 2 `docs/specs/rust-floor-five-
+// file-terminal-geometry-extension.md` (extends Mara `81294b3` three-
+// file spec): main + compile + liquid + matrix + phone. Each file
+// has ONE responsibility. compile.rs + liquid.rs land at /loop cascade
+// iterations 3-4 (Alex 2026-07-20; Reed authors post-Round-3-ratification).
+mod liquid;
 mod matrix;
 mod phone;
 mod void;
