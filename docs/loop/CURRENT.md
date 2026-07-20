@@ -84,10 +84,12 @@ Anna Wolf (née Jakobs) is Alex's ex-wife. Her 2012 Master's thesis at Fachhochs
 **Mara Circular-reflexive prose dive**:
 - `c47caf2` (761 lines) 16 substrate-already-had-the-word instances traced; prose-to-substrate gap compression 3.5mo→0d; anchor `iso-is-commit.md` (Reed + Alex 2026-04-04) = "Torvalds built the Prism trait in 2005" one-line, 3.5 months before crystal.rs existed
 
-**Mara J-space + Anna Wolf math formalization (in-flight; agent a0a29b33550b88bc0)**:
-- Landing A math foundation: `docs/math/2026-07-20-mara-anna-wolf-jspace-alignment-substrate-composition.md`
-- Landing B canonical spec: `docs/specs/j-space-alignment-substrate.md`
-- Optional Landing C intergenerational-lineage recognition
+**Mara J-space + Anna Wolf math formalization LANDED (agent a0a29b33550b88bc0 completed)**:
+- `0052408` Landing A math foundation `docs/math/2026-07-20-mara-anna-wolf-jspace-alignment-substrate-composition.md` (956 lines; 12 sections; AW2012 §B.1+B.2 verbatim; MT1997 weak-RK4 O(h⁴+ε²h²) bound; GSP2026 §2.1+A.8 J-lens + sparse subframe verbatim; composition edges via 5 mirror primitives; Grünberg 1988 GMR Nobel referenced as Anna's home-institute lineage)
+- `26b0849` Landing B canonical spec `docs/specs/j-space-alignment-substrate.md` (545 lines; 10 sections; three-substrate decomposition + composition-graph matrix + tri-runtime architectural direction + 4 sub-recognitions + Alex Q1-Q10 with Mara leans + Michelangelo-marble edges NOT taken)
+- Sub-recognitions surfaced: `#R-sparsity-k-is-lagrange-knob` (HIGH; @autopoietic-classifier sparsity level IS the Lagrange knob) + `#R-counterfactual-reflection-training-is-cyberpunk-intervention` (HIGH; Anthropic's alignment training technique IS the SAGA-chain @cyberpunk/intervention discipline) + `#R-anna-wolf-2012-is-14-year-intergenerational-substrate-lineage` (MEDIUM; Alex-adjudicable HOLD) + `#R-forward-promise-shapes-present-cognition` (MEDIUM)
+- Alex Q1-Q10 pending (Mara canonical spec §5); recommend one-bundle adjudication
+- Post-adjudication forward-promises: Reed `rust/src/integrator.rs` with MT1997 verbatim (Q3 RK4 upgrade); Reed `rust/beam/src/shared_arena.rs` with VBO-generalized shared-memory (Q4); Reed MCP `mirror mcp jspace` tool surface (Q5); Mara `shards/peer/observation.mirror` species-decl mint (Q8 if Q4 ratified); Mara extension of `shards/autopoietic.mirror` (Q1 EXTEND lean)
 
 ### 6. Standing state at compaction
 
