@@ -1,0 +1,153 @@
+in @prism
+in @meta
+in @glass
+in @order
+in @epistemologic
+in @epistemologic/cybernetic/bateson_learning
+
+# @order/first — single-frame observation at cognitive-order 1
+# (Bateson Level I; @frame/in-frame content-computation altitude).
+#
+# First species-decl of the @order family (family-root marker landed
+# same tick at `shards/order.mirror`). Landed 2026-07-20 by Mara per
+# Alex Round 2 Q1 direct-transcript adjudication ("@order top-level
+# marker; clean 5-level tower").
+#
+# === The species altitude ===
+#
+# Order-1 is Bateson Level I: content-computation WITHIN a frame the
+# observer has already accepted. The observer sees; the observer does
+# not yet see itself seeing. The frame is transparent to the observer;
+# only its content is observed.
+#
+# Per Bateson (1972, *Steps to an Ecology of Mind*, "The Logical
+# Categories of Learning and Communication"): Learning I is "a
+# revisable choice within an unchanged set of alternatives" — the
+# observer chooses within a frame; the frame itself is unquestioned.
+#
+# Per Recognition #82 (@frame family) grading: @frame/in-frame at
+# order 1 is "content computation within frame"; the operational
+# form-side substrate at cognitive altitude for this rung. @order/first
+# is the substrate-decl'd carrier at grading-dimension altitude; @frame/
+# in is the operational form-side sibling.
+#
+# === What order-1 observation IS ===
+#
+# The observer has a frame (accepted; not questioned; not observed as
+# frame); the observer computes within it. The observation carrier at
+# this altitude has:
+#
+#   - a substrate (what is observed)
+#   - a witness (the observing operation)
+#   - a frame (the accepted context; NOT the object of observation at
+#     this altitude — the frame is the LENS, not the seen)
+#
+# There is no meta-observation. There is no recursion. The observer
+# points at the substrate and the frame stays transparent.
+#
+# === Substrate-already-had-the-word audit ===
+#
+# 1. **No prior `shards/order/first.mirror`.** Clean mint.
+# 2. **@frame/in** (`shards/frame/in.mirror`; Recognition #82 order-1
+#    species) — reviewed. Operational form-side sibling; @frame/in
+#    carries the frame-relation operational content ("content
+#    computation within frame"); @order/first carries the grading-
+#    dimension marker at the cognitive-order altitude. Sibling
+#    specializations; no conflict.
+# 3. **`@epistemologic/cybernetic/bateson_learning`** (Mara shard #380;
+#    Recognition #42) — reviewed. Bateson Learning-Level substrate-
+#    decl; grounds this species's Level-I citation.
+#
+# === Composition ===
+#
+# - Consumed by consumers that need to type an order-1 observation
+#   (e.g., first-order tests; the base case of a metalogue rhythm's
+#   grounding turn).
+# - Composes with @frame/in as sibling operational form.
+# - Composes with @void's 5-op basis: order-1 observation uses `focus`
+#   (attend to substrate) and `settle` (accept the observation);
+#   does NOT need `split` (no pole-maintenance yet at this order).
+#
+# === Substrate authority chain ===
+#
+# - Bateson 1972, "The Logical Categories of Learning and
+#   Communication" — Learning I at logical-type altitude.
+# - Recognition #82 (`docs/math/the-tower/recognition-82-frame-as-
+#   cognitive-order-substrate-decl.md`) — order-1 grading at
+#   @frame/in species-decl altitude.
+# - Alex Round 2 Q1 adjudication (2026-07-20) — @order family-root
+#   marker; 5-level tower under one marker.
+#
+# === Path-namespace ===
+#
+# Path-namespace property: this file at `shards/order/first.mirror`
+# declares `@order/first` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/cybernetics/foerster-1974
+
+prism @order/first {
+  focus  observation_first
+  project observation_first
+  split  observation_first
+  shift  observation_first
+  settle observation_first
+}
+
+# === observation_first — the order-1 carrier ===
+#
+# Typed record carrying an order-1 observation state. Four fields
+# per Bateson Level I formalization. Identity contract: byte-equality
+# on the four-field tuple.
+#
+#   observer   — the peer performing the observation.
+#   substrate  — the ref being observed (the content).
+#   frame      — the accepted lens (transparent at this order; the
+#                 observer does NOT observe the frame AS frame at
+#                 order 1; that recursion is @order/second).
+#   witness    — the operation-ref that performed the observing.
+type observation_first = {
+  observer:  peer,
+  substrate: ref,
+  frame:     ref,
+  witness:   ref,
+}
+
+# === order_first_admissible — bilateral predicate ===
+#
+# Does the (peer, observation_first) pair discharge admissibility for
+# order-1 observation? Discharges Pass iff:
+#
+#   - ctx.substrate resolves via content-addressed lookup
+#   - ctx.frame resolves (frame is present as accepted lens)
+#   - ctx.witness resolves (the observing operation is well-formed)
+#
+# Rice-safe bound: byte-visible state only. Sentinel:
+# `order=first-admissible`.
+bilateral order_first_admissible {
+  sentinel "order=first-admissible"
+  arity 2
+}
+order_first_admissible(p: peer, ctx: observation_first) -> verdict { \ }
+
+# === observe_first — the action ===
+#
+# Given a peer and an observation_first, discharge the order-1
+# observation event: the observer attends to the substrate through
+# the accepted frame; the observation returns as a content-addressed
+# ref.
+#
+# Returns imperfect(ref, ref, ref): success carries the observation
+# ref; failure variants carry not-admissible / degenerate-substrate
+# reasons.
+#
+# Sentinel: `order=first-observe`.
+observe_first(p: peer, ctx: observation_first) -> imperfect(ref, ref, ref)
+requires order_first_admissible(p, ctx)
+{ \ }
+
+out @order/first
+out observation_first
+out order_first_admissible
+out observe_first

@@ -1,0 +1,157 @@
+in @prism
+in @meta
+in @glass
+in @order
+in @epistemologic
+in @epistemologic/cybernetic/bateson_learning
+in @epistemologic/cybernetic/second_order
+
+# @order/second — observer inside observed at cognitive-order 2
+# (Bateson Level II; @frame/of-frame frame-awareness altitude;
+# Foerster's second-order cybernetics).
+#
+# Second species-decl of the @order family (family-root marker landed
+# same tick at `shards/order.mirror`). Landed 2026-07-20 by Mara per
+# Alex Round 2 Q1 direct-transcript adjudication.
+#
+# === The species altitude ===
+#
+# Order-2 is Bateson Level II: the observer observes ITS OWN OBSERVING.
+# The frame becomes visible as frame; the observer is inside the
+# observed. Learning II is "learning to learn" — a revisable choice
+# among sets of alternatives; the alternatives-set itself becomes
+# object of choice.
+#
+# Per Foerster (1974, *Observing Systems*): the second-order observer
+# includes itself in the described system. The observer is part of
+# the substrate the observer describes. The subject-object distinction
+# breaks down at this altitude.
+#
+# Per Recognition #82 (@frame family) grading: @frame/of-frame at
+# order 2 is "frame-awareness (observing-frame-as-frame)"; the
+# operational form-side substrate at cognitive altitude for this rung.
+# @order/second is the substrate-decl'd carrier at grading-dimension
+# altitude.
+#
+# === What order-2 observation IS ===
+#
+# The observer sees the frame AS frame; the observer sees itself as
+# frame-inhabiting; the recursion has depth 2. The observation carrier
+# at this altitude has:
+#
+#   - substrate — the content that was observed at order 1
+#   - frame_of  — the frame that was previously transparent, now
+#                  visible AS frame
+#   - inner_witness  — the order-1 observation this order-2 witnesses
+#   - meta_witness   — the observing-of-observing operation
+#
+# The critical structural feature: `inner_witness` refers to an
+# order-1 observation. Order-2 REQUIRES order-1 as substrate; order-2
+# without order-1 is degenerate (there is nothing to be observing-of).
+#
+# === Substrate-already-had-the-word audit ===
+#
+# 1. **No prior `shards/order/second.mirror`.** Clean mint.
+# 2. **@frame/of** (`shards/frame/of.mirror`; Recognition #82 order-2
+#    species) — reviewed. Operational form-side sibling; carries the
+#    frame-awareness operational content. @order/second is the grading-
+#    dimension marker. Sibling specializations.
+# 3. **`shards/epistemologic/cybernetic/second_order.mirror`**
+#    (Foerster substrate-decl, 445 LOC) — reviewed. The canonical
+#    second-order-cybernetics substrate-decl at cybernetic altitude;
+#    @order/second inherits via `in @epistemologic/cybernetic/second_
+#    order`. Sibling readings of the same substrate at different
+#    family-root altitudes; no conflict.
+# 4. **@third's `observer_observes_observing` predicate**
+#    (`shards/third.mirror:196-204`) — reviewed. @third named the
+#    second-order-observation as a predicate over depth-3 observations.
+#    @order/second is the substrate-decl'd carrier for the depth-2
+#    observation the predicate quantifies over. Composition edge:
+#    @order/third's carrier (migrated from @third) will presuppose
+#    order_second_admissible on its inner_witness.
+#
+# === Composition ===
+#
+# - REQUIRES @order/first as substrate (inner_witness is an
+#   observation_first).
+# - Consumed by @order/third (metalogue between two poles requires
+#   order-2 observation of the pole-holding as a substrate-mode).
+# - Composes with @void's 5-op basis: order-2 observation uses
+#   `focus` + `settle` + `shift` (the observer shifts perspective to
+#   include itself in the observed).
+#
+# === Path-namespace ===
+#
+# Path-namespace property: this file at `shards/order/second.mirror`
+# declares `@order/second` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/cybernetics/foerster-1974
+source @arxiv/cybernetics/kauffman-2003
+
+prism @order/second {
+  focus  observation_second
+  project observation_second
+  split  observation_second
+  shift  observation_second
+  settle observation_second
+}
+
+# === observation_second — the order-2 carrier ===
+#
+# Typed record carrying an order-2 observation state. Four fields.
+# Identity contract: byte-equality on the four-field tuple.
+#
+#   substrate       — the content observed at order 1.
+#   frame_of        — the frame now visible AS frame.
+#   inner_witness   — REF to an @order/first observation the order-2
+#                      observation witnesses.
+#   meta_witness    — the observing-of-observing operation.
+type observation_second = {
+  substrate:     ref,
+  frame_of:      ref,
+  inner_witness: ref,
+  meta_witness:  ref,
+}
+
+# === order_second_admissible — bilateral predicate ===
+#
+# Does the (peer, observation_second) pair discharge admissibility?
+# Discharges Pass iff:
+#
+#   - ctx.inner_witness resolves to a well-formed @order/first
+#     observation (order-1 substrate present)
+#   - ctx.frame_of resolves (frame is present as OBJECT of
+#     observation, not just as lens)
+#   - ctx.meta_witness resolves (observing-of-observing operation
+#     is well-formed)
+#
+# Rice-safe bound: byte-visible state; @order/first resolvability.
+# Sentinel: `order=second-admissible`.
+bilateral order_second_admissible {
+  sentinel "order=second-admissible"
+  arity 2
+}
+order_second_admissible(p: peer, ctx: observation_second) -> verdict { \ }
+
+# === observe_second — the action ===
+#
+# Given a peer and an observation_second, discharge the order-2
+# observation event: the observer attends to its own observing;
+# the frame becomes visible as frame; the observation returns as
+# a content-addressed ref.
+#
+# Returns imperfect(ref, ref, ref): success carries the meta-
+# observation ref; failure carries not-admissible / degenerate-
+# inner-witness reasons.
+#
+# Sentinel: `order=second-observe`.
+observe_second(p: peer, ctx: observation_second) -> imperfect(ref, ref, ref)
+requires order_second_admissible(p, ctx)
+{ \ }
+
+out @order/second
+out observation_second
+out order_second_admissible
+out observe_second
