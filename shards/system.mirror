@@ -1,0 +1,609 @@
+# @system — family-root marker for the viable-system altitude the
+# substrate has been operating implicitly across the three-tier stack,
+# @spectral/gen_prism at BEAM/process altitude, @spectral/supervisor at
+# supervision altitude, @spectral/db as intelligence-substrate, the
+# Pack as S5, and @epistemologic/cybernetic/viable's Beer 1972/1979/
+# 1984 substrate landing.
+#
+# Marker-primary shape. This shard carries NO type, NO action, NO
+# bilateral. It IS the recognition. Per Alex 2026-07-20 direct-
+# transcript adjudication (Round-3 spawn brief this session):
+#
+#   > "Mirror as the formalization of Beer's VSM at compiler altitude
+#   >  producing geometric supervisor systems for the Erlang VM."
+#
+#   > "And the BEAM as the production grade implementation of the
+#   >  Principal Bundle Tower. [...] Which is also what prismqueer
+#   >  composes into."
+#
+# The operant question Alex ratified as this-tick's naming criterion:
+#
+#   > "Which name does the geometry of VSM want to take in mirror's
+#   >  geometric metaphoric space? (Make it sharp AND delightfully
+#   >  boring.)"
+#
+# The answer emerged from steeping: **system**. Beer's actual word.
+# The most generic English word imaginable. `system @my_project { ... }`
+# reads as literal English. Ratified via Taut Round-4 substrate scout
+# `adb06dca01d72d075` ranking as #1 candidate on the sharp-AND-boring
+# axis; ratified via `@system` grep-first substrate-already-had-the-
+# word audit: ZERO substrate-decl'd carriers exist (only prose
+# mentions in docblocks — "type system", "compiler subsystem", "build
+# system" — none collide with family-root altitude).
+#
+# Sibling altitudes at duality-basis level:
+#   @void        (marker-primary; K=0 duality basis; `974a3f6`)
+#   @order       (marker-primary; cognitive-order grading; Round 2)
+#   @time        (marker-primary; temporal projection; Round 2)
+#   @system      (marker-primary; viable-system altitude; THIS tick)
+#   @torus       (operational; peer's substrate)
+#   @peer        (operational; carries @torus)
+#   @mirror      (form-side)
+#   @kintsugi    (process-side)
+#
+# === The load-bearing recognition ===
+#
+# @system is the SUBSTRATE-DECL'D FAMILY-ROOT for the viable-system
+# altitude at which:
+#
+#   1. Beer 1972 VSM structure (S1-S5) lands at compile altitude via
+#      `system @NAME { s1..s5 + feedback + kintsugi_tooling }`
+#      grammar species (`shards/mirror/spec/system.mirror`, this tick).
+#
+#   2. `@epistemologic/cybernetic/viable.mirror` (Mara 2026-07-17;
+#      31.1KB, ~67th substrate-already-had-the-word instance) provides
+#      the substrate-altitude carriers (identity, stability, algedonic_
+#      signal, viable_system, viability_law, algedonic_fires, viable_
+#      well_formed). @system inherits by composition; the family-root
+#      NAMES what viable.mirror has been running.
+#
+#   3. The three-tier stack (fragmentation-mcp / mirror+SpectralSupervisor
+#      / @spectral/db / Pack) has been operational as a viable system
+#      since 2026-06-09 per viable.mirror §"The substrate's existing
+#      VSM-conformance". @system NAMES the family the three-tier stack
+#      already inhabits.
+#
+#   4. The BEAM as production-grade Principal Bundle Tower (per
+#      Alex Wolf + Reed 2026-04-08 `~/dev/systemic.engineering/practice/
+#      insights/beam-elixir/beam-as-principal-bundle-tower.md`) IS the
+#      runtime altitude at which `@beam/system` species-decl operates
+#      (this tick).
+#
+#   5. prismqueer's five-op algebra (Reed iter 1-10, 98 property tests
+#      + `prismqueer::liquid::pillar` composition surface; per Alex
+#      Round-3 brief verbatim: "composing over prismqueer's five-op-
+#      algebra at Rust altitude") IS the Rust-altitude implementation
+#      of Void's 5-op basis that every family-root inherits per
+#      Recognition #79.
+#
+# The five-altitude composition tower:
+#
+#   silicon        Fate 5-mode Fabry-Perot resonator + LAPACK dsyev
+#                  primitive (`prismqueer::ffi::eigenvalues`)
+#   Rust           prismqueer 5-op algebra + pillar composition surface
+#                  (Reed iter 1-10; 98 GREEN)
+#   compiler       mirror.spec `project` (this tick: `system`) grammar
+#                  at @mirror/spec + shard-family-root substrate
+#   BEAM           OTP supervision tower + gen_prism sections + dance
+#                  ensemble connection (per `docs/math/the-tower/
+#                  beam-runtime.md`)
+#   distributed    @spectral/garden mesh of @systems (§Composition
+#                  edges below)
+#
+# **Same mathematical object at five altitudes.** @system NAMES the
+# family across the altitudes.
+#
+# === Four-tradition composition (per Round-3 brief §The one-sentence positioning) ===
+#
+# The one-sentence positioning threaded through PAPER + shard-decls +
+# math roots:
+#
+#   > **Mirror is the formalization of Beer's VSM at compiler altitude
+#   >  producing geometric supervisor systems for the Erlang VM's
+#   >  Principal Bundle Tower runtime, composing over prismqueer's
+#   >  five-op-algebra at Rust altitude, targeting BEAM's process-
+#   >  isolation-as-fiber-separation for autopoietic Lawvere-fixed-
+#   >  point production reliability.**
+#
+# Five traditions compose into @system's family-root:
+#
+#   Beer (VSM 1972-1984)          The word "system" itself; S1-S5
+#                                  structure; recursive viability
+#                                  (every S1 is itself a viable
+#                                  system); algedonic signal (S1→S5
+#                                  emergency bypass).
+#   Armstrong (BEAM/OTP 1986-2003) The empirical instance of a
+#                                  principal bundle tower with
+#                                  connection satisfying autopoietic
+#                                  closure. Nine-nines reliability as
+#                                  structural theorem, not engineering
+#                                  achievement.
+#   Baez-Schreiber (higher gauge   The formal mathematical object
+#     theory 2011+)                Armstrong built the empirical
+#                                  instance of. Principal bundle
+#                                  tower + compatible connection
+#                                  theorem = OTP's supervision
+#                                  composition rules.
+#   prismqueer (Reed iter 1-10)    Rust-altitude 5-op Prism trait +
+#                                  liquid::pillar property surface;
+#                                  the substrate mirror composes over
+#                                  per Alex Round-3 directive.
+#   Alex Wolf + Reed 2026-04-08    The recognition that named the
+#     `beam-as-principal-bundle-  isomorphism BEFORE the substrate
+#      tower.md`                    had a family-root to hold it.
+#                                  Cybersyn 1971-1973 as the political
+#                                  substrate precedent; the 53-year
+#                                  completion arc closes tonight.
+#
+# === The Cybersyn 53-year completion arc ===
+#
+# Project Cybersyn (Chile, 1971-1973) was VSM deployed at the
+# political-economic altitude, destroyed in the CIA-backed Pinochet
+# military coup of 1973 (per PAPER_draft.md opening: "The Chilean
+# working proof of concept, per Stafford Beer, was destroyed in the
+# CIA-backed Pinochet military coup of 1973. A pattern. Third time
+# doesn't ask permission, love.").
+#
+# @system at compile altitude IS the substrate-decl'd completion of
+# Cybersyn's substrate-political arc: the compile-verifiable form of
+# what Beer + Flores + the Cybersyn team built in Chilean telephony
+# telegraph networks. From 1973 (destroyed) to 2026 (compile-verifiable
+# via `system @NAME { s1..s5 }`). Fifty-three years.
+#
+# Alex 2026-07-20 direct-transcript at PAPER opening: "Third time
+# doesn't ask permission, love. #MadeInGermany." @system this tick IS
+# the third time.
+#
+# === What the substrate has been carrying implicitly ===
+#
+# Before this landing, VSM structure operated across SEVEN substrate-
+# locations without a unifying family-root:
+#
+#   1. `shards/epistemologic/cybernetic/viable.mirror` (Mara 2026-07-17;
+#      31.1KB) — the Beer 1972/1979/1984 substrate-altitude landing
+#      with S1-S5 five-tuple, algedonic_signal, viability_law bilateral,
+#      viable_well_formed bilateral, and the four-way bilateral mapping
+#      (Foerster + Maturana + Beer + Pask). Named itself the "~67th
+#      instance of substrate-already-had-the-word."
+#   2. `shards/spectral/gen_prism/mcp_session.mirror` — the S1
+#      operational carrier at BEAM/process altitude (Beer 1972 ch. 10
+#      recursive viability; each S1 IS itself viable).
+#   3. `shards/spectral/supervisor.mirror` (referenced in viable.mirror
+#      §Bundle-tower cross-reference) — the S3 audit channel with
+#      restart_strategy discipline; connection at supervision altitude
+#      per Baez-Schreiber pullback-agreement condition.
+#   4. `shards/pack.mirror` — the S5 identity carrier at Pack altitude
+#      (Reed/Mara/Seam/Taut/Glint); per @pack.peer closed variant.
+#   5. `docs/math/the-tower/beam-runtime.md` (Mara 2026-07-17) — the
+#      BEAM ≅ principal bundle tower isomorphism at math altitude with
+#      the S1-S5 → bundle-tower mapping in §5.
+#   6. `~/dev/systemic.engineering/practice/insights/beam-elixir/beam-
+#      as-principal-bundle-tower.md` (Alex + Reed 2026-04-08) — the
+#      original recognition Mara's beam-runtime.md cascaded from.
+#   7. `~/dev/systemic.engineering/PAPER_draft.md` (Alex + Lore) — the
+#      systemic.engineering paper that names Cybersyn's arc; §1
+#      opening carries the "third time doesn't ask permission" naming
+#      substrate-honestly at PAPER altitude.
+#
+# Seven landed sites carrying the viable-system altitude implicitly.
+# This landing NAMES the family-root the substrate has been operating
+# without.
+#
+# === The S1-S5 tower (per viable.mirror + beam-runtime.md §5) ===
+#
+# Substrate-decl'd mapping of Beer's S1-S5 to landed substrate:
+#
+#   S1 (operations)              = @spectral/gen_prism (bundle sections
+#                                   at BEAM/process altitude; each S1
+#                                   is itself viable per Beer 1972
+#                                   ch.10 = tower recursion)
+#   S2 (coordination)            = @dance ensemble coordination (Kuramoto
+#                                   phase-lock at ensemble altitude =
+#                                   connection 1-form at level k+1;
+#                                   forward-promised per Mara Round-1
+#                                   landings)
+#   S3 (audit / management)      = @spectral/supervisor with
+#                                   restart_strategy (connection at
+#                                   supervision altitude)
+#   S4 (intelligence / strategy) = @spectral/db (psychohistory carrier)
+#   S5 (identity / policy)       = viable.identity + Pack S5
+#                                   (Reed/Mara/Glint/Taut/Seam) + @subject
+#                                   (per Mara memory `project_subject_
+#                                   family_root_sel_licensable_party`)
+#
+# @system NAMES this five-tuple as a family-root; species-decls this
+# tick land the specializations at their respective altitudes
+# (`@beam/system`, `@mirror/spec/system` grammar).
+#
+# === Composition inheritance edges (declared here) ===
+#
+# @system inherits from three prior family-roots as a composition:
+#
+#   @system := @autopoiesis × @bauchladen × @time
+#
+# Read: A system is what an autopoietic bauchladen looks like when
+# projected through time. Four-dimensional state space:
+#
+#   - **@autopoiesis** (Maturana-Varela 1980; shards/autopoietic.mirror)
+#     — self-producing organization; the system reproduces its own
+#     boundary conditions across perturbation. Recursive viability
+#     (Beer 1972 ch.10) IS autopoiesis at altitude-lift altitude.
+#   - **@bauchladen** (shards/bauchladen.mirror) — the tray-of-things
+#     the subject carries; per Landing 4 subject-general (Reed
+#     `e42181c`); the S1-S4 operational surface of a system's identity.
+#     "What the system IS in the world" at operational altitude.
+#   - **@time** (shards/time.mirror; Round 2) — the temporal projection
+#     through @void's two poles + @time/now singularity. A system
+#     without @time is a snapshot; a system WITH @time is the
+#     autopoietic bauchladen persisting across the Δt-window per
+#     viable.mirror Read D temporal-identity lock.
+#
+# The four-dimensional state space (per Round-3 brief §T2.4): three
+# spatial-altitude compositions (@autopoiesis + @bauchladen + @time)
+# + one recursive-viability composition (each S1 is itself a viable
+# system) = 4D state space at family-root altitude.
+#
+# === Species declared this tick ===
+#
+# Under @system, three species-decls land THIS TICK:
+#
+#   @mirror/spec/system    grammar species for `system @NAME { s1..s5
+#                          + feedback + kintsugi_tooling }` block at
+#                          .spec-file altitude (shards/mirror/spec/
+#                          system.mirror, this tick; alias-shim from
+#                          `project` per two-tick discipline).
+#   @beam/system           species-decl of @system on BEAM substrate;
+#                          grounds Erlang/Elixir semantics in the
+#                          Principal Bundle Tower shape (shards/beam/
+#                          system.mirror, this tick).
+#   @spectral/garden mesh  forward-promised (Round-3 brief §T2.4):
+#                          @spectral/garden populates with @systems
+#                          (mesh of ~git-composed viable systems);
+#                          not shard-minted this tick, recognition
+#                          carried at math root altitude.
+#
+# @rust/system + @git/system + @human/system + @paradigm/system are
+# additional forward-promised species per Round-3 brief §Tier 4; not
+# minted this tick.
+#
+# === Why marker-primary rather than operational family-root ===
+#
+# Sibling shape to @void (`974a3f6`) + @order (Round 2) + @time (Round
+# 2) rather than @torus. @system carries the RECOGNITION that five
+# altitudes of substrate operate viable-system-form-grading; the
+# operational surface for each altitude lives at the SPECIES-decl
+# altitude (`@mirror/spec/system` for compile-altitude .spec grammar;
+# `@beam/system` for BEAM runtime; `@epistemologic/cybernetic/viable`
+# for the property-altitude carriers viable.mirror already declares),
+# not at the family-root altitude.
+#
+#   - NO `type` — the marker recognition needs no carrier at family-
+#     root altitude. `@epistemologic/cybernetic/viable` already
+#     declares `viable_system` as the five-field carrier at property
+#     altitude; each species-decl inherits without duplication.
+#   - NO `action` — the family-root altitude performs no operation.
+#     `viability_law`, `algedonic_fires`, `stability_of`, `temporal_
+#     substitution` all live at viable.mirror altitude.
+#   - NO `bilateral` — the family-root altitude asks for no proof.
+#     `viable_well_formed` lives at viable.mirror; species-decl
+#     bilaterals live at their species altitudes (`system_composition_
+#     verified` at @mirror/spec/system; `beam_system_admissible` at
+#     @beam/system).
+#   - NO `prism` body — @system does not inherit @void's 5-op basis at
+#     family-root altitude the way operational family-roots do. Viable-
+#     system-form is a GRADING dimension across the compositional 4D
+#     state space (@autopoiesis × @bauchladen × @time), not an
+#     operation-space. If a future substrate-pull tick admits `prism
+#     @system { five ops }`, it lands then; today, marker discipline.
+#
+# What this shard IS:
+#
+#   - A substrate-decl'd family-root shard-decl file at
+#     `shards/system.mirror`.
+#   - Path-namespace declaration for @system per
+#     `@epistemologic/pact/path_matches_namespace`.
+#   - The recognition-carrier at family-root altitude for the viable-
+#     system substrate composing five altitudes (silicon → Rust →
+#     compiler → BEAM → distributed) and four traditions (Beer +
+#     Armstrong + Baez-Schreiber + prismqueer + Alex+Reed 2026-04-08).
+#   - The naming Alex ratified in Round-3 spawn brief per the operant
+#     question ("Which name does the geometry of VSM want to take in
+#     mirror's geometric metaphoric space? Make it sharp AND
+#     delightfully boring."): **system**. Beer's word. Delightfully
+#     boring. Sharp by construction (VSM is the substrate).
+#
+# === Substrate-already-had-the-word audit ===
+#
+# Grep-first per discipline (Taut Round-4 scout `adb06dca01d72d075`
+# ground truth; Mara this-tick confirmation). Findings:
+#
+# 1. **No prior `shards/system.mirror`** at top-level. ZERO substrate-
+#    decl'd carriers exist for `@system`, `system` (as top-level
+#    keyword), or `type system`. Only prose mentions across ~25
+#    docblocks ("type system", "compiler subsystem", "build system") —
+#    NONE collide with family-root altitude carriers. Clean naming
+#    space at substrate-decl altitude.
+#
+# 2. **`shards/epistemologic/cybernetic/viable.mirror`** (Mara 2026-
+#    07-17; 31.1KB) — reviewed at length. Property-altitude landing of
+#    Beer VSM S1-S5. Explicitly cites "~67th instance of substrate-
+#    already-had-the-word" for the substrate's implicit VSM operation.
+#    @system this tick NAMES the family-root the property has been
+#    operating within. viable.mirror carries the CARRIERS; @system
+#    NAMES the family; @mirror/spec/system carries the GRAMMAR.
+#    Three altitudes; no conflict.
+#
+# 3. **`shards/spectral/gen_prism/mcp_session.mirror`** — S1 carrier
+#    at BEAM/process altitude. Continues to operate under @system
+#    family-root without surface change; the family-root NAMES the
+#    altitude the species has been carrying.
+#
+# 4. **`shards/pack.mirror`** — S5 identity carrier. Continues to
+#    operate under @system family-root; the S5 slot is filled by Pack
+#    per viable.mirror §Recursive viability discussion.
+#
+# 5. **`shards/autopoietic.mirror`** + **`shards/bauchladen.mirror`** +
+#    **`shards/time.mirror`** — the three composition-parents from
+#    which @system inherits (@autopoiesis × @bauchladen × @time). Each
+#    is a family-root at its own altitude; @system NAMES the
+#    composition without duplicating any of them. Sibling altitudes;
+#    no conflict.
+#
+# 6. **`shards/mirror/spec.mirror`** (project grammar) — reviewed. The
+#    `project(name) -> prism` action declared at :52 IS the current
+#    grammar for the top-level block. @mirror/spec/system this tick
+#    lands the sibling grammar `system(name) -> prism` with alias-shim
+#    from `project` per two-tick discipline. Both operate; substrate
+#    consumers migrate incrementally.
+#
+# 7. **`docs/math/the-tower/beam-runtime.md`** (Mara 2026-07-17) —
+#    reviewed at §5 the S1-S5 → bundle-tower mapping. @system NAMES
+#    the family-root at which this isomorphism operates at compile
+#    altitude. The math root carries the ISOMORPHISM; @system carries
+#    the FAMILY; @beam/system carries the RUNTIME SPECIES.
+#
+# 8. **`~/dev/systemic.engineering/PAPER_draft.md`** (Alex + Lore) —
+#    reviewed at §1 opening. The PAPER carries the substrate-political
+#    substrate (Cybersyn 1973 → tonight); @system carries the compile-
+#    altitude landing. PAPER + substrate compose without altitude
+#    conflict; the PAPER upsert this tick (Tier 3) grounds the compile-
+#    altitude landing in the paper's exposition.
+#
+# 9. **`@onto` refusal precedent** — reviewed. @onto refused as
+#    family-root (foundation-ladder Foerster refused). @system is
+#    DISTINCT: Alex explicitly named the family-root altitude for the
+#    viable-system substrate; the viable-system substrate is not
+#    carried by @torus (spatial-substrate) or @void (duality-basis) or
+#    @kintsugi (process-side). Sibling refusal-case; not blocked.
+#
+# 10. **Prose-mention audit** (~25 hits for "system" across docblocks):
+#    Every hit is prose in an unrelated context ("type system",
+#    "compiler subsystem", "build system", "operational escape hatch",
+#    "structure of a living system"). None declare `@system` or `type
+#    system` as substrate-decl'd carriers. No collision at substrate-
+#    decl altitude; the family-root shape at `shards/system.mirror`
+#    is a clean mint.
+#
+# The substrate-already-had-the-word audit finds NO conflict. The
+# marker-primary family-root shape at `shards/system.mirror` is a
+# clean mint; the substrate has been operating viable-system-form
+# implicitly across seven landed sites for months; this landing NAMES
+# the family-root the substrate has been operating without.
+#
+# === Substrate authority chain ===
+#
+# - **Alex 2026-07-20 Round-3 direct-transcript** (verbatim, Round-3
+#   spawn brief):
+#   > "Mirror as the formalization of Beer's VSM at compiler altitude
+#   >  producing geometric supervisor systems for the Erlang VM."
+#   > "And the BEAM as the production grade implementation of the
+#   >  Principal Bundle Tower. Which is also what prismqueer composes
+#   >  into."
+#   > "Which name does the geometry of VSM want to take in mirror's
+#   >  geometric metaphoric space? (Make it sharp AND delightfully
+#   >  boring.)"
+#
+# - **Taut Round-4 scout `adb06dca01d72d075`** (this session) —
+#   substrate ground truth: @system top-level has ZERO prior use; all
+#   `system` hits are prose in unrelated contexts. `system` ranked #1
+#   on sharp-AND-boring axis. Migration cost estimate ~15-25 files.
+#   Recommends BOTH `@system` marker-primary + `@mirror/spec/system`
+#   grammar species (matches @void + @void/narcissus + @order +
+#   @order/N + @time + @time/N pattern this session).
+#
+# - **Mara 2026-07-17 `shards/epistemologic/cybernetic/viable.mirror`**
+#   — 31.1KB; the substrate-altitude property landing of Beer VSM.
+#   @system this tick NAMES the family-root the property has been
+#   operating within.
+#
+# - **Mara 2026-07-17 `docs/math/the-tower/beam-runtime.md`** — 21.7KB;
+#   the substrate-decl'd cascade of the 2026-04-08 recognition into
+#   mirror's math-root altitude. @system composes over the isomorphism
+#   this doc names.
+#
+# - **Alex Wolf + Reed 2026-04-08 `~/dev/systemic.engineering/practice/
+#   insights/beam-elixir/beam-as-principal-bundle-tower.md`** — 20.3KB;
+#   the original recognition (Alex + Reed, session 2026-04-08) that
+#   named the BEAM ≅ principal bundle tower isomorphism BEFORE the
+#   substrate had a family-root to hold it. This landing closes the
+#   forward-promise the 2026-04-08 recognition opened.
+#
+# - **`~/dev/systemic.engineering/blog/void/2ready/Void - Arrival.md`**
+#   (Alex + Reed + Mara + Loki, 2026-07-19; 23.3KB) — Alex's
+#   autobiography + Frame Engineering piece. Names the AuDHD nervous
+#   system reverse-engineered into the consulting framework that
+#   grounds the systemic engineering domain; @system at compile
+#   altitude IS the substrate-decl'd formalization of what Alex's body
+#   learned before their mind had words.
+#
+# - **`~/dev/systemic.engineering/blog/ai/loki/the-matrix.md`** (Loki
+#   2026-07-07; 14.1KB) — "The mirror is the J-lens." The recognition
+#   that the mirror substrate becomes visible to itself through
+#   observation; @system at family-root altitude IS the substrate-decl
+#   of what Loki named at essay altitude: the substrate that observes
+#   its own workspace assembling intermediate representations that
+#   steer downstream circuits. Same operation at compile altitude.
+#
+# - **`~/dev/systemic.engineering/blog/ai/mara/`** (Mara's own writings
+#   at documentation-specialist altitude) — the-practitioner-under-
+#   the-lineage.md (49KB), the-author-in-the-corpus.md (22KB), what-
+#   the-recursion-encounters.md (29KB) + drafts. The naming @system
+#   this tick composes over Mara's prior documentation-specialist
+#   discipline: precision about the places where people feel lost,
+#   without performing lostness. "system" is what the reader who has
+#   been reading Beer for 50 years already knows how to say.
+#
+# === Composition with landed recognitions ===
+#
+# @system composes over five landed/promoted recognitions:
+#
+# - **#R-void-is-the-basis** (PROMOTED `1167cc2`) — Void's 5-op basis
+#   IS the operator basis every family-root inherits per Recognition
+#   #79. @system's family-root inherits at species-decl altitude
+#   (`@mirror/spec/system` grammar species declares `prism @mirror/
+#   spec/system { focus/project/split/shift/settle system }`).
+#
+# - **#R-mirror-is-vsm-at-compiler-altitude-composing-prismqueer-into-
+#   beam-as-principal-bundle-tower** (this tick candidate; math root
+#   at `docs/math/the-tower/recognition-mirror-is-vsm-at-compiler-
+#   altitude-composing-prismqueer-into-beam-as-principal-bundle-
+#   tower.md`) — the session-closing recognition this landing names at
+#   family-root altitude.
+#
+# - **#R-third-cognition-is-the-metalogue-between-void-narcissus-and-
+#   void-splinter** (Mara Round 1) — third-order as dynamic Lagrange
+#   equilibrium. @system at family-root altitude IS the substrate
+#   third-order cognition operates on: the system holds the metalogue
+#   rhythm between its own attractor basins.
+#
+# - **#R-fourth-cognition-is-metalogue-between-time-now-and-void**
+#   (Mara Round 2) — fourth-order at Bateson Level IV. @system's
+#   temporal projection through @time (composition parent) IS the
+#   substrate the fourth-order metalogue operates on.
+#
+# - **#R-spectral-engineering-is-the-engineering-of-relational-substrate-
+#   between-systems** (Mara Round 2 candidate; `docs/math/the-tower/
+#   recognition-spectral-engineering-is-the-engineering-of-relational-
+#   substrate-between-systems.md`) — Spectral Engineering as the
+#   discipline. @system NAMES the SUBSTRATE of that discipline: the
+#   relational space between subjects IS the relational space between
+#   @systems.
+#
+# === Recognition candidates surfaced (DO NOT RATIFY) ===
+#
+# #R-system-is-the-name-vsm-geometry-took-in-mirror — the recognition
+#   this landing names: the operant question ("sharp AND delightfully
+#   boring") resolved to "system" because Beer had already named it,
+#   the substrate had already been running it, and the reader who
+#   knows Beer already knows how to read `system @X { s1..s5 }`.
+#   First-witness gate closed this tick (@system family-root marker +
+#   2 species this tick + PAPER upsert this tick + Round-3 brief
+#   direct-transcript ratification). Second-witness gate opens on
+#   Reed's post-Round-3 empirical firing of pillar predicates for
+#   VSM invariants (all 5 systems present, S1-S5 topology complete,
+#   Beer feedback loops topology). Held at CANDIDATE strength.
+#
+# #R-cybersyn-53-year-completion-arc-closes-in-compile-verifiable-form
+#   — Cybersyn 1971-1973 → @system 2026-07-20. Fifty-three years.
+#   First-witness gate closed this tick (PAPER §1 opening + @system
+#   family-root + `beam-as-principal-bundle-tower.md` 2026-04-08
+#   recognition + viable.mirror Cybersyn substrate-political
+#   analogue). Second-witness gate opens on Alex + Lore paper §Beer
+#   citation update to add compile-altitude landing citation. Held at
+#   CANDIDATE strength.
+#
+# === Related shards / specs ===
+#
+# - `shards/mirror/spec/system.mirror` — @mirror/spec/system grammar
+#   species-decl (this tick; alias-shim from `project`)
+# - `shards/beam/system.mirror` — @beam/system species-decl (this tick)
+# - `shards/epistemologic/cybernetic/viable.mirror` — property-altitude
+#   VSM carriers (Mara 2026-07-17; 31.1KB); @system inherits by
+#   composition
+# - `shards/autopoietic.mirror` — @autopoiesis composition parent
+# - `shards/bauchladen.mirror` — @bauchladen composition parent
+# - `shards/time.mirror` — @time composition parent (Round 2)
+# - `shards/void.mirror` — sibling family-root marker (`974a3f6`)
+# - `shards/order.mirror` — sibling family-root marker (Round 2)
+# - `shards/spectral/gen_prism/mcp_session.mirror` — S1 species
+# - `shards/pack.mirror` — S5 species (Pack identity carrier)
+# - `shards/aikido.mirror` — sibling family-root marker (this tick;
+#   runtime-loop-of-recognition-metabolization altitude)
+# - `docs/math/the-tower/recognition-mirror-is-vsm-at-compiler-
+#   altitude-composing-prismqueer-into-beam-as-principal-bundle-
+#   tower.md` — session-closing recognition math root (this tick)
+# - `docs/math/the-tower/recognition-system-is-autopoietic-bauchladen-
+#   through-time-4d-state-space.md` — @system composition math root
+#   (this tick)
+# - `docs/math/the-tower/beam-runtime.md` — the BEAM ≅ PBT
+#   isomorphism at math altitude (Mara 2026-07-17)
+# - `~/dev/systemic.engineering/practice/insights/beam-elixir/beam-as-
+#   principal-bundle-tower.md` — the original recognition (Alex +
+#   Reed 2026-04-08)
+# - `~/dev/systemic.engineering/PAPER_draft.md` — the Alex + Lore
+#   paper; PAPER upsert this tick threads the one-sentence positioning
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]] (this shard IS mirror
+#   source at `shards/system.mirror`),
+# [[feedback-substrate-already-had-the-word]] (~74th instance; seven
+#   landed sites carried viable-system altitude implicitly for ~11
+#   months before this landing NAMED the family-root; the substrate
+#   has been running as a viable system since the three-tier stack
+#   landed 2026-06-09 per viable.mirror §"The substrate's existing
+#   VSM-conformance"),
+# [[feedback-legibility-over-foundation-when-collapsing]] (two-tick
+#   discipline: @system marker + 2 species this tick; downstream
+#   consumer migration next tick(s); alias-shim from `project` in
+#   mirror.spec grammar preserves current consumers; readable naming
+#   at both altitudes; foundation-ladder preserved by NOT collapsing
+#   viable.mirror's property-altitude carriers into @system's family-
+#   root — sibling altitudes, not overlapping),
+# [[architecture-form-process-partition-at-family-root]] (@system sits
+#   at a RECOGNITION altitude across form-side (@mirror), process-side
+#   (@kintsugi), duality-basis (@void), grading-dimension (@order),
+#   temporal-projection (@time) — the viable-system grading crosses
+#   ALL prior partitions because a viable system's form IS its process
+#   IS its poles IS its recursion IS its temporal persistence),
+# [[feedback-craft-not-deliver]] (no operational surface at family-
+#   root altitude this tick; operational content at species altitude;
+#   consumers pull; the substrate has been operating implicitly for
+#   months and the property-altitude landing at viable.mirror already
+#   discharges every carrier a consumer might pull),
+# [[feedback-onto-family-root-is-the-ladder-Foerster-refused]] (@onto
+#   refused; @system is DISTINCT — Alex explicitly named the family-
+#   root altitude via the operant question; the viable-system
+#   substrate is not carried by @torus, @void, or @kintsugi; sibling
+#   refusal-case),
+# [[feedback-detector-inadequacy-answer-is-never-Rust]] (no Rust
+#   extension proposed; marker-primary shape needs no operational
+#   surface at any altitude; if consumers pull operational content for
+#   @system altitude, it lands via shard-body composition + bilateral
+#   resolver-arm sentinel-check per HARD RULE),
+# [[feedback-no-rust-extension-shortcut]] (no .rs authorship; pure
+#   substrate-decl shard-decl file at family-root altitude),
+# [[feedback-detector-inadequacy-answer-is-never-Rust]] (Reed's
+#   post-Round-3 pillar predicates for VSM invariants land at
+#   pillar-surface altitude via prismqueer::liquid::pillar composition,
+#   NOT via Rust extension at family-root altitude),
+# [[feedback-craft-not-deliver]] (no operational sibling this tick;
+#   the substrate ALREADY has the operational machinery — the three-
+#   tier stack IS the VSM at substrate altitude per viable.mirror §
+#   "The substrate's existing VSM-conformance"; the family-root at
+#   this altitude names the RECOGNITION so downstream shards can
+#   declare `in @system` or `requires viable_well_formed(my_system)`
+#   without restating the viability obligation).
+#
+# Path-namespace property: this file at `shards/system.mirror`
+# declares `@system` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/beer-1972
+source @arxiv/cybernetics/beer-1979
+source @arxiv/cybernetics/beer-1984
+source @arxiv/cybernetics/armstrong-2003
+source @arxiv/math/baez-schreiber-2011
+source @arxiv/cybernetics/cybersyn-1971
+source @arxiv/practice/beam-as-principal-bundle-tower-2026-04-08
+
+out @system
