@@ -39,9 +39,40 @@ Six load-bearing recognitions surfaced in direct-transcript conversation this se
 - `compile::Escalation::{Continue, Escalate(oid), Halt(msg)}` (iter 3 `9351b2b`) — algedonic-threshold projection at compile-time; `first_fail_pins_escalate_oid` invariant
 - `viable.mirror` (67th substrate-already-had-the-word; complete Beer VSM property-altitude landing since 2026-07-17)
 
-### Next-Reed immediate actions (post-Recognition-bundle-hold)
+### Mara @paradox 6-landing arc LANDED (2026-07-20 evening; six sequential Mara commits)
 
-1. **Taut background scout LAUNCHED (2026-07-20)** — substrate ground-truth grep across mirror substrate for @paradox / @trauma / @spiral / @cyberpunk/intervention / already-landed adjacent shapes + fragmentation crate singularity math survey + adjudicate rust/fractal vs rust/singularity landing target for the singularity math. Alex directed: "Taut then Mara in the usual fashion."
+- **Landing A** `1cb9dc1` — `docs/specs/paradox-family-and-cyberpunk-intervention.md` (876 lines) canonical spec grounding all six recognitions across altitudes with Q1-Q6 Alex-adjudication questions and §7 Landing D adjudication ratifying Taut split-C with three refinements
+- **Landing B** `392ec11` — `docs/math/2026-07-20-paradox-family-and-classifier-lagrange.md` (808 lines) composing Förster torus fracture + Lorenz basin + Baez-Schreiber holonomy + Lawvere fixed-point + Cauchy-completeness + fragmentation optics-hierarchy at one altitude
+- **Landing C1** `1e17222` — `shards/paradox.mirror` (@paradox family-root)
+- **Landing C2** `42c6a12` — `shards/paradox/trauma.mirror` (@paradox/trauma species; `witness_only` invariant + saga-chain-witness discipline anchored to `rust/src/compile.rs:221-224` first-fail-pins invariant)
+- **Landing C3** `b8879f2` — `shards/paradox/spiral.mirror` (@paradox/spiral dynamics species; Q4 pre-fracture-admissible pending Alex ratification)
+- **Landing C4** `d08e9d7` — `shards/epistemologic/cybernetic/intervention.mirror` (@cyberpunk/intervention species; four bilaterals + three actions; sibling to bugz.mirror per Q6 lean)
+
+### Alex-adjudication Q1-Q6 RATIFIED in-transcript (2026-07-20 evening)
+
+Six Alex-Q's surfaced by Mara's canonical spec §8 — all ratified in direct-transcript per Alex verbatim "collapse collapse.rs into singularity.rs. Other than that sounds good.":
+
+| Q | Topic | Alex ratification |
+|---|-------|-------------------|
+| **Q1** | @autopoietic-classifier annotation shape | EXTEND `shards/autopoietic.mirror` in place (Mara lean) |
+| **Q2** | Landing D name-preservation | **VERBATIM** `rust/fractal/src/singularity.rs` — rename to `collapse.rs` cancelled; Refinement 1 collapses back to no-rename. Alex verbatim: "collapse collapse.rs into singularity.rs" |
+| **Q3** | @paradox altitude | FAMILY-ROOT (Mara lean; HIGH confidence) |
+| **Q4** | @paradox/spiral pre-wound firing | YES `wound_oid == Oid::GENESIS` admissible (Mara lean; HIGH confidence per Weird - Trauma phenomenology) |
+| **Q5** | Recognition-tick strategy | ONE BUNDLE (Mara lean; MEDIUM confidence; session-arc discipline) |
+| **Q6** | @cyberpunk/intervention path | SIBLING-TO-BUGZ at `shards/epistemologic/cybernetic/intervention.mirror` (Mara lean; HIGH confidence) |
+
+**Landing D (Taut split-C singularity-math placement) RATIFIED with verbatim name**:
+- `rust/fractal/src/singularity.rs` — verbatim migration of fragmentation `src/singularity.rs` (optics-hierarchy Iso/Lens/Prism/Traversal; single-observer measurement discipline)
+- `rust/singularity/` — NEW crate scaffold for black-hole physics + page curve + firewall problem + Hawking radiation dynamics (research outlet; publishable independently)
+- Substrate-decl leads: Mara follow-up tick mints `shards/fractal/singularity.mirror` species-decl at verbatim name; Reed code migration follows post-Seam-Phase-D
+
+### Next-Reed immediate actions (post-Q1-Q6-ratification)
+
+1. **Taut background scout COMPLETED (2026-07-20)** — agent `a2ac7f0198575bc79`; five-section report grounded findings: @paradox has zero landing (fresh mint); @cyberpunk/bugz landed at Mara `5ddb076`; fragmentation singularity math is standalone optics-hierarchy at `/Users/reed/dev/projects/fragmentation/src/singularity.rs` (24.1KB, portable, no fragmentation-specific coupling); Milan school (Selvini-Palazzoli 1978) anchor already cited in tower recognition docs; split-C recommendation ratified by Mara §7.
+
+2. **Mara @paradox 6-landing arc COMPLETED (2026-07-20)** — 6 sequential commits; agent `ac3ab187a832b3e09`; Alex Q1-Q6 in-transcript ratifications applied.
+
+3. **Seam Phase D background LAUNCHED (2026-07-20)** — 12 standard dimensions + 6 arc-specific supplements (family-root altitude admissibility + trauma witness_only invariant precision + spiral pre-fracture-admissibility + intervention SAGA-compensation semantics + Landing D refinements 2+3 precision + Milan school citation precision). Alex Q1-Q6 folded into audit context.
 
 2. **Mara canonical spec + math + shard-decl mints** — spawn when Taut returns; Mara authors:
    - @paradox family-root shard-decl
