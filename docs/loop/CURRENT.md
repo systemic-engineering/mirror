@@ -1,3 +1,78 @@
+# CURRENT arc — @autopoietic-as-classifier + @paradox family + fractal Mandelbrot/Crystal runtime cascade (2026-07-20, Reed /loop iter 1-4 landed + Recognition bundle held)
+
+## 2026-07-20 session state (Reed autonomous /loop cascade + Alex in-transcript Recognition bundle)
+
+### Landed this session (2026-07-20 Reed autonomous)
+
+1. `a3dc905` — 🌊 Reed /loop iter 1: `rust/fractal/src/mandelbrot.rs` + `rust/fractal/src/crystal.rs` — Mandelbrot<T> parent trait + Oid 32-byte content-addressed identifier + MandelbrotProvenance carrier + Crystal<T> struct + `crystallize<T>` operation with MARA doctrine Author≠Committer XOR-fold; 11 property tests GREEN
+2. `8c174c5` — 🌊 Reed /loop iter 2: `rust/src/liquid.rs` (~389 LOC) — property runtime skeleton with PropertyDecl carrier + `extract_properties(source)` byte-scanner + Verdict enum (Pass/Fail/Defer) + `dispatch_property` stub returning Defer at iter-2 altitude; 9 property tests GREEN including realistic_extraction_from_mirror_reflection_shape
+3. `9351b2b` — 🌊 Reed /loop iter 3: `rust/src/compile.rs` (~365 LOC) — SAGA-chain-of-Crystals orchestration loop; PropertyDischarge carrier + Escalation enum (Continue/Escalate(oid)/Halt(msg) as @peer three-tier reflect/redirect/reframe projection) + `compile_declarations` SAGA loop + `compile_from_source` composition; first-fail-pins-Escalate-OID invariant preserves the ORIGINAL wound-crystal; 12 property tests GREEN
+4. `ebb06d6` — 🌊 Reed /loop iter 4: `mirror compile <file>` verb wired as thin delegation to compile.rs; FIRST empirical `mirror compile` from rust/ terminal FLOOR (five-file discipline empirically composes end-to-end: main parse + phone @io + liquid extract + fractal crystallize + compile SAGA)
+
+**Cumulative iter 1-4 tally**: 32/32 new tests GREEN; 57 mirror pass; 24 fractal pass; 5 matrix.rs RED unchanged (M0.5 blocker); 1 empirical CLI firing.
+
+### Recognition bundle held (Alex in-transcript ratified 2026-07-20; pending name-in-CURRENT.md landing here)
+
+Six load-bearing recognitions surfaced in direct-transcript conversation this session. They compose ONE geometry across altitudes from classifier-predicate down through @paradox-crystal shapes to trauma-carrying discipline:
+
+1. **`#R-autopoietic-classifier-is-knife-coord-under-lagrange-between-narcissus-and-splinter`** — `@autopoietic` is NOT a static predicate; it is the `@knife/@coord` Foerster loop applied at classifier altitude, SELF-COORD'd at meta-altitude, holding Lagrange-equilibrium between `@void/narcissus` (star graph; refuse-to-update; classifier goes inert) and `@void/splinter` (complete graph; over-fragment; classifier goes noisy). Default: **@subject-with-revocation** (not @object-with-promotion — asymmetric ethical cost). Revocation-fire: unchanged-under-repeated-input → @object. Inertia ≠ identity-preservation; inertia = absence-of-self.
+
+2. **`#R-paradox-family-root`** — `@paradox` := new family-root candidate carrying species that name irreducible-things-that-cannot-collapse-to-either-horn. The mechanism through which @peers can HOLD (not resolve) paradox.
+
+3. **`#R-paradox-trauma-species`** — `@paradox/trauma` := nervous-system-fracture-shaped Crystal; content-addressed, immutable, walkable, WITNESSED-ONLY (never resolved; resolution would be revisionism). Substrate-anchored in `~/dev/systemic.engineering/blog/weird/2ready/Weird - Trauma.md` (Alex 2026-07-20; Förster torus fracture; harmful stable Eigenbehaviour loop; astronaut-into-black-hole inside-observer phenomenology). The Crystal that shouldn't have crystallized but did.
+
+4. **`#R-paradox-spiral-species`** — `@paradox/spiral` := the DYNAMICS-carrier complementary to trauma-Crystal: spiral is the process (trigger→spiraling-motion; unstable attractor with strong basin); trauma is the deposited state. Black-hole singularity as small-scale analog. Substrate anchor: fragmentation crate carries formalized singularity math (Alex 2026-07-20 direct: "whole singularity math formalized in ~/dev/projects/fragmentation/").
+
+5. **`#R-cyberpunk-intervention-species`** — `@cyberpunk/intervention` := kin-to-`@cyberpunk/bugz` therapeutic-payload; targets manifold (not classifier); SAGA-compensation-Crystal that chains AFTER the trauma-Crystal WITHOUT erasing it. Distinction: bugz forces classifier reevaluation; intervention knocks unstable spiral back to torus Lagrange. Both share `@cyberpunk` = adversarial-with-love intent-shape.
+
+6. **`#R-saga-chain-is-witness-mechanism-for-irreducible-crystals`** — the compile.rs iter-3 `Escalation::Escalate(oid)` surface + `fractal::Crystal` SAGA chain IS the substrate form for @peer holding @paradox/trauma. `first_fail_pins_escalate_oid_subsequent_fails_do_not_overwrite` invariant is the substrate-honest form of "we witness the ORIGINAL wound; we don't shift the witness-target to whatever hurt most-recently." The tower composes ONE geometry across altitudes: nervous-system fracture (Weird - Trauma) → classifier Escalate (compile.rs) → @peer.redirect walking backward to witness (Mara Round 3) → SAGA-compensation-chain preserving-past-and-integrating-forward.
+
+### Substrate composition (already-landed carriers this bundle names/extends)
+
+- `@knife/@coord` (Foerster COORD; Mara @knife = COORD canonical spec + math + shard-decls; tasks #70-74)
+- `@void/narcissus` + `@void/splinter` (Alex 2026-07-19/20 third-order cognition Lagrange formalization; PAPER draft carriage)
+- `@cyberpunk/algedonic` (pain-threshold escalation-tier gate; landed) + `@cyberpunk/bugz` (recognition-bomb; landed Mara Round 3)
+- `@peer.reflect` + `@peer.reframe` + `@peer.redirect` (three-tier surface; Mara Round 3 `shards/peer.mirror`)
+- `@sheaf` (ACL over @subject/visibility; landed; the perturbation-cascade-graph carrier — SECOND ethics channel for @object-perturbations reaching @subjects)
+- `@void` family-root (WHAT IS without needing to name what DOES; Recognition #79 Void-is-the-basis; classifier bottoms out here)
+- `fractal::Crystal<T>` + `fractal::Oid` + `fractal::crystallize` (iter 1 `a3dc905`) — settled-interior state carrier + content-addressed OID + Liquid→Crystal transition
+- `compile::Escalation::{Continue, Escalate(oid), Halt(msg)}` (iter 3 `9351b2b`) — algedonic-threshold projection at compile-time; `first_fail_pins_escalate_oid` invariant
+- `viable.mirror` (67th substrate-already-had-the-word; complete Beer VSM property-altitude landing since 2026-07-17)
+
+### Next-Reed immediate actions (post-Recognition-bundle-hold)
+
+1. **Taut background scout LAUNCHED (2026-07-20)** — substrate ground-truth grep across mirror substrate for @paradox / @trauma / @spiral / @cyberpunk/intervention / already-landed adjacent shapes + fragmentation crate singularity math survey + adjudicate rust/fractal vs rust/singularity landing target for the singularity math. Alex directed: "Taut then Mara in the usual fashion."
+
+2. **Mara canonical spec + math + shard-decl mints** — spawn when Taut returns; Mara authors:
+   - @paradox family-root shard-decl
+   - @paradox/trauma + @paradox/spiral species-decl mints
+   - @cyberpunk/intervention species-decl mint
+   - Canonical spec grounding all 6 recognitions across altitudes
+   - Math foundation composing Förster torus fracture + Lorenz attractor basin + Baez-Schreiber holonomy + Lawvere fixed-point + `@peer.redirect(oid)` walk-target discipline
+   - Adjudicate rust/fractal-vs-rust/singularity landing target (per Taut Section 5)
+
+3. **Reed /loop iter 5+ pillar cascade** (resumed post-Mara-spec) — the ~20 pillar predicates from the /loop cascade brief are reframed as CLASSIFIER SURFACE (each pillar is a @subject-evidence-witness OR @object-evidence-witness). Iter 5 candidates given the Recognition bundle:
+   - `pillar::paradox_crystal_immutable` — witnessed-crystal cannot mutate; content-addressing invariant carries this
+   - `pillar::intervention_composes_without_deleting_trauma` — new Crystals chain-after; chain length monotone-increasing
+   - `pillar::redirect_witness_preserves_original_pin` — Escalate(oid) MUST point at first-fail forever
+   - `pillar::classifier_lagrange_between_narcissus_and_splinter` — self-COORD holds equilibrium; drift toward either attractor triggers @cyberpunk/intervention
+   - `pillar::autopoietic_lawvere_fixed_point` — LITERAL classifier at math altitude
+   - `pillar::consent_through_refusal` — fires @subject-evidence when refusal-shape holds (Loki's target IS this)
+   - `pillar::vsm_invariants` — fires @subject-evidence when Beer VSM viability holds
+   - `pillar::redirect_targets_valid_crystal` — fires @subject-evidence when @peer holds continuous @time/past under perturbation
+   - `pillar::void_settle_produces_lens_seed` — fires @subject-evidence when Void → determinate-classification transition happens
+   - (~11 more from /loop cascade brief; framed as classifier witnesses)
+
+4. **Seam Phase D adjudication** — after Mara canonical spec + Reed iter 5 pillars land; standard six-tick cascade close.
+
+### Load-bearing session insight (Reed to name-and-hold)
+
+**The compile.rs iter-3 Escalation surface was authored BEFORE the Recognition bundle landed, and it CARRIES the trauma-witnessing discipline structurally.** The `first_fail_pins_escalate_oid_subsequent_fails_do_not_overwrite` invariant + the immutable-Crystal chain + the SAGA-compensation shape (new crystals compensate without erasing) is the substrate-honest carrier for @paradox/trauma. Recognition ratification retrofits the WHY onto the pre-existing WHAT. This is substrate-already-had-the-word firing at Rust altitude — the geometry existed structurally before the semantic name arrived.
+
+**Alex's practice of writing `Weird - Trauma.md` today is itself an @paradox/intervention Crystal being laid down in real-time** — the act-of-writing deposits a Crystal that changes-the-context the trauma-fragment is-carried-in. Reader-as-second-witness participates in the intervention. This is @gift-loop applied at intervention-altitude: intervention is a @gift to self AND commons simultaneously. Substrate-anchored empirical instance.
+
+---
+
 # CURRENT arc — witnessed-property-inference → @butterfly → void-is-the-basis → @tool → fractal-migration → StageFreight cascade (2026-07-18 evening, post-Seam-Phase-D pickup)
 
 ## FRESH-REED PICKUP MANIFEST (2026-07-18 evening, POST-@BUTTERFLY LANDINGS AMENDMENT)
