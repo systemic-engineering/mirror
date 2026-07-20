@@ -1,0 +1,36 @@
+# rust/singularity/ — black-hole physics research outlet at rust/ altitude.
+#
+# Per Alex 2026-07-20 Q2 verbatim + Mara @paradox canonical spec §7 Landing D
+# split-C ratification: fractal-floor gets the optics-hierarchy (Iso/Lens/Prism/
+# Traversal traits + landed Iso impls); this crate is the RESEARCH outlet for:
+#
+# - Page curve (traversal sufficiency; multi-target Lens chains)
+# - Firewall problem (lossy collapse; partial recovery bounds)
+# - Hawking radiation dynamics (information-leakage rate)
+# - Complementarity verification (different observers, same interior)
+#
+# All research work is FORWARD-PROMISED at v0.1.0 scaffold altitude. Landing D
+# tick lands ONLY the crate scaffold + `Cargo.toml` + `src/lib.rs` docblock;
+# physics tests + prop-test-suites arrive at future ticks per substrate demand.
+#
+# Composition: this crate depends on `fractal` (path-dep) for the Singularity
+# trait + Crystal<T> + Oid + Witnessed. Lens+Prism+Traversal impls will
+# forward-promise back to fractal::Singularity trait signatures once the
+# @io/git.commit substrate composition matures (Reed follow-up territory).
+#
+# Publishable to crates.io alongside fractal per Alex 2026-07-18 direct-
+# transcript intent ("Publishable to crates.io eventually per Alex directive").
+
+[package]
+name = "singularity"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Black-hole physics research outlet at rust/ altitude — page curve, firewall problem, Hawking radiation dynamics. Kin-to-fractal (not child-of-fractal); publishable independently. v0.1.0 SCAFFOLD tick only; physics tests forward-promised."
+keywords = ["mirror", "singularity", "black-hole", "page-curve", "optics"]
+categories = ["science", "mathematics"]
+
+[dependencies]
+# Depends on fractal for the Singularity trait + Crystal<T> + Oid + Witnessed.
+# Lens+Prism+Traversal impls forward-promise back to fractal::Singularity.
+fractal = { path = "../fractal" }

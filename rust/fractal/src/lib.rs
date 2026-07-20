@@ -36,10 +36,12 @@
 
 pub mod crystal;
 pub mod mandelbrot;
+pub mod singularity;
 pub mod subject;
 pub mod witnessed;
 
 pub use crystal::{crystallize, Crystal};
 pub use mandelbrot::{Mandelbrot, MandelbrotProvenance, Oid};
+pub use singularity::{OpticKind, Singularity, SingularityError, SingularityState};
 pub use subject::{Subject, SubjectKind};
 pub use witnessed::{Author, Committer, Message, Timestamp, Witnessed};
