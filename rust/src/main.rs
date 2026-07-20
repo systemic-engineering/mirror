@@ -61,8 +61,8 @@ mod collapse;
 // file-terminal-geometry-extension.md` (extends Mara `81294b3` three-
 // file spec): main + compile + liquid + matrix + phone. Each file
 // has ONE responsibility. liquid.rs + compile.rs landed at /loop
-// cascade iterations 2-3 (Alex 2026-07-20).
-#[allow(dead_code)]
+// cascade iterations 2-3 (Alex 2026-07-20); iter 4 wires `mirror
+// compile <file>` verb as thin delegation to compile.rs.
 mod compile;
 mod liquid;
 mod matrix;
@@ -1093,6 +1093,90 @@ mod at_operator_tests {
     }
 }
 
+/// `mirror compile <file>` — the SAGA-chain-of-Crystals compilation
+/// verb. Delegates orchestration to `compile::compile_from_source`
+/// (iter 3); crosses @io via `phone::read_file`. This is the
+/// substrate-honest thin-delegation shape per Alex 2026-07-20 cascade
+/// brief: main.rs owns argv-parse + reporting; compile.rs owns the
+/// SAGA loop; phone.rs owns the @io crossing.
+///
+/// Exit codes:
+///   0 — compilation succeeded; SAGA chain printed. Includes
+///        Continue-escalation OR Escalate(oid) OR Halt(msg) tiers
+///        — they are compile-time projections, not exit-code
+///        classifications (the caller decides what to do with an
+///        Escalate; the verb itself returns 0 for a completed loop).
+///   2 — usage error (missing <file>).
+///   3 — @io error (file read failure).
+fn cmd_compile(rest: &[String]) -> ExitCode {
+    let file = match rest.first() {
+        Some(f) => f,
+        None => {
+            eprintln!("mirror compile: <file> is required");
+            eprintln!();
+            eprintln!("Usage: mirror compile <file>");
+            eprintln!();
+            eprintln!("Compiles the bilateral property declarations in <file>");
+            eprintln!("through the SAGA-chain-of-Crystals loop (compile.rs");
+            eprintln!("iter 3; composes over liquid.rs iter 2 + fractal iter 1).");
+            return ExitCode::from(2);
+        }
+    };
+
+    let path = std::path::Path::new(file);
+    let source = match phone::read_file(path) {
+        Ok(s) => s,
+        Err(e) => {
+            eprintln!("mirror compile: @io/fs.read {}: {}", file, e);
+            return ExitCode::from(3);
+        }
+    };
+
+    // Witnessed identity for the crystallization chain — mirror as
+    // both Author and Committer at compile-verb altitude (the caller
+    // supplies typed Subjects when the reflective @-operator dispatch
+    // matures; at iter 4 the verb defaults to Subject::mirror() for
+    // both roles per fractal step 9 shape).
+    let mirror_subject = fractal::Subject::mirror();
+    let witnessed = fractal::Witnessed::new(
+        mirror_subject.as_author(),
+        mirror_subject.as_committer(),
+        fractal::Timestamp(current_utc_timestamp()),
+    );
+
+    let comp = compile::compile_from_source(&source, &witnessed);
+
+    println!("mirror compile: SAGA chain of {} crystal(s) from {}", comp.depth(), file);
+    println!();
+    for (i, (crystal, discharge)) in comp.crystals.iter().zip(comp.discharges.iter()).enumerate() {
+        let verdict_tag = if discharge.verdict.is_pass() {
+            "pass  "
+        } else if discharge.verdict.is_fail() {
+            "fail  "
+        } else {
+            "defer "
+        };
+        let oid_prefix: String = crystal.oid.0.iter().take(8).map(|b| format!("{:02x}", b)).collect();
+        println!("  [{:>3}] {} {} — {}", i, verdict_tag, oid_prefix, discharge.property_name);
+    }
+
+    println!();
+    match &comp.escalation {
+        compile::Escalation::Continue => {
+            println!("escalation: Continue (all discharges reflected or redirected)");
+        }
+        compile::Escalation::Escalate(oid) => {
+            let prefix: String = oid.0.iter().take(8).map(|b| format!("{:02x}", b)).collect();
+            println!("escalation: Escalate(crystal={}) — @peer.redirect walk-target", prefix);
+        }
+        compile::Escalation::Halt(msg) => {
+            println!("escalation: Halt({})", msg);
+        }
+    }
+
+    ExitCode::SUCCESS
+}
+
 /// Hand-rolled argv dispatch. Deliberately does NOT reach for clap; the
 /// M2 reflective cli-block reader (Mara §2.2) IS the real dispatch
 /// surface. Adding clap now would breed abstraction the substrate has
@@ -1123,12 +1207,24 @@ fn main() -> ExitCode {
             let rest: Vec<String> = args.iter().skip(2).cloned().collect();
             cmd_roomba(&rest)
         }
+        Some("compile") => {
+            // /loop iter-4 empirical firing per Alex 2026-07-20 cascade
+            // brief item 5 ("main.rs refactor — thin to delegation").
+            // main.rs holds argv parsing + delegates the SAGA loop
+            // orchestration to compile.rs (iter 3); phone.rs supplies
+            // the @io/fs.read crossing. The verb is substrate-honestly
+            // thin: parse → read → compile → report.
+            let rest: Vec<String> = args.iter().skip(2).cloned().collect();
+            cmd_compile(&rest)
+        }
         Some(other) => {
             // Every named verb is substrate-decl'd but dispatch lands
             // at M3+ per Mara §2.2. Return exit 2 with a substrate-
             // honest message pointing at the FLOOR that will land it.
             let is_known = VERBS.iter().any(|(v, _)| {
                 // Match "peer" as a prefix for the two peer-nested verbs.
+                // Note: "compile" is dispatched above; if it reaches
+                // this arm it's a substrate-decl'd verb not yet wired.
                 *v == other || other == "peer"
             });
             if is_known {
