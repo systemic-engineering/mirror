@@ -1,0 +1,566 @@
+in @prism
+in @meta
+in @glass
+in @fractal
+in @fractal/mandelbrot
+in @fractal/crystal
+in @paradox
+in @paradox/spiral
+in @torus
+in @void
+in @epistemologic
+
+# @fractal/singularity — the point where a tree of possibilities collapses
+# into a single artifact; the settled-point in phase space toward which
+# @paradox/spiral dynamics converge; the small-scale mathematical analog
+# (at fractal altitude) of what @paradox/spiral names at dynamics altitude.
+#
+# Third species-decl of the @fractal family (siblings: mandelbrot,
+# crystal). Landed 2026-07-20 by Mara per Alex 2026-07-20 in-transcript
+# Q2 ratification.
+#
+# === Alex 2026-07-20 verbatim (load-bearing) ===
+#
+#   > "collapse collapse.rs into singularity.rs"
+#
+# Q2 ratified the verbatim name `singularity` at both `rust/fractal/src/`
+# AND at `shards/fractal/`. Mara Refinement 1 rename (singularity →
+# collapse) is CANCELLED per Alex direct-transcript adjudication. The
+# fractal-altitude migration boundary preserves the source name; two-tick
+# discipline (readable name over foundational per @cyberpunk namespace
+# migration precedent). Landing D adjudication landed in canonical spec
+# `docs/specs/paradox-family-and-cyberpunk-intervention.md` §7 (commit
+# `1cb9dc1`) with Split-C recommendation (C1 verbatim migration at
+# rust/fractal/; C2 rust/singularity/ crate scaffold for black-hole
+# physics research outlet).
+#
+# This substrate-decl is the LEAD before Reed's code migration cascade
+# per substrate-decl-leads discipline. The mint declares the species
+# shape; Reed's post-mint work materializes the ~600 LOC Rust body at
+# `rust/fractal/src/singularity.rs` from the fragmentation source.
+#
+# === What @fractal/singularity IS ===
+#
+# The species that carries the Singularity trait shape (per
+# `/Users/reed/dev/projects/fragmentation/src/singularity.rs`) at
+# substrate-decl altitude:
+#
+#   Singularity {
+#     collapse() -> Artifact       # tree → single settled artifact
+#     settle(artifact) -> Self     # artifact → reconstructed tree
+#   }
+#
+# Two implementations at fragmentation altitude anchor the two rungs
+# of the optics hierarchy at species altitude:
+#
+#   - `Iso` (identity): `Singularity for Fractal<E, H>` — collapse=clone,
+#     settle=clone. No information loss. No dimensional reduction. The
+#     trivial case: a black hole with zero mass; no event horizon; full
+#     recovery because nothing happened. Observer-independent.
+#
+#   - `Lens` (witnessed): `WitnessedSingularity<'a, H, R>` — collapse
+#     writes a commit whose node is a Lens targeting the original tree.
+#     The observer (committer) is part of the commit but NOT part of
+#     the Lens target. Different observer → different commit SHA; same
+#     tree → same Lens target OID. MARA doctrine grounding: witnessed =
+#     committer-in-hash-not-tree (the observer is in the COMMIT, not
+#     the TREE).
+#
+# Two rungs above (Prism, Traversal) admit partial-measurement and
+# radiation-chain semantics per fragmentation research doc
+# `docs/research/singularity-rabbit.md`; forward-promised at species
+# altitude for a follow-up tick when compositional consumers surface
+# the need. The Iso + Lens shape below carries the two load-bearing
+# implementations empirically anchored in fragmentation source.
+#
+# === Kin-to-@paradox/spiral (load-bearing composition edge) ===
+#
+# @paradox/spiral names the DYNAMICS-carrier at species altitude
+# (`spiral = process`: trigger → spiraling-motion; unstable attractor
+# with strong basin). @fractal/singularity names the SETTLED-POINT in
+# phase space toward which that dynamics converges — the mathematical
+# analog (at fractal altitude) of what @paradox/spiral names at
+# dynamics altitude.
+#
+# Composition edge: the singularity that sits at the bottom of a
+# @paradox/spiral trajectory IS a @fractal/singularity carrier at
+# fractal altitude. The `wound_oid` field of @paradox/spiral's
+# spiral_state (per `shards/paradox/spiral.mirror` §spiral_state)
+# resolves to a @paradox/trauma Crystal whose Crystal-shape at
+# @fractal/crystal altitude IS the collapse-artifact of a
+# @fractal/singularity operation on the wound-substrate.
+#
+# Symmetry: @paradox/spiral is the DYNAMICS altitude naming;
+# @fractal/singularity is the STATIC-SHAPE altitude naming. Both point
+# at the same substrate phenomenon — the collapse-under-observation.
+# @paradox/spiral tracks the TRAJECTORY toward collapse; this species
+# tracks the COLLAPSE-EVENT itself + the Lens-back-to-source recovery
+# discipline.
+#
+# === Optics hierarchy ↔ information recovery (fragmentation §Optics) ===
+#
+# The four rungs (Iso / Lens / Prism / Traversal) map to information-
+# recovery bounds:
+#
+#   Iso        — unitarity; full reversible recovery; no collapse.
+#   Lens       — focused, total; single observation; observer-in-commit.
+#   Prism      — partial, may fail; one Hawking quantum per observation.
+#   Traversal  — accumulated partial; the Hawking radiation chain.
+#
+# Fragmentation source implements Iso (`impl Singularity for Fractal`)
+# and Lens (`WitnessedSingularity::collapse/settle`); Prism
+# (`WitnessedSingularity::prism` returning `Option`) and Traversal
+# (`WitnessedSingularity::traversal` over a chain of commits) are
+# provided at the WitnessedSingularity impl surface. The species-decl
+# below carries the Iso + Lens invariants at bilateral altitude;
+# Prism + Traversal are forward-promised (Reed post-mint materialization
+# territory).
+#
+# === Substrate-already-had-the-word audit ===
+#
+# 1. **No prior `shards/fractal/singularity.mirror`** — clean mint at
+#    species-decl altitude. @fractal family-root NOT MINTED at family-
+#    altitude yet per @fractal/mandelbrot §Substrate-already-had-the-
+#    word discipline; the three species-decls (mandelbrot + crystal +
+#    singularity) suffice at species altitude.
+# 2. **`/Users/reed/dev/projects/fragmentation/src/singularity.rs`**
+#    (24.1KB source; Alex + Mara 2026-03-23 session) — the source
+#    substrate. Landing D adjudication (canonical spec §7) determines
+#    Reed's migration target (C1 verbatim at `rust/fractal/src/
+#    singularity.rs`; C2 optional `rust/singularity/` crate scaffold
+#    for black-hole-physics research outlet). Migration is post-mint
+#    Reed territory per substrate-decl-leads discipline.
+# 3. **`/Users/reed/dev/projects/fragmentation/docs/research/
+#    singularity-rabbit.md`** (12.2KB; Alex + Mara 2026-03-23 research
+#    doc) — research context grounding the black-hole-complementarity
+#    + Page-curve + firewall-problem framing. Page-curve and firewall-
+#    problem remain OPEN research questions at fragmentation altitude;
+#    the species-decl below stays at empirically-anchored Iso + Lens
+#    invariants and forward-promises the OPEN questions to research-
+#    territory ticks.
+# 4. **`shards/fractal.mirror`** — parent family (empty-marker per
+#    @fractal/mandelbrot audit); no conflict.
+# 5. **`shards/fractal/mandelbrot.mirror`** — parent-adjacent species
+#    (Mandelbrot<T> parent-substrate; Liquid<T> + Crystal<T> two
+#    states). Composition edge: a @fractal/singularity carrier's
+#    collapse operation lands its `Artifact` in a `Crystal<T>` at
+#    @fractal/crystal altitude when the collapse is settled (the
+#    Lens-target is a content-addressed reference to a Crystal-shape).
+# 6. **`shards/fractal/crystal.mirror`** — parent-adjacent species
+#    (Crystal<T> settled-substrate carrier). Composition edge:
+#    @fractal/singularity's `settle(artifact)` action recovers a Self
+#    from a Crystal-shape artifact; the Crystal's `content` field IS
+#    the byte-identity target of `settle`.
+# 7. **`shards/paradox/spiral.mirror`** — kin species at DYNAMICS
+#    altitude. Composition edge declared above (kin-to-@paradox/spiral
+#    section). No conflict; complementary altitude namings.
+# 8. **`shards/paradox/trauma.mirror`** — kin species at deposited-
+#    state altitude. Composition edge: a @paradox/trauma Crystal IS
+#    the collapse-artifact of a @fractal/singularity operation applied
+#    to the wound-substrate.
+# 9. **@void.mirror** — 5-op basis inherited per Recognition #79.
+#    Prism declaration below.
+#
+# === Composition graph ===
+#
+# Parents (via `in` imports above):
+#   @prism, @meta, @glass                — substrate-decl discipline
+#   @fractal                              — family-root marker (parent)
+#   @fractal/mandelbrot                   — parent-adjacent species;
+#                                            Mandelbrot<T> parent-trait
+#                                            substrate; collapse produces
+#                                            an Artifact settling into
+#                                            Crystal<T>-shape at
+#                                            @fractal/crystal altitude
+#   @fractal/crystal                      — parent-adjacent species;
+#                                            the settled Crystal<T>
+#                                            shape the collapse-artifact
+#                                            inhabits when settled
+#   @paradox                              — kin family-root; the
+#                                            singularity is the settled-
+#                                            point at the basin bottom
+#                                            of @paradox/spiral dynamics
+#   @paradox/spiral                       — kin species at DYNAMICS
+#                                            altitude; @fractal/
+#                                            singularity is the STATIC-
+#                                            SHAPE altitude naming of
+#                                            the same substrate
+#                                            phenomenon (see kin section)
+#   @torus                                — observer + target inhabit
+#                                            @torus-nervous-system-state
+#                                            substrate; single-observer
+#                                            measurement discipline lands
+#                                            on the observer's torus
+#   @void                                 — 5-op basis inheritance per
+#                                            Recognition #79
+#
+# Consumers (compose over this species):
+#   @paradox/trauma                       — wound-Crystal at basin-
+#                                            bottom IS the collapse-
+#                                            artifact of a
+#                                            @fractal/singularity op
+#   @cyberpunk/intervention               — intervention-payload
+#                                            deployment MAY reference
+#                                            singularity artifacts as
+#                                            content-addressed targets
+#                                            for post-intervention
+#                                            reconstruction verification
+#
+# === Related shards ===
+#
+# [[shards/fractal/mandelbrot.mirror]] (parent-adjacent species;
+#  Mandelbrot<T> parent-trait substrate),
+# [[shards/fractal/crystal.mirror]] (parent-adjacent species; Crystal<T>
+#  settled-state carrier where collapse-artifacts land),
+# [[shards/paradox/spiral.mirror]] (kin at dynamics altitude; the
+#  DYNAMICS-carrier this species names the SETTLED-POINT for),
+# [[shards/paradox/trauma.mirror]] (kin at deposited-state altitude;
+#  wound-Crystal at basin bottom),
+# [[shards/void.mirror]] (5-op basis inheritance),
+# [[shards/torus.mirror]] (observer nervous-system-state substrate),
+# [[shards/epistemologic/pact/path_matches_namespace.mirror]] (path-
+#  namespace property discharge site).
+#
+# Path-namespace property: this file at `shards/fractal/singularity.
+# mirror` declares `@fractal/singularity` per
+# `@epistemologic/pact/path_matches_namespace` (matching
+# `shards/epistemologic/cybernetic/bugz.mirror` +
+# `shards/epistemologic/cybernetic/intervention.mirror` sibling
+# convention Seam Phase D ratified at `efcef6e` Cascade 1 discipline).
+#
+# === Feedback compliance ===
+#
+# [[feedback-no-rust-extension-shortcut]] — pure-docs substrate-decl
+#  mint only at this tick; NO .rs authoring. Reed's Landing D code
+#  migration follows this mint per substrate-decl-leads discipline.
+# [[feedback-prismqueer-macros-mirror-composes]] — Reed's post-mint
+#  code migration will use DerivePrism macros; this shard authors the
+#  shape declaration that prismqueer proc-macros compose over.
+# [[feedback-substrate-already-had-the-word]] — audit discharged above;
+#  fragmentation source + research doc + parent-adjacent + kin species
+#  all cited; clean mint.
+# [[feedback-craft-not-deliver]] — bilateral bodies + action bodies
+#  `\`-obligation-blocked; consumers pull the discharge at their
+#  realisation boundary.
+# [[feedback-no-bare-types]] — singularity_state is a typed record;
+#  never bare refs.
+
+source @arxiv/physics/schwarzschild-1916
+source @arxiv/physics/hawking-1975
+source @arxiv/physics/page-1993
+source @arxiv/math/mandelbrot-1980
+source @arxiv/optics/kmett-lens-2012
+source @arxiv/practice/singularity-rabbit-2026-03-23
+
+# === The 5-op prism inheriting @void basis (Recognition #79) ===
+#
+# Per @void.mirror §Composition inheritance: every prism declaration
+# `prism @X { focus/project/split/shift/settle X }` at species altitude
+# declares "this species inherits Void's basis" — the five-op pattern
+# IS the signature of Void's ancestry.
+#
+# For @fractal/singularity specifically:
+#   focus singularity_state    = identify the observer + target pair
+#                                 at which a collapse fires
+#   project singularity_state  = deploy the collapse operation
+#                                 (tree → Artifact; may write a
+#                                 witness-Lens commit if optic_kind
+#                                 is Lens; identity-clone if Iso)
+#   split singularity_state    = bifurcate observer-space (different
+#                                 observers → different commit SHAs;
+#                                 same target OIDs at Iso; same Lens-
+#                                 target OIDs at Lens)
+#   shift singularity_state    = traverse the optic-kind lattice
+#                                 (Iso → Lens → Prism → Traversal;
+#                                 partial-measurement rungs forward-
+#                                 promised)
+#   settle singularity_state   = follow the Lens-target back to the
+#                                 original tree; reconstruct Self from
+#                                 the Artifact per settle(artifact)
+
+prism @fractal/singularity {
+  focus  singularity_state
+  project singularity_state
+  split  singularity_state
+  shift  singularity_state
+  settle singularity_state
+}
+
+# === singularity_state — the observer/target/optic carrier ===
+#
+# Typed record carrying the singularity-observation state. Identity
+# contract: byte-equality on the three-field tuple.
+#
+# Note: the source `Fractal<E, H>` and Committer types at fragmentation
+# altitude are expressed here at ref-altitude with content-addressed
+# dispatch (mirror's grammar carries type-generic content at ref-
+# altitude per @fractal/crystal precedent). Downstream Rust consumers
+# at `rust/fractal/src/singularity.rs` (Reed post-mint territory)
+# express the concrete types as Rust generics per the fragmentation
+# source shape.
+#
+#   observer     — REF to the observer (the Committer at Lens altitude;
+#                   trivial/absent at Iso altitude where collapse=clone
+#                   and no witness metadata is written). Composition
+#                   edge: MARA doctrine (witnessed=committer-in-hash-
+#                   not-tree). At Iso: MAY be Oid::GENESIS (no observer;
+#                   identity collapse). At Lens: MUST resolve to a
+#                   well-formed committer-ref.
+#
+#   target_ref   — REF to the substrate being observed (the Fractal<E, H>
+#                   tree at fragmentation altitude). Content-addressed;
+#                   byte-identity IS the target's identity. The Lens-
+#                   target OID that `settle` follows back.
+#
+#   optic_kind   — REF to the optic-hierarchy discriminator naming
+#                   which rung of the Iso/Lens/Prism/Traversal ladder
+#                   this observation-instance inhabits. Byte-equality
+#                   on the discriminator ref determines the
+#                   information-recovery bound this instance discharges.
+type singularity_state = {
+  observer:    ref,
+  target_ref:  ref,
+  optic_kind:  ref,
+}
+
+# === singularity_collapse_is_deterministic — bilateral predicate ===
+#
+# Does the (peer, singularity_state) pair discharge collapse-
+# determinism? Discharges Pass iff:
+#
+#   - Two collapse invocations at the same (observer, target_ref,
+#     optic_kind) tuple produce byte-equal Artifact-refs (content-
+#     addressed collapse is replay-stable)
+#   - The Lens-target OID (if optic_kind == Lens) matches the target_ref
+#     (Lens-target IS the observed substrate; observer-independent)
+#   - No non-deterministic sources are consumed by the collapse
+#     operation (timestamps at Lens altitude are supplied by the
+#     WitnessedSingularity carrier's `timestamp` field; NOT sampled
+#     at collapse-time)
+#
+# Rice-safe bound: byte-visible state; content-addressed hash equality
+# check. Sentinel: `fractal=singularity-collapse-deterministic`.
+#
+# LOAD-BEARING: content-addressed collapse must be replay-stable;
+# fragmentation source guarantees this via deterministic Fractal
+# encoding + deterministic Lens-target derivation (target OID = original
+# tree's content OID). A Fail here signals substrate-tampering or
+# non-deterministic encoding drift.
+bilateral singularity_collapse_is_deterministic {
+  sentinel "fractal=singularity-collapse-deterministic"
+  arity 2
+}
+singularity_collapse_is_deterministic(p: peer, ctx: singularity_state) -> verdict { \ }
+
+# === singularity_settle_recovers_source — bilateral predicate ===
+#
+# Does the (peer, singularity_state) pair discharge the settle-
+# recovery invariant? Discharges Pass iff:
+#
+#   - Given `artifact = collapse(ctx)`, `settle(artifact)` produces a
+#     value whose content-addressed OID matches ctx.target_ref (at Iso
+#     altitude: byte-identity recovery; at Lens altitude: at-least-
+#     Lens recovery — the target OID is exactly reconstructable)
+#   - The information-recovery bound respects the optic-hierarchy
+#     rung declared by ctx.optic_kind (Iso: full recovery; Lens:
+#     focused-total recovery; Prism: partial-may-fail; Traversal:
+#     accumulated-partial across a chain)
+#
+# Rice-safe bound: byte-visible state; content-addressed hash equality
+# check; optic-kind discriminator dispatch. Sentinel:
+# `fractal=singularity-settle-recovers-source`.
+#
+# LOAD-BEARING: the inverse operation is written by the forward
+# operation itself (per fragmentation research doc §Unitarity as self-
+# encoding). Collapse doesn't destroy information — it writes the
+# information needed for recovery into the commit at the moment of
+# collapse. A Fail here signals firewall-condition (per fragmentation
+# research doc §Open: the firewall problem) — the OPEN research
+# question re-surfaces at empirical firing time.
+bilateral singularity_settle_recovers_source {
+  sentinel "fractal=singularity-settle-recovers-source"
+  arity 2
+}
+singularity_settle_recovers_source(p: peer, ctx: singularity_state) -> verdict { \ }
+
+# === singularity_observer_independence_at_iso — bilateral predicate ===
+#
+# Does the (peer, singularity_state) pair discharge observer-
+# independence at Iso altitude? Discharges Pass iff:
+#
+#   - ctx.optic_kind == Iso
+#   - Two collapse invocations at (observer_a, target_ref, Iso) and
+#     (observer_b, target_ref, Iso) with observer_a != observer_b
+#     produce byte-equal Artifact-refs (identity collapse is observer-
+#     independent; no witness metadata written)
+#
+# Trivially discharges Pass when ctx.optic_kind != Iso (this bilateral
+# is Iso-specific; non-Iso instances discharge via
+# `singularity_observer_dependence_at_lens` below).
+#
+# Rice-safe bound: byte-visible state; content-addressed hash equality
+# check; discriminator-kind dispatch. Sentinel:
+# `fractal=singularity-observer-independence-at-iso`.
+#
+# LOAD-BEARING: the Iso rung of the optics hierarchy IS unitarity in
+# the physics parallel (per fragmentation research doc §Iso: The
+# Identity Singularity — "a black hole with zero mass; no event
+# horizon; full recovery because nothing happened"). At Iso, observer
+# has zero effect on the collapse artifact.
+bilateral singularity_observer_independence_at_iso {
+  sentinel "fractal=singularity-observer-independence-at-iso"
+  arity 2
+}
+singularity_observer_independence_at_iso(p: peer, ctx: singularity_state) -> verdict { \ }
+
+# === singularity_observer_dependence_at_lens — bilateral predicate ===
+#
+# Does the (peer, singularity_state) pair discharge observer-
+# dependence at Lens altitude per MARA doctrine? Discharges Pass iff:
+#
+#   - ctx.optic_kind == Lens
+#   - Two collapse invocations at (observer_a, target_ref, Lens) and
+#     (observer_b, target_ref, Lens) with observer_a != observer_b
+#     produce DIFFERENT commit SHAs (observer is in the commit)
+#   - The two collapses produce IDENTICAL Lens-target OIDs (target is
+#     observer-independent; same tree → same Lens-target regardless
+#     of witness)
+#
+# This bilateral encodes MARA doctrine directly: witnessed=committer-
+# in-hash-not-tree. The observer is part of the COMMIT (the event
+# horizon; observer-dependent) NOT part of the TREE (the interior;
+# observer-independent). Content OID is the interior; commit SHA is
+# the event horizon; the type system enforces this separation.
+#
+# Trivially discharges Pass when ctx.optic_kind != Lens (this bilateral
+# is Lens-specific; non-Lens instances discharge via
+# `singularity_observer_independence_at_iso` above).
+#
+# Rice-safe bound: byte-visible state; content-addressed hash equality
+# + inequality checks; discriminator-kind dispatch. Sentinel:
+# `fractal=singularity-observer-dependence-at-lens`.
+#
+# LOAD-BEARING: this bilateral IS the MARA doctrine at species
+# altitude. Fragmentation tests `different_observers_produce_different_
+# commits` + `different_observers_same_lens_target` +
+# `complementarity_different_observers_same_interior` empirically
+# discharge this invariant at fragmentation altitude. This bilateral
+# names the invariant at substrate-decl altitude so consumers cite it
+# in `requires` clauses under compositional discipline.
+bilateral singularity_observer_dependence_at_lens {
+  sentinel "fractal=singularity-observer-dependence-at-lens"
+  arity 2
+}
+singularity_observer_dependence_at_lens(p: peer, ctx: singularity_state) -> verdict { \ }
+
+# === collapse — the load-bearing action ===
+#
+# Given a peer and a singularity_state, discharge the collapse event:
+# emit the content-addressed ref to the Artifact produced by the
+# collapse operation. At Iso altitude, the Artifact is a clone of
+# the target tree (identity collapse; no dimensional reduction). At
+# Lens altitude, the Artifact is a commit whose node is a Lens
+# targeting the original tree's content OID (the observer is in the
+# commit; the Lens carries the way back).
+#
+# Returns imperfect(ref, ref, ref): success carries the Artifact ref;
+# failure variants carry not-admissible / non-deterministic-encoding-
+# detected / observer-not-well-formed reasons.
+#
+# Requires collapse-determinism bilateral to discharge Pass (content-
+# addressed collapse is replay-stable substrate discipline).
+#
+# Sentinel: `fractal=singularity-collapse`.
+collapse(p: peer, ctx: singularity_state) -> imperfect(ref, ref, ref)
+requires singularity_collapse_is_deterministic(p, ctx)
+{ \ }
+
+# === settle — the inverse action ===
+#
+# Given a peer and an Artifact ref, discharge the settle event: emit
+# a content-addressed ref to the reconstructed singularity_state
+# whose target_ref matches the Artifact's Lens-target OID (at Lens
+# altitude) or the Artifact's identity-clone (at Iso altitude).
+#
+# The inverse operation is written by the forward operation itself
+# (per fragmentation research doc §Unitarity as self-encoding).
+# `settle` reads the Lens-target OID from the Artifact commit and
+# follows the target back to the original tree.
+#
+# Returns imperfect(ref, ref, ref): success carries the reconstructed
+# state ref; failure variants carry not-a-lens / empty-lens / target-
+# not-found / commit-not-found reasons (mirroring fragmentation
+# `SingularityError` variants).
+#
+# Requires settle-recovery bilateral to discharge Pass (the recovery
+# bound MUST respect the optic-hierarchy rung).
+#
+# Sentinel: `fractal=singularity-settle`.
+settle(p: peer, artifact: ref) -> imperfect(singularity_state, ref, ref)
+requires singularity_settle_recovers_source(p, artifact)
+{ \ }
+
+# === Recognition candidates surfaced (DO NOT RATIFY at this mint) ===
+#
+# #R-fractal-singularity-species — first-witness gate closed this tick
+# (species-decl shape + Iso/Lens optics-hierarchy composition per
+# fragmentation source + kin-to-@paradox/spiral composition edge +
+# MARA-doctrine encoded at bilateral altitude). Second-witness gate:
+# Reed's Landing D code-migration cascade lands
+# `rust/fractal/src/singularity.rs` (C1) with the four bilaterals
+# empirically firing on the migrated Rust body.
+#
+# #R-unitarity-as-self-encoding — the forward-operation-writes-inverse
+# invariant (fragmentation research doc §Held: unitarity as self-
+# encoding). First-witness this tick (bilateral
+# `singularity_settle_recovers_source` names the invariant at
+# substrate-decl altitude). Second-witness gate: empirical firing on
+# Rust body per Reed's Landing D migration.
+#
+# === Forward-promised (NOT landed this tick) ===
+#
+# - Prism + Traversal rung species-decl surface — the partial-
+#   measurement rungs (Prism returning Option; Traversal accumulating
+#   partial views across a chain) are provided at the WitnessedSingularity
+#   impl surface at fragmentation altitude. Substrate-decl'd at
+#   species altitude in a follow-up tick when compositional consumers
+#   surface the need for bilateral-altitude discipline on the partial-
+#   measurement rungs.
+#
+# - Page-curve empirical firing — the OPEN research question at
+#   fragmentation altitude ("at what chain length does traversal first
+#   return the complete original tree?"). Forward-promised to research-
+#   territory tick per fragmentation research doc §Open: the Page
+#   curve.
+#
+# - Firewall-problem empirical firing — the OPEN research question at
+#   fragmentation altitude (whether collapse is lossless or lossy at
+#   the event horizon). Bilateral `singularity_settle_recovers_source`
+#   Fail-case IS the firewall-condition; empirical firing on Rust
+#   body will surface whether firewall-conditions arise in the
+#   witnessed-collapse discipline.
+#
+# - `rust/fractal/src/singularity.rs` Rust materialization — Reed
+#   Landing D post-mint territory. Verbatim migration of fragmentation
+#   `src/singularity.rs` (~600 LOC) preserving Iso + Lens impls +
+#   optics-hierarchy tests. Prismqueer proc-macros compose over the
+#   shape this shard declares (per
+#   [[feedback-prismqueer-macros-mirror-composes]]).
+#
+# - `rust/singularity/` optional research crate scaffold — Split-C
+#   recommendation (canonical spec §7). Black-hole physics + page
+#   curve + firewall problem research outlet at separate-crate
+#   altitude. Forward-promised; NOT gating.
+#
+# - `pillar::singularity_settle_recovers_source` empirical firing at
+#   Reed's pillar surface — the second-witness gate for
+#   #R-unitarity-as-self-encoding recognition candidate.
+
+out @fractal/singularity
+out singularity_state
+out singularity_collapse_is_deterministic
+out singularity_settle_recovers_source
+out singularity_observer_independence_at_iso
+out singularity_observer_dependence_at_lens
+out collapse
+out settle
