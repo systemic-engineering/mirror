@@ -148,11 +148,6 @@
 /// Fiedler eigenvalue compute on a real symmetric `n×n` matrix (row-
 /// major). Returns eigenvalues in ascending order.
 ///
-/// **RED state**: `unimplemented!()` — body lands at M0.5 GREEN tick via
-/// `prismqueer::ffi::eigenvalues(n, matrix).expect("LAPACK convergence")`
-/// per docblock line 40 transitional path (M5 replaces with FLANG-emit
-/// when @cascade/code/llvm/flang lands).
-///
 /// **Property contract** (verified in `#[cfg(test)] mod prop_tests`):
 /// - Returns `n` eigenvalues for an `n×n` matrix
 /// - Values are finite (no NaN, no Inf) — real by construction on
@@ -160,30 +155,26 @@
 /// - Values in ascending order
 /// - Non-negative for PSD graph Laplacian (`L = D - W`, `W >= 0`
 ///   symmetric) — @coherence witness at rust/ altitude
+///
+/// Delegates to `prismqueer::ffi::eigenvalues` — LAPACK `dsyev` via
+/// the FLANG-compiled Fortran wrapper (native/spectral.f90). This is
+/// the ONE ordained numerical @io boundary per Loki matrix.rs essay +
+/// Mara terminal-geometry spec §4.2: above the knife = Rust; below =
+/// Fortran. Numerical `unsafe extern "C"` lives ONLY here.
+///
+/// Alex 2026-07-20 direct-transcript: "This is literally the FLOOR,
+/// Reed. We don't forward promise the FLOOR." — path A per docblock
+/// line 40 ratified.
+///
+/// Panics if LAPACK dsyev fails to converge (info != 0). For a
+/// symmetric matrix this indicates catastrophic numerical failure
+/// and is Rice-safely surfaced as panic — the caller's catch_unwind
+/// converts to Verdict::Fail with the LAPACK info code in the
+/// diagnostic.
 #[allow(dead_code)]
-pub(crate) fn eigenvalues(_n: usize, _matrix: &[f64]) -> Vec<f64> {
-    // M0.5 GREEN transition BLOCKED (Reed diagnostic 2026-07-18):
-    // prismqueer's `lapack` feature declares `extern "C"` symbols
-    // (`spectral_eigenvalues` etc.) but prismqueer/build.rs compiles
-    // ONLY Brainfuck sources — no C/Fortran LAPACK dsyev wrapper is
-    // built. Result: `_spectral_eigenvalues` undefined at link time.
-    //
-    // Two follow-ups to unblock GREEN:
-    //   (A) Extend prism/prismqueer/build.rs to compile a small C
-    //       wrapper calling dsyev_ from LAPACK (~30 LOC C + build.rs
-    //       cc invocation + cargo:rustc-link-lib=lapack + blas).
-    //   (B) Interim pure-Rust QR/Jacobi eigenvalue for small dense
-    //       matrices (~80 LOC in matrix.rs; test n=2..5 covered);
-    //       swap to prismqueer::ffi when (A) lands.
-    //
-    // Held RED this tick; matrix.rs 5 property tests will continue
-    // to Fail per catch_unwind wrapper, documenting the invariants
-    // the M0.5 GREEN body must satisfy when (A) or (B) lands.
-    unimplemented!(
-        "M0.5 GREEN BLOCKED: prismqueer's `lapack` feature declares extern \
-         symbols but doesn't compile the wrapper (prism-repo fix needed). \
-         See docblock; two paths (A) fix prism build.rs, (B) pure-Rust interim."
-    )
+pub(crate) fn eigenvalues(n: usize, matrix: &[f64]) -> Vec<f64> {
+    prismqueer::ffi::eigenvalues(n, matrix)
+        .unwrap_or_else(|info| panic!("LAPACK dsyev convergence failed: info={info}"))
 }
 
 /// Kuramoto phase-lock at N≥2 peers. Fixed-point iteration on a

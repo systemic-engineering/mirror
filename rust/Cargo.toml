@@ -44,6 +44,18 @@ path = "src/main.rs"
 # wrapper (step 10). Steps 3-12 follow in sequential ticks.
 [dependencies]
 fractal = { path = "fractal" }
+# prismqueer with `lapack` + `bundle` features enabled. The `lapack`
+# feature carries the FLANG-floor integration (prismqueer/build.rs
+# compiles native/spectral.f90 + native/prism.f90 via flang and links
+# LAPACK + BLAS + flang-rt). matrix.rs::eigenvalues delegates to
+# prismqueer::ffi::eigenvalues at the ONE ordained numerical @io
+# boundary (Loki matrix.rs essay + Mara terminal-geometry spec).
+#
+# Alex 2026-07-20 direct-transcript: "This is literally the FLOOR,
+# Reed. We don't forward promise the FLOOR." — path A per matrix.rs
+# docblock line 40 ratified: extend prism/prismqueer/build.rs to
+# compile Fortran wrappers + link LAPACK.
+prismqueer = { path = "../../prism/prismqueer", features = ["lapack", "bundle"] }
 
 # Dev-dependencies for property-based RED tests grounded in Mara
 # 3cd9a42 (grounding spec) + 5d3040d (math foundation). These are
@@ -52,7 +64,9 @@ fractal = { path = "fractal" }
 # reference the actual prismqueer::liquid + fate::Fate + terni::
 # PropertyVerdict shapes Taut 058b892 verified.
 [dev-dependencies]
-prismqueer = { path = "../../prism/prismqueer", features = ["bundle"] }
+# prismqueer moved to [dependencies] above with lapack+bundle features
+# per Alex 2026-07-20 FLANG-floor directive. terni stays dev-only
+# (property-test framework consumed by matrix.rs::prop_tests).
 terni      = { path = "../../prism/imperfect" }
 # tempfile: unique-per-test scratch dirs for filesystem-dependent
 # tests in `collapse.rs::prop_tests` (iter 7 — covers
