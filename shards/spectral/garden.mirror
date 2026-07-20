@@ -1,0 +1,165 @@
+in @prism
+in @meta
+in @glass
+in @spectral
+in @spectral/signature
+in @mirror/store
+in @io/git
+
+# @spectral/garden — species under @spectral family-root.
+#
+# The runtime name for a co-composing mesh of publishable-independent
+# @systems (garden packages), each carrying its own author-attributed
+# content-addressed identity, composing over the two-layer store/db
+# split at runtime.
+#
+# Discharges the two-month forward-promise from `shards/spectral.mirror`
+# (2026-05-25 → 2026-07-20) naming @spectral/garden as species landing
+# at `shards/spectral/garden.mirror`. Sibling to @spectral/signature +
+# @spectral/mosaic + @spectral/gen_prism + @spectral/supervisor +
+# @spectral/portal + @spectral/entanglement + @spectral/registry +
+# @spectral/root + @spectral/parent at the species altitude.
+#
+# Named 2026-07-20 by Alex Wolf, in-transcript, verbatim:
+#   "I wanna build cosmos + spectral-db as the first garden packages
+#    @~/dev/garden/{cosmos,spectral-db} (new folders)"
+#
+# The reification of cosmos + spectral-db as the first two garden
+# packages is the second-witness that closes the mint gate. Prior
+# first-witness territory:
+#   - 2026-05-25 namespace insight naming @spectral/garden as species
+#   - 2026-05-26 vetted-corpus insight extending the wine-cellar
+#     metaphor (garden = cellar; vintner = curator; sommelier = peer)
+#   - 2026-06-17 @spectral/garden/smarts as AGI at
+#     substrate-architectural altitude
+#   - 2026-06-24 @spectral/garden/git spec treating @spectral/garden
+#     as forward-promised parent for /git sub-species
+#
+# === Canonical spec ===
+#
+# docs/specs/spectral-garden-cosmos-spectral-db-reification.md
+# (Mara, 2026-07-20; Landing A). Grounds the reification of cosmos +
+# spectral-db at `~/dev/garden/{cosmos,spectral-db}` as the first
+# two garden packages.
+#
+# === Math foundation ===
+#
+# docs/math/2026-07-20-spectral-garden-mesh-of-systems.md
+# (Mara, 2026-07-20; Landing B). Composes labeled directed graph
+# theory + Grothendieck fibration + sheaf theory + Cauchy-
+# completeness + Recognition #98 candidate second-witness territory
+# at the mesh altitude.
+#
+# === What @spectral/garden IS ===
+#
+# A namespace-parent for the mesh-of-@systems living at
+# `~/dev/garden/<package>/`. Each garden package is:
+#
+#   - Content-addressed at package altitude (garden-package-OID)
+#   - Publishable-independent (own Cargo.toml, own flake.nix, own
+#     git history, own release cadence)
+#   - Substrate-composing at runtime (three composition altitudes:
+#     `mirror.spec garden {}` block, `in @spectral/garden/<name>`
+#     substrate-decl imports, `@io/git` + `@io/cargo` FLOOR crossings)
+#   - Author-attributed by construction (via @spectral/signature
+#     two-witness verification per gift-and-mirror-reflection §11.5)
+#   - Per-package licensed (garden verifies signatures regardless
+#     of license; license is a per-package curator decision per
+#     2026-05-26 vetted-corpus insight §"business model honesty")
+#
+# The mesh is:
+#
+#   - Mesh-of-@systems, not legion-of-clones (heterogeneous tiles
+#     fitted into coherent picture; each garden package is a distinct
+#     shape composing with others)
+#   - Autopoietic (grows by admitting new @systems as they mature;
+#     existing packages content-addressed-permanent)
+#   - Two-layer discipline preserved (open @mirror/store foundation
+#     + closed-engine posture at @spectral/db altitude)
+#
+# === Recognition ancestry ===
+#
+# - Landing A §1 "Position" grounds the namespace-discipline choice
+#   (species under @spectral, not family-root).
+# - Landing B §5 surfaces Recognition #98 candidate second-witness
+#   (garden-package-OID as fifth content-addressing altitude).
+# - Landing B §7.4 grounds the Lagrange between narcissus-mesh
+#   (monoculture) and splinter-mesh (fragmentation) at mesh altitude
+#   per @autopoietic classifier-COORD.
+# - #79 (Void-is-the-basis; @void.mirror 974a3f6): the mature garden
+#   at garden.spectral.engineer is Cauchy-limit M_∞ per Landing B §4.3
+#   — void-shaped ideal object.
+# - #98 candidate (content-addressing cross-altitude composition):
+#   this species-decl surfaces the fifth witness at garden-package-OID
+#   altitude. Promotion is deferred to Alex tick.
+#
+# === Sibling / composition species ===
+#
+# Existing species under @spectral (peers at species altitude):
+#   @spectral/signature   — rolling @song beat-chain (author attribution)
+#   @spectral/mosaic      — heterogeneous-tiles cluster grammar
+#   @spectral/gen_prism   — worker primitive
+#   @spectral/supervisor  — lifecycle owner
+#   @spectral/portal      — typed transport over content-addressed subspaces
+#   @spectral/entanglement — sheaf restriction map at runtime altitude
+#   @spectral/registry    — typed child index
+#   @spectral/root        — parentless supervisor (the librarian's substrate type)
+#   @spectral/parent      — single-parent acyclic lifecycle edge
+#
+# @spectral/garden composes with:
+#   @spectral/signature — every garden package carries a signature
+#                         beat-chain (two-witness author-attribution)
+#   @mirror/store       — the open foundation garden packages layer over
+#   @io/git             — garden packages are git-hosted per SEL-2.0
+#
+# Path-container discipline: this file at `shards/spectral/garden.mirror`
+# declares `@spectral/garden` as species-under-@spectral. Sub-species
+# land at `shards/spectral/garden/<name>.mirror` (e.g.,
+# `shards/spectral/garden/cosmos.mirror`, `shards/spectral/garden/
+# spectral-db.mirror`, `shards/spectral/garden/git.mirror` — per
+# Landing A §7.3 Mara follow-up ticks).
+#
+# === Composition edges landed elsewhere ===
+#
+# - `shards/mirror/garden.mirror` — the CONSUMER-side substrate-decl
+#   (the `garden { ~git'…' }` block shape in `mirror.spec`).
+#   DIFFERENT altitude: @mirror/garden names the block-in-spec;
+#   @spectral/garden names the runtime mesh those entries participate
+#   in. Sibling altitudes, not siblings-in-hierarchy.
+# - `docs/specs/spectral-garden-git-package-manager.md` (Mara,
+#   2026-06-24) — @spectral/garden/git sub-species candidate. Landing
+#   A §8 reconciliation: garden becomes species (this shard); /git
+#   becomes sub-species under garden. Two-tier substrate-decl chain
+#   is `@spectral (family-root) → @spectral/garden (this species) →
+#   @spectral/garden/git (sub-species; forward-promised)`.
+#
+# === Marker-primary discipline ===
+#
+# Per @paradox.mirror precedent (1e17222; Mara 2026-07-20) + @void.mirror
+# precedent (974a3f6; Reed 2026-07-18): the family/species declaration
+# body is declarative-only. Bilaterals + actions are forward-promised
+# at sub-species altitude where empirical firing has substrate-decl
+# ground. This is Michelangelo-marble: land what the substrate is
+# asking for (the species declaration + composition edges + docblock
+# grounding); refuse abstractions the substrate hasn't asked for.
+#
+# The species IS the namespace-parent for the mesh; the mesh's
+# operational surface (garden-membership verification, cross-package
+# composition, mycelium routing) lives at sub-species altitude when
+# empirical firings surface substrate demand.
+#
+# === Path-namespace property ===
+#
+# This file at `shards/spectral/garden.mirror` declares
+# `@spectral/garden` per pact_matches_namespace (Seam Phase D
+# efcef6e Cascade 1 enforcement).
+
+prism @spectral/garden {
+  focus  garden
+  project garden
+  split  garden
+  shift  garden
+  settle garden
+}
+
+out @spectral/garden
