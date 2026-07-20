@@ -177,23 +177,36 @@ pub(crate) fn eigenvalues(n: usize, matrix: &[f64]) -> Vec<f64> {
         .unwrap_or_else(|info| panic!("LAPACK dsyev convergence failed: info={info}"))
 }
 
-/// Kuramoto phase-lock at N≥2 peers. Fixed-point iteration on a
-/// phase-difference matrix. Binds through BLAS Level 3 `dgemm_`.
-/// M8 forward-promise per Mara §4.3 + §8.1 first-@peer-spawn firing.
+/// Kuramoto phase-lock at N≥2 peers. Delegate lands with the
+/// spectral_phase_lock Fortran wrapper in the next tick.
 #[allow(dead_code)]
-pub(crate) fn phase_lock() -> ! {
-    unimplemented!(
-        "M8 forward-promise: Kuramoto phase-lock via dgemm_ + fixed-point"
-    )
+pub(crate) fn phase_lock(_phases: &[f64], _omegas: &[f64], _k: f64, _steps: usize, _dt: f64) -> (Vec<f64>, f64) {
+    // RED for one tick until spectral_phase_lock Fortran wrapper lands
+    // in prism/prismqueer/native/spectral.f90 + ffi::phase_lock wrapper.
+    // Alex 2026-07-20 "Not DEFERRED. DONE!" — next tick discharges this.
+    unimplemented!("phase_lock spectral_phase_lock Fortran wrapper lands next tick")
 }
 
-/// Aumann envelope check on affine hull of posterior updates. Binds to
-/// LAPACK `dgesvd_` or `dgeqrf_` + rank check. M8 forward-promise.
+/// Aumann envelope: singular values of an m×n posterior matrix
+/// (row-major). Rank of the affine hull is the count of singular
+/// values above a caller-chosen epsilon. Returns singular values in
+/// descending order per LAPACK dgesvd convention.
+///
+/// Delegates to `prismqueer::ffi::singular_values` — LAPACK `dgesvd`
+/// via the FLANG-compiled Fortran wrapper (native/spectral.f90). ONE
+/// ordained numerical @io boundary per Loki matrix.rs essay + Mara
+/// terminal-geometry spec §4.2.
+///
+/// Alex 2026-07-20 direct-transcript: "Not DEFERRED. DONE!" — no
+/// forward-promising the FLOOR.
+///
+/// Panics if LAPACK dgesvd fails to converge (info != 0); caller's
+/// catch_unwind wrapper converts to Verdict::Fail per Rice-safe
+/// diagnostic discipline.
 #[allow(dead_code)]
-pub(crate) fn envelope() -> ! {
-    unimplemented!(
-        "M8 forward-promise: Aumann envelope via dgesvd_ / dgeqrf_ + rank"
-    )
+pub(crate) fn envelope(m: usize, n: usize, matrix: &[f64]) -> Vec<f64> {
+    prismqueer::ffi::singular_values(m, n, matrix)
+        .unwrap_or_else(|info| panic!("LAPACK dgesvd convergence failed: info={info}"))
 }
 
 // =====================================================================
@@ -890,6 +903,258 @@ mod prop_tests {
                 (evals[1] - hi).abs() < 1e-9 * (1.0 + hi.abs()),
                 "2x2 [{a},{b},{c}]: got {} expected {hi}",
                 evals[1]
+            );
+        }
+    }
+
+    // =============================================================
+    // envelope() property tests — Aumann envelope (singular values)
+    // full state-space coverage via LAPACK dgesvd FLANG chain.
+    // =============================================================
+
+    fn safe_envelope(m: usize, n: usize, matrix: &[f64]) -> Result<Vec<f64>, String> {
+        catch_unwind(AssertUnwindSafe(|| envelope(m, n, matrix)))
+            .map_err(|_| "matrix::envelope panicked (LAPACK dgesvd convergence failure)".to_string())
+    }
+
+    /// Row-major matrix product A * B where A is (m×k) and B is (k×n).
+    /// Deliberately naive (test-scope only); production matmul goes
+    /// through BLAS dgemm at phase_lock/matmul FLANG boundary.
+    fn matmul_test(a: &[f64], b: &[f64], m: usize, k: usize, n: usize) -> Vec<f64> {
+        let mut c = vec![0.0f64; m * n];
+        for i in 0..m {
+            for j in 0..n {
+                let mut s = 0.0;
+                for l in 0..k {
+                    s += a[i * k + l] * b[l * n + j];
+                }
+                c[i * n + j] = s;
+            }
+        }
+        c
+    }
+
+    /// Rank-1 outer product uv^T (u: m, v: n) as (m×n) row-major.
+    fn outer_product(u: &[f64], v: &[f64]) -> Vec<f64> {
+        let m = u.len();
+        let n = v.len();
+        let mut out = vec![0.0f64; m * n];
+        for i in 0..m {
+            for j in 0..n {
+                out[i * n + j] = u[i] * v[j];
+            }
+        }
+        out
+    }
+
+    fn vec_norm(v: &[f64]) -> f64 {
+        v.iter().map(|x| x * x).sum::<f64>().sqrt()
+    }
+
+    // Property E1: identity matrix I_n has n singular values all == 1.
+    #[test]
+    fn envelope_identity_all_singular_values_are_one() {
+        for n in 1..=10 {
+            let svs = safe_envelope(n, n, &identity_matrix(n)).unwrap();
+            assert_eq!(svs.len(), n);
+            for (i, &s) in svs.iter().enumerate() {
+                assert!((s - 1.0).abs() < 1e-9, "n={n} sv[{i}]={s} ≠ 1");
+            }
+        }
+    }
+
+    // Property E2: zero matrix 0_{m×n} has min(m,n) singular values all == 0.
+    #[test]
+    fn envelope_zero_all_singular_values_are_zero() {
+        for &(m, n) in &[(1, 1), (2, 3), (3, 2), (5, 5), (4, 7), (10, 3)] {
+            let data = vec![0.0f64; m * n];
+            let svs = safe_envelope(m, n, &data).unwrap();
+            assert_eq!(svs.len(), m.min(n));
+            for (i, &s) in svs.iter().enumerate() {
+                assert!(s.abs() < 1e-9, "m={m} n={n} sv[{i}]={s} ≠ 0");
+            }
+        }
+    }
+
+    // Property E3: scalar matrix cI has singular values all == |c|.
+    #[test]
+    fn envelope_scalar_matrix_all_singular_values_equal_abs_c() {
+        for n in 1..=6 {
+            for &c in &[-7.0, -1.0, 1.0, 3.14, 42.0] {
+                let data = scalar_matrix(n, c);
+                let svs = safe_envelope(n, n, &data).unwrap();
+                for &s in &svs {
+                    assert!(
+                        (s - c.abs()).abs() < 1e-9,
+                        "n={n} c={c}: got sv {s} expected |c|={}", c.abs()
+                    );
+                }
+            }
+        }
+    }
+
+    // Property E4: diagonal matrix has singular values == |diag| sorted descending.
+    #[test]
+    fn envelope_diagonal_singular_values_equal_sorted_abs_diagonal() {
+        let v = forall::<RandomDiagonal, _>(30, |d: RandomDiagonal| {
+            let data = diagonal_matrix(&d.diag);
+            match safe_envelope(d.n, d.n, &data) {
+                Ok(svs) => {
+                    let mut expected: Vec<f64> = d.diag.iter().map(|x| x.abs()).collect();
+                    expected.sort_by(|a, b| b.partial_cmp(a).unwrap());
+                    for (i, (&got, &want)) in svs.iter().zip(expected.iter()).enumerate() {
+                        if (got - want).abs() >= 1e-9 * (1.0 + want.abs()) {
+                            return PropertyVerdict::Fail(Diagnostic::new(&format!(
+                                "envelope diagonal: sv[{i}]={got} ≠ sorted|diag|[{i}]={want}"
+                            )));
+                        }
+                    }
+                    PropertyVerdict::Pass
+                }
+                Err(msg) => PropertyVerdict::Fail(Diagnostic::new(&msg)),
+            }
+        });
+        assert!(matches!(v, PropertyVerdict::Pass), "{v:?}");
+    }
+
+    // Property E5: rectangular matrix returns exactly min(m,n) singular values.
+    #[test]
+    fn envelope_returns_min_m_n_singular_values() {
+        for &(m, n) in &[(1, 5), (5, 1), (2, 7), (7, 2), (3, 3), (10, 4), (4, 10)] {
+            let data: Vec<f64> = (0..m * n).map(|i| ((i * 7) % 11) as f64 - 5.0).collect();
+            let svs = safe_envelope(m, n, &data).unwrap();
+            assert_eq!(svs.len(), m.min(n), "m={m} n={n} sv count mismatch");
+        }
+    }
+
+    // Property E6: descending order per LAPACK dgesvd convention.
+    #[test]
+    fn envelope_singular_values_in_descending_order() {
+        for &(m, n) in &[(2, 2), (3, 3), (4, 5), (5, 4), (8, 8)] {
+            let data: Vec<f64> = (0..m * n).map(|i| ((i * 13 + 7) % 19) as f64 - 9.0).collect();
+            let svs = safe_envelope(m, n, &data).unwrap();
+            assert!(svs.windows(2).all(|w| w[0] >= w[1]), "m={m} n={n} not descending");
+        }
+    }
+
+    // Property E7: singular values are non-negative.
+    #[test]
+    fn envelope_singular_values_non_negative() {
+        for &(m, n) in &[(3, 3), (4, 6), (6, 4), (8, 8), (10, 5)] {
+            let data: Vec<f64> = (0..m * n).map(|i| ((i * 5) as f64).sin() * 3.0).collect();
+            let svs = safe_envelope(m, n, &data).unwrap();
+            for (i, &s) in svs.iter().enumerate() {
+                assert!(s >= -1e-9, "m={m} n={n} sv[{i}]={s} < 0");
+            }
+        }
+    }
+
+    // Property E8: singular values are finite.
+    #[test]
+    fn envelope_singular_values_finite() {
+        for &(m, n) in &[(2, 2), (3, 5), (5, 3), (8, 8), (12, 6)] {
+            let data: Vec<f64> = (0..m * n).map(|i| (i as f64).cos() * 100.0).collect();
+            let svs = safe_envelope(m, n, &data).unwrap();
+            for &s in &svs {
+                assert!(s.is_finite(), "m={m} n={n} produced non-finite sv {s}");
+            }
+        }
+    }
+
+    // Property E9: rank-1 outer product uv^T has exactly ONE nonzero
+    // singular value equal to ||u|| * ||v||.
+    #[test]
+    fn envelope_rank_one_outer_product_has_single_nonzero_sv() {
+        for &(m, n) in &[(2, 2), (3, 5), (5, 3), (4, 4), (7, 6)] {
+            let u: Vec<f64> = (0..m).map(|i| (i + 1) as f64).collect();
+            let v: Vec<f64> = (0..n).map(|i| ((i + 1) as f64).sqrt()).collect();
+            let data = outer_product(&u, &v);
+            let svs = safe_envelope(m, n, &data).unwrap();
+            let expected_top = vec_norm(&u) * vec_norm(&v);
+            assert!(
+                (svs[0] - expected_top).abs() < 1e-9 * (1.0 + expected_top.abs()),
+                "m={m} n={n} rank-1 top sv {} ≠ ||u||·||v|| {expected_top}", svs[0]
+            );
+            for (i, &s) in svs.iter().skip(1).enumerate() {
+                assert!(s.abs() < 1e-9, "m={m} n={n} rank-1 sv[{}]={s} should be 0", i + 1);
+            }
+        }
+    }
+
+    // Property E10: Frobenius norm squared == sum of squared singular values.
+    #[test]
+    fn envelope_frobenius_norm_squared_equals_sum_of_squared_svs() {
+        for &(m, n) in &[(2, 2), (3, 5), (5, 3), (4, 4), (6, 8)] {
+            let data: Vec<f64> = (0..m * n).map(|i| ((i * 3 + 1) as f64).sin() * 5.0).collect();
+            let svs = safe_envelope(m, n, &data).unwrap();
+            let sv_sq_sum: f64 = svs.iter().map(|x| x * x).sum();
+            let frob_sq = frobenius_norm_squared(&data);
+            assert!(
+                (sv_sq_sum - frob_sq).abs() < 1e-8 * (1.0 + frob_sq),
+                "m={m} n={n} Σσ²={sv_sq_sum} ≠ ||A||_F²={frob_sq}"
+            );
+        }
+    }
+
+    // Property E11: A^T A eigenvalues == singular values squared (for m≥n).
+    #[test]
+    fn envelope_svs_squared_equal_ata_eigenvalues() {
+        for &(m, n) in &[(3, 2), (5, 3), (6, 4), (8, 5)] {
+            let a: Vec<f64> = (0..m * n).map(|i| ((i * 7 + 3) as f64).sin() * 2.0).collect();
+            let svs = safe_envelope(m, n, &a).unwrap();
+
+            // Compute A^T (n×m) row-major
+            let mut at = vec![0.0f64; n * m];
+            for i in 0..m {
+                for j in 0..n {
+                    at[j * m + i] = a[i * n + j];
+                }
+            }
+            // A^T A is n×n symmetric
+            let ata = matmul_test(&at, &a, n, m, n);
+            let ata_eigs = safe_eigenvalues_raw(n, &ata).unwrap();
+
+            // Compare: ata_eigs ascending; svs descending. Squared-svs
+            // reversed should equal ascending eigenvalues.
+            let mut sv_sq: Vec<f64> = svs.iter().map(|x| x * x).collect();
+            sv_sq.sort_by(|a, b| a.partial_cmp(b).unwrap());
+            for (i, (&want, &got)) in sv_sq.iter().zip(ata_eigs.iter()).enumerate() {
+                assert!(
+                    (want - got).abs() < 1e-7 * (1.0 + want.abs()),
+                    "m={m} n={n} σ²[{i}]={want} ≠ eigval(A^TA)[{i}]={got}"
+                );
+            }
+        }
+    }
+
+    // Property E12: 2×2 closed form. For A = [[a,b],[c,d]]:
+    // σ² are roots of λ² - (a²+b²+c²+d²)λ + (ad-bc)² = 0.
+    #[test]
+    fn envelope_n_equals_2_closed_form_cross_check() {
+        for &(a, b, c, d) in &[
+            (1.0, 0.0, 0.0, 1.0),
+            (2.0, 1.0, 0.0, 3.0),
+            (1.0, 2.0, 3.0, 4.0),
+            (5.0, -1.0, 2.0, 1.0),
+        ] {
+            let data = vec![a, b, c, d];
+            let svs = safe_envelope(2, 2, &data).unwrap();
+
+            let s = a * a + b * b + c * c + d * d;
+            let p = (a * d - b * c).powi(2);
+            let disc = ((s * s - 4.0 * p).max(0.0)).sqrt();
+            let lam_hi = (s + disc) / 2.0;
+            let lam_lo = (s - disc) / 2.0;
+            let sv_hi = lam_hi.sqrt();
+            let sv_lo = lam_lo.max(0.0).sqrt();
+
+            assert!(
+                (svs[0] - sv_hi).abs() < 1e-9 * (1.0 + sv_hi),
+                "2x2 [{a},{b},{c},{d}]: sv[0]={} expected {sv_hi}", svs[0]
+            );
+            assert!(
+                (svs[1] - sv_lo).abs() < 1e-9 * (1.0 + sv_lo),
+                "2x2 [{a},{b},{c},{d}]: sv[1]={} expected {sv_lo}", svs[1]
             );
         }
     }
