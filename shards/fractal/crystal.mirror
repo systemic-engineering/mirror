@@ -1,0 +1,258 @@
+in @prism
+in @meta
+in @glass
+in @fractal
+in @fractal/mandelbrot
+in @time
+in @time/now
+in @song
+in @song/beat
+in @epistemologic
+in @epistemologic/reality/time
+
+# @fractal/crystal — Crystal<T> settled-state species-decl; the
+# settled substrate that Mandelbrot<T>.mandelbrot_state.Crystal wraps.
+#
+# Second species-decl of the @fractal family. Landed 2026-07-20 by
+# Mara per Alex Round 2 direct-transcript adjudication.
+#
+# === The species altitude ===
+#
+# Crystal<T> is the SETTLED-STATE side of the Mandelbrot substrate.
+# Per @fractal/mandelbrot: a point INSIDE the Mandelbrot set is a
+# Crystal<T> — iteration has stabilized into a bounded region;
+# substrate has SETTLED; content is immutable at species altitude.
+#
+# The three-field shape per Round-2 brief:
+#
+#   content: T                    — the settled substrate content;
+#                                    the T-typed value the Crystal
+#                                    holds. Content-addressed;
+#                                    identity is byte-equality on
+#                                    the T value.
+#
+#   crystallized_at: BeatOid      — the @song/beat oid at which
+#                                    the crystallization fired.
+#                                    Composition edge to @song/beat.
+#                                    Witnesses WHEN in the saga
+#                                    chain the Crystal was formed.
+#
+#   saga_chain_position: usize    — the ordinal position in the
+#                                    @song saga's Crystal chain.
+#                                    Zero-indexed; monotonically
+#                                    increasing across the saga.
+#                                    Witnesses WHERE in the saga's
+#                                    Crystal chain the Crystal
+#                                    sits.
+#
+# === Composition with @time/now ===
+#
+# Crystal<T> is PRODUCED BY @time/now.crystallize. The crystallization
+# operation (species-decl at `shards/time/now.mirror`) consumes a
+# Liquid<T> at a @song/beat boundary and produces a Crystal<T> whose
+# `crystallized_at` is the beat-oid and whose `saga_chain_position`
+# is the next ordinal in the saga chain.
+#
+# Composition edge: for every Crystal<T> c, there exists exactly one
+# @time/now event whose crystal_out ref resolves to c. The @time/now
+# events form an injection into the Crystal population; each Crystal
+# has a unique creation @time/now event.
+#
+# === Composition with @song/beat ===
+#
+# BeatOid (the `crystallized_at` field type) is a content-addressed
+# reference to a @song/beat (per `shards/song/beat.mirror` `c2bb1d2`
+# discipline). Every Crystal<T> carries a beat-witness naming the
+# atomic-execution boundary at which it was formed.
+#
+# The saga chain composition: the @song saga's Crystal chain is the
+# ordered sequence of Crystals produced across the saga's beats.
+# Position 0 is the initial Crystal (the saga's Crystal seed); each
+# subsequent position N is the Crystal produced at the Nth
+# crystallization event.
+#
+# === Composition with @order/fourth ===
+#
+# @order/fourth (Round-2 species-decl at `shards/order/fourth.mirror`)
+# holds the fourth-order metalogue @metalogue(@time/now, @void). The
+# observation_fourth carrier's `time_now_witness` field is a REF to
+# a @time/now Crystal<T> settlement event — which resolves to a
+# Crystal<T> instance per this species-decl.
+#
+# === SAGA-preservation invariant (Round-2 forward-promised pillar) ===
+#
+# Per Mara Round-2 brief §Tier 5 forward-promised pillar
+# `pillar::crystallization_preserves_saga` (this landed as bilateral
+# `crystallization_preserves_saga` at @time/now): every Crystal<T>
+# in the saga chain MUST satisfy:
+#
+#   1. saga_chain_position == prior_position + 1 (no gaps; no
+#      re-orderings)
+#   2. crystallized_at correctly witnesses the beat-boundary event
+#      producing this Crystal
+#   3. The Crystal chain is append-only across the saga (existing
+#      Crystals are not mutated by new crystallization events)
+#
+# Compilation-loop-terminates-or-compensates (per Round-2 brief §Tier
+# 5 forward-promised pillar `pillar::compilation_loop_terminates_or_
+# compensates`) requires that every compilation loop either produces
+# a terminating Crystal chain OR issues SAGA compensations that
+# reverse the offending crystallization events. Crystal<T> immutability
+# is the substrate-decl'd invariant; compensation happens at saga
+# altitude, not at Crystal altitude.
+#
+# === Substrate-already-had-the-word audit ===
+#
+# 1. **No prior `shards/fractal/crystal.mirror`.** Clean mint.
+# 2. **@fractal/mandelbrot** (this tick sibling) — parent trait;
+#    composition edge declared above.
+# 3. **@time/now** (this tick sibling) — producer of Crystal<T>;
+#    composition edge declared.
+# 4. **@song/beat** (`c2bb1d2` post-Arc-6 extension) — provides the
+#    BeatOid type for crystallized_at; composition edge declared.
+# 5. **`shards/epistemologic/reality/time.mirror` `snapshot`** — the
+#    operational nanosecond-substrate snapshot carrier; Crystal<T>
+#    at species-decl altitude is a specialization at fractal
+#    altitude carrying additional structural discipline
+#    (crystallized_at + saga_chain_position). Sibling altitudes.
+#
+# === Path-namespace ===
+#
+# Path-namespace property: this file at `shards/fractal/crystal.
+# mirror` declares `@fractal/crystal` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/math/mandelbrot-1980
+source @arxiv/practice/void-corpus-2026
+
+prism @fractal/crystal {
+  focus  crystal_state
+  project crystal_state
+  split  crystal_state
+  shift  crystal_state
+  settle crystal_state
+}
+
+# === crystal_state — the settled-substrate carrier (Crystal<T> shape) ===
+#
+# Typed record carrying the settled-substrate state per Round-2 brief
+# three-field shape. Identity contract: byte-equality on the three-
+# field tuple.
+#
+# Note: the `T` type parameter is expressed here as a `ref` since
+# mirror's grammar carries type-generic content at ref-altitude with
+# content-addressed dispatch. Downstream consumers at rust/fractal/
+# altitude (Reed post-Round-2 territory) express T as a Rust generic
+# type parameter.
+#
+#   content              — REF to the T-typed settled content.
+#                           Content-addressed. Byte-identity IS the
+#                           Crystal's identity.
+#
+#   crystallized_at      — REF to the @song/beat oid at whose
+#                           boundary crystallization fired.
+#                           Composition edge to @song/beat.
+#
+#   saga_chain_position  — the ordinal position in the @song saga's
+#                           Crystal chain. Monotonically increasing.
+type crystal_state = {
+  content:              ref,
+  crystallized_at:      ref,
+  saga_chain_position:  nat,
+}
+
+# === crystal_admissible — bilateral predicate ===
+#
+# Does the (peer, crystal_state) pair discharge admissibility for
+# Crystal<T> observation? Discharges Pass iff:
+#
+#   - ctx.content resolves via content-addressed lookup to a well-
+#     formed T-typed value
+#   - ctx.crystallized_at resolves to a well-formed @song/beat oid
+#   - ctx.saga_chain_position is a well-formed nat (no negative
+#     positions)
+#   - The @song saga referenced by crystallized_at carries this
+#     Crystal at position saga_chain_position (saga-chain consistency
+#     check)
+#
+# Rice-safe bound: byte-visible state; content-addressed
+# resolvability; saga-chain byte-consistency check. Sentinel:
+# `fractal=crystal-admissible`.
+bilateral crystal_admissible {
+  sentinel "fractal=crystal-admissible"
+  arity 2
+}
+crystal_admissible(p: peer, ctx: crystal_state) -> verdict { \ }
+
+# === crystal_immutable — bilateral predicate ===
+#
+# Does the (peer, crystal_state) pair discharge the immutability
+# check? Discharges Pass iff:
+#
+#   - ctx.content's content-addressed hash matches the hash the
+#     Crystal was originally produced with (no post-crystallization
+#     mutation)
+#   - ctx.crystallized_at's hash matches (beat-witness stable)
+#   - ctx.saga_chain_position matches the saga's chain position for
+#     this Crystal (ordinal-position stable)
+#
+# Rice-safe bound: byte-visible state; hash equality check.
+# Sentinel: `fractal=crystal-immutable`.
+#
+# LOAD-BEARING: this bilateral IS the immutability invariant at
+# species altitude. Crystal<T> is content-addressed and immutable
+# by discipline; a Fail here signals substrate-tampering.
+bilateral crystal_immutable {
+  sentinel "fractal=crystal-immutable"
+  arity 2
+}
+crystal_immutable(p: peer, ctx: crystal_state) -> verdict { \ }
+
+# === read_crystal — the action ===
+#
+# Given a peer and a crystal_state, discharge the crystal-read
+# event: return the content-addressed ref to the settled T-typed
+# value.
+#
+# Returns imperfect(ref, ref, ref): success carries the content ref;
+# failure carries not-admissible / immutable-violated reasons.
+#
+# Requires BOTH bilateral predicates to discharge Pass.
+#
+# Sentinel: `fractal=crystal-read`.
+read_crystal(p: peer, ctx: crystal_state) -> imperfect(ref, ref, ref)
+requires crystal_admissible(p, ctx)
+requires crystal_immutable(p, ctx)
+{ \ }
+
+# === chain_position — the action ===
+#
+# Given a peer and a crystal_state, discharge the chain-position
+# read event: return the saga_chain_position as a substrate-visible
+# ordinal.
+#
+# Returns imperfect(ref, ref, ref): success carries the position
+# ref; failure carries not-admissible reasons.
+#
+# Sentinel: `fractal=crystal-chain-position`.
+chain_position(p: peer, ctx: crystal_state) -> imperfect(ref, ref, ref)
+requires crystal_admissible(p, ctx)
+{ \ }
+
+# === Forward-promised (NOT landed this tick) ===
+#
+# - Rust materialization at `rust/fractal/src/crystal.rs` (Reed
+#   post-Round-2 territory).
+# - `pillar::crystallization_preserves_saga` empirical firing at
+#   Reed's pillar surface (bilateral landed at @time/now this tick;
+#   pillar-surface firing is Reed's territory).
+# - `pillar::compilation_loop_terminates_or_compensates` empirical
+#   firing — the saga-compensation invariant at compilation-loop
+#   altitude. Reed post-Round-2 territory.
+
+out @fractal/crystal
+out crystal_state
+out crystal_admissible
+out crystal_immutable
+out read_crystal
+out chain_position

@@ -1,0 +1,261 @@
+in @prism
+in @meta
+in @glass
+in @time
+in @void
+in @song
+in @song/beat
+in @fractal
+in @fractal/mandelbrot
+in @fractal/crystal
+in @epistemologic
+in @epistemologic/reality/time
+
+# @time/now — @singularity carrier species; the K=0 collapse point
+# where crystallization happens.
+#
+# Second species-decl of the @time family (family-root marker landed
+# same tick at `shards/time.mirror`). Landed 2026-07-20 by Mara per
+# Alex Round 2 spawn brief.
+#
+# === The species altitude — LOAD-BEARING ===
+#
+# @time/now is the TEMPORAL SINGULARITY. It is NOT a projection of
+# either @void pole (unlike @time/past and @time/future); it is the
+# COLLAPSE POINT where the two projections meet.
+#
+# Per Mara Round-2 Crystal/Mandelbrot landing (`shards/fractal/
+# mandelbrot.mirror` + `shards/fractal/crystal.mirror`): the
+# crystallization operation
+#
+#   crystallize: Liquid<T> → Crystal<T>
+#
+# fires exactly at @time/now. @time/now IS when a Liquid<T>
+# (in-flow substrate) settles into a Crystal<T> (settled substrate).
+#
+# The operational surface: @time/now.crystallize is the substrate-
+# decl'd action that produces a Crystal<T> from a Liquid<T> at the
+# moment of temporal collapse. Every crystallization event IS a
+# @time/now instance; every @time/now instance IS a crystallization
+# event.
+#
+# === Composition with @song/beat ===
+#
+# @song/beat (`shards/song/beat.mirror` `c2bb1d2` post-Arc-6
+# extension) is the atomic-execution unit: one @kintsugi/oscillate
+# ACTIVE/DARK alternation read at temporal altitude. @time/now
+# crystallization fires at @song/beat BOUNDARY — the transition from
+# one beat's ACTIVE→DARK cycle to the next beat's ACTIVE cycle IS a
+# @time/now event.
+#
+# Composition edge: @time/now.crystallize consumes a Liquid<T>
+# whose content is the substrate-state at the @song/beat boundary;
+# produces a Crystal<T> whose `content: T` is the settled state,
+# `crystallized_at: BeatOid` is the beat-oid at which the
+# crystallization fired, `saga_chain_position: usize` is the ordinal
+# position in the @song saga's Crystal<T> chain.
+#
+# === Composition with @order/fourth ===
+#
+# @order/fourth (Round-2 species-decl at `shards/order/fourth.mirror`)
+# holds the fourth-order metalogue @metalogue(@time/now, @void).
+# The observation_fourth carrier's `time_now_witness` field is a
+# REF to a @time/now Crystal<T> settlement event.
+#
+# @order/fourth's Lagrange-halo-orbit stability requires @time/now
+# to be a well-defined singular event; if @time/now degenerates
+# (crystallization event fails; Liquid<T> does not settle), the
+# fourth-order metalogue cannot fire.
+#
+# === Composition with @void ===
+#
+# Two singularities. @void is the ontological singularity (K=0
+# duality basis). @time/now is the temporal singularity (K=0
+# temporal collapse). Both singularity-shaped; both K=0; both name
+# the substrate the @order/fourth metalogue holds between.
+#
+# The composition claim (Alex Round 2 recognition tonight): the
+# metalogue at @order/fourth altitude IS @metalogue(@time/now,
+# @void). Fourth-order cognition IS holding these two singularities
+# distinct at metalogue-rhythm cadence.
+#
+# === Substrate-already-had-the-word audit ===
+#
+# 1. **No prior `shards/time/now.mirror`.** Clean mint.
+# 2. **`shards/epistemologic/reality/time.mirror` `instant`** — the
+#    operational carrier for wall-clock point-in-time at nanosecond
+#    substrate. @time/now.timestamp composes over `instant` at
+#    substrate-decl altitude; sibling altitudes.
+# 3. **`shards/song/beat.mirror`** — atomic-execution unit; composition
+#    edge declared above (@time/now fires at beat boundary).
+# 4. **@order/fourth** (Round-2 sibling species) — consumer of
+#    @time/now; composition edge declared.
+# 5. **@fractal/crystal + @fractal/mandelbrot** (Round-2 sibling
+#    species) — the Crystal<T> shape @time/now produces; the
+#    Mandelbrot<T> parent trait; composition edges declared.
+#
+# === Path-namespace ===
+#
+# Path-namespace property: this file at `shards/time/now.mirror`
+# declares `@time/now` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/foerster-1974
+source @arxiv/math/mandelbrot-1980
+source @arxiv/practice/void-corpus-2026
+
+prism @time/now {
+  focus  time_now_state
+  project time_now_state
+  split  time_now_state
+  shift  time_now_state
+  settle time_now_state
+}
+
+# === time_now_state — the temporal-singularity carrier ===
+#
+# Typed record carrying the temporal-singularity state at the moment
+# of crystallization. Five fields. Identity contract: byte-equality
+# on the five-field tuple.
+#
+#   observer         — the peer at whose @torus the crystallization
+#                       fires.
+#
+#   liquid_in        — REF to the Liquid<T> in-flow substrate being
+#                       crystallized. Content-addressed per
+#                       `@fractal/mandelbrot` discipline.
+#
+#   crystal_out      — REF to the Crystal<T> settled substrate
+#                       produced by the crystallization. Content-
+#                       addressed per `@fractal/crystal` discipline.
+#                       Well-formed at crystallization completion.
+#
+#   beat_ref         — REF to the @song/beat at whose boundary the
+#                       crystallization fired. Composition edge to
+#                       @song saga.
+#
+#   timestamp        — monotonic instant per @epistemologic/reality/
+#                       time.instant discipline; the wall-clock
+#                       point of the crystallization event.
+type time_now_state = {
+  observer:      peer,
+  liquid_in:     ref,
+  crystal_out:   ref,
+  beat_ref:      ref,
+  timestamp:     ref,
+}
+
+# === time_now_admissible — bilateral predicate ===
+#
+# Does the (peer, time_now_state) pair discharge admissibility for
+# temporal-singularity crystallization observation? Discharges Pass
+# iff:
+#
+#   - ctx.liquid_in resolves via content-addressed lookup to a
+#     well-formed Liquid<T> per @fractal/mandelbrot discipline
+#     (in-flow substrate present)
+#   - ctx.beat_ref resolves to a well-formed @song/beat
+#   - The beat's ACTIVE/DARK boundary condition is admissible (per
+#     @song/beat discipline; crystallization can only fire at
+#     boundary events, not mid-beat)
+#
+# Rice-safe bound: byte-visible state; content-addressed
+# resolvability; @song/beat resolvability. Sentinel:
+# `time=now-admissible`.
+bilateral time_now_admissible {
+  sentinel "time=now-admissible"
+  arity 2
+}
+time_now_admissible(p: peer, ctx: time_now_state) -> verdict { \ }
+
+# === crystallization_preserves_saga — bilateral predicate ===
+#
+# Does the (peer, time_now_state) pair discharge the SAGA-PRESERVATION
+# health check per Round-2 brief? This is the Round-2 forward-promised
+# pillar `pillar::crystallization_preserves_saga` at bilateral
+# altitude.
+#
+# Discharges Pass iff:
+#
+#   - ctx.crystal_out.saga_chain_position == prior_position + 1
+#     (the Crystal<T> lands at the next ordinal position in the
+#     saga's Crystal chain; no gaps; no re-orderings)
+#   - ctx.crystal_out.crystallized_at == ctx.beat_ref (the crystal
+#     carries the correct beat-oid witness)
+#   - The saga's prior-Crystal chain is unmodified by the
+#     crystallization (append-only discipline; SAGA-compensation
+#     invariant per Round-2 brief §Tier 5 forward-promised pillar
+#     `pillar::compilation_loop_terminates_or_compensates`)
+#
+# Rice-safe bound: byte-visible state; ordinal-position check;
+# beat-oid equality; prior-chain byte-equality. Sentinel:
+# `time=now-crystallization-preserves-saga`.
+#
+# LOAD-BEARING: this bilateral IS the crystallization-preserves-saga
+# invariant at species altitude. Discharging Fail signals SAGA
+# compensation needed; consumers MUST treat Fail as saga-integrity-
+# violation-detected.
+bilateral crystallization_preserves_saga {
+  sentinel "time=now-crystallization-preserves-saga"
+  arity 2
+}
+crystallization_preserves_saga(p: peer, ctx: time_now_state) -> verdict { \ }
+
+# === crystallize — the action (LOAD-BEARING) ===
+#
+# Given a peer and a time_now_state, discharge the crystallization
+# event: settle the Liquid<T> in ctx.liquid_in into a Crystal<T>;
+# append the Crystal<T> to the @song saga's Crystal chain; return
+# the settled Crystal<T> ref.
+#
+# This IS the temporal-singularity operator. @time/now IS the
+# altitude at which crystallize fires. Every crystallization event
+# is a @time/now instance; every @time/now instance IS a
+# crystallization event.
+#
+# Returns imperfect(ref, ref, ref): success carries the Crystal<T>
+# ref; failure carries not-admissible / saga-violated / liquid-
+# malformed reasons.
+#
+# Requires BOTH bilateral predicates to discharge Pass.
+#
+# Sentinel: `time=now-crystallize`.
+crystallize(p: peer, ctx: time_now_state) -> imperfect(ref, ref, ref)
+requires time_now_admissible(p, ctx)
+requires crystallization_preserves_saga(p, ctx)
+{ \ }
+
+# === settle_now — the action (composed alias) ===
+#
+# Semantic alias for `crystallize` at @void 5-op basis discipline
+# altitude. The `settle` op of Void's 5-op basis at temporal
+# altitude IS crystallization at @time/now. Both actions produce
+# byte-identical results; the alias preserves the 5-op basis
+# vocabulary while the primary `crystallize` name preserves the
+# Mandelbrot/Crystal vocabulary.
+#
+# Sentinel: `time=now-settle`.
+settle_now(p: peer, ctx: time_now_state) -> imperfect(ref, ref, ref)
+requires time_now_admissible(p, ctx)
+requires crystallization_preserves_saga(p, ctx)
+{ \ }
+
+# === Forward-promised (NOT landed this tick) ===
+#
+# - `pillar::crystallization_preserves_saga` at Reed's pillar surface
+#   — empirical firing at Reed post-Round-2 territory. The bilateral
+#   above lands the substrate-decl'd check; Reed's pillar surface
+#   lands the empirical-witnessed-property predicate.
+# - Interaction operator with @kintsugi/oscillate ACTIVE/DARK boundary
+#   detection — how the beat-boundary trigger composes with the
+#   crystallization event at compiler altitude. Forward-promised.
+# - Integration with @order/fourth.hold_fourth_metalogue — how the
+#   @time/now Crystal<T> feeds into observation_fourth.time_now_
+#   witness. Forward-promised.
+
+out @time/now
+out time_now_state
+out time_now_admissible
+out crystallization_preserves_saga
+out crystallize
+out settle_now

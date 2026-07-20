@@ -1,0 +1,204 @@
+in @prism
+in @meta
+in @glass
+in @fractal
+in @epistemologic
+
+# @fractal/mandelbrot — Mandelbrot<T> parent-substrate at fractal
+# altitude. The trait/species that unifies Liquid<T> (in-flow) and
+# Crystal<T> (settled) as two states of a Mandelbrot-set point.
+#
+# First species-decl of the @fractal family. Landed 2026-07-20 by
+# Mara per Alex Round 2 direct-transcript adjudication ("Crystal<T> +
+# Mandelbrot trait: YES to rust/fractal/ placement. Mandelbrot is the
+# parent trait; Liquid<T> (existing at prismqueer::liquid) + Crystal<T>
+# (new) are the two states of a Mandelbrot-set point").
+#
+# === The species altitude ===
+#
+# Per Alex 2026-07-13 recognition (memory `project_fractal_mandelbrot_
+# substrate`): "@fractal underlies @kintsugi/consent; mirror compiler
+# IS a Mandelbrot set." Load-bearing hinge. Round-2 Crystal/Mandelbrot
+# ratification NAMES the substrate at species-decl altitude:
+# Mandelbrot<T> IS the parent trait; Liquid<T> and Crystal<T> are its
+# two states.
+#
+# Mathematical grounding: the Mandelbrot set (Mandelbrot 1980) is
+# defined as the set of complex points c where the iteration
+# z_{n+1} = z_n^2 + c does not diverge. Points INSIDE the set have
+# iterations that stay bounded (settled behavior); points OUTSIDE
+# diverge (in-flow behavior with an escape trajectory); the BOUNDARY
+# is where iteration behavior is undecidable in finite time (in-flow
+# substrate that has not yet settled into a Crystal-state or escaped
+# entirely).
+#
+# The compiler-substrate reading:
+#
+#   - Crystal<T> — a point INSIDE the Mandelbrot set: iteration
+#     stays bounded; substrate has SETTLED into a stable Crystal
+#     shape. Content-addressed. Immutable at species altitude.
+#
+#   - Liquid<T> — a point outside/on-boundary of the Mandelbrot set:
+#     iteration is in-flow; substrate has NOT YET settled; may
+#     eventually crystallize (via @time/now.crystallize) or may
+#     eventually escape (per liquid-runtime discipline at
+#     `shards/liquid.mirror`).
+#
+#   - Mandelbrot<T> — the PARENT trait: any T-typed substrate object
+#     is a point in Mandelbrot-substrate-space; it is EITHER Liquid<T>
+#     (in-flow) OR Crystal<T> (settled); the trait carries the
+#     mandelbrot_state variant discriminating the two.
+#
+# === Composition with @time/now ===
+#
+# The operation `crystallize: Liquid<T> → Crystal<T>` (@time/now
+# species-decl at `shards/time/now.mirror`) IS the state-transition
+# from Liquid to Crystal at Mandelbrot altitude. The transition fires
+# at temporal-singularity events (@time/now). Every crystallization
+# event IS a Mandelbrot-state transition from Liquid to Crystal.
+#
+# The reverse operation (Crystal → Liquid) is NOT provided at this
+# altitude. Crystals are content-addressed and immutable; a Crystal
+# cannot be "un-crystallized" — a NEW Liquid can be constructed from
+# a Crystal via `deconstruct` (theory-forward-promised) but the
+# original Crystal remains in the saga chain.
+#
+# === Composition with @liquid family-root ===
+#
+# @liquid (`shards/liquid.mirror`; composition-altitude family-root)
+# is the REFINEMENT-LENS OPERATOR. @liquid(@X) produces a substrate
+# view where every @X carrier admits a refinement_predicate.
+# @fractal/mandelbrot's Liquid<T> state IS the in-flow substrate
+# @liquid operates over at type altitude.
+#
+# Composition edge: Mandelbrot<T>.mandelbrot_state == Liquid<T> is
+# byte-equivalent to `@liquid(@T)` at composition-altitude — the
+# T-typed substrate is being viewed under the liquid refinement lens
+# while in the in-flow state.
+#
+# The `prismqueer::liquid` module Alex cites in the Round-2 brief is
+# the operational-altitude implementation of Liquid<T> in the
+# prismqueer proc-macro apparatus (Reed post-Round-2 territory for
+# `rust/fractal/src/mandelbrot.rs`).
+#
+# === Composition with @kintsugi/consent ===
+#
+# Per Alex 2026-07-13 recognition (memory): "@fractal underlies
+# @kintsugi/consent." The @kintsugi/consent substrate operates at
+# Mandelbrot altitude: consent is Liquid<consent-decision> in-flow
+# until the peer settles into a decision, at which point
+# @time/now.crystallize produces Crystal<consent-decision>. The
+# settled consent is content-addressed and immutable.
+#
+# Composition edge: every @kintsugi/consent decision is a
+# Mandelbrot<consent-decision> point; the decision-space's fractal
+# structure is Mandelbrot-shaped because consent-decisions at
+# fine-grain admit further sub-decisions (the fractal self-
+# similarity discipline).
+#
+# === Substrate-already-had-the-word audit ===
+#
+# 1. **No prior `shards/fractal/mandelbrot.mirror`.** Clean mint at
+#    species-decl altitude. @fractal family-root NOT MINTED this
+#    tick (Alex's Round-2 direction was rust/fractal/ placement +
+#    two species-decls; family-root marker MAY land at future tick
+#    when @fractal's operational surface needs the family-root
+#    altitude; today the species-decls suffice).
+# 2. **Alex 2026-07-13 memory** — recognition NAMED but not
+#    substrate-decl'd; this tick lands the substrate-decl at
+#    species altitude.
+# 3. **@liquid family-root** (`shards/liquid.mirror`) — reviewed;
+#    composition edge declared above; no conflict.
+# 4. **@kintsugi/consent** — reviewed; composition edge declared.
+# 5. **Mandelbrot 1980** — the mathematical substrate (`Fractals:
+#    Form, Chance and Dimension`); classical citation.
+#
+# === Path-namespace ===
+#
+# Path-namespace property: this file at `shards/fractal/mandelbrot.
+# mirror` declares `@fractal/mandelbrot` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/math/mandelbrot-1980
+
+prism @fractal/mandelbrot {
+  focus  mandelbrot_state
+  project mandelbrot_state
+  split  mandelbrot_state
+  shift  mandelbrot_state
+  settle mandelbrot_state
+}
+
+# === mandelbrot_state — the parent state carrier ===
+#
+# Typed variant carrying the two states of a Mandelbrot-set point.
+# A T-typed substrate object is EITHER Liquid<T> (in-flow) OR
+# Crystal<T> (settled). Identity contract: variant-tag equality +
+# byte-equality on the wrapped state.
+#
+#   Liquid(l)   — in-flow substrate; iteration is not yet bounded
+#                  in the Mandelbrot-set sense; may eventually
+#                  crystallize (@time/now.crystallize) or escape
+#                  (per @liquid runtime discipline).
+#
+#   Crystal(c)  — settled substrate; iteration has stabilized into
+#                  a bounded region of Mandelbrot-space;
+#                  content-addressed; immutable at species altitude.
+type mandelbrot_state =
+  | Liquid(ref)
+  | Crystal(ref)
+
+# === mandelbrot_admissible — bilateral predicate ===
+#
+# Does the (peer, mandelbrot_state) pair discharge admissibility?
+# Discharges Pass iff:
+#
+#   - The variant is well-formed (either Liquid or Crystal; NOT a
+#     null-state; NOT a mid-transition state)
+#   - The wrapped ref resolves via content-addressed lookup
+#   - For Crystal variant: the Crystal<T> carrier's three fields
+#     (content, crystallized_at, saga_chain_position) are all
+#     well-formed per @fractal/crystal discipline
+#   - For Liquid variant: the Liquid<T> carrier is well-formed per
+#     @liquid discipline
+#
+# Rice-safe bound: byte-visible state; variant-tag check; content-
+# addressed resolvability. Sentinel: `fractal=mandelbrot-admissible`.
+bilateral mandelbrot_admissible {
+  sentinel "fractal=mandelbrot-admissible"
+  arity 2
+}
+mandelbrot_admissible(p: peer, ctx: mandelbrot_state) -> verdict { \ }
+
+# === is_settled — the action ===
+#
+# Given a peer and a mandelbrot_state, discharge the settled-check
+# event: return true if the state is Crystal<T> (settled); false if
+# Liquid<T> (in-flow).
+#
+# Returns imperfect(ref, ref, ref): success carries the settled-
+# state verdict ref; failure carries not-admissible / null-state
+# reasons.
+#
+# Sentinel: `fractal=mandelbrot-is-settled`.
+is_settled(p: peer, ctx: mandelbrot_state) -> imperfect(ref, ref, ref)
+requires mandelbrot_admissible(p, ctx)
+{ \ }
+
+# === Forward-promised (NOT landed this tick) ===
+#
+# - `crystallize: Liquid<T> → Crystal<T>` transition operator —
+#   substrate-decl'd at @time/now (this tick); Mandelbrot altitude
+#   consumes.
+# - `deconstruct: Crystal<T> → Liquid<T'>` operator for
+#   substrate-refinement (T' MAY differ from T; the deconstruction
+#   admits fine-grain refinement). Forward-promised.
+# - Rust materialization at `rust/fractal/src/mandelbrot.rs` (Reed
+#   post-Round-2 territory).
+# - @fractal family-root marker — forward-promised when operational
+#   surface at family-root altitude needs the recognition-carrier.
+
+out @fractal/mandelbrot
+out mandelbrot_state
+out mandelbrot_admissible
+out is_settled
