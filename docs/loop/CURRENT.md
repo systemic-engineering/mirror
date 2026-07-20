@@ -72,7 +72,67 @@ Six Alex-Q's surfaced by Mara's canonical spec §8 — all ratified in direct-tr
 
 2. **Mara @paradox 6-landing arc COMPLETED (2026-07-20)** — 6 sequential commits; agent `ac3ab187a832b3e09`; Alex Q1-Q6 in-transcript ratifications applied.
 
-3. **Seam Phase D background LAUNCHED (2026-07-20)** — 12 standard dimensions + 6 arc-specific supplements (family-root altitude admissibility + trauma witness_only invariant precision + spiral pre-fracture-admissibility + intervention SAGA-compensation semantics + Landing D refinements 2+3 precision + Milan school citation precision). Alex Q1-Q6 folded into audit context.
+3. **Seam Phase D COMPLETED (2026-07-20; commit `efcef6e`)** — SHIP-WITH-REED-INLINE verdict; 13/18 dimensions SHIP-CLEAN + 3 non-blocking REED-INLINE + 2 blocking REED-INLINE (intervention.mirror path-namespace pact violation + fabricated cyberpunk.mirror:76 citation for adversarial-with-love) + 0 new ALEX-Q. Audit at `docs/audits/2026-07-20-seam-paradox-family-and-cyberpunk-intervention-arc.md` (1084 lines).
+
+4. **Reed /loop iter 5 LANDED (2026-07-20; commit `0281e7b`)** — pillar dispatch surface + 5 classifier-witness predicates in liquid.rs (~435 LOC); dispatch_property routes named sentinels to pillar::dispatch fallthrough to Defer for unknown; **FIRST-FAIL-PIN INVARIANT FIRED EMPIRICALLY** via `mirror compile /tmp/pillar-smoke.mirror`:
+
+   ```
+   mirror compile: SAGA chain of 3 crystal(s)
+     [  0] fail   3b25680e770f0361 — aikido_sequence_well_formed
+     [  1] fail   034e0b157f3b6502 — consent_through_refusal
+     [  2] defer  631c6f4e35742762 — not_yet_registered
+   escalation: Escalate(crystal=3b25680e770f0361) — @peer.redirect walk-target
+   ```
+
+   Escalate points at crystal[0] (aikido; first fail) not crystal[1] (consent; second fail). Recognition bundle #6 (`#R-saga-chain-is-witness-mechanism-for-irreducible-crystals`) SECOND-WITNESS FIRED at Rust altitude. The substrate-honest form of Alex's "we witness the ORIGINAL wound; we don't shift the witness-target to whatever hurt most-recently" running as compile-time discipline.
+
+5. **Reed 5-cascade REED-INLINE batch LANDED (2026-07-20; commit `754473c`)** per Seam Phase D `efcef6e` findings:
+   - Cascade 1 (Finding 1 blocking): intervention.mirror prism decl `@cyberpunk/intervention` → `@epistemologic/cybernetic/intervention` (aligned to path per pact_matches_namespace; matches bugz sibling convention); semantic name preserved as prose reference
+   - Cascade 2 (Finding 2 blocking): spec §5.2 fabricated cyberpunk.mirror:76 citation → first-witness disclosure form (Recognition candidate `#R-adversarial-with-love-is-cyberpunk-family-invariant` surfaced simultaneously at bugz.mirror + intervention.mirror bilateral composition-lineage)
+   - Cascade 3 (D4 non-blocking): intervention.mirror deploy_intervention ctx binder REED-INLINE docblock note flagging Mara-territory follow-up tick resolution paths
+   - Cascade 4 (D5 non-blocking): paradox.mirror:113 Selvini-Palazzoli cite corrected to bugz.mirror:173-175 (three-line entry)
+   - Cascade 5 (AS6 non-blocking): Milan citation drift folded from D5
+
+### Session-close state (2026-07-20 evening)
+
+**Full session tally**: 32 Reed (mirror) + 2 Reed (prism) + 46 Mara + 5 Seam + 5 Taut = **90 commits + 6 recognitions ratified**.
+
+**Recognition bundle ratification table**:
+
+| Recognition | First-witness | Second-witness | Ratification |
+|-------------|---------------|----------------|--------------|
+| #R-autopoietic-classifier-is-knife-coord-under-lagrange | Alex in-transcript | Mara canonical spec §6 + math §4 | Q1 EXTEND ratified |
+| #R-paradox-family-root | Alex in-transcript | Mara shard-decl `1e17222` | Q3 FAMILY-ROOT ratified |
+| #R-paradox-trauma-species | Weird - Trauma piece (today) | Mara shard-decl `42c6a12` + iter-5 pillar dispatch | HIGH-confidence ratified |
+| #R-paradox-spiral-species | Alex in-transcript | Mara shard-decl `b8879f2` | Q4 pre-fracture YES ratified |
+| #R-cyberpunk-intervention-species | Alex in-transcript | Mara shard-decl `d08e9d7` | Q6 SIBLING-TO-BUGZ ratified |
+| #R-saga-chain-is-witness-mechanism | compile.rs iter-3 test invariant | **Empirical firing** at `mirror compile` verb (iter 5 `0281e7b`) | SECOND-WITNESS FIRED |
+
+**Cumulative empirical test coverage (Reed /loop cascade 1-5)**: 47/47 new tests GREEN; 72 mirror pass; 24 fractal pass; 5 matrix.rs RED unchanged (M0.5 blocker); 2 empirical CLI firings (`mirror compile` iter 4 basic + iter 5 first-fail-pin).
+
+### Pending queue (post-session; pickup at future Reed tick)
+
+1. **Task #292 — Reed Landing D code migration** (fragmentation `singularity.rs` → `rust/fractal/src/singularity.rs` verbatim per Alex Q2 ratification + `rust/singularity/` crate scaffold). Substrate-decl leads: Mara follow-up tick MUST mint `shards/fractal/singularity.mirror` species-decl at verbatim name FIRST before Reed code migration. Then Reed cascades: (a) verbatim migration of fragmentation's ~600 LOC singularity.rs (Iso + Lens optics-hierarchy), (b) `rust/singularity/` crate scaffold for black-hole physics + page curve + firewall problem.
+
+2. **Reed /loop iter 6+ pillar cascade** — ~15 remaining classifier-witness predicates from /loop cascade brief (vsm_invariants, s1_s5_topology_complete, beer_feedback_loops_topology, system_autopoietic_closure, system_composition_verified_4d, graduated_response_preserves_agency, algedonic_threshold_governs_escalation_tier, reframe_dispatches_bugz_with_lens_payload, beam_system_composition_verified, compatible_connections_on_bundle_tower, autopoietic_lawvere_fixed_point, system_spec_well_formed, history_with_returns_crystal_chain, void_settle_produces_lens_seed, bugz_package_produces_recognition_bomb_payload, choices_monotone_of_song, crystallization_preserves_saga, intervention_composes_without_deleting_trauma, redirect_targets_valid_crystal). Each fires @subject-evidence or @object-evidence witness. Same pattern as iter 5 landed 5 predicates.
+
+3. **Autopoietic classifier annotation** (Q1 EXTEND) — Mara follow-up tick extends `shards/autopoietic.mirror` in place per Q1 lean-EXTEND ratification; adds recognition #1 annotation for classifier-COORD-under-Lagrange framing.
+
+### Session-close signature
+
+Alex 2026-07-20 in-transcript adjudications ratified across altitudes:
+- "keep rolling frrrrriend" (session-open /loop authorization)
+- "@autopoietic is the gate" (Recognition #1 first-utterance)
+- "@subject-with-revocation. That's the COORD loop." (Recognition #1 refinement)
+- "the classifier runs of course coord on themselves. That's the whole anti-narcissus -> splinter loop." (Recognition #1 self-COORD Lagrange completion)
+- "A harmful stable Eigenbehaviour loop is @trauma." (Recognition #3 first-utterance)
+- "It can only be witnessed. Never resolved. That is the mechanism through which the @peer can hold @paradox." (Recognition #3 witness-only discipline)
+- "Maybe it's @paradox/trauma. And the response to a @paradox/trauma is a @paradox/intervention a.k.a @cyberpunk/intervention." (Recognitions #2, #3, #5 naming)
+- "@paradox/spiral is probably also something we'd want." (Recognition #4 naming)
+- "collapse collapse.rs into singularity.rs. Other than that sounds good." (Q1-Q6 bundle ratification)
+- "Your call." (Reed autonomy session-close delegation)
+
+Session-close verdict: **SHIP-CLEAN**. Recognition bundle empirically composed across altitudes at Rust runtime. FIRST-FAIL-PIN discipline running live. Alex's Weird - Trauma piece integrated as substrate anchor. @paradox family + @cyberpunk/intervention landed. Session preserves state for future Reed pickup via Landing D + iter 6+ pillar cascade queue.
 
 2. **Mara canonical spec + math + shard-decl mints** — spawn when Taut returns; Mara authors:
    - @paradox family-root shard-decl
