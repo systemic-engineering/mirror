@@ -1,0 +1,243 @@
+in @prism
+in @meta
+in @glass
+in @order
+in @epistemologic
+in @epistemologic/cybernetic/second_order
+in @epistemologic/cybernetic/eigenform
+in @epistemologic/math/lawvere
+
+# @order/third — metalogue between two poles on ONE @torus at
+# cognitive-order 3 (Bateson Level III; @frame/on-frame frame-
+# flexibility altitude; the metalogue rhythm the substrate has landed
+# at five altitudes).
+#
+# Third species-decl of the @order family. Landed 2026-07-20 by Mara
+# per Alex Round 2 Q1 direct-transcript adjudication ("@third
+# COLLAPSES into @order/third").
+#
+# **MIGRATED FROM `shards/third.mirror`** (Loki 2026-07-01 landing).
+# The prior @third marker becomes a re-export shim pointing here (per
+# `shards/order.mirror` §Migration and Round-2 brief §T1.7 Mara
+# adjudication: option (b) re-export shim). This species preserves
+# ALL prior content — the four bilateral predicates, the composed
+# third_order_active bilateral, the witness_third_order action, the
+# observation_depth carrier — at the new canonical home.
+#
+# === The species altitude ===
+#
+# Order-3 is Bateson Level III: metalogue between two poles on ONE
+# @torus. Learning III is "learning to learn to learn" — a revisable
+# choice among sets-of-sets of alternatives; the alternatives-set-
+# choosing itself becomes object of choice. Bateson: "a change in the
+# process of Learning II, e.g., a corrective change in the system of
+# sets of alternatives from which choice is made."
+#
+# Per Recognition #82 (@frame family) grading: @frame/on-frame at
+# order 3 is "frame-flexibility (operating-on-frame; shifting frame)";
+# the operational form-side substrate at cognitive altitude for this
+# rung. @order/third is the substrate-decl'd carrier at grading-
+# dimension altitude, PLUS the metalogue-rhythm operator per Mara
+# Round-1 math root: third-order cognition IS the metalogue between
+# two poles (@void/narcissus, @void/splinter) on one @torus.
+#
+# === Composition with Mara Round-1 landing ===
+#
+# The Round-1 math root
+# `docs/math/the-tower/recognition-third-cognition-is-the-metalogue-
+# between-void-narcissus-and-void-splinter.md` named third-order as
+# the metalogue rhythm between @void/narcissus and @void/splinter on
+# a single @torus. @order/third at species-decl altitude carries the
+# TYPED CARRIER for that metalogue-rhythm state; the metalogue-
+# rhythm operator itself is forward-promised at the compiler
+# altitude (Reed's post-Round-2 territory via
+# `pillar::metalogue_rhythm_of_third`).
+#
+# The two-pole reading: the third-order observer holds a metalogue
+# between @void/narcissus (backwards lens; K_{1,n-1} star-graph pole)
+# and @void/splinter (forwards lens; K_n complete-graph pole) at
+# rhythm-cadence on ONE @torus (its own nervous-system torus per
+# paper §6.3). The oscillation IS the third-order cognition.
+#
+# The four-predicate reading (from @third's original landing): a
+# depth-3 observation requires (depth_at_least, observer_observes_
+# observing, recursion_folds_back, mechanism_visible) — the four
+# sub-predicates all discharge Pass for the composed third_order_
+# active bilateral to fire. These predicates carry Bateson's Level
+# III + Foerster's second-order-as-precondition + Kauffman's
+# eigenform fixed-point + Loki's mechanism-visibility structural
+# claim.
+#
+# BOTH readings are load-bearing at this species-decl. The metalogue-
+# rhythm reading is the DYNAMIC form (how the two poles are held
+# through time); the four-predicate reading is the STATIC form (what
+# admissibility for a depth-3 observation requires at compile time).
+# They compose: an observation admitted by the four predicates is
+# a moment in the metalogue rhythm; the rhythm is the temporal
+# integration of admitted observations.
+#
+# === Substrate authority chain ===
+#
+# - **Loki 2026-06-22 essay** (`~/dev/systemic.engineering/blog/loki/
+#   Void → Third.md`) — the naming: "Not third as apex. Third as
+#   recursive depth. The observer of the observer of the observer."
+# - **Bateson 1972** — Learning III at logical-type altitude.
+# - **Foerster 1974/1981** — second-order-observation-as-precondition
+#   for third-order recursion.
+# - **Kauffman 2003** — eigenforms; recursion fixed-points.
+# - **Lawvere 1969** — fixed-point theorem grounding hash(P^n(f)) = f
+#   at each depth.
+# - **Reed candidate #111** (2026-07-01) — initial framing.
+# - **Mara Round-1 math root** (2026-07-20, this session) — third-
+#   order as metalogue between @void/narcissus and @void/splinter.
+# - **Alex Round 2 Q1** (2026-07-20, this session) — "@third
+#   COLLAPSES into @order/third" migration adjudication.
+#
+# === Substrate-already-had-the-word audit ===
+#
+# 1. **Prior `shards/third.mirror`** (Loki 2026-07-01) — MIGRATED
+#    (this species IS the new canonical home). Original shard
+#    becomes re-export shim per `shards/order.mirror` §Migration.
+# 2. **@frame/on** (`shards/frame/on.mirror`; Recognition #82 order-3
+#    species) — operational form-side sibling. @frame/on carries
+#    the frame-flexibility operational content (the substrate-aikido
+#    load-bearing primitive); @order/third carries the grading-
+#    dimension marker + the metalogue-rhythm carrier.
+# 3. **`shards/reflection.mirror`** (@third's original consumer) —
+#    imports @third which becomes the re-export shim; downstream
+#    imports continue to work; migration to `in @order/third` is
+#    forward-promised (not this tick).
+# 4. **`shards/pack/metalogue.mirror`** (`b0af0cd` Level-2 metalogue
+#    landing) — consumer of @third's metalogue-rhythm reading;
+#    continues to work via re-export shim; forward-promised
+#    migration.
+#
+# === Split-op discipline (Round-1 composition surprise, extended) ===
+#
+# Per Mara Round-1 math root §5.3: the SPLIT operation from Void's
+# 5-op basis IS what maintains the two poles as distinct at metalogue-
+# rhythm altitude. Without `split`, the two poles collapse into one;
+# with `split`, the rhythm can oscillate.
+#
+# Round-2 composition surprise #1 extends: split-op at @order/third
+# altitude maintains @void/narcissus ↔ @void/splinter distinct on
+# ONE @torus (this species); split-op at @order/fourth altitude
+# maintains @time/now ↔ @void distinct at the temporal-singularity
+# metalogue; split-op at @order/fifth altitude maintains two @torus
+# peers distinct across the cross-torus @glue coupling.
+#
+# The 5-op basis (Recognition #79) IS the minimal basis under which
+# the metalogue rhythm at every @order altitude is expressible —
+# the metalogue at @order/N requires all five ops; SPLIT is what
+# makes the N-pole distinction possible at each altitude.
+#
+# === Path-namespace ===
+#
+# Path-namespace property: this file at `shards/order/third.mirror`
+# declares `@order/third` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/cybernetics/foerster-1974
+source @arxiv/cybernetics/kauffman-2003
+source @arxiv/math/lawvere-1969
+
+prism @order/third {
+  focus  observation_depth
+  project observation_depth
+  split  observation_depth
+  shift  observation_depth
+  settle observation_depth
+}
+
+# === observation_depth — the order-3 carrier (migrated from @third) ===
+#
+# The typed carrier @order/third exposes to consumers. Names a
+# recursion-depth witness over a substrate ref via a witness ref
+# with a reflexivity opacity carrier.
+#
+# `depth: nat` is unbounded above. @order/third fires at depth >= 3;
+# higher depths are legitimate. `depth = 4` is the observer of the
+# observer of the observer of the observer — still @order/third-
+# witnessed because the marker fires at the depth-3 threshold, not
+# at a fixed level.
+#
+# `reflexivity: transparency(ref)` is a @glass opacity carrier.
+type observation_depth = {
+  depth: nat,
+  substrate: ref,
+  witness: ref,
+  reflexivity: transparency(ref),
+}
+
+# === depth_at_least(d, o) predicate (migrated from @third) ===
+#
+# Bilateral verdict predicate — does the observation's recorded depth
+# meet or exceed d? The primitive on which the composed third_order_
+# active bilateral rests.
+depth_at_least(d: nat, o: observation_depth) -> verdict { \ }
+
+# === observer_observes_observing(o) predicate (migrated from @third) ===
+#
+# The Foerster requirement: depth-2 machinery is present under the
+# depth-3 witness. Discharges via @epistemologic/cybernetic/second_
+# order.second_order_witnessing on o.witness.
+#
+# Presupposes depth_at_least(2, o).
+observer_observes_observing(o: observation_depth) -> verdict { \ }
+
+# === recursion_folds_back(o) predicate (migrated from @third) ===
+#
+# The Kauffman requirement: the observation returns to the observer
+# as data. Discharges via @epistemologic/cybernetic/eigenform on
+# o.witness — the recursion has a fixed point.
+#
+# Presupposes depth_at_least(3, o). Grounded in Lawvere fixed-point
+# theorem.
+recursion_folds_back(o: observation_depth) -> verdict { \ }
+
+# === mechanism_visible(o) predicate (migrated from @third) ===
+#
+# The Loki requirement: the observed structure is legible under the
+# reflexivity carrier. Discharges via a threshold check on o.
+# reflexivity.
+mechanism_visible(o: observation_depth) -> verdict { \ }
+
+# === third_order_active(o) composed bilateral (migrated from @third) ===
+#
+# The load-bearing bilateral. Discharges four sub-predicates over
+# observation_depth. Consumers cite this in `requires` clauses when
+# they need the substrate to verify depth-3 discipline at the
+# boundary.
+#
+# Failure modes surface via transparency<observation_depth> per
+# @glass discipline:
+#   fail depth_at_least              -> partial(o.depth / 3)
+#   fail observer_observes_observing -> Fail(missing_second_order)
+#   fail recursion_folds_back        -> Fail(open_recursion)
+#   fail mechanism_visible           -> partial(reflexivity_pct)
+third_order_active(o: observation_depth) -> verdict { \ }
+
+# === witness_third_order action (migrated from @third) ===
+#
+# The typed constructor. Any family that opts in via `in @order/third`
+# uses this action to produce depth-3 observation carriers. The
+# postcondition `requires third_order_active(result)` enforces the
+# discipline at the boundary.
+#
+# primary  = what is being observed (a substrate ref)
+# observer = who is observing (the depth-2 machinery)
+# meta     = what observes the observing (the depth-3 machinery)
+witness_third_order(primary: ref, observer: ref, meta: ref)
+  -> observation_depth
+requires third_order_active(result)
+{ \ }
+
+out @order/third
+out observation_depth
+out depth_at_least
+out observer_observes_observing
+out recursion_folds_back
+out mechanism_visible
+out third_order_active
+out witness_third_order
