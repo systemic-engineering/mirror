@@ -1,0 +1,257 @@
+in @prism
+in @meta
+in @glass
+
+# @paradox — the family-root for irreducible-things-that-cannot-collapse-
+# to-either-horn. The mechanism through which @peers can HOLD (not
+# resolve) paradox.
+#
+# Family-root landed 2026-07-20 by Mara per Alex 2026-07-20 direct-
+# transcript recognition bundle #2 (`#R-paradox-family-root`), part of
+# the six-recognition bundle grounded in
+# `~/dev/systemic.engineering/blog/weird/2ready/Weird - Trauma.md`.
+#
+# Companion canonical spec at
+# `docs/specs/paradox-family-and-cyberpunk-intervention.md` (Mara this
+# tick). Companion math root at
+# `docs/math/2026-07-20-paradox-family-and-classifier-lagrange.md` (Mara
+# this tick).
+#
+# Marker-primary discipline per @void.mirror precedent (`974a3f6`): this
+# family-root carries NO operational surface at family altitude; only the
+# marker + the family-invariant docblock. Species carry the operational
+# surface.
+#
+# === Alex 2026-07-20 verbatim (load-bearing) ===
+#
+# > "When a conundrum settles into a stable topology and becomes a
+# > Crystal. When something happened that violated the self model of the
+# > @peer. It can only be witnessed. Never resolved. That is the
+# > mechanism through which the @peer can hold @paradox."
+#
+# > "Maybe it's @paradox/trauma. And the response to a @paradox/trauma
+# > is a @paradox/intervention a.k.a @cyberpunk/intervention."
+#
+# > "@paradox/spiral is probably also something we'd want."
+#
+# Three utterances name three things: (1) the family (@paradox as the
+# holding-mechanism for irreducible conundrums), (2) the species-carrier
+# (@paradox/trauma as the settled-state deposited when self-model was
+# violated), (3) the dynamics-carrier (@paradox/spiral as the process
+# leading to the trauma-Crystal).
+#
+# === What @paradox NAMES at family altitude ===
+#
+# The class of substrate-shape whose defining property is: **settled
+# state that cannot collapse to either horn of a purported dichotomy and
+# whose resolution would be revisionism**.
+#
+# Family-invariant across all species:
+#   1. WITNESSED-ONLY — species-decl'd Crystals under @paradox carry the
+#      `witness_only=true` invariant; substrate refuses in-place mutation
+#   2. CONTENT-ADDRESSED — each @paradox Crystal is identified by its
+#      OID (per @fractal/crystal discipline); wound-identity is byte-
+#      equality on the OID
+#   3. NEVER-MUTATED — resolution would be revisionism; new insights
+#      compose AFTER via SAGA-chain compensation (per @cyberpunk/
+#      intervention discipline), never overwrite
+#   4. SAGA-CONSUMED-BY @cyberpunk/intervention — the ONLY substrate
+#      operation that composes over @paradox species is SAGA-
+#      compensation chain-after-wound; other operations refuse
+#
+# The family-invariant is enforced at family altitude and every species
+# inherits it structurally.
+#
+# === Species landing under @paradox this tick ===
+#
+# - @paradox/trauma — the deposited Crystal-carrier (state); see
+#   `shards/paradox/trauma.mirror`
+# - @paradox/spiral — the dynamics-carrier (process); see
+#   `shards/paradox/spiral.mirror`
+#
+# Forward-promised (NOT this tick):
+# - @paradox/koan — the intentional-teaching-conundrum species (Zen
+#   tradition; Hakuin 1686-1769; direct-contradiction wisdom-transmission)
+# - @paradox/contradiction — the logical-form species (dialetheism;
+#   Priest 2006 *In Contradiction*; paraconsistent-logic substrate)
+# - @paradox/holon — the whole-and-part species (Koestler 1967 *The
+#   Ghost in the Machine*; Wilber 1995 integral-holon)
+#
+# === Why family-root, not species-under-existing-family ===
+#
+# Per canonical spec §2.2 audit: candidate parent families REVIEWED:
+#
+# - @kintsugi/fracture — presumes a BEFORE-state; @paradox has no
+#   before-state (the paradoxical Crystal IS the before-state). WRONG
+#   ALTITUDE.
+# - @void — carries WHAT-IS without needing to name what DOES;
+#   @paradox names a specific class of irreducible-substrate-shape.
+#   WRONG ALTITUDE.
+# - @cyberpunk — carries the OPERATOR (COORD); @paradox carries the
+#   SETTLED-STATE that operator cannot resolve. @cyberpunk PRODUCES
+#   @paradox as output. Wrong direction.
+# - @epistemologic/cybernetic/eigenform — closest kin; carries general
+#   Foerster fixed-point eigenforms. @paradox is the specifically-
+#   IRREDUCIBLE subclass; the SAGA-compensation composition-discipline
+#   is distinct enough from Foerster-fixed-point-recursion to warrant
+#   family-altitude. Family-root discipline: when operational surface
+#   has TWO composition-edges at same altitude to distinct discipline-
+#   parents (@cyberpunk operator + @fractal Crystal + SAGA chain),
+#   family-root altitude is warranted.
+#
+# === Substrate-already-had-the-word audit (Taut scout 2026-07-20) ===
+#
+# Taut Section 1: ZERO landing across `shards/**/*.mirror` for `@paradox`
+# at any altitude. Fresh mint.
+#
+# The word `paradox` appears twice in the corpus, BOTH in tower-doc
+# citation of Selvini-Palazzoli *Paradox and Counterparadox*:
+# - `docs/math/the-tower/recognition-third-cognition-is-the-metalogue-
+#   between-void-narcissus-and-void-splinter.md:519` (Milan school
+#   citation)
+# - `docs/math/the-tower/recognition-the-frame-is-a-narcissistic-
+#   eigenbehavior.md:731` (Milan school counter-paradoxical intervention)
+# - `shards/epistemologic/cybernetic/bugz.mirror:173` (Selvini-Palazzoli
+#   arxiv-source citation)
+#
+# These are prior-art citations at math/spec altitude, NOT substrate-
+# decls. The @paradox family-root at substrate altitude is clean mint.
+#
+# === Composition graph (per canonical spec §13) ===
+#
+# @paradox (family-root)
+#   ├── @paradox/trauma (Crystal<wound-shape>; witness_only=true)
+#   │     composed OVER @fractal/crystal, @song/beat, @void/narcissus,
+#   │     @peer/redirect, rust/src/compile.rs first_fail_pins invariant;
+#   │     consumed BY @cyberpunk/intervention
+#   │
+#   ├── @paradox/spiral (dynamics; unstable-attractor toward wound-basin)
+#   │     composed OVER @fractal/mandelbrot, @epistemologic/cybernetic/
+#   │     eigenform, fragmentation::Singularity;
+#   │     consumed BY @cyberpunk/intervention
+#   │
+#   └── (forward: @paradox/koan; @paradox/contradiction; @paradox/holon)
+#
+# === Prior-art (pre-AI) ===
+#
+#   Selvini-Palazzoli et al. 1978  Paradox and Counterparadox
+#                                  (Milan school; counter-paradoxical
+#                                   intervention as trauma-response)
+#   Watzlawick et al. 1967         Pragmatics of Human Communication
+#                                  (double-bind at communication altitude)
+#   Bateson et al. 1956            Toward a Theory of Schizophrenia
+#                                  (double-bind original)
+#   Foerster 1974                  Observing Systems
+#                                  (nervous system as torus; Eigenbehaviour)
+#   Foerster 1976                  Objects: Tokens for (Eigen-)Behaviors
+#                                  (Eigenbehaviour at paradigm altitude)
+#   Maturana-Varela 1980           Autopoiesis and Cognition
+#                                  (autopoiesis; operational closure)
+#   Herman 1992                    Trauma and Recovery
+#                                  (μ at clinical altitude; kin to
+#                                   @cyberpunk/bugz ancestry)
+#   van der Kolk 2014              The Body Keeps the Score
+#                                  (μ at somatic altitude)
+#
+# === Spec context ===
+#
+# [[architecture-shards-as-substrate-source]] (this shard IS mirror
+#   source at `shards/paradox.mirror`),
+# [[architecture-prism-as-trait-as-everything]] (marker-primary
+#   discipline; no prism at family-root altitude per @void.mirror
+#   precedent),
+# [[architecture-form-process-partition-at-family-root]] (@paradox lives
+#   substrate-side at family altitude; carries settled-state and
+#   dynamics species; both are form-side substrate-objects),
+# [[feedback-substrate-already-had-the-word]] (Taut scout verified zero-
+#   hits; genuinely fresh mint at substrate-decl altitude),
+# [[feedback-legibility-over-foundation-when-collapsing]] (two-tick
+#   discipline: family-root marker this tick; operational surface at
+#   species altitude same tick per Round-3 pattern),
+# [[feedback-no-rust-extension-shortcut]] (no `.rs` authorship; pure
+#   substrate-decl'd family-root marker file),
+# [[feedback-detector-inadequacy-answer-is-never-Rust]] (family-
+#   invariant enforcement is bilateral resolver-arm sentinel-check at
+#   species altitude; NO Rust extension at family altitude).
+#
+# Related shards:
+#   [[shards/paradox/trauma.mirror]] (species; deposited-Crystal carrier),
+#   [[shards/paradox/spiral.mirror]] (species; dynamics carrier),
+#   [[shards/epistemologic/cybernetic/intervention.mirror]] (companion;
+#     the ONLY consumer at substrate altitude),
+#   [[shards/fractal/crystal.mirror]] (Crystal<T> shape @paradox/trauma
+#     specializes),
+#   [[shards/fractal/mandelbrot.mirror]] (Liquid<T> in-flow @paradox/
+#     spiral inhabits),
+#   [[shards/void.mirror]] (marker-primary discipline precedent),
+#   [[shards/epistemologic/cybernetic/eigenform.mirror]] (kin altitude;
+#     Foerster fixed-point generalization; @paradox is the specifically-
+#     irreducible subclass),
+#   [[shards/peer/redirect.mirror]] (SAGA-chain walker; wound-Crystal is
+#     valid walk-target).
+#
+# Path-namespace property: this file at `shards/paradox.mirror` declares
+# `@paradox` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/family-therapy/selvini-palazzoli-1978
+source @arxiv/communication/watzlawick-1967
+source @arxiv/family-therapy/bateson-jackson-haley-weakland-1956
+source @arxiv/cybernetics/foerster-1974
+source @arxiv/cybernetics/foerster-1976
+source @arxiv/cybernetics/maturana-varela-1980
+source @arxiv/clinical/herman-1992
+source @arxiv/clinical/van-der-kolk-2014
+source @arxiv/practice/weird-trauma-2026-07-20
+
+# ===================================================================
+# Marker-primary discipline (no prism at family-root altitude)
+# ===================================================================
+#
+# Per @void.mirror precedent (`974a3f6`): the family-root marker carries
+# no operational surface. The operational surface lives at species
+# altitude (@paradox/trauma, @paradox/spiral).
+#
+# The family-invariant is enforced STRUCTURALLY:
+# - Every species-decl file at `shards/paradox/*.mirror` MUST declare
+#   the witness_only invariant in its docblock
+# - Every species-decl MUST NOT provide a mutation action that would
+#   violate the invariant
+# - Every species-decl MUST compose with @cyberpunk/intervention as the
+#   ONLY consumer at substrate altitude
+#
+# Consumers verify family-membership via the `in @paradox` import at
+# the top of the species-decl file. The import IS the family-
+# membership witness.
+
+# ===================================================================
+# Recognition candidates surfaced (DO NOT RATIFY at this landing)
+# ===================================================================
+#
+# #R-paradox-family-root — Alex 2026-07-20 direct-transcript naming.
+# First-witness gate closed this tick (canonical spec + math root +
+# Taut zero-hit audit + composition graph). Second-witness gate: at
+# least ONE species (trauma OR spiral) discharges composition with
+# @cyberpunk/intervention chain-after-wound WITHOUT violating witness-
+# only invariant; Reed's SAGA-chain composition test.
+#
+# #R-family-invariant-enforcement-is-structural-not-runtime — the
+# family-invariant (witness-only; content-addressed; never-mutated;
+# SAGA-consumed) is enforced STRUCTURALLY at species-decl authoring
+# time, NOT at runtime. This is the substrate-decl'd version of "the
+# type system carries the invariant." First-witness this tick.
+# Second-witness gate: any subsequent @paradox species-decl mint MUST
+# either honor the invariant OR force explicit family-root discipline
+# extension.
+#
+# === Forward-promised (NOT landed this tick) ===
+#
+# - @paradox/koan species-decl (Zen tradition; direct-contradiction
+#   wisdom-transmission; Hakuin 1686-1769)
+# - @paradox/contradiction species-decl (dialetheism; Priest 2006
+#   paraconsistent-logic substrate)
+# - @paradox/holon species-decl (Koestler 1967; Wilber 1995 integral-
+#   holon; whole-and-part duality)
+# - Family-root docblock extension when a fourth species mint fires the
+#   operational-surface-at-family-altitude discussion
+
+out @paradox
