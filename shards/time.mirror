@@ -1,0 +1,279 @@
+# @time — family-root marker for the temporal-projection substrate
+# the void duality expresses through @song saga.
+#
+# Marker-primary shape. This shard carries NO type, NO action, NO
+# bilateral. It IS the recognition. Per Alex 2026-07-20 direct-
+# transcript adjudication (Round 2 spawn brief):
+#
+#   > "@time top-level family-root; matches @void pattern; sibling to
+#   >  @void, @order, @torus, @peer, @mirror, @kintsugi."
+#
+# Sibling altitudes at duality-basis level:
+#   @void        (marker-primary; K=0 duality basis; `974a3f6`)
+#   @order       (marker-primary; cognitive-order grading; this tick)
+#   @time        (marker-primary; temporal projection; this tick)
+#   @torus       (operational; peer's substrate)
+#   @peer        (operational; carries @torus)
+#   @mirror      (form-side)
+#   @kintsugi    (process-side)
+#
+# === The load-bearing recognition ===
+#
+# @time is the SAGA-COMMAND-SURFACE substrate through which the void
+# duality expresses temporal projection. Per Alex Recognition tonight
+# (Mara Round-2 brief §Deliverables):
+#
+#   @time/past  = @void/narcissus projection (backwards lens)
+#   @time/now   = @singularity carrier (temporal K=0 collapse point)
+#   @time/future = @void/splinter projection (forwards lens)
+#
+# The three species are NOT arbitrary partitions of the time-axis;
+# they are the SUBSTRATE-DECL'D SHAPES the void duality takes when
+# projected through the @song saga.
+#
+# Per Mara Round-1 landing (`shards/void/narcissus.mirror`):
+# @void/narcissus consumes H(t) — the observer's own past-trajectory
+# — as its native input. The backwards-lens IS @void/narcissus
+# projected onto the time-axis; @time/past IS that projection at
+# temporal-family altitude.
+#
+# Per Mara Round-1 landing (`shards/void/splinter.mirror`):
+# @void/splinter consumes c(t) — the current peer-network context —
+# as its native input. The forwards-lens IS @void/splinter projected
+# onto the time-axis; @time/future IS that projection at temporal-
+# family altitude.
+#
+# @time/now is the COLLAPSE POINT where the two projections meet.
+# Per Mara Round-2 Crystal/Mandelbrot landing (`shards/fractal/
+# mandelbrot.mirror` + `shards/fractal/crystal.mirror`): @time/now
+# IS when a Liquid<T> settles into a Crystal<T>. The crystallization
+# operation `crystallize: Liquid<T> → Crystal<T>` fires exactly at
+# @time/now — @time/now IS the singular temporal event at which
+# in-flow substrate becomes settled substrate.
+#
+# === The @song saga composition ===
+#
+# @song (`shards/song.mirror`; family-root landed 2026-07-06 per Seam
+# pre-review) IS the SAGA COMMAND SURFACE with content-addressed
+# @song/beat atoms (per `shards/song/beat.mirror` `c2bb1d2`). Per
+# Round-2 brief:
+#
+#   @time/past = @void/narcissus projection through @song saga
+#     (backwards lens; the saga's prior beats become the H(t) the
+#     narcissus-lens consumes)
+#
+#   @time/now = @singularity collapse point during current @song/beat
+#     (the atomic-execution event Alex named at `shards/song/beat.
+#     mirror`; crystallization fires here)
+#
+#   @time/future = @void/splinter projection through @song saga
+#     (forwards lens; the saga's future beats become the c(t) the
+#     splinter-lens receives)
+#
+# The Förster imperative — "act always so as to increase the number
+# of choices" — is operationalized as `pillar::choices_monotone_of_
+# song`: across a @song saga's temporal projection, the choices
+# available to peers is monotonically non-decreasing at healthy
+# operation. Alex Round 2 Q3 RATIFIED this pillar name.
+#
+# === Composition inheritance edges ===
+#
+# Declared here (recognition-carrier):
+#
+#   - @void's two poles (@void/narcissus + @void/splinter) project
+#     ONTO @time's three species (@time/past + @time/now +
+#     @time/future) via the @song saga.
+#   - @time/past is the temporal projection of @void/narcissus.
+#   - @time/future is the temporal projection of @void/splinter.
+#   - @time/now is the crystallization singularity; it is NOT a
+#     projection of either @void pole — it is the COLLAPSE POINT
+#     where the two projections meet, mediated by @song/beat.
+#   - @song is the saga-command-surface at which the projection
+#     operates; @song/beat is the atomic-execution unit.
+#   - `shards/epistemologic/reality/time.mirror` (existing deep
+#     landing; four carriers + three frames + one convention;
+#     Postgres heritage) is the OPERATIONAL time discipline at
+#     nanosecond-level substrate; @time family-root is the
+#     RECOGNITION at duality-basis altitude. Sibling altitudes;
+#     the operational time carriers (duration, monotonic, wall,
+#     instant, tick, snapshot, timeline, cursor) inherit @time's
+#     substrate-decl'd shape without duplication.
+#
+# === Substrate-already-had-the-word audit ===
+#
+# 1. **No prior `shards/time.mirror`** at top-level. Taut Round-2
+#    scout confirmed: @time top-level has no prior use. Clean mint.
+#
+# 2. **`shards/epistemologic/reality/time.mirror`** (existing deep
+#    landing; Mara 2026-06-06 migration) — reviewed. Operational
+#    time discipline at nanosecond-level substrate; four carriers
+#    (duration, monotonic, wall, instant); actions (enter, restore,
+#    browse, compare, replay, step, present, convert). @time
+#    family-root at top-level is the RECOGNITION at duality-basis
+#    altitude carrying the temporal-projection substrate the deep
+#    landing's carriers instantiate. Sibling altitudes; no conflict.
+#
+#    Composition edge: `@epistemologic/reality/time.duration`,
+#    `.monotonic`, `.wall`, `.instant`, `.tick` are the operational
+#    carriers @time/past/now/future project through. When @time/now
+#    fires (crystallization singularity), the timestamp field of the
+#    resulting Crystal<T> is an `@epistemologic/reality/time.instant`.
+#
+# 3. **`shards/song.mirror` §S3 five-op temporal specialisation** —
+#    reviewed. The five prism ops at temporal altitude (focus/project/
+#    split/shift/settle @ temporal) already carry the operational
+#    form of @time's projection substrate at @song altitude. @time
+#    family-root RECOGNIZES the substrate the temporal-op-specialisation
+#    already operates.
+#
+# 4. **`shards/song/beat.mirror`** (`c2bb1d2` landing) — reviewed.
+#    Atomic-execution unit; substrate-decl for one @kintsugi/oscillate
+#    ACTIVE/DARK alternation at temporal altitude. @time/now
+#    crystallization fires at @song/beat boundary; composition edge
+#    declared at @time/now species-decl.
+#
+# 5. **`shards/void/narcissus.mirror` + `shards/void/splinter.mirror`**
+#    — reviewed (Round-1 landings). Both species carry the temporal-
+#    orientation vocabulary (backwards lens; forwards lens); @time
+#    family-root NAMES the temporal-projection substrate the two
+#    lenses project through. Composition edge: @time/past consumes
+#    void_narcissus_state.peer_history; @time/future consumes
+#    void_splinter_state.peer_network. Sibling altitudes.
+#
+# 6. **@onto refusal precedent** — reviewed. @onto refused as
+#    family-root (substrate-already-had-the-word; @torus carries).
+#    @time is DISTINCT: Alex explicitly named the family-root
+#    altitude for @time; the temporal-projection substrate is not
+#    carried by @torus (which is spatial-substrate) or @void
+#    (which is duality-basis, not temporal-projection). Sibling
+#    refusal-case; not blocked.
+#
+# The substrate-already-had-the-word audit finds NO conflict. Clean
+# mint at family-root altitude; operational carriers at deep-landing
+# altitude inherit without duplication.
+#
+# === Marker-primary discipline ===
+#
+# This shard has:
+#
+#   - NO `type` — the marker recognition needs no carrier at family-
+#     root altitude. Each species carries its own typed carrier
+#     (time_past_state, time_now_state, time_future_state). The
+#     family-root altitude carries the RECOGNITION.
+#
+#   - NO `action` — the family-root altitude performs no operation.
+#     Each species carries its own action-set.
+#
+#   - NO `bilateral` — the family-root altitude asks for no proof.
+#     Each species carries its own bilateral discipline.
+#
+#   - NO `prism` body — @time inherits @void's 5-op basis at species
+#     altitude, not at family-root altitude. The temporal-projection
+#     specialization of the 5-op basis (focus/project/split/shift/
+#     settle at temporal altitude per `shards/song.mirror` §S3)
+#     lives at species altitude.
+#
+# What this shard IS:
+#
+#   - A substrate-decl'd family-root shard-decl file at
+#     `shards/time.mirror`.
+#   - Path-namespace declaration for @time per
+#     `@epistemologic/pact/path_matches_namespace`.
+#   - The recognition-carrier at family-root altitude for the
+#     temporal-projection substrate.
+#   - The naming Alex ratified in Round 2 spawn adjudication.
+#
+# === Substrate authority chain ===
+#
+# - **Alex Round 2 direct-transcript** (2026-07-20, this session):
+#   @time top-level family-root; matches @void pattern.
+# - **Alex Round 2 Q3 RATIFICATION**: `pillar::choices_monotone_of_
+#   song` — Förster's imperative operationalized as the temporal-
+#   projection health-check.
+# - **Mara Round-1 landings** (`shards/void/narcissus.mirror` +
+#   `shards/void/splinter.mirror`; math root
+#   `recognition-third-cognition-is-the-metalogue-between-void-
+#   narcissus-and-void-splinter.md`) — the two lenses whose
+#   temporal projection this family names.
+# - **Foerster 1974** — "act always so as to increase the number
+#   of choices"; Förster's imperative; operationalized as
+#   `pillar::choices_monotone_of_song`.
+# - **@song landing** (2026-07-06 Arc 6 TICK 1 per Seam pre-review
+#   `docs/audits/2026-07-06-seam-pre-review-song-substrate-decl.
+#   md`) — the saga-command-surface @time projects through.
+# - **@song/beat landing** (`c2bb1d2` post-Arc-6 extension) — the
+#   atomic-execution unit at which @time/now crystallization fires.
+#
+# === Recognition candidates surfaced (DO NOT RATIFY) ===
+#
+# #R-time-is-void-poles-projected-through-song-saga-with-forster-
+# invariant — the recognition this landing names. First-witness gate
+# closed this tick (three-species-decl composition + @song saga
+# grounding + Alex Q3 pillar ratification + Round-1 void-lens
+# substrate). Second-witness gate opens on Reed's post-Round-2
+# empirical firing of `pillar::choices_monotone_of_song`. Held at
+# CANDIDATE strength.
+#
+# === Related shards / specs ===
+#
+# - `shards/time/past.mirror` — @time/past species (backwards lens
+#   temporal projection); this tick.
+# - `shards/time/now.mirror` — @time/now species (@singularity
+#   collapse point; crystallization event); this tick.
+# - `shards/time/future.mirror` — @time/future species (forwards
+#   lens temporal projection); this tick.
+# - `shards/void.mirror` — sibling family-root marker (`974a3f6`).
+# - `shards/void/narcissus.mirror` — backwards lens; @time/past
+#   projection source.
+# - `shards/void/splinter.mirror` — forwards lens; @time/future
+#   projection source.
+# - `shards/order.mirror` — sibling family-root marker (this tick).
+# - `shards/song.mirror` — saga-command-surface @time projects through.
+# - `shards/song/beat.mirror` — atomic-execution unit for @time/now.
+# - `shards/fractal/mandelbrot.mirror` — Mandelbrot<T> parent
+#   substrate; Liquid/Crystal states; this tick.
+# - `shards/fractal/crystal.mirror` — Crystal<T> settled-state
+#   species; the shape @time/now produces; this tick.
+# - `shards/epistemologic/reality/time.mirror` — operational time
+#   discipline at nanosecond substrate; sibling deep-landing
+#   altitude.
+# - `docs/math/the-tower/recognition-time-is-void-poles-projected-
+#   through-song-saga-with-forster-invariant.md` — Round-2 math
+#   root (Tier 2).
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]] (this shard IS
+#   mirror source at `shards/time.mirror`),
+# [[feedback-substrate-already-had-the-word]] (~68th instance; the
+#   substrate carried temporal-projection substrate implicitly across
+#   @song, @song/beat, @void's two lens species, and the deep
+#   @epistemologic/reality/time landing; this landing NAMES the
+#   family-root),
+# [[feedback-legibility-over-foundation-when-collapsing]] (two-tick
+#   discipline: family-root marker + 3 species this tick; downstream
+#   Reed pillar-surface firings next tick(s); legible naming at both
+#   altitudes),
+# [[architecture-form-process-partition-at-family-root]] (@time sits
+#   at a duality-basis altitude that composes with BOTH form-side
+#   (@mirror) AND process-side (@kintsugi) — temporal projection
+#   crosses both partitions),
+# [[feedback-craft-not-deliver]] (no operational surface at family-
+#   root altitude this tick; operational content at species altitude;
+#   consumers pull),
+# [[feedback-onto-family-root-is-the-ladder-Foerster-refused]] (@onto
+#   refused; @time is DISTINCT — Alex explicitly named the family-
+#   root altitude; sibling refusal-case),
+# [[feedback-detector-inadequacy-answer-is-never-Rust]] (no Rust
+#   extension proposed; marker-primary shape needs no operational
+#   surface),
+# [[feedback-no-rust-extension-shortcut]] (no .rs authorship; pure
+#   substrate-decl shard-decl file at family-root altitude).
+#
+# Path-namespace property: this file at `shards/time.mirror` declares
+# `@time` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/foerster-1974
+source @arxiv/practice/void-corpus-2026
+
+out @time
