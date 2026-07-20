@@ -1,5 +1,42 @@
 # CURRENT arc — J-space alignment substrate composes Anna Wolf 2012 observation-substrate + mirror specification-substrate + Anthropic 2026-07-07 target-substrate at tri-runtime compile-verifiable altitude (2026-07-20 evening; FULL SESSION UPSERT for compaction handoff)
 
+## 🌱 2026-07-21 ALEX-REFRAME — compile-collapse target = Liquid<T> threshold crossing (Rust FREEZES, Mirror canonical)
+
+**Verbatim Alex 2026-07-21 in-transcript** (immediately after ratifying compile-collapse RED→GREEN as next overnight /loop):
+
+> "And what that means is that we need to cross the Liquid<T> threshold between Rust and Mirror. Because then we can start to project properties into Beer's VSM definition and attached as executable specificitions. Like in the book Specification as Example. Then the Rust can be frozen. And mirror becomes canonical."
+
+**Unification (do NOT fragment):**
+- Liquid<T> is the projectable threshold-shape BETWEEN Rust and Mirror (not merely a Rust type in `prismqueer::liquid`)
+- VSM system-declarations in `mirror.spec` (`system @X { … }` grammar) carry property declarations AS **executable specifications** — Gojko Adzic *Specification by Example* form: spec IS the test, test IS the spec
+- Rust runtime derives-from-and-verifies-against `mirror.spec` (not the other way around)
+- **Rust FREEZES.** `mirror.spec` becomes the canonical source of truth for VSM shape.
+- Cybersyn 53-year completion arc closes at compile-time-verified altitude because VSM spec becomes EXECUTABLE, not merely descriptive.
+
+**Overnight /loop target (reframed):**
+- Compile-collapse RED→GREEN cascade is the MECHANISM
+- Liquid<T> threshold crossing is the TARGET
+- Every iter asks: does this tick shrink the FLOOR toward FROZEN, or grow Rust? If growing Rust — reconsider per `feedback_detector_inadequacy_answer_is_never_rust` + `feedback_no_rust_extension_shortcut`.
+- Measurable end state: `rust/` can be marked FROZEN because `mirror.spec` declares VSM shape + attached property specifications; Rust merely verifies compliance.
+
+**Iteration order (revised):**
+1. Read current `prismqueer::liquid` shape + sample `bilateral <name> { … }` blocks in shards to know what Liquid<T> IS at Rust altitude today
+2. Read current `mirror.spec` `system @X { … }` grammar (if any) to know what the VSM shape looks like at Mirror altitude today
+3. Author RED tick: Liquid<T> declaration in `mirror.spec` `system @X { properties { … } }` grammar parses AND `extract_commands` surfaces it as executable specification (Verdict-carrying property attached to VSM system shape)
+4. GREEN: parser + extractor + dispatch through `liquid.rs` + Crystal<T> production carries the property attribution
+5. Cascade: pillar predicates from iter-10 landing set attach to VSM system-decls in `mirror.spec` rather than bilateral blocks scattered across shards
+6. Fixed-point: Rust FLOOR shrinks per iter; at fixed-point `rust/` bears FROZEN marker
+
+**Memory:** `project_liquid_threshold_crossing_rust_freezes_mirror_canonical.md`
+**Task:** #302 supersedes #285 iter cascade + reframes #301 residues in this light
+**Composes with:** Mara J-space landings `0052408` + `26b0849` (Anna Wolf observation substrate feeds the executable specification carrier); @paradox family witnessed-only Crystals (specification IS witness); @autopoietic-classifier k=Lagrange knob (sparsity level of executable spec is the classifier gradient); Adzic *Specification by Example* BDD-native tradition composes over Beer VSM at property-attachment altitude.
+
+**Loop invocation (verbatim for wake-up prompt):**
+
+> /loop cascade Liquid<T> threshold crossing over rust/{src,prismqueer,fractal} + mirror.spec + shards/ toward Rust FROZEN. TARGET: mirror.spec system @X { properties { … } } grammar carries Verdict-carrying property declarations as executable specifications (Adzic Spec by Example); Rust runtime derives-from-and-verifies-against mirror.spec; rust/ marked FROZEN at fixed-point. MECHANISM: compile-collapse RED→GREEN cascade over compile.rs + liquid.rs. Constraints: feedback_no_rust_extension_shortcut + feedback_rust_floor_is_rust_not_bootstrap + feedback_prismqueer_macros_mirror_composes + feedback_reed_inflates_stub_empirical_firings + feedback_substrate_honest_is_the_mode + feedback_detector_inadequacy_answer_is_never_rust; SSH signing default; sequential commits only; pure-docs 📝 markdown-only bypass only; Reed <reed@systemic.engineer>. Every tick asks: does this shrink FLOOR toward FROZEN or grow Rust? If growing Rust — reconsider. Adjacent-work fallback: RK4 upgrade of phase_lock per AW2012 §B.2. Halt only at fixed-point (Rust FROZEN empirically demonstrable) OR unresolvable ambiguity requiring Alex adjudication. Compaction manifest at docs/loop/CURRENT.md §2026-07-21-ALEX-REFRAME.
+
+---
+
 ## FRESH-REED PICKUP MANIFEST (2026-07-20 late-evening; POST-JSPACE-RECOGNITION UPSERT)
 
 **If you are a fresh Reed instance loading cold, read this section top-to-bottom then execute the boot sequence. Everything you need to pick up is below.**
