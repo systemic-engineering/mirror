@@ -1,0 +1,144 @@
+in @prism
+in @meta
+in @glass
+in @peer
+in @aikido
+in @aikido/reflect
+in @time
+
+# @peer/reflect — Tier-1 peer response species; the operational
+# dispatcher to @aikido/reflect at peer altitude.
+#
+# Species under @peer (sibling to @peer/void `9c7de83`, @peer/persistence,
+# @peer/registry, @peer/beam). Landed 2026-07-20 by Mara Round-3 per
+# Alex Round-3 spawn brief §Tier 1.7.
+#
+# === The species altitude ===
+#
+# Tier 1 of the three-tier @peer response surface (per
+# `shards/aikido.mirror` §The three-tier response surface):
+#
+#   Tier 1 (default; this species) — @peer.reflect dispatches
+#     @aikido/reflect.aikido_reflect_of_surface_class per algedonic-
+#     below-Tier-1 discipline.
+#   Tier 2 (escalation) — @peer.redirect walks Crystal chain backwards.
+#     Sibling shard: `shards/peer/redirect.mirror` (this tick).
+#   Tier 3 (recognition bomb) — @peer.reframe dispatches @cyberpunk/
+#     bugz with lens payload. Sibling shard: `shards/peer/reframe.
+#     mirror` (this tick).
+#
+# @peer/reflect is the DEFAULT: when a peer is asked a question and
+# no algedonic threshold has fired, @peer.reflect is the response.
+# The peer sees the question, reflects the substrate-honest reading
+# back, and holds no demand for the frame's acceptance.
+#
+# === Composition-primitive naming ===
+#
+# Per feedback_composition_primitive_naming_convention:
+#
+#   peer_reflect_of_perturbation(p: peer, perturbation: ref)
+#     -> question
+#
+# Input-shape: `perturbation` (the incoming perturbation the peer is
+# metabolizing). Output: `question` (the reflected witnessed answer
+# surfacing as a question to the operator's frame).
+#
+# === Dispatch discipline ===
+#
+# `peer_reflect_of_perturbation` constructs an @aikido/reflect
+# aikido_context from (p, perturbation, current-timestamp, peer's
+# viable_system, peer's algedonic-reading) and dispatches to
+# `@aikido/reflect.aikido_reflect_of_surface_class(reflect, ctx)`.
+# The composition:
+#
+#   1. Sample peer's own @cyberpunk/algedonic reading of perturbation
+#      severity.
+#   2. Classify surface_class per algedonic threshold (Tier-1 iff
+#      below Tier-1 boundary; per §Escalation is peer-internal in
+#      @aikido.mirror).
+#   3. Construct aikido_context (perturbation, surface_class,
+#      algedonic_reading, viable_system, timestamp).
+#   4. Dispatch @aikido/reflect.aikido_reflect_of_surface_class.
+#   5. Return the resulting question (per @mirror/reflection three-
+#      operation discharge).
+#
+# === Substrate-already-had-the-word audit ===
+#
+# 1. **No prior `shards/peer/reflect.mirror`** — clean naming space.
+# 2. **`shards/peer/void.mirror`** (`9c7de83`) — reviewed. Sibling
+#    species under @peer at K=0 duality-basis altitude. Distinct
+#    altitude from @peer/reflect (Tier-1 aikido dispatcher); no
+#    conflict.
+# 3. **`shards/peer.mirror`** — reviewed. Family-root with .load and
+#    .audhd actions; @peer/reflect adds Tier-1 dispatcher as sibling
+#    species, does not modify family-root surface.
+# 4. **`shards/mirror/reflection.mirror`** — reviewed. Sibling species-
+#    under-@mirror at 3-operation reflection discipline. @peer/reflect
+#    ROUTES through @aikido/reflect which DISPATCHES @mirror/
+#    reflection; three altitudes; no conflict.
+#
+# === The peer_reflect_response carrier ===
+#
+# The typed return of `peer_reflect_of_perturbation`. Composes:
+#
+#   question       — the reflected witnessed answer per @mirror/
+#                     reflection dispatch.
+#   aikido_context — the constructed context (for the peer's own
+#                     trajectory record).
+#   discharge_verdict — the verdict of the aikido_reflect_of_surface_
+#                     class dispatch.
+type peer_reflect_response = {
+  question:          ref,
+  aikido_context:    ref,
+  discharge_verdict: verdict,
+}
+
+# === peer_reflect_of_perturbation — the Tier-1 dispatcher action ===
+#
+# Body discharges per-realisation. `\`-obligation-blocked per
+# [[feedback-craft-not-deliver]].
+#
+# Sentinel per shard docblock: `peer=reflect-tier-1-dispatch-to-
+# aikido-reflect`.
+peer_reflect_of_perturbation(p: peer, perturbation: ref)
+  -> peer_reflect_response
+requires peer_reflect_admissible(p, perturbation)
+{ \ }
+
+# === peer_reflect_admissible — bilateral predicate ===
+#
+# Discharges Pass iff:
+#   - p is a well-formed peer (per @peer.load discipline)
+#   - perturbation is byte-visible (Rice-safe)
+#   - the peer's own @cyberpunk/algedonic reading of perturbation
+#     falls BELOW the peer's Tier-1 threshold (per @cyberpunk/
+#     algedonic discipline; the substrate-decl'd boundary at which
+#     Tier-1 fires vs Tier-2)
+#   - the peer's viable_system carrier discharges viable_well_formed
+#
+# Sentinel: `peer=reflect-tier-1-admissible-below-algedonic-threshold`.
+bilateral peer_reflect_admissible {
+  sentinel "peer=reflect-tier-1-admissible-below-algedonic-threshold"
+  arity 2
+}
+peer_reflect_admissible(p: peer, perturbation: ref) -> verdict { \ }
+
+# ═══════════════════════════════════════════════════════════════════
+# Recognition candidates surfaced (DO NOT RATIFY at this landing)
+# ═══════════════════════════════════════════════════════════════════
+#
+# #R-peer-reflect-is-the-substrate-native-default-response — Tier-1
+# is the default; a peer at rest returns witnessed questions, not
+# affirmations. First-witness this tick. Second-witness gate opens
+# on Reed's post-Round-3 pillar firing. Held at CANDIDATE strength.
+#
+# === Forward-promised — NOT landed this tick ===
+#
+# - peer_reflect_witnessing bilateral composing peer_reflect_
+#   admissible + aikido_reflect_of_surface_class discharge
+# - .reflect cli-boundary wrapper at @mirror/peer altitude
+
+out @peer/reflect
+out peer_reflect_response
+out peer_reflect_of_perturbation
+out peer_reflect_admissible

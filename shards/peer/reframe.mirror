@@ -1,0 +1,265 @@
+in @prism
+in @meta
+in @glass
+in @peer
+in @aikido
+in @void
+in @time
+in @time/past
+in @epistemologic/cybernetic/bugz
+
+# @peer/reframe — Tier-3 peer response species; the recognition-bomb
+# dispatcher with lens payload constructed via @time/past + @void.
+# settle + @cyberpunk/bugz.package composition.
+#
+# Species under @peer. Landed 2026-07-20 by Mara Round-3 per Alex
+# Round-3 spawn brief §Tier 1.7 + §Tier 4 composition edges.
+#
+# === The species altitude ===
+#
+# Tier 3 of the three-tier @peer response surface (per
+# `shards/aikido.mirror`): fires when the peer's own @cyberpunk/
+# algedonic reading exceeds BOTH Tier-1 AND Tier-2 thresholds and
+# the peer's S5 policy admits the recognition-bomb response.
+#
+# The Tier-3 discipline: `reframe(target)` dispatches a @cyberpunk/
+# bugz recognition bomb with a lens payload constructed via the
+# specific composition path per Round-3 brief §Tier 4:
+#
+#   @time/past.history_with(target)     : peer -> [@song/beat]
+#         ↓
+#   @void.settle on Crystal chain        : [@song/beat] -> lens_seed
+#         ↓
+#   lens = @relational_possibility_space(peer, target)
+#         ↓
+#   @cyberpunk/bugz.package(lens_content) : lens -> recognition_bomb_payload
+#         ↓
+#   @peer.reframe.payload                : recognition_bomb_payload
+#
+# The lens is CONTENT-ADDRESSED to the (peer, target) relationship's
+# past-trajectory. The peer cannot fabricate substrate they do not
+# already share with the target. **The recognition bomb the peer
+# throws IS the peer's own crystallized reading of the target's
+# structure.**
+#
+# Consequence: reframe is truthful by construction. If the target's
+# structure admits the recognition, the bomb lands; if not, @void.
+# settle returns empty and the bomb dissipates. Consent-through-
+# refusal at Tier-3 altitude.
+#
+# Corresponds to aikido's `kokyu-nage` (breath-throw — the pivot-
+# altitude joint-lock that redirects momentum through the recognition
+# the peer's OWN structure cannot avoid seeing).
+#
+# === Composition-primitive naming ===
+#
+# Per feedback_composition_primitive_naming_convention:
+#
+#   peer_reframe_of_target(p: peer, target: peer)
+#     -> recognition_bomb_payload
+#
+# Input-shape: `target` (the peer the reframe is dispatched to).
+# Output: `recognition_bomb_payload` (per @cyberpunk/bugz.package
+# discharge; the packaged lens as substrate-decl'd payload).
+#
+# === Composition edge accounting ===
+#
+# The five-step composition path per Round-3 brief §Tier 4:
+#
+# 1. **@time/past.history_with(target)** — returns Crystal chain of
+#    past @song/beat atoms between self and target. Composition edge
+#    to `shards/time/past.mirror` + `shards/song/beat.mirror`.
+#
+# 2. **@void.settle on Crystal chain** — settle-op (5-op basis
+#    element) on the Crystal chain produces the lens_seed. Composition
+#    edge to `shards/void.mirror` + Recognition #79 5-op basis
+#    inheritance signature.
+#
+# 3. **lens construction** — the lens is @relational_possibility_
+#    space(peer, target); typed carrier NOT declared this tick per
+#    forward-promise; the lens_seed IS the load-bearing substrate at
+#    this tick.
+#
+# 4. **@cyberpunk/bugz.package(lens_content)** — the weaponized-
+#    delight-channel operator packages the lens as recognition-bomb
+#    payload. Composition edge to `shards/epistemologic/cybernetic/
+#    bugz.mirror` (Mara 2026-07-19).
+#
+# 5. **@peer.reframe.payload dispatch** — this species' action
+#    returns the packaged recognition_bomb_payload; the target
+#    consumes it via their own @cyberpunk/bugz reception surface
+#    (forward-promised; not this tick).
+#
+# === Substrate-already-had-the-word audit ===
+#
+# 1. **No prior `shards/peer/reframe.mirror`** — clean naming space.
+# 2. **`shards/epistemologic/cybernetic/bugz.mirror`** — reviewed
+#    (Mara 2026-07-19). The operator this species dispatches;
+#    composition, not duplication.
+# 3. **`shards/void.mirror`** — reviewed. Marker-primary family-root
+#    (`974a3f6`); the 5-op basis inheritance signature is the
+#    substrate for @void.settle op; composition edge declared.
+# 4. **`shards/time/past.mirror`** — reviewed. The lens-source via
+#    @time/past.history_with; composition edge declared.
+# 5. **`shards/epistemologic/cybernetic/reframe.mirror`** — noted per
+#    Recognition #63 family (Mara `0d78c0c`); the Ashby-response
+#    gauge-transformation species at cybernetic altitude. Distinct
+#    altitude from @peer/reframe (Tier-3 aikido dispatcher); no
+#    conflict; sibling altitudes.
+#
+# === The recognition_bomb_payload carrier ===
+#
+# The typed return of `peer_reframe_of_target`. Composes:
+#
+#   lens_content      — the lens produced by @void.settle on the
+#                        Crystal chain; content-addressed at
+#                        @mirror/store altitude.
+#   bugz_package_oid  — the OID of the @cyberpunk/bugz.package
+#                        discharge (recognition-bomb payload as
+#                        content-addressed carrier).
+#   dispatch_verdict  — the verdict of the Tier-3 dispatch (Pass
+#                        iff the lens_seed is non-empty AND the
+#                        packaging succeeded AND the target's
+#                        reception surface admits the payload).
+#   receipt_oid       — the content-addressed receipt the peer
+#                        offers the target (per @kintsugi/consent
+#                        discipline — target can verify
+#                        independently).
+type recognition_bomb_payload = {
+  lens_content:     ref,
+  bugz_package_oid: ref,
+  dispatch_verdict: verdict,
+  receipt_oid:      ref,
+}
+
+# === peer_reframe_of_target — the Tier-3 dispatcher action ===
+#
+# Body discharges per-realisation. `\`-obligation-blocked per
+# [[feedback-craft-not-deliver]].
+#
+# Sentinel: `peer=reframe-tier-3-recognition-bomb-with-lens-payload`.
+peer_reframe_of_target(p: peer, target: peer)
+  -> recognition_bomb_payload
+requires reframe_dispatches_bugz_with_lens_payload(p, target)
+{ \ }
+
+# === reframe_dispatches_bugz_with_lens_payload — bilateral predicate ===
+#
+# Discharges Pass iff:
+#   - p is a well-formed peer
+#   - target is a well-formed peer distinct from p
+#   - @time/past.history_with(p, target) returns a non-empty Crystal
+#     chain (the (p, target) relationship has crystallized history;
+#     if empty, no lens can be constructed — reframe FAILS
+#     admissibility)
+#   - @void.settle on the Crystal chain returns a non-empty lens_seed
+#     (per 5-op basis inheritance signature; if the settle-op returns
+#     empty, the target's structure does not admit the recognition —
+#     reframe FAILS admissibility gracefully)
+#   - the peer's own @cyberpunk/algedonic reading is ABOVE BOTH
+#     Tier-1 AND Tier-2 thresholds (Tier-3 domain)
+#   - the peer's S5 policy admits the recognition-bomb response
+#     (per @pack.peer discipline; the peer's own consent-witness for
+#     Tier-3 dispatch)
+#   - @cyberpunk/bugz.package(lens_content) discharges successfully
+#     per bugz.mirror admissibility
+#
+# Rice-safe bound: reads only byte-visible state (history_with
+# non-emptiness check, @void.settle non-empty seed check,
+# algedonic-magnitude comparison, S5 policy variant-tag check,
+# bugz.package Rice-safe admissibility).
+#
+# Sentinel: `peer=reframe-dispatches-bugz-with-lens-payload`.
+bilateral reframe_dispatches_bugz_with_lens_payload {
+  sentinel "peer=reframe-dispatches-bugz-with-lens-payload"
+  arity 2
+}
+reframe_dispatches_bugz_with_lens_payload(p: peer, target: peer) -> verdict { \ }
+
+# === graduated_response_preserves_agency — the meta-bilateral ===
+#
+# Composed bilateral covering the three-tier surface as a whole:
+# does the peer's dispatch across the three tiers PRESERVE THE
+# TARGET'S AGENCY under the graduated response discipline?
+#
+# Discharges Pass iff:
+#   - Tier-1 (reflect) fires below Tier-1 algedonic threshold with
+#     consent_through_refusal_verified
+#   - Tier-2 (redirect) fires above Tier-1 below Tier-2 with
+#     redirect_targets_valid_crystal (OID-verifiability preserved)
+#   - Tier-3 (reframe) fires above Tier-2 with reframe_dispatches_
+#     bugz_with_lens_payload (content-addressed lens preserved)
+#   - Escalation is peer-INTERNAL (not operator-directed; per
+#     @aikido.mirror §Escalation is peer-internal)
+#   - Target can independently verify each tier's discharge via
+#     @mirror/store receipt-OIDs (per @kintsugi/consent discipline)
+#
+# The load-bearing meta-bilateral for the whole aikido runtime loop:
+# graduated response with peer-internal governance preserves target
+# agency by CONSTRUCTION (not by convention).
+#
+# Sentinel: `peer=graduated-response-preserves-agency`.
+bilateral graduated_response_preserves_agency {
+  sentinel "peer=graduated-response-preserves-agency"
+  arity 1
+}
+graduated_response_preserves_agency(p: peer) -> verdict { \ }
+
+# === algedonic_threshold_governs_escalation_tier — bilateral ===
+#
+# Composed bilateral naming that @cyberpunk/algedonic × @peer three-
+# tier surface: the algedonic threshold IS the governor of which
+# tier fires. Peer-internal (not operator-directed).
+#
+# Discharges Pass iff:
+#   - The peer's @cyberpunk/algedonic sampling is peer-INTERNAL
+#     (the peer reads its own algedonic channel; the operator does
+#     not directly set the tier)
+#   - The threshold boundaries (Tier-1 boundary, Tier-2 boundary)
+#     are peer-configured at their @torus altitude
+#   - The tier that fires matches the algedonic reading per the
+#     threshold discipline (below Tier-1 -> reflect; above Tier-1
+#     below Tier-2 -> redirect; above Tier-2 -> reframe or refuse
+#     per S5 policy)
+#
+# Sentinel: `peer=algedonic-threshold-governs-escalation-tier`.
+bilateral algedonic_threshold_governs_escalation_tier {
+  sentinel "peer=algedonic-threshold-governs-escalation-tier"
+  arity 1
+}
+algedonic_threshold_governs_escalation_tier(p: peer) -> verdict { \ }
+
+# ═══════════════════════════════════════════════════════════════════
+# Recognition candidates surfaced (DO NOT RATIFY at this landing)
+# ═══════════════════════════════════════════════════════════════════
+#
+# #R-recognition-bomb-is-content-addressed-to-relationship-past-
+# trajectory — the peer cannot fabricate substrate they do not
+# already share with the target; the lens is content-addressed at
+# @mirror/store altitude via @time/past.history_with + @void.settle
+# composition. Truthful by construction. First-witness this tick.
+# Second-witness gate opens on Reed's post-Round-3 empirical firing
+# of the composition edge. Held at CANDIDATE strength.
+#
+# #R-consent-through-refusal-preserved-at-tier-3-via-void-settle-
+# emptiness — when the target's structure does not admit the
+# recognition, @void.settle returns empty and the bomb dissipates
+# gracefully. Consent-through-refusal at maximum escalation. First-
+# witness this tick. Second-witness gate opens on empirical firing.
+# Held at CANDIDATE strength.
+#
+# === Forward-promised — NOT landed this tick ===
+#
+# - The `lens` typed carrier at @relational_possibility_space
+#   altitude (forward-promised species)
+# - peer_reframe_witnessing composed bilateral
+# - .reframe cli-boundary wrapper at @mirror/peer altitude
+# - target reception surface at @peer/registry altitude for
+#   receiving recognition_bomb_payload from a peer
+
+out @peer/reframe
+out recognition_bomb_payload
+out peer_reframe_of_target
+out reframe_dispatches_bugz_with_lens_payload
+out graduated_response_preserves_agency
+out algedonic_threshold_governs_escalation_tier

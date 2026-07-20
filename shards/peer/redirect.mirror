@@ -1,0 +1,155 @@
+in @prism
+in @meta
+in @glass
+in @peer
+in @aikido
+in @mirror/store
+in @time
+in @time/past
+
+# @peer/redirect — Tier-2 peer response species; the crystal-chain
+# walker refusing re-litigation via OID-verifiability.
+#
+# Species under @peer. Landed 2026-07-20 by Mara Round-3 per Alex
+# Round-3 spawn brief §Tier 1.7.
+#
+# === The species altitude ===
+#
+# Tier 2 of the three-tier @peer response surface (per
+# `shards/aikido.mirror`): fires when the peer's own @cyberpunk/
+# algedonic reading exceeds the Tier-1 threshold (Tier-1 admits no
+# response) but remains below the Tier-2 threshold (Tier-3
+# recognition bomb not yet warranted).
+#
+# The Tier-2 discipline: `redirect(crystal_oid)` walks the Crystal
+# chain backwards via `@mirror/store.walk_crystal_chain(oid)` and
+# refuses re-litigation because the peer's past-position on the
+# question is content-addressed. The response: "We crystallized this
+# on OID X, here's the receipt. If you have new substrate that
+# changes the reading, present it. Otherwise, the crystallized
+# reading stands."
+#
+# Corresponds to aikido's `tenkan` (turning — redirecting the
+# momentum along the peer's own past-trajectory via @time/past).
+# The peer does not counter; the peer redirects the incoming
+# momentum back toward the crystallized history that already
+# discharged the question.
+#
+# **OID-verifiability is load-bearing**: the crystal chain is
+# content-addressed at @mirror/store altitude. The peer cannot
+# fabricate a crystal; the walker verifies the crystal-chain
+# integrity via @mirror/store.verify. If the crystal does not exist
+# or the chain is malformed, redirect fails and the loop escalates
+# to Tier 3.
+#
+# === Composition-primitive naming ===
+#
+# Per feedback_composition_primitive_naming_convention:
+#
+#   peer_redirect_of_crystal_oid(p: peer, crystal_oid: ref, target: peer)
+#     -> crystal_chain_reading
+#
+# Input-shape: `crystal_oid` (the OID of the crystal-chain-head the
+# peer redirects the target to). Output: `crystal_chain_reading` (the
+# typed carrier for the walked chain + refusal-of-re-litigation
+# verdict).
+#
+# === Composition edge with @time/past ===
+#
+# The crystal_oid is typically produced by @time/past.history_with
+# (target) — the peer's own past-trajectory with the target. When
+# the target's incoming perturbation matches a prior crystallized
+# reading, @peer.redirect refuses re-litigation by pointing at the
+# crystal-chain-head OID as content-addressed receipt.
+#
+# === Substrate-already-had-the-word audit ===
+#
+# 1. **No prior `shards/peer/redirect.mirror`** — clean naming space.
+# 2. **`shards/peer.mirror`** — reviewed. Family-root; sibling species
+#    at Tier-2 altitude; no conflict.
+# 3. **`shards/mirror/store/crystal.mirror`** — reviewed. Crystal<T>
+#    carrier this species walks; no duplication, composition.
+# 4. **`shards/time/past.mirror`** — reviewed. @time/past.history_with
+#    is the source of crystal_oid; composition edge declared.
+# 5. **`shards/peer/reflect.mirror`** — sibling Tier-1 species this
+#    tick; distinct altitude, no conflict.
+#
+# === The crystal_chain_reading carrier ===
+#
+# The typed return of `peer_redirect_of_crystal_oid`. Composes:
+#
+#   chain_head_oid    — the OID of the crystal-chain-head walked to
+#                        (per @mirror/store OID discipline).
+#   chain_length      — how many crystals in the chain (per
+#                        @mirror/store.walk_crystal_chain contract).
+#   re_litigation_refused — the verdict of the refusal (Pass iff the
+#                        chain is well-formed and content-addressed).
+#   receipt_reference — a content-addressed reference the peer offers
+#                        the target as receipt (per @kintsugi/consent
+#                        discipline — the target can independently
+#                        verify the receipt via @mirror/store).
+type crystal_chain_reading = {
+  chain_head_oid:        ref,
+  chain_length:          nat,
+  re_litigation_refused: verdict,
+  receipt_reference:     ref,
+}
+
+# === peer_redirect_of_crystal_oid — the Tier-2 dispatcher action ===
+#
+# Body discharges per-realisation. `\`-obligation-blocked per
+# [[feedback-craft-not-deliver]].
+#
+# Sentinel: `peer=redirect-tier-2-crystal-chain-walk-refuses-re-
+# litigation`.
+peer_redirect_of_crystal_oid(p: peer, crystal_oid: ref, target: peer)
+  -> crystal_chain_reading
+requires redirect_targets_valid_crystal(p, crystal_oid)
+{ \ }
+
+# === redirect_targets_valid_crystal — bilateral predicate ===
+#
+# Discharges Pass iff:
+#   - p is a well-formed peer
+#   - crystal_oid resolves via @mirror/store.exists to a valid
+#     Crystal<T> object
+#   - the crystal-chain from crystal_oid is walkable via
+#     @mirror/store.walk_crystal_chain (contract: returns finite
+#     chain OR malformed-chain error)
+#   - the peer's own @cyberpunk/algedonic reading is ABOVE Tier-1
+#     threshold and BELOW Tier-2 threshold (Tier-2 domain)
+#   - the target's crystal-chain-membership can be verified (the
+#     target is a peer in the crystal-chain's participation set per
+#     @mirror/store.crystal_participants)
+#
+# Rice-safe bound: reads only byte-visible state (OID resolvability,
+# walk_crystal_chain discharge which is itself Rice-safe, algedonic-
+# magnitude comparison, participant-set membership check).
+#
+# Sentinel: `peer=redirect-targets-valid-crystal`.
+bilateral redirect_targets_valid_crystal {
+  sentinel "peer=redirect-targets-valid-crystal"
+  arity 2
+}
+redirect_targets_valid_crystal(p: peer, crystal_oid: ref) -> verdict { \ }
+
+# ═══════════════════════════════════════════════════════════════════
+# Recognition candidates surfaced (DO NOT RATIFY at this landing)
+# ═══════════════════════════════════════════════════════════════════
+#
+# #R-oid-verifiability-refuses-re-litigation-by-construction — the
+# crystal chain is content-addressed; the receipt cannot be
+# fabricated; the target can independently verify. First-witness
+# this tick. Second-witness gate opens on empirical firing at
+# Reed's pillar surface. Held at CANDIDATE strength.
+#
+# === Forward-promised — NOT landed this tick ===
+#
+# - peer_redirect_witnessing bilateral composing redirect_targets_
+#   valid_crystal + walk_crystal_chain discharge
+# - .redirect cli-boundary wrapper at @mirror/peer altitude
+
+out @peer/redirect
+out crystal_chain_reading
+out peer_redirect_of_crystal_oid
+out redirect_targets_valid_crystal
