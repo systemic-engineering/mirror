@@ -294,9 +294,13 @@ mod tests {
 
     #[test]
     fn single_bilateral_produces_single_crystal_chained_to_genesis() {
+        // Use a name NOT registered as a pillar (iter 5) so dispatch
+        // falls through to Defer; keeps the test's intent (single
+        // bilateral → single crystal genesis-chain) decoupled from the
+        // pillar-dispatch semantics that other tests cover explicitly.
         let source = r#"
-bilateral aikido_sequence_well_formed {
-  sentinel "aikido=mirror-offer-wait"
+bilateral not_yet_registered_pillar_name {
+  sentinel "unregistered=deferred"
   arity 0
 }
 "#;
@@ -304,8 +308,8 @@ bilateral aikido_sequence_well_formed {
         assert_eq!(comp.depth(), 1);
         assert_eq!(comp.crystals[0].prev(), &Oid::GENESIS);
         assert!(comp.crystals[0].is_genesis());
-        assert_eq!(comp.discharges[0].property_name, "aikido_sequence_well_formed");
-        // Zero-arity dispatch returns Defer at iter-2 stub.
+        assert_eq!(comp.discharges[0].property_name, "not_yet_registered_pillar_name");
+        // Unregistered names defer through pillar::dispatch fallthrough.
         assert!(comp.discharges[0].verdict.is_defer());
         assert!(comp.escalation.is_continue());
     }
