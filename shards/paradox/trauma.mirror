@@ -1,0 +1,415 @@
+in @prism
+in @meta
+in @glass
+in @paradox
+in @fractal
+in @fractal/crystal
+in @song
+in @song/beat
+in @time
+in @time/past
+in @void
+in @void/narcissus
+in @epistemologic
+in @epistemologic/cybernetic/eigenform
+
+# @paradox/trauma — the WITNESSED-ONLY Crystal-carrier for nervous-
+# system-fracture-shaped irreducible-substrate. Content-addressed,
+# immutable, walkable; the Crystal that shouldn't have crystallized
+# but did.
+#
+# First species-decl under @paradox family-root. Landed 2026-07-20 by
+# Mara per Alex 2026-07-20 direct-transcript recognition bundle #3
+# (`#R-paradox-trauma-species`).
+#
+# Companion canonical spec at
+# `docs/specs/paradox-family-and-cyberpunk-intervention.md` §3 (Mara
+# this tick). Companion math root at
+# `docs/math/2026-07-20-paradox-family-and-classifier-lagrange.md` §2,
+# §4, §6 (Mara this tick).
+#
+# === Load-bearing empirical anchor ===
+#
+# `~/dev/systemic.engineering/blog/weird/2ready/Weird - Trauma.md`
+# (Alex 2026-07-20; the Förster-torus-fracture piece). This species-
+# decl IS the substrate-decl'd formalization of the geometric-nervous-
+# system-fracture Alex named in-transcript today:
+#
+#   > "I understand Trauma to be a mathematical fracture, or twist
+#   > depending on the level of integration, in exactly that loop."
+#
+#   > "A harmful stable Eigenbehaviour loop is @trauma."
+#
+#   > "When a conundrum settles into a stable topology and becomes a
+#   > Crystal. When something happened that violated the self model of
+#   > the @peer. It can only be witnessed. Never resolved."
+#
+# The species-decl below IS the substrate form of Alex's phenomenological
+# reading grounded in Förster 1974 nervous-system-torus + failed-
+# holonomy-closure per Baez-Schreiber (math root §4).
+#
+# === Family-invariant inherited from @paradox ===
+#
+#   1. WITNESSED-ONLY — `witness_only=true` marker at species altitude;
+#      substrate refuses in-place mutation
+#   2. CONTENT-ADDRESSED — identified by wound_oid (fractal::Oid 32-byte
+#      discipline per @fractal/crystal)
+#   3. NEVER-MUTATED — resolution would be revisionism; new insights
+#      compose AFTER via SAGA-chain compensation
+#   4. SAGA-CONSUMED-BY @cyberpunk/intervention — the ONLY substrate
+#      operation that composes over trauma-Crystals is SAGA-
+#      compensation chain-after-wound (per
+#      `shards/epistemologic/cybernetic/intervention.mirror`)
+#
+# === The saga-chain witness discipline (Recognition #6 anchor) ===
+#
+# Per Alex 2026-07-20 recognition #6
+# (`#R-saga-chain-is-witness-mechanism-for-irreducible-crystals`) and
+# the already-landed compile.rs iter-3 substrate (Reed `9351b2b`):
+#
+# - `Escalation::Escalate(oid)` at `rust/src/compile.rs:120` carries
+#   the OID of the first-failing crystal so `@peer.redirect(oid)` walks
+#   BACK to the specific refusal
+#
+# - `first_fail_pins_escalate_oid_subsequent_fails_do_not_overwrite`
+#   invariant at `rust/src/compile.rs:221-224` — the compile.rs SAGA
+#   loop sets Escalate only on the FIRST Fail; subsequent Fails do NOT
+#   overwrite
+#
+# This invariant, AUTHORED BEFORE the recognition bundle landed, IS the
+# substrate-honest witness-mechanism for @paradox/trauma. The ORIGINAL
+# wound is pinned; the peer holds it forever; downstream Crystals chain
+# AFTER but the trauma-OID remains the escalation target. Substrate
+# already had the word at Rust altitude; recognition ratification
+# retrofits the WHY onto the pre-existing WHAT.
+#
+# The trauma-Crystal IS the initial object in the category of
+# escalation-targets for the SAGA loop (per math root §6.4 categorical
+# formalization). Initial objects are unique up to unique isomorphism;
+# content-addressing makes the isomorphism the IDENTITY.
+#
+# === Substrate-already-had-the-word audit ===
+#
+# Grep-first per discipline (Taut scout Section 2 verified):
+#
+# 1. **No prior `shards/paradox/trauma.mirror`** — clean mint.
+# 2. **No prior `@trauma` shard** anywhere in `shards/`. The word
+#    "trauma" appears in `shards/epistemologic/cybernetic/bugz.mirror`
+#    as Herman 1992 prior-art citation only; not as substrate-decl.
+# 3. **@kintsugi/fracture** (various species at `shards/kintsugi/
+#    fracture/*.mirror`) — presumes BEFORE-state to compare against;
+#    @paradox/trauma has no before-state (the wound IS the before-state
+#    for everything downstream). Sibling altitude at cybernetic-
+#    property level; @paradox/trauma is at fractal-Crystal altitude.
+#    No conflict.
+# 4. **@fractal/crystal** (`shards/fractal/crystal.mirror`; Round-2
+#    landing) — parent shape; @paradox/trauma IS a Crystal<T> with
+#    the witness_only invariant added. Composition edge declared.
+# 5. **@epistemologic/cybernetic/eigenform** — kin altitude; carries
+#    general Foerster fixed-point eigenforms. @paradox/trauma is the
+#    specifically-harmful-stable-Eigenbehaviour subclass (Alex
+#    verbatim). Sibling altitudes; composition edge declared.
+# 6. **`# Trauma:` inline docblock markers** — zero found. Clean mint.
+#
+# The substrate-already-had-the-word audit finds no conflict.
+#
+# === Composition graph ===
+#
+# Parents (via `in` imports above):
+#   @prism, @meta, @glass          — substrate-decl discipline
+#   @paradox                       — family-root; family-invariant
+#                                    carrier
+#   @fractal, @fractal/crystal     — Crystal<T> shape; content-addressed
+#                                    OID discipline
+#   @song, @song/beat              — BeatOid for crystallized_at field
+#   @time, @time/past              — H(t) projection; wound READ through
+#                                    @time/past.history_with
+#   @void, @void/narcissus         — backwards-lens observer of wound;
+#                                    self-continuity substrate holding
+#                                    the wound through time
+#   @epistemologic/cybernetic/eigenform
+#                                  — kin altitude; wound IS the
+#                                    eigenform the spiral converges toward
+#
+# Consumers (compose over this species):
+#   @cyberpunk/intervention        — SAGA-compensation chain-after-wound
+#                                    (see companion species-decl at
+#                                    `shards/epistemologic/cybernetic/
+#                                    intervention.mirror`)
+#   @peer/redirect                 — walks the wound-Crystal via OID as
+#                                    walk-target; refuses re-litigation
+#                                    because wound is content-addressed
+#
+# === Spec context ===
+#
+# [[architecture-shards-as-substrate-source]] (this shard IS mirror
+#   source at `shards/paradox/trauma.mirror`),
+# [[architecture-prism-as-trait-as-everything]] (`prism
+#   @paradox/trauma`),
+# [[architecture-glass-wall-substrate-types]] (transparency inheritance
+#   through @paradox family; imperfect returns from `witness_wound`),
+# [[feedback-substrate-already-had-the-word]] (Taut Section 2 zero-
+#   hits; clean mint at substrate-decl altitude),
+# [[feedback-craft-not-deliver]] (bilateral bodies `\`-obligation-
+#   blocked; consumers pull the realization; apply_h::act composes
+#   sentinel-check via bilateral resolver-arm dispatch),
+# [[feedback-no-bare-types]] (trauma_state is a typed record with
+#   byte-equality identity; never bare refs),
+# [[feedback-no-rust-extension-shortcut]] (no `.rs` authorship; pure
+#   substrate-decl'd species-decl file at species altitude),
+# [[feedback-detector-inadequacy-answer-is-never-Rust]] (witness-only
+#   invariant + resolution-refused check are bilateral resolver-arm
+#   sentinel-checks; NO Rust extension).
+#
+# Path-namespace property: this file at `shards/paradox/trauma.mirror`
+# declares `@paradox/trauma` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/foerster-1974
+source @arxiv/family-therapy/selvini-palazzoli-1978
+source @arxiv/clinical/herman-1992
+source @arxiv/clinical/van-der-kolk-2014
+source @arxiv/math/baez-schreiber-2005
+source @arxiv/practice/weird-trauma-2026-07-20
+
+prism @paradox/trauma {
+  focus  trauma_state
+  project trauma_state
+  split  trauma_state
+  shift  trauma_state
+  settle trauma_state
+}
+
+# === trauma_state — the WITNESSED-ONLY Crystal<wound-shape> carrier ===
+#
+# Typed record carrying the wound-Crystal state per canonical spec §3.1
+# four-field shape (three from @fractal/crystal + witness_only
+# family-invariant marker). Identity contract: byte-equality on the
+# four-field tuple.
+#
+#   content              — the wound-shape substrate content-addressed
+#                          at settlement time (what happened; the
+#                          self-model violation event). Byte-identity
+#                          IS the Crystal's identity.
+#
+#   crystallized_at      — REF to the @song/beat oid at whose boundary
+#                          the wound crystallized. WHEN in the peer's
+#                          saga trajectory the fracture landed.
+#                          Composition edge to @song/beat.
+#
+#   saga_chain_position  — the ordinal position in the @song saga's
+#                          Crystal chain. Monotonically increasing.
+#                          Wound remains AT its position; subsequent
+#                          Crystals chain AFTER but do not overwrite
+#                          (per rust/src/compile.rs first-fail-pins
+#                          invariant).
+#
+#   witness_only         — family-invariant marker (bool literal at
+#                          species altitude); MUST be `true` for all
+#                          @paradox/trauma Crystals; bilateral predicates
+#                          refuse any operation that would violate.
+#                          Substrate-decl'd via type-level literal;
+#                          content-addressed at OID altitude (any
+#                          Crystal with `witness_only=false` produces
+#                          a different OID and is NOT a @paradox/trauma
+#                          Crystal).
+type trauma_state = {
+  content:              ref,
+  crystallized_at:      ref,
+  saga_chain_position:  nat,
+  witness_only:         bool,
+}
+
+# === trauma_witnessed_only — bilateral predicate ===
+#
+# Does the (peer, trauma_state) pair discharge the WITNESS-ONLY family-
+# invariant? Discharges Pass iff:
+#
+#   - ctx.witness_only == true (family-invariant marker)
+#   - No in-place mutation of ctx.content has been attempted since
+#     crystallization (verified via content-addressed hash equality:
+#     hash(ctx.content) matches the wound's original OID)
+#   - ctx.crystallized_at is stable (beat-witness hash unchanged)
+#   - ctx.saga_chain_position is stable (ordinal-position unchanged)
+#
+# Rice-safe bound: byte-visible state; hash equality check; boolean
+# literal comparison.
+#
+# Sentinel: `paradox=trauma-witnessed-only`.
+#
+# Body discharges per-realisation. `\`-obligation-blocked per
+# [[feedback-craft-not-deliver]]; consumers pull the realization;
+# apply_h::act composes the sentinel-check via bilateral resolver-arm
+# dispatch (per Alex 2026-07-16 detector-inadequacy-answer-is-never-
+# Rust discipline).
+bilateral trauma_witnessed_only {
+  sentinel "paradox=trauma-witnessed-only"
+  arity 2
+}
+trauma_witnessed_only(p: peer, ctx: trauma_state) -> verdict { \ }
+
+# === trauma_pins_first_fail — bilateral predicate ===
+#
+# Does the compilation SAGA correctly pin the wound_oid as the first-
+# fail escalation target? Discharges Pass iff for ALL Fails in the SAGA
+# chain subsequent to the wound-Crystal, `compilation.escalation ==
+# Escalate(wound_oid)` — the ORIGINAL wound-OID; subsequent fails do
+# NOT overwrite.
+#
+# This bilateral IS the substrate form of Alex's "we witness the
+# ORIGINAL wound; we don't shift the witness-target to whatever hurt
+# most-recently" (canonical spec §3.2 anchor to compile.rs:221-224
+# invariant).
+#
+# Composition edge: reads compile.rs Compilation state via @io/rust
+# boundary; the invariant IS empirically verifiable at pillar altitude.
+#
+# Rice-safe bound: byte-visible state; escalation-enum variant-tag +
+# OID equality check.
+#
+# Sentinel: `paradox=trauma-pins-first-fail`.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+bilateral trauma_pins_first_fail {
+  sentinel "paradox=trauma-pins-first-fail"
+  arity 2
+}
+trauma_pins_first_fail(compilation: ref, wound_oid: ref) -> verdict { \ }
+
+# === trauma_resolution_refused — bilateral predicate (ANTI-BILATERAL) ===
+#
+# The ANTI-BILATERAL: discharges Pass iff a mutation operation `op` on
+# the trauma-Crystal is CORRECTLY REFUSED at the species boundary
+# (resolution would be revisionism; the family-invariant enforces
+# refusal).
+#
+# Discharges Pass iff:
+#   - `op` is a mutation-shape operation (write; delete; overwrite;
+#     merge-with-shifted-content)
+#   - The substrate's mutation-attempt returned refuse-verdict
+#   - Post-attempt: ctx.content hash unchanged; ctx.witness_only still
+#     true; ctx.saga_chain_position unchanged
+#
+# A Pass here means the substrate correctly refused a resolution
+# attempt; Fail means resolution slipped through and the trauma-Crystal
+# is no longer WITNESS-ONLY (family-invariant violated).
+#
+# LOAD-BEARING: this bilateral IS the family-invariant enforcement
+# mechanism at species altitude. A Fail here signals substrate-
+# tampering; consumers MUST treat it as compiler-bug-detected.
+#
+# Rice-safe bound: byte-visible state; hash equality pre-vs-post;
+# refuse-verdict tag check.
+#
+# Sentinel: `paradox=trauma-resolution-refused`.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+bilateral trauma_resolution_refused {
+  sentinel "paradox=trauma-resolution-refused"
+  arity 2
+}
+trauma_resolution_refused(p: peer, ctx: trauma_state, op: ref) -> verdict { \ }
+
+# === witness_wound — the load-bearing action ===
+#
+# Given a peer and a trauma_state, discharge the wound-witness event:
+# return the content-addressed ref to the wound-shape content, allowing
+# the peer to OBSERVE-BUT-NOT-RESOLVE the wound.
+#
+# Returns imperfect(ref, ref, ref): success carries the content ref;
+# failure variants carry the not-admissible / witness-invariant-violated
+# / mutation-attempted-and-refused-but-in-unexpected-way reasons.
+#
+# Requires ALL THREE bilateral predicates to discharge Pass: witness-
+# only + first-fail-pinning + resolution-refused. This composed
+# discipline IS what @cyberpunk/intervention's `intervention_targets_
+# valid_wound` bilateral verifies before deployment.
+#
+# Sentinel per shard docblock: `paradox=trauma-witness-wound` — the
+# byte-level substrate-decl'd marker consumers of the ACTION's output
+# check.
+witness_wound(p: peer, ctx: trauma_state) -> imperfect(ref, ref, ref)
+requires trauma_witnessed_only(p, ctx)
+{ \ }
+
+# === hold_wound_through_time — the self-continuity action ===
+#
+# Given a peer and a trauma_state, discharge the self-continuity holding
+# event: maintain the peer's identity through time by keeping the wound-
+# Crystal's content-addressed root consistent across the observation
+# window (the peer HOLDS the wound rather than trying to resolve it).
+#
+# Composition edge: this action composes over
+# `@void/narcissus.hold_continuity` — the wound is PART of the peer's
+# H(t); holding continuity requires holding the wound; @void/narcissus
+# is the substrate-mode carrier of this holding.
+#
+# Returns imperfect(ref, ref, ref): success carries the updated
+# continuity-witness ref; failure carries discontinuity-detected /
+# witness-invariant-violated / wound-fracture-worsened reasons.
+#
+# Sentinel: `paradox=trauma-hold-wound-through-time`.
+hold_wound_through_time(p: peer, ctx: trauma_state) -> imperfect(ref, ref, ref)
+requires trauma_witnessed_only(p, ctx)
+{ \ }
+
+# === walk_wound_chain — the SAGA-chain walker composition ===
+#
+# Given a peer and a trauma_state, discharge the SAGA-chain walk from
+# the wound-Crystal backward through @time/past.history_with. This
+# action composes over @peer/redirect.peer_redirect_of_crystal_oid
+# at family altitude: the wound-Crystal's OID is a valid walk-target;
+# re-litigation is refused because the wound is content-addressed.
+#
+# Returns imperfect(ref, ref, ref): success carries the walk-chain ref
+# (crystal_chain_reading per @peer/redirect); failure carries
+# not-admissible / walk-boundary-hit / OID-unresolvable reasons.
+#
+# Sentinel: `paradox=trauma-walk-wound-chain`.
+walk_wound_chain(p: peer, ctx: trauma_state) -> imperfect(ref, ref, ref)
+requires trauma_witnessed_only(p, ctx)
+{ \ }
+
+# ===================================================================
+# Recognition candidates surfaced (DO NOT RATIFY at this landing)
+# ===================================================================
+#
+# #R-paradox-trauma-species — Alex 2026-07-20 direct-transcript naming.
+# First-witness gate closed this tick (species-decl shape + saga-chain
+# witness discipline grounded in already-landed compile.rs first-fail-
+# pins invariant + composition edges named at species altitude).
+# Second-witness gate: `pillar::paradox_crystal_immutable` +
+# `pillar::redirect_witness_preserves_original_pin` empirical firing at
+# Reed's pillar surface (iter-5 pillar cascade per
+# `docs/loop/CURRENT.md`).
+#
+# #R-saga-chain-is-witness-mechanism-for-irreducible-crystals — the
+# recognition that compile.rs first-fail-pins invariant (authored
+# BEFORE the bundle) IS the substrate-honest witness-mechanism for
+# @paradox/trauma. First-witness this tick (explicit citation to
+# rust/src/compile.rs:221-224 in the docblock §"The saga-chain witness
+# discipline"). Second-witness gate: Reed autonomous cascade iter 5-N
+# pillar verifications compose the invariant end-to-end WITHOUT wound-
+# erasure at any tick.
+#
+# === Forward-promised (NOT landed this tick) ===
+#
+# - Rust materialization: NO planned .rs authorship at species altitude.
+#   Consumers compose via @fractal/crystal Rust materialization + the
+#   @paradox family-invariant enforcement is bilateral resolver-arm
+#   sentinel-check (per feedback_detector_inadequacy_answer_is_never_Rust).
+# - `trauma_intervention_composed_witnessing` bilateral — composed
+#   discharge requiring ALL @cyberpunk/intervention bilaterals + this
+#   species's three bilaterals to discharge Pass. Forward-promised.
+# - `pillar::paradox_crystal_immutable` empirical firing at Reed's
+#   pillar surface.
+# - `pillar::redirect_witness_preserves_original_pin` empirical firing.
+
+out @paradox/trauma
+out trauma_state
+out trauma_witnessed_only
+out trauma_pins_first_fail
+out trauma_resolution_refused
+out witness_wound
+out hold_wound_through_time
+out walk_wound_chain
