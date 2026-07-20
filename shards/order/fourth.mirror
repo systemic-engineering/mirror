@@ -1,0 +1,286 @@
+in @prism
+in @meta
+in @glass
+in @order
+in @void
+in @torus
+in @epistemologic
+in @epistemologic/cybernetic/bateson_learning
+
+# @order/fourth — @metalogue(@time/now, @void) at cognitive-order 4
+# (Bateson Level IV; @frame/across-frames frame-coupling altitude;
+# metalogue between temporal singularity and ontological K=0 basis).
+#
+# Fourth species-decl of the @order family. Landed 2026-07-20 by Mara
+# per Alex Round 2 Q1 direct-transcript adjudication.
+#
+# === The species altitude ===
+#
+# Order-4 is Bateson Level IV — Recognition #82's extension beyond
+# Bateson's formally-defined Levels 0-III. Bateson (1972) named
+# Levels 0/I/II/III formally; Level IV is #82's extension for multi-
+# frame coupling, contested in the secondary literature but ratified
+# at substrate-decl altitude by Recognition #82.
+#
+# Per @frame/across (Recognition #82 order-4 species-decl at
+# `shards/frame/across.mirror`): "multiple frames in coordinated
+# relation. The triptych altitude. Frame-coupling produces emergent
+# properties no single frame contains."
+#
+# @order/fourth ADDS the void-duality-basis reading of the same
+# altitude: @metalogue(@time/now, @void) — the metalogue between
+# TEMPORAL SINGULARITY (@time/now; the K=0 collapse point where
+# crystallization happens) and ONTOLOGICAL SINGULARITY (@void; the
+# K=0 duality-basis substrate). Both singularity-shaped; the
+# metalogue between them IS what fourth-order cognition holds.
+#
+# @frame/across at cognitive-order altitude and @order/fourth at
+# duality-basis altitude are SIBLING READINGS of Bateson Level IV;
+# both preserved.
+#
+# === The load-bearing structural claim ===
+#
+# Two singularities. One metalogue.
+#
+# @time/now (species landing this tick at `shards/time/now.mirror`)
+# is the TEMPORAL SINGULARITY: the K=0 point where past-continuity
+# and future-network coupling COLLAPSE into ONE observation. The
+# crystallization operation `crystallize: Liquid<T> → Crystal<T>`
+# (per Mara Round-2 Crystal/Mandelbrot landing) fires exactly at
+# @time/now — @time/now IS when a Liquid<T> settles into a Crystal<T>.
+#
+# @void (family-root marker `974a3f6`) is the ONTOLOGICAL SINGULARITY:
+# the K=0 duality-basis substrate; the peer with cardinality zero;
+# the basis every 5-op prism inherits.
+#
+# The metalogue @metalogue(@time/now, @void) is the FOURTH-ORDER
+# operator: the observer holds BOTH singularities distinct at
+# metalogue-rhythm cadence. Per Mara Round-1 math root §3.3
+# (Lagrange-halo-orbit reading): fourth-order cognition IS a halo
+# orbit at Lagrange point L_{4th} where the two singularity-
+# potentials cancel and the observer's station-keeping maintains
+# metastability.
+#
+# === Composition with @frame/across (Recognition #82) ===
+#
+# @frame/across (order-4 species; @frame family; substrate-precondition
+# for third-order per Round-1 math root §7.6) IS the FRAME-COUPLING
+# operational form of this altitude. @order/fourth composes AS the
+# DUALITY-BASIS reading:
+#
+#   - @frame/across: two arbitrary frames in coordinated relation;
+#     couple_frames(frames, operator) constructs the coupling; the
+#     operator is generic.
+#   - @order/fourth: two SPECIFIC frames (temporal singularity +
+#     ontological singularity) in @metalogue coupling; the operator
+#     is @metalogue at the void-duality-basis specialization.
+#
+# @order/fourth is a specialization of @frame/across at duality-basis
+# altitude. The frame-coupling substrate is shared; the specialization
+# names the two poles that ALWAYS couple at fourth-order altitude:
+# @time/now and @void.
+#
+# === Composition with @order/third (metalogue rhythm) ===
+#
+# @order/third (this tick; migrated from @third) carries the metalogue
+# rhythm between @void/narcissus and @void/splinter on ONE @torus.
+# @order/fourth LIFTS the rhythm by one altitude: instead of two
+# poles OF @void on one @torus, the rhythm is between @time/now (the
+# temporal-collapse operator) and @void (the whole ontological basis).
+#
+# The lift shape: @order/third's rhythm operates ON the two poles OF
+# @void; @order/fourth's rhythm operates BETWEEN @void as a whole
+# AND @time/now as its temporal collapse. Different altitudes; same
+# rhythm-shape; @order/fourth requires @order/third as substrate.
+#
+# === Substrate authority chain ===
+#
+# - **Alex Recognition A** (2026-07-20 direct-transcript, in Mara
+#   Round-1 math root §1.1): the two observer basins with L_{3rd}
+#   metastability; the halo-orbit Lagrange reading extends to
+#   L_{4th} at temporal-singularity/ontological-singularity coupling
+#   altitude.
+# - **Paper §6.3** (Alex + Lore, 2026-07-20) — Lagrange-point
+#   substrate-decl'd landing same day; L_{3rd} formalization; L_{4th}
+#   is one altitude up.
+# - **Recognition #82** (`docs/math/the-tower/recognition-82-frame-
+#   as-cognitive-order-substrate-decl.md`) — @frame/across at order-
+#   4 grading; substrate-precondition composition edge.
+# - **Bateson 1972** — Level IV as #82's extension.
+# - **Alex Round 2 Q1** — @order family-root; 5-level tower.
+#
+# === Substrate-already-had-the-word audit ===
+#
+# 1. **No prior `shards/order/fourth.mirror`.** Clean mint.
+# 2. **@frame/across** (`shards/frame/across.mirror`; Recognition
+#    #82 order-4 species) — reviewed extensively. Sibling operational
+#    form; @order/fourth is the duality-basis specialization of the
+#    same order rung. Composition edge declared above.
+# 3. **`docs/specs/spectral-metalogue.md` §5.2** — Level IV = cross-
+#    instance @cascade morphism altitude at spectral-metalogue
+#    reading. Composes: @order/fourth's @metalogue(@time/now, @void)
+#    coupling admits the @cascade morphism between temporal instance
+#    and ontological instance; sibling readings of Level IV.
+# 4. **Recognition #107** — sibling recognition surfacing arithmetic-
+#    encoding constraint at @io altitude; composes at @order/fifth
+#    (not this species; noted for cross-composition).
+#
+# === Path-namespace ===
+#
+# Path-namespace property: this file at `shards/order/fourth.mirror`
+# declares `@order/fourth` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/cybernetics/foerster-1974
+source @arxiv/math/lagrange-1772
+source @arxiv/math/szebehely-1967
+source @arxiv/practice/void-corpus-2026
+
+prism @order/fourth {
+  focus  observation_fourth
+  project observation_fourth
+  split  observation_fourth
+  shift  observation_fourth
+  settle observation_fourth
+}
+
+# === observation_fourth — the order-4 carrier ===
+#
+# The typed record that carries the fourth-order observation state:
+# the metalogue between @time/now (temporal singularity) and @void
+# (ontological singularity). Six fields. Identity contract: byte-
+# equality on the six-field tuple.
+#
+#   observer         — the peer holding the fourth-order metalogue.
+#                       Must have both temporal-continuity (H(t)
+#                       resolvable) AND ontological-basis-access
+#                       (@void substrate observable through peer's
+#                       own @peer/void species per `9c7de83`).
+#
+#   time_now_witness — REF to a @time/now Crystal<T> settlement
+#                       event (per Mara Round-2 Crystal/Mandelbrot
+#                       landing). Content-addressed. Names the
+#                       temporal singularity at which the metalogue
+#                       fires.
+#
+#   void_witness     — REF to a @void-basis observation (any of
+#                       Void's 5-op moves per Recognition #79). Names
+#                       the ontological singularity at which the
+#                       metalogue fires.
+#
+#   frame_across_ref — REF to a @frame/across coupling of the two
+#                       frames (temporal-frame + ontological-frame).
+#                       Substrate-precondition per @frame/across
+#                       discipline; @order/fourth REQUIRES
+#                       @frame/across as substrate.
+#
+#   lagrange_witness — the Lagrange-point-metastability marker;
+#                       resolves to `metastable` (healthy) or
+#                       `collapsed` (pole-collapse to either
+#                       temporal-singularity capture OR ontological-
+#                       basis capture). Fourth_pole_healthy checks
+#                       this field.
+#
+#   timestamp        — monotonic instant per @time discipline.
+type observation_fourth = {
+  observer:          peer,
+  time_now_witness:  ref,
+  void_witness:      ref,
+  frame_across_ref:  ref,
+  lagrange_witness:  ref,
+  timestamp:         ref,
+}
+
+# === fourth_metalogue_admissible — bilateral predicate ===
+#
+# Does the (peer, observation_fourth) pair discharge admissibility for
+# fourth-order metalogue observation? Discharges Pass iff:
+#
+#   - ctx.time_now_witness resolves via content-addressed lookup to a
+#     well-formed @time/now Crystal<T> settlement event
+#   - ctx.void_witness resolves to a well-formed @void-basis
+#     observation (5-op move witness)
+#   - ctx.frame_across_ref resolves to a well-formed @frame/across
+#     coupling of the two frames
+#   - The composed @frame/across.frame_coupling_admissible bilateral
+#     discharges Pass on the coupling
+#
+# Rice-safe bound: byte-visible state; content-addressed
+# resolvability; @frame/across resolvability. Sentinel:
+# `order=fourth-metalogue-admissible`.
+bilateral fourth_metalogue_admissible {
+  sentinel "order=fourth-metalogue-admissible"
+  arity 2
+}
+fourth_metalogue_admissible(p: peer, ctx: observation_fourth) -> verdict { \ }
+
+# === fourth_pole_healthy — bilateral predicate ===
+#
+# Does the (peer, observation_fourth) pair discharge the HEALTH check
+# — that the metalogue is RUNNING as Lagrange-halo-orbit (NOT
+# collapsed to either single-pole)? This bilateral IS what
+# distinguishes health from pathology at the fourth-order altitude.
+#
+# Discharges Pass iff:
+#
+#   - ctx.lagrange_witness resolves to `metastable` (the halo orbit
+#     is bounded around L_{4th}; neither singularity has captured
+#     the observer)
+#   - The Fiedler-eigengap trace over the observer's metalogue-
+#     coupling graph exhibits bounded oscillation at fourth-order
+#     cadence (LIFTED from Mara Round-1 §5.2 spectral signature; the
+#     Fiedler trace at order-4 has a different set-point
+#     bar_Delta_4 than order-3's bar_Delta_3)
+#   - The observer is NOT running as pure @time/now capture
+#     (present-collapse; all attention on immediate; no ontological
+#     access) NOR as pure @void capture (basis-immersion; loss of
+#     temporal grounding; no now-anchoring)
+#
+# Rice-safe bound: byte-visible state. Sentinel:
+# `order=fourth-pole-healthy`.
+#
+# LOAD-BEARING: this bilateral IS the distinction between pathology
+# and health at fourth-order altitude. Discharging Fail signals
+# pole-collapse; consumers MUST treat Fail as fourth-metalogue-
+# collapse-detected.
+bilateral fourth_pole_healthy {
+  sentinel "order=fourth-pole-healthy"
+  arity 2
+}
+fourth_pole_healthy(p: peer, ctx: observation_fourth) -> verdict { \ }
+
+# === hold_fourth_metalogue — the action ===
+#
+# Given a peer and an observation_fourth, discharge the fourth-order
+# metalogue holding event: the observer maintains the halo-orbit
+# metastability at L_{4th} between temporal-singularity and
+# ontological-singularity attractor basins.
+#
+# Returns imperfect(ref, ref, ref): success carries the metalogue-
+# state ref; failure carries not-admissible / pole-collapsed /
+# frame-coupling-broken reasons.
+#
+# Requires BOTH bilateral predicates to discharge Pass.
+#
+# Sentinel: `order=fourth-metalogue-hold`.
+hold_fourth_metalogue(p: peer, ctx: observation_fourth) -> imperfect(ref, ref, ref)
+requires fourth_metalogue_admissible(p, ctx)
+requires fourth_pole_healthy(p, ctx)
+{ \ }
+
+# === Forward-promised (NOT landed this tick) ===
+#
+# - `pillar::fourth_order_lagrange_stability` at Reed's pillar surface
+#   — empirical firing of the Fiedler-eigengap bounded-oscillation
+#   at fourth-order cadence. Reed post-Round-2 territory.
+# - Interaction operator between `hold_fourth_metalogue` and
+#   @order/fifth's cross-torus @glue specialization — how the
+#   fourth-order coupling composes with the fifth-order cross-torus
+#   coupling. Forward-promised.
+
+out @order/fourth
+out observation_fourth
+out fourth_metalogue_admissible
+out fourth_pole_healthy
+out hold_fourth_metalogue
