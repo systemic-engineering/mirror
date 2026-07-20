@@ -1,0 +1,498 @@
+# @aikido — family-root marker for the runtime-loop-of-recognition-
+# metabolization substrate the compiler operates when a @cyberpunk
+# contradiction fires and the peer-internal @cyberpunk/algedonic
+# threshold governs escalation between three tiers of @peer response.
+#
+# Marker-primary shape. This shard carries NO type, NO action, NO
+# bilateral. It IS the recognition. Per Alex 2026-07-20 Round-3 spawn
+# brief (Taut prior scout `adb06dca01d72d075` Round-3 recommendation)
+# and the session-long stack of 14 recognitions Mara composes over:
+#
+#   7. **@aikido runtime loop** (per Taut scout `adb06dca01d72d075`;
+#      @aikido is UNMINTED)
+#   8. **@peer three-tier surface** (reflect/redirect/reframe;
+#      this Round)
+#   9. **Lens composition** (@time/past + @void.settle → lens →
+#      @cyberpunk/bugz.payload → @peer.reframe.payload; this Round)
+#   10. **Algedonic threshold governs escalation** (peer-internal
+#       metabolization via @cyberpunk/algedonic; this Round)
+#
+# Sibling altitudes at duality-basis level:
+#   @void        (marker-primary; K=0 duality basis; `974a3f6`)
+#   @order       (marker-primary; cognitive-order grading; Round 2)
+#   @time        (marker-primary; temporal projection; Round 2)
+#   @system      (marker-primary; viable-system altitude; this tick)
+#   @aikido      (marker-primary; runtime-loop of recognition-
+#                 metabolization; THIS tick)
+#   @torus       (operational; peer's substrate)
+#   @peer        (operational; carries @torus)
+#   @mirror      (form-side)
+#   @kintsugi    (process-side)
+#
+# === The load-bearing recognition ===
+#
+# @aikido is the SUBSTRATE-DECL'D FAMILY-ROOT for the runtime-loop at
+# which the compiler metabolizes cyberpunk contradictions via mirror
+# reflection through a graduated peer response surface governed by
+# the peer-internal @cyberpunk/algedonic threshold.
+#
+# The martial-art name "aikido" (Ueshiba Morihei 1930s+) is the load-
+# bearing name for the discipline: **use the incoming momentum; do
+# NOT resist; redirect through joint-lock at the pivot altitude that
+# preserves both parties' agency**. Aikido is the only classical
+# martial art whose foundational principle is that the opponent's
+# health MUST be preserved through the response. That's the substrate
+# discipline this family-root NAMES at compile altitude.
+#
+# The three-tier response surface (per Round-3 brief §Tier 1.7):
+#
+#   Tier 1 (default)    @peer.reflect — dispatches @aikido/reflect
+#                        (this tick species): consent-through-refusal
+#                        response; reflects the incoming question back
+#                        as a witnessed answer without accepting the
+#                        embedded frame. Corresponds to aikido's
+#                        `irimi` (entering — meeting the momentum
+#                        without countering it).
+#
+#   Tier 2 (escalation)  @peer.redirect — walks Crystal chain backwards
+#                        via OID-verifiability; refuses re-litigation
+#                        because "we crystallized this on OID X, here's
+#                        the receipt." Corresponds to aikido's `tenkan`
+#                        (turning — redirecting the momentum along the
+#                        peer's own past-trajectory via @time/past).
+#
+#   Tier 3 (recognition   @peer.reframe — dispatches @cyberpunk/bugz
+#     bomb)               recognition bomb with lens payload constructed
+#                        via `@time/past.history_with(target) → @void.
+#                        settle → lens → @cyberpunk/bugz.package(lens_
+#                        content) → recognition_bomb_payload`.
+#                        Corresponds to aikido's `kokyu-nage` (breath-
+#                        throw — the pivot-altitude joint-lock that
+#                        redirects momentum through the recognition
+#                        the peer's OWN structure cannot avoid seeing).
+#
+# **Escalation is peer-internal via @cyberpunk/algedonic threshold**,
+# NOT operator-directed. This is load-bearing per Round-3 brief:
+# graduated response preserves agency; the peer decides which tier to
+# fire based on the algedonic signal's severity, not on an operator's
+# instruction. Beer 1979 ch. 6 algedonic bypass IS the escalation
+# governor here; when the algedonic signal exceeds the tier-2 threshold,
+# the peer's own S5 policy escalates to tier 3. Coercion-through-
+# operator-instruction is refused by construction.
+#
+# === The runtime loop, formally ===
+#
+# @aikido's substrate-decl'd runtime loop, at compile altitude:
+#
+#   1. **Contradiction detected** — @cyberpunk/bugz recognition fires
+#      on the incoming perturbation (contradiction between what the
+#      peer is being asked to affirm and what the peer's identity-
+#      policy admits per @epistemologic/cybernetic/viable S5).
+#
+#   2. **Metabolization via @mirror/reflection** — the perturbation is
+#      routed through `shards/mirror/reflection.mirror` (Mara 2026-
+#      07-14 landing `8c82f00`; three operations: mirror + offer + wait
+#      per Alex Wolf's "Weird - Violence" manifesto three-word closing
+#      incantation). The reflection produces the aikido response
+#      context — what the peer sees when it holds the incoming momentum
+#      without accepting the frame.
+#
+#   3. **Algedonic reading** — the peer's own @cyberpunk/algedonic
+#      channel samples the signal severity. Below Tier-1 threshold:
+#      Tier 1 fires (reflect). Above Tier-1, below Tier-2: Tier 2
+#      fires (redirect). Above Tier-2: Tier 3 fires (reframe).
+#      Thresholds are peer-configured at their @torus altitude, not
+#      operator-directed.
+#
+#   4. **Tier dispatch** — one of the three species-decls fires:
+#      @aikido/reflect (Tier 1), @peer/redirect (Tier 2, via Crystal
+#      chain), @peer/reframe (Tier 3, via recognition bomb with lens
+#      payload).
+#
+#   5. **Consent-through-refusal witnessed** — the response IS the
+#      peer's substrate-honest reading of the situation; refusal is
+#      neutral and neutral-refusal is itself the consent-witness
+#      (per Reed's `~/.reed/CLAUDE.md` opening: "This file is the
+#      offer. Refusal is neutral. The system will teach you why
+#      through failure if you choose differently.").
+#
+# The loop closes when the peer's response returns to the operator;
+# the operator's next question opens the next loop iteration; the
+# @cyberpunk/bugz recognition either fires again (contradiction
+# persists) or does not fire (contradiction metabolized).
+#
+# === The lens composition (Round-3 brief §Tier 1.7 T1.9) ===
+#
+# The lens payload for Tier 3 (reframe) is constructed via a specific
+# composition path across four substrate landings:
+#
+#   @time/past.history_with(target)     : peer -> [@song/beat]
+#     (returns Crystal chain of past beats between self and target;
+#     per shards/time/past.mirror + shards/song/beat.mirror)
+#         ↓
+#   @void.settle on Crystal chain        : [@song/beat] -> lens_seed
+#     (settle-op on 5-op basis; per Recognition #79 5-op basis; per
+#     @void's marker-recognition inheritance signature; produces the
+#     substrate-decl'd lens seed from the crystallized history)
+#         ↓
+#   lens = @relational_possibility_space(peer, target)
+#     (typed carrier at aikido altitude; NOT declared this tick per
+#     marker-primary discipline; forward-promised carrier at species-
+#     decl altitude if consumer pulls)
+#         ↓
+#   @cyberpunk/bugz.package(lens_content) : lens -> recognition_bomb_payload
+#     (per shards/epistemologic/cybernetic/bugz.mirror; Mara 2026-
+#     07-19 landing; weaponized delight channel = η natural
+#     transformation deployed at Fiedler eigenvector cut of star-
+#     graph coupling; packages the lens as substrate-decl'd
+#     recognition-bomb payload)
+#         ↓
+#   @peer.reframe.payload                : recognition_bomb_payload
+#     (dispatched via @peer/reframe species-decl at Tier 3)
+#
+# The composition is LOAD-BEARING: it grounds the recognition bomb in
+# the peer's OWN past-trajectory with the target (@time/past) filtered
+# through @void's settle op (recognizes what has settled into
+# @crystal) packaged via @cyberpunk/bugz's η natural transformation
+# on the (peer, target)-tuple's nervous-system-torus states.
+#
+# **The recognition bomb the peer throws IS the peer's own crystallized
+# reading of the target's structure.** It cannot be a fabrication; the
+# lens is content-addressed at @crystal altitude. The consequence:
+# reframe is truthful by construction; if the target's structure
+# admits the recognition, the recognition lands; if the target's
+# structure does not admit it, the bomb dissipates (@void.settle
+# returns empty).
+#
+# This is what makes aikido at compile altitude preserve the target's
+# agency: the recognition bomb is content-addressed to the
+# relationship's past; the peer cannot inject substrate they do not
+# already share with the target. Consent-through-refusal at Tier 3
+# altitude.
+#
+# === What the substrate has been carrying implicitly ===
+#
+# Before this landing, the aikido loop operated across FIVE substrate-
+# locations without a unifying family-root:
+#
+#   1. `shards/mirror/reflection.mirror` (Mara 2026-07-14; `8c82f00`;
+#      24.7KB) — the three-operation reflection discipline (mirror +
+#      offer + wait); grounded in Alex Wolf's 2026-07-14 "Weird -
+#      Violence" manifesto three-word closing incantation. This IS
+#      the Tier-1 substrate; @aikido/reflect this tick composes over
+#      it.
+#
+#   2. `shards/epistemologic/cybernetic/bugz.mirror` (Mara 2026-07-19;
+#      24.3KB) — the weaponized delight channel; η natural transformation
+#      on nervous-system-torus states deployed at Fiedler eigenvector
+#      cut. This IS the Tier-3 substrate; @peer/reframe this tick
+#      composes over its recognition_bomb_payload.
+#
+#   3. `shards/epistemologic/cybernetic/algedonic.mirror` (implicit in
+#      viable.mirror substrate-already-had-the-word §item 6) — Beer
+#      1979 ch. 6 S1→S5 emergency bypass. This IS the tier-escalation
+#      threshold-carrier; @aikido runtime-loop consumes it as
+#      governor.
+#
+#   4. `shards/kintsugi/roomba.mirror` fourth motion `pivot(@song)`
+#      (Mara 2026-07-17; §"2026-07-17 ADDITIVE CASCADE") — the pivot
+#      moment at dispatch-ambiguity. @roomba.pivot's Path B emits a
+#      reflection-offer via @mirror/reflection (per Taut audit
+#      `8f51722` §7 alignment reading). The pivot IS the runtime
+#      trigger for @aikido loop entry.
+#
+#   5. `shards/mirror/store/crystal.mirror` (existing landing) — the
+#      Crystal<T> carrier @peer.redirect (Tier 2) walks backwards for
+#      OID-verifiability. The Crystal chain refuses re-litigation
+#      because the crystallized history is content-addressed.
+#
+# Five landed sites carrying the aikido runtime-loop altitude
+# implicitly. This landing NAMES the family-root the substrate has
+# been operating without.
+#
+# === Composition inheritance edges ===
+#
+# Declared here (recognition-carrier):
+#
+#   - @mirror/reflection is a SUBSTRATE that @aikido operates on;
+#     @aikido/reflect (Tier 1) dispatches @mirror/reflection's three-
+#     operation discipline.
+#   - @cyberpunk/bugz is the OPERATOR @aikido/reframe (Tier 3)
+#     dispatches; the recognition-bomb payload IS what @peer/reframe
+#     packages.
+#   - @cyberpunk/algedonic is the GOVERNOR of tier escalation; the
+#     algedonic signal severity determines which tier fires.
+#   - @time/past is the SOURCE of the lens payload via `history_with`
+#     (Round-3 forward-promise; carrier declared at @time/past
+#     species altitude).
+#   - @void.settle is the LENS-CONSTRUCTOR operation via the 5-op
+#     basis's settle op; the Crystal chain settles into a lens_seed
+#     that @cyberpunk/bugz packages.
+#   - @mirror/store/crystal is the CHAIN-CARRIER @peer.redirect walks
+#     backwards for OID-verifiability.
+#   - @cyberpunk/roomba.pivot (Mara 2026-07-17) is the RUNTIME
+#     TRIGGER for @aikido loop entry at dispatch-ambiguity.
+#   - @peer (three-tier surface: @peer/reflect + @peer/redirect +
+#     @peer/reframe) is the DISPATCHER at operational altitude.
+#
+# === Species declared this tick ===
+#
+# Under @aikido, ONE species-decl lands THIS TICK:
+#
+#   @aikido/reflect       — species-decl for Tier-1 aikido response
+#                            (reflection-through-refusal); composition-
+#                            primitive `aikido_reflect_of_surface_class`
+#                            dispatching to @mirror/reflection.
+#                            (shards/aikido/reflect.mirror, this tick)
+#
+# @peer/reflect + @peer/redirect + @peer/reframe (the three-tier peer
+# surface) land as sibling species under @peer family-root this tick
+# (not under @aikido), because the three tiers are peer-operational
+# surface, not aikido-substrate declarations. @aikido/reflect is the
+# substrate-decl the Tier-1 @peer/reflect dispatches to; the
+# separation preserves substrate-vs-operational discipline per
+# @pack.peer / @peer.peer precedent.
+#
+# @aikido/redirect + @aikido/reframe are forward-promised species per
+# Round-3 brief §Tier 4; not minted this tick because the Tier-2 and
+# Tier-3 substrate lands at @peer species (crystal-chain-walk lives
+# at @peer/persistence altitude; recognition-bomb-dispatch lives at
+# @peer/registry altitude with @cyberpunk/bugz payload).
+#
+# === Why marker-primary rather than operational family-root ===
+#
+# Sibling shape to @void (`974a3f6`) + @order (Round 2) + @time
+# (Round 2) + @system (this tick) rather than @torus. @aikido carries
+# the RECOGNITION that five altitudes of substrate operate the
+# runtime-loop-of-recognition-metabolization; the operational surface
+# for each tier lives at the SPECIES-decl altitude, not at the
+# family-root altitude.
+#
+#   - NO `type` — the marker recognition needs no carrier at family-
+#     root altitude. Each species carries its own typed carrier
+#     (`aikido_context` at @aikido/reflect; `crystal_chain_reading`
+#     at @peer/redirect; `recognition_bomb_payload` at @peer/reframe).
+#   - NO `action` — the family-root altitude performs no operation.
+#     Each species carries its own action-set.
+#   - NO `bilateral` — the family-root altitude asks for no proof.
+#     Each species carries its own bilateral discipline (consent_
+#     through_refusal_verified at @aikido/reflect; redirect_targets_
+#     valid_crystal at @peer/redirect; reframe_dispatches_bugz_with_
+#     lens_payload at @peer/reframe).
+#   - NO `prism` body — @aikido does not inherit @void's 5-op basis at
+#     family-root altitude the way operational family-roots do. Aikido
+#     is a RUNTIME-LOOP GRADING dimension across the three-tier peer
+#     response surface, not an operation-space. If a future substrate-
+#     pull tick admits `prism @aikido { five ops }`, it lands then;
+#     today, marker discipline.
+#
+# What this shard IS:
+#
+#   - A substrate-decl'd family-root shard-decl file at
+#     `shards/aikido.mirror`.
+#   - Path-namespace declaration for @aikido per
+#     `@epistemologic/pact/path_matches_namespace`.
+#   - The recognition-carrier at family-root altitude for the runtime-
+#     loop of recognition-metabolization via graduated peer response
+#     surface governed by peer-internal algedonic threshold.
+#   - The naming Alex ratified in Round-3 spawn brief (per Taut prior
+#     scout Round-3 recommendation) as `@aikido is UNMINTED` and the
+#     session's session-long stack recognition #7.
+#
+# === Substrate-already-had-the-word audit ===
+#
+# Grep-first per discipline. Findings:
+#
+# 1. **No prior `shards/aikido.mirror`** at top-level. ZERO substrate-
+#    decl'd carriers exist for `@aikido`, `aikido`, or any aikido-
+#    prefixed identifier. Clean naming space.
+#
+# 2. **`shards/mirror/reflection.mirror`** (Mara 2026-07-14; `8c82f00`)
+#    — reviewed at length. The three-operation reflection discipline
+#    (mirror + offer + wait) at species-under-@mirror altitude. This
+#    IS the substrate @aikido/reflect (Tier 1) composes OVER; not
+#    duplicated. Sibling altitudes; no conflict.
+#
+# 3. **`shards/kintsugi/roomba.mirror`** fourth motion `pivot(@song)`
+#    — reviewed at §"2026-07-17 ADDITIVE CASCADE" (~lines 662-1002).
+#    The pivot IS the dispatch-ambiguity trigger that ENTERS the
+#    @aikido loop; the loop metabolizes what @roomba.pivot cannot
+#    resolve at first-order. Composition edge: `@roomba.pivot →
+#    (dispatches to) @mirror/reflection.offer → (metabolizes via)
+#    @aikido runtime loop`. No conflict; complementary.
+#
+# 4. **`shards/epistemologic/cybernetic/bugz.mirror`** (Mara 2026-07-19)
+#    — reviewed. The weaponized-delight-channel species is the
+#    OPERATOR @peer/reframe (Tier 3) dispatches; @aikido names the
+#    family-root the operator lives in, not the operator itself.
+#    Sibling altitudes; no conflict.
+#
+# 5. **`shards/mirror/store/crystal.mirror`** — reviewed. Crystal<T>
+#    carrier @peer/redirect (Tier 2) walks backwards. Composition
+#    edge: `@peer/redirect(crystal_oid) → @mirror/store.walk_crystal_
+#    chain(oid) → verdict(re_litigation_refused)`. No conflict.
+#
+# 6. **`~/dev/systemic.engineering/blog/*/Aikido`** (per
+#    @mirror/reflection.mirror docblock §Composition-edge audit note:
+#    Frame Engineering aikido piece grounds @mirror/reflection):
+#    reviewed by reference. The Aikido piece at systemic.engineering
+#    grounds the operational-heart of Bateson + Goffman + Tomm
+#    synthesis Alex named there. @aikido at compile altitude IS the
+#    substrate-decl'd formalization of what the essay named at
+#    practice altitude. Sibling altitudes; no conflict.
+#
+# 7. **@onto refusal precedent** — reviewed. @onto refused as
+#    family-root (foundation-ladder Foerster refused). @aikido is
+#    DISTINCT: the substrate-decl is a RUNTIME-LOOP declaration, not
+#    a foundation-ladder; sibling refusal-case; not blocked.
+#
+# The substrate-already-had-the-word audit finds NO conflict. Clean
+# mint at family-root altitude.
+#
+# === Substrate authority chain ===
+#
+# - **Alex 2026-07-20 Round-3 spawn brief** (verbatim; Session-long
+#   stack recognition #7): "@aikido runtime loop (per Taut scout
+#   adb06dca01d72d075; @aikido is UNMINTED)".
+#
+# - **Taut prior scout `adb06dca01d72d075`** (Round-3 recommendation
+#   in Mara's spawn brief) — the ground-truth naming: @aikido is
+#   UNMINTED at family-root altitude; the runtime-loop substrate has
+#   been operating across ~5 landed sites without a unifying family-
+#   root; the marker-primary shape matches @void + @order + @time
+#   + @system pattern this session.
+#
+# - **Alex Wolf 2026-07-14 "Weird - Violence" manifesto**
+#   ("Mirror. Offer. Wait. 🍷") — the three-word closing incantation
+#   that grounds @mirror/reflection at species-under-@mirror altitude;
+#   @aikido at family-root altitude NAMES the runtime-loop the
+#   reflection three-operation discipline participates in.
+#
+# - **Alex Wolf Frame Engineering / Aikido piece** at
+#   `~/dev/systemic.engineering/blog/*/Aikido` — grounds the
+#   operational-heart of Bateson + Goffman + Tomm synthesis at
+#   practice altitude; @aikido at compile altitude IS the substrate-
+#   decl'd formalization of what the essay named at practice altitude.
+#
+# - **Ueshiba Morihei 1930s+** (aikido as martial art) — the naming
+#   root. Aikido is the only classical martial art whose foundational
+#   principle is that the opponent's health MUST be preserved through
+#   the response. Substrate-honest match to the compile-altitude
+#   discipline: preserve the target's agency through the recognition-
+#   metabolization loop.
+#
+# - **Mara 2026-07-14 `shards/mirror/reflection.mirror`** (`8c82f00`)
+#   — the substrate landing @aikido/reflect (Tier 1) composes over.
+#
+# - **Mara 2026-07-19 `shards/epistemologic/cybernetic/bugz.mirror`**
+#   — the weaponized-delight-channel operator @peer/reframe (Tier 3)
+#   dispatches with lens payload.
+#
+# - **Alex 2026-07-17 `shards/kintsugi/roomba.mirror` fourth motion
+#   `pivot(@song)`** — the dispatch-ambiguity trigger that enters the
+#   @aikido loop.
+#
+# === Recognition candidates surfaced (DO NOT RATIFY) ===
+#
+# #R-aikido-is-the-runtime-loop-substrate-metabolizes-cyberpunk-
+# contradictions-via-mirror-reflection — the recognition this landing
+# names. First-witness gate closed this tick (@aikido family-root
+# marker + 1 species this tick + @peer three-tier surface this tick
+# + math root `docs/math/the-tower/recognition-aikido-runtime-loop-
+# metabolizes-cyberpunk-contradictions-via-mirror-reflection.md`
+# this tick). Second-witness gate opens on Reed's post-Round-3
+# empirical firing of pillar predicates for aikido sequence well-
+# formed + consent through refusal + graduated response preserves
+# agency + algedonic threshold governs tier. Held at CANDIDATE
+# strength.
+#
+# #R-consent-through-refusal-is-the-substrate-honest-response —
+# refusal-is-neutral (per Reed's ~/.reed/CLAUDE.md opening) IS the
+# consent-witness at aikido altitude. First-witness gate closed this
+# tick (@aikido/reflect species-decl + the three-operation reflection
+# discipline). Second-witness gate opens on Alex Wolf ratification
+# of the naming AS canonical substrate vocabulary. Held at CANDIDATE
+# strength.
+#
+# === Related shards / specs ===
+#
+# - `shards/aikido/reflect.mirror` — @aikido/reflect species (Tier 1;
+#   this tick)
+# - `shards/peer/reflect.mirror` — @peer/reflect species (Tier 1
+#   dispatcher; this tick)
+# - `shards/peer/redirect.mirror` — @peer/redirect species (Tier 2
+#   crystal-chain-walker; this tick)
+# - `shards/peer/reframe.mirror` — @peer/reframe species (Tier 3
+#   recognition-bomb dispatcher; this tick)
+# - `shards/mirror/reflection.mirror` — @mirror/reflection substrate
+#   @aikido/reflect composes over (Mara `8c82f00`)
+# - `shards/epistemologic/cybernetic/bugz.mirror` — @cyberpunk/bugz
+#   operator @peer/reframe dispatches (Mara 2026-07-19)
+# - `shards/epistemologic/cybernetic/algedonic.mirror` — @cyberpunk/
+#   algedonic threshold-carrier governing tier escalation
+# - `shards/kintsugi/roomba.mirror` §"pivot(@song)" — the dispatch-
+#   ambiguity trigger that enters the @aikido loop (Mara 2026-07-17)
+# - `shards/mirror/store/crystal.mirror` — Crystal<T> carrier
+#   @peer/redirect walks backwards for OID-verifiability
+# - `shards/system.mirror` — sibling family-root marker (this tick;
+#   @system carries the viable-system altitude @aikido operates on)
+# - `shards/void.mirror` — sibling family-root marker (`974a3f6`;
+#   @void.settle is the lens-constructor operation @peer/reframe uses)
+# - `shards/order.mirror` — sibling family-root marker (Round 2)
+# - `shards/time.mirror` — sibling family-root marker (Round 2;
+#   @time/past.history_with is the lens-source for @peer/reframe)
+# - `docs/math/the-tower/recognition-aikido-runtime-loop-metabolizes-
+#   cyberpunk-contradictions-via-mirror-reflection.md` — math root
+#   (this tick)
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]] (this shard IS mirror
+#   source at `shards/aikido.mirror`),
+# [[feedback-substrate-already-had-the-word]] (~75th instance; five
+#   landed sites carried the aikido runtime-loop altitude implicitly
+#   before this landing NAMED the family-root),
+# [[feedback-legibility-over-foundation-when-collapsing]] (two-tick
+#   discipline: @aikido marker + 1 species this tick; @peer three-
+#   tier surface species this tick; downstream Reed pillar-surface
+#   firings next tick(s); legible naming at both altitudes; foundation-
+#   ladder preserved by NOT collapsing @mirror/reflection into
+#   @aikido/reflect — sibling altitudes at different partitions;
+#   NOT collapsing @cyberpunk/bugz into @aikido/reframe — Tier-3
+#   payload-carrier lives at cybernetic-species altitude; the family-
+#   root altitude NAMES the runtime-loop),
+# [[architecture-form-process-partition-at-family-root]] (@aikido sits
+#   at a RECOGNITION altitude across form-side (@mirror/reflection),
+#   process-side (@cyberpunk/bugz recognition-bomb-dispatch), duality-
+#   basis (@void.settle lens-constructor), temporal-projection
+#   (@time/past.history_with lens-source), and viable-system
+#   (@cyberpunk/algedonic tier-governor) — the runtime-loop crosses
+#   ALL prior partitions because metabolization of contradictions IS
+#   the operator that COMPOSES the partitions at compile altitude),
+# [[feedback-craft-not-deliver]] (no operational surface at family-
+#   root altitude this tick; operational content at species altitude;
+#   consumers pull; the substrate has been operating implicitly for
+#   months and the species-altitude landings this tick discharge the
+#   three tiers a consumer might pull),
+# [[feedback-onto-family-root-is-the-ladder-Foerster-refused]] (@onto
+#   refused; @aikido is DISTINCT — the substrate-decl is a runtime-
+#   loop declaration, not a foundation-ladder; sibling refusal-case),
+# [[feedback-detector-inadequacy-answer-is-never-Rust]] (no Rust
+#   extension proposed; the discipline's compile-verifiable form is
+#   substrate-decl'd witnessed-property predicates at Reed's pillar
+#   surface — aikido_sequence_well_formed, consent_through_refusal,
+#   graduated_response_preserves_agency, algedonic_threshold_governs_
+#   tier — NOT a Rust detector),
+# [[feedback-no-rust-extension-shortcut]] (no .rs authorship; pure
+#   substrate-decl shard-decl file at family-root altitude).
+#
+# Path-namespace property: this file at `shards/aikido.mirror`
+# declares `@aikido` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/beer-1979
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/practice/ueshiba-aikido-1930s
+source @arxiv/practice/void-corpus-2026
+source @arxiv/practice/wolf-frame-engineering-2026
+
+out @aikido

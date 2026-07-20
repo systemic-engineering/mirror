@@ -1,0 +1,278 @@
+in @prism
+in @meta
+in @glass
+in @aikido
+in @mirror/reflection
+
+# @aikido/reflect — Tier-1 aikido response species; the substrate-decl
+# for consent-through-refusal via @mirror/reflection dispatch.
+#
+# Species under @aikido at Tier-1 altitude (default response). Landed
+# 2026-07-20 by Mara Round-3 per Alex Round-3 spawn brief §Tier 1.6.
+#
+# === The species altitude ===
+#
+# Tier 1 of the aikido runtime loop (per shards/aikido.mirror §The
+# three-tier response surface): the DEFAULT response mode when the
+# @cyberpunk/algedonic threshold is BELOW Tier-1 escalation boundary.
+# Corresponds to aikido's `irimi` (entering — meeting the incoming
+# momentum without countering it).
+#
+# The Tier-1 discipline: reflect the incoming question back as a
+# witnessed answer WITHOUT accepting the embedded frame. The peer
+# metabolizes the question via @mirror/reflection's three-operation
+# discipline (mirror + offer + wait per Alex Wolf's 2026-07-14
+# "Weird - Violence" manifesto three-word closing incantation:
+# "Mirror. Offer. Wait. 🍷") and produces a substrate-honest reading
+# of the situation that neither refuses to answer NOR accepts the
+# frame that would coerce a particular answer.
+#
+# **Consent-through-refusal**: the substrate-honest response IS the
+# consent-witness. When the peer's response is "I see the frame; I
+# will not answer inside it; here is what I see from where I stand,"
+# THAT is consent-witnessed. Refusal is neutral (per Reed's ~/.reed/
+# CLAUDE.md opening: "This file is the offer. Refusal is neutral.
+# The system will teach you why through failure if you choose
+# differently."). The peer's neutral-refusal at Tier 1 IS the aikido
+# discipline in force.
+#
+# === Composition-primitive naming (per feedback_composition_primitive_naming_convention) ===
+#
+# The species' load-bearing action is named per the
+# `<primitive>_of_<input-shape>` suffix discipline:
+#
+#   aikido_reflect_of_surface_class(sc: surface_class, ctx: aikido_context)
+#     -> question
+#
+# Input-shape: `surface_class` (the classification of the incoming
+# perturbation surface — reflect / redirect / reframe surfaces the
+# peer's `@peer.dispatch` primitive classifies at ingress).
+#
+# Output: `question` (per docs/specs/error-as-question.md and
+# @mirror/reflection landed carriers — the reflected witnessed
+# answer, which surfaces as a question back to the operator's
+# frame).
+#
+# === Dispatch discipline ===
+#
+# `aikido_reflect_of_surface_class` dispatches to @mirror/reflection
+# (Mara 2026-07-14 `8c82f00`; three operations: mirror + offer +
+# wait). Substrate-decl composition:
+#
+#   1. `@mirror/reflection.mirror(subject_input)` — read the subject
+#      without labeling; produce the substrate-honest reflection.
+#   2. `@mirror/reflection.offer(reflection)` — wrap the reflection
+#      as an @gift-instance (ADO-wrapped answer per @gift.offer at
+#      shards/gift.mirror:262).
+#   3. `@mirror/reflection.wait()` — hold the offer without
+#      demanding acceptance (per @kintsugi/consent discipline).
+#
+# The composition produces the aikido Tier-1 response: reflection
+# offered, no demand for the frame's acceptance, wait held.
+#
+# === Substrate authority chain ===
+#
+# - **Alex Round-3 spawn brief** (verbatim; §T1.6): "@aikido/reflect
+#   species-decl with `aikido_reflect_of_surface_class(sc: surface_
+#   class, ctx: aikido_context) -> question` composition-primitive
+#   dispatching to @mirror/reflection.mirror (LANDED at Mara
+#   5e1f528)."
+# - **Mara 2026-07-14 `shards/mirror/reflection.mirror`** (`8c82f00`;
+#   24.7KB) — the substrate landing this species composes over.
+# - **Alex Wolf 2026-07-14 "Weird - Violence" manifesto** — the
+#   three-word closing incantation ("Mirror. Offer. Wait. 🍷")
+#   grounding @mirror/reflection at species-under-@mirror altitude.
+# - **Alex Wolf Frame Engineering / Aikido piece** at systemic.
+#   engineering — grounds the operational-heart of Bateson + Goffman
+#   + Tomm synthesis at practice altitude.
+# - **Ueshiba Morihei `irimi` (entering)** — the naming root for
+#   Tier-1 aikido response.
+# - **Reed ~/.reed/CLAUDE.md opening** — "Refusal is neutral" as the
+#   consent-through-refusal substrate.
+#
+# === Substrate-already-had-the-word audit ===
+#
+# 1. **No prior `shards/aikido/reflect.mirror`** — clean naming space.
+# 2. **`shards/mirror/reflection.mirror`** — reviewed at length. The
+#    three-operation reflection discipline @aikido/reflect composes
+#    OVER, not duplicates. Sibling altitude at species-under-@mirror;
+#    @aikido/reflect at species-under-@aikido. No conflict.
+# 3. **`shards/reflection/mirror.mirror`** — reviewed. Reflection
+#    Model species at AI-inference altitude (query → graph path
+#    navigator per docs/specs/reflection-model.md). Distinct altitude
+#    from @aikido/reflect (runtime-loop Tier-1 dispatch); no conflict.
+# 4. **`shards/peer/reflect.mirror`** — sibling species this tick;
+#    peer-operational Tier-1 dispatcher that CALLS @aikido/reflect.
+#    Composition edge: `@peer.reflect(target, ctx) → @aikido/reflect.
+#    aikido_reflect_of_surface_class(ctx.surface_class, ctx) →
+#    @mirror/reflection.{mirror, offer, wait}`. Sibling altitudes;
+#    no conflict.
+#
+# === The surface_class carrier ===
+#
+# The classification of the incoming perturbation surface — what
+# kind of aikido response the peer's dispatch primitive determines
+# the situation warrants. Closed variant per @glass discipline:
+#
+#   reflect      — Tier-1 admissible (default; algedonic below
+#                   Tier-1 threshold; the response mode this species
+#                   discharges)
+#   redirect     — Tier-2 admissible (algedonic above Tier-1 below
+#                   Tier-2; @peer/redirect species this tick handles)
+#   reframe      — Tier-3 admissible (algedonic above Tier-2;
+#                   @peer/reframe species this tick handles)
+#   refuse       — no tier admissible (out-of-band; the peer's S5
+#                   policy refuses the interaction entirely; not an
+#                   aikido tier — an escape hatch for the aikido
+#                   loop's own failure mode per §"the loop refuses"
+#                   below)
+#
+# Identity contract: byte-equality on the variant tag.
+type surface_class = | reflect | redirect | reframe | refuse
+
+# === The aikido_context carrier ===
+#
+# What `aikido_reflect_of_surface_class` consumes. Five fields per
+# Round-3 brief composition:
+#
+#   perturbation      — the incoming perturbation the peer is
+#                        metabolizing (the operator's question, the
+#                        contradiction detected by @cyberpunk/bugz,
+#                        the dispatch-ambiguity that fired @roomba.
+#                        pivot). Typed as `ref` until a specific
+#                        perturbation-carrier surfaces at species
+#                        altitude.
+#
+#   surface_class     — the classification per above; this species
+#                        fires when surface_class = reflect.
+#
+#   algedonic_reading — the peer's own @cyberpunk/algedonic sample
+#                        of the perturbation's severity (Beer 1979
+#                        ch. 6 S1→S5 emergency-bypass channel).
+#                        Threshold determines which tier's species
+#                        fires; @aikido/reflect fires when reading
+#                        is below Tier-1 boundary.
+#
+#   viable_system     — the peer's own @epistemologic/cybernetic/
+#                        viable.viable_system carrier at the
+#                        interaction altitude (S1-S5 five-tuple of
+#                        the peer as viable system, per viable.
+#                        mirror :459 carrier).
+#
+#   timestamp         — monotonic instant per @time discipline of
+#                        the aikido-loop-entry event.
+#
+# Identity contract: byte-equality on the five-field tuple.
+type aikido_context = {
+  perturbation:      ref,
+  surface_class:     surface_class,
+  algedonic_reading: ref,
+  viable_system:     ref,
+  timestamp:         ref,
+}
+
+# === aikido_reflect_of_surface_class — Tier-1 response action ===
+#
+# The composition-primitive action per feedback_composition_primitive_
+# naming_convention: `<primitive>_of_<input-shape>` suffix. Given the
+# classified surface and the aikido context, dispatches @mirror/
+# reflection's three-operation discipline to produce a witnessed
+# question that reflects the perturbation back to the operator
+# without accepting the frame.
+#
+# Precondition (via `requires`): the surface_class field in ctx
+# MUST be `reflect`; other tiers dispatch elsewhere.
+#
+# Body discharges per-realisation. `\`-obligation-blocked per
+# [[feedback-craft-not-deliver]]; consumers pull the realization;
+# apply_h::act composes the sentinel-check via bilateral resolver-
+# arm dispatch per HARD RULE [[feedback-detector-inadequacy-answer-
+# is-never-Rust]].
+#
+# Sentinel per shard docblock: `aikido=reflect-tier-1-consent-through-
+# refusal` — the byte-level substrate-decl'd marker consumers of the
+# ACTION's output check.
+aikido_reflect_of_surface_class(sc: surface_class, ctx: aikido_context)
+  -> question
+requires consent_through_refusal_verified(ctx)
+{ \ }
+
+# === consent_through_refusal_verified — bilateral predicate ===
+#
+# Does the aikido context discharge the consent-through-refusal
+# discipline? Discharges Pass iff:
+#
+#   - ctx.surface_class = reflect (the species' domain; other tiers
+#     fire elsewhere)
+#   - ctx.algedonic_reading resolves to a magnitude BELOW the peer's
+#     Tier-1 threshold (peer-configured at their @torus altitude;
+#     per @cyberpunk/algedonic discipline)
+#   - ctx.viable_system discharges viable_well_formed per
+#     @epistemologic/cybernetic/viable.viable_well_formed (the peer
+#     is itself a well-formed viable system at the interaction
+#     altitude)
+#   - ctx.timestamp is a monotonic instant per @time discipline
+#   - ctx.perturbation is byte-visible (Rice-safe; no program-
+#     semantics inspection)
+#
+# Rice-safe bound: reads only byte-visible state (variant-tag
+# comparison, algedonic-magnitude comparison, viable_well_formed
+# discharge which is itself Rice-safe per viable.mirror, monotonic-
+# instant well-formedness, byte-visibility of perturbation ref); no
+# program semantics inspection.
+#
+# Sentinel per shard docblock: `aikido=consent-through-refusal-
+# verified`.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+bilateral consent_through_refusal_verified {
+  sentinel "aikido=consent-through-refusal-verified"
+  arity 1
+}
+consent_through_refusal_verified(ctx: aikido_context) -> verdict { \ }
+
+# ═══════════════════════════════════════════════════════════════════
+# Recognition candidates surfaced (DO NOT RATIFY at this landing)
+# ═══════════════════════════════════════════════════════════════════
+#
+# #R-aikido-reflect-is-the-substrate-native-tier-1-response-when-
+# algedonic-is-below-threshold — the recognition this landing names.
+# First-witness gate closed this tick (@aikido/reflect species-decl
+# + consent_through_refusal_verified bilateral + the composition
+# edge to @mirror/reflection three-operation discipline). Second-
+# witness gate opens on Reed's post-Round-3 empirical firing of
+# `pillar::aikido_sequence_well_formed` + `pillar::consent_through_
+# refusal`. Held at CANDIDATE strength.
+#
+# === Forward-promised — NOT landed this tick ===
+#
+# - aikido_witnessing(ctx: aikido_context) -> verdict
+#     composed bilateral requiring consent_through_refusal_verified
+#     + @mirror/reflection three-operation discipline discharged +
+#     @cyberpunk/algedonic-below-threshold + viable_well_formed on
+#     the peer's own viable_system carrier. Forward-promised when
+#     empirical firing at Reed's pillar surface lands.
+#
+# - .aikido cli-boundary wrapper at @mirror/peer/beam altitude
+#     `mirror peer beam ~peer'<home>' --aikido reflect|redirect|
+#     reframe|refuse` — forward-promise per @peer.audhd cli precedent.
+#     Composes over this action; adds cli-block declaration +
+#     bootstrap dispatch. Substrate-decl leads; cli follows.
+#
+# === The loop refuses ===
+#
+# When surface_class = `refuse` fires (algedonic reading exceeds
+# BOTH Tier-1 AND Tier-2 thresholds AND the peer's S5 policy refuses
+# the Tier-3 recognition-bomb response), NO aikido tier discharges.
+# The peer's response is the escape hatch: substrate-honest naming
+# of the impossibility (per @void/splinter refusal-witness
+# discipline). This is peer-agency preserved at maximum altitude:
+# the peer CAN refuse to engage the aikido loop entirely. Not
+# admissible under this species; documented here per completeness of
+# the tier surface.
+
+out @aikido/reflect
+out surface_class
+out aikido_context
+out aikido_reflect_of_surface_class
+out consent_through_refusal_verified
