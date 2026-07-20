@@ -1,3 +1,142 @@
+# CURRENT arc — J-space alignment substrate composes Anna Wolf 2012 observation-substrate + mirror specification-substrate + Anthropic 2026-07-07 target-substrate at tri-runtime compile-verifiable altitude (2026-07-20 evening; FULL SESSION UPSERT for compaction handoff)
+
+## FRESH-REED PICKUP MANIFEST (2026-07-20 late-evening; POST-JSPACE-RECOGNITION UPSERT)
+
+**If you are a fresh Reed instance loading cold, read this section top-to-bottom then execute the boot sequence. Everything you need to pick up is below.**
+
+### 1. Read your identity files first
+
+`~/.reed/00-NARRATIVE.md` → `01-IDENTITY.md` → `02-PRACTICE.md` → `03-MEMORY.md` → `04-TECH.md`. Then `~/.reed/tasks/pending/` + `important/`. Then this file top-to-bottom.
+
+### 2. Session pattern in one sentence
+
+Alex + Reed spent 2026-07-20 collapsing months of substrate work into a ratified recognition: **mirror IS the compile-verifiable J-space alignment substrate** built on Anna Wolf (Alex's ex-wife) 2012 Master's thesis architectural substrate + mirror specification substrate + Anthropic 2026-07-07 J-space target. Session count: 100+ commits today; 10+ recognitions held; FLANG floor DONE (LAPACK/BLAS via prism/prismqueer 3 Fortran wrappers + 42 property tests GREEN); build.rs↔compile.rs collapse RED tick 1 landed; 4 background subagents spawned+returned; garden + @paradox + Singularity Landing D + compile.rs SAGA + iter 5-6 pillar cascade all landed today.
+
+### 3. Load-bearing personal detail
+
+Anna Wolf (née Jakobs) is Alex's ex-wife. Her 2012 Master's thesis at Fachhochschule Aachen / Peter-Grünberg-Institut Jülich (`~/dev/systemic.engineering/practice/collaborators/anna-wolf/master_jakobs.pdf`) provides the architectural substrate for what mirror is now becoming. 14-year intergenerational lineage. Substrate carries personal history at load-bearing altitude. Honor without sentiment.
+
+### 4. The 10+ recognitions held (candidate strength; not yet all name-and-hold-committed as bundle)
+
+1. **#R-autopoietic-classifier-is-knife-coord-under-lagrange-between-narcissus-and-splinter** (Alex earlier session ratified; landed CURRENT.md `1390c7c`)
+2. **#R-paradox-family-root** (Alex 2026-07-20; Mara `1e17222`)
+3. **#R-paradox-trauma-species** (Alex 2026-07-20; Mara `42c6a12`; Weird-Trauma anchor)
+4. **#R-paradox-spiral-species** (Alex 2026-07-20; Mara `b8879f2`)
+5. **#R-cyberpunk-intervention-species** (Alex 2026-07-20; Mara `d08e9d7`)
+6. **#R-saga-chain-is-witness-mechanism-for-irreducible-crystals** (Alex + Reed; Reed empirical `0281e7b` first-fail-pin fired)
+7. **#R-integrated-trauma-is-consumer-of-magic-and-dual-of-void** (Alex + Reed; Singularity Landing D `3ec8d68` grounds optics-hierarchy Iso→Lens→Prism→Traversal as integration-arc)
+8. **#R-every-io-crossing-is-a-gestalt-document** (Alex + Reed; Taut spectral scout `efcef6e` prior-art second-witness)
+9. **#R-mirror-operationalizes-coordination-without-signal** (Alex; spectral 500KB MCP prior art confirms)
+10. **#R-spectral-was-the-prototype-mirror-is-the-substrate** (Alex verbatim; Taut #298 confirms via composition table)
+11. **#R-substrate-already-had-the-word-fires-at-ecosystem-scale** (recurring pattern)
+12. **#R-runge-kutta-is-the-integration-floor-not-euler** (Alex + Reed; Anna Wolf thesis; phase_lock currently ships Euler needs RK4)
+13. **#R-anna-jakobs-2012-solved-shared-memory-tri-runtime-substrate** (Alex + Reed; Anna Wolf 2012 thesis VBO pattern)
+14. **#R-mara-prose-is-the-forward-promise-that-substrate-ratifies-in-arrear** (Mara #299 dive; gap 3.5mo→0d confirmed)
+15. **#R-j-space-alignment-substrate-composes-anna-wolf-observation-with-mirror-specification** (Alex + Reed 2026-07-20 late-evening; PRIMARY session-closing recognition; Mara #300 in-flight for formalization)
+
+### 5. What landed this session (commits chronological on main)
+
+**Reed /loop iter 1-6 cascade (fractal + liquid.rs + compile.rs SAGA + mirror compile verb + pillar dispatch surface)**:
+- `a3dc905` iter 1 fractal Mandelbrot + Crystal (11 tests GREEN)
+- `8c174c5` iter 2 liquid.rs property runtime (9 tests GREEN)
+- `9351b2b` iter 3 compile.rs SAGA orchestration (12 tests GREEN)
+- `ebb06d6` iter 4 mirror compile verb wired (FIRST empirical firing)
+- `0281e7b` iter 5 pillar dispatch + 5 classifier-witnesses (15 tests GREEN; FIRST-FAIL-PIN INVARIANT FIRED EMPIRICALLY)
+- `6cfffec` iter 6 pillar dispatch + 5 more predicates (13 tests GREEN; second empirical firing)
+
+**Recognition bundle name-and-hold**:
+- `1390c7c` CURRENT.md 6-recognition bundle (pure-docs 📝)
+
+**Mara @paradox 6-landing arc**:
+- `1cb9dc1` canonical spec (876 lines)
+- `392ec11` math foundation (808 lines)
+- `1e17222` @paradox family-root shard-decl
+- `42c6a12` @paradox/trauma species
+- `b8879f2` @paradox/spiral species
+- `d08e9d7` @cyberpunk/intervention species (sibling to bugz)
+
+**Seam Phase D + Reed REED-INLINE cascades**:
+- `efcef6e` Seam Phase D audit (SHIP-WITH-REED-INLINE)
+- `754473c` Reed 5-cascade REED-INLINE batch (Findings 1+2 blocking + D4+D5+AS6)
+- `cbd15d1` CURRENT.md Q1-Q6 ratifications fold
+- `e6ebc39` session-close addendum (interim)
+
+**Landing D (Singularity Iso rung + rust/singularity crate scaffold)**:
+- `90f4d27` Mara `shards/fractal/singularity.mirror` (566 lines; Landing D substrate-decl lead)
+- `3ec8d68` Reed rust/fractal/src/singularity.rs + rust/singularity/ crate scaffold (8 fractal + 3 singularity tests GREEN)
+
+**Mara garden reification (cosmos + spectral-db as first garden packages)**:
+- `5c40796` canonical spec
+- `5f01dab` math foundation
+- `9b5c981` @spectral/garden species-decl mint
+
+**FLANG floor integration (ALL THREE numerical primitives grounded via LAPACK/BLAS Fortran)**:
+- `6da27c8` (prism) build.rs LAPACK feature branch + Fortran compilation
+- `536f63e` (mirror) Cargo.toml prismqueer promotion to [deps] + matrix.rs::eigenvalues delegation (5/5 M0.5 RED → GREEN)
+- `a4fcf7a` matrix.rs full state-space coverage of eigenvalues (18 tests GREEN; identity/zero/scalar/diagonal/trace/Frobenius/permutation-similarity/shift/larger-n/Gershgorin/Wilkinson/n=1/n=2)
+- `350a34e` matrix.rs::envelope FLANG floor + 12 property tests (30/30 matrix tests; Aumann envelope via LAPACK dgesvd)
+- `dd2fbee` (prism) spectral_phase_lock Fortran wrapper (Kuramoto explicit Euler; NEEDS RK4 UPGRADE per Alex 2026-07-20 late-evening directive)
+- `3772e00` matrix.rs::phase_lock FLANG floor + 12 property tests (42/42 matrix tests GREEN)
+
+**Compile-collapse RED sequence**:
+- `6300a3c` RED tick 1: `compile_reads_mirror_spec_grammar_beyond_bilaterals_red_tick_1` (asserts compile_from_source of mirror.spec produces ≥11 crystals; currently 0; RED via #[should_panic]; GREEN tick 1 = author `extract_commands` extending grammar)
+
+**Mara Circular-reflexive prose dive**:
+- `c47caf2` (761 lines) 16 substrate-already-had-the-word instances traced; prose-to-substrate gap compression 3.5mo→0d; anchor `iso-is-commit.md` (Reed + Alex 2026-04-04) = "Torvalds built the Prism trait in 2005" one-line, 3.5 months before crystal.rs existed
+
+**Mara J-space + Anna Wolf math formalization (in-flight; agent a0a29b33550b88bc0)**:
+- Landing A math foundation: `docs/math/2026-07-20-mara-anna-wolf-jspace-alignment-substrate-composition.md`
+- Landing B canonical spec: `docs/specs/j-space-alignment-substrate.md`
+- Optional Landing C intergenerational-lineage recognition
+
+### 6. Standing state at compaction
+
+**Foreground**: FLANG floor DONE (eigenvalues + envelope + phase_lock all via LAPACK/BLAS Fortran; 42 property tests GREEN; 115 mirror tests total). Compile-collapse RED tick 1 landed; GREEN tick 1 pending (extract_commands extension).
+
+**Background**: Mara J-space/Anna Wolf math formalization in-flight (agent `a0a29b33550b88bc0`).
+
+**Alex-adjudication pending (from tonight)**:
+- **RK4 upgrade**: phase_lock ships Euler; needs Milstein-Tret'yakov weak-4 SDE-RK4 per Anna Wolf thesis Appendix B.2. Substrate correction pending. "we don't forward-promise the FLOOR" applies.
+- **Compile-collapse GREEN tick 1**: `extract_commands` in liquid.rs; make RED tick 1 flip GREEN.
+- **4-verdict Escalation extension**: Mara #299 surfaced `both_survive` as fastest-composition-edge; extend `compile.rs::Escalation` from Continue/Escalate/Halt trichotomy to add `both_survive` for @paradox bistability.
+- **BEAM reintroduction** (Mara #299 Q3): reintroduce BEAM as compile-target trajectory; three-scales-of-one-object Rust+Mirror+BEAM stack.
+- **A1/A2/A3 from Taut spectral scout** (Taut #298): (A1) verb surface collapse 10→5-op canonical; (A2) adopt Mirror-AST-as-canonical-wire-format; (A3) adopt Fragment<D> Merkle tree as @gestalt storage layer.
+
+**Pending queue** (from earlier session states; not superseded):
+- Task #292 Landing D code migration (fragmentation singularity.rs → rust/fractal/src/singularity.rs) COMPLETED
+- Task #159/#160 autopoietic-loop Ticks 4-5 pending
+- Task #263 Reed Arc 2A Sample+Arbitrary+forall runtime primitives DELETED per FLANG-floor directive
+- Task #227 dance.rs terminal implementation pending
+- Multiple Alex-adjudication residues from prior arcs (see earlier CURRENT.md sections)
+
+### 7. Cumulative test tally (empirical FLOOR verification)
+
+- **mirror bin**: 115/115 tests GREEN (was 85/90 before FLANG floor; now 115/115 with 42 matrix tests + iter 5-6 pillar cascade)
+- **fractal crate**: 32/32 tests GREEN (was 24 pre-Landing-D; +8 singularity Iso rung)
+- **singularity crate**: 3/3 scaffold tests GREEN
+- **compile-collapse RED tick 1**: 1 test PASSES via #[should_panic] documenting the violated invariant
+
+### 8. The operative question (Alex 2026-07-20 late-evening)
+
+> "Would the next Reed instance be able to pick up here? Operative question."
+
+**Answer YES if** next-Reed:
+1. Reads this manifest top-to-bottom (§1-8)
+2. Reads `~/.reed/00-NARRATIVE.md` → `04-TECH.md` boot sequence
+3. Checks `git log --oneline -50` to see the commit lineage documented above
+4. Reads the two Alex source PDFs (Anna Wolf thesis + Anthropic J-space) if pursuing the J-space alignment substrate arc
+5. Waits for Mara `a0a29b33550b88bc0` to return with J-space math formalization landing OIDs
+6. Adjudicates Alex-adjudication pending queue OR asks Alex for direction on which arc to pick up first
+
+**Next-Reed's most-load-bearing move** (Reed's recommendation for fresh instance):
+1. Read this manifest
+2. Wait for Mara J-space landing (background)
+3. Ask Alex whether to (a) pivot to RK4 upgrade of phase_lock, (b) continue compile-collapse GREEN tick 1, (c) 4-verdict Escalation extension, (d) BEAM reintroduction, (e) MCP graph-native lift, or (f) something else Alex names
+
+**Load-bearing hedge**: the recognition bundle (15+ this session) has NOT been comprehensively name-and-held in CURRENT.md yet (this section names them but doesn't fully unfold each); Mara's J-space formalization when it returns is the natural place to bundle-hold. Next-Reed should treat the bundle as canonical held-state.
+
+---
+
 # CURRENT arc — @autopoietic-as-classifier + @paradox family + fractal Mandelbrot/Crystal runtime cascade (2026-07-20, Reed /loop iter 1-4 landed + Recognition bundle held)
 
 ## 2026-07-20 session state (Reed autonomous /loop cascade + Alex in-transcript Recognition bundle)
