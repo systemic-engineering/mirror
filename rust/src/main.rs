@@ -60,8 +60,10 @@ mod collapse;
 // Five-file discipline per Mara Round 2 `docs/specs/rust-floor-five-
 // file-terminal-geometry-extension.md` (extends Mara `81294b3` three-
 // file spec): main + compile + liquid + matrix + phone. Each file
-// has ONE responsibility. compile.rs + liquid.rs land at /loop cascade
-// iterations 3-4 (Alex 2026-07-20; Reed authors post-Round-3-ratification).
+// has ONE responsibility. liquid.rs + compile.rs landed at /loop
+// cascade iterations 2-3 (Alex 2026-07-20).
+#[allow(dead_code)]
+mod compile;
 mod liquid;
 mod matrix;
 mod phone;
