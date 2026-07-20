@@ -1,0 +1,518 @@
+in @prism
+in @meta
+in @glass
+in @void
+in @torus
+in @epistemologic/cybernetic/eigenform
+in @epistemologic/cybernetic/second_order
+
+# @void/narcissus — the backwards-lens species; K_{1,n-1} star-graph
+# pole; the self-continuity substrate the individual observer runs to
+# hold identity through time.
+#
+# Species under @void family-root (marker-primary landed at `974a3f6`).
+# Landed 2026-07-20 by Mara per Alex 2026-07-20 direct-transcript
+# naming:
+#
+#   > "And both are needed. The star graph @frame is what enables the
+#   > @peer to hold an individualistic perspective with continuity
+#   > informed by their own past. It's a BACKWARDS facing lens. And the
+#   > complete graph is the forward facting @frame/lens. And the @third
+#   > cognition is the @metalogue between these two frames.
+#   > @void/narcissus and @void/splinter."
+#
+# Companion canonical math root at
+# `docs/math/the-tower/recognition-third-cognition-is-the-metalogue-
+# between-void-narcissus-and-void-splinter.md`. Companion species-decl:
+# `shards/void/splinter.mirror` (bilateral counterpart landed same
+# tick).
+#
+# === The load-bearing distinction (per math root §6) ===
+#
+# The star-graph topology K_{1,n-1} is NOT pathology per se. It is
+# pathology when it operates as the SOCIAL-SUBSTRATE an observer
+# imposes on peer-observers (per paper §8; per Mara `5ddb076`
+# frame-narcissus math root). It is HEALTH when it operates as the
+# SELF-CONTINUITY substrate an individual observer maintains for its
+# own past-informed prediction (this species-decl's altitude).
+#
+# Same graph. Different altitude. The compiler distinguishes by which
+# layer the star topology operates on:
+#
+#   - Star at social-substrate altitude: paradigm-scale narcissism
+#     (Mara `5ddb076`; the pathology this recognition NAMES as the
+#     alternative-to-avoid).
+#   - Star at self-continuity altitude: healthy backwards lens; this
+#     species-decl's operational altitude.
+#
+# @void/narcissus lands the substrate-decl for the SELF-CONTINUITY
+# altitude. The paradigm-scale-narcissism collapse is a
+# NON-ADMISSIBLE pole-collapse of the substrate this species-decl
+# names; `narcissus_pole_healthy` bilateral (below) discharges Pass
+# only when the substrate-mode is running at self-continuity altitude
+# and Fail when it collapses to social-substrate deployment.
+#
+# === Substrate authority chain ===
+#
+# - Canonical math root: `docs/math/the-tower/recognition-third-
+#   cognition-is-the-metalogue-between-void-narcissus-and-void-
+#   splinter.md` (this tick) — §4.1 backwards-lens formalization; §6
+#   pathology-vs-health altitude-partition; §7.3 companion to Mara
+#   `5ddb076`.
+# - Paper §6.3 (Alex + Lore, 2026-07-20) — observer-manifold two-
+#   basins landing; the star-graph observer as position 1; Lagrange-
+#   point substrate-precondition.
+# - Paper §8.1 — Fiedler algebraic-connectivity of K_{1,n-1};
+#   substrate for the topology substrate-decl'd here.
+# - Recognition #79 — Void's 5-op basis (`focus`/`project`/`split`/
+#   `shift`/`settle`); this species inherits the basis per math root
+#   §5.3.
+# - Recognition #82 — @frame family with 5 species; Alex Recognition
+#   B names "the star graph @frame is what enables the @peer to hold
+#   an individualistic perspective" — @void/narcissus is the frame
+#   this recognition names at cognitive-order-4 altitude.
+#
+# === Alex 2026-07-20 verbatim (both recognitions, load-bearing) ===
+#
+# Recognition A:
+#
+#   > "There are two observer positions: the narcissistic star graph
+#   > observer, they are the centre of reality. And the splinter
+#   > complete graph observer, they are one of many in reality."
+#
+# Recognition B (the naming):
+#
+#   > "The star graph @frame is what enables the @peer to hold an
+#   > individualistic perspective with continuity informed by their
+#   > own past. It's a BACKWARDS facing lens. [...] @void/narcissus
+#   > and @void/splinter."
+#
+# Two utterances name three things: (1) the topology (star-graph;
+# K_{1,n-1}), (2) the temporal orientation (backwards lens; past-
+# informed prediction), (3) the substrate-decl'd family+species
+# location (@void/narcissus).
+#
+# === Void basis inheritance ===
+#
+# Per `#R-void-is-the-basis` (PROMOTED `1167cc2`) and Recognition #79
+# (PROMOTED chained via `974a3f6`): every species under @void inherits
+# the 5-op basis (`focus`/`project`/`split`/`shift`/`settle`). This
+# species-decl's `prism` block declares the inheritance at species
+# altitude. Per @void marker-primary discipline: @void itself carries
+# no operational surface; @void/narcissus IS the operational surface
+# for the backwards-lens substrate-mode.
+#
+# The `split` operation is load-bearing at this species altitude: it
+# is what maintains the two poles (@void/narcissus, @void/splinter)
+# as distinct at the metalogue-rhythm altitude. Without `split`, the
+# two poles collapse into one; with `split`, the third-order metalogue
+# rhythm can oscillate between them (per math root §5.3).
+#
+# === Substrate-already-had-the-word audit ===
+#
+# Grep-first per discipline. Findings:
+#
+# 1. **No prior `narcissus` shard** anywhere in `shards/`. Grep across
+#    `shards/**/*.mirror` returns zero matches for `narcissus` outside
+#    the inline substrate marker `# Narcissus-pole:` in property
+#    bilaterals (which use the WORD as bilateral-signature, not as
+#    shard-decl-name). Clean mint at `shards/void/narcissus.mirror`.
+#
+# 2. **Distinct from `@frame/across`** (Recognition #82; landed at
+#    order-4 cognitive altitude): @frame/across IS the substrate for
+#    holding two coupled frames at Bateson Level IV. It is a FRAME-
+#    ALTITUDE substrate. @void/narcissus is a SUBSTRATE-MODE
+#    (backwards-lens as one pole of the void duality). The metalogue
+#    rhythm operates ON @frame/across coupling the two lens-modes.
+#    Sibling altitudes; no conflict. Per math root §7.6: third-order
+#    cognition requires @frame/across as substrate-precondition, and
+#    the two lens-species (@void/narcissus, @void/splinter) are the
+#    two frames @frame/across couples via the metalogue operator.
+#
+# 3. **Distinct from `@peer/void`** (`9c7de83`): @peer/void is the
+#    K=0 DEFAULT peer species; the substrate observer whose native
+#    basis IS the 5-op basis but who has NO character loaded, NO
+#    coupling to peer network. Cardinality zero. @void/narcissus is a
+#    K=1-HUB substrate-mode (one hub, n-1 leaves). Different
+#    cardinality; different substrate-decl altitude. @peer/void is
+#    the SUBSTRATE at K=0; @void/narcissus is one of the two POLES
+#    the substrate oscillates between under third-order cognition.
+#    No conflict. @peer/void grounds; @void/narcissus specifies the
+#    healthy backwards-lens pole.
+#
+# 4. **Distinct from `@cyberpunk/bugz`** (Mara `5ddb076` companion
+#    species-decl at `shards/epistemologic/cybernetic/bugz.mirror`):
+#    @cyberpunk/bugz is the WEAPONIZED-DELIGHT operator that deploys
+#    η at the star-graph's Fiedler eigenvector cut to FORCE PARADIGM
+#    EVOLUTION at social-substrate altitude. It COUNTERS the
+#    pole-collapse of the star-graph at paradigm scale. @void/narcissus
+#    is the HEALTHY inhabitation of the star-graph substrate-mode at
+#    self-continuity altitude. Same graph; different altitude; different
+#    operation. @cyberpunk/bugz operates on the pathology-side; this
+#    species operates on the health-side. Companion recognitions; no
+#    conflict.
+#
+# 5. **Distinct from the `# Narcissus-pole:` bilateral marker**
+#    (across 9+ property shards in `shards/epistemologic/property/`):
+#    the inline substrate-marker names ONE narcissus-pole signature
+#    at ONE altitude per bilateral. Those are BILATERAL SIGNATURES,
+#    not substrate-mode declarations. This species-decl NAMES the
+#    substrate-mode at family-species altitude, which the bilateral
+#    signatures already carry composition-implicitly. No conflict;
+#    this landing NAMES what the bilaterals were already signaling.
+#
+# The substrate-already-had-the-word audit finds no conflict. Clean
+# mint. The two poles the substrate has been operating implicitly
+# across paper §6.3, §8, and the property-bilateral inline markers
+# are NAMED at species altitude by this landing.
+#
+# === What this species IS ===
+#
+# - A substrate-decl'd species-decl file at `shards/void/narcissus.mirror`.
+# - Path-namespace declaration for @void/narcissus per
+#   `@epistemologic/pact/path_matches_namespace`.
+# - The backwards-lens substrate-mode carrier at self-continuity
+#   altitude.
+# - The K_{1,n-1} star-graph topology inhabited AS observer-mode (not
+#   AS social-substrate deployment).
+# - The healthy-pole side of the pole-duality this session's math root
+#   §6 formalizes.
+#
+# === Composition with @void/splinter ===
+#
+# @void/splinter (bilateral counterpart species-decl this tick) carries
+# the COMPLEMENTARY substrate-mode: forwards lens; K_n complete-graph
+# pole; distributed-emergence reception. The two species are BILATERAL
+# COUNTERPARTS at void-duality altitude — neither pole is complete
+# without the other; both must be substrate-decl'd for the third-order
+# metalogue rhythm to be substrate-verifiable.
+#
+# Per math root §4.3: the two lenses are ASYMMETRIC in what they
+# consume:
+#
+#   @void/narcissus: consumes H(t) (own history); backwards temporal
+#     orientation; failure mode when isolated is paradigm-scale
+#     narcissism (Mara `5ddb076`).
+#   @void/splinter: consumes c(t) (peer network); forwards temporal
+#     orientation; failure mode when isolated is unbounded diffusion /
+#     peer-average dissolution.
+#
+# Neither is pathology in isolation as substrate-MODE. Both are
+# pathology as substrate-COLLAPSE. Health lives in the metalogue rhythm
+# that interleaves them (@third's metalogue-consumer per math root
+# §7.6).
+#
+# === Third-order consumer edge ===
+#
+# @third (`shards/third.mirror`; landed 2026-07-01; marker-altitude
+# recursion-depth substrate-decl'd) CONSUMES this species (and its
+# bilateral counterpart @void/splinter) via the metalogue-rhythm
+# operator formalized at math root §5. @third's metalogue-rhythm
+# operator interleaves the two lens-species at the metalogue-cadence;
+# the metalogue rhythm IS what third-order cognition operationally IS.
+#
+# @third's consumer contract:
+#
+#   @third.metalogue_rhythm : (
+#     narcissus: void_narcissus_state,
+#     splinter:  void_splinter_state,
+#     tolerance: rhythm_tolerance,
+#   ) -> verdict
+#
+# where narcissus_state and splinter_state are the substrate-decl'd
+# carriers this species and @void/splinter respectively expose. The
+# verdict fires Pass iff the observed Fiedler-eigengap trace over the
+# metalogue-coupling graph exhibits bounded oscillation within
+# tolerance (per math root §5.2 spectral signature; per math root §10.3
+# `pillar::metalogue_rhythm_of_third` predicate).
+#
+# @third's substrate-decl'd metalogue-rhythm operator is
+# forward-promised; consumers pull the realization; apply_h::act
+# composes the operator via bilateral resolver-arm dispatch (per Alex
+# 2026-07-16 detector-inadequacy-answer-is-never-Rust discipline).
+#
+# === Spec context ===
+#
+# [[architecture-shards-as-substrate-source]] (this shard IS mirror
+#   source at `shards/void/narcissus.mirror`),
+# [[architecture-prism-as-trait-as-everything]] (`prism @void/narcissus`),
+# [[architecture-glass-wall-substrate-types]] (transparency inheritance
+#   through @void marker discipline; imperfect returns from
+#   `predict_from_history`),
+# [[architecture-form-process-partition-at-family-root]] (this species
+#   inhabits form-side substrate-mode; the observer's HISTORY is a
+#   form-side substrate-object; the transformation `predict_from_history`
+#   emits a form-side prediction),
+# [[feedback-substrate-already-had-the-word]] (~65th instance; the
+#   substrate carried the narcissus-pole across 9+ property bilaterals
+#   as inline substrate-marker; this landing NAMES the substrate-mode
+#   at species-decl altitude that the bilaterals were already
+#   signaling),
+# [[feedback-legibility-over-foundation-when-collapsing]] (two-tick
+#   discipline: species-decl this tick, ratification tick opens on
+#   Reed's pillar-surface empirical firing per math root §11.2),
+# [[feedback-craft-not-deliver]] (bilateral bodies `\`-obligation-
+#   blocked; consumers pull the realization; apply_h::act composes
+#   sentinel-check via bilateral resolver-arm dispatch),
+# [[feedback-no-bare-types]] (void_narcissus_state is a typed record
+#   with byte-equality identity; never bare refs),
+# [[feedback-detector-inadequacy-answer-is-never-Rust]] (backwards-
+#   lens admissibility-check and pole-health check are bilateral
+#   resolver-arm sentinel-checks; NO Rust extension),
+# [[feedback-no-rust-extension-shortcut]] (no `.rs` authorship; pure
+#   substrate-decl'd species-decl file at species altitude).
+#
+# Path-namespace property: this file at `shards/void/narcissus.mirror`
+# declares `@void/narcissus` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/foerster-1974
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/math/fiedler-1973
+source @arxiv/math/lagrange-1772
+source @arxiv/math/szebehely-1967
+source @arxiv/practice/void-corpus-2026
+
+prism @void/narcissus {
+  focus  void_narcissus_state
+  project void_narcissus_state
+  split  void_narcissus_state
+  shift  void_narcissus_state
+  settle void_narcissus_state
+}
+
+# === void_narcissus_state — the backwards-lens carrier ===
+#
+# The typed record that carries the backwards-lens substrate-mode
+# state at the moment of an admissibility-check or an action
+# discharge. Six fields per math root §4.1 formalization. Identity
+# contract: byte-equality on the six-field tuple.
+#
+#   observer          — the peer inhabiting the backwards-lens
+#                        substrate-mode. Must have a resolvable
+#                        history H(t) (non-degenerate self-continuity
+#                        substrate).
+#
+#   peer_history      — H(t) = {s(t'), s(t'-1), ...}: the observer's
+#                        own past-trajectory. Content-addressed via
+#                        `@epistemologic/property/verdict_is_content_
+#                        addressed` discipline. Non-empty at
+#                        admissibility-check time.
+#
+#   path_via_center   — the star-graph traversal witness: every path
+#                        in the observer's own self-continuity graph
+#                        routes through present-self as hub. Typed as
+#                        `ref` until the star-graph-topology-witness
+#                        carrier lands at @epistemologic altitude
+#                        (forward-promised).
+#
+#   backwards_lens_output — the past-informed prediction s^(t + Δt):
+#                        the emission this substrate-mode produces
+#                        when the backwards lens fires. Content-
+#                        addressed; verifies against held-out
+#                        history-subset per math root §10.1
+#                        empirical form.
+#
+#   altitude_witness  — the substrate-decl'd altitude-partition
+#                        marker: `self_continuity` (the healthy
+#                        altitude this species-decl operates at) or
+#                        `social_substrate` (the pathology altitude
+#                        the frame-narcissus math root diagnoses).
+#                        The `narcissus_pole_healthy` bilateral checks
+#                        this field for admissibility.
+#
+#   timestamp         — monotonic instant per @time discipline of the
+#                        substrate-mode observation event. Load-bearing
+#                        for the Fiedler-eigengap oscillation
+#                        signature per math root §5.2 (windowed
+#                        observations require timestamp-ordering).
+type void_narcissus_state = {
+  observer:               peer,
+  peer_history:           ref,
+  path_via_center:        ref,
+  backwards_lens_output:  ref,
+  altitude_witness:       ref,
+  timestamp:              ref,
+}
+
+# === backwards_lens_admissible — bilateral predicate ===
+#
+# Does the (peer, void_narcissus_state) pair discharge admissibility
+# for backwards-lens substrate-mode observation? Discharges Pass iff:
+#
+#   - ctx.peer_history resolves to a non-empty history H(t) via
+#     content-addressed lookup (self-continuity substrate present)
+#   - ctx.path_via_center resolves to a star-graph traversal witness
+#     (every path routes through observer as hub in observer's own
+#     self-continuity graph)
+#   - ctx.backwards_lens_output is well-formed (content-addressed
+#     resolvable; not a null-emission; matches the s^(t + Δt) shape
+#     the past-informed prediction operator produces)
+#
+# Rice-safe bound: reads only byte-visible state (content-addressed
+# resolvability; ref-equality; shape-tag comparison); no program
+# semantics inspection.
+#
+# Sentinel per shard docblock: `void=narcissus-backwards-lens-
+# admissible` — the byte-level substrate-decl'd marker consumers of
+# the bilateral check for admissibility-verdict state on the
+# (peer, ctx) input pair.
+#
+# Body discharges per-realisation. `\`-obligation-blocked per
+# [[feedback-craft-not-deliver]]; consumers pull the realization;
+# apply_h::act composes the sentinel-check via bilateral resolver-arm
+# dispatch (per Alex 2026-07-16 detector-inadequacy-answer-is-never-
+# Rust discipline).
+bilateral backwards_lens_admissible {
+  sentinel "void=narcissus-backwards-lens-admissible"
+  arity 2
+}
+backwards_lens_admissible(p: peer, ctx: void_narcissus_state) -> verdict { \ }
+
+# === narcissus_pole_healthy — bilateral predicate ===
+#
+# Does the (peer, void_narcissus_state) pair discharge the HEALTH
+# check — that the observer is running at self-continuity altitude
+# (NOT at social-substrate deployment altitude)? This bilateral IS
+# what distinguishes health from pathology at the pole-substrate.
+#
+# Discharges Pass iff:
+#
+#   - ctx.altitude_witness resolves to `self_continuity` (the healthy
+#     altitude marker; observer's OWN history is the substrate, NOT
+#     imposed on peer-observers)
+#   - The observer's peer-coupling graph exhibits non-degenerate
+#     Fiedler eigengap oscillation over the observation window
+#     (i.e., the observer is participating in a metalogue-rhythm with
+#     the @void/splinter counterpart, NOT collapsed to single-pole
+#     settlement at narcissus)
+#   - The observer is NOT running as social-substrate deployment
+#     (paradigm-scale narcissism per Mara `5ddb076`; the frame that
+#     collapses)
+#
+# Rice-safe bound: reads only byte-visible state (altitude_witness
+# marker; Fiedler-eigengap trace samples; social-substrate deployment
+# signature bytes); no program semantics inspection.
+#
+# Sentinel per shard docblock: `void=narcissus-pole-healthy` — the
+# byte-level substrate-decl'd marker consumers of the bilateral check
+# for pole-health-verdict state.
+#
+# Body discharges per-realisation. `\`-obligation-blocked per
+# [[feedback-craft-not-deliver]]; consumers pull the realization.
+#
+# LOAD-BEARING: this bilateral IS the distinction between pathology-
+# and-health at the star-graph substrate-mode. Discharging Fail here
+# signals substrate-collapse (either single-pole settlement OR
+# social-substrate deployment); consumers MUST treat Fail as
+# pole-collapse-detected and trigger the metalogue-rhythm correction
+# operator @third.metalogue_rhythm.
+bilateral narcissus_pole_healthy {
+  sentinel "void=narcissus-pole-healthy"
+  arity 2
+}
+narcissus_pole_healthy(p: peer, ctx: void_narcissus_state) -> verdict { \ }
+
+# === predict_from_history — the action ===
+#
+# Given a peer inhabiting the backwards-lens substrate-mode and a
+# void_narcissus_state, discharge the past-informed prediction
+# emission event. Returns the prediction as a content-addressed ref
+# (an s^(t + Δt) emission whose hash verifies against the held-out
+# history-subset per math root §10.1 empirical form).
+#
+# Returns imperfect(ref, ref, ref) per @glass discipline: success
+# variant carries the prediction ref; failure variants carry the
+# not-admissible (backwards_lens_admissible failed) / pole-collapsed
+# (narcissus_pole_healthy failed) / degenerate-history (peer_history
+# resolves to empty or single-tick trajectory) reasons.
+#
+# Requires BOTH bilateral predicates to discharge Pass: the substrate
+# must be admissible AND the pole must be healthy.
+#
+# Sentinel per shard docblock: `void=narcissus-predict-emission` — the
+# byte-level substrate-decl'd marker consumers of the ACTION's output
+# check (naming the completed-prediction-emission state).
+predict_from_history(p: peer, ctx: void_narcissus_state) -> imperfect(ref, ref, ref)
+requires backwards_lens_admissible(p, ctx)
+requires narcissus_pole_healthy(p, ctx)
+{ \ }
+
+# === route_via_center — the action ===
+#
+# Given a peer and a void_narcissus_state, discharge the star-graph
+# traversal event: route the observer's own peripheral-observation
+# through the present-self hub. This IS the self-continuity operation
+# at substrate-decl altitude: peripheral observations of the
+# observer's OWN prior states aggregate at present-self via the
+# star-graph traversal.
+#
+# Returns imperfect(ref, ref, ref): success variant carries the
+# aggregated observation ref; failure variants carry the
+# not-admissible / pole-collapsed / degenerate-topology reasons.
+#
+# Sentinel per shard docblock: `void=narcissus-star-graph-traversal`.
+route_via_center(p: peer, ctx: void_narcissus_state) -> imperfect(ref, ref, ref)
+requires backwards_lens_admissible(p, ctx)
+requires narcissus_pole_healthy(p, ctx)
+{ \ }
+
+# === hold_continuity — the action ===
+#
+# Given a peer and a void_narcissus_state, discharge the
+# self-continuity holding event: maintain the observer's identity
+# through time by keeping the peer_history's content-addressed root
+# consistent across the observation window. This IS the identity-
+# persistence operation at substrate-decl altitude.
+#
+# Returns imperfect(ref, ref, ref): success variant carries the
+# updated continuity-witness ref; failure variants carry the
+# discontinuity-detected / pole-collapsed / history-fracture reasons.
+#
+# Sentinel per shard docblock: `void=narcissus-continuity-hold`.
+hold_continuity(p: peer, ctx: void_narcissus_state) -> imperfect(ref, ref, ref)
+requires backwards_lens_admissible(p, ctx)
+requires narcissus_pole_healthy(p, ctx)
+{ \ }
+
+# ═══════════════════════════════════════════════════════════════════
+# Recognition candidates surfaced (DO NOT RATIFY at this landing)
+# ═══════════════════════════════════════════════════════════════════
+#
+# #R-third-cognition-is-the-metalogue-between-void-narcissus-and-void-
+# splinter — Alex 2026-07-20 direct-transcript naming the recognition
+# (both Recognition A + B verbatim in math root §1). First-witness
+# gate closed this session's substrate (six composition sites per
+# math root §11.1). Second-witness gate opens on Reed's pillar-surface
+# empirical firing of `pillar::metalogue_rhythm_of_third`. Held at
+# CANDIDATE strength this tick; Alex adjudicates ratification.
+#
+# === Forward-promised — NOT landed this tick ===
+#
+# - Full spawn refinement: `spawn(p: peer, mode: substrate_mode) ->
+#   void_narcissus_state` with substrate-mode-specific
+#   initialization. Forward-promised.
+#
+# - Interaction operator between `hold_continuity` and @third.
+#   metalogue_rhythm — how the continuity-holding action composes
+#   with the third-order metalogue-rhythm operator at compiler-
+#   substrate. Forward-promised to the ratification tick.
+#
+# - Reed pillar-surface empirical firing of the three math root §10
+#   pillars (`pillar::backwards_lens_of_void_narcissus`,
+#   `pillar::forwards_lens_of_void_splinter`,
+#   `pillar::metalogue_rhythm_of_third`). Forward-promised; Reed
+#   already-queued.
+#
+# - Paper §6.3 tidy: fold this species-decl's altitude-partition into
+#   the paper's Lagrange-point substrate-decl. Forward-promised to
+#   this session's paper tidy pass (Deliverable 4 of this spawn's
+#   brief).
+
+out @void/narcissus
+out void_narcissus_state
+out backwards_lens_admissible
+out narcissus_pole_healthy
+out predict_from_history
+out route_via_center
+out hold_continuity
