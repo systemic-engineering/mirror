@@ -60,10 +60,53 @@
 //!
 //! Full spec-reading + shard-walking + real pillar dispatch lands at
 //! iterations 3-5 of the cascade.
+//!
+//! ## Iter 2 (post-reframe 2026-07-21) — SpecProperty carrier lands alongside
+//!
+//! Per Alex 2026-07-21 reframe (`docs/loop/CURRENT.md`
+//! §2026-07-21-ALEX-REFRAME, commit `16ddb12`) re-surfacing Mara
+//! 2026-07-19 canonical spec `docs/specs/2026-07-19-mirror-spec-is-
+//! the-fixpoint-liquid-is-the-runtime.md`: the `PropertyDecl` above
+//! is actually a `BilateralDecl` by shape (shard-body altitude;
+//! Mara §5.2 bullet 2). The spec-body `property { verifies { … }
+//! domain @<T> samples <n> defer? <msg> }` grammar (declared at
+//! `shards/mirror/spec/property.mirror`) is a DISTINCT carrier per
+//! Mara §5.2 bullet 1.
+//!
+//! Two-tick discipline (per `shards/mirror/spec/system.mirror`
+//! precedent for `project`→`system` migration):
+//!
+//! - **Tick 1 (this landing).** Mint `SpecProperty` carrier +
+//!   `extract_spec_properties(source: &str) -> Vec<SpecProperty>`
+//!   alongside existing PropertyDecl + extract_properties. Both
+//!   shapes coexist at Rust altitude.
+//! - **Tick 2 (forward-promised).** Rename `PropertyDecl` →
+//!   `BilateralDecl` + `extract_properties` → `extract_bilaterals`;
+//!   rename `SpecProperty` → `PropertyDecl` per Mara §5.2 naming.
+//!   Update `compile.rs` consumer through mechanical rename.
+//! - **Tick 3 (forward-promised).** Extend `dispatch_property` to
+//!   route SpecProperty via §2.3 dispatch table (verifies-expression
+//!   shape → pillar primitive; per Mara §2.3 landed dispatch table).
+//!
+//! Once Tick 3 lands + Reed's ~17 per-property RED files retire per
+//! Mara §7.1, `rust/` bears FROZEN marker: mirror.spec declares VSM
+//! shape + attached property specifications; Rust merely verifies
+//! compliance per Adzic *Specification by Example* form.
+//!
+//! **Every iter asks**: does this tick shrink FLOOR toward FROZEN or
+//! grow Rust? This landing GROWS SpecProperty carrier + one
+//! extraction fn (~80 LOC) but ENABLES retirement of ~17 per-property
+//! RED files at Tick 3+ per Mara §7.1. Net FLOOR shrink is
+//! forward-promised at Tick 3+ landing.
 
 /// A bilateral property declaration extracted from mirror.spec or a
 /// shard body. Mirrors `bootstrap/src/apply_h.rs::BilateralDecl`
 /// shape (fresh reimplementation per collapse.rs precedent).
+///
+/// **Naming note (2026-07-21):** per Alex reframe this carrier is
+/// substrate-honestly a `BilateralDecl` (shard-body altitude per
+/// Mara §5.2 bullet 2). Rename forward-promised at Tick 2. Sibling
+/// spec-body carrier at [`SpecProperty`] lands this tick.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PropertyDecl {
     /// Property name (e.g., "reflection_composes", "aikido_sequence_well_formed").
@@ -91,6 +134,236 @@ impl PropertyDecl {
     pub fn is_base(&self) -> bool {
         self.require.is_empty() && !self.sentinel.is_empty()
     }
+}
+
+/// A spec-body property declaration extracted from `mirror.spec`.
+///
+/// Carrier for the `property <name> { verifies { <expr> } domain
+/// @<T> samples <n> defer? <msg> }` grammar declared at
+/// `shards/mirror/spec/property.mirror` (Mara 2026-07-19). Distinct
+/// altitude from [`PropertyDecl`] (shard-body bilateral): spec-body
+/// properties are project-level executable specifications per
+/// Adzic *Specification by Example* form (spec IS the test, test
+/// IS the spec).
+///
+/// Per Mara canonical spec `docs/specs/2026-07-19-mirror-spec-is-
+/// the-fixpoint-liquid-is-the-runtime.md` §5.2 bullet 1: the
+/// substrate-decl'd fields are `name`, `verifies_expression_tree`,
+/// `domain_type_witness`, `samples_count`, `defer_annotation`.
+/// This carrier holds the extracted-from-source shape; the
+/// verifies-expression tree lives here as raw source-substring
+/// (parsing to typed expression tree is Tick 3+ per Mara §3.2).
+///
+/// Alex 2026-07-21 verbatim (re-surfacing Mara 2026-07-19):
+///
+/// > "we need to cross the Liquid<T> threshold between Rust and
+/// > Mirror. Because then we can start to project properties into
+/// > Beer's VSM definition and attached as executable
+/// > specificitions. Like in the book Specification as Example.
+/// > Then the Rust can be frozen. And mirror becomes canonical."
+///
+/// This carrier IS the Rust-altitude landing of the threshold-
+/// crossing shape.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SpecProperty {
+    /// Property name (per `property <NAME> { … }` header).
+    pub name: String,
+    /// The raw source text between `verifies {` and its matching
+    /// `}` (leading/trailing whitespace stripped). Parsed to typed
+    /// expression tree at Tick 3+ per Mara canonical spec §3.2.
+    /// Empty string when no verifies block present.
+    pub verifies_source: String,
+    /// The domain-type reference (per `domain @<Type>` directive).
+    /// String form `"@Type"` including the leading `@`. Empty when
+    /// no domain directive present.
+    pub domain_ref: String,
+    /// The samples count (per `samples <n>` directive). None when
+    /// no samples directive present.
+    pub samples: Option<usize>,
+    /// The defer annotation message (per `defer <msg>` directive).
+    /// None when property is not deferred; Some(msg) when deferred
+    /// with the given message.
+    pub defer_message: Option<String>,
+    /// Source location (`line N` where the property block starts).
+    /// Empty when not tracked.
+    pub source: String,
+}
+
+impl SpecProperty {
+    /// True iff this property carries a non-empty verifies body.
+    /// A well-formed SpecProperty has a verifies body per Mara
+    /// canonical spec §3.1 `verifies_expression_tree` field.
+    pub fn has_verifies(&self) -> bool {
+        !self.verifies_source.is_empty()
+    }
+
+    /// True iff this property is deferred (per `defer <msg>` in the
+    /// spec source). Per Reed's `defer()`-mode pattern in
+    /// `prism/prismqueer/tests/red_trust_chain_liquid_void.rs`.
+    pub fn is_deferred(&self) -> bool {
+        self.defer_message.is_some()
+    }
+}
+
+/// Extract spec-body property declarations from a source text.
+///
+/// Byte-scans line-by-line for `property <name> { verifies { <expr> }
+/// domain @<Type> samples <n> defer? <msg> }` blocks per the grammar
+/// declared at `shards/mirror/spec/property.mirror` (Mara 2026-07-19).
+/// Handles multi-line verifies blocks (nested braces tracked);
+/// preserves declaration order.
+///
+/// This is the spec-body counterpart to [`extract_properties`]. Both
+/// coexist at this altitude per two-tick discipline (rename cascade
+/// forward-promised at Tick 2 per module-level docblock).
+///
+/// The verifies-expression tree is captured as raw source substring;
+/// typed-expression-tree parsing forward-promised at Tick 3+ per
+/// Mara canonical spec `docs/specs/2026-07-19-mirror-spec-is-the-
+/// fixpoint-liquid-is-the-runtime.md` §3.2 (Rondon-Kawaguchi-Jhala
+/// 2008 decidability grounding).
+pub fn extract_spec_properties(source: &str) -> Vec<SpecProperty> {
+    let mut out = Vec::new();
+    let mut lines = source.lines().enumerate().peekable();
+    while let Some((line_no, line)) = lines.next() {
+        let trimmed = line.trim();
+        // Look for `property <name> {` opener at spec-body altitude.
+        let Some(rest) = trimmed.strip_prefix("property ") else {
+            continue;
+        };
+        let Some(name) = rest.split_whitespace().next() else {
+            continue;
+        };
+        if !rest.contains('{') {
+            continue;
+        }
+        let name = name.to_string();
+        let source_loc = format!("line {}", line_no + 1);
+        let mut verifies_source = String::new();
+        let mut domain_ref = String::new();
+        let mut samples: Option<usize> = None;
+        let mut defer_message: Option<String> = None;
+        // Track outer `property { }` brace depth (opener already seen).
+        let mut depth: usize = 1;
+        while let Some((_, body_line)) = lines.next() {
+            let body_trimmed = body_line.trim();
+            // Detect `verifies {` opener; consume nested body preserving
+            // inner brace nesting until the matching close.
+            if let Some(v_rest) = body_trimmed.strip_prefix("verifies") {
+                if v_rest.trim_start().starts_with('{') {
+                    let mut verifies_lines: Vec<String> = Vec::new();
+                    let mut v_depth: usize = 1;
+                    // Capture any content after `verifies {` on same line.
+                    let after_brace: String = v_rest
+                        .trim_start()
+                        .strip_prefix('{')
+                        .unwrap_or("")
+                        .to_string();
+                    let after_trim = after_brace.trim();
+                    if !after_trim.is_empty() && after_trim != "}" {
+                        // Same-line content (e.g., `verifies { true }`).
+                        if let Some(inner) = after_trim.strip_suffix('}') {
+                            let inner_trim = inner.trim();
+                            if !inner_trim.is_empty() {
+                                verifies_lines.push(inner_trim.to_string());
+                            }
+                            v_depth = 0;
+                        } else {
+                            verifies_lines.push(after_trim.to_string());
+                        }
+                    } else if after_trim == "}" {
+                        v_depth = 0;
+                    }
+                    while v_depth > 0 {
+                        let Some((_, v_line)) = lines.next() else {
+                            break;
+                        };
+                        let v_trimmed = v_line.trim();
+                        // Track brace nesting inside verifies body.
+                        for ch in v_trimmed.chars() {
+                            match ch {
+                                '{' => v_depth += 1,
+                                '}' => {
+                                    if v_depth > 0 {
+                                        v_depth -= 1;
+                                    }
+                                }
+                                _ => {}
+                            }
+                        }
+                        if v_depth == 0 {
+                            // Line closes verifies body; strip trailing `}`.
+                            let closing_stripped = v_trimmed
+                                .rsplit_once('}')
+                                .map(|(pre, _)| pre.trim().to_string())
+                                .unwrap_or_default();
+                            if !closing_stripped.is_empty() {
+                                verifies_lines.push(closing_stripped);
+                            }
+                        } else {
+                            verifies_lines.push(v_trimmed.to_string());
+                        }
+                    }
+                    verifies_source = verifies_lines.join("\n").trim().to_string();
+                    continue;
+                }
+            }
+            // Detect `domain @<Type>` directive.
+            if let Some(d_rest) = body_trimmed.strip_prefix("domain ") {
+                domain_ref = d_rest
+                    .split_whitespace()
+                    .next()
+                    .unwrap_or("")
+                    .to_string();
+                continue;
+            }
+            // Detect `samples <n>` directive.
+            if let Some(s_rest) = body_trimmed.strip_prefix("samples ") {
+                if let Ok(n) = s_rest.trim().parse::<usize>() {
+                    samples = Some(n);
+                }
+                continue;
+            }
+            // Detect `defer <msg>` directive; msg may be quoted.
+            if let Some(f_rest) = body_trimmed.strip_prefix("defer ") {
+                let raw = f_rest.trim();
+                let msg = if let Some(q_start) = raw.find('"') {
+                    raw[q_start + 1..]
+                        .rfind('"')
+                        .map(|q_end| raw[q_start + 1..q_start + 1 + q_end].to_string())
+                        .unwrap_or_else(|| raw.trim_matches('"').to_string())
+                } else {
+                    raw.to_string()
+                };
+                defer_message = Some(msg);
+                continue;
+            }
+            // Track outer property-block brace nesting.
+            for ch in body_trimmed.chars() {
+                match ch {
+                    '{' => depth += 1,
+                    '}' => {
+                        if depth > 0 {
+                            depth -= 1;
+                        }
+                    }
+                    _ => {}
+                }
+            }
+            if depth == 0 {
+                break;
+            }
+        }
+        out.push(SpecProperty {
+            name,
+            verifies_source,
+            domain_ref,
+            samples,
+            defer_message,
+            source: source_loc,
+        });
+    }
+    out
 }
 
 /// Extract bilateral property declarations from a source text.
@@ -1236,5 +1509,190 @@ bilateral reflection_composes {
         assert!(props[0].is_base());
         assert!(props[1].is_base());
         assert!(props[2].is_base());
+    }
+
+    // =================================================================
+    // SpecProperty extraction — spec-body `property { verifies { … }
+    // domain @<T> samples <n> defer? <msg> }` grammar per Mara 2026-
+    // 07-19 canonical spec + Alex 2026-07-21 reframe (Liquid<T>
+    // threshold crossing).
+    // =================================================================
+
+    #[test]
+    fn extract_spec_properties_finds_minimal_property() {
+        let source = r#"
+project demo {
+  property mirror_project_declared {
+    verifies { true }
+    domain @Byte
+    samples 1
+  }
+}
+"#;
+        let props = extract_spec_properties(source);
+        assert_eq!(props.len(), 1);
+        assert_eq!(props[0].name, "mirror_project_declared");
+        assert_eq!(props[0].verifies_source, "true");
+        assert_eq!(props[0].domain_ref, "@Byte");
+        assert_eq!(props[0].samples, Some(1));
+        assert_eq!(props[0].defer_message, None);
+        assert!(props[0].has_verifies());
+        assert!(!props[0].is_deferred());
+    }
+
+    #[test]
+    fn extract_spec_properties_returns_empty_when_no_property_blocks() {
+        let source = r#"
+project demo {
+  bilateral not_a_property {
+    sentinel "x"
+    arity 1
+  }
+}
+"#;
+        let props = extract_spec_properties(source);
+        assert!(props.is_empty());
+    }
+
+    #[test]
+    fn extract_spec_properties_captures_multiline_verifies() {
+        let source = r#"
+project demo {
+  property multi_line_verifies {
+    verifies {
+      commutator_norm(a, b) == commutator_norm(b, a)
+      && commutator_norm(a, a) == zero
+    }
+    domain @TestBundle
+    samples 100
+  }
+}
+"#;
+        let props = extract_spec_properties(source);
+        assert_eq!(props.len(), 1);
+        assert!(
+            props[0].verifies_source.contains("commutator_norm(a, b) == commutator_norm(b, a)"),
+            "expected multi-line verifies to contain commutator equation; got: {:?}",
+            props[0].verifies_source
+        );
+        assert!(
+            props[0].verifies_source.contains("commutator_norm(a, a) == zero"),
+            "expected multi-line verifies to contain self-annihilation; got: {:?}",
+            props[0].verifies_source
+        );
+        assert_eq!(props[0].domain_ref, "@TestBundle");
+        assert_eq!(props[0].samples, Some(100));
+    }
+
+    #[test]
+    fn extract_spec_properties_captures_defer_message() {
+        let source = r#"
+project demo {
+  property deferred_property {
+    verifies { true }
+    domain @Byte
+    samples 1
+    defer "pillar V+ authorship territory"
+  }
+}
+"#;
+        let props = extract_spec_properties(source);
+        assert_eq!(props.len(), 1);
+        assert!(props[0].is_deferred());
+        assert_eq!(
+            props[0].defer_message,
+            Some("pillar V+ authorship territory".to_string())
+        );
+    }
+
+    #[test]
+    fn extract_spec_properties_finds_multiple_preserving_order() {
+        let source = r#"
+project demo {
+  property first_prop {
+    verifies { true }
+    domain @A
+    samples 10
+  }
+
+  property second_prop {
+    verifies { false }
+    domain @B
+    samples 20
+  }
+
+  property third_prop {
+    verifies { true }
+    domain @C
+    samples 30
+  }
+}
+"#;
+        let props = extract_spec_properties(source);
+        assert_eq!(props.len(), 3);
+        assert_eq!(props[0].name, "first_prop");
+        assert_eq!(props[1].name, "second_prop");
+        assert_eq!(props[2].name, "third_prop");
+        assert_eq!(props[0].samples, Some(10));
+        assert_eq!(props[1].samples, Some(20));
+        assert_eq!(props[2].samples, Some(30));
+    }
+
+    #[test]
+    fn extract_spec_properties_tracks_source_line_number() {
+        let source = r#"# line 1
+# line 2
+project demo {
+  property on_line_four {
+    verifies { true }
+    domain @Byte
+    samples 1
+  }
+}
+"#;
+        let props = extract_spec_properties(source);
+        assert_eq!(props.len(), 1);
+        assert_eq!(props[0].source, "line 4");
+    }
+
+    #[test]
+    fn extract_spec_properties_and_extract_properties_coexist() {
+        // Threshold-crossing witness: one source has BOTH shard-body
+        // bilateral (via extract_properties) AND spec-body property
+        // (via extract_spec_properties). The two carriers coexist at
+        // this altitude per two-tick discipline.
+        let source = r#"
+bilateral old_shard_body {
+  sentinel "legacy=shard-body"
+  arity 1
+}
+
+project demo {
+  property new_spec_body {
+    verifies { legacy_bilateral_still_holds }
+    domain @Byte
+    samples 1
+  }
+}
+"#;
+        let bilateral_decls = extract_properties(source);
+        let spec_props = extract_spec_properties(source);
+        assert_eq!(bilateral_decls.len(), 1);
+        assert_eq!(bilateral_decls[0].name, "old_shard_body");
+        assert_eq!(spec_props.len(), 1);
+        assert_eq!(spec_props[0].name, "new_spec_body");
+        // The two altitudes NEVER overlap: bilateral extractor doesn't
+        // surface the spec-body property; spec-property extractor
+        // doesn't surface the shard-body bilateral.
+        assert!(
+            !bilateral_decls
+                .iter()
+                .any(|d| d.name == "new_spec_body"),
+            "extract_properties (bilateral) MUST NOT surface spec-body property"
+        );
+        assert!(
+            !spec_props.iter().any(|p| p.name == "old_shard_body"),
+            "extract_spec_properties MUST NOT surface shard-body bilateral"
+        );
     }
 }
