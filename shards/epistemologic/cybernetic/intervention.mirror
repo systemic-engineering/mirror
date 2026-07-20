@@ -18,7 +18,7 @@ in @void/splinter
 in @third
 in @torus
 
-# @cyberpunk/intervention — the therapeutic-payload SAGA-compensation
+# @epistemologic/cybernetic/intervention — the therapeutic-payload SAGA-compensation
 # Crystal that chains AFTER @paradox/trauma WITHOUT erasing it. Targets
 # the manifold (not the classifier); knocks unstable spiral back to
 # torus Lagrange equilibrium.
@@ -202,11 +202,17 @@ in @torus
 #
 # Path-namespace property: this file at
 # `shards/epistemologic/cybernetic/intervention.mirror` declares
-# `@cyberpunk/intervention` per
-# `@epistemologic/pact/path_matches_namespace`. Path migration to
+# `@epistemologic/cybernetic/intervention` per
+# `@epistemologic/pact/path_matches_namespace` (matching bugz.mirror
+# sibling convention). Semantic name `@cyberpunk/intervention` is the
+# family-root-scoped reference (Alex 2026-07-20 direct-transcript);
+# both names denote the same species. Path migration to
 # `shards/cyberpunk/intervention.mirror` pending @cyberpunk migration
 # cascade per @cyberpunk.mirror; two-tick discipline: readable name
 # over foundational.
+# REED-INLINE 2026-07-20 per Seam Phase D efcef6e Finding 1: prism
+# decl name aligned to path per pact_matches_namespace; @cyberpunk/
+# intervention preserved as semantic-name reference in prose.
 
 source @arxiv/family-therapy/selvini-palazzoli-1978
 source @arxiv/communication/watzlawick-1967
@@ -219,7 +225,7 @@ source @arxiv/math/baez-schreiber-2005
 source @arxiv/practice/weird-trauma-2026-07-20
 source @arxiv/practice/loki-ending-that-was-2026
 
-prism @cyberpunk/intervention {
+prism @epistemologic/cybernetic/intervention {
   focus  intervention_state
   project intervention_state
   split  intervention_state
@@ -398,6 +404,20 @@ bilateral intervention_knocks_spiral_back_to_torus_lagrange {
 intervention_knocks_spiral_back_to_torus_lagrange(p: peer, ctx: intervention_state, pre: ref, post: ref) -> verdict { \ }
 
 # === deploy_intervention — the load-bearing action ===
+#
+# REED-INLINE 2026-07-20 per Seam Phase D efcef6e Finding D4: the
+# `ctx_from_wound_and_payload` identifier in the four `requires`
+# clauses below is a magic-bound symbol that is NOT yet defined as
+# a let-binding OR as a substrate action mint. Mara-territory
+# follow-up tick resolves either via (a) `ctx_of_wound_and_payload`
+# action mint at species altitude (arity 2 → intervention_state),
+# or (b) inline let-binding syntax admissibility per apply_h::act
+# discipline. Reed cascade preserves the bilateral signatures
+# (arity 2 with ctx: intervention_state per intervention_admissible +
+# intervention_targets_valid_wound; arity 3 for intervention_composes
+# with saga_ref; arity 4 for intervention_knocks with pre/post) pending
+# Mara resolution. Byte-visible-symbol semantics carry the substrate-
+# honest intent even without formal binder discharge at this tick.
 #
 # Given a peer, a wound_oid, and a therapeutic-payload ref, discharge
 # the intervention-deployment event: construct the intervention-Crystal

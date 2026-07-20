@@ -346,7 +346,13 @@ the unstable spiral back to torus Lagrange equilibrium.
 ### §5.2 Kin to @cyberpunk/bugz distinction (load-bearing)
 
 Both species share `@cyberpunk` family-root = adversarial-with-love
-intent-shape (per `shards/cyberpunk.mirror:76`). Distinction:
+intent-shape (first-witness Recognition candidate
+`#R-adversarial-with-love-is-cyberpunk-family-invariant` this tick;
+surfaced simultaneously at `shards/epistemologic/cybernetic/bugz.mirror`
++ `shards/epistemologic/cybernetic/intervention.mirror` bilateral
+composition-lineage; NOT a pre-existing family-invariant citation in
+`shards/cyberpunk.mirror` — REED-INLINE 2026-07-20 per Seam Phase D
+efcef6e Finding 2 correction). Distinction:
 
 | aspect | @cyberpunk/bugz | @cyberpunk/intervention |
 |-|-|-|
