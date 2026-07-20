@@ -530,6 +530,72 @@ bilateral history_with_returns_crystal_chain {
         assert!(!h.is_continue() && !h.is_escalate() && h.is_halt());
     }
 
+    // =================================================================
+    // build.rs ↔ compile.rs collapse arc — RED + GREEN sequence per
+    // Alex 2026-07-20 "we don't want to blindly copy paste" +
+    // build.rs vs compile.rs "wouldn't these want to be the same?"
+    // + "slow is fast, no cruft, verified substrate".
+    //
+    // Terminal shape: ONE compile discipline. `mirror compile
+    // @mirror.spec` compiles mirror itself. build.rs collapses to a
+    // ~10 LOC bootstrap shim shelling to `mirror compile`. Every
+    // compile step — building the compiler binary, compiling a
+    // downstream .mirror spec, cross-compiling, rebuilding mirror
+    // from its own spec — goes through compile.rs.
+    //
+    // Each RED tick expresses a collapse-invariant currently violated.
+    // Each GREEN tick closes the gap. Small ticks. Sequential commits.
+    // Slow is fast.
+    // =================================================================
+
+    /// **RED tick 1** — compile.rs currently only speaks `bilateral`
+    /// grammar. mirror.spec speaks `project` + `target` + `cli` +
+    /// `command` grammar. To close the compile-collapse, compile.rs
+    /// MUST see mirror.spec's declared substance.
+    ///
+    /// Currently RED: extract_properties finds zero bilateral blocks
+    /// in mirror.spec; the SAGA chain is empty. GREEN transition:
+    /// extract_commands (or generalized extract_declarations) that
+    /// recognizes `command <name> { ... }` blocks at nested altitude,
+    /// composed into compile_from_source's SAGA orchestration.
+    ///
+    /// This test WILL FAIL at RED tick 1 landing. GREEN tick 1 lands
+    /// the extraction extension and removes the #[should_panic].
+    #[test]
+    #[should_panic(expected = "RED tick 1")]
+    fn compile_reads_mirror_spec_grammar_beyond_bilaterals_red_tick_1() {
+        // Read the actual mirror.spec at the repo root. If this test
+        // runs from cargo test at rust/, the relative path resolves
+        // to ../mirror.spec.
+        let paths = [
+            "../mirror.spec",
+            "/Users/alexwolf/dev/projects/mirror/mirror.spec",
+        ];
+        let source = paths
+            .iter()
+            .find_map(|p| std::fs::read_to_string(p).ok())
+            .expect("could not locate mirror.spec");
+
+        let comp = compile_from_source(&source, &test_witnessed());
+
+        // mirror.spec declares (grep'd 2026-07-20 pre-RED) 9 top-level
+        // cli commands (compile, kintsugi, shatter, craft, init,
+        // recall, beam, index, peer) plus 2 nested peer subcommands
+        // (beam, contribute) = 11 command declarations. compile.rs
+        // MUST see them.
+        //
+        // Currently comp.depth() == 0 because extract_properties only
+        // handles `bilateral` blocks. This assert fires the RED marker
+        // so #[should_panic] catches it and documents the failing
+        // invariant in the test log.
+        let cmd_count = comp.depth();
+        assert!(
+            cmd_count >= 11,
+            "RED tick 1: compile.rs of mirror.spec produced {} crystals; expected ≥11 (9 top-level commands + 2 peer subcommands); extract_commands not yet landed",
+            cmd_count
+        );
+    }
+
     #[test]
     fn compile_declarations_with_missing_args_treats_as_empty() {
         // args_per_decl shorter than decls → remaining decls get empty
