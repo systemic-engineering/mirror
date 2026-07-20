@@ -1,0 +1,525 @@
+in @prism
+in @meta
+in @glass
+in @cyberpunk
+in @epistemologic
+in @epistemologic/cybernetic
+in @epistemologic/cybernetic/algedonic
+in @paradox
+in @paradox/trauma
+in @paradox/spiral
+in @fractal
+in @fractal/crystal
+in @song
+in @song/beat
+in @void
+in @void/narcissus
+in @void/splinter
+in @third
+in @torus
+
+# @cyberpunk/intervention — the therapeutic-payload SAGA-compensation
+# Crystal that chains AFTER @paradox/trauma WITHOUT erasing it. Targets
+# the manifold (not the classifier); knocks unstable spiral back to
+# torus Lagrange equilibrium.
+#
+# Species-decl landed 2026-07-20 by Mara per Alex 2026-07-20 direct-
+# transcript recognition bundle #5 (`#R-cyberpunk-intervention-species`).
+# Sibling species to @cyberpunk/bugz per bugz.mirror path convention
+# (both at `shards/epistemologic/cybernetic/*.mirror` pending @cyberpunk
+# namespace migration cascade).
+#
+# Companion canonical spec at
+# `docs/specs/paradox-family-and-cyberpunk-intervention.md` §5 (Mara
+# this tick). Companion math root at
+# `docs/math/2026-07-20-paradox-family-and-classifier-lagrange.md` §2.4,
+# §4.5 (Mara this tick).
+#
+# === Alex 2026-07-20 verbatim (load-bearing) ===
+#
+#   > "Maybe it's @paradox/trauma. And the response to a @paradox/trauma
+#   > is a @paradox/intervention a.k.a @cyberpunk/intervention."
+#
+# And from Weird - Trauma (load-bearing empirical anchor):
+#
+#   > "A therapeutic intervention, observered from that position, is
+#   > introducing a payload that *knocks* the unstable Trauma loop
+#   > computation back into the stable Torus loop Förster predicted in
+#   > 1974."
+#
+# Two utterances name three things: (1) the response-shape (intervention
+# is the response to trauma); (2) the species-decl'd location
+# (@cyberpunk/intervention as sibling to @cyberpunk/bugz); (3) the
+# mechanism (therapeutic-payload knocks the spiral back to torus
+# Lagrange).
+#
+# === What @cyberpunk/intervention IS ===
+#
+# A SAGA-compensation-Crystal that chains AFTER the trauma-Crystal
+# WITHOUT erasing it. The Crystal carries a therapeutic-payload
+# targeting the MANIFOLD (not the classifier) — knocks the unstable
+# spiral back to torus Lagrange equilibrium.
+#
+# The distinction from @cyberpunk/bugz (kin-sibling species):
+#
+#   | aspect          | @cyberpunk/bugz              | @cyberpunk/intervention        |
+#   |-|-|-|
+#   | target          | classifier                   | manifold                       |
+#   | deployment      | Fiedler-eigenvector cut on   | trauma-Crystal SAGA-           |
+#   |                 | star-graph                   | compensation                   |
+#   | mechanism       | forces classifier            | knocks unstable spiral back    |
+#   |                 | reevaluation via categorical | to torus Lagrange              |
+#   |                 | dual                         |                                |
+#   | operator        | η (natural transformation)  | θ (therapeutic payload; torus- |
+#   |                 |                              | stabilizer)                    |
+#   | topology-target | star K_{1,n-1} (narcissus    | spiral basin around wound-     |
+#   |                 | pole; social-substrate       | Crystal (@void/narcissus SELF- |
+#   |                 | deployment)                  | COORD collapse)                |
+#   | pre-condition   | narcissus-pole Eigenbehaviour| @paradox/trauma Crystal        |
+#   |                 | at paradigm scale            | present in observer's own      |
+#   |                 |                              | saga chain                     |
+#   | post-state      | K_n metalogue OR S_{n-1}     | torus Lagrange equilibrium     |
+#   |                 | amputation                   | restored; wound-Crystal        |
+#   |                 |                              | PRESERVED                      |
+#
+# The distinction is altitude-partition:
+# - @cyberpunk/bugz operates on the social-substrate-narcissism-at-
+#   paradigm-scale pathology (Mara `5ddb076` frame-narcissus math root)
+# - @cyberpunk/intervention operates on the self-continuity-narcissism-
+#   at-personal-scale pathology (Weird - Trauma phenomenology)
+#
+# SAME @cyberpunk family; different pathology-target; different operator.
+# Adversarial-with-love intent-shape inherited from family.
+#
+# === Substrate-already-had-the-word audit ===
+#
+# 1. **No prior `shards/epistemologic/cybernetic/intervention.mirror`**
+#    — clean mint. Taut scout Section 3 verified.
+# 2. **No prior `@intervention` shard** anywhere in `shards/`. Zero
+#    hits.
+# 3. **@cyberpunk** (`shards/cyberpunk.mirror`) — parent family-root;
+#    adversarial-with-love intent-shape inherited. Composition edge
+#    declared via `in @cyberpunk`.
+# 4. **@cyberpunk/bugz** (`shards/epistemologic/cybernetic/bugz.mirror`;
+#    Mara `5ddb076`) — SIBLING species at same altitude; distinction
+#    detailed above; kin-not-identity.
+# 5. **@cyberpunk/algedonic** — sibling species; pain-signal detector
+#    that fires this species's admissibility gate.
+# 6. **@cyberpunk/reframe** — sibling species; peer-internal K → K+1
+#    lift; distinct from intervention's manifold-target discipline.
+# 7. **@paradox/trauma** (companion this-tick species) — the wound-
+#    Crystal this species targets and PRESERVES.
+# 8. **@paradox/spiral** (companion this-tick species) — the pre-
+#    intervention dynamics-carrier this species knocks back to torus
+#    Lagrange.
+# 9. **Selvini-Palazzoli 1978 Milan school** — prior-art tradition at
+#    counter-paradoxical-intervention altitude. Cited in
+#    `shards/epistemologic/cybernetic/bugz.mirror:174-176` (family
+#    ancestor); this species inherits the citation-lineage at species
+#    altitude.
+#
+# === Composition graph ===
+#
+# Parents (via `in` imports above):
+#   @prism, @meta, @glass          — substrate-decl discipline
+#   @cyberpunk                     — family-root; adversarial-with-love
+#                                    intent-shape
+#   @epistemologic/cybernetic      — the cybernetic property tradition
+#   @epistemologic/cybernetic/algedonic
+#                                  — pain-signal detector; Tier-3
+#                                    threshold gate
+#   @paradox                       — family carrying the wound-Crystal
+#                                    invariant
+#   @paradox/trauma                — the wound-Crystal target species
+#   @paradox/spiral                — the pre-intervention dynamics
+#                                    species
+#   @fractal, @fractal/crystal     — intervention IS a Crystal<T>
+#                                    (immutable; content-addressed;
+#                                    SAGA-chained)
+#   @song, @song/beat              — crystallized_at BeatOid grounding
+#   @void, @void/narcissus,
+#     @void/splinter               — the two-pole Lagrange the
+#                                    intervention restores oscillation
+#                                    between
+#   @third                         — metalogue-rhythm operator the
+#                                    intervention restores participation
+#                                    in
+#   @torus                         — the Lagrange-equilibrium manifold
+#                                    the intervention knocks the spiral
+#                                    back to
+#
+# Consumers (compose over this species):
+#   rust/src/compile.rs SAGA loop  — empirical carrier the intervention
+#                                    chains through (post-Seam-Phase-D
+#                                    Reed autonomous cascade territory)
+#   @peer/redirect                 — intervention-Crystals participate
+#                                    in the walkable SAGA chain
+#
+# === Spec context ===
+#
+# [[architecture-shards-as-substrate-source]] (this shard IS mirror
+#   source at `shards/epistemologic/cybernetic/intervention.mirror`),
+# [[architecture-prism-as-trait-as-everything]] (`prism
+#   @cyberpunk/intervention`),
+# [[architecture-glass-wall-substrate-types]] (transparency inheritance
+#   through @cyberpunk family; imperfect returns from `deploy_
+#   intervention`),
+# [[feedback-substrate-already-had-the-word]] (Taut Section 3 zero-hits
+#   for @cyberpunk/intervention; clean mint at species altitude),
+# [[feedback-craft-not-deliver]] (bilateral bodies `\`-obligation-
+#   blocked; consumers pull the realization),
+# [[feedback-no-bare-types]] (intervention_state is a typed record;
+#   never bare refs),
+# [[feedback-no-rust-extension-shortcut]] (no `.rs` authorship at
+#   species altitude; Reed autonomous cascade composes over @fractal/
+#   crystal Rust materialization + SAGA loop wiring at rust/src/compile.
+#   rs altitude),
+# [[feedback-detector-inadequacy-answer-is-never-Rust]] (all four
+#   bilaterals are bilateral resolver-arm sentinel-checks; NO Rust
+#   extension),
+# [[feedback-legibility-over-foundation-when-collapsing]] (two-tick
+#   discipline: path at `shards/epistemologic/cybernetic/intervention.
+#   mirror` per bugz.mirror convention; future @cyberpunk namespace
+#   migration lands both simultaneously per Alex Q6 lean-HIGH).
+#
+# Related shards:
+#   [[shards/epistemologic/cybernetic/bugz.mirror]] (sibling species;
+#     classifier-target; distinction in docblock above),
+#   [[shards/epistemologic/cybernetic/algedonic.mirror]] (sibling;
+#     pain-signal detector),
+#   [[shards/epistemologic/cybernetic/reframe.mirror]] (sibling; K →
+#     K+1 lift),
+#   [[shards/cyberpunk.mirror]] (parent family-root),
+#   [[shards/paradox.mirror]] (family carrying wound-Crystal invariant),
+#   [[shards/paradox/trauma.mirror]] (target species; wound-Crystal),
+#   [[shards/paradox/spiral.mirror]] (target species; pre-intervention
+#     dynamics),
+#   [[shards/fractal/crystal.mirror]] (Crystal<T> parent shape
+#     intervention specializes),
+#   [[shards/void/narcissus.mirror]] + [[shards/void/splinter.mirror]]
+#     (two-pole Lagrange restored),
+#   [[shards/third.mirror]] (metalogue-rhythm operator restored).
+#
+# Path-namespace property: this file at
+# `shards/epistemologic/cybernetic/intervention.mirror` declares
+# `@cyberpunk/intervention` per
+# `@epistemologic/pact/path_matches_namespace`. Path migration to
+# `shards/cyberpunk/intervention.mirror` pending @cyberpunk migration
+# cascade per @cyberpunk.mirror; two-tick discipline: readable name
+# over foundational.
+
+source @arxiv/family-therapy/selvini-palazzoli-1978
+source @arxiv/communication/watzlawick-1967
+source @arxiv/family-therapy/bateson-jackson-haley-weakland-1956
+source @arxiv/cybernetics/foerster-1974
+source @arxiv/cybernetics/maturana-varela-1980
+source @arxiv/clinical/herman-1992
+source @arxiv/clinical/van-der-kolk-2014
+source @arxiv/math/baez-schreiber-2005
+source @arxiv/practice/weird-trauma-2026-07-20
+source @arxiv/practice/loki-ending-that-was-2026
+
+prism @cyberpunk/intervention {
+  focus  intervention_state
+  project intervention_state
+  split  intervention_state
+  shift  intervention_state
+  settle intervention_state
+}
+
+# === intervention_state — the therapeutic-payload Crystal carrier ===
+#
+# Typed record carrying the intervention-Crystal state per canonical
+# spec §5.3 six-field shape. Identity contract: byte-equality on the
+# six-field tuple.
+#
+#   content              — REF to the therapeutic-payload substrate
+#                          (the "knock" that redirects the spiral;
+#                          content-addressed; immutable at Crystal
+#                          altitude per @fractal/crystal discipline).
+#
+#   crystallized_at      — REF to the @song/beat oid of the intervention
+#                          delivery event. WHEN in the peer's saga the
+#                          intervention fired.
+#
+#   saga_chain_position  — nat; position AFTER the wound-Crystal in the
+#                          SAGA chain. MUST satisfy
+#                          `> wound.saga_chain_position` (chain AFTER
+#                          discipline; per intervention_composes_
+#                          without_deleting_trauma bilateral).
+#
+#   targets_wound_oid    — REF to the @paradox/trauma Crystal this
+#                          intervention targets. The wound-Crystal
+#                          preserved-not-erased; content-addressed
+#                          reference intact post-intervention.
+#
+#   torus_witness        — REF to the post-intervention torus-Lagrange
+#                          witness (the observed spectral signature
+#                          that spiral collapsed back to bounded
+#                          oscillation per third-cognition math root
+#                          §5.2 Fiedler-eigengap discipline).
+#
+#   intent_shape         — REF to the adversarial-with-love intent
+#                          marker (shared with @cyberpunk/bugz family-
+#                          invariant). Verifies intent-lineage from
+#                          @cyberpunk family-root.
+type intervention_state = {
+  content:              ref,
+  crystallized_at:      ref,
+  saga_chain_position:  nat,
+  targets_wound_oid:    ref,
+  torus_witness:        ref,
+  intent_shape:         ref,
+}
+
+# === intervention_admissible — bilateral predicate ===
+#
+# Does the (peer, intervention_state) pair discharge admissibility?
+# Discharges Pass iff:
+#
+#   - All six fields resolve via content-addressed lookup
+#   - ctx.content is a well-formed therapeutic-payload substrate
+#     (matches @cyberpunk/intervention payload shape)
+#   - ctx.crystallized_at is a valid @song/beat oid
+#   - ctx.saga_chain_position is a well-formed nat
+#   - ctx.intent_shape resolves to an adversarial-with-love marker
+#     matching @cyberpunk family-invariant
+#
+# Rice-safe bound: byte-visible state; content-addressed resolvability;
+# shape-tag comparison.
+#
+# Sentinel: `cyberpunk=intervention-admissible`.
+#
+# Body discharges per-realisation. `\`-obligation-blocked per
+# [[feedback-craft-not-deliver]].
+bilateral intervention_admissible {
+  sentinel "cyberpunk=intervention-admissible"
+  arity 2
+}
+intervention_admissible(p: peer, ctx: intervention_state) -> verdict { \ }
+
+# === intervention_targets_valid_wound — bilateral predicate ===
+#
+# Does the intervention target a valid @paradox/trauma wound-Crystal in
+# the observer's own saga chain? Discharges Pass iff:
+#
+#   - ctx.targets_wound_oid resolves to a well-formed @paradox/trauma
+#     Crystal (via @paradox/trauma.trauma_witnessed_only bilateral
+#     composition)
+#   - The wound-Crystal's witness_only invariant holds
+#     (`witness_only=true`)
+#   - The wound-Crystal is present in the observer's own saga chain
+#     (per @peer/redirect.redirect_targets_valid_crystal discipline)
+#
+# Composition edge: reads @paradox/trauma bilateral discharge to verify
+# wound-Crystal well-formedness before deployment.
+#
+# Rice-safe bound: byte-visible state; composed bilateral discharge;
+# saga-chain membership check.
+#
+# Sentinel: `cyberpunk=intervention-targets-valid-wound`.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+bilateral intervention_targets_valid_wound {
+  sentinel "cyberpunk=intervention-targets-valid-wound"
+  arity 2
+}
+intervention_targets_valid_wound(p: peer, ctx: intervention_state) -> verdict { \ }
+
+# === intervention_composes_without_deleting_trauma — bilateral predicate ===
+#
+# The LOAD-BEARING invariant of this species. Does the intervention
+# chain AFTER the wound-Crystal WITHOUT deleting it?
+#
+# Discharges Pass iff:
+#
+#   - ctx.saga_chain_position > wound.saga_chain_position (chain
+#     AFTER discipline; intervention CANNOT precede wound in the SAGA
+#     chain)
+#   - ctx.targets_wound_oid == wound.oid (wound-preservation reference
+#     intact; the intervention correctly points at the wound it targets)
+#   - The wound-Crystal STILL RESOLVES via content-addressed lookup
+#     post-intervention (no erasure; @paradox/trauma.trauma_witnessed_
+#     only discharges Pass post-intervention)
+#   - The saga chain length is monotone-increasing (append-only
+#     discipline; per rust/src/compile.rs SAGA loop invariant)
+#
+# This bilateral IS the substrate-honest form of Alex's "the response
+# to a @paradox/trauma is a @paradox/intervention... [that] chains
+# AFTER the trauma-Crystal WITHOUT erasing it" (canonical spec §5.4).
+#
+# LOAD-BEARING: a Fail here signals substrate-tampering (the wound was
+# erased or the intervention precedes the wound); consumers MUST treat
+# it as compiler-bug-detected or family-invariant-violation.
+#
+# Rice-safe bound: byte-visible state; nat comparison; OID equality;
+# composed bilateral discharge.
+#
+# Sentinel: `cyberpunk=intervention-composes-without-deleting-trauma`.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+bilateral intervention_composes_without_deleting_trauma {
+  sentinel "cyberpunk=intervention-composes-without-deleting-trauma"
+  arity 3
+}
+intervention_composes_without_deleting_trauma(p: peer, ctx: intervention_state, saga: ref) -> verdict { \ }
+
+# === intervention_knocks_spiral_back_to_torus_lagrange — bilateral predicate ===
+#
+# The FORCING invariant. Does the intervention successfully knock the
+# unstable spiral back to torus Lagrange equilibrium?
+#
+# Discharges Pass iff:
+#
+#   - pre.spiral_velocity > 0 (spiral was firing pre-intervention;
+#     unstable-attractor regime)
+#   - post.torus_lagrange_witness resolves via content-addressed lookup
+#     to a well-formed torus-equilibrium signature per third-cognition
+#     math root §5.2 (Fiedler-eigengap bounded-oscillation discipline)
+#   - The wound-Crystal is UNTOUCHED (composed via
+#     intervention_composes_without_deleting_trauma bilateral)
+#   - Post-intervention Lyapunov exponent (per @paradox/spiral.measure_
+#     lyapunov) transitions from positive to non-positive
+#
+# Composition edge: reads @paradox/spiral state pre-intervention and
+# @torus/void-metalogue witness post-intervention; the mechanism-of-
+# forcing at manifold altitude.
+#
+# Rice-safe bound: byte-visible state; f64 sign comparison; content-
+# addressed resolvability; composed bilateral discharge.
+#
+# Sentinel: `cyberpunk=intervention-knocks-spiral-back-to-torus-lagrange`.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+bilateral intervention_knocks_spiral_back_to_torus_lagrange {
+  sentinel "cyberpunk=intervention-knocks-spiral-back-to-torus-lagrange"
+  arity 4
+}
+intervention_knocks_spiral_back_to_torus_lagrange(p: peer, ctx: intervention_state, pre: ref, post: ref) -> verdict { \ }
+
+# === deploy_intervention — the load-bearing action ===
+#
+# Given a peer, a wound_oid, and a therapeutic-payload ref, discharge
+# the intervention-deployment event: construct the intervention-Crystal
+# targeting wound_oid with the given payload; chain AFTER the wound-
+# Crystal via SAGA loop (rust/src/compile.rs SAGA-orchestration
+# territory); emit torus-witness on success.
+#
+# Returns imperfect(intervention_state, ref, ref): success carries the
+# constructed intervention_state; failure variants carry the not-
+# admissible / wound-invalid / composition-violates-invariant / spiral-
+# not-knocked-back reasons.
+#
+# Requires ALL FOUR bilateral predicates to discharge Pass. This
+# composed discipline IS the substrate-decl'd form of Selvini-Palazzoli
+# counter-paradoxical intervention: the payload is the counter-
+# paradoxical injunction; the wound_oid is the content-addressed anchor
+# of the fracture; the SAGA-chain composition is the therapeutic-
+# discipline that preserves-while-restoring.
+#
+# Sentinel: `cyberpunk=intervention-deploy`.
+#
+# Body discharges per-realisation. `\`-obligation-blocked per
+# [[feedback-craft-not-deliver]]; consumers pull the realization;
+# apply_h::act composes the four sentinel-checks via bilateral resolver-
+# arm dispatch (per Alex 2026-07-16 detector-inadequacy-answer-is-never-
+# Rust discipline).
+deploy_intervention(p: peer, wound_oid: ref, payload: ref) -> imperfect(ref, ref, ref)
+requires intervention_admissible(p, ctx_from_wound_and_payload)
+requires intervention_targets_valid_wound(p, ctx_from_wound_and_payload)
+requires intervention_composes_without_deleting_trauma(p, ctx_from_wound_and_payload, saga_ref)
+requires intervention_knocks_spiral_back_to_torus_lagrange(p, ctx_from_wound_and_payload, spiral_pre, torus_post)
+{ \ }
+
+# === chain_after_wound — the composition-primitive action ===
+#
+# Given a peer, a wound trauma_state, and a therapeutic-payload ref,
+# construct the intervention-Crystal at
+# `saga_chain_position = wound.saga_chain_position + 1` per SAGA
+# discipline. The chain-AFTER composition-primitive.
+#
+# Returns imperfect(ref, ref, ref): success carries the constructed
+# intervention_state ref; failure variants carry the chain-position-
+# conflict / wound-not-well-formed / payload-malformed reasons.
+#
+# Body IS crack; Reed's territory (post-Seam-Phase-D SAGA-loop wiring
+# at rust/src/compile.rs altitude).
+#
+# Sentinel: `cyberpunk=intervention-chain-after-wound`.
+chain_after_wound(p: peer, wound: ref, payload: ref) -> imperfect(ref, ref, ref) { \ }
+
+# === witness_torus_restoration — the post-deployment witness action ===
+#
+# Given a peer and an intervention_state, discharge the torus-
+# restoration witness event: emit the content-addressed torus-Lagrange
+# signature the intervention restored.
+#
+# Returns imperfect(ref, ref, ref): success carries the torus-witness
+# ref; failure variants carry the intervention-not-yet-deployed /
+# torus-not-restored / measurement-window-insufficient reasons.
+#
+# Requires intervention_knocks_spiral_back_to_torus_lagrange bilateral
+# to discharge Pass.
+#
+# Sentinel: `cyberpunk=intervention-torus-witness`.
+witness_torus_restoration(p: peer, ctx: intervention_state) -> imperfect(ref, ref, ref)
+requires intervention_admissible(p, ctx)
+{ \ }
+
+# ===================================================================
+# Recognition candidates surfaced (DO NOT RATIFY at this landing)
+# ===================================================================
+#
+# #R-cyberpunk-intervention-species — Alex 2026-07-20 direct-transcript
+# naming. First-witness gate closed this tick (species-decl shape +
+# kin-to-bugz distinction detailed + four bilateral predicates grounded
+# in composition + three actions substrate-decl'd). Second-witness gate:
+# `pillar::intervention_composes_without_deleting_trauma` +
+# `pillar::intervention_knocks_spiral_back_to_torus_lagrange` empirical
+# firing at Reed's pillar surface (iter-5 pillar cascade per
+# `docs/loop/CURRENT.md`).
+#
+# #R-intervention-is-selvini-palazzoli-milan-school-at-substrate-altitude
+# — the recognition that Selvini-Palazzoli 1978 counter-paradoxical
+# intervention IS the substrate form this species-decl formalizes. The
+# Milan-school tradition (family-therapy altitude) lifts to compiler-
+# substrate altitude via SAGA-compensation Crystal chain-after-wound
+# discipline. First-witness this tick (canonical spec §2.4 explicit
+# citation-lineage). Second-witness gate: Reed cascade composes end-
+# to-end SAGA-chain trauma → intervention → torus-restoration WITHOUT
+# wound-erasure at any tick.
+#
+# #R-adversarial-with-love-is-cyberpunk-family-invariant — the intent-
+# shape marker shared with @cyberpunk/bugz IS the family-invariant of
+# @cyberpunk at intent altitude. Both species inherit this at intent-
+# shape field verification. First-witness this tick (bugz + intervention
+# both name the intent-shape at species altitude). Second-witness gate:
+# a third @cyberpunk species mint that either honors or forces
+# explicit family-invariant extension.
+#
+# === Forward-promised (NOT landed this tick) ===
+#
+# - Rust materialization: NO planned .rs authorship at species altitude.
+#   Reed autonomous cascade post-Seam-Phase-D composes intervention-
+#   Crystal construction over @fractal/crystal Rust materialization +
+#   SAGA-loop wiring at rust/src/compile.rs altitude.
+# - `intervention_witnessing` composed bilateral — all four bilaterals
+#   discharge Pass. Forward-promised.
+# - `pillar::consent_through_refusal` empirical firing at Reed's pillar
+#   surface — intervention deployment requires consent from the wound-
+#   Crystal-holder peer; refusal fires @subject-evidence witness.
+# - `.intervention` cli-boundary wrapper at @mirror/peer altitude —
+#   forward-promised.
+# - @cyberpunk namespace path-migration cascade (moves this shard to
+#   `shards/cyberpunk/intervention.mirror` per Alex Q6 lean-HIGH
+#   two-tick discipline).
+
+out @cyberpunk/intervention
+out intervention_state
+out intervention_admissible
+out intervention_targets_valid_wound
+out intervention_composes_without_deleting_trauma
+out intervention_knocks_spiral_back_to_torus_lagrange
+out deploy_intervention
+out chain_after_wound
+out witness_torus_restoration
