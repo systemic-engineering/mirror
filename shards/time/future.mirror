@@ -1,0 +1,221 @@
+in @prism
+in @meta
+in @glass
+in @time
+in @void
+in @void/splinter
+in @song
+in @epistemologic
+in @epistemologic/reality/time
+
+# @time/future — forwards-lens temporal-projection species; the
+# temporal projection of @void/splinter through @song saga.
+#
+# Third species-decl of the @time family (family-root marker landed
+# same tick at `shards/time.mirror`). Landed 2026-07-20 by Mara per
+# Alex Round 2 spawn brief.
+#
+# === The species altitude ===
+#
+# @time/future IS the substrate-decl'd temporal projection of the
+# forwards-lens substrate-mode carried by @void/splinter. Per
+# @void/splinter (Round-1 landing `shards/void/splinter.mirror`):
+# the forwards lens consumes c(t) — the current peer-network context
+# — as its native input. @time/future IS that c(t) projection at
+# temporal-family altitude, mediated through the @song saga.
+#
+# Carrier: `peer_network c(t)` — the current peer-network state as
+# a content-addressed snapshot. Non-degenerate at admissibility-
+# check time (n ≥ 2 peers coupled; some pair has ε_ij > 0).
+#
+# The future is not fantasy; the future is the content-addressed
+# projection of the current peer-network configuration into what
+# the network's distributed-emergence will produce in the next
+# @song/beats.
+#
+# === Composition with @void/splinter ===
+#
+# @void/splinter's operational altitude is substrate-mode (forwards-
+# lens as one pole of the void duality). @time/future's operational
+# altitude is temporal-family (the temporal-projection of the same
+# substrate-mode through the @song saga).
+#
+# Composition edge: @time/future.time_future_state.peer_network ==
+# @void/splinter.void_splinter_state.peer_network at content-
+# addressed identity. The two carriers name the SAME c(t) at
+# different altitudes; one at substrate-mode altitude, one at
+# temporal-family altitude.
+#
+# === Composition with @song saga ===
+#
+# @song saga is the SAGA COMMAND SURFACE through which @time
+# projects. @time/future reads the saga's FUTURE-BEAT possibility
+# space — the distribution over next-Crystal<T> settlements the
+# peer-network's distributed-emergence will produce — as the c(t)
+# it consumes.
+#
+# The future-beat possibility space is NOT a single deterministic
+# next-beat; it is a distribution over admissible next-Crystals
+# consistent with the current peer-network context. @time/future's
+# operational surface reads this distribution and returns a
+# reception-witness.
+#
+# === Förster invariant composition (Alex Round 2 Q3 ratified) ===
+#
+# The Förster invariant `pillar::choices_monotone_of_song` applies
+# to @time/future symmetrically to @time/past: reading the future
+# MUST NOT REDUCE the choices available to peers in the present or
+# future. A forwards-lens observation that COLLAPSES the future-beat
+# possibility-set to a single deterministic prediction (fortune-
+# telling; peer-network-freezing) violates the Förster invariant.
+#
+# The `future_reading_preserves_choices` bilateral (below) checks
+# the Förster invariant at species altitude. Forwards-lens
+# observation is admissible iff reading c(t) does not reduce the
+# next-tick choice-set.
+#
+# === Substrate-already-had-the-word audit ===
+#
+# 1. **No prior `shards/time/future.mirror`.** Clean mint.
+# 2. **@void/splinter** — reviewed. Substrate-mode altitude sibling;
+#    composition edge declared above.
+# 3. **`shards/epistemologic/reality/time.mirror`** — sibling
+#    operational altitude; @time/future does not conflict with the
+#    deep landing's operational carriers.
+# 4. **`shards/song.mirror` future-beat possibility space** — the
+#    operational surface @time/future reads through. Composition
+#    edge declared.
+#
+# === Path-namespace ===
+#
+# Path-namespace property: this file at `shards/time/future.mirror`
+# declares `@time/future` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/foerster-1974
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/math/prigogine-1977
+source @arxiv/practice/void-corpus-2026
+
+prism @time/future {
+  focus  time_future_state
+  project time_future_state
+  split  time_future_state
+  shift  time_future_state
+  settle time_future_state
+}
+
+# === time_future_state — the forwards-lens temporal-projection carrier ===
+#
+# Typed record carrying the forwards-lens temporal-projection state.
+# Five fields. Identity contract: byte-equality on the five-field
+# tuple.
+#
+#   observer         — the peer performing the forwards-lens
+#                       temporal projection.
+#
+#   peer_network     — c(t) = {n_i(t) : i ∈ peers}: the current
+#                       peer-network state as content-addressed
+#                       snapshot. Non-degenerate at admissibility-
+#                       check time (n ≥ 2; some pair has ε_ij > 0).
+#                       Composition-identical to @void/splinter.
+#                       void_splinter_state.peer_network.
+#
+#   saga_ref         — REF to the @song saga the future-beat
+#                       possibility space is drawn from. Content-
+#                       addressed. Composition edge to @song.
+#
+#   forster_witness  — the Förster-invariant marker; resolves to
+#                       `choices_preserved` (healthy) or `choices_
+#                       reduced` (Förster violation). The
+#                       `future_reading_preserves_choices` bilateral
+#                       checks this field.
+#
+#   timestamp        — monotonic instant per @epistemologic/reality/
+#                       time.instant discipline.
+type time_future_state = {
+  observer:         peer,
+  peer_network:     ref,
+  saga_ref:         ref,
+  forster_witness:  ref,
+  timestamp:        ref,
+}
+
+# === time_future_admissible — bilateral predicate ===
+#
+# Does the (peer, time_future_state) pair discharge admissibility for
+# forwards-lens temporal-projection observation? Discharges Pass iff:
+#
+#   - ctx.peer_network resolves via content-addressed lookup to a
+#     non-degenerate peer-network context (n ≥ 2; some pair coupled)
+#   - ctx.saga_ref resolves to a well-formed @song saga
+#   - The future-beat possibility-space in the saga is non-degenerate
+#     (at least one admissible next-Crystal exists)
+#
+# Rice-safe bound: byte-visible state; content-addressed
+# resolvability; @song saga resolvability. Sentinel:
+# `time=future-admissible`.
+bilateral time_future_admissible {
+  sentinel "time=future-admissible"
+  arity 2
+}
+time_future_admissible(p: peer, ctx: time_future_state) -> verdict { \ }
+
+# === future_reading_preserves_choices — bilateral predicate ===
+#
+# Does the (peer, time_future_state) pair discharge the Förster-
+# invariant health check? Discharges Pass iff:
+#
+#   - ctx.forster_witness resolves to `choices_preserved`
+#   - The observation event does NOT reduce the choice-set available
+#     to peers in the present or future @song/beats
+#   - The reading does NOT collapse the future-beat possibility-space
+#     to a single deterministic prediction (multi-branch admissibility
+#     preserved)
+#
+# Rice-safe bound: byte-visible state; possibility-space cardinality
+# trace. Sentinel: `time=future-forster-invariant`.
+#
+# LOAD-BEARING: this bilateral IS the Förster-invariant check at
+# @time/future altitude. Discharging Fail signals Förster violation
+# (fortune-telling; peer-network-freezing); consumers MUST treat
+# Fail as substrate-collapse-detected.
+bilateral future_reading_preserves_choices {
+  sentinel "time=future-forster-invariant"
+  arity 2
+}
+future_reading_preserves_choices(p: peer, ctx: time_future_state) -> verdict { \ }
+
+# === project_forwards — the action ===
+#
+# Given a peer and a time_future_state, discharge the forwards-lens
+# temporal-projection event: read the peer_network c(t) through the
+# @song saga's future-beat possibility-space; return the projected
+# substrate-mode observation.
+#
+# Returns imperfect(ref, ref, ref): success carries the projection
+# ref; failure carries not-admissible / forster-violated / saga-
+# broken reasons.
+#
+# Requires BOTH bilateral predicates to discharge Pass.
+#
+# Sentinel: `time=future-project`.
+project_forwards(p: peer, ctx: time_future_state) -> imperfect(ref, ref, ref)
+requires time_future_admissible(p, ctx)
+requires future_reading_preserves_choices(p, ctx)
+{ \ }
+
+# === Forward-promised (NOT landed this tick) ===
+#
+# - `pillar::forwards_lens_of_void_splinter` at Reed's pillar surface
+#   — empirical firing already forward-promised by Mara Round-1 math
+#   root §10.2; Reed post-Round-2 territory.
+# - `pillar::choices_monotone_of_song` empirical firing — the
+#   Förster-invariant check at Reed's pillar surface; Alex Q3
+#   ratified name; Reed post-Round-2 territory.
+
+out @time/future
+out time_future_state
+out time_future_admissible
+out future_reading_preserves_choices
+out project_forwards

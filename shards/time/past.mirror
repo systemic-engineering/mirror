@@ -1,0 +1,218 @@
+in @prism
+in @meta
+in @glass
+in @time
+in @void
+in @void/narcissus
+in @song
+in @epistemologic
+in @epistemologic/reality/time
+
+# @time/past — backwards-lens temporal-projection species; the
+# temporal projection of @void/narcissus through @song saga.
+#
+# First species-decl of the @time family (family-root marker landed
+# same tick at `shards/time.mirror`). Landed 2026-07-20 by Mara per
+# Alex Round 2 spawn brief.
+#
+# === The species altitude ===
+#
+# @time/past IS the substrate-decl'd temporal projection of the
+# backwards-lens substrate-mode carried by @void/narcissus. Per
+# @void/narcissus (Round-1 landing `shards/void/narcissus.mirror`):
+# the backwards lens consumes H(t) — the observer's own past-
+# trajectory — as its native input. @time/past IS that H(t)
+# projection at temporal-family altitude, mediated through the
+# @song saga.
+#
+# Carrier: `peer_history H(t)` — the ordered sequence of prior
+# @song/beats the observer's timeline traversed. Content-addressed
+# per `@epistemologic/property/verdict_is_content_addressed`
+# discipline. The past is not opinion; the past is the content-
+# addressed trace of settled beats.
+#
+# === Composition with @void/narcissus ===
+#
+# @void/narcissus's operational altitude is substrate-mode
+# (backwards-lens as one pole of the void duality). @time/past's
+# operational altitude is temporal-family (the temporal-projection
+# of the same substrate-mode through the @song saga).
+#
+# Composition edge: @time/past.time_past_state.peer_history ==
+# @void/narcissus.void_narcissus_state.peer_history at content-
+# addressed identity. The two carriers name the SAME H(t) at
+# different altitudes; one at substrate-mode altitude, one at
+# temporal-family altitude.
+#
+# === Composition with @song saga ===
+#
+# @song saga (family-root at `shards/song.mirror`; @song/beat at
+# `shards/song/beat.mirror`) is the SAGA COMMAND SURFACE through
+# which @time projects. @time/past reads the saga's PRIOR beats —
+# beats that have already crystallized (per Mara Round-2 Crystal/
+# Mandelbrot landing) — as the H(t) it consumes.
+#
+# Each prior @song/beat is a Crystal<T> settled at some @time/now
+# event; the sequence of Crystal<T> settlements IS the observer's
+# peer_history H(t). @time/past's operational surface reads through
+# the saga's prior-beats chain.
+#
+# === Förster invariant composition (Alex Round 2 Q3 ratified) ===
+#
+# The Förster invariant `pillar::choices_monotone_of_song` applies
+# to @time/past as follows: reading the past MUST NOT REDUCE the
+# choices available to peers in the present or future. A backwards-
+# lens observation that COLLAPSES peer choice-sets (e.g., narrative-
+# imposition; deterministic-past-forcing) violates the Förster
+# invariant.
+#
+# The `past_reading_preserves_choices` bilateral (below) checks the
+# Förster invariant at species altitude. Backwards-lens observation
+# is admissible iff reading H(t) does not reduce the present-tick
+# choice-set.
+#
+# === Substrate-already-had-the-word audit ===
+#
+# 1. **No prior `shards/time/past.mirror`.** Clean mint.
+# 2. **@void/narcissus** — reviewed. Substrate-mode altitude sibling;
+#    composition edge declared above.
+# 3. **`shards/epistemologic/reality/time.mirror` `timeline`** — the
+#    operational carrier for ordered snapshot-sequence at nanosecond
+#    substrate. @time/past.peer_history composes over `timeline` at
+#    substrate-decl altitude. Sibling altitudes.
+# 4. **`shards/song.mirror` prior-beat chain** — the operational
+#    surface @time/past reads through. Composition edge declared.
+#
+# === Path-namespace ===
+#
+# Path-namespace property: this file at `shards/time/past.mirror`
+# declares `@time/past` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/foerster-1974
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/math/lagrange-1772
+source @arxiv/practice/void-corpus-2026
+
+prism @time/past {
+  focus  time_past_state
+  project time_past_state
+  split  time_past_state
+  shift  time_past_state
+  settle time_past_state
+}
+
+# === time_past_state — the backwards-lens temporal-projection carrier ===
+#
+# Typed record carrying the backwards-lens temporal-projection state.
+# Five fields. Identity contract: byte-equality on the five-field
+# tuple.
+#
+#   observer         — the peer performing the backwards-lens
+#                       temporal projection.
+#
+#   peer_history     — H(t) = {settled Crystal<T> chain of prior
+#                       @song/beats the observer's timeline
+#                       traversed}. Content-addressed per
+#                       `@epistemologic/property/verdict_is_content_
+#                       addressed` discipline. Composition-identical
+#                       to @void/narcissus.void_narcissus_state.
+#                       peer_history.
+#
+#   saga_ref         — REF to the @song saga the peer_history is
+#                       drawn from. Content-addressed. Composition
+#                       edge to @song.
+#
+#   forster_witness  — the Förster-invariant marker; resolves to
+#                       `choices_preserved` (healthy) or `choices_
+#                       reduced` (Förster violation). The
+#                       `past_reading_preserves_choices` bilateral
+#                       checks this field.
+#
+#   timestamp        — monotonic instant per @epistemologic/reality/
+#                       time.instant discipline of the observation
+#                       event.
+type time_past_state = {
+  observer:         peer,
+  peer_history:     ref,
+  saga_ref:         ref,
+  forster_witness:  ref,
+  timestamp:        ref,
+}
+
+# === time_past_admissible — bilateral predicate ===
+#
+# Does the (peer, time_past_state) pair discharge admissibility for
+# backwards-lens temporal-projection observation? Discharges Pass iff:
+#
+#   - ctx.peer_history resolves via content-addressed lookup to a
+#     non-empty settled-Crystal-chain (substrate present; no null
+#     history)
+#   - ctx.saga_ref resolves to a well-formed @song saga
+#   - The prior-beats chain in the saga is byte-consistent with
+#     ctx.peer_history (Crystal<T> chain matches)
+#
+# Rice-safe bound: byte-visible state; content-addressed
+# resolvability; @song saga resolvability. Sentinel:
+# `time=past-admissible`.
+bilateral time_past_admissible {
+  sentinel "time=past-admissible"
+  arity 2
+}
+time_past_admissible(p: peer, ctx: time_past_state) -> verdict { \ }
+
+# === past_reading_preserves_choices — bilateral predicate ===
+#
+# Does the (peer, time_past_state) pair discharge the Förster-
+# invariant health check? Discharges Pass iff:
+#
+#   - ctx.forster_witness resolves to `choices_preserved`
+#   - The observation event does NOT reduce the choice-set available
+#     to peers in the present or future @song/beats (the choice-set
+#     is monotonically non-decreasing across the reading)
+#
+# Rice-safe bound: byte-visible state; choice-set cardinality trace.
+# Sentinel: `time=past-forster-invariant`.
+#
+# LOAD-BEARING: this bilateral IS the Förster-invariant check at
+# @time/past altitude. Discharging Fail signals Förster violation
+# (narrative-imposition; deterministic-past-forcing); consumers
+# MUST treat Fail as substrate-collapse-detected.
+bilateral past_reading_preserves_choices {
+  sentinel "time=past-forster-invariant"
+  arity 2
+}
+past_reading_preserves_choices(p: peer, ctx: time_past_state) -> verdict { \ }
+
+# === project_backwards — the action ===
+#
+# Given a peer and a time_past_state, discharge the backwards-lens
+# temporal-projection event: read the peer_history H(t) through the
+# @song saga; return the projected substrate-mode observation.
+#
+# Returns imperfect(ref, ref, ref): success carries the projection
+# ref; failure carries not-admissible / forster-violated / saga-
+# broken reasons.
+#
+# Requires BOTH bilateral predicates to discharge Pass.
+#
+# Sentinel: `time=past-project`.
+project_backwards(p: peer, ctx: time_past_state) -> imperfect(ref, ref, ref)
+requires time_past_admissible(p, ctx)
+requires past_reading_preserves_choices(p, ctx)
+{ \ }
+
+# === Forward-promised (NOT landed this tick) ===
+#
+# - `pillar::backwards_lens_of_void_narcissus` at Reed's pillar
+#   surface — empirical firing already forward-promised by Mara
+#   Round-1 math root §10.1; Reed post-Round-2 territory.
+# - `pillar::choices_monotone_of_song` empirical firing — the
+#   Förster-invariant check at Reed's pillar surface; Alex Q3
+#   ratified name; Reed post-Round-2 territory.
+
+out @time/past
+out time_past_state
+out time_past_admissible
+out past_reading_preserves_choices
+out project_backwards
