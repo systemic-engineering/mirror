@@ -177,14 +177,31 @@ pub(crate) fn eigenvalues(n: usize, matrix: &[f64]) -> Vec<f64> {
         .unwrap_or_else(|info| panic!("LAPACK dsyev convergence failed: info={info}"))
 }
 
-/// Kuramoto phase-lock at N≥2 peers. Delegate lands with the
-/// spectral_phase_lock Fortran wrapper in the next tick.
+/// Kuramoto phase-lock at N≥1 coupled oscillators.
+///
+/// Model: dθ_i/dt = ω_i + (K/N) Σ_j sin(θ_j - θ_i)
+/// Explicit Euler integration for `steps` timesteps of `dt`.
+///
+/// Returns `(final_phases, order_parameter_r)` where r ∈ [0,1] is
+/// the Kuramoto order parameter (r=1 = fully synchronized; r=0 =
+/// incoherent).
+///
+/// Delegates to `prismqueer::ffi::phase_lock` — the entire integration
+/// loop runs in `spectral_phase_lock` Fortran (native/spectral.f90) at
+/// the ONE ordained numerical @io boundary. Alex 2026-07-20 direct-
+/// transcript: "Not DEFERRED. DONE!"
+///
+/// Panics if `phases.len() != omegas.len()` or either is empty.
 #[allow(dead_code)]
-pub(crate) fn phase_lock(_phases: &[f64], _omegas: &[f64], _k: f64, _steps: usize, _dt: f64) -> (Vec<f64>, f64) {
-    // RED for one tick until spectral_phase_lock Fortran wrapper lands
-    // in prism/prismqueer/native/spectral.f90 + ffi::phase_lock wrapper.
-    // Alex 2026-07-20 "Not DEFERRED. DONE!" — next tick discharges this.
-    unimplemented!("phase_lock spectral_phase_lock Fortran wrapper lands next tick")
+pub(crate) fn phase_lock(
+    phases: &[f64],
+    omegas: &[f64],
+    k: f64,
+    steps: usize,
+    dt: f64,
+) -> (Vec<f64>, f64) {
+    prismqueer::ffi::phase_lock(phases, omegas, k, steps, dt)
+        .unwrap_or_else(|info| panic!("Kuramoto phase_lock invocation failed: info={info}"))
 }
 
 /// Aumann envelope: singular values of an m×n posterior matrix
@@ -1122,6 +1139,263 @@ mod prop_tests {
                 assert!(
                     (want - got).abs() < 1e-7 * (1.0 + want.abs()),
                     "m={m} n={n} σ²[{i}]={want} ≠ eigval(A^TA)[{i}]={got}"
+                );
+            }
+        }
+    }
+
+    // =============================================================
+    // phase_lock() property tests — Kuramoto phase-lock via LAPACK-
+    // adjacent BLAS matmul + trig at spectral_phase_lock Fortran
+    // altitude. Full state-space coverage per Alex 2026-07-20
+    // "full state space coverage of this" directive.
+    // =============================================================
+
+    fn safe_phase_lock(
+        phases: &[f64],
+        omegas: &[f64],
+        k: f64,
+        steps: usize,
+        dt: f64,
+    ) -> Result<(Vec<f64>, f64), String> {
+        catch_unwind(AssertUnwindSafe(|| phase_lock(phases, omegas, k, steps, dt)))
+            .map_err(|_| "matrix::phase_lock panicked".to_string())
+    }
+
+    /// Kuramoto order parameter r = |(1/N) Σ e^(iθ)| for a set of
+    /// phases. Reference impl for cross-check.
+    fn kuramoto_order(phases: &[f64]) -> f64 {
+        let n = phases.len() as f64;
+        let cos_sum: f64 = phases.iter().map(|t| t.cos()).sum();
+        let sin_sum: f64 = phases.iter().map(|t| t.sin()).sum();
+        (cos_sum * cos_sum + sin_sum * sin_sum).sqrt() / n
+    }
+
+    // Property P1: zero coupling + zero omegas → phases unchanged.
+    #[test]
+    fn phase_lock_zero_coupling_zero_omegas_stays_at_initial() {
+        let phases = vec![0.1, 0.7, 1.3, 2.5, 4.0];
+        let omegas = vec![0.0; 5];
+        let (out, _r) = safe_phase_lock(&phases, &omegas, 0.0, 100, 0.01).unwrap();
+        for (i, (&p_in, &p_out)) in phases.iter().zip(out.iter()).enumerate() {
+            assert!(
+                (p_in - p_out).abs() < 1e-12,
+                "phase[{i}]: initial {p_in} ≠ final {p_out} with zero dynamics"
+            );
+        }
+    }
+
+    // Property P2: zero coupling + uniform omegas → rigid rotation
+    // (all phases advance by same amount).
+    #[test]
+    fn phase_lock_zero_coupling_uniform_omegas_rigid_rotation() {
+        let phases = vec![0.0, 0.5, 1.0, 1.5];
+        let omegas = vec![2.0; 4];
+        let steps = 50usize;
+        let dt = 0.01;
+        let (out, _r) = safe_phase_lock(&phases, &omegas, 0.0, steps, dt).unwrap();
+        let expected_advance = omegas[0] * (steps as f64) * dt;
+        for (i, (&p_in, &p_out)) in phases.iter().zip(out.iter()).enumerate() {
+            let advance = p_out - p_in;
+            assert!(
+                (advance - expected_advance).abs() < 1e-10,
+                "phase[{i}]: advance {advance} ≠ expected {expected_advance}"
+            );
+        }
+    }
+
+    // Property P3: N=1 singleton — no coupling term applies (self-
+    // interaction sin(θ-θ)=0); phase = θ_0 + steps·dt·ω.
+    #[test]
+    fn phase_lock_singleton_n_1_free_drift() {
+        for &omega in &[-3.0, -0.5, 0.0, 0.5, 3.0] {
+            let phases = vec![0.7];
+            let omegas = vec![omega];
+            let steps = 100usize;
+            let dt = 0.01;
+            let (out, _r) = safe_phase_lock(&phases, &omegas, 5.0, steps, dt).unwrap();
+            let expected = 0.7 + omega * (steps as f64) * dt;
+            assert!(
+                (out[0] - expected).abs() < 1e-10,
+                "ω={omega}: got {} expected {expected}", out[0]
+            );
+        }
+    }
+
+    // Property P4: order parameter r ALWAYS in [0, 1].
+    #[test]
+    fn phase_lock_order_parameter_bounded_in_zero_one() {
+        for n in 1..=10 {
+            let phases: Vec<f64> = (0..n).map(|i| (i as f64) * 0.31 + 0.17).collect();
+            let omegas: Vec<f64> = (0..n).map(|i| ((i as f64) * 0.7 - 1.0).sin()).collect();
+            for &k in &[-2.0, 0.0, 1.0, 5.0] {
+                let (_, r) = safe_phase_lock(&phases, &omegas, k, 20, 0.01).unwrap();
+                assert!(
+                    (0.0..=1.0 + 1e-10).contains(&r),
+                    "n={n} k={k}: r={r} out of [0,1]"
+                );
+            }
+        }
+    }
+
+    // Property P5: identical phases (∀i θ_i = c) → r=1 exactly regardless
+    // of coupling. Coupling term Σ sin(θ_j - θ_i) = Σ sin(0) = 0.
+    #[test]
+    fn phase_lock_identical_phases_zero_omegas_order_r_is_one() {
+        for n in 1..=10 {
+            for &phase in &[0.0, 1.5, -2.0, 3.14, 100.0] {
+                let phases = vec![phase; n];
+                let omegas = vec![0.0; n];
+                let (out, r) = safe_phase_lock(&phases, &omegas, 10.0, 50, 0.01).unwrap();
+                assert!(
+                    (r - 1.0).abs() < 1e-10,
+                    "n={n} phase={phase}: r={r} ≠ 1"
+                );
+                for &p in &out {
+                    assert!((p - phase).abs() < 1e-10);
+                }
+            }
+        }
+    }
+
+    // Property P6: evenly distributed phases on the unit circle → r=0.
+    // For N=4 at {0, π/2, π, 3π/2}: sum of e^(iθ) = 0 exactly.
+    #[test]
+    fn phase_lock_evenly_distributed_phases_order_r_is_zero() {
+        use std::f64::consts::PI;
+        for n in &[3usize, 4, 5, 6, 8, 12] {
+            let phases: Vec<f64> = (0..*n).map(|i| 2.0 * PI * (i as f64) / (*n as f64)).collect();
+            let omegas = vec![0.0; *n];
+            let (_, r) = safe_phase_lock(&phases, &omegas, 0.0, 0, 0.0).unwrap();
+            assert!(
+                r.abs() < 1e-10,
+                "n={n} evenly distributed: r={r} ≠ 0"
+            );
+        }
+    }
+
+    // Property P7: strong coupling + identical omegas → converges to r→1.
+    // Ensures Kuramoto integration actually synchronizes (dynamics working).
+    #[test]
+    fn phase_lock_strong_coupling_identical_omegas_converges_to_synchrony() {
+        // Start with widely-spread phases + identical omegas + strong coupling.
+        // After many timesteps, order parameter should be near 1.
+        let phases: Vec<f64> = (0..5).map(|i| (i as f64) * 1.2).collect();
+        let omegas = vec![1.0; 5];
+        let k = 20.0; // strong
+        let dt = 0.01;
+        let steps = 2000usize;
+        let (_, r) = safe_phase_lock(&phases, &omegas, k, steps, dt).unwrap();
+        assert!(
+            r > 0.95,
+            "strong coupling did not synchronize: final r={r} (expected ≥ 0.95)"
+        );
+    }
+
+    // Property P8: output phases + order parameter are always finite.
+    #[test]
+    fn phase_lock_output_finite() {
+        for n in 1..=8 {
+            let phases: Vec<f64> = (0..n).map(|i| (i as f64) * 0.5 + 0.1).collect();
+            let omegas: Vec<f64> = (0..n).map(|i| ((i as f64) * 0.3).cos() * 2.0).collect();
+            let (out, r) = safe_phase_lock(&phases, &omegas, 3.0, 100, 0.01).unwrap();
+            assert!(r.is_finite(), "r not finite for n={n}");
+            for (i, &p) in out.iter().enumerate() {
+                assert!(p.is_finite(), "phase[{i}]={p} not finite for n={n}");
+            }
+        }
+    }
+
+    // Property P9: permutation invariance of order parameter. Permuting
+    // (phases, omegas) pairwise yields the SAME r after integration.
+    #[test]
+    fn phase_lock_permutation_invariance_of_order_parameter() {
+        let phases = vec![0.1, 0.7, 1.4, 2.2, 3.1];
+        let omegas = vec![0.5, -0.3, 0.8, -0.5, 0.1];
+        let k = 1.5;
+        let steps = 100usize;
+        let dt = 0.01;
+
+        let (_, r_original) = safe_phase_lock(&phases, &omegas, k, steps, dt).unwrap();
+
+        // Reverse permutation
+        let mut phases_rev = phases.clone();
+        phases_rev.reverse();
+        let mut omegas_rev = omegas.clone();
+        omegas_rev.reverse();
+        let (_, r_reversed) = safe_phase_lock(&phases_rev, &omegas_rev, k, steps, dt).unwrap();
+
+        assert!(
+            (r_original - r_reversed).abs() < 1e-10,
+            "permutation broke order parameter: original {r_original} vs reversed {r_reversed}"
+        );
+    }
+
+    // Property P10: N=2 antipodal + zero coupling stays antipodal.
+    // For N=2 with θ=(0, π), K=0, ω=0: sin(π-0) = sin(π) = 0 anyway,
+    // so dynamics are trivial. Verifies the trivial fixed point.
+    #[test]
+    fn phase_lock_n_2_antipodal_zero_dynamics() {
+        use std::f64::consts::PI;
+        let phases = vec![0.0, PI];
+        let omegas = vec![0.0, 0.0];
+        let (out, r) = safe_phase_lock(&phases, &omegas, 5.0, 100, 0.01).unwrap();
+        // Antipodal is an unstable fixed point of Kuramoto but starts
+        // exactly at it — dynamics are zero because sin(π)=sin(-π)=0.
+        assert!(
+            (out[0]).abs() < 1e-10 && (out[1] - PI).abs() < 1e-10,
+            "antipodal drifted: {} vs 0; {} vs π", out[0], out[1]
+        );
+        // Order parameter: |e^i0 + e^iπ|/2 = |1 - 1|/2 = 0.
+        assert!(r.abs() < 1e-10, "antipodal r={r} ≠ 0");
+    }
+
+    // Property P11: order parameter matches reference at t=0 for arbitrary
+    // phases (steps=0 is a pure order-parameter measurement).
+    #[test]
+    fn phase_lock_order_parameter_matches_reference_at_t_zero() {
+        let cases = vec![
+            vec![0.0, 0.5, 1.0, 1.5, 2.0],
+            vec![-1.0, 1.0],
+            vec![0.1, 0.15, 0.2, 0.25],
+            vec![3.14, -3.14, 0.0, 1.57],
+        ];
+        for phases in cases {
+            let omegas = vec![0.0; phases.len()];
+            let (_, r) = safe_phase_lock(&phases, &omegas, 0.0, 0, 0.0).unwrap();
+            let expected = kuramoto_order(&phases);
+            assert!(
+                (r - expected).abs() < 1e-12,
+                "n={} phases={:?}: got r={r} expected {expected}", phases.len(), phases
+            );
+        }
+    }
+
+    // Property P12: identity of dynamics under rigid phase shift. Shifting
+    // all initial phases by Δ shifts all final phases by Δ (since sin is
+    // shift-invariant in the difference); order parameter r is invariant.
+    #[test]
+    fn phase_lock_rigid_phase_shift_invariance() {
+        use std::f64::consts::PI;
+        let base_phases = vec![0.1, 0.7, 1.3, 2.5];
+        let omegas = vec![0.5, -0.2, 0.3, 0.7];
+        let k = 2.0;
+        let steps = 50usize;
+        let dt = 0.01;
+
+        let (out_base, r_base) = safe_phase_lock(&base_phases, &omegas, k, steps, dt).unwrap();
+
+        for &shift in &[0.5, PI, -1.7, 2.0 * PI] {
+            let shifted: Vec<f64> = base_phases.iter().map(|p| p + shift).collect();
+            let (out_shifted, r_shifted) = safe_phase_lock(&shifted, &omegas, k, steps, dt).unwrap();
+            assert!(
+                (r_base - r_shifted).abs() < 1e-9,
+                "shift {shift}: order parameter broke: {r_base} vs {r_shifted}"
+            );
+            for (i, (&b, &s)) in out_base.iter().zip(out_shifted.iter()).enumerate() {
+                assert!(
+                    (s - b - shift).abs() < 1e-9,
+                    "shift {shift}: phase[{i}] not rigidly shifted: {b} vs {s}"
                 );
             }
         }
