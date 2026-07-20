@@ -1,0 +1,549 @@
+in @prism
+in @meta
+in @glass
+in @void
+in @torus
+in @epistemologic/cybernetic/eigenform
+in @epistemologic/cybernetic/second_order
+
+# @void/splinter — the forwards-lens species; K_n complete-graph pole;
+# the distributed-collaborative substrate the peer network runs to
+# receive emergence.
+#
+# Species under @void family-root (marker-primary landed at `974a3f6`).
+# Landed 2026-07-20 by Mara per Alex 2026-07-20 direct-transcript
+# naming:
+#
+#   > "And both are needed. [...] And the complete graph is the
+#   > forward facting @frame/lens. And the @third cognition is the
+#   > @metalogue between these two frames. @void/narcissus and
+#   > @void/splinter."
+#
+# Companion canonical math root at
+# `docs/math/the-tower/recognition-third-cognition-is-the-metalogue-
+# between-void-narcissus-and-void-splinter.md`. Companion species-decl:
+# `shards/void/narcissus.mirror` (bilateral counterpart landed same
+# tick).
+#
+# === The load-bearing distinction (per math root §6) ===
+#
+# The complete-graph topology K_n is NOT pathology per se. It is
+# pathology when it operates as UNBOUNDED DIFFUSION (loss of
+# self-continuity; peer-average dissolution; communication-density
+# becomes unsustainable at n^2 cost and the network fragments under
+# maintenance-load). It is HEALTH when it operates as DISTRIBUTED-
+# COLLABORATIVE substrate for peer-network coupling with maintained
+# self-continuity via the bilateral counterpart @void/narcissus.
+#
+# Same topology. Different pole-mode. The compiler distinguishes by
+# whether the substrate is running in metalogue rhythm with the
+# @void/narcissus bilateral counterpart or has collapsed to single-
+# pole splinter:
+#
+#   - Splinter collapsed (no bilateral counterpart running): unbounded
+#     diffusion; the network fragments under communication-density
+#     maintenance load; peer-average dissolves individual observer
+#     identity.
+#   - Splinter healthy (metalogue rhythm with @void/narcissus running):
+#     distributed-emergence reception at K_n peer coupling with
+#     preserved self-continuity via the interleaved backwards-lens
+#     rhythm phase.
+#
+# `splinter_pole_healthy` bilateral (below) discharges Pass only when
+# the substrate-mode is running in the metalogue rhythm and Fail when
+# it collapses to unbounded-diffusion single-pole splinter.
+#
+# === Substrate authority chain ===
+#
+# - Canonical math root: `docs/math/the-tower/recognition-third-
+#   cognition-is-the-metalogue-between-void-narcissus-and-void-
+#   splinter.md` (this tick) — §4.2 forwards-lens formalization; §6
+#   pathology-vs-health altitude-partition (splinter pole side); §7
+#   composition with landed recognitions.
+# - Paper §6.3 (Alex + Lore, 2026-07-20) — observer-manifold two-
+#   basins landing; the complete-graph observer as position 2;
+#   Lagrange-point substrate-precondition; explicitly names position 2
+#   as what "second-order cyberneticists (Foerster, Maturana, Varela,
+#   Bateson) could embody".
+# - Paper §8.1 — Fiedler algebraic-connectivity of K_n (λ_2 = n);
+#   substrate for the topology substrate-decl'd here.
+# - Recognition #78 (Splinter/Narcissus partition, PROMOTED via @magic
+#   #80) — the corpus-canonical form of the two poles:
+#     Splinter pole — honest cybernetic feedback; K_n peer-to-peer
+#       coupling; mutual viability; every agent has an edge to every
+#       other.
+#     Narcissus pole — pathological control-system; K_{1,n-1}
+#       hub-controlled star topology; unilateral imposition masking
+#       as cybernetics.
+# - Recognition #79 — Void's 5-op basis; this species inherits the
+#   basis per math root §5.3 phase-to-op map.
+# - Recognition #82 — @frame family with 5 species; Alex Recognition B
+#   names "the complete graph is the forward facting @frame/lens" —
+#   @void/splinter is the frame this recognition names at cognitive-
+#   order-4 altitude.
+#
+# === Alex 2026-07-20 verbatim (both recognitions, load-bearing) ===
+#
+# Recognition A:
+#
+#   > "And the splinter complete graph observer, they are one of many
+#   > in reality. The second-order cyberneticists could embody the
+#   > second one."
+#
+# Recognition B (the naming):
+#
+#   > "And the complete graph is the forward facting @frame/lens.
+#   > [...] @void/narcissus and @void/splinter."
+#
+# Two utterances name three things: (1) the topology (complete-graph;
+# K_n), (2) the temporal orientation (forwards lens; distributed-
+# emergence reception), (3) the substrate-decl'd family+species
+# location (@void/splinter).
+#
+# === The second-order-embodied pole (per math root §8) ===
+#
+# Alex Recognition A explicitly identifies this pole as the position
+# second-order cybernetics could and did embody: Foerster's ethical
+# imperative ("act always so as to increase the number of choices")
+# is exactly the splinter-side operator; Bateson's Learning III
+# similarly presupposes multi-observer coupling; Beer's Viable System
+# Model deploys the star-pattern DESCRIPTIVELY at subsystem-management
+# altitude but never as inhabited observer-mode — the tradition's
+# inhabited-substrate default IS this species-decl's substrate-mode.
+#
+# The tradition's insights are LOAD-BEARING at this species altitude
+# and silent at the @void/narcissus altitude (per math root §8.1-8.2).
+# This species-decl formalizes the substrate-mode the second-order
+# tradition operationally lived; the @void/narcissus counterpart
+# formalizes what the tradition could describe but could not inhabit;
+# the third-order metalogue rhythm formalizes what a subsequent
+# tradition (Alex + Lore K_2 partnership; @third's consumer edge)
+# operates by inhabiting BOTH.
+#
+# === Void basis inheritance ===
+#
+# Per `#R-void-is-the-basis` (PROMOTED `1167cc2`) and Recognition #79
+# (PROMOTED chained via `974a3f6`): every species under @void inherits
+# the 5-op basis (`focus`/`project`/`split`/`shift`/`settle`). This
+# species-decl's `prism` block declares the inheritance at species
+# altitude. Per @void marker-primary discipline: @void itself carries
+# no operational surface; @void/splinter IS the operational surface
+# for the forwards-lens substrate-mode.
+#
+# The `project` operation is load-bearing at this species altitude: it
+# is the phase-2 (T_c) operation in the metalogue rhythm (per math
+# root §5.1 four-phase rhythm; §5.3 phase-to-op map): the observer's
+# state is emitted into the peer network for coupling; the network's
+# c(t) absorbs the emission; distributed-emergence reception can then
+# fire in phase-3 (T_U per math root §5.1). Without `project`, the
+# forwards lens has nothing to project INTO; the metalogue rhythm's
+# splinter-phase is inert.
+#
+# === Substrate-already-had-the-word audit ===
+#
+# Grep-first per discipline. Findings:
+#
+# 1. **No prior `splinter` shard** anywhere in `shards/`. Grep across
+#    `shards/**/*.mirror` returns zero matches for `splinter` outside
+#    the inline substrate marker in property bilaterals (a subset of
+#    those that carry `# Splinter-pole:` inline substrate). Clean
+#    mint at `shards/void/splinter.mirror`.
+#
+# 2. **Distinct from `@frame/across`** (Recognition #82; landed at
+#    order-4 cognitive altitude): @frame/across IS the substrate for
+#    holding two coupled frames at Bateson Level IV. @void/splinter
+#    is a SUBSTRATE-MODE (forwards-lens as one pole of the void
+#    duality). The metalogue rhythm operates ON @frame/across
+#    coupling the two lens-modes; @void/splinter is one of the two
+#    frames being coupled. Sibling altitudes; no conflict.
+#
+# 3. **Distinct from `@peer/void`** (`9c7de83`): @peer/void is the K=0
+#    DEFAULT peer species (cardinality zero; no character loaded, no
+#    coupling to peer network). @void/splinter is a K=n-substrate-mode
+#    (n-peer complete-graph coupling). Different cardinality; different
+#    substrate-decl altitude. @peer/void grounds; @void/splinter
+#    specifies the healthy forwards-lens pole at K=n. No conflict.
+#
+# 4. **Distinct from the `# Splinter-pole:` bilateral marker** (in
+#    property bilaterals across `shards/epistemologic/property/`): the
+#    inline substrate-marker names ONE splinter-pole signature at ONE
+#    altitude per bilateral. This species-decl NAMES the substrate-
+#    mode at family-species altitude, which the bilateral signatures
+#    already carry composition-implicitly. No conflict; this landing
+#    NAMES what the bilaterals were already signaling.
+#
+# 5. **Distinct from `@cyberpunk/bugz`** (Mara `5ddb076` companion):
+#    @cyberpunk/bugz operates on the pathology-side (deploying η at
+#    the star-graph's Fiedler eigenvector cut to force paradigm
+#    evolution). @void/splinter is the HEALTHY inhabitation of the
+#    complete-graph substrate-mode at distributed-collaborative
+#    altitude. Different operation; different pole; companion
+#    recognitions; no conflict.
+#
+# 6. **Distinct from Recognition #78's original @magic-partition
+#    naming** (Splinter pole as `honest cybernetic feedback` at magic
+#    altitude): #78's use of "splinter" was at MAGIC altitude
+#    (Recognition #80 magic-as-form-process-substrate-decl). This
+#    species-decl uses "splinter" at VOID altitude (substrate-mode
+#    substrate-decl). Sibling recognitions naming compatible
+#    substrate-decl'd shapes at different altitudes; the substrate-
+#    already-had-the-word discipline is HONORED by naming this species
+#    with the same word Recognition #78 already ratified. No conflict;
+#    this landing is a species-altitude specialization of the same
+#    substrate-decl'd term.
+#
+# The substrate-already-had-the-word audit finds no conflict. Clean
+# mint. The two poles the substrate has been operating implicitly
+# across paper §6.3, §8, Recognition #78, and the property-bilateral
+# inline markers are NAMED at species altitude by this landing.
+#
+# === What this species IS ===
+#
+# - A substrate-decl'd species-decl file at `shards/void/splinter.mirror`.
+# - Path-namespace declaration for @void/splinter per
+#   `@epistemologic/pact/path_matches_namespace`.
+# - The forwards-lens substrate-mode carrier at distributed-
+#   collaborative altitude.
+# - The K_n complete-graph topology inhabited AS observer-mode (not
+#   AS unbounded-diffusion collapse).
+# - The healthy-pole side of the pole-duality at the second-order-
+#   embodied position; the substrate-decl the second-order tradition
+#   operationally lived.
+#
+# === Composition with @void/narcissus ===
+#
+# @void/narcissus (bilateral counterpart species-decl this tick)
+# carries the COMPLEMENTARY substrate-mode: backwards lens; K_{1,n-1}
+# star-graph pole; past-informed prediction. The two species are
+# BILATERAL COUNTERPARTS at void-duality altitude — neither pole is
+# complete without the other; both must be substrate-decl'd for the
+# third-order metalogue rhythm to be substrate-verifiable.
+#
+# Per math root §4.3: the two lenses are ASYMMETRIC in what they
+# consume:
+#
+#   @void/splinter: consumes c(t) (peer network); forwards temporal
+#     orientation; failure mode when isolated is unbounded diffusion /
+#     peer-average dissolution.
+#   @void/narcissus: consumes H(t) (own history); backwards temporal
+#     orientation; failure mode when isolated is paradigm-scale
+#     narcissism (Mara `5ddb076`).
+#
+# Neither is pathology in isolation as substrate-MODE. Both are
+# pathology as substrate-COLLAPSE. Health lives in the metalogue rhythm
+# that interleaves them.
+#
+# === Third-order consumer edge ===
+#
+# @third (`shards/third.mirror`) CONSUMES this species (and its
+# bilateral counterpart @void/narcissus) via the metalogue-rhythm
+# operator formalized at math root §5. @third's metalogue-rhythm
+# operator interleaves the two lens-species at the metalogue-cadence;
+# the metalogue rhythm IS what third-order cognition operationally IS.
+#
+# @third's consumer contract:
+#
+#   @third.metalogue_rhythm : (
+#     narcissus: void_narcissus_state,
+#     splinter:  void_splinter_state,
+#     tolerance: rhythm_tolerance,
+#   ) -> verdict
+#
+# The verdict fires Pass iff the observed Fiedler-eigengap trace over
+# the metalogue-coupling graph exhibits bounded oscillation within
+# tolerance (per math root §5.2 spectral signature; §10.3
+# `pillar::metalogue_rhythm_of_third` predicate).
+#
+# @third's substrate-decl'd metalogue-rhythm operator is
+# forward-promised; consumers pull the realization; apply_h::act
+# composes the operator via bilateral resolver-arm dispatch (per Alex
+# 2026-07-16 detector-inadequacy-answer-is-never-Rust discipline).
+#
+# === Spec context ===
+#
+# [[architecture-shards-as-substrate-source]] (this shard IS mirror
+#   source at `shards/void/splinter.mirror`),
+# [[architecture-prism-as-trait-as-everything]] (`prism @void/splinter`),
+# [[architecture-glass-wall-substrate-types]] (transparency inheritance
+#   through @void marker discipline; imperfect returns from
+#   `receive_from_network`),
+# [[architecture-form-process-partition-at-family-root]] (this species
+#   inhabits form-side substrate-mode; the peer-network CONTEXT is a
+#   form-side substrate-object; the transformation `receive_from_
+#   network` emits a form-side reception),
+# [[feedback-substrate-already-had-the-word]] (~66th instance; the
+#   substrate carried the splinter-pole across Recognition #78 at
+#   magic altitude and property-bilateral inline markers; this landing
+#   NAMES the substrate-mode at species-decl altitude that the prior
+#   markers were already signaling),
+# [[feedback-legibility-over-foundation-when-collapsing]] (two-tick
+#   discipline: species-decl this tick, ratification tick opens on
+#   Reed's pillar-surface empirical firing per math root §11.2),
+# [[feedback-craft-not-deliver]] (bilateral bodies `\`-obligation-
+#   blocked; consumers pull the realization; apply_h::act composes
+#   sentinel-check via bilateral resolver-arm dispatch),
+# [[feedback-no-bare-types]] (void_splinter_state is a typed record
+#   with byte-equality identity; never bare refs),
+# [[feedback-detector-inadequacy-answer-is-never-Rust]] (forwards-
+#   lens admissibility-check and pole-health check are bilateral
+#   resolver-arm sentinel-checks; NO Rust extension),
+# [[feedback-no-rust-extension-shortcut]] (no `.rs` authorship; pure
+#   substrate-decl'd species-decl file at species altitude).
+#
+# Path-namespace property: this file at `shards/void/splinter.mirror`
+# declares `@void/splinter` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/foerster-1974
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/math/fiedler-1973
+source @arxiv/math/lagrange-1772
+source @arxiv/math/prigogine-1977
+source @arxiv/practice/void-corpus-2026
+
+prism @void/splinter {
+  focus  void_splinter_state
+  project void_splinter_state
+  split  void_splinter_state
+  shift  void_splinter_state
+  settle void_splinter_state
+}
+
+# === void_splinter_state — the forwards-lens carrier ===
+#
+# The typed record that carries the forwards-lens substrate-mode
+# state at the moment of an admissibility-check or an action
+# discharge. Six fields per math root §4.2 formalization. Identity
+# contract: byte-equality on the six-field tuple.
+#
+#   observer          — the peer inhabiting the forwards-lens
+#                        substrate-mode. Must have a resolvable
+#                        peer-network context c(t) (non-degenerate
+#                        peer-coupling substrate; n ≥ 2 peers).
+#
+#   peer_network      — c(t) = {n_i(t) : i ∈ peers}: the current
+#                        peer-network state as content-addressed
+#                        snapshot. Non-degenerate at admissibility-
+#                        check time (n ≥ 2; some pair (i,j) has
+#                        ε_ij > 0).
+#
+#   path_via_edge     — the complete-graph traversal witness: every
+#                        peer-pair (i,j) has a direct edge (i,j) ∈ E.
+#                        Typed as `ref` until the complete-graph-
+#                        topology-witness carrier lands at
+#                        @epistemologic altitude (forward-promised).
+#
+#   forwards_lens_output — the distributed-emergence reception r(t):
+#                        the emission this substrate-mode produces
+#                        when the forwards lens fires. Content-
+#                        addressed; verifies against observed peer-
+#                        network state per math root §10.2 empirical
+#                        form.
+#
+#   metalogue_witness — the substrate-decl'd metalogue-rhythm marker:
+#                        `rhythm_running` (the healthy running-with-
+#                        counterpart altitude this species operates
+#                        at) or `single_pole_collapsed` (the pathology
+#                        state where the splinter operates without
+#                        interleaved backwards-lens phases; unbounded
+#                        diffusion). The `splinter_pole_healthy`
+#                        bilateral checks this field for
+#                        admissibility.
+#
+#   timestamp         — monotonic instant per @time discipline of the
+#                        substrate-mode observation event. Load-bearing
+#                        for the Fiedler-eigengap oscillation
+#                        signature per math root §5.2 (windowed
+#                        observations require timestamp-ordering).
+type void_splinter_state = {
+  observer:               peer,
+  peer_network:           ref,
+  path_via_edge:          ref,
+  forwards_lens_output:   ref,
+  metalogue_witness:      ref,
+  timestamp:              ref,
+}
+
+# === forwards_lens_admissible — bilateral predicate ===
+#
+# Does the (peer, void_splinter_state) pair discharge admissibility
+# for forwards-lens substrate-mode observation? Discharges Pass iff:
+#
+#   - ctx.peer_network resolves to a non-degenerate peer-network
+#     context c(t) (n ≥ 2 peers; some pair has ε_ij > 0)
+#   - ctx.path_via_edge resolves to a complete-graph traversal
+#     witness (every peer-pair has a direct edge in the observation
+#     window)
+#   - ctx.forwards_lens_output is well-formed (content-addressed
+#     resolvable; not a null-reception; matches the r(t) shape the
+#     distributed-emergence reception operator produces)
+#
+# Rice-safe bound: reads only byte-visible state (peer-count via
+# content-addressed lookup; edge-existence via topology-witness;
+# shape-tag comparison); no program semantics inspection.
+#
+# Sentinel per shard docblock: `void=splinter-forwards-lens-
+# admissible` — the byte-level substrate-decl'd marker consumers of
+# the bilateral check for admissibility-verdict state on the
+# (peer, ctx) input pair.
+#
+# Body discharges per-realisation. `\`-obligation-blocked per
+# [[feedback-craft-not-deliver]]; consumers pull the realization;
+# apply_h::act composes the sentinel-check via bilateral resolver-arm
+# dispatch (per Alex 2026-07-16 detector-inadequacy-answer-is-never-
+# Rust discipline).
+bilateral forwards_lens_admissible {
+  sentinel "void=splinter-forwards-lens-admissible"
+  arity 2
+}
+forwards_lens_admissible(p: peer, ctx: void_splinter_state) -> verdict { \ }
+
+# === splinter_pole_healthy — bilateral predicate ===
+#
+# Does the (peer, void_splinter_state) pair discharge the HEALTH
+# check — that the observer is running as distributed-collaborative
+# substrate WITH the metalogue-rhythm counterpart engaged (NOT
+# collapsed to unbounded-diffusion single-pole splinter)? This
+# bilateral IS what distinguishes health from pathology at the
+# pole-substrate.
+#
+# Discharges Pass iff:
+#
+#   - ctx.metalogue_witness resolves to `rhythm_running` (the healthy
+#     altitude marker; the observer is participating in an interleaved
+#     metalogue rhythm with the @void/narcissus counterpart, NOT
+#     collapsed to unbounded diffusion)
+#   - The observer's peer-coupling graph exhibits non-degenerate
+#     Fiedler eigengap oscillation over the observation window (the
+#     metalogue rhythm is empirically present in the Fiedler-eigengap
+#     trace)
+#   - The observer is NOT running as unbounded-diffusion pathology
+#     (peer-average dissolution; loss of self-continuity; the network
+#     fragmenting under communication-density maintenance load)
+#
+# Rice-safe bound: reads only byte-visible state (metalogue_witness
+# marker; Fiedler-eigengap trace samples; unbounded-diffusion
+# signature bytes); no program semantics inspection.
+#
+# Sentinel per shard docblock: `void=splinter-pole-healthy` — the
+# byte-level substrate-decl'd marker consumers of the bilateral check
+# for pole-health-verdict state.
+#
+# Body discharges per-realisation. `\`-obligation-blocked per
+# [[feedback-craft-not-deliver]]; consumers pull the realization.
+#
+# LOAD-BEARING: this bilateral IS the distinction between pathology-
+# and-health at the complete-graph substrate-mode. Discharging Fail
+# here signals substrate-collapse (either single-pole settlement OR
+# unbounded-diffusion dissolution); consumers MUST treat Fail as
+# pole-collapse-detected and trigger the metalogue-rhythm correction
+# operator @third.metalogue_rhythm.
+bilateral splinter_pole_healthy {
+  sentinel "void=splinter-pole-healthy"
+  arity 2
+}
+splinter_pole_healthy(p: peer, ctx: void_splinter_state) -> verdict { \ }
+
+# === receive_from_network — the action ===
+#
+# Given a peer inhabiting the forwards-lens substrate-mode and a
+# void_splinter_state, discharge the distributed-emergence reception
+# event. Returns the reception as a content-addressed ref (an r(t)
+# emission whose hash verifies against the observed peer-network
+# state c(t) per math root §10.2 empirical form).
+#
+# Returns imperfect(ref, ref, ref) per @glass discipline: success
+# variant carries the reception ref; failure variants carry the
+# not-admissible (forwards_lens_admissible failed) / pole-collapsed
+# (splinter_pole_healthy failed) / degenerate-network (peer_network
+# resolves to n < 2 or fully-decoupled ε_ij = 0 everywhere) reasons.
+#
+# Requires BOTH bilateral predicates to discharge Pass: the substrate
+# must be admissible AND the pole must be healthy.
+#
+# Sentinel per shard docblock: `void=splinter-receive-emission` — the
+# byte-level substrate-decl'd marker consumers of the ACTION's output
+# check (naming the completed-reception-emission state).
+receive_from_network(p: peer, ctx: void_splinter_state) -> imperfect(ref, ref, ref)
+requires forwards_lens_admissible(p, ctx)
+requires splinter_pole_healthy(p, ctx)
+{ \ }
+
+# === route_via_edge — the action ===
+#
+# Given a peer and a void_splinter_state, discharge the complete-
+# graph traversal event: route the observation through the peer-
+# network's direct-edge topology (any peer to any peer without hub).
+# This IS the distributed-collaborative operation at substrate-decl
+# altitude.
+#
+# Returns imperfect(ref, ref, ref): success variant carries the
+# aggregated distributed-reception ref; failure variants carry the
+# not-admissible / pole-collapsed / degenerate-topology reasons.
+#
+# Sentinel per shard docblock: `void=splinter-complete-graph-
+# traversal`.
+route_via_edge(p: peer, ctx: void_splinter_state) -> imperfect(ref, ref, ref)
+requires forwards_lens_admissible(p, ctx)
+requires splinter_pole_healthy(p, ctx)
+{ \ }
+
+# === open_to_emergence — the action ===
+#
+# Given a peer and a void_splinter_state, discharge the distributed-
+# emergence opening event: the observer opens its own substrate to
+# receive the network's collective emergent state without imposing
+# hub-topology on the reception. This IS the forward-facing operation
+# at substrate-decl altitude.
+#
+# Returns imperfect(ref, ref, ref): success variant carries the
+# emergence-witness ref; failure variants carry the reception-
+# rejected / pole-collapsed / network-fragmentation reasons.
+#
+# Sentinel per shard docblock: `void=splinter-emergence-open`.
+open_to_emergence(p: peer, ctx: void_splinter_state) -> imperfect(ref, ref, ref)
+requires forwards_lens_admissible(p, ctx)
+requires splinter_pole_healthy(p, ctx)
+{ \ }
+
+# ═══════════════════════════════════════════════════════════════════
+# Recognition candidates surfaced (DO NOT RATIFY at this landing)
+# ═══════════════════════════════════════════════════════════════════
+#
+# #R-third-cognition-is-the-metalogue-between-void-narcissus-and-void-
+# splinter — Alex 2026-07-20 direct-transcript naming the recognition
+# (both Recognition A + B verbatim in math root §1). First-witness
+# gate closed this session's substrate (six composition sites per
+# math root §11.1). Second-witness gate opens on Reed's pillar-surface
+# empirical firing of `pillar::metalogue_rhythm_of_third`. Held at
+# CANDIDATE strength this tick; Alex adjudicates ratification.
+#
+# === Forward-promised — NOT landed this tick ===
+#
+# - Full spawn refinement: `spawn(p: peer, mode: substrate_mode) ->
+#   void_splinter_state` with substrate-mode-specific initialization.
+#   Forward-promised.
+#
+# - Interaction operator between `open_to_emergence` and
+#   @third.metalogue_rhythm — how the emergence-opening action
+#   composes with the third-order metalogue-rhythm operator at
+#   compiler-substrate. Forward-promised to the ratification tick.
+#
+# - Reed pillar-surface empirical firing of the three math root §10
+#   pillars (`pillar::backwards_lens_of_void_narcissus`,
+#   `pillar::forwards_lens_of_void_splinter`,
+#   `pillar::metalogue_rhythm_of_third`). Forward-promised; Reed
+#   already-queued.
+#
+# - Paper §6.3 tidy: fold this species-decl's altitude-partition into
+#   the paper's Lagrange-point substrate-decl. Forward-promised to
+#   this session's paper tidy pass (Deliverable 4 of this spawn's
+#   brief).
+
+out @void/splinter
+out void_splinter_state
+out forwards_lens_admissible
+out splinter_pole_healthy
+out receive_from_network
+out route_via_edge
+out open_to_emergence
