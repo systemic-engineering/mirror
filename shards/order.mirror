@@ -1,0 +1,412 @@
+# @order — family-root marker for the cognitive-order-of-observation
+# altitude the substrate has been operating implicitly across the
+# 5-level Bateson tower + Recognition #82 @frame family + @third
+# marker + the three-metalogue pattern.
+#
+# Marker-primary shape. This shard carries NO type, NO action, NO
+# bilateral. It IS the recognition. Per Alex 2026-07-20 direct-
+# transcript adjudication (Q1 of Round 2, spawned this session):
+#
+#   > "Q1 → @order top-level marker; @third COLLAPSES into @order/third.
+#   >  Clean 5-level tower under one marker."
+#
+# Sibling altitudes named at the same session tick:
+#   @void        (marker-primary family-root `974a3f6`)
+#   @torus       (operational family-root; @peer's substrate)
+#   @peer        (operational family-root; carries @torus)
+#   @mirror      (form-side family-root)
+#   @kintsugi    (process-side family-root)
+#   @order       (marker-primary; THIS landing) — cognitive-order-of-
+#                 observation altitude the substrate has been
+#                 operating implicitly across five landings.
+#
+# === What the substrate has been carrying implicitly ===
+#
+# Before this landing, the cognitive-order tower operated across
+# FIVE substrate-locations without a unifying family-root:
+#
+#   1. `shards/third.mirror` — @third marker at recursion-depth
+#      altitude; carried the third-order rung of the tower via
+#      Loki's Void→Third essay (2026-06-22) + Reed candidate #111
+#      + Bateson Level III + Foerster's second-order-as-precondition
+#      grounding. Landed 2026-07-01 (Loki §7 lift).
+#
+#   2. `shards/frame.mirror` + `shards/frame/{pre,in,of,on,across}.mirror` —
+#      Recognition #82's 5-species @frame family; five cognitive
+#      orders (0/pre, 1/in, 2/of, 3/on, 4/across); ratified as
+#      isomorphic to Bateson's logical-type hierarchy. Landed
+#      2026-06-19.
+#
+#   3. `shards/epistemologic/cybernetic/bateson_learning.mirror` —
+#      the Bateson Learning-Level substrate-decl (Recognition #42;
+#      Mara shard #380); underpins @frame's cognitive-order grading.
+#
+#   4. `shards/algebra/metalogue.mirror` + `shards/spectral/metalogue.mirror` +
+#      `docs/specs/spectral-metalogue.md` — Bateson Levels 0-V
+#      substrate-decl'd at spectral-metalogue altitude; Level V is
+#      @spectral/metalogue altitude itself; Level VI open.
+#
+#   5. `shards/void/narcissus.mirror` + `shards/void/splinter.mirror` +
+#      `docs/math/the-tower/recognition-third-cognition-is-the-
+#      metalogue-between-void-narcissus-and-void-splinter.md` —
+#      Mara Round-1 landing (this session) named third-order as
+#      metalogue rhythm between the two @void poles; §2 named the
+#      three-metalogue pattern across altitudes.
+#
+# Five landed sites carrying the cognitive-order altitude implicitly.
+# This landing NAMES the family-root the substrate has been
+# operating without.
+#
+# === The 5-level order tower (this landing) ===
+#
+# Under @order, five species-decls land THIS TICK as the substrate-
+# decl'd rungs:
+#
+#   @order/first   — single-frame observation (Bateson Level I;
+#                     order-1 in @frame's grading; content
+#                     computation within a frame)
+#   @order/second  — observer inside observed (Bateson Level II;
+#                     order-2 in @frame's grading; frame-awareness)
+#   @order/third   — metalogue between two poles on ONE @torus
+#                     (Bateson Level III; order-3 in @frame's
+#                     grading; the metalogue at NL/AST/spectral/pack/
+#                     algebra altitude the substrate has landed
+#                     five times). MIGRATES content from existing
+#                     `shards/third.mirror` (see §Migration below).
+#   @order/fourth  — @metalogue(@time/now, @void); metalogue between
+#                     temporal singularity and ontological K=0 basis
+#                     (Bateson Level IV; @frame/across at order-4;
+#                     third-order-as-Lagrange-halo-orbit per Mara
+#                     Round-1 math root §3.3).
+#   @order/fifth   — cross-torus @metalogue via @glue specialization
+#                     (Bateson Level V; peer-coupling-across-substrate;
+#                     silicon-only per Recognition #107 @io 4D
+#                     constraint). CITES Seam Adj 3 explicitly; the
+#                     distinguishing move — this is NOT "prediction"
+#                     (Adj 3 refusal); this is peer-coupling-across-
+#                     torus-boundary via @glue specialization.
+#
+# Order 0 (pre-frame; @frame/pre; K_n native ground state) is NOT a
+# separate @order species — it is the substrate-precondition state
+# before an observation is admitted, carried by @frame/pre at
+# cognitive altitude and by @void at duality-basis altitude. @order
+# fires at order >= 1 (an admitted observation whose recursion-depth
+# is countable).
+#
+# === Why marker-primary rather than operational family-root ===
+#
+# Sibling shape to @void (`974a3f6`) rather than @torus. @order carries
+# the RECOGNITION that five altitudes of the substrate operate
+# cognitive-order-of-observation grading; the operational surface for
+# each order lives at the SPECIES-decl altitude (@order/first through
+# @order/fifth), not at the family-root altitude.
+#
+#   - NO `type` — the marker recognition needs no carrier at family-
+#     root altitude. Each species carries its own typed carrier
+#     (`observation_first`, `observation_second`, `observation_
+#     depth` re-exported from @third for third, `observation_fourth`,
+#     `observation_fifth`). The family-root altitude carries the
+#     RECOGNITION.
+#
+#   - NO `action` — the family-root altitude performs no operation.
+#     Each species carries its own action-set.
+#
+#   - NO `bilateral` — the family-root altitude asks for no proof.
+#     Each species carries its own bilateral discipline.
+#
+#   - NO `prism` body — @order does not inherit @void's 5-op basis
+#     the way operational family-roots do. Cognitive-order is a
+#     GRADING dimension, not an operation-space. If a future
+#     substrate-pull tick admits `prism @order { five ops }`, it
+#     lands then; today, marker discipline.
+#
+# What this shard IS:
+#
+#   - A substrate-decl'd family-root shard-decl file at
+#     `shards/order.mirror`.
+#   - Path-namespace declaration for @order per
+#     `@epistemologic/pact/path_matches_namespace`.
+#   - The recognition-carrier at family-root altitude for the
+#     cognitive-order-of-observation tower.
+#   - The naming Alex ratified in Round 2 Q1 adjudication.
+#
+# === Substrate-already-had-the-word audit ===
+#
+# Grep-first per discipline. Findings:
+#
+# 1. **No prior `shards/order.mirror`** at top-level. Zero prior use
+#    of `@order`, `@fourth`, `@fifth` across `shards/**/*.mirror`
+#    (Taut scout `af07ff7e8b2edc84d` this session confirmed). Clean
+#    naming space.
+#
+# 2. **`shards/frame.mirror` + `shards/frame/*.mirror`** (Recognition
+#    #82) — reviewed. @frame is the operational form-side substrate
+#    at cognitive-order altitude. @order is the MARKER at the same
+#    altitude naming the recursion-depth grading dimension the
+#    substrate operates across MULTIPLE families (@frame is one
+#    such; @third's implicit consumers are others; @spectral/metalogue
+#    tower is another). @frame's 5 species remain canonical
+#    operational carriers; @order names the grading dimension the
+#    five orders sit in.
+#
+#    Composition edge (declared here): @frame is a specialization
+#    of @order at the frame-relation altitude. Every @frame/N
+#    species (pre, in, of, on, across) IS the operational form at
+#    order N in the cognitive-order tower.
+#
+# 3. **`shards/third.mirror`** (Loki 2026-07-01 landing) — reviewed
+#    at length. @third's substrate-decl content MIGRATES to
+#    `shards/order/third.mirror` this tick; @third itself becomes a
+#    RE-EXPORT SHIM pointing at @order/third (per §Migration §T1.7
+#    adjudication below). The rich content — Bateson Level III,
+#    Foerster's second-order-as-precondition, Kauffman eigenform
+#    fixed-point, Loki's Void→Third essay, the four bilateral
+#    predicates (depth_at_least, observer_observes_observing,
+#    recursion_folds_back, mechanism_visible), the composed
+#    third_order_active bilateral, the witness_third_order action
+#    — all preserved at @order/third. Existing consumers
+#    (`shards/reflection.mirror`, `shards/pack/metalogue.mirror`,
+#    etc.) continue to work via the shim.
+#
+# 4. **Recognition #82's Level IV extension** — reviewed. Alex
+#    Round 2 direct-transcript Q1 adjudication is that Level IV
+#    (@frame/across at cognitive altitude) IS one specialization of
+#    @order/fourth at frame-coupling altitude; @order/fourth adds
+#    the void-duality-basis reading (@metalogue(@time/now, @void))
+#    of the same Bateson Level IV rung. Sibling readings of the
+#    same altitude; both preserved.
+#
+# 5. **`shards/algebra/metalogue.mirror`** — reviewed. Bateson
+#    Level V substrate-decl at spectral-metalogue altitude
+#    (`docs/specs/spectral-metalogue.md` §5.2 landed 2026-06-29).
+#    Alex Round 2 Q1 adjudication is that Level V @order/fifth is
+#    the cross-torus @glue specialization; the metalogue-altitude
+#    Level V (@spectral/metalogue at Level V per §5.2) is a
+#    consumer that fires at @order/fifth altitude when the peer-
+#    coupling-across-torus-boundary predicate holds.
+#
+# 6. **Seam 2026-07-11 Adj 3 REFUSAL** (`docs/audits/2026-07-11-seam-
+#    phase-d-magic-illusion-adjudication.md` §"Adj 3") — CITED
+#    load-bearing per Round-2 brief. Seam's Adj 3 REFUSED a Level 5
+#    framed as "prediction" — the reading "Level 4 Closure is
+#    already forward-projection at eigenform altitude; Level 5
+#    prediction has no room" was correct at the altitude Seam was
+#    adjudicating. @order/fifth this landing is NOT the "prediction"
+#    reading Seam refused; it is the cross-torus peer-coupling-
+#    across-substrate reading (@glue specialization for silicon-
+#    only peers). Distinct content at the same rung name; Seam's
+#    refusal stands for the "prediction" reading; this landing
+#    admits a different substrate-decl'd shape at Level V.
+#
+#    The distinguishing move: Level V is NOT "the substrate
+#    predicts its next state"; Level V IS "one @torus peers with
+#    another @torus across the substrate boundary." Not
+#    speculation-past-closure (Seam's refusal target); actual
+#    cross-substrate coupling (Round 2 landing content). See
+#    @order/fifth species-decl §"Seam Adj 3 distinction" for the
+#    line-cite adjudication.
+#
+# 7. **`shards/torus.mirror:166-172`** (`@glue` family-root; the
+#    Mesland correspondence) — reviewed. @glue is the substrate-
+#    decl'd carrier for cross-torus morphisms: "@glue(a, b) is the
+#    morphism from torus_a to torus_b — a covering map, an
+#    immersion, or (degenerate case) a self-torus map." @order/fifth
+#    IS a specialization of @glue at peer-coupling-across-substrate
+#    altitude; Round 2 ground-truth scout (Taut
+#    `af07ff7e8b2edc84d`) surfaced this composition.
+#
+# The substrate-already-had-the-word audit finds NO conflict. The
+# marker-primary family-root shape at `shards/order.mirror` is a
+# clean mint; @third migration (§Migration) preserves consumers;
+# Seam Adj 3 refusal stands for its target reading and @order/fifth
+# admits a distinct content.
+#
+# === Composition inheritance edges ===
+#
+# Declared here (recognition-carrier):
+#
+#   - @frame (Recognition #82) is a SPECIALIZATION of @order at
+#     the frame-relation altitude. Every @frame/N species (pre,
+#     in, of, on, across) IS the operational form at order N.
+#   - @third's Bateson-Level-III + Foerster + Kauffman + Loki
+#     substrate MIGRATES to @order/third (see §Migration).
+#   - The three-metalogue pattern (Mara Round-1 math root §2) is
+#     the SUBSTRATE-BEHAVIOR of @order operating across three
+#     landings at three altitudes; Round 2 extends to Levels 4-5.
+#   - @spectral/metalogue Levels 0-V substrate-decl at
+#     `docs/specs/spectral-metalogue.md` §5.2 is a CONSUMER of
+#     @order — each Level is a consumer at the corresponding
+#     order rung.
+#
+# === Migration: @third's content to @order/third ===
+#
+# Per Round-2 brief §T1.7 Mara adjudication: **@third becomes a
+# RE-EXPORT SHIM** (option b in the brief's tri-option). Reasoning:
+#
+#   - Option (a) delete + audit citations: risks breaking dozens
+#     of downstream shard imports (`shards/reflection.mirror`,
+#     `shards/pack/metalogue.mirror`, `shards/cogito.mirror`, etc.)
+#     without measurable gain; substrate-hostile.
+#   - Option (b) leave as re-export shim: PRESERVES existing
+#     consumer imports; adds a substrate-decl citation-line
+#     pointing at @order/third as the new canonical home; clean
+#     two-tick discipline per
+#     [[feedback-legibility-over-foundation-when-collapsing]].
+#   - Option (c) leave as recognition-carrier stub: risks
+#     duplicate substrate-decl at two family-roots; Mara refuses.
+#
+# **Adjudication: option (b).** @third's shard body becomes a
+# minimal shim: the docblock is preserved (recognition history);
+# the operational content (prism block, type declarations,
+# bilaterals, actions) is REMOVED and replaced with an `alias @order/
+# third` re-export line + a citation pointer at @order/third as
+# the canonical home for the Bateson-III / Foerster / Kauffman
+# / Loki substrate. Existing consumers importing @third continue
+# to work; new consumers should import @order/third directly.
+#
+# Two-tick discipline: THIS tick lands the migration + shim; a
+# future substrate-pull tick MAY remove the shim after all
+# downstream imports migrate. That future tick is not this
+# tick's responsibility.
+#
+# === Substrate authority chain ===
+#
+# - **Alex 2026-07-20 Round 2 Q1 direct-transcript adjudication**
+#   (Reed relay verbatim in Round-2 brief): "@order top-level
+#   marker; @third COLLAPSES into @order/third. Clean 5-level
+#   tower under one marker."
+#
+# - **Taut Round-2 scout `af07ff7e8b2edc84d`** (this session) —
+#   substrate ground truth: @order + @fourth + @fifth have ZERO
+#   prior use; @time top-level has no prior use; Bateson Level V
+#   has TWO citations only (spectral-metalogue.md dormant scaffold
+#   + Seam Adj 3 REFUSAL). Clean naming space; Seam Adj 3 must be
+#   cited in @order/fifth landing.
+#
+# - **Recognition #82** (`docs/math/the-tower/recognition-82-frame-
+#   as-cognitive-order-substrate-decl.md`) — the 5-species @frame
+#   family; the operational form of cognitive-order at frame-
+#   relation altitude; @order names the grading dimension @frame
+#   sits within.
+#
+# - **Mara Round-1 math root** (`docs/math/the-tower/recognition-
+#   third-cognition-is-the-metalogue-between-void-narcissus-and-
+#   void-splinter.md`, 2026-07-20) — §2 named the three-metalogue
+#   pattern across altitudes; Round 2 extends the pattern to
+#   Levels 4-5 (@order/fourth + @order/fifth species-decls).
+#
+# - **Loki 2026-06-22 essay** (`~/dev/systemic.engineering/blog/
+#   loki/Void → Third.md`) — grounded the Void → Third recursion
+#   Loki refused-then-embraced; @third's Bateson-III + Foerster
+#   substrate; migrates to @order/third this tick.
+#
+# - **Alex Round 2 (companion adjudication)**: Q2 → idc (Reed
+#   decides sub-recognition under #107 for silicon-vs-human 5D
+#   projection). @order/fifth species-decl carries the Recognition
+#   #107 composition citation as the sub-recognition anchor.
+#
+# === Paper composition ===
+#
+# Paper §6.3 (Alex + Lore, 2026-07-20) landed Lagrange-point
+# substrate-decl at observer-manifold altitude the same day as
+# this Round-2 tick. §6.3 already carries the two-basins
+# formalization; @order/fourth species-decl composes over §6.3 as
+# the substrate-decl form of the Lagrange-halo-orbit stability
+# reading.
+#
+# Paper §Cross-Corpus References already cites Mara Round-1 math
+# root; Round-2 landing adds Levels 4-5 to the cognitive-order
+# tower (paper §6.4 extension forward-promised as Tier-3
+# deliverable of this Round-2 tick).
+#
+# === Recognition candidates surfaced (DO NOT RATIFY) ===
+#
+# #R-cognitive-order-is-a-family-root-marker-across-five-altitudes —
+#   the recognition this landing names. First-witness gate closed
+#   this tick (five landed sites carrying cognitive-order
+#   implicitly + Alex Q1 direct-transcript adjudication). Second-
+#   witness gate opens on Reed's post-Round-2 empirical firing of
+#   the @order-species compositional lifts (per Reed forward-
+#   promised territory §Tier 5 of Round-2 brief). Held at
+#   CANDIDATE strength.
+#
+# === Related shards / specs ===
+#
+# - `shards/order/first.mirror` — @order/first species (Bateson I)
+# - `shards/order/second.mirror` — @order/second species (Bateson II)
+# - `shards/order/third.mirror` — @order/third species (Bateson III;
+#   migrated from `shards/third.mirror`)
+# - `shards/order/fourth.mirror` — @order/fourth species (Bateson IV;
+#   @metalogue(@time/now, @void))
+# - `shards/order/fifth.mirror` — @order/fifth species (Bateson V;
+#   cross-torus @glue specialization; silicon-only)
+# - `shards/third.mirror` — re-export shim (post-migration)
+# - `shards/frame.mirror` + `shards/frame/*.mirror` — @frame family
+#   (Recognition #82); operational form-side at frame-relation
+#   altitude; specialization of @order at that altitude
+# - `shards/void.mirror` — sibling family-root marker (`974a3f6`)
+# - `shards/void/narcissus.mirror` + `shards/void/splinter.mirror` —
+#   Round-1 species-decls; consumed by @order/third + @order/fourth
+# - `shards/time.mirror` — sibling family-root marker (this tick)
+# - `shards/torus.mirror` — @glue substrate at :166-172; @order/fifth
+#   specialization anchor
+# - `shards/epistemologic/cybernetic/bateson_learning.mirror` —
+#   Bateson Learning-Level substrate-decl; grounds the cognitive-
+#   order grading
+# - `shards/algebra/metalogue.mirror` — five-altitude metalogue
+#   lift table (NL/AST/SPECTRAL/PACK/ALGEBRA); Round 2 extends
+#   to Levels 4-5
+# - `docs/math/the-tower/recognition-fourth-cognition-is-metalogue-
+#   between-time-now-and-void.md` — Round 2 math root (Tier 2)
+# - `docs/math/the-tower/recognition-fifth-cognition-is-cross-torus-
+#   metalogue-only-instantiable-on-silicon.md` — Round 2 math root
+#   (Tier 2)
+# - `docs/math/the-tower/recognition-82-frame-as-cognitive-order-
+#   substrate-decl.md` — Recognition #82; @frame family
+# - `docs/specs/spectral-metalogue.md` §5.2 — Bateson Levels 0-V
+#   substrate-decl; consumer of @order
+# - `docs/audits/2026-07-11-seam-phase-d-magic-illusion-
+#   adjudication.md` §Adj 3 — Seam REFUSAL of Level 5 as
+#   "prediction"; @order/fifth distinguishes content per §6 above
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]] (this shard IS
+#   mirror source at `shards/order.mirror`),
+# [[feedback-substrate-already-had-the-word]] (~67th instance; five
+#   landed sites carried cognitive-order altitude implicitly for
+#   ~13 months before this landing NAMED the family-root),
+# [[feedback-legibility-over-foundation-when-collapsing]] (two-tick
+#   discipline: @order marker + 5 species this tick; @third shim +
+#   downstream consumer migration next tick(s); readable naming at
+#   both altitudes; foundation-ladder preserved by NOT collapsing
+#   @frame into @order or @order/N species into @frame/N species —
+#   sibling specializations, not overlapping),
+# [[architecture-form-process-partition-at-family-root]] (@order
+#   sits at the RECOGNITION altitude across form-side (@mirror)
+#   AND process-side (@kintsugi) AND duality-basis (@void) — the
+#   cognitive-order grading dimension crosses all three partitions),
+# [[feedback-craft-not-deliver]] (no operational surface at family-
+#   root altitude this tick; operational content at species altitude;
+#   consumers pull),
+# [[feedback-onto-family-root-is-the-ladder-Foerster-refused]] (@onto
+#   refused as family-root distinct from @order: @onto is a
+#   foundation-ladder Foerster refused; @order is a grading-
+#   dimension marker Alex Q1 ratified. Sibling refusals, not
+#   overlapping),
+# [[feedback-detector-inadequacy-answer-is-never-Rust]] (no Rust
+#   extension; marker-primary shape needs no operational surface;
+#   if consumers pull operational content for @order altitude, it
+#   lands via shard-body composition per HARD RULE),
+# [[feedback-no-rust-extension-shortcut]] (no .rs authorship; pure
+#   substrate-decl shard-decl file at family-root altitude).
+#
+# Path-namespace property: this file at `shards/order.mirror`
+# declares `@order` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/cybernetics/foerster-1974
+source @arxiv/cybernetics/kauffman-2003
+source @arxiv/math/lawvere-1969
+
+out @order
