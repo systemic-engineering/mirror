@@ -257,14 +257,192 @@ mod prop_tests {
     }
 
     /// Wrap the possibly-panicking eigenvalues() call so property tests
-    /// return `Fail` verdicts rather than propagating the panic.
+    /// return `Fail` verdicts rather than propagating the panic. Kept
+    /// as a safety net post-FLANG-integration — LAPACK dsyev can still
+    /// return info != 0 in pathological cases.
     fn safe_eigenvalues(l: &SymLaplacian) -> Result<Vec<f64>, String> {
-        catch_unwind(AssertUnwindSafe(|| eigenvalues(l.n, &l.data)))
-            .map_err(|_| {
-                "matrix::eigenvalues panicked (M0.5 body unimplemented; \
-                 land prismqueer::ffi::eigenvalues delegate per docblock line 40)"
-                    .to_string()
-            })
+        catch_unwind(AssertUnwindSafe(|| eigenvalues(l.n, &l.data))).map_err(|_| {
+            "matrix::eigenvalues panicked (LAPACK dsyev convergence failure)".to_string()
+        })
+    }
+
+    fn safe_eigenvalues_raw(n: usize, data: &[f64]) -> Result<Vec<f64>, String> {
+        catch_unwind(AssertUnwindSafe(|| eigenvalues(n, data)))
+            .map_err(|_| "matrix::eigenvalues panicked (LAPACK dsyev convergence failure)".to_string())
+    }
+
+    // -------------------------------------------------------------
+    // State-space coverage helpers — concrete matrix constructors +
+    // extended Arbitrary variants per Alex 2026-07-20 "100% covered
+    // by property based tests" + "full state space coverage" directive.
+    // -------------------------------------------------------------
+
+    fn identity_matrix(n: usize) -> Vec<f64> {
+        let mut m = vec![0.0f64; n * n];
+        for i in 0..n {
+            m[i * n + i] = 1.0;
+        }
+        m
+    }
+
+    fn zero_matrix(n: usize) -> Vec<f64> {
+        vec![0.0f64; n * n]
+    }
+
+    fn scalar_matrix(n: usize, c: f64) -> Vec<f64> {
+        let mut m = vec![0.0f64; n * n];
+        for i in 0..n {
+            m[i * n + i] = c;
+        }
+        m
+    }
+
+    fn diagonal_matrix(diag: &[f64]) -> Vec<f64> {
+        let n = diag.len();
+        let mut m = vec![0.0f64; n * n];
+        for i in 0..n {
+            m[i * n + i] = diag[i];
+        }
+        m
+    }
+
+    /// Wilkinson matrix W_n^+ — tri-diagonal with entries designed for
+    /// nearly-repeated eigenvalues (Wilkinson 1965, standard hard case).
+    /// For n=5: diag=[2,1,0,1,2], off-diag=1.
+    fn wilkinson_matrix(n: usize) -> Vec<f64> {
+        let mut m = vec![0.0f64; n * n];
+        let center = (n - 1) as f64 / 2.0;
+        for i in 0..n {
+            m[i * n + i] = (i as f64 - center).abs();
+        }
+        for i in 0..(n - 1) {
+            m[i * n + i + 1] = 1.0;
+            m[(i + 1) * n + i] = 1.0;
+        }
+        m
+    }
+
+    fn trace(matrix: &[f64], n: usize) -> f64 {
+        (0..n).map(|i| matrix[i * n + i]).sum()
+    }
+
+    fn frobenius_norm_squared(matrix: &[f64]) -> f64 {
+        matrix.iter().map(|x| x * x).sum()
+    }
+
+    /// Gershgorin disk bound: every eigenvalue λ satisfies
+    /// |λ - a_ii| ≤ R_i where R_i = Σ_{j≠i} |a_ij|. So max|λ| ≤
+    /// max_i (|a_ii| + R_i). Return that upper bound.
+    fn gershgorin_bound(matrix: &[f64], n: usize) -> f64 {
+        let mut max_bound = 0.0f64;
+        for i in 0..n {
+            let row_sum: f64 = (0..n).map(|j| matrix[i * n + j].abs()).sum();
+            if row_sum > max_bound {
+                max_bound = row_sum;
+            }
+        }
+        max_bound
+    }
+
+    /// Larger symmetric Laplacian sampler — n in [6, 20] (extends the
+    /// small-range SymLaplacian sampler to state-space beyond n=5).
+    struct LargeSymLaplacian {
+        n: usize,
+        data: Vec<f64>,
+    }
+
+    impl Arbitrary for LargeSymLaplacian {
+        fn arbitrary(sample: &mut Sample) -> Self {
+            let n = sample.draw_integer(6, 20) as usize;
+            let mut w = vec![0.0f64; n * n];
+            for i in 0..n {
+                for j in (i + 1)..n {
+                    let weight = sample.draw_integer(0, 3) as f64;
+                    w[i * n + j] = weight;
+                    w[j * n + i] = weight;
+                }
+            }
+            let mut l = vec![0.0f64; n * n];
+            for i in 0..n {
+                let deg: f64 = (0..n).map(|j| w[i * n + j]).sum();
+                for j in 0..n {
+                    l[i * n + j] = if i == j { deg } else { -w[i * n + j] };
+                }
+            }
+            Self { n, data: l }
+        }
+    }
+
+    /// Random diagonal matrix; eigenvalues MUST equal sorted diagonal.
+    struct RandomDiagonal {
+        n: usize,
+        diag: Vec<f64>,
+    }
+
+    impl Arbitrary for RandomDiagonal {
+        fn arbitrary(sample: &mut Sample) -> Self {
+            let n = sample.draw_integer(2, 8) as usize;
+            let diag: Vec<f64> = (0..n).map(|_| sample.draw_integer(-10, 10) as f64).collect();
+            Self { n, diag }
+        }
+    }
+
+    /// A Laplacian + a random scalar shift cI.
+    struct ShiftedSymLaplacian {
+        n: usize,
+        base_data: Vec<f64>,
+        shifted_data: Vec<f64>,
+        shift: f64,
+    }
+
+    impl Arbitrary for ShiftedSymLaplacian {
+        fn arbitrary(sample: &mut Sample) -> Self {
+            let base = SymLaplacian::arbitrary(sample);
+            let shift = sample.draw_integer(-5, 5) as f64;
+            let mut shifted = base.data.clone();
+            for i in 0..base.n {
+                shifted[i * base.n + i] += shift;
+            }
+            Self {
+                n: base.n,
+                base_data: base.data,
+                shifted_data: shifted,
+                shift,
+            }
+        }
+    }
+
+    /// Symmetric permutation similarity: given L, apply P^T L P where P
+    /// is a random permutation matrix. Result MUST have same spectrum.
+    struct PermutationSimilar {
+        n: usize,
+        base_data: Vec<f64>,
+        permuted_data: Vec<f64>,
+    }
+
+    impl Arbitrary for PermutationSimilar {
+        fn arbitrary(sample: &mut Sample) -> Self {
+            let base = SymLaplacian::arbitrary(sample);
+            let n = base.n;
+            // Random permutation via Fisher-Yates
+            let mut perm: Vec<usize> = (0..n).collect();
+            for i in (1..n).rev() {
+                let j = sample.draw_integer(0, i as i64) as usize;
+                perm.swap(i, j);
+            }
+            // Permuted matrix: L'[i,j] = L[perm[i], perm[j]]
+            let mut permuted = vec![0.0f64; n * n];
+            for i in 0..n {
+                for j in 0..n {
+                    permuted[i * n + j] = base.data[perm[i] * n + perm[j]];
+                }
+            }
+            Self {
+                n,
+                base_data: base.data,
+                permuted_data: permuted,
+            }
+        }
     }
 
     // =============================================================
@@ -412,5 +590,307 @@ mod prop_tests {
              GREEN transition: land body delegating to prismqueer::ffi::eigenvalues. \
              Verdict: {v:?}"
         );
+    }
+
+    // =============================================================
+    // State-space extension properties (Reed 2026-07-20 per Alex
+    // "full state space coverage" directive; FLANG floor landed at
+    // 536f63e). Every canonical closed-form case + every invariant
+    // the LAPACK dsyev call MUST respect gets a property test here.
+    // =============================================================
+
+    // Property 6: Identity matrix I_n has n eigenvalues all == 1.
+    #[test]
+    fn identity_matrix_eigenvalues_are_all_one() {
+        for n in 1..=20 {
+            let data = identity_matrix(n);
+            let evals = safe_eigenvalues_raw(n, &data).unwrap();
+            assert_eq!(evals.len(), n, "n={n}: expected {n} eigenvalues");
+            for (i, &e) in evals.iter().enumerate() {
+                assert!(
+                    (e - 1.0).abs() < 1e-9,
+                    "n={n}: eigenvalue[{i}]={e} ≠ 1.0 (identity matrix must have all-ones spectrum)"
+                );
+            }
+        }
+    }
+
+    // Property 7: Zero matrix 0_n has n eigenvalues all == 0.
+    #[test]
+    fn zero_matrix_eigenvalues_are_all_zero() {
+        for n in 1..=20 {
+            let data = zero_matrix(n);
+            let evals = safe_eigenvalues_raw(n, &data).unwrap();
+            assert_eq!(evals.len(), n);
+            for (i, &e) in evals.iter().enumerate() {
+                assert!(
+                    e.abs() < 1e-9,
+                    "n={n}: eigenvalue[{i}]={e} ≠ 0.0 (zero matrix must have all-zero spectrum)"
+                );
+            }
+        }
+    }
+
+    // Property 8: Scalar matrix cI has n eigenvalues all == c.
+    #[test]
+    fn scalar_matrix_eigenvalues_are_all_c() {
+        for n in 1..=10 {
+            for &c in &[-7.0, -1.5, 0.0, 1.0, 3.14, 42.0, 100.0] {
+                let data = scalar_matrix(n, c);
+                let evals = safe_eigenvalues_raw(n, &data).unwrap();
+                for &e in &evals {
+                    assert!(
+                        (e - c).abs() < 1e-9,
+                        "n={n}, c={c}: got eigenvalue {e}"
+                    );
+                }
+            }
+        }
+    }
+
+    // Property 9: Diagonal matrix D has eigenvalues == sorted diagonal entries.
+    #[test]
+    fn diagonal_matrix_eigenvalues_equal_sorted_diagonal() {
+        let v = forall::<RandomDiagonal, _>(30, |d: RandomDiagonal| {
+            let data = diagonal_matrix(&d.diag);
+            match safe_eigenvalues_raw(d.n, &data) {
+                Ok(evals) => {
+                    let mut expected = d.diag.clone();
+                    expected.sort_by(|a, b| a.partial_cmp(b).unwrap());
+                    if evals.len() != expected.len() {
+                        return PropertyVerdict::Fail(Diagnostic::new(&format!(
+                            "length mismatch: {} vs {}",
+                            evals.len(),
+                            expected.len()
+                        )));
+                    }
+                    for (i, (&got, &want)) in evals.iter().zip(expected.iter()).enumerate() {
+                        if (got - want).abs() >= 1e-9 {
+                            return PropertyVerdict::Fail(Diagnostic::new(&format!(
+                                "diagonal_matrix: eigenvalue[{i}]={got} ≠ sorted diagonal[{i}]={want}"
+                            )));
+                        }
+                    }
+                    PropertyVerdict::Pass
+                }
+                Err(msg) => PropertyVerdict::Fail(Diagnostic::new(&msg)),
+            }
+        });
+        assert!(matches!(v, PropertyVerdict::Pass), "{v:?}");
+    }
+
+    // Property 10: Trace preservation — sum of eigenvalues == trace(A).
+    #[test]
+    fn trace_equals_sum_of_eigenvalues() {
+        let v = forall::<SymLaplacian, _>(30, |l: SymLaplacian| {
+            match safe_eigenvalues(&l) {
+                Ok(evals) => {
+                    let sum: f64 = evals.iter().sum();
+                    let tr = trace(&l.data, l.n);
+                    if (sum - tr).abs() < 1e-9 * (1.0 + tr.abs()) {
+                        PropertyVerdict::Pass
+                    } else {
+                        PropertyVerdict::Fail(Diagnostic::new(&format!(
+                            "trace preservation: Σλ_i={sum} ≠ tr(A)={tr}"
+                        )))
+                    }
+                }
+                Err(msg) => PropertyVerdict::Fail(Diagnostic::new(&msg)),
+            }
+        });
+        assert!(matches!(v, PropertyVerdict::Pass), "{v:?}");
+    }
+
+    // Property 11: Frobenius norm squared == sum of squared eigenvalues.
+    #[test]
+    fn frobenius_norm_squared_equals_sum_of_squared_eigenvalues() {
+        let v = forall::<SymLaplacian, _>(30, |l: SymLaplacian| {
+            match safe_eigenvalues(&l) {
+                Ok(evals) => {
+                    let eval_sq_sum: f64 = evals.iter().map(|x| x * x).sum();
+                    let frob_sq = frobenius_norm_squared(&l.data);
+                    if (eval_sq_sum - frob_sq).abs() < 1e-8 * (1.0 + frob_sq.abs()) {
+                        PropertyVerdict::Pass
+                    } else {
+                        PropertyVerdict::Fail(Diagnostic::new(&format!(
+                            "Frobenius: Σλ_i²={eval_sq_sum} ≠ ||A||_F²={frob_sq}"
+                        )))
+                    }
+                }
+                Err(msg) => PropertyVerdict::Fail(Diagnostic::new(&msg)),
+            }
+        });
+        assert!(matches!(v, PropertyVerdict::Pass), "{v:?}");
+    }
+
+    // Property 12: Symmetric permutation preserves spectrum — P^T A P has
+    // same eigenvalues as A for any permutation matrix P.
+    #[test]
+    fn symmetric_permutation_preserves_spectrum() {
+        let v = forall::<PermutationSimilar, _>(30, |p: PermutationSimilar| {
+            let base_evals = match safe_eigenvalues_raw(p.n, &p.base_data) {
+                Ok(e) => e,
+                Err(msg) => return PropertyVerdict::Fail(Diagnostic::new(&msg)),
+            };
+            let perm_evals = match safe_eigenvalues_raw(p.n, &p.permuted_data) {
+                Ok(e) => e,
+                Err(msg) => return PropertyVerdict::Fail(Diagnostic::new(&msg)),
+            };
+            for (i, (&a, &b)) in base_evals.iter().zip(perm_evals.iter()).enumerate() {
+                if (a - b).abs() >= 1e-8 {
+                    return PropertyVerdict::Fail(Diagnostic::new(&format!(
+                        "permutation similarity broke eigenvalue[{i}]: base={a} vs permuted={b}"
+                    )));
+                }
+            }
+            PropertyVerdict::Pass
+        });
+        assert!(matches!(v, PropertyVerdict::Pass), "{v:?}");
+    }
+
+    // Property 13: Constant shift shifts spectrum — eigvals(A + cI) ==
+    // eigvals(A) + c.
+    #[test]
+    fn constant_shift_shifts_spectrum() {
+        let v = forall::<ShiftedSymLaplacian, _>(30, |s: ShiftedSymLaplacian| {
+            let base_evals = match safe_eigenvalues_raw(s.n, &s.base_data) {
+                Ok(e) => e,
+                Err(msg) => return PropertyVerdict::Fail(Diagnostic::new(&msg)),
+            };
+            let shifted_evals = match safe_eigenvalues_raw(s.n, &s.shifted_data) {
+                Ok(e) => e,
+                Err(msg) => return PropertyVerdict::Fail(Diagnostic::new(&msg)),
+            };
+            for (i, (&a, &b)) in base_evals.iter().zip(shifted_evals.iter()).enumerate() {
+                let expected = a + s.shift;
+                if (b - expected).abs() >= 1e-8 * (1.0 + expected.abs()) {
+                    return PropertyVerdict::Fail(Diagnostic::new(&format!(
+                        "shift invariance broke eigenvalue[{i}]: base={a} shift={} shifted={b} expected={expected}",
+                        s.shift
+                    )));
+                }
+            }
+            PropertyVerdict::Pass
+        });
+        assert!(matches!(v, PropertyVerdict::Pass), "{v:?}");
+    }
+
+    // Property 14: Larger Laplacian (n=6..20) preserves all base invariants.
+    #[test]
+    fn larger_laplacian_n_up_to_20_holds_base_invariants() {
+        let v = forall::<LargeSymLaplacian, _>(15, |l: LargeSymLaplacian| {
+            let evals = match catch_unwind(AssertUnwindSafe(|| eigenvalues(l.n, &l.data))) {
+                Ok(e) => e,
+                Err(_) => return PropertyVerdict::Fail(Diagnostic::new("panic on larger n")),
+            };
+            if evals.len() != l.n {
+                return PropertyVerdict::Fail(Diagnostic::new(&format!(
+                    "cardinality: expected {} got {}",
+                    l.n,
+                    evals.len()
+                )));
+            }
+            if !evals.iter().all(|x| x.is_finite()) {
+                return PropertyVerdict::Fail(Diagnostic::new("non-finite eigenvalue at larger n"));
+            }
+            if !evals.windows(2).all(|w| w[0] <= w[1]) {
+                return PropertyVerdict::Fail(Diagnostic::new("not ascending at larger n"));
+            }
+            if !evals.iter().all(|&x| x >= -1e-8) {
+                return PropertyVerdict::Fail(Diagnostic::new("negative eigenvalue for PSD Laplacian at larger n"));
+            }
+            if evals[0].abs() >= 1e-8 {
+                return PropertyVerdict::Fail(Diagnostic::new(&format!(
+                    "smallest eigenvalue ≠ 0 for Laplacian at larger n: {}",
+                    evals[0]
+                )));
+            }
+            PropertyVerdict::Pass
+        });
+        assert!(matches!(v, PropertyVerdict::Pass), "{v:?}");
+    }
+
+    // Property 15: Gershgorin disk bound — max|λ| ≤ max row-sum.
+    #[test]
+    fn eigenvalues_bounded_by_gershgorin_row_sum() {
+        let v = forall::<SymLaplacian, _>(30, |l: SymLaplacian| {
+            let bound = gershgorin_bound(&l.data, l.n);
+            match safe_eigenvalues(&l) {
+                Ok(evals) => {
+                    for (i, &e) in evals.iter().enumerate() {
+                        if e.abs() > bound + 1e-8 {
+                            return PropertyVerdict::Fail(Diagnostic::new(&format!(
+                                "Gershgorin violated: |λ_{i}|={} > row-sum bound {bound}",
+                                e.abs()
+                            )));
+                        }
+                    }
+                    PropertyVerdict::Pass
+                }
+                Err(msg) => PropertyVerdict::Fail(Diagnostic::new(&msg)),
+            }
+        });
+        assert!(matches!(v, PropertyVerdict::Pass), "{v:?}");
+    }
+
+    // Property 16: Wilkinson matrix W_5 has deterministic eigenvalues.
+    // W_5^+ per Wilkinson 1965: standard hard-case check that dsyev
+    // handles nearly-repeated eigenvalues. The exact spectrum is
+    // symmetric around 0; we verify eigenvalues sum to trace = 6.
+    #[test]
+    fn wilkinson_matrix_dsyev_convergence() {
+        for n in &[3, 5, 7, 9] {
+            let data = wilkinson_matrix(*n);
+            let evals = safe_eigenvalues_raw(*n, &data).unwrap();
+            assert_eq!(evals.len(), *n);
+            assert!(evals.iter().all(|x| x.is_finite()), "W_{n} produced non-finite");
+            assert!(evals.windows(2).all(|w| w[0] <= w[1]), "W_{n} not ascending");
+            let sum: f64 = evals.iter().sum();
+            let tr = trace(&data, *n);
+            assert!(
+                (sum - tr).abs() < 1e-9 * (1.0 + tr.abs()),
+                "Wilkinson W_{n}: Σλ={sum} ≠ tr={tr}"
+            );
+        }
+    }
+
+    // Property 17: N=1 degenerate case — single eigenvalue == the entry.
+    #[test]
+    fn n_equals_1_eigenvalue_is_the_entry() {
+        for &c in &[-100.0, -1.0, 0.0, 1e-9, 1.0, 42.0, 1e9] {
+            let evals = safe_eigenvalues_raw(1, &[c]).unwrap();
+            assert_eq!(evals.len(), 1);
+            assert!((evals[0] - c).abs() < 1e-9 * (1.0 + c.abs()));
+        }
+    }
+
+    // Property 18: N=2 closed-form cross-check — for a 2×2 symmetric
+    // [[a,b],[b,c]], eigenvalues = (a+c)/2 ± √(((a-c)/2)² + b²).
+    #[test]
+    fn n_equals_2_closed_form_cross_check() {
+        for &(a, b, c) in &[
+            (1.0, 0.0, 1.0),
+            (2.0, 1.0, 2.0),
+            (5.0, -3.0, 1.0),
+            (0.0, 1.0, 0.0),
+            (10.0, 2.5, -3.0),
+        ] {
+            let data = vec![a, b, b, c];
+            let evals = safe_eigenvalues_raw(2, &data).unwrap();
+            let mid = (a + c) / 2.0;
+            let disc = (((a - c) / 2.0).powi(2) + b * b).sqrt();
+            let lo = mid - disc;
+            let hi = mid + disc;
+            assert!(
+                (evals[0] - lo).abs() < 1e-9 * (1.0 + lo.abs()),
+                "2x2 [{a},{b},{c}]: got {} expected {lo}",
+                evals[0]
+            );
+            assert!(
+                (evals[1] - hi).abs() < 1e-9 * (1.0 + hi.abs()),
+                "2x2 [{a},{b},{c}]: got {} expected {hi}",
+                evals[1]
+            );
+        }
     }
 }
