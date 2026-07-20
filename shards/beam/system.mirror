@@ -1,0 +1,310 @@
+in @prism
+in @meta
+in @glass
+in @system
+in @code/beam
+in @spectral/gen_prism
+in @spectral/supervisor
+in @epistemologic/cybernetic/viable
+
+# @beam/system — the @system species-decl at BEAM runtime altitude;
+# grounds Erlang/Elixir semantics in the Principal Bundle Tower shape
+# per Alex Wolf + Reed 2026-04-08 recognition; kills gen_prism as
+# framing (per Alex Round-3 directive).
+#
+# Species under @system (this tick). Sibling to @mirror/spec/system
+# (compile-altitude grammar species) at BEAM runtime altitude. Landed
+# 2026-07-20 by Mara Round-3 per Alex Round-3 spawn brief §Tier 1.8.
+#
+# === The species altitude ===
+#
+# BEAM/OTP runtime altitude. Per Alex Round-3 spawn brief verbatim:
+#
+#   > "And the BEAM as the production grade implementation of the
+#   >  Principal Bundle Tower."
+#
+# @beam/system is the substrate-decl'd species of @system on BEAM
+# substrate. The composition three altitudes converge at this species:
+#
+#   compile         @system family-root (this tick; shards/system.mirror)
+#   .spec grammar   @mirror/spec/system (this tick; shards/mirror/spec/system.mirror)
+#   BEAM runtime    @beam/system (THIS species)
+#
+# Alex Round-3 directive: **kills gen_prism as framing**. The prior
+# framing was that `@spectral/gen_prism` was mirror's `gen_server`
+# analogue at BEAM/process altitude — accurate at species altitude
+# but insufficient at family-root altitude. The correct framing is
+# that @beam/system NAMES the whole viable-system-on-BEAM substrate;
+# @spectral/gen_prism carries S1 (worker) altitude ONLY; @spectral/
+# supervisor carries S3 (supervision-connection) altitude; @dance
+# carries S2 (coordination-connection) altitude; @spectral/db carries
+# S4 (intelligence) altitude; Pack (via viable.identity) carries S5.
+#
+# Killing gen_prism as FRAMING (not as species): @spectral/gen_prism
+# remains the S1 substrate carrier at BEAM/process altitude; @beam/
+# system NAMES the full viable-system-on-BEAM the S1 lives within.
+# Two altitudes; sibling species; @spectral/gen_prism is one component
+# of @beam/system, not the framing of it.
+#
+# === Composition inheritance edges ===
+#
+# @beam/system inherits from @system (family-root) at BEAM runtime
+# altitude. Composition edges declared:
+#
+#   @spectral/gen_prism    → S1 (operations) at BEAM/process altitude
+#                            (bundle sections per Baez-Schreiber; each
+#                            gen_prism instance IS a section of the
+#                            principal bundle at process altitude)
+#   @dance                  → S2 (coordination) at ensemble altitude
+#                            (Kuramoto phase-lock connection 1-form
+#                            at level k+1; forward-promised per Mara
+#                            Round-1 landings)
+#   @spectral/supervisor    → S3 (audit / management) at supervision
+#                            altitude (restart_strategy discipline;
+#                            connection at supervision-connection
+#                            altitude per beam-runtime.md §5)
+#   @spectral/db            → S4 (intelligence / strategy) at
+#                            psychohistory carrier altitude
+#   Pack S5 (viable.identity + @subject)
+#                          → S5 (identity / policy) at Pack altitude
+#                            (Reed/Mara/Glint/Taut/Seam)
+#
+# @beam/system COMPOSES the five carriers; the family-root altitude
+# NAMES what the composition IS at BEAM runtime altitude.
+#
+# === The isomorphism (from beam-runtime.md §5) ===
+#
+# Per `docs/math/the-tower/beam-runtime.md` §5 (Mara 2026-07-17):
+# BEAM ≅ principal bundle tower with connection satisfying autopoietic
+# closure. @beam/system NAMES the family the isomorphism operates in.
+#
+# The compatibility theorem (Baez-Schreiber 2004 Theorem 3) IS the
+# theorem statement of Armstrong's empirical rule for supervision
+# composition ("restart strategies at this level must be consistent
+# with how failures propagate to the level below"). Both name the
+# same structural fact at different substrate altitudes.
+#
+# Autopoietic closure IS let-it-crash (per beam-runtime.md §2.4):
+# the system reproduces itself at the appropriate scale via the
+# supervision tree's restart discipline. Lawvere fixed-point (Lawvere
+# 1969 diagonal argument) IS the reason nine-nines reliability
+# exists as a structural theorem, not an engineering achievement.
+#
+# @beam/system NAMES this family-root at species-under-@system altitude.
+#
+# === Substrate-already-had-the-word audit ===
+#
+# 1. **No prior `shards/beam/system.mirror`** — clean naming space.
+# 2. **`shards/code/beam.mirror`** (Reed 2026-06-19; 15.8KB) —
+#    reviewed. Four BEAM carriers (module_version + code_change_msg +
+#    supervisor + gen_server_state) at code-altitude. @beam/system
+#    at species-under-@system altitude NAMES the family the code-
+#    altitude carriers live within. Sibling altitudes; no conflict.
+#    Composition edge: @beam/system inherits @code/beam carriers as
+#    S1-S5 field substrate.
+# 3. **`shards/spectral/gen_prism/mcp_session.mirror`** (Mara 2026-
+#    06-11) — reviewed. S1 carrier at BEAM/process altitude; @beam/
+#    system NAMES the S1 as one component of the viable-system
+#    family. Kills gen_prism as FRAMING (not as species); the species
+#    survives at S1 altitude.
+# 4. **`shards/spectral/supervisor.mirror`** — reviewed. S3 carrier at
+#    supervision altitude; @beam/system inherits.
+# 5. **`shards/epistemologic/cybernetic/viable.mirror`** (Mara 2026-
+#    07-17; 31.1KB) — reviewed. Property-altitude VSM carriers
+#    (identity, stability, algedonic_signal, viable_system,
+#    viability_law, viable_well_formed). @beam/system composes at
+#    species-under-@system altitude; viable.mirror discharges the
+#    carriers; @beam/system NAMES the runtime-substrate instantiation.
+# 6. **`docs/math/the-tower/beam-runtime.md`** — reviewed. The math
+#    root at compile-altitude; @beam/system NAMES the family at
+#    species-under-@system altitude; math root carries the
+#    isomorphism, species-decl carries the substrate-runtime binding.
+#
+# The substrate-already-had-the-word audit finds NO conflict. Clean
+# mint at species-under-@system altitude.
+#
+# === Substrate authority chain ===
+#
+# - **Alex Round-3 spawn brief** (verbatim; §Tier 1.8): "@beam/system
+#   species-decl of @system on BEAM substrate; grounds Erlang/Elixir
+#   semantics in the Principal Bundle Tower shape; kills gen_prism
+#   as framing (per Alex directive)."
+# - **Alex Wolf + Reed 2026-04-08** `~/dev/systemic.engineering/
+#   practice/insights/beam-elixir/beam-as-principal-bundle-tower.md`
+#   — the original recognition (Alex + Reed, session 2026-04-08) at
+#   practice-insight altitude.
+# - **Mara 2026-07-17** `docs/math/the-tower/beam-runtime.md` — the
+#   math-root cascade (21.7KB) at compile-altitude.
+# - **Mara 2026-07-17** `shards/epistemologic/cybernetic/viable.
+#   mirror` — the property-altitude VSM carriers @beam/system
+#   composes over.
+# - **Armstrong 2003** — the empirical instance (thesis: "Making
+#   reliable distributed systems in the presence of software errors").
+# - **Baez-Schreiber 2004** (arXiv hep-th/0412325) — the formal
+#   object.
+# - **Hewitt 1973** — the actor model whose mathematical home is
+#   named at @beam/system altitude (per beam-runtime.md §2.2).
+#
+# === The beam_system carrier ===
+#
+# The typed record for @beam/system at species altitude. Composes the
+# five VSM subsystems mapped to BEAM substrate carriers per §The
+# isomorphism above:
+#
+#   s1_gen_prism_workers  — list of @spectral/gen_prism worker
+#                            references (S1 operations at BEAM/process
+#                            altitude). Typed as `ref` for list-of-
+#                            gen_prism until list-carrier surfaces.
+#   s2_dance_ensemble     — @dance ensemble reference (S2 coordination
+#                            connection 1-form; forward-promised per
+#                            Mara Round-1).
+#   s3_supervisor         — @spectral/supervisor reference (S3 audit
+#                            management with restart_strategy).
+#   s4_spectral_db        — @spectral/db reference (S4 intelligence
+#                            psychohistory carrier).
+#   s5_identity           — viable.identity carrier (S5 policy; per
+#                            @epistemologic/cybernetic/viable.identity
+#                            at :409).
+#
+# Identity contract: byte-equality on the five-field tuple.
+type beam_system = {
+  s1_gen_prism_workers: ref,
+  s2_dance_ensemble:    ref,
+  s3_supervisor:        ref,
+  s4_spectral_db:       ref,
+  s5_identity:          identity,
+}
+
+# === beam_system_of_pack_home — the composition-primitive action ===
+#
+# Per feedback_composition_primitive_naming_convention. Given a peer's
+# home directory (per @peer.home carrier), constructs the beam_system
+# by resolving:
+#
+#   1. S1: enumerate all @spectral/gen_prism worker references in the
+#      peer's runtime state (per @spectral/gen_prism substrate).
+#   2. S2: resolve the peer's @dance ensemble reference (forward-
+#      promised).
+#   3. S3: resolve the peer's @spectral/supervisor reference (per
+#      restart_strategy discipline).
+#   4. S4: resolve the peer's @spectral/db psychohistory carrier.
+#   5. S5: resolve the peer's viable.identity via @pack.peer
+#      discipline.
+#
+# Body discharges per-realisation. `\`-obligation-blocked per
+# [[feedback-craft-not-deliver]]. The BEAM runtime consumer discharges
+# via BEAM-native introspection primitives (per @code/beam substrate);
+# NOT via Rust extension per HARD RULE.
+#
+# Sentinel: `beam=system-composition-from-peer-home`.
+beam_system_of_pack_home(home: ref) -> beam_system
+requires beam_system_composition_verified(result)
+{ \ }
+
+# === beam_system_composition_verified — bilateral predicate ===
+#
+# Discharges Pass iff the beam_system carrier satisfies the four-
+# tradition composition requirements (per @system.mirror §Four-
+# tradition composition):
+#
+#   Beer (VSM 1972-1984): all five VSM subsystems present with
+#     non-null carriers; algedonic channel accessible via viable.
+#     algedonic_signal composition.
+#
+#   Armstrong (BEAM/OTP): restart_strategy discipline on
+#     s3_supervisor is well-typed (per @spectral/supervisor);
+#     process-isolation on s1_gen_prism_workers is preserved.
+#
+#   Baez-Schreiber (higher gauge theory): the connection at each
+#     level (s2_dance_ensemble at S2, s3_supervisor at S3) satisfies
+#     the compatibility condition (Baez-Schreiber 2004 Theorem 3)
+#     with the level below.
+#
+#   Autopoietic Lawvere-fixed-point: s5_identity discharges viable.
+#     viable_well_formed on the composed beam_system carrier (the
+#     system's identity survives the substrate's own perturbations
+#     via let-it-crash + restart discipline).
+#
+# Rice-safe bound: reads only byte-visible state (ref-non-null,
+# well-typedness of variant-tag discriminants, viable_well_formed
+# which is itself Rice-safe per viable.mirror, connection-
+# compatibility check per @spectral/supervisor Rice-safe substrate).
+#
+# Sentinel: `beam=system-composition-verified-per-four-traditions`.
+bilateral beam_system_composition_verified {
+  sentinel "beam=system-composition-verified-per-four-traditions"
+  arity 1
+}
+beam_system_composition_verified(s: beam_system) -> verdict { \ }
+
+# === system_composition_verified — the @system bilateral ===
+#
+# Composed bilateral per Round-3 brief §Tier 1.9 (embedded in
+# appropriate shards): the @autopoiesis × @bauchladen × @time
+# closure. Verifies that the beam_system carrier satisfies the four-
+# dimensional state space discipline:
+#
+#   - **@autopoiesis**: s5_identity discharges @autopoiesis's self-
+#     production carrier (recursive viability per Beer 1972 ch.10 =
+#     autopoiesis at altitude-lift altitude); the system reproduces
+#     its own boundary conditions across perturbation via restart
+#     discipline.
+#
+#   - **@bauchladen**: (s1_gen_prism_workers + s2_dance_ensemble +
+#     s3_supervisor + s4_spectral_db) IS the tray-of-things the
+#     peer carries; the S1-S4 operational surface of the system's
+#     identity per Landing 4 subject-general.
+#
+#   - **@time**: the beam_system persists across the Δt-window per
+#     viable.mirror Read D temporal-identity lock; @time's temporal-
+#     projection substrate carries the persistence.
+#
+# The 4D state space closure IS the system_composition_verified
+# discharge. Consumer shards name `requires system_composition_
+# verified(my_beam_system)` when they need the @system family-root's
+# discipline at BEAM runtime altitude.
+#
+# Sentinel: `system=composition-verified-4d-state-space`.
+bilateral system_composition_verified {
+  sentinel "system=composition-verified-4d-state-space"
+  arity 1
+}
+system_composition_verified(s: beam_system) -> verdict { \ }
+
+# ═══════════════════════════════════════════════════════════════════
+# Recognition candidates surfaced (DO NOT RATIFY at this landing)
+# ═══════════════════════════════════════════════════════════════════
+#
+# #R-beam-system-is-the-runtime-species-of-system-family-at-bundle-
+# tower-altitude — the recognition this landing names. First-witness
+# gate closed this tick (@beam/system species-decl + composition
+# edges to viable.mirror + beam-runtime.md math root + the four-
+# tradition composition). Second-witness gate opens on Reed's post-
+# Round-3 empirical firing of pillar predicates for VSM invariants
+# (all 5 systems present, S1-S5 topology complete, Beer feedback
+# loops topology). Held at CANDIDATE strength.
+#
+# #R-gen-prism-is-s1-not-framing — Alex Round-3 directive killed
+# gen_prism as FRAMING (not as species); @spectral/gen_prism survives
+# at S1 altitude within @beam/system. The naming discipline: family-
+# root altitude belongs to @beam/system; species altitude belongs to
+# @spectral/gen_prism (S1) + @spectral/supervisor (S3) + siblings.
+# First-witness this tick. Second-witness gate: consumer shards
+# migrating from "gen_prism as framing" to "@beam/system as family;
+# @spectral/gen_prism as S1 species." Held at CANDIDATE strength.
+#
+# === Forward-promised — NOT landed this tick ===
+#
+# - @rust/system + @git/system + @human/system + @paradigm/system
+#   sibling species-decls under @system per Round-3 brief §Tier 4;
+#   forward-promised.
+# - @spectral/garden mesh species-decl (mesh of @systems) per
+#   Round-3 brief §Tier 4; forward-promised.
+# - beam_system_witnessing composed bilateral at empirical-firing
+#   altitude (Reed's pillar territory).
+
+out @beam/system
+out beam_system
+out beam_system_of_pack_home
+out beam_system_composition_verified
+out system_composition_verified
