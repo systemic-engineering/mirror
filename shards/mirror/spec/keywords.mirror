@@ -54,8 +54,19 @@ grammar @mirror/spec("spec") {
 
   # === top-level blocks (recursively scanned bodies) ===
   focus project
+  focus system
   focus target
   focus cli
+  # === VSM sub-directive blocks (recursively scanned; per
+  # shards/mirror/spec/system.mirror this-tick grammar species-decl;
+  # each admits a nested body per Beer 1972-1984 VSM structure)
+  focus s1
+  focus s2
+  focus s3
+  focus s4
+  focus s5
+  focus feedback_loops
+  focus kintsugi_tooling
   settle settle_on
 
   # === single-line directives ===

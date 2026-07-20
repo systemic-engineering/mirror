@@ -1,0 +1,345 @@
+in @prism
+in @meta
+in @nl
+in @glass
+in @system
+in @mirror/spec
+in @mirror/lens/cli
+
+# @mirror/spec/system — the grammar species-decl for `system @NAME
+# { s1..s5 + feedback_loops + kintsugi_tooling }` block at .spec-
+# file altitude; the compile-altitude landing of Beer's VSM per
+# Alex Round-3 spawn brief.
+#
+# Species under @mirror/spec (sibling to the existing `project(name)
+# -> prism` grammar at :52). Landed 2026-07-20 by Mara Round-3 per
+# Alex Round-3 spawn brief §Tier 1.2. Alias-shim from `project` per
+# two-tick discipline (§Migration below).
+#
+# === The species altitude ===
+#
+# `mirror.spec` grammar altitude. Per Alex Round-3 spawn brief
+# verbatim:
+#
+#   > "Mirror as the formalization of Beer's VSM at compiler altitude
+#   >  producing geometric supervisor systems for the Erlang VM."
+#
+# @mirror/spec/system IS the compile-altitude grammar species at
+# which Beer's VSM lands as a `system @NAME { s1..s5 + feedback_loops
+# + kintsugi_tooling }` block. The block reads as literal English:
+#
+#   system @my_project {
+#     s1 { ... operations ... }
+#     s2 { ... coordination ... }
+#     s3 { ... audit ... }
+#     s4 { ... intelligence ... }
+#     s5 { ... identity ... }
+#     feedback_loops { ... }
+#     kintsugi_tooling { ... }
+#   }
+#
+# The reader who has been reading Beer for 50 years already knows
+# how to read this. That's the "sharp AND delightfully boring"
+# discipline in force: Beer's actual word, Beer's actual structure,
+# compile-verifiable via witnessed-property predicates.
+#
+# === Alias-shim from `project` per two-tick discipline ===
+#
+# Per Alex Round-3 spawn brief §Tier 1.2: "Alias-shim from `project`
+# per two-tick discipline. ~500-800 LOC."
+#
+# The current mirror.spec grammar at `shards/mirror/spec.mirror` :52
+# declares:
+#
+#   project(name) -> prism { \ }
+#
+# This species adds the sibling `system(name) -> prism` grammar; the
+# `project` grammar remains operational as an ALIAS-SHIM for one
+# release cycle per two-tick discipline (per [[feedback-legibility-
+# over-foundation-when-collapsing]]).
+#
+# Two-tick migration:
+#
+#   TICK 1 (this tick):
+#     - Land `system(name) -> prism` grammar species
+#     - Keep `project(name) -> prism` operational (unchanged surface)
+#     - Add `system` keyword to @mirror/spec grammar keywords
+#     - Preserve consumer stability (existing mirror.spec files
+#       using `project` continue to work)
+#
+#   TICK 2 (next release cycle):
+#     - Deprecate `project` grammar (deprecation warning)
+#     - Update mirror.spec (the dogfood) to use `system @mirror.spec`
+#     - Update downstream consumer specs
+#     - Retire `project` grammar (following release cycle)
+#
+# The dogfood update in mirror.spec at compile-altitude altitude is
+# forward-promised for TICK 2; NOT this tick per two-tick discipline
+# (preserve consumer stability).
+#
+# === Composition-primitive naming ===
+#
+# Per feedback_composition_primitive_naming_convention:
+#
+#   system(name) -> prism
+#
+# Reads: given a name, produces a prism (the substrate manifold
+# @mirror/mosaic.focus reads to produce the build manifold).
+#
+# === The seven sub-directives ===
+#
+# Per Round-3 brief §Tier 1.2 + Beer 1972-1984 VSM structure, the
+# `system @NAME { ... }` block admits SEVEN sub-directives:
+#
+#   s1 { ... }                — S1 operations block (workers +
+#                                variety-producers; each S1 is
+#                                itself a viable system per Beer
+#                                1972 ch.10 recursive viability)
+#   s2 { ... }                — S2 coordination block (anti-
+#                                oscillation between S1s; shared
+#                                protocol per @dance ensemble
+#                                altitude)
+#   s3 { ... }                — S3 audit / management block
+#                                (restart_strategy at supervision
+#                                altitude per @spectral/supervisor)
+#   s4 { ... }                — S4 intelligence / strategy block
+#                                (@spectral/db psychohistory carrier
+#                                altitude)
+#   s5 { ... }                — S5 identity / policy block (Pack S5
+#                                or subject-identity per viable.
+#                                identity carrier)
+#   feedback_loops { ... }    — the feedback-loop declarations
+#                                (algedonic bypass channel per Beer
+#                                1979 ch.6; adjacent-level feedback
+#                                per Baez-Schreiber connection
+#                                compatibility)
+#   kintsugi_tooling { ... }  — the tooling declarations at the
+#                                system's kintsugi discipline
+#                                altitude (@kintsugi + @kintsugi/
+#                                roomba + @kintsugi/fracture
+#                                composition; how the system heals
+#                                its own perturbations)
+#
+# Each sub-directive is a typed lambda per @mirror/spec discipline;
+# the obligation blocks (\) discharge at mosaic.focus consumer
+# altitude.
+#
+# === Substrate-already-had-the-word audit ===
+#
+# 1. **No prior `shards/mirror/spec/system.mirror`** — clean naming
+#    space (the directory `shards/mirror/spec/` currently contains
+#    only `keywords.mirror`).
+# 2. **`shards/mirror/spec.mirror`** — reviewed. Family-root prism +
+#    `project(name) -> prism` grammar at :52. @mirror/spec/system is
+#    the SIBLING grammar per two-tick alias-shim discipline;
+#    substrate consumers migrate incrementally. No conflict; the
+#    two grammars coexist during migration cycle.
+# 3. **`shards/mirror/spec/keywords.mirror`** — reviewed. Companion
+#    keyword bindings for the tokenizer's harvester; extended this
+#    tick to add `system` keyword (per @mirror/spec/keywords
+#    extension below OR sibling shard update).
+# 4. **`shards/system.mirror`** — reviewed (this tick). @system
+#    family-root marker; @mirror/spec/system inherits at species
+#    altitude; the grammar species IS the compile-altitude form of
+#    what the family-root NAMES.
+# 5. **`shards/epistemologic/cybernetic/viable.mirror`** — reviewed.
+#    Property-altitude VSM carriers. @mirror/spec/system's SEVEN
+#    sub-directives correspond to viable.mirror's carriers + Beer
+#    1979 ch.6 algedonic + kintsugi discipline. Sibling altitudes;
+#    grammar species carries the syntax, viable carries the
+#    semantics.
+# 6. **`shards/beam/system.mirror`** (this tick) — reviewed. Sibling
+#    species-under-@system at BEAM runtime altitude; @mirror/spec/
+#    system at compile-altitude altitude. Two altitudes; both are
+#    species of @system.
+#
+# === Substrate authority chain ===
+#
+# - **Alex Round-3 spawn brief** (verbatim; §Tier 1.2): "shards/
+#   mirror/spec/system.mirror — grammar species-decl for `system
+#   @NAME { ... }` block with S1-S5 sub-directives. Composition-
+#   primitive naming per feedback_composition_primitive_naming_
+#   convention. Alias-shim from `project` per two-tick discipline.
+#   ~500-800 LOC."
+# - **`shards/system.mirror`** (this tick) — the family-root marker
+#   this species is under.
+# - **`shards/mirror/spec.mirror`** — the family-root prism this
+#   species is a sibling grammar within.
+# - **Beer 1972/1979/1984** — the VSM structure the SEVEN sub-
+#   directives correspond to.
+# - **Alex Round-3 spawn brief §The one-sentence positioning** —
+#   the compile-altitude landing this grammar makes verbatim.
+#
+# === The system_spec carrier ===
+#
+# The typed carrier for a `system @NAME { ... }` block. Composes the
+# seven sub-directives as typed fields.
+#
+#   name              — the block's name (per `system @NAME`
+#                        header; identity contract).
+#   s1_operations     — the S1 sub-directive contents (per BEAM
+#                        gen_prism worker altitude).
+#   s2_coordination   — the S2 sub-directive contents (per @dance
+#                        ensemble altitude).
+#   s3_audit          — the S3 sub-directive contents (per
+#                        @spectral/supervisor restart_strategy).
+#   s4_intelligence   — the S4 sub-directive contents (per
+#                        @spectral/db psychohistory).
+#   s5_identity       — the S5 sub-directive contents (per viable.
+#                        identity + @pack.peer).
+#   feedback_loops    — the feedback-loop declarations (per Beer
+#                        1979 ch.6 algedonic + Baez-Schreiber
+#                        connection compatibility).
+#   kintsugi_tooling  — the kintsugi tooling declarations (per
+#                        @kintsugi discipline).
+#
+# Identity contract: byte-equality on the eight-field record.
+type system_spec = {
+  name:             str,
+  s1_operations:    ref,
+  s2_coordination:  ref,
+  s3_audit:         ref,
+  s4_intelligence:  ref,
+  s5_identity:      identity,
+  feedback_loops:   ref,
+  kintsugi_tooling: ref,
+}
+
+# === system — the top-level keyword grammar ===
+#
+# Per Alex Round-3 spawn brief §Tier 1.2 verbatim. Reads:
+#
+#   system @my_project { s1 {...} s2 {...} s3 {...} s4 {...}
+#                         s5 {...} feedback_loops {...}
+#                         kintsugi_tooling {...} }
+#
+# The grammar consumer is @mirror/mosaic.focus (per @mirror/spec's
+# consumer discipline). The obligation block (\) discharges when
+# mosaic.focus walks the manifold.
+#
+# Alias-shim discipline: `project(name) -> prism` remains operational
+# at `shards/mirror/spec.mirror` :52; both grammars coexist during
+# migration cycle. TICK 2 (forward-promised) deprecates `project`
+# and updates the dogfood mirror.spec to use `system`.
+system(name) -> prism { \ }
+
+# === the seven sub-directives inside a `system` block ===
+#
+# Each is a typed lambda (substrate's action form, per @mirror/spec
+# discipline); the obligation block (\) is discharged by mosaic.focus
+# when it walks the manifold.
+
+# s1 { ... }
+#
+# S1 operations block. Declares the variety-producers at BEAM/process
+# altitude (workers + gen_prism instances per @spectral/gen_prism).
+# Each S1 is itself a viable system per Beer 1972 ch.10 recursive
+# viability; the sub-directive body admits nested `system @X { ... }`
+# declarations at S1 altitude for recursion.
+s1(operations: ref) -> prism { \ }
+
+# s2 { ... }
+#
+# S2 coordination block. Declares the anti-oscillation protocol
+# between S1s (per @dance ensemble altitude; Kuramoto phase-lock
+# connection 1-form at level k+1). Forward-promised: @dance ensemble
+# carrier per Mara Round-1 landings.
+s2(coordination: ref) -> prism { \ }
+
+# s3 { ... }
+#
+# S3 audit / management block. Declares the restart_strategy
+# discipline at supervision altitude (per @spectral/supervisor +
+# restart_intensity + connection at supervision-connection altitude
+# per beam-runtime.md §5).
+s3(audit: ref) -> prism { \ }
+
+# s4 { ... }
+#
+# S4 intelligence / strategy block. Declares the psychohistory
+# carrier at @spectral/db altitude (per @resonance inter-peer coupling
+# discipline).
+s4(intelligence: ref) -> prism { \ }
+
+# s5 { ... }
+#
+# S5 identity / policy block. Declares the identity carrier at Pack
+# S5 altitude (per viable.identity + @pack.peer + @subject
+# discipline; the peer/pack whose identity IS the system's identity-
+# policy).
+s5(identity: identity) -> prism { \ }
+
+# feedback_loops { ... }
+#
+# Declares the feedback-loop topology at Beer 1979 ch.6 algedonic
+# altitude + Baez-Schreiber connection-compatibility altitude. Names
+# the S1→S5 emergency-bypass channel + adjacent-level feedback per
+# viable.mirror algedonic_signal carrier.
+feedback_loops(loops: ref) -> prism { \ }
+
+# kintsugi_tooling { ... }
+#
+# Declares the kintsugi discipline for the system: how the system
+# heals its own perturbations via @kintsugi + @kintsugi/roomba +
+# @kintsugi/fracture composition. Sub-directives inside admit the
+# @kintsugi/consent + @kintsugi/mosaic + @kintsugi/oscillate
+# discipline references.
+kintsugi_tooling(tooling: ref) -> prism { \ }
+
+# === system_spec_well_formed — bilateral predicate ===
+#
+# Discharges Pass iff:
+#   - name is non-empty
+#   - all five S1-S5 sub-directive references are non-null (Beer
+#     1972-1984 requires all five VSM subsystems present)
+#   - feedback_loops declares at minimum the algedonic S1→S5 bypass
+#     channel per Beer 1979 ch.6
+#   - kintsugi_tooling references at minimum the @kintsugi family-
+#     root discipline
+#   - s5_identity discharges viable.viable_well_formed at the
+#     species boundary
+#
+# Rice-safe bound: reads only byte-visible state (ref-non-null,
+# string-emptiness, viable_well_formed Rice-safe discharge).
+#
+# Sentinel: `mirror-spec-system=well-formed-vsm-seven-directive-block`.
+bilateral system_spec_well_formed {
+  sentinel "mirror-spec-system=well-formed-vsm-seven-directive-block"
+  arity 1
+}
+system_spec_well_formed(s: system_spec) -> verdict { \ }
+
+# ═══════════════════════════════════════════════════════════════════
+# Recognition candidates surfaced (DO NOT RATIFY at this landing)
+# ═══════════════════════════════════════════════════════════════════
+#
+# #R-vsm-is-mirror-spec-grammar-at-compile-altitude — Cybersyn's
+# 53-year completion arc closes at compile-altitude via the `system
+# @NAME { s1..s5 }` grammar. First-witness this tick (@mirror/spec/
+# system species-decl + companion math root at `docs/math/the-tower/
+# recognition-vsm-is-mirror-spec-grammar.md`). Second-witness gate
+# opens on Alex + Lore paper §"VSM at compile altitude" section
+# landing. Held at CANDIDATE strength.
+#
+# === Forward-promised — NOT landed this tick ===
+#
+# - TICK 2: deprecate `project` grammar + update dogfood mirror.spec
+#   to use `system @mirror.spec { ... }`.
+# - system_spec_witnessing composed bilateral at empirical-firing
+#   altitude (Reed's pillar territory: pillar predicates for VSM
+#   invariants).
+# - `.system` cli-boundary wrapper at @mirror altitude for
+#   introspection: `mirror system <spec>` reads the system_spec
+#   carrier and emits the VSM diagnostic.
+
+out @mirror/spec/system
+out system_spec
+out system
+out s1
+out s2
+out s3
+out s4
+out s5
+out feedback_loops
+out kintsugi_tooling
+out system_spec_well_formed

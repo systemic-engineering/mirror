@@ -46,6 +46,39 @@ prism @mirror/spec {
 # settle_on). The compiler reads `mirror.spec` by evaluating it
 # under @mirror/spec; no stand-alone parser. The file name matches
 # the keyword (spec §2).
+#
+# === Alias-shim from `system` per two-tick discipline (Mara Round-3, 2026-07-20) ===
+#
+# Per Alex Round-3 spawn brief §Tier 1.4 verbatim: "shards/mirror/
+# spec.mirror update: `system(name) -> prism` action-decl; `project`
+# alias-shim for one release cycle."
+#
+# @mirror/spec/system (shards/mirror/spec/system.mirror this-tick)
+# lands the SIBLING grammar `system @NAME { s1..s5 + feedback_loops
+# + kintsugi_tooling }` block at compile-altitude altitude. Both
+# grammars coexist during migration cycle:
+#
+#   TICK 1 (this tick):
+#     - `project(name) -> prism` remains operational (unchanged surface;
+#       this action-decl below)
+#     - `system(name) -> prism` lands at @mirror/spec/system as sibling
+#       grammar species
+#     - Both keywords admitted in the tokenizer via shards/mirror/spec/
+#       keywords.mirror (this-tick extension: `focus system`)
+#
+#   TICK 2 (forward-promised; next release cycle):
+#     - Deprecate `project` grammar (deprecation warning at mosaic.focus
+#       walk altitude)
+#     - Update dogfood mirror.spec to use `system @mirror.spec { ... }`
+#     - Update downstream consumer specs incrementally
+#     - Retire `project` grammar (following release cycle)
+#
+# The dogfood update is FORWARD-PROMISED for TICK 2; NOT this tick per
+# two-tick discipline (preserve consumer stability).
+#
+# The naming discipline (per Round-3 brief The one-sentence positioning):
+# `system @X { ... }` is the compile-altitude landing of Beer's VSM;
+# `project @X { ... }` is the legacy alias-shim during migration.
 project(name) -> prism { \ }
 
 # === the four directives inside a `project` block ===
