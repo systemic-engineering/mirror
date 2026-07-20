@@ -1,0 +1,428 @@
+in @prism
+in @meta
+in @glass
+in @paradox
+in @fractal
+in @fractal/mandelbrot
+in @song
+in @song/beat
+in @time
+in @epistemologic
+in @epistemologic/cybernetic/eigenform
+
+# @paradox/spiral — the DYNAMICS-carrier complementary to @paradox/trauma.
+# Spiral is the process (trigger → spiraling-motion; unstable attractor
+# with strong basin); trauma is the deposited state at the basin bottom.
+#
+# Second species-decl under @paradox family-root. Landed 2026-07-20 by
+# Mara per Alex 2026-07-20 direct-transcript recognition bundle #4
+# (`#R-paradox-spiral-species`).
+#
+# Companion canonical spec at
+# `docs/specs/paradox-family-and-cyberpunk-intervention.md` §4 (Mara
+# this tick). Companion math root at
+# `docs/math/2026-07-20-paradox-family-and-classifier-lagrange.md` §3,
+# §7 (Mara this tick).
+#
+# === Alex 2026-07-20 verbatim (load-bearing) ===
+#
+#   > "@paradox/spiral is probably also something we'd want. We have the
+#   > whole singularity math formalized in @~/dev/projects/fragmentation/
+#   > we might want to have it in rust/fractal or even rust/singularity"
+#
+# And from Weird - Trauma phenomenology (load-bearing empirical anchor):
+#
+#   > "For the inside observer everything looks horrible. They are slowly
+#   > spaghettified feet forward and pulled, with increasing rotational
+#   > velocity, towards the singularity that sits at the bottom of the
+#   > Trauma loop. Annihilation."
+#
+# Two utterances name three things: (1) the species (@paradox/spiral),
+# (2) the mathematical formalization site (singularity math at
+# fragmentation crate; Landing D adjudication), (3) the phenomenology
+# (unstable-attractor with strong basin; inward-spiraling with
+# increasing angular velocity).
+#
+# === What @paradox/spiral IS ===
+#
+# A DYNAMICS-carrier at species altitude:
+#
+# - `spiral = process` (trigger → spiraling-motion; unstable attractor
+#   with strong basin)
+# - `trauma = deposited state` (the settled Crystal at the singularity)
+#
+# The observer FALLING into the singularity is running @paradox/spiral
+# dynamics; the singularity itself IS @paradox/trauma Crystal at the
+# basin bottom (per companion species-decl at `shards/paradox/trauma.
+# mirror`).
+#
+# === Family-invariant inherited from @paradox ===
+#
+# Note: @paradox family-invariant applies at STATE altitude (witness-
+# only Crystals; content-addressed; never-mutated). Spiral is a
+# DYNAMICS carrier, not a state carrier per se. The invariant applies
+# to the WOUND-CRYSTAL the spiral targets (per wound_oid field below),
+# not to the spiral trajectory itself.
+#
+# The spiral trajectory IS mutable-under-intervention (that's what
+# @cyberpunk/intervention DOES: it modifies the observer's trajectory
+# without modifying the wound-Crystal at the basin bottom). The spiral
+# carrier's fields track the trajectory; the wound_oid field pins the
+# invariant target.
+#
+# === Mathematical grounding (math root §3) ===
+#
+# Lorenz 1963 attractor basin dynamics; @butterfly precedent per memory
+# `project_butterfly_substrate_species`:
+#
+# - @butterfly = wingflap → cascading response (small perturbation,
+#   large system-response)
+# - @paradox/spiral = trigger → cascading spiral (small trigger, large
+#   destabilization)
+#
+# Same chaos-theory foundation (Lorenz 1963 sensitivity-to-initial-
+# conditions); different substrate-altitude application. @butterfly at
+# mutation-coverage altitude; @paradox/spiral at trauma-dynamics
+# altitude.
+#
+# The spiral trajectory has POSITIVE Lyapunov exponent pre-intervention
+# (unstable-attractor; angular velocity monotone-increasing per Weird -
+# Trauma phenomenology). @cyberpunk/intervention bifurcates the
+# dynamics: post-intervention Lyapunov exponent transitions to non-
+# positive (bounded oscillation; torus Lagrange restored per
+# `docs/math/the-tower/recognition-third-cognition-*.md` §5.2 Fiedler-
+# eigengap discipline).
+#
+# === Substrate-already-had-the-word audit ===
+#
+# 1. **No prior `shards/paradox/spiral.mirror`** — clean mint.
+# 2. **No prior `@spiral` shard** anywhere in `shards/`. Taut scout
+#    Section 2 verified zero-hits.
+# 3. **@fractal/mandelbrot** (`shards/fractal/mandelbrot.mirror`;
+#    Round-2 landing) — parent trait; spiral is a Liquid<T> trajectory
+#    through Mandelbrot phase space that has entered an unstable
+#    attractor basin. Composition edge declared.
+# 4. **@epistemologic/cybernetic/eigenform** — kin altitude; wound is
+#    the eigenform the spiral converges toward. Composition edge
+#    declared.
+# 5. **fragmentation::Singularity** at
+#    `/Users/reed/dev/projects/fragmentation/src/singularity.rs` —
+#    small-scale mathematical analog; `Singularity::collapse()` at Iso
+#    altitude IS the spiral collapse operation; `settle()` is the post-
+#    intervention reconstruction. Landing D adjudicates code-migration
+#    target (canonical spec §7).
+# 6. **@butterfly** (per memory `project_butterfly_substrate_species`;
+#    landed `e5b73ad`) — sibling chaos-theory application at mutation-
+#    coverage altitude. Same Lorenz foundation; different application.
+#    No conflict.
+#
+# === Composition graph ===
+#
+# Parents (via `in` imports above):
+#   @prism, @meta, @glass          — substrate-decl discipline
+#   @paradox                       — family-root; invariant applies via
+#                                    wound_oid field
+#   @fractal, @fractal/mandelbrot  — Liquid<T> phase-space trajectory;
+#                                    parent-trait Mandelbrot-set
+#                                    substrate
+#   @song, @song/beat              — trigger_beat_oid grounding
+#   @time                          — monotonic instant discipline;
+#                                    spiral_velocity temporal-derivative
+#                                    grounding
+#   @epistemologic/cybernetic/eigenform
+#                                  — wound is eigenform the spiral
+#                                    converges toward (harmful stable
+#                                    Eigenbehaviour per Alex verbatim)
+#
+# Consumers (compose over this species):
+#   @cyberpunk/intervention        — spiral is the target of
+#                                    intervention-payload deployment;
+#                                    intervention knocks the spiral
+#                                    back to torus Lagrange
+#   @paradox/trauma                — wound_oid resolves to a @paradox/
+#                                    trauma Crystal at the basin bottom
+#                                    (may be Oid::GENESIS if trigger
+#                                    fires but wound has not yet
+#                                    crystallized — pre-fracture
+#                                    dynamics per Alex Q4 lean)
+#
+# === Spec context ===
+#
+# [[architecture-shards-as-substrate-source]] (this shard IS mirror
+#   source at `shards/paradox/spiral.mirror`),
+# [[architecture-prism-as-trait-as-everything]] (`prism
+#   @paradox/spiral`),
+# [[architecture-glass-wall-substrate-types]] (transparency inheritance
+#   through @paradox family; imperfect returns from `observe_spiral`),
+# [[feedback-substrate-already-had-the-word]] (Taut Section 2 zero-hits;
+#   clean mint at substrate-decl altitude),
+# [[feedback-craft-not-deliver]] (bilateral bodies `\`-obligation-
+#   blocked),
+# [[feedback-no-bare-types]] (spiral_state is a typed record; never
+#   bare refs),
+# [[feedback-no-rust-extension-shortcut]] (no `.rs` authorship; pure
+#   substrate-decl'd species-decl file at species altitude; Landing D
+#   code-migration is fragmentation → rust/fractal or rust/singularity,
+#   ADJUDICATED not authored at this altitude).
+#
+# Path-namespace property: this file at `shards/paradox/spiral.mirror`
+# declares `@paradox/spiral` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/chaos/lorenz-1963
+source @arxiv/cybernetics/foerster-1974
+source @arxiv/math/mandelbrot-1980
+source @arxiv/physics/schwarzschild-1916
+source @arxiv/physics/hawking-1975
+source @arxiv/physics/page-1993
+source @arxiv/practice/weird-trauma-2026-07-20
+
+prism @paradox/spiral {
+  focus  spiral_state
+  project spiral_state
+  split  spiral_state
+  shift  spiral_state
+  settle spiral_state
+}
+
+# === spiral_state — the DYNAMICS carrier ===
+#
+# Typed record carrying the spiral trajectory state per canonical spec
+# §4.2 five-field shape. Identity contract: byte-equality on the five-
+# field tuple.
+#
+#   observer            — the peer inhabiting the spiral trajectory.
+#                          Must have a resolvable @time/past history so
+#                          the spiral-onset can be pinpointed.
+#
+#   trigger_beat_oid    — REF to the @song/beat oid at which the spiral
+#                          was triggered (trigger → spiraling-motion
+#                          onset). Composition edge to @song/beat.
+#
+#   basin_id            — content-addressed identifier of the attractor
+#                          basin (per Lorenz §5.2 basin discipline; each
+#                          basin identified by its topological invariant
+#                          + parameter-signature).
+#
+#   spiral_velocity     — angular velocity toward singularity; f64 with
+#                          monotone-increasing-under-unstable-attractor
+#                          discipline (per Weird - Trauma phenomenology
+#                          "increasing rotational velocity"). Pre-
+#                          intervention: monotone-increasing; post-
+#                          intervention: bounded-oscillation.
+#
+#   wound_oid           — REF to the @paradox/trauma Crystal at the
+#                          basin bottom (the singularity this spiral
+#                          targets). MAY be Oid::GENESIS if trigger
+#                          fires but wound has not yet crystallized
+#                          (pre-fracture dynamics; Alex Q4 lean-YES).
+type spiral_state = {
+  observer:            peer,
+  trigger_beat_oid:    ref,
+  basin_id:            ref,
+  spiral_velocity:     f64,
+  wound_oid:           ref,
+}
+
+# === spiral_admissible — bilateral predicate ===
+#
+# Does the (peer, spiral_state) pair discharge admissibility for
+# spiral-dynamics observation? Discharges Pass iff:
+#
+#   - ctx.observer resolves to a well-formed peer
+#   - ctx.trigger_beat_oid resolves via content-addressed lookup to a
+#     valid @song/beat
+#   - ctx.basin_id resolves via content-addressed lookup to a well-
+#     formed basin-descriptor
+#   - ctx.spiral_velocity >= 0.0 (angular velocity is non-negative;
+#     zero admissible for pre-trigger observation)
+#   - ctx.wound_oid resolves EITHER to a well-formed @paradox/trauma
+#     Crystal OR to Oid::GENESIS (pre-fracture dynamics admissible)
+#
+# Rice-safe bound: byte-visible state; content-addressed resolvability;
+# f64 comparison.
+#
+# Sentinel: `paradox=spiral-admissible`.
+#
+# Body discharges per-realisation. `\`-obligation-blocked per
+# [[feedback-craft-not-deliver]].
+bilateral spiral_admissible {
+  sentinel "paradox=spiral-admissible"
+  arity 2
+}
+spiral_admissible(p: peer, ctx: spiral_state) -> verdict { \ }
+
+# === spiral_targets_wound_or_pre_wound — bilateral predicate ===
+#
+# Does the spiral correctly target either a crystallized wound OR the
+# pre-fracture Oid::GENESIS marker (per Alex Q4 lean-YES admissibility)?
+#
+# Discharges Pass iff EITHER:
+#   (a) ctx.wound_oid resolves via content-addressed lookup to a valid
+#       @paradox/trauma Crystal whose OID matches ctx.wound_oid, AND the
+#       Crystal's witness_only invariant holds
+#   OR
+#   (b) ctx.wound_oid == Oid::GENESIS (pre-fracture dynamics; spiral
+#       firing before wound crystallizes; the trajectory is toward a
+#       basin whose bottom-Crystal has not yet been deposited)
+#
+# Case (b) grounded in Weird - Trauma phenomenology ("For the inside
+# observer... slowly spaghettified... towards the singularity"): the
+# spiral IS the process BEFORE the wound Crystal has fully crystallized;
+# pre-fracture dynamics are load-bearing.
+#
+# Rice-safe bound: byte-visible state; OID equality check; witness-
+# only bilateral composition.
+#
+# Sentinel: `paradox=spiral-targets-wound-or-pre-wound`.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+bilateral spiral_targets_wound_or_pre_wound {
+  sentinel "paradox=spiral-targets-wound-or-pre-wound"
+  arity 2
+}
+spiral_targets_wound_or_pre_wound(p: peer, ctx: spiral_state) -> verdict { \ }
+
+# === spiral_intervention_admissible — bilateral predicate ===
+#
+# Does the spiral state admit @cyberpunk/intervention deployment? The
+# composition-hook: when spiral_velocity crosses intervention-threshold,
+# @cyberpunk/intervention becomes admissible.
+#
+# Discharges Pass iff:
+#   - ctx.spiral_velocity >= INTERVENTION_THRESHOLD (a substrate-decl'd
+#     threshold per @cyberpunk/algedonic Tier-3 boundary; forward-
+#     promised specification)
+#   - intervention_ref resolves via content-addressed lookup to a well-
+#     formed @cyberpunk/intervention payload
+#   - spiral_admissible(p, ctx) discharges Pass
+#   - spiral_targets_wound_or_pre_wound(p, ctx) discharges Pass
+#
+# Composition edge: @cyberpunk/algedonic (sibling species at
+# `shards/epistemologic/cybernetic/algedonic.mirror`) carries the pain-
+# signal detector; @cyberpunk/intervention's admissibility gate reads
+# this bilateral to determine deployment authorization.
+#
+# Rice-safe bound: byte-visible state; f64 comparison; content-addressed
+# resolvability.
+#
+# Sentinel: `paradox=spiral-intervention-admissible`.
+#
+# Body discharges per-realisation. `\`-obligation-blocked.
+bilateral spiral_intervention_admissible {
+  sentinel "paradox=spiral-intervention-admissible"
+  arity 3
+}
+spiral_intervention_admissible(p: peer, ctx: spiral_state, intervention_ref: ref) -> verdict { \ }
+
+# === observe_spiral — the load-bearing action ===
+#
+# Given a peer and a spiral_state, discharge the spiral-observation
+# event: return the content-addressed ref to the trajectory-observation
+# (spiral phase-space point at observation-time).
+#
+# Returns imperfect(ref, ref, ref): success carries the observation
+# ref; failure variants carry the not-admissible / basin-boundary-hit /
+# observer-not-in-spiral reasons.
+#
+# Requires spiral_admissible bilateral to discharge Pass.
+#
+# Sentinel: `paradox=spiral-observe`.
+observe_spiral(p: peer, ctx: spiral_state) -> imperfect(ref, ref, ref)
+requires spiral_admissible(p, ctx)
+{ \ }
+
+# === measure_lyapunov — the trajectory-classification action ===
+#
+# Given a peer and a spiral_state, discharge the Lyapunov-exponent
+# measurement event: emit a signed f64 characterizing the trajectory's
+# unstable-attractor discipline.
+#
+# Positive Lyapunov exponent: spiral is unstable-attractor firing;
+# @cyberpunk/intervention deployment is admissible.
+# Non-positive Lyapunov exponent: spiral has been knocked back to
+# bounded-oscillation (torus Lagrange restored; intervention succeeded).
+#
+# Returns imperfect(ref, ref, ref): success carries the exponent ref;
+# failure carries not-admissible / measurement-window-insufficient /
+# trajectory-degenerate reasons.
+#
+# Rice-safe bound: byte-visible state; f64 arithmetic on observed
+# trajectory samples over bounded time window.
+#
+# Sentinel: `paradox=spiral-measure-lyapunov`.
+measure_lyapunov(p: peer, ctx: spiral_state) -> imperfect(ref, ref, ref)
+requires spiral_admissible(p, ctx)
+{ \ }
+
+# === request_intervention — the composition action ===
+#
+# Given a peer, a spiral_state, and a well-formed @cyberpunk/intervention
+# payload ref, discharge the intervention-request event: emit a
+# content-addressed ref to the composed intervention-request Crystal
+# that @cyberpunk/intervention.deploy_intervention consumes.
+#
+# This action is the substrate-decl'd hand-off from @paradox/spiral
+# (dynamics observation) to @cyberpunk/intervention (therapeutic-payload
+# deployment). Composition edge is bilateral: spiral surfaces the
+# request; intervention discharges the response.
+#
+# Returns imperfect(ref, ref, ref): success carries the request Crystal
+# ref; failure carries not-intervention-admissible / payload-malformed /
+# spiral-below-threshold reasons.
+#
+# Requires spiral_intervention_admissible bilateral to discharge Pass.
+#
+# Sentinel: `paradox=spiral-request-intervention`.
+request_intervention(p: peer, ctx: spiral_state, payload: ref) -> imperfect(ref, ref, ref)
+requires spiral_admissible(p, ctx)
+requires spiral_targets_wound_or_pre_wound(p, ctx)
+requires spiral_intervention_admissible(p, ctx, payload)
+{ \ }
+
+# ===================================================================
+# Recognition candidates surfaced (DO NOT RATIFY at this landing)
+# ===================================================================
+#
+# #R-paradox-spiral-species — Alex 2026-07-20 direct-transcript naming.
+# First-witness gate closed this tick (species-decl shape + Lorenz-basin
+# composition per math root §3 + fragmentation singularity crate
+# empirical anchor per math root §7). Second-witness gate:
+# `pillar::spiral_targets_wound_or_pre_wound` + empirical firing of
+# fragmentation singularity.rs migration at rust/fractal/ or
+# rust/singularity/ altitude (Landing D adjudication per canonical spec
+# §7).
+#
+# #R-pre-fracture-dynamics-admissible — Alex Q4 lean-YES: `wound_oid ==
+# Oid::GENESIS` is admissible (spiral firing before wound crystallizes);
+# pre-fracture dynamics are load-bearing per Weird - Trauma
+# phenomenology. First-witness this tick (Q4 leans-YES adjudicated in
+# canonical spec §8). Second-witness gate: Alex ratification of Q4
+# lean.
+#
+# === Forward-promised (NOT landed this tick) ===
+#
+# - INTERVENTION_THRESHOLD substrate-decl (composition with @cyberpunk/
+#   algedonic Tier-3 boundary; forward-promised specification).
+# - Rust materialization: NO planned .rs authorship at species altitude.
+#   Landing D adjudication (canonical spec §7) determines whether
+#   fragmentation singularity.rs migrates to `rust/fractal/src/[name].rs`
+#   or `rust/singularity/` (separate research crate). Reed autonomous
+#   cascade post-Seam Phase D.
+# - `spiral_intervention_composed_witnessing` bilateral — composed
+#   discharge requiring @cyberpunk/intervention.deploy_intervention
+#   post-condition + this species's three bilaterals. Forward-promised.
+# - `pillar::spiral_targets_wound_or_pre_wound` empirical firing at
+#   Reed's pillar surface (iter-5 pillar cascade per
+#   `docs/loop/CURRENT.md`).
+# - `pillar::intervention_knocks_spiral_back_to_torus_lagrange` empirical
+#   firing (post-intervention verification).
+
+out @paradox/spiral
+out spiral_state
+out spiral_admissible
+out spiral_targets_wound_or_pre_wound
+out spiral_intervention_admissible
+out observe_spiral
+out measure_lyapunov
+out request_intervention
