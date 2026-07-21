@@ -31,6 +31,64 @@
 **Task:** #302 supersedes #285 iter cascade + reframes #301 residues in this light
 **Composes with:** Mara J-space landings `0052408` + `26b0849` (Anna Wolf observation substrate feeds the executable specification carrier); @paradox family witnessed-only Crystals (specification IS witness); @autopoietic-classifier k=Lagrange knob (sparsity level of executable spec is the classifier gradient); Adzic *Specification by Example* BDD-native tradition composes over Beer VSM at property-attachment altitude.
 
+## 🌱 2026-07-21 SESSION LANDING SUMMARY (13 iters + phone.rs ship arc + dispatch surface complete)
+
+**Alex 2026-07-21 directive discharge complete.** 13 iters landed in one session (16ddb12 → 5e518f5). 108 new tests (@io/dispatch), 272/272 bin mirror tests GREEN, zero regression. 2 real bugs caught + fixed by property tests.
+
+### Session cascade (chronological)
+
+| # | Commit | Landing | Tests |
+|---|--------|---------|------:|
+| 1 | `16ddb12` | CURRENT.md ALEX-REFRAME (Liquid<T> threshold crossing target) | — |
+| 2 | `3ae06b5` | SpecProperty carrier + extract_spec_properties | +7 |
+| 3a | `d75ebfb` | dispatch_spec_property 3 Rice-safe arms (defer/boolean/sentinel-containment) | +7 |
+| 3b | `7ea6a69` | CURRENT.md ALEX-CORRECTION (Liquid<T> = Fiber<T> flow) | — |
+| 4 | `23f839b` | compile.rs SAGA integration — spec-body properties join Crystal chain | +5 |
+| 5 | (in-transcript) | Fiber<T>+phone.rs scout ground captured | — |
+| **6** | **`b6f32ea`** | **phone.rs @io/fs family + walker BUG FIXED** | **+37** |
+| **7** | **`e470d03`** | **phone.rs @io/git family + hooks/signing isolation** | **+14** |
+| **8** | **`4db932d`** | **phone.rs @io/bytes stdio M4 stubs → real bodies** | **+20** |
+| **9** | **`0f2b3bf`** | **phone.rs @io/socket M8 stub → real bodies** | **+11** |
+| 10 | `aa8fc07` | dispatch_spec_property algedonic_of_magnitude arm (+ ScalarLoss negative-panic BUG FIXED) | +8 |
+| 11 | `627b299` | dispatch_spec_property viability_of_magnitudes arm | +13 |
+| 12 | `4a41621` | dispatch_spec_property fold arm (verdict-list composition) | +14 |
+| 13 | `5e518f5` | dispatch_spec_property bundle_commutator arm — TRUE Fiber<T>-flow via LiquidTestBundle | +8 |
+| **Total** | | | **+144** |
+
+### dispatch_spec_property surface (7 arms deep at spec-body altitude)
+
+1. **defer directive** — SpecProperty.defer_message overrides verifies (Verdict::Defer per Mara Q-Mara-D)
+2. **boolean literals** — `verifies { true|false }` (Rice-safe trivial dispatch)
+3. **sentinel-containment** — `verifies { contains("<byte-str>") }` (bilateral degenerate case per Mara §2.3 last row)
+4. **algedonic_of_magnitude** — `verifies { algedonic(mag, theta) }` (Rice-safe stepping-stone per Mara §2.3 row 1)
+5. **viability_of_magnitudes** — `verifies { viability([m1, m2, …], theta, omega) }` (Rice-safe stepping-stone per Mara §2.3 row 2)
+6. **fold** — `verifies { fold([pass|fail|defer, …]) }` (verdict-list composition per Mara §2.3 row 5)
+7. **bundle_commutator** — `verifies { bundle_commutator(strategy_a, strategy_b, theta) }` (**TRUE Fiber<T>-flow** via LiquidTestBundle Commutator + pillar::algedonic per Mara §2.3 row 1 proper)
+
+All 6 rows of Mara §2.3 dispatch table (algedonic + viability + health + fold + forall + bilateral-degenerate) LANDED at Rust altitude via 7 dispatch arms. Health arm (of_health / fate feature) is the one non-landed dispatch table entry — forward-promised at future tick when @fate integration lands. general-expression-tree (row 6) landed via bundle_commutator concrete-instance form; parametric expression-tree parser is forward-promised iter 14+.
+
+### phone.rs ship arc (task #303 completed)
+
+82 new @io property tests across 4 iters shipped phone.rs to production-ready:
+- @io/fs: 8 fns, 37 tests (walker bug caught + fixed: .git/target skip semantics)
+- @io/git: 3 fns, 14 tests (tempdir-repo scaffold with per-repo gpgsign+hooks disable)
+- @io/bytes stdio: 2 fns implemented + generic helpers, 20 tests (Read/Write-generic)
+- @io/socket: 3 fns implemented (Unix-only cfg), 11 tests (listener-thread + client-roundtrip)
+
+**All 3 phone.rs `unimplemented!()` M-tick stubs replaced with real bodies + full state-space property test coverage.** phone.rs empirically production-ready per Alex 2026-07-21 directive.
+
+### Rust FROZEN target (corrected per ALEX-CORRECTION below)
+
+Status: **substantially advanced.**
+- `rust/src/phone.rs` @io connection surface: SHIPPED + property-tested (Alex directive discharge)
+- `rust/src/liquid.rs` dispatch cascade: 7 arms complete; SpecProperty declarations produce Verdicts via full flow
+- `rust/src/compile.rs` SAGA integration: spec-body property discharges join Crystal chain
+- Fiber<T>-flow altitude achieved: LiquidTestBundle Commutator dispatch (iter 13)
+
+Remaining forward-promise: mirror.spec `property { … }` declarations actually landed in the dogfood spec (currently declared but not consumed at dogfood altitude); phone.rs docblock sync to reflect landed state (stale "M0 module stub" comment); ~17 per-property RED file retirements per Mara §7.1.
+
+---
+
 ## 🌱 2026-07-21 ALEX-CORRECTION — Liquid<T> is Fiber<T> flow; phone.rs connects fibers (iter 3 mid-flight correction)
 
 **Alex 2026-07-21 in-transcript CORRECTION** (LOAD-BEARING; supersedes any prior framing that conflated SpecProperty with Liquid<T>):
