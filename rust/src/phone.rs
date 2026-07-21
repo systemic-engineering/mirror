@@ -309,10 +309,9 @@ pub(crate) fn find_substrate_root(start: &Path) -> PathBuf {
 }
 
 fn walk_into(dir: &Path, out: &mut Vec<WalkEntry>) -> io::Result<()> {
-    // Skip walker-invisible directories at the @io boundary — .git and
-    // target/ are substrate-invisible per walker discipline. NOT a
-    // policy decision; both are non-substrate by construction (VCS
-    // metadata; build artifacts).
+    // Defense-in-depth: if walk_into is entered with a .git or target/
+    // directory as its argument (e.g., via a direct recursive call
+    // that bypassed the per-entry filter below), skip without emitting.
     if let Some(name) = dir.file_name().and_then(|n| n.to_str()) {
         if name == ".git" || name == "target" {
             return Ok(());
@@ -324,6 +323,20 @@ fn walk_into(dir: &Path, out: &mut Vec<WalkEntry>) -> io::Result<()> {
         let path = entry.path();
         let file_type = entry.file_type()?;
         let is_dir = file_type.is_dir();
+
+        // Skip walker-invisible directory ENTRIES per walker
+        // discipline: `.git/` (VCS metadata) and `target/` (Rust build
+        // artifacts) are substrate-invisible. Do not emit the entry
+        // AND do not descend. Fixed 2026-07-21 iter 6 phone.rs ship
+        // per property tests catching that the docblock's "skip"
+        // claim wasn't honored at entry-emission altitude.
+        if is_dir {
+            if let Some(name) = path.file_name().and_then(|n| n.to_str()) {
+                if name == ".git" || name == "target" {
+                    continue;
+                }
+            }
+        }
 
         // Skip symlinks by not descending into them and not emitting
         // them (they materialize elsewhere; the vacuum reads content,
@@ -342,4 +355,496 @@ fn walk_into(dir: &Path, out: &mut Vec<WalkEntry>) -> io::Result<()> {
         }
     }
     Ok(())
+}
+
+// =====================================================================
+// @io/fs property tests — full state-space coverage per Alex 2026-07-21
+// "ship phone.rs proper. Property tests and all. Full statespace
+// coverage."
+//
+// Same discipline as FLANG matrix.rs property test surface: every
+// public @io/fs fn covered by hand-authored state-space tests spanning
+// the observable behavior boundary. tempfile scratch dirs; cleanup on
+// TempDir drop; no leaked state.
+//
+// Iter 6 scope: 8 @io/fs fns — read_file / write_file / append_to /
+// mkdir_p / path_exists / list_dir_recursive / find_substrate_root /
+// walk_into (via list_dir_recursive). Total: ~30 property tests.
+// =====================================================================
+
+#[cfg(test)]
+mod fs_prop_tests {
+    use super::*;
+    use std::io::Write as _;
+    use tempfile::TempDir;
+
+    // ---------- read_file / write_file round-trip -------------------
+
+    #[test]
+    fn write_then_read_returns_written_content_ascii() {
+        let tmp = TempDir::new().unwrap();
+        let path = tmp.path().join("f.txt");
+        let content = "hello mirror";
+        write_file(&path, content).unwrap();
+        assert_eq!(read_file(&path).unwrap(), content);
+    }
+
+    #[test]
+    fn write_then_read_returns_written_content_empty() {
+        let tmp = TempDir::new().unwrap();
+        let path = tmp.path().join("empty.txt");
+        write_file(&path, "").unwrap();
+        assert_eq!(read_file(&path).unwrap(), "");
+    }
+
+    #[test]
+    fn write_then_read_returns_written_content_unicode() {
+        let tmp = TempDir::new().unwrap();
+        let path = tmp.path().join("u.txt");
+        let content = "🌱 mirror → substrate · 中文";
+        write_file(&path, content).unwrap();
+        assert_eq!(read_file(&path).unwrap(), content);
+    }
+
+    #[test]
+    fn write_then_read_returns_written_content_multiline_with_newlines() {
+        let tmp = TempDir::new().unwrap();
+        let path = tmp.path().join("m.txt");
+        let content = "line1\nline2\nline3\n";
+        write_file(&path, content).unwrap();
+        assert_eq!(read_file(&path).unwrap(), content);
+    }
+
+    #[test]
+    fn write_then_read_returns_written_content_large_1mb() {
+        let tmp = TempDir::new().unwrap();
+        let path = tmp.path().join("big.txt");
+        let content: String = "x".repeat(1024 * 1024);
+        write_file(&path, &content).unwrap();
+        let read = read_file(&path).unwrap();
+        assert_eq!(read.len(), content.len());
+        assert_eq!(read, content);
+    }
+
+    #[test]
+    fn write_overwrites_existing_file() {
+        let tmp = TempDir::new().unwrap();
+        let path = tmp.path().join("f.txt");
+        write_file(&path, "first").unwrap();
+        write_file(&path, "second").unwrap();
+        assert_eq!(read_file(&path).unwrap(), "second");
+    }
+
+    #[test]
+    fn read_nonexistent_returns_error() {
+        let tmp = TempDir::new().unwrap();
+        let path = tmp.path().join("nope.txt");
+        assert!(read_file(&path).is_err());
+    }
+
+    #[test]
+    fn write_to_missing_parent_returns_error() {
+        let tmp = TempDir::new().unwrap();
+        let path = tmp.path().join("missing/dir/f.txt");
+        assert!(write_file(&path, "x").is_err());
+    }
+
+    // ---------- append_to semantics ---------------------------------
+
+    #[test]
+    fn append_to_nonexistent_creates_file_with_content() {
+        let tmp = TempDir::new().unwrap();
+        let path = tmp.path().join("a.log");
+        append_to(&path, "first entry\n").unwrap();
+        assert_eq!(read_file(&path).unwrap(), "first entry\n");
+    }
+
+    #[test]
+    fn append_to_preserves_order_across_multiple_appends() {
+        let tmp = TempDir::new().unwrap();
+        let path = tmp.path().join("a.log");
+        append_to(&path, "A").unwrap();
+        append_to(&path, "B").unwrap();
+        append_to(&path, "C").unwrap();
+        assert_eq!(read_file(&path).unwrap(), "ABC");
+    }
+
+    #[test]
+    fn append_to_does_not_overwrite_existing() {
+        let tmp = TempDir::new().unwrap();
+        let path = tmp.path().join("a.log");
+        write_file(&path, "seed").unwrap();
+        append_to(&path, "+more").unwrap();
+        assert_eq!(read_file(&path).unwrap(), "seed+more");
+    }
+
+    #[test]
+    fn append_to_empty_string_is_noop_content() {
+        let tmp = TempDir::new().unwrap();
+        let path = tmp.path().join("a.log");
+        append_to(&path, "seed").unwrap();
+        append_to(&path, "").unwrap();
+        assert_eq!(read_file(&path).unwrap(), "seed");
+    }
+
+    // ---------- mkdir_p idempotence + nested -------------------------
+
+    #[test]
+    fn mkdir_p_creates_single_directory() {
+        let tmp = TempDir::new().unwrap();
+        let path = tmp.path().join("d");
+        mkdir_p(&path).unwrap();
+        assert!(path.is_dir());
+    }
+
+    #[test]
+    fn mkdir_p_creates_nested_directories() {
+        let tmp = TempDir::new().unwrap();
+        let path = tmp.path().join("a/b/c/d");
+        mkdir_p(&path).unwrap();
+        assert!(path.is_dir());
+        assert!(tmp.path().join("a").is_dir());
+        assert!(tmp.path().join("a/b").is_dir());
+        assert!(tmp.path().join("a/b/c").is_dir());
+    }
+
+    #[test]
+    fn mkdir_p_is_idempotent_on_existing_directory() {
+        let tmp = TempDir::new().unwrap();
+        let path = tmp.path().join("d");
+        mkdir_p(&path).unwrap();
+        mkdir_p(&path).unwrap();
+        mkdir_p(&path).unwrap();
+        assert!(path.is_dir());
+    }
+
+    #[test]
+    fn mkdir_p_returns_error_when_path_is_existing_file() {
+        let tmp = TempDir::new().unwrap();
+        let path = tmp.path().join("f");
+        write_file(&path, "x").unwrap();
+        assert!(mkdir_p(&path).is_err());
+    }
+
+    // ---------- path_exists file/dir/nonexistent --------------------
+
+    #[test]
+    fn path_exists_true_for_extant_file() {
+        let tmp = TempDir::new().unwrap();
+        let path = tmp.path().join("f");
+        write_file(&path, "x").unwrap();
+        assert!(path_exists(&path));
+    }
+
+    #[test]
+    fn path_exists_true_for_extant_directory() {
+        let tmp = TempDir::new().unwrap();
+        let path = tmp.path().join("d");
+        mkdir_p(&path).unwrap();
+        assert!(path_exists(&path));
+    }
+
+    #[test]
+    fn path_exists_false_for_nonexistent() {
+        let tmp = TempDir::new().unwrap();
+        assert!(!path_exists(&tmp.path().join("nope")));
+    }
+
+    #[test]
+    fn path_exists_true_for_tempdir_root() {
+        let tmp = TempDir::new().unwrap();
+        assert!(path_exists(tmp.path()));
+    }
+
+    // ---------- list_dir_recursive full state-space -----------------
+
+    #[test]
+    fn list_dir_recursive_on_empty_dir_returns_empty() {
+        let tmp = TempDir::new().unwrap();
+        let entries = list_dir_recursive(tmp.path()).unwrap();
+        assert!(entries.is_empty());
+    }
+
+    #[test]
+    fn list_dir_recursive_flat_directory_finds_all_files() {
+        let tmp = TempDir::new().unwrap();
+        write_file(&tmp.path().join("a"), "x").unwrap();
+        write_file(&tmp.path().join("b"), "y").unwrap();
+        write_file(&tmp.path().join("c"), "z").unwrap();
+        let entries = list_dir_recursive(tmp.path()).unwrap();
+        assert_eq!(entries.len(), 3);
+        assert!(entries.iter().all(|e| !e.is_dir));
+        let names: Vec<String> = entries
+            .iter()
+            .filter_map(|e| e.path.file_name().and_then(|n| n.to_str()).map(String::from))
+            .collect();
+        for n in ["a", "b", "c"] {
+            assert!(names.contains(&n.to_string()), "expected `{n}` in {names:?}");
+        }
+    }
+
+    #[test]
+    fn list_dir_recursive_nested_finds_dirs_and_files_depth_first() {
+        let tmp = TempDir::new().unwrap();
+        // tmp/a/b/leaf.txt
+        // tmp/a/sibling.txt
+        mkdir_p(&tmp.path().join("a/b")).unwrap();
+        write_file(&tmp.path().join("a/b/leaf.txt"), "L").unwrap();
+        write_file(&tmp.path().join("a/sibling.txt"), "S").unwrap();
+        let entries = list_dir_recursive(tmp.path()).unwrap();
+        // 4 entries: a/ + a/b/ + a/b/leaf.txt + a/sibling.txt (order
+        // filesystem-dependent within each dir but a/ MUST come first
+        // and a/b/ MUST be visited before leaf.txt).
+        assert_eq!(entries.len(), 4);
+        let paths: Vec<String> = entries
+            .iter()
+            .map(|e| {
+                e.path
+                    .strip_prefix(tmp.path())
+                    .unwrap()
+                    .to_string_lossy()
+                    .replace('\\', "/")
+            })
+            .collect();
+        assert!(paths.contains(&"a".to_string()));
+        assert!(paths.contains(&"a/b".to_string()));
+        assert!(paths.contains(&"a/b/leaf.txt".to_string()));
+        assert!(paths.contains(&"a/sibling.txt".to_string()));
+
+        // Depth-first: a/ appears before a/b/leaf.txt AND a/b/ appears
+        // before a/b/leaf.txt.
+        let idx_a = paths.iter().position(|p| p == "a").unwrap();
+        let idx_ab = paths.iter().position(|p| p == "a/b").unwrap();
+        let idx_leaf = paths.iter().position(|p| p == "a/b/leaf.txt").unwrap();
+        assert!(idx_a < idx_leaf, "a/ must precede a/b/leaf.txt");
+        assert!(idx_ab < idx_leaf, "a/b/ must precede a/b/leaf.txt");
+    }
+
+    #[test]
+    fn list_dir_recursive_skips_dot_git_at_any_level() {
+        let tmp = TempDir::new().unwrap();
+        // tmp/.git/HEAD  — must NOT appear
+        // tmp/src/main.rs  — MUST appear
+        // tmp/nested/.git/objects/pack  — nested .git/ MUST also be skipped
+        mkdir_p(&tmp.path().join(".git")).unwrap();
+        write_file(&tmp.path().join(".git/HEAD"), "ref").unwrap();
+        mkdir_p(&tmp.path().join("src")).unwrap();
+        write_file(&tmp.path().join("src/main.rs"), "fn main() {}").unwrap();
+        mkdir_p(&tmp.path().join("nested/.git/objects")).unwrap();
+        write_file(&tmp.path().join("nested/.git/objects/pack"), "p").unwrap();
+
+        let entries = list_dir_recursive(tmp.path()).unwrap();
+        let paths: Vec<String> = entries
+            .iter()
+            .map(|e| e.path.to_string_lossy().to_string())
+            .collect();
+        assert!(
+            !paths.iter().any(|p| p.contains("/.git/") || p.ends_with("/.git")),
+            "no .git entries expected; got {paths:?}"
+        );
+        assert!(paths.iter().any(|p| p.ends_with("main.rs")));
+    }
+
+    #[test]
+    fn list_dir_recursive_skips_target_directory() {
+        let tmp = TempDir::new().unwrap();
+        mkdir_p(&tmp.path().join("target/debug")).unwrap();
+        write_file(&tmp.path().join("target/debug/artifact"), "a").unwrap();
+        write_file(&tmp.path().join("lib.rs"), "code").unwrap();
+        let entries = list_dir_recursive(tmp.path()).unwrap();
+        let paths: Vec<String> = entries
+            .iter()
+            .map(|e| e.path.to_string_lossy().to_string())
+            .collect();
+        assert!(
+            !paths.iter().any(|p| p.contains("/target")),
+            "no target/ entries expected; got {paths:?}"
+        );
+        assert!(paths.iter().any(|p| p.ends_with("lib.rs")));
+    }
+
+    #[test]
+    fn list_dir_recursive_skips_symlinks() {
+        // Cross-platform-safe: only test if symlink creation succeeds
+        // (Windows may require admin; unix always works). Skip via
+        // early return if symlink creation errors — the assertion
+        // still holds for the platforms that support symlinks.
+        let tmp = TempDir::new().unwrap();
+        write_file(&tmp.path().join("real.txt"), "R").unwrap();
+        let link_path = tmp.path().join("alias.txt");
+        #[cfg(unix)]
+        {
+            std::os::unix::fs::symlink(&tmp.path().join("real.txt"), &link_path).unwrap();
+            let entries = list_dir_recursive(tmp.path()).unwrap();
+            let paths: Vec<String> = entries
+                .iter()
+                .map(|e| e.path.file_name().unwrap().to_string_lossy().to_string())
+                .collect();
+            assert!(paths.contains(&"real.txt".to_string()));
+            assert!(
+                !paths.contains(&"alias.txt".to_string()),
+                "symlink alias.txt MUST be skipped; got {paths:?}"
+            );
+        }
+        #[cfg(not(unix))]
+        {
+            // Symlink test skipped on non-unix; sentinel to keep the
+            // test structure honest.
+            let _ = link_path;
+        }
+    }
+
+    #[test]
+    fn list_dir_recursive_is_reads_only_no_mutation() {
+        // Regression guard: walker MUST NOT create/modify any files.
+        let tmp = TempDir::new().unwrap();
+        write_file(&tmp.path().join("seed"), "s").unwrap();
+        let before = fs::read_dir(tmp.path()).unwrap().count();
+        let _ = list_dir_recursive(tmp.path()).unwrap();
+        let after = fs::read_dir(tmp.path()).unwrap().count();
+        assert_eq!(before, after, "walker MUST NOT mutate the filesystem");
+    }
+
+    #[test]
+    fn list_dir_recursive_error_on_nonexistent_root() {
+        let tmp = TempDir::new().unwrap();
+        let missing = tmp.path().join("does_not_exist");
+        assert!(list_dir_recursive(&missing).is_err());
+    }
+
+    #[test]
+    fn list_dir_recursive_dir_entries_have_is_dir_true() {
+        let tmp = TempDir::new().unwrap();
+        mkdir_p(&tmp.path().join("a")).unwrap();
+        mkdir_p(&tmp.path().join("b")).unwrap();
+        write_file(&tmp.path().join("c.txt"), "x").unwrap();
+        let entries = list_dir_recursive(tmp.path()).unwrap();
+        for e in &entries {
+            let name = e.path.file_name().unwrap().to_string_lossy().to_string();
+            let expected_is_dir = matches!(name.as_str(), "a" | "b");
+            assert_eq!(
+                e.is_dir, expected_is_dir,
+                "is_dir mismatch for entry `{name}`"
+            );
+        }
+    }
+
+    // ---------- find_substrate_root upward walk ---------------------
+
+    #[test]
+    fn find_substrate_root_returns_root_when_shards_present_at_start() {
+        let tmp = TempDir::new().unwrap();
+        mkdir_p(&tmp.path().join("shards")).unwrap();
+        let root = find_substrate_root(tmp.path());
+        assert_eq!(root, tmp.path());
+    }
+
+    #[test]
+    fn find_substrate_root_walks_upward_from_nested_child() {
+        let tmp = TempDir::new().unwrap();
+        mkdir_p(&tmp.path().join("shards")).unwrap();
+        mkdir_p(&tmp.path().join("a/b/c")).unwrap();
+        let root = find_substrate_root(&tmp.path().join("a/b/c"));
+        assert_eq!(root, tmp.path());
+    }
+
+    #[test]
+    fn find_substrate_root_returns_start_when_no_shards_ancestor() {
+        // tmp/leaf/ has no shards/ ancestor within tmp (temp roots
+        // don't have shards/ at OS root either). find_substrate_root
+        // returns start unchanged.
+        let tmp = TempDir::new().unwrap();
+        let start = tmp.path().join("leaf");
+        mkdir_p(&start).unwrap();
+        let root = find_substrate_root(&start);
+        // On systems where none of the ancestors has shards/, the fn
+        // returns start unchanged.
+        assert_eq!(root, start);
+    }
+
+    #[test]
+    fn find_substrate_root_selects_nearest_shards_ancestor() {
+        // Two shards/ present: closer one wins. Walker walks upward
+        // and returns the FIRST ancestor with shards/ (nearest).
+        let tmp = TempDir::new().unwrap();
+        mkdir_p(&tmp.path().join("outer/inner/shards")).unwrap();
+        mkdir_p(&tmp.path().join("outer/inner/deep/nested")).unwrap();
+        // NB: we do NOT create tmp/shards — nearest is outer/inner/.
+        let root = find_substrate_root(&tmp.path().join("outer/inner/deep/nested"));
+        assert_eq!(root, tmp.path().join("outer/inner"));
+    }
+
+    // ---------- append_to atomicity (writer flushes on drop) --------
+
+    #[test]
+    fn append_to_flushes_before_returning() {
+        // Regression guard for the OpenOptions.append pattern: the
+        // fn MUST flush before returning so subsequent read_file
+        // observes the written bytes without an explicit sync.
+        let tmp = TempDir::new().unwrap();
+        let path = tmp.path().join("a.log");
+        for i in 0..10 {
+            append_to(&path, &format!("line{i}\n")).unwrap();
+            let content = read_file(&path).unwrap();
+            assert!(
+                content.contains(&format!("line{i}")),
+                "line{i} not visible after append; got {content:?}"
+            );
+        }
+    }
+
+    // ---------- WalkEntry Debug is stable + non-empty ---------------
+
+    #[test]
+    fn walk_entry_debug_includes_path_and_is_dir() {
+        let entry = WalkEntry {
+            path: PathBuf::from("/tmp/test"),
+            is_dir: false,
+        };
+        let dbg = format!("{entry:?}");
+        assert!(dbg.contains("/tmp/test"));
+        assert!(dbg.contains("is_dir"));
+    }
+
+    // ---------- write_file over previous mkdir_p directory errors ---
+
+    #[test]
+    fn write_file_to_existing_directory_path_errors() {
+        let tmp = TempDir::new().unwrap();
+        let path = tmp.path().join("d");
+        mkdir_p(&path).unwrap();
+        assert!(write_file(&path, "x").is_err());
+    }
+
+    // ---------- content-round-trip via bytes helper (append + read) -
+
+    #[test]
+    fn append_bytes_survive_arbitrary_content_boundaries() {
+        let tmp = TempDir::new().unwrap();
+        let path = tmp.path().join("boundary.log");
+        // Mix ASCII + unicode + newlines + tabs across appends.
+        let chunks = [
+            "start",
+            "\t\ttab-indented",
+            "\n",
+            "🌱",
+            "\r\ncarriage",
+            "end",
+        ];
+        let expected: String = chunks.concat();
+        for c in &chunks {
+            append_to(&path, c).unwrap();
+        }
+        assert_eq!(read_file(&path).unwrap(), expected);
+    }
+
+    // ---------- silence unused-warnings for internal helpers --------
+    //
+    // Keeping Write imported for future append_writer-based tests
+    // without dragging the whole io::Write consumer surface into the
+    // #[test] namespace.
+    #[allow(dead_code)]
+    fn _use_write_trait(f: &mut fs::File, bytes: &[u8]) -> io::Result<()> {
+        f.write_all(bytes)
+    }
 }
