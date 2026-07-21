@@ -87,7 +87,10 @@
 //! prompt) lands at iter 5+ via liquid.rs upgrade; main.rs refactor to
 //! delegation lands at iter 4.
 
-use crate::liquid::{dispatch_property, extract_properties, PropertyDecl, Verdict};
+use crate::liquid::{
+    dispatch_property, dispatch_spec_property, extract_properties, extract_spec_properties,
+    PropertyDecl, SpecProperty, Verdict,
+};
 use fractal::{crystallize, Crystal, Oid, Witnessed};
 
 /// One property discharge — the verdict of one dispatch call plus the
@@ -235,14 +238,72 @@ pub fn compile_declarations(
     }
 }
 
-/// Compile a source text. Extracts property declarations via
-/// liquid::extract_properties, then dispatches with empty args per
-/// decl (iter-3 stub — args-passing at compile call sites lands with
-/// pillar-predicate dispatch at iter 5+).
+/// Compile a source text. Walks BOTH shard-body bilateral declarations
+/// (via `liquid::extract_properties`) AND spec-body property declarations
+/// (via `liquid::extract_spec_properties`); dispatches each; produces a
+/// unified Crystal SAGA chain.
+///
+/// ## Iter 4 wiring (post Alex 2026-07-21 reframe + correction)
+///
+/// Per Mara canonical spec `docs/specs/2026-07-19-mirror-spec-is-the-
+/// fixpoint-liquid-is-the-runtime.md` §2.1 Q1 answer (spec-native
+/// primary + shard-decl secondary; both dispatch through the same
+/// generic verdict path). Both classes flow into the same SAGA chain:
+///
+/// 1. Extract bilateral declarations (shard-body altitude) via
+///    `extract_properties`; dispatch each via `dispatch_property`;
+///    crystallize each into the SAGA chain.
+/// 2. Extract spec-body property declarations (spec-body altitude) via
+///    `extract_spec_properties`; dispatch each via `dispatch_spec_property`;
+///    crystallize each into the SAGA chain, continuing from bilateral tail.
+///
+/// Escalation aggregates across BOTH classes: first Fail (whether
+/// bilateral or spec-body) sets `Escalate(oid)`; subsequent Fails do
+/// not overwrite (first-fail-pin invariant per Mara `0281e7b`).
+///
+/// ## Substrate framing (Alex 2026-07-21 correction)
+///
+/// This wiring stays at DECLARATION altitude — the SAGA chain holds
+/// obligation discharges (Verdicts from evaluating what Liquid<T>
+/// flow must satisfy). The FLOW altitude (Liquid<T> flowing through
+/// Fiber<T> via phone.rs @io connections) is where Fiber<T>-sampling
+/// arms of dispatch_spec_property (pillar::forall/algedonic/viability
+/// per Mara §2.3 rows 1-3+6) live. That extension is forward-promised
+/// at iter 5+; this iter proves the declaration-altitude wiring works
+/// end-to-end (mirror.spec property declarations → Verdicts → Crystals).
 pub fn compile_from_source(source: &str, witnessed: &Witnessed) -> Compilation {
-    let decls = extract_properties(source);
-    let args: Vec<Vec<String>> = vec![Vec::new(); decls.len()];
-    compile_declarations(&decls, &args, witnessed)
+    // Class 1: shard-body bilateral declarations.
+    let bilateral_decls = extract_properties(source);
+    let bilateral_args: Vec<Vec<String>> = vec![Vec::new(); bilateral_decls.len()];
+    let mut comp = compile_declarations(&bilateral_decls, &bilateral_args, witnessed);
+
+    // Class 2: spec-body property declarations. Continue the SAGA
+    // chain from the bilateral tail (Genesis if no bilaterals present).
+    let spec_props = extract_spec_properties(source);
+    let mut prev_oid = comp.head_oid();
+    for prop in &spec_props {
+        // Empty args per spec-body decl for iter 4; args-passing at
+        // compile call sites lands with Fiber<T>-sampling arms iter 5+.
+        let verdict = dispatch_spec_property(prop, &[]);
+        let discharge = PropertyDischarge {
+            property_name: prop.name.clone(),
+            verdict: verdict.clone(),
+        };
+        let bytes = serialize_discharge(&discharge);
+        let crystal = crystallize(bytes, witnessed.clone(), prev_oid.clone());
+
+        // First Fail (across BOTH classes) sets Escalate; subsequent
+        // Fails do not overwrite (first-fail-pin invariant).
+        if verdict.is_fail() && comp.escalation.is_continue() {
+            comp.escalation = Escalation::Escalate(crystal.oid.clone());
+        }
+
+        prev_oid = crystal.oid.clone();
+        comp.crystals.push(crystal);
+        comp.discharges.push(discharge);
+    }
+
+    comp
 }
 
 // =====================================================================
@@ -609,5 +670,150 @@ bilateral history_with_returns_crystal_chain {
         let comp = compile_declarations(&decls, &args, &test_witnessed());
         assert_eq!(comp.depth(), 3);
         assert!(comp.discharges.iter().all(|d| d.verdict.is_defer()));
+    }
+
+    // =================================================================
+    // Iter 4 wiring — spec-body property discharges join the SAGA chain
+    // alongside bilateral discharges per Alex 2026-07-21 reframe +
+    // correction. compile_from_source now walks BOTH classes.
+    // =================================================================
+
+    #[test]
+    fn compile_from_source_walks_spec_body_property_produces_crystal() {
+        // Minimal source: one spec-body property, no bilaterals. The
+        // SAGA chain MUST contain exactly one crystal for the spec-
+        // body discharge. verifies { true } dispatches to Pass.
+        let source = r#"
+project demo {
+  property mirror_project_declared {
+    verifies { true }
+    domain @Byte
+    samples 1
+  }
+}
+"#;
+        let comp = compile_from_source(source, &test_witnessed());
+        assert_eq!(
+            comp.depth(),
+            1,
+            "one spec-body property MUST produce one crystal; got depth={}",
+            comp.depth()
+        );
+        assert_eq!(comp.discharges[0].property_name, "mirror_project_declared");
+        assert!(comp.discharges[0].verdict.is_pass());
+        assert!(comp.escalation.is_continue());
+    }
+
+    #[test]
+    fn compile_from_source_chains_bilateral_and_spec_body_in_saga_order() {
+        // Source with 1 bilateral + 1 spec-body property MUST produce
+        // 2 crystals: bilateral first, spec-body appended. SAGA chain
+        // walkable end-to-end.
+        let source = r#"
+bilateral shard_body_admissible {
+  sentinel "shard=admissible"
+  arity 0
+}
+
+project demo {
+  property spec_body_declared {
+    verifies { true }
+    domain @Byte
+    samples 1
+  }
+}
+"#;
+        let comp = compile_from_source(source, &test_witnessed());
+        assert_eq!(
+            comp.depth(),
+            2,
+            "1 bilateral + 1 spec-body MUST produce 2 crystals; got depth={}",
+            comp.depth()
+        );
+        assert_eq!(comp.discharges[0].property_name, "shard_body_admissible");
+        assert_eq!(comp.discharges[1].property_name, "spec_body_declared");
+        // SAGA chain walkable: first genesis, second chains from first.
+        assert!(comp.crystals[0].is_genesis());
+        assert_eq!(comp.crystals[1].prev(), &comp.crystals[0].oid);
+        // Head OID == last crystal (spec-body's).
+        assert_eq!(comp.head_oid(), comp.crystals[1].oid);
+    }
+
+    #[test]
+    fn compile_from_source_spec_body_false_verdict_fires_escalation() {
+        // verifies { false } produces Fail; escalation MUST fire at
+        // the spec-body crystal's OID (first-fail-pin across classes).
+        let source = r#"
+project demo {
+  property fails_by_declaration {
+    verifies { false }
+    domain @Byte
+    samples 1
+  }
+}
+"#;
+        let comp = compile_from_source(source, &test_witnessed());
+        assert_eq!(comp.depth(), 1);
+        assert!(comp.discharges[0].verdict.is_fail());
+        assert!(comp.escalation.is_escalate());
+        if let Escalation::Escalate(oid) = &comp.escalation {
+            assert_eq!(oid, &comp.crystals[0].oid);
+        }
+    }
+
+    #[test]
+    fn compile_from_source_first_fail_pin_spans_bilateral_and_spec_body() {
+        // First-fail-pin invariant per Mara 0281e7b: across BOTH
+        // classes, first Fail sets Escalate; subsequent Fails do NOT
+        // overwrite. Sequence: bilateral(Defer) → spec_body(Fail) →
+        // spec_body(Fail). Escalate MUST point at FIRST fail's OID.
+        let source = r#"
+bilateral unregistered_pillar_defers {
+  sentinel "unknown=defers"
+  arity 0
+}
+
+project demo {
+  property first_fail {
+    verifies { false }
+    domain @Byte
+    samples 1
+  }
+
+  property second_fail {
+    verifies { false }
+    domain @Byte
+    samples 1
+  }
+}
+"#;
+        let comp = compile_from_source(source, &test_witnessed());
+        assert_eq!(comp.depth(), 3);
+        // crystal[0] = bilateral (Defer via unregistered pillar)
+        // crystal[1] = spec_body first_fail (Fail)
+        // crystal[2] = spec_body second_fail (Fail)
+        assert!(comp.discharges[0].verdict.is_defer());
+        assert!(comp.discharges[1].verdict.is_fail());
+        assert!(comp.discharges[2].verdict.is_fail());
+        // First-fail-pin points at FIRST failing crystal = crystal[1]
+        assert!(comp.escalation.is_escalate());
+        if let Escalation::Escalate(oid) = &comp.escalation {
+            assert_eq!(
+                oid,
+                &comp.crystals[1].oid,
+                "escalation MUST point at FIRST fail (spec_body first_fail); NOT overwritten by second_fail"
+            );
+        }
+    }
+
+    #[test]
+    fn compile_from_source_empty_source_still_produces_empty_saga() {
+        // Regression guard: extending to spec-body extraction must not
+        // spuriously produce crystals from empty/prose-only source.
+        let source = "# just a comment; no bilateral, no property\n";
+        let comp = compile_from_source(source, &test_witnessed());
+        assert_eq!(comp.depth(), 0);
+        assert_eq!(comp.head_oid(), Oid::GENESIS);
+        assert!(comp.escalation.is_continue());
     }
 }
