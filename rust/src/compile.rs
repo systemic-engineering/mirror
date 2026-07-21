@@ -89,7 +89,7 @@
 
 use crate::liquid::{
     dispatch_property, dispatch_spec_property, extract_properties, extract_spec_properties,
-    PropertyDecl, SpecProperty, Verdict,
+    PropertyDecl, Verdict,
 };
 use fractal::{crystallize, Crystal, Oid, Witnessed};
 
