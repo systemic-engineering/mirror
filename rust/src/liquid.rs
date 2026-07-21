@@ -750,6 +750,67 @@ pub fn dispatch_spec_property(prop: &SpecProperty, args: &[String]) -> Verdict {
         }
     }
 
+    // Arm 6: fold over a list of verdict-literals per Mara §2.3
+    // dispatch table row 5. Shape:
+    //   `fold([pass|fail|defer, …])`
+    // where each element is a keyword literal (message-less). Parse
+    // the array, construct Vec<PropertyVerdict>, invoke
+    // pillar::fold, convert PropertyVerdict → Verdict via existing
+    // bridge. Semantics inherited from pillar::fold: Fail dominates
+    // any Fail in sequence, Pass is neutral, Partial merges min
+    // confidence + union diagnostics; empty list → Pass (neutral).
+    if let Some(rest) = verifies.strip_prefix("fold(") {
+        if let Some(paren_end) = rest.rfind(')') {
+            let args_source = &rest[..paren_end];
+            let bracket_open = match args_source.find('[') {
+                Some(i) => i,
+                None => {
+                    return Verdict::Fail(format!(
+                        "property `{}` verifies fold requires verdict array `[pass|fail|defer, …]`",
+                        prop.name
+                    ));
+                }
+            };
+            let bracket_close = match args_source[bracket_open..].find(']') {
+                Some(i) => bracket_open + i,
+                None => {
+                    return Verdict::Fail(format!(
+                        "property `{}` verifies fold verdict array missing closing `]`",
+                        prop.name
+                    ));
+                }
+            };
+            let inner = &args_source[bracket_open + 1..bracket_close];
+            let verdict_tokens: Vec<&str> = inner
+                .split(',')
+                .map(str::trim)
+                .filter(|s| !s.is_empty())
+                .collect();
+            let mut verdicts: Vec<prismqueer::PropertyVerdict> = Vec::with_capacity(verdict_tokens.len());
+            for token in &verdict_tokens {
+                let pv = match *token {
+                    "pass" => prismqueer::PropertyVerdict::Pass,
+                    "fail" => prismqueer::PropertyVerdict::Fail(prismqueer::Diagnostic::new(
+                        "fold-arg-fail",
+                    )),
+                    "defer" => prismqueer::PropertyVerdict::Partial {
+                        confidence: 0.5,
+                        diagnostics: vec![prismqueer::Diagnostic::new("fold-arg-defer")],
+                    },
+                    other => {
+                        return Verdict::Fail(format!(
+                            "property `{}` verifies fold unknown verdict token `{}`; expected pass|fail|defer",
+                            prop.name, other
+                        ));
+                    }
+                };
+                verdicts.push(pv);
+            }
+            let pv = prismqueer::liquid::pillar::fold(&verdicts);
+            return property_verdict_to_verdict(pv, &prop.name);
+        }
+    }
+
     // Unrecognized verifies-shape: defer to iter 4+ authorship territory.
     Verdict::Defer(format!(
         "property `{}` verifies-shape `{}` not yet dispatched at iter 3; iter 4+ arms forward-promised per Mara §2.3 dispatch table (algedonic/viability/health/fold/forall)",
@@ -2374,6 +2435,153 @@ project demo {
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
             assert!(msg.contains("non-negative theta"));
+        }
+    }
+
+    // -----------------------------------------------------------------
+    // dispatch_spec_property arm 6: fold over verdict-literal list
+    // per Mara §2.3 dispatch table row 5. Semantics inherited from
+    // pillar::fold: Fail dominates, Pass is neutral, Partial merges
+    // min confidence + union diagnostics; empty list → Pass (neutral).
+    // -----------------------------------------------------------------
+
+    #[test]
+    fn dispatch_spec_property_fold_all_pass_returns_pass() {
+        let prop = spec_property_verifies("fold_all_pass", "fold([pass, pass, pass])");
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_pass(), "got {:?}", v);
+    }
+
+    #[test]
+    fn dispatch_spec_property_fold_empty_list_returns_pass_neutral() {
+        let prop = spec_property_verifies("fold_empty", "fold([])");
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_pass(), "empty fold MUST return Pass (neutral); got {:?}", v);
+    }
+
+    #[test]
+    fn dispatch_spec_property_fold_single_fail_dominates_result() {
+        let prop = spec_property_verifies("fold_one_fail", "fold([pass, pass, fail, pass])");
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_fail(), "one fail in fold MUST dominate to Fail; got {:?}", v);
+    }
+
+    #[test]
+    fn dispatch_spec_property_fold_all_fail_returns_fail() {
+        let prop = spec_property_verifies("fold_all_fail", "fold([fail, fail, fail])");
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_fail(), "got {:?}", v);
+    }
+
+    #[test]
+    fn dispatch_spec_property_fold_defer_alone_returns_defer() {
+        let prop = spec_property_verifies("fold_defer", "fold([defer])");
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_defer(), "got {:?}", v);
+    }
+
+    #[test]
+    fn dispatch_spec_property_fold_pass_with_defer_returns_defer() {
+        // pillar::fold merge: Pass merged with Partial → Partial
+        // dominates (uncertainty propagates).
+        let prop = spec_property_verifies("fold_pass_defer", "fold([pass, defer, pass])");
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_defer(), "Pass + Partial merge → Partial → Defer; got {:?}", v);
+    }
+
+    #[test]
+    fn dispatch_spec_property_fold_fail_with_defer_returns_fail() {
+        // Fail dominates Partial per fold semantics.
+        let prop = spec_property_verifies("fold_fail_defer", "fold([defer, fail, defer])");
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_fail(), "Fail dominates any merge; got {:?}", v);
+    }
+
+    #[test]
+    fn dispatch_spec_property_fold_single_pass_returns_pass() {
+        let prop = spec_property_verifies("fold_single_pass", "fold([pass])");
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_pass(), "got {:?}", v);
+    }
+
+    #[test]
+    fn dispatch_spec_property_fold_single_fail_returns_fail() {
+        let prop = spec_property_verifies("fold_single_fail", "fold([fail])");
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_fail(), "got {:?}", v);
+    }
+
+    #[test]
+    fn dispatch_spec_property_fold_missing_bracket_returns_fail() {
+        let prop = spec_property_verifies("fold_no_array", "fold(pass, fail)");
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_fail());
+        if let Verdict::Fail(msg) = v {
+            assert!(msg.contains("verdict array"));
+        }
+    }
+
+    #[test]
+    fn dispatch_spec_property_fold_missing_closing_bracket_returns_fail() {
+        // Outer paren is present but bracket close is missing — arm
+        // enters the fold-dispatch path and detects the malformed
+        // array. Contrast with fully-unclosed `fold([pass` which
+        // doesn't have the outer `)` either and thus doesn't enter
+        // the fold arm at all (falls through to Defer).
+        let prop = spec_property_verifies("fold_unclosed_bracket", "fold([pass, fail)");
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_fail(), "got {:?}", v);
+        if let Verdict::Fail(msg) = v {
+            assert!(msg.contains("missing closing"));
+        }
+    }
+
+    #[test]
+    fn dispatch_spec_property_fold_fully_unclosed_falls_through_to_defer() {
+        // Both outer paren AND bracket close missing — arm's
+        // strip_prefix succeeds but rfind(')') returns None, so the
+        // arm doesn't fire and the outer unrecognized-shape Defer
+        // handles it. Substrate-honest: unrecognized malformed input
+        // defers to the outermost fallback rather than pretending to
+        // partially parse.
+        let prop = spec_property_verifies("fold_no_close", "fold([pass, fail");
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_defer(), "got {:?}", v);
+    }
+
+    #[test]
+    fn dispatch_spec_property_fold_unknown_verdict_token_returns_fail() {
+        let prop = spec_property_verifies("fold_bad_token", "fold([pass, maybe, fail])");
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_fail());
+        if let Verdict::Fail(msg) = v {
+            assert!(msg.contains("unknown verdict token"));
+            assert!(msg.contains("maybe"));
+        }
+    }
+
+    #[test]
+    fn dispatch_spec_property_fold_composition_with_algedonic_style_verdicts_stays_dominant() {
+        // Simulates fold over the output verdicts of upstream algedonic
+        // + viability + sentinel-containment arms (all Pass → Pass;
+        // one Fail → Fail). This is the composition-as-substrate
+        // pattern Mara §2.3 row 5 anchors: property authors chain
+        // verdicts from other properties into a single unified verdict.
+        let cases: Vec<(&str, fn(&Verdict) -> bool)> = vec![
+            ("fold([pass, pass, pass])", |v: &Verdict| v.is_pass()),
+            ("fold([pass, pass, fail])", |v: &Verdict| v.is_fail()),
+            ("fold([pass, defer, pass])", |v: &Verdict| v.is_defer()),
+            ("fold([defer, defer, fail])", |v: &Verdict| v.is_fail()),
+            ("fold([defer, defer, defer])", |v: &Verdict| v.is_defer()),
+        ];
+        for (verifies, expect) in cases {
+            let prop = spec_property_verifies("fold_composition", verifies);
+            let v = dispatch_spec_property(&prop, &[]);
+            assert!(
+                expect(&v),
+                "fold composition {} produced unexpected verdict {:?}",
+                verifies, v
+            );
         }
     }
 
