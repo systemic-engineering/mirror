@@ -650,6 +650,106 @@ pub fn dispatch_spec_property(prop: &SpecProperty, args: &[String]) -> Verdict {
         }
     }
 
+    // Arm 5: viability persistence on raw Loss magnitudes over a
+    // rolling window. Shape:
+    //   `viability([m1, m2, m3, …], theta, omega)`
+    // where the array holds f64 magnitudes, theta is f64 threshold,
+    // omega is usize window size. Dispatches to prismqueer::liquid::
+    // pillar::viability_of_magnitudes per Mara §2.3 dispatch table
+    // row 2. Rice-safe stepping-stone (raw magnitudes; no Fiber<T>
+    // sampling). Fiber<T>-flow via pillar::viability with
+    // LiquidTestBundle commutator histories forward-promised iter 12+.
+    if let Some(rest) = verifies.strip_prefix("viability(") {
+        if let Some(paren_end) = rest.rfind(')') {
+            let args_source = &rest[..paren_end];
+            let bracket_open = match args_source.find('[') {
+                Some(i) => i,
+                None => {
+                    return Verdict::Fail(format!(
+                        "property `{}` verifies viability requires history array `[m1, …]`",
+                        prop.name
+                    ));
+                }
+            };
+            let bracket_close = match args_source[bracket_open..].find(']') {
+                Some(i) => bracket_open + i,
+                None => {
+                    return Verdict::Fail(format!(
+                        "property `{}` verifies viability history array missing closing `]`",
+                        prop.name
+                    ));
+                }
+            };
+            let inner = &args_source[bracket_open + 1..bracket_close];
+            let history_parse: Result<Vec<f64>, _> = inner
+                .split(',')
+                .map(str::trim)
+                .filter(|s| !s.is_empty())
+                .map(|s| s.parse::<f64>())
+                .collect();
+            let history: Vec<f64> = match history_parse {
+                Ok(v) => v,
+                Err(e) => {
+                    return Verdict::Fail(format!(
+                        "property `{}` verifies viability history parse error: {}",
+                        prop.name, e
+                    ));
+                }
+            };
+            let tail = args_source[bracket_close + 1..]
+                .trim_start_matches([',', ' ', '\t'])
+                .trim();
+            let tail_parts: Vec<&str> = tail.split(',').map(str::trim).collect();
+            if tail_parts.len() != 2 {
+                return Verdict::Fail(format!(
+                    "property `{}` verifies viability(history, theta, omega) requires theta + omega after history; got {} tail args",
+                    prop.name,
+                    tail_parts.len()
+                ));
+            }
+            let theta: f64 = match tail_parts[0].parse() {
+                Ok(v) => v,
+                Err(_) => {
+                    return Verdict::Fail(format!(
+                        "property `{}` verifies viability theta `{}` is not a valid f64",
+                        prop.name, tail_parts[0]
+                    ));
+                }
+            };
+            let omega: usize = match tail_parts[1].parse() {
+                Ok(v) => v,
+                Err(_) => {
+                    return Verdict::Fail(format!(
+                        "property `{}` verifies viability omega `{}` is not a valid usize",
+                        prop.name, tail_parts[1]
+                    ));
+                }
+            };
+            // Guard non-negative magnitudes + theta (ScalarLoss invariant).
+            if history.iter().any(|m| *m < 0.0) {
+                return Verdict::Fail(format!(
+                    "property `{}` verifies viability requires non-negative magnitudes; history={:?}",
+                    prop.name, history
+                ));
+            }
+            if theta < 0.0 {
+                return Verdict::Fail(format!(
+                    "property `{}` verifies viability requires non-negative theta; got {}",
+                    prop.name, theta
+                ));
+            }
+            let history_loss: Vec<prismqueer::ScalarLoss> =
+                history.iter().map(|&m| prismqueer::ScalarLoss::new(m)).collect();
+            let theta_loss = prismqueer::ScalarLoss::new(theta);
+            let pv = prismqueer::liquid::pillar::viability_of_magnitudes(
+                &history_loss,
+                &theta_loss,
+                omega,
+            );
+            return property_verdict_to_verdict(pv, &prop.name);
+        }
+    }
+
     // Unrecognized verifies-shape: defer to iter 4+ authorship territory.
     Verdict::Defer(format!(
         "property `{}` verifies-shape `{}` not yet dispatched at iter 3; iter 4+ arms forward-promised per Mara §2.3 dispatch table (algedonic/viability/health/fold/forall)",
@@ -2098,6 +2198,183 @@ project demo {
         );
         let v = dispatch_spec_property(&prop, &[]);
         assert!(v.is_pass(), "got {:?}", v);
+    }
+
+    // -----------------------------------------------------------------
+    // dispatch_spec_property arm 5: viability_of_magnitudes (Fiber<T>-
+    // sampling STEPPING STONE per Mara §2.3 dispatch table row 2).
+    // Raw magnitudes over rolling window; no bundle sampling yet.
+    // Fiber<T>-flow via pillar::viability with LiquidTestBundle
+    // commutator histories forward-promised iter 12+.
+    // -----------------------------------------------------------------
+
+    #[test]
+    fn dispatch_spec_property_viability_window_full_above_theta_passes() {
+        // history.len() >= omega AND accumulated > theta → Pass.
+        // ScalarLoss combine is scalar addition; window last-3 of
+        // [2,3,4] = 9.0 > theta 5.0 → Pass.
+        let prop = spec_property_verifies(
+            "viability_persistent",
+            "viability([2.0, 3.0, 4.0], 5.0, 3)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_pass(), "got {:?}", v);
+    }
+
+    #[test]
+    fn dispatch_spec_property_viability_window_full_below_theta_fails() {
+        // window accumulated 0.5 + 0.5 + 0.5 = 1.5, theta 10.0 → Fail.
+        let prop = spec_property_verifies(
+            "viability_starving",
+            "viability([0.5, 0.5, 0.5], 10.0, 3)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_fail(), "got {:?}", v);
+    }
+
+    #[test]
+    fn dispatch_spec_property_viability_history_shorter_than_window_defers_partial() {
+        // history.len() < omega → Partial → Defer.
+        let prop = spec_property_verifies(
+            "viability_early",
+            "viability([1.0, 2.0], 5.0, 5)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_defer(), "got {:?}", v);
+        if let Verdict::Defer(msg) = v {
+            assert!(msg.contains("viability_early"));
+            assert!(msg.contains("partial"));
+        }
+    }
+
+    #[test]
+    fn dispatch_spec_property_viability_empty_history_defers() {
+        let prop = spec_property_verifies(
+            "viability_empty",
+            "viability([], 5.0, 3)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_defer(), "got {:?}", v);
+    }
+
+    #[test]
+    fn dispatch_spec_property_viability_window_larger_than_history_defers() {
+        // 2 magnitudes, window 5 → shorter than window → Partial → Defer.
+        let prop = spec_property_verifies(
+            "viability_short_history",
+            "viability([10.0, 10.0], 5.0, 5)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_defer(), "got {:?}", v);
+    }
+
+    #[test]
+    fn dispatch_spec_property_viability_only_last_omega_magnitudes_count() {
+        // history [100, 100, 100, 0.1, 0.1, 0.1] window 3 → last 3
+        // = 0.3 accumulated, theta 5.0 → Fail (recent starvation
+        // dominates despite early plenty).
+        let prop = spec_property_verifies(
+            "viability_recent_starvation",
+            "viability([100.0, 100.0, 100.0, 0.1, 0.1, 0.1], 5.0, 3)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(
+            v.is_fail(),
+            "only last omega should count, not early plenty; got {:?}",
+            v
+        );
+    }
+
+    #[test]
+    fn dispatch_spec_property_viability_missing_bracket_returns_fail() {
+        let prop = spec_property_verifies(
+            "viability_no_array",
+            "viability(1.0, 2.0, 3)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_fail());
+        if let Verdict::Fail(msg) = v {
+            assert!(msg.contains("history array"));
+        }
+    }
+
+    #[test]
+    fn dispatch_spec_property_viability_missing_closing_bracket_returns_fail() {
+        let prop = spec_property_verifies(
+            "viability_unclosed",
+            "viability([1.0, 2.0, 3.0, 5.0, 3)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_fail());
+        if let Verdict::Fail(msg) = v {
+            assert!(msg.contains("missing closing"));
+        }
+    }
+
+    #[test]
+    fn dispatch_spec_property_viability_missing_theta_omega_returns_fail() {
+        let prop = spec_property_verifies(
+            "viability_no_tail",
+            "viability([1.0, 2.0, 3.0])",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_fail());
+        if let Verdict::Fail(msg) = v {
+            assert!(msg.contains("requires theta + omega"));
+        }
+    }
+
+    #[test]
+    fn dispatch_spec_property_viability_non_numeric_history_returns_fail() {
+        let prop = spec_property_verifies(
+            "viability_bad_history",
+            "viability([1.0, wat, 3.0], 5.0, 3)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_fail());
+        if let Verdict::Fail(msg) = v {
+            assert!(msg.contains("history parse error"));
+        }
+    }
+
+    #[test]
+    fn dispatch_spec_property_viability_bad_omega_returns_fail() {
+        let prop = spec_property_verifies(
+            "viability_bad_omega",
+            "viability([1.0, 2.0], 5.0, three)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_fail());
+        if let Verdict::Fail(msg) = v {
+            assert!(msg.contains("omega"));
+            assert!(msg.contains("not a valid usize"));
+        }
+    }
+
+    #[test]
+    fn dispatch_spec_property_viability_negative_magnitude_returns_fail() {
+        let prop = spec_property_verifies(
+            "viability_negative",
+            "viability([1.0, -2.0, 3.0], 5.0, 3)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_fail());
+        if let Verdict::Fail(msg) = v {
+            assert!(msg.contains("non-negative magnitudes"));
+        }
+    }
+
+    #[test]
+    fn dispatch_spec_property_viability_negative_theta_returns_fail() {
+        let prop = spec_property_verifies(
+            "viability_negative_theta",
+            "viability([1.0, 2.0, 3.0], -5.0, 3)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_fail());
+        if let Verdict::Fail(msg) = v {
+            assert!(msg.contains("non-negative theta"));
+        }
     }
 
     #[test]
