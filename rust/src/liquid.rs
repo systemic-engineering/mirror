@@ -486,6 +486,126 @@ pub fn dispatch_property(decl: &PropertyDecl, args: &[String]) -> Verdict {
     pillar::dispatch(&decl.name, args)
 }
 
+/// Dispatch a spec-body SpecProperty to a Verdict.
+///
+/// Iter 3 of /loop cascade (Alex 2026-07-21 reframe post-2026-07-19
+/// Mara canonical spec). First dispatch surface at Rust altitude for
+/// the spec-body `property { verifies { <expr> } domain @<T> samples
+/// <n> defer? <msg> }` grammar per Mara `docs/specs/2026-07-19-
+/// mirror-spec-is-the-fixpoint-liquid-is-the-runtime.md` §2.3
+/// dispatch table.
+///
+/// **Substrate framing (Alex 2026-07-21 in-transcript correction):**
+/// SpecProperty is the SPEC-DECLARED OBLIGATION — what Liquid<T>
+/// flows must satisfy. Liquid<T> itself is what flows through the
+/// Fiber<T> of prismqueer's Bundle Tower (`Transport → Gauge →
+/// Connection → Fiber → State` supertrait chain per
+/// `prism/prismqueer/src/liquid.rs` module docblock §1). phone.rs
+/// connects fibers via the @io boundary (@io/socket + @io/fs +
+/// @io/git); Liquid<T> flows through those connections. This fn
+/// evaluates the obligation for the Rice-safe cases where no
+/// Fiber<T> sampling is needed (boolean literals + sentinel-
+/// containment); the pillar::forall-invoking arms (algedonic /
+/// viability / general expression tree per Mara §2.3 rows 1-3+6)
+/// forward-promised at iter 4+ WILL sample domain-Arbitrary<T>
+/// through Fiber<T>, sending Liquid<T> flow through phone.rs
+/// connections.
+///
+/// Rust FROZEN target = rust/src/phone.rs @io connection surface
+/// stabilizes + mirror.spec property declarations produce Verdicts
+/// through Liquid<T>-flow-via-phone.rs-connections; Mirror fiber
+/// becomes canonical source-of-truth for the flow topology.
+///
+/// Landed dispatch arms (this iter — 3 shapes; ACTUAL Verdict, not
+/// stub Defer):
+///
+/// 1. **`defer` directive** — SpecProperty carries `defer_message`;
+///    dispatch returns Defer(msg) regardless of verifies_source.
+///    Per Mara Q-Mara-D + Reed's `defer()`-mode pattern in
+///    `prism/prismqueer/tests/red_trust_chain_liquid_void.rs`.
+///
+/// 2. **Boolean literals** — `verifies { true }` → Pass;
+///    `verifies { false }` → Fail. Rice-safe by construction; the
+///    trivial constant-truth-value dispatch that proves the
+///    threshold-crossing shape is empirical.
+///
+/// 3. **Sentinel-containment** — `verifies { contains("<byte-str>") }`
+///    → checks `args[0].contains(byte-str)`; Pass if true, Fail
+///    otherwise. Parallel to the existing shard-body bilateral
+///    dispatch's sentinel check (Rice-safe byte-substring). Per
+///    Mara §2.3 dispatch table last row: "bilateral degenerate case."
+///    Requires arity >= 1 (the arg to check against).
+///
+/// Forward-promised arms (iter 4+; NOT this landing):
+///
+/// - `commutator_norm(a, b) op scalar` → `pillar::algedonic` /
+///   `pillar::algedonic_of_magnitude` (Mara §2.3 row 1)
+/// - `viability_over(<sequence>) op threshold` → `pillar::viability` /
+///   `pillar::viability_of_magnitudes` (Mara §2.3 row 2)
+/// - `health_of(<state>) within envelope` → `pillar::of_health`
+///   (Mara §2.3 row 3)
+/// - `fold(<verdict-list>)` → `pillar::fold` (Mara §2.3 row 5)
+/// - general expression tree → `pillar::forall(samples, |t| ⟦expr⟧(t))`
+///   (Mara §2.3 row 6; requires expression-tree parser per Mara §3.2
+///   Rondon-Kawaguchi-Jhala 2008 decidability grounding)
+///
+/// Any verifies-shape not in the landed arms above returns Defer
+/// naming the forward-promise territory (iter 4+ per Mara §2.3
+/// dispatch table row-by-row landing plan).
+pub fn dispatch_spec_property(prop: &SpecProperty, args: &[String]) -> Verdict {
+    // Arm 1: defer directive dominates (per Mara Q-Mara-D).
+    if let Some(msg) = &prop.defer_message {
+        return Verdict::Defer(msg.clone());
+    }
+
+    let verifies = prop.verifies_source.trim();
+
+    // Arm 2: boolean literals — trivial constant-truth-value dispatch.
+    if verifies == "true" {
+        return Verdict::Pass;
+    }
+    if verifies == "false" {
+        return Verdict::Fail(format!(
+            "property `{}` verifies {{ false }} — property asserts falsehood",
+            prop.name
+        ));
+    }
+
+    // Arm 3: sentinel-containment (bilateral degenerate case per
+    // Mara §2.3 last row). Shape: `contains("<byte-string>")`.
+    if let Some(rest) = verifies.strip_prefix("contains(") {
+        if let Some(paren_end) = rest.rfind(')') {
+            let arg_source = rest[..paren_end].trim();
+            // Extract byte-string between quotes.
+            if let Some(q_start) = arg_source.find('"') {
+                if let Some(q_end) = arg_source[q_start + 1..].find('"') {
+                    let needle = &arg_source[q_start + 1..q_start + 1 + q_end];
+                    if args.is_empty() {
+                        return Verdict::Fail(format!(
+                            "property `{}` verifies contains(\"{}\") requires >= 1 arg; got 0",
+                            prop.name, needle
+                        ));
+                    }
+                    if args[0].contains(needle) {
+                        return Verdict::Pass;
+                    } else {
+                        return Verdict::Fail(format!(
+                            "property `{}` verifies contains(\"{}\") did not find byte-string in args[0] (`{}`)",
+                            prop.name, needle, args[0]
+                        ));
+                    }
+                }
+            }
+        }
+    }
+
+    // Unrecognized verifies-shape: defer to iter 4+ authorship territory.
+    Verdict::Defer(format!(
+        "property `{}` verifies-shape `{}` not yet dispatched at iter 3; iter 4+ arms forward-promised per Mara §2.3 dispatch table (algedonic/viability/health/fold/forall)",
+        prop.name, verifies
+    ))
+}
+
 // =====================================================================
 // pillar — classifier-witness predicates.
 // =====================================================================
@@ -1653,6 +1773,123 @@ project demo {
         let props = extract_spec_properties(source);
         assert_eq!(props.len(), 1);
         assert_eq!(props[0].source, "line 4");
+    }
+
+    // =================================================================
+    // dispatch_spec_property — iter 3 first dispatch surface at Rust
+    // altitude. Rice-safe cases (boolean literals + sentinel-containment
+    // + defer). Fiber<T>-sampling arms (algedonic / viability / general
+    // expression tree) forward-promised at iter 4+ per Mara §2.3.
+    // =================================================================
+
+    fn spec_property_verifies(name: &str, verifies: &str) -> SpecProperty {
+        SpecProperty {
+            name: name.to_string(),
+            verifies_source: verifies.to_string(),
+            domain_ref: "@Byte".to_string(),
+            samples: Some(1),
+            defer_message: None,
+            source: "test".to_string(),
+        }
+    }
+
+    #[test]
+    fn dispatch_spec_property_boolean_true_returns_pass() {
+        let prop = spec_property_verifies("trivial_true", "true");
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_pass(), "verifies {{ true }} MUST return Pass; got {:?}", v);
+    }
+
+    #[test]
+    fn dispatch_spec_property_boolean_false_returns_fail() {
+        let prop = spec_property_verifies("trivial_false", "false");
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_fail(), "verifies {{ false }} MUST return Fail; got {:?}", v);
+        if let Verdict::Fail(msg) = v {
+            assert!(
+                msg.contains("trivial_false"),
+                "Fail message MUST name the property; got {:?}",
+                msg
+            );
+            assert!(msg.contains("asserts falsehood"));
+        }
+    }
+
+    #[test]
+    fn dispatch_spec_property_sentinel_containment_pass() {
+        let prop = spec_property_verifies(
+            "state_well_formed",
+            r#"contains("well-formed")"#,
+        );
+        let v = dispatch_spec_property(
+            &prop,
+            &["state=well-formed-and-observed".to_string()],
+        );
+        assert!(
+            v.is_pass(),
+            "contains(\"well-formed\") on args[0]=`state=well-formed-and-observed` MUST return Pass; got {:?}",
+            v
+        );
+    }
+
+    #[test]
+    fn dispatch_spec_property_sentinel_containment_fail() {
+        let prop = spec_property_verifies(
+            "state_well_formed",
+            r#"contains("well-formed")"#,
+        );
+        let v = dispatch_spec_property(&prop, &["state=malformed".to_string()]);
+        assert!(
+            v.is_fail(),
+            "contains(\"well-formed\") on args[0]=`state=malformed` MUST return Fail; got {:?}",
+            v
+        );
+        if let Verdict::Fail(msg) = v {
+            assert!(msg.contains("well-formed"));
+            assert!(msg.contains("state=malformed"));
+        }
+    }
+
+    #[test]
+    fn dispatch_spec_property_sentinel_containment_missing_arg_fails() {
+        let prop = spec_property_verifies("state_well_formed", r#"contains("x")"#);
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_fail());
+        if let Verdict::Fail(msg) = v {
+            assert!(msg.contains(">= 1 arg"));
+        }
+    }
+
+    #[test]
+    fn dispatch_spec_property_defer_directive_dominates_verifies() {
+        // Per Mara Q-Mara-D: `defer` marks property as deferred with
+        // the given message; dispatch returns Defer(msg) regardless
+        // of verifies_source.
+        let mut prop = spec_property_verifies("deferred", "true");
+        prop.defer_message = Some("pillar V+ authorship territory".to_string());
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_defer());
+        if let Verdict::Defer(msg) = v {
+            assert_eq!(msg, "pillar V+ authorship territory");
+        }
+    }
+
+    #[test]
+    fn dispatch_spec_property_unrecognized_verifies_defers_with_iter_4_message() {
+        let prop = spec_property_verifies(
+            "algedonic_shape",
+            "commutator_norm(a, b) > theta",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_defer());
+        if let Verdict::Defer(msg) = v {
+            assert!(
+                msg.contains("iter 4+"),
+                "Defer message MUST name iter 4+ authorship territory; got {:?}",
+                msg
+            );
+            assert!(msg.contains("algedonic_shape"));
+        }
     }
 
     #[test]
