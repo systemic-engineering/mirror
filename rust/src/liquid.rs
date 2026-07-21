@@ -811,6 +811,82 @@ pub fn dispatch_spec_property(prop: &SpecProperty, args: &[String]) -> Verdict {
         }
     }
 
+    // Arm 7: TRUE Fiber<T>-flow via pillar::algedonic + LiquidTestBundle
+    // Commutator. Shape: `bundle_commutator(strategy_a=<u8>,
+    // strategy_b=<u8>, theta=<f64>)`. Constructs two LiquidTestBundle
+    // instances at prismqueer::bundle::examples altitude, forms a
+    // Commutator between them at default state [0.0; 4], invokes
+    // pillar::algedonic (which takes &Commutator not raw magnitude),
+    // converts PropertyVerdict → Verdict.
+    //
+    // Substrate-honest FLOW altitude per Alex 2026-07-21 correction:
+    // LiquidTestBundle::Transport::transport returns Imperfect<State,
+    // Infallible, ScalarLoss>. Liquid<ScalarLoss> flows through
+    // Fiber<[f64;4]> per the Bundle Tower supertrait chain
+    // (Transport → Gauge → Connection → Fiber → State). This IS
+    // Fiber<T> sampling, not stepping-stone on raw magnitudes.
+    //
+    // Non-abelian semantic property: LiquidTestBundle transport loss
+    // depends on strategy.value() NOT state, so commutator between two
+    // bundles with SAME strategy vanishes (both produce identical
+    // holonomy → metric distance zero → Fail). Commutator between
+    // DIFFERENT strategies produces non-vanishing holonomy (metric
+    // distance non-zero → algedonic Pass/Partial).
+    if let Some(rest) = verifies.strip_prefix("bundle_commutator(") {
+        if let Some(paren_end) = rest.rfind(')') {
+            let args_source = rest[..paren_end].trim();
+            let parts: Vec<&str> = args_source.split(',').map(str::trim).collect();
+            if parts.len() != 3 {
+                return Verdict::Fail(format!(
+                    "property `{}` verifies bundle_commutator requires exactly 3 args (strategy_a, strategy_b, theta); got {}",
+                    prop.name, parts.len()
+                ));
+            }
+            let strategy_a: u8 = match parts[0].parse() {
+                Ok(v) => v,
+                Err(_) => {
+                    return Verdict::Fail(format!(
+                        "property `{}` verifies bundle_commutator strategy_a `{}` is not a valid u8",
+                        prop.name, parts[0]
+                    ));
+                }
+            };
+            let strategy_b: u8 = match parts[1].parse() {
+                Ok(v) => v,
+                Err(_) => {
+                    return Verdict::Fail(format!(
+                        "property `{}` verifies bundle_commutator strategy_b `{}` is not a valid u8",
+                        prop.name, parts[1]
+                    ));
+                }
+            };
+            let theta: f64 = match parts[2].parse() {
+                Ok(v) => v,
+                Err(_) => {
+                    return Verdict::Fail(format!(
+                        "property `{}` verifies bundle_commutator theta `{}` is not a valid f64",
+                        prop.name, parts[2]
+                    ));
+                }
+            };
+            if theta < 0.0 {
+                return Verdict::Fail(format!(
+                    "property `{}` verifies bundle_commutator requires non-negative theta; got {}",
+                    prop.name, theta
+                ));
+            }
+            // Construct two LiquidTestBundle instances at the Bundle
+            // Tower altitude. Strategy values wrap mod 4 per Cyclic<4>.
+            let bundle_a = prismqueer::bundle::examples::LiquidTestBundle::with_strategy(strategy_a);
+            let bundle_b = prismqueer::bundle::examples::LiquidTestBundle::with_strategy(strategy_b);
+            let state: [f64; 4] = [0.0, 0.0, 0.0, 0.0];
+            let commutator = prismqueer::liquid::commutator(&bundle_a, &bundle_b, &state);
+            let theta_holonomy = prismqueer::ScalarLoss::new(theta);
+            let pv = prismqueer::liquid::pillar::algedonic(&commutator, &theta_holonomy);
+            return property_verdict_to_verdict(pv, &prop.name);
+        }
+    }
+
     // Unrecognized verifies-shape: defer to iter 4+ authorship territory.
     Verdict::Defer(format!(
         "property `{}` verifies-shape `{}` not yet dispatched at iter 3; iter 4+ arms forward-promised per Mara §2.3 dispatch table (algedonic/viability/health/fold/forall)",
@@ -2558,6 +2634,119 @@ project demo {
             assert!(msg.contains("unknown verdict token"));
             assert!(msg.contains("maybe"));
         }
+    }
+
+    // -----------------------------------------------------------------
+    // dispatch_spec_property arm 7: TRUE Fiber<T>-flow via
+    // pillar::algedonic with LiquidTestBundle Commutator per Alex
+    // 2026-07-21 correction. Culminating iter 13: closes the
+    // stepping-stone-to-full-flow arc.
+    // -----------------------------------------------------------------
+
+    #[test]
+    fn dispatch_spec_property_bundle_commutator_same_strategy_vanishes_to_fail() {
+        // Same strategy → commutator vanishes → magnitude zero → Fail.
+        let prop = spec_property_verifies(
+            "bundle_same_strategy",
+            "bundle_commutator(1, 1, 0.5)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_fail(), "same-strategy commutator vanishes; got {:?}", v);
+    }
+
+    #[test]
+    fn dispatch_spec_property_bundle_commutator_different_strategy_above_theta_passes() {
+        // Different strategies with LiquidTestBundle: transport loss
+        // depends on strategy.value() as f64. Commutator between
+        // strategies 1 and 3: metric distance between two ScalarLoss
+        // values (1.0 vs 3.0) is 2.0. theta=0.5 → magnitude 2.0 > 0.5
+        // → Pass.
+        let prop = spec_property_verifies(
+            "bundle_strong_signal",
+            "bundle_commutator(1, 3, 0.5)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_pass(), "different-strategy magnitude > theta; got {:?}", v);
+    }
+
+    #[test]
+    fn dispatch_spec_property_bundle_commutator_below_theta_defers_partial() {
+        // Commutator magnitude between strategies 1+2 = |1-2| = 1.0.
+        // theta=5.0 → magnitude 1.0 <= 5.0, non-zero → Partial → Defer.
+        let prop = spec_property_verifies(
+            "bundle_weak_signal",
+            "bundle_commutator(1, 2, 5.0)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(
+            v.is_defer(),
+            "below-threshold non-zero magnitude → Partial → Defer; got {:?}",
+            v
+        );
+    }
+
+    #[test]
+    fn dispatch_spec_property_bundle_commutator_wrong_arity_returns_fail() {
+        let prop = spec_property_verifies(
+            "bundle_bad_arity",
+            "bundle_commutator(1, 2)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_fail());
+        if let Verdict::Fail(msg) = v {
+            assert!(msg.contains("exactly 3 args"));
+        }
+    }
+
+    #[test]
+    fn dispatch_spec_property_bundle_commutator_bad_strategy_returns_fail() {
+        let prop = spec_property_verifies(
+            "bundle_bad_strategy",
+            "bundle_commutator(hello, 2, 0.5)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_fail());
+        if let Verdict::Fail(msg) = v {
+            assert!(msg.contains("strategy_a"));
+            assert!(msg.contains("not a valid u8"));
+        }
+    }
+
+    #[test]
+    fn dispatch_spec_property_bundle_commutator_negative_theta_returns_fail() {
+        let prop = spec_property_verifies(
+            "bundle_negative_theta",
+            "bundle_commutator(1, 2, -0.5)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_fail());
+        if let Verdict::Fail(msg) = v {
+            assert!(msg.contains("non-negative theta"));
+        }
+    }
+
+    #[test]
+    fn dispatch_spec_property_bundle_commutator_strategy_wraps_mod_4() {
+        // Cyclic<4> wraps: strategy 5 = strategy 1 mod 4. So
+        // bundle_commutator(5, 5, 0.5) behaves like (1, 1, 0.5)
+        // → same strategy → vanishes → Fail.
+        let prop = spec_property_verifies(
+            "bundle_wrap",
+            "bundle_commutator(5, 5, 0.5)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_fail(), "Cyclic<4> wrap 5==1; got {:?}", v);
+    }
+
+    #[test]
+    fn dispatch_spec_property_bundle_commutator_zero_theta_edge_case() {
+        // theta=0.0 and magnitude>0 → magnitude > 0 == true → Pass.
+        let prop = spec_property_verifies(
+            "bundle_zero_theta",
+            "bundle_commutator(0, 1, 0.0)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_pass(), "got {:?}", v);
     }
 
     #[test]
