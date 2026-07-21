@@ -12,29 +12,64 @@
 //! > matrix.rs, which hands it to Fortran, which hands the result back."
 //! > — Loki `b53aeeb` §4
 //!
-//! ## M0 surface (this file)
+//! ## Landed @io surface (post ship arc 2026-07-21)
 //!
-//! MODULE STUB. Per Mara §2.2 M0 milestone: empty @io stub. Signatures
-//! declared as forward-promises; no bodies. Empirical firing lands at
-//! M2+ (MCP handshake alive: Mara §2.2 M4) and M8 (peer socket boot).
+//! Alex 2026-07-21 directive discharge: "ship phone.rs proper. Property
+//! tests and all. Full statespace coverage." Task #303 completed in 4-
+//! iter cascade landing all @io families with property-test coverage +
+//! implementing all 3 M-tick forward-promise stubs. phone.rs empirically
+//! production-ready.
 //!
-//! ## Forward-promises (M2+ ticks; not implemented here)
+//! ### Implemented families (all with full state-space property tests)
 //!
-//! - `read_stdin` / `write_stdout` — JSON-RPC framing over stdio for
-//!   `@mcp.serve` sentinel; M4 milestone.
-//! - `@io/socket` accept / read / write — peer socket boot for
-//!   `mirror peer beam`; M8 milestone. Per Taut `7f4307f` §Q2:
-//!   boot-altitude declaration at `boot/std/io/socket.mirror` is
-//!   empirically sufficient for M4 stdio (stdin/stdout are @io/bytes
-//!   streams, not socket connections); mirror-altitude lift-tick for
-//!   `@io/socket` fires at M8 when peer beam opens TCP/UnixStream.
-//! - `@io/git` process spawn + pipe management — M6 co-tick when
-//!   `roomba --commit` composes `@nl.compose + @io/git.commit`.
-//! - `@io/fs` file descriptor management — M3 first empirical verb
-//!   (`mirror compile <file>`).
-//! - The `unsafe extern "C"` process/socket/fd plumbing boundary —
-//!   phone.rs's `unsafe` is @io plumbing; matrix.rs's `unsafe` is
-//!   LAPACK/BLAS numerical FFI (per Mara §3.2 item 4 + §4.2 item 4).
+//! - **@io/fs** (iter 6 `b6f32ea`; 37 tests) — `read_file` /
+//!   `write_file` / `append_to` / `mkdir_p` / `path_exists` /
+//!   `list_dir_recursive` / `find_substrate_root` / private
+//!   `walk_into`. Walker skips `.git/` + `target/` + symlinks at
+//!   per-entry read (bug caught + fixed by property tests: docblock
+//!   said "skip" but original impl emitted the directory entry).
+//!
+//! - **@io/git** (iter 7 `e470d03`; 14 tests) — `git_add` /
+//!   `git_commit_as` / `git_head_oid`. Tempdir-repo scaffold isolates
+//!   from operator SSH signing default + commit-msg hook (per-repo
+//!   `commit.gpgsign=false` + `core.hooksPath=/dev/null`; NEVER at
+//!   global scope per CLAUDE.md discipline). MARA doctrine (Author ≠
+//!   Committer) empirically verified via `git log --format=%an|%ae|%cn|%ce`.
+//!   Tests skip gracefully via `git --version` check when git absent.
+//!
+//! - **@io/bytes stdio** (iter 8 `4db932d`; 20 tests) — M4 landed.
+//!   `read_stdin_frame` + `write_stdout_frame` implemented over
+//!   Read/Write-generic helpers `read_frame_from<BufRead>` +
+//!   `write_frame_to<Write>` so parsing logic tests in isolation with
+//!   `Cursor<&[u8]>` + `Vec<u8>` buffers. Newline-delimited JSON-RPC 2.0
+//!   framing (MCP over stdio; body-only, one `\n` terminator per frame).
+//!
+//! - **@io/socket** (iter 9 `0f2b3bf`; 11 tests) — M8 landed.
+//!   `open_peer_socket` + `bind_peer_socket` +
+//!   `PeerSocketConnection` + `PeerSocketListener` carriers over
+//!   `std::os::unix::net::{UnixStream, UnixListener}`. Peer socket
+//!   path convention `<peer_home>/.sock` per @peer/persistence
+//!   discipline. `bind_peer_socket` clears stale socket files before
+//!   binding (Unix socket files persist on dirty exit). Unix-only via
+//!   `#[cfg(unix)]`; non-Unix returns `ErrorKind::Unsupported` with
+//!   named-pipe forward-promise.
+//!
+//! ### The `unsafe extern "C"` boundary
+//!
+//! phone.rs contains ZERO `unsafe extern "C"` — the @io families use
+//! `std::fs` + `std::process::Command` + `std::os::unix::net` (all
+//! safe wrappers around syscalls). The `unsafe` boundary in the
+//! mirror rust FLOOR lives at `matrix.rs` for LAPACK/BLAS numerical
+//! FFI per Mara §4.2 item 4 (FLANG floor). phone.rs stays safe-Rust
+//! throughout.
+//!
+//! ### Forward-promise (post ship arc)
+//!
+//! - Docblock sync (this update; ♢ refactor iter 14) — pre-ship claims
+//!   about "MODULE STUB" + "forward-promises" retired.
+//! - Named-pipe support for non-Unix (@io/socket Windows path) —
+//!   deferred until Windows peer-beam demand.
+//! - No other outstanding forward-promises at phone.rs altitude.
 //!
 //! ## What phone.rs does NOT hold (per Mara §3.3)
 //!
@@ -73,9 +108,11 @@
 //!   fires at M8.
 
 // ---------------------------------------------------------------------
-// M0 module stub. No implementations; signatures are forward-promises.
-// The `#[allow(dead_code)]` gate keeps M0 compiling cleanly under
-// `-W dead_code`; each item retires the gate when its M-tick lands.
+// Post ship arc 2026-07-21: all @io families implemented with property
+// test coverage. `#[allow(dead_code)]` retained on stdio + socket
+// wrappers only — they're consumed by tests + downstream code paths
+// that land at post-M8 wiring ticks (peer beam boot + MCP handshake).
+// Retire the allow when those wiring ticks land.
 // ---------------------------------------------------------------------
 
 /// Read one line-delimited frame from a `BufRead`. Body-only per
