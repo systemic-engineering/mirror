@@ -599,11 +599,98 @@ pub fn dispatch_spec_property(prop: &SpecProperty, args: &[String]) -> Verdict {
         }
     }
 
+    // Arm 4: algedonic threshold on raw Loss magnitudes. Shape:
+    // `algedonic(<magnitude>, <theta>)` where both are f64 literals.
+    // Dispatches to prismqueer::liquid::pillar::algedonic_of_magnitude
+    // per Mara §2.3 dispatch table row 1 (commutator_norm shape).
+    // This is the Rice-safe stepping-stone form — raw magnitudes,
+    // no Fiber<T> sampling. Full Fiber<T>-flow via pillar::algedonic
+    // with LiquidTestBundle commutators forward-promised iter 11+.
+    if let Some(rest) = verifies.strip_prefix("algedonic(") {
+        if let Some(paren_end) = rest.rfind(')') {
+            let args_source = rest[..paren_end].trim();
+            let parts: Vec<&str> = args_source.split(',').map(str::trim).collect();
+            if parts.len() != 2 {
+                return Verdict::Fail(format!(
+                    "property `{}` verifies algedonic(mag, theta) requires exactly 2 args; got {}",
+                    prop.name, parts.len()
+                ));
+            }
+            let magnitude: f64 = match parts[0].parse() {
+                Ok(v) => v,
+                Err(_) => {
+                    return Verdict::Fail(format!(
+                        "property `{}` verifies algedonic magnitude `{}` is not a valid f64",
+                        prop.name, parts[0]
+                    ));
+                }
+            };
+            let theta: f64 = match parts[1].parse() {
+                Ok(v) => v,
+                Err(_) => {
+                    return Verdict::Fail(format!(
+                        "property `{}` verifies algedonic theta `{}` is not a valid f64",
+                        prop.name, parts[1]
+                    ));
+                }
+            };
+            // ScalarLoss carries the invariant magnitude ≥ 0; guard
+            // before construction to surface the substrate-honest
+            // domain error instead of panicking.
+            if magnitude < 0.0 || theta < 0.0 {
+                return Verdict::Fail(format!(
+                    "property `{}` verifies algedonic requires non-negative magnitudes; got magnitude={} theta={}",
+                    prop.name, magnitude, theta
+                ));
+            }
+            let mag_loss = prismqueer::ScalarLoss::new(magnitude);
+            let theta_loss = prismqueer::ScalarLoss::new(theta);
+            let pv = prismqueer::liquid::pillar::algedonic_of_magnitude(&mag_loss, &theta_loss);
+            return property_verdict_to_verdict(pv, &prop.name);
+        }
+    }
+
     // Unrecognized verifies-shape: defer to iter 4+ authorship territory.
     Verdict::Defer(format!(
         "property `{}` verifies-shape `{}` not yet dispatched at iter 3; iter 4+ arms forward-promised per Mara §2.3 dispatch table (algedonic/viability/health/fold/forall)",
         prop.name, verifies
     ))
+}
+
+/// Convert a `terni::PropertyVerdict` (Pass / Fail(Diagnostic) /
+/// Partial { confidence, diagnostics }) into a mirror `Verdict`
+/// (Pass / Fail(String) / Defer(String)).
+///
+/// Mapping:
+/// - `PropertyVerdict::Pass` → `Verdict::Pass`
+/// - `PropertyVerdict::Fail(diag)` → `Verdict::Fail(msg)` with diag.msg
+/// - `PropertyVerdict::Partial { confidence, diagnostics }` →
+///   `Verdict::Defer(msg)` — Partial is neither Pass nor Fail; Defer
+///   is the closest Verdict variant carrying the uncertainty +
+///   confidence + diagnostics summary.
+fn property_verdict_to_verdict(pv: prismqueer::PropertyVerdict, prop_name: &str) -> Verdict {
+    use prismqueer::PropertyVerdict as PV;
+    match pv {
+        PV::Pass => Verdict::Pass,
+        PV::Fail(diag) => Verdict::Fail(format!(
+            "property `{}` failed: {:?}",
+            prop_name, diag
+        )),
+        PV::Partial {
+            confidence,
+            diagnostics,
+        } => {
+            let diag_str = diagnostics
+                .iter()
+                .map(|d| format!("{:?}", d))
+                .collect::<Vec<_>>()
+                .join("; ");
+            Verdict::Defer(format!(
+                "property `{}` partial (confidence={:.2}): {}",
+                prop_name, confidence, diag_str
+            ))
+        }
+    }
 }
 
 // =====================================================================
@@ -1877,7 +1964,7 @@ project demo {
     #[test]
     fn dispatch_spec_property_unrecognized_verifies_defers_with_iter_4_message() {
         let prop = spec_property_verifies(
-            "algedonic_shape",
+            "unknown_shape",
             "commutator_norm(a, b) > theta",
         );
         let v = dispatch_spec_property(&prop, &[]);
@@ -1888,8 +1975,129 @@ project demo {
                 "Defer message MUST name iter 4+ authorship territory; got {:?}",
                 msg
             );
-            assert!(msg.contains("algedonic_shape"));
+            assert!(msg.contains("unknown_shape"));
         }
+    }
+
+    // -----------------------------------------------------------------
+    // dispatch_spec_property arm 4: algedonic_of_magnitude (Fiber<T>-
+    // sampling STEPPING STONE per Mara §2.3 dispatch table row 1).
+    // Raw magnitudes, no bundle sampling; full Fiber<T>-flow via
+    // pillar::algedonic with LiquidTestBundle commutators forward-
+    // promised iter 11+.
+    // -----------------------------------------------------------------
+
+    #[test]
+    fn dispatch_spec_property_algedonic_magnitude_above_theta_returns_pass() {
+        let prop = spec_property_verifies(
+            "algedonic_strong_signal",
+            "algedonic(5.0, 3.0)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(
+            v.is_pass(),
+            "algedonic(5.0, 3.0): magnitude > theta MUST Pass; got {:?}",
+            v
+        );
+    }
+
+    #[test]
+    fn dispatch_spec_property_algedonic_zero_magnitude_returns_fail() {
+        let prop = spec_property_verifies(
+            "algedonic_no_signal",
+            "algedonic(0.0, 3.0)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(
+            v.is_fail(),
+            "algedonic(0.0, 3.0): zero magnitude MUST Fail; got {:?}",
+            v
+        );
+    }
+
+    #[test]
+    fn dispatch_spec_property_algedonic_between_zero_and_theta_defers_partial() {
+        let prop = spec_property_verifies(
+            "algedonic_below_threshold",
+            "algedonic(1.5, 3.0)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(
+            v.is_defer(),
+            "algedonic(1.5, 3.0): 0 < mag <= theta MUST Defer (Partial); got {:?}",
+            v
+        );
+        if let Verdict::Defer(msg) = v {
+            assert!(msg.contains("algedonic_below_threshold"));
+            assert!(msg.contains("partial"));
+        }
+    }
+
+    #[test]
+    fn dispatch_spec_property_algedonic_wrong_arity_returns_fail() {
+        let prop = spec_property_verifies(
+            "algedonic_bad_arity",
+            "algedonic(5.0)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_fail());
+        if let Verdict::Fail(msg) = v {
+            assert!(msg.contains("exactly 2 args"));
+        }
+    }
+
+    #[test]
+    fn dispatch_spec_property_algedonic_non_numeric_returns_fail() {
+        let prop = spec_property_verifies(
+            "algedonic_bad_number",
+            "algedonic(hello, 3.0)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_fail());
+        if let Verdict::Fail(msg) = v {
+            assert!(msg.contains("not a valid f64"));
+        }
+    }
+
+    #[test]
+    fn dispatch_spec_property_algedonic_negative_magnitude_returns_fail() {
+        // ScalarLoss invariant: magnitude ≥ 0. Dispatch guards against
+        // negative values before constructing the Loss, surfacing a
+        // substrate-honest domain error instead of panicking.
+        let prop = spec_property_verifies(
+            "algedonic_negative",
+            "algedonic(-1.0, 3.0)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(
+            v.is_fail(),
+            "algedonic(-1.0, 3.0): negative MUST Fail (ScalarLoss invariant); got {:?}",
+            v
+        );
+        if let Verdict::Fail(msg) = v {
+            assert!(msg.contains("non-negative"));
+        }
+    }
+
+    #[test]
+    fn dispatch_spec_property_algedonic_large_magnitude_passes() {
+        let prop = spec_property_verifies(
+            "algedonic_huge",
+            "algedonic(1000000.0, 0.001)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_pass());
+    }
+
+    #[test]
+    fn dispatch_spec_property_algedonic_integer_literal_parses() {
+        // f64::parse accepts integer literals (they parse as f64 too).
+        let prop = spec_property_verifies(
+            "algedonic_int_literals",
+            "algedonic(5, 3)",
+        );
+        let v = dispatch_spec_property(&prop, &[]);
+        assert!(v.is_pass(), "got {:?}", v);
     }
 
     #[test]
