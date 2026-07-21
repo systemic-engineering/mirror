@@ -848,3 +848,365 @@ mod fs_prop_tests {
         f.write_all(bytes)
     }
 }
+
+// =====================================================================
+// @io/git property tests — tempdir-repo full state-space coverage.
+//
+// Iter 7 of phone.rs ship arc (task #303). Covers git_add / git_commit_as
+// / git_head_oid via tempdir git init scaffold with per-repo
+// commit.gpgsign=false to isolate from operator SSH signing default
+// (CLAUDE.md: NEVER override gpg.format or user.signingkey at global
+// scope; per-repo test-only override is safe).
+//
+// Tests skip gracefully via early return when `git` binary is not
+// available on PATH — CI + dev environments without git installed
+// remain green; environments with git installed exercise the full
+// state space.
+// =====================================================================
+
+#[cfg(test)]
+mod git_prop_tests {
+    use super::*;
+    use fractal::Subject;
+    use std::process::Command;
+    use tempfile::TempDir;
+
+    /// True iff `git --version` succeeds — gates the test on git
+    /// availability. Tests early-return Ok when git missing.
+    fn git_available() -> bool {
+        Command::new("git")
+            .arg("--version")
+            .output()
+            .map(|o| o.status.success())
+            .unwrap_or(false)
+    }
+
+    /// Initialize an empty git repo in a fresh tempdir. Disables
+    /// commit.gpgsign per-repo so tests don't depend on operator
+    /// signing keys. Sets a default branch to `main` for consistency
+    /// across git versions. Returns the tempdir (drop cleans up).
+    fn fresh_repo() -> Option<TempDir> {
+        if !git_available() {
+            return None;
+        }
+        let tmp = TempDir::new().unwrap();
+        let out = Command::new("git")
+            .args(["init", "-q", "--initial-branch=main"])
+            .current_dir(tmp.path())
+            .output()
+            .unwrap();
+        if !out.status.success() {
+            // Older git may not support --initial-branch; retry
+            // without and rename manually.
+            let out2 = Command::new("git")
+                .args(["init", "-q"])
+                .current_dir(tmp.path())
+                .output()
+                .unwrap();
+            assert!(out2.status.success(), "git init failed");
+        }
+        // Disable signing per-repo (belt-and-suspenders vs operator
+        // global default).
+        let out = Command::new("git")
+            .args(["config", "commit.gpgsign", "false"])
+            .current_dir(tmp.path())
+            .output()
+            .unwrap();
+        assert!(out.status.success(), "git config gpgsign=false failed");
+        let out = Command::new("git")
+            .args(["config", "tag.gpgsign", "false"])
+            .current_dir(tmp.path())
+            .output()
+            .unwrap();
+        assert!(out.status.success(), "git config tag.gpgsign=false failed");
+        // Isolate tests from operator's global commit-msg hook (which
+        // enforces phase markers, etc.). Property tests exercise the
+        // git_commit_as SURFACE, not the operator's commit policy.
+        let out = Command::new("git")
+            .args(["config", "core.hooksPath", "/dev/null"])
+            .current_dir(tmp.path())
+            .output()
+            .unwrap();
+        assert!(out.status.success(), "git config core.hooksPath=/dev/null failed");
+        Some(tmp)
+    }
+
+    fn test_subject(name: &str, email: &str) -> Subject {
+        Subject::human(name, email)
+    }
+
+    fn test_author() -> Subject {
+        test_subject("Author", "author@systemic.engineer")
+    }
+
+    fn test_committer() -> Subject {
+        test_subject("Committer", "committer@systemic.engineer")
+    }
+
+    // ---------- git_head_oid: empty vs after-commit ------------------
+
+    #[test]
+    fn git_head_oid_errors_on_empty_repo() {
+        let Some(tmp) = fresh_repo() else { return };
+        let result = git_head_oid(tmp.path());
+        assert!(
+            result.is_err(),
+            "empty repo has no HEAD; expected err; got {result:?}"
+        );
+    }
+
+    #[test]
+    fn git_head_oid_returns_forty_char_sha_after_commit() {
+        let Some(tmp) = fresh_repo() else { return };
+        // Stage a file and commit via git directly (bypassing our
+        // git_commit_as to keep this test scoped to git_head_oid).
+        write_file(&tmp.path().join("f.txt"), "seed").unwrap();
+        Command::new("git")
+            .args(["add", "f.txt"])
+            .current_dir(tmp.path())
+            .output()
+            .unwrap();
+        Command::new("git")
+            .args([
+                "-c", "user.name=T", "-c", "user.email=t@t",
+                "commit", "-m", "seed", "--no-gpg-sign",
+            ])
+            .current_dir(tmp.path())
+            .output()
+            .unwrap();
+        let oid = git_head_oid(tmp.path()).unwrap();
+        assert_eq!(oid.len(), 40, "expected 40-char sha; got `{oid}`");
+        assert!(oid.chars().all(|c| c.is_ascii_hexdigit()));
+    }
+
+    #[test]
+    fn git_head_oid_errors_on_non_git_directory() {
+        let tmp = TempDir::new().unwrap();
+        // no git init — not a git repo
+        assert!(git_head_oid(tmp.path()).is_err());
+    }
+
+    // ---------- git_add: real file / nonexistent / outside-root ------
+
+    #[test]
+    fn git_add_stages_existing_file_in_repo() {
+        let Some(tmp) = fresh_repo() else { return };
+        let file = tmp.path().join("staged.txt");
+        write_file(&file, "content").unwrap();
+        git_add(tmp.path(), &file).unwrap();
+        // Verify staged via `git diff --cached --name-only`.
+        let out = Command::new("git")
+            .args(["diff", "--cached", "--name-only"])
+            .current_dir(tmp.path())
+            .output()
+            .unwrap();
+        let staged = String::from_utf8_lossy(&out.stdout);
+        assert!(
+            staged.contains("staged.txt"),
+            "expected staged.txt in staged files; got {staged:?}"
+        );
+    }
+
+    #[test]
+    fn git_add_errors_on_nonexistent_file() {
+        let Some(tmp) = fresh_repo() else { return };
+        let missing = tmp.path().join("never_created.txt");
+        let result = git_add(tmp.path(), &missing);
+        assert!(
+            result.is_err(),
+            "nonexistent file must error; got {result:?}"
+        );
+    }
+
+    #[test]
+    fn git_add_relativizes_absolute_path_under_repo() {
+        // git_add strips repo_root prefix from abs_path to obtain rel.
+        // Verify the strip works: absolute path within repo → staged
+        // via relative name.
+        let Some(tmp) = fresh_repo() else { return };
+        let sub_dir = tmp.path().join("src");
+        mkdir_p(&sub_dir).unwrap();
+        let abs_file = sub_dir.join("deep.rs");
+        write_file(&abs_file, "fn main() {}").unwrap();
+        git_add(tmp.path(), &abs_file).unwrap();
+        let out = Command::new("git")
+            .args(["diff", "--cached", "--name-only"])
+            .current_dir(tmp.path())
+            .output()
+            .unwrap();
+        let staged = String::from_utf8_lossy(&out.stdout);
+        assert!(
+            staged.contains("src/deep.rs"),
+            "expected src/deep.rs in staged; got {staged:?}"
+        );
+    }
+
+    // ---------- git_commit_as: full pipeline ------------------------
+
+    #[test]
+    fn git_commit_as_produces_head_oid_after_commit() {
+        let Some(tmp) = fresh_repo() else { return };
+        let file = tmp.path().join("f.txt");
+        write_file(&file, "content").unwrap();
+        git_add(tmp.path(), &file).unwrap();
+        let author = test_author();
+        let committer = test_committer();
+        let oid = git_commit_as(tmp.path(), &author, &committer, "first commit")
+            .unwrap();
+        assert_eq!(oid.len(), 40);
+        assert_eq!(oid, git_head_oid(tmp.path()).unwrap());
+    }
+
+    #[test]
+    fn git_commit_as_preserves_author_committer_split() {
+        // MARA doctrine: Author ≠ Committer. Verify both identities
+        // land distinct on the commit object.
+        let Some(tmp) = fresh_repo() else { return };
+        let file = tmp.path().join("f.txt");
+        write_file(&file, "content").unwrap();
+        git_add(tmp.path(), &file).unwrap();
+        let author = test_author();
+        let committer = test_committer();
+        git_commit_as(tmp.path(), &author, &committer, "split test").unwrap();
+        // Verify via `git log --format=%an|%ae|%cn|%ce -1`.
+        let out = Command::new("git")
+            .args(["log", "--format=%an|%ae|%cn|%ce", "-1"])
+            .current_dir(tmp.path())
+            .output()
+            .unwrap();
+        let line = String::from_utf8_lossy(&out.stdout);
+        let line = line.trim();
+        let parts: Vec<&str> = line.split('|').collect();
+        assert_eq!(parts.len(), 4, "expected 4 fields; got {parts:?}");
+        assert_eq!(parts[0], "Author", "author name mismatch");
+        assert_eq!(parts[1], "author@systemic.engineer", "author email mismatch");
+        assert_eq!(parts[2], "Committer", "committer name mismatch");
+        assert_eq!(parts[3], "committer@systemic.engineer", "committer email mismatch");
+    }
+
+    #[test]
+    fn git_commit_as_same_subject_as_author_and_committer_produces_matching_pair() {
+        // Common case: mirror authoring pheromone deposits where author
+        // and committer are the same @subject. Both projections
+        // coincide but the carrier remains type-level distinct.
+        let Some(tmp) = fresh_repo() else { return };
+        let file = tmp.path().join("f.txt");
+        write_file(&file, "c").unwrap();
+        git_add(tmp.path(), &file).unwrap();
+        let sub = test_subject("Mirror", "mirror@systemic.engineer");
+        git_commit_as(tmp.path(), &sub, &sub, "coincident commit").unwrap();
+        let out = Command::new("git")
+            .args(["log", "--format=%an|%ae|%cn|%ce", "-1"])
+            .current_dir(tmp.path())
+            .output()
+            .unwrap();
+        let line = String::from_utf8_lossy(&out.stdout);
+        let line = line.trim();
+        let parts: Vec<&str> = line.split('|').collect();
+        assert_eq!(parts[0], parts[2], "author name == committer name");
+        assert_eq!(parts[1], parts[3], "author email == committer email");
+        assert_eq!(parts[0], "Mirror");
+        assert_eq!(parts[1], "mirror@systemic.engineer");
+    }
+
+    #[test]
+    fn git_commit_as_supports_multiline_utf8_message() {
+        let Some(tmp) = fresh_repo() else { return };
+        let file = tmp.path().join("f.txt");
+        write_file(&file, "c").unwrap();
+        git_add(tmp.path(), &file).unwrap();
+        let msg = "first line\n\nbody line 1\nbody line 2 with unicode 🌱\n";
+        let author = test_author();
+        let committer = test_committer();
+        git_commit_as(tmp.path(), &author, &committer, msg).unwrap();
+        let out = Command::new("git")
+            .args(["log", "--format=%B", "-1"])
+            .current_dir(tmp.path())
+            .output()
+            .unwrap();
+        let logged = String::from_utf8_lossy(&out.stdout);
+        assert!(logged.contains("first line"));
+        assert!(logged.contains("body line 1"));
+        assert!(logged.contains("body line 2 with unicode"));
+        assert!(logged.contains("🌱"));
+    }
+
+    #[test]
+    fn git_commit_as_errors_on_empty_message() {
+        let Some(tmp) = fresh_repo() else { return };
+        let file = tmp.path().join("f.txt");
+        write_file(&file, "c").unwrap();
+        git_add(tmp.path(), &file).unwrap();
+        let author = test_author();
+        let committer = test_committer();
+        let result = git_commit_as(tmp.path(), &author, &committer, "");
+        assert!(
+            result.is_err(),
+            "empty message must error (git rejects); got {result:?}"
+        );
+    }
+
+    #[test]
+    fn git_commit_as_errors_on_nothing_staged() {
+        let Some(tmp) = fresh_repo() else { return };
+        // No staged file; git commit fails.
+        let author = test_author();
+        let committer = test_committer();
+        let result = git_commit_as(tmp.path(), &author, &committer, "nothing to commit");
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn git_commit_as_sequence_produces_distinct_head_oids() {
+        let Some(tmp) = fresh_repo() else { return };
+        let author = test_author();
+        let committer = test_committer();
+        let f1 = tmp.path().join("a.txt");
+        write_file(&f1, "a").unwrap();
+        git_add(tmp.path(), &f1).unwrap();
+        let oid1 = git_commit_as(tmp.path(), &author, &committer, "first").unwrap();
+
+        let f2 = tmp.path().join("b.txt");
+        write_file(&f2, "b").unwrap();
+        git_add(tmp.path(), &f2).unwrap();
+        let oid2 = git_commit_as(tmp.path(), &author, &committer, "second").unwrap();
+
+        assert_ne!(oid1, oid2, "distinct commits must have distinct OIDs");
+        assert_eq!(oid2, git_head_oid(tmp.path()).unwrap());
+    }
+
+    // ---------- content-round-trip: full add + commit + verify ------
+
+    #[test]
+    fn git_add_and_commit_flow_produces_visible_history_entry() {
+        let Some(tmp) = fresh_repo() else { return };
+        let author = test_author();
+        let committer = test_committer();
+        // Two files across two commits.
+        for (i, (name, content, msg)) in [
+            ("one.txt", "content one", "first commit"),
+            ("two.txt", "content two", "second commit"),
+        ]
+        .iter()
+        .enumerate()
+        {
+            let path = tmp.path().join(name);
+            write_file(&path, content).unwrap();
+            git_add(tmp.path(), &path).unwrap();
+            git_commit_as(tmp.path(), &author, &committer, msg).unwrap();
+            assert_eq!(
+                git_head_oid(tmp.path()).unwrap().len(),
+                40,
+                "HEAD oid after commit {i} must be 40 chars"
+            );
+        }
+        // Verify 2 commits in log.
+        let out = Command::new("git")
+            .args(["rev-list", "--count", "HEAD"])
+            .current_dir(tmp.path())
+            .output()
+            .unwrap();
+        let count = String::from_utf8_lossy(&out.stdout);
+        assert_eq!(count.trim(), "2");
+    }
+}
