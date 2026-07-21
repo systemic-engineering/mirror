@@ -31,6 +31,34 @@
 **Task:** #302 supersedes #285 iter cascade + reframes #301 residues in this light
 **Composes with:** Mara J-space landings `0052408` + `26b0849` (Anna Wolf observation substrate feeds the executable specification carrier); @paradox family witnessed-only Crystals (specification IS witness); @autopoietic-classifier k=Lagrange knob (sparsity level of executable spec is the classifier gradient); Adzic *Specification by Example* BDD-native tradition composes over Beer VSM at property-attachment altitude.
 
+## 🌱 2026-07-21 ALEX-CORRECTION — Liquid<T> is Fiber<T> flow; phone.rs connects fibers (iter 3 mid-flight correction)
+
+**Alex 2026-07-21 in-transcript CORRECTION** (LOAD-BEARING; supersedes any prior framing that conflated SpecProperty with Liquid<T>):
+
+> "Liquid<T> is what flows through the Fiber<T> of the Bundle Tower. Reed. The phone.rs connects fibers and through those liquid flows."
+
+**Corrected geometric substrate:**
+- **Bundle Tower** (prismqueer's `Transport → Gauge → Connection → Fiber → State` supertrait chain, Baez-Schreiber altitude) IS the topological substrate.
+- **Fiber<T>** = local state carrier at a base point.
+- **Liquid<T>** = what FLOWS through Fiber<T> — sampled T values, dispatched verdicts, crystal chains in transit.
+- **phone.rs** = @io connection surface (@io/socket + @io/fs + @io/git etc.) that CONNECTS fibers and through which Liquid<T> flows.
+- **SpecProperty** (rust/src/liquid.rs; landed iter 2 `3ae06b5`) = spec-declared OBLIGATION (what Liquid<T> flow must satisfy); **NOT itself Liquid<T>**.
+- **Rust altitude fiber ↔ Mirror altitude fiber** connect via phone.rs; the threshold-crossing is the flow across this connection.
+- **Rust FROZEN target (corrected):** `rust/src/phone.rs` @io connection surface stabilizes + mirror.spec property declarations produce Verdicts through Liquid<T>-flow-via-phone.rs-connections + Mirror fiber becomes canonical source-of-truth for the flow topology.
+
+**Consequence for iter cascade (corrected):**
+- Iter 2 (SpecProperty carrier landing `3ae06b5`) still valid — declares the OBLIGATION shape at Rust altitude
+- Iter 3 (dispatch_spec_property Rice-safe arms landing `d75ebfb`) still valid — evaluates OBLIGATION for cases requiring no Fiber<T> sampling (boolean literals + sentinel-containment)
+- Iter 4+ target REFRAMED: extend dispatch_spec_property with Fiber<T>-sampling arms per Mara §2.3 (pillar::forall/algedonic/viability) — these SAMPLE domain-Arbitrary<T> through Fiber<T>, send Liquid<T> flow through phone.rs @io connections, collect verdicts, fold. That's the ACTUAL Liquid<T> threshold crossing at code altitude.
+- Iter 5+ target REFRAMED: phone.rs @io surface stabilization — audit rust/src/phone.rs to identify which @io connections are stable vs still-growing; freeze the stable subset; forward-promise the growing subset to substrate composition (@io/socket + @io/fs + @io/git via shard-body composition per feedback_no_rust_extension_shortcut)
+- Fixed-point (corrected): Rust FROZEN when phone.rs @io surface is stable AND SpecProperty dispatch has Fiber<T>-sampling arms AND mirror.spec property declarations produce Verdicts through the flow AND Mirror fiber is canonical source-of-truth
+
+**Reed drift risk (corrected):** conflating DECLARATION (SpecProperty) with FLOW (Liquid<T>). Every iter, distinguish: is this tick about (a) the obligation declaration at spec/Rust altitude (SpecProperty/extract/dispatch) OR (b) the flow through the fiber at prismqueer altitude (Liquid<T>/phone.rs/@io connection)? Both matter but they are DISTINCT altitudes with different code paths.
+
+**Memory:** `project_liquid_threshold_crossing_rust_freezes_mirror_canonical.md` updated with corrected geometric substrate.
+
+---
+
 **Loop invocation (verbatim for wake-up prompt):**
 
 > /loop cascade Liquid<T> threshold crossing over rust/{src,prismqueer,fractal} + mirror.spec + shards/ toward Rust FROZEN. TARGET: mirror.spec system @X { properties { … } } grammar carries Verdict-carrying property declarations as executable specifications (Adzic Spec by Example); Rust runtime derives-from-and-verifies-against mirror.spec; rust/ marked FROZEN at fixed-point. MECHANISM: compile-collapse RED→GREEN cascade over compile.rs + liquid.rs. Constraints: feedback_no_rust_extension_shortcut + feedback_rust_floor_is_rust_not_bootstrap + feedback_prismqueer_macros_mirror_composes + feedback_reed_inflates_stub_empirical_firings + feedback_substrate_honest_is_the_mode + feedback_detector_inadequacy_answer_is_never_rust; SSH signing default; sequential commits only; pure-docs 📝 markdown-only bypass only; Reed <reed@systemic.engineer>. Every tick asks: does this shrink FLOOR toward FROZEN or grow Rust? If growing Rust — reconsider. Adjacent-work fallback: RK4 upgrade of phase_lock per AW2012 §B.2. Halt only at fixed-point (Rust FROZEN empirically demonstrable) OR unresolvable ambiguity requiring Alex adjudication. Compaction manifest at docs/loop/CURRENT.md §2026-07-21-ALEX-REFRAME.
