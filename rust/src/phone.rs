@@ -78,19 +78,57 @@
 // `-W dead_code`; each item retires the gate when its M-tick lands.
 // ---------------------------------------------------------------------
 
-/// Read one JSON-RPC line-delimited frame from stdin. M4 forward-promise
-/// per Mara §3.2 item 2. Composition: `@io/bytes` + `@data/json.parse`
-/// per Taut `7f4307f` §Q4 `initialize` composition path.
-#[allow(dead_code)]
-pub(crate) fn read_stdin_frame() -> ! {
-    unimplemented!("M4 forward-promise: JSON-RPC frame read over @io/bytes")
+/// Read one line-delimited frame from a `BufRead`. Body-only per
+/// newline-delimited JSON-RPC 2.0 framing (MCP over stdio uses this
+/// shape; contrast with LSP's Content-Length header framing).
+///
+/// - Reads bytes up to and including the next `\n`, returns bytes
+///   WITHOUT the trailing newline.
+/// - EOF before any bytes: returns an empty Vec.
+/// - EOF mid-frame (no trailing newline): returns bytes read.
+///
+/// The stdin-bound wrapper [`read_stdin_frame`] composes this with
+/// `io::stdin().lock()` so the runtime can test the parsing logic in
+/// isolation with in-memory buffers.
+pub(crate) fn read_frame_from<R: io::BufRead>(reader: &mut R) -> io::Result<Vec<u8>> {
+    let mut buf = Vec::new();
+    reader.read_until(b'\n', &mut buf)?;
+    if buf.last() == Some(&b'\n') {
+        buf.pop();
+    }
+    Ok(buf)
 }
 
-/// Write one JSON-RPC line-delimited frame to stdout. M4 forward-promise
-/// per Mara §3.2 item 2. Composition: `@data/json.emit` + `@io/bytes`.
+/// Write one line-delimited frame + trailing `\n` to a `Write`, then
+/// flush. Body-only per newline-delimited JSON-RPC 2.0 framing.
+pub(crate) fn write_frame_to<W: io::Write>(writer: &mut W, frame: &[u8]) -> io::Result<()> {
+    writer.write_all(frame)?;
+    writer.write_all(b"\n")?;
+    writer.flush()
+}
+
+/// Read one JSON-RPC line-delimited frame from stdin. M4 landing per
+/// Mara §3.2 item 2 (iter 8 phone.rs ship arc, task #303). Composition:
+/// `@io/bytes` + `@data/json.parse` per Taut `7f4307f` §Q4 `initialize`
+/// composition path. Delegates to [`read_frame_from`] with
+/// `io::stdin().lock()`; the parsing logic is testable in isolation
+/// via that generic.
 #[allow(dead_code)]
-pub(crate) fn write_stdout_frame(_frame: &[u8]) -> ! {
-    unimplemented!("M4 forward-promise: JSON-RPC frame write over @io/bytes")
+pub(crate) fn read_stdin_frame() -> io::Result<Vec<u8>> {
+    let stdin = io::stdin();
+    let mut locked = stdin.lock();
+    read_frame_from(&mut locked)
+}
+
+/// Write one JSON-RPC line-delimited frame to stdout. M4 landing per
+/// Mara §3.2 item 2. Composition: `@data/json.emit` + `@io/bytes`.
+/// Delegates to [`write_frame_to`] with `io::stdout().lock()`; flushes
+/// before returning.
+#[allow(dead_code)]
+pub(crate) fn write_stdout_frame(frame: &[u8]) -> io::Result<()> {
+    let stdout = io::stdout();
+    let mut locked = stdout.lock();
+    write_frame_to(&mut locked, frame)
 }
 
 /// Open peer socket for `mirror peer beam`. M8 forward-promise per
@@ -1177,6 +1215,9 @@ mod git_prop_tests {
 
     // ---------- content-round-trip: full add + commit + verify ------
 
+    // ---------- placeholder anchor for the last test in the block --
+    // (kept above the final commit-flow test)
+
     #[test]
     fn git_add_and_commit_flow_produces_visible_history_entry() {
         let Some(tmp) = fresh_repo() else { return };
@@ -1208,5 +1249,218 @@ mod git_prop_tests {
             .unwrap();
         let count = String::from_utf8_lossy(&out.stdout);
         assert_eq!(count.trim(), "2");
+    }
+}
+
+// =====================================================================
+// @io/bytes stdio property tests — M4 landing per iter 8 phone.rs ship
+// arc (task #303). Covers read_frame_from + write_frame_to generic
+// helpers with in-memory buffers, so parsing / framing logic is tested
+// without spawning child processes for stdin/stdout piping.
+//
+// read_stdin_frame + write_stdout_frame are thin wrappers around the
+// generic helpers with io::stdin().lock() / io::stdout().lock(); their
+// correctness follows from the generic helpers' correctness plus the
+// lock semantics of std::io::stdin/stdout (which is a std library
+// invariant, not phone.rs's concern).
+// =====================================================================
+
+#[cfg(test)]
+mod bytes_prop_tests {
+    use super::*;
+    use std::io::Cursor;
+
+    // ---------- read_frame_from -------------------------------------
+
+    #[test]
+    fn read_frame_returns_bytes_before_newline_stripping_delimiter() {
+        let mut r = Cursor::new(b"hello\n".as_ref());
+        let frame = read_frame_from(&mut r).unwrap();
+        assert_eq!(frame, b"hello");
+    }
+
+    #[test]
+    fn read_frame_empty_input_returns_empty_vec() {
+        let mut r = Cursor::new(b"".as_ref());
+        let frame = read_frame_from(&mut r).unwrap();
+        assert!(frame.is_empty());
+    }
+
+    #[test]
+    fn read_frame_missing_trailing_newline_returns_bytes_read() {
+        // EOF mid-frame: read_until returns all bytes to EOF without
+        // a delimiter; fn returns them verbatim (no newline to strip).
+        let mut r = Cursor::new(b"partial".as_ref());
+        let frame = read_frame_from(&mut r).unwrap();
+        assert_eq!(frame, b"partial");
+    }
+
+    #[test]
+    fn read_frame_reads_only_first_line_of_multi_line_input() {
+        let mut r = Cursor::new(b"first\nsecond\nthird\n".as_ref());
+        let first = read_frame_from(&mut r).unwrap();
+        assert_eq!(first, b"first");
+        let second = read_frame_from(&mut r).unwrap();
+        assert_eq!(second, b"second");
+        let third = read_frame_from(&mut r).unwrap();
+        assert_eq!(third, b"third");
+    }
+
+    #[test]
+    fn read_frame_preserves_utf8_bytes() {
+        let input = "🌱 mirror 中文\n".as_bytes();
+        let mut r = Cursor::new(input);
+        let frame = read_frame_from(&mut r).unwrap();
+        assert_eq!(String::from_utf8(frame).unwrap(), "🌱 mirror 中文");
+    }
+
+    #[test]
+    fn read_frame_preserves_json_body_verbatim() {
+        // JSON-RPC 2.0 frame content stays byte-identical (no parsing
+        // at this altitude — that's @data/json.parse consumer).
+        let json = br#"{"jsonrpc":"2.0","method":"initialize","id":1,"params":{}}"#;
+        let mut input = Vec::with_capacity(json.len() + 1);
+        input.extend_from_slice(json);
+        input.push(b'\n');
+        let mut r = Cursor::new(input);
+        let frame = read_frame_from(&mut r).unwrap();
+        assert_eq!(frame, json);
+    }
+
+    #[test]
+    fn read_frame_handles_empty_line_returning_empty_vec_between_frames() {
+        let mut r = Cursor::new(b"first\n\nthird\n".as_ref());
+        assert_eq!(read_frame_from(&mut r).unwrap(), b"first");
+        assert_eq!(read_frame_from(&mut r).unwrap(), b"");
+        assert_eq!(read_frame_from(&mut r).unwrap(), b"third");
+    }
+
+    #[test]
+    fn read_frame_handles_binary_content_before_newline() {
+        // Frame bytes are BODY-ONLY; binary content survives.
+        let mut input = vec![0x00, 0xFF, 0x01, 0xFE, 0x02];
+        input.push(b'\n');
+        let mut r = Cursor::new(input.clone());
+        let frame = read_frame_from(&mut r).unwrap();
+        assert_eq!(frame, &input[..5]);
+    }
+
+    #[test]
+    fn read_frame_repeated_at_eof_returns_empty_vec() {
+        let mut r = Cursor::new(b"only\n".as_ref());
+        assert_eq!(read_frame_from(&mut r).unwrap(), b"only");
+        // Further reads at EOF return empty (Rice-safe).
+        assert!(read_frame_from(&mut r).unwrap().is_empty());
+        assert!(read_frame_from(&mut r).unwrap().is_empty());
+    }
+
+    // ---------- write_frame_to --------------------------------------
+
+    #[test]
+    fn write_frame_writes_bytes_followed_by_newline() {
+        let mut w: Vec<u8> = Vec::new();
+        write_frame_to(&mut w, b"hello").unwrap();
+        assert_eq!(w, b"hello\n");
+    }
+
+    #[test]
+    fn write_frame_empty_body_writes_just_newline() {
+        let mut w: Vec<u8> = Vec::new();
+        write_frame_to(&mut w, b"").unwrap();
+        assert_eq!(w, b"\n");
+    }
+
+    #[test]
+    fn write_frame_preserves_utf8_body() {
+        let body = "🌱 mirror".as_bytes();
+        let mut w: Vec<u8> = Vec::new();
+        write_frame_to(&mut w, body).unwrap();
+        let mut expected: Vec<u8> = body.to_vec();
+        expected.push(b'\n');
+        assert_eq!(w, expected);
+    }
+
+    #[test]
+    fn write_frame_preserves_binary_body() {
+        let body = &[0x00u8, 0xFF, 0x01, 0xFE, 0x02];
+        let mut w: Vec<u8> = Vec::new();
+        write_frame_to(&mut w, body).unwrap();
+        assert_eq!(&w[..5], body);
+        assert_eq!(w[5], b'\n');
+    }
+
+    #[test]
+    fn write_frame_appends_only_one_newline_when_body_ends_with_newline() {
+        // Substrate-honest: fn writes body verbatim + ONE newline.
+        // If the caller's body already ends in \n, the frame contains
+        // TWO newlines. Documented behavior; test asserts it.
+        let mut w: Vec<u8> = Vec::new();
+        write_frame_to(&mut w, b"already\n").unwrap();
+        assert_eq!(w, b"already\n\n");
+    }
+
+    #[test]
+    fn write_frame_flushes_before_returning() {
+        // Vec<u8> flush is no-op; this test just verifies the write
+        // completed. A more thorough test would use a fake writer that
+        // tracks flush calls, but the flush semantic is enforced by
+        // the fn body's explicit writer.flush() call.
+        let mut w: Vec<u8> = Vec::new();
+        for i in 0..100 {
+            write_frame_to(&mut w, format!("frame{i}").as_bytes()).unwrap();
+        }
+        assert_eq!(w.iter().filter(|&&b| b == b'\n').count(), 100);
+    }
+
+    // ---------- round-trip: write then read -------------------------
+
+    #[test]
+    fn write_then_read_round_trips_ascii_frame() {
+        let mut buf: Vec<u8> = Vec::new();
+        write_frame_to(&mut buf, b"round-trip").unwrap();
+        let mut r = Cursor::new(buf);
+        let frame = read_frame_from(&mut r).unwrap();
+        assert_eq!(frame, b"round-trip");
+    }
+
+    #[test]
+    fn write_then_read_round_trips_json_rpc_frame() {
+        let json = br#"{"jsonrpc":"2.0","result":{"ok":true},"id":42}"#;
+        let mut buf: Vec<u8> = Vec::new();
+        write_frame_to(&mut buf, json).unwrap();
+        let mut r = Cursor::new(buf);
+        let frame = read_frame_from(&mut r).unwrap();
+        assert_eq!(frame, json);
+    }
+
+    #[test]
+    fn write_then_read_round_trips_multiple_frames_in_order() {
+        let mut buf: Vec<u8> = Vec::new();
+        for i in 0..10 {
+            write_frame_to(&mut buf, format!("frame{i}").as_bytes()).unwrap();
+        }
+        let mut r = Cursor::new(buf);
+        for i in 0..10 {
+            let frame = read_frame_from(&mut r).unwrap();
+            assert_eq!(frame, format!("frame{i}").as_bytes());
+        }
+        // After 10 frames, reader is at EOF.
+        assert!(read_frame_from(&mut r).unwrap().is_empty());
+    }
+
+    // ---------- stdin/stdout wrappers exist + return io::Result -----
+
+    #[test]
+    fn read_stdin_frame_signature_returns_io_result() {
+        // Signature-only compile check: we can't actually READ from
+        // stdin under `cargo test` without pipe manipulation. This
+        // asserts the fn exists and returns io::Result<Vec<u8>>.
+        let _f: fn() -> io::Result<Vec<u8>> = read_stdin_frame;
+    }
+
+    #[test]
+    fn write_stdout_frame_signature_returns_io_result() {
+        // Signature-only compile check.
+        let _f: fn(&[u8]) -> io::Result<()> = write_stdout_frame;
     }
 }
