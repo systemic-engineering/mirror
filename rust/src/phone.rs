@@ -131,16 +131,90 @@ pub(crate) fn write_stdout_frame(frame: &[u8]) -> io::Result<()> {
     write_frame_to(&mut locked, frame)
 }
 
-/// Open peer socket for `mirror peer beam`. M8 forward-promise per
-/// Mara §3.2 item 3. Composition: `@io/socket` mirror-altitude lift-tick
-/// (currently boot-only at `boot/std/io/socket.mirror`; lift lands at
-/// M8 per Taut `7f4307f` §Q4 substrate-honest deferral).
+/// Open a Unix-domain-socket connection to a peer at `peer_home`.
+///
+/// M8 landing per Mara §3.2 item 3 (iter 9 phone.rs ship arc, task
+/// #303). Composition: `@io/socket` mirror-altitude lift of
+/// `boot/std/io/socket.mirror` per Taut `7f4307f` §Q4. The peer's
+/// socket path is `<peer_home>/.sock` per @peer/persistence discipline
+/// (peer home is a filesystem directory carrying the peer's substrate;
+/// `.sock` is the well-known socket handle name for `mirror peer beam`
+/// connection).
+///
+/// Returns a live `UnixStream` on success. Errors bubble as
+/// `io::Error`: file not found (no peer listening), permission denied,
+/// or not a socket (path exists but is a regular file/directory).
+///
+/// **Unix-only.** On non-Unix platforms (Windows), returns
+/// `ErrorKind::Unsupported` — peer beam over Unix sockets is a Unix
+/// discipline; Windows peer connection is forward-promised at a future
+/// tick via named-pipe substitution.
 #[allow(dead_code)]
-pub(crate) fn open_peer_socket(_peer_home: &str) -> ! {
-    unimplemented!(
-        "M8 forward-promise: @io/socket connection for peer beam \
-         (consumer-pull mirror-altitude lift of boot/std/io/socket.mirror)"
-    )
+pub(crate) fn open_peer_socket(peer_home: &str) -> io::Result<PeerSocketConnection> {
+    let socket_path = Path::new(peer_home).join(".sock");
+    #[cfg(unix)]
+    {
+        use std::os::unix::net::UnixStream;
+        let stream = UnixStream::connect(&socket_path)?;
+        Ok(PeerSocketConnection { stream })
+    }
+    #[cfg(not(unix))]
+    {
+        let _ = socket_path;
+        Err(io::Error::new(
+            io::ErrorKind::Unsupported,
+            "peer socket connection requires Unix (named-pipe support forward-promised)",
+        ))
+    }
+}
+
+/// Bind a Unix-domain-socket listener at `peer_home/.sock` for a peer.
+///
+/// M8 complement to [`open_peer_socket`] — the peer-side entry point
+/// for accepting incoming `mirror peer beam` connections. Removes any
+/// stale socket file at the path first (Unix socket files persist on
+/// dirty exit; a re-bind must clear them).
+#[allow(dead_code)]
+pub(crate) fn bind_peer_socket(peer_home: &str) -> io::Result<PeerSocketListener> {
+    let socket_path = Path::new(peer_home).join(".sock");
+    #[cfg(unix)]
+    {
+        use std::os::unix::net::UnixListener;
+        // Clear stale socket file if present. Ignore ENOENT.
+        match fs::remove_file(&socket_path) {
+            Ok(()) => {}
+            Err(e) if e.kind() == io::ErrorKind::NotFound => {}
+            Err(e) => return Err(e),
+        }
+        let listener = UnixListener::bind(&socket_path)?;
+        Ok(PeerSocketListener { listener })
+    }
+    #[cfg(not(unix))]
+    {
+        let _ = socket_path;
+        Err(io::Error::new(
+            io::ErrorKind::Unsupported,
+            "peer socket binding requires Unix (named-pipe support forward-promised)",
+        ))
+    }
+}
+
+/// A live Unix-domain-socket connection to a peer. Wraps `UnixStream`
+/// so downstream consumers see a phone.rs-owned handle at the @io
+/// boundary, not the raw std type.
+#[allow(dead_code)]
+#[derive(Debug)]
+pub(crate) struct PeerSocketConnection {
+    #[cfg(unix)]
+    pub(crate) stream: std::os::unix::net::UnixStream,
+}
+
+/// A Unix-domain-socket listener bound to a peer's `.sock`.
+#[allow(dead_code)]
+#[derive(Debug)]
+pub(crate) struct PeerSocketListener {
+    #[cfg(unix)]
+    pub(crate) listener: std::os::unix::net::UnixListener,
 }
 
 // ---------------------------------------------------------------------
@@ -1462,5 +1536,246 @@ mod bytes_prop_tests {
     fn write_stdout_frame_signature_returns_io_result() {
         // Signature-only compile check.
         let _f: fn(&[u8]) -> io::Result<()> = write_stdout_frame;
+    }
+}
+
+// =====================================================================
+// @io/socket property tests — iter 9 (final) phone.rs ship arc M8
+// landing per task #303. Unix-only; skipped on non-Unix at cfg level.
+//
+// Tests cover open_peer_socket + bind_peer_socket lifecycle via
+// tempdir + spawned listener thread + concurrent client. Ensures
+// stale socket cleanup, connection roundtrip, error cases (peer not
+// listening, path is not a socket).
+// =====================================================================
+
+#[cfg(all(test, unix))]
+mod socket_prop_tests {
+    use super::*;
+    use std::io::{Read, Write};
+    use std::os::unix::net::UnixStream;
+    use std::thread;
+    use std::time::Duration;
+    use tempfile::TempDir;
+
+    // ---------- bind_peer_socket ------------------------------------
+
+    #[test]
+    fn bind_peer_socket_creates_socket_file_at_expected_path() {
+        let tmp = TempDir::new().unwrap();
+        let peer_home = tmp.path().to_str().unwrap();
+        let _listener = bind_peer_socket(peer_home).unwrap();
+        let socket_path = tmp.path().join(".sock");
+        assert!(
+            socket_path.exists(),
+            "expected socket file at {:?}",
+            socket_path
+        );
+    }
+
+    #[test]
+    fn bind_peer_socket_clears_stale_socket_before_binding() {
+        let tmp = TempDir::new().unwrap();
+        let peer_home = tmp.path().to_str().unwrap();
+        // Create a stale regular file at the socket path.
+        let socket_path = tmp.path().join(".sock");
+        write_file(&socket_path, "stale").unwrap();
+        assert!(socket_path.exists());
+        // bind_peer_socket clears the stale file + binds fresh.
+        let _listener = bind_peer_socket(peer_home).unwrap();
+        assert!(socket_path.exists());
+        // Verify the new file IS a socket by connecting.
+        let _stream = UnixStream::connect(&socket_path).unwrap();
+    }
+
+    #[test]
+    fn bind_peer_socket_errors_on_nonexistent_peer_home() {
+        let tmp = TempDir::new().unwrap();
+        let missing = tmp.path().join("does_not_exist");
+        let peer_home = missing.to_str().unwrap();
+        assert!(bind_peer_socket(peer_home).is_err());
+    }
+
+    // ---------- open_peer_socket ------------------------------------
+
+    #[test]
+    fn open_peer_socket_errors_when_no_listener_bound() {
+        let tmp = TempDir::new().unwrap();
+        let peer_home = tmp.path().to_str().unwrap();
+        let result = open_peer_socket(peer_home);
+        assert!(
+            result.is_err(),
+            "opening socket to unbound peer must error; got {result:?}"
+        );
+    }
+
+    #[test]
+    fn open_peer_socket_errors_when_path_is_regular_file() {
+        let tmp = TempDir::new().unwrap();
+        let peer_home = tmp.path().to_str().unwrap();
+        // Create a regular file at .sock path (not a socket).
+        let socket_path = tmp.path().join(".sock");
+        write_file(&socket_path, "not-a-socket").unwrap();
+        assert!(open_peer_socket(peer_home).is_err());
+    }
+
+    #[test]
+    fn open_peer_socket_succeeds_when_listener_bound() {
+        let tmp = TempDir::new().unwrap();
+        let peer_home = tmp.path().to_str().unwrap();
+        let _listener = bind_peer_socket(peer_home).unwrap();
+        let conn = open_peer_socket(peer_home).unwrap();
+        // Verify we got a real stream (peek at addr).
+        assert!(conn.stream.peer_addr().is_ok());
+    }
+
+    // ---------- bind + open + roundtrip via listener thread ----------
+
+    #[test]
+    fn peer_socket_client_writes_and_listener_reads_bytes() {
+        let tmp = TempDir::new().unwrap();
+        let peer_home = tmp.path().to_str().unwrap().to_string();
+        let listener = bind_peer_socket(&peer_home).unwrap();
+
+        // Spawn listener thread: accept one connection, read all
+        // bytes, return them via channel.
+        let (tx, rx) = std::sync::mpsc::channel::<Vec<u8>>();
+        let handle = thread::spawn(move || {
+            let (mut accepted, _addr) = listener.listener.accept().unwrap();
+            let mut buf = Vec::new();
+            accepted.read_to_end(&mut buf).unwrap();
+            tx.send(buf).unwrap();
+        });
+
+        // Give listener a moment to accept.
+        thread::sleep(Duration::from_millis(50));
+
+        // Client connects + writes.
+        let mut conn = open_peer_socket(&peer_home).unwrap();
+        conn.stream.write_all(b"hello peer").unwrap();
+        // Close write side so listener sees EOF.
+        conn.stream.shutdown(std::net::Shutdown::Write).unwrap();
+
+        // Listener returns bytes.
+        let received = rx.recv_timeout(Duration::from_secs(5)).unwrap();
+        handle.join().unwrap();
+        assert_eq!(received, b"hello peer");
+    }
+
+    #[test]
+    fn peer_socket_supports_bidirectional_message_exchange() {
+        let tmp = TempDir::new().unwrap();
+        let peer_home = tmp.path().to_str().unwrap().to_string();
+        let listener = bind_peer_socket(&peer_home).unwrap();
+
+        // Spawn listener thread: read a request, write a response.
+        let handle = thread::spawn(move || {
+            let (mut accepted, _) = listener.listener.accept().unwrap();
+            let mut req = [0u8; 5];
+            accepted.read_exact(&mut req).unwrap();
+            assert_eq!(&req, b"PING?");
+            accepted.write_all(b"PONG!").unwrap();
+            accepted.flush().unwrap();
+        });
+
+        thread::sleep(Duration::from_millis(50));
+
+        let mut conn = open_peer_socket(&peer_home).unwrap();
+        conn.stream.write_all(b"PING?").unwrap();
+        let mut resp = [0u8; 5];
+        conn.stream.read_exact(&mut resp).unwrap();
+        assert_eq!(&resp, b"PONG!");
+
+        handle.join().unwrap();
+    }
+
+    #[test]
+    fn peer_socket_multiple_sequential_connections_supported() {
+        let tmp = TempDir::new().unwrap();
+        let peer_home = tmp.path().to_str().unwrap().to_string();
+        let listener = bind_peer_socket(&peer_home).unwrap();
+
+        // Listener thread: accept 3 connections, each read 1 byte,
+        // write 1 byte back.
+        let handle = thread::spawn(move || {
+            for _ in 0..3 {
+                let (mut accepted, _) = listener.listener.accept().unwrap();
+                let mut b = [0u8; 1];
+                accepted.read_exact(&mut b).unwrap();
+                accepted.write_all(&[b[0].wrapping_add(1)]).unwrap();
+                accepted.flush().unwrap();
+            }
+        });
+
+        thread::sleep(Duration::from_millis(50));
+
+        for i in 0u8..3 {
+            let mut conn = open_peer_socket(&peer_home).unwrap();
+            conn.stream.write_all(&[i]).unwrap();
+            let mut resp = [0u8; 1];
+            conn.stream.read_exact(&mut resp).unwrap();
+            assert_eq!(resp[0], i + 1);
+        }
+
+        handle.join().unwrap();
+    }
+
+    #[test]
+    fn peer_socket_utf8_message_round_trips_intact() {
+        let tmp = TempDir::new().unwrap();
+        let peer_home = tmp.path().to_str().unwrap().to_string();
+        let listener = bind_peer_socket(&peer_home).unwrap();
+
+        let msg = "🌱 mirror peer beam → substrate · 中文";
+        let msg_bytes = msg.as_bytes().to_vec();
+        let expected_len = msg_bytes.len();
+
+        let handle = thread::spawn(move || {
+            let (mut accepted, _) = listener.listener.accept().unwrap();
+            let mut buf = vec![0u8; expected_len];
+            accepted.read_exact(&mut buf).unwrap();
+            accepted.write_all(&buf).unwrap();
+            accepted.flush().unwrap();
+        });
+
+        thread::sleep(Duration::from_millis(50));
+
+        let mut conn = open_peer_socket(&peer_home).unwrap();
+        conn.stream.write_all(&msg_bytes).unwrap();
+        let mut resp = vec![0u8; expected_len];
+        conn.stream.read_exact(&mut resp).unwrap();
+        assert_eq!(String::from_utf8(resp).unwrap(), msg);
+
+        handle.join().unwrap();
+    }
+
+    // ---------- large message support -------------------------------
+
+    #[test]
+    fn peer_socket_supports_large_message_transfer() {
+        let tmp = TempDir::new().unwrap();
+        let peer_home = tmp.path().to_str().unwrap().to_string();
+        let listener = bind_peer_socket(&peer_home).unwrap();
+
+        // 64KB message — spans multiple socket-buffer chunks on most
+        // OS defaults; exercises the streaming behavior.
+        let msg = vec![0xABu8; 64 * 1024];
+        let msg_len = msg.len();
+
+        let handle = thread::spawn(move || {
+            let (mut accepted, _) = listener.listener.accept().unwrap();
+            let mut buf = Vec::new();
+            accepted.read_to_end(&mut buf).unwrap();
+            assert_eq!(buf.len(), msg_len);
+            assert!(buf.iter().all(|&b| b == 0xAB));
+        });
+
+        thread::sleep(Duration::from_millis(50));
+
+        let mut conn = open_peer_socket(&peer_home).unwrap();
+        conn.stream.write_all(&msg).unwrap();
+        conn.stream.shutdown(std::net::Shutdown::Write).unwrap();
+
+        handle.join().unwrap();
     }
 }
