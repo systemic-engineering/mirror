@@ -50,6 +50,7 @@
 //! each to gen_prism actor spawn under supervisor. The 10 verbs below
 //! ARE the M0 shadow of that dispatch table.
 
+mod book;
 mod collapse;
 // M0 module wiring — declare the sibling altitudes so the terminal-
 // geometry five-file discipline is byte-visible in `rust/src/` and
@@ -985,8 +986,18 @@ pub(crate) fn at_operator(action_ref: &str, args: &[String]) -> Result<String, S
                 .get(3)
                 .ok_or_else(|| "@io/git.commit: expected 4 args (author_oid, committer_oid, repo_root, message)".to_string())?;
 
-            let author_subject = resolve_well_known_peer_oid(author_oid)?;
-            let committer_subject = resolve_well_known_peer_oid(committer_oid)?;
+            let author_subject = book::resolve(author_oid).map_err(|e| {
+                format!(
+                    "@io/git.commit: {}. Callers with typed fractal::Subject values SHOULD use phone::git_commit_as directly.",
+                    e
+                )
+            })?;
+            let committer_subject = book::resolve(committer_oid).map_err(|e| {
+                format!(
+                    "@io/git.commit: {}. Callers with typed fractal::Subject values SHOULD use phone::git_commit_as directly.",
+                    e
+                )
+            })?;
 
             phone::git_commit_as(
                 Path::new(repo_root),
@@ -997,31 +1008,9 @@ pub(crate) fn at_operator(action_ref: &str, args: &[String]) -> Result<String, S
             .map_err(|e| format!("@io/git.commit: {}", e))
         }
         _ => Err(format!(
-            "@-operator: unknown action-ref `{}` (landed: @io/fs.{{list_dir,read,write,append,mkdir_p}} + @io/git.commit[@peer/mirror|@peer/void]; other @peer OIDs pending Mara @peer/registry + @trust family-root landing)",
-            action_ref
-        )),
-    }
-}
-
-/// Resolve a well-known @peer OID string to a fractal::Subject.
-///
-/// HARDCODED shortcut per COORD-4 (Taut `3787770` + Alex 2026-07-22).
-/// Only two literals: `@peer/mirror` → Subject::mirror() and
-/// `@peer/void` → Subject::void(). Arbitrary @peer OIDs return an
-/// Err naming Mara's @peer/registry + @trust family-root authorship
-/// territory — the future landing that will replace this map with
-/// arbitrary-peer OID resolution.
-///
-/// Substrate-honest partial-solve: covers mirror-authored + void-
-/// authored commits (the two well-known peers the compiler + garden
-/// use today) without waiting on the full @peer/registry authorship.
-fn resolve_well_known_peer_oid(oid: &str) -> Result<fractal::Subject, String> {
-    match oid {
-        "@peer/mirror" => Ok(fractal::Subject::mirror()),
-        "@peer/void" => Ok(fractal::Subject::void()),
-        other => Err(format!(
-            "@io/git.commit: unknown @peer OID `{}`. Well-known landed: @peer/mirror + @peer/void. Arbitrary @peer OIDs pending Mara @peer/registry species-decl + @trust family-root mint (per Alex 2026-07-18 direction B: OID + registry; garden-altitude passkey/PRF bridge as parallel altitude of same @trust family-root). Callers with typed fractal::Subject values SHOULD use phone::git_commit_as directly.",
-            other
+            "@-operator: unknown action-ref `{}` (landed: @io/fs.{{list_dir,read,write,append,mkdir_p}} + @io/git.commit[{}]; arbitrary @<name> pending Mara @peer/registry + @trust family-root general-purpose lookup)",
+            action_ref,
+            book::well_known_at_names().join("|"),
         )),
     }
 }
@@ -1038,7 +1027,13 @@ mod at_operator_tests {
         let msg = result.unwrap_err();
         assert!(msg.contains("unknown action-ref"));
         assert!(msg.contains("list_dir"));
-        assert!(msg.contains("@io/git.commit[@peer/mirror|@peer/void]"));
+        // Post-book.rs: dynamically enumerated well-known @<name> set.
+        assert!(msg.contains("@peer/mirror"));
+        assert!(msg.contains("@peer/void"));
+        assert!(msg.contains("@peer/reed"));
+        assert!(msg.contains("@peer/mara"));
+        assert!(msg.contains("@human/alex"));
+        assert!(msg.contains("@peer/registry"));
     }
 
     #[test]
@@ -1092,61 +1087,76 @@ mod at_operator_tests {
     }
 
     #[test]
-    fn git_commit_unknown_peer_oid_names_mara_registry_territory() {
-        // COORD-4 landing: well-known @peer OIDs (@peer/mirror,
-        // @peer/void) route through phone::git_commit_as; all
-        // other @peer OIDs surface the Mara @peer/registry +
-        // @trust family-root authorship boundary substrate-
-        // honestly. This test pins that boundary so future
-        // arbitrary-peer resolution attempts get a substrate-
-        // honest error naming Mara's authorship territory.
+    fn git_commit_at_operator_consumes_book_registry_for_well_known_pack_peer() {
+        // Post-COORD-5 (book.rs extraction): the at_operator @io/git.commit
+        // arm consumes book::resolve for @<name> → Subject lookup. Well-
+        // known Pack peers (@peer/reed, @peer/mara, etc.) now resolve
+        // successfully at the switchboard boundary; the previous COORD-4
+        // hardcoded 2-well-known map is retired. This test pins the shape
+        // by attempting a @peer/reed authored commit through the switchboard
+        // in a tempdir repo and asserting real 40-char SHA-1 OID return.
+        //
+        // Skip if git binary unavailable.
+        if std::process::Command::new("git")
+            .arg("--version")
+            .output()
+            .map(|o| !o.status.success())
+            .unwrap_or(true)
+        {
+            return;
+        }
         let td = tempfile::tempdir().unwrap();
-        let result = at_operator(
+        let repo_path = td.path();
+        let git = |args: &[&str]| {
+            std::process::Command::new("git")
+                .args(args)
+                .current_dir(repo_path)
+                .env("GIT_CONFIG_GLOBAL", "/dev/null")
+                .env("GIT_CONFIG_SYSTEM", "/dev/null")
+                .output()
+                .unwrap()
+        };
+        git(&["init", "-q"]);
+        git(&["config", "commit.gpgsign", "false"]);
+        git(&["config", "core.hooksPath", "/dev/null"]);
+        std::fs::write(repo_path.join("seed.txt"), "pack-peer commit").unwrap();
+        git(&["add", "seed.txt"]);
+        let commit_oid = at_operator(
             "@io/git.commit",
             &[
                 "@peer/reed".to_string(),
                 "@peer/mirror".to_string(),
+                repo_path.display().to_string(),
+                "pack-peer through book+phone switchboard".to_string(),
+            ],
+        )
+        .unwrap();
+        assert_eq!(commit_oid.len(), 40, "expected 40-char SHA-1 OID");
+        assert!(commit_oid.chars().all(|c| c.is_ascii_hexdigit()));
+    }
+
+    #[test]
+    fn git_commit_error_from_book_wraps_with_switchboard_context() {
+        // When book::resolve fails, at_operator wraps the error with
+        // @io/git.commit prefix + phone::git_commit_as hint for typed-
+        // Subject callers. Substrate-honest failure surface at the
+        // dispatch site altitude.
+        let td = tempfile::tempdir().unwrap();
+        let result = at_operator(
+            "@io/git.commit",
+            &[
+                "@peer/nonexistent".to_string(),
+                "@peer/mirror".to_string(),
                 td.path().display().to_string(),
-                "test commit body".to_string(),
+                "test".to_string(),
             ],
         );
         assert!(result.is_err());
         let msg = result.unwrap_err();
-        assert!(msg.contains("@peer/reed"));
+        assert!(msg.contains("@io/git.commit"));
+        assert!(msg.contains("@peer/nonexistent"));
         assert!(msg.contains("@peer/registry"));
-        assert!(msg.contains("@trust"));
         assert!(msg.contains("phone::git_commit_as"));
-    }
-
-    #[test]
-    fn git_commit_well_known_peer_mirror_resolves_to_subject() {
-        // The internal resolver returns Ok(Subject::mirror()) for
-        // the well-known @peer/mirror OID. Direct resolver-test
-        // (no phone.rs invocation) pins the well-known map.
-        let subject = resolve_well_known_peer_oid("@peer/mirror").unwrap();
-        assert_eq!(subject.name, fractal::Subject::mirror().name);
-        assert_eq!(subject.email, fractal::Subject::mirror().email);
-    }
-
-    #[test]
-    fn git_commit_well_known_peer_void_resolves_to_subject() {
-        let subject = resolve_well_known_peer_oid("@peer/void").unwrap();
-        assert_eq!(subject.name, fractal::Subject::void().name);
-        assert_eq!(subject.email, fractal::Subject::void().email);
-    }
-
-    #[test]
-    fn git_commit_unknown_peer_oid_error_lists_landed_well_knowns() {
-        // Substrate-honest failure surface: the error message lists
-        // what IS landed (@peer/mirror + @peer/void) alongside
-        // what's Mara territory. Callers get an actionable
-        // boundary marker.
-        let result = resolve_well_known_peer_oid("@peer/reed");
-        assert!(result.is_err());
-        let msg = result.unwrap_err();
-        assert!(msg.contains("@peer/mirror"));
-        assert!(msg.contains("@peer/void"));
-        assert!(msg.contains("@peer/registry"));
     }
 
     #[test]
