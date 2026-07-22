@@ -428,6 +428,30 @@ pub(crate) fn git_commit_as(
     git_head_oid(repo_root)
 }
 
+/// Spawn `cargo build --bin <bin_name>` in `dir` and wait for
+/// completion. Returns the process's ExitStatus.
+///
+/// The @io/process primitive at MVP altitude — the bootstrap-kernel
+/// spawn boundary for cargo invocation. Landed 2026-07-23 per Alex
+/// ouroboros-closure directive ("get mirror actually built from
+/// mirror.spec") + Taut `173a1204` §5 @io/process gap remediation
+/// (partial: cargo-scoped rather than general-purpose subprocess).
+///
+/// Substrate-honest scope: this is the Bucket A @io quarantine floor
+/// primitive that `cmd_craft` composes over to close the ouroboros at
+/// orchestrator altitude. General-purpose `@io/process.spawn` species-
+/// decl + phone.rs primitive lands separately per Mara `defc8ef`
+/// minimal-gap analysis Tick 1.
+pub(crate) fn spawn_cargo_build(
+    dir: &Path,
+    bin_name: &str,
+) -> io::Result<std::process::ExitStatus> {
+    std::process::Command::new("cargo")
+        .args(["build", "--bin", bin_name])
+        .current_dir(dir)
+        .status()
+}
+
 /// Read HEAD OID via `git rev-parse HEAD`.
 pub(crate) fn git_head_oid(repo_root: &Path) -> io::Result<String> {
     let out = std::process::Command::new("git")

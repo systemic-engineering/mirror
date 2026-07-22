@@ -1265,6 +1265,238 @@ mod at_operator_tests {
     }
 }
 
+/// `mirror craft <spec-file>` — build the artifact declared by the
+/// spec. First empirical ouroboros closure at the ORCHESTRATOR altitude:
+/// mirror reads its own spec + invokes cargo to produce the mirror
+/// binary.
+///
+/// Per Alex 2026-07-23 in-transcript directive: "get mirror actually
+/// built from mirror.spec. The ouroboros wants to close." Composes
+/// over Taut `173a1204` §6 Bootstrap Kernel reframe (LANDED as
+/// property-verification; ASPIRATIONAL as self-compiling reflective
+/// evaluator) — this tick lands the orchestrator-altitude closure
+/// without discharging the full source-to-binary Foerster-fixpoint.
+///
+/// MVP scope: Rice-safe byte-check on the spec to verify it declares
+/// a @code/rust binary target; shell out to `cargo build --bin <name>`
+/// in the sibling `rust/` directory via `phone::spawn_cargo_build`.
+/// Full self-hosting (mirror emits its own Rust source + retires
+/// cargo) is Mara §5.2 M2+ territory forward-promised.
+///
+/// The Foerster-fixpoint chicken-and-egg PARTIALLY CLOSES here at
+/// orchestrator altitude — mirror is now the invoked orchestrator of
+/// its own build, even if the compilation still happens through cargo.
+///
+/// Exit codes:
+///   0 — spec verified + cargo build succeeded
+///   2 — usage error (missing spec-file; spec doesn't declare
+///        @code/rust binary target via cargo)
+///   3 — @io error (spec read failed; cargo workspace missing;
+///        cargo spawn failed; cargo returned non-zero)
+fn cmd_craft(rest: &[String]) -> ExitCode {
+    let spec_arg = match rest.first() {
+        Some(s) => s.as_str(),
+        None => {
+            eprintln!("mirror craft: <spec-file> required");
+            eprintln!();
+            eprintln!("Usage: mirror craft <spec-file>");
+            eprintln!();
+            eprintln!("The spec declares a target binary at @code/rust altitude");
+            eprintln!("(e.g. ./mirror.spec's variety.emits.binary block).");
+            return ExitCode::from(2);
+        }
+    };
+
+    let spec_path = std::path::Path::new(spec_arg);
+    let spec_source = match phone::read_file(spec_path) {
+        Ok(s) => s,
+        Err(e) => {
+            eprintln!("mirror craft: @io/fs.read {}: {}", spec_arg, e);
+            return ExitCode::from(3);
+        }
+    };
+
+    // Rice-safe byte-check: verify the spec declares a @code/rust
+    // binary target via cargo. Substrate-honest partial-parse; full
+    // grammar parsing lands with the reflective evaluator (Mara
+    // §5.2 M2). Accepts both `system @<name>` (post-VSM-transition)
+    // and legacy `project <name>` grammars per Mara two-tick
+    // alias-shim discipline (c6eb2d8).
+    let has_container_block =
+        spec_source.contains("system @") || spec_source.contains("project ");
+    if !has_container_block {
+        eprintln!(
+            "mirror craft: {} does not declare a `system @<name>` or `project <name>` block",
+            spec_arg
+        );
+        return ExitCode::from(2);
+    }
+    let has_rust_target =
+        spec_source.contains("altitude @code/rust")
+            && (spec_source.contains("cargo"));
+    if !has_rust_target {
+        eprintln!(
+            "mirror craft: {} does not declare a `@code/rust` binary target via cargo",
+            spec_arg
+        );
+        return ExitCode::from(2);
+    }
+
+    // Extract binary name from the spec — Rice-safe grep for `name "..."`.
+    // MVP: default to "mirror" if extraction fails; full field-
+    // extraction lands with reflective evaluator.
+    let bin_name = extract_binary_name(&spec_source).unwrap_or_else(|| "mirror".to_string());
+
+    // Determine cargo working directory: sibling `rust/` to the spec.
+    // MVP assumes the terminal-geometry three-file layout (Mara
+    // `81294b3` + task #237 M0 scaffold).
+    let spec_dir = spec_path.parent().unwrap_or(std::path::Path::new("."));
+    let rust_dir = spec_dir.join("rust");
+    if !rust_dir.is_dir() {
+        eprintln!(
+            "mirror craft: cargo workspace not found at {}",
+            rust_dir.display()
+        );
+        eprintln!("MVP assumes sibling `rust/` directory to the spec.");
+        return ExitCode::from(3);
+    }
+
+    // Shell out to cargo. THIS IS THE OUROBOROS CLOSURE at orchestrator
+    // altitude — mirror invokes cargo to build itself.
+    eprintln!(
+        "mirror craft: building `{}` at @code/rust via cargo in {}",
+        bin_name,
+        rust_dir.display()
+    );
+    let status = match phone::spawn_cargo_build(&rust_dir, &bin_name) {
+        Ok(s) => s,
+        Err(e) => {
+            eprintln!("mirror craft: cargo spawn failed: {}", e);
+            return ExitCode::from(3);
+        }
+    };
+
+    if !status.success() {
+        eprintln!(
+            "mirror craft: cargo build failed with exit code {}",
+            status.code().unwrap_or(-1)
+        );
+        return ExitCode::from(3);
+    }
+
+    let artifact = rust_dir.join("target").join("debug").join(&bin_name);
+    println!(
+        "mirror craft: settled `{}` to binary at {}",
+        bin_name,
+        artifact.display()
+    );
+    ExitCode::SUCCESS
+}
+
+/// Extract the binary name from the first `name "..."` line inside
+/// the spec source. Rice-safe byte-substring extraction; returns
+/// None if no matching line found.
+fn extract_binary_name(source: &str) -> Option<String> {
+    for line in source.lines() {
+        let trimmed = line.trim_start();
+        if let Some(rest) = trimmed.strip_prefix("name ") {
+            let rest = rest.trim();
+            if let Some(inner) = rest.strip_prefix('"') {
+                if let Some(end) = inner.find('"') {
+                    return Some(inner[..end].to_string());
+                }
+            }
+        }
+    }
+    None
+}
+
+#[cfg(test)]
+mod craft_tests {
+    use super::*;
+
+    #[test]
+    fn craft_requires_spec_arg() {
+        assert_eq!(cmd_craft(&[]), ExitCode::from(2));
+    }
+
+    #[test]
+    fn craft_errors_on_missing_spec_file() {
+        let args = vec!["/nonexistent/path/to/mirror.spec".to_string()];
+        assert_eq!(cmd_craft(&args), ExitCode::from(3));
+    }
+
+    #[test]
+    fn craft_errors_on_non_container_spec() {
+        let tmp = tempfile::tempdir().unwrap();
+        let spec = tmp.path().join("bad.spec");
+        std::fs::write(&spec, "# no system block here\n").unwrap();
+        let args = vec![spec.display().to_string()];
+        assert_eq!(cmd_craft(&args), ExitCode::from(2));
+    }
+
+    #[test]
+    fn craft_errors_on_spec_without_rust_target() {
+        let tmp = tempfile::tempdir().unwrap();
+        let spec = tmp.path().join("non_rust.spec");
+        std::fs::write(
+            &spec,
+            "system @foo { variety { emits [ ci { altitude @ci/github emit yaml } ] } }\n",
+        )
+        .unwrap();
+        let args = vec![spec.display().to_string()];
+        assert_eq!(cmd_craft(&args), ExitCode::from(2));
+    }
+
+    #[test]
+    fn extract_binary_name_finds_first_name_line() {
+        let source = r#"system @mirror {
+  variety {
+    emits [
+      binary {
+        name     "mirror"
+        altitude @code/rust
+        emit     cargo
+      }
+    ]
+  }
+}
+"#;
+        assert_eq!(extract_binary_name(source), Some("mirror".to_string()));
+    }
+
+    #[test]
+    fn extract_binary_name_returns_none_when_absent() {
+        let source = "system @nameless { variety { } }\n";
+        assert_eq!(extract_binary_name(source), None);
+    }
+
+    #[test]
+    fn craft_errors_on_missing_cargo_workspace() {
+        let tmp = tempfile::tempdir().unwrap();
+        let spec = tmp.path().join("mirror.spec");
+        std::fs::write(
+            &spec,
+            r#"system @mirror {
+  variety {
+    emits [
+      binary {
+        name     "mirror"
+        altitude @code/rust
+        emit     cargo
+      }
+    ]
+  }
+}
+"#,
+        )
+        .unwrap();
+        // No `rust/` sibling directory created — should exit 3.
+        let args = vec![spec.display().to_string()];
+        assert_eq!(cmd_craft(&args), ExitCode::from(3));
+    }
+}
+
 /// `mirror compile <file>` — the SAGA-chain-of-Crystals compilation
 /// verb. Delegates orchestration to `compile::compile_from_source`
 /// (iter 3); crosses @io via `phone::read_file`. This is the
@@ -1378,6 +1610,14 @@ fn main() -> ExitCode {
             // roomba dispatch arm for flag parsing.
             let rest: Vec<String> = args.iter().skip(2).cloned().collect();
             cmd_roomba(&rest)
+        }
+        Some("craft") => {
+            // Ouroboros closure at orchestrator altitude (Alex 2026-07-23
+            // directive "get mirror actually built from mirror.spec").
+            // MVP: read spec + verify @code/rust binary target + shell
+            // out to cargo build. Full self-hosting forward-promised.
+            let rest: Vec<String> = args.iter().skip(2).cloned().collect();
+            cmd_craft(&rest)
         }
         Some("compile") => {
             // /loop iter-4 empirical firing per Alex 2026-07-20 cascade
