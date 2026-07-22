@@ -286,6 +286,147 @@ feedback_loops(loops: ref) -> prism { \ }
 # discipline references.
 kintsugi_tooling(tooling: ref) -> prism { \ }
 
+# ═══════════════════════════════════════════════════════════════════
+# 2026-07-22 addendum: substrate-honest section-directive rename cascade
+# ═══════════════════════════════════════════════════════════════════
+#
+# Addendum landed by Mara 2026-07-22 per Alex 2026-07-22 late-night
+# tracing of substrate-honest section names for `system @NAME { ... }`
+# blocks. Canonical spec: `docs/specs/2026-07-22-liquid-splinter-
+# crystal-eigen-canonical.md` §7. Math root: `docs/math/2026-07-22-
+# splinter-eigen-fragment-ouroboros-closure.md` §11 composition graph.
+#
+# The seven original section names (s1..s5 + feedback_loops +
+# kintsugi_tooling) are Beer's numeric VSM shorthand — legible to any
+# reader who has been reading Beer for 50 years, but obscure to
+# consumers reading mirror.spec cold. The substrate has landed
+# family-root vocabulary that names the same substrate more directly:
+#
+#   s1               → variety      (Beer VSM s1 = variety producers;
+#                                     landed at shards/epistemologic/
+#                                     cybernetic/variety.mirror)
+#   s2               → coupling     (Beer VSM s2 = anti-oscillation
+#                                     between s1s; @dance ensemble
+#                                     altitude carrier; the coupling
+#                                     between variety producers)
+#   s3               → coherence    (Beer VSM s3 = audit/management +
+#                                     Fiedler λ₀ discipline; landed
+#                                     at shards/epistemologic/
+#                                     cybernetic/coherence.mirror)
+#   s4               → reality      (Beer VSM s4 = intelligence /
+#                                     strategy; @reality altitude
+#                                     carrier per shards/reality.mirror
+#                                     family-root)
+#   s5               → eigen        (Beer VSM s5 = identity / policy;
+#                                     @eigen(T) altitude per @eigen
+#                                     family-root landed this task
+#                                     `bc4e7fc`; DOUBLY-JUSTIFIED —
+#                                     see below)
+#   feedback_loops   → loop         (explicit @loop family-root
+#                                     shards/loop.mirror; feedback IS
+#                                     the loop discipline)
+#   kintsugi_tooling → kintsugi     (@kintsugi family-root; tooling IS
+#                                     the kintsugi discipline)
+#
+# === `eigen` section name is DOUBLY-JUSTIFIED (Alex 2026-07-22) ===
+#
+# 1. **Identity carrier** — the S5 identity-policy IS the eigen-form
+#    the system stabilizes on (per Foerster 1976 + math root §3 + §8;
+#    per @eigenboard being the working-state readout on the S5
+#    identity carrier).
+#
+# 2. **Operator that produces fragments** — @eigen(T) as type-level
+#    COORD decorator IS what produces settled crystals from splinter
+#    superposition (per math root §3 + §8; per canonical spec §3 the
+#    type-level face of Foerster COORD). The section names the
+#    SUBSTRATE on which the full VSM operates.
+#
+# Both readings converge on the same name at the same altitude. The
+# section-rename is not a stylistic choice; it names what the
+# substrate has been carrying all along.
+#
+# === Two-tick alias-shim discipline ===
+#
+# Per canonical spec §7:
+#
+# TICK 1 (this tick):
+#   - New section-directive names landed BELOW as sibling grammars
+#     (variety / coupling / coherence / reality / eigen / loop /
+#     kintsugi).
+#   - Existing section-directive names above (s1..s5 + feedback_loops
+#     + kintsugi_tooling) RETAINED as alias-shim; both sets admitted
+#     in the tokenizer during migration cycle.
+#   - Consumer-side (dogfood mirror.spec) NOT UPDATED this tick per
+#     consumer-stability discipline.
+#
+# TICK 2 (forward-promised; next release cycle):
+#   - Update dogfood mirror.spec to use new section names.
+#   - Emit deprecation warnings at compile altitude when old names
+#     referenced.
+#
+# TICK 3 (following release cycle):
+#   - Retire s1..s5 + feedback_loops + kintsugi_tooling section
+#     directives.
+#
+# === Substrate-honest sibling grammars (alias-shim TICK 1) ===
+
+# variety { ... } — alias for s1 { ... } per rename cascade.
+#
+# S1 operations block via substrate-honest name (Beer VSM s1 =
+# variety producers). Substrate-decl citation: shards/epistemologic/
+# cybernetic/variety.mirror.
+variety(operations: ref) -> prism { \ }
+
+# coupling { ... } — alias for s2 { ... } per rename cascade.
+#
+# S2 coordination block via substrate-honest name (the coupling
+# between variety producers; anti-oscillation protocol). Substrate-
+# decl citation: @dance ensemble carrier + Kuramoto phase-lock
+# connection 1-form at level k+1.
+coupling(coordination: ref) -> prism { \ }
+
+# coherence { ... } — alias for s3 { ... } per rename cascade.
+#
+# S3 audit/management block via substrate-honest name (Fiedler λ₀
+# discipline). Substrate-decl citation: shards/epistemologic/
+# cybernetic/coherence.mirror + @coherence.score = algebraic
+# connectivity per math root §1 word→substrate-decl table.
+coherence(audit: ref) -> prism { \ }
+
+# reality { ... } — alias for s4 { ... } per rename cascade.
+#
+# S4 intelligence/strategy block via substrate-honest name.
+# Substrate-decl citation: shards/reality.mirror family-root +
+# @reality/subject non-linear trajectory (light-cone spread) per
+# this session `0b2858a` — the intelligence carrier is a subject-
+# altitude actor by construction.
+reality(intelligence: ref) -> prism { \ }
+
+# eigen { ... } — alias for s5 { ... } per rename cascade.
+#
+# S5 identity/policy block via substrate-honest name. DOUBLY-
+# JUSTIFIED per Alex 2026-07-22 (see docblock addendum above): the
+# identity carrier IS the eigen-form the system stabilizes on AND
+# @eigen(T) IS the type-level operator producing settled fragments.
+# Substrate-decl citation: shards/eigen.mirror family-root (landed
+# this task `bc4e7fc`); viable.identity + @pack.peer + @subject
+# discipline for the identity carrier.
+eigen(identity: identity) -> prism { \ }
+
+# loop { ... } — alias for feedback_loops { ... } per rename cascade.
+#
+# Feedback-loop topology block via substrate-honest name. Substrate-
+# decl citation: shards/loop.mirror family-root (existing); Beer
+# 1979 ch.6 algedonic + Baez-Schreiber connection-compatibility.
+loop(loops: ref) -> prism { \ }
+
+# kintsugi { ... } — alias for kintsugi_tooling { ... } per rename cascade.
+#
+# Kintsugi tooling block via substrate-honest name. Substrate-decl
+# citation: shards/kintsugi.mirror family-root (existing);
+# @kintsugi/roomba + @kintsugi/fracture composition.
+kintsugi(tooling: ref) -> prism { \ }
+
 # === system_spec_well_formed — bilateral predicate ===
 #
 # Discharges Pass iff:
@@ -342,4 +483,12 @@ out s4
 out s5
 out feedback_loops
 out kintsugi_tooling
+# 2026-07-22 addendum: substrate-honest section-directive rename aliases (TICK 1)
+out variety
+out coupling
+out coherence
+out reality
+out eigen
+out loop
+out kintsugi
 out system_spec_well_formed
