@@ -1,5 +1,39 @@
 # CURRENT arc — J-space alignment substrate composes Anna Wolf 2012 observation-substrate + mirror specification-substrate + Anthropic 2026-07-07 target-substrate at tri-runtime compile-verifiable altitude (2026-07-20 evening; FULL SESSION UPSERT for compaction handoff)
 
+## 🌱 2026-07-22 MARA — Ouroboros closure at physical-substrate altitude (task #314 continuation)
+
+**Verbatim Alex 2026-07-22 late-night** (immediately after Reed grep-audit confirmed `splinter` substrate-already-had-the-word at every altitude):
+
+> *"Liquid splinters settle into content-addressed crystals by holding the quantum wavefunction @coherent as long as possible. If that isn't sexy then idk what is."*
+
+**Session landing cascade (this task):**
+
+| # | SHA | Landing | Loc |
+|---|-----|---------|-----|
+| Tick 1 | `f30a230` | docs/math/2026-07-22-splinter-eigen-fragment-ouroboros-closure.md — math foundation (16 sections; substrate-already-had-the-word audit table across every altitude; sub-Turing decidability as NATURAL CONSEQUENCE not imposed constraint; fragment = @eigen(Crystal<T>) — NO new species) | 537 |
+| Tick 2 | `151c043` | docs/specs/2026-07-22-liquid-splinter-crystal-eigen-canonical.md — canonical spec (11 sections; @eigen family-root authorization; @knife → @eigen VERDICT: OPTION B compose-not-absorb; three [ALEX-Qn] surfaced with Mara-lean recommendations) | 456 |
+| Tick 3 | `bc4e7fc` | shards/eigen.mirror mint — @eigen family-root marker + eigen(T) core operator + eigen_of_carrier bilateral; species-renames (form/board/object) forward-promised per two-tick discipline | 251 |
+| Tick 5 | `2a70ed7` | shards/io.mirror docblock addendum — @io as wavefunction-collapse discharge boundary; three verbatim Alex citations (2026-07-15 memory + 2026-07-22 x2); imperfect eigenstate mapping; Glass Wall + wavefunction-collapse unified as ONE discipline at TWO altitudes; NO new mechanism | 126 |
+| Tick 6 | `c6eb2d8` | shards/mirror/spec/system.mirror addendum — seven-name section-directive rename cascade LANDED as alias-shim sibling grammars (s1→variety, s2→coupling, s3→coherence, s4→reality, s5→eigen [DOUBLY-JUSTIFIED], feedback_loops→loop, kintsugi_tooling→kintsugi); two-tick alias-shim discipline; dogfood update TICK 2 forward-promised | 149 |
+| Tick 7 | (this) | CURRENT.md addendum handoff | — |
+
+**Ouroboros closure at physical-substrate altitude:**
+
+- The substrate has been running `splinter → crystal` at every altitude (parser + storage + transparency + observer + runtime) since June via glass.mirror FLOOR decl + crystallize.rs settle layer + mirror/store/crystal.mirror species + void/splinter.mirror observer-position + rust/src/liquid.rs Liquid<T>. Neither the parser altitude nor the storage altitude nor the observer altitude knew they were the same word at different altitudes until Alex named it tonight.
+- `fragment` disposition: **NO new species-decl mint** (74th+ substrate-already-had-the-word instance chained). Per glass.mirror 2026-06-06 Alex verbatim: "The splinter IS the content addressed fragment." Prose synonym spanning both splinter (atom) and crystal (settled) altitudes.
+- @knife → @eigen: **OPTION B compose-not-absorb** verdict landed. @knife = RUNTIME face of Foerster COORD; @eigen = TYPE-LEVEL face; both altitudes needed; composition operator authorized (`@knife.jump : @eigen(T) × @knife.domain → @eigen(T')`; forward-promised at @knife altitude).
+- Sub-Turing decidability = **NATURAL CONSEQUENCE** of holding wavefunction @coherent within FLANG + shared memory + below @io collapse boundary. Not an imposed constraint. matrix.rs LAPACK dsyev_ O(n³) polynomial + BLAKE3 deterministic + Foerster COORD contraction dH¹/dt ≤ 0 monotone = the sub-Turing floor.
+
+**Three [ALEX-Qn] Pack-adjudication candidates surfaced (canonical spec §9):**
+
+- **[ALEX-Q1]** — Species-rename shards timing: land @eigen/form + @eigen/board + @eigen/object this task OR forward-promise? Mara-lean forward-promised per anti-stall discipline; low-consequence.
+- **[ALEX-Q2]** — Ratify substrate-honest `fragment` disposition (NO new species-decl) OR mint `shards/fragment.mirror`? Mara-lean strong NO-mint.
+- **[ALEX-Q3]** — mirror.spec dogfood update TICK 1 vs TICK 2? Mara-lean TICK 2 forward-promised per consumer-stability discipline; TICK 1 landed sibling grammars only (see Tick 6 above).
+
+**One-sentence answer to the closing question:** the substrate's `splinter` word already carries Alex's tonight-recognition; NO new word needed.
+
+**Composes with (prior arcs):** Mara this-session Eigenform Stabilizer synthesis (`0adcfc4` + `ab6ad43` + `0b2858a` + `ebd50a4` + `50cd2b4` + `c02c669`); Anna Wolf J-space substrate (task #300 landings `0052408` + `26b0849`); @paradox family §7.5 event-horizon topology; Beer 1972-1984 VSM at compile-altitude altitude.
+
 ## 🌱 2026-07-21 ALEX-REFRAME — compile-collapse target = Liquid<T> threshold crossing (Rust FREEZES, Mirror canonical)
 
 **Verbatim Alex 2026-07-21 in-transcript** (immediately after ratifying compile-collapse RED→GREEN as next overnight /loop):
