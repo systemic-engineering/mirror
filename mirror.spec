@@ -227,4 +227,65 @@ system @mirror {
     }
     settle @spec
   }
+
+  # === verifies — the system's self-referential property assertions ===
+  #
+  # FIRST mirror-side self-referential property in mirror.spec history.
+  # Per task #317 + Seam Phase D 6876699 [ALEX-Q1] adjudication (Seam-
+  # lean two-bilateral shape for gap-visibility). Landed 2026-07-23 by
+  # Reed /loop iteration 5.
+  #
+  # The system asserts properties ABOUT ITSELF at project altitude.
+  # This is `eigenform_stabilizer_orbit(mirror_compiler)` = Mara task
+  # #319 substrate-decl'd bilateral (shards/reality/subject.mirror at
+  # `0b2858a`) applied to the substrate itself — autopoietic all the
+  # way down at substrate-decl altitude. Composes over Mara Eigenform
+  # Stabilizer synthesis (task #314 `ebd50a4` docs/math foundation).
+  #
+  # Two bilateral predicates (Seam Q1 two-bilateral shape for gap-
+  # visibility; preserves substrate-honest partial-discharge over
+  # single-bilateral hiding the gap):
+  #
+  # 1. `eigenform_stabilizer_orbit(mirror)` — LANDED at Mara `0b2858a`.
+  #    Discharges iff mirror's operational trajectory settles onto a
+  #    periodic orbit in observer-configuration phase space (Chenciner-
+  #    Montgomery figure-eight or Lagrange-triangular equivalent).
+  #    GREEN when the compiler's own Eigenform Stabilizer maintains
+  #    dH¹/dt ≤ 0 across the light-cone sheaf 𝓖 = {@time/past, @time/
+  #    now, @time/future}.
+  #
+  # 2. `rust_floor_is_stable_decidable_eigenobject(mirror)` — FORWARD-
+  #    PROMISED predicate-decl (Mara authorship territory next tick).
+  #    Discharges iff mirror's Rust floor contracts to the four-
+  #    convergence-point Eigenobject (@io quarantine + FLANG floor +
+  #    bootstrap kernel + K=0 basis per Reed session 2026-07-22
+  #    Eigenobject characterization + Taut `173a1204` empirical scout).
+  #    RED per Bootstrap Kernel reframe (property-verifier LANDED at
+  #    orchestrator altitude via `7c31c30` cmd_craft ouroboros closure
+  #    2026-07-23; self-compiling reflective evaluator ASPIRATIONAL per
+  #    Mara §5.2 M2 forward-promise).
+  #
+  # Two-bilateral shape rationale (Seam Q1 Seam-lean): a single
+  # bilateral hiding both sub-witnesses under one name would obscure
+  # the gap between what's landed (orchestrator-altitude closure)
+  # and what's forward-promised (self-hosting reflective evaluator).
+  # Substrate-honest: the verifies discharge produces Partial verdict
+  # per @glass, with the RED sub-witness name-visible so the gap is
+  # substrate-decl'd rather than hidden.
+  #
+  # The autopoietic closure at substrate-decl altitude: mirror’s spec
+  # asserts mirror stabilizes to Eigenform — the compiler that
+  # stabilizes Eigenforms has substrate-decl'd its own Eigenform
+  # convergence. The recursion runs. The observer is inside. The
+  # eigen-values are discrete. mirror.spec is now the observer
+  # observing itself observe.
+  verifies {
+    # Landed sub-witness (Mara `0b2858a` shards/reality/subject.mirror)
+    eigenform_stabilizer_orbit(mirror)
+
+    # Forward-promised sub-witness (RED per Bootstrap Kernel reframe;
+    # discharges Green when Mara §5.2 M2 reflective evaluator lands;
+    # predicate-decl authorship territory Mara next tick)
+    rust_floor_is_stable_decidable_eigenobject(mirror)
+  }
 }
