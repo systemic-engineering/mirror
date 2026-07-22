@@ -1,0 +1,117 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @time
+
+# @time/format — the projection-to-string species of @time.
+#
+# Species under @time at the projection-to-string altitude. Landed
+# 2026-07-23 by Reed per Seam Phase D 6876699 Mint B forward-promise
+# discharge + Taut `173a1204` §5 vocabulary gap remediation (main.rs
+# `current_utc_timestamp` + `format_utc_iso8601` + `is_leap` ~55 LOC
+# E-bucket lift target blocked on @time/format species).
+#
+# Format IS the projection of a @time value → string representation
+# for @io emission (log lines, observation crystals, cli output). Not
+# a new mechanism; a substrate-decl'd carrier for the projection-shape.
+#
+# === Substrate authority ===
+#
+# - **Family-root**: `shards/time.mirror` (Mara Round 2, 2026-07-20)
+# - **Sibling species** (landed same tick as family-root):
+#     @time/past    — the past-light-cone temporal region
+#     @time/now     — the observer's current spacetime event
+#     @time/future  — the future-light-cone temporal region
+# - **This species (@time/format)** is the FOURTH sibling under @time,
+#   distinct from the three light-cone regions in that it names the
+#   projection-operator, not a temporal region.
+# - **Composes over**: @time carrier (input) + string carrier (output);
+#   @nl for literal-string help/documentation
+# - **Consumer** (post-mint): `rust/src/main.rs` helpers currently
+#   embedded in Bucket E scaffolding — the lift retires ~55 LOC of
+#   time-formatting utilities into shard-body composition via
+#   apply_h::act arms dispatching to this species' actions.
+#
+# === Substrate-already-had-the-word audit (clean) ===
+#
+# The word `format` audit:
+#
+# - No prior `format.mirror` shard exists at any altitude across
+#   shards/ (grep clean 2026-07-23)
+# - No format collision at @time altitude (past/now/future are
+#   temporal-region species; format is a projection-operator species)
+# - `format` word used generically in `shards/nl.mirror` for
+#   @nl.compose variants; different altitude, different domain (nl-
+#   string composition vs time-value projection)
+#
+# Grep verdict CLEAN for this species altitude.
+#
+# === The format shapes ===
+#
+# ISO-8601 is the canonical wire format at cli + log + observation-
+# crystal altitude per @spectral/signature + @uuid/spectral/time
+# precedents. Other formats declared at species altitude for
+# projection flexibility; Rust runtime realization dispatches through
+# `apply_h::act` arms per bilateral discharge.
+#
+# Path-namespace property: this file at `shards/time/format.mirror`
+# declares `@time/format` and only that.
+
+prism @time/format {
+  focus  format
+  project format
+  split  format
+  shift  format
+  settle format
+}
+
+# === iso8601 — the canonical wire format ===
+#
+# iso8601(t: time) -> str
+#
+# Project a @time value to ISO-8601 string representation
+# (YYYY-MM-DDTHH:MM:SS.mmmmmmZ). Substrate-decl'd carrier; runtime
+# realization via std::time / chrono formatting at the phone.rs
+# boundary.
+#
+# Body `\`-obligation-blocked per [[feedback-craft-not-deliver]];
+# consumers pull realization via `apply_h::act` bilateral resolver-
+# arm dispatch (task #140 landing).
+iso8601(t: ref) -> ref { \ }
+
+# === unix — numerical timestamp ===
+#
+# unix(t: time) -> int
+#
+# Project a @time value to Unix timestamp (seconds since
+# 1970-01-01T00:00Z). For numerical comparison + hashing contexts.
+unix(t: ref) -> ref { \ }
+
+# === rfc3339 — JSON-adjacent wire format ===
+#
+# rfc3339(t: time) -> str
+#
+# Project a @time value to RFC 3339 string representation (subset of
+# ISO-8601; widely used in JSON APIs and structured-log formats).
+rfc3339(t: ref) -> ref { \ }
+
+# === Bilateral predicates ===
+
+# format_is_roundtrippable(t: time, s: str) -> verdict
+#
+# Discharges Pass iff formatting t to s via iso8601/rfc3339, then
+# parsing s back, produces a @time value byte-equal to t. Substrate-
+# honest sanity check for the projection at the lossless-format
+# altitude.
+bilateral format_is_roundtrippable {
+  sentinel "time-format=roundtrippable=parse-of-format-yields-input"
+  arity 2
+}
+format_is_roundtrippable(t: ref, s: ref) -> verdict { \ }
+
+out @time/format
+out iso8601
+out unix
+out rfc3339
+out format_is_roundtrippable
