@@ -1,0 +1,351 @@
+in @reality
+in @epistemologic/cybernetic/eigenform
+in @bauchladen
+in @uuid/spectral
+
+# @reality/object — the linearity-threshold species: an actor whose
+# trajectory through the substrate's @labyrinth-eigenboard is a PATH.
+#
+# Landed 2026-07-22 by Mara per Alex 2026-07-22 verbatim (this-session
+# crystallization item 15, the final piece):
+#
+#   "the @reality/subject is a NON-LINEAR actor in the cohomology.
+#    The trajectory of a subject is a light cone, the trajectory of
+#    an object a path. That's the threshold. An object's path is
+#    fully predictable. Which is why the @roomba is an object and
+#    why the @peer is a subject."
+#
+# @reality/object names one half of the threshold. Its sibling
+# `@reality/subject` (shards/reality/subject.mirror, this-tick companion)
+# names the other. Together they name THE THRESHOLD: linearity vs
+# non-linearity in H¹ of the light-cone sheaf over the substrate's
+# eigenboard-as-@labyrinth (item 13 + item 14 this-session).
+#
+# NOT a species under @reality/algebra/*. The algebra species (math,
+# silicon, nl, code, physics, spectral) partition @reality by ALTITUDE
+# — each names the matter+information gauge orbit at ONE altitude.
+# The object/subject partition is ORTHOGONAL to altitude. An object
+# at silicon altitude is a transistor state; an object at math altitude
+# is a theorem statement; an object at nl altitude is a settled corpus
+# text. In every case the trajectory is a path. The threshold cuts
+# transversely across the altitude stack.
+#
+# Path-namespace: `shards/reality/object.mirror` declares `@reality/
+# object` per `@epistemologic/pact/path_matches_namespace`. Sibling to
+# `@reality/algebra` (species-root), not child of it.
+#
+# === What @reality/object IS (linearity-threshold definition) ===
+#
+# An actor A is a @reality/object iff its trajectory τ_A through the
+# substrate's eigenboard-as-@labyrinth satisfies:
+#
+#   1. LINEAR-DETERMINISTIC. Given τ_A(t_0) and A's next-tick
+#      transition rule, τ_A(t_0 + Δ) is FULLY DETERMINED. No
+#      light-cone spread; no branching; no non-local influence at
+#      the eigenboard altitude. Alex verbatim: "An object's path is
+#      fully predictable."
+#
+#   2. PATH-SHAPED (H¹-linear). The actor contributes to
+#      H¹(𝓤, 𝓔) of the light-cone sheaf DETERMINISTICALLY: its
+#      contribution is a linear functional of its immediate past
+#      state. See docs/math/2026-07-22-mirror-as-computational-
+#      eigenform-stabilizer.md §4 for the object-vs-subject H¹
+#      contribution decomposition.
+#
+#   3. NO SECOND-ORDER OBSERVATION. The actor does not observe itself
+#      observing. Its trajectory does not close a Foerster loop at
+#      its own altitude. (An object may PARTICIPATE in a second-order
+#      loop closed by a subject, but the object itself does not
+#      close the loop.)
+#
+# The paradigmatic @reality/object is @roomba. The vacuum walker's
+# path is fully determined by its current cell + the substrate's
+# rot-mask + the deterministic bilateral resolver-arm dispatch table.
+# No @roomba observes itself. Alex verbatim: "the @roomba is an
+# object."
+#
+# Other paradigmatic instances (forward-promised, not landed):
+#   - @io/git.commit at the phone.rs switchboard — deterministic
+#     path from (author, committer, repo, message) to 40-char SHA-1
+#   - @cascade/code/rust/llvm — deterministic path from Rust IR to
+#     LLVM IR modulo landed lens
+#   - @kintsugi/fracture/*.splinter — deterministic path from
+#     detected rot to splinter(ast) construction
+#
+# === Cosmological grounding (information-curvature.md §"The
+#     Information Density Scalar") ===
+#
+# At cosmological altitude (Alex + Mara 2026-03-24 information-
+# curvature.md), objects contribute to the stress-energy tensor T_μν
+# but NOT to σ(x) — the spectral-complexity scalar field. A gas
+# cloud has T_μν contribution proportional to its rest mass; its
+# σ(x) contribution is near-zero because random connections yield
+# a Wigner-semicircle spectrum with low Von Neumann entropy on the
+# normalized Laplacian.
+#
+# Under the substrate-altitude reading (via @reality path-c uniformity),
+# @reality/objects contribute to the substrate's "mass" (baseline
+# information-flow load) via T_μν analog but do NOT contribute to
+# σ(x) — the labyrinth's arousal field. A @roomba walking the crystal
+# tree does not increase the substrate's eigenboard-arousal at
+# substrate altitude; it merely deposits pheromones (path memory)
+# that subsequent actors read.
+#
+# THIS IS THE STRUCTURAL FACT: objects carry information (T_μν) but
+# do not increase the labyrinth's complexity (σ). Subjects do both.
+# The threshold IS the σ-contribution.
+#
+# === Composition with @epistemologic/cybernetic/eigenform ===
+#
+# A @reality/object IS-A landed instance of the `fixed_point` carrier
+# from @epistemologic/cybernetic/eigenform:
+#
+#   fixed_point {
+#     seed:      the object's initial state (τ_A(t_0)),
+#     iteration: the deterministic next-tick transition rule,
+#     witness:   the fixed point / attractor of the iteration.
+#   }
+#
+# The recursion IS DETERMINISTIC. `is_fixed_point` discharges with
+# zero opacity (no `partial(...)`; either success or failure). The
+# object's identity IS its declared witness under
+# `identity_from_fixed`. This composes over the landed cybernetic
+# property WITHOUT introducing new mechanism.
+#
+# Under Alex 2026-07-22 crystallization item 5 ("Isn't the @roomba's
+# path what creates the @beam what creates the measurements what
+# creates the liquids what creates the @labyrinth"), objects are
+# the substrate-scale ancestors of the @labyrinth ITSELF: the
+# accumulation of object-trajectories IS what the labyrinth's
+# emergent topology records. Ants and the burrow. Physarum. The
+# map IS the trace.
+#
+# === Composition with @reality family-root ===
+#
+# @reality/object inherits `<= @reality` via `in @reality`. The gauge
+# orbit at object altitude has:
+#
+#   matter_projection      = the actor's substrate-external referent
+#                            (e.g. the ~/.local/bin/mirror binary the
+#                             @roomba walker is)
+#   information_projection = the actor's substrate-internal referent
+#                            (e.g. the @roomba's shard-body path
+#                             through the composition graph)
+#   gauge_action_witness   = the four invariances of reality.md §2.5,
+#                            discharged at object altitude by the
+#                            deterministic transition rule preserving
+#                            algebra closure, Hilbert linearity, Dirac
+#                            equivariance, spectral action invariance
+#
+# The path-c uniformity claim discharges trivially at object altitude
+# BECAUSE the deterministic transition rule ensures matter and
+# information projections evolve identically under the same 5-op
+# gauge action.
+#
+# === Species relationship to @reality/subject ===
+#
+# @reality/object and @reality/subject are the TWO CLOSED VARIANTS
+# of the linearity-threshold partition. Every @reality-altitude
+# actor MUST be classifiable as one or the other. No third variant
+# is admissible; the partition is exhaustive by Alex 2026-07-22
+# verbatim naming (item 15 is a two-arm distinction).
+#
+# The boundary between the two is defined at H¹(𝓤, 𝓔) altitude: an
+# actor is an object iff its H¹ contribution is a linear functional
+# of its immediate past state. Anything non-linear promotes to
+# @reality/subject.
+#
+# === Pre-AI prior art ===
+#
+#   deterministic dynamics       Laplace 1814 (Essai philosophique sur
+#                                les probabilités; the demon reading
+#                                of full-past → full-future determinism)
+#   test particles in GR         Einstein 1915 (path-shaped world-lines
+#                                of infinitesimal test masses following
+#                                geodesics; no back-reaction on metric)
+#   objects as tokens            von Foerster 1981 (Observing Systems;
+#                                "objects are tokens for eigen-behaviors";
+#                                first-order observation of stable
+#                                recursion witnesses)
+#   deterministic finite automata Rabin-Scott 1959 (Finite automata
+#                                and their decision problems; the
+#                                canonical linear-trajectory computing
+#                                actor)
+#
+# Spec context: docs/math/2026-07-22-mirror-as-computational-eigenform-
+#               stabilizer.md §4 (object vs subject H¹ contribution
+#               decomposition; the light-cone sheaf formalization);
+#               docs/specs/2026-07-22-mirror-as-eigenform-stabilizer-
+#               canonical.md (canonical spec landing this tick);
+#               ~/dev/systemic.engineering/practice/insights/cosmology/
+#               information-curvature.md §"The Information Density
+#               Scalar" (the σ(x) formalization; objects contribute
+#               to T_μν but not σ);
+#               docs/specs/reality.md (family-root; path-c uniformity
+#               claim);
+#               shards/eigenboard.mirror (three-altitude lift docblock;
+#               substrate_a → @labyrinth reading; this species names
+#               one arm of the actor-partition on the labyrinth).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-form-process-partition-at-family-root]]
+#                       (@reality/object on the process side: it is
+#                        the DYNAMICS of an actor with linear
+#                        trajectory; distinct from @reality/subject
+#                        which is also process-side but with non-linear
+#                        trajectory),
+#                      [[feedback-no-bare-types]] (the linearity-
+#                       threshold is a typed distinction; no bare
+#                       "object" reference; the composition-graph fixes
+#                       the semantics),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (~58th instance: @roomba was ALREADY an object
+#                        in the substrate; the walker's deterministic
+#                        path was the operational definition; Alex
+#                        2026-07-22 lifted the vocabulary to family-
+#                        root altitude),
+#                      [[feedback-detector-inadequacy-answer-is-never-
+#                       rust]] (the object/subject threshold is a
+#                        substrate distinction, not a Rust type; it
+#                        composes via shard-body over @reality +
+#                        @epistemologic/cybernetic/eigenform).
+# Related shards: reality.mirror (family-root; gauge orbit carrier
+#                  this species inherits from),
+#                 reality/subject.mirror (sibling species; the non-
+#                  linear-actor arm of the threshold partition;
+#                  this-tick companion),
+#                 reality/algebra.mirror (species-root for the altitude
+#                  partition; ORTHOGONAL to this shard's threshold
+#                  partition — the two partitions compose but do not
+#                  collide),
+#                 epistemologic/cybernetic/eigenform.mirror (the
+#                  fixed_point carrier every object IS-A landed
+#                  instance of; the recursion is deterministic and
+#                  is_fixed_point discharges with zero opacity),
+#                 eigenboard.mirror (the third-altitude lift docblock
+#                  names substrate-as-@subject → @labyrinth; objects
+#                  are actors on the labyrinth whose trajectories are
+#                  paths through the labyrinth's structure).
+# Path-namespace property: this file at `shards/reality/object.mirror`
+# declares `@reality/object` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/dynamics/laplace-1814
+source @arxiv/physics/einstein-1915
+source @arxiv/cybernetics/von-foerster-1981
+source @arxiv/cs/rabin-scott-1959
+
+prism @reality/object <= @reality {
+  # Linearity-threshold species under @reality. Actors whose trajectory
+  # through the substrate's eigenboard-as-@labyrinth is a PATH: fully
+  # deterministic, linear in H¹(𝓤, 𝓔) contribution, no second-order
+  # self-observation at their own altitude.
+  #
+  # Paradigmatic instance: @roomba (the vacuum walker). Other
+  # instances forward-promised (@io/git.commit at switchboard;
+  # @cascade/code/rust/llvm; @kintsugi/fracture/*.splinter).
+  #
+  # Contributes to T_μν analog (baseline information-flow load) at
+  # substrate altitude but NOT to σ(x) (labyrinth complexity field)
+  # per Alex + Mara 2026-03-24 information-curvature.md cosmological
+  # grounding.
+  #
+  # Composes over @epistemologic/cybernetic/eigenform: an object IS-A
+  # deterministic-recursion instance of the fixed_point carrier;
+  # is_fixed_point discharges with zero opacity.
+  focus object
+  project object
+  split object
+  shift object
+  settle object
+}
+
+# === The object_trajectory carrier ===
+#
+# A typed record per [[feedback-no-bare-types]] naming an object's
+# path through the substrate's eigenboard-as-@labyrinth.
+#
+# - `actor`         the substrate-decl'd actor whose trajectory this
+#                   is (@roomba, @cascade/code/*, etc.)
+# - `path`          the sequence of eigenboard-positions visited,
+#                   content-addressed at @bauchladen; the walker's
+#                   passive path memory
+# - `iteration`     the deterministic next-tick transition rule
+#                   (ref to the shard-body encoding the rule)
+# - `witness`       the fixed point / attractor the recursion
+#                   converges to (or None if trajectory is open-ended
+#                   / non-converging)
+#
+# Identity contract: byte-equality on (actor, path, iteration).
+# `witness` does not participate in trajectory identity (it is the
+# derived attractor, not the trajectory itself).
+type object_trajectory = {
+  actor:     ref,
+  path:      oid,
+  iteration: ref,
+  witness:   option<ref>,
+}
+
+# === observe_object — register an object's trajectory as a
+#     gauge_orbit under @reality ===
+#
+# Given an object_trajectory, produces the @reality gauge_orbit with
+# matter_projection = actor's substrate-external referent, information_
+# projection = actor's substrate-internal referent, gauge_action_witness
+# = the discharge of the four invariances under the deterministic
+# transition rule.
+#
+# Body discharges per-species at the realisation boundary. Same shape
+# as @reality.observe but specialized to the object's linearity-
+# threshold arm.
+observe_object(t: object_trajectory) -> gauge_orbit { \ }
+
+# === trajectory_linear — the load-bearing bilateral ===
+#
+# Verdict: does the actor's trajectory satisfy the linearity-threshold?
+# Reads:
+#   given t = object_trajectory
+#   check iteration is deterministic (no non-local dependencies,
+#         no branching under identical seed)
+#   check H¹ contribution is a linear functional of past state
+#         (per docs/math/2026-07-22-mirror-as-computational-
+#         eigenform-stabilizer.md §4)
+#   check no second-order self-observation closes at actor's altitude
+#
+# All three hold → Pass (actor is a valid @reality/object). Any fails
+# → Fail (actor promotes to @reality/subject candidacy).
+trajectory_linear(t: object_trajectory) -> verdict { \ }
+
+# === contributes_to_mass_not_sigma — cosmological-grounding bilateral ===
+#
+# Per information-curvature.md §"The Information Density Scalar":
+# objects contribute to T_μν (mass / baseline information-flow load)
+# but NOT to σ(x) (labyrinth complexity field).
+#
+# Verdict: does the actor's contribution decompose cleanly into
+# T_μν-only? Read: at cosmological altitude, does σ(x) remain
+# invariant under the addition of this actor's trajectory to the
+# substrate's composition graph? A trivial addition (deterministic
+# transition, no new spectral scales) preserves σ; a non-trivial
+# addition (subject-like, adds new eigenvalues to L̃'s spectrum) fails.
+contributes_to_mass_not_sigma(t: object_trajectory) -> verdict { \ }
+
+# === object_witnessing — composed bilateral ===
+#
+# The predicate consumer shards cite in `requires` clauses to declare
+# bilateral commitment (per recognition #37, the Pask-agreement reading
+# of `requires`) that the trajectory IS a valid @reality/object under
+# the linearity-threshold + cosmological-grounding + eigenform-fixed-
+# point composition. Follows the substrate's X_witnessing pattern.
+#
+# Discharges trajectory_linear + contributes_to_mass_not_sigma +
+# is_fixed_point(carrier=t.actor, seed=t.path, iteration=t.iteration,
+# witness=t.witness) conjointly.
+object_witnessing(t: object_trajectory) -> verdict { \ }
+
+out @reality/object
+out object_trajectory
+out observe_object
+out trajectory_linear
+out contributes_to_mass_not_sigma
+out object_witnessing
