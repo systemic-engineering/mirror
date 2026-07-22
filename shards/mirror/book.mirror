@@ -1,0 +1,151 @@
+in @prism
+in @meta
+in @nl
+in @glass
+in @mirror
+in @peer
+in @peer/registry
+in @subject
+in @trust
+
+# @mirror/book — the runtime @<name> registry species at compile-
+# altitude altitude. Type-level companion to rust/src/book.rs
+# (the Rust realization).
+#
+# Sibling to @mirror/phone (shards/mirror/phone.mirror this-tick;
+# the @io switchboard operator species). Together the pair makes
+# the switchboard complete:
+#
+#   @mirror/phone   = switchboard operator (patches Liquid<T> fibers)
+#   @mirror/book    = phone book (resolves @<name> → typed handle)
+#
+# BEAM lineage. Alex 2026-07-22 verbatim: "Registry. That's a good
+# point. We need a Registry. The @<name> is basically like a global
+# GenServer name. phone.rs and book.rs". Every @<name> in the
+# substrate is the parallel of `{:via, Registry, {MyRegistry, name}}`
+# at BEAM altitude; @mirror/book IS the Registry species, at the
+# rust/ compile-altitude realization site.
+#
+# === Substrate authority ===
+#
+# - Companion shard (sibling this-tick):
+#     shards/mirror/phone.mirror
+# - Composes over (shard altitude):
+#     shards/peer/registry.mirror §3 four well-known Subject
+#     constructors + §4.1 `resolve` action + §4.3 `register` action.
+#     @mirror/book at compile altitude REALIZES the well-known
+#     subset of §4.1 (§3.1-3.4 fixpoints + substrate-known Pack peer
+#     + Alex identities). General-purpose content-addressed OID
+#     lookup remains @peer/registry authorship territory.
+# - Rust realization (this-tick):
+#     rust/src/book.rs
+# - Consumer (this-tick):
+#     rust/src/main.rs::at_operator (@io/git.commit arm consults
+#     book::resolve for author + committer @<name> resolution).
+#
+# Landed 2026-07-22 by Mara-inline (Reed authoring cascade under
+# [substrate-floor:@io-boundary] discipline for the .rs; pure-docs
+# 📝 for this shard-decl body). Discharges shard-decl forward-
+# promise from COORD-4 (de18fde: hardcoded 2-well-known map in
+# main.rs → extracted to book.rs across full 8-well-known set).
+#
+# === Substrate-already-had-the-word audit (clean) ===
+#
+# The word `book` audit:
+#
+#   - No prior `book.mirror` shard exists at any altitude across
+#     shards/, spec/, docs/ (grep clean 2026-07-22).
+#   - No `library` / `directory` / `phonebook` / `catalog` shard
+#     collision at @mirror altitude. (shards/mirror/index.mirror
+#     names the substrate DAG index; orthogonal domain from the
+#     @<name> registry surface.)
+#   - @peer/registry (shards/peer/registry.mirror, 2026-07-18
+#     Mara) declares the SHARD-altitude species; @mirror/book is
+#     the COMPILE-altitude realization of the well-known subset.
+#     Different altitude, composes not collides. Per canonical
+#     spec docs/specs/2026-07-18-peer-registry-oid-resolution.md
+#     §2.1 the SHARD species carries `subject_registry` type;
+#     book.rs (compile) implements a well-known-subset resolver
+#     over `fractal::Subject`.
+#   - @spectral/registry (shards/spectral/registry.mirror,
+#     2026-06-11) is a DIFFERENT registry species (typed child
+#     index for gen_prism children under supervisor tree); same
+#     `registry` word at different family-root altitude per
+#     [[feedback-substrate-already-had-the-word]] discipline.
+#
+# Grep verdict CLEAN for this species altitude.
+#
+# === Composition graph ===
+#
+# Parents (substrate-decl via `in` imports):
+#   @prism          — 5-op family per Recognition #79 basis
+#   @meta           — substrate-decl marker at glass altitude
+#   @nl             — name-carriers for @<name> string references
+#   @glass          — transparency inheritance via @mirror family-root
+#   @mirror         — family-root; @mirror/book species carrier
+#   @peer           — well-known @peer/<name> subset domain
+#   @peer/registry  — shard-altitude parent species this shard
+#                     realizes at compile altitude (§4.1 subset)
+#   @subject        — resolve returns Subject values
+#   @trust          — well-known Subjects are @trust chain roots per
+#                     canonical spec §5 priority ladder step 4
+#
+# Downstream consumers:
+#   rust/src/main.rs::at_operator     — dispatch site (@io/git.commit)
+#   Future: all shard bodies that dispatch ‘@io/git.commit’ through
+#           @mirror/phone MUST resolve author + committer @<name>
+#           references through @mirror/book first.
+
+prism @mirror/book {
+  focus book
+  project book
+  split book
+  shift book
+  settle book
+}
+
+# === the resolve action — load-bearing ===
+#
+# resolve(name) -> imperfect(subject, ref, ref)
+#
+# Given an @<name> reference string (e.g. "@peer/mirror",
+# "@peer/reed", "@human/alex"), return the Subject that name
+# resolves to via well-known lookup, OR name the resolution
+# failure explicitly per @glass discipline.
+#
+# Well-known set (Landing 1, this tick):
+#
+#   @peer/mirror  → Subject::mirror()              (compiler self-identity)
+#   @peer/void    → Subject::void()                (K=0 default)
+#   @peer/reed    → Subject::peer("reed",  … /Users/reed)
+#   @peer/mara    → Subject::peer("mara",  … /Users/mara)
+#   @peer/seam    → Subject::peer("seam",  … /Users/seam)
+#   @peer/taut    → Subject::peer("taut",  … /Users/taut)
+#   @peer/glint   → Subject::peer("glint", … /Users/glint)
+#   @human/alex   → Subject::human("alex", …)
+#
+# Ordering: two zero-arg substrate-constructor Subjects first
+# (@peer/mirror + @peer/void; @peer/registry canonical spec §3.1-3.2
+# fixpoints), then the five Pack peer @subject-instances (§3.4
+# constructor over substrate-known Pack roster reed/mara/seam/taut/
+# glint), then Alex as the first Human @subject (§3.3 constructor +
+# Landing 3 named-ancestor roster).
+#
+# Arbitrary @<name> resolution requires @peer/registry §2 storage
+# backend + §4.3 `register` action realization + @trust family-root
+# chain traversal. Book returns a substrate-honest Err naming that
+# authorship territory. The well-known boundary shrinks over time as
+# Mara @peer/registry general-purpose lookup lands.
+resolve(name) -> imperfect { \ }
+
+# === the well_known_names action — enumerative ===
+#
+# well_known_names() -> [name]
+#
+# Enumerate the well-known @<name> set as a stable ordered list.
+# Consumers use this to construct actionable error messages naming
+# what IS landed at the current registry surface. Stable ordering
+# is load-bearing for downstream consumers that pattern-match on
+# enumerated well-known sets (e.g. main.rs at_operator error
+# format substring assertions).
+well_known_names() -> ref { \ }

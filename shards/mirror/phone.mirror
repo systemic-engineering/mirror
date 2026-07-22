@@ -1,0 +1,142 @@
+in @prism
+in @meta
+in @nl
+in @glass
+in @mirror
+in @io
+in @io/fs
+in @io/git
+in @trust
+
+# @mirror/phone — the @io switchboard operator species at compile-
+# altitude altitude. Type-level companion to rust/src/phone.rs
+# (the Rust realization).
+#
+# phone.rs patches Liquid<T> flowing through Fiber<T> of the Bundle
+# Tower (Baez-Schreiber altitude). The switch-operator metaphor is
+# exact: callers hand phone.rs a request + typed handles; phone.rs
+# opens the physical @io channel and returns the completed round-
+# trip. Alex 2026-07-22 verbatim: "the Liquid<T> is what runs
+# through the phone.rs fibres. Think telephone switch operator."
+#
+# Sibling to @mirror/book (shards/mirror/book.mirror this-tick;
+# @<name> → Subject resolver). Together the pair makes the
+# switchboard complete:
+#
+#   @mirror/phone   = switchboard operator (patches Liquid<T> fibers)
+#   @mirror/book    = phone book (resolves @<name> → typed handle)
+#
+# === @io families phone.rs serves ===
+#
+# @io/fs      — list_dir_recursive + read_file + write_file +
+#               append_file + mkdir_p (5 primitives; full state-space
+#               property tests per task #303 phone.rs ship arc)
+# @io/git     — git_commit_as (author + committer + repo_root +
+#               message); SSH-signed via @trust family-root; content-
+#               addressed 40-char SHA-1 OID return
+# @io/bytes   — stdio read/write at line-carrier altitude
+# @io/socket  — TCP/UDS connect + accept + read + write (MCP stdio
+#               transport surface)
+#
+# Fifth @io family FORWARD-PROMISED per Mara `defc8ef` minimal-gap
+# analysis Tick 1: @io/process (spawn + wait + status + stdio-pipe)
+# as the @tools hook prerequisite.
+#
+# === Substrate authority ===
+#
+# - Rust realization:
+#     rust/src/phone.rs (task #303 phone.rs ship arc; 82 property tests)
+# - Companion shard (sibling this-tick):
+#     shards/mirror/book.mirror
+# - Composes over (shard altitude):
+#     shards/io/fs.mirror + shards/io/git.mirror +
+#     shards/io/secrets.mirror + shards/io/secrets/sops.mirror +
+#     shards/io/crypto.mirror (@io family-root species). Phone at
+#     compile altitude REALIZES those specs via the phone.rs runtime.
+# - Consumer (this-tick + prior):
+#     rust/src/main.rs::at_operator (dispatches all @io action-refs
+#     through phone.rs primitives; the switchboard IS the switchboard,
+#     not an implicit-context leaker).
+#
+# Landed 2026-07-22 by Mara-inline (Reed authoring cascade). This
+# shard-decl RETROACTIVELY catches up the type-level representation
+# for phone.rs (the Rust realization landed across the phone.rs
+# ship arc 2026-07-14 through 2026-07-21 per task #303 completion).
+# Per Alex 2026-07-22 verbatim: "@mirror/book equivalent. And @mirror/
+# phone. It feels coherent to each of the rust files represented at
+# type level. At some point we might be able to even inline the rust/
+# after the bootstrap/ inlining worked." The type-level companions
+# prepare rust/-inlining via the same @roomba/@kintsugi mechanism
+# that collapses bootstrap/: shard-decl surface grows; .rs surface
+# eventually dissolves into shard-body composition.
+#
+# === Substrate-already-had-the-word audit (clean) ===
+#
+# The word `phone` audit:
+#
+#   - No prior `phone.mirror` shard exists at any altitude across
+#     shards/, spec/, docs/ (grep clean 2026-07-22).
+#   - No `switchboard` / `operator` / `switch` / `dial` / `telephone`
+#     shard collision at @mirror altitude.
+#   - `phone.rs` (rust/src/phone.rs, 2026-07-14) is the Rust
+#     realization landing that predated the shard-decl. This shard
+#     retroactively catches up the type-level representation per Alex
+#     2026-07-22 directive.
+#
+# Grep verdict CLEAN for this species altitude.
+#
+# === Composition graph ===
+#
+# Parents (substrate-decl via `in` imports):
+#   @prism    — 5-op family per Recognition #79 basis
+#   @meta     — substrate-decl marker at glass altitude
+#   @nl       — action-ref name-carriers (@io/git.commit strings)
+#   @glass    — transparency inheritance via @mirror family-root
+#   @mirror   — family-root; @mirror/phone species carrier
+#   @io       — the family-root of the physical crossing
+#   @io/fs    — filesystem @io family (5 primitives)
+#   @io/git   — git @io family (commit + log + status)
+#   @trust    — SSH-signing authorization chain per family-root
+#
+# Downstream consumers:
+#   rust/src/main.rs::at_operator     — all @io action-ref dispatch
+#   Future: every shard body that composes over @io/... crosses
+#           through phone.rs at the compile-altitude realization
+#           boundary; the switchboard IS the sole legitimate @io
+#           crossing surface at rust/ altitude.
+
+prism @mirror/phone {
+  focus phone
+  project phone
+  split phone
+  shift phone
+  settle phone
+}
+
+# === the dial action — load-bearing ===
+#
+# dial(action_ref, args) -> imperfect(result, ref, ref)
+#
+# Route an @io/... action-ref (name-carrier string) through phone.rs
+# to the underlying @io family primitive. The switchboard operator
+# metaphor: callers hand the "phone number" (action_ref like
+# "@io/git.commit") + args; the operator patches Liquid<T> through
+# the fiber to the physical @io side and returns the completed call.
+#
+# Signature-shape parity with at_operator: callers pass string
+# name-carriers; phone patches to typed handles; return value crosses
+# back at the string carrier altitude. This mirrors phone.rs's
+# `io::Result<_>` shape at compile altitude.
+dial(action_ref, args) -> imperfect { \ }
+
+# === the roundtrip action — composition-view ===
+#
+# roundtrip(request) -> imperfect(response, ref, ref)
+#
+# Composition-view of dial: the full @io round-trip as a single
+# atomic action. Callers pass a typed request; phone patches to the
+# appropriate physical side and returns the response. Fiber altitude
+# (Baez-Schreiber Bundle Tower). Composes with @mirror/book for
+# request Subject resolution when the roundtrip carries @<name>
+# author/committer references.
+roundtrip(request) -> imperfect { \ }
