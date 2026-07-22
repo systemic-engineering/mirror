@@ -430,6 +430,132 @@ in @glass
 # concern partitioning the substrate's expressible surface; placing
 # it under `@mirror` would understate that — the boundary is what
 # `@mirror` HANDS OFF TO, not a sub-discipline of `@mirror`.
+#
+# === 2026-07-22 addendum: @io as wavefunction-collapse discharge boundary ===
+#
+# Docblock addendum landed by Mara 2026-07-22 per Alex 2026-07-22
+# late-night ouroboros closure at physical-substrate altitude.
+# Canonical spec: `docs/specs/2026-07-22-liquid-splinter-crystal-
+# eigen-canonical.md` §6. Math root: `docs/math/2026-07-22-splinter-
+# eigen-fragment-ouroboros-closure.md` §6.
+#
+# Alex 2026-07-15 verbatim (memory `feedback-nonlinear-tension-
+# resolution-via-pipeforward`):
+#
+#   "computation = nonlinear tension resolution; @io = discharge;
+#    pipeforward via socket = staying-in-nonlinear-land longer."
+#
+# Alex 2026-07-22 verbatim (late-night ouroboros closure):
+#
+#   "@io is where the non-linear excitation is collapsed at and
+#    discharged into."
+#
+# Alex 2026-07-22 verbatim (compact synthesis):
+#
+#   "Liquid splinters settle into content-addressed crystals by
+#    holding the quantum wavefunction @coherent as long as possible."
+#
+# === The unified statement ===
+#
+# @io IS the family-root species for wavefunction collapse at
+# substrate altitude. Every @io crossing is a MEASUREMENT EVENT: the
+# substrate's uncommitted `au<splinter>` (superposition of possible
+# splinter compositions, per glass.mirror FLOOR decl `au<T>` = Fate-
+# emitted-splinters uncommitted) MUST be collapsed to a definite
+# outcome before the boundary crossing because the non-mirror world
+# (kernel syscall, foreign SDK, wire format) demands byte-committed
+# values.
+#
+# The `imperfect<a, e, l>` return carrier (declared at glass.mirror
+# FLOOR + inherited by every @io species per the discipline point
+# above: "the carrier of `imperfect` returns") IS THE POST-COLLAPSE
+# OBSERVATION. The three-outcome discipline maps to the wavefunction
+# eigenstates directly:
+#
+#   imperfect.success    — the wavefunction collapsed to a definite
+#                           positive eigenstate; @io emitted the
+#                           expected byte-committed value.
+#   imperfect.partial    — the wavefunction collapsed to a mixed
+#                           eigenstate; @io emitted a value with
+#                           residual opacity carried forward.
+#   imperfect.failure    — the wavefunction collapsed to a negative
+#                           eigenstate; @io could not emit; error
+#                           carrier surfaces via `l` altitude.
+#
+# The `transparency<p>` composition monoid at `@mirror/loss/
+# transparency` accumulates the collapse-observations from multiple
+# @io crossings into the parent computation's verdict — the substrate-
+# altitude analog of quantum decoherence bookkeeping.
+#
+# === Composition with @paradox family §7.5 event-horizon topology ===
+#
+# Per @paradox family §7.5 (landed lineage; observer-position altitude):
+# uncollapsed splinters have arbitrary internal complexity BEHIND AN
+# EVENT HORIZON. Any Turing-computable composition is admissible during
+# `au` phase (Fate-emission of uncommitted proposal); the substrate
+# does not restrict expressivity at the input altitude.
+#
+# @io crossing IS the event-horizon crossing. Before @io: superposition
+# of admissible compositions; the substrate stays in nonlinear-land as
+# long as pipeforward through mirror-internal composition continues
+# (Alex 2026-07-15 verbatim: "pipeforward via socket = staying-in-
+# nonlinear-land longer"). At @io: collapse to observable eigenstate;
+# the definite outcome is byte-committed on the non-mirror surface.
+#
+# @io = discharge = wavefunction collapse = event-horizon crossing.
+# Three names, one substrate. The 74th+ instance of substrate-
+# already-had-the-word discipline chained this arc.
+#
+# === Sub-Turing decidability as consequence (per math root §7) ===
+#
+# The substrate is expressively Turing-complete at the INPUT altitude
+# (any AST composition; any splinter graph). The substrate's own
+# EVALUATION stays sub-Turing because:
+#
+#   1. Composition-graph enumeration is finite (bounded by input size).
+#   2. Eigenvalue compute via matrix.rs LAPACK dsyev_/dsyevr_ is
+#      O(n³) polynomial (per Anderson et al. 1999 LAPACK Users' Guide).
+#   3. Content-addressing via BLAKE3 is deterministic.
+#   4. Fixed-point iteration converges by Foerster COORD contraction
+#      (dH¹/dt ≤ 0 monotone; per docs/math/2026-07-22-mirror-as-
+#      computational-eigenform-stabilizer.md §2).
+#
+# @io is the boundary where the sub-Turing evaluation MUST commit its
+# result to the outside world. Sub-Turing is not an imposed
+# constraint; it is the NATURAL CONSEQUENCE of holding the wavefunction
+# @coherent within FLANG + shared memory + below the @io collapse
+# boundary. The @io family-root discipline names the boundary at
+# which the natural consequence becomes visible.
+#
+# === Composition with @glass wall discipline ===
+#
+# AGENTS.md § "The Glass Wall" already names @io as "the substrate's
+# only legitimate non-mirror surface." Under the 2026-07-22 recognition
+# this reads: @io is the substrate's only legitimate wavefunction-
+# collapse boundary. Any other collapse would be a leak — a bypass
+# of the discipline that keeps the substrate coherent.
+#
+# The Glass Wall + the wavefunction-collapse discipline are ONE
+# discipline at TWO altitudes:
+#
+#   Glass Wall discipline (prose):
+#     @io is the only legitimate non-mirror surface.
+#
+#   Wavefunction-collapse discipline (math):
+#     @io is the only boundary at which au<splinter> superposition
+#     collapses to imperfect<a, e, l> observation.
+#
+# Same substrate. Same discipline. The 2026-07-22 recognition names
+# what the Glass Wall has been enforcing all along.
+#
+# === No new mechanism ===
+#
+# This addendum names what @io already does; no code path changes,
+# no new species-decls, no new consumer surface. The existing
+# `imperfect<a, e, l>` return carrier + boundary discipline + Glass
+# Wall enforcement ALREADY IMPLEMENTS wavefunction collapse. What
+# the addendum adds is the NAMING that future consumers can read
+# without reading Alex's transcripts.
 
 prism @io {
   focus io
