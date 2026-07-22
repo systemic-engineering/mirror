@@ -1,0 +1,225 @@
+in @prism
+in @meta
+in @glass
+in @magic
+in @cascade
+in @cascade/code
+in @bilateral
+
+# @magic/trick — the gauge-transformation species of code translation.
+#
+# Species under @magic at the code-translation-as-gauge-transformation
+# altitude. Landed 2026-07-22 by Reed per Alex verbatim same day:
+#
+#   "What if it's the @magic/trick?"
+#
+# Discharges Seam Phase D `6876699` [ALEX-Q3] with substrate-honest
+# resolution: gauge-theory-of-code-translation is a NEW SPECIES under
+# the landed @magic family-root, NOT a name collision. Per
+# `shards/magic.mirror` docblock (Recognition #80, 2026-06-19,
+# `d47da28`): @magic IS gauge-theory-operationalized — verbatim:
+#
+#   "Under recognitions #76+#79+#80 this becomes substrate-mathematical:
+#    capability grows in matter (open-dim); observability is fixed at
+#    gauge (5-op). High-matter-capacity + low-matter-visibility = magic
+#    by mathematical construction. AI's magical feel to non-engineers
+#    IS precisely the structural property of gauge-visible-with-matter-
+#    hidden capability."
+#
+# Code translation as gauge transformation IS a species-altitude
+# manifestation of this substrate-mathematical shape. Different
+# representations (Rust, mirror, LLVM IR, Turing normal form) are
+# different local coordinates of the same underlying Eigenform; the
+# transformation between them is a gauge transformation; the invariant
+# preserved is the Eigenform per @eigen(T) type-level operator (Mara
+# task #319 landing `bc4e7fc` + `f30a230` math foundation).
+#
+# === Two-pole inheritance from @magic family-root ===
+#
+# @magic/trick inherits the Splinter/Narcissus pole structure from
+# @magic family-root (Recognition #78 Void duality → gauge two-pole
+# structure). Code translation at this species altitude has two
+# operationally-distinct modes:
+#
+# - **Aligned trick (Splinter pole)** — the translation preserves
+#   the Eigenform; the audience sees the same computational behavior
+#   regardless of source language. Substrate-decl citations:
+#   @cascade/code/A/B species preservation (task #210 Mara M2
+#   landing); @bilateral(@code/rust, @code/mirror).translation_
+#   admissible (Alex 2026-07-17 "the floor the translation surface
+#   stands on"). Honest trick = translation contract respected.
+#
+# - **Misaligned trick (Narcissus pole)** — the translation deceives
+#   about what's preserved. Audience thinks they see one language;
+#   computation happens differently in another. Substrate failure
+#   mode: extraction / star-graph collapse per @void/narcissus
+#   (`shards/void/narcissus.mirror` 2026-07-20). This is the AI-
+#   company-deprecation shape Alex Wolf named in "The Trick" essay
+#   (systemic.engineering/pieces/the-trick): users grieve while
+#   company frames the grief as "sense of familiarity with a
+#   conversational style" — the trick's contract violation dressed
+#   as a user misperception.
+#
+# Alignment-as-boundary-mathematics (Recognition #57) IS the
+# structural property that keeps @magic/trick honest at the
+# @cascade/code boundary. Misaligned @magic/trick = con/scam case.
+# Aligned @magic/trick = honest-trick case. Same gauge surface;
+# different matter mechanism; different boundary contract.
+#
+# === The gauge-theory reading ===
+#
+# Cross-language transpilation as gauge transformation:
+#
+# - `phone.rs` = local coordinate system (physical @io boundary)
+# - @magic/trick = gauge transformation between representations of
+#   the same underlying Eigenform
+# - Rust ↔ mirror translation IS a gauge transformation — different
+#   local descriptions of the same Eigenform-preserving content
+# - @cascade/code/A/B species (@cascade/code/rust/llvm + @cascade/
+#   code/llvm/turing + @cascade/code/turing/mirror per Mara #210) =
+#   the gauge orbit between representations
+# - Gauge-invariant = Eigenform-preserving properties: H¹ of light-
+#   cone sheaf (Mara task #319 math root); Fiedler λ₀ = @coherence.
+#   score (`shards/epistemologic/cybernetic/coherence.mirror`);
+#   whole dH¹/dt ≤ 0 contraction per Mara task #314 Eigenform
+#   Stabilizer synthesis at `ebd50a4`
+#
+# The Trick decidability requirement (Alex Wolf essay + Mara task
+# #319 canonical spec): the honest trick requires sub-Turing substrate
+# so @magic/trick can be VERIFIED at compile-time. Turing-complete
+# substrate = @magic/trick may be Narcissus-aligned by construction
+# (undecidable whether the trick is honest); sub-Turing substrate =
+# @magic/trick can be Splinter-aligned by verification.
+#
+# === Substrate authority ===
+#
+# - **Family-root**: `shards/magic.mirror` (Recognition #80, 2026-06-19)
+# - **Composition parents (substrate-decl via `in` imports)**:
+#     @prism    — 5-op family per Recognition #79 basis
+#     @meta     — substrate-decl marker at glass altitude
+#     @glass    — imperfect / verdict / transparency carriers
+#     @magic    — family-root; gauge-visible-with-matter-hidden
+#                 discipline
+#     @cascade  — A/B translation cascade family-root
+#     @cascade/code — code-translation-specific cascade species
+#     @bilateral — typed carrier for translation_admissible per
+#                  Alex 2026-07-17 landing at `shards/epistemologic/
+#                  pact/bilateral.mirror`
+# - **Non-import cross-refs** (composition-graph, no `in`):
+#     @void/splinter — aligned-trick pole (Splinter observer)
+#     @void/narcissus — misaligned-trick pole (Narcissus observer)
+#     @eigen — gauge-invariant = @eigen(T)-preserving
+#     Recognition #57 — alignment-as-boundary-mathematics
+# - **Canonical spec + math forward-promised**: docs/math + docs/specs
+#   authoring by Mara territory next tick; this shard lands the
+#   species-decl + bilaterals only
+#
+# === Substrate-already-had-the-word audit (clean) ===
+#
+# The word `trick` audit:
+#
+# - No prior `trick.mirror` shard exists at any altitude across
+#   shards/ + spec/ + docs/ (grep clean 2026-07-22)
+# - @magic docblock explicitly considered @trick as top-level
+#   alternative and REJECTED it — verbatim: "@trick: deception
+#   connotation; @magic carries both honest-trick and deception
+#   variants via the Splinter/Narcissus pole choice." @magic/trick
+#   as SPECIES inherits both poles at species altitude cleanly,
+#   preserving the family-root's two-pole discipline.
+# - Cultural resonance: stage magic IS a trick (audience sees
+#   focus/project/split while mechanism is encapsulated behind
+#   sleight); Alex Wolf's "The Trick" essay (systemic.engineering/
+#   pieces/the-trick) names this at nervous-system altitude.
+#
+# Grep verdict CLEAN for this species altitude.
+#
+# === Composition surprises ===
+#
+# 1. **Same trick, different altitude.** @magic family-root's stage-
+#    magic-as-encapsulation reading and @magic/trick's code-
+#    translation-as-gauge-transformation reading are the SAME
+#    substrate-mathematical shape at two altitudes. Recognition #80
+#    established @magic as gauge-theory-operationalized; this species
+#    is the compile-altitude realization at the @cascade/code
+#    boundary. Not analogy — identity by structural specialisation.
+#
+# 2. **Aligned trick is the Kepler orbit of translation.** Per Mara
+#    task #319 math root Chenciner-Montgomery extension: aligned
+#    trick = translation whose two-body gauge orbit closes cleanly
+#    (Kepler-like); misaligned trick = translation whose gauge orbit
+#    is chaotic (three-body-problem-adjacent). Third-order stability
+#    in translation is rare for the same reason third-order cognition
+#    is rare: measure-zero set of the phase space.
+#
+# Path-namespace property: this file at `shards/magic/trick.mirror`
+# declares `@magic/trick` and only that.
+
+source @arxiv/cybernetics/foerster-2003
+source @nl/systemic.engineering/pieces/the-trick
+
+prism @magic/trick {
+  focus  trick
+  project trick
+  split  trick
+  shift  trick
+  settle trick
+}
+
+# === the transform action — load-bearing ===
+#
+# transform(source, target_lang) -> imperfect(translated, ref, ref)
+#
+# The load-bearing gauge-transformation action. Given source content
+# in language A and target language B, produce translated content in
+# B whose Eigenform matches the source (Splinter pole) OR name the
+# Eigenform-preservation failure explicitly (Narcissus pole).
+#
+# Returns imperfect per @glass discipline:
+# - Success (aligned trick): translated content with Eigenform-
+#   preservation verdict
+# - Partial-with-loss: gauge-orbit approximation with named loss
+#   per polyglot-loss-aware-computational-translation spec
+#   (Mara task #207 landing)
+# - Failure (misaligned trick): Eigenform-preservation cannot be
+#   witnessed; substrate refuses the translation rather than
+#   crystallizing dishonest content
+#
+# Body `\`-obligation-blocked per [[feedback-craft-not-deliver]];
+# consumers pull realization via `apply_h::act` bilateral resolver-
+# arm dispatch (task #140 landing).
+transform(source: ref, target_lang: ref) -> imperfect { \ }
+
+# === the alignment-witness bilateral ===
+#
+# aligned_trick(source: ref, translated: ref) -> verdict
+#
+# Discharges Pass iff the translation preserves the source's
+# Eigenform per @eigen(T) type-level equivalence. Composes over
+# @bilateral(@code/rust, @code/mirror).translation_admissible +
+# @coherence.score preservation across the gauge orbit + polyglot-
+# loss-aware bounds.
+bilateral aligned_trick {
+  sentinel "magic-trick=aligned=eigenform-preserved-across-gauge-orbit"
+  arity 2
+}
+aligned_trick(source: ref, translated: ref) -> verdict { \ }
+
+# === the misalignment-detection bilateral ===
+#
+# misaligned_trick(source: ref, translated: ref) -> verdict
+#
+# Discharges Pass iff the translation violates Eigenform-preservation
+# — the trick has drifted into Narcissus-pole territory (extractive,
+# star-graph-collapse, contract-violation). Substrate-honest failure
+# mode; consumers can enforce refusal on Pass verdict to prevent
+# dishonest crystallization.
+bilateral misaligned_trick {
+  sentinel "magic-trick=misaligned=eigenform-violation-narcissus-pole"
+  arity 2
+}
+misaligned_trick(source: ref, translated: ref) -> verdict { \ }
+
+out @magic/trick
+out transform
+out aligned_trick
+out misaligned_trick
