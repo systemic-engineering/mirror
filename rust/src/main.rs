@@ -953,44 +953,75 @@ pub(crate) fn at_operator(action_ref: &str, args: &[String]) -> Result<String, S
                 .map_err(|e| format!("@io/fs.mkdir_p({}): {}", path, e))
         }
         "@io/git.commit" => {
-            // Stub route — stakes the dispatch shape without making
-            // identity-policy calls. Per Alex 2026-07-18 direct-
-            // transcript "B. In the garden. The @trust floor is in the
-            // compiler. And it extends to the passkey" + insight doc
-            // `~/dev/systemic.engineering/practice/insights/cosmos/
-            // passkey-spectral-bridge.md`:
+            // Wired route — COORD-4 landing per Taut `3787770` +
+            // Mara `defc8ef` + Alex 2026-07-22 direction ("make the
+            // liquid flow"). Extends the earlier stub (which staked
+            // the dispatch shape) into an actual routing to
+            // phone::git_commit_as via a HARDCODED WELL-KNOWN OID
+            // MAP for @peer/mirror + @peer/void. Arbitrary @peer
+            // OIDs still surface the Mara @peer/registry authorship
+            // boundary — partial-solve substrate-honestly named.
             //
-            // Subject serialization = OID + registry (content-addressed).
-            // Every Subject value has `Addressable::oid()` via
-            // `#[derive(DerivePrism)] #[oid("@fractal/subject")]` (landed
-            // at fractal step 4 `82bc599`). The at_operator dispatch
-            // takes author_oid + committer_oid strings; a runtime Subject
-            // registry resolves them back to typed `&fractal::Subject`
-            // for the phone::git_commit_as call.
+            // The well-known map is Rice-safe: two literal string
+            // matches over fractal::Subject constructors that need
+            // no external state. Mara's @peer/registry species-decl
+            // + @trust family-root mint will replace this hardcoded
+            // map with arbitrary-peer OID lookup when landed.
             //
-            // The registry itself is Mara authorship territory:
-            // @peer/registry species-decl (forward-promised) + @trust
-            // family-root mint (forward-promised) + garden-altitude
-            // passkey bridge (insight doc names PRF as the WebAuthn
-            // parallel to SSH signing). Reed does NOT make identity-
-            // policy calls; Reed stakes the dispatch shape.
+            // Signature: 4 args = (author_oid, committer_oid,
+            // repo_root_path, message). Explicit repo_root avoids
+            // CWD-magic; the switchboard IS the switchboard, not
+            // an implicit-context leaker.
             let author_oid = args
                 .first()
-                .ok_or_else(|| "@io/git.commit: expected 3 args (author_oid, committer_oid, message)".to_string())?;
+                .ok_or_else(|| "@io/git.commit: expected 4 args (author_oid, committer_oid, repo_root, message)".to_string())?;
             let committer_oid = args
                 .get(1)
-                .ok_or_else(|| "@io/git.commit: expected 3 args (author_oid, committer_oid, message)".to_string())?;
-            let _message = args
+                .ok_or_else(|| "@io/git.commit: expected 4 args (author_oid, committer_oid, repo_root, message)".to_string())?;
+            let repo_root = args
                 .get(2)
-                .ok_or_else(|| "@io/git.commit: expected 3 args (author_oid, committer_oid, message)".to_string())?;
-            Err(format!(
-                "@io/git.commit: Subject registry resolution NOT YET LANDED (author_oid={}, committer_oid={}). Mara @peer/registry species-decl + @trust family-root mint is the authorship territory that resolves OIDs → fractal::Subject values. Per Alex 2026-07-18 + passkey-spectral-bridge insight: this is direction B (OID + registry) with the compiler's SSH-signing chain as one altitude and the garden's passkey/PRF chain as the parallel altitude of the SAME @trust family-root.",
-                author_oid, committer_oid
-            ))
+                .ok_or_else(|| "@io/git.commit: expected 4 args (author_oid, committer_oid, repo_root, message)".to_string())?;
+            let message = args
+                .get(3)
+                .ok_or_else(|| "@io/git.commit: expected 4 args (author_oid, committer_oid, repo_root, message)".to_string())?;
+
+            let author_subject = resolve_well_known_peer_oid(author_oid)?;
+            let committer_subject = resolve_well_known_peer_oid(committer_oid)?;
+
+            phone::git_commit_as(
+                Path::new(repo_root),
+                &author_subject,
+                &committer_subject,
+                message,
+            )
+            .map_err(|e| format!("@io/git.commit: {}", e))
         }
         _ => Err(format!(
-            "@-operator: unknown action-ref `{}` (landed: @io/fs.{{list_dir,read,write,append,mkdir_p}}; @io/git.commit STUBBED pending Mara @peer/registry + @trust family-root landing)",
+            "@-operator: unknown action-ref `{}` (landed: @io/fs.{{list_dir,read,write,append,mkdir_p}} + @io/git.commit[@peer/mirror|@peer/void]; other @peer OIDs pending Mara @peer/registry + @trust family-root landing)",
             action_ref
+        )),
+    }
+}
+
+/// Resolve a well-known @peer OID string to a fractal::Subject.
+///
+/// HARDCODED shortcut per COORD-4 (Taut `3787770` + Alex 2026-07-22).
+/// Only two literals: `@peer/mirror` → Subject::mirror() and
+/// `@peer/void` → Subject::void(). Arbitrary @peer OIDs return an
+/// Err naming Mara's @peer/registry + @trust family-root authorship
+/// territory — the future landing that will replace this map with
+/// arbitrary-peer OID resolution.
+///
+/// Substrate-honest partial-solve: covers mirror-authored + void-
+/// authored commits (the two well-known peers the compiler + garden
+/// use today) without waiting on the full @peer/registry authorship.
+fn resolve_well_known_peer_oid(oid: &str) -> Result<fractal::Subject, String> {
+    match oid {
+        "@peer/mirror" => Ok(fractal::Subject::mirror()),
+        "@peer/void" => Ok(fractal::Subject::void()),
+        other => Err(format!(
+            "@io/git.commit: unknown @peer OID `{}`. Well-known landed: @peer/mirror + @peer/void. Arbitrary @peer OIDs pending Mara @peer/registry species-decl + @trust family-root mint (per Alex 2026-07-18 direction B: OID + registry; garden-altitude passkey/PRF bridge as parallel altitude of same @trust family-root). Callers with typed fractal::Subject values SHOULD use phone::git_commit_as directly.",
+            other
         )),
     }
 }
@@ -1007,7 +1038,7 @@ mod at_operator_tests {
         let msg = result.unwrap_err();
         assert!(msg.contains("unknown action-ref"));
         assert!(msg.contains("list_dir"));
-        assert!(msg.contains("@io/git.commit STUBBED"));
+        assert!(msg.contains("@io/git.commit[@peer/mirror|@peer/void]"));
     }
 
     #[test]
@@ -1061,35 +1092,166 @@ mod at_operator_tests {
     }
 
     #[test]
-    fn git_commit_stub_names_the_registry_boundary() {
-        // The stub route MUST surface the Subject-registry-not-yet-landed
-        // boundary explicitly — not silently pass or fail. This test
-        // pins the boundary so future runtime attempts to resolve OIDs
-        // through this route get a substrate-honest error naming Mara's
-        // authorship territory (@peer/registry + @trust family-root).
+    fn git_commit_unknown_peer_oid_names_mara_registry_territory() {
+        // COORD-4 landing: well-known @peer OIDs (@peer/mirror,
+        // @peer/void) route through phone::git_commit_as; all
+        // other @peer OIDs surface the Mara @peer/registry +
+        // @trust family-root authorship boundary substrate-
+        // honestly. This test pins that boundary so future
+        // arbitrary-peer resolution attempts get a substrate-
+        // honest error naming Mara's authorship territory.
+        let td = tempfile::tempdir().unwrap();
         let result = at_operator(
             "@io/git.commit",
             &[
                 "@peer/reed".to_string(),
                 "@peer/mirror".to_string(),
+                td.path().display().to_string(),
                 "test commit body".to_string(),
             ],
         );
         assert!(result.is_err());
         let msg = result.unwrap_err();
-        assert!(msg.contains("Subject registry"));
+        assert!(msg.contains("@peer/reed"));
         assert!(msg.contains("@peer/registry"));
         assert!(msg.contains("@trust"));
-        assert!(msg.contains("@peer/reed"));
-        assert!(msg.contains("@peer/mirror"));
+        assert!(msg.contains("phone::git_commit_as"));
     }
 
     #[test]
-    fn git_commit_stub_requires_three_args() {
-        // Arity discipline preserved even at the stub altitude.
-        let result = at_operator("@io/git.commit", &["@peer/reed".to_string()]);
+    fn git_commit_well_known_peer_mirror_resolves_to_subject() {
+        // The internal resolver returns Ok(Subject::mirror()) for
+        // the well-known @peer/mirror OID. Direct resolver-test
+        // (no phone.rs invocation) pins the well-known map.
+        let subject = resolve_well_known_peer_oid("@peer/mirror").unwrap();
+        assert_eq!(subject.name, fractal::Subject::mirror().name);
+        assert_eq!(subject.email, fractal::Subject::mirror().email);
+    }
+
+    #[test]
+    fn git_commit_well_known_peer_void_resolves_to_subject() {
+        let subject = resolve_well_known_peer_oid("@peer/void").unwrap();
+        assert_eq!(subject.name, fractal::Subject::void().name);
+        assert_eq!(subject.email, fractal::Subject::void().email);
+    }
+
+    #[test]
+    fn git_commit_unknown_peer_oid_error_lists_landed_well_knowns() {
+        // Substrate-honest failure surface: the error message lists
+        // what IS landed (@peer/mirror + @peer/void) alongside
+        // what's Mara territory. Callers get an actionable
+        // boundary marker.
+        let result = resolve_well_known_peer_oid("@peer/reed");
         assert!(result.is_err());
-        assert!(result.unwrap_err().contains("expected 3 args"));
+        let msg = result.unwrap_err();
+        assert!(msg.contains("@peer/mirror"));
+        assert!(msg.contains("@peer/void"));
+        assert!(msg.contains("@peer/registry"));
+    }
+
+    #[test]
+    fn git_commit_at_operator_end_to_end_in_tempdir_repo() {
+        // Full end-to-end: at_operator dispatches through the
+        // switchboard — resolve well-known @peer/mirror OID →
+        // phone::git_commit_as → real git commit in tempdir.
+        // Liquid flows through the switchboard for git-commit
+        // altitude for the first time.
+        //
+        // Skip if git binary unavailable.
+        if std::process::Command::new("git")
+            .arg("--version")
+            .output()
+            .map(|o| !o.status.success())
+            .unwrap_or(true)
+        {
+            return;
+        }
+
+        let td = tempfile::tempdir().unwrap();
+        let repo_path = td.path();
+
+        // Init repo with per-repo signing + hooks disabled (test
+        // isolation from operator SSH signing + commit-msg hooks).
+        std::process::Command::new("git")
+            .args(["init", "-q", "--initial-branch=main"])
+            .current_dir(repo_path)
+            .output()
+            .unwrap();
+        std::process::Command::new("git")
+            .args(["config", "commit.gpgsign", "false"])
+            .current_dir(repo_path)
+            .output()
+            .unwrap();
+        std::process::Command::new("git")
+            .args(["config", "core.hooksPath", "/dev/null"])
+            .current_dir(repo_path)
+            .output()
+            .unwrap();
+
+        // Seed + stage a file.
+        let file = repo_path.join("seed.txt");
+        std::fs::write(&file, "end2end at_operator @io/git.commit").unwrap();
+        std::process::Command::new("git")
+            .args(["add", "seed.txt"])
+            .current_dir(repo_path)
+            .output()
+            .unwrap();
+
+        // The load-bearing call: at_operator switchboard dispatches
+        // @io/git.commit → resolve @peer/mirror → phone::git_commit_as.
+        let commit_oid = at_operator(
+            "@io/git.commit",
+            &[
+                "@peer/mirror".to_string(),
+                "@peer/mirror".to_string(),
+                repo_path.display().to_string(),
+                "end2end switchboard test commit".to_string(),
+            ],
+        )
+        .unwrap();
+
+        assert_eq!(commit_oid.len(), 40, "expected 40-char SHA-1 OID");
+        assert!(commit_oid.chars().all(|c| c.is_ascii_hexdigit()));
+
+        // Verify commit landed with @peer/mirror author identity.
+        let log_out = std::process::Command::new("git")
+            .args(["log", "--format=%an|%ae|%s", "-1"])
+            .current_dir(repo_path)
+            .output()
+            .unwrap();
+        let log_line = String::from_utf8_lossy(&log_out.stdout);
+        let line = log_line.trim();
+        assert!(line.contains("end2end switchboard test commit"));
+
+        // Also verify @peer/void resolves + commits.
+        let file2 = repo_path.join("seed2.txt");
+        std::fs::write(&file2, "void commit").unwrap();
+        std::process::Command::new("git")
+            .args(["add", "seed2.txt"])
+            .current_dir(repo_path)
+            .output()
+            .unwrap();
+        let void_oid = at_operator(
+            "@io/git.commit",
+            &[
+                "@peer/void".to_string(),
+                "@peer/void".to_string(),
+                repo_path.display().to_string(),
+                "void commit through switchboard".to_string(),
+            ],
+        )
+        .unwrap();
+        assert_eq!(void_oid.len(), 40);
+        assert_ne!(void_oid, commit_oid, "distinct commits must have distinct OIDs");
+    }
+
+    #[test]
+    fn git_commit_at_operator_requires_four_args() {
+        // Arity discipline: (author_oid, committer_oid,
+        // repo_root, message) per COORD-4 signature update.
+        let result = at_operator("@io/git.commit", &["@peer/mirror".to_string()]);
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("expected 4 args"));
     }
 }
 
