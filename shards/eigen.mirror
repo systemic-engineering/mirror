@@ -1,0 +1,251 @@
+in @prism
+in @meta
+in @glass
+in @nl
+
+# @eigen — the type-level Foerster-COORD family-root.
+#
+# Landed 2026-07-22 by Mara per Alex 2026-07-22 late-night ouroboros
+# closure at physical-substrate altitude. Canonical spec:
+# `docs/specs/2026-07-22-liquid-splinter-crystal-eigen-canonical.md`
+# §2. Math root: `docs/math/2026-07-22-splinter-eigen-fragment-
+# ouroboros-closure.md` §3.
+#
+# === Alex 2026-07-22 verbatim (this-session ouroboros closure) ===
+#
+#   "Liquid splinters settle into content-addressed crystals by
+#    holding the quantum wavefunction @coherent as long as possible."
+#
+# @eigen is the type-level substrate-decl for THE OPERATOR that
+# produces the settled-crystal from splinter superposition — the
+# type-decorator naming Foerster 1976's COORD discipline at
+# COMPILE-TIME altitude (not runtime; that altitude is @knife per
+# `shards/mirror/lens/knife.mirror`; Foerster COORD lifts to BOTH
+# altitudes and this substrate is the type-level face).
+#
+# === Foerster 1976 Appendix A3 (verbatim, per knife.mirror citation) ===
+#
+#   "COORD may itself be treated as an eigen-operator, stable within
+#    bounds, and jumping to other values whenever the boundary
+#    conditions exceed its former stable domain: `Op(COORDi) = COORDi`."
+#
+# @eigen(T) IS the type-level decorator naming this discipline:
+# `Op(x) = x`; the carrier `T` admits the fixed-point discipline at
+# TYPE altitude. Applied to landed value-types:
+#
+#   @eigen(crystal)   — the settled crystal viewed as fixed-point of
+#                        settle-recursion; `x = settle(x)` at type
+#                        altitude; every crystal IS an eigenform of
+#                        the settle contraction (per math root §3).
+#   @eigen(splinter)  — the atom viewed at fixed-point under identity
+#                        recursion; degenerate case (every content-
+#                        addressed atom trivially satisfies `x = x`).
+#   @eigen(Liquid<T>) — the excited-state carrier viewed at fixed-
+#                        point of the dH¹/dt ≤ 0 monotone contraction
+#                        per docs/math/2026-07-22-mirror-as-
+#                        computational-eigenform-stabilizer.md §2
+#                        (this-session ebd50a4).
+#
+# === Family-root discipline ===
+#
+# @eigen is a FAMILY-ROOT (not a species-decl). Species landings this
+# arc (per canonical spec §2 forward-promise):
+#
+#   @eigen/form   — the identity-as-fixed-point PROPERTY carrier.
+#                    Content-preserving rename of @epistemologic/
+#                    cybernetic/eigenform (alias-shim per two-tick
+#                    discipline). Substrate-decl at
+#                    shards/eigen/form.mirror (forward-promised).
+#
+#   @eigen/board  — the per-subject working-state READOUT carrier.
+#                    Content-preserving rename of @eigenboard
+#                    (alias-shim per two-tick discipline). Substrate-
+#                    decl at shards/eigen/board.mirror (forward-
+#                    promised).
+#
+#   @eigen/object — the settled-fixed-point VIEW species.
+#                    @reality/object composed with @eigen(T);
+#                    Substrate-decl at shards/eigen/object.mirror
+#                    (forward-promised).
+#
+# Substrate-honest status: this shard lands the FAMILY-ROOT marker.
+# Species-decl mints for form + board + object are forward-promised
+# per anti-stall discipline (canonical spec §9 Q1 Mara-lean).
+#
+# === Two-tick alias-shim discipline (per canonical spec §2 + two-
+# tick rule) ===
+#
+# TICK 1 (this tick):
+#   - @eigen family-root marker LANDED here.
+#   - @epistemologic/cybernetic/eigenform continues to declare at
+#     shards/epistemologic/cybernetic/eigenform.mirror (unchanged).
+#   - @eigenboard continues to declare at shards/eigenboard.mirror
+#     (unchanged; Alex 2026-07-22 this session 0adcfc4 third-altitude
+#     lift docblock addendum preserved).
+#
+# TICK 2 (forward-promised; next release cycle):
+#   - Species-rename shards land (form + board + object).
+#   - Deprecation notice at @eigenform + @eigenboard shards.
+#   - Consumer update cascade.
+#
+# TICK 3 (following release cycle):
+#   - Retire @eigenform + @eigenboard alias-shim shards.
+#
+# === Composition with @knife (adjudicated per canonical spec §3) ===
+#
+# @knife is the RUNTIME-operator face of Foerster COORD (per
+# shards/mirror/lens/knife.mirror :26-38): performs `COORDi → COORDj`
+# jump at domain-boundary crossings. @eigen is the TYPE-LEVEL face:
+# names the fixed-point discipline that holds WITHIN a domain.
+#
+# @knife.jump : @eigen(T) × @knife.domain → @eigen(T')
+#
+# The runtime event (@knife.jump) consumes a type-level @eigen(T)
+# witness at the origin domain, executes the jump, produces a new
+# type-level @eigen(T') witness at the destination domain. Both
+# altitudes are needed for the substrate's full COORD-as-heterarchy
+# discipline (Foerster 1976 heterarchy + Douady-Hubbard 1985
+# R-universality + McCulloch 1945 topology-encodes-depth per
+# knife.mirror ancestry chain).
+#
+# **NO @knife → @eigen absorption.** Both family-roots operate at
+# their respective altitudes; the composition operator is the
+# substrate-honest carrier (canonical spec §3 verdict).
+#
+# === Substrate-already-had-the-word audit ===
+#
+# 1. **`shards/epistemologic/cybernetic/eigenform.mirror`** — reviewed.
+#    Species carrier for the identity-as-fixed-point property. Lands
+#    2026-06-19 per Reed cybernetic-property #9 canon; forward-promised
+#    to rename to @eigen/form as species-under-@eigen (canonical
+#    spec §2.2; TICK 2).
+# 2. **`shards/eigenboard.mirror`** — reviewed. Family-root altitude
+#    working-state readout; three-altitude lift including labyrinth
+#    identification this session `0adcfc4`. Forward-promised to
+#    rename to @eigen/board as species-under-@eigen (canonical spec
+#    §2.3; TICK 2).
+# 3. **`shards/mirror/lens/knife.mirror`** — reviewed. Runtime-face
+#    of Foerster COORD; peer family-root (NOT species-under-@eigen)
+#    per canonical spec §3 verdict; composition operator authorized.
+# 4. **`shards/reality/object.mirror`** (this session `ab6ad43`) —
+#    reviewed. Substrate carrier that @eigen/object composes over
+#    (forward-promised; canonical spec §2.4).
+# 5. **`shards/mirror/store/crystal.mirror`** — reviewed. THE crystal
+#    species-decl @eigen(crystal) applies to; the primary type-
+#    decorator target this arc.
+# 6. **`shards/glass.mirror`** — reviewed. FLOOR splinter decl; the
+#    universal content-addressed atom @eigen(splinter) applies to
+#    (degenerate case per §Alex-verbatim above).
+# 7. **`docs/math/2026-07-22-mirror-as-computational-eigenform-
+#    stabilizer.md`** (this session `ebd50a4`) — reviewed. §2
+#    Eigenform Stabilizer operator 𝔐 with dH¹/dt ≤ 0 is exactly the
+#    contraction @eigen(Liquid<T>) names at type altitude.
+#
+# No prior `shards/eigen.mirror`; clean naming space (per canonical
+# spec §2.1). Cross-reference chain confirms substrate-already-had-
+# the-word discipline: the OPERATOR discipline was scattered across
+# eigenform + eigenboard + knife + crystal + Eigenform Stabilizer
+# math foundation; this shard names the family-root that unifies
+# the type-level face.
+#
+# === Substrate authority chain ===
+#
+# - **Canonical spec**: docs/specs/2026-07-22-liquid-splinter-crystal-
+#   eigen-canonical.md §2 (Mara this task Tick 2 `151c043`).
+# - **Math root**: docs/math/2026-07-22-splinter-eigen-fragment-
+#   ouroboros-closure.md §3 (Mara this task Tick 1 `f30a230`).
+# - **Alex 2026-07-22 verbatim** — the compact synthesis + earlier-
+#   this-session @eigen family-root reorganization directive.
+# - **Foerster 1976 Appendix A3** — verbatim COORD-as-eigen-operator
+#   passage (per knife.mirror citation).
+# - **Kauffman 2003** — Eigenforms as objects tokens for eigen-
+#   behaviors (Cybernetics & Human Knowing 10:3-4).
+
+# === The @eigen family-root prism decl ===
+#
+# Per prism-as-trait-as-everything: `prism @eigen { ... }` declares
+# @eigen IS a prism. Five-operation block below is the canonical
+# declaration form (cf. boot/00-prism.mirror).
+
+prism @eigen {
+  focus eigen
+  project eigen
+  split eigen
+  shift eigen
+  settle eigen
+}
+
+# === @eigen(T) — the type-level Foerster COORD decorator ===
+#
+# The core operator. Produces a substrate view where `T`'s carrier
+# admits the fixed-point discipline `Op(x) = x`.
+#
+# Substrate-decl semantics:
+#
+#   Given a landed value-type T with a recursion R: T → T:
+#     @eigen(T) is the type-level projection that names the set of
+#     fixed points {x ∈ T | R(x) = x}.
+#     The witness IS the identity per Foerster 1976 + Kauffman 2003.
+#
+# Applied to landed value-types:
+#
+#   @eigen(crystal) — the settled crystal at fixed-point of
+#                      settle-recursion.
+#   @eigen(splinter) — the atom at fixed-point (trivial).
+#   @eigen(Liquid<T>) — the excited-state carrier at fixed-point
+#                        of the dH¹/dt ≤ 0 contraction.
+#   @eigen(system_spec) — the VSM system-declaration at fixed-point
+#                          of the mosaic.focus walk (per @mirror/spec/
+#                          system canonical spec §2 obligation
+#                          discharge).
+#
+# Composition-primitive naming per feedback_composition_primitive_
+# naming_convention: `eigen(T) -> ref` reads as: given a type T,
+# produce a substrate view (`ref`).
+eigen(t: ref) -> ref { \ }
+
+# === eigen_of_carrier — bilateral property predicate ===
+#
+# Discharges Pass iff:
+#   - the carrier `t` has an associated recursion R: T → T declared
+#     (typically via `settle` op at the carrier's altitude)
+#   - the witness `x` is a fixed point of R modulo bounded discrepancy
+#     (per @eigen/form's is_fixed_point discharge; forward-promised
+#     species-under-@eigen)
+#
+# Rice-safe bound: reads only byte-visible state (carrier reference
+# non-null; witness reference non-null; fixed-point discharge
+# delegated to @eigen/form species-decl at forward-promise altitude).
+#
+# Sentinel: `eigen=type-level-foerster-coord-fixed-point`.
+bilateral eigen_of_carrier {
+  sentinel "eigen=type-level-foerster-coord-fixed-point"
+  arity 2
+}
+eigen_of_carrier(t: ref, x: ref) -> verdict { \ }
+
+# === Recognition candidates surfaced (DO NOT RATIFY at this landing) ===
+#
+# #R-eigen-family-root-unifies-foerster-coord-type-altitude —
+# @eigen family-root unifies eigenform + eigenboard + fragment-as-
+# @eigen(Crystal<T>) recognition + Eigenform Stabilizer 𝔐 into
+# ONE type-level face of Foerster COORD; @knife carries the peer
+# runtime face. First-witness this tick (this shard). Second-witness
+# gate opens on species-rename shards landing (TICK 2 forward-
+# promised). Held at CANDIDATE strength.
+#
+# === Forward-promised — NOT landed this tick ===
+#
+# - `shards/eigen/form.mirror` species-rename (from @epistemologic/
+#   cybernetic/eigenform).
+# - `shards/eigen/board.mirror` species-rename (from @eigenboard).
+# - `shards/eigen/object.mirror` new species (@reality/object under
+#   @eigen(T)).
+# - `@knife.jump : @eigen(T) × @knife.domain → @eigen(T')` composition
+#   operator at @knife family-root altitude.
+# - Empirical firing at rust/ altitude (per canonical spec §12
+#   forward-promise; Reed's territory).
+
+out @eigen
+out eigen
+out eigen_of_carrier
