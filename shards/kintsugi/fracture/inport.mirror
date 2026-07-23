@@ -1,0 +1,671 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @kintsugi
+in @kintsugi/fracture
+in @kintsugi/mend
+in @kintsugi/roomba
+in @fractal
+in @fractal/shard
+in @fate
+in @mirror/store
+in @io
+in @io/fs
+in @epistemologic
+in @epistemologic/pact
+in @epistemologic/pact/bilateral
+
+# @kintsugi/fracture/inport — the OPERATIONAL fracture species that
+# names the pattern "a shard body invokes symbols from family-root @X
+# but does NOT declare `in @X` in its import block." The absence of
+# the `in @X` declaration IS the fracture; inserting the missing `in`
+# statement IS the discharge; the sheaf-inclusion invariant IS the
+# geometry the fracture defends.
+#
+# Species under @kintsugi/fracture at sheaf-inclusion altitude.
+# Sixteenth landed sibling to the fifteen existing fracture bodies
+# (angle_to_paren, bilateral_arm_redundant, cold_compile_within_tolerance,
+# dark_count_monotone, docblock_extractive, docblock_incoherent,
+# docblock_ungrounded, gate, keyword, operator_match, parent_cycle,
+# partials_align, relocate, restart_storm, symbol_lift). Same shape:
+# typed carrier + detect action + resolution action + composed
+# bilateral discipline.
+#
+# === Substrate authority (Alex 2026-07-23 verbatim, load-bearing) ===
+#
+# In-transcript with Reed after Reed's grep-verify of missing
+# `in @metalogue` imports across shards:
+#
+#   > "But like for real. My understanding is that `in` imports a
+#      shard, hence a sheaf, hence CREATES the geometric space from
+#      which the new shard can be minted."
+#
+#   > "That needs to be an explicit boundary. Not soft. Otherwise we
+#      have implicit sheaf gluing and nobody wants that. That would be
+#      geometric JavaScript."
+#
+# Immediately after Reed enumerated three enforcement-state
+# possibilities, Alex named the fracture species by substrate-poetry:
+#
+#   > "That sounds like a @kintsugi/fracture/inport using a @shard
+#      which is not `in`ported"
+#
+# Ratified substrate-poetry: **inport = `in`-port**. The composition
+# portal the `in` keyword declares. A shard using symbols from @X
+# without declaring `in @X` violates sheaf-inclusion. That violation
+# IS a @kintsugi/fracture/inport.
+#
+# === The load-bearing geometric invariant ===
+#
+# `in @X` is a **sheaf-inclusion morphism**. It opens a chart on the
+# sheaf @X. The shard being minted lives as a section over the union
+# of opened charts. Cross-shard composition requires explicit chart
+# overlap declaration. No explicit `in @X`, no valid overlap → no
+# valid section → no valid shard.
+#
+# Not soft. Explicit boundary. Compiler-load-bearing.
+#
+# Anti-pattern name: **geometric JavaScript** (implicit sheaf gluing;
+# prototype-chain-substrate; any shard can implicitly reach any
+# other; unauditable). The substrate MUST NOT be that.
+#
+# === Substrate-already-had-the-word audit ===
+#
+# 1. **No prior `shards/kintsugi/fracture/inport.mirror`.** Clean
+#    mint at species-decl altitude. Sixteenth sibling under the
+#    @kintsugi/fracture family.
+# 2. **`inport`** — Alex 2026-07-23 substrate-poetry naming. The word
+#    is `in`-port: the composition portal the `in` keyword declares.
+#    Grep confirmed no prior usage in the substrate (shards/**/*.mirror
+#    + docs/**/*.md).
+# 3. **`import_missing`** rejected — bureaucratic CS-vocab; fails the
+#    delightfully-boring audit ("wait, what IS an import in mirror?").
+#    Alex's `inport` reads as inevitable to a reader who has grasped
+#    the substrate geometry: the `in` keyword is a port; a missing
+#    port IS a fracture.
+# 4. **`composition_undeclared`** rejected — reads as a philosophical
+#    statement rather than a mechanical detector. Not delightfully-
+#    boring; not substrate-poetry.
+# 5. **`in` as substrate keyword** — landed at `shards/mirror/spec/*`
+#    and every `.mirror` file's opening block. The keyword's semantics
+#    IS sheaf-chart-opening; this species names the fracture when the
+#    keyword is missing.
+# 6. **`sheaf-inclusion`** as mathematical vocabulary — Grothendieck
+#    sheaves + chart-opening semantics are the canonical mathematical
+#    grounding for the invariant; math foundation cites the standard
+#    sheaf theory at `docs/math/2026-07-23-kintsugi-fracture-inport-
+#    sheaf-inclusion.md`.
+# 7. **`geometric JavaScript`** — Alex 2026-07-23 anti-pattern
+#    coinage; the failure mode this species DEFENDS AGAINST.
+#    Prototype-chain-substrate as CS ancestor; the substrate refuses
+#    that shape at species-decl altitude.
+#
+# === Composition graph ===
+#
+# Parents (via `in` imports above; each one dogfoods the invariant
+# this species enforces):
+#   @prism, @meta, @glass                — substrate-decl discipline
+#   @nl                                    — `#` comment primitive
+#   @kintsugi                              — process-side family-root
+#   @kintsugi/fracture                     — family-root; sixteenth
+#                                             sibling species under the
+#                                             fracture pattern
+#   @kintsugi/mend                         — the ACTION that discharges
+#                                             the fracture-to-shard
+#                                             morphism; the `discharge`
+#                                             action below composes
+#                                             over `@kintsugi/mend.mend`
+#                                             to materialize the
+#                                             correction as an inserted
+#                                             `in` statement at shard
+#                                             top (companion species
+#                                             landed 2026-07-23 by Mara)
+#   @kintsugi/roomba                       — walker that dispatches
+#                                             this species' `detect`
+#                                             action per pulse via
+#                                             fracture_species discrim-
+#                                             inator
+#   @fractal                               — vessel family-root
+#   @fractal/shard                         — the RETURN SHAPE of the
+#                                             tournament-crystallized
+#                                             correction (Mara 2026-07-23
+#                                             sibling landing; the
+#                                             mend's output is a shard
+#                                             carrying the inserted
+#                                             `in` statement)
+#   @fate                                  — tournament dispatch for
+#                                             candidate `in @<family>`
+#                                             corrections; the
+#                                             `propose_correction`
+#                                             action rolls the dice over
+#                                             the sheaf-inclusion
+#                                             candidate space
+#   @mirror/store                          — content-addressed fracture
+#                                             record store; each
+#                                             inport_fracture is
+#                                             identified by its
+#                                             (shard_position, invoked_
+#                                             symbol) content-address
+#   @io/fs                                 — file bytes for shard body
+#                                             + import-block extraction;
+#                                             discharge composes over
+#                                             `@io/fs.mutate_at` at
+#                                             import-block top offset
+#   @epistemologic/pact/bilateral          — bilateral shape below;
+#                                             the three predicates
+#                                             dogfood the reflective-
+#                                             corpus discipline
+#
+# Consumers (compose over this species, forward-promised at this tick):
+#   `mirror kintsugi <shard>` — Reed post-mint CLI empirical
+#                                   discharge; dispatches `detect` +
+#                                   emits inport_fracture list as
+#                                   questions
+#   `mirror kintsugi --roomba <shard>` — Reed post-mint CLI empirical
+#                                   discharge; dispatches
+#                                   `propose_correction` +
+#                                   `discharge` in sequence; the
+#                                   roomba walks + fills fractures
+#                                   until fixed-point
+#   @kintsugi/roomba.bump                 — roomba's bump-pulse
+#                                   dispatch composes this species'
+#                                   detect action via fracture_species
+#                                   open enum extension
+#
+# === Rice-safety ===
+#
+# The fracture predicate is **grep-decidable**: finite predicate over
+# a finite shard-import graph. For each invoked symbol `s` in shard
+# `S`:
+#
+#   1. Extract `family_root(s)` — the `@X` prefix (byte-visible
+#      substring operation at @nl altitude).
+#   2. Extract `import_block(S)` — the sequence of `in @Y` statements
+#      at S's top (byte-visible; deterministic parse).
+#   3. Check `family_root(s) ∈ { Y : "in @Y" ∈ import_block(S) }`
+#      (finite set membership).
+#
+# No dynamic dispatch, no aliasing analysis, no program semantics.
+# Whole-tick Rice-safe by construction. See `docs/math/2026-07-23-
+# kintsugi-fracture-inport-sheaf-inclusion.md` §5 for the mechanical-
+# decidability proof.
+#
+# === The autopoietic discharge pipeline ===
+#
+# Six-step loop (per Mara #152 autopoietic-loop formalization; Mara
+# #159 + #160 forward-promise discharge):
+#
+#   1. **detect**    — @kintsugi/roomba walks shard bodies; for each
+#                       shard, greps invoked symbols vs declared
+#                       imports; emits inport_fracture records.
+#   2. **propose**   — @fate tournament dispatches candidate
+#                       `in @<family_root>` additions per fracture.
+#   3. **tournament** — @fate.roll ranks candidates by
+#                       @fractal/shard.through-restriction fit.
+#   4. **crystallize** — @fractal/shard.materialize crystallizes the
+#                       winning candidate as a shard carrying the
+#                       inserted `in` statement.
+#   5. **mend**      — @kintsugi/mend.mend composes over
+#                       @io/fs.mutate_at to insert the `in` statement
+#                       at import-block top.
+#   6. **verify**    — re-run detect; the specific fracture no
+#                       longer fires; fixed-point at that position.
+#
+# **This IS the empirical proof of autopoietic loop closure.**
+# Discharges Reed forward-promise tasks #159 (wire six-step loop
+# through apply_h::act) + #160 (empirical one-fracture autopoietic
+# round-trip demonstration) against ONE well-defined fracture class.
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]] — this species IS a
+#   shard-decl; the roomba composition edge reads the shard at parse
+#   time via the reflective loader.
+# [[architecture-glass-wall-substrate-types]] — verdict is
+#   `@glass.verdict`; source_position is `@glass.source_position`;
+#   both types inherit through the glass wall.
+# [[architecture-property-fracture-bilateral]] — this species IS the
+#   operational half at the sheaf-inclusion altitude.
+# [[architecture-prism-as-trait-as-everything]] — `prism
+#   @kintsugi/fracture/inport` declares the species IS a prism.
+# [[feedback-substrate-already-had-the-word]] (~74th+ landed instance)
+#   — every primitive this species composes over was already landed
+#   (@kintsugi/mend + @fractal/shard companion mints today; @fate,
+#   @kintsugi/roomba, @io/fs, @epistemologic/pact/bilateral prior);
+#   ZERO new machinery beyond the three artifacts (shard-decl +
+#   spec + math).
+# [[feedback-craft-not-deliver]] — action bodies (detect, propose_
+#   correction, discharge) `\`-obligation-blocked at species altitude;
+#   discharge at realisation via the reflective evaluator + @io
+#   boundary.
+# [[feedback-no-rust-extension-shortcut]] — this species is a shard-
+#   decl + spec + math triad; ZERO new Rust authorship in this arc.
+#   Reed post-mint CLI wire dispatches through apply_h::act sentinel-
+#   check arms only.
+# [[feedback-cli-subcommand-nesting-is-geometric]] — the CLI verb
+#   surface `mirror kintsugi` + `mirror kintsugi --roomba` reads
+#   the shard-decl composition graph declared here; Alex 2026-07-23
+#   named this arc as the "Last Responsible Moment for the CLI
+#   design surface and @gestalt rendering shebang."
+# [[feedback-legibility-over-foundation-when-collapsing]] — the shape
+#   name `inport` is the readable Alex-lineage word from substrate-
+#   poetry; foundational alternates (`import_missing`,
+#   `composition_undeclared`) refused in favor of the substrate-
+#   poetry word Alex used verbatim in the naming moment.
+#
+# === Related shards / specs ===
+#
+# - docs/specs/kintsugi-fracture-inport-sheaf-inclusion-compile-
+#   invariant.md
+#     (Mara THIS-tick canonical spec; the mechanically-decidable
+#      predicate + six-step autopoietic discharge pipeline + Rice-
+#      safety + composition graph + LRM CLI surface forward-promise)
+# - docs/math/2026-07-23-kintsugi-fracture-inport-sheaf-inclusion.md
+#     (Mara THIS-tick math foundation; Grothendieck sheaf-inclusion
+#      morphisms + chart-opening semantics + fracture-cohomology
+#      H^1 obstruction measure + autopoietic discharge as coboundary
+#      morphism)
+# - shards/fractal/shard.mirror
+#     (Mara 2026-07-23 sibling landing; the vessel the corrected
+#      `in` statement crystallizes as)
+# - shards/kintsugi/mend.mirror
+#     (Mara 2026-07-23 sibling landing; the mend action this
+#      species' `discharge` composes over)
+# - shards/kintsugi/roomba.mirror
+#     (Reed post-mint follow-up adds composition edge; do not touch
+#      this tick)
+# - shards/kintsugi/fracture/bilateral_arm_redundant.mirror
+#     (sibling species precedent; same composed-bilateral shape;
+#      same detect/collapse action-pair discipline)
+# - shards/fate.mirror
+#     (@fate tournament dispatch; the propose_correction action
+#      composes over @fate.roll)
+# - shards/io/fs.mirror
+#     (@io/fs.mutate_at at import-block insertion altitude)
+#
+# Path-namespace property: this file at
+# `shards/kintsugi/fracture/inport.mirror` declares
+# `@kintsugi/fracture/inport` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/math/grothendieck-1957
+source @arxiv/math/hansen-ghrist-2018
+source @arxiv/practice/wolf-2026-07-23-inport-sheaf-inclusion-geometric-boundary
+
+# === The 5-op prism inheriting @void basis (Recognition #79) ===
+#
+# For @kintsugi/fracture/inport specifically:
+#   focus inport_fracture    = identify the (shard_position,
+#                              invoked_symbol, missing_family_root)
+#                              tuple at which the sheaf-inclusion
+#                              invariant fails
+#   project inport_fracture  = deploy the detect operation
+#                              (walk shard bodies, grep-compare
+#                              invoked symbols vs declared imports)
+#   split inport_fracture    = bifurcate candidate correction-space
+#                              (each candidate `in @<family_root>`
+#                              insertion is one arm of @fate's split)
+#   shift inport_fracture    = traverse the fracture-sibling lattice
+#                              (this species vs other @kintsugi/
+#                              fracture/* siblings; shift enters an
+#                              adjacent fracture's frame)
+#   settle inport_fracture   = crystallize the tournament winner as
+#                              a @fractal/shard carrying the inserted
+#                              `in` statement; discharge via @kintsugi/
+#                              mend at import-block top
+
+prism @kintsugi/fracture/inport {
+  focus  inport_fracture
+  project inport_fracture
+  split  inport_fracture
+  shift  inport_fracture
+  settle inport_fracture
+}
+
+# === The inport_fracture carrier ===
+#
+# Typed record naming ONE shard-position where a symbol is invoked
+# without a matching `in @<family_root>` declaration. Consumed by
+# `propose_correction` + `discharge`; produced by `detect`. The unit-
+# of-repair for the roomba's per-pulse fracture-emission at sheaf-
+# inclusion altitude.
+#
+# Four fields:
+#
+#   shard_position       — REF to the shard where the fracture fires
+#                           (path + import-block offset). The mend
+#                           will insert the `in` statement at this
+#                           position's import-block top.
+#
+#   invoked_symbol       — REF to the invoked symbol whose family-root
+#                           is unimported. Content-addressed identity:
+#                           two records with the same
+#                           (shard_position, invoked_symbol) name the
+#                           same fracture. Byte-visible in shard body.
+#
+#   missing_family_root  — REF to the family-root `@X` derived from
+#                           `invoked_symbol` by prefix extraction.
+#                           This IS the shard the missing `in @X`
+#                           statement would import.
+#
+#   suggested_in_statement — REF to the fully-formed `in @X` line
+#                           to insert. Byte-precision: leading
+#                           whitespace + `in ` + family_root + `\n`.
+#                           The mend's byte-splice payload.
+#
+# Identity contract: byte-equality on (shard_position,
+# invoked_symbol). Two records name the same fracture iff both
+# fields byte-match; missing_family_root + suggested_in_statement
+# are DERIVED from these two under a total function.
+type inport_fracture = {
+  shard_position:         ref,
+  invoked_symbol:         ref,
+  missing_family_root:    ref,
+  suggested_in_statement: ref,
+}
+
+# === inport_fracture_witnessed — bilateral predicate (arity 2) ===
+#
+# Is the fracture mechanically detectable at the given position?
+# The FIRST discharge conjunct: the invoked_symbol exists at the
+# named shard_position AND its family-root is NOT in the shard's
+# import block.
+#
+# Discharges Pass iff:
+#   - shard_position resolves via @io/fs.read to a well-formed
+#     shard body
+#   - invoked_symbol appears byte-visibly in the shard body at
+#     some offset > import-block-end
+#   - family_root(invoked_symbol) NOT ∈ imported_family_roots(shard)
+#     (finite-set-membership; grep-decidable)
+#
+# Rice-safe at whole-tick altitude: reads only byte-visible state
+# (shard body bytes + import-block-parse output; substring
+# containment); no program semantics. See math foundation §5.
+#
+# Sentinel: `inport=fracture-witnessed`.
+bilateral inport_fracture_witnessed {
+  sentinel "inport=fracture-witnessed"
+  arity 2
+}
+inport_fracture_witnessed(p: peer, ctx: inport_fracture) -> verdict { \ }
+
+# === inport_correction_is_valid_in_statement — bilateral predicate (arity 2) ===
+#
+# Is the suggested correction a well-formed `in @<family_root>`
+# statement? The SECOND discharge conjunct: the proposed byte-splice
+# would produce a syntactically-valid import-block entry.
+#
+# Discharges Pass iff:
+#   - suggested_in_statement byte-starts with `in @` prefix
+#   - the `@<family_root>` portion resolves to a substrate-declared
+#     family-root (grep against `shards/**/*.mirror` for a matching
+#     `@X` species-decl)
+#   - the statement byte-ends with `\n` (import-block line-shape)
+#   - inserting the statement at import-block top produces a shard
+#     whose import block still parses under @meta discipline
+#
+# Rice-safe at whole-tick altitude: byte-visible state; family-root
+# existence check against finite shards/ tree; grammar-parse of
+# candidate byte-string (finite depth).
+#
+# Sentinel: `inport=correction-valid-in-statement`.
+bilateral inport_correction_is_valid_in_statement {
+  sentinel "inport=correction-valid-in-statement"
+  arity 2
+}
+inport_correction_is_valid_in_statement(p: peer, ctx: inport_fracture) -> verdict { \ }
+
+# === inport_discharge_restores_sheaf_inclusion — bilateral predicate (arity 2) ===
+#
+# Does the discharge restore the sheaf-inclusion invariant at the
+# fracture position? The THIRD discharge conjunct: after the mend
+# fires, the fracture no longer witnesses at that position.
+#
+# Discharges Pass iff:
+#   - after `discharge(fracture)` succeeds, re-running
+#     inport_fracture_witnessed on the same (shard_position,
+#     invoked_symbol) tuple returns Fail (the fracture no longer
+#     detects)
+#   - the shard body's non-import bytes are byte-identical before
+#     and after discharge (the mend touches ONLY the import block;
+#     the shard body is preserved)
+#   - the shard's remaining fractures (if any) are byte-visibly
+#     distinct from the just-discharged one (no side-effect on
+#     other fracture sites)
+#
+# Rice-safe at whole-tick altitude: composition of two Rice-safe
+# reads (before-state + after-state) + byte-equality check on
+# body bytes; no program semantics.
+#
+# Sentinel: `inport=discharge-restores-sheaf-inclusion`.
+#
+# LOAD-BEARING: this bilateral encodes Alex 2026-07-23 verbatim
+# ("`in` imports a shard, hence a sheaf, hence CREATES the geometric
+# space") at substrate-decl altitude. The invariant IS: after
+# discharge, the section over the union of opened charts is well-
+# formed at ctx.shard_position.
+bilateral inport_discharge_restores_sheaf_inclusion {
+  sentinel "inport=discharge-restores-sheaf-inclusion"
+  arity 2
+}
+inport_discharge_restores_sheaf_inclusion(p: peer, ctx: inport_fracture) -> verdict { \ }
+
+# === detect action (fracture-emission surface) ===
+#
+# THE LOAD-BEARING DETECTION ACTION. Reads a shard's bytes; extracts
+# import-block declared family-roots; extracts invoked symbols from
+# the shard body; emits one inport_fracture record per invoked
+# symbol whose family-root is unimported. Returns empty list when
+# the fixed-point holds (every invoked symbol's family-root is
+# declared in the import block).
+#
+# Algorithm (per docs/specs/kintsugi-fracture-inport-sheaf-inclusion-
+# compile-invariant.md §3 detection pseudocode):
+#
+#   detect(shard_position):
+#     bytes = @io/fs.read(shard_position.path)
+#     import_block = parse_import_block(bytes)
+#     declared = { family_root(entry) : entry in import_block }
+#     invoked  = extract_invoked_symbols(bytes, after=import_block.end)
+#     records = []
+#     for sym in invoked:
+#       root = family_root(sym)
+#       if root not in declared:
+#         suggested = compose_in_statement(root)
+#         record = inport_fracture {
+#           shard_position:         shard_position,
+#           invoked_symbol:         sym,
+#           missing_family_root:    root,
+#           suggested_in_statement: suggested,
+#         }
+#         if inport_fracture_witnessed(p, record) == Pass:
+#           records.append(record)
+#     return records
+#
+# Composition surface:
+#   @io/fs.read(shard_position.path)              — read shard bytes
+#   parse_import_block(bytes)                     — @meta discipline
+#   extract_invoked_symbols(bytes, after)         — @nl grep
+#   inport_fracture_witnessed(p, record)          — witnessing conjunct
+#
+# Rice-safe bound at whole-tick altitude: reads only byte-visible
+# state (shard body bytes; substring containment); no program
+# semantics. See math §5 mechanical-decidability proof.
+#
+# Body `\`-obligation-blocked per [[feedback-craft-not-deliver]];
+# Reed post-mint follow-up wires the roomba composition edge that
+# dispatches this action per bump-pulse.
+#
+# Sentinel: `inport=detect`.
+detect(p: peer, shard_position: ref) -> imperfect(ref, ref, ref)
+requires inport_fracture_witnessed(p, ctx)
+{ \ }
+
+# === propose_correction action (fate-tournament dispatch) ===
+#
+# THE LOAD-BEARING PROPOSAL ACTION. Reads one inport_fracture record;
+# dispatches @fate.roll tournament over the candidate correction-
+# space (each candidate is one possible `in @<family_root>` statement
+# shape); returns the winning candidate ref.
+#
+# For a grep-decidable fracture (this species), the candidate space
+# is a singleton: the fracture's `missing_family_root` field UNIQUELY
+# determines the correction. The tournament degenerates to identity
+# selection. The action shape is preserved for composition with the
+# autopoietic-loop math (Mara #152) which requires @fate as one arm
+# of the six-step loop.
+#
+# Algorithm:
+#
+#   propose_correction(fracture):
+#     candidates = [ fracture.suggested_in_statement ]
+#     winner = @fate.roll(candidates, restriction=fracture.shard_position)
+#     if inport_correction_is_valid_in_statement(p, fracture) != Pass:
+#       return failure("correction not well-formed")
+#     return winner
+#
+# Composition surface:
+#   @fate.roll(candidates, restriction)         — tournament dispatch
+#   inport_correction_is_valid_in_statement(p, fracture)  — validity
+#                                                            guard
+#
+# Rice-safe bound: byte-visible state; @fate.roll on singleton
+# candidate space is deterministic-identity; validity guard is
+# grep-decidable.
+#
+# Body `\`-obligation-blocked; Reed post-mint composes @fate.roll
+# resolver-arm at apply_h::act altitude.
+#
+# Sentinel: `inport=propose-correction`.
+propose_correction(p: peer, ctx: inport_fracture) -> imperfect(ref, ref, ref)
+requires inport_correction_is_valid_in_statement(p, ctx)
+{ \ }
+
+# === discharge action (fracture-resolution surface) ===
+#
+# THE LOAD-BEARING RESOLUTION ACTION. Reads one inport_fracture
+# record + a proposed correction ref; composes over @kintsugi/mend.mend
+# to crystallize the correction as a @fractal/shard and byte-splice
+# the shard's import block via @io/fs.mutate_at at import-block top.
+# Returns @glass.verdict.
+#
+# Algorithm (per docs/specs/kintsugi-fracture-inport-sheaf-inclusion-
+# compile-invariant.md §4 resolution pseudocode):
+#
+#   discharge(fracture, correction):
+#     # Guard: only proceed if the witnessing bilateral passes
+#     if inport_fracture_witnessed(p, fracture) != Pass:
+#       return failure("fracture no longer witnesses; skip discharge")
+#
+#     # Compose @kintsugi/mend to crystallize correction as a shard
+#     mend_state = {
+#       fracture_position: fracture.shard_position,
+#       target:            @kintsugi/fracture/inport,
+#       through:           correction,
+#     }
+#     produced_shard = @kintsugi/mend.mend(p, mend_state)
+#     if produced_shard.status != success:
+#       return failure("mend refused; fracture preserved")
+#
+#     # Byte-splice the produced shard's suggested_in_statement
+#     # at import-block top via @io/fs.mutate_at (insertion at
+#     # offset = 0 with non-empty replacement).
+#     bytes = @io/fs.read(fracture.shard_position.path)
+#     position = import_block_top_position(bytes)
+#     mutate = @io/fs.mutate_at(
+#       fracture.shard_position.path,
+#       position,
+#       fracture.suggested_in_statement,
+#     )
+#     if mutate.status != success:
+#       return failure("mutate_at refused; file preserved")
+#
+#     # Verify the discharge restored sheaf-inclusion
+#     if inport_discharge_restores_sheaf_inclusion(p, fracture) != Pass:
+#       return failure("discharge did not restore invariant")
+#
+#     return pass
+#
+# Composition surface:
+#   @kintsugi/mend.mend(p, mend_state)          — crystallize
+#                                                  correction as shard
+#   @io/fs.read(fracture.shard_position.path)   — read shard bytes
+#   @io/fs.mutate_at(path, position, replacement) — byte-splice
+#                                                    insertion
+#   inport_fracture_witnessed(p, fracture)      — pre-guard
+#   inport_discharge_restores_sheaf_inclusion(p, fracture) — post-verify
+#
+# Rice-safe bound at whole-tick altitude: composition of Rice-safe
+# reads + byte-splice + Rice-safe post-verify.
+#
+# Body `\`-obligation-blocked; Reed post-mint composes this via
+# apply_h::act sentinel-check arm. The realisation composes over
+# @kintsugi/mend + @io/fs at the boundary; the driver code does NOT
+# encode inport semantics — only sentinel dispatch.
+#
+# Sentinel: `inport=discharge`.
+discharge(p: peer, ctx: inport_fracture, correction: ref) -> verdict
+requires inport_fracture_witnessed(p, ctx)
+requires inport_correction_is_valid_in_statement(p, ctx)
+requires inport_discharge_restores_sheaf_inclusion(p, ctx)
+{ \ }
+
+# === Recognition candidates surfaced (DO NOT RATIFY at this mint) ===
+#
+# #R-inport-sheaf-inclusion-compile-invariant — first-witness gate
+# closed this tick (species-decl shape + geometric-invariant docblock
+# + three-bilateral discharge chain + composition edges to @kintsugi/
+# mend + @fractal/shard + @fate + @kintsugi/roomba). Second-witness
+# gate: Reed empirical CLI discharge (`mirror kintsugi <shard>` +
+# `mirror kintsugi --roomba <shard>`) reproducing the six-step
+# autopoietic loop output verbatim.
+#
+# #R-autopoietic-loop-closure-witnessed — Mara #152 autopoietic-loop
+# formalization gets its FIRST empirical witness through this species.
+# Second-witness gate: Reed empirical discharge at Rust altitude via
+# apply_h::act sentinel-check arms + `mirror kintsugi` CLI verb.
+#
+# === Forward-promised (NOT landed this tick) ===
+#
+# - @kintsugi/roomba composition edge — Reed post-mint tick adds
+#   one composition edge in `shards/kintsugi/roomba.mirror`
+#   dispatching this species' detect action on bump-pulse when the
+#   walker encounters a shard body with invoked symbols.
+#
+# - apply_h::act sentinel-check arms — Reed post-mint Rust altitude
+#   under `[substrate-floor:@io-boundary]` marker + Seam sign-off.
+#   Three arms, one per bilateral sentinel:
+#     if action == "@kintsugi/fracture/inport.inport_fracture_witnessed"
+#       { arg.oid.contains("inport=fracture-witnessed") ? Pass : Fail }
+#   (and similar for the other two sentinels).
+#
+# - `mirror kintsugi <shard>` CLI verb — Reed post-mint CLI wire;
+#   dispatches detect action; emits inport_fracture list as
+#   questions per Alex 2026-07-23 verbatim ("produces the errors as
+#   questions").
+#
+# - `mirror kintsugi --roomba <shard>` CLI verb — Reed post-mint
+#   CLI wire; dispatches propose_correction + discharge in sequence;
+#   the roomba walks + fills fractures until fixed-point per
+#   Alex 2026-07-23 verbatim ("fixes them and afterwards there are
+#   no more fractures").
+#
+# - @gestalt rendering for `mirror kintsugi` output — Reed post-mint
+#   / Glint cascade; Last Responsible Moment per Alex 2026-07-23
+#   naming.
+#
+# - Empirical one-fracture autopoietic round-trip demonstration —
+#   Reed post-mint task #160 discharge; runs the six-step loop
+#   against ONE inport_fracture in a real shard and verifies fixed-
+#   point at that position.
+
+out @kintsugi/fracture/inport
+out inport_fracture
+out inport_fracture_witnessed
+out inport_correction_is_valid_in_statement
+out inport_discharge_restores_sheaf_inclusion
+out detect
+out propose_correction
+out discharge
