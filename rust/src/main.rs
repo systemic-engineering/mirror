@@ -68,6 +68,11 @@ mod compile;
 mod liquid;
 mod matrix;
 mod phone;
+// Tick 1 of the rust/src/spectral.rs landing per Taut substrate-scout
+// 2026-07-23 verdict-b (macro-territory partial): build-time shard
+// manifest exposed to rust/ altitude. See spectral.rs docblock for the
+// (A, H, D) trait tower composition anchors at prismqueer::bundle.
+mod spectral;
 mod void;
 
 use std::env;
