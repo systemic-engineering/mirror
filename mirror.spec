@@ -279,13 +279,31 @@ system @mirror {
   # convergence. The recursion runs. The observer is inside. The
   # eigen-values are discrete. mirror.spec is now the observer
   # observing itself observe.
-  verifies {
-    # Landed sub-witness (Mara `0b2858a` shards/reality/subject.mirror)
-    eigenform_stabilizer_orbit(mirror)
-
-    # Forward-promised sub-witness (RED per Bootstrap Kernel reframe;
-    # discharges Green when Mara §5.2 M2 reflective evaluator lands;
-    # predicate-decl authorship territory Mara next tick)
-    rust_floor_is_stable_decidable_eigenobject(mirror)
+  property mirror_system_stabilizes {
+    # First mirror-side self-referential property, wrapped in
+    # `property { }` decl for empirical dispatch via rust/src/
+    # liquid.rs::extract_spec_properties + dispatch_spec_property +
+    # pillar::dispatch pipeline (Reed /loop iter 3-6 landings).
+    #
+    # Iteration 6 correction (Alex 2026-07-23 "sloppy loop prep"
+    # callout): iter 5 landing was a bare `verifies { }` block at
+    # system-sub-directive altitude — declarative but NOT extracted
+    # by the extractor (which requires `property <name> { verifies
+    # ... }` shape per Mara canonical spec §3.1). Wrapping in
+    # property{} makes it EMPIRICALLY dispatchable.
+    #
+    # Empirical discharge shape: dispatch_spec_property Arm 7
+    # fallthrough returns Defer("verifies-shape not in landed arms")
+    # because `eigenform_stabilizer_orbit(mirror)` name is not yet
+    # in the landed pillar-registered predicate set. Substrate-
+    # honest partial: the Defer verdict NAMES the forward-promise
+    # gap explicitly rather than pretending discharge is complete.
+    # Full GREEN discharge lands when pillar::dispatch registers
+    # eigenform_stabilizer_orbit predicate arm per Mara task #319
+    # canonical spec 0b2858a shards/reality/subject.mirror body
+    # forward-promise realization.
+    verifies {
+      eigenform_stabilizer_orbit(mirror)
+    }
   }
 }
