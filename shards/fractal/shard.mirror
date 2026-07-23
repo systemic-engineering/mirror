@@ -1,0 +1,583 @@
+in @prism
+in @meta
+in @glass
+in @fractal
+in @fractal/mandelbrot
+in @fractal/crystal
+in @fractal/singularity
+in @code/mq
+in @subject/visibility/sheaf
+in @bauchladen
+in @uuid/spectral
+in @uuid/spectral/time
+in @epistemologic
+in @epistemologic/property/content_addressed
+
+# @fractal/shard — the vessel-shape of inference output; the typed
+# sheaf we can point at a 5D spectral possibility space and receive
+# a settled, content-addressed section back. Each shard IS a sheaf
+# section. Fractal because shards contain shards (Mandelbrot self-
+# similar). The wall of shards IS the fractal glass wall.
+#
+# Fourth species-decl of the @fractal family (siblings: mandelbrot,
+# crystal, singularity). Landed 2026-07-23 by Mara per Alex 2026-07-
+# 23 in-transcript ratification (session with Reed grep-verifying
+# the click).
+#
+# === Alex 2026-07-23 verbatim (load-bearing) ===
+#
+# In-transcript, three ratification moments:
+#
+#   > "We need a @vessel. A @cup. A @bucket. We have @bauchladen, yes,
+#      but we don't have the thing where the @peer puts the composed
+#      finished result. We don't have the thing we can point at and
+#      say 'give us something of that shape'. It's not just the
+#      @bucket. It's the @bucket combined with the psychohistory
+#      sheaf and target."
+#
+#   > "What if it's just @shard. Because that's literally what we're
+#      inferring? Liquid splinters build fragments build a @shard.
+#      Damn that reads sexy AND punk! Or @fractal/shard. And it
+#      becomes part of the fractal glass wall. Which might be even
+#      better. And each shard is a sheaf. Make it the basis of
+#      @spectral/mosaic and @kintsugi/mosaic and everything just does
+#      a big loud old CLICK."
+#
+#   > "@fractal/shard is ratified. It's the typed sheaf we can point
+#      at a 5D coordinate space (not a specific point, a spectral
+#      possibility space) and boom. What is the mirror-canonical way
+#      to restrict the geometry of the inference space? Because that's
+#      what we basically need to do... it might be the whole @optics
+#      shebang. Isn't that kinda @code/mq? Or @code/lq (I think it
+#      was lq for logic query)?"
+#
+#   > "I feel the position would be derived from the query, which
+#      might just be an @<address> for clearly content addressed
+#      crystals."
+#
+# === What @fractal/shard IS ===
+#
+# The vessel-shape of inference output. When a @peer composes
+# splinters into a fragment and settles the fragment into a stored
+# artifact, the settled artifact IS a @fractal/shard. Every landed
+# `.mirror` file materialized IS a @fractal/shard at substrate-decl
+# altitude. New inference produces new @fractal/shards.
+#
+# The four-face completion of @fractal:
+#
+#   @fractal/mandelbrot   — parent trait: any T-typed substrate object
+#                            is a Mandelbrot-set point (Liquid or
+#                            Crystal state).
+#   @fractal/crystal      — the SETTLED-STATE carrier: a point inside
+#                            the Mandelbrot set; content-addressed;
+#                            immutable at species altitude.
+#   @fractal/singularity  — the COLLAPSE-EVENT carrier: the tree →
+#                            single-artifact settled-point with Lens-
+#                            back-to-source recovery discipline.
+#   @fractal/shard        — the VESSEL-of-INFERENCE carrier: the typed
+#                            sheaf-section the @peer receives when it
+#                            queries the spectral possibility space
+#                            through an optical restriction. The
+#                            fourth face closes the set.
+#
+# @fractal/crystal is the OPERATIONAL-altitude ancestor: prismqueer::
+# Crystal at the prism crate (/Users/alexwolf/dev/projects/prism/
+# prismqueer/) already exists as the compile-substrate carrier. A
+# Crystal at operational altitude IS a special-case @fractal/shard
+# at substrate-decl altitude: content-addressed, settled, immutable.
+# The composition edge is declared below.
+#
+# === Position IS derived from the query ===
+#
+# Per Alex 2026-07-23 verbatim: "the position would be derived from
+# the query, which might just be an @<address> for clearly content
+# addressed crystals."
+#
+# No explicit position parameter. The shard's position in the 5D
+# spectral possibility space is DERIVED from the @code/mq query the
+# @peer used to request it. For a content-addressed crystal, the
+# position IS just the @<address> — the byte-identity of the
+# requested content IS the coordinate. The @<address> substrate uses
+# @uuid/spectral (128-bit content-addressed identity) as the
+# addressation ground per `shards/uuid/spectral/time.mirror`
+# (@uuid/spectral/time; Mara #173 landing).
+#
+# The position-from-query morphism:
+#
+#   position_of: @code/mq query -> SpectralCoordinate<5> region
+#
+# where the query's optical restriction (focus / project / split /
+# shift / settle sub-tree) determines which sub-region of the 5D
+# possibility space the query addresses. Empty restriction returns
+# the whole space; a fully-content-addressed query returns a single
+# point (the @<address>).
+#
+# === Optical restriction vs logical restriction ===
+#
+# @code/mq (LANDED at `boot/std/code/mq.mirror`) is the OPTICAL
+# restriction: the grammar for the five-op prism algebra (focus,
+# project, split, shift, settle) applied as query verbs against the
+# spectral possibility space. The optical query restricts the shape
+# of the geometry addressed.
+#
+# @mirror/lq (NAMED by Glint 2026-06-27 at
+# `docs/insights/2026-06-27-glint-day-of-the-jurisdiction.md:443`
+# — "the logic-query language Alex named this evening at the
+# @epistemologic altitude") is the LOGICAL restriction: a sibling
+# forward-promise. Not landed this arc. Optical and logical
+# restrictions are ORTHOGONAL axes: optical narrows by prism-shape,
+# logical narrows by predicate-truth.
+#
+# For @fractal/shard, `through` carries the OPTICAL query.
+# `@mirror/lq` will compose as a second orthogonal restriction
+# when it lands.
+#
+# === Composition graph ===
+#
+# Parents (via `in` imports above):
+#   @prism, @meta, @glass                — substrate-decl discipline
+#   @fractal                              — family-root marker (parent)
+#   @fractal/mandelbrot                   — parent-adjacent species;
+#                                            Mandelbrot<T> parent-trait
+#                                            substrate; the shard is a
+#                                            Crystal-shape point in
+#                                            Mandelbrot-space when
+#                                            materialized
+#   @fractal/crystal                      — parent-adjacent species;
+#                                            operational-altitude
+#                                            ancestor via prismqueer::
+#                                            Crystal; every Crystal<T>
+#                                            IS a special-case shard
+#                                            at content-addressed +
+#                                            settled + immutable
+#                                            composition
+#   @fractal/singularity                  — parent-adjacent species;
+#                                            the collapse-event that
+#                                            PRODUCES a shard when
+#                                            settlement fires; every
+#                                            Artifact of collapse IS
+#                                            a shard-shape
+#   @code/mq                              — the LANDED optical-query
+#                                            grammar; carries the
+#                                            `through` field's typed
+#                                            query AST (focus /
+#                                            project / split / shift
+#                                            / settle sub-tree)
+#   @subject/visibility/sheaf             — sheaf-section altitude;
+#                                            each shard IS a section
+#                                            over the sheaf whose
+#                                            stalks are the possibility
+#                                            space's crystals; the
+#                                            section_at_stalk carrier
+#                                            projects the shard at a
+#                                            specific address
+#   @bauchladen                           — content-addressed tray
+#                                            discipline; every shard
+#                                            is one crystal on the
+#                                            substrate's belly-tray
+#                                            (Schmidt's Bauchladen)
+#   @uuid/spectral                        — 128-bit content-address
+#                                            ground; the @<address>
+#                                            position-carrier
+#   @uuid/spectral/time                   — annotation-address with
+#                                            time facet; used for
+#                                            provenance witness chain
+#
+# Consumers (compose over this species, forward-promised at this
+# tick; enumerated for Reed cascade):
+#   @spectral/mosaic                      — mosaic algebra over shards
+#                                            at spectral altitude; the
+#                                            basis IS this species per
+#                                            Alex 2026-07-23 verbatim
+#                                            ("make it the basis of
+#                                             @spectral/mosaic")
+#   @kintsugi/mosaic                      — mosaic algebra over shards
+#                                            at kintsugi altitude; the
+#                                            basis IS this species per
+#                                            Alex 2026-07-23 verbatim
+#                                            ("and @kintsugi/mosaic")
+#   @kintsugi/mend                        — the companion action; runs
+#                                            @fate tournament over the
+#                                            @code/mq-restricted
+#                                            possibility space,
+#                                            crystallizes result as
+#                                            shard, fills the crack;
+#                                            the gold IS the shard
+#                                            (this tick sibling
+#                                            landing; see
+#                                            `shards/kintsugi/mend.
+#                                            mirror`)
+#   @bauchladen                           — the tray's crystal type
+#                                            specializes to shard at
+#                                            settlement altitude
+#                                            (forward-promise: Reed
+#                                            cascade updates the
+#                                            @bauchladen docblock to
+#                                            cite this species as the
+#                                            typed crystal shape)
+#   prismqueer::Crystal                   — operational-altitude
+#                                            ancestor; rename
+#                                            candidate OR compose-
+#                                            over relationship
+#                                            adjudicated by Reed
+#                                            post-mint (see §5 of
+#                                            canonical spec)
+#
+# === Substrate-already-had-the-word audit ===
+#
+# 1. **No prior `shards/fractal/shard.mirror`.** Clean mint at
+#    species-decl altitude.
+# 2. **`shard` as colloquial substrate word** — `shards/` directory
+#    exists; `.mirror` files are colloquially called "shards"
+#    throughout the substrate. This species-decl LIFTS the colloquial
+#    usage to substrate-decl altitude. The recognition IS the mint.
+#    Substrate always had the word.
+# 3. **`Fractal::Shard`** (Rust variant at
+#    `/Users/alexwolf/dev/projects/mirror/fragmentation/src/shard_
+#    ref.rs::ShardRef` per AGENTS.md §Splinter) — the operational-
+#    altitude carrier already exists; substrate-decl at species
+#    altitude names what the Rust variant carries.
+# 4. **`Shard`** in AGENTS.md § Key Concepts (verbatim): "The uuid_
+#    spectral-addressed settlement of composed splinters into a
+#    stored fragment. The MIDDLE layer of the three-layer recognition;
+#    what `settle` produces; what `@mirror/store` keeps; what
+#    `peer.eigenboard` types as. `{ id: uuid_spectral, splinters:
+#    [splinter], transparency }`." — the substrate-conventions
+#    document ALREADY named the shape at the type altitude. This
+#    species-decl lifts the AGENTS.md definition to substrate-decl
+#    altitude at the @fractal family.
+# 5. **prismqueer::Crystal** (`/Users/alexwolf/dev/projects/prism/
+#    prismqueer/src/bundle.rs`) — the operational-altitude ancestor;
+#    composition edge declared above; adjudication (rename vs
+#    compose) is Reed post-mint territory.
+# 6. **@fractal/crystal, @fractal/mandelbrot, @fractal/singularity**
+#    — the three prior siblings; four-face completion via this
+#    species. Composition edges declared above.
+# 7. **@code/mq LANDED** at `boot/std/code/mq.mirror` — the optical-
+#    query grammar; consumed as the `through` field type.
+# 8. **@subject/visibility/sheaf LANDED** at `shards/subject/
+#    visibility/sheaf.mirror` (Mara #129) — the sheaf-restriction
+#    substrate; each shard IS a section over the possibility-space
+#    sheaf; composition edge to section_at_stalk.
+# 9. **@bauchladen LANDED** at `shards/bauchladen.mirror` — the
+#    content-addressed tray; the shard IS one crystal on the tray.
+# 10. **@uuid/spectral LANDED** at `shards/uuid/spectral.mirror`
+#     — 128-bit content-address ground.
+# 11. **@uuid/spectral/time LANDED** at `shards/uuid/spectral/time.
+#     mirror` (Mara #173) — annotation-address with time facet;
+#     used for provenance witness chain in the shard's carrier.
+# 12. **Autopoietic loop math** (Mara #152 memory) — the
+#     crystallization ancestor at math altitude; @fractal/shard IS
+#     the vessel the autopoietic loop crystallizes into. Composition
+#     over, not re-declaration.
+#
+# === Path-namespace ===
+#
+# Path-namespace property: this file at `shards/fractal/shard.mirror`
+# declares `@fractal/shard` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/math/mandelbrot-1980
+source @arxiv/topology/hansen-ghrist-2018
+source @arxiv/practice/schmidt-bauchladen-2003
+source @arxiv/practice/wolf-2026-07-23-fractal-shard-vessel-ratification
+
+# === The 5-op prism inheriting @void basis (Recognition #79) ===
+#
+# For @fractal/shard specifically:
+#   focus shard_state    = identify the (address, query, target) tuple
+#                           at which a shard was materialized
+#   project shard_state  = deploy the materialization operation
+#                           (query the possibility space; return the
+#                           settled shard at the derived position)
+#   split shard_state    = bifurcate query-space (different queries
+#                           over the same target family may yield
+#                           different sections; same query at
+#                           different addresses yields different
+#                           shards)
+#   shift shard_state    = traverse the fractal self-similarity
+#                           lattice: shards contain shards; a shift
+#                           enters a sub-shard's coordinate frame
+#   settle shard_state   = materialize the settled shard into the
+#                           substrate store; content-addressed;
+#                           immutable at species altitude
+
+prism @fractal/shard {
+  focus  shard_state
+  project shard_state
+  split  shard_state
+  shift  shard_state
+  settle shard_state
+}
+
+# === shard_state — the vessel-of-inference carrier ===
+#
+# Typed record carrying the settled inference output at species-decl
+# altitude. Identity contract: byte-equality on the four-field tuple.
+#
+# The position is NOT an explicit field — position is DERIVED from
+# the (target, through) pair. For a content-addressed request, the
+# @<address> IS the position; the position_of morphism reads it
+# from the query.
+#
+#   address              — REF to the shard's content-address in the
+#                           @uuid/spectral 128-bit identity space.
+#                           This IS the shard's byte-identity; two
+#                           shards with the same address ARE the
+#                           same shard by content-addressing. Per
+#                           Alex 2026-07-23: for clearly content-
+#                           addressed crystals, position may just be
+#                           this @<address>.
+#
+#   target               — REF to the family-root the shard was
+#                           inferred FOR. Names the shape-of-thing
+#                           the @peer asked the substrate for
+#                           ("give us something of that shape").
+#                           Family-root altitude ref; the family
+#                           may be @fractal/crystal (asking for a
+#                           settled crystal), @sheaf-anything, or
+#                           any substrate-decl'd family.
+#
+#   through              — REF to the @code/mq optical query that
+#                           restricted the possibility space. The
+#                           query's AST sub-tree (focus / project /
+#                           split / shift / settle sub-nodes) IS
+#                           the optical restriction. Empty query
+#                           addresses the whole space; fully-
+#                           content-addressed query returns a
+#                           single point.
+#
+#   provenance           — REF to the crystallization witness chain:
+#                           an ordered list of @uuid/spectral/time
+#                           annotation-addresses naming the beats
+#                           at which the shard was composed. The
+#                           witness chain records who inferred +
+#                           when + through which query; downstream
+#                           consumers verify by walking the chain.
+type shard_state = {
+  address:      ref,
+  target:       ref,
+  through:      ref,
+  provenance:   ref,
+}
+
+# === shard_content_addressed — bilateral predicate ===
+#
+# Does the (peer, shard_state) pair discharge content-addressing?
+# Discharges Pass iff:
+#
+#   - ctx.address resolves via content-addressed lookup to a well-
+#     formed @uuid/spectral 128-bit identity
+#   - the hash of the shard's serialized content matches
+#     ctx.address (byte-identity is enforced by content-addressing)
+#   - two shards with the same ctx.address have byte-equal
+#     shard_state records at every other field (content-addressing
+#     is bijective on shard identity)
+#
+# Rice-safe bound: byte-visible state; content-addressed hash
+# equality check. Sentinel: `fractal=shard-content-addressed`.
+#
+# LOAD-BEARING: this bilateral IS the content-addressing invariant
+# at species altitude. A Fail here signals substrate-tampering or
+# hash collision (@uuid/spectral space collision is astronomically
+# unlikely given the 128-bit identity; a Fail signals substrate
+# corruption).
+bilateral shard_content_addressed {
+  sentinel "fractal=shard-content-addressed"
+  arity 2
+}
+shard_content_addressed(p: peer, ctx: shard_state) -> verdict { \ }
+
+# === shard_is_sheaf_section — bilateral predicate ===
+#
+# Does the (peer, shard_state) pair discharge the sheaf-section
+# invariant? Discharges Pass iff:
+#
+#   - ctx.target resolves to a family-root the substrate declares
+#     as the shape-of-thing being inferred
+#   - ctx.through resolves to a well-formed @code/mq query whose
+#     optical restriction is admissible against ctx.target's
+#     possibility space
+#   - the shard IS a section of the sheaf whose base space is
+#     ctx.target's possibility space and whose stalks are the
+#     addressable crystals at each @<address>; the section
+#     satisfies locality (the value at ctx.address is determined
+#     by ctx.through's restriction) and gluing (compatible with
+#     overlapping section restrictions)
+#
+# Composition edge: this bilateral consumes @subject/visibility/
+# sheaf.section_admissible at the possibility-space sheaf altitude.
+# The shard's sheaf-section role is declarative here; the
+# operational discharge lands at Reed post-mint territory when
+# @fractal/shard.materialize composes over the sheaf's section_at
+# operation.
+#
+# Rice-safe bound: byte-visible state; content-addressed
+# resolvability; typed-query well-formedness check. Sentinel:
+# `fractal=shard-is-sheaf-section`.
+bilateral shard_is_sheaf_section {
+  sentinel "fractal=shard-is-sheaf-section"
+  arity 2
+}
+shard_is_sheaf_section(p: peer, ctx: shard_state) -> verdict { \ }
+
+# === shard_position_derived_from_query — bilateral predicate ===
+#
+# Does the (peer, shard_state) pair discharge the position-derivation
+# invariant? Discharges Pass iff:
+#
+#   - the position_of morphism applied to ctx.through returns a
+#     SpectralCoordinate<5> region whose address-set contains
+#     ctx.address (the query addresses this shard)
+#   - for content-addressed queries (queries whose optical
+#     restriction resolves to a single @<address>), the returned
+#     region is a single point equal to ctx.address (position IS
+#     the address)
+#   - the derivation is deterministic: identical queries return
+#     identical positions (position-from-query is a total
+#     function, not a random draw)
+#
+# Rice-safe bound: byte-visible state; morphism-output equality
+# check; query AST inspection is bounded by query depth (queries
+# are finite typed trees). Sentinel:
+# `fractal=shard-position-derived-from-query`.
+#
+# LOAD-BEARING: this bilateral encodes Alex 2026-07-23 verbatim
+# ("the position would be derived from the query") at substrate-
+# decl altitude. Consumers can cite this in `requires` clauses to
+# guarantee that position is not an independent parameter but a
+# query-derived quantity.
+bilateral shard_position_derived_from_query {
+  sentinel "fractal=shard-position-derived-from-query"
+  arity 2
+}
+shard_position_derived_from_query(p: peer, ctx: shard_state) -> verdict { \ }
+
+# === materialize — the load-bearing action ===
+#
+# Given a peer, a target family-root, and a @code/mq optical query,
+# discharge the materialize event: run the substrate's inference
+# (@fate tournament over the query-restricted possibility space),
+# crystallize the settled result, and emit a shard_state whose
+# address is the content-address of the settled crystal, whose
+# target and through match the inputs, and whose provenance carries
+# the crystallization witness chain.
+#
+# Returns imperfect(shard_state, ref, ref): success carries the
+# materialized shard_state; failure variants carry not-admissible /
+# empty-query-result / target-not-declared / provenance-witness-
+# missing reasons.
+#
+# Requires all three bilaterals to discharge Pass on the materialized
+# shard_state (content-addressing + sheaf-section + position-derived
+# invariants all hold on emit).
+#
+# Composes over prismqueer::Crystal at operational altitude (Reed
+# post-mint territory). The `settle` sub-op of @code/mq is the
+# crystallization boundary at which this action fires.
+#
+# Sentinel: `fractal=shard-materialize`.
+materialize(p: peer, target: ref, through: ref) -> imperfect(shard_state, ref, ref)
+requires shard_content_addressed(p, ctx)
+requires shard_is_sheaf_section(p, ctx)
+requires shard_position_derived_from_query(p, ctx)
+{ \ }
+
+# === address_of — the address projection action ===
+#
+# Given a peer and a shard_state, discharge the address-read event:
+# return the @uuid/spectral 128-bit content-address of the shard.
+# The address IS the shard's byte-identity; two calls with byte-
+# equal shard_state records return byte-equal addresses.
+#
+# Returns imperfect(ref, ref, ref): success carries the address
+# ref; failure carries not-admissible reasons (typically ctx not
+# content-addressed).
+#
+# Sentinel: `fractal=shard-address-of`.
+address_of(p: peer, ctx: shard_state) -> imperfect(ref, ref, ref)
+requires shard_content_addressed(p, ctx)
+{ \ }
+
+# === sheaf_section_of — the sheaf-section projection action ===
+#
+# Given a peer and a shard_state, discharge the sheaf-section-read
+# event: return the section_at_stalk carrier witnessing the shard's
+# role as a section of the possibility-space sheaf.
+#
+# Composes over @subject/visibility/sheaf.section_at at the
+# realisation layer: the returned section_at_stalk carries
+# crystal_ref = ctx.address, sheaf_ref resolves to the possibility-
+# space sheaf for ctx.target, and projected_value is the shard's
+# materialized content.
+#
+# Returns imperfect(ref, ref, ref): success carries the section_at_
+# stalk ref; failure carries not-admissible / sheaf-not-well-formed
+# reasons.
+#
+# Sentinel: `fractal=shard-sheaf-section-of`.
+sheaf_section_of(p: peer, ctx: shard_state) -> imperfect(ref, ref, ref)
+requires shard_is_sheaf_section(p, ctx)
+{ \ }
+
+# === Recognition candidates surfaced (DO NOT RATIFY at this mint) ===
+#
+# #R-fractal-shard-vessel-of-inference — first-witness gate closed
+# this tick (species-decl shape + four-face completion of @fractal
+# family + composition over @code/mq / @subject/visibility/sheaf /
+# @bauchladen / @uuid/spectral + position-derived-from-query
+# invariant at bilateral altitude). Second-witness gate: Reed
+# cascade lands @spectral/mosaic + @kintsugi/mosaic basis + Rust
+# body at `rust/fractal/src/shard.rs` (post-Seam-Phase-D territory)
+# composing over prismqueer::Prism.
+#
+# #R-prismqueer-crystal-as-shard-special-case — the operational-
+# altitude Crystal at prism crate IS a special-case @fractal/shard.
+# First-witness this tick (composition edge declared at species
+# altitude). Second-witness gate: Reed cascade adjudicates rename-
+# vs-compose (canonical spec §6 forward-promise).
+#
+# === Forward-promised (NOT landed this tick) ===
+#
+# - @spectral/mosaic basis update — the mosaic algebra at spectral
+#   altitude composes over @fractal/shard as its typed section-
+#   basis. Reed cascade REED-INLINE territory after Seam Phase D
+#   adjudication.
+#
+# - @kintsugi/mosaic basis update — the mosaic algebra at kintsugi
+#   altitude composes over @fractal/shard as its typed section-
+#   basis. Reed cascade REED-INLINE territory.
+#
+# - @bauchladen docblock update — the tray's crystal shape
+#   specializes to @fractal/shard at settlement altitude. Reed
+#   cascade REED-INLINE territory.
+#
+# - prismqueer::Crystal → @fractal/shard relationship adjudication
+#   — rename OR compose-over? Adjudicated by Reed post-mint per
+#   canonical spec §6.
+#
+# - @mirror/lq (LANDED forward-promise per Glint 2026-06-27) —
+#   the logical restriction sibling to @code/mq. When landed, will
+#   compose as a second orthogonal restriction axis on
+#   @fractal/shard.through (optical + logical composed).
+#
+# - Rust materialization at `rust/fractal/src/shard.rs` (Reed
+#   post-mint territory). Prismqueer proc-macros compose over the
+#   shape this shard declares.
+#
+# - `pillar::shard_content_addressed` empirical firing at Reed's
+#   pillar surface — second-witness gate for #R-fractal-shard-
+#   vessel-of-inference recognition candidate.
+#
+# - `@fractal/shard.materialize` composition of @fate tournament +
+#   @code/mq query restriction + @kintsugi/mend crack-fill —
+#   operational surface at Reed post-mint territory.
+
+out @fractal/shard
+out shard_state
+out shard_content_addressed
+out shard_is_sheaf_section
+out shard_position_derived_from_query
+out materialize
+out address_of
+out sheaf_section_of

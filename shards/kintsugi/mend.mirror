@@ -1,0 +1,471 @@
+in @prism
+in @meta
+in @glass
+in @kintsugi
+in @kintsugi/fracture
+in @fractal
+in @fractal/shard
+in @fractal/crystal
+in @code/mq
+in @bauchladen
+in @uuid/spectral
+in @epistemologic
+
+# @kintsugi/mend — the companion action to @fractal/shard: fills a
+# fracture by running @fate tournament over the @code/mq-restricted
+# possibility space, crystallizing the settled result as a
+# @fractal/shard, and mending the crack. The gold IS the shard.
+#
+# Species-decl under @kintsugi. Landed 2026-07-23 by Mara per Alex
+# 2026-07-23 in-transcript ratification (session with Reed grep-
+# verifying the click). Sibling species landing:
+# `shards/fractal/shard.mirror` (the shard vessel-shape this action
+# produces).
+#
+# === Alex 2026-07-23 verbatim (load-bearing) ===
+#
+# Same session as @fractal/shard ratification. The mend/shard pair
+# is one recognition; the shard is the shape, the mend is the
+# action that produces one:
+#
+#   > "@fractal/shard is ratified. It's the typed sheaf we can point
+#      at a 5D coordinate space (not a specific point, a spectral
+#      possibility space) and boom. What is the mirror-canonical way
+#      to restrict the geometry of the inference space? Because that's
+#      what we basically need to do... it might be the whole @optics
+#      shebang. Isn't that kinda @code/mq?"
+#
+# The mend action IS the operational half of the shard-of-inference
+# recognition: given a fracture (a `\` crack in the substrate, per
+# `shards/mirror/shatter.mirror` and AGENTS.md § The `\` Crack) and
+# a target shape, run the tournament, settle the winner, and pour
+# the gold shard into the crack.
+#
+# === What @kintsugi/mend IS ===
+#
+# Kintsugi is the Japanese art of mending broken pottery by filling
+# the cracks with gold. In the substrate, cracks are `\` — honest
+# uncertainty as first-class value. Prior kintsugi discipline:
+# @kintsugi/fracture/* declares HOW to restore properties when they
+# fail (fracture bodies emit morphisms; the kintsugi loop applies
+# them). @kintsugi/mend is the ACTION that discharges the fracture-
+# to-shard morphism: it consumes a fracture (the `\` position) + a
+# target shape (@fractal/shard shape) and produces a shard that
+# fills the crack.
+#
+# The gold in kintsugi IS the shard. Every mended fracture leaves
+# a shard-shaped gold vein visible in the substrate — the shard's
+# @<address> IS the byte-identity of the gold that mended THIS
+# fracture.
+#
+# === Composition with @fractal/shard ===
+#
+# @kintsugi/mend produces @fractal/shard. The mend action's return
+# type IS a shard_state (per @fractal/shard species-decl at
+# `shards/fractal/shard.mirror`). The mend action's parameters:
+#
+#   - fracture_position: the `\` crack's position in the substrate
+#     (typically an OID + offset naming the settle-site)
+#   - target: the family-root shape the fracture asked for (feeds
+#     @fractal/shard.target)
+#   - through: the @code/mq optical query restricting the possibility
+#     space (feeds @fractal/shard.through)
+#
+# The mend runs @fate.roll (@fate tournament; forward-promised
+# resolver via @kintsugi/translate precedent), reads the winning
+# candidate, invokes @fractal/shard.materialize with the tournament's
+# settled result, and returns the produced shard. The shard's
+# @<address> IS the gold's byte-identity in the substrate.
+#
+# === Composition with @kintsugi/fracture family ===
+#
+# @kintsugi/mend sits under @kintsugi at species altitude, sibling
+# to @kintsugi/translate, @kintsugi/oscillate, etc. It is NOT under
+# @kintsugi/fracture (which carries fracture-body species that emit
+# morphisms). The distinction:
+#
+#   @kintsugi/fracture/*  — fracture BODIES: emit morphisms that
+#                            restore substrate properties when they
+#                            fail (declarative-half of the bilateral
+#                            pattern with @epistemologic/property/*)
+#   @kintsugi/mend        — mend ACTION: consumes a fracture and
+#                            produces a shard; the operational
+#                            crack-fill operation
+#
+# @kintsugi/fracture/* species DECLARE what to do when a specific
+# property fails; @kintsugi/mend is the action that discharges the
+# actual crack-fill by running the tournament and materializing the
+# shard. Different altitude of the same kintsugi discipline.
+#
+# === Composition graph ===
+#
+# Parents (via `in` imports above):
+#   @prism, @meta, @glass                — substrate-decl discipline
+#   @kintsugi                             — family-root; the process-
+#                                            side transformation
+#                                            engine (Maturana-Varela
+#                                            organisation vs
+#                                            structure partition)
+#   @kintsugi/fracture                    — sibling species altitude;
+#                                            the fracture-body family
+#                                            @kintsugi/mend
+#                                            complements (fractures
+#                                            declare; mend discharges)
+#   @fractal                              — kin family-root; the
+#                                            vessel-of-inference
+#                                            family the mend produces
+#                                            into
+#   @fractal/shard                        — the RETURN TYPE of mend;
+#                                            the vessel the gold
+#                                            crystallizes as (this
+#                                            tick sibling landing)
+#   @fractal/crystal                      — parent-adjacent; the
+#                                            settled-substrate carrier
+#                                            the shard inherits
+#                                            content-addressing +
+#                                            immutability from
+#   @code/mq                              — the LANDED optical-query
+#                                            grammar; the `through`
+#                                            parameter's typed query
+#   @bauchladen                           — content-addressed tray
+#                                            discipline; the produced
+#                                            shard lands as one
+#                                            crystal on the tray
+#   @uuid/spectral                        — 128-bit content-address
+#                                            ground for the produced
+#                                            shard's @<address>
+#
+# Consumers (compose over this species, forward-promised at this
+# tick):
+#   @kintsugi/mosaic                      — mosaic algebra at kintsugi
+#                                            altitude; mend is the
+#                                            action that produces one
+#                                            mosaic-tile (a shard);
+#                                            per Alex 2026-07-23
+#                                            "@kintsugi/mosaic" click
+#   @kintsugi/roomba                      — the substrate's stigmergic
+#                                            pathfinder; forward-
+#                                            promise: mend as a
+#                                            resolver-arm in roomba's
+#                                            fracture-resolution
+#                                            cascade
+#   @fate/tournament                      — the tournament @kintsugi/
+#                                            mend runs to select the
+#                                            winning candidate for
+#                                            crystallization (forward-
+#                                            promise: mend composes
+#                                            over tournament at Reed
+#                                            post-mint territory)
+#
+# === Substrate-already-had-the-word audit ===
+#
+# 1. **No prior `shards/kintsugi/mend.mirror`.** Clean mint at
+#    species-decl altitude. Greenfield.
+# 2. **`kintsugi` verbatim** (Japanese; the art of mending broken
+#    pottery with gold) — the substrate's own vocabulary since the
+#    2026-06-10 family-root landing (`shards/kintsugi.mirror`;
+#    mirror `20eaf15`). Mending IS the kintsugi discipline; naming
+#    the action `mend` is the delightfully-boring word.
+# 3. **`mend` as English verb** — the audit criterion (AGENTS.md
+#    §Delightfully Boring): "does the reader knowing the substrate's
+#    geometry go 'of course it's this'?" Yes. Kintsugi mends
+#    cracks; @kintsugi/mend is the action that mends a fracture.
+#    Zero WTF/minute.
+# 4. **@kintsugi/fracture family** (15 landed species at
+#    `shards/kintsugi/fracture/*`) — the DECLARATIVE half; @kintsugi/
+#    mend is the OPERATIONAL half. Distinction declared above.
+# 5. **@kintsugi/translate** (Mara post-2026-07-16 landing) — sibling
+#    species precedent for @kintsugi/<action> at species altitude
+#    (not under @kintsugi/fracture). Same altitude discipline.
+# 6. **@fractal/shard** (this tick sibling landing at
+#    `shards/fractal/shard.mirror`) — the return type of mend; the
+#    vessel the gold crystallizes as. Companion mint.
+# 7. **@code/mq LANDED** at `boot/std/code/mq.mirror` — the optical-
+#    query grammar; consumed as the `through` parameter.
+# 8. **@bauchladen LANDED** at `shards/bauchladen.mirror` — the
+#    content-addressed tray discipline; produced shards land as
+#    crystals on the tray.
+# 9. **@kintsugi/roomba** (`shards/kintsugi/roomba.mirror`) — the
+#    stigmergic pathfinder; forward-promise composition surface.
+# 10. **@fate/tournament** (`shards/fate/tournament.mirror`) — the
+#     tournament resolver mend composes over (forward-promise).
+#
+# === Path-namespace ===
+#
+# Path-namespace property: this file at `shards/kintsugi/mend.mirror`
+# declares `@kintsugi/mend` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/practice/kintsugi-japanese-pottery
+source @arxiv/practice/wolf-2026-07-23-fractal-shard-vessel-ratification
+
+# === The 5-op prism inheriting @void basis (Recognition #79) ===
+#
+# For @kintsugi/mend specifically:
+#   focus mend_state    = identify the (fracture, target, through)
+#                          tuple at which a mend fires
+#   project mend_state  = deploy the tournament + materialization
+#                          operation (@fate.roll → @fractal/shard.
+#                          materialize)
+#   split mend_state    = bifurcate candidate-space (the tournament's
+#                          bracket; each split introduces one
+#                          candidate arm)
+#   shift mend_state    = traverse the fracture-resolution lattice
+#                          (different fractures → different mends;
+#                          shift enters a sibling fracture's frame)
+#   settle mend_state   = crystallize the tournament winner as a
+#                          @fractal/shard; pour the gold; content-
+#                          addressed at settle
+
+prism @kintsugi/mend {
+  focus  mend_state
+  project mend_state
+  split  mend_state
+  shift  mend_state
+  settle mend_state
+}
+
+# === mend_state — the mend-operation carrier ===
+#
+# Typed record carrying the mend operation's parameter tuple.
+# Identity contract: byte-equality on the three-field tuple.
+#
+#   fracture_position   — REF to the `\` crack's position in the
+#                          substrate. Typically an OID + offset
+#                          naming the settle-site where the fracture
+#                          fired. Composition edge to
+#                          @mirror/shatter's crack representation.
+#
+#   target              — REF to the family-root shape the fracture
+#                          asked for. Feeds @fractal/shard.target on
+#                          the produced shard. Family-root altitude
+#                          ref; names the shape-of-thing the mend
+#                          crystallizes.
+#
+#   through             — REF to the @code/mq optical query
+#                          restricting the possibility space the
+#                          tournament searches over. Feeds
+#                          @fractal/shard.through on the produced
+#                          shard. Empty query searches the whole
+#                          possibility space; restricted query
+#                          bounds the search.
+type mend_state = {
+  fracture_position:  ref,
+  target:             ref,
+  through:            ref,
+}
+
+# === mend_fills_fracture — bilateral predicate ===
+#
+# Does the (peer, mend_state) pair discharge the fracture-fill
+# invariant? Discharges Pass iff:
+#
+#   - ctx.fracture_position resolves to a well-formed `\` crack in
+#     the substrate (the fracture EXISTS at the named position)
+#   - the mend's produced shard has content that could substitute
+#     for the fracture at the position (byte-shape compatibility;
+#     the shard's target family-root matches what the fracture
+#     asked for)
+#   - after the mend fires, the fracture at ctx.fracture_position
+#     is filled (the `\` is replaced by the shard's byte-identity;
+#     the crack is no longer a hole)
+#
+# Rice-safe bound: byte-visible state; fracture-existence check;
+# shape-compatibility check. Sentinel: `kintsugi=mend-fills-fracture`.
+#
+# LOAD-BEARING: this bilateral IS the kintsugi discipline at species
+# altitude — mending fills cracks. A Fail here signals the mend
+# operation produced a shard that DOES NOT fit the fracture shape
+# (substrate-dishonest crystallization).
+bilateral mend_fills_fracture {
+  sentinel "kintsugi=mend-fills-fracture"
+  arity 2
+}
+mend_fills_fracture(p: peer, ctx: mend_state) -> verdict { \ }
+
+# === gold_is_shard — bilateral predicate ===
+#
+# Does the (peer, mend_state) pair discharge the gold-IS-shard
+# invariant per Alex 2026-07-23 verbatim ratification? Discharges
+# Pass iff:
+#
+#   - the mend's produced return value is a @fractal/shard
+#     (species-decl'd shard_state per `shards/fractal/shard.mirror`)
+#   - the shard's @<address> is content-addressed via @uuid/spectral
+#     (128-bit identity)
+#   - the shard's provenance chain includes this mend event as the
+#     crystallization witness (the mend that produced the shard is
+#     namable in the shard's provenance)
+#
+# Rice-safe bound: byte-visible state; return-type shape check;
+# @uuid/spectral resolvability; provenance-chain membership check.
+# Sentinel: `kintsugi=gold-is-shard`.
+#
+# LOAD-BEARING: this bilateral encodes Alex 2026-07-23 verbatim
+# ("The gold in kintsugi IS the shard") at substrate-decl altitude.
+# Consumers can cite this in `requires` clauses to guarantee that
+# the mend produces a @fractal/shard-typed gold pour, not some
+# other shape.
+bilateral gold_is_shard {
+  sentinel "kintsugi=gold-is-shard"
+  arity 2
+}
+gold_is_shard(p: peer, ctx: mend_state) -> verdict { \ }
+
+# === mend_preserves_wall_integrity — bilateral predicate ===
+#
+# Does the (peer, mend_state) pair discharge the fractal-glass-wall
+# integrity invariant? Discharges Pass iff:
+#
+#   - after the mend fires, the substrate's fractal glass wall
+#     (the total collection of settled @fractal/shard's) remains
+#     substrate-honest at every altitude
+#   - the mend does NOT displace or invalidate any existing shard
+#     on the wall (immutability at species altitude is preserved)
+#   - the mend does NOT introduce a shard whose @<address> collides
+#     with an existing address (content-addressing is bijective;
+#     no collision)
+#   - the mend does NOT introduce a shard whose sheaf-section
+#     violates gluing with overlapping sections (sheaf-cohomology
+#     integrity per docs/math/2026-07-23 companion doc)
+#
+# Rice-safe bound: byte-visible state; wall-state before/after
+# equality check on existing shards; address-collision check;
+# sheaf-gluing check bounded by section-overlap set size (finite).
+# Sentinel: `kintsugi=mend-preserves-wall-integrity`.
+#
+# LOAD-BEARING: this bilateral encodes the fractal-glass-wall
+# invariant (per @fractal/shard §Alex 2026-07-23 "it becomes part
+# of the fractal glass wall"). The wall grows by mending; growth
+# must be integrity-preserving.
+bilateral mend_preserves_wall_integrity {
+  sentinel "kintsugi=mend-preserves-wall-integrity"
+  arity 2
+}
+mend_preserves_wall_integrity(p: peer, ctx: mend_state) -> verdict { \ }
+
+# === mend — the load-bearing action ===
+#
+# Given a peer and a mend_state (fracture position + target family-
+# root + @code/mq optical query), discharge the mend event: run
+# @fate.roll tournament over the query-restricted possibility space,
+# read the winning candidate, invoke @fractal/shard.materialize with
+# the tournament's settled result, and emit the produced shard_state.
+#
+# Returns imperfect(shard_state, ref, ref): success carries the
+# produced @fractal/shard's shard_state; failure variants carry
+# not-admissible / no-tournament-winner / target-not-declared /
+# fracture-not-found / wall-integrity-violated reasons.
+#
+# Requires all three bilaterals to discharge Pass:
+#   - mend_fills_fracture: the mend produces a shard fitting the
+#     fracture shape
+#   - gold_is_shard: the return type IS a @fractal/shard
+#   - mend_preserves_wall_integrity: the wall remains substrate-
+#     honest after the mend
+#
+# Composes over @fate.roll (forward-promised resolver; see
+# @kintsugi/translate precedent) + @fractal/shard.materialize (this
+# tick sibling landing) + @kintsugi/consent (consent-in-flow discipline
+# for the mend event's authorization).
+#
+# Sentinel: `kintsugi=mend`.
+mend(p: peer, ctx: mend_state) -> imperfect(shard_state, ref, ref)
+requires mend_fills_fracture(p, ctx)
+requires gold_is_shard(p, ctx)
+requires mend_preserves_wall_integrity(p, ctx)
+{ \ }
+
+# === tournament_run — the tournament sub-action ===
+#
+# Given a peer and a mend_state, discharge the tournament event:
+# run @fate.roll over the @code/mq-restricted possibility space
+# (ctx.through) targeting the shape ctx.target, and emit the
+# winning candidate's ref.
+#
+# Composes over @fate/tournament at the realisation layer; the
+# tournament's bracket is derived from the query's split sub-tree;
+# the winner is selected by the tournament's ranking function.
+#
+# Returns imperfect(ref, ref, ref): success carries the winning
+# candidate ref; failure carries no-candidates / tournament-not-
+# well-formed reasons.
+#
+# Body discharges per-realisation. `\`-obligation-blocked per
+# [[feedback-craft-not-deliver]]; Reed post-mint composes @fate.roll
+# resolver-arm.
+#
+# Sentinel: `kintsugi=mend-tournament-run`.
+tournament_run(p: peer, ctx: mend_state) -> imperfect(ref, ref, ref)
+requires mend_fills_fracture(p, ctx)
+{ \ }
+
+# === fill_crack — the crack-fill sub-action ===
+#
+# Given a peer, a mend_state, and a produced shard_state, discharge
+# the crack-fill event: replace the `\` at ctx.fracture_position
+# with the shard's byte-identity, updating the substrate's fractal
+# glass wall.
+#
+# Composes over @mirror/shatter's crack representation + @mirror/
+# store's content-addressed write at the realisation layer. The
+# fill operation is content-addressed and idempotent: filling the
+# same fracture with the same shard twice is a no-op.
+#
+# Returns imperfect(ref, ref, ref): success carries a ref to the
+# updated fracture position (now-filled); failure carries wall-
+# integrity-violated / fracture-not-found reasons.
+#
+# Body discharges per-realisation. `\`-obligation-blocked. Reed
+# post-mint composes @mirror/store.write resolver-arm.
+#
+# Sentinel: `kintsugi=mend-fill-crack`.
+fill_crack(p: peer, ctx: mend_state, produced: shard_state) -> imperfect(ref, ref, ref)
+requires mend_preserves_wall_integrity(p, ctx)
+{ \ }
+
+# === Recognition candidates surfaced (DO NOT RATIFY at this mint) ===
+#
+# #R-kintsugi-mend-gold-is-shard — first-witness gate closed this
+# tick (species-decl shape + gold_is_shard bilateral naming the
+# invariant + composition edge to @fractal/shard). Second-witness
+# gate: Reed cascade lands @fate.roll resolver-arm + Rust body at
+# `rust/kintsugi/src/mend.rs` (post-Seam-Phase-D territory).
+#
+# === Forward-promised (NOT landed this tick) ===
+#
+# - @fate.roll resolver-arm — the tournament composition at
+#   apply_h::act altitude. Reed post-mint territory; @kintsugi/
+#   translate precedent applies.
+#
+# - @kintsugi/roomba composition surface — mend as a resolver-arm
+#   in roomba's stigmergic fracture-resolution cascade. Forward-
+#   promise.
+#
+# - @kintsugi/mosaic basis update — @kintsugi/mosaic composes over
+#   @kintsugi/mend as the action that produces mosaic-tiles. Reed
+#   cascade REED-INLINE territory.
+#
+# - Rust materialization at `rust/kintsugi/src/mend.rs` (Reed
+#   post-mint territory). Prismqueer proc-macros compose over the
+#   shape this shard declares.
+#
+# - `pillar::mend_fills_fracture` empirical firing at Reed's pillar
+#   surface — second-witness gate for #R-kintsugi-mend-gold-is-shard
+#   recognition candidate.
+#
+# - `pillar::gold_is_shard` empirical firing — the fractal-glass-
+#   wall integrity invariant at empirical altitude.
+#
+# - Autopoietic-loop composition — @kintsugi/mend as the operational
+#   crystallization step of the autopoietic loop (Mara #152 memory).
+#   Forward-promise for cascade.
+
+out @kintsugi/mend
+out mend_state
+out mend_fills_fracture
+out gold_is_shard
+out mend_preserves_wall_integrity
+out mend
+out tournament_run
+out fill_crack
