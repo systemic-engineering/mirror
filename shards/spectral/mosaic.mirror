@@ -12,6 +12,7 @@ in @io/fs
 in @code/rust
 in @code/typescript
 in @code/python
+in @fractal/shard
 
 # @spectral/mosaic — the READ-side species over the parametric
 # mosaic(altitude) form; types an existing filesystem repository
@@ -216,6 +217,21 @@ glass @spectral/mosaic {
   shift  altitudes    # [(@code/*, ...)] + altitude -> emitter
   settle typing       # emitter           -> mosaic(@repo) fixed
 }
+
+# === REED-INLINE 2026-07-23: @fractal/shard as typed tile-basis ===
+#
+# Per Mara three-landing arc `cdc25d4` + `1fa42d5` + `dd1d1d5`
+# (@fractal/shard family-mint per Alex 2026-07-23 in-transcript
+# ratification): the mosaic's typed tile-basis IS @fractal/shard.
+# Each tile crystallizes as a shard; the mosaic algebra composes
+# shard sections. Position of each tile is derived from its
+# @code/mq query (LANDED at `boot/std/code/mq.mirror`); for
+# content-addressed crystals, position IS `@<address>`.
+#
+# Composition anchor: `docs/specs/fractal-shard-vessel-of-
+# inference.md` §6.1 cascade forward-promise discharged here.
+# Full spec + math: same spec + `docs/math/2026-07-23-fractal-
+# shard-sheaf-cohomology-of-inference.md`.
 
 # === classification carrier ===
 #

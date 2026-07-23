@@ -14,6 +14,7 @@ in @silicon/algebra
 in @kintsugi/oscillate
 in @kintsugi/consent
 in @io/fs
+in @fractal/shard
 
 # @kintsugi/mosaic — the WRITE-side species over the parametric
 # mosaic(altitude) form; back-projects a mosaic(@repo) typing into
@@ -312,6 +313,24 @@ type_of_spec(sigma: ref) -> mosaic(@repo) { \ }
 # See @spectral/mosaic docblock for full semantics. Declared at
 # BOTH species; consumers cite either symmetrically. Substrate
 # honours byte-equal declaration across shards.
+
+# === REED-INLINE 2026-07-23: @fractal/shard as typed tile-basis ===
+#
+# Per Mara three-landing arc `cdc25d4` + `1fa42d5` + `dd1d1d5`
+# (@fractal/shard family-mint per Alex 2026-07-23 in-transcript
+# ratification): the mosaic's typed tile-basis IS @fractal/shard.
+# The write-side back-projection into a <project>.spec composes
+# @fractal/shard sections at each altitude; @kintsugi/mend fills
+# fractures in the emitted mosaic with newly-crystallized shards.
+# Position of each tile is derived from its @code/mq query
+# (LANDED at `boot/std/code/mq.mirror`); for content-addressed
+# crystals, position IS `@<address>`.
+#
+# Composition anchor: `docs/specs/fractal-shard-vessel-of-
+# inference.md` §6.2 cascade forward-promise discharged here.
+# Full spec + math: same spec + `docs/math/2026-07-23-fractal-
+# shard-sheaf-cohomology-of-inference.md`.
+
 bilateral mosaic_bilateral_witnessing {
   sentinel  "mosaic=repo-spec-adjoint-round-trip"
   arity     2

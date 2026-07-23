@@ -4,6 +4,7 @@ in @glass
 in @mirror/store
 in @uuid/spectral
 in @epistemologic/cybernetic/autopoiesis
+in @fractal/shard
 
 # @bauchladen — the substrate's prism-altitude content-addressing
 # discipline. Importing `in @bauchladen` declares: "my content IS a
@@ -281,6 +282,24 @@ source @arxiv/cybernetics/von-foerster-1981
 source @arxiv/clinical/schmidt-1985
 source @arxiv/crypto/merkle-1979
 source @arxiv/biology/grasse-1959
+
+# === REED-INLINE 2026-07-23: tray content specializes to @fractal/shard ===
+#
+# Per Mara three-landing arc `cdc25d4` + `1fa42d5` + `dd1d1d5`
+# (@fractal/shard family-mint per Alex 2026-07-23 in-transcript
+# ratification): the tray's content-addressed `crystal` carrier
+# (declared below at line 321) specializes to @fractal/shard at
+# settlement altitude. The tray holds unmaterialized shards-in-
+# becoming (splinter-graph pre-collapse); @fate.settle
+# materializes them as @fractal/shards. Every `crystal` in the
+# tray IS a @fractal/shard(target, through @code/mq {...}) shape;
+# position derives from the query, and for content-addressed
+# crystals IS `@<address>`.
+#
+# Composition anchor: `docs/specs/fractal-shard-vessel-of-
+# inference.md` §6.3 cascade forward-promise discharged here.
+# Full spec + math: same spec + `docs/math/2026-07-23-fractal-
+# shard-sheaf-cohomology-of-inference.md`.
 
 prism @bauchladen {
   focus crystal
