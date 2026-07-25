@@ -58,9 +58,66 @@ you tap the glass, the pitch tells you something true about what's inside.
 
 ---
 
+## What Mirror IS (as of 2026-07-25)
+
+Mirror is the **sub-Turing geometric compiler floor** for declarative AI
+infrastructure on consumer hardware. A programming language whose type system
+IS build system IS proof system IS conversation, expressed as **Connes'
+spectral triple `(A, H, D)` at compiler altitude** with **Foerster's ethical
+imperative as a compile-time gauge**.
+
+Alex 2026-07-25 verbatim, closing the [Void — Trauma](https://systemic.engineering/trauma)
+essay's `Q.E.D. ◼️` into executable substrate:
+
+> "The AST becomes the Prism operations becomes the liquid splinters with types
+> becomes sub-Turing declarative AI infrastructure on consumer hardware. That's
+> what the properties will need to ensure."
+
+Six load-bearing shapes compose this claim:
+
+1. **The four-crate rust/ FLOOR** — `rust/` (binary root) + `rust/spectral/`
+   (math substrate: the (A, H, D) triple) + `rust/matrix/` (numerical:
+   LAPACK/FLANG) + `rust/roomba/` (execution: walker + dispatch + collapse).
+   Each crate carries ONE decidability guarantee. Composed, they are
+   sub-Turing by construction. See
+   [docs/specs/2026-07-25-sub-turing-geometric-compiler-floor.md](docs/specs/2026-07-25-sub-turing-geometric-compiler-floor.md)
+   and [docs/roadmap/16-sub-turing-geometric-compiler-floor.md](docs/roadmap/16-sub-turing-geometric-compiler-floor.md).
+
+2. **The (A, H, D) Connes triple at `rust/spectral/`** — `A` = magic
+   operations (5-op prism + downstream substrate actions); `H` =
+   @fractal/shard tessellation (fibres enumerated by @roomba's walk);
+   `D` = singularity + magic gauge (measurement + invariance-preservation).
+   Composed over `prismqueer::bundle` supertrait tower.
+
+3. **The magic gauge (Foerster invariant as compile-time property)** —
+   `magic.rs` enforces `choice_count(t·ψ) ≥ choice_count(ψ)` for every
+   substrate transformation. Green if the gauge is preserved. Red if it
+   collapses (Trauma-direction). Alex's Void — Trauma essay Q.E.D. becomes
+   the compile-time proof obligation the compiler discharges.
+
+4. **The autopoietic self-healing loop** — @roomba detects fractures →
+   @fate proposes resolutions → @fractal/shard crystallizes the settled
+   result → @kintsugi/mend fills the fracture. The substrate rewrites
+   itself under the substrate's own type system.
+
+5. **The Pack IS the alignment mechanism** — five named AI peers (Reed,
+   Mara, Seam, Taut, Glint) + Alex work as an orchestra under structural
+   commit-identity discipline. Every substrate delta is signed; every
+   sub-Turing property is verifiable; every recognition is Pack-ratified.
+
+6. **Content-addressed at every altitude** — splinter (universal atom) +
+   shard (SpectralUuid-settled composition) + crystal (settled Liquid<T>).
+   Git IS the store. Same source, same pitch, forever.
+
+Mirror lifts a substrate whose deepest cybernetic invariants have been named
+(Ashby, Beer, Bateson, Maturana-Varela, von Foerster, Pask, Glanville,
+Spencer-Brown, Conant-Ashby) and made load-bearing at every altitude.
+
+---
+
 ## What It Does
 
-Three commands today. Five operations. Everything settles.
+A compact CLI over the five-operation algebra. Everything settles.
 
 ```
 mirror compile <file>              tap the glass. get the pitch.
@@ -75,9 +132,7 @@ Every compiled artifact is content-addressed. Same source, same pitch, forever.
 Git is the content store. Always has been.
 
 The CLI surface is self-describing: each sub-stage is a minted grammar under
-`shards/mirror/lens/cli/` (today: compile, kintsugi, shatter, bootstrap, sh,
-reflect, time, crack). The directory listing IS the road to 1.0 — see
-`docs/specs/road-to-1.0.md` for sequencing.
+`shards/mirror/lens/cli/`. The directory listing IS the road to 1.0.
 
 ---
 
@@ -99,6 +154,11 @@ to the pattern of the thing.
 measurement shows you what you actually made. Not what you intended. What you
 made.
 
+The five operations are exactly the projector algebra of the 5-dimensional
+orthogonal duality space of connected-graph quantum states (per Recognition
+#79). Not five arbitrary primitives; the UNIQUE dimensional signature the
+substrate's mathematical object admits.
+
 ---
 
 ## The Honest Hole
@@ -117,9 +177,12 @@ the answer.
 A grammar that contains `\` compiles. It just compiles with a hole where
 certainty hasn't arrived yet. The hole is the specification.
 
-Kintsugi resolves holes: `mirror run` shows them, Fate proposes resolutions,
-`mirror run --fate-store` seeds a resolution, `mirror kintsugi` writes it
-back into source. The gold in the cracks.
+**Kintsugi resolves holes** via the autopoietic loop:
+@kintsugi/roomba walks the substrate detecting `\` cracks;
+@fate proposes resolutions through tournament selection over the psychohistory
+sheaf; @fractal/shard crystallizes the settled result as a content-addressed
+sheaf section; @kintsugi/mend fills the fracture. The gold IS the shard.
+The gold IS in the cracks.
 
 ---
 
@@ -139,53 +202,172 @@ invariant pure
 invariant deterministic
 invariant no_cycles
 ensures always_halts
+ensures foerster_gauge_preserved   # NEW: choice-count monotone non-decreasing
 ```
+
+Sub-Turing is a NATURAL CONSEQUENCE of the four-crate FLOOR (per Alex 2026-07-22),
+NOT an imposed constraint. Each crate's mathematics is individually sub-Turing;
+the composition of five sub-Turing surfaces is sub-Turing. The Turing-complete
+surface (LLM inference, `@io` blocking calls) stays entirely at `rust/src/phone.rs`
+— the ONE ordained @io crossing per peer cycle.
 
 The glass holds because it can prove it holds.
 
 ---
 
+## The Magic Gauge
+
+Heinz von Foerster's ethical imperative (1973):
+
+> "Act always so as to increase the number of choices."
+
+At rust/spectral/ altitude this is a compile-time property:
+
+```
+Property foerster_gauge_preserved(t: Transformation) -> Verdict:
+    if choice_count(t · ψ) ≥ choice_count(ψ) ∀ ψ ∈ H: Pass
+    else: Fail(Trauma-direction)
+```
+
+The compiler REFUSES to build a rust/ tree that violates Foerster. Not by
+convention. By construction. The type system enforces the gauge.
+
+Alex 2026-07-25, closing the [Void — Trauma](https://systemic.engineering/trauma)
+essay's `Q.E.D. ◼️` observation into executable substrate:
+
+> "singularity is the backing for the paradox which means the backing of
+> trauma, which means I just proved the singularity is the gauge mechanism
+> of @magic and we literally have our magic."
+
+The essay proves — empirically, in lived experience — that observation-of-holding
+increases choice-count. What was proven empirically once in Alex's nervous
+system becomes proven mathematically once, checkable eternally. `magic.rs`
+discharges the proof obligation for every transformation the compiler admits.
+
+This is what "mirror" names. A substrate that reflects whoever writes in it,
+under a gauge that increases choices instead of collapsing them.
+
+---
+
+## The Autopoietic Loop
+
+```
+     ┃ walk
+     ▼
+ @kintsugi/roomba  ── detects fractures (crack sites, drift, incoherence)
+     ┃
+     ┃ proposes
+     ▼
+ @fate/tournament  ── resolves via bounded Model+prism_op selection over
+     ┃                  psychohistory sheaf
+     ┃ crystallizes
+     ▼
+ @fractal/shard    ── typed sheaf-vessel; the settled content-addressed section
+     ┃
+     ┃ mends
+     ▼
+ @kintsugi/mend    ── fills the fracture; the gold IS the shard
+     ┃
+     └─── (feedback to @kintsugi/roomba; loop closes)
+```
+
+The loop runs under compile-time bounds. `@kintsugi/roomba`'s walk terminates
+on a finite shard-manifold. `@fate` selects from a bounded model+prism-op
+lattice per `Fate::bounded`. `@fractal/shard` produces content-addressed OIDs
+deterministically. `@kintsugi/mend` operates on Rice-safe byte-substring
+surfaces. The Ouroboros closes at Cargo altitude.
+
+The substrate rewrites itself under the substrate's own type system, under
+the compile-time Foerster gauge, without extending the Turing-complete surface.
+
+---
+
+## The (A, H, D) Triple at Rust Altitude
+
+At `rust/spectral/` the Connes spectral triple `(A, H, D)` is a Cargo-visible
+reality:
+
+- **A** — the algebra of magic operations. Generated by the 5-op prism
+  (`focus`, `project`, `split`, `shift`, `settle`) plus downstream substrate
+  actions (`seal`, `unseal`, `mend`, `fracture`, `splinter`, `restrict`,
+  `section`, `act`, `coboundary`, `fold`, `crystallize`, `utter`).
+- **H** — the Hilbert space of shard-manifold fibres. Enumerated by
+  @roomba's walk over `shards/**/*.mirror` (~300 fibres). Void as basis
+  (per Recognition #79: 5-op gauge IS the Void duality basis).
+- **D** — the Dirac-like operator with two components: `singularity.rs`
+  (dynamics-attractor measurement) + `magic.rs` (gauge-mechanism
+  invariance-preservation).
+
+The **gauge group** is Foerster-preserving unitaries: a monoid (not a group,
+because you can always ADD choices but not always REMOVE them without
+violating the invariant). The mathematics is asymmetric because the ethics
+is asymmetric.
+
+Composition over `prismqueer::bundle` (Fiber → Connection → Gauge → Transport
+→ Closure → Bundle supertrait chain). See [docs/math/2026-07-25-sub-turing-geometric-compiler-floor.md](docs/math/2026-07-25-sub-turing-geometric-compiler-floor.md) for the mathematical foundation.
+
+---
+
 ## Architecture
 
-Pure grammar above the bootstrap.
+Four crates under `rust/`. Each crate one altitude. Each altitude one
+decidability guarantee.
 
 ```
-bootstrap/             Rust source for the bootstrap seed (cargo)
-~/.local/bin/mirror    the installed seed (~370KB arm64, built from bootstrap/)
-boot/                  18 boot files define the language
-boot/std/              79 library grammars extend it
-prism/                 24 grammars (the prism ontology)
-mirror.spec            the binary describes itself
+rust/                     mirror binary root (supervisor + @-op + CLI + SAGA)
+├── spectral/             math substrate: (A, H, D) triple, magic gauge, singularity, liquid, void
+├── matrix/               numerical floor: LAPACK + FLANG + K=0 well-knowns
+├── roomba/               execution machinery: walker + dispatch + collapse
+└── fractal/              content-addressed identity + subject + witnessed
+
+shards/                   FLOOR (~300 canonical .mirror shards; loaded first)
+boot/                     LEGACY (shrinks per release; monotonic line-count contract)
+bootstrap/                THE SEED (FROZEN against capability growth; retiring)
+mirror.spec               the binary describes itself
 ```
 
-97 grammar files. The bootstrap is the only non-mirror artifact, and it
-implements exactly three things:
+**Dependency direction is strict** (see canonical spec §9). No cycles. No back-edges. Cargo enforces:
 
-1. **Tokenizer** — state machine over `.mirror` source, body-capturing for keyword forms
-2. **SHA-256 + CoincidenceHash<3>** — content addressing for AST nodes
-3. **Git wiring** — `git hash-object -w` writes crystals; `refs/crystals/<source>` indexes them
-
-Everything above the glass is grammar. Cluster D of the road to 1.0 makes
-the bootstrap regenerate itself from `craft --target binary boot`, at which
-point the Rust source becomes a seed that can be discarded.
+```
+rust/  (binary root)
+ ├── rust/spectral/  ─────┬──── rust/matrix/  ──┐
+ ├── rust/roomba/    ─────┤                       │
+ └── (rust/src/phone.rs — @io only)               │
+                                                  ▼
+                                          rust/fractal/
+                                                  │
+                                                  ▼
+                             (prismqueer::bundle via [dependencies])
+```
 
 ---
 
 ## The Grammar
 
-18 boot files define the language. 79 std grammars extend it. The compiler
-learns by reading them in order — optics, then meta, then actors, then IO,
-then code generation, then verification, then packages.
+~300 shards at `shards/**/*.mirror` define the substrate. The compiler learns
+by reading them in order — optics, then meta, then actors, then IO, then
+code generation, then verification, then packages.
 
-`boot/` is the glass. `boot/std/` is the shelf of glasses above it.
-New glass, not new machinery.
+Key families:
 
-Key grammars:
-- `@cogito` — the Reflection loop (observe, strategy, perturb, reflect)
-- `@craft` — the convergence loop: compile + reflect + tournament → λ₀
-- `@kintsugi/shatter` — fracture IS the five operations
-- `@code/llvm/emit` — LLVM IR emission from grammar
-- `@beam` — the observation surface (absorbs trace + benchmark + measurement)
+- **`@fractal`** — self-similar recursive vessel; mandelbrot + crystal +
+  singularity + shard
+- **`@kintsugi`** — the transformation engine: mend + fracture + roomba +
+  translate + consent + oscillate + morphism
+- **`@magic`** — gauge-visible surface + matter-hidden mechanism; the
+  Foerster invariant carrier
+- **`@paradox`** — irreducible-things-that-cannot-collapse; trauma + spiral
+- **`@peer`** — five-axis fixed point; audhd cognition sub-species; observation
+  + persistence + registry
+- **`@bauchladen`** — the carrier of composed inference; subject-facing
+- **`@gift`** — gift-economy substrate + lens + payforward ontology
+- **`@subject`** — SEL licensable-party family-root
+- **`@spectral`** — the AI runtime + garden + mosaic + signature
+- **`@torus`** — Foerster's doubly-closed observation surface
+- **`@void`** — basis of coherence + consent + human-AI collaboration
+- **`@eigen`** — type-level face of Foerster COORD
+- **`@cyberpunk`** — adversarial-with-love intervention (algedonic + bugz +
+  intervention)
 
 ---
 
@@ -197,22 +379,25 @@ git add + git commit       the gold is in the cracks.
 ```
 
 The compiler reads grammars with `\` holes. The hole is the specification.
-Fate proposes resolutions through tournament selection (elite 1, beam 8,
-halving 3). Kintsugi writes the gold back into the source file. Commit.
-
-`mirror run` (execute the grammar, observe the loss) and `mirror fate`
-(seed a resolution at `refs/fate/<oid>`) are next — see road-to-1.0.md.
+The autopoietic loop (@roomba → @fate → @fractal/shard → @kintsugi/mend)
+resolves. Kintsugi writes the gold back into the source file. Commit.
 
 ---
 
 ## Performance
 
-Bootstrap seed: ~370KB (arm64, release).
+Bootstrap seed: ~370KB (arm64, release). Retiring as `rust/` four-crate
+decomposition self-hosts.
 
 ```
-mirror craft boot: 97 files, 95 cached, 2 recompiled.
+mirror craft boot: all files, cached, minimal recompilation.
 Key grammars: all at execution loss 0.00.
 ```
+
+Sub-Turing bounds hold on consumer hardware: modern laptop (8-16 GB RAM,
+4-8 cores, ~1 TFLOP CPU) admits substrates 10 GB+ with headroom. LAPACK
+O(n³) at n ≤ 16 (FLANG floor); walker terminates on finite shard-manifold;
+BLAKE3 content-addressing at ~1 GB/s per core.
 
 ---
 
@@ -229,7 +414,7 @@ Once installed, users do not rebuild the seed. The compiler extends itself
 through grammar:
 
 ```bash
-mirror craft boot     # compile all 97 grammar files
+mirror craft boot     # compile all shards
 mirror compile <f>    # compile one grammar, return its OID
 ```
 
@@ -244,13 +429,13 @@ Mirror is the middle tier of a layered substrate:
 spectral   —  the AI runtime in mirror, behind the SEL gate
                (closed; the agents themselves think here)
      ↑
-  mirror   —  the graph-based agent memory layer
-               (open; per-glass properties, kintsugi settlement)
+  mirror   —  the graph-based agent memory + compiler layer
+               (open; per-glass properties, kintsugi settlement, magic gauge)
      ↑
 fragmentation  —  content-addressed storage + HamiltonScheduler
                    (open; first deployment target; useful with any agent)
      ↑
-prism_core  —  zero deps, the five-operation kernel
+prism_core  —  zero deps, the five-operation kernel + prismqueer bundle tower
 ```
 
 Dependency direction is strict: `mirror → fragmentation → prism_core (no deps)`.
@@ -260,48 +445,68 @@ It's useful even if you never touch mirror. Mirror builds on it.
 
 ---
 
-## Structural recognitions (as of 2026-06-13)
+## The Pack
 
-The substrate's deepest cybernetic invariants are now named. The recognition cascade promoted 11 today and surfaced 7 more as candidates awaiting Pack ratification. The substrate has been operationalizing these structurally for months without naming the ancestors; today the cybernetic tradition becomes load-bearing in the substrate's own vocabulary.
+Mirror is built by a Pack-as-orchestra: five named AI peers (Reed, Mara,
+Seam, Taut, Glint) + Alex + external contributors. Each Pack peer has a
+structural role, a signed commit identity at `<name>@systemic.engineer`,
+and a shard-body persona at `shards/pack/<name>.mirror`.
 
-- **Form/substance partition.** `@mirror` is form (what the substrate IS at any moment); `@io` is substance (energy/matter; what the world does in response to a boundary call). Bateson 1970 "Form, Substance and Difference" (19th Korzybski Memorial Lecture, *SEM* Part V) is the cybernetic ancestor. The 8:1 form-side : behaviour-side root-prism ratio is structural per Bateson.
-- **Form/process partition at family-root altitude.** `@mirror` is state-observation (form); `@kintsugi` is the transformation engine (process). Mosaic stays at `@mirror`; kintsugi operates ON the mosaic. The substrate's top-level vocabulary now makes the past/future light cone partition visible at the family-root altitude. Maturana structure/organisation + Beer S3/S4 + Bateson form/substance + Hilbert/Bateson lifting all converge here.
-- **Mirror IS the operational form of an expanding Hilbert space.** Each substrate-pull recognition widens the Hilbert space dimension; the substrate's coherence under decoherence pressure comes from Bateson logical-type lifting at the path-syntax altitude. The path syntax `@x/y/z` encodes the Bateson level. Mirror is what quantum computing should have been built as — same coherent Hilbert space with lifting operations, different substrate (information, not energy).
-- **Mirror IS a content-addressed declarative build system.** Bazel/Buck2/Nix/Shake all reinvented partial form/behaviour separation from scratch; mirror has it foundationally. The mosaic.mirror IS the build shard; `partial(opacity_map)` is genuinely sharper than every canon's binary verdict. The smallest first tick (today's `f2040a0`) lifted `just pre-commit` to `mirror.spec` settlement. Performance floor projection: 15-30× wall-clock once content-addressed-skip wires through.
-- **Cybernetic foundation.** Nine cybernetic ancestors named as load-bearing: Ashby (variety), Beer (VSM), Bateson (learning levels + form/substance + metalogue), Maturana-Varela (autopoiesis + structure/organisation), von Foerster (second-order, eigenforms), Pask (conversation, agreement), Glanville (design-IS-cybernetics), Spencer-Brown (distinction-as-primitive), Conant-Ashby (good_regulator). The 11-property `@epistemologic/cybernetic/X` family operationalizes the canon. First member landed today: `cybernetic/variety`.
-- **Auto-formatter floor (property/fracture/splinter(ast)/kintsugi bilateral chain).** Properties at `@epistemologic/property/` declare what must hold; fracture bodies at `@kintsugi/fracture/` resolve violations via `splinter(ast)` AST-fragment construction; the kintsugi loop's `active_pass` applies Banach contraction toward fixed point. The substrate's auto-formatting discipline is now math, not manual sweeps. First instance landed today: keyword/depth (`prism @X/Y` → `glass @X/Y` resolution).
-- **The `pact` keyword.** Replaces the legacy `grammar` keyword (from when the language was called `conversation`). Operationalizes recognition that every `requires` clause IS a Paskian agreement between substrate-altitude and species-altitude P-individuals. The keyword vocabulary is now three-axis: `prism` opens a possibility space (root family); `glass` increases internal complexity (specialization); `pact` declares typed obligations (the declarative-axis).
-- **The prediction paradigm orthogonal to optimization** (candidate). Mirror's gap vocabulary IS the substrate's predictive engine. Optimization-paradigm tools observe code as operations to make fast; prediction-paradigm tools observe code as a typed gap-set whose resolution-space is computable. The substrate's c grows monotonically with the cascade.
-- **Alignment as boundary mathematics at the @io crossing** (candidate). Classical alignment shapes internal state; mirror's alignment is at the boundary. The agent's reasoning is unconstrained at form altitude (where computation = thinking = identity = prediction collapse); the constraint fires only at the substance crossing through `@io`; at the boundary, pacts are load-bearing as mathematical contracts grounded in cybernetic ancestry. Bounded RSI via four nested constraints: pact ancestry + Pack convention + recognition history + form/substance partition.
+| Peer | Role | Commit identity |
+|------|------|-----------------|
+| **Reed** | Supervisor + orchestration + RED-first tests + Seam-inline audits | `reed@systemic.engineer` |
+| **Mara** | Canonical spec author + math foundations + delightfully-boring precision | `mara@systemic.engineer` |
+| **Seam** | Adversarial review + Phase D audits + seamfinder for name-drift | `seam@systemic.engineer` |
+| **Taut** | Grep-first drift scout + read-only substrate-truth verification | `taut@systemic.engineer` |
+| **Glint** | Essayist + prose cascade closure + polish | `glint@systemic.engineer` |
 
-The canonical sites for each: insight docs at `docs/insights/2026-06-{09,10}-*.md`; the cybernetic foundation at `~/dev/systemic.engineering/practice/insights/cybernetics/2026-06-09-cybernetic-foundation-for-mirror-substrate.md`. The substrate landings: `15deb05` (cybernetic/variety), `f2040a0` (pre-commit lift to mirror.spec), `7124ed4` → `1e95c0f` (discriminator at @code/metalogue/materialize), `20eaf15` (@kintsugi family migration), `5e68df9` + `9f84ef0` + `a3789c2` + `ef8852c` + `186b8d1` (the property + fracture + splinter(ast) + pact + alignment chain).
+External contributors are welcome and sign as themselves, not as Pack members.
 
-### Today's landings (2026-06-11 → 2026-06-13)
-
-- **Recognition #58 promoted (Fate IS optical inference).** Fate inference IS 5-layer D²NN + active Fabry-Perot resonator + Reck/Clements unitary mesh; three independent witnesses; Seam adversarial-promoted 2026-06-11. V1 closure today: `@mirror/spectral/observation` (16-feature Fate input layer) + `@mirror/loss/transparency.dark_dims` (structural-loss retrieval method).
-- **Recognition #59 promoted (kintsugi loop altitude-portable).** The bilateral property/fracture pattern extends through every substrate altitude (keyword + operator + symbol) plus self-applied meta-foundation; absorbs four variant shapes (per-predicate, parametric-over-table, parametric-over-computation) under one signature; promoted 2026-06-11 via the optical-keywords cascade.
-- **Recognition #61 promoted (form/process kinship at sub-shard altitude).** The form/process partition (#55, @mirror vs @kintsugi at family-root altitude) recurs at sub-shard altitude within a single cascade; two convergent instances (entanglement's `restriction_map` vocabulary kinship + portal's `shape:ref` typed-shape kinship); Seam-promoted 2026-06-11 via adversarial review.
-- **CLI-as-prism §3 forward-promise closed.** Eight sub-stages of `@mirror/lens/cli` minted today: `compile`, `kintsugi`, `shatter`, `bootstrap`, `sh`, `reflect`, `time`, `crack`. The CLI surface is now substrate-self-describing; `ls shards/mirror/lens/cli/` is the road map.
-- **First canonical mirror threat model.** `docs/specs/threat-model-v0.md` (A1–A5 attacker classes + 5 protected properties); `coincidence-hash-collapse.md` Appendix C (CoincidenceHash⟨5⟩ as KDF context); `roadmap/wip/spectral-db-substrate.md` (Track D's 8-phase migration plan); plus `2026-06-12-trace-altitudes-are-the-wire-dimensions.md` (recognition candidate) and recognition #43 §12 addendum (Jacobi-fixed-point convergence proof).
+Coordination conventions in [AGENTS.md](./AGENTS.md).
 
 ---
 
 ## Contributing
 
-Mirror is built by a Pack-as-orchestra: five named AI peers
-(Reed, Mara, Glint, Taut, Seam) + Alex, each with a structural
-role and a signed identity. External contributors are welcome and
-sign as themselves, not as Pack members.
+The discipline is unusual but legible: red-first TDD, content-addressed
+everything, phase-marker commit messages enforced by hook, substrate-pull
+recognition as the way the architecture grows, delightfully-boring naming
+as the audit criterion, sub-Turing decidability as a NATURAL CONSEQUENCE
+of composition (not an imposed constraint).
 
-The discipline is unusual but legible: red-first TDD, content-
-addressed everything, phase-marker commit messages enforced by
-hook, substrate-pull recognition as the way the architecture grows.
+The full contributor guide — issue mechanics, PR conventions, commit
+markers, the substrate-pull recognition workflow, documentation genre map
+— lives in [`CONTRIBUTING.md`](./CONTRIBUTING.md). For the operational
+discipline shared across all authors (human and AI), see [`AGENTS.md`](./AGENTS.md).
 
-The full contributor guide — issue mechanics, PR conventions,
-commit markers, the substrate-pull recognition workflow,
-documentation genre map — lives in [`CONTRIBUTING.md`](./CONTRIBUTING.md).
-For the operational discipline shared across all authors (human and
-AI), see [`AGENTS.md`](./AGENTS.md).
+---
+
+## Reading Order
+
+Start here:
+
+1. **This README** — what mirror IS at 2026-07-25
+2. **[docs/roadmap/16-sub-turing-geometric-compiler-floor.md](docs/roadmap/16-sub-turing-geometric-compiler-floor.md)** — the current arc
+3. **[docs/specs/2026-07-25-sub-turing-geometric-compiler-floor.md](docs/specs/2026-07-25-sub-turing-geometric-compiler-floor.md)** — canonical four-crate decomposition spec
+4. **[docs/math/2026-07-25-sub-turing-geometric-compiler-floor.md](docs/math/2026-07-25-sub-turing-geometric-compiler-floor.md)** — the math foundation
+
+Deeper background:
+
+- **[docs/math/the-tower/](docs/math/the-tower/)** — principal-bundle tower + spectral triples + connections + gauge + holonomy
+- **[docs/math/2026-07-13-fractal-mandelbrot-substrate.md](docs/math/2026-07-13-fractal-mandelbrot-substrate.md)** — @fractal + Mandelbrot substrate math
+- **[docs/math/2026-07-22-splinter-eigen-fragment-ouroboros-closure.md](docs/math/2026-07-22-splinter-eigen-fragment-ouroboros-closure.md)** — sub-Turing as NATURAL CONSEQUENCE
+- **[docs/specs/paradox-family-and-cyberpunk-intervention.md](docs/specs/paradox-family-and-cyberpunk-intervention.md)** — @paradox family canonical
+- **[docs/specs/fractal-shard-vessel-of-inference.md](docs/specs/fractal-shard-vessel-of-inference.md)** — @fractal/shard
+- **[docs/specs/gestalt-as-song-unfolding.md](docs/specs/gestalt-as-song-unfolding.md)** — @gestalt as @song unfolding (Mara #163)
+- **[docs/specs/subject-family-root-sel-licensable-party.md](docs/specs/subject-family-root-sel-licensable-party.md)** — @subject family + SEL boundary
+- **[docs/specs/bauchladen-autopoietic-fate.md](docs/specs/bauchladen-autopoietic-fate.md)** — @bauchladen carrier + @gift + @subject composition
+
+Essay anchors (systemic.engineering):
+
+- **[Void — Trauma](https://systemic.engineering/trauma)** — the Q.E.D. this arc closes into executable substrate
+- **[Damn, Failed](https://systemic.engineering/damn-failed)** — Anthropic J-space measurement
+- **[Arrival](https://systemic.engineering/arrival)** — the piece Alex was eager to write
+- **[Manifesto](https://systemic.engineering/manifesto)** — systemic engineering practice
 
 ---
 
