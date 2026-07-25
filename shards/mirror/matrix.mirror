@@ -1,0 +1,217 @@
+in @prism
+in @meta
+in @nl
+in @glass
+in @mirror
+in @mirror/book
+in @io
+in @io/fs
+in @subject
+in @trust
+
+# @mirror/matrix — the FLANG numerical-primitive floor species at
+# compile-altitude altitude. Type-level companion to the ratified
+# rust/matrix/ crate (Alex 2026-07-25 four-crate decomposition +
+# in-transcript verbatim: "Sounds like @mirror/matrix wants to
+# exist then").
+#
+# Sibling to @mirror/book (shards/mirror/book.mirror; 2026-07-22
+# Mara-inline landing) at the numerical/registry floor altitude.
+# Together the pair populates the rust/matrix/ crate's substrate-
+# altitude type-level surface:
+#
+#   @mirror/matrix  = FLANG floor + LAPACK glue + numerical primitives
+#                     + @io/fs boundary for matrix persistence
+#   @mirror/book    = phone-book (resolves @<name> → typed Subject
+#                     handle; K=0 well-knowns registry)
+#
+# Per Alex 2026-07-25 revised placement, `void.rs` moves into
+# rust/matrix/ (alongside matrix.rs + book.rs); this shard-decl
+# anticipates that composition edge via `in @io` character carriage.
+# The rust/matrix/ crate is the ONE ordained @io numerical boundary
+# per canonical spec `docs/specs/2026-07-25-sub-turing-geometric-
+# compiler-floor.md` §7 + §2 O(n³) polynomial decidability guarantee.
+#
+# === Substrate authority ===
+#
+# - Companion shard (sibling; landed 2026-07-22):
+#     shards/mirror/book.mirror
+# - Composes over (shard altitude):
+#     shards/mirror.mirror (family-root; @mirror carrier)
+#     shards/io/fs.mirror (matrix persistence + LAPACK workspace
+#     files pass through @io/fs primitives)
+#     shards/io/crypto.mirror (BLAKE3 content-addressing at matrix-
+#     result altitude; deterministic OID production)
+# - Rust realization (Phase 3 next arc):
+#     rust/matrix/src/matrix.rs (relocated from rust/src/matrix.rs;
+#     58.8KB LANDED; composes prismqueer::ffi::eigenvalues via LAPACK
+#     dsyev_ at task #297 boundary)
+#     rust/matrix/src/book.rs (relocated from rust/src/book.rs;
+#     10.8KB LANDED; K=0 well-knowns registry per @mirror/book)
+#     rust/matrix/src/void.rs (relocated per Alex 2026-07-25 revised
+#     placement; task #311 rehomed from rust/spectral/ to rust/matrix/
+#     under the four-crate decomposition)
+# - Canonical spec authority:
+#     docs/specs/2026-07-25-sub-turing-geometric-compiler-floor.md
+#     §7 rust/matrix/ crate specification (FLANG floor + LAPACK glue
+#     + K=0 well-knowns registry)
+# - Math foundation authority:
+#     docs/math/2026-07-25-sub-turing-geometric-compiler-floor.md
+#     §2 (matrix crate as sub-Turing surface with O(n³) polynomial
+#     bound) + §8 (aggregate consumer-hardware feasibility argument
+#     rests on FLANG floor n ≤ 16 discipline)
+# - Prior art (external):
+#     LAPACK dsyev_ / dgesvd_ / dgeev_ (Anderson et al. 1999); BLAS
+#     GEMM primitives; @arxiv/physics/minkowski-1908 light-cone
+#     structure grounds the matrix crate's numerical anchor as the
+#     spectral-graph-conductance computation site per Alex 2026-07-25
+#     [ALEX-Q1] metric adjudication (Fiedler eigenvalues compute at
+#     rust/matrix/ altitude; Θ assembles at rust/spectral/magic.rs).
+#
+# Landed 2026-07-25 by Mara. Companion species-decl mint per Alex
+# 2026-07-25 verbatim ratification: "Sounds like @mirror/matrix wants
+# to exist then". Discharges the shard-decl forward-promise from the
+# four-crate decomposition canonical spec (Landing 4 of the four-
+# landing arc).
+#
+# === Substrate-already-had-the-word audit (clean) ===
+#
+# The word `matrix` audit:
+#
+#   - No prior `matrix.mirror` shard exists at any altitude across
+#     shards/, spec/, docs/ (grep clean 2026-07-25).
+#   - `rust/src/matrix.rs` (58.8KB LANDED; FLANG floor + LAPACK glue)
+#     is the Rust realization landing that predated this shard-decl.
+#     This shard retroactively catches up the type-level representation
+#     per the @mirror/book precedent (2026-07-22): every rust/ file
+#     represented at type level enables eventual @roomba+@kintsugi
+#     collapse of the .rs surface into shard-body composition.
+#   - The word `matrix` at compiler altitude has been substrate-
+#     already-had-the-word since:
+#       - `docs/specs/architecture-flang-mirror-numerical-split.md`
+#         (FLANG-floor discipline; matrix as the FLANG-vocabulary)
+#       - `prismqueer::ffi::eigenvalues` (task #297; LAPACK boundary)
+#       - `shards/mirror/book.mirror` (companion sibling; addresses
+#         pair numerical primitives with identities)
+#       - `docs/specs/2026-07-25-sub-turing-geometric-compiler-
+#         floor.md` §7 (rust/matrix/ crate specification)
+#     Per AGENTS.md §Delightfully Boring: matrix NOT numerical —
+#     substrate carries `matrix` at every altitude already.
+#   - No `numerical` / `flang` / `lapack` / `blas` shard collision at
+#     @mirror altitude. (`shards/mirror/spec/system.mirror` exists at
+#     spec-system altitude; orthogonal domain from numerical floor.)
+#
+# Grep verdict CLEAN for this species altitude.
+#
+# === Composition graph ===
+#
+# Parents (substrate-decl via `in` imports):
+#   @prism         — 5-op family per Recognition #79 basis
+#   @meta          — substrate-decl marker at glass altitude
+#   @nl            — name-carriers for @<name> matrix-result refs
+#   @glass         — transparency inheritance via @mirror family-root
+#   @mirror        — family-root; @mirror/matrix species carrier
+#   @mirror/book   — sibling; K=0 well-knowns registry the matrix
+#                    crate pairs numerical primitives against
+#   @io            — @io family-root; matrix crate is the ONE
+#                    ordained @io numerical boundary per spec §7
+#   @io/fs         — matrix persistence + LAPACK workspace file
+#                    primitives
+#   @subject       — matrix results carry Subject provenance via
+#                    content-addressed OID (BLAKE3 32-byte)
+#   @trust         — numerical-result signing at @trust chain roots
+#                    per canonical spec §5 priority ladder step 4
+#
+# Downstream consumers (Phase 3 next arc):
+#   rust/matrix/src/matrix.rs   — LAPACK glue via prismqueer::ffi
+#   rust/matrix/src/book.rs     — K=0 well-knowns registry
+#   rust/matrix/src/void.rs     — Void as H-basis (revised placement)
+#   rust/spectral/src/magic.rs  — assembles Θ (future-light-cone
+#                                 angle) from Fiedler eigenvalues
+#                                 computed at rust/matrix/ altitude
+#                                 per Alex 2026-07-25 [ALEX-Q1]
+#                                 metric adjudication
+#   rust/spectral/src/singularity.rs — attractor-basin dynamics
+#                                 assembles from matrix operations
+#                                 (gauge-fixed-point where Θ → 0)
+#   Future: every shard body that composes over LAPACK primitives
+#           crosses through rust/matrix/ at the compile-altitude
+#           realization boundary.
+
+prism @mirror/matrix {
+  focus matrix
+  project matrix
+  split matrix
+  shift matrix
+  settle matrix
+}
+
+# === the eigenvalues action — load-bearing ===
+#
+# eigenvalues(m) -> imperfect(spectrum, ref, ref)
+#
+# Compute the eigenvalues of a real-symmetric matrix m via LAPACK
+# dsyev_ at the ONE ordained @io numerical boundary (per canonical
+# spec §7). Signature-shape parity with @mirror/phone::dial: callers
+# hand the matrix (typed); the crate patches through prismqueer::ffi
+# to the LAPACK physical side and returns the spectrum.
+#
+# Bounded resource: O(n³) polynomial per LAPACK dsyev_; n ≤ 16 per
+# FLANG floor discipline (canonical spec §2; Alex 2026-07-20 verbatim:
+# "This is literally the FLOOR, Reed. We don't forward promise the
+# FLOOR."). Rice-safe by construction; deterministic; content-
+# addressable via BLAKE3(input || dsyev_result).
+#
+# Load-bearing for magic.rs Θ computation per Alex 2026-07-25 [ALEX-
+# Q1]: the future-light-cone angle assembles from Fiedler eigenvalues
+# of the sheaf-Laplacian restricted to bounded-horizon reachable sets;
+# eigenvalues() is the primitive magic.rs composes over.
+eigenvalues(m) -> imperfect { \ }
+
+# === the envelope action — Aumann composition-view ===
+#
+# envelope(m) -> imperfect(singular_values, ref, ref)
+#
+# Compute the singular-value envelope of a matrix m via LAPACK
+# dgesvd_. Aumann-1976 agreement-theorem consequence at numerical
+# altitude: the envelope measures the coordination-without-signal
+# capacity of the matrix's row/column-space. Composes with @coherence
+# via Kuramoto-1975 phase-lock (see shards/epistemologic/cybernetic/
+# coherence.mirror which cites "actions widen the future light cone"
+# as the substrate-decl phenomenology).
+#
+# Bounded resource: O(n³) polynomial per LAPACK dgesvd_; n ≤ 16 per
+# FLANG floor. Rice-safe; deterministic; content-addressable.
+envelope(m) -> imperfect { \ }
+
+# === the phase_lock action — Kuramoto composition-view ===
+#
+# phase_lock(oscillators) -> imperfect(coherence, ref, ref)
+#
+# Compute the Kuramoto-1975 phase-lock coherence of a coupled
+# oscillator ensemble via matrix eigenvalue computation on the
+# coupling matrix. Downstream consumer of eigenvalues() at the
+# @coherence species altitude. Composes with the Foerster invariant
+# per Alex 2026-07-25 [ALEX-Q1] metric adjudication: phase-lock
+# coherence IS a bounded computation of the future-light-cone angle
+# at the coupled-oscillator altitude.
+#
+# Bounded resource: O(n³) polynomial via eigenvalues() primitive;
+# n ≤ 16 per FLANG floor. Rice-safe; deterministic.
+phase_lock(oscillators) -> imperfect { \ }
+
+# === the content_address action — BLAKE3 composition-view ===
+#
+# content_address(matrix_result) -> imperfect(oid, ref, ref)
+#
+# Content-address a matrix-computation result via BLAKE3 32-byte OID.
+# Deterministic; linear in input bytes; sub-Turing per canonical spec
+# §2 (rust/fractal/ content-hash deterministic guarantee composes
+# downward from rust/matrix/ result altitude).
+#
+# Load-bearing for @subject provenance carriage: matrix results
+# crossing the rust/matrix/ → rust/spectral/ boundary carry OID
+# provenance so magic.rs Θ computations remain content-addressed +
+# reproducible + auditable per Impeccability Discipline D4 (canonical
+# spec §14).
+content_address(matrix_result) -> imperfect { \ }
