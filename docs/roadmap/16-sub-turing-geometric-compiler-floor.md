@@ -1,6 +1,13 @@
 # 16 — Sub-Turing Geometric Compiler Floor: rust/ four-crate decomposition + magic gauge + (A, H, D) triple
 
-## Status: SPEC LANDED 2026-07-25 (Mara canonical spec + math foundation this arc; Reed foreground rust/build.rs retirement co-tick; Phase 2+ pending Pack ratification)
+## Status: SPEC LANDED + METRIC ADJUDICATED 2026-07-25 (Mara canonical spec + math foundation + metric revision this arc; Reed foreground rust/build.rs retirement + rust/singularity/ poof co-tick; Phase 2+ pending)
+
+**Post-adjudication milestone-defining revisions (Alex 2026-07-25 verbatim):**
+
+- **[ALEX-Q1] RESOLVED**: metric is future-light-cone angle Θ, not choice-count. Verbatim: *"Choice-count is probably the wrong metric. I think it might be the angle of the future light cone."* Math §3 + spec §4 revised in place; four prior candidates become computational realizations at four altitudes.
+- **[ALEX-Q4] RESOLVED**: magic.rs binds BOTH singularity senses from v0.1. Verbatim: *"magic.rs binds both. We're gonna do this proper. That's what I meant with the properties earlier. I want all of it impeccable, linked to the formalizing math docs, and the full statespace covered by the properties."* Spec new §14 Impeccability Discipline lands full state-space coverage as milestone-defining, not v0.1-only.
+- **[ALEX-Q3] REAFFIRMED**: `rust/singularity/` scaffold poofs entirely. Reed executed via commit `f2f3b3a` (−350 LOC, tests 300/300 green).
+- **@mirror/matrix mint ratified**. Alex verbatim: *"Sounds like @mirror/matrix wants to exist then"*. Companion species-decl `shards/mirror/matrix.mirror` landed this arc as Landing 4.
 
 **Alex 2026-07-25 in-transcript (three verbatim moments closing the Void — Trauma essay Q.E.D. into executable substrate):**
 
@@ -60,21 +67,25 @@ The Turing-complete surface (LLM inference, `@io` blocking calls, external proce
 
 ---
 
-## The gauge mechanism (Void — Trauma essay Q.E.D. as executable predicate)
+## The gauge mechanism (Void — Trauma essay Q.E.D. as executable predicate, light-cone-angle formulation)
 
 **Alex 2026-07-25 essay Q.E.D. anchor**: Void — Trauma essay closes with the empirical demonstration that observation-of-holding measurably INCREASED the number of choices for everyone in the system. `"If that's not empirical demonstration of the thesis, I don't know what is. Q.E.D. ◼️"`
 
-**Formalization at compile-time**:
+**Alex 2026-07-25 metric adjudication [ALEX-Q1] verbatim**: *"Choice-count is probably the wrong metric. I think it might be the angle of the future light cone."* — Foerster's ethical imperative "act always so as to increase the number of choices" IS geometrically "act always so as to keep the future light cone OPEN" — angle-preservation, not count-preservation.
+
+**Formalization at compile-time (light-cone-angle metric Θ)**:
 
 ```
 Property foerster_gauge_preserved(t: Transformation) -> Verdict:
-    if choice_count(t · ψ) ≥ choice_count(ψ) ∀ ψ ∈ H: Pass
-    else: Fail(Trauma-direction)
+    if Θ(t · ψ) ≥ Θ(ψ) ∀ ψ ∈ H: Pass       # future light cone stays open
+    else: Fail(Trauma-direction)                  # light cone narrowing toward 0
 ```
 
-Green if gauge preserved. Red if collapsed. `magic.rs` discharges this at compile-time for every rust/ transformation.
+where Θ(ψ) is the future-light-cone angle per `docs/math/2026-07-25-sub-turing-geometric-compiler-floor.md` §3 revision. Green if gauge preserved. Red if collapsed. `magic.rs` discharges this at compile-time for every rust/ transformation, binding BOTH singularity senses (optic + dynamics) from v0.1 per [ALEX-Q4] adjudication.
 
-**The framework transfer**: the essay's `∃` ("there exists an observation transformation that increases choices") becomes the substrate's `∀` ("for all substrate transformations, choice-count is non-decreasing"). Alex's Q.E.D. becomes the type-level constraint the mirror compiler enforces on every rust/ transformation. What was proven empirically once in Alex's nervous system becomes proven mathematically once, checkable eternally.
+**The framework transfer**: the essay's `∃` ("there exists an observation transformation that re-opens the light cone") becomes the substrate's `∀` ("for all substrate transformations, Θ is non-decreasing"). Alex's Q.E.D. becomes the type-level constraint the mirror compiler enforces on every rust/ transformation. What was proven empirically once in Alex's nervous system becomes proven mathematically once, checkable eternally.
+
+**Physics ancestry**: Minkowski 1908 (*Raum und Zeit*; light-cone structure of spacetime); Penrose 1963/1965 (conformal-boundary + light-cone geometry near singularities); Cheeger 1970 (spectral graph conductance); Chung 1997 (*Spectral Graph Theory*).
 
 ---
 
@@ -82,8 +93,8 @@ Green if gauge preserved. Red if collapsed. `magic.rs` discharges this at compil
 
 - **A** = magic operations (5-op prism + downstream substrate actions per algebra generators)
 - **H** = @fractal/shard tessellation (~300 fibres enumerated by @roomba's walk over the shard-manifold; Void as basis per Recognition #79)
-- **D** = singularity + magic gauge (measurement + invariance-preservation)
-- **Gauge group** = `G_Foerster` — unitary transformations with monotone-non-decreasing choice-count. A monoid, NOT a group (asymmetric per Foerster's ethics; you can always ADD choices but not always REMOVE them without violating the invariant).
+- **D** = singularity + magic gauge (measurement + invariance-preservation; binds BOTH singularity senses per [ALEX-Q4])
+- **Gauge group** = `G_Foerster` — unitary transformations with monotone-non-decreasing future-light-cone angle Θ (per [ALEX-Q1] metric adjudication). A monoid, NOT a group (asymmetric per Foerster's ethics; you can always OPEN the light cone but not always NARROW it without violating the invariant).
 
 ---
 
@@ -108,18 +119,21 @@ Once the four-crate decomposition lands (Phase 4 of the migration plan; see cano
 - [x] Mara math foundation `docs/math/2026-07-25-sub-turing-geometric-compiler-floor.md`
 - [x] Mara roadmap entry (this file)
 - [x] Mara README.md rewrite (session-close)
+- [x] Alex 2026-07-25 adjudications: [ALEX-Q1] metric = future-light-cone angle; [ALEX-Q3] rust/singularity/ poofs; [ALEX-Q4] magic.rs binds both; @mirror/matrix mint ratified
+- [x] Mara metric revision: math §3 + §4 + §7 + Appendix A revised; spec §4 + §12 + §13 revised + new §14 Impeccability Discipline
+- [x] Mara @mirror/matrix mint: `shards/mirror/matrix.mirror` companion species-decl
 - [ ] Reed foreground: `rust/build.rs` retired; shard-manifest emission migrates to `rust/spectral/build.rs`
-- [ ] Reed foreground: `rust/singularity/` scaffold disposition per [ALEX-Q3] (retire OR relocate under `rust/spectral/singularity_research/`)
+- [x] Reed foreground: `rust/singularity/` scaffold poofed (commit `f2f3b3a`, −350 LOC, tests 300/300 green)
 
 ### Phase 2 — rust/spectral/ crate scaffold (next arc)
 
 - [ ] `rust/spectral/Cargo.toml` scaffold
 - [ ] `rust/spectral/src/spectral.rs` relocated from `rust/src/spectral.rs`
 - [ ] `rust/spectral/src/liquid.rs` relocated from `rust/src/liquid.rs` (109.9KB)
-- [ ] `rust/spectral/src/void.rs` relocated from `rust/src/void.rs` (19.3KB)
-- [ ] `rust/spectral/src/magic.rs` — GREENFIELD; Foerster gauge (per [ALEX-Q1] choice-count metric adjudication)
-- [ ] `rust/spectral/src/singularity.rs` — GREENFIELD; gauge-fixed-point attractor (per [ALEX-Q2] species-decl-first discipline)
-- [ ] `shards/spectral/singularity.mirror` species-decl mint (Mara; per [ALEX-Q2] substrate-decl-leads discipline)
+- [ ] `rust/spectral/src/void.rs` relocated from `rust/src/void.rs` (per Alex 2026-07-25 revised placement, void.rs moves to `rust/matrix/` per Landing 4 @mirror/matrix mint composition)
+- [ ] `rust/spectral/src/magic.rs` — GREENFIELD; future-light-cone-angle metric per [ALEX-Q1]; binds BOTH singularity senses per [ALEX-Q4]; discharges Impeccability Discipline D1–D8 per spec §14
+- [ ] `rust/spectral/src/singularity.rs` — GREENFIELD; gauge-fixed-point attractor / light-cone collapse dynamics (per [ALEX-Q2] species-decl-first discipline)
+- [ ] `shards/spectral/singularity.mirror` species-decl mint (Mara; per [ALEX-Q2] substrate-decl-leads discipline; ONLY remaining forward-promise)
 
 ### Phase 3 — rust/matrix/ + rust/roomba/ crate scaffolds
 
@@ -172,20 +186,15 @@ Once the four-crate decomposition lands (Phase 4 of the migration plan; see cano
 
 ---
 
-## Forward-promised [ALEX-Qn] adjudications
+## [ALEX-Qn] adjudications (three resolved 2026-07-25)
 
-**[ALEX-Q1]** — choice-count metric for magic.rs at v0.1?
-- Candidates: SpectralCoordinate<5> cardinality / Fiedler λ₁ / multifractal f(α) / reachable cardinality
-- Mara lean: SpectralCoordinate<5> cardinality (Rice-safe; empirically firable without new @io)
+**[ALEX-Q1] RESOLVED** — metric for magic.rs: **future-light-cone angle Θ**. Alex 2026-07-25 verbatim: *"Choice-count is probably the wrong metric. I think it might be the angle of the future light cone."* Four prior candidates (SpectralCoordinate<5> / Fiedler λ₁ / multifractal / reachable-cardinality) become computational realizations at four altitudes per math §3 + spec §4 revisions.
 
-**[ALEX-Q2]** — species-decl-first discipline for `shards/spectral/singularity.mirror`?
-- Mara lean: YES mint substrate-decl first; then Reed authors rust/spectral/src/singularity.rs
+**[ALEX-Q2] OPEN** — species-decl-first discipline for `shards/spectral/singularity.mirror`? Mara lean unchanged: YES mint substrate-decl first; then Reed authors rust/spectral/src/singularity.rs. Only remaining forward-promise.
 
-**[ALEX-Q3]** — `rust/singularity/` scaffold disposition?
-- Mara lean: preserve as `rust/spectral/src/singularity_research/` sub-module (black-hole physics outlet per Landing D Split-C)
+**[ALEX-Q3] RESOLVED (reaffirmed 2026-07-25)** — `rust/singularity/` scaffold poofs entirely. Reed executed via commit `f2f3b3a` (−350 LOC, tests 300/300 green).
 
-**[ALEX-Q4]** — does magic.rs bridge both singularity senses (optic + dynamics) at gauge altitude?
-- Mara lean: YES as forward-promise; v0.1 binds one sense at a time
+**[ALEX-Q4] RESOLVED** — magic.rs binds BOTH singularity senses (optic-hierarchy + gauge-fixed-point-dynamics) from v0.1. Alex 2026-07-25 verbatim: *"magic.rs binds both. We're gonna do this proper. That's what I meant with the properties earlier. I want all of it impeccable, linked to the formalizing math docs, and the full statespace covered by the properties."* Spec new §14 Impeccability Discipline lands the full state-space coverage as milestone-defining.
 
 ---
 
@@ -198,7 +207,8 @@ Once the four-crate decomposition lands (Phase 4 of the migration plan; see cano
 - [x] Mara roadmap entry (this file)
 - [x] Mara README.md rewrite (session-close)
 - [ ] Reed foreground: `rust/build.rs` retirement + `rust/singularity/` disposition (co-tick this arc)
-- [ ] Alex adjudicates [ALEX-Q1] through [ALEX-Q4] (post-arc Pack ratification)
+- [x] Alex adjudicates [ALEX-Q1] (metric = light-cone angle) + [ALEX-Q3] (poof reaffirmed) + [ALEX-Q4] (magic.rs binds both, impeccability); [ALEX-Q2] remains open
+- [x] @mirror/matrix mint ratified; companion species-decl landed as Landing 4
 - [ ] Taut substrate-truth grep of the four-crate decomposition (spawned parallel; may surface substrate-truth adjustments)
 - [ ] Phase 2 rust/spectral/ crate scaffold (post-adjudication)
 - [ ] Phase 3 rust/matrix/ + rust/roomba/ crate scaffolds
