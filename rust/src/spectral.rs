@@ -1,66 +1,103 @@
-//! `spectral.rs` — build-time shard manifest as macro-consumer floor
-//! for `prismqueer`'s Connes (A, H, D) triple.
+//! `spectral.rs` — runtime shard manifest via `phone::list_dir_recursive`.
 //!
-//! Per Taut substrate-scout 2026-07-23 (macro-territory partial
-//! verdict): `prism/prismqueer` already encodes the Connes spectral
-//! triple as a trait tower (`bundle::{Fiber, Connection, Transport,
-//! Bundle}` at `bundle.rs:71-193`) and exports `apply_h` as the
-//! operator-on-Hilbert-space action (`lib.rs:216-238`). The gap Alex
-//! named 2026-07-22 ("what if we had rust/src/spectral.rs") is a
-//! compile-time pipeline that binds every `shards/**/*.mirror` to
-//! that trait tower at rust/ altitude.
+//! ## Tick 2 (2026-07-25): build.rs shortcut RETIRED
 //!
-//! ## Tick 1 scope (this landing)
+//! Alex 2026-07-25 verbatim: "build.rs in spectral, that's a smell.
+//! What's the math underneath? And how do we collapse? We might need
+//! a rust/roomba/ for the first order sub-Turing execution machinery."
 //!
-//! The thinnest possible pipeline proof: expose the shard manifest
-//! that `rust/build.rs` emits at cargo build time. Zero parsing, zero
-//! trait binding — Tick 1 verifies the enumeration surface only.
+//! The math underneath IS the colimit computation over the shard-
+//! manifold: `H = colim(shard_decl_fibres)`. The substrate reads
+//! itself (@mirror/reflection) to construct its own H-space by folding
+//! over its declarations. That is Foerster COORD applied to the
+//! shard-tree. **@roomba's walk IS the colimit computation.**
 //!
-//! ## What this is NOT (forward-promised to Ticks 2+)
+//! build.rs was a compile-time @roomba shortcut that bypassed the
+//! substrate's own walker at a substrate-invisible altitude (cargo
+//! build script). This tick retires it: the walk happens at runtime
+//! via `phone::list_dir_recursive` (existing `@io/fs` primitive),
+//! `shard_paths()` returns `Vec<String>` computed on invocation.
 //!
-//! - NOT a claim that each shard is bound to `prismqueer::bundle::
-//!   Bundle` at rust/ altitude yet — Tick 2 lands the first per-shard
-//!   `impl Bundle` end-to-end.
-//! - NOT a retirement of any hardcoded-arm class — Ticks 4-N retire
-//!   `main.rs::VERBS` (class 1+2), `main.rs::at_operator` `@io/*` arms
-//!   (class 3), `liquid.rs::dispatch_spec_property` strip_prefix arms
-//!   (class 5), and `liquid.rs::pillar::dispatch` predicate arms
-//!   (class 6) — one class per tick, each is a substrate delta.
-//! - NOT a runtime dispatch surface — that already exists at
-//!   `liquid.rs:960-970::pillar::dispatch` and is what Ticks 4-N
-//!   structurally replace via compile-time trait dispatch.
+//! Substrate delta: `rust/build.rs` deleted (-103 LOC); this file
+//! restructured (net minor). Rust FLOOR shrinks; substrate-honesty
+//! grows. Sub-Turing preserved: walk is bounded by finite shard-tree
+//! and per-step decidable dispatch.
+//!
+//! ## Forward-promise: migration to rust/roomba/
+//!
+//! The runtime walk currently lives inline in this module. Per Alex
+//! 2026-07-25 four-crate decomposition, it migrates to a new crate
+//! `rust/roomba/` (first-order sub-Turing execution machinery). At
+//! that migration, this function becomes a thin call into
+//! `roomba::walk_shards(root)`; signature (Vec<String> return)
+//! preserved for source-compat.
 //!
 //! ## Composition anchors (LANDED)
 //!
+//! - `rust/src/phone.rs` — `list_dir_recursive` @io/fs primitive +
+//!   `find_substrate_root` (walks upward for `shards/` directory).
 //! - `prism/prismqueer/src/bundle.rs:71-193` — Connes (A, H, D) tower.
 //! - `prism/prismqueer/src/lib.rs:216-238` — `apply_h` action.
-//! - `prism/projections/src/lib.rs:96` — `#[proc_macro] declaration`.
 //! - `mirror/docs/specs/spectral-triple-grammar.md` (22.1KB canonical).
-//! - `mirror/docs/specs/prism-core-as-spectral-triple.md` (22.3KB).
 //! - `mirror/shards/epistemologic/spectral_triple.mirror` (substrate).
 //!
-//! Substrate-already-had-the-word: `spectral` is spoken at
-//! `shards/spectral/*` (12 species), `shards/mirror/spectral.mirror`
-//! (species), `shards/epistemologic/spectral_triple.mirror` (property),
-//! and `prismqueer::{spectral_dimension, spectral_oid, spectral_uuid}`
-//! (numerics + addressing). This module is the rust/ altitude echo of
-//! that landed vocabulary — not a new mint.
+//! ## History
+//!
+//! - Tick 1 (2026-07-23, commit `4185255`): rust/build.rs walked at
+//!   cargo build time; emitted `$OUT_DIR/shard_manifest.rs`; this
+//!   module `include!()`d it. First empirical pipeline proof.
+//! - Tick 2 (2026-07-25, this landing): build.rs retired per Alex
+//!   substrate-smell callout; runtime walk via phone::list_dir_recursive.
 
-include!(concat!(env!("OUT_DIR"), "/shard_manifest.rs"));
+use std::path::PathBuf;
 
-/// Accessor for the compile-time manifest of every
-/// `shards/**/*.mirror` file present in the workspace at cargo build
-/// time. Paths are `shards/<relative>` strings, sorted lexicographically
-/// for byte-stable output.
+use crate::phone;
+
+/// Runtime manifest of every `shards/**/*.mirror` file present in the
+/// workspace when called. Paths are `shards/<relative>` strings,
+/// sorted lexicographically for byte-stable output.
 ///
-/// See `rust/build.rs` for the emitter. See `#[cfg(test)] mod tests`
-/// below for pipeline verification.
-pub fn shard_paths() -> &'static [&'static str] {
-    SHARD_PATHS
+/// Composes over `phone::find_substrate_root` (walks upward from CWD
+/// looking for `shards/` directory) + `phone::list_dir_recursive`
+/// (recursive walker that already skips `.git/` + `target/` +
+/// symlinks per phone.rs walker discipline).
+///
+/// Migration forward-promise: this function migrates to
+/// `roomba::walk_shards(root)` per Alex 2026-07-25 four-crate
+/// decomposition. Return signature (`Vec<String>`) preserved for
+/// source-compat.
+pub fn shard_paths() -> Vec<String> {
+    let cwd = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
+    let root = phone::find_substrate_root(&cwd);
+    let shards_root = root.join("shards");
+
+    let mut paths: Vec<String> = Vec::new();
+    if let Ok(entries) = phone::list_dir_recursive(&shards_root) {
+        for entry in entries {
+            if entry.is_dir {
+                continue;
+            }
+            if entry.path.extension().and_then(|e| e.to_str()) != Some("mirror") {
+                continue;
+            }
+            if let Ok(rel) = entry.path.strip_prefix(&root) {
+                // Force POSIX-style separators for byte-stable output
+                // across macOS/Linux (both use `/`; this is defense-in-depth).
+                let rel_str = rel.to_string_lossy().replace('\\', "/");
+                paths.push(rel_str);
+            }
+        }
+    }
+    paths.sort();
+    paths
 }
 
 #[cfg(test)]
 mod tests {
+    //! Tick 2 pipeline-proof: runtime walk yields the same manifest
+    //! shape that Tick 1's compile-time embed did. Non-empty; contains
+    //! known shards; sorted.
+
     use super::shard_paths;
 
     #[test]
@@ -68,30 +105,26 @@ mod tests {
         let paths = shard_paths();
         assert!(
             !paths.is_empty(),
-            "SHARD_PATHS is empty — build.rs did not walk shards/. \
-             Expected 300+ entries (per Taut 2026-07-23 shard census); \
-             got 0. Either the shards/ tree is missing at ../shards/ \
-             relative to rust/, or build.rs did not re-run.",
+            "shard_paths() returned empty — phone::list_dir_recursive did \
+             not find shards/. Expected 300+ entries (per Taut 2026-07-23 \
+             shard census); got 0. Verify cwd is inside the substrate tree \
+             or a subdir of it (phone::find_substrate_root walks upward).",
         );
     }
 
     #[test]
     fn manifest_contains_known_shards() {
         let paths = shard_paths();
-        // Spot-check three shards from three different family-roots to
-        // catch phantom-successful-walk (empty subtree yielding empty
-        // vec) that manifest_non_empty alone would not detect.
-        // Each verified present at 2026-07-23 09:58:28:
-        //   shards/reality/subject.mirror       (26.1KB, 2026-07-22)
-        //   shards/mirror/spec/system.mirror    (21.2KB, 2026-07-22)
-        //   shards/magic/trick.mirror           ( 9.9KB, 2026-07-22)
+        // Spot-check three shards from three different family-roots
+        // to catch phantom-successful-walk (empty subtree yielding
+        // empty vec) that manifest_non_empty alone would not detect.
         for expected in [
             "shards/reality/subject.mirror",
             "shards/mirror/spec/system.mirror",
             "shards/magic/trick.mirror",
         ] {
             assert!(
-                paths.iter().any(|p| *p == expected),
+                paths.iter().any(|p| p == expected),
                 "expected shard `{}` in manifest; got {} entries. First 5: {:?}",
                 expected,
                 paths.len(),
@@ -103,13 +136,11 @@ mod tests {
     #[test]
     fn manifest_is_sorted() {
         let paths = shard_paths();
-        let mut sorted: Vec<&str> = paths.iter().copied().collect();
+        let mut sorted = paths.clone();
         sorted.sort();
-        let original: Vec<&str> = paths.iter().copied().collect();
         assert_eq!(
-            original, sorted,
-            "SHARD_PATHS is not sorted; deterministic manifest broken. \
-             build.rs must sort paths after enumeration.",
+            paths, sorted,
+            "shard_paths() is not sorted; deterministic manifest broken.",
         );
     }
 }
