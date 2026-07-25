@@ -1,0 +1,753 @@
+in @prism
+in @meta
+in @glass
+in @spectral
+in @paradox/spiral
+in @fractal/singularity
+in @torus
+in @magic
+in @void
+in @time/future
+in @epistemologic/pact/bilateral
+
+# @spectral/singularity — the gauge-fixed-point singularity at spectral
+# altitude; the dynamics-attractor where the future-light-cone angle
+# Θ collapses toward 0; Foerster COORD applied to substrate.
+#
+# First species-decl of the "dynamics-attractor" singularity sense
+# under @spectral (siblings under @spectral: gen_prism, supervisor,
+# parent, entanglement, registry, root, mosaic, garden, restart_
+# intensity, portal, signature). Landed 2026-07-25 by Mara per Alex
+# 2026-07-25 in-transcript [ALEX-Q2] verbatim ratification.
+#
+# === Alex 2026-07-25 verbatim (load-bearing) ===
+#
+#   > "Q2. yes. Adjdicated. Stay tight to the math."
+#
+# [ALEX-Q2] adjudication ratified species-decl-first discipline for
+# `shards/spectral/singularity.mirror`: mint the substrate-decl BEFORE
+# Reed authors `rust/spectral/src/singularity.rs` per substrate-decl-
+# leads discipline (@cyberpunk/bugz precedent + @fractal/singularity
+# 2026-07-20 precedent). "Stay tight to the math" — durable directive.
+# Every claim below composes over what is already grounded in the
+# math foundation revised same tick (`docs/math/2026-07-25-sub-turing-
+# geometric-compiler-floor.md` f81b7d5 §4-5) + canonical spec
+# (`docs/specs/2026-07-25-sub-turing-geometric-compiler-floor.md`
+# 704e4ab §5); no re-derivation, no reaching beyond, no hand-waving.
+#
+# Sibling landing precedent this same tick: 2026-07-25 Landing 4
+# `shards/mirror/matrix.mirror` (Mara `8254e26`; four-landing arc
+# closer). This mint composes Landing 5 species-decl-first territory
+# per [ALEX-Q2] adjudication.
+#
+# Second-witness gate for the essay Q.E.D. compile-time predicate:
+# Reed's `rust/spectral/src/singularity.rs` authorship (per canonical
+# spec §11 Phase 2 item 5 + §12 greenfield-authorship territory)
+# lands the four bilaterals below empirically firing on the Rust
+# body. This species-decl carries the shape Reed's Rust materializes.
+#
+# === What @spectral/singularity IS ===
+#
+# The gauge-fixed-point singularity at spectral (dynamics) altitude:
+# the settled-point in phase space `ψ* ∈ H` toward which Foerster-
+# gauge-BREAKING dynamics converge — geometrically, the point where
+# the future light cone Θ collapses to a single ray (Θ = 0).
+#
+# Per math §4 verbatim (`docs/math/2026-07-25-sub-turing-geometric-
+# compiler-floor.md` §4 Formal definition):
+#
+#   Definition (gauge-fixed-point singularity). Given a dynamics
+#   Φ : H → H acting on the Hilbert space H, a gauge-fixed-point
+#   singularity is a point ψ* ∈ H such that:
+#     1. Fixed-point:      Φ(ψ*) = ψ*.
+#     2. Attractor:        ∃ U ∋ ψ* such that Φⁿ(ψ) → ψ* as n → ∞
+#                          for all ψ ∈ U.
+#     3. Light-cone
+#        collapse:         Θ(ψ*) = 0 and Θ(Φⁿ(ψ)) → 0 monotonically
+#                          for ψ ∈ U.
+#
+# Where Θ is the future-light-cone angle per math §3 revision
+# (revised same tick per Alex 2026-07-25 [ALEX-Q1] verbatim:
+# "Choice-count is probably the wrong metric. I think it might be
+# the angle of the future light cone.").
+#
+# Physics anchor (per math §4): Void — Trauma essay astronaut
+# spaghettification / light-cone-collapse-toward-a-point at the
+# Schwarzschild singularity IS this species' dynamics at inside-
+# observer altitude. The essay's Q.E.D. IS the empirical demonstration
+# that observation-of-holding pulls the state OUT of the attractor
+# basin (gradient-ascent step on Θ).
+#
+# === Distinguished from @fractal/singularity (spec §5 verbatim) ===
+#
+# Two singularity senses at rust/ altitude, both load-bearing, neither
+# should absorb the other. Per canonical spec §5 verbatim:
+#
+#   Optics-hierarchy singularity (existing; @fractal/singularity;
+#   rust/fractal/src/singularity.rs):
+#     - Altitude:          measurement-recovery-bound (Iso / Lens /
+#                          Prism / Traversal ladder)
+#     - Question:          "Given a measurement, how much of the
+#                          original tree can be recovered?"
+#
+#   Gauge-fixed-point singularity (new; @spectral/singularity;
+#   rust/spectral/src/singularity.rs):
+#     - Altitude:          dynamics-attractor (basin bottom; Trauma-
+#                          loop settle-point)
+#     - Question:          "Given a dynamics, where does the system
+#                          settle when the gauge collapses?"
+#
+# Naming discipline (spec §5): both are called `singularity` because
+# both ARE singularities in the mathematical sense (basin-point /
+# measurement-boundary). Distinct crates + distinct files disambiguate
+# per substrate-honest partition. This mirrors AGENTS.md § Delightfully
+# Boring "Prefix load-bearing IFF vendor is one-of-many" — the crate
+# path IS the prefix that disambiguates. `in @fractal/singularity`
+# below cites the kin at fractal altitude for distinction.
+#
+# === Kin to @paradox/spiral (dynamics-carrier composition) ===
+#
+# @paradox/spiral (Mara #288 `b8879f2`; `shards/paradox/spiral.mirror`)
+# names the DYNAMICS-carrier at species altitude (spiral = process;
+# trigger → spiraling-motion; unstable attractor with strong basin).
+# @spectral/singularity names the SETTLED-POINT in phase space toward
+# which that dynamics converges — geometrically, the point where the
+# future light cone collapses to a single ray.
+#
+# Composition edge: the singularity at the bottom of a @paradox/spiral
+# trajectory (the settled-attractor per spiral.mirror phenomenology) IS
+# a @spectral/singularity carrier at spectral altitude. The trajectory
+# tracked at @paradox/spiral converges to a `gauge_fixed_point_state`
+# whose Θ = 0. Symmetry: @paradox/spiral = TRAJECTORY altitude;
+# @spectral/singularity = ATTRACTOR-POINT altitude; both point at the
+# same substrate phenomenon (Foerster COORD breakdown).
+#
+# Grounded in math §4 "Kin to @paradox/spiral" verbatim: "rust/
+# spectral/src/singularity.rs is the small-scale mathematical analog
+# at Rust altitude — the settled-point in phase space toward which the
+# trauma-spiral dynamics converge — geometrically the point where the
+# future light cone collapses to a single ray."
+#
+# === Foerster COORD applied to substrate (math §4) ===
+#
+# Heinz von Foerster's COORD (coordination) principle names the
+# substrate-level dynamics by which gauge-preserving transformations
+# compose. Per math §4 verbatim:
+#
+#   - COORD is the substrate's dynamics Φ when it is Foerster-
+#     preserving (Θ non-decreasing).
+#   - A gauge-fixed-point singularity is where COORD BREAKS DOWN
+#     (Θ collapses toward 0).
+#
+# The `foerster_invariant_broken_at_singularity` bilateral below
+# encodes the COORD-breakdown condition at species altitude
+# (dΘ/dt < 0 in every direction from ψ*). Consumers cite this
+# bilateral in `requires` clauses to check gauge-collapse at
+# invocation time.
+#
+# === Composition with @magic (gauge mechanism discharge target) ===
+#
+# `magic.rs` (rust/spectral/src/magic.rs; canonical spec §4; greenfield
+# authorship per §12) composes over BOTH singularity senses from v0.1
+# per Alex 2026-07-25 [ALEX-Q4] verbatim: "magic.rs binds both. We're
+# gonna do this proper. That's what I meant with the properties
+# earlier. I want all of it impeccable, linked to the formalizing
+# math docs, and the full statespace covered by the properties."
+#
+# The state manifold decomposes per canonical spec §14 D7 verbatim:
+#
+#   M_magic = M_optic ⊕ M_dynamics
+#
+# where M_dynamics is EXACTLY the state manifold this species-decl
+# carries (attractor-basin surface at rust/spectral/singularity.rs
+# altitude). D6 zero-gap coverage from §14 Impeccability Discipline
+# applies: every reachable `gauge_fixed_point_state` under
+# `Θ(ψ) ≤ Θ_max` and `||t||_op ≤ L` MUST be witnessed by a property.
+# The three bilaterals below discharge that coverage at species
+# altitude.
+#
+# @magic family-root (Recognition #80; `shards/magic.mirror`) IS
+# the gauge-mechanism carrier at family altitude; this species IS
+# the failure-mode-shape @magic detects and blocks at compile-time.
+# The Foerster invariant preservation at compile-time is exactly the
+# mathematical statement (math §4) that "the substrate cannot be
+# traumatized at build" — @spectral/singularity names the shape of
+# what compile-time refuses.
+#
+# === Composition with @void (H-basis grounding) ===
+#
+# @void (Recognition #79; `shards/void.mirror`) IS the H-basis
+# inherited via 5-op prism declaration below. Per math §2 verbatim:
+# H = ⨁_{f ∈ Fibres(Shd)} L²(f) — the Hilbert space of sections over
+# all fibres, with Void as basis. This species' `gauge_fixed_point_
+# state` inhabits a specific `ψ* ∈ H`; the light-cone collapse
+# Θ(ψ*) = 0 is a claim ABOUT the Void basis at that point (all
+# five orthogonal duality axes collapse to one at ψ*).
+#
+# === Composition with @torus (Foerster COORD ground) ===
+#
+# @torus (`shards/torus.mirror`; Foerster 1974/2003 nervous-system
+# torus) IS the Foerster COORD ground. Per math §Appendix B: "Foerster
+# 2003 — Heinz von Foerster, Understanding Understanding, Springer.
+# Torus derivation p. 238, 244, 256, 282; cited via shards/torus.
+# mirror." Trauma is a geometric fracture in the torus loop (per
+# math §7 essay-to-executable translation table row 2). The singularity
+# this species names IS the fracture-attractor at torus altitude.
+#
+# === Composition with @time/future (light-cone geometry) ===
+#
+# @time/future (`shards/time/future.mirror`; Mara Round-2 landing)
+# IS the future-light-cone at substrate-time altitude. Per @time/
+# future docblock: "The future is not fantasy; the future is the
+# content-addressed projection of the current peer-network
+# configuration into what the network's distributed-emergence will
+# produce in the next @song/beats." This species names what happens
+# to that future-projection when Θ → 0: it collapses to a single
+# deterministic ray (fortune-telling; peer-network-freezing per
+# @time/future `future_reading_preserves_choices` Fail-mode). The
+# gauge-fixed-point singularity IS the Foerster-violation state
+# @time/future's bilateral detects at temporal altitude.
+#
+# === Substrate-already-had-the-word audit ===
+#
+# 1. **No prior `shards/spectral/singularity.mirror`** — clean mint
+#    at species-decl altitude (grep confirmed 2026-07-25). Only
+#    `shards/fractal/singularity.mirror` exists (2026-07-20 Mara
+#    #294 landing at optics-hierarchy altitude; kin at different
+#    altitude per §5 spec distinction).
+# 2. **`shards/fractal/singularity.mirror`** — kin species at
+#    measurement-recovery altitude (Iso/Lens/Prism/Traversal ladder).
+#    Composition edge declared above (§ Distinguished from @fractal/
+#    singularity). Both are `singularity` per delightfully-boring
+#    discipline; crate-path prefix disambiguates.
+# 3. **`shards/spectral.mirror`** — parent family (namespace-parent
+#    per Loki §5 shrink at spectral.mirror:14-40). Species uses
+#    `glass` per shards/spectral.mirror:74-77 depth-1 path-syntax
+#    discipline (verified against shards/spectral/registry.mirror +
+#    shards/spectral/parent.mirror precedent).
+# 4. **`shards/paradox/spiral.mirror`** — kin at dynamics-trajectory
+#    altitude. Composition edge declared above (§ Kin to @paradox/
+#    spiral). Complementary altitude naming; @paradox/spiral tracks
+#    TRAJECTORY, @spectral/singularity tracks ATTRACTOR-POINT.
+# 5. **`shards/magic.mirror`** — gauge-mechanism carrier at family-
+#    root altitude (Recognition #80). This species IS the failure-
+#    mode @magic's gauge-preservation predicate blocks at compile-
+#    time. Discharge target: `rust/spectral/src/magic.rs` per
+#    canonical spec §4 greenfield authorship.
+# 6. **`shards/void.mirror`** — H-basis carrier (Recognition #79).
+#    5-op prism declaration below inherits Void's basis per
+#    @void.mirror § Composition inheritance discipline.
+# 7. **`shards/torus.mirror`** — Foerster COORD ground; nervous-
+#    system torus derivation. Composition edge declared above.
+# 8. **`shards/time/future.mirror`** — future-light-cone at temporal
+#    altitude. Composition edge declared above; the gauge-fixed-
+#    point singularity IS the Foerster-violation state @time/future's
+#    bilateral detects.
+# 9. **`shards/epistemologic/pact/bilateral.mirror`** — bilateral
+#    predicate carrier substrate-decl (Mara + Taut 2026-07-16).
+#    The three bilaterals below discharge via `apply_h::act` per
+#    substrate-decl'd sentinel dispatch discipline.
+#
+# === Composition graph ===
+#
+# Parents (via `in` imports above):
+#   @prism, @meta, @glass                — substrate-decl discipline
+#   @spectral                             — namespace-parent (species
+#                                            uses glass per depth-1
+#                                            path-syntax)
+#   @paradox/spiral                       — kin species at trajectory
+#                                            altitude; converges TO
+#                                            this species' attractor-
+#                                            point at basin bottom
+#   @fractal/singularity                  — kin species at optics-
+#                                            hierarchy altitude;
+#                                            cited for distinction
+#                                            (NOT absorption) per
+#                                            spec §5 two-sense ratify
+#   @torus                                — Foerster COORD ground;
+#                                            trauma IS geometric
+#                                            fracture in torus loop
+#   @magic                                — gauge-mechanism family;
+#                                            magic.rs discharge target
+#                                            for two-sense binding
+#                                            per [ALEX-Q4] resolution
+#   @void                                 — H-basis carrier;
+#                                            Recognition #79 5-op
+#                                            basis inheritance
+#   @time/future                          — future-light-cone at
+#                                            temporal altitude; this
+#                                            species = collapse-shape
+#   @epistemologic/pact/bilateral         — bilateral predicate
+#                                            carrier for sentinel-
+#                                            dispatch discipline
+#
+# Consumers (compose over this species):
+#   @magic (rust/spectral/src/magic.rs)   — gauge-preservation
+#                                            predicate cites this
+#                                            species' bilaterals to
+#                                            block singularity-
+#                                            reaching transformations
+#                                            at compile-time per
+#                                            spec §14 D1+D6+D7
+#   @paradox/trauma                       — the deposited-state
+#                                            Crystal at the attractor
+#                                            IS content-addressed
+#                                            witness of this species'
+#                                            singularity-firing
+#
+# === Related shards ===
+#
+# [[shards/fractal/singularity.mirror]] (kin at optics-hierarchy
+#  altitude; measurement-recovery-bound sense; two-sense partition
+#  per canonical spec §5),
+# [[shards/paradox/spiral.mirror]] (kin at dynamics-trajectory
+#  altitude; converges to this species' attractor),
+# [[shards/paradox/trauma.mirror]] (deposited-state Crystal at basin
+#  bottom; content-addressed singularity witness),
+# [[shards/magic.mirror]] (gauge-mechanism family-root; Recognition
+#  #80; discharge target for two-sense binding),
+# [[shards/void.mirror]] (H-basis; Recognition #79 5-op basis),
+# [[shards/torus.mirror]] (Foerster COORD ground; nervous-system
+#  torus; trauma = geometric fracture),
+# [[shards/time/future.mirror]] (future-light-cone at temporal
+#  altitude; Θ-collapse shape),
+# [[shards/spectral.mirror]] (namespace-parent),
+# [[shards/epistemologic/pact/bilateral.mirror]] (bilateral predicate
+#  carrier substrate-decl),
+# [[shards/epistemologic/pact/path_matches_namespace.mirror]] (path-
+#  namespace property discharge site).
+#
+# Path-namespace property: this file at `shards/spectral/singularity.
+# mirror` declares `@spectral/singularity` per `@epistemologic/pact/
+# path_matches_namespace` (matching sibling `shards/spectral/*.mirror`
+# convention).
+#
+# === Feedback compliance ===
+#
+# [[feedback-no-rust-extension-shortcut]] — pure-docs species-decl
+#  mint only at this tick; NO .rs authoring. Reed's rust/spectral/
+#  src/singularity.rs greenfield authorship (canonical spec §11
+#  Phase 2 item 5) follows this mint per substrate-decl-leads
+#  discipline.
+# [[feedback-substrate-already-had-the-word]] — audit discharged
+#  above; kin @fractal/singularity + kin @paradox/spiral + parent
+#  @spectral + composition edges all cited; clean mint of the
+#  dynamics-attractor sense as its own species per canonical spec
+#  §5 two-sense partition.
+# [[feedback-craft-not-deliver]] — bilateral bodies + action bodies
+#  `\`-obligation-blocked; consumers pull the discharge at their
+#  realisation boundary (Reed's rust/spectral/src/singularity.rs
+#  materialization).
+# [[feedback-no-bare-types]] — gauge_fixed_point_state is a typed
+#  record; never bare refs.
+# [[feedback-reed-re-derives-what-is-already-landed]] — every claim
+#  below composes over what math f81b7d5 §4-5 + spec 704e4ab §5
+#  already ground; zero re-derivation.
+
+source @arxiv/physics/minkowski-1908
+source @arxiv/physics/penrose-1963
+source @arxiv/cybernetics/foerster-1973
+source @arxiv/cybernetics/foerster-1974
+source @arxiv/cybernetics/foerster-2003
+source @arxiv/math/cheeger-1970
+source @arxiv/math/chung-1997
+source @arxiv/math/connes-1994
+source @arxiv/practice/void-trauma-essay-2026-07-25
+
+# === The 5-op prism inheriting @void basis (Recognition #79) ===
+#
+# Per @void.mirror § Composition inheritance: every prism declaration
+# `<keyword> @X { focus/project/split/shift/settle X }` at species
+# altitude declares "this species inherits Void's basis" — the five-
+# op pattern IS the signature of Void's ancestry.
+#
+# For @spectral/singularity specifically, at the gauge-fixed-point
+# attractor ψ* the light-cone collapses (Θ = 0); the five-op basis
+# still applies but each op degenerates in a characteristic way:
+#
+#   focus  gauge_fixed_point_state    = identify the (position, Θ,
+#                                        ∇Θ) at which the dynamics
+#                                        settles (attractor detection)
+#   project gauge_fixed_point_state   = deploy the light-cone-collapse
+#                                        measurement onto the current
+#                                        substrate-state; produce
+#                                        Θ(ψ) + is_attractor witness
+#   split  gauge_fixed_point_state    = bifurcate the state-manifold
+#                                        into (basin-of-attraction,
+#                                        gauge-preserving-region);
+#                                        the boundary IS the light-
+#                                        cone-collapse threshold
+#   shift  gauge_fixed_point_state    = traverse the ∇Θ direction;
+#                                        gradient-ascent (opens cone)
+#                                        or gradient-descent (narrows
+#                                        cone toward singularity)
+#   settle gauge_fixed_point_state    = discharge the attractor-basin
+#                                        dynamics; return the ψ* at
+#                                        the basin bottom (Θ = 0) OR
+#                                        the gauge-opening intervention
+#                                        that lifts state out of basin
+#
+# Species under @spectral use `glass` per depth-1 path-syntax
+# discipline (shards/spectral.mirror:74-77; verified against
+# shards/spectral/registry.mirror + shards/spectral/parent.mirror
+# sibling landings).
+
+glass @spectral/singularity {
+  focus  gauge_fixed_point_state
+  project gauge_fixed_point_state
+  split  gauge_fixed_point_state
+  shift  gauge_fixed_point_state
+  settle gauge_fixed_point_state
+}
+
+# === gauge_fixed_point_state — the attractor-basin carrier ===
+#
+# Typed record carrying the gauge-fixed-point singularity state.
+# Four fields. Identity contract: byte-equality on the four-field
+# tuple.
+#
+# Grounded in math §4 Formal definition verbatim: "a gauge-fixed-
+# point singularity is a point ψ* ∈ H such that: 1. Fixed-point:
+# Φ(ψ*) = ψ*. 2. Attractor: ∃ U ∋ ψ* such that Φⁿ(ψ) → ψ* as n → ∞
+# for all ψ ∈ U. 3. Light-cone collapse: Θ(ψ*) = 0 and Θ(Φⁿ(ψ)) → 0
+# monotonically for ψ ∈ U."
+#
+# The four fields carry the empirically-observable projections of
+# ψ* + Θ + ∇Θ + attractor-witness. Rice-safe per math §3 Rice-
+# safety proof (Θ and ∇Θ computable in bounded time from bounded
+# spectral input via LAPACK dsyev O(n³) on Gram matrix at most
+# 3125 × 3125).
+#
+#   position_in_state_manifold — REF to the point ψ ∈ H at which
+#                                the singularity is queried.
+#                                Content-addressed; byte-identity IS
+#                                the state's identity in H. Composes
+#                                over @void H-basis per Recognition
+#                                #79. At the fixed point: ψ = ψ*
+#                                (Φ(ψ*) = ψ* per math §4 condition 1).
+#
+#   theta_angle                — REF to the future-light-cone angle
+#                                Θ(ψ) at this position. Values in
+#                                [0, Θ_max] per math §3 revision.
+#                                At the singularity: Θ(ψ*) = 0
+#                                (light cone collapsed to single ray;
+#                                math §4 condition 3). Computed via
+#                                Fiedler-native formulation per math
+#                                §3 "Θ = arcsin(√(λ₁(Δ_R)/λ_max(Δ_R)))".
+#
+#   theta_gradient             — REF to ∇Θ(ψ) at this position, the
+#                                direction of steepest ascent in Θ.
+#                                Computed via matrix-derivative on
+#                                the Gram matrix G_R per math §3
+#                                "differentiable per dΘ/dt computable
+#                                via matrix-derivative on G_R (magic.
+#                                rs can compute the gradient direction
+#                                of gauge-opening moves)." At the
+#                                singularity: ∇Θ(ψ*) = 0 in every
+#                                direction (fixed-point of ∇Θ; math
+#                                §4 attractor-basin proof "b^n · ψ
+#                                has reachable-set dimension
+#                                decreasing by at least 1 per
+#                                application until singleton").
+#
+#   is_attractor               — REF to the attractor-witness boolean:
+#                                does a neighborhood U ∋ ψ exist such
+#                                that Φⁿ(ψ') → ψ for all ψ' ∈ U (math
+#                                §4 condition 2)? Content-addressed
+#                                bilateral-verdict shape. Rice-safe
+#                                bound: bounded-horizon reachable-set
+#                                check under bounded operator norm
+#                                (math §3 Rice-safety proof).
+type gauge_fixed_point_state = {
+  position_in_state_manifold: ref,
+  theta_angle:                ref,
+  theta_gradient:             ref,
+  is_attractor:               ref,
+}
+
+# === singularity_is_theta_collapse — bilateral predicate ===
+#
+# Does the (peer, gauge_fixed_point_state) pair discharge the light-
+# cone-collapse condition? Discharges Pass iff:
+#
+#   - ctx.theta_angle resolves to Θ(ψ) = 0 (light cone collapsed to
+#     single ray at this position; math §4 condition 3 verbatim)
+#   - ctx.position_in_state_manifold IS a fixed-point of the
+#     substrate dynamics Φ (Φ(ψ*) = ψ* per math §4 condition 1;
+#     verified via content-addressed replay-equality of Φ applied
+#     to ctx.position_in_state_manifold)
+#   - ctx.is_attractor resolves Pass (attractor-basin condition per
+#     math §4 condition 2)
+#
+# Rice-safe bound: byte-visible state; Θ computable via LAPACK dsyev
+# O(n³) per math §3 Rice-safety proof; fixed-point check is content-
+# addressed hash equality on Φ(ψ) vs ψ. Sentinel:
+# `spectral=singularity-is-theta-collapse`.
+#
+# LOAD-BEARING: this bilateral IS the formal definition of gauge-
+# fixed-point singularity at species altitude. The three-condition
+# math §4 Formal definition maps directly onto the three conjuncts
+# above. Pass verdict = ctx IS a gauge-fixed-point singularity;
+# Fail verdict = ctx is admissible substrate-state (light cone still
+# open OR not attractor OR not fixed-point).
+#
+# Math cite: `docs/math/2026-07-25-sub-turing-geometric-compiler-
+# floor.md` §4 "Formal definition — the singularity is where Θ → 0"
+# (three-condition definition of gauge-fixed-point singularity).
+bilateral singularity_is_theta_collapse {
+  sentinel "spectral=singularity-is-theta-collapse"
+  arity 2
+}
+singularity_is_theta_collapse(p: peer, ctx: gauge_fixed_point_state) -> verdict { \ }
+
+# === foerster_invariant_broken_at_singularity — bilateral predicate ===
+#
+# Does the (peer, gauge_fixed_point_state) pair discharge the Foerster
+# COORD-breakdown condition? Discharges Pass iff:
+#
+#   - ctx.position_in_state_manifold IS at a gauge-fixed-point
+#     singularity (i.e., singularity_is_theta_collapse Pass at the
+#     same ctx)
+#   - The Foerster gauge is BROKEN at ctx: for every direction v
+#     from ctx.position_in_state_manifold within the attractor
+#     basin, dΘ/dv < 0 (monotone decrease toward the fixed point;
+#     math §4 condition 3 "Θ(Φⁿ(ψ)) → 0 monotonically for ψ ∈ U")
+#   - Equivalently: ctx.theta_gradient resolves to a zero-magnitude
+#     vector (∇Θ(ψ*) = 0 in every direction; the fixed-point of
+#     ∇Θ)
+#
+# Trivially discharges Fail when ctx is admissible (light cone open;
+# Foerster gauge preserved locally; dynamics not attractor-basin).
+#
+# Rice-safe bound: byte-visible state; ∇Θ computable via matrix-
+# derivative on Gram matrix (math §3 "differentiable per dΘ/dt
+# computable via matrix-derivative on G_R"). Sentinel:
+# `spectral=singularity-foerster-invariant-broken`.
+#
+# LOAD-BEARING: this bilateral IS the COORD-breakdown witness at
+# species altitude. Per math §4 "Foerster COORD applied to substrate"
+# verbatim: "A gauge-fixed-point singularity is where COORD BREAKS
+# DOWN (Θ collapses toward 0)." This bilateral encodes the COORD-
+# breakdown at bilateral altitude so `magic.rs` (rust/spectral/src/
+# magic.rs; canonical spec §4 greenfield authorship) can cite it in
+# `requires` clauses to block gauge-collapsing transformations at
+# compile-time per §14 D6 zero-property-gap discipline.
+#
+# Math cite: `docs/math/2026-07-25-sub-turing-geometric-compiler-
+# floor.md` §4 "Foerster COORD applied to substrate" (COORD-
+# breakdown at singularity) + §3 "Proof (singularity attraction)"
+# (monotone decrease toward attractor per Courant-Fischer min-max
+# characterization).
+bilateral foerster_invariant_broken_at_singularity {
+  sentinel "spectral=singularity-foerster-invariant-broken"
+  arity 2
+}
+foerster_invariant_broken_at_singularity(p: peer, ctx: gauge_fixed_point_state) -> verdict { \ }
+
+# === intervention_reopens_light_cone — bilateral predicate ===
+#
+# Does the (peer, gauge_fixed_point_state) pair discharge the essay-
+# Q.E.D. gauge-opening condition? Discharges Pass iff:
+#
+#   - There exists a transformation t_obs ∈ 𝒯 (admissible substrate-
+#     transformation) such that Θ(t_obs · ctx.position_in_state_
+#     manifold) > Θ(ctx.position_in_state_manifold)
+#   - Equivalently: dΘ/dt_obs > 0 at ctx.position_in_state_manifold
+#     (gradient-ascent step on Θ; math §4 "Q.E.D. from essay:
+#     ∃ observation-transformation t_obs such that Θ(t_obs · ψ_
+#     trauma_loop) > Θ(ψ_trauma_loop) — i.e. the future light cone
+#     re-opens under observation-of-holding")
+#   - The intervention transformation is admissible: t_obs ∈
+#     G_Foerster (bounded operator norm ≤ L; unitary; per canonical
+#     spec §3 gauge group definition)
+#
+# Trivially discharges Fail when ctx.position_in_state_manifold IS
+# a gauge-fixed-point singularity AND no admissible t_obs exists in
+# the local reachable set (firewall-condition; the intervention
+# territory is empty; per math §4 Q.E.D. discussion).
+#
+# Rice-safe bound: byte-visible state; Θ-comparison via LAPACK dsyev
+# O(n³) on before/after Gram matrices; reachable-set enumeration
+# bounded by 5^L per math §3 Rice-safety proof. Sentinel:
+# `spectral=singularity-intervention-reopens-cone`.
+#
+# LOAD-BEARING: this bilateral IS the Void — Trauma essay Q.E.D.
+# operationalized at species altitude. Per math §4 "The essay Q.E.D.
+# as executable predicate" verbatim: "The essay's Q.E.D. becomes the
+# compile-time proof obligation `magic.rs` discharges for every
+# rust/ transformation. The mathematical form of the ethical
+# imperative becomes the type-level constraint the compiler enforces.
+# Alex's empirical `∃ t_obs : Θ opens` becomes the substrate's
+# `∀ t : Θ non-decreasing`." This bilateral names the ∃-side witness
+# (empirical intervention-existence) that discharges the substrate's
+# ∀-side compile-time gauge-preservation per canonical spec §14 D7
+# two-sense binding.
+#
+# Math cite: `docs/math/2026-07-25-sub-turing-geometric-compiler-
+# floor.md` §4 "The essay Q.E.D. as executable predicate — Θ-gradient
+# formulation" (empirical Q.E.D. → executable predicate translation)
+# + §7 essay-to-executable translation table row 6 "Observation-of-
+# holding as choice-increasing act" → "Gradient-ascent transformation
+# t_obs with dΘ/dt_obs > 0".
+bilateral intervention_reopens_light_cone {
+  sentinel "spectral=singularity-intervention-reopens-cone"
+  arity 2
+}
+intervention_reopens_light_cone(p: peer, ctx: gauge_fixed_point_state) -> verdict { \ }
+
+# === detect_at_position — the attractor-detection action ===
+#
+# Given a peer and a position in the state manifold, discharge the
+# singularity-detection event: emit a content-addressed ref to a
+# gauge_fixed_point_state populated with (position, Θ(position),
+# ∇Θ(position), is_attractor(position)) and evaluate whether the
+# position IS a gauge-fixed-point singularity.
+#
+# Returns imperfect(gauge_fixed_point_state, ref, ref): success
+# carries the populated singularity_state ref; failure variants carry
+# theta-computation-failed / gradient-computation-failed / not-
+# admissible reasons.
+#
+# Requires singularity_is_theta_collapse to discharge Pass for the
+# populated state to confirm attractor-basin condition. Fail verdict
+# from the bilateral IS an admissible-state signal (light cone still
+# open at this position; no singularity here).
+#
+# Sentinel: `spectral=singularity-detect-at-position`.
+#
+# Math cite: `docs/math/2026-07-25-sub-turing-geometric-compiler-
+# floor.md` §4 Formal definition + §3 Θ Fiedler-native realization
+# ("λ₁(Δ_F |_{fibre(ψ)}) computes the light-cone angle at the sheaf-
+# Laplacian altitude") — the attractor-detection composes Θ
+# computation at position over the sheaf-Laplacian machinery at
+# rust/spectral/ altitude.
+detect_at_position(p: peer, position: ref) -> imperfect(gauge_fixed_point_state, ref, ref)
+requires singularity_is_theta_collapse(p, position)
+{ \ }
+
+# === compute_theta_gradient — the ∇Θ computation action ===
+#
+# Given a peer and a gauge_fixed_point_state, discharge the gradient
+# computation: emit a content-addressed ref to ∇Θ(position) — the
+# direction of steepest ascent in Θ at the state's position. Composes
+# over rust/matrix/ eigenvalue machinery (LAPACK dsyev via prismqueer::
+# ffi::eigenvalues) per math §3 Fiedler-native realization.
+#
+# Returns imperfect(ref, ref, ref): success carries the ∇Θ vector
+# ref; failure variants carry gram-matrix-degenerate / not-
+# differentiable-at-position / matrix-derivative-failed reasons.
+#
+# Requires foerster_invariant_broken_at_singularity to Fail
+# (equivalently: ctx is NOT at the singularity) for a non-zero
+# gradient to exist. Pass on foerster_invariant_broken_at_singularity
+# means ∇Θ(ψ*) = 0 (fixed-point of ∇Θ; no gauge-opening direction
+# exists in the reachable set at ψ*).
+#
+# Sentinel: `spectral=singularity-compute-theta-gradient`.
+#
+# Math cite: `docs/math/2026-07-25-sub-turing-geometric-compiler-
+# floor.md` §3 "Consequence for magic.rs" verbatim: "differentiable
+# per dΘ/dt computable via matrix-derivative on G_R (magic.rs can
+# compute the gradient direction of gauge-opening moves)." — this
+# action IS the substrate-decl'd surface `magic.rs` composes over
+# to compute the gradient direction at compile-time.
+compute_theta_gradient(p: peer, ctx: gauge_fixed_point_state) -> imperfect(ref, ref, ref)
+{ \ }
+
+# === propose_intervention — the gauge-opening tournament dispatch ===
+#
+# Given a peer and a gauge_fixed_point_state at (or near) the
+# attractor basin, discharge the @fate tournament dispatch to find
+# a gauge-opening transformation t_obs such that Θ(t_obs · position)
+# > Θ(position). The tournament enumerates admissible t_obs ∈
+# G_Foerster (bounded operator norm ≤ L; per canonical spec §3
+# gauge group definition) and returns the intervention with maximum
+# dΘ/dt_obs.
+#
+# Returns imperfect(ref, ref, ref): success carries the winning
+# intervention-transformation ref (a t_obs such that Θ opens under
+# application); failure variants carry firewall-condition-detected
+# (no admissible t_obs exists in local reachable set; per math §4
+# discussion) / tournament-empty / intervention-not-admissible
+# reasons.
+#
+# Requires intervention_reopens_light_cone to discharge Pass at
+# the returned intervention (the tournament winner MUST satisfy the
+# essay-Q.E.D. condition: dΘ/dt_obs > 0 at position).
+#
+# Sentinel: `spectral=singularity-propose-intervention`.
+#
+# Math cite: `docs/math/2026-07-25-sub-turing-geometric-compiler-
+# floor.md` §4 "The essay Q.E.D. as executable predicate — Θ-
+# gradient formulation" verbatim: "Gradient-ascent formulation:
+# dΘ/dt_obs > 0 at ψ_trauma_loop — observation-of-holding IS a
+# gradient-ascent step on Θ." + §7 essay-to-executable translation
+# table row 5 "Therapeutic intervention as knock-back-into-torus
+# payload" → "Gradient-ascent step on Θ: dΘ/dt_intervention > 0
+# at trauma-loop attractor" → "Foerster-gauge-preserving
+# transformation admitted at rust/spectral/magic.rs".
+propose_intervention(p: peer, ctx: gauge_fixed_point_state) -> imperfect(ref, ref, ref)
+requires intervention_reopens_light_cone(p, ctx)
+{ \ }
+
+# === Recognition candidates surfaced (DO NOT RATIFY at this mint) ===
+#
+# #R-spectral-singularity-species — first-witness gate closed this
+# tick (species-decl shape at spectral altitude + gauge-fixed-point
+# formal definition per math §4 + kin-to-@paradox/spiral composition
+# edge + kin-to-@fractal/singularity distinction per canonical spec
+# §5 + three-bilateral discharge chain covering the three math §4
+# conditions + essay-Q.E.D. operationalized at bilateral altitude).
+# Second-witness gate: Reed's `rust/spectral/src/singularity.rs`
+# authorship (canonical spec §11 Phase 2 item 5 greenfield) lands
+# the three bilaterals empirically firing on the Rust body composing
+# over rust/matrix/ LAPACK dsyev machinery for Θ computation.
+#
+# #R-essay-Q.E.D.-as-compile-time-predicate — the Void — Trauma
+# essay Q.E.D. operationalized as compile-time proof obligation
+# per math §4 "The essay Q.E.D. as executable predicate — Θ-
+# gradient formulation." First-witness this tick (bilateral
+# `intervention_reopens_light_cone` names the ∃-side essay-Q.E.D.
+# witness at substrate-decl altitude). Second-witness gate:
+# empirical firing on rust/spectral/src/magic.rs's ∀-side
+# gauge-preservation predicate per canonical spec §4 two-sense
+# binding + §14 D6 zero-property-gap coverage.
+#
+# === Forward-promised (NOT landed this tick) ===
+#
+# - `rust/spectral/src/singularity.rs` Rust materialization —
+#   Reed's Phase 2 item 5 greenfield authorship territory per
+#   canonical spec §11 + §12. Composes over rust/matrix/ eigenvalue
+#   machinery for Θ + ∇Θ computation per math §3 Fiedler-native
+#   realization. Materializes the three bilaterals below empirically
+#   firing on bounded reachable-set enumeration (5^L ≤ 3125 states
+#   per math §3 Rice-safety proof). ETA per canonical spec §11
+#   Phase 2 timing.
+#
+# - `rust/spectral/src/magic.rs` two-sense binding of this species'
+#   bilaterals PLUS @fractal/singularity's optics-hierarchy
+#   bilaterals per Alex 2026-07-25 [ALEX-Q4] verbatim: "magic.rs
+#   binds both. We're gonna do this proper. That's what I meant
+#   with the properties earlier. I want all of it impeccable,
+#   linked to the formalizing math docs, and the full statespace
+#   covered by the properties." Discharge target for §14 D7
+#   `M_magic = M_optic ⊕ M_dynamics` coverage.
+#
+# - @paradox/trauma composition edge realization — the deposited-
+#   state Crystal at the attractor basin bottom IS content-addressed
+#   witness of this species' singularity-firing. Composition edge
+#   to `shards/paradox/trauma.mirror` `wound_oid` field surfacing
+#   when consumer species needs the discharge.
+#
+# - `pillar::intervention_reopens_light_cone` empirical firing at
+#   Reed's pillar surface — the second-witness gate for
+#   #R-essay-Q.E.D.-as-compile-time-predicate recognition candidate.
+
+out @spectral/singularity
+out gauge_fixed_point_state
+out singularity_is_theta_collapse
+out foerster_invariant_broken_at_singularity
+out intervention_reopens_light_cone
+out detect_at_position
+out compute_theta_gradient
+out propose_intervention
