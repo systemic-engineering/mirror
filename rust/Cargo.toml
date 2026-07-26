@@ -44,6 +44,11 @@ path = "src/main.rs"
 # wrapper (step 10). Steps 3-12 follow in sequential ticks.
 [dependencies]
 fractal = { path = "fractal" }
+# matrix — sub-Turing FLANG floor crate (LAPACK + K=0 registry via
+# book). Migrated 2026-07-26 from rust/src/{matrix.rs, book.rs} per
+# Alex 2026-07-25 four-crate decomposition. main.rs uses matrix::book
+# for @<name> resolution at at_operator dispatch.
+matrix = { path = "matrix" }
 # prismqueer with `lapack` + `bundle` features enabled. The `lapack`
 # feature carries the FLANG-floor integration (prismqueer/build.rs
 # compiles native/spectral.f90 + native/prism.f90 via flang and links

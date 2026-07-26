@@ -23,6 +23,10 @@ description = "mirror matrix crate — sub-Turing FLANG floor (LAPACK + K=0 regi
 license = "MIT OR Apache-2.0"
 
 [dependencies]
+# fractal — Subject / Author / Committer / Witnessed. Required by
+# book.rs for the K=0 well-knowns registry (book::resolve returns
+# Subject; well-known peer/human constructors compose fractal types).
+fractal = { path = "../fractal" }
 # LAPACK via prismqueer FFI (dsyev for eigenvalues; dgesvd for
 # envelope; custom phase_lock). Matches rust/Cargo.toml feature
 # selection (lapack + bundle) so byte-parity of numerical output

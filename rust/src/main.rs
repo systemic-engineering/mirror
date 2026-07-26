@@ -50,7 +50,12 @@
 //! each to gen_prism actor spawn under supervisor. The 10 verbs below
 //! ARE the M0 shadow of that dispatch table.
 
-mod book;
+// book migrated 2026-07-26 to rust/matrix/ (external crate) per Alex
+// 2026-07-25 four-crate decomposition + 2026-07-26 mycelial-
+// autopoietic-foam framing. K=0 well-knowns registry sits alongside
+// LAPACK numerical primitives as the concrete-floor cell. Use alias
+// preserves `book::resolve(...)` call-site paths at ~lines 997-1020.
+use matrix::book;
 mod collapse;
 // M0 module wiring — declare the sibling altitudes so the terminal-
 // geometry five-file discipline is byte-visible in `rust/src/` and

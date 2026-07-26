@@ -178,6 +178,12 @@
 /// converts to Verdict::Fail with the LAPACK info code in the
 /// diagnostic.
 #[allow(dead_code)]
+// Sub-module declarations for the matrix crate. Each sub-module is a
+// cell-facet within this cell — book.rs (K=0 well-knowns registry;
+// migrated 2026-07-26) sits alongside the LAPACK eigenvalue/phase_lock/
+// envelope primitives per Alex 2026-07-25 four-crate ratification.
+pub mod book;
+
 pub fn eigenvalues(n: usize, matrix: &[f64]) -> Vec<f64> {
     prismqueer::ffi::eigenvalues(n, matrix)
         .unwrap_or_else(|info| panic!("LAPACK dsyev convergence failed: info={info}"))
