@@ -1,0 +1,37 @@
+[package]
+# `rust/matrix/` — sub-Turing FLANG floor crate at rust/ altitude.
+# Migrated 2026-07-26 from `rust/src/matrix.rs` per Alex 2026-07-25
+# four-crate decomposition ratification. First cell in the
+# Alex-peer-foam mycelial-autopoietic geometry (Alex 2026-07-26
+# framing) to materialize as its own crate boundary.
+#
+# Sibling migrations (this arc, pending): `book.rs` (K=0 well-knowns
+# registry, task #306) + `void.rs` (Void basis; Alex 2026-07-25
+# revised placement here because void.rs uses phone-primitives
+# fs.mkdir_p + fs.append_to; matrix crate takes on @io character).
+#
+# Consumers (post-arc): `rust/spectral/` composes Fiedler eigenvalue
+# computation over `matrix::eigenvalues` per canonical spec §7
+# (Mara `180b211`). `rust/roomba/` composes walker+dispatch over
+# matrix if needed. mirror binary root at `rust/` does not
+# directly depend on matrix (matrix is used transitively via
+# spectral).
+name = "matrix"
+version = "0.1.0"
+edition = "2021"
+description = "mirror matrix crate — sub-Turing FLANG floor (LAPACK + K=0 registry)"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+# LAPACK via prismqueer FFI (dsyev for eigenvalues; dgesvd for
+# envelope; custom phase_lock). Matches rust/Cargo.toml feature
+# selection (lapack + bundle) so byte-parity of numerical output
+# across the two dep chains is preserved.
+prismqueer = { path = "../../../prism/prismqueer", features = ["lapack", "bundle"] }
+
+[dev-dependencies]
+# Property-test framework (terni) + tempdir for fs-dependent tests.
+# Matches rust/Cargo.toml dev-deps for consistent test-authorship
+# discipline across the crate boundary.
+terni = { path = "../../../prism/imperfect" }
+tempfile = "3"

@@ -66,7 +66,10 @@ mod collapse;
 // compile <file>` verb as thin delegation to compile.rs.
 mod compile;
 mod liquid;
-mod matrix;
+// matrix migrated 2026-07-26 to rust/matrix/ (external crate) per Alex
+// 2026-07-25 four-crate decomposition. mirror binary root does not
+// directly depend on matrix (matrix is used transitively via spectral
+// when that crate lands).
 mod phone;
 // Tick 1 of the rust/src/spectral.rs landing per Taut substrate-scout
 // 2026-07-23 verdict-b (macro-territory partial): build-time shard

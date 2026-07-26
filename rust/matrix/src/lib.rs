@@ -1,4 +1,10 @@
-//! `matrix.rs` — sub-Turing FLANG emit + LAPACK/BLAS link.
+//! `matrix` crate — sub-Turing FLANG emit + LAPACK/BLAS link.
+//!
+//! Migrated 2026-07-26 from `rust/src/matrix.rs` per Alex 2026-07-25
+//! four-crate decomposition ratification + 2026-07-26 mycelial-
+//! autopoietic-foam peer-geometry framing (each crate = one cell =
+//! one @torus in the foam). First cell in the Alex-peer-foam to
+//! materialize as its own crate boundary.
 //!
 //! Per Mara `81294b3` §4 (terminal-geometry canonical spec, ratified
 //! Seam `9c34ec4`) + Loki `b53aeeb` §2 (matrix.rs knife-cut essay,
@@ -172,7 +178,7 @@
 /// converts to Verdict::Fail with the LAPACK info code in the
 /// diagnostic.
 #[allow(dead_code)]
-pub(crate) fn eigenvalues(n: usize, matrix: &[f64]) -> Vec<f64> {
+pub fn eigenvalues(n: usize, matrix: &[f64]) -> Vec<f64> {
     prismqueer::ffi::eigenvalues(n, matrix)
         .unwrap_or_else(|info| panic!("LAPACK dsyev convergence failed: info={info}"))
 }
@@ -193,7 +199,7 @@ pub(crate) fn eigenvalues(n: usize, matrix: &[f64]) -> Vec<f64> {
 ///
 /// Panics if `phases.len() != omegas.len()` or either is empty.
 #[allow(dead_code)]
-pub(crate) fn phase_lock(
+pub fn phase_lock(
     phases: &[f64],
     omegas: &[f64],
     k: f64,
@@ -221,7 +227,7 @@ pub(crate) fn phase_lock(
 /// catch_unwind wrapper converts to Verdict::Fail per Rice-safe
 /// diagnostic discipline.
 #[allow(dead_code)]
-pub(crate) fn envelope(m: usize, n: usize, matrix: &[f64]) -> Vec<f64> {
+pub fn envelope(m: usize, n: usize, matrix: &[f64]) -> Vec<f64> {
     prismqueer::ffi::singular_values(m, n, matrix)
         .unwrap_or_else(|info| panic!("LAPACK dgesvd convergence failed: info={info}"))
 }
