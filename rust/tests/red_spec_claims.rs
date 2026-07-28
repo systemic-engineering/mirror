@@ -23,7 +23,22 @@ fn src_root() -> PathBuf {
 }
 
 fn read_source(name: &str) -> String {
-    let path = src_root().join(name);
+    // Post-migration crate layout (Migrations 2–5 landed 2026-07-26–28):
+    // matrix.rs → matrix/src/lib.rs
+    // void.rs → matrix/src/void.rs
+    // liquid.rs → spectral/src/liquid.rs
+    // spectral.rs → spectral/src/lib.rs
+    // collapse.rs → roomba/src/mend.rs
+    // main.rs / phone.rs / compile.rs stay at rust/src/ altitude.
+    let manifest = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    let path = match name {
+        "matrix.rs" => manifest.join("matrix/src/lib.rs"),
+        "void.rs" => manifest.join("matrix/src/void.rs"),
+        "liquid.rs" => manifest.join("spectral/src/liquid.rs"),
+        "spectral.rs" => manifest.join("spectral/src/lib.rs"),
+        "collapse.rs" => manifest.join("roomba/src/mend.rs"),
+        _ => manifest.join("src").join(name),
+    };
     std::fs::read_to_string(&path)
         .unwrap_or_else(|e| panic!("cannot read {}: {}", path.display(), e))
 }

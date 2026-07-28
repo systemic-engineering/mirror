@@ -1,4 +1,14 @@
-//! `collapse.rs` — bilateral-arm collapse capability at rust/ altitude.
+//! `mend.rs` — bilateral-arm mend capability at roomba-crate altitude.
+//!
+//! Migrated 2026-07-28 from `rust/src/collapse.rs` per Alex 2026-07-25
+//! four-crate decomposition + Mara `9bb1f57` twelve-primitive revision
+//! register: `apply_deletions` → `apply`; module `collapse` → `mend`
+//! (constitutive semantics). The `dispatch_arm_collapse` orchestrator
+//! stays in `mirror` bin at main.rs altitude for now — its @io calls
+//! into `phone::{read_file,write_file,git_add,git_commit_as}` require
+//! bin-crate visibility. Migration 6 collapses phone → std::fs at this
+//! crate and lifts the orchestrator here as `mend::at`.
+//!
 //!
 //! First substrate-delta surface birthed FROM the terminal floor.
 //! Composed shard-body + @io: reads shards/**/*.mirror to extract
@@ -275,7 +285,7 @@ pub fn find_redundant_arms(
 }
 
 /// Splice arms out of the source. Arms must be sorted by `byte_start`.
-pub fn apply_deletions(source: &str, arms: &[RedundantArm]) -> String {
+pub fn apply(source: &str, arms: &[RedundantArm]) -> String {
     let mut out = String::with_capacity(source.len());
     let mut cursor = 0usize;
     for arm in arms {
@@ -402,8 +412,8 @@ mod prop_tests {
     //!   ∧ sbec(after)              ≥ sbec(before)
     //! ```
     //!
-    //! At `apply_deletions` altitude these project to byte-level
-    //! monotonicity: `apply_deletions(s, arms).len() ≤ s.len()`. That
+    //! At `apply` altitude these project to byte-level
+    //! monotonicity: `apply(s, arms).len() ≤ s.len()`. That
     //! IS `rust_loc_non_increasing` at the finest granularity substrate
     //! admits — one collapse tick over one source file, byte-visible.
     //!
@@ -470,26 +480,26 @@ mod prop_tests {
     }
 
     #[test]
-    /// Empty arm list → identity. `apply_deletions(s, &[])` is `s`.
+    /// Empty arm list → identity. `apply(s, &[])` is `s`.
     /// The base case of the byte-monotonicity projection.
-    fn apply_deletions_empty_arms_is_identity() {
+    fn apply_empty_arms_is_identity() {
         let source = fixture_source();
-        let out = apply_deletions(&source, &[]);
+        let out = apply(&source, &[]);
         assert_eq!(out, source, "empty arm list must be identity");
     }
 
     #[test]
     /// **rust_loc_non_increasing at byte altitude.** After
-    /// `apply_deletions` with any valid non-empty arm list,
+    /// `apply` with any valid non-empty arm list,
     /// `bytes_after < bytes_before`. This is the FIRST CONJUNCT of
     /// `ouroboros_monotone` at the finest granularity substrate
     /// admits.
-    fn apply_deletions_shrinks_source_when_arms_non_empty() {
+    fn apply_shrinks_source_when_arms_non_empty() {
         let source = fixture_source();
         let corpus = fixture_corpus();
         let arms = find_redundant_arms(&source, &corpus);
         assert!(!arms.is_empty(), "fixture must produce at least one arm");
-        let out = apply_deletions(&source, &arms);
+        let out = apply(&source, &arms);
         assert!(
             out.len() < source.len(),
             "byte monotonicity failed: {} !< {}",
@@ -499,17 +509,17 @@ mod prop_tests {
     }
 
     #[test]
-    /// Determinism: `apply_deletions` is a pure function. Same
+    /// Determinism: `apply` is a pure function. Same
     /// inputs, same output every call. Required for cache-keyable
     /// admissibility per `@epistemologic/property/
     /// verdict_is_content_addressed`.
-    fn apply_deletions_is_deterministic() {
+    fn apply_is_deterministic() {
         let source = fixture_source();
         let corpus = fixture_corpus();
         let arms = find_redundant_arms(&source, &corpus);
-        let out1 = apply_deletions(&source, &arms);
-        let out2 = apply_deletions(&source, &arms);
-        assert_eq!(out1, out2, "apply_deletions must be deterministic");
+        let out1 = apply(&source, &arms);
+        let out2 = apply(&source, &arms);
+        assert_eq!(out1, out2, "apply must be deterministic");
     }
 
     #[test]
@@ -543,7 +553,7 @@ mod prop_tests {
 
     #[test]
     /// Byte-range validity: `0 ≤ byte_start < byte_end ≤ source.len()`
-    /// for every returned arm. Contract required by `apply_deletions`.
+    /// for every returned arm. Contract required by `apply`.
     fn find_redundant_arms_byte_ranges_are_valid() {
         let source = fixture_source();
         let corpus = fixture_corpus();
@@ -562,7 +572,7 @@ mod prop_tests {
 
     #[test]
     /// Sort invariant: arms are returned sorted by `byte_start`
-    /// ascending (contract required by `apply_deletions`, which
+    /// ascending (contract required by `apply`, which
     /// walks arms in order and would produce garbled output on
     /// unsorted input).
     fn find_redundant_arms_are_sorted() {
@@ -591,7 +601,7 @@ mod prop_tests {
         let corpus = fixture_corpus();
         let arms_first = find_redundant_arms(&source, &corpus);
         assert!(!arms_first.is_empty());
-        let mended = apply_deletions(&source, &arms_first);
+        let mended = apply(&source, &arms_first);
         let arms_second = find_redundant_arms(&mended, &corpus);
         assert!(
             arms_second.is_empty(),
@@ -627,13 +637,13 @@ mod prop_tests {
     #[test]
     /// Bytes-shrinkage exact accounting: `s.len() - out.len()`
     /// equals the sum of arm sizes. The byte-level witness that
-    /// `apply_deletions` splices exactly the recorded ranges — no
+    /// `apply` splices exactly the recorded ranges — no
     /// over-cut, no under-cut.
-    fn apply_deletions_accounts_for_exact_arm_bytes() {
+    fn apply_accounts_for_exact_arm_bytes() {
         let source = fixture_source();
         let corpus = fixture_corpus();
         let arms = find_redundant_arms(&source, &corpus);
-        let out = apply_deletions(&source, &arms);
+        let out = apply(&source, &arms);
         let expected_delta: usize = arms.iter()
             .map(|a| a.byte_end - a.byte_start)
             .sum();
@@ -672,7 +682,7 @@ mod prop_tests {
     #[test]
     /// **Multi-tick byte-shrinkage composes into Pillar III viability.**
     ///
-    /// Byte-shrinkage per collapse tick from `apply_deletions` flows
+    /// Byte-shrinkage per collapse tick from `apply` flows
     /// into `prismqueer::liquid::pillar::viability_of_magnitudes`
     /// with `ScalarLoss` as the magnitude type. The four-conjunct
     /// invariant at ouroboros_monotone altitude closes empirically:

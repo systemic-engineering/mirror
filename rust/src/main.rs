@@ -56,7 +56,13 @@
 // LAPACK numerical primitives as the concrete-floor cell. Use alias
 // preserves `book::resolve(...)` call-site paths at ~lines 997-1020.
 use matrix::book;
-mod collapse;
+// `collapse` module migrated 2026-07-28 to `roomba` crate as `mend`
+// per Alex 2026-07-25 four-crate decomposition + Mara `9bb1f57`
+// naming discipline (Migration 5). Consumer alias below preserves
+// the `dispatch_arm_collapse` orchestrator surface at main.rs
+// altitude — it composes over phone.rs @io helpers which are
+// `pub(crate)`. Full lift-to-`mend::at` deferred to Migration 6.
+use roomba::mend as collapse;
 // M0 module wiring — declare the sibling altitudes so the terminal-
 // geometry five-file discipline is byte-visible in `rust/src/` and
 // `cargo build` compiles ALL FIVE files even while the bodies are
@@ -780,7 +786,7 @@ fn dispatch_arm_collapse(
         });
     }
 
-    let mended = collapse::apply_deletions(&source, &arms);
+    let mended = collapse::apply(&source, &arms);
     let bytes_after = mended.len();
 
     phone::write_file(rs_path, &mended)

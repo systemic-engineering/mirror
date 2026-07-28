@@ -54,6 +54,12 @@ matrix = { path = "matrix" }
 # from rust/src/{liquid.rs,spectral.rs}. main.rs uses spectral::liquid
 # for property discharge; compile.rs likewise.
 spectral = { path = "spectral" }
+# roomba — mend-computation crate (byte-substrate for bilateral-arm-
+# redundant collapse). Migrated 2026-07-28 from rust/src/collapse.rs
+# per Alex 2026-07-25 four-crate decomposition. main.rs uses
+# roomba::mend::{apply, find_redundant_arms, load_bilateral_corpus,
+# BilateralDecl, RedundantArm, CollapseReport} for the mend surface.
+roomba = { path = "roomba" }
 # prismqueer with `lapack` + `bundle` features enabled. The `lapack`
 # feature carries the FLANG-floor integration (prismqueer/build.rs
 # compiles native/spectral.f90 + native/prism.f90 via flang and links

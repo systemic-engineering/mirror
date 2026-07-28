@@ -1,0 +1,49 @@
+[package]
+# `roomba` crate — mend-computation substrate at rust/ altitude.
+#
+# Migrated 2026-07-28 from `rust/src/collapse.rs` per Alex 2026-07-25
+# four-crate decomposition + Mara `9bb1f57` naming discipline. Third
+# cell in the peer-foam mycelial-autopoietic geometry to materialize
+# as its own crate boundary (after `matrix` and `spectral`).
+#
+# ## What lives here
+#
+# - `mend` — pure byte-computation module for bilateral-arm-
+#   redundant collapse. Loads shard corpus, finds redundant arms,
+#   applies deletions. Zero @io beyond std::fs directory walking.
+#
+# ## What does NOT live here (yet)
+#
+# - `dispatch_arm_collapse` orchestrator (@io/git commit surface).
+#   That stays in `mirror` bin at main.rs altitude because it composes
+#   over `phone::{read_file,write_file,git_add,git_commit_as}` which
+#   are `pub(crate)`. Full `mend::at` collapse deferred to Migration 6
+#   when phone.rs @io helpers migrate.
+#
+# ## Rice-safety
+#
+# `mend::apply` is pure byte-substring transformation. Byte-visible
+# state only. No program semantics. Comment lines skipped;
+# string-literal contexts skipped via naive quote-depth on anchor line.
+name = "roomba"
+version = "0.1.0"
+edition = "2021"
+description = "mirror compiler — mend-computation substrate crate"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+
+[dev-dependencies]
+# tempfile: unique-per-test scratch dirs for filesystem-dependent
+# tests in `mend::prop_tests` (covers `load_bilateral_corpus` which
+# walks `<root>/shards/**/*.mirror`). Cleanup on TempDir drop; no
+# leaked state.
+tempfile = "3"
+# terni: PropertyVerdict framework consumed by mend::prop_tests for
+# ouroboros_monotone byte-shrinkage witnesses (moved from rust/ with
+# the tests during Migration 5). Path-dep to sibling crate.
+terni = { path = "../../../prism/imperfect" }
+# prismqueer: pillar predicates + ScalarLoss consumed by mend::prop_tests
+# for byte-level ouroboros_monotone witness composition. lapack+bundle
+# features match mirror-bin config.
+prismqueer = { path = "../../../prism/prismqueer", features = ["lapack", "bundle"] }
