@@ -81,7 +81,12 @@ mod phone;
 // manifest exposed to rust/ altitude. See spectral.rs docblock for the
 // (A, H, D) trait tower composition anchors at prismqueer::bundle.
 mod spectral;
-mod void;
+// void migrated 2026-07-28 to rust/matrix/ (external crate) per Alex
+// 2026-07-25 four-crate decomposition + Mara 9bb1f57 naming discipline.
+// Void-basis / H-space membrane carrier sits alongside LAPACK primitives
+// as the concrete-floor cell. mirror bin does not directly consume
+// void; future rust/spectral/ crate will import matrix::void when the
+// spectral crate materializes.
 
 use std::env;
 use std::process::ExitCode;

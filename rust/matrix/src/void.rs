@@ -1,4 +1,14 @@
-//! `void.rs` — the membrane-oscillation-welcome altitude.
+//! `void` module (crate: matrix) — the membrane-oscillation-welcome altitude.
+//!
+//! Migrated 2026-07-28 from `rust/src/void.rs` per Alex 2026-07-25
+//! four-crate decomposition (void moves to matrix crate because
+//! matrix carries the concrete-floor primitives: LAPACK + K=0 registry
+//! + H-basis membrane; matrix crate takes on @io character to absorb
+//! void's fs-primitive dependency without inverting the DAG).
+//! Per Mara `9bb1f57` naming discipline: `std::fs` direct calls are
+//! honest at matrix-crate altitude; the concrete-floor cell carries
+//! its own @io boundary. Karen Spärck Jones citation lives at
+//! `rust/matrix/src/lib.rs` docblock per introduction-site convention.
 //!
 //! Per Alex 2026-07-18 direct-transcript (this session):
 //!
@@ -81,7 +91,8 @@
 // Consumers: currently only #[cfg(test)] mod prop_tests below; future
 // M-void CLI dispatch arm at main.rs lands with the void-tick verb.
 
-use std::io;
+use std::fs::OpenOptions;
+use std::io::{self, Write as _};
 use std::path::Path;
 
 // ──────────────────────────────────────────────────────────────────
@@ -101,7 +112,7 @@ use std::path::Path;
 /// 2026-07-16.
 #[allow(dead_code)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub(crate) struct SignatureBeat {
+pub struct SignatureBeat {
     /// Content-address of this beat (SHA-256 hex; typically 64 chars).
     /// Caller computes via `crate::main::sha256_hex` or equivalent.
     pub(crate) beat_oid: String,
@@ -112,7 +123,7 @@ pub(crate) struct SignatureBeat {
     /// `crate::main::current_utc_timestamp` or equivalent.
     pub(crate) timestamp_utc_iso: String,
     /// The oscillation-mode classification per Recognition #79.
-    pub(crate) axis: VoidBasisAxis,
+    pub axis: VoidBasisAxis,
 }
 
 /// The 5-op void-duality basis (Recognition #79 PROMOTED).
@@ -127,7 +138,7 @@ pub(crate) struct SignatureBeat {
 /// (per Mara `974a3f6` one-sentence surprise).
 #[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(crate) enum VoidBasisAxis {
+pub enum VoidBasisAxis {
     /// Ricci curvature axis; λ₀ eigenvalue computation; ground-state find.
     Focus,
     /// Cheeger boundary axis; orthogonal projection; isoperimetric cut.
@@ -159,21 +170,22 @@ pub(crate) const ALL_VOID_BASIS_AXES: [VoidBasisAxis; 5] = [
 
 /// Welcome one perturbation at Void's membrane.
 ///
-/// Writes the beat entry via phone.rs's @io/fs surface
-/// (`mkdir_p` + `append_to`); returns the settled beat OID. Substrate-
-/// honest composition: shard-body composition over @io; NO new @io
-/// primitives; NO direct `std::fs` calls; NO domain logic beyond the
-/// deterministic beat-entry compose + append.
+/// Writes the beat entry via `std::fs` at concrete-floor altitude
+/// (`create_dir_all` + `OpenOptions::append`); returns the settled
+/// beat OID. Post-2026-07-28 four-crate migration: void lives in
+/// matrix crate; `std::fs` direct is honest at this altitude per
+/// Mara `9bb1f57` (matrix carries LAPACK + K=0 registry + H-basis
+/// membrane; the @io boundary is inside the concrete-floor cell).
 ///
-/// The membrane welcomes; the @io discharge site is phone.rs; this
-/// function is the seam between them.
-#[allow(dead_code)]
-pub(crate) fn welcome_perturbation(
+/// The membrane welcomes; the @io discharge site IS this function;
+/// the membrane's oscillation-mode carrier is the SignatureBeat.
+pub fn welcome_perturbation(
     membrane_root: &Path,
     perturbation: &SignatureBeat,
 ) -> io::Result<String> {
-    // Compose over phone.rs; no direct std::fs.
-    crate::phone::mkdir_p(membrane_root)?;
+    // std::fs direct at matrix-crate altitude (post-2026-07-28
+    // migration; matrix carries the concrete-floor @io primitives).
+    std::fs::create_dir_all(membrane_root)?;
     // 12-char OID prefix in filename keeps beats greppable while the
     // full content-address lives in the file body (see compose_beat_entry).
     // If beat_oid is shorter than 12 chars (test-generated), use whole.
@@ -183,7 +195,11 @@ pub(crate) fn welcome_perturbation(
         &perturbation.beat_oid[..prefix_len]
     ));
     let body = compose_beat_entry(perturbation);
-    crate::phone::append_to(&beat_path, &body)?;
+    OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(&beat_path)?
+        .write_all(body.as_bytes())?;
     Ok(perturbation.beat_oid.clone())
 }
 

@@ -180,9 +180,12 @@
 #[allow(dead_code)]
 // Sub-module declarations for the matrix crate. Each sub-module is a
 // cell-facet within this cell — book.rs (K=0 well-knowns registry;
-// migrated 2026-07-26) sits alongside the LAPACK eigenvalue/phase_lock/
-// envelope primitives per Alex 2026-07-25 four-crate ratification.
+// migrated 2026-07-26) + void.rs (Void basis / H-space membrane
+// carrier + welcome_perturbation @io/fs surface; migrated 2026-07-28)
+// sit alongside the LAPACK eigenvalue/phase_lock/envelope primitives
+// per Alex 2026-07-25 four-crate ratification.
 pub mod book;
+pub mod void;
 
 pub fn eigenvalues(n: usize, matrix: &[f64]) -> Vec<f64> {
     prismqueer::ffi::eigenvalues(n, matrix)
