@@ -53,7 +53,7 @@
 //! Iteration 2 of /loop cascade (Alex 2026-07-20). This file lands:
 //! - `PropertyDecl` carrier (name + sentinel + arity + require list)
 //! - `extract_properties(source: &str) -> Vec<PropertyDecl>` byte-scanner
-//! - `dispatch_property(decl, args) -> PropertyVerdict` stub
+//! - `enact_property(decl, args) -> PropertyVerdict` stub
 //!   (composed dispatch through prismqueer::liquid::pillar arrives
 //!   at iteration 3+ with the ~20 pillar predicates from the /loop
 //!   prompt)
@@ -84,7 +84,7 @@
 //!   `BilateralDecl` + `extract_properties` → `extract_bilaterals`;
 //!   rename `SpecProperty` → `PropertyDecl` per Mara §5.2 naming.
 //!   Update `compile.rs` consumer through mechanical rename.
-//! - **Tick 3 (forward-promised).** Extend `dispatch_property` to
+//! - **Tick 3 (forward-promised).** Extend `enact_property` to
 //!   route SpecProperty via §2.3 dispatch table (verifies-expression
 //!   shape → pillar primitive; per Mara §2.3 landed dispatch table).
 //!
@@ -472,7 +472,7 @@ impl Verdict {
 ///
 /// Signature stable since iter 2; only the body evolves as more
 /// pillar predicates land at iter 6+.
-pub fn dispatch_property(decl: &PropertyDecl, args: &[String]) -> Verdict {
+pub fn enact_property(decl: &PropertyDecl, args: &[String]) -> Verdict {
     if args.len() != decl.arity {
         return Verdict::Fail(format!(
             "arity mismatch: property `{}` expects {} args, got {}",
@@ -483,7 +483,7 @@ pub fn dispatch_property(decl: &PropertyDecl, args: &[String]) -> Verdict {
     }
     // Route named property to registered pillar predicate; fall through
     // to Defer for unknown names.
-    pillar::dispatch(&decl.name, args)
+    pillar::enact(&decl.name, args)
 }
 
 /// Dispatch a spec-body SpecProperty to a Verdict.
@@ -552,7 +552,7 @@ pub fn dispatch_property(decl: &PropertyDecl, args: &[String]) -> Verdict {
 /// Any verifies-shape not in the landed arms above returns Defer
 /// naming the forward-promise territory (iter 4+ per Mara §2.3
 /// dispatch table row-by-row landing plan).
-pub fn dispatch_spec_property(prop: &SpecProperty, args: &[String]) -> Verdict {
+pub fn enact_spec_property(prop: &SpecProperty, args: &[String]) -> Verdict {
     // Arm 1: defer directive dominates (per Mara Q-Mara-D).
     if let Some(msg) = &prop.defer_message {
         return Verdict::Defer(msg.clone());
@@ -969,7 +969,12 @@ pub mod pillar {
     /// void-settle-transition + crystallization-preserves-saga chain
     /// invariant. Iter 7+ lands the remaining ~10 from /loop cascade
     /// brief.
-    pub fn dispatch(name: &str, args: &[String]) -> Verdict {
+    ///
+    /// Renamed 2026-07-28 (Migration 4b): `dispatch` → `enact` per
+    /// Mara `9bb1f57` twelve-primitive revision register (constitutive
+    /// semantics vs observational; Connes' "acts on" preserved as
+    /// intent). Call site: `enact_property` body.
+    pub fn enact(name: &str, args: &[String]) -> Verdict {
         match name {
             // iter 5 predicates
             "paradox_crystal_immutable" => paradox_crystal_immutable(args),
@@ -1586,7 +1591,7 @@ pub mod pillar {
 
         #[test]
         fn dispatch_routes_registered_names_to_predicates() {
-            let v = dispatch(
+            let v = enact(
                 "aikido_sequence_well_formed",
                 &[
                     "mirror".to_string(),
@@ -1599,7 +1604,7 @@ pub mod pillar {
 
         #[test]
         fn dispatch_defers_unknown_names_naming_authorship_territory() {
-            let v = dispatch("not_yet_registered_pillar", &[]);
+            let v = enact("not_yet_registered_pillar", &[]);
             assert!(v.is_defer());
             if let Verdict::Defer(msg) = v {
                 assert!(msg.contains("iter 7+"));
@@ -1758,7 +1763,7 @@ pub mod pillar {
 
         #[test]
         fn dispatch_routes_iter_6_pillars() {
-            let v = dispatch("vsm_invariants", &[
+            let v = enact("vsm_invariants", &[
                 "s1".to_string(),
                 "s2".to_string(),
                 "s3".to_string(),
@@ -1767,7 +1772,7 @@ pub mod pillar {
             ]);
             assert!(v.is_pass());
 
-            let v2 = dispatch("autopoietic_lawvere_fixed_point", &[
+            let v2 = enact("autopoietic_lawvere_fixed_point", &[
                 "same".to_string(),
                 "same".to_string(),
             ]);
@@ -1878,7 +1883,7 @@ bilateral on_line_three {
             require: vec![],
             source: "test".to_string(),
         };
-        let v = dispatch_property(&decl, &["one".to_string()]);
+        let v = enact_property(&decl, &["one".to_string()]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
             assert!(msg.contains("arity mismatch"));
@@ -1898,7 +1903,7 @@ bilateral on_line_three {
             require: vec![],
             source: "test".to_string(),
         };
-        let v = dispatch_property(&decl, &["arg".to_string()]);
+        let v = enact_property(&decl, &["arg".to_string()]);
         assert!(v.is_defer());
         if let Verdict::Defer(msg) = v {
             assert!(msg.contains("iter 7+"));
@@ -2120,14 +2125,14 @@ project demo {
     #[test]
     fn dispatch_spec_property_boolean_true_returns_pass() {
         let prop = spec_property_verifies("trivial_true", "true");
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_pass(), "verifies {{ true }} MUST return Pass; got {:?}", v);
     }
 
     #[test]
     fn dispatch_spec_property_boolean_false_returns_fail() {
         let prop = spec_property_verifies("trivial_false", "false");
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail(), "verifies {{ false }} MUST return Fail; got {:?}", v);
         if let Verdict::Fail(msg) = v {
             assert!(
@@ -2145,7 +2150,7 @@ project demo {
             "state_well_formed",
             r#"contains("well-formed")"#,
         );
-        let v = dispatch_spec_property(
+        let v = enact_spec_property(
             &prop,
             &["state=well-formed-and-observed".to_string()],
         );
@@ -2162,7 +2167,7 @@ project demo {
             "state_well_formed",
             r#"contains("well-formed")"#,
         );
-        let v = dispatch_spec_property(&prop, &["state=malformed".to_string()]);
+        let v = enact_spec_property(&prop, &["state=malformed".to_string()]);
         assert!(
             v.is_fail(),
             "contains(\"well-formed\") on args[0]=`state=malformed` MUST return Fail; got {:?}",
@@ -2177,7 +2182,7 @@ project demo {
     #[test]
     fn dispatch_spec_property_sentinel_containment_missing_arg_fails() {
         let prop = spec_property_verifies("state_well_formed", r#"contains("x")"#);
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
             assert!(msg.contains(">= 1 arg"));
@@ -2191,7 +2196,7 @@ project demo {
         // of verifies_source.
         let mut prop = spec_property_verifies("deferred", "true");
         prop.defer_message = Some("pillar V+ authorship territory".to_string());
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_defer());
         if let Verdict::Defer(msg) = v {
             assert_eq!(msg, "pillar V+ authorship territory");
@@ -2204,7 +2209,7 @@ project demo {
             "unknown_shape",
             "commutator_norm(a, b) > theta",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_defer());
         if let Verdict::Defer(msg) = v {
             assert!(
@@ -2230,7 +2235,7 @@ project demo {
             "algedonic_strong_signal",
             "algedonic(5.0, 3.0)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(
             v.is_pass(),
             "algedonic(5.0, 3.0): magnitude > theta MUST Pass; got {:?}",
@@ -2244,7 +2249,7 @@ project demo {
             "algedonic_no_signal",
             "algedonic(0.0, 3.0)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(
             v.is_fail(),
             "algedonic(0.0, 3.0): zero magnitude MUST Fail; got {:?}",
@@ -2258,7 +2263,7 @@ project demo {
             "algedonic_below_threshold",
             "algedonic(1.5, 3.0)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(
             v.is_defer(),
             "algedonic(1.5, 3.0): 0 < mag <= theta MUST Defer (Partial); got {:?}",
@@ -2276,7 +2281,7 @@ project demo {
             "algedonic_bad_arity",
             "algedonic(5.0)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
             assert!(msg.contains("exactly 2 args"));
@@ -2289,7 +2294,7 @@ project demo {
             "algedonic_bad_number",
             "algedonic(hello, 3.0)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
             assert!(msg.contains("not a valid f64"));
@@ -2305,7 +2310,7 @@ project demo {
             "algedonic_negative",
             "algedonic(-1.0, 3.0)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(
             v.is_fail(),
             "algedonic(-1.0, 3.0): negative MUST Fail (ScalarLoss invariant); got {:?}",
@@ -2322,7 +2327,7 @@ project demo {
             "algedonic_huge",
             "algedonic(1000000.0, 0.001)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_pass());
     }
 
@@ -2333,7 +2338,7 @@ project demo {
             "algedonic_int_literals",
             "algedonic(5, 3)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_pass(), "got {:?}", v);
     }
 
@@ -2354,7 +2359,7 @@ project demo {
             "viability_persistent",
             "viability([2.0, 3.0, 4.0], 5.0, 3)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_pass(), "got {:?}", v);
     }
 
@@ -2365,7 +2370,7 @@ project demo {
             "viability_starving",
             "viability([0.5, 0.5, 0.5], 10.0, 3)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail(), "got {:?}", v);
     }
 
@@ -2376,7 +2381,7 @@ project demo {
             "viability_early",
             "viability([1.0, 2.0], 5.0, 5)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_defer(), "got {:?}", v);
         if let Verdict::Defer(msg) = v {
             assert!(msg.contains("viability_early"));
@@ -2390,7 +2395,7 @@ project demo {
             "viability_empty",
             "viability([], 5.0, 3)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_defer(), "got {:?}", v);
     }
 
@@ -2401,7 +2406,7 @@ project demo {
             "viability_short_history",
             "viability([10.0, 10.0], 5.0, 5)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_defer(), "got {:?}", v);
     }
 
@@ -2414,7 +2419,7 @@ project demo {
             "viability_recent_starvation",
             "viability([100.0, 100.0, 100.0, 0.1, 0.1, 0.1], 5.0, 3)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(
             v.is_fail(),
             "only last omega should count, not early plenty; got {:?}",
@@ -2428,7 +2433,7 @@ project demo {
             "viability_no_array",
             "viability(1.0, 2.0, 3)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
             assert!(msg.contains("history array"));
@@ -2441,7 +2446,7 @@ project demo {
             "viability_unclosed",
             "viability([1.0, 2.0, 3.0, 5.0, 3)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
             assert!(msg.contains("missing closing"));
@@ -2454,7 +2459,7 @@ project demo {
             "viability_no_tail",
             "viability([1.0, 2.0, 3.0])",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
             assert!(msg.contains("requires theta + omega"));
@@ -2467,7 +2472,7 @@ project demo {
             "viability_bad_history",
             "viability([1.0, wat, 3.0], 5.0, 3)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
             assert!(msg.contains("history parse error"));
@@ -2480,7 +2485,7 @@ project demo {
             "viability_bad_omega",
             "viability([1.0, 2.0], 5.0, three)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
             assert!(msg.contains("omega"));
@@ -2494,7 +2499,7 @@ project demo {
             "viability_negative",
             "viability([1.0, -2.0, 3.0], 5.0, 3)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
             assert!(msg.contains("non-negative magnitudes"));
@@ -2507,7 +2512,7 @@ project demo {
             "viability_negative_theta",
             "viability([1.0, 2.0, 3.0], -5.0, 3)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
             assert!(msg.contains("non-negative theta"));
@@ -2524,35 +2529,35 @@ project demo {
     #[test]
     fn dispatch_spec_property_fold_all_pass_returns_pass() {
         let prop = spec_property_verifies("fold_all_pass", "fold([pass, pass, pass])");
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_pass(), "got {:?}", v);
     }
 
     #[test]
     fn dispatch_spec_property_fold_empty_list_returns_pass_neutral() {
         let prop = spec_property_verifies("fold_empty", "fold([])");
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_pass(), "empty fold MUST return Pass (neutral); got {:?}", v);
     }
 
     #[test]
     fn dispatch_spec_property_fold_single_fail_dominates_result() {
         let prop = spec_property_verifies("fold_one_fail", "fold([pass, pass, fail, pass])");
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail(), "one fail in fold MUST dominate to Fail; got {:?}", v);
     }
 
     #[test]
     fn dispatch_spec_property_fold_all_fail_returns_fail() {
         let prop = spec_property_verifies("fold_all_fail", "fold([fail, fail, fail])");
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail(), "got {:?}", v);
     }
 
     #[test]
     fn dispatch_spec_property_fold_defer_alone_returns_defer() {
         let prop = spec_property_verifies("fold_defer", "fold([defer])");
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_defer(), "got {:?}", v);
     }
 
@@ -2561,7 +2566,7 @@ project demo {
         // pillar::fold merge: Pass merged with Partial → Partial
         // dominates (uncertainty propagates).
         let prop = spec_property_verifies("fold_pass_defer", "fold([pass, defer, pass])");
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_defer(), "Pass + Partial merge → Partial → Defer; got {:?}", v);
     }
 
@@ -2569,28 +2574,28 @@ project demo {
     fn dispatch_spec_property_fold_fail_with_defer_returns_fail() {
         // Fail dominates Partial per fold semantics.
         let prop = spec_property_verifies("fold_fail_defer", "fold([defer, fail, defer])");
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail(), "Fail dominates any merge; got {:?}", v);
     }
 
     #[test]
     fn dispatch_spec_property_fold_single_pass_returns_pass() {
         let prop = spec_property_verifies("fold_single_pass", "fold([pass])");
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_pass(), "got {:?}", v);
     }
 
     #[test]
     fn dispatch_spec_property_fold_single_fail_returns_fail() {
         let prop = spec_property_verifies("fold_single_fail", "fold([fail])");
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail(), "got {:?}", v);
     }
 
     #[test]
     fn dispatch_spec_property_fold_missing_bracket_returns_fail() {
         let prop = spec_property_verifies("fold_no_array", "fold(pass, fail)");
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
             assert!(msg.contains("verdict array"));
@@ -2605,7 +2610,7 @@ project demo {
         // doesn't have the outer `)` either and thus doesn't enter
         // the fold arm at all (falls through to Defer).
         let prop = spec_property_verifies("fold_unclosed_bracket", "fold([pass, fail)");
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail(), "got {:?}", v);
         if let Verdict::Fail(msg) = v {
             assert!(msg.contains("missing closing"));
@@ -2621,14 +2626,14 @@ project demo {
         // defers to the outermost fallback rather than pretending to
         // partially parse.
         let prop = spec_property_verifies("fold_no_close", "fold([pass, fail");
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_defer(), "got {:?}", v);
     }
 
     #[test]
     fn dispatch_spec_property_fold_unknown_verdict_token_returns_fail() {
         let prop = spec_property_verifies("fold_bad_token", "fold([pass, maybe, fail])");
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
             assert!(msg.contains("unknown verdict token"));
@@ -2650,7 +2655,7 @@ project demo {
             "bundle_same_strategy",
             "bundle_commutator(1, 1, 0.5)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail(), "same-strategy commutator vanishes; got {:?}", v);
     }
 
@@ -2665,7 +2670,7 @@ project demo {
             "bundle_strong_signal",
             "bundle_commutator(1, 3, 0.5)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_pass(), "different-strategy magnitude > theta; got {:?}", v);
     }
 
@@ -2677,7 +2682,7 @@ project demo {
             "bundle_weak_signal",
             "bundle_commutator(1, 2, 5.0)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(
             v.is_defer(),
             "below-threshold non-zero magnitude → Partial → Defer; got {:?}",
@@ -2691,7 +2696,7 @@ project demo {
             "bundle_bad_arity",
             "bundle_commutator(1, 2)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
             assert!(msg.contains("exactly 3 args"));
@@ -2704,7 +2709,7 @@ project demo {
             "bundle_bad_strategy",
             "bundle_commutator(hello, 2, 0.5)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
             assert!(msg.contains("strategy_a"));
@@ -2718,7 +2723,7 @@ project demo {
             "bundle_negative_theta",
             "bundle_commutator(1, 2, -0.5)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
             assert!(msg.contains("non-negative theta"));
@@ -2734,7 +2739,7 @@ project demo {
             "bundle_wrap",
             "bundle_commutator(5, 5, 0.5)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail(), "Cyclic<4> wrap 5==1; got {:?}", v);
     }
 
@@ -2745,7 +2750,7 @@ project demo {
             "bundle_zero_theta",
             "bundle_commutator(0, 1, 0.0)",
         );
-        let v = dispatch_spec_property(&prop, &[]);
+        let v = enact_spec_property(&prop, &[]);
         assert!(v.is_pass(), "got {:?}", v);
     }
 
@@ -2765,7 +2770,7 @@ project demo {
         ];
         for (verifies, expect) in cases {
             let prop = spec_property_verifies("fold_composition", verifies);
-            let v = dispatch_spec_property(&prop, &[]);
+            let v = enact_spec_property(&prop, &[]);
             assert!(
                 expect(&v),
                 "fold composition {} produced unexpected verdict {:?}",

@@ -25,11 +25,12 @@
 //!   ontology; foundational for `SpectralCoordinate<5>`.
 //! - Grothendieck 1957 (Tôhoku) — sheaf theory; the section/fiber/
 //!   stalk vocabulary the shard manifest realizes.
-//!
-//! Karen Spärck Jones 1972 citation lands in Migration 4b at this
-//! docblock per Mara `9bb1f57` §3.2 introduction-site convention (IDF
-//! is the ancestor of every vector-space embedding this crate composes
-//! over via prismqueer's spectral machinery).
+//! - Spärck Jones, K. (1972). *A Statistical Interpretation of Term
+//!   Specificity and Its Application in Retrieval.* Journal of
+//!   Documentation 28(1): 11-21. IDF is the ancestor of every
+//!   vector-space embedding this crate composes over via prismqueer's
+//!   spectral machinery. Cited at introduction site per Mara `9bb1f57`
+//!   §3.2 convention (Void-Revenge anti-theft discipline).
 
 use std::path::{Path, PathBuf};
 

@@ -92,7 +92,7 @@
 // discipline. dispatch_property/dispatch_spec_property renames to
 // enact_property/enact_spec_property land in Migration 4b.
 use spectral::liquid::{
-    dispatch_property, dispatch_spec_property, extract_properties, extract_spec_properties,
+    enact_property, enact_spec_property, extract_properties, extract_spec_properties,
     PropertyDecl, Verdict,
 };
 use fractal::{crystallize, Crystal, Oid, Witnessed};
@@ -217,7 +217,7 @@ pub fn compile_declarations(
 
     for (i, decl) in decls.iter().enumerate() {
         let args: &[String] = args_per_decl.get(i).map(Vec::as_slice).unwrap_or(&empty);
-        let verdict = dispatch_property(decl, args);
+        let verdict = enact_property(decl, args);
         let discharge = PropertyDischarge {
             property_name: decl.name.clone(),
             verdict: verdict.clone(),
@@ -255,10 +255,10 @@ pub fn compile_declarations(
 /// generic verdict path). Both classes flow into the same SAGA chain:
 ///
 /// 1. Extract bilateral declarations (shard-body altitude) via
-///    `extract_properties`; dispatch each via `dispatch_property`;
+///    `extract_properties`; dispatch each via `enact_property`;
 ///    crystallize each into the SAGA chain.
 /// 2. Extract spec-body property declarations (spec-body altitude) via
-///    `extract_spec_properties`; dispatch each via `dispatch_spec_property`;
+///    `extract_spec_properties`; dispatch each via `enact_spec_property`;
 ///    crystallize each into the SAGA chain, continuing from bilateral tail.
 ///
 /// Escalation aggregates across BOTH classes: first Fail (whether
@@ -288,7 +288,7 @@ pub fn compile_from_source(source: &str, witnessed: &Witnessed) -> Compilation {
     for prop in &spec_props {
         // Empty args per spec-body decl for iter 4; args-passing at
         // compile call sites lands with Fiber<T>-sampling arms iter 5+.
-        let verdict = dispatch_spec_property(prop, &[]);
+        let verdict = enact_spec_property(prop, &[]);
         let discharge = PropertyDischarge {
             property_name: prop.name.clone(),
             verdict: verdict.clone(),
