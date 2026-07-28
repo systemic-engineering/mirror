@@ -70,17 +70,19 @@ mod collapse;
 // cascade iterations 2-3 (Alex 2026-07-20); iter 4 wires `mirror
 // compile <file>` verb as thin delegation to compile.rs.
 mod compile;
-mod liquid;
+// liquid + spectral both migrated 2026-07-28 to rust/spectral/ crate
+// per Alex 2026-07-25 four-crate decomposition. main.rs consumers
+// (compile.rs) reference `spectral::liquid::*` directly per Rust's
+// external-crate namespacing; no `use` alias required at this altitude.
 // matrix migrated 2026-07-26 to rust/matrix/ (external crate) per Alex
 // 2026-07-25 four-crate decomposition. mirror binary root does not
 // directly depend on matrix (matrix is used transitively via spectral
 // when that crate lands).
 mod phone;
-// Tick 1 of the rust/src/spectral.rs landing per Taut substrate-scout
-// 2026-07-23 verdict-b (macro-territory partial): build-time shard
-// manifest exposed to rust/ altitude. See spectral.rs docblock for the
-// (A, H, D) trait tower composition anchors at prismqueer::bundle.
-mod spectral;
+// spectral crate composition: shard_paths() surface + liquid module
+// available at `spectral::shard_paths()` + `spectral::liquid::*`.
+// Karen Spärck Jones citation lives at rust/spectral/src/lib.rs
+// docblock per Mara 9bb1f57 introduction-site convention.
 // void migrated 2026-07-28 to rust/matrix/ (external crate) per Alex
 // 2026-07-25 four-crate decomposition + Mara 9bb1f57 naming discipline.
 // Void-basis / H-space membrane carrier sits alongside LAPACK primitives

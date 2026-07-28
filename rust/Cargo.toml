@@ -49,6 +49,11 @@ fractal = { path = "fractal" }
 # Alex 2026-07-25 four-crate decomposition. main.rs uses matrix::book
 # for @<name> resolution at at_operator dispatch.
 matrix = { path = "matrix" }
+# spectral — math substrate crate (property/pillar surface + shard
+# manifest + post-Migration 4b singularity + magic). Migrated 2026-07-28
+# from rust/src/{liquid.rs,spectral.rs}. main.rs uses spectral::liquid
+# for property discharge; compile.rs likewise.
+spectral = { path = "spectral" }
 # prismqueer with `lapack` + `bundle` features enabled. The `lapack`
 # feature carries the FLANG-floor integration (prismqueer/build.rs
 # compiles native/spectral.f90 + native/prism.f90 via flang and links

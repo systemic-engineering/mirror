@@ -87,7 +87,11 @@
 //! prompt) lands at iter 5+ via liquid.rs upgrade; main.rs refactor to
 //! delegation lands at iter 4.
 
-use crate::liquid::{
+// liquid migrated 2026-07-28 to rust/spectral/src/liquid.rs (external
+// crate) per Alex 2026-07-25 four-crate + Mara 9bb1f57 naming
+// discipline. dispatch_property/dispatch_spec_property renames to
+// enact_property/enact_spec_property land in Migration 4b.
+use spectral::liquid::{
     dispatch_property, dispatch_spec_property, extract_properties, extract_spec_properties,
     PropertyDecl, Verdict,
 };
