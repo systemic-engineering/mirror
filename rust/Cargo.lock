@@ -148,7 +148,6 @@ dependencies = [
  "roomba",
  "spectral",
  "tempfile",
- "terni",
 ]
 
 [[package]]

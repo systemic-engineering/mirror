@@ -1,7 +1,13 @@
 //! `Singularity<T>` — the optics-hierarchy floor at rust/fractal altitude.
 //!
 //! Landing D per Alex 2026-07-20 Q2 verbatim ratification (name preserved:
-//! `singularity.rs` NOT `collapse.rs` per Mara Refinement 1 cancelled).
+//! `singularity.rs` NOT `collapse.rs` per Mara Refinement 1 cancelled). The
+//! `collapse.rs` here refers to Mara's proposed alternative name for THIS
+//! file (Singularity dynamics), which is distinct from the historical
+//! `rust/src/collapse.rs` (bilateral-arm redundant surface, now
+//! `rust/roomba/src/mend.rs` per Migration 5, 2026-07-28). Per Mara
+//! `9bb1f57` §7: `collapse` as name reserves for Singularity dynamics
+//! altitude; `mend` (constitutive) names the byte-substrate action.
 //! Migrated from `/Users/reed/dev/projects/fragmentation/src/singularity.rs`
 //! (608 LOC) adapted to rust/fractal's Crystal/Oid/Witnessed types per Mara
 //! `90f4d27` shard-decl `shards/fractal/singularity.mirror:299-306`

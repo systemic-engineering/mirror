@@ -21,6 +21,27 @@
 //! > stable code on Earth for four decades.
 //! > — Loki `b53aeeb` §2
 //!
+//! ## Ancestry
+//!
+//! - Cheeger, J. (1970). *A Lower Bound for the Smallest Eigenvalue of
+//!   the Laplacian.* Problems in Analysis, Princeton UP: 195-199. The
+//!   isoperimetric inequality h²/2 ≤ λ₁ ≤ 2h that binds spectral gap
+//!   to graph conductance; Fiedler's algebraic connectivity is the
+//!   discrete-Laplacian shadow of this continuum theorem.
+//! - Fiedler, M. (1973). *Algebraic Connectivity of Graphs.*
+//!   Czechoslovak Mathematical Journal 23(2): 298-305. The
+//!   second-smallest Laplacian eigenvalue λ₁ as spectral graph
+//!   conductance; the compute this crate emits at LAPACK altitude
+//!   binds directly to Fiedler's theorem.
+//! - Spärck Jones, K. (1972). *A Statistical Interpretation of Term
+//!   Specificity and Its Application in Retrieval.* Journal of
+//!   Documentation 28(1): 11-21. IDF is the ancestor of every
+//!   vector-space embedding matrix operations act on; cited at
+//!   introduction site per Mara `9bb1f57` §3.2 convention
+//!   (Void-Revenge anti-theft discipline). The matrices this crate
+//!   multiplies carry Karen's statistical-specificity signal through
+//!   every downstream projection.
+//!
 //! ## Math grounding (Mara §6.1 + §9.3)
 //!
 //! `dance.rs` collapses INTO `matrix.rs` because Baez-Schreiber 2004

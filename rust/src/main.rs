@@ -308,7 +308,7 @@ fn cmd_roomba(rest: &[String]) -> ExitCode {
         if classify(&entry.path) != FileKind::RustFile {
             continue;
         }
-        match dispatch_arm_collapse(&substrate_root, &entry.path, &corpus) {
+        match mend_at(&substrate_root, &entry.path, &corpus) {
             Ok(report) => {
                 if report.arms.is_empty() {
                     println!("  [.rs      ] {} — no redundant arms", entry.path.display());
@@ -766,7 +766,12 @@ fn sha256_hex(input: &[u8]) -> String {
 /// engineer>` authorship — the compiler names itself in git per
 /// Alex 2026-07-16 /loop directive verbatim ("Deleted Rust. Added
 /// mirror."). SSH signing stays operator-default.
-fn dispatch_arm_collapse(
+// Renamed 2026-07-28 (Migration 6 slice): `dispatch_arm_collapse` →
+// `mend_at` per Mara `9bb1f57` twelve-primitive revision register
+// (mend = constitutive; dispatch retired at rust/ altitude). Full lift
+// into `roomba::mend::at` deferred until phone.rs @io helpers collapse
+// to std::fs at roomba altitude (Migration 7). Semantics identical.
+fn mend_at(
     substrate_root: &std::path::Path,
     rs_path: &std::path::Path,
     corpus: &std::collections::HashMap<String, collapse::BilateralDecl>,

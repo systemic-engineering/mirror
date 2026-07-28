@@ -81,12 +81,15 @@ prismqueer = { path = "../../prism/prismqueer", features = ["lapack", "bundle"] 
 # PropertyVerdict shapes Taut 058b892 verified.
 [dev-dependencies]
 # prismqueer moved to [dependencies] above with lapack+bundle features
-# per Alex 2026-07-20 FLANG-floor directive. terni stays dev-only
-# (property-test framework consumed by matrix.rs::prop_tests).
-terni      = { path = "../../prism/imperfect" }
+# per Alex 2026-07-20 FLANG-floor directive.
+#
+# Post-Migration-2/4a/5 (2026-07-26–28): terni moved to sibling
+# crate dev-deps (matrix crate for prop_tests; roomba crate for
+# byte-shrinkage witnesses). Not consumed at rust/ altitude anymore.
+#
 # tempfile: unique-per-test scratch dirs for filesystem-dependent
-# tests in `collapse.rs::prop_tests` (iter 7 — covers
-# `load_bilateral_corpus` which walks `<root>/shards/**/*.mirror`).
+# tests at main.rs + phone.rs altitude (git-repo scratch dirs for
+# git_add/git_commit_as fixtures + @io/fs round-trip tests).
 # Cleanup on TempDir drop; no leaked state.
 tempfile = "3"
 
