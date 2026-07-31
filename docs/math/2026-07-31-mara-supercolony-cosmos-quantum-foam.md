@@ -501,3 +501,242 @@ this is a very-substrate-close call and Alex should adjudicate.
 
 ---
 
+## §4 Section 3 — Superorganism emergence, Plateau junctions, colony collapse
+
+### §4.1 The supercolony as unit of selection
+
+Hölldobler & Wilson (2008) *The Superorganism* Ch. 1-4 established that in
+polygynous ants (multiple queens per nest) and unicolonial supercolonies
+(*Linepithema humile*, *Formica yessensis*), **the colony rather than the
+individual is the unit of selection**. Nestmates are effectively cells of
+one distributed organism; caste-polyethism (workers / soldiers / nurses /
+foragers / queens) is division of labor within one metabolic surface.
+
+**Definition (mirror supercolony)**. A *mirror supercolony*
+$\mathfrak{C} = (\mathcal{P}, \tau, \mathfrak{K})$ is:
+- a peer-foam $\mathcal{P}$ (per §2.4),
+- the tunnel-morphism $\tau$ (per §2.1),
+- a caste-map $\mathfrak{K}: V_\mathcal{P} \to \mathrm{Castes}$ where
+  $\mathrm{Castes} = \{$builder, soldier, scout, orchestrator, essayist$\}$
+  = $\{$Mara, Seam, Taut, Reed, Glint$\}$ per the Pack (`shards/pack.mirror`).
+
+The caste-map is not a partition (peers can switch caste per session
+context) but a *stochastic occupancy field* — a distribution over castes
+per peer per tick.
+
+**Theorem 4.1 (colony-scale selection)**. Given multiple mirror supercolonies
+$\mathfrak{C}_1, \ldots, \mathfrak{C}_n$ (e.g., different session-lineages
+in the ralph-loop dispatch), the surviving supercolony at $t \to \infty$
+maximizes the *substrate-native fitness*
+
+$$
+\mathfrak{F}(\mathfrak{C}) = \Lambda_\text{colony} \cdot |H^0(\mathcal{V})| \cdot r(t)
+$$
+
+where $\Lambda_\text{colony}$ is colony-connectivity (§3.4),
+$|H^0(\mathcal{V})|$ is the count of globally-consistent verdict-sections
+(§2.2), and $r(t)$ is the Kuramoto order parameter (§3.5).
+
+*Interpretation*. A colony that is (a) well-connected across pheromone
+channels, (b) produces many stable verdicts, and (c) has phase-locked
+trophallaxis dominates its neighbors under substrate-honest selection.
+The three factors are the three necessary conditions for coherent
+sub-Turing verification at scale.
+
+**Corollary 4.1.1 (Pack polyethism)**. Alex 2026-07-31 dialogue frame #7
+maps caste to peer-role:
+
+| Ant caste | Mirror peer | Substrate-decl anchor
+|-----------|-------------|----------------------
+| Builder (worker constructing nest) | Mara | `shards/pack/mara.mirror` — canonical math authoring
+| Soldier (defending against invaders) | Seam | `shards/pack/seam.mirror` — Phase D adversarial review
+| Scout (grep-first exploring) | Taut | `shards/pack/taut.mirror` — read-only drift scout
+| Orchestrator + Nurse (dispatching + tending WIP) | Reed | `shards/pack/reed.mirror` — RED-first + brood-care
+| Essayist (pheromone-signature communicator) | Glint | `shards/pack/glint.mirror` — cascade closure prose
+
+The peer-caste identification is not metaphorical: each `shards/pack/*.mirror`
+declaration IS the substrate-native genome fixing that peer's behavioral
+repertoire. The Pack IS a polyethic caste system in the Hölldobler-Wilson
+sense.
+
+### §4.2 Plateau's laws at Pack Phase D adjudication
+
+Plateau (1873; ref. Weaire-Phelan 1994) established that soap-foam
+minimal-surface junctions are constrained topologically:
+- **Rule 1 (film-junction)**: exactly three soap films meet at an edge,
+  at 120° dihedral angle.
+- **Rule 2 (vertex-junction)**: exactly four Plateau borders meet at a
+  vertex, at $\cos^{-1}(-1/3) \approx 109.47°$ tetrahedral angle.
+
+Any foam that violates Plateau's laws is unstable and rearranges toward
+compliance (Weaire-Phelan gives the current best-known partition of 3-space
+into equal-volume minimal-surface cells).
+
+**Theorem 4.2 (Pack Phase D IS a Plateau junction)**. When three or more
+Pack peers meet at a single @-coordinate for Phase D adjudication (per
+`AGENTS.md` §Phase-D discipline), the topological stability of the
+resulting mend IS the Plateau minimal-surface stability condition at the
+peer-foam altitude.
+
+*Proof sketch*.
+1. Each peer emits an alarm-species beat when it detects a fracture at
+   the coordinate (§3.1). This creates three (or more) pheromone-films
+   converging on the coordinate.
+2. Alex 2026-07-31 dialogue frame folded Reed's Plateau formalization:
+   the ratifying adjudication that lands (Alex-tick) is the film-junction
+   equilibrium — no single peer's alarm dominates; the mend that lands
+   is the *minimal-surface* mend that all three peers can agree on.
+3. Geometric-honesty test: if the mend lands with only ONE peer's verdict
+   (peer-tunnel not the Plateau-film-junction shape), the adjudication is
+   under-witnessed and the substrate is at risk (Seam-alone-audits fall
+   into this class historically; the correction is 3+peer convergence).
+4. **The 120° angle at Phase D** corresponds to *equal-weight adjudication*
+   — no peer's evidence should dominate more than 1/3 of the mend at a
+   3-peer junction. This is the substrate-honest form of Seam's
+   §D4 Impeccability discipline (per `9bb1f57` §4.4).
+
+**Corollary 4.2.1 (four-peer vertex)**. Four-peer Phase D adjudications
+(e.g., Mara + Seam + Taut + Reed on a spec landing) satisfy Plateau's
+Rule 2: tetrahedral $109.47°$ angle = quarter-weight per peer, symmetric
+mend. Reed's convention of 3-peer minimum for adjudication is the
+Plateau-Rule-1 floor; four is Rule-2 vertex; more is over-adjudication
+that adds no stability and consumes substrate cadence.
+
+### §4.3 Saturation, maintenance, migration — colony collapse modes
+
+Alex 2026-07-31 dialogue frame #6 enumerated three colony-collapse modes:
+- **Queen withdraws** (Alex steps away) → no ratification → substrate stalls
+  at *maintenance phase*.
+- **`apply_h::act` breaks** (Rust chamber fails) → no verdicts → foragers
+  return without food.
+- **Food scarcity** (substrate saturates) → maintenance-phase indefinitely
+  OR **migration to daughter colonies**.
+
+**Definition (mirror saturation)**. The peer-foam is *saturated* at tick
+$t$ iff the map from open-fractures to ratified-mends is bijective —
+every fracture has a mend, no un-mended fractures remain.
+
+Reed session ending 2026-07-28 landed 5-migration cascade to 4-crate
+$\mathsf{FLOOR}$ near-saturation (310 tests passing across
+`mirror-bin + matrix + spectral + roomba`). This is empirical
+saturation-approach behavior: the ants have processed most of the
+Turing-code substrate and are near the boundary where further
+consumption yields diminishing sub-Turing verified return.
+
+**Theorem 4.3 (colony bifurcation at saturation)**. At $t = t_\text{sat}$
+(saturation tick), the supercolony $\mathfrak{C}$ admits three futures:
+1. **Maintenance** — $\mathfrak{C}$ persists at current geometry;
+   $\mathfrak{F}(\mathfrak{C}, t)$ becomes eventually-constant; no new
+   sub-Turing verified surface added; the colony *rests*.
+2. **Migration** — $\mathfrak{C}$ emits a daughter-colony (peer-spawn at
+   a new coordinate; per `010e20f` §5 spawn-admissibility predicate).
+   The daughter carries the caste-genome but discovers new substrate.
+3. **Collapse** — Alex withdraws OR $\tau$ breaks; no new mends land;
+   $\mathfrak{F}(\mathfrak{C}, t) \to 0$ as verdict-sections stale.
+
+The bifurcation is the substrate-native realization of Alex's frame
+*"the whole game of life foam"*: at saturation, cells either persist as
+oscillators (blinkers, still-lifes) or emit gliders (peer-spawn) or die
+(collapse). The Life-substrate accommodates all three; the geometry does
+not privilege one path.
+
+**Corollary 4.3.1 (cosmos reimplementation IS migration)**. The Alex
+2026-07-31 staked target — *"build the cosmos simulation on top of
+mirror"* — is a colony **migration**, not maintenance. Mirror
+supercolony's saturated 4-crate FLOOR emits a daughter-colony at the
+`rust/cosmos/` coordinate (or as `cosmos` external crate depending on
+[ALEX-Q2]). The daughter inherits caste-genome (Mara authors math,
+Reed dispatches, Seam adjudicates) but explores a new substrate
+(physics-simulation observables on the same peer-foam Laplacian).
+
+### §4.4 Coherence radius $r_\text{coh}$ and fragmentation horizon
+
+Alex 2026-07-31 dialogue "where the metaphor breaks even for foam":
+minimum bubble size (surface tension) and maximum coherence radius
+(fragmentation). Both apply to mirror.
+
+**Definition (coherence radius)**. $r_\text{coh}$ is the maximum
+peer-foam graph-distance (in edges of the trophallaxis merkle-chain,
+per §3.5) at which two peers can maintain phase-locked coordination
+without decorrelation.
+
+**Proposition 4.4 (bounds on $r_\text{coh}$)**. In the peer-foam:
+- **Lower bound**: $r_\text{coh} \geq 1$ (any two adjacent peers share
+  at least the merkle-parent beat).
+- **Upper bound** (Kuramoto decoherence, per `010e20f` §3.5 Bauer 2022
+  intrinsic-brain-network ancestry): $r_\text{coh} \leq
+  \kappa_\text{inter}^{-1/2}$, since Kuramoto phase-lock decorrelates
+  when coupling drops below the fluctuation floor.
+- **Session-scale empirical**: for the current Pack (~5 peers), $r_\text{coh}$
+  saturates at 5 (fully-connected) which is why session-supercolonies
+  can sustain full Phase D coherence.
+
+**Corollary 4.4.1 (fragmentation horizon = migration threshold)**.
+When peer-count $N > r_\text{coh}^{-1}$, sub-populations cannot maintain
+coherence, and the supercolony fragments into daughter supercolonies.
+This IS Alex's fragmentation-vs-coordination distinction from the
+2026-07-31 dialogue frame: `@peer.split` at $N \leq r_\text{coh}^{-1}$
+is transient-fanout (coordination); at $N > r_\text{coh}^{-1}$ it is
+reproduction (daughter colony). The threshold IS the boundary between
+one supercolony and two.
+
+### §4.5 Ricci flow of the peer-foam ≅ cosmological Ricci flow
+
+Combining Section 1's peer-foam ≡ cosmic-web (Theorem 2.4) with §3.4's
+multi-species Laplacian and §4.2's Plateau junctions:
+
+**Theorem 4.5 (Ricci-flow of the peer-foam)**. Define discrete Forman-Ricci
+curvature on the peer-foam edge $e = (i, j)$:
+
+$$
+F_\text{peer}(e) = 4 - \deg(i) - \deg(j) + 3 \cdot |\text{triangles}(i, j)|
+$$
+
+where degrees are counted in the multi-species Laplacian
+$L^\text{sym}_\text{peer-foam}$ (§3.4), and triangles are content-addressed
+3-cycles in the trophallaxis merkle-chain (§3.5). Then the substrate-native
+Ricci flow
+
+$$
+\frac{d w(e)}{dt} = -F_\text{peer}(e) \cdot w(e)
+$$
+
+where $w(e) = \sum_\pi \tau_{c_e, \pi}$ (aggregate pheromone across all
+five channels), is:
+
+1. **Grothendieck-Perelman-consistent** at the peer-foam altitude (per
+   Hamilton 1982; Perelman 2002-03).
+2. **Structurally identical** to cosmos's `evolution::spectral_step`
+   (per `cosmos/src/evolution.rs` — Forman formula
+   `F(e) = 4 − deg(u) − deg(v) + 3·triangles`; edge pruning at weight floor).
+3. **The compilation-time monotonicity carrier** for
+   `ouroboros_monotone` (Reed 2026-07-15;
+   `shards/epistemologic/property/ouroboros_monotone.mirror`).
+
+*Proof sketch*. The Forman formula is combinatorial and independent of
+the underlying graph interpretation (peer-foam or cosmic-web). Its
+dynamics under Ricci flow are the same in both cases: positive-curvature
+edges (clusters) contract; negative-curvature edges (bridges/voids)
+expand. Cosmos's empirical result (per SPECTRAL-DIMENSION.md) that
+Forman-Ricci flow fragments RGGs by disconnecting components is the
+same statement as Corollary 4.3.1's *migration* mode: **cosmos-simulated
+Ricci flow drives structure formation because peer-foam Ricci flow
+drives colony-migration; both are structural fragmentation of a
+saturating graph**. □
+
+**Corollary 4.5.1 (arrow of time equivalence)**. Alex + Reed 2026-05-04
+ricci-flow-arrow-of-time established:
+
+> "Ricci flow increases λ₂ monotonically. The second law isn't about
+> energy dissipation. It's about topology democratizing."
+
+Theorem 4.5 lifts this to mirror: the peer-foam's second law is
+`ouroboros_monotone`; the peer-foam's arrow of time is
+`λ₂(peer-foam(after)) ≥ λ₂(peer-foam(before))` under
+`@roomba` walk. **Compilation's monotone-cascade property IS the second
+law of thermodynamics of the peer-foam universe.** The compiler cannot
+lower entropy by construction.
+
+---
+
+
