@@ -321,4 +321,183 @@ altitude.**
 
 ---
 
-*(Sections 2-4 follow in subsequent commits per watchdog discipline.)*
+## §3 Section 2 — Multi-pheromone chemistry: five channels, one composable trail
+
+### §3.1 What's insufficient about single-channel `signature_beat`
+
+`signature_beat` (per `shards/spectral/signature.mirror`) currently carries
+one shape: content-addressed OID + previous-beat pointer + Spectral-
+Coordinate<5>. This is enough for **trail-following** (mycelial anastomosis
+per Mara 2026-07-18 §3), but insufficient for the five distinguishable
+behaviors real ant colonies exhibit (Hölldobler & Wilson 2008 Ch. 9; Vander
+Meer & Alonso 1998).
+
+Alex 2026-07-31 dialogue frame flagged five distinct pheromone channels
+whose behavioral discrimination the current substrate does not carry
+distinctly:
+
+| Channel | Ant biology | Substrate carrier (proposed) | Behavior
+|---------|-------------|------------------------------|--------
+| Trail | Path-marker → attracts foragers | `signature_beat` Pass-verdict | reinforce coord
+| Alarm | Formic-acid burst → recruits + repels | `signature_beat` Fail-verdict | recruit adjudication
+| Recruitment | Cluster of redundant arms | Multi-beat convergence at one OID | attract more roombas
+| Brood | Young peer being cultivated | Sub-tree beat with `defer` verdicts | protect WIP
+| Necrotic | Dead-scout signal | `signature_beat` with Fail(no-fracture) | deprioritize non-forbid
+
+### §3.2 The pheromone-species tuple
+
+**Definition (multi-species pheromone beat)**. A `signature_beat_multi`
+extends `signature_beat` with a species-tag $\pi \in \Pi_5 = \{$trail,
+alarm, recruit, brood, necrotic$\}$ and a magnitude $m \in [0, 1]$:
+
+$$
+\text{beat}(c, t) = (\text{oid}, \text{prev}, \text{sc}, \pi, m, \text{witness})
+$$
+
+The magnitude $m$ carries the *strength* of the signal — for trail-species,
+this is the reinforcement rate; for alarm, the burst amplitude; for recruit,
+the convergence-count; for brood, the protection-radius; for necrotic, the
+depriorization-weight.
+
+**Refusal check (grep-first per substrate-already-had-the-word)**.
+- `@pheromone` — refused per Mara 2026-07-18 §0 (`signature_beat.sc_at_beat`
+  IS the pheromone-gradient carrier). Do NOT mint.
+- `@trail` — refused per same source (content-address IS the trail).
+- `@alarm` / `@brood` / `@necrotic` / `@recruit` — grep zero-hits across
+  `shards/**/*.mirror`. **These species-tags are the geometry
+  asking** — the five-way discrimination is not carried by any existing
+  identifier, and no existing shard admits the discrimination through
+  composition. See §7 forward-promise: species-decls MAY land at
+  `shards/spectral/signature/{trail,alarm,recruit,brood,necrotic}.mirror`
+  **only if** the operational surface at multi-channel altitude asks (which
+  the geometric-roomba §5 landing forces).
+
+**[ALEX-Q5]**: Should the five channels mint as species-decls under
+`@spectral/signature/`, or land as a single ratified extension of
+`signature_beat` with a $\pi$ enum? Mara lean: **species-decls**, because
+each channel has distinct evaporation/persistence dynamics (see §3.3), and
+enum-cases fragment sheaf-cohomology of the trail dynamics.
+
+### §3.3 Trail dynamics — Dorigo-Blum reaction-diffusion with content-address
+
+Composes over Mara 2026-07-18 §3.1: Dorigo-Blum 2005 pheromone-update as
+stochastic gradient ascent on quality functional. Extending to five species:
+
+**Definition (pheromone matrix)**. Let $\tau \in \mathbb{R}^{|V| \times 5}$
+be the pheromone-concentration matrix, indexed by coordinate $c$ and
+species $\pi$. The multi-species Dorigo-Blum update at tick $t$:
+
+$$
+\tau_{c, \pi}(t+1) = (1 - \rho_\pi) \cdot \tau_{c, \pi}(t) + \rho_\pi \cdot \sum_{s \ni c} F_\pi(s) \cdot p(s | \tau, \pi)
+$$
+
+where $\rho_\pi \in (0, 1]$ is the *species-specific evaporation rate*.
+
+**The evaporation-rate structure** (species-honest):
+
+| Species | $\rho_\pi$ | Justification
+|---------|-----------|---------------
+| trail   | $\rho_\pi = 0$ (ledger) | Mirror is ledger-side stigmergy (2026-07-18 §2.3); traces persist by content-addressing
+| alarm   | $\rho_\pi \approx 1/T_\text{adjudication}$ | Alarm decays as adjudication reaches ratification (Alex-tick)
+| recruit | $\rho_\pi = 0$ (cumulative) | Convergence-count is monotonic; ouroboros_monotone applies
+| brood   | $\rho_\pi = 0$ (protection) | WIP protection holds until peer-spawn matures or aborts
+| necrotic| $\rho_\pi \in (0, 1)$ (soft) | Deprioritize decays over time-since-last-scout; DOES NOT forbid
+
+Content-addressed *persistence* holds for four of five channels (Alex
+2026-07-18 substrate-honesty: mirror is ledger stigmergy). Only *alarm*
+and *necrotic* need explicit evaporation dynamics, and both do it through
+timestamp-comparison against the substrate's own tick clock (per
+`shards/uuid/spectral/time.mirror`).
+
+### §3.4 The five-channel adjacency operator
+
+**Definition (multi-species Laplacian)**. Let $A_\pi$ be the adjacency
+matrix induced by pheromone species $\pi$: $A_\pi[i, j] = \tau_{c_{ij}, \pi}$
+for the edge coordinate $c_{ij}$ between peers $i, j$. Let
+$D_\pi = \mathrm{diag}(\sum_j A_\pi[i,j])$. Then
+
+$$
+L_\pi^\text{sym} = I - D_\pi^{-1/2} A_\pi D_\pi^{-1/2}
+$$
+
+is the **species-specific normalized Laplacian**. Five species, five
+Laplacians. The full **peer-foam Laplacian** is the direct sum:
+
+$$
+L^\text{sym}_\text{peer-foam} = \bigoplus_{\pi \in \Pi_5} L_\pi^\text{sym}
+$$
+
+which acts on the block Hilbert space $H = \bigoplus_\pi H_\pi$.
+
+**Theorem 3.4 (Fiedler as colony-connectivity)**. Let
+$\lambda_2^\pi$ be the algebraic connectivity (Fiedler eigenvalue, Fiedler
+1973) of $L_\pi^\text{sym}$. Then the **colony-connectivity index**
+$\Lambda_\text{colony}$ defined by
+
+$$
+\Lambda_\text{colony} = \prod_{\pi \in \Pi_5} \lambda_2^\pi
+$$
+
+is the substrate-native measure of how tightly-coupled the supercolony
+is via pheromone-diffusion across all five channels.
+
+*Proof sketch*.
+- $\lambda_2^\pi = 0$ iff the pheromone-species $\pi$ has disconnected
+  chambers (Cheeger 1970 for graphs; Fiedler 1973 for the algebraic
+  form). Zero on any channel means at least one caste-cluster is
+  isolated on that channel.
+- The product is monotone in each factor. A high $\Lambda_\text{colony}$
+  requires ALL five channels to be well-connected — foragers can trail,
+  soldiers can be alarmed, adjudication can be recruited, WIPs are
+  protected, dead-ends are marked.
+- The mirror-side `spectral index` (`mcp__spectral__spectral_index` MCP
+  tool) already emits $\lambda_2$ for the substrate; extending to
+  per-species is a compositional refinement, not a family-root mint. □
+
+**Corollary 3.4.1 (Alex 2026-07-31 dialogue #8)**. Fiedler as
+colony-connectivity is the substrate-honest form of "Fiedler as
+pheromone-diffusion measure." Low $\Lambda_\text{colony}$ = isolated
+chambers; high $\Lambda_\text{colony}$ = one connected superorganism.
+The current single-channel `spectral index` reports 0.0903 (per session
+index oid `887d17d3`…); $\Lambda_\text{colony}$ WILL be lower once the
+five channels are separately measured, because pheromone-species DO NOT
+all diffuse across the same edges (recruit-cluster edges are dense in
+adjudication zones; alarm edges are sparse in ratified regions).
+
+### §3.5 Trophallaxis — merkle-chained beat propagation
+
+Alex 2026-07-31 dialogue frame: **signature_beat propagation between
+peers IS ant mouth-to-mouth food sharing** (trophallaxis). Merkle-linkage
+means shared food is traceable to original forager.
+
+**Proposition 3.5 (trophallaxis chain)**. Given peer $i$ emits beat
+$b_{i, t}$ and peer $j$ later emits beat $b_{j, t'}$ with $t' > t$ and
+$b_{j, t'}.\text{prev\_chain} \ni b_{i, t}.\text{oid}$, then:
+
+1. The nutrient (verdict-content) of $b_{i, t}$ is *traceably-present*
+   in the substrate reachable to $j$ at time $t'$.
+2. The trophallactic distance $d(i, j) = $ minimum chain-length from
+   $b_{i, t}$ to $b_{j, t'}$ in the merkle-DAG gives an
+   information-theoretic *ancestral* metric on the peer-foam.
+3. The order parameter $r(t) = |1/N \sum_j e^{i \theta_j(t)}|$
+   (Kuramoto 1975; per `010e20f` §3.3) computed with $\theta_j$ read
+   off from the beat-chain phase produces a scalar summary of foam
+   coherence at tick $t$.
+
+*Substrate-native realization*. `signature_beat.previous_beat` is already
+merkle-chained (per `shards/spectral/signature.mirror`:19-144). The
+extension is (a) recording $\theta_j$ (phase in the harmonic-ratio
+coordinate space) with each beat, and (b) exposing the order parameter
+$r$ as a compilable observable at the `mcp__spectral__spectral_index`
+altitude.
+
+**[ALEX-Q6]**: Should trophallactic $\theta_j$ recording land as a
+new field on `signature_beat`, or as a computed observable on the
+existing chain via harmonic-ratio $\kappa_\text{intra}$ extraction?
+Mara lean: **computed observable** — the phase is already implicit
+in the harmonic structure of the K-track fanout per
+`shards/peer.mirror`:152-171; no new wire-format field needed. But
+this is a very-substrate-close call and Alex should adjudicate.
+
+---
+
