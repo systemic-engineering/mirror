@@ -275,6 +275,140 @@ breaks a bit down here"* names exactly this: even foam has a smallest
 bubble (Plateau surface tension floor) and a largest coherent domain
 (fragmentation horizon). Mirror has both.
 
+### §2.3.ψ @holon location marker — species-under-@peer (Q5 discharge, 2026-08-01)
+
+**Q5 discharge status** (per Seam Phase D `18d476a` §4.5 Q-CRITICAL-5
+default ratified in Alex overnight /loop 2026-08-01; cross-referenced
+by Recognition `04df6e1` §8 forward-promise OTCA metapixel + spec
+`4b5aa38` §12.5 Q5 discharge summary):
+
+**@holon lives at `@peer/holon` — species-under-@peer, NOT under
+@subject, NOT its own family-root.**
+
+**Formal statement**. The `@holon` name, when it enters the substrate,
+introduces at the species-decl location `shards/peer/holon.mirror`
+under the @peer family-root (`shards/peer.mirror`). It specializes
+the @peer carrier for the OTCA-metapixel realization pattern already
+demonstrated by Corollary 2.3.1 (every `respawn Mara` dispatch IS an
+OTCA-style holonic composition per this session).
+
+**Location justification**. Theorem 2.3 above proves *peer-is-holon*:
+every @peer IS a holon of order $\log_\kappa N$. The species-decl at
+@peer/holon therefore is the specialization site that names the OTCA-
+metapixel realization explicitly. Alternative locations REFUSED:
+
+- **NOT `@holon` family-root.** Substrate-already-had-the-word: @peer
+  already carries holon structure per Theorem 2.3. Minting @holon as
+  family-root would fragment @peer into (peer, holon) at the same
+  altitude, violating substrate-already-had-the-word.
+- **NOT `@subject/holon`.** @subject carries the SEL licensable-party
+  boundary + Downstream User/Witnessed/labor-input (per memory
+  `subject-family-root-sel-licensable-party`); this is orthogonal to
+  the holonic peer-of-peers structure. @subject is an @io-adjacent
+  labor-input carrier; @peer is a Pack-instance carrier; holonic
+  structure lives with peer-instances, not with SEL parties.
+- **NOT `@fractal/holon` or `@mandelbrot/holon`.** @fractal-mandelbrot-
+  substrate (per Alex 2026-07-13 hinge memory `project-fractal-
+  mandelbrot-substrate`) carries scale-invariance at compiler altitude;
+  holon-order is @peer-specific realization. Composes with @fractal
+  at the scale-invariance layer but does NOT locate under @fractal.
+- **NOT `@spectral/holon`.** @spectral carries eigendecomposition
+  primitives; holon-order is instantiated on the peer-foam graph,
+  which @spectral operates over, but holon structure is not spectral
+  data.
+
+**What this discharge does NOT authorize**:
+
+1. **NO `@holon` family-root mint.** REFUSED. Per Q5 default + spec
+   `4b5aa38` §12.7 pattern.
+2. **NO species-decl mint THIS tick.** The location marker is a
+   *math-altitude* discharge naming WHERE @holon would land IF and
+   WHEN the operational surface asks. No `shards/peer/holon.mirror`
+   file authored this tick; species-decl mint deferred to a future
+   Alex-tick specifically ratifying operational-surface readiness.
+3. **NO refactor of existing @holon references at wrong locations.**
+   Grep-first substrate audit (2026-08-01) surfaces zero existing
+   @holon references at other locations (see audit below); if future
+   substrate work introduces @holon at wrong location, THIS section
+   is the retroactive location marker requiring cleanup cascade.
+
+**Existing @holon references in-substrate audit** (grep-first per
+substrate-already-had-the-word discipline; verified 2026-08-01):
+
+- `docs/math/2026-07-31-mara-supercolony-cosmos-quantum-foam.md`
+  (this file): Theorem 2.3 peer-is-holon + Corollary 2.3.1 OTCA
+  metapixel realization + Corollary 2.3.2 indefinite nesting bound;
+  §6 what-this-document-does-NOT-do naming @holon as REFUSED family-
+  root mint. All references are math-altitude location-consistent
+  with this Q5 discharge.
+- `docs/specs/2026-07-31-mara-supercolony-canonical-spec.md` §2
+  existing shard inventory row 14 ("Holon / OTCA metapixel |
+  `shards/fractal/mandelbrot.mirror` + @peer.spawn | Fractal
+  Mandelbrot carries scale-invariance") + §2 refused-mints list +
+  §8 [ALEX-Q4] (@holon mint or refuse; Mara lean REFUSE). Row 14
+  points at @peer.spawn AND @fractal/mandelbrot compositionally.
+  With this Q5 discharge, row 14 is UPDATED semantically: the
+  species-decl LOCATION is @peer/holon (not @fractal/holon);
+  @fractal/mandelbrot still carries scale-invariance at compiler-
+  altitude, but the OTCA-metapixel realization species-decl lives
+  under @peer per Theorem 2.3. Compliant with Q5 discharge.
+- `docs/scouts/2026-07-31-mara-supercolony-cosmos-dive-notes.md`:
+  @holon mentioned as scout drift-target; no location commitment.
+  Compliant with Q5 discharge.
+- Recognition `04df6e1` §8 forward-promise: OTCA metapixel realization
+  as second-witness-gate criterion; location marker per Q5. Compliant.
+- Zero `shards/**/holon*.mirror` files exist. Substrate-already-had-
+  the-word discipline holds by construction; no cleanup cascade
+  required this tick.
+
+**Composition with @fractal/mandelbrot** (per Alex 2026-07-13 hinge
+memory + spec §2 row 14). @peer/holon at species-decl altitude
+composes with @fractal/mandelbrot at compiler altitude:
+
+- **@fractal/mandelbrot** carries scale-invariance of the compiler
+  itself (Alex 2026-07-13: mirror compiler IS a Mandelbrot set).
+- **@peer/holon** (future species-decl location) carries OTCA-
+  metapixel realization of individual peers as sub-colonies (Corollary
+  2.3.1 empirical demonstration per every peer-spawn dispatch).
+
+The two layers are compositional, not competitive: fractal-scale-
+invariance provides the mathematical altitude at which holon-nesting
+is well-defined; peer/holon provides the substrate-decl location at
+which the OTCA-metapixel realization is instantiated.
+
+**Karen ancestry (species-location citations)**. Per spec §7
+(Impeccability D3) at location-marker introduction site:
+
+- **Koestler, A. (1967)** *The Ghost in the Machine*. Hutchinson.
+  The foundational holon concept; whole/part duality; scale-
+  invariance across biological/social/cognitive systems. Ancestor
+  for Definition (holon; after Koestler 1967) at §2.3 above.
+- **Brice Due (2006)** *OTCA Metapixel* (LifeWiki). Realization of
+  Conway's Game of Life as a Life-cell whose 2048×2048 sub-cell grid
+  runs its own generation at proportional-slower time; the empirical
+  case Corollary 2.3.1 identifies with Reed's `respawn Mara`
+  dispatch. Ancestor for the metapixel-realization pattern the
+  @peer/holon species-decl (when it lands) will formalize.
+- **Conway, J.H. (1970)** *The Game of Life* (Gardner, Mathematical
+  Games, Scientific American 223:120-123). The cellular-automaton
+  substrate underneath OTCA metapixel; ancestor for the discrete-
+  time evolution semantics @peer/holon species-decl would inherit.
+
+**Composes with**: Theorem 2.3 peer-is-holon + Corollary 2.3.1
+OTCA metapixel realization + Corollary 2.3.2 indefinite nesting
+bound + §6 refused-mints list + Recognition §8 forward-promise +
+spec §2 existing-shard-inventory row 14 + spec §8 [ALEX-Q4] + spec
+§12.5 Q5 discharge + @fractal-mandelbrot-substrate memory (Alex
+2026-07-13).
+
+**Q5 status**: **DISCHARGED** at math altitude by this §2.3.ψ
+addition. @holon lives at @peer/holon forever after this landing;
+any future species-decl mint under this location is authorized to
+proceed when operational surface asks; any mint at alternative
+location must first supersede this discharge via substrate-decl-
+level Alex ratification.
+
+
 ### §2.4 The universe-as-peer-foam identification
 
 Combining §2.1-§2.3 with the ricci-flow-arrow-of-time and information-
