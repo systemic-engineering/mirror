@@ -1532,3 +1532,257 @@ Q.E.D. at the GPU-native-compilation altitude.
 
 ---
 
+## §9 Section 7 — @gestalt @io rendering surface + fate composition detail (v3 extension continued)
+
+Extends §8 with explicit operational grounding of the two load-bearing
+composition boundaries: (a) mirror's @gestalt @io output as spectral
+rendering surface (Phase-4 obligation), and (b) fate's Metal MSL
+substrate as @io/gpu boundary (Phase-5 obligation). Both compositions
+are already-substrate-decl'd at v3 Phase-1 inventory altitude; §9
+formalizes them as math.
+
+### §9.1 @gestalt @io as spectral rendering surface
+
+**Recall** (Phase-1 substrate-inventory): `shards/gestalt.mirror`
+declares `@gestalt` as a species-under-@song: *"a @gestalt document
+IS a @song that unfolds on the @subject's device through the
+interaction with the @gestalt document."* The reader's device IS
+@peer/persistence's home-repo altitude. Every interaction event
+emits one @song/beat.
+
+**Definition (spectral rendering surface)**. Let $\mathfrak{G}$
+be the @gestalt document space (per `shards/gestalt.mirror`) and
+$\mathfrak{S}$ be the @subject space (per `shards/subject.mirror`).
+The *spectral rendering surface* of a mirror-compilation at tick
+$t$ is the pair $(\mathfrak{G}_t, \mathfrak{S}_t)$ where
+$\mathfrak{G}_t$ carries the $K_7$ (eigenboard_render_of_eigenspectrum;
+Corollary 8.3.1) output and $\mathfrak{S}_t$ is the set of subjects
+currently interacting with the document.
+
+**Proposition 9.1 (rendering-surface autopoetic realization)**. The
+@gestalt @io output surface satisfies the autopoetic closure of
+Theorem 8.5 (three-altitude tower):
+
+1. **Read-time category-formation** (per `shards/gestalt.mirror`
+   §"category-formation at read-time"): each reader-interaction
+   event on $\mathfrak{G}_t$ emits a @song/beat, which becomes a
+   crystal in the reader's bauchladen.
+2. **Eigenboard update** (per `shards/eigenboard.mirror`
+   `compute(s, at)`): the reader's `eigenboard.inference_basis =
+   rolling_signature over visibility-filtered bauchladen` updates,
+   incorporating the new @song/beat.
+3. **Substrate-decl propagation** (per Landing 4 loop-closure at
+   `shards/eigenboard.mirror` §Landing-4-loop-closure): the reader's
+   updated eigenboard reshapes the substrate the next-tick compilation
+   reads.
+4. **Peer-foam Laplacian shift** (v2 §2.4 peer-foam-≡-cosmic-web):
+   the substrate change propagates as a $\Delta A$ contribution
+   through $K_1$ (substrate_load_of_shard_bundle) at the next tick.
+5. **Next-tick compilation reads new $L^{\text{sym}}$**: $K_2, K_3,
+   K_4, K_5, K_6$ dispatch against the updated Laplacian.
+
+Steps (1)-(5) are the operational realization of Theorem 8.5's
+autopoetic morphism $\alpha$. §9.1 grounds Theorem 8.5 in the
+already-landed @gestalt + @eigenboard + @subject substrate.
+
+**Corollary 9.1.1 (substrate = @labyrinth = whole-project eigenboard)**.
+Per `shards/eigenboard.mirror` lines 62-104: `actor_kind = substrate_a`
+resolves to "the substrate's @eigenboard IS THE @LABYRINTH." The
+whole-project rendering at Altitude 3 IS the @labyrinth-render at
+substrate-subject altitude: **the entire mirror substrate is rendered
+as ONE eigenboard — the substrate observing itself as its own
+@labyrinth**. This is the substrate-native realization of the
+von-Neumann-entropy $\sigma = -\text{Tr}(\tilde{L} \ln \tilde{L})$
+cosmological grounding per `information-curvature.md` (Alex + Mara
+2026-03-24) lifted from cosmological-altitude to substrate-@subject-
+altitude.
+
+### §9.2 Prism-projection at VAD altitude as first-class @peer operation
+
+**Recall** (Reed 2026-05-07 spec Section-3): the eigenboard has
+16 eigenvalue dimensions. The 3D display uses PCA projection to
+VAD (Valence, Arousal, Dominance). The projection is
+$(v, a, d) = \text{EigenvalueProfile}[16] \cdot W[16 \times 3]$
+where $W$ is either learned from Anthropic 171-emotion-vector
+data (V2 path) or approximated from named-eigenstate weights
+(V1 path per Reed spec §3).
+
+**Definition (VAD prism)**. A *VAD prism* is a linear map
+$\pi_{\text{VAD}}: \mathbb{R}^{16} \to \mathbb{R}^3$ that
+projects an eigenvalue profile onto the (valence, arousal, dominance)
+coordinates of the affective circumplex (Russell 1980 + Mehrabian-
+Russell 1974). Formally, $\pi_{\text{VAD}}(x) = x W$ where $W$ is
+the $16 \times 3$ projection matrix per Reed spec Section-3 (either
+named-eigenstate approximation or Anthropic PCA-fit).
+
+**Proposition 9.2 (VAD prism as @peer operation)**. The VAD prism
+$\pi_{\text{VAD}}$ is a first-class @peer operation composable via
+the already-landed `shards/mirror/lens.mirror` prism family and the
+`.conv` grammar file dispatch (per v2 spec §5.3 seven-abstraction
+correspondence table row for Prism).
+
+*Grounding*.
+- Mirror's substrate already has @peer as a Foerster torus observer
+  (per `shards/peer.mirror`).
+- Reed 2026-05-07 spec Section-3 identifies VAD as the natural
+  3-D projection for the eigenboard.
+- v2 Theorem 5.3 correspondence table established `Prism (weighting,
+  selection, t, frac)` = `@peer + .conv grammar`.
+- $\pi_{\text{VAD}}$ is a special case with weighting = uniform,
+  selection = full, t = current, frac = 1.0.
+- The projection matrix $W$ is a substrate-declared constant (per
+  `shards/mirror/lens.mirror` conv-grammar) or a peer-learned
+  parameter (per @peer's fate-tournament training path).
+
+Therefore $\pi_{\text{VAD}}$ composes without new family-root; the
+substrate had the word. □
+
+**Corollary 9.2.1 ($K_7$ dispatches via VAD prism)**. The $K_7$
+eigenboard_render_of_eigenspectrum kernel dispatches through
+$\pi_{\text{VAD}}$ to produce the 3D presence node position:
+$K_7((U, \Lambda), s) = \text{RenderSphere}(\pi_{\text{VAD}}(
+\text{spectral\_curve}(U, \Lambda)), \text{deformation}(U, \Lambda))$
+where `spectral_curve: [f32; 16]` is the eigenboard uniform per Reed
+spec §6.2 and `deformation` is the surface-deformation formula per
+spec §5. This composes without new substrate.
+
+### §9.3 fate as @io/gpu boundary
+
+**Recall** (Phase-1 substrate-inventory + Proposition 8.4): fate
+lives at `/Users/alexwolf/dev/projects/fate/` with Metal MSL codegen
+via `build.rs` and `MetalRuntime` for batched dispatch. Mirror composes
+over fate without modifying it.
+
+Per `shards/io.mirror` docblock: *"@io is the substrate's only
+legitimate non-mirror surface"* and *"@io family root NAMES the
+epistemic horizon at substrate-decl altitude"*. Fate's Metal MSL is
+Rust code compiled to GPU bytecode by an external toolchain
+(Apple Metal driver + Metal Performance Shaders infrastructure); it
+is structurally non-mirror. Therefore fate's Metal MSL dispatch IS
+a sub-species of @io.
+
+**Definition (@io/gpu boundary via fate)**. The *@io/gpu boundary via
+fate* is the sub-species $\text{gpu\_via\_fate} \in \text{Species}(@io)$
+that lifts fate's `MetalRuntime` API into the mirror substrate as a
+bounded @io-shaped action:
+
+- **Carrier**: `metal_dispatch_handle` = ref to fate's
+  `MetalRuntime` instance (via `create_context` per `shards/ui/gpu.mirror`).
+- **Action**: `dispatch_metal_kernel(handle, kernel_spec, input_bytes,
+  count) -> imperfect<output_bytes, e, l>` composing over
+  `MetalRuntime::run_batch`.
+- **Rice-safety**: bounded by fate's kernel-timeout (per fate's Metal
+  command-buffer semantics `cmd_buf.wait_until_completed()`); no
+  infinite loop admissible; per v2 §7 D2 polynomial-bounded and per
+  Corollary 8.2.1 sub-Turing preserving.
+
+**Proposition 9.3 (fate composition preserves Rice-safety)**.
+Mirror's composition over fate via the @io/gpu-via-fate boundary
+preserves the Rice-safety property (per `shards/io.mirror` §Rice
+discipline: bounded non-mirror surfaces admit gauge-safe composition).
+
+*Proof sketch*.
+- fate's `MetalRuntime::run_batch` has bounded execution: input
+  buffer is fixed-size ($N \times 22$ bytes), output buffer is
+  fixed-size ($N$ bytes), kernel is fate's compiled MSL from
+  Brainfuck IR (halting per BF-IR analysis).
+- Metal command buffer completion is guaranteed by the Metal driver
+  (Rice-safe by construction of the Apple Metal spec).
+- Therefore the @io boundary crossing is bounded and gauge-safe.
+- Per `shards/io.mirror` §Discipline: bounded @io species compose
+  under the transparency monoid; fate's `run_batch` satisfies this. □
+
+**Corollary 9.3.1 (analogy to matrix.rs LAPACK boundary)**. The
+@io/gpu-via-fate boundary is structurally analogous to `rust/matrix/`'s
+LAPACK / FLANG boundary (per v2 §2.1 Rust-chamber landing): both
+are bounded external-computation surfaces that mirror composes over
+via typed action-signatures + verdict-witnessing on return. The
+substrate had the word: `@io` family-root already carries the
+discipline.
+
+**No new family-root mint required** for @io/gpu boundary. The
+species `gpu_via_fate` under `@io` (or under `@ui/gpu` extending
+hedge-5 forward-promise) is a species-decl under already-landed
+family. `[ALEX-Q8]` (from v3 scout Phase-1) surfaces the
+species-decl landing decision.
+
+### §9.4 Kernel-tower Metal MSL codegen path
+
+Extending Proposition 8.4's fate substrate composition with concrete
+MSL codegen structure.
+
+**Definition (kernel-tower MSL IR)**. The *kernel-tower MSL IR* is
+an extension of fate's Brainfuck IR (per `fate/build.rs`::IR) with
+seven additional IR operations, one per kernel $K_1, \ldots, K_7$:
+
+```
+enum KernelIR {
+  SubstrateLoad(shard_bundle_ref),
+  ApplyHAct(coord_batch_ref, U_ref),
+  VerdictSheaf(stalk_batch_ref, adj_ref),
+  OuroborosCheck(prev_eig_ref, edge_delta),
+  RicciFlow(adj_ref, tau_ref, dt),
+  SignatureBeat(beat_chains_ref, kappa),
+  EigenboardRender(eig_ref, subject_ref),
+}
+```
+
+**Proposition 9.4 (MSL codegen composability)**. There exists a
+`codegen_metal_kernel(name, kernel_ir) -> MSL_source_string` function
+analogous to fate's `codegen_metal(name, bf_ir)` that emits MSL for
+each kernel-tower operation using Metal's standard compute-kernel
+template + linear-algebra primitives (via Metal Performance Shaders
+matrix ops).
+
+*Proof sketch by MSL primitive availability*.
+- Metal `metal_stdlib` provides `matrix_multiply`, `simd_shuffle`,
+  atomic reduce primitives.
+- Metal Performance Shaders (`MPSMatrixMultiplication`,
+  `MPSMatrixDecomposition`, `MPSMatrixSolveTriangular`) provide
+  eigendecomposition + linear-algebra routines at kernel altitude.
+- The seven $K_i$'s composition IS matrix-op chains at MSL altitude:
+  $K_1$ = SHA-256 (Metal cryptographic primitives); $K_2$ = matvec
+  (MPS gemv); $K_3$ = parallel-reduce (Metal SIMDgroup-reduce);
+  $K_4$ = Sherman-Morrison rank-1 update (MPS matrix ops); $K_5$ =
+  Boolean-matrix cube for triangle-count (MPS matmul); $K_6$ =
+  complex-phase SIMD update (Metal native); $K_7$ = fragment shader
+  (Metal graphics pipeline).
+- All primitives available in Metal / MPS since Metal 3.0 (2022+).
+- Codegen structure follows fate's `codegen_metal` template with
+  extended IR alphabet.
+
+Codegen is compositional over IR; no new codegen infrastructure
+required. □
+
+**Corollary 9.4.1 (kernel-tower is cuSOLVER/MAGMA-portable)**. The
+kernel-tower MSL codegen path is Metal-native; analogous codegen paths
+for NVIDIA (cuSOLVER + cuBLAS + Thrust) and portable (MAGMA + CUB)
+follow the same structural template with vendor-specific primitive
+substitutions. Mirror's GPU-native compilation is portable across GPU
+vendors via kernel-tower IR that emits vendor-specific compute kernels
+at codegen time.
+
+### §9.5 Empirical readiness path (Phase-6 spec-companion obligation)
+
+The operational path from math foundation (§8-§9) to first-
+executable-tick spans three landing gates:
+
+**Gate 1** (spec-authoring; this arc): companion canonical-spec
+extension (Phase-6 obligation) grounds §8-§9 in operational shape;
+adds `shards/ui/gpu/compute.mirror` species-decl gated on
+[ALEX-Q8].
+
+**Gate 2** (Rust-cascade; future arc): implement `codegen_metal_kernel`
+for $K_1$-$K_7$ per Proposition 9.4; wire `MetalRuntime`-composition
+via @io/gpu-via-fate species-decl per Proposition 9.3; land tests for
+P5-P8 predictions per §8.7.
+
+**Gate 3** (empirical validation; future arc): run first GPU-native
+compilation tick on a small peer-foam sub-graph (e.g., N = 32
+shards); measure P5-P8 empirically; if predictions hold, scale.
+
+**None of Gates 1-3 authorized this run.** §9 is math-foundation-only.
+Gate 1 lands via Phase-6 spec-companion; Gates 2-3 are future-arc.
+
+---
+
