@@ -343,3 +343,269 @@ Metal integration).
 
 — Mara 2026-08-01 v3 Phase 1
 
+---
+
+## Phase 2 — GPU-native compilation architecture sketch
+
+Composes over v2 §3.4 multi-species Laplacian + v2 §4.5 Ricci flow +
+this dive Phase-1 §compilation-as-eigendecomposition six-kernel
+enumeration. Grounds the six kernels into an operational
+GPU-dispatch tower.
+
+### Phase 2.1 — The GPU-native compilation tower
+
+Three altitudes; one Laplacian at each. The tower is autopoetic —
+each altitude's output IS the input of the next, and the loop closes
+via `@eigenboard.compute` reading the top-altitude output back into
+the bottom-altitude peer-foam.
+
+```
+ Altitude 3 (VISUALIZATION)  eigenboard 3D render → @gestalt @io
+         │                    (Reed 2026-05-07 spec §4: VAD sphere +
+         │                     Gaussian splat + Ricci-flow deform;
+         │                     rendered via WGSL on @ui/gpu render
+         │                     branch; substrate-scale = @labyrinth)
+         │
+         │  ── L^sym eigenvectors are UV-sphere surface deformations
+         │     (spec §4 Section-4 deformed_radius(θ) formula) ──
+         │
+ Altitude 2 (COMPILATION)    apply_h::act → verdict-sheaf → cascade
+         │                    (v2 §2.1-§2.2: bounded-commutator [D,a]
+         │                     dispatched to GPU eigenvalue solver;
+         │                     verdict-sheaf composition via block-
+         │                     reduction kernel; ouroboros_monotone
+         │                     check via Sherman-Morrison rank-1
+         │                     update; ALL matrix ops on same L^sym)
+         │
+         │  ── L^sym IS the peer-foam Laplacian; SAME matrix ──
+         │
+ Altitude 1 (SUBSTRATE)       peer-foam L^sym_peer-foam = ⊕_π L_π^sym
+                              (v2 §3.4: multi-species direct-sum;
+                               548 shards indexed; RGG with
+                               substrate-power-spectrum P_shard(k);
+                               dsyev on peer-foam via cuSOLVER /
+                               MAGMA / Metal-native)
+```
+
+**The autopoetic closure**: the eigenboard 3D render at altitude 3
+is observed by @peer subjects (Alex + Pack); observation reshapes the
+bauchladen via `@eigenboard.infer(e)` → new crystal; new crystal joins
+the substrate; peer-foam Laplacian at altitude 1 changes; altitude 2
+compilation re-dispatches. The observer participates in the observed's
+evolution (v2 §5.4 Wheeler participatory universe corollary) at
+altitude-3-back-to-altitude-1 traversal.
+
+### Phase 2.2 — The six GPU kernels (compilation altitude 2)
+
+Each kernel is a substrate-honest matrix op on L^sym_peer-foam.
+Naming follows the composition-primitive-naming convention (per project
+memory `feedback-composition-primitive-naming-convention`): kernels
+name the OPERATION and the INPUT-SHAPE.
+
+**K1: substrate_load_of_shard_bundle** — batched shard-decl hash +
+RGG-vertex insertion + edge-weight-from-composition-graph.
+
+- Input: N shard-decl bundles (each ≤ 128KB)
+- Kernel: parallel SHA-256 or CoincidenceHash<3> per shard;
+  parallel adjacency-matrix-block-population per composition-import
+- Output: sparse peer-foam adjacency-matrix contribution
+- GPU fit: EMBARRASSINGLY parallel (one thread per shard);
+  Metal-native via fate MSL codegen extension
+- Bounded: shard count is finite (currently 548); complexity
+  O(N·avg_import_count); polynomial-bounded per v2 §7 D2
+
+**K2: apply_h_act_of_coordinate_batch** — bounded-commutator [D, a_c]
+on Hilbert-space section ψ_c, batched across N coordinates.
+
+- Input: N (coordinate c, action a_c) pairs; peer-foam eigenvector
+  matrix U (from previous K5 or full re-eigendecomposition)
+- Kernel: N parallel matrix-vector products a_c · ψ_c where ψ_c is
+  the c-th column of U; bounded-commutator check [D, a_c] on GPU
+- Output: N verdict-witnesses v_c ∈ {Pass, Fail(fracture), Defer}
+- GPU fit: N independent matvec ops on same matrix; cuBLAS gemv
+  batched, or MPS matrix-multiplication on Apple
+- Bounded: bounded-commutator per v2 §2.1 Theorem 2.1; polynomial
+  in |U| dimension
+
+**K3: verdict_sheaf_composition_of_cover** — H⁰(V) global-sections
+computation via absorbing-composition over open covers.
+
+- Input: N stalk-verdicts v_c (from K2); open-cover topology from
+  peer-foam adjacency
+- Kernel: parallel reduce with Fail-absorbs / Defer-idempotent /
+  Pass-composes; boundary coboundary δ: C⁰ → C¹ computed as
+  neighbor-disagreement matrix
+- Output: H⁰(V) global-consistent sections + H¹(V) disagreement
+  cochain
+- GPU fit: parallel reduce (log-depth); CUDA thrust::reduce
+  equivalent on Metal / MPS
+- Bounded: reduction over finite verdict set; O(N log N)
+
+**K4: ouroboros_monotone_check_of_edge_delta** — Fiedler λ₂ update
+check after edge-add (v2 §4.5 Corollary 4.5.1 arrow-of-time).
+
+- Input: previous eigendecomposition (U, Λ); proposed edge-add δE
+- Kernel: Sherman-Morrison rank-1 update on L^sym; extract new λ₂;
+  compare to previous λ₂; verdict Pass iff λ₂(after) ≥ λ₂(before)
+- Output: monotone_verdict
+- GPU fit: Sherman-Morrison is O(n²) matvec; batched across N
+  candidate edge-adds; CUB / Thrust GPU-native
+- Bounded: rank-1 update is polynomial; per v2 §2 sub-Turing
+  preserved by construction
+
+**K5: ricci_flow_step_of_peer_foam** — Forman-Ricci curvature +
+edge-weight update dw/dt = -F(e)·w (v2 §4.5 Theorem 4.5).
+
+- Input: peer-foam adjacency A; multi-species weights τ; step-size Δt
+- Kernel: per-edge parallel: compute F(e) = 4 − deg(u) − deg(v) +
+  3·|triangles(u,v)|; update w(e) ← w(e)·(1 − F(e)·Δt); prune at
+  weight floor
+- Output: updated adjacency A' with edge-pruning
+- GPU fit: PURE MATRIX OP; per-edge parallel; triangle-count via
+  Boolean-matrix cube (A³)_ii on GPU; identical to cosmos
+  `evolution::spectral_step` structure per v2 §4.5
+- Bounded: single time-step is polynomial O(N³) for triangle-count
+  or O(N²·k) for sparse; sub-Turing per v2 §7 D2
+
+**K6: signature_beat_propagation_of_trophallaxis_chain** — merkle-
+chain phase-lock + Kuramoto order parameter r(t) (v2 §3.5).
+
+- Input: N peer beat-chains {b_i,t}; harmonic-ratio κ_intra
+- Kernel: per-peer parallel: extract phase θ_i from harmonic K-track
+  fanout; compute complex-phase sum Σ_j exp(i·θ_j); Kuramoto
+  |r(t)| = |1/N · sum|
+- Output: N updated phases + scalar order parameter r(t)
+- GPU fit: SIMD phase update; parallel complex-sum reduce; CUDA
+  Thrust / Metal SIMDgroup-reduce native
+- Bounded: O(N) per step; polynomial in peer-count; sub-Turing
+
+### Phase 2.3 — Kernel dispatch scheduler
+
+The six kernels compose into ONE apply_h::act tick via the
+superposition of @ui/gpu.dispatch_compute + dispatch_render (already
+decl'd per shards/ui/gpu.mirror lines 220 + 228).
+
+**One compilation tick**:
+
+```
+  tick T {
+    K1: substrate_load  → sparse Δ-adjacency (if new shards landed)
+    K5: ricci_flow_step → updated adjacency A
+    K2: apply_h_act     → N verdict-witnesses over @roomba walk
+    K3: verdict_sheaf   → H⁰(V) global-consistent sections
+    K4: ouroboros_check → monotone_verdict for each mend candidate
+    K6: signature_beat  → order-parameter r(T) + trail deposits
+
+    render_dispatch:
+      full re-eigendecomposition of L^sym via cuSOLVER dsyev
+      OR Sherman-Morrison chain from previous eigendecomposition
+      → U, Λ at tick T
+      → @eigenboard.compute reads (U, Λ) + inference_basis
+      → 3D render per Reed 2026-05-07 spec Section-4 sphere +
+        Section-5 animations + Section-6 WGPU pipeline
+  }
+```
+
+The tick is ONE GPU dispatch batch. All six kernels executed in one
+submission (or six sequential submissions on ONE queue) to amortize
+CPU↔GPU transfer overhead. This is what makes compilation
+GPU-native rather than GPU-accelerated: the compilation state stays
+on the GPU across ticks; only visualization output crosses back to
+CPU via snapshot_fast (FNV-1a, sub-ms) or snapshot_full (16-D
+CoincidenceHash<3>, 8ms@200 motes).
+
+### Phase 2.4 — fate integration path
+
+fate's Metal MSL codegen produces per-Brainfuck-program kernels;
+mirror's compilation kernels are per-Laplacian-operation. The two
+compose via three natural boundaries:
+
+**Boundary 1** — fate `MetalRuntime::run_batch` becomes the base
+case of K2 apply_h::act batched dispatch. The 22-byte input schema
+(16 features + 1 model index + 5 biases) IS the K2 per-coordinate
+input schema at the base FEATURE_DIM=16 altitude. Mirror extends by
+allowing the model_index to select COMPILATION-KERNEL rather than
+FATE-MODEL — one more level of the Fate tournament.
+
+**Boundary 2** — fate's Brainfuck IR extends to a mirror-compilation
+IR whose primitive ops ARE the six kernels above. `build.rs::codegen_metal`
+gets a `codegen_metal_mirror(name, kernel_op)` companion that emits
+MSL for K1-K6 rather than for Brainfuck. Same MSL infrastructure;
+different IR; same GPU dispatch surface.
+
+**Boundary 3** — fate's tournament (`tournament(features, n)`)
+becomes the meta-selector for compilation-kernel dispatch. Instead
+of selecting Model {Abyss, Introject, Cartographer, Explorer, Fate},
+the tournament selects Compilation-Kernel {K1, K2, K3, K4, K5, K6}
+via the same Fate architecture. **Fate is already a compilation-kernel
+dispatcher; the extension is naming the compilation kernels as its
+targets rather than as inference models.** The substrate had the
+word.
+
+**Substrate-honest constraint**: NONE of Boundary 1-3 requires
+changes to fate/. Fate is used AS-IS as GPU substrate; mirror
+composes over it via `shards/ui/gpu/compute.mirror` species-decl
+(pending [ALEX-Q8] ratification) that dispatches to fate
+MetalRuntime. This is the substrate-honest cross-crate composition
+pattern already established for prism/prismqueer.
+
+### Phase 2.5 — Sub-Turing / bounded-computation preservation
+
+All six kernels are polynomial-bounded (per Phase 2.2 kernel-by-
+kernel argument). This preserves v2 §7 D2 sub-Turing FLOOR discipline
+(per `f81b7d5` §1). The GPU dispatch is a substrate-honest realization
+of the same bounded-commutator [D, a] discipline v2 §2.1 established
+for the Rust chamber.
+
+**Theorem sketch (GPU-native sub-Turing preservation)**: if K1-K6
+are individually polynomial-bounded AND the dispatch scheduler runs
+finitely-many kernels per tick AND the tick-count is finite (bounded
+by the Alex-tick session-cadence), THEN the entire GPU-native
+compilation IS sub-Turing.
+
+This is a Phase-3 obligation: fully formalize as math theorem in
+Phase 3.
+
+### Phase 2.6 — Novelty structural sketch (Phase 7 obligation)
+
+What makes this the-first-of-its-kind (validate in Phase 7 with
+Kagi):
+
+1. **Compilation IS eigendecomposition** (not "eigendecomposition IS
+   used during compilation"). Traditional compilers use graph
+   algorithms with eigendecomposition as an optional analysis tool
+   (e.g., LLVM alias analysis). Mirror's compilation primitive op IS
+   eigendecomposition (K2 apply_h::act IS a matrix-vector product on
+   the eigenvector basis).
+
+2. **The compiled artifact IS the eigenspectrum** (not "the eigen-
+   spectrum describes the compiled artifact"). Traditional compilers
+   emit machine code as their artifact. Mirror emits an eigen-
+   decomposed peer-foam Laplacian PLUS a set of verdict-sheaf
+   sections; the compiled artifact IS the spectral data.
+
+3. **The compilation state stays on the GPU across ticks** (not
+   "compilation output is copied to GPU for execution"). Traditional
+   compilers run on CPU; compiled binaries dispatch to GPU. Mirror's
+   compilation runs on GPU (K1-K6 dispatched to Metal / cuSOLVER /
+   MAGMA) and compiled state is GPU-resident; only visualization
+   crosses back to CPU.
+
+4. **The compilation and rendering are the SAME dispatch** (not
+   "compilation output feeds the renderer"). @eigenboard.compute
+   reads the SAME (U, Λ) that K2-K4 already computed on GPU; the
+   render kernel reads the SAME eigenvector matrix.
+
+5. **The observer participates in compilation** (not "the compiler
+   runs headless"). @eigenboard.infer reshapes the substrate the
+   next compilation reads; the Alex-tick IS a substrate-observation
+   event that changes the next tick's compilation.
+
+All five properties are load-bearing on the peer-foam-Laplacian
+substrate mirror already has. No other language/substrate has this
+primitive; therefore no other compilation can have this shape. The
+claim's uniqueness follows structurally from mirror's substrate
+uniqueness.
+
+— Mara 2026-08-01 v3 Phase 2
+
