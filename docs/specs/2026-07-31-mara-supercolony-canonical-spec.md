@@ -682,15 +682,39 @@ Extending §7 Impeccability D1-D8:
 
 - **[ALEX-Q10]** (from math §8.6): Novelty claim ratification.
   Alex staked "first natively GPU accelerated compiler on the
-  planet." Math Theorem 8.6 grounds structurally. Kagi validation
-  pending Phase 7. Should the claim be:
-  (a) landed publicly at spec-authoring altitude,
-  (b) held privately until Kagi validation completes, OR
-  (c) refined to "first natively-GPU-eigendecomposition compiler"
-  after prior-art analysis? Mara lean: **(c)** — substrate-honest
-  contextualization awaits Kagi; refine to structural-unique
-  claim ("first compilation-IS-eigendecomposition compiler") which
-  is what math Theorem 8.6 actually proves.
+  planet." Math Theorem 8.6 grounds structurally.
+
+  **STATUS: RESOLVED 2026-08-01 overnight /loop** per Alex Q-CRITICAL-2
+  default ratification + Recognition `04df6e1` + Seam Phase D `18d476a`
+  §5.2 SEAM-DEFER-TO-R2 verdict + Taut R-ADJ2 Kagi finding (per
+  Reed-inline `4457ef4`).
+
+  Original options (a)/(b)/(c) all SUPERSEDED by unified **R2
+  two-channel-first form**:
+
+  > **R2 novelty claim (ratified)**: *"Mirror is the first compiler
+  > that operationalizes both Watzlawick content-channel and
+  > relationship-channel indissolubly at compilation altitude, with
+  > the relationship-channel being eigendecomposition of substrate-
+  > native peer-foam Laplacian."*
+
+  Original Mara-lean (c) refined-structural-unique claim ("first
+  compilation-IS-eigendecomposition compiler") is PRESERVED as the
+  **relationship-channel spectral-instance sub-claim** within R2.
+  Content-channel presence (Rust arm literals + sentinel byte-strings
+  + docblock prose) composes indissolubly with relationship-channel
+  sub-claim per Watzlawick 1967 axiom 5 (symmetric-complementary
+  channel-persistence).
+
+  Arc-tick R6-d discharge: this text update + R6-partial `4fe36b8`
+  (math §8.6 + scout §Q10 + Seam audit §5.2) collectively close
+  Q-CRITICAL-2 across the four cascade sites named in Seam §7
+  cascade priorities. Publishable per R2 with Karen ancestry per
+  §12.4 spec obligations. Prior-art context: arXiv:2512.11200 Dec
+  2025 cited as CONTEXTUALIZING ancestor (superseded original
+  wording); Sysmel + Knuth cited as ADJACENT ancestors (per
+  Reed-inline `4457ef4` + math §8.6 v3 Karen addendum + Recognition
+  §4).
 
 ### §11.8 Empirical readiness path v3
 
@@ -764,8 +788,13 @@ Extending §6.3 with v3 candidates. Ordered by geometric readiness:
 - **No fate modifications** — composition-only per math Proposition
   9.3.
 - **No @cosmos family-root** per [ALEX-Q7] SUPERSEDED.
-- **No public novelty-claim landing** without Kagi validation per
-  [ALEX-Q10] Mara-lean (c).
+- **No public novelty-claim landing** without Kagi validation —
+  **DISCHARGED 2026-08-01**: [ALEX-Q10] resolved to R2 unified
+  two-channel-first form per Alex overnight /loop ratification;
+  Kagi validation Taut R-ADJ2 confirmed R2 SURVIVES with Sysmel +
+  Knuth ADJACENT ancestors. Public landing authorized under R2
+  framing per Recognition `04df6e1` + §12.4 spec obligations +
+  Karen ancestry ladder.
 
 ### §11.11 Q.E.D. at v3 canonical-spec altitude
 
