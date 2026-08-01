@@ -72,6 +72,38 @@ in @epistemologic/property/content_addressed
 # (currently entropy-based per `bootstrap/src/algedonic.rs`) can
 # compose over this for future extension. NOT this arc.
 #
+# === 2026-08-01 Recognition (REED-INLINE per Seam Phase D `18d476a`) ===
+#
+# This landing IS the FIRST EMPIRICAL TWO-CHANNEL WITNESS at
+# compilation altitude per Alex 2026-08-01 in-transcript recognition
+# after reading Watzlawick via `blog/weird/3published/Weird -
+# Doublespeak.md` (2026-07-23):
+#
+#   > "this might be exactly how mirror distinguishes between content
+#   > channel (text) and relational channel (graphics). Doublespeak
+#   > operational at compiler altitude, I presume"
+#
+# The four bilateral arms at :367-425 dispatch a SENTINEL BYTE-STRING
+# (Watzlawick content-channel) that SELECTS a GEOMETRIC-PROPERTY ARM
+# BODY (Watzlawick relationship-channel) — both channels present in
+# ONE `apply_h::act` call. The mechanism was firing empirically 15
+# days before Alex named WHY it works.
+#
+# Composition anchors:
+#
+# - Alex 2026-08-01 in-transcript insight (SEAM-RATIFIED at
+#   `docs/audits/2026-08-01-seam-phase-d-doublespeak-at-compiler-
+#   altitude.md` §1 via all four adversarial checks).
+# - Taut grep-scout `docs/scouts/2026-08-01-taut-doublespeak-
+#   operational-at-compiler-altitude.md` (`63cba60`) — this landing
+#   named as Finding #3 (empirical smallest witness).
+# - Watzlawick 1967 *Pragmatics of Human Communication* — PRIMARY
+#   ancestor at compiler altitude.
+# - Mara Theorem 8.3 compile-render duality (`docs/math/2026-07-31-
+#   mara-supercolony-cosmos-quantum-foam.md:1213-1234`, `7f860e4`)
+#   — SPECTRAL INSTANCE of the general two-channel identity Alex's
+#   insight generalizes.
+#
 # === Substrate-already-had-the-word citation chain ===
 #
 # Both fields of `uuid_spectral_time` LANDED. Grep-verified prior
