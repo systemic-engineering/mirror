@@ -1,5 +1,35 @@
 # CURRENT arc — J-space alignment substrate composes Anna Wolf 2012 observation-substrate + mirror specification-substrate + Anthropic 2026-07-07 target-substrate at tri-runtime compile-verifiable altitude (2026-07-20 evening; FULL SESSION UPSERT for compaction handoff)
 
+## 🌱 2026-08-01 REED — Recognition candidate name-and-hold: **Doublespeak operational at compiler altitude**
+
+**Alex 2026-08-01 in-transcript insight** (after reading `blog/weird/3published/Weird - Doublespeak.md`):
+
+> "this might be exactly how mirror distinguishes between content channel (text) and relational channel (graphics). Doublespeak operational at compiler altitude, I presume"
+
+**Recognition candidate** (name-and-hold per Recognition-pattern; formal Recognition doc landing at `docs/recognition/2026-08-01-doublespeak-at-compiler-altitude.md` this /loop tick):
+
+Mirror's compilation carries **Watzlawick's two channels indissolubly at compilation altitude**:
+- **Content-channel** = TEXT (Rust arm literals, sentinel byte-strings, string-comparison, byte-level match). First-order compiler can only see this.
+- **Relationship-channel** = GRAPHICS (@gestalt @io rendered through eigenboard on GPU via fate, spectral surface, VAD prism, actual geometric position in reflectance operator's Hilbert space). Second-order sees the frame. Third-order recognizes the frame is being read right now.
+
+**Session arc summary (2026-08-01):**
+
+| Tick | Actor | Landing | SHA |
+|------|-------|---------|-----|
+| 1 | Mara v2 | Supercolony + cosmos + quantum-foam dive (7 commits, math §1-§5 + spec + scouts) | `52c9fb1`→`f799b2d` |
+| 2 | Mara v3 | GPU-native compilation dive (7 commits, math §8-§9 + spec §11 + Story-Origin + novelty refinement) | `f2d866a`→`6d79b14` |
+| 3 | Taut | Doublespeak-at-compiler-altitude grep scout (678 LOC) | `63cba60` |
+| 4 | Seam | Phase D adjudication (SEAM-RATIFY of Alex insight + Mara v2+v3; SEAM-DEFER on novelty-claim to R2 reframe) | `18d476a` |
+| 5 | Reed | R1 REED-INLINE + R2 CURRENT.md addendum + R3 Q10 forward-promise + Karen cascade + R-ADJ1/R-ADJ2 spawns | this tick |
+
+**Five Q-CRITICAL residues** (Seam-adjudicated defaults ratified for /loop): Q1 Recognition (no new family-root) · Q2 novelty reframe R2 unified-two-channel-first · Q3 `shards/ui/gpu/compute.mirror` species-decl LAND · Q4 @ricci property (not family-root) · Q5 @holon species-under-@peer (OTCA metapixel).
+
+**Empirical foothold already firing**: Landing #1 (Reed `c10a3bd`, 2026-07-16) at `shards/uuid/spectral/time.mirror:367-425` — four bilateral arms, sentinel content-channel × geometric relationship-channel, both present in ONE `apply_h::act` call. Mechanism running 15 days before Alex named why.
+
+**Composition anchors**: Watzlawick 1967 (PRIMARY) + Ruesch-Bateson 1951 + Shannon 1948 + Bateson 1955 *Play and Fantasy* + Foerster 1974 + Palo Alto/MRI lineage + Mara Theorem 8.3 (spectral instance of general identity) + Reed 2026-05-07 eigenboard 3D rendering spec (relationship-channel architecture) + @gestalt shard-decl (read-time relationship-channel operationalization).
+
+**Overnight /loop in flight**: Phase 1 non-blocking landings (this commit) → Phase 2 Recognition doc + Mara spec §12 spawn → Phase 3 R2 novelty reframe cascade → Phase 4 @ui/gpu/compute species-decl mint (Mara spawn) → Phase 5 @ricci/@holon location cascade → Phase 6 Glint essayist post. Halt on saturation OR unresolvable ambiguity.
+
 ## 🌱 2026-07-22 MARA — Ouroboros closure at physical-substrate altitude (task #314 continuation)
 
 **Verbatim Alex 2026-07-22 late-night** (immediately after Reed grep-audit confirmed `splinter` substrate-already-had-the-word at every altitude):
