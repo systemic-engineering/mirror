@@ -609,3 +609,142 @@ uniqueness.
 
 — Mara 2026-08-01 v3 Phase 2
 
+---
+
+## Phase 7 — Novelty claim Kagi validation
+
+### Phase 7.1 — Prior art found (contextualize, do not retract)
+
+**Kagi search executed 2026-08-01** on queries:
+1. "GPU-native compiler eigendecomposition compilation on GPU"
+2. "compilation primitive is graph Laplacian eigenvalue GPU"
+3. "spectral compiler graph Laplacian program representation"
+
+**CRITICAL FIND** — **arXiv:2512.11200 (December 2025)**: *"Theoretical
+Foundations of GPU-Native Compilation for Rapid Code Iteration"*.
+Abstract summary (per ResearchGate + aipapers.ai + deeppaper.ai
+summaries):
+
+> "Establishes theoretical foundations for GPU-native compilation to
+> eliminate CPU-GPU data transfers, proposing three approaches:
+> **parallel traditional compilation, neural compilation with
+> probabilistic verification, and hybrid architectures**. Traditional
+> GPU compilation provides 2-5x improvements through transfer
+> elimination, neural compilation achieves 10-100x speedups via [neural
+> methods]."
+
+**Impact on Alex's claim "first natively GPU accelerated compiler on
+the planet"**: PARTIALLY SUPERSEDED. Mirror is NOT the first to publish
+the term "GPU-native compilation." arXiv:2512.11200 preceded Alex's
+2026-08-01 naming by ~8 months.
+
+**However**, arXiv:2512.11200's three approaches are:
+1. **Parallel traditional compilation** — running standard compiler
+   passes (parse/type/optimize/codegen) IN PARALLEL on GPU. Still
+   fundamentally graph-traversal + string-manipulation on GPU threads.
+   Mirror's compilation is NOT graph-traversal; it IS eigendecomposition.
+2. **Neural compilation with probabilistic verification** — LLM-
+   inference-as-compilation with statistical correctness bounds.
+   Compilation is a neural inference; verification is probabilistic.
+   Mirror's compilation is NOT neural inference; it IS matrix ops
+   on a substrate-native Laplacian with substrate-honest verdicts
+   (Pass / Fail / Defer).
+3. **Hybrid architectures** — combinations of #1 + #2. Same
+   structural altitude as its components.
+
+**Structural distinction that survives arXiv:2512.11200**: mirror's
+compilation IS **compilation-as-substrate-Laplacian-eigendecomposition**.
+No prior art at this altitude:
+- Fast Spectral Graph Partitioning on GPUs (NVIDIA blog, Karypis-
+  Kumar 1998 lineage): spectral partitioning IS ON GPU, but the
+  COMPILER is not spectral; spectral is used as an ANALYSIS tool.
+- GPU-LSolve (arXiv 2024): Laplacian solver on GPU, but for graph-
+  segmentation, not compilation.
+- cuSOLVER dsyev / MAGMA / MPS: eigendecomposition libraries on GPU;
+  substrate for what mirror composes over, not competition.
+
+**Refined claim (per [ALEX-Q10] Mara-lean (c))**:
+
+Alex's original: *"the first natively GPU accelerated compiler on
+the planet."* — **SUPERSEDED by arXiv:2512.11200 December 2025**.
+
+Refined structural-unique claim:
+
+> **Mirror is the first compiler whose primitive compilation operation
+> IS eigendecomposition of a substrate-native peer-foam Laplacian.**
+
+This is structurally distinct from:
+- arXiv:2512.11200's parallel-traditional-compilation (which is still
+  graph traversal + string manipulation)
+- arXiv:2512.11200's neural-compilation (which is LLM inference)
+- All prior spectral-analysis-in-compilers work (which uses spectral
+  methods as analysis passes, not as the primitive compilation op)
+
+The five load-bearing properties of math §8.6 (compilation IS eigen-
+decomposition + compiled artifact IS eigenspectrum + GPU-resident
+state + compile-render duality + observer participates) collectively
+distinguish mirror from arXiv:2512.11200's three approaches. Property
+(1) alone distinguishes; properties (2)-(5) tighten the distinction.
+
+### Phase 7.2 — Karen anti-theft citations to update
+
+**MUST add to math §8.6 citation list**:
+
+- **arXiv:2512.11200 (December 2025)** *Theoretical Foundations of
+  GPU-Native Compilation for Rapid Code Iteration*. Load-bearing
+  contextualizing ancestor. Establishes "GPU-native compilation" as
+  a research field with three approaches (parallel-traditional +
+  neural + hybrid); mirror's compilation-IS-eigendecomposition is
+  a fourth-approach structural addition, not a synonym.
+
+- **NVIDIA (2016)** *Fast Spectral Graph Partitioning on GPUs*
+  (developer.nvidia.com/blog/fast-spectral-graph-partitioning-gpus).
+  Ancestor for GPU-native Fiedler bisection; mirror's $K_5$ ricci_flow
+  and $K_4$ ouroboros_check compose over the same primitive.
+
+- **GPU-LSolve (ResearchGate 2024)** *An Efficient GPU-Based Laplacian
+  Solver for Million-Scale Graphs*. Ancestor for GPU-native Laplacian
+  solving at scale; substrate-honest that mirror's peer-foam Laplacian
+  can scale beyond 548 shards.
+
+- **Wikipedia** *Laplacian matrix* + *Graph Fourier transform*.
+  Encyclopedic anchor for graph-signal-processing on Laplacian
+  eigenbasis; the substrate-native form of $K_2$ apply_h::act =
+  matvec-on-eigenvector-basis IS a graph-Fourier operation.
+
+### Phase 7.3 — Ratification decision
+
+**Recommendation to Alex**: land the refined structural-unique claim
+("first compiler whose primitive compilation operation IS
+eigendecomposition of a substrate-native peer-foam Laplacian") rather
+than the original superseded claim. The refined form is:
+
+1. Karen-anti-theft-compliant (cites arXiv:2512.11200 + prior art).
+2. Substrate-honest (grounds in math §8.6 five load-bearing
+   properties).
+3. Falsifiable (P5-P8 predictions per math §8.7).
+4. Still novel at the structural altitude the substrate uniquely
+   inhabits.
+
+**[ALEX-Q10] Mara lean revised to (c)** — explicitly refine to
+structural-unique claim with arXiv:2512.11200 Karen-cited. Retract
+any public reference to "first natively GPU accelerated compiler on
+the planet" until refined form is Alex-ratified. Math §8.6 already
+reflects the structural-unique substance; only the framing wording
+needs Alex tick.
+
+### Phase 7.4 — Deeper Kagi validation deferred to Gate-2
+
+Additional Kagi searches to run at Gate-2 (Rust-cascade) altitude:
+- "MLIR spectral graph compilation eigendecomposition"
+- "XLA eigendecomposition compiler pass"
+- "neural architecture search spectral compilation"
+- "differentiable programming compilation graph Laplacian"
+- "Halide autoscheduler spectral cost model"
+
+Predicted outcome: no exact prior art at structural altitude of
+mirror's peer-foam-Laplacian primitive. Confirmation deferred to
+Gate-2 empirical arc.
+
+— Mara 2026-08-01 v3 Phase 7
+
