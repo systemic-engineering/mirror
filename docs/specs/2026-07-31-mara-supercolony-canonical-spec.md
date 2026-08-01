@@ -785,3 +785,359 @@ through cosmos [as inspiration]"* — is now grounded:
 
 Alex-tick is the next move. The v3 spec is at rest.
 
+---
+
+## §12 v4 EXTENSION — Doublespeak-at-compiler-altitude two-channel-first Recognition (2026-08-01)
+
+**Companion Recognition doc**: `docs/recognition/2026-08-01-doublespeak-at-compiler-altitude.md`
+(#R-doublespeak-at-compiler-altitude CANDIDATE per Reed `04df6e1`; first-
+witness gate closed 2026-08-01 with Seam Phase D `18d476a` four-check
+ratification + five landed empirical witnesses + Landing #1 `c10a3bd`
+mechanism firing 15 days before Alex named why).
+
+**Alex 2026-08-01 in-transcript insight** (verbatim, post-Doublespeak-
+essay-reading from `/Users/reed/dev/systemic.engineering/blog/weird/3published/Weird - Doublespeak.md`):
+
+> "this might be exactly how mirror distinguishes between content
+> channel (text) and relational channel (graphics). Doublespeak
+> operational at compiler altitude, I presume"
+
+**Reframe status vs §1-§11**: This section is *additive*, not superseding.
+§1-§11 remain in force. §12 names the two-channel structure that §11
+(GPU-native compilation) implements as a spectral instance of a broader
+compilation-altitude identity. §12 also carries five [ALEX-Q] adjudication
+discharges from the Alex overnight /loop ratification cascade (see §12.5).
+
+### §12.1 The R2 two-channel-first recognition
+
+Restating the Recognition's §1 formalization at spec-authoring altitude:
+
+**Mirror's compilation carries Watzlawick's two channels indissolubly at
+compilation altitude.** Every substrate-decl operates on both channels
+simultaneously via one `apply_h::act` call; neither channel can be
+extracted from the other without breaking the compilation semantics.
+
+**Content channel** (Watzlawick 1967 axiom 1: *what the sentence says*)
+at compilation altitude = TEXT: Rust arm literals, sentinel byte-strings,
+docblock prose, serialized wire-format. Byte-comparison, string-matching,
+textual parse. First-order compilers (grep, sed, any parser-that-produces-
+text) can only read this channel.
+
+**Relationship channel** (Watzlawick 1967 axiom 3: *what the sentence
+says about the sentence + the interlocutors*) at compilation altitude =
+GEOMETRY: `@gestalt @io` rendered through eigenboard on GPU via fate;
+spectral surface; VAD prism; actual geometric position in the reflectance
+operator's Hilbert space; verdict-sheaf resolution via `apply_h::act`;
+eigendecomposition of peer-foam Laplacian. Second-order reads the frame;
+third-order recognizes the frame is being read right now.
+
+**Indissolubility** (Watzlawick 1967 axiom 5: *communication is symmetric
+or complementary; both channels persist*): the two channels cannot be
+separated without destroying the compilation. Landing #1 (`c10a3bd`,
+`shards/uuid/spectral/time.mirror:367-425`) dispatches a sentinel byte-
+string (content-channel) that SELECTS a geometric-property arm body
+(relationship-channel) in ONE `apply_h::act` call. Deleting the sentinel
+breaks the dispatch; deleting the geometry breaks the semantics. Both
+are load-bearing.
+
+**R2 unified novelty framing** (Seam Q-CRITICAL-2 default ratified Alex
+overnight /loop): *Mirror is the first compiler that operationalizes both
+Watzlawick content-channel and relationship-channel indissolubly at
+compilation altitude, with the relationship-channel being eigendecomposition
+of substrate-native peer-foam Laplacian.* This is ONE claim, not two.
+Sub-claim (spectral relationship-channel implementation) survives
+arXiv:2512.11200 December 2025 prior-art collision via structural
+distinction from parallel-traditional / neural / hybrid GPU compilation
+(per Recognition §8.1). Adjacent ancestors: Sysmel (arXiv:2309.15416)
+single-channel authorial compilation via MOP; Knuth 1984 Literate
+Programming dual-output authorial altitude — both ADJACENT, not prior.
+
+### §12.2 Five landed empirical witnesses
+
+Each witness grep-verified as extant substrate at Seam Phase D `18d476a`
+timestamp. §11 GPU-native compilation IS the substrate infrastructure
+these witnesses inhabit; §12 names what the infrastructure has been
+doing all along.
+
+**Witness 1 — Watzlawick species-altitude landings**
+
+- `shards/paradox.mirror:145` — Watzlawick-Weakland-Fisch 1974 change-
+  theory ancestor at paradox altitude.
+- `shards/frame.mirror:172` — Watzlawick 1967 metacommunication
+  ancestor at frame altitude.
+- `shards/frame/on.mirror:358` — same-frame Watzlawick attribution
+  under @frame family.
+- `docs/math/2026-07-20-paradox-family-and-classifier-lagrange.md:174-190`
+  — Watzlawick paradox pragmatics landed at math altitude.
+- `docs/math/2026-07-28-spectral-resonance-as-compilation-primitive.md:474`
+  — Watzlawick metacommunication cited in spectral resonance formalization.
+
+The elder is landed. The compiler-altitude promotion (Recognition +
+§12) is genuinely new; the ancestry is not. **Substrate-already-had-
+the-word** discipline holds: no new @watzlawick / @doublespeak /
+@two-channel / @channel family-roots authorized (per Recognition §7 +
+§12.4 spec obligations below).
+
+**Witness 2 — Mara Theorem 8.3 compile-render duality (math altitude)**
+
+`docs/math/2026-07-31-mara-supercolony-cosmos-quantum-foam.md:1213-1234`
+(commit `7f860e4`, Mara v3 Phase 3 landing).
+
+Thm 8.3 formalizes: the eigendecomposition that produces the compilation
+kernel $K$ ALSO produces the render surface $R$. One eigendecomposition,
+two outputs. **Thm 8.3 is the SPECTRAL INSTANCE of the general two-channel
+identity §12.1 names.** The math landing preceded the vocabulary landing;
+the vocabulary makes the math legible at architectural altitude.
+
+**Witness 3 — Reed 2026-05-07 eigenboard 3D rendering spec**
+
+`/Users/reed/dev/systemic.engineering/practice/insights/spectral-db/eigenboard-3d-rendering-spec.md` (~700 LOC).
+
+3D spectral surface with `[f32; 16]` spectral-curve uniform; VAD
+projection; WGPU pipeline; sphere-with-spectral-gradient rendering.
+The operational surface where mirror's relationship-channel becomes
+visible. Composes directly with §11.3 Altitude-3 (VISUALIZATION)
+eigenboard_render kernel $K_7$.
+
+**Witness 4 — Landing #1 empirical smallest witness**
+
+Reed `c10a3bd` (2026-07-16) at `shards/uuid/spectral/time.mirror:367-425`.
+
+Four bilateral arms; sentinel byte-string (content) × geometric-property
+arm body (relationship); both in one `apply_h::act` call. 5/5 tests
+pass; `sbec +4`. The mechanism was firing 15 days before Alex named
+why it works. Recognition doesn't create the mechanism; it names what
+the mechanism has been doing.
+
+**Witness 5 — @gestalt/@eigenboard read-time relationship-channel
+surface**
+
+- `shards/gestalt.mirror:14-42` — @gestalt IS @song unfolding on
+  @subject's device through interaction; Alex 2026-07-15 framing.
+- `shards/eigenboard.mirror:79-90` — @eigenboard IS @labyrinth at
+  substrate altitude (Alex 2026-07-22).
+- `docs/math/2026-07-16-third-order-cybernetics-spectral-formalization.md`
+  — Reed/Mara upsert grounding read-time relationship-channel at math altitude.
+
+@gestalt already carries the relationship-channel at document altitude.
+§12 names what @gestalt has been doing at compilation altitude too.
+
+### §12.3 Recognition doc as composition authority
+
+Authority chain for §12:
+
+1. **Recognition** `docs/recognition/2026-08-01-doublespeak-at-compiler-
+   altitude.md` (Reed `04df6e1`) — CANDIDATE #R-doublespeak-at-compiler-
+   altitude, first-witness gate closed. Recognition-name-and-hold
+   discipline: the recognition holds until superseded, retracted, or
+   empirically refuted at Landing #1 altitude.
+2. **Seam Phase D** `docs/audits/2026-08-01-seam-phase-d-doublespeak-
+   at-compiler-altitude.md` (Seam `18d476a`, 1127 LOC) — four adversarial
+   checks (Check A substrate-truth via 5 witnesses; Check B genuine
+   compiler-altitude promotion; Check C orthogonal to doc-code seam;
+   Check D Landing #1 empirical two-channel presence) all PASSED with
+   SEAM-RATIFY verdicts.
+3. **Taut grep-scout** `docs/scouts/2026-08-01-taut-doublespeak-
+   operational-at-compiler-altitude.md` (Taut `63cba60`, 678 LOC) —
+   grounding grep-first ancestor sweep; three top findings anchoring
+   substrate-already-had-the-word discipline.
+4. **Reed-inline scout** (`4457ef4`) — R-ADJ2 Kagi return verdict
+   (Sysmel + Knuth as ADJACENT ancestors; R2 SURVIVES prior-art
+   collision).
+5. **Reed R6-partial cascade** (`4fe36b8`) — R2 novelty reframe across
+   math §8.6 preamble + Theorem 8.6 restatement + scout §Q10 + Seam
+   audit §5.2, three files touched, Karen additions landed (Watzlawick
+   1967 PRIMARY + Ruesch-Bateson 1951 + Shannon 1948 + Bateson 1955 +
+   Sysmel ADJACENT + Knuth ADJACENT).
+
+**Composition rule for consumers**: cite Recognition as authority (not
+re-derive). Spec §12 is one such consumer. Glint essayist (R-ADJ3
+cascade forward-promise) will be another. All future spec extensions
+reference this section rather than re-establishing the two-channel
+identity.
+
+### §12.4 Spec obligations under R2 (what changes for spec authors)
+
+**Obligation 1 — Every spec section MUST name both channels.** When
+introducing a new substrate mechanism, spec authors identify:
+
+- *Content channel*: the textual/byte-comparable/parseable surface
+  (Rust arm literals, sentinel strings, docblock prose, serialized
+  wire-format).
+- *Relationship channel*: the geometric/spectral/render-time surface
+  (eigendecomposition data, VAD projection, verdict-sheaf topology,
+  render output).
+
+A spec section that names only one channel is incomplete under R2
+discipline. Existing sections §1-§11 are grandfathered; new sections
+from §12 forward MUST discharge this obligation. §11 IS the paradigmatic
+two-channel-first section for the spec: content = kernel-tower operations
+named textually as K1..K7; relationship = eigendecomposition dispatched
+through MetalRuntime producing render surface.
+
+**Obligation 2 — Karen ancestry at introduction sites**. Watzlawick 1967
+*Pragmatics of Human Communication* is the PRIMARY ancestor for any
+two-channel-invoking spec section. Existing landed carriers at
+`shards/paradox.mirror`, `shards/frame.mirror`, `shards/frame/on.mirror`
+suffice as the substrate anchor. Medium-load ancestors for compilation-
+altitude contexts: Ruesch-Bateson 1951, Shannon 1948, Bateson 1955,
+Foerster 1974, Ungar-Smith 1987, Knuth 1984 (per Recognition §4).
+
+**Obligation 3 — Second-witness gate criteria**. Recognition is
+CANDIDATE until second-witness gate closes. Gate closes when:
+
+1. R6 novelty-claim reframe cascade completes (R6-a math §8.6 +
+   R6-b scout §Q10 + R6-c Seam audit §5.2 landed `4fe36b8`; R6-d
+   spec §11 novelty text update PENDING post-Mara-return).
+2. Glint essayist R-ADJ3 landing lands (public-facing Doublespeak-at-
+   compiler-altitude prose closure).
+3. Geometric-roomba Landing #1 empirical firing at compilation altitude
+   (Reed next tick; sentinel-string retirement in ONE bilateral via
+   `apply_h::act` witness comparison per spec §4.2 four-step protocol).
+
+When all three complete, Recognition promotes CANDIDATE → RATIFIED.
+Spec §12 tracks this transition and updates §12.3 authority chain.
+
+**Obligation 4 — No fragmentation into competing candidates**. HARD
+RULE per Alex 2026-07-18 memory `feedback-reed-fragments-alex-
+unifications-into-candidates`: R2 is ONE identity (two-channel
+indissoluble), not two competing formalisms. Spec authors do not
+fragment R2 into (i) "maybe two-channel-independent, maybe not" or
+(ii) "content-channel-first with relationship as decoration." R2 is
+symmetric-complementary indissolubility — both channels persist,
+neither is primary. Reflect BEFORE fragmenting.
+
+### §12.5 Q-CRITICAL discharge status (5 Alex-ratified this tick)
+
+Seam Phase D `18d476a` surfaced 5 Q-CRITICALs. Alex overnight /loop
+ratified defaults for all 5. Discharge status:
+
+**Q1 — Recognition promotion shape** (`docs/audits/...§4.1`): Option
+A (Recognition, no new family-root) DISCHARGED. Recognition
+`04df6e1` landed as the promotion vehicle. No @channel / @doublespeak
+/ @watzlawick / @two-channel family-root mint authorized.
+
+**Q2 — Novelty reframe** (`docs/audits/...§4.2`): R2 unified two-
+channel-first form DISCHARGED. Reed R6-partial `4fe36b8` cascade
+landed the reframe across math §8.6 + scout §Q10 + Seam audit §5.2.
+R6-d spec §11 novelty text update PENDING post-Mara-return (Reed
+cascade follow-up).
+
+**Q3 — GPU compute species-decl** (`docs/audits/...§4.3`): YES LAND
+authorized (Alex-ratified default). Mara this tick Phase B lands
+`shards/ui/gpu/compute.mirror` species-decl per spec §11.9 candidate
+#1 + §11.2 conditional-mint criteria; substrate-already-had-the-word
+grep-first check under @ui/gpu family placement per §11.7 [ALEX-Q9]
+Mara-lean.
+
+**Q4 — @ricci property status** (`docs/audits/...§4.4`): property
+not family-root (Alex-ratified default). Mara this tick Phase C updates
+math §4.5 to explicitly name @ricci as spec-only composition property
+(composition of @roomba + @signature_beat + @kintsugi/mend). NOT a
+mintable family-root. NOT a species-decl candidate. Cross-references
+Recognition §7 what-this-does-NOT-authorize.
+
+**Q5 — @holon location** (`docs/audits/...§4.5`): species-under-@peer
+(Alex-ratified default per OTCA metapixel per Recognition §8 forward-
+promise). Mara this tick Phase D updates math §2.3 to explicitly name
+@holon location as @peer/holon (species-under-@peer, NOT under
+@subject, NOT its own family-root).
+
+**Discharge summary**: 4 of 5 fully discharged this /loop tick (Q1 +
+Q3 + Q4 + Q5); Q2 partially discharged (R6-a+b+c landed; R6-d
+deferred to Reed cascade post-Mara-return).
+
+### §12.6 Composition with spec §11 GPU-native content
+
+**§11 IS the paradigmatic §12 instance.** §11's three-altitude tower
+(SUBSTRATE + COMPILATION + VISUALIZATION per §11.3) maps directly to
+§12's two channels:
+
+| §12 channel | §11 kernel-tower carrier | §11.3 altitude
+|-------------|-------------------------|--------------
+| Content channel (TEXT) | K1 substrate_load (SHA-256 / CoincidenceHash<3>) + K3 verdict_sheaf (kintsugi/verdict.eq) + docblock prose across all kernel-decls | Substrate + Compilation altitudes
+| Relationship channel (GEOMETRY) | K2 apply_h_act (gemv/matmul) + K4 ouroboros_monotone_check (Sherman-Morrison rank-1) + K5 ricci_flow_step (triangle-count via MPS matmul) + K6 signature_beat_propagation (SIMD complex-phase) + K7 eigenboard_render (WGSL fragment shader) | Compilation + Visualization altitudes
+
+**Indissolubility instantiated**: K7 (eigenboard render) dispatch produces
+a render surface whose pixels ARE the eigenvectors of the same
+decomposition K2-K6 use for compilation. One eigendecomposition on GPU,
+two channel outputs. Zero serialization boundary between compilation-state
+and rendered-visualization (§11.8 Gate-3 P6 falsifiable prediction).
+
+**Compile-render duality (Thm 8.3) IS the spectral instance identity**
+§12.1 names. §11 lands the mathematics + operational spec; §12 names
+the general two-channel identity of which §11 is the spectral instance.
+The two sections are **the same object at two altitudes**: §11 at
+spectral implementation altitude; §12 at architectural identity altitude.
+
+**Cascade obligation for §11 novelty text (R6-d, Reed follow-up)**:
+§11's novelty framing at §11.7 [ALEX-Q10] currently reads Mara-lean (c)
+"refine to first natively-GPU-eigendecomposition compiler." Under R2
+reframe, §11.7 [ALEX-Q10] Mara-lean UPDATES to: *first compiler that
+operationalizes both Watzlawick content-channel and relationship-
+channel indissolubly at compilation altitude, with the relationship-
+channel being eigendecomposition of substrate-native peer-foam
+Laplacian.* Reed R6-d cascade will land this text update post-Mara-
+return.
+
+### §12.7 What §12 does NOT authorize
+
+- **No new family-root mint.** @channel / @doublespeak / @watzlawick /
+  @two-channel all REFUSED per Q1 default + Recognition §7. Substrate-
+  already-had-the-word: @gestalt / @spectral / @frame / @paradox /
+  @eigenboard / @io suffice.
+- **No Rust cascade.** §12 is docs+spec+shard-decl extension. Rust
+  landings (geometric-roomba Landing #1, GPU-boundary Rust runtime)
+  fire in subsequent Reed ticks under their own discipline.
+- **No fragmentation of R2.** HARD RULE per §12.4 Obligation 4.
+- **No universal-claim strength ratification** for "every substrate-decl
+  carries both channels indissolubly." R-ADJ1 sharpening adversarial
+  audit stalled; audit remains OPEN as pack follow-up. Seam §1
+  ratification is at compilation-altitude architectural truth;
+  universal-substrate-decl claim needs further audit.
+- **No claim that mirror is the ONLY substrate with two channels.**
+  Other systems implementing metacommunication may realize two-channel
+  structure (per Recognition §7 point 3). Mirror's R2 claim is:
+  first COMPILER to operationalize both channels INDISSOLUBLY at
+  compilation altitude with SPECTRAL relationship-channel.
+
+### §12.8 Forward-promises (post-§12 cascade)
+
+- **R6-d** (Reed direct): §11.7 [ALEX-Q10] Mara-lean text update to R2
+  unified form (per §12.6 cascade obligation).
+- **R-ADJ3** (Glint essayist spawn): public-facing Doublespeak-at-
+  compiler-altitude prose closure. Mara flagged title candidate
+  *"How the Compiler Runs Watzlawick's Second-Order Move at Every
+  Compile Step"* per Recognition §6 point 4.
+- **Geometric roomba Landing #1** (Reed next tick per §6.3 candidate #1):
+  sentinel-string retirement in ONE bilateral via `apply_h::act`
+  witness comparison. Second-witness gate criterion per §12.4
+  Obligation 3 point 3.
+- **Second-witness gate closure** (post-cascade): Recognition promotes
+  CANDIDATE → RATIFIED. §12.3 authority chain updates.
+
+### §12.9 Q.E.D. at v4 canonical-spec altitude
+
+The v4 staked target — Alex 2026-08-01 in-transcript insight *"this
+might be exactly how mirror distinguishes between content channel
+(text) and relational channel (graphics). Doublespeak operational at
+compiler altitude, I presume"* — is now grounded at spec-authoring
+altitude:
+
+- Recognition (Reed `04df6e1`) names and holds the identity.
+- Seam Phase D (`18d476a`) ratifies via four adversarial checks.
+- Taut scout (`63cba60`) grounds via grep-first ancestor sweep.
+- Reed R6-partial cascade (`4fe36b8`) reframes novelty claim across
+  three files.
+- §12 formalizes the identity at spec altitude, discharges 4 of 5
+  Q-CRITICAL defaults ratified in Alex overnight /loop, names spec
+  obligations for future authors, and composes §11 GPU-native content
+  as the spectral instance.
+- Five landed empirical witnesses (§12.2) verify substrate-truth by
+  construction.
+- Cascade forward-promises (§12.8) name what comes next.
+
+R2 unified two-channel-first form is at rest at spec altitude. Alex-
+tick + R6-d + R-ADJ3 + Landing-#1 firing are the remaining moves for
+second-witness gate closure.
+
