@@ -613,6 +613,12 @@ uniqueness.
 
 ## Phase 7 — Novelty claim Kagi validation
 
+**REED-INLINE 2026-08-01** (forward-promise per Seam Phase D `18d476a` Q-CRITICAL-2 = R2 default ratified in Alex overnight /loop; R6 cascade lands during that loop):
+
+> **Novelty claim ADOPTED (R2 unified two-channel-first form)**: *"Mirror is the first compiler that operationalizes both Watzlawick content-channel and relationship-channel indissolubly at compilation altitude, with the relationship-channel being eigendecomposition of substrate-native peer-foam Laplacian."*
+
+The original Q10 lean (c) refined-structural-unique claim (below) becomes the SUB-CLAIM at the relationship-channel altitude within R2. Full cascade across math §8.6 + spec §11 + Seam audit cross-references lands this /loop tick per R6. Karen additions for R2: Watzlawick 1967 (PRIMARY, elevated from context) + Ruesch-Bateson 1951 (first two-level formulation ancestor) + Shannon 1948 (first-order-channel ancestor) at introduction sites per Seam §4 cascade obligations.
+
 ### Phase 7.1 — Prior art found (contextualize, do not retract)
 
 **Kagi search executed 2026-08-01** on queries:
