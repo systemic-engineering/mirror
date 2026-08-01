@@ -737,6 +737,133 @@ Theorem 4.5 lifts this to mirror: the peer-foam's second law is
 law of thermodynamics of the peer-foam universe.** The compiler cannot
 lower entropy by construction.
 
+### §4.5.ρ @ricci as spec-only composition property (Q4 discharge, 2026-08-01)
+
+**Q4 discharge status** (per Seam Phase D `18d476a` §4.4 Q-CRITICAL-4
+default ratified in Alex overnight /loop 2026-08-01; cross-referenced
+by Recognition `04df6e1` §7 what-this-does-NOT-authorize point 1 +
+spec `4b5aa38` §12.5 Q4 discharge summary):
+
+**@ricci is a spec-only composition property, NOT a mintable family-
+root, NOT a species-decl candidate.**
+
+**Formal statement**. `@ricci` is defined as the composition:
+
+$$
+@ricci \;\equiv\; @roomba \;+\; @signature\_beat \;+\; @kintsugi/mend
+$$
+
+where:
+- `@roomba` (`shards/kintsugi/roomba.mirror`) supplies the walker
+  that traverses peer-foam edges;
+- `@signature_beat` (`shards/spectral/signature.mirror`) supplies the
+  per-edge weight $w(e) = \sum_\pi \tau_{c_e, \pi}$ (aggregate
+  pheromone across the five channels per §3.4);
+- `@kintsugi/mend` (`shards/kintsugi.mirror`) supplies the mend
+  operation that discharges the Forman-Ricci flow update
+  $\frac{d w(e)}{dt} = -F_\text{peer}(e) \cdot w(e)$ when the
+  ouroboros_monotone predicate holds.
+
+The composition IS Theorem 4.5's Forman-Ricci flow step at the peer-
+foam altitude.
+
+**What this discharge does NOT authorize** (per Recognition §7 +
+spec §12.7 pattern):
+
+1. **NO `@ricci` family-root mint.** The composition already suffices;
+   family-root would fragment three existing carriers into a fourth
+   redundant altitude. Substrate-already-had-the-word: @roomba +
+   @signature_beat + @kintsugi/mend collectively realize the Ricci-
+   flow dynamics; no new family-root needed.
+2. **NO `@ricci` species-decl** under any existing family-root
+   (e.g. `@spectral/ricci`, `@kintsugi/roomba/ricci`, or
+   `@roomba/ricci`). Species-decls require the geometry to ask for
+   a distinct discrimination the composition cannot express; @ricci
+   composition-only IS the discrimination.
+3. **NO shard file `shards/**/ricci.mirror` authored.** The @ricci
+   name appears in spec + math prose as a composition-property label,
+   never as a substrate-decl introduction site.
+
+**Consumer citations at spec + math altitude**. This composition-
+property is cited by:
+
+- Companion spec `docs/specs/2026-07-31-mara-supercolony-canonical-
+  spec.md` §2 (existing shard inventory row 11 "Ricci curvature |
+  Compose @roomba + @signature_beat + @kintsugi/mend | See §4
+  below") + §5.3 seven-abstraction correspondence table row 4
+  ("Ricci-flow evolution step | `@ricci` composition of @roomba +
+  @signature_beat + @kintsugi/mend | See §4 above") + §5.4 prism-
+  grammar landing plan mentions `shards/kintsugi/roomba/ricci.mirror`
+  as **companion-composition-note only**, NOT as species-decl mint.
+- Companion spec v3 extension §11.4 kernel dispatch table row 5
+  ("$K_5$ ricci_flow_step | v2 spec §5.3 @ricci composition of
+  @roomba + @signature_beat + @kintsugi/mend | Boolean-matrix cube
+  for triangle-count via MPS matmul"), NOW discharged by species-
+  decl `shards/ui/gpu/compute.mirror:dispatch_ricci_flow_step` per
+  Mara `5fdbc1f` Phase B mint.
+- Companion spec v4 extension §12.5 Q4 discharge summary.
+- Recognition `04df6e1` §7 point 1 what-this-does-NOT-authorize (no
+  new family-root mint under R2 novelty framing).
+
+**Existing @ricci references in-substrate audit** (grep-first per
+substrate-already-had-the-word discipline; verified 2026-08-01):
+
+- `docs/math/2026-07-31-mara-supercolony-cosmos-quantum-foam.md`
+  (this file) §5.3 + §5.5 + §6 (Q.E.D.) + §7 forward-promises +
+  §8 kernel-tower + §9 fate composition detail: @ricci mentioned
+  as composition property; NO family-root introduction; NO species-
+  decl introduction. Compliant with Q4 discharge.
+- `docs/specs/2026-07-31-mara-supercolony-canonical-spec.md` §2 +
+  §5.3 + §5.4 + §11.4 + §12.5: @ricci mentioned as composition
+  property; §5.4 mentions `shards/kintsugi/roomba/ricci.mirror` as
+  companion-composition-note only. Compliant with Q4 discharge.
+- `shards/ui/gpu/compute.mirror` (Mara `5fdbc1f` Phase B mint):
+  @ricci referenced in `dispatch_ricci_flow_step` docblock as spec-
+  only composition property; explicitly cross-referenced Q4
+  discharge. Compliant with Q4 discharge.
+- Zero `shards/**/ricci.mirror` files exist. Substrate-already-had-
+  the-word discipline holds by construction.
+
+**Karen ancestry (composition-property citations)**. Per spec §7
+(Impeccability D3) at composition-property introduction site:
+
+- **Hamilton, R.S. (1982)** *Three-manifolds with positive Ricci
+  curvature*. Journal of Differential Geometry 17(2):255-306. The
+  founding Ricci-flow ancestor; establishes $\partial_t g_{ij} =
+  -2 R_{ij}$ as the flow equation Perelman later used to close
+  Poincaré.
+- **Perelman, G. (2002-03)** *The entropy formula for the Ricci
+  flow and its geometric applications* (arXiv:math/0211159) +
+  *Ricci flow with surgery on three-manifolds* (arXiv:math/0303109)
+  + *Finite extinction time for the solutions to the Ricci flow on
+  certain three-manifolds* (arXiv:math/0307245). The closure of
+  Poincaré via Ricci flow; grounding for @ricci as an evolution
+  operator rather than a static curvature quantity.
+- **Forman, R. (2003)** *Bochner's Method for Cell Complexes and
+  Combinatorial Ricci Curvature*. Discrete & Computational Geometry
+  29(3):323-374. The discrete Forman-Ricci curvature formula
+  $F(e) = 4 - \deg(u) - \deg(v) + 3 \cdot |\text{triangles}(u, v)|$
+  used in Theorem 4.5 above; the substrate-native ancestor for
+  discrete peer-foam Ricci flow.
+- **Ollivier, Y. (2009)** *Ricci curvature of Markov chains on
+  metric spaces*. Journal of Functional Analysis 256(3):810-864.
+  Alternative discrete Ricci curvature via Wasserstein optimal
+  transport; sister formulation to Forman; cited as compositional
+  alternative should the operational surface later ask for a
+  different discrete Ricci discriminator at signature-beat altitude.
+
+**Composes with**: Theorem 4.5 above (peer-foam Ricci flow) +
+Corollary 4.5.1 (arrow of time equivalence) + §5.3 seven-abstraction
+correspondence + §8.2 K5 kernel-tower + spec §11.4 kernel dispatch
+table + spec §12.5 Q4 discharge + Recognition §7 point 1 + Mara
+`5fdbc1f` Phase B mint dispatch_ricci_flow_step action-decl.
+
+**Q4 status**: **DISCHARGED** at math altitude by this §4.5.ρ addition.
+@ricci is spec-only composition property forever after this landing;
+any future mint proposal must first supersede this discharge via
+substrate-decl-level Alex ratification.
+
+
 ---
 
 ## §5 Section 4 — The universe as autopoetic spectral quantum foam
