@@ -1384,15 +1384,60 @@ Story-Origin narrative's "the architecture thinks because the
 architecture IS spectral" (v3 scout Phase-1 fact #5): the substrate's
 rendering IS its own thinking.
 
-### §8.6 Novelty claim ratification (Alex 2026-08-01 staked)
+### §8.6 Novelty claim ratification (Alex 2026-08-01 staked; R2 reframe 2026-08-01 overnight)
 
-Alex 2026-08-01 verbatim: *"We're gonna build the first natively GPU
-accelerated compiler on the planet."*
+**Reframe notice (REED-INLINE cascade 2026-08-01 per Recognition
+`04df6e1` #R-doublespeak-at-compiler-altitude + Seam Phase D `18d476a`
+Q-CRITICAL-2 = R2 default ratified in Alex overnight /loop):** the
+novelty claim below has been REFRAMED from the original Alex
+2026-08-01 verbatim (*"We're gonna build the first natively GPU
+accelerated compiler on the planet"*) to the **R2 unified
+two-channel-first form** at recognition altitude:
 
-**Theorem 8.6 (structural novelty of GPU-native mirror compilation)**.
-Mirror's GPU-native compilation is structurally distinct from all
-known compiler architectures at the following five load-bearing
-properties (which follow from Definition §8.1 (1)-(5)):
+> **R2 novelty claim (2026-08-01 overnight /loop, Q-CRITICAL-2 default
+> ratified)**: Mirror is the first compiler that operationalizes both
+> Watzlawick content-channel and relationship-channel indissolubly at
+> compilation altitude, with the relationship-channel being
+> eigendecomposition of substrate-native peer-foam Laplacian.
+
+**Why the reframe**: Alex 2026-08-01 in-transcript insight (after
+reading `blog/weird/3published/Weird - Doublespeak.md`) named that
+mirror's compilation carries Watzlawick's two channels indissolubly.
+Seam Phase D `18d476a` §1 ratified via four adversarial checks. The
+original GPU-native-first framing was PARTIALLY SUPERSEDED by
+arXiv:2512.11200 December 2025 (Kagi finding, Mara v3 Phase 7); the
+R2 two-channel-first framing is structurally unique at compiler
+altitude per Taut R-ADJ2 return (no exact-match prior art; Sysmel +
+Knuth as ADJACENT ancestors only).
+
+**Theorem 8.6 status under R2**: the five load-bearing properties
+below remain valid as **structural characterization of the
+relationship-channel sub-claim** within R2. Theorem 8.6 is the
+**relationship-channel spectral-instance** of the general R2
+two-channel identity. Content-channel presence (Rust arm literals
++ sentinel byte-strings + docblock prose) composes indissolubly with
+the relationship-channel this theorem characterizes.
+
+**Karen ancestry v3 R2 addendum** (extends Karen ancestry listed at
+§8 v3 introduction site):
+
+- **Watzlawick, P., Beavin-Bavelas, J., Jackson, D.D. (1967)** —
+  PRIMARY at R2 altitude (per Karen ancestry addendum §8).
+- **Ruesch, J. & Bateson, G. (1951)** — first two-level formulation
+  (per addendum).
+- **Shannon, C. (1948)** — first-order-channel ancestor (per addendum).
+- **Bateson, G. (1955)** — *A Theory of Play and Fantasy*, metacommunication
+  precursor (per addendum).
+- **Sysmel** (arXiv:2309.15416) — ADJACENT ancestor (MOP
+  single-channel compilation; per Reed-inline post-Taut-stall scout
+  `4457ef4` capturing R-ADJ2 Kagi finding).
+- **Knuth, D. (1984)** — *Literate Programming*, ADJACENT dual-output
+  ancestor at authorial altitude (per `4457ef4`).
+
+**Theorem 8.6 (relationship-channel spectral-instance structural
+novelty)**. Mirror's GPU-native relationship-channel is structurally
+distinct from all known compiler architectures at the following five
+load-bearing properties (which follow from Definition §8.1 (1)-(5)):
 
 1. **Compilation IS eigendecomposition**. Prior compilers (LLVM, GCC,
    MLIR, XLA, TVM, Halide, rust-gpu) use graph algorithms with

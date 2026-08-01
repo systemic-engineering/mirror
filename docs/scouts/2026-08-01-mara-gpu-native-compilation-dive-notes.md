@@ -669,22 +669,49 @@ No prior art at this altitude:
 - cuSOLVER dsyev / MAGMA / MPS: eigendecomposition libraries on GPU;
   substrate for what mirror composes over, not competition.
 
-**Refined claim (per [ALEX-Q10] Mara-lean (c))**:
+**Refined claim (per [ALEX-Q10] Mara-lean (c), 2026-07-31)**:
 
 Alex's original: *"the first natively GPU accelerated compiler on
 the planet."* — **SUPERSEDED by arXiv:2512.11200 December 2025**.
 
-Refined structural-unique claim:
+Mara v3 refined structural-unique claim:
 
 > **Mirror is the first compiler whose primitive compilation operation
 > IS eigendecomposition of a substrate-native peer-foam Laplacian.**
 
-This is structurally distinct from:
+**REED-INLINE CASCADE 2026-08-01** (per Seam Phase D `18d476a`
+Q-CRITICAL-2 default ratified in Alex overnight /loop): Alex 2026-08-01
+in-transcript insight (Watzlawick two-channel at compiler altitude,
+post-Doublespeak-essay-reading) reframes the novelty claim under **R2
+unified two-channel-first form**:
+
+> **R2 novelty claim**: Mirror is the first compiler that operationalizes
+> both Watzlawick content-channel and relationship-channel
+> indissolubly at compilation altitude, with the relationship-channel
+> being eigendecomposition of substrate-native peer-foam Laplacian.
+
+Mara v3 refined-structural-unique claim (above) is preserved as the
+**relationship-channel spectral-instance sub-claim** within R2.
+Content-channel presence (Rust arm literals + sentinel byte-strings +
+docblock prose) composes indissolubly with the relationship-channel
+sub-claim to form the R2 two-channel-first novelty.
+
+Ratification: Recognition `04df6e1` (#R-doublespeak-at-compiler-
+altitude CANDIDATE first-witness gate closed) + Seam Phase D `18d476a`
+§1 four-check ratification + Taut R-ADJ2 Kagi finding (no exact-match
+prior art; Sysmel arXiv:2309.15416 + Knuth 1984 as ADJACENT ancestors
+only, per Reed-inline scout `4457ef4`).
+
+R2 is structurally distinct from:
 - arXiv:2512.11200's parallel-traditional-compilation (which is still
-  graph traversal + string manipulation)
-- arXiv:2512.11200's neural-compilation (which is LLM inference)
+  graph traversal + string manipulation; single-channel content-only)
+- arXiv:2512.11200's neural-compilation (which is LLM inference;
+  single-channel content-inference)
 - All prior spectral-analysis-in-compilers work (which uses spectral
-  methods as analysis passes, not as the primitive compilation op)
+  methods as analysis passes; not two-channel-indissoluble)
+- Sysmel MOP compilation (single-channel authorial control)
+- Knuth Literate Programming (two-alternative-outputs from choice;
+  not one-output-two-channels-shared-eigendecomposition)
 
 The five load-bearing properties of math §8.6 (compilation IS eigen-
 decomposition + compiled artifact IS eigenspectrum + GPU-resident

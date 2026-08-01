@@ -676,6 +676,17 @@ over `shards/io.mirror` @io family-root; no new Rice concern.
 
 ### §5.2 Novelty-claim reframe under two-channel insight
 
+**REED-INLINE 2026-08-01 overnight /loop update**: Q-CRITICAL-2 = R2
+default RATIFIED by Alex overnight /loop. Reed cascade R6 (this tick)
+has landed R2 reframe at (a) `docs/math/2026-07-31-mara-supercolony-
+cosmos-quantum-foam.md` §8.6 preamble + Theorem 8.6 restated as
+"relationship-channel spectral-instance structural novelty", (b)
+`docs/scouts/2026-08-01-mara-gpu-native-compilation-dive-notes.md`
+Phase 7 refined-claim section, (c) `docs/recognition/2026-08-01-
+doublespeak-at-compiler-altitude.md` §6 Recognition-authority
+ratification. Mara v3 refined-structural-unique claim preserved as
+relationship-channel spectral-instance sub-claim within R2.
+
 **Current Mara claim** (§8.6 + Q10 lean): *"first compiler whose
 primitive compilation operation IS eigendecomposition of substrate-native
 peer-foam Laplacian"* (with five load-bearing sub-properties).
