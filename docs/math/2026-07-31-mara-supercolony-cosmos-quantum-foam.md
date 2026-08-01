@@ -1100,6 +1100,48 @@ valid as **structural evidence** that mirror's substrate is
 physics-simulator-capable, but no operational cosmos-crate landing
 follows.
 
+**Karen ancestry v3 addendum** (REED-INLINE cascade 2026-08-01 per
+Seam Phase D `18d476a` §4 gap-flag; extends the compile-render
+sub-claim's citation ancestry with Watzlawick-lineage ancestors that
+surfaced via Alex 2026-08-01 doublespeak-at-compiler-altitude insight,
+now ratified as the R2 novelty framing this section §8.6 lands):
+
+- **Watzlawick, P., Beavin-Bavelas, J., Jackson, D.D. (1967)**
+  *Pragmatics of Human Communication*. Norton. **PRIMARY** ancestor
+  at compiler altitude: the two-channel structure (content channel
+  vs relationship channel) that mirror's compilation carries
+  indissolubly (per R2 novelty framing this section §8.6). Compiler-
+  altitude promotion is NEW (Alex 2026-08-01); Watzlawick species-
+  altitude landings already at `shards/paradox.mirror:145` +
+  `shards/frame.mirror:172` + `shards/frame/on.mirror:358` +
+  `docs/math/2026-07-20-paradox-family-and-classifier-lagrange.md:174-190`
+  + `docs/math/2026-07-28-spectral-resonance-as-compilation-primitive.md:474`.
+- **Ruesch, J. & Bateson, G. (1951)** *Communication: The Social
+  Matrix of Psychiatry*. Norton. First-recorded two-level formulation
+  of the model Watzlawick 1967 later canonicalized as the five
+  pragmatic axioms. Palo Alto MRI foundational text Bateson brought
+  to Watzlawick. **MEDIUM-load** ancestor of content-vs-relationship
+  channel distinction.
+- **Shannon, C. (1948)** *A Mathematical Theory of Communication*.
+  Bell System Technical Journal 27:379-423, 623-656. First-order
+  channel ancestor: information-theoretic bit-capacity of the
+  content channel that mirror's compilation composes over via
+  sentinel-string byte-matching. Landed elsewhere in mirror substrate
+  (see `docs/math/2026-07-18-stigmergy-witnessed-computation-
+  mycelial-composition.md` for stigmergy-altitude Shannon composition)
+  but not previously cited at compilation altitude. **MEDIUM-load**.
+- **Bateson, G. (1955)** *A Theory of Play and Fantasy* (Psychiatric
+  Research Reports 2:39-51). Direct metacommunication precursor to
+  Watzlawick axiom 3 (every message carries content + relationship
+  channels); "this is play" IS the frame-signal at the relationship
+  channel that content-channel alone cannot carry. **SHARPEN** for
+  compile-render duality: mirror's relationship-channel-via-
+  eigenboard-rendering IS this frame-signal at compilation altitude.
+
+Citation obligation: R6 Phase 3 cascade this /loop tick threads
+these four ancestors through §8.6 novelty-claim text + §9 rendering
+surface + spec §11 canonical-spec reference block.
+
 ### §8.1 The GPU-native compilation primitive
 
 **Definition (GPU-native compilation)**. A *GPU-native compilation*
