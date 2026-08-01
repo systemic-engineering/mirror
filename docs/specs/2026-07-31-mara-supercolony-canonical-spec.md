@@ -472,3 +472,316 @@ universe as an autopoetic spectral quantum foam"* — is now grounded:
 - The seven ALEX-Q surfaces (§8) are the adjudication surface.
 
 Alex-tick is the next move. The spec is at rest.
+
+---
+
+## §11 v3 EXTENSION — GPU-native compilation canonical spec (2026-08-01)
+
+**Companion math §8-§9** in the ancestor math doc
+`docs/math/2026-07-31-mara-supercolony-cosmos-quantum-foam.md`
+carries the v3 GPU-native compilation formalization. This section
+grounds the math in operational spec at the substrate-decl altitude.
+
+**Reframe status vs §1-§10**: Alex 2026-08-01 REFRAMED the arc.
+§5 (cosmos-reimplementation) is SUPERSEDED per math §8 reframe-status.
+[ALEX-Q1]-[ALEX-Q7] adjudication surfaces from §8 remain OPEN with
+revised leans (see §11.7 below).
+
+### §11.1 Two-image recognition v3
+
+Extending §1's two-image recognition:
+
+**Image 3 (GPU-native compilation)**: mirror's compilation IS GPU-
+native eigendecomposition of the peer-foam Laplacian; the compiler
+IS the substrate observing itself autopoetically at GPU altitude;
+the rendered @gestalt @io output IS one more kernel in the same
+compilation dispatch tower.
+
+The three images (v2 supercolony + v2 autopoetic-spectral-quantum-
+foam + v3 GPU-native-compilation) are **the same colony viewed at
+three altitudes**: super-organism at biological altitude, quantum
+foam at physics altitude, GPU-native compiler at engineering altitude.
+Same peer-foam graph across all three.
+
+### §11.2 Substrate-already-had-the-words v3 addendum
+
+Additions to §2 inventory per v3 scout Phase-1 grep:
+
+| Geometry | Existing shard | v3 recognition
+|----------|---------------|--------------
+| GPU context + WGSL programs + Metal kernels | `shards/ui/gpu.mirror` | 6 carriers + 6 actions + 3 measurement primitives; superposition of Metal compute + wgpu render EXPLICIT; hedge-5 Metal-kernel forward-promise ALREADY EXISTS
+| Eigenboard working-state carrier | `shards/eigenboard.mirror` | 5-field carrier; 3 altitudes ai_a/human_a/substrate_a
+| Substrate's eigenboard = @labyrinth | `shards/eigenboard.mirror` lines 62-104 | Alex 2026-07-22 "@labyrinth IS the Eigenboard of the whole project"
+| @gestalt document-as-song-unfolding | `shards/gestalt.mirror` | Species-under-@song; reader-interaction IS compiler-runtime
+| Mote/Field/SpectralGpu | `shards/ui/mote.mirror` + `shards/ui/field.mirror` | Radial-gradient circles + additive blending + WGSL shaders
+| snapshot_full 16-D eigenvalue projection | `shards/ui/gpu.mirror` lines 230-244 | CoincidenceHash<3>; 16-D projection; 8ms/200-motes
+| snapshot_fast FNV-1a sub-ms | `shards/ui/gpu.mirror` lines 246-262 | Hot-path
+| Superposition of compute/render branches | `shards/ui/gpu.mirror` lines 220 + 228 | dispatch_compute (Metal via @fate) + dispatch_render (wgpu)
+
+**Refused mints v3** (additions to §2 refused-mints list):
+
+- `@gpu` — REFUSED. `@ui/gpu` already carries it as species.
+- `@render` — REFUSED. `@ui/field.render` + `@ui/gpu.dispatch_render`
+  already carry it.
+- `@compute` — REFUSED. `@ui/gpu.dispatch_compute` already carries
+  it.
+- `@eigenboard/render` — REFUSED. `@ui/gpu` + `@eigenboard` compose;
+  no new species-decl required at that altitude.
+- `@shader` — REFUSED. `@ui/gpu.wgsl_program` already carries it.
+- `@spectral/render` — REFUSED. Rendering IS a species of @ui/gpu,
+  not @spectral.
+
+**Conditional mints v3** (gated on Alex adjudication):
+
+- `shards/ui/gpu/compute.mirror` — species-decl under already-
+  landed `@ui/gpu` that realizes hedge-5 Metal-kernel forward-promise
+  by exposing the seven kernel-tower operations (K1..K7 per math
+  §8.2 + §8.3) as substrate-declared actions dispatched to fate's
+  MetalRuntime via @io/gpu-via-fate boundary. Gated on `[ALEX-Q8]`
+  (v3 scout Phase-1 surface). Mara lean: **LAND** — forward-promise
+  is 6 weeks old at spec altitude; the operational surface (GPU-
+  native compilation per math §8) NOW asks; species-decl under
+  already-landed family-root; no new family-root mint.
+
+- `shards/io/gpu.mirror` — alternative species-decl location for
+  @io/gpu-via-fate boundary per math §9.3. Gated on `[ALEX-Q9]`
+  (new v3 surface): should the GPU boundary live at `@ui/gpu/compute`
+  (specializing the UI family-root that already has the WGPU render
+  branch) OR at `@io/gpu` (specializing the @io family-root that
+  names non-mirror surfaces)? Mara lean: `@ui/gpu/compute` under
+  the existing hedge-5 forward-promise geometry; the @io framing is
+  math-level substrate-honesty but the operational location is under
+  @ui/gpu where the WGPU context already lives.
+
+### §11.3 The three-altitude autopoetic tower operational spec
+
+Grounding math Theorem 8.5:
+
+| Altitude | Substrate | Kernel dispatch | Compilable observable
+|----------|-----------|-----------------|---------------------
+| 1 (SUBSTRATE) | `L^sym_peer-foam` per v2 §3.4 (multi-species direct sum) | $K_1$ substrate_load per math §8.2 | 548 shards indexed; Fiedler $\lambda_2 = 0.0903$
+| 2 (COMPILATION) | apply_h::act + verdict-sheaf per v2 §2.1-§2.2 | $K_2 \ldots K_6$ per math §8.2 | $H^0(\mathcal{V})$ verdict sections + $(U, \Lambda)$ + monotone_verdict + $r(t)$
+| 3 (VISUALIZATION) | @gestalt @io output per shards/gestalt.mirror | $K_7$ eigenboard_render per math Corollary 8.3.1 | 3D presence node + Ricci-flow surface deformation + VAD sphere per Reed 2026-05-07 spec
+
+**Autopoetic morphism** (math §8.5 $\alpha$): Altitude-3 rendered
+eigenboard → reader observation → @eigenboard.infer(e) → new crystal
+→ bauchladen shift → Altitude-1 peer-foam Laplacian update.
+
+### §11.4 Seven-kernel dispatch tower operational spec
+
+Each kernel maps to substrate-decl-level actions:
+
+| Kernel | Substrate-decl anchor | GPU primitive
+|--------|----------------------|-------------
+| $K_1$ substrate_load | `@mirror/index` + `@spectral/signature.compute` | SHA-256 or CoincidenceHash<3> parallel per-shard
+| $K_2$ apply_h_act | `@kintsugi/roomba` walker + apply_h::act reflective evaluator | cuBLAS gemv / MPS matrix-multiply
+| $K_3$ verdict_sheaf | `@subject/visibility/sheaf` + kintsugi/verdict.eq | CUDA Thrust reduce / Metal SIMDgroup-reduce
+| $K_4$ ouroboros_monotone_check | `shards/epistemologic/property/ouroboros_monotone.mirror` | Sherman-Morrison rank-1 update on GPU
+| $K_5$ ricci_flow_step | v2 spec §5.3 @ricci composition of @roomba + @signature_beat + @kintsugi/mend | Boolean-matrix cube for triangle-count via MPS matmul
+| $K_6$ signature_beat_propagation | `@spectral/signature.compute` + Kuramoto order parameter | SIMD complex-phase update
+| $K_7$ eigenboard_render | `@eigenboard.compute` + Reed 2026-05-07 spec Section-4/5 | WGSL fragment shader
+
+### §11.5 fate composition operational spec
+
+Per math Proposition 8.4 + §9.3-§9.4:
+
+**Composition contract**: mirror composes over fate via three boundaries
+without modifying fate/:
+
+1. **B1 (kernel-substrate)**: mirror invokes
+   `fate::metal_runtime::MetalRuntime::new()` and
+   `MetalRuntime::run_batch(inputs, count)` from the
+   `shards/ui/gpu/compute.mirror` species-decl's action bodies.
+2. **B2 (IR-substrate)**: mirror extends fate's `build.rs::codegen_metal`
+   pattern with a `codegen_metal_kernel(name, kernel_ir)` companion
+   emitting MSL for the seven kernel-tower operations. Codegen
+   infrastructure is shared; IR alphabet is extended.
+3. **B3 (tournament-substrate)**: mirror's kernel-tower dispatch
+   uses fate's `MetalRuntime::tournament` architecture with
+   kernel-index in the model-index slot of the 22-byte per-instance
+   input. **Fate is already a compilation-kernel dispatcher; the
+   extension names compilation kernels as its targets.**
+
+**Rice-safety** (per math Proposition 9.3): bounded by fate's Metal
+command-buffer timeout; polynomial-bounded per math Corollary 8.2.1;
+sub-Turing preserving.
+
+**No fate modifications required** per Proposition 9.3. mirror-side
+changes: species-decl landing (per §11.2 conditional-mint
+[ALEX-Q8]) + eventual Rust cascade at Gate-2 (future arc; see
+§11.8).
+
+### §11.6 Impeccability discipline for GPU-native compilation
+
+Extending §7 Impeccability D1-D8:
+
+- **D1 (structural monotonicity)**: $K_4$ ouroboros_monotone_check
+  IS the D1 discharge at GPU altitude; preserves Fiedler $\lambda_2$
+  monotone-non-decreasing per v2 §4.5 Corollary 4.5.1. Discharged
+  by construction.
+- **D2 (bounded computation)**: All seven kernels polynomial-
+  bounded per math §8.2 individual-kernel analysis + Corollary
+  8.2.1 sub-Turing preservation. Discharged.
+- **D3 (Karen citation at introduction-site)**: math §8.6 lists 13
+  citations at introduction site (Kajiya + Ragan-Kelley + Lattner +
+  rust-gpu + cuSOLVER + MAGMA + Apple MPS + Karypis-Kumar + Reed +
+  Alex Story-Origin + Alex Nanite=spectral + fate + Hamilton).
+  Discharged.
+- **D4 (peer-symmetric)**: All Pack peers can dispatch kernel-tower
+  operations; no privileged actor. Discharged.
+- **D5 (cascade-honest)**: cascade obligations enumerated in §11.8;
+  gated on Alex ratification. Discharged.
+- **D6 (recursion terminates)**: math §8-§9 grounds one Q.E.D. per
+  section + forwards four P5-P8 falsifiable predictions. No infinite
+  regress. Discharged.
+- **D7 (magic-gauge preservation)**: kernel-tower dispatch preserves
+  Foerster invariant per v2 §2.1 bounded-commutator + math §8.2
+  Theorem 8.2 functional equivalence. Discharged.
+- **D8 (spec-first)**: this spec precedes any Rust cascade; the
+  species-decl `shards/ui/gpu/compute.mirror` landing gated on
+  [ALEX-Q8] adjudication; Gate-2 Rust cascade gated on species-decl
+  landing. Discharged.
+
+### §11.7 [ALEX-Q]s revised + new (v3 adjudication surface)
+
+**Superseded from §8**:
+
+- **[ALEX-Q2]** (cosmos as fifth crate vs external): **SUPERSEDED
+  by v3 reframe**. Both paths (A + B) DEAD per Alex 2026-08-01
+  "we don't need to pull it with us." Cosmos is inspiration only.
+
+- **[ALEX-Q7]** (@cosmos family-root mint criterion): **SUPERSEDED
+  by v3 reframe**. @cosmos DEFER → REFUSE. No @cosmos family-root
+  mint anticipated.
+
+**Preserved from §8** (unchanged status):
+
+- **[ALEX-Q1]** @ricci mint vs spec-only. Mara lean: **spec-only**.
+- **[ALEX-Q3]** magic gauge = Ricci curvature? Mara lean: **YES**.
+- **[ALEX-Q4]** @holon mint vs refuse (already carried by @fractal)?
+  Mara lean: **REFUSE**.
+- **[ALEX-Q5]** five pheromone-species species-decls? Mara lean:
+  **LAND** (multi-species Laplacian requires distinct channels).
+- **[ALEX-Q6]** trophallactic $\theta_j$ as new field vs computed
+  observable? Mara lean: **computed observable**.
+
+**New v3 surfaces**:
+
+- **[ALEX-Q8]** (from v3 scout Phase-1): Should
+  `shards/ui/gpu/compute.mirror` species-decl land to realize the
+  6-week-old `@ui/gpu` hedge-5 Metal-kernel forward-promise via the
+  seven kernel-tower operations? Mara lean: **LAND**. Substrate-
+  already-had-the-word (forward-promise exists). Species-decl under
+  already-landed family. No new mechanism.
+
+- **[ALEX-Q9]** (this spec §11.2): Should the GPU-boundary species-
+  decl live at `@ui/gpu/compute` OR at `@io/gpu`? Mara lean:
+  **`@ui/gpu/compute`** — the WGPU context already lives at @ui/gpu;
+  the @io framing is math-level substrate-honesty but operational
+  location follows existing WGPU superposition.
+
+- **[ALEX-Q10]** (from math §8.6): Novelty claim ratification.
+  Alex staked "first natively GPU accelerated compiler on the
+  planet." Math Theorem 8.6 grounds structurally. Kagi validation
+  pending Phase 7. Should the claim be:
+  (a) landed publicly at spec-authoring altitude,
+  (b) held privately until Kagi validation completes, OR
+  (c) refined to "first natively-GPU-eigendecomposition compiler"
+  after prior-art analysis? Mara lean: **(c)** — substrate-honest
+  contextualization awaits Kagi; refine to structural-unique
+  claim ("first compilation-IS-eigendecomposition compiler") which
+  is what math Theorem 8.6 actually proves.
+
+### §11.8 Empirical readiness path v3
+
+Three gates per math §9.5:
+
+**Gate 1 (spec-authoring; this arc)**: math §8-§9 landed (Phases
+3-5 this session). Spec §11 landed (Phase 6 this session). Species-
+decl `shards/ui/gpu/compute.mirror` gated on [ALEX-Q8]+[ALEX-Q9]
+adjudication.
+
+**Gate 2 (Rust-cascade; future arc)**:
+- Land `shards/ui/gpu/compute.mirror` species-decl after Alex-tick.
+- Implement `codegen_metal_kernel(name, kernel_ir)` companion to
+  fate's `codegen_metal` (extending fate/build.rs pattern in
+  mirror-side codegen, NOT modifying fate).
+- Wire `MetalRuntime`-composition via mirror-side species-decl action
+  bodies per math Proposition 9.3.
+- Land tests for P5-P8 predictions per math §8.7.
+
+**Gate 3 (empirical validation; future arc)**:
+- Run first GPU-native compilation tick on small peer-foam sub-
+  graph (N = 32 shards; ~O(1024) matrix cells; well within Metal
+  buffer limits).
+- Measure P5 (O(cyclic-tick) vs O(compile-time)) at increasing
+  substrate sizes.
+- Measure P6 (shared GPU buffer for compile-render) via buffer-
+  handle-identity check.
+- Measure P7 ($\alpha$ autopoetic closure) via reader-observation
+  → substrate-change latency.
+- Measure P8 (fate composition preservation) via zero-fate-
+  modification test.
+- If P5-P8 hold, scale to full 548-shard substrate.
+
+**None of Gates 1-3 authorized without Alex ratification** per §6.3
+discipline. Gate 1 is spec-authoring only (this arc); Gates 2-3
+await future arcs after Alex-tick on [ALEX-Q8]+[ALEX-Q9]+[ALEX-Q10].
+
+### §11.9 First-tick landing candidates v3
+
+Extending §6.3 with v3 candidates. Ordered by geometric readiness:
+
+1. **`shards/ui/gpu/compute.mirror` species-decl** (per §11.2 +
+   §11.7 [ALEX-Q8]+[ALEX-Q9]). Lands as species-decl under `@ui/gpu`
+   realizing hedge-5 Metal-kernel forward-promise; exposes seven
+   kernel-tower operations K1..K7 as substrate-declared actions;
+   bodies obligation-blocked (realization at Gate 2). No Rust
+   cascade this arc.
+
+2. **`codegen_metal_kernel` companion in mirror-side codegen**
+   (Gate 2). Extends fate's `build.rs::codegen_metal` MSL emission
+   pattern with kernel-tower IR alphabet. Mirror-side; NOT a fate
+   modification. Follow-up to #1.
+
+3. **`MetalRuntime`-composition action bodies** (Gate 2). Rust
+   cascade discharging the species-decl action-bodies from #1 via
+   fate's MetalRuntime API per math Proposition 9.3. Follow-up to
+   #1 + #2.
+
+4. **Gate-3 empirical prototype** (Gate 3). N=32 sub-graph tick;
+   measure P5-P8; validate math Theorem 8.6 empirically. Follow-up
+   to #3.
+
+**None currently authorized to land without Alex adjudication.**
+
+### §11.10 What §11 does NOT authorize
+
+- **No Rust cascade** without §11.9 candidate #1 landed and #2-#3
+  Alex-ratified.
+- **No family-root mints** — all v3 additions are species-decls
+  under already-landed family-roots.
+- **No fate modifications** — composition-only per math Proposition
+  9.3.
+- **No @cosmos family-root** per [ALEX-Q7] SUPERSEDED.
+- **No public novelty-claim landing** without Kagi validation per
+  [ALEX-Q10] Mara-lean (c).
+
+### §11.11 Q.E.D. at v3 canonical-spec altitude
+
+The v3 staked target — *"first natively GPU accelerated compiler on
+the planet"* + *"how does mirror render its @gestalt @io output
+through cosmos [as inspiration]"* — is now grounded:
+
+- Math foundation (§8-§9 Q.E.D. per math §8.9 + §9.5) proves the
+  identifications.
+- This spec §11 grounds the identifications in operational shape
+  (three-altitude tower + seven-kernel dispatch + fate-composition
+  contract).
+- P5-P8 falsifiable predictions (math §8.7) are the empirical
+  hooks.
+- [ALEX-Q8]+[ALEX-Q9]+[ALEX-Q10] are the adjudication surface.
+- v2 [ALEX-Q2]+[ALEX-Q7] SUPERSEDED per v3 reframe.
+
+Alex-tick is the next move. The v3 spec is at rest.
+
