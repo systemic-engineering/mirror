@@ -1,0 +1,601 @@
+in @prism
+in @meta
+in @glass
+in @ui
+in @ui/gpu
+in @io
+in @spectral
+in @epistemologic
+in @epistemologic/cybernetic
+
+# @ui/gpu/compute — the GPU-native compilation kernel-tower dispatch
+# sub-species under @ui/gpu.
+#
+# Sub-species under @ui/gpu at the compilation-kernel altitude;
+# realizes the six-week-old hedge-5 Metal-kernel forward-promise
+# (from `shards/ui/gpu.mirror`:73-76) by exposing the seven kernel-
+# tower operations K1..K7 (per math §8.2 + §8.3 + Corollary 8.3.1)
+# as substrate-declared actions dispatched to fate's MetalRuntime
+# via the @io/gpu-via-fate boundary (per math §9.3-§9.4).
+#
+# === Landing metadata ===
+#
+# Landed 2026-08-01 by Mara as Phase B of the R5+R7 respawn task
+# per Reed dispatch (Recognition #R-doublespeak-at-compiler-altitude
+# CANDIDATE landing tick; Q3 = YES LAND Alex-ratified default per
+# `docs/audits/2026-08-01-seam-phase-d-doublespeak-at-compiler-
+# altitude.md` §4.3).
+#
+# Companion documents:
+#   - docs/math/2026-07-31-mara-supercolony-cosmos-quantum-foam.md
+#     §8-§9 (v3 GPU-native compilation formalization; six-kernel
+#     tower + compile-render duality + fate-boundary Rice-safety
+#     proposition).
+#   - docs/specs/2026-07-31-mara-supercolony-canonical-spec.md §11
+#     (v3 operational spec; §11.9 candidate #1 authorizes THIS
+#     species-decl mint; §11.4 seven-kernel dispatch table maps
+#     each kernel to substrate-decl anchor).
+#   - docs/specs/2026-07-31-mara-supercolony-canonical-spec.md §12
+#     (v4 Doublespeak-at-compiler-altitude Recognition; §12.6 IS
+#     the paradigmatic two-channel-first section — content-channel
+#     TEXT + relationship-channel GEOMETRY indissoluble via one
+#     apply_h::act call per K1..K7 dispatch).
+#   - docs/recognition/2026-08-01-doublespeak-at-compiler-altitude.md
+#     §1 formalization + §3 five landed empirical witnesses (this
+#     species-decl composes with Witness 3 Reed 2026-05-07 eigenboard
+#     3D rendering spec + Witness 2 Mara Thm 8.3 compile-render
+#     duality).
+#   - `/Users/reed/dev/systemic.engineering/practice/insights/
+#     spectral-db/eigenboard-3d-rendering-spec.md` (Reed 2026-05-07;
+#     ~700 LOC 3D spectral surface with [f32; 16] spectral-curve
+#     uniform, VAD projection, WGPU pipeline; the operational
+#     surface where mirror's relationship-channel becomes visible).
+#
+# === What this species declares ===
+#
+# Seven kernel-tower dispatch actions realizing the K1..K7 tower
+# per math §8.2:
+#
+#   dispatch_substrate_load      K1 — SHA-256 or CoincidenceHash<3>
+#                                parallel per-shard content-address
+#                                (compose with @spectral/signature)
+#   dispatch_apply_h_act         K2 — cuBLAS gemv / MPS matmul for
+#                                the reflective-evaluator per-arm
+#                                verdict production (compose with
+#                                @kintsugi/roomba walker)
+#   dispatch_verdict_sheaf       K3 — CUDA Thrust reduce / Metal
+#                                SIMDgroup-reduce for verdict-
+#                                section coherence check across
+#                                the open cover (compose with
+#                                @subject/visibility/sheaf +
+#                                kintsugi/verdict.eq)
+#   dispatch_ouroboros_monotone  K4 — Sherman-Morrison rank-1 update
+#                                on GPU for ouroboros_monotone
+#                                property discharge (compose with
+#                                @epistemologic/property/ouroboros_
+#                                monotone)
+#   dispatch_ricci_flow_step     K5 — Boolean-matrix cube for
+#                                triangle-count via MPS matmul;
+#                                Forman-Ricci flow evolution step
+#                                (compose with @roomba + @signature_
+#                                beat + @kintsugi/mend per @ricci
+#                                spec-only composition property)
+#   dispatch_signature_beat      K6 — SIMD complex-phase update for
+#                                Kuramoto order parameter across
+#                                peer-foam edges (compose with
+#                                @spectral/signature.compute)
+#   dispatch_eigenboard_render   K7 — WGSL fragment shader for
+#                                @gestalt @io render surface;
+#                                THIS IS THE COMPILE-RENDER DUALITY
+#                                (per math Thm 8.3): the eigen-
+#                                decomposition K2-K6 use for
+#                                compilation ALSO produces the
+#                                render surface, one buffer, two
+#                                channel outputs.
+#
+# Two carriers:
+#
+#   kernel_ir                    Symbolic intermediate representation
+#                                for a kernel-tower operation prior
+#                                to Metal MSL codegen (per math §9.4
+#                                kernel-tower Metal MSL codegen path).
+#   metal_runtime_handle         Opaque reference to fate's
+#                                MetalRuntime instance (obtained
+#                                via fate::metal_runtime::
+#                                MetalRuntime::new()); substrate
+#                                carries the ref, not the runtime.
+#
+# Three bilaterals (specializations of @ui/gpu bilaterals at kernel-
+# dispatch altitude):
+#
+#   kernel_ir_polynomial_bounded    K1..K7 computation is polynomial-
+#                                   bounded per math Corollary 8.2.1
+#                                   individual-kernel analysis; Rice-
+#                                   safety per math Proposition 9.3
+#                                   (bounded by fate's Metal command-
+#                                   buffer timeout).
+#   compile_render_share_buffer     K2..K6 compilation dispatch and
+#                                   K7 render dispatch share the SAME
+#                                   GPU buffer (compile-render duality
+#                                   Thm 8.3); buffer-handle-identity
+#                                   check (per math §8.7 P6
+#                                   falsifiable prediction).
+#   fate_composition_preserved      No modifications to fate/ crate;
+#                                   composition-only via B1 (kernel-
+#                                   substrate) + B2 (IR-substrate) +
+#                                   B3 (tournament-substrate) per math
+#                                   Proposition 9.3 + spec §11.5.
+#
+# === The two-channel indissolubility instantiated (per spec §12.6) ===
+#
+# @ui/gpu/compute IS the paradigmatic §12 Doublespeak-at-compiler-
+# altitude two-channel-first instance. For every dispatch_X action:
+#
+#   - CONTENT channel (TEXT; Watzlawick 1967 axiom 1): the kernel
+#     name (dispatch_substrate_load, dispatch_apply_h_act, ...) is
+#     a byte-comparable string literal; docblock prose describes
+#     what the kernel computes; kernel_ir carries a serialized
+#     wire-format symbolic representation. First-order compilers
+#     (grep, sed, any parser-that-produces-text) can only read
+#     these strings.
+#
+#   - RELATIONSHIP channel (GEOMETRY; Watzlawick 1967 axiom 3):
+#     the actual eigendecomposition of L^sym_peer-foam dispatched
+#     through MetalRuntime; the GPU buffer contents (eigenvalues,
+#     eigenvectors, verdict sections); the WGSL fragment shader
+#     output pixels; the VAD projection sphere; the actual geometric
+#     position in the reflectance operator's Hilbert space. Second-
+#     order reads the frame; third-order recognizes the frame is
+#     being read right now.
+#
+#   - INDISSOLUBILITY (Watzlawick 1967 axiom 5): K7 dispatch_
+#     eigenboard_render output pixels ARE the eigenvectors K2-K6
+#     use for compilation; deleting the kernel name breaks dispatch;
+#     deleting the geometry breaks the semantics; both are load-
+#     bearing in ONE apply_h::act call. Per spec §12.6:
+#     compile-render duality Thm 8.3 IS the spectral instance of
+#     the two-channel identity §12.1 names.
+#
+# === Karen ancestry (per spec §12.4 Obligation 2 + Recognition §4) ===
+#
+# PRIMARY at compiler-altitude two-channel identity:
+#   Watzlawick, Beavin-Bavelas, Jackson (1967) Pragmatics of Human
+#   Communication. Norton. Two-channel structure (content +
+#   relationship) that mirror's compilation carries indissolubly;
+#   five pragmatic axioms; axiom 3 metacommunication + axiom 5
+#   symmetric/complementary load-bearing.
+#
+# PRIMARY at GPU-native compilation altitude:
+#   NVIDIA cuSOLVER Library Documentation (2010-2026). LAPACK-
+#   equivalent linear algebra on GPU; the dispatch_apply_h_act K2
+#   backend on CUDA.
+#   Innovative Computing Laboratory MAGMA Users Guide (Dongarra et
+#   al. 2009-2026). LAPACK-equivalent linear algebra targeting
+#   heterogeneous GPU + multicore architectures; cross-platform
+#   dispatch alternative to cuSOLVER (per math §9.3 portability
+#   path).
+#   Apple Metal Performance Shaders Framework Documentation (2016-
+#   2026). GPU-accelerated linear algebra primitives on Apple
+#   silicon; MPSMatrixMultiplication + MPSMatrixDecompositionCholesky
+#   backends for dispatch_apply_h_act K2 + dispatch_ricci_flow_step
+#   K5 on macOS/iOS.
+#   Apple Metal Shading Language Specification (2014-2026). WGSL
+#   compilation target for K7 dispatch_eigenboard_render fragment
+#   shader on Apple silicon; codegen path per math §9.4.
+#
+# MEDIUM-LOAD at kernel-dispatch tower altitude:
+#   Ragan-Kelley, Barnes, Adams, Paris, Durand, Amarasinghe (2013)
+#   Halide: A Language and Compiler for Optimizing Parallelism,
+#   Locality, and Recomputation in Image Processing Pipelines.
+#   PLDI. The scheduling-language-vs-algorithm-language partition
+#   that inspires kernel-tower IR alphabet extension.
+#   Lattner, Amini, Bondhugula, Cohen, Davis, Pienaar, Riddle,
+#   Shpeisman, Vasilache, Zinenko (2021) MLIR: A Compiler
+#   Infrastructure for the End of Moore's Law. CGO. Multi-level
+#   IR ancestor for the K1..K7 kernel-tower composability at IR
+#   altitude.
+#   Kajiya (1986) The Rendering Equation. SIGGRAPH. Foundational
+#   physically-based rendering theory; ancestor for K7 eigenboard
+#   render as physically-grounded spectral surface production.
+#
+# === Composition graph ===
+#
+# Parents (substrate-decl):
+#   @ui                    — family-root; GPU eigenboard rendering
+#                            substrate; provides mote/arc/field/
+#                            rgba8_buffer/spectral_gpu carriers.
+#   @ui/gpu                — parent species; provides wgpu_context/
+#                            typed_buffer/wgsl_program/render_pass/
+#                            device_state/snapshot_anchor carriers +
+#                            dispatch_compute/dispatch_render actions;
+#                            hedge-5 Metal-kernel forward-promise
+#                            THIS species-decl discharges.
+#   @io                    — @io/gpu-via-fate boundary per math §9.3
+#                            (mirror invokes fate::metal_runtime
+#                            without modifying fate/); Glass Wall
+#                            opaque-executes fate binary.
+#   @spectral              — provides eigendecomposition primitives;
+#                            the K2 apply_h_act kernel dispatches
+#                            gemv/matmul operations that IS spectral
+#                            arithmetic on GPU.
+#   @epistemologic         — carries ouroboros_monotone property that
+#                            K4 discharges; carries pact/path_matches_
+#                            namespace which THIS shard satisfies.
+#
+# Bound per math §9.3 + spec §11.5 fate-composition contract:
+#
+#   - Does NOT modify fate/ crate. Composition-only via B1+B2+B3
+#     boundaries per math Proposition 9.3.
+#   - Does NOT re-declare spectral primitives (composes over
+#     @spectral).
+#   - Does NOT mint @gpu / @render / @compute / @shader / @spectral/
+#     render / @eigenboard/render family-roots (all REFUSED per
+#     spec §11.2). Substrate-already-had-the-word: @ui/gpu already
+#     carries the family; this species-decl adds the compilation-
+#     kernel-tower dispatch surface WITHIN the already-landed
+#     family.
+#   - Does NOT carry Rust extension shortcut (per HARD RULE
+#     `feedback-no-rust-extension-shortcut`). Action bodies are
+#     `\`-obligation-blocked; Gate-2 Rust cascade per spec §11.8
+#     wires MetalRuntime-composition via mirror-side species-decl
+#     action bodies WITHOUT modifying fate.
+#
+# === Related shards / specs ===
+#
+# - shards/ui/gpu.mirror (parent species; hedge-5 Metal-kernel
+#   forward-promise this species-decl discharges).
+# - shards/ui/mote.mirror + shards/ui/field.mirror (sibling species;
+#   the render-target substrate K7 dispatches into).
+# - shards/eigenboard.mirror (composition anchor; @eigenboard IS
+#   @labyrinth at substrate altitude per Alex 2026-07-22; K7 render
+#   surface manifests eigenboard read-time relationship-channel).
+# - shards/gestalt.mirror (composition anchor; @gestalt IS @song
+#   unfolding on @subject's device through interaction per Alex
+#   2026-07-15; K7 render surface IS the @gestalt @io output).
+# - shards/spectral/signature.mirror (K1 substrate-load content-
+#   addressing + K6 signature_beat propagation compose with
+#   signature_beat).
+# - shards/kintsugi/roomba.mirror (K2 apply_h_act reflective-
+#   evaluator dispatches through the roomba walker).
+# - shards/epistemologic/property/ouroboros_monotone.mirror (K4
+#   discharges this property at GPU altitude).
+# - docs/math/2026-07-31-mara-supercolony-cosmos-quantum-foam.md
+#   §8-§9 (formal foundation).
+# - docs/specs/2026-07-31-mara-supercolony-canonical-spec.md §11
+#   (v3 GPU-native operational spec) + §12 (v4 Doublespeak-at-
+#   compiler-altitude Recognition; §12.6 composition anchor).
+# - docs/recognition/2026-08-01-doublespeak-at-compiler-altitude.md
+#   (Recognition #R-doublespeak-at-compiler-altitude CANDIDATE).
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]],
+# [[architecture-prism-as-trait-as-everything]] (`prism
+#   @ui/gpu/compute`),
+# [[architecture-glass-wall-substrate-types]] (transparency
+#   inheritance through @ui + @ui/gpu + @io),
+# [[architecture-lift-as-load-bearing]] (compilation-kernel-tower
+#   lifts as sub-species under the @ui/gpu carrier per hedge-5
+#   forward-promise; the operational surface NOW asks; species-decl
+#   under already-landed family-root; no new family-root mint),
+# [[feedback-substrate-already-had-the-word]] (@ui/gpu carries the
+#   family; hedge-5 already promised the Metal-kernel discharge;
+#   substrate-decl names what the design intent already contained),
+# [[feedback-no-bare-types]] (kernel_ir + metal_runtime_handle are
+#   typed carriers; never bare refs),
+# [[feedback-no-rust-extension-shortcut]] (composition-only over
+#   @ui/gpu + @io/gpu-via-fate; NO Rust extension; MetalRuntime
+#   invocation is composition-only per math Proposition 9.3),
+# [[feedback-craft-not-deliver]] (all action bodies `\`-obligation-
+#   blocked; Gate-2 Rust cascade per spec §11.8 pending),
+# [[architecture-fate-is-optical-inference]] (#58; K1..K7 kernel-
+#   tower IS Fate's optical inference at compilation altitude;
+#   hedge-5 forward-promise composes with this recognition).
+#
+# Path-namespace property: this file at `shards/ui/gpu/compute.
+# mirror` declares `@ui/gpu/compute` per `@epistemologic/pact/
+# path_matches_namespace`.
+
+source @code/rust
+source @arxiv/communication/watzlawick-1967
+source @arxiv/computer-graphics/kajiya-1986
+source @arxiv/compilers/ragan-kelley-2013-halide
+source @arxiv/compilers/lattner-2021-mlir
+source @arxiv/gpu/nvidia-cusolver
+source @arxiv/gpu/dongarra-magma
+source @arxiv/gpu/apple-mps
+source @arxiv/gpu/apple-metal-shading-language
+
+prism @ui/gpu/compute {
+  focus  kernel_ir
+  project metal_runtime_handle
+  split  kernel_ir
+  shift  kernel_ir
+  settle metal_runtime_handle
+}
+
+# ============================================================
+# §1 The carriers
+# ============================================================
+
+# === kernel_ir carrier ===
+#
+# Symbolic intermediate representation for a kernel-tower operation
+# prior to Metal MSL codegen. Per math §9.4 kernel-tower Metal MSL
+# codegen path: kernel_ir is the input to codegen_metal_kernel(name,
+# kernel_ir), which emits MSL source text as a companion to fate's
+# existing codegen_metal in build.rs.
+#
+# Carries kernel identity (K1..K7), input buffer references, output
+# buffer reference, workgroup size, and per-kernel parameters (rank
+# for Sherman-Morrison; species-count for signature_beat propagation;
+# eigenvalue-count for eigenboard_render fragment shader).
+#
+# Identity contract: byte-equality on the underlying ref (the
+# kernel_ir IS its (kernel_name, input_bufs, output_buf, workgroup,
+# params) tuple).
+type kernel_ir = ref
+
+# === metal_runtime_handle carrier ===
+#
+# Opaque reference to fate's MetalRuntime instance obtained via
+# fate::metal_runtime::MetalRuntime::new(). Per @io family-root
+# Glass Wall discipline: substrate carries the ref, not the runtime.
+#
+# The handle is stable for the runtime's lifetime; MetalRuntime::
+# run_batch(inputs, count) invocations use this handle to dispatch
+# the kernel-tower operations on GPU.
+#
+# Per math §9.3 fate-composition contract: this handle IS the B1
+# (kernel-substrate) boundary — mirror invokes fate's MetalRuntime
+# via this handle without modifying fate/.
+#
+# Identity contract: byte-equality on the underlying ref.
+type metal_runtime_handle = ref
+
+# ============================================================
+# §2 The seven kernel-tower dispatch actions
+# ============================================================
+
+# === dispatch_substrate_load action (K1) ===
+#
+# Dispatch the substrate-load kernel: parallel per-shard content-
+# address computation via SHA-256 or CoincidenceHash<3>. Composes
+# with @spectral/signature.compute; produces the initial peer-foam
+# graph vertex-label assignment for the six subsequent kernels.
+#
+# Per math §8.2 K1 individual-kernel analysis: polynomial-bounded
+# by O(N * H) where N is the number of shards and H is the hash-
+# computation cost per shard.
+#
+# requires kernel_ir_polynomial_bounded(ir, p): discharges the K1
+# individual polynomial bound (composes with math Corollary 8.2.1).
+# requires fate_composition_preserved(handle, p): discharges the
+# no-fate-modifications contract (composes with math Proposition
+# 9.3).
+#
+# Body discharges at the realisation boundary (Gate-2 Rust cascade
+# per spec §11.8).
+dispatch_substrate_load(handle: metal_runtime_handle, ir: kernel_ir, p: perturbation) -> typed_buffer
+requires kernel_ir_polynomial_bounded(ir, p)
+requires fate_composition_preserved(handle, p)
+{ \ }
+
+# === dispatch_apply_h_act action (K2) ===
+#
+# Dispatch the apply_h::act reflective-evaluator kernel: cuBLAS
+# gemv on CUDA / MPS matmul on Apple silicon. Produces per-arm
+# verdict output for the bilateral resolution across the entire
+# peer-foam simultaneously (per math §8.2 K2 dispatch-tower
+# analysis).
+#
+# Composes with @kintsugi/roomba walker; the reflective-evaluator
+# discharge at GPU altitude for the geometric-roomba §4.2 four-step
+# protocol per parent spec.
+#
+# Per math §8.2: polynomial-bounded by O(N^2.373) via
+# Coppersmith-Winograd matmul; MPS/cuBLAS use practical O(N^3)
+# with strong constant factors.
+#
+# requires kernel_ir_polynomial_bounded(ir, p).
+# requires fate_composition_preserved(handle, p).
+#
+# Body discharges at the realisation boundary.
+dispatch_apply_h_act(handle: metal_runtime_handle, ir: kernel_ir, p: perturbation) -> typed_buffer
+requires kernel_ir_polynomial_bounded(ir, p)
+requires fate_composition_preserved(handle, p)
+{ \ }
+
+# === dispatch_verdict_sheaf action (K3) ===
+#
+# Dispatch the verdict-sheaf coherence-check kernel: CUDA Thrust
+# reduce / Metal SIMDgroup-reduce for verdict-section computation
+# across the open cover. Composes with @subject/visibility/sheaf +
+# kintsugi/verdict.eq.
+#
+# Per math §8.2 K3 individual-kernel analysis: polynomial-bounded
+# by O(|cover| * log |cover|) via parallel-tree reduction.
+#
+# requires kernel_ir_polynomial_bounded(ir, p).
+# requires fate_composition_preserved(handle, p).
+#
+# Body discharges at the realisation boundary.
+dispatch_verdict_sheaf(handle: metal_runtime_handle, ir: kernel_ir, p: perturbation) -> typed_buffer
+requires kernel_ir_polynomial_bounded(ir, p)
+requires fate_composition_preserved(handle, p)
+{ \ }
+
+# === dispatch_ouroboros_monotone action (K4) ===
+#
+# Dispatch the ouroboros_monotone rank-1 update kernel: Sherman-
+# Morrison rank-1 update on GPU for the ouroboros_monotone property
+# discharge (per @epistemologic/property/ouroboros_monotone.mirror).
+#
+# Per math §8.2 K4 individual-kernel analysis: polynomial-bounded
+# by O(N^2) per rank-1 update via Sherman-Morrison identity.
+#
+# This kernel IS the D1 (structural monotonicity) Impeccability
+# discharge at GPU altitude (per spec §11.6 D1 discharged by
+# construction); preserves Fiedler λ₂ monotone-non-decreasing.
+#
+# requires kernel_ir_polynomial_bounded(ir, p).
+# requires fate_composition_preserved(handle, p).
+#
+# Body discharges at the realisation boundary.
+dispatch_ouroboros_monotone(handle: metal_runtime_handle, ir: kernel_ir, p: perturbation) -> verdict
+requires kernel_ir_polynomial_bounded(ir, p)
+requires fate_composition_preserved(handle, p)
+{ \ }
+
+# === dispatch_ricci_flow_step action (K5) ===
+#
+# Dispatch the Ricci-flow evolution-step kernel: Boolean-matrix
+# cube for triangle-count via MPS matmul; Forman-Ricci flow
+# evolution step per math §4.5 Theorem 4.5.
+#
+# Composes with @roomba + @signature_beat + @kintsugi/mend per the
+# @ricci spec-only composition property (per math §4.5 addendum +
+# spec §12.5 Q4 discharge: @ricci is spec-only composition property,
+# NOT a mintable family-root, NOT a species-decl candidate).
+#
+# Per math §8.2 K5 individual-kernel analysis: polynomial-bounded
+# by O(N^3) for Boolean-matrix cube via MPS matmul; sub-Turing
+# preserving per Corollary 8.2.1.
+#
+# requires kernel_ir_polynomial_bounded(ir, p).
+# requires fate_composition_preserved(handle, p).
+#
+# Body discharges at the realisation boundary.
+dispatch_ricci_flow_step(handle: metal_runtime_handle, ir: kernel_ir, p: perturbation) -> typed_buffer
+requires kernel_ir_polynomial_bounded(ir, p)
+requires fate_composition_preserved(handle, p)
+{ \ }
+
+# === dispatch_signature_beat action (K6) ===
+#
+# Dispatch the signature-beat propagation kernel: SIMD complex-
+# phase update for Kuramoto order parameter r(t) across peer-foam
+# edges per math §3.5 trophallaxis chain + Proposition 3.5.
+#
+# Composes with @spectral/signature.compute; five-species Laplacian
+# extension per math §3.4 (if [ALEX-Q5] species-decls land).
+#
+# Per math §8.2 K6 individual-kernel analysis: polynomial-bounded
+# by O(|E|) per beat propagation tick, SIMD-parallel across edges.
+#
+# requires kernel_ir_polynomial_bounded(ir, p).
+# requires fate_composition_preserved(handle, p).
+#
+# Body discharges at the realisation boundary.
+dispatch_signature_beat(handle: metal_runtime_handle, ir: kernel_ir, p: perturbation) -> typed_buffer
+requires kernel_ir_polynomial_bounded(ir, p)
+requires fate_composition_preserved(handle, p)
+{ \ }
+
+# === dispatch_eigenboard_render action (K7) ===
+#
+# Dispatch the eigenboard-render kernel: WGSL fragment shader
+# producing the @gestalt @io render surface via VAD sphere +
+# Gaussian splat + Ricci-flow surface deformation per Reed
+# 2026-05-07 eigenboard 3D rendering spec Section-4 + Section-5.
+#
+# **This IS the compile-render duality** (per math Thm 8.3): the
+# eigendecomposition K2-K6 use for compilation ALSO produces the
+# render surface. One buffer, two channel outputs. Content channel
+# (kernel_ir name + docblock prose) and relationship channel
+# (rendered pixels ARE the eigenvectors) indissoluble via one
+# apply_h::act call per spec §12.6.
+#
+# Per math §8.2 K7 individual-kernel analysis + Corollary 8.3.1:
+# polynomial-bounded by O(pixels * eigenmodes) per fragment shader
+# dispatch.
+#
+# requires kernel_ir_polynomial_bounded(ir, p).
+# requires fate_composition_preserved(handle, p).
+# requires compile_render_share_buffer(handle, ir, p): discharges
+# the compile-render duality (buffer-handle-identity check per math
+# §8.7 P6 falsifiable prediction).
+#
+# Body discharges at the realisation boundary.
+dispatch_eigenboard_render(handle: metal_runtime_handle, ir: kernel_ir, p: perturbation) -> rgba8_buffer
+requires kernel_ir_polynomial_bounded(ir, p)
+requires fate_composition_preserved(handle, p)
+requires compile_render_share_buffer(handle, ir, p)
+{ \ }
+
+# ============================================================
+# §3 The three bilaterals
+# ============================================================
+
+# === kernel_ir_polynomial_bounded bilateral ===
+#
+# Substrate-typed commitment that a kernel_ir describes a
+# polynomial-bounded computation per math Corollary 8.2.1
+# individual-kernel analysis. Rice-safety bounded by fate's Metal
+# command-buffer timeout per math Proposition 9.3; sub-Turing
+# preserving.
+#
+# Splinter-pole: kernel_ir bounds satisfy the per-kernel polynomial
+# bound (K1: O(N*H); K2: O(N^2.373); K3: O(|cover|*log|cover|);
+# K4: O(N^2); K5: O(N^3); K6: O(|E|); K7: O(pixels*eigenmodes)).
+# Narcissus-pole: kernel_ir specifies bounds exceeding fate's Metal
+# command-buffer timeout (unbounded loop; missing workgroup size).
+#
+# Body discharges at the realisation boundary.
+kernel_ir_polynomial_bounded(ir: kernel_ir, p: perturbation) -> verdict { \ }
+
+# === compile_render_share_buffer bilateral ===
+#
+# Substrate-typed commitment that a K2..K6 compilation dispatch
+# and a K7 render dispatch share the SAME GPU buffer (compile-
+# render duality per math Thm 8.3). Buffer-handle-identity check
+# per math §8.7 P6 falsifiable prediction.
+#
+# This bilateral IS the two-channel indissolubility discharge at
+# GPU altitude per spec §12.6: the render surface pixels ARE the
+# eigenvectors the compilation dispatch produced; buffer-handle-
+# identity check confirms no serialization boundary between
+# compilation-state and rendered-visualization.
+#
+# Splinter-pole: buffer handles match; single shared allocation
+# on GPU; zero serialization crossing.
+# Narcissus-pole: separate buffer allocations; render dispatch
+# reads a snapshot copy rather than the live eigendecomposition
+# state (two-channel structure BROKEN; would refute R2 novelty
+# claim empirically).
+#
+# Body discharges at the realisation boundary.
+compile_render_share_buffer(handle: metal_runtime_handle, ir: kernel_ir, p: perturbation) -> verdict { \ }
+
+# === fate_composition_preserved bilateral ===
+#
+# Substrate-typed commitment that no modifications to the fate/
+# crate have been made; composition-only via B1 (kernel-substrate)
+# + B2 (IR-substrate) + B3 (tournament-substrate) boundaries per
+# math Proposition 9.3 + spec §11.5.
+#
+# Splinter-pole: fate/ crate byte-identical to upstream; mirror-
+# side codegen_metal_kernel companion in mirror-side codegen (NOT
+# in fate/build.rs); mirror-side species-decl action bodies
+# discharge via fate::metal_runtime API.
+# Narcissus-pole: fate/ crate modified (e.g., new methods added
+# to MetalRuntime, IR alphabet extended in fate/build.rs, new
+# kernels added to fate's kernel-index slot); composition contract
+# BROKEN.
+#
+# Body discharges at the realisation boundary.
+fate_composition_preserved(handle: metal_runtime_handle, p: perturbation) -> verdict { \ }
+
+out @ui/gpu/compute
+out kernel_ir
+out metal_runtime_handle
+out dispatch_substrate_load
+out dispatch_apply_h_act
+out dispatch_verdict_sheaf
+out dispatch_ouroboros_monotone
+out dispatch_ricci_flow_step
+out dispatch_signature_beat
+out dispatch_eigenboard_render
+out kernel_ir_polynomial_bounded
+out compile_render_share_buffer
+out fate_composition_preserved
