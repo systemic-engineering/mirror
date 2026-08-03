@@ -252,4 +252,110 @@ mcp__mirror__mirror_roomba("--vacuum=/tmp/test-dir")
   → JSON-RPC response to MCP client (bootstrap NEVER touched)
 ```
 
+### §3.3 Phase C — Retire `bin/mirror-mcp` bash shim (post-Phase-B stability)
+
+**Scope:** `.mcp.json` swaps command from `bin/mirror-mcp` bash shim to `~/.local/bin/mirror` binary with `args: ["serve", "--mcp"]` per lsp-and-mcp.md §"What this spec implies" item (4).
+
+**Precondition:** Phase B empirically stable; rust/src/mcp.rs serve_loop passes byte-parity test fixtures + zero regression across all 9 tools; `mirror serve --mcp` stdio behavior indistinguishable from `bin/mirror-mcp` → bootstrap chain at Phase A altitude (client-visible: same tools/list schema; same initialize response shape; same per-tool dispatch behavior).
+
+**Landings:**
+
+- `.mcp.json` edit from `"command": "/Users/alexwolf/dev/projects/mirror/bin/mirror-mcp"` to `"command": "/Users/alexwolf/.local/bin/mirror", "args": ["serve", "--mcp"]` (or whatever the operator's canonical mirror-binary install path resolves to).
+- `bin/mirror-mcp` bash shim stays as archival transitional per two-tick discipline (git preserves; the shim simply becomes unused; delete deferred to two-tick-post-Phase-C window).
+- `docs/specs/lsp-and-mcp.md` §"State today" table row for MCP transport updates from `bin/mirror-mcp` (bash, ~80 lines) to `mirror serve --mcp` (rust/, native).
+
+**Phase C empirical anchor:**
+
+```
+mcp__mirror__mirror_roomba("--vacuum=/tmp/test-dir")
+  → .mcp.json → ~/.local/bin/mirror serve --mcp
+  → rust/src/mcp.rs::serve_loop (direct; NO shim)
+  → [Phase B chain]
+```
+
+**Phase C discharges:** the `bin/mirror-mcp` bash shim retirement gate per lsp-and-mcp.md §"What this spec implies" (4). Two-tick removal window per substrate discipline (bin/mirror-mcp deleted at Phase C+2-tick sibling landing after empirical stability confirmed).
+
+### §3.4 Phase D — `@mirror/reload` gen_prism at rust/src/mcp.rs (post-M5)
+
+**Scope:** land `@mirror/reload` gen_prism at rust/ altitude per `boot/std/mirror/reload.mirror` (2.0KB substrate-decl LANDED-SPEC-ONLY per Taut §3) + lsp-and-mcp.md §"Auto-reload" contract; handles `notifications/tools/list_changed` on grammar drift.
+
+**Precondition:** Phase C empirically stable; `@mirror/runtime/gen_prism` primitive lands at rust/ altitude (per `docs/specs/mirror-runtime-gen-prism.md` §"The primitive": `tick(state, message) -> tick_result`; `observe(gp) -> oid`; `history(gp, N) -> [oid]`); `@mirror/store` six-op wire lifted from bootstrap to rust/ altitude (per Taut §1 gap: no rust/ Rust emitter for the six-op wire surface currently; forward-promised at rust/spectral/ or rust/store/ crate landing).
+
+**Landings:**
+
+- `rust/src/mcp.rs::handle_request_in` invokes `mirror_reload::tick(session_state_oid, message)` on EVERY incoming request per `boot/std/mirror/reload.mirror` semantics ("Every incoming request — any request, not just `tools/list` — triggers a tick. No watcher, no inotify, no daemon dependency.").
+- `mirror_reload::tick` computes `@mcp.grammars_hash` (SHA-256 over `(path, content_oid)` for every grammar reachable from `boot/std/`); compares to `state.last_emitted_hash`; if drifted, appends `notifications/tools/list_changed` JSON-RPC frame to the outbound stdio wire; updates `state.last_emitted_hash` via @mirror/store crystal.
+- `initialize_result` updates `capabilities.tools.listChanged` from `false` to `true` (per MCP protocol: server declares reload capability to the client).
+- The state crystal at `refs/gen_prism/mirror_reload` persists across daemon restarts per gen_prism ref discipline.
+
+**Composition anchors (LANDED-SPEC-ONLY awaiting rust/ altitude realization):**
+
+- `boot/std/mirror/reload.mirror:1-53` (2.0KB) — the gen_prism substrate-decl; tick body carries the match on `(current_hash, stored_hash)` tuple with same-name-twice equality discipline.
+- `boot/std/mcp.mirror:78` (`grammars_hash -> oid`) forward-promised at boot altitude; body `\`-obligation-blocked; realization via `@hash/coincidence.content_oid` over `@mirror/spectral.gestalt`.
+- `docs/specs/mirror-runtime-gen-prism.md` — gen_prism primitive spec; Example 1 IS the `@mirror/reload` reload contract.
+
+**Phase D discharges:** the auto-reload gap per lsp-and-mcp.md §"Auto-reload" + closes Blocker part of Layer 4 per Taut §5 (`@mirror/reload gen_prism LANDED-SPEC-ONLY` → LANDED-EMPIRICAL at rust/ altitude).
+
+**Phase D empirical anchor:**
+
+```
+[MCP client caches tools/list from initialize handshake]
+[operator pulls a branch that adds a new grammar with @mcp/tool annotation]
+mcp__mirror__mirror_compile("foo.mirror")
+  → rust/src/mcp.rs::handle_request_in
+  → mirror_reload::tick(state, message)
+  → @mcp.grammars_hash ≠ state.last_emitted_hash
+  → emit `notifications/tools/list_changed` on stdio wire
+  → update state.last_emitted_hash via @mirror/store crystal
+  → process the `mirror_compile` tool call as normal
+[MCP client re-fetches tools/list; sees new grammar's @mcp/tool as new tool entry]
+```
+
+### §3.5 Phase E — `mirror kintsugi @spec` spawns @spec into @song via @mirror/peer/beam (post-M6)
+
+**Scope:** ratified @spec accumulated through the MCP session gen_prism spawns into a running @song via `mirror kintsugi @spec` verb per collapse-spec §4 + `shards/mirror/peer/beam.mirror` §4.2 spec-target spawn extension.
+
+**Precondition:** Phase D empirically stable; `@mirror/peer/beam` empirical dispatch lands at rust/ altitude (per Taut §4: `mirror peer beam` present in rust/src/main.rs VERBS list but returns exit 2 with "lands at M3+"; the actual empirical peer-spawn requires @fate optical inference + @pack.spawn realization at rust/ altitude per Alex-altitude Phase G+H LOCAL-PACK loop closure); `@spec` construction at MCP session altitude per collapse-spec §3.3 empirical (session accumulates spec fragments from tool-call trajectory; ratified @spec is the accumulated crystal at session-close time OR at `spec_ratified(spec, p)` predicate discharge time).
+
+**Landings:**
+
+- `shards/mirror/peer/beam.mirror` extends `spawn_target` type per collapse-spec §4.2 verbatim: `type spawn_target = | peer_target(peer) | spec_target(@mirror/spec) |`; adds `spawn_spec(spec: @mirror/spec, p: perturbation) -> song requires spec_ratified(spec, p) { \ }` sibling action.
+- `rust/src/main.rs` dispatches `mirror kintsugi @spec` (recognizing `@spec` sigil after `kintsugi` verb) to `cmd_kintsugi_spec(&rest)` which invokes `mcp_session::current_ratified_spec()` → `peer_beam::spawn_spec(spec, perturbation)` → returns @song handle.
+- `rust/src/mcp.rs` adds `mirror_kintsugi_spec` tool entry (10th tool at Phase E) invocable from MCP client to trigger the empirical spawn.
+- The spawned @song runs Fate multi-frequency tournament at each temporal step per collapse-spec §5; the trajectory IS observable via gen_prism observer surface (per §3.5's `observe(gp)`); coefficient pattern names Projection vs Illusion per §6.
+
+**Composition anchors (composition graph forward-promises):**
+
+- `docs/specs/mcp-spec-song-collapse.md` §4.2 verbatim: the spec-to-song lift extends `mirror_spawn_request` target-discriminator to accept `spec_target(@mirror/spec)`.
+- `shards/mirror/peer/beam.mirror:15.9KB` (Taut §4) — the cli-surface wrapper; adds spec_target arm to existing peer_target dispatch.
+- `shards/pack.mirror:263` — `@pack.spawn` primitive at pack altitude; Recognition #84 LANDED at substrate-decl; empirical realization forward-promised to Alex-altitude Phase G+H LOCAL-PACK loop.
+- `shards/fate.mirror` — Fate D²NN + Fabry-Pérot + Reck/Clements unitary mesh per collapse-spec §5.2; the tournament dispatcher.
+
+**Phase E discharges:** the loop-closure at MCP altitude per collapse-spec §4 (MCP session accumulates @spec via tool-call trajectory → ratified @spec spawns into running @song → @song's trajectory observable at MCP altitude via next session's queries against the @song's gen_prism observer); closes Blocker C per Taut §5 (`No @peer runtime at rust/ altitude` → empirical dispatch through the composition chain).
+
+**Phase E empirical anchor:**
+
+```
+[MCP session accumulates spec fragments across 20+ tool calls]
+mcp__mirror__mirror_kintsugi_spec()  # 10th tool; Phase E
+  → rust/src/mcp.rs::dispatch_tool_call("mirror_kintsugi_spec", args, ctx)
+  → mcp_session::current_ratified_spec()
+  → peer_beam::spawn_spec(spec, perturbation)
+  → @song handle returned
+  → @song trajectory runs Fate multi-frequency tournament at each temporal step
+[Subsequent MCP queries observe the @song's coefficient trajectory via gen_prism observer]
+```
+
+### §3.6 Phase A→E ordering summary (per collapse-spec §5.2 sub-arc dependency graph)
+
+| Phase | Actor | Empirical altitude | Discharges | Preconditions |
+|---|---|---|---|---|
+| A | Reed nearly-today | bin/mirror-mcp → bootstrap chain still owns serve_loop; delegation stub at rust/src/main.rs | MCP-spawn end2end fires TODAY; 9th tool (`mirror_roomba`) available | none |
+| B | Reed post-Mara-spec | rust/src/mcp.rs owns serve_loop; bootstrap serve_loop NOT touched | Blocker A empirical closure; substrate-honest ouroboros at rust/ altitude | A landed; THIS spec landed |
+| C | Reed post-B-stability | `bin/mirror-mcp` shim NOT in execution path | shim retirement per lsp-and-mcp.md (4) | B empirically stable |
+| D | Reed post-M5 | `@mirror/reload` gen_prism fires per-request | auto-reload contract per lsp-and-mcp.md §"Auto-reload" | C landed; `@mirror/runtime/gen_prism` + `@mirror/store` six-op wire at rust/ altitude |
+| E | Reed post-M6 (Alex-altitude Phase G+H composition) | `mirror kintsugi @spec` spawns @song empirically | Loop-closure at MCP altitude per collapse-spec §4 | D landed; `@mirror/peer/beam` empirical + `@spec` accumulation at MCP session |
+
+One phase after the other. Each phase's landing IS a distinct empirical witness. Substrate-pull-honest per no-time-estimates discipline: motion order named; motion count untimed.
+
 ---
