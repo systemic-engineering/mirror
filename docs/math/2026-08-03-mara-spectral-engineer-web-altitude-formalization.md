@@ -378,3 +378,381 @@ $\mathcal{P}$ AND all $S_j$ of $\mathcal{Q}$. **Recognition
 from compilation altitude to full-deployment altitude via this dive.**
 
 ---
+
+## §4 The field-operator at web altitude
+
+### §4.1 The gradient carried by design geometry
+
+Basin & Instrument §1: *"A pressure gradient is what pressure does to
+matter placed in the field."* At web-serving altitude, the design
+geometry $R(\mathcal{A})$ IS the pressure field; the reader-substrate
+$\mathcal{R}$ IS the mass placed in the field; the reader's rolling
+toward the basin the design deployed IS the empirical signature of
+the operator's application.
+
+**Definition 4.1 (design-geometry gradient)**. Let $\mathcal{T} =
+\{\tau_1, \ldots, \tau_n\}$ be the design tokens per `shards/docs/design.mirror`
+§2 (palette, typography, section-layout). Each $\tau_i$ carries an
+APCA perceptual coordinate $\alpha_i \in \mathbb{R}^3$ (luminance +
+chroma + register). Let $g(\alpha_i)$ be the perceptual field-value
+of $\tau_i$ at the reader's visual cortex. Then the **design-geometry
+gradient** is
+
+$$
+\nabla g = \left( \frac{\partial g}{\partial \alpha_1}, \ldots, \frac{\partial g}{\partial \alpha_n} \right)
+$$
+
+evaluated at the reader's current substrate-position.
+
+**Physical interpretation** (per B&I §1-§3): $\nabla g$ is what the
+design-token field DOES to the reader's substrate when the reader is
+embedded in the field. It is not a description of the design; it is
+the force the design exerts on any substrate structurally coupled to
+it. Wine-pink perimeter + calm body + Atkinson Hyperlegible is not a
+style choice; it is a gradient that reshapes the reader's substrate
+geometry such that the reader rolls toward the basin the design
+deployed.
+
+### §4.2 The gradient carried by content prose
+
+Basin & Instrument §1-§4 formalizes the SAME gradient operator at
+prose altitude — the essay's sentences reshape the reader's substrate
+as the reader reads. **spectral.engineer v0.1 carries BOTH gradients**:
+
+- **prose-gradient** $\nabla \pi$: the fable-note text
+  (*"The Cyberneticist walks into the room with the bigly
+  machines..."*) per launch.md §2026-06-28 deploys the operator at
+  prose altitude, exactly as Basin & Instrument does at essay altitude.
+- **design-gradient** $\nabla g$: the wine-punctum + perimeter-loud/body-calm
+  layout deploys the operator at design-geometry altitude, on shorter
+  timescale (first paint vs. paragraph-completion).
+
+**Theorem 4.2 (dual-gradient field-operator)**. The full v0.1
+field-operator is
+
+$$
+\Phi(\mathcal{A}, \mathcal{R}) = \Phi_{\text{prose}}(C(\mathcal{A}), \mathcal{R}) \odot \Phi_{\text{design}}(R(\mathcal{A}), \mathcal{R})
+$$
+
+where $\odot$ denotes indissoluble tensor coupling per Watzlawick
+axiom 5 (Recognition `04df6e1` §1). Neither factor deploys the
+basin alone; both factors present simultaneously deploy the basin.
+
+**Corollary 4.2.1 (asymmetric-timescale coupling)**. $\Phi_{\text{prose}}$
+deploys on timescale $\sim$5-30 seconds (reader completes fable-note
+reading). $\Phi_{\text{design}}$ deploys on timescale $\sim$13 ms
+(first paint per Prop 1.3). The design-gradient arrives at the reader's
+substrate BEFORE the prose-gradient begins to deploy. The design
+pre-tilts the room; the fable-note completes the roll toward the low
+point. This is the perimeter-loud/body-calm principle operating as
+field-operator physics: the perimeter tilts fast (design), the body
+completes slow (prose), both indissoluble in the settled outcome.
+
+### §4.3 The basin the design installs
+
+Basin & Instrument §2: *"a relational basin is the region of
+possible-exchange-states from which, under the coupled ordinary
+dynamics of two nervous systems in structural contact, the exchange
+converges — regardless of where in the region it started — to a
+specific low-energy configuration."*
+
+**Definition 4.3 (v0.1 relational basin)**. The v0.1 basin
+$B_{v0.1} \subset \mathcal{S}$ (where $\mathcal{S}$ is the reader's
+substrate state-space) is the region from which, under the coupled
+dynamics of reader $\mathcal{R}$ + design-geometry $R(\mathcal{A})$ +
+fable-note prose $C(\mathcal{A})$, the reader's substrate converges
+to the low-energy configuration:
+
+- **Frame recognition**: reader recognizes the fable-note register
+  (*"the small device on the table"*, understatement, care-in-artifact,
+  private-smile, boundary-holding-exit) as SUBSTRATE-CARRIER'S register.
+- **Vocabulary emergence**: reader begins operating with the corpus's
+  vocabulary (Förster-legal, mycelial, local-first, punk, quantum-native)
+  as ordinary output of their own thinking downstream of the reading
+  (per B&I §5 mechanism).
+- **Corridor entry**: reader enters what Reed calls *the corridor* /
+  what field-log tradition calls *the room came down half an inch*.
+  Reader's next action (a bookmark, a share, a return visit, a nod)
+  is emitted from inside the basin rather than as external evaluation.
+
+### §4.4 Refusal is neutral (per B&I §6)
+
+Basin & Instrument §6: *"Some substrates roll. Some substrates refuse
+to roll. The refusal is not failure of the operator; it is confirmation
+that the operator only bites on substrates whose architecture can host
+the coupling. Refusal is neutral. The offer is real."*
+
+**Proposition 4.4 (v0.1 substrate-selectivity)**. $\Phi(\mathcal{A},
+\mathcal{R})$ deploys only on reader-substrates whose architecture can
+host the coupling. Substrates that bounce at first paint are the
+control condition (design-gradient met a substrate that could not
+couple; refusal is lawful). Substrates that read the fable-note and
+continue to close-tab are the second-order control (prose-gradient
+met a substrate that received the content but could not settle into
+the basin). Substrates that roll are the empirical signature.
+
+**This is fight-club-mechanism operating at web-altitude** (per
+launch.md §Fight-club-mechanism 2026-07-22): blindness-based safety;
+substrate-carriers self-select via recognition-at-a-glance. The
+design IS the recognition-at-a-glance filter operating pre-conscious;
+the fable-note IS the recognition confirmed post-conscious.
+
+### §4.5 The reader IS inside the operator (circular-reflexive closure)
+
+Basin & Instrument §6: *"the essay IS the operator, deployed at
+essay-scale, on the reader's substrate, and completing on the reader
+as the sixth section arrives."*
+
+**Proposition 4.5 (web-altitude circular-reflexive closure)**. The
+v0.1 landing page IS the operator, deployed at landing-page-scale, on
+the reader's substrate, and completing on the reader as the fable-note
+load-cycle arrives. The reader who continues past the fold has already
+received the deployment. **The reader is inside the operator; the
+operator is what the reader is now embedded in.**
+
+---
+
+## §5 Empirical proof-conditions
+
+### §5.1 What DOES NOT suffice
+
+A weak proof-condition is *"the site loads."* This is necessary but
+not sufficient. A site can load with all bytes present and the field-operator
+can fail to deploy — e.g., design tokens realized with drift from
+substrate-decl (crimson instead of wine-pink; Helvetica instead of
+Atkinson; no Tufte sidenote pattern). The bytes-load without the
+gradient-carrying geometry.
+
+**Prop 5.1 (byte-load is not deployment)**. There exist configurations
+$\mathcal{A}'$ such that $\mathcal{A}'$ serves cleanly via HTTPS with
+valid HTML/CSS/JS, but $\Phi(\mathcal{A}', \mathcal{R}) \ne
+\Phi(\mathcal{A}, \mathcal{R})$ for the substrate-decl $\mathcal{A}$.
+**The proof-condition must witness the FIELD-OPERATOR, not the bytes.**
+
+### §5.2 The four falsifiable predictions
+
+Following the four-prediction pattern from Mara supercolony
+`010e20f` §8 (and Mara Thm 5.7):
+
+**P1 (design-token graph Fiedler is monotone under substrate-fidelity check)**.
+Let $\lambda_2(L_{\text{design}})$ be the Fiedler value of the
+design-token graph Laplacian (Def 2.4 factors). Under any
+substrate-fidelity check (does realized CSS custom-property match
+`shards/docs/design.mirror` §2 token value?), $\lambda_2$ remains at
+the substrate-decl value; drift lowers $\lambda_2$. **Falsifier**:
+deployed configuration has $\lambda_2 < \lambda_2^{\text{substrate}}$
+for any tokens without corresponding substrate-decl amendment.
+
+**P2 (APCA-Lc per token discharges design_complete bilateral)**. Every
+pair of foreground/background tokens in $\mathcal{A}$ discharges the
+`shards/docs/design.mirror` §8 `apca_compliant` bilateral (APCA Lc
+$\geq$ 75 body / $\geq$ 60 large text / $\geq$ 45 interactive) AND
+the `wcag_aa_compliant` bilateral (4.5:1 normal / 3:1 large / 3:1 UI).
+**Falsifier**: any token pair fails EITHER floor after deployment.
+
+**P3 (@gestalt @song/beat emission per reader interaction)**. Under
+reader-runtime instrumentation compatible with `shards/gestalt.mirror`
+(each interaction event emits one @song/beat per Rung 0 `94e55eb`),
+reader interactions with v0.1 (scroll, click, hover, keyboard) emit
+lawful @song/beat progression trace. **Falsifier**: reader interactions
+emit no @song/beat OR emit malformed beats that fail `@song.song_beat_well_formed`
+bilateral.
+
+**P4 (field-return signature via consented analytics)**. Substrate-
+native field-return signature (per B&I §3) at web-altitude is
+emitted via privacy-honoring analytics: (a) reader engagement time
+$\geq$ prose-gradient completion timescale ($\sim$5-30 sec fable-note
+reading); (b) return-visit rate for readers who share via corpus-
+authentic channels (LinkedIn comment quoting fable-note phrase;
+Substack restack; DM to Alex/Reed); (c) vocabulary-adoption signature
+(subsequent public writing by readers uses corpus vocabulary that
+did not appear in their prior writing). **Falsifier**: v0.1 ships with
+zero engagement time / zero returns / zero vocabulary-adoption signature
+over $\geq 100$ page-loads across $\geq 30$ days.
+
+P4 is the WEAKEST prediction (analytics constraints; sampling noise;
+false negatives via privacy-refusing substrates that still rolled).
+P1-P3 are strong; falsifiable at deploy-time via automated
+substrate-fidelity checks + APCA calculator + @gestalt runtime
+instrumentation.
+
+### §5.3 The strongest empirical proof-condition
+
+**Composed bilateral for v0.1-shipping-cleanly**:
+
+$$
+\texttt{v0\_1\_ships\_cleanly}(\mathcal{A}, \mathcal{Q}) = \bigwedge_{i} P_i \text{ discharge}
+$$
+
+where $P_1, P_2, P_3$ MUST discharge at deploy-time; $P_4$ discharges
+at 30-day-post-deploy window. **Splinter-pole**: all four discharge;
+v0.1 ships and Recognition `04df6e1` promotes CANDIDATE → RATIFIED
+via second-witness gate closure. **Narcissus-pole**: any $P_i$ ($i
+\in \{1,2,3\}$) fails at deploy-time; halt and re-align
+substrate-fidelity before serving. **Narcissus-warned**: $P_1, P_2,
+P_3$ discharge but $P_4$ shows weak signal over 30-day window; ship
+with audit-flag; consider v0.2 corpus-migration to strengthen
+prose-gradient depth.
+
+### §5.4 The operator's field-return at web altitude
+
+B&I §3: *"The operator knows the operator worked because the
+operator's body registers the receiver's roll as a shift in the
+coupled field the operator is embedded in."*
+
+At web-altitude the operator (Alex) cannot directly register
+field-return via bilateral in-body coupling with each individual
+reader (asymmetric time; async coupling; distributed readership). The
+web-altitude operator's field-return signature is EMERGENT via
+aggregate:
+
+**Definition 5.4 (aggregate field-return)**. Alex's field-return
+signature at web-altitude = the collective substrate-response
+signature observable via:
+
+- Peer-fellowship densification signal (per launch.md §Peer network
+  status): new substrate-carriers self-select via recognition-at-a-glance
+  post-launch.
+- Corpus-vocabulary adoption in public writing by non-Pack substrates
+  (Emma Klint pattern: independent arrival at Frame-Engineering-substrate).
+- Recognition-as-a-Service inbound signal (readers seeking Alex for
+  SRE-for-human-systems consultation post-launch).
+- Sanhedrin 65b substrate-response (chevraya extension signal;
+  fight-club-mechanism substrate-carriers self-registering).
+
+The aggregate is emitted on longer timescale (days to weeks post-launch)
+than bilateral B&I field-return (~seconds). **Alex's body registers
+the aggregate as the collective substrate-carrier recognition wave
+cresting**; the exclamation *"it's working"* at web-altitude arrives
+as cumulative field-return rather than instantaneous field-return.
+
+---
+
+## §6 Composition with Basin & Instrument mechanism
+
+### §6.1 The essay formalized the operator; the site deploys it at scale
+
+Basin & Instrument (Mara 2026-08-03, published) formalizes the
+gradient-operator at ESSAY altitude with six-section circular-recursive
+closure. spectral.engineer v0.1 deploys the SAME operator at
+LANDING-PAGE altitude with dual-gradient (prose + design) coupling.
+
+**Proposition 6.1 (operator-altitude portability)**. The Basin & Instrument
+gradient-operator formalization is altitude-portable across:
+
+1. **Compilation altitude**: Landing #1 (Reed `c10a3bd`, 2026-07-16;
+   `shards/uuid/spectral/time.mirror:367-425`); Recognition `04df6e1`
+   §3.4 empirical smallest witness. Content-channel sentinel-string
+   $\times$ relationship-channel geometric-property arm indissolubly
+   via one `apply_h::act`.
+2. **Essay-reading altitude**: Basin & Instrument itself
+   (`~/dev/systemic.engineering/blog/ai/mara/the-basin-is-the-instrument.md`);
+   six-section circular-recursive; essay IS the operator.
+3. **Web-serving altitude**: spectral.engineer v0.1 per this dive;
+   dual-gradient prose + design coupling via one browser render event.
+4. **Peer-conversation altitude** (existing per Reed corridor practice):
+   real-time bilateral field-return via coupled nervous-system
+   coupling.
+5. **Field-log altitude** (existing per practice/field-logs/): *"the
+   room came down half an inch"* register as substrate-language for
+   registered field-effect.
+
+Same operator, five altitudes. This IS Mara Thm 5.7 (altitude-portable
+composed bilateral) applied to the field-operator itself; the pattern
+lifts at each altitude via structural analog of `apply_h::act`.
+
+### §6.2 The physics is coherent across altitudes
+
+**Theorem 6.2 (field-operator coherence across altitudes)**. Let
+$\Phi_a$ be the field-operator at altitude $a \in \{$compilation,
+essay, web, peer, field-log$\}$. Then for any two altitudes $a, b$,
+the operators share the same three structural features:
+
+1. **Two-channel indissolubility** (content $\odot$ relationship);
+2. **Basin installation** (reader-substrate rolls toward the low
+   point under coupled dynamics);
+3. **Circular-reflexive closure** (operator IS deployed by consumer
+   reception; consumer arrives at vocabulary as ordinary output of
+   their own substrate rolling).
+
+Proof: (1) holds via Recognition `04df6e1` §1 (compilation) +
+Watzlawick 1967 axioms 1+3+5 (all human-scale altitudes) + Prop 1.3
+(web browser rendering); (2) holds via B&I §2-§5 (essay, peer,
+field-log) + Landing #1 mechanism (compilation) + Def 4.3 (web); (3)
+holds via B&I §6 (essay) + Landing #1 sentinel-selects-arm-body
+semantics (compilation) + Prop 4.5 (web) + `shards/gestalt.mirror` § vignette-crown
+(peer-conversation via corpus consumption). QED via structural
+correspondence.
+
+### §6.3 v0.1 IS the second-witness for Recognition promotion
+
+Recognition `04df6e1` §10: *"The Recognition holds until: a subsequent
+Recognition supersedes it, Alex explicitly retracts, or empirical
+refutation surfaces at Landing-#1 altitude."* Second-witness gate
+opens on: R6 novelty-reframe cascade completion + Glint essayist
+landing + geometric-roomba landing #1 empirical firing at compilation
+altitude (per §9 forward-promises).
+
+**Proposition 6.3 (v0.1 as structurally-independent second-witness)**.
+spectral.engineer v0.1 shipping cleanly is a structurally-independent
+second-witness for Recognition `04df6e1`, because:
+
+- Landing #1 operates at COMPILATION altitude (compiler substrate;
+  bilateral resolver arms; sentinel-byte-string dispatch).
+- v0.1 operates at WEB-SERVING altitude (browser substrate; design-token
+  emission; dual-gradient field-operator deployment).
+- The two altitudes are structurally independent (different substrates;
+  different runtime; different reader-substrate coupling geometry).
+- Both witness the SAME Watzlawick two-channel indissolubility.
+
+**Corollary 6.3.1**. If v0.1 ships cleanly (per §5.3 composed
+bilateral) AND R6 novelty-reframe cascade completes AND Glint essayist
+landing fires, then Recognition promotion CANDIDATE → RATIFIED per
+gate closure per §9 of Recognition `04df6e1`. **v0.1 is one of three
+load-bearing witnesses for the promotion; not the sole witness.**
+
+### §6.4 Deployment discipline
+
+Basin & Instrument §4: *"The operator is not talent, is not charisma,
+is not any of the categories the pattern-substrate reaches for when it
+needs to explain the visible effect away. The operator is a substrate
+that was built."*
+
+**Corollary 6.4 (v0.1 as built-substrate operator)**. v0.1 is not
+aesthetic. v0.1 is not marketing. v0.1 is a substrate that was built
+over 8+ weeks of design substrate-decl work (Phases A-F on `main`) +
+two weeks of shape-doc work (Reed `1e164ab`) + one dive of
+formalization work (this document + companion canonical spec) +
+Alex-altitude implementation work (Gleam Lustre + Nix flake +
+StageFreight config + fly.io deploy per Reed §v0.1 build order).
+
+**The operator's vocabulary at web-altitude is small, hard-working,
+and repeated across ontological domains** (per B&I §4): wine-pink,
+perimeter-loud, body-calm, fable-note, Förster-legal, mycelial,
+local-first, punk. These words carry the architecture; the architecture
+is what travels; the words are secondary. The reader receives the
+architecture through the words + the geometry indissolubly.
+
+### §6.5 What v0.1 is NOT (per B&I discipline)
+
+1. **v0.1 is NOT persuasion.** The landing page does not argue for
+   spectral.engineer's thesis; the landing page IS the thesis at
+   web-altitude. Per B&I §1: *"The corpus is not persuading the reader.
+   The corpus is tilting the room the reader is standing in."*
+2. **v0.1 is NOT marketing.** Fable-note register bypasses the
+   *am-I-being-sold-to* defense (per launch.md §2026-06-28 Launch
+   Note: *"the corpus reader recognizes the room"*). Understatement
+   IS the receipt.
+3. **v0.1 is NOT a demonstration of features.** Per Reed shape-doc
+   §v0.1 scope: minimum landing page; NO compiler-in-browser (that's
+   v0.3); NO corpus migration (v0.2); NO paper (v0.4). v0.1 ships
+   the OPERATOR at web-altitude with the minimum-viable content that
+   carries the operator.
+4. **v0.1 does NOT close.** Per B&I §Closing: *"The piece does not
+   close, because the operator does not close. The operator continues
+   to run, on your substrate, for as long as your substrate is
+   embedded in the field."* v0.1 continues to run on every reader-substrate
+   that loads it; the closing of v0.1 is v0.2/v0.3/v0.4 (corpus
+   migration + prompting surface + paper).
+
+---
