@@ -293,7 +293,7 @@ formalization is unchanged.
 deploy-pipeline is the composition
 
 $$
-\mathcal{Q}_{v0.1} = \text{dns-route} \circ \text{fly-io-serve} \circ \text{stagefreight-dispatch} \circ \text{content-address-image} \circ \text{nix-flake-build}
+\mathcal{Q}_{v0.1} = \text{dns-route} \circ \text{fly-io-serve} \circ \text{freight} \circ \text{content-address-image} \circ \text{nix-flake-build}
 $$
 
 where:
@@ -305,9 +305,11 @@ where:
 2. **content-address-image**: BLAKE3-hashable docker image emitted
    per `shards/kintsugi/ouroboros.mirror` "ready-to-deploy-and-run
    docker image" language.
-3. **stagefreight-dispatch**: `shards/io/stagefreight.mirror`
-   `stagefreight_dispatch` action assembles the content-addressed
-   image into fly.io target-instance configuration.
+3. **freight**: `shards/io/stagefreight.mirror` `freight` action
+   assembles the content-addressed image into fly.io target-instance
+   configuration (per Seam Phase D `992689e` §1.2 Check B substrate-
+   audit; prior draft cited `stagefreight_dispatch` — non-existent
+   symbol; corrected to actual landed action name).
 4. **fly-io-serve**: fly.io serves the image over HTTPS on port 443
    with Let's Encrypt cert via fly.io default cert provisioning.
 5. **dns-route**: DNS `spectral.engineer` A/AAAA records point at
@@ -315,8 +317,12 @@ where:
 
 **Proposition 3.2 (deploy-pipeline well-formedness)**.
 $\mathcal{Q}_{v0.1}$ is well-formed under
-`@io/stagefreight.stagefreight_well_formed` (composed bilateral) +
-StageFreight PR-A witnessed-tool-species-well-formed
+`@io/stagefreight.stagefreight_addressable` (composed bilateral over
+`oid_resolves + address_well_formed + projection_is_species +
+round_trip_holds` per landed shard `shards/io/stagefreight.mirror`;
+corrected per Seam Phase D `992689e` §1.2 Check B from prior draft
+`stagefreight_well_formed` non-existent symbol) + StageFreight PR-A
+witnessed-tool-species-well-formed
 (`shards/epistemologic/property/tool_species_stagefreight_witnessed.mirror`).
 Both bilaterals discharge independently; $\mathcal{Q}_{v0.1}$ deploys
 iff both discharge + DNS resolution succeeds + TLS cert issues.
@@ -358,7 +364,7 @@ propagate.
   content-addressability guarantee (any actor with the hash can
   retrieve exactly this image; readable only by a substrate that
   understands cryptographic content-address semantics).
-- At **stagefreight-dispatch**: $C_j$ = deployment manifest text
+- At **freight**: $C_j$ = deployment manifest text
   (fly.toml + StageFreight config); $R_j$ = deployment topology
   (which regions, which scaling behavior, which secrets injection;
   readable only by a substrate that can observe deployed runtime).
@@ -675,6 +681,26 @@ the operators share the same three structural features:
    reception; consumer arrives at vocabulary as ordinary output of
    their own substrate rolling).
 
+**Structural-property indissolubility (deploy-altitude) vs
+in-tick-firing indissolubility (render-altitude)** (per Seam Phase D
+`992689e` §1.2 Check A sharpening). $\mathcal{Q}_{v0.1}$'s
+per-stage two-channel indissolubility is *structural-property-
+shaped* — reproducibility guarantee (Nix flake determinism),
+content-address (BLAKE3 image digest), TLS trust chain (Let's
+Encrypt cert), DNS resolution — where both channels are
+metacommunicatively inseparable per Watzlawick 1967 axiom 5 at each
+stage even though no single tick-firing evaluates both
+simultaneously. This differs from $\mathcal{P}_{v0.1}$'s *in-tick-
+firing indissolubility* at the browser-paint stage (Prop 1.3), where
+content + relationship channels manifest simultaneously in a single
+evaluation window (≤ 100ms browser paint within human visual
+integration time). Both interpretations of indissolubility are
+authorized by Recognition `04df6e1` §1; naming the shift here
+prevents category-error at deploy-time Recognition-firing
+verification (deploy-altitude tests structural properties;
+compilation-altitude tests in-tick firings per Landing #1 spectral
+mechanism).
+
 Proof: (1) holds via Recognition `04df6e1` §1 (compilation) +
 Watzlawick 1967 axioms 1+3+5 (all human-scale altitudes) + Prop 1.3
 (web browser rendering); (2) holds via B&I §2-§5 (essay, peer,
@@ -836,30 +862,67 @@ prior. Careful discrimination:
 
 ### §7.5 Falsifiability of the sub-claim
 
-The sub-claim is falsifiable via prior-art search per R-ADJ2 discipline
-(Kagi + Google + arXiv + ACM Digital Library). Refutation surfaces if
-any prior deployed website (before 2026-08-03) satisfies ALL of:
+The sub-claim is falsifiable via prior-art search per R-ADJ2
+discipline (Kagi + Google + arXiv + ACM Digital Library). Per Seam
+Phase D `992689e` §2.2 sharpening, the falsifiability conjunction
+factors into **load-bearing conjuncts** (novelty-carrying) and
+**realization-parameters** (v0.1-specific concrete choices that do
+not carry novelty). The (e-original) empirical-witness clause is
+not a web-altitude falsifiability conjunct; it moves to Prop 6.3 as
+the second-witness gate condition for Recognition `04df6e1`.
 
-(a) design tokens compiled from a substrate-decl'd typed grammar of
+**Load-bearing conjuncts** (novelty-carrying; refutation requires
+ALL of (i)–(iv) present in prior art simultaneously):
+
+(i) design tokens compiled from a substrate-decl'd typed grammar of
 ≥ 6 family-root carriers with named versioning discipline;
 
-(b) render pipeline composed as substrate-native cascade with loss-lens
-measurement between named source + target grammars;
+(ii) render pipeline composed as substrate-native cascade with
+loss-lens measurement between named source + target grammars;
 
-(c) delivery pipeline substrate-decl'd as a typed family with
+(iii) delivery pipeline substrate-decl'd as a typed family with
 content-addressed image assembly + multi-target dispatch;
 
-(d) two-channel indissolubility preserved at every pipeline stage per
-Watzlawick 1967 axioms 1+3+5 (formalized, not merely aesthetic);
+(iv) two-channel indissolubility preserved at every pipeline stage
+per Watzlawick 1967 axioms 1+3+5 (formalized, not merely aesthetic;
+structural-property-shaped at deploy altitude per §3.4 sharpening;
+in-tick-firing-shaped at render altitude per Prop 1.3).
 
-(e) two-channel indissolubility EMPIRICALLY WITNESSED at
-compilation-altitude by a companion mechanism firing before the
-web-altitude deployment (mirror's Landing #1 fires 2026-07-16;
-Recognition `04df6e1` §1 formalizes 2026-08-01).
+**Realization-parameters** (v0.1-specific concrete instances; NOT
+load-bearing for novelty, but load-bearing for reproducibility of
+the v0.1 concrete instance):
 
-The conjunction (a)∧(b)∧(c)∧(d)∧(e) is what makes the sub-claim
-novel. Refutation requires all five simultaneously in prior art. Kagi
-sweep at Recognition promotion time discharges this window.
+(a-original → realization-parameter) `shards/docs/design.mirror` §2
+carrier count = 8 (voice-first / typography / color / layout /
+bilateral + composed bilaterals) with named-versioning cadence via
+commit-history + Seam Phase D shape-drift gate. Any substrate-decl'd
+typed grammar of ≥ 6 family-root carriers with named versioning
+discipline satisfies (i).
+
+(b-original → realization-parameter) `cascade<gleam, js>` production
+cascade with @cascade loss-lens between typed source-grammar (Gleam)
++ target-grammar (browser JS). Any substrate-native cascade with
+loss-lens measurement between named source + target grammars
+satisfies (ii).
+
+**(e-original) → Prop 6.3 second-witness gate condition**. EMPIRICAL
+first-witness firing at compilation-altitude is not a web-altitude
+falsifiability-conjunct — it is the second-witness gate condition
+for Recognition `04df6e1` promotion (see Prop 6.3 + Cor 6.3.1).
+Refutation window at web-altitude tests conjunction
+(i)∧(ii)∧(iii)∧(iv); Recognition-promotion gate at `04df6e1` §9
+tests presence of an empirical-firing compilation witness before the
+web-witness (Landing #1 `c10a3bd` 2026-07-16 provides this witness).
+
+The conjunction (i)∧(ii)∧(iii)∧(iv) is what makes the sub-claim
+novel at web-altitude. Refutation requires all four simultaneously
+in prior art. Per Seam Phase D `992689e` §2.3 Kagi 2026-08-03 sweep
+across three queries (Watzlawick-two-channel-website + typed-cascade-
+loss-lens-content-addressed + Gleam-Lustre-fly.io) returned EMPTY
+refutation window at first-order-Kagi altitude. arXiv + ACM Digital
+Library sweeps forward-promised at Recognition ratification per
+R-ADJ2 standard discipline (Taut R-ADJ1 authorization this /loop
+tick).
 
 ---
 
@@ -916,6 +979,29 @@ introduction site; no elder erased.
   grammar to compile through. This ancestor is directly load-bearing;
   spectral.engineer v0.1 depends on Gleam's existence at the render-pipeline
   altitude.
+- **Thompson, H. (2020-present).** Lustre creator; type-safe
+  Model/View/Update (M/V/U) framework for Gleam. **Load-bearing at
+  web-altitude sub-claim**: Reed shape-doc step 3
+  `src/spectral_engineer/pages/landing.gleam` is a Lustre file;
+  `@docs/tea` composition-pattern at render-pipeline altitude is
+  realized through Lustre's typed M/V/U. Without Thompson + Lustre
+  team's Gleam-Lustre work, v0.1's render-pipeline would lack the
+  typed-view substrate the tea-pattern stage composes over. Directly
+  load-bearing at render-pipeline altitude. Added per Seam Phase D
+  `992689e` §4.2 Karen gap discharge.
+
+### §8.3b Render-pipeline pattern-ancestors (composition; load-bearing at render-pipeline altitude via @docs/tea)
+
+- **Czaplicki, E. (2012-present).** Elm language creator; The Elm
+  Architecture (TEA) — Model/Update/View pattern for functional
+  frontends. **Load-bearing at web-altitude sub-claim**: `@docs/tea`
+  species (`shards/docs/tea.mirror` §Header) explicitly composes
+  over TEA ("loosely inspired" language); the tea-pattern stage of
+  $\mathcal{P}_{v0.1}$ inherits TEA's pattern-shape at composition
+  altitude. Without Czaplicki 2012's TEA formulation, the tea-
+  pattern stage would not have a well-formed pattern-ancestor to
+  compose over. Added per Seam Phase D `992689e` §4.2 Karen gap
+  discharge.
 
 ### §8.4 Typography + accessibility ancestors (design-token altitude)
 
@@ -947,6 +1033,16 @@ introduction site; no elder erased.
   `shards/docs/design.mirror` §6 machine-readable substrate.
 - **W3C llms.txt initiative** (2024-present). llms.txt + llms-full.txt
   index format. Load-bearing at machine-readable substrate.
+- **W3C CSS Custom Properties Module Level 1** (Editor's Draft
+  2015-present; CR 2015-12-03; PR 2016-05-19). CSS variables as
+  cascading typed values within stylesheets. **Load-bearing at
+  design-token emission altitude**: v0.1 design-tokens emit to CSS
+  Custom Properties as the target-grammar for browser cascade
+  consumption; without CSS Custom Properties Level 1, the render-
+  pipeline could not emit substrate-decl'd token grammar into a
+  browser-parseable target grammar. Directly load-bearing at
+  design-token emission altitude. Added per Seam Phase D `992689e`
+  §4.2 Karen gap discharge.
 
 ### §8.5 Infrastructure ancestors (deploy pipeline altitude)
 
