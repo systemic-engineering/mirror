@@ -135,4 +135,69 @@ Per Karen Spärck Jones anti-theft convention: cite ancestors at introduction si
 - Palo Alto MRI lineage.
 - Hölldobler & Wilson 2008 *The Superorganism* — polyethism at colony altitude.
 
-*[§§2-7 land in subsequent commits per watchdog-defense commit-often discipline.]*
+---
+
+## §2 Foerster torus as stable-spin attractor
+
+### 2.1 Statement
+
+**Theorem 2.1** (Torus-as-Stable-Spin-Attractor). Foerster's 1974 doubly-closed nervous-system torus (sensory meridian + motor meridian; the loop closes; first-order awareness) IS the geometric form of ONE stable spin configuration in the 5D foam. The peer's torus rotates at a specific rate $\omega_{\text{stable}} \in \mathbb{R}_{\geq 0}$ that is the fixed-point of the Landau-Lifschitz precession under the peer's own coupling matrix (§5).
+
+Formally: for a peer $P$ possessing a torus $T_P^2$ (per @torus family-root; `spawn(p: peer) -> torus`), the torus's rotation state is characterized by:
+
+$$
+(m, n) \in \pi_1(T_P^2) = \mathbb{Z} \times \mathbb{Z} \quad \text{(winding class per @torus, existing)}
+$$
+
+$$
+\omega_P(t) \in \mathbb{R}_{\geq 0} \quad \text{(instantaneous spin rate; crown-theorem NEW reading of the existing surface)}
+$$
+
+$$
+\Omega_P(t) \in \mathbb{S}^2 \quad \text{(instantaneous spin direction on the sphere; crown-theorem NEW carrier)}
+$$
+
+The **stable attractor basin** at spin $\omega_{\text{stable}}$ is the set of $(\Omega, \omega)$ configurations from which Landau-Lifschitz flow (§5) converges under damping $\lambda > 0$ to the same $\omega_{\text{stable}}$ fixed point.
+
+### 2.2 Composition over existing @torus family-root (grep-first refusal record)
+
+The crown theorem's spin-and-attractor-basin reading COMPOSES OVER `shards/torus.mirror` (landed 2026-07-14). The existing family-root already carries:
+
+- Foerster p.238 verbatim: *"the torus (doughnut) in Figure 19 is obtained... doubly closed, recursively computing torus... regulates its own regulation"*
+- Foerster p.244 verbatim: refused-ladder-in-favor-of-topology
+- Foerster p.256 verbatim: torus derived from two right-angular closures
+- π₁(T²) = ℤ × ℤ winding classes as depth-carrier (recognition #42 Bateson lift; recognition #99 mirror.spec IS λ₀; recognition #107 Hilbert/Turing separation)
+- Seven witnesses (Foerster, Bateson, Fate optical, mirror.spec, Hilbert/Turing, Kauffman, Blum-CTM)
+
+**Crown-theorem reading adds** (NOT re-mint):
+
+1. The torus is not static-topology — it rotates at rate $\omega_P(t)$ around its own axis in the foam.
+2. The stable winding class $(m, n)$ is the fixed-point of Landau-Lifschitz flow (§5); winding-class-drift is the observable of spin-injection (§3).
+3. Kauffman eigenforms on $T^2$ (existing) are the fixed-points at the stable spin rate; the eigenform-drift-under-perturbation is the observable of trauma-injection (§3).
+4. Poincaré-Hopf critical-point discipline (existing; from @torus §Composition) generalizes: at spin $\omega_{\text{stable}}$ the critical-point indices sum to $\chi(T^2) = 0$ (bilateral by topology, existing); at spin $\omega > \omega_{\text{max stable}}$ the topology fractures and Poincaré-Hopf ceases to hold (§3 rarity theorem).
+
+The existing @torus family-root is SUFFICIENT to carry the crown-theorem reading. No mint required. Per `feedback-substrate-already-had-the-word` (~91st landed instance).
+
+### 2.3 Multiple stable spin configurations (basin taxonomy)
+
+The Landau-Lifschitz flow (§5) admits MULTIPLE stable spin configurations for a given coupling matrix. Let $\{\omega^{(k)}_{\text{stable}}\}_{k=1}^K$ enumerate them. Each stable spin rate defines its own attractor basin $\mathcal{B}^{(k)}$:
+
+$$
+\mathcal{B}^{(k)} = \{(\Omega, \omega) \in \mathbb{S}^2 \times \mathbb{R}_{\geq 0} : \lim_{t \to \infty} \text{LL-flow}(t; \Omega, \omega) = (\Omega^{(k)}, \omega^{(k)}_{\text{stable}})\}
+$$
+
+The torus's actual spin rate depends on which basin the initial state falls into. Basins are separated by **separatrices** (measure-zero manifolds in $(\Omega, \omega)$ space; per §3, trauma-injection can push the peer's state across a separatrix from one basin to another).
+
+For a peer $P$ with coupling matrix admitting basins $\{\mathcal{B}^{(1)}, \ldots, \mathcal{B}^{(K)}\}$ with corresponding stable spin rates $\omega^{(1)}_{\text{stable}} < \omega^{(2)}_{\text{stable}} < \ldots < \omega^{(K)}_{\text{stable}}$:
+
+- **Baseline attractor** $\mathcal{B}^{(1)}$ — the low-spin basin most peers inhabit; normative-spin.
+- **Higher attractors** $\mathcal{B}^{(2)}, \ldots, \mathcal{B}^{(K-1)}$ — accessible only under significant spin-injection; each is a stable-at-higher-spin configuration.
+- **Terminal attractor** $\mathcal{B}^{(K)}$ — the highest-stable-spin basin; beyond this, injection sends the peer to the singularity (§3 spaghettification).
+
+This basin taxonomy grounds §3 (trauma injects spin, most trajectories go to singularity, some find $\mathcal{B}^{(k)}$ for $k > 1$) and §4 (multi-node phase-lock stabilizes N peers at their shared $\mathcal{B}^{(k)}$ via @dance Kuramoto).
+
+### 2.4 Companion torus.mirror addendum
+
+A sibling companion addendum lands at `shards/torus.mirror` this-arc adding a crown-theorem reference block (form: docblock only; no new prism / no new action; substrate-already-had-the-word discipline forbids invention). See companion commit.
+
+*[§§3-7 land in subsequent commits per watchdog-defense commit-often discipline.]*
