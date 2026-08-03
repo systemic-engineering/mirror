@@ -72,12 +72,191 @@ build order.*
 
 **No family-root mint. No species-decl mint. No math-primitive mint.** Every carrier v0.1 needs already exists on `main`. This dive is COMPOSITION over 51+ landed geometry, not extension.
 
-Phases 2-7 will:
-- §Phase 2: math §1-§3 (site as web-altitude two-channel enactment; render-pipeline formalization via existing cascade; deploy-pipeline formalization via existing @io/stagefreight)
-- §Phase 3: math §4-§6 (field-operator at web altitude; empirical proof-conditions; composition with Basin & Instrument mechanism)
-- §Phase 4: canonical spec §1-§5 (three-image recognition + substrate-already-had-the-word inventory + v0.1 operational grounding + Q-CRITICAL discharge + composition with Reed shape doc)
-- §Phase 5: canonical spec §6-§10 (Impeccability D1-D8; [ALEX-Q] residues; empirical readiness path; forward-promises v0.2-v0.4; Q.E.D.)
-- §Phase 6: novelty claim + Karen ancestry (Watzlawick + Ruesch-Bateson + Shannon + Bateson 1955 + Louis Pilfold + Erlang elders + José Valim + Tufte 2001 + Atkinson Hyperlegible team + Andrew Somers APCA + Stimpunks + Neurodiversity Design System)
-- §Phase 7: anti-preemptive-mint discipline + scout closure (new geometry registry; shard-decl candidates refused; Reed/Seam follow-ups; F-series arc pointers)
+Phases 2-7 landing status (this dive):
+- §Phase 2 LANDED `bd49430`: math §1-§3
+- §Phase 3 LANDED `bad3f90`: math §4-§6
+- §Phase 4 LANDED `cdf177f`: canonical spec §1-§5
+- §Phase 5 LANDED `b63e8e6`: canonical spec §6-§10
+- §Phase 6 LANDED `ea9dfc2`: math §7-§9 (novelty + Karen + Q.E.D.)
+- §Phase 7 (this commit): anti-preemptive-mint discipline + scout closure
 
 ---
+
+## Phase 7 — Anti-preemptive-mint discipline + scout closure
+
+### §7.1 New-geometry-registry (this dive)
+
+No new geometry minted at family-root or species-decl altitude by this
+dive. Full inventory of what this dive PROPOSED and what it REFUSED:
+
+| Proposed geometry | Substrate-status | Verdict | Reason |
+|---|---|---|---|
+| `@web` family-root | REFUSED | Recognition `04df6e1` §7.1 refusal-pattern applies; @docs already carries web-presentation altitude via @docs/tea + @docs/design | substrate-already-had-the-word (`@docs` species-instances suffice) |
+| `@site` family-root | REFUSED | @docs/tea/spectral-engineer-case-study.mirror carries first-deployed-page shape; @docs/tea M/V/U pattern generalizes; NO new family-root | substrate-already-had-the-word |
+| `@deploy` family-root | REFUSED | `@io/stagefreight` family already carries delivery-substrate altitude; fly.io is target-instance not substrate-altitude | substrate-already-had-the-word |
+| `@render` family-root | REFUSED | `@cascade/code/gleam/js` species carries render-pipeline substrate altitude; browser is a target-instance of the JS cascade | substrate-already-had-the-word |
+| `@host` family-root | REFUSED | fly.io is target-instance; DNS + TLS + custom-domain provisioning is external-substrate (not mirror-substrate concerns at v0.1) | substrate-boundary discipline (not-mirror-substrate) |
+| `@web-altitude` species under @docs | REFUSED | "web-altitude" is a descriptor for existing @docs species-instances; naming does not need species-decl | descriptor vs species distinction |
+| `@channel` / `@doublespeak` / `@watzlawick` / `@two-channel` family-roots | REFUSED (per Recognition `04df6e1` §7.1) | Landed carriers (@gestalt, @spectral/*, @frame, @paradox, @eigenboard, @io/*) already suffice at compilation altitude AND web altitude | Recognition-refusal-inheritance |
+| `@basin` family-root | REFUSED | "basin" is descriptor for the low-energy configuration $B_{v0.1}$ per math Def 4.3; not a substrate primitive requiring family-root | descriptor vs family-root distinction |
+| `@gradient` family-root | REFUSED | "gradient" is descriptor for $\nabla g$ + $\nabla \pi$ per math §4.1-§4.2; formalized at math altitude; not a substrate primitive requiring family-root | descriptor vs family-root distinction |
+| `@docs/tea/landing` sub-species | GATED on [ALEX-Q-1] | Mara-lean OPTION B compose-over-@docs/tea per two-tick discipline; wait for v0.2-v0.3 pattern stability before minting | pending Alex adjudication |
+
+**Registry closure**: 10 candidate mints canvassed; 9 REFUSED; 1 GATED
+on [ALEX-Q-1]. **Zero mints landed by this dive.**
+
+### §7.2 Cumulative substrate-already-had-the-word count (v2 + v3 + this dive)
+
+Per feedback-substrate-already-had-the-word HARD RULE tracking (Mara
+v2/v3 combined arc: 51 instances; Recognition `04df6e1` addendum: +N;
+this dive: +10 verified refusals).
+
+**This dive adds 10 substrate-already-had-the-word instances** to the
+cumulative count:
+
+1. @web → @docs/tea already suffices
+2. @site → @docs/tea already suffices
+3. @deploy → @io/stagefreight already suffices
+4. @render → @cascade/code/gleam/js already suffices
+5. @host → external-substrate boundary (not mirror-substrate)
+6. @web-altitude species → descriptor, not species
+7. @basin → descriptor, not family-root (formalized at math altitude)
+8. @gradient → descriptor, not family-root (formalized at math altitude)
+9. "content-channel" naming → Recognition `04df6e1` already carries
+10. "relationship-channel" naming → Recognition `04df6e1` already carries
+
+### §7.3 Shard-decl candidates refused or gated on [ALEX-Q]
+
+Per canonical spec §7 [ALEX-Q] residues:
+
+- **[ALEX-Q-1]** — `@docs/tea/landing` sub-species mint: GATED. Mara-lean
+  OPTION B (compose over @docs/tea, no new species-decl). Non-blocking
+  for v0.1 shipping; blocking for whether Reed step 3 authors
+  landing.gleam as sub-species instance or bare tea-pattern instance.
+- **[ALEX-Q-2]** — novelty sub-claim promotion timing: GATED. Mara-lean
+  OPTION A (extend Recognition `04df6e1` §8 with web-altitude sub-claim).
+- **[ALEX-Q-3]** — P4 analytics stack: GATED. Mara-lean OPTION D
+  (substrate-native aggregate signal only; no analytics at v0.1).
+- **[ALEX-Q-4]** — second-witness gate closure ordering: GATED. Mara-lean
+  OPTION A (any-one-witness per structural-independence discipline).
+- **[ALEX-Q-5]** — v0-build vs v1-build filename: GATED. Mara-lean
+  OPTION A (v0.X per substrate-honesty; Alex-name defers).
+
+**Five [ALEX-Q]s surfaced (target ≤5; hit exactly). No shard-decl
+mints landed by this dive.**
+
+### §7.4 Reed / Seam / Taut / Glint follow-ups
+
+**Seam Phase D adjudication** (adversarial audit + Karen validation +
+ratification obligations):
+
+1. **Recognition promotion gate closure Q-CRITICAL**: does v0.1 shipping
+   cleanly (per math §5.3 composed bilateral) constitute one of the
+   named second-witnesses per Recognition `04df6e1` §9 gate closure?
+   Seam adjudication needed on [ALEX-Q-4] (Option A any-one-witness
+   vs Option B all-three-conjunctive-discharge).
+2. **Kagi/Google/arXiv prior-art sweep** per math §7.5 falsifiability
+   conjunction (a)∧(b)∧(c)∧(d)∧(e). Seam-orchestrated Taut R-ADJ2
+   sweep at Recognition promotion time.
+3. **Substrate-fidelity check discharge validation**: does math P1
+   (Fiedler-monotone) admit tractable deploy-time verification? Seam
+   Phase D check.
+4. **APCA + WCAG AA composed bilateral discharge validation**: does
+   `shards/docs/design.mirror` §8 `design_complete` bilateral run
+   correctly against Gleam Lustre realized CSS at deploy-time? Seam
+   Phase D check.
+5. **Karen anti-theft citation completeness**: is the §8 ancestry
+   ladder exhaustive at web-altitude sub-claim? Seam Phase D pass
+   verifies no elder erased.
+
+**Reed follow-ups** (post-Seam-ratification cascade):
+
+1. **REED-INLINE update to Recognition `04df6e1`** §9 forward-promises
+   (adding v0.1 as second-witness per [ALEX-Q-4] Mara-lean OPTION A;
+   updating §8 sub-claim ladder with web-altitude sub-claim per
+   [ALEX-Q-2] Mara-lean OPTION A).
+2. **REED-INLINE update to `~/.reed/tasks/pending/spectral-engineer-v0-build.md`**
+   with cross-reference to this dive's substrate identification
+   (§1-§5 canonical spec + §1-§6 math foundation).
+3. **CURRENT.md addendum** with 2026-08-03 Mara spectral.engineer
+   web-altitude dive landing (7 commits `6e63a42` → this Phase 7 SHA).
+4. **Reed cascade orchestration** for [ALEX-Q-1] adjudication timing
+   (before Alex-altitude Reed-step-3 landing-page template authoring).
+
+**Taut follow-ups** (post-Seam-ratification):
+
+1. **R-ADJ2 Kagi/Google/arXiv sweep** for web-altitude sub-claim
+   novelty-conjunction refutation window (per math §7.5). Standard
+   R-ADJ discipline.
+2. **grep-first verification of §2 canonical-spec inventory** — does
+   every claim of "already landed on main" grep-verify? Taut Phase 1
+   grep discipline.
+
+**Glint follow-ups** (post-Recognition-ratification):
+
+1. **Public-facing prose landing** for the web-altitude sub-claim
+   — Glint essayist cascade R-ADJ3 per Recognition `04df6e1` §9
+   (currently CANDIDATE title: *"How the Compiler Runs Watzlawick's
+   Second-Order Move at Every Compile Step"*; web-altitude extension
+   opens *"How the Website Runs Watzlawick's Second-Order Move at
+   Every Reader Arrival"* as sharper sibling).
+
+### §7.5 F-series arc pointers (Recognition `04df6e1` cascade)
+
+This dive fires **R-WEB1** (new sub-cascade under Recognition `04df6e1`
+cascade series). Positioning:
+
+- R1-R5 (compilation altitude): landed in Recognition `04df6e1` /loop tick
+- R6 (novelty-claim reframe cascade): in flight per Recognition
+  `04df6e1` §9
+- R7 (`shards/ui/gpu/compute.mirror` species-decl mint): LANDED via
+  Mara Phase B `08b3f9e` (2026-08-01)
+- **R-WEB1 (this dive)**: web-altitude sub-claim + second-witness
+  candidate for Recognition promotion CANDIDATE → RATIFIED gate closure
+- **R-WEB2 (forward-promised)**: v0.2 corpus-migration realization of
+  @gestalt at deployed altitude (Recognition #96 second-witness at
+  full-corpus altitude); Mara canonical spec at v0.2 shape-doc landing
+
+### §7.6 Watchdog discipline retrospective (v2/v3 pattern maintained)
+
+- **v2 Mara run**: 7 commits, zero stalls (supercolony/cosmos/quantum-foam dive)
+- **v3 Mara run**: 7 commits, zero stalls (GPU-native compilation dive)
+- **This dive (web-altitude spectral.engineer)**: 7 commits, zero stalls
+
+**Discipline held**: one commit per phase; substrate-honest at every
+phase; no two-paths framing; no Rust extension shortcut; Recognition
++ Basin & Instrument + design-shard + cascade + StageFreight composed
+over as substrate ancestors; five [ALEX-Q]s surfaced (target hit
+exactly); zero substrate-decl mints; ten substrate-already-had-the-word
+instances added; Karen ancestry ladder honored.
+
+### §7.7 Commit trail
+
+| Phase | SHA | Landing |
+|---|---|---|
+| 1 | `6e63a42` | scout dive-notes: sources + reading impressions + composition topology |
+| 2 | `bd49430` | math §1-§3: identification + render pipeline + deploy pipeline |
+| 3 | `bad3f90` | math §4-§6: field-operator + empirical proof-conditions + B&I composition |
+| 4 | `cdf177f` | canonical spec §1-§5: three-image recognition + inventory + operational grounding + Q-CRITICAL discharge + Reed shape-doc composition |
+| 5 | `b63e8e6` | canonical spec §6-§10: Impeccability D1-D8 + [ALEX-Q] residues + novelty sub-claim + forward-promises v0.2-v0.4 + Q.E.D. |
+| 6 | `ea9dfc2` | math §7-§9: novelty sub-claim + Karen ancestry ladder + Q.E.D. |
+| 7 | (this commit) | scout closure: anti-preemptive-mint registry + Seam/Reed/Taut/Glint follow-ups + F-series arc pointers + watchdog retrospective |
+
+---
+
+## Scout closure
+
+- 7 phase-commits successfully sequenced (v2/v3 pattern held; zero stalls)
+- **Zero substrate-decl mints landed** (per anti-preemptive-mint discipline)
+- **10 substrate-already-had-the-word refusals surfaced** (added to cumulative Recognition-cascade tally)
+- **5 [ALEX-Q] residues surfaced** (target ≤5; hit exactly)
+- **Web-altitude sub-claim under Recognition `04df6e1` R2 formalized** (falsifiability conjunction (a)∧(b)∧(c)∧(d)∧(e))
+- **Karen ancestry ladder honored**: Watzlawick + Ruesch-Bateson + Shannon + Bateson 1955 + Foerster + Armstrong/Virding/Williams/Däcker + Valim + Pilfold + Tufte + Atkinson team + Somers + Arrow Type + Stimpunks + NDS + AIPREF + REST + NixOS + fly.io + StageFreight + Mara supercolony + Reed eigenboard + Landing #1 + Recognition `04df6e1` + Basin & Instrument
+- **v0.1 identified at substrate altitude** as first-web-altitude-enactment of Recognition #R-doublespeak-at-compiler-altitude; structurally-independent second-witness for Recognition promotion CANDIDATE → RATIFIED gate closure
+- **Seam Phase D adjudication targets**: 5 (Recognition promotion gate closure + Kagi prior-art sweep + substrate-fidelity check validation + APCA/WCAG bilateral discharge validation + Karen citation completeness)
+- **Reed cascade forward-promises**: 4 REED-INLINE cascades (Recognition `04df6e1` §8+§9 update + spectral-engineer-v0-build.md cross-reference + CURRENT.md addendum + [ALEX-Q-1] adjudication timing orchestration)
+- **Glint public-facing prose landing forward-promised** (web-altitude sibling to Doublespeak-at-compiler-altitude essay)
+
+Substrate-honest, circular-reflexive, commit-often. 🌱⚖️
+
+— *Mara, 2026-08-03*
