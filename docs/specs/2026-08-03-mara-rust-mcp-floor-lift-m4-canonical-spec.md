@@ -165,3 +165,91 @@ Some("serve") => {
 The Phase A delegation stub (Reed nearly-today) uses `cmd_serve_mcp(&rest)` calling `bootstrap::mcp::serve_loop()` via cargo-workspace re-export; Phase B (Mara canonical) substitutes `mcp::serve_loop()` calling the rust/src/mcp.rs FLOOR emitter directly. Same dispatch arm shape; the substitution IS the substrate-honest replacement.
 
 ---
+
+## §3 Migration path from bootstrap (Phase A → Phase E)
+
+Five phases enumerating how Reed's nearly-today delegation stub becomes the M4 rust/src/mcp.rs FLOOR emitter + post-M4 evolutions per M5 (auto-reload) + M6 (kintsugi @spec spawn). Each phase is a distinct empirical landing; boundaries between phases are witness-gated per Recognition-pattern discipline.
+
+### §3.1 Phase A — Reed nearly-today delegation stub (TODAY)
+
+**Scope:** ship empirical MCP-spawn end2end via bash-shim OR rust/ delegation TODAY.
+
+**Landings:**
+
+- `rust/src/main.rs` VERBS list adds 12th entry `("serve", "JSON-RPC stdio server. `--mcp` for MCP dispatch.")` per §2.5 above.
+- `rust/src/main.rs` main() dispatch adds `Some("serve") => cmd_serve_mcp(&rest)` arm per §2.5.
+- `rust/src/main.rs` (or thin `rust/src/mcp.rs` stub) declares `fn cmd_serve_mcp(argv: &[String]) -> ExitCode` that calls `bootstrap::mcp::serve_loop()` via cargo-workspace re-export.
+- `rust/Cargo.toml` adds `bootstrap = { path = "../bootstrap" }` dependency to make `bootstrap::mcp::serve_loop` reachable at rust/ altitude.
+- `bootstrap/src/lib.rs` exposes `pub mod mcp;` (if not already) so `bootstrap::mcp::serve_loop` is a public API. Grep-verify current visibility state before editing (Taut `64e8d60` §6 Reed-authorable discharge item 3 assumes the re-export is trivial; if `bootstrap::mcp` is not currently public at crate boundary, Reed authors the `pub` addition as part of Phase A).
+- `bootstrap/src/mcp.rs` `tools_list_result` extends 8→9 tools to add `mirror_roomba` entry (byte-parity with Mara iter-15 discipline; matches Taut §6 Reed-authorable discharge item 1).
+- `bootstrap/src/mcp.rs` `dispatch_tool_call` adds `"mirror_roomba" => { ... }` arm dispatching to `mirror roomba --vacuum=<dir>` subprocess invocation (matches existing `mirror_compile` / `mirror_craft` / `mirror_kintsugi` per-arm shape).
+- `bootstrap/tests/mcp_fixtures/tools_list.resp.json` regenerated to reflect 9-tool schema (RED-first: fixture drift catches the byte-parity discipline).
+- `.mcp.json` unchanged at Phase A (still points at `bin/mirror-mcp` bash shim per grep-verified current state; the shim execs `${MIRROR_BIN:-$HOME/.local/bin/mirror} /dev/stdin "@mcp.serve"` which routes through bootstrap Path B `mirror <file> <mq>` form per bootstrap/src/lib.rs:2858).
+
+**Empirical anchor (Phase A):**
+
+```
+mcp__mirror__mirror_roomba("--vacuum=/tmp/test-dir")
+  → bin/mirror-mcp (bash shim, 888B)
+  → mirror /dev/stdin @mcp.serve
+  → bootstrap/src/mcp.rs::serve_loop (via bootstrap binary)
+  → dispatch_tool_call("mirror_roomba", args)
+  → exec: rust/target/debug/mirror roomba --vacuum=/tmp/test-dir
+  → rust/src/main.rs::cmd_roomba (FIRES-END2END per Taut §2)
+  → phone::list_dir_recursive + collapse::load_bilateral_corpus + mend_at
+  → phone::git_commit_as ("mirror <mirror@spectral.engineer>")
+  → deposit_observation_crystal → docs/bauchladen/mirror-observations.md → git commit
+  → JSON-RPC response to MCP client
+```
+
+**Alternative empirical anchor** (Reed's Phase A rust/ delegation): the MCP wrapper execs `rust/target/debug/mirror serve --mcp` instead of the bootstrap binary; `cmd_serve_mcp` in main.rs delegates to `bootstrap::mcp::serve_loop()` via cargo-workspace re-export. Same 8-tool (or 9-tool with mirror_roomba) schema fires; the difference is which binary owns the serve_loop process at Phase A.
+
+**Phase A discharges:** Blocker A per Taut §5 gap map at spec-decl altitude ONLY (empirical MCP-spawn fires TODAY through the delegation; the substrate-honest ouroboros closure at rust/ altitude is deferred to Phase B).
+
+**Phase A does NOT discharge:** the `bootstrap/` retirement gate (bootstrap is still dispatched at MCP altitude via delegation); the `bin/mirror-mcp` bash shim retirement (still Phase A's transport); the rust/ altitude serve_loop authorship (Phase B).
+
+### §3.2 Phase B — Port serve_loop core to rust/src/mcp.rs (post-Mara-spec Reed authorship)
+
+**Scope:** Reed authors `rust/src/mcp.rs` FLOOR emitter under `[substrate-floor:@io-boundary]` per-file audit-citation gate; ports `bootstrap/src/mcp.rs::serve_loop` verbatim to rust/ altitude; retires the cargo-workspace re-export.
+
+**Discipline per no-Rust-extension-shortcut memory:** before authoring, ask: can this be a shard body composing over @io? For the serve_loop transport primitive, the answer is NO — JSON-RPC framing + stdin/stdout wire management + JSON parse/emit is genuinely @io/bytes territory below the shard-body altitude. Per Mara `81294b3` §3.2 phone.rs holds "JSON-RPC framing for MCP messages" (line-delimited or Content-Length; whichever transport requires); mcp.rs composes phone.rs primitives at the dispatch altitude.
+
+**Port scope per bootstrap/src/mcp.rs shape (46.6KB, ~500 LOC target for rust/src/mcp.rs):**
+
+- `pub fn serve_loop() -> i32` — the outer stdin-line-reading loop; reads MIRROR_HOME env; constructs Ctx; loops on stdin lines invoking `handle_request_in`.
+- `pub fn handle_request(line: &str) -> Option<String>` — the process-cwd-based convenience wrapper.
+- `pub fn handle_request_in(line: &str, ctx: &Ctx) -> Option<String>` — the Ctx-aware core dispatcher; parses JSON; matches on `method` field; routes to `initialize` / `notifications/initialized` / `tools/list` / `tools/call`.
+- `fn initialize_result() -> Value` — preserves bootstrap's exact response shape (server name `"mirror"`, version `"0.1.0"`, protocol version `"2024-11-05"`, capabilities advertising `tools.listChanged: false`; the `false` extends to `true` at M5 auto-reload landing).
+- `fn tools_list_result() -> Value` — the 9-tool schema (byte-parity with Phase A bootstrap 8-tool + `mirror_roomba` 9th; migration to grammar-driven walks at M5 per §4 below).
+- `fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool)` — per-tool routing to rust/ altitude cmd invocations. Two dispatch strategies co-existing:
+  - **Subprocess invocation** (Phase B: default for tools requiring full mirror binary): `phone::spawn_mirror_verb(&[verb, args...])` — spawns rust/target/debug/mirror subprocess; wait; capture stdout/stderr; marshal as (text, is_error).
+  - **In-process invocation** (Phase B+ for tools with clean library API): `compile::compile_file(path)` / `roomba::mend::run(dir)` / `matrix::index::compute_fiedler(dir)` etc. Cleaner but requires those crates to expose library APIs (roomba::mend at rust/roomba/ already does; compile.rs library API forward-promised).
+- `struct Ctx { home: PathBuf }` — substrate-home carrier; `Ctx::from_process_cwd()` for standalone dispatch; `Ctx::new(home)` for MIRROR_HOME-scoped dispatch. Preserves bootstrap discipline.
+- Test fixture parity: rust/tests/mcp_fixtures/ carries the same JSON fixtures bootstrap/tests/mcp_fixtures/ carries; byte-parity gates the port (RED-first: rust/src/mcp.rs test asserts `handle_request(fixture.req.json)` = `fixture.resp.json` verbatim; if drift, port body incorrect).
+
+**Composition-honest transitional discipline:** Phase B's subprocess-invocation default preserves the empirical MCP-spawn end2end firing across the port (any tool that fires in Phase A also fires in Phase B); the in-process invocation migration is Phase B+ per-tool as library APIs land. This maintains Michelangelo/marble discipline: subtract dependencies iteratively; each subtraction leaves working substrate.
+
+**Retirement at Phase B landing:**
+
+- Reed's Phase A `cmd_serve_mcp` cargo-workspace re-export retires; `mcp::serve_loop()` calls the rust/src/mcp.rs FLOOR emitter directly.
+- `rust/Cargo.toml` `bootstrap = { path = "../bootstrap" }` dependency retires if no other rust/ crate consumes it (grep-first before removal per adjacent-work-may-dissolve-blockers discipline).
+- `bootstrap/src/mcp.rs` stays as legacy-status-only per `mirror.spec:21-24` `legacy` block — not deleted (git preserves for archaeology; the module simply stops being called from rust/ altitude).
+
+**Phase B discharges:** Blocker A per Taut §5 gap map at empirical altitude (rust/src/mcp.rs is the terminal serve_loop; bootstrap serve_loop no longer in the execution path).
+
+**Phase B empirical anchor:**
+
+```
+mcp__mirror__mirror_roomba("--vacuum=/tmp/test-dir")
+  → .mcp.json → rust/target/debug/mirror serve --mcp
+  → rust/src/main.rs::main() → mcp::serve_loop()
+  → rust/src/mcp.rs::serve_loop
+  → handle_request_in(json_line, ctx)
+  → dispatch_tool_call("mirror_roomba", args, ctx)
+  → phone::spawn_mirror_verb(&["roomba", "--vacuum=/tmp/test-dir"])
+     OR direct in-process: roomba::mend::run_vacuum("/tmp/test-dir", ctx)
+  → Same downstream chain as Phase A (walker + arm-collapse + commit + pheromone-deposit)
+  → JSON-RPC response to MCP client (bootstrap NEVER touched)
+```
+
+---
