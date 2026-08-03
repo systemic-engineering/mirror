@@ -1,0 +1,300 @@
+in @prism
+in @meta
+in @glass
+in @cascade
+in @labeled
+in @code/gestalt
+in @code/gleam
+
+# @cascade/code/gestalt/gleam — the gestalt IR → gleam (via
+# gestalt-ui library) value cascade species.
+#
+# Path naming: per Alex 2026-06-23 directive — cascade species
+# shards group by `@cascade/code/<source>/<target>`. Source
+# language (gestalt IR) groups together at `shards/cascade/code/
+# gestalt/`; target (gleam here) leafs at `shards/cascade/code/
+# gestalt/gleam.mirror`.
+#
+# THIS species is the SECOND LEG of the composition theorem chain
+# per Alex 2026-08-03 split-cascade directive (Q-C1):
+#
+#   *"Split cascade architecture: cascade<mirror, gestalt> +
+#    cascade<gestalt, gleam> as separate species (not one combined
+#    cascade). Opens door for cascade<gestalt, X> alternate
+#    back-ends without touching mirror."*
+#
+# Per Alex 2026-08-03 Q-C2 verbatim:
+#
+#   *"cascade<gestalt, gleam> emits gestalt-ui-shaped Gleam (not
+#    arbitrary Gleam)"*
+#
+# The emission target IS the existing gestalt-ui Gleam vocabulary
+# crate at `/Users/reed/dev/projects/gestalt-ui/`. This cascade
+# does NOT emit arbitrary Gleam — it emits Gleam that COMPOSES
+# OVER the gestalt-ui library's Token/Theme/composite/view
+# abstractions (per Taut scout §1.4 exported grammar).
+#
+# === Composition theorem chain (companion math 2026-08-03) ===
+#
+#   mirror substrate
+#     ↓  @cascade/code/mirror/gestalt (sibling mint this arc)
+#   gestalt IR (@code/gestalt AST + .gestalt file surface)
+#     ↓  @cascade/code/gestalt/gleam (THIS species)
+#   gestalt-ui-shaped Gleam
+#     ↓  @cascade/code/gleam/js (landed sibling per Taut scout §5)
+#   JS bundle
+#     → browser peer runtime @peer/browser (mint this arc)
+#
+# THIS cascade IS load-bearing for the composition-theorem chain
+# closure. Without gestalt-ui-shaped emission, the chain cannot
+# terminate at a browser peer runtime that consumes gestalt-ui
+# tokens; arbitrary Gleam would require additional glue layer.
+#
+# === Substrate-already-had-the-word ===
+#
+# The gestalt-ui vocabulary crate ALREADY EXISTS at
+# `/Users/reed/dev/projects/gestalt-ui/` (11 Gleam modules +
+# tokens/*.dhall shadow-substrate + ui.conv mirror grammar per
+# Taut scout 2026-08-03 §1). The composition target is not
+# invented — it is Alex's existing target-agnostic vocabulary
+# library that compiles to both BEAM and JS.
+#
+# This shard NAMES the cascade species that emits into that
+# library; does not invent the library. Per [[feedback-substrate-
+# already-had-the-word]] (~98th instance).
+#
+# === composition altitude: FILE-PROJECTION ↔ VOCABULARY-LIBRARY ===
+#
+# Source altitude: `@code/gestalt` (shards/code/gestalt.mirror,
+# this-arc landing) — .gestalt file-projection of the @gestalt
+# graph.
+#
+# Target altitude: `@code/gleam` (shards/code/gleam.mirror,
+# 2026-06-06) — Gleam grammar; specifically the gestalt-ui subset
+# per Q-C2 (Token(a) = Token(materialize: fn(Theme)->a,
+# description) + composite.materialize_typography-shaped folds +
+# view target-neutral view-models).
+#
+# Per companion spec §Composition theorem:
+# - PRESERVED: register-honoring bytes (breath-marks + asymmetric
+#   brackets + emoji + soft-breaks + corpus-links all lift to
+#   Gleam string literals with source-position annotations); the
+#   @document element structure (sections/paragraphs/spans map to
+#   gestalt-ui view model constructors); the @user profile-optic
+#   application (@user.project(theme) → gestalt-ui Theme record
+#   modification).
+# - LOST: mirror-substrate parametricity (labeled<v,m> collapses
+#   to raw Gleam types); mirror-substrate bilateral verdict
+#   states (cannot execute at Gleam runtime); mirror-substrate
+#   family-root altitude discipline (Gleam has module-level
+#   organization; not multi-altitude prism-family recursion).
+#
+# The `loss_lens<@code/gestalt, @code/gleam>` measures these gaps.
+#
+# === Gestalt-ui vocabulary composition constraints ===
+#
+# The emitted Gleam MUST compose over gestalt-ui's Token(a) type:
+#
+#   Token(materialize: fn(Theme) -> a, description: String)
+#
+# This is the LOAD-BEARING API constraint. Per gestalt-ui
+# theme.gleam docblock (Alex 2026-02-28 verbatim): "Theme: the
+# observation frame. Materialize collapses possibility space into
+# actuality for a given theme."
+#
+# The cascade MUST emit tokens as Token(fn(Theme) -> concrete)
+# instantiations, NOT as plain values. This ensures the browser
+# peer runtime can theme-swap dynamically (light/dark; density
+# compact/comfortable/spacious; motion full/reduced) WITHOUT
+# re-invoking the cascade.
+#
+# Per Q-C2 gestalt-ui-shaped emit constraint (Alex 2026-08-03
+# adjudication).
+#
+# === Recognition ancestry ===
+#
+# - Recognition #95 (@cascade family-root; Mara canonical
+#   `ce4874b`, 2026-06-23): this species IS one of the cascade
+#   species discharging the family-root.
+# - Recognition #93 H4 RESOLVED (labeled<> functor): gleam_
+#   artifact uses labeled<> instance for gleam-value + gestalt-
+#   ui-shape metadata.
+# - Recognition #51 (mirror as expanding Hilbert space): the
+#   dimension-projection from gestalt IR's file-projection basis
+#   to gleam's module-value basis IS measurable via
+#   `measure_gestalt_gleam`.
+#
+# === Pre-AI prior art ===
+#
+#   Elm-style Model/View/Update  Czaplicki 2012 Elm; ancestor of
+#                                gestalt-ui's fn(Theme)->a
+#                                materialize-as-collapse pattern.
+#   Van Laarhoven 2007 lens      The Token(a) parametric wrapper
+#                                composes over lens-style optics
+#                                per @user's AffineTraversal/Lens/
+#                                Traversal/Iso algebra.
+#   Wadler 2003 + Bernardy 2017  doc-combinator algebra; render
+#                                emits Gleam code via the same
+#                                pretty-printer discipline both
+#                                @code/mirror.render and @code/
+#                                gestalt.render use.
+#
+# Spec context: docs/specs/2026-08-03-mara-distributed-colony-
+#               canonical-spec.md §Composition theorem + §Cascade
+#               leg spec §gestalt→gleam.
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]] (Alex
+#                      Q-C1 split-cascade + Q-C2 gestalt-ui-shaped
+#                      emit directives),
+#                      [[feedback-loss-from-epistemologic-properties]],
+#                      [[feedback-craft-not-deliver]].
+# Related shards: shards/cascade.mirror (family-root),
+#                 shards/labeled.mirror (functor primitive),
+#                 shards/code/gestalt.mirror (source grammar; this-arc),
+#                 shards/code/gleam.mirror (target grammar),
+#                 shards/cascade/code/mirror/gestalt.mirror (sibling
+#                                                             mint;
+#                                                             first
+#                                                             cascade
+#                                                             leg),
+#                 shards/cascade/code/turing/mirror.mirror (structural
+#                                                            template
+#                                                            precedent).
+# Path-namespace property: this file at
+# `shards/cascade/code/gestalt/gleam.mirror` declares
+# `@cascade/code/gestalt/gleam` per `@epistemologic/pact/
+# path_matches_namespace`.
+
+source @arxiv/programming-languages/wadler-1989-theorems-for-free
+source @arxiv/programming-languages/reynolds-1983-parametricity
+source @arxiv/programming-languages/wadler-2003-prettier-printer
+source @arxiv/programming-languages/bernardy-2017-pretty-not-greedy
+
+prism @cascade/code/gestalt/gleam {
+  focus cascade
+  project cascade
+  split cascade
+  shift cascade
+  settle cascade
+}
+
+# === gestalt_source carrier ===
+# Specialization of @cascade.typed_source for source_grammar=gestalt.
+# References a gestalt IR (per @code/gestalt) as unit of cascade.
+type gestalt_source = ref
+
+# === gestalt_ui_shape_metadata carrier ===
+# Structured carrier for the gestalt-ui-shaped emit metadata per
+# Q-C2 constraint:
+#
+#   token_bindings          — Token(a) instantiations for each
+#                             .gestalt semantic-intent (per @ui/
+#                             design color_intent + motion_intent +
+#                             typography_intent enums).
+#   theme_frame             — Theme record initialization per
+#                             gestalt-ui theme.gleam Theme
+#                             constructor.
+#   composite_bindings      — Typography + Spacing + Surface
+#                             composite constructor calls per
+#                             gestalt-ui composite.gleam.
+#   view_bindings           — SignalView / ActorView constructor
+#                             calls per gestalt-ui view/*.gleam.
+#   materialize_dispatch    — fn(Theme) -> a closure emissions
+#                             per each token.
+type gestalt_ui_shape_metadata = ref
+
+# === gleam_artifact carrier ===
+# The @labeled<> instance per recognition #93 H4. A gleam_artifact
+# IS a Gleam module ref annotated with gestalt_ui_shape_metadata.
+type gleam_artifact = labeled(ref, gestalt_ui_shape_metadata)
+
+# === apply_gestalt_gleam action ===
+# THE LOAD-BEARING ACTION. Specialization of @cascade.compile for
+# the gestalt IR → gleam functor.
+#
+# Emission constraint per Q-C2: MUST emit Token(fn(Theme) -> a)
+# instantiations, NOT plain values. Browser peer runtime theme-
+# swaps dynamically without re-cascading.
+#
+# requires gestalt_source_well_formed(src, p): source parses per
+# @code/gestalt grammar discipline.
+apply_gestalt_gleam(src: gestalt_source, p: perturbation) -> ref
+requires gestalt_source_well_formed(src, p)
+{ \ }
+
+# === bundle_gleam action ===
+# Wraps a Gleam-module ref + gestalt-ui-shape metadata into a
+# gleam_artifact via @labeled.label construction.
+bundle_gleam(gleam_ref: ref, metadata: gestalt_ui_shape_metadata,
+             p: perturbation) -> gleam_artifact
+requires gestalt_ui_shape_coherent(gleam_ref, metadata, p)
+{ \ }
+
+# === measure_gestalt_gleam action ===
+# Specialization of @cascade.measure for the gestalt IR → gleam
+# cascade.
+measure_gestalt_gleam(src: gestalt_source, artifact: gleam_artifact,
+                       p: perturbation)
+  -> imperfect(gleam_artifact, ref, information_loss)
+requires gestalt_gleam_loss_well_defined(src, artifact, p)
+{ \ }
+
+# === Sub-bilaterals ===
+
+bilateral gestalt_source_well_formed {
+  sentinel "gestalt-source=parses-per-code-gestalt-grammar"
+  arity 1
+}
+gestalt_source_well_formed(src: gestalt_source, p: perturbation)
+  -> verdict { \ }
+
+bilateral gestalt_ui_shape_coherent {
+  sentinel "gestalt-ui-shape=matches-vocabulary-library"
+  arity 2
+}
+gestalt_ui_shape_coherent(gleam_ref: ref,
+                            metadata: gestalt_ui_shape_metadata,
+                            p: perturbation) -> verdict { \ }
+
+bilateral gestalt_gleam_loss_well_defined {
+  sentinel "cascade=source-artifact-pair-discharge-witnessed"
+  arity 2
+}
+gestalt_gleam_loss_well_defined(src: gestalt_source,
+                                  artifact: gleam_artifact,
+                                  p: perturbation) -> verdict { \ }
+
+bilateral cascade_gestalt_gleam_admissible {
+  sentinel "cascade=gestalt-ui-vocabulary-shaped"
+  arity 1
+}
+cascade_gestalt_gleam_admissible(cascade_outcome: gleam_artifact)
+  -> verdict { \ }
+
+# === Composed bilateral ===
+bilateral gestalt_gleam_cascade_well_formed {
+  sentinel "cascade=all-sub-bilaterals-discharge"
+  arity 2
+}
+gestalt_gleam_cascade_well_formed(src: gestalt_source,
+                                    artifact: gleam_artifact,
+                                    p: perturbation) -> verdict
+requires gestalt_source_well_formed(src, p)
+requires gestalt_ui_shape_coherent(unlabel(artifact, p), label_of(artifact, p), p)
+requires gestalt_gleam_loss_well_defined(src, artifact, p)
+requires cascade_gestalt_gleam_admissible(artifact)
+{ \ }
+
+out @cascade/code/gestalt/gleam
+out gestalt_source
+out gestalt_ui_shape_metadata
+out gleam_artifact
+out apply_gestalt_gleam
+out bundle_gleam
+out measure_gestalt_gleam
+out gestalt_source_well_formed
+out gestalt_ui_shape_coherent
+out gestalt_gleam_loss_well_defined
+out cascade_gestalt_gleam_admissible
+out gestalt_gleam_cascade_well_formed

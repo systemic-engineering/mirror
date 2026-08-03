@@ -1,0 +1,301 @@
+in @prism
+in @meta
+in @glass
+in @cascade
+in @labeled
+in @code/mirror
+in @code/gestalt
+
+# @cascade/code/mirror/gestalt — the mirror substrate → gestalt IR
+# value cascade species.
+#
+# Path naming: per Alex 2026-06-23 directive — cascade species
+# shards group by `@cascade/code/<source>/<target>`. Source
+# language (mirror substrate) groups together at
+# `shards/cascade/code/mirror/`; target (gestalt IR here) leafs at
+# `shards/cascade/code/mirror/gestalt.mirror`.
+#
+# THIS species is the FIRST LEG of the composition theorem chain
+# per Alex 2026-08-03 verbatim:
+#
+#   *"Split cascade architecture: cascade<mirror, gestalt> +
+#    cascade<gestalt, gleam> as separate species (not one combined
+#    cascade). Opens door for cascade<gestalt, X> alternate
+#    back-ends without touching mirror."*
+#
+# Composition-theorem chain per companion math 2026-08-03:
+#
+#   mirror substrate
+#     ↓  @cascade/code/mirror/gestalt (THIS species)
+#   gestalt IR (@code/gestalt AST + .gestalt file surface)
+#     ↓  @cascade/code/gestalt/gleam (sibling mint this arc)
+#   gestalt-ui-shaped Gleam
+#     ↓  @cascade/code/gleam/js (landed sibling per Taut scout §5)
+#   JS bundle
+#     → browser peer runtime @peer/browser (mint this arc)
+#
+# === Substrate-already-had-the-word ===
+#
+# The pattern of "cascade to gestalt IR" already appears at prose
+# altitude in:
+#
+#   docs/scouts/2026-08-03-taut-distributed-colony-substrate-scout.md
+#     §5 mint prerequisites — enumerated expected mint shape for
+#     @cascade/code/mirror/gestalt per landed sibling template
+#     (5 carriers + 3 actions + 4 sub-bilaterals + 1 composed
+#     following @cascade/code/turing/mirror template).
+#   docs/specs/2026-08-03-mara-distributed-colony-canonical-spec.md
+#     — companion spec landing this arc; §Composition theorem names
+#     this leg as required for chain closure.
+#
+# The sibling template @cascade/code/turing/mirror.mirror
+# (`shards/cascade/code/turing/mirror.mirror`, 22.1KB, 2026-07-17)
+# is the STRUCTURAL PRECEDENT — the reverse-direction cascade
+# (tape → mirror substrate) that gives the shape mirror looks
+# like at cascade altitude. This species mirrors that structure
+# in the forward direction (mirror substrate → gestalt IR).
+#
+# === composition altitude: SUBSTRATE-NATIVE ↔ FILE-PROJECTION ===
+#
+# The source altitude is `@code/mirror` (shards/code/mirror.mirror
+# 2026-06-07) — mirror's own instance of @code at the mirror
+# altitude. The target altitude is `@code/gestalt` (shards/code/
+# gestalt.mirror, this-arc landing) — the file-level projection
+# of the @gestalt graph.
+#
+# THIS cascade is the AUTHOR-EMISSION edge: it emits `.gestalt`
+# files that Alex (or Reed, or any peer) reads/writes in the
+# register the corpus already carries. Per polyglot spec §3.2
+# composition axiom, THIS species composes with:
+#
+#   - `@cascade/code/gestalt/gleam` (sibling mint this tick) →
+#     gives the full mirror → gleam composition when chained.
+#   - `@cascade/code/gleam/js` (landed) → chained further gives
+#     mirror → js composition when the browser-peer target is
+#     the final destination.
+#   - Composable via `@glue.compose` with existing mirror substrate
+#     carriers at their own altitudes.
+#
+# === The cascade shape (mirror substrate → gestalt IR) ===
+#
+# Source (mirror substrate admits per @code/mirror discipline):
+# - substrate-decl graph (@mirror/store content-addressed refs)
+# - composition edges (@glue.compose morphism composition)
+# - typed carriers (@glass verdict + @nl language surface +
+#   @prism five-op discipline)
+# - substrate-native composition (@code/mirror grammar/render
+#   sub-species)
+# - identity-contract preservation (byte-equality on OID)
+#
+# Target (gestalt IR preserves per @code/gestalt + @gestalt):
+# - .gestalt file structure (frontmatter + heading hierarchy +
+#   line-break-as-structure per @code/gestalt/grammar)
+# - @gestalt.gestalt_document (nodes + edges + annotations +
+#   modes + visibility_scope)
+# - register-honoring bytes (breath-marks + asymmetric brackets +
+#   emoji + soft-breaks + corpus-links — ALL preserved verbatim)
+# - round-trip identity (parse(render(doc)) = doc structurally)
+#
+# Per companion spec §4.4 (this cascade leg):
+# - PRESERVED: substrate-decl semantics (every mirror shard-decl
+#   has a .gestalt-file equivalent projection); OID content-address
+#   (fragments preserve identity); the .gestalt corpus register
+#   (per @code/gestalt/grammar 22 productions).
+# - LOST: the substrate-decl's compile-time-only invariants that
+#   have no reader-runtime discharge (e.g., mirror-substrate-only
+#   bilateral verdict states); the substrate's parametricity
+#   (labeled<v,m> collapses to raw refs at file altitude).
+#
+# The `loss_lens<@code/mirror, @code/gestalt>` measures these gaps
+# against mirror's substrate-decl graph altitude + .gestalt's
+# file-level projection altitude.
+#
+# === Recognition ancestry ===
+#
+# - Recognition #95 (@cascade family-root; Mara canonical `ce4874b`,
+#   2026-06-23): this species IS one of the cascade species
+#   discharging the family-root.
+# - Recognition #93 H4 RESOLVED (labeled<> functor at
+#   `shards/labeled.mirror`): gestalt_ir_artifact uses labeled<>
+#   instance for substrate-value + gestalt-projection-metadata.
+# - Recognition #51 (mirror as expanding Hilbert space): the
+#   dimension-projection from mirror's substrate-decl-graph basis
+#   to gestalt's file-projection basis IS measurable via
+#   `measure_mirror_gestalt`; the projection REBASES mirror's
+#   substrate-decl surface into gestalt's file-projection altitude
+#   while preserving computational semantics.
+#
+# === Pre-AI prior art ===
+#
+#   Markdown → HTML          Gruber 2004 markdown.pl — first prose-
+#                            to-web cascade with round-trip identity
+#                            as design goal; ancestor of the
+#                            register-preservation contract.
+#   Wadler 2003             "A prettier printer" — the doc-combinator
+#                            algebra @code/mirror.render + @code/
+#                            gestalt.render both use; measurement of
+#                            layout cost.
+#   Bernardy 2017           "A pretty but not greedy printer" — the
+#                            dynamic-programming optimality criterion
+#                            over the doc algebra; grounds cascade
+#                            emission of minimal-loss projections.
+#   Reynolds 1983 + Wadler   Parametricity — the labeled<> functor
+#     1989                   that lifts substrate-value refs with
+#                            projection-metadata dimension.
+#
+# Spec context: docs/specs/2026-08-03-mara-distributed-colony-
+#               canonical-spec.md §Composition theorem + §Cascade
+#               leg spec §mirror→gestalt.
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]] (Alex
+#                      2026-08-03 Q-C1 split-cascade directive),
+#                      [[feedback-loss-from-epistemologic-properties]]
+#                      (loss is @epistemologic/properties composite),
+#                      [[feedback-craft-not-deliver]] (every action
+#                      body `\` blocked; FLOOR realization domain).
+# Related shards: shards/cascade.mirror (family-root),
+#                 shards/labeled.mirror (functor primitive
+#                                        gestalt_ir_artifact rests on),
+#                 shards/code/mirror.mirror (source grammar),
+#                 shards/code/gestalt.mirror (target grammar; this-arc
+#                                             landing),
+#                 shards/cascade/code/turing/mirror.mirror (structural
+#                                                          precedent),
+#                 shards/cascade/code/gestalt/gleam.mirror (sibling
+#                                                           mint this
+#                                                           arc; second
+#                                                           cascade
+#                                                           leg).
+# Path-namespace property: this file at
+# `shards/cascade/code/mirror/gestalt.mirror` declares
+# `@cascade/code/mirror/gestalt` per `@epistemologic/pact/
+# path_matches_namespace`.
+
+source @arxiv/programming-languages/wadler-1989-theorems-for-free
+source @arxiv/programming-languages/reynolds-1983-parametricity
+source @arxiv/programming-languages/wadler-2003-prettier-printer
+source @arxiv/programming-languages/bernardy-2017-pretty-not-greedy
+
+prism @cascade/code/mirror/gestalt {
+  focus cascade
+  project cascade
+  split cascade
+  shift cascade
+  settle cascade
+}
+
+# === mirror_source carrier ===
+# Specialization of @cascade.typed_source for source_grammar=mirror.
+# References mirror-substrate content as the unit of cascade.
+type mirror_source = ref
+
+# === gestalt_projection_metadata carrier ===
+# Structured carrier for the mirror-substrate → gestalt-IR
+# projection shape (visibility_scope inference; annotation-carrier
+# extraction; section-boundary detection from shard-decl grouping;
+# emoji-carrier preservation).
+type gestalt_projection_metadata = ref
+
+# === gestalt_ir_artifact carrier ===
+# The @labeled<> instance per recognition #93 H4. A gestalt_ir_
+# artifact IS a gestalt-substrate-value ref annotated with
+# gestalt_projection_metadata via the labeled functor.
+type gestalt_ir_artifact = labeled(ref, gestalt_projection_metadata)
+
+# === apply_mirror_gestalt action ===
+# THE LOAD-BEARING ACTION. Specialization of @cascade.compile for
+# the mirror substrate → gestalt IR functor. Takes a mirror source
+# ref; returns a gestalt IR ref (content-addressed per @mirror/store).
+#
+# The FLOOR resolver at [substrate-floor:@io-boundary] discharges
+# via @code/mirror parsing + @code/gestalt emission per Wadler-
+# Bernardy doc combinator algebra.
+#
+# requires mirror_source_well_formed(src, p): source must pass
+# @code/mirror parsing per @code/mirror grammar discipline.
+apply_mirror_gestalt(src: mirror_source, p: perturbation) -> ref
+requires mirror_source_well_formed(src, p)
+{ \ }
+
+# === bundle_gestalt action ===
+# Wraps a gestalt-IR ref + projection metadata into a gestalt_ir_
+# artifact via @labeled.label construction.
+bundle_gestalt(gestalt_ref: ref, metadata: gestalt_projection_metadata,
+               p: perturbation) -> gestalt_ir_artifact
+requires gestalt_projection_coherent(gestalt_ref, metadata, p)
+{ \ }
+
+# === measure_mirror_gestalt action ===
+# Specialization of @cascade.measure for the mirror substrate →
+# gestalt IR cascade. Returns imperfect<gestalt_ir_artifact, ref,
+# information_loss> per @glass discipline.
+measure_mirror_gestalt(src: mirror_source, artifact: gestalt_ir_artifact,
+                        p: perturbation)
+  -> imperfect(gestalt_ir_artifact, ref, information_loss)
+requires mirror_gestalt_loss_well_defined(src, artifact, p)
+{ \ }
+
+# === Sub-bilaterals ===
+
+# mirror_source_well_formed — source-side well-formedness
+bilateral mirror_source_well_formed {
+  sentinel "mirror-source=parses-per-code-mirror-grammar"
+  arity 1
+}
+mirror_source_well_formed(src: mirror_source, p: perturbation)
+  -> verdict { \ }
+
+# gestalt_projection_coherent — target-side well-formedness
+bilateral gestalt_projection_coherent {
+  sentinel "gestalt-projection=metadata-coherent-with-value"
+  arity 2
+}
+gestalt_projection_coherent(gestalt_ref: ref,
+                             metadata: gestalt_projection_metadata,
+                             p: perturbation) -> verdict { \ }
+
+# mirror_gestalt_loss_well_defined — loss-measurability bilateral
+bilateral mirror_gestalt_loss_well_defined {
+  sentinel "cascade=source-artifact-pair-discharge-witnessed"
+  arity 2
+}
+mirror_gestalt_loss_well_defined(src: mirror_source,
+                                   artifact: gestalt_ir_artifact,
+                                   p: perturbation) -> verdict { \ }
+
+# cascade_mirror_gestalt_admissible — @glue.compose admissibility
+bilateral cascade_mirror_gestalt_admissible {
+  sentinel "cascade=gestalt-substrate-consumable"
+  arity 1
+}
+cascade_mirror_gestalt_admissible(cascade_outcome: gestalt_ir_artifact)
+  -> verdict { \ }
+
+# === Composed bilateral ===
+# THE LOAD-BEARING composed bilateral for THIS species.
+bilateral mirror_gestalt_cascade_well_formed {
+  sentinel "cascade=all-sub-bilaterals-discharge"
+  arity 2
+}
+mirror_gestalt_cascade_well_formed(src: mirror_source,
+                                     artifact: gestalt_ir_artifact,
+                                     p: perturbation) -> verdict
+requires mirror_source_well_formed(src, p)
+requires gestalt_projection_coherent(unlabel(artifact, p), label_of(artifact, p), p)
+requires mirror_gestalt_loss_well_defined(src, artifact, p)
+requires cascade_mirror_gestalt_admissible(artifact)
+{ \ }
+
+out @cascade/code/mirror/gestalt
+out mirror_source
+out gestalt_projection_metadata
+out gestalt_ir_artifact
+out apply_mirror_gestalt
+out bundle_gestalt
+out measure_mirror_gestalt
+out mirror_source_well_formed
+out gestalt_projection_coherent
+out mirror_gestalt_loss_well_defined
+out cascade_mirror_gestalt_admissible
+out mirror_gestalt_cascade_well_formed
