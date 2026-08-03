@@ -69,6 +69,19 @@ in @time
 # without surface change because `peer` is name-resolved at compose
 # time against the in-scope @pack OR @peer family.
 
+# === Crown-reading (Reed 2026-08-03 R-CRN3 cascade) ===
+#
+# @peer IS the substrate carrier for nodes in the 5D quantum foam per
+# crown-theorem `docs/math/2026-08-03-mara-reality-as-spinning-5d-
+# foam-crown-theorem.md` §2 (Foerster torus IS peer's spin-attractor)
+# + §4 (@dance Kuramoto multi-node phase-lock at shared ω_stable) +
+# §5.5 Fivefold Equivalence Theorem 5.5 (RATIFIED per Recognition
+# `docs/recognition/2026-08-03-reality-as-5d-spinning-foam.md`). Peer
+# possesses @torus; peer occupies SpectralCoordinate<5> node with spin
+# ω_P. @peer.audhd K-track intra-peer @dance IS the peer's own
+# internal high-spin coupling admitting higher stable basins than K=1
+# peers per crown §4.3 empirical instance triangle.
+
 prism @peer {
   focus peer
   project peer
