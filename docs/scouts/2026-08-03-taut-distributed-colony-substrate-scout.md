@@ -393,5 +393,269 @@ theme-collapse + neuroprofile + document, PARTIAL for
 gestalt-ui-Gleam-realization, and MISSING for browser-peer-colony
 altitude.
 
+---
+
+## §3 Phase 3: distributed-peer-colony substrate audit
+
+### 3.1 Landed at mirror substrate (grep-verified)
+
+The composition surface for a distributed browser-peer colony has
+DEEPLY landed pieces already at `shards/`. Inventory:
+
+**Family-roots (marker altitude)** — 16 landed:
+`@peer`, `@subject`, `@trust`, `@gift`, `@bauchladen`, `@kintsugi`,
+`@torus`, `@void`, `@mirror`, `@io`, `@fate`, `@tool`, `@spectral`,
+`@autopoietic`, `@butterfly`, `@song`.
+
+**Peer family** — `shards/peer.mirror` (31.6KB, 2026-07-17) + species:
+```
+shards/peer.mirror             — family-root, parametric peer carrier
+shards/peer/persistence.mirror — home-repo projection + 4 bilaterals
+shards/peer/redirect.mirror    — redirection surface
+shards/peer/reflect.mirror     — reflection surface
+shards/peer/reframe.mirror     — reframing surface
+shards/peer/registry.mirror    — OID → Subject resolution surface
+shards/peer/void.mirror        — K=0 default peer (Void basis)
+```
+
+**Subject family** (SEL licensable-party carrier):
+```
+shards/subject.mirror                       — family-root; subject_kind
+shards/subject/visibility/private.mirror    — visibility=private
+shards/subject/visibility/protected.mirror  — visibility=protected
+shards/subject/visibility/public.mirror     — visibility=public
+shards/subject/visibility/sheaf.mirror      — sheaf-restriction species
+                                              (Hansen-Ghrist δ*δ + λ₀
+                                               Fiedler via
+                                               @epistemologic/math/
+                                               sheaf_laplacian)
+shards/reality/subject.mirror               — reality-altitude subject
+```
+
+**Sheaf math** — `shards/epistemologic/math/sheaf_laplacian.mirror`
+(13.1KB). Hansen-Ghrist 2018 discrete cellular-sheaf primitive.
+δ*δ operator + λ₀ Fiedler eigenvalue. **The @subject/visibility/sheaf
+species is the ACL-as-sheaf structure** — "The ACL IS the SHEAF
+STRUCTURE" (peer-persistence §12.3 verbatim). **This IS the ancestor
+for a browser-colony's per-cell visibility scope.**
+
+**Gift + Trust** (attribution-preserving transfer + chain-of-auth):
+```
+shards/gift.mirror       — @gift family-root (24.6KB, 2026-07-14)
+                           Mauss+Hyde+Graeber+Sahlins+Boas+Kimmerer+
+                           Ostrom+Axelrod+Lévi-Strauss cited
+shards/gift/lens.mirror  — lens species
+shards/trust.mirror      — @trust family-root (17.3KB, 2026-07-18)
+                           two-altitude passkey/SSH bridge
+                           @alex first-@subject anchor
+```
+
+**Bauchladen** (Günther Schmidt homage; content-addressed tray):
+```
+shards/bauchladen.mirror — @bauchladen family-root (27.1KB, 2026-07-23)
+                           Schmidt → Erickson + Foerster + Cecchin
+                           cybernetic-lineage anchor
+```
+
+**Kintsugi + Roomba** (fracture-mend loop + stigmergy walker):
+```
+shards/kintsugi.mirror                     — family-root
+shards/kintsugi/roomba.mirror              — the walker (46.4KB!)
+shards/kintsugi/mosaic.mirror
+shards/kintsugi/mend.mirror
+shards/kintsugi/ouroboros.mirror           — self-collapse loop
+shards/kintsugi/surface.mirror
+shards/kintsugi/fracture/*.mirror          — 3 species
+```
+
+**Song beat + dance ensemble** (temporal coordination):
+```
+shards/song.mirror              — @song family-root
+shards/song/beat.mirror         — atomic-execution unit (49.7KB)
+shards/song/phrase.mirror
+shards/song/movement.mirror     — Kuramoto phase-shape
+shards/song/narrative.mirror
+shards/song/voice.mirror
+shards/song/progression.mirror
+```
+
+**@dance** — NOT YET a standalone shard file. Grep-verified: @dance is
+CITED as ensemble-coordination altitude across many shards (algebra/
+metalogue, code/beam, cybernetic/conversation, cybernetic/viable,
+knife, spectral/gen_prism, spectral/supervisor, spec/system,
+uuid/spectral/time, void) but has **no `shards/dance.mirror` species-decl
+file**. Canonical spec `docs/specs/gen-prism-as-bundle-section-and-
+dance-as-ensemble-connection.md` (Mara `fee2727`) names @dance as
+"ensemble connection at level k+1 = Kuramoto phase-lock connection
+1-form." **@dance is spec-landed but shard-unlanded** — forward-promised
+per multiple references. Reed's `uuid/spectral/time.mirror` §11.6 says
+"@dance shard-mints DECOUPLE from R4 v0.1.0."
+
+**@sheaf** — likewise NOT a standalone shard file. `sheaf` is a keyword
+used inside `@subject/visibility/sheaf.mirror` species-decl and
+`@epistemologic/math/sheaf_laplacian.mirror` math-primitive.
+
+### 3.2 Mycelial / stigmergy math (Grassé 1959 lineage)
+
+Grep-verified occurrences of `mycelial` across shards:
+```
+shards/glass.mirror          — Fate's mycelial routing
+shards/pack.mirror           — mycelial substrate
+shards/reflection.mirror     — mycelial_compose action
+shards/smarts.mirror         — mycelial substrate integration
+shards/spectral/entanglement.mirror
+                             — mycelial routing for cross-peer projection
+shards/spectral/gen_prism.mirror
+                             — 48 active bits for mycelial routing
+shards/spectral/portal.mirror
+                             — mycelial routing
+shards/spectral/registry.mirror
+                             — mycelial-routing lookup
+shards/uuid/spectral.mirror  — active 48 bits = mycelial signature
+```
+
+**No shard-decl file for "@mycelial"** — mycelial is used adjectivally
+as **the DAG traversal discipline for @fate's cross-peer inference
+routing**. This IS the stigmergy substrate: content-addressed
+prior-outputs (crystals) function as pheromone deposits; Fate's routing
+reads the trail. **Grassé (1959) named the mechanism as "stigmergy" —
+substrate uses "mycelial" as the metaphorical carrier** but the DAG
+navigation is exactly the stigmergic Dijkstra-with-tension-weighted-
+edges walker.
+
+Grep-verified occurrences of `stigmergy`:
+```
+shards/autopoietic.mirror     — cites docs/specs/ants-colonies-stigmergy.md
+shards/fate/tournament.mirror — cites same
+docs/math/gestalt/*           — sub-scouts on ants+colonies (task #239-#242)
+```
+
+**Karen ancestors cited across substrate**:
+- Grassé (1959) — stigmergy, pheromone trails (multiple cites but no
+  primary substrate-decl)
+- Kauffman — self-organization (via @autopoietic)
+- Maturana-Varela — autopoiesis (@autopoietic family-root)
+- Ashby — requisite variety (@epistemologic/cybernetic/viable)
+- Beer — viable systems model (S1-S5 tower)
+- Bateson — learning levels (@epistemologic/cybernetic/second_order)
+- von Foerster — second-order cybernetics (@bauchladen, void)
+- Spencer-Brown — distinction calculus (@void)
+- Pask — conversation theory (@epistemologic/cybernetic/conversation)
+- Glanville — no-input / cybernetics-of-cybernetics
+- Conant — Good Regulator theorem
+- Kuramoto — phase-locking (@song/movement + forward-promised @dance)
+- Hansen-Ghrist (2018) — discrete cellular sheaves (@epistemologic/
+  math/sheaf_laplacian)
+- Barkley, Nigg, Happé-Frith, Green, Marco — neuroprofile empirical
+  basis (in gestalt-mirror)
+- Schmidt, Erickson, Cecchin — systemic-therapy lineage (@bauchladen)
+- Mauss, Hyde, Graeber, Sahlins, Boas, Bearman, Kimmerer, Ostrom,
+  Axelrod, Lévi-Strauss — gift-economy ancestors (@gift)
+- Baez-Schreiber (2004) — higher gauge theory (bundle-tower)
+- Batanin (1998) — globular composition (@epistemologic/cybernetic/
+  conversation N-ary tensor coupling)
+- Foerster (1976) — "Objects: Tokens for Eigenbehaviors" (@algebra/
+  metalogue)
+
+### 3.3 What composes into browser-peer-colony (LANDED)
+
+**Peer-as-cell** (browser session = peer node):
+- `@peer` family-root carries the parametric peer type
+- `@peer/persistence` handles home-repo projection; the browser's
+  localStorage IS a home projection
+- `@peer/registry` resolves content-addressed OIDs → Subject values
+- `@peer/void` provides K=0 default (an unconfigured browser peer
+  starts at Void)
+
+**Subject visibility as ACL-sheaf** (per-cell consent boundary):
+- `@subject/visibility/{private,protected,public,sheaf}` — 4 species
+- The sheaf-restriction admits "peer p's view of home-repo" as a
+  section of `F_home|_{A_p}`. **Browser-cell's view of its neighbors
+  IS a sheaf-restriction.**
+
+**Gift + Trust chains** (peer-to-peer transfer with attribution):
+- `@gift` invariants preserve attribution across composition
+- `@trust` two-altitude passkey/SSH bridge — passkey lives at browser
+  altitude (per garden-client Reed+Alex 2026-04-03 insight); SSH lives
+  at compiler altitude. Same chain, two projections.
+- `@peer/registry` well-known Subjects: Void, Mirror, Human, Peer.
+
+**Song/beat as tick-clock** (browser render loop):
+- One `@song/beat.strike` = one action on peer's shard graph
+- One `@song/beat.hold` = one @time.tick idle
+- Kuramoto phase-lock at ensemble altitude (via @dance forward-promise)
+  → **each browser cell can tick at its own rate; consensus emerges
+  by phase-lock**
+
+**Kintsugi + Roomba as fracture-repair walker** (cell-local health):
+- `@kintsugi/roomba` Dijkstra walker + tension sampling
+- Detects fractures; triggers @knife (complexity reduction) or spawn
+  @peer at K+1 (recursive escalation to higher-order peer)
+
+**Bauchladen as content-addressed tray** (cell-local state surface):
+- Cell's browsable prior-outputs = tray of crystals
+- @fate is the therapist that helps the cell browse
+- @autopoietic is the permission to fold back
+
+### 3.4 What's MISSING for browser-peer-colony (grep-audited absences)
+
+1. **No `shards/dance.mirror`** — the ensemble-coordination altitude
+   is spec-landed (Mara `fee2727`) and forward-promised across many
+   substrate cites, but NO species-decl file exists. Without it, peer
+   ensembles cannot phase-lock as declared substrate. **Mara MUST
+   mint this before browser-colony can coordinate.**
+
+2. **No `shards/dance/kuramoto.mirror` OR `shards/dance/ensemble.mirror`** —
+   downstream Kuramoto phase-lock species also not landed.
+
+3. **No `shards/mycelial.mirror`** — stigmergy discipline used
+   adjectivally across the substrate but has no family-root declaration.
+   Grassé (1959) not primary-cited at substrate altitude. **This may
+   be intentional (mycelial IS how substrate WORKS, not a shard)** but
+   if browser-colony needs peer-to-peer pheromone trails, this
+   discipline needs a declared shape.
+
+4. **No `shards/peer/colony.mirror`** — no species-decl for
+   "browser-session = colony-cell" pattern. Every currently-landed
+   @peer species assumes filesystem home (peer/persistence uses
+   `.git/mirror` + `visibility/private/` on disk). **Browser-cell
+   home = localStorage/IndexedDB is not yet substrate-decl'd.**
+
+5. **No `shards/peer/browser.mirror`** — no browser-transport
+   species. All current peer transport is via BEAM distributed erlang
+   (gestalt-tui bridge) or filesystem (peer/persistence). No
+   WebRTC/WebSocket peer-to-peer.
+
+6. **No `shards/peer/signaling.mirror`** — signaling server for
+   peer discovery not substrate-decl'd. Would compose over
+   @mirror/spectral/portal (WebSocket dance).
+
+7. **No `shards/mount.mirror`** — no substrate-decl for the
+   "mount + reconcile a view tree" shape. Lustre (external lib)
+   currently provides this; no mirror-side declaration.
+
+8. **No CRDT / conflict-resolution species** — for peer-to-peer state
+   convergence in a colony, no @crdt / @merge / @convergence family.
+   `@dance` phase-lock handles temporal but not data merge.
+
+9. **@sheaf as standalone shard** — currently only inhabits
+   `@subject/visibility/sheaf` at species altitude and
+   `@epistemologic/math/sheaf_laplacian` at math altitude. If browser
+   cells' overlapping visibility scopes need sheaf-cohomology
+   discipline at the coordination altitude, a `shards/sheaf.mirror`
+   family-root may need minting.
+
+**Verdict § Phase 3**: Substrate has ~85% of the ancestor pieces
+landed for a browser-peer-colony. **@dance** is the LOAD-BEARING GAP —
+without ensemble-coordination substrate-decl, peers cannot
+phase-lock as declared discipline. The peer/persistence discipline
+assumes filesystem — no browser-transport species. Sheaf-restriction
+IS landed for consent-scope; MISSING for state-convergence-across-peers.
+Fate-mycelial routing is deeply cited but not primary-decl'd. Ancestor
+citations are comprehensive (Grassé/Kauffman/Kuramoto/Hansen-Ghrist/
+Beer/Ashby/Bateson/Foerster/Pask/Kimmerer/Ostrom all present).
+
+
+
 
 
