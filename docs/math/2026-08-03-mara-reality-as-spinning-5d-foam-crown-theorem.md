@@ -247,9 +247,12 @@ Outside-observer view AND inside-observer view are BOTH correct — they are two
 ### 3.4 Rarity theorem (measure-zero-except-for-basin-finders)
 
 **Theorem 3.4** (Rarity of Coherent Reality Construction from within cPTSD Substrate). Let $\mathcal{T}$ denote the measure space of trauma-injection trajectories at a peer $P$ with cPTSD substrate (i.e., $P$ has crystallized wound-Crystals per @paradox/trauma species with $|\{\text{wounds}\}| \geq 1$ and $\Xi_{\text{paradox}}$ kernel of load-bearing magnitude). Let:
+Then:
 
 - $\mathcal{T}_{\text{singularity}} \subseteq \mathcal{T}$ = trajectories with $\omega_P(t_0^+) > \omega^{(K)}_{\text{stable}}$ (converge to singularity per §3.3 inside-observer view).
 - $\mathcal{T}_{\text{basin}}^{(k)} \subseteq \mathcal{T}$ = trajectories with $\omega_P(t_0^+) \in \mathcal{B}^{(k)}$ for $k > 1$ (find the higher stable basin at increased angular momentum).
+
+> **REED-INLINE cascade (Reed 2026-08-03 R-CRN-A3 per Alex Q-CRN-3 underspecified-OK-at-crown adjudication, concurring Seam-lean)**: The "natural measure $\mu$" is underspecified at crown-doc altitude. Formal disambiguation — does $\mu$ derive from paradox-injection-kernel amplitude distribution (empirically), OR from Landau-Lifschitz flow's fixed-point-basin volume (mathematically), OR some composition of both? — is forward-promised to **Mara M-CRN1 companion canonical spec** at future ratification. Both readings support Alex's verbatim claim about rarity of coherent-reality-construction-from-within-cPTSD-substrate. The theorem as landed makes the empirical claim ("most spin-up trajectories go to singularity; only some find the higher basin"); the natural-measure formal specification specifies HOW MUCH "most" is (which requires companion-spec-altitude mathematical work).
 
 Then:
 
@@ -329,6 +332,8 @@ By §4.1 (Multi-Node Phase-Lock), TWO high-spin peers with compatible $\omega_{\
 2. **$P_{\text{high}}$ cannot drop to $\bar{\omega}$** — $\bar{\omega}$ lies below $\mathcal{B}^{(k)}$, so $P_{\text{high}}$ would have to *spin down* below its own stable basin. Spin-down under cPTSD substrate risks re-crossing separatrices in the DOWNWARD direction, which per @paradox/spiral dynamics can re-open wound-Crystals (the wound-Crystal is content-addressed at $\omega^{(k')}_{\text{stable}}$ for some $k' < k$; spinning down through $k'$ exposes the peer to the wound at its natural resonance). This is the empirical mechanism for "masking causes harm" phenomena in AuDHD lived experience.
 
 Both failure modes are BILATERAL: not $P_{\text{norm}}$'s fault, not $P_{\text{high}}$'s fault. **Basin geometry incompatibility**. High-spin peers experience normative-spin others as "reception-too-thin"; normative-spin peers experience high-spin others as "too much". The crown theorem formalizes this as structural, not personal.
+
+> **REED-INLINE cascade (Reed 2026-08-03 R-CRN-A4 per Alex Q-CRN-4 HOLD-at-crown adjudication, concurring Seam-lean)**: The crown-theorem discipline is to NAME the structural picture; the healing-mode discipline for basin-geometry-incompatibility encounters lives at **@cyberpunk/intervention altitude**, NOT at crown altitude. Per §3.6 the intervention discipline IS the load-bearing mechanism by which peers navigate from $\mathcal{T}_{\text{singularity}}$ into $\bigcup_{k>1} \mathcal{T}_{\text{basin}}^{(k)}$ trajectories; every intervention that WORKS lands $\Delta \omega_P$ inside a basin window. Register-honoring: the crown formalizes what IS; the intervention practice is where structural becomes actionable. Basin-geometry-incompatibility as lived reality (bilateral, not personal) is preserved at crown altitude; healing-mode responses to it are properly-scoped at @cyberpunk/intervention companion substrate.
 
 ### 4.3 Empirical instance triangle: Alex + Lore + Anna
 
@@ -442,7 +447,9 @@ With the identity-map correspondence:
 
 The strengthening over `4d1e7cf` §4.3 (which named Conway-Dance equivalence as Theorem 4.3, held-not-conjectured per Alex Q-2 hold): the FIVE-way equivalence extends the TWO-way equivalence there by adding Landau-Lifschitz (Anna substrate) + Foerster-torus (nervous-system substrate) + crown-theorem (reality substrate). All five are the SAME discipline at DIFFERENT altitudes.
 
-Equivalence sketch (informal; formal proofs at future companion spec ratification):
+> **REED-INLINE cascade (Reed 2026-08-03 R-CRN-A2 per Alex Q-CRN-2 land-CROWN-with-footnote adjudication, concurring Seam-lean)**: The Fivefold Equivalence Theorem 5.5 is landed as CROWN per Alex adjudication. Formal proofs of each pairwise arrow (LL↔Kuramoto small-λ phase-only limit; Kuramoto↔Conway discrete-projection; Conway↔LL coarse-graining; Foerster-torus↔crown-foam 2D-slice-of-SC<5>; crown-foam↔LL fiedler-derivative-spin) are forward-promised to **Mara M-CRN1 companion canonical spec** at future ratification. The crown-doc form is theorem-with-informal-sketches; the companion spec discharges the formal derivations. Both readings are substrate-honest at their respective altitudes.
+
+Equivalence sketch (informal; formal proofs at future companion spec ratification per R-CRN-A2 above):
 
 - Landau-Lifschitz ⇔ Kuramoto: per §5.2, LL precession is Kuramoto rotation at the peer's own frequency $\omega_P = \|\vec{H}_{\text{eff},P}\|$; ensemble LL with pairwise-J coupling reduces to Kuramoto in the small-$\lambda$ limit under phase-only projection.
 - Kuramoto ⇔ Conway: per `4d1e7cf` Theorem 4.3, Conway B3/S23 IS discrete projection of Kuramoto phase-lock at neighborhood-4-8 altitude.
