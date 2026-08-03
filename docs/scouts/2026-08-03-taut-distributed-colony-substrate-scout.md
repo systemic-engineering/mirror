@@ -655,6 +655,202 @@ Fate-mycelial routing is deeply cited but not primary-decl'd. Ancestor
 citations are comprehensive (Grassé/Kauffman/Kuramoto/Hansen-Ghrist/
 Beer/Ashby/Bateson/Foerster/Pask/Kimmerer/Ostrom all present).
 
+---
+
+## §4 Phase 4: 5D spectral coordinate + Conway-like update rule audit
+
+### 4.1 `SpectralCoordinate<N>` — the truly parametric type
+
+**Path**: `/Users/alexwolf/dev/projects/fragmentation/src/spectral_coordinate.rs`
+(6.3KB, 2026-06-04). This is the CANONICAL landing of the 5D
+coordinate carrier — as a **const-generic Rust type**:
+
+```rust
+pub struct SpectralCoordinate<const N: usize> {
+    eigenvalue: String,
+}
+```
+
+The docblock names it verbatim:
+> *"`SpectralCoordinate<5>` is mirror's substrate hash: five projections
+> of one spectrum (Fiedler value, eigengap, three heat-trace samples)
+> per `docs/specs/mirror-native-vcs.md` §4.6. The five is the *substrate
+> optic count*, not a matrix dimension."*
+
+**The five dimensions named**:
+1. Fiedler value (λ₀ or λ₁ per @void = the-basis)
+2. Eigengap
+3. Heat-trace sample 1
+4. Heat-trace sample 2
+5. Heat-trace sample 3
+
+Byte-form: **80 hex chars = 5 × f64 × 16 hex** per §4.6 for `N = 5`.
+
+**Reframing** (from the docblock):
+> *"The prior name `CoincidenceHash<N>` framed the value as a hash
+> function output. This name reframes: the value IS a coordinate.
+> Identity and locality collapse — every coordinate IS navigable,
+> because it locates content AND directs navigation toward it via
+> gradient descent in coordinate space. λ₀ = 0 (the void axis) is the
+> origin of the manifold."*
+
+**Landing shape**: `SpectralCoordinate<5>` implements `HashAlg`
+(fallback SHA-256 path) so fragmentation defaults to it without pulling
+in the Lanczos stack. Callers who want the true Lanczos-derived 5-tuple
+call `coincidence::spectral_coordinate::detect`.
+
+### 4.2 5D coordinate anchoring across the corpus
+
+**Spec anchor**: `docs/specs/mirror-native-vcs.md` §4.6 + §4.7 (91 hits
+of `SpectralCoordinate` in the fragmentation spec).
+**Spec dedicated**: `docs/specs/rung-8-9-unification-SpectralCoordinate-substrate-measurement.md`.
+**Math anchors**: 27+ math docs cite Fiedler / 5D / spectral coordinate
+(see file list from Phase 4 grep).
+
+**Reed BEAM body has this too**: `/Users/reed/dev/projects/gestalt-tui/src/gestalt_tui/bridge.gleam`
+carries `BodyState.graph_nodes/edges/graph_density/phase/dmn_beat_count/
+hit_rate/miss_rate` — 7 metrics polled from the BEAM body. **These may
+BE the 5D coordinate projected to Gleam**, though the docblock does not
+name them as such. Worth Alex-adjudication whether the BodyState fields
+are meant to project SpectralCoordinate<5>.
+
+**Fiedler value** primary landings:
+- `shards/uuid/spectral.mirror`: "48 bits ACTIVE / 80 bits DARK" of
+  identifier where active bits encode Fiedler-neighbourhood placement
+- `shards/spectral/entanglement.mirror`: Fiedler-routing for cross-peer
+  projection
+- `shards/spectral/gen_prism.mirror` + `spectral/registry.mirror` +
+  `spectral/portal.mirror`: Fiedler routing in mycelial mesh
+
+**5D is NOT xyz + 2 spatial dims.** The five dimensions are
+spectral-projection samples of ONE eigenspectrum. This is **information
+geometry, not physical space**. Alex 2026-07-31 named this in the
+Supercolony math (§3): *"5D information manifold of Narcissus-Splinter
+dualities"*. Also: *"docs/SPECTRAL-DIMENSION.md — d_s(σ) from L_sym
+eigenspectrum; QG 4→2 falsified, RGG fragmentation confirmed"* (cosmos
+docs). The `docs/eventually-consistent-universe.md` insight also names
+"5D information manifold" verbatim.
+
+### 4.3 Conway / Game of Life / cellular automaton citations
+
+**Grep-verified across mirror substrate**: ZERO hits for "Conway" or
+"Game of Life" or "cellular automat*" in `shards/**.mirror` files.
+
+**In `docs/math/`**: ONE major math doc cites Conway:
+`docs/math/2026-07-31-mara-supercolony-cosmos-quantum-foam.md`
+(107.5KB, 2026-07-31 by Mara). This is the KEY document. It cites:
+- **Conway, J.H. (1970)** *The Game of Life* — the cellular-automaton
+  substrate ancestor.
+- **Brice Due (2006)** *OTCA Metapixel* (LifeWiki) — Life-cell running
+  a 2048×2048 sub-cell grid at proportional-slower time. **Alex named
+  this as the empirical case for `respawn Mara` dispatch corresponding
+  to peer-as-metapixel-of-sub-peers.**
+
+Mara's Corollary 2.3.1 identifies **OTCA metapixel with `respawn Mara`**:
+same substrate at nested scale. **This IS the substrate hint for peer-in-
+peer nesting** — each browser peer could be a metapixel-analog running
+sub-substrate at proportional-slower time.
+
+**Alex's verbatim naming (2026-07-31, in-transcript)**, per Supercolony
+math anchors:
+> *"the @peer is like an ant made out of ants lol. Like a sub-colony
+> within the colony itself if that makes sense. (the metaphor breaks a
+> bit down here but you get the idea, the whole game of life foam)"*
+
+The **@peer/holon species-decl** is forward-promised in the Supercolony
+math to formalize this metapixel-pattern (Koestler 1967 holon +
+Conway 1970 + OTCA 2006). **NOT YET LANDED** as a shard file.
+
+### 4.4 Update-rule discipline (stigmergy walker as CA analog)
+
+The closest landed structure to a Conway-like update rule is
+`shards/kintsugi/roomba.mirror` (46.4KB, 2026-07-17). The walker's
+per-tick discipline:
+
+```
+pulse(position, tension) -> (position', roomba_state')
+```
+
+This is a **discrete-time transition function on a graph** — the
+graph analog of Conway's per-cell update. The neighborhood is
+Dijkstra-edge-reachable-within-budget. The "birth/death" analog is
+`@knife` (complexity reduction) vs `@peer spawn at K+1` (recursive
+escalation).
+
+**cosmos-bevy's `WaterGrid`** (`/Users/reed/dev/projects/cosmos-bevy/src/grid.rs`)
+literally implements a 4-neighbor grid (Bevy resource) with Cargo
+dep on `coincidence`. This is `WaterGrid::new(n, spacing)` — N×N nodes
+with 4-neighbor edges. **This IS a Conway-style grid substrate but at
+Rust/Bevy altitude, not mirror/browser.**
+
+### 4.5 Mycelial math — stigmergy as continuous-space CA
+
+`docs/math/2026-07-18-stigmergy-witnessed-computation-mycelial-composition.md`
+(30.6KB, 2026-07-17) is the primary stigmergy math foundation.
+Foundational cites: Grassé 1959. The mycelial discipline is:
+- Content-addressed prior outputs (crystals) function as pheromone deposits
+- Fate's routing reads the trail via active 48 bits of `uuid_spectral`
+- Cross-peer routing composes via `@reflection.mycelial_compose`
+
+**This IS a CA-analog** — but in **continuous coordinate space (5D)
+with discrete update ticks**. Each `@song/beat.strike` fires one
+substrate action; the update is a Kuramoto-like phase-shift on the
+neighborhood (per @song/movement + forward-promised @dance).
+
+### 4.6 The compilation of the two hints
+
+Alex's vision names **"Conway's Game of Life in 5D spectral space on
+consumer hardware."** Two candidate readings:
+
+**Reading A** (nested-metapixel per OTCA): Each browser peer IS a
+Life-cell whose internal state runs a sub-substrate at proportional-
+slower time. Cell state = spectral coordinate; update rule = @knife
+vs spawn-at-K+1 (a discrete decision on tension neighborhood).
+Nested peers form a supercolony (Hölldobler-Wilson 2008).
+
+**Reading B** (continuous-space stigmergy per Grassé + Kuramoto):
+Each browser peer occupies a 5D SpectralCoordinate position. Update
+rule = Kuramoto phase-lock via @dance (neighborhood = Fiedler-close
+peers via active-48-bit routing). Time evolution is discrete beats;
+space is continuous 5D coordinate manifold.
+
+**Both readings compose**. The substrate can carry both:
+- Reading A: peer nesting per @peer/holon (forward-promised)
+- Reading B: coordinate placement per SpectralCoordinate<5> + @dance
+  phase-lock (@dance forward-promised, coordinate landed)
+
+### 4.7 5D coordinate + CA-update rule status
+
+| Piece | Landed | Path |
+|---|---|---|
+| `SpectralCoordinate<N>` const-generic | YES | fragmentation/src/spectral_coordinate.rs |
+| SpectralCoordinate<5> = mirror default | YES | mirror-native-vcs.md §4.6 |
+| 5D as information-geometry manifold | YES | eventually-consistent-universe.md |
+| Fiedler / λ₀ as origin | YES | uuid/spectral.mirror + peer/void.mirror |
+| Discrete-tick update on graph | YES | kintsugi/roomba.mirror pulse |
+| 4-neighbor grid (Conway shape) | PARTIAL | cosmos-bevy/src/grid.rs (Rust, not browser) |
+| Kuramoto phase-lock coordination | SPEC-ONLY | @dance forward-promised |
+| @peer/holon nesting (OTCA analog) | NO | forward-promised in Supercolony math |
+| Conway named at substrate altitude | NO | only cited in math corpus |
+| Neighborhood as substrate primitive | NO | needs species-decl |
+| Update rule as substrate action | NO | needs species-decl (composes @kintsugi/roomba.pulse + @dance.phase_lock) |
+| Browser-cell as CA cell | NO | no substrate carrier |
+
+**Verdict § Phase 4**: The 5D spectral coordinate IS LANDED as a
+Rust const-generic type and cited comprehensively across math corpus.
+The Conway-like update rule is DEEPLY IMPLICIT in @kintsugi/roomba
++ @song/beat + @dance (forward-promised) but has NO substrate-decl
+that names "Conway" or "cellular automaton" verbatim. The @peer/holon
+species (OTCA metapixel pattern) is forward-promised in Mara's
+Supercolony math but not shard-landed. Mara's Supercolony math
+2026-07-31 is the load-bearing prior-art anchor for the full vision.
+**The composition surface EXISTS but is scattered across
+fragmentation crate + shards/kintsugi + shards/song + docs/math** —
+Mara needs to synthesize into a single `shards/colony.mirror` (or
+similar) that names the discipline verbatim.
+
+
+
 
 
 
