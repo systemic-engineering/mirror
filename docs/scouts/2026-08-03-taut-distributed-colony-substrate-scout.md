@@ -169,3 +169,229 @@ declaration but lives in a `.conv` extension outside `shards/`. Composition
 surface is CLEAN but SMALL — Mara will need substantial minting downstream
 of gestalt-ui to reach the vision.
 
+---
+
+## §2 Phase 2: mirror-substrate composition ancestors
+
+### 2.1 gestalt-mirror — the mirror-side canonical
+
+**Path**: `/Users/reed/dev/projects/gestalt-mirror/`. Small, tight, load-bearing.
+
+**File inventory** (10 files, ~14 KB total):
+```
+gestalt.mirror                              (59B — top-level use@document/@ui/@user)
+protected/ui.mirror                         (835B — @ui grammar with theme+intents)
+protected/user.mirror                       (2.4KB — abstract @user + optic algebra)
+protected/user/neuro/adhd.mirror            (3.7KB — Alex's ADHD profile)
+protected/user/neuro/audhd.mirror           (3.7KB — Alex's AuDHD profile via
+                                                     adhd.then(autism))
+protected/user/neuro/autism.mirror          (2.9KB — Alex's autism profile)
+protected/user/neuro/nt.mirror              (2.1KB — Liana's stub profile)
+public/document.mirror                      (726B — @document grammar)
+```
+
+**gestalt.mirror** (the whole file):
+```mirror
+grammar @gestalt {
+  use @document
+  use @ui
+  use @user
+}
+```
+Three-grammar composition. `@document × @ui × @user` — the document, its
+appearance, and the reader who calibrates the appearance.
+
+### 2.2 @ui in gestalt-mirror vs @ui in gestalt-ui/ui.conv — DIVERGENCE
+
+`gestalt-mirror/protected/ui.mirror` is a **richer** @ui than
+`gestalt-ui/ui.conv`. Key differences:
+
+| Feature | gestalt-ui/ui.conv | gestalt-mirror/protected/ui.mirror |
+|---|---|---|
+| Extension | `.conv` (legacy) | `.mirror` (current) |
+| Top-level types | `token \| theme \| composite \| view \| target` | `theme` only |
+| Color model | `background..destructive \| agent..waiting..errored` | `color_intent = background..status(status_kind)` — parametric |
+| Motion | `motion_pref = full \| reduced` | `motion_intent = fast \| normal \| slow \| slower` |
+| Radius | not enumerated | `radius_intent = sm \| md \| lg \| xl \| full` |
+| Shadow | not enumerated | `shadow_intent = none \| sm \| md \| lg \| xl` |
+| Typography | as composite only | `typography_intent = heading..caption` |
+| Role/signal | absent | `role = supervisor..human`, `signal_kind = message..exit` |
+| Actions | `materialize + compose` | none declared |
+
+**Interpretation**: `ui.mirror` in gestalt-mirror is the **type-only vocabulary**
+(intent enums), while `ui.conv` in gestalt-ui adds the **action layer**
+(materialize/compose). Neither is complete alone. **A proper unified `shards/ui.mirror`
+species-decl would merge them.**
+
+### 2.3 @user + neuroprofile substrate — the optic algebra
+
+`protected/user.mirror` declares `abstract grammar @user` with:
+- Four optic types named: `AffineTraversal`, `Prism`, `Lens`, `Traversal`
+- Abstract templates: `project(t: theme) -> theme`, `optic -> optic_kind`,
+  `label -> string`, `author -> string`, `invariants -> [constraint]`
+- `then(other, t)` composition; `requires composition_satisfiable`;
+  `recover |t, loss| { t }` (partial-recovery clause)
+
+The four concrete profiles at `protected/user/neuro/{adhd,audhd,autism,nt}.mirror`
+each implement the abstract grammar with named authors, invariants, and
+anti-requirements. **The audhd profile is the derived intersection**:
+```
+adhd requires:   duration <= 300ms (attention bound)
+autism requires: duration >= 200ms (perceptibility bound)
+intersection:    200ms <= duration <= 300ms
+```
+
+`nt.mirror` is Liana's stub — deliberately partial. Test `"nt profile has
+named invariants"` intentionally fails until Liana authors it. **Substrate
+holds space for absent human authorship.**
+
+Karen-cited empirical ancestors in these files:
+- Barkley (1997) — working memory (adhd)
+- Nigg (2017) — executive function (adhd)
+- Happé & Frith (2006) — weak central coherence (autism)
+- Green et al. (2012) — amygdala response to unexpected state change (autism)
+- Marco et al. (2011) — sensory processing differences (autism)
+
+### 2.4 @document (public) — the semantic-block vocabulary
+
+`public/document.mirror` declares the standard prose/knowledge vocabulary:
+- `section | paragraph | code_block | quote | callout | list | list_item |
+  definition_list | table | figure | separator | breath | raw_block | embedded`
+- Spans: `text | code | math | link | image | ref | emoji | spoiler | hard_break`
+- Marks: `strong | emphasis | strikethrough | highlight | superscript | subscript`
+- Meta: `id | role | extension` where `role = claim | evidence | question |
+  answer | summary | aside | definition`
+- Callout kinds: `note | tip | important | warning | caution`
+
+This is **Alex Wolf's semantic-web-of-prose vocabulary** (aligned with
+systemic.engineering essay conventions). Composes naturally with @gestalt for
+rendering, and with @user for reader-adaptive rendering.
+
+### 2.5 gestalt-tui — the terminal companion (renderer)
+
+**Path**: `/Users/reed/dev/projects/gestalt-tui/`, target=erlang (BEAM-only),
+depends on `gestalt_ui = { path = "../gestalt-ui" }`. This IS the **renderer
+composition** for gestalt-ui: gestalt-tui takes gestalt-ui vocabulary and
+emits ANSI escape sequences.
+
+Modules: `ansi.gleam`, `bridge.gleam` (BEAM-to-reed distributed erlang link),
+`layout.gleam`, `panel.gleam`, `render.gleam`. panel.gleam has a candid
+docblock: *"When gestalt_ui path dep resolves, swap these for live token
+materialization"* — currently uses hardcoded RGB constants from
+gestalt-ui dark theme. **The composition surface is real but temporarily
+denormalized.**
+
+**Critical prior-art**: gestalt-tui already **connects to the Reed BEAM
+body via distributed Erlang** (`bridge.connect("reed@localhost")` + poll
+loop reading BodyState with `graph_nodes/edges/density/phase/dmn_beat_count/
+hit_rate/miss_rate`). **This IS the peer-node-connects-to-remote-actor pattern
+that the browser-peer-colony vision needs, minus the browser transport.**
+
+### 2.6 garden-client — Lustre-based browser client (prior art for the JS target)
+
+**Path**: `/Users/reed/dev/projects/garden-client/`, `target = "javascript"`,
+deps: `gleam_stdlib`, `gleam_json`, **`lustre >= 5.0.0`**. THIS is the
+mount+reconcile framework that the vision needs at the browser end.
+
+Modules: `auth.gleam`, `graphql.gleam` (FFI to browser fetch/WS),
+`repl.gleam` (Command sum type — Help/Domains/Grammar/State/Clear/Unknown),
+`store.gleam` (FFI to browser localStorage), `terminal.gleam` (FFI to
+xterm-like), plus `ffi/{auth,graphql,store,terminal}_ffi.mjs`.
+
+**Lustre**: this is Gleam's canonical Elm-style M/V/U framework compiled
+to JS with a virtual DOM. Present as a dependency but **not yet imported in
+this project's src/**. Landing surface: gestalt-ui + lustre + garden-client
+pattern = the browser-peer-colony prototype scaffold. See Adjacent-prior-art
+in §6.
+
+### 2.7 glue.gleam — the coordination layer (BEAM-side)
+
+**Path**: `/Users/reed/dev/projects/glue.gleam/`, deps include
+`fragmentation = { path = "../fragmentation/gleam" }` + `cairn = { path = "../cairn" }`.
+Signals: `Signal | Ask | Work | Dm | Init | Exit | Spawn`.
+Work state: `UphillEarly | UphillLate | Downhill | Review` (ShapeUp hill-chart).
+`topology.gleam` declares 4-level address hierarchy:
+`hostname / repo / branch / actor` — glue URI `glue://sessions/<h>/<r>/<b>/<a>`.
+
+**This is the exact same 4-level actor addressing that Reed uses for the
+glue bus.** Composes with mirror `@torus(peer)` — glue actor = @torus peer
+node. Substrate-adjacent prior art for peer addressing in a colony.
+
+### 2.8 mirror-helix — the editor sketch (not yet functional)
+
+**Path**: `/Users/reed/dev/projects/mirror-helix/`, Cargo project,
+Author: Glint. Status: scaffold only, no working binary. Describes:
+- Fork of helix (evil-helix 25.07.1 detected)
+- Spectral OID gutter (per-line content-address display)
+- AI formatter actor with 5 fate models (abyss/pathfinder/cartographer/
+  explorer/fate)
+- `.shatter` files = serialized edit trajectories
+- Relationship to spectral-loom named on record
+
+**Not composition-adjacent for the browser vision** — but the
+`.shatter` = content-addressed edit trajectory concept **is directly
+parallel to** the Conway-CA "step" as a content-addressed transition. If
+Fate models represent 5D spectral dimensions, mirror-helix's 5-fate
+architecture is a substrate hint for the 5D coordinate. Flag for §4.
+
+### 2.9 gestalt-gradient — Rust CLI (adjacent but not composition)
+
+**Path**: `/Users/reed/dev/projects/gestalt-gradient/`, Rust CLI (`cli_test`
+binary), depends on `pulldown-cmark` for markdown parsing. Modules:
+`commit.rs`, `css.rs`, `decoder.rs`, `document.rs`, `dom.rs`, `domain.rs`,
+`encoder.rs`, `fragment.rs`, `gradient.rs`, `jq.rs`, `semantic.rs`, `uri.rs`.
+
+Substrate-adjacent: Rust implementation of gestalt-side markdown → CSS
+gradient encoder. **Not composition-critical for the vision** but useful
+as reference for a Rust-side @gestalt renderer. Distinct project, Cargo
+altitude, likely never touches gleam or browser.
+
+### 2.10 Mirror-side ancestors + gaps
+
+**Landed at gestalt-mirror**:
+- `@gestalt = use @document + use @ui + use @user` composition root
+- `@document` semantic-block vocabulary (14 block kinds + 9 span kinds)
+- `@ui` type-only intent vocabulary (theme axes + intent enums)
+- `@user` abstract grammar with 4-optic algebra + `.then` + `composition_satisfiable`
+- Four @user/neuro profiles (adhd + autism + audhd via composition + nt stub)
+
+**Landed at gestalt-ui (Gleam)**:
+- Concrete materialization runtime for Token(a) + Theme
+- Two composite types (Typography currently, spacing/surface named as intents)
+- Template runtime with if/for/interpolation
+- View models (ActorView + SignalView)
+- 6 token modules (color/motion/radius/shadow/spacing/typography)
+
+**GAPS at mirror altitude** (Mara will need to mint):
+1. **`shards/ui.mirror`** — unified @ui with both intent-vocabulary AND
+   materialize/compose actions (merges the two divergent versions).
+2. **`shards/document.mirror`** — promote `public/document.mirror` from
+   gestalt-mirror to mirror substrate root.
+3. **`shards/user.mirror`** — promote `protected/user.mirror` optic-algebra
+   abstract grammar; anchor to `@subject` family-root (Alex 2026-07-14
+   dying-on-this-hill decision).
+4. **`shards/user/neuro/{adhd,audhd,autism,nt}.mirror`** — species-declare
+   the four concrete profiles.
+5. **`shards/cascade/code/mirror/gleam.mirror`** — the cascade species Reed
+   will use to compile mirror → gestalt-ui-shaped Gleam.
+6. **`shards/cascade/code/gleam/js.mirror`** — cascade for Gleam → JS
+   (currently Gleam-native; needs substrate-decl to make composition
+   explicit).
+7. **`shards/mount.mirror` OR `shards/component.mirror`** — currently
+   Lustre lives outside substrate; needs a mirror-side declaration
+   of the mount+reconcile shape (or explicit accept-that-Lustre-is-the-target).
+8. **`shards/peer/colony.mirror`** OR species under existing `@peer` —
+   the browser-session-as-colony-cell concept isn't yet declared as
+   substrate.
+
+**Verdict § Phase 2**: mirror-substrate ancestry is RICH at
+gestalt-mirror altitude but **not yet promoted to shards/**. The vision
+requires a 7-8 file mint at shards/ altitude to give Mara a legal composition
+surface. The prose/document/user/neuroprofile vocabulary is fully landed
+in Alex's voice with Karen citations. Composition surface is COMPLETE for
+theme-collapse + neuroprofile + document, PARTIAL for
+gestalt-ui-Gleam-realization, and MISSING for browser-peer-colony
+altitude.
+
+
+
