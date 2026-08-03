@@ -359,3 +359,96 @@ mcp__mirror__mirror_kintsugi_spec()  # 10th tool; Phase E
 One phase after the other. Each phase's landing IS a distinct empirical witness. Substrate-pull-honest per no-time-estimates discipline: motion order named; motion count untimed.
 
 ---
+
+## §4 The tools list surface (byte-parity milestone → grammar-driven migration)
+
+### §4.1 The migration arc
+
+From **hard-coded** (bootstrap 8-tool + `mirror_roomba` 9th per Reed nearly-today) → **grammar-driven** (`@mcp/tool` annotation walked from `@mirror/spectral.gestalt` per lsp-and-mcp.md §"MCP dispatch table").
+
+Two milestones bound the arc:
+
+1. **Byte-parity milestone (Phase B landing):** rust/src/mcp.rs `tools_list_result` starts identical to bootstrap 8-tool schema + `mirror_roomba` 9th tool per Reed nearly-today Phase A. Byte-for-byte JSON equality gates the port (RED-first: fixture test asserts the schema hasn't drifted).
+
+2. **Grammar-driven milestone (Phase D+ / M5 co-tick):** `@mcp.tools -> json` walks landed shards for `@mcp/tool` annotations per `boot/std/mcp.mirror:78-82` + lsp-and-mcp.md §"MCP dispatch table" verbatim: *"the tools list is computed, not hard-coded. walk the boot/std/ graph, find every @mcp/tool annotation, emit a tool descriptor. when a new grammar lands declaring @mcp/tool, the tool appears here on next call."* The grammar IS the tool surface.
+
+### §4.2 Byte-parity 9-tool schema (Phase B landing)
+
+Per Taut `64e8d60` §3 grep-verified `bootstrap/src/mcp.rs::tools_list_result` shape + Reed nearly-today `mirror_roomba` 9th tool addition:
+
+1. **`mirror_compile`** — tokenize one `.mirror` file (SHA-256 hash). Routes to `mirror compile <file>`.
+2. **`mirror_craft`** — converge a target directory to lambda_0. Routes to `mirror craft <target> [--target-kind <k>] [--reflect]`.
+3. **`mirror_kintsugi`** — settle a `.mirror` file (ALWAYS `--ci --out @data/json` per Tick 7 fold `ffba2a7`). Routes to `mirror kintsugi --ci --out @data/json <file> [--liquid] [--shatter N]`.
+4. **`mirror_init`** — mirror-native store bootstrap. Routes to `mirror init <path> [--install-hooks]`.
+5. **`mirror_recall`** — inbound-trajectory dual of peer beam. Routes to `mirror recall <spec_dir>`.
+6. **`mirror_peer_beam`** — beam through peer's persistent-identity context. Routes to `mirror peer beam <peer_home> [flags]` per collapse-spec composition table.
+7. **`mirror_beam`** — anonymous inference primitive. Routes to `mirror beam --mission <mission>`.
+8. **`mirror_spawn`** — DEPRECATED alias for `mirror_peer_beam` (two-tick discipline). Routes to `mirror spawn <peer_home>`.
+9. **`mirror_roomba`** — walker motion; `--vacuum=<dir>` walks + dispatches (Reed nearly-today 9th tool). Routes to `mirror roomba --vacuum=<dir>`.
+
+**Additional tool** grep-verified in current bootstrap/src/mcp.rs `tools/list` assertion at line ~858-878 (`mirror_beam_act`) — note: Taut §3 counted 8-tool per docstring but grep verifies `mirror_beam_act` present as Arc-1 Tick 1.4 landing per docs/audits/2026-07-15-seam-kintsugi-ouroboros-phase-d-cascade-a2-a6.md + `mirror_index` present per bootstrap test assertion vec![compile,craft,kintsugi,init,recall,peer_beam,beam,spawn,index]. THIS spec's Phase B port MUST grep-verify the actual current tool count in bootstrap/src/mcp.rs at port-authorship time (the docstring may lag the assertion; the assertion is ground-truth per Mara iter-15 byte-parity discipline). Reed at Phase B: `grep -c '"name":' bootstrap/src/mcp.rs` on the tools_list_result body OR read the tool count from the bootstrap test assertion `vec![...].len()`.
+
+**Substrate-honest note:** the 8-tool-vs-9-tool count depends on grep-verification-at-port-authorship-time, not this spec's authorship-time snapshot. THIS spec names the byte-parity gate ("identical to bootstrap current state at port-authorship time + `mirror_roomba` if not yet present") NOT a specific integer count. Reed at Phase B verifies + reconciles per Mara iter-15 discipline.
+
+### §4.3 Migration to grammar-driven (Phase D+ / M5 co-tick)
+
+Per `boot/std/mcp.mirror:78-82` `@mcp.tools` substrate-decl:
+
+```mirror
+tools -> json {
+  @mirror/spectral.gestalt
+    |> @mcp/tool.collect
+    |> @data/json.emit
+}
+```
+
+And per lsp-and-mcp.md §"The MCP dispatch table" verbatim:
+
+```mirror
+in @mcp
+
+grammar @code/llvm/ir {
+  in @code/llvm
+
+  # tells @mcp that this grammar contributes an MCP tool.
+  # the tool name, description, and parameters come from the action signature.
+  @mcp/tool ir_compile(text) -> oid {
+    @code/llvm/ir.parse |> @hash/coincidence.content_oid
+  }
+}
+```
+
+**Landings for the grammar-driven surface:**
+
+- `@mcp/tool` first-class grammar annotation lands at boot/std/mcp/tool.mirror (or extension of boot/std/mcp.mirror; substrate-decl mint at forward-promise altitude; grep-verify substrate-already-had-the-word before mint per HARD RULE).
+- `@mcp.tools` reflective walk implementation lands: composes over `@mirror/spectral.gestalt` (the substrate-graph reachability primitive) + `@mcp/tool.collect` (fold-body enumerating annotated actions) + `@data/json.emit` (schema serialization).
+- `rust/src/mcp.rs::tools_list_result` migrates from hardcoded 9-tool schema to `@mcp.tools` invocation: `let tools_json = reflective::invoke("@mcp.tools", ctx); json!({"tools": tools_json})`. The reflective invocation composes over apply_h::act at rust/ altitude (per Reed's `21fc211` Landing 3+4 reflective evaluator; lifted from bootstrap/src/apply_h.rs at task #159's rust/ altitude landing).
+- Each landed shard adding an `@mcp/tool action_name(...)` declaration appears in `tools/list` on the next call automatically (subject to `@mirror/reload` gen_prism per Phase D emitting `notifications/tools/list_changed` when grammars_hash drifts).
+
+**Composition-honest ordering:** grammar-driven migration is Phase D+ per M5 co-tick because it depends on both (a) `@mcp/tool` annotation first-class mint at grammar altitude AND (b) apply_h::act at rust/ altitude for reflective invocation AND (c) `@mirror/reload` gen_prism for `notifications/tools/list_changed` push-notification. Byte-parity milestone (Phase B) is the operational scaffold; grammar-driven (Phase D+) is the substrate-honest terminal form.
+
+### §4.4 The three bilateral-predicate contracts (Phase B+ discharge)
+
+Per `boot/std/mcp.mirror:110-130` three bilateral-predicate contracts obligation-blocked at substrate:
+
+1. **`dispatch_reflects_cli_block(dispatch)`** — every request.method dispatch accepts resolves to a `command <name>` in mirror.spec's cli-block (or JSON-RPC framing verb). Dispatch synthesizes routing table from cli-block reflection, not from hardcoded case.
+2. **`tools_reflects_cli_block(tools)`** — tools/list JSON synthesizes from mirror.spec's cli-block. Adding a `command` to cli-block adds a tool entry; two surfaces cannot drift.
+3. **`frame_relativity(response)`** — MCP responses carry observer's shard frame consistent with peer identity across the wire (inherited from `@mirror/shard`).
+
+**Phase B discharge:** hardcoded 9-tool schema at Phase B does NOT satisfy `tools_reflects_cli_block` (bilateral bilaterally-violated by design during transitional milestone; documented at Phase B port authorship: `// TODO(M5): retire hardcoded tools_list_result; @mcp.tools reflective walk replaces this + discharges tools_reflects_cli_block bilateral`).
+
+**Phase D+ discharge:** grammar-driven surface at Phase D+ empirically satisfies all three bilateral predicates. `dispatch_reflects_cli_block` becomes structural (every method routes through cli-block reflection); `tools_reflects_cli_block` becomes structural (tools/list computed from cli-block); `frame_relativity` becomes structural (session gen_prism carries shard frame across ticks).
+
+### §4.5 The MCP wire vs the typed-DSL altitude (per lsp-and-mcp.md reframe)
+
+Per lsp-and-mcp.md §"The MCP dispatch table" 2026-06-02 reframe:
+
+> The MCP server's tool surface is the three `prism_core::Prism` operations (`focus`, `project`, `settle`); the per-grammar `@mcp/tool` annotation extends the typed DSL types (`Target`, `Filter`, `Output`) inside those three calls, NOT new wire tools. When the reload contract (`@mirror/reload`) emits `tools/list_changed`, what's changing is the typed DSL surface, not the wire tool count. The MCP wire stays at three.
+
+THIS spec's byte-parity milestone (Phase B, 9 tools) is the **transitional intermediate** per lsp-and-mcp.md "the five-tool framing for the mirror-mcp surface; it's a useful intermediate, but the grounding altitude is pq." The **terminal form** (post-M5+ + pq altitude alignment) collapses the per-grammar tools INTO the typed DSL inside `focus`/`project`/`settle`.
+
+**Substrate-honest posture per lsp-and-mcp.md §"MCP dispatch table":** the table records the in-flight intermediate; the grounding altitude is pq. THIS spec's Phase B milestone is the in-flight intermediate; the terminal collapse to pq's three-op wire is a post-M4 architectural direction the spec forward-promises to pq-altitude adjudication (Alex-altitude architectural call; NOT M4's territory).
+
+**Consequence for THIS spec:** Phase B lands 9-tool byte-parity; Phase D+ lands grammar-driven reflective computation; the pq-collapse-to-three-wire-ops is a subsequent phase (not Phase E; separate architectural motion at pq altitude). THIS spec discharges the M4 milestone at 9-tool byte-parity + grammar-driven forward-promise + pq-collapse acknowledgement.
+
+---
