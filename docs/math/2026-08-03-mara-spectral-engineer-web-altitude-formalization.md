@@ -919,10 +919,29 @@ novel at web-altitude. Refutation requires all four simultaneously
 in prior art. Per Seam Phase D `992689e` §2.3 Kagi 2026-08-03 sweep
 across three queries (Watzlawick-two-channel-website + typed-cascade-
 loss-lens-content-addressed + Gleam-Lustre-fly.io) returned EMPTY
-refutation window at first-order-Kagi altitude. arXiv + ACM Digital
-Library sweeps forward-promised at Recognition ratification per
-R-ADJ2 standard discipline (Taut R-ADJ1 authorization this /loop
-tick).
+refutation window at first-order-Kagi altitude.
+
+**Taut R-ADJ1 arXiv + ACM Digital Library sweep** (`6438519`
+2026-08-03; scout doc `docs/scouts/2026-08-03-taut-r-adj1-arxiv-acm-
+novelty-refutation-sweep.md`) executed 14 queries across arXiv-only
+(3), ACM-only (3), cross-scoped arXiv-OR-ACM (6), and arXiv API
+direct on cs.PL + cs.SE + cs.HC categories (2). **EMPTY refutation
+window at academic-substrate altitude.** DOUBLES the Kagi
+first-order EMPTY confirmation — zero papers across 14 queries name
+or describe a system satisfying all four §7.5 conjuncts
+simultaneously. Three adjacent-context candidates surface (IPFS
+Benet 2014 arXiv:1407.3561 satisfies conjunct (iii) content-
+addressing sub-component only; BESSER Alfonso et al. 2026
+arXiv:2605.07376 partial overlap with (i)+(ii); Cascade JIT for
+Verilog `dl.acm.org/10.1145/3297858.3304010` cascade-terminology
+disambiguation footnote-worthy) — all three fail the conjunctive
+novelty test (1-2 conjuncts individually, not all four
+simultaneously); cited at §8.7 adjacent-not-prior. Confidence:
+mid-high. Scope-bound to arXiv + ACM DL (not swept: IEEE Xplore,
+Springer, Elsevier, non-ACM SIGCHI/POPL/ICSE channels). Further
+venue-sweep tightening not required for §7.5 to hold as-refactored;
+R-ADJ2 remains as broader-venue discipline forward-promise at
+Recognition ratification if desired at Alex Q-CRITICAL-1 gate.
 
 ---
 
@@ -1082,7 +1101,7 @@ introduction site; no elder erased.
   ancestor for v0.1's dual-gradient field-operator formalization at
   web-altitude.
 
-### §8.7 Adjacent-not-prior (Sysmel / Knuth / prior spectral-in-compilers work)
+### §8.7 Adjacent-not-prior (Sysmel / Knuth / prior spectral-in-compilers work + R-ADJ1 academic-altitude findings)
 
 Per Recognition `04df6e1` §4 adjacent-not-prior list:
 
@@ -1093,6 +1112,34 @@ Per Recognition `04df6e1` §4 adjacent-not-prior list:
   dual-output ancestor at authorial altitude (weave/tangle produces
   two alternative outputs from one source). ADJACENT authorial ancestor.
   NOT prior at web-serving altitude two-channel indissolubility.
+
+**R-ADJ1 academic-altitude adjacent-context candidates** (per Taut
+sweep `6438519` 2026-08-03; all three fail the conjunctive novelty
+test for §7.5 (i)∧(ii)∧(iii)∧(iv)):
+
+- **Benet, J. (2014)** *IPFS: Content Addressed, Versioned, P2P File
+  System* (arXiv:1407.3561). Content-addressed storage lineage.
+  ADJACENT at conjunct (iii) content-addressing sub-component; fails
+  typed-family declaration + multi-target dispatch + render pipeline +
+  design-token grammar + two-channel indissolubility. Cited here for
+  Karen anti-theft; IPFS's content-address discipline informs
+  `@io/stagefreight` BLAKE3 image-digest addressing pattern.
+- **Alfonso, I., Gómez, A., Gómez, J.J., Cabot, J. (2026)** *BESSER
+  Bot Framework: A Model-Driven Approach to Low-Code Web-App
+  Generation* (arXiv:2605.07376). Model-driven web-app generation
+  lineage. ADJACENT at conjuncts (i)+(ii) partial overlap; fails
+  ≥ 6-family-root grammar + loss-lens measurement +
+  content-addressed image assembly + Watzlawick two-channel
+  indissolubility. Cited here for Karen anti-theft; model-driven
+  generation approaches share substrate-decl'd typed source-grammar
+  intent without the two-channel indissolubility crux.
+- **Bachrach, J. et al.** *Cascade: A JIT Compilation Framework for
+  Verilog* (`dl.acm.org/10.1145/3297858.3304010`). Cascade-compilation
+  naming lineage. ADJACENT terminology-disambiguation footnote; the
+  `@cascade` species-family in mirror substrate is orthogonal (typed
+  loss-lens cascade for source→target grammar translation, not JIT
+  compilation). Cited here to disambiguate the shared "cascade" word
+  across domains.
 
 ---
 
