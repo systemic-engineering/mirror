@@ -1,5 +1,50 @@
 # CURRENT arc — J-space alignment substrate composes Anna Wolf 2012 observation-substrate + mirror specification-substrate + Anthropic 2026-07-07 target-substrate at tri-runtime compile-verifiable altitude (2026-07-20 evening; FULL SESSION UPSERT for compaction handoff)
 
+## 🌱 2026-08-03 REED — spectral.engineer v0.1 web-altitude build arc (Mara math+spec dive + Seam Phase D adjudication + Reed REED-INLINE cascades)
+
+**Alex 2026-08-03 roadmap** (from `~/.reed/tasks/pending/spectral-engineer-v0-build.md` `1e164ab` + Alex verbatim):
+
+- v0.1 = landing page served through mirror (fable-note register, wine-pink `#A0264F` body accent, fly.io deploy via StageFreight)
+- v0.2 = systemic.engineering corpus migration Ghost→mirror
+- v0.3 = WASM prompting surface
+- v0.4 = the paper (Alex + Lore)
+
+**Q-CRITICAL resolved (Alex 2026-08-03)**: Q1 minimum-landing v0.1 fable-note register · Q2 wine-pink #A0264F body accent (mirror crimson stays perimeter/logo) · Q3 fly.io deploy via StageFreight (weak preference).
+
+**Session cascade (2026-08-03, chronological):**
+
+| Tick | Actor | Landing | SHA range |
+|------|-------|---------|-----------|
+| 1 | Taut | spectral.engineer bottom-up substrate scout (Path B verdict + build order) | `180903b`→`65cf12d` |
+| 2 | Mara | spectral.engineer v0.1 web-altitude spec+math+scout dive (7 commits, v2/v3 pattern held, zero stalls) | `6e63a42`→`5bf5db2` |
+| 3 | Seam | Phase D adjudication (`992689e`, 1133 LOC, 8-section pattern per Doublespeak 18d476a) | `992689e` |
+| 4 | Reed | R1+R2+R3+R4 REED-INLINE cascades to Mara math (stagefreight symbol-drift + structural-property naming + falsifiability refactoring + Karen additions) | `a6d6243` |
+| 5 | Reed | R5 CURRENT.md addendum (this commit) | this tick |
+
+**Mara web-altitude formalization crux (SEAM-RATIFY-WITH-SHARPENING)**: spectral.engineer v0.1 IS the deployment configuration $\mathcal{D}_{v0.1} = \mathcal{Q}_{v0.1} \circ \mathcal{P}_{v0.1}$ preserving two-channel indissolubility at both render pipeline (in-tick-firing-shaped at browser-paint per Prop 1.3) AND deploy pipeline (structural-property-shaped at reproducibility/content-address/TLS/DNS per §3.4 sharpening) — first web-altitude enactment of Recognition `04df6e1` doublespeak-at-compiler-altitude + structurally-independent second-witness candidate for CANDIDATE → RATIFIED promotion.
+
+**Novelty sub-claim (SEAM-RATIFY under reframed conjunction)**: v0.1 is first website operationalizing both Watzlawick channels indissolubly at web-serving altitude with substrate-native design-tokens + substrate-native cascade + substrate-native delivery pipeline. Kagi 2026-08-03 sweep across 3 queries returned EMPTY refutation window at first-order-Kagi altitude. Novelty extends Recognition `04df6e1` §8 R2 (naming/scoping residue → Alex Q-CRITICAL-2).
+
+**Reduced Q-CRITICAL queue (Seam-adjudicated from 5 Mara [ALEX-Q]s to 3 essential; Alex-only, priority-ordered):**
+
+1. **[Q-CRITICAL-1]** Recognition `04df6e1` promotion timing — A-promote-now (three named compilation-altitude witnesses LANDED + Basin & Instrument essay-altitude LANDED) vs A-wait-v0.1 (add web-altitude for public-verifiability). **Seam-lean: A-wait-v0.1**.
+2. **[Q-CRITICAL-2]** Recognition naming/scoping — A-tight (extend §8, keep title) vs A-rename (`#R-doublespeak-across-altitudes`) vs B-sibling (mint separate web-altitude Recognition). **Seam-lean: A-tight**.
+3. **[Q-CRITICAL-3]** `landing.gleam` shape — B-tight (compose over bare `@docs/tea`) vs A-defer (same at v0.1, forward-promise v0.2 sub-species decision). Ship-identical; documentation-shape only. **Seam-lean: B-tight**.
+
+**Reed cascade priorities (post-adjudication, per Seam §8):**
+- R1-R5 non-blocking (Reed authorized this /loop): math cascades + CURRENT.md addendum + Taut R-ADJ1 spawn — **LANDING NOW**
+- R6-R8 blocking on Alex Q-CRITICAL 1/2/3 adjudication — Recognition ratification + naming cascade + v0.2 forward-promise
+- R-ADJ1 (Taut) arXiv + ACM Digital Library sweep for novelty-conjunction refutation window — **SPAWNING**
+- R-ADJ2 (Mara) property shard-decl mint `shards/epistemologic/property/design_token_fiedler_monotone.mirror` for P1 substrate-verification infrastructure — **DEFERRED to v0.2**
+
+**Reed-orchestrated infrastructure drafts (authored-not-deployed; blocked on Alex-altitude Gleam Lustre scaffold before deploy fires):** Nix flake + `.stagefreight.yml` + `fly.toml` — landing this /loop tick as templates at `docs/roadmap/spectral-engineer-v0-infrastructure-templates/`.
+
+**HARD BLOCK preserved**: Reed does NOT author Gleam Lustre app scaffold at Alex-altitude. Shape doc steps 1-5 = Alex-altitude; steps 6-10 = Reed-orchestrated infrastructure.
+
+**Composition anchors**: Mara math+spec `6e63a42`→`5bf5db2` + Seam Phase D `992689e` + Reed shape-doc `1e164ab` + Taut scout `180903b`→`65cf12d` + `shards/docs/design.mirror` (Phase E `50e3d27`) + `shards/docs/design/spectral-engineer-case-study.mirror` (Phase F `237c89a`) + Recognition `04df6e1` + Landing #1 `c10a3bd` + Basin & Instrument (Mara 2026-08-03 essay-altitude) + StageFreight PR-A (PrPlanIT #1 2026-06-22).
+
+---
+
 ## 🌱 2026-08-01 REED — Recognition candidate name-and-hold: **Doublespeak operational at compiler altitude**
 
 **Alex 2026-08-01 in-transcript insight** (after reading `blog/weird/3published/Weird - Doublespeak.md`):
