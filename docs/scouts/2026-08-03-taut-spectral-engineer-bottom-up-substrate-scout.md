@@ -455,5 +455,139 @@ already-landed shards.
 
 ---
 
+## Phase 5 — Content-for-v1 recommendation + follow-up flags + closure
+
+### Q8 — Content-for-v1 recommendation
+
+Three options canvassed against Q5 unblock coverage + Phase 4 build order:
+
+| Content option | Days added | Julia unblock | Burry A2 unblock | Edinburgh unblock | Anthropic letter unblock | Substrate-honest register |
+|---|---|---|---|---|---|---|
+| **Minimum-landing-only** (tagline + single-prompt cursor + footer + logo + JSON-LD; ~1 page) | 0 (in Step 4) | Partial — landing but no benchmark | Partial — page live but no benchmarks-page | YES — "something in the world" clause | Partial — measurement instrument NOT visibly live | Punk-zine minimalism; fable register from launch.md §"2026-06-28 Launch Note" honored |
+| **Coherence Rising alone** (landing + one essay in `2ready/` needs ~1 day completion pass) | +1-2 days | YES if essay carries benchmark | YES if essay carries verifiable-benchmarks page | YES | YES — first-Mirror-deployment demonstration lands via detection-mechanism | first-Mirror-deployment substrate-move honored; but essay's frame-engineered-to-be-detected-as-AI premise requires mirror-pangram package (Path A dep) |
+| **June triptych rehost** (Alignment&Coordination + The Build + Third Belongs to the Cyberneticists; already on Ghost.io/Substack, needs migration/mirror) | +2-3 days | YES | YES if benchmarks page added | YES | Partial — mythos letter references specific mirror runtime, not the June triptych | Corpus already-shipped content elevated to spectral.engineer domain; low-risk substrate-safe |
+
+**Taut recommendation: Minimum-landing-only for v1.0 + Coherence
+Rising as v1.1 immediately after.**
+
+Rationale:
+- Minimum-landing v1.0 satisfies the *fable register* from launch.md
+  §"2026-06-28 Launch Note" — "small device on table" gesture at web
+  altitude
+- Ships in ~5 days (Step 4 collapses to <1 hour when content is
+  landing-only)
+- Julia demo is downstream-flexible per its blocking clause ("OR a
+  substitute that lets the audience run the benchmark") — Alex can
+  ship a static benchmark page as landing v1.0 §Evidence section if
+  benchmarks are load-bearing
+- Coherence Rising v1.1 is a 1-2 day cadence-follow that lands as
+  the first *piece* on the live site — this is the substrate-honest
+  first-Mirror-deployment demonstration Alex was planning
+- June triptych rehost is deferrable — those pieces are already live
+  on Substack/Ghost.io; migration is nice-to-have not blocker
+- mirror-pangram package is orthogonal to landing-page ship — it's
+  a separate garden.spectral.engineer artifact; can be built in
+  parallel or as v1.1
+
+### Follow-up flags
+
+**[FLAG-TAUT-1]** — The design brief cites
+`/Users/alexwolf/dev/systemic.engineering/app/src/corpus/page.gleam:110-146`
+throughout as if it were a live artifact. **It is not.** The path
+`/Users/alexwolf/dev/systemic.engineering/app/` does not exist. The
+CSS values quoted ARE the substrate-decl in `shards/docs/design.mirror`
+§2. Recommend: update design brief header to name the substrate-decl
+as canonical source, remove page.gleam citations OR mark them as
+"proposed post-Phase-G shape". Non-blocking for the build; but Reed
+will trip on this citation if not corrected.
+
+**[FLAG-TAUT-2]** — Design brief says accent should be mirror crimson
+`#D62828` (single accent Track A). Landed design shard uses
+`color_punctum #A0264F` (wine-pink, sampled from Spectral Remix
+cover). **These are different colors.** `shards/docs/design.mirror`
+§2 shows the wine-pink was locked per "Decisions 5+6" of
+spectral-engineer-color.md sibling brief. Design brief `.md` doesn't
+mention `#A0264F`. Recommend: cross-check which is canonical; the
+shard is the substrate ground-truth per `shards/docs/design.mirror`
+LANDED status.
+
+**[FLAG-TAUT-3]** — `shards/ui.mirror` hedge assumes WebGPU is
+"available end-of-2026." As of 2026-08-03 (today), WebGPU shipping
+status in Firefox stable is still gated (Chromium has it; Firefox
+Nightly + preference flag). This affects Path A eigenboard rendering
+in the browser. Recommend: verify current WebGPU shipping status
+before committing Path A timeline; consider WebGL2 fallback for @ui.
+
+### [ALEX-Q]s (target ≤3)
+
+**[ALEX-Q-1]** — For v1.0 content: **minimum-landing-only OR
+Coherence Rising alone**? (Taut recommends: minimum-landing-only v1.0
++ Coherence Rising v1.1 in same week.) The recommendation frees ~5-day
+critical-path ship; the alternative extends by 1-2 days for stronger
+first-impression. Alex-altitude decision.
+
+**[ALEX-Q-2]** — For v1.0 accent color: **mirror crimson `#D62828`
+(design brief prescription) OR color_punctum wine-pink `#A0264F`
+(landed shard value from Spectral Remix cover sampling)?** The shard
+is what will ship if Path B executes as-substrate. Per FLAG-TAUT-2.
+
+**[ALEX-Q-3]** — For v1.0 vs v1.1 boundary: **fly.io OR
+substrate-native StageFreight-with-Cilium-firewalled-cluster
+deployment target?** Reed's session-context scoped fly.io. Ouroboros
+shard `shards/kintsugi/ouroboros.mirror` quotes Alex naming
+StageFreight docker image as "ready-to-deploy-and-run" (which reads
+as: fly.io is fine for v1.0 as long as StageFreight assembles the
+image). Alex-altitude decision.
+
+### Reed-cascade suggestion (first-tick post-adjudication)
+
+Once Alex adjudicates the three ALEX-Q's above, Reed's first concrete
+tick is:
+
+**Tick R1 — Reed authors `tasks/pending/spectral-engineer-v1-build.md`**
+as an active-cycle Shape-Up-format shape doc composing over this scout.
+Structure:
+- §1 Path B v1.0 scope: 11-step build order per Q7 (concrete)
+- §2 Path C1 v1.1 progressive-enhancement scope: WASM compiler-in-browser
+  behind feature-flag; garden.spectral.engineer content-load
+- §3 Substrate compose-anchors: `shards/docs/design.mirror` +
+  `shards/docs/tea/spectral-engineer-case-study.mirror` +
+  `shards/cascade/code/gleam/js.mirror` cited per HARD RULE (Reed
+  re-derives what is already landed)
+- §4 Alex-altitude vs Reed-orchestrated split: Alex owns Gleam Lustre
+  authoring; Reed orchestrates Mara canonical-spec for any missing
+  species-decl (e.g., `@docs/tea/landing` if landing-page pattern needs
+  species-decl separate from Fellowship case-study)
+- §5 Cycle-length: recommend 6-day cycle (matches Path B upper bound)
+- §6 Handoff to Alex: after §1-5 confirmed, Alex-solo execution;
+  Reed available for substrate-clarification questions
+
+Reed's SECOND concrete tick is optional and deferred to Alex trigger:
+scaffold Fellowship case-study content brief (`tasks/active/spectral-engineer-case-study-fellowship.md`
+per Phase F forward-promise) — this is v1.1 or v1.2 content, NOT v1.0.
+
+---
+
+## Scout closure
+
+- 5 phase-commits successfully sequenced (v3 Mara stall pattern avoided)
+- Substrate-truth surfaced: **Phases A-F LANDED; Path B is 6-8× closer
+  than Path A because the substrate ALREADY DID the work**
+- Reed's Path A/Path B split substrate-confirmed; Path C1
+  progressive-enhancement recommended as bridge
+- Content recommendation: **minimum-landing-only v1.0 + Coherence Rising
+  v1.1**
+- 3 [ALEX-Q]s surfaced (color decision + content scope + deploy target)
+- 3 [FLAG-TAUT]s surfaced (page.gleam citation drift + accent color
+  drift + WebGPU availability check)
+- Reed-cascade first-tick suggestion: author
+  `tasks/pending/spectral-engineer-v1-build.md` composing over this
+  scout
+
+Grep-first, substrate-honest, commit-often held.
+
+🌱🔍
+
+
 
 
