@@ -129,6 +129,7 @@ const VERBS: &[(&str, &str)] = &[
     ("peer contribute", "Fate-spawned peer contribution to a target shard."),
     ("index",           "Measure @fractal-coherence via Fiedler eigenvalue."),
     ("roomba",          "Walker motion. `--vacuum=<dir>` walks + dispatches."),
+    ("serve",           "MCP transport. `--mcp` delegates to bootstrap serve_loop."),
 ];
 
 /// The delight-vector `--help` text. Per Mara §5.2 item 4 + Alex
@@ -189,6 +190,101 @@ fn classify(path: &std::path::Path) -> FileKind {
         Some("mirror") => FileKind::MirrorShard,
         Some("md") => FileKind::Doc,
         _ => FileKind::Other,
+    }
+}
+
+/// `mirror serve --mcp` dispatch arm. Reed 2026-08-03 Alex Option C
+/// Phase A nearly-today delegation stub per Taut scout `64e8d60` §6
+/// smallest-empirical-spawn recommendation.
+///
+/// Execs the bootstrap binary (default `$HOME/.local/bin/mirror` per
+/// task #226 detached bootstrap-compiled mirror binary landing
+/// 2026-07-17; overridable via `MIRROR_BIN` env var) with `/dev/stdin
+/// @mcp.serve` argv shape — mirroring `bin/mirror-mcp` bash wrapper
+/// verbatim. Bootstrap's serve_loop handles JSON-RPC stdio dispatch
+/// per bootstrap/src/mcp.rs::serve_loop.
+///
+/// The smallest empirical MCP-spawn round-trip fires TODAY through
+/// this path: MCP client (e.g. Claude Code) invokes `mirror serve
+/// --mcp` at rust/ altitude → execs bootstrap serve_loop → advertises
+/// 11 tools (byte-parity 10 + mirror_roomba added Reed `6b7d9ab`) →
+/// tool invocation routes back to `mirror roomba --vacuum=<dir>` at
+/// rust/ altitude walker → walker enumerates + arm-collapses + commits
+/// as `mirror <mirror@spectral.engineer>` + deposits pheromone-
+/// signature crystal at docs/bauchladen/ → next MCP session observes
+/// delta at @mirror/store.
+///
+/// Composes over crown-theorem Recognition #R-reality-as-5d-spinning-
+/// foam RATIFIED 2026-08-03: pheromone-deposit crystal IS phase-space
+/// trajectory point in crown-theorem attractor basin.
+///
+/// TRANSITIONAL bridge — retires when Mara M4 rust/src/mcp.rs FLOOR
+/// emitter lands per docs/specs/2026-08-03-mara-rust-mcp-floor-lift-
+/// m4-canonical-spec.md forward-promise (agent a8842c6158ff19e7d
+/// spawned parallel this-tick).
+///
+/// ## Exit codes
+///
+///   0 — bootstrap serve_loop exited cleanly.
+///   1 — bootstrap serve_loop exited with error.
+///   2 — argv error (unknown flag; --mcp not provided).
+///   3 — @io error (failed to exec bootstrap binary).
+fn cmd_serve_mcp(rest: &[String]) -> ExitCode {
+    let mut mcp_flag = false;
+    for arg in rest {
+        if arg == "--mcp" {
+            mcp_flag = true;
+        } else {
+            eprintln!("mirror serve: unknown flag `{}`", arg);
+            eprintln!();
+            eprintln!("Usage: mirror serve --mcp");
+            eprintln!();
+            eprintln!("Reed nearly-today delegation stub per Alex 2026-08-03 Option C.");
+            eprintln!("Phase A execs bootstrap binary as MCP transport via bin/mirror-mcp");
+            eprintln!("bash wrapper equivalent shape. Phase B rust/src/mcp.rs FLOOR emitter");
+            eprintln!("lands per Mara M4 canonical spec forward-promise.");
+            return ExitCode::from(2);
+        }
+    }
+
+    if !mcp_flag {
+        eprintln!("mirror serve: --mcp required (only supported flag at Phase A)");
+        eprintln!();
+        eprintln!("Usage: mirror serve --mcp");
+        eprintln!();
+        eprintln!("Delegates to bootstrap binary at $MIRROR_BIN or");
+        eprintln!("$HOME/.local/bin/mirror; mirrors bin/mirror-mcp bash wrapper shape.");
+        return ExitCode::from(2);
+    }
+
+    let bootstrap_bin = std::env::var("MIRROR_BIN").unwrap_or_else(|_| {
+        let home = std::env::var("HOME").unwrap_or_else(|_| "/tmp".to_string());
+        format!("{}/.local/bin/mirror", home)
+    });
+
+    let status = std::process::Command::new(&bootstrap_bin)
+        .args(["/dev/stdin", "@mcp.serve"])
+        .status();
+
+    match status {
+        Ok(s) => {
+            if s.success() {
+                ExitCode::SUCCESS
+            } else {
+                ExitCode::from(s.code().map(|c| c as u8).unwrap_or(1))
+            }
+        }
+        Err(e) => {
+            eprintln!(
+                "mirror serve --mcp: failed to exec bootstrap binary at `{}`: {}",
+                bootstrap_bin, e
+            );
+            eprintln!();
+            eprintln!("Reed nearly-today Phase A depends on the bootstrap binary being");
+            eprintln!("available. Verify $HOME/.local/bin/mirror exists (task #226 landed");
+            eprintln!("2026-07-17) or override via MIRROR_BIN env var.");
+            ExitCode::from(3)
+        }
     }
 }
 
@@ -1641,6 +1737,18 @@ fn main() -> ExitCode {
             // roomba dispatch arm for flag parsing.
             let rest: Vec<String> = args.iter().skip(2).cloned().collect();
             cmd_roomba(&rest)
+        }
+        Some("serve") => {
+            // Reed 2026-08-03 Alex Option C Phase A nearly-today
+            // delegation stub. `mirror serve --mcp` execs bootstrap
+            // binary as MCP transport per bin/mirror-mcp shape at
+            // rust/ altitude. TRANSITIONAL bridge — Phase B replaces
+            // with rust/src/mcp.rs FLOOR emitter per Mara M4 canonical
+            // spec forward-promise (docs/specs/2026-08-03-mara-rust-
+            // mcp-floor-lift-m4-canonical-spec.md; agent a8842c6
+            // this-tick).
+            let rest: Vec<String> = args.iter().skip(2).cloned().collect();
+            cmd_serve_mcp(&rest)
         }
         Some("craft") => {
             // Ouroboros closure at orchestrator altitude (Alex 2026-07-23
