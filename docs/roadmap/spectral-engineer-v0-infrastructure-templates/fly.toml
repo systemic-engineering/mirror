@@ -1,0 +1,103 @@
+# spectral.engineer v0.1 fly.toml template
+#
+# Authored: 2026-08-03 by Reed (authored-not-deployed).
+# Realizes: shape-doc steps 8-10 (fly.io target-instance configuration:
+#           app provisioning, custom-domain, TLS, HTTP service).
+# Target: copy to `fly.toml` at app repo root.
+#
+# Composition anchors:
+# - Mara math §3.2 (Def 3.2 v0.1 deploy-pipeline composition; fly-io-serve
+#   + dns-route stages)
+# - Mara math §8.5 (fly.io team target-instance provisioning + Let's
+#   Encrypt cert integration Karen ancestry)
+# - Alex Q3 adjudication 2026-08-03: fly.io deploy (weak preference)
+# - Reed shape-doc step 8-10 infrastructure config
+#
+# [ALEX-VERIFY] markers indicate fields requiring Alex verification
+# against current fly.io v2 API grammar + provisioned app details.
+
+app = "spectral-engineer"  # [ALEX-VERIFY] confirm available; alternative: spectral-engineer-v0
+primary_region = "iad"     # [ALEX-VERIFY] Ashburn VA; alternatives: fra (Frankfurt), ord (Chicago)
+
+# Kill signal + timeout (StageFreight rolling deploy discipline).
+kill_signal = "SIGINT"
+kill_timeout = "5s"
+
+[experimental]
+  auto_rollback = true
+
+# Build config: composes with flake.nix + .stagefreight.yml.
+# Image is built via Nix (dockerTools.buildLayeredImage) and dispatched
+# via StageFreight freight action.
+[build]
+  # [ALEX-VERIFY] image reference; StageFreight populates this dynamically
+  # per its freight-manifest schema. Placeholder here for direct-deploy fallback.
+  image = "registry.fly.io/spectral-engineer:v0.1.0"
+
+# HTTP service: primary listener for spectral.engineer.
+[[services]]
+  protocol = "tcp"
+  internal_port = 8080  # Caddy static-file-server per flake.nix config.Cmd
+  processes = ["app"]
+
+  # Health check per .stagefreight.yml deploy.targets[].health_check.
+  [[services.http_checks]]
+    interval = "10s"
+    timeout = "2s"
+    grace_period = "5s"
+    method = "GET"
+    path = "/"
+    protocol = "http"
+    tls_skip_verify = false
+
+  # HTTPS listener — fly.io provisions Let's Encrypt cert automatically
+  # for the app's *.fly.dev subdomain + any custom domains attached.
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+    force_https = true
+
+  # HTTP → HTTPS redirect (relationship-channel discipline: server enforces
+  # TLS everywhere; content-channel discipline: no plaintext leakage).
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+    force_https = true
+
+  # v0.1 traffic profile: minimum viable target-instance.
+  # Per shape-doc: shared-cpu-1x, no persistent volume v0.1, TLS default.
+  [services.concurrency]
+    type = "connections"
+    hard_limit = 200  # [ALEX-VERIFY] adjust per expected traffic
+    soft_limit = 100
+
+# VM sizing: shared-cpu-1x per Alex Q3 discipline (v0.1 minimum).
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory = "256mb"  # [ALEX-VERIFY] adjust if Caddy needs more headroom
+
+# Custom domain attachment.
+# After `flyctl apps create spectral-engineer`, run:
+#   flyctl certs create spectral.engineer -a spectral-engineer
+#   flyctl certs create www.spectral.engineer -a spectral-engineer
+# Then update DNS A/AAAA records per fly.io dashboard instructions.
+#
+# [ALEX-VERIFY] once domain attached, cert issuance is automatic; verify
+# via `flyctl certs show spectral.engineer -a spectral-engineer`.
+
+# Deploy strategy per StageFreight config.
+[deploy]
+  strategy = "rolling"  # per .stagefreight.yml deploy.targets[].strategy
+
+# Secrets: none required for v0.1 static-site deployment.
+# For v0.3+ WASM prompting surface, secrets discipline composes via
+# @io/secrets + @io/secrets/sops per shards/io/secrets.mirror discipline.
+
+# [ALEX-VERIFY] before first deploy:
+# 1. `flyctl apps create spectral-engineer` (or chosen name)
+# 2. `flyctl launch --no-deploy` (validates fly.toml + provisions)
+# 3. `flyctl certs create spectral.engineer` (custom domain TLS)
+# 4. Update DNS A/AAAA records at domain registrar per fly.io dashboard
+# 5. First deploy via nix flake app: `nix run .#deploy`
+#    (or direct: `flyctl deploy --image spectral-engineer:v0.1.0`)

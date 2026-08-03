@@ -1,0 +1,96 @@
+# spectral.engineer v0.1 StageFreight config template
+#
+# Authored: 2026-08-03 by Reed (authored-not-deployed).
+# Realizes: shape-doc step 7 (content-addressed docker image dispatch
+#           via @io/stagefreight freight action to fly.io target-instance).
+# Target: copy to `.stagefreight.yml` at app repo root.
+#
+# Composition anchors:
+# - shards/io/stagefreight.mirror §Header (delivery family; freight action;
+#   stagefreight_addressable composed bilateral over oid_resolves +
+#   address_well_formed + projection_is_species + round_trip_holds)
+# - StageFreight PR-A merged PrPlanIT/StageFreight #1 (2026-06-22)
+# - Mara math §3.2 (Def 3.2 v0.1 deploy-pipeline composition; freight stage)
+# - Mara math §3.4 structural-property indissolubility (per R2 REED-INLINE)
+#
+# [ALEX-VERIFY] markers indicate schema fields Reed inferred from session
+# context that require verification against landed StageFreight PR-A
+# schema at time of use. StageFreight repo local at
+# `/Users/reed/dev/projects/StageFreight/` per task #269.
+
+apiVersion: stagefreight/v1  # [ALEX-VERIFY] check PR-A version tag
+kind: FreightManifest
+metadata:
+  name: spectral-engineer
+  version: v0.1.0
+  description: "spectral.engineer v0.1 — landing served through mirror"
+
+source:
+  # Source substrate: Nix flake produces content-addressed docker image.
+  # Composes with flake.nix `packages.spectral-engineer-image` output.
+  type: nix-flake
+  flake: "."
+  package: spectral-engineer-image
+
+image:
+  # Content-address discipline: BLAKE3 image digest is the address.
+  # Per math §3.2 content-address-image stage of $\mathcal{Q}_{v0.1}$.
+  address_scheme: blake3  # [ALEX-VERIFY] StageFreight PR-A address scheme
+
+  build:
+    # Build via nix (composes with flake apps.deploy dispatch).
+    command: ["nix", "build", ".#spectral-engineer-image"]
+    artifact: "./result"  # Nix flake symlink output
+
+  registry:
+    # [ALEX-VERIFY] registry provider; fly.io's registry.fly.io by default
+    provider: fly-registry
+    namespace: spectral-engineer
+
+deploy:
+  # Target: fly.io per Alex Q3 adjudication 2026-08-03 (weak preference).
+  # Multi-target dispatch discipline preserved for v0.3+ Cilium+K8s per
+  # Reed shape-doc + math §7.3.
+  targets:
+    - name: fly-io-primary
+      type: fly-io
+      config: fly.toml  # composes with fly.toml sibling template
+      regions:
+        - iad  # [ALEX-VERIFY] primary region choice
+
+      # Deploy strategy per fly.io v2 discipline.
+      strategy: rolling  # [ALEX-VERIFY] alternatives: bluegreen, immediate
+
+      # Health check gate before target-instance switchover.
+      health_check:
+        path: /
+        port: 8080
+        timeout: 30s
+        expected_status: 200
+
+# Structural-property witness discipline per Mara math §3.4 (post-R2
+# REED-INLINE): $\mathcal{Q}_{v0.1}$'s two-channel indissolubility is
+# structural-property-shaped at deploy altitude — reproducibility (nix),
+# content-address (BLAKE3), TLS trust chain (Let's Encrypt), DNS resolution.
+witness:
+  # Composed bilateral: stagefreight_addressable per shards/io/stagefreight.mirror.
+  stagefreight_addressable:
+    - oid_resolves            # BLAKE3 image digest resolves against registry
+    - address_well_formed     # image address matches address_scheme grammar
+    - projection_is_species   # target-instance config is well-formed fly.io v2
+    - round_trip_holds        # image pulled from registry matches pushed
+
+  # Additional witnesses per StageFreight PR-A tool-species discipline.
+  tool_species_witnessed:
+    - shards/epistemologic/property/tool_species_stagefreight_witnessed.mirror
+
+# Alex-altitude verification checklist (before first deploy):
+# 1. Verify flake.nix `packages.spectral-engineer-image` builds successfully.
+# 2. Verify fly.io app `spectral-engineer` provisioned + custom-domain
+#    `spectral.engineer` DNS records point at fly.io A/AAAA.
+# 3. Verify Let's Encrypt cert issues (fly.io default cert provisioning).
+# 4. Verify content-address round-trip: `nix build` output digest matches
+#    registry pull digest.
+# 5. Verify APCA + WCAG AA discharge against served CSS per
+#    shards/docs/design.mirror §8 `design_complete` composed bilateral +
+#    Seam Phase D 992689e §6 realization-fidelity check.
