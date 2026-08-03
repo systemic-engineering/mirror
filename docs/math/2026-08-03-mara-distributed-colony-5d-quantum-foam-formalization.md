@@ -69,6 +69,8 @@ The 5D quantum foam formalization unifies five prior-art strands the substrate h
 
 **Strand 1** — **Anna Wolf 2012 J-space** (Alex's pre-mirror observation substrate; verbatim from `~/dev/systemic.engineering/practice/insights/cosmology/eventually-consistent-universe.md`): the "5D information manifold of Narcissus-Splinter dualities" IS the same 5D structure at information-geometric altitude. J-space names the observation frame; SpectralCoordinate<5> is the coordinate system on J-space.
 
+> **REED-INLINE cascade (Mara 2026-08-03 crown-theorem tick-5)**: Anna's J-space substrate has a load-bearing computational-substrate ancestor at nano-magnetic-materials altitude: Anna Jakobs (2012) *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (Fachhochschule Aachen / Peter-Grünberg-Institut / Jülich Centre of Neutron Science). The magnetization vector $\vec{S}_i \in \mathbb{R}^3$ at atom $i$ in Anna 2012 lifts to peer-state-at-SpectralCoordinate<5> at graph altitude. This IS identity across altitude-lift, not analogy. Per crown-theorem `docs/math/2026-08-03-mara-reality-as-spinning-5d-foam-crown-theorem.md` §5.
+
 **Strand 2** — **Foerster 1974 observer-included cybernetics**: Foerster's doubly-closed torus π₁(T²) = ℤ × ℤ carries TWO winding classes (the observer's + the observed's). The 4D content channel = observed; the 5th relational dimension = observer's coupling. Foerster's torus IS a 2D slice of SpectralCoordinate<5>.
 
 **Strand 3** — **Watzlawick 1967 two-channel indissolubility**: every message carries a content channel (what's said; 4D-spacetime-shaped) AND a relationship channel (how it's said; 5th-dim relational carrier). The two channels are indissoluble per Watzlawick Axiom 2. SpectralCoordinate<5> is the geometric substrate that makes indissolubility a coordinate-system property rather than an axiom.
@@ -135,6 +137,8 @@ $$
 r = \left| \frac{1}{K} \sum_{j=1}^{K} e^{i \theta_j} \right|
 $$
 
+> **REED-INLINE cascade (Mara 2026-08-03 crown-theorem tick-5)**: the Kuramoto phase-evolution is a projection of Anna Jakobs 2012 Landau-Lifschitz precession lifted from nano-magnetic-materials to ensemble altitude. Anna's $\partial \vec{S}_i / \partial t = \vec{H}_{\text{eff},i} \times \vec{S}_i + \lambda (\vec{H}_{\text{eff},i} \times \vec{S}_i) \times \vec{S}_i + \vec{f}_i \times \vec{S}_i$ (Anna eq. 8 p.10) reduces to the Kuramoto phase equation above in the small-$\lambda$ phase-only limit with Heisenberg coupling $J_{ij}$ = Kuramoto coupling $\kappa$. Per crown-theorem `docs/math/2026-08-03-mara-reality-as-spinning-5d-foam-crown-theorem.md` §5.
+
 Per Kuramoto 1975, there exists a critical coupling $\kappa_c > 0$ such that:
 
 - $\kappa < \kappa_c \implies r \to 0$ (decoherence; no lock)
@@ -194,6 +198,8 @@ $$
 
 This is the standard Conway rule with neighborhood defined via $d_{\text{aff}}$ instead of Moore-neighborhood-in-2D-grid.
 
+> **REED-INLINE cascade (Mara 2026-08-03 crown-theorem tick-5)**: the Conway update step IS ONE STEP of Anna Jakobs 2012's Runge-Kutta-4 SDE integrator at accuracy $O(\Delta t^4 + \varepsilon^2 \Delta t^2)$ (Anna Appendix B.2 p.49, adopted from David Bauer diplomarbeit *Atomistic Spin-Dynamics in Confined Magnetic Nano-Structure*). Discrete Conway B/S is coarse-grained Landau-Lifschitz basin dynamics. Per crown-theorem `docs/math/2026-08-03-mara-reality-as-spinning-5d-foam-crown-theorem.md` §5.3.
+
 ### 4.2 Generalization: K-neighbor cardinality
 
 For non-B3/S23 rules (e.g., HighLife B36/S23; Life-Without-Death B3/S012345678), the birth-set $B \subseteq \{0, 1, \ldots, |\mathcal{N}_\varepsilon|\}$ and survival-set $S \subseteq \{0, 1, \ldots, |\mathcal{N}_\varepsilon|\}$ parametrize the update. In 5D with $\varepsilon$-neighborhoods, the neighborhood cardinality varies (dense regions have more neighbors); the K-neighbor cardinality generalization admits variable-K rules per Kauffman NK model discipline.
@@ -246,6 +252,8 @@ Per @peer/colony.colony_locked + @peer/colony.colony_well_formed bilaterals (bot
 - Bandwidth ≤ WebRTC data-channel sustained rate (~1 MB/s).
 - Storage ≤ IndexedDB quota (~50% of free disk).
 - Discovery via WebSocket signaling endpoint (bootstrap-only; migrates to direct P2P).
+
+> **REED-INLINE cascade (Mara 2026-08-03 crown-theorem tick-5)**: the consumer-hardware realizability descends from Anna Jakobs 2012's OpenCL cross-vendor discipline (Anna §3 pp.11-13; portable across NVIDIA GPU + AMD GPU + multi-core CPU). Anna's 2012 substrate ran on Intel Core2 Duo + NVIDIA GeForce 8800 GS + NVIDIA GeForce GTX 590 (Anna Appendix A p.47). The browser peer runtime discharge lifts Anna's OpenCL portability to WebGL / WebGPU / WebAssembly altitude — same discipline, different runtime. Per crown-theorem `docs/math/2026-08-03-mara-reality-as-spinning-5d-foam-crown-theorem.md` §5.4.
 
 Per @peer/browser.transport_admissible + @peer/browser.browser_peer_well_formed bilaterals (both this-arc landing).
 
