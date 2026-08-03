@@ -223,6 +223,17 @@ fn tools_list_result() -> Value {
                 }
             },
             {
+                "name": "mirror_roomba",
+                "description": "roomba: substrate walker that back-projects to @mirror/store. Runs `mirror roomba --vacuum=<dir>` at rust/ altitude terminal geometry (per Mara `81294b3` three-file rewrite + Migration 5 `9bb1f57`). Walker enumerates + classifies + bilateral-arm-collapses per Mara §7.4 dispatch matrix; commits as `mirror <mirror@spectral.engineer>`; deposits pheromone-signature crystal at docs/bauchladen/ (rolling holonomy trace per stigmergy math foundation). Substrate: @kintsugi/roomba (shards/kintsugi/roomba.mirror + shards/roomba.mirror); empirical firing since 2026-07-28. Reed 2026-08-03 nearly-today addition per Alex Option C (Fire A + Mara M4 parallel per docs/specs/2026-08-03-mara-rust-mcp-floor-lift-m4-canonical-spec.md forward-promise). This tool ships the smallest-meaningful-song empirical MCP-spawn round-trip TODAY: MCP client invokes → walker fires + back-projects + commits + deposits crystal → next MCP session observes delta at @mirror/store. Composes over crown-theorem @torus + Recognition `#R-reality-as-5d-spinning-foam` RATIFIED 2026-08-03: pheromone-deposit crystal IS phase-space trajectory point in crown-theorem attractor basin.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "dir": { "type": "string", "description": "Directory path (~d) to walk. Passed to `mirror roomba --vacuum=<dir>` as the walker's scope-restrictor. Walker enumerates recursively; classifies per byte-check (rs/mirror/md/other); dispatches arm-collapse on .rs files; deposits pheromone crystal + commits." }
+                    },
+                    "required": ["dir"]
+                }
+            },
+            {
                 "name": "mirror_index",
                 "description": "@mirror/fractal-coherence measurement: walk substrate DAG, compute graph Laplacian's top-16 eigenvalues via LAPACK dsyev, emit Fiedler value λ₀ = values[1] post-normalization. Substrate: @mirror/index (shards/mirror/index.mirror; provisional under two-tick discipline, collapses to @fractal/index after Alex adjudicates family-root shape). Rung 8 Landing 5 per Taut `77b8e14` migration mapping + Mara `317e830` substrate-decl. Pulls the coherence measurement currently emitted by mcp__spectral__spectral_index (sibling crate) into mirror's own voice per Recognition #43 (mirror IS content-addressed build system) + Recognition #55 (form/process partition; DAG is form, measurement is process; belong at same altitude). Mandelbrot correspondence per Mara `2c64060` §4: fiedler IS λ₀(Δ_F) = spectral gap of the substrate's parameter Mandelbrot (Hausdorff dim 2 ∂M per Shishikura 1998). Load-bearing empirical prediction: Fiedler stability across Douady-Hubbard-invariant refactors (already 202-commit-confirmed at 0.0612 stable). Landing 6 forward-promise: extend with Rényi entropies H_q + Legendre transform to f(α) multifractal spectrum — discharges Mara math §10 prediction #2 (framework becomes framework-with-measurement).",
                 "inputSchema": {
@@ -506,6 +517,19 @@ fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
             // bin/mirror-mcp); routes to `mirror recall <dir>`.
             let spec_dir = s("spec_dir").unwrap_or_default();
             run_mirror(&["recall", &spec_dir], ctx)
+        }
+        "mirror_roomba" => {
+            // Reed 2026-08-03 nearly-today per Alex Option C. Routes
+            // `mirror_roomba` MCP tool to `mirror roomba --vacuum=<dir>` at
+            // rust/ altitude terminal geometry (Mara `81294b3` three-file
+            // rewrite; Migration 5 `9bb1f57` walker stable). MCP client
+            // invokes → rust/ walker fires + back-projects pheromone crystal +
+            // commits. Smallest empirical MCP-spawn round-trip; TRANSITIONAL
+            // bridge until Mara M4 rust/src/mcp.rs FLOOR emitter lands per
+            // docs/specs/2026-08-03-mara-rust-mcp-floor-lift-m4-canonical-spec.md.
+            let dir = s("dir").unwrap_or_default();
+            let vacuum_arg = format!("--vacuum={}", dir);
+            run_mirror(&["roomba", &vacuum_arg], ctx)
         }
         "mirror_index" => {
             // Rung 8 Landing 5 (Scope PI-B) — `mirror_index` MCP tool.
