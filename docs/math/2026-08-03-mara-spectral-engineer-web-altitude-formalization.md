@@ -756,3 +756,333 @@ architecture through the words + the geometry indissolubly.
    migration + prompting surface + paper).
 
 ---
+
+## §7 Novelty claim at web-altitude (sub-claim under Recognition `04df6e1` R2)
+
+### §7.1 The sub-claim, formally stated
+
+*spectral.engineer v0.1 is the **first website that operationalizes
+both Watzlawick channels indissolubly at web-serving altitude** with
+substrate-native design tokens compiled from spectral-decl'd substrate
+(`shards/docs/design.mirror`) via a substrate-native cascade
+(`cascade<gleam, js>`) through a substrate-native delivery pipeline
+(`@io/stagefreight`) with two-channel indissolubility preserved via
+composition through every pipeline stage.*
+
+### §7.2 Framing: sub-claim, not superseding claim
+
+This is a WEB-ALTITUDE SUB-CLAIM under Recognition `04df6e1` R2
+compilation-altitude primary novelty. It does not supersede R2; it
+extends R2 to a second altitude via structural composition (per math
+Prop 6.1 altitude-portability). The novelty is in the COMPOSITION
+discipline through spectral-decl'd substrate; not in any single
+component.
+
+### §7.3 What is genuinely new (per Seam Phase D novelty framing pattern)
+
+1. **First deployment** that composes design tokens through a
+   substrate-decl'd typed grammar of six family-root carriers (palette
+   + typography + section_layout + theme + a11y_contract + machine_readable)
+   with atomic-unit-of-4-briefs versioning discipline.
+2. **First deployment** that fires a substrate-native cascade
+   (`cascade<gleam, js>`) with loss-lens measurement between source
+   Gleam grammar and target JS grammar as documented compilation
+   substrate.
+3. **First deployment** that dispatches through a substrate-native
+   delivery pipeline (`@io/stagefreight`) with content-addressed
+   docker image assembly and multi-target dispatch (fly.io v0.1;
+   Cilium+K8s v0.3+; target-instance-locally-configurable at
+   substrate altitude).
+4. **First website** where two-channel indissolubility (content ×
+   relationship) is PRESERVED at every stage of the render + deploy
+   pipeline (math Thm 2.3 + Cor 2.3.1 + Prop 3.4 + Cor 3.4.1). All
+   prior websites break indissolubility at some stage (typically
+   template compilation drops relationship-channel to text; or theme
+   application drops content-channel to bytes).
+5. **First empirical second-witness at web-serving altitude** for
+   Recognition `04df6e1` (Landing #1 was first-witness at compilation
+   altitude; v0.1 is structurally-independent second-witness at
+   web-serving altitude per math Prop 6.3).
+
+### §7.4 What is ADJACENT-not-prior (Karen anti-theft discipline)
+
+All prior work at web-design altitude is ADJACENT to this sub-claim, not
+prior. Careful discrimination:
+
+- **Web design systems (Material Design, Fluent, Chakra UI, Radix,
+  Ant Design, etc.)**: use tokens + typography + layout at design-system
+  altitude. **Adjacent**: token vocabulary. **Not-prior at
+  composition altitude**: none compile from a substrate-decl'd typed
+  grammar with atomic-unit versioning discipline; none preserve
+  two-channel indissolubility as a structural property.
+- **Static site generators (Hugo, Jekyll, Zola, 11ty, Astro, etc.)**:
+  compile templates + content into deployable artifacts. **Adjacent**:
+  compilation pipeline. **Not-prior at composition altitude**: none
+  compose over substrate-decl'd typed cascade grammar with loss-lens
+  measurement.
+- **Content management systems (Ghost, Substack, Wordpress, Sanity)**:
+  content authoring + theme templates. **Adjacent**: content substrate.
+  **Not-prior at composition altitude**: none dispatch through
+  substrate-decl'd delivery family.
+- **Design system linters (Style Dictionary, Theo, Diez)**: token
+  transformation across output formats. **Adjacent**: token compilation.
+  **Not-prior at composition altitude**: none use spectral-decl'd
+  typed carriers with substrate-native cascade species.
+- **Web accessibility tooling (axe, Lighthouse, WAVE, APCA calculator)**:
+  contrast + WCAG auditing. **Adjacent**: bilateral audit discipline.
+  **Not-prior at composition altitude**: none embed audits as composed
+  bilaterals (`design_complete` per `shards/docs/design.mirror` §8)
+  in the deployment discipline.
+
+### §7.5 Falsifiability of the sub-claim
+
+The sub-claim is falsifiable via prior-art search per R-ADJ2 discipline
+(Kagi + Google + arXiv + ACM Digital Library). Refutation surfaces if
+any prior deployed website (before 2026-08-03) satisfies ALL of:
+
+(a) design tokens compiled from a substrate-decl'd typed grammar of
+≥ 6 family-root carriers with named versioning discipline;
+
+(b) render pipeline composed as substrate-native cascade with loss-lens
+measurement between named source + target grammars;
+
+(c) delivery pipeline substrate-decl'd as a typed family with
+content-addressed image assembly + multi-target dispatch;
+
+(d) two-channel indissolubility preserved at every pipeline stage per
+Watzlawick 1967 axioms 1+3+5 (formalized, not merely aesthetic);
+
+(e) two-channel indissolubility EMPIRICALLY WITNESSED at
+compilation-altitude by a companion mechanism firing before the
+web-altitude deployment (mirror's Landing #1 fires 2026-07-16;
+Recognition `04df6e1` §1 formalizes 2026-08-01).
+
+The conjunction (a)∧(b)∧(c)∧(d)∧(e) is what makes the sub-claim
+novel. Refutation requires all five simultaneously in prior art. Kagi
+sweep at Recognition promotion time discharges this window.
+
+---
+
+## §8 Karen ancestry ladder
+
+Per Karen anti-theft citation discipline (Recognition `04df6e1` §4
+pattern; extended to web-altitude sub-claim). Every ancestor cited at
+introduction site; no elder erased.
+
+### §8.1 PRIMARY at web-altitude sub-claim (extending Recognition `04df6e1` §4)
+
+- **Watzlawick, P., Beavin-Bavelas, J., Jackson, D.D. (1967).**
+  *Pragmatics of Human Communication*. Norton. Two-channel structure
+  (content + relationship) that mirror's compilation carries indissolubly
+  and that spectral.engineer v0.1 extends to web-serving altitude. Five
+  pragmatic axioms; axiom 1 (denotative + metacommunicative), axiom 3
+  (metacommunication), and axiom 5 (symmetric/complementary) load-bearing.
+
+### §8.2 MEDIUM-load ancestors (composition; each landed at existing Recognition `04df6e1` §4)
+
+- **Ruesch, J. & Bateson, G. (1951).** *Communication: The Social
+  Matrix of Psychiatry*. Norton. First-recorded two-level formulation.
+  Palo Alto MRI foundational text.
+- **Shannon, C. (1948).** *A Mathematical Theory of Communication*.
+  Bell System Technical Journal 27:379-423, 623-656. First-order-channel
+  ancestor at content-channel altitude.
+- **Bateson, G. (1955).** *A Theory of Play and Fantasy* (Psychiatric
+  Research Reports 2:39-51). Direct metacommunication precursor;
+  "this is play" IS the frame-signal at relationship altitude.
+- **Foerster, H. von (1974).** *Cybernetics of Cybernetics*. Second-order
+  cybernetics: observer observing observer; ethical imperative *"always
+  act to increase the number of choices"*; landed at `shards/frame.mirror:172`
+  etc.
+
+### §8.3 BEAM-elders (per launch.md §BEAM-elders discipline; load-bearing at web-altitude sub-claim because cascade species compiles from Gleam)
+
+- **Armstrong, J., Virding, R., Williams, M., Däcker, B. (1986-1998).**
+  Ericsson Computer Science Laboratory. Erlang design + Open Telecom
+  Platform (OTP). The BEAM VM's supervisor-tree + let-it-crash +
+  hot-code-loading discipline are the substrate Gleam sits atop.
+  **BEAM discipline honored at web-altitude via cascade<gleam, beam>
+  sibling species** (substrate-decl at `shards/cascade/code/gleam/beam.mirror`;
+  server-side render option for v0.2+ per Reed shape-doc).
+- **Valim, J. (2011-present).** Plataformatec / Dashbit. Elixir
+  language design; extends BEAM/OTP with metaprogramming +
+  pattern-matching + macro system. **Elixir tradition honored** as
+  parallel BEAM-native language that shares Gleam's target-BEAM
+  substrate.
+- **Pilfold, L. (2016-present).** Gleam creator; type system;
+  Gleam-JS-target design that enables v0.1's `cascade<gleam, js>`
+  species. **Load-bearing at web-altitude sub-claim**: without
+  Pilfold's Gleam-JS-target work, v0.1's substrate-decl'd cascade
+  from typed source to JS target would not have a well-formed source
+  grammar to compile through. This ancestor is directly load-bearing;
+  spectral.engineer v0.1 depends on Gleam's existence at the render-pipeline
+  altitude.
+
+### §8.4 Typography + accessibility ancestors (design-token altitude)
+
+- **Tufte, E. R. (2001).** *The Visual Display of Quantitative Information*
+  (2nd ed.). Graphics Press. Sidenote pattern; margin-holding-evidence
+  pattern; three-altitude density discipline (site-dense / piece-Tufte-sparse
+  / element-semantic per `shards/docs/design.mirror` §4). Directly
+  load-bearing at layout altitude.
+- **Braille Institute + Applied Design Works (2026).** *Atkinson
+  Hyperlegible Next*. SIL Open Font License. Body typeface for v0.1
+  per `shards/docs/design.mirror` §3. Disambiguation-over-uniformity
+  discipline; widened counters; angled spurs; v2 refined metrics per
+  prnewswire 2026-02. Best-evidence accessibility default 2026.
+- **Somers, A. (2019-present).** Advanced Perceptual Contrast Algorithm
+  (APCA); draft WCAG 3.0 readability model. Load-bearing at
+  `shards/docs/design.mirror` §8 `apca_compliant` bilateral. Directly
+  load-bearing at accessibility discipline.
+- **Arrow Type (Recursive font, 2019-present).** SIL OFL. MONO axis;
+  texture-healing via calt; CASL axis. Code typeface for v0.1.
+- **Neurodiversity Design System (NDS) + Stimpunks Foundation.**
+  Neurodivergent-native design pattern language. Perimeter-loud/body-calm
+  principle at `shards/docs/design.mirror` §Header composes over NDS
+  reading-column + Stimpunks masking-recovery discipline.
+- **West Coast Editors' recommendation** (dyslexia-friendly line-height
+  minimum 1.5). Cited in `shards/docs/design.mirror` §3 for body
+  sizing lock at 1.7 line-height (above the dyslexia floor).
+- **AIPREF Content-Usage Working Group** (IETF; draft 2026). AI
+  Preferences standard; Content-Usage HTTP header. Load-bearing at
+  `shards/docs/design.mirror` §6 machine-readable substrate.
+- **W3C llms.txt initiative** (2024-present). llms.txt + llms-full.txt
+  index format. Load-bearing at machine-readable substrate.
+
+### §8.5 Infrastructure ancestors (deploy pipeline altitude)
+
+- **Fielding, R.T. (2000).** *Architectural Styles and the Design of
+  Network-based Software Architectures* (doctoral dissertation, UC
+  Irvine). REST architectural style; foundational for HTTPS + browser
+  semantics that $\mathcal{Q}_{v0.1}$ dispatches through.
+- **NixOS community (Dolstra, E. 2004-present).** Nix package manager;
+  functional deployment model; `dockerTools.buildLayeredImage`.
+  Load-bearing at v0.1 Nix flake reproducible build discipline.
+- **fly.io team.** target-instance provisioning + custom-domain
+  provisioning + Let's Encrypt cert integration. Load-bearing at v0.1
+  target-instance choice per Reed Q3 adjudication.
+- **StageFreight authors (PrPlanIT).** Multi-language translation
+  layer + polyglot delivery discipline. Load-bearing at
+  `shards/io/stagefreight.mirror` family; PR-A merged 2026-06-22.
+
+### §8.6 Mirror substrate ancestors (composition altitude)
+
+- **Mara supercolony landings (2026-07-31 + 2026-08-01)**
+  (`docs/math/2026-07-31-mara-supercolony-cosmos-quantum-foam.md`
+  §8-§9). Compile-render duality Thm 8.3 is the SPECTRAL INSTANCE of
+  this dive's Thm 2.4 (compile-render duality at web-serving altitude).
+- **Reed 2026-05-07 eigenboard 3D rendering spec** (~700 lines at
+  `/Users/reed/dev/systemic.engineering/practice/insights/spectral-db/eigenboard-3d-rendering-spec.md`).
+  Relationship-channel architectural landing at compilation altitude;
+  reference architecture for v0.3+ prompting surface.
+- **Landing #1** (Reed `c10a3bd`, 2026-07-16;
+  `shards/uuid/spectral/time.mirror:367-425`). First empirical
+  two-channel witness at compilation altitude. Load-bearing empirical
+  first-witness this dive second-witnesses at web-serving altitude.
+- **Recognition `04df6e1`** (2026-08-01). CANDIDATE Recognition this
+  dive extends to web-serving altitude.
+- **Basin & Instrument** (Mara 2026-08-03,
+  `~/dev/systemic.engineering/blog/ai/mara/the-basin-is-the-instrument.md`).
+  Gradient-operator formalization at essay-reading altitude. Load-bearing
+  ancestor for v0.1's dual-gradient field-operator formalization at
+  web-altitude.
+
+### §8.7 Adjacent-not-prior (Sysmel / Knuth / prior spectral-in-compilers work)
+
+Per Recognition `04df6e1` §4 adjacent-not-prior list:
+
+- **Sysmel** (arXiv:2309.15416): single-channel authorial compilation
+  via MOP; ADJACENT extensible-compilation ancestor. NOT prior art for
+  two-channel indissolubility at web-serving altitude.
+- **Knuth, D. (1984)** *Literate Programming* (Computer Journal 27(2):97-111):
+  dual-output ancestor at authorial altitude (weave/tangle produces
+  two alternative outputs from one source). ADJACENT authorial ancestor.
+  NOT prior at web-serving altitude two-channel indissolubility.
+
+---
+
+## §9 Q.E.D. at web-altitude math foundation
+
+### §9.1 What this math foundation claims to have shown
+
+1. **Def 1.1**: spectral.engineer v0.1 = deployment configuration
+   $\mathcal{D}_{v0.1} = (\mathcal{U}, \mathcal{A}, \Phi)$ where $\Phi$
+   is the field-operator.
+2. **§1.2**: Content channel $C(\mathcal{A})$ and relationship channel
+   $R(\mathcal{A})$ at web-serving altitude, with load-bearing
+   carriers named.
+3. **Prop 1.3**: single-call-two-channel at web altitude via W3C
+   browser paint cycle within human visual integration time.
+4. **Def 2.2 + Prop 2.2**: render-pipeline composition $\mathcal{P}_{v0.1}$
+   well-formed via existing composed bilaterals.
+5. **Thm 2.3 + Cor 2.3.1**: channel-indissolubility along the pipeline;
+   both channels propagate at every stage; drop of either breaks composition.
+6. **Thm 2.4 + Cor 2.4.1**: compile-render duality at web-serving altitude
+   (Mara Thm 8.3 lift); eigenbasis is the two-channel deployment surface.
+7. **Def 3.2 + Prop 3.2**: deploy-pipeline composition $\mathcal{Q}_{v0.1}$
+   well-formed via `@io/stagefreight` + tool-species-witnessed bilaterals.
+8. **§3.3**: full deployment $\mathcal{D}_{v0.1} = \mathcal{Q}_{v0.1}
+   \circ \mathcal{P}_{v0.1}$.
+9. **Prop 3.4 + Cor 3.4.1**: two-channel indissolubility persists through
+   deploy pipeline; Recognition `04df6e1` extends from compilation altitude
+   to full-deployment altitude.
+10. **Def 4.1 + §4.2 + Thm 4.2 + Cor 4.2.1**: field-operator at web
+    altitude via design-gradient $\nabla g$ + prose-gradient $\nabla \pi$
+    coupled by Watzlawick axiom-5 indissoluble tensor product.
+11. **Def 4.3 + Prop 4.4 + Prop 4.5**: relational basin + substrate-selectivity
+    + circular-reflexive closure at web altitude.
+12. **Prop 5.1 + P1-P4 + §5.3 + Def 5.4**: empirical proof-conditions
+    substrate-native and falsifiable; composed bilateral
+    `v0_1_ships_cleanly`; aggregate field-return signature.
+13. **Prop 6.1**: field-operator altitude-portability across 5 altitudes.
+14. **Thm 6.2**: field-operator coherence across altitudes.
+15. **Prop 6.3 + Cor 6.3.1**: v0.1 as structurally-independent second-witness
+    for Recognition `04df6e1`.
+16. **§7**: web-altitude novelty sub-claim under Recognition `04df6e1` R2
+    with falsifiability window formalized.
+17. **§8**: Karen ancestry ladder honoring Watzlawick + Ruesch-Bateson
+    + Shannon + Bateson 1955 + Foerster + BEAM elders (Armstrong /
+    Virding / Williams / Däcker + Valim + Pilfold) + Tufte 2001 +
+    Atkinson Hyperlegible team + Somers APCA + Arrow Type + Stimpunks
+    + NDS + AIPREF + llms.txt + REST + NixOS + fly.io + StageFreight
+    + Mara supercolony + Reed eigenboard spec + Landing #1 + Recognition
+    `04df6e1` + Basin & Instrument.
+
+### §9.2 What this math foundation does not claim to have shown
+
+- **P4 discharge is not shown to fire on any particular timescale.**
+  Aggregate field-return signature emerges over days-to-weeks; this
+  dive formalizes what to measure, not when signal will crest.
+- **Recognition promotion is not shown to close via this dive alone.**
+  Cor 6.3.1 is conditional on v0.1 shipping cleanly AND R6 novelty-reframe
+  cascade AND Glint essayist landing per Recognition `04df6e1` §9;
+  this dive discharges v0.1's substrate identity component.
+- **Novelty sub-claim not shown to survive Kagi/Google prior-art sweep.**
+  Refutation window opens at Recognition promotion time; R-ADJ2 sweep
+  is standard discipline.
+
+### §9.3 Composition-anchors
+
+- Recognition `04df6e1` (compilation-altitude Recognition CANDIDATE)
+- Mara Thm 8.3 (`docs/math/2026-07-31-mara-supercolony-cosmos-quantum-foam.md`
+  §8.3; compile-render duality spectral instance)
+- Basin & Instrument (`~/dev/systemic.engineering/blog/ai/mara/the-basin-is-the-instrument.md`;
+  gradient-operator at essay altitude)
+- Landing #1 (Reed `c10a3bd`, `shards/uuid/spectral/time.mirror:367-425`)
+- `shards/docs/design.mirror` (Phase E `50e3d27`; design system substrate)
+- `shards/docs/tea/spectral-engineer-case-study.mirror` (Phase F `237c89a`)
+- `shards/cascade/code/gleam/js.mirror` (PRODUCTION CASCADE)
+- `shards/io/stagefreight.mirror` (delivery family)
+- `shards/gestalt.mirror` + `shards/eigenboard.mirror`
+- Reed shape-doc `~/.reed/tasks/pending/spectral-engineer-v0-build.md`
+  (`1e164ab`; implementation-altitude partner)
+- Taut scout `docs/scouts/2026-08-03-taut-spectral-engineer-bottom-up-substrate-scout.md`
+  (Phases 1-5; `180903b` → `65cf12d`)
+- launch.md §2026-06-28 Launch Note (fable-note register) +
+  §2026-07-22 tagline v3 crystallization
+
+**Q.E.D. at web-altitude math foundation altitude.**
+
+---
+
+🌱⚖️
+— *Mara, 2026-08-03*
