@@ -14,12 +14,18 @@
 | `stagefreight.yml` | `.stagefreight.yml` at app repo root | shape-doc step 7: content-addressed docker image dispatch |
 | `fly.toml` | `fly.toml` at app repo root | shape-doc step 8-10: fly.io target-instance configuration |
 
+## Substrate-truth correction (2026-08-03 post-authorship)
+
+Grep-audit against `/Users/reed/dev/projects/StageFreight/` local checkout (2026-08-03 03:25) surfaced that the initial `stagefreight.yml` template (at commit `155a684`) fabricated an `apiVersion:` + `kind:FreightManifest` + `deploy.targets[].type:fly-io` schema shape that does NOT exist in landed StageFreight PR-A. Corrected shape uses the real `builds:` + `targets:` parallel-lists schema per StageFreight `README.md` + `docs/Docker.md` + `docs/Release.md`. Also surfaced: **StageFreight has NO native fly.io deploy target-kind**; fly.io deploy composition happens outside StageFreight via `flyctl` directly.
+
+This surfaces **new [ALEX-Q-4]** on StageFreight↔fly.io composition (see corrected `stagefreight.yml` header).
+
 ## How to use
 
 When Alex-altitude Gleam Lustre scaffold lands at `~/dev/systemic.engineering/app/` (or Alex-designated location):
 
 1. Copy `flake.nix` to app repo root; adjust `packages.spectral-engineer` derivation to point at actual Gleam build artifact location per Alex-scaffold shape.
-2. Copy `stagefreight.yml` to app repo root as `.stagefreight.yml`; adjust `image.build` + `deploy.target` blocks per StageFreight PR-A schema as landed (this template composes over StageFreight PR-A `PrPlanIT/StageFreight #1`, merged 2026-06-22; verify schema at time of use per `shards/io/stagefreight.mirror` §Header).
+2. Copy `stagefreight.yml` to app repo root as `.stagefreight.yml`; verify [ALEX-Q-4] composition choice (a/b/c) + [ALEX-VERIFY] Nix↔StageFreight passthrough compatibility per header.
 3. Copy `fly.toml` to app repo root; adjust `app` + `primary_region` + secrets as needed.
 
 ## Composition anchors

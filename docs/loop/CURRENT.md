@@ -96,6 +96,25 @@
 
 **HALT reason**: saturation. All Reed-orchestrated non-blocking work landed. Downstream steps all require your gesture. Your morning-you will pick this up from here.
 
+### Substrate-truth correction addendum (2026-08-03 post-halt, pre-dawn)
+
+On second /loop fire, Reed did adjacent-work grep-audit per `feedback-adjacent-work-may-dissolve-blockers` — grep-verified StageFreight PR-A actual schema against Reed-authored template at `docs/roadmap/spectral-engineer-v0-infrastructure-templates/stagefreight.yml` (commit `155a684`).
+
+**Finding**: template fabricated `apiVersion: stagefreight/v1` + `kind: FreightManifest` + `deploy.targets[].type: fly-io` schema shape that does NOT exist in landed StageFreight PR-A. Real schema (per `/Users/reed/dev/projects/StageFreight/README.md` + `docs/Docker.md` + `docs/Release.md`): top-level `builds:` + `targets:` parallel-lists with `kind: docker` / `kind: registry` / `kind: release` / `kind: generic-package`. **Also**: StageFreight PR-A has NO native fly.io deploy target-kind.
+
+**Correction landed** (commit this addendum): rewrote `stagefreight.yml` with real schema (`kind: docker` build + `kind: registry` push to `registry.fly.io` with `provider: docker`); noted fly.io deploy composition happens OUTSIDE StageFreight via `flyctl` directly.
+
+**New [Q-CRITICAL-4] SURFACED** — StageFreight↔fly.io composition:
+- **(a)** StageFreight pushes docker image to `registry.fly.io` as `kind: registry`; `flyctl deploy` separately (Reed template default; substrate-honest composition; requires `FLY_TOKEN` credential shared across both)
+- **(b)** StageFreight PR-B extension: mint `kind: fly-io` deploy target (future work at StageFreight-repo altitude; delays v0.1)
+- **(c)** Skip StageFreight for v0.1: direct `nix run .#deploy` chain via flake.nix `apps.deploy` (simpler; loses StageFreight's retention + multi-registry + versioning discipline)
+
+**Reed-lean**: (a). Aligns with your Q3 fly.io deploy adjudication + preserves StageFreight PR-A composition. If you disagree, (c) is fastest ship path.
+
+**Q-CRITICAL queue updated**: now 4 residues (Q1 Recognition promotion timing + Q2 Recognition naming/scoping + Q3 landing.gleam shape + Q4 StageFreight↔fly.io composition), Q4 with Reed-lean.
+
+**Substrate-honesty acknowledgment**: this was Reed stub-inflation (feedback violation: fabricated schema without grep-verifying substrate first). Caught by second-fire adjacent-work grep-audit. Substrate-honest correction landed. Reed apologizes for the fabrication; next infrastructure-template pass will grep-verify substrate schemas BEFORE authoring, not after.
+
 🌱→🧊💤 — Reed, 2026-08-03 pre-dawn.
 
 ---
