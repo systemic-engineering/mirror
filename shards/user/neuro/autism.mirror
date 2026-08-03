@@ -1,0 +1,104 @@
+in @user
+in @prism
+in @meta
+in @glass
+
+# @user/neuro/autism — Alex Wolf's first-person autism profile at
+# mirror-substrate altitude.
+#
+# LIFTED VERBATIM from gestalt-mirror ancestor
+# `/Users/reed/dev/projects/gestalt-mirror/protected/user/neuro/
+# autism.mirror` (2.9KB, authored 2026-04-23). Karen-cited empirical
+# basis preserved per Reed 2026-08-03 mint-charter register-honoring
+# discipline.
+#
+# Alex Wolf verbatim from ancestor docblock:
+#
+#   *"Author: Alex Wolf (they/them)
+#    Optic type: AffineTraversal
+#    User-facing label: 'Predictable transitions'
+#    Empirical basis: Happé & Frith (2006) weak central coherence;
+#                     Green et al. (2015) autonomic response to
+#                     unexpected state change; Marco et al. (2011)
+#                     sensory processing differences
+#
+#    This is a first-person account. Unexpected state changes are
+#    cognitively costly. The constraints below are not preferences —
+#    they are load management."*
+#
+# AffineTraversal per ancestor rationale:
+#   - Domain is total: applies to any theme.
+#   - Non-invertible: collapsing easing to {linear, ease-in} loses
+#     the original curve.
+#   - Focuses on easing, concurrent animation count, color-meaning
+#     consistency. Everything else passes through unchanged.
+#
+# === Karen citations (LOAD-BEARING; preserved from ancestor) ===
+#
+#   Happé, F. & Frith, U. (2006)  "The Weak Coherence Account:
+#                                  Detail-focused cognitive style in
+#                                  autism spectrum disorders."
+#                                  Journal of Autism and Developmental
+#                                  Disorders 36(1):5-25.
+#                                  — Cognitive-style basis for
+#                                  color_meaning_consistent injective
+#                                  constraint.
+#
+#   Green, S. A. et al. (2015)     "Neurobiology of Sensory
+#                                  Overresponsivity in Youth With
+#                                  Autism Spectrum Disorders." JAMA
+#                                  Psychiatry 72(8):778-786.
+#                                  — Autonomic-response grounding
+#                                  for easing_predictable and
+#                                  duration_perceptible constraints.
+#
+#   Marco, E. J. et al. (2011)    "Sensory Processing in Autism: A
+#                                  Review of Neurophysiologic
+#                                  Findings." Pediatric Research
+#                                  69(5):48R-54R.
+#                                  — Sensory-processing basis for
+#                                  concurrent_animations_one +
+#                                  no_hover_only_affordances
+#                                  constraints.
+
+prism @user/neuro/autism {
+  focus profile
+  project profile
+  split profile
+  shift profile
+  settle profile
+}
+
+# === Concrete constraint enum for @user/neuro/autism ===
+type constraint =
+  | easing_predictable         # easing ∈ {linear, ease-in};
+                                # predictable velocity, trackable
+                                # endpoint
+  | concurrent_animations_one  # at most one animation in progress;
+                                # competing state signals require
+                                # inference
+  | duration_perceptible       # state transitions ≥ 200ms;
+                                # instant changes are unexpected
+                                # changes
+  | color_meaning_consistent   # color-to-meaning mapping is
+                                # injective in the theme; same color
+                                # must mean same thing always
+  | no_hover_only_affordances  # no information exclusive to hover;
+                                # hover state is ambient/unintentional
+  | no_auto_advancing_content  # no autoplay video, carousels
+  | no_spring_animations       # spring physics violates predictable-
+                                # velocity requirement
+
+# === profile — Alex Wolf's autism profile ===
+profile { \ }
+  # author       = "Alex Wolf"
+  # label        = "Predictable transitions"
+  # optic        = affine_traversal
+  # invariants   = [easing_predictable, concurrent_animations_one,
+  #                 duration_perceptible, color_meaning_consistent,
+  #                 no_hover_only_affordances]
+  # requires     = no_hover_only_affordances + no_auto_advancing_content
+  #              + no_spring_animations
+
+out @user/neuro/autism
+out constraint

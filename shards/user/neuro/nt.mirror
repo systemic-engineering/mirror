@@ -1,0 +1,78 @@
+in @user
+in @prism
+in @meta
+in @glass
+
+# @user/neuro/nt — Liana's neurotypical profile stub at mirror-
+# substrate altitude.
+#
+# LIFTED VERBATIM from gestalt-mirror ancestor
+# `/Users/reed/dev/projects/gestalt-mirror/protected/user/neuro/nt.
+# mirror` (2.1KB, authored 2026-04-23). STUB status preserved:
+# awaits Liana's first-person authorship.
+#
+# Alex Wolf verbatim from ancestor docblock:
+#
+#   *"Author: Liana
+#    Optic type: TBD — to be determined by the author
+#    User-facing label: TBD
+#
+#    This profile is Liana's to write.
+#    The stub exists to hold the namespace and make the structural
+#    intent clear:
+#
+#    NT is not the default. NT is not the absence of constraints.
+#    NT has a person behind it, just like every other profile in
+#    this grammar.
+#
+#    What belongs here:
+#    - Liana's first-person account of how documents should feel
+#    - The constraints NT imposes (not the absence of constraints)
+#    - The invariants that matter from inside that perspective
+#    - The anti-requirements: what NT must NOT do
+#
+#    What does not belong here:
+#    - 'Everything turned on' (that's not a perspective, that's a
+#      fallback)
+#    - Research synthesis of what NT users prefer (that's not
+#      authorship)
+#    - Defaults from the base theme with no lenses applied
+#
+#    The garden will expand from here."*
+#
+# STRUCTURAL DISCIPLINE (preserved from ancestor):
+#   Every profile in @user/neuro/ needs a named author.
+#   The compiler will reject a profile with no author.
+#   `@user.profile_well_authored` bilateral discharges this.
+
+prism @user/neuro/nt {
+  focus profile
+  project profile
+  split profile
+  shift profile
+  settle profile
+}
+
+# === Concrete constraint enum for @user/neuro/nt ===
+# TBD by Liana. Placeholder; not empty (see ancestor rationale:
+# "A profile with empty invariants is structurally suspect").
+type constraint =
+  | tbd_liana_authored          # placeholder; Liana replaces
+
+# === profile — Liana's NT profile (STUB; awaits authoring) ===
+profile { \ }
+  # author       = "Liana"
+  # label        = "TBD"  (Liana authors)
+  # optic        = traversal  (placeholder; Liana authors —
+  #                             hint per ancestor: "if NT profile
+  #                             imposes positive constraints (not
+  #                             just 'pass through'), it is likely
+  #                             AffineTraversal or Lens. If it is
+  #                             genuinely the identity (no
+  #                             modification), it is Iso. But a
+  #                             perspective is never an identity —
+  #                             it always selects.")
+  # invariants   = [tbd_liana_authored]  (Liana replaces)
+
+out @user/neuro/nt
+out constraint

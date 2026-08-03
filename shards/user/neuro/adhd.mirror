@@ -1,0 +1,104 @@
+in @user
+in @prism
+in @meta
+in @glass
+
+# @user/neuro/adhd — Alex Wolf's first-person ADHD profile at
+# mirror-substrate altitude.
+#
+# LIFTED VERBATIM from gestalt-mirror ancestor
+# `/Users/reed/dev/projects/gestalt-mirror/protected/user/neuro/adhd.
+# mirror` (3.7KB, authored 2026-04-23). Karen-cited empirical basis
+# preserved per Reed 2026-08-03 mint-charter register-honoring
+# discipline.
+#
+# Alex Wolf verbatim from ancestor docblock:
+#
+#   *"Author: Alex Wolf (they/them)
+#    Optic type: AffineTraversal
+#    User-facing label: 'Reduce visual noise'
+#    Empirical basis: Barkley (1997) working memory; Nigg (2017)
+#                     executive function; dopaminergic salience
+#                     competition
+#
+#    This is a first-person account, not a research approximation.
+#    Every constraint below was calibrated against lived experience.
+#    The formal properties fall out of what that experience requires."*
+#
+# AffineTraversal per ancestor rationale:
+#   - Domain is total: applies to any theme.
+#   - Non-invertible: clamping duration from 800ms to 300ms loses
+#     information (cannot recover the original 800ms from the
+#     clamped 300ms).
+#   - Focuses on a subset of theme tokens (motion, saturation,
+#     density). The rest (hue, surface colors, font family) pass
+#     through unchanged.
+#
+# === Karen citations (LOAD-BEARING; preserved from ancestor) ===
+#
+#   Barkley, R. A. (1997)     "Behavioral inhibition, sustained
+#                              attention, and executive functions:
+#                              Constructing a unifying theory of
+#                              ADHD." Psychological Bulletin
+#                              121(1):65-94.
+#                              — THE canonical ADHD working-memory
+#                              framework the duration_bounded
+#                              constraint rests on.
+#
+#   Nigg, J. T. (2017)        "Annual Research Review: On the
+#                              relations among self-regulation,
+#                              self-control, executive functioning,
+#                              effortful control, cognitive control,
+#                              impulsivity, risk-taking, and
+#                              inhibition for developmental
+#                              psychopathology." Journal of Child
+#                              Psychology and Psychiatry
+#                              58(4):361-383.
+#                              — Executive-function grounding for
+#                              hierarchy_preserved constraint.
+#
+# === Path-namespace pact ===
+#
+# This file at `shards/user/neuro/adhd.mirror` declares
+# `@user/neuro/adhd` at species-depth 2. Path-depth == namespace-
+# depth == 2; pact honoured.
+#
+# Related shards:
+#   user.mirror (family-root parent),
+#   user/neuro/autism.mirror (sibling; audhd composes both),
+#   user/neuro/audhd.mirror (sibling; adhd.then(autism)
+#                            intersection-theorem [200ms, 300ms]),
+#   user/neuro/nt.mirror (sibling; Liana-authored stub).
+
+prism @user/neuro/adhd {
+  focus profile
+  project profile
+  split profile
+  shift profile
+  settle profile
+}
+
+# === Concrete constraint enum for @user/neuro/adhd ===
+type constraint =
+  | duration_bounded          # duration ≤ 300ms; attention bound
+  | ambient_motion_zero       # no looping animations
+  | saturation_muted          # non-interactive saturation ≤ 0.6
+  | density_spacious          # spacing.density = spacious
+  | line_height_open          # line_height ≥ 1.6
+  | hierarchy_preserved       # structural depth unchanged
+  | no_blink                  # no CSS blink or equivalent
+  | no_looping_progress       # no indefinite spinners
+  | no_color_as_sole_cue      # color-blindness safety inherited
+
+# === profile — Alex Wolf's ADHD profile ===
+profile { \ }
+  # author         = "Alex Wolf"
+  # label          = "Reduce visual noise"
+  # optic          = affine_traversal
+  # invariants     = [duration_bounded, ambient_motion_zero,
+  #                   saturation_muted, density_spacious,
+  #                   line_height_open, hierarchy_preserved]
+  # requires       = no_blink + no_looping_progress + no_color_as_sole_cue
+
+out @user/neuro/adhd
+out constraint

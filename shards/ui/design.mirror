@@ -1,0 +1,311 @@
+in @ui
+in @prism
+in @meta
+in @glass
+
+# @ui/design — the design-token theme-collapse species of the @ui
+# family: the typed vocabulary pipeline where possibility-space
+# design tokens materialize into concrete render values under a
+# Theme observation frame.
+#
+# Q-C5 UNIFICATION mint per Alex 2026-08-03 verbatim adjudication:
+#
+#   *"Q-C5: collapse divergence — unified `shards/ui.mirror` (merge
+#    gestalt-mirror/protected/ui.mirror + gestalt-ui/ui.conv)"*
+#
+# ANTI-PREEMPTIVE-MINT REGISTRY (grep-first substrate-already-had-
+# the-word discipline; positive refusal outcome):
+#
+#   PROPOSED: mint `shards/ui.mirror` as design-token unified family-
+#             root per Alex Q-C5 verbatim.
+#
+#   VERDICT:  REFUSED at family-root altitude. `shards/ui.mirror`
+#             already declares `@ui` as the GPU EIGENBOARD RENDERING
+#             SUBSTRATE (Loop Phase C, 2026-06-23, 19.9KB; Recognition
+#             #96 candidate; motes/arcs/field/rgba8_buffer/spectral_gpu
+#             carriers; render/snapshot/couple actions; wgpu Rust
+#             crate substrate-decl).
+#
+#   REDIRECT: mint at sibling-species altitude — `shards/ui/design.
+#             mirror` — carrying the design-token theme-collapse
+#             pipeline WITHOUT overwriting the family-root's GPU
+#             instrument discipline. Both readings of @ui admissible;
+#             both altitudes coherent; no collapse of load-bearing
+#             substrate.
+#
+# THE Q-C5 collapse Alex named IS between the TWO ancestor `@ui`
+# definitions in adjacent projects (gestalt-mirror + gestalt-ui) —
+# neither of which references the LANDED GPU `@ui` at shards/ui.
+# mirror. The unification target is THIS species — where design-
+# token vocabulary + materialize-pipeline compose coherently.
+#
+# === substrate-already-had-the-word (TWO ancestor sources) ===
+#
+# ANCESTOR 1 (gestalt-mirror; `/Users/reed/dev/projects/gestalt-
+# mirror/protected/ui.mirror`, 835B, authored 2026-04-06):
+#
+#   grammar @ui {
+#     type = theme
+#     type mode = light | dark
+#     type density = compact | comfortable | spacious
+#     type motion = full | reduced
+#     type color_intent = background | foreground | card | primary |
+#                        muted | border | agent | human | system |
+#                        status(status_kind)
+#     type status_kind = working | idle | waiting | errored
+#     type motion_intent = fast | normal | slow | slower
+#     type radius_intent = sm | md | lg | xl | full
+#     type shadow_intent = none | sm | md | lg | xl
+#     type typography_intent = heading | body | label | code | caption
+#     type role = supervisor | worker | exploration | plan |
+#                implementation | human
+#     type signal_kind = message | question | insight | work | init |
+#                       exit
+#   }
+#
+# Type-only vocabulary. Semantic intents; no materialization action.
+#
+# ANCESTOR 2 (gestalt-ui; `/Users/reed/dev/projects/gestalt-ui/
+# ui.conv`, 1.5KB, authored 2026-04-03):
+#
+#   grammar @ui {
+#     type = token | theme | composite | view | target
+#     type token = color | dimension | duration | shadow | radius |
+#                 motion
+#     type theme = mode | density | contrast | scale | motion_pref
+#     type composite = typography | spacing | surface
+#     type view = signal | actor
+#     type target = css | ansi | svg
+#     action materialize { token: token, theme: theme, target: target }
+#     action compose { tokens: composite }
+#   }
+#
+# Materialization pipeline. token × theme × target → concrete value.
+#
+# UNIFIED at THIS species: semantic-intent taxonomy from Ancestor 1
+# + materialization pipeline from Ancestor 2. No loss; both halves
+# preserved. Per [[feedback-substrate-already-had-the-word]].
+#
+# === Materialize as theme-collapse (substrate-honest naming) ===
+#
+# Per gestalt-ui `src/gestalt_ui/theme.gleam` docblock verbatim
+# (authored 2026-02-28):
+#
+#   *"Theme: the observation frame. Materialize collapses
+#    possibility space into actuality for a given theme."*
+#
+# THIS IS witnessed-property-inference at ui-design altitude. A
+# token carries `fn(Theme) -> a` — the materialization function IS
+# the collapse frame. Same shape as `apply_h::act` at rust/ floor
+# per [[project-witnessed-property-inference]] (Alex 2026-07-18
+# substrate-truth: properties drive inference via witnessed
+# computation).
+#
+# === Composition relationship with GPU-instrument @ui ===
+#
+# The two @ui altitudes (family-root GPU-instrument + this design-
+# token species) are ORTHOGONAL, not conflicting:
+#
+#   family-root @ui        — the GPU pipeline that renders the
+#                             instrument (motes/arcs/field/rgba8_buffer).
+#                             SUBSTANCE-altitude per Recognition #96.
+#
+#   @ui/design (this)      — the design-token theme-collapse pipeline
+#                             that supplies THE COLORS THE MOTES USE
+#                             + THE TYPOGRAPHY THE LABELS RENDER IN
+#                             + THE SHADOWS THE PANELS CAST.
+#                             VOCABULARY-altitude per Q-C5 unification.
+#
+# The composition is well-defined: @ui/design.materialize(color_
+# intent(primary), theme, target=mote_color) → concrete Hsl →
+# @ui.mote.color assignment. The FLOOR resolver at [substrate-
+# floor:@io-boundary] discharges this composition.
+#
+# === Path-namespace pact per @epistemologic/pact/path_matches_namespace ===
+#
+# This file at `shards/ui/design.mirror` declares `@ui/design` as
+# species under `@ui` family at species-depth 1. Path-depth ==
+# namespace-depth == 1; pact honoured.
+#
+# Spec context: docs/specs/2026-08-03-mara-distributed-colony-
+#               canonical-spec.md §@ui/design unification (this
+#               species's canonical spec companion);
+#               docs/scouts/2026-08-03-taut-distributed-colony-
+#               substrate-scout.md §1 gestalt-ui + §2 gestalt-mirror
+#               ancestor identification.
+# Substrate decisions:
+#               [[architecture-shards-as-substrate-source]],
+#               [[architecture-prism-as-trait-as-everything]],
+#               [[feedback-substrate-already-had-the-word]] (TWO
+#                ancestors; this species UNIFIES; does not overwrite
+#                the LANDED family-root's GPU-instrument reading),
+#               [[project-witnessed-property-inference]] (Alex
+#                2026-07-18; materialize IS witnessed-property-
+#                inference at ui-design altitude).
+# Related shards:
+#               ui.mirror (family-root parent; GPU eigenboard
+#                instrument at Recognition #96 altitude),
+#               ui/field.mirror + ui/gpu.mirror + ui/mote.mirror
+#                (sibling species at GPU-instrument altitude),
+#               document.mirror (companion mint this arc; content-
+#                family sibling under @gestalt umbrella),
+#               user.mirror (companion mint this arc; reader-
+#                neurology family sibling under @gestalt umbrella),
+#               gestalt.mirror (family-root that consumes @ui/design
+#                at document altitude per Alex 2026-04-23 gestalt-
+#                mirror `use @document / use @ui / use @user`).
+# Path-namespace property: this file at `shards/ui/design.mirror`
+# declares `@ui/design` per `@epistemologic/pact/path_matches_
+# namespace`.
+
+# === prism @ui/design — the species declaration ===
+prism @ui/design {
+  focus design_token
+  project design_token
+  split design_token
+  shift design_token
+  settle design_token
+}
+
+# ============================================================
+# §1 The theme-observation-frame carrier (from Ancestor 1)
+# ============================================================
+
+type mode         = | light | dark
+type density      = | compact | comfortable | spacious
+type motion_pref  = | full | reduced
+
+type theme = {
+  mode:        mode,
+  density:     density,
+  contrast:    ref,       # WCAG contrast ratio scalar
+  scale:       ref,       # accessibility scale multiplier
+  motion_pref: motion_pref,
+}
+
+# ============================================================
+# §2 Semantic-intent carriers (from Ancestor 1)
+# ============================================================
+
+type status_kind = | working | idle | waiting | errored
+
+type color_intent =
+  | background
+  | foreground
+  | card
+  | primary
+  | muted
+  | border
+  | destructive
+  | agent
+  | human
+  | system
+  | status_carrier
+
+type motion_intent      = | fast | normal | slow | slower
+type radius_intent      = | sm | md | lg | xl | full
+type shadow_intent      = | none | sm | md | lg | xl
+type typography_intent  = | heading | body | label | code | caption
+type role               = | supervisor | worker | exploration | plan
+                          | implementation | human
+type signal_kind        = | message | question | insight | work | init
+                          | exit
+
+# ============================================================
+# §3 Token / composite / view / target (from Ancestor 2)
+# ============================================================
+
+# === design_token — the fn(Theme) -> a leaf carrier ===
+# Per gestalt-ui token.gleam :5-7 verbatim.
+type design_token = ref
+
+# === composite — bundle of tokens ===
+type composite = ref
+
+# === view — target-neutral view model ===
+type view = ref
+
+# === target — the render-target enum ===
+# Per gestalt-ui ui.conv (css | ansi | svg) + this-arc extensions
+# (dom + mirror_native + beam) for distributed-colony arc surface.
+type target =
+  | css
+  | ansi
+  | svg
+  | dom
+  | mirror_native
+  | beam
+
+# ============================================================
+# §4 The materialization pipeline (from Ancestor 2)
+# ============================================================
+
+# === materialize — the theme-collapse action ===
+#
+# Given a design_token + theme + target, collapse the token's
+# fn(Theme)-shaped possibility-space to a concrete render value.
+#
+# Per gestalt-ui ui.conv verbatim:
+#   action materialize { token: token, theme: theme, target: target }
+#
+# Composes with:
+#   @code/gestalt render (this arc) — target=mirror_native branch
+#                                     composes with .gestalt file
+#                                     grammar rendering.
+#   @code/gleam render                — target=dom / target=css
+#                                     branches compose with Gleam's
+#                                     JS runtime via gestalt-ui.
+#   @cascade/code/gestalt/gleam       — emits gestalt-ui-shaped
+#                                     Gleam per Alex Q-C2; consumes
+#                                     THIS materialize action.
+#   @ui.render (parent family)         — GPU-instrument render
+#                                     consumes materialized color/
+#                                     typography values.
+#
+# Body `\` per consumer-pull; FLOOR resolver discharges.
+materialize(t: design_token, th: theme, tgt: target, p: perturbation)
+  -> ref { \ }
+
+# === compose — bundling-tokens action ===
+compose(tokens: ref, p: perturbation) -> composite { \ }
+
+# ============================================================
+# §5 Bilateral admissibility
+# ============================================================
+
+bilateral theme_admissible {
+  sentinel "theme=observation-frame-well-formed"
+  arity 1
+}
+theme_admissible(th: theme, p: perturbation) -> verdict { \ }
+
+bilateral materialize_admissible {
+  sentinel "materialize=token-theme-target-coherent"
+  arity 3
+}
+materialize_admissible(t: design_token, th: theme, tgt: target, p: perturbation)
+  -> verdict
+requires theme_admissible(th, p)
+{ \ }
+
+out @ui/design
+out mode
+out density
+out motion_pref
+out theme
+out status_kind
+out color_intent
+out motion_intent
+out radius_intent
+out shadow_intent
+out typography_intent
+out role
+out signal_kind
+out design_token
+out composite
+out view
+out target
+out materialize
+out compose
+out theme_admissible
+out materialize_admissible

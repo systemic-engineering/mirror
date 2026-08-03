@@ -1,0 +1,107 @@
+in @user
+in @user/neuro/adhd
+in @user/neuro/autism
+in @prism
+in @meta
+in @glass
+
+# @user/neuro/audhd — Alex Wolf's first-person AuDHD profile at
+# mirror-substrate altitude: the mathematical composition of adhd
+# ∩ autism.
+#
+# LIFTED VERBATIM from gestalt-mirror ancestor
+# `/Users/reed/dev/projects/gestalt-mirror/protected/user/neuro/
+# audhd.mirror` (3.7KB, authored 2026-04-23). Karen-cited empirical
+# basis preserved per Reed 2026-08-03 mint-charter register-honoring
+# discipline.
+#
+# Alex Wolf verbatim from ancestor docblock:
+#
+#   *"Authors: Alex Wolf (they/them) — AuDHD is co-occurring ADHD
+#             + autism. Calibrated from lived experience as both.
+#    Optic type: Traversal (composition of two AffineTraversals)
+#    User-facing label: 'Predictable and clear'
+#
+#    AuDHD is not ADHD with autism bolted on. It is its own
+#    experience. The constraint intersection is mathematically
+#    derived:
+#
+#      adhd requires:   duration ≤ 300ms (attention bound)
+#      autism requires: duration ≥ 200ms (perceptibility bound)
+#      intersection:    200ms ≤ duration ≤ 300ms
+#
+#    That range [200ms, 300ms] is not a compromise. It is a theorem.
+#    Both constraints are fully satisfied. Neither is weakened."*
+#
+# THE THEOREM. The audhd profile IS the substrate-decl of the
+# intersection theorem: two AffineTraversal-typed profiles compose
+# to a Traversal-typed profile IFF their invariant sets intersect
+# non-emptily. For (adhd, autism), the duration axis intersection
+# [200ms, 300ms] is non-empty; composition_satisfiable discharges;
+# the composed profile IS Traversal at optic altitude.
+#
+# === Conflict-resolution rules (from ancestor) ===
+#
+# Where the profiles agree, the intersection is trivial. Where they
+# conflict, the resolution rule per ancestor:
+#
+#   motion style           autism wins  (linear — predictable velocity)
+#   motion amount          adhd wins    (short — attention-preserving)
+#   density                both agree   (spacious)
+#   saturation             adhd wins    (muted non-interactive)
+#   ambient motion         both agree   (none)
+#   concurrent animations  both agree   (1 maximum)
+#
+# The rules are LOAD-BEARING: they are not preferences but
+# thermodynamic requirements per masking-thermodynamics.md (Mara +
+# Alex 2026-03-24; Landauer floor for autistic masking).
+#
+# === Traversal per ancestor rationale ===
+#
+#   - Multiple foci (both profiles touch overlapping token subsets)
+#   - Non-invertible (clamping from both directions loses
+#     information)
+#   - Composition of two AffineTraversals is a Traversal (per
+#     van Laarhoven 2007 optic-composition algebra)
+
+prism @user/neuro/audhd {
+  focus profile
+  project profile
+  split profile
+  shift profile
+  settle profile
+}
+
+# === Concrete constraint enum for @user/neuro/audhd ===
+# THE INTERSECTION SET: adhd's constraints + autism's constraints +
+# the derived duration ∈ [200ms, 300ms] bound.
+type constraint =
+  # From adhd (wins on motion amount and saturation):
+  | duration_bounded            # duration ≤ 300ms
+  | ambient_motion_zero
+  | saturation_muted
+  | density_spacious
+  | line_height_open
+  | hierarchy_preserved
+  # From autism (wins on motion style and concurrent animations):
+  | easing_predictable
+  | concurrent_animations_one
+  | duration_perceptible        # duration ≥ 200ms
+  | color_meaning_consistent
+  | no_hover_only_affordances
+  # Intersection-derived (the theorem):
+  | duration_in_intersection    # 200ms ≤ duration ≤ 300ms
+
+# === profile — Alex Wolf's AuDHD profile ===
+# Composition: @user/neuro/adhd.then(@user/neuro/autism)
+profile { \ }
+  # author       = "Alex Wolf"
+  # label        = "Predictable and clear"
+  # optic        = traversal
+  # invariants   = [ALL constraints above, including intersection-
+  #                 derived duration_in_intersection]
+  # requires     = no_blink + no_looping_progress + no_color_as_sole_cue
+  #              + no_hover_only_affordances + no_auto_advancing_content
+
+out @user/neuro/audhd
+out constraint

@@ -1,0 +1,232 @@
+in @prism
+in @meta
+in @glass
+
+# @document — the family root for the substrate's authored-content
+# vocabulary discipline: the typed section/paragraph/span/mark tree
+# that carries WHAT gets rendered (independent of HOW at @ui/design
+# altitude or WHO at @user altitude).
+#
+# LRM mint per distributed-colony arc (Alex 2026-08-03) discharging
+# the third leg of the @gestalt umbrella per gestalt-mirror ancestor
+# (`/Users/reed/dev/projects/gestalt-mirror/gestalt.mirror` verbatim):
+#
+#   grammar @gestalt {
+#     use @document
+#     use @ui
+#     use @user
+#   }
+#
+# @document is one of the three families @gestalt uses. This mint
+# NAMES that family at mirror-substrate altitude, discharging the
+# forward-promise the gestalt-mirror ancestor already carried.
+#
+# === substrate-already-had-the-word ===
+#
+# ANCESTOR (gestalt-mirror; `/Users/reed/dev/projects/gestalt-
+# mirror/public/document.mirror`, 726B, authored 2026-04-06):
+#
+#   grammar @document {
+#     type = section | paragraph | code_block | quote | callout |
+#            list | list_item | definition_list | table | figure |
+#            separator | breath | raw_block | embedded
+#     type span = text | code | math | link | image | ref | emoji |
+#                spoiler | hard_break
+#     type mark = strong | emphasis | strikethrough | highlight |
+#                superscript | subscript
+#     type meta = id | role | extension
+#     type role = claim | evidence | question | answer | summary |
+#                aside | definition
+#     type callout_kind = note | tip | important | warning | caution
+#   }
+#
+# Type-only vocabulary at gestalt-mirror altitude. This mint LIFTS
+# the ancestor's vocabulary to mirror-substrate altitude,
+# preserving every declared type + adding the family-root's five-op
+# prism block per @prism-as-trait-as-everything discipline. Per
+# [[feedback-substrate-already-had-the-word]] (~94th instance).
+#
+# === Register-honoring composition with @code/gestalt ===
+#
+# `breath` (per ancestor line 12) is the ELEMENT for the corpus
+# `..\n` breath-mark pattern @code/gestalt/grammar declares. The
+# grammar parses `..\n`; the AST is a `breath` element. Element
+# ↔ grammar production alignment enforced at the cascade altitude
+# (@cascade/code/mirror/gestalt discharges the mapping).
+#
+# The span-kind enum (text/code/math/link/image/ref/emoji/spoiler/
+# hard_break) is ALREADY REPLICATED at @gestalt.node_kind
+# (shards/gestalt.mirror lines 233-241 verbatim). This is
+# substrate-already-had-the-word within the mirror-substrate
+# itself: @gestalt.node_kind IS the reader-runtime consumer of
+# THIS grammar's span types. The two are structurally identical
+# by construction; a byte-level check confirms the identity
+# preserves under the cascade discharge.
+#
+# === Composition graph ===
+#
+#                        @document (this family-root)
+#                             |
+#            +----------------+----------------+
+#            |                |                |
+#         section          span              mark
+#      (structural       (inline           (typography
+#       element)          element)         style)
+#            |                |                |
+#            v                v                v
+#     @gestalt.node_kind + @gestalt.edge_kind consumes THIS grammar
+#     at reader-runtime altitude per gestalt.mirror :233-247.
+#
+# @ui/design.materialize supplies concrete rendering values to
+# spans/marks at render altitude. @user.project filters/adapts
+# the document to the reader's neurology at consumption altitude.
+# Three-way composition: what (@document) + how (@ui/design) + for
+# whom (@user).
+#
+# === Path-namespace pact ===
+#
+# This file at `shards/document.mirror` declares `@document` at
+# species-depth 0. Species land at `shards/document/<species>.
+# mirror` per pact discipline.
+#
+# Spec context: docs/specs/2026-08-03-mara-distributed-colony-
+#               canonical-spec.md §@document unification.
+# Substrate decisions:
+#               [[architecture-shards-as-substrate-source]],
+#               [[architecture-prism-as-trait-as-everything]],
+#               [[feedback-substrate-already-had-the-word]] (ancestor
+#                already carried this at gestalt-mirror; this shard
+#                LIFTS to mirror-substrate altitude).
+# Related shards:
+#               gestalt.mirror (family-root that consumes @document
+#                at reader-runtime altitude via node_kind + edge_kind),
+#               code/gestalt.mirror (grammar that parses .gestalt
+#                files INTO @document AST),
+#               ui/design.mirror (companion mint this arc; renders
+#                the @document tree via materialize),
+#               user.mirror (companion mint this arc; filters/adapts
+#                the @document tree via project).
+
+# === prism @document — the family-root declaration ===
+prism @document {
+  focus element
+  project element
+  split element
+  shift element
+  settle element
+}
+
+# ============================================================
+# §1 Structural elements (block-level; from Ancestor)
+# ============================================================
+
+# === element — the block-level structural carrier ===
+# Per gestalt-mirror document.mirror :1-14 verbatim (with `breath`
+# preserved as first-class per @code/gestalt register-honoring
+# discipline).
+type element =
+  | section
+  | paragraph
+  | code_block
+  | quote
+  | callout
+  | list
+  | list_item
+  | definition_list
+  | table
+  | figure
+  | separator
+  | breath           # `..\n` breath-mark from .gestalt corpus
+  | raw_block
+  | embedded
+
+# ============================================================
+# §2 Inline elements (from Ancestor)
+# ============================================================
+
+# === span — the inline-element carrier ===
+# Per gestalt-mirror document.mirror :16-24 verbatim. STRUCTURALLY
+# IDENTICAL to @gestalt.node_kind (shards/gestalt.mirror :233-241);
+# preserved-by-construction under cascade discharge.
+type span =
+  | text
+  | code
+  | math
+  | link
+  | image
+  | ref
+  | emoji
+  | spoiler
+  | hard_break
+
+# ============================================================
+# §3 Typography marks (from Ancestor)
+# ============================================================
+
+# === mark — the typographic-styling carrier ===
+# Per gestalt-mirror document.mirror :26 verbatim.
+type mark =
+  | strong
+  | emphasis
+  | strikethrough
+  | highlight
+  | superscript
+  | subscript
+
+# ============================================================
+# §4 Metadata (from Ancestor)
+# ============================================================
+
+# === meta — the element-metadata carrier ===
+type meta = | id | role | extension
+
+# === role — the semantic-role vocabulary ===
+# Per gestalt-mirror document.mirror :30 verbatim. Composes with
+# @gestalt.edge_kind (annotation edges carry role assignments).
+type role =
+  | claim
+  | evidence
+  | question
+  | answer
+  | summary
+  | aside
+  | definition
+
+# === callout_kind — the callout-severity vocabulary ===
+type callout_kind =
+  | note
+  | tip
+  | important
+  | warning
+  | caution
+
+# ============================================================
+# §5 Bilateral admissibility
+# ============================================================
+
+# === document_element_well_formed — structural well-formedness ===
+#
+# Bilateral verdict that a document element is structurally coherent:
+#   1. Section elements have non-empty child sequences.
+#   2. List elements contain only list_item children.
+#   3. Definition_list elements pair terms with definitions.
+#   4. Table elements have consistent row widths.
+#   5. Callout elements carry a valid callout_kind.
+#
+# Splinter-pole: all five hold; element structurally well-formed.
+# Narcissus-pole: any violation; element rejected before render.
+bilateral document_element_well_formed {
+  sentinel "document=element-well-formed"
+  arity 1
+}
+document_element_well_formed(e: element, p: perturbation)
+  -> verdict { \ }
+
+out @document
+out element
+out span
+out mark
+out meta
+out role
+out callout_kind
+out document_element_well_formed

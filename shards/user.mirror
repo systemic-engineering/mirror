@@ -1,0 +1,305 @@
+in @prism
+in @meta
+in @glass
+in @optics
+
+# @user — the family root for the substrate's reader-neurology
+# adaptation discipline: the typed profile-as-optic pipeline where
+# a reader's neurological profile projects the @document/@ui-design
+# tree into an adapted view. Sibling to @document (content family)
+# + @ui/design (rendering family) + @gestalt (unfolding family
+# that composes all three).
+#
+# LRM mint per distributed-colony arc (Alex 2026-08-03) discharging
+# the third leg of the @gestalt umbrella per gestalt-mirror ancestor
+# `use @document / use @ui / use @user` composition.
+#
+# Alex verbatim (from gestalt-mirror ancestor `/Users/reed/dev/
+# projects/gestalt-mirror/protected/user.mirror` docblock):
+#
+#   *"@user: The document adapts to the reader. Profiles are pure
+#    templates. Apache-2.0. No side effects. The reader's neurology
+#    is a first-class input to rendering."*
+#
+# LOAD-BEARING architectural inversion. Standard UX flow: designer
+# picks tokens → document renders → reader consumes. @user flow:
+# reader's neurology templates → document projected via reader's
+# optic → adapted view materializes. The neurology drives; the
+# author accommodates.
+#
+# === substrate-already-had-the-word ===
+#
+# ANCESTOR (gestalt-mirror; `/Users/reed/dev/projects/gestalt-
+# mirror/protected/user.mirror`, 2.4KB, authored 2026-04-23):
+#
+#   abstract grammar @user {
+#     abstract template project(t: theme) -> theme
+#     abstract template optic -> optic_kind
+#     abstract template label -> string
+#     abstract template author -> string
+#     abstract template invariants -> [constraint]
+#     template then(other: @user, t: theme) -> theme { ... }
+#     requires composition_satisfiable
+#     recover |t, loss| { t }
+#   }
+#
+# Abstract grammar. Each concrete profile (@user/neuro/adhd,
+# @user/neuro/autism, @user/neuro/audhd, @user/neuro/nt) implements
+# the abstract template surface. This mint LIFTS to mirror-substrate
+# altitude, preserving the profile-as-optic + composition-
+# satisfiability + recovery-as-loss-surfacing discipline. Per
+# [[feedback-substrate-already-had-the-word]] (~95th instance).
+#
+# === Optic algebra: AffineTraversal / Prism / Lens / Traversal ===
+#
+# Per gestalt-mirror ancestor verbatim (user.mirror :8-17):
+#
+#   *"Each profile is a named optic over theme. The optic type is
+#    its structural guarantee — not a design decision, but a
+#    mathematical property of what the profile does to the token
+#    tree.
+#
+#      AffineTraversal — total domain, non-invertible (clamping
+#                        loses information)
+#      Prism           — partial: falls through if constraint
+#                        already satisfied
+#      Lens            — single field, invertible
+#      Traversal       — multiple foci, non-invertible
+#
+#    Composition is verified at grammar compile time.
+#    Empty constraint intersection = COMPOSITION_FAILURE = static
+#    error. You find out before rendering, not during."*
+#
+# This is Wadler-Reynolds parametricity applied at reader-neurology
+# altitude. The four optic kinds correspond to the four categories
+# of Haskell's `lens` library (van Laarhoven 2007; Kmett 2012);
+# each concrete @user/neuro/X species declares which optic-kind
+# it inhabits, and composition_satisfiable enforces intersection
+# non-emptiness statically.
+#
+# === Karen-cited empirical basis (LOAD-BEARING, preserved) ===
+#
+# The four neuroprofile species (adhd + audhd + autism + nt) carry
+# Karen citations from lived-experience-plus-research grounding.
+# Per Reed 2026-08-03 mint-charter: "Karen-cited empirical basis
+# preserved". The citations DO NOT sanitize away when lifting from
+# gestalt-mirror to mirror-substrate; they REMAIN at introduction-
+# sites in the species shards.
+#
+#   @user/neuro/adhd    — Alex Wolf first-person; Barkley 1997
+#                          (working memory); Nigg 2017 (executive
+#                          function); dopaminergic salience
+#                          competition.
+#   @user/neuro/autism  — Alex Wolf first-person; Happé & Frith
+#                          2006 (weak central coherence); Green
+#                          et al. 2015 (autonomic response to
+#                          unexpected state change); Marco et al.
+#                          2011 (sensory processing differences).
+#   @user/neuro/audhd   — Alex Wolf first-person AS BOTH; the
+#                          intersection theorem [200ms, 300ms]
+#                          duration bound derived mathematically
+#                          from adhd (≤300ms attention bound) ∩
+#                          autism (≥200ms perceptibility bound).
+#   @user/neuro/nt      — Liana stub; author's job to fill in
+#                          first-person account + optic-kind
+#                          + invariants; NT is not the absence of
+#                          constraints; NT has a person behind it.
+#
+# Species land in this same commit; carriers preserved verbatim
+# from gestalt-mirror ancestors.
+#
+# === Composition graph ===
+#
+#                        @user (this family-root)
+#                             |
+#            +----------------+----------------+----------------+
+#            |                |                |                |
+#     @user/neuro/adhd  @user/neuro/     @user/neuro/audhd  @user/neuro/nt
+#                       autism            = adhd.then(         (stub;
+#                                          autism)             Liana
+#                                                              authors)
+#                             |
+#                             v
+#                   @gestalt.unfold uses @user.project(theme)
+#                   to filter @document tree for THIS reader.
+#
+# === Path-namespace pact ===
+#
+# This file at `shards/user.mirror` declares `@user` at species-
+# depth 0. Species land at `shards/user/<species>.mirror` +
+# `shards/user/neuro/<species>.mirror` per pact discipline
+# (species-depth 1 + 2 respectively).
+#
+# Spec context: docs/specs/2026-08-03-mara-distributed-colony-
+#               canonical-spec.md §@user family-root unification.
+# Substrate decisions:
+#               [[architecture-shards-as-substrate-source]],
+#               [[architecture-prism-as-trait-as-everything]],
+#               [[feedback-substrate-already-had-the-word]] (ancestor
+#                already carried this at gestalt-mirror; this shard
+#                LIFTS to mirror-substrate altitude preserving
+#                Karen-citation discipline).
+# Related shards:
+#               document.mirror (companion mint this arc; content
+#                family sibling under @gestalt umbrella),
+#               ui/design.mirror (companion mint this arc; rendering
+#                family sibling that materialize consumes @user
+#                projections),
+#               gestalt.mirror (family-root that composes @user.
+#                project + @document + @ui/design at reader-runtime
+#                altitude),
+#               user/neuro/adhd.mirror + user/neuro/autism.mirror +
+#                user/neuro/audhd.mirror + user/neuro/nt.mirror
+#                (companion species mints this arc; each with Karen-
+#                cited empirical basis preserved).
+
+# === prism @user — the family-root declaration ===
+prism @user {
+  focus profile
+  project profile
+  split profile
+  shift profile
+  settle profile
+}
+
+# ============================================================
+# §1 The optic-kind carrier
+# ============================================================
+
+# === optic_kind — the profile-structural-guarantee vocabulary ===
+# Per gestalt-mirror ancestor verbatim; the four categories from
+# van Laarhoven 2007 / Kmett 2012 `lens` library.
+type optic_kind =
+  | affine_traversal    # total domain, non-invertible
+  | prism               # partial, falls through if satisfied
+  | lens                # single field, invertible
+  | traversal           # multiple foci, non-invertible
+  | iso                 # identity optic; only for genuinely-no-change
+                        # profiles (NT-stub NOT permitted per ancestor
+                        # rationale: "a perspective is never an
+                        # identity — it always selects")
+
+# ============================================================
+# §2 The constraint carrier
+# ============================================================
+
+# === constraint — the profile-invariant vocabulary ===
+# Per gestalt-mirror ancestor abstract template invariants. Each
+# neuroprofile species declares its own constraint enum; this
+# family-root carrier is polymorphic. Composition-satisfiability
+# is verified at compile time by intersecting constraint sets.
+type constraint = ref
+
+# ============================================================
+# §3 The profile carrier
+# ============================================================
+
+# === profile — the reader-neurology profile carrier ===
+#
+# Six-field record at family-root altitude:
+#
+#   author       — the first-person authority for THIS profile
+#                  (per ancestor: "Profiles without a named author
+#                  cannot land in the garden").
+#   label        — user-facing description (per ancestor: "Reduce
+#                  visual noise" — not "I have ADHD").
+#   optic        — the structural-guarantee kind.
+#   invariants   — the constraint set the projected theme must
+#                  satisfy.
+#   composable   — bilateral verdict cache for composition_
+#                  satisfiable (per ancestor: verified at grammar
+#                  compile time).
+#   recover_ref  — optional loss-recovery handler (per ancestor:
+#                  "when a projected theme fails its invariants,
+#                  surface the failing constraint as loss rather
+#                  than hard error").
+type profile = {
+  author:      ref,
+  label:       ref,
+  optic:       optic_kind,
+  invariants:  ref,
+  composable:  ref,
+  recover_ref: ref,
+}
+
+# ============================================================
+# §4 The abstract-template action surface (from Ancestor)
+# ============================================================
+
+# === project — the profile-projection action ===
+#
+# Per gestalt-mirror ancestor abstract template `project(t: theme)
+# -> theme`. Each concrete neuroprofile species overrides this
+# with its specific clamping/filtering/adapting logic.
+#
+# Composes with @ui/design.theme carrier at family-root altitude
+# (the input `t` IS a @ui/design.theme; the output IS the adapted
+# theme the profile permits).
+#
+# Body `\` per consumer-pull; concrete species implementations
+# discharge.
+project(pr: profile, t: ref, p: perturbation) -> ref { \ }
+
+# === then — the profile-composition action ===
+#
+# Per gestalt-mirror ancestor:
+#   template then(other: @user, t: theme) -> theme {
+#     other.project(project(t))
+#   }
+#
+# Fold two profiles; the composition applies THIS profile first,
+# then the OTHER. Composition_satisfiability MUST discharge before
+# then can fire; empty intersection = COMPOSITION_FAILURE per
+# ancestor rationale.
+then(pr_a: profile, pr_b: profile, t: ref, p: perturbation)
+  -> ref
+requires composition_satisfiable(pr_a, pr_b, p)
+{ \ }
+
+# ============================================================
+# §5 Bilateral admissibility
+# ============================================================
+
+# === composition_satisfiable — intersection-nonemptiness bilateral ===
+#
+# Per gestalt-mirror ancestor verbatim: composition is verified at
+# grammar compile time. Two profiles CAN compose IFF their
+# invariant sets have non-empty intersection.
+#
+# Splinter-pole: pr_a.invariants ∩ pr_b.invariants ≠ ∅; composition
+# admissible.
+# Narcissus-pole: intersection empty; COMPOSITION_FAILURE; static
+# error at compile altitude BEFORE any render fires. Per ancestor:
+# "You find out before rendering, not during."
+bilateral composition_satisfiable {
+  sentinel "composition=invariants-intersect-nonempty"
+  arity 2
+}
+composition_satisfiable(pr_a: profile, pr_b: profile, p: perturbation)
+  -> verdict { \ }
+
+# === profile_well_authored — Karen-citation-discipline bilateral ===
+#
+# Per gestalt-mirror ancestor: "Profiles without a named author
+# cannot land in the garden." + "The compiler will reject a profile
+# with no author."
+#
+# Splinter-pole: profile.author is non-empty AND author-string
+# resolves to a named subject (human or agent per @subject
+# discipline).
+# Narcissus-pole: profile.author empty OR unresolvable; profile
+# rejected at substrate altitude before landing.
+bilateral profile_well_authored {
+  sentinel "profile=author-named-and-resolvable"
+  arity 1
+}
+profile_well_authored(pr: profile, p: perturbation) -> verdict { \ }
+
+out @user
+out optic_kind
+out constraint
+out profile
+out project
+out then
+out composition_satisfiable
+out profile_well_authored
