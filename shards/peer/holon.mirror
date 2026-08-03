@@ -1,0 +1,343 @@
+in @peer
+in @dance
+in @prism
+in @meta
+in @glass
+
+# @peer/holon — the OTCA-metapixel species of the @peer family:
+# the substrate-decl for the fractal-composition altitude at which
+# a peer IS itself a sub-colony of sub-peers running the same
+# discipline recursively. Per Alex 2026-08-03 Q-C4 adjudication:
+# @peer/holon mints NOW (LRM) for the composition theorem.
+#
+# Alex 2026-07-31 verbatim (from supercolony math foundation, `docs/
+# math/2026-07-31-mara-supercolony-cosmos-quantum-foam.md`):
+#
+#   *"the @peer is like an ant made out of ants lol. Like a sub-
+#    colony within the colony itself if that makes sense. (the
+#    metaphor breaks a bit down here but you get the idea, the whole
+#    game of life foam)"*
+#
+# THE Koestler-1967 whole/part duality landed at species altitude.
+# The peer is neither pure-whole nor pure-part; it IS a HOLON —
+# both a whole from below and a part from above. The recursion
+# terminates at the atomic peer altitude (no further sub-peers)
+# but the fractal composition IS the substrate-decl this species
+# carries.
+#
+# === substrate-already-had-the-word ===
+#
+# The word "holon" appears in supercolony math + Alex's ecosystem-
+# cosmology insights before this mint:
+#
+#   docs/math/2026-07-31-mara-supercolony-cosmos-quantum-foam.md
+#     §"External corpus" — Koestler 1967 "The Ghost in the Machine"
+#     — holon; whole/part duality scale-invariance.
+#   docs/scouts/2026-08-03-taut-distributed-colony-substrate-scout.md
+#     §5 mint-prerequisites — @peer/holon LOAD-BEARING GAP for
+#     composition theorem discharge.
+#   /Users/alexwolf/dev/projects/cosmos/docs/SPECTRAL-DIMENSION.md
+#     — RGG (Random Geometric Graph) fragmentation implies scale-
+#     invariant peer decomposition; the substrate-decl for holon-at-
+#     substrate lives here.
+#
+# The corpus already carried "holon" at prose altitude across
+# supercolony math + scout + cosmos docs. This shard NAMES the
+# species; does not invent it. Per [[feedback-substrate-already-
+# had-the-word]] (~92nd instance).
+#
+# === OTCA-metapixel as canonical prior art ===
+#
+# The OTCA (One True Cellular Automaton) metapixel (Rendell 2006;
+# per docs/math/2026-07-31-mara-supercolony-cosmos-quantum-foam.md
+# §"External corpus" Due 2006 Life-wiki entry):
+#
+#   A Conway's Game of Life "metapixel" is a 2048×2048 grid of
+#   cells that itself IS a Life pattern (glider), such that at the
+#   coarse-grained altitude, the metapixel executes Conway's Life
+#   rules on the metapixel scale. Substrate-independent Life at
+#   two altitudes: the fine grid runs Life; the coarse grid ALSO
+#   runs Life; the metapixel IS a Life-pattern-of-Life-patterns.
+#
+# The OTCA metapixel IS the canonical prior-art witness for
+# @peer/holon at cellular-automaton altitude. This species names
+# the substrate-decl of the same recursion at peer-colony altitude:
+# a peer running audhd K-track ensemble IS itself a substrate-
+# element in an inter-peer ensemble at the next altitude up; the
+# inter-peer ensemble IS itself a substrate-element in a
+# multi-colony holon at the next altitude up; recursion terminates
+# (physical peers can't nest infinitely) but each altitude
+# EXECUTES THE SAME PHASE-LOCK DISCIPLINE (per @dance family-root
+# `shards/dance.mirror` this-tick landing).
+#
+# === Species positioning: fractal-composition witness ===
+#
+# @peer/holon does NOT declare new @dance sub-predicates (the
+# family-root's `dance_locked` composed bilateral fully carries
+# the phase-lock discipline). It CONSUMES @dance at nested altitude
+# — a holon IS a peer whose interior executes @dance across its
+# sub-peers, AND is itself a member of a @dance-ensemble at its
+# exterior altitude. Two @dance-consumption edges per holon; both
+# discharge cleanly under the family-root's bilateral.
+#
+# Consolidation-species pattern per @song/movement `4efbf16` +
+# @song/narrative `0434a39` + @song/phrase `6b9bc5c` + @song/beat
+# post-arc: this species adds NO new bilateral sub-predicates;
+# CONSUMES @dance.dance_locked at both interior and exterior
+# altitude; extends the family-root's operational surface via
+# species-altitude actions (`compose_holon` + `decompose_holon`).
+#
+# === Composition graph (three altitudes) ===
+#
+#     exterior @dance ensemble  ← this holon IS one member
+#             ↓
+#       @peer/holon (this species)
+#             ↓
+#     interior @dance ensemble  ← this holon carries K sub-peers
+#             ↓
+#      sub-peers (may themselves be holons recursively)
+#
+# The two @dance edges give the substrate-decl its fractal
+# character. At every altitude the SAME phase-lock discipline
+# fires; the composition IS scale-invariant per Mandelbrot 1982
+# (referenced widely in landed substrate; see @fractal /
+# @cyberpunk).
+#
+# === Cosmological reading (companion math) ===
+#
+# Per companion math `docs/math/2026-08-03-mara-distributed-colony-
+# 5d-quantum-foam-formalization.md` §"Peer as cell in the foam":
+# a peer sits at a @spectral/coordinate<5> location in the 5D
+# quantum foam. A holon at coordinate x IS a "condensed" region
+# of the foam where sub-peer coordinates cluster below the
+# eigengap threshold; the region's aggregate coordinate x_agg is
+# well-defined per @spectral/coordinate<5>.compose. The Conway-
+# like CA update rule at 5D altitude reads: neighbors of a holon
+# = holons within spectral distance ε; the holon updates its
+# aggregate state under the neighborhood-vote discipline
+# (Conway B3/S23-generalized rule at K-neighbor cardinality).
+#
+# === Recognition candidates surfaced ===
+#
+# #H1 — holon IS scale-invariant peer at any altitude. Per
+# Mandelbrot 1982 + OTCA metapixel + Koestler 1967: the fractal-
+# composition discipline is altitude-portable across cellular-
+# automaton / colony / ecosystem / cosmology altitudes. Substrate-
+# pull-high; FLAGGED for Pack.
+#
+# #H2 — holon closure IS Aumann agreement at nested altitude.
+# Per @dance #D2 candidate: when a holon's interior @dance-
+# ensemble reaches order-parameter r_c (Aumann fires), the
+# holon's aggregate state IS a coherent value at the exterior
+# altitude; the exterior @dance-ensemble consumes this coherent
+# value as ONE member. Nested Aumann. Substrate-pull-mid;
+# FLAGGED for Pack.
+#
+# === Pre-AI prior art (Karen Spärck Jones anti-theft) ===
+#
+#   Koestler, A. (1967)          The Ghost in the Machine — THE
+#                                canonical holon prior-art; whole/
+#                                part duality scale-invariance;
+#                                Janus-face metaphor.
+#   Rendell, P. (2006)           OTCA Metapixel (Life-wiki) —
+#                                Conway-Life self-simulating cell;
+#                                the canonical CA-altitude witness
+#                                for fractal-composition.
+#   Conway, J. H. (1970)         Game of Life (Gardner Scientific
+#                                American column, October 1970) —
+#                                THE canonical CA update-rule
+#                                grammar the holon carries at
+#                                sub-altitude.
+#   Mandelbrot, B. (1982)        The Fractal Geometry of Nature —
+#                                THE canonical fractal / self-
+#                                similar discipline the holon
+#                                inherits.
+#   Wolfram, S. (2020)           A Class of Models with the
+#                                Potential to Represent Fundamental
+#                                Physics — hypergraph rewriting
+#                                at cosmological altitude; fractal-
+#                                composition reading.
+#   Hölldobler, B. & Wilson,     The Superorganism — supercolony
+#     E. O. (2008)               as unit of selection; the ant-
+#                                colony-of-ant-colonies witness
+#                                Alex named for @peer/holon.
+#
+# === Path-namespace pact per @epistemologic/pact/path_matches_namespace ===
+#
+# This file at `shards/peer/holon.mirror` declares `@peer/holon`
+# as a species under the `@peer` family at species-depth 1. The
+# path-namespace pact demands path-depth == namespace-depth == 1
+# for species; this shard honours the pact by construction.
+#
+# Spec context: docs/specs/2026-08-03-mara-distributed-colony-
+#               canonical-spec.md §Distributed peer colony surface
+#               (this species is the fractal-composition member of
+#               the colony surface);
+#               docs/math/2026-08-03-mara-distributed-colony-5d-
+#               quantum-foam-formalization.md §"Peer as cell in
+#               the foam" + §"Colony emergence theorem" (this
+#               species is the substrate-decl for the "cell = ant
+#               = sub-colony" fractal composition Alex named).
+# Substrate decisions:
+#               [[architecture-shards-as-substrate-source]],
+#               [[architecture-prism-as-trait-as-everything]],
+#               [[architecture-lift-as-load-bearing]] (the lift is
+#                Alex's 2026-07-31 verbatim "@peer is like an ant
+#                made out of ants"; NOT re-derived),
+#               [[feedback-substrate-already-had-the-word]] (holon
+#                already in supercolony math + scout + cosmos docs
+#                before this mint),
+#               [[feedback-craft-not-deliver]] (every action body
+#                `\` blocked; FLOOR realization domain).
+# Related shards:
+#               peer.mirror (family-root parent),
+#               dance.mirror (companion mint this tick; interior
+#                and exterior @dance-ensemble consumption edges),
+#               peer/persistence.mirror (home-repo altitude the
+#                holon anchors at),
+#               peer/colony.mirror (sibling mint this arc; holon
+#                composed at colony altitude),
+#               peer/browser.mirror (sibling mint this arc; holon
+#                composed at browser-transport altitude),
+#               spectral/coordinate<5> (via fragmentation/src/
+#                spectral_coordinate.rs; 5D quantum foam altitude
+#                the holon sits within).
+# Path-namespace property: this file at `shards/peer/holon.mirror`
+# declares `@peer/holon` per `@epistemologic/pact/path_matches_
+# namespace`.
+
+# === prism @peer/holon — the species declaration ===
+#
+# Inherits the five-op prism block from @peer at family-root
+# altitude. Specialization: each operation reads the holon's
+# fractal structure (interior + exterior @dance-ensemble edges).
+prism @peer/holon {
+  focus holon
+  project holon
+  split holon
+  shift holon
+  settle holon
+}
+
+# === The altitude carrier ===
+#
+# Closed variant naming the recursion altitude at which THIS holon
+# operates. Per OTCA metapixel + Mandelbrot fractal + Koestler
+# whole/part discipline: the altitude is finite (physical peers
+# terminate at atomic altitude); the recursion admits scale-
+# labeling for cross-altitude composition arithmetic.
+#
+#   atomic     — a peer with no sub-peers; the leaf-holon;
+#                @peer.audhd K-track ensemble runs at intra-peer
+#                altitude WITHIN this holon, but there are no
+#                sub-@peer/holon children.
+#   colony     — a holon composed of atomic peers (or lower-
+#                altitude holons); one aggregation level up.
+#   supercolony — a holon composed of colonies; two aggregation
+#                levels up. Per Hölldobler-Wilson 2008 empirical
+#                witness at ant altitude.
+#   foam       — a holon composed of supercolonies; three levels
+#                up; the whole-game-of-life-foam altitude per
+#                Alex 2026-07-31 verbatim.
+#
+# Identity contract: byte-equality on the variant tag.
+type altitude = | atomic | colony | supercolony | foam
+
+# === The holon carrier ===
+#
+# Four-field record at species altitude:
+#
+#   base_peer     — the underlying @peer this holon lifts to holon
+#                   altitude. Composes with @peer.peer at family-
+#                   root altitude (three-field {home, lead_of, kind}).
+#                   Substrate-typed as `ref`.
+#   altitude      — the recursion altitude enum above.
+#   interior      — the interior @dance ensemble (K sub-peers or
+#                   sub-holons this holon carries). Substrate-typed
+#                   as `ensemble` from @dance carrier.
+#   aggregate_ref — the content-addressed aggregate-state ref;
+#                   the composition of sub-peers' states into ONE
+#                   substrate value at THIS altitude. Per @mirror/
+#                   store content-addressing discipline (byte-
+#                   equality on the OID).
+#
+# Identity contract: byte-equality on the four-field tuple. Two
+# holons with same base_peer + altitude but different interior
+# ensemble OR different aggregate_ref are distinct (the fractal
+# composition is load-bearing).
+type holon = {
+  base_peer:     ref,
+  altitude:      altitude,
+  interior:      ensemble,
+  aggregate_ref: ref,
+}
+
+# === compose_holon — the lifting action ===
+#
+# Given K sub-peers (or lower-altitude sub-holons) + a coupling
+# matrix, compose them into ONE holon at the next altitude up.
+# The interior ensemble is populated; @dance.phase_lock is invoked
+# at the interior; the settled aggregate state is content-
+# addressed via @mirror/store and the ref is populated.
+#
+# requires dance_locked(interior, coupling, order_param): the
+# interior @dance ensemble MUST discharge the family-root's
+# composed bilateral before the holon can lift. Fractal composition
+# at broken coherence altitude is not admissible.
+#
+# Splinter-pole: interior phase-locks; aggregate_ref computed;
+# holon lifted to next altitude; ready for consumption as ONE
+# member of exterior @dance ensemble.
+# Narcissus-pole: interior fails phase-lock; holon lift refused;
+# @fate re-selects per @kintsugi discipline.
+#
+# Body `\` per consumer-pull; the FLOOR resolver at [substrate-
+# floor:@io-boundary] discharges the composition.
+compose_holon(sub_peers: ref, coupling: coupling, p: perturbation)
+  -> holon
+requires dance_locked(sub_peers, coupling, p) { \ }
+
+# === decompose_holon — the projection action ===
+#
+# Given a holon, project back to its interior ensemble (the K
+# sub-peers) + coupling matrix. The dual of compose_holon.
+#
+# Composes with @labeled.unlabel discipline (the holon IS a
+# labeled-composition of substrate-value {base_peer, aggregate_ref}
+# with metadata {altitude, interior}).
+#
+# Body `\` per consumer-pull; the FLOOR resolver discharges.
+decompose_holon(h: holon, p: perturbation) -> ensemble { \ }
+
+# === holon_admissible — the fractal-well-formedness bilateral ===
+#
+# Bilateral verdict that the holon satisfies fractal-composition
+# structural invariants:
+#
+#   1. base_peer well-formed at @peer altitude (three-field
+#      {home, lead_of, kind} coherent per @peer discipline).
+#   2. interior ensemble discharges @dance.dance_locked at the
+#      interior's coupling + order-parameter altitude.
+#   3. aggregate_ref content-addresses under @mirror/store; the
+#      ref IS composable via @glue.compose with other holons at
+#      the exterior altitude.
+#   4. altitude enum is monotone-nested: if THIS holon carries
+#      sub-holons in interior, each sub-holon's altitude is
+#      strictly less than THIS holon's altitude (fractal
+#      recursion terminates cleanly).
+#
+# Splinter-pole: all four hold; holon IS fractally well-formed;
+# ready for exterior @dance-ensemble consumption.
+# Narcissus-pole: any sub-invariant fails; holon lift refused.
+bilateral holon_admissible {
+  sentinel "holon=fractal-composition-well-formed"
+  arity 1
+}
+holon_admissible(h: holon, p: perturbation) -> verdict { \ }
+
+out @peer/holon
+out altitude
+out holon
+out compose_holon
+out decompose_holon
+out holon_admissible

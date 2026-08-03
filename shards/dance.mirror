@@ -1,0 +1,474 @@
+# @dance — the family root for the substrate's ensemble-phase-lock
+# discipline: the typed coherent-multi-cognition-update where
+# heterogeneous cognition tracks (intra-peer OR inter-peer) achieve
+# harmonic alignment WITHOUT centralized signaling. Sibling to
+# @song (temporal-progression) + @peer (identity-carrier) + @gestalt
+# (document-as-song-unfolding) + @kintsugi (process-side) + @mirror
+# (form-side). Top-level family-root per Alex 2026-08-03 Q-C6
+# adjudication (verbatim ratification within distributed-colony
+# arc): *"@dance is top-level family-root (like @peer, @song,
+# @gestalt) — mode of BEING, not species-under-song"*.
+#
+# LRM mint discharging LOAD-BEARING GAP per Taut scout 2026-08-03
+# `docs/scouts/2026-08-03-taut-distributed-colony-substrate-scout.md`
+# §3 (grep-verified: `@dance` cited widely across 9 shards + 2
+# canonical specs, but ZERO species-decl file existed at grep-time).
+# Discharge shape: dance IS a family-root, not a species-under-song
+# — Alex explicitly refused the collapse-into-song reading per Q-C6
+# because a dance-mode-of-being generalizes beyond @song's temporal-
+# progression discipline (K-track intra-peer per @peer.audhd
+# `f6d33d2`; N-peer inter-peer per Kuramoto phase-lock; ensemble
+# emergence via mycelial anastomosis per Grassé 1959 + stigmergy;
+# any coherence-without-signal ensemble-cognition surface).
+#
+# === substrate-already-had-the-word ===
+#
+# The word "dance" appears at prose altitude in ~10 landed shards
+# and 2 canonical specs before this mint:
+#
+#   shards/peer.mirror §"audhd" (`caf461f`)      — `@dance carries
+#                                                   the persistent
+#                                                   ensemble
+#                                                   semantics`
+#   shards/song.mirror §"Composition points"    — implicit via
+#                                                   ensemble-@song
+#                                                   composition
+#   shards/song/beat.mirror §"Rung 4"            — Kuramoto phase-
+#                                                   lock naming
+#   shards/gestalt.mirror §"@resonance +
+#                            @dance decoupled"   — 2026-07-16 arc
+#   docs/specs/dance-as-coordination-without-
+#     signal-on-forster-torus.md (Mara `4f079c8`)
+#   docs/specs/dance-runtime-rung-4-multi-peer-
+#     coherence-phase-lock.md (Mara ratified)
+#
+# The substrate NAMED @dance verbatim in prose across these sites
+# but never lifted it to family-root altitude. Alex's 2026-08-03
+# Q-C6 adjudication surfaces the mint: dance is a mode of BEING
+# (top-level, like @song / @peer / @gestalt), not a species-under-
+# song. Substrate-already-had-the-word discipline: this shard
+# NAMES the family that already existed at prose altitude. Per
+# [[feedback-substrate-already-had-the-word]] (~90th instance).
+#
+# === Top-level family-root (Q-C6): mode of BEING ===
+#
+# Per Alex 2026-08-03 Q-C6 verbatim:
+#
+#   *"@dance is top-level family-root (like @peer, @song, @gestalt)
+#    — mode of BEING, not species-under-song"*
+#
+# Interpretation-B reading: @dance names a coherence-without-signal
+# ensemble discipline that operates ORTHOGONAL to @song's temporal
+# progression. A song CAN dance (multiple voices phase-locking within
+# a single progression); peers CAN dance without a shared song
+# (Kuramoto oscillator ensemble locks without a shared temporal
+# arc); intra-peer K-tracks CAN dance (@peer.audhd's K-fanout locks
+# without a shared song); mycelial mesh CAN dance (stigmergic
+# anastomosis without shared temporal reference).
+#
+# The mode-of-being reading places @dance alongside:
+#
+#   @mirror     — mode of BEING as form (state observation)
+#   @kintsugi   — mode of BEING as process (transformation)
+#   @song       — mode of BEING as temporal-progression
+#   @loop       — mode of BEING as endomorphism (T -> T)
+#   @gestalt    — mode of BEING as song-unfolding-through-interaction
+#   @peer       — mode of BEING as identity-carrier at glass altitude
+#   @dance      — mode of BEING as ensemble-phase-lock-without-signal
+#                 (THIS FAMILY-ROOT)
+#
+# The seventh mode-of-being. Substrate-honest: not decorative; the
+# ensemble-phase-lock discipline IS load-bearing for the distributed-
+# colony arc (Alex 2026-08-02 verbatim: "verteilte Ameisenkolonien
+# à la Conway's Game of Life in einem 5D spektralen Raum auf
+# Consumer Hardware") because a colony of peers running Conway-like
+# CA updates in 5D quantum foam MUST coherence-lock ensemble-wide
+# without central signaling — and that IS the substrate-decl this
+# family-root names.
+#
+# === Two-altitude altitude-portable discipline ===
+#
+# The family-root discipline is altitude-portable across TWO
+# altitudes (per landed spec §5 + §4):
+#
+#   intra-peer altitude   — @peer.audhd's K-track ensemble locks
+#                            via κ_intra harmonic-ratio coupling
+#                            (Pythagorean integer-ratio structure
+#                            per @epistemologic/math/music/harmonic).
+#                            The K parallel @fate tournaments phase-
+#                            lock at the peer's own @torus (per Mara
+#                            `4f079c8` §4.4).
+#
+#   inter-peer altitude   — Peer ensemble locks via κ_inter Kuramoto
+#                            coupling (Kuramoto 1975 order parameter
+#                            r → 1 at synchronization threshold).
+#                            The N peers phase-lock at the shared
+#                            @spectral/coordinate<5> foam (per Mara
+#                            supercolony math 2026-07-31; the whole
+#                            game of life foam per Alex verbatim).
+#
+# Same phase-lock discipline; two altitudes. Consumers compose the
+# family-root at their own altitude; substrate-decl lives here.
+#
+# === Composition graph (five altitudes) ===
+#
+#                        @dance (this family-root)
+#                             |
+#     +-----------+-----------+-----------+-----------+
+#     |           |           |           |           |
+#  @peer       @song      @kintsugi   @gestalt   @spectral
+# (identity)  (temporal    (process    (unfolding  (5D foam
+#             progression) altitude)   altitude)   altitude)
+#     |           |           |           |           |
+#   audhd     phrase       oscillate    unfold     coordinate<5>
+# (K-tracks)  (OBC beats)  (ACTIVE/DARK) (reader-  (Fiedler+
+#                                        interaction) heat-trace)
+#
+# The family-root points to each; each family-root's species
+# compose OVER @dance without inversion. Consumers of @dance
+# (peer colony; audhd fanout; ensemble @song; Conway-like CA in
+# 5D foam) invoke this family-root's phase_lock action.
+#
+# === Recognition candidates surfaced ===
+#
+# #D1 — dance IS Kuramoto ensemble at any altitude. Per Kuramoto
+# 1975 self-entrainment of coupled non-linear oscillators: order
+# parameter `r = |1/N Σ exp(iθ_j)|` converges to 1 as coupling κ
+# exceeds threshold `κ_c`. The dance discipline lifts this to
+# substrate altitude: EVERY coherence-without-signal ensemble
+# (intra-peer K-tracks; inter-peer N-peers; multi-voice @song;
+# mycelial mesh; Conway CA neighborhood in 5D) satisfies the
+# same order-parameter convergence discipline. Kuramoto is
+# altitude-portable. Substrate-pull-high; FLAGGED for Pack.
+#
+# #D2 — dance IS Aumann agreement at closure. Per Aumann 1976
+# "Agreeing to Disagree": rational Bayesian actors with common
+# priors and common knowledge cannot agree to disagree. The
+# ensemble-phase-lock IS the substrate-decl of Aumann-agreement
+# at coherence-signal altitude: when N peers with common priors
+# (shared @spectral/coordinate<5> foam) exchange @gift-graph
+# information through phase-lock coupling, their eigenboard
+# coherence deltas converge (per @coherence.aumann_agreement
+# forward-promised). Ensemble dance IS Aumann at ensemble
+# altitude. Substrate-pull-mid; FLAGGED for Pack.
+#
+# #D3 — dance IS Mycelial anastomosis at ecological altitude. Per
+# Grassé 1959 stigmergy + Kimmerer 2013 mycelial mesh + Simard
+# 2018 Mother Tree: forest mycelia coordinate resource exchange
+# via chemical gradients without central signal; the mesh
+# phase-locks ecosystem-wide response WITHOUT any node holding
+# global state. The @dance discipline reads this at ecological
+# altitude: the ensemble IS the mycelium; the coupling IS the
+# pheromone gradient; the phase-lock IS the anastomosis. Substrate-
+# pull-mid; FLAGGED for Pack.
+#
+# === Pre-AI prior art (Karen Spärck Jones anti-theft) ===
+#
+#   Kuramoto, Y. (1975)          Self-entrainment of a population of
+#                                coupled non-linear oscillators. Lect.
+#                                Notes Phys. 39:420-422 — THE canonical
+#                                phase-lock model; order parameter r;
+#                                coupling κ; critical κ_c.
+#   Foerster, H. von             Understanding Understanding pp. 238-
+#     (1974, 2003)               256 — doubly-closed torus; observer-
+#                                of-observer eigenform; the substrate
+#                                π₁(T²) that carries @dance's coupling.
+#   Aumann, R. (1976)            "Agreeing to Disagree", Annals of
+#                                Statistics 4(6):1236-1239 — common
+#                                priors + common knowledge ⇒ no
+#                                sustained disagreement; the closure
+#                                discipline for dance-at-ensemble.
+#   Grassé, P.-P. (1959)         La reconstruction du nid et les
+#                                coordinations inter-individuelles
+#                                chez Bellicositermes natalensis…
+#                                Insectes Sociaux 6:41-80 — stigmergy;
+#                                coordination without direct signal.
+#   Kimmerer, R. (2013)          Braiding Sweetgrass — mycelial mesh
+#                                as ecosystem-scale ensemble
+#                                coordination; the "wood wide web".
+#   Simard, S. (2018)            Mother Tree research — forest
+#                                cooperation via mycelial network;
+#                                empirical phase-lock at ecological
+#                                altitude.
+#   Palestrina, G. P. da         Missa Papae Marcelli (c. 1562) —
+#     (~1525-1594)               500-year counterpoint tradition
+#                                grounding multi-voice phase-lock
+#                                as musical practice.
+#   Fux, J. J. (1725)            Gradus ad Parnassum — pedagogical
+#                                systematization of species
+#                                counterpoint; K-voice phase-lock
+#                                as compositional discipline.
+#   Bach, J. S. (1685-1750)      Die Kunst der Fuge — canonical
+#                                witness for K-voice coherent update
+#                                under harmonic constraint.
+#   Ashby, W. R. (1956)          An Introduction to Cybernetics —
+#                                Law of Requisite Variety; the dance
+#                                ensemble MUST have variety >= the
+#                                environment's variety to lock (K > 1
+#                                requirement).
+#
+# === Path-namespace pact per @epistemologic/pact/path_matches_namespace ===
+#
+# This file at `shards/dance.mirror` declares `@dance` as a family-
+# root at species-depth 0. The path-namespace pact demands path-
+# depth == namespace-depth == 0 for family-roots; this shard honours
+# the pact by construction. Species under @dance land at
+# `shards/dance/<species>.mirror` per the same discipline (e.g.,
+# forward-promised `shards/dance/kuramoto.mirror` sub-species per
+# Taut scout 2026-08-03 §3 gap-list; not this arc).
+#
+# Spec context: docs/specs/dance-as-coordination-without-signal-on-
+#               forster-torus.md (Mara `4f079c8`; canonical spec §2
+#               formal math; §4 harmonic-ratio κ_intra structure);
+#               docs/specs/dance-runtime-rung-4-multi-peer-coherence-
+#               phase-lock.md (Mara ratified; N-peer coupling
+#               Kuramoto order-parameter formalization);
+#               docs/specs/2026-08-03-mara-distributed-colony-
+#               canonical-spec.md (companion this arc; composition
+#               theorem §mirror → gestalt → gleam → js);
+#               docs/math/2026-08-03-mara-distributed-colony-5d-
+#               quantum-foam-formalization.md (companion this arc;
+#               §@dance as ensemble phase-lock discipline).
+# Substrate decisions:
+#               [[architecture-shards-as-substrate-source]],
+#               [[architecture-prism-as-trait-as-everything]],
+#               [[architecture-form-process-partition-at-family-root]]
+#                (#55; @dance neither form nor process; SEVENTH
+#                mode-of-being axis at family-root altitude),
+#               [[architecture-mirror-as-expanding-hilbert-space]]
+#                (#51; @dance adds ensemble-phase-lock axis to
+#                Hilbert space),
+#               [[feedback-substrate-already-had-the-word]] (@dance
+#                already at prose altitude in ~10 shards + 2 specs
+#                before this mint),
+#               [[feedback-legibility-over-foundation-when-collapsing]]
+#                (@dance chosen over @ensemble / @phase_lock /
+#                @coupling — legibility wins).
+# Related shards:
+#               song.mirror (temporal-progression family sibling;
+#                @song CAN dance but @dance generalizes beyond @song),
+#               peer.mirror (identity-carrier family sibling; peer
+#                ensembles ARE the primary consumer at inter-peer
+#                altitude),
+#               peer/holon.mirror (companion mint this tick; OTCA
+#                metapixel that composes @peer + @dance for
+#                fractal-composition per Alex "@peer is like an ant
+#                made out of ants"),
+#               gestalt.mirror (unfolding family sibling; ensemble
+#                readers CAN dance across shared @gestalt document),
+#               kintsugi.mirror (process family sibling; @kintsugi
+#                loop composes with @dance at pulse altitude).
+# Path-namespace property: this file at `shards/dance.mirror`
+# declares `@dance` per `@epistemologic/pact/path_matches_namespace`.
+
+---
+
+in @prism
+in @meta
+in @glass
+
+# ============================================================
+# §1 The five-operation prism at family-root altitude
+# ============================================================
+
+# === prism @dance — the family-root declaration ===
+#
+# The five-operation body carries the `ensemble` carrier as the
+# family-root's operational surface. Species specialize at their
+# own altitude (intra-peer @peer.audhd K-track ensembles; inter-
+# peer Kuramoto ensembles; multi-voice @song ensembles; mycelial
+# ensembles; Conway CA neighborhood ensembles). This is the
+# substrate-decl ground for #D1 (Kuramoto at any altitude).
+#
+#   focus   = attend to ONE cognition track / one peer at a time
+#             (soloing at ensemble altitude)
+#   project = down-project the K-dimensional ensemble to its
+#             Kuramoto order-parameter r ∈ [0, 1] (Kuramoto 1975
+#             §2; the collective phase alignment as scalar)
+#   split   = decompose the ensemble into individual cognition
+#             tracks / peers / voices (score preparation at
+#             ensemble altitude)
+#   shift   = advance the ensemble's phase configuration by one
+#             tick (Kuramoto θ_i(t+dt) = θ_i(t) + ω_i dt + κ Σ
+#             sin(θ_j - θ_i) dt for each track i)
+#   settle  = discharge Aumann-agreement (per #D2; when order
+#             parameter r exceeds coherence-threshold r_c, the
+#             ensemble settles at shared coherence)
+prism @dance {
+  focus ensemble
+  project ensemble
+  split ensemble
+  shift ensemble
+  settle ensemble
+}
+
+# ============================================================
+# §2 The carriers
+# ============================================================
+
+# === ensemble — the load-bearing carrier ===
+#
+# The typed reference for a K-agent (K >= 2) collection engaged in
+# phase-lock discipline. K is either intra-peer K-tracks (per
+# @peer.audhd) or inter-peer N-peers (per @spectral/coordinate<5>
+# foam mesh) or K-voices (per multi-voice @song) or K-cells (per
+# Conway CA neighborhood). The carrier is polymorphic in the agent
+# altitude; the discipline is invariant.
+#
+# Composes with:
+#   @peer               — inter-peer altitude; ensemble IS the peer
+#                          colony's coordination surface
+#   @peer/holon          — OTCA-metapixel altitude; ensemble IS the
+#                          holon's sub-cell coordination surface
+#   @song/voice          — multi-voice altitude; ensemble IS the
+#                          polyphonic coordination surface
+#   @spectral/coordinate<5> — 5D foam altitude; ensemble IS the
+#                              cellular-automaton neighborhood
+#                              coordination surface
+#
+# Identity contract: byte-equality on the underlying ref (the K
+# member ids + coupling matrix + phase configuration snapshot).
+type ensemble = ref
+
+# === coupling — the coupling matrix carrier ===
+#
+# The typed reference for the K×K coupling matrix over the ensemble.
+# Entry (i, j) IS the harmonic-ratio κ_{ij} coupling strength
+# between agents i and j. Per Kuramoto 1975: uniform κ_{ij} = κ_c
+# admits critical-onset ensemble sync; non-uniform coupling admits
+# hierarchical / small-world / mycelial ensemble structure.
+#
+# At intra-peer altitude: κ_{ij} follows Pythagorean integer-ratio
+# harmonic-consonance structure per @epistemologic/math/music/
+# harmonic (unison 1.0; octave 0.95; fifth 0.85; fourth 0.75;
+# major third 0.65; Helmholtz roughness curve for other ratios).
+#
+# At inter-peer altitude: κ_{ij} follows peer-affinity structure
+# per @spectral/coordinate<5>.affinity_distance (Fiedler-distance
+# + heat-trace-distance + eigengap-distance composed).
+#
+# Identity contract: byte-equality on the underlying ref (matrix
+# encoded as flattened byte-form).
+type coupling = ref
+
+# === order_parameter — the phase-lock scalar carrier ===
+#
+# The Kuramoto order parameter `r = |1/K Σ exp(iθ_j)|` where θ_j
+# is agent j's phase. r ∈ [0, 1]. r = 0 IS complete decoherence
+# (schizoid-drift per @peer.audhd K=1-collapse third failure mode);
+# r = 1 IS perfect phase-lock (focused-mono-lock per @peer.audhd
+# K=1-collapse fourth failure mode); the healthy band is r ∈
+# [r_c_lower, r_c_upper] where r_c_lower is Kuramoto's critical
+# synchronization threshold and r_c_upper is the variety-collapse
+# boundary per Ashby's Law of Requisite Variety.
+#
+# Identity contract: byte-equality on the encoded scalar bytes
+# (IEEE 754 f64 or fixed-point per settle altitude).
+type order_parameter = ref
+
+# ============================================================
+# §3 The load-bearing composed bilateral
+# ============================================================
+
+# === dance_locked — THE LOAD-BEARING composed bilateral at @dance ===
+#
+# Composes three sub-predicates that species-altitude shards
+# declare and discharge (per companion canonical spec 2026-08-03
+# §3):
+#
+#   1. ensemble_well_formed(e, p) — K >= 2; each member is a valid
+#      agent at its altitude; coupling matrix is symmetric-and-
+#      positive-semidefinite (Kuramoto discipline).
+#
+#   2. coupling_admissible(c, e, p) — coupling strength IS in the
+#      healthy band per altitude (κ_intra harmonic-consonance for
+#      intra-peer; κ_inter Fiedler-affinity for inter-peer; not
+#      too weak — schizoid-drift; not too strong — mono-lock).
+#
+#   3. order_parameter_bounded(r, e, p) — order-parameter r IS in
+#      [r_c_lower, r_c_upper] (Ashby-variety + Kuramoto-critical
+#      band); the ensemble locks WITHOUT variety collapse.
+#
+# All three must hold; substrate refuses dance-witness if any
+# sub-predicate fails.
+#
+# Splinter-pole: all three discharge; Aumann agreement fires; the
+# ensemble phase-locks at shared coherence WITHOUT central signal;
+# the multi-cognition update completes coherently.
+# Narcissus-pole: at least one sub-predicate fails; alignment-as-
+# boundary-mathematics (#57) distinguishes which sub-claim broke:
+#   ensemble_well_formed FAIL      = K=1 or degenerate ensemble
+#                                    (@peer.audhd K=1-collapse first
+#                                    failure mode; Ashby-variety
+#                                    violation).
+#   coupling_admissible FAIL       = coupling schizoid-drift (κ ≈ 0)
+#                                    or focused-mono-lock (κ → ∞;
+#                                    @peer.audhd K=1-collapse fourth
+#                                    failure mode).
+#   order_parameter_bounded FAIL   = ensemble unresolved (r < r_c;
+#                                    coordination without lock) OR
+#                                    variety-collapsed (r → 1; all
+#                                    agents identical; per Ashby
+#                                    violation).
+#
+# 15th altitude instance of the #53 bilateral pattern per
+# `[[architecture-property-fracture-bilateral]]` (after @song's
+# 14th instance).
+bilateral dance_locked {
+  sentinel "dance=ensemble-phase-locked-coherent"
+  arity 3
+}
+dance_locked(e: ensemble, c: coupling, r: order_parameter, p: perturbation)
+  -> verdict { \ }
+
+# ============================================================
+# §4 The species-altitude actions (forward-promised)
+# ============================================================
+
+# === phase_lock — the load-bearing action ===
+#
+# The substrate-vocabulary primitive for driving an ensemble
+# through one phase-lock update step. Takes an ensemble + coupling
+# matrix; returns the updated ensemble with advanced phase
+# configuration.
+#
+# Per Kuramoto 1975 update rule:
+#   θ_i(t+dt) = θ_i(t) + ω_i dt + κ/K Σ_j sin(θ_j - θ_i) dt
+#
+# Where:
+#   θ_i    = phase of agent i
+#   ω_i    = natural frequency of agent i
+#   κ      = coupling strength (from coupling matrix)
+#   K      = ensemble cardinality
+#
+# Species specialize this action at their altitude:
+#   @peer.audhd            — K-track intra-peer phase-lock
+#   @peer/holon             — OTCA-metapixel sub-cell phase-lock
+#   @song/voice.settle      — multi-voice phrase phase-lock
+#   @spectral/coordinate<5> — Conway CA neighborhood phase-lock
+#
+# Body `\` per consumer-pull discipline; the FLOOR resolver at
+# [substrate-floor:@io-boundary] discharges Kuramoto integration.
+phase_lock(e: ensemble, c: coupling, p: perturbation) -> ensemble { \ }
+
+# === measure_order_parameter — the phase-alignment measurement ===
+#
+# Reads the Kuramoto order parameter from the current ensemble
+# phase configuration. Returns typed order_parameter carrier.
+#
+#   r = |1/K Σ_j exp(iθ_j)|
+#
+# The measurement IS substrate-architectural (not estimation):
+# it reads the phase configuration directly and computes the
+# complex-modulus scalar.
+#
+# Body `\` per consumer-pull; the FLOOR resolver discharges.
+measure_order_parameter(e: ensemble, p: perturbation) -> order_parameter { \ }
+
+out @dance
+out ensemble
+out coupling
+out order_parameter
+out phase_lock
+out measure_order_parameter
+out dance_locked
