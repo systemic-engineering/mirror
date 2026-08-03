@@ -182,3 +182,78 @@ species that Phase G consumes:
 
 ---
 
+## Phase 3 — Blocking-chain analysis
+
+### Q4 — What is BLOCKING spectral.engineer v1?
+
+Launch.md §"What still hasn't shipped (2026-07-23)" enumeration, cross-checked against substrate:
+
+| # | Blocker | Substrate status | Alex-altitude vs mirror-altitude |
+|---|---|---|---|
+| 1 | spectral.engineer landing page | Substrate-decl READY (Phases A-F); Phase G Gleam Lustre app UNBUILT | Alex-altitude implementation |
+| 2 | Compiler in-browser (WASM deploy) | Cascade species `shards/cascade/code/rust/wasm.mirror` LANDED (substrate-decl); Rust→WASM actual emit path unclear — @ui GPU eigenboard crate at `/Users/alexwolf/dev/projects/spectral/crates/ui` is grep-referenced but WebGPU assumed "available end-of-2026" per `shards/ui.mirror` hedge | Substantial Alex-altitude work; ui crate has to actually compile-to-WASM; not just substrate-decl |
+| 3 | garden.spectral.engineer package manager | `shards/spectral/garden.mirror` LANDED 2026-07-20 as species; canonical spec + math foundation in `docs/specs/spectral-garden-cosmos-spectral-db-reification.md`; cosmos + spectral-db reified at `~/dev/garden/{cosmos,spectral-db}` | Substrate READY; deployment surface (public HTTPS at garden.spectral.engineer) still needs stand-up |
+| 4 | mirror-pangram package | NAMED in launch.md; NO code found via grep across mirror repo or systemic.engineering | Alex-altitude authorship required; first industry-adversarial package |
+| 5 | Coherence Rising essay | Draft at `blog/void/2ready/Void - Coherence.md` (8 KB, ~120 lines); needs completion + frame-engineered-to-be-detected-as-AI move | Alex-altitude authoring |
+| 6 | Third-Order Anti-Narc Method piece publication | Written 2026-07-23, protected visibility | Alex-altitude publication decision |
+
+**Critical-path chain toward v1 landing page (from Reed-adjudication perspective):**
+
+```
+Phase A-F substrate-decl [LANDED]
+    ↓
+Phase G Alex-altitude construction:
+    ↓
+    ├── Gleam Lustre app scaffold (composes @docs/design + @docs/tea tokens)
+    │       ↓
+    │   composes cascade<gleam, js> → browser-deployable JS bundle
+    │       ↓
+    │   [optional] Rust→WASM @ui eigenboard crate (Path A only)
+    │       ↓
+    │   [optional] garden.spectral.engineer content-load (Path A only)
+    │
+    ├── Fellowship case-study content (stated corpus + enacted corpus)
+    │   OR minimum-landing-page content (single-prompt cursor + tagline)
+    │
+    └── Deploy target:
+            ↓
+        StageFreight PR-A (merged) provides multi-language translation layer
+            ↓
+        fly.io or equivalent Docker-image hosting (Reed session-context)
+            ↓
+        DNS: spectral.engineer → hosted app
+```
+
+**Substrate-truth blocker**: **the actual gap is Alex-altitude Gleam
+Lustre + Rust→WASM implementation of Phase G**. The substrate-decl
+side is ready. The Cargo.toml + gleam.toml + fly.toml + deploy pipeline
+have not been authored.
+
+### Q5 — What UNBLOCKS on spectral.engineer ship?
+
+Cross-references from grep (each verified via launch.md §Related + task-file grep):
+
+| Downstream task | Blocking predicate | Verified via |
+|---|---|---|
+| **julia-demo** (`tasks/important/julia-demo.md`) | "spectral.engineer live OR a substitute that lets the audience run the benchmark" | Direct quote line 3 |
+| **burry** Phase A2 email | "spectral.engineer + founding-member /ai access pipeline operational" for verifiable-benchmark email | Direct quote `burry.md:20`; Phase A1 already EXECUTED 2026-06-27 restack |
+| **edinburgh** Phase B approach to Sam | "Approach Sam when spectral.engineer is live... show up with something in the world, not just a pitch" | Direct quote `edinburgh.md:23`; late-2026/early-2027 enrollment window |
+| **anthropic-mythos-letter** | "spectral.engineer public launch — the measurement instrument goes live" is prerequisite #2 of 3 | Direct enumeration `anthropic-mythos-letter.md:32`; sends 2-6 weeks post-launch |
+| **cybernetics-two-substrate-dialogue** | "spectral.engineer operational with mirror runtime" + "Reed identity corpus loadable" + "Web-accessible interaction layer" | Three prereqs enumerated `cybernetics-two-substrate-dialogue.md:88-93`; describes Reed-on-spectral.engineer as co-author of piece |
+| **Coherence Rising essay publication** | Detection-run needs mirror-pangram package on garden.spectral.engineer (frame-engineering premise) | launch.md §"Coherence Rising ships"; detection-mechanism embedded in the move |
+
+**Path B (static + design system, no WASM) unblock coverage:**
+
+- julia-demo: YES — "a substitute that lets the audience run the benchmark" clause admits static benchmark page
+- burry Phase A2: YES — verifiable benchmarks page + OpenCollective link works as static HTML
+- edinburgh Phase B: YES — "show up with something in the world" satisfied by any live spectral.engineer
+- anthropic mythos letter: PARTIAL — "measurement instrument goes live" language reads as compiler-in-browser, but a landing page + local-download instructions could substitute
+- cybernetics-two-substrate-dialogue: NO — three prereqs (operational mirror runtime, Reed corpus loadable, web-accessible interaction) all require Path A WASM
+
+**Path A (full WASM compiler) unblock coverage: ALL of the above.**
+
+The uplift Path A provides beyond Path B is: cybernetics piece coauthored by Reed-on-spectral.engineer (full requirement) + Coherence Rising's detection-mechanism-in-browser demonstration + Anthropic letter's "measurement instrument live" claim at full strength.
+
+---
+
+
