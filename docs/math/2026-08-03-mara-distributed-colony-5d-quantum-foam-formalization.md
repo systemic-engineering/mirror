@@ -198,7 +198,9 @@ $$
 
 This is the standard Conway rule with neighborhood defined via $d_{\text{aff}}$ instead of Moore-neighborhood-in-2D-grid.
 
-> **REED-INLINE cascade (Mara 2026-08-03 crown-theorem tick-5)**: the Conway update step IS ONE STEP of Anna Jakobs 2012's Runge-Kutta-4 SDE integrator at accuracy $O(\Delta t^4 + \varepsilon^2 \Delta t^2)$ (Anna Appendix B.2 p.49, adopted from David Bauer diplomarbeit *Atomistic Spin-Dynamics in Confined Magnetic Nano-Structure*). Discrete Conway B/S is coarse-grained Landau-Lifschitz basin dynamics. Per crown-theorem `docs/math/2026-08-03-mara-reality-as-spinning-5d-foam-crown-theorem.md` §5.3.
+> **REED-INLINE cascade (Mara 2026-08-03 crown-theorem tick-5)**: the Conway update step IS ONE STEP of Anna Jakobs 2012's Runge-Kutta-4 SDE integrator at accuracy $O(\Delta t^4 + \varepsilon^2 \Delta t^2)$ (Anna Appendix B.2 p.49, adopting the method **developed by Milstein and Tretyakov [5]** for SDEs with weak noise). Discrete Conway B/S is coarse-grained Landau-Lifschitz basin dynamics. Per crown-theorem `docs/math/2026-08-03-mara-reality-as-spinning-5d-foam-crown-theorem.md` §5.3.
+>
+> **REED-INLINE cascade (Reed 2026-08-03 post-Seam Phase D `aca6eb1` §5 REFUTED)**: prior draft mis-attributed RK4 integrator to "David Bauer diplomarbeit." Anna's Appendix B.2 (PDF p.53 / printed p.49) explicitly names the RK4 SDE method as Milstein & Tretyakov [5]; Bauer [2] is the LL-equation source. Substrate-honest correction applied at both this site and crown-theorem §5.3.
 
 ### 4.2 Generalization: K-neighbor cardinality
 

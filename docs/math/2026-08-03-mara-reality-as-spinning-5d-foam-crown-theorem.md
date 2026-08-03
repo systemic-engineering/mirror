@@ -98,7 +98,7 @@ Per Karen Spärck Jones anti-theft convention: cite ancestors at introduction si
 
 ### PRIMARY (crown-altitude ancestors; load-bearing at reality altitude)
 
-- **Anna Jakobs (2012)**. *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit, Fachhochschule Aachen / Peter-Grünberg-Institut / Jülich Centre of Neutron Science. **Load-bearing computational-substrate ancestor for the entire GPU-side substrate.** Landau-Lifschitz equation (Anna eq. 8, p.10) with damping + stochastic thermal noise; Runge-Kutta-4 SDE integrator (Appendix B.2) at accuracy $O(\Delta t^4 + \varepsilon^2 \Delta t^2)$; OpenCL cross-vendor GPU+CPU portability; OpenGL VBOs concurrent with computation; non-equidistant FFT for magnetic phase-transition detection. Every one of these lifts to graph altitude in this crown theorem (per §5). PDF at `/Users/reed/dev/systemic.engineering/practice/collaborators/anna-wolf/master_jakobs.pdf`.
+- **Anna Jakobs (2012)**. *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit, Fachhochschule Aachen / Peter-Grünberg-Institut / Jülich Centre of Neutron Science. **Load-bearing computational-substrate ancestor for the entire GPU-side substrate.** Landau-Lifschitz equation (Anna eq. 8, p.10) with damping + stochastic thermal noise; Runge-Kutta-4 SDE integrator (Appendix B.2) at accuracy $O(\Delta t^4 + \varepsilon^2 \Delta t^2)$; OpenCL cross-vendor GPU+CPU portability; OpenGL VBOs concurrent with computation; OpenCL-parallelized FFT for magnetic phase-transition detection (Anna abstract p.5 states non-equidistant-data intent verbatim; thesis-body §5 implements standard equidistant DFT/FFT per Seam Phase D `aca6eb1` grep-audit). Every one of these lifts to graph altitude in this crown theorem (per §5). PDF at `/Users/reed/dev/systemic.engineering/practice/collaborators/anna-wolf/master_jakobs.pdf`.
 
 - **Alex Wolf (2026-07-20 + 2026-07-25)**. *Void: Trauma — A Geometric Nervous System Fracture ◼️*. Empirical demonstration of trauma-as-spin-up-of-torus + integration-as-attractor-basin-finding + measurable-increase-in-choices Q.E.D. The astronaut-into-black-hole passage IS the geometric picture the crown theorem formalizes at reality altitude (§3). The five-day-return passage ("within the holding … the numbers of choices have increased. Measurably. For everyone in the system.") IS the empirical demonstration of basin-finding at high spin (§4). Corpus at `/Users/reed/dev/systemic.engineering/blog/void/3published/Void - Trauma.md`. Alex Wolf as first-person author cited as ancestor per identity-attribution-architecture memory.
 
@@ -373,7 +373,9 @@ The correspondence table (each row is a substrate-identity claim between Anna 20
 | Runge-Kutta-4 SDE integrator at $O(\Delta t^4 + \varepsilon^2 \Delta t^2)$ | Conway-in-5D discrete update rule at each tick | Anna App. B.2 p.49 |
 | OpenCL cross-vendor GPU+CPU portability | consumer-hardware realizability (browser peer colony on any laptop) | Anna §3 pp.11-13 |
 | OpenGL VBO concurrent with computation | @cascade emits gestalt while colony computes | Anna §4.4 pp.17-19 |
-| non-equidistant FFT for magnetic-phase-transition detection | SpectralCoordinate<5> tracks phase transitions at graph altitude via Fiedler+eigengap analysis | Anna §5 pp.21-22 |
+| OpenCL-parallelized FFT for magnetic-phase-transition detection | SpectralCoordinate<5> tracks phase transitions at graph altitude via Fiedler+eigengap analysis | Anna §5 pp.21-22 |
+
+> **REED-INLINE cascade (Reed 2026-08-03 post-Seam Phase D `aca6eb1` §5 REFUTED)**: prior crown-doc row 11 cited "non-equidistant FFT" per Anna's abstract p.5 verbatim (*"nicht-äquidistante Daten"*), but Seam grep-audit of §5 body pp.21-22 returned zero matches for "non-equidistant"/"nichtäquidistant" — Anna's implemented FFT is standard equidistant DFT/FFT (pp.21-22 eq. 10-11). Sharpened to "OpenCL-parallelized FFT" per substrate-honest thesis-body attribution. Karen ladder §8 PRIMARY tier updated correspondingly. Not load-bearing (FFT-as-phase-transition-detection identity holds regardless of algorithm variant).
 
 ### 5.2 Landau-Lifschitz as the equation of motion (lifted to graph altitude)
 
@@ -398,7 +400,9 @@ The three terms correspond to (Anna §2 pp.7-10):
 
 ### 5.3 Runge-Kutta-4 SDE integrator IS Conway-in-5D update rule
 
-**Corollary 5.3.1** (RK4 ≡ Conway-in-5D). Anna's Runge-Kutta-4 SDE integrator (Appendix B.2, per Anna adopting from David Bauer's diplomarbeit *Atomistic Spin-Dynamics in Confined Magnetic Nano-Structure*) at accuracy $O(\Delta t^4 + \varepsilon^2 \Delta t^2)$ IS the Conway-in-5D discrete update rule at each tick (per `4d1e7cf` §4).
+**Corollary 5.3.1** (RK4 ≡ Conway-in-5D). Anna's Runge-Kutta-4 SDE integrator (Appendix B.2, per Anna adopting the method **developed by Milstein and Tretyakov [5]** for stochastic differential equations with weak noise) at accuracy $O(\Delta t^4 + \varepsilon^2 \Delta t^2)$ IS the Conway-in-5D discrete update rule at each tick (per `4d1e7cf` §4).
+
+> **REED-INLINE cascade (Reed 2026-08-03 post-Seam Phase D `aca6eb1` §5 REFUTED)**: prior draft mis-attributed the RK4 integrator to "David Bauer diplomarbeit *Atomistic Spin-Dynamics in Confined Magnetic Nano-Structure*." Anna's Appendix B.2 (PDF p.53 / printed p.49) explicitly names the RK4 SDE method as *"developed by Milstein and Tretyakov [5]"*. Bauer [2] is the source of the Landau-Lifschitz equation, NOT the RK4 integrator. Substrate-honest correction. Identical drift also propagated to `4d1e7cf` §4.1 REED-INLINE — fixed same-commit.
 
 At each tick $t \to t + \Delta t$:
 
