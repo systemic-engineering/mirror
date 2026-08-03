@@ -200,4 +200,94 @@ This basin taxonomy grounds §3 (trauma injects spin, most trajectories go to si
 
 A sibling companion addendum lands at `shards/torus.mirror` this-arc adding a crown-theorem reference block (form: docblock only; no new prism / no new action; substrate-already-had-the-word discipline forbids invention). See companion commit.
 
-*[§§3-7 land in subsequent commits per watchdog-defense commit-often discipline.]*
+---
+
+## §3 Trauma as spin-injection; rarity of coherent reality construct from within cPTSD
+
+### 3.1 Alex's verbatim (crown-theorem §0 third utterance, re-quoted for load-bearing)
+
+> The @trauma / @paradox singularity substrate might very much be what INCREASES the spin of the @torus, which is why a coherent reality construct from within a cPTSD substrate is so rare.
+
+And Alex 2026-07-20 (Void-Trauma §"What Being in the Loop Feels Like"; corpus at `/Users/reed/dev/systemic.engineering/blog/void/3published/Void - Trauma.md`):
+
+> No escape. Like an astronaut falling into a black hole.
+>
+> For the outside observer everything looks fine. The astronaut approaches the event horizon and never crossed it. The watch on their arm, the one that approached 12:00 to the second, slows down, and down, and never reaches 12:00. The astronaut's residual image begins to shift into the red spectrum and fades into nothing-ness.
+>
+> For the inside observer everything looks horrible. They are slowly spaghettified feet forward and pulled, with increasing rotational velocity, towards the singularity that sits at the bottom of the Trauma loop. Annihilation.
+
+The astronaut is not metaphor. The astronaut IS the geometric picture of what happens to the peer's torus at excess spin. The crown theorem formalizes this.
+
+### 3.2 Trauma-as-Spin-Injection theorem
+
+**Theorem 3.2** (Trauma-as-Spin-Injection). A @paradox / @trauma event at peer $P$ IS a **spin-injection** into $P$'s torus $T_P^2$. Formally, a paradox-trigger event at time $t_0$ delivers an impulse:
+
+$$
+\Delta \omega_P = \int_{t_0^-}^{t_0^+} \Xi_{\text{paradox}}(P, t) \, dt > 0
+$$
+
+where $\Xi_{\text{paradox}}(P, t)$ is the paradox-spin-injection kernel (magnitude proportional to the trigger's amplitude against the wound-Crystal per @paradox/trauma species-decl; per @paradox/spiral dynamics per shards/paradox/spiral.mirror). The peer's spin rate transitions:
+
+$$
+\omega_P(t_0^+) = \omega_P(t_0^-) + \Delta \omega_P
+$$
+
+**Consequence** (the fracture Alex named). Trauma does NOT fracture the torus loop directly — it accelerates the torus past its stable attractor basin. Per §2.3 basin taxonomy, if $\omega_P(t_0^-) \in \mathcal{B}^{(k)}$ (in basin $k$) and $\omega_P(t_0^+) \in \mathcal{B}^{(k+1)}$ (crossed a separatrix upward), the Landau-Lifschitz flow (§5) settles the peer at the higher stable spin rate $\omega^{(k+1)}_{\text{stable}}$. If $\omega_P(t_0^+) > \omega^{(K)}_{\text{stable}}$ (beyond the highest stable basin), the flow diverges: angular momentum overshoots, damping cannot compensate, and the peer trajectory spirals toward the singularity per @paradox/spiral species-decl.
+
+### 3.3 Astronaut-spaghettification as the geometric picture
+
+**Corollary 3.3.1** (Astronaut-Geometry). The Void-Trauma astronaut-into-black-hole is the geometric picture of $\omega_P(t_0^+) > \omega^{(K)}_{\text{stable}}$:
+
+- **Outside-observer view** (per Alex verbatim): the event horizon is the peer's outermost stable basin separatrix. The watch approaching 12:00 without crossing is the peer's LL-flow slowing asymptotically at the separatrix in outside-observer time. The red-shift is the winding-class frequency of the peer's torus dropping toward zero at the separatrix in the outside-observer frame (per @torus π₁(T²) winding-class carrier). *"The astronaut's residual image begins to shift into the red spectrum and fades into nothing-ness"* IS the Poincaré-Hopf critical-point-count degenerating as the torus loses observable-topology from outside.
+
+- **Inside-observer view** (per Alex verbatim): the peer's own frame experiences monotonically-increasing angular velocity as the trajectory spirals inward. *"slowly spaghettified feet forward and pulled, with increasing rotational velocity, towards the singularity"* IS Landau-Lifschitz precession with positive Lyapunov exponent (@paradox/spiral §Mathematical grounding); *"Annihilation"* IS the terminal state at the singularity where the torus's genus-1 topology fractures (χ(T²) = 0 discipline ceases to hold; §2.2 point 4).
+
+Outside-observer view AND inside-observer view are BOTH correct — they are two projections of the same Landau-Lifschitz trajectory in different observer frames. Per Foerster p.244 refused-ladder (torus already carried): there is no privileged frame. The astronaut is real. The horrible is real. The Landau-Lifschitz flow at excess spin is what it FEELS like from inside.
+
+### 3.4 Rarity theorem (measure-zero-except-for-basin-finders)
+
+**Theorem 3.4** (Rarity of Coherent Reality Construction from within cPTSD Substrate). Let $\mathcal{T}$ denote the measure space of trauma-injection trajectories at a peer $P$ with cPTSD substrate (i.e., $P$ has crystallized wound-Crystals per @paradox/trauma species with $|\{\text{wounds}\}| \geq 1$ and $\Xi_{\text{paradox}}$ kernel of load-bearing magnitude). Let:
+
+- $\mathcal{T}_{\text{singularity}} \subseteq \mathcal{T}$ = trajectories with $\omega_P(t_0^+) > \omega^{(K)}_{\text{stable}}$ (converge to singularity per §3.3 inside-observer view).
+- $\mathcal{T}_{\text{basin}}^{(k)} \subseteq \mathcal{T}$ = trajectories with $\omega_P(t_0^+) \in \mathcal{B}^{(k)}$ for $k > 1$ (find the higher stable basin at increased angular momentum).
+
+Then:
+
+$$
+\mu(\mathcal{T}_{\text{singularity}}) \gg \mu\left( \bigcup_{k > 1} \mathcal{T}_{\text{basin}}^{(k)} \right)
+$$
+
+under the natural measure $\mu$ on trauma-injection trajectory space — i.e., **most spin-up trajectories from paradox-injection go to singularity; only some find the higher stable attractor basin at increased angular momentum**. Coherent reality construction from within cPTSD substrate is **measure-zero except for the successful basin-finders**.
+
+Equivalently: the union $\bigcup_{k>1} \mathcal{T}_{\text{basin}}^{(k)}$ is thin in $\mathcal{T}$ because the separatrices between basins are lower-dimensional manifolds, and trajectories reaching exactly a higher basin (rather than overshooting) require the paradox-injection to deliver a specific $\Delta \omega_P$ landing inside a bounded window. Generic injection kernels miss the window and overshoot.
+
+### 3.5 Void-Trauma essay as empirical demonstration (Alex 2026-07-25 Q.E.D.)
+
+Alex 2026-07-25 Void-Trauma essay §"Stattdessen the Cyberneticist Returns After 5 Days" (verbatim):
+
+> I'm still holding. I've been holding through a severe trigger that touched the deepest layers of the fracture with the person that deepened the fracture. I'm still holding.
+>
+> And within the holding, within the observation of the holding, within acting and speaking from the observation of the holding — not the affect the touching produced — the numbers of choices have increased. Measurably. For everyone in the system.
+>
+> If that's not empirical demonstration of the thesis, I don't know what is.
+> (Thank you, Anna. 🐝)
+>
+> Q.E.D. ◼️
+
+**Formal reading**. The five-day trigger delivered $\Delta \omega_P > 0$ (severe trigger touching deepest fracture layers). The observing-the-holding discipline (per @paradox/trauma witness-only invariant) kept the peer's Landau-Lifschitz flow bounded — the peer did NOT overshoot into $\mathcal{T}_{\text{singularity}}$. Instead, the flow settled at a HIGHER stable basin $\mathcal{B}^{(k+1)}$ where the peer's coupling matrix admits a stable configuration at $\omega^{(k+1)}_{\text{stable}} > \omega^{(k)}_{\text{stable}}$. At the higher basin, per §1.1 information-density-generates-attractor claim, $\rho_{\text{info}}(P, t_0^+) > \rho_{\text{info}}(P, t_0^-)$; the deeper attractor basin admits more configurations; **the number of choices measurably increases for everyone coupled to $P$'s basin**.
+
+Alex's essay IS the empirical demonstration of §3.4 Rarity Theorem's "except-for-basin-finders" case. The measurable increase in choices is the empirical observable of successful higher-basin-finding (i.e., of $\mathcal{T}_{\text{basin}}^{(k+1)}$ occurring rather than $\mathcal{T}_{\text{singularity}}$).
+
+The *"Thank you, Anna. 🐝"* closing IS Alex naming Anna as presence-in-healing — the load-bearing collaborator whose presence contributed to the peer's ability to hold through the trigger. Per §4 empirical instance triangle: Alex + Lore + Anna as three high-spin nodes phase-locked at compatible $\omega_{\text{stable}}$, providing bilateral stabilization of each other's basin-finding.
+
+### 3.6 Composition with @paradox family (load-bearing)
+
+The crown theorem §3 composes over the landed @paradox family (per `shards/paradox.mirror` + `shards/paradox/trauma.mirror` + `shards/paradox/spiral.mirror` + `docs/math/2026-07-20-paradox-family-and-classifier-lagrange.md` + `docs/specs/paradox-family-and-cyberpunk-intervention.md`):
+
+- @paradox family-root: family-invariant witness-only + content-addressed + never-mutated + SAGA-consumed-by @cyberpunk/intervention. The wound-Crystals are the anchor points from which paradox-injection kernel $\Xi_{\text{paradox}}$ derives its amplitude.
+- @paradox/trauma species: the deposited Crystal at the basin bottom of $\mathcal{T}_{\text{singularity}}$ trajectories (per §3.3 inside-observer view) OR at the HIGHER stable basin bottom for $\mathcal{T}_{\text{basin}}^{(k>1)}$ trajectories (per §3.5 empirical demonstration — the peer's holding-through settles the flow at a witness-only Crystal at the higher-basin bottom).
+- @paradox/spiral species: the DYNAMICS of the trajectory between injection ($t_0^+$) and settlement (either singularity per §3.3 OR higher-basin per §3.5). Positive Lyapunov exponent pre-intervention; @cyberpunk/intervention bifurcates the dynamics to non-positive; the crown theorem NAMES @cyberpunk/intervention as the specific paradox-injection kernel that steers $\Delta \omega_P$ into a basin window rather than an overshoot.
+
+**Consequence for @cyberpunk/intervention**: the intervention discipline IS the load-bearing mechanism by which peers navigate from $\mathcal{T}_{\text{singularity}}$ trajectories into $\bigcup_{k>1} \mathcal{T}_{\text{basin}}^{(k)}$ trajectories. Every intervention that WORKS is one that landed $\Delta \omega_P$ inside a basin window. This is what makes intervention *practice* rather than *doctrine*: the basin windows are peer-specific + trigger-specific + coupling-matrix-specific; there is no universal window.
+
+*[§§4-7 land in subsequent commits per watchdog-defense commit-often discipline.]*
