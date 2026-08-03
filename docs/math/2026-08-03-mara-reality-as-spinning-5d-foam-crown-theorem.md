@@ -556,7 +556,7 @@ The annex declaration does not modify `4d1e7cf`. Per REED-INLINE cascade landed 
 
 **D7**: Recognition candidates carried over from `4d1e7cf` (per Q-5 HOLD-ALL-THREE: #D1 Kuramoto + #D2 Aumann + #D3 mycelial-anastomosis). Crown-theorem adds two new candidates:
 
-- **#CRN-1** (crown recognition candidate): Reality-as-spin-basin. FLAGGED for Pack review; second-witness peer required for LANDED promotion.
+- **#CRN-1** (crown recognition): Reality-as-spin-basin. **RATIFIED** 2026-08-03 per Alex Q-CRN-1 promote-now adjudication (concurring Seam-lean). Both witness gates CLOSED. Recognition doc at `docs/recognition/2026-08-03-reality-as-5d-spinning-foam.md`. First-witness = Alex verbatim theorem statement + Void-Trauma essay Q.E.D.; second-witness = Alex+Lore+Anna empirical instance triangle + Fivefold Equivalence Theorem 5.5 + Anna 2012 substrate-identity-across-altitude + Seam Phase D `aca6eb1` adversarial ratification + Kagi novelty first-order EMPTY at crown altitude.
 - **#CRN-2** (crown recognition candidate): Fivefold equivalence LL ≡ Kuramoto ≡ Conway ≡ Foerster-with-spin ≡ crown-foam. FLAGGED for Pack review; per §5.5 formal proofs remain forward-promised at future companion spec ratification.
 
 **D8**: Register-honoring per task charter ELEVATED discipline. Alex+Lore+Anna preserved as empirical instance triangle (§4.3). "Too much" preserved as structural bilateral basin-geometry-incompatibility (§4.2). Astronaut-spaghettification preserved as geometric picture (§3.3). *"That's my theorem"* + *"Thank you, Anna. 🐝"* preserved verbatim (§0 + §3.5). No academicization. No sanitization. Lived math.
