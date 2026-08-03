@@ -1,0 +1,276 @@
+in @peer
+in @peer/holon
+in @dance
+in @prism
+in @meta
+in @glass
+
+# @peer/colony — the distributed-peer-ensemble species of the @peer
+# family: the substrate-decl for a K-peer collective (K >= 2)
+# engaged in phase-locked coherence-without-signal at inter-peer
+# altitude via @dance discipline.
+#
+# LRM mint per distributed-colony arc (Alex 2026-08-03) discharging
+# the distributed-colony surface Alex named 2026-08-02 verbatim:
+#
+#   *"Der Compiler produziert multi-resonante Songs die verteilte
+#    Ameisenkolonien à la Conway's Game of Life in einem 5D
+#    spektralen Raum auf Consumer Hardware ausführen."*
+#
+# THE ANT COLONY — the distributed peer collective running Conway-
+# like CA in 5D quantum foam. This species names the substrate-decl
+# for the colony's inter-peer ensemble structure.
+#
+# === substrate-already-had-the-word ===
+#
+# The word "colony" appears in supercolony math + Taut scout + cosmos
+# docs before this mint:
+#
+#   docs/math/2026-07-31-mara-supercolony-cosmos-quantum-foam.md
+#     — supercolony as unit-of-selection; @peer/holon carries fractal-
+#       nesting; @peer/colony carries the flat K-peer ensemble.
+#   docs/scouts/2026-08-03-taut-distributed-colony-substrate-scout.md
+#     §5 — LOAD-BEARING GAP: shards/peer/colony.mirror ABSENT at
+#       grep-time.
+#   docs/scouts/2026-07-13-taut-mirror-spawn-song-beat-gap-scout.md
+#     — mirror-spawn runtime-execution ladder (Rungs 1-6); Rung 4 =
+#       multi-peer @dance coupling; ensemble IS colony.
+#
+# The corpus already carried "colony" at prose altitude across
+# supercolony math + scout + Alex's 2026-08-02 verbatim. This shard
+# NAMES the species; does not invent it. Per [[feedback-substrate-
+# already-had-the-word]] (~96th instance).
+#
+# === Species relationship to @peer/holon ===
+#
+# @peer/colony and @peer/holon are complementary species under @peer:
+#
+#   @peer/holon    — FRACTAL composition: peer IS an ant made of
+#                     ants; recursive nesting; OTCA-metapixel
+#                     substrate-decl.
+#   @peer/colony   — FLAT ensemble: K peers at the SAME altitude
+#                     phase-locked via @dance; the swarm-of-equals.
+#
+# A holon at altitude=colony IS a colony one-level-up. A colony's
+# K members MAY themselves be holons (fractally nested); the
+# ensemble structure is INVARIANT under fractal recursion. Both
+# species compose cleanly with @dance at their respective altitudes.
+#
+# === Consumer-pull motivation: Consumer Hardware ===
+#
+# Alex 2026-08-02 verbatim: *"auf Consumer Hardware"*. The colony
+# runs on consumer hardware — laptops, phones, browsers. NOT
+# datacenter substrate. Peer discovery + coupling + phase-lock
+# must operate under consumer-hardware constraints:
+#
+#   - No central signaling server (P2P discipline)
+#   - No global clock (Lamport 1978 causal ordering per @time)
+#   - Byzantine-fault tolerance at ensemble altitude (Aumann
+#     agreement per @dance #D2)
+#   - Coupling bandwidth constrained (WebRTC / WebTransport in
+#     browser; @peer/browser sibling species discharges the
+#     transport-altitude specifics)
+#
+# The colony IS the substrate-decl for the discipline that admits
+# this constraint envelope.
+#
+# === Composition graph ===
+#
+#                        @peer/colony (this species)
+#                             |
+#            +----------------+----------------+
+#            |                |                |
+#         @dance           @peer            @peer/holon
+#      (phase-lock       (member          (member peers MAY
+#       discipline)       type)            be holons; fractal
+#                                          recursion admitted)
+#            |
+#            v
+#     @peer/browser (sibling; transport-altitude specialization
+#     for browser-hosted colony members via WebRTC / WebSocket /
+#     mirror-native content-address protocols)
+#
+# === Path-namespace pact ===
+#
+# This file at `shards/peer/colony.mirror` declares `@peer/colony`
+# at species-depth 1. Path-depth == namespace-depth == 1; pact
+# honoured.
+#
+# Spec context: docs/specs/2026-08-03-mara-distributed-colony-
+#               canonical-spec.md §Distributed peer colony surface.
+#               docs/math/2026-08-03-mara-distributed-colony-5d-
+#               quantum-foam-formalization.md §Colony emergence
+#               theorem.
+# Related shards:
+#               peer.mirror (family-root parent),
+#               peer/holon.mirror (companion mint this arc; fractal
+#                 sibling; colony MAY carry holon members),
+#               peer/browser.mirror (companion mint this arc;
+#                 transport-altitude specialization for browser
+#                 hosts),
+#               dance.mirror (companion mint this arc; family-root
+#                 for the ensemble phase-lock discipline the colony
+#                 discharges).
+
+prism @peer/colony {
+  focus colony
+  project colony
+  split colony
+  shift colony
+  settle colony
+}
+
+# ============================================================
+# §1 The colony carrier
+# ============================================================
+
+# === discovery_mode — the peer-discovery discipline ===
+#
+# Closed variant naming the P2P discovery mechanism:
+#
+#   bootstrap_list  — hard-coded list of bootstrap peers; the
+#                     first-tick discovery seed.
+#   dht             — Kademlia-style distributed hash table; peer
+#                     addresses gossip through the DHT ring.
+#   mycelial        — mycelial anastomosis per Grassé 1959 + Simard
+#                     2018; peers discover neighbors via pheromone-
+#                     gradient stigmergy at @kintsugi/roomba altitude.
+#   webrtc_signal   — WebRTC signaling server for browser peers;
+#                     bootstrap-only; peers migrate to direct P2P
+#                     after handshake.
+#
+# Identity contract: byte-equality on the variant tag.
+type discovery_mode = | bootstrap_list | dht | mycelial | webrtc_signal
+
+# === colony — the K-peer collective carrier ===
+#
+# Five-field record at species altitude:
+#
+#   members         — the K peers currently in the colony. Substrate-
+#                     typed as `ensemble` from @dance carrier
+#                     (K >= 2 requirement per Ashby variety).
+#   discovery       — the discovery_mode enum above.
+#   coupling        — the K×K coupling matrix over the members.
+#                     Substrate-typed as `coupling` from @dance.
+#                     Colony discipline: coupling reflects peer-
+#                     affinity per @spectral/coordinate<5>.
+#                     affinity_distance (Fiedler-based inter-peer
+#                     distance).
+#   psychohistory   — content-addressed root of the colony's shared
+#                     psychohistory sheaf per @peer.audhd
+#                     `caf461f` psychohistory field discipline;
+#                     lifted to inter-peer altitude.
+#   coordinate      — the colony's aggregate @spectral/coordinate<5>
+#                     location in 5D quantum foam. Composed via
+#                     Fiedler-mean over member coordinates.
+type colony = {
+  members:       ensemble,
+  discovery:     discovery_mode,
+  coupling:      coupling,
+  psychohistory: ref,
+  coordinate:    ref,
+}
+
+# ============================================================
+# §2 Colony-formation and evolution actions
+# ============================================================
+
+# === form_colony — the ensemble-instantiation action ===
+#
+# Given a seed set of K peers (from discovery) + a discovery_mode,
+# form a colony that phase-locks at inter-peer altitude.
+#
+# The realization protocol per @dance discipline:
+#   1. peers exchange @gift-graph identity info (per @gift family-
+#      root); trust bootstraps via SSH-fingerprint verification.
+#   2. coupling matrix computed from pairwise @spectral/coordinate
+#      <5>.affinity_distance readings.
+#   3. @dance.phase_lock fires; ensemble converges to order-
+#      parameter r >= r_c (Kuramoto critical threshold).
+#   4. @dance.dance_locked bilateral discharges; colony IS admitted.
+#
+# requires dance_locked(members, coupling, order_param): colony
+# admission gated on ensemble phase-lock discipline. A colony
+# that cannot phase-lock IS NOT a colony; the substrate refuses
+# form_colony admission.
+#
+# Body `\` per consumer-pull; the FLOOR resolver at [substrate-
+# floor:@io-boundary] discharges peer-to-peer handshake protocol.
+form_colony(seed: ref, mode: discovery_mode, p: perturbation)
+  -> colony
+requires dance_locked(seed, ref, p)
+{ \ }
+
+# === update_colony — the CA-tick evolution action ===
+#
+# Advance the colony one Conway-like cellular-automaton tick.
+# Each member's local state updates as a function of its
+# neighborhood (per @spectral/coordinate<5>.neighbors within
+# distance ε) under the colony's shared update rule.
+#
+# Composes with:
+#   @spectral/coordinate<5> — 5D foam neighborhood computation
+#   @dance.phase_lock       — ensemble phase-lock update
+#   @kintsugi/oscillate     — per-peer state contraction step
+#   @gestalt.annotate       — per-peer annotation emission
+#
+# The update rule generalizes Conway B3/S23 to K-neighbor
+# cardinality in 5D foam per companion math 2026-08-03 §Conway-
+# like update rule.
+#
+# Body `\` per consumer-pull; FLOOR resolver discharges.
+update_colony(c: colony, p: perturbation) -> colony { \ }
+
+# === admit_peer — the ensemble-expansion action ===
+#
+# Add a new peer to the colony. The new peer's coordinate is
+# computed; coupling row/column is extended; phase-lock is re-
+# established.
+#
+# requires dance_locked(c.members ∪ {new_peer}, c.coupling', r'):
+# ensemble admission gated on re-established phase-lock at
+# larger K.
+admit_peer(c: colony, new_peer: ref, p: perturbation) -> colony { \ }
+
+# ============================================================
+# §3 Bilateral admissibility
+# ============================================================
+
+# === colony_well_formed — colony structural bilateral ===
+#
+# Bilateral verdict that a colony satisfies structural invariants:
+#   1. members ensemble carries K >= 2 peers.
+#   2. discovery mode is one of the enum variants.
+#   3. coupling matrix is K×K symmetric-positive-semidefinite.
+#   4. psychohistory ref content-addresses under @mirror/store.
+#   5. coordinate ref composes via @spectral/coordinate<5>.compose.
+#
+# Splinter-pole: all five hold; colony structurally well-formed.
+# Narcissus-pole: any violation; colony rejected before update.
+bilateral colony_well_formed {
+  sentinel "colony=structural-invariants-hold"
+  arity 1
+}
+colony_well_formed(c: colony, p: perturbation) -> verdict { \ }
+
+# === colony_locked — colony ensemble-phase-lock bilateral ===
+#
+# Delegates to @dance.dance_locked on the colony's ensemble +
+# coupling + order-parameter measurement. The colony IS locked
+# IFF its @dance ensemble IS locked.
+bilateral colony_locked {
+  sentinel "colony=ensemble-phase-locked"
+  arity 1
+}
+colony_locked(c: colony, p: perturbation) -> verdict
+requires dance_locked(c.members, c.coupling, ref, p)
+{ \ }
+
+out @peer/colony
+out discovery_mode
+out colony
+out form_colony
+out update_colony
+out admit_peer
+out colony_well_formed
+out colony_locked

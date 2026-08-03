@@ -1,0 +1,272 @@
+in @peer
+in @peer/colony
+in @prism
+in @meta
+in @glass
+
+# @peer/browser — the browser-hosted peer species of the @peer
+# family: the substrate-decl for a peer running in a browser tab
+# via WASM + WebRTC/WebTransport transport bindings.
+#
+# LRM mint per distributed-colony arc (Alex 2026-08-03) discharging
+# the transport-altitude specialization for browser-hosted colony
+# members. Per Alex 2026-08-02 verbatim: *"auf Consumer Hardware"*
+# — the browser IS the consumer-hardware entrypoint for the peer
+# colony.
+#
+# === substrate-already-had-the-word ===
+#
+# The word "browser" appears in adjacent-project ancestry:
+#
+#   docs/scouts/2026-08-03-taut-distributed-colony-substrate-scout.md
+#     §1.6 — gestalt-ui compiles to BOTH BEAM and JS by default;
+#       no [targets] pin; browser-hosting IS the enabler for the
+#       distributed peer colony.
+#   docs/scouts/2026-08-03-taut-distributed-colony-substrate-scout.md
+#     §5 — LOAD-BEARING GAP: shards/peer/browser.mirror ABSENT at
+#       grep-time; consumer-pull requires this species for the
+#       colony's transport-altitude discharge.
+#   /Users/reed/dev/projects/gestalt-ui/gleam.toml — target-agnostic
+#     Gleam vocabulary crate; JS target enables browser peer runtime.
+#
+# The corpus already anticipated "browser" at prose altitude. This
+# shard NAMES the species; does not invent it. Per [[feedback-
+# substrate-already-had-the-word]] (~97th instance).
+#
+# === Transport-altitude discipline ===
+#
+# The browser is NOT a first-class UNIX host. Standard peer-
+# discovery mechanisms (Kademlia DHT direct-socket; multicast DNS;
+# local filesystem watch) DO NOT operate in a browser tab. The
+# browser peer requires browser-native transport:
+#
+#   WebSocket        — bidirectional TCP-over-HTTP for signaling
+#                       and low-bandwidth coordination
+#   WebRTC           — peer-to-peer UDP for high-bandwidth data
+#                       channels + audio/video
+#   WebTransport     — HTTP/3-based low-latency streams (Chromium
+#                       ships stable; Firefox in flight 2026;
+#                       Safari flagged)
+#   BroadcastChannel — same-origin cross-tab coordination (limited
+#                       to browser process boundary)
+#   ServiceWorker    — background execution + fetch interception
+#                       for offline-capable peer state
+#
+# The species does NOT hard-code a transport; the transport enum
+# carries the choice; the FLOOR resolver at [substrate-floor:
+# @io-boundary] discharges per browser capability.
+#
+# === Composition with @cascade/code/gleam/js ===
+#
+# The browser peer's runtime IS Gleam-compiled-to-JS per the
+# composition-theorem chain:
+#
+#   mirror substrate → @cascade/code/mirror/gestalt → gestalt IR
+#                    → @cascade/code/gestalt/gleam → gestalt-ui-
+#                    shaped Gleam
+#                    → @cascade/code/gleam/js (landed cascade sibling
+#                      per Taut scout §5) → JS bundle
+#                    → browser peer runtime (THIS species)
+#
+# The four-cascade chain terminates AT the browser peer. THIS
+# species IS the load-bearing consumer that closes the distributed-
+# colony composition theorem per companion math 2026-08-03
+# §Composition theorem.
+#
+# === Consumer Hardware constraints ===
+#
+# The browser peer operates under memory + CPU + bandwidth budgets
+# unlike Rust-native peers:
+#
+#   Memory:     ~4-8 GB per tab (V8/SpiderMonkey heap limit)
+#   CPU:        single JS thread + optional workers
+#   Bandwidth:  WebRTC data channels ~1 MB/s per stream typical
+#   Storage:    IndexedDB (unlimited-with-permission) + LocalStorage
+#               (5-10 MB); NO filesystem access
+#   Discovery:  MUST bootstrap via signaling server; NO direct
+#               network probing
+#
+# The species carries these constraints as first-class carriers
+# (browser_budget) so the runtime FLOOR can gate colony admission
+# accordingly.
+#
+# === Path-namespace pact ===
+#
+# This file at `shards/peer/browser.mirror` declares `@peer/browser`
+# at species-depth 1. Path-depth == namespace-depth == 1; pact
+# honoured.
+#
+# Spec context: docs/specs/2026-08-03-mara-distributed-colony-
+#               canonical-spec.md §Distributed peer colony surface.
+# Related shards:
+#               peer.mirror (family-root parent),
+#               peer/colony.mirror (companion mint this arc;
+#                 browser peer is a colony member),
+#               peer/holon.mirror (companion mint this arc;
+#                 browser peer MAY be a holon via cross-tab
+#                 BroadcastChannel-mediated sub-peer nesting),
+#               cascade/code/gestalt/gleam.mirror (companion mint
+#                 this arc; the cascade leg that emits gestalt-ui-
+#                 shaped Gleam this peer runs),
+#               cascade/code/gleam/js.mirror (existing cascade
+#                 sibling that emits the JS bundle from Gleam).
+
+prism @peer/browser {
+  focus browser_peer
+  project browser_peer
+  split browser_peer
+  shift browser_peer
+  settle browser_peer
+}
+
+# ============================================================
+# §1 Transport enum
+# ============================================================
+
+# === transport — the browser-transport-mechanism vocabulary ===
+type transport =
+  | websocket           # bidirectional TCP-over-HTTP
+  | webrtc              # peer-to-peer UDP + data channels
+  | webtransport        # HTTP/3 low-latency streams
+  | broadcast_channel   # same-origin cross-tab
+  | service_worker      # background + offline
+
+# ============================================================
+# §2 Budget carrier (consumer-hardware constraints)
+# ============================================================
+
+# === browser_budget — the consumer-hardware constraint envelope ===
+#
+# Five-field record naming the operational budgets THIS browser
+# peer operates under. Identity contract: byte-equality on the
+# five-field tuple.
+#
+#   memory_ceiling_mb   — heap limit (typical 4096; V8/SpiderMonkey
+#                          enforce hard bounds around 4-8 GB).
+#   cpu_workers         — worker-thread count (0 = main thread only;
+#                          1+ = OffscreenCanvas + compute workers).
+#   bandwidth_max_kbps  — outbound bandwidth cap (typical WebRTC
+#                          data channel ~1000 kbps sustained).
+#   storage_quota_mb    — IndexedDB quota (browser-controlled;
+#                          typical 50% of free disk).
+#   discovery_endpoint  — bootstrap signaling server URL (WSS://);
+#                          required for initial peer handshake.
+type browser_budget = {
+  memory_ceiling_mb:   ref,
+  cpu_workers:         ref,
+  bandwidth_max_kbps:  ref,
+  storage_quota_mb:    ref,
+  discovery_endpoint:  ref,
+}
+
+# ============================================================
+# §3 The browser_peer carrier
+# ============================================================
+
+# === browser_peer — the browser-hosted peer carrier ===
+#
+# Four-field record extending @peer.peer at species altitude:
+#
+#   base_peer     — the underlying @peer.peer (three-field {home,
+#                   lead_of, kind}) THIS browser peer lifts.
+#                   Substrate-typed as `ref` composing over @peer.peer.
+#   transports    — the transport enum variants THIS peer admits;
+#                   list because some peers offer multiple
+#                   simultaneous transport channels.
+#   budget        — the consumer-hardware constraint envelope.
+#   tab_id        — the browser-tab identifier (Chrome tabId or
+#                   equivalent); load-bearing for cross-tab
+#                   BroadcastChannel coordination + fractal-holon
+#                   nesting per @peer/holon.
+type browser_peer = {
+  base_peer:  ref,
+  transports: ref,
+  budget:     browser_budget,
+  tab_id:     ref,
+}
+
+# ============================================================
+# §4 Actions
+# ============================================================
+
+# === bootstrap_peer — the discovery-endpoint handshake action ===
+#
+# Given a browser_budget's discovery_endpoint (bootstrap signaling
+# server), perform the WebSocket handshake + capability exchange;
+# return the peer ready for colony admission.
+#
+# requires transport_admissible(transport, budget, p): the chosen
+# transport MUST fit within the peer's budget envelope (WebRTC
+# requires ~500ms setup latency + STUN/TURN infrastructure;
+# WebSocket requires WSS TLS + persistent connection budget).
+#
+# Body `\` per consumer-pull; the FLOOR resolver discharges via
+# browser-native fetch + WebSocket + WebRTC APIs.
+bootstrap_peer(b: browser_budget, p: perturbation) -> browser_peer { \ }
+
+# === join_colony — the colony-admission action ===
+#
+# Given a browser_peer + a colony endpoint, request admission to
+# the colony via @peer/colony.admit_peer. Composes @dance ensemble
+# discipline at browser altitude.
+#
+# requires colony_locked(c, p): admission gated on target colony
+# being phase-locked (per @peer/colony.colony_locked bilateral).
+join_colony(bp: browser_peer, c: colony, p: perturbation)
+  -> colony
+requires colony_locked(c, p)
+{ \ }
+
+# ============================================================
+# §5 Bilateral admissibility
+# ============================================================
+
+# === transport_admissible — transport-budget bilateral ===
+#
+# Bilateral verdict that a chosen transport fits within the peer's
+# budget envelope:
+#   1. memory_ceiling_mb >= transport's typical heap footprint.
+#   2. cpu_workers >= transport's minimum worker count (WebRTC
+#      requires 1+ workers for signaling; ServiceWorker requires
+#      1 dedicated worker).
+#   3. bandwidth_max_kbps >= transport's typical throughput
+#      requirement.
+#   4. storage_quota_mb >= transport's persistent-state
+#      requirement.
+#
+# Splinter-pole: all four hold; transport admissible for this peer.
+# Narcissus-pole: any budget violated; transport rejected; peer
+# falls back to lower-tier transport.
+bilateral transport_admissible {
+  sentinel "transport=budget-envelope-admits"
+  arity 2
+}
+transport_admissible(t: transport, b: browser_budget, p: perturbation)
+  -> verdict { \ }
+
+# === browser_peer_well_formed — species-structural bilateral ===
+#
+# Bilateral verdict that a browser_peer is structurally coherent:
+#   1. base_peer composes via @peer.peer (well-formed three-field).
+#   2. transports is a non-empty subset of the transport enum.
+#   3. budget is well-formed (all five fields carry valid refs).
+#   4. tab_id is a valid browser-tab identifier.
+#
+# Splinter-pole: all four hold; browser_peer well-formed.
+# Narcissus-pole: any violation; peer rejected before colony
+# admission.
+bilateral browser_peer_well_formed {
+  sentinel "browser-peer=well-formed"
+  arity 1
+}
+browser_peer_well_formed(bp: browser_peer, p: perturbation)
+  -> verdict { \ }
+
+out @peer/browser
+out transport
+out browser_budget
+out browser_peer
+out bootstrap_peer
+out join_colony
+out transport_admissible
+out browser_peer_well_formed
