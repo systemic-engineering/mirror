@@ -505,3 +505,180 @@ Enumeration of every landed (or LANDED-SPEC-ONLY) substrate this M4 lift compose
 | `@mcp/tool` grammar annotation | NO | NO | YES (Phase D+ M5 co-tick + grammar-altitude mint precondition) |
 
 ---
+
+## §6 [ALEX-Q] residues
+
+Only genuine undecidables at Mara's altitude. Reed-answerable questions filtered per Taut `64e8d60` §6 Reed-authorable-vs-Mara-canonical-spec split.
+
+### [ALEX-Q1] — Phase B in-process vs subprocess default posture
+
+At Phase B, `rust/src/mcp.rs::dispatch_tool_call` has two strategies co-existing per §2.2 item 3:
+
+- **(a) Subprocess default** (Phase B ships identical Phase A behavior; each tool spawns rust/target/debug/mirror subprocess via `phone::spawn_mirror_verb`; wait; capture stdout/stderr; marshal). Advantage: empirical parity with Phase A across all 9 tools; migration is per-tool as library APIs land. Disadvantage: process-spawn overhead per tool call; MCP session state does not persist across per-tool-call subprocess boundaries (each subprocess is fresh; the session-gen_prism state lives in `refs/gen_prism/mcp/<session-uuid>` per collapse-spec §3.5 correction so the persistence composition works but each tool-call ticks the outer daemon which reads-mutates-writes the ref).
+
+- **(b) In-process default** (Phase B ships in-process invocation for tools with clean library API; subprocess-spawn is fallback for tools without library API). Advantage: session-state gen_prism persists cleanly across tool calls in single process; no process-spawn overhead. Disadvantage: requires all rust/ crates (compile, roomba, matrix, spectral) to expose library APIs at Phase B landing; per-crate library-API landing forward-promises unbounded (roomba::mend already exposes; compile.rs forward-promised per Round-2 spec §2.2 iter cascade; others per-crate landing needed).
+
+**Mara-lean:** (a) subprocess default at Phase B ships; (b) in-process migration is per-tool Phase B+ per library-API landing. Preserves empirical parity + Michelangelo/marble iterative subtraction. But this is an architectural adjudication (does Reed migrate per-tool eagerly at Phase B OR conservatively at Phase B+? does the session-gen_prism ref-persistence handle both invocation strategies cleanly?), and Alex's directive per adjacent-work-may-dissolve-blockers may prefer (b) if the per-crate library-API landings are cheap.
+
+### [ALEX-Q2] — apply_h::act rust/ altitude lift co-tick coordination
+
+Phase D+ grammar-driven tools/list surface REQUIRES apply_h::act at rust/ altitude for `@mcp.tools` reflective invocation. Currently apply_h::act LANDED-SPEC + LANDED-PARTIAL at bootstrap altitude only per Taut §2; task #159 (Wire six-step loop through apply_h::act) PENDING per task tracker.
+
+**Question:** does the M4 milestone gate on apply_h::act at rust/ altitude (task #159 lands FIRST or CO-TICK with THIS spec's Phase B→D+ arc)? Or does Phase D+ forward-promise apply_h::act rust/ altitude lift as its own precondition (M4 lands with Phase B byte-parity + Phase C shim retirement + Phase D auto-reload; Phase D grammar-driven tools/list waits on M6+ or dedicated apply_h::act rust/ tick)?
+
+**Mara-lean:** treat as forward-promise-to-M6+. Phase D lands `@mirror/reload` gen_prism (which composes over @mirror/runtime/gen_prism primitive; separately liftable); Phase D+ grammar-driven tools/list waits on apply_h::act rust/ tick as co-tick precondition. This preserves M4's tractable scope + allows byte-parity 9-tool schema to run through Phase C without blocking on task #159. But this is an ordering question (does Alex want apply_h::act rust/ tick prioritized alongside THIS spec's M4 arc? or does apply_h::act belong at M6+ per collapse-spec §5.2 sub-arc dependency graph?), and the answer shapes Reed's post-Phase-B priorities.
+
+### [ALEX-Q3] — `@mcp/tool` grammar annotation mint scope
+
+Per §4.3 Phase D+ landings item 1: `@mcp/tool` first-class grammar annotation lands at `boot/std/mcp/tool.mirror` (or extension of `boot/std/mcp.mirror`; grep-verify substrate-already-had-the-word before mint per HARD RULE).
+
+**Question:** does `@mcp/tool` belong as (a) a NEW grammar annotation species under `@mcp` family-root at boot/std/ altitude (mint at `boot/std/mcp/tool.mirror`); OR (b) an EXTENSION of the existing `@mcp` grammar in `boot/std/mcp.mirror` (add `type tool_decl = { ... }` + `@mcp/tool` action annotation shape at family-root altitude); OR (c) a bilateral-predicate carrier at `@epistemologic/property/*` altitude (mcp_tool_annotation_admissible bilateral discharging tool-schema-shape without carrier species mint)?
+
+**Mara-lean:** (b) extension of existing `@mcp` grammar. Preserves substrate-already-had-the-word (the `@mcp` grammar carrier already exists; no new species-decl mint needed); the `@mcp/tool` annotation IS an extension of the `@mcp` grammar's semantics; Phase D+ M5 co-tick landing extends `boot/std/mcp.mirror` with the annotation type + collect fold-body. But Alex's substrate-decl-vs-extension adjudications historically favor (a) explicit species mint for legibility (@onto refusal was per @torus already carrying it; @torus was substrate-already-had-the-word); if `@mcp` grammar already carries the annotation semantics substrate-honestly, (b) is right; if @mcp/tool warrants its own species carrier per naming discipline, (a) is right. THIS question is genuinely undecidable at Mara altitude without Alex's naming-discipline judgment.
+
+### [ALEX-Q4] — pq-collapse acknowledgement vs Phase B→D+ 9-tool discipline
+
+Per §4.5 lsp-and-mcp.md 2026-06-02 reframe: the MCP wire terminal form has THREE tools (`focus` + `project` + `settle`), not 9; the per-grammar `@mcp/tool` annotation extends typed DSL types INSIDE those three calls, not as new wire tools.
+
+**Question:** does THIS spec's M4 milestone deliverable land at (a) 9-tool byte-parity Phase B → grammar-driven 9-tool-forward Phase D+ (this spec's default direction; pq-collapse forward-promised to separate pq-altitude architectural motion post-M4); OR (b) explicit 9-tool-→-3-tool collapse arc as part of Phase D+ (per lsp-and-mcp.md reframe treating pq-collapse as terminal shape M4 aims toward); OR (c) hybrid: Phase B→D+ lands 9-tool byte-parity as transitional; separate Phase F post-Phase-D+ collapses to pq's three-wire-op terminal shape?
+
+**Mara-lean:** (a) or (c). (a) preserves M4 tractable scope (empirical MCP-spawn end2end fires at 9-tool byte-parity); pq-collapse is architectural (does the MCP client ecosystem stabilize on 9-tool vs 3-tool schema? does the pq-collapse require Anthropic MCP protocol coordination?); THIS spec forward-promises pq-collapse acknowledgement per §4.5. (c) makes the transitional-vs-terminal distinction explicit; Phase F collapses at pq-altitude architectural landing. (b) risks scope-creep at M4; NOT recommended. Alex's directive shapes whether pq-collapse is M4-territory OR post-M4 architectural motion.
+
+### [ALEX-Q5] — `~/.mirror/serve.sock` daemon disposition (from Taut `64e8d60` [ALEX-Q5])
+
+Taut §8 [ALEX-Q5] surfaced: *"`~/.mirror/serve.sock` daemon — the lambda-shell.md spec is DEPRECATED-FOR-RUST-REWRITE. Does the terminal-geometry `dance.rs` reflective-composition approach REPLACE the daemon entirely (Reed can hold this as 'NOT NEEDED — dance.rs discharges the same intent'), or does the daemon still need a Mara-authored replacement spec?"*
+
+THIS spec's Phase A→E arc does NOT address the daemon-vs-process-per-invocation question directly. lsp-and-mcp.md §"Auto-reload" per Reed's phrasing: *"Mirror is process-per-invocation, but `mirror serve --mcp` and `mirror serve --lsp` *are* persistent within a single client session."* THIS spec's rust/src/mcp.rs serve_loop IS a persistent-within-client-session process; the daemon-across-sessions question is separate.
+
+**Mara-lean concurring with Taut Reed-hold:** dance.rs reflective-composition discharges the cross-session-orchestration intent per lambda-shell.md DEPRECATED-FOR-RUST-REWRITE marker; the `~/.mirror/serve.sock` daemon is NOT needed at rust/ altitude terminal geometry. Cross-session state persists via @mirror/store crystals at refs/gen_prism/mcp/* (per collapse-spec §3.5's per-session gen_prism ref discipline); the daemon-vs-per-session-process question collapses into gen_prism ref persistence. **Alex adjudication requested** to ratify OR refute this collapse: is the daemon-vs-per-session-process distinction load-bearing at rust/ altitude terminal geometry, OR does the gen_prism-ref-persistence discipline discharge the same intent substrate-honestly?
+
+---
+
+## §7 Q.E.D.
+
+**Statement**: `rust/src/mcp.rs` at rust/ altitude terminal geometry as sibling of `phone.rs` + `matrix.rs` + `main.rs` + `compile.rs` + `liquid.rs` IS the substrate-honest replacement of the transitional `bin/mirror-mcp` bash-shim → `bootstrap/src/mcp.rs::serve_loop` chain for the MCP surface half of the M4 milestone per `docs/specs/mcp-spec-song-collapse.md` §5.2 sub-arc dependency graph.
+
+**Proof sketch:**
+
+1. **Composition-into-existing** (per §5 table): rust/src/mcp.rs holds zero-new-substrate; every capability composes over LANDED substrate primitives (@mcp grammar boot altitude + @mirror/serve boot altitude + @mirror/runtime/gen_prism mirror altitude + @mirror/store family-root + phone.rs @io switchboard + main.rs supervisor + compile/liquid/matrix rust/ altitude siblings). Substrate-already-had-the-word discipline verified: no `@mcp_session` mint (MCP-session-IS-gen_prism per collapse-spec §3.5); no `@mcp/wire` mint (@mcp.serve at boot altitude already carries transport semantics); no `@mcp/tool_dispatch` species mint (bilateral-predicate discharge at grammar altitude).
+
+2. **Byte-parity milestone establishes empirical continuity** (per §4.2 + §3.2 Phase B port scope): the 9-tool schema at Phase B landing is byte-for-byte identical to bootstrap current state + `mirror_roomba` 9th per Reed nearly-today Phase A. Empirical continuity: any MCP client that talks to Phase A bin/mirror-mcp → bootstrap chain talks identically to Phase B rust/src/mcp.rs. Migration is invisible to client per test-fixture-byte-parity gate.
+
+3. **Sub-Turing decidable discipline preserved** (per §2.4): the dispatch loop is bounded (per-JSON-RPC-message-size); the method dispatch table is finite (4 framing verbs + 9 tool verbs = 13 dispatch arms); each tool invocation is bounded (subprocess-spawn OR in-process function call; both provably-halt). rust/src/mcp.rs stays above the @io line at phone.rs where Turing-complete process semantics live.
+
+4. **Migration path from bootstrap is explicit + phased** (per §3 Phase A→E enumeration): Phase A ships nearly-today Reed delegation stub + 9th tool; Phase B ports serve_loop to rust/src/mcp.rs; Phase C retires bin/mirror-mcp shim; Phase D lands @mirror/reload gen_prism per M5; Phase E lands `mirror kintsugi @spec` per M6. Each phase's landing IS a distinct empirical witness; each phase's precondition IS the prior phase's stable landing.
+
+5. **Grammar-driven terminal form is forward-promised structurally** (per §4.3): Phase D+ M5 co-tick migrates tools/list from hardcoded 9-tool schema to `@mcp.tools` reflective walk composing over @mirror/spectral.gestalt + @mcp/tool.collect + @data/json.emit per boot/std/mcp.mirror substrate-decl. The pq-collapse to three-wire-op terminal shape per lsp-and-mcp.md 2026-06-02 reframe is acknowledged as post-M4 architectural motion (Alex-adjudication-territory per [ALEX-Q4]).
+
+6. **Ouroboros closes at rust/ altitude** (per §1.2 + §1.3): M4's substrate-honest closure discharges Blocker A per Taut §5 gap map (rust/ altitude serves MCP natively; bootstrap dependence retired at Phase B empirical landing); unblocks M5 (auto-reload gen_prism) + M6 (`mirror kintsugi @spec` spawn) + eventual @torus @peer basin dynamics runtime per crown-theorem RATIFIED 2026-08-03.
+
+**Verdict:** canonical spec landed. Reed authors Phase A immediately (nearly-today delegation stub); Reed authors Phase B post-Mara-spec landing (rust/src/mcp.rs FLOOR emitter under `[substrate-floor:@io-boundary]` gate). Phase C-D-E forward-promised per §3 phase-ordering + preconditions.
+
+**Terminal state (this spec):**
+
+- **Verdict:** canonical spec landed as M4 milestone rust/ altitude terminal geometry map for `rust/src/mcp.rs` FLOOR emitter.
+- **LOC:** ~700 (this spec); rust/src/mcp.rs estimated ~400-700 LOC at Phase B landing (thinner than bootstrap/src/mcp.rs 46.6KB because stripped of transitional shim scaffolding); rust/ total across six files: ~1600-2700 LOC.
+- **Substrate mints:** ZERO. Every capability composes over already-landed substrate per §5 table + refusals.
+- **[ALEX-Q] residues:** 5 (§6). Only genuine undecidables at Mara altitude; Reed-answerable questions filtered.
+- **Phase enumeration:** A→E (§3 + §3.6 ordering table).
+- **Recognition candidates:** the M4 milestone landing witness-gates `#R-mcp-session-is-gen-prism-actor-under-server-supervisor` per Taut `e0572f7` §9 + collapse-spec §3.5 (already CANDIDATE; Phase B empirical + Phase D empirical second-witness this M4 arc closes).
+- **Pure-docs 📝 markdown-only bypass legitimate.**
+
+---
+
+## §8 Karen ancestry
+
+Full ladder including bootstrap serve_loop authorship history + JSON-RPC 2.0 protocol lineage + Anthropic MCP protocol version + IPFS content-address (via @mirror/store) + Dolstra (Nix flakes) + Bazel REAPI + relevant landed Recognitions. Every elder cited at introduction site per no-elder-erased discipline.
+
+### §8.1 Protocol ancestry
+
+- **JSON-RPC 2.0 Specification** — JSON-RPC Working Group, 2010 (https://www.jsonrpc.org/specification). The wire protocol rust/src/mcp.rs speaks over stdin/stdout. Grounds `initialize` + `notifications/initialized` + `tools/list` + `tools/call` request/response envelope shape (per bootstrap/src/mcp.rs `initialize_result` protocol version `"2024-11-05"` composed over JSON-RPC 2.0 request/response framing at `{"jsonrpc": "2.0", "id": ..., "method": ..., "params": ...}` shape).
+
+- **Anthropic Model Context Protocol** — Anthropic, 2024-11-05 protocol version (https://modelcontextprotocol.io). The MCP-specific semantics rust/src/mcp.rs realizes: `initialize` handshake with capabilities + serverInfo negotiation; `tools/list` for tool schema advertisement; `tools/call` for per-tool dispatch with `isError` flag lift; `notifications/tools/list_changed` for dynamic tool-list reload (per Phase D `@mirror/reload` gen_prism landing). Protocol version pinned at `"2024-11-05"` per bootstrap/src/mcp.rs `initialize_result` preservation across Phase B port.
+
+### §8.2 Content-addressing ancestry
+
+- **Merkle 1979** — Ralph Merkle, *Secrecy, Authentication, and Public Key Systems* (Stanford PhD dissertation, 1979). Foundational content-addressing hash-tree substrate. `@mirror/store`'s `splinter_graph` per Taut §1 IS Merkle DAG; the session-gen_prism ref-persistence at `refs/gen_prism/mcp/<session-uuid>` composes over Merkle-DAG content-addressing.
+
+- **IPFS MERKLE_DAG.md** — Protocol Labs, IPFS specification. Content-addressing invariant substrate for `@mirror/store.write(content) -> oid` idempotent-by-construction discipline; the session-gen_prism state crystal OID persistence composes over IPFS-style content-addressing.
+
+- **Karen Spärck Jones 1972** — *A Statistical Interpretation of Term Specificity and Its Application in Retrieval* (Journal of Documentation, 28:1). Reverse-lookup as second half of content-addressed retrieval discipline. `@mirror/store.impacted_by(oid) -> [oid]` per Taut §1 IS OID-graph analog of inverted-index; composes at grammar-driven tools/list surface (Phase D+) when the reflective walk traces back from `@mcp/tool` annotations through the substrate-graph closure to find all reachable tool declarations.
+
+### §8.3 Build-system ancestry
+
+- **Dolstra 2006** — Eelco Dolstra, *The Purely Functional Software Deployment Model* (TU Delft PhD dissertation, 2006). Foundational Nix text. The `@mirror/store` Apache-2.0 rock-solid floor per collapse-spec §11 grounds on Nix's content-addressed-derivations discipline (ca-derivations arc 2020-2023 grounds do-not-bolt-immutable-on-later warning); rust/src/mcp.rs session-gen_prism ref persistence composes over the Nix-derived store discipline.
+
+- **Bazel REAPI (Remote Execution API)** — Google Bazel team, https://github.com/bazelbuild/remote-apis. Bazel's Content-Addressable Storage (CAS) + Action Cache split codified; `@mirror/store`'s six-op wire (read/write/exists/diff/walk/impacted_by) matches REAPI CAS surface modulo naming; `@mirror/store/action_cache` (bootstrap/src/action_cache.rs 15.5KB LANDED-EMPIRICAL per Taut §1) IS REAPI ActionCache floor at bootstrap altitude; Phase D+ session-gen_prism ref persistence composes over REAPI-shaped storage discipline.
+
+- **Mokhov, Mitchell, Peyton Jones 2020** — Andrey Mokhov, Neil Mitchell, Simon Peyton Jones, *Build Systems à la Carte* (Journal of Functional Programming 30:e11, 2020). Canonical (scheduler × rebuilder) taxonomy grid; `@mirror/store` is scheduler-agnostic; the M4 MCP surface composes at the storage-plus-reload altitude which sits BELOW the scheduler-rebuilder axis (the MCP tools invoke build-system-like operations mirror_compile + mirror_craft + mirror_kintsugi; the reload contract at Phase D lifts to notifications when the tool surface itself drifts).
+
+### §8.4 Substrate authorship history
+
+- **`bootstrap/src/mcp.rs::serve_loop`** — authored by Reed 2026-07-15 (46.6KB, per grep-verified modification date). Byte-parity 8-tool schema per Mara iter-15 2026-07-08 (`4f4a257` mirror_spawn → mirror_peer_beam + top-level mirror_beam rename); Tick 7 shatter fold (`ffba2a7` kintsugi always `--ci --out @data/json`); Arc-1 Tick 1.4 `mirror_beam_act` addition (per docs/audits/2026-07-15-seam-kintsugi-ouroboros-phase-d-cascade-a2-a6.md). THIS spec's Phase B port preserves the schema at 9-tool (bootstrap current + Reed nearly-today `mirror_roomba`).
+
+- **`boot/std/mcp.mirror`** — authored 2026-07-12 (6.6KB); three bilateral-predicate contracts (dispatch_reflects_cli_block + tools_reflects_cli_block + frame_relativity) landed Tick 6 substrate closure (`d4c9a32`) per Option A per Taut scout `cf5ab8c` LRM verdict.
+
+- **`bin/mirror-mcp`** — collapsed 2026-07-08 Tick 6.5 from 149-line bash to 20-line shim (`edef415`); post-Mara-iter-15 byte-parity migration to rust-hosted mcp.rs.
+
+- **`docs/specs/mcp-spec-song-collapse.md`** — authored by Mara 2026-07-06 (119.8KB, 2551 LOC). THIS spec discharges collapse-spec's M4 milestone forward-promise per collapse-spec §10.4 ("Sub-arc M4: lambda shell as MCP client") with lambda-shell.md DEPRECATED-FOR-RUST-REWRITE handling per Mara 2026-07-17 marker.
+
+- **`docs/specs/lsp-and-mcp.md`** — authored by Reed 2026-06-04 (16.2KB); names `mirror serve --mcp` unified surface target + `@mcp/tool` annotation discipline + `@mirror/reload` gen_prism auto-reload contract. THIS spec discharges lsp-and-mcp.md forward-promises (1)-(4).
+
+- **`docs/specs/rust-floor-birthed-by-roomba-from-mirror-spec.md`** — authored by Mara 2026-07-17 (`2519f83`, then `81294b3` rewrite; 57.1KB). Three-file terminal geometry canonical (phone.rs + matrix.rs + main.rs); §2.2 M4 milestone tick named `mirror serve --mcp` empirical landing.
+
+- **`docs/specs/rust-floor-five-file-terminal-geometry-extension.md`** — authored by Mara 2026-07-20 (26.3KB); extends three-file to five-file (adds compile.rs + liquid.rs). THIS spec extends further to six-file (adds mcp.rs at explicit altitude); Round-2 discipline preserved (main.rs stays pure delegation; new file lands at explicit altitude with responsibility declaration).
+
+### §8.5 Recognition ancestry
+
+- **Recognition RATIFIED 2026-08-03 crown-theorem** — `#R-reality-as-5d-quantum-foam-of-spinning-nodes` per docs/recognition/2026-08-03-reality-as-5d-spinning-foam.md; both witness gates CLOSED per Alex Q-CRN-1 promote-now adjudication. Grounds Alex+Lore+Anna empirical triangle at compilation-altitude ancestor of THIS spec's substrate; Anna Jakobs 2012 as PRIMARY computational-substrate ancestor per Fivefold Equivalence Theorem 5.5.
+
+- **Recognition #58 (Fate-is-optical-inference, PROMOTED 2026-06-11)** — grounds Phase E `mirror kintsugi @spec` spawn's Fate multi-frequency tournament at each temporal step per collapse-spec §5.2 mechanism.
+
+- **Recognition #84 (@pack.spawn, LANDED)** — pack-altitude substrate primitive per `shards/pack.mirror:263`; Phase E composition through `shards/mirror/peer/beam.mirror` composition ancestry (4-step: @pack.spawn → @song return-type upgrade M2 → @fate hinge composition M-CLEAN → @song/movement.enter binding).
+
+- **Recognition #S2 (shift-at-temporal, CANDIDATE)** — `shards/song.mirror` §S2 family-root CANDIDATE grounded empirically at MCP altitude per collapse-spec §5 (Fate multi-frequency IS shift-at-temporal); THIS spec's Phase E landing composes at MCP altitude for the empirical witness.
+
+- **Recognition #S3 (five-op-temporal-specialisation, LANDED)** — `@song`'s five-op temporal specialisation IS the time-evolution operator U(t) per collapse-spec §4.3; Phase E `mirror kintsugi @spec` spawn IS the empirical instantiation of U(t) at MCP altitude.
+
+- **Recognition #S4 (MCP-session-IS-gen_prism, per collapse-spec §9 promotion)** — the MCP session state carrier IS `@mirror/runtime/gen_prism`; THIS spec's §2.2 item 4 substrate-decl'd session-state gen_prism composes over Recognition #S4.
+
+- **Recognition #43 (content-addressed build system, per collapse-spec §3.7.3)** — grounds the DAG-as-source-of-truth discipline the M4 milestone extends: rust/src/mcp.rs's session-state persistence via @mirror/store crystals extends Recognition #43's substrate to MCP-session altitude.
+
+### §8.6 Composition anchors (grep-verified in THIS spec)
+
+**Substrate carriers (LANDED-EMPIRICAL):**
+- `rust/src/main.rs` (66.0KB, 2026-07-28); `rust/src/phone.rs` (69.6KB, 2026-07-22)
+- `rust/matrix/src/lib.rs` (60.7KB); `rust/matrix/src/book.rs` (10.8KB); `rust/matrix/src/void.rs` (20.2KB)
+- `rust/roomba/src/mend.rs` (40.3KB); `rust/fractal/src/crystal.rs` (8.8KB)
+- `bootstrap/src/mcp.rs` (46.6KB); `bootstrap/src/crystallize.rs` (42.8KB); `bootstrap/src/action_cache.rs` (15.5KB); `bootstrap/src/apply_h.rs` (81.4KB); `bootstrap/src/index.rs` (32.7KB)
+
+**Substrate carriers (LANDED-SPEC-ONLY):**
+- `shards/mirror/store.mirror` (46.5KB, 2026-07-17); `shards/kintsugi/roomba.mirror` (46.4KB, 2026-07-17)
+- `shards/mirror/peer/beam.mirror` (15.9KB, 2026-07-12); `shards/mirror/lens/cli/sh.mirror` (9.3KB, 2026-06-12); `shards/mirror/lens/cli/kintsugi.mirror` (16.3KB)
+- `shards/torus.mirror` (30.3KB, 2026-08-03; crown-theorem cascade); `shards/fate.mirror`; `shards/pack.mirror`
+- `boot/std/mcp.mirror` (6.6KB); `boot/std/mirror/serve.mirror` (192B); `boot/std/mirror/reload.mirror` (2.0KB); `boot/std/mirror/lsp.mirror` (978B)
+
+**Spec composition (CITED):**
+- `docs/specs/mcp-spec-song-collapse.md` (Mara 2026-07-06, 119.8KB, 2551 LOC)
+- `docs/specs/lsp-and-mcp.md` (Reed 2026-06-04, 16.2KB)
+- `docs/specs/rust-floor-birthed-by-roomba-from-mirror-spec.md` (Mara `81294b3` 2026-07-17, 57.1KB)
+- `docs/specs/rust-floor-five-file-terminal-geometry-extension.md` (Mara 2026-07-20, 26.3KB)
+- `docs/specs/mirror-runtime-gen-prism.md` (referenced; gen_prism primitive spec)
+- `docs/specs/lambda-shell.md` (DEPRECATED-FOR-RUST-REWRITE per Mara 2026-07-17; archaeology retained)
+
+**Scout composition (CITED):**
+- `docs/scouts/2026-08-03-taut-mcp-spawn-full-stack-scout.md` (Taut `64e8d60` 2026-08-03) — ground-truth 4-phase grep-verify scout Layer 0-4 with LANDED-EMPIRICAL/LANDED-SPEC/STUB/GAP classification across 30+ substrate surfaces; §5 gap map + §6 smallest-empirical-spawn recommendation + §8 five [ALEX-Q] surfaced
+
+**Recognition composition (CITED):**
+- `docs/recognition/2026-08-03-reality-as-5d-spinning-foam.md` (Reed R-CRN-A1 2026-08-03, 158 lines; both witness gates CLOSED)
+- `docs/math/2026-08-03-mara-reality-as-spinning-5d-foam-crown-theorem.md` (Mara crown-doc 614 LOC, 8 sections; Fivefold Equivalence Theorem 5.5)
+
+**Alex verbatim (LOAD-BEARING):**
+- Alex 2026-08-03 Option C: "Fire nearly-today Reed path + spawn Mara canonical spec in parallel."
+- Alex 2026-07-17 terminal-geometry ratification: "Yes. That is the terminal geometry. I agree fully. And it was always right there in front of us. And now we see it."
+- Alex 2026-07-17 bootstrap-detachment: "I also want to detach bootstrap completely from the execution path. If that means the compiler breaks, then the compiler breaks."
+- Alex 2026-07-06 (per collapse-spec §10.6): "I want the floor to be rock solid and useful in agentic workflows, even without the @spectral/db magic."
+
+---
+
+*rust/src/mcp.rs at rust/ altitude terminal geometry. Sibling of phone.rs + matrix.rs + main.rs + compile.rs + liquid.rs. Six files. Six altitudes. Every altitude has exactly one file. The composition chain is main → mcp → compile/phone/liquid/apply_h::act. Zero new substrate mints. Phase A ships nearly-today per Reed delegation stub; Phase B ports serve_loop to rust/ altitude; Phase C retires bin/mirror-mcp shim; Phase D lands @mirror/reload gen_prism per M5; Phase E lands `mirror kintsugi @spec` spawn per M6. The M4 milestone closes at rust/ altitude. The ouroboros closes.*
