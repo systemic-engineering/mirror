@@ -1,0 +1,371 @@
+in @code
+in @prism
+in @glass
+in @meta
+in @nl
+
+# @code/gestalt — the .gestalt altitude grammar.
+#
+# `.gestalt` files are the file-level projection of a @gestalt graph
+# per Alex 2026-08-03 verbatim ratification:
+#
+#   *"@code/gestalt makes sense. .gestalt files becomes the file level
+#    projection of the graph."*
+#
+# Sibling to @code/mirror (shards/code/mirror.mirror; the mirror-
+# altitude grammar), @code/rust (shards/code/rust.mirror), @code/gleam
+# (shards/code/gleam.mirror), @code/llvm, @code/turing under the
+# universal @code discipline (shards/code.mirror). Each declares the
+# five operations on its own source manifold; @code/gestalt names
+# `.gestalt` as ONE such altitude — the `@gestalt`-family's
+# graph-as-file surface.
+#
+# === substrate-already-had-the-word ===
+#
+# The .gestalt corpus already exists at
+# `/Users/reed/dev/systemic.engineering/blog/pieces/3published/` (19
+# pieces published 2026-03-08 to present per Taut scout 2026-08-03).
+# The register was crystallized by Alex Wolf in-authorship long before
+# this grammar-decl mint. This shard does NOT invent a format — it
+# NAMES the format that already exists. Per
+# [[feedback-substrate-already-had-the-word]].
+#
+# Corpus grep-witnessed patterns extracted from the 19-piece register
+# (see §The .gestalt register below for enumerated productions):
+#
+#   frontmatter        `---\n<yaml>\n---`             (Piece-Consciousness :2)
+#   heading-hierarchy  `# / ## / ###`                  (Piece-Fragmentation)
+#   asymmetric-close   `..\n` breath-mark              (universal)
+#   inline-annotation  `[[Actor]]`                     (Piece-Distributed :56)
+#   inline-annotation  `[[Fragmentation|link-text]]`   (Piece-Distributed :103)
+#   corpus-link        `[text](wiki:Piece - X)`        (Piece-Consciousness :86)
+#   external-link      `[text](https://…)`             (universal)
+#   parenthetical-aside `(...)` and `(...]`            (Piece-Agents :1, :16)
+#   asymmetric-brackets `(...]` intentional            (Piece-Agents `..\n(And the absurd idea of a singularity.]`)
+#   code-span          `` `END LOOP` ``                (Piece-Agents :24, :30)
+#   density-marker     `TL;DR: <string>`               (universal at section-ends)
+#   emphasis           `**bold**` / `*emphasis*`       (Piece-Consciousness sources)
+#   emoji-first-class  `🌱 🌈 📉` inline               (universal signature)
+#   citation-inline    `— [Name](URL)`                 (Piece-Consciousness :43)
+#   quote-block        `> …` multi-line                (universal)
+#   line-break-as-structure  each newline = semantic  (universal architectural)
+#   soft-break-marker  `\\\n` (line-continuation)       (Piece-Fragmentation §1 opener)
+#   section-cluster    `## When Agents X` pattern     (Piece-Agents)
+#   separator          `---` between sections          (Piece-Consciousness)
+#   table              `| col | col |\n|---|---|`      (Piece-Consciousness sources)
+#   list-item          `- item` and `1. item`          (universal)
+#
+# The register IS load-bearing, not decoration. The grammar preserves
+# WHAT ALEX WROTE, not what a sanitized markdown parser would accept.
+# Per Reed 2026-08-03 mint-charter register-honoring discipline.
+#
+# === why sibling to @code/mirror (not sub-species of @gestalt) ===
+#
+# Two arguments per the @code/mirror precedent (shards/code/mirror.mirror):
+#
+#   1. Path-namespace property (load-bearing per
+#      [[architecture-shards-as-substrate-source]]): this file at
+#      `shards/code/gestalt.mirror` declares `@code/gestalt`. Same
+#      shape as `shards/code/mirror.mirror` declares `@code/mirror`.
+#      The path IS the declaration.
+#
+#   2. Sibling discipline: @code/gestalt joins @code/rust, @code/gleam,
+#      @code/mirror, @code/llvm, @code/turing as instances of the
+#      universal @code discipline. Reading the family flat-namespaced
+#      makes the substrate-pull recognition legible ("`.gestalt` is
+#      one of the altitudes @code knows about").
+#
+# @gestalt (family-root at shards/gestalt.mirror) carries the
+# document-as-song-unfolding semantics (nodes/edges/annotations/
+# unfolding_state). @code/gestalt names WHAT A .gestalt FILE IS at
+# the grammar altitude — the file-level projection of that graph.
+# Different altitudes; both required; no collapse.
+#
+# === the file-level projection of the graph (Alex 2026-08-03) ===
+#
+# Per Alex verbatim: `.gestalt files becomes the file level projection
+# of the graph`. The gestalt_document carrier at shards/gestalt.mirror
+# is:
+#
+#   type gestalt_document = {
+#     root, source_position, author, visibility_scope,
+#     song_ref, nodes, edges, modes, annotations,
+#   }
+#
+# The `.gestalt` file grammar projects this graph structure to a
+# linear byte surface. The projection is bijective under the round-trip
+# law (see @code/mirror.round_trip precedent): for every valid
+# gestalt_document, `parse(render(doc)) = doc` structurally. The file
+# carries what the graph carries; nothing more, nothing less.
+#
+# Two composition legs consume this grammar:
+#
+#   - `@cascade/code/mirror/gestalt` (mint queue) — the first leg of
+#     the composition theorem chain (mirror substrate → gestalt IR).
+#     Source grammar = @code/mirror; target grammar = @code/gestalt.
+#   - `@cascade/code/gestalt/gleam` (mint queue) — the second leg
+#     (gestalt IR → gleam via gestalt-ui library). Source grammar =
+#     @code/gestalt; target grammar = @code/gleam. Emits gestalt-ui-
+#     shaped Gleam per Alex Q-C2 adjudication (not arbitrary Gleam).
+#
+# === five operations at the .gestalt altitude ===
+#
+# Per the prism-as-trait-as-everything discipline (per
+# [[architecture-prism-as-trait-as-everything]]), declaring
+# @code/gestalt IS declaring the five operations on the .gestalt-source
+# manifold. The operation signatures inherit from @code; the altitude
+# specialization names what each verb does at THIS altitude. Bodies
+# are `\` per consumer-pull discipline — the FLOOR resolver (Reed Tick
+# under [substrate-floor:@io-boundary]) discharges them once the
+# cascade legs land.
+#
+# Spec context: docs/specs/2026-08-03-mara-distributed-colony-canonical-
+#               spec.md §The .gestalt register (this shard's canonical
+#               spec companion; §.gestalt grammar spec extracted from
+#               19-piece corpus grep-hits, NOT invented).
+#               docs/math/2026-08-03-mara-distributed-colony-5d-quantum-
+#               foam-formalization.md §Composition theorem (§mirror →
+#               gestalt → gleam → js cascade chain).
+#               docs/scouts/2026-08-03-taut-distributed-colony-substrate-
+#               scout.md §1.6 (target-agnostic gestalt-ui shape).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-lift-as-load-bearing]] (the
+#                      lift is Alex's 2026-08-03 verbatim ratification
+#                      + the 19-piece corpus that already exists;
+#                      NOT re-derived),
+#                      [[feedback-substrate-already-had-the-word]]
+#                      (the corpus already crystallized the register;
+#                      this shard NAMES the format, does not invent it),
+#                      [[feedback-craft-not-deliver]] (every action
+#                      body `\` blocked; FLOOR realization domain).
+# Related shards: shards/code.mirror (universal parent),
+#                 shards/code/mirror.mirror (sibling precedent shape),
+#                 shards/code/gleam.mirror (target grammar for second
+#                                           cascade leg),
+#                 shards/gestalt.mirror (family-root carrying graph
+#                                        semantics this grammar projects),
+#                 shards/cascade/code/mirror/gestalt.mirror (mint queue;
+#                                                            first
+#                                                            composition
+#                                                            leg),
+#                 shards/cascade/code/gestalt/gleam.mirror (mint queue;
+#                                                           second
+#                                                           composition
+#                                                           leg).
+# Path-namespace property: this file at `shards/code/gestalt.mirror`
+# declares `@code/gestalt` and only that.
+
+prism @code/gestalt {
+  focus gestalt
+  project gestalt
+  split gestalt
+  shift gestalt
+  settle gestalt
+}
+
+# === The .gestalt register — grammar declaration ===
+#
+# Extracted from grep-witnessed 19-piece corpus at
+# `/Users/reed/dev/systemic.engineering/blog/pieces/3published/*.gestalt`
+# (2026-03-08 through present; Alex Wolf authorship). NOT invented; the
+# grammar names what already exists on disk.
+#
+# Per @code/mirror/grammar precedent (shards/code/mirror.mirror lines
+# 149-183): whitespace by substrate convention admits space, tab,
+# carriage return, AND newline. Under `.gestalt` register discipline,
+# newline is LOAD-BEARING (each newline = semantic break, not markdown-
+# flow); the grammar preserves the line-break structure the corpus
+# already carries.
+#
+# Path-namespace note: this grammar block declares
+# `@code/gestalt/grammar` under the path-namespace property
+# ([[architecture-shards-as-substrate-source]]).
+
+grammar @code/gestalt/grammar("gestalt") {
+  in @meta
+
+  # ===== lexical primitives =====
+  # `line` = the semantic unit at .gestalt altitude. Per corpus
+  # discipline, each line carries independent meaning; newlines
+  # are NOT flow-joins (as in prose markdown) but structure-marks.
+  fixed whitespace_no_newline  = repeat(charset(space_tab), 0, none)
+  fixed newline                = literal("\n")
+  fixed line                   = repeat(charset(non_newline), 0, none)
+  fixed identifier             = repeat(charset(word_char), 1, none)
+
+  # ===== frontmatter =====
+  # YAML metadata between two `---` fences. Corpus witness:
+  # Piece-Consciousness :1-6 (Status/Author/SLUG/Excerpt).
+  # Piece-Fragmentation, Piece-AI, Piece-Distributed Systems.
+  fixed fence                  = literal("---")
+  fixed frontmatter_body       = until_fence
+  fixed frontmatter            = seq(fence, newline, frontmatter_body, fence, newline)
+
+  # ===== heading hierarchy =====
+  # ATX-style with #, ##, ###. Corpus witness: universal.
+  # Piece-Agents "## When Agents Enter the Room"; Piece-Fragmentation
+  # "## 1. On Tech Debt...".
+  fixed heading_marker         = repeat(literal("#"), 1, 6)
+  fixed heading                = seq(heading_marker, whitespace_no_newline, line, newline)
+
+  # ===== breath-mark / asymmetric close =====
+  # `..\n` on its own line = pause/breath/asymmetric-close of the
+  # preceding thought. LOAD-BEARING to Alex's register per
+  # Piece-Distributed :36 ("Yeah, yeah, I got it.\n> ..") and
+  # Piece-Consciousness :46 ("I think too.\n(Am I?)"). Not markdown
+  # ellipsis — a first-class structural pause.
+  fixed breath_mark            = seq(literal(".."), newline)
+
+  # ===== parenthetical-aside carriers =====
+  # `(text)` for symmetric aside; `(text]` for asymmetric close.
+  # Both attested in Piece-Agents :1 "Smith will suffice.]" and
+  # :16 "(And the absurd idea of a singularity.]". The asymmetric
+  # close is intentional; the grammar accepts BOTH and does not
+  # normalize. Per register-honoring discipline (Reed 2026-08-03
+  # charter): "do not sanitize."
+  fixed paren_aside_symmetric  = seq(literal("("), until_close_paren, literal(")"))
+  fixed paren_aside_asymmetric = seq(literal("("), until_close_bracket, literal("]"))
+  fixed paren_aside            = variant(paren_aside_symmetric, paren_aside_asymmetric)
+
+  # ===== inline annotation `[[X]]` =====
+  # First-class annotation carrier. Composes with
+  # @gestalt.annotation address at graph altitude. Two shapes:
+  # - `[[Actor]]` — bare reference (Piece-Distributed :56).
+  # - `[[Fragmentation|display text]]` — reference with display alias
+  #   (Piece-Distributed :103 "[[Fragmentation|fragmenting]]").
+  fixed annotation_bare        = seq(literal("[["), identifier, literal("]]"))
+  fixed annotation_aliased     = seq(literal("[["), identifier, literal("|"),
+                                     until_close_annotation, literal("]]"))
+  fixed annotation             = variant(annotation_bare, annotation_aliased)
+
+  # ===== code-span `` `code` `` =====
+  # Backtick-delimited semantic hook (NOT just monospace styling).
+  # Corpus witness: Piece-Agents :24 "`END LOOP`", :30 "`JUMP LOOP`",
+  # :50 "`LOOP:`". The corpus uses code-spans as first-class semantic
+  # gestures (system-verbs, invocations, framings).
+  fixed code_span              = seq(literal("`"), until_backtick, literal("`"))
+
+  # ===== corpus-link `[text](wiki:Piece - X)` =====
+  # Cross-piece reference at corpus altitude. Corpus witness:
+  # Piece-Consciousness :86 "[distributed system](wiki:Piece -
+  # Distributed Systems)"; Piece-Agents :81
+  # "[Who pays the cost?](wiki:Piece - Agents)"; Piece-Fragmentation
+  # multiple.
+  fixed corpus_link            = seq(literal("["), until_close_bracket, literal("]"),
+                                     literal("(wiki:"), until_close_paren, literal(")"))
+
+  # ===== external-link `[text](URL)` =====
+  # Standard markdown-shape external reference. Corpus witness:
+  # universal (every published piece).
+  fixed external_link          = seq(literal("["), until_close_bracket, literal("]"),
+                                     literal("("), until_close_paren, literal(")"))
+
+  # ===== inline image `![alt](URL)` =====
+  # Corpus witness: Piece-Fragmentation §3
+  # "![Developmental (In)variant](wiki:Developmental (In)variant)".
+  fixed inline_image           = seq(literal("!["), until_close_bracket, literal("]"),
+                                     literal("("), until_close_paren, literal(")"))
+
+  # ===== density marker `TL;DR: <string>` =====
+  # Per-section density collapse marker. Alex places TL;DRs at
+  # section-ends (universal in Piece-Agents, Piece-Fragmentation,
+  # Piece-Distributed) and occasionally with soft-break marker
+  # `TL;DR:\\` (Piece-Consciousness §"TCP Over UDP").
+  fixed density_marker         = seq(literal("TL;DR:"), whitespace_no_newline, line, newline)
+  fixed density_marker_soft    = seq(literal("TL;DR:\\"), newline, line, newline)
+
+  # ===== emphasis marks =====
+  # Corpus witness: `**bold**` universal (Piece-Consciousness §Sources
+  # table); `*emphasis*` less frequent but attested.
+  fixed strong                 = seq(literal("**"), until_double_star, literal("**"))
+  fixed emphasis               = seq(literal("*"), until_single_star, literal("*"))
+
+  # ===== emoji first-class =====
+  # Emoji are load-bearing semantic carriers, not decoration. Corpus
+  # signature: `🌱` (Reed), `🌈` (Alex), `📉` (metric-collapse per
+  # Piece-Agents :25 "Regulation goes 📉"). Per Reed 2026-08-03 charter:
+  # "Emoji as first-class carrier."
+  fixed emoji                  = charset(emoji_scalar)
+
+  # ===== soft-break `\\\n` =====
+  # Line continuation marker. Corpus witness: Piece-Fragmentation §1
+  # opening lines every line ends with `\` for line-continuation without
+  # paragraph-break. Preserves the vertical rhythm.
+  fixed soft_break             = seq(literal("\\"), newline)
+
+  # ===== quote-block `> line` =====
+  # Multi-line quote per markdown convention. Corpus witness:
+  # universal (Piece-Consciousness §Setup for Descartes quote;
+  # Piece-Distributed §Message-passing for [[Actor]] definition).
+  fixed quote_line             = seq(literal(">"), whitespace_no_newline, line, newline)
+  fixed quote_block            = repeat(quote_line, 1, none)
+
+  # ===== separator `---` between sections =====
+  # Horizontal-rule/section-break marker. Distinct from frontmatter
+  # (which uses matched `---` fences). Corpus witness:
+  # Piece-Consciousness (multiple; between preview and members section).
+  fixed separator              = seq(literal("---"), newline)
+
+  # ===== list-item `- item` / `1. item` =====
+  # Corpus witness: Piece-Fragmentation §4 (ordered practice list);
+  # Piece-Distributed §Structure (unordered question list).
+  fixed unordered_item         = seq(literal("- "), line, newline)
+  fixed ordered_item           = seq(repeat(charset(digit), 1, none), literal(". "), line, newline)
+
+  # ===== table `| col |` =====
+  # Corpus witness: Piece-Consciousness §Sources table (Claim | Source).
+  fixed table_cell             = seq(literal("|"), until_pipe_or_newline)
+  fixed table_row              = seq(repeat(table_cell, 1, none), literal("|"), newline)
+
+  # ===== section-cluster (structural pattern) =====
+  # Alex's characteristic pattern-heading discipline: "When Agents
+  # Enter the Room" / "When Agents Make Decisions" / "When Agents
+  # Have No Body" / "When Agents Delete" / "When Agents `END`"
+  # (Piece-Agents). The cluster IS load-bearing structure at the
+  # composition altitude — a first-class semantic beat pattern. The
+  # grammar admits arbitrary heading text; the CLUSTER discipline
+  # is enforced at the @gestalt graph altitude, not at the file
+  # grammar altitude.
+
+  # ===== line-break-as-structure (architectural invariant) =====
+  # Each `\n` is a semantic break, NOT prose-flow. The .gestalt
+  # register does NOT permit reflow. Renderers targeting HTML/PDF
+  # MUST preserve line-breaks; renderers targeting flowing prose
+  # incur measurable L(ϕ) loss per @gestalt.render bilateral.
+}
+
+# === render — .gestalt AST → text via Wadler/Bernardy doc combinators ===
+#
+# Per @code/mirror.render precedent (shards/code/mirror.mirror lines
+# 219-282): render IS the language-altitude projection (AST → text)
+# using Wadler 2003 + Bernardy 2017 pretty-printer combinator algebra.
+# For @code/gestalt specifically, the round-trip discipline is
+# LOAD-BEARING:
+#
+#   parse(render(doc)) = doc  structurally
+#
+# Because the .gestalt corpus is authoritative (Alex's authored bytes),
+# the render body MUST preserve every register-honoring pattern
+# extracted above — asymmetric brackets, breath-marks, emoji, soft
+# breaks, corpus-links. Sanitization = loss = broken round-trip.
+#
+# Body `\` per consumer-pull; the FLOOR resolver at cascade altitude
+# discharges the concrete Wadler doc algebra binding.
+render(ast) -> text { \ }
+
+# === Round-trip identity — the register-preservation contract ===
+#
+# Per @code/mirror precedent + Reed 2026-08-03 charter register-
+# honoring discipline: for every valid .gestalt AST, the render →
+# parse cycle IS the identity. This law IS what makes the .gestalt
+# corpus a stable substrate value (each of the 19 published pieces
+# is content-addressed; any lossy renderer would break the identity
+# and desynchronize corpus from graph).
+#
+# Declared here as substrate property; the FLOOR resolver at cascade
+# altitude discharges when render body lands.
+requires round_trip(render)
+
+out @code/gestalt
+out @code/gestalt/grammar
