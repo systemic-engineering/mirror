@@ -849,6 +849,491 @@ fragmentation crate + shards/kintsugi + shards/song + docs/math** —
 Mara needs to synthesize into a single `shards/colony.mirror` (or
 similar) that names the discipline verbatim.
 
+---
+
+## §5 Phase 5: cascade<mirror, gleam> mint prerequisites
+
+### 5.1 @cascade family-root shape (landed)
+
+`shards/cascade.mirror` (14.8KB, 2026-06-23 by Mara `ce4874b`) declares
+the parametric loss-lens substrate at family-root altitude. Full
+carrier + action + bilateral surface:
+
+**Carriers** (5 refs):
+```mirror
+type grammar = ref
+type typed_source = ref              # parametric over G
+type compiled_artifact = ref         # parametric over T
+type loss_lens = ref                 # parametric over (S, T)
+type information_loss = ref
+```
+
+**Actions** (3):
+```mirror
+compile(source: typed_source, p: perturbation) -> compiled_artifact { \ }
+
+measure(source: typed_source, artifact: compiled_artifact,
+        lens: loss_lens, p: perturbation)
+  -> imperfect<compiled_artifact, ref, information_loss>
+requires loss_well_defined(lens, source, p)
+{ \ }
+
+cascade(source: typed_source, lens: loss_lens, p: perturbation)
+  -> imperfect<compiled_artifact, ref, information_loss>
+requires cascade_well_defined(lens, source, p)
+{ \ }
+```
+
+**Bilaterals** (3):
+```mirror
+loss_well_defined(lens, source, p) -> verdict { \ }
+grammar_coherent(source, g, p) -> verdict { \ }
+cascade_well_defined(lens, source, p) -> verdict
+  requires grammar_coherent(source, source, p)
+  requires loss_well_defined(lens, source, p)
+  { \ }
+```
+
+**Karen prior art**: Wadler 1989 "Theorems for Free," Reynolds 1983
+parametricity, Pierce 2002 TAPL.
+
+### 5.2 Landed sibling cascade species (9)
+
+```
+shards/cascade/code/formal/prose.mirror     (27.2KB, 2026-06-29)
+shards/cascade/code/gleam/beam.mirror       (24.1KB, 2026-06-23)  ← dual-target sibling
+shards/cascade/code/gleam/js.mirror         (21.4KB, 2026-06-23)  ← PRODUCTION for spectral.engineer content layer
+shards/cascade/code/llvm/turing.mirror      (19.8KB, 2026-07-17)
+shards/cascade/code/purescript/js.mirror    (16.3KB, 2026-06-23)
+shards/cascade/code/rust/go.mirror          (25.7KB, 2026-07-18)
+shards/cascade/code/rust/llvm.mirror        (18.5KB, 2026-07-17)
+shards/cascade/code/rust/wasm.mirror        (11.4KB, 2026-06-23)
+shards/cascade/code/turing/mirror.mirror    (22.1KB, 2026-07-17)   ← REVERSE-DIRECTION sibling
+```
+
+**Critical for the mint**: `shards/cascade/code/turing/mirror.mirror` IS
+the reverse-direction sibling — `source_grammar = @code/turing`,
+`target_grammar = @code/mirror`. It demonstrates how a
+`cascade<X, mirror>` (mirror as TARGET) is shaped.
+
+**Also critical**: `shards/cascade/code/gleam/js.mirror` demonstrates
+`cascade<gleam, js>` — the downstream cascade that the browser-colony
+vision uses AFTER cascade<mirror, gleam> emits Gleam.
+
+### 5.3 What the reverse-direction sibling teaches
+
+`cascade/code/turing/mirror.mirror` (Turing → mirror) uses:
+- Source carrier alias: `type turing_source = program` (program from
+  @code/turing)
+- Target carrier: `type mirror_artifact = labeled(ref,
+  mirror_consumption_metadata)`
+- Composition action: `apply_turing_mirror(prog, p) -> ref` (the
+  "lift" into mirror substrate)
+- Bundle action: `bundle_mirror(substrate_value, metadata, p)
+  -> mirror_artifact`
+- Measure action: `measure_turing_mirror(prog, artifact, p)
+  -> imperfect(mirror_artifact, ref, information_loss)`
+- 4 bilaterals: `turing_well_formed` (source), `mirror_consumption_coherent`
+  (target), `turing_mirror_loss_well_defined` (measurement),
+  `cascade_turing_mirror_admissible` (outcome-substrate-consumable)
+- 1 composed: `turing_mirror_cascade_well_formed` composing all 4
+
+**This IS the template for `cascade<mirror, gleam>` structurally**:
+same 4-bilateral shape + 1 composed + 4 actions + 3 carriers.
+
+### 5.4 What `shards/code/gleam.mirror` provides
+
+`shards/code/gleam.mirror` (2.5KB, 2026-06-06). Minimal:
+```mirror
+prism @code/gleam {
+  focus gleam
+  project gleam
+  split gleam
+  shift gleam
+  settle gleam
+}
+```
+No richer grammar declaration. The Gleam grammar IS the Gleam language
+specification (Louis Pilfold 2018+). Mara can compose over `@code/gleam`
+as a target-grammar reference without additional Gleam-side mint work.
+
+### 5.5 What `shards/code/mirror.mirror` provides
+
+`shards/code/mirror.mirror` (16.2KB, 2026-06-07). Substantial:
+- Five-op prism declaration
+- Grammar sub-block `@code/mirror/grammar` with lexical primitives,
+  type-declaration variant separator, etc.
+- Multi-line-tolerant separator discipline
+- Substrate-pull-realize tick with Phase 2 parser self-hosting anchor
+
+Mirror-source grammar IS declared as substrate-decl. Mara can
+compose over `@code/mirror` as source-grammar reference.
+
+### 5.6 Prerequisites for `shards/cascade/code/mirror/gleam.mirror` mint
+
+**Required prior landings** (all VERIFIED landed):
+
+1. `shards/cascade.mirror` — family-root (Mara `ce4874b`)
+2. `shards/labeled.mirror` — labeled<> functor (needed for the
+   artifact = labeled(module, metadata) pattern; forward-promised per
+   Recognition #93 H4. **NEED TO VERIFY LANDING.**
+3. `shards/code/mirror.mirror` — source-grammar reference
+4. `shards/code/gleam.mirror` — target-grammar reference
+5. `shards/glue.mirror` — the compose action (used by
+   `apply_turing_mirror` for lift back into mirror substrate)
+
+**All required family-roots are landed** — no upstream blockers for
+the mint itself.
+
+### 5.7 Expected shape of `shards/cascade/code/mirror/gleam.mirror`
+
+Following the sibling-pair pattern of `turing/mirror.mirror`
+(reverse-direction) + `gleam/js.mirror` (downstream), the species-decl
+should have:
+
+**Header + prism**:
+```mirror
+in @prism
+in @meta
+in @glass
+in @cascade
+in @labeled
+in @code/mirror
+in @code/gleam
+in @glue          # for compose action if lift back into gleam context needed
+
+# @cascade/code/mirror/gleam — mirror substrate → Gleam source cascade.
+# THE PRODUCTION CASCADE from mirror-substrate .mirror source
+# TO Gleam source (which then feeds cascade<gleam, js> for browser
+# OR cascade<gleam, beam> for BEAM).
+
+prism @cascade/code/mirror/gleam {
+  focus cascade
+  project cascade
+  split cascade
+  shift cascade
+  settle cascade
+}
+```
+
+**Carriers** (5):
+```mirror
+type mirror_source = ref                        # a .mirror file / shard closure
+type gleam_module_out = ref                     # emitted Gleam source (.gleam file)
+type gleam_target_metadata = ref                # entry module + FFI marks +
+                                                # target-flag hint (js OR beam OR both)
+type gleam_source_out = labeled(gleam_module_out, gleam_target_metadata)
+type mirror_gleam_information_loss = ref        # composite loss profile
+```
+
+**Actions** (3):
+```mirror
+apply_mirror_gleam(source: mirror_source, p: perturbation)
+  -> gleam_module_out
+requires mirror_well_formed(source, p)
+{ \ }
+
+bundle_gleam_target(module: gleam_module_out,
+                    metadata: gleam_target_metadata, p: perturbation)
+  -> gleam_source_out
+requires gleam_target_coherent(module, metadata, p)
+{ \ }
+
+measure_mirror_gleam(source: mirror_source, artifact: gleam_source_out,
+                     p: perturbation)
+  -> imperfect(gleam_source_out, ref, mirror_gleam_information_loss)
+requires mirror_gleam_loss_well_defined(source, artifact, p)
+{ \ }
+```
+
+**Bilaterals** (4 sub + 1 composed):
+```mirror
+mirror_well_formed(source, p) -> verdict { \ }
+    # source-side: .mirror parses; grammar_coherent per @code/mirror
+
+gleam_target_coherent(module, metadata, p) -> verdict { \ }
+    # target-side: emitted Gleam type-checks; FFI marks resolve;
+    # target flag (js/beam) makes sense for the emitted content
+
+mirror_gleam_loss_well_defined(source, artifact, p) -> verdict { \ }
+    # measurement: substrate-decl types (prism, glass, bilateral,
+    # imperfect<>, labeled<>) → Gleam-preserved forms (constructor tags,
+    # generic type parameters, Result/Option, pattern matching);
+    # what mirror admits that Gleam does NOT preserve IS the loss
+
+cascade_mirror_gleam_admissible(artifact) -> verdict { \ }
+    # outcome: emitted Gleam IS compilable by `gleam check` in a
+    # gestalt-ui-shaped context; can feed downstream cascade<gleam, js>
+    # without impedance
+
+mirror_gleam_cascade_well_formed(source, artifact, p) -> verdict
+  requires mirror_well_formed(source, p)
+  requires gleam_target_coherent(unlabel(artifact, p), label_of(artifact, p), p)
+  requires mirror_gleam_loss_well_defined(source, artifact, p)
+  requires cascade_mirror_gleam_admissible(artifact)
+  { \ }
+```
+
+**Karen citations expected**:
+- Pilfold (2018+) — Gleam language specification
+- Wadler (1989), Reynolds (1983), Pierce (2002) — parametricity + type
+  systems (inherited from @cascade family-root)
+- Mara's Supercolony math 2026-07-31 — the target-application anchor
+- Alex 2026-08-02 in-transcript naming (the German sentence)
+- gestalt-ui @ui grammar (`/Users/reed/dev/projects/gestalt-ui/ui.conv`)
+  as the concrete target shape
+
+**Loss dimensions to be measured**:
+- prism-five-op discipline → Gleam has no first-class prism (approx via
+  module + type + fold pattern)
+- `\`-obligation blocks → Gleam requires concrete bodies (loss = the
+  substrate-decl-vs-realization gap)
+- bilateral verdicts with sentinels → Gleam has no sentinel primitive
+- `imperfect<>` type → Gleam has `Result<T, E>` (partial preservation)
+- `labeled<>` functor → Gleam has generic phantom-type pattern (partial)
+- @-family-root inheritance → Gleam has module-import (partial; no
+  family-inheritance)
+
+**Composition surface after mint**:
+```
+mirror shard closure (e.g., gestalt-ui-shaped @ui + @gestalt + @user +
+                     @document + colony/peer/dance)
+   → cascade<mirror, gleam>       [THIS SPECIES TO MINT]
+   → Gleam source (in gestalt-ui-shape)
+   → cascade<gleam, js>           [ALREADY LANDED at js.mirror]
+   → JavaScript bundle
+   → browser-peer-colony deployable
+```
+
+### 5.8 Mint sequencing (Mara handoff order)
+
+**Precondition tick** (verify these are landed):
+- P1: `shards/labeled.mirror` — labeled<> functor primitive
+- P2: any Gleam-side type-preserved-vs-lost enumeration if @cascade
+  requires per-cascade specialization
+
+**Core mint tick** (Mara math + spec + shard):
+- M1: math foundation doc — `docs/math/2026-08-04-mara-cascade-mirror-
+  gleam-loss-profile.md` — enumerates the 6+ loss dimensions with
+  substrate-decl anchors
+- M2: canonical spec — `docs/specs/2026-08-04-cascade-mirror-gleam-
+  species-decl.md` — the full carrier/action/bilateral surface with
+  4-bilateral discharge conditions
+- M3: shard-decl — `shards/cascade/code/mirror/gleam.mirror` — the
+  substrate-decl following the reverse-direction sibling template
+
+**Adjacent-work tick** (upstream mint queue for the browser-colony
+vision):
+- A1: `shards/ui.mirror` — unified @ui merging gestalt-mirror/protected/
+  ui.mirror + gestalt-ui/ui.conv
+- A2: `shards/document.mirror` — promote gestalt-mirror/public/document.mirror
+- A3: `shards/user.mirror` — promote gestalt-mirror/protected/user.mirror
+  optic-algebra; anchor to @subject
+- A4: `shards/user/neuro/{adhd,audhd,autism,nt}.mirror` — species mint
+- A5: `shards/dance.mirror` — the load-bearing missing family-root
+- A6: `shards/peer/colony.mirror` — browser-cell-as-colony-cell
+- A7: `shards/peer/browser.mirror` — WebRTC/WebSocket peer transport
+- A8: `shards/peer/holon.mirror` — Alex's "@peer is an ant made of ants"
+  → OTCA metapixel formalization
+
+### 5.9 Post-mint composition test
+
+The mint is validated when Reed can wire a proof-of-concept:
+1. Take `/Users/reed/dev/projects/gestalt-ui/ui.conv` (the mirror
+   @ui grammar declaration).
+2. Apply `cascade<mirror, gleam>` (the new species) to emit Gleam
+   source that materializes as `/Users/reed/dev/projects/gestalt-ui/src/
+   gestalt_ui/*.gleam` shape (Token(a) + Theme + composite + view).
+3. Apply `cascade<gleam, js>` (landed js.mirror species) to get browser
+   bundle.
+4. Load in browser and materialize a token per Theme — one peer-cell
+   worth of substrate.
+5. Repeat step 4 with 2 peers over WebRTC = colony seed.
+
+**Verdict § Phase 5**: All prerequisites for `cascade<mirror, gleam>`
+mint are landed EXCEPT possibly `shards/labeled.mirror` (verify).
+Sibling species (turing→mirror reverse-direction + gleam→js
+downstream) provide clean shape templates. Expected mint = 5
+carriers + 3 actions + 4 sub-bilaterals + 1 composed bilateral,
+following the landed template exactly. Downstream browser-colony
+composition requires 8 adjacent mints (unified ui + document + user +
+4 neuroprofiles + dance + peer/colony + peer/browser + peer/holon)
+but the CENTRAL CASCADE MINT ITSELF is UNBLOCKED.
+
+---
+
+## §6 Synthesis — the composition surface
+
+### 6.1 What's ready
+
+- **@cascade family + 9 sibling species** all landed with the exact
+  4-bilateral + 1-composed template.
+- **@code/mirror + @code/gleam** as source/target grammar refs both
+  landed.
+- **SpectralCoordinate<5>** landed as Rust const-generic type with
+  full spec anchoring (mirror-native-vcs.md §4.6 + rung-8-9-
+  unification spec).
+- **gestalt-ui Gleam project** with 11 modules + tokens/*.dhall +
+  ui.conv IS the target-artifact shape mirror needs to emit.
+- **gestalt-mirror** with @gestalt + @ui + @user + 4 neuroprofiles
+  is the source-shape ready for promotion to shards/.
+- **glue.gleam topology (hostname/repo/branch/actor)** is the peer
+  addressing that composes with @torus(peer).
+- **garden-client with lustre dep** is the M/V/U + browser-transport
+  prior art scaffold.
+- **16 mirror family-roots landed** — peer/subject/trust/gift/
+  bauchladen/kintsugi/torus/void/mirror/io/fate/tool/spectral/
+  autopoietic/butterfly/song — the substrate is CROWDED with the
+  right primitives.
+- **~30 shard species under @peer + @subject + @kintsugi + @song**
+  already carrying the colony-cell disciplines.
+- **Karen ancestor citation index** is comprehensive: Grassé + Kauffman
+  + Kuramoto + Hansen-Ghrist + Beer + Ashby + Bateson + Foerster +
+  Pask + Kimmerer + Ostrom + neuroprofile empiricists + gift-economy
+  lineage + Schmidt therapy-lineage + Conway + OTCA + Koestler.
+
+### 6.2 What's missing (Mara mint queue, priority-ordered)
+
+**MUST-MINT before browser-colony wiring** (Mara-authored):
+
+1. `shards/labeled.mirror` — labeled<> functor primitive (verify
+   landing; #93 H4 said RESOLVED in some places, forward-promised in
+   others — CHECK BEFORE cascade<mirror, gleam> mint).
+2. `shards/cascade/code/mirror/gleam.mirror` — **the central mint**.
+3. `shards/dance.mirror` — load-bearing ensemble-coordination
+   family-root. Widely cited in @dance references, spec-landed via
+   Mara `fee2727`, but no shard file exists.
+4. `shards/ui.mirror` — unified @ui merging gestalt-mirror + gestalt-ui.
+5. `shards/document.mirror` — promote from gestalt-mirror/public.
+6. `shards/user.mirror` — promote optic-algebra; anchor to @subject.
+7. `shards/user/neuro/{adhd,audhd,autism,nt}.mirror` — 4 species.
+
+**SHOULD-MINT for the full vision**:
+
+8. `shards/peer/colony.mirror` — browser-cell = colony-cell.
+9. `shards/peer/browser.mirror` — WebRTC/WebSocket transport.
+10. `shards/peer/holon.mirror` — Alex's OTCA-metapixel nesting.
+11. `shards/peer/signaling.mirror` — peer discovery.
+12. `shards/mount.mirror` — component mount/reconcile (or accept
+    Lustre as unrepresented target).
+13. `shards/colony.mirror` OR `shards/mycelial.mirror` — the
+    Conway-in-5D-spectral-space discipline verbatim.
+
+### 6.3 Adjacent-project prior art Reed should read
+
+Before Mara math or Reed wiring, both should read:
+- `/Users/reed/dev/projects/gestalt-ui/src/gestalt_ui/*.gleam` (all
+  11 modules) — the target-artifact shape
+- `/Users/reed/dev/projects/gestalt-ui/ui.conv` — the mirror-side
+  @ui grammar declaration
+- `/Users/reed/dev/projects/gestalt-mirror/protected/user.mirror`
+  + `/Users/reed/dev/projects/gestalt-mirror/protected/user/neuro/
+  *.mirror` — the 4 neuroprofile substrate declarations Alex authored
+- `/Users/reed/dev/projects/gestalt-tui/src/gestalt_tui/bridge.gleam`
+  — the BEAM-body BodyState pattern (potential SpectralCoordinate<5>
+  projection)
+- `/Users/reed/dev/projects/garden-client/src/*.gleam` — the browser
+  M/V/U pattern with lustre
+- `/Users/alexwolf/dev/projects/mirror/docs/math/2026-07-31-mara-
+  supercolony-cosmos-quantum-foam.md` — the load-bearing prior-art
+  anchor for the vision (Conway + OTCA + holon + Hölldobler-Wilson +
+  Grassé all cited)
+- `/Users/alexwolf/dev/projects/mirror/docs/math/2026-08-03-mara-
+  spectral-engineer-web-altitude-formalization.md` — Mara's most
+  recent web-altitude formalization (62.7KB, 2026-08-03) that
+  cascade<gleam, js> IS the production cascade
+- `/Users/alexwolf/dev/projects/fragmentation/src/spectral_coordinate.rs`
+  — the SpectralCoordinate<N> const-generic type
+
+### 6.4 Q-CRITICALs for Alex adjudication
+
+**Q-C1**: Is `shards/labeled.mirror` landed? If yes: what commit?
+If no: does its mint precede `cascade<mirror, gleam>` mint (the
+existing sibling shards `cascade/code/turing/mirror.mirror` and
+`cascade/code/gleam/js.mirror` both use `labeled(a, b)` in carrier
+declarations, so the primitive MUST be available at mint time).
+
+**Q-C2**: Should `cascade<mirror, gleam>` emit Gleam that shapes to
+`gestalt-ui`'s exported grammar specifically (Token(a) + Theme +
+composite + view), or should it emit "generic Gleam" that then feeds
+another cascade to shape into gestalt-ui form? Two readings compete:
+- Reading X: `cascade<mirror, gleam>` = mirror-→-arbitrary-Gleam;
+  gestalt-ui shape happens at a higher altitude
+- Reading Y: `cascade<mirror, gleam>` inherently targets gestalt-ui-
+  shape because that's the substrate's ONLY declared Gleam consumer
+- The sibling `cascade/code/gleam/js.mirror` explicitly names
+  spectral.engineer content layer as the production consumer — so
+  Reading Y precedent exists. Alex adjudicate.
+
+**Q-C3**: Is `shards/dance.mirror` LOAD-BEARING BLOCKING for the
+browser-colony vision? If yes: Mara mints @dance FIRST, before
+cascade<mirror, gleam>. If no (Kuramoto phase-lock deferrable to
+"future arc"): cascade<mirror, gleam> lands without ensemble
+discipline and browser peers operate as isolated cells.
+
+**Q-C4**: For `@peer/holon` (Alex's "ant made of ants" OTCA metapixel
+species), is this Mara's next mint after @dance, OR does it defer
+to a later arc? The Supercolony math 2026-07-31 forward-promises it
+but doesn't commit a landing tick.
+
+**Q-C5**: The `ui.conv` file in gestalt-ui is a legacy `.conv`
+extension. Should the substrate-honest path be:
+- Path A: Promote ui.conv verbatim to `shards/ui.mirror` (single
+  authoritative source)
+- Path B: Merge ui.conv (has materialize + compose actions) with
+  gestalt-mirror/protected/ui.mirror (has richer intent-vocabulary)
+  into unified `shards/ui.mirror` (both current sources are
+  incomplete alone)
+- Reed lean: Path B (both files carry load-bearing content the
+  other doesn't).
+
+**Q-C6**: Should the @dance shard live at `shards/dance.mirror` (top-
+level family-root, sibling to @peer/@subject/@torus) OR under
+`shards/song/dance.mirror` (species-under-@song, since @dance is
+temporal-coordination like song/beat + song/movement)? Substrate
+citations lean top-level (referenced at S2 altitude alongside
+@spectral/gen_prism S1 + @spectral/supervisor S3 in the beam.mirror
+bundle-tower); Alex adjudicate.
+
+**Q-C7**: For SpectralCoordinate<5>, is the 5 the RIGHT number for
+the "5D spectral space" of the vision, or is Alex's "5D" a DIFFERENT
+5 (e.g., x/y/z + time + something)? The `SpectralCoordinate<N>` is
+const-generic so `<5>` is a choice; the vision could use `<3>` or
+`<7>` if physical dimensions were meant. Alex adjudicate the
+correspondence: is "5D spectral space" = SpectralCoordinate<5>
+(Fiedler + eigengap + 3 heat-trace samples), OR is 5D a different
+concept that needs its own substrate-decl?
+
+### 6.5 Overall verdict
+
+**MOSTLY-READY**. The composition surface for the vision has:
+- 100% of the @cascade family + sibling-shape templates landed
+- 100% of the source and target @code refs landed
+- 100% of the SpectralCoordinate<5> Rust type landed
+- 100% of the gestalt-ui Gleam target-artifact shape available
+- 100% of the gestalt-mirror source-declarations authored (though
+  not yet promoted to shards/)
+- 85% of the peer/subject/trust/gift/kintsugi/song colony-cell
+  disciplines landed at shards/ altitude
+- @dance ensemble-coordination is the LOAD-BEARING GAP (spec-landed
+  Mara `fee2727` but no shard file)
+- @peer/holon nesting (OTCA metapixel) is Mara-forward-promised
+- Conway/CA-verbatim naming is absent from shards but comprehensively
+  cited in docs/math/2026-07-31-mara-supercolony-cosmos-quantum-foam.md
+
+**The single central mint** (`shards/cascade/code/mirror/gleam.mirror`)
+is UNBLOCKED provided `shards/labeled.mirror` is verified landed
+(Q-C1). Every other prerequisite is present. Mara can proceed to
+math + canonical spec + shard-decl tick immediately after Q-C1 is
+resolved.
+
+**Downstream browser-colony wiring** requires 5-8 additional Mara
+mints (Q-C1 through Q-C7 will adjudicate priority order), but each
+individual mint is small (~15-25KB per shard following the landed
+template patterns) and independent of the others.
+
+
+
 
 
 
