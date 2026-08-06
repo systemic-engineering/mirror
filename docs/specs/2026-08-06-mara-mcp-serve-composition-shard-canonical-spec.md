@@ -307,3 +307,174 @@ If Alex's Q-2 rename is a signal that `@wire` family-root SHOULD be minted at su
 - (b) prescient of substrate `@wire` family-root mint; substrate should migrate to `@wire/json` in a subsequent tick (Position B; requires substrate migration adjudication)?
 
 **Mara Phase 1 landing assumption**: (a) — the composition-shard at `shards/mcp/serve.mirror` composes over `@data/json.parse` / `@data/json.emit` per landed substrate. If Alex ratifies (b), the composition-shard body is edited (grep-and-replace `@data/json` → `@wire/json` at 2 sites in the `serve` pipeline) as part of the substrate migration; the composition-shard shape is namespace-agnostic.
+
+---
+
+## §4 Tools list byte-parity — Phase 1 10-tool wire
+
+**Byte-parity grep-verification** against `bootstrap/src/mcp.rs::tools_list_result` at HEAD (2026-08-06):
+
+The bootstrap `tools_list_result` JSON emits **10 tools** (via `"name": "mirror_..."` entries grep-verified; see §4.1 enumeration). The `assertion vec!` at bootstrap `bootstrap/src/mcp.rs:876-887` asserts **9 stable names + mirror_index** (10 total counting mirror_spawn deprecated alias). Byte-parity Phase 1 discharge of the `tools_reflects_cli_block` bilateral contract MUST emit these 10 tools verbatim (naming + description + inputSchema).
+
+### §4.1 The 10-tool wire (grep-verified enumeration)
+
+Per grep of `bootstrap/src/mcp.rs` for `"name": "mirror_`:
+
+| # | Tool name | CLI verb dispatch | Substrate anchor |
+|---|-----------|-------------------|------------------|
+| 1 | `mirror_compile` | `mirror compile <file>` | `@mirror/compile.compile` (`shards/mirror/compile.mirror`) |
+| 2 | `mirror_craft` | `mirror craft <target> [--target-kind <k>] [--reflect]` | `@mirror/craft.craft` |
+| 3 | `mirror_kintsugi` | `mirror kintsugi --ci --out @data/json <file> [--liquid] [--shatter N]` (Tick 7 shatter fold `ffba2a7`) | `@kintsugi.kintsugi` |
+| 4 | `mirror_init` | `mirror init <path> [--install-hooks]` | `@mirror/init.init` (`docs/specs/mirror-init.md`) |
+| 5 | `mirror_recall` | `mirror recall <spec_dir>` | `@mirror/recall.recall` (`docs/specs/mirror-recall.md`) |
+| 6 | `mirror_peer_beam` | `mirror peer beam <peer_home> [flags…]` | `@mirror/peer/beam.beam` (Tick 3 rename `4f4a257` from mirror_spawn) |
+| 7 | `mirror_beam` | `mirror beam --mission <mission>` | `@mirror/beam.beam` (mirror.spec top-level `command beam` `96aa752`) |
+| 8 | `mirror_spawn` | `mirror spawn <peer_home>` (DEPRECATED alias per two-tick discipline) | `@mirror/peer/beam.beam` via `spawn` alias arm (`b012d3f`) |
+| 9 | `mirror_beam_act` | `mirror beam act <ref> <predicate>` | `@mirror/beam/act.act` (Arc-1 Tick 1.4 `546c2f6`) |
+| 10 | `mirror_roomba` | `mirror roomba --vacuum=<dir>` | `@kintsugi/roomba.vacuum` (Reed 2026-08-03 addition per Alex Option C) |
+| 11 | `mirror_index` | `mirror index <path> [--fiedler] [--full-profile]` | `@mirror/index.index` (Rung 8 Landing 5 `77b8e14` + `317e830`) |
+
+**Count reconciliation**: 11 tool entries in `tools_list_result` JSON emission. The bootstrap test assertion at `bootstrap/src/mcp.rs:876-887` asserts a 9-name `vec!` (excluding `mirror_spawn` alias + INCLUDING `mirror_index` per `77b8e14` Rung 8 landing). Effective wire byte-parity target: **10 unique tools** (mirror_compile / mirror_craft / mirror_kintsugi / mirror_init / mirror_recall / mirror_peer_beam / mirror_beam / mirror_beam_act / mirror_roomba / mirror_index) + `mirror_spawn` deprecated alias per two-tick discipline (11 total emitted; alias is DEPRECATED and will be removed in a subsequent tick per bootstrap docblock).
+
+**Phase 1 landing target**: emit all 11 tool entries verbatim (schema + description + name) for byte-parity with bootstrap `tools_list_result`. The `mirror_spawn` alias retains DEPRECATED status per two-tick discipline; Phase 2 (M5 co-tick) reflective walk drops it when the alias arm retires at `bootstrap/src/mcp.rs`.
+
+### §4.2 Composition body — Phase 1 hardcoded emission
+
+The `@mcp.tools` action body at `shards/mcp/serve.mirror` (Phase 1 landing):
+
+```mirror
+@mcp.tools -> json {
+  # Phase 1 (this spec) — hardcoded 11-tool byte-parity with bootstrap/src/mcp.rs::tools_list_result.
+  # Discharges the tools_reflects_cli_block bilateral-predicate contract byte-parity-empirically;
+  # substrate-structural discharge lifts at Phase 2 (M5 co-tick) via reflective grammar walk.
+  [
+    { "name": "mirror_compile",    "description": "focus: tokenize one .mirror file through grammar lens. Returns SHA-256 hash on success.",
+      "inputSchema": { "type": "object", "properties": { "file": { "type": "string" } }, "required": ["file"] } },
+    { "name": "mirror_craft",      "description": "split: converge a target directory to lambda_0. --target-kind emits code (binary|rust|gleam). --reflect verifies properties without emission.",
+      "inputSchema": { … } },
+    { "name": "mirror_kintsugi",   "description": "settle: kintsugi a .mirror file. --liquid writes inferred properties below ---. --shatter N seeds N cracks. `--ci` walks a corpus. Returns canonical source or typed verdict envelope.",
+      "inputSchema": { … } },
+    { "name": "mirror_init",       "description": "init: mirror-native store bootstrap. …", "inputSchema": { … } },
+    { "name": "mirror_recall",     "description": "recall: inbound-trajectory dual of peer beam. …", "inputSchema": { … } },
+    { "name": "mirror_peer_beam",  "description": "peer beam: the peer HAS a torus. …", "inputSchema": { … } },
+    { "name": "mirror_beam",       "description": "beam: anonymous inference primitive. …", "inputSchema": { … } },
+    { "name": "mirror_spawn",      "description": "DEPRECATED (2026-07-08): use mirror_peer_beam instead. …", "inputSchema": { … } },
+    { "name": "mirror_beam_act",   "description": "beam act: dispatch a substrate-decl'd action against the 7-combinator evaluator surface (@apply_h). …", "inputSchema": { … } },
+    { "name": "mirror_roomba",     "description": "roomba: substrate walker that back-projects to @mirror/store. …", "inputSchema": { … } },
+    { "name": "mirror_index",      "description": "@mirror/fractal-coherence measurement: walk substrate DAG, compute graph Laplacian's top-16 eigenvalues …", "inputSchema": { … } }
+  ]
+}
+```
+
+**Full description + inputSchema verbatim from bootstrap/src/mcp.rs::tools_list_result** — the composition-shard body carries the full 11-entry byte-parity JSON literal. Reed's actual `.mirror` file mint at `shards/mcp/serve.mirror` copies the descriptions + inputSchema fields verbatim from bootstrap (grep-verified per §4.1); spec-altitude here elides the full schema for brevity.
+
+### §4.3 Composition body — @mcp.dispatch Phase 1 hardcoded tool-name → action-ref map
+
+The `@mcp.dispatch` action body at `shards/mcp/serve.mirror` for `tools/call` dispatch (Phase 1):
+
+```mirror
+@mcp.tool_action_ref(name) -> ref {
+  # Phase 1 (this spec) — hardcoded tool-name → substrate action-ref map.
+  # Byte-parity with bootstrap/src/mcp.rs::dispatch_tool_call match arms.
+  match name {
+    "mirror_compile"    => @mirror/compile.compile,
+    "mirror_craft"      => @mirror/craft.craft,
+    "mirror_kintsugi"   => @kintsugi.kintsugi_ci,       # --ci --out @data/json per Tick 7 fold
+    "mirror_init"       => @mirror/init.init,
+    "mirror_recall"     => @mirror/recall.recall,
+    "mirror_peer_beam"  => @mirror/peer/beam.beam,
+    "mirror_beam"       => @mirror/beam.beam,
+    "mirror_spawn"      => @mirror/peer/beam.beam,      # DEPRECATED alias
+    "mirror_beam_act"   => @mirror/beam/act.act,
+    "mirror_roomba"     => @kintsugi/roomba.vacuum,
+    "mirror_index"      => @mirror/index.index,
+    _ => @mcp.error_tool_not_found(name)
+  }
+}
+```
+
+Phase 2 (M5 co-tick) lifts this map to reflective corpus walk via `roomba::mend::load_bilateral_corpus` + `@mirror/spectral.gestalt` — every landed shard with `@mcp/tool` annotation becomes a wire tool, dispatched via `apply_h::act(action_ref, args)`.
+
+### §4.4 Grammar walker deferred to Phase 2 (M5 co-tick per Alex Q-4)
+
+Alex Q-4 RATIFIED grammar walker deferral to Phase 2 M5+; Phase 1 tools-list hardcoded via `discharge_action` byte-parity 10-tool wire. Rationale (from Alex Q-4 concurrence with Reed-lean):
+
+- Byte-parity Phase 1 establishes empirical continuity with landed bootstrap MCP wire; MCP clients (Claude Code, etc.) observe zero behavior change during rust/-altitude cut-over from bootstrap-exec-delegation to substrate-composition-native dispatch.
+- Reflective walker requires additional rust/-altitude primitive (grammar walker / AST walk; GAP per Taut §3 Phase 3 verdict); Fire A + B + C is scoped to smallest primitive-gap closure per Taut §7 ranking. Grammar walker is Fire D (M5+ co-tick) NOT this spec's blocker.
+- Bilateral-predicate contract `tools_reflects_cli_block` is discharged bilaterally-violated-by-design at Phase 1 (byte-parity carries the empirical claim; the reflective claim discharges structurally at Phase 2). TODO(M5) marker embedded in the composition-shard body; empirical firing at Phase 1 verifies the byte-parity claim; structural firing at Phase 2 verifies the reflective claim.
+
+**Phase 2 M5 co-tick preconditions**:
+
+1. **Grammar walker primitive at rust/ altitude** (Reed Fire D) — port `bootstrap/src/spectral.rs::Fold5` AST walker to rust/ altitude, OR compose over already-landed `roomba::mend::load_bilateral_corpus` extended to detect `@mcp/tool` annotations on shard bilateral blocks.
+2. **`@mcp/tool` annotation mint** — first-class grammar annotation per `docs/specs/lsp-and-mcp.md`; shard bilateral blocks that carry `@mcp/tool` annotation become wire tools automatically.
+3. **`@mirror/reload` gen_prism at rust/ altitude** (per `boot/std/mirror/reload.mirror`) — emits `notifications/tools/list_changed` on grammars_hash drift; MCP client re-queries `tools/list` on notification.
+
+**Phase 2 M5 landing shape** (forward-promise; NOT this spec's landing target):
+
+```mirror
+@mcp.tools -> json {
+  # Phase 2 M5 co-tick — reflective grammar walk.
+  @mirror/spectral.gestalt
+    |> shards.filter(has_annotation(@mcp/tool))
+    |> shards.map(shard_to_tool_json_schema)
+    |> @data/json.array
+}
+
+# @mirror/reload gen_prism fires on every request; emits notifications/tools/list_changed
+# when grammars_hash drifts. MCP client re-queries tools/list on notification.
+```
+
+---
+
+## §5 M4 direction retirement — DEPRECATED-FOR-COMPOSITION-SHARD-REWRITE
+
+### §5.1 What the 2026-08-03 M4 canonical spec proposed
+
+Per `docs/specs/2026-08-03-mara-rust-mcp-floor-lift-m4-canonical-spec.md`:
+
+- **Direction**: full port of `bootstrap/src/mcp.rs::serve_loop` (~500 LOC) to rust/ altitude as `rust/src/mcp.rs` — sixth rust/-altitude sibling of phone.rs / matrix.rs / main.rs / compile.rs / liquid.rs.
+- **Scope**: rust/src/mcp.rs holds `serve_loop` natively; retires `bin/mirror-mcp` bash shim; `.mcp.json` points at `~/.local/bin/mirror` with `args: ["serve", "--mcp"]`; discharges Blocker A per Taut `64e8d60` scout §5 gap map (`"No mirror serve --mcp verb at rust/src/main.rs. MCP still routes through bin/mirror-mcp → bootstrap/mirror binary."`).
+- **Substrate composition**: rust/src/mcp.rs at spec's §5 composition-into-existing-substrate table treated as substrate-honest additive extension (zero new substrate primitives; 16-row composition edge enumeration; four refusal candidates NOT taken per Michelangelo/marble).
+
+### §5.2 What this spec substrate-honestly replaces
+
+Per Alex 2026-08-05 verbatim reframe (§0 above): rust/ altitude serve_loop port is substrate-dishonest. Wire-protocol logic lives at substrate composition altitude, not rust/ altitude. The correct pattern is primitives-at-rust + composition-at-substrate:
+
+| M4 (2026-08-03) proposed | THIS spec substrate-honestly replaces |
+|--------------------------|---------------------------------------|
+| `rust/src/mcp.rs` sixth rust/-altitude sibling (~400-700 LOC) | `shards/mcp/serve.mirror` composition-shard body (~200-400 lines substrate composition; no rust/ module) |
+| `serve_loop` at rust/ altitude | `serve -> imperfect { pipe-chain }` composition at substrate altitude (§1.2 Variant A) |
+| `tools_list_result` at rust/ altitude (11-tool hardcoded JSON) | `@mcp.tools -> json { hardcoded byte-parity Phase 1; reflective walk Phase 2 }` composition body (§4.2) |
+| `dispatch_tool_call` at rust/ altitude (11-arm match) | `@mcp.dispatch(request) -> response { apply_h::act(tool_action_ref(name), args) }` composition body (§4.3) |
+| ~500 LOC rust/ altitude serve_loop port | ~55 LOC rust/ altitude primitives per Reed Fire A (R-PRIM-1 wire.rs + R-PRIM-2 pub-visibility + R-PRIM-3 discharge_action) |
+| M4 milestone charter at collapse-spec §5.2 | Milestone charter reframed: M4 IS composition-shard mint + Fire A primitives lift + Fire C empirical wire; NOT rust/src/mcp.rs port |
+
+### §5.3 Retirement mechanism — REED-INLINE marker at M4 spec header
+
+Reed will land a REED-INLINE marker at the header of `docs/specs/2026-08-03-mara-rust-mcp-floor-lift-m4-canonical-spec.md` post-ratification of THIS spec. Marker shape:
+
+```markdown
+> **DEPRECATED-FOR-COMPOSITION-SHARD-REWRITE (2026-08-06):** the `rust/src/mcp.rs`
+> port direction proposed in this spec is substrate-dishonest per Alex 2026-08-05
+> verbatim reframe ("MCP served through mirror geometry, no specific mcp rust code").
+> The substrate-honest replacement is `docs/specs/2026-08-06-mara-mcp-serve-composition-shard-canonical-spec.md`
+> — primitives-at-rust (~55 LOC per Reed Fire A) + composition-at-substrate
+> (`shards/mcp/serve.mirror` composition-shard body per Mara Fire B THIS spec).
+> The 2026-08-03 M4 spec is retained for archival ancestry only; §1-4 (M4 in context,
+> rust/src/mcp.rs shape, Phase C-D-E migration, tools list surface) are superseded;
+> §5-8 (composition-into-existing-substrate table, [ALEX-Q]s, Q.E.D. sketch, Karen
+> ancestry) remain useful cross-references.
+```
+
+**Marker landing altitude**: REED-INLINE per Reed's inline-edit authorship pattern (Reed 2026-07-16 REED-INLINE #2 at `docs/loop/CURRENT.md` per `f1767c0` precedent); pure-docs 📝 markdown-only bypass; single-line-edit at spec header line 4 (Status field) OR docblock addition immediately after title.
+
+### §5.4 What survives from the 2026-08-03 M4 spec
+
+- **§5 composition-into-existing-substrate table** (16 rows enumerating substrate composition anchors): survives as cross-reference; the composition graph the M4 spec enumerated is substrate-real and this spec inherits the composition edges (see §7 below).
+- **§6 five [ALEX-Q] residues** (Phase B in-process-vs-subprocess default; apply_h::act rust/ altitude lift co-tick; @mcp/tool grammar annotation mint scope; pq-collapse vs 9-tool discipline; ~/.mirror/serve.sock daemon disposition): all five survive as cross-reference; Alex 2026-08-06 adjudication touched Q-1 (apply_h::act naming; ratified concurrent with Reed-lean) and structurally shifted the others (Q-2 in-process moot at composition altitude; Q-3 @mcp/tool mint still forward-promise; Q-4 9-tool wire ratified byte-parity Phase 1; Q-5 daemon socket unchanged).
+- **§7 Q.E.D. six-move proof sketch**: superseded — this spec's §8 Q.E.D. re-derives the proof at composition-shard altitude with the primitives-vs-composition partition explicit.
+- **§8 Karen ancestry ladder**: SURVIVES ENTIRELY; this spec's §9 EXTENDS the ladder with Alex 2026-08-05 verbatim + Taut Fire scout `7af55ee` + Recognition `#R-reality-as-5d-spinning-foam` RATIFIED 2026-08-03 + `feedback-rust-delivers-primitives-substrate-delivers-composition` memory.
+
+### §5.5 What survives from Reed's Phase A delegation stub
+
+Reed's Phase A delegation stub landing (`rust/src/main.rs::cmd_serve_mcp` at `59591a9`) — the transitional bootstrap-exec-delegation that ships empirical MCP-spawn TODAY — SURVIVES as transitional-until-Fire-C. Post-Fire C: `cmd_serve_mcp` is re-wired to invoke `@mcp/serve.mirror` composition-shard via `apply_h::act` discharge; bootstrap-exec-delegation retires. The stub is NOT retired at Phase 1 landing; it retires at Fire C landing when the composition-shard fires empirical MCP round-trip. Two-tick discipline: stub + composition co-exist; empirical parity verified; stub retires.
