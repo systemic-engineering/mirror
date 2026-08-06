@@ -150,8 +150,17 @@ pub(crate) fn write_frame_to<W: io::Write>(writer: &mut W, frame: &[u8]) -> io::
 /// composition path. Delegates to [`read_frame_from`] with
 /// `io::stdin().lock()`; the parsing logic is testable in isolation
 /// via that generic.
+///
+/// **Reed 2026-08-06 R-PRIM-2 visibility lift** `pub(crate)` → `pub`
+/// per Alex 2026-08-05 substrate-honest reframe (rust/ delivers
+/// primitives; substrate delivers composition). This primitive is
+/// composed OVER by `@mcp/serve.mirror` (Mara Fire B M-COMP-1) via
+/// apply_h::act discharge; external visibility is load-bearing.
+/// `#[allow(dead_code)]` retained until Fire A tick 3 (R-PRIM-3
+/// apply_h.rs) wires the primitive through act discharge — removes
+/// naturally when composition-path fires.
 #[allow(dead_code)]
-pub(crate) fn read_stdin_frame() -> io::Result<Vec<u8>> {
+pub fn read_stdin_frame() -> io::Result<Vec<u8>> {
     let stdin = io::stdin();
     let mut locked = stdin.lock();
     read_frame_from(&mut locked)
@@ -161,8 +170,12 @@ pub(crate) fn read_stdin_frame() -> io::Result<Vec<u8>> {
 /// Mara §3.2 item 2. Composition: `@data/json.emit` + `@io/bytes`.
 /// Delegates to [`write_frame_to`] with `io::stdout().lock()`; flushes
 /// before returning.
+///
+/// **Reed 2026-08-06 R-PRIM-2 visibility lift** `pub(crate)` → `pub`
+/// per Alex 2026-08-05 substrate-honest reframe. See
+/// [`read_stdin_frame`] docblock for rationale.
 #[allow(dead_code)]
-pub(crate) fn write_stdout_frame(frame: &[u8]) -> io::Result<()> {
+pub fn write_stdout_frame(frame: &[u8]) -> io::Result<()> {
     let stdout = io::stdout();
     let mut locked = stdout.lock();
     write_frame_to(&mut locked, frame)
