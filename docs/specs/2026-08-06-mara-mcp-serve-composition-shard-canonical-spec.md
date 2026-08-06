@@ -478,3 +478,132 @@ Reed will land a REED-INLINE marker at the header of `docs/specs/2026-08-03-mara
 ### §5.5 What survives from Reed's Phase A delegation stub
 
 Reed's Phase A delegation stub landing (`rust/src/main.rs::cmd_serve_mcp` at `59591a9`) — the transitional bootstrap-exec-delegation that ships empirical MCP-spawn TODAY — SURVIVES as transitional-until-Fire-C. Post-Fire C: `cmd_serve_mcp` is re-wired to invoke `@mcp/serve.mirror` composition-shard via `apply_h::act` discharge; bootstrap-exec-delegation retires. The stub is NOT retired at Phase 1 landing; it retires at Fire C landing when the composition-shard fires empirical MCP round-trip. Two-tick discipline: stub + composition co-exist; empirical parity verified; stub retires.
+
+---
+
+## §6 [ALEX-Q] residues — genuine undecidables at Mara altitude
+
+Only genuine undecidables surfaced here. All five of Alex 2026-08-06 adjudications (Q-1 through Q-5) are already RATIFIED per §0; those are NOT residues. Residues below are questions that emerged during Fire B spec authorship that Mara cannot decide at spec-author altitude.
+
+### §6.1 [ALEX-Q-R1] Substrate namespace `@data/json` vs `@wire/json`
+
+**Fully articulated at §3 above.** Position A (Mara-lean): keep `@data/json` at substrate + `wire.rs` at rust/ altitude; substrate-already-had-the-word + substrate/rust altitude decoupling per phone.rs precedent. Position B: mirror the rust/ rename at substrate → mint `@wire/json` family-root + species; requires substrate migration. Alex Q-2 rename signal is ambiguous between (a) rust/-altitude naming honesty only vs (b) prescient substrate migration seed.
+
+**Landing assumption Phase 1**: Position A. Composition-shard body uses `@data/json.parse` / `@data/json.emit`. If Alex ratifies Position B, substrate migration tick lands first; composition-shard body edits at 2 sites in the `serve` pipeline.
+
+### §6.2 [ALEX-Q-R2] `@mcp/tool` annotation extension shape
+
+The Phase 2 M5 co-tick reflective grammar walk requires `@mcp/tool` first-class grammar annotation per `docs/specs/lsp-and-mcp.md` §"MCP dispatch table". Grep-verified 2026-08-06: `@mcp/tool` DOES NOT EXIST as a landed annotation in any shard (grep for `@mcp/tool` across `shards/**/*.mirror`: zero matches; `@code/rust` shows 46 matches by contrast — the pattern precedent exists but @mcp/tool is unminted).
+
+**Three candidate mint shapes** (Mara cannot decide at spec-author altitude):
+
+- **(a) Species-under-@mcp**: `shards/mcp/tool.mirror` species — `@mcp/tool { name: text, description: text, inputSchema: json }`. Composes as `bilateral <name> { require @mcp/tool { name = "mirror_compile" description = "…" } }` at each landed shard opting-in.
+- **(b) Extension of existing @mcp grammar**: extend `boot/std/mcp.mirror` grammar with `tool` annotation as first-class grammar carrier (like `@code/rust` at `shards/code/rust.mirror`; annotates ~46 shards' code emission).
+- **(c) Bilateral-predicate composition**: no new mint; `@mcp.tools` reflective walk uses existing bilateral-corpus loader + heuristic (e.g., detect `bilateral <name>` blocks with specific naming pattern like `mirror_*` prefix). Composition-only; zero substrate mint.
+
+**Mara-lean**: (b) extension of existing @mcp grammar. Rationale: `@code/rust` grammar annotation precedent lands ~46 shards at composition altitude with a single annotation shape; @mcp/tool at extension altitude of @mcp family-root at boot/std/mcp.mirror keeps the composition graph flat (@mcp is family-root; @mcp/tool is grammar annotation species; symmetry).
+
+**BUT**: (a) species-under-@mcp has clean substrate placement (siblings THIS spec's `shards/mcp/serve.mirror` composition-shard mint at `shards/mcp/` altitude). (c) bilateral-predicate composition zero-mint may honor substrate-already-had-the-word discipline more strictly.
+
+**Genuinely undecidable at Mara altitude.** Landing assumption Phase 1: composition-shard body forward-promises `@mcp/tool` annotation via TODO(M5) marker; concrete annotation shape unresolved until Alex adjudicates.
+
+### §6.3 [ALEX-Q-R3] Grammar walker M5 co-tick priority
+
+Per Alex Q-4 ratified: grammar walker deferred to Phase 2 M5+. But the M5 co-tick priority (WHEN in the M1-M6 sequence) is not fully specified. Options:
+
+- **M5-primary**: grammar walker lands at M5 as prerequisite for `@mirror/reload` gen_prism (per lsp-and-mcp.md §"Auto-reload"); tools/list reflective walk lands at M5 alongside walker.
+- **M5-adjacent**: grammar walker lands post-M5 as forward-promise; M5 itself is `@mirror/reload` gen_prism only; reflective walk lands at M5.5 or M6-adjacent.
+- **M6-adjacent**: grammar walker lands after `mirror kintsugi @spec` spawn wire per collapse-spec §4; walker is @spec-consumer-driven.
+
+**Mara-lean**: M5-primary. Rationale: reflective walk IS the substrate-decl'd body of `tools_reflects_cli_block` bilateral-predicate contract per `boot/std/mcp.mirror:118`; the contract fires structurally when walker lands; deferring walker past M5 lengthens the bilaterally-violated-by-design window.
+
+**Not blocking THIS spec's landing**: Phase 1 byte-parity fires empirically without walker. Alex adjudication needed only for Phase 2 timing.
+
+### §6.4 [ALEX-Q-R4] Composition-shard body altitude vs `boot/std/mcp.mirror` body
+
+The composition-shard body at `shards/mcp/serve.mirror` fills `dispatch` + `tools` action bodies declared at `boot/std/mcp.mirror:71,76` (currently `\`-blocked at boot altitude). Two placement options:
+
+- **(a) Species-shard composition** (Mara-lean per Alex Q-3 concurrence): body at `shards/mcp/serve.mirror` composition-shard; boot/std/mcp.mirror stays `\`-blocked at action-body altitude; substrate composition pulls body from species altitude when @mcp is instantiated.
+- **(b) Boot-altitude body**: fill `dispatch` + `tools` bodies at `boot/std/mcp.mirror` directly; no composition-shard mint needed.
+
+**Alex Q-3 RATIFIED (a)**: `shards/mcp/serve.mirror` at NEW substrate altitude. So (a) is not a residue — it's ratified. The residue is: **does `boot/std/mcp.mirror` stay `\`-blocked at `dispatch` + `tools` bodies, OR does it get a `body-composed-at @mcp/serve` reference pointer added?**
+
+**Mara-lean**: add reference pointer at boot/std/mcp.mirror as a docblock note (`# dispatch body composed at shards/mcp/serve.mirror`; not a structural substrate edit — a discovery-aid comment). Actual body substrate-pulled from species altitude at runtime. Substrate-honest per two-altitude discipline.
+
+**Not blocking THIS spec's landing**: composition-shard body stands on its own; boot-altitude reference pointer is a documentation improvement Reed can land at Fire B substrate mint time or Fire C wiring time.
+
+### §6.5 [ALEX-Q-R5] Deprecated `mirror_spawn` alias retirement tick
+
+The 11-tool byte-parity list includes `mirror_spawn` (DEPRECATED alias for `mirror_peer_beam` per Tick 3 rename `4f4a257`). Bootstrap docblock at `bootstrap/src/mcp.rs::13-14` states: *"DEPRECATED alias per two-tick discipline. This tool will be removed in a subsequent tick."*
+
+**Residue**: WHEN does `mirror_spawn` alias retire? Options:
+
+- **(a) Phase 1 (immediately)** — this spec's composition-shard drops `mirror_spawn` from the 11-tool list; MCP clients using `mirror_spawn` receive `method_not_found` error.
+- **(b) Phase 2 (M5 co-tick)** — reflective walk drops alias when bootstrap `spawn` alias arm retires; two-tick discipline honored via reflective source-of-truth shift.
+- **(c) Phase 3 (post-M5, on Alex signal)** — Alex explicitly signals alias retirement; substrate honors user-facing deprecation window (typically 2+ tick major-version equivalent).
+
+**Mara-lean**: (b) — retire alias when bootstrap `spawn` arm at `bootstrap/src/mcp.rs:640` retires per two-tick discipline; substrate reflects source-of-truth. Phase 1 emits 11-tool wire (INCLUDING `mirror_spawn`); Phase 2 reflective walk drops it when bootstrap does.
+
+**Not blocking THIS spec's landing**: Phase 1 byte-parity requires including `mirror_spawn`. Alex adjudication needed only for Phase 2+ retirement timing.
+
+### §6.6 [ALEX-Q-R6] Composition-shard mint authorship
+
+Mara canonical spec-author role (per Mara MEMORY.md `feedback-composition-primitive-naming-convention` + `AGENTS.md` role: "canonical spec author, math-first") — Mara authors SPECS + MATH + shard-decl mints. The actual `.mirror` file at `shards/mcp/serve.mirror` mint could be authored by:
+
+- **(a) Reed (recommended)** — Reed's Fire C wiring altitude is adjacent (rust/src/main.rs::cmd_serve_mcp wire needs composition-shard body to exist for runtime dispatch); Reed authors under [substrate-floor:@io-boundary] gate; RED-first empirical test lands with composition body.
+- **(b) Mara** — Mara authors spec + shard-decl body together (spec-and-shard co-landing); precedent per Mara's other canonical shard mints (`shards/butterfly.mirror` `2026-07-18` per project_butterfly_substrate_species memory).
+- **(c) Glint** — Glint's essayist / prose cascade closure role — the composition-shard body's docblock (§1.5 five-paragraph header shape) sits at prose cascade altitude; body itself technical composition.
+
+**Mara-lean**: (a) Reed at Fire C. Rationale: Reed's Fire A + C rhythm carries the empirical burden of round-trip firing; the composition-shard body co-lands with the rust/-altitude wire (`cmd_serve_mcp` invokes composition-shard body via apply_h::act discharge); RED-first test discipline lands together. Mara's authorship altitude = THIS spec + Karen ancestry.
+
+**Not blocking THIS spec's landing**: authorship attribution is a coordination question, not a substrate structural question. Reed or Mara can mint; the composition-shard shape is spec'd here regardless.
+
+---
+
+## §7 Composition-into-existing-substrate table
+
+Enumeration of how `shards/mcp/serve.mirror` composition-shard sits in already-landed substrate. Each row: existing substrate anchor + composition edge THIS spec's mint introduces + edge type (compose-over / extend / reference / co-declare).
+
+| # | Existing substrate anchor | Landing state | Composition edge from `shards/mcp/serve.mirror` | Edge type |
+|---|---------------------------|---------------|-------------------------------------------------|-----------|
+| 1 | `boot/std/mcp.mirror` @mcp family-root grammar-decl (types + serve pipeline + dispatch/tools body-blocked + 3 bilateral-predicates) | LANDED-SPEC (Mara Tick 6 2026-07-08 substrate-decl closure) | Composition-shard fills `dispatch` + `tools` action bodies declared at family-root; honors 3 bilateral-predicate contracts (`dispatch_reflects_cli_block` + `tools_reflects_cli_block` + `frame_relativity`) at composition altitude | compose-over (body-fill) |
+| 2 | `boot/std/data/json.mirror` @data/json grammar (parse/emit body-blocked) | LANDED-SPEC-ONLY | Composition-shard references `@data/json.parse` + `@data/json.emit` at `serve` pipe-stages 2 + 4; body dispatched via apply_h::act to rust/-altitude `wire::parse` / `wire::emit` (Reed R-PRIM-1) | reference |
+| 3 | `boot/std/io/socket.mirror` @io/socket grammar (connection + listener types + read_bytes/write_bytes/close actions) | LANDED-SPEC-ONLY | Composition-shard references `@io/socket.accept` + `@io/socket.read_bytes` + `@io/socket.write_bytes` at `serve_socket` Variant B pipe-stages (Phase 2 forward-promise; Unix landed at phone.rs iter 9; TCP family-extension per Alex Q-5) | reference (forward-promise) |
+| 4 | `boot/std/mirror/serve.mirror` @mirror/serve substrate-decl (`serve -> imperfect { \ }`) | LANDED-SPEC (192B) | Composition-shard extends @mirror/serve pattern to @mcp altitude; @mirror/serve is generic transport; @mcp/serve is JSON-RPC MCP transport specialisation | extend |
+| 5 | `boot/std/mirror/reload.mirror` @mirror/reload gen_prism (auto-reload on grammars_hash drift) | LANDED-SPEC-ONLY (2.0KB) | Composition-shard forward-promises composition with @mirror/reload at Phase 2 M5 co-tick; `@mirror/reload.tick` fires on every request; emits `notifications/tools/list_changed` on drift | reference (forward-promise M5) |
+| 6 | `shards/mirror/lens/mcp.mirror` @mirror/lens/mcp prism (agent-audience transport-side lens) | LANDED-SPEC (2.4KB, 2026-06-06) | Composition-shard sits at composition altitude adjacent to lens altitude; lens declares abstract `dispatch(call: ref) -> mcp` action; composition-shard fills the wire-protocol composition of that abstract dispatch surface | co-declare (adjacent species) |
+| 7 | `shards/spectral/gen_prism/mcp_session.mirror` @spectral/gen_prism/mcp_session (session state machine at gen_prism altitude) | LANDED-SPEC (28.8KB, Reed M1 TICK 1 `e8378ca`) | Composition-shard references mcp_session for state discipline (state lives in @mirror/store; process is stateless; session persists across daemon restart); dispatch body composes with mcp_session.tick for stateful requests | reference (composition-time state carrier) |
+| 8 | `rust/src/phone.rs` @io switchboard (fs + git + socket + stdio; ~90% wire-transport primitives) | LANDED-EMPIRICAL (69.6KB) | Composition-shard's `serve` body pipe-stages 1 + 5 dispatch through phone.rs @io/stdio primitives (`read_stdin_frame` + `write_stdout_frame`); Reed R-PRIM-2 lifts pub-visibility for cross-crate composition | compose-over |
+| 9 | `rust/src/wire.rs` @data/json rust/-altitude wrapper (Reed R-PRIM-1 IN FLIGHT) | IN FLIGHT (Reed Fire A ~20-30 LOC) | Composition-shard's `serve` body pipe-stages 2 + 4 dispatch through wire::parse + wire::emit via `@data/json` substrate-decl'd action refs | compose-over (via substrate-decl) |
+| 10 | `rust/roomba/src/mend.rs::discharge_action` (Reed R-PRIM-3 IN FLIGHT; composes over landed `load_bilateral_corpus` + `discharge`) | IN FLIGHT (Reed Fire A ~30 LOC wrapper over LANDED-EMPIRICAL 40.3KB) | Composition-shard's `@mcp.dispatch` body dispatches via `apply_h::act(action_ref, args) -> Verdict`; discharge_action IS the bilateral-predicate `act` path at rust/ altitude | compose-over (via apply_h::act naming) |
+| 11 | `bootstrap/src/apply_h.rs` 7-combinator surface (section/fold/act/settle/crystallize/coboundary/utter) | LANDED-EMPIRICAL bootstrap-only (81.4KB Arc-1 Tick 1.3 GREEN) | Composition-shard uses ONLY the bilateral-predicate `act` path (composed via rust/-altitude `discharge_action`); other 6 combinators NOT structurally required per Taut §2 verdict | reference (act-only subset) |
+| 12 | `mirror.spec` cli-block (10-verb VERBS list at rust/src/main.rs `const VERBS: &[(&str, &str)]`; hardcoded per Mara §5.2 M2 milestone) | LANDED-EMPIRICAL (hardcoded); reflective at M2 (GAP per Taut §3 red_spec_claims.rs verifies) | Composition-shard's Phase 1 hardcoded tool-name → action-ref map (§4.3) mirrors VERBS list byte-parity; Phase 2 M5 co-tick reflective walk collapses hardcoded map to reflective source-of-truth per bilateral-predicate `dispatch_reflects_cli_block` contract | reference (byte-parity Phase 1; reflective Phase 2) |
+| 13 | `bootstrap/src/mcp.rs::tools_list_result` (11-tool JSON emission byte-parity with `bin/mirror-mcp`) | LANDED-EMPIRICAL (49.2KB; DYING per Alex 2026-07-22) | Composition-shard's `@mcp.tools` Phase 1 body copies 11-entry byte-parity verbatim (name + description + inputSchema per §4.2); replaces bootstrap tools_list_result at composition altitude when Fire C wires cmd_serve_mcp to composition-shard | replace (byte-parity Phase 1) |
+| 14 | `bin/mirror-mcp` bash shim (149 lines; execs bootstrap binary; MCP client wire) | LANDED-EMPIRICAL (transitional; retirement at Tick 6.5/7 per boot/std/mcp.mirror docblock) | Composition-shard's landing enables bash-shim retirement per boot/std/mcp.mirror:80-83 docblock ("Tick 6.5/7 collapses `bin/mirror-mcp` (149 lines of bash) to `exec ~/.local/bin/mirror /dev/stdin @mcp.serve` once the Rust runtime discharges the bilateral-predicate contracts") | retire (post-Fire-C empirical parity) |
+| 15 | `rust/src/main.rs::cmd_serve_mcp` (Reed 2026-08-03 `59591a9` stub-delegation; execs bootstrap binary) | LANDED-STUB-DELEGATION | Composition-shard's landing + Fire C wiring re-wires cmd_serve_mcp to invoke `@mcp/serve.mirror` composition-shard body via apply_h::act discharge; stub-delegation retires | re-wire (Fire C) |
+| 16 | `shards/reflection.mirror` + `shards/mirror/spectral/portal.mirror` (references to @mcp.serve at composition altitude) | LANDED-SPEC references | Composition-shard closes the compose-target hole those references pointed at; @mcp.serve is now compose-target-existing at species altitude | close-hole (compose-target-existing) |
+
+### §7.1 Composition-honest observations
+
+- **Zero new substrate mints beyond `shards/mcp/serve.mirror` itself.** Every composition edge references already-landed substrate anchors (rows 1-16 above). The single mint is the composition-shard file at `shards/mcp/serve.mirror` (species-under-@mcp) + implicit `shards/mcp/` directory creation.
+- **Two forward-promise references remain**: `@mcp/tool` grammar annotation (row 5 M5 co-tick precondition) + `@mirror/reload` gen_prism composition (row 5 M5 co-tick discharge). Neither blocks Phase 1 empirical landing.
+- **Three refusal candidates NOT taken** per Michelangelo/marble discipline:
+  - REFUSE minting `@mcp/wire` transport primitive — @mcp.serve at boot altitude ALREADY carries transport semantics (pipe body composed at boot altitude); composition-shard fills the composition body without minting parallel wire primitive.
+  - REFUSE minting `@mcp/dispatcher` composition primitive — dispatch is bilateral-predicate discharge via apply_h::act; naming already-carried by @mcp.dispatch action decl at boot altitude.
+  - REFUSE minting `@mcp/serve/tools` sub-species — @mcp.tools action decl at boot altitude carries tools discovery; composition-shard body fills the action body without minting parallel species.
+- **Composition edges are additive, not substrate-mutating.** No existing substrate file is edited by THIS spec's mint; composition-shard body is drop-in-additive. Reed's REED-INLINE marker at 2026-08-03 M4 spec header (§5.3) is the only edit to already-landed substrate; that edit is a documentation deprecation marker, not a structural mutation.
+
+### §7.2 Composition-into-existing empirical status matrix
+
+| Composition edge | Phase 1 (this spec landing) | Phase 2 (M5 co-tick) | Phase 3 (post-M6) |
+|------------------|------------------------------|---------------------|-------------------|
+| serve body pipe-chain composition | LANDED-COMPOSED (empirical Fire C) | Same | Same |
+| @mcp.dispatch body via apply_h::act | LANDED-COMPOSED (hardcoded 11-tool map) | Reflective bilateral-corpus walk | Same |
+| @mcp.tools body byte-parity 11-tool | LANDED-COMPOSED (hardcoded JSON literal) | Reflective grammar walk over @mcp/tool annotations | Same |
+| bilateral-predicate contract discharge (3 contracts) | Bilaterally-violated-by-design (byte-parity carries empirical claim) | Structurally-discharged (reflective claim) | Same |
+| bin/mirror-mcp bash shim retirement | Not yet (transitional; Fire C parity verification needed) | Retired (composition-shard is source-of-truth) | Retired |
+| Reed cmd_serve_mcp re-wire | Fire C landing (post-composition-shard mint) | Same | Same |
+| @mirror/reload gen_prism composition | Not yet | LANDED-COMPOSED (grammars_hash drift → notifications/tools/list_changed) | Same |
+| Session state via mcp_session gen_prism | Referenced (composition edge declared) | Composed-with-state (mcp_session.tick per request) | Composed-with-state |
+| mirror kintsugi @spec spawn wire (M6) | N/A (M6 territory) | N/A | LANDED-COMPOSED (composition-shard exposes session-state gen_prism for @spec accumulation) |
+| Socket transport Variant B | `\`-blocked (Phase 2 forward-promise) | Unix-scope LANDED (phone.rs iter 9 landed empirical) | TCP family-extension LANDED (M8-adjacent) |
