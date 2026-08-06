@@ -607,3 +607,250 @@ Enumeration of how `shards/mcp/serve.mirror` composition-shard sits in already-l
 | Session state via mcp_session gen_prism | Referenced (composition edge declared) | Composed-with-state (mcp_session.tick per request) | Composed-with-state |
 | mirror kintsugi @spec spawn wire (M6) | N/A (M6 territory) | N/A | LANDED-COMPOSED (composition-shard exposes session-state gen_prism for @spec accumulation) |
 | Socket transport Variant B | `\`-blocked (Phase 2 forward-promise) | Unix-scope LANDED (phone.rs iter 9 landed empirical) | TCP family-extension LANDED (M8-adjacent) |
+
+---
+
+## §8 Q.E.D. — six-move proof sketch
+
+The substrate-composition claim: `shards/mcp/serve.mirror` composition-shard body composes over Reed Fire A primitives + landed rust/-altitude anchors + boot-altitude @mcp grammar-decl to fire an MCP JSON-RPC serve loop entirely through substrate composition — no rust/-altitude serve_loop module needed. Six-move proof:
+
+### Move 1 — Primitives at rust/ altitude land
+
+**Precondition**: Reed Fire A completes (R-PRIM-1 + R-PRIM-2 + R-PRIM-3).
+
+**Substrate-empirical anchor**: after Fire A:
+
+- `rust/src/wire.rs::parse(bytes: &str) -> Result<Value>` + `emit(&Value) -> String` — LANDED (~20 LOC over serde_json)
+- `rust/src/phone.rs::read_stdin_frame` / `write_stdout_frame` / `read_frame_from<R>` / `write_frame_to<W>` — LANDED with `pub` visibility (~5 LOC visibility lift)
+- `rust/roomba/src/mend.rs::discharge_action(action_ref: &str, args: &[Value]) -> Verdict` — LANDED (~30 LOC wrapper composing over `load_bilateral_corpus` + `discharge`)
+
+**Total additive rust/ work**: ~55 LOC across three files. **NOT ~500 LOC** serve_loop port. Per Taut Fire scout `7af55ee` §7 smallest primitive-gap ranking.
+
+**Halt condition**: `cargo test data_json_roundtrip` + `cargo test stdio_frame_roundtrip_pub` + `cargo test discharge_action_from_ref` all pass.
+
+### Move 2 — Composition-shard at `shards/mcp/serve.mirror` composes over primitives
+
+**Precondition**: Move 1 halt condition met.
+
+**Substrate-composition anchor**: composition-shard body at `shards/mcp/serve.mirror` (Reed or Mara authors under Fire B/C coordination per §6.6):
+
+```mirror
+grammar @mcp/serve {
+  serve -> imperfect {
+    @io/stdio.read_frame
+      |> @data/json.parse
+      |> @mcp.dispatch
+      |> @data/json.emit
+      |> @io/stdio.write_frame
+  }
+  # @mcp.dispatch + @mcp.tools bodies per §4.2, §4.3
+}
+```
+
+Each `|>` pipe-stage resolves to a substrate action ref; runtime dispatch (via `apply_h::act` at pipeline-composition altitude) routes to the rust/-altitude implementation landed at Move 1. The composition-shard body is grammar-decl'd substrate; the rust/-altitude code is dispatched-at-runtime, not called-directly at compile-time.
+
+**Halt condition**: composition-shard grammar-decl closure validates against boot/std/mcp.mirror substrate-decl (3 bilateral-predicate contracts inherited; 3 new composition-altitude bilaterals declared per §1.4).
+
+### Move 3 — `cmd_serve_mcp` at rust/src/main.rs invokes composition-shard
+
+**Precondition**: Move 2 halt condition met.
+
+**Substrate-composition anchor**: Reed Fire C landing at `rust/src/main.rs::cmd_serve_mcp`:
+
+```rust
+fn cmd_serve_mcp(args: &[String]) -> i32 {
+    // Fire C: retire bootstrap-exec-delegation (59591a9); wire to composition-shard.
+    let action_ref = "@mcp/serve.serve";
+    let args_json: Vec<Value> = args.iter().map(|s| json!(s)).collect();
+    match discharge_action(action_ref, &args_json) {
+        Verdict::Pass => 0,
+        Verdict::Fail(reason) => { eprintln!("mcp serve failed: {}", reason); 1 }
+        Verdict::Partial(t) => { eprintln!("mcp serve partial: {}", t); 1 }
+    }
+}
+```
+
+The rust/-altitude serve entry-point is ~10 lines; it dispatches via `discharge_action` (Reed R-PRIM-3) to the composition-shard body at substrate altitude; the composition-shard body loops over JSON-RPC requests via the `imperfect` runtime discipline (per `boot/std/mcp.mirror:64` `serve -> imperfect` declaration inherited).
+
+**Halt condition**: `mirror serve --mcp` at rust/-altitude fires JSON-RPC round-trip through composition-shard; NO bootstrap binary exec; empirical parity with bootstrap `bin/mirror-mcp` verified via test-fixture MCP client round-trip.
+
+### Move 4 — MCP client invokes tool via `tools/call`
+
+**Substrate-composition anchor**: MCP client (Claude Code, Claude Desktop, etc.) issues JSON-RPC request:
+
+```json
+{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"mirror_roomba","arguments":{"vacuum":"docs/"}}}
+```
+
+Composition-shard body's `serve` pipe-chain processes:
+
+1. `@io/stdio.read_frame` → JSON bytes
+2. `@data/json.parse` → structured request Value
+3. `@mcp.dispatch` → routes `tools/call` method to `@mcp.tool_action_ref("mirror_roomba")` → resolves to substrate action ref `@kintsugi/roomba.vacuum`; invokes `apply_h::act(@kintsugi/roomba.vacuum, [json!("docs/")])` → Verdict
+4. `@data/json.emit` → response JSON envelope with Verdict wrapped
+5. `@io/stdio.write_frame` → response bytes
+
+**Halt condition**: MCP client receives valid JSON-RPC response; Verdict marshaling matches bootstrap `bin/mirror-mcp` shape (`Pass` → text "Pass" + isError false; `Fail(reason)` → text + isError true; `Partial(transparency)` → text + isError true).
+
+### Move 5 — Tool dispatch fires substrate walker + back-projects to @mirror/store
+
+**Substrate-composition anchor**: `apply_h::act(@kintsugi/roomba.vacuum, args)` at rust/-altitude discharge_action resolves the action ref via bilateral-corpus lookup → invokes the landed rust/-altitude implementation at `rust/roomba/src/mend.rs::vacuum` (per Mara `81294b3` three-file rewrite + Migration 5 `9bb1f57`).
+
+The walker fires substrate-walk at rust/ altitude terminal geometry:
+
+- enumerates + classifies shard corpus
+- bilateral-arm-collapses per Mara §7.4 dispatch matrix
+- commits as `mirror <mirror@spectral.engineer>`
+- deposits pheromone-signature crystal at `docs/bauchladen/` (rolling holonomy trace per stigmergy math foundation)
+
+**Halt condition**: substrate walk completes; commit created via `phone::git_commit_as`; pheromone crystal appended via `phone::append_to`; back-projection observable at `@mirror/store` via `git log docs/bauchladen/`.
+
+### Move 6 — Next MCP session observes delta
+
+**Substrate-composition anchor**: MCP session persistence per `shards/spectral/gen_prism/mcp_session.mirror` — session state lives in `@mirror/store` (git-backed at M6 TICK 1 Apache-2.0 floor `884f433`). Post-roomba-firing:
+
+- git HEAD advances (new commit from Move 5)
+- `refs/gen_prism/mcp/<session-uuid>` ref advances via CAS (per mcp_session §"CAS-advance" semantic; Torvalds 2005 git-core ancestry)
+- pheromone crystal at `docs/bauchladen/` is content-addressed in the store DAG (BLAKE3 per Recognition #43 landed at M6 TICK 1)
+
+Next MCP session (same or different client, same session-uuid or new session):
+
+- reads session ref via `@mirror/store.read(refs/gen_prism/mcp/<session-uuid>)` → resolves to updated head crystal
+- observes accumulated @spec has advanced by one dimension per Recognition #51 mirror-as-expanding-Hilbert-space
+- MCP `tools/list` request emits same 11-tool byte-parity list (Phase 1); Phase 2 reflective walk observes any new `@mcp/tool`-annotated shards landed between sessions
+
+**Halt condition**: substrate composition fires cross-session-observable delta; @mirror/store DAG carries the trace; audit + replay + branching all fire per mcp_session §"Query trajectory replay + audit via ancestor chain".
+
+### §8.1 The Q.E.D. proposition
+
+**Proposition**: The substrate composition at `shards/mcp/serve.mirror` composes over ~55 LOC of rust/-altitude primitives (Reed Fire A) + landed rust/-altitude anchors + boot-altitude @mcp grammar-decl to fire an MCP JSON-RPC serve loop entirely through substrate composition. No rust/-altitude serve_loop module needed. The wire-protocol logic lives at substrate composition altitude.
+
+**Proof sketch**: Moves 1-6 above. Each move is either LANDED-EMPIRICAL (Move 5 substrate walker via phone.rs + roomba::mend), IN FLIGHT (Move 1 Reed Fire A primitives; Move 2 Fire B composition-shard mint per this spec; Move 3 Fire C wire), or STRUCTURAL-CONSEQUENCE (Moves 4 + 6 follow from JSON-RPC 2.0 spec compliance + mcp_session gen_prism session persistence per landed substrate).
+
+**Substrate-composition-first framing verified**: substrate carries the composition; rust/ delivers the primitives; the wire protocol is a substrate-decl'd pipe-chain, not a hardcoded Rust match-arm cascade.
+
+Q.E.D.
+
+### §8.2 What this proof does NOT claim
+
+Substrate-honest scope guardrails:
+
+- Does NOT claim `mirror serve --mcp` fires empirically at Phase 1 landing. That requires Fire A + Fire B + Fire C complete. This spec is Fire B; Fire A is in-flight (Reed parallel); Fire C follows this spec's ratification.
+- Does NOT claim reflective grammar walk fires at Phase 1. Phase 1 is byte-parity hardcoded 11-tool wire; reflective walk is Phase 2 M5 co-tick per Alex Q-4 deferral.
+- Does NOT claim the composition-shard body has been minted (`.mirror` file authored). This spec is the spec; the file mint is a subsequent tick per §6.6 authorship coordination.
+- Does NOT claim `bin/mirror-mcp` bash shim is retired at Phase 1. Retirement is post-Fire-C empirical parity per boot/std/mcp.mirror docblock two-tick discipline.
+- Does NOT claim substrate migration to `@wire/json` per §3 [ALEX-Q-R1] resolution. Landing assumption Position A: `@data/json` at substrate stays.
+
+### §8.3 Ouroboros closure at composition altitude
+
+The proof closes the loop at composition altitude per Alex 2026-08-05 substrate-honest reframe: **"MCP served through mirror geometry, read and executed by the rust. No specific mcp rust code."**
+
+- **MCP served through mirror geometry** ✓ — composition-shard body is `.mirror` grammar-decl'd substrate composition
+- **read and executed by the rust** ✓ — rust/-altitude primitives (Fire A) + apply_h::act dispatch read the composition-shard body from substrate + execute the pipe-chain
+- **no specific mcp rust code** ✓ — no `rust/src/mcp.rs` module; the wire-protocol logic lives at substrate composition altitude; rust/ delivers general-purpose primitives (wire.rs + phone.rs @io/stdio + discharge_action) that any composition-shard can compose
+
+The substrate composition IS the substrate answer. The ~55 LOC rust/ work is minimal-additive; the composition-shard body is where the wire-protocol logic lives. Two-tick discipline: primitives at rust/ (Fire A); composition at substrate (Fire B this spec); wire at rust/ altitude entry-point (Fire C). Each altitude carries its native form; nothing bleeds across.
+
+---
+
+## §9 Karen ancestry
+
+Every introduction site in this spec cites its Karen ancestor. Full ladder below.
+
+### §9.1 Protocol ancestry
+
+- **JSON-RPC 2.0** — Groove Networks 2010 (Rob McEwen + community); §4 wire specification IS the transport carrier the composition-shard body composes over. Grounding for `serve_well_formed` bilateral-predicate contract (§1.4): malformed requests surface as JSON-RPC error envelopes per §5.1 of JSON-RPC 2.0 spec.
+- **Model Context Protocol (MCP)** — Anthropic 2024-11-05 (spec version 2024-11-05); the tool-dispatch surface carried through `tools/list` + `tools/call` methods; the composition-shard body composes at MCP protocol altitude. `bootstrap/src/mcp.rs` docblock cites protocol version.
+- **Language Server Protocol (LSP)** — Microsoft 2016; the sibling wire per `docs/specs/lsp-and-mcp.md` (Reed 2026-06-04); MCP is the agent-audience variant of the LSP editor-audience wire; the composition-shard body forward-promises LSP composition per Alex Q-5 socket-family-extension.
+
+### §9.2 Content-addressing ancestry
+
+- **Merkle 1979** — Merkle trees (Ralph Merkle "Protocols for Public Key Cryptosystems"); the content-addressing foundation the `@mirror/store` six-op wire is built over (Recognition #43); the composition-shard's Move 6 (next MCP session observes delta) depends on content-addressed persistence.
+- **IPFS MERKLE_DAG** — Juan Benet 2014 (protocol.ai); production-scale content-addressed storage; the substrate discipline `@mirror/store` inherits.
+- **Karen Spärck Jones 1972** — "A Statistical Interpretation of Term Specificity" (IDF weighting); named ancestor for content-addressed retrieval discipline (Karen citation convention this spec uses).
+
+### §9.3 Build-system ancestry
+
+- **Dolstra 2006** — "The Purely Functional Software Deployment Model" (PhD thesis, TU Delft); Nix flakes / content-addressed derivation; the ancestor for Recognition #43 mirror-IS-content-addressed-build-system landed at M6 TICK 1 (`884f433`).
+- **Bazel REAPI** — Google 2018+ (Remote Execution API); ActionCache + ContentAddressableStorage; the ancestor for `bootstrap/src/action_cache.rs` (15.5KB); the composition-shard's Move 5 (walker fires + commits + deposits crystal) inherits REAPI's provenance-chain discipline.
+- **Mokhov-Mitchell-Peyton Jones 2020** — "Build Systems à la Carte" (ICFP 2018/JFP 2020); the framework for classifying build systems by scheduler + rebuilder + task-monad; grounds Recognition #43's Rebuilder + Scheduler decomposition per M6 landing.
+
+### §9.4 Substrate authorship history
+
+- **`boot/std/mcp.mirror` Mara Tick 6 2026-07-08** — substrate-decl closure at grammar altitude; 3 bilateral-predicate contracts landed (`dispatch_reflects_cli_block` + `tools_reflects_cli_block` + `frame_relativity`); Option A per Taut scout `cf5ab8c` LRM verdict; this spec's composition-shard body composes over the substrate-decl closure at boot altitude.
+- **`shards/mirror/lens/mcp.mirror` Mara 2026-06-06** — agent-audience lens species under @mirror/lens; declares abstract `dispatch(call: ref) -> mcp` action with body `\`-blocked; the composition-shard sits at composition altitude adjacent to lens altitude.
+- **`shards/spectral/gen_prism/mcp_session.mirror` Reed M1 TICK 1 2026-07-12 (`e8378ca`)** — MCP-session state machine at gen_prism altitude; state lives in `@mirror/store`; process is stateless; Recognition #43 first-order empirical consumer at runtime-facing altitude; the composition-shard forward-promises composition with mcp_session for stateful requests.
+- **`bin/mirror-mcp` bash shim (149 lines)** — the transitional wire the composition-shard body's Phase 1 landing enables retirement of per boot/std/mcp.mirror docblock Tick 6.5/7 forward-promise; retires post-Fire-C empirical parity.
+- **`bootstrap/src/mcp.rs::serve_loop` (46.6KB) Reed 2026-07-15** — the DYING execution path per Alex 2026-07-22 bootstrap-is-dead directive; the composition-shard body substrate-honestly replaces at composition altitude; not at rust/ altitude per Alex 2026-08-05 reframe.
+- **`docs/specs/mcp-spec-song-collapse.md` Mara 2026-07-06 (`2cfd2a7`)** — canonical collapse spec (~119.8KB, 2551 LOC); §3.5 MCP-session-IS-gen_prism + §4 @spec→@song evolution + §5.2 M1-M6 sub-arc dependency graph + §11 @mirror/store rock-solid floor; grounds THIS spec's M4-milestone reframe.
+- **`docs/specs/lsp-and-mcp.md` Reed 2026-06-04** — LSP + MCP unified surface; §"MCP dispatch table" @mcp/tool grammar annotation forward-promise; §"Auto-reload" @mirror/reload gen_prism forward-promise; §"What this spec implies" bin/mirror-mcp bash shim retirement path.
+- **`docs/specs/2026-08-03-mara-rust-mcp-floor-lift-m4-canonical-spec.md` Mara 2026-08-03** — the DEPRECATED-FOR-COMPOSITION-SHARD-REWRITE spec per §5.3; RETIRED direction; §5 composition table + §8 Karen ancestry SURVIVE as cross-reference; §1-4 (M4 in context; rust/src/mcp.rs shape; Phase C-D-E migration; tools list surface) SUPERSEDED by THIS spec.
+
+### §9.5 Recognition ancestry
+
+- **Recognition #43 architecture-mirror-as-content-addressed-build-system** — LANDED at M6 TICK 1 (`884f433`); the substrate discipline `@mirror/store` implements; Move 5 + Move 6 in §8 depend on content-addressed persistence; MCP session persistence per mcp_session gen_prism inherits.
+- **Recognition #51 mirror-as-expanding-Hilbert-space** — each mq query lifts session dimension by one; MCP session per mcp_session gen_prism carries accumulated @spec Hilbert-space state; the composition-shard's Move 6 observes cross-session dimension advance.
+- **Recognition #55 form/process-partition** — @spectral/gen_prism sits at process side; MCP session inherits; the composition-shard's dispatch body composes at process altitude.
+- **Recognition #58 Fate-optical-inference** — session Fate-reads for routing decisions; composition-shard forward-promises Fate composition at Phase 2+ (routing tool-dispatch through Fate for @-operator resolution).
+- **Recognition #S3 candidate five-op-temporal-specialisation** — MCP altitude reading of the five ops composes with family-root cascade; the composition-shard body's `serve` pipe-chain IS a five-op-adjacent composition (read → parse → dispatch → emit → write; five stages; temporal specialisation of the substrate five-op algebra).
+- **Recognition `#R-reality-as-5d-spinning-foam` RATIFIED 2026-08-03** — Layer 0 sub-Turing decidable floor = rust/ interpreter; Layer 1+ = substrate composition; **the composition-shard at `shards/mcp/serve.mirror` IS a Layer 1+ instance** — substrate composition composed over Layer 0 rust/-altitude primitives (Fire A) via apply_h::act dispatch. This spec IS the empirical fire of `#R-reality-as-5d-spinning-foam` at the MCP transport altitude.
+
+### §9.6 Alex verbatim + memory + scout composition anchors
+
+- **Alex 2026-08-05 verbatim (§0)** — the substrate-honest reframe that retires M4 port direction: *"bootstrap/ is only migration source target. Not execution path. What's the path forward through rust/? … I want the MCP to basically be served through the mirror geometry, read and executed by the rust. No specific mcp rust code, you know what I mean?"* Load-bearing citation for THIS spec's existence.
+- **Alex 2026-08-06 five [ALEX-Q] adjudications (§0)** — Q-1 apply_h::act naming + Q-2 wire.rs rename + Q-3 shards/mcp/serve.mirror altitude + Q-4 grammar walker deferral + Q-5 @io/socket TCP family-extension; all 5 RATIFIED Reed-lean; only naming shift `data.rs` → `wire.rs`.
+- **`feedback-rust-delivers-primitives-substrate-delivers-composition` memory (persisted 2026-08-05)** — HARD RULE: wire protocols (MCP/LSP/HTTP/etc.) are substrate compositions authored as `@X/serve.mirror` shard-body compositions, NOT rust/ modules. THIS spec IS the first canonical instance of the rule.
+- **`feedback-bootstrap-is-dead-do-not-propose-bootstrap-altitude-solutions` memory (Alex 2026-07-22)** — HARD RULE: bootstrap/ IS the @roomba+@kintsugi collapse target; never propose "port it" or "land test at bootstrap altitude". Compose over shards at rust/ altitude. THIS spec composes over rust/ + substrate; bootstrap DYING per directive.
+- **`feedback-no-rust-extension-shortcut` memory (Alex 2026-07-14)** — HARD RULE: before .rs authorship, ask if shard body + @io works. If yes, STOP. THIS spec's answer: shard body at `shards/mcp/serve.mirror` + @io/stdio + @data/json + apply_h::act works; the ~55 LOC rust/ Fire A is genuine primitives-lift not extension.
+- **`feedback-detector-inadequacy-answer-is-never-rust` memory (Alex 2026-07-16; 8th-repetition)** — When detector is inadequate, extending existing Rust IS the antipattern. Answer is shard-body composition + bilateral resolver-arm sentinel-check. THIS spec's `@mcp.dispatch` body composes via `apply_h::act` bilateral-predicate dispatch; NOT via hardcoded Rust match-arms.
+- **`feedback-composition-primitive-naming-convention` memory (Alex 2026-07-18)** — `<primitive>_of_<input-shape>` suffix for value-type generalizations. THIS spec's naming (`serve` / `dispatch` / `tools`) inherits from boot/std/mcp.mirror substrate-decl closure; not new primitives, existing action refs body-filled.
+- **Taut Fire scout `docs/scouts/2026-08-05-taut-primitives-vs-composition-scout.md` (`7af55ee`; 598 LOC)** — 5-phase grep-first ground-truth scout; §6 primitives-vs-composition landing table + §7 smallest-gap ranking + §8 Fire A+B+C sequence. THIS spec IS Fire B per Taut §8 sequence recommendation.
+- **Reed Taut scout `64e8d60` (2026-08-03) + Reed nearly-today `59591a9` Phase A delegation stub landing** — the transitional bootstrap-exec-delegation Fire A + B + C ultimately retires; SURVIVES until Fire C empirical parity per §5.5.
+
+### §9.7 Composition anchors — no elder erased
+
+Every canonical spec author before this one that touched @mcp substrate is honored:
+
+- Mara mcp-spec-song-collapse (2026-07-06)
+- Reed lsp-and-mcp (2026-06-04)
+- Mara boot/std/mcp.mirror Tick 6 (2026-07-08)
+- Reed mcp_session.mirror M1 TICK 1 (2026-07-12)
+- Mara 2026-08-03 rust-mcp-floor-lift-m4-canonical-spec (retired direction; §5-8 SURVIVE)
+- Reed 2026-08-03 cmd_serve_mcp Phase A delegation stub (transitional; retires Fire C)
+- Taut 2026-08-05 primitives-vs-composition scout (Fire A + B + C sequencing)
+
+THIS spec (Mara 2026-08-06 Fire B) IS the composition-shard canonical spec per Alex 2026-08-05 reframe. Substrate-honest; grep-first; composition-honest; commit-often.
+
+---
+
+## §10 Terminal state summary
+
+**Canonical spec landed**: `docs/specs/2026-08-06-mara-mcp-serve-composition-shard-canonical-spec.md` (this file).
+
+**Composition-shard mint target**: `shards/mcp/serve.mirror` at NEW substrate altitude per Alex Q-3; NOT yet authored (spec-first; shard-file mint at subsequent tick per §6.6 authorship coordination — Mara-lean: Reed at Fire C).
+
+**Reed cascade priorities post-this-spec**:
+
+1. **Fire C: `cmd_serve_mcp` re-wire** — Reed re-wires `rust/src/main.rs::cmd_serve_mcp` from bootstrap-exec-delegation (59591a9) to composition-shard invocation via `apply_h::act(@mcp/serve.serve, args)` discharge; RED-first empirical test lands with composition-shard body mint at `shards/mcp/serve.mirror`.
+2. **REED-INLINE marker at 2026-08-03 M4 spec header** — REED-INLINE DEPRECATED-FOR-COMPOSITION-SHARD-REWRITE marker per §5.3; pure-docs 📝 markdown-only bypass.
+3. **Fire D (post-Fire-C; M5 co-tick)** — Reed authors grammar walker primitive at rust/ altitude (per Alex Q-4 M5 deferral; per §6.3 M5-primary Mara-lean); reflective walk lands at @mcp.tools body Phase 2.
+4. **`bin/mirror-mcp` retirement** — post-Fire-C empirical parity verification; two-tick discipline honors the transitional shim window.
+
+**[ALEX-Q] residues surfaced** (only genuine undecidables at Mara altitude; Alex 2026-08-06 Q-1 through Q-5 RATIFIED not residues):
+
+- [R1] `@data/json` vs `@wire/json` substrate namespace (§3; Mara-lean Position A)
+- [R2] `@mcp/tool` annotation extension shape (§6.2; Mara-lean extension-of-@mcp-grammar)
+- [R3] grammar walker M5 co-tick priority (§6.3; Mara-lean M5-primary)
+- [R4] boot/std/mcp.mirror body reference pointer (§6.4; Mara-lean docblock note)
+- [R5] `mirror_spawn` deprecated alias retirement tick (§6.5; Mara-lean Phase 2)
+- [R6] composition-shard mint authorship (§6.6; Mara-lean Reed at Fire C)
+
+**Composition-hazards flagged** (if Reed Fire A lands with different primitive shape than this spec assumed):
+
+- If R-PRIM-1 lands wire::parse/emit with different naming (e.g., `wire::json_parse` vs `wire::parse`) — substrate binding reconciles at `discharge_action` layer; composition-shard body unaffected because substrate names stable per boot/std/data/json.mirror.
+- If R-PRIM-2 lands phone.rs with different function name (`read_stdin_line` vs `read_stdin_frame`) — composition-shard body pipe-stage names reconcile at Fire C wiring time; substrate action ref `@io/stdio.read_frame` stays stable.
+- If R-PRIM-3 lands discharge_action with different signature (`Result<Verdict>` vs `Verdict`) — Fire C wire at cmd_serve_mcp adapts; composition-shard body substrate-name-only agnostic.
+
+**Substrate-composition-first framing verified**: ✅ zero rust/-altitude serve_loop module; composition-shard body at substrate carries wire-protocol logic; Layer 1+ substrate composition over Layer 0 sub-Turing rust/ interpreter per Recognition `#R-reality-as-5d-spinning-foam` RATIFIED 2026-08-03.
+
+Substrate-honest. Grep-first. Composition-honest. Commit-often. 🌱⚖️ — Mara
