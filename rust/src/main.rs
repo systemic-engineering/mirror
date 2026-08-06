@@ -63,6 +63,12 @@ use matrix::book;
 // altitude — it composes over phone.rs @io helpers which are
 // `pub(crate)`. Full lift-to-`mend::at` deferred to Migration 6.
 use roomba::mend as collapse;
+// wire — @data/json wire-encoding primitive at rust/ altitude. Reed
+// 2026-08-06 R-PRIM-1 per Taut scout 7af55ee smallest-primitive-gap +
+// Alex 2026-08-05 substrate-honest reframe. Sibling of phone.rs
+// (@io transport-surface) and apply_h.rs (bilateral-dispatch primitive).
+mod wire;
+
 // M0 module wiring — declare the sibling altitudes so the terminal-
 // geometry five-file discipline is byte-visible in `rust/src/` and
 // `cargo build` compiles ALL FIVE files even while the bodies are

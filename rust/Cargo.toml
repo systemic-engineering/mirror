@@ -73,6 +73,20 @@ roomba = { path = "roomba" }
 # compile Fortran wrappers + link LAPACK.
 prismqueer = { path = "../../prism/prismqueer", features = ["lapack", "bundle"] }
 
+# serde_json — the wire encoding primitive at rust/ altitude. Reed
+# 2026-08-06 R-PRIM-1 per Taut scout 7af55ee §7 smallest-primitive-gap +
+# Alex 2026-08-05 substrate-honest reframe (rust/ delivers primitives;
+# substrate delivers composition; wire protocols are @X/serve.mirror
+# shard-body compositions NOT rust/ modules). Exposed at rust/src/wire.rs
+# as `pub parse(bytes) -> Value` + `pub emit(&Value) -> String`. Named
+# `wire` not `data` per Alex 2026-08-06 Q-2 correction — "wire" names
+# the transport-encoding altitude honestly (cascade family middle:
+# source_grammar → wire_encoding → target_grammar). Sibling of phone.rs
+# (@io transport-surface) and apply_h.rs (bilateral-dispatch primitive)
+# at terminal-geometry rust/ altitude.
+serde_json = "1.0"
+
+
 # Dev-dependencies for property-based RED tests grounded in Mara
 # 3cd9a42 (grounding spec) + 5d3040d (math foundation). These are
 # test-only; the binary at src/main.rs stays zero-dep until M4-M5.
