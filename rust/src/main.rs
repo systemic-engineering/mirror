@@ -69,6 +69,15 @@ use roomba::mend as collapse;
 // (@io transport-surface) and apply_h.rs (bilateral-dispatch primitive).
 mod wire;
 
+// apply_h — bilateral-dispatch primitive at rust/ altitude. Reed
+// 2026-08-06 R-PRIM-3 per Taut scout 7af55ee smallest-primitive-gap +
+// Alex 2026-08-06 Q-1 (expose as `apply_h::act` for naming honesty per
+// bootstrap surface; other 6 combinators land as extensions when demand
+// surfaces). Minimum act = bilateral-sentinel-check composing over
+// roomba::mend::load_bilateral_corpus. Sub-Turing decidable.
+#[allow(dead_code)]
+mod apply_h;
+
 // M0 module wiring — declare the sibling altitudes so the terminal-
 // geometry five-file discipline is byte-visible in `rust/src/` and
 // `cargo build` compiles ALL FIVE files even while the bodies are
