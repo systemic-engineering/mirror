@@ -127,3 +127,183 @@ The composition-shard file will carry a docblock at the shard-file header explai
 **Substrate mint scope** (author-boundary):
 
 Mara authors the **spec** in this document. The **actual `.mirror` file** at `shards/mcp/serve.mirror` will be minted by Reed (or another RED-first authorable-peer) in a subsequent tick under `[substrate-floor:@io-boundary]` gate discipline. Mara's authorship altitude = spec + Karen ancestry; NOT the shard body itself per Mara's canonical spec-author role.
+
+---
+
+## §2 Primitives-composed-over
+
+This section enumerates the rust/-altitude primitives the composition-shard body composes over. All primitives at rust/ altitude are either LANDED-EMPIRICAL (phone.rs stack + roomba::mend surface) or IN-FLIGHT via Reed Fire A (R-PRIM-1 / R-PRIM-2 / R-PRIM-3). No primitive is speculative; every composition edge references a landed or in-flight rust/-altitude anchor.
+
+### §2.1 `@io/stdio.read_frame` + `write_frame` (Reed R-PRIM-2)
+
+**Rust altitude anchors** (post-R-PRIM-2 pub-visibility lift):
+
+- `phone::read_stdin_frame() -> io::Result<Vec<u8>>` — LANDED-EMPIRICAL (`#[allow(dead_code)]` currently); post-R-PRIM-2 lifted to `pub`
+- `phone::write_stdout_frame(bytes: &[u8]) -> io::Result<()>` — LANDED-EMPIRICAL; post-R-PRIM-2 lifted to `pub`
+- `phone::read_frame_from<R: BufRead>(reader: &mut R) -> io::Result<Vec<u8>>` — LANDED-EMPIRICAL (`pub(crate)`); post-R-PRIM-2 lifted to `pub` (composition-tests over `Cursor<&[u8]>`)
+- `phone::write_frame_to<W: Write>(writer: &mut W, bytes: &[u8]) -> io::Result<()>` — LANDED-EMPIRICAL (`pub(crate)`); post-R-PRIM-2 lifted to `pub`
+
+**Wire framing**: newline-delimited JSON-RPC 2.0 per phone.rs iter 8 (`4db932d`) landing. Per-frame semantics: read one line (terminated by `\n`); parse as one JSON-RPC message; emit one JSON-RPC response with trailing `\n`.
+
+**Substrate composition anchor**: `boot/std/io/stdio.mirror` (if landed) or the boot-altitude `@io.read(stdin) |> ... |> @io.write(stdout)` shape already declared at `boot/std/mcp.mirror:63` (`serve -> imperfect { @io.read(stdin) |> ... }`). The composition-shard at `shards/mcp/serve.mirror` LIFTS the `@io.read(stdin)` boot-altitude pipe stage to `@io/stdio.read_frame` species-altitude for frame-oriented (not byte-stream) discipline, matching phone.rs's frame-oriented primitives.
+
+**Composition-hazard flag**: if Reed R-PRIM-2 lands with different naming (e.g., `read_stdin_line` vs `read_stdin_frame`) or different signature (e.g., `String` vs `Vec<u8>`), the composition-shard body's pipe-stage names must reconcile. Mara-lean assumption: signatures match Taut scout §1 landing verification (`read_stdin_frame` + `write_stdout_frame`; `Vec<u8>` carrier per newline-delimited JSON-RPC 2.0).
+
+### §2.2 `@data/json.parse` + `emit` (Reed R-PRIM-1)
+
+**Rust altitude anchors** (post-R-PRIM-1 wire.rs landing):
+
+- `wire::parse(bytes: &str) -> Result<serde_json::Value>` — IN FLIGHT; ~10 LOC wrapping `serde_json::from_str`
+- `wire::emit(value: &serde_json::Value) -> String` — IN FLIGHT; ~10 LOC wrapping `serde_json::to_string`
+
+**Naming note per Alex Q-2**: file lands as `rust/src/wire.rs` (RENAMED from `data.rs`); "wire" names transport-encoding altitude honestly (cascade family-middle `source → wire → target`). The substrate namespace question (`@data/json` vs `@wire/json`) is surfaced at §3.
+
+**Composition anchor**: `boot/std/data/json.mirror` (272B, LANDED-SPEC; `parse(text) -> json` + `emit(json) -> text` with `\`-blocked bodies). The composition-shard body composes over the rust/-altitude `wire::parse` / `wire::emit` primitives via substrate-decl'd `@data/json.parse` / `@data/json.emit` action refs; the runtime dispatch (via `apply_h::act`) resolves the action ref to the rust/ altitude implementation.
+
+**Composition-hazard flag**: if Reed R-PRIM-1 lands with different naming (e.g., `wire::json_parse` vs `wire::parse`) or different carrier (e.g., `Vec<u8>` vs `&str` input), the substrate binding reconciles at the `discharge_action` layer; the composition-shard body itself is unaffected because the substrate names (`@data/json.parse` / `@data/json.emit`) are stable per `boot/std/data/json.mirror`.
+
+### §2.3 `apply_h::act` (Reed R-PRIM-3 — bilateral-predicate dispatch path)
+
+**Rust altitude anchor** (post-R-PRIM-3 discharge_action landing):
+
+- `roomba::mend::discharge_action(action_ref: &str, args: &[serde_json::Value]) -> Verdict` — IN FLIGHT; ~30 LOC wrapper composing over already-landed `load_bilateral_corpus` + `discharge`
+
+**Naming per Alex Q-1**: exposed at bootstrap surface as `apply_h::act` (naming honesty; the other 6 combinators land as extensions when their consumers pull). The rust/ altitude landing is Reed's `discharge_action` wrapper composing over landed rust/-altitude primitives (`roomba::mend::load_bilateral_corpus` + `discharge`); this IS the `apply_h::act` bilateral-predicate `act` path at rust/ altitude, without porting the full 7-combinator surface per Taut scout §2 verdict ("MCP composition can fire with `act` + `bilateral_corpus` + `discharge` alone").
+
+**Dispatch semantic**:
+
+1. `action_ref` — a substrate action reference like `@mirror/compile.compile` or `@mirror/roomba.vacuum`; naming shape matches landed `bilateral <name> { require <ref> }` block references at shard altitude.
+2. `args` — JSON-RPC `params` array parsed via `@data/json.parse`; each element is a `serde_json::Value`.
+3. Return `Verdict` — landed enum at bootstrap altitude (`Pass` / `Fail(reason)` / `Partial(transparency)`); rust/ altitude carries the same shape per `roomba::mend` re-export pattern.
+
+**Composition anchor**: `bootstrap/src/apply_h.rs` (Arc-1 Tick 1.3 GREEN; 81.4KB); the `act` primitive is the substrate-honest name per Mara canonical spec `docs/specs/kintsugi-ouroboros-arc-1-evaluator-combinator-surface.md` §5 A/H/D correspondence. The 6 other combinators (section/fold/settle/crystallize/coboundary/utter) are NOT structurally required for MCP composition — they compose for `mirror kintsugi` settle-loop + `mirror compile` saga-chain, orthogonal work.
+
+**Composition-hazard flag**: if Reed R-PRIM-3 lands `discharge_action` with different signature (e.g., returns `Result<Verdict>` vs bare `Verdict`; takes `&[String]` vs `&[serde_json::Value]`), the composition-shard body's `@mcp.dispatch` action wiring reconciles at the rust/-altitude `cmd_serve_mcp` invocation site (Fire C). The substrate composition-shard body itself is signature-agnostic — it composes at the substrate-name altitude (`apply_h::act(action_ref, args)`), not at the rust/-specific signature altitude.
+
+### §2.4 `@mcp.dispatch` — the composition-shard's dispatch predicate
+
+**NEW composition body** (this spec's mint; body composed at `shards/mcp/serve.mirror`).
+
+The `@mcp.dispatch` action is DECLARED at `boot/std/mcp.mirror:71` as `dispatch(request) -> response { \ }` (body-blocked at boot altitude). THIS spec's composition-shard mint carries the body composition — routing MCP `tools/call` requests to substrate-decl'd actions via `apply_h::act` on the tool-name → action-ref mapping.
+
+**Composition body shape**:
+
+```mirror
+@mcp.dispatch(request) -> response {
+  match request.method {
+    "initialize"   => @mcp.initialize_result,        # JSON-RPC framing verb
+    "tools/list"   => { "tools": @mcp.tools },       # composes over @mcp.tools body §2.5
+    "tools/call"   => {
+      # tool-name → action-ref lookup via bilateral-corpus (Phase 1: hardcoded 10-tool map)
+      # apply_h::act discharge to Verdict
+      # Verdict → response.result JSON envelope
+      let action_ref = @mcp.tool_action_ref(request.params.name);
+      let verdict = apply_h::act(action_ref, request.params.arguments);
+      @mcp.verdict_to_result(verdict)
+    },
+    _ => @mcp.error_method_not_found(request.method)
+  }
+}
+```
+
+Phase 1 lands the tool-name → action-ref map hardcoded (10-tool byte-parity per §4). Phase 2 (M5 co-tick) lifts the map to reflective walk via `@mirror/spectral.gestalt` per bilateral-predicate contract `tools_reflects_landed_shards`.
+
+### §2.5 `@mcp.tools` — tool discovery predicate
+
+**NEW composition body** (this spec's mint).
+
+The `@mcp.tools` action is DECLARED at `boot/std/mcp.mirror:76` as `tools -> json { \ }` (body-blocked at boot altitude). THIS spec's composition-shard mint carries the body composition.
+
+**Phase 1 body** — hardcoded 10-tool JSON emission byte-parity with `bootstrap/src/mcp.rs::tools_list_result`:
+
+```mirror
+@mcp.tools -> json {
+  # 10-tool byte-parity list per §4 enumeration
+  [ tool_compile, tool_craft, tool_kintsugi, tool_init, tool_recall,
+    tool_peer_beam, tool_beam, tool_spawn_deprecated, tool_beam_act,
+    tool_roomba, tool_index ]
+}
+```
+
+**Phase 2 body** (M5 co-tick; forward-promise) — reflective grammar walk:
+
+```mirror
+@mcp.tools -> json {
+  # Phase 2: reflective walk via @mirror/spectral.gestalt over landed shards for @mcp/tool annotations
+  @mirror/spectral.gestalt
+    |> shards.filter(has_annotation(@mcp/tool))
+    |> shards.map(shard_to_tool_json_schema)
+    |> @data/json.array
+}
+```
+
+### §2.6 Composition surface summary
+
+| Primitive | rust/ altitude anchor | Reed Fire A task | Substrate composition edge |
+|-----------|-----------------------|------------------|----------------------------|
+| `@io/stdio.read_frame` | `phone::read_stdin_frame` (pub) | R-PRIM-2 pub-visibility lift | `serve` body pipe-stage 1 |
+| `@io/stdio.write_frame` | `phone::write_stdout_frame` (pub) | R-PRIM-2 pub-visibility lift | `serve` body pipe-stage 5 |
+| `@data/json.parse` | `wire::parse` | R-PRIM-1 `rust/src/wire.rs` (~10 LOC) | `serve` body pipe-stage 2 |
+| `@data/json.emit` | `wire::emit` | R-PRIM-1 `rust/src/wire.rs` (~10 LOC) | `serve` body pipe-stage 4 |
+| `apply_h::act` (bilateral `act` path) | `roomba::mend::discharge_action` | R-PRIM-3 (~30 LOC wrapper) | `@mcp.dispatch` body dispatch predicate |
+| `bilateral_corpus` lookup | `roomba::mend::load_bilateral_corpus` | LANDED-EMPIRICAL (no Fire A needed) | `@mcp.dispatch` body tool-name → action-ref |
+| `shard_paths` enumerator | `spectral::shard_paths` | LANDED-EMPIRICAL (no Fire A needed) | Phase 2 `@mcp.tools` reflective walk |
+| grammar walker (AST walk) | GAP at rust/ | Reed Fire D (M5+ co-tick; NOT this spec's blocker) | Phase 2 `@mcp.tools` body |
+
+**Total rust/ altitude additive work per Fire A** (per Taut §7 smallest primitive-gap ranking): ~55 LOC (R-PRIM-1 ~20 LOC + R-PRIM-2 ~5 LOC + R-PRIM-3 ~30 LOC). NOT ~500 LOC serve_loop port. The composition-shard IS the substrate answer.
+
+---
+
+## §3 [ALEX-Q] surfaced — substrate namespace `@data/json` vs `@wire/json`
+
+**The question** (Mara-surfaced [ALEX-Q]):
+
+Alex Q-2 RATIFIED the rust/-altitude file rename `rust/src/data.rs` → `rust/src/wire.rs` (2026-08-06). The rename names transport-encoding altitude honestly at rust/ altitude. But it opens a substrate-namespace question at the composition altitude:
+
+**Should the substrate keep `@data/json` (Mara's existing composition graph) or shift to `@wire/json` (mirroring the rust/-altitude rename for cascade-honesty)?**
+
+### §3.1 Grounding — what substrate already has
+
+Grep-verified LANDED substrate at 2026-08-06:
+
+- **`boot/std/data/json.mirror`** (272B, 2026-05-20): grammar `@data/json` with `parse(text) -> json` + `emit(json) -> text`. LANDED-SPEC-ONLY (`\`-blocked bodies). This IS the composition anchor referenced by `boot/std/mcp.mirror:63` (`@data/json.parse` + `@data/json.emit` at the `serve` pipeline).
+- **`shards/mirror/data.mirror`** (12.4KB) + **`shards/mirror/data/json.mirror`** (8.2KB): `@mirror/data` + `@mirror/data/json` extensions. These sit at species-under-@mirror altitude, not @data family-root altitude.
+- **`@wire` family-root**: DOES NOT EXIST at any altitude in landed substrate (grep for `family @wire` or `in @wire`: zero matches).
+- **`boot/std/wire.mirror`**: DOES NOT EXIST.
+
+### §3.2 The two positions
+
+**Position A — `@data/json` at substrate; `wire.rs` at rust/** (Mara-lean):
+
+- rust/ is the terminal file name; substrate namespace preserves existing composition graph.
+- `wire.rs` speaks JSON via `@data/json` substrate-decl; the file name at rust/ altitude names WHICH kind of rust/-altitude module it is (wire-encoding), while the substrate name (`@data/json`) names the data-domain algebra the module implements.
+- No substrate migration needed; `boot/std/mcp.mirror:63` pipeline shape unchanged; all downstream substrate references (`shards/mirror/data.mirror`, `shards/mirror/data/json.mirror`) unchanged.
+- Substrate-already-had-the-word discipline preserved: `@data/json` already exists; do not mint `@wire` family-root when the composition graph already routes through `@data`.
+
+**Position B — `@wire/json` at substrate; `wire.rs` at rust/** (cascade-symmetry-lean):
+
+- Cascade middle-altitude naming honesty: the rust/ altitude file is `wire.rs`; the substrate name mirrors → `@wire/json`.
+- Wire encodings sit at the substrate's cascade-middle altitude (source → wire → target); a `@wire` family-root would collect JSON, MessagePack, CBOR, ProtoBuf, XML at a substrate-honest cross-encoding altitude.
+- Requires substrate migration: mint `boot/std/wire.mirror` family-root; mint `boot/std/wire/json.mirror` species-under-@wire; update `boot/std/mcp.mirror:63` pipeline to `@wire/json.parse` / `@wire/json.emit`; DEPRECATE or MIGRATE `boot/std/data/json.mirror` + `shards/mirror/data/json.mirror`.
+- Substrate-mint-cost is non-trivial: at least 3 new substrate files + 1 boot-altitude migration + downstream shard-reference migration.
+
+### §3.3 Mara-lean
+
+**Position A: `@data/json` at substrate; `wire.rs` at rust/.**
+
+Rationale:
+
+1. **Substrate-already-had-the-word.** `@data/json` LANDED-SPEC at `boot/std/data/json.mirror` since 2026-05-20; downstream substrate composition graph (esp. `boot/std/mcp.mirror`) already routes through it. Minting `@wire` family-root when `@data` already carries the composition is substrate-inflation.
+2. **Substrate/rust altitude decoupling.** The rust/-altitude file name (`wire.rs`) names the module's role at rust/ altitude (a wire-encoding module). The substrate name (`@data/json`) names the algebra the module implements. Decoupling is substrate-honest per landed pattern (e.g., `phone.rs` at rust/ altitude implements `@io/fs` + `@io/git` + `@io/socket` + `@io/stdio` substrate names; the rust/ file name does not force substrate namespace shape).
+3. **Cascade family-middle is a rust/-altitude concern, not a substrate-altitude concern.** The `source → wire → target` cascade Alex named at Q-2 applies to rust/ altitude module organization (where in rust/src/ does the wire-encoding module live?); it does not force the substrate namespace to mirror the rust/ file layout. Substrate names track data-domain algebras, not rust/-crate file layouts.
+
+### §3.4 BUT — genuine undecidability at Mara altitude
+
+If Alex's Q-2 rename is a signal that `@wire` family-root SHOULD be minted at substrate altitude (i.e., the rust/ rename is prescient of a substrate migration Alex intends to seed), then Position B becomes ratified. Mara cannot decide this at spec-author altitude — the substrate/rust altitude coupling question is genuinely undecidable without Alex adjudication.
+
+**Surfaced [ALEX-Q]**: does Alex's Q-2 rename (`data.rs` → `wire.rs`) signal:
+
+- (a) rust/-altitude naming honesty only; substrate stays `@data/json` (Position A; Mara-lean), OR
+- (b) prescient of substrate `@wire` family-root mint; substrate should migrate to `@wire/json` in a subsequent tick (Position B; requires substrate migration adjudication)?
+
+**Mara Phase 1 landing assumption**: (a) — the composition-shard at `shards/mcp/serve.mirror` composes over `@data/json.parse` / `@data/json.emit` per landed substrate. If Alex ratifies (b), the composition-shard body is edited (grep-and-replace `@data/json` → `@wire/json` at 2 sites in the `serve` pipeline) as part of the substrate migration; the composition-shard shape is namespace-agnostic.
