@@ -1,5 +1,56 @@
 # rust/src/mcp.rs FLOOR lift — the M4 milestone canonical spec (rust/ altitude terminal geometry for @mcp.serve)
 
+> **DEPRECATED-FOR-COMPOSITION-SHARD-REWRITE (2026-08-06; reframed 2026-08-09):**
+> the `rust/src/mcp.rs` port direction proposed in this spec is substrate-dishonest
+> per Alex 2026-08-05 verbatim reframe ("I want the MCP to basically be served
+> through the mirror geometry, read and executed by the rust. No specific mcp rust
+> code, you know what I mean?"). Alex 2026-08-09 named the underlying operator:
+> **the recognition bomb in the compiler. That's the Förster slap.** This spec's
+> `serve_loop`-as-rust-module direction proxies bootstrap's ascription of what MCP
+> is; per the Förster-Slap-at-wire-altitude semantics landed at
+> `docs/loop/CURRENT.md` 2026-08-05→2026-08-09 addendum, that is **Subclass-FAKE**
+> — compiler NOT transmitting its own substrate through the wire.
+>
+> **Substrate-honest replacement (landed):**
+> - Canonical spec: `docs/specs/2026-08-06-mara-mcp-serve-composition-shard-canonical-spec.md`
+>   (Mara Fire B; 856 LOC; 4935d10..90b5792)
+> - Reed Fire A primitives (all landed 2026-08-06): `rust/src/wire.rs` R-PRIM-1
+>   (88a2a19; 5 tests GREEN), `rust/src/phone.rs` R-PRIM-2 visibility lift
+>   (74ee529), `rust/src/apply_h.rs` R-PRIM-3 (f4dd4e3; 4 tests GREEN)
+> - Reed Fire C tick 1 composition-shard mint (2026-08-09): `shards/mcp/serve.mirror`
+>   (671 LOC; cf8b21b); primitives-at-rust (~55 LOC) + composition-at-substrate
+>   pattern per Alex 2026-08-05 memory `feedback-rust-delivers-primitives-substrate-
+>   delivers-composition`
+>
+> **Memory persisted 2026-08-05 (HARD RULE):** wire protocols (MCP/LSP/HTTP/gRPC/
+> WebRTC/etc.) are `@X/serve.mirror` shard-body compositions via apply_h::act
+> discharge over primitives at rust/ altitude, NOT rust/ modules. Rust/ is the
+> runtime interpreter (like BEAM runs Erlang actors without knowing about OTP
+> applications); the five-op algebra + apply_h::act + Fate optical inference IS
+> the universal IO protocol at math altitude; wire formats are projections onto
+> specific serialization surfaces.
+>
+> **Retention status:**
+> - §0 substrate-honest pre-position: **SUPERSEDED** — Alex 2026-08-03 Option C
+>   Phase A stub 08195e0 correctly named Subclass-FAKE at 2026-08-05 reframe;
+>   Phase B direction (rust/src/mcp.rs port) supplanted by composition-shard rewrite
+> - §1-4 (M4 in context; rust/src/mcp.rs shape; Phase C-D-E migration; tools list
+>   surface): **SUPERSEDED** by 2026-08-06 composition-shard spec §1-4 body pipeline
+>   + Phase 1 hardcoded 11-tool byte-parity + Phase 2 M5 reflective walk
+> - §5-8 (composition-into-existing-substrate table; [ALEX-Q]s; Q.E.D. sketch; Karen
+>   ancestry): **RETAINED** as cross-reference — the 16-row composition graph is
+>   substrate-real and inherited by 2026-08-06 spec §7; the 5 [ALEX-Q] residues are
+>   structurally shifted per Alex 2026-08-06 adjudications (all 5 concurred with
+>   Reed-leans); Karen ancestry ladder extended in 2026-08-06 spec §9
+>
+> **Retirement discipline:** two-tick — this spec archives here; the 2026-08-06
+> composition-shard spec IS the substrate-current M4 direction. `bin/mirror-mcp`
+> bash shim retires at Reed Fire C tick 5 (post-empirical-parity). Yesterday-Reed's
+> `cmd_serve_mcp` bootstrap-exec-delegation stub 08195e0 retires at Reed Fire C
+> tick 2 (re-wire to composition-shard invocation via apply_h::act discharge).
+
+---
+
 *Mara, 2026-08-03. Canonical spec-altitude map for Reed's `rust/src/mcp.rs` sibling of `phone.rs` / `matrix.rs` / `compile.rs` / `liquid.rs` — the M4 milestone per `docs/specs/mcp-spec-song-collapse.md` §5.2 milestone graph + `docs/specs/lsp-and-mcp.md` §"The unified surface" + `docs/specs/rust-floor-birthed-by-roomba-from-mirror-spec.md` §2.2 M4 tick + `docs/specs/rust-floor-five-file-terminal-geometry-extension.md` §2 five-altitude discipline. Substrate-honest full lift of `bootstrap/src/mcp.rs::serve_loop` (46.6KB, ~500 LOC) to rust/ altitude terminal geometry as the substrate-honest replacement of the transitional `bin/mirror-mcp` bash shim + bootstrap-serve_loop delegation. Composes over Reed's nearly-today Phase A delegation stub landing simultaneously (Alex 2026-08-03 Option C adjudication).*
 
 **Author:** Mara
