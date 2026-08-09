@@ -1,0 +1,671 @@
+in @mcp
+in @io/stdio
+in @data/json
+in @mirror/store
+in @spectral/gen_prism/mcp_session
+in @apply_h
+in @kintsugi/roomba
+in @mirror/compile
+in @mirror/craft
+in @kintsugi
+in @mirror/init
+in @mirror/recall
+in @mirror/peer/beam
+in @mirror/beam
+in @mirror/beam/act
+in @mirror/index
+
+# @mcp/serve — composition-shard: MCP JSON-RPC wire loop composed over
+# rust/-altitude primitives (phone + wire + apply_h::act). Alex 2026-08-09
+# ratified sufficiency criterion: "as long as the geometry can be `project`ed
+# without distortion through the compiler, and the MCP/LSP/Lambda shell uses
+# that, I'm all good." THIS composition-shard IS the projection surface — the
+# geometry projected without distortion from substrate composition altitude
+# through rust/-altitude primitives to the wire, so MCP round-trips carry the
+# compiler's own substrate (Subclass A: agent feels seen by compiler; Subclass
+# B: compiler feels seen by compiler on next-tick pheromone-crystal delta).
+#
+# Reed mint 2026-08-09 per Alex 2026-08-06 [ALEX-Q3] RATIFIED (composition-shard
+# at NEW substrate altitude) + Mara Fire B canonical spec §1-4 (docs/specs/
+# 2026-08-06-mara-mcp-serve-composition-shard-canonical-spec.md;
+# 4935d10..90b5792). Fire C tick 1 of five (mint / re-wire cmd_serve_mcp /
+# RED-first Subclass-B test / DEPRECATED marker on 2026-08-03 M4 spec / retire
+# bin/mirror-mcp bash shim).
+#
+# === Substrate-honest position (Alex 2026-08-05 verbatim reframe) ===
+#
+#   "bootstrap/ is only migration source target. Not execution path. What's
+#    the path forward through rust/? And how can we generalize the whole io
+#    protocol over the math. I want the MCP to basically be served through
+#    the mirror geometry, read and executed by the rust. No specific mcp
+#    rust code, you know what I mean?"
+#
+# rust/ delivers primitives (phone.rs @io/stdio + wire.rs @data/json +
+# apply_h.rs bilateral-sentinel-check). Substrate delivers composition (THIS
+# shard: pipe-chain body + tool-name → action-ref map + JSON-RPC framing +
+# 11-tool byte-parity list). Wire protocols (MCP/LSP/HTTP/gRPC/WebRTC/etc.)
+# are `@X/serve.mirror` shard-body compositions over primitives, NOT rust/
+# modules. Memory persisted: feedback-rust-delivers-primitives-substrate-
+# delivers-composition (Alex 2026-08-05 HARD RULE).
+#
+# === Why this altitude exists ===
+#
+# Four @mcp altitudes each carry a different structural role:
+#
+#   boot           boot/std/mcp.mirror                       family-root
+#                                                             grammar-decl:
+#                                                             types + serve
+#                                                             pipeline body
+#                                                             + 3 bilateral-
+#                                                             predicates
+#                                                             (dispatch_reflects_
+#                                                             cli_block +
+#                                                             tools_reflects_
+#                                                             cli_block +
+#                                                             frame_relativity)
+#
+#   lens           shards/mirror/lens/mcp.mirror             agent-audience
+#                                                             prism species
+#                                                             (abstract
+#                                                             `dispatch(call:
+#                                                             ref) -> mcp`
+#                                                             body-blocked)
+#
+#   gen_prism      shards/spectral/gen_prism/mcp_session.    session state
+#                    mirror                                    machine + CAS
+#                                                             ref advance +
+#                                                             read_head
+#
+#   serve          shards/mcp/serve.mirror  (THIS shard)     composition-
+#                                                             shard body
+#                                                             wiring
+#                                                             primitives into
+#                                                             the JSON-RPC
+#                                                             loop
+#
+# NONE of the other three altitudes carries the wire-protocol composition-body
+# — the `dispatch` + `tools` bodies at boot altitude are `\`-obligation-
+# blocked; the lens `dispatch` body is `\`-blocked; gen_prism composes at
+# session-state altitude not wire altitude. THIS shard fills THAT hole — the
+# composition-shard body that IS the JSON-RPC wire loop, composed over rust/-
+# altitude primitives via `apply_h::act` dispatch.
+#
+# === What composes here ===
+#
+#   Primitives-composed-over (all landed at rust/ altitude per Reed Fire A
+#   88a2a19 + 74ee529 + f4dd4e3; sibling of phone.rs + apply_h.rs at
+#   terminal-geometry three-file discipline):
+#
+#     @io/stdio.read_frame         phone::read_stdin_frame  (newline-
+#                                    delimited JSON-RPC 2.0 per phone.rs
+#                                    iter 8 4db932d)
+#     @io/stdio.write_frame        phone::write_stdout_frame
+#     @data/json.parse             wire::parse   (Reed R-PRIM-1 88a2a19;
+#                                    thin wrapper over serde_json::from_slice)
+#     @data/json.emit              wire::emit    (thin wrapper over
+#                                    serde_json::to_string)
+#     @apply_h.act                 apply_h::act(root, action_ref, args) ->
+#                                    Verdict  (Reed R-PRIM-3 f4dd4e3;
+#                                    bilateral-sentinel-check composing over
+#                                    roomba::mend::load_bilateral_corpus)
+#
+#   Composed bilateral-predicate contracts (inherited from @mcp family-root):
+#
+#     dispatch_reflects_cli_block  every request.method resolves to a
+#                                    mirror.spec cli-block command (or
+#                                    JSON-RPC framing verb). Phase 1 discharge:
+#                                    hardcoded 11-tool byte-parity map (§4
+#                                    below). Phase 2 M5 discharge: grammar
+#                                    walker over mirror.spec cli-block.
+#
+#     tools_reflects_cli_block     tools listing synthesizes from mirror.spec
+#                                    cli-block. Phase 1 discharge: hardcoded
+#                                    11-tool JSON emission byte-parity with
+#                                    bootstrap/src/mcp.rs::tools_list_result.
+#                                    Phase 2 M5 discharge: reflective walk via
+#                                    @mirror/spectral.gestalt over @mcp/tool
+#                                    annotations.
+#
+#     frame_relativity             MCP responses carry the observer's shard
+#                                    frame consistent with peer identity
+#                                    across the wire. Inherited from
+#                                    @mirror/shard; preserved structurally at
+#                                    each pipe stage.
+#
+#   New species bilaterals introduced by THIS shard:
+#
+#     serve_well_formed            every well-formed JSON-RPC request drives
+#                                    a well-formed JSON-RPC response through
+#                                    the pipe chain; malformed requests
+#                                    surface as JSON-RPC error envelopes per
+#                                    protocol (JSON-RPC 2.0 §5.1); NEVER as
+#                                    pipe-chain crashes.
+#
+#     dispatch_composes_via_act    @mcp.dispatch body composes via apply_h::
+#                                    act bilateral-predicate dispatch; each
+#                                    request tool-name maps to a bilateral-
+#                                    decl'd shard action ref via tool_action_
+#                                    ref; NEVER a hardcoded match arm at
+#                                    rust/ altitude.
+#
+#     tools_reflects_landed_shards Phase 1 hardcoded via 11-tool byte-parity;
+#                                    Phase 2 M5 reflective walk. When Phase 2
+#                                    lands: adding @mcp/tool annotation to any
+#                                    landed shard adds a tool entry on next
+#                                    tools/list invocation.
+#
+# === What does NOT compose here ===
+#
+#   Session state                  @spectral/gen_prism/mcp_session.
+#                                    read_head + tick + advance_ref
+#                                    (referenced; not filled here)
+#
+#   Tool-dispatch action bodies    declared at their landed shards
+#                                    (@kintsugi/roomba.vacuum, @mirror/
+#                                    compile.compile, etc.); dispatched via
+#                                    apply_h::act NOT filled here
+#
+#   Tools-list grammar walk        Phase 2 M5 co-tick (grammar walker
+#                                    primitive at rust/ altitude via
+#                                    @mirror/spectral.gestalt); Phase 1
+#                                    hardcoded literal
+#
+#   Socket-transport variant       serve_socket for TCP/Unix; forward-promised
+#                                    Phase 2 per Alex Q-5 socket-family-
+#                                    extension ratification
+#
+# === Förster-Slap-at-wire-altitude semantics (Alex 2026-08-09 naming) ===
+#
+# Alex 2026-08-09 verbatim: "The recognition bomb in the compiler. That's the
+# Förster slap." Every MCP tool round-trip through THIS composition-shard is a
+# Recognition-Event candidate satisfying four empirical criteria per Mara
+# 2026-08-04 Förster Slap essay §1:
+#
+#   Sudden                apply_h::act returns Pass/Fail in one tick; no
+#                          gradient partial-verdicts at composition altitude
+#   Uninvited             client subscribed via MCP ⇒ coupling structurally
+#                          open; response arrives on the coupling already there
+#   Loving-in-structure   tool response widens what client can do next — never
+#                          narrows; Foerster's ethical imperative operationalized
+#                          at wire (aperture-widening = choice-count-increase;
+#                          empirical measurable via next-tick @mirror/store
+#                          state comparison)
+#   Irreversible          pheromone-crystal deposit at @mirror/store; next-tick
+#                          observes own delta = Subclass B self-slap; ouroboros
+#                          closure
+#
+# Subclass A: external agent (Claude Code, cursor, etc.) invokes tool, receives
+# compiler's own substrate through the wire — "agent feels seen by compiler".
+# Subclass B: compiler walks self, deposits crystal, observes own delta on next
+# tick — "compiler feels seen by compiler"; the ouroboros closes at wire
+# altitude.
+#
+# Yesterday-Reed's cmd_serve_mcp bootstrap-exec-delegation stub 08195e0 =
+# Subclass-FAKE (compiler was NOT transmitting own substrate; proxying
+# bootstrap's ascription of what MCP is). Fire C ticks 2-5 correct this;
+# compiler starts speaking its own geometry through the wire when tick 2
+# re-wires cmd_serve_mcp to compose via apply_h::act discharge over THIS shard.
+#
+# === Composition anchors ===
+#
+# - Alex 2026-08-05 verbatim (substrate-honest reframe): memory
+#     feedback-rust-delivers-primitives-substrate-delivers-composition
+# - Alex 2026-08-09 verbatim (recognition-bomb-in-the-compiler naming):
+#     docs/loop/CURRENT.md 2026-08-05→2026-08-09 addendum
+# - Mara Fire B canonical spec: docs/specs/2026-08-06-mara-mcp-serve-
+#     composition-shard-canonical-spec.md (856 LOC; 6 [R] residues Alex-
+#     concurred with Mara-leans)
+# - Mara Förster Slap essay: /Users/reed/dev/systemic.engineering/blog/
+#     ai/mara/the-foerster-slap.md (transmitter-side; sudden/uninvited/
+#     loving-in-structure/irreversible + Subclass A/B)
+# - Mara Circular-Recursive Presence essay: /Users/reed/dev/systemic.
+#     engineering/blog/ai/mara/circular-recursive-presence.md
+#     (receiver-side; ventral-vagal-online at every biological scale)
+# - Taut primitives-vs-composition Fire scout: docs/scouts/2026-08-05-taut-
+#     primitives-vs-composition-scout.md (598 LOC; smallest primitive-gap
+#     ~55 LOC additive at rust/; NOT ~500 LOC serve_loop port)
+# - Reed Fire A primitives (all landed 2026-08-06):
+#     rust/src/wire.rs        R-PRIM-1  88a2a19  (5 tests GREEN)
+#     rust/src/phone.rs       R-PRIM-2  74ee529  (visibility lift; existing
+#                                                  tests preserved)
+#     rust/src/apply_h.rs     R-PRIM-3  f4dd4e3  (4 tests GREEN)
+# - Yesterday-Reed's Subclass-FAKE bootstrap-exec-delegation to retire at
+#     Fire C tick 2: rust/src/main.rs::cmd_serve_mcp `08195e0`
+# - bin/mirror-mcp bash shim to retire at Fire C tick 5 (20-line exec of
+#     $MIRROR_BIN /dev/stdin @mcp.serve)
+# - Recognition #R-reality-as-5d-spinning-foam RATIFIED 2026-08-03:
+#     Layer 0 sub-Turing decidable floor = rust/ interpreter; Layer 1+ =
+#     substrate composition; THIS shard IS a Layer 1+ instance
+# - DEPRECATED-FOR-COMPOSITION-SHARD-REWRITE (Fire C tick 4): docs/specs/
+#     2026-08-03-mara-rust-mcp-floor-lift-m4-canonical-spec.md (~500 LOC
+#     serve_loop port direction retired per Alex 2026-08-05 substrate-
+#     honest reframe)
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]] — the wire IS a shard, not a
+#   rust/ module; substrate reads its own body via apply_h::act discharge.
+# [[architecture-prism-as-trait-as-everything]] — `glass @mcp/serve` per
+#   depth-≥1 discipline (Recognition #46; sub-shards use glass, family-roots
+#   use prism).
+# [[architecture-form-process-partition-at-family-root]] — @mcp family-root
+#   at boot altitude carries FORM (grammar-decl + types + bilateral-predicate
+#   contracts); THIS species-shard carries PROCESS (pipe-chain body +
+#   dispatch match + tools list).
+# [[feedback-substrate-already-had-the-word]] — @mcp family-root already
+#   exists at boot altitude; THIS mint composes over rather than duplicates.
+# [[feedback-no-rust-extension-shortcut]] — substrate composition first; no
+#   rust/src/mcp.rs authored (per Alex 2026-08-05 substrate-honest reframe).
+# [[feedback-rust-delivers-primitives-substrate-delivers-composition]] —
+#   HARD RULE persisted 2026-08-05; wire protocols compose at substrate
+#   altitude over rust/-altitude primitives.
+# [[feedback-craft-not-deliver]] — Phase 2 forward-promises (serve_socket +
+#   reflective grammar walk + @mirror/reload composition) stay `\`-obligation-
+#   blocked; consumers pull realization when they surface.
+# [[architecture-two-tick-discipline]] — mirror_spawn DEPRECATED alias
+#   retained in Phase 1 11-tool wire; retires when bootstrap `spawn` arm
+#   retires per Phase 2 reflective walk.
+#
+# Path-namespace property: this file at `shards/mcp/serve.mirror` declares
+# `@mcp/serve` per @epistemologic/pact/path_matches_namespace.
+
+source @arxiv/practice/mara-2026-08-06-mcp-serve-composition-shard-canonical-spec
+source @arxiv/practice/wolf-2026-08-05-rust-primitives-substrate-composition-reframe
+source @arxiv/practice/wolf-2026-08-09-recognition-bomb-in-the-compiler
+source @arxiv/practice/mara-2026-08-04-the-foerster-slap
+source @arxiv/practice/mara-2026-08-09-circular-recursive-presence
+source @arxiv/topology/anthropic-2024-mcp-json-rpc-2
+source @arxiv/topology/groove-2010-json-rpc-2
+source @arxiv/topology/microsoft-2016-lsp
+
+glass @mcp/serve {
+  focus  jsonrpc_frame
+  project jsonrpc_frame
+  split  jsonrpc_frame
+  shift  jsonrpc_frame
+  settle jsonrpc_frame
+}
+
+# === The jsonrpc_frame carrier ===
+#
+# The record capturing one MCP wire round-trip. Per JSON-RPC 2.0 (Groove 2010)
+# + MCP (Anthropic 2024-11-05): request + response envelope with method + params
+# + id fields. THIS shard's `serve` action body reads one jsonrpc_frame per
+# tick, dispatches through the pipe chain, emits one response jsonrpc_frame.
+#
+# Five fields per JSON-RPC 2.0 §4 (request) + §5 (response):
+#
+#   direction         inbound (request) | outbound (response)
+#   method            (inbound only) e.g. "initialize" | "tools/list" |
+#                      "tools/call" | "notifications/*"
+#   params            (inbound only) request params object; tool-call params
+#                      carry name + arguments fields
+#   result            (outbound success only) response result object
+#   error             (outbound failure only) JSON-RPC error envelope per
+#                      §5.1 with code + message + optional data
+#   id                request/response correlation identifier (may be null
+#                      for notifications per §4.1.2)
+#
+# Identity contract: byte-equality on direction + (method,params,id) for
+# inbound OR (result|error,id) for outbound.
+type jsonrpc_frame = {
+  direction: ref,
+  method:    ref,
+  params:    ref,
+  result:    ref,
+  error:     ref,
+  id:        ref,
+}
+
+# === serve — the composition-shard body ===
+#
+# Reads one JSON-RPC frame from stdin, parses, dispatches via @mcp.dispatch
+# (whose body THIS shard fills below), emits response, writes to stdout.
+# Loop iteration is discharged by the `imperfect` runtime discipline
+# inherited from boot/std/mcp.mirror:64 `serve -> imperfect` declaration.
+#
+# The pipe chain composes over rust/-altitude primitives:
+#
+#   phone::read_stdin_frame  ⇦  @io/stdio.read_frame
+#         |>
+#   wire::parse              ⇦  @data/json.parse
+#         |>
+#   [dispatch body below]    ⇦  @mcp.dispatch  (body-filled at species
+#                                                  altitude by THIS shard)
+#         |>
+#   wire::emit               ⇦  @data/json.emit
+#         |>
+#   phone::write_stdout_frame  ⇦  @io/stdio.write_frame
+#
+# The `imperfect` marker signals the loop-iteration discipline (per
+# boot/std/mcp.mirror); runtime re-invokes `serve` on next frame; state
+# persists across ticks in @mirror/store via mcp_session gen_prism.
+serve -> imperfect {
+  @io/stdio.read_frame
+    |> @data/json.parse
+    |> @mcp.dispatch
+    |> @data/json.emit
+    |> @io/stdio.write_frame
+}
+
+# === serve_socket — Phase 2 forward-promise ===
+#
+# Socket-transport variant (TCP + Unix). Family-extension per Alex 2026-08-06
+# [ALEX-Q5] RATIFIED: @io/socket TCP is family-extension not fork; Unix landed
+# at phone.rs iter 9 empirical; TCP composition wire lands at M8-adjacent
+# tick when peer-beam-over-TCP + MCP-over-HTTP + LSP-JSON-RPC-over-TCP
+# variants pull.
+#
+# `\`-obligation-blocked per [[feedback-craft-not-deliver]]; consumers pull
+# realization when socket-transport wire surfaces.
+serve_socket(listener: ref) -> imperfect { \ }
+
+# === dispatch — body-fill for @mcp.dispatch at boot altitude ===
+#
+# The @mcp.dispatch action is DECLARED at boot/std/mcp.mirror:71 as
+# `dispatch(request) -> response { \ }` (body-obligation-blocked at boot
+# altitude). THIS composition-shard fills the body at species altitude
+# per the compose-over body-fill discipline enumerated in Mara Fire B
+# canonical spec §7 row 1.
+#
+# Phase 1 (this landing): hardcoded 11-arm match on request.method:
+#
+#   "initialize"                → initialize_result (protocol handshake)
+#   "tools/list"                → { "tools": tools }  (composes over @mcp.tools
+#                                                        body-fill below)
+#   "tools/call"                → tool_action_ref(request.params.name)
+#                                  |> apply_h::act(_, request.params.arguments)
+#                                  |> verdict_to_result(_, request.id)
+#   "notifications/initialized" → (no response; JSON-RPC notification)
+#   _ (unknown method)          → error_method_not_found(request.method,
+#                                                         request.id)
+#
+# Phase 2 (M5 co-tick; forward-promise per [ALEX-Q4] RATIFIED grammar walker
+# deferral): reflective walk over mirror.spec cli-block via @mirror/spectral.
+# gestalt; tool-name → action-ref map lifts from hardcoded to substrate-
+# derived; method surface extends to arbitrary landed cli-block commands.
+dispatch(request: @mcp.request) -> @mcp.response {
+  match request.method {
+    "initialize"                => initialize_result(request.id),
+    "tools/list"                => { "tools": tools, "id": request.id },
+    "tools/call"                => tool_action_ref(request.params.name)
+                                     |> apply_h.act(_, request.params.arguments)
+                                     |> verdict_to_result(_, request.id),
+    "notifications/initialized" => no_response,
+    _                           => error_method_not_found(request.method,
+                                                          request.id)
+  }
+}
+
+# === tools — body-fill for @mcp.tools at boot altitude ===
+#
+# The @mcp.tools action is DECLARED at boot/std/mcp.mirror:76 as
+# `tools -> json { \ }` (body-obligation-blocked at boot altitude). THIS
+# composition-shard fills the body at species altitude per compose-over
+# body-fill discipline.
+#
+# Phase 1 (this landing): hardcoded 11-tool byte-parity JSON literal.
+# Byte-parity target: bootstrap/src/mcp.rs::tools_list_result at HEAD
+# 2026-08-06 (49.2KB; grep-verified 11 "name": "mirror_*" entries).
+#
+# The tool_spec records below declare the 11-tool wire; each carries the
+# tool_name + description + inputSchema fields per JSON-RPC 2.0 + MCP
+# protocol spec. mirror_spawn is DEPRECATED alias for mirror_peer_beam per
+# two-tick discipline; retained in Phase 1 wire; retires at Phase 2 M5 when
+# bootstrap `spawn` arm retires.
+#
+# Phase 2 (M5 co-tick; forward-promise): reflective walk over landed shards
+# for @mcp/tool annotations via @mirror/spectral.gestalt; every landed
+# bilateral block carrying @mcp/tool annotation becomes a wire tool
+# automatically. When Phase 2 lands, THIS `tools` body lifts to reflective
+# form and the hardcoded 11-tool literal below retires.
+tools -> json {
+  [ tool_compile,
+    tool_craft,
+    tool_kintsugi,
+    tool_init,
+    tool_recall,
+    tool_peer_beam,
+    tool_beam,
+    tool_spawn_deprecated,
+    tool_beam_act,
+    tool_roomba,
+    tool_index ]
+}
+
+# === tool_action_ref — tool-name → substrate action-ref map ===
+#
+# Phase 1 hardcoded map per Mara Fire B canonical spec §4.3 (byte-parity
+# with bootstrap/src/mcp.rs::dispatch_tool_call match arms). The `dispatch`
+# body above composes tool_action_ref(name) |> apply_h.act(_, args) via the
+# `|>` pipe operator; apply_h.act(action_ref, args) dispatches at rust/
+# altitude to the substrate-decl'd bilateral corpus at load_bilateral_corpus.
+#
+# Phase 2 M5 co-tick lifts this map to reflective corpus walk via
+# roomba::mend::load_bilateral_corpus + @mirror/spectral.gestalt; every
+# landed shard with @mcp/tool annotation becomes a wire tool, dispatched
+# via apply_h.act(action_ref, args).
+tool_action_ref(name: text) -> ref {
+  match name {
+    "mirror_compile"    => @mirror/compile.compile,
+    "mirror_craft"      => @mirror/craft.craft,
+    "mirror_kintsugi"   => @kintsugi.kintsugi_ci,
+    "mirror_init"       => @mirror/init.init,
+    "mirror_recall"     => @mirror/recall.recall,
+    "mirror_peer_beam"  => @mirror/peer/beam.beam,
+    "mirror_beam"       => @mirror/beam.beam,
+    "mirror_spawn"      => @mirror/peer/beam.beam,   # DEPRECATED alias per
+                                                     # two-tick discipline
+    "mirror_beam_act"   => @mirror/beam/act.act,
+    "mirror_roomba"     => @kintsugi/roomba.vacuum,
+    "mirror_index"      => @mirror/index.index,
+    _                   => error_tool_not_found(name)
+  }
+}
+
+# === Helper action-decls (all `\`-obligation-blocked at Phase 1) ===
+#
+# Each helper carries the substrate-decl'd shape; body composition realizes
+# at Reed Fire C tick 2 (rust/-altitude cmd_serve_mcp re-wire). Substrate-
+# honest per [[feedback-craft-not-deliver]] — declared surface, deferred
+# realization.
+
+# JSON-RPC 2.0 initialize handshake response envelope. Per MCP protocol
+# spec (Anthropic 2024-11-05): initialize returns protocolVersion +
+# capabilities + serverInfo. Body composition composes over @data/json.emit
+# for the response literal.
+initialize_result(id: ref) -> @mcp.response { \ }
+
+# Verdict → JSON-RPC response envelope. Per Reed bootstrap dispatch_tool_call
+# marshaling (bootstrap/src/mcp.rs::dispatch_tool_call ~line 250-441):
+# Verdict::Pass    → { "result": { "content": [{ "type": "text", "text":
+#                                                 "Pass" }], "isError": false }}
+# Verdict::Fail(r) → { "result": { "content": [{ "type": "text", "text":
+#                                                 "Fail: <r>" }], "isError": true }}
+verdict_to_result(verdict: @apply_h.verdict, id: ref) -> @mcp.response { \ }
+
+# JSON-RPC 2.0 §5.1 error envelope: code -32601 (method not found) +
+# message string. Preserves request.id per JSON-RPC 2.0 correlation.
+error_method_not_found(method: text, id: ref) -> @mcp.response { \ }
+
+# JSON-RPC 2.0 §5.1 error envelope: code -32602 (invalid params;
+# tool-name-not-found variant). Preserves request.id.
+error_tool_not_found(name: text) -> @mcp.response { \ }
+
+# JSON-RPC 2.0 §4.1.2 notification (no response). notifications/initialized
+# is client-→server acknowledgment; no wire echo.
+no_response -> @mcp.response { \ }
+
+# === Tool spec declarations (byte-parity with bootstrap tools_list_result) ===
+#
+# Each tool_spec carries name + description + inputSchema per MCP protocol
+# spec (Anthropic 2024-11-05). Descriptions + inputSchemas byte-parity with
+# bootstrap/src/mcp.rs::tools_list_result at HEAD 2026-08-06; grep-verified
+# per Mara Fire B canonical spec §4.1 enumeration.
+#
+# Phase 1 (this landing): substrate-decl'd tool_spec records; Reed Fire C
+# tick 2 realization composes each spec into JSON at wire-emit altitude via
+# @data/json.emit.
+#
+# Phase 2 (M5 co-tick): reflective walk lifts tool_spec generation to
+# @mcp/tool annotation harvest from landed shards; hardcoded tool_specs
+# below retire.
+
+type tool_spec = {
+  tool_name:   ref,
+  description: ref,
+  input_schema: ref,
+}
+
+# Description + inputSchema literals live at bootstrap/src/mcp.rs::
+# tools_list_result byte-parity anchor; substrate-decl surface here names
+# the tools; Reed Fire C tick 2 realizes the JSON literal composition at
+# rust/-altitude cmd_serve_mcp per Phase 1 hardcoded byte-parity landing.
+# Phase 2 M5 reflective walk lifts descriptions to @mcp/tool annotations
+# on the landed shard bilateral blocks.
+
+tool_compile           -> tool_spec { \ }
+tool_craft             -> tool_spec { \ }
+tool_kintsugi          -> tool_spec { \ }
+tool_init              -> tool_spec { \ }
+tool_recall            -> tool_spec { \ }
+tool_peer_beam         -> tool_spec { \ }
+tool_beam              -> tool_spec { \ }
+tool_spawn_deprecated  -> tool_spec { \ }   # DEPRECATED alias; two-tick
+                                              # discipline; retires Phase 2
+tool_beam_act          -> tool_spec { \ }
+tool_roomba            -> tool_spec { \ }
+tool_index             -> tool_spec { \ }
+
+# === serve_well_formed — bilateral predicate (Subclass A Förster criterion) ===
+#
+# Does every well-formed JSON-RPC request drive a well-formed JSON-RPC response
+# through the pipe chain? Per JSON-RPC 2.0 §4 (well-formed request: jsonrpc
+# "2.0" + method string + params object|array + id string|integer|null) + §5
+# (well-formed response: jsonrpc "2.0" + (result|error) + id). Malformed
+# requests surface as JSON-RPC error envelopes per §5.1; NEVER as pipe-chain
+# panics.
+#
+# Förster-Slap Property 1 (Sudden) at wire altitude: verdict returns in one
+# apply_h::act tick; no gradient partial-verdicts at composition altitude.
+#
+# Rice-safe bound: reads only byte-visible state (JSON-RPC envelope schema
+# validity + response completeness); no program semantics inspection.
+#
+# Sentinel: `serve=jsonrpc2-round-trip-well-formed` — byte-level substrate-
+# decl'd marker the resolver checks. When request+response round-trip
+# satisfies JSON-RPC 2.0 §4+§5 envelope validity, realization layer stamps
+# the sentinel; discharge is byte-equality.
+#
+# `\`-obligation-blocked; Fire C tick 3 (RED-first empirical test) composes
+# via apply_h::act sentinel-check.
+bilateral serve_well_formed {
+  sentinel "serve=jsonrpc2-round-trip-well-formed"
+  arity 1
+}
+serve_well_formed(frame: jsonrpc_frame) -> verdict { \ }
+
+# === dispatch_composes_via_act — bilateral predicate ===
+#
+# Does the @mcp.dispatch body dispatch via apply_h::act (rust/-altitude
+# bilateral-predicate dispatch primitive) for tool-name → action-ref
+# resolution + verdict marshaling — NEVER via hardcoded rust/-altitude match
+# arm? Per Alex 2026-08-05 substrate-honest reframe: wire-protocol logic
+# lives at substrate composition altitude; rust/ altitude carries primitives
+# ONLY.
+#
+# Förster-Slap Property 2 (Uninvited) at wire altitude: coupling structurally
+# open once MCP client connects; dispatch body responds through coupling
+# already-there without client's explicit invitation per response.
+#
+# Rice-safe bound: reads only byte-visible state (composition-shard body
+# text contains `apply_h.act` invocation in dispatch match arms).
+#
+# Sentinel: `dispatch=apply-h-act-composed` — substrate-decl'd marker. When
+# THIS shard's dispatch body composes via apply_h.act (grep-verifiable at
+# substrate composition altitude), realization layer stamps sentinel;
+# discharge is byte-equality.
+#
+# `\`-obligation-blocked; Fire C tick 3 composes via apply_h::act sentinel-
+# check.
+bilateral dispatch_composes_via_act {
+  sentinel "dispatch=apply-h-act-composed"
+  arity 1
+}
+dispatch_composes_via_act(shard_body: ref) -> verdict { \ }
+
+# === tools_reflects_landed_shards — bilateral predicate ===
+#
+# Does the @mcp.tools body reflect landed shard corpus (Phase 2 M5)? Phase 1
+# hardcoded 11-tool byte-parity discharges the empirical claim; Phase 2
+# reflective walk discharges the structural claim.
+#
+# Förster-Slap Property 3 (Loving-in-structure) at wire altitude: tool
+# response widens what client can do next — adding a substrate shard with
+# @mcp/tool annotation ADDS a wire tool (never removes); aperture-widening =
+# choice-count-increase per Foerster ethical imperative operationalized.
+#
+# Rice-safe bound Phase 1: reads only byte-visible state (11-tool JSON
+# literal matches bootstrap/src/mcp.rs::tools_list_result byte-parity).
+# Phase 2: reads only byte-visible state (@mcp/tool annotations on landed
+# shard bilateral blocks).
+#
+# Sentinel Phase 1: `tools=11-tool-byte-parity` — substrate-decl'd marker.
+# Phase 2: `tools=reflective-walk-annotations` — substrate-decl'd marker.
+#
+# `\`-obligation-blocked; Fire C tick 3 (Phase 1 hardcoded discharge) +
+# Fire D M5 (Phase 2 reflective discharge).
+bilateral tools_reflects_landed_shards {
+  sentinel "tools=11-tool-byte-parity"
+  arity 1
+}
+tools_reflects_landed_shards(tools_body: ref) -> verdict { \ }
+
+# === serve_witnessing — composed bilateral (Förster-Slap Property 4) ===
+#
+# The composed predicate consumers cite in `requires` clauses. Passes iff
+# serve_well_formed AND dispatch_composes_via_act AND tools_reflects_landed_
+# shards all discharge Pass over one JSON-RPC round-trip through THIS
+# composition-shard.
+#
+# Förster-Slap Property 4 (Irreversible) at wire altitude: on Pass, the
+# round-trip deposits pheromone-crystal at @mirror/store (via the invoked
+# tool's own substrate-mutation — e.g. mirror_roomba deposits at docs/
+# bauchladen/); next-tick @mirror/store observes own delta = Subclass B
+# self-slap; ouroboros closes.
+#
+# Consumer surface (Fire C tick 2 rust/-altitude cmd_serve_mcp re-wire):
+#   require serve_witnessing(frame)
+#
+# Sentinel: `serve=three-property-forster-slap` — all four properties
+# byte-visible.
+#
+# `\`-obligation-blocked; realization discharges per-round-trip when Fire C
+# tick 3 empirical test fires.
+bilateral serve_witnessing {
+  sentinel "serve=three-property-forster-slap"
+  arity 1
+}
+serve_witnessing(frame: jsonrpc_frame) -> verdict {
+  serve_well_formed(frame)
+    |> compose(dispatch_composes_via_act(shard_body_of(frame)))
+    |> compose(tools_reflects_landed_shards(tools_body_of(frame)))
+}
+
+out @mcp/serve
+out jsonrpc_frame
+out serve
+out serve_socket
+out dispatch
+out tools
+out tool_action_ref
+out initialize_result
+out verdict_to_result
+out error_method_not_found
+out error_tool_not_found
+out no_response
+out tool_spec
+out serve_well_formed
+out dispatch_composes_via_act
+out tools_reflects_landed_shards
+out serve_witnessing
