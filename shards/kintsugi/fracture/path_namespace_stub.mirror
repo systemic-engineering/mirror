@@ -1,0 +1,120 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @kintsugi
+in @kintsugi/fracture
+in @kintsugi/mend
+in @kintsugi/consent
+in @kintsugi/morphism
+in @mirror/store
+in @epistemologic
+in @epistemologic/pact
+in @epistemologic/pact/bilateral
+in @epistemologic/pact/path_matches_namespace
+
+# @kintsugi/fracture/path_namespace_stub — the kintsugi fracture body
+# that detects the substrate's redundant docblock template naming the
+# path-namespace property:
+#
+#   # Path-namespace property: this file at `shards/X/Y.mirror`
+#   # declares `@X/Y` per `@epistemologic/pact/path_matches_namespace`.
+#
+# The docblock text IS a deterministic template over the file's path
+# and its declared prism/glass symbol. Preserving it at source adds
+# no information a reader cannot reconstruct from the file path + the
+# pact citation. The pact edge IS what carries the substrate's grep-
+# first Karen-anti-theft ancestry-check at store altitude; the docblock
+# prose IS a projection of that edge onto source altitude.
+#
+# LOAD-BEARING INVARIANT: the pact-citation edge at @mirror/store MUST
+# be preserved at store altitude even when the docblock prose is
+# omitted from source. Store-side crystal projection retains the
+# `@epistemologic/pact/path_matches_namespace` edge as a first-class
+# graph edge on the shard's crystal. Source omits the prose; store
+# keeps the pact.
+#
+# Reed Fire E tick M-E1 landing per Mara canonical spec §1.4.
+#
+# === Substrate authority ===
+#
+# See sibling `@kintsugi/fracture/prism_boilerplate` for full
+# authority chain (Alex 2026-08-09 verbatim; Recognition #79; Mara
+# 2026-08-09 physics insight; Taut 2b01da0; Mara 733cbf1; Seam
+# 0a4c5a0).
+#
+# === Grep-verified instance count ===
+#
+# Taut scout §1.5: 43 landed shards. Mara spec §1.4 LOC estimate:
+# ~86–129 lines removal (2–3 lines per instance).
+#
+# === Refusal check ===
+#
+# The docblock text is derivable-by-template from file path + declared
+# prism/glass symbol. Sentinel byte-check tolerates surface variants
+# (multi-line splits, trailing spaces) per Mara §1.4 spec. Store-side
+# invariant: pact-citation edge preserved at @mirror/store crystal-
+# altitude; source omission removes only prose.
+#
+# Path-namespace property: this file at
+# `shards/kintsugi/fracture/path_namespace_stub.mirror` declares
+# `@kintsugi/fracture/path_namespace_stub` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/practice/wolf-2026-08-09-kintsugi-sugar-first-self-applied-loop
+source @arxiv/practice/mara-2026-08-09-a-f-universality-sugar-mechanism
+
+prism @kintsugi/fracture/path_namespace_stub {
+  focus path_namespace_stub_event
+  project path_namespace_stub_event
+  split path_namespace_stub_event
+  shift path_namespace_stub_event
+  settle path_namespace_stub_event
+}
+
+# === path_namespace_stub_event carrier ===
+type path_namespace_stub_event = {
+  shard_path:         ref,
+  family_literal:     ref,
+  docblock_byte_range: ref,
+  pact_edge_at_store: ref,
+  store_oid_pre:      ref,
+}
+
+# === path_namespace_stub_derivable — bilateral predicate ===
+#
+# Sentinel-check per Mara canonical spec §1.4. Detects docblock
+# template naming path-namespace property per pact citation.
+#
+# Sentinel: `path-namespace-stub = derivable-from-file-path-and-pact`.
+# Rice-safe bound: reads only byte-visible state (docblock text
+# matches template with slot bindings from file path); no semantics.
+#
+# Load-bearing composed invariant: `pact_edge_at_store_preserved(event)`
+# MUST discharge Pass at store altitude for round-trip to hold. If
+# store-side crystal lacks the pact edge, resolution refuses omission.
+bilateral path_namespace_stub_derivable {
+  sentinel "path-namespace-stub = derivable-from-file-path-and-pact"
+  arity 1
+}
+path_namespace_stub_derivable(event: path_namespace_stub_event) -> verdict { \ }
+
+# === detect action ===
+#
+# Scans shard source for docblock template matching path-namespace
+# property text. Verifies pact-citation edge exists at store altitude
+# for the shard's crystal (load-bearing precondition to resolution).
+detect(shard_path: ref) -> path_namespace_stub_event { \ }
+
+# === resolve action ===
+#
+# Emit omission-morphism; docblock byte range replaced by empty.
+# Store-side pact-citation edge preserved (verified via detect
+# precondition).
+resolve(event: path_namespace_stub_event) -> ref { \ }
+
+out @kintsugi/fracture/path_namespace_stub
+out path_namespace_stub_event
+out path_namespace_stub_derivable
+out detect
+out resolve

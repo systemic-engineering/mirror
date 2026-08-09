@@ -1,0 +1,125 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @kintsugi
+in @kintsugi/fracture
+in @kintsugi/mend
+in @kintsugi/consent
+in @kintsugi/morphism
+in @mirror/store
+in @epistemologic
+in @epistemologic/pact
+in @epistemologic/pact/bilateral
+in @epistemologic/pact/path_matches_namespace
+
+# @kintsugi/fracture/glass_boilerplate — the kintsugi fracture body
+# that detects the substrate's universally-redundant identity-carrier
+# glass block at depth-≥1 species altitude: `glass @X/Y { focus X/Y /
+# project X/Y / split X/Y / shift X/Y / settle X/Y }`. Depth-≥1
+# analogue of `@kintsugi/fracture/prism_boilerplate` (sibling tick;
+# same-shape mint applied at sub-prism altitude per Recognition #46
+# keyword/depth discipline).
+#
+# THE DETECTION HALF for the glass-keyword variant of the first
+# self-applied kintsugi loop. Reed Fire E tick M-E1 landing per Mara
+# canonical spec §1.2.
+#
+# === Substrate authority ===
+#
+# Same as sibling `@kintsugi/fracture/prism_boilerplate` (Alex
+# 2026-08-09 verbatim; Recognition #79 + Mara 2026-08-09 physics
+# insight; Taut 2b01da0 + Mara 733cbf1 + Seam 0a4c5a0 cascade). See
+# that file's docblock for the full authority chain.
+#
+# === The fracture pattern ===
+#
+# At depth-≥1 species altitude, sub-prisms use the `glass` keyword
+# per Recognition #46 (keyword_matches_depth). Universally-redundant
+# identity-carrier glass blocks have the shape:
+#
+#   glass @X/Y {
+#     focus X/Y
+#     project X/Y
+#     split X/Y
+#     shift X/Y
+#     settle X/Y
+#   }
+#
+# where `@X/Y` = family/species literal derived from path per
+# `@epistemologic/pact/path_matches_namespace`. Same A_F-universality
+# mathematical justification as prism_boilerplate (Mara insight §1.1
+# + §7 substrate-scale-invariance thesis applies at every altitude;
+# 5-op algebra is scale-invariant).
+#
+# === Grep-verified instance count ===
+#
+# Taut scout §1.3: 43 landed shards. Mara spec §1.2 LOC estimate:
+# ~215–301 lines removal potential.
+#
+# === Fixed-point exemption ===
+#
+# `shards/glass.mirror` itself (the substrate's declaration of the
+# glass sub-prism form) is EXEMPT per [ALEX-Q3] Mara-lean. Enforced
+# at detect-action altitude: `glass_boilerplate.detect(shards/glass.
+# mirror)` returns Fail by hardcoded fixed-point-exemption.
+#
+# Path-namespace property: this file at
+# `shards/kintsugi/fracture/glass_boilerplate.mirror` declares
+# `@kintsugi/fracture/glass_boilerplate` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/practice/wolf-2026-08-09-kintsugi-sugar-first-self-applied-loop
+source @arxiv/practice/mara-2026-08-09-a-f-universality-sugar-mechanism
+
+prism @kintsugi/fracture/glass_boilerplate {
+  focus glass_boilerplate_event
+  project glass_boilerplate_event
+  split glass_boilerplate_event
+  shift glass_boilerplate_event
+  settle glass_boilerplate_event
+}
+
+# === glass_boilerplate_event carrier ===
+#
+# Same four-tuple shape as prism_boilerplate_event (byte-shape identity
+# preserved at species altitude).
+type glass_boilerplate_event = {
+  shard_path:       ref,
+  family_literal:   ref,
+  block_byte_range: ref,
+  store_oid_pre:    ref,
+}
+
+# === glass_boilerplate_redundant — bilateral predicate ===
+#
+# Sentinel-check per Mara canonical spec §1.2. Identical to
+# prism_boilerplate_redundant with `prism` keyword replaced by `glass`
+# in the sentinel byte-pattern.
+#
+# Sentinel: `glass-boilerplate = identity-carrier-a-f-projection`.
+# Rice-safe bound + body-discharge discipline: identical to sibling
+# `prism_boilerplate_redundant`.
+bilateral glass_boilerplate_redundant {
+  sentinel "glass-boilerplate = identity-carrier-a-f-projection"
+  arity 1
+}
+glass_boilerplate_redundant(event: glass_boilerplate_event) -> verdict { \ }
+
+# === detect action ===
+#
+# Scans depth-≥1 species shard for identity-carrier glass block.
+# Enforces `shards/glass.mirror` fixed-point exemption.
+detect(shard_path: ref) -> glass_boilerplate_event { \ }
+
+# === resolve action ===
+#
+# Emit omission-morphism identical shape to prism_boilerplate.resolve;
+# byte range in `block_byte_range` replaced by empty.
+resolve(event: glass_boilerplate_event) -> ref { \ }
+
+out @kintsugi/fracture/glass_boilerplate
+out glass_boilerplate_event
+out glass_boilerplate_redundant
+out detect
+out resolve

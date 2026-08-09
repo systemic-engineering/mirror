@@ -1,0 +1,112 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @kintsugi
+in @kintsugi/fracture
+in @kintsugi/mend
+in @kintsugi/consent
+in @kintsugi/morphism
+in @mirror/store
+in @epistemologic
+in @epistemologic/pact
+in @epistemologic/pact/bilateral
+in @epistemologic/pact/path_matches_namespace
+
+# @kintsugi/fracture/out_derivable — the kintsugi fracture body that
+# detects the substrate's redundant root-export line `out @X` at the
+# end of a shard whose `@X` matches the file's declared prism/glass
+# symbol at the top. The root-export IS derivable from the shard's
+# grammar-decl per `@epistemologic/pact/path_matches_namespace`;
+# preserving it at source adds no information a reader cannot
+# reconstruct from the file path + declared prism/glass symbol.
+#
+# LOAD-BEARING REFUSAL: additional `out <name>` lines (for exported
+# carriers/actions like `out reveal_event`, `out reveal`, `out
+# unsealed_during_reveal` per `shards/magic/reveal.mirror`) DO carry
+# per-symbol export semantics and are NEVER matched by this fracture.
+# Only the root `out @X` line matches.
+#
+# Reed Fire E tick M-E1 landing per Mara canonical spec §1.3.
+#
+# === Substrate authority ===
+#
+# See sibling `@kintsugi/fracture/prism_boilerplate` for full
+# authority chain (Alex 2026-08-09 verbatim; Recognition #79; Mara
+# 2026-08-09 physics insight; Taut 2b01da0; Mara 733cbf1; Seam
+# 0a4c5a0).
+#
+# === Grep-verified instance count ===
+#
+# Taut scout §1.4: 209 landed shards carrying pattern (Seam §1 audit
+# clarified: 209 was the filtered subset of derivable-root-out
+# instances; raw `out @X` line count is 362 including per-symbol
+# additional exports which do NOT match this fracture). Mara spec
+# §1.3 LOC estimate: ~209 lines removal (one line per fracturable
+# instance).
+#
+# === Refusal check (Rice-safe) ===
+#
+# Byte-level check: only match `out @X` lines where `X` byte-equals
+# the declared prism/glass symbol at file top. All non-matching
+# `out <name>` lines pass through unchanged. Multi-out shards
+# (`shards/kintsugi/roomba.mirror` with 20+ per-symbol exports;
+# `shards/magic.mirror` with 5) retain per-symbol lines by construction.
+#
+# Path-namespace property: this file at
+# `shards/kintsugi/fracture/out_derivable.mirror` declares
+# `@kintsugi/fracture/out_derivable` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/practice/wolf-2026-08-09-kintsugi-sugar-first-self-applied-loop
+source @arxiv/practice/mara-2026-08-09-a-f-universality-sugar-mechanism
+
+prism @kintsugi/fracture/out_derivable {
+  focus out_derivable_event
+  project out_derivable_event
+  split out_derivable_event
+  shift out_derivable_event
+  settle out_derivable_event
+}
+
+# === out_derivable_event carrier ===
+type out_derivable_event = {
+  shard_path:       ref,
+  family_literal:   ref,
+  line_byte_range:  ref,
+  store_oid_pre:    ref,
+}
+
+# === out_derivable_redundant — bilateral predicate ===
+#
+# Sentinel-check per Mara canonical spec §1.3. Detects `out @<S>` root
+# export line where `<S>` byte-equals the declared prism/glass symbol
+# at file top.
+#
+# Sentinel: `out-derivable = matches-declared-prism-symbol`. Rice-safe
+# bound: reads only byte-visible state (out line's `@` reference vs
+# top-of-file prism/glass declared symbol); no semantics.
+bilateral out_derivable_redundant {
+  sentinel "out-derivable = matches-declared-prism-symbol"
+  arity 1
+}
+out_derivable_redundant(event: out_derivable_event) -> verdict { \ }
+
+# === detect action ===
+#
+# Scans shard source for root `out @X` line matching file's declared
+# prism/glass symbol at top. NEVER matches per-symbol `out <name>`
+# lines (load-bearing refusal preservation per Mara §1.3).
+detect(shard_path: ref) -> out_derivable_event { \ }
+
+# === resolve action ===
+#
+# Emit omission-morphism; byte range in `line_byte_range` replaced by
+# empty. Store-side crystal projection retains the root-export edge.
+resolve(event: out_derivable_event) -> ref { \ }
+
+out @kintsugi/fracture/out_derivable
+out out_derivable_event
+out out_derivable_redundant
+out detect
+out resolve

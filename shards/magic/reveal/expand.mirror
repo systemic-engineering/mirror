@@ -1,0 +1,237 @@
+in @prism
+in @meta
+in @glass
+in @magic
+in @magic/reveal
+in @magic/contract
+in @magic/audit
+in @magic/mechanism
+in @mirror/store
+in @subject
+in @kintsugi
+in @kintsugi/fracture
+in @kintsugi/fracture/prism_boilerplate
+in @kintsugi/fracture/glass_boilerplate
+in @kintsugi/fracture/out_derivable
+in @kintsugi/fracture/path_namespace_stub
+
+# @magic/reveal/expand — the invisible-mechanism resolution species
+# for the first self-applied kintsugi loop. Audience-relative
+# projection functor: given a shard's crystal-OID at @mirror/store and
+# an audience parameter, projects the crystal to source bytes per
+# audience-specific sugar rules. AI-facing audience: apply all four
+# ratified sugar rules (P1/P3/P4/P5 per @kintsugi/fracture/*) →
+# maximum-density rendering. Human-facing audience: retain full-form
+# → maximum-readable rendering with pedagogical prism-block, root
+# `out @X`, path-namespace docblock all present.
+#
+# THE RESOLUTION HALF of the first self-applied kintsugi loop; sibling
+# to the four @kintsugi/fracture/* detection species (Fire E M-E1
+# co-mints). Composition split per Alex 2026-08-09 verbatim ("the
+# complexity can be part of mirror's @kintsugi @magic") — both @kintsugi
+# and @magic family-roots named. Detection at @kintsugi/fracture;
+# resolution at @magic/reveal/expand. Taut Option D substrate-honest
+# split per SEAM-RATIFY-WITH-SHARPENING at Seam Phase D 0a4c5a0.
+#
+# Reed Fire E tick M-E1 landing per Mara canonical spec §2 + Seam
+# SEAM-1 lean (type-align expand shape with parent @magic/reveal typed-
+# carrier reveal discipline).
+#
+# === SEAM-1 type-alignment with parent @magic/reveal ===
+#
+# Parent species `shards/magic/reveal.mirror` declares:
+#
+#   type reveal_event = {
+#     contract:      magic_contract,
+#     old_mechanism: magic_mechanism,
+#     new_mechanism: magic_mechanism,
+#     witness:       ref,
+#   }
+#   reveal(c, new_m) -> magic_contract
+#     requires audited(c)
+#     requires mechanism_intact(c.mechanism)
+#     requires mechanism_intact(new_m)
+#   unsealed_during_reveal(event: reveal_event) -> verdict
+#
+# This sub-species declares TYPE-ALIGNED shape:
+#
+#   type expand_event = { ... four fields ... }
+#   expand(oid, aud) -> ref
+#     requires stored_at(oid)
+#     requires round_trip_pass(oid)
+#   unsealed_during_expand(event: expand_event) -> verdict
+#
+# Same 4-field event carrier + 2+ `requires` clauses + bilateral
+# unsealed-during predicate. Parent typed-carrier discipline preserved
+# per SEAM-1 Seam-lean at Phase D 0a4c5a0.
+#
+# === Substrate authority ===
+#
+# Alex 2026-08-09 verbatim (kintsugi sugar first self-applied loop; @
+# kintsugi @magic composition split). Alex 2026-08-05 memory
+# `feedback-rust-delivers-primitives-substrate-delivers-composition`.
+# Recognition #79 (5-op void-duality algebra); Recognition #80 (@magic
+# as form/process substrate-decl); Recognition #81 (runtime-@magic;
+# controlled disclosure). Mara 2026-08-09 physics insight (A_F
+# universality Theorem 1.1). README central-claim discharge target:
+# "written BY AI FOR AI and FOR HUMANS BY HUMANS" — the audience-
+# parameter of `expand` IS the observer-position that makes the
+# README claim category-theoretically-exact.
+#
+# === Composition graph ===
+#
+# Parent species:
+#   @magic/reveal              controlled-disclosure family-species;
+#                              this sub-species inherits reveal-shape
+#                              discipline; `expand` IS the
+#                              bidirectional-projection reveal (dual to
+#                              parent's atomic-replacement reveal).
+#   @magic                     family-root; gauge-visible-surface-with-
+#                              matter-hidden-mechanism discipline.
+#   @magic/contract            round-trip fidelity contract carrier.
+#   @magic/audit               `unsealed_during_expand` bilateral
+#                              witnessing invariant preservation.
+#   @magic/mechanism           the store-crystal-projection mechanism
+#                              this species reveals per audience.
+#
+# Detection-side siblings (Fire E M-E1 co-mints):
+#   @kintsugi/fracture/prism_boilerplate      P1 detector
+#   @kintsugi/fracture/glass_boilerplate      P3 detector
+#   @kintsugi/fracture/out_derivable          P4 detector
+#   @kintsugi/fracture/path_namespace_stub    P5 detector
+#
+# Composition-shard body:
+#   @kintsugi/mend/sugar       wires detect + expand via apply_h::act
+#                              dispatch (Fire E M-E1 sibling mint)
+#
+# Empirical instrument:
+#   apply_h::act extension     Reed Fire D M5 co-tick (shared with
+#                              Fire E M-E2 rust/-altitude primitive)
+#
+# === Q5 audience-neutrality (Mara-lean concurred by Alex 2026-08-09) ===
+#
+# NO DEFAULT audience. Every `expand` invocation MUST supply an
+# audience parameter. Audience-neutrality is load-bearing per Mara
+# spec §6.3: neither audience is privileged; observer-position IS the
+# parameter; requiring explicit selection preserves observer-position
+# duality at compiler substrate (Mara insight §6.3 + Recognition #63
+# Pack-orchestra observer-symmetry).
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]]
+# [[architecture-prism-as-trait-as-everything]]
+# [[architecture-alignment-as-boundary-mathematics]] — the sugar
+#   mechanism preserves the store-crystal invariant while projecting
+#   audience-relative renderings; Foerster gauge preserved via
+#   audience-parameter introduction increasing the choice-space
+#   (Mara math §5.3).
+# [[feedback-substrate-already-had-the-word]] — @magic/reveal already
+#   exists; this sub-species mint additively.
+# [[feedback-no-bare-types]] — expand_event typed record.
+# [[feedback-craft-not-deliver]] — body `\`-obligation-blocked;
+#   composition-shard @kintsugi/mend/sugar pulls realization.
+#
+# Path-namespace property: this file at
+# `shards/magic/reveal/expand.mirror` declares `@magic/reveal/expand`
+# per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/practice/wolf-2026-08-09-kintsugi-sugar-first-self-applied-loop
+source @arxiv/practice/mara-2026-08-09-a-f-universality-sugar-mechanism
+source @arxiv/practice/seam-2026-08-09-phase-d-kintsugi-sugar-cascade
+source @arxiv/spectral/chamseddine-connes-marcolli-2007
+
+prism @magic/reveal/expand {
+  focus expand
+  project expand
+  split expand
+  shift expand
+  settle expand
+}
+
+# === audience type ===
+#
+# Observer-position parameter per Q5 audience-neutrality Mara-lean.
+# Two canonical values grep-verifiable at species-decl site:
+#
+#   audience { role: @audience/agent }   AI-facing; all four ratified
+#                                         sugar rules applied at
+#                                         rendering → maximum-density
+#   audience { role: @audience/human }   human-facing; full-form
+#                                         retained → maximum-readable
+#
+# Extends per audience-parameter-taxonomy at Alex's discretion (future
+# ticks). No default; MUST supply per Q5 Mara-lean.
+type audience = { role: ref }
+
+# === expand_event carrier (SEAM-1 type-aligned with parent reveal_event) ===
+#
+# Four-field typed record naming an audience-relative source-projection
+# event. Records the substrate-political receipt of one bidirectional
+# projection across the audience boundary:
+#
+#   crystal_oid    the @mirror/store crystal-OID projected
+#   audience       the observer-position parameter (agent | human)
+#   source_bytes   the projected source rendering (audience-relative)
+#   witness        substrate-typed witness ref naming evidence of
+#                   round-trip fidelity preservation across the
+#                   projection (SEAM-2 preserves indent-as-parameter)
+#
+# Identity contract: byte-equality on the four-tuple.
+type expand_event = {
+  crystal_oid:  ref,
+  audience:     audience,
+  source_bytes: ref,
+  witness:      ref,
+}
+
+# === expand action ===
+#
+# TWO NON-DECORATIVE `requires` CLAUSES per SEAM-1 type-alignment with
+# parent @magic/reveal.reveal (which carries three). Audience-relative
+# projection of a store-crystal to source bytes.
+#
+# requires stored_at(oid, @mirror/store): the crystal-OID must exist
+#   at @mirror/store (composes with @mirror/store existence discipline
+#   per landed shard).
+# requires round_trip_pass(oid): the round-trip fidelity contract
+#   MUST discharge Pass at content-address altitude for oid before
+#   expansion proceeds (Mara math §2 `desugar(sugar(x)) = x` formal
+#   contract enforcement at species-decl boundary).
+#
+# Body discharges at realization boundary via composition with
+# @kintsugi/mend/sugar (Fire E M-E1 sibling mint) + apply_h::act shard-
+# body-projector extension (Fire E M-E2 rust/-altitude primitive;
+# shared with Fire D M5 wire-executor).
+#
+# Per Q6 Mara-lean concurred by Alex: sugar rule always applies at
+# rendering altitude; store canonicalizes; no per-shard opt-out.
+# Audience determines rendering entirely.
+#
+# SEAM-2 discipline: preserve-indent-as-parameter. Indent variation
+# in source is a rendering parameter carried through the round-trip.
+# Store-crystal is indent-invariant; source rendering re-applies
+# indent per audience-specific rules.
+expand(oid: ref, aud: audience) -> ref
+requires stored_at(oid)
+requires round_trip_pass(oid)
+{ \ }
+
+# === unsealed_during_expand — bilateral predicate (SEAM-1 aligned) ===
+#
+# Bilateral verdict analog of parent's `unsealed_during_reveal`.
+# Consumer shards name `requires unsealed_during_expand(event)` to
+# commit to verifying the expand sequence respected the audience
+# rendering invariants throughout the projection (start, mid-projection,
+# end).
+#
+# Rice-safe bound: reads only byte-visible state (event fields;
+# projected source bytes vs re-computed store crystal OID); no
+# program semantics inspection.
+unsealed_during_expand(event: expand_event) -> verdict { \ }
+
+out @magic/reveal/expand
+out audience
+out expand_event
+out expand
+out unsealed_during_expand

@@ -1,0 +1,261 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @kintsugi
+in @kintsugi/fracture
+in @kintsugi/mend
+in @kintsugi/consent
+in @kintsugi/morphism
+in @fractal
+in @fractal/shard
+in @mirror/store
+in @epistemologic
+in @epistemologic/pact
+in @epistemologic/pact/bilateral
+in @epistemologic/pact/path_matches_namespace
+
+# @kintsugi/fracture/prism_boilerplate — the kintsugi fracture body
+# that detects the substrate's universally-redundant identity-carrier
+# prism block: `prism @X { focus X / project X / split X / shift X /
+# settle X }` at the top of any depth-0 shard whose path-derived
+# family/species literal binds all five 5-op arms to the same carrier
+# name (itself). The fracture IS the presence of the redundant block
+# at source altitude; the resolution IS its omission from source AND
+# preservation at @mirror/store crystal altitude via @magic/reveal/
+# expand's audience-relative projection.
+#
+# THE DETECTION HALF of the first self-applied kintsugi loop. The
+# resolution half lives at `@magic/reveal/expand` (sibling tick;
+# Alex 2026-08-09 verbatim ratifying the @kintsugi @magic composition
+# split); the composition-shard body wiring both into apply_h::act
+# dispatch lives at `@kintsugi/mend/sugar` (sibling tick). Reed Fire E
+# tick M-E1 landing per Mara canonical spec
+# `docs/specs/2026-08-09-mara-kintsugi-sugar-desugar-composition-
+# canonical-spec.md` §1.1.
+#
+# === Substrate authority (Alex 2026-08-09 verbatim, load-bearing) ===
+#
+#   > "How can we teach the compiler to omit the `prism` boilerplate
+#      in files as kintsugi sugar? I feel that's the perfect first
+#      self-applied kintsugi loop. What my brain is thinking right now
+#      is that @kintsugi/fractures are basically known patterns. And
+#      a known pattern can be projected into the store but doesn't
+#      have to be projected outwards. The complexity can be part of
+#      mirror's @kintsugi @magic, if that makes sense."
+#
+# Alex named BOTH @kintsugi and @magic family-roots; this shard is the
+# detection half at @kintsugi/fracture altitude; the resolution half
+# lives at @magic/reveal/expand. Substrate-composition split per Taut
+# Option D + Seam SEAM-RATIFY-WITH-SHARPENING at Phase D 0a4c5a0.
+#
+# === The fracture pattern ===
+#
+# Every landed shard whose depth is 0 carries an identity-carrier
+# 5-op prism block at the top:
+#
+#   prism @X {
+#     focus X
+#     project X
+#     split X
+#     shift X
+#     settle X
+#   }
+#
+# where `@X` is the family/species literal derived from the file's
+# path per `@epistemologic/pact/path_matches_namespace`. All five 5-op
+# arms bind the same carrier name (the literal). Per Recognition #79
+# (5-op void-duality algebra = A_F projector basis; Mara + Reed
+# 2026-06-18) + Mara 2026-08-09 physics insight §1.1 Theorem 1.1
+# (A_F IS the prismqueer 5-op algebra; universal-structure per
+# substrate-scale-invariance §7): the block re-declares A_F's identity
+# projection over H_shard=self. A_F is universal across every shard;
+# only the H_carrier varies per shard. Identity-carrier blocks vary
+# NOTHING — they re-state the substrate's universal-structure without
+# adding information. The fracture IS this universally-redundant
+# re-declaration at source altitude.
+#
+# === Substrate-already-had-the-word citation chain ===
+#
+# Sixteenth-plus landed fracture species under @kintsugi/fracture
+# following the same-shape template (angle_to_paren, bilateral_arm_
+# redundant, cold_compile_within_tolerance, dark_count_monotone,
+# docblock_extractive, docblock_incoherent, docblock_ungrounded,
+# gate, inport, keyword, operator_match, parent_cycle, partials_
+# align, relocate, restart_storm, symbol_lift). Typed carrier +
+# detect action + resolve action + bilateral discipline.
+#
+# Taut scout 2b01da0 grep-verified 235 landed shards carrying this
+# pattern (P1 identity-carrier prism); estimated ~1,175–1,645 LOC
+# removal at source altitude. Mara spec §1.1 formalized the sentinel
+# byte-check + Rice-safe decidability + zero-information-loss
+# round-trip contract. Seam Phase D 0a4c5a0 ratified via independent
+# Fiedler-1973 leaf-removal argument: source-altitude λ₀ INCREASES
+# post-cascade.
+#
+# === Ancestors ===
+#
+# Recognition #79 (5-op void-duality algebra; Mara + Reed 2026-06-18);
+# Mara 2026-08-09 physics insight (`/Users/reed/dev/systemic.
+# engineering/practice/insights/spectral/mass-discrete-spacetime-
+# continuous-through-5op-spectral-space.md`; A_F universality Theorem
+# 1.1; substrate-scale-invariance thesis §7); Alex 2026-08-09 verbatim
+# (above); Alex 2026-08-05 memory `feedback-rust-delivers-primitives-
+# substrate-delivers-composition`; Chamseddine-Connes-Marcolli 2007
+# (arXiv:hep-th/0610241); Connes 1994.
+#
+# Composition graph:
+#
+#   Detection side:
+#     @kintsugi/fracture         family-root; walker consumes via
+#                                @kintsugi/oscillate.active_pass
+#     @epistemologic/pact/       path-derivation of family literal
+#       path_matches_namespace
+#     @epistemologic/pact/       bilateral-predicate substrate discipline
+#       bilateral
+#
+#   Resolution side (sibling tick; forward-composed):
+#     @magic/reveal/expand       read-path resugar (source ← store)
+#     @kintsugi/mend/sugar       composition-shard body wiring detect +
+#                                expand via apply_h::act dispatch
+#
+#   Empirical instrument:
+#     apply_h::act extension     Reed Fire D M5 co-tick (shared with
+#                                Fire E M-E2 rust/-altitude primitive)
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]] — the fracture IS a
+#   shard; its resolution IS via other shards.
+# [[architecture-prism-as-trait-as-everything]] — `prism @kintsugi/
+#   fracture/prism_boilerplate` at depth-0 family-root-declaration form
+#   (Recognition #46; sub-shards use glass).
+# [[architecture-form-process-partition-at-family-root]] — @kintsugi
+#   family-root is process-side; this species-shard carries the
+#   detection action; resolution at @magic/reveal/expand (process-side
+#   invisible-mechanism-with-visible-surface).
+# [[feedback-substrate-already-had-the-word]] — @kintsugi/fracture
+#   family already carries 16 sibling species; this mint follows the
+#   same-shape template additively.
+# [[feedback-no-bare-types]] — fracture_event is a typed record.
+# [[feedback-craft-not-deliver]] — all bodies `\`-obligation-blocked;
+#   consumers pull realization when they surface (Fire E M-E2/M-E3
+#   composes the sentinel via apply_h::act).
+# [[architecture-alignment-as-boundary-mathematics]] — the sugar rule
+#   preserves the store-crystal invariant while projecting audience-
+#   relative renderings; Foerster gauge preserved (Mara math §5.3;
+#   choice-count(t · ψ) ≥ choice-count(ψ) via audience-parameter
+#   introduction increasing the choice-space).
+#
+# === Fixed-point exemption ===
+#
+# `shards/prism.mirror` itself (the self-referential fixed-point
+# `prism @prism { focus focus / project project / split split / shift
+# shift / settle settle }`) is EXEMPT from sugar per Alex 2026-08-09
+# concur-with-Mara-lean on [ALEX-Q3]. The exemption is enforced at
+# detect-action altitude: `prism_boilerplate.detect(shards/prism.
+# mirror)` returns Fail by hardcoded fixed-point-exemption.
+#
+# Path-namespace property: this file at
+# `shards/kintsugi/fracture/prism_boilerplate.mirror` declares
+# `@kintsugi/fracture/prism_boilerplate` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/practice/wolf-2026-08-09-kintsugi-sugar-first-self-applied-loop
+source @arxiv/practice/mara-2026-08-09-a-f-universality-sugar-mechanism
+source @arxiv/practice/taut-2026-08-09-pattern-collapse-as-sugar-scout
+source @arxiv/practice/seam-2026-08-09-phase-d-kintsugi-sugar-cascade
+source @arxiv/spectral/chamseddine-connes-marcolli-2007
+
+prism @kintsugi/fracture/prism_boilerplate {
+  focus prism_boilerplate_event
+  project prism_boilerplate_event
+  split prism_boilerplate_event
+  shift prism_boilerplate_event
+  settle prism_boilerplate_event
+}
+
+# === prism_boilerplate_event carrier ===
+#
+# A typed record per [[feedback-no-bare-types]] naming one detected
+# instance of the identity-carrier prism block at source altitude.
+#
+#   shard_path        the shard file carrying the redundant block
+#   family_literal    the family/species literal derived from path
+#                      (matches `@X` in the prism decl AND all five
+#                      op-carriers)
+#   block_byte_range  the byte range [start, end) covering the full
+#                      prism block (opening `prism` keyword through
+#                      closing `}`)
+#   store_oid_pre     the @mirror/store crystal-OID at detection time
+#                      (round-trip fidelity witness: `expand` must
+#                      yield same OID post-cascade)
+#
+# Identity contract: byte-equality on the four-tuple.
+type prism_boilerplate_event = {
+  shard_path:       ref,
+  family_literal:   ref,
+  block_byte_range: ref,
+  store_oid_pre:    ref,
+}
+
+# === prism_boilerplate_redundant — bilateral predicate ===
+#
+# Sentinel-check per Mara canonical spec §1.1. Detects the substrate-
+# obvious pattern `prism @<S> { focus <S> / project <S> / split <S>
+# / shift <S> / settle <S> }` where `<S>` binds identically across
+# all five 5-op arms. Rice-safe: byte-level pattern match on the
+# opening-`prism`-through-closing-`}` block plus arm-carrier-literal
+# equality check.
+#
+# Sentinel: `prism-boilerplate = identity-carrier-a-f-projection`.
+# When source contains an identity-carrier prism block at depth-0
+# whose all-five-arm carriers match the path-derived family literal,
+# realization layer stamps the sentinel; discharge is byte-equality.
+#
+# Rice-safe bound: reads only byte-visible state (opening keyword +
+# five arm-carrier literals + closing brace); no program semantics
+# inspection.
+#
+# Body discharges per-realization. `\`-obligation-blocked per
+# [[feedback-craft-not-deliver]]; Fire E M-E2 composes via apply_h::
+# act sentinel-check.
+bilateral prism_boilerplate_redundant {
+  sentinel "prism-boilerplate = identity-carrier-a-f-projection"
+  arity 1
+}
+prism_boilerplate_redundant(event: prism_boilerplate_event) -> verdict { \ }
+
+# === detect action ===
+#
+# Scans a shard source at `shard_path` for the identity-carrier prism
+# block pattern. Returns a prism_boilerplate_event if the pattern is
+# present; Fail otherwise. Enforces fixed-point exemption for
+# `shards/prism.mirror` (returns Fail; the self-referential prism
+# block IS the substrate's declaration of what the sugar rule refers
+# to per [ALEX-Q3] Mara-lean).
+#
+# Body discharges at realization boundary; Fire E M-E2 wires via
+# apply_h::act dispatch composing over Reed Fire A phone::read_file +
+# wire::parse primitives.
+detect(shard_path: ref) -> prism_boilerplate_event { \ }
+
+# === resolve action ===
+#
+# Given a detected prism_boilerplate_event, emit the omission-morphism
+# @kintsugi/consent consumes. The morphism's `content` ref names the
+# source with the identity-carrier block removed (bytes in
+# `block_byte_range` replaced by empty); `score` = zero-dissonance
+# (the removal is unambiguous per A_F-universality); `expected` =
+# authentic cadence (the substrate settles cleanly post-cascade because
+# `expand` reprojects the block at rendering altitude on-demand).
+#
+# Body discharges at realization boundary via composition with
+# @kintsugi/mend.mend at Fire E M-E4 walker cascade.
+resolve(event: prism_boilerplate_event) -> ref { \ }
+
+out @kintsugi/fracture/prism_boilerplate
+out prism_boilerplate_event
+out prism_boilerplate_redundant
+out detect
+out resolve

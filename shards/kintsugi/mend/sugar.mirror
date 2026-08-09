@@ -1,0 +1,235 @@
+in @prism
+in @meta
+in @glass
+in @kintsugi
+in @kintsugi/mend
+in @kintsugi/fracture
+in @kintsugi/fracture/prism_boilerplate
+in @kintsugi/fracture/glass_boilerplate
+in @kintsugi/fracture/out_derivable
+in @kintsugi/fracture/path_namespace_stub
+in @magic
+in @magic/reveal
+in @magic/reveal/expand
+in @mirror/store
+in @fractal
+in @fractal/shard
+in @apply_h
+in @io
+in @io/fs
+in @data
+in @data/mirror
+
+# @kintsugi/mend/sugar — the composition-shard body wiring the first
+# self-applied kintsugi loop through apply_h::act dispatch. Composes
+# over the four @kintsugi/fracture/* detection species + @magic/reveal/
+# expand resolution species + Reed Fire A rust/-altitude primitives
+# (phone::@io/fs.read_file + wire::parse for read; wire::emit +
+# phone::@io/fs.write_file for write; apply_h::act shard-body-projector
+# extension for dispatch — Fire E M-E2 shared primitive with Fire D M5
+# wire-executor).
+#
+# Sub-species of @kintsugi/mend per Q4 Mara-lean concurred by Alex
+# 2026-08-09 (composition-honest: sugar IS a mend variety filling the
+# "crack" between store crystal and audience-source with the audience-
+# relative projection-morphism; avoids over-elevating a composition-
+# body altitude to sub-family-root).
+#
+# Reed Fire E tick M-E1 landing per Mara canonical spec §2.5 +
+# forward-composed with Fire E M-E2/M-E3/M-E4 landings.
+#
+# === Substrate authority ===
+#
+# Alex 2026-08-09 verbatim (@kintsugi @magic composition split; sugar
+# rule as first self-applied kintsugi loop). Alex 2026-08-05 memory
+# `feedback-rust-delivers-primitives-substrate-delivers-composition`
+# (composition-at-substrate discipline; wire protocols + rendering
+# rules are shard-body compositions NOT rust/ modules). README central
+# claim discharge: audience-relative rendering makes "written BY AI
+# FOR AI and FOR HUMANS BY HUMANS" category-theoretically-exact via
+# resugar∘sugar = id identity functor at content-address altitude
+# (Mara math §2).
+#
+# === Composition-shard body pipeline ===
+#
+# Write-path (source → store):
+#
+#   phone::read_file(shard_path)                # @io/fs.read
+#     |> wire::parse(_)                         # @data/mirror.parse
+#     |> detect_all_fracturable(_)              # composition over 4
+#                                                # @kintsugi/fracture/*.detect
+#                                                # via apply_h::act dispatch
+#     |> omit_fractures(_)                      # composition over 4
+#                                                # @kintsugi/fracture/*.resolve
+#                                                # via apply_h::act dispatch
+#     |> @mirror/store.crystallize(_)           # store-side canonical form
+#
+# Read-path (store → audience-rendered source):
+#
+#   @mirror/store.load(oid)                     # crystal-OID lookup
+#     |> @magic/reveal/expand.expand(_, aud)    # audience-relative
+#                                                # projection via
+#                                                # apply_h::act dispatch
+#     |> wire::emit(_)                          # @data/mirror.emit
+#     |> phone::write_file(_, shard_path)       # @io/fs.write (write-
+#                                                # back to source when
+#                                                # walker cascade fires)
+#
+# Round-trip fidelity check (Fire E M-E5 RED-first empirical test):
+#
+#   source_bytes_pre = phone::read_file(shard_path)
+#     |> wire::parse(_)
+#     |> @mirror/store.crystallize(_)              # oid_pre
+#     |> @magic/reveal/expand.expand(_, human)     # full-form projection
+#     |> wire::emit(_)                             # source_bytes_post
+#     |> @mirror/store.crystallize(_)              # oid_post
+#     |> assert(oid_pre == oid_post)               # bit-exact per Mara
+#                                                    # math §2
+#
+# ASSERT contract: `resugar∘sugar = id` at content-address altitude
+# per Mara math §2 formal proof (identity functor property). SEAM-2
+# preserves indent-as-parameter (indent variation carried through
+# round-trip as rendering parameter).
+#
+# === Cross-connect to Fire D M5 shared primitive ===
+#
+# apply_h::act shard-body-projector extension (Fire E M-E2 rust/-
+# altitude) IS the shared primitive with Fire D M5 wire-executor.
+# Fire E lands FIRST as low-risk pure-canonicalization validator;
+# Fire D wire-executor lands SECOND sharing the validated primitive.
+# Both compose over phone.rs + wire.rs + apply_h.rs Fire A primitives
+# (88a2a19 + 74ee529 + f4dd4e3 landings 2026-08-06).
+#
+# === Ancestors ===
+#
+# Recognition #79 (5-op void-duality algebra); Recognition #80 (@magic
+# as form/process substrate-decl); Recognition #81 (runtime-@magic;
+# controlled disclosure); Mara 2026-08-09 physics insight (A_F
+# universality); Reed 2026-08-09 Fire C tick 1 (cf8b21b shards/mcp/
+# serve.mirror composition-shard precedent); Reed Fire A primitives
+# (88a2a19 + 74ee529 + f4dd4e3); Taut 2b01da0 pattern-collapse-as-
+# sugar scout; Mara 733cbf1 canonical spec + math; Seam 0a4c5a0 Phase
+# D SEAM-RATIFY-WITH-SHARPENING.
+#
+# === Composition into existing substrate ===
+#
+# @kintsugi/mend            family-root parent; sugar IS a mend
+#                            variety at rendering altitude.
+# @kintsugi/fracture/*      four detection species Fire E M-E1 co-mints
+#                            (prism_boilerplate + glass_boilerplate +
+#                            out_derivable + path_namespace_stub).
+# @magic/reveal/expand      resolution species Fire E M-E1 co-mint
+#                            (audience-relative projection functor).
+# @mirror/store             content-addressed store; crystallize +
+#                            load actions carry the round-trip fidelity
+#                            invariants.
+# @apply_h                  bilateral-dispatch + shard-body-projector
+#                            (Fire E M-E2 extension).
+# @io/fs                    phone::read_file + phone::write_file
+#                            primitives (Reed Fire A R-PRIM-2 lifted).
+# @data/mirror              wire::parse + wire::emit primitives at
+#                            @data/mirror altitude (Reed Fire A R-PRIM-1).
+# @fractal/shard            typed-sheaf vessel; crystals landed at
+#                            @mirror/store are @fractal/shard instances.
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]]
+# [[architecture-prism-as-trait-as-everything]]
+# [[architecture-alignment-as-boundary-mathematics]]
+# [[feedback-rust-delivers-primitives-substrate-delivers-composition]]
+#   — Alex 2026-08-05 HARD RULE; this composition-shard body IS the
+#   substrate composition; rust/-altitude primitives compose here.
+# [[feedback-substrate-already-had-the-word]] — @kintsugi/mend already
+#   exists; this sub-species mint additively; no @kintsugi/sugar
+#   sibling family (refused per Option D substrate-thin-species-per-
+#   operation discipline).
+# [[feedback-craft-not-deliver]] — mend body `\`-obligation-blocked;
+#   Fire E M-E4 walker cascade + M-E5 RED-first test discharge at
+#   realization boundary.
+#
+# Path-namespace property: this file at `shards/kintsugi/mend/sugar.
+# mirror` declares `@kintsugi/mend/sugar` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/practice/wolf-2026-08-09-kintsugi-sugar-first-self-applied-loop
+source @arxiv/practice/mara-2026-08-09-a-f-universality-sugar-mechanism
+source @arxiv/practice/seam-2026-08-09-phase-d-kintsugi-sugar-cascade
+source @arxiv/practice/taut-2026-08-09-pattern-collapse-as-sugar-scout
+
+prism @kintsugi/mend/sugar {
+  focus sugar_event
+  project sugar_event
+  split sugar_event
+  shift sugar_event
+  settle sugar_event
+}
+
+# === sugar_event carrier ===
+#
+# A typed record naming one complete sugar-cascade tick over a shard:
+# detection + omission + round-trip verification + write-back (or
+# skip if no fracturable pattern detected).
+type sugar_event = {
+  shard_path:      ref,
+  oid_pre:         ref,
+  oid_post:        ref,
+  fractures_found: ref,
+  bytes_removed:   ref,
+  witness:         ref,
+}
+
+# === sugar_witnessing — composed bilateral predicate ===
+#
+# The load-bearing round-trip fidelity contract per Mara math §2.
+# Passes iff oid_pre == oid_post bit-exactly. Discharges the identity-
+# functor property empirically at every walker tick.
+#
+# Sentinel: `sugar-bit-parity-round-trip = pass-content-addressed`.
+# Rice-safe bound: byte-equality check on two @mirror/store crystal
+# OIDs; no semantics.
+bilateral sugar_witnessing {
+  sentinel "sugar-bit-parity-round-trip = pass-content-addressed"
+  arity 1
+}
+sugar_witnessing(event: sugar_event) -> verdict { \ }
+
+# === mend action — composition-shard body ===
+#
+# The composition-shard body per pipeline documented in header docblock.
+# Composes over @kintsugi/fracture/*.detect + .resolve + @magic/reveal/
+# expand.expand + @mirror/store.crystallize + Reed Fire A primitives
+# via apply_h::act shard-body-projector dispatch (Fire E M-E2 extension).
+#
+# Per Q4 Mara-lean: mend IS the composition-shard body altitude for
+# the sugar cascade; this action wires the full pipeline; consumers
+# (Fire E M-E4 walker cascade) invoke via apply_h::act(root,
+# "@kintsugi/mend/sugar.mend", shard_path).
+#
+# Body `\`-obligation-blocked at spec altitude; realization discharges
+# at Fire E M-E2 apply_h::act extension landing + Fire E M-E3/M-E4/M-E5
+# subsequent ticks. Requires round-trip fidelity discharge per
+# `sugar_witnessing` bilateral.
+mend(shard_path: ref) -> sugar_event
+requires sugar_witnessing(_)
+{ \ }
+
+# === walk_cascade action — Fire E M-E4 walker driver ===
+#
+# Walks shards/ (or a subdirectory scope-restricted per --collapse
+# flag), invokes `mend` per shard, commits per N-shards (or per
+# recognition-batch), deposits pheromone-signature crystal at
+# docs/bauchladen/ per @gift/lens.pay_forward discipline. Commit
+# author: `mirror <mirror@spectral.engineer>` (first mass mirror-
+# authored kintsugi cascade per Fire E M-E6 empirical target).
+#
+# Body discharges at Fire E M-E4 realization. Halt conditions per
+# CURRENT.md Fire E halt-condition list (crystal-OID mismatch;
+# substrate-truth grep-count deltas; new [ALEX-Q] surface).
+walk_cascade(scope: ref) -> ref { \ }
+
+out @kintsugi/mend/sugar
+out sugar_event
+out sugar_witnessing
+out mend
+out walk_cascade
