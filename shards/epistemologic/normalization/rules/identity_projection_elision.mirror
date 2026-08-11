@@ -1,0 +1,135 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/pact
+in @epistemologic/pact/bilateral
+in @epistemologic/pact/path_matches_namespace
+in @epistemologic/normalization
+in @epistemologic/normalization/beta_reduce
+in @kintsugi
+in @kintsugi/fracture
+in @kintsugi/fracture/prism_boilerplate
+in @apply_h
+
+# @epistemologic/normalization/rules/identity_projection_elision —
+# reduction rule that eliminates the P1 identity-carrier prism block
+# from the AST. When the AST contains a subtree of shape:
+#
+#   prism @<S> {
+#     focus <S>
+#     project <S>
+#     split <S>
+#     shift <S>
+#     settle <S>
+#   }
+#
+# where all five 5-op arms bind identically to the family literal <S>,
+# the subtree reduces to the empty carrier — the identity projection
+# of A_F over H_shard=self carries no information beyond A_F itself.
+#
+# THE AST-ALTITUDE COMPANION to @kintsugi/fracture/prism_boilerplate
+# (Reed Fire E M-E1 landed at acaed91; Fire E M-E2 detector primitive
+# at 0021882). The fracture-species detects the pattern at SOURCE
+# altitude for audience-relative rendering; THIS species eliminates
+# the same pattern at AST altitude for hash canonicalization.
+#
+# Reed Fire E M-E3-REVISED landing per Mara canonical spec 5ad8528
+# §2.2 first reduction rule.
+#
+# === Ancestor ===
+#
+# Mara 2026-08-09 physics insight §1.1 Theorem 1.1: A_F IS the
+# prismqueer 5-op void-duality algebra; A_F universal-structure at
+# every altitude. Substrate-scale-invariance thesis (§7): the 5-op
+# algebra is scale-invariant; at compiler altitude the identity
+# projection over H_shard=self is beta-reducible; the corresponding
+# AST subtree contributes nothing to the hash.
+#
+# === Fixed-point exemption ===
+#
+# Per Alex 2026-08-09 Q3 concur-with-Mara-lean: `shards/prism.mirror`
+# and `shards/glass.mirror` self-referential fixed-points are EXEMPT
+# from beta-reduction. They ARE the substrate's declaration of what
+# the reduction rule refers to; reducing them would collapse the
+# substrate's own vocabulary. Enforced at rule-application altitude:
+# `identity_projection_elision(ast_at_shards_prism_mirror)` returns
+# NoReduction (rule does not fire on the fixed-point).
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]]
+# [[feedback-rust-delivers-primitives-substrate-delivers-composition]]
+#   — rule lands as shard body composing over apply_h::act; NO new Rust.
+# [[feedback-craft-not-deliver]] — body `\`-obligation-blocked; Reed
+#   Fire E M-E3.5-REVISED at rust/ altitude discharges the sentinel.
+#
+# Path-namespace property: this file at
+# `shards/epistemologic/normalization/rules/identity_projection_
+# elision.mirror` declares `@epistemologic/normalization/rules/
+# identity_projection_elision` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/practice/mara-2026-08-10-beta-normal-ast-content-addressing
+source @arxiv/practice/mara-2026-08-09-a-f-universality-sugar-mechanism
+source @arxiv/spectral/mara-2026-08-09-mass-discrete-spacetime-5op-spectral
+
+prism @epistemologic/normalization/rules/identity_projection_elision {
+  focus identity_projection_redex
+  project identity_projection_redex
+  split identity_projection_redex
+  shift identity_projection_redex
+  settle identity_projection_redex
+}
+
+# === identity_projection_redex carrier ===
+#
+# A typed record naming one identity-carrier prism block detected in
+# an AST subtree.
+type identity_projection_redex = {
+  ast_subtree:      ref,
+  family_literal:   ref,
+  carrier_verified: ref,
+  witness:          ref,
+}
+
+# === reduce action ===
+#
+# Applies the identity-projection-elision rule to an AST subtree.
+# Returns the reduced subtree (empty carrier) if the redex pattern
+# is matched and the shard is not a fixed-point exemption; otherwise
+# returns the input subtree unchanged (rule does not fire).
+#
+# Body `\`-obligation-blocked; Reed Fire E M-E3.5-REVISED discharges
+# via apply_h::act sentinel arm composing over the M-E2 landed
+# detect_prism_boilerplate_at primitive (rust/src/apply_h.rs).
+reduce(ast: ref) -> ref
+requires well_formed(ast)
+{ \ }
+
+# === reducible — bilateral predicate ===
+#
+# Rice-safe byte-check: the AST subtree matches the P1 identity-
+# carrier prism block pattern (as detected by
+# @kintsugi/fracture/prism_boilerplate.detect at source altitude, now
+# at AST altitude via apply_h::act). Reads only byte-visible state
+# (AstKind + subtree structure + arm-carrier-literal equality).
+#
+# Sentinel: `identity-projection = a-f-identity-over-h-shard-self`.
+bilateral identity_projection_reducible {
+  sentinel "identity-projection = a-f-identity-over-h-shard-self"
+  arity 1
+}
+reducible(ast: ref) -> verdict { \ }
+
+# === well_formed — inherited composed bilateral ===
+#
+# Delegates to @epistemologic/normalization/beta_reduce.well_formed.
+well_formed(ast: ref) -> verdict { \ }
+
+out @epistemologic/normalization/rules/identity_projection_elision
+out identity_projection_redex
+out reduce
+out reducible
+out identity_projection_reducible
+out well_formed

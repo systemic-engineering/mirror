@@ -1,0 +1,88 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/pact
+in @epistemologic/pact/bilateral
+in @epistemologic/pact/path_matches_namespace
+in @epistemologic/normalization
+in @epistemologic/normalization/beta_reduce
+in @kintsugi
+in @kintsugi/fracture
+in @kintsugi/fracture/path_namespace_stub
+in @apply_h
+
+# @epistemologic/normalization/rules/docblock_stub_elision — reduction
+# rule that eliminates the P5 path-namespace docblock stub from the
+# AST. When the AST contains a docblock template:
+#
+#   # Path-namespace property: this file at `shards/X/Y.mirror`
+#   # declares `@X/Y` per `@epistemologic/pact/path_matches_namespace`.
+#
+# where the text is deterministically derivable from the file path
+# and the pact, the docblock reduces to empty at AST altitude. The
+# pact-citation edge is preserved at @mirror/store crystal altitude
+# per the load-bearing invariant Mara 2026-08-09 kintsugi-sugar spec
+# §1.4 named.
+#
+# THE AST-ALTITUDE COMPANION to @kintsugi/fracture/path_namespace_stub
+# (Reed Fire E M-E1 landed).
+#
+# LOAD-BEARING INVARIANT: pact-citation edge preserved at @mirror/store
+# crystal altitude even when docblock AST subtree is reduced away.
+# Store-side crystal projection retains the
+# @epistemologic/pact/path_matches_namespace edge as a first-class
+# graph edge on the shard's crystal.
+#
+# Reed Fire E M-E3-REVISED landing per Mara canonical spec 5ad8528
+# §2.2 fourth reduction rule.
+#
+# Path-namespace property: this file at
+# `shards/epistemologic/normalization/rules/docblock_stub_elision.
+# mirror` declares `@epistemologic/normalization/rules/docblock_stub_
+# elision` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/practice/mara-2026-08-10-beta-normal-ast-content-addressing
+
+prism @epistemologic/normalization/rules/docblock_stub_elision {
+  focus docblock_stub_redex
+  project docblock_stub_redex
+  split docblock_stub_redex
+  shift docblock_stub_redex
+  settle docblock_stub_redex
+}
+
+type docblock_stub_redex = {
+  ast_subtree:        ref,
+  docblock_text:      ref,
+  pact_edge_at_store: ref,
+  witness:            ref,
+}
+
+reduce(ast: ref) -> ref
+requires well_formed(ast)
+requires pact_edge_at_store_preserved(ast)
+{ \ }
+
+bilateral docblock_stub_reducible {
+  sentinel "docblock-stub = derivable-from-path-and-pact"
+  arity 1
+}
+reducible(ast: ref) -> verdict { \ }
+
+bilateral pact_edge_at_store_preserved_pact {
+  sentinel "pact-edge = preserved-at-mirror-store-crystal"
+  arity 1
+}
+pact_edge_at_store_preserved(ast: ref) -> verdict { \ }
+
+well_formed(ast: ref) -> verdict { \ }
+
+out @epistemologic/normalization/rules/docblock_stub_elision
+out docblock_stub_redex
+out reduce
+out reducible
+out docblock_stub_reducible
+out pact_edge_at_store_preserved
+out pact_edge_at_store_preserved_pact
+out well_formed

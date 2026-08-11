@@ -1,0 +1,74 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/pact
+in @epistemologic/pact/bilateral
+in @epistemologic/pact/path_matches_namespace
+in @epistemologic/normalization
+in @epistemologic/normalization/beta_reduce
+in @kintsugi
+in @kintsugi/fracture
+in @kintsugi/fracture/glass_boilerplate
+in @apply_h
+
+# @epistemologic/normalization/rules/glass_identity_elision — reduction
+# rule that eliminates the P3 identity-carrier glass block from the
+# AST at depth-≥1 species altitude. Sibling of
+# identity_projection_elision (same rule at sub-prism altitude per
+# Recognition #46 keyword/depth discipline).
+#
+# THE AST-ALTITUDE COMPANION to @kintsugi/fracture/glass_boilerplate
+# (Reed Fire E M-E1 landed). Same reduction rule as identity_projection
+# with `prism` keyword replaced by `glass` in the redex pattern.
+#
+# Reed Fire E M-E3-REVISED landing per Mara canonical spec 5ad8528
+# §2.2 second reduction rule.
+#
+# === Fixed-point exemption ===
+#
+# Per Alex 2026-08-09 Q3 concur-with-Mara-lean: `shards/glass.mirror`
+# self-referential fixed-point is EXEMPT from beta-reduction.
+#
+# See sibling identity_projection_elision for full docblock context.
+#
+# Path-namespace property: this file at
+# `shards/epistemologic/normalization/rules/glass_identity_elision.
+# mirror` declares `@epistemologic/normalization/rules/glass_identity_
+# elision` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/practice/mara-2026-08-10-beta-normal-ast-content-addressing
+
+prism @epistemologic/normalization/rules/glass_identity_elision {
+  focus glass_identity_redex
+  project glass_identity_redex
+  split glass_identity_redex
+  shift glass_identity_redex
+  settle glass_identity_redex
+}
+
+type glass_identity_redex = {
+  ast_subtree:      ref,
+  family_literal:   ref,
+  carrier_verified: ref,
+  witness:          ref,
+}
+
+reduce(ast: ref) -> ref
+requires well_formed(ast)
+{ \ }
+
+bilateral glass_identity_reducible {
+  sentinel "glass-identity = a-f-identity-at-species-altitude"
+  arity 1
+}
+reducible(ast: ref) -> verdict { \ }
+
+well_formed(ast: ref) -> verdict { \ }
+
+out @epistemologic/normalization/rules/glass_identity_elision
+out glass_identity_redex
+out reduce
+out reducible
+out glass_identity_reducible
+out well_formed

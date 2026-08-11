@@ -1,0 +1,72 @@
+in @prism
+in @meta
+in @glass
+in @epistemologic
+in @epistemologic/pact
+in @epistemologic/pact/bilateral
+in @epistemologic/pact/path_matches_namespace
+in @epistemologic/normalization
+in @epistemologic/normalization/beta_reduce
+in @kintsugi
+in @kintsugi/fracture
+in @kintsugi/fracture/out_derivable
+in @apply_h
+
+# @epistemologic/normalization/rules/out_derivable_elision — reduction
+# rule that eliminates the P4 root `out @X` AST node when `@X` is
+# derivable from the file's declared prism/glass symbol. The pact
+# `@epistemologic/pact/path_matches_namespace` supplies the same
+# information; explicit re-declaration at AST is beta-redundant.
+#
+# THE AST-ALTITUDE COMPANION to @kintsugi/fracture/out_derivable
+# (Reed Fire E M-E1 landed).
+#
+# LOAD-BEARING REFUSAL preserved from source-altitude sibling:
+# additional `out <name>` AST nodes for exported carriers/actions
+# (e.g., `out reveal_event`, `out reveal`) DO carry per-symbol export
+# semantics and MUST NOT be reduced. Only the root `out @X` node
+# matches this rule.
+#
+# Reed Fire E M-E3-REVISED landing per Mara canonical spec 5ad8528
+# §2.2 third reduction rule.
+#
+# Path-namespace property: this file at
+# `shards/epistemologic/normalization/rules/out_derivable_elision.
+# mirror` declares `@epistemologic/normalization/rules/out_derivable_
+# elision` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/practice/mara-2026-08-10-beta-normal-ast-content-addressing
+
+prism @epistemologic/normalization/rules/out_derivable_elision {
+  focus out_derivable_redex
+  project out_derivable_redex
+  split out_derivable_redex
+  shift out_derivable_redex
+  settle out_derivable_redex
+}
+
+type out_derivable_redex = {
+  ast_subtree:     ref,
+  out_symbol:      ref,
+  declared_family: ref,
+  witness:         ref,
+}
+
+reduce(ast: ref) -> ref
+requires well_formed(ast)
+{ \ }
+
+bilateral out_derivable_reducible {
+  sentinel "out-derivable = root-export-matches-declared-family"
+  arity 1
+}
+reducible(ast: ref) -> verdict { \ }
+
+well_formed(ast: ref) -> verdict { \ }
+
+out @epistemologic/normalization/rules/out_derivable_elision
+out out_derivable_redex
+out reduce
+out reducible
+out out_derivable_reducible
+out well_formed

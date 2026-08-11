@@ -1,0 +1,311 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @epistemologic
+in @epistemologic/pact
+in @epistemologic/pact/bilateral
+in @epistemologic/pact/path_matches_namespace
+in @epistemologic/normalization/rules/identity_projection_elision
+in @epistemologic/normalization/rules/glass_identity_elision
+in @epistemologic/normalization/rules/out_derivable_elision
+in @epistemologic/normalization/rules/docblock_stub_elision
+in @apply_h
+in @fractal
+in @fractal/shard
+in @mirror/store
+
+# @epistemologic/normalization/beta_reduce — the substrate-honest
+# beta-normalizer at AST altitude. Applies the ratified reduction rules
+# (identity-projection-elision + glass-identity-elision + out-derivable-
+# elision + docblock-stub-elision) to an AST until fixpoint, producing
+# the beta-normal AST. The beta-normal AST is what gets hashed for
+# crystal-OID at @mirror/store altitude — not the raw AST.
+#
+# THE LOAD-BEARING SUBSTRATE MOVE per Mara canonical spec 5ad8528:
+# under this species, `resugar ∘ sugar = id` at OID altitude becomes a
+# Church-Rosser theorem (not a testable predicate). The compiler's
+# crystal-OID is invariant under sugar-form source variation by
+# construction. Recognition candidate #82.
+#
+# Reed Fire E M-E3-REVISED landing per Mara 5ad8528 §6.1 + §7.2. Retires
+# the M-E3/M-E3.5 workaround Reed proposed pre-scout: read-path projector
+# + bootstrap namespace resolver fallback. Under this species those
+# workarounds are unnecessary — the beta-normalizer at hash time
+# canonicalizes away the sugar-fracturable patterns before hashing.
+#
+# === Substrate authority (Alex 2026-08-10 verbatim, load-bearing) ===
+#
+#   > "Which role does beta-normalization of the AST play here? [...]
+#      Dhall does this. They have semantic hashing where the hash is
+#      based on the beta-normalized AST, which is sexy AF, they use it
+#      for safe remote imports."
+#
+# Alex 2026-08-11 concur-with-Mara-lean on 6 [ALEX-Q1-Q6] via trust-
+# transfer ("I trust your substrate more on these calls than mine").
+# Q1 concurred: LAND alpha-normalization for parameter names only (see
+# sibling @epistemologic/normalization/alpha_reduce). Q2 concurred:
+# DEFER eta-equivalence (last responsible moment). Q3 concurred: INHERIT
+# bootstrap retirement for Primitive A. Q4 concurred: Mara 5ad8528 IS
+# the audit citation for apply_h::act extension per Reed M-E2 precedent.
+# Q5 concurred: DIVERGE via Fold5 (BLAKE3-of-Fold5-of-beta-normal-AST).
+# Q6 concurred: CLOSE Reed's original hard/soft question (Church-Rosser
+# theorem, not testable).
+#
+# === Prior art ===
+#
+# Dhall (dhall-lang.org) since ~2017: `standard/beta-normalization.md`
+# formal notation `t₀ ⇥ t₁`; strongly-normalizing total language;
+# `standard/binary.md` verbatim "a SHA-256 hash of the binary
+# representation of an expression's normal form". Composition-adjacent:
+# Unison (~2015) content-addressed code via AST-hashing at expression
+# altitude.
+#
+# Corpus prior recognition (Karen anti-theft):
+#
+# - Reed 2026-03-01 `~/dev/systemic.engineering/practice/insights/
+#   infrastructure/semantic-hashing-normalization.md` — corpus's
+#   earliest Dhall research; three-stage pipeline (beta-normalize +
+#   alpha-normalize + CBOR encode) documented in full.
+# - Reed+Alex 2026-03-28 `~/dev/systemic.engineering/practice/insights/
+#   coincidence/kolmogorov-canonical-complexity.md` — six-result chain:
+#   sub-Turing + computable K + beta-normalization + content-addressing
+#   + OID as complexity index. Cites Dhall standard.
+# - Spectral MCP surface spec 2026-06-05 §6.2 — partial-drift claim
+#   "mirror's `content_oid()` hashes the display form of the AST,
+#   which is canonical" that Taut ab3821e empirically refuted; this
+#   species resolves the drift.
+#
+# === Church-Rosser theorem (round-trip fidelity by construction) ===
+#
+# Church-Rosser 1936: confluence ⇒ unique normal forms for strongly-
+# normalizing terms. Mirror is sub-Turing (README §"Sub-Turing") =
+# strongly normalizing by construction. Consequently: every AST
+# reduces to exactly one beta-normal AST, up to alpha-equivalence.
+#
+# Round-trip fidelity as theorem (Mara math 5ad8528 §2):
+#
+#   oid(β-normal(parse(sugar(S)))) = oid(β-normal(parse(S)))
+#
+# for every shard S and every sugar-rule application. No projection
+# primitive needed. No resolver fallback needed. Sugar becomes source-
+# form varying over the same beta-equivalence class.
+#
+# === Composition ===
+#
+# Read-path pipeline (Mara 5ad8528 §2.1):
+#
+#   source_bytes
+#     |> phone::read_file        # @io/fs.read (Reed Fire A primitive)
+#     |> wire::parse             # @data/mirror.parse (Reed Fire A)
+#     |> beta_reduce             # THIS SPECIES (fixpoint iteration over rules)
+#     |> alpha_reduce            # @epistemologic/normalization/alpha_reduce (Q1 lean)
+#     |> compute_content_oid     # existing Fold5 primitive
+#     ==> crystal_oid            # authoritative at @mirror/store
+#
+# Rules-family reduction composition (each rule is a bilateral resolver
+# arm per Reed M-E2 precedent; each dispatches via apply_h::act):
+#
+#   @epistemologic/normalization/rules/identity_projection_elision  # P1
+#   @epistemologic/normalization/rules/glass_identity_elision       # P3
+#   @epistemologic/normalization/rules/out_derivable_elision        # P4
+#   @epistemologic/normalization/rules/docblock_stub_elision        # P5
+#
+# Deferred rules (Q2 eta-equivalence + composition-associativity)
+# forward-promised per Mara 5ad8528 §10 items 6 + 9.
+#
+# === Cross-connect to Fire D M5 + Fire E M-E2 landings ===
+#
+# Per Mara 5ad8528 §6.1: the shard-body-executor (Fire D M5) and the
+# beta-normalizer are the same operator family. The beta-normalizer is
+# a special case of the general shard-body-executor:
+#
+#   beta_reduce(ast) = apply_h::act(root, "@epistemologic/normalization/
+#                                          rules/<rule>.reduce", (ast))
+#
+# Reed Fire E M-E2 (0021882) already extended apply_h::act with the P1
+# detector primitive at source altitude. This species (M-E3-REVISED)
+# extends the same dispatch surface with reduction rules at AST
+# altitude. The four fracture-detector species (Mara 2026-08-09
+# kintsugi-sugar spec §1) and the four reduction-rule species (this
+# family) are the SAME substrate at two altitudes: source-view for
+# audience-relative rendering; AST-view for hash-canonicalization.
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]] — reduction rules live as
+#   shards; the substrate carries what it normalizes.
+# [[architecture-prism-as-trait-as-everything]] — prism decl at family
+#   altitude (depth-0 to @epistemologic/normalization).
+# [[architecture-connes-spectral-triple]] — A_F identity-projection-
+#   triviality at physics substrate mirrors A_F-elision at compiler
+#   substrate; beta-normalization IS that elision (Mara 2026-08-09
+#   physics insight §7 substrate-scale-invariance thesis operational
+#   at compiler altitude).
+# [[feedback-rust-delivers-primitives-substrate-delivers-composition]]
+#   — beta-normalizer lands as shard body composing over apply_h::act +
+#   Fold5 primitives; NO new Rust module authored.
+# [[feedback-substrate-already-had-the-word]] — semantic-hashing +
+#   beta-normalization named in corpus 5 months before this mint (Reed
+#   2026-03-01 + Reed+Alex 2026-03-28); 55th+ instance of the discipline.
+# [[feedback-craft-not-deliver]] — action body `\`-obligation-blocked;
+#   Reed M-E3.5-REVISED at rust/ altitude discharges via apply_h::act
+#   dispatch arms.
+# [[feedback-no-bare-types]] — all actions typed `ast: ref`.
+#
+# Path-namespace property: this file at
+# `shards/epistemologic/normalization/beta_reduce.mirror` declares
+# `@epistemologic/normalization/beta_reduce` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/practice/wolf-2026-08-10-beta-normalization-of-ast
+source @arxiv/practice/mara-2026-08-10-beta-normal-ast-content-addressing
+source @arxiv/practice/reed-2026-03-01-semantic-hashing-normalization
+source @arxiv/practice/reed-wolf-2026-03-28-kolmogorov-canonical-complexity
+source @arxiv/lambda/church-1936-unsolvable-elementary-number-theory
+source @arxiv/lambda/church-rosser-1936-conversion-properties
+source @arxiv/lambda/barendregt-1984-lambda-calculus-syntax-semantics
+source @arxiv/lambda/de-bruijn-1972-nameless-dummies
+source @arxiv/topology/dhall-lang-standard
+
+prism @epistemologic/normalization/beta_reduce {
+  focus ast_reduction
+  project ast_reduction
+  split ast_reduction
+  shift ast_reduction
+  settle ast_reduction
+}
+
+# === ast_reduction carrier ===
+#
+# A typed record naming one beta-reduction step: the input AST subtree,
+# the rule that applied, the output AST subtree (post-reduction), and
+# the witness that the reduction preserves semantic content.
+type ast_reduction = {
+  ast_pre:      ref,
+  rule_applied: ref,
+  ast_post:     ref,
+  witness:      ref,
+}
+
+# === beta_reduce action — apply one reduction rule ===
+#
+# Applies exactly one reduction rule to an AST subtree. The rule is
+# identified by a substrate-decl'd shard reference (one of the four
+# rule-species under @epistemologic/normalization/rules/). Returns the
+# reduced AST subtree.
+#
+# Body `\`-obligation-blocked; Reed Fire E M-E3.5-REVISED extends
+# apply_h::act dispatch with sentinel-check arms per rule species per
+# Reed M-E2 (0021882) precedent.
+#
+# `requires well_formed(ast)`: the input AST must be syntactically
+# valid per the mirror.spec grammar; ill-formed ASTs cannot be reduced
+# (would require type-inference-during-normalization; refused per
+# Q2 eta-equivalence-deferral analogous discipline).
+#
+# `requires rule_landed(rule)`: the reduction rule must be one of the
+# ratified rule-species under @epistemologic/normalization/rules/.
+#
+# Discipline: rule-application is deterministic (Rice-safe byte-check
+# on AstKind + subtree structure); confluence per Church-Rosser 1936;
+# strong normalization per README §"Sub-Turing" = sub-Turing by
+# construction.
+beta_reduce(ast: ref, rule: ref) -> ref
+requires well_formed(ast)
+requires rule_landed(rule)
+{ \ }
+
+# === beta_normalize action — fixpoint iteration ===
+#
+# Applies beta_reduce repeatedly until no reduction rule fires
+# (fixpoint reached). Returns the beta-normal AST.
+#
+# By Church-Rosser confluence + strong normalization (Church-Rosser
+# 1936; Barendregt 1984), the fixpoint is unique. The order of rule
+# application does not affect the result (up to alpha-equivalence).
+#
+# Composition:
+#
+#   beta_normalize(ast) =
+#     fixpoint(lambda a. fold(beta_reduce(a, _), rules_list))
+#
+# where rules_list = [identity_projection_elision, glass_identity_
+# elision, out_derivable_elision, docblock_stub_elision] (Q1 concurred
+# 4-rule initial set; additional rules per @epistemologic/normalization/
+# rules/* mints as sugar patterns emerge per Mara 5ad8528 §10 items 6+9).
+#
+# `ensures oid_stable_under_alpha(result)`: the beta-normal AST's OID
+# is invariant under alpha-equivalence (parameter-name renaming); this
+# is guaranteed structurally by composing beta_normalize with
+# @epistemologic/normalization/alpha_reduce (Q1 lean).
+beta_normalize(ast: ref) -> ref
+requires well_formed(ast)
+ensures oid_stable_under_alpha(result)
+{ \ }
+
+# === well_formed — bilateral predicate ===
+#
+# Rice-safe byte-check: the AST subtree is syntactically valid per the
+# mirror.spec grammar. Reads only byte-visible state (AstKind enum
+# variants + subtree structure); no program semantics inspection.
+#
+# Sentinel: `ast=well-formed-per-mirror-spec-grammar`.
+bilateral well_formed_pact {
+  sentinel "ast=well-formed-per-mirror-spec-grammar"
+  arity 1
+}
+well_formed(ast: ref) -> verdict { \ }
+
+# === rule_landed — bilateral predicate ===
+#
+# Rice-safe byte-check: the rule reference resolves to a landed shard
+# under @epistemologic/normalization/rules/ family. Reads only byte-
+# visible state (shard-ref resolution via @mirror/store lookup).
+#
+# Sentinel: `rule=landed-under-normalization-rules-family`.
+bilateral rule_landed_pact {
+  sentinel "rule=landed-under-normalization-rules-family"
+  arity 1
+}
+rule_landed(rule: ref) -> verdict { \ }
+
+# === oid_stable_under_alpha — bilateral predicate ===
+#
+# The beta-normal AST's OID (via Fold5 + BLAKE3) is invariant under
+# alpha-equivalence — parameter-name renaming does not change the hash.
+# Guaranteed structurally by composing beta_normalize output through
+# @epistemologic/normalization/alpha_reduce (Q1 lean).
+#
+# Sentinel: `oid=stable-under-alpha-equivalence`.
+bilateral oid_stable_under_alpha_pact {
+  sentinel "oid=stable-under-alpha-equivalence"
+  arity 1
+}
+oid_stable_under_alpha(ast: ref) -> verdict { \ }
+
+# === beta_normal_witnessing — composed bilateral ===
+#
+# The load-bearing round-trip fidelity contract as Church-Rosser
+# theorem, discharged per shard cascade at M-E4 walker altitude.
+# Passes iff beta_normalize is confluent + terminating + preserves
+# semantic content over the input AST.
+#
+# Sentinel: `beta-normal=church-rosser-confluent-and-strongly-normalizing`.
+bilateral beta_normal_witnessing {
+  sentinel "beta-normal=church-rosser-confluent-and-strongly-normalizing"
+  arity 1
+}
+beta_normal_witnessing(ast: ref) -> verdict { \ }
+
+out @epistemologic/normalization/beta_reduce
+out ast_reduction
+out beta_reduce
+out beta_normalize
+out well_formed
+out well_formed_pact
+out rule_landed
+out rule_landed_pact
+out oid_stable_under_alpha
+out oid_stable_under_alpha_pact
+out beta_normal_witnessing

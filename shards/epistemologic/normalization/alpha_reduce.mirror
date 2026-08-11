@@ -1,0 +1,140 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @epistemologic
+in @epistemologic/pact
+in @epistemologic/pact/bilateral
+in @epistemologic/pact/path_matches_namespace
+in @apply_h
+in @fractal
+in @fractal/shard
+
+# @epistemologic/normalization/alpha_reduce — alpha-normalization at
+# AST altitude. Renames all bound parameter names to de Bruijn indices
+# (`_@0`, `_@1`, ...) so that two shards differing only in parameter
+# names hash identically. Carrier refs at `@X` position are NOT alpha-
+# renamed (they are content-addressed refs, not binders; alpha-
+# invariance would break identity resolution).
+#
+# Per Alex 2026-08-11 Q1 concur-with-Mara-lean: LAND ALPHA-NORMALIZATION
+# for parameter names only. Substrate-honest closure of Dhall parity
+# (Dhall pairs beta with alpha per standard/alpha-normalization.md);
+# small delta (~50 LOC at rust/ altitude); avoids the trap of hashing
+# accidental parameter-name variation.
+#
+# Reed Fire E M-E3-REVISED landing per Mara canonical spec 5ad8528
+# §8 [ALEX-Q1] Mara-lean + Alex 2026-08-11 concur.
+#
+# === What alpha-normalization does at mirror substrate ===
+#
+# Two shards that differ only in parameter names should hash identically:
+#
+#   Shard A: `beta_reduce(ast: ref, rule: ref) -> ref { \ }`
+#   Shard B: `beta_reduce(tree: ref, r: ref) -> ref { \ }`
+#
+# Alpha-normal form:
+#
+#   Both: `beta_reduce(_@0: ref, _@1: ref) -> ref { \ }`
+#
+# Same de Bruijn index positions; same alpha-normal AST; same OID.
+#
+# Carrier refs at `@X` position are NOT renamed:
+#
+#   `focus ast_reduction` → `focus ast_reduction` (unchanged)
+#
+# `ast_reduction` is a type-reference, not a bound parameter; alpha-
+# invariance would break identity resolution at the @mirror/store
+# lookup.
+#
+# === Prior art ===
+#
+# Dhall standard/alpha-normalization.md verbatim: *"if two expressions
+# are α-equivalent then they will be identical after α-normalization"*.
+# Formal notation `t₀ ↦ t₁`. de Bruijn indices per de Bruijn 1972.
+# Standard construction from Barendregt 1984.
+#
+# === Composition ===
+#
+# Read-path pipeline position:
+#
+#   ... |> beta_normalize |> alpha_reduce |> compute_content_oid ...
+#
+# alpha_reduce runs AFTER beta_normalize (per Dhall pipeline convention;
+# some beta-reductions may introduce new parameters or eliminate old
+# ones; alpha-normalization runs last to canonicalize the final form).
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]]
+# [[architecture-prism-as-trait-as-everything]]
+# [[feedback-rust-delivers-primitives-substrate-delivers-composition]]
+#   — alpha_reduce lands as shard body composing over apply_h::act +
+#   Fold5 primitives; NO new Rust module.
+# [[feedback-craft-not-deliver]] — body `\`-obligation-blocked; Reed
+#   Fire E M-E3.5-REVISED discharges at rust/ altitude via apply_h::act.
+# [[feedback-no-bare-types]] — typed `ast: ref`.
+#
+# Path-namespace property: this file at
+# `shards/epistemologic/normalization/alpha_reduce.mirror` declares
+# `@epistemologic/normalization/alpha_reduce` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/practice/mara-2026-08-10-beta-normal-ast-content-addressing
+source @arxiv/practice/wolf-2026-08-11-q1-concur-alpha-normalization-parameter-names
+source @arxiv/lambda/de-bruijn-1972-nameless-dummies
+source @arxiv/lambda/barendregt-1984-lambda-calculus-syntax-semantics
+source @arxiv/topology/dhall-lang-standard-alpha-normalization
+
+prism @epistemologic/normalization/alpha_reduce {
+  focus alpha_reduction
+  project alpha_reduction
+  split alpha_reduction
+  shift alpha_reduction
+  settle alpha_reduction
+}
+
+# === alpha_reduction carrier ===
+type alpha_reduction = {
+  ast_pre:            ref,
+  parameter_renaming: ref,
+  ast_post:           ref,
+  witness:            ref,
+}
+
+# === alpha_reduce action ===
+#
+# Renames all bound parameter names in the AST to de Bruijn indices.
+# Preserves carrier refs at `@X` positions (they are content-addressed
+# refs, not binders).
+#
+# Body `\`-obligation-blocked; Reed Fire E M-E3.5-REVISED extends
+# apply_h::act dispatch with alpha_reduce sentinel arm.
+#
+# `requires well_formed(ast)`: input must be syntactically valid
+# (delegates to @epistemologic/normalization/beta_reduce.well_formed).
+# `ensures parameter_names_are_de_bruijn(result)`: all parameter
+# occurrences in the output AST are of shape `_@<index>`.
+alpha_reduce(ast: ref) -> ref
+requires well_formed(ast)
+ensures parameter_names_are_de_bruijn(result)
+{ \ }
+
+# === parameter_names_are_de_bruijn — bilateral predicate ===
+#
+# Rice-safe byte-check: all bound parameter occurrences in the AST
+# match the pattern `_@\d+` (de Bruijn index form). Reads only byte-
+# visible state (parameter-name tokens in AST); no semantics.
+#
+# Sentinel: `parameters=de-bruijn-indexed`.
+bilateral parameter_names_are_de_bruijn_pact {
+  sentinel "parameters=de-bruijn-indexed"
+  arity 1
+}
+parameter_names_are_de_bruijn(ast: ref) -> verdict { \ }
+
+out @epistemologic/normalization/alpha_reduce
+out alpha_reduction
+out alpha_reduce
+out parameter_names_are_de_bruijn
+out parameter_names_are_de_bruijn_pact
