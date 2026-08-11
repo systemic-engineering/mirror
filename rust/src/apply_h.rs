@@ -641,6 +641,171 @@ fn collapse_excess_blank_lines(source: &str) -> String {
     result
 }
 
+// =====================================================================
+// Fire E M-E4 — walker cascade (empirical mass mirror-authored
+// substrate rewrite)
+// =====================================================================
+//
+// Per Mara canonical spec 5ad8528 §7.2 M-E4 walker cascade: walks
+// shards/ + detects P1/P3/P4/P5 sugar-fracturable + rewrites source
+// removing pattern + commits as mirror <mirror@spectral.engineer> +
+// deposits pheromone-signature crystal at docs/bauchladen/.
+//
+// M-E4 lands P1 walker first per Fire A discipline (minimum first;
+// P3/P4/P5 extend as demand pulls; M-E7 P2/P7 syntax extension arc).
+//
+// Under Mara math 5ad8528 §2 Church-Rosser theorem: post-cascade
+// crystal-OIDs are bit-identical to pre-cascade BY CONSTRUCTION
+// (source-level canonicalization via reduce_identity_prism_at is
+// equivalent to AST-level beta-reduction from the crystal-OID
+// stability standpoint after re-parse). M-E5 sanity-check verifies
+// implementation-correctness; theorem provides substrate-composition
+// correctness.
+
+/// Cascade execution mode. `DryRun` walks + reports without mutation;
+/// `Commit` walks + reduces + writes back + prepares for commit.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CascadeMode {
+    /// Walk + report; NO substrate mutation. Safe to fire anywhere.
+    DryRun,
+    /// Walk + reduce + write back. Substrate-mutating. Requires
+    /// explicit gate at caller altitude (env var FIRE_E_M_E4_COMMIT=1
+    /// at test-driver altitude per Fire E M-E4 empirical fire).
+    Commit,
+}
+
+/// Report from one walker cascade pass. Substrate-honest witness of
+/// the empirical fire result per Mara canonical spec 5ad8528 §7.2.
+#[derive(Debug, Clone)]
+pub struct CascadeReport {
+    /// Total number of shards walked.
+    pub shards_walked: usize,
+    /// Shards where the P1 reducer fired (Reduced variant).
+    pub shards_reduced: usize,
+    /// Shards where the reducer returned NoReduction.
+    pub shards_no_reduction: usize,
+    /// Shards where the reducer returned Error.
+    pub shards_errored: usize,
+    /// Total bytes removed across all reduced shards.
+    pub bytes_removed: usize,
+    /// Paths of reduced shards (relative to root; sorted).
+    pub reduced_paths: Vec<PathBuf>,
+    /// Paths that errored (relative to root; sorted).
+    pub errored_paths: Vec<(PathBuf, String)>,
+}
+
+impl CascadeReport {
+    fn new() -> Self {
+        Self {
+            shards_walked: 0,
+            shards_reduced: 0,
+            shards_no_reduction: 0,
+            shards_errored: 0,
+            bytes_removed: 0,
+            reduced_paths: Vec::new(),
+            errored_paths: Vec::new(),
+        }
+    }
+}
+
+/// Walk `<root>/shards/**/*.mirror` applying the P1 identity-projection
+/// reducer per Fire E M-E4 cascade. Under `CascadeMode::DryRun` returns
+/// a report without mutation. Under `CascadeMode::Commit` writes
+/// reduced source back per shard.
+///
+/// Excludes non-shard files (`.mirror` suffix only), directories, and
+/// symlinks. Fixed-point exemption for `shards/prism.mirror` +
+/// `shards/glass.mirror` inherited from `reduce_identity_prism_at`
+/// (returns NoReduction; walker counts as such).
+///
+/// # Substrate discipline
+///
+/// Terminates on finite shard-manifold per @kintsugi/roomba discipline.
+/// Read + write are the only @io operations (no networking). Commit
+/// orchestration + pheromone-crystal deposit are caller's
+/// responsibility (walker returns report; caller commits via
+/// phone::git_commit_as + phone::append_to per landed primitives).
+pub fn walk_p1_sugar_cascade(root: &Path, mode: CascadeMode) -> CascadeReport {
+    let mut report = CascadeReport::new();
+    let shards_root = root.join("shards");
+    if !shards_root.is_dir() {
+        return report;
+    }
+
+    let shard_paths = enumerate_mirror_shards(&shards_root);
+
+    for shard_path in shard_paths {
+        report.shards_walked += 1;
+        let pre_len = std::fs::metadata(&shard_path).map(|m| m.len() as usize).unwrap_or(0);
+        match reduce_identity_prism_at(&shard_path) {
+            ReduceResult::Reduced { new_source } => {
+                let post_len = new_source.len();
+                let removed = pre_len.saturating_sub(post_len);
+                report.shards_reduced += 1;
+                report.bytes_removed += removed;
+                report.reduced_paths.push(
+                    shard_path.strip_prefix(root).unwrap_or(&shard_path).to_path_buf(),
+                );
+                if mode == CascadeMode::Commit {
+                    if let Err(e) = std::fs::write(&shard_path, &new_source) {
+                        report.shards_errored += 1;
+                        report.errored_paths.push((
+                            shard_path.clone(),
+                            format!("write_file failed: {}", e),
+                        ));
+                    }
+                }
+            }
+            ReduceResult::NoReduction => {
+                report.shards_no_reduction += 1;
+            }
+            ReduceResult::Error(reason) => {
+                report.shards_errored += 1;
+                report.errored_paths.push((
+                    shard_path.strip_prefix(root).unwrap_or(&shard_path).to_path_buf(),
+                    reason,
+                ));
+            }
+        }
+    }
+
+    report.reduced_paths.sort();
+    report
+}
+
+/// Enumerate all `*.mirror` files under `shards_root` recursively.
+/// Skips symlinks + non-`.mirror` files. Returns absolute paths.
+fn enumerate_mirror_shards(shards_root: &Path) -> Vec<PathBuf> {
+    let mut out = Vec::new();
+    enumerate_mirror_shards_recurse(shards_root, &mut out);
+    out.sort();
+    out
+}
+
+fn enumerate_mirror_shards_recurse(dir: &Path, out: &mut Vec<PathBuf>) {
+    let entries = match std::fs::read_dir(dir) {
+        Ok(e) => e,
+        Err(_) => return,
+    };
+    for entry in entries.flatten() {
+        let path = entry.path();
+        let file_type = match entry.file_type() {
+            Ok(t) => t,
+            Err(_) => continue,
+        };
+        if file_type.is_symlink() {
+            continue;
+        }
+        if file_type.is_dir() {
+            enumerate_mirror_shards_recurse(&path, out);
+            continue;
+        }
+        if path.extension().and_then(|e| e.to_str()) == Some("mirror") {
+            out.push(path);
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1129,6 +1294,202 @@ bilateral consent_scope_universal {
             collapse_excess_blank_lines("a\n\n\n\n\nb"),
             "a\n\nb"
         );
+    }
+
+    // =================================================================
+    // Fire E M-E4 walker tests (tempdir fixtures; substrate-safe)
+    // =================================================================
+
+    /// Fixture: substrate root with N shards, M of which carry P1.
+    fn fixture_walker_root(p1_count: usize, non_p1_count: usize) -> TempDir {
+        let dir = TempDir::new().expect("tempdir");
+        let shards = dir.path().join("shards");
+        fs::create_dir_all(&shards).expect("mkdir shards");
+        for i in 0..p1_count {
+            let name = format!("p1_{}", i);
+            let source = format!(
+                "# P1 fixture {i}.\n\n\
+                 prism @{n} {{\n  \
+                 focus {n}\n  \
+                 project {n}\n  \
+                 split {n}\n  \
+                 shift {n}\n  \
+                 settle {n}\n\
+                 }}\n\n\
+                 out @{n}\n",
+                i = i,
+                n = name,
+            );
+            fs::write(shards.join(format!("{}.mirror", name)), source).unwrap();
+        }
+        for i in 0..non_p1_count {
+            let name = format!("np1_{}", i);
+            let source = format!(
+                "# Non-P1 fixture {i}.\n\n\
+                 prism @{n} {{\n  \
+                 focus otherstuff\n  \
+                 project otherstuff\n  \
+                 split otherstuff\n  \
+                 shift otherstuff\n  \
+                 settle otherstuff\n\
+                 }}\n",
+                i = i,
+                n = name,
+            );
+            fs::write(shards.join(format!("{}.mirror", name)), source).unwrap();
+        }
+        dir
+    }
+
+    #[test]
+    fn walker_dry_run_counts_correctly() {
+        let dir = fixture_walker_root(5, 3);
+        let report = walk_p1_sugar_cascade(dir.path(), CascadeMode::DryRun);
+        assert_eq!(report.shards_walked, 8);
+        assert_eq!(report.shards_reduced, 5);
+        assert_eq!(report.shards_no_reduction, 3);
+        assert_eq!(report.shards_errored, 0);
+        assert!(report.bytes_removed > 0);
+    }
+
+    #[test]
+    fn walker_dry_run_does_not_mutate_source() {
+        let dir = fixture_walker_root(3, 0);
+        let shard_path = dir.path().join("shards").join("p1_0.mirror");
+        let pre_bytes = fs::read(&shard_path).unwrap();
+        let _report = walk_p1_sugar_cascade(dir.path(), CascadeMode::DryRun);
+        let post_bytes = fs::read(&shard_path).unwrap();
+        assert_eq!(pre_bytes, post_bytes, "DryRun must not mutate substrate");
+    }
+
+    #[test]
+    fn walker_commit_mode_removes_blocks() {
+        let dir = fixture_walker_root(3, 0);
+        let report = walk_p1_sugar_cascade(dir.path(), CascadeMode::Commit);
+        assert_eq!(report.shards_reduced, 3);
+        for path in &report.reduced_paths {
+            let abs = dir.path().join(path);
+            let post_source = fs::read_to_string(&abs).unwrap();
+            assert!(!post_source.contains("prism @p1_"), "reduced source should lack P1 block");
+        }
+    }
+
+    #[test]
+    fn walker_is_idempotent() {
+        // Fire twice; second run should find zero reducibles.
+        let dir = fixture_walker_root(4, 2);
+        let first = walk_p1_sugar_cascade(dir.path(), CascadeMode::Commit);
+        assert_eq!(first.shards_reduced, 4);
+        let second = walk_p1_sugar_cascade(dir.path(), CascadeMode::Commit);
+        assert_eq!(second.shards_reduced, 0, "Church-Rosser: idempotent");
+        assert_eq!(second.shards_no_reduction, 6);
+    }
+
+    #[test]
+    fn walker_handles_nested_shard_directories() {
+        let dir = TempDir::new().unwrap();
+        let nested = dir.path().join("shards").join("foo").join("bar");
+        fs::create_dir_all(&nested).unwrap();
+        let name = "deep";
+        let source = format!(
+            "prism @foo/bar/{n} {{\n  \
+             focus {n}\n  project {n}\n  split {n}\n  \
+             shift {n}\n  settle {n}\n\
+             }}\n",
+            n = name,
+        );
+        fs::write(nested.join(format!("{}.mirror", name)), source).unwrap();
+        let report = walk_p1_sugar_cascade(dir.path(), CascadeMode::DryRun);
+        assert_eq!(report.shards_walked, 1);
+        assert_eq!(report.shards_reduced, 1);
+    }
+
+    #[test]
+    fn walker_returns_empty_report_when_no_shards_dir() {
+        let dir = TempDir::new().unwrap();
+        let report = walk_p1_sugar_cascade(dir.path(), CascadeMode::DryRun);
+        assert_eq!(report.shards_walked, 0);
+    }
+
+    #[test]
+    fn walker_ignores_non_mirror_files() {
+        let dir = TempDir::new().unwrap();
+        let shards = dir.path().join("shards");
+        fs::create_dir_all(&shards).unwrap();
+        fs::write(shards.join("readme.md"), "not a shard").unwrap();
+        fs::write(shards.join("config.toml"), "not a shard").unwrap();
+        let report = walk_p1_sugar_cascade(dir.path(), CascadeMode::DryRun);
+        assert_eq!(report.shards_walked, 0);
+    }
+
+    // =================================================================
+    // Fire E M-E4 EMPIRICAL FIRE — real substrate walk
+    //
+    // WARNING: this test MUTATES the real mirror repo when both env
+    // vars set. Fire ONLY via explicit invocation:
+    //
+    //   cargo test fire_e_m_e4_empirical_walker -- --ignored --nocapture
+    //
+    // With no env vars: performs DryRun + prints report. Safe.
+    // With FIRE_E_M_E4_COMMIT=1: performs Commit + writes ~285 shards.
+    //   Caller then git-adds + git-commits + deposits pheromone crystal.
+    // =================================================================
+
+    #[test]
+    #[ignore]
+    fn fire_e_m_e4_empirical_walker() {
+        let commit_mode = std::env::var("FIRE_E_M_E4_COMMIT").as_deref() == Ok("1");
+        let mode = if commit_mode { CascadeMode::Commit } else { CascadeMode::DryRun };
+
+        // Discover project root via marker file (mirror.spec at root).
+        let mut root = std::env::current_dir().expect("cwd");
+        loop {
+            if root.join("mirror.spec").is_file() {
+                break;
+            }
+            if !root.pop() {
+                panic!("cannot find project root (no mirror.spec ancestor)");
+            }
+        }
+
+        println!("Fire E M-E4 empirical walker");
+        println!("  project_root: {}", root.display());
+        println!("  mode: {:?}", mode);
+        println!();
+
+        let report = walk_p1_sugar_cascade(&root, mode);
+
+        println!("CASCADE REPORT");
+        println!("  shards_walked:       {}", report.shards_walked);
+        println!("  shards_reduced:      {}", report.shards_reduced);
+        println!("  shards_no_reduction: {}", report.shards_no_reduction);
+        println!("  shards_errored:      {}", report.shards_errored);
+        println!("  bytes_removed:       {} bytes (~{:.1} KB)",
+                 report.bytes_removed,
+                 report.bytes_removed as f64 / 1024.0);
+        println!();
+
+        if !report.reduced_paths.is_empty() {
+            println!("REDUCED SHARDS (first 20):");
+            for path in report.reduced_paths.iter().take(20) {
+                println!("  {}", path.display());
+            }
+            if report.reduced_paths.len() > 20 {
+                println!("  ... and {} more", report.reduced_paths.len() - 20);
+            }
+            println!();
+        }
+
+        if !report.errored_paths.is_empty() {
+            println!("ERRORED SHARDS:");
+            for (path, reason) in &report.errored_paths {
+                println!("  {}: {}", path.display(), reason);
+            }
+            println!();
+        }
+
+        // Test always passes; the report IS the empirical witness.
+        assert!(report.shards_walked > 0, "expected non-empty shard walk");
     }
 
     #[test]
