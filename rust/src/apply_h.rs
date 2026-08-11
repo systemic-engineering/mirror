@@ -144,6 +144,21 @@ pub fn act(root: &Path, action_ref: &str, args: &[String]) -> Verdict {
         return dispatch_fracture_detect(root, species, args);
     }
 
+    // Fire E M-E3.5-REVISED extension: beta-reduction-rule reducible
+    // dispatch (Reed 2026-08-11 per Alex 2026-08-11 concur-with-Mara-
+    // lean on 6 [ALEX-Q1-Q6] + trust-transfer + Mara canonical spec
+    // 5ad8528 + M-E3-REVISED shards landed at d983854).
+    //
+    // When action_ref matches `@epistemologic/normalization/rules/
+    // <rule>.reducible`, dispatch to the rule's `reducible` bilateral
+    // predicate. Under Mara §6.2 discipline, the fracture-detector and
+    // the beta-reduction rule are the same operator at two altitudes;
+    // .reducible at AST altitude routes to the M-E2 landed source-
+    // altitude detector.
+    if let Some(species) = strip_normalization_rule_reducible_ref(action_ref) {
+        return dispatch_reduction_rule_reducible(root, species, args);
+    }
+
     let corpus = load_bilateral_corpus(root);
     let decl: &BilateralDecl = match corpus.get(action_ref) {
         Some(d) => d,
@@ -187,6 +202,53 @@ pub fn act(root: &Path, action_ref: &str, args: &[String]) -> Verdict {
 // `shards/glass.mirror` self-referential fixed-points are EXEMPT from
 // sugar-detection (they ARE the substrate's declaration of what the
 // sugar rule refers to). Detector returns Verdict::Fail for those paths.
+
+/// Strip `@epistemologic/normalization/rules/<species>.reducible`
+/// action_ref → species name. Returns None if action_ref doesn't match
+/// the reduction-rule reducible pattern.
+fn strip_normalization_rule_reducible_ref(action_ref: &str) -> Option<&str> {
+    let prefix = "@epistemologic/normalization/rules/";
+    let suffix = ".reducible";
+    if action_ref.starts_with(prefix) && action_ref.ends_with(suffix) {
+        Some(&action_ref[prefix.len()..action_ref.len() - suffix.len()])
+    } else {
+        None
+    }
+}
+
+/// Dispatch reduction-rule `.reducible` action_ref to the rule-species
+/// predicate. args[0] = shard_path relative to `root`. Under Mara §6.2
+/// discipline, reducible at AST altitude routes to the M-E2 landed
+/// source-altitude detector for the corresponding pattern.
+fn dispatch_reduction_rule_reducible(root: &Path, species: &str, args: &[String]) -> Verdict {
+    let rel_path = match args.first() {
+        Some(p) => p,
+        None => {
+            return Verdict::Fail(format!(
+                "apply_h::act[@epistemologic/normalization/rules/{}.reducible]: \
+                 missing shard_path in args",
+                species
+            ))
+        }
+    };
+    let shard_path: PathBuf = root.join(rel_path);
+
+    match species {
+        "identity_projection_elision" => detect_prism_boilerplate_at(&shard_path),
+        // Fire E subsequent-tick reducibles land as demand pulls per
+        // Fire A discipline (minimum first; extensions when consumers surface):
+        //   "glass_identity_elision"      P3 depth-≥1 identity-carrier glass
+        //   "out_derivable_elision"       P4 root `out @X` line derivable
+        //   "docblock_stub_elision"       P5 docblock template derivable
+        other => Verdict::Fail(format!(
+            "apply_h::act[@epistemologic/normalization/rules/{}.reducible]: no reducible \
+             primitive at rust/ altitude (Fire E M-E3.5-REVISED lands identity_projection_\
+             elision first; P3/P4/P5 rule reducibles are subsequent-tick forward-promises \
+             per Mara 5ad8528 §7.2)",
+            other
+        )),
+    }
+}
 
 /// Strip `@kintsugi/fracture/<species>.detect` action_ref → species
 /// name. Returns None if action_ref doesn't match the fracture-detect
@@ -388,6 +450,195 @@ fn source_carries_p1_identity_prism(source: &str, family: &str, last_seg: &str) 
         }
     }
     false
+}
+
+// =====================================================================
+// Fire E M-E3.5-REVISED — beta-reduction primitives (source altitude)
+// =====================================================================
+//
+// Per Mara canonical spec 5ad8528 §6.2: the fracture-detector at
+// source altitude (M-E2) and the beta-reduction rule at AST altitude
+// are the same operator at two altitudes. At rust/ altitude today, we
+// operate on source bytes (no shard AST parser at rust/ yet; Fire D
+// M5 territory). The source-level byte transformation IS equivalent
+// to the AST-level reduction from the crystal-OID stability standpoint
+// after re-parse: `crystal_oid(parse(reduce_source(s))) =
+// crystal_oid(beta_normal(parse(s)))` by Church-Rosser (Mara math
+// 5ad8528 §2). Lifting to full AST parse+reduce at rust/ altitude is
+// forward-promised at Fire D M5 co-tick.
+//
+// M-E3.5-REVISED lands identity_projection_elision (P1) first per Fire
+// A discipline (minimum primitive first; extensions land as demand
+// pulls). P3/P4/P5 rule reducers land at subsequent M-E4 walker ticks
+// as needed.
+
+/// Result of applying a beta-reduction rule to a shard source at
+/// rust/ altitude.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ReduceResult {
+    /// Rule matched and applied; carries the reduced source bytes.
+    Reduced { new_source: String },
+    /// Rule did not match (pattern absent, or fixed-point exemption).
+    /// Source is unchanged.
+    NoReduction,
+    /// Reduction attempted but failed (path derivation error, read
+    /// error, etc.). Substrate-honest reason string.
+    Error(String),
+}
+
+/// Reduce the identity-projection-elision (P1) redex from a shard
+/// source. Given a shard file that carries the P1 identity-carrier
+/// prism block per Mara canonical spec 5ad8528 §1.1, remove the block
+/// bytes and collapse resulting excess blank lines.
+///
+/// The reduced source, when re-parsed, produces the SAME crystal-OID
+/// as the original source's beta-normal AST (Church-Rosser confluence
+/// per Mara math 5ad8528 §2). This is the empirical operationalization
+/// of Recognition candidate #82.
+///
+/// # Fixed-point exemption (Q3 Mara-lean; Alex 2026-08-09 concur)
+///
+/// `shards/prism.mirror` returns `NoReduction` — the self-referential
+/// fixed-point IS the substrate's declaration of what the sugar rule
+/// refers to; reducing it would collapse the substrate's own vocabulary.
+///
+/// # Substrate discipline
+///
+/// Rice-safe byte-check + byte-substring removal per Mara §1.1.
+/// Terminates in O(source_len) at worst. No unbounded recursion; no
+/// networking; no fs writes. Pure source-byte transformation.
+pub fn reduce_identity_prism_at(shard_path: &Path) -> ReduceResult {
+    // Q3 Mara-lean: fixed-point exemption for shards/prism.mirror.
+    if let Some(name) = shard_path.file_name() {
+        if name == "prism.mirror" {
+            return ReduceResult::NoReduction;
+        }
+    }
+
+    let family = match derive_family_from_shard_path(shard_path) {
+        Some(f) => f,
+        None => {
+            return ReduceResult::Error(format!(
+                "reduce_identity_prism_at: cannot derive family literal from path `{}`",
+                shard_path.display()
+            ))
+        }
+    };
+
+    let last_seg: &str = family.rsplit('/').next().unwrap_or(&family);
+
+    let source = match std::fs::read_to_string(shard_path) {
+        Ok(s) => s,
+        Err(e) => {
+            return ReduceResult::Error(format!(
+                "reduce_identity_prism_at: read_file(`{}`) failed: {}",
+                shard_path.display(),
+                e
+            ))
+        }
+    };
+
+    match find_p1_block_byte_range(&source, &family, last_seg) {
+        Some((start, end)) => {
+            let mut new_source = String::with_capacity(source.len() - (end - start));
+            new_source.push_str(&source[..start]);
+            new_source.push_str(&source[end..]);
+            let new_source = collapse_excess_blank_lines(&new_source);
+            ReduceResult::Reduced { new_source }
+        }
+        None => ReduceResult::NoReduction,
+    }
+}
+
+/// Locate the byte range of a P1 identity-carrier prism block in
+/// `source`. Returns `Some((start, end))` where the range covers the
+/// full block including the opening `prism` keyword, all five arm
+/// lines, the closing `}`, and one trailing newline if present.
+///
+/// Tolerates whitespace variation on arm lines per landed shard reality
+/// (per source_carries_p1_identity_prism discipline).
+fn find_p1_block_byte_range(source: &str, family: &str, last_seg: &str) -> Option<(usize, usize)> {
+    let decl_line_prefix = format!("prism @{} {{", family);
+    let expected_ops = ["focus", "project", "split", "shift", "settle"];
+
+    for (pos, _) in source.match_indices(&decl_line_prefix) {
+        // Verify pos is at start of a line (or start of source).
+        if pos > 0 && !source[..pos].ends_with('\n') {
+            continue;
+        }
+
+        // Skip past the decl-line's newline.
+        let mut cursor = match source[pos..].find('\n') {
+            Some(n) => pos + n + 1,
+            None => continue,
+        };
+
+        // Verify 5 arm lines in canonical order with expected carrier.
+        let mut arms_ok = true;
+        for op in expected_ops.iter() {
+            let line_end = match source[cursor..].find('\n') {
+                Some(n) => cursor + n,
+                None => {
+                    arms_ok = false;
+                    break;
+                }
+            };
+            let arm_line = source[cursor..line_end].trim();
+            let mut tokens = arm_line.split_whitespace();
+            let arm_op = tokens.next();
+            let arm_carrier = tokens.next();
+            let extra = tokens.next();
+            if arm_op != Some(*op) || arm_carrier != Some(last_seg) || extra.is_some() {
+                arms_ok = false;
+                break;
+            }
+            cursor = line_end + 1;
+        }
+        if !arms_ok {
+            continue;
+        }
+
+        // Verify closing brace line.
+        let close_line_end = source[cursor..]
+            .find('\n')
+            .map(|n| cursor + n)
+            .unwrap_or(source.len());
+        let close_line = source[cursor..close_line_end].trim();
+        if close_line != "}" {
+            continue;
+        }
+
+        // Include closing brace + trailing newline if present.
+        let block_end = if close_line_end < source.len() {
+            close_line_end + 1
+        } else {
+            close_line_end
+        };
+        return Some((pos, block_end));
+    }
+    None
+}
+
+/// Collapse runs of 3+ consecutive newlines to exactly 2 (single
+/// blank line). Preserves single blank lines and no-blank-line
+/// separations. Applied after block removal to keep source density
+/// consistent with landed shard conventions (max one blank line
+/// between sections per grep-verified corpus).
+fn collapse_excess_blank_lines(source: &str) -> String {
+    let mut result = String::with_capacity(source.len());
+    let mut consecutive_newlines = 0;
+    for ch in source.chars() {
+        if ch == '\n' {
+            consecutive_newlines += 1;
+            if consecutive_newlines <= 2 {
+                result.push(ch);
+            }
+        } else {
+            consecutive_newlines = 0;
+            result.push(ch);
+        }
+    }
+    result
 }
 
 #[cfg(test)]
@@ -699,6 +950,185 @@ bilateral consent_scope_universal {
             Verdict::Fail(reason) => assert!(reason.contains("missing shard_path")),
             other => panic!("expected Fail on missing shard_path, got {:?}", other),
         }
+    }
+
+    // =================================================================
+    // Fire E M-E3.5-REVISED tests — beta-reduction primitives
+    // =================================================================
+
+    #[test]
+    fn strip_normalization_rule_reducible_ref_recognizes_identity_projection() {
+        assert_eq!(
+            strip_normalization_rule_reducible_ref(
+                "@epistemologic/normalization/rules/identity_projection_elision.reducible"
+            ),
+            Some("identity_projection_elision")
+        );
+    }
+
+    #[test]
+    fn strip_normalization_rule_reducible_ref_rejects_non_normalization_action() {
+        assert_eq!(
+            strip_normalization_rule_reducible_ref(
+                "@kintsugi/fracture/prism_boilerplate.detect"
+            ),
+            None
+        );
+    }
+
+    #[test]
+    fn strip_normalization_rule_reducible_ref_rejects_non_reducible_suffix() {
+        assert_eq!(
+            strip_normalization_rule_reducible_ref(
+                "@epistemologic/normalization/rules/identity_projection_elision.reduce"
+            ),
+            None
+        );
+    }
+
+    #[test]
+    fn reduce_identity_prism_at_removes_block_from_p1_fixture() {
+        let dir = fixture_p1_shard("spectral", "spectral.mirror");
+        let shard_path = dir.path().join("shards").join("spectral.mirror");
+        match reduce_identity_prism_at(&shard_path) {
+            ReduceResult::Reduced { new_source } => {
+                // Reduced source must NOT contain the prism block.
+                assert!(!new_source.contains("prism @spectral {"));
+                assert!(!new_source.contains("  focus spectral"));
+                assert!(!new_source.contains("  settle spectral"));
+                // But MUST preserve the surrounding docblock + out line.
+                assert!(new_source.contains("# Fixture shard for detect_prism_boilerplate P1 tests."));
+                assert!(new_source.contains("out @spectral"));
+            }
+            other => panic!("expected Reduced on P1 fixture, got {:?}", other),
+        }
+    }
+
+    #[test]
+    fn reduce_identity_prism_at_is_idempotent() {
+        // Round-trip: after reduce, detect must return Fail (no P1 block).
+        let dir = fixture_p1_shard("spectral", "spectral.mirror");
+        let shard_path = dir.path().join("shards").join("spectral.mirror");
+
+        let reduced = match reduce_identity_prism_at(&shard_path) {
+            ReduceResult::Reduced { new_source } => new_source,
+            other => panic!("expected Reduced, got {:?}", other),
+        };
+
+        // Write reduced source back, verify detector no longer fires.
+        fs::write(&shard_path, &reduced).expect("rewrite");
+        let post_verdict = detect_prism_boilerplate_at(&shard_path);
+        match post_verdict {
+            Verdict::Fail(_) => {} // idempotent: reduced source doesn't detect P1
+            other => panic!("expected Fail after reduce (idempotent), got {:?}", other),
+        }
+
+        // And re-reducing the reduced source is NoReduction.
+        match reduce_identity_prism_at(&shard_path) {
+            ReduceResult::NoReduction => {}
+            other => panic!("expected NoReduction on re-reduce, got {:?}", other),
+        }
+    }
+
+    #[test]
+    fn reduce_identity_prism_at_no_reduction_for_fixed_point_exemption() {
+        let dir = fixture_p1_shard("prism", "prism.mirror");
+        let shard_path = dir.path().join("shards").join("prism.mirror");
+        match reduce_identity_prism_at(&shard_path) {
+            ReduceResult::NoReduction => {} // Q3 fixed-point exemption
+            other => panic!("expected NoReduction on shards/prism.mirror, got {:?}", other),
+        }
+    }
+
+    #[test]
+    fn reduce_identity_prism_at_no_reduction_for_non_p1_shard() {
+        // Write a shard that does NOT carry P1 pattern (named-carrier P2).
+        let dir = TempDir::new().expect("tempdir");
+        let shards = dir.path().join("shards");
+        fs::create_dir_all(&shards).expect("mkdir");
+        let shard_path = shards.join("dance.mirror");
+        let source = "# Non-P1 fixture.\n\n\
+                      prism @dance {\n  \
+                      focus ensemble\n  \
+                      project ensemble\n  \
+                      split ensemble\n  \
+                      shift ensemble\n  \
+                      settle ensemble\n\
+                      }\n";
+        fs::write(&shard_path, source).expect("write");
+        match reduce_identity_prism_at(&shard_path) {
+            ReduceResult::NoReduction => {} // named-carrier P2, not P1
+            other => panic!("expected NoReduction on non-P1 shard, got {:?}", other),
+        }
+    }
+
+    #[test]
+    fn reduce_identity_prism_at_collapses_excess_blank_lines() {
+        // After removing the block, verify blank-line collapse policy
+        // (max 2 consecutive newlines = 1 blank line between sections).
+        let dir = fixture_p1_shard("spectral", "spectral.mirror");
+        let shard_path = dir.path().join("shards").join("spectral.mirror");
+        let reduced = match reduce_identity_prism_at(&shard_path) {
+            ReduceResult::Reduced { new_source } => new_source,
+            other => panic!("expected Reduced, got {:?}", other),
+        };
+        // No triple+ newlines in reduced source.
+        assert!(!reduced.contains("\n\n\n"));
+    }
+
+    #[test]
+    fn dispatch_via_act_routes_to_reducible_pass() {
+        // act() dispatch of @epistemologic/normalization/rules/
+        // identity_projection_elision.reducible routes to the M-E2
+        // detector; same Pass verdict on P1 fixture.
+        let dir = fixture_p1_shard("spectral", "spectral.mirror");
+        let verdict = act(
+            dir.path(),
+            "@epistemologic/normalization/rules/identity_projection_elision.reducible",
+            &["shards/spectral.mirror".to_string()],
+        );
+        assert_eq!(verdict, Verdict::Pass);
+    }
+
+    #[test]
+    fn dispatch_via_act_reducible_returns_fail_for_unknown_rule() {
+        let dir = TempDir::new().expect("tempdir");
+        let verdict = act(
+            dir.path(),
+            "@epistemologic/normalization/rules/glass_identity_elision.reducible",
+            &["shards/some_species.mirror".to_string()],
+        );
+        match verdict {
+            Verdict::Fail(reason) => {
+                assert!(reason.contains("no reducible primitive"));
+                assert!(reason.contains("glass_identity_elision"));
+            }
+            other => panic!("expected Fail on unknown rule, got {:?}", other),
+        }
+    }
+
+    #[test]
+    fn collapse_excess_blank_lines_preserves_single_blank() {
+        assert_eq!(
+            collapse_excess_blank_lines("a\n\nb"),
+            "a\n\nb"
+        );
+    }
+
+    #[test]
+    fn collapse_excess_blank_lines_collapses_triple_to_double() {
+        assert_eq!(
+            collapse_excess_blank_lines("a\n\n\nb"),
+            "a\n\nb"
+        );
+    }
+
+    #[test]
+    fn collapse_excess_blank_lines_collapses_quintuple_to_double() {
+        assert_eq!(
+            collapse_excess_blank_lines("a\n\n\n\n\nb"),
+            "a\n\nb"
+        );
     }
 
     #[test]
