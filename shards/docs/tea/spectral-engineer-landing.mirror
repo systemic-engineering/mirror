@@ -1,0 +1,498 @@
+in @prism
+in @meta
+in @glass
+in @docs
+in @docs/tea
+in @docs/design
+in @nl
+
+# @docs/tea/spectral-engineer-landing — the v0.1 minimum landing page
+# for spectral.engineer as substrate-decl @docs/tea instance.
+#
+# Sibling to @docs/tea/spectral-engineer-case-study (Phase F Alex
+# 2026-06-23; 20.1KB Fellowship stated-vs-enacted page shape) — but
+# MINIMAL per Alex 2026-08-03 Q1 discharge: not Coherence Rising, not
+# the compiler-in-browser (v0.3 territory), not corpus rendering (v0.2
+# territory). Just: cover image + boot-jingle caption + product
+# tagline + wine glass + corpus link.
+#
+# === Alex 2026-08-12 no-scaffold-bottom-up reframe ===
+#
+# > "Why do we need the scaffold? That's a smell. I want it all bottom
+# >  up generated from mirror itself."
+#
+# THIS SHARD is the substrate for the FIRST DEPLOYED PAGE. The Gleam
+# Lustre project scaffold, the gleam.toml, the .gleam sources, the
+# build config — ALL EMITTED FROM THIS SHARD via the cascade chain:
+#
+#   shards/docs/tea/spectral-engineer-landing.mirror  ← THIS SHARD
+#     |  @cascade/code/mirror/gestalt (FLOOR emitter; forward-promised
+#     v   rust/src/apply_h.rs discharge for apply_mirror_gestalt)
+#   .gestalt IR (per shards/cascade/code/mirror/gestalt.mirror)
+#     |  @cascade/code/gestalt/gleam (FLOOR emitter; forward-promised
+#     v   rust/src/apply_h.rs discharge; Q-C2 gestalt-ui-shaped emit
+#         per shards/cascade/code/gestalt/gleam.mirror)
+#   Gleam project tree (gleam.toml + src/*.gleam composing over
+#     /Users/alexwolf/dev/projects/gestalt-ui/ vocabulary crate)
+#     |  gleam build --target=erlang (external tooling)
+#     v
+#   BEAM binary
+#     |  @io/stagefreight registry push (per shards/io/stagefreight)
+#     v  flyctl deploy (per infrastructure templates at
+#        docs/roadmap/spectral-engineer-v0-infrastructure-templates/)
+#   https://spectral.engineer live
+#
+# No Alex-altitude Gleam authorship anywhere in this chain. Bottom-up
+# from mirror substrate per Alex reframe.
+#
+# === What this species declares ===
+#
+# The typed SHAPE of the v0.1 landing page as a @docs/tea instance:
+# minimal state carrier (theme + viewer position), minimal msg sum
+# (page_loaded + theme_switched + viewer_panned), the cover/tagline/
+# footer/toggle/machine-readability layouts, and the init/update/view/
+# subscribe actions specialized for the landing page (each with
+# purity discipline from @docs/tea parent).
+#
+# === The composition ===
+#
+# Design tokens (@docs/design wine-family palette + typography stack)
+# + TEA pattern (@docs/tea model + msg + update + view + cmd + sub)
+# + fable-note register (@nl corpus per launch.md 2026-06-28 draft)
+# + machine-readability (@docs/design §6 AIPREF + llms.txt + JSON-LD)
+# = one typed page substrate-decl.
+#
+# === Content substrate (v0.1) ===
+#
+# Per Alex 2026-08-03 Q1 discharge + ~/.reed/tasks/pending/launch.md
+# fable-note register:
+#
+# 1. Cover image (Spectral Remix punk-zine register; content-
+#    addressed OID at @mirror/store; forward-promised Phase G load).
+# 2. Boot-jingle caption: "Mirror. Offer. Wait. 🍷" (corpus-canonical
+#    per launch.md 2026-07-15 restack quote; Alex verbatim: "We're
+#    gonna make a little ruckus tomorrow at 6pm, Berlin time. Mirror.
+#    Offer. Wait. 🍷").
+# 3. Product tagline v3 (corpus-canonical crystallization Alex
+#    2026-07-22 evening per launch.md "spectral.engineer tagline
+#    crystallized (v3)" section, verbatim):
+#      "Förster-legal quantum-native AI. Local. Distributed.
+#       Mycelial. On hardware you already own. Made in Germany.
+#       Smarter. Harder. And definitely more punk."
+# 4. Wine glass hospitality glyph (🍷) present in copy per corpus
+#    discipline (Watzlawick hospitality element per Loki's Weird -
+#    Doublespeak §Watzlawick section; the "wine glass on the table").
+# 5. Corpus link into ~/dev/systemic.engineering corpus. At v0.1 the
+#    corpus lives at Ghost.io (v0.2 migration discharges the
+#    substrate-native rendering); v0.1 link resolves to Ghost during
+#    transition per launch.md "redirect strategy" hedge.
+#
+# === What v0.1 does NOT include (per Q1 discharge scope) ===
+#
+# - No eigenboard @ui field (v0.3 WASM prompting surface territory)
+# - No Connes distance measurement (case-study species territory)
+# - No corpus rendering (v0.2 Ghost→mirror migration territory)
+# - No dynamic content (pure static v0.1)
+# - No blinking-cursor "What do you want to know?" prompt (v0.3
+#   compilation-in-browser deliverable per launch.md landing-page
+#   vision section)
+#
+# === Recognition ancestry ===
+#
+# - Recognition #96 candidate (instrument @ui vs presentation @docs
+#   partition; @docs/tea IS the presentation-side composition pattern;
+#   spectral-engineer-landing IS a @docs/tea instance).
+# - Recognition #82 (crystal-OID = β-normal-AST-OID by construction;
+#   this landing shard's OID stability under Church-Rosser holds).
+# - Recognition #85 (fractal-colony triple-metalogue-pair-with-self-
+#   closure; each deployed page IS a colony; spectral.engineer IS
+#   a supercolony instance at the site altitude).
+# - Recognition #86 (cryptographic identity of the practice;
+#   deployment carries derived-SSH signature per PK_alex.pub emet
+#   inscription; landing page ships with build-provenance-attestation).
+#
+# === Pre-AI prior art ===
+#
+#   Elm-style Model/View/Update  Czaplicki 2012 Elm — the parent
+#                                @docs/tea pattern this species
+#                                specializes; substrate-pull-correct
+#                                partition of state + effect.
+#   Punk-zine landing pages      Sniffin' Glue Perry 1976; Jamie
+#                                Reid Sex Pistols 1977; Crass 1977-84
+#                                — the perimeter-loud / body-calm
+#                                register per @docs/design §Part 1
+#                                lineage inventory.
+#   Tufte 2001 Visual Display    Sidenotes-in-margin pattern per
+#                                @docs/design §Part 4; not directly
+#                                deployed at v0.1 minimum but pattern
+#                                available for v0.2 corpus render.
+#
+# Spec context: shards/docs/tea.mirror (parent species; M/V/U purity
+#                pattern this instance discharges);
+#               shards/docs/tea/spectral-engineer-case-study.mirror
+#                (sibling species; Fellowship case study; landed
+#                template for the specialization discipline);
+#               shards/docs/design.mirror (Phase E design tokens this
+#                species resolves at wine-family palette + typography
+#                + section_layout);
+#               shards/docs.mirror (parent family-root; document /
+#                rendered_page carriers);
+#               shards/nl.mirror (fable-note corpus register carrier);
+#               shards/cascade/code/mirror/gestalt.mirror (first-leg
+#                cascade species this landing projects through);
+#               shards/cascade/code/gestalt/gleam.mirror (second-leg
+#                cascade species Q-C2 gestalt-ui-shaped emission);
+#               shards/cascade/code/gleam/beam.mirror (third-leg
+#                cascade species Gleam→BEAM compilation);
+#               shards/io/stagefreight.mirror (deployment substrate;
+#                registry push discipline);
+#               ~/.reed/tasks/pending/spectral-engineer-v0-build.md
+#                (Reed shape-doc; Alex-adjudicated Q1-Q3 discharges);
+#               ~/.reed/tasks/pending/launch.md (fable-note register
+#                content substrate; tagline v3 crystallization
+#                2026-07-22 evening);
+#               docs/specs/2026-08-03-mara-spectral-engineer-v0-
+#                canonical-spec.md (Mara web-altitude formalization);
+#               docs/roadmap/spectral-engineer-v0-infrastructure-
+#                templates/ (deployment infrastructure templates
+#                authored-not-deployed; Nix flake + fly.toml +
+#                stagefreight.yml).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[feedback-no-bare-types]] (landing_model /
+#                       landing_msg / hero_layout / footer_layout /
+#                       theme_toggle_state / machine_metadata are
+#                       separate carriers for separate concepts),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (every primitive on this page already exists
+#                       at parent altitude; this species is COMPOSITION,
+#                       not invention),
+#                      [[architecture-alignment-as-boundary-
+#                       mathematics]] (SSR-vs-client + HTTP + deploy
+#                       fire at @io / @cascade / @io/stagefreight,
+#                       not here).
+# Path-namespace property: this file at
+# `shards/docs/tea/spectral-engineer-landing.mirror` declares
+# `@docs/tea/spectral-engineer-landing` per `@epistemologic/pact/
+# path_matches_namespace`.
+
+source @arxiv/programming-languages/elm-architecture
+source @arxiv/programming-languages/gleam-lustre
+source @arxiv/typography/tufte-2001-visual-display
+source @arxiv/web/aipref-content-usage
+source @arxiv/web/llms-txt
+
+prism @docs/tea/spectral-engineer-landing {
+  focus landing
+  project layout
+  split section
+  shift event
+  settle render
+}
+
+# === §1 Model — landing_model state ===
+#
+# The typed page state for the v0.1 minimum landing. Specializes
+# @docs/tea's bare `model = ref` into the concrete carrier the
+# page-runtime consumes. Per [[feedback-no-bare-types]] every named
+# concept gets its own carrier; the model is the composition.
+
+# Theme selection per @docs/design tech toggle (Decision 4):
+# `light` = wine-leaked cream body; `dark` = wine-cave with Recursive
+# MONO at 1.0 (Matrix-without-dystopia per Decision 9).
+type theme_state = light | dark
+
+# Viewer scroll position (for restore across theme swap and page
+# reload). Bare ref at v0.1; typed shape forward-promised at v0.2
+# when viewer-restore discipline surfaces at @docs altitude.
+type viewer_position = ref
+
+# THE LOAD-BEARING MODEL CARRIER. The complete landing-page state at
+# the @docs/tea altitude, specialized for v0.1 minimum. Composes
+# four typed fields:
+#
+#   theme           current theme_state (light | dark; persisted via
+#                    localStorage `spectral_theme` key per
+#                    @docs/design §5)
+#   viewer          viewer_position (scroll restore across theme
+#                    swap; hydration continuity)
+#   loaded          boolean-shaped ref: has page_loaded msg fired
+#                    (init cmd discharge complete; assets present)
+#   cover_image_oid content-addressed OID for the Spectral Remix
+#                    cover image (@mirror/store load; Phase G asset
+#                    dispatch)
+type landing_model = ref
+
+# === §2 Msg — landing_msg events ===
+#
+# The typed event sum the runtime dispatches into update_landing.
+# Specializes @docs/tea's bare `msg = ref` into the concrete sum.
+# Per Elm: every state transition fires through a typed msg; the sum
+# is exhaustive.
+#
+# Three constructors at v0.1 (minimum-landing scope; deliberately
+# small — the substrate refuses feature-creep at v0.1 shape):
+#
+#   page_loaded             initial mount complete; init cmd
+#                            discharge finished (theme resolved from
+#                            localStorage or prefers-color-scheme;
+#                            cover asset loaded from @mirror/store)
+#   theme_switched(theme)   user toggled human <-> tech per
+#                            @docs/design §5 toggle discipline;
+#                            persists via localStorage cmd
+#   viewer_panned(pos)      scroll-position update (debounced; used
+#                            for restore continuity across theme
+#                            swap and reload)
+type landing_msg = ref
+
+# === §3 Hero cover template (F1; punk-zine perimeter) ===
+#
+# Per @docs/design §4.2: the cover IS the perimeter — display stencil
+# face (cover-only; never body), high-contrast wine-family palette,
+# Sniffin' Glue cut-paste asymmetric register. The bleed_into_body
+# 4px wine_punctum horizontal rule IS the threshold between perimeter
+# aggression and body care per Alex 2026-06-23 design synthesis.
+#
+# Fields:
+#   cover_image_ref      the Spectral Remix cover image content-hash
+#                         (@mirror/store OID; Phase G asset load)
+#   boot_jingle_caption  "Mirror. Offer. Wait. 🍷" — corpus-canonical
+#                         per launch.md 2026-07-15 restack (Alex
+#                         verbatim quoted at header docblock)
+#   product_tagline_v3   "Förster-legal quantum-native AI. Local.
+#                         Distributed. Mycelial. On hardware you
+#                         already own. Made in Germany. Smarter.
+#                         Harder. And definitely more punk." —
+#                         corpus-canonical per launch.md 2026-07-22
+#                         evening crystallization (Alex verbatim)
+#   aggression_register  `high` — punctum hook; v0.1 punk-zine cover
+#                         plays perimeter loud per @docs/design §Part
+#                         6 six-pillars principle
+#   bleed_into_body      4px wine_punctum horizontal rule (the
+#                         threshold; the visual semicolon between
+#                         perimeter and body)
+#
+# Composes @docs/design tokens:
+#   palette       wine_50 background (light) / wine_950 (dark)
+#   typography    stencil display face for tagline (v1 selection per
+#                  @docs/design §Q5 open — cover-only never body);
+#                  Atkinson Hyperlegible Next for boot-jingle
+#   section_layout the broken-grid asymmetric cover layout per
+#                   @docs/design §4.2
+type hero_layout = ref
+
+# === §4 Footer template (F2; corpus-link + license + wine glass) ===
+#
+# Per launch.md 2026-07-14 landing page vision section: footer carries
+# the shorter tagline variant + a corpus link into systemic.engineering
+# (v0.1 to Ghost.io; v0.2 to substrate-native corpus render). The wine
+# glass hospitality glyph appears here per corpus discipline
+# (Watzlawick's hospitality element).
+#
+# Fields:
+#   footer_tagline_short  "Local first AI for the real world. Smarter.
+#                          Harder. And definitely more punk." —
+#                          corpus-canonical per launch.md 2026-07-14
+#                          landing page vision section (short variant)
+#   corpus_link_href      https://systemic.engineering/manifesto —
+#                          v0.1 Ghost.io resolution; v0.2 discharge
+#                          via corpus migration; substrate-honest
+#                          hedge per launch.md redirect strategy
+#   corpus_link_label     "Enter the room." — fable-note register
+#                          per launch.md 2026-06-28 draft; corpus-
+#                          canonical corpus-navigation topology
+#   license_line          SEL v1.1 terms URL + attribution;
+#                          machine-readable per @docs/design §6
+#   wine_glass            🍷 — corpus-canonical hospitality glyph;
+#                          present in copy per Loki Weird - Doublespeak
+#                          Watzlawick section ("the wine glass on the
+#                          table") + corpus discipline
+#
+# Composes @docs/design tokens:
+#   palette       wine_700 background (footer discipline per
+#                  @docs/design §4 footer specification); wine_300
+#                  text (minimal; page settles here)
+#   typography    Atkinson Hyperlegible Next at footer-scale
+type footer_layout = ref
+
+# === §5 Tech toggle (F3) ===
+#
+# Per @docs/design §5: three rendering configurations, two user-facing
+# toggles. Default honors prefers-color-scheme; explicit tech toggle
+# is opt-in to wine-cave-in-monospace (Recursive MONO at 1.0). Same
+# discipline as spectral-engineer-case-study sibling; lifted here for
+# v0.1 minimum-landing.
+#
+# Fields:
+#   default        prefers_color_scheme (system preference resolves
+#                   on initial mount at page_loaded)
+#   user_override  localStorage persistence (`spectral_theme` key)
+#   light          wine_50 background + wine_950 body + Atkinson
+#                   (cream + near-black)
+#   dark           wine_850 background + wine_50 body + Recursive
+#                   MONO 1.0 (wine-cave-in-monospace per @docs/design
+#                   §5 + spectral-engineer-color.md Decision 9
+#                   Matrix-without-dystopia)
+type theme_toggle_state = ref
+
+# === §6 Machine-readability layer (F4) ===
+#
+# Per @docs/design §6 + Mara research spectral-engineer-agents.md
+# Part 8 synthesis. The corpus position: anti-extraction is NOT
+# anti-agent. SEL §3 protects; AIPREF + llms.txt + JSON-LD welcome.
+# Single-source-of-truth per Decision 8. Same discipline as sibling
+# case-study species; lifted here for v0.1 minimum-landing.
+#
+# Fields:
+#   aipref            { training: allow_with_sel,
+#                       inference: allow_with_sel } — per-page
+#                     Content-Usage header per AIPREF draft
+#   robots            no AI-targeted disallow blocks; sitemap
+#                     reference (refuse walled-garden vs extraction-
+#                     target bifurcation)
+#   llms_txt          auto-generated from frontmatter at build time
+#                     (title + 1-line summary + URL) — v0.1 seed;
+#                     v0.2 corpus-migration extends with per-piece
+#                     entries
+#   json_ld           WebPage + Organization additionalType; author
+#                     "Alex Wolf + Reed (Pack)"; datePublished v0.1
+#                     ship date; about "Local-first AI for the real
+#                     world"
+#
+# The agent-facing layer renders identically across both themes
+# (Decision 8: semantic/rendering separation is structural).
+type machine_metadata = ref
+
+# === §7 Actions ===
+#
+# Specializations of @docs/tea's bare init / update / view_of /
+# subscribe actions for v0.1 landing. Each carries the purity
+# obligation from the parent species. Bodies discharge at the cascade
+# emission target (Gleam Lustre runtime post-cascade emission via
+# @cascade/code/mirror/gestalt + @cascade/code/gestalt/gleam).
+
+# Construct initial (landing_model, cmd) pair. The cmd dispatched at
+# init MAY load the cover image asset over HTTP + resolve theme from
+# localStorage or prefers-color-scheme. Per @docs/tea hedge 4 cmd is
+# a bare ref at v0.1 (typed effect shape forward-promised at v0.2
+# once @io adapter species name concrete effect shapes).
+init_landing(p: perturbation) -> (landing_model, cmd)
+requires init_pure(p)
+{ \ }
+
+# Pure (state, msg) -> (new_state, cmd). Per @docs/tea update_pure
+# obligation. Dispatches localStorage persist cmd on theme_switched;
+# noop cmd on viewer_panned (position update is pure state); noop cmd
+# on page_loaded (init cmd already fired). Substrate forecloses
+# hidden side effects.
+update_landing(
+  state: landing_model,
+  m: landing_msg,
+  p: perturbation
+) -> (landing_model, cmd)
+requires update_pure(state, m, p)
+{ \ }
+
+# Pure model -> view projection. Composes hero_layout + footer_layout
+# + theme_toggle_state + machine_metadata into one rendered view.
+# Per @docs/tea view_pure obligation.
+view_landing(state: landing_model, p: perturbation) -> view
+requires view_pure(state, p)
+{ \ }
+
+# Pure model -> sub projection. v0.1 subscribes to prefers-color-
+# scheme media-query change (for theme sync when user changes system
+# preference) + viewer scroll events (debounced for viewer_panned
+# msg). No eigenboard @ui field subscription at v0.1 (deferred to
+# v0.3 WASM prompting surface).
+subscribe_landing(state: landing_model, p: perturbation) -> sub { \ }
+
+# === §8 Composed bilateral ===
+#
+# THE LOAD-BEARING composed bilateral at the @docs/tea/spectral-
+# engineer-landing altitude. Composes purity verdicts from @docs/tea
+# + composition verdict from @docs + design verdict from @docs/design.
+#
+# Same composed-bilateral pattern as @cascade.cascade_well_defined,
+# @ui.ui_instrument_coherent, @docs.docs_complete, @docs/tea.tea_
+# well_formed, @docs/design.design_complete, @docs/tea/spectral-
+# engineer-case-study.case_study_well_formed — ELEVENTH altitude lift
+# of the pattern (sibling case-study was TENTH at 2026-06-23).
+#
+# Four sub-predicates must hold for v0.1 landing to ship:
+#   1. init_pure(p)                    @docs/tea
+#   2. update_pure(state, m, p)        @docs/tea
+#   3. view_pure(state, p)             @docs/tea
+#   4. document_well_formed(state, p)  @docs (composition coherence)
+#
+# NOTE: no field_well_formed sub-predicate at v0.1 (no @ui eigenboard
+# instrument at minimum-landing scope; sibling case-study composes
+# field_well_formed because it embeds the eigenboard measurement).
+#
+# Splinter-pole: all four discharge; page ships.
+# Narcissus-pole: any sub-predicate fails; deployment blocked at the
+#   failing altitude.
+# Narcissus-warned: all four discharge but at least one is warned
+#   (e.g., document warns deprecated anchor; design warns APCA at
+#   lower bound); page ships with audit-flag.
+landing_well_formed(
+  state: landing_model,
+  m: landing_msg,
+  p: perturbation
+) -> verdict
+requires init_pure(p)
+requires update_pure(state, m, p)
+requires view_pure(state, p)
+requires document_well_formed(state, p)
+{ \ }
+
+# === §9 Honest hedges ===
+#
+# 1. Cover image OID forward-promised. The Spectral Remix cover-image
+#    content-hash + asset bytes land at Phase G via @mirror/store
+#    content-addressed load. This shard substrate-decl's the cover_
+#    image_ref carrier; the ACTUAL bytes attach at Phase G runtime
+#    per @mirror/store discipline.
+#
+# 2. Corpus link resolves to Ghost.io at v0.1. The systemic.engineering
+#    corpus lives at Ghost.io at v0.1 ship time; v0.2 corpus migration
+#    swaps the link target to substrate-native mirror-served corpus.
+#    Redirect strategy per launch.md "redirect strategy" hedge (Ghost
+#    URLs → spectral.engineer equivalents via HTTP 301; DNS swap at
+#    v0.2 completion).
+#
+# 3. cmd + sub as bare refs at v0.1. Refinement to typed effect
+#    descriptions forward-promised once @io adapter species name
+#    concrete effect shapes (HTTP fetch, localStorage, media-query
+#    subscription, scroll listener, etc.) — same hedge inheritance
+#    from @docs/tea parent hedge 4.
+#
+# 4. SUBSTRATE-DECL ONLY. The Gleam Lustre runtime, the actual page
+#    HTML, the CSS bytes, the BEAM binary, the fly.io deployment —
+#    all cascade-emission territory. This shard carries the TYPED
+#    SHAPE the emission cascade discharges against. Per Alex
+#    2026-08-12 no-scaffold reframe: emission runtime lives at
+#    rust/src/apply_h.rs FLOOR discharge for apply_mirror_gestalt +
+#    apply_gestalt_gleam (currently `{ \ }` in landed cascade
+#    species; forward-promised Reed cascade this arc).
+#
+# 5. v0.1 minimum-landing does NOT ship the compiler-in-browser.
+#    The blinking-cursor "What do you want to know?" prompt per
+#    launch.md landing-page-vision section is v0.3 WASM prompting
+#    surface territory. v0.1 = static landing; v0.3 = compiler on
+#    the page. Per Alex 2026-08-03 Q1 minimum-landing discharge.
+
+out @docs/tea/spectral-engineer-landing
+out theme_state
+out viewer_position
+out landing_model
+out landing_msg
+out hero_layout
+out footer_layout
+out theme_toggle_state
+out machine_metadata
+out init_landing
+out update_landing
+out view_landing
+out subscribe_landing
+out landing_well_formed
