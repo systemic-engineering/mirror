@@ -102,14 +102,6 @@ in @ui
 
 source @code/rust
 
-prism @ui/mote {
-  focus mote
-  project mote
-  split mote
-  shift mote
-  settle mote
-}
-
 # === mote_data carrier ===
 #
 # The CPU-side mote: a glowing node in the eigenboard field. Five

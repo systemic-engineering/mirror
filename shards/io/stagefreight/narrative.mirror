@@ -146,14 +146,6 @@ source @arxiv/programming-languages/mccarthy-1958
 source @arxiv/markup/goodger-2001
 source @arxiv/markup/gruber-2004
 
-prism @io/stagefreight/narrative {
-  focus narrative
-  project narrative
-  split narrative
-  shift narrative
-  settle narrative
-}
-
 # === The narrative_text carrier ===
 #
 # Substrate-typed reference for the rendered narrative form. Per

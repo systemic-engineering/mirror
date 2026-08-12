@@ -154,12 +154,4 @@ in @io/git
 # `@spectral/garden` per pact_matches_namespace (Seam Phase D
 # efcef6e Cascade 1 enforcement).
 
-prism @spectral/garden {
-  focus  garden
-  project garden
-  split  garden
-  shift  garden
-  settle garden
-}
-
 out @spectral/garden

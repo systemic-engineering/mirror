@@ -31,14 +31,6 @@ in @mirror/lens/cli
 # Path-namespace property: this file at `shards/mirror/spec.mirror`
 # declares `@mirror/spec` and only that.
 
-prism @mirror/spec {
-  focus spec
-  project spec
-  split spec
-  shift spec
-  settle spec
-}
-
 # === the top-level keyword: `project NAME { ... }` ===
 #
 # One per project. Declares a prism over a `mirror.spec` file; the

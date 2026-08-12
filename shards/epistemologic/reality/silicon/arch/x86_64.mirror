@@ -40,14 +40,6 @@ in @epistemologic/property/content_addressed
 # `shards/epistemologic/reality/silicon/arch/x86_64.mirror` declares
 # `@epistemologic/reality/silicon/arch/x86_64` and only that.
 
-prism @epistemologic/reality/silicon/arch/x86_64 {
-  focus x86_64
-  project x86_64
-  split x86_64
-  shift x86_64
-  settle x86_64
-}
-
 # ISA extensions. SSE2 is the AMD64 baseline (every x86_64 has it);
 # SSE4_2 brings string ops and CRC32; AVX/AVX2 are the 256-bit
 # SIMD generations; AVX512F is the foundation tier of AVX-512;

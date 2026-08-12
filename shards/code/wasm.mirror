@@ -55,14 +55,6 @@ in @io
 # Path-namespace property: this file at `shards/code/wasm.mirror`
 # declares `@code/wasm` per `@epistemologic/pact/path_matches_namespace`.
 
-prism @code/wasm {
-  focus wasm
-  project wasm
-  split wasm
-  shift wasm
-  settle wasm
-}
-
 # === build-property surface (settle_on consumers) ===
 #
 # mirror.spec's `settle_on { binary.validates, binary.runs }` block

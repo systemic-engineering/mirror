@@ -133,14 +133,6 @@ source @arxiv/version-control/torvalds-2005
 source @arxiv/distributed/benet-2014
 source @arxiv/build-systems/dolstra-2006-nix
 
-prism @io/oci {
-  focus oci
-  project oci
-  split oci
-  shift oci
-  settle oci
-}
-
 # ============================================================
 # §2 The carriers
 # ============================================================

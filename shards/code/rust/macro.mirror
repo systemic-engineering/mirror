@@ -87,14 +87,6 @@ in @property
 # code/mirror.mirror (T17 — the render half at the mirror altitude;
 # the sibling-altitude precedent for the round-trip law).
 
-prism @code/rust/macro {
-  focus macro
-  project macro
-  split macro
-  shift macro
-  settle macro
-}
-
 # === Rust-altitude shim bindings ===
 #
 # The four shim signatures from `@code/metalogue` (universal

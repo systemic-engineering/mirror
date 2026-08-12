@@ -161,14 +161,6 @@ source @arxiv/types/rondon-kawaguchi-jhala-2008
 source @arxiv/verification/flanagan-leino-2001
 source @arxiv/math/connes-1994
 
-prism @loop {
-  focus loop
-  project loop
-  split loop
-  shift loop
-  settle loop
-}
-
 # === The tick carrier ===
 #
 # Typed reference for one iteration's identity. Per [[feedback-no-

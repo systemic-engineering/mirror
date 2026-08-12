@@ -95,12 +95,4 @@ in @glass
 # `shards/code/metalogue.mirror`. Canonical species landing:
 # `@code/rust/macro` at `shards/code/rust/macro.mirror`.
 
-prism @code {
-  focus code
-  project code
-  split code
-  shift code
-  settle code
-}
-
 out @code

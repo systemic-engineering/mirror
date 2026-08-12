@@ -146,14 +146,6 @@ in @io
 # `shards/optics/lens/<name>.mirror` (e.g. @optics/lens/diff, landed
 # separately by sibling Mara iter-26 as the first species).
 
-prism @optics/lens {
-  focus lens
-  project lens
-  split lens
-  shift lens
-  settle lens
-}
-
 # === Type carriers (Foster 2007 shape) ===
 #
 # The semantic ↔ linear pair. `lens_get` names the semantic → linear

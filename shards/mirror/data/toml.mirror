@@ -76,14 +76,6 @@ in @mirror/data
 # Path-namespace property: this file at `shards/mirror/data/toml.mirror`
 # declares `@mirror/data/toml` and only that.
 
-prism @mirror/data/toml {
-  focus toml
-  project toml
-  split toml
-  shift toml
-  settle toml
-}
-
 # === The toml carrier ===
 #
 # TOML 1.0 value types. Core six kinds match json's carrier shape;

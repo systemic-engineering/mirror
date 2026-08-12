@@ -240,14 +240,6 @@ source @arxiv/cybernetics/foerster-2003
 source @arxiv/cybernetics/maturana-varela-1980
 source @arxiv/manifesto/wolf-2026-07-14-weird-violence
 
-prism @eigenboard {
-  focus  eigenboard
-  project eigenboard
-  split  eigenboard
-  shift  eigenboard
-  settle eigenboard
-}
-
 # === The arousal variant carrier (§3.2) ===
 #
 # Four-state closed variant. Per `docs/specs/lambda-shell.md` verbatim

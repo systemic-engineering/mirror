@@ -151,14 +151,6 @@ in @epistemologic/math/bundle
 # `@epistemologic/math/sheaf_laplacian` per the
 # `@epistemologic/pact/path_matches_namespace` rule.
 
-prism @epistemologic/math/sheaf_laplacian {
-  focus sheaf_laplacian
-  project sheaf_laplacian
-  split sheaf_laplacian
-  shift sheaf_laplacian
-  settle sheaf_laplacian
-}
-
 # === The restriction carrier ===
 #
 # One edge of a cellular sheaf in a chosen gauge. The matrix block

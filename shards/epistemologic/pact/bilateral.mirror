@@ -197,14 +197,6 @@ in @apply_h
 #                 evaluates each `require` entry; Pass iff all sub-
 #                 bilaterals discharge Pass on the same argument.
 
-prism @epistemologic/pact/bilateral {
-  focus  bilateral
-  project bilateral
-  split  bilateral
-  shift  bilateral
-  settle bilateral
-}
-
 # === Typed carrier ===
 #
 # The record shape carrying one bilateral declaration. Consumed by the

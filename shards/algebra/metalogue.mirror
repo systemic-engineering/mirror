@@ -212,14 +212,6 @@ source @arxiv/cybernetics/bateson-1972
 source @arxiv/math/kasparov-1981
 source @arxiv/math/mesland-2013
 
-prism @algebra/metalogue {
-  focus metalogue
-  project metalogue
-  split metalogue
-  shift metalogue
-  settle metalogue
-}
-
 # === The algebra_turn carrier ===
 #
 # Typed record per [[feedback-no-bare-types]] naming one move

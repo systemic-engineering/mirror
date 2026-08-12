@@ -164,14 +164,6 @@ source @arxiv/cs/dijkstra-1959
 source @arxiv/math/fiedler-1973
 source @arxiv/anthropology/bateson-1972
 
-prism @reflection/mirror {
-  focus mirror
-  project mirror
-  split mirror
-  shift mirror
-  settle mirror
-}
-
 # === The graph_path carrier ===
 #
 # Substrate-typed reference naming a path through the substrate graph

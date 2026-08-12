@@ -35,14 +35,6 @@ in @io
 # (T23 — the language-side compile-time AST consumption surface;
 # spec docs/specs/code-macro-surface.md).
 
-prism @code/rust {
-  focus rust
-  project rust
-  split rust
-  shift rust
-  settle rust
-}
-
 # === cargo — the emit-target sub-prism ===
 #
 # Per mirror-spec-schema.md §10.5: `emit` takes `ref(@io)` OR

@@ -108,14 +108,6 @@ in @magic/audit
 source @arxiv/physics/yang-mills-1954
 source @arxiv/security/dennis-van-horn-1966
 
-prism @magic/mechanism {
-  focus mechanism
-  project mechanism
-  split mechanism
-  shift mechanism
-  settle mechanism
-}
-
 # === mechanism_invariant carrier ===
 #
 # A typed reference per [[feedback-no-bare-types]] naming a specific

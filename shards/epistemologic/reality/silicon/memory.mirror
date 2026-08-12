@@ -34,14 +34,6 @@ in @epistemologic/property/content_addressed
 # `shards/epistemologic/reality/silicon/memory.mirror` declares
 # `@epistemologic/reality/silicon/memory` and only that.
 
-prism @epistemologic/reality/silicon/memory {
-  focus memory
-  project memory
-  split memory
-  shift memory
-  settle memory
-}
-
 # Memory model. UMA (Apple Silicon: unified memory, GPU sees the
 # same address space as CPU); separate (host CPU + discrete GPU,
 # explicit transfers required); NUMA (multi-socket servers with

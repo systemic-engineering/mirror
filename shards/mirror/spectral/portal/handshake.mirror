@@ -55,14 +55,6 @@ in @mirror/spectral/portal
 # `@mirror/spectral/portal/handshake` as a sub-species under
 # `@mirror/spectral/portal`.
 
-prism @mirror/spectral/portal/handshake {
-  focus handshake
-  project handshake
-  split handshake
-  shift handshake
-  settle handshake
-}
-
 # === parse_upgrade — server-side, parse a client's Upgrade request ===
 parse_upgrade(c: ref) -> imperfect { \ }
 

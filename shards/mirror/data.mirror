@@ -238,12 +238,4 @@ in @nl
 # declares `@mirror/data` as the family root; species live at
 # `shards/mirror/data/<name>.mirror`.
 
-prism @mirror/data {
-  focus data
-  project data
-  split data
-  shift data
-  settle data
-}
-
 out @mirror/data

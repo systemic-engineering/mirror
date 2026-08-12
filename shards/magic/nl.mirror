@@ -181,14 +181,6 @@ source @arxiv/physics/yang-mills-1954
 source @arxiv/physics/connes-1994
 source @arxiv/linguistics/firth-1957
 
-prism @magic/nl {
-  focus nl
-  project nl
-  split nl
-  shift nl
-  settle nl
-}
-
 # === text_as_surface adapter ===
 #
 # Substrate-vocabulary adapter action lifting an @nl term to a

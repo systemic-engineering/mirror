@@ -123,14 +123,6 @@ in @kintsugi
 source @arxiv/programming/floyd-hoare-1969
 source @arxiv/programming/claessen-hughes-2000
 
-prism @epistemologic/property/dark_count_monotone {
-  focus dark_count_monotone
-  project dark_count_monotone
-  split dark_count_monotone
-  shift dark_count_monotone
-  settle dark_count_monotone
-}
-
 # === The shard carrier ===
 #
 # Typed reference to the substrate-decl shard being checked. Forward-

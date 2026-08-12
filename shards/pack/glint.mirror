@@ -200,14 +200,6 @@ source @arxiv/literature/sontag-1966
 source @arxiv/literature/didion-1979
 source @arxiv/media-theory/mcluhan-1964
 
-prism @pack/glint {
-  focus glint
-  project glint
-  split glint
-  shift glint
-  settle glint
-}
-
 # === The essay carrier ===
 #
 # Substrate-typed reference naming a cross-frame-synthesis artifact.

@@ -138,14 +138,6 @@ source @arxiv/cybernetics/beer-1972
 source @arxiv/cybernetics/von-foerster-1981
 source @arxiv/common-goods/ostrom-1990
 
-prism @smarts/epistemologic {
-  focus epistemologic
-  project epistemologic
-  split epistemologic
-  shift epistemologic
-  settle epistemologic
-}
-
 # === epistemologic_cybernetic_form_of adapter ===
 #
 # The substrate-vocabulary adapter action projecting the cybernetic

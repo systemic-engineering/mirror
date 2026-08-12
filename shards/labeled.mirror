@@ -80,14 +80,6 @@ in @glass
 source @arxiv/programming-languages/wadler-1989-theorems-for-free
 source @arxiv/programming-languages/reynolds-1983-parametricity
 
-prism @labeled {
-  focus labeled
-  project labeled
-  split labeled
-  shift labeled
-  settle labeled
-}
-
 # === The labeled carrier ===
 #
 # Parametric carrier over (value_type, label_type). The functor that

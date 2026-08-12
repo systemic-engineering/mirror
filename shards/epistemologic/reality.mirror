@@ -88,12 +88,4 @@ in @epistemologic
 # Path-namespace property: this file at `shards/epistemologic/reality.mirror`
 # declares `@epistemologic/reality` and only that.
 
-prism @epistemologic/reality {
-  focus reality
-  project reality
-  split reality
-  shift reality
-  settle reality
-}
-
 out @epistemologic/reality

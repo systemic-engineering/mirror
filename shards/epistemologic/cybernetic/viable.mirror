@@ -407,14 +407,6 @@ source @arxiv/cybernetics/beer-1984
 source @arxiv/cybernetics/conant-ashby-1970
 source @arxiv/cybernetics/ashby-1952
 
-prism @epistemologic/cybernetic/viable {
-  focus viable
-  project viable
-  split viable
-  shift viable
-  settle viable
-}
-
 # === The identity carrier ===
 #
 # T_reg per spec §3.1 Read A. The substrate-altitude carrier for

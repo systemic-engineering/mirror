@@ -528,14 +528,6 @@ source @arxiv/cybernetics/soto-andrade-varela-1984
 source @arxiv/math/lawvere-1969
 source @arxiv/cybernetics/beer-1979
 
-prism @epistemologic/cybernetic/autopoiesis {
-  focus autopoiesis
-  project autopoiesis
-  split autopoiesis
-  shift autopoiesis
-  settle autopoiesis
-}
-
 # === The organization carrier ===
 #
 # T_reg per spec §3.1 Read A. The substrate-altitude carrier for

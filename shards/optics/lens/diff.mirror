@@ -161,14 +161,6 @@ in @mirror/store
 # Path-namespace property: this file at `shards/optics/lens/diff.mirror`
 # declares `@optics/lens/diff` and only that.
 
-prism @optics/lens/diff {
-  focus diff
-  project diff
-  split diff
-  shift diff
-  settle diff
-}
-
 # === Type carriers (species specialization of parent family-root) ===
 #
 # Parent `@optics/lens` (b0427fd) declares:

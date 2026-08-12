@@ -173,14 +173,6 @@ source @arxiv/programming-languages/wadler-1989-theorems-for-free
 source @arxiv/programming-languages/reynolds-1983-parametricity
 source @arxiv/programming-languages/pierce-2002-types-and-programming-languages
 
-prism @cascade {
-  focus cascade
-  project cascade
-  split cascade
-  shift cascade
-  settle cascade
-}
-
 # === The grammar carrier ===
 #
 # Substrate-typed reference naming a language grammar's complete

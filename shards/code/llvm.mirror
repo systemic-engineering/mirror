@@ -119,14 +119,6 @@ in @code
 # target.md OID discipline) lives at `shards/code/llvm/ir.mirror`
 # when a consumer pulls; not landed this tick per scope.
 
-prism @code/llvm {
-  focus llvm
-  project llvm
-  split llvm
-  shift llvm
-  settle llvm
-}
-
 # === typed carriers for LLVM IR ===
 #
 # Small vocabulary per §9.2 M2 sibling-species discipline. Each

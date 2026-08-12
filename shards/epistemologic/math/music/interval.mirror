@@ -197,14 +197,6 @@ in @epistemologic/math/music/harmonic
 # `@epistemologic/math/music/interval` as a species under the
 # `@epistemologic/math/music` family.
 
-prism @epistemologic/math/music/interval {
-  focus interval
-  project interval
-  split interval
-  shift interval
-  settle interval
-}
-
 # === The pitch-class carrier (Z_12) ===
 #
 # A pitch class is an element of Z_12 — pitch space modulo octave

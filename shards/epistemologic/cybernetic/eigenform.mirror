@@ -182,14 +182,6 @@ in @epistemologic/cybernetic
 source @arxiv/cybernetics/von-foerster-1981
 source @arxiv/cybernetics/kauffman-2003
 
-prism @epistemologic/cybernetic/eigenform {
-  focus eigenform
-  project eigenform
-  split eigenform
-  shift eigenform
-  settle eigenform
-}
-
 # === The fixed_point carrier ===
 #
 # A typed record per [[feedback-no-bare-types]] naming the three

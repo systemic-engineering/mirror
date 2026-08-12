@@ -124,14 +124,6 @@ in @nl
 #                 T17 — `render` is one half of the codegen pipeline;
 #                 `metalogue` reception is the other).
 
-prism @code/metalogue {
-  focus metalogue
-  project metalogue
-  split metalogue
-  shift metalogue
-  settle metalogue
-}
-
 # === The four substrate-declaration kinds ===
 #
 # Per docs/specs/code-metalogue-surface.md §4.1, every substrate

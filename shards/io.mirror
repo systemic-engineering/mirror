@@ -557,12 +557,4 @@ in @glass
 # the addendum adds is the NAMING that future consumers can read
 # without reading Alex's transcripts.
 
-prism @io {
-  focus io
-  project io
-  split io
-  shift io
-  settle io
-}
-
 out @io

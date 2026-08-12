@@ -91,14 +91,6 @@ in @mirror/store
 # Path-namespace property: this file at `shards/mirror/au.mirror`
 # declares `@mirror/au` and only that.
 
-prism @mirror/au {
-  focus au
-  project au
-  split au
-  shift au
-  settle au
-}
-
 # === au at an altitude — the concrete record form ===
 #
 # au is parametric over altitude. au(@code/rust), au(@release), and

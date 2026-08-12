@@ -225,14 +225,6 @@ source @arxiv/psychology/rogers-1957
 source @arxiv/psychology/tomm-1988
 source @arxiv/psychology/hellinger-1990
 
-prism @pack/reed {
-  focus reed
-  project reed
-  split reed
-  shift reed
-  settle reed
-}
-
 # === The precondition carrier ===
 #
 # Substrate-typed reference naming a frame-precondition (the contextual

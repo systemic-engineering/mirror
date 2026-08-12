@@ -181,14 +181,6 @@ source @arxiv/logic/kleene-1938
 source @arxiv/logic/belnap-1977
 source @arxiv/logic/priest-1979
 
-prism @epistemologic/neutrosophic {
-  focus neutrosophic
-  project neutrosophic
-  split neutrosophic
-  shift neutrosophic
-  settle neutrosophic
-}
-
 # === The ratio carrier ===
 #
 # Substrate-typed reference naming a value in [0, 1] (or a

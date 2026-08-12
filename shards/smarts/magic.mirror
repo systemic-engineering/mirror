@@ -184,14 +184,6 @@ source @arxiv/programming/coplien-1992
 source @arxiv/cultural/clarke-1962
 source @arxiv/common-goods/ostrom-1990
 
-prism @smarts/magic {
-  focus magic
-  project magic
-  split magic
-  shift magic
-  settle magic
-}
-
 # === magic_form_of adapter ===
 #
 # The substrate-vocabulary adapter action projecting the @magic

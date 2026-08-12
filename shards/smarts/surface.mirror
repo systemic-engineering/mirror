@@ -169,14 +169,6 @@ source @arxiv/nlp/manning-schutze-1999
 source @arxiv/databases/codd-1970
 source @arxiv/information-retrieval/salton-1971
 
-prism @smarts/surface {
-  focus surface
-  project surface
-  split surface
-  shift surface
-  settle surface
-}
-
 # === The language carrier ===
 #
 # Substrate-typed reference for natural-language input. Per

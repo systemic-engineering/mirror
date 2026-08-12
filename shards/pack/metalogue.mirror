@@ -269,14 +269,6 @@ source @arxiv/math/bertozzini-conti-lewkeeratiyutkul-2006
 source @arxiv/family-therapy/tomm-1987
 source @arxiv/cybernetics/bateson-1972
 
-prism @pack/metalogue {
-  focus metalogue
-  project metalogue
-  split metalogue
-  shift metalogue
-  settle metalogue
-}
-
 # === The agent_triple carrier ===
 #
 # Typed record per [[feedback-no-bare-types]] naming the four

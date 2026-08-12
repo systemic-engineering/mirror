@@ -301,14 +301,6 @@ in @metalogue
 # `@mirror/spectral/score` as a species under the `@mirror/spectral`
 # family.
 
-prism @mirror/spectral/score {
-  focus score
-  project score
-  split score
-  shift score
-  settle score
-}
-
 # === The score carrier ===
 #
 # The orchestra's shared score. Three components, each a typed

@@ -137,14 +137,6 @@ in @epistemologic/cybernetic
 # `@epistemologic/cybernetic/variety` per
 # `@epistemologic/pact/path_matches_namespace`.
 
-prism @epistemologic/cybernetic/variety {
-  focus variety
-  project variety
-  split variety
-  shift variety
-  settle variety
-}
-
 # === The five canonical axes ===
 #
 # Per recognition #36, variety decomposes along at minimum five axes for

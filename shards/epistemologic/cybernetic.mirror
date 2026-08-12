@@ -167,12 +167,4 @@ in @epistemologic
 # declares `@epistemologic/cybernetic` per
 # `@epistemologic/pact/path_matches_namespace`.
 
-prism @epistemologic/cybernetic {
-  focus cybernetic
-  project cybernetic
-  split cybernetic
-  shift cybernetic
-  settle cybernetic
-}
-
 out @epistemologic/cybernetic

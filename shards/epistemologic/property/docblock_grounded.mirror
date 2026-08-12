@@ -184,14 +184,6 @@ in @epistemologic/property
 in @epistemologic/liquid_extraction
 in @docblock
 
-prism @epistemologic/property/docblock_grounded {
-  focus docblock_grounded
-  project docblock_grounded
-  split docblock_grounded
-  shift docblock_grounded
-  settle docblock_grounded
-}
-
 # === docblock_grounded predicate (declarative half) ===
 #
 # THE LOAD-BEARING PREDICATE. Returns verdict that every extractable

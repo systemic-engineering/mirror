@@ -81,14 +81,6 @@ in @mirror/au
 # Path-namespace property: this file at `shards/mirror/shatter.mirror`
 # declares `@mirror/shatter` and only that.
 
-prism @mirror/shatter {
-  focus shatter
-  project shatter
-  split shatter
-  shift shatter
-  settle shatter
-}
-
 # === the five-section structure on disk ===
 #
 # Per docs/specs/shatter-spec.md (post-MirrorLoss -> transparency

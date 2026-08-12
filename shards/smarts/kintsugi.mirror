@@ -166,14 +166,6 @@ source @arxiv/cybernetics/beer-1972
 source @arxiv/cultural/japan-16c-kintsugi
 source @arxiv/common-goods/ostrom-1990
 
-prism @smarts/kintsugi {
-  focus kintsugi
-  project kintsugi
-  split kintsugi
-  shift kintsugi
-  settle kintsugi
-}
-
 # === kintsugi_form_of adapter ===
 #
 # The substrate-vocabulary adapter action projecting the kintsugi

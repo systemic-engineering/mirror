@@ -161,14 +161,6 @@ source @arxiv/math/euler-1735
 source @arxiv/logic/spencer-brown-1969
 source @arxiv/programming/valim-2016
 
-prism @edge {
-  focus edge
-  project edge
-  split edge
-  shift edge
-  settle edge
-}
-
 # === edge_weight carrier ===
 #
 # A typed reference per [[feedback-no-bare-types]] naming the matter-

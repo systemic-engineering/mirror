@@ -110,14 +110,6 @@ source @arxiv/cybernetics/beer-1979
 source @arxiv/cybernetics/foerster-1979
 source @arxiv/futures/clarke-1962
 
-prism @epistemologic/cybernetic/reframe {
-  focus reframe
-  project reframe
-  split reframe
-  shift reframe
-  settle reframe
-}
-
 # === The ontological_level carrier ===
 #
 # The peer's current observation depth (K in Alex's naming). Bounded

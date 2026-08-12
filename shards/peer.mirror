@@ -82,14 +82,6 @@ in @time
 # internal high-spin coupling admitting higher stable basins than K=1
 # peers per crown §4.3 empirical instance triangle.
 
-prism @peer {
-  focus peer
-  project peer
-  split peer
-  shift peer
-  settle peer
-}
-
 # === The kind carrier ===
 #
 # Closed variant distinguishing peer altitudes. Per recognition #84

@@ -294,14 +294,6 @@ in @mirror/spectral
 # family; sub-species live at
 # `shards/mirror/spectral/portal/<name>.mirror`.
 
-prism @mirror/spectral/portal {
-  focus portal
-  project portal
-  split portal
-  shift portal
-  settle portal
-}
-
 # === The portal carrier ===
 #
 # Four fields. The substrate's typed declaration of the

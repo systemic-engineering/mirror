@@ -294,14 +294,6 @@ in @epistemologic/property
 in @epistemologic/liquid_extraction
 in @docblock
 
-prism @epistemologic/property/docblock_no_extraction_pattern {
-  focus docblock_no_extraction_pattern
-  project docblock_no_extraction_pattern
-  split docblock_no_extraction_pattern
-  shift docblock_no_extraction_pattern
-  settle docblock_no_extraction_pattern
-}
-
 # === docblock_no_extraction_pattern predicate (declarative half) ===
 #
 # THE LOAD-BEARING PREDICATE. Returns verdict that every extracted

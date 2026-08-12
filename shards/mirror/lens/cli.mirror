@@ -105,14 +105,6 @@ in @mirror/lens
 # Path-namespace property: this file at `shards/mirror/lens/cli.mirror`
 # declares `@mirror/lens/cli` and only that.
 
-prism @mirror/lens/cli {
-  focus cli
-  project cli
-  split cli
-  shift cli
-  settle cli
-}
-
 # === keywords ===
 #
 # `command`, `arg`, `flag` are the three declaration heads inside

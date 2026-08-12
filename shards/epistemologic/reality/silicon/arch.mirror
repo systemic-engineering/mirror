@@ -28,12 +28,4 @@ in @epistemologic/reality/silicon
 # `shards/epistemologic/reality/silicon/arch.mirror` declares
 # `@epistemologic/reality/silicon/arch` and only that.
 
-prism @epistemologic/reality/silicon/arch {
-  focus arch
-  project arch
-  split arch
-  shift arch
-  settle arch
-}
-
 out @epistemologic/reality/silicon/arch

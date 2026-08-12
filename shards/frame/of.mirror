@@ -293,14 +293,6 @@ source @arxiv/cybernetics/bateson-1964
 source @arxiv/sociology/goffman-1974
 source @arxiv/cognitive-science/flavell-1979
 
-prism @frame/of {
-  focus of
-  project of
-  split of
-  shift of
-  settle of
-}
-
 # === observe_frame action ===
 #
 # The substrate-vocabulary action for order-2 frame-observation. The

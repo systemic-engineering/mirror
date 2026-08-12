@@ -177,14 +177,6 @@ source @arxiv/manifesto/wolf-2026-07-14-weird-violence
 source @arxiv/practice/mara-8c82f00-gift-and-mirror-reflection-spec-landing-1
 source @arxiv/practice/taut-8f51722-errors-as-questions-composition-edge-scout
 
-prism @mirror/reflection {
-  focus  reflection
-  project reflection
-  split  reflection
-  shift  reflection
-  settle reflection
-}
-
 # === subject_input — the reflection carrier (spec §2.3) ===
 #
 # What a @subject presents at the compile boundary that reflection

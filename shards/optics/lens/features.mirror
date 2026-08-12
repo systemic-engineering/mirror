@@ -172,14 +172,6 @@ in @io
 # Path-namespace: shards/optics/lens/features.mirror declares
 # `@optics/lens/features` and only that.
 
-prism @optics/lens/features {
-  focus features
-  project features
-  split features
-  shift features
-  settle features
-}
-
 # === Type carriers (Seam Adj 2 — reuse graph_observation) ===
 #
 # Parent `@optics/lens` (`b0427fd`) declares:

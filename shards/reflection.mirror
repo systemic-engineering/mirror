@@ -337,14 +337,6 @@ source @arxiv/cybernetics/von-foerster-1974
 source @arxiv/practice/schon-1983
 source @arxiv/programming/maes-1987
 
-prism @reflection {
-  focus reflection
-  project reflection
-  split reflection
-  shift reflection
-  settle reflection
-}
-
 # === The observation carrier (Seam tick-34 C2 typed record) ===
 #
 # Per Seam C2 closure: typed record over (frame, tensions,

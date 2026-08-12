@@ -81,14 +81,6 @@ in @mirror/lens
 # Path-namespace property: this file at `shards/mirror/lens/refract.mirror`
 # declares `@mirror/lens/refract` and only that.
 
-prism @mirror/lens/refract {
-  focus refract
-  project refract
-  split refract
-  shift refract
-  settle refract
-}
-
 # === duality family — the five Void dualities ===
 #
 # Closed sum. Each variant names one spectral measurement of the

@@ -140,14 +140,6 @@ in @mirror/store
 #                 store.mirror (the carrier; oid, bytes, shard_ref,
 #                 splinter_graph).
 
-prism @mirror/lens/unix {
-  focus unix
-  project unix
-  split unix
-  shift unix
-  settle unix
-}
-
 # === actions — abstract impedance surface; bodies land on
 #     platform sub-species pull ===
 

@@ -126,14 +126,6 @@ in @epistemologic/math/music
 # `@epistemologic/math/music/harmonic` as a species under the
 # `@epistemologic/math/music` family.
 
-prism @epistemologic/math/music/harmonic {
-  focus harmonic
-  project harmonic
-  split harmonic
-  shift harmonic
-  settle harmonic
-}
-
 # === The harmonic-ratio carrier ===
 #
 # A frequency ratio between two pitches. Numerator and denominator are

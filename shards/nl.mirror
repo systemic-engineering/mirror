@@ -18,14 +18,6 @@ in @glass
 # The five-op block below is the canonical declaration form
 # (cf. boot/00-prism.mirror, shards/glass.mirror).
 
-prism @nl {
-  focus nl
-  project nl
-  split nl
-  shift nl
-  settle nl
-}
-
 # `#` is the sigil that produces an @nl term.
 #
 # Same shape as `\` producing fracture (an obligation hole) and

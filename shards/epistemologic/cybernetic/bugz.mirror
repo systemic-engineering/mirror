@@ -252,14 +252,6 @@ source @arxiv/consensus/olfati-saber-murray-2004
 #   settle bugz  = converge to the post-bomb spectrum (either K_n
 #                  metalogue per option a, or S_{n-1} per option b)
 
-prism @epistemologic/cybernetic/bugz {
-  focus bugz
-  project bugz
-  split bugz
-  shift bugz
-  settle bugz
-}
-
 # === Carriers ─────────────────────────────────────────────────────
 
 # === The natural_transformation_eta carrier ===

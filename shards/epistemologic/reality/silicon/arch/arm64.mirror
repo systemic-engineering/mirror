@@ -40,14 +40,6 @@ in @epistemologic/property/content_addressed
 # `shards/epistemologic/reality/silicon/arch/arm64.mirror` declares
 # `@epistemologic/reality/silicon/arch/arm64` and only that.
 
-prism @epistemologic/reality/silicon/arch/arm64 {
-  focus arm64
-  project arm64
-  split arm64
-  shift arm64
-  settle arm64
-}
-
 # ISA generation. ARMv8 baselines and ARMv9 generation. The values
 # are the only ones the substrate distinguishes; finer-grained
 # point releases (v8.4 vs v8.5) collapse into the nearest tagged

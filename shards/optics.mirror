@@ -81,14 +81,6 @@ in @prism
 # declares `@optics` as the family root; species live at
 # `shards/optics/<name>.mirror`.
 
-prism @optics {
-  focus optics
-  project optics
-  split optics
-  shift optics
-  settle optics
-}
-
 # === The eight schematic keyword declaration forms ===
 #
 # Per docs/specs/optical-keywords.md §1, the optical schematic

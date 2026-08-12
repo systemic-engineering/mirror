@@ -167,14 +167,6 @@ in @nl
 # @eigen IS a prism. Five-operation block below is the canonical
 # declaration form (cf. boot/00-prism.mirror).
 
-prism @eigen {
-  focus eigen
-  project eigen
-  split eigen
-  shift eigen
-  settle eigen
-}
-
 # === @eigen(T) — the type-level Foerster COORD decorator ===
 #
 # The core operator. Produces a substrate view where `T`'s carrier

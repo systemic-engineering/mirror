@@ -93,14 +93,6 @@ in @magic/contract
 source @arxiv/physics/yang-mills-1954
 source @arxiv/programming/parnas-1972
 
-prism @magic/surface {
-  focus surface
-  project surface
-  split surface
-  shift surface
-  settle surface
-}
-
 # === surface_invariant carrier ===
 #
 # A typed reference per [[feedback-no-bare-types]] naming a specific

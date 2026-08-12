@@ -236,14 +236,6 @@ in @epistemologic/property
 in @mirror/bench
 in @kintsugi/ouroboros
 
-prism @epistemologic/property/ouroboros_monotone {
-  focus ouroboros_monotone
-  project ouroboros_monotone
-  split ouroboros_monotone
-  shift ouroboros_monotone
-  settle ouroboros_monotone
-}
-
 # === Type carriers ===
 
 # ouroboros_bench_pair — paired bench_crystal snapshot at two

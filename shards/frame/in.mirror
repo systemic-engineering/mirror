@@ -193,14 +193,6 @@ source @arxiv/cybernetics/von-foerster-1974
 source @arxiv/cybernetics/bateson-1964
 source @arxiv/sociology/goffman-1974
 
-prism @frame/in {
-  focus in
-  project in
-  split in
-  shift in
-  settle in
-}
-
 # === compute_in_frame action ===
 #
 # The substrate-vocabulary action for in-frame content computation.

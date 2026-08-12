@@ -94,14 +94,6 @@ in @mirror/lens
 # Path-namespace property: this file at `shards/mirror/lens/transit.mirror`
 # declares `@mirror/lens/transit` and only that.
 
-prism @mirror/lens/transit {
-  focus transit
-  project transit
-  split transit
-  shift transit
-  settle transit
-}
-
 # === property family — the six axes ===
 #
 # Closed sum. Each variant is a stable substrate path the verdict is

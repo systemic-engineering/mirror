@@ -121,14 +121,6 @@ in @kintsugi
 source @arxiv/programming/floyd-hoare-1969
 source @arxiv/programming/bencher-criterion-2014
 
-prism @epistemologic/property/cold_compile_within_tolerance {
-  focus cold_compile_within_tolerance
-  project cold_compile_within_tolerance
-  split cold_compile_within_tolerance
-  shift cold_compile_within_tolerance
-  settle cold_compile_within_tolerance
-}
-
 # === The crate carrier ===
 #
 # Typed reference for the Rust crate being benched. Forward-promised

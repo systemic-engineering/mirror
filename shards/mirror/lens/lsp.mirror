@@ -41,14 +41,6 @@ in @mirror/lens
 # Path-namespace property: this file at `shards/mirror/lens/lsp.mirror`
 # declares `@mirror/lens/lsp` and only that.
 
-prism @mirror/lens/lsp {
-  focus lsp
-  project lsp
-  split lsp
-  shift lsp
-  settle lsp
-}
-
 # === actions — abstract surface; bodies land on consumer pull ===
 
 # method — declare a LSP method name + its expected arg shape. Per

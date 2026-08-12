@@ -114,12 +114,4 @@ in @nl
 # Path-namespace property: this file at `shards/mirror/lens.mirror`
 # declares `@mirror/lens` and only that.
 
-prism @mirror/lens {
-  focus lens
-  project lens
-  split lens
-  shift lens
-  settle lens
-}
-
 out @mirror/lens

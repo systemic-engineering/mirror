@@ -230,14 +230,6 @@ source @arxiv/distributed/benet-2014
 source @arxiv/protocols/google-protobuf-2008
 source @arxiv/protocols/varda-2013
 
-prism @io/stagefreight {
-  focus stagefreight
-  project stagefreight
-  split stagefreight
-  shift stagefreight
-  settle stagefreight
-}
-
 # === The spectral_coordinate carrier ===
 #
 # Substrate-typed reference for the OID-namespaced wire address.

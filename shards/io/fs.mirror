@@ -156,14 +156,6 @@ in @io
 # declares `@io/fs` per `@epistemologic/pact/path_matches_
 # namespace`.
 
-prism @io/fs {
-  focus  fs
-  project fs
-  split  fs
-  shift  fs
-  settle fs
-}
-
 # ============================================================
 # §2 The carriers
 # ============================================================

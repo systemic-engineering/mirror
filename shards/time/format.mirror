@@ -58,14 +58,6 @@ in @time
 # Path-namespace property: this file at `shards/time/format.mirror`
 # declares `@time/format` and only that.
 
-prism @time/format {
-  focus  format
-  project format
-  split  format
-  shift  format
-  settle format
-}
-
 # === iso8601 — the canonical wire format ===
 #
 # iso8601(t: time) -> str

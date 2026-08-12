@@ -72,14 +72,6 @@ in @mirror/data
 # Path-namespace property: this file at `shards/mirror/data/yaml.mirror`
 # declares `@mirror/data/yaml` and only that.
 
-prism @mirror/data/yaml {
-  focus yaml
-  project yaml
-  split yaml
-  shift yaml
-  settle yaml
-}
-
 # === The yaml carrier ===
 #
 # YAML 1.2 core schema (JSON-superset subset). Same six value

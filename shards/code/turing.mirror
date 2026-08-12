@@ -121,14 +121,6 @@ in @code
 # declares `@code/turing` per `@epistemologic/pact/path_matches_
 # namespace`.
 
-prism @code/turing {
-  focus turing
-  project turing
-  split turing
-  shift turing
-  settle turing
-}
-
 # === typed carriers for the tape substrate ===
 #
 # Small vocabulary per §9.1 M1: symbol, state, tape, head_position,

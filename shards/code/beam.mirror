@@ -207,14 +207,6 @@ in @magic/audit
 source @arxiv/distributed/armstrong-2003
 source @arxiv/distributed/otp-behaviours
 
-prism @code/beam {
-  focus beam
-  project beam
-  split beam
-  shift beam
-  settle beam
-}
-
 # === module_version carrier ===
 #
 # Per [[feedback-no-bare-types]], a typed record naming the BEAM

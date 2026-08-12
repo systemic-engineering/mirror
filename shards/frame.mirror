@@ -197,14 +197,6 @@ source @arxiv/sociology/goffman-1974
 source @arxiv/cybernetics/bateson-1972
 source @arxiv/therapy/tomm-1988
 
-prism @frame {
-  focus frame
-  project frame
-  split frame
-  shift frame
-  settle frame
-}
-
 # === The frame carrier ===
 #
 # A typed reference per [[feedback-no-bare-types]] naming a substrate-

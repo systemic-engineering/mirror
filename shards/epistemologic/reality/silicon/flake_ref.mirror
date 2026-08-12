@@ -36,14 +36,6 @@ in @epistemologic/property/content_addressed
 # `shards/epistemologic/reality/silicon/flake_ref.mirror` declares
 # `@epistemologic/reality/silicon/flake_ref` and only that.
 
-prism @epistemologic/reality/silicon/flake_ref {
-  focus flake_ref
-  project flake_ref
-  split flake_ref
-  shift flake_ref
-  settle flake_ref
-}
-
 # The flake source URL. text-typed because the URL surface is
 # heterogeneous (github:owner/repo, git:host/path, path:/abs/path,
 # file:/abs/path, tarball+https://...) and the substrate does not

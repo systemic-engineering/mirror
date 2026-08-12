@@ -53,14 +53,6 @@ in @mirror/spectral/portal
 # `@mirror/spectral/portal/codec` as a sub-species under
 # `@mirror/spectral/portal`.
 
-prism @mirror/spectral/portal/codec {
-  focus codec
-  project codec
-  split codec
-  shift codec
-  settle codec
-}
-
 # === serialize — frame → bytes ===
 serialize(f: ref) -> ref { \ }
 

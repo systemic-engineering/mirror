@@ -41,14 +41,6 @@ in @epistemologic/property/content_addressed
 # `shards/epistemologic/reality/silicon/compute_bound.mirror` declares
 # `@epistemologic/reality/silicon/compute_bound` and only that.
 
-prism @epistemologic/reality/silicon/compute_bound {
-  focus compute_bound
-  project compute_bound
-  split compute_bound
-  shift compute_bound
-  settle compute_bound
-}
-
 # Wall-clock time bound carrier. Resolved 2026-05-25: the locally-
 # declared `type wall_time = u64` (milliseconds, undocumented frame)
 # promoted to @time.wall, which IS shift(duration) where duration =

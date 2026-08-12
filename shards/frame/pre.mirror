@@ -170,14 +170,6 @@ source @arxiv/cognitive-science/treisman-1980
 source @arxiv/philosophy/sellars-1956
 source @arxiv/cybernetics/bateson-1964
 
-prism @frame/pre {
-  focus pre
-  project pre
-  split pre
-  shift pre
-  settle pre
-}
-
 # === pre_frame carrier ===
 #
 # A typed reference per [[feedback-no-bare-types]] naming content

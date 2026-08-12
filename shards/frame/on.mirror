@@ -362,14 +362,6 @@ source @arxiv/therapy/watzlawick-1974
 source @arxiv/professional-practice/schon-1983
 source @arxiv/cybernetics/maturana-varela-1980
 
-prism @frame/on {
-  focus on
-  project on
-  split on
-  shift on
-  settle on
-}
-
 # === shift_frame action ===
 #
 # THE LOAD-BEARING ACTION at order 3. The substrate-vocabulary action

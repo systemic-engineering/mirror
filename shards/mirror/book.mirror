@@ -96,14 +96,6 @@ in @trust
 #           @mirror/phone MUST resolve author + committer @<name>
 #           references through @mirror/book first.
 
-prism @mirror/book {
-  focus book
-  project book
-  split book
-  shift book
-  settle book
-}
-
 # === the resolve action — load-bearing ===
 #
 # resolve(name) -> imperfect(subject, ref, ref)

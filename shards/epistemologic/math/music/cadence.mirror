@@ -243,14 +243,6 @@ in @epistemologic/math/music/interval
 # `@epistemologic/math/music/cadence` as a species under the
 # `@epistemologic/math/music` family.
 
-prism @epistemologic/math/music/cadence {
-  focus cadence
-  project cadence
-  split cadence
-  shift cadence
-  settle cadence
-}
-
 # === The cadence-kind carrier ===
 #
 # The four classical cadence types as a closed sum. Each is an

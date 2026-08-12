@@ -138,14 +138,6 @@ in @kintsugi/consent
 #
 # === What @knife mints (only the COORD-jump primitive) ===
 
-prism @mirror/lens/knife {
-  focus knife
-  project knife
-  split knife
-  shift knife
-  settle knife
-}
-
 # === Rust runtime carrier ===
 #
 # Per Seam `e8508f5` §3 divergence #5 verdict: `pub fn knife_cut(...)`

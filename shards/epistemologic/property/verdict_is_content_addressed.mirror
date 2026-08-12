@@ -384,14 +384,6 @@ in @epistemologic/property
 in @mirror/store
 in @fate
 
-prism @epistemologic/property/verdict_is_content_addressed {
-  focus verdict_is_content_addressed
-  project verdict_is_content_addressed
-  split verdict_is_content_addressed
-  shift verdict_is_content_addressed
-  settle verdict_is_content_addressed
-}
-
 # === verdict_is_content_addressed predicate (declarative half) ===
 #
 # THE LOAD-BEARING PREDICATE. Returns verdict that

@@ -179,14 +179,6 @@ source @arxiv/programming/meyer-1988
 source @arxiv/programming/liskov-wing-1994
 source @arxiv/formal-methods/abrial-1996
 
-prism @pack/mara {
-  focus mara
-  project mara
-  split mara
-  shift mara
-  settle mara
-}
-
 # === The spec carrier ===
 #
 # Substrate-typed reference naming a canonical substrate-decl record.

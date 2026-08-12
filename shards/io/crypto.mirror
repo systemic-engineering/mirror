@@ -173,14 +173,6 @@ in @io
 # declares `@io/crypto` per `@epistemologic/pact/path_matches_
 # namespace`.
 
-prism @io/crypto {
-  focus  crypto
-  project crypto
-  split  crypto
-  shift  crypto
-  settle crypto
-}
-
 # ============================================================
 # §2 The carriers
 # ============================================================

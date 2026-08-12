@@ -257,14 +257,6 @@ source @arxiv/cybernetics/spencer-brown-1969
 source @arxiv/cybernetics/bateson-1972
 source @arxiv/algebra/halmos-1963
 
-prism @epistemologic/cybernetic/distinction {
-  focus distinction
-  project distinction
-  split distinction
-  shift distinction
-  settle distinction
-}
-
 # === The mark carrier ===
 #
 # A typed reference per [[feedback-no-bare-types]] naming Spencer-Brown's

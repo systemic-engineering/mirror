@@ -254,14 +254,6 @@ source @arxiv/math/connes-1995
 source @arxiv/math/atiyah-1966
 source @arxiv/cybernetics/bateson-1970
 
-prism @epistemologic/cybernetic/chirality {
-  focus chirality
-  project chirality
-  split chirality
-  shift chirality
-  settle chirality
-}
-
 # === The chirality carrier ===
 #
 # A typed record per [[feedback-no-bare-types]] naming the two

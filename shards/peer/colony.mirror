@@ -112,14 +112,6 @@ in @glass
 #                 for the ensemble phase-lock discipline the colony
 #                 discharges).
 
-prism @peer/colony {
-  focus colony
-  project colony
-  split colony
-  shift colony
-  settle colony
-}
-
 # ============================================================
 # §1 The colony carrier
 # ============================================================

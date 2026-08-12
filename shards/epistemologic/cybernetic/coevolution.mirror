@@ -253,14 +253,6 @@ in @epistemologic/property/coevolution
 # `@epistemologic/cybernetic/coevolution` per
 # `@epistemologic/pact/path_matches_namespace`.
 
-prism @epistemologic/cybernetic/coevolution {
-  focus  coevolution
-  project coevolution
-  split  coevolution
-  shift  coevolution
-  settle coevolution
-}
-
 # The carrier-instantiation: coevolution names the four-parameter
 # carrier with its species-specific bindings. ρ is dissolved (no
 # sixth canonical-rep); ω is named and non-trivial.

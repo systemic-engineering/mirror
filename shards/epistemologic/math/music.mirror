@@ -138,12 +138,4 @@ in @epistemologic
 # `@epistemologic/math/music` as the family root; species live at
 # `shards/epistemologic/math/music/<name>.mirror`.
 
-prism @epistemologic/math/music {
-  focus music
-  project music
-  split music
-  shift music
-  settle music
-}
-
 out @epistemologic/math/music

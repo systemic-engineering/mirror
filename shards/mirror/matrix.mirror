@@ -138,14 +138,6 @@ in @trust
 #           crosses through rust/matrix/ at the compile-altitude
 #           realization boundary.
 
-prism @mirror/matrix {
-  focus matrix
-  project matrix
-  split matrix
-  shift matrix
-  settle matrix
-}
-
 # === the eigenvalues action — load-bearing ===
 #
 # eigenvalues(m) -> imperfect(spectrum, ref, ref)

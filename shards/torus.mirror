@@ -445,14 +445,6 @@ source @arxiv/cs/blum-blum-2022
 source @arxiv/math/coquand-cohen-huber-mortberg-2018
 source @arxiv/cybernetics/mcculloch-1945
 
-prism @torus {
-  focus  torus
-  project torus
-  split  torus
-  shift  torus
-  settle torus
-}
-
 # === The winding carrier — π₁(T²) = ℤ × ℤ ===
 #
 # The refined depth type. Replaces `depth: nat` in @third's

@@ -48,12 +48,4 @@ in @nl
 # Path-namespace property: this file at `shards/code/gleam.mirror`
 # declares `@code/gleam` and only that.
 
-prism @code/gleam {
-  focus gleam
-  project gleam
-  split gleam
-  shift gleam
-  settle gleam
-}
-
 out @code/gleam

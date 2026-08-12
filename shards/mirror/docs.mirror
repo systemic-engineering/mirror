@@ -200,14 +200,6 @@ in @mirror
 source @arxiv/programming/knuth-1984
 source @arxiv/documentation/procida-2017
 
-prism @mirror/docs {
-  focus  docs
-  project docs
-  split  docs
-  shift  docs
-  settle docs
-}
-
 # === The taxonomy_kind variant ===
 #
 # Per Seam C4 closure pattern: typed substrate variant naming the

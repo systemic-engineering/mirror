@@ -41,14 +41,6 @@ in @mirror/lens
 # Path-namespace property: this file at `shards/mirror/lens/mcp.mirror`
 # declares `@mirror/lens/mcp` and only that.
 
-prism @mirror/lens/mcp {
-  focus mcp
-  project mcp
-  split mcp
-  shift mcp
-  settle mcp
-}
-
 # === actions — abstract surface; bodies land on consumer pull ===
 
 # tool — declare a tool name + its argument shape. Per the-convergence

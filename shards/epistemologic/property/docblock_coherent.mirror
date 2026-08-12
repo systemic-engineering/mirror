@@ -233,14 +233,6 @@ in @epistemologic/property
 in @epistemologic/liquid_extraction
 in @docblock
 
-prism @epistemologic/property/docblock_coherent {
-  focus docblock_coherent
-  project docblock_coherent
-  split docblock_coherent
-  shift docblock_coherent
-  settle docblock_coherent
-}
-
 # === docblock_coherent predicate (declarative half) ===
 #
 # THE LOAD-BEARING PREDICATE. Returns verdict that every extracted

@@ -152,14 +152,6 @@ source @arxiv/cybernetics/kauffman-2003
 source @arxiv/math/lawvere-1969
 source @arxiv/cybernetics/bateson-1972
 
-prism @cogito {
-  focus cogito
-  project cogito
-  split cogito
-  shift cogito
-  settle cogito
-}
-
 # === The eigenboard carrier ===
 #
 # @cogito's spectral state at one tick. Fields come from

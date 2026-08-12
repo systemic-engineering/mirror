@@ -60,14 +60,6 @@ in @mirror/lens
 # Path-namespace property: this file at `shards/mirror/lens/shell.mirror`
 # declares `@mirror/lens/shell` and only that.
 
-prism @mirror/lens/shell {
-  focus shell
-  project shell
-  split shell
-  shift shell
-  settle shell
-}
-
 # === actions — abstract surface; bodies land on consumer pull ===
 
 # enter — enter the shell. Optional peer argument; when present, the

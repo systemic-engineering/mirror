@@ -104,14 +104,6 @@ in @magic/contract
 source @arxiv/programming/claessen-hughes-2000
 source @arxiv/distributed/armstrong-2003
 
-prism @magic/audit {
-  focus audit
-  project audit
-  split audit
-  shift audit
-  settle audit
-}
-
 # === audit_strategy carrier ===
 #
 # Substrate-typed variant per Seam C1+C4 (was stringly-typed `ref`

@@ -66,14 +66,6 @@ in @nl
 # Path-namespace property: this file at `shards/code/mirror.mirror`
 # declares `@code/mirror` and only that.
 
-prism @code/mirror {
-  focus mirror
-  project mirror
-  split mirror
-  shift mirror
-  settle mirror
-}
-
 # === type-declaration grammar — newline-tolerant variant separator ===
 #
 # Substrate-pull-realize tick (2026-06-06, Reed + Alex → Mara). The

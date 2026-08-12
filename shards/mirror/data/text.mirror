@@ -82,14 +82,6 @@ in @mirror/data
 # Path-namespace property: this file at `shards/mirror/data/text.mirror`
 # declares `@mirror/data/text` and only that.
 
-prism @mirror/data/text {
-  focus text
-  project text
-  split text
-  shift text
-  settle text
-}
-
 # === parse — bytes → text ===
 #
 # Identity projection. Body forward-promised per consumer-pull

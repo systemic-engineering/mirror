@@ -77,14 +77,6 @@ in @uuid/spectral
 # @glass IS a prism. No `<= prism` redundancy. The five-op block
 # below is the canonical declaration form (cf. boot/00-prism.mirror).
 
-prism @glass {
-  focus glass
-  project glass
-  split glass
-  shift glass
-  settle glass
-}
-
 # `glass` keyword — sub-prism declaration form inside a parent prism.
 #
 # Surface: `glass @<name> { <body> }` declares a sub-prism scoped to

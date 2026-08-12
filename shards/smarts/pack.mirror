@@ -234,14 +234,6 @@ source @arxiv/programming/coplien-1992
 source @arxiv/distributed/armstrong-2003
 source @arxiv/distributed/burns-2018
 
-prism @smarts/pack {
-  focus pack
-  project pack
-  split pack
-  shift pack
-  settle pack
-}
-
 # === pack_as_smarts adapter ===
 #
 # The substrate-vocabulary adapter action lifting a @pack instance

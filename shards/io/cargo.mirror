@@ -53,14 +53,6 @@ in @property
 # Path-namespace property: this file at `shards/io/cargo.mirror`
 # declares `@io/cargo` and only that.
 
-prism @io/cargo {
-  focus cargo
-  project cargo
-  split cargo
-  shift cargo
-  settle cargo
-}
-
 # === types ===
 
 # manifest — path to a Cargo.toml. `~f` is the substrate's file-ref

@@ -147,14 +147,6 @@ source @arxiv/cybernetics/beer-1972
 source @arxiv/cybernetics/maturana-varela-1980
 source @arxiv/common-goods/ostrom-1990
 
-prism @smarts/cyberpunk {
-  focus cyberpunk
-  project cyberpunk
-  split cyberpunk
-  shift cyberpunk
-  settle cyberpunk
-}
-
 # === cyberpunk_form_of adapter ===
 #
 # The substrate-vocabulary adapter action projecting the @cyberpunk

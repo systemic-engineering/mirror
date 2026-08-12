@@ -228,14 +228,6 @@ source @arxiv/programming-languages/pierce-2002
 source @arxiv/programming-languages/wadler-1989
 source @arxiv/programming-languages/matsakis-klock-2010
 
-prism @pack/taut {
-  focus taut
-  project taut
-  split taut
-  shift taut
-  settle taut
-}
-
 # === The implementation carrier ===
 #
 # Substrate-typed reference naming a Rust+tooling artifact that grounds

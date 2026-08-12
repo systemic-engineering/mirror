@@ -148,14 +148,6 @@ in @epistemologic/math/sheaf_laplacian
 # `@epistemologic/math/curvature` per the
 # `@epistemologic/pact/path_matches_namespace` rule.
 
-prism @epistemologic/math/curvature {
-  focus curvature
-  project curvature
-  split curvature
-  shift curvature
-  settle curvature
-}
-
 # === The curvature carrier ===
 #
 # The Balanced Forman curvature read on one edge of the operator's

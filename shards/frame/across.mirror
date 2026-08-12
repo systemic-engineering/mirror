@@ -390,14 +390,6 @@ source @arxiv/cybernetics/maturana-varela-1980
 source @arxiv/dialogue/bohm-1996
 source @arxiv/cognitive-science/hutchins-1995
 
-prism @frame/across {
-  focus across
-  project across
-  split across
-  shift across
-  settle across
-}
-
 # === frame_coupling carrier ===
 #
 # A typed reference per [[feedback-no-bare-types]] naming the

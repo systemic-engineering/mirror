@@ -157,14 +157,6 @@ in @bilateral
 source @arxiv/cybernetics/foerster-2003
 source @nl/systemic.engineering/pieces/the-trick
 
-prism @magic/trick {
-  focus  trick
-  project trick
-  split  trick
-  shift  trick
-  settle trick
-}
-
 # === the transform action — load-bearing ===
 #
 # transform(source, target_lang) -> imperfect(translated, ref, ref)

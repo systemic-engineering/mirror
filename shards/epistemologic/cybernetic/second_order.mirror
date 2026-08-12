@@ -286,14 +286,6 @@ source @arxiv/cybernetics/von-foerster-1981
 source @arxiv/algebra/peter-weyl-1927
 source @arxiv/cybernetics/mead-1934
 
-prism @epistemologic/cybernetic/second_order {
-  focus second_order
-  project second_order
-  split second_order
-  shift second_order
-  settle second_order
-}
-
 # === The observer carrier ===
 #
 # A typed reference per [[feedback-no-bare-types]] naming von Foerster's

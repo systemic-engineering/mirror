@@ -339,12 +339,4 @@ in @loss
 # declares `@mirror/loss` as the family root; sub-glasses live at
 # `shards/mirror/loss/<name>.mirror`.
 
-prism @mirror/loss {
-  focus loss
-  project loss
-  split loss
-  shift loss
-  settle loss
-}
-
 out @mirror/loss

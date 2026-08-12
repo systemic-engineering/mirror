@@ -47,12 +47,4 @@ in @epistemologic/reality
 # Path-namespace property: this file at `shards/epistemologic/reality/silicon.mirror`
 # declares `@epistemologic/reality/silicon` and only that.
 
-prism @epistemologic/reality/silicon {
-  focus silicon
-  project silicon
-  split silicon
-  shift silicon
-  settle silicon
-}
-
 out @epistemologic/reality/silicon

@@ -60,14 +60,6 @@ in @epistemologic/property/content_addressed
 # Path-namespace property: this file at `shards/uuid.mirror`
 # declares `@uuid` and only that.
 
-prism @uuid {
-  focus uuid
-  project uuid
-  split uuid
-  shift uuid
-  settle uuid
-}
-
 # The universal 128-bit identifier carrier.
 #
 # A typed reference whose content IS its identity. Construction is

@@ -131,14 +131,6 @@ source @arxiv/information-retrieval/brin-page-1998
 source @arxiv/databases/selinger-1979
 source @arxiv/graphs/cvetkovic-doob-sachs-1980
 
-prism @smarts/mirror {
-  focus mirror
-  project mirror
-  split mirror
-  shift mirror
-  settle mirror
-}
-
 # === The graph_path carrier ===
 #
 # Substrate-typed reference for the navigated graph path output.

@@ -234,14 +234,6 @@ in @epistemologic
 in @epistemologic/property
 in @epistemologic/pact
 
-prism @epistemologic/liquid {
-  focus liquid
-  project liquid
-  split liquid
-  shift liquid
-  settle liquid
-}
-
 # === liquid_qualifier — a single refinement qualifier (theory §2.1) ===
 #
 # Per math §2.1: one predicate + arity at the qualifier-fragment

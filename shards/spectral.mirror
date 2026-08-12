@@ -111,12 +111,4 @@ in @uuid/spectral
 # declares `@spectral` as the namespace-parent; species live at
 # `shards/spectral/<name>.mirror`.
 
-prism @spectral {
-  focus spectral
-  project spectral
-  split spectral
-  shift spectral
-  settle spectral
-}
-
 out @spectral

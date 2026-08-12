@@ -192,14 +192,6 @@ in @epistemologic/math/music/interval
 # `@epistemologic/math/music/dissonance` as a species under the
 # `@epistemologic/math/music` family.
 
-prism @epistemologic/math/music/dissonance {
-  focus dissonance
-  project dissonance
-  split dissonance
-  shift dissonance
-  settle dissonance
-}
-
 # === The dissonance carrier ===
 #
 # A typed measurement of perceived roughness for a frequency ratio.

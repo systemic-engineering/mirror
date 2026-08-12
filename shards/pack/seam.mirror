@@ -162,14 +162,6 @@ source @arxiv/cognitive-science/kahneman-klein-2009
 source @arxiv/programming/claessen-hughes-2000
 source @arxiv/cybernetics/von-foerster-1974
 
-prism @pack/seam {
-  focus seam
-  project seam
-  split seam
-  shift seam
-  settle seam
-}
-
 # === The constraint_set carrier ===
 #
 # Substrate-typed reference naming the list of constraints surfaced

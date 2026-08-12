@@ -188,14 +188,6 @@ in @time
 source @arxiv/law/sel-v1.1
 source @arxiv/manifesto/wolf-2026-07-14-weird-violence
 
-prism @subject {
-  focus  subject
-  project subject
-  split  subject
-  shift  subject
-  settle subject
-}
-
 # === The subject_kind carrier — SEL-grounded species dispatch ===
 #
 # One variant per SEL-grounded party class. The variant IS the SEL §

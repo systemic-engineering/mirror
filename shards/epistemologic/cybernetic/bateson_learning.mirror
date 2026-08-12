@@ -481,14 +481,6 @@ source @arxiv/cybernetics/bateson-1972
 source @arxiv/cybernetics/soto-andrade-varela-1984
 source @arxiv/cybernetics/beer-1979
 
-prism @epistemologic/cybernetic/bateson_learning {
-  focus bateson_learning
-  project bateson_learning
-  split bateson_learning
-  shift bateson_learning
-  settle bateson_learning
-}
-
 # === The level carrier ===
 #
 # The per-level Russell-Whitehead carrier per spec §3.1 Read A.

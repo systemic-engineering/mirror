@@ -206,14 +206,6 @@ source @arxiv/programming/valim-2016
 source @arxiv/programming/yamaguchi-2014
 source @arxiv/programming/feenk-2020
 
-prism @mirror/ref {
-  focus  ref
-  project ref
-  split  ref
-  shift  ref
-  settle ref
-}
-
 # === graph_ref carrier ===
 #
 # Imperfect-wrapped per @glass's loss discipline. transparency(@mirror/

@@ -148,14 +148,6 @@ in @mirror/data
 # Path-namespace property: this file at `shards/mirror/data/json.mirror`
 # declares `@mirror/data/json` and only that.
 
-prism @mirror/data/json {
-  focus json
-  project json
-  split json
-  shift json
-  settle json
-}
-
 # === The json carrier ===
 #
 # Per RFC 8259 §3-5: six value kinds. Lifted verbatim from

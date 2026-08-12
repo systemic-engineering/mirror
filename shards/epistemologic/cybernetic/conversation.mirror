@@ -111,14 +111,6 @@ source @arxiv/math/mesland-sengupta-2018
 # `@epistemologic/cybernetic/conversation` per
 # `@epistemologic/pact/path_matches_namespace`.
 
-prism @epistemologic/cybernetic/conversation {
-  focus conversation
-  project conversation
-  split conversation
-  shift conversation
-  settle conversation
-}
-
 # === The species-specific carriers ===
 #
 # Observer A's model: substrate-altitude carrier for the conversational

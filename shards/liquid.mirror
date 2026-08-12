@@ -248,14 +248,6 @@ in @glass
 in @epistemologic
 in @epistemologic/liquid
 
-prism @liquid {
-  focus liquid
-  project liquid
-  split liquid
-  shift liquid
-  settle liquid
-}
-
 # === liquid_lens — the parametric refinement lens carrier ===
 #
 # The typed carrier for one @liquid(@X) specialization. Per

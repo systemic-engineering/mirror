@@ -151,14 +151,6 @@ in @epistemologic/cybernetic
 source @arxiv/nlp/liang-jordan-klein-2011
 source @arxiv/sociology/goffman-1974
 
-prism @reflection/surface {
-  focus surface
-  project surface
-  split surface
-  shift surface
-  settle surface
-}
-
 # === The language carrier ===
 #
 # Substrate-typed reference naming a natural language input (per

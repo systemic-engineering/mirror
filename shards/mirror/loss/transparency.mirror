@@ -125,14 +125,6 @@ in @mirror/loss
 # `@mirror/loss/transparency` as a species under the `@mirror/loss`
 # family.
 
-prism @mirror/loss/transparency {
-  focus transparency
-  project transparency
-  split transparency
-  shift transparency
-  settle transparency
-}
-
 # === The dim_index carrier ===
 #
 # Per [[feedback-no-bare-types]]: a typed dimension index. Locally a

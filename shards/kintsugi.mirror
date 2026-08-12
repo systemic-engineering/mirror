@@ -336,14 +336,6 @@ kintsugi_algebra_witnessing(binding: kintsugi_algebra) -> verdict { \ }
 # Path-namespace property: this file at `shards/kintsugi.mirror`
 # declares `@kintsugi` and only that.
 
-prism @kintsugi {
-  focus kintsugi
-  project kintsugi
-  split kintsugi
-  shift kintsugi
-  settle kintsugi
-}
-
 out @kintsugi
 out kintsugi_algebra
 out kintsugi_algebra_witnessing

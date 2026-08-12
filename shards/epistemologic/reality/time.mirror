@@ -57,14 +57,6 @@ in @epistemologic/reality
 # `shards/epistemologic/reality/time.mirror` declares
 # `@epistemologic/reality/time` and only that.
 
-prism @epistemologic/reality/time {
-  focus time
-  project time
-  split time
-  shift time
-  settle time
-}
-
 # the base duration carrier. non-negative by construction (settle
 # witness): constructors that would produce a negative duration
 # return imperfect. u64 nanoseconds.

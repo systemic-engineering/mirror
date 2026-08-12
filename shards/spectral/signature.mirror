@@ -57,14 +57,6 @@ in @kintsugi/store/git
 # Audit: docs/audits/2026-07-15-seam-kintsugi-ouroboros-phase-d-cascade-
 #        a2-a6.md (Phase D-cascade audit ratifying the Arc-2 sequence).
 
-prism @spectral/signature {
-  focus  signature
-  project signature
-  split  signature
-  shift  signature
-  settle signature
-}
-
 # === signature_beat — one contribution = one beat ===
 #
 # Every author contribution to garden.spectral.engineer (or the local

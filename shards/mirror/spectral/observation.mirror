@@ -135,14 +135,6 @@ in @mirror/spectral
 # `@mirror/spectral/observation` as a species under the
 # `@mirror/spectral` family.
 
-prism @mirror/spectral/observation {
-  focus observation
-  project observation
-  split observation
-  shift observation
-  settle observation
-}
-
 # === The unit-interval carrier ===
 #
 # Per [[feedback-no-bare-types]]: the typed `[0,1]` scalar. The

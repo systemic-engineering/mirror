@@ -240,14 +240,6 @@ in @kintsugi
 source @arxiv/programming/floyd-hoare-1969
 source @arxiv/beam/armstrong-thesis-1996
 
-prism @epistemologic/property/restart_intensity_well_formed {
-  focus restart_intensity_well_formed
-  project restart_intensity_well_formed
-  split restart_intensity_well_formed
-  shift restart_intensity_well_formed
-  settle restart_intensity_well_formed
-}
-
 # === well_formed predicate (declarative half) ===
 #
 # THE LOAD-BEARING PREDICATE. Returns verdict that the

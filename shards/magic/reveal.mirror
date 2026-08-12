@@ -149,14 +149,6 @@ source @arxiv/distributed/armstrong-2003
 source @arxiv/concurrent/herlihy-1991
 source @arxiv/software/lehman-belady-1985
 
-prism @magic/reveal {
-  focus reveal
-  project reveal
-  split reveal
-  shift reveal
-  settle reveal
-}
-
 # === reveal_event carrier ===
 #
 # A typed record per [[feedback-no-bare-types]] naming an atomic

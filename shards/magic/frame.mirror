@@ -257,14 +257,6 @@ source @arxiv/cybernetics/bateson-1972
 source @arxiv/therapy/tomm-1988
 source @arxiv/cultural/clarke-1962
 
-prism @magic/frame {
-  focus frame
-  project frame
-  split frame
-  shift frame
-  settle frame
-}
-
 # === frame_as_surface adapter ===
 #
 # The substrate-vocabulary adapter action lifting a @frame instance to

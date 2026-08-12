@@ -136,14 +136,6 @@ source @arxiv/version-control/torvalds-2005
 source @arxiv/version-control/mackall-2005-mercurial
 source @arxiv/distributed/benet-2014
 
-prism @io/git {
-  focus git
-  project git
-  split git
-  shift git
-  settle git
-}
-
 # ============================================================
 # §2 The carriers
 # ============================================================

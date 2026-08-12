@@ -211,13 +211,6 @@ in @glass
 # Inherits the five-op prism block from @peer at family-root
 # altitude. Specialization: each operation reads the holon's
 # fractal structure (interior + exterior @dance-ensemble edges).
-prism @peer/holon {
-  focus holon
-  project holon
-  split holon
-  shift holon
-  settle holon
-}
 
 # === The altitude carrier ===
 #

@@ -56,14 +56,6 @@ in @nl
 # both speakers hold; the opacity IS Void's structural signature
 # surfacing at this altitude.
 
-prism @metalogue {
-  focus metalogue
-  project metalogue
-  split metalogue
-  shift metalogue
-  settle metalogue
-}
-
 # === turn ===
 
 # turn — a single move in the metalogue. Carries the speaker (a

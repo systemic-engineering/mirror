@@ -92,14 +92,6 @@ in @magic
 source @arxiv/programming/hoare-1969
 source @arxiv/programming/meyer-1986
 
-prism @magic/contract {
-  focus contract
-  project contract
-  split contract
-  shift contract
-  settle contract
-}
-
 # Note: `magic_invariant` moved to family-root (magic.mirror) per Seam
 # C5 so it can type magic_contract.promise. Imported via `in @magic`.
 

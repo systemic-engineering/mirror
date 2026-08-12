@@ -167,14 +167,6 @@ source @arxiv/actor-model/hewitt-1973
 source @arxiv/actor-model/kahn-1974
 source @arxiv/distributed/armstrong-2003
 
-prism @pack {
-  focus pack
-  project pack
-  split pack
-  shift pack
-  settle pack
-}
-
 # === The peer carrier (typed variant per Seam C4/P1 tick 32) ===
 #
 # Per Seam C4 + P1: bare-ref-with-documented-values is stringly-typed-

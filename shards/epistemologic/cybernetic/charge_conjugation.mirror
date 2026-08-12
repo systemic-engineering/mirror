@@ -223,14 +223,6 @@ source @arxiv/math/atiyah-1966
 source @arxiv/cybernetics/tomm-1987
 source @arxiv/math/mesland-2013
 
-prism @epistemologic/cybernetic/charge_conjugation {
-  focus  charge_conjugation
-  project charge_conjugation
-  split  charge_conjugation
-  shift  charge_conjugation
-  settle charge_conjugation
-}
-
 # === The charge_conjugation carrier ===
 #
 # A typed record per [[feedback-no-bare-types]]:

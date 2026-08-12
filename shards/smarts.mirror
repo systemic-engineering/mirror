@@ -167,14 +167,6 @@ in @kintsugi
 source @arxiv/common-goods/ostrom-1990
 source @arxiv/peer-production/benkler-2006
 
-prism @smarts {
-  focus smarts
-  project smarts
-  split smarts
-  shift smarts
-  settle smarts
-}
-
 # === The smarts carrier ===
 #
 # Per Seam tick 30 C4 closure: typed record over the integrated

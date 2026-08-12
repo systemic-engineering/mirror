@@ -160,14 +160,6 @@ source @arxiv/cybernetics/bateson-1972
 source @arxiv/therapy/tomm-1988
 source @arxiv/common-goods/ostrom-1990
 
-prism @smarts/frame {
-  focus frame
-  project frame
-  split frame
-  shift frame
-  settle frame
-}
-
 # === frame_form_of adapter ===
 #
 # The substrate-vocabulary adapter action projecting the @frame

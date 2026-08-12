@@ -93,14 +93,6 @@ in @mirror/spectral/portal
 # `@mirror/spectral/portal/stream` as a sub-species under
 # `@mirror/spectral/portal`.
 
-prism @mirror/spectral/portal/stream {
-  focus stream
-  project stream
-  split stream
-  shift stream
-  settle stream
-}
-
 # === read_value — read one f64 observation from the wire ===
 #
 # Reads 8 bytes from the connection, interprets as IEEE-754

@@ -200,14 +200,6 @@ source @arxiv/pretty-printing/bernardy-2017
 source @arxiv/markup/knuth-1978
 source @arxiv/visualization/wilkinson-1999
 
-prism @smarts/shatter {
-  focus shatter
-  project shatter
-  split shatter
-  shift shatter
-  settle shatter
-}
-
 # === The text carrier ===
 #
 # Substrate-typed reference for the rendered text output. Per

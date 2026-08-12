@@ -168,12 +168,4 @@ in @nl
 # declares `@mirror/spectral` as the family root; species live at
 # `shards/mirror/spectral/<name>.mirror`.
 
-prism @mirror/spectral {
-  focus spectral
-  project spectral
-  split spectral
-  shift spectral
-  settle spectral
-}
-
 out @mirror/spectral

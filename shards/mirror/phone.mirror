@@ -105,14 +105,6 @@ in @trust
 #           boundary; the switchboard IS the sole legitimate @io
 #           crossing surface at rust/ altitude.
 
-prism @mirror/phone {
-  focus phone
-  project phone
-  split phone
-  shift phone
-  settle phone
-}
-
 # === the dial action — load-bearing ===
 #
 # dial(action_ref, args) -> imperfect(result, ref, ref)

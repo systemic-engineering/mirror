@@ -121,14 +121,6 @@ source @arxiv/cybernetics/bateson-1972
 source @arxiv/cybernetics/beer-1972
 source @arxiv/cybernetics/maturana-varela-1980
 
-prism @cyberpunk {
-  focus cyberpunk
-  project cyberpunk
-  split cyberpunk
-  shift cyberpunk
-  settle cyberpunk
-}
-
 # === The cybernetic_state carrier ===
 #
 # A typed reference per [[feedback-no-bare-types]] naming the

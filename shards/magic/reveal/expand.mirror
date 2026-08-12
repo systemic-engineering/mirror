@@ -141,14 +141,6 @@ source @arxiv/practice/mara-2026-08-09-a-f-universality-sugar-mechanism
 source @arxiv/practice/seam-2026-08-09-phase-d-kintsugi-sugar-cascade
 source @arxiv/spectral/chamseddine-connes-marcolli-2007
 
-prism @magic/reveal/expand {
-  focus expand
-  project expand
-  split expand
-  shift expand
-  settle expand
-}
-
 # === audience type ===
 #
 # Observer-position parameter per Q5 audience-neutrality Mara-lean.

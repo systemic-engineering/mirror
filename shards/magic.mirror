@@ -221,14 +221,6 @@ source @arxiv/cultural/clarke-1962
 source @arxiv/cybernetics/bateson-1972
 source @arxiv/physics/connes-1994
 
-prism @magic {
-  focus magic
-  project magic
-  split magic
-  shift magic
-  settle magic
-}
-
 # === The magic_surface carrier ===
 #
 # A typed reference per [[feedback-no-bare-types]] naming the gauge-

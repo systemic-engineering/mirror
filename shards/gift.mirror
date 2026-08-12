@@ -156,14 +156,6 @@ source @arxiv/game-theory/axelrod-1984
 source @arxiv/anthropology/levi-strauss-1949
 source @arxiv/manifesto/wolf-2026-07-14-weird-violence
 
-prism @gift {
-  focus  gift
-  project gift
-  split  gift
-  shift  gift
-  settle gift
-}
-
 # === The subject_or_substrate variant — the giver/receiver arms ===
 #
 # A gift may be received by (or given by) a peer (@subject) or by the

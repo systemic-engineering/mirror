@@ -393,14 +393,6 @@ in @kintsugi/roomba
 # Path-namespace property: this file at `shards/mirror/store.mirror`
 # declares `@mirror/store` and only that.
 
-prism @mirror/store {
-  focus store
-  project store
-  split store
-  shift store
-  settle store
-}
-
 # === oid — the content-addressed identity primitive ===
 #
 # A sub-prism scoped to @mirror/store. `oid` IS the substrate's

@@ -121,14 +121,6 @@ in @epistemologic/cybernetic/distinction
 source @arxiv/programming/gamma-helm-johnson-vlissides-1994
 source @arxiv/cybernetics/spencer-brown-1969
 
-prism @magic/distinction {
-  focus distinction
-  project distinction
-  split distinction
-  shift distinction
-  settle distinction
-}
-
 # === surface_as_mark adapter ===
 #
 # The substrate-vocabulary adapter action lifting a @magic surface
