@@ -91,6 +91,7 @@ mod apply_h;
 // cascade iterations 2-3 (Alex 2026-07-20); iter 4 wires `mirror
 // compile <file>` verb as thin delegation to compile.rs.
 mod compile;
+mod magic;
 // liquid + spectral both migrated 2026-07-28 to rust/spectral/ crate
 // per Alex 2026-07-25 four-crate decomposition. main.rs consumers
 // (compile.rs) reference `spectral::liquid::*` directly per Rust's
