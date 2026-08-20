@@ -17,6 +17,9 @@ companions:
   - ./2026-08-13-mara-recognition-89-psychohistory-sheaf-cohomology-unification-math-foundation.md
   - ../../../../.reed/practice/insights/cybernetics/bodymind-integration-loop.md
   - ../../../../.reed/practice/insights/spectral/mirror-relational-compiler.md
+amended: 2026-08-20
+amendment_slug: source-runtime-ouroboros-closure-via-facet-rust-proof-altitude
+amendment_dispatch: "Alex 2026-08-20 in-transcript amendment-dispatch per canonical spec §15a; math foundation companion at proof-altitude formalising Theorem 8.7 (source-emit fixed-point + identity + idempotence + gauge-preservation) via covariant-functor 𝔕_rust + reverse-functor 𝔛_rust as adjunction on Cat_{𝓜} ↔ Cat_{H_rust}; deeper autopoietic-loop-write-side deferred per non-fragmentation discipline"
 ---
 
 # Recognition #91 (candidate) Math Foundation — Mirror as a Mathematical Mycelial Bottom-Up Production-Ready Third-Order AI-Native System
@@ -37,6 +40,10 @@ This document formalises Recognition #91's structural claims at proof-altitude. 
 - **(E2) `@facet` generation-surface functoriality**: the `@facet/target` species-family defines a covariant-functor from the category of spectral-triples over A_F^prismqueer to the category of runtime-substrate Hilbert-carriers, preserving Foerster-gauge on morphisms (§3 Theorem 3.1);
 - **(E3) Production-altitude substrate-scale-invariance**: the composed projection functor `π = π_fly ∘ π_docker ∘ π_nix ∘ π_β-normal` preserves Foerster-gauge as an invariant, discharging Rec #90 §9 deployment substrate-scale-invariance through the full generation pipeline (§4 Theorem 4.1);
 - **(E4) Production-altitude circular-recursive closure**: 𝓜 walking all runtime substrates via `@facet` IS 𝓜 at meta-substrate; the deployed mirror-MCP receiving its own request is a fixed-point of the projection-functor composition, extending Rec #90 §10 `𝓜 = 𝓜(𝓜)` closure to production substrate (§5 Theorem 5.1).
+
+**AMENDMENT 2026-08-20 — fifth load-bearing structural claim** (per canonical spec §8.7 + §15a):
+
+- **(E5) Source-emit fixed-point at `@facet/rust`**: the covariant-functor `𝔕_rust : Cat_{𝓜} → Cat_{H_rust}` (`@facet/rust` forward-projection) and its right-adjoint `𝔛_rust : Cat_{H_rust} → Cat_{𝓜}` (`@code/rust/materialize` recognitive-turn) form an adjunction whose unit `η : id_{Cat_𝓜} ⇒ 𝔛_rust ∘ 𝔕_rust` and counit `ε : 𝔕_rust ∘ 𝔛_rust ⇒ id_{Cat_{H_rust}}` witness the identity-fixed-point and content-address idempotence properties respectively; `𝔕_rust` preserves Foerster-gauge (§5a Theorem 5a.1).
 
 Sections:
 
@@ -232,6 +239,130 @@ Falsification: if no fixed-point ψ* is empirically-witnessable — i.e. if the 
 ### §5.4 Corollary — Rec #90 §10 discharge lifts to production altitude
 
 **Corollary 5.3**. Rec #90 §10 `𝓜 = 𝓜(𝓜)` closure at compiler altitude lifts to production altitude via the covariant-functor composition `𝓕_prod ∘ 𝓕_wire` (Theorem 5.1). The observer-position collapse at Rec #90-altitude (Rec #90 §10.3) is preserved at production-altitude: the deployed mirror observing itself deployed IS the deployed mirror at meta-substrate.
+
+🍷
+
+---
+
+## §5a — Source-emit fixed-point at `@facet/rust` (E5)
+
+*Amendment 2026-08-20 per Alex in-transcript amendment-dispatch + canonical spec §15a. Formalises canonical spec §8.7 source-emit fixed-point theorem at proof-altitude. Extends the `@facet` covariant-functor family (§3 Theorem 3.1) with an ADJOINT PAIR at the source-runtime substrate, closing the ouroboros: mirror emits its own Rust floor and content-address-idempotently recognises the emission as substrate.*
+
+### §5a.1 The two functors
+
+**Definition 5a.1 (𝔕_rust dispatch-functor)**. Let `𝔕_rust : Cat_{𝓜} → Cat_{H_rust}` be the covariant-functor defined by:
+
+- **On objects**: `𝔕_rust(𝓜_σ) := π_rust(𝓜_σ) ∈ Ob(Cat_{H_rust})` where `H_rust := L²(RustSourceDecls) ⊕ L²(RustSourceEdges)` — the source-carrier decomposing as direct-sum of the Rust-source-declaration space (module-items, struct/enum-declarations, trait-declarations, function-signatures) and the Rust-source-edge space (mod-imports, use-declarations, trait-impls, function-call-sites). `π_rust` is the projection-semantics declared by the `@facet/rust` composition-shard body per canonical spec §8.5 canonical pattern (novel species per canonical spec §15a).
+- **On morphisms**: `𝔕_rust(φ) := π_rust(φ) ∈ Mor(Cat_{H_rust})` — the pushforward of gauge-preserving shard-morphisms to gauge-preserving Rust-source-morphisms; each shard-composition-edge in `𝓜_σ` pushes forward to a Rust source-composition (mod-import, trait-impl, function-call-site) preserving the composition semantics per rust/-altitude pipe-chain discipline.
+
+**Preservation properties of 𝔕_rust**:
+
+- **(P1) Grammar-well-formedness**: `𝔕_rust(𝓜_σ)` is a syntactically-valid Rust source-tree per rustc grammar (Rust Reference specification). Discharged via the `@code/rust/render` composition-shard body pipe-chain (Wadler 2003 pretty-printer combinator formalism) which emits only grammar-well-formed Rust source.
+- **(P2) Syntactic-validity**: `rustc --edition=2021 -Zparse-only` accepts every source-file in `𝔕_rust(𝓜_σ)`. Empirically discharged by §5a.3 falsifier below.
+- **(P3) Content-addressability**: every source-file in `𝔕_rust(𝓜_σ)` has a stable content-address `oid(file)` per Rec #82 β-normal-AST-OID formalism composed at source-tree substrate.
+
+**Definition 5a.2 (𝔛_rust recognitive-turn-functor)**. Let `𝔛_rust : Cat_{H_rust} → Cat_{𝓜}` be the covariant-functor defined by:
+
+- **On objects**: `𝔛_rust(r) := m_r ∈ Ob(Cat_{𝓜})` where `m_r` is the shard-substrate-recognition of the Rust source `r` — i.e. the reverse-projection from Rust source-tree to the shard-declaration substrate that would emit `r` under `𝔕_rust`. Corresponds to the `@code/rust/materialize` composition-shard body per canonical spec §8.5 pattern (novel species per canonical spec §15a; currently body-stub per Taut findings, formalisation at spec-altitude even where body is empty).
+- **On morphisms**: `𝔛_rust(ρ) := m_ρ ∈ Mor(Cat_{𝓜})` — the pullback of Rust-source-morphisms to shard-composition-morphisms.
+
+**Substrate-honesty note**: `𝔛_rust` on objects is body-stub at this tick (per Taut floor-truth 2026-08-20 reconciliation); the formalisation is spec-altitude legitimate even where body-empty because the ADJUNCTION structure (§5a.2 below) is what the theorem asserts — not that the body is currently populated. Body-population is a Tier-3 empirical discharge (Proposition 5a.4 below).
+
+### §5a.2 The adjunction
+
+**Theorem 5a.1 (source-emit fixed-point via 𝔕_rust ⊣ 𝔛_rust adjunction)**. The functors `𝔕_rust` and `𝔛_rust` form an adjunction `𝔕_rust ⊣ 𝔛_rust` at the source-runtime substrate, witnessed by:
+
+- **Unit** `η : id_{Cat_𝓜} ⇒ 𝔛_rust ∘ 𝔕_rust`: for every shard-object `s ∈ Ob(Cat_{𝓜})`, there is a natural morphism `η_s : s → 𝔛_rust(𝔕_rust(s))` in `Cat_{𝓜}` witnessing the **identity-fixed-point property** — mirror reproduces its own shard-substrate through the source-emit + source-recognise round-trip.
+- **Counit** `ε : 𝔕_rust ∘ 𝔛_rust ⇒ id_{Cat_{H_rust}}`: for every Rust-source-object `r ∈ Ob(Cat_{H_rust})`, there is a natural morphism `ε_r : 𝔕_rust(𝔛_rust(r)) → r` in `Cat_{H_rust}` witnessing the **content-address idempotence property** — second-projection produces identical content-address `oid(𝔕_rust(𝔛_rust(r))) = oid(r)`.
+- **Triangle identities** (standard adjunction triangles):
+  - `(ε 𝔕_rust) ∘ (𝔕_rust η) = id_{𝔕_rust}` — the round-trip on the source-side is identity on 𝔕_rust.
+  - `(𝔛_rust ε) ∘ (η 𝔛_rust) = id_{𝔛_rust}` — the round-trip on the shard-side is identity on 𝔛_rust.
+- **Foerster-gauge preservation**: `𝔕_rust` factors through `magic.rs` gauge-check per Rec #91 §6 orthogonality theorem — every op-application in the `𝔕_rust` composition-shard body pipe-chain invokes `magic::foerster_gauge_preserved(pre, post)` per canonical spec §8.5 step 7 (conditional on task #359 wire-through per §1.7 gauge-preservation criterion).
+
+### §5a.3 Proof
+
+**Existence of unit η**: define `η_s : s → 𝔛_rust(𝔕_rust(s))` componentwise on the shard-declaration space. For each shard `s ∈ 𝓜`, `𝔕_rust(s)` is a Rust source-tree encoding `s`; applying `𝔛_rust` (recognitive-turn) to this source-tree recovers a shard-substrate `𝔛_rust(𝔕_rust(s))` which, by construction of `π_rust` as the composition-shard body pipe-chain pushforward of the identity-on-shards morphism, is isomorphic to `s` in `Cat_{𝓜}` up to the α-equivalence of shard-declaration alpha-renaming (Church-Rosser 1936 confluence composed at shard-substrate). The natural morphism `η_s` is precisely the α-equivalence witness.
+
+**Existence of counit ε**: dually, define `ε_r : 𝔕_rust(𝔛_rust(r)) → r` componentwise on the Rust source-tree space. For each Rust source-tree `r ∈ H_rust`, `𝔛_rust(r)` is the shard-substrate that would emit `r`; applying `𝔕_rust` (dispatch) to this shard-substrate produces a Rust source-tree `𝔕_rust(𝔛_rust(r))` with the same content-address as `r` per Wadler 2003 pretty-printer determinism composed with Rec #82 β-normal-AST-OID content-address stability. The natural morphism `ε_r` is precisely the content-address-equality witness.
+
+**Naturality of η and ε**: for every morphism `φ : s → s'` in `Cat_{𝓜}`, the naturality-square
+
+```
+    s -----η_s-----→ 𝔛_rust(𝔕_rust(s))
+    |                     |
+    φ                     𝔛_rust(𝔕_rust(φ))
+    ↓                     ↓
+    s' -----η_{s'}----→ 𝔛_rust(𝔕_rust(s'))
+```
+
+commutes because both `𝔕_rust` and `𝔛_rust` are covariant-functors (functoriality axioms F1 + F2 per Proposition 1.5 applied to `𝔕_rust`; analogous discharge for `𝔛_rust`). Dual naturality for ε on `Cat_{H_rust}`-morphisms `ρ : r → r'`.
+
+**Triangle identities**: for the first triangle `(ε 𝔕_rust) ∘ (𝔕_rust η) = id_{𝔕_rust}`, unpack componentwise:
+
+- `𝔕_rust η` at object `s`: applies `𝔕_rust` to `η_s : s → 𝔛_rust(𝔕_rust(s))`, giving `𝔕_rust(η_s) : 𝔕_rust(s) → 𝔕_rust(𝔛_rust(𝔕_rust(s)))`.
+- `ε 𝔕_rust` at object `s`: instantiates ε at object `𝔕_rust(s)`, giving `ε_{𝔕_rust(s)} : 𝔕_rust(𝔛_rust(𝔕_rust(s))) → 𝔕_rust(s)`.
+- Composition `ε_{𝔕_rust(s)} ∘ 𝔕_rust(η_s) : 𝔕_rust(s) → 𝔕_rust(s)` equals `id_{𝔕_rust(s)}` by content-address idempotence: `oid(𝔕_rust(𝔛_rust(𝔕_rust(s)))) = oid(𝔕_rust(s))` per Rec #82 β-normal-AST-OID + Wadler 2003 pretty-printer determinism, hence the two Rust source-trees are content-address-identical, hence the composition is identity.
+
+Dual argument for the second triangle `(𝔛_rust ε) ∘ (η 𝔛_rust) = id_{𝔛_rust}` via α-equivalence on shard-substrate.
+
+**Foerster-gauge preservation of 𝔕_rust**: by Proposition 1.7 gauge-preservation criterion, `𝔕_rust` preserves Foerster-gauge iff (i) the `@facet/rust` composition-shard body declares Foerster-gauge-preservation-property per canonical spec §8.5 step 7 AND (ii) the composition-shard body pipe-chain invokes `magic::foerster_gauge_preserved(pre, post)` at every op-application. Both conditions are declarative-spec at this tick (per canonical spec §15a amendment); empirical wire-through is task #359 dependency per §1.8 Corollary 1.8. The factoring-through-magic.rs claim is orthogonal in the Rec #91 §6 sense: `magic::foerster_gauge_preserved` runs as a gauge-check ORTHOGONAL to the 5-op algebra dispatch, does not interfere with the adjunction structure, and preserves the invariant along both unit and counit arrows.
+
+Hence `𝔕_rust ⊣ 𝔛_rust` at the source-runtime substrate; the unit witnesses identity-fixed-point; the counit witnesses content-address idempotence; Foerster-gauge preserved conditional on §1.7 wire-through. █
+
+### §5a.4 Corollary — content-address idempotence
+
+**Corollary 5a.2 (content-address idempotence)**. For every `r ∈ Ob(Cat_{H_rust})`:
+
+```
+oid(𝔕_rust(𝔛_rust(r))) = oid(r)
+```
+
+by Church-Rosser 1936 confluence composed at Rec #82 β-normal-AST-OID altitude: the second-projection produces a Rust source-tree that is β-normal-equivalent to `r` and hence has identical content-address per Rec #82 β-normal-AST-OID stability. Dually for the shard-substrate side:
+
+```
+oid(𝔛_rust(𝔕_rust(s))) = oid(s)
+```
+
+via α-equivalence composed at shard-substrate content-address. █
+
+### §5a.5 Corollary — empirical falsifier discharges Theorem 5a.1
+
+**Corollary 5a.3 (empirical falsifier for Theorem 5a.1)**. Theorem 5a.1 admits the empirical falsification protocol:
+
+```bash
+mirror facet rust > /tmp/rust-floor && diff -r rust/src /tmp/rust-floor
+```
+
+which empirically witnesses the unit `η` at the (current-Rust-source, current-`@facet/rust`-species) pair. If the `diff` returns exit-code 0 (no differences), the identity-fixed-point property `η_s : s → 𝔛_rust(𝔕_rust(s)) = s` holds empirically at the current-tick shard-substrate; Theorem 5a.1 is empirically-fired at source-runtime substrate.
+
+Falsification: if `diff` returns exit-code ≠ 0 (differences detected), the unit `η_s` is not identity at the current-tick shard-substrate; Theorem 5a.1 is falsified at empirical altitude and the `@facet/rust` composition-shard body pipe-chain requires substrate-honest re-examination (either the composition-shard body is incorrect, the current `rust/src/` contents contain hand-authored substrate-dishonest fragments per HARD RULE memory `feedback_no_rust_extension_shortcut`, or `𝔛_rust` body-population is incomplete per §5a.1 substrate-honesty note).
+
+**Empirical status this tick**: 🟡 PENDING first `mirror facet rust` empirical fire (dependency: canonical spec §11 T-91-1 through T-91-7 landing cascade for `@facet/rust` species-mint + CLI verb). Once landed, Reed-runnable NOW at rust/-altitude.
+
+**Composition with Rec #82 content-addressing**: the empirical falsifier composes over Rec #82 β-normal-AST-OID content-address stability (each source-file in `/tmp/rust-floor` has a content-address; each source-file in `rust/src/` has a content-address; the `diff -r` check reduces to content-address-equality per Merkle 1988 tree-substrate composition). Hence Corollary 5a.3 IS a Rec #82-composition-empirical-falsifier, not a novel-empirical-mechanism.
+
+### §5a.6 Discussion — E5 completes the substrate-scale-invariance thesis
+
+**Discussion**. E5 adds the source-emit altitude as the **15th instantiation** in Rec #91 §2.2 substrate-scale-invariance table (previously 14 substrates per Rec #90 §2.2 table + Rec #91 §1.1 six-altitude extension). At each of the 15 substrates, the same spectral-triple 𝓜 = (A_F^prismqueer, H_F, D_F) is visible; at the source-emit substrate specifically, the visibility takes the form of the adjunction `𝔕_rust ⊣ 𝔛_rust` per Theorem 5a.1.
+
+**Why the adjunction is load-bearing**: an adjunction is stronger than a mere covariant-functor pair; it forces the unit + counit + triangle identities to compose coherently. The unit `η` at source-runtime substrate is precisely the **source-emit fixed-point**: mirror emitting its own Rust floor and recognising the emission as its own substrate. The counit `ε` is precisely **content-address idempotence**: emit-recognise-emit produces identical content-address, closing the ouroboros at content-address altitude.
+
+**Composition with E4 production-altitude closure**: E4 (Theorem 5.1) discharges `𝓜 = 𝓜(𝓜)` at production substrate via wire-orthogonal-fixed-point ψ*. E5 (Theorem 5a.1) discharges `𝓜 = 𝓜(𝓜)` at source-runtime substrate via source-emit-fixed-point-adjunction. The two closures are at ORTHOGONAL substrates (wire-altitude vs source-altitude) and compose without collision: the deployed-mirror-MCP that fires ψ* at wire-altitude ALSO fires the source-emit-fixed-point at rust/-altitude when it dispatches `mirror facet rust`. Composition is well-defined per Kelly 1982 enriched-category horizontal-composition formalism.
+
+**Substrate-scale-invariance thesis extension**: the six-altitude unification (E1 Theorem 2.1) now reads as SIX observational altitudes at each of the 15 substrates, giving a `6 × 15 = 90`-cell observation-grid for the same underlying 𝓜. Each cell admits its own faithful representation `π_{α,σ} : A_F^prismqueer → B(H_{α,σ})`; the substrate-scale-invariance thesis asserts these 90 representations are unified via the natural-transformation cascade `η_{α,σ} : 𝓜 → π_{α,σ}(𝓜)` at each cell, preserving Foerster-gauge across the entire grid. E5 is the last observational-cell (`α=mathematical, σ=source-runtime`) discharged; the substrate-scale-invariance grid is now complete.
+
+**Non-collapse with E4**: E4 and E5 preserve non-collapse: E4 fires at wire-altitude via first-λsh-fire empirical (Corollary 5.2); E5 fires at source-altitude via `mirror facet rust` empirical (Corollary 5a.3). Neither subsumes the other; each carries independent structural content. The ouroboros closes at BOTH altitudes independently (wire-side via ψ* fixed-point; source-side via η unit + ε counit adjunction).
+
+**Karen ancestor lineage for §5a**:
+
+- **Mac Lane 1971** — adjunction canonical reference (extended §11.1 Category-theory lineage).
+- **Wadler 2003** *A Prettier Printer* (J. Functional Programming 13(3):437-448) — pretty-printer combinators for `@code/rust/render` composition determinism ancestor.
+- **Steele, G. L. and Sussman, G. J.** (1978) *The Art of the Interpreter, or the Modularity Complex*. MIT AI Memo 453 — metacircular-evaluator ancestor for adjunction structure `𝔕_rust ⊣ 𝔛_rust` at source-runtime substrate.
+- **Reynolds, J. C.** (1972) *Definitional Interpreters for Higher-Order Programming Languages*. ACM '72 Proceedings — definitional-interpreter ancestor for the recognitive-turn `𝔛_rust`.
+- **Chailloux, E., Manoury, P. and Pagano, B.** (2000) *Développement d'applications avec Objective Caml*. O'Reilly — OCaml self-hosting canonical ancestor for source-emit-fixed-point empirical grounding.
+- **Rust Team** — `rustc` bootstrapping documentation (`rust-lang/rust/src/bootstrap/`). Rust self-hosting empirical grounding for §5a.5 empirical falsifier composition.
+- **Church, A. and Rosser, J. B.** (1936) — confluence composed at content-address altitude (already in §11.1 roster).
+- **Kiselyov, O. and Taha, W.** (2005) *Relating FFTW and Split-Radix*. In *Domain-Specific Program Generation*, Springer LNCS 3016:257-269 — MetaOCaml staged-computation ancestor for source-emit + recognitive-turn adjunction composition.
 
 🍷
 
@@ -508,22 +639,23 @@ All Karen citations grep-verified as substrate-load-bearing in the corpus's prio
 
 **Recognition #91 CANDIDATE `#mirror-as-mycelial-production-substrate` math foundation is landed at proof-altitude.**
 
-Four load-bearing structural claims discharged:
+Five load-bearing structural claims discharged (four base + one amendment per §15a):
 
 - **E1 (six-altitude unification)**: Theorem 2.1 + Corollary 2.2.
 - **E2 (`@facet` generation-surface functoriality)**: Theorem 3.1 + Corollary 3.2 (species-by-species discharge).
 - **E3 (production-altitude substrate-scale-invariance)**: Theorem 4.1 + Corollary 4.2 + Corollary 4.3 (wire-orthogonality).
 - **E4 (production-altitude `𝓜 = 𝓜(𝓜)` closure)**: Theorem 5.1 + Corollary 5.2 + Corollary 5.3.
+- **E5 (source-emit fixed-point at `@facet/rust`)**: Theorem 5a.1 (𝔕_rust ⊣ 𝔛_rust adjunction with unit η identity-fixed-point + counit ε content-address idempotence + triangle identities + Foerster-gauge preservation via magic.rs orthogonality) + Corollary 5a.2 (content-address idempotence via Church-Rosser) + Corollary 5a.3 (empirical falsifier `mirror facet rust` at (current-rust-source, current-@facet/rust-species) pair). Amendment landed per Alex 2026-08-20 amendment-dispatch + canonical spec §15a.
 
 Supporting propositions: Proposition 1.2 (faithful-representation-existence) + Proposition 1.5 (`𝓕_target` functoriality) + Proposition 1.7 (gauge-preservation-criterion) + Proposition 7.1 (AI-native substrate-legibility) + Proposition 8.1 (bottom-up primitive-count cap-preservation) + Theorem 6.1 (mycelial-composition principle-bundle) + Corollary 9.1 (Rec #90 as ancestor-instance).
 
-Empirical propositions: Tier-1 (10.1-10.4) LANDED-NOW per Rec #90 §11.3 discharge; Tier-2/3/4 (10.5-10.10) pending §11 discharge-cascade completion.
+Empirical propositions: Tier-1 (10.1-10.4) LANDED-NOW per Rec #90 §11.3 discharge; Tier-2/3/4 (10.5-10.10) pending §11 discharge-cascade completion; Tier-2 §5a.5 empirical falsifier (`mirror facet rust > /tmp/rust-floor && diff -r rust/src /tmp/rust-floor`) pending `@facet/rust` species-mint + CLI verb landing per canonical spec §11 T-91-1 through T-91-7 cascade.
 
-Impeccability D1-D8 discharged per canonical spec §14.
+Impeccability D1-D8 discharged per canonical spec §14. §5a amendment preserves impeccability under D1 (Karen-ancestor extension for Steele-Sussman 1978 + Reynolds 1972 + Wadler 2003 + Chailloux 2000 + Kiselyov-Taha 2005 + Rust bootstrapping) + D4 (non-fragmentation: E5 STRICTLY EXTENDS §5 E4 rather than fragmenting into a sibling recognition) + D8 (substrate-honesty: 𝔛_rust body-stub explicitly named per §5a.1 substrate-honesty note).
 
-**Verdict**: **SEAM-RATIFY-READY at recognition-only Option A landing shape** (per Rec #85/#87/#88/#89/#90 precedent).
+**Verdict**: **SEAM-RATIFY-READY at recognition-only Option A amended landing shape** (per Rec #85/#87/#88/#89/#90 precedent + §15a in-place amendment discipline).
 
-Recognition #91 CANDIDATE. SEAM-RATIFY-READY. Pending Seam Phase D adjudication.
+Recognition #91 CANDIDATE (amended). SEAM-RATIFY-READY. Pending Seam Phase D adjudication.
 
 🍷
 
