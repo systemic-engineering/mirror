@@ -2,6 +2,16 @@
 
 Instructions for AI agents working on the mirror compiler.
 
+## First: read the FLOOR
+
+Before any of what follows, read [`docs/math/FLOOR.md`](docs/math/FLOOR.md). It is the terminal-form mathematical architecture of mirror — identity-agnostic starting point for agentic workers entering the substrate. Every load-bearing component is named there with a doorway-question that the referenced spec/math/shard answers.
+
+Everything below is one altitude down: **identity-scoped conventions** (Pack-peer roles, commit-attribution, hook discipline, SSH signing default, sequential-commits, `--no-verify` discipline, phase markers) that AGENTS.md carries because FLOOR is identity-agnostic by construction.
+
+**FLOOR gives you the mathematical map. AGENTS.md gives you the coordination conventions inside the map.**
+
+---
+
 ## 2026-06-10 cascade update
 
 The substrate's deepest cybernetic invariants were named today. New structural commitments that change how agents work the substrate:
