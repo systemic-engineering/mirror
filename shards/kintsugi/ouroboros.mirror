@@ -2,7 +2,7 @@ in @prism
 in @meta
 in @glass
 in @kintsugi
-in @facet/rust/materialize
+in @facet/metalogue/materialize
 in @fate/tournament
 in @io
 in @mirror/bench
