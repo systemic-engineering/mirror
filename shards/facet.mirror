@@ -1,0 +1,152 @@
+in @prism
+in @meta
+in @nl
+in @glass
+
+# @facet — the generation surface for spectral-triple projections onto
+# concrete runtime substrates.
+#
+# The recognition (2026-08-20, Alex → Reed → Mara, Rec #91 canonical
+# spec amendment `674ffc6`): mirror IS `𝓜 = (A_F^prismqueer, H_F, D_F)` at
+# every one of six simultaneously-load-bearing adjectival altitudes
+# (mathematical / mycelial / bottom-up / production-ready / third-order
+# / AI-native), and `@facet` names the operational-empirical proof-
+# surface at which 𝓜 catches light on each concrete runtime substrate
+# it inhabits. Each `@facet/X` species IS a covariant functor
+# `F_X : 𝓜 → 𝓜|_X` preserving the Foerster-gauge invariant `magic.rs`
+# discharges at compile-time per Rec #90 §8 orthogonality theorem.
+#
+# Mirror-metaphor: one stone (the substrate 𝓜), many facets catching
+# light differently onto each runtime target. The generation surface
+# is radial (projection FROM 𝓜 onto concrete H_X), not linear (which
+# was the @cascade metaphor's failure). Peer-to-peer translation
+# BETWEEN facets lives at `@cast` (composing `@glue` + `@fate` under
+# the hood; the mesh, not the waterfall).
+#
+# === sibling to @code at generation-surface altitude (transitional) ===
+#
+# `@code` (family-root at `shards/code.mirror`) is the grammar-at-an-
+# altitude discipline. `@facet` is the generation-surface. Different
+# altitudes; different concerns. During the pre-release transition
+# (Alex 2026-08-21 ratification: "Unless there is a HARD TECHNICAL
+# REASON against a rename I don't want to hear more excuses"), the
+# @code family-root and 11 landed species (`@code/rust`, `@code/mirror`,
+# `@code/beam`, `@code/gleam`, `@code/erlang`, `@code/gestalt`,
+# `@code/llvm`, `@code/turing`, `@code/wasm`, `@code/docker`,
+# `@code/metalogue`) rename to `@facet/*` per the T-91-16 discharge
+# cascade Phase 3. Until the rename lands byte-substrate-wide, both
+# family-roots coexist as siblings; @code's discipline flows through
+# during the transition.
+#
+# Post-rename, `@facet` absorbs @code's role AND extends the family
+# with the additional projection surfaces Rec #91 §8.3 enumerates:
+# `@facet/git` (git-persistence substrate; composes over
+# `@mirror/store/git`), `@facet/mirror` (self-hosting mirror-onto-
+# itself; the autopoietic-closure arm per Rec #91 §8.8), `@facet/lustre`
+# (client-side JS-leg parity to `@facet/gleam` BEAM-leg), `@facet/fly`
+# (fly.io deployment substrate).
+#
+# === composition-shape: covariant functor preserving Foerster-gauge ===
+#
+# Each `@facet/X` species declares:
+#   1. The target-substrate Hilbert-carrier `H_X` (what the projection
+#      lands on — BEAM bytecode / JS + DOM / Nix hermetic-build content-
+#      address / Docker layer content-address / fly.io machine content-
+#      address / etc.).
+#   2. The forward-projection semantics `F_X : 𝓜 → H_X` (how a shard-
+#      declaration in 𝓜 lands as a concrete artifact in H_X).
+#   3. The Foerster-gauge preservation guarantee (magic.rs invariant
+#      discharged at each layer of the projection).
+#   4. The composition-shard body pattern (per `@mcp/serve.mirror` at
+#      cf8b21b as exemplar: pipe-chain over rust/-altitude primitives
+#      `@io/*` + `@data/*` + `apply_h::act` + shard reader).
+#
+# Rust delivers primitives; substrate delivers composition (Alex
+# 2026-08-05 HARD RULE per `feedback-rust-delivers-primitives-
+# substrate-delivers-composition`). @facet species are composition-
+# shard bodies, NOT rust/ modules. `@facet/rust` (T-91-16 first-tick)
+# authors the forward-projection body at substrate altitude composing
+# over the landed rust/ primitives; the source-emit fixed-point
+# empirical is `mirror facet rust > /tmp/rust-floor && diff -r rust/src
+# /tmp/rust-floor == 0` (Rec #91 amendment §8.7 Theorem 5a.1 discharge).
+#
+# === admissibility as almost-commutative internal algebra ===
+#
+# @facet species collectively realize 𝓜's projection surface across the
+# fourteen-substrate table Rec #91 §2.2 enumerates. Chamseddine-Connes
+# 2007 arXiv:0706.3688 §1 admissibility criteria (finite-dimensional +
+# involutive + unital) inherit from A_F^prismqueer through the covariant
+# functor F_X per Rec #90 §1 Proposition 1.3; the projection preserves
+# admissibility by construction. Foerster-gauge orthogonality per
+# Rec #90 §8 propagates through every F_X: the compile-time refusal
+# cascades from the shard-graph through the composition-shard body
+# through the rust/-altitude primitive discharge through the runtime
+# artifact.
+#
+# === adjunction structure at Rec #91 §5a (post-amendment) ===
+#
+# For species with a reverse-projection charter (`@facet/X` forward +
+# `@code/X/materialize` reverse per pre-rename shape, or `@facet/X` +
+# `@facet/X/materialize` post-rename), the pair forms an adjunction
+# `𝔕_X ⊣ 𝔛_X` with unit η (identity-fixed-point: `𝔛_X(𝔕_X(shard)) = shard`
+# up to α-equivalence) + counit ε (content-address idempotence:
+# `oid(𝔕_X(𝔛_X(source))) = oid(source)` up to Church-Rosser) + triangle
+# identities + Foerster-gauge preservation per Rec #91 amendment §5a.2
+# Theorem 5a.1. Reed's authoring cascade for `@facet/X` species bodies
+# is anchored at spec altitude by this adjunction; the reverse-body
+# `𝔛_X` may remain stub-bodied (`\`-obligated) at substrate mint
+# time; the adjunction IS spec-altitude legitimate even where the
+# reverse-body is not yet implementable.
+#
+# Spec context:
+#   - `docs/specs/2026-08-20-mara-recognition-91-mathematical-mycelial-bottom-up-production-ready-third-order-ai-native-system-canonical-spec.md`
+#     §2 @facet composition + §8.3 species enumeration + §8.7 source-emit
+#     fixed-point theorem + §8.8 deeper-close as Rec #93 extension arc
+#   - `docs/math/2026-08-20-mara-recognition-91-mathematical-mycelial-bottom-up-production-ready-third-order-ai-native-system-math-foundation.md`
+#     §5a Theorem 5a.1 adjunction formalization
+#   - `docs/math/FLOOR.md` §9 (terminal-form reference)
+#
+# Substrate decisions: [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-shards-as-substrate-source]],
+#                      [[feedback-rust-delivers-primitives-substrate-delivers-composition]],
+#                      [[feedback-alex-ratification-overrides-mara-lean-unless-hard-technical]].
+#
+# Karen ancestor citations (at introduction sites per anti-theft convention):
+#   - Chamseddine, Ali H.; Connes, Alain, *Why the Standard Model?*,
+#     arXiv:0706.3688, 2007. — almost-commutative spectral triple
+#     admissibility inherited through F_X.
+#   - von Foerster, Heinz, *Ethics and Second-Order Cybernetics*
+#     (essay-titled-thus republished 1990s; imperative statement traces
+#     to *Understanding Understanding* volume 1974/2003). — the gauge
+#     each F_X preserves is Foerster's ethical imperative rendered as
+#     compile-time invariant.
+#
+# Related shards:
+#   - `shards/code.mirror` (sibling family-root at grammar-at-an-altitude
+#     discipline; renames into @facet during Phase 3 cascade)
+#   - `shards/cast.mirror` (sibling prism at peer-to-peer translation
+#     mesh altitude; composes @glue + @fate under the hood)
+#   - `shards/mcp/serve.mirror` (cf8b21b; exemplar composition-shard
+#     body shape @facet/X species will follow)
+#   - `shards/beam/system.mirror` (@beam/system with Baez-Schreiber
+#     principal-bundle-tower; @facet/beam will compose over)
+#   - `shards/mirror/store/git.mirror` (@mirror/store/git;
+#     @facet/git will compose over)
+#   - `shards/glue.mirror` + `shards/fate.mirror` (primitives
+#     @cast composes over)
+#
+# Path-namespace property: this file at `shards/facet.mirror` declares
+# `@facet` as the universal generation-surface family-root; species
+# live at `shards/facet/<name>.mirror`.
+#
+# === substrate-truth (2026-08-21 mint) ===
+#
+# At mint time, `@facet` is a virgin family-root with zero landed
+# species. Phase 3 rename cascade migrates the 11 landed `@code/*`
+# species. Phase 4 T-91-16 discharge authors `@facet/rust` forward-
+# projection body via first-file iterative (starting `rust/src/wire.rs`
+# at 210 LOC per Seam Phase D `1893afc` SHARPENING-3). @facet/git +
+# @facet/mirror + @facet/lustre + @facet/nix + @facet/docker + @facet/fly
+# species mint as cascade discharges.
+
+out @facet
