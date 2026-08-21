@@ -153,6 +153,98 @@ is_materialisable(d: declaration) -> verdict { \ }
 # against the target altitude's grammar.
 target_altitude(d: declaration) -> ref { \ }
 
+# === Alex 2026-08-21 reframe: parse-dep-tree = autopoietic litmus ===
+#
+# Alex 2026-08-21 in-transcript reframe (post-HALT Phase 4 scoping):
+# *"The litmus test is that mirror can parse the totality of mirror's
+# own dependency tree in rust. Does that help? Think of mirror as a loop
+# with `in` and `out`s and each increment widens the autopoietic
+# surface that the loop can cover."*
+#
+# Reed pre-reframe scope drift: had been authoring forward-projection
+# `𝔕_rust` (substrate → source-emit fixed-point) per Rec #91 amendment
+# §5a Theorem 5a.1 discharge. That direction requires substantial multi-
+# week AST substrate authoring (Rust grammar 2-3× Erlang precedent). NOT
+# a /loop-cadence discharge.
+#
+# Alex-corrected scope: the LITMUS is the REVERSE direction (`𝔛_rust`
+# per Rec #91 amendment §5a.1) — mirror READS its own rust/ dep tree +
+# represents as substrate. Each increment widens the autopoietic
+# surface the loop can cover. Progressive expansion, not big-bang.
+#
+# === increment plan (Reed post-reframe) ===
+#
+# I1: mirror invokes `cargo metadata --format-version 1 --manifest-path
+#     rust/Cargo.toml` (existing phone.rs::spawn_cargo_build primitive
+#     adapted for metadata subcommand); parses JSON output (existing
+#     wire.rs @data/json primitive); represents workspace members
+#     (fractal + matrix + roomba + spectral + tests + main) as substrate
+#     splinters at @mirror/store altitude. Empirical fire: mirror KNOWS
+#     its own workspace-member set. Autopoietic surface increment 1.
+#
+# I2: For each workspace member, parse its Cargo.toml [dependencies]
+#     from cargo metadata JSON output; represent dep-graph edges as
+#     substrate splinters. Empirical: mirror KNOWS its own inter-crate
+#     dep graph (main → {fractal, matrix, spectral, roomba, prismqueer};
+#     matrix → {fractal, prismqueer}; etc.). Autopoietic surface
+#     increment 2.
+#
+# I3: For each rust/**/src/**/*.rs file, extract `use` statements via
+#     grep-level parsing (not full Rust AST); represent intra-crate
+#     file-level dep graph as substrate splinters. Empirical: mirror
+#     KNOWS its own module-import structure. Autopoietic surface
+#     increment 3.
+#
+# I4: Extend to full Rust AST parsing via shelling to `rustc --emit
+#     dep-info` or `cargo-syn` (external tool composition); represent
+#     AST-level dep-graph as substrate. Empirical: TOTALITY of dep tree
+#     parsed per Alex litmus. Autopoietic surface increment 4.
+#
+# === substrate-honest scope for I1-I4 ===
+#
+# I1 + I2 are shell-out-plus-JSON-parse compositions. Landed rust/
+# primitives (phone.rs::spawn_cargo_build + wire.rs::parse) suffice;
+# NO new rust/ primitive authoring per Alex 2026-08-05 rust-delivers-
+# primitives / substrate-delivers-composition HARD RULE. Just wire
+# `mirror facet materialize` CLI verb at rust/src/main.rs dispatching
+# to shard-body composition via apply_h::act.
+#
+# I3 requires small addition: grep-level `use`-statement extraction
+# (regex against file bytes; no full Rust parser). Composition-shard
+# body over @io/fs.read + string manipulation primitives.
+#
+# I4 requires substantial external-tool composition (rustc / cargo-syn)
+# OR full Rust parser as substrate authoring. Defer to future arc.
+#
+# === body actions extension for cargo-metadata litmus ===
+#
+# The classify() action above signatures over `code/rust.ast` (parsed-
+# declaration input). For I1-I2 (cargo metadata parsing), the input is
+# `manifest_ref` (a Cargo.toml file path) and the output is a workspace-
+# representation splinter. Different arity from classify(d). Extension:
+
+# `classify_workspace(manifest: ref) -> workspace_splinter` — the
+# parse-workspace action for I1. Reads a Cargo.toml manifest ref;
+# invokes `cargo metadata --format-version 1 --manifest-path
+# <manifest>`; parses JSON via wire.rs; represents workspace members
+# as splinter graph at @mirror/store altitude. Body discharges when
+# rust/ CLI verb `mirror facet materialize workspace <manifest>` is
+# wired (I1 empirical fire tick).
+classify_workspace(manifest: ref) -> workspace_splinter { \ }
+
+# `classify_dependency_tree(root: ref) -> dep_graph_splinter` — the
+# parse-dep-tree action for I2. Reads a workspace-root Cargo.toml
+# ref; parses cargo metadata output; represents inter-crate dep-
+# graph as content-addressed splinter graph. Body discharges when
+# I2 empirical fire is authored.
+classify_dependency_tree(root: ref) -> dep_graph_splinter { \ }
+
+# `classify_use_graph(src_root: ref) -> module_import_splinter` — the
+# parse-use-statements action for I3. Reads rust/**/src/**/*.rs files;
+# extracts `use` statements via grep-level regex (no full Rust
+# parser); represents intra-crate module-import structure as splinter
+# graph. Body discharges when I3 empirical fire is authored.
+
 # === Citations + cascade context ===
 #
 # The Rust-altitude binding inherits all four laws (round-trip,
