@@ -226,6 +226,69 @@ type materialised_file = {
   verdict:   transparency,
 }
 
+# === T-91-A2.2 UNIVERSAL BODY LIFT (Mara Rec #91 amendment #2) ===
+#
+# Per Mara canonical spec `c909ce2` §A2.2 + math foundation `f176367`
+# Thm M3.2 (universal adjunction `𝔉 ⊣ 𝔛`) + Alex 2026-08-21 fractal-
+# mandelbrot reframe: classify's body composition lifts from PER-
+# SPECIES realisation (was the pre-2026-08-21 discipline) to a
+# UNIVERSAL BODY at this ground. Fractal-mandelbrot per-facet
+# inheritance per Thm M2.3 fiber-projection: @facet/X species inherit
+# `in @facet/metalogue/materialize` and gain classify() by construction
+# with NO per-facet body authoring. Adding a new @facet/X species =
+# species-decl (small) + @tool/X primitive (small); everything else
+# inherited from this universal ground.
+#
+# The universal body composition (fractal-mandelbrot; species-
+# parameterized via `d.kind`):
+#
+#   classify(d) :=
+#     let target_tool = @tool.dispatch(d.kind, species_registry)
+#     let output     = @tool/target_tool.metadata(d.manifest)   # T-91-A2.1
+#     let json       = @data/json.parse(output.stdout)          # wire.rs
+#     let members    = json.extract(species_registry.get(d.kind).extract_path)
+#     let splinter   = @mirror/store.represent(members, altitude: d.kind)
+#     materialised_file {
+#       path:      d.manifest,
+#       partition: substrate,   # metadata-parsing IS substrate-side
+#       target:    d.kind,      # the @facet/X altitude the metadata targets
+#       verdict:   transparency.clear(splinter),
+#     }
+#
+# Per species dispatch table (fractal-mandelbrot inheritance shape):
+#   d.kind = @facet/rust      → target_tool = @tool/cargo
+#                                cargo metadata --format-version 1 → workspace_members
+#   d.kind = @facet/go        → target_tool = @tool/go
+#                                go list -json -m → module + require + replace
+#   d.kind = @facet/docker    → target_tool = @tool/docker
+#                                docker inspect --format=json → config + layers + labels
+#   d.kind = @facet/nix       → target_tool = @tool/nix
+#                                nix flake metadata --json → inputs + outputs + narHash
+#   d.kind = @facet/git       → target_tool = @tool/git
+#                                git log --format tab-template → commits + refs
+#   d.kind = @facet/gitlab_ci → target_tool = @tool/gitlab_ci
+#                                REST pipeline_status → pipeline JSON
+#
+# Adding a new @facet/newstack: (a) mint shards/facet/newstack.mirror
+# species-decl + `in @facet/metalogue` + `in @facet/metalogue/materialize`;
+# (b) mint shards/tool/newstack.mirror @tool primitive with metadata
+# action + subcommand binding. Species-registry entry auto-derived
+# from the two mints. NO body-authoring at this ground; NO per-facet
+# materialize.mirror. Zero code addition beyond the two small mints.
+#
+# Sub-Turing verification delta over Bazel per Mara Thm M5.1: every
+# property P ∈ @epistemologic/property/effect/{network, clock,
+# filesystem, cpu} satisfies `P(ψ) ⇺ P(𝔉_X(φ)(ψ))` — metadata
+# parsing preserves property witnesses across the projection. Bazel's
+# Starlark counterexample (rules_rust with reqwest::get: network-
+# absent HOLDS at Starlark, FAILS at compiled binary) does NOT arise
+# because the universal body composes over @tool primitives that
+# themselves declare their @epistemologic/property witnesses.
+#
+# Body stays `\`-obligated per craft-not-deliver. Discharge tick lands
+# when apply_h::act wire-through dispatches this composition through
+# rust/-altitude primitives (T-91-A2.5 empirical fire).
+
 # === classify — the recognitive primitive ===
 #
 # Given a parsed species AST (`d: declaration` carrying the form's
@@ -235,11 +298,12 @@ type materialised_file = {
 # substrate declaration; classify reads the species form and
 # emits the substrate verdict.
 #
-# Body discharges per-species at the realisation altitude (see
-# `shards/code/rust/materialize.mirror` for the Rust binding). The
-# 29 substrate-pull recognitions enumerated in the prior shard's
-# §"The training set" are the labeled (form-shape, substrate-
-# altitude) pairs the per-species body's match table walks.
+# UNIVERSAL BODY (post-T-91-A2.2 lift; discharge deferred per
+# apply_h::act wire-through at T-91-A2.5): composition-shape
+# substrate-decl'd in the section above; body stays `\`-obligated
+# until Reed cascade wire-through fires the universal composition
+# empirically. Per-species classify() derives from this via Mara
+# Thm M2.3 fiber-projection with NO per-facet body-authoring.
 classify(d: declaration) -> materialised_file { \ }
 
 # === is_materialisable — the binary projection ===
