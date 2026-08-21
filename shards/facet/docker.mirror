@@ -1,3 +1,11 @@
+in @facet
+in @facet/metalogue
+in @facet/metalogue/materialize
+in @prism
+in @glass
+in @meta
+in @nl
+
 # @facet/docker — Dockerfile as declarative code at code altitude.
 # Arc 5 TICK 4 GREEN landing per Reed RED at `29d327f` against the
 # spec Mara `ec636d3` §6.1. Sits under `@facet` family-root at the

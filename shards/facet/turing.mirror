@@ -3,6 +3,8 @@ in @glass
 in @meta
 in @nl
 in @facet
+in @facet/metalogue
+in @facet/metalogue/materialize
 
 # @facet/turing — the abstract-machine tape altitude.
 #

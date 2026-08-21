@@ -2,6 +2,8 @@ in @prism
 in @meta
 in @glass
 in @facet
+in @facet/metalogue
+in @facet/metalogue/materialize
 in @magic
 in @magic/audit
 
