@@ -14,15 +14,15 @@
 
 ### Q+1: What ouroboros closure would the FLOOR consolidation empirically discharge?
 
-**Tick landed via Alex 2026-08-20 dispatch verbatim**: *"We already have @code/* what if @code wants to become @facet and then we add @facet/rust and then we let mirror generate it's own Rust floor and because @facet is within the content addressed mirror store it never needs to be projected to disk and mirror generates it's own Rust floor on demand to build itself? The full orouborous close.. 🤯"*
+**Tick landed via Alex 2026-08-20 dispatch verbatim**: *"We already have @facet/* what if @facet wants to become @facet and then we add @facet/rust and then we let mirror generate it's own Rust floor and because @facet is within the content addressed mirror store it never needs to be projected to disk and mirror generates it's own Rust floor on demand to build itself? The full orouborous close.. 🤯"*
 
 **Composition anchors landed**:
 
-- Taut floor-truth on @code family + @facet/rust ouroboros territory — substrate-truth surfaced: 15 @code files with 4055 LOC of decl but ZERO functional projection bodies; `@code/rust/materialize` REVERSE-direction only; ~150 files reference @code (2-3× @cascade blast-radius); cargo invocation GO via `mirror craft`; content-address store discipline GO; bootstrap seed requires-authoring-from-scratch
+- Taut floor-truth on @facet family + @facet/rust ouroboros territory — substrate-truth surfaced: 15 @facet files with 4055 LOC of decl but ZERO functional projection bodies; `@facet/rust/materialize` REVERSE-direction only; ~150 files reference @facet (2-3× @cascade blast-radius); cargo invocation GO via `mirror craft`; content-address store discipline GO; bootstrap seed requires-authoring-from-scratch
 - Mara Rec #91 canonical spec amendment `674ffc6` (Option A in-place amendment chosen over Option B Rec #92 sibling per amendment reading as strict-extension of six-adjectival unification through source-emit generation-surface); §8.3 species enumeration extension with @facet/rust + @facet/mirror + @facet/git; §8.7 source-emit fixed-point theorem + empirical falsifier `mirror facet rust > /tmp/rust-floor && diff -r rust/src /tmp/rust-floor == 0`; §8.8 deeper autopoietic-loop-write-side as Rec #93 extension arc (deferred per non-fragmentation)
 - Mara Rec #91 math §5a completion `0f79190` (+137 lines net; 662 LOC total): Definition 5a.1 `𝔕_rust` dispatch-functor + Definition 5a.2 `𝔛_rust` recognitive-turn-functor + Theorem 5a.1 adjunction `𝔕_rust ⊣ 𝔛_rust` with unit η (identity-fixed-point) + counit ε (content-address idempotence) + triangle identities + Foerster-gauge preservation via magic.rs orthogonality; Corollary 5a.2 content-address idempotence via Church-Rosser + Rec #82; Corollary 5a.3 empirical falsifier discharges Theorem 5a.1 at (current-Rust-source, current-@facet/rust-species) pair
 
-### Q+2: Was the @cascade dissolution actually landable via @code → @facet RENAME, or does the Mara-lean ADDITIVE-SIBLINGS position hold?
+### Q+2: Was the @cascade dissolution actually landable via @facet → @facet RENAME, or does the Mara-lean ADDITIVE-SIBLINGS position hold?
 
 **Tick landed via Alex 2026-08-21 rename boundary**: Alex explicit-ratified RENAME; Mara-lean ADDITIVE-SIBLINGS was PREFERENCE not BLOCKER; Seam Phase D cascade audit `1893afc` REFUTE cited only soft-preference not HARD TECHNICAL REASON; Reed re-asking Alex Path A vs Path B = excuse-making texture around already-made decision.
 
@@ -46,7 +46,7 @@ Fiedler λ₀ = 0.0897 preserved through all three commits (pre-commit hook gest
 **Ticks pending post-Phase-1** (autonomous /loop cadence continuing per Alex 2026-08-21 dispatch):
 
 - **Phase 2 SUBSTRATE MINT**: `shards/facet.mirror` family-root (novel virgin) + `shards/cast.mirror` prism composing @glue + @fate under the hood
-- **Phase 3 SUBSTRATE RESHAPE**: @code → @facet rename cascade (~150 files) with atomic-per-dependency-tier commits (family-root first, species next, body-references last; NOT per-file per Seam SHARPENING) + dual-byte-check backward-compat window in `rust/src/main.rs` line 1474 during rename per Seam SHARPENING-2 (both `"altitude @code/rust"` and `"altitude @facet/rust"` accepted until close)
+- **Phase 3 SUBSTRATE RESHAPE**: @facet → @facet rename cascade (~150 files) with atomic-per-dependency-tier commits (family-root first, species next, body-references last; NOT per-file per Seam SHARPENING) + dual-byte-check backward-compat window in `rust/src/main.rs` line 1474 during rename per Seam SHARPENING-2 (both `"altitude @facet/rust"` and `"altitude @facet/rust"` accepted until close)
 - **Phase 4 OUROBOROS CLOSE (T-91-16)**: `@facet/rust` species-decl + forward-projection body FIRST-FILE ITERATIVE per Seam SHARPENING-3 starting `rust/src/wire.rs` (210 LOC substrate-honest first-fire) + `mirror facet` CLI verb + empirical fire per file (`mirror facet rust --file=wire.rs > /tmp/wire.rs && diff rust/src/wire.rs /tmp/wire.rs == 0`) then iterate through remaining files toward full-substrate diff == 0
 - **Phase G FIRST-λSH-FIRE EMPIRICAL** (task #355 discharge; requires Alex-authority fly.io app + FLY_TOKEN + spectral.engineer DNS): deployed mirror-MCP receives Reed's `spectral join @silicon-venue` call; Subclass B slap per PAPER §5; recognition-arc closes empirically
 
@@ -551,7 +551,7 @@ MCP tool round-trip = Recognition-Event candidate. Four empirical criteria (per 
 | R | Question | Mara-lean |
 |---|----------|-----------|
 | R1 | @data/json vs @wire/json namespace | Position A — @data/json at substrate; wire.rs at rust/ (substrate-already-had-the-word + phone.rs precedent) |
-| R2 | @mcp/tool annotation extension shape | extension-of-@mcp-grammar (per @code/rust 46-shard precedent) |
+| R2 | @mcp/tool annotation extension shape | extension-of-@mcp-grammar (per @facet/rust 46-shard precedent) |
 | R3 | grammar walker M5 co-tick priority | M5-primary (Phase 2 reflective composition) |
 | R4 | boot/std/mcp.mirror body reference-pointer | docblock note (composition-shard IS the real body; boot/std points at it) |
 | R5 | `mirror_spawn` deprecated retirement tick | Phase 2 (byte-parity Phase 1; retire with grammar walker) |
@@ -2057,8 +2057,8 @@ corrected via 6-arc retirement plan.
 Alex 2026-07-15 in-transcript verbatim naming:
 
 > "What if we used this opportunity, when you return, to look at the
-> @kintsugi ouroborous? The one that begins to collapse the @code/rust
-> of the compiler into @code/mirror? Every verifiable line of Rust
+> @kintsugi ouroborous? The one that begins to collapse the @facet/rust
+> of the compiler into @facet/mirror? Every verifiable line of Rust
 > collapses into mirror."
 
 And on scale:
@@ -2078,7 +2078,7 @@ the cracks. Six-arc retirement plan:
 - **Arc-1** evaluator FLOOR (irreducible; Dirac operator per eigensheaf §3.2)
 - **Arc-2** 5-file hardcoded collapse (spectral_signature → coherence → peer_persistence → roomba → roomba_walk_smoke)
 - **Arc-3** tournament ∼25 files (Rayleigh-descent-ordered)
-- **Arc-4** cross-@code/X universalization
+- **Arc-4** cross-@facet/X universalization
 - **Arc-5** StageFreight × downstream CI empirical
 - **Arc-6** terminal recognition
 
@@ -2510,7 +2510,7 @@ the deletions, and made the commits itself — signed as
 
 25. `86dec5e` — Mara `shards/kintsugi/translate.mirror` (+511 LOC):
     `translate_rust_to_mirror(source, target) -> verdict`; composes
-    `@fate.roll(@glue(@code/rust, @shatter), @kintsugi/algebra) →
+    `@fate.roll(@glue(@facet/rust, @shatter), @kintsugi/algebra) →
     @glue(_, @mirror) → @bauchladen.crystallize`
 26. `f4372f4` — Mara `shards/silicon/algebra.mirror` tray content
     source (+252 LOC; initially git-log filter)
@@ -2519,14 +2519,14 @@ the deletions, and made the commits itself — signed as
 
 Alex 2026-07-17 verbatim: *"What if `@bilateral` became a
 composition on top of `@glue` and `@metalogue`. And then
-`@bilateral(@code/rust, @code/mirror)` becomes the floor the
+`@bilateral(@facet/rust, @facet/mirror)` becomes the floor the
 translation surface stands on."* + *"the source of truth for
 content-addressed storage is `@mirror/store`."*
 
 27. `9336074` — Mara canonical spec `docs/specs/bilateral-as-glue-metalogue-composition.md`
     (+693 LOC; general `@bilateral(A, B)` composition; existing
-    shape valid as degenerate A=B case; `@bilateral(@code/rust,
-    @code/mirror)` as translation floor)
+    shape valid as degenerate A=B case; `@bilateral(@facet/rust,
+    @facet/mirror)` as translation floor)
 28. `f74086e` — Mara `shards/epistemologic/pact/bilateral.mirror`
     extension: general-case reframe + `type translation_pair` +
     `bilateral translation_admissible { sentinel "translation=preserves-meaning"
@@ -2559,9 +2559,9 @@ content-addressed storage is `@mirror/store`."*
 
 - *"Q1. Let's mint it then. Properly. Seems like it's load-bearing."* — the bilateral shape mint
 - *"Rattified."* — the `@kintsugi/algebra := algebra_metalogue_session` binding
-- *"@glue(@code/rust, @shatter)"* — the fragmentation lens (composition, not mint; caught Reed's mint-reflex)
+- *"@glue(@facet/rust, @shatter)"* — the fragmentation lens (composition, not mint; caught Reed's mint-reflex)
 - *"What if `@kintsugi/algebra` is the `@metalogue(@silicon/algebra, @fate/algebra)`."* — speaker-pair specialization ratified
-- *"What if `@bilateral` became a composition on top of `@glue` and `@metalogue`. And then `@bilateral(@code/rust, @code/mirror)` becomes the floor the translation surface stands on."* — paradigmatic reframe
+- *"What if `@bilateral` became a composition on top of `@glue` and `@metalogue`. And then `@bilateral(@facet/rust, @facet/mirror)` becomes the floor the translation surface stands on."* — paradigmatic reframe
 - *"Let's not forget that the source of truth for content-addressed storage is `@mirror/store`."* — correction on `@io/git.log` reach
 - *"It's working."* — recognition after first mirror-authored commit
 - *"I'd rather have you do deep substrate work and cleanup and postponed work then sit idly if a blocker appears."* — saved as feedback-adjacent-work-may-dissolve-blockers
@@ -2569,7 +2569,7 @@ content-addressed storage is `@mirror/store`."*
 ### Substrate primitives introduced this arc
 
 - `@bilateral(A, B)` — the general composition on `@glue + @metalogue`; A=B degenerate case = existing sentinel-check shape
-- `@bilateral(@code/rust, @code/mirror)` — the translation floor (first non-degenerate instance)
+- `@bilateral(@facet/rust, @facet/mirror)` — the translation floor (first non-degenerate instance)
 - `@kintsugi/algebra` — speaker-pair specialization of `algebra_metalogue_session`; the mending IS the metalogue between memory (`@silicon/algebra`) and structure (`@fate/algebra`)
 - `@mirror/store.query(store, predicate)` — filter-fold action; shard-body composition over LANDED `walk` + `read` + `discharge`
 - `translate_rust_to_mirror(source, target)` — the autopoietic Rust→mirror translation action; substrate composition, no Rust
@@ -2629,7 +2629,7 @@ Alex directive: *"So we can have @cascade/code/llvm/turing and @cascade/code/rus
 - `1ce68c3` — canonical spec `docs/specs/polyglot-loss-aware-computational-translation.md` (+1135 LOC; §1-§12 grounding cascade composition through Turing altitude; MLIR-multi-level alignment)
 - `dc4ad4c` — math foundation `docs/math/polyglot-loss-aware-computational-translation.md` (+774 LOC; existence-and-admissibility direction; §7 universal quantification deferred to follow-up)
 - `7186410` — `shards/code/turing.mirror` M1 (+361 LOC; family-root + 9 typed carriers + 7 obligation-blocked actions + 3 bilaterals)
-- `62d1b1c` — `shards/code/llvm.mirror` M1 (+280 LOC; @code/llvm was genuinely absent per Taut audit)
+- `62d1b1c` — `shards/code/llvm.mirror` M1 (+280 LOC; @facet/llvm was genuinely absent per Taut audit)
 - `eee446b` — `shards/cascade/code/rust/llvm.mirror` M2 (+440 LOC; apply_rust_llvm + cascade_rust_llvm_preserves_semantics bilateral)
 - `c9328ec` — `shards/cascade/code/llvm/turing.mirror` M2 (+466 LOC)
 - `3322825` — `shards/cascade/code/turing/mirror.mirror` M2 (+514 LOC)
@@ -2683,8 +2683,8 @@ Where:
 **Arc 5 status:** parked on Q-A/Q-B/Q-C awaiting Alex. Reed continues adjacent postponed work per feedback-adjacent-work-may-dissolve-blockers.
 
 **Four-arc deferred queue (Alex-ratified at various altitudes, awaiting sequential execution):**
-- Arc 2: `@sre` family-root + `@sre(@code/X)` species pattern (measurement substrate for code-under-load)
-- Arc 3: `@peer.eigenboard` + `@roomba(@code/X)` polyglot walker (peer's perceptual apparatus)
+- Arc 2: `@sre` family-root + `@sre(@facet/X)` species pattern (measurement substrate for code-under-load)
+- Arc 3: `@peer.eigenboard` + `@roomba(@facet/X)` polyglot walker (peer's perceptual apparatus)
 - Arc 4: `@peer.sing(@song)` third-order cognition (peer's ONE primitive; song = intent-language; roomba = execution mechanism)
 - Arc 5: `@liquid` + `@epistemologic/liquid` + `@epistemologic/silicon` composition (Taut scout LANDED `b8c453f`; Alex ratified Q-A/Q-B/Q-C 2026-07-17; Mara Arc 5 M1 mints landed `cc816f9` + `b2c5d09` + `12cdf0e`; grounds semantic-preservation for translation via `@kintsugi + @knife + @liquid` complexity-reducing cascade)
 
@@ -2836,7 +2836,7 @@ restored bytes, mirror committed the deletion autonomously.
   investment ~940 LOC vs harvest −345 LOC; break-even at ~57 more
   arms).
 - **§11.5** The 21 mirror-authored retirements' algebra-membership
-  reading (`@bilateral(@code/rust, @code/mirror)` witnesses under
+  reading (`@bilateral(@facet/rust, @facet/mirror)` witnesses under
   degenerate-arity subcase vs `bilateral_arm_redundant` witnesses
   only).
 

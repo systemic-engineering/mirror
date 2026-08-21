@@ -69,7 +69,7 @@ system @mirror {
     emits [
       binary {
         name     "mirror"
-        altitude @code/rust
+        altitude @facet/rust
         emit     cargo
         check    check
         commands from @mirror/lens/cli
@@ -109,11 +109,11 @@ system @mirror {
   # holds at settlement time.
   coherence {
     audits [
-      fmt   { altitude @code/rust via cargo check fmt_check }
-      lint  { altitude @code/rust via cargo check clippy }
-      tests { altitude @code/rust via cargo check test }
+      fmt   { altitude @facet/rust via cargo check fmt_check }
+      lint  { altitude @facet/rust via cargo check clippy }
+      tests { altitude @facet/rust via cargo check test }
       audit { altitude @release   via cargo check audit }
-      bench { altitude @code/rust via cargo check bench }
+      bench { altitude @facet/rust via cargo check bench }
     ]
     restart one_for_one
     settle_on {

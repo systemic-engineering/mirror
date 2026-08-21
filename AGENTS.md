@@ -19,7 +19,7 @@ The substrate's deepest cybernetic invariants were named today. New structural c
 - **`@kintsugi` is now a root prism family** (mirror `20eaf15`). The transformation engine shards (oscillate, morphism, consent, fracture/*) moved out of `@mirror/spectral` to `@kintsugi/*`. Form/process partition is now visible at the family-root altitude. When you spawn agent work that touches transformation, point at `@kintsugi/*`; observation/state work stays at `@mirror/*`.
 - **The `pact` keyword replaces `grammar`** for property declarations (mirror `ef8852c`). When you see `grammar @epistemologic/property/X` in older docs, the canonical form is now `pact @epistemologic/property/X`. The keyword vocabulary is three-axis: `prism` (root family), `glass` (specialization), `pact` (declarative obligation).
 - **Property + fracture + splinter(ast) bilateral pattern operationalized.** Pure-substrate enforcement is now via property/fracture pairs. Properties at `@epistemologic/property/` declare what must hold; fracture bodies at `@kintsugi/fracture/` resolve violations via `splinter(ast)` AST construction; kintsugi's `active_pass` applies Banach contraction. When you see substrate violations across many shards, don't sweep manually — declare the property + fracture pair and let the kintsugi loop's gradient resolve.
-- **The discriminator moved.** What was `@mirror/realisation` is now `@code/metalogue/materialize` (mirror `7124ed4`). Form-on-form operation lives at the metalogue altitude (recognition #34's AST-altitude self-conversation), not at @mirror.
+- **The discriminator moved.** What was `@mirror/realisation` is now `@facet/metalogue/materialize` (mirror `7124ed4`). Form-on-form operation lives at the metalogue altitude (recognition #34's AST-altitude self-conversation), not at @mirror.
 - **Cybernetic foundation grounded.** Nine cybernetic ancestors named as load-bearing: Ashby, Beer, Bateson, Maturana-Varela, von Foerster, Pask, Glanville, Spencer-Brown, Conant-Ashby. The 11-property `@epistemologic/cybernetic/X` family operationalizes the canon. First member: `cybernetic/variety` (mirror `15deb05`).
 - **The boundary alignment frame (#57 candidate).** Mirror's alignment is at the @io crossing, not in agent internal state. Agents reason freely at form altitude; the harness fires at substance crossing through `@io`. The harness IS the property + fracture + kintsugi + splinter(ast) chain. Pacts at @io are mathematical contracts grounded in cybernetic ancestry. **This is load-bearing for how the Pack convention works as alignment mechanism.**
 
@@ -157,7 +157,7 @@ transparency: transparency(altitude) }`; shard = SpectralUuid-addressed
 composition). CRDT-shaped substrate from the floor. Sub-Turing by
 construction (every grammar action terminates).
 Numerics as substrate vocabulary (Fiedler = algedonic signal; 16×16/5×5
-flang/mirror split; LAPACK at `@code/fortran`). Four transports onto one
+flang/mirror split; LAPACK at `@facet/fortran`). Four transports onto one
 runtime (λsh / CLI / MCP / LSP). Conversation IS substrate (every response
 carries `eigenboard` + `compose` + (on settle) `proof` block).
 
@@ -178,7 +178,7 @@ content addressing, the bidirectional renderer, `git hash-object -w`
 storage, and per-altitude dispatch stubs that retire as the substrate
 self-hosts. Everything above is `.mirror` in `boot/` and `shards/`. The
 butterfly roadmap (`roadmap/wip/butterfly-self-hosting.md`) names the path:
-at the v0.9 → v1.0 gate, `@code/llvm` lands; the seed becomes vestigial.
+at the v0.9 → v1.0 gate, `@facet/llvm` lands; the seed becomes vestigial.
 
 ## Substrate Layout
 
@@ -190,8 +190,8 @@ shards/             FLOOR (canonical; loaded first)
   metalogue.mirror     language's self-conversation
   epistemologic/       substrate-level properties
   mirror/              @mirror/* shards (cli, mosaic, spec, store, au, shatter)
-  code.mirror          @code universal grammar-at-altitude discipline (the parent)
-  code/                @code/* altitude grammars (mirror, rust, gleam; llvm + fortran pending)
+  code.mirror          @facet universal grammar-at-altitude discipline (the parent)
+  code/                @facet/* altitude grammars (mirror, rust, gleam; llvm + fortran pending)
   io/                  @io/* contracts (cargo; flang pending)
 
 boot/               LEGACY (shrinks per release; monotonic line-count contract)
@@ -481,8 +481,8 @@ declares the parametric carrier at `shards/mirror/mosaic.mirror`;
 altitude-specific shapes (e.g. `splinter_graph` IS `mosaic(@store)`)
 specialize at their home altitude (2026-06-06 second tick, Mara).
 
-**au.** The settled output type, parametric over altitude. `au(@code/rust)`
-is a binary; `au(@release)` is a signed archive; `au(@code/fortran)` is a
+**au.** The settled output type, parametric over altitude. `au(@facet/rust)`
+is a binary; `au(@release)` is a signed archive; `au(@facet/fortran)` is a
 LAPACK kernel. au is the output of Fate inference; gold conducts; au
 carries; verification IS conductivity in context
 (per `[[architecture-au-conductivity]]`).
@@ -525,7 +525,7 @@ Properties return `Imperfect<verdict, violation, verification_loss>`.
 
 - Types are always lowercase: `type grammar`, not `type Grammar`
 - Actions are always implemented on named types
-- `in @code/rust { }` — the block IS the state struct
+- `in @facet/rust { }` — the block IS the state struct
 - `action name()` — the action IS a method on that struct
 - `recover |value, loss| { }` — 7-9 handler
 - `rescue |error| { }` — 6- handler
