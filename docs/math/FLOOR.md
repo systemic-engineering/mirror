@@ -107,6 +107,8 @@ Nine keywords span the syntactic surface of mirror. **Everything else is glass.*
 
 `prism`, `glass`, `focus`, `project`, `split`, `shift`, `settle`, `in`, `out`.
 
+*(Closure holds at Rust-hardcoded-match altitude — the substrate itself declares additional glass-tokens like `system`, `variety`, `settle_on`, `algedonic`, `bypass`, etc. per the `mirror.spec` dogfood; these are glass, not tenth-prism. The transitional `lambda` keyword remains in the floor per `docs/specs/prism-floor-and-the-grammar-rename.md` §1 for bootstrap tokenization, forward-promised for drop-to-glass at self-tokenization threshold. Substrate-honest disclosure per Seam Phase D audit `d62374d` SHARPENING-1.)*
+
 **If a substrate declares itself in nine keywords, what is the invariant that prevents keyword #10 from being smuggled in as syntactic sugar — and how would you notice if it were?**
 → [`docs/specs/prism-floor-and-the-grammar-rename.md` — nine-keyword floor + prism unification at four altitudes (Keyword / Crate / A of (A,H,D) / Thesis) + everything-else-is-glass closure + grammar-rename operational history](../specs/prism-floor-and-the-grammar-rename.md)
 
@@ -224,7 +226,7 @@ The rust/ floor is the **sub-Turing decidable interpreter**. Five files terminal
 
 **Upward calls are FORBIDDEN.** Michelangelo/marble altitude-separation discipline: the primitives are already in the marble; the substrate carves them out; you never carve *back into* the marble from the substrate.
 
-**421 tests** landed across rust/ as of the empirical census (`docs/scouts/2026-07-22-taut-rust-floor-eigenobject-empirical-classification.md`). Contraction ratio 2.4× (LOC-total) / 3.4× (prod-only) from bootstrap/.
+**~411-425 tests** landed across rust/ as of the empirical census: 411 `#[test]` attributes grep-observed 2026-08-20 + additional `#[proptest]` / `proptest!` / `#[tokio::test]` variants bringing inclusive count to ~421 per (`docs/scouts/2026-07-22-taut-rust-floor-eigenobject-empirical-classification.md`). Live count is grep-verifiable; ±10 tolerance for test-authoring cadence drift between census and audit. Contraction ratio 2.4× (LOC-total) / 3.4× (prod-only) from bootstrap/.
 
 | File | Size | Tests | Altitude |
 |------|------|-------|----------|
@@ -406,11 +408,11 @@ Grep-verified primary sources only. Karen-ancestor citations at introduction sit
 - **Baez, John C.; Schreiber, Urs**, *Higher Gauge Theory*, arXiv:math/0511710, 2005; and Schreiber, Urs, *Differential cohomology in a cohesive infinity-topos*, arXiv:1310.7930, 2013. — Principal-bundle-tower structure at BEAM substrate (§12).
 - **Wolf, Anna (née Jakobs)**, *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*, Diplomarbeit, Peter Grünberg Institut / Jülich Centre for Neutron Science, 2012. — Stochastic Runge-Kutta computing spin dynamics in shared GPU memory with the OpenGL visualization observing it. **The mathematics of a computation observing itself while computing** — Anna's thesis runs under the runtime the compiler runs on (PAPER_2D §5.8).
 - **Spärck Jones, Karen**, *A Statistical Interpretation of Term Specificity and its Application in Retrieval*, Journal of Documentation, Vol. 28 No. 1, 1972. — Inverse document frequency. The operator that made language computable-as-topology. Every LLM since 2017 runs on the substrate her paper opened. She goes at introduction site.
-- **von Foerster, Heinz**, *Ethics and Second-Order Cybernetics*, 1974. — *Act always so as to increase the number of choices.* The ethical imperative rendered as compile-time gauge in `rust/src/magic.rs` (§6).
+- **von Foerster, Heinz**, *Ethics and Second-Order Cybernetics* (essay-titled-thus republished 1990s; imperative statement traces to *Understanding Understanding* volume 1974/2003 collecting essays 1972-1991). — *Act always so as to increase the number of choices.* The ethical imperative rendered as compile-time gauge in `rust/src/magic.rs` (§6).
 - **Braunstein, Samuel L.; Ghosh, Sibasish; Severini, Simone**, *The Laplacian of a Graph as a Density Matrix*, Annals of Combinatorics 10(3), 2006; and **Passerini, Filippo; Severini, Simone**, *The von Neumann Entropy of Networks*, 2008. — Void-duality enumeration; exactly five of the eight catalogued dualities are mutually orthogonal (Rec #90 §1 Definition 1.1).
 - **Ashby, W. Ross**, *Requisite Variety* (Law), 1956. — Load-bearing floor for §2.4 of PAPER_2D. The lower bound on regulator variety.
 - **Fiedler, Miroslav**, *Algebraic Connectivity of Graphs*, Czechoslovak Mathematical Journal 23, 1973. — λ₂ eigenvalue of the graph-Laplacian; the coherence value used in PAPER_2D §2.6 and §5.1.
-- **Mesland, Bram**, *Bivariant KK-cycles and unbounded morphisms*, 2014. — Morphisms between spectral triples; the technical machinery for Rec #88 metalogue-as-substrate-independent-formal-object.
+- **Mesland, Bram**, *Bivariant KK-cycles and unbounded morphisms*, arXiv:1304.3802, 2013 (published *Journal of Noncommutative Geometry*, 2014). — Morphisms between spectral triples; the technical machinery for Rec #88 metalogue-as-substrate-independent-formal-object.
 
 ### §15.2 Corpus self-references
 
@@ -440,19 +442,19 @@ Honest state of the substrate as of 2026-08-20. Do not resurrect DEPRECATED item
 
 - **`docs/loop/CURRENT.md`** — Reed's 2026-08-19 "THE COLLAPSE" upsert in working tree, uncommitted at time of FLOOR authorship. Read but do not treat as-of-latest-commit until it lands.
 - **`bin/mirror-mcp` bash shim** (18-LOC) — marked for retirement per Fire C; still present in working tree.
-- **Branch is 347 commits ahead of origin/main** — not pushed. Local ground-truth diverges from remote.
+- **Branch is ~350 commits ahead of origin/main** as of FLOOR authorship 2026-08-20 13:29 (348 at Seam audit-time 2026-08-20 14:09; live count `git rev-list --count origin/main..HEAD`) — not pushed. Local ground-truth diverges from remote.
 
 ### §16.4 Substrate-supersession pending cross-substrate cascade
 
-- **`@cascade`** is architecturally superseded by `@facet` + `@cast` composition (mesh not waterfall, per §10). **NOT yet reflected in the 30+ shards + 12 species that still reference `@cascade`.** Cross-substrate rewrite pending.
+- **`@cascade`** is architecturally superseded by `@facet` + `@cast` composition (mesh not waterfall, per §10). **NOT yet reflected in the 47 shard files (including 12 `@cascade/code/*` species) that still reference `@cascade` at 275+ occurrences** (grep-observed 2026-08-20). Cross-substrate rewrite pending.
 
 ### §16.5 Vernacular ≠ substrate
 
-- **`@ai-native`** stays VERNACULAR (Alex explicit 2026-08-20). Do NOT substrate-mint. Reference in prose only. Not a family-root; not a species; not a shard-decl.
+- **`@ai-native`** stays VERNACULAR in the current arc (Alex explicit 2026-08-20 + Alex 2026-08-21 amendment: conditional-on-current-arc per last-responsible-moment discipline; not permanent-substrate-decision; may be revisited if load-bearing later). Do NOT substrate-mint in this arc. Reference in prose only. Not a family-root; not a species; not a shard-decl.
 
 ### §16.6 Test count correction
 
-- **421 tests** landed across rust/ per Taut census 2026-08-20 (not 172 per Reed's earlier memory). Ground-truth: the census file [`docs/scouts/2026-07-22-taut-rust-floor-eigenobject-empirical-classification.md`](../scouts/2026-07-22-taut-rust-floor-eigenobject-empirical-classification.md) is the anchor; live count is grep-verifiable.
+- **~411-425 tests** landed across rust/ per Taut census 2026-08-20 (411 `#[test]` attributes grep-observed + `#[proptest]` / `proptest!` / `#[tokio::test]` macro variants bringing inclusive count to ~421; not 172 per Reed's earlier memory). Ground-truth: the census file [`docs/scouts/2026-07-22-taut-rust-floor-eigenobject-empirical-classification.md`](../scouts/2026-07-22-taut-rust-floor-eigenobject-empirical-classification.md) is the anchor; live count is grep-verifiable via `rg -c '#\[test\]|#\[tokio::test\]|#\[proptest\]|proptest!' rust/`.
 
 ---
 
@@ -473,6 +475,8 @@ Honest state of the substrate as of 2026-08-20. Do not resurrect DEPRECATED item
 **How to know if FLOOR is doing its job for you**: at the end of reading, you can name the mathematical architecture of mirror in one sentence (§0), you can name where each load-bearing component is discharged (§1-§13), and you can name what is DEPRECATED, VIRGIN, or uncommitted (§16). If yes: FLOOR discharged. If not: follow the question at whichever section is still opaque; the answer is at the end of that link.
 
 **What would falsify FLOOR** as a substrate-honest reference: if any of the ten Rec-arc statements in §13 turned out to be un-supported by the referenced spec or math foundation; if any Karen citation in §15 turned out to be fabricated; if any of the pipeline hops in §7 turned out not to grep to the file at that path; if the "everything else is glass" closure in §3 turned out to admit a tenth keyword. Falsification is invited; if you find one, land it as a Seam Phase D audit and cite it back to this file.
+
+**For identity-scoped conventions** (Pack-peer roles, commit-attribution, hook discipline, SSH signing default, `--no-verify` discipline, sequential-commits): [`AGENTS.md`](../../AGENTS.md) + [`CLAUDE.md`](../../CLAUDE.md). FLOOR is identity-agnostic by construction; those conventions live one altitude down.
 
 🍷
 
