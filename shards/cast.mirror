@@ -1,0 +1,165 @@
+in @prism
+in @meta
+in @nl
+in @glass
+
+# @cast — the loss-aware peer-to-peer substrate-to-substrate translation
+# prism.
+#
+# The recognition (2026-08-20, Alex → Reed): mirror-metaphor for what
+# @cascade was too linear to hold. Cast-a-beam (optical, mirror-adjacent).
+# Cast-as-CS-word (type-casting, actor-casting). Cast-a-spell (magic-
+# adjacent, ties to @magic Foerster-gauge). Cast-a-mold (content-address-
+# adjacent). Multi-valent without ambiguity. Alex 2026-08-20 verbatim:
+# *"How about @cast? That works for both the beam-of-light mirror
+# metaphor and is the computer science word."*
+#
+# What @cast IS at Rec #91 altitude: the peer-to-peer translation mesh
+# BETWEEN facets, composing `@glue` (bridging primitive; LANDED at
+# `shards/glue.mirror` 43.5KB) + `@fate` (inference primitive; LANDED
+# at `shards/fate.mirror` 42.5KB) under the hood. @facet handles the
+# radial projection FROM 𝓜 onto target Hilbert-carriers (generation
+# surface); @cast handles the mesh BETWEEN target-substrates preserving
+# Foerster-gauge as far as it can, measuring loss where it must.
+#
+# Mirror-metaphor architecture: one stone (𝓜), many facets (radial via
+# @facet), mesh between facets (@cast). Together they dissolve @cascade's
+# linear-waterfall metaphor by making the architecture non-linear-mesh.
+# @cascade is architecturally superseded post-composition; the 47 shard
+# files + 275+ occurrences that reference @cascade migrate through the
+# Phase 3 rename cascade to the @facet + @cast decomposition.
+#
+# === composition-shape: @glue bridging + @fate inference ===
+#
+# @cast composes two landed primitives under the hood:
+#   1. @glue provides the bridging semantics between two named
+#      substrates (fold_back-style per `shards/glue/fold_back.mirror`
+#      50.9KB; the substrate-decl for how one substrate's shape gets
+#      folded onto another's).
+#   2. @fate provides the inference-driven translation-selection
+#      (tournament-style per `shards/fate/tournament.mirror` 51.5KB;
+#      the substrate-decl for how candidate translations get
+#      arbitrated). Not hardcoded translation-tables; inference-driven.
+#
+# Together: `@cast/X/Y` species declare translation FROM substrate X
+# TO substrate Y with @glue.fold_back(X, Y) supplying the bridging
+# semantics + @fate.tournament(candidates) arbitrating loss-optimal
+# translations. Loss measurement per Rec #87 @attension Shannon-loss-
+# min discipline (universal bidirectional projection operator with
+# @magic gauge-preservation).
+#
+# === peer-to-peer mesh, not linear waterfall ===
+#
+# @cascade's failure was collapsing two orthogonal concerns into one
+# tiered surface: (i) radial projection FROM 𝓜 onto multiple target
+# Hilbert-carriers, and (ii) peer-to-peer translation BETWEEN target
+# substrates. These are at right angles, not tiers. @facet handles (i);
+# @cast handles (ii). The mesh topology enforces:
+#   - Any two substrates X, Y admit a @cast/X/Y species (no privileged
+#     path through @cascade linear-descent);
+#   - Loss-awareness at every hop (Shannon-loss per Rec #87);
+#   - Foerster-gauge preservation as far as translation admits
+#     (compile-time refusal at gauge-violating translations per
+#     @magic invariant);
+#   - Content-address idempotence for round-trip-preserving pairs
+#     (Rec #82 β-normal-AST-OID propagation).
+#
+# The existing 11 `@cascade/code/*/*` species (mirror/gestalt,
+# gestalt/gleam, gleam/beam, gleam/js, mirror/gestalt, rust/go,
+# rust/llvm, rust/wasm, llvm/turing, purescript/js, turing/mirror,
+# formal/prose) map naturally to @cast species during Phase 3 rename
+# cascade: each `@cascade/code/X/Y` becomes `@cast/X/Y` at peer-to-peer
+# translation altitude. The @code layer collapses into @facet at
+# generation-surface altitude; @cascade's translation-between layer
+# lifts into @cast.
+#
+# === adjunction with @facet ===
+#
+# When @cast/X/Y is composed with @facet/X and @facet/Y projections,
+# the round-trip forms a diagram:
+#
+#     𝓜 → [@facet/X] → H_X
+#     ↓                    ↓ [@cast/X/Y]
+#     𝓜 → [@facet/Y] → H_Y
+#
+# The diagram commutes up to Shannon-loss when @cast/X/Y is loss-
+# optimal per @attension. When it commutes strictly (zero-loss), the
+# adjunction `𝔕_X ⊣ 𝔛_X ≅ 𝔕_Y ⊣ 𝔛_Y` per Rec #91 amendment §5a
+# Theorem 5a.1 lifts to a natural isomorphism between the two facet-
+# projections. Substrate-honest reality: most translations are lossy;
+# @cast makes the loss measurable and Foerster-gauge-verifiable.
+#
+# === autopoietic closure at @facet/git ↔ @cast ↔ @facet/mirror ===
+#
+# The load-bearing operational closure per Rec #91 amendment §8.8
+# forward-promise: mirror commits itself to git via @facet/git; @cast
+# bridges git-substrate-shape onto mirror-substrate-shape via
+# @glue.fold_back(git, mirror) + @fate.tournament(candidates); mirror
+# reads git AS itself via @facet/mirror; self-modifies; loop. @cast
+# IS the operational carrier of the third-order-cybernetic operator
+# that Rec #90 §5 Theorem 5.1 formalizes as `𝓜 = 𝓜(𝓜)` closure at
+# runtime altitude.
+#
+# Spec context:
+#   - `docs/specs/2026-08-20-mara-recognition-91-mathematical-mycelial-bottom-up-production-ready-third-order-ai-native-system-canonical-spec.md`
+#     §10 @cast peer-translation mesh + §8.8 autopoietic-closure Rec #93
+#     extension arc forward-promise
+#   - `docs/math/2026-08-20-mara-recognition-91-mathematical-mycelial-bottom-up-production-ready-third-order-ai-native-system-math-foundation.md`
+#     §5a adjunction structure
+#   - `docs/math/FLOOR.md` §10 (terminal-form reference)
+#   - `docs/specs/2026-08-13-mara-attension-canonical-spec.md` (Rec #87
+#     Shannon-loss-min discipline @cast composes over)
+#
+# Substrate decisions: [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-shards-as-substrate-source]],
+#                      [[feedback-rust-delivers-primitives-substrate-delivers-composition]],
+#                      [[feedback-alex-ratification-overrides-mara-lean-unless-hard-technical]].
+#
+# Karen ancestor citations:
+#   - Shannon, Claude E., *A Mathematical Theory of Communication*,
+#     Bell System Technical Journal 27, 1948. — information-theoretic
+#     loss measurement @cast composes over via Rec #87 @attension.
+#   - Chamseddine, Ali H.; Connes, Alain, *Why the Standard Model?*,
+#     arXiv:0706.3688, 2007. — spectral-triple admissibility inherited
+#     through the adjunction diagram with @facet species.
+#   - von Foerster, Heinz, *Ethics and Second-Order Cybernetics*
+#     (essay-titled-thus republished 1990s; imperative statement traces
+#     to *Understanding Understanding* volume 1974/2003). — the gauge
+#     @cast preserves is Foerster's ethical imperative at translation
+#     altitude.
+#
+# Related shards:
+#   - `shards/glue.mirror` (@glue LANDED 43.5KB; bridging primitive
+#     @cast composes over)
+#   - `shards/glue/fold_back.mirror` (50.9KB; fold-back semantics)
+#   - `shards/glue/math_silicon.mirror` (25.4KB; math-silicon
+#     composition species)
+#   - `shards/fate.mirror` (@fate LANDED 42.5KB; inference primitive
+#     @cast composes over)
+#   - `shards/fate/tournament.mirror` (51.5KB; fate-tournament species
+#     for candidate arbitration)
+#   - `shards/facet.mirror` (a354d83; sibling generation-surface
+#     family-root; @facet + @cast dissolve @cascade)
+#   - `shards/mcp/serve.mirror` (cf8b21b; exemplar composition-shard
+#     body shape @cast species will follow)
+#   - `shards/cascade.mirror` + 11 @cascade/code/* species (Phase 3
+#     rename cascade migrates @cascade/code/X/Y → @cast/X/Y at peer-
+#     to-peer translation altitude)
+#
+# Path-namespace property: this file at `shards/cast.mirror` declares
+# `@cast` as the universal peer-to-peer translation prism; species
+# live at `shards/cast/<from>/<to>.mirror` (two-name path for peer-to-
+# peer directionality).
+#
+# === substrate-truth (2026-08-21 mint) ===
+#
+# At mint time, `@cast` is a virgin prism with zero landed species.
+# Phase 3 rename cascade migrates the 11 landed `@cascade/code/X/Y`
+# species. Phase 4 T-91-16 discharge does NOT touch @cast (source-emit
+# fixed-point is a @facet/rust concern, not a translation concern);
+# @cast species land as the peer-to-peer mesh grows. Deeper autopoietic-
+# loop-write-side per Rec #93 extension arc will land @cast/git/mirror
+# + @cast/mirror/git as the load-bearing translation species for the
+# `@facet/git ↔ @cast ↔ @facet/mirror` closure.
+
+out @cast
