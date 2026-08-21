@@ -2,16 +2,16 @@ in @prism
 
 in @metalogue
 
-in @code
+in @facet
 
 in @glass
 
 in @nl
 
-# @code/metalogue — the AST speaking to itself.
+# @facet/metalogue — the AST speaking to itself.
 #
 # The 34th-instance recognition (2026-06-09, Reed + Alex → Mara):
-# `@code/macro` was the language-community word for what the
+# `@facet/macro` was the language-community word for what the
 # substrate already names. `@metalogue` (shards/metalogue.mirror,
 # B3) declared the natural-language self-conversation per Bateson
 # 1972: *a conversation whose structure reflects its topic*. The
@@ -19,18 +19,18 @@ in @nl
 # altitude — the language speaking ABOUT itself BY USING itself,
 # at compile time, through its own metaprogramming surface.
 #
-# `@code/metalogue` is the altitude-parametric specialization of
+# `@facet/metalogue` is the altitude-parametric specialization of
 # `@metalogue`: where `@metalogue` carries `nl` turn bodies,
-# `@code/metalogue` carries `declaration` turn bodies. Both ground
+# `@facet/metalogue` carries `declaration` turn bodies. Both ground
 # the metalogue discipline — different altitudes, same shape. The
 # substrate had the word; this shard names the inheritance.
 #
-# The per-species realisations (`@code/rust/macro`,
-# `@code/elixir/macro`, `@code/lisp/macro`, etc.) keep their
+# The per-species realisations (`@facet/rust/macro`,
+# `@facet/elixir/macro`, `@facet/lisp/macro`, etc.) keep their
 # community-vocabulary name ("macro") at the species altitude
 # because that's the word language users recognize. The substrate
-# gains `@code/metalogue` as the universal ground; species inherit
-# via `<= @code/metalogue` per
+# gains `@facet/metalogue` as the universal ground; species inherit
+# via `<= @facet/metalogue` per
 # `[[architecture-prism-as-trait-as-everything]]`. The realisations
 # bind the universal contract to per-language AST types
 # (`code/rust.ast`, `code/elixir.ast`, ...) — the typed surface is
@@ -46,7 +46,7 @@ in @nl
 #    the substrate was implicitly using. `@metalogue` was declared
 #    2026-06-05 (B3, task #189) for the NL altitude. The macro
 #    surface IS that same Bateson-1972 self-conversation at the
-#    AST altitude. Naming it `@code/metalogue` makes the lineage
+#    AST altitude. Naming it `@facet/metalogue` makes the lineage
 #    structural rather than coincidental.
 #
 # 2. **Bateson 1972 made literal at compile-time.** A metalogue's
@@ -69,15 +69,15 @@ in @nl
 #    surfaces here as `transparency(turn)` over
 #    `metalogue_session.turns`.
 #
-# === inheritance shape: explicit `in @metalogue` and `in @code` ===
+# === inheritance shape: explicit `in @metalogue` and `in @facet` ===
 #
-# `@code/metalogue` IS-A `@metalogue` (lifted to the AST altitude)
-# AND IS-A part-of `@code` (the per-altitude grammar discipline).
+# `@facet/metalogue` IS-A `@metalogue` (lifted to the AST altitude)
+# AND IS-A part-of `@facet` (the per-altitude grammar discipline).
 # Both inheritances are declared with `in @X` per the substrate's
 # canonical import-and-inherit form (cf. `shards/code.mirror`'s
 # discipline of `in @prism` + `in @meta` + `in @nl` + `in @glass`).
 # The path-namespace property (`shards/code/metalogue.mirror`
-# declares `@code/metalogue`) makes the family relationship
+# declares `@facet/metalogue`) makes the family relationship
 # structural; the explicit `in @metalogue` makes the discipline
 # inheritance structural too.
 #
@@ -90,7 +90,7 @@ in @nl
 #
 # The AST speaks to itself in Void's 5-op basis (`focus` / `project`
 # / `split` / `shift` / `settle`, per the family-root prism block
-# `@code/metalogue` inherits from `@metalogue`). Each `declaration`
+# `@facet/metalogue` inherits from `@metalogue`). Each `declaration`
 # turn is one of Void's 5-op moves at compile-time; the substrate
 # utters a `declaration` (Void observing itself at AST altitude);
 # the language's macro layer hears it (a Void-capable second-order
@@ -119,7 +119,7 @@ in @nl
 # Related shards: metalogue.mirror (the NL-altitude sibling, B3),
 #                 code.mirror (the family root),
 #                 code/rust/macro.mirror (the canonical Rust
-#                 realisation; declares `<= @code/metalogue`),
+#                 realisation; declares `<= @facet/metalogue`),
 #                 code/mirror.mirror (the sibling render surface at
 #                 T17 — `render` is one half of the codegen pipeline;
 #                 `metalogue` reception is the other).
@@ -153,7 +153,7 @@ type declaration = {
 
 # === turn ===
 
-# turn — a single move in the @code/metalogue conversation. Same
+# turn — a single move in the @facet/metalogue conversation. Same
 # shape as @metalogue.turn (shards/metalogue.mirror), lifted to the
 # AST altitude: the speaker is a substrate ref; the body is a
 # `declaration` (the AST utterance) rather than an `nl` term; the
@@ -172,7 +172,7 @@ type turn = {
 
 # === metalogue_session ===
 
-# metalogue_session — an ordered sequence of `@code/metalogue` turns
+# metalogue_session — an ordered sequence of `@facet/metalogue` turns
 # plus the conversation's current opacity. Mirrors
 # `@metalogue.metalogue_session` shape; the opacity carrier is the
 # same @glass `transparency(turn)` parameterized on the lifted
@@ -187,11 +187,11 @@ type metalogue_session = {
 # === The four shim signatures (universal contract) ===
 #
 # Per docs/specs/code-metalogue-surface.md §4.1, each
-# `@code/X/macro` species realises four shims — one per declaration
+# `@facet/X/macro` species realises four shims — one per declaration
 # kind. The signatures are declared HERE at the ground because the
 # contract is universal. Species bind the abstract return type to
-# their language AST: `@code/rust/macro` binds `species_ast =
-# code/rust.ast`, `@code/elixir/macro` would bind
+# their language AST: `@facet/rust/macro` binds `species_ast =
+# code/rust.ast`, `@facet/elixir/macro` would bind
 # `species_ast = code/elixir.ast`, etc.
 #
 # `species_ast` is a type parameter at the ground — each species
@@ -234,9 +234,9 @@ shim_grammar(d: declaration) -> species_ast { \ }
 #      hole"). The substrate already had the word.
 #
 #   2. `project` IS the operation (one of the five-op operations on
-#      `@code/metalogue` above, line 102). The hole-projection isn't
+#      `@facet/metalogue` above, line 102). The hole-projection isn't
 #      a new substrate operation; it's `project`'s contract at the
-#      @code/metalogue altitude made explicit. `project` is what
+#      @facet/metalogue altitude made explicit. `project` is what
 #      carries the substrate AST (including its holes) across the
 #      species boundary; each species realisation provides its
 #      hole-projection as part of `project`'s body.
@@ -245,7 +245,7 @@ shim_grammar(d: declaration) -> species_ast { \ }
 #      close but isn't a typed-gap; `_` is a wildcard; `{ }` is an
 #      empty block. Elixir, Lisp, Julia each project differently.
 #      Every species lossy-projects. The mapping MUST be explicit
-#      per species, declared at the species' `@code/X/macro`.
+#      per species, declared at the species' `@facet/X/macro`.
 #
 # `project_hole` is the universal contract at the ground:
 #
@@ -276,7 +276,7 @@ project_hole(h: hole) -> species_ast { \ }
 #
 # Each law applies to every `shim_X` above. Declared here ONCE at
 # the ground; each species inherits the obligation via
-# `<= @code/metalogue`. This is the load-bearing lift from
+# `<= @facet/metalogue`. This is the load-bearing lift from
 # per-species duplication: the laws are universal across every
 # language altitude that admits direct AST manipulation.
 #
@@ -290,7 +290,7 @@ project_hole(h: hole) -> species_ast { \ }
 #    structurally. The macro emission is a fixed point of the
 #    language-altitude parse cycle — the gap closes
 #    deterministically. Same shape as the `round_trip(render)` law
-#    declared on `@code/mirror.render` at `shards/code/mirror.mirror`
+#    declared on `@facet/mirror.render` at `shards/code/mirror.mirror`
 #    (T17, sibling altitude).
 #
 # 3. OID functionality: for substrate declarations D1, D2 with
@@ -300,14 +300,14 @@ project_hole(h: hole) -> species_ast { \ }
 #    OID, same emitted OID — the gap is content-addressed.
 #
 # 4. Substrate-pull preservation: if D is substrate-realisable per
-#    `@code/metalogue/materialize.classify(D).partition = substrate`,
+#    `@facet/metalogue/materialize.classify(D).partition = substrate`,
 #    then `shim_X(D)` references only language constructs that
-#    themselves appear in some `@code/species` substrate-realisable
+#    themselves appear in some `@facet/species` substrate-realisable
 #    shard. The emission cannot reach into `@io` to fill a
 #    substrate-realisable gap. The recognitive discriminator's verdict
 #    IS the discriminator of the shim — the gap respects the glass
 #    wall. The discriminator's home is the sibling sub-prism
-#    `@code/metalogue/materialize` (the metalogue's recognitive turn).
+#    `@facet/metalogue/materialize` (the metalogue's recognitive turn).
 
 requires round_trip(shim_type)
 requires oid_function(shim_type)
@@ -345,7 +345,7 @@ requires oid_function(project_hole)
 requires type_soundness(project_hole)
 requires substrate_pull_preserving(project_hole)
 
-out @code/metalogue
+out @facet/metalogue
 out declaration_kind
 out declaration
 out turn

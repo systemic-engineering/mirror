@@ -1,53 +1,53 @@
-in @code
+in @facet
 in @prism
 in @glass
 in @meta
 in @nl
 
-# @code/mirror — mirror's instance of @code at the mirror altitude.
+# @facet/mirror — mirror's instance of @facet at the mirror altitude.
 #
 # The recognition (2026-06-06, Reed + Alex → Mara): mirror IS code at
-# the mirror altitude. Same as @code/rust IS code at the Rust altitude,
-# @code/llvm IS code at the LLVM altitude. The substrate already had
-# @code as the universal grammar-at-an-altitude discipline; this shard
+# the mirror altitude. Same as @facet/rust IS code at the Rust altitude,
+# @facet/llvm IS code at the LLVM altitude. The substrate already had
+# @facet as the universal grammar-at-an-altitude discipline; this shard
 # names mirror's own membership in that family.
 #
 # Why this matters for self-hosting (per the butterfly roadmap, Phase 2
 # in `roadmap/wip/butterfly-self-hosting.md` §The compile staircase):
-# when @code/mirror is the bootstrap's parser, the bootstrap stops
+# when @facet/mirror is the bootstrap's parser, the bootstrap stops
 # being load-bearing for parsing. Mirror parses mirror through its own
-# substrate-declared @code instance. The previous framing
+# substrate-declared @facet instance. The previous framing
 # `@mirror/syntax` was wrong-shaped because syntax is not a sibling of
 # mosaic / cli / spec / store at @mirror — syntax is what code IS at
 # the mirror altitude, which means the substrate already had the word.
 #
-# === naming: why @code/mirror, not @mirror/code ===
+# === naming: why @facet/mirror, not @mirror/code ===
 #
-# Two arguments converge on @code/mirror:
+# Two arguments converge on @facet/mirror:
 #
 #   1. Path-namespace property (load-bearing per
 #      [[architecture-shards-as-substrate-source]]): this file lives at
 #      `shards/code/mirror.mirror` and that path declares the namespace
-#      `@code/mirror`. Same shape as `shards/code/rust.mirror` declares
-#      `@code/rust`. The path IS the declaration.
+#      `@facet/mirror`. Same shape as `shards/code/rust.mirror` declares
+#      `@facet/rust`. The path IS the declaration.
 #
-#   2. Sibling discipline: @code/mirror sits alongside @code/rust,
-#      @code/gleam, @code/llvm, @code/fortran as instances of the same
+#   2. Sibling discipline: @facet/mirror sits alongside @facet/rust,
+#      @facet/gleam, @facet/llvm, @facet/fortran as instances of the same
 #      universal discipline. Reading the family flat-namespaced makes
 #      the substrate-pull recognition legible ("mirror is one of the
-#      altitudes @code knows about"). @mirror/code would isolate mirror
+#      altitudes @facet knows about"). @mirror/code would isolate mirror
 #      as its own sub-family and lose that legibility.
 #
 # Alex flagged (2026-06-06) that `@X/Y/Z` namespaces may be isomorphic
 # to `@Z/Y/X` because composition is order-invariant; the
 # path-namespace property pulls the canonical form to the path-shape,
-# which lands at @code/mirror here.
+# which lands at @facet/mirror here.
 #
 # === five operations at the mirror altitude ===
 #
-# Per the prism-as-trait-as-everything discipline, declaring @code/mirror
+# Per the prism-as-trait-as-everything discipline, declaring @facet/mirror
 # IS declaring the five operations on the mirror-source manifold. The
-# operation signatures inherit from @code (universal); the altitude
+# operation signatures inherit from @facet (universal); the altitude
 # specialization names what each verb does at THIS altitude. Bodies
 # are abstract (the obligation block \) — the bootstrap discharges them
 # today; @mirror/compile discharges them in the self-hosted phase.
@@ -61,10 +61,10 @@ in @nl
 # Related shards: code.mirror (the universal parent),
 #                 code/rust.mirror (D2; the sibling precedent),
 #                 code/gleam.mirror (post-migration from boot/04b),
-#                 mirror/store.mirror (where @code/mirror artifacts
+#                 mirror/store.mirror (where @facet/mirror artifacts
 #                 settle as content-addressed splinters).
 # Path-namespace property: this file at `shards/code/mirror.mirror`
-# declares `@code/mirror` and only that.
+# declares `@facet/mirror` and only that.
 
 # === type-declaration grammar — newline-tolerant variant separator ===
 #
@@ -85,7 +85,7 @@ in @nl
 # The fix is not to extend mirror's syntax. It's to declare mirror's
 # variant-separator rule HERE, at the substrate altitude that Phase 2
 # wires as the bootstrap's parser (per roadmap/pending/phase-2-parser-
-# self.md task 1: "Write @code/mirror grammar describing tokenization
+# self.md task 1: "Write @facet/mirror grammar describing tokenization
 # rules using the five operations"). The substrate already carries the
 # rule's primitive: `charset(whitespace)` (cf. boot/std/mirror/grammar.
 # mirror line 21, boot/std/mirror/glass/ast/token.mirror line 72,
@@ -95,12 +95,12 @@ in @nl
 # primitive as the separator's surround; no new combinator needed.
 #
 # Said another way: the substrate already had the rule. We just
-# hadn't NAMED the inheritance. Same shape as the @code recognition
+# hadn't NAMED the inheritance. Same shape as the @facet recognition
 # itself (mirror IS code at the mirror altitude), as splinter_graph →
 # mosaic(@store), as fragment → splinter. The substrate-pull pattern.
 #
 # Phase 2 will discharge the obligation: when the bootstrap's parser is
-# replaced by @code/mirror, the multi-line form parses identically to
+# replaced by @facet/mirror, the multi-line form parses identically to
 # the single-line form, and `mirror compile --strict` over glass.mirror
 # / transit.mirror / refract.mirror returns zero darks for the variant
 # separators. Until then this declaration is forward-looking; the
@@ -108,14 +108,14 @@ in @nl
 # (transit.mirror, refract.mirror) keep the flattened shape to honor
 # the bootstrap constraint while the substrate carries the truth.
 #
-# Path-namespace note: this grammar block declares `@code/mirror/grammar`
+# Path-namespace note: this grammar block declares `@facet/mirror/grammar`
 # under the path-namespace property
 # ([[architecture-shards-as-substrate-source]]). The block belongs to
-# @code/mirror as code IS grammar at the mirror altitude (per the
+# @facet/mirror as code IS grammar at the mirror altitude (per the
 # Phase-2 recognition); the sub-prism naming preserves the Phase-2
-# language ("@code/mirror grammar") at the substrate altitude.
+# language ("@facet/mirror grammar") at the substrate altitude.
 
-grammar @code/mirror/grammar("mirror", "spec", "meta", "glass", "shard", "shatter") {
+grammar @facet/mirror/grammar("mirror", "spec", "meta", "glass", "shard", "shatter") {
   in @meta
 
   # ===== lexical primitives =====
@@ -170,7 +170,7 @@ grammar @code/mirror/grammar("mirror", "spec", "meta", "glass", "shard", "shatte
 # text with layout choices — different surface:
 #
 #   @mirror/data/json.emit  : data-altitude render (carrier → text)
-#   @code/mirror.render     : language-altitude render (AST → text)
+#   @facet/mirror.render     : language-altitude render (AST → text)
 #
 # Both are projections from a typed structure to a wire surface; both
 # face the same algebraic question of how to lay out a tree of
@@ -188,8 +188,8 @@ grammar @code/mirror/grammar("mirror", "spec", "meta", "glass", "shard", "shatte
 # This sub-prism names the language-altitude half. The shared
 # primitive — Wadler/Bernardy's combinator algebra — is the surface;
 # the two altitudes specialise the carrier (json/yaml/toml/text on
-# the data side; mirror AST on the language side; future @code/rust /
-# @code/gleam / @code/llvm renders on the language side as siblings).
+# the data side; mirror AST on the language side; future @facet/rust /
+# @facet/gleam / @facet/llvm renders on the language side as siblings).
 #
 # === Naming: render, not emit ===
 #
@@ -202,7 +202,7 @@ grammar @code/mirror/grammar("mirror", "spec", "meta", "glass", "shard", "shatte
 #      carrier and its wire surface; data uses `emit`. The substrate
 #      already had the word at the language altitude.
 #   2. The Phase 4 contract. `roadmap/pending/phase-4-emitter-self.md`
-#      task 4 names it explicitly: "Write the `@code/mirror` render
+#      task 4 names it explicitly: "Write the `@facet/mirror` render
 #      template (the pretty-printer). Round-trip: parse → emit →
 #      parse = identity." The contract names render; this declaration
 #      lands its substrate form.
@@ -211,7 +211,7 @@ grammar @code/mirror/grammar("mirror", "spec", "meta", "glass", "shard", "shatte
 # text); `emit` is the data-altitude projection (carrier → bytes).
 # They share Wadler/Bernardy as the algebra and the round-trip law
 # as the contract; they differ in carrier kind. Future
-# `@code/rust.render`, `@code/gleam.render`, `@code/llvm.render` join
+# `@facet/rust.render`, `@facet/gleam.render`, `@facet/llvm.render` join
 # this as siblings — each altitude's render specialises the doc
 # carrier to its own AST shape, all sharing the combinator surface
 # declared below.
@@ -225,7 +225,7 @@ grammar @code/mirror/grammar("mirror", "spec", "meta", "glass", "shard", "shatte
 # adds no new constructors — its contribution is the optimality
 # criterion over the same algebra. The carrier is the minimal one
 # the algebra requires.
-prism @code/mirror/render {
+prism @facet/mirror/render {
   focus render
   project render
   split render
@@ -325,12 +325,12 @@ flatten(d: doc) -> doc { \ }
 # Declared here as a substrate property; the model checker
 # discharges when T19's render body lands. The contract names the
 # law; the implementation must satisfy it; the verdict is a
-# typed property check at the @code/mirror altitude.
+# typed property check at the @facet/mirror altitude.
 requires round_trip(render)
 
-out @code/mirror
-out @code/mirror/grammar
-out @code/mirror/render
+out @facet/mirror
+out @facet/mirror/grammar
+out @facet/mirror/render
 out doc
 out render
 out text

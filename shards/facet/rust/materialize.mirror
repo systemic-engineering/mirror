@@ -1,10 +1,10 @@
-in @code
+in @facet
 
-in @code/metalogue
+in @facet/metalogue
 
-in @code/metalogue/materialize
+in @facet/metalogue/materialize
 
-in @code/rust
+in @facet/rust
 
 in @prism
 
@@ -14,39 +14,39 @@ in @meta
 
 in @nl
 
-# @code/rust/materialize — the Rust altitude's recognitive turn
+# @facet/rust/materialize — the Rust altitude's recognitive turn
 # realisation.
 #
 # The metalogue-turn-pair recognition (2026-06-10, Alex → Mara via
-# Reed): `@code/metalogue` declares the substrate-pull-correct
+# Reed): `@facet/metalogue` declares the substrate-pull-correct
 # ground for the AST altitude's metalogue. The shim direction
 # (substrate utters → species emits) is realised PER-SPECIES at
-# `@code/X/macro` shards (cf. `shards/code/rust/macro.mirror`).
+# `@facet/X/macro` shards (cf. `shards/code/rust/macro.mirror`).
 # The recognitive direction (species utters → substrate
-# recognises) is realised PER-SPECIES at `@code/X/materialize`
+# recognises) is realised PER-SPECIES at `@facet/X/materialize`
 # shards — this file is the Rust-altitude binding.
 #
-# Why under `@code/rust` (not a new `@code/materialize` family or
+# Why under `@facet/rust` (not a new `@facet/materialize` family or
 # the prior `@mirror/realisation` home): per
 # docs/specs/code-metalogue-surface.md §2 substrate-pull check,
-# `@code/X` species carry per-language altitude grammars. The
+# `@facet/X` species carry per-language altitude grammars. The
 # metalogue/materialize recognition sub-prism IS-A part of the
-# language altitude (the way `@code/rust/macro` IS-A part of
-# `@code/rust`, the way `@code/rust/cargo` IS-A part of
-# `@code/rust`), not a sibling family. The classifier's INPUT is
+# language altitude (the way `@facet/rust/macro` IS-A part of
+# `@facet/rust`, the way `@facet/rust/cargo` IS-A part of
+# `@facet/rust`), not a sibling family. The classifier's INPUT is
 # a `code/rust.ast`; the home pulls to the species altitude. Path-
 # namespace property per
 # [[architecture-shards-as-substrate-source]]: this file at
 # `shards/code/rust/materialize.mirror` declares
-# `@code/rust/materialize`. The path IS the declaration.
+# `@facet/rust/materialize`. The path IS the declaration.
 #
-# === Inheritance from @code/metalogue/materialize ===
+# === Inheritance from @facet/metalogue/materialize ===
 #
 # The recognitive turn's contract (`classify` /
 # `is_materialisable` / `target_altitude` action signatures, the
 # `materialised_file` + `partition` carriers, the four laws) is
 # declared ONCE at `shards/code/metalogue/materialize.mirror`.
-# This shard inherits via `in @code/metalogue/materialize` per
+# This shard inherits via `in @facet/metalogue/materialize` per
 # [[architecture-prism-as-trait-as-everything]]'s `<=` mechanism
 # (`in @X` is the canonical import-and-inherit form). The action
 # signatures below specialise the ground's parametric
@@ -75,7 +75,7 @@ in @nl
 #   #24 oscillate_witness (next-oscillation)         -> @kintsugi/oscillate
 #   #25 morphism_context (per-candidate slice)       -> @kintsugi/morphism
 #   #26 shift(oid, T) typed-capability primitive     -> @mirror/spectral/portal
-#   #27 template render (one operation, many uses)   -> @code/mirror
+#   #27 template render (one operation, many uses)   -> @facet/mirror
 #   #28 "path was already half-built" (json lift)    -> @mirror/data
 #   #29 "presence IS the signal" (SCM_RIGHTS)        -> @mirror/spectral/portal
 #
@@ -85,7 +85,7 @@ in @nl
 # kintsugi-on-Rust when the consumer pulls) reads the
 # `code/rust.ast` and walks the family roster: does this file's
 # structural shape match `@mirror/lens`'s family? `@mirror/loss`'s?
-# `@code/mirror`'s? The 29 prior recognitions teach the
+# `@facet/mirror`'s? The 29 prior recognitions teach the
 # discriminator what "shape-match" means at each altitude.
 #
 # === The carrier vs the verdict (two surfaces) ===
@@ -103,11 +103,11 @@ in @nl
 #
 # Per the in-flight depth-2 recognition (#46 pending, glass for
 # depth-≥1 declarations): this sub-prism uses `glass` since it is
-# depth-2 (`@code/rust` is depth-1; `@code/rust/materialize` is
+# depth-2 (`@facet/rust` is depth-1; `@facet/rust/materialize` is
 # depth-2). Cf. `shards/code/rust/macro.mirror`'s depth-2 `prism`
 # declaration that the sweep will lift; this new shard uses the
 # new vocabulary from birth.
-glass @code/rust/materialize {
+glass @facet/rust/materialize {
   focus materialize
   project materialize
   split materialize
@@ -117,10 +117,10 @@ glass @code/rust/materialize {
 
 # === Rust-altitude binding ===
 #
-# The three action signatures from `@code/metalogue/materialize`
+# The three action signatures from `@facet/metalogue/materialize`
 # (universal contract) bind here to `code/rust.ast` as the
 # species AST type. The contract and laws inherit from the ground
-# via `in @code/metalogue/materialize`; this shard's job is the
+# via `in @facet/metalogue/materialize`; this shard's job is the
 # per-altitude binding plus the realisation cascade.
 #
 # Per [[feedback-craft-not-deliver]]: bodies are `\` until a
@@ -134,7 +134,7 @@ glass @code/rust/materialize {
 # for Rust forms. Reads a `code/rust.ast`-parsed declaration;
 # emits the full materialised_file record (path / partition /
 # target / verdict). Body discharges by walking the AST against
-# the family roster (@io, @code/mirror, @mirror/lens,
+# the family roster (@io, @facet/mirror, @mirror/lens,
 # @mirror/loss, @mirror/data, @mirror/spectral,
 # @epistemologic/math/*) and pattern-matching the file's
 # structural shape against each altitude's declared grammar. The
@@ -157,15 +157,15 @@ target_altitude(d: declaration) -> ref { \ }
 #
 # The Rust-altitude binding inherits all four laws (round-trip,
 # OID-functionality, type-soundness, substrate-pull preservation)
-# from `@code/metalogue/materialize` via the `<=` mechanism. No
+# from `@facet/metalogue/materialize` via the `<=` mechanism. No
 # additional `requires` clauses are declared here; the obligations
 # are universal across every species realisation.
 #
-# Spec context: docs/specs/code-metalogue-surface.md (the @code/
+# Spec context: docs/specs/code-metalogue-surface.md (the @facet/
 #               metalogue spec; the per-species realisation
 #               matrix at §11 lifts to include both directions —
-#               shim at @code/X/macro, materialize at
-#               @code/X/materialize),
+#               shim at @facet/X/macro, materialize at
+#               @facet/X/materialize),
 #               docs/insights/2026-06-09-mirror-as-content-
 #               addressed-build-system.md (the adjunction
 #               declaration ↔ realisation lift at the species
@@ -197,10 +197,10 @@ target_altitude(d: declaration) -> ref { \ }
 #                  deprecation pointer pending cleanup tick).
 # Path-namespace property: this file at
 # `shards/code/rust/materialize.mirror` declares
-# `@code/rust/materialize` per
+# `@facet/rust/materialize` per
 # `@epistemologic/pact/path_matches_namespace`.
 
-out @code/rust/materialize
+out @facet/rust/materialize
 out classify
 out is_materialisable
 out target_altitude

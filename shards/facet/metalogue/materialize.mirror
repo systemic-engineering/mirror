@@ -1,6 +1,6 @@
-in @code
+in @facet
 
-in @code/metalogue
+in @facet/metalogue
 
 in @prism
 
@@ -10,10 +10,10 @@ in @meta
 
 in @nl
 
-# @code/metalogue/materialize — the metalogue's recognitive turn.
+# @facet/metalogue/materialize — the metalogue's recognitive turn.
 #
 # The metalogue-turn-pair recognition (2026-06-10, Alex → Mara via
-# Reed): the @code/metalogue conversation has TWO directions, and
+# Reed): the @facet/metalogue conversation has TWO directions, and
 # the substrate had named only one. The shim family at the ground
 # (`shim_type` / `shim_prism` / `shim_action` / `shim_grammar` at
 # `shards/code/metalogue.mirror`) names the substrate-utters →
@@ -22,7 +22,7 @@ in @nl
 # species-emits → substrate-recognises direction — the substrate
 # hearing the species' speech and asking "which altitude already
 # names this?" One conversation, two turns; the substrate-pull-
-# correct home for both is `@code/metalogue` because both ARE the
+# correct home for both is `@facet/metalogue` because both ARE the
 # AST altitude's metalogue per Bateson 1972 (the structure reflects
 # the topic — both directions).
 #
@@ -30,17 +30,17 @@ in @nl
 # 2026-06-10 sibling insight at
 # `docs/insights/2026-06-10-bateson-form-behaviour-as-substrates-
 # first-distinction.md`): the discriminator's operation is form-on-
-# form (reads `@code/X.ast` form; emits a substrate-altitude verdict
+# form (reads `@facet/X.ast` form; emits a substrate-altitude verdict
 # — both form-side). It CANNOT live under `@io` (the substance side)
 # per the #47 retraction. The form-side home that subsumes BOTH
-# directions of the metalogue is `@code/metalogue` itself; the
+# directions of the metalogue is `@facet/metalogue` itself; the
 # discriminator IS the metalogue's recognitive turn.
 #
 # === The turn-pair structural argument ===
 #
 # A metalogue per Bateson 1972 (*Steps to an Ecology of Mind*,
 # §"Metalogues") is a conversation whose structure reflects its
-# topic. At the AST altitude (@code/metalogue), the substrate and
+# topic. At the AST altitude (@facet/metalogue), the substrate and
 # the species hold the metalogue. The turn-pair:
 #
 #   SHIM DIRECTION  (substrate utters → species emits)
@@ -82,7 +82,7 @@ in @nl
 # `realisation` named the British-spelled noun for the recognitive
 # verdict at the @mirror altitude (the prior home, T21,
 # `shards/mirror/realisation.mirror`). The lift to
-# `@code/metalogue/materialize` adopts the substrate-pull-correct
+# `@facet/metalogue/materialize` adopts the substrate-pull-correct
 # vocabulary at the new altitude:
 #
 #   - `materialize` (Anglo-French ME via Latin *materia* — the
@@ -91,7 +91,7 @@ in @nl
 #     recognitive turn asks: in what form does the species' AST
 #     materialize the substrate's declaration? The verdict surface
 #     IS the materialisation map.
-#   - At the @code/metalogue altitude, `materialize` parallels the
+#   - At the @facet/metalogue altitude, `materialize` parallels the
 #     `shim_X` direction's emission verb: the substrate utters; the
 #     species shim emits; the substrate's classifier reads the
 #     emission and asks "what altitude did this materialise?"
@@ -119,7 +119,7 @@ in @nl
 # The verdict record stays per-file (per-form-emission):
 #
 #   type materialised_file = {
-#     path:      ref,         // the @code/X form the classifier ran on
+#     path:      ref,         // the @facet/X form the classifier ran on
 #     partition: partition,   // boundary | substrate
 #     target:    ref,         // the substrate altitude that subsumes
 #                             // this form when partition = substrate;
@@ -130,7 +130,7 @@ in @nl
 #
 # === Inheritance ===
 #
-# `in @code/metalogue` — inherits the four laws (round-trip, OID-
+# `in @facet/metalogue` — inherits the four laws (round-trip, OID-
 # functionality, type-soundness, substrate-pull preservation), the
 # `declaration` / `turn` / `metalogue_session` carriers, the
 # `species_ast` parametric mechanism. The recognitive turn inherits
@@ -148,7 +148,7 @@ in @nl
 # the discriminator of the form-side gap.
 #
 # `in @prism` / `in @glass` / `in @meta` / `in @nl` — same
-# discipline inheritances as the sibling `@code/metalogue` ground
+# discipline inheritances as the sibling `@facet/metalogue` ground
 # (the carriers `transparency`, `imperfect`, the universal ref
 # carrier; the meta-altitude discipline; the natural-language prose
 # discipline for the surface narrative).
@@ -157,13 +157,13 @@ in @nl
 #
 # Per the in-flight depth-2 recognition (#46 pending, glass for
 # depth-≥1 declarations): this sub-prism uses `glass` since it is
-# depth-2 (`@code/metalogue` is depth-1; `@code/metalogue/materialize`
+# depth-2 (`@facet/metalogue` is depth-1; `@facet/metalogue/materialize`
 # is depth-2). The five-op block follows the substrate's canonical
-# form (cf. `shards/code/rust/macro.mirror`'s depth-2 `prism @code/
+# form (cf. `shards/code/rust/macro.mirror`'s depth-2 `prism @facet/
 # rust/macro` declaration that the in-flight sweep will lift, and
-# the future `glass @code/elixir/macro` / `glass @code/lisp/macro`
+# the future `glass @facet/elixir/macro` / `glass @facet/lisp/macro`
 # sibling realisations).
-glass @code/metalogue/materialize {
+glass @facet/metalogue/materialize {
   focus materialize
   project materialize
   split materialize
@@ -197,14 +197,14 @@ type partition =
 #              is the substrate's universal content-reference
 #              carrier (per `glass.mirror`'s `file: ref` precedent,
 #              `mirror/store.mirror`'s `oid = ref`, the
-#              altitude-reference pattern across @code/X).
+#              altitude-reference pattern across @facet/X).
 #   partition  the binary verdict (`boundary` vs `substrate`).
 #              When `boundary`, the form STAYS at the @io altitude.
 #              When `substrate`, the form is a CANDIDATE for cross-
 #              wall kintsugi to a .mirror declaration.
 #   target     when partition = substrate, the substrate altitude
 #              that subsumes the form (e.g. `@mirror/loss` for
-#              `loss.rs`, `@code/mirror` for parser forms,
+#              `loss.rs`, `@facet/mirror` for parser forms,
 #              `@kintsugi/oscillate` for `oscillate.rs`).
 #              When partition = boundary, target IS the @io species
 #              (e.g. `@io/cargo`, `@io/llvm`, `@io/fs`).
@@ -218,7 +218,7 @@ type partition =
 #              with the discriminator's own ref as anchor when
 #              the form resists classification entirely (the
 #              classifier's miss IS a substrate gap on
-#              `@code/metalogue/materialize` itself).
+#              `@facet/metalogue/materialize` itself).
 type materialised_file = {
   path:      ref,
   partition: partition,
@@ -292,7 +292,7 @@ target_altitude(d: declaration) -> ref { \ }
 # direction action carries the four obligations (round-trip,
 # OID-functionality, type-soundness, substrate-pull preservation).
 # The recognitive direction inherits the same four laws via
-# `in @code/metalogue` — applied to `classify` / `is_materialisable`
+# `in @facet/metalogue` — applied to `classify` / `is_materialisable`
 # / `target_altitude` at this altitude, the obligations read:
 #
 # 1. Round-trip (the turn-pair identity): for every declaration D,
@@ -335,9 +335,9 @@ requires substrate_pull_preserving(target_altitude)
 
 # === Citations + cascade context ===
 #
-# Recognition #34 (2026-06-09): `@code/metalogue` ground — `macro`
+# Recognition #34 (2026-06-09): `@facet/metalogue` ground — `macro`
 # was the language-community word, `@metalogue` was the substrate
-# word; `@code/metalogue` lifts to the AST altitude. The shim
+# word; `@facet/metalogue` lifts to the AST altitude. The shim
 # direction landed there; this shard names the recognitive turn
 # at the same ground.
 #
@@ -354,7 +354,7 @@ requires substrate_pull_preserving(target_altitude)
 # first-distinction.md`. The family-roster partition (form-side
 # five families / substance-side @io) IS Bateson 1970's first
 # distinction at the substrate altitude. The discriminator must
-# live on the form side; `@code/metalogue` IS the form-side AST
+# live on the form side; `@facet/metalogue` IS the form-side AST
 # altitude's universal ground for both metalogue turn directions.
 #
 # Recognition #46 (in-flight, glass-vs-prism for depth-≥1
@@ -363,7 +363,7 @@ requires substrate_pull_preserving(target_altitude)
 # declarations; the OLD `prism @mirror/realisation` declaration
 # at the prior home is being retired, so no sweep is needed there.
 #
-# Spec context: docs/specs/code-metalogue-surface.md (the @code/
+# Spec context: docs/specs/code-metalogue-surface.md (the @facet/
 #               metalogue spec; the recognitive direction is a
 #               sibling section the spec sweep adds at §2.6
 #               replacement),
@@ -378,7 +378,7 @@ requires substrate_pull_preserving(target_altitude)
 # Substrate decisions: [[architecture-shards-as-substrate-source]],
 #                      [[architecture-prism-as-trait-as-everything]]
 #                      (the depth-2 glass keyword usage; the `<=`
-#                      `in @code/metalogue` inheritance form),
+#                      `in @facet/metalogue` inheritance form),
 #                      [[architecture-lift-as-load-bearing]] (the
 #                      operation is the same operation across both
 #                      turn directions; the metalogue is the lift),
@@ -417,10 +417,10 @@ requires substrate_pull_preserving(target_altitude)
 #                  but the same shape).
 # Path-namespace property: this file at
 # `shards/code/metalogue/materialize.mirror` declares
-# `@code/metalogue/materialize` per
+# `@facet/metalogue/materialize` per
 # `@epistemologic/pact/path_matches_namespace`.
 
-out @code/metalogue/materialize
+out @facet/metalogue/materialize
 out partition
 out materialised_file
 out classify

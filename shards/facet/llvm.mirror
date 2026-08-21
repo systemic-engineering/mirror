@@ -2,9 +2,9 @@ in @prism
 in @glass
 in @meta
 in @nl
-in @code
+in @facet
 
-# @code/llvm — the LLVM IR altitude grammar.
+# @facet/llvm — the LLVM IR altitude grammar.
 #
 # The register-allocation-adjacent machine-substrate altitude. Per
 # Alex 2026-07-17 (verbatim, session-crystallizing):
@@ -12,9 +12,9 @@ in @code
 #   *"So we can have @cascade/code/llvm/turing and
 #    @cascade/code/rust/llvm. And boom. The loop closes."*
 #
-# @code/llvm IS the LLVM intermediate-representation altitude — the
+# @facet/llvm IS the LLVM intermediate-representation altitude — the
 # linear-SSA surface between imperative-language front-ends
-# (@code/rust, @code/fortran, @code/c) and target-specific
+# (@facet/rust, @facet/fortran, @facet/c) and target-specific
 # backends. Per docs/specs/craft-binary-target.md, mirror ALREADY
 # consumes LLVM IR for its own binary (OID = SHA-256(LLVM IR text);
 # IR is deterministic-from-grammar); this shard NAMES the
@@ -22,32 +22,32 @@ in @code
 #
 # === substrate-already-had-the-word ===
 #
-# `@code/llvm` appears in docblocks across the corpus (per
+# `@facet/llvm` appears in docblocks across the corpus (per
 # shards/code.mirror line 30, line 41, line 57; shards/io.mirror;
 # shards/code/mirror.mirror lines 12, 24, 51; shards/reality/
 # algebra/silicon.mirror). The family-root discipline names it as
-# adjacent-altitude sibling to @code/rust; @code/llvm/ir is
+# adjacent-altitude sibling to @facet/rust; @facet/llvm/ir is
 # empirically consumed via bootstrap/mirror.ll ~700 lines. But no
 # species-decl file existed. This shard mints the file the corpus
 # already assumed.
 #
-# Taut audit `d0572cd` §1.1 listed 10 landed @code/* species;
-# @code/llvm was NOT in that list despite ubiquitous reference.
+# Taut audit `d0572cd` §1.1 listed 10 landed @facet/* species;
+# @facet/llvm was NOT in that list despite ubiquitous reference.
 # Per Alex ratification for the polyglot spec §4.1 (Rust → LLVM
-# → Turing → mirror chain), @code/llvm MUST be species-decl'd for
+# → Turing → mirror chain), @facet/llvm MUST be species-decl'd for
 # the cascade species @cascade/code/rust/llvm and
 # @cascade/code/llvm/turing (Mara §9.2 M2 forward-promise) to
 # have a target altitude to compose against.
 #
 # === composition altitude: MACHINE-SUBSTRATE HUB ===
 #
-# @code/llvm is one machine-substrate hub (per Mara canonical spec
-# §3.4 polyglot theorem). Sits BELOW @code/rust, @code/fortran,
-# @code/c source-language altitudes; sits ABOVE @code/turing tape
+# @facet/llvm is one machine-substrate hub (per Mara canonical spec
+# §3.4 polyglot theorem). Sits BELOW @facet/rust, @facet/fortran,
+# @facet/c source-language altitudes; sits ABOVE @facet/turing tape
 # floor. The polyglot theorem's O(2N) coverage-through-hub proof
-# requires @code/llvm as one of the three hubs (`@code/llvm`,
-# `@code/wasm`, `@code/turing`) covering the ~10 landed
-# `@code/*` languages.
+# requires @facet/llvm as one of the three hubs (`@facet/llvm`,
+# `@facet/wasm`, `@facet/turing`) covering the ~10 landed
+# `@facet/*` languages.
 #
 # Empirical consumer: bootstrap/mirror.ll — mirror's own binary IR
 # (~700 lines; deterministic-from-grammar; round-trip validated
@@ -75,13 +75,13 @@ in @code
 # target altitude of `@cascade/code/rust/llvm`.
 #
 # docs/specs/craft-binary-target.md — the empirical prior-art;
-# @code/llvm/ir sub-species implicitly landed via bootstrap/
+# @facet/llvm/ir sub-species implicitly landed via bootstrap/
 # mirror.ll consumption. THIS shard makes the parent altitude
 # explicit at family-root discipline.
 #
 # docs/specs/numerical-substrate-via-fortran.md §1-3 — Fortran →
-# LLVM → mirror pathway; @code/fortran cascade source-side needs
-# @code/llvm as target altitude. THIS shard discharges that
+# LLVM → mirror pathway; @facet/fortran cascade source-side needs
+# @facet/llvm as target altitude. THIS shard discharges that
 # adjacency.
 #
 # arXiv 2409.18824 — flang architectural discussion; grounds the
@@ -103,7 +103,7 @@ in @code
 #
 # === related shards ===
 #
-# shards/code.mirror — family root (@code discipline).
+# shards/code.mirror — family root (@facet discipline).
 # shards/code/rust.mirror — sibling species precedent for five-op
 # + typed-carrier + build-property surface shape.
 # shards/code/wasm.mirror — sibling machine-substrate hub precedent.
@@ -114,8 +114,8 @@ in @code
 # promise; Reed follow-up domain).
 #
 # Path-namespace property: this file at `shards/code/llvm.mirror`
-# declares `@code/llvm` per `@epistemologic/pact/path_matches_
-# namespace`. The `@code/llvm/ir` sub-species (per craft-binary-
+# declares `@facet/llvm` per `@epistemologic/pact/path_matches_
+# namespace`. The `@facet/llvm/ir` sub-species (per craft-binary-
 # target.md OID discipline) lives at `shards/code/llvm/ir.mirror`
 # when a consumer pulls; not landed this tick per scope.
 
@@ -253,7 +253,7 @@ basic_block_ssa_valid(b: basic_block) -> verdict { \ }
 
 # === outbound declarations ===
 
-out @code/llvm
+out @facet/llvm
 out llvm_ir_module
 out basic_block
 out instruction

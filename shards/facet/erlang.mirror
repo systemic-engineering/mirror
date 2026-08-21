@@ -1,34 +1,34 @@
-in @code
+in @facet
 in @prism
 in @glass
 in @meta
 in @nl
 in @property
 
-# @code/erlang — the Erlang altitude grammar.
+# @facet/erlang — the Erlang altitude grammar.
 #
 # Carries the EAF (Erlang Abstract Format) as substrate sum types
 # declared inline within this glass. The polymorphic `type ast`
-# carrier near the end of this file is what `@code/erlang.ast`
+# carrier near the end of this file is what `@facet/erlang.ast`
 # references resolve to — type access into the language's glass
 # namespace, not a sub-prism. Opens the BEAM target road: future
-# ticks wire `@code/erlang/macro` → `splinter(@code/erlang.ast)`
+# ticks wire `@facet/erlang/macro` → `splinter(@facet/erlang.ast)`
 # emission → `compile:forms/1` → `.beam` (the BEAM analogue of the
 # existing Rust ouroboros pipeline at
 # [[architecture-fragmentation-is-the-rust-substrate]] and
 # `shards/spectral.mirror`'s step-by-step lift).
 #
-# === naming: `<lang>.ast` is TYPE access into `@code/<lang>` ===
+# === naming: `<lang>.ast` is TYPE access into `@facet/<lang>` ===
 #
-# The dotted form `@code/erlang.ast` reads as "the `ast` type within
-# `@code/erlang` glass" — type field access, not namespace nesting.
-# Same form used by `@code/metalogue`'s parametric `species_ast` slot:
-# `@code/rust/macro` binds `species_ast = code/rust.ast`,
-# `@code/erlang/macro` will bind `species_ast = code/erlang.ast`.
+# The dotted form `@facet/erlang.ast` reads as "the `ast` type within
+# `@facet/erlang` glass" — type field access, not namespace nesting.
+# Same form used by `@facet/metalogue`'s parametric `species_ast` slot:
+# `@facet/rust/macro` binds `species_ast = code/rust.ast`,
+# `@facet/erlang/macro` will bind `species_ast = code/erlang.ast`.
 # The `type ast` declaration below is the unified polymorphic carrier
 # the dotted reference resolves to. Path-namespace property per
 # [[architecture-shards-as-substrate-source]]: this file at
-# `shards/code/erlang.mirror` declares `@code/erlang`; types declared
+# `shards/code/erlang.mirror` declares `@facet/erlang`; types declared
 # at substrate altitude inside the glass become addressable via the
 # dotted form.
 #
@@ -36,11 +36,11 @@ in @property
 #
 # Per [[feedback-substrate-already-had-the-word]] (52-instance
 # track): `code/rust.ast` has been type-referenced from
-# `@code/metalogue` (as documentation) and `@code/rust/macro` (as
+# `@facet/metalogue` (as documentation) and `@facet/rust/macro` (as
 # return type binding) since 2026-06-09 — the type access pattern
 # was the convention before any file declared it. This tick lands
 # the FIRST `type ast` declaration on disk via Erlang because the
-# BEAM road is opening now; `@code/rust` needs the same `type ast`
+# BEAM road is opening now; `@facet/rust` needs the same `type ast`
 # inline (substrate-pull-realize candidate; the type access
 # `code/rust.ast` resolves to nothing until that lands).
 #
@@ -82,17 +82,17 @@ in @property
 # === what this shard does NOT declare ===
 #
 # - The per-species shim bindings (`shim_erlang_function`,
-#   `shim_erlang_module`, etc.). Per the @code/metalogue contract
+#   `shim_erlang_module`, etc.). Per the @facet/metalogue contract
 #   (`shards/code/metalogue.mirror` §"the four shim signatures"),
-#   shim bindings live at `@code/<lang>/macro`, NOT at
-#   `@code/<lang>.ast`. The downstream `shards/code/erlang/macro.mirror`
+#   shim bindings live at `@facet/<lang>/macro`, NOT at
+#   `@facet/<lang>.ast`. The downstream `shards/code/erlang/macro.mirror`
 #   tick will bind `shim_type` / `shim_prism` / `shim_action` /
 #   `shim_grammar` to `code/erlang.ast` as the species AST type,
 #   parallel to `shards/code/rust/macro.mirror` lines 113-116.
 #
-# - The `@code/erlang` altitude root. The brief's path layout
-#   places `@code/erlang.ast` as a depth-1 sibling of `@code/rust`,
-#   `@code/gleam`, `@code/mirror` — language is denoted by the bare
+# - The `@facet/erlang` altitude root. The brief's path layout
+#   places `@facet/erlang.ast` as a depth-1 sibling of `@facet/rust`,
+#   `@facet/gleam`, `@facet/mirror` — language is denoted by the bare
 #   `<lang>` segment, `.ast` is the AST-specialization marker. A
 #   future `shards/code/erlang.mirror` will declare the altitude
 #   five-op prism block (parallel to `shards/code/rust.mirror`);
@@ -100,7 +100,7 @@ in @property
 #   smallest tick is the carrier the macro shim will return.
 #
 # - The mirror.spec extension naming `target binary { altitude
-#   @code/erlang, emit beam }`. That's Taut's territory
+#   @facet/erlang, emit beam }`. That's Taut's territory
 #   (`shards/mirror/{mosaic,spec,spec/keywords}.mirror`,
 #   `mirror.spec`).
 #
@@ -120,7 +120,7 @@ in @property
 #   returns).
 # - docs/specs/mirror-spec-schema.md §2 (target.emit), §10.5
 #   (emit disambiguation) — the future `emit beam` keyword
-#   will resolve through `@code/erlang`'s altitude when that
+#   will resolve through `@facet/erlang`'s altitude when that
 #   shard lands.
 #
 # Substrate decisions: [[architecture-shards-as-substrate-source]],
@@ -130,12 +130,12 @@ in @property
 #                      [[feedback-craft-not-deliver]],
 #                      [[architecture-splinter-ast-quote-primitive]]
 #                      (the parametric AST-fragment construction
-#                      primitive; `splinter(@code/erlang.ast)` is
+#                      primitive; `splinter(@facet/erlang.ast)` is
 #                      the natural composition at the BEAM altitude).
 #
 # Related shards: code.mirror (universal parent),
 #                 code/rust.mirror (the sibling Rust altitude root;
-#                  precedent for `@code/<lang>` family member),
+#                  precedent for `@facet/<lang>` family member),
 #                 code/gleam.mirror (sibling altitude root; same
 #                  family pattern),
 #                 code/metalogue.mirror (the universal AST-altitude
@@ -152,14 +152,14 @@ in @property
 #
 # Per [[architecture-prism-as-trait-as-everything]] and recognition
 # #46 (keyword/depth bilateral; first instance of #53, promoted):
-# top-level family roots (@code, @prism, @glass, @kintsugi, etc.)
-# use `prism`; all sub-namespaces (depth-1+) use `glass`. `@code/erlang`
-# at depth-1 uses `glass`. (Note: `@code/rust` at `shards/code/rust.mirror`
+# top-level family roots (@facet, @prism, @glass, @kintsugi, etc.)
+# use `prism`; all sub-namespaces (depth-1+) use `glass`. `@facet/erlang`
+# at depth-1 uses `glass`. (Note: `@facet/rust` at `shards/code/rust.mirror`
 # currently uses `prism` and is a pre-existing #46 violation; the
 # kintsugi auto-fracture will resolve it via `@kintsugi/fracture/keyword`.
 # Separate substrate-pull-realize tick.)
 
-glass @code/erlang {
+glass @facet/erlang {
   focus erlang
   project erlang
   split erlang
@@ -489,12 +489,12 @@ type type_var = {
 
 # === ast — the unified EAF polymorphic carrier ===
 #
-# What `@code/erlang.ast` references resolve to. The five mutually
+# What `@facet/erlang.ast` references resolve to. The five mutually
 # recursive EAF categories (form, expr, pat, clause, type_form) are
 # distinct types at the substrate altitude but converge at the
 # consumer boundary as a single addressable carrier — the type the
-# shim signatures return (`shim_type(d) -> @code/erlang.ast`), the
-# type `splinter(@code/erlang.ast)` produces, the type the BEAM
+# shim signatures return (`shim_type(d) -> @facet/erlang.ast`), the
+# type `splinter(@facet/erlang.ast)` produces, the type the BEAM
 # codegen pipeline consumes before projecting to EAF tuples for
 # `compile:forms/1`.
 #
@@ -509,27 +509,27 @@ type ast =
   | ast_clause(clause)
   | ast_type(type_form)
 
-# === splinter(@code/erlang.ast) — the addressable AST fragment ===
+# === splinter(@facet/erlang.ast) — the addressable AST fragment ===
 #
 # Per [[architecture-splinter-ast-quote-primitive]] (#54): the
 # substrate's parametric quote primitive specializes by species.
-# `splinter(@code/erlang.ast)` is the content-addressed,
+# `splinter(@facet/erlang.ast)` is the content-addressed,
 # oid-identified EAF fragment future fracture bodies emit when
 # discharging a `\` obligation at the Erlang altitude. The
 # declaration here names the specialization; the carrier shape
 # inherits from `splinter(ast)` (shards/glass.mirror line 261).
 #
 # Body abstract per [[feedback-craft-not-deliver]]: a consumer
-# pull from `@code/erlang/macro` (the downstream tick) will
+# pull from `@facet/erlang/macro` (the downstream tick) will
 # discharge this when its `shim_*` realisations need to emit
 # typed AST fragments declaratively rather than reconstruct
 # tuples at the call site.
 
-type erlang_ast_splinter = splinter(@code/erlang.ast)
+type erlang_ast_splinter = splinter(@facet/erlang.ast)
 
 # === out ===
 
-out @code/erlang
+out @facet/erlang
 out ast
 out anno
 out anno_attr

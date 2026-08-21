@@ -1,11 +1,11 @@
 in @prism
 in @meta
 in @glass
-in @code
+in @facet
 in @magic
 in @magic/audit
 
-# @code/beam — BEAM semantics absorbed as substrate vocabulary.
+# @facet/beam — BEAM semantics absorbed as substrate vocabulary.
 #
 # Recognition: "last responsible moment" landing per Alex 2026-06-18
 # evening. The substrate stays full mirror; BEAM is inspiration, not
@@ -15,9 +15,9 @@ in @magic/audit
 # eventually in self-hosted spectral) without ever depending on
 # Erlang/Elixir runtime.
 #
-# This is the @code/X glass species for BEAM, per
+# This is the @facet/X glass species for BEAM, per
 # [[architecture-glass-wall-substrate-types]]: glass species project
-# substrate concepts onto an external code-altitude. @code/beam is
+# substrate concepts onto an external code-altitude. @facet/beam is
 # how mirror sees BEAM's semantics without inheriting BEAM's runtime.
 #
 # Composes with @magic (recognition #80) at runtime altitude. Per Seam
@@ -69,7 +69,7 @@ in @magic/audit
 #   callbacks expose the gauge-side interface.
 #
 # These four concepts (versioning, code_change, supervision strategy,
-# GenServer state encapsulation) are what @code/beam lifts to
+# GenServer state encapsulation) are what @facet/beam lifts to
 # substrate vocabulary. Mirror's Rust impl of hot reload reads from
 # this shard's carrier declarations to ensure semantic alignment;
 # eventually-self-hosted mirror runs them natively.
@@ -78,7 +78,7 @@ in @magic/audit
 #
 # Per the conversation 2026-06-18 evening: today's MCP+LSP loop is
 # moving toward runtime altitude (hot code upgrade for the MCP
-# binary so /mcp reconnect dissolves). Without @code/beam's vocabulary,
+# binary so /mcp reconnect dissolves). Without @facet/beam's vocabulary,
 # mirror would either (a) depend on actual BEAM runtime (Alex: no),
 # (b) reinvent supervision/code-change semantics ad-hoc without
 # substrate-grammar grounding, or (c) lose the BEAM discipline
@@ -127,7 +127,7 @@ in @magic/audit
 # - The kintsugi loop's settle-to-λ₀ (recognition #59) IS the
 #   BEAM-philosophical equivalent of restart-into-known-state.
 #
-# The substrate had the components; @code/beam is the glass that
+# The substrate had the components; @facet/beam is the glass that
 # absorbs BEAM's specific naming so mirror's implementation has
 # named carriers to align with.
 #
@@ -179,7 +179,7 @@ in @magic/audit
 #                dependency per Alex's 2026-06-18 directive).
 # Substrate decisions: [[architecture-shards-as-substrate-source]],
 #                      [[architecture-glass-wall-substrate-types]]
-#                       (the @code/X glass species pattern; @code/beam
+#                       (the @facet/X glass species pattern; @facet/beam
 #                       is the BEAM instance),
 #                      [[architecture-prism-as-trait-as-everything]],
 #                      [[architecture-mirror-store-vs-spectral-db]]
@@ -202,7 +202,7 @@ in @magic/audit
 #                  Pask tensor coupling at the supervision-altitude
 #                  process-linking semantics).
 # Path-namespace property: this file at `shards/code/beam.mirror`
-# declares `@code/beam` per `@epistemologic/pact/path_matches_namespace`.
+# declares `@facet/beam` per `@epistemologic/pact/path_matches_namespace`.
 
 source @arxiv/distributed/armstrong-2003
 source @arxiv/distributed/otp-behaviours
@@ -351,7 +351,7 @@ swap_module(s: supervisor, old_vsn: module_version, new_vsn: module_version) -> 
 # implement the actual link / monitor / restart machinery.
 supervise(parent: supervisor, child: ref) -> supervisor { \ }
 
-out @code/beam
+out @facet/beam
 out module_version
 out code_change_msg
 out supervisor

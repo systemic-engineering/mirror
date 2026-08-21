@@ -5,26 +5,26 @@ in @nl
 in @property
 in @io
 
-# @code/wasm — the WebAssembly altitude grammar.
+# @facet/wasm — the WebAssembly altitude grammar.
 #
-# Per Alex 2026-06-23: "wasm is @code/wasm." Not a separate family-
-# root; lives as a glass instance under @code (matches @code/beam,
-# @code/llvm, @code/rust pattern). WASM is just another target_grammar
+# Per Alex 2026-06-23: "wasm is @facet/wasm." Not a separate family-
+# root; lives as a glass instance under @facet (matches @facet/beam,
+# @facet/llvm, @facet/rust pattern). WASM is just another target_grammar
 # in @cascade.
 #
 # The altitude at which mosaic's shift delegates to a wasm toolchain
 # (wasm-pack / wasmtime / wasm-tools / wabt). When mirror.spec
-# declares `target binary { altitude @code/wasm, emit wasm-pack }`,
-# mosaic walks the target, resolves `@code/wasm` here, then resolves
+# declares `target binary { altitude @facet/wasm, emit wasm-pack }`,
+# mosaic walks the target, resolves `@facet/wasm` here, then resolves
 # `wasm-pack` against this altitude's namespace.
 #
-# === Why WASM as glass under @code ===
+# === Why WASM as glass under @facet ===
 #
 # WASM is the portable bytecode target: browsers, edge compute,
 # wasmtime serverless. Multiple source grammars cascade to wasm:
 # Rust (rustc --target wasm32), AssemblyScript, Gleam (~2026 ETA),
 # C/C++ via Emscripten, Go via TinyGo. Per @cascade family-root,
-# each (source_grammar, @code/wasm) pair is a cascade species
+# each (source_grammar, @facet/wasm) pair is a cascade species
 # shard at `shards/cascade/<source>-wasm.mirror`.
 #
 # First cascade species discharging this altitude:
@@ -46,14 +46,14 @@ in @io
 # Substrate decisions: [[architecture-shards-as-substrate-source]],
 #                      [[architecture-prism-as-trait-as-everything]],
 #                      [[feedback-substrate-already-had-the-word]]
-#                      (@code family-root pattern; wasm is just
+#                      (@facet family-root pattern; wasm is just
 #                      another instance per Alex's directive).
-# Related shards: shards/code/rust.mirror (@code/rust as paired
+# Related shards: shards/code/rust.mirror (@facet/rust as paired
 #                 cascade source); shards/code/beam.mirror (pattern
 #                 reference); shards/cascade.mirror (the cascade
 #                 family-root that target_grammar this).
 # Path-namespace property: this file at `shards/code/wasm.mirror`
-# declares `@code/wasm` per `@epistemologic/pact/path_matches_namespace`.
+# declares `@facet/wasm` per `@epistemologic/pact/path_matches_namespace`.
 
 # === build-property surface (settle_on consumers) ===
 #
@@ -68,6 +68,6 @@ in @io
 validates(target) -> verdict { \ }
 runs(target) -> verdict { \ }
 
-out @code/wasm
+out @facet/wasm
 out validates
 out runs

@@ -1,17 +1,17 @@
-# @code/docker — Dockerfile as declarative code at code altitude.
+# @facet/docker — Dockerfile as declarative code at code altitude.
 # Arc 5 TICK 4 GREEN landing per Reed RED at `29d327f` against the
-# spec Mara `ec636d3` §6.1. Sits under `@code` family-root at the
-# code altitude (same species-altitude as `@code/rust`, `@code/gleam`,
-# `@code/mirror`, `@code/wasm`, `@code/erlang`).
+# spec Mara `ec636d3` §6.1. Sits under `@facet` family-root at the
+# code altitude (same species-altitude as `@facet/rust`, `@facet/gleam`,
+# `@facet/mirror`, `@facet/wasm`, `@facet/erlang`).
 #
 # === What this shard IS ===
 #
-# `@code/docker` names the Dockerfile as content-addressable code at
+# `@facet/docker` names the Dockerfile as content-addressable code at
 # the code altitude. Substrate-honest positioning: the Dockerfile IS
 # code — a declarative grammar producing a build-graph artifact —
-# and it composes with `@code` per the universal grammar-at-an-
+# and it composes with `@facet` per the universal grammar-at-an-
 # altitude discipline (per `shards/code.mirror`). Sibling to every
-# other `@code/X` species; the community word "Dockerfile" stays at
+# other `@facet/X` species; the community word "Dockerfile" stays at
 # the species altitude; the substrate carries the discipline via the
 # five-operation prism plus a typed carrier.
 #
@@ -21,7 +21,7 @@
 # Runtime, Distribution. The substrate carries a mirror of that
 # closure at substrate-decl altitude:
 #
-#   build surface        @code/docker      (Dockerfile as declarative code)
+#   build surface        @facet/docker      (Dockerfile as declarative code)
 #      ↓ PRODUCES
 #   distribution surface @io/oci           (Mara `2801478` 2026-06-24)
 #      ↓ CONSUMED BY
@@ -38,7 +38,7 @@
 # === The build IS a shift ===
 #
 # THE LOAD-BEARING composition. `build(d: dockerfile) -> image_witness`
-# is the cross-altitude fold from CODE altitude (`@code/docker` names
+# is the cross-altitude fold from CODE altitude (`@facet/docker` names
 # the Dockerfile source) to CONTAINER altitude (`@container/image`
 # holds the produced image handle). The fold IS a `@kintsugi/shift`
 # instance: same underlying content-address on both sides of the
@@ -76,12 +76,12 @@
 #   at TICK 2 `49f0486`; 15th was `image_shifted_from_oci` at TICK 3
 #   `b66b280`). Substrate-pull-confident per
 #   `[[architecture-property-fracture-bilateral]]`.
-# - #55 form/process partition: `@code/docker` is form-side (state
+# - #55 form/process partition: `@facet/docker` is form-side (state
 #   observation — what the Dockerfile IS as declarative source);
 #   `@kintsugi/shift` is process-side (the transformation crossing
 #   altitudes). The `build` action bridges them: it reads the form-
 #   side witness and dispatches through the process-side shift.
-# - #58 substrate IS Connes (A, H, D): `@code/docker`'s source lives
+# - #58 substrate IS Connes (A, H, D): `@facet/docker`'s source lives
 #   on H (the void document) as declarative bytes; the shift primitive
 #   IS D (Dirac/gradient) crossing altitude; the produced
 #   `image_witness` is the projection onto the container-runtime
@@ -141,7 +141,7 @@
 #                 distribution-altitude middle of the three-surface
 #                 partition).
 # Path-namespace property: this file at `shards/code/docker.mirror`
-# declares `@code/docker` per `@epistemologic/pact/path_matches_namespace`.
+# declares `@facet/docker` per `@epistemologic/pact/path_matches_namespace`.
 # Related specs: docs/specs/docker-container-substrate-decl-v0.1.md
 # (Mara `ec636d3` 2026-07-06; §6.1 names this species' predicate
 # shape and the composed-bilateral `docker_buildable`).
@@ -192,7 +192,7 @@
 in @prism
 in @meta
 in @glass
-in @code
+in @facet
 in @kintsugi/shift
 in @container/image
 
@@ -200,7 +200,7 @@ in @container/image
 # §1 The five-operation prism at species altitude
 # ============================================================
 
-# === prism @code/docker — the species declaration ===
+# === prism @facet/docker — the species declaration ===
 #
 # The five-operation body carries `dockerfile` as the species's
 # operational surface — the content-addressed Dockerfile source the
@@ -211,9 +211,9 @@ in @container/image
 # The five-op block includes `shift` as one of the five per
 # `shards/prism.mirror` §L38-45 (basis transformation on H) — the
 # code-altitude shift specializes to the cross-altitude fold
-# `@code/docker → @container/image` that the `build` action below
+# `@facet/docker → @container/image` that the `build` action below
 # discharges through the `@kintsugi/shift` primitive.
-prism @code/docker {
+prism @facet/docker {
   focus dockerfile
   project dockerfile
   split dockerfile
@@ -231,15 +231,15 @@ prism @code/docker {
 # addressable code at code altitude per
 # [[feedback-explicit-over-implicit]] +
 # [[feedback-no-bare-types]]. Byte-equals at ref altitude; typed at
-# species altitude so consumer sites in `@code/docker/*` species
-# (forward-promised: `@code/docker/frontend`, `@code/docker/llb`)
+# species altitude so consumer sites in `@facet/docker/*` species
+# (forward-promised: `@facet/docker/frontend`, `@facet/docker/llb`)
 # and downstream cascade species (`@cascade/code/docker/oci` per
 # Mara spec §6.5) read a substrate-declared shape rather than a
 # bare ref.
 #
 # Composes with `@mirror/store`'s ref discipline (the Dockerfile
 # source bytes live in mirror's content-addressed storage; the OID
-# IS the Dockerfile's identity). Composes with `@code`'s universal
+# IS the Dockerfile's identity). Composes with `@facet`'s universal
 # grammar-at-an-altitude discipline (per `shards/code.mirror`): the
 # Dockerfile grammar is one instance of the family; the code-altitude
 # five-op block is what the species contributes.
@@ -256,7 +256,7 @@ type dockerfile = ref
 #
 # THE LOAD-BEARING typed action. Consumes a `dockerfile` at code
 # altitude and produces an `image_witness` at container altitude —
-# the cross-altitude fold from `@code/docker` (declaration) to
+# the cross-altitude fold from `@facet/docker` (declaration) to
 # `@container/image` (runtime handle) via `@kintsugi/shift`.
 #
 # The build IS a shift. Per prism.mirror §L38-45 and
@@ -365,7 +365,7 @@ docker_buildable(d: dockerfile) -> verdict { \ }
 # §5 The out clauses
 # ============================================================
 
-out @code/docker
+out @facet/docker
 out dockerfile
 out build
 out docker_buildable

@@ -2,9 +2,9 @@ in @prism
 in @glass
 in @meta
 in @nl
-in @code
+in @facet
 
-# @code/turing — the abstract-machine tape altitude.
+# @facet/turing — the abstract-machine tape altitude.
 #
 # THE PHYSICAL SUBSTRATE FLOOR of the polyglot cascade. Per Alex
 # 2026-07-17 (verbatim, session-crystallizing):
@@ -13,17 +13,17 @@ in @code
 #    what the machine does at the substrate level, the languages on
 #    top become flavours. Not categorical new grammar."*
 #
-#   *"@code/turing as tape floor."*
+#   *"@facet/turing as tape floor."*
 #
-#   *"@code/turing/rust as species means Rust IS a lens on the tape."*
+#   *"@facet/turing/rust as species means Rust IS a lens on the tape."*
 #
-# @code/turing IS the abstract-machine tape altitude — the ONE
+# @facet/turing IS the abstract-machine tape altitude — the ONE
 # altitude at which Church-Turing 1936 grounds every Turing-complete
 # language as a specialization over the same physical substrate. The
 # tape is the linear-symbol surface of the abstract machine; states
 # are the machine's discrete configurations; transitions are the
 # per-step deterministic move. Every higher-altitude language
-# (@code/rust, @code/mirror, @code/gleam, @code/wasm, ...) becomes
+# (@facet/rust, @facet/mirror, @facet/gleam, @facet/wasm, ...) becomes
 # a lens on this floor rather than a categorically-new grammar.
 #
 # === Church-Turing 1936 as substrate authority ===
@@ -35,27 +35,27 @@ in @code
 # Church 1936 *"An Unsolvable Problem of Elementary Number Theory"*
 # (Am. J. Math. 58:345-363). The equivalence establishes: every
 # Turing-complete language is inter-simulatable with the tape
-# machine model. Hence @code/turing is a candidate machine-substrate
+# machine model. Hence @facet/turing is a candidate machine-substrate
 # hub for any (source_lang, target_lang) polyglot pair.
 #
 # === substrate-already-had-the-word ===
 #
-# Per shards/code.mirror docblock: "@code/llvm, @code/fortran each
+# Per shards/code.mirror docblock: "@facet/llvm, @facet/fortran each
 # declare the same five-op block at their altitude." The substrate
-# ALREADY named @code/turing as adjacent-altitude candidate via
+# ALREADY named @facet/turing as adjacent-altitude candidate via
 # Alex's 2026-07-17 ratification. This shard NAMES what the substrate
 # already carries at family-root discipline; MINTS the species-decl
 # per Mara canonical spec `1ce68c3` §9.1 M1 forward-promise.
 #
 # Taut audit `d0572cd` §1.3 grep-verified ABSENT: 0 matches for
-# `@code/turing`, `@code/assembler`, `@code/asm`, `turing.tape`,
+# `@facet/turing`, `@facet/assembler`, `@facet/asm`, `turing.tape`,
 # `universal.tape`. No substrate-already-had-the-word conflict.
 # Small vocabulary (~10-15 species per §9.1); the mint is the FLOOR
 # of the cascade chain, not the top.
 #
 # === composition altitude: FLOOR ===
 #
-# Every other @code/X species sits ABOVE this altitude. The typed
+# Every other @facet/X species sits ABOVE this altitude. The typed
 # carriers (symbol, state, tape, head_position, transition, program)
 # are the substrate the higher-altitude grammars SPECIALIZE via
 # their own cascade species. The five-op prism at family-root
@@ -76,26 +76,26 @@ in @code
 # M1 (Mara `1ce68c3`, 2026-07-17) — the mint plan forward-promise
 # THIS shard discharges. §2.3 (tape as serialization target, not
 # master) grounds the altitude framing. §4.1 (concrete instantiation
-# chain) names @code/turing as the middle hub in the Rust →
+# chain) names @facet/turing as the middle hub in the Rust →
 # LLVM → Turing → mirror loop.
 #
 # docs/math/polyglot-loss-aware-computational-translation.md §3.4
 # (Mara `dc4ad4c`, 2026-07-17) — Church-Turing citation grounding
 # universal-hub existence for arbitrary (A, B) pair. §1.1 places
-# @code/turing as one object in the `Cascade_@code` category.
+# @facet/turing as one object in the `Cascade_@facet` category.
 #
 # boot/01-meta.mirror (Taut audit `d0572cd` §1.5) — the universal
 # AST parameterized by grammar sits at ADJACENT altitude (boot-
 # grammar altitude, above tape floor). The tape-floor grammar is
 # the physical-substrate ground; the boot-grammar AST is one
-# altitude up (language-agnostic symbolic surface); each `@code/X`
+# altitude up (language-agnostic symbolic surface); each `@facet/X`
 # is another altitude further up.
 #
 # === substrate decisions ===
 #
 # [[architecture-shards-as-substrate-source]] — this file IS the
 # substrate declaration; nothing lives above it as authority for
-# what @code/turing carries.
+# what @facet/turing carries.
 # [[architecture-prism-as-trait-as-everything]] — five-op prism
 # discipline at family-root; typed carriers below.
 # [[architecture-lift-as-load-bearing]] — the lift is Church-Turing
@@ -108,7 +108,7 @@ in @code
 #
 # === related shards ===
 #
-# shards/code.mirror — family root (@code discipline).
+# shards/code.mirror — family root (@facet discipline).
 # shards/code/rust.mirror — sibling species precedent for five-op
 # + typed-carrier + build-property surface shape.
 # shards/code/wasm.mirror — sibling machine-substrate hub precedent.
@@ -118,7 +118,7 @@ in @code
 # Mara §9.2 M2 forward-promise (Reed follow-up domain).
 #
 # Path-namespace property: this file at `shards/code/turing.mirror`
-# declares `@code/turing` per `@epistemologic/pact/path_matches_
+# declares `@facet/turing` per `@epistemologic/pact/path_matches_
 # namespace`.
 
 # === typed carriers for the tape substrate ===
@@ -331,7 +331,7 @@ configuration_reachable(p: program, c: configuration) -> verdict { \ }
 
 # === outbound declarations ===
 
-out @code/turing
+out @facet/turing
 out symbol
 out state
 out tape

@@ -1,22 +1,22 @@
-in @code
+in @facet
 in @prism
 in @glass
 in @meta
 in @nl
 
-# @code/gestalt — the .gestalt altitude grammar.
+# @facet/gestalt — the .gestalt altitude grammar.
 #
 # `.gestalt` files are the file-level projection of a @gestalt graph
 # per Alex 2026-08-03 verbatim ratification:
 #
-#   *"@code/gestalt makes sense. .gestalt files becomes the file level
+#   *"@facet/gestalt makes sense. .gestalt files becomes the file level
 #    projection of the graph."*
 #
-# Sibling to @code/mirror (shards/code/mirror.mirror; the mirror-
-# altitude grammar), @code/rust (shards/code/rust.mirror), @code/gleam
-# (shards/code/gleam.mirror), @code/llvm, @code/turing under the
-# universal @code discipline (shards/code.mirror). Each declares the
-# five operations on its own source manifold; @code/gestalt names
+# Sibling to @facet/mirror (shards/code/mirror.mirror; the mirror-
+# altitude grammar), @facet/rust (shards/code/rust.mirror), @facet/gleam
+# (shards/code/gleam.mirror), @facet/llvm, @facet/turing under the
+# universal @facet discipline (shards/code.mirror). Each declares the
+# five operations on its own source manifold; @facet/gestalt names
 # `.gestalt` as ONE such altitude — the `@gestalt`-family's
 # graph-as-file surface.
 #
@@ -59,25 +59,25 @@ in @nl
 # WHAT ALEX WROTE, not what a sanitized markdown parser would accept.
 # Per Reed 2026-08-03 mint-charter register-honoring discipline.
 #
-# === why sibling to @code/mirror (not sub-species of @gestalt) ===
+# === why sibling to @facet/mirror (not sub-species of @gestalt) ===
 #
-# Two arguments per the @code/mirror precedent (shards/code/mirror.mirror):
+# Two arguments per the @facet/mirror precedent (shards/code/mirror.mirror):
 #
 #   1. Path-namespace property (load-bearing per
 #      [[architecture-shards-as-substrate-source]]): this file at
-#      `shards/code/gestalt.mirror` declares `@code/gestalt`. Same
-#      shape as `shards/code/mirror.mirror` declares `@code/mirror`.
+#      `shards/code/gestalt.mirror` declares `@facet/gestalt`. Same
+#      shape as `shards/code/mirror.mirror` declares `@facet/mirror`.
 #      The path IS the declaration.
 #
-#   2. Sibling discipline: @code/gestalt joins @code/rust, @code/gleam,
-#      @code/mirror, @code/llvm, @code/turing as instances of the
-#      universal @code discipline. Reading the family flat-namespaced
+#   2. Sibling discipline: @facet/gestalt joins @facet/rust, @facet/gleam,
+#      @facet/mirror, @facet/llvm, @facet/turing as instances of the
+#      universal @facet discipline. Reading the family flat-namespaced
 #      makes the substrate-pull recognition legible ("`.gestalt` is
-#      one of the altitudes @code knows about").
+#      one of the altitudes @facet knows about").
 #
 # @gestalt (family-root at shards/gestalt.mirror) carries the
 # document-as-song-unfolding semantics (nodes/edges/annotations/
-# unfolding_state). @code/gestalt names WHAT A .gestalt FILE IS at
+# unfolding_state). @facet/gestalt names WHAT A .gestalt FILE IS at
 # the grammar altitude — the file-level projection of that graph.
 # Different altitudes; both required; no collapse.
 #
@@ -94,7 +94,7 @@ in @nl
 #
 # The `.gestalt` file grammar projects this graph structure to a
 # linear byte surface. The projection is bijective under the round-trip
-# law (see @code/mirror.round_trip precedent): for every valid
+# law (see @facet/mirror.round_trip precedent): for every valid
 # gestalt_document, `parse(render(doc)) = doc` structurally. The file
 # carries what the graph carries; nothing more, nothing less.
 #
@@ -102,18 +102,18 @@ in @nl
 #
 #   - `@cascade/code/mirror/gestalt` (mint queue) — the first leg of
 #     the composition theorem chain (mirror substrate → gestalt IR).
-#     Source grammar = @code/mirror; target grammar = @code/gestalt.
+#     Source grammar = @facet/mirror; target grammar = @facet/gestalt.
 #   - `@cascade/code/gestalt/gleam` (mint queue) — the second leg
 #     (gestalt IR → gleam via gestalt-ui library). Source grammar =
-#     @code/gestalt; target grammar = @code/gleam. Emits gestalt-ui-
+#     @facet/gestalt; target grammar = @facet/gleam. Emits gestalt-ui-
 #     shaped Gleam per Alex Q-C2 adjudication (not arbitrary Gleam).
 #
 # === five operations at the .gestalt altitude ===
 #
 # Per the prism-as-trait-as-everything discipline (per
 # [[architecture-prism-as-trait-as-everything]]), declaring
-# @code/gestalt IS declaring the five operations on the .gestalt-source
-# manifold. The operation signatures inherit from @code; the altitude
+# @facet/gestalt IS declaring the five operations on the .gestalt-source
+# manifold. The operation signatures inherit from @facet; the altitude
 # specialization names what each verb does at THIS altitude. Bodies
 # are `\` per consumer-pull discipline — the FLOOR resolver (Reed Tick
 # under [substrate-floor:@io-boundary]) discharges them once the
@@ -154,7 +154,7 @@ in @nl
 #                                                           composition
 #                                                           leg).
 # Path-namespace property: this file at `shards/code/gestalt.mirror`
-# declares `@code/gestalt` and only that.
+# declares `@facet/gestalt` and only that.
 
 # === The .gestalt register — grammar declaration ===
 #
@@ -163,7 +163,7 @@ in @nl
 # (2026-03-08 through present; Alex Wolf authorship). NOT invented; the
 # grammar names what already exists on disk.
 #
-# Per @code/mirror/grammar precedent (shards/code/mirror.mirror lines
+# Per @facet/mirror/grammar precedent (shards/code/mirror.mirror lines
 # 149-183): whitespace by substrate convention admits space, tab,
 # carriage return, AND newline. Under `.gestalt` register discipline,
 # newline is LOAD-BEARING (each newline = semantic break, not markdown-
@@ -171,10 +171,10 @@ in @nl
 # already carries.
 #
 # Path-namespace note: this grammar block declares
-# `@code/gestalt/grammar` under the path-namespace property
+# `@facet/gestalt/grammar` under the path-namespace property
 # ([[architecture-shards-as-substrate-source]]).
 
-grammar @code/gestalt/grammar("gestalt") {
+grammar @facet/gestalt/grammar("gestalt") {
   in @meta
 
   # ===== lexical primitives =====
@@ -329,10 +329,10 @@ grammar @code/gestalt/grammar("gestalt") {
 
 # === render — .gestalt AST → text via Wadler/Bernardy doc combinators ===
 #
-# Per @code/mirror.render precedent (shards/code/mirror.mirror lines
+# Per @facet/mirror.render precedent (shards/code/mirror.mirror lines
 # 219-282): render IS the language-altitude projection (AST → text)
 # using Wadler 2003 + Bernardy 2017 pretty-printer combinator algebra.
-# For @code/gestalt specifically, the round-trip discipline is
+# For @facet/gestalt specifically, the round-trip discipline is
 # LOAD-BEARING:
 #
 #   parse(render(doc)) = doc  structurally
@@ -348,7 +348,7 @@ render(ast) -> text { \ }
 
 # === Round-trip identity — the register-preservation contract ===
 #
-# Per @code/mirror precedent + Reed 2026-08-03 charter register-
+# Per @facet/mirror precedent + Reed 2026-08-03 charter register-
 # honoring discipline: for every valid .gestalt AST, the render →
 # parse cycle IS the identity. This law IS what makes the .gestalt
 # corpus a stable substrate value (each of the 19 published pieces
@@ -359,5 +359,5 @@ render(ast) -> text { \ }
 # altitude discharges when render body lands.
 requires round_trip(render)
 
-out @code/gestalt
-out @code/gestalt/grammar
+out @facet/gestalt
+out @facet/gestalt/grammar
