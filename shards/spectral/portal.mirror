@@ -229,7 +229,7 @@ in @mirror/spectral/portal
 # runtime portal does NOT need a new substrate primitive for the
 # SCM_RIGHTS handoff (STOP-condition 3 resolved); the existing
 # `ref` and `shard_ref` carriers compose the handoff at the
-# runtime altitude. T20's substrate work lands at the @code/io/cli
+# runtime altitude. T20's substrate work lands at the @facet/io/cli
 # pipe-boundary integration, not at this shard.
 #
 # === Honest partial discipline (per #306) ===
@@ -238,7 +238,7 @@ in @mirror/spectral/portal
 # fracture body emits any morphism in this tick. No `partials`
 # declaration needed (per `dissonance_partials_match_ast_breadth`
 # #306). Bodies discharge downstream when the consumer pulls
-# realisation through `@code/metalogue/materialize` (per the
+# realisation through `@facet/metalogue/materialize` (per the
 # ouroboros pipeline in docs/specs/spectral-runtime.md §5).
 #
 # === Cascade siblings (forward-promised, NOT landing this tick) ===
@@ -432,7 +432,7 @@ type portal = {
 #   4. Initialises the frame_stream to an empty shard_ref (the null
 #      lattice element; the next send_frame advances by one settle).
 #
-# Body discharges through @code/metalogue/materialize per the
+# Body discharges through @facet/metalogue/materialize per the
 # ouroboros pipeline. Stays a `\` obligation in this tick;
 # realisation lives at the form-side declaration's resolution and
 # the gen_prism constructor's autopoietic fixed-point evaluation.

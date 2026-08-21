@@ -88,8 +88,8 @@ in @io
 #   promised @io/http species; REST fallback path composes here).
 # - Recognition #55 (form/process partition): @tool/gitlab_ci is
 #   process-side (the invocation of glab or REST endpoint); the
-#   `.gitlab-ci.yml` form-side lives at future `@code/gitlab_ci`
-#   or `@code/yaml` refinement (forward-promised).
+#   `.gitlab-ci.yml` form-side lives at future `@facet/gitlab_ci`
+#   or `@facet/yaml` refinement (forward-promised).
 # - Recognition #98 candidate (content-addressing across scopes):
 #   pipeline_id + job_trace hashes compose with the existing four
 #   witnesses (git OID, nix derivation, cargo Cargo.lock, OCI
@@ -331,9 +331,9 @@ requires tool_invocation_admissible(invocation, invocation, p)
 #    mirror` — the ORTHOGONAL git-forge adapter for PR/issue/
 #    release surfaces via git protocol (per @io/git §6 forward-
 #    promise). Distinct altitude from THIS species.
-# 3. `@code/gitlab_ci` mint at `shards/code/gitlab_ci.mirror` —
+# 3. `@facet/gitlab_ci` mint at `shards/code/gitlab_ci.mirror` —
 #    the form-side `.gitlab-ci.yml` declarative grammar. Would
-#    compose with @code/yaml (LANDED at `shards/mirror/data/yaml.
+#    compose with @facet/yaml (LANDED at `shards/mirror/data/yaml.
 #    mirror`) as species-refinement.
 # 4. `@tool/glab` refinement — the glab CLI itself has its own
 #    subcommand tree (glab issue / glab mr / glab api / etc.);

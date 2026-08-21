@@ -40,7 +40,7 @@ in @io
 #
 # THREE docker-adjacent shards already exist at different altitudes:
 #
-#   1. `@code/docker` (LANDED at `shards/code/docker.mirror`; 18.2KB)
+#   1. `@facet/docker` (LANDED at `shards/code/docker.mirror`; 18.2KB)
 #      — the DOCKERFILE-AS-DECLARATIVE-CODE altitude. The Dockerfile
 #      IS declarative code at code altitude; form-side (what the
 #      Dockerfile IS as source).
@@ -56,7 +56,7 @@ in @io
 #
 # @tool/docker sits at a FOURTH altitude — the PORCELAIN-CLI-
 # INVOCATION altitude. Sibling of @tool/cargo + @tool/git + @tool/
-# nix, NOT sibling of @code/docker / @io/oci / @container. The
+# nix, NOT sibling of @facet/docker / @io/oci / @container. The
 # porcelain surface (@tool/docker) DISPATCHES through mechanism
 # (@io/oci for artifact-side, @container/runtime for runtime-side);
 # it does NOT replace any of the three existing altitudes.
@@ -320,9 +320,9 @@ requires tool_invocation_admissible(invocation, invocation, p)
 #    credential resolution; species-decl'd sibling forward-promised.
 # 5. Compose-file grammar mint — `docker-compose.yml` / `compose.
 #    yml` IS declarative code at compose-file altitude; sibling
-#    `@code/docker/compose` forward-promised (would live at
+#    `@facet/docker/compose` forward-promised (would live at
 #    `shards/code/docker/compose.mirror`) with its own bilateral
-#    grammar-conformance discipline mirroring @code/docker.
+#    grammar-conformance discipline mirroring @facet/docker.
 
 out @tool/docker
 out docker_subcommand

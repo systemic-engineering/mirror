@@ -2,7 +2,7 @@
 # altitude. Composable operator sibling to @sre, @shatter, @glue.
 # Substrate-decl'd lens `@liquid(@X)` that lenses over any @X
 # substrate to add refinement (parallel structural pattern to
-# `@sre(@code/rust)`, `@shatter(@X)`, `@glue(@A, @B)`).
+# `@sre(@facet/rust)`, `@shatter(@X)`, `@glue(@A, @B)`).
 # Composition operator; NOT theory itself (theory lives at
 # @epistemologic/liquid; Mara THIS-tick `cc816f9`).
 #
@@ -45,11 +45,11 @@
 #                                            category correspondence carrier
 #                                            (Mesland spectral-triple morphism
 #                                            operator)
-#   @sre           @sre(@code/X)            per Reed research prose citing SRE
+#   @sre           @sre(@facet/X)            per Reed research prose citing SRE
 #                                            operator pattern (not landed as
 #                                            standalone family-root file; the
 #                                            operator pattern is corpus-attested
-#                                            through `@code/*` × `@sre`
+#                                            through `@facet/*` × `@sre`
 #                                            composition citations)
 #
 # `@liquid` joins this altitude as the refinement-lens operator:
@@ -138,8 +138,8 @@
 # Per Taut scout §7.2 the substrate ALREADY dogfoods the
 # lens-composition pattern this operator declares:
 #
-#   - `@sre(@code/X)` per corpus references
-#   - `@bilateral(@code/A, @code/B)` per `shards/epistemologic/pact/
+#   - `@sre(@facet/X)` per corpus references
+#   - `@bilateral(@facet/A, @facet/B)` per `shards/epistemologic/pact/
 #     bilateral.mirror` (§"@bilateral generalization" — Alex
 #     2026-07-17 verbatim reframe) + polyglot spec §5.2 + the
 #     `translation_admissible` bilateral block at bilateral.mirror

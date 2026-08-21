@@ -230,7 +230,7 @@ in @uuid/spectral
 #     session IS autopoietic).
 #
 # Asymmetry: NOT every prism becomes @autopoietic. Many prisms are
-# stateless inference functions (e.g., @code/metalogue shims that
+# stateless inference functions (e.g., @facet/metalogue shims that
 # translate substrate declarations to language-specific AST nodes).
 # Such prisms import `in @bauchladen` (outputs are content-addressed
 # crystals) but do NOT import `in @autopoietic` (they do not fold

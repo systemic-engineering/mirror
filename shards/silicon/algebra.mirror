@@ -147,7 +147,7 @@ in @epistemologic/pact/bilateral
 # monotonic (crystals accumulate; the filter never removes past
 # matches per @bauchladen bauchladen-monotonicity).
 #
-# === Filter predicate — @bilateral(@code/rust, @code/mirror) ===
+# === Filter predicate — @bilateral(@facet/rust, @facet/mirror) ===
 #
 # The Edge 3 filter predicate `crystal.discharges @bilateral/
 # translation.translation_admissible` is the substrate-honest form of
@@ -161,7 +161,7 @@ in @epistemologic/pact/bilateral
 # `translation_admissible` Pass — the algebra membership condition
 # lands as a bilateral discharge, not a string-match.
 #
-# The composition binding is `@bilateral(@code/rust, @code/mirror)`
+# The composition binding is `@bilateral(@facet/rust, @facet/mirror)`
 # per Alex 2026-07-17 verbatim ("the floor the translation surface
 # stands on"). The 21 mirror-authored bilateral-arm retirements are
 # the first 21 witnesses at the degenerate-arity subcase (single-file-
@@ -284,7 +284,7 @@ in @epistemologic/pact/bilateral
 #    authored translation invokes at write-back altitude (per
 #    `shards/kintsugi/translate.mirror` Edge 6). THIS species reads
 #    the crystals bauchladen emitted.
-# 3. `@bilateral(@code/rust, @code/mirror).translation_admissible`
+# 3. `@bilateral(@facet/rust, @facet/mirror).translation_admissible`
 #    (`shards/epistemologic/pact/bilateral.mirror` :456-475; Mara
 #    THIS-tick) — the algebra-membership predicate the filter
 #    dispatches at Edge 3. Content-addressed membership discipline.
@@ -349,7 +349,7 @@ prism @silicon/algebra <= @bauchladen {
 # shaped action whose composition graph names (A) an `@mirror/store`
 # read/query edge + (B) an author-filter edge on `mirror <mirror@
 # spectral.engineer>` + (C) a discharge-filter edge on
-# `@bilateral(@code/rust, @code/mirror).translation_admissible`
+# `@bilateral(@facet/rust, @facet/mirror).translation_admissible`
 # (or its degenerate-arity subcase at `@kintsugi/fracture/
 # bilateral_arm_redundant`) + (D) a projection edge onto
 # `crystal.oid`. Discharge is byte-check on the composition graph's
@@ -367,7 +367,7 @@ prism @silicon/algebra <= @bauchladen {
 #     formedness; the composition that writes back to THIS tray).
 #   - `translation_admissible(pair)` at `shards/epistemologic/pact/
 #     bilateral.mirror` :472-475 (the general-case @bilateral(A, B)
-#     FLOOR predicate at A=@code/rust B=@code/mirror; the algebra-
+#     FLOOR predicate at A=@facet/rust B=@facet/mirror; the algebra-
 #     membership condition THIS shard's Edge 3 filter dispatches).
 #
 # Substrate-decl'd shape per `shards/epistemologic/pact/bilateral.

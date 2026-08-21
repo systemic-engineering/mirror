@@ -21,7 +21,7 @@ in @glass
 # This shard lifts `@io` from the boot grammar floor to the mirror
 # altitude — same primitive at two altitudes; the family root names
 # the discipline; species parameterize the boundary. The lift matches
-# the rhythm of every prior family-root recognition: `@code` (the
+# the rhythm of every prior family-root recognition: `@facet` (the
 # universal language-grammar discipline, 2026-06-06), `@mirror/lens`
 # (the observation/projection family, 2026-06-06), `@mirror/loss`
 # (the measurement-carrier family, 2026-06-07), `@mirror/data` (the
@@ -88,7 +88,7 @@ in @glass
 #     substrate's analyzability matures. The recognitive
 #     discriminator (T21's second half, retired from
 #     `@mirror/realisation` 2026-06-10 to its substrate-pull-
-#     correct home at `@code/metalogue/materialize`) names which
+#     correct home at `@facet/metalogue/materialize`) names which
 #     is which.
 #
 # === #107 — Hilbert/Turing structural separation (PROMOTED at substrate-decl altitude) ===
@@ -175,7 +175,7 @@ in @glass
 #                   transparency lift). The first species the
 #                   mirror-altitude lift named (shards/io/cargo.mirror,
 #                   2026-06-05). Per its docstring: "the @io tool the
-#                   altitude grammar @code/rust delegates to."
+#                   altitude grammar @facet/rust delegates to."
 #   @io/crypto     (2026-07-15; lifted from boot-floor via @io/secrets
 #                   consumer pull; carries key_material, ciphertext_
 #                   bytes, signature_bytes, aead_context + AEAD/sig/
@@ -197,7 +197,7 @@ in @glass
 # land when a consumer pulls):
 #
 #   @io/llvm       LLVM-IR / LLVM toolchain surface. Lands when the
-#                   `@code/llvm` altitude pulls its emit target (per
+#                   `@facet/llvm` altitude pulls its emit target (per
 #                   `roadmap/wip/butterfly-self-hosting.md` § the
 #                   compile staircase; v0.9 → v1.0 gate).
 #   @io/flang      Flang Fortran frontend / LAPACK kernel surface.
@@ -238,32 +238,32 @@ in @glass
 # output has no typed home. T21 lands both halves in the same tick
 # because each half is the other half's substrate prerequisite.
 #
-# === Sibling relationship to @code ===
+# === Sibling relationship to @facet ===
 #
-# `@code` (shards/code.mirror) is the LANGUAGE-grammar family at the
+# `@facet` (shards/code.mirror) is the LANGUAGE-grammar family at the
 # mirror altitude — the universal "this is a grammar producing
 # artifacts at altitude X" discipline. `@io` (this shard) is the
 # BOUNDARY family at the mirror altitude — the universal "this is a
 # typed contract with the non-mirror-world at surface X" discipline.
 # Both name typed surfaces; both declare the five-op block at their
 # root; both species-parameterize their carrier (altitude type for
-# @code; boundary kind for @io); both compose under the same
+# @facet; boundary kind for @io); both compose under the same
 # `transparency<p>` monoid.
 #
-# The difference is altitude OF THE SURFACE: `@code/X` is INSIDE the
+# The difference is altitude OF THE SURFACE: `@facet/X` is INSIDE the
 # mirror substrate (Rust-as-grammar, mirror-as-grammar, LLVM-as-
-# grammar — all instances of @code reading their own source); `@io/X`
+# grammar — all instances of @facet reading their own source); `@io/X`
 # is the WALL the substrate cannot fold past (cargo's subprocess
 # semantics, LLVM-IR's linker invariants, LAPACK's column-major
 # allocation contract — all instances of @io naming what the
 # substrate hands off to). The two families partition what mirror can
-# express at the byte level: `@code` declares what mirror reads and
+# express at the byte level: `@facet` declares what mirror reads and
 # writes AS-MIRROR; `@io` declares what mirror reads and writes
 # AS-NON-MIRROR-WORLD.
 #
 # Sibling family roster at the mirror altitude (six, post-T21):
 #
-#   @code              language-grammar discipline      (2026-06-06)
+#   @facet              language-grammar discipline      (2026-06-06)
 #   @mirror/lens       observation/projection family    (2026-06-06)
 #   @mirror/spectral   agent-coordination family        (2026-06-06)
 #   @mirror/loss       measurement-carrier family       (2026-06-07)
@@ -279,7 +279,7 @@ in @glass
 # === Cybernetic ancestor (recognition #50, 2026-06-10) ===
 #
 # The form/substance partition this family declares — five form-side
-# family roots (@code, @mirror/lens, @mirror/spectral, @mirror/loss,
+# family roots (@facet, @mirror/lens, @mirror/spectral, @mirror/loss,
 # @mirror/data) + this one substance-side root (@io) — IS Bateson's
 # 1970 distinction from *Form, Substance and Difference* (Nineteenth
 # Alfred Korzybski Memorial Lecture, January 9, 1970; reprinted in
@@ -344,7 +344,7 @@ in @glass
 #               roadmap/2026-06-08-rug-pull.md §6 + §11 (T21 + T22
 #               named as the kintsugi-on-Rust prerequisite + pilot),
 #               docs/specs/mirror-spec-schema.md §10.5 (emit
-#               disambiguation; `ref(@io)` vs `ref(@code/*)`).
+#               disambiguation; `ref(@io)` vs `ref(@facet/*)`).
 # Substrate decisions: [[architecture-shards-as-substrate-source]],
 #                      [[architecture-prism-as-trait-as-everything]],
 #                      [[architecture-lift-as-load-bearing]]
@@ -395,7 +395,7 @@ in @glass
 #     during the @mirror/lens/cli migration, and as @data/json stays
 #     in boot during the @mirror/data/json migration).
 #   - @io/llvm, @io/flang: lift when the LLVM / flang backends
-#     consume them (`@code/llvm`'s emit target; LapackBackend's
+#     consume them (`@facet/llvm`'s emit target; LapackBackend's
 #     numerical kernel surface).
 #   - @io/fs (already lifted 2026-07-15 via @io/secrets pull), @io/git,
 #     @io/process: lift when the runtime layer's disk / git /

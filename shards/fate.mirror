@@ -40,7 +40,7 @@ in @uuid/spectral
 #     §4.1 (bilateral compile-time + runtime); §4.2 (the dice-roll
 #     framing); §4.3 (the substrate-decl shape with five `in`
 #     declarations + IS-A @autopoietic); §4.4 (composition with
-#     `@code/metalogue.project_hole` + `@kintsugi/fracture/
+#     `@facet/metalogue.project_hole` + `@kintsugi/fracture/
 #     resolve_hole`); §4.5 (@fate's role in @glue); §4.6 (@fate's
 #     role in @kintsugi); §4.7 (the `candidates(hole)` migration
 #     home — @autopoietic's tick_action absorbs the signature,
@@ -298,7 +298,7 @@ in @uuid/spectral
 #               §4.1 (bilateral altitude — Alex's correction); §4.2
 #               (the dice-roll framing; A/H/D/γ/J/tray); §4.3 (the
 #               substrate-decl shape); §4.4 (composition with
-#               `@code/metalogue.project_hole` + `@kintsugi/fracture/
+#               `@facet/metalogue.project_hole` + `@kintsugi/fracture/
 #               resolve_hole`); §4.5 (@glue); §4.6 (@kintsugi); §4.7
 #               (the `candidates(hole)` migration); docs/specs/
 #               spectral-metalogue.md `16f4564` §3 (Tomm probes as

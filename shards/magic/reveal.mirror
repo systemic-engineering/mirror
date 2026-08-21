@@ -17,7 +17,7 @@ in @magic/mechanism
 #
 # CRQ: which forward-promise has the highest leverage — closes the
 # most residue per landed line? Reveal IS recognition #81's
-# substrate-decl AND composes structurally with @code/beam.swap_module
+# substrate-decl AND composes structurally with @facet/beam.swap_module
 # AND completes the @magic family's species set AND can carry TWO
 # `requires` clauses in one action. Quadruple closure per single
 # shard.
@@ -33,12 +33,12 @@ in @magic/mechanism
 # Composition (forward-promised mechanical glue per Seam C2 honest
 # hedging at tick 11):
 #
-# - @code/beam.swap_module composes-WITH @magic/reveal's `reveal`
+# - @facet/beam.swap_module composes-WITH @magic/reveal's `reveal`
 #   action at runtime altitude. Both names the substrate-pull-correct
 #   atomic-replacement primitive. Mechanical glue: when supervisor
 #   acquires a `contract: magic_contract` field (forward-promised),
 #   swap_module discharges through @magic/reveal's reveal action.
-# - @code/beam.code_change composes-WITH the migration's invariant
+# - @facet/beam.code_change composes-WITH the migration's invariant
 #   preservation. Mechanical glue: forward-promised
 #   `contract_preserved_across_swap(msg, c)` predicate at
 #   @magic/contract or contract field on code_change_msg.
@@ -53,7 +53,7 @@ in @magic/mechanism
 #
 # - `reveal_event` carrier: records an atomic mechanism replacement
 #   (old + new mechanism + contract + audit witness). The runtime-
-#   altitude analogue of @code/beam.code_change_msg.
+#   altitude analogue of @facet/beam.code_change_msg.
 # - `reveal(c, new_m) -> magic_contract` action: atomic replacement
 #   of contract.mechanism with new_m. Carries TWO non-decorative
 #   `requires` clauses (third and fourth in the family):
@@ -74,7 +74,7 @@ in @magic/mechanism
 # Per Mara's canonical spec (landed in this tick's bundled commit):
 # #81 is a candidate recognition. The substrate-decl IS the
 # `@magic/reveal` prism family declared here. The mechanical glue
-# between @magic/reveal and @code/beam (and the operational hot-
+# between @magic/reveal and @facet/beam (and the operational hot-
 # reload Rust spike that would make /mcp refresh dissolve) is
 # forward-promised.
 #
@@ -126,7 +126,7 @@ in @magic/mechanism
 #                       across mechanism replacement),
 #                      [[feedback-composition-claims-need-empirical-
 #                       test]] (Reed's own discipline; @magic ↔
-#                       @code/beam composition hedged honestly as
+#                       @facet/beam composition hedged honestly as
 #                       "composes-with" not "IS" until mechanical
 #                       glue lands),
 #                      [[feedback-no-bare-types]].

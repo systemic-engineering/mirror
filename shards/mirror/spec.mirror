@@ -134,7 +134,7 @@ altitude(value: ref) -> altitude_decl { \ }
 # emit <ref|grammar> — which @io tool or grammar projection emits
 # the artifact. Per spec §10.5: `emit cargo` resolves to a @io tool
 # invocation through the altitude grammar; `emit yaml` resolves to
-# a @code/yaml grammar projection. Disambiguation is by type at
+# a @facet/yaml grammar projection. Disambiguation is by type at
 # the call site (open question — see spec §10.5).
 emit(target: ref) -> emit_decl { \ }
 
@@ -217,9 +217,9 @@ needs(targets: [ref]) -> needs_decl { \ }
 # post-landing Tick M3.
 
 # check <action-ref> — names the @io action the target dispatches
-# (the cargo subcommand at @code/rust altitude). Optional; when
+# (the cargo subcommand at @facet/rust altitude). Optional; when
 # omitted, the target dispatches the altitude's default (cargo check
-# for @code/rust today).
+# for @facet/rust today).
 #
 # The substrate-pull recognition (insight #43, 2026-06-09): the
 # pre-commit chain (fmt / check / clippy / test / audit) IS five
@@ -230,7 +230,7 @@ needs(targets: [ref]) -> needs_decl { \ }
 #
 # Resolution: the `action` ref is looked up in the altitude's @io
 # contract (today: shards/io/cargo.mirror). Substrate-pull-correct
-# values for @code/rust: check, test, build, fmt_check, clippy, audit,
+# values for @facet/rust: check, test, build, fmt_check, clippy, audit,
 # bench (per shards/io/cargo.mirror's declared actions).
 #
 # Per Seam Phase D `91e79c8` §7 Sub-arc 3a (RED `d25b91a`): `bench`

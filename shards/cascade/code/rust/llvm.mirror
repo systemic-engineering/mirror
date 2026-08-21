@@ -3,8 +3,8 @@ in @meta
 in @glass
 in @cascade
 in @labeled
-in @code/rust
-in @code/llvm
+in @facet/rust
+in @facet/llvm
 
 # @cascade/code/rust/llvm — the Rust → LLVM IR cascade species.
 #
@@ -43,14 +43,14 @@ in @code/llvm
 #
 # === composition altitude: SOURCE-ADJACENT ===
 #
-# The source altitude is `@code/rust` (landed
-# `shards/code/rust.mirror`). The target altitude is `@code/llvm`
+# The source altitude is `@facet/rust` (landed
+# `shards/code/rust.mirror`). The target altitude is `@facet/llvm`
 # (landed `shards/code/llvm.mirror` this session; Mara M1
 # `62d1b1c`). This species is the ADJACENT-ALTITUDE morphism
 # between them; per polyglot spec §3.2 composition axiom, it
 # composes with `@cascade/code/llvm/turing` (sibling mint) to
 # give O(N)-authored coverage of O(N²) translation pairs through
-# the @code/llvm machine-substrate hub.
+# the @facet/llvm machine-substrate hub.
 #
 # === The cascade shape (Rust → LLVM IR) ===
 #
@@ -83,7 +83,7 @@ in @code/llvm
 #   (monomorphized), macros (expanded), trait objects (partial
 #   via vtables), high-level ownership discipline.
 #
-# The `loss_lens<@code/rust, @code/llvm>` measures these gaps
+# The `loss_lens<@facet/rust, @facet/llvm>` measures these gaps
 # against the rustc emission + the LLVM LangRef target grammar.
 #
 # === Recognition ancestry ===
@@ -150,7 +150,7 @@ in @code/llvm
 #                 shards/cascade/code/llvm/turing.mirror (sibling
 #                 mint this tick; composes with THIS species per
 #                 polyglot spec §3.2 to give Rust → Turing via
-#                 @code/llvm hub).
+#                 @facet/llvm hub).
 # Path-namespace property: this file at
 # `shards/cascade/code/rust/llvm.mirror` declares
 # `@cascade/code/rust/llvm` per
@@ -195,7 +195,7 @@ type llvm_emission_metadata = ref
 # === llvm_artifact carrier ===
 #
 # The @labeled<> instance per recognition #93 H4. An llvm_artifact
-# IS a `@code/llvm.llvm_ir_module` annotated with
+# IS a `@facet/llvm.llvm_ir_module` annotated with
 # llvm_emission_metadata via the labeled functor. Substrate-
 # architecturally load-bearing: the module's typed identity is
 # preserved (via labeled parametricity per Wadler 1989 / Reynolds
@@ -211,7 +211,7 @@ type llvm_artifact = labeled(llvm_ir_module, llvm_emission_metadata)
 #
 # THE LOAD-BEARING ACTION. Specialization of @cascade.compile for
 # the Rust → LLVM IR functor. Takes a rust_source; returns the
-# `@code/llvm.llvm_ir_module`.
+# `@facet/llvm.llvm_ir_module`.
 #
 # Realisation shells to `rustc --emit=llvm-ir` at the @io boundary
 # (per polyglot spec §5 loss-aware note; bootstrap/src/lib.rs
@@ -310,7 +310,7 @@ rust_well_typed(source: rust_source, p: perturbation) -> verdict { \ }
 # Splinter-pole: target triple matches datalayout; optimization
 # level consistent with emitted attributes; debug info nodes
 # match emission metadata; module passes LLVM Verifier
-# (composes with `@code/llvm.llvm_ir_valid` per Mara `62d1b1c`).
+# (composes with `@facet/llvm.llvm_ir_valid` per Mara `62d1b1c`).
 # Narcissus-pole: triple/datalayout mismatch; attributes drift
 # from optimization level; debug info incoherent; Verifier
 # rejects.
@@ -327,7 +327,7 @@ llvm_emission_coherent(module: llvm_ir_module, metadata: llvm_emission_metadata,
 # Specializes the family-root's loss_well_defined for this
 # cascade. Commitment that the substrate-typed gap calculation IS
 # computable for the (source, artifact) pair; the source IS in
-# @code/rust grammar, the artifact's module IS in @code/llvm
+# @facet/rust grammar, the artifact's module IS in @facet/llvm
 # grammar, and the pair represents a valid cascade discharge
 # (rustc `--emit=llvm-ir` produced THIS artifact from THIS source).
 #

@@ -3,7 +3,7 @@ in @meta
 in @glass
 in @magic
 in @frame
-in @code/beam
+in @facet/beam
 in @epistemologic
 in @epistemologic/cybernetic
 in @cyberpunk  # Seam tick 30 C2 closure: @cyberpunk family-root landed
@@ -26,7 +26,7 @@ in @kintsugi
 #
 # The @smarts prism family compositionally integrates ALL the other
 # prism families the cascade has built: @magic (form/process; #80),
-# @frame (cognitive-order; #82), @code/beam (BEAM semantics; tick 8),
+# @frame (cognitive-order; #82), @facet/beam (BEAM semantics; tick 8),
 # @epistemologic/cybernetic (variety/autopoiesis/eigenform/distinction/
 # conversation/etc.), @cyberpunk (the recursion-lock tower family),
 # @kintsugi (the loop discipline).

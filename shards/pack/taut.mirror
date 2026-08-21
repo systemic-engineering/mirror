@@ -173,7 +173,7 @@ in @epistemologic/cybernetic
 #                                preservation through realisation.
 #   rust rfc                     Matsakis Klock 2010. The substrate
 #                                Taut grounds in; the implementation-
-#                                language ancestor of @code/rust at
+#                                language ancestor of @facet/rust at
 #                                @pack altitude.
 #
 # Spec context: shards/pack.mirror (family-root, recognition #84; the
@@ -363,7 +363,7 @@ implementation_grounds_substrate(ti: taut_impl, p: perturbation)
 # and Seam are upstream).
 #
 # Three-predicate discharge IS the structurally heaviest action in the
-# orchestra; the realisation layer at @code/rust altitude lifts all
+# orchestra; the realisation layer at @facet/rust altitude lifts all
 # three disciplines into Rust type-bounds + trait constraints.
 tighten(im: implementation, ti: taut_impl, ms: mara_spec, sr: seam_review, p: perturbation) -> ref
 requires implementation_grounds_substrate(ti, p)

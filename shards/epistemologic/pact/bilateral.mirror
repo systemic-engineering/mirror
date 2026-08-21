@@ -449,7 +449,7 @@ bilateral_well_formed(decl: bilateral) -> verdict { \ }
 # valid as degenerate case; no reflective-evaluator changes):
 #
 #   "What if `@bilateral` became a composition on top of `@glue` and
-#    `@metalogue`. And then `@bilateral(@code/rust, @code/mirror)`
+#    `@metalogue`. And then `@bilateral(@facet/rust, @facet/mirror)`
 #    becomes the floor the translation surface stands on."
 #
 # Canonical spec: `docs/specs/bilateral-as-glue-metalogue-composition.md`
@@ -477,7 +477,7 @@ bilateral_well_formed(decl: bilateral) -> verdict { \ }
 #
 #   - A ≠ B (general case, translation floor): real semantic-
 #     preservation check that a morphism from A to B preserves meaning.
-#     Concrete first instance: `@bilateral(@code/rust, @code/mirror)`
+#     Concrete first instance: `@bilateral(@facet/rust, @facet/mirror)`
 #     — the floor the Rust→mirror translation surface stands on (per
 #     `shards/kintsugi/translate.mirror::translate_rust_to_mirror` at
 #     Mara `86dec5e`). Declared BELOW as `translation_admissible`
@@ -509,12 +509,12 @@ bilateral_well_formed(decl: bilateral) -> verdict { \ }
 #                                                                                                     `algebra_metalogue_session` is the
 #                                                                                                     underlying session carrier
 #   algebra_metalogue_witnessing(s)          shards/algebra/metalogue.mirror :348                     session well-formedness inheritance
-#   @code/rust                               shards/code/rust.mirror (Mara 2026-06-08)                source-side altitude for the first
+#   @facet/rust                               shards/code/rust.mirror (Mara 2026-06-08)                source-side altitude for the first
 #                                                                                                     general-case instance
-#   @code/mirror                             shards/code/mirror.mirror (Mara 2026-06-07)              target-side altitude for the first
+#   @facet/mirror                             shards/code/mirror.mirror (Mara 2026-06-07)              target-side altitude for the first
 #                                                                                                     general-case instance
 #   @kintsugi/translate                      shards/kintsugi/translate.mirror (Mara `86dec5e`)        the translation surface
-#                                                                                                     @bilateral(@code/rust, @code/mirror)
+#                                                                                                     @bilateral(@facet/rust, @facet/mirror)
 #                                                                                                     floors
 #
 # === Connection to @kintsugi/algebra ===
@@ -563,7 +563,7 @@ bilateral_well_formed(decl: bilateral) -> verdict { \ }
 # === Deliverable 2 THIS TICK: the first general-case instance ===
 #
 # Concrete first general-case instance per Alex 2026-07-17 verbatim:
-# `@bilateral(@code/rust, @code/mirror)` — the floor the translation
+# `@bilateral(@facet/rust, @facet/mirror)` — the floor the translation
 # surface (Mara `86dec5e`) stands on.
 #
 # Declared below as `translation_admissible` — a grammar-decl'd
@@ -576,7 +576,7 @@ bilateral_well_formed(decl: bilateral) -> verdict { \ }
 #
 # The 21 mirror-authored bilateral-arm retirements landed 2026-07-16..
 # 17 (`ad52973` + `20047c2` + ancestors) are the first 21 witnesses of
-# `@bilateral(@code/rust, @code/mirror)` at the degenerate-arity
+# `@bilateral(@facet/rust, @facet/mirror)` at the degenerate-arity
 # subcase (single-file-in-bootstrap-src). Every future
 # `translate_rust_to_mirror` discharge (per `shards/kintsugi/translate.
 # mirror::translate_rust_to_mirror` at `86dec5e`) adds a witness.
@@ -586,10 +586,10 @@ bilateral_well_formed(decl: bilateral) -> verdict { \ }
 # The record shape carrying one Rust→mirror translation outcome the
 # `translation_admissible` bilateral witnesses. Fields:
 #
-#   rust_source        — the @code/rust ref (a .rs file's bytes; the
+#   rust_source        — the @facet/rust ref (a .rs file's bytes; the
 #                         source-side altitude ref per shards/code/
 #                         rust.mirror altitude discipline).
-#   mirror_target      — the @code/mirror ref (a .mirror composition's
+#   mirror_target      — the @facet/mirror ref (a .mirror composition's
 #                         bytes; the target-side altitude ref per
 #                         shards/code/mirror.mirror altitude discipline).
 #   discharge_verdict  — the @glass.verdict from the translation's
@@ -601,7 +601,7 @@ bilateral_well_formed(decl: bilateral) -> verdict { \ }
 # discharge_verdict). Two translation_pairs with byte-equal fields ARE
 # the same outcome under content-addressing (per Mesland-category
 # morphism identity: same source + same target + same verdict IS the
-# same translation-turn in the @metalogue(@code/rust, @code/mirror)
+# same translation-turn in the @metalogue(@facet/rust, @facet/mirror)
 # session).
 type translation_pair = {
   rust_source:       ref,
@@ -612,20 +612,20 @@ type translation_pair = {
 # === translation_admissible — bilateral predicate (arity 1) ===
 #
 # THE FIRST GENERAL-CASE INSTANCE of `@bilateral(A, B)` at this species'
-# altitude. Names `@bilateral(@code/rust, @code/mirror)` as a grammar-
+# altitude. Names `@bilateral(@facet/rust, @facet/mirror)` as a grammar-
 # decl'd bilateral (arity 1; single-outcome check).
 #
 # Discharges Pass iff the Rust→mirror translation preserves meaning
 # under the composition of:
-#   - `@glue(@code/rust, @code/mirror)` — the correspondence carrier
+#   - `@glue(@facet/rust, @facet/mirror)` — the correspondence carrier
 #     from source altitude to target altitude
-#   - `@metalogue(@code/rust, @code/mirror)` — the session carrier
+#   - `@metalogue(@facet/rust, @facet/mirror)` — the session carrier
 #     the winning turn joins
 #
 # Semantically: for each successful `translate_rust_to_mirror`
 # discharge (per `shards/kintsugi/translate.mirror::translate_rust_to_
 # mirror` at Mara `86dec5e`), the outcome IS a turn in the
-# `@metalogue(@code/rust, @code/mirror)` session AND witnesses this
+# `@metalogue(@facet/rust, @facet/mirror)` session AND witnesses this
 # predicate.
 #
 # The reflective evaluator dispatches this bilateral via the corpus
@@ -650,8 +650,8 @@ type translation_pair = {
 #     correspondence).
 #
 # Sentinel per shard docblock: `translation=preserves-meaning` — the
-# byte-level substrate-decl'd marker for `@bilateral(@code/rust,
-# @code/mirror)` discharge. When the composition machinery discharges
+# byte-level substrate-decl'd marker for `@bilateral(@facet/rust,
+# @facet/mirror)` discharge. When the composition machinery discharges
 # Pass, the realization layer stamps the sentinel on the outcome ref;
 # discharge is byte-equality on ref.oid containment per
 # `@epistemologic/pact/bilateral.discharge`.
@@ -682,7 +682,7 @@ translation_admissible(pair: translation_pair) -> verdict { \ }
 #    Rice-safety proof + decidability + fixed-point convergence for
 #    the Rust→mirror translation loop)
 # - shards/kintsugi/translate.mirror (Mara `86dec5e`, THIS session) —
-#   the translation surface `@bilateral(@code/rust, @code/mirror)`
+#   the translation surface `@bilateral(@facet/rust, @facet/mirror)`
 #   floors; `translation_witnessing` composes over `translation_
 #   admissible` at outcome-check altitude
 # - shards/kintsugi.mirror :178-241 (Mara `0ac3c7b`, 2026-07-16) —

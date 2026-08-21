@@ -31,7 +31,7 @@ in @epistemologic/property/content_addressed
 #
 # Same tick-1 discipline as arm64: carriers ship now; detect() body
 # is a Fate-resolved hole filled at boot via tournament against
-# @code/kernel/x86_64.
+# @facet/kernel/x86_64.
 #
 # Substrate-pull placement (2026-06-06, Mara's reality family migration):
 # moved from shards/epistemologic/silicon/arch/ to shards/epistemologic/reality/silicon/arch/
@@ -93,7 +93,7 @@ requires content_addressed(x86_64)
 # Darwin x86_64 (Rosetta or pre-AS hardware): @io.exec("sysctl",
 # ["-n", "machdep.cpu.features", "machdep.cpu.leaf7_features"])
 # surfaces SSE/AVX/AVX-512. Body is a Fate-resolved hole filled at
-# boot via tournament against @code/kernel/x86_64.
+# boot via tournament against @facet/kernel/x86_64.
 detect() -> x86_64 { \ }
 
 # Literal property. Same discipline as arm64.literal: re-detect,

@@ -3,8 +3,8 @@ in @meta
 in @glass
 in @cascade
 in @labeled
-in @code/gleam
-in @code/beam
+in @facet/gleam
+in @facet/beam
 
 # @cascade/code/gleam/beam — the Gleam → BEAM bytecode cascade species.
 #
@@ -20,8 +20,8 @@ in @code/beam
 # discharges the per-grammar measurement of information loss in
 # compilation from a typed source grammar to a mainstream target.
 #
-# This species: source_grammar = @code/gleam, target_grammar =
-# @code/beam (shards/code/beam.mirror; landed 2026-06-19 by Reed).
+# This species: source_grammar = @facet/gleam, target_grammar =
+# @facet/beam (shards/code/beam.mirror; landed 2026-06-19 by Reed).
 # The Gleam→BEAM cascade IS GLEAM'S NATIVE TARGET; the BEAM-side
 # runtime preserves the dimensions JS cannot: preemptive
 # concurrency, supervision trees, hot code upgrade, the OTP
@@ -48,13 +48,13 @@ in @code/beam
 #   when no clause matches)
 # - immutability (BEAM enforces by language)
 # - preemptive scheduling (BEAM scheduler; each process is
-#   independently scheduled per @code/beam's discipline)
+#   independently scheduled per @facet/beam's discipline)
 # - supervision tree (gen_supervisor; restart strategies;
-#   per @code/beam.swap_module + @code/beam.supervise actions)
+#   per @facet/beam.swap_module + @facet/beam.supervise actions)
 # - hot code upgrade (BEAM's two-version-coexistence per
-#   @code/beam.code_change_msg + @code/beam.code_change action)
+#   @facet/beam.code_change_msg + @facet/beam.code_change action)
 # - the @magic/contract preservation across hot swaps (per
-#   @code/beam's composition with @magic per recognition #80)
+#   @facet/beam's composition with @magic per recognition #80)
 #
 # Loss surfaces at: static type erasure (the type system itself
 # vanishes at runtime; BEAM is dynamically typed; the
@@ -70,7 +70,7 @@ in @code/beam
 # profile of Gleam→JS; the difference is exactly the BEAM-
 # preserved dimensions (concurrency, supervision, hot upgrade).
 #
-# The loss_lens<@code/gleam, @code/beam> measures these gaps
+# The loss_lens<@facet/gleam, @facet/beam> measures these gaps
 # against the Gleam compiler's emitted type info + the BEAM grammar
 # specification.
 #
@@ -137,13 +137,13 @@ in @code/beam
 #   BEAM boundary IS the @io altitude this species operationalizes;
 #   the boundary is where Gleam's static types meet BEAM's
 #   dynamic-runtime invariants. The substrate-pull-correct boundary
-#   discharge composes with @code/beam's @magic-derived discipline
+#   discharge composes with @facet/beam's @magic-derived discipline
 #   (recognition #80) for runtime-altitude correctness.
-# - Recognition #80 (@magic family; @code/beam composes with):
+# - Recognition #80 (@magic family; @facet/beam composes with):
 #   the BEAM target's hot-upgrade and supervision discipline
 #   composes through this species; a Gleam-authored gen_server
 #   compiled to BEAM inherits the @magic/contract preservation
-#   discipline that @code/beam declares.
+#   discipline that @facet/beam declares.
 # - Recognition #59 (kintsugi loop altitude-portable): @kintsugi
 #   heals the loss this species measures, including at the BEAM
 #   runtime-upgrade altitude where hot swaps are the operational
@@ -167,7 +167,7 @@ in @code/beam
 #                                  this species's target preserves
 #                                  semantics of.
 #   BEAM VM                        the Erlang virtual machine;
-#                                  per @code/beam's substrate-decl
+#                                  per @facet/beam's substrate-decl
 #                                  (shards/code/beam.mirror).
 #
 # Spec context: docs/specs/recognitions/recognition-95-cascade-as-
@@ -224,11 +224,11 @@ in @code/beam
 #    the Narcissus-warned pole for FFI-present programs.
 #
 # 4. BEAM-side substrate composition forward-promised. The composed
-#    cascade well-formedness COULD declare requires @code/beam
+#    cascade well-formedness COULD declare requires @facet/beam
 #    bilaterals (e.g., supervision-tree-coherent, contract-
 #    preserved-across-swap) for BEAM-side runtime correctness;
-#    those bilaterals don't yet exist at @code/beam altitude
-#    (per @code/beam's own honest hedges about mechanical-glue
+#    those bilaterals don't yet exist at @facet/beam altitude
+#    (per @facet/beam's own honest hedges about mechanical-glue
 #    forward-promises with @magic). This shard's composed bilateral
 #    stays at the cascade altitude (source typed + target
 #    consumable + loss well-defined) and does NOT pre-empt the
@@ -483,7 +483,7 @@ gleam_beam_loss_well_defined(source: gleam_source, artifact: beam_artifact, p: p
 #
 # Per hedge 4: BEAM-runtime bilaterals (supervision-tree-coherent,
 # contract-preserved-across-swap) are FORWARD-PROMISED at @magic/
-# audit + @magic/contract altitude per @code/beam's own honest
+# audit + @magic/contract altitude per @facet/beam's own honest
 # hedges; this composed bilateral does NOT pre-empt them. A future
 # extension could LIFT the requires clauses when those bilaterals
 # discharge.

@@ -3,7 +3,7 @@ in @meta
 in @glass
 in @cascade
 in @labeled
-in @code/rust
+in @facet/rust
 
 # @cascade/code/rust/go — the Rust → Go cascade species.
 #
@@ -60,7 +60,7 @@ in @code/rust
 #
 # Grep verdict clean at species altitude:
 #   - `@cascade/code/rust/go` DOES NOT EXIST at any altitude.
-#   - `@code/go` DOES NOT EXIST at family-root-species altitude
+#   - `@facet/go` DOES NOT EXIST at family-root-species altitude
 #     (would live at `shards/code/go.mirror`; forward-promised
 #     mint).
 #   - Go's `--emit` capability is upstream-canonical; the substrate
@@ -68,8 +68,8 @@ in @code/rust
 #
 # === composition altitude: SOURCE-ADJACENT ===
 #
-# The source altitude is `@code/rust` (LANDED at
-# `shards/code/rust.mirror`). The target altitude is `@code/go`
+# The source altitude is `@facet/rust` (LANDED at
+# `shards/code/rust.mirror`). The target altitude is `@facet/go`
 # (FORWARD-PROMISED at `shards/code/go.mirror`; this cascade
 # species DECLARES the target-grammar carriers internally as `ref`
 # until the target grammar shard lands). Per the sibling
@@ -124,7 +124,7 @@ in @code/rust
 #   Go leg. Direct Rust → Go measures BOTH the erasure AND the
 #   reintroduction ONCE against the source.
 #
-# The `loss_lens<@code/rust, @code/go>` measures these gaps
+# The `loss_lens<@facet/rust, @facet/go>` measures these gaps
 # against the rustc emission surface + the Go 2024 spec grammar.
 #
 # === StageFreight application ===
@@ -258,7 +258,7 @@ type rust_source = ref
 #
 # Specialization of @cascade.compiled_artifact for target_grammar=go.
 # The .go file(s) + go.mod + go.sum produced from the cascade.
-# Substrate-decl'd here inline because `@code/go` is forward-
+# Substrate-decl'd here inline because `@facet/go` is forward-
 # promised (would live at `shards/code/go.mirror`). Per the sibling
 # `@cascade/code/rust/llvm` :193 `llvm_emission_metadata` carrier
 # declared inline without target-grammar-shard prerequisite.
@@ -436,7 +436,7 @@ go_emission_coherent(source: go_source, metadata: go_emission_metadata, p: pertu
 # Specializes the family-root's loss_well_defined for this
 # cascade. Commitment that the substrate-typed gap calculation IS
 # computable for the (source, artifact) pair; the source IS in
-# @code/rust grammar, the artifact's go_source IS in @code/go
+# @facet/rust grammar, the artifact's go_source IS in @facet/go
 # grammar (forward-promised shard; grammar validated via `go vet`
 # at @io boundary in the interim), and the pair represents a
 # valid cascade discharge (mirror's Rust → Go emitter produced
@@ -533,11 +533,11 @@ requires cascade_rust_go_preserves_semantics(artifact)
 # §5 Forward-promised
 # ============================================================
 #
-# 1. `@code/go` mint at `shards/code/go.mirror` — the target
+# 1. `@facet/go` mint at `shards/code/go.mirror` — the target
 #    grammar family-species this cascade forward-promises. When
-#    landed, `in @code/go` import can replace the inline `ref`
+#    landed, `in @facet/go` import can replace the inline `ref`
 #    carriers here (mirror of sibling `@cascade/code/rust/llvm`
-#    :7 `in @code/llvm` composition).
+#    :7 `in @facet/llvm` composition).
 # 2. `@io/go` mint at `shards/io/go.mirror` — the @io mechanism
 #    altitude for Go tool subprocess dispatch. `@tool/go.exec`
 #    (sibling shard this tick) forward-promises this @io species

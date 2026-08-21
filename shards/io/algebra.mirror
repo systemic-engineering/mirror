@@ -531,7 +531,7 @@ requires bauchladen_membership_held(a)
 # group multiplication table is cross-wall-kintsugi-eligible); MUST
 # stay @io-bound when the external algebra depends on non-mirror
 # state (a vendor SDK's algebra-of-effects is permanent-@io). The
-# realisation discharges the discrimination per @code/metalogue/
+# realisation discharges the discrimination per @facet/metalogue/
 # materialize (the recognitive discriminator).
 #
 # requires endpoint_well_typed(endpoint): the external endpoint

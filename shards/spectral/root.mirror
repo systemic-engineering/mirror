@@ -229,7 +229,7 @@ in @uuid/spectral
 # body emits any morphism in this tick. No `partials` declaration
 # needed (per `dissonance_partials_match_ast_breadth` #306). The
 # body discharges downstream when the consumer pulls realisation
-# through `@code/metalogue/materialize` (per the ouroboros pipeline
+# through `@facet/metalogue/materialize` (per the ouroboros pipeline
 # in docs/specs/spectral-runtime.md §5).
 #
 # === The mara-spawn example resolved ===
@@ -382,7 +382,7 @@ type root = {
 # Body discharges as `\`; concrete construction (identity computation,
 # self-parent edge establishment, default restart_strategy assignment,
 # anchor binding) lives at the realisation layer via
-# @code/metalogue/materialize (per the ouroboros pipeline in
+# @facet/metalogue/materialize (per the ouroboros pipeline in
 # docs/specs/spectral-runtime.md §5).
 start_root(anchor: ref) -> root { \ }
 

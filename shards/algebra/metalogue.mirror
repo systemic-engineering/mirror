@@ -155,7 +155,7 @@ in @uuid/spectral
 # (source = target, operation_map = identity) IS well-formed.
 # At this altitude, this names the algebra-self-conversation
 # case. Same shape as @pack/metalogue's self-handoff (an agent
-# talking to itself) and @code/metalogue's self-shim (a
+# talking to itself) and @facet/metalogue's self-shim (a
 # declaration emitting as itself per round_trip).
 #
 # === Pre-AI prior art ===
@@ -246,7 +246,7 @@ type algebra_turn = {
 # Per recognition #100 §2.4 (metalogue_session shape lifted to
 # the algebra altitude): ordered turn sequence plus residual
 # opacity. Same shape as @metalogue.metalogue_session,
-# @code/metalogue.metalogue_session, @pack/metalogue
+# @facet/metalogue.metalogue_session, @pack/metalogue
 # .metalogue_thread; lifted to the algebra altitude.
 #
 # - `turns`    ordered sequence of algebra-to-algebra turns.
@@ -323,7 +323,7 @@ session_well_formed(s: algebra_metalogue_session) -> verdict { \ }
 # === The bilateral requires obligations ===
 #
 # Per the canonical metalogue-altitude discipline (precedent at
-# @code/metalogue + @pack/metalogue + the canonical spec at
+# @facet/metalogue + @pack/metalogue + the canonical spec at
 # `docs/specs/spectral-metalogue.md` §2.5): consumer shards
 # declare bilateral agreement by writing the obligations below.
 

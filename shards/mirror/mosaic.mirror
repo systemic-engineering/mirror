@@ -73,7 +73,7 @@ prism @mirror/mosaic {
 #                          settle_on as a typed graph).
 #   mosaic(@emitter)      is the shifted-to-an-altitude
 #                          intermediate that settle consumes.
-#   mosaic(@code/rust)    is the resolved Rust workspace + build
+#   mosaic(@facet/rust)    is the resolved Rust workspace + build
 #                          invocation the cargo @io call composes
 #                          across.
 #   mosaic(@ci/github)    is the GitHub Actions YAML manifold.
@@ -97,7 +97,7 @@ type mosaic(altitude) = ref
 #
 # `au` is the substrate's settled-gold form (per glass.mirror's
 # transparency / imperfect floor). At the build altitude, au is
-# parametric on the altitude it settled at: au(@code/rust),
+# parametric on the altitude it settled at: au(@facet/rust),
 # au(@ci/github), au(@release). The `imperfect(au, e, transparency)`
 # functor from @glass carries the partial-settlement case.
 type au(altitude) = settle(altitude)
@@ -134,7 +134,7 @@ split(resolved) -> [shard] { \ }
 # altitude DOWN to the target's altitude. Shift is where @io
 # crossings happen: an altitude that requires an external tool
 # (cargo, llc, opencl, gh) delegates THROUGH the altitude grammar
-# (substrate-pull goes through @code/rust, not through mosaic).
+# (substrate-pull goes through @facet/rust, not through mosaic).
 # Per [[architecture-lift-as-load-bearing]] this is the same `shift`
 # verb (formerly `zoom`) the floor algebra uses.
 shift(resolved, altitude) -> emitter { \ }
@@ -147,11 +147,11 @@ shift(resolved, altitude) -> emitter { \ }
 # what kintsugi reads to pick the next focus.
 settle(emitter) -> imperfect(au, error, transparency) { \ }
 
-# === cargo @io contract — the @code/rust delegation sketch ===
+# === cargo @io contract — the @facet/rust delegation sketch ===
 #
-# Per mosaic.md §4: when shift hits @code/rust, the altitude grammar
-# (@code/rust, NOT mosaic) delegates to cargo through @io. Mosaic
-# does not know about cargo — it knows about @code/rust, which knows
+# Per mosaic.md §4: when shift hits @facet/rust, the altitude grammar
+# (@facet/rust, NOT mosaic) delegates to cargo through @io. Mosaic
+# does not know about cargo — it knows about @facet/rust, which knows
 # about cargo. The substrate-pull goes through the altitude.
 #
 # Phase-bounded (mosaic.md §8): the @io.cargo footprint shrinks
@@ -166,7 +166,7 @@ settle(emitter) -> imperfect(au, error, transparency) { \ }
 # settlements composed under transparency<p>; the bootstrap dispatcher
 # walks them in declaration order today, eigensheaf-Laplacian
 # parallelism analysis lands at recognition #44+.
-shift @code/rust(resolved) -> rust_emitter {
+shift @facet/rust(resolved) -> rust_emitter {
   workspace: project_workspace(resolved),
   invocation: @io.cargo.build {
     manifest: workspace.cargo_toml,
@@ -176,7 +176,7 @@ shift @code/rust(resolved) -> rust_emitter {
   \
 }
 
-settle rust_emitter -> au(@code/rust) {
+settle rust_emitter -> au(@facet/rust) {
   verdict: run(emitter.invocation),
   result: imperfect_of(verdict, emitter.workspace.artifact_path),
   \

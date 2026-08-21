@@ -1,17 +1,17 @@
-# @code/turing/mirror.value — polyglot cascade Tick M3 landing.
-# Substrate-decl'd wrap of a @code/turing.program per
+# @facet/turing/mirror.value — polyglot cascade Tick M3 landing.
+# Substrate-decl'd wrap of a @facet/turing.program per
 # shards/cascade/code/turing/mirror.mirror (Mara 3322825).
 # Audit: Mara 1ce68c3 §9 M3; Alex 2026-07-17 ratification.
 # value_oid: ac30b4cfdc61053a0576c2e1dc5898850681d50360d33c584246f717f2c5d6de
 
-in @code/mirror
+in @facet/mirror
 in @glass
 
-focus @code/turing/mirror/value {
-  project @code/turing/program {
+focus @facet/turing/mirror/value {
+  project @facet/turing/program {
     # Dark region — tape-program bytes verbatim.
     dark <<END_TURING_PROGRAM
-@code/turing.program {
+@facet/turing.program {
   initial_state: q0
   halt_states: [q_halt]
   transitions: [

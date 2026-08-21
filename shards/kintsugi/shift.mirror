@@ -218,7 +218,7 @@ prism @kintsugi/shift {
 # Altitudes are substrate refs — the substrate names its own
 # observation strata by content-addressed handle (per
 # `@mirror/store`'s ref discipline). Example handles: `@mirror/store/
-# oci`, `@code/rust`, `@container`, `@io/socket`. The source_altitude
+# oci`, `@facet/rust`, `@container`, `@io/socket`. The source_altitude
 # carrier carries the handle at ref altitude; species that specialise
 # `@kintsugi/shift` may refine the altitude-of-origin's structure at
 # their own altitude.

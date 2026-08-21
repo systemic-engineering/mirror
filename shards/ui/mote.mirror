@@ -100,7 +100,7 @@ in @ui
 # Path-namespace property: this file at `shards/ui/mote.mirror`
 # declares `@ui/mote` per `@epistemologic/pact/path_matches_namespace`.
 
-source @code/rust
+source @facet/rust
 
 # === mote_data carrier ===
 #

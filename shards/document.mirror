@@ -46,10 +46,10 @@ in @glass
 # prism block per @prism-as-trait-as-everything discipline. Per
 # [[feedback-substrate-already-had-the-word]] (~94th instance).
 #
-# === Register-honoring composition with @code/gestalt ===
+# === Register-honoring composition with @facet/gestalt ===
 #
 # `breath` (per ancestor line 12) is the ELEMENT for the corpus
-# `..\n` breath-mark pattern @code/gestalt/grammar declares. The
+# `..\n` breath-mark pattern @facet/gestalt/grammar declares. The
 # grammar parses `..\n`; the AST is a `breath` element. Element
 # ↔ grammar production alignment enforced at the cascade altitude
 # (@cascade/code/mirror/gestalt discharges the mapping).
@@ -122,7 +122,7 @@ prism @document {
 
 # === element — the block-level structural carrier ===
 # Per gestalt-mirror document.mirror :1-14 verbatim (with `breath`
-# preserved as first-class per @code/gestalt register-honoring
+# preserved as first-class per @facet/gestalt register-honoring
 # discipline).
 type element =
   | section

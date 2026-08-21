@@ -1474,12 +1474,18 @@ fn cmd_craft(rest: &[String]) -> ExitCode {
         );
         return ExitCode::from(2);
     }
+    // Dual-byte-check backward-compat window per Seam Phase D 1893afc
+    // SHARPENING-2 during @code → @facet rename (Phase 3b landed
+    // 2026-08-21): accept BOTH `altitude @code/rust` (legacy) and
+    // `altitude @facet/rust` (post-rename canonical). Window closes
+    // when all downstream spec files migrate to @facet/rust.
     let has_rust_target =
-        spec_source.contains("altitude @code/rust")
+        (spec_source.contains("altitude @code/rust")
+            || spec_source.contains("altitude @facet/rust"))
             && (spec_source.contains("cargo"));
     if !has_rust_target {
         eprintln!(
-            "mirror craft: {} does not declare a `@code/rust` binary target via cargo",
+            "mirror craft: {} does not declare a `@facet/rust` (or legacy `@code/rust`) binary target via cargo",
             spec_arg
         );
         return ExitCode::from(2);

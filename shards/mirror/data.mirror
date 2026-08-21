@@ -12,7 +12,7 @@ in @nl
 # the future cbor/msgpack sit as parallel species. This shard lifts
 # the JSON declaration from grammar-altitude `@data/json` to mirror-
 # altitude `@mirror/data/json` under a family root, matching the
-# rhythm of `@code → @mirror/code` (no — `@code` stayed where it
+# rhythm of `@facet → @mirror/code` (no — `@facet` stayed where it
 # was; the analogous lift was `@cli → @mirror/lens/cli`) and the
 # loss family lift (`@loss → @mirror/loss`). Same primitive at two
 # altitudes; the family root names the discipline; species
@@ -31,13 +31,13 @@ in @nl
 # altitude lower (the carrier IS the section; parse/emit are the
 # restriction maps over the bytes/carrier boundary).
 #
-# Same `@code/X` precedent extended: `@code/X` (language-grammar
+# Same `@facet/X` precedent extended: `@facet/X` (language-grammar
 # lens onto source code) and `@mirror/data/X` (data-grammar lens onto
 # structured content) are the two halves of grammar-as-lens at the
 # mirror altitude. The first half landed at `shards/code.mirror`
-# (2026-06-06, the @code family root recognition); this shard lands
+# (2026-06-06, the @facet family root recognition); this shard lands
 # the second half. The four-format opening (json / yaml / toml /
-# text) mirrors the four-language opening of @code
+# text) mirrors the four-language opening of @facet
 # (rust / mirror / gleam / llvm) — sibling families at the same
 # altitude, both projecting the same five-op algebra through their
 # own typed surfaces.
@@ -78,9 +78,9 @@ in @nl
 #                        boot/std/data/json.mirror's original
 #                        declaration; lifted to the family altitude
 #                        with `grammar` → `prism` keyword change
-#                        per the @code/rust precedent (boot keeps
-#                        `grammar @code/rust`; shards/ lifts to
-#                        `prism @code/rust`).
+#                        per the @facet/rust precedent (boot keeps
+#                        `grammar @facet/rust`; shards/ lifts to
+#                        `prism @facet/rust`).
 #
 # Parallel species (stubs land this tick; bodies forward-promised):
 #
@@ -125,12 +125,12 @@ in @nl
 # LRM (per the 2026-06-07 research):
 #
 #   T16 — @mirror/data root + json lift + yaml/toml/text stubs (this).
-#   T17 — @code/mirror.render with Wadler/Bernardy combinators.
+#   T17 — @facet/mirror.render with Wadler/Bernardy combinators.
 #   T18 — eigenvalue projection action on portal stream.
 #   T19 — `mirror kintsugi <file>` settled-formatting output path.
 #   T20 — portal handoff via SCM_RIGHTS at CLI pipe boundary.
 #
-# T17 onward consume this family root: `@code/mirror.render` is the
+# T17 onward consume this family root: `@facet/mirror.render` is the
 # AST-to-text projection at the mirror grammar altitude (a sibling
 # operation to `@mirror/data/json.emit` — code-as-data, rendered
 # through the Wadler/Bernardy doc combinators). T19's settled-
@@ -143,12 +143,12 @@ in @nl
 #
 # === Sibling relationships ===
 #
-# `@code/X` (shards/code.mirror) is the LANGUAGE-grammar family at
+# `@facet/X` (shards/code.mirror) is the LANGUAGE-grammar family at
 # the mirror altitude. `@mirror/data/X` (this shard) is the DATA-
 # grammar family at the mirror altitude. Both name typed lenses
 # onto structured byte streams; both declare the five-op block at
 # their root; both species-parameterize the carrier type. The
-# difference is altitude of the surface: `@code/X` is source-code-
+# difference is altitude of the surface: `@facet/X` is source-code-
 # shaped (parsing is per language grammar; emit is back to source);
 # `@mirror/data/X` is data-content-shaped (parsing is per format
 # spec; emit is back to wire bytes). The two families partition

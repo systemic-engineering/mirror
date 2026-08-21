@@ -5,7 +5,7 @@ in @fractal
 in @fractal/mandelbrot
 in @fractal/crystal
 in @fractal/singularity
-in @code/mq
+in @facet/mq
 in @subject/visibility/sheaf
 in @bauchladen
 in @uuid/spectral
@@ -48,7 +48,7 @@ in @epistemologic/property/content_addressed
 #      possibility space) and boom. What is the mirror-canonical way
 #      to restrict the geometry of the inference space? Because that's
 #      what we basically need to do... it might be the whole @optics
-#      shebang. Isn't that kinda @code/mq? Or @code/lq (I think it
+#      shebang. Isn't that kinda @facet/mq? Or @facet/lq (I think it
 #      was lq for logic query)?"
 #
 #   > "I feel the position would be derived from the query, which
@@ -94,7 +94,7 @@ in @epistemologic/property/content_addressed
 # addressed crystals."
 #
 # No explicit position parameter. The shard's position in the 5D
-# spectral possibility space is DERIVED from the @code/mq query the
+# spectral possibility space is DERIVED from the @facet/mq query the
 # @peer used to request it. For a content-addressed crystal, the
 # position IS just the @<address> — the byte-identity of the
 # requested content IS the coordinate. The @<address> substrate uses
@@ -104,7 +104,7 @@ in @epistemologic/property/content_addressed
 #
 # The position-from-query morphism:
 #
-#   position_of: @code/mq query -> SpectralCoordinate<5> region
+#   position_of: @facet/mq query -> SpectralCoordinate<5> region
 #
 # where the query's optical restriction (focus / project / split /
 # shift / settle sub-tree) determines which sub-region of the 5D
@@ -114,7 +114,7 @@ in @epistemologic/property/content_addressed
 #
 # === Optical restriction vs logical restriction ===
 #
-# @code/mq (LANDED at `boot/std/code/mq.mirror`) is the OPTICAL
+# @facet/mq (LANDED at `boot/std/code/mq.mirror`) is the OPTICAL
 # restriction: the grammar for the five-op prism algebra (focus,
 # project, split, shift, settle) applied as query verbs against the
 # spectral possibility space. The optical query restricts the shape
@@ -157,7 +157,7 @@ in @epistemologic/property/content_addressed
 #                                            settlement fires; every
 #                                            Artifact of collapse IS
 #                                            a shard-shape
-#   @code/mq                              — the LANDED optical-query
+#   @facet/mq                              — the LANDED optical-query
 #                                            grammar; carries the
 #                                            `through` field's typed
 #                                            query AST (focus /
@@ -198,7 +198,7 @@ in @epistemologic/property/content_addressed
 #                                            ("and @kintsugi/mosaic")
 #   @kintsugi/mend                        — the companion action; runs
 #                                            @fate tournament over the
-#                                            @code/mq-restricted
+#                                            @facet/mq-restricted
 #                                            possibility space,
 #                                            crystallizes result as
 #                                            shard, fills the crack;
@@ -253,7 +253,7 @@ in @epistemologic/property/content_addressed
 # 6. **@fractal/crystal, @fractal/mandelbrot, @fractal/singularity**
 #    — the three prior siblings; four-face completion via this
 #    species. Composition edges declared above.
-# 7. **@code/mq LANDED** at `boot/std/code/mq.mirror` — the optical-
+# 7. **@facet/mq LANDED** at `boot/std/code/mq.mirror` — the optical-
 #    query grammar; consumed as the `through` field type.
 # 8. **@subject/visibility/sheaf LANDED** at `shards/subject/
 #    visibility/sheaf.mirror` (Mara #129) — the sheaf-restriction
@@ -338,7 +338,7 @@ prism @fractal/shard {
 #                           settled crystal), @sheaf-anything, or
 #                           any substrate-decl'd family.
 #
-#   through              — REF to the @code/mq optical query that
+#   through              — REF to the @facet/mq optical query that
 #                           restricted the possibility space. The
 #                           query's AST sub-tree (focus / project /
 #                           split / shift / settle sub-nodes) IS
@@ -395,7 +395,7 @@ shard_content_addressed(p: peer, ctx: shard_state) -> verdict { \ }
 #
 #   - ctx.target resolves to a family-root the substrate declares
 #     as the shape-of-thing being inferred
-#   - ctx.through resolves to a well-formed @code/mq query whose
+#   - ctx.through resolves to a well-formed @facet/mq query whose
 #     optical restriction is admissible against ctx.target's
 #     possibility space
 #   - the shard IS a section of the sheaf whose base space is
@@ -455,7 +455,7 @@ shard_position_derived_from_query(p: peer, ctx: shard_state) -> verdict { \ }
 
 # === materialize — the load-bearing action ===
 #
-# Given a peer, a target family-root, and a @code/mq optical query,
+# Given a peer, a target family-root, and a @facet/mq optical query,
 # discharge the materialize event: run the substrate's inference
 # (@fate tournament over the query-restricted possibility space),
 # crystallize the settled result, and emit a shard_state whose
@@ -473,7 +473,7 @@ shard_position_derived_from_query(p: peer, ctx: shard_state) -> verdict { \ }
 # invariants all hold on emit).
 #
 # Composes over prismqueer::Crystal at operational altitude (Reed
-# post-mint territory). The `settle` sub-op of @code/mq is the
+# post-mint territory). The `settle` sub-op of @facet/mq is the
 # crystallization boundary at which this action fires.
 #
 # Sentinel: `fractal=shard-materialize`.
@@ -524,7 +524,7 @@ requires shard_is_sheaf_section(p, ctx)
 #
 # #R-fractal-shard-vessel-of-inference — first-witness gate closed
 # this tick (species-decl shape + four-face completion of @fractal
-# family + composition over @code/mq / @subject/visibility/sheaf /
+# family + composition over @facet/mq / @subject/visibility/sheaf /
 # @bauchladen / @uuid/spectral + position-derived-from-query
 # invariant at bilateral altitude). Second-witness gate: Reed
 # cascade lands @spectral/mosaic + @kintsugi/mosaic basis + Rust
@@ -557,7 +557,7 @@ requires shard_is_sheaf_section(p, ctx)
 #   canonical spec §6.
 #
 # - @mirror/lq (LANDED forward-promise per Glint 2026-06-27) —
-#   the logical restriction sibling to @code/mq. When landed, will
+#   the logical restriction sibling to @facet/mq. When landed, will
 #   compose as a second orthogonal restriction axis on
 #   @fractal/shard.through (optical + logical composed).
 #
@@ -570,7 +570,7 @@ requires shard_is_sheaf_section(p, ctx)
 #   vessel-of-inference recognition candidate.
 #
 # - `@fractal/shard.materialize` composition of @fate tournament +
-#   @code/mq query restriction + @kintsugi/mend crack-fill —
+#   @facet/mq query restriction + @kintsugi/mend crack-fill —
 #   operational surface at Reed post-mint territory.
 
 out @fractal/shard

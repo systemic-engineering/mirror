@@ -3,8 +3,8 @@ in @meta
 in @glass
 in @cascade
 in @labeled
-in @code/gestalt
-in @code/gleam
+in @facet/gestalt
+in @facet/gleam
 
 # @cascade/code/gestalt/gleam — the gestalt IR → gleam (via
 # gestalt-ui library) value cascade species.
@@ -38,7 +38,7 @@ in @code/gleam
 #
 #   mirror substrate
 #     ↓  @cascade/code/mirror/gestalt (sibling mint this arc)
-#   gestalt IR (@code/gestalt AST + .gestalt file surface)
+#   gestalt IR (@facet/gestalt AST + .gestalt file surface)
 #     ↓  @cascade/code/gestalt/gleam (THIS species)
 #   gestalt-ui-shaped Gleam
 #     ↓  @cascade/code/gleam/js (landed sibling per Taut scout §5)
@@ -65,11 +65,11 @@ in @code/gleam
 #
 # === composition altitude: FILE-PROJECTION ↔ VOCABULARY-LIBRARY ===
 #
-# Source altitude: `@code/gestalt` (shards/code/gestalt.mirror,
+# Source altitude: `@facet/gestalt` (shards/code/gestalt.mirror,
 # this-arc landing) — .gestalt file-projection of the @gestalt
 # graph.
 #
-# Target altitude: `@code/gleam` (shards/code/gleam.mirror,
+# Target altitude: `@facet/gleam` (shards/code/gleam.mirror,
 # 2026-06-06) — Gleam grammar; specifically the gestalt-ui subset
 # per Q-C2 (Token(a) = Token(materialize: fn(Theme)->a,
 # description) + composite.materialize_typography-shaped folds +
@@ -89,7 +89,7 @@ in @code/gleam
 #   family-root altitude discipline (Gleam has module-level
 #   organization; not multi-altitude prism-family recursion).
 #
-# The `loss_lens<@code/gestalt, @code/gleam>` measures these gaps.
+# The `loss_lens<@facet/gestalt, @facet/gleam>` measures these gaps.
 #
 # === Gestalt-ui vocabulary composition constraints ===
 #
@@ -136,7 +136,7 @@ in @code/gleam
 #   Wadler 2003 + Bernardy 2017  doc-combinator algebra; render
 #                                emits Gleam code via the same
 #                                pretty-printer discipline both
-#                                @code/mirror.render and @code/
+#                                @facet/mirror.render and @facet/
 #                                gestalt.render use.
 #
 # Spec context: docs/specs/2026-08-03-mara-distributed-colony-
@@ -181,7 +181,7 @@ prism @cascade/code/gestalt/gleam {
 
 # === gestalt_source carrier ===
 # Specialization of @cascade.typed_source for source_grammar=gestalt.
-# References a gestalt IR (per @code/gestalt) as unit of cascade.
+# References a gestalt IR (per @facet/gestalt) as unit of cascade.
 type gestalt_source = ref
 
 # === gestalt_ui_shape_metadata carrier ===
@@ -218,7 +218,7 @@ type gleam_artifact = labeled(ref, gestalt_ui_shape_metadata)
 # swaps dynamically without re-cascading.
 #
 # requires gestalt_source_well_formed(src, p): source parses per
-# @code/gestalt grammar discipline.
+# @facet/gestalt grammar discipline.
 apply_gestalt_gleam(src: gestalt_source, p: perturbation) -> ref
 requires gestalt_source_well_formed(src, p)
 { \ }

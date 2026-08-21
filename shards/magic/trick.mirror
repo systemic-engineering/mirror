@@ -45,7 +45,7 @@ in @bilateral
 #   the Eigenform; the audience sees the same computational behavior
 #   regardless of source language. Substrate-decl citations:
 #   @cascade/code/A/B species preservation (task #210 Mara M2
-#   landing); @bilateral(@code/rust, @code/mirror).translation_
+#   landing); @bilateral(@facet/rust, @facet/mirror).translation_
 #   admissible (Alex 2026-07-17 "the floor the translation surface
 #   stands on"). Honest trick = translation contract respected.
 #
@@ -187,7 +187,7 @@ transform(source: ref, target_lang: ref) -> imperfect { \ }
 #
 # Discharges Pass iff the translation preserves the source's
 # Eigenform per @eigen(T) type-level equivalence. Composes over
-# @bilateral(@code/rust, @code/mirror).translation_admissible +
+# @bilateral(@facet/rust, @facet/mirror).translation_admissible +
 # @coherence.score preservation across the gauge orbit + polyglot-
 # loss-aware bounds.
 bilateral aligned_trick {

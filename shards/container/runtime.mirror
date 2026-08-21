@@ -117,7 +117,7 @@
 # This makes `@container/runtime` the species that CLOSES the runtime
 # side of the three-surface partition at process-side altitude:
 #
-#   build surface        @code/docker      (Arc 5 TICK 4 `a1fb4bd`)
+#   build surface        @facet/docker      (Arc 5 TICK 4 `a1fb4bd`)
 #      ↓ PRODUCES
 #   distribution surface @io/oci           (Mara `2801478` 2026-06-24)
 #      ↓ CONSUMED BY

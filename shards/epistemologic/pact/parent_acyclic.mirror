@@ -97,7 +97,7 @@ in @spectral/parent
 # the carrier altitude for traversal-based predicates (per
 # [[feedback-loss-from-epistemologic-properties]]). The fold
 # discipline lives at the realisation layer's
-# @code/metalogue/materialize step (per docs/specs/spectral-
+# @facet/metalogue/materialize step (per docs/specs/spectral-
 # runtime.md §5's ouroboros pipeline); the substrate names the
 # rule, the realisation discharges the traversal. NOT a STOP —
 # the discipline is exactly to declare the carrier and forward-

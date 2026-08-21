@@ -229,7 +229,7 @@ in @epistemologic/reality/time
 # fracture body emits any morphism in this tick. No `partials`
 # declaration needed (per `dissonance_partials_match_ast_breadth`
 # #306). Bodies discharge downstream when the consumer pulls
-# realisation through `@code/metalogue/materialize` (per the
+# realisation through `@facet/metalogue/materialize` (per the
 # ouroboros pipeline in docs/specs/spectral-runtime.md §5).
 #
 # === Cascade siblings (forward-promised, NOT landing this tick) ===
@@ -454,7 +454,7 @@ type supervisor = {
 # resolves the declaration shard, the gen_prism constructor fires,
 # the parent edge is set, the registry's settle advances. The body
 # stays a `\` obligation in this tick; concrete resolution lives at
-# the realisation layer (via @code/metalogue/materialize per the
+# the realisation layer (via @facet/metalogue/materialize per the
 # ouroboros pipeline).
 start_child(s: supervisor, spec: child_spec) -> gen_prism { \ }
 

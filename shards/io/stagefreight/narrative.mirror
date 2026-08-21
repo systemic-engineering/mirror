@@ -35,7 +35,7 @@ in @epistemologic/cybernetic
 #  - section (language-section structure)
 #  - derived_predicates (verified-during-settlement properties)
 #  - fracture_calendar (open opacities; the gold-cracks)
-#  - composition_graph (DAG over @code/<lang> grammars)
+#  - composition_graph (DAG over @facet/<lang> grammars)
 #
 # The narrative projection renders all five into structured prose: a
 # story-form reading of the crystal that survives the wire and lets a

@@ -9,7 +9,7 @@ in @mirror/store
 # Recognition (docs/specs/au-and-conductivity.md): au IS gold at the
 # artifact altitude. Same operation (settle) applied at different
 # altitudes produces different au:
-#   au(@code/rust)   is a binary
+#   au(@facet/rust)   is a binary
 #   au(@release)     is a signed archive
 #   au(@ci/github)   is an action YAML
 # The altitude parametrizes the emit; au is the type of the
@@ -93,7 +93,7 @@ in @mirror/store
 
 # === au at an altitude — the concrete record form ===
 #
-# au is parametric over altitude. au(@code/rust), au(@release), and
+# au is parametric over altitude. au(@facet/rust), au(@release), and
 # au(@ci/github) are distinct types (the altitude is part of the
 # type, not a runtime tag). The record below is what each au(A)
 # resolves to: a Fate-emitted composition of splinters proposed for

@@ -3,7 +3,7 @@ in @meta
 in @glass
 in @cascade
 in @labeled
-in @code/gleam
+in @facet/gleam
 
 # @cascade/code/gleam/js — the Gleam → JavaScript cascade species.
 #
@@ -19,8 +19,8 @@ in @code/gleam
 # discharges the per-grammar measurement of information loss in
 # compilation from a typed source grammar to a mainstream target.
 #
-# This species: source_grammar = @code/gleam, target_grammar =
-# @code/js (forward-promised; see hedge 1). The Gleam→JS cascade
+# This species: source_grammar = @facet/gleam, target_grammar =
+# @facet/js (forward-promised; see hedge 1). The Gleam→JS cascade
 # IS THE PRODUCTION CASCADE FOR SPECTRAL.ENGINEER'S CONTENT LAYER:
 # Alex's existing systemic.engineering codebase is already in Gleam
 # (app/src/corpus/page.gleam:114 per the loop brief); the typography
@@ -56,7 +56,7 @@ in @code/gleam
 # two Gleam target cascades, exactly because JS does not have a
 # preemptive concurrency primitive).
 #
-# The loss_lens<@code/gleam, @code/js> measures these gaps against
+# The loss_lens<@facet/gleam, @facet/js> measures these gaps against
 # the Gleam compiler's emitted type info + the JS grammar
 # specification.
 #
@@ -166,14 +166,14 @@ in @code/gleam
 #
 # === Honest hedges ===
 #
-# 1. @code/js shard forward-promised. The substrate has @code/wasm
+# 1. @facet/js shard forward-promised. The substrate has @facet/wasm
 #    (shards/code/wasm.mirror; landed 2026-06-23 by Reed) but does
-#    NOT yet have @code/js. This shard cannot declare `in @code/js`
+#    NOT yet have @facet/js. This shard cannot declare `in @facet/js`
 #    at the head and must instead name JS at prose altitude until
-#    the @code/js shard lands. The js_artifact carrier and the JS
+#    the @facet/js shard lands. The js_artifact carrier and the JS
 #    metadata vocabulary stand on the JS grammar's de-facto
-#    specification (ECMAScript 2026 + ESM); when @code/js lands,
-#    this shard's `in @code/js` line lifts cleanly without changing
+#    specification (ECMAScript 2026 + ESM); when @facet/js lands,
+#    this shard's `in @facet/js` line lifts cleanly without changing
 #    the carrier shapes.
 #
 # 2. gleam_stdlib version pinning. Gleam's stdlib evolves; the

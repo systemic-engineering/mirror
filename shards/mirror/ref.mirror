@@ -14,7 +14,7 @@ in @mirror/au
 in @epistemologic
 in @epistemologic/property
 in @epistemologic/reality/time
-in @code/mq
+in @facet/mq
 
 # @mirror/ref — the navigable surface of the substrate's spectral
 # triple. One CLI over two altitudes (reference / reflection); same

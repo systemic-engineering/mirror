@@ -137,7 +137,7 @@ in @epistemologic/property/coevolution
 #       The top-level discharge: a coevolution shard is well-formed
 #       iff its τ-action types check against the extended carrier
 #       AND one of the two lock-hold modes is witnessed. Discharges
-#       at the species-boundary `@code/metalogue/materialize.classify`
+#       at the species-boundary `@facet/metalogue/materialize.classify`
 #       surface.
 #
 # The ω axis IS surfaced at the action surface: `transition_at_t`'s

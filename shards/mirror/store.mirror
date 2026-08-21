@@ -594,7 +594,7 @@ impacted_by(oid: oid) -> [oid] { \ }
 # 1. `@silicon/algebra.tray_content_source` (`shards/silicon/algebra.
 #    mirror` :164-202) — reads mirror-authored bilateral-arm retirement
 #    crystals as `@silicon/algebra`'s tray seed. Filter predicate is
-#    `@bilateral(@code/rust, @code/mirror).translation_admissible`
+#    `@bilateral(@facet/rust, @facet/mirror).translation_admissible`
 #    (per `shards/epistemologic/pact/bilateral.mirror` :677-681, the
 #    first general-case `@bilateral(A, B)` instance).
 #

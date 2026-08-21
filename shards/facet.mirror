@@ -23,28 +23,31 @@ in @glass
 # BETWEEN facets lives at `@cast` (composing `@glue` + `@fate` under
 # the hood; the mesh, not the waterfall).
 #
-# === sibling to @code at generation-surface altitude (transitional) ===
+# === @code family collapse into @facet (Phase 3b landed 2026-08-21) ===
 #
-# `@code` (family-root at `shards/code.mirror`) is the grammar-at-an-
-# altitude discipline. `@facet` is the generation-surface. Different
-# altitudes; different concerns. During the pre-release transition
-# (Alex 2026-08-21 ratification: "Unless there is a HARD TECHNICAL
-# REASON against a rename I don't want to hear more excuses"), the
-# @code family-root and 11 landed species (`@code/rust`, `@code/mirror`,
-# `@code/beam`, `@code/gleam`, `@code/erlang`, `@code/gestalt`,
-# `@code/llvm`, `@code/turing`, `@code/wasm`, `@code/docker`,
-# `@code/metalogue`) rename to `@facet/*` per the T-91-16 discharge
-# cascade Phase 3. Until the rename lands byte-substrate-wide, both
-# family-roots coexist as siblings; @code's discipline flows through
-# during the transition.
+# `@code` (previously family-root at `shards/code.mirror`, DELETED
+# 2026-08-21 Phase 3b) was the grammar-at-an-altitude discipline.
+# `@facet` absorbs its role at generation-surface altitude and extends
+# with additional projection substrates per Rec #91 §8.3 enumeration.
+# Alex 2026-08-21 rename ratification verbatim: "Unless there is a HARD
+# TECHNICAL REASON against a rename I don't want to hear more excuses."
 #
-# Post-rename, `@facet` absorbs @code's role AND extends the family
-# with the additional projection surfaces Rec #91 §8.3 enumerates:
-# `@facet/git` (git-persistence substrate; composes over
-# `@mirror/store/git`), `@facet/mirror` (self-hosting mirror-onto-
-# itself; the autopoietic-closure arm per Rec #91 §8.8), `@facet/lustre`
-# (client-side JS-leg parity to `@facet/gleam` BEAM-leg), `@facet/fly`
-# (fly.io deployment substrate).
+# The pre-rename @code family-root and its 11 landed species
+# (@code/rust, @code/mirror, @code/beam, @code/gleam, @code/erlang,
+# @code/gestalt, @code/llvm, @code/turing, @code/wasm, @code/docker,
+# @code/metalogue) were migrated to `@facet/*` in Phase 3a species
+# migration (commit `9f2b834`) + Phase 3b body-references cleanup
+# (this commit). Rename landed byte-substrate-wide across all shards
+# via bulk substrate-transformation; @code family-root deleted; @facet
+# stands alone as generation-surface.
+#
+# @facet additionally extends the family with projection surfaces
+# Rec #91 §8.3 enumerates that @code never carried: `@facet/git`
+# (git-persistence substrate; composes over `@mirror/store/git`),
+# `@facet/mirror` (self-hosting mirror-onto-itself; the autopoietic-
+# closure arm per Rec #91 §8.8), `@facet/lustre` (client-side JS-leg
+# parity to `@facet/gleam` BEAM-leg), `@facet/fly` (fly.io deployment
+# substrate).
 #
 # === composition-shape: covariant functor preserving Foerster-gauge ===
 #
@@ -86,7 +89,7 @@ in @glass
 # === adjunction structure at Rec #91 §5a (post-amendment) ===
 #
 # For species with a reverse-projection charter (`@facet/X` forward +
-# `@code/X/materialize` reverse per pre-rename shape, or `@facet/X` +
+# `@facet/X/materialize` reverse per pre-rename shape, or `@facet/X` +
 # `@facet/X/materialize` post-rename), the pair forms an adjunction
 # `𝔕_X ⊣ 𝔛_X` with unit η (identity-fixed-point: `𝔛_X(𝔕_X(shard)) = shard`
 # up to α-equivalence) + counit ε (content-address idempotence:
@@ -122,8 +125,9 @@ in @glass
 #     compile-time invariant.
 #
 # Related shards:
-#   - `shards/code.mirror` (sibling family-root at grammar-at-an-altitude
-#     discipline; renames into @facet during Phase 3 cascade)
+#   - `shards/code.mirror` (DELETED 2026-08-21 Phase 3b; pre-rename
+#     was grammar-at-an-altitude family-root; species migrated to
+#     shards/facet/)
 #   - `shards/cast.mirror` (sibling prism at peer-to-peer translation
 #     mesh altitude; composes @glue + @fate under the hood)
 #   - `shards/mcp/serve.mirror` (cf8b21b; exemplar composition-shard
@@ -142,7 +146,7 @@ in @glass
 # === substrate-truth (2026-08-21 mint) ===
 #
 # At mint time, `@facet` is a virgin family-root with zero landed
-# species. Phase 3 rename cascade migrates the 11 landed `@code/*`
+# species. Phase 3 rename cascade migrates the 11 landed `@facet/*`
 # species. Phase 4 T-91-16 discharge authors `@facet/rust` forward-
 # projection body via first-file iterative (starting `rust/src/wire.rs`
 # at 210 LOC per Seam Phase D `1893afc` SHARPENING-3). @facet/git +

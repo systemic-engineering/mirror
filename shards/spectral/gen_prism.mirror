@@ -102,7 +102,7 @@ in @mirror/au
 #            gen_prisms (the supervisor's `split` IS its registry
 #            walk)
 #   shift    basis transformation: same content, different altitude
-#            (e.g. an @io boundary view of a @code/rust state shard)
+#            (e.g. an @io boundary view of a @facet/rust state shard)
 #   settle   measurement collapse: drive any pending `au` into a new
 #            shard through the property chain; the state surface
 #            advances by one lattice element
@@ -177,7 +177,7 @@ in @mirror/au
 # fracture body emits any morphism in this tick. No `partials`
 # declaration needed (per `dissonance_partials_match_ast_breadth`
 # #306). Bodies discharge downstream when the consumer pulls
-# realisation through `@code/metalogue/materialize` (per the
+# realisation through `@facet/metalogue/materialize` (per the
 # ouroboros pipeline in docs/specs/spectral-runtime.md §5).
 #
 # Spec context: docs/math/the-tower/beam-runtime.md §2.2 (actors as
@@ -229,7 +229,7 @@ in @mirror/au
 #                  the substrate-altitude reading; the boot floor
 #                  is retained as a transitional placeholder during
 #                  consumer-pull migration through
-#                  @code/metalogue/materialize).
+#                  @facet/metalogue/materialize).
 # Path-namespace property: this file at
 # `shards/spectral/gen_prism.mirror` declares
 # `@spectral/gen_prism` and only that.

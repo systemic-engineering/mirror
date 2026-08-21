@@ -6,13 +6,13 @@ in @kintsugi/fracture
 in @fractal
 in @fractal/shard
 in @fractal/crystal
-in @code/mq
+in @facet/mq
 in @bauchladen
 in @uuid/spectral
 in @epistemologic
 
 # @kintsugi/mend — the companion action to @fractal/shard: fills a
-# fracture by running @fate tournament over the @code/mq-restricted
+# fracture by running @fate tournament over the @facet/mq-restricted
 # possibility space, crystallizing the settled result as a
 # @fractal/shard, and mending the crack. The gold IS the shard.
 #
@@ -33,7 +33,7 @@ in @epistemologic
 #      possibility space) and boom. What is the mirror-canonical way
 #      to restrict the geometry of the inference space? Because that's
 #      what we basically need to do... it might be the whole @optics
-#      shebang. Isn't that kinda @code/mq?"
+#      shebang. Isn't that kinda @facet/mq?"
 #
 # The mend action IS the operational half of the shard-of-inference
 # recognition: given a fracture (a `\` crack in the substrate, per
@@ -68,7 +68,7 @@ in @epistemologic
 #     (typically an OID + offset naming the settle-site)
 #   - target: the family-root shape the fracture asked for (feeds
 #     @fractal/shard.target)
-#   - through: the @code/mq optical query restricting the possibility
+#   - through: the @facet/mq optical query restricting the possibility
 #     space (feeds @fractal/shard.through)
 #
 # The mend runs @fate.roll (@fate tournament; forward-promised
@@ -124,7 +124,7 @@ in @epistemologic
 #                                            the shard inherits
 #                                            content-addressing +
 #                                            immutability from
-#   @code/mq                              — the LANDED optical-query
+#   @facet/mq                              — the LANDED optical-query
 #                                            grammar; the `through`
 #                                            parameter's typed query
 #   @bauchladen                           — content-addressed tray
@@ -180,7 +180,7 @@ in @epistemologic
 # 6. **@fractal/shard** (this tick sibling landing at
 #    `shards/fractal/shard.mirror`) — the return type of mend; the
 #    vessel the gold crystallizes as. Companion mint.
-# 7. **@code/mq LANDED** at `boot/std/code/mq.mirror` — the optical-
+# 7. **@facet/mq LANDED** at `boot/std/code/mq.mirror` — the optical-
 #    query grammar; consumed as the `through` parameter.
 # 8. **@bauchladen LANDED** at `shards/bauchladen.mirror` — the
 #    content-addressed tray discipline; produced shards land as
@@ -242,7 +242,7 @@ prism @kintsugi/mend {
 #                          ref; names the shape-of-thing the mend
 #                          crystallizes.
 #
-#   through             — REF to the @code/mq optical query
+#   through             — REF to the @facet/mq optical query
 #                          restricting the possibility space the
 #                          tournament searches over. Feeds
 #                          @fractal/shard.through on the produced
@@ -347,7 +347,7 @@ mend_preserves_wall_integrity(p: peer, ctx: mend_state) -> verdict { \ }
 # === mend — the load-bearing action ===
 #
 # Given a peer and a mend_state (fracture position + target family-
-# root + @code/mq optical query), discharge the mend event: run
+# root + @facet/mq optical query), discharge the mend event: run
 # @fate.roll tournament over the query-restricted possibility space,
 # read the winning candidate, invoke @fractal/shard.materialize with
 # the tournament's settled result, and emit the produced shard_state.
@@ -379,7 +379,7 @@ requires mend_preserves_wall_integrity(p, ctx)
 # === tournament_run — the tournament sub-action ===
 #
 # Given a peer and a mend_state, discharge the tournament event:
-# run @fate.roll over the @code/mq-restricted possibility space
+# run @fate.roll over the @facet/mq-restricted possibility space
 # (ctx.through) targeting the shape ctx.target, and emit the
 # winning candidate's ref.
 #

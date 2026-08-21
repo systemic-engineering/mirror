@@ -336,7 +336,7 @@ type handoff = {
 # Per recognition #100 §2.4 (metalogue_session shape lifted to agent
 # altitude): an ordered sequence of handoffs plus the thread's residual
 # opacity. Same shape as @metalogue.metalogue_session and
-# @code/metalogue.metalogue_session and @spectral/metalogue.metalogue_session,
+# @facet/metalogue.metalogue_session and @spectral/metalogue.metalogue_session,
 # lifted to the Pack altitude.
 #
 # - handoffs : the ordered sequence of agent-to-agent handoffs.

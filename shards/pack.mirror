@@ -5,7 +5,7 @@ in @magic
 in @frame
 in @smarts
 in @cyberpunk
-in @code/beam
+in @facet/beam
 in @epistemologic
 in @epistemologic/cybernetic
 in @kintsugi
@@ -120,7 +120,7 @@ in @kintsugi
 #
 #   actor model              Hewitt 1973; Kahn 1974. The substrate-
 #                            altitude ancestor for spawn/runtime.
-#   Erlang/OTP supervision   Armstrong 1986-2003; @code/beam glass
+#   Erlang/OTP supervision   Armstrong 1986-2003; @facet/beam glass
 #                            (tick 8) carries this; @pack inherits.
 #   Bash loop / Ralph        the implementation-altitude precedent
 #                            for agent loops at multi-process scale.

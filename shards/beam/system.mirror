@@ -2,7 +2,7 @@ in @prism
 in @meta
 in @glass
 in @system
-in @code/beam
+in @facet/beam
 in @spectral/gen_prism
 in @spectral/supervisor
 in @epistemologic/cybernetic/viable
@@ -100,7 +100,7 @@ in @epistemologic/cybernetic/viable
 #    supervisor + gen_server_state) at code-altitude. @beam/system
 #    at species-under-@system altitude NAMES the family the code-
 #    altitude carriers live within. Sibling altitudes; no conflict.
-#    Composition edge: @beam/system inherits @code/beam carriers as
+#    Composition edge: @beam/system inherits @facet/beam carriers as
 #    S1-S5 field substrate.
 # 3. **`shards/spectral/gen_prism/mcp_session.mirror`** (Mara 2026-
 #    06-11) — reviewed. S1 carrier at BEAM/process altitude; @beam/
@@ -193,7 +193,7 @@ type beam_system = {
 #
 # Body discharges per-realisation. `\`-obligation-blocked per
 # [[feedback-craft-not-deliver]]. The BEAM runtime consumer discharges
-# via BEAM-native introspection primitives (per @code/beam substrate);
+# via BEAM-native introspection primitives (per @facet/beam substrate);
 # NOT via Rust extension per HARD RULE.
 #
 # Sentinel: `beam=system-composition-from-peer-home`.

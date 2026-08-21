@@ -16,7 +16,7 @@ in @io
 #
 # Per Mara's Elm research (docs/research/2026-06-23-elm-architecture-
 # and-code-elm-substrate-decl.md, commit c486718) §5: substrate-decl
-# `@docs/tea` (not `@code/elm`) as presentation-altitude composition
+# `@docs/tea` (not `@facet/elm`) as presentation-altitude composition
 # pattern; strict purity at form altitude; effects at @io boundary;
 # Gleam Lustre as canonical implementor.
 #
@@ -48,7 +48,7 @@ in @io
 # compiler import; no ports-as-API; no Elm's specific Cmd / Sub
 # bifurcation — substrate uses @io for effects). The pattern is
 # substrate-pull-correct at the composition altitude; the Elm grammar
-# is a different question (@code/elm forward-promised at Mara research
+# is a different question (@facet/elm forward-promised at Mara research
 # c486718 §4 with explicit defer-recommendation).
 #
 # === Forward-promised consumers ===

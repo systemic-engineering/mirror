@@ -35,7 +35,7 @@ in @uuid/spectral
 # A namespace-parent for the runtime species living at
 # `shards/spectral/<name>.mirror`. Path-container; no operational
 # contract of its own. Sibling to @mirror, @kintsugi, @prism, @glass,
-# @nl, @epistemologic, @code, @io at the top-level path-altitude —
+# @nl, @epistemologic, @facet, @io at the top-level path-altitude —
 # but the sibling-family DISCIPLINES (form/process/shape/runtime, the
 # ouroboros pipeline, gen_prism vocabulary) live at the SPECIES
 # altitude, not here.

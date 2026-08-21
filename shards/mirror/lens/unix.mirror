@@ -17,7 +17,7 @@ in @mirror/store
 # Per docs/specs/spectral-runtime.md the pipeline is:
 #
 #   mirror substrate
-#     -> @code/macro codegen (shim_prism / shim_action / shim_grammar /
+#     -> @facet/macro codegen (shim_prism / shim_action / shim_grammar /
 #        shim_type)
 #     -> @mirror/store shard (content-addressed; oid-graph closure)
 #     -> @mirror/lens/unix (presents shard as Unix filesystem)
@@ -26,7 +26,7 @@ in @mirror/store
 #     -> IS @spectral runtime
 #
 # Three runtime targets ship with mirror (Rust / Erlang / Fortran via
-# @code/rust, @code/erlang, @code/fortran); all three pass through
+# @facet/rust, @facet/erlang, @facet/fortran); all three pass through
 # THIS lens. The lens is target-agnostic; the cargo / erlc / flang
 # distinction is a consumer-side concern. This species declares the
 # Unix-shaped impedance surface; the platform sub-species (FUSE on

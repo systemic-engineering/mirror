@@ -160,7 +160,7 @@ in @uuid/spectral
 #   - **@io/silicon (LLVM IR lowering)** — the LLVM-IR emission path
 #     for content that lowers below the substrate-decl altitude.
 #     Discharge via a `splinter(ast)`-typed projection (per MEMORY
-#     [[architecture-splinter-ast-quote-primitive]]) into @code/llvm.
+#     [[architecture-splinter-ast-quote-primitive]]) into @facet/llvm.
 #
 #   - **@io/silicon (LAPACK column-major FFI)** — the FFI ABI the
 #     substrate uses to invoke Fortran-compiled numerical routines.

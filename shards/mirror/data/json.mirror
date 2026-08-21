@@ -12,8 +12,8 @@ in @mirror/data
 # the mirror altitude. Two changes from the boot version:
 #
 #   1. `grammar @data/json` → `prism @mirror/data/json`. Per the
-#      @code/rust precedent (boot `grammar @code/rust` → shards
-#      `prism @code/rust`): the family root altitude uses `prism`;
+#      @facet/rust precedent (boot `grammar @facet/rust` → shards
+#      `prism @facet/rust`): the family root altitude uses `prism`;
 #      `grammar` was the pre-substrate-pull keyword for grammars
 #      that hadn't yet been recognized as prisms-with-a-typed-
 #      carrier. JSON IS a prism: its five-op specialization is
@@ -65,7 +65,7 @@ in @mirror/data
 #
 #   1. Names the family placement (`@mirror/data/json` is now a
 #      species under `@mirror/data`).
-#   2. Switches `grammar` → `prism` per the @code/rust precedent.
+#   2. Switches `grammar` → `prism` per the @facet/rust precedent.
 #   3. Names the lens-onto-bytes reading at the family altitude.
 #   4. Re-exports the json type and parse/emit actions so consumers
 #      pulling `in @mirror/data/json` get the named surface.
@@ -160,7 +160,7 @@ type json = null | bool(bool) | number(f64) | string(text) | array([json]) | obj
 # wire format yields a typed json carrier. The body is `\` per
 # the substrate-pull discipline — lands when the consumer pulls
 # (the bootstrap parser today, the @mirror/compile-bootstrapped
-# parser when @code/mirror.render lands at T17).
+# parser when @facet/mirror.render lands at T17).
 parse(text) -> json { \ }
 
 # === emit — json → bytes ===

@@ -113,7 +113,7 @@ in @uuid/spectral
 #             matter aspect = waveform/bytes; info aspect =
 #             proposition/meaning. Autopoietic recursion: every nl
 #             crystal becomes input to future nl emissions.
-#   code      code altitude (lifts @code/<lang> + @cascade); matter
+#   code      code altitude (lifts @facet/<lang> + @cascade); matter
 #             aspect = source text; info aspect = denotational
 #             semantics.
 #   physics   physical-reality altitude (cosmos-mirror's territory);
@@ -306,7 +306,7 @@ enumerate_orbits(s: species_descriptor) -> [gauge_orbit] { \ }
 #   - `@reality/algebra/silicon` (forward-promised): subsumes today's
 #     @silicon work at `27e9067`.
 #   - `@reality/algebra/nl` (forward-promised): lifts @nl + @metalogue.
-#   - `@reality/algebra/code` (forward-promised): lifts @code/<lang>
+#   - `@reality/algebra/code` (forward-promised): lifts @facet/<lang>
 #     + @cascade.
 #   - `@reality/algebra/physics` (forward-promised): cosmos-mirror's
 #     territory; MUST declare fragmentation as valid crystal state.

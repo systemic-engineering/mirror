@@ -1,9 +1,9 @@
-in @code/metalogue/materialize
+in @facet/metalogue/materialize
 
 # @mirror/realisation — RETIRED (2026-06-10).
 #
-# The recognitive turn of the @code/metalogue conversation moved to
-# `@code/metalogue/materialize` per:
+# The recognitive turn of the @facet/metalogue conversation moved to
+# `@facet/metalogue/materialize` per:
 #
 #   - Recognition #50 (2026-06-10): the form/substance partition.
 #     The discriminator's operation is form-on-form (reads
@@ -12,10 +12,10 @@ in @code/metalogue/materialize
 #     mis-coordinate. @io is form/substance's substance side and
 #     was correctly ruled out at #47 retraction; the form-side
 #     home that subsumes BOTH directions of the metalogue is
-#     `@code/metalogue`.
+#     `@facet/metalogue`.
 #
 #   - The metalogue-turn-pair recognition (2026-06-10): the
-#     @code/metalogue conversation has two directions — the shim
+#     @facet/metalogue conversation has two directions — the shim
 #     direction (`shim_X(d) -> species_ast`, substrate utters →
 #     species emits) at `shards/code/metalogue.mirror`, and the
 #     recognitive direction (`classify(d) -> materialised_file`,
@@ -55,9 +55,9 @@ in @code/metalogue/materialize
 #
 # Consumers that referenced this shard's surface should update:
 #
-#   @mirror/realisation              → @code/metalogue/materialize
-#   @mirror/realisation.classify     → @code/metalogue/materialize.classify
-#   @mirror/realisation.altitude     → @code/metalogue/materialize.partition
+#   @mirror/realisation              → @facet/metalogue/materialize
+#   @mirror/realisation.classify     → @facet/metalogue/materialize.classify
+#   @mirror/realisation.altitude     → @facet/metalogue/materialize.partition
 #   realisable_file                  → materialised_file
 #   is_substrate_realisable          → is_materialisable
 #
@@ -65,7 +65,7 @@ in @code/metalogue/materialize
 # deprecation pointer lets consumers update without breakage.
 #
 # Spec context: docs/specs/code-metalogue-surface.md
-#                (the @code/metalogue spec; the recognitive
+#                (the @facet/metalogue spec; the recognitive
 #                direction lifts to §2.6 at the new home),
 #               docs/insights/2026-06-10-bateson-form-behaviour-
 #                as-substrates-first-distinction.md

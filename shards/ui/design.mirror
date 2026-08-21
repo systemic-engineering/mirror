@@ -249,10 +249,10 @@ type target =
 #   action materialize { token: token, theme: theme, target: target }
 #
 # Composes with:
-#   @code/gestalt render (this arc) — target=mirror_native branch
+#   @facet/gestalt render (this arc) — target=mirror_native branch
 #                                     composes with .gestalt file
 #                                     grammar rendering.
-#   @code/gleam render                — target=dom / target=css
+#   @facet/gleam render                — target=dom / target=css
 #                                     branches compose with Gleam's
 #                                     JS runtime via gestalt-ui.
 #   @cascade/code/gestalt/gleam       — emits gestalt-ui-shaped

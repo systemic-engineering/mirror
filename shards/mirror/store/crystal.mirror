@@ -5,7 +5,7 @@ in @nl
 in @mirror/store
 in @mirror/au
 in @mirror/mosaic
-in @code
+in @facet
 
 # @mirror/store/crystal — the polyglot, content-addressed, self-executable
 # artifact the kintsugi build settles into; altitude-4 of the build lifecycle.
@@ -36,19 +36,19 @@ in @code
 #
 # THE LOAD-BEARING STRUCTURAL CLAIM. The crystal cannot be non-polyglot
 # because the spec doesn't compile to one language. Every kintsugi settle
-# emits at multiple @code/<lang> altitudes simultaneously: a target may
-# settle to @code/rust as a binary AND emit @ci/github YAML alongside AND
-# project @code/typescript bindings for a runtime peer. The `crystal`
+# emits at multiple @facet/<lang> altitudes simultaneously: a target may
+# settle to @facet/rust as a binary AND emit @ci/github YAML alongside AND
+# project @facet/typescript bindings for a runtime peer. The `crystal`
 # carrier preserves those altitude boundaries STRUCTURALLY — no
 # language-erasure happens at the artifact altitude.
 #
-# `composition_graph: mosaic(@code)` IS the structural enforcement. mosaic
+# `composition_graph: mosaic(@facet)` IS the structural enforcement. mosaic
 # (shards/mirror/mosaic.mirror) declares `type mosaic(altitude) = ref` as
-# the universal parametric composition carrier; the @code-altitude
-# specialization names a DAG whose nodes are `@code/<lang>` grammars and
+# the universal parametric composition carrier; the @facet-altitude
+# specialization names a DAG whose nodes are `@facet/<lang>` grammars and
 # whose edges are compilation dependencies. The substrate rejects a
 # crystal whose composition_graph is malformed (cycles, dangling references,
-# missing @code/* nodes) because the @code-altitude mosaic algebra is
+# missing @facet/* nodes) because the @facet-altitude mosaic algebra is
 # closed under well-typed composition.
 #
 # === Deployment is shift, not a separate noun ===
@@ -73,16 +73,16 @@ in @code
 #     crystal. This is the inherited identity contract from @glass's
 #     splinter / shard floor.
 #
-#   section: [splinter(@code)]
-#     Language-section structure. Each splinter lives at an `@code/<lang>`
+#   section: [splinter(@facet)]
+#     Language-section structure. Each splinter lives at an `@facet/<lang>`
 #     altitude (per @glass's `type splinter(altitude)` — the universal
 #     content-addressed atom parametric over altitude). The list preserves
-#     ordering AND altitude boundaries: section[0] may be @code/rust at
-#     OID(A); section[1] may be @code/typescript at OID(B); the same
+#     ordering AND altitude boundaries: section[0] may be @facet/rust at
+#     OID(A); section[1] may be @facet/typescript at OID(B); the same
 #     crystal carries both without language-erasure. Substrate-pull
 #     correct: the substrate already has `splinter(altitude)` (glass.mirror)
 #     and `splinter(ast)` (the parametric quote primitive #54); `[splinter
-#     (@code)]` specializes the carrier to the language-section altitude.
+#     (@facet)]` specializes the carrier to the language-section altitude.
 #
 #   derived_predicates: [property_verdict]
 #     The properties the kintsugi loop verified during settlement. Per
@@ -114,15 +114,15 @@ in @code
 #     wrote the morphisms; the crystal carries the cracks the morphisms
 #     didn't close.
 #
-#   composition_graph: mosaic(@code)
-#     The DAG over @code/<lang> grammars. Per @mirror/mosaic's `type
+#   composition_graph: mosaic(@facet)
+#     The DAG over @facet/<lang> grammars. Per @mirror/mosaic's `type
 #     mosaic(altitude) = ref` (the universal parametric composition
 #     carrier, mosaic.mirror lines 60-94): mosaic IS the composition form
-#     at every altitude; the @code-altitude specialization carries the
-#     polyglot DAG. Each node references an `@code/<lang>` grammar; each
+#     at every altitude; the @facet-altitude specialization carries the
+#     polyglot DAG. Each node references an `@facet/<lang>` grammar; each
 #     edge is a compilation dependency. The substrate enforces well-
-#     formedness through the @code-altitude mosaic algebra (no cycles,
-#     no dangling refs, no missing @code/* nodes). This IS the polyglot-
+#     formedness through the @facet-altitude mosaic algebra (no cycles,
+#     no dangling refs, no missing @facet/* nodes). This IS the polyglot-
 #     by-construction structural witness.
 #
 # === The four sub-type choices: substrate-pull reading ===
@@ -130,16 +130,16 @@ in @code
 # Every non-oid field rides an existing substrate carrier:
 #
 #   section            ← splinter(altitude) at @glass (glass.mirror)
-#                         specialized via `splinter(@code)` — the same
+#                         specialized via `splinter(@facet)` — the same
 #                         parametric-quote primitive #54 used.
 #   derived_predicates ← property_verdict at @glass (glass.mirror line ~154)
 #                         — identical shape to shatter's section-3.
 #   fracture_calendar  ← transparency(au) at @glass (glass.mirror line ~137)
 #                         — au's loss carrier lifted to artifact altitude;
 #                         identical shape to shatter's section-2.
-#   composition_graph  ← mosaic(@code) at @mirror/mosaic (mosaic.mirror)
+#   composition_graph  ← mosaic(@facet) at @mirror/mosaic (mosaic.mirror)
 #                         — the parametric universal carrier specialized
-#                         to the @code namespace altitude.
+#                         to the @facet namespace altitude.
 #
 # No new types invented at this shard. Four existing carriers, composed.
 # The crystal IS what falls out of altitude-4 when the substrate's prior
@@ -152,7 +152,7 @@ in @code
 # Fate-emitted proposal at the settle altitude; crystal is the MULTI-
 # ALTITUDE settled artifact at the post-settle altitude. au carries one
 # `altitude: ref` field (the target altitude of the proposal); crystal
-# carries a `composition_graph: mosaic(@code)` field (the DAG of all
+# carries a `composition_graph: mosaic(@facet)` field (the DAG of all
 # altitudes the artifact composes). au is what Fate emits; crystal is
 # what kintsugi crystallizes from the settled au through the property
 # chain. settle is the Kleisli arrow `au -> Imperfect<shard>`; the
@@ -164,8 +164,8 @@ in @code
 # recognition's middle); crystal is what one or more shards compose
 # into at the polyglot-artifact altitude. A shard carries
 # `splinters: [splinter(altitude)]` at one altitude per shard; a
-# crystal's `section: [splinter(@code)]` carries the artifact's
-# language sections across the @code altitudes. The shard is the
+# crystal's `section: [splinter(@facet)]` carries the artifact's
+# language sections across the @facet altitudes. The shard is the
 # storage primitive; the crystal is the deployable artifact.
 #
 # crystal vs shatter (shards/mirror/shatter.mirror): shatter is the
@@ -212,15 +212,15 @@ in @code
 # pull. Sketched, not declared this tick (per [[feedback-craft-not-
 # deliver]]):
 #
-#   crystallize(s: shard, m: mosaic(@code)) -> imperfect(crystal)
+#   crystallize(s: shard, m: mosaic(@facet)) -> imperfect(crystal)
 #     The constructor. Compose a settled shard's splinters with the
-#     project's composition_graph; verify the @code-altitude mosaic
+#     project's composition_graph; verify the @facet-altitude mosaic
 #     algebra closes; emit imperfect<crystal> with transparency
 #     carrying the residual cracks (the fracture_calendar's source).
 #
 #   verify_composition(c: crystal) -> verdict
 #     The polyglot-by-construction integrity check. Walks the
-#     composition_graph; verifies every `@code/<lang>` node resolves;
+#     composition_graph; verifies every `@facet/<lang>` node resolves;
 #     verifies no cycles; verifies every edge's compilation
 #     dependency holds. Returns @glass.verdict.
 #
@@ -247,7 +247,7 @@ in @code
 #   polyglot composition         WebAssembly Component Model (W3C
 #                                 2023); GraalVM (Oracle 2018). The
 #                                 substrate's composition_graph IS
-#                                 the @code-altitude mosaic; the
+#                                 the @facet-altitude mosaic; the
 #                                 polyglot boundary is structural,
 #                                 not coordinated through a runtime
 #                                 host.
@@ -299,7 +299,7 @@ in @code
 #
 #   focus crystal    observe a crystal's state (oid + sections + verdicts).
 #   project crystal  filter a crystal by what matters (specific
-#                     @code/<lang> section; specific predicate verdict).
+#                     @facet/<lang> section; specific predicate verdict).
 #   split crystal    explore the composition_graph's structure;
 #                     enumerate the DAG's nodes and edges.
 #   shift crystal    the deployment verb. Relocates the crystal to
@@ -328,7 +328,7 @@ glass @mirror/store/crystal {
 # with equal field tuples have the same oid and ARE the same
 # crystal. This is the substrate-altitude statement of polyglot-by-
 # construction's reproducibility: same settlement, same crystal,
-# byte-equal — regardless of how many @code/<lang> altitudes the
+# byte-equal — regardless of how many @facet/<lang> altitudes the
 # composition spans.
 #
 # After settle:
@@ -344,11 +344,11 @@ type crystal = {
   # The content-address of the settled artifact. Per @mirror/store/oid.
   oid: oid,
 
-  # Language-section structure. Each splinter at its own @code/<lang>
+  # Language-section structure. Each splinter at its own @facet/<lang>
   # altitude; the list preserves altitude boundaries within the
   # content-addressed atom. Per @glass's splinter(altitude) carrier
-  # specialized to the @code namespace.
-  section: [splinter(@code)],
+  # specialized to the @facet namespace.
+  section: [splinter(@facet)],
 
   # Properties the kintsugi loop verified during settlement. Same
   # carrier as shatter's section-3 (shards/mirror/shatter.mirror).
@@ -361,11 +361,11 @@ type crystal = {
   # au lifted to artifact altitude. Per @glass's transparency(p).
   fracture_calendar: transparency(au),
 
-  # The DAG over @code/<lang> grammars — the polyglot-by-construction
+  # The DAG over @facet/<lang> grammars — the polyglot-by-construction
   # structural witness. Per @mirror/mosaic's mosaic(altitude)
-  # specialized to the @code namespace. The substrate rejects a
+  # specialized to the @facet namespace. The substrate rejects a
   # malformed composition_graph at this altitude.
-  composition_graph: mosaic(@code),
+  composition_graph: mosaic(@facet),
 }
 
 out @mirror/store/crystal

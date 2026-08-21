@@ -67,11 +67,12 @@ in @glass
 # The existing 11 `@cascade/code/*/*` species (mirror/gestalt,
 # gestalt/gleam, gleam/beam, gleam/js, mirror/gestalt, rust/go,
 # rust/llvm, rust/wasm, llvm/turing, purescript/js, turing/mirror,
-# formal/prose) map naturally to @cast species during Phase 3 rename
-# cascade: each `@cascade/code/X/Y` becomes `@cast/X/Y` at peer-to-peer
-# translation altitude. The @code layer collapses into @facet at
-# generation-surface altitude; @cascade's translation-between layer
-# lifts into @cast.
+# formal/prose) map naturally to @cast species during future @cast
+# supersession arc: each `@cascade/code/X/Y` becomes `@cast/X/Y` at
+# peer-to-peer translation altitude. The @code layer (DELETED
+# 2026-08-21 Phase 3b) collapsed into @facet at generation-surface
+# altitude; @cascade's translation-between layer lifts into @cast
+# (pending future arc; @cascade not yet touched by Phase 3).
 #
 # === adjunction with @facet ===
 #

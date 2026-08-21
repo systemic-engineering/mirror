@@ -120,7 +120,7 @@ type location = {
 # carrier; zero new species mint.
 #
 # Alternative rejected 2026-07-15 (Alex adjudication of post-Seam-
-# Phase-D residue): minting a new species @code/mirror/materialize
+# Phase-D residue): minting a new species @facet/mirror/materialize
 # was considered but rejected — adds altitude at the tick when Rust
 # FLOOR shrinks. Delightfully Boring: of course @glass carries
 # where-in-source.
@@ -277,7 +277,7 @@ type property_verdict = {
 # shards/mirror/store.mirror.
 #
 # Altitude: a splinter lives at an altitude — a substrate ref naming
-# where in the prism manifold it sits. `@code/rust`, `@mirror/spec`,
+# where in the prism manifold it sits. `@facet/rust`, `@mirror/spec`,
 # `@meta/ast`, `@release`, `@ci/github` are all altitudes a splinter
 # can be observed at. Cross-altitude composition is shift on
 # splinters (per [[architecture-lift-as-load-bearing]]: shift is the

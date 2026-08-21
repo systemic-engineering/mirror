@@ -9,9 +9,9 @@ in @mirror/store
 in @algebra
 in @algebra/metalogue
 in @io/fs
-in @code/rust
-in @code/typescript
-in @code/python
+in @facet/rust
+in @facet/typescript
+in @facet/python
 in @fractal/shard
 
 # @spectral/mosaic — the READ-side species over the parametric
@@ -67,8 +67,8 @@ in @fractal/shard
 #   splinter_graph                — @mirror/store (LANDED; mosaic
 #                                    (@store) shape)
 #   @io/fs.read_at, walk_at       — @io family-root (LANDED)
-#   @code/rust, @code/typescript,
-#   @code/python                  — @code family (LANDED)
+#   @facet/rust, @facet/typescript,
+#   @facet/python                  — @facet family (LANDED)
 #   algebra_metalogue_session     — @algebra/metalogue (LANDED)
 #   algebra_carrier               — @algebra (LANDED)
 #   observation_depth             — @third (LANDED)
@@ -213,8 +213,8 @@ in @fractal/shard
 glass @spectral/mosaic {
   focus  repo         # ref_repo (path)   -> mosaic(@repo) typing
   project splinters   # typing            -> filtered splinter set
-  split  languages    # splinter set      -> [(@code/*, splinters)]
-  shift  altitudes    # [(@code/*, ...)] + altitude -> emitter
+  split  languages    # splinter set      -> [(@facet/*, splinters)]
+  shift  altitudes    # [(@facet/*, ...)] + altitude -> emitter
   settle typing       # emitter           -> mosaic(@repo) fixed
 }
 
@@ -225,7 +225,7 @@ glass @spectral/mosaic {
 # ratification): the mosaic's typed tile-basis IS @fractal/shard.
 # Each tile crystallizes as a shard; the mosaic algebra composes
 # shard sections. Position of each tile is derived from its
-# @code/mq query (LANDED at `boot/std/code/mq.mirror`); for
+# @facet/mq query (LANDED at `boot/std/code/mq.mirror`); for
 # content-addressed crystals, position IS `@<address>`.
 #
 # Composition anchor: `docs/specs/fractal-shard-vessel-of-
@@ -238,7 +238,7 @@ glass @spectral/mosaic {
 # Language + build-system + dependency detection record. Internal
 # to type_of_repo per canonical math §10 adjudication.
 type classification = {
-  languages: [ref],       # @code/rust, @code/typescript, ...
+  languages: [ref],       # @facet/rust, @facet/typescript, ...
   build_systems: [ref],   # @io/cargo, @io/npm, @io/poetry, ...
   dependencies: [ref],    # cross-splinter arrows from manifests
 }
@@ -250,8 +250,8 @@ type classification = {
 #
 # Composition:
 #   1. file-walker enumerates repo contents (@io/fs.walk_at);
-#   2. parser dispatch per detected language (@code/rust,
-#      @code/typescript, @code/python, ...);
+#   2. parser dispatch per detected language (@facet/rust,
+#      @facet/typescript, @facet/python, ...);
 #   3. build-manifest parse (Cargo.toml, package.json, pyproject.
 #      toml, flake.nix, ...);
 #   4. dependency-edge extraction from manifests;
@@ -281,7 +281,7 @@ type_of_repo(path: ref) -> mosaic(@repo) { \ }
 # 2026-07-16 8th repetition; memory `feedback-detector-
 # inadequacy-answer-is-never-rust`): the answer to insufficient
 # classification is NOT a new Rust classifier; it is composition
-# in @spectral/mosaic's action body via existing @code/* parsers.
+# in @spectral/mosaic's action body via existing @facet/* parsers.
 classify_of_repo(path: ref) -> classification { \ }
 
 # === mosaic_bilateral_witnessing bilateral (well-formedness) ===

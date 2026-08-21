@@ -21,7 +21,7 @@ in @epistemologic/cybernetic
 # @cyberpunk` clause + composition signature. Second: in Seam's tick
 # 29 review (constraint C2) catching the phantom reference.
 #
-# Per the @code/beam LRM precedent (tick 8): when a family is named
+# Per the @facet/beam LRM precedent (tick 8): when a family is named
 # twice without substrate-decl, collapse the surface NOW or carry the
 # phantom reference indefinitely. Substrate-pull-correct move: land
 # the family-root so future @cyberpunk references have a substrate-

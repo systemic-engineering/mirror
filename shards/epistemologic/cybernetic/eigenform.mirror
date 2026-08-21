@@ -67,7 +67,7 @@ in @epistemologic/cybernetic
 #   iteration map, witness. The witness IS the fixed point
 #   (witness = iteration(witness) modulo bounded discrepancy).
 # - Verifiable at the boundary via the same
-#   `@code/metalogue/materialize.classify` discriminator surface
+#   `@facet/metalogue/materialize.classify` discriminator surface
 #   that variety uses: a recursion's k-th iterate either converges
 #   to the witness (success), converges with residual discrepancy
 #   (partial), or diverges (failure). The verdict carrier is the

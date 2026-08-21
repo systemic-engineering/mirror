@@ -21,7 +21,7 @@ in @mirror/lens/cli
 # Top-level `mirror settle` is the algebraic operation (one write,
 # one proof, no loop). `compile` is the canonical pipeline given a
 # name because users say "build" more often than they say "settle
-# store after shift @code/rust". The stage's `settle` IS the build;
+# store after shift @facet/rust". The stage's `settle` IS the build;
 # the stage's `focus` previews what would change.
 #
 # Per optical-keywords.md §1.2: a `stage` is a single-input,
@@ -67,7 +67,7 @@ in @mirror/lens/cli
 #                 ultimately dispatches into — `settle(emitter)` is
 #                 what `compile.settle` walks to),
 #                 io/cargo.mirror (the @io boundary where the
-#                 produced binary lands when altitude=@code/rust),
+#                 produced binary lands when altitude=@facet/rust),
 #                 glass.mirror (imperfect / transparency carriers).
 
 stage @mirror/lens/cli/compile {
@@ -88,7 +88,7 @@ stage @mirror/lens/cli/compile {
   #   project  predicate  — filter the grammar set by a predicate
   #   split    candidate  — enumerate build candidates / import graph
   #   shift    altitude   — view the same grammar at a different
-  #                          declared altitude (e.g. @code/rust ->
+  #                          declared altitude (e.g. @facet/rust ->
   #                          @meta/ast); shift is basis transform,
   #                          per [[architecture-lift-as-load-bearing]]
   #   settle   target     — the ONE write; runs the build, emits the

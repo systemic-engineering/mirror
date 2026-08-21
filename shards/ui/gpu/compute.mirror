@@ -296,7 +296,7 @@ in @epistemologic/cybernetic
 # mirror` declares `@ui/gpu/compute` per `@epistemologic/pact/
 # path_matches_namespace`.
 
-source @code/rust
+source @facet/rust
 source @arxiv/communication/watzlawick-1967
 source @arxiv/computer-graphics/kajiya-1986
 source @arxiv/compilers/ragan-kelley-2013-halide

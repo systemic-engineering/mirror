@@ -124,7 +124,7 @@ in @epistemologic/cybernetic
 #   chirality. The verdict carrier is the substrate's existing
 #   `transparency<chirality>` — form-side (success), process-side
 #   (success), partial (carriers that straddle the partition; rare
-#   but real at boundaries like @code/metalogue/materialize), or
+#   but real at boundaries like @facet/metalogue/materialize), or
 #   failure (the carrier has no chirality reading; a substrate
 #   violation).
 # - Declares `flip`: the involution γ² = 1; flipping twice is
@@ -300,7 +300,7 @@ type form_or_process = form | process
 #                               byte-stable.
 # - partial(opacity_map)        the carrier straddles the partition
 #                               (boundary case; e.g.,
-#                               @code/metalogue/materialize shims
+#                               @facet/metalogue/materialize shims
 #                               that lift form-side declarations into
 #                               process-side discharges at the
 #                               metalogue altitude). The opacity_map
@@ -395,7 +395,7 @@ commute_with_algebra(g: chirality) -> verdict { \ }
 #   docs/specs/spectral-metalogue.md §9.1): Tomm probes will need
 #   to respect γ in addition to bounded commutator. The probe's
 #   `[D, a]` curvature data inherits chirality from `a`.
-# - `@code/metalogue/materialize` shims: boundary carriers; expected
+# - `@facet/metalogue/materialize` shims: boundary carriers; expected
 #   verdict is `partial(opacity_map)` recording the form-to-process
 #   lift the shim performs.
 chirality_witnessing(c: chirality) -> verdict { \ }

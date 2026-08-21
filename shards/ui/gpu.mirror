@@ -96,7 +96,7 @@ in @ui
 # Path-namespace property: this file at `shards/ui/gpu.mirror`
 # declares `@ui/gpu` per `@epistemologic/pact/path_matches_namespace`.
 
-source @code/rust
+source @facet/rust
 
 prism @ui/gpu {
   focus snapshot

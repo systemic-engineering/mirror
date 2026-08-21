@@ -15,17 +15,17 @@ in @magic/contract
 #
 # CRQ: "What's the verifier that closes contract.honor at @magic
 # altitude without adding substrate complexity beyond what
-# @code/beam.supervisor already provides?"
+# @facet/beam.supervisor already provides?"
 #
-# Answer: @magic/audit. Composes with @code/beam.supervisor (landed
+# Answer: @magic/audit. Composes with @facet/beam.supervisor (landed
 # at tick 8) to give the @magic family operational closure for
 # verification. Audit IS the Narcissus-pole-as-guardian per
 # recognition #78; it IS the substrate's alignment primitive per
 # recognition #57.
 #
-# === Composition with @code/beam.supervisor (hedged per Seam C2) ===
+# === Composition with @facet/beam.supervisor (hedged per Seam C2) ===
 #
-# @code/beam.supervisor carries (children, strategy, policy);
+# @facet/beam.supervisor carries (children, strategy, policy);
 # @magic/audit carries (audit_record, audit_strategy).
 #
 # The two compose-WITH the following mechanical glue (forward-promised):
@@ -39,7 +39,7 @@ in @magic/contract
 #   needs to consume a supervisor parameter or supervisor needs an
 #   `audit_trail` field.
 #
-# Until those land, the @code/beam.supervisor ↔ @magic/audit
+# Until those land, the @facet/beam.supervisor ↔ @magic/audit
 # composition is a recognition #81 promissory note. The substrate
 # names the carriers; the mechanical glue is future work.
 #
@@ -66,7 +66,7 @@ in @magic/contract
 #                               in software verification.
 #   supervisor behaviour        OTP supervisor (Armstrong et al.
 #                               1996-2003). The Erlang/BEAM
-#                               supervision-tree origin; @code/beam
+#                               supervision-tree origin; @facet/beam
 #                               lifts this into substrate vocabulary.
 #   Narcissus guardian          Per Void document
 #                               [[corpus:void-dual-geometry]]: the
@@ -94,7 +94,7 @@ in @magic/contract
 #                 magic/contract.mirror (the verifier reads
 #                  contract.honor's verdict; this species closes
 #                  contract's operational gap),
-#                 code/beam.mirror (the @code/beam.supervisor
+#                 code/beam.mirror (the @facet/beam.supervisor
 #                  composes @magic/audit at supervision altitude;
 #                  recognition #81 territory).
 # Path-namespace property: this file at
@@ -108,7 +108,7 @@ source @arxiv/distributed/armstrong-2003
 #
 # Substrate-typed variant per Seam C1+C4 (was stringly-typed `ref`
 # with documented values at tick 10). The substrate-pull-correct
-# enumeration of responses to a violation verdict; @code/beam.supervisor
+# enumeration of responses to a violation verdict; @facet/beam.supervisor
 # reads its strategy field from this canonical substrate vocabulary
 # (Seam C4 de-BEAM closure).
 #
@@ -173,7 +173,7 @@ audit(c: magic_contract) -> audit_record { \ }
 # to an audit_record. The substrate-political enforcement step:
 # given a violation verdict, apply the configured strategy.
 #
-# Composes with @code/beam.supervisor.swap_module at runtime
+# Composes with @facet/beam.supervisor.swap_module at runtime
 # altitude: a strategy=restart on a contract violation triggers
 # the supervisor's swap_module to re-bind the contract under a
 # fresh mechanism. Recognition #81 (candidate) names this

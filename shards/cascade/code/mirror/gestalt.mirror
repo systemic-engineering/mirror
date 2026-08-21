@@ -3,8 +3,8 @@ in @meta
 in @glass
 in @cascade
 in @labeled
-in @code/mirror
-in @code/gestalt
+in @facet/mirror
+in @facet/gestalt
 
 # @cascade/code/mirror/gestalt — the mirror substrate → gestalt IR
 # value cascade species.
@@ -27,7 +27,7 @@ in @code/gestalt
 #
 #   mirror substrate
 #     ↓  @cascade/code/mirror/gestalt (THIS species)
-#   gestalt IR (@code/gestalt AST + .gestalt file surface)
+#   gestalt IR (@facet/gestalt AST + .gestalt file surface)
 #     ↓  @cascade/code/gestalt/gleam (sibling mint this arc)
 #   gestalt-ui-shaped Gleam
 #     ↓  @cascade/code/gleam/js (landed sibling per Taut scout §5)
@@ -57,9 +57,9 @@ in @code/gestalt
 #
 # === composition altitude: SUBSTRATE-NATIVE ↔ FILE-PROJECTION ===
 #
-# The source altitude is `@code/mirror` (shards/code/mirror.mirror
-# 2026-06-07) — mirror's own instance of @code at the mirror
-# altitude. The target altitude is `@code/gestalt` (shards/code/
+# The source altitude is `@facet/mirror` (shards/code/mirror.mirror
+# 2026-06-07) — mirror's own instance of @facet at the mirror
+# altitude. The target altitude is `@facet/gestalt` (shards/code/
 # gestalt.mirror, this-arc landing) — the file-level projection
 # of the @gestalt graph.
 #
@@ -78,18 +78,18 @@ in @code/gestalt
 #
 # === The cascade shape (mirror substrate → gestalt IR) ===
 #
-# Source (mirror substrate admits per @code/mirror discipline):
+# Source (mirror substrate admits per @facet/mirror discipline):
 # - substrate-decl graph (@mirror/store content-addressed refs)
 # - composition edges (@glue.compose morphism composition)
 # - typed carriers (@glass verdict + @nl language surface +
 #   @prism five-op discipline)
-# - substrate-native composition (@code/mirror grammar/render
+# - substrate-native composition (@facet/mirror grammar/render
 #   sub-species)
 # - identity-contract preservation (byte-equality on OID)
 #
-# Target (gestalt IR preserves per @code/gestalt + @gestalt):
+# Target (gestalt IR preserves per @facet/gestalt + @gestalt):
 # - .gestalt file structure (frontmatter + heading hierarchy +
-#   line-break-as-structure per @code/gestalt/grammar)
+#   line-break-as-structure per @facet/gestalt/grammar)
 # - @gestalt.gestalt_document (nodes + edges + annotations +
 #   modes + visibility_scope)
 # - register-honoring bytes (breath-marks + asymmetric brackets +
@@ -100,13 +100,13 @@ in @code/gestalt
 # - PRESERVED: substrate-decl semantics (every mirror shard-decl
 #   has a .gestalt-file equivalent projection); OID content-address
 #   (fragments preserve identity); the .gestalt corpus register
-#   (per @code/gestalt/grammar 22 productions).
+#   (per @facet/gestalt/grammar 22 productions).
 # - LOST: the substrate-decl's compile-time-only invariants that
 #   have no reader-runtime discharge (e.g., mirror-substrate-only
 #   bilateral verdict states); the substrate's parametricity
 #   (labeled<v,m> collapses to raw refs at file altitude).
 #
-# The `loss_lens<@code/mirror, @code/gestalt>` measures these gaps
+# The `loss_lens<@facet/mirror, @facet/gestalt>` measures these gaps
 # against mirror's substrate-decl graph altitude + .gestalt's
 # file-level projection altitude.
 #
@@ -132,7 +132,7 @@ in @code/gestalt
 #                            as design goal; ancestor of the
 #                            register-preservation contract.
 #   Wadler 2003             "A prettier printer" — the doc-combinator
-#                            algebra @code/mirror.render + @code/
+#                            algebra @facet/mirror.render + @facet/
 #                            gestalt.render both use; measurement of
 #                            layout cost.
 #   Bernardy 2017           "A pretty but not greedy printer" — the
@@ -209,11 +209,11 @@ type gestalt_ir_artifact = labeled(ref, gestalt_projection_metadata)
 # ref; returns a gestalt IR ref (content-addressed per @mirror/store).
 #
 # The FLOOR resolver at [substrate-floor:@io-boundary] discharges
-# via @code/mirror parsing + @code/gestalt emission per Wadler-
+# via @facet/mirror parsing + @facet/gestalt emission per Wadler-
 # Bernardy doc combinator algebra.
 #
 # requires mirror_source_well_formed(src, p): source must pass
-# @code/mirror parsing per @code/mirror grammar discipline.
+# @facet/mirror parsing per @facet/mirror grammar discipline.
 apply_mirror_gestalt(src: mirror_source, p: perturbation) -> ref
 requires mirror_source_well_formed(src, p)
 { \ }

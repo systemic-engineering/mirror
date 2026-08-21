@@ -385,7 +385,7 @@ in @epistemologic/math/sheaf_laplacian
 # fracture body emits any morphism in this tick. No `partials`
 # declaration needed (per `dissonance_partials_match_ast_breadth`
 # #306). Bodies discharge downstream when the consumer pulls
-# realisation through `@code/metalogue/materialize` (per the
+# realisation through `@facet/metalogue/materialize` (per the
 # ouroboros pipeline in docs/specs/spectral-runtime.md §5).
 #
 # === Cascade siblings (forward-promised, NOT landing this tick) ===
@@ -602,7 +602,7 @@ type entanglement_edge = {
 # Body discharges by composing the peers and restriction_map into
 # the edge record. Stays a `\` obligation in this tick; concrete
 # resolution lives at the realisation layer (via
-# @code/metalogue/materialize per the ouroboros pipeline).
+# @facet/metalogue/materialize per the ouroboros pipeline).
 entangle(peers: [uuid_spectral], map: restriction_map) -> entanglement_edge { \ }
 
 # === disentangle — remove a peer from an edge ===

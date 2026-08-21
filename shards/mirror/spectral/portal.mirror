@@ -120,7 +120,7 @@ in @mirror/spectral
 # prism.md):
 #
 #   T16 ✓ — @mirror/data root + json lift + yaml/toml/text stubs
-#   T17 ✓ — @code/mirror.render with Wadler/Bernardy combinators
+#   T17 ✓ — @facet/mirror.render with Wadler/Bernardy combinators
 #   T18 ← — portal eigenvalue projection at substrate altitude (this)
 #   T19 — `mirror kintsugi <file>` settled-formatting output path
 #   T20 — portal handoff via SCM_RIGHTS at CLI pipe boundary

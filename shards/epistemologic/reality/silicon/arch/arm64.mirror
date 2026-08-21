@@ -29,7 +29,7 @@ in @epistemologic/property/content_addressed
 # so the tournament has typed handles instead of stringly tags.
 #
 # The detection body is a hole filled by Fate at boot via tournament
-# against @code/kernel/arm64; the carrier ships with the contract,
+# against @facet/kernel/arm64; the carrier ships with the contract,
 # not the implementation, matching the tick-1 phase in the design
 # doc's §10 implementation order.
 #

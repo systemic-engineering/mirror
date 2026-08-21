@@ -49,7 +49,7 @@ in @epistemologic/cybernetic
 # === The verifiable shape (per cybernetic foundation §3.5 row 1) ===
 #
 # - Declares the shard's variety vector with per-axis budget.
-# - Verifiable at species boundary via `@code/metalogue/materialize.classify`.
+# - Verifiable at species boundary via `@facet/metalogue/materialize.classify`.
 # - The per-axis loss profile is recoverable from the opacity-weighted
 #   projection at the boundary (`shards/glass.mirror`'s `opacity_map`
 #   carries the residuals; per-axis labelling is the interpretive
@@ -208,7 +208,7 @@ type variety_vector = [axis_budget]
 # === The per-axis loss profile at the species boundary ===
 #
 # When a shard crosses a species boundary (per
-# `@code/metalogue/materialize.classify`), the projection at the boundary
+# `@facet/metalogue/materialize.classify`), the projection at the boundary
 # may lose variety on some axis. The loss profile is recoverable from
 # the opacity-weighted projection —
 # `shards/glass.mirror`'s `opacity_map` carries the residuals; the
@@ -258,8 +258,8 @@ declared_variety(s: shard) -> variety_vector { \ }
 # the bilateral commitment.
 #
 # Declared here as a typed predicate so downstream shards can write
-# `requires variety_preserving(@code/rust)` or `requires
-# variety_preserving(@code/mirror)` — same shape as the metalogue
+# `requires variety_preserving(@facet/rust)` or `requires
+# variety_preserving(@facet/mirror)` — same shape as the metalogue
 # `requires substrate_pull_preserving(shim_X)` pattern at
 # `shards/code/metalogue.mirror`. The body is `\` at this altitude; the
 # discharge IS the conjunction of per-axis `axis_loss` verdicts falling

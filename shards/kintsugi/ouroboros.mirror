@@ -2,7 +2,7 @@ in @prism
 in @meta
 in @glass
 in @kintsugi
-in @code/rust/materialize
+in @facet/rust/materialize
 in @fate/tournament
 in @io
 in @mirror/bench
@@ -20,8 +20,8 @@ in @mirror/bench
 # === Alex Wolf 2026-07-15 in-transcript verbatim naming ===
 #
 # > "What if we used this opportunity, when you return, to look at the
-# > @kintsugi ouroborous? The one that begins to collapse the @code/rust
-# > of the compiler into @code/mirror? Every verifiable line of Rust
+# > @kintsugi ouroborous? The one that begins to collapse the @facet/rust
+# > of the compiler into @facet/mirror? Every verifiable line of Rust
 # > collapses into mirror."
 #
 # === Alex Wolf 2026-07-15 in-transcript verbatim scale claim ===
@@ -110,7 +110,7 @@ in @mirror/bench
 #                              |
 #          +-------------------+----------------------+
 #          |                   |                      |
-#      @kintsugi        @code/rust/materialize    @mirror/bench
+#      @kintsugi        @facet/rust/materialize    @mirror/bench
 #      (family root)    (classifier binding)      (monotone template)
 #          |
 #          +-> @kintsugi/oscillate  (loop primitive)
@@ -132,13 +132,13 @@ in @mirror/bench
 #
 # === The classifier IS the ouroboros iterated ===
 #
-# Per Taut §D5: @code/rust/materialize.classify reads a Rust file's
+# Per Taut §D5: @facet/rust/materialize.classify reads a Rust file's
 # AST and emits `partition = boundary | substrate` + `target`. The
 # ouroboros IS this classifier iterated. Each tick:
 #
 #   parse bootstrap/src/F.rs -> code/rust.ast
 #   d := declaration(F)
-#   m := @code/rust/materialize.classify(d)
+#   m := @facet/rust/materialize.classify(d)
 #   case m.partition of
 #     boundary  -> F IS FLOOR; stays; Seam sign-off if new.
 #     substrate -> F IS BUSINESS_LOGIC; target = m.target
@@ -157,7 +157,7 @@ in @mirror/bench
 #   Arc-3  Cross-file scale-out
 #                           (~25 BUSINESS_LOGIC files;
 #                            @fate/tournament ranks collapse order)
-#   Arc-4  Cross-@code/X scale-out
+#   Arc-4  Cross-@facet/X scale-out
 #                           (python, typescript, gleam, elixir,
 #                            fortran; universal species-decl)
 #   Arc-5  StageFreight × downstream CI empirical propagation
@@ -188,7 +188,7 @@ glass @kintsugi/ouroboros {
 #                arc's per-tick unit of consideration.
 # mirror_target  substrate ref to shards/*.mirror or new species
 #                that will host the collapsed shard body. Per
-#                @code/rust/materialize.classify.target: names the
+#                @facet/rust/materialize.classify.target: names the
 #                substrate altitude that subsumes the Rust form.
 # verifiable     bool. True iff the file has test-coverage on BOTH
 #                sides — the Rust side has landed tests AND the
@@ -330,7 +330,7 @@ prism @kintsugi/ouroboros {
 # Reads a collapse_target and emits the arc's per-target verdict.
 # Composes:
 #
-#   @code/rust/materialize.classify(target.rust_file)
+#   @facet/rust/materialize.classify(target.rust_file)
 #     -> materialised_file (partition + target + verdict)
 #   case partition of
 #     boundary  -> collapse_refused_boundary_violation

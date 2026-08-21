@@ -6,7 +6,7 @@ in @kintsugi/fracture
 in @silicon/algebra
 in @fate/algebra
 in @bauchladen
-in @code/rust
+in @facet/rust
 in @mirror
 in @io
 in @io/fs
@@ -48,7 +48,7 @@ in @epistemologic/pact/bilateral
 #
 # Alex 2026-07-16 in-transcript verbatim (compositional decl):
 #
-#   "@glue(@code/rust, @shatter)"
+#   "@glue(@facet/rust, @shatter)"
 #
 # The compositional expression Alex named directly — the fragmentation
 # lens that decomposes Rust source into typed fragments the `@fate.
@@ -94,7 +94,7 @@ in @epistemologic/pact/bilateral
 # (Alex 2026-07-16 verbatim, session-crystallizing):
 #
 #   @fate.roll(
-#     @glue(@code/rust, @shatter),      ← fragmentation lens
+#     @glue(@facet/rust, @shatter),      ← fragmentation lens
 #     @kintsugi/algebra                   ← candidate pool
 #                                            (speaker-pair metalogue-
 #                                             session; 15 landed
@@ -109,7 +109,7 @@ in @epistemologic/pact/bilateral
 #
 #   Primitive                                Path                                                     Role
 #   --------------------------------------   ------------------------------------------------------   ------------------------------------------------
-#   @code/rust                               shards/code/rust.mirror                                  source-side altitude (a `.rs` path ref)
+#   @facet/rust                               shards/code/rust.mirror                                  source-side altitude (a `.rs` path ref)
 #   @shatter                                 shards/shatter.mirror (family-root)                      fragmentation prism composed via @glue
 #   @glue                                    shards/glue.mirror                                       morphism-category family-root; @glue(A, B)
 #                                                                                                     is a correspondence carrier per
@@ -150,16 +150,16 @@ in @epistemologic/pact/bilateral
 #   Edge 1 (READ):
 #     `@io/fs.read(source)` → rust_bytes
 #     Reads the source .rs file as bytes. `source` is a ref whose
-#     altitude namespace is `@code/rust` (a .rs path per
+#     altitude namespace is `@facet/rust` (a .rs path per
 #     `shards/code/rust.mirror`); the read is at `@io/fs` altitude
 #     per the boundary discipline.
 #
 #   Edge 2 (FRAGMENT via @glue):
-#     `@glue.propose(@code/rust, @shatter)` → [correspondence]
+#     `@glue.propose(@facet/rust, @shatter)` → [correspondence]
 #     → rust_fragments = @glue.translate(correspondence, rust_bytes)
-#     Alex's compositional decl `@glue(@code/rust, @shatter)` names
+#     Alex's compositional decl `@glue(@facet/rust, @shatter)` names
 #     the fragmentation lens: a Mesland-category correspondence from
-#     the source altitude (@code/rust) to the shatter altitude
+#     the source altitude (@facet/rust) to the shatter altitude
 #     (@shatter). The correspondence's restriction bounds the
 #     admissible morphisms; @fate selects one within the restriction
 #     per `@glue.translate` at `shards/glue.mirror :662`.
@@ -277,16 +277,16 @@ in @epistemologic/pact/bilateral
 #
 # === Pending surface flag (for Reed follow-up scoping) ===
 #
-# `@code/rust` at `shards/code/rust.mirror` (Mara 2026-06-08) does
+# `@facet/rust` at `shards/code/rust.mirror` (Mara 2026-06-08) does
 # NOT expose a `source(path) -> [ast_fragment]` action at THIS tick;
 # the altitude declares only `compiles(target) -> verdict` +
 # `tests_pass(target) -> verdict` + the emit-target sub-prism
-# `@code/rust/cargo`. The `source` fragment-extraction responsibility
+# `@facet/rust/cargo`. The `source` fragment-extraction responsibility
 # is discharged HERE via Edge 1 (`@io/fs.read`) → Edge 2
-# (`@glue.propose(@code/rust, @shatter)`) composition; the
+# (`@glue.propose(@facet/rust, @shatter)`) composition; the
 # fragmentation IS the correspondence-lookup + morphism-application,
-# NOT a bespoke `@code/rust.source` action. Reed follow-up may mint
-# a `@code/rust.source` action IFF empirical composition needs it;
+# NOT a bespoke `@facet/rust.source` action. Reed follow-up may mint
+# a `@facet/rust.source` action IFF empirical composition needs it;
 # THIS species does not require it.
 #
 # === Substrate decisions ===
@@ -311,7 +311,7 @@ in @epistemologic/pact/bilateral
 #   this species is process-side (transformation engine at the
 #   Rust→mirror boundary); sits under `@kintsugi` per the partition.
 # [[architecture-connes-spectral-triple]] — the composition is a
-#   Mesland-category morphism between the @code/rust triple and the
+#   Mesland-category morphism between the @facet/rust triple and the
 #   @mirror triple; `@glue` names the morphism family root; THIS
 #   species specialises at the Rust→mirror altitude.
 # [[architecture-alignment-as-boundary-mathematics]] — (#57) the
@@ -363,7 +363,7 @@ in @epistemologic/pact/bilateral
 # - shards/code/rust.mirror
 #     (Mara 2026-06-08; source-side altitude ref; NO `source(...)`
 #      action landed at this tick; fragmentation is composition
-#      via `@io/fs.read` + `@glue.propose(@code/rust, @shatter)`)
+#      via `@io/fs.read` + `@glue.propose(@facet/rust, @shatter)`)
 # - shards/mirror.mirror
 #     (target-side altitude ref)
 # - shards/io/fs.mirror
@@ -405,7 +405,7 @@ prism @kintsugi/translate {
 # === translation_witnessing — bilateral predicate (arity 1) ===
 #
 # THE LOAD-BEARING witnessing predicate. Discharges Pass iff the
-# translation outcome preserves semantics from the source (@code/rust)
+# translation outcome preserves semantics from the source (@facet/rust)
 # to the target (@mirror) under the winning fracture's morphism.
 # The compiler's own proof that the Rust→mirror translation was
 # substrate-honest.
@@ -466,7 +466,7 @@ translation_witnessing(outcome: ref) -> verdict { \ }
 # === translate_rust_to_mirror — the composition action ===
 #
 # THE LOAD-BEARING COMPOSITION ACTION. Given a source ref (a `.rs`
-# path at `@code/rust` altitude) + a target shard-path ref (a
+# path at `@facet/rust` altitude) + a target shard-path ref (a
 # `.mirror` path at `@mirror` altitude), composes the 9-edge
 # autopoietic Rust→mirror translation per the docblock composition
 # graph above. Returns `@glass.verdict`.

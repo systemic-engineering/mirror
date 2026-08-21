@@ -120,7 +120,7 @@ in @mirror/lens/cli
 #               gap-tension-tensor-substrate.md (the `\` event and
 #               kintsugi geometry this stage carries).
 # Substrate decisions: [[architecture-kintsugi-bias-lift]] (kintsugi
-#                      bias = lift @code -> @mirror; the gold pour
+#                      bias = lift @facet -> @mirror; the gold pour
 #                      IS the bias-aligned write),
 #                      [[architecture-kintsugi-variety-io]] (the
 #                      variety-maintenance contract; force fill

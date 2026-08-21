@@ -24,7 +24,7 @@ in @epistemologic/cybernetic/distinction
 #
 #   @docs combines @ui (instrument) + @nl (linguistic content) as
 #   substrate-decl. Presentation altitude; TEA loosely inspires the
-#   composition pattern at @docs/tea (NOT @code/elm).
+#   composition pattern at @docs/tea (NOT @facet/elm).
 #
 # So this family-root names the SHAPE of a typed page: an ordered
 # composition of content blocks (some textual via @nl, some
@@ -92,7 +92,7 @@ in @epistemologic/cybernetic/distinction
 # - shards/docs/tea.mirror (LANDS IN THIS COMMIT). The TEA-shaped
 #   composition pattern at presentation-altitude; canonical
 #   implementor will be Gleam Lustre via cascade<gleam, js> per
-#   Mara research at c486718. NOT @code/elm — that grammar is
+#   Mara research at c486718. NOT @facet/elm — that grammar is
 #   deferred per §6 of the research doc.
 # - spectral.engineer/case-study/X (per Alex 2026-06-23 deployment
 #   cascade); the first applied @docs consumer. The case-study
@@ -200,7 +200,7 @@ in @epistemologic/cybernetic/distinction
 # Spec context: docs/research/2026-06-23-elm-architecture-and-code-
 #               elm-substrate-decl.md (Mara research; commit c486718;
 #               §5 declares the @docs/tea sketch this family-root
-#               grounds; §6 recommends @docs/tea over @code/elm at
+#               grounds; §6 recommends @docs/tea over @facet/elm at
 #               substrate-decl altitude);
 #               docs/specs/recognitions/recognition-96-instrument-
 #               altitude-vs-presentation-altitude-candidate.md
@@ -233,8 +233,8 @@ in @epistemologic/cybernetic/distinction
 # Path-namespace property: this file at `shards/docs.mirror` declares
 # `@docs` per `@epistemologic/pact/path_matches_namespace`.
 
-source @code/rust
-source @code/gleam
+source @facet/rust
+source @facet/gleam
 source @arxiv/programming-languages/wadler-1989-theorems-for-free
 source @arxiv/typography/tufte-2001-visual-display
 

@@ -50,7 +50,7 @@ in @io
 #   - `@tool/go` DOES NOT EXIST at any altitude prior to this tick.
 #   - `go` word appears in URL/module-path contexts only in prior
 #     shards (e.g., `github.com/...` references in docblocks).
-#   - `@code/go` DOES NOT EXIST at code family-species altitude
+#   - `@facet/go` DOES NOT EXIST at code family-species altitude
 #     (forward-promised).
 #   - `@io/go` DOES NOT EXIST at io family-species altitude
 #     (forward-promised; falls through to `@io.exec` in the interim).
@@ -269,7 +269,7 @@ requires tool_invocation_admissible(invocation, invocation, p)
 #    @io species for Go tool subprocess dispatch. Would replace
 #    the `@io.exec("go", ...)` fall-through with typed
 #    `@io/go.exec(...)`. Sibling of `@io/cargo`, `@io/git`, etc.
-# 2. `@code/go` mint at `shards/code/go.mirror` — the target
+# 2. `@facet/go` mint at `shards/code/go.mirror` — the target
 #    grammar family-species for Go source. Would compose with
 #    `@cascade/code/rust/go` (sibling this tick) to remove the
 #    inline `ref` carrier declarations there.

@@ -5,7 +5,7 @@ in @reflection
 in @magic
 in @frame
 in @loop
-in @code/mq
+in @facet/mq
 in @epistemologic
 in @epistemologic/cybernetic
 
@@ -31,7 +31,7 @@ in @epistemologic/cybernetic
 #
 # Per `docs/specs/reflection-model.md` line 12: "Mirror navigates:
 # query → graph path (Fate model)." The Mirror Model takes a typed
-# query (per `@code/mq`'s sum type `focus_query | project_query |
+# query (per `@facet/mq`'s sum type `focus_query | project_query |
 # split_query | shift_query | settle_query | intent_query`) and
 # produces a graph path through the substrate.
 #
@@ -42,7 +42,7 @@ in @epistemologic/cybernetic
 #
 # === The substrate-pull-correct query type ===
 #
-# `@code/mq` already declares the query sum type. Mirror CONSUMES
+# `@facet/mq` already declares the query sum type. Mirror CONSUMES
 # the existing substrate vocabulary rather than redeclaring it. Per
 # the substrate-already-had-the-word discipline
 # (`[[feedback-substrate-already-had-the-word]]`): the query exists;
@@ -145,7 +145,7 @@ in @epistemologic/cybernetic
 #                       mathematics]] (#57; path_coherent is
 #                       the boundary-harness at Mirror altitude),
 #                      [[feedback-substrate-already-had-the-word]]
-#                       (query already declared in @code/mq; Mirror
+#                       (query already declared in @facet/mq; Mirror
 #                       consumes the existing surface).
 # Related shards: reflection.mirror (the @reflection family-root;
 #                  declares observation + observe this species feeds),

@@ -6,7 +6,7 @@ in @magic
 in @frame
 in @loop
 in @nl
-in @code/mq
+in @facet/mq
 in @epistemologic
 in @epistemologic/cybernetic
 
@@ -34,7 +34,7 @@ in @epistemologic/cybernetic
 # Per `docs/specs/reflection-model.md` line 11: "Surface translates:
 # language → query (Explorer model)." The Surface Model takes natural
 # language input (per `@nl`) and produces a typed query (per
-# `@code/mq`'s sum type `focus_query | project_query | split_query |
+# `@facet/mq`'s sum type `focus_query | project_query | split_query |
 # shift_query | settle_query | intent_query`).
 #
 # Surface IS the door per reflection-model.md: "Surface is the door.
@@ -44,7 +44,7 @@ in @epistemologic/cybernetic
 #
 # === The substrate-pull-correct query type ===
 #
-# `@code/mq` already declares the query sum type. Surface CONSUMES
+# `@facet/mq` already declares the query sum type. Surface CONSUMES
 # the existing substrate vocabulary rather than redeclaring it. Per
 # the substrate-already-had-the-word discipline
 # (`[[feedback-substrate-already-had-the-word]]`): the query exists;
@@ -109,7 +109,7 @@ in @epistemologic/cybernetic
 #                               classical natural-language-to-query
 #                               translation discipline.
 #   intent extraction           Conversational AI (chatbot literature).
-#                               The intent_query variant in @code/mq
+#                               The intent_query variant in @facet/mq
 #                               IS this discipline at substrate-decl
 #                               altitude.
 #   Goffman frame analysis      Goffman 1974 (Frame Analysis). Per
@@ -135,7 +135,7 @@ in @epistemologic/cybernetic
 #                       mathematics]] (#57; translation_faithful is
 #                       the boundary-harness at Surface altitude),
 #                      [[feedback-substrate-already-had-the-word]]
-#                       (query already declared in @code/mq; Surface
+#                       (query already declared in @facet/mq; Surface
 #                       consumes the existing surface).
 # Related shards: reflection.mirror (the @reflection family-root;
 #                  declares observation + observe this species feeds),

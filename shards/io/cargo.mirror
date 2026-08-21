@@ -6,10 +6,10 @@ in @property
 
 # @io/cargo — the cargo invocation contract.
 #
-# Cargo IS the canonical @io tool for the @code/rust altitude. When
-# mirror.spec declares `target binary { altitude @code/rust, emit
-# cargo }`, mosaic's `shift @code/rust` resolves through
-# @code/rust/cargo (the substrate identity, D2) and lands on THIS
+# Cargo IS the canonical @io tool for the @facet/rust altitude. When
+# mirror.spec declares `target binary { altitude @facet/rust, emit
+# cargo }`, mosaic's `shift @facet/rust` resolves through
+# @facet/rust/cargo (the substrate identity, D2) and lands on THIS
 # shard's actions for the actual subprocess invocation.
 #
 # Substrate-pull tightenings (per [[architecture-shards-as-substrate-source]],
@@ -38,7 +38,7 @@ in @property
 #      are documented as `env_allowlist` below; mirror.spec MAY
 #      narrow but not widen this set.
 #
-# Spec context: docs/specs/mosaic.md §4 (the @code/rust delegation
+# Spec context: docs/specs/mosaic.md §4 (the @facet/rust delegation
 # contract), docs/specs/mirror-spec-schema.md §10.5 (emit
 # disambiguation), docs/specs/transparency.md (the loss carrier
 # cargo's exit codes lift into).
@@ -120,9 +120,9 @@ env_allowlist(key: text) -> verdict { \ }
 #                                    raw code as @nl reason)
 cargo_exit_to_transparency(code: exit_code, stderr: ~f) -> transparency { \ }
 
-# === actions — what mosaic's shift @code/rust invokes ===
+# === actions — what mosaic's shift @facet/rust invokes ===
 
-# build — compile the target. `features` is a @code/rust feature
+# build — compile the target. `features` is a @facet/rust feature
 # list (the cargo --features set). Returns imperfect carrying the
 # transparency (per cargo_exit_to_transparency).
 build(manifest: manifest, profile: profile, env: env, features: [text]) -> imperfect { \ }
@@ -142,7 +142,7 @@ check(manifest: manifest) -> imperfect { \ }
 # recognition #43 (2026-06-09): pre-commit chain altitude 1.
 fmt_check(manifest: manifest) -> imperfect { \ }
 
-# clippy — `cargo clippy`. Lint verification at the @code/rust
+# clippy — `cargo clippy`. Lint verification at the @facet/rust
 # altitude. Same imperfect contract; opacity_map on non-zero is the
 # clippy diagnostics (file:line:col-located warnings/errors). Substrate-
 # pull recognition #43 (2026-06-09): pre-commit chain altitude 3.

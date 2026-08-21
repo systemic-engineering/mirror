@@ -494,7 +494,7 @@ source @arxiv/math/hansen-ghrist-2019
 # without changing the species' substrate-altitude identity. The
 # five ancestor measurements + lock_verdict inherited from the
 # parametric carrier appear at this species boundary via the
-# realisation-time `@code/metalogue/materialize.classify`
+# realisation-time `@facet/metalogue/materialize.classify`
 # discriminator (per parametric carrier §Bodies-discharge-at-species-
 # boundary discipline).
 
@@ -588,7 +588,7 @@ type pole_distances = {
 #
 # Body discharges `\` at this altitude per the parametric carrier's
 # discipline; the discharge surfaces at the species-boundary via
-# `@code/metalogue/materialize.classify`.
+# `@facet/metalogue/materialize.classify`.
 coherence_score(sc: ref) -> coherence { \ }
 
 # === coherence_gradient — the direction of steepest ascent ===

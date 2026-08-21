@@ -114,7 +114,7 @@ in @labeled
 # Path-namespace property: this file at `shards/ui/field.mirror`
 # declares `@ui/field` per `@epistemologic/pact/path_matches_namespace`.
 
-source @code/rust
+source @facet/rust
 
 prism @ui/field {
   focus field

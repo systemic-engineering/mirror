@@ -103,7 +103,7 @@ in @uuid/spectral
 #      conversational surface, README rendering).
 #
 #   3. `@reality/algebra/code` — the code-altitude species (lifts
-#      @code/<lang> + @cascade). Matter aspect: source text bytes
+#      @facet/<lang> + @cascade). Matter aspect: source text bytes
 #      (Rust, C, LLVM IR). Information aspect: denotational semantics
 #      (the function the source computes). Discharge target: @io/code
 #      (cargo build, LLVM lowering, file-system source emission).
@@ -540,7 +540,7 @@ path_c_uniformity_held(o: gauge_orbit) -> verdict { \ }
 #   - `@reality/algebra/nl` (forward-promised): the natural-language
 #     altitude species lifting @nl + @metalogue + #100.
 #   - `@reality/algebra/code` (forward-promised): the code-altitude
-#     species lifting @code/<lang> + @cascade.
+#     species lifting @facet/<lang> + @cascade.
 #   - `@reality/algebra/physics` (forward-promised): the physical-
 #     reality altitude species (cosmos-mirror's territory); MUST
 #     declare fragmentation as valid crystal state for degenerate

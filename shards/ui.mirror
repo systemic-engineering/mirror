@@ -200,7 +200,7 @@ in @epistemologic/cybernetic/distinction
 # Path-namespace property: this file at `shards/ui.mirror` declares
 # `@ui` per `@epistemologic/pact/path_matches_namespace`.
 
-source @code/rust
+source @facet/rust
 source @arxiv/computer-graphics/akenine-moller-real-time-rendering
 source @arxiv/distributed-systems/lamport-1978-time-clocks-ordering
 

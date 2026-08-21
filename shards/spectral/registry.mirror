@@ -246,7 +246,7 @@ in @mirror/store
 # fracture body emits any morphism in this tick. No `partials`
 # declaration needed (per `dissonance_partials_match_ast_breadth`
 # #306). Bodies discharge downstream when the consumer pulls
-# realisation through `@code/metalogue/materialize` (per the
+# realisation through `@facet/metalogue/materialize` (per the
 # ouroboros pipeline in docs/specs/spectral-runtime.md §5).
 #
 # === Cascade siblings (forward-promised, NOT landing this tick) ===
@@ -408,7 +408,7 @@ type registry = {
 # Body discharges by composing the entry into the registry's
 # settled state shard at @mirror/store and re-settling. The body
 # stays a `\` obligation in this tick; concrete resolution lives at
-# the realisation layer (via @code/metalogue/materialize per the
+# the realisation layer (via @facet/metalogue/materialize per the
 # ouroboros pipeline).
 insert(r: registry, e: registry_entry) -> registry { \ }
 

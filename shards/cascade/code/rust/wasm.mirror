@@ -3,8 +3,8 @@ in @meta
 in @glass
 in @cascade
 in @labeled
-in @code/rust
-in @code/wasm
+in @facet/rust
+in @facet/wasm
 
 # @cascade/code/rust/wasm — the Rust → WebAssembly cascade species.
 #
@@ -18,8 +18,8 @@ in @code/wasm
 # discharges the per-grammar measurement of information loss in
 # compilation from a typed source grammar to a mainstream target.
 #
-# This species: source_grammar = @code/rust, target_grammar =
-# @code/wasm. The Rust→WASM cascade is the LOAD-BEARING delivery
+# This species: source_grammar = @facet/rust, target_grammar =
+# @facet/wasm. The Rust→WASM cascade is the LOAD-BEARING delivery
 # mechanism for spectral.engineer's @ui (GPU eigenboard rendering
 # crate at /Users/alexwolf/dev/projects/spectral/crates/ui): the
 # wgpu-based Mote/Arc/Field instrument ships to browser via this
@@ -44,7 +44,7 @@ in @code/wasm
 #
 # Loss surfaces at: lifetime erasure, generic monomorphization
 # (information condensation), trait-object devirtualization,
-# macro expansion. The loss_lens<@code/rust, @code/wasm> measures
+# macro expansion. The loss_lens<@facet/rust, @facet/wasm> measures
 # these gaps against the rustc + WASM grammar specifications.
 #
 # === First applied consumer ===
@@ -233,8 +233,8 @@ wasm_consumable(module: wasm_module, metadata: wasm_metadata, p: perturbation)
 # === rust_wasm_loss_well_defined predicate (bilateral) ===
 #
 # Bilateral verdict that the loss measurement is grammatically
-# well-defined: rust_source IS in @code/rust grammar AND
-# wasm_artifact.module IS in @code/wasm grammar AND the
+# well-defined: rust_source IS in @facet/rust grammar AND
+# wasm_artifact.module IS in @facet/wasm grammar AND the
 # (source, artifact) pair represents a valid cascade discharge
 # (rustc with --target wasm32 produced this artifact from this source).
 #
