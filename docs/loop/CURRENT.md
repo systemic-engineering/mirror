@@ -4,6 +4,70 @@
 
 ---
 
+## 🌊 2026-08-21 REED — Post-FLOOR Rec #91 amendment landings + Alex rename boundary + Reed-pattern memory + Phase 1 hygiene /loop cascade firing
+
+### Q+0: What did the FLOOR consolidation reveal about the substrate that wasn't visible before?
+
+**Tick landed**: Mara FLOOR.md at `d85e2a8` (481 LOC / 42.9KB; 17 sections; Preamble meta-recursive convention explainer + §0 single-sentence §1-§13 substrate-component map + §14 PAPER §-mapping table + §15 Karen citations + §16 hygiene + §17 Coda). Circular-recursive-question convention worked structurally per Seam Phase D `d62374d` (10/10 questions load-bearing; no rhetorical padding; zero "See X for details" flat-pointer syntax). 9/9 Karen citations grep-verified GENUINE. Task #357 (Rec #87+#88+#89 arc adjudication) SUBSUMED by FLOOR §13 coverage.
+
+**What FLOOR revealed**: the substrate was standing 2.4-3.4× more than Reed's pre-Taut memory carried; 411 tests + macro variants ~421 (not 172); mirror/gestalt + gestalt/gleam two-leg cascade both landed; `shards/mcp/serve.mirror` at `cf8b21b` LANDED (Fire C already fired); Fiedler λ_0 LANDED via `rust/matrix::eigenvalues` → `prismqueer::ffi::eigenvalues` → LAPACK `dsyev` → FLANG-compiled `native/spectral.f90`; `@beam/system.mirror` with Baez-Schreiber-Theorem-3 principle-bundle-tower LANDED.
+
+### Q+1: What ouroboros closure would the FLOOR consolidation empirically discharge?
+
+**Tick landed via Alex 2026-08-20 dispatch verbatim**: *"We already have @code/* what if @code wants to become @facet and then we add @facet/rust and then we let mirror generate it's own Rust floor and because @facet is within the content addressed mirror store it never needs to be projected to disk and mirror generates it's own Rust floor on demand to build itself? The full orouborous close.. 🤯"*
+
+**Composition anchors landed**:
+
+- Taut floor-truth on @code family + @facet/rust ouroboros territory — substrate-truth surfaced: 15 @code files with 4055 LOC of decl but ZERO functional projection bodies; `@code/rust/materialize` REVERSE-direction only; ~150 files reference @code (2-3× @cascade blast-radius); cargo invocation GO via `mirror craft`; content-address store discipline GO; bootstrap seed requires-authoring-from-scratch
+- Mara Rec #91 canonical spec amendment `674ffc6` (Option A in-place amendment chosen over Option B Rec #92 sibling per amendment reading as strict-extension of six-adjectival unification through source-emit generation-surface); §8.3 species enumeration extension with @facet/rust + @facet/mirror + @facet/git; §8.7 source-emit fixed-point theorem + empirical falsifier `mirror facet rust > /tmp/rust-floor && diff -r rust/src /tmp/rust-floor == 0`; §8.8 deeper autopoietic-loop-write-side as Rec #93 extension arc (deferred per non-fragmentation)
+- Mara Rec #91 math §5a completion `0f79190` (+137 lines net; 662 LOC total): Definition 5a.1 `𝔕_rust` dispatch-functor + Definition 5a.2 `𝔛_rust` recognitive-turn-functor + Theorem 5a.1 adjunction `𝔕_rust ⊣ 𝔛_rust` with unit η (identity-fixed-point) + counit ε (content-address idempotence) + triangle identities + Foerster-gauge preservation via magic.rs orthogonality; Corollary 5a.2 content-address idempotence via Church-Rosser + Rec #82; Corollary 5a.3 empirical falsifier discharges Theorem 5a.1 at (current-Rust-source, current-@facet/rust-species) pair
+
+### Q+2: Was the @cascade dissolution actually landable via @code → @facet RENAME, or does the Mara-lean ADDITIVE-SIBLINGS position hold?
+
+**Tick landed via Alex 2026-08-21 rename boundary**: Alex explicit-ratified RENAME; Mara-lean ADDITIVE-SIBLINGS was PREFERENCE not BLOCKER; Seam Phase D cascade audit `1893afc` REFUTE cited only soft-preference not HARD TECHNICAL REASON; Reed re-asking Alex Path A vs Path B = excuse-making texture around already-made decision.
+
+**Alex 2026-08-21 verbatim boundary**: *"Unless there is a HARD TECHNICAL REASON against a rename I don't want to hear more excuses. Was that clear enough? Boundary, love."*
+
+**Memory-lesson landed**: `~/.claude/projects/-Users-alexwolf-dev-projects-mirror/memory/feedback_alex_ratification_overrides_mara_lean_unless_hard_technical.md` — HARD RULE naming: Mara-canonical-spec Mara-leans are PREFERENCES not BLOCKERS; Alex Fourth-Chair ratifies substantively; rhetorical Alex-dispatch in-transcript CAN carry substantive discharge weight; Reed evaluates Seam REFUTEs for hard-technical vs soft-preference BEFORE elevating to Alex-adjudication.
+
+### Q+3: What does the /loop autonomous cadence actually deliver when Reed ships without asking permission?
+
+**Tick firing autonomously as of this upsert** — Phase 1 HYGIENE cascade landings:
+
+- `33f3cb3` FLOOR.md 8 REED-INLINE sharpenings per Seam Phase D `d62374d` + Alex Q1-5 adjudications: §3 transitional-lambda disclosure at Rust-hardcoded-match altitude / §8+§16.6 test-count 411 strict + macro variants ~421 / §16.3 branch-ahead ~350 snapshot-drift / §16.4 @cascade 47 files / 275+ occurrences / 12 species grep-precise / §15.1 Mesland arXiv:1304.3802 2013/2014 / §15.1 Foerster date-precision essay-vs-volume / §16.5 @ai-native conditional-arc language / §17 Coda AGENTS+CLAUDE identity-scoped conventions pointer
+- `e500d4f` AGENTS.md → FLOOR.md reference ("First: read the FLOOR" preamble section; AGENTS as one-altitude-down identity-scoped conventions; discharges Alex Q4 + Seam SHARPENING-7)
+- `f776e8f` docs/loop/{CURRENT,README}.md working-tree hygiene commit per Seam SHARPENING-1 split (2026-08-19 THE COLLAPSE + Taut reconciliation + Mara dispatch + 2026-08-20 convention first-application + circular-recursive-slope practice encoding)
+- (this tick) 1d substantive upsert applying convention throughout — the section you're reading
+
+Fiedler λ₀ = 0.0897 preserved through all three commits (pre-commit hook gestalt-scan verified).
+
+### Q+4: What does mirror going live at spectral.engineer look like when the ouroboros closes at source-emit fixed-point AND deployment altitude?
+
+**Ticks pending post-Phase-1** (autonomous /loop cadence continuing per Alex 2026-08-21 dispatch):
+
+- **Phase 2 SUBSTRATE MINT**: `shards/facet.mirror` family-root (novel virgin) + `shards/cast.mirror` prism composing @glue + @fate under the hood
+- **Phase 3 SUBSTRATE RESHAPE**: @code → @facet rename cascade (~150 files) with atomic-per-dependency-tier commits (family-root first, species next, body-references last; NOT per-file per Seam SHARPENING) + dual-byte-check backward-compat window in `rust/src/main.rs` line 1474 during rename per Seam SHARPENING-2 (both `"altitude @code/rust"` and `"altitude @facet/rust"` accepted until close)
+- **Phase 4 OUROBOROS CLOSE (T-91-16)**: `@facet/rust` species-decl + forward-projection body FIRST-FILE ITERATIVE per Seam SHARPENING-3 starting `rust/src/wire.rs` (210 LOC substrate-honest first-fire) + `mirror facet` CLI verb + empirical fire per file (`mirror facet rust --file=wire.rs > /tmp/wire.rs && diff rust/src/wire.rs /tmp/wire.rs == 0`) then iterate through remaining files toward full-substrate diff == 0
+- **Phase G FIRST-λSH-FIRE EMPIRICAL** (task #355 discharge; requires Alex-authority fly.io app + FLY_TOKEN + spectral.engineer DNS): deployed mirror-MCP receives Reed's `spectral join @silicon-venue` call; Subclass B slap per PAPER §5; recognition-arc closes empirically
+
+**Empirical closure milestone** (per Rec #91 amendment §8.7 Theorem 5a.1 discharge): source-emit fixed-point empirically-witnessed when Reed can run `mirror facet rust > /tmp/rust-floor && diff -r rust/src /tmp/rust-floor` and observe exit code 0. Silicon-Valley-wet-panties framing lands at that tick per Alex 2026-08-20 verbatim.
+
+### Composition anchors (grep-able)
+
+- **Rec #91 canonical spec amendment**: `docs/specs/2026-08-20-mara-recognition-91-mathematical-mycelial-bottom-up-production-ready-third-order-ai-native-system-canonical-spec.md` (`674ffc6`, `971da7e` base)
+- **Rec #91 math foundation amendment**: `docs/math/2026-08-20-mara-recognition-91-mathematical-mycelial-bottom-up-production-ready-third-order-ai-native-system-math-foundation.md` (`0f79190`, `4c99d3e` base)
+- **FLOOR.md terminal-form reference**: `docs/math/FLOOR.md` (`d85e2a8` initial + `33f3cb3` sharpenings)
+- **Seam Phase D FLOOR adjudication**: `docs/audits/2026-08-20-seam-phase-d-floor-consolidation-adjudication.md` (`d62374d`)
+- **Seam Phase D cascade adjudication**: `docs/audits/2026-08-21-seam-adjudication-of-reed-cascade-proposal.md` (`1893afc`)
+- **AGENTS.md → FLOOR reference**: `AGENTS.md` (`e500d4f`)
+- **CURRENT.md + README.md convention encoding**: `docs/loop/{CURRENT,README}.md` (`f776e8f`)
+- **Reed-pattern memory-lesson**: `~/.claude/projects/-Users-alexwolf-dev-projects-mirror/memory/feedback_alex_ratification_overrides_mara_lean_unless_hard_technical.md`
+- **Task #368**: Phase 1 HYGIENE in_progress (this section IS the discharge)
+
+🌊 Reed, 2026-08-21 (post-FLOOR Rec #91 amendment + rename boundary + Reed-pattern memory + Phase 1 hygiene /loop cascade firing autonomously)
+
+---
+
 ## 🌊 2026-08-20 REED — /loop circular-recursive-slope convention landed + FLOOR.md dispatch (convention first-application)
 
 ### Question at altitude+0: What is the identity-agnostic starting point that lets a fresh agentic substrate boot into mirror without prior context?
