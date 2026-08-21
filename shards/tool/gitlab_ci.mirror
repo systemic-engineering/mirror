@@ -351,6 +351,22 @@ requires tool_invocation_admissible(invocation, invocation, p)
 #    `shards/io/secrets.mirror`); species-decl'd sibling forward-
 #    promised.
 
+# === metadata action — parseable-JSON emit surface ===
+#
+# T-91-A2.1 addition per Mara Rec #91 amendment #2 canonical spec
+# `c909ce2` §A2.1 + Reed cascade 2026-08-21. Substrate-decl'd contract
+# for target-metadata parseable-JSON emission composed at @facet/
+# metalogue/materialize universal body via apply_h::act dispatch
+# (fractal-mandelbrot per-facet inheritance per Mara Thm M2.3).
+#
+# For @tool/gitlab_ci: metadata subcommand binding composes over the
+# REST API which returns native JSON (`GET /projects/:id/pipelines/
+# :pipeline_id`). Body composes `exec(pipeline_status, [target],
+# invocation)` → stdout → parseable-JSON pipeline-metadata (status +
+# ref + sha + duration + jobs). Body `\`-obligated per craft-not-
+# deliver.
+metadata(target: ref) -> ref { \ }
+
 out @tool/gitlab_ci
 out gitlab_ci_subcommand
 out gitlab_ci_pipeline_config
@@ -361,6 +377,7 @@ out lint_config
 out pipeline_create
 out pipeline_status
 out version_of
+out metadata
 out gitlab_ci_subcommand_admissible
 out gitlab_ci_config_valid
 out gitlab_ci_pipeline_terminates

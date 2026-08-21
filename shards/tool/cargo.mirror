@@ -163,9 +163,31 @@ requires tool_invocation_admissible(invocation, invocation, p)
 #    that change semantics; species-decl'd carrier
 #    `cargo_workspace_target` forward-promised.
 
+# === metadata action — parseable-JSON emit surface ===
+#
+# T-91-A2.1 addition per Mara Rec #91 amendment #2 canonical spec
+# `c909ce2` §A2.1 + Reed cascade 2026-08-21. Substrate-decl'd contract
+# for target-metadata parseable-JSON emission composed at @facet/
+# metalogue/materialize universal body via apply_h::act dispatch:
+# `@facet/metalogue/materialize.classify(d)` composes
+# `@tool/X.metadata(target_ref)` → wire::parse(stdout) →
+# @mirror/store.represent(splinter, altitude: X). Fractal-mandelbrot
+# per-facet inheritance per Mara Thm M2.3 fiber-projection recovers
+# per-species adjunction from universal-functor.
+#
+# For @tool/cargo: metadata subcommand binding is `cargo_subcommand::
+# metadata` (already in closed variant above). Body composes
+# `exec(metadata, [--format-version, 1, --manifest-path, target,
+# --no-deps], invocation)` → stdout → parseable-JSON workspace-
+# metadata (workspace_members + packages + resolve + workspace_root).
+# Body `\`-obligated per craft-not-deliver; discharge tick lands when
+# universal body composition fires.
+metadata(target: ref) -> ref { \ }
+
 out @tool/cargo
 out cargo_subcommand
 out exec
 out version_of
+out metadata
 out cargo_subcommand_admissible
 out cargo_invocation_well_formed

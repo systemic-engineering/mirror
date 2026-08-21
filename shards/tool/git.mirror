@@ -210,12 +210,31 @@ requires tool_invocation_admissible(invocation, invocation, p)
 #    @tool/git is the INVOCATION altitude. Sibling composition
 #    forward-promised.
 
+# === metadata action — parseable-JSON emit surface ===
+#
+# T-91-A2.1 addition per Mara Rec #91 amendment #2 canonical spec
+# `c909ce2` §A2.1 + Reed cascade 2026-08-21. Substrate-decl'd contract
+# for target-metadata parseable-JSON emission composed at @facet/
+# metalogue/materialize universal body via apply_h::act dispatch
+# (fractal-mandelbrot per-facet inheritance per Mara Thm M2.3).
+#
+# For @tool/git: metadata subcommand binding is `log --format=json` OR
+# `for-each-ref --format=<json-template>` (git does not emit native
+# JSON; the format-template composes JSON-shaped output that
+# wire::parse handles). Body composes
+# `exec(log, [--format=%H\t%P\t%an\t%s, target], invocation)` → stdout
+# → tab-separated ref-metadata (commit_oid + parents + author +
+# subject) that composition-shard body lifts to substrate splinter.
+# Body `\`-obligated per craft-not-deliver.
+metadata(target: ref) -> ref { \ }
+
 out @tool/git
 out git_subcommand
 out exec
 out commit_signed
 out push_signed
 out version_of
+out metadata
 out git_subcommand_admissible
 out commit_signing_ssh_only
 out git_invocation_well_formed

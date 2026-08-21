@@ -324,6 +324,21 @@ requires tool_invocation_admissible(invocation, invocation, p)
 #    `shards/code/docker/compose.mirror`) with its own bilateral
 #    grammar-conformance discipline mirroring @facet/docker.
 
+# === metadata action — parseable-JSON emit surface ===
+#
+# T-91-A2.1 addition per Mara Rec #91 amendment #2 canonical spec
+# `c909ce2` §A2.1 + Reed cascade 2026-08-21. Substrate-decl'd contract
+# for target-metadata parseable-JSON emission composed at @facet/
+# metalogue/materialize universal body via apply_h::act dispatch
+# (fractal-mandelbrot per-facet inheritance per Mara Thm M2.3).
+#
+# For @tool/docker: metadata subcommand binding is `inspect` (docker
+# inspect --format=json <image-or-container>). Body composes
+# `exec(inspect, [--format, json, target], invocation)` → stdout →
+# parseable-JSON image/container-metadata (config + layers + labels
+# + created + digest). Body `\`-obligated per craft-not-deliver.
+metadata(target: ref) -> ref { \ }
+
 out @tool/docker
 out docker_subcommand
 out docker_image_target
@@ -332,6 +347,7 @@ out exec
 out build_image
 out push_image
 out version_of
+out metadata
 out docker_subcommand_admissible
 out docker_build_reproducible
 out docker_image_reference_valid

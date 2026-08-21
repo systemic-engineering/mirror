@@ -214,6 +214,22 @@ requires tool_invocation_admissible(invocation, invocation, p)
 #    load-bearing for @roomba's dynamic dispatch; species-decl'd
 #    bilateral `nix_ifd_admissible` forward-promised.
 
+# === metadata action — parseable-JSON emit surface ===
+#
+# T-91-A2.1 addition per Mara Rec #91 amendment #2 canonical spec
+# `c909ce2` §A2.1 + Reed cascade 2026-08-21. Substrate-decl'd contract
+# for target-metadata parseable-JSON emission composed at @facet/
+# metalogue/materialize universal body via apply_h::act dispatch
+# (fractal-mandelbrot per-facet inheritance per Mara Thm M2.3).
+#
+# For @tool/nix: metadata subcommand binding is `flake metadata --json`
+# (nix flake metadata --json <flake-ref>). Body composes
+# `exec(flake, [metadata, --json, target], invocation)` → stdout →
+# parseable-JSON flake-metadata (description + inputs + outputs +
+# lastModified + narHash + revision + storePath). Body `\`-obligated
+# per craft-not-deliver.
+metadata(target: ref) -> ref { \ }
+
 out @tool/nix
 out nix_subcommand
 out nix_pin
@@ -222,6 +238,7 @@ out exec
 out resolve_pin
 out version_of
 out build_target
+out metadata
 out nix_pin_resolvable
 out nix_store_content_addressed
 out nix_invocation_well_formed
