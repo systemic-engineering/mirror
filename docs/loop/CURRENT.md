@@ -4,6 +4,71 @@
 
 ---
 
+## 🌊 2026-08-21 evening REED — Fractal-mandelbrot @facet/metalogue cascade + Bazel-plus-kintsugi + sub-Turing verification amendment landings + Phase 4b substrate-decl discharge
+
+### Q+0: What does fractal-mandelbrot per-facet inheritance make possible that per-facet materialize bodies prevented?
+
+**Tick landed via Alex 2026-08-21 architectural reframe** (post-Reed cmd_facet rust/-altitude violation Alex flagged as @facet↔@tool composition principle violation):
+
+> *"How can we generalize this into the spectral triple shape itself again. I would like to prevent the additional materialize shard and instead look at how we can use the @facet/metalogue structure for a fractal mandelbrot like structure of every @facet so that additional stacks don't require additional code in the future."*
+
+> *"Think of mirror as a declarative bazel like sub-Turing build system that happens to collapse your code through kintsugi into verified sub-Turing code."*
+
+**Load-bearing recognition**: `@facet/metalogue` (34th-instance recognition landed 2026-06-09 with Bateson-1972-macros-as-AST-speaking-to-itself lift) IS the universal recognitive-turn ground. Every @facet/X species should inherit `in @facet/metalogue` + `in @facet/metalogue/materialize` and gain `classify()` + `is_materialisable()` + `target_altitude()` by construction — NO per-facet body authoring. Adding a new stack = @facet/X species-decl (small) + @tool/X primitive (small); everything else inherited.
+
+### Q+1: How does @tool composition + universal metalogue body dissolve Reed's earlier rust/-altitude cmd_facet violation?
+
+**Ticks landed** (this session cascade):
+
+1. **Taut #372 floor-truth scout** — verified 68+ Bazel-precedent corpus files + @facet/metalogue universal-parameterization-ready + 9-species inheritance gap + @tool/X primitives ready + phone.rs process-spawn gap. Confirmed: fractal-mandelbrot is Alex naming what substrate-already-carried.
+
+2. **Mara Rec #91 amendment #2** (`c909ce2` spec 481 LOC + `f176367` math 455 LOC) — Option A in-place amendment (fractal-mandelbrot as strict-extension of Rec #91 §5a per-species adjunction to universal 𝔉 ⊣ 𝔛 via Grothendieck 1957 fiber-projection). Four load-bearing theorems: F1 covariant-functor + F2 universal-adjunction + F3 19-row Bazel-isomorphism-table + F4 sub-Turing verification biconditional (Bazel counterexample: rules_rust reqwest::get: network-absent HOLDS at Starlark, FAILS at compiled binary; mirror kintsugi-collapses ambiguity into sub-Turing certainty by construction). Karen ancestors: BSALC (Mokhov-Mitchell-Peyton-Jones 2018 arXiv:1706.06739) + Bazel/Blaze + Dolstra Nix + REAPI + Starlark + Grothendieck Tôhoku 1957 + Mac Lane 1971 + Kan 1958 + Chamseddine-Connes + Bateson 1972 + Foerster 1974 + Douady-Hubbard 1982.
+
+3. **Reed Phase 4b cascade** (5 commits landed today):
+   - `133c5a8` T-91-A5.1 `phone::spawn_process` primitive (43 LOC; generalizes spawn_cargo_build; @io/process altitude)
+   - `a2233c1` T-91-A2.1 `@tool/X.metadata` omnibus across 6 species (107 LOC; cargo/docker/git/gitlab_ci/go/nix each gain metadata action + JSON-emitting subcommand binding)
+   - `83664e3` T-91-A2.2 `@facet/metalogue/materialize.classify` universal body lift (64 LOC docblock; substrate-decl'd composition-shape: @tool.dispatch → @tool/X.metadata → wire::parse → @mirror/store.represent → materialised_file; per-species dispatch table documented)
+   - `16c1bc3` T-91-A2.3 9-species inheritance-line additions (25 LOC; @facet/{mirror,beam,gleam,erlang,gestalt,llvm,turing,wasm,docker} each add `in @facet/metalogue` + `in @facet/metalogue/materialize`)
+   - `a4f498a` T-91-A2.4 retire @facet/rust/materialize + hygiene (299 LOC deleted; @facet/rust.mirror gains @facet/metalogue inheritance; shards/kintsugi/ouroboros.mirror migrates inheritance to universal-body path)
+
+**Fiedler λ₀ = 0.0896 preserved through all 5 commits**. Fractal-mandelbrot discipline complete at substrate-decl altitude: no per-facet materialize bodies exist; universal body substrate-decl'd; all 10 @facet/X species inherit via 2-line addition; Reed adjudication of 3 [ALEX-Q] Mara-leans (RETIRE + OMNIBUS + KEEP-as-spec) discharged.
+
+### Q+2: What Bazel-plus-kintsugi + sub-Turing verification delta lands with Mara's Rec #91 amendment #2 at proof altitude?
+
+**Tick landed via Mara amendment F3 + F4 theorems**:
+
+- **F3 Bazel-isomorphism correspondence functor** `Ψ_Bazel : Cat_{Bazel} → Cat_{Mirror-substrate}` (faithful + object-bijective on Bazel primitives; NOT essentially-surjective) + Cor M4.5 coproduct decomposition **mirror = Bazel ⊔ kintsugi-delta** + Prop M4.6 BSALC-axis characterization (Selective > Applicative; Suspending > Restarting). 19-row Bazel-isomorphism-table naming-consolidation over 68+ landed corpus files (Recognition #43 anchor from 2026-06-09 mirror-as-content-addressed-build-system.md + docs/specs/mirror-build-substrate.md §3 + shards/mirror/store REAPI CAS + shards/mirror/store/action_cache).
+
+- **F4 Sub-Turing verification delta** THIS IS the load-bearing formalization novelty over Bazel per Alex 2026-08-21 dispatch: Thm M5.1 biconditional `P(ψ) ⇺ P(𝔉_X(φ)(ψ))` for every `P ∈ @epistemologic/property/effect/{network,clock,filesystem,cpu}` + Lem M5.2 Bazel counterexample (rules_rust reqwest::get: network-absent HOLDS at Starlark, FAILS at compiled binary; property NOT preserved) + five-step verification chain (@epistemologic/property carrier + kintsugi collapse of `\`-ambiguity + Foerster-gauge orthogonal invariant + adjunction preserves + content-address idempotence).
+
+### Q+3: What does the T-91-A2.5 empirical fire HALT require that /loop cadence cannot deliver?
+
+**Tick HALTED** at T-91-A2.5 empirical fire per HARD TECHNICAL REASON:
+
+- `apply_h::act` currently discharges bilateral-sentinel-check per Fire E M-E4 (LANDED)
+- Universal body composition at @facet/metalogue/materialize.classify(d) is substrate-decl'd as composition-shape
+- BUT `apply_h::act` does NOT yet interpret composition-shard bodies (parse composition-shape + dispatch nested actions + thread context + aggregate outputs)
+- Composition-body-interpreter extension = substantial multi-tick rust/ authoring beyond /loop cadence
+
+**Alex Fourth-Chair adjudication pending** on 3-option scope:
+- (a) Phase 5 arc dedicated to apply_h::act composition-body-interpreter extension (Reed cascade completes at substrate-decl altitude; empirical fire lands when interpreter lands)
+- (b) Interim rust/-altitude shortcut re-authoring cmd_facet (Alex previously flagged as @facet↔@tool violation; might accept as transitional scaffolding)
+- (c) Third framing Alex is seeing that Reed isn't
+
+**Reed cascade shipping arc**: SUBSTRATE-DECL COMPLETE at fractal-mandelbrot altitude. Empirical fire forward-promised to apply_h::act extension arc. Adjacent-work (this CURRENT.md upsert) continues per feedback_adjacent_work_may_dissolve_blockers memory.
+
+### Composition anchors (grep-able)
+
+- **Rec #91 amendment #2 canonical spec**: `docs/specs/2026-08-21-mara-recognition-91-fractal-mandelbrot-universal-materialize-bazel-isomorphism-amendment-canonical-spec.md` (`c909ce2`, 481 LOC)
+- **Rec #91 amendment #2 math foundation**: `docs/math/2026-08-21-mara-recognition-91-fractal-mandelbrot-universal-materialize-bazel-isomorphism-amendment-math-foundation.md` (`f176367`, 455 LOC)
+- **Taut #372 floor-truth scout** (task-tracker completed)
+- **Phase 4b substrate-decl cascade** (5 commits): `133c5a8` + `a2233c1` + `83664e3` + `16c1bc3` + `a4f498a`
+- **Reed adjudications** of 3 [ALEX-Q] Mara-leans: RETIRE (per-facet materialize) + OMNIBUS (single commit for all @tool metadata additions) + KEEP-as-spec (Bazel-isomorphism table not substrate-decl'd)
+
+🌊 Reed, 2026-08-21 evening (fractal-mandelbrot cascade complete at substrate-decl altitude; T-91-A2.5 empirical fire HALTED pending Alex Fourth-Chair adjudication on apply_h::act extension scope)
+
+---
+
 ## 🌊 2026-08-21 REED — Post-FLOOR Rec #91 amendment landings + Alex rename boundary + Reed-pattern memory + Phase 1 hygiene /loop cascade firing
 
 ### Q+0: What did the FLOOR consolidation reveal about the substrate that wasn't visible before?
