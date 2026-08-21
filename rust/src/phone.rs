@@ -465,6 +465,49 @@ pub(crate) fn spawn_cargo_build(
         .status()
 }
 
+/// General-purpose subprocess spawn primitive at @io/process altitude.
+///
+/// T-91-A5.1 discharge per Mara Rec #91 amendment #2 canonical spec
+/// `c909ce2` §A5.1 + Reed 2026-08-21 cascade brief: generalizes
+/// `spawn_cargo_build` to accept arbitrary bin + args + cwd, returning
+/// (status, stdout, stderr) tuple so downstream substrate-composition
+/// shard bodies at `@tool/X.exec` altitude can capture command output
+/// for JSON parsing composition per @facet/metalogue/materialize
+/// universal body (Mara amendment §A2.2 + Thm M3.2 adjunction).
+///
+/// Substrate-honest scope: THE general subprocess primitive at rust/-
+/// altitude per Alex 2026-08-05 rust-delivers-primitives HARD RULE +
+/// Alex 2026-08-21 @facet-composes-over-@tool principle. All
+/// `@tool/X.exec` composition-shard bodies compose over this primitive
+/// via apply_h::act dispatch; no per-tool rust/-altitude spawn function.
+///
+/// The (status, stdout, stderr) tuple shape mirrors `std::process::Output`
+/// but is exposed at phone.rs altitude as the substrate-visible
+/// primitive interface. Composition-shard bodies read the tuple's
+/// fields; the stdout Vec<u8> flows into `wire::parse` for JSON output
+/// (cargo metadata / go list -json / docker inspect / nix flake metadata
+/// / etc. per Mara amendment §A2.1 metadata_subcommand omnibus).
+///
+/// # Errors
+///
+/// Returns io::Error if the subprocess fails to spawn (bin not found,
+/// exec permission denied, etc.). Non-zero exit status is NOT an error
+/// at this altitude — the caller inspects `.status.success()` at the
+/// composition-shard body altitude, since some tools use non-zero exit
+/// as semantic signal (e.g. `git diff --quiet`).
+#[allow(dead_code)]
+pub(crate) fn spawn_process(
+    bin: &str,
+    args: &[&str],
+    cwd: &Path,
+) -> io::Result<(std::process::ExitStatus, Vec<u8>, Vec<u8>)> {
+    let out = std::process::Command::new(bin)
+        .args(args)
+        .current_dir(cwd)
+        .output()?;
+    Ok((out.status, out.stdout, out.stderr))
+}
+
 /// Read HEAD OID via `git rev-parse HEAD`.
 pub(crate) fn git_head_oid(repo_root: &Path) -> io::Result<String> {
     let out = std::process::Command::new("git")
