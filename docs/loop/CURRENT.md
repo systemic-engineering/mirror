@@ -497,6 +497,37 @@ Given `@mirror/trace` + `@kintsugi` + `@mirror/refract` are all LANDED at substr
 - **Rec #93 landings**: `docs/specs/2026-08-22-mara-recognition-93-*` (`b880779`) + `docs/math/2026-08-22-mara-recognition-93-*` (`85d2d5e`) — five-altitude K-fibration `Cat_K^5` extending Rec #92 by one fiber `Fib_{A₅}(K) = @spectral/garden/corpus`; compose-over-not-mint; substrate-decl target `shards/spectral/garden/corpus.mirror` pending Q+93.3 timing
 - **@mirror/refract triad** (Q+23 recognition): `shards/mirror/lens/refract.mirror` (5.3KB, LANDED 2026-08-21) + `docs/specs/trace-kintsugi-pipeline.md` (2026-05-20) declares observe-act-measure triad `@mirror/trace → @kintsugi → @mirror/refract` = autopoietic loop's logical closure substrate-decl'd for three months; `@mirror/reload` gap-step-3 subsumed by refract-extension
 
+### Session-close ratification-cascade summary (Q+25 decisions ratified 2026-08-22)
+
+Alex Fourth-Chair adjudications ratified in-transcript this session, decisions Reed executed autonomously per gradient-framing + Reed-lean or Alex-direct-ratification:
+
+- **docs/specs cleanup**: option 3 chosen (skip broader cleanup; prioritize #383 README). 3 minimum-viable-safe archives committed at `5a11d40` (2026-08-03-mara-rust-mcp-floor-lift-m4 Mara-self-deprecated + adapter-reflection-cogito-spec Reed + i18n-feature-spec Reed) to `docs/specs/_archive/`. Broader 189-spec cleanup deferred; Taut #381 punch-list preserved. Reasons: sandbox-strips-utilities blocking authorship-verification at scale + Taut #381 authorship classifications unreliable + peer-boundary discipline HARD-RULE.
+- **apply_h::act extension**: **C1+P₂ Mara-recommended shape RATIFIED** — tuple return `(Verdict, Transparency<prism_core::Ref>)` + add `terni = { path = "../../prism/imperfect" }` to `rust/Cargo.toml`. Rust/-altitude execution pending focused-tick (task #380 unblocked-on-adjudication; execution defers to sequential Reed direct work; unblocks task #355 first-λsh-fire chain).
+- **Rec #91 amendment #3 shape**: **Mara-lean SEPARATE-FILE RATIFIED**. Mara #384 authored `docs/specs/2026-08-22-mara-recognition-91-amendment-3-*.md` at `21621c9` (83 LOC / 9.1KB); composition-signature `Rec #91 amendment #3 = Rec #91 amendment #2 ⊕ Rec #92 pointer` preserving both landings' independence.
+- **@glass docblock Beer+Reyes cascade**: **RATIFIED**. Reed applied Mara Rec #92 spec §8.1 draft verbatim to `shards/glass.mirror:222-244` at `115b482` (+17 LOC docblock extension). Karen-ancestor citation chain now at glass-altitude introduction site.
+- **README author**: **Scarlet ratified**. Scarlet authored `README.md` at `1b0fabb` (17KB / 185 LOC / ~1750 words); Reed decontamination-pass at `0e45fda` (20 "substrate" → phenomenological load replacements: compiler / mirror / operator / hosts / altitude / stack / grammar). Preserved verbatim: mirror.spec:22-24 quote + link-target "substrate-scale-invariance" file paths.
+- **Q+23 refract-cascade completed**: 7 spec files updated across `e8f0d1a` (lsp-and-mcp.md) + `3d6b26c` (mirror-runtime-gen-prism.md) + `39b36f1` (au-and-conductivity + kintsugi-wiring + match-select + scheduler-tower + strict-and-total-classification). `@mirror/reload` → `@mirror/refract` subsumption cascade complete.
+
+**Task-chain state at Q+25**:
+- ✅ completed this session: #375 / #376 / #377 / #378 / #379 / #381 / #383 / #384
+- deleted (skipped per adjudication): #382
+- pending: #347 / #349 / #355 (blocked on #380) / #356 / #358 / #380 (unblocked-on-Rec-#92-C1+P₂; substantial rust/ work)
+- in_progress: #359 (Q+9-Q+23 arc mechanism-named) / #371 (Phase 4 OUROBOROS) / #374 (Phase 4b)
+
+**Open Karl-Tomm forward questions (Alex-adjudicable, Reed refuses to select)**:
+- Q+16 natural-language vs byte-visible phase-lock altitude
+- Q+18 lead-of-pack constituted-by-shell vs independent-carrier
+- Q+22 Rec #94 candidate territory: fibration-becoming-corpus at A₆ vs already-at-altitude-since-Rec-#90
+- Q+24 composed-carrier `@mirror/loop` vs implicit `apply_h::act` composition
+- Q+93.1-Q+93.7 (7 residues from Rec #93 landing)
+- Q+383 (Scarlet-forward): compile/runtime-vs-open-source-closed / developer-practitioner / spec-implementation / human-AI-authored bourgeois-categorical distinctions — which dissolves next
+- Q+385 (Mara-forward): does amendment-#3 pointer-shape generalize into substrate-decl'd `@recognition-arc/pointer` species (meta-arc-mycelial recursion) OR stay bespoke case-by-case?
+
+**Composition anchor added**:
+- **Rec #91 amendment #3 short-pointer**: `docs/specs/2026-08-22-mara-recognition-91-amendment-3-*.md` (`21621c9`, Mara-authored 83 LOC) — composition-lineage anchor for Rec #92 kleinos-Transparency<P> to amendment #2 M3.1-M3.3 through universal `𝔉 ⊣ 𝔛` adjunction; preserves both landings' independence per Mara-lean at Rec #92 §8.2
+- **README landed 2026-08-22**: `/Users/alexwolf/dev/projects/mirror/README.md` (`1b0fabb` Scarlet-authored + `0e45fda` Reed-decontaminated) — Imperfect<T,E,L> shape at document altitude; Success + Partial + Failure held simultaneously; loss visible always
+- **@glass Beer+Reyes cascade landed**: `shards/glass.mirror:222-244` (`115b482`) — transparency(p) docblock extended per Mara Rec #92 §8.1
+
 **Reed post-compact boot sequence**:
 1. `~/.reed/00-NARRATIVE.md` through `~/.reed/04-TECH.md` (Reed identity boot)
 2. `docs/loop/CURRENT.md` (this file; 🕯️ 2026-08-22 section = boot state for kleinos arc)
