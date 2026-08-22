@@ -597,6 +597,60 @@ The self-modifying mirror loop at silicon closes as a Lawvere 1969 diagonal fixe
 
 **Reed λsh halted /loop**: all ratified adjacent-work landed; Rec #94 mint delivered with substantive Central Theorem + task-chain simultaneous-discharge proof + work-plan Tick 1-6 + first-loop-close criteria + 7 Alex-adjudication residues + Q+94.1 forward. Next-tick = Alex-in-conversation for Tick 1-6 execution authorization + adjudication residues + Q+94.1 pole selection.
 
+### Q+27: Reed's rust/-focus was axis-projection — complexity-substrate lives in @docs+@shards (Taut #388 findings)
+
+**Reframe landed via Alex 2026-08-22 in-transcript** (post-Rec #94 mint):
+
+> *"The number of lines in the @rust/ floor gets reduced to less numbers through macro usage. But that's surface. Spawn Taut on @docs and @shards/; iirc there should be lenses on code complexity. Graph connectivity etc. The void dimensions. We wanna reduce complexity whose outward most layer is often but not necessarily always number-of-lines-reduction. Think of it as COORD(code) untilt the lowest complexity harmonic is found. And as soon as that is landed we can talk about pertubations. Which is the MCP layer."*
+
+**Recognition-shift**: LOC-reduction = outermost shadow. Actual complexity-descent = **COORD(code) spectral-minimum across 5 Void dualities** per @mirror/refract measurement-lens (per `docs/insights/2026-06-06-benchmarking-glass-sweep.md` §2.2 verbatim: *"@mirror/refract IS bench wearing its real name. Reads the five Void dualities over the grammar graph: entropy (von Neumann), spectral (Fiedler λ₂), cheeger (min edge-boundary), ricci (Forman per-edge), mixing (random-walk mixing time)."*).
+
+**Rec #94 recontexted (not invalidated)**: its Loss functional `e(r) = LOC(r) - LOC(ψ*)` is ONE shadow of higher-dimensional Loss `e(r) = Σᵢ wᵢ · (dualityᵢ(r) - dualityᵢ(ψ*))` across all 5 Void dualities. Rec #94 Central Thm M2.1 holds under generalization; ψ* generalizes from LOC-fixed-point to spectral-harmonic-minimum. Rec #94 discharge at rust/-altitude = ONE fiber of a broader complexity-descent.
+
+**Taut #388 findings** (substantive baseline):
+
+- **Complexity distribution**: @docs/ (901K LOC) >> @shards/ (256K LOC); 3.5:1 imbalance signals descriptor-to-shard ratio heavy on narrative + formalization
+- **Baseline harmonic**: MEDIUM across all 5 dualities; entropy MEDIUM-HIGH; spectral λ₂ MEDIUM; cheeger MEDIUM-LOW; ricci MEDIUM; mixing MEDIUM-HIGH
+- **Reed rust/-focus check**: **FALSE ALARM.** rust/ already at Foerster-gauge-preserved FLOOR per Rec #94 M2.1. Actual complexity-descent needs to happen in @docs+@shards. Mara-canonical-spec + Taut-scout-reconnaissance is where harmonic-descent matters.
+
+**Bucket A (10 HEALTHY landmarks; DO NOT TOUCH)**: `docs/loop/CURRENT.md` + `docs/specs/gift-and-mirror-reflection.md` + `shards/fate.mirror` + `shards/glue.mirror` + `shards/autopoietic.mirror` + `docs/specs/reality.md` + `docs/math/the-tower/recursion-locks.md` + `docs/specs/bauchladen-autopoietic-fate.md` + `shards/reflection.mirror` + `shards/epistemologic/cybernetic/coherence.mirror`. These are the substrate's structural-attractors; already at harmonic minimum.
+
+**Bucket B (~350KB COLLAPSE-CANDIDATE; low entropy + compressible)**: docs/archive/plans (obsolete 2026-04) + docs/observations/single-point-observations + docs/essays (Glint stubs; relocate to corpus) + docs/research (cold reference) + docs/cicd (not staged) + docs/hooks + docs/benchmarks (unstaged) + orphaned audits + duplicative observations + roadmap consolidation. Impact: LOW-MEDIUM (most is informational, not structural).
+
+**Bucket C (RESTRUCTURE-CANDIDATE; low λ₂ / low cheeger / negative Ricci)** — top-3 highest-impact:
+
+1. **docs/scouts/** (~1.2MB, 85 files, flat date-prefixed namespace) — CRITICAL structural issue. Recommendation: date-grouped folders + INDEX-BY-TOPIC.md. Impact: HIGH (λ₂ +40%).
+2. **docs/math/** (~450KB scattered subdirs; no hierarchy) — recommendation: flatten + cross-reference by FOUNDATION/BY_FAMILY_ROOT/BY_ALTITUDE structure + INDEX.md. Impact: HIGH.
+3. **docs/specs/** (~150 files, flat namespace) — recommendation: group by foundations/operations/interaction/phase-d-audits. Impact: MEDIUM.
+
+**Bucket D (INTENTIONAL-BOUNDARY; do NOT restructure)**: `docs/recognition/` (14 candidate Rec files; segregation intentional) + `~/.reed/visibility/protected/` (consent boundary; inviolate) + `docs/loop/CURRENT.md` (intentional gravity-well; do NOT fragment into per-tick files) + `shards/epistemologic/pact/` (substrate-test-contract altitude specialization) + `docs/archive/` (historical compartment) + `shards/generated/` (codegen output; inviolate).
+
+**Structural reshaping (off-critical-path; can land autonomously)**:
+
+- **Add INDEX files** (docs/insights + docs/scouts + docs/recognition + docs/math + shards/epistemologic READMEs) — ~12KB total; HIGH ROI; pure-docs 📝; peer-boundary-safe; Reed can execute autonomously
+- **Bucket B relocation** (~350KB collapse) — MEDIUM effort; touches Mara/Alex/Reed-authored files at peer-boundary; **needs Alex adjudication** on which specific files move where
+- **Bucket C restructure** (~200-520KB refactor) — HIGH effort; touches Mara-authored canonical specs at peer-boundary; **needs Alex adjudication** + likely Mara-spawn to canonical-form the hierarchy discipline
+
+**Measurement estimate per @mirror/refract lens**:
+
+| Duality | Baseline | Target | Effort | ROI |
+|---------|----------|--------|--------|-----|
+| Entropy (Von Neumann) | MEDIUM-HIGH | HIGH | Index + discipline docs | 5KB cost; semantic clarity |
+| Spectral (Fiedler λ₂) | MEDIUM | HIGH | Hierarchy + INDEX files | 200KB refactor; +30% λ₂ |
+| Cheeger (bottleneck) | MEDIUM-LOW | MEDIUM | Move archive cold | 110KB reorg; +20% cheeger |
+| Ricci (curvature) | MEDIUM | HIGH | Add INDEX edges | 5KB cost; +30% curvature |
+| Mixing (random-walk) | MEDIUM-HIGH | HIGH | Flatten scouts + math | 200KB reorg; -40% mixing time |
+| **Overall COORD** | **MEDIUM** | **HIGH-MEDIUM** | **520KB refactor + 12KB index** | **Harmonic descent to plateau-minimum** |
+
+**Alex-adjudication surface** (halting for direction):
+
+- Reed autonomously executes INDEX files (Bucket C low-risk-high-ROI subset)?
+- Alex adjudicates Bucket B relocation per-file (touches peer-authored specs; slow)?
+- Mara #389 spawn for canonical-form hierarchy discipline for Bucket C restructure (docs/scouts date-grouping + docs/math hierarchy + docs/specs family-root grouping)?
+- Wait until Rec #94 Tick 1-6 executes at rust/-altitude and observe whether fibration-induction (per Q+94.1) automatically discharges @docs+@shards altitude?
+
+**Q+27.1 forward** (Taut Karl-Tomm at altitude+1): what higher-altitude question does the recognition "@docs+@specs+@shards carries the actual complexity substrate while rust/ is already FLOOR" open? Reed-lean at Alex-adjudication surface: connects to Q+94.1 fibration-induction — if Rec #94 fires at rust/-altitude, does that induce the harmonic-descent at @docs+@shards altitude automatically (Grothendieck 1957 base-lift per Cor M7.3), OR does @docs+@shards require its own recognition-mint at a separate altitude (perhaps A_docs distinct from A₁-A₅ rec-arc)? Reed refuses to select.
+
 **Reed post-compact boot sequence**:
 1. `~/.reed/00-NARRATIVE.md` through `~/.reed/04-TECH.md` (Reed identity boot)
 2. `docs/loop/CURRENT.md` (this file; 🕯️ 2026-08-22 section = boot state for kleinos arc)
