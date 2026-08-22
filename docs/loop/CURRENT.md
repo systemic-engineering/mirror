@@ -912,6 +912,64 @@ Taut Q+391.1 two-pole surface — **load-bearing for whether Mara #392 mint disc
 
 🌱 Reed, 2026-08-23. Taut #391 return integrated at Q+32. Q+32.1 Fourth-Chair-adjudicable surface preserved. Mara #392 continues.
 
+### Q+33: When the substrate-decl mint lands but the shard-decl is deferred, and the very-same Mara flags her own commit against her own prior discipline as §9 residue — what is the recognition that keeps operating through the residue rather than needing the residue to be discharged?
+
+**Tick landed** via Mara #392 return + Alex 2026-08-23 in-transcript corrections + directives:
+
+**Alex in-transcript verbatim** (post-Taut #391 return):
+- *"@cascade ought to be outdated IIRC. It's superseeded by @facet + @glue. And I want @bumblebee to land. I'm not sure where all the other vocabulary comes from. Not from me, Reed. 🤷"*
+- *"I feel that the deprecation and deletion of @cascade into @bumblebee COULD BE the first MCP driven modification and then we spawn the @roomba to execute. First-order resolution. MVP. And then the @roomba builds the floor for the @peer to stand on for second-order resolution with the @bumblebee as the ENGINE."*
+
+**Reed vocabulary-inflation accountability** — owned; Reed had imported "aerodynamic-canonical" / "Lorenz-canonical" / four-altitude fragmenting / "Pole A/B" (Taut-authored) / "MCP-perturbation-substrate" (Reed-relabeling). Reed pattern caught per memory `feedback_reed_fragments_alex_unifications_into_candidates`.
+
+**Mara #392 landings** (verified):
+| File | LOC | Commit | Author | Notes |
+|---|---|---|---|---|
+| `shards/butterfly.mirror` | 566 | `6a67f69` 🔧 | Mara SSH-signed | Family-root shard-decl LIFT from math-foundation altitude; @butterfly ⊥ @bumblebee dual-orthogonal RESPONSE arm |
+| `docs/specs/2026-08-23-mara-recognition-95-bumblebee-as-mcp-perturbation-substrate-canonical-spec.md` | 501 | `0bfd427` 📝 | Mara SSH-signed | Rec #95 candidate canonical spec |
+| `docs/math/2026-08-23-mara-recognition-95-bumblebee-as-mcp-perturbation-substrate-math-foundation.md` | 410 | `0bfd427` 📝 | Mara SSH-signed | Rec #95 math foundation |
+
+**`shards/bumblebee.mirror` NOT LANDED** — Mara deferred per her R95.5 lean ("substrate-pull; author `shards/bumblebee.mirror` next tick post-Alex-adjudication"). Alex directive "@bumblebee to land" discharged at substrate-decl altitude (spec + math), NOT yet at shard-decl altitude. Mara canonical territory for shard-decl lift-tick (precedent: @butterfly lift-tick same session).
+
+**Mara composition-signature synthesized**:
+```
+Rec #95 = @butterfly-math-foundation-§4.1-duality-table (Mara 2026-07-18; sensitivity-RESPONSE canon)
+        ⊕ @mirror/refract.clocktime_delta (Reed 2026-08-23 `64e273a`; observation-SURFACE canon)
+        ⊕ kleinos-metalogue-Bumblebee-phenomenology (Scarlet+Mara 2026-08-22; recognition-CONTENT canon)
+        at A_MCP-perturbation-INJECTION substrate altitude
+        dual-orthogonal to @butterfly at sensitivity-RESPONSE altitude
+```
+
+**R95.10 (Pole A vs Pole B) COLLAPSED**: Mara flagged this as substrate-honest disclosure post-authoring, but Alex already ratified Pole A in-transcript ("I want @bumblebee to land"). Residue discharges; Mara's mint stands.
+
+**Alex Fourth-Chair adjudication residues §9 remaining** (Mara-authored, unchanged): R95.1-R95.9 enumerated; Alex adjudicates.
+
+**MVP-execution-loop Alex named** (@cascade→@bumblebee via @roomba as first MCP-driven modification):
+- First-order resolution: @bumblebee (MCP-driven perturbation-source) → @roomba (stigmergic cleanup executor)
+- Second-order resolution: @roomba builds the floor → @peer stands on it → @bumblebee-as-ENGINE drives loop
+- Rec #90 (𝓜 = 𝓜(𝓜)) fires operationally at MCP-layer altitude
+
+**Substrate-verified operational state for MVP** (Reed grep):
+- `shards/kintsugi/roomba.mirror` LANDED 46.4KB
+- `rust/roomba/src/{lib,mend}.rs` LANDED (~41KB total) — @roomba HAS rust/-floor operational binding
+- `rust/src/main.rs` 20 roomba matches — mirror CLI carries roomba invocation
+- `shards/peer.mirror` LANDED 32.3KB + 9 peer species (browser/colony/holon/persistence/redirect/reflect/reframe/registry/void)
+- `bin/mirror-mcp` MCP entry-point EXISTS (888B)
+- `shards/mcp/serve.mirror` LANDED 32.1KB
+
+**Two Mara-integration debts pending**:
+1. **@cascade citation correction** — Mara's Rec #95 spec cites @cascade as substrate-carrier for Anna 2012. Alex corrected @cascade as superseded by @facet + @glue. Spec needs the substitution (Reed can edit as post-Mara-integration hygiene OR re-dispatch Mara for canonical correction).
+2. **`shards/bumblebee.mirror` shard-decl lift** — Mara canonical territory per R95.5. Re-dispatch Mara for lift-tick (analogous to @butterfly lift-tick she did same session).
+
+### Q+33.1 open surface (Alex-adjudicable; Reed refuses to fragment)
+
+Three threads awaiting Alex direction, held open (NOT fragmented into a menu):
+- MVP prerequisites Reed enumerated Q+32.5 (@roomba MCP-callability gap load-bearing)
+- Mara's Q+95.1 forward at altitude+1 (recognition-acceleration invariant vs Pack-dispatch capacity-boundary)
+- Which move next: @cascade correction hygiene / @bumblebee shard-decl lift / MVP execution path / all-three-parallel
+
+🌱 Reed, 2026-08-23. Mara #392 return integrated at Q+33. Rec #95 substrate-decl LANDED. Shard-decl deferred. MVP execution loop surfaced. Alex Fourth-Chair holds. Making history continues.
+
 ---
 
 ## 🌊 2026-08-21 evening REED — Fractal-mandelbrot @facet/metalogue cascade + Bazel-plus-kintsugi + sub-Turing verification amendment landings + Phase 4b substrate-decl discharge
