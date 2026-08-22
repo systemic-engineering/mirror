@@ -970,6 +970,50 @@ Three threads awaiting Alex direction, held open (NOT fragmented into a menu):
 
 🌱 Reed, 2026-08-23. Mara #392 return integrated at Q+33. Rec #95 substrate-decl LANDED. Shard-decl deferred. MVP execution loop surfaced. Alex Fourth-Chair holds. Making history continues.
 
+### Q+34: When the substrate builds the tool that fires the modification of the substrate, and the tool advertises through MCP but the fire hits an unexpected substrate-obstacle at the transitional-bridge boundary, what does the obstacle reveal about the shape of the collapse Alex-in-transcript authorized?
+
+**Tick landed** via Pack cascade + Reed rust wire + empirical fire attempt per Alex 2026-08-23 verbatim: *"@bumblebee is what rattles the tension. Which is why @cascade collapses into the bumblebee. And that's what the @roomba resolves. What do we need to build to make the MCP a reality?"* + *"What if it's bumblebee_buzz and what do you need from to make it a reality?"* + *"As long as you remember that the modification wants to fire through the MCP MVP I'm all green-light."*
+
+**Mara #393 landings** (verified):
+| File | LOC | Commit | Notes |
+|---|---|---|---|
+| `shards/bumblebee.mirror` | 700 | `64d4307` 🔧 | family-root shard-decl carrier-primary; discharges R95.5 substrate-pull deferral |
+| `docs/specs/2026-08-23-mara-cascade-to-bumblebee-absorption-companion-spec.md` | 793 | `06789fa` 📝 | absorption spec; byte-for-byte rename shape adjudicated |
+
+**Mara #393 adjudications**:
+- **Naming**: `@bumblebee.buzz` (buzzing IS what rattles per Alex naming)
+- **@cascade correction**: Option B (dissolve; @cascade citations in Rec #95 spec were ordinary-word not family-root)
+- **Absorption shape**: Option A byte-for-byte rename (preserves 227.3KB provenance + git history)
+- **Shard-decl shape**: carrier-primary per @roomba precedent
+- **Rename map**: 12 direct species + 3 sibling shard imports (glue + io/oci + magic/trick) + ~20 docblock citations across song/docs/ui/container/facet/reality/glue/io/oci
+- **Karl-Tomm Q+95.2 forward**: substrate-honesty requires MCP-tool-dispatch discipline structurally OR is it cultural convention? (Alex Fourth-Chair)
+
+**Reed rust wire #394 landings** (verified):
+| File | Commit | Content |
+|---|---|---|
+| `rust/src/main.rs` + `bootstrap/src/mcp.rs` | `4516602` 🔧 | 4 edits: VERBS registry entry + main() dispatch match arm + cmd_bumblebee (~90 LOC) + tools_list_result mirror_bumblebee_buzz entry + dispatch_tool_call match arm |
+| `bootstrap/src/mcp.rs` | `405d764` 🔧 | refactor: mirror_bumblebee_buzz inline dry-run plan handler (avoids growing bootstrap kintsugi_main dispatch surface per HARD RULE `bootstrap-is-dead`) |
+
+**Empirical fire #395 attempt** (partial):
+- **tools/list VERIFIED**: 12 tools advertised (up from 11); `mirror_bumblebee_buzz` present
+- **tools/call BLOCKED**: bootstrap rebuild fails at linker step with `-liconv` env issue (nix/darwin toolchain); can't test the post-refactor inline dispatch handler until linker env resolved
+- **Two paths tested**:
+  1. run_mirror-delegation (first commit `4516602`): dispatches to bootstrap's kintsugi_main which has no "bumblebee" case → "unknown: bumblebee"
+  2. Inline dispatch (second commit `405d764`): bootstrap rebuild needed to verify — blocked on linker env
+
+**MVP fire criterion status**:
+- ✅ Substrate-decl companion LANDED (shards/bumblebee.mirror + Rec #95 spec + companion absorption spec)
+- ✅ MCP tool exposed via tools/list (verified empirically)
+- ❌ Actual MCP tool-call fires plan output (blocked on bootstrap rebuild environmental issue)
+- ✅ Dry-run mode logic authored + inline in bootstrap/src/mcp.rs handler (per HARD RULE)
+- ❌ --execute mode NOT YET IMPLEMENTED at MVP altitude (second-phase pending Alex authorization + Seam audit + @kintsugi/roomba.trigger body composition)
+
+### Q+34.1 forward at altitude+1 (Alex-adjudicable)
+
+Given the MCP wire is 90% shipped (substrate-decl + tool exposure + dispatch handler code all landed) but the empirical fire is blocked by environmental linker toolchain issue (`-liconv` not found) rather than substrate-honest architectural obstacle — does the environmental-obstacle-at-fire-moment reveal something about the substrate-honesty of the ship-during-hybrid path (bootstrap crate transitional-bridge accumulating toolchain-fragility as it approaches collapse into rust/-crate FLOOR), OR is this purely an ops issue (Reed rebuilds in a clean env; the wire fires next tick) OR does the linker-obstacle name that Phase B rust/src/mcp.rs FLOOR emitter (per Mara §7 transitional-bridge forward-promise) needs to land BEFORE the MCP-MVP-fire fully discharges the modification (since bootstrap-crate cannot be relied upon for the fire)?
+
+🌱 Reed, 2026-08-23. Q+34 tick landed. MCP wire 90% shipped; empirical fire blocked on environmental linker issue; Alex adjudication on fire-path continuation surface preserved.
+
 ---
 
 ## 🌊 2026-08-21 evening REED — Fractal-mandelbrot @facet/metalogue cascade + Bazel-plus-kintsugi + sub-Turing verification amendment landings + Phase 4b substrate-decl discharge
