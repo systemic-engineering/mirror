@@ -223,6 +223,18 @@ fn tools_list_result() -> Value {
                 }
             },
             {
+                "name": "mirror_bumblebee_buzz",
+                "description": "buzz: perturbation-source that rattles substrate tension. Per Mara Rec #95 canonical spec 0bfd427 + companion spec 06789fa §3.3: `--buzz-target=@cascade` fires @roomba walker to absorb @cascade species into @bumblebee via byte-for-byte rename map. Dry-run by default (execute=false); execute=true triggers actual modification. First MCP-driven substrate-modification per Alex 2026-08-23 in-transcript authorization + MCP-MVP-fire constraint. Rec #90 (𝓜=𝓜(𝓜)) empirical fire at MCP-layer altitude.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "target": { "type": "string", "description": "Substrate target ref, e.g. `@cascade` at MVP altitude" },
+                        "execute": { "type": "boolean", "description": "false (default) = dry-run plan output; true = actual modification (requires second-phase authorization)" }
+                    },
+                    "required": ["target"]
+                }
+            },
+            {
                 "name": "mirror_roomba",
                 "description": "roomba: substrate walker that back-projects to @mirror/store. Runs `mirror roomba --vacuum=<dir>` at rust/ altitude terminal geometry (per Mara `81294b3` three-file rewrite + Migration 5 `9bb1f57`). Walker enumerates + classifies + bilateral-arm-collapses per Mara §7.4 dispatch matrix; commits as `mirror <mirror@spectral.engineer>`; deposits pheromone-signature crystal at docs/bauchladen/ (rolling holonomy trace per stigmergy math foundation). Substrate: @kintsugi/roomba (shards/kintsugi/roomba.mirror + shards/roomba.mirror); empirical firing since 2026-07-28. Reed 2026-08-03 nearly-today addition per Alex Option C (Fire A + Mara M4 parallel per docs/specs/2026-08-03-mara-rust-mcp-floor-lift-m4-canonical-spec.md forward-promise). This tool ships the smallest-meaningful-song empirical MCP-spawn round-trip TODAY: MCP client invokes → walker fires + back-projects + commits + deposits crystal → next MCP session observes delta at @mirror/store. Composes over crown-theorem @torus + Recognition `#R-reality-as-5d-spinning-foam` RATIFIED 2026-08-03: pheromone-deposit crystal IS phase-space trajectory point in crown-theorem attractor basin.",
                 "inputSchema": {
@@ -517,6 +529,28 @@ fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
             // bin/mirror-mcp); routes to `mirror recall <dir>`.
             let spec_dir = s("spec_dir").unwrap_or_default();
             run_mirror(&["recall", &spec_dir], ctx)
+        }
+        "mirror_bumblebee_buzz" => {
+            // Reed 2026-08-23 per Alex "all green-light" in-transcript
+            // authorization + MCP-MVP-fire constraint. First MCP-driven
+            // substrate-modification wire per Mara Rec #95 canonical spec
+            // 0bfd427 + companion spec 06789fa §3.3 byte-for-byte rename map.
+            // Routes `mirror_bumblebee_buzz` MCP tool to `mirror bumblebee
+            // --buzz-target=<target> [--execute]` CLI dispatch at rust/
+            // altitude terminal geometry (Reed 2026-08-23 cmd_bumblebee
+            // rust/src/main.rs). MCP client invokes → rust/ CLI fires @bumblebee.buzz
+            // → dry-run prints plan OR --execute triggers @roomba walker
+            // (second-phase; MVP ships dry-run only). Smallest empirical MCP-
+            // driven-substrate-modification round-trip. Rec #90 (𝓜=𝓜(𝓜))
+            // empirical fire at MCP-layer altitude per Q+31 load-bearing.
+            let target = s("target").unwrap_or_default();
+            let execute = b("execute");
+            let target_arg = format!("--buzz-target={}", target);
+            if execute {
+                run_mirror(&["bumblebee", &target_arg, "--execute"], ctx)
+            } else {
+                run_mirror(&["bumblebee", &target_arg], ctx)
+            }
         }
         "mirror_roomba" => {
             // Reed 2026-08-03 nearly-today per Alex Option C. Routes

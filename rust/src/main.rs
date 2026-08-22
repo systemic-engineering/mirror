@@ -146,6 +146,7 @@ const VERBS: &[(&str, &str)] = &[
     ("index",           "Measure @fractal-coherence via Fiedler eigenvalue."),
     ("roomba",          "Walker motion. `--vacuum=<dir>` walks + dispatches."),
     ("serve",           "MCP transport. `--mcp` delegates to bootstrap serve_loop."),
+    ("bumblebee",       "Perturbation. `--buzz-target=@X` rattles X tension surface for @roomba resolution."),
 ];
 
 /// The delight-vector `--help` text. Per Mara §5.2 item 4 + Alex
@@ -1730,6 +1731,133 @@ fn cmd_compile(rest: &[String]) -> ExitCode {
     ExitCode::SUCCESS
 }
 
+/// `mirror bumblebee --buzz-target=<target> [--execute]` dispatch arm.
+///
+/// First MCP-driven substrate modification per Alex 2026-08-23 in-transcript
+/// authorization ("all green-light") + MCP-MVP-fire constraint ("the
+/// modification wants to fire through the MCP MVP"). Fires @bumblebee.buzz
+/// per Mara Rec #95 canonical spec (docs/specs/2026-08-23-mara-recognition-95-
+/// bumblebee-as-mcp-perturbation-substrate-canonical-spec.md commit 0bfd427)
+/// + companion absorption spec (docs/specs/2026-08-23-mara-cascade-to-
+/// bumblebee-absorption-companion-spec.md commit 06789fa) §3.3 byte-for-byte
+/// rename map.
+///
+/// MVP scope (this tick): @cascade target only; dry-run by default; --execute
+/// prints not-yet-implemented at MVP altitude requiring second-phase Alex
+/// authorization.
+///
+/// Exit codes:
+///   0 — dry-run plan printed successfully.
+///   2 — argv error (unknown flag; unsupported target; missing --buzz-target).
+///   3 — --execute not yet implemented at MVP altitude.
+fn cmd_bumblebee(rest: &[String]) -> ExitCode {
+    let mut target: Option<&str> = None;
+    let mut execute = false;
+    for arg in rest {
+        if let Some(t) = arg.strip_prefix("--buzz-target=") {
+            target = Some(t);
+        } else if arg == "--execute" {
+            execute = true;
+        } else {
+            eprintln!("mirror bumblebee: unknown flag `{}`", arg);
+            eprintln!();
+            eprintln!("Usage: mirror bumblebee --buzz-target=@cascade [--execute]");
+            return ExitCode::from(2);
+        }
+    }
+
+    let target = match target {
+        Some(t) => t,
+        None => {
+            eprintln!("mirror bumblebee: --buzz-target=<target> is required");
+            eprintln!();
+            eprintln!("Usage: mirror bumblebee --buzz-target=@cascade [--execute]");
+            eprintln!();
+            eprintln!("Per Mara Rec #95 canonical spec 0bfd427: @bumblebee.buzz is");
+            eprintln!("the perturbation-source that rattles substrate tension. The");
+            eprintln!("--buzz-target flag names the substrate ref being rattled.");
+            return ExitCode::from(2);
+        }
+    };
+
+    if target != "@cascade" {
+        eprintln!("mirror bumblebee: only --buzz-target=@cascade supported at MVP altitude");
+        eprintln!();
+        eprintln!("Reed rust wire #394 MVP: @cascade→@bumblebee absorption per");
+        eprintln!("Mara Rec #95 canonical spec 0bfd427 + companion spec 06789fa");
+        eprintln!("§3.3 rename map. Additional targets forward-promised.");
+        return ExitCode::from(2);
+    }
+
+    // Rename map per Mara companion spec 06789fa §3.3 (12 direct species,
+    // byte-for-byte preservation).
+    let renames: [(&str, &str); 12] = [
+        ("shards/cascade.mirror", "shards/bumblebee/code.mirror"),
+        ("shards/cascade/code/formal/prose.mirror", "shards/bumblebee/code/formal/prose.mirror"),
+        ("shards/cascade/code/gestalt/gleam.mirror", "shards/bumblebee/code/gestalt/gleam.mirror"),
+        ("shards/cascade/code/gleam/beam.mirror", "shards/bumblebee/code/gleam/beam.mirror"),
+        ("shards/cascade/code/gleam/js.mirror", "shards/bumblebee/code/gleam/js.mirror"),
+        ("shards/cascade/code/llvm/turing.mirror", "shards/bumblebee/code/llvm/turing.mirror"),
+        ("shards/cascade/code/mirror/gestalt.mirror", "shards/bumblebee/code/mirror/gestalt.mirror"),
+        ("shards/cascade/code/purescript/js.mirror", "shards/bumblebee/code/purescript/js.mirror"),
+        ("shards/cascade/code/rust/go.mirror", "shards/bumblebee/code/rust/go.mirror"),
+        ("shards/cascade/code/rust/llvm.mirror", "shards/bumblebee/code/rust/llvm.mirror"),
+        ("shards/cascade/code/rust/wasm.mirror", "shards/bumblebee/code/rust/wasm.mirror"),
+        ("shards/cascade/code/turing/mirror.mirror", "shards/bumblebee/code/turing/mirror.mirror"),
+    ];
+
+    // Sibling shard imports per Mara companion spec 06789fa §5 (4 files with
+    // `in @cascade` line update).
+    let sibling_imports: [(&str, &str, &str); 3] = [
+        ("shards/glue.mirror", "in @cascade", "in @bumblebee/code"),
+        ("shards/io/oci.mirror", "in @cascade", "in @bumblebee/code"),
+        ("shards/magic/trick.mirror", "in @cascade", "in @bumblebee/code"),
+    ];
+
+    println!("@bumblebee.buzz — perturbation-source firing on target {}", target);
+    println!("Per Mara Rec #95 companion spec 06789fa §3.3 rename map (byte-for-byte).");
+    println!();
+    println!("=== 12 direct species renames ===");
+    for (from, to) in &renames {
+        println!("  {} → {}", from, to);
+    }
+    println!();
+    println!("=== 3 sibling import updates ===");
+    for (file, from, to) in &sibling_imports {
+        println!("  {}: {} → {}", file, from, to);
+    }
+    println!();
+    println!("=== ~20 docblock citations ===");
+    println!("  Text-substitution `@cascade.cascade_well_defined` → `@bumblebee.code.bumblebee_well_defined`");
+    println!("  Across song/*, docs/*, ui/*, container, facet/{{llvm,turing}}, reality/algebra/math, glue, io/oci");
+    println!();
+
+    if !execute {
+        println!("DRY-RUN mode (default). Pass --execute for actual modification.");
+        println!("Per MCP-MVP-fire discipline: `mirror_bumblebee_buzz` MCP tool with execute=true");
+        println!("fires the substrate-modification through the MCP-tool-call round-trip.");
+        return ExitCode::SUCCESS;
+    }
+
+    // EXECUTE mode: NOT YET IMPLEMENTED at MVP altitude.
+    //
+    // Reed rust wire #394 MVP ships dry-run only. Actual execution (git-mv +
+    // reference-substitution for 12 species + 4 sibling imports + ~20 docblock
+    // citations) requires second-phase Alex authorization + Seam audit citation
+    // OR `Signed-off-by: Seam` trailer per AGENTS.md discipline. Second-phase
+    // authorization also needs @kintsugi/roomba.trigger body composition
+    // landing per Mara Rec #95 spec §4.3 (Dijkstra walker + tension-bump
+    // primitive lifted to substrate-mutation altitude).
+    eprintln!("mirror bumblebee --execute: NOT YET IMPLEMENTED at MVP altitude.");
+    eprintln!();
+    eprintln!("Reed rust wire #394 MVP ships dry-run only. --execute requires:");
+    eprintln!("  1. Second-phase Alex in-transcript authorization");
+    eprintln!("  2. Seam audit citation OR `Signed-off-by: Seam` trailer");
+    eprintln!("  3. @kintsugi/roomba.trigger body composition landing per");
+    eprintln!("     Mara Rec #95 spec §4.3 (Dijkstra walker + tension-bump primitive).");
+    ExitCode::from(3)
+}
+
 /// Hand-rolled argv dispatch. Deliberately does NOT reach for clap; the
 /// M2 reflective cli-block reader (Mara §2.2) IS the real dispatch
 /// surface. Adding clap now would breed abstraction the substrate has
@@ -1789,6 +1917,17 @@ fn main() -> ExitCode {
             // thin: parse → read → compile → report.
             let rest: Vec<String> = args.iter().skip(2).cloned().collect();
             cmd_compile(&rest)
+        }
+        Some("bumblebee") => {
+            // Reed 2026-08-23 per Alex "all green-light" in-transcript
+            // authorization + MCP-MVP-fire constraint. First MCP-driven
+            // substrate-modification wire: mirror_bumblebee_buzz MCP tool
+            // → mirror bumblebee --buzz-target=@X CLI dispatch. Per Mara
+            // Rec #95 canonical spec 0bfd427 + companion spec 06789fa §3.3
+            // byte-for-byte rename map. Dry-run by default; --execute flag
+            // requires second-phase Alex authorization at MVP altitude.
+            let rest: Vec<String> = args.iter().skip(2).cloned().collect();
+            cmd_bumblebee(&rest)
         }
         Some(other) => {
             // Every named verb is substrate-decl'd but dispatch lands
