@@ -29,18 +29,27 @@ in @mirror/lens
 # `@mirror/lens/refract` carries the family-altitude metaphor without
 # competing for the operation name.
 #
-# === Five Void dualities (per trace-kintsugi-pipeline.md §1.1) ===
+# === Six Void dualities (five original + clocktime_delta per Taut #390 2026-08-23) ===
 #
-#   entropy   Von Neumann entropy of the normalized graph Laplacian.
-#             Order ↔ disorder. Low = rigid/crystallized. High = chaotic.
-#   spectral  Fiedler value (λ_2 of graph Laplacian). Connectivity ↔
-#             fragility. High = robust mesh. Low = fragile.
-#   cheeger   Cheeger constant (minimum edge boundary ratio). Flow ↔
-#             bottleneck. High = smooth data flow. Low = SPOF.
-#   ricci     Forman-Ricci curvature per edge. Geometric pressure on
-#             individual edges.
-#   mixing    random-walk mixing time. How fast information equilibrates
-#             across the graph.
+#   entropy         Von Neumann entropy of the normalized graph Laplacian.
+#                   Order ↔ disorder. Low = rigid/crystallized. High = chaotic.
+#   spectral        Fiedler value (λ_2 of graph Laplacian). Connectivity ↔
+#                   fragility. High = robust mesh. Low = fragile.
+#   cheeger         Cheeger constant (minimum edge boundary ratio). Flow ↔
+#                   bottleneck. High = smooth data flow. Low = SPOF.
+#   ricci           Forman-Ricci curvature per edge. Geometric pressure on
+#                   individual edges.
+#   mixing          random-walk mixing time. How fast information equilibrates
+#                   across the graph.
+#   clocktime_delta silicon-thermal-substrate observation-in-motion. Wall-clock
+#                   delta of a fixed-cost inner computation across CPU-load
+#                   regimes. Reads whether σ(x) information-curvature per Alex+Mara
+#                   information-curvature.md scales at silicon-thermal-substrate to
+#                   measurable magnitude; distinguishes substrate curvature from
+#                   thermal-throttling artifact via regression on junction
+#                   temperature. Taut #390 landing 2026-08-23; measurement body
+#                   forward-promised at rust/-floor @io-boundary pending Seam
+#                   audit + Mara canonical σ(x) silicon-thermal scaling law.
 #
 # Each duality is a property; each verdict is the glass-floor
 # verdict; the joint report is transparency<duality>. Same monoid as
@@ -81,12 +90,31 @@ in @mirror/lens
 # Path-namespace property: this file at `shards/mirror/lens/refract.mirror`
 # declares `@mirror/lens/refract` and only that.
 
-# === duality family — the five Void dualities ===
+# === duality family — the six Void dualities ===
 #
 # Closed sum. Each variant names one spectral measurement of the
-# grammar graph; downstream consumers (the gutter rendering layer)
-# match on the variant to pick a color.
-type duality = entropy | spectral | cheeger | ricci | mixing
+# grammar graph OR (clocktime_delta) of its silicon-thermal execution
+# substrate; downstream consumers (the gutter rendering layer) match
+# on the variant to pick a color. Sixth variant `clocktime_delta`
+# landed 2026-08-23 per Taut #390 design spec at
+# `docs/specs/2026-08-22-taut-benchmarking-clocktime-experiment-design-spec.md`
+# (commit `66a3db5`) as substrate-decl'd extension of the closed sum;
+# measurement body forward-promised.
+type duality = entropy | spectral | cheeger | ricci | mixing | clocktime_delta
+
+# === cpu_load_regime — the four regimes for clocktime_delta observation ===
+#
+# Closed sum. Four regimes chosen (not two) to separate thermal-throttling
+# curve from σ(x)-scaling signal via regression: at 100% single-core the
+# thermal envelope is one shape; at 100% all-cores it is another; the
+# difference isolates the substrate-curvature contribution from the
+# thermal-throttling artifact. Per Taut #390 spec §2.2.
+#
+#   idle_baseline     ~0% CPU utilization; observation-substrate baseline.
+#   load_50           ~50% single-core CPU; mid-regime for regression anchor.
+#   load_100_single   100% single-core CPU; thermal-junction near envelope.
+#   load_100_all      100% all-cores CPU; system-wide thermal saturation.
+type cpu_load_regime = idle_baseline | load_50 | load_100_single | load_100_all
 
 # === refract report — transparency<duality> ===
 #
@@ -112,8 +140,32 @@ measure(graph: ref, d: [duality]) -> report { \ }
 # reads this as the crystal-formation signal.
 stabilize(prev: report, next: report) -> verdict { \ }
 
+# measure_clocktime — sixth-Void-duality measurement action per Taut #390.
+#
+# Given a CPU-load regime and a sample count, discharge N samples of
+# fixed-cost inner work (β-normal-AST hash of 4KB corpus per Rec #82
+# content-addressing per Taut spec §2.3); read `mach_absolute_time()` +
+# `clock_gettime(CLOCK_MONOTONIC_RAW)` per sample; aggregate over cohort;
+# produce a clocktime_delta verdict inside transparency(duality). Statistical
+# protocol per Taut #390 spec §2 (Welch's t-test + Bonferroni α=0.05/6=0.0083 +
+# Cohen's d ≥ 0.2 + regression against CPU-util AND junction-temp separately).
+#
+# Body forward-promised: rust/-floor @io-boundary binding pending Seam audit
+# citation OR `Signed-off-by: Seam` trailer per AGENTS.md discipline;
+# lifts into shard-body composition once `@io/clock` species-decl lands
+# (Mara canonical spec territory; @io family-root discipline).
+#
+# σ(x) silicon-thermal scaling law forward-promised: Mara canonical spec
+# at `docs/math/YYYY-MM-DD-mara-sigma-x-silicon-thermal-scaling-law.md`
+# grounds the expected-magnitude prediction the empirical protocol tests
+# against; possible Anna+Mara co-authorship if derivation requires Anna 2012
+# Diplomarbeit apparatus (per Taut spec §7).
+measure_clocktime(regime: cpu_load_regime, samples: u64) -> report { \ }
+
 out @mirror/lens/refract
 out duality
+out cpu_load_regime
 out report
 out measure
+out measure_clocktime
 out stabilize
