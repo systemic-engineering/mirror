@@ -137,9 +137,9 @@ Client sends:    {"jsonrpc":"2.0","method":"tools/list","id":1}
                       |
 mirror serve     parse request, identify target gen_prism
                       |
-                 send(@mirror/reload, message{kind: "tools/list"})
+                 send(@mirror/refract, message{kind: "tools/list"})
                       |
-                 - read head crystal (refs/gen_prism/mcp_reload → oid)
+                 - read head crystal (refs/gen_prism/mirror_refract → oid)
                  - call tick(head, message)
                  - tick returns: new state crystal + notification emission
                  - write new crystal via git hash-object -w
@@ -162,21 +162,42 @@ resumes exactly where the last session left off.
 
 ## Examples
 
-### Example 1: `@mirror/reload` as a gen_prism
+### Example 1: `@mirror/refract` as the observe-act-measure triad's measure-leg (subsumes prior `@mirror/reload` gen_prism plan per 2026-08-22 Q+23)
+
+> **2026-08-22 Q+23 recontexting**: this Example 1 was originally authored
+> naming `@mirror/reload` as the reload-concern's gen_prism. Substrate-
+> already-had-the-word audit (Alex 2026-08-22) revealed `@mirror/refract`
+> already-LANDED at `shards/mirror/lens/refract.mirror` (2026-08-21) as
+> family-header for 5-Void-duality measurement at grammar-graph altitude,
+> AND `docs/specs/trace-kintsugi-pipeline.md` (2026-05-20) already declares
+> the observe-act-measure triad `@mirror/trace → @kintsugi → @mirror/refract`.
+> The reload-concern is one specific spectral measurement inside refract
+> (grammars_hash memoized-diff over same spectrum-space bench-glass reads on-demand).
+> "reload" was a bourgeois-tech-substrate word inherited from software-engineering
+> plugin-reload vocabulary; `refract` is substrate-native at prismqueer 5-op
+> algebra altitude. Below stands as gen_prism-pattern exemplar with `@mirror/refract`
+> as the specific instance; the pattern teaches how gen_prism extends a
+> family-header rather than introducing a new shard.
 
 From `lsp-and-mcp.md`: every MCP/LSP request must check whether the live
 grammars hash has drifted since last notification, and push
 `tools/list_changed` if so.
 
-As a gen_prism, the state crystal records `last_emitted_hash`. Every
+As a gen_prism extending `@mirror/refract`, the state crystal records
+`last_emitted_hash`. Every
 incoming request — *any* request, not just `tools/list` — triggers a tick:
 
 ```mirror
 in @mirror/runtime/gen_prism
 in @mcp
 in @hash/coincidence
+in @mirror/lens/refract
 
-grammar @mirror/reload {
+grammar @mirror/refract/reload {
+  # gen_prism extension of the already-landed @mirror/refract family-header
+  # (shards/mirror/lens/refract.mirror 2026-08-21) adding the tick-on-request
+  # behavior + grammars_hash_delta measurement per 2026-08-22 Q+23.
+  #
   # the state crystal carries one field: the hash we last told the client about.
   type state = {
     last_emitted_hash: oid,
@@ -332,7 +353,8 @@ Boundary summary:
 |---|---|
 | `@mirror/runtime/gen_prism` | the actor primitive: state in crystals, refs as identity |
 | `mirror serve` | the host process: stdio transport, routing, message loop |
-| `@mirror/reload` (gen_prism) | the reload contract; ticks on every request |
+| `@mirror/trace` → `@kintsugi` → `@mirror/refract` | the observe-act-measure autopoietic triad per [`trace-kintsugi-pipeline.md`](trace-kintsugi-pipeline.md) 2026-05-20 |
+| `@mirror/refract` (gen_prism extension) | the reload-concern subsumed as refract measure-leg; ticks on every request per Q+23 |
 | `@spectral/spawn` | autonomous gen_prisms with their own heartbeat |
 | spectral daemon | cross-session orchestration, the bus, the autonomous heartbeat |
 
@@ -347,11 +369,14 @@ Ordered follow-ups:
    concrete bodies (`send`, `history`, `observe`, `terminate`) compose
    `@io.git_*` operations.
 
-2. **Refactor `@mirror/reload` as a gen_prism.** The spec in `lsp-and-mcp.md`
-   described an abstract "reload contract." That contract IS
-   `@mirror/reload tick(state, message)`. Update the LSP/MCP spec to point
-   at gen_prism for the implementation pattern. Remove the spectral-daemon
-   dependency from that spec's auto-reload section.
+2. **Extend `@mirror/refract` with the reload-concern as gen_prism (per 2026-08-22 Q+23; supersedes prior `@mirror/reload` plan).** The spec in `lsp-and-mcp.md`
+   described an abstract "reload contract." That contract IS `@mirror/refract`
+   gen_prism extension with `tick(state, message)` running grammars_hash_delta
+   measurement. Update the LSP/MCP spec to point at `@mirror/refract` as the
+   measure-leg of the observe-act-measure triad substrate-decl'd in
+   [`trace-kintsugi-pipeline.md`](trace-kintsugi-pipeline.md) 2026-05-20. Remove
+   the spectral-daemon dependency from that spec's auto-reload section. LSP/MCP
+   spec update landed 2026-08-22 in same recursive-improvement tick as this file.
 
 3. **LSP document state as gen_prisms.** When the bootstrap gains `mirror
    serve --lsp`, each open buffer becomes a gen_prism. The path mapping
