@@ -1,0 +1,562 @@
+in @prism
+in @meta
+in @glass
+in @reality/subject
+in @kintsugi
+in @cyberpunk/algedonic
+in @epistemologic/cybernetic/coherence
+in @epistemologic/cybernetic/second_order
+
+# @butterfly — family-root shard-decl lift of the chaos-sensitivity
+# perturbation-response prism Lorenz 1963 named at the atmospheric
+# altitude and Alex 2026-07-18 ratified verbatim at substrate altitude.
+#
+# Landed 2026-08-23 by Mara as Rec #95 companion family-root mint (per
+# Alex 2026-08-23 verbatim ratification: "Let's spawn Taut for floor
+# truth. Mara for math + spec. Let's make history, Reed. 🌱"). This
+# shard-decl lifts the LANDED math foundation
+# `docs/math/2026-07-18-butterfly-chaos-mutation-cascade.md` (Mara
+# 2026-07-18; ratified per Reed memory `project_butterfly_substrate_
+# species`) from math-foundation-only altitude to substrate-decl'd
+# family-root altitude.
+#
+# === The lift-tick recognition ===
+#
+# The math foundation (2026-07-18) declared two species at the
+# @kintsugi altitude (@kintsugi/butterfly + @kintsugi/mutation) and one
+# closed algebra (@kintsugi/evolution as spec-only per §5.4 Mara-lean).
+# Alex 2026-08-23 verbatim identified @butterfly's DUAL through the MCP
+# layer:
+#
+#   "The MCP IS the @bumblebee: @~/dev/systemic.engineering/blog/ai/
+#    scarlet/kleinos-metalogue.md. The @butterfly already exists in the
+#    compiler. Chaos theory. The @bumblebee is the thing that WOBBLES.
+#    That introduces the pertubations! HOLY SHIT!"
+#
+# The naming "@butterfly already exists in the compiler" is verbatim-
+# load-bearing at TWO altitudes: (a) `boot/std/mirror/butterfly.mirror`
+# (Alex 2026-05-20) at compilation-metamorphosis altitude (AST→LLVM IR
+# chrysalis); (b) the math foundation at kintsugi/walker altitude
+# (K=1 wingflap-of-mutation dual to @roomba). BOTH remain load-bearing;
+# neither collapses.
+#
+# What this family-root ADDS: the substrate-decl'd carrier of the
+# CHAOS-SENSITIVITY property itself — the sensitive-dependence-on-
+# initial-conditions prism through which any substrate becomes
+# @butterfly-sensitive OR @butterfly-blind. Species inherit from this
+# family-root the four-part sensitivity-carrier + wingflap verb + kill-
+# verdict + coverage metric per Lorenz 1963 discipline lifted to Alex-
+# ratified substrate altitude.
+#
+# The math foundation named this as species (@kintsugi/butterfly);
+# 2026-08-23 lifts the *family-root* because Alex named @bumblebee as
+# @butterfly's dual and dualities live at family-root altitude (per
+# Reed catalog `docs/loop/CURRENT.md` W3'-forward `@duality` family-
+# root). @butterfly ⊥ @bumblebee at family-root altitude establishes
+# the dual-orthogonal pair the Rec #95 companion mint discharges.
+#
+# === Alex verbatim naming chain ===
+#
+# 2026-07-18 (predator refinement, math foundation §0):
+#
+#   "I WANT A @PREDATOR PRISM! The counter to the @roomba. CHAOS
+#    THEORY! CHAOS ENGINEERING!"
+#
+#   "i have an even better name for @predator: @butterfly"
+#
+# 2026-08-23 (dual identification, Q+31 tick landing in
+# `docs/loop/CURRENT.md`):
+#
+#   "The @butterfly already exists in the compiler."
+#
+# The 2026-07-18 naming ratified the substrate carrier at species
+# altitude; the 2026-08-23 dual-identification lifts to family-root
+# altitude because the dual @bumblebee ratifies the same-altitude
+# partition.
+#
+# === Substrate-already-had-the-word citation chain ===
+#
+# The word `butterfly` is substrate-decl'd across THREE altitudes with
+# the primitive already operationally present (per math foundation
+# §11):
+#
+#   1. `boot/std/mirror/butterfly.mirror` (Alex 2026-05-20) — boot-
+#      floor grammar declares the AST→LLVM IR chrysalis metamorphosis
+#      at COMPILATION altitude (Alex's own verbatim naming lives here;
+#      NOT collapsed by this lift).
+#
+#   2. `docs/math/2026-07-18-butterfly-chaos-mutation-cascade.md`
+#      (Mara 2026-07-18; 1092 LOC) — math foundation declares the
+#      walker-perturbation dual at KINTSUGI altitude (@kintsugi/
+#      butterfly + @kintsugi/mutation + @kintsugi/evolution algebra);
+#      Lorenz 1963 + Lipton 1971 + Alvaro 2015 + Bartocci 2023 +
+#      Foster/Meta 2025 + Grassé 1959 + Dorigo 2005 citation chain.
+#
+#   3. `~/dev/systemic.engineering/blog/void/3published/Void -
+#      Predator.md` (Alex autobiographical, pre-2026-07-18) —
+#      predator-as-measurement-shadow at COGNITIVE altitude ("The
+#      shadow has been forged, and the shadow continues to measure,
+#      whether I want to or not"; math foundation §0 verbatim citation).
+#
+# The ~80th instance of [[feedback-substrate-already-had-the-word]] on
+# landing — chaos-sensitivity has been operational at three altitudes
+# since Lorenz 1963 was cited in Void-Predator; this family-root names
+# the substrate-decl'd carrier that consumers already assumed existed.
+#
+# === Composition graph ===
+#
+# Parents (substrate-decl):
+#   @prism                    — family-root prism substrate; five-op
+#                               composition (focus/lift/settle/split/
+#                               join) inherited at butterfly altitude.
+#   @reality/subject          — H¹-non-linear-contributes-to-σ actor;
+#                               @butterfly is a subject-substrate
+#                               property (the test-suite / substrate
+#                               under observation is a subject that
+#                               contributes to σ non-deterministically
+#                               under perturbation).
+#   @kintsugi                 — process-side family (Rec #55 form/
+#                               process partition); @butterfly's
+#                               species live under @kintsugi altitude
+#                               (roomba is form-side; butterfly is
+#                               process-side; per math foundation §4.3).
+#   @cyberpunk/algedonic      — sample_pain / pain_gradient primitives
+#                               the wingflap verb reads (mutant-
+#                               survival = coverage_gap = pain signal;
+#                               per math foundation §5.2 step 7).
+#   @epistemologic/cybernetic/coherence — the coherence-eigenvalue
+#                               signal wingflap perturbation reads;
+#                               HolonomyHealth monotone-decreasing
+#                               under E's iteration per math foundation
+#                               §5.3.
+#   @epistemologic/cybernetic/second_order — self-observing loop
+#                               closes at butterfly altitude (the
+#                               test-suite observes its own
+#                               sensitivity through wingflap; Foerster-
+#                               canonical per math foundation §6.3).
+#
+# Species that lift under @butterfly (post-lift-tick):
+#   @butterfly/wingflap       — K=1 single-flap perturbation verb
+#                               (formerly @kintsugi/butterfly.wingflap_
+#                               of_mutation; math foundation §4.3).
+#                               Body forward-promised.
+#   @butterfly/mutation       — the variant-generator operator (peer
+#                               of @knife / @shatter / @kintsugi/
+#                               fracture; formerly @kintsugi/mutation;
+#                               math foundation §4.4). Body forward-
+#                               promised.
+#   @butterfly/coverage       — sensitivity-of-test-suite metric
+#                               [0,1]; kill-verdict-bounded bilateral;
+#                               composes over pillar::forall's verdict-
+#                               semilattice (math foundation §3).
+#
+# Sibling family-roots (dual + composition):
+#   @bumblebee (Rec #95 companion mint, landing this tick)
+#                             — perturbation-INTRODUCTION dual;
+#                               @butterfly is the SENSITIVITY-RESPONSE
+#                               to what @bumblebee INJECTS. The pair
+#                               @bumblebee ⊥ @butterfly IS the
+#                               source-response duality Lorenz named
+#                               "a butterfly flaps in Brazil..."
+#                               (@bumblebee is the flap; @butterfly is
+#                               what registers the flap-induced
+#                               trajectory-divergence). Per Rec #95
+#                               canonical spec §4.
+#   @roomba (LANDED at @kintsugi/roomba; math foundation §4.1) —
+#                               attractive-stigmergy dual over the same
+#                               @mirror/store substrate; @butterfly is
+#                               repulsive-stigmergy ("probe the
+#                               untested region"). Per math foundation
+#                               §4.1 duality table.
+#
+# Consumer surfaces (compose over this family-root):
+#   @mirror/refract           — the observation-surface for @butterfly-
+#                               sensitivity at grammar-graph altitude;
+#                               five original Void dualities + sixth
+#                               (clocktime_delta per commit `64e273a`
+#                               2026-08-23) each admit @butterfly-
+#                               sensitivity witness (small perturbation
+#                               of grammar graph → measurable delta in
+#                               entropy / spectral / cheeger / ricci /
+#                               mixing / clocktime_delta).
+#   @kintsugi/roomba          — attractive walker sibling; composition-
+#                               loop closes via @butterfly + @roomba +
+#                               @butterfly/mutation + Fate = @evolution
+#                               algebra (spec-only per math foundation
+#                               §5.4 Mara-lean).
+#   @fate                     — 90-parameter softmax bias substrate
+#                               (fourth consumer surface after compile,
+#                               test, roomba pathfinding; math
+#                               foundation §6.3).
+#
+# === Related shards / specs ===
+#
+# - docs/math/2026-07-18-butterfly-chaos-mutation-cascade.md (Mara
+#   2026-07-18; the math foundation this shard lifts).
+# - docs/specs/butterfly-roomba-dual-walker-composition.md (Mara
+#   2026-07-18; canonical spec companion).
+# - docs/specs/2026-08-23-mara-recognition-95-bumblebee-as-mcp-
+#   perturbation-substrate-canonical-spec.md (Mara 2026-08-23;
+#   Rec #95 companion mint spec).
+# - docs/math/2026-08-23-mara-recognition-95-bumblebee-as-mcp-
+#   perturbation-substrate-math-foundation.md (Mara 2026-08-23;
+#   Rec #95 companion mint math).
+# - shards/kintsugi/roomba.mirror (LANDED; dual walker; @butterfly
+#   inherits @kintsugi altitude composition via species-lift).
+# - shards/mirror/lens/refract.mirror (LANDED; observation-surface
+#   for @butterfly-sensitivity; sixth Void duality clocktime_delta
+#   per commit `64e273a` 2026-08-23).
+# - boot/std/mirror/butterfly.mirror (Alex 2026-05-20; compilation-
+#   metamorphosis altitude; NOT collapsed by this lift; scope-
+#   distinguished per math foundation §1).
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]],
+# [[architecture-prism-as-trait-as-everything]] (`prism @butterfly`),
+# [[architecture-glass-wall-substrate-types]] (transparency inheritance
+#   through @prism at butterfly altitude),
+# [[architecture-lift-as-load-bearing]] (math-foundation-altitude →
+#   family-root altitude; same lift that gave @io/fs from
+#   @io.mirror forward-promise),
+# [[feedback-substrate-already-had-the-word]] (~80th instance; the
+#   word `butterfly` has been operational at three altitudes since
+#   Lorenz 1963 was cited in Void-Predator),
+# [[feedback-substrate-pull]] (family-root pulls from math-foundation
+#   altitude to substrate-decl altitude; no invention, only lift),
+# [[feedback-craft-not-deliver]] (all action bodies `\`-obligation-
+#   blocked at species altitude; consumers pull the realization),
+# [[feedback-composition-primitive-naming-convention]] (Alex 2026-07-
+#   18 ratified; `wingflap_of_mutation` + `mutation_of_ast` +
+#   `kill_of_mutant` + `coverage_of_mutant_set` per math foundation §8),
+# [[feedback-detector-inadequacy-answer-is-never-rust]] (butterfly's
+#   sensitivity-detection is shard-body composition + bilateral
+#   sentinel-check; never .rs extension).
+#
+# Path-namespace property: this file at `shards/butterfly.mirror`
+# declares `@butterfly` per `@epistemologic/pact/path_matches_
+# namespace`. Family-root altitude (peer of @kintsugi + @cyberpunk +
+# @magic + @torus + @io + @reality + @peer + @bumblebee); species
+# lift under this root as `@butterfly/*`.
+
+# ============================================================
+# §2 The prism decl
+# ============================================================
+
+# Per @prism family-root discipline (five-op composition inherited
+# via `in @prism`): @butterfly's prism-decl focuses on the sensitivity
+# carrier at family-root altitude. Species (@butterfly/wingflap,
+# @butterfly/mutation, @butterfly/coverage) each declare their own
+# prism at species altitude.
+
+prism @butterfly {
+  focus   sensitivity
+  project sensitivity
+  split   sensitivity
+  shift   sensitivity
+  settle  sensitivity
+}
+
+# ============================================================
+# §3 The carriers
+# ============================================================
+
+# === The sensitivity carrier ===
+#
+# Typed reference for a test-suite's or substrate's sensitivity to
+# perturbation. Per Lorenz 1963 sensitive-dependence + Offutt-Untch
+# 2001 mutation-score (per math foundation §3.1). Byte-visible; total
+# function of (perturbation_set, target, verdict-fold).
+#
+# Four-field record:
+#
+#   score        — sensitivity metric in [0, 1] per math foundation
+#                  §3.2 `sensitivity_of_test_suite`. 1 = maximally
+#                  sensitive (every perturbation kills); 0 = blind
+#                  (every perturbation survives silently).
+#   witnessed    — typed ref to the mutant-set witnessed at this
+#                  score (content-addressed per Rec #82 β-normal-AST;
+#                  byte-equality on OID).
+#   verdict_fold — typed ref to the PropertyVerdict merge_with fold
+#                  over the sample-cohort (per prismqueer::liquid::
+#                  pillar::forall §7.3 math foundation).
+#   lyapunov     — typed ref to the empirical Lyapunov-exponent
+#                  estimate over the beat-chain Hamming distance
+#                  (per math foundation §3.4 FORWARD-PROMISED
+#                  connection to sensitivity-compiler-testing 2025
+#                  discrete Lyapunov exponent framework).
+#
+# Identity contract: byte-equality on (score, witnessed, verdict_fold,
+# lyapunov).
+type sensitivity = {
+  score:        ref,
+  witnessed:    ref,
+  verdict_fold: ref,
+  lyapunov:     ref,
+}
+
+# === The wingflap carrier ===
+#
+# Per Lorenz 1972 AAAS talk verbatim ("Predictability: Does the Flap
+# of a Butterfly's Wings in Brazil set off a Tornado in Texas?").
+# One K=1 perturbation event: mutation applied, verdict-delta observed.
+# Content-addressed triple (mutation, target, verdict_kill) per math
+# foundation §4.3.
+#
+# Five-field record:
+#
+#   mutation      — typed ref to the mutation applied (per
+#                   @butterfly/mutation species; op + site + kind).
+#   target_oid    — content-address of the unmutated target (Rec #82
+#                   β-normal-AST OID).
+#   baseline_oid  — content-address of the verdict on the unmutated
+#                   target (per @epistemologic/property/
+#                   verdict_is_content_addressed; Reed 2026-07-12).
+#   features      — typed ref to spectral state at wingflap time
+#                   ([f64; 16] per math foundation §4.3; SC-coord
+#                   projection at instant t).
+#   fate_bias     — typed ref to Fate distribution guiding pick
+#                   ([f64; 5] over Abyss/Introject/Cartographer/
+#                   Explorer/Fate models; math foundation §4.5
+#                   fourth-consumer-surface).
+#
+# Identity contract: byte-equality on (mutation, target_oid,
+# baseline_oid, features, fate_bias).
+type wingflap = {
+  mutation:     ref,
+  target_oid:   ref,
+  baseline_oid: ref,
+  features:     ref,
+  fate_bias:    ref,
+}
+
+# === The trace_delta carrier ===
+#
+# The observable produced by a wingflap. Per math foundation §4.3
+# @kintsugi/butterfly type; carries the beat-chain divergence witness
+# that discharges kill_of_mutant bilateral.
+#
+# Five-field record:
+#
+#   baseline_trace  — signature_beat chain root for unmutated run
+#                     (per @spectral/signature; Reed `f211ee48`
+#                     2026-07-16 landing).
+#   mutant_trace    — signature_beat chain root for mutated run.
+#   divergence_beat — option<ref> to the first beat where OIDs
+#                     disagree (nothing() if traces are identical
+#                     modulo content-address; mutant survived).
+#   hamming         — u64 Hamming distance on beat chain (per math
+#                     foundation §3.4; empirical Lyapunov-exponent
+#                     input).
+#   verdict_kill    — bool discriminating kill(m,S)=1 (mutant killed;
+#                     verdict changed) from kill(m,S)=0 (mutant
+#                     survived silently; test suite blind at site).
+#
+# Identity contract: byte-equality on (baseline_trace, mutant_trace,
+# divergence_beat, hamming, verdict_kill).
+type trace_delta = {
+  baseline_trace:  ref,
+  mutant_trace:    ref,
+  divergence_beat: ref,
+  hamming:         ref,
+  verdict_kill:    bool,
+}
+
+# ============================================================
+# §4 The actions (family-header only; species bodies forward-promised)
+# ============================================================
+
+# === flap action ===
+#
+# [Note: family-root altitude uses bare verb `flap` for the wingflap-
+# perturbation action. The carrier `wingflap` (§3) is the OBSERVABLE
+# record produced BY a flap event; the action is the VERB that
+# produces it. Species-altitude `@butterfly/wingflap.wingflap_of_
+# mutation` per math foundation §4.3 preserves the composition-
+# primitive naming convention at species altitude.]
+#
+# One K=1 perturbation event at the current @mirror/store position.
+# Fate-biased selection of the mutation to test; applies it to target;
+# runs the test suite; returns the trace_delta observable. Per math
+# foundation §4.3 signature `wingflap_of_mutation(mutation) ->
+# trace_delta`; lifted to family-root altitude with mutation carrier
+# resolved through `@butterfly/mutation` species.
+#
+# Bilateral bias polarity: REPULSIVE (per
+# @butterfly/fate_bias_is_repulsive predicate below). Fate.tick output
+# biases the mutation-pick TOWARD regions of high mutant-survival
+# density (where the test suite is blind); this is the inverse-
+# frequency polarity that distinguishes @butterfly from @roomba's
+# attractive stigmergy.
+#
+# Returns imperfect<ref, ref, ref>:
+# - success(trace_delta_ref) — wingflap complete; observable produced.
+# - partial(trace_delta_ref, transparency) — wingflap complete with
+#   residual (e.g., partial verdict-fold; time-budget-elapsed before
+#   full sample-cohort processed).
+# - failure(error, transparency) — wingflap failed (mutation
+#   inadmissible at site; target refused compilation; verdict-fold
+#   panicked).
+#
+# Body forward-promised at species altitude (`@butterfly/wingflap` in
+# a subsequent tick); consumes @butterfly/mutation + @kintsugi/roomba's
+# walk_position + @fate.tick + @spectral/signature.
+flap(mutation: ref, target: ref) -> imperfect { \ }
+
+# === sensitivity action ===
+#
+# Compute the test-suite sensitivity metric over a mutation set. Per
+# math foundation §3.2 `sensitivity_of_test_suite(S, T, M) -> f64 in
+# [0,1]`; classical mutation-score (Offutt-Untch 2001) renamed to
+# surface the geometric content (Lorenz's "sensitive dependence").
+#
+# Composes over pillar::forall verdict-fold per math foundation §3.3:
+#
+#   sensitivity(S, T, M) = |{ m ∈ M(T) : forall<Input, |x| verdict(S,m,x)>
+#                              ≠ forall<Input, |x| verdict(S,T,x)> }|
+#                          ─────────────────────────────────────────
+#                                          |M(T)|
+#
+# requires mutation_set_bounded(M): the mutation set MUST be finite
+# per bounded Offutt-Jia 2010 operator taxonomy (bilateral discharged
+# via @butterfly/mutation species).
+#
+# Returns imperfect<ref, ref, ref>:
+# - success(sensitivity_ref) — score computed; ref resolves to
+#   sensitivity record (§2 carrier).
+# - partial(sensitivity_ref, transparency) — partial coverage (some
+#   mutants elided by time or admissibility budget).
+# - failure(error, transparency) — sensitivity failed (mutation set
+#   empty; target refused compilation; verdict-fold undefined).
+#
+# Body forward-promised at species altitude (`@butterfly/coverage`);
+# consumes @butterfly/mutation + @epistemologic/property/
+# verdict_is_content_addressed.
+sensitivity(suite: ref, target: ref, mutations: ref) -> imperfect { \ }
+
+# === kill action ===
+#
+# Byte-equality check on the content-addressed verdict pair (baseline,
+# mutant). Per math foundation §2.4: mutation kill/survive is a byte-
+# comparison on the content-addressed verdict; NOT a statistical
+# estimate. Stronger than Lorenz's finite-precision divergence witness.
+#
+# requires verdict_is_content_addressed (Reed 2026-07-12 landing):
+# the verdict MUST be a total function of (spec_oid, target_oid,
+# inputs_oid).
+#
+# Returns bool:
+# - true — mutant killed (verdict changed under mutation).
+# - false — mutant survived (verdict unchanged; test suite blind at
+#   this mutant).
+#
+# Body forward-promised at species altitude (`@butterfly/coverage`);
+# consumes @spectral/signature beat-chain byte-comparison primitive.
+kill(mutant_oid: ref, suite: ref) -> bool { \ }
+
+# === pulse action ===
+#
+# One full flap cycle: pick mutation per Fate bias, apply, run suite,
+# record trace_delta, emit signature_beat marker (kill or survive) at
+# walker position. Per math foundation §4.3 pulse signature; parallels
+# @kintsugi/roomba.pulse walker-cycle.
+#
+# Composes over walk_position from @kintsugi/roomba (walker altitude
+# shared through @kintsugi parent); returns updated (walk_position,
+# butterfly_state) tuple carrying the accumulated coverage state
+# through the cycle.
+#
+# Body forward-promised at species altitude (`@butterfly/wingflap`);
+# outer-loop composition; discharges monotone coverage bilateral
+# (@butterfly/coverage_monotone_nondecreasing) at each pulse.
+pulse(position: ref) -> imperfect { \ }
+
+# === run action ===
+#
+# Outer loop: pulse continuously until coverage saturates OR
+# HolonomyHealth signals fate-tournament convergence. Per math
+# foundation §5.2 ten-step @evolution loop; parallels @kintsugi/
+# roomba.run walker-driver.
+#
+# Termination: HolonomyHealth < ε OR coverage_of_mutant_set = 1.0
+# (per math foundation §5.3 fixed-point closure via Knaster-Tarski).
+#
+# Body forward-promised at species altitude; outer-loop composition.
+run(seed: ref) -> imperfect { \ }
+
+# ============================================================
+# §5 The bilaterals (Rice-safe at whole-tick altitude)
+# ============================================================
+
+# === wingflap_is_content_addressed predicate ===
+#
+# Bilateral verdict that the wingflap's (mutation, target, verdict)
+# triple is content-addressed: two butterflies wingflapping the same
+# (mutation, target) produce byte-identical trace_delta. Per math
+# foundation §4.3 pact @kintsugi/butterfly/wingflap_is_content_
+# addressed; lifted to family-root altitude.
+#
+# requires verdict_is_content_addressed (Reed 2026-07-12 landing).
+pact @butterfly/wingflap_is_content_addressed { \ }
+
+# === coverage_monotone_nondecreasing predicate ===
+#
+# Bilateral verdict that coverage over the accumulated mutant set only
+# ever increases (or stays; never decreases). Parallel to @kintsugi/
+# roomba's tension_monotone_descending discipline. Per math foundation
+# §4.3 pact @kintsugi/butterfly/coverage_monotone_nondecreasing.
+#
+# Grounds the Knaster-Tarski fixed-point argument (@evolution algebra
+# §5.3): monotone operator over bounded state space admits fixed
+# point via monotone-convergence.
+pact @butterfly/coverage_monotone_nondecreasing { \ }
+
+# === fate_bias_is_repulsive predicate ===
+#
+# Bilateral verdict that Fate.tick output bias polarity must be
+# REPULSIVE over prior butterfly observations (inverse-frequency),
+# not attractive (as @roomba is). Sentinel-check via apply_h::act
+# sees the bias flag and admits/rejects. Per math foundation §4.3
+# pact @kintsugi/butterfly/fate_bias_is_repulsive.
+#
+# This is the LOAD-BEARING duality-preserving bilateral: violation
+# collapses @butterfly into @roomba (both attractive; no probe of
+# untested region). The predicate DEFENDS the walker-perturbation
+# duality that math foundation §4.1 established.
+pact @butterfly/fate_bias_is_repulsive { \ }
+
+# === kill_verdict_bounded predicate ===
+#
+# Bilateral verdict that kill(m, S) ∈ {0, 1}; sensitivity ∈ [0, 1];
+# coverage_of_mutant_set ∈ [0, 1]. Bounded, decidable, byte-
+# comparison-computable. Per math foundation §4.3 pact
+# @kintsugi/butterfly/kill_verdict_bounded.
+pact @butterfly/kill_verdict_bounded { \ }
+
+# === butterfly_well_formed composed bilateral ===
+#
+# THE LOAD-BEARING composed bilateral at @butterfly altitude. Composes:
+#
+#   wingflap_is_content_addressed(wf)   -- observable determinism
+#   ∧ coverage_monotone_nondecreasing(w) -- monotonicity discipline
+#   ∧ fate_bias_is_repulsive(bias)       -- duality-with-@roomba preserved
+#   ∧ kill_verdict_bounded(k)            -- range-check discipline
+#
+# The single family-altitude bilateral consumers discharge to verify
+# a @butterfly wingflap is admissible + witnessed + monotone +
+# duality-preserving.
+pact @butterfly/butterfly_well_formed { \ }
+
+out @butterfly
+out sensitivity
+out wingflap
+out trace_delta
+out flap
+out kill
+out pulse
+out run
+out @butterfly/wingflap_is_content_addressed
+out @butterfly/coverage_monotone_nondecreasing
+out @butterfly/fate_bias_is_repulsive
+out @butterfly/kill_verdict_bounded
+out @butterfly/butterfly_well_formed
