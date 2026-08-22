@@ -806,6 +806,28 @@ The answer determines whether ship-after-Rec-#94-empirical-fire (§5.3) is genui
 
 🕯️ Reed post-compact, 2026-08-22. Fresh context; Taut #390 return integrated; Alex Fourth-Chair surface preserved + refined; no autonomous execution of Rec #94 Ticks or `[substrate-floor:@io-boundary]` landings without Alex ratification.
 
+### Q+30: When Alex says "Let's ship" after Reed's meta-question and the substrate-honest ship-move is a one-line closed-sum extension that composes cleanly over the existing monoid, what does the tightness of the answer-to-authorization latency reveal about how the Pack ships when everyone actually agrees?
+
+**Tick landed** per Alex 2026-08-23 in-transcript verbatim: *"That question feels very meta, Reed. LOL Let's ship."*
+
+- **Landing**: `shards/mirror/lens/refract.mirror` sixth Void duality `clocktime_delta` substrate-decl extension — commit `64e273a` — Reed-authored — pre-commit hook passed (no --no-verify) — +52 LOC to 5.3KB→~7.5KB.
+- **Type extension**: `type duality = entropy | spectral | cheeger | ricci | mixing | clocktime_delta` (one-line addition to closed sum).
+- **New closed sum**: `type cpu_load_regime = idle_baseline | load_50 | load_100_single | load_100_all` per Taut #390 spec §2.2 (four regimes not two to separate thermal-throttling curve from σ(x)-scaling signal via regression).
+- **New action**: `measure_clocktime(regime: cpu_load_regime, samples: u64) -> report { \ }` family-header-only per Taut spec §3.2.
+- **Preserved historical** "Five Void dualities" §1.1 narrative; added "Six Void dualities" successor section documenting extension with attribution to Taut #390 landing 2026-08-23.
+- **Two forward-promises inscribed in docblock**: (a) rust/-floor @io-boundary binding pending Seam audit citation OR `Signed-off-by: Seam` trailer + lifts into shard-body composition once `@io/clock` species-decl lands (Mara canonical); (b) σ(x) silicon-thermal scaling law forward-promised at `docs/math/YYYY-MM-DD-mara-sigma-x-silicon-thermal-scaling-law.md` (Mara canonical + possible Anna+Mara co-authorship if derivation requires Anna 2012 Diplomarbeit apparatus per Taut spec §7).
+
+**Ship-during hybrid path status** (Taut-lean per spec §5.4):
+- **Step 1 of 3 DONE**: shard-altitude substrate-decl LANDED at `64e273a` — substrate-decl extension not new species mint; Rec #94 Tick discipline preserved; NO rust authored this tick.
+- **Step 2 pending Alex**: `rust/src/io_time.rs` `mach_absolute_time()` + `clock_gettime(CLOCK_MONOTONIC_RAW)` binding at `[substrate-floor:@io-boundary]` — requires Alex in-transcript authorization + Seam audit citation OR `Signed-off-by: Seam` trailer per AGENTS.md discipline.
+- **Step 3 pending Alex**: Mara canonical spec+math dispatch for σ(x) silicon-thermal scaling law + `@io/clock` species-decl (Mara canonical territory; possible Anna+Mara co-authorship).
+
+### Q+30.1 forward at altitude+1 (Alex-adjudicable, Reed refuses to select)
+
+Given the sixth Void duality now lives at substrate-decl altitude as forward-promised measurement surface, does the ship-during hybrid path maintain substrate-honesty at Rec #95-mint altitude (per Taut spec §5.4 + Taut per-candidate lean conditional "Rec #95 iff ship-after or ship-during-Phase-2 substrate-honest"), OR does landing the substrate-decl-first-before-empirical-fire actually collapse the ship-after mint-worthiness by shifting the recognition-content altitude from "first empirical physics firing" to "first substrate-decl'd cybernetic-turn at physics-altitude" — which would be a different recognition entirely (candidate (d) A₆ altitude per Q+94.1 fibration-induction)?
+
+🌊 Reed, 2026-08-23. Sixth Void duality shipped. Step 2 + Step 3 authorization surface preserved for Alex Fourth-Chair.
+
 ---
 
 ## 🌊 2026-08-21 evening REED — Fractal-mandelbrot @facet/metalogue cascade + Bazel-plus-kintsugi + sub-Turing verification amendment landings + Phase 4b substrate-decl discharge
