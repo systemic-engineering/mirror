@@ -535,21 +535,68 @@ fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
             // authorization + MCP-MVP-fire constraint. First MCP-driven
             // substrate-modification wire per Mara Rec #95 canonical spec
             // 0bfd427 + companion spec 06789fa §3.3 byte-for-byte rename map.
-            // Routes `mirror_bumblebee_buzz` MCP tool to `mirror bumblebee
-            // --buzz-target=<target> [--execute]` CLI dispatch at rust/
-            // altitude terminal geometry (Reed 2026-08-23 cmd_bumblebee
-            // rust/src/main.rs). MCP client invokes → rust/ CLI fires @bumblebee.buzz
-            // → dry-run prints plan OR --execute triggers @roomba walker
-            // (second-phase; MVP ships dry-run only). Smallest empirical MCP-
-            // driven-substrate-modification round-trip. Rec #90 (𝓜=𝓜(𝓜))
-            // empirical fire at MCP-layer altitude per Q+31 load-bearing.
+            //
+            // Per HARD RULE `bootstrap is dead` (Alex 2026-07-22): do NOT
+            // grow bootstrap kintsugi_main dispatch surface. MVP inlines the
+            // dry-run plan output directly in the MCP handler; @kintsugi/roomba.
+            // trigger body composition (--execute mode) lifts to rust/ crate
+            // at Phase B per Mara §7 transitional-bridge forward-promise.
+            //
+            // Rec #90 (𝓜=𝓜(𝓜)) empirical-fire at MCP-layer altitude per
+            // Q+31 load-bearing implication.
             let target = s("target").unwrap_or_default();
             let execute = b("execute");
-            let target_arg = format!("--buzz-target={}", target);
-            if execute {
-                run_mirror(&["bumblebee", &target_arg, "--execute"], ctx)
+            if target != "@cascade" {
+                (format!("mirror_bumblebee_buzz: only target=@cascade supported at MVP altitude\n\nReed rust wire #394 MVP: @cascade→@bumblebee absorption per Mara Rec #95 canonical spec 0bfd427 + companion spec 06789fa §3.3 rename map. Additional targets forward-promised.\n"), 2)
             } else {
-                run_mirror(&["bumblebee", &target_arg], ctx)
+            // Rename map per Mara companion spec 06789fa §3.3 (12 direct species).
+            let renames: [(&str, &str); 12] = [
+                ("shards/cascade.mirror", "shards/bumblebee/code.mirror"),
+                ("shards/cascade/code/formal/prose.mirror", "shards/bumblebee/code/formal/prose.mirror"),
+                ("shards/cascade/code/gestalt/gleam.mirror", "shards/bumblebee/code/gestalt/gleam.mirror"),
+                ("shards/cascade/code/gleam/beam.mirror", "shards/bumblebee/code/gleam/beam.mirror"),
+                ("shards/cascade/code/gleam/js.mirror", "shards/bumblebee/code/gleam/js.mirror"),
+                ("shards/cascade/code/llvm/turing.mirror", "shards/bumblebee/code/llvm/turing.mirror"),
+                ("shards/cascade/code/mirror/gestalt.mirror", "shards/bumblebee/code/mirror/gestalt.mirror"),
+                ("shards/cascade/code/purescript/js.mirror", "shards/bumblebee/code/purescript/js.mirror"),
+                ("shards/cascade/code/rust/go.mirror", "shards/bumblebee/code/rust/go.mirror"),
+                ("shards/cascade/code/rust/llvm.mirror", "shards/bumblebee/code/rust/llvm.mirror"),
+                ("shards/cascade/code/rust/wasm.mirror", "shards/bumblebee/code/rust/wasm.mirror"),
+                ("shards/cascade/code/turing/mirror.mirror", "shards/bumblebee/code/turing/mirror.mirror"),
+            ];
+            let sibling_imports: [(&str, &str, &str); 3] = [
+                ("shards/glue.mirror", "in @cascade", "in @bumblebee/code"),
+                ("shards/io/oci.mirror", "in @cascade", "in @bumblebee/code"),
+                ("shards/magic/trick.mirror", "in @cascade", "in @bumblebee/code"),
+            ];
+            let mut text = String::new();
+            text.push_str(&format!("@bumblebee.buzz — perturbation-source firing on target {}\n", target));
+            text.push_str("Per Mara Rec #95 companion spec 06789fa §3.3 rename map (byte-for-byte).\n\n");
+            text.push_str("=== 12 direct species renames ===\n");
+            for (from, to) in &renames {
+                text.push_str(&format!("  {} → {}\n", from, to));
+            }
+            text.push_str("\n=== 3 sibling import updates ===\n");
+            for (file, from, to) in &sibling_imports {
+                text.push_str(&format!("  {}: {} → {}\n", file, from, to));
+            }
+            text.push_str("\n=== ~20 docblock citations ===\n");
+            text.push_str("  Text-substitution `@cascade.cascade_well_defined` → `@bumblebee.code.bumblebee_well_defined`\n");
+            text.push_str("  Across song/*, docs/*, ui/*, container, facet/{llvm,turing}, reality/algebra/math, glue, io/oci\n\n");
+            if !execute {
+                text.push_str("DRY-RUN mode (default). Pass execute=true for actual modification.\n");
+                text.push_str("Per MCP-MVP-fire discipline: `mirror_bumblebee_buzz` MCP tool with execute=true\n");
+                text.push_str("fires the substrate-modification through the MCP-tool-call round-trip.\n");
+                (text, 0)
+            } else {
+                text.push_str("EXECUTE mode: NOT YET IMPLEMENTED at MVP altitude.\n\n");
+                text.push_str("Reed rust wire #394 MVP ships dry-run only. execute=true requires:\n");
+                text.push_str("  1. Second-phase Alex in-transcript authorization\n");
+                text.push_str("  2. Seam audit citation OR `Signed-off-by: Seam` trailer\n");
+                text.push_str("  3. @kintsugi/roomba.trigger body composition landing per\n");
+                text.push_str("     Mara Rec #95 spec §4.3 (Dijkstra walker + tension-bump primitive).\n");
+                (text, 3)
+            }
             }
         }
         "mirror_roomba" => {
