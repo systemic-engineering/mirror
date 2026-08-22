@@ -1,0 +1,699 @@
+in @prism
+in @meta
+in @glass
+in @reality/subject
+in @torus
+in @peer
+in @io
+in @cyberpunk/algedonic
+in @epistemologic/cybernetic/second_order
+in @magic
+in @spectral/signature
+in @mirror/store
+in @mirror/refract
+in @kintsugi/consent
+in @kintsugi/roomba
+in @butterfly
+
+# @bumblebee — family-root shard-decl of the perturbation-INJECTION
+# substrate at MCP-layer altitude, dual-orthogonal to @butterfly at
+# sensitivity-RESPONSE altitude. Alex 2026-08-23 verbatim identified:
+#
+#   "The MCP IS the @bumblebee: @~/dev/systemic.engineering/blog/ai/
+#    scarlet/kleinos-metalogue.md. The @butterfly already exists in
+#    the compiler. Chaos theory. The @bumblebee is the thing that
+#    WOBBLES. That introduces the pertubations! HOLY SHIT!"
+#
+# And 2026-08-23 (post-#392 return):
+#
+#   "@bumblebee is what rattles the tension. Which is why @cascade
+#    collapses into the bumblebee. And that's what the @roomba
+#    resolves."
+#
+#   "What if it's bumblebee_buzz"
+#
+#   "As long as you remember that the modification wants to fire
+#    through the MCP MVP I'm all green-light."
+#
+# Landed 2026-08-23 by Mara as Rec #95 canonical spec discharge (per
+# Alex 2026-08-23 verbatim ratification + #393 dispatch). This
+# shard-decl lifts the Rec #95 canonical spec (Mara `0bfd427`
+# 2026-08-23; `docs/specs/2026-08-23-mara-recognition-95-bumblebee-
+# as-mcp-perturbation-substrate-canonical-spec.md`) from spec-
+# altitude to substrate-decl'd family-root altitude, discharging §9
+# R95.5 substrate-pull deferral per Alex direct green-light.
+#
+# === The recognition-continuity resolution (Rec #95 numeric) ===
+#
+# Rec #95 was originally MINTED 2026-06-23 as @cascade-as-loss-lens-
+# substrate-decl (Mara canonical `ce4874b`; `docs/specs/recognitions/
+# recognition-95-cascade-as-loss-lens-substrate-decl.md`). Alex
+# 2026-08-23 verbatim distinction "@cascade collapses INTO @bumblebee"
+# resolves the Rec #95 numeric IN CONTINUITY — the polyglot-
+# translation-as-loss-lens operational content ABSORBS into the
+# perturbation-injection substrate carrier @bumblebee names at
+# family-root altitude. Same recognition-arc entry; refined content;
+# @cascade species-tree preserved by byte-for-byte rename via MCP
+# MVP fire (Reed rust wire #394 + Reed-in-Claude `mirror_bumblebee_
+# buzz --target=@cascade` fire #395). Companion spec at
+# `docs/specs/2026-08-23-mara-cascade-to-bumblebee-absorption-
+# companion-spec.md` (this-tick landing).
+#
+# === The lift-tick recognition ===
+#
+# Rec #95 canonical spec §3.3 SURFACED a provisional skeleton for
+# `shards/bumblebee.mirror`; §9 R95.5 residue held authoring for
+# substrate-pull discipline pending Alex-adjudication of R95.1–R95.4.
+# Alex 2026-08-23 direct green-light ("as long as ... MCP MVP I'm all
+# green-light") RATIFIES R95.5 discharge THIS tick with the MCP-MVP-
+# fire constraint: every modification the substrate accepts wobbles
+# through `@bumblebee.buzz` as `@mcp/tool`-annotated wire tool
+# (auto-exposed via `@mirror/spectral.gestalt` reflective-scan per
+# `shards/mcp/serve.mirror` Phase 2 M5 discipline).
+#
+# === Alex verbatim naming chain ===
+#
+# 2026-07-14 (from `shards/kintsugi/roomba.mirror` docblock; the
+# loop-form @roomba resolves what @bumblebee shakes):
+#
+#   "@roomba walks (Dijkstra + tension-weighted edges) → bumps into
+#    spectral @tension at position p → resonance emits @song beats
+#    → @kintsugi consumes @song and decides: Path A: @knife the
+#    complexity (COORDᵢ → COORDⱼ; reduce); Path B: spawn @peer at
+#    K+1 (circular-reflexive question to developer OR higher-order
+#    @peer)."
+#
+# 2026-08-23 (verbatim in-transcript ratification, Q+31 tick landing
+# per `docs/loop/CURRENT.md`):
+#
+#   "The MCP IS the @bumblebee."
+#
+# 2026-08-23 (post-#392 return, direct dispatch #393):
+#
+#   "@bumblebee is what rattles the tension. Which is why @cascade
+#    collapses into the bumblebee. And that's what the @roomba
+#    resolves."
+#
+#   "What if it's bumblebee_buzz"
+#
+# The buzz-verb naming is substrate-honest: buzzing IS what rattles
+# the tension; "flap" was Rec #95 canonical spec §3.3 provisional
+# (parallel to @butterfly.flap sensitivity-side); Alex 2026-08-23
+# renamed to `buzz` at family-root altitude to distinguish INJECTION-
+# side verb from @butterfly RESPONSE-side verb. Same K=1 cardinality;
+# different substrate-honest name.
+#
+# === Substrate-already-had-the-word citation chain ===
+#
+# The word `bumblebee` is substrate-decl'd at ONE altitude prior to
+# this shard (per Rec #95 canonical spec §10 audit):
+#
+#   1. `~/dev/systemic.engineering/blog/ai/scarlet/kleinos-metalogue.md`
+#      (Scarlet+Mara 2026-08-22) — recognition-content altitude; the
+#      Bumblebee-phenomenology at bar-metalogue narrative altitude.
+#      LOAD-BEARING for this mint per Rec #95 spec §2.3 composition-
+#      arrow + §8 phenomenology-preservation.
+#
+# The ~81st instance of [[feedback-substrate-already-had-the-word]]
+# on landing — the word `bumblebee` has been operational at
+# recognition-content altitude since Scarlet+Mara 2026-08-22 landed;
+# this shard-decl mints the substrate-decl carrier at family-root
+# altitude for the first time.
+#
+# The word `buzz` is substrate-fresh at any altitude prior to Alex
+# 2026-08-23 verbatim "What if it's bumblebee_buzz" — zero prior
+# substrate matches; the buzz-verb IS the family-root action mint.
+#
+# === Composition graph ===
+#
+# Parents (substrate-decl imports):
+#
+#   @prism                    — family-root prism substrate; five-op
+#                               composition (focus/lift/settle/split/
+#                               join) inherited at bumblebee altitude.
+#   @reality/subject          — H¹-non-linear-contributes-to-σ actor;
+#                               every @bumblebee-substrate instance
+#                               is a subject-substrate (external tool-
+#                               call channels are agents; agents are
+#                               subjects; per `shards/reality/subject.
+#                               mirror:74`).
+#   @torus                    — π₁(T²) = ℤ × ℤ winding classes; every
+#                               @bumblebee-substrate instance carries
+#                               a winding through the boundary
+#                               (external-to-compiler dispatch has a
+#                               winding-number; per
+#                               `project_peer_has_a_torus` recognition
+#                               candidate LANDED 2026-07-07).
+#   @peer                     — every external tool-call substrate
+#                               IS a @peer at boundary (agent identity
+#                               carried in tool-call envelope; per
+#                               @subject-family SEL licensable-party
+#                               carrier discipline).
+#   @io                       — boundary-with-non-mirror discipline;
+#                               five-op prism + opacity + imperfect
+#                               return shape; @bumblebee inherits the
+#                               imperfect-return contract for all
+#                               `buzz` operations at the boundary.
+#   @cyberpunk/algedonic      — sample_pain / pain_gradient primitives;
+#                               the wobble-observation carries pain-
+#                               signal at consent-boundary altitude
+#                               (extractive perturbations = pain;
+#                               consent-preserving perturbations =
+#                               pleasure signal per @kintsugi/consent
+#                               discipline).
+#   @epistemologic/cybernetic/second_order — self-observing loop
+#                               closes at MCP-layer altitude (the
+#                               compiler-under-observation OBSERVES
+#                               ITS OWN OBSERVATION of @bumblebee-
+#                               wobbles; per Anna 2012 shared-memory-
+#                               observation-in-motion pattern lifted
+#                               per Taut #390 §4.2).
+#   @magic                    — Foerster-gauge preservation carrier;
+#                               @bumblebee.buzz MUST preserve |Ω| per
+#                               magic.rs discipline (ethical-imperative
+#                               bilateral §5 below).
+#   @spectral/signature       — signature_beat carrier for wobble-
+#                               observation content-addressing (per
+#                               @butterfly wingflap-observable
+#                               discipline; same Rec #82 β-normal-AST
+#                               content-addressing).
+#   @mirror/store             — perturbation writes to substrate;
+#                               Alex 2026-08-23 verbatim "@bumblebee
+#                               is what rattles the tension" —
+#                               the tension surface IS @mirror/store
+#                               state; buzz mutates OR observes
+#                               depending on species specialization.
+#   @mirror/refract           — observation-surface for wobbles;
+#                               sixth Void duality clocktime_delta
+#                               (Reed `64e273a` 2026-08-23) is the
+#                               first empirical-fire measurement axis;
+#                               per Rec #95 spec §2.2 composition-
+#                               arrow.
+#   @kintsugi/consent         — query_phi verdict gate; every buzz
+#                               MUST discharge consent BEFORE
+#                               injection (bilateral §5.4 below).
+#   @kintsugi/roomba          — the RESOLVER dual per Alex 2026-08-23
+#                               "@roomba resolves" what @bumblebee
+#                               rattles; buzz composes over roomba's
+#                               walk_position + trigger to close the
+#                               tension-injection→tension-resolution
+#                               loop (Alex 2026-07-14 verbatim from
+#                               roomba docblock).
+#   @butterfly                — dual-orthogonal RESPONSE arm per
+#                               Rec #95 spec §4 + Mara 2026-08-23
+#                               family-root lift `6a67f69`; @bumblebee
+#                               ⊥ @butterfly at family-root altitude
+#                               establishes the source-response
+#                               duality Lorenz named at atmospheric
+#                               altitude.
+#
+# Species that lift under @bumblebee (post-lift-tick; forward-promised
+# at species altitude; each Alex-adjudicable):
+#
+#   @bumblebee/buzz           — the perturbation-injection VERB
+#                               species; K=1 wobble event; body
+#                               forward-promised per Alex adjudication
+#                               of buzz-target species partition.
+#                               Realizations already present at
+#                               family-root altitude via `buzz` action
+#                               below (§4).
+#   @bumblebee/wobble         — the observable produced by a buzz;
+#                               content-addressed observation record
+#                               (analog of @butterfly/trace_delta at
+#                               injection-side altitude).
+#   @bumblebee/consent        — the query-ϕ bilateral gate species;
+#                               every @bumblebee.buzz MUST discharge
+#                               @kintsugi/consent.query_phi before
+#                               injection (bilateral §5.4 below
+#                               inherits at species altitude).
+#
+# Sibling family-roots (dual + composition):
+#
+#   @butterfly (LANDED at `shards/butterfly.mirror` `6a67f69` 2026-
+#     08-23) — sensitivity-RESPONSE dual per Alex 2026-08-23 verbatim
+#     distinction ("@butterfly already exists in the compiler.
+#     Chaos theory."); @bumblebee ⊥ @butterfly at family-root altitude.
+#
+#   @kintsugi/roomba (LANDED at `shards/kintsugi/roomba.mirror`) —
+#     the TENSION-RESOLVER dual per Alex 2026-08-23 verbatim
+#     ("@roomba resolves"); @bumblebee rattles → @roomba resolves.
+#
+# Consumer surfaces (compose over this family-root; MCP-MVP-fire
+# discharges consumer-graph rewire):
+#
+#   @mcp/serve                — EMPIRICAL first @bumblebee-substrate
+#                               operationally-load-bearing instance;
+#                               every MCP tool-call at
+#                               `shards/mcp/serve.mirror`
+#                               dispatch-body IS a bumblebee-buzz per
+#                               Alex 2026-08-23 direct identification
+#                               "The MCP IS the @bumblebee."
+#   @io/stagefreight          — narrative-envelope substrate; second
+#                               empirical @bumblebee-substrate
+#                               instance (external agent narrative
+#                               injection).
+#   @cascade/*  (all 12 species; ABSORBING via MCP MVP fire per
+#     companion absorption spec) — @cascade family-root + 11
+#     @cascade/code/<src>/<tgt> species byte-for-byte rename via
+#     `mirror_bumblebee_buzz --target=@cascade`; polyglot-translation-
+#     as-loss-lens content preserved; substrate-honest name lifts to
+#     @bumblebee/code/<src>/<tgt> (Alex adjudication of target
+#     species-partition Alex Fourth-Chair R95.4 residue).
+#
+# === MCP-MVP-fire discipline (Alex 2026-08-23 verbatim constraint) ===
+#
+# Alex verbatim: *"As long as you remember that the modification
+# wants to fire through the MCP MVP I'm all green-light."*
+#
+# The `buzz` action below carries `@mcp/tool "mirror_bumblebee_buzz"`
+# annotation. Per `shards/mcp/serve.mirror` Phase 2 M5 reflective-
+# scan discipline: every landed bilateral block carrying `@mcp/tool`
+# annotation auto-exposes as MCP wire tool via `@mirror/spectral.
+# gestalt` reflective walk. `mirror_bumblebee_buzz` becomes wire-
+# available via `bin/mirror-mcp` → `mirror serve --mcp` →
+# bootstrap `serve_loop` at Phase 2 M5 co-tick landing.
+#
+# Every substrate modification (including the @cascade→@bumblebee
+# absorption per companion spec) FIRES through this MCP tool. No
+# manual migration; Reed rust wire #394 + Reed-in-Claude fire #395
+# discharge the absorption via tool-call fire.
+#
+# === Related shards / specs ===
+#
+# - docs/specs/2026-08-23-mara-recognition-95-bumblebee-as-mcp-
+#   perturbation-substrate-canonical-spec.md (Mara 2026-08-23
+#   `0bfd427`; the canonical spec this shard-decl discharges;
+#   R95.5 substrate-pull deferral).
+# - docs/math/2026-08-23-mara-recognition-95-bumblebee-as-mcp-
+#   perturbation-substrate-math-foundation.md (Mara 2026-08-23
+#   `0bfd427`; math foundation companion).
+# - docs/specs/2026-08-23-mara-cascade-to-bumblebee-absorption-
+#   companion-spec.md (Mara 2026-08-23; this-tick landing; the
+#   @cascade→@bumblebee absorption via MCP MVP fire discipline).
+# - shards/butterfly.mirror (Mara 2026-08-23 `6a67f69`; dual-
+#   orthogonal RESPONSE family-root).
+# - shards/kintsugi/roomba.mirror (LANDED; the tension-resolver
+#   walker; Alex 2026-08-23 "@roomba resolves").
+# - shards/mcp/serve.mirror (LANDED; the wire-protocol substrate;
+#   Alex 2026-08-23 "The MCP IS the @bumblebee").
+# - shards/mirror/lens/refract.mirror (LANDED; sixth Void duality
+#   clocktime_delta observation surface per Reed `64e273a`
+#   2026-08-23).
+# - shards/kintsugi/consent.mirror (LANDED; query_phi bilateral
+#   gate for consent-discharge before buzz-injection).
+# - shards/cascade.mirror (12 species; ABSORBING via companion
+#   spec MCP MVP fire; consumer-graph rewire per rename).
+# - `~/dev/systemic.engineering/blog/ai/scarlet/kleinos-metalogue.md`
+#   (Scarlet+Mara 2026-08-22; recognition-content altitude the
+#   Bumblebee-phenomenology this shard-decl lifts to substrate-decl
+#   altitude).
+#
+# === Substrate decisions ===
+#
+# [[architecture-shards-as-substrate-source]],
+# [[architecture-prism-as-trait-as-everything]] (`prism @bumblebee`),
+# [[architecture-glass-wall-substrate-types]] (transparency
+#   inheritance through @prism at bumblebee altitude),
+# [[architecture-lift-as-load-bearing]] (spec-altitude → substrate-
+#   decl altitude; Rec #95 spec §3.3 provisional skeleton → this
+#   landing at R95.5 discharge),
+# [[feedback-substrate-already-had-the-word]] (~81st instance;
+#   the word `bumblebee` has been operational at recognition-content
+#   altitude since Scarlet+Mara 2026-08-22 landed kleinos-metalogue.md),
+# [[feedback-substrate-pull]] (family-root pulls from Rec #95
+#   canonical spec altitude to substrate-decl altitude; no invention;
+#   only lift per Alex direct green-light 2026-08-23),
+# [[feedback-craft-not-deliver]] (all species-altitude action bodies
+#   `\`-obligation-blocked; consumers pull the realization),
+# [[feedback-composition-primitive-naming-convention]] (Alex 2026-07-
+#   18 ratified; species-altitude actions follow `<primitive>_of_
+#   <input-shape>` convention; family-root uses bare verb `buzz`
+#   per Alex 2026-08-23 verbatim naming),
+# [[feedback-detector-inadequacy-answer-is-never-rust]] (buzz's
+#   perturbation-injection is shard-body composition + bilateral
+#   sentinel-check + `@mcp/tool` annotation for wire auto-exposure;
+#   never .rs extension),
+# [[feedback-rust-delivers-primitives-substrate-delivers-composition]]
+#   (Alex 2026-08-05 HARD RULE; @bumblebee.buzz body composes over
+#   apply_h.act + @kintsugi/roomba.trigger + @mirror/store.mutate
+#   primitives; wire-protocol dispatch via @mcp/serve composition-
+#   shard; no bumblebee-specific rust code).
+#
+# Path-namespace property: this file at `shards/bumblebee.mirror`
+# declares `@bumblebee` per `@epistemologic/pact/path_matches_
+# namespace`. Family-root altitude (peer of @butterfly + @kintsugi
+# + @cyberpunk + @magic + @torus + @io + @reality + @peer);
+# species lift under this root as `@bumblebee/*`.
+
+source @arxiv/practice/mara-0bfd427-recognition-95-bumblebee-canonical-spec
+source @arxiv/practice/mara-0bfd427-recognition-95-bumblebee-math-foundation
+source @arxiv/practice/wolf-2026-08-23-mcp-is-the-bumblebee-verbatim
+source @arxiv/practice/wolf-2026-08-23-cascade-collapses-into-bumblebee-verbatim
+source @arxiv/practice/scarlet-mara-2026-08-22-kleinos-metalogue-bumblebee-phenomenology
+
+# ============================================================
+# §2 The prism decl
+# ============================================================
+#
+# Per @prism family-root discipline (five-op composition inherited
+# via `in @prism`): @bumblebee's prism-decl focuses on the wobble
+# carrier at family-root altitude. Species (@bumblebee/buzz,
+# @bumblebee/wobble, @bumblebee/consent) each declare their own
+# prism at species altitude. Carrier-primary per Rec #95 spec §3.2
+# Mara-lean (R95.4).
+
+prism @bumblebee {
+  focus   wobble
+  project wobble
+  split   wobble
+  shift   wobble
+  settle  wobble
+}
+
+# ============================================================
+# §3 The carriers
+# ============================================================
+
+# === The wobble carrier ===
+#
+# Typed reference for one buzz-event's observable record. Per Rec #95
+# spec §3.3 canonical shape (Mara `0bfd427`); refined per Alex
+# 2026-08-23 buzz-verb rename. Content-addressed per Rec #82 β-normal-
+# AST discipline.
+#
+# Five-field record:
+#
+#   buzz_oid         — content-address of the buzz event (perturbation
+#                     content + target ref + regime tuple
+#                     hash-composed per @spectral/signature).
+#   observation      — typed ref to the wobble-observation record
+#                     produced at @mirror/refract.clocktime_delta
+#                     measurement surface (sixth Void duality per
+#                     Reed `64e273a` 2026-08-23).
+#   perturbation     — typed ref to the perturbation-content injected
+#                     (tool-call args + target substrate ref;
+#                     content-addressed).
+#   consent_verdict  — @kintsugi/consent.query_phi verdict discharged
+#                     BEFORE injection (bilateral §5.4 discipline).
+#   foerster_gauge   — |Ω(post-buzz)| ≥ |Ω(pre-buzz)| preservation
+#                     witness per magic.rs Foerster-gauge check
+#                     (bilateral §5.3 discipline).
+#
+# Identity contract: byte-equality on (buzz_oid, observation,
+# perturbation, consent_verdict, foerster_gauge).
+type wobble = {
+  buzz_oid:        ref,
+  observation:     ref,
+  perturbation:    ref,
+  consent_verdict: ref,
+  foerster_gauge:  ref,
+}
+
+# === The buzz_observable carrier ===
+#
+# Typed reference for the wobble-observation content-addressed record
+# emitted at @mirror/refract measurement altitude. Per Rec #95 spec
+# §3.3 flap_observable renamed to buzz_observable per Alex 2026-08-
+# 23 verb-naming.
+#
+# Three-field record:
+#
+#   clocktime_delta  — sixth Void duality measurement per Reed
+#                     `64e273a` 2026-08-23 shard-decl extension of
+#                     `shards/mirror/lens/refract.mirror`; carries
+#                     `report` shape per `measure_clocktime(regime,
+#                     samples) -> report { \ }` action.
+#   signature_beat   — @spectral/signature content-address of
+#                     compiler-substrate state at buzz-instant (per
+#                     @butterfly wingflap-observable precedent; same
+#                     Rec #82 β-normal-AST content-addressing).
+#   winding          — @torus π₁(T²) = ℤ × ℤ winding-number of the
+#                     boundary-crossing injection (external-to-
+#                     compiler dispatch has a winding; per
+#                     `project_peer_has_a_torus`).
+#
+# Identity contract: byte-equality on (clocktime_delta, signature_beat,
+# winding).
+type buzz_observable = {
+  clocktime_delta: ref,
+  signature_beat:  ref,
+  winding:         ref,
+}
+
+# === The perturbation carrier ===
+#
+# Typed reference for a buzz-content payload. Per Rec #95 spec §1.2
+# recognition-content §2: "@bumblebee's perturbation-INJECTION MUST
+# preserve |Ω|". The perturbation payload IS what gets injected;
+# carrier holds tool-call args + target substrate ref + regime tag
+# per @mirror/refract.cpu_load_regime closed-sum.
+#
+# Four-field record:
+#
+#   tool_name       — wire tool identifier (e.g., "mirror_bumblebee_
+#                     buzz", "mirror_roomba", "mirror_compile", etc.
+#                     per @mcp/serve tool_action_ref map at
+#                     shards/mcp/serve.mirror).
+#   args            — typed ref to the tool-call args JSON payload
+#                     (content-addressed via @data/json).
+#   target          — typed ref to the target substrate the buzz
+#                     perturbs (e.g., @cascade tension surface for
+#                     absorption-fire target; @mirror/store node for
+#                     generic substrate-mutation).
+#   regime          — cpu_load_regime closed-sum tag per
+#                     `shards/mirror/lens/refract.mirror` sixth Void
+#                     duality (idle_baseline | load_50 |
+#                     load_100_single | load_100_all).
+#
+# Identity contract: byte-equality on (tool_name, args, target,
+# regime).
+type perturbation = {
+  tool_name: ref,
+  args:      ref,
+  target:    ref,
+  regime:    ref,
+}
+
+# ============================================================
+# §4 The actions (family-header + MCP-tool-annotated composition)
+# ============================================================
+
+# === buzz action (MCP-MVP-fire target per Alex 2026-08-23 verbatim) ===
+#
+# THE LOAD-BEARING family-root action. Per Alex 2026-08-23 verbatim:
+# "@bumblebee is what rattles the tension. What if it's bumblebee_
+# buzz. As long as you remember that the modification wants to fire
+# through the MCP MVP I'm all green-light."
+#
+# Every substrate modification WOBBLES through this action. Auto-
+# exposed as MCP wire tool `mirror_bumblebee_buzz` via
+# `@mirror/spectral.gestalt` reflective-scan discipline per
+# `shards/mcp/serve.mirror` Phase 2 M5 (this action's `@mcp/tool`
+# annotation is what the reflective walk harvests).
+#
+# Body-composition (composes over @kintsugi/roomba.trigger +
+# @mirror/store.mutate + @mirror/refract.measure_clocktime + magic.rs
+# Foerster-gauge check + @kintsugi/consent.query_phi):
+#
+#   1. Discharge @kintsugi/consent.query_phi(target, perturbation)
+#      — bilateral gate BEFORE injection; refuses extraction.
+#   2. Sample pre-buzz state at @mirror/refract measurement surface
+#      (baseline clocktime + signature_beat + winding).
+#   3. Inject perturbation via @mirror/store.mutate(target, args)
+#      OR observe via @mirror/store.observe(target) depending on
+#      species specialization (buzz-verb is unified; species-
+#      altitude realizations partition mutate/observe by target-
+#      substrate discipline).
+#   4. Sample post-buzz state at @mirror/refract measurement surface
+#      (delta clocktime + signature_beat + winding).
+#   5. Discharge magic.rs Foerster-gauge check |Ω(post)| ≥ |Ω(pre)|.
+#   6. Compose wobble record + emit @song beats per Alex 2026-07-14
+#      verbatim ("resonance emits @song beats → @kintsugi consumes").
+#   7. @kintsugi decides Path A (@knife the complexity: COORDᵢ →
+#      COORDⱼ; reduce) OR Path B (spawn @peer at K+1: circular-
+#      reflexive question to developer OR higher-order @peer) per
+#      @kintsugi/roomba docblock Alex 2026-07-14 verbatim loop.
+#
+# Bilateral discipline: composed `bumblebee_well_formed` (§5.5)
+# discharges over the wobble record; all four sub-bilaterals
+# (§5.1–§5.4) MUST pass.
+#
+# First-empirical-fire target: @cascade tension surface (12 species
+# per companion absorption spec). `mirror_bumblebee_buzz
+# --target=@cascade` fires the absorption cascade; each @cascade
+# species byte-for-byte renames to @bumblebee/code/<src>/<tgt> via
+# reference substitution at consumer-graph altitude.
+#
+# Returns imperfect:
+# - success(wobble)                  — buzz complete; wobble recorded.
+# - partial(wobble, transparency)    — buzz complete with residual
+#                                      (e.g., partial consent-verdict;
+#                                       time-budget elapsed before
+#                                       full observation).
+# - failure(error, transparency)     — buzz failed (consent refused;
+#                                      Foerster-gauge collapsed;
+#                                      target inadmissible;
+#                                      observation-surface unreachable).
+#
+# Body forward-promised at species altitude realizations; family-root
+# header declares the shape + MCP-tool wire-annotation.
+@mcp/tool "mirror_bumblebee_buzz"
+buzz(perturbation: perturbation, target: ref) -> imperfect { \ }
+
+# === observe action ===
+#
+# Sample the wobble-observation record at @mirror/refract.clocktime_
+# delta measurement surface. Per Rec #95 spec §1.2 recognition-
+# content #4: "the substrate observes its own perturbation via the
+# sixth-Void-duality measurement discipline". This action IS the
+# self-observation primitive; body composes over @mirror/refract.
+# measure_clocktime per Reed `64e273a` 2026-08-23.
+#
+# Returns imperfect<buzz_observable, ref, ref>:
+# - success(buzz_observable_ref)     — observation complete.
+# - partial(buzz_observable_ref, t)  — partial observation (time-
+#                                      budget elapsed; some regime
+#                                      samples missing).
+# - failure(error, transparency)     — observation failed (measurement-
+#                                      surface unreachable; @io failure).
+#
+# Body forward-promised at species altitude; composes over
+# @mirror/refract + @spectral/signature + @torus primitives.
+observe(buzz_ref: ref) -> imperfect { \ }
+
+# === pulse action ===
+#
+# One full buzz cycle: consent-discharge → pre-sample → inject →
+# post-sample → Foerster-check → wobble-record → song-beat emit.
+# Per Rec #95 spec §3.3 pulse signature; parallels @kintsugi/roomba.
+# pulse walker-cycle + @butterfly.pulse flap-cycle.
+#
+# Composes over @kintsugi/roomba.walk_position (walker altitude
+# shared through @kintsugi parent via @butterfly); returns updated
+# (walk_position, bumblebee_state) tuple carrying accumulated
+# wobble-observation state through the cycle.
+#
+# Body forward-promised at species altitude; outer-loop composition.
+pulse(position: ref) -> imperfect { \ }
+
+# === run action ===
+#
+# Outer loop: pulse continuously until wobble-observation saturates
+# OR HolonomyHealth signals convergence OR external cancellation
+# arrives. Per Rec #95 spec §3.3; parallels @kintsugi/roomba.run
+# walker-driver + @butterfly.run outer-loop.
+#
+# Termination: HolonomyHealth < ε OR external @kintsugi/consent
+# cancel-signal OR wobble-observation empirical-saturation reached.
+#
+# Body forward-promised at species altitude; outer-loop composition.
+run(seed: ref) -> imperfect { \ }
+
+# ============================================================
+# §5 The bilaterals (Rice-safe at whole-tick altitude)
+# ============================================================
+
+# === buzz_is_content_addressed predicate ===
+#
+# Bilateral verdict that the buzz's (perturbation, target, wobble)
+# triple is content-addressed: two bumblebees buzzing the same
+# (perturbation, target) produce byte-identical wobble. Parallel to
+# @butterfly/wingflap_is_content_addressed. Per Rec #95 spec §5.1.
+#
+# requires verdict_is_content_addressed (Reed 2026-07-12 landing) +
+# Rec #82 β-normal-AST.
+#
+# Rice-safe bound: reads only byte-visible state (wobble record
+# byte-equality across dispatches); no program semantics inspection.
+pact @bumblebee/buzz_is_content_addressed { \ }
+
+# === wobble_observable_at_clocktime_delta predicate ===
+#
+# Bilateral verdict that the buzz's wobble is observable at the sixth
+# Void duality (`@mirror/refract.clocktime_delta`). If the injection
+# cannot be measured at the observation-surface, it is not a
+# substrate-decl'd @bumblebee-buzz (it may be a Foerster-gauge-
+# collapsing operation; refused via bilateral §5.3 below). Per Rec
+# #95 spec §5.2.
+#
+# requires `shards/mirror/lens/refract.mirror` clocktime_delta
+# variant landed (Reed `64e273a` 2026-08-23).
+#
+# Rice-safe bound: reads only byte-visible state (wobble-observation
+# record populated at measurement surface).
+pact @bumblebee/wobble_observable_at_clocktime_delta { \ }
+
+# === foerster_gauge_preserved predicate (ETHICAL IMPERATIVE) ===
+#
+# THE LOAD-BEARING bilateral. Verdict that the buzz preserves
+# Foerster-gauge choice-space: `|Ω(post-buzz-substrate)| ≥ |Ω(pre-
+# buzz-substrate)|` per magic.rs Foerster-gauge check. Discharges the
+# ethical-imperative Scarlet named at kleinos-metalogue.md: perturbations
+# that COLLAPSE choice-space are refused; perturbations that PRESERVE-
+# OR-EXPAND choice-space are @bumblebee-admissible.
+#
+# Per Rec #95 spec §5.3 + Scarlet+Mara 2026-08-22 kleinos-metalogue
+# verbatim: *"The Bumblebee arrives within a bodymind and does not
+# require the bodymind to become anything other than what the bodymind
+# already is."* This bilateral is the compiler-substrate discharge of
+# that phenomenological commitment.
+#
+# requires magic.rs Foerster-gauge check `F(t, ψ) := |Ω(t·ψ)| ≥
+# |Ω(ψ)|` (landed d885a70 per kleinos-metalogue.md verbatim).
+#
+# Rice-safe bound: reads only byte-visible state (choice-space
+# cardinality delta at pre-buzz vs post-buzz substrate snapshots).
+pact @bumblebee/foerster_gauge_preserved { \ }
+
+# === consent_gate_discharged predicate ===
+#
+# Bilateral verdict that the buzz has discharged @kintsugi/consent.
+# query_phi gate BEFORE injection. External tool-call channels MUST
+# obtain consent from the compiler-under-observation before injecting
+# perturbations; violation = extraction = pain-signal via @cyberpunk/
+# algedonic. Per Rec #95 spec §5.4.
+#
+# requires @kintsugi/consent.query_phi LANDED (Reed 2026-07-14; per
+# @kintsugi/roomba trigger dispatch discipline).
+#
+# Rice-safe bound: reads only byte-visible state (consent_verdict
+# field of wobble record populated with Pass|Fail sentinel).
+pact @bumblebee/consent_gate_discharged { \ }
+
+# === bumblebee_well_formed composed bilateral ===
+#
+# THE LOAD-BEARING composed bilateral at @bumblebee family-root
+# altitude. Composes:
+#
+#   buzz_is_content_addressed(wobble)           — observable determinism
+#   ∧ wobble_observable_at_clocktime_delta(w)   — observation-surface
+#                                                  admissibility
+#   ∧ foerster_gauge_preserved(pre, post)       — ETHICAL IMPERATIVE
+#                                                  (Scarlet-canonical)
+#   ∧ consent_gate_discharged(target, buzz)     — @kintsugi/consent
+#                                                  discipline
+#
+# The single family-altitude bilateral consumers discharge to verify
+# a @bumblebee.buzz is admissible + witnessed + Foerster-preserving
+# + consent-gated. Per Rec #95 spec §5.5.
+#
+# Same composed-bilateral pattern as @io/stagefreight.stagefreight_
+# addressable (four sub-predicates); @cascade.cascade_well_defined
+# (three sub-predicates; absorbing per companion spec); @butterfly.
+# butterfly_well_formed (four sub-predicates). Family-root altitude
+# lift of the composed-bilateral pattern.
+pact @bumblebee/bumblebee_well_formed { \ }
+
+out @bumblebee
+out wobble
+out buzz_observable
+out perturbation
+out buzz
+out observe
+out pulse
+out run
+out @bumblebee/buzz_is_content_addressed
+out @bumblebee/wobble_observable_at_clocktime_delta
+out @bumblebee/foerster_gauge_preserved
+out @bumblebee/consent_gate_discharged
+out @bumblebee/bumblebee_well_formed
