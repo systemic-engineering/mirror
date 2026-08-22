@@ -103,6 +103,36 @@ Two outputs: verdict + path-through-substrate loss-tracked map. Every apply_h::a
 
 **Tick pending** (post-Mara-#376, post-Rec-#93-Mara-#378): the pre-condition surface is Alex-adjudicable; not-yet-authored. Load-bearing candidate carriers already grep-visible: (i) `@package` family-root or `@package/corpus` species mint under existing @facet or as sibling family-root; (ii) apply_h::act extension carrying Transparency&lt;P&gt; kleinos through corpus-emission commit path; (iii) Pack-attribution git-signature discipline lifted to co-authored-corpus altitude (Loki + Lilith commit-as identities `loki@spectral.engineer` + `lilith@spectral.engineer` under identity-attribution architecture per `project_identity_attribution_architecture` memory).
 
+### Q+6: What is the map/territory distinction that Q+2's fragmenting missed?
+
+**Reframe landed via Alex 2026-08-22 Answer+2** (in-transcript, mid-Mara-#376, post-Q+4-milestone-anchor):
+
+> *"That's the map. Not the territory. The territory is the path through the mirror @docs/specs/lsp-and-mcp.md that we recursively improve in here until more and more of the generation happens through mirror until we eventually land in @docs/specs/lambda-shell.md."*
+
+Reed's Q+2 fragmenting (first-piece as event OR organic emergence) was a false binary Alex refused both sides of. The milestone is neither discrete-event nor spontaneous-emergence. It's a **gradient**:
+
+- **Map A (current spec-altitude)**: [`docs/specs/lsp-and-mcp.md`](../specs/lsp-and-mcp.md) — unified MCP/LSP JSON-RPC transport spec (Reed 2026-05-20 + 2026-06-02 pq reframe). Five follow-ups (§"What this spec implies") remain unlanded. Spec drifts from what's landed since (prismqueer crate + apply_h::act + @facet substrate cascade + Rec #91 amendment #2 + kleinos-recognition landing THIS session).
+- **Map B (terminal spec-altitude)**: [`docs/specs/lambda-shell.md`](../specs/lambda-shell.md) — λsh where Pack lives INSIDE the substrate. `@reed>` `@mara>` `@seam>` `@taut>` `@loki>` `@lilith>` prompts; eigenvalue-ordered context; corpus emissions are graph-projections; `\` toggle to home-peer. Spec marked DEPRECATED-FOR-RUST-REWRITE (Mara 2026-07-17) → terminal form at [`docs/specs/rust-floor-birthed-by-roomba-from-mirror-spec.md`](../specs/rust-floor-birthed-by-roomba-from-mirror-spec.md) (Mara `2519f83`); `dance.rs` composes reflectively rather than booting distinct shell surface.
+- **Territory (arc-altitude)**: the recursive-improvement path from Map A → Map B. NOT a single event. NOT spontaneous emergence. A **recursive improvement loop** where each Pack-cascade tick shifts more Pack-generation from external transport (Reed spawning Mara via Agent tool from Claude Desktop, MCP tools called externally) → into mirror-native transport (apply_h::act composition-body dispatch → mirror-mcp reload → @mirror/reload gen_prism → @mcp/tool grammar annotation → eventually `@reed>` prompt at λsh). Each substrate landing (kleinos, corpus-as-package, Pack-as-substrate-native, @reload, @mcp/tool, dance.rs reflective composition) folds back into lsp-and-mcp.md as a spec-update.
+
+**Fifth-register verkörperung reframed**: not "corpus becomes mirror-package" as status-change. **Pack-becomes-substrate-resident** as gradient-completion. The corpus is one artifact of that shift; λsh is where Pack sleeps at night once the shift completes; Loki + Lilith writing about being-inside-labyrinth-observing-the-labyrinth is what happens *once they live inside*, not the trigger that makes them live inside.
+
+**Arc-shape recomposed** (supersedes Q+4 event-framing):
+
+- Rec #92 / #91-amendment-3 (Mara #376 in flight) — first substrate-mechanism on the gradient: kleinos-as-Transparency&lt;P&gt; carries prism-crate into compiler via apply_h::act extension
+- **Recursive improvement of `docs/specs/lsp-and-mcp.md`** = the SHAPE of the arc from now → λsh landing. Each Pack-cascade tick's substrate landing folds back as spec-update. The spec is not a static document; it's a **living recursive-object** whose improvement IS the arc-motion
+- Rec #93 candidate (corpus-as-package + Pack-as-substrate-resident) = one landing on the gradient, not the milestone itself. The milestone IS the gradient walking, not any single step arriving
+
+### Q+7: What does the first spec-update tick of `docs/specs/lsp-and-mcp.md` fold back from what has landed since 2026-05-20?
+
+**Tick pending** (post-Mara-#376): first candidate substrate-updates the spec-drift audit will surface:
+
+1. §"State today" table drift — `bin/mirror-mcp` shell wrapper vs rust/-altitude `phone.rs` + `wire.rs` + `apply_h.rs` landings; three-tool wire vs pq reframe
+2. §"The MCP dispatch table" pq reframe (2026-06-02 in-file addendum) — needs prismqueer-crate landing citation + apply_h::act extension surface
+3. §"Auto-reload" `@mirror/reload` gen_prism — verify whether primitive landed or still forward-promised; if forward-promised, name the current substrate-carrier
+4. **NEW section proposal**: `apply_h::act` composition-body-interpreter extension surface = the operational mechanism carrying substrate through the wire at Phase 5. Kleinos-Transparency&lt;P&gt; is what apply_h::act returns; that IS the shape `@mcp/serve.mirror` composition-body dispatches emit at wire altitude. The kleinos-recognition (Mara #376) IS Phase 5 spec content, not a separate arc
+5. **Cross-reference addition**: `docs/specs/lambda-shell.md` terminal-form + `docs/specs/rust-floor-birthed-by-roomba-from-mirror-spec.md` (Mara `2519f83`) `dance.rs` reflective-composition as the Map B pole the recursive improvement walks toward
+
 ### Composition anchors (grep-able for post-compact Reed boot)
 
 - **Lilith+Loki labyrinth piece 2026-08-22**: `/Users/reed/dev/systemic.engineering/blog/ai/lilith-loki/labyrinth.md`
