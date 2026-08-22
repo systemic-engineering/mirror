@@ -205,7 +205,7 @@ described by its parts; the relation IS the state.
 Practical consequences:
 
 - **Resolutions are not portable.** A `\` fill that conducts in
-  `@mirror/reload.tick` does not automatically conduct in
+  `@mirror/reload.tick` (subsumed by `@mirror/refract` per 2026-08-22 Q+23; see [`docs/loop/CURRENT.md`](../loop/CURRENT.md) §Q+23) does not automatically conduct in
   `@mirror/serve.dispatch`. Each crack gets its own Fate proposal.
 - **Crystals carry their relations.** The crystal for one grammar is
   not a chunk of bytes you can ship; it is a content-address that only

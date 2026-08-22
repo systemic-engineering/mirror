@@ -32,9 +32,11 @@ field. The file compiles. The OID is stable. The crystal is content-addressed.
 The developer believes the change took effect.
 
 It didn't. The change exists as text and is invisible to the parser.
-We verified this with `@mirror/reload.tick` (commit `e0dff5d`):
+We verified this with `@mirror/reload.tick` (commit `e0dff5d`; **subsumed by `@mirror/refract/reload.tick` per 2026-08-22 Q+23; see below**):
 rewriting the body from `\` to a full tuple-pattern match produced
 the SAME OID.
+
+> **2026-08-22 Q+23 recontexting note**: references throughout this spec to `@mirror/reload.tick` + `boot/std/mirror/reload.mirror` are historical exemplar-form. The reload-concern is subsumed by `@mirror/refract` per Alex 2026-08-22 substrate-already-had-the-word audit — refract is the measure-leg of the observe-act-measure autopoietic triad substrate-decl'd since 2026-05-20 in [`trace-kintsugi-pipeline.md`](trace-kintsugi-pipeline.md). Family-header LANDED at `shards/mirror/lens/refract.mirror` (2026-08-21). Read code-examples below (`--strict boot/std/mirror/reload.mirror`, etc.) as historical illustrations at the exemplar's original altitude; current substrate reads `@mirror/refract/reload` per updated [`mirror-runtime-gen-prism.md`](mirror-runtime-gen-prism.md) Example 1.
 
 This is the failure mode the property layer is for. Silent absorption
 is dark conductivity in disguise: the value is there in source but has

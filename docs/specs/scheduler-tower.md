@@ -358,7 +358,7 @@ This v2 sketch is not implemented in v1.5; it's a forward-compatibility check. T
 
 When the Scheduler Tower lands:
 
-1. **gen_prism backwards-compat.** Existing gen_prisms (without demand contracts) continue to work unchanged. Adding `demand_window` is opt-in. **Validation:** the existing `@mirror/reload` gen_prism (per `mirror-runtime-gen-prism.md`) is not modified; it still ticks correctly.
+1. **gen_prism backwards-compat.** Existing gen_prisms (without demand contracts) continue to work unchanged. Adding `demand_window` is opt-in. **Validation:** the existing `@mirror/refract/reload` gen_prism (subsumes prior `@mirror/reload` per 2026-08-22 Q+23; per updated `mirror-runtime-gen-prism.md` Example 1) is not modified; it still ticks correctly.
 2. **Pipeline composition.** Three gen_prisms can be subscribed producer → producer-consumer → consumer; messages flow forward with type checks; demand flows backward. **Validation:** a fixture pipeline (range → double → collect, mirrored from stage_play's litmus tests) emits the expected outputs.
 3. **GPU saturation handling.** A CPU producer sending to a MetalBackend consumer at high rate triggers backpressure when the Metal command queue saturates; producer rate decreases; no OOM. **Validation:** synthetic load test with producer emitting 10× the consumer's drain rate.
 4. **Type-safe subscription.** A producer emitting `message` of kind `foo` cannot subscribe to a consumer expecting kind `bar` — **compile-time error** (compose-time, when the pipeline is constructed). Strictly stronger than GenStage's runtime check. **Validation:** a negative test that fails to compile.

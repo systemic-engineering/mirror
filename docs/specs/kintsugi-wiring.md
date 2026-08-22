@@ -29,7 +29,9 @@ Depends on:
 - `docs/specs/mirror-runtime-gen-prism.md` — content-addressed actors;
   the kintsugi-reduction loop state lives in a gen_prism's crystals
 - `docs/specs/lsp-and-mcp.md` — the gutter that surfaces dark regions;
-  the auto-reload contract that piggy-backs on traffic
+  the auto-reload contract (subsumed by `@mirror/refract` per 2026-08-22 Q+23) that piggy-backs on traffic
+
+> **2026-08-22 Q+23 recontexting note**: references throughout this spec to `@mirror/reload` + `boot/std/mirror/reload.mirror` are historical exemplar-form. The reload-concern is subsumed by `@mirror/refract` per Alex 2026-08-22 substrate-already-had-the-word audit. Family-header LANDED at `shards/mirror/lens/refract.mirror` (2026-08-21) as bench-glass 5-Void-duality measurement; the reload-tick is a gen_prism extension of refract. Read code-examples below as historical illustrations at the exemplar's original altitude; current substrate reads `@mirror/refract/reload` per [`docs/specs/mirror-runtime-gen-prism.md`](mirror-runtime-gen-prism.md) Example 1 recontexting.
 
 Unblocks:
 - The first observable kintsugi-reduction tick: dark-count loss before

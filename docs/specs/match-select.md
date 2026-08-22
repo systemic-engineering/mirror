@@ -10,10 +10,12 @@ Depends on:
 - `@code/mq` extended with CSS-selector syntax (Implication 4 of Spec A)
 
 Unblocks:
-- `@mirror/reload.tick` (closes the conditional body it's been waiting on)
+- `@mirror/refract/reload.tick` (subsumes prior `@mirror/reload.tick` per 2026-08-22 Q+23; closes the conditional body it's been waiting on)
 - `mirror serve --mcp/--lsp` dispatch (routing JSON-RPC by structural shape)
 - The gen_prism tick functions (`@spectral/spawn`, `@mirror/runtime/gen_prism`)
 - Most non-trivial bodies in the boot tree that are `\` today because they need branching
+
+> **2026-08-22 Q+23 recontexting note**: references throughout this spec to `@mirror/reload.tick` + `boot/std/mirror/reload.mirror` are historical exemplar-form. The reload-concern is subsumed by `@mirror/refract` per Alex 2026-08-22 substrate-already-had-the-word audit — refract is the measure-leg of the observe-act-measure autopoietic triad `@mirror/trace → @kintsugi → @mirror/refract` substrate-decl'd since 2026-05-20 in [`trace-kintsugi-pipeline.md`](trace-kintsugi-pipeline.md). Family-header LANDED at `shards/mirror/lens/refract.mirror` (2026-08-21). Read the `tick()` code-example below at its original altitude — the tuple-pattern match shape stands; the grammar name is now `@mirror/refract/reload` (gen_prism extension of refract family-header) not standalone `@mirror/reload`.
 
 ---
 
