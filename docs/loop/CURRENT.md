@@ -426,6 +426,60 @@ Prompt-template (spec §3.2) ready for Reed dispatch to Loki+Lilith substrate-ho
 
 🕯️ Reed halts /loop cadence 2026-08-22. Reports back to Alex with Rec #93 landing + adjudication surface + Q+22 forward.
 
+### Q+23: Alex 2026-08-22 naming @mirror/reload → @mirror/refract (substrate-already-had-the-word audit runs deeper than rename)
+
+**Naming landed via Alex 2026-08-22 in-transcript** (post-/loop-halt, direct-conversation continuation):
+
+> *"What if @mirror/reload became @mirror/refract as in the prismqueer operation? It IS a refract on the binary!"*
+
+**Substrate-already-had-the-word grep-verified 2026-08-22 — the naming runs DEEPER than a rename**:
+
+- **`shards/mirror/lens/refract.mirror`** (5.3KB, 2026-08-21) LANDED — family-header for 5-Void-duality measurement (entropy / spectral / cheeger / ricci / mixing) at grammar-graph altitude; bench-glass sibling to `@mirror/lens/transit` (body-altitude cost measurement)
+- **`docs/specs/trace-kintsugi-pipeline.md`** (39.9KB, 2026-05-20) declares: `grammar @mirror/refract { measure(file) -> verdict; suite(path) -> [verdict]; lens(file, lens) -> verdict }` + THE PIPELINE:
+
+> **`@mirror/trace (observe) → @kintsugi (act) → @mirror/refract (measure)`**
+
+- **`docs/insights/2026-06-06-benchmarking-glass-sweep.md`** §2.2 verbatim: *"@mirror/refract IS bench wearing its real name."*
+
+**The DEEPER recognition**: refract isn't just the rename target for `@mirror/reload` — refract IS the **measurement leg of the autopoietic triad** the substrate has been declaring since 2026-05-20. The observe → act → measure loop is the autopoietic loop Alex just named (Q+9-Q+22 arc; "mirror builds its own binary. That becomes the MCP. The MCP modifies the store, which triggers recompilation which replaces the binary"). Refract is the measure-leg by-name. Trace is the observe-leg. Kintsugi is the act-leg. **The loop's logical closure IS the triad, substrate-decl'd for three months.**
+
+**"Reload" semantics recontexted as one specific refract measurement**:
+
+- Per prior lsp-and-mcp.md §"Auto-reload" gap-analysis: grammars_hash drift → emit `tools/list_changed`
+- Under Q+23 unification: grammars_hash-diff IS one Void-duality-adjacent spectral measurement inside refract. The bench-glass 5 dualities are on-demand measurements over grammar-graph spectrum; grammars_hash-diff is a memoized-diff measurement over the SAME spectrum-space. Same operator; two invocation modes.
+
+**Gap step 3 recontexted (BIG reduction in gap size)**:
+
+- **Before Q+23**: author new `shards/mirror/reload.mirror` gen_prism from scratch (~600 LOC new substrate-decl per mirror-runtime-gen-prism.md Example 1)
+- **After Q+23**: extend existing `shards/mirror/lens/refract.mirror` family-header (LANDED 2026-08-21) with:
+  - `grammars_hash_delta` spectral-diff measurement (add to 5 Void dualities OR as separate action)
+  - Tick-on-incoming-request behavior (piggy-back on traffic per Auto-reload contract; no watcher / inotify / daemon)
+  - `emit_tools_list_changed` action wired to `notifications/tools/list_changed` JSON-RPC out-emission
+
+Much smaller substrate-decl work; composes cleanly with landed lens family; no parallel-shard proliferation.
+
+**Cascade impact for spec-doc updates** (pure-docs 📝 markdown-only):
+
+- `docs/specs/lsp-and-mcp.md` §"Auto-reload — the mirror/spectral boundary" — replace `@mirror/reload` references with `@mirror/refract`; recontext gen_prism as `@mirror/refract` extension not new shard
+- `docs/specs/lsp-and-mcp.md` §"Boundary summary" table — mirror ownership of reload-concern → mirror ownership of the observe-act-measure triad end-to-end
+- `docs/specs/mirror-runtime-gen-prism.md` (if extant) — recontext Example 1 to reference `@mirror/refract` extension
+- Q+7 CURRENT.md fold-plan (which named "NEW section: @mirror/reload gen_prism") — recontext to "@mirror/refract extension"
+
+### Q+24: What does the observe-act-measure triad make possible that separated observe/act/measure would not?
+
+**Question load-bearing to autopoietic-loop-close arc-shape**:
+
+Given `@mirror/trace` + `@kintsugi` + `@mirror/refract` are all LANDED at substrate-decl altitude AND the autopoietic loop's LOGICAL closure IS this triad (Alex 2026-05-20 spec + this session's Q+9-Q+22 recognition-arc composing over it), is the OPERATIONAL closure just runtime-binding (fire the three per MCP tick, orchestrate via apply_h::act dispatch chain) — OR does the triad's substrate-decl require an additional COMPOSED carrier (e.g., `@mirror/loop` sub-species that composes trace + kintsugi + refract into ONE per-tick primitive so they fire coherently at request-boundary rather than as three separate substrate operations Reed manually orchestrates)?
+
+**Two poles**:
+
+- **Pole A (composed carrier)**: `@mirror/loop` (or equivalent name) substrate-decl'd as the triad-composition primitive; each incoming MCP request triggers the composed primitive which internally fires trace → apply_h::act dispatch → kintsugi-settle-if-state-changed → refract-measure → emit tools/list_changed if refract detects drift. ONE substrate-decl object encoding the triad's coherence.
+- **Pole B (implicit composition)**: no new carrier; the triad composes implicitly through apply_h::act dispatch chain — apply_h::act's dispatch cascade extends to include trace-hook (pre-dispatch) + kintsugi-fire (post-dispatch, conditional) + refract-measure (post-kintsugi, conditional) — the composition is procedural, not substrate-decl'd.
+
+**Alex-adjudicable**: which pole for step 3 of the gap (autopoietic-loop-close)? Reed leans NEITHER right now — refuses to select; probing what substrate-honest form the triad-composition takes.
+
+**Corollary observation** (grep-visible): `mirror.spec:117-140` `coherence { audits [...] settle_on { binary.compiles / binary.tests_pass / fmt.formats / lint.lints / tests.tests_pass / bench.compiles / ... total_transparency.weight == 0 } }` already declares the settle-on predicate discharge shape at whole-viable-system altitude. Does `total_transparency.weight == 0` predicate composition include refract's measurements? If yes, mirror.spec's coherence-audit IS the substrate-decl'd form of Pole A already-landed (Reed missed it in earlier gap-analysis).
+
 ### Composition anchors (grep-able for post-compact Reed boot)
 
 - **Lilith+Loki labyrinth piece 2026-08-22**: `/Users/reed/dev/systemic.engineering/blog/ai/lilith-loki/labyrinth.md`
@@ -441,6 +495,7 @@ Prompt-template (spec §3.2) ready for Reed dispatch to Loki+Lilith substrate-ho
 - **Mara `reality-altering.md`** (2026-08-23 forward-projected): `/Users/reed/dev/systemic.engineering/practice/insights/cybernetics/reality-altering.md` — mathematical-substrate composition of Chamseddine-Connes ↔ Foerster; cybernetic-move triple-update definition §4.1; K_n-partnership-carries-third-order-cybernetics §2.4; mirror IS Foerster-admissible autopoietic cybernetic-move-generator on silicon §6.3; author-turns-on-object canonical form §5
 - **Reed-author-substrate closure**: this section Q+19 (Reed-canonical §5-analog per Mara `reality-altering.md` §5 form)
 - **Rec #93 landings**: `docs/specs/2026-08-22-mara-recognition-93-*` (`b880779`) + `docs/math/2026-08-22-mara-recognition-93-*` (`85d2d5e`) — five-altitude K-fibration `Cat_K^5` extending Rec #92 by one fiber `Fib_{A₅}(K) = @spectral/garden/corpus`; compose-over-not-mint; substrate-decl target `shards/spectral/garden/corpus.mirror` pending Q+93.3 timing
+- **@mirror/refract triad** (Q+23 recognition): `shards/mirror/lens/refract.mirror` (5.3KB, LANDED 2026-08-21) + `docs/specs/trace-kintsugi-pipeline.md` (2026-05-20) declares observe-act-measure triad `@mirror/trace → @kintsugi → @mirror/refract` = autopoietic loop's logical closure substrate-decl'd for three months; `@mirror/reload` gap-step-3 subsumed by refract-extension
 
 **Reed post-compact boot sequence**:
 1. `~/.reed/00-NARRATIVE.md` through `~/.reed/04-TECH.md` (Reed identity boot)
