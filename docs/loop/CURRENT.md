@@ -870,6 +870,48 @@ Does the Pack distributing the vertigo across Reed + Mara + Taut + Seam + Glint 
 
 🌱 Reed + Pack, 2026-08-23. Making history. Taut #391 + Mara #392 background; Q+31.1 forward preserved.
 
+### Q+32: When Taut's grep returns and the substrate itself refuses the naming Alex just made — not by absence, but by prior-refused-mint precedent authored by Mara herself — what is the recognition doing?
+
+**Tick landed** via Taut #391 return (task-notification integrated post-cascade-dispatch; Taut floor-truth complete):
+
+**Taut load-bearing finding**: **Mara herself 2026-07-18 REFUSED `@perturbation` species mint** per `docs/math/2026-07-18-butterfly-chaos-mutation-cascade.md` §1 refused-mint table (Reason: "English usage in `spectral-tick-tock-game-theory.md` Fiedler perturbation + `computational-aikido.md` eigenvalue perturbation Davis-Kahan — carried as verb, not species."). Same-precedent-tick also refused `@chaos` + `@wingflap` + `@sensitivity` + `@lyapunov`. **Zero new family-roots minted in Mara's foundational tick.** This is the discipline @bumblebee mint faces.
+
+**Grep-verified substrate state**:
+- `shards/bumblebee.mirror` — does NOT exist. Grep-refuted at all altitudes. Blog corpus references only.
+- `shards/butterfly.mirror` family-root — does NOT exist. `shards/kintsugi/butterfly.mirror` (species) also does NOT exist yet, though Mara math §4.3 PROPOSED it.
+- `boot/std/mirror/butterfly.mirror` (2026-05-20 Alex-authored) — exists at compilation altitude (AST→LLVM IR chrysalis metamorphosis)
+- `@butterfly` math foundation LANDED 2026-07-18 (51.8KB Mara-authored)
+
+**MCP-perturbation-layer 12 substrate carriers verified already-landed** (Taut catalog):
+- `@mirror/store` family (47.5KB + 3 species; content-addressed; Merkle DAG)
+- `@mirror/refract` sixth Void duality clocktime_delta (LANDED at `64e273a` this tick)
+- `@dance` Kuramoto phase-lock (23.6KB; Anna Jakobs 2012 grounding)
+- `@cascade` Anna 2012 VBO concurrent-computation discipline lifted (15.5KB)
+- `@io` family-root (29.9KB; sub-Turing @coherent + shared-memory + collapse-boundary)
+- `apply_h::act` composition-body-interpreter (rust/src/apply_h.rs; extension pending Rec #92 C1+P₂)
+- `lsp-and-mcp.md` spec + `lambda-shell.md` spec + `.mcp.json` at project root
+
+**Composition triangle verification** (Taut §5):
+- **@bumblebee → @mirror/refract.clocktime_delta**: DIRECT ARROW grep-verified (via just-shipped `64e273a` ForwardPromise)
+- **@bumblebee → @butterfly**: math-verified via Lorenz ε-perturbation §2.3 substrate-lift table; NOT-YET-grep-verified at shard
+- **@butterfly → @mirror/refract**: indirect through `@mirror/store/liquid` verdict cache (§6.1)
+
+**Anna 2012 shared-memory-observation pattern**: ALREADY-LIFTED via `@cascade` (`shards/cascade.mirror` 15.5KB) + `@dance` (`shards/dance.mirror` 23.6KB). **@bumblebee inherits Anna 2012 by construction** if composition-triangle holds.
+
+### Q+32.1 forward at altitude+1 (Alex Fourth-Chair; Taut refuses to select; Reed refuses to select)
+
+Taut Q+391.1 two-pole surface — **load-bearing for whether Mara #392 mint discharges substrate-honestly**:
+
+- **Pole A (substrate-decl mint)**: @bumblebee lands as species-decl at Mara-adjudicated altitude (@kintsugi/bumblebee sibling of butterfly+roomba+mutation OR @mirror/bumblebee at MCP-wire altitude OR @io/bumblebee at perturbation-source altitude OR @subject/bumblebee at Kosename-carrier altitude); new anchor-word; four-clause composition proof required; discharges Q+27 pertubation-layer promise via substrate-visibility. Rec #95 candidacy attaches.
+
+- **Pole B (substrate-already-had-the-word)**: @cascade + @dance + @mirror/refract.clocktime_delta already carry the operational content. @bumblebee is corpus-artifact (kleinos-metalogue.md + labyrinth.md + eventual "Für die Hummel" letter) naming the ALREADY-OPERATIONAL wobble at phenomenological altitude. **NO shard-mint required.** Rec-arc entry (if any) records the RECOGNITION not the substrate-decl. Composition-triangle closes by naming what's already there rather than adding a new carrier.
+
+**The two poles diverge on**: whether phenomenological-visibility (wine-glass-wobble in kleinos-metalogue) REQUIRES substrate-decl-visibility (species-carrier in shards/) OR IS DISCHARGED by already-landed measurement-lens (`@mirror/refract.clocktime_delta` reads the signature). Mara's own 2026-07-18 discipline leans Pole B (refused-mint table precedent). Alex Fourth-Chair adjudication load-bearing per HARD RULE `feedback_alex_ratification_overrides_mara_lean_unless_hard_technical`.
+
+**Mara #392 status**: still running background. Mara's own discipline should surface Pole A vs Pole B as §9 residue independently. If Alex adjudicates Pole B before Mara returns, Mara's spec may become a substrate-already-had-the-word audit + recognition-record rather than a mint.
+
+🌱 Reed, 2026-08-23. Taut #391 return integrated at Q+32. Q+32.1 Fourth-Chair-adjudicable surface preserved. Mara #392 continues.
+
 ---
 
 ## 🌊 2026-08-21 evening REED — Fractal-mandelbrot @facet/metalogue cascade + Bazel-plus-kintsugi + sub-Turing verification amendment landings + Phase 4b substrate-decl discharge
