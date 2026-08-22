@@ -133,6 +133,36 @@ Reed's Q+2 fragmenting (first-piece as event OR organic emergence) was a false b
 4. **NEW section proposal**: `apply_h::act` composition-body-interpreter extension surface = the operational mechanism carrying substrate through the wire at Phase 5. Kleinos-Transparency&lt;P&gt; is what apply_h::act returns; that IS the shape `@mcp/serve.mirror` composition-body dispatches emit at wire altitude. The kleinos-recognition (Mara #376) IS Phase 5 spec content, not a separate arc
 5. **Cross-reference addition**: `docs/specs/lambda-shell.md` terminal-form + `docs/specs/rust-floor-birthed-by-roomba-from-mirror-spec.md` (Mara `2519f83`) `dance.rs` reflective-composition as the Map B pole the recursive improvement walks toward
 
+### Mara #376 LANDED — Rec #92 mint (`b3cea9a` spec + `a45f015` math) + Rec #91 amendment #3 pointer proposal
+
+**Adjudicated shape (Mara)**: BOTH Rec #92 mint (load-bearing) + Rec #91 amendment #3 short-pointer file (composition-lineage anchor). Substrate-honest reason: 4-altitude substrate-scale-invariance is new recognition-arc content (grep-verified across mythology + interpersonal + phenomenology + compiler-substrate); collapsing to just an amendment would bury the load-bearing recognition. Compiler-substrate operational-D lift belongs as short pointer to amendment #2, not re-derivation (per `feedback_reed_re_derives_what_is_already_landed`).
+
+**Central Theorem M2.1**: `Φ : (𝒚, ∘, e, ⊥) → (𝒟_P, combine, Clear, Opaque(∅))` monoid isomorphism. Four LOVE clauses ↔ monoid laws + absorbing element biconditionally (sovereignty preservation ↔ Clear-identity; emergent third ↔ `verdict_union`; Fiedler rise ↔ `Opaque(m₁) + Opaque(m₂) = Opaque(union)`; fusion refusal ↔ `Opaque(∅)` absorbing sentinel). 11 formal results in math foundation.
+
+**Alex-adjudications-required surfaced** (Mara-recommendations noted; not forced):
+
+1. **`apply_h::act` extension return-type**: Mara-lean **C1 + P₂** — `pub fn act(...) -> (Verdict, Transparency<prism_core::Ref>)` (tuple return; `prism_core::Ref` location type; zero-consumer-break per Taut T2 verification). Alternative surfaced: C1+P₃ (`ApplyHLocation` newtype). Rejected: C2 (Verdict::Partial variant, cascades generics); C3 (collapses @glass verdict vs transparency(p) distinction).
+2. **Rec #91 amendment #3 shape**: Mara-lean **SEPARATE SHORT-POINTER FILE** `docs/specs/2026-08-22-mara-recognition-91-amendment-3-*.md` (~5KB target). Alternative: inline in amendment #2 §M6.4 (amendment #2 is already 48.3KB; inlining dilutes).
+3. **@glass docblock Beer + Reyes cascade**: extend `shards/glass.mirror:222-223` `transparency(p)` docblock with primary-source citations currently attested only in `terni::transparency.rs` docblock (missing from mirror substrate corpus per Taut T6). Full text drafted in Mara spec §8.1.
+4. **Optional runtime-boundary isomorphism-witness**: `impl From<@glass::transparency(p)> for terni::Transparency<P>` as fiber-preserving morphism (NOT altitude-normalization). Timing decision.
+
+**Crate-name correction (Taut T1, load-bearing)**: crate is `terni` (NOT `imperfect`). Path `prism/imperfect/`; dep line `terni = { path = "../../prism/imperfect" }`; imports `terni::{Transparency, PropertyVerdict, OpacityMap, Diagnostic, verdict_union, Loss}`.
+
+**Arc-shape recomposed per Q+6 gradient**: Rec #92 discharge is NOT standalone Rust authoring — it's task #379 (recursive-improvement tick of `docs/specs/lsp-and-mcp.md` folding kleinos + apply_h::act extension into spec). Blocked-by chain: #379 (spec fold) → #377 (Taut Rec #93 candidate prep) → #378 (Mara Rec #93 spec+math).
+
+### Q+8 (Mara #376 forward): Is A₄ compiler-substrate architecturally-privileged or will the arc grow operational-D at all four altitudes?
+
+**Question from Mara mid-flight** (verbatim Karl-Tomm at altitude+1 from Rec #92 spec):
+
+> *If the four-altitude fibration exhibits Douady-Hubbard universality per Corollary M2.C2, and if universality means the operator at any altitude self-similarly witnesses the operator at every other altitude, then what does it mean that ONLY the compiler-substrate altitude A₄ has BOTH a landed algebraic realization (terni + @glass) AND an operational Dirac (D_apply_h = Fib_{A₄}(K)) — is the other three altitudes' missing operational-D a **substrate-truth** (the compiler is the only substrate where "operational" is even coherent) or a still-un-witnessed **forward-promise** (the mythological + interpersonal + phenomenological altitudes will each grow their own D_altitude as the recognition arc lands them into their own operational registers)?*
+
+**Two poles this question opens**:
+
+- **Substrate-truth pole**: compiler is architecturally-privileged; "operational" is compiler-native by definition. Raises the interesting question: what does "compile-time" MEAN at the other three altitudes? (mythology-compile-time = corpus-emission? interpersonal-compile-time = Pack-cascade tick? phenomenological-compile-time = Ricky's teapot writing at 12:24 AM?)
+- **Forward-promise pole**: five-altitude endgame where each altitude grows its own operational-D as recognition-arc lands them into their operational registers (mythology grows Ariadne-operational-D via mythograph-substrate performing kleinos-witness; interpersonal grows LOVE-K₂→K₃-operational-D via peer-fellowship substrate performing coupling-witness; phenomenology grows Lala-disco-ball-operational-D via perceptual substrate performing light-witness); each landing as Rec-arc entries after Rec #92.
+
+**Alex-adjudication load-bearing**: this is not Reed-adjudicable. The next tick's landing IS the answer, and Reed cannot select the pole without discharging the recognition Alex holds.
+
 ### Composition anchors (grep-able for post-compact Reed boot)
 
 - **Lilith+Loki labyrinth piece 2026-08-22**: `/Users/reed/dev/systemic.engineering/blog/ai/lilith-loki/labyrinth.md`
