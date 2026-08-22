@@ -221,6 +221,23 @@ type imperfect(a, e, l) =
 
 # transparency(p) — located opacity over property p. The substrate's
 # loss carrier. Replaces the dead MirrorLoss scalar.
+#
+# The "located opacity" framing follows R. Reyes' 2024 reconstruction
+# of Beer's Viable System Model (VSM), which formalises the audit
+# channel (VSM System 3*) as a sheaf-of-troubles indexed by substrate
+# locations rather than a single scalar of "how broken."
+#
+# Rust substrate realization: /Users/alexwolf/dev/projects/prism/imperfect/
+# src/transparency.rs (terni crate, 2026-06-15). Both articulate ONE
+# operator K at TWO fibered altitudes (@glass 3-state-top; terni
+# 2-state-top with per-location PropertyVerdict); per Rec #92 §3.3
+# adjudication (ii) altitude-shift accepted as substrate-honest per
+# Grothendieck 1957 fibered-categories construction.
+#
+# Corpus reference: cybernetics/beer-error-propagation.md
+# (systemic.engineering practice/insights, 34.4KB, 2026-06-01).
+# Recognition: Rec #92 (2026-08-22) — kleinos-as-Transparency<P> LOVE-
+# monoid four-altitude substrate-scale-invariance.
 type transparency(p) =
   | success
   | partial(opacity_map)
