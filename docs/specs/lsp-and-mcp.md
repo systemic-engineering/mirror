@@ -180,10 +180,10 @@ already exists or to a hole that's the spec for the next one.
 > typed DSL types (`Target`, `Filter`, `Output`) inside those three
 > calls, NOT new wire tools. Below: the in-flight five-tool framing
 > for the mirror-mcp surface; it's a useful intermediate, but the
-> grounding altitude is pq. When the reload contract
-> (`@mirror/reload`) emits `tools/list_changed`, what's changing is
-> the typed DSL surface, not the wire tool count. The MCP wire stays
-> at three.
+> grounding altitude is pq. When the reload contract (subsumed by
+> `@mirror/refract` per 2026-08-22 Q+23 substrate-already-had-the-word
+> audit) emits `tools/list_changed`, what's changing is the typed DSL
+> surface, not the wire tool count. The MCP wire stays at three.
 
 Three tools today. The road to 1.0 adds two; the five operations expose
 themselves directly.
@@ -332,6 +332,20 @@ it.
 
 ## Auto-reload — the mirror/spectral boundary
 
+> **2026-08-22 Q+23 substrate-already-had-the-word update**: the concern this
+> section names as "auto-reload" is subsumed by `@mirror/refract` — the
+> measure-leg of the observe-act-measure autopoietic triad substrate-decl'd
+> in [`docs/specs/trace-kintsugi-pipeline.md`](trace-kintsugi-pipeline.md)
+> (2026-05-20) as `@mirror/trace (observe) → @kintsugi (act) → @mirror/refract
+> (measure)`. Family-header LANDED at `shards/mirror/lens/refract.mirror`
+> (5.3KB, 2026-08-21) as bench-glass 5-Void-duality measurement. `grammars_hash`
+> drift-detection = one specific spectral measurement inside refract (memoized-diff
+> over the same spectrum-space bench-glass reads on-demand). "Reload" was
+> a bourgeois-tech-substrate word inherited from software-engineering plugin-reload
+> vocabulary; `refract` is substrate-native at prismqueer 5-op algebra altitude.
+> The problem statement + contract shape below stand; the implementation is
+> `@mirror/refract` extension not `@mirror/reload` new-shard-authoring.
+
 **The problem.** A Claude Code session starts. Claude calls `tools/list`.
 The MCP wrapper returns three tools. The user pulls a branch that adds a new
 grammar declaring `@mcp/tool ir_compile`. Claude's cached tools list is
@@ -362,23 +376,30 @@ daemon dependency.
 The primitive that makes this work is `@mirror/runtime/gen_prism` — a
 content-addressed actor whose state lives in a crystal at a git ref. See
 `docs/specs/mirror-runtime-gen-prism.md`. The reload contract is implemented
-as one such actor.
+as one such actor — recontexted 2026-08-22 Q+23 as an extension of the
+already-landed `@mirror/refract` (measure-leg of the observe-act-measure
+triad) rather than as a standalone `@mirror/reload` shard.
 
-### `@mirror/reload` as a gen_prism
+### `@mirror/refract` as the observe-act-measure triad's measure-leg (subsumes the reload-concern)
 
 The state crystal records `last_emitted_hash`. Every incoming request — any
-request, not just `tools/list` — triggers a tick. The tick recomputes
+request, not just `tools/list` — triggers a refract-tick. The tick recomputes
 `@mcp.grammars_hash`, compares it to the stored value, and emits
 `notifications/tools/list_changed` if it drifted.
 
-The grammar lives at `boot/std/mirror/reload.mirror` (see
-`docs/specs/mirror-runtime-gen-prism.md` Example 1 for the full body). It
-declares one state type (`{ last_emitted_hash: oid }`), one message type
-(any incoming method), and one `tick(state, message) -> tick_result`.
+The measurement extension lives at `shards/mirror/lens/refract.mirror` (LANDED
+2026-08-21 family-header; grammars_hash_delta action + tick-on-request behavior
+added per Q+23; see `docs/specs/mirror-runtime-gen-prism.md` Example 1 for the
+gen_prism state-type shape). It composes: state type (`{ last_emitted_hash: oid }`),
+message type (any incoming method), and one `tick(state, message) -> tick_result`.
 
-No cross-process bus is needed for the auto-reload concern. The session-local
-`mirror serve` runs the tick inline; the notification rides the same stdio
-the request arrived on.
+No cross-process bus is needed for the reload-concern (now refract-tick). The
+session-local `mirror serve` runs the tick inline; the notification rides the
+same stdio the request arrived on. Refract is the measure-leg of the
+`@mirror/trace → @kintsugi → @mirror/refract` autopoietic triad; when refract
+detects drift, kintsugi has already-acted or is about-to-act (per the loop's
+procedural composition; see Q+24 in [`docs/loop/CURRENT.md`](../loop/CURRENT.md)
+for composed-carrier vs implicit-composition pole selection).
 
 ### Boundary summary
 
@@ -387,15 +408,18 @@ the request arrived on.
 | Compute the tools list | mirror (`@mcp.tools`) |
 | Compute the grammars hash | mirror (`@mcp.grammars_hash`) |
 | The actor primitive (state in crystals) | mirror (`@mirror/runtime/gen_prism`) |
-| The reload contract | mirror (`@mirror/reload` gen_prism) |
+| The observe-act-measure triad | mirror (`@mirror/trace` → `@kintsugi` → `@mirror/refract` per [`trace-kintsugi-pipeline.md`](trace-kintsugi-pipeline.md)) |
+| The reload contract (subsumed by refract measure-leg) | mirror (`@mirror/refract` extension per Q+23; see [`shards/mirror/lens/refract.mirror`](../../shards/mirror/lens/refract.mirror)) |
 | Run the tick on incoming requests | mirror (`mirror serve --mcp` / `--lsp`) |
-| Persist `last_emitted_hash` across ticks | mirror (crystal at `refs/gen_prism/mirror_reload`) |
+| Persist `last_emitted_hash` across refract-ticks | mirror (crystal at `refs/gen_prism/mirror_refract`) |
 | Cross-session, cross-tool orchestration | spectral (daemon, the glue bus) |
 | Autonomous heartbeat for `@spectral/spawn` gen_prisms | spectral (the autonomous tick loop) |
 
-Mirror owns the auto-reload concern end-to-end via the gen_prism primitive.
-Spectral retains the cross-session bus and the autonomous heartbeat for
-`@spectral/spawn` — those genuinely need a daemon.
+Mirror owns the observe-act-measure triad end-to-end via `@mirror/trace` +
+`@kintsugi` + `@mirror/refract`; the reload-concern is subsumed by refract's
+measure-leg per Q+23 substrate-already-had-the-word audit. Spectral retains
+the cross-session bus and the autonomous heartbeat for `@spectral/spawn` —
+those genuinely need a daemon.
 
 ---
 
@@ -519,10 +543,12 @@ Concrete follow-ups, ordered:
    surface tools via annotations on actions, and `@mcp.tools` should walk
    the gestalt to emit the list.
 
-3. **Mirror: `@mirror/reload` gen_prism.**
-   Per `mirror-runtime-gen-prism.md` Example 1. Lives at
-   `boot/std/mirror/reload.mirror`. Ticks on every incoming request; emits
-   `tools/list_changed` when `@mcp.grammars_hash` drifts. The grammar IS
+3. **Mirror: `@mirror/refract` extension (subsumes prior `@mirror/reload` gen_prism plan per 2026-08-22 Q+23).**
+   Extend already-landed family-header at `shards/mirror/lens/refract.mirror`
+   (2026-08-21) with grammars_hash_delta measurement + tick-on-request behavior
+   per gen_prism shape in `mirror-runtime-gen-prism.md` Example 1. Ticks on
+   every incoming request; emits `tools/list_changed` when `@mcp.grammars_hash`
+   drifts. The grammar IS
    the spec.
 
 4. **Mirror: replace `bin/mirror-mcp` with `mirror serve --mcp`.**
@@ -530,9 +556,10 @@ Concrete follow-ups, ordered:
    directly. `.mcp.json` points at `~/.local/bin/mirror` with `args: ["serve", "--mcp"]`.
 
 5. **Spectral: cross-tool bus only.**
-   The auto-reload concern moves into mirror via `@mirror/reload`. Spectral
-   keeps the glue bus for cross-session orchestration and the autonomous
-   heartbeat for `@spectral/spawn` gen_prisms.
+   The auto-reload concern moves into mirror via `@mirror/refract` extension
+   (per 2026-08-22 Q+23; not a new `@mirror/reload` shard). Spectral keeps
+   the glue bus for cross-session orchestration and the autonomous heartbeat
+   for `@spectral/spawn` gen_prisms.
 
 Follow-ups (1)–(4) become candidate tasks. (5) is a scope reduction for
 spectral, not new work.
@@ -564,7 +591,7 @@ Update to the 2026-05-20 follow-ups above, folding Rec #92 kleinos-as-Transparen
 
 - ⚪ **(1) Close `@mirror/lsp.dispatch` + `@mirror/lsp.completion`** + add definition/references/formatting/code_actions/workspace_changed — kintsugi state; @fate seeds them as dark-region clusters accumulate
 - ⚪ **(2) `@mcp/tool` as first-class grammar annotation** — gestalt-walk tools list per @mcp.tools grammar
-- ⚪ **(3) `@mirror/reload` gen_prism** — per `mirror-runtime-gen-prism.md` Example 1; verify state on next tick
+- ⚪ **(3) `@mirror/refract` extension** (per 2026-08-22 Q+23 substrate-already-had-the-word; subsumes prior "@mirror/reload gen_prism" plan) — extend already-landed `shards/mirror/lens/refract.mirror` with grammars_hash_delta measurement + tick-on-request behavior + emit_tools_list_changed action; refract is measure-leg of observe-act-measure triad `@mirror/trace → @kintsugi → @mirror/refract` per trace-kintsugi-pipeline.md 2026-05-20
 - ⚪ **(4) Replace `bin/mirror-mcp` with `mirror serve --mcp`** — the migration Alex Q+14 named starts here
 
 ### New concrete follow-ups (post-Rec #92 + Q+9–Q+17)
