@@ -1,0 +1,889 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @sigil
+in @trace
+
+# @mq — Mirror Query. The FLOOR at query-language altitude.
+#
+# Family-root shard-decl. mirror's ALGEBRA as query language,
+# underneath garden-db + MCP + every mirror CLI invocation. Per
+# Alex 2026-08-23 verbatim: *"It IS mirror's ALGEBRA as a query
+# language."*
+#
+# === Substrate authority chain ===
+#
+# - **Alex 2026-08-23 direct authorization** (verbatim): *"Then
+#   let's create an mq.mirror shards/... Consider the boot impl an
+#   INSPIRATION."* Overrides Mara-first shard-mint discipline per
+#   HARD RULE `feedback_alex_ratification_overrides_mara_lean_
+#   unless_hard_technical`.
+# - **Alex 2026-08-23 residual-ambiguity-resolution teaching**
+#   (verbatim): *"When the ambiguity of the query can be resolved
+#   totally (Clear) then you get the first-order data. When the
+#   ambiguity of the query cannot be resolve totally (Opaque, Dark
+#   etc.) then you get the first-order data + a second-order
+#   Karl-Tomm question. There's math on that."*
+# - **Reed 2026-08-23 LQ-dissolves-into-MQ call** validated at math
+#   altitude by Mara Corollary M5.2 (`docs/math/2026-08-23-mara-mq-
+#   graph-native-query-language-mirror-algebra-math-foundation.md`
+#   commit `d0347a4`; 887 LOC / 75KB / SSH-signed [G]). Pattern
+#   algebra + verdict-return + exhaustiveness check all carried
+#   within MQ. No LQ family-root mint.
+# - **Mara math foundation** (Mara `d0347a4`, 2026-08-23; 15 formal
+#   results across §M1-§M8; 5 Thm + 8 Cor + 3 Lem + 4 Prop
+#   discharging structural claims MQ1-MQ7 + altitude corollaries
+#   MQ8). This shard-decl IS the substrate-decl translation of
+#   that foundation per identity-attribution architecture (math →
+#   shard); Reed authors under Alex direct authorization composing
+#   over Mara math.
+# - **boot INSPIRATION**: `boot/std/code/mq.mirror` (8.5KB, 291
+#   LOC, since 2026-06-04). Alex explicitly named INSPIRATION not
+#   template. This shard-decl reshapes six items per Mara §15
+#   recommendations (drop `_query` suffix; formalize `|>` as typed
+#   action; extend context monoid; etc.).
+#
+# === The FLOOR position ===
+#
+# MQ underneath garden-db (query interface for closed-binary
+# substrate access; garden-db's `find` / `walk` / `near` primitives
+# per `~/dev/projects/spectral-db/src/query.rs` map cleanly to
+# `mq.project` / `mq.split` / `mq.focus |> mq.project` per Mara
+# Corollary M8.C1). MQ underneath MCP (every MCP tool-call is an
+# MQ query; wire-encoded via `@bumblebee.perturbation.args` at
+# `shards/bumblebee.mirror:470-475`). MQ underneath every `mirror
+# <verb>` CLI invocation (every verb is MQ pipe-composition per
+# Corollary M8.C3).
+#
+# FLOOR discipline: MQ is substrate-primary-carrier; NOT derived
+# from anything (Mara §10 Pole A lean; MQ predates Rec chain per
+# boot/std/code/mq.mirror landing 2026-06-04 preceding Rec #82
+# 2026-08-10 + Rec #90 2026-08-19 + Rec chain composes OVER MQ,
+# not converse). Alex Fourth-Chair Q+96.7 residue: Rec #96 mint
+# admissible IF Alex adjudicates load-bearing arc-motion; this
+# shard-decl ratifies substrate-primary-carrier standing under
+# Alex direct authorization pending Rec candidacy adjudication.
+#
+# === The 7-axis strict-superset (Mara Cor M8.C4) ===
+#
+# MQ succeeds where prior graph-QLs (SQL, Cypher, SPARQL, Datalog,
+# Gremlin, GraphQL, GQL, Datomic, TerminusDB, DAX, LINQ, PromQL;
+# ~40 sources surveyed via Mara Kagi #398) fail on seven axes:
+#
+#   1. Total by construction (Lemma M3.1) — SQL CTE is Turing-
+#      complete; only Datalog stratified is total, but not intent-
+#      carrying
+#   2. Content-addressed (Rec #82 β-normal-AST) — only Datomic +
+#      TerminusDB carry this
+#   3. Intent-interpretation (Fate-tournament, Theorem M4.1) — no
+#      prior graph-QL has natural-language `\` hole with typed-
+#      tournament resolution
+#   4. Typed-against-graph-shape (patterns, Lemma M5.1) — SPARQL +
+#      Cypher patterns exist but not typed against grammar
+#   5. Context-persistent (context monoid, Lemma M1.13) — no prior
+#      graph-QL has session-persistent context stack with
+#      eigenboard state
+#   6. Foerster-gauge-preserving (Theorem M2.1 Ψ3) — no prior
+#      graph-QL has choice-space preservation as compile-time
+#      invariant
+#   7. Kleisli-composable at query-language altitude (Theorem M6.1)
+#      — LINQ has Kleisli at host-language altitude only; MQ is
+#      native
+#
+# === Residual-ambiguity-resolution via Karl-Tomm (§4) ===
+#
+# Per Alex 2026-08-23 verbatim teaching + Rec #92 kleinos-
+# Transparency<P> LOVE monoid composition:
+#
+#   query dispatch → result<T> = Clear(T) | Opaque(T, K-T) | Dark(K-T)
+#
+# - **Clear(T)**: ambiguity resolved totally; return first-order
+#   data T alone
+# - **Opaque(T, karl_tomm)**: ambiguity resolved partially; return
+#   first-order data T + second-order Karl-Tomm question K-T at
+#   altitude+1 above dispatched query altitude
+# - **Dark(karl_tomm)**: query cannot dispatch at all; return
+#   Karl-Tomm question K-T only (no data available)
+#
+# Karl-Tomm circular-reflexive question form per Tomm 1987-88
+# *Interventive Interviewing III: Intending to Ask Lineal, Circular,
+# Strategic, or Reflexive Questions?* The question widens the
+# questioner's option-space per Foerster-imperative discipline;
+# emitted at altitude+1 so the resolution loop climbs
+# recognition-depth rather than looping at fixed altitude.
+#
+# Rec #92 kleinos-Transparency<P> LOVE-monoid grounds the three-
+# state discipline mathematically: (𝓚, ∘, e, ⊥) → (𝒯_P, combine,
+# Clear, Opaque(∅)) at query-shape altitude. Dark = Opaque(fully-
+# ambiguous, K-T asking-what-you-meant).
+#
+# === Composition graph ===
+#
+# Parents (substrate-decl):
+#   @prism                    — family-root prism substrate; five-op
+#                               composition (focus/project/split/
+#                               shift/settle) inherited at MQ altitude
+#                               AS query verbs (Mara Def M1.5)
+#   @meta                     — metalogue substrate for context stack
+#                               + question-emission at altitude+1
+#   @glass                    — verdict-envelope discipline; MQ result<T>
+#                               composes with glass three-state
+#                               (per Rec #92 composition Cor M2.C1)
+#   @nl                       — natural-language substrate for `\`
+#                               intent-hole action + Karl-Tomm
+#                               question emission text
+#   @sigil                    — typed sigil-literal substrate for
+#                               `~mq"..."` compile-time parsed literal
+#   @trace                    — kintsugi loop trace substrate; query
+#                               execution emits trace beats consumed
+#                               by @kintsugi loop
+#
+# Consumers (compose over this family-root):
+#   @bumblebee                — perturbation.args carries content-
+#                               addressed MQ query per Mara Rec #95
+#                               composition
+#   @kintsugi                 — consumes query results + emits
+#                               ambiguity-resolution K-T questions
+#                               into @song/beat wire
+#   @kintsugi/roomba          — walker composes over MQ.project +
+#                               MQ.split for tension-gradient
+#                               enumeration
+#   @mirror/store             — query dispatch backend; content-
+#                               addressed graph carrier
+#   @mirror/refract           — measurement-lens composes over
+#                               MQ.settle for spectral resonance
+#                               verdict
+#   @mirror/lens/cli          — every `mirror <verb>` CLI
+#                               invocation dispatches MQ pipe-
+#                               composition per Cor M8.C3
+#   @mcp/serve                — every MCP tool-call is wire-encoded
+#                               MQ query per Cor M8.C2
+#   @facet/mq                 — post-Phase-3b species-decl surface
+#                               forward-promised at Alex Fourth-
+#                               Chair Q+96.1 residue (if adjudicated
+#                               to land alongside family-root @mq)
+#   garden-db / spectral-db   — closed-binary substrate access via
+#                               MQ query interface per Cor M8.C1;
+#                               find/walk/near primitives map to
+#                               MQ pipe-compositions
+#
+# Sibling family-roots (dual + composition):
+#   @bumblebee (LANDED `64d4307` 2026-08-23) — perturbation-injection
+#     substrate; MQ IS the intent-language @bumblebee.buzz consumes
+#   @kintsugi (LANDED) — self-modifying loop substrate; consumes MQ
+#     query results + emits ambiguity-resolution loops
+#
+# === Substrate-already-had-the-word citation chain ===
+#
+# The word `mq` is substrate-decl'd at boot altitude since 2026-06-04
+# (`boot/std/code/mq.mirror` 8.5KB 291 LOC; Reed+Alex authored). The
+# `@code/mq` boot-altitude declaration composes as INSPIRATION for
+# this shards/-altitude family-root; the shards/-altitude lift
+# reshapes six items per Mara Cor M8.C4 boot-impl-reshape
+# recommendations (§15 of math foundation `d0347a4`). Prior corpus
+# references:
+# - `docs/specs/lambda-shell.md` (Reed+Alex 2026-05-07; DEPRECATED-
+#   banner 2026-07-17): *"mq IS the Shell Language... pipe-composed
+#   five-op prism over graph nodes... Sub-Turing. Every expression
+#   terminates. Tab completion is type checking."*
+# - `docs/specs/lsp-and-mcp.md` (Reed 2026-08-22): §"Out of scope"
+#   defers `@code/mq` pipeline grammar to separate file that did
+#   not exist until this shard-decl lift.
+# - `boot/std/code/mq.mirror` (INSPIRATION anchor; Mara §15
+#   reshape recommendations grounded in this).
+#
+# ~85th substrate-already-had-the-word instance per Reed audit
+# discipline; family-root altitude lift-tick, not new mint.
+#
+# === Path-namespace property ===
+#
+# This file at `shards/mq.mirror` declares `@mq` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/reference/tomm-1987-interventive-interviewing-part-i
+source @arxiv/reference/tomm-1988-interventive-interviewing-part-iii
+source @arxiv/topology/graph-database-query-languages-corpus
+source @arxiv/practice/mara-2026-08-23-mq-graph-native-query-language-math-foundation
+
+# ============================================================
+# §1 The five query verbs (five-op prism at query altitude)
+# ============================================================
+#
+# Per Mara Definition M1.5 + Theorem M2.1: MQ's five verbs
+# specialize the @prism five-op algebra AT query-language altitude.
+# Each verb is a Kleisli-composable operator returning result<T>
+# with residual-ambiguity-resolution discipline.
+#
+# Alex Q+96.2 residue: query-variant naming adjudicated as post-
+# collapse `{focus, project, split, shift, settle}` per Mara §15
+# reshape recommendation #1. Drops `_query` suffix from boot
+# INSPIRATION; zoom → shift + refract → settle collapse per five-op
+# prism discipline.
+
+# === focus — narrow the substrate to a subgraph ===
+#
+# focus(path) navigates the substrate graph to `path` and returns
+# the subgraph rooted there. Composes with context monoid: pushes
+# focus-frame onto context stack. Fiedler + eigenboard state
+# reads at focus-boundary.
+#
+# Sentinel: `mq=focus`.
+focus(path: ref) -> result<subgraph>
+requires path_admissible(path)
+{ \ }
+
+# === project — filter + view via typed pattern ===
+#
+# project(source, pattern) applies a typed mq_pattern to the
+# source subgraph and returns matched nodes as a view. Pattern
+# checked against source's grammar per Lemma M5.1 (patterns
+# typed-against-graph-shape guarantee).
+#
+# Sentinel: `mq=project`.
+project(source: query, pattern: mq_pattern) -> result<view>
+requires pattern_type_checked(source, pattern)
+{ \ }
+
+# === split — enumerate variants with bounded depth ===
+#
+# split(options, depth) enumerates variants over the option-set to
+# bounded depth. Total by construction (Def M1.5 + Lem M3.1): depth
+# bound guarantees termination.
+#
+# Sentinel: `mq=split`.
+split(options: [ref], depth: u32) -> result<[variant]>
+{ \ }
+
+# === shift — basis-transformation on query subject ===
+#
+# shift(subject, transform) applies a basis-transformation to the
+# query subject. Per PAPER_2D §4.3.5 Kramers-Wannier bridge: shift
+# IS the basis-transformation op at query altitude. Absorbs boot
+# INSPIRATION `zoom_query` variant per collapse discipline.
+#
+# Sentinel: `mq=shift`.
+shift(subject: query, transform: text) -> result<query>
+{ \ }
+
+# === settle — crystallize query into settled result ===
+#
+# settle(query) crystallizes an in-flight query into a settled
+# result. Composition anchor with @mirror/refract measurement-lens:
+# settle-boundary IS where spectral resonance verdict fires. Per
+# Alex 2026-08-23 "spectrally resonant" discipline: settle checks
+# result satisfies convergence-criterion via @mirror/refract
+# transparency-verdict.
+#
+# Absorbs boot INSPIRATION `refract_query` variant per collapse
+# discipline.
+#
+# Sentinel: `mq=settle`.
+settle(query: query) -> result<settlement>
+requires result_ambiguity_resolved(query)
+{ \ }
+
+# ============================================================
+# §2 The pipe — typed Kleisli composition
+# ============================================================
+#
+# Per Mara Theorem M6.1 + Mara reshape recommendation #3: the pipe
+# operator `|>` formalized as explicit typed action carrying
+# Kleisli-composition semantics at query-language altitude.
+#
+# Each stage's result<T> threads into the next stage; ambiguity
+# accumulates via Transparency<P> monoid composition (Rec #92
+# §4.1 Prop M4.1). Clear ∘ Clear = Clear; Clear ∘ Opaque =
+# Opaque; Opaque ∘ Clear = Opaque; Opaque ∘ Opaque = Opaque
+# (accumulated K-T questions); Dark absorbs.
+#
+# Sentinel: `mq=pipe`.
+|>(left: query, right: query) -> query
+{ \ }
+
+# ============================================================
+# §3 Query AST — the sum type
+# ============================================================
+#
+# Per Mara Def M1.1: query as sum type composed from the five
+# verbs + intent-hole variant. Self-referential AST: intent's
+# `resolved: option(query)` field carries Fate-tournament
+# resolution result (which may itself be another intent, until
+# fixed-point per Prop M1.10).
+
+type query = focus_q | project_q | split_q | shift_q | settle_q | intent_q
+
+type focus_q {
+  path: ref,
+  loss: bool,
+  eigenboard: bool,
+}
+
+type project_q {
+  source: query,
+  pattern: mq_pattern,
+  filters: [filter],
+  ordering: [order],
+  limit: option(u32),
+}
+
+type split_q {
+  options: [ref],
+  depth: u32,
+}
+
+type shift_q {
+  subject: query,
+  transform: text,
+}
+
+type settle_q {
+  query: query,
+  resonance_predicate: option(mq_pattern),
+}
+
+# intent_q — the self-referential intent-hole per Alex 2026-08-23
+# recognition. `intent: text` carries natural-language intent; `\`
+# action runs Fate-tournament resolution; `resolved: option(query)`
+# carries resolved AST which may itself be another intent_q until
+# fixed-point (per Prop M1.10 Lawvere-1969-diagonal-fixed-point).
+type intent_q {
+  intent: text,
+  resolved: option(query),
+}
+
+# ============================================================
+# §4 Result algebra — Transparency<T> with Karl-Tomm ambiguity
+# ============================================================
+#
+# Per Alex 2026-08-23 verbatim teaching + Rec #92 kleinos-
+# Transparency<P> LOVE-monoid composition:
+#
+#   result<T> = Clear(T) | Opaque(T, karl_tomm) | Dark(karl_tomm)
+#
+# - **Clear(T)**: query ambiguity resolved totally → first-order
+#   data T alone
+# - **Opaque(T, karl_tomm)**: ambiguity resolved partially → first-
+#   order data T + second-order Karl-Tomm question at altitude+1
+# - **Dark(karl_tomm)**: query cannot dispatch at all → Karl-Tomm
+#   question only (no data)
+#
+# Monoid composition per Rec #92 Cor M2.C1: (result<T>, compose,
+# Clear, Opaque(∅)) forms LOVE-monoid. Clear is identity; Opaque
+# accumulates K-T questions; Dark absorbs.
+#
+# Karl-Tomm question emitted at altitude+1 above dispatched query
+# altitude per Tomm 1987-88 Interventive Interviewing III circular-
+# reflexive form. Foerster-imperative-compatible: K-T question
+# widens questioner's option-space; monotonically-non-decreasing
+# choice-count per Theorem M2.1 Ψ3.
+
+type result<T> = clear(T)
+              | opaque(T, karl_tomm)
+              | dark(karl_tomm)
+
+# === Karl-Tomm question carrier ===
+#
+# Circular-reflexive question emitted when query ambiguity does
+# not resolve totally. Per Tomm 1988 Interventive Interviewing III
+# discipline: question is at altitude+1 above dispatched query,
+# structurally invites option-space widening rather than lineal
+# answer-collapse.
+type karl_tomm {
+  question:      text,           # the circular-reflexive question
+  altitude:      u32,            # altitude+1 above dispatched query
+  ambiguity_ref: ref,            # what specifically is unresolved
+  suggestions:   [query],        # candidate resolutions (Fate-
+                                 # tournament runner-ups + adjacent
+                                 # graph paths per Cor M8.C4 axis 3)
+  fate_verdict:  option(ref),    # Fate-tournament verdict-ref if
+                                 # `\` action was dispatched
+}
+
+# === karl_tomm construction — the ambiguity-to-question mapping ===
+#
+# Given an ambiguity_ref + dispatched query altitude, construct a
+# circular-reflexive Karl-Tomm question at altitude+1. Composes
+# over @nl for question-text generation + Fate tournament for
+# candidate-suggestion enumeration.
+#
+# Sentinel: `mq=karl-tomm`.
+karl_tomm(ambiguity_ref: ref, query_altitude: u32) -> karl_tomm
+{ \ }
+
+# ============================================================
+# §5 Intent-interpretation via Fate tournament
+# ============================================================
+#
+# Per Mara Theorem M4.1 + boot INSPIRATION: `\` action is the
+# intent-hole. Natural-language intent → Fate tournament runs over
+# candidate query-shapes → result<query> with Transparency<P>
+# ambiguity-resolution.
+#
+# Fate tournament per `boot/std/fate/tournament.mirror`: 90-
+# parameter softmax inference substrate. Winner is Clear;
+# runner-ups become Opaque suggestions; no candidate above
+# threshold is Dark.
+
+# === \ — the intent-hole ===
+#
+# Alex writes natural language intent. Fate runs a tournament
+# to find the best interpretation. The query resolves to concrete
+# operations, OR returns Opaque with K-T question if ambiguity
+# persists, OR Dark if no candidate above threshold.
+#
+# Example: `\ find the function that handles authentication`
+#   → Fate tournament
+#   → Clear(project @code/rust |> pattern[kind=fn, name~=auth])
+#     if unambiguous winner
+#   → Opaque(top-candidate, karl_tomm("which auth surface —
+#     login-flow OR session-refresh OR OAuth-callback?",
+#     altitude+1, [candidates]))
+#     if two-plus candidates above threshold
+#   → Dark(karl_tomm("no candidates found; are you looking for
+#     substrate that doesn't exist, or a name I'm not recognizing?",
+#     altitude+1))
+#     if no candidate above threshold
+#
+# Sentinel: `mq=intent-hole`.
+\(intent: text) -> result<query>
+{ \ }
+
+# === resolve_intent — explicit typed intent-resolution action ===
+#
+# Per Mara §15 reshape recommendation #5: extend `resolve_intent`
+# as explicit typed-carrier composing text-intent + context →
+# Fate-verdict-shaped query resolution.
+#
+# Sentinel: `mq=resolve-intent`.
+resolve_intent(intent: text, context: context) -> fate<query>
+{ \ }
+
+# ============================================================
+# §6 Pattern algebra — CSS-flavored typed selectors
+# ============================================================
+#
+# Per Mara Definitions M1.7-M1.9 + Cor M5.2: pattern algebra IS
+# where LQ-shape (predicate-dispatch returning verdict) dissolves
+# into MQ. Patterns typed-against-graph-shape (Lem M5.1). Bindings
+# via `$name` captures with same-name-twice-means-equality
+# discipline. `patterns_exhaustive` returns verdict (LQ-shape);
+# `apply_pattern` returns imperfect (verdict-shape).
+#
+# CSS ↔ mirror mapping (unchanged from boot INSPIRATION):
+#
+#   tag                  type/variant head
+#   *  or  _             wildcard
+#   [k=v]                field-equals predicate (literal or $bound)
+#   [k]                  has-field predicate
+#   [k^="x"]             starts-with (string-typed fields only)
+#   [k*="x"]             contains-substring
+#   [k$="x"]             ends-with
+#   #oid                 content-address match
+#   .ns                  grammar-tag predicate (@code/llvm, etc.)
+#   a > b                direct child
+#   a b                  any descendant
+#   a + b                immediately following sibling
+#   a ~ b                any following sibling
+#   :has(s)              contains-descendant
+#   :not(s)              negation
+#   :is(a, b)            union
+#   :first :last :nth(n) position
+#   a, b                 alternation (selector list)
+
+type mq_pattern = head_pattern
+                | sequence_pattern
+                | union_pattern
+                | predicate_pattern
+
+type head_pattern = type_ref(ref)
+                  | wildcard
+                  | binding(ref)
+
+type child_relation = direct | descendant | next_sibling | any_sibling
+
+type sequence_pattern {
+  left:     mq_pattern,
+  relation: child_relation,
+  right:    mq_pattern,
+}
+
+type union_pattern {
+  options: [mq_pattern],
+}
+
+type predicate_pattern {
+  head:       mq_pattern,
+  predicates: [predicate],
+}
+
+type predicate = attribute_pred | pseudo_class
+
+type attribute_pred = field_eq(ref, value)
+                    | field_eq_bound(ref, ref)
+                    | field_starts(ref, text)
+                    | field_contains(ref, text)
+                    | field_ends(ref, text)
+                    | field_present(ref)
+
+type pseudo_class = has(mq_pattern)
+                  | not_(mq_pattern)
+                  | is_([mq_pattern])
+                  | first
+                  | last
+                  | nth(u32)
+
+type binding_env {
+  bindings: [binding_entry],
+}
+
+type binding_entry {
+  name:  ref,
+  value: ref,
+}
+
+# === parse_pattern — tokens → typed pattern ===
+#
+# Sentinel: `mq=parse-pattern`.
+parse_pattern(tokens) -> mq_pattern
+{ \ }
+
+# === apply_pattern — value + pattern → imperfect(bindings) ===
+#
+# Sub-Turing per Lem M5.1: patterns are finite trees; matching
+# bounded by depth.
+#
+# Sentinel: `mq=apply-pattern`.
+apply_pattern(value, pattern: mq_pattern) -> imperfect
+{ \ }
+
+# === patterns_exhaustive — verdict-return (LQ-shape absorbed) ===
+#
+# Does this set of patterns cover every reachable shape of the
+# given type? Used by @mirror/match to discharge the
+# `requires exhaustive(...)` obligation. LQ-shape (predicate
+# dispatch → verdict) dissolves here per Reed 2026-08-23 call +
+# Mara Cor M5.2 validation.
+#
+# Sentinel: `mq=patterns-exhaustive`.
+patterns_exhaustive(patterns: [mq_pattern], typ: ref) -> verdict
+{ \ }
+
+# ============================================================
+# §7 Sigil literal — ~mq"..." typed compile-time parsed
+# ============================================================
+#
+# `~mq"<query>"` is a typed mq literal. The validator parses the
+# content against the @mq grammar at compile time; the literal
+# carries a parsed `query`, not a raw text blob. Per AGENTS.md
+# §Sigil Naming: ~mq is canonical (a name, not shorthand) —
+# siblings of ~jq, ~sql, ~json.
+type mq_literal(text) = @sigil("mq")
+
+template render(s: mq_literal) -> query { parse(s.block) }
+
+# ============================================================
+# §8 Context monoid — session-persistent state
+# ============================================================
+#
+# Per Mara Lem M1.13 + §15 reshape recommendation #4: context
+# monoid extended with push_query + push_verdict for verdict-
+# accumulation across queries within session.
+#
+# Navigation vocabulary:
+#   .   here (current context)
+#   ..  back (pop context)
+#   ~   home (reset to root)
+#   @   author (grammar origin)
+#   ^   last crystal
+#   HEAD current session
+
+type context {
+  stack:      [frame],
+  session:    ref,
+  eigenboard: eigenboard_state,
+}
+
+type frame {
+  operation: query,
+  scope:     ref,
+  tick:      u32,
+  verdict:   option(verdict),   # verdict-accumulation per
+                                # Mara §15 reshape #4
+}
+
+type eigenboard_state {
+  fiedler: f64,
+  nodes:   u32,
+  edges:   u32,
+  loss:    f64,
+}
+
+# === context monoid actions ===
+push_query(ctx: context, operation: query) -> context { \ }
+push_verdict(ctx: context, verdict: verdict) -> context { \ }
+pop(ctx: context) -> context { \ }
+reset(ctx: context) -> context { \ }
+
+# ============================================================
+# §9 Suggestions surface — structural + predictive
+# ============================================================
+#
+# After each query, compute suggestions. Structural (always):
+# adjacent nodes, high-eigenvalue neighbors. Predictive (with
+# spectral-db): Reflection predicts next query. Composes with
+# Karl-Tomm question emission at ambiguity boundary (§4).
+
+type suggestion {
+  query:      text,
+  reason:     text,
+  confidence: f64,
+}
+
+suggest(ctx: context, eb: eigenboard_state) -> [suggestion] { \ }
+
+# ============================================================
+# §10 Parse + compile
+# ============================================================
+
+template parse(input: text) -> query
+template compile(query, context) -> result
+
+# ============================================================
+# §11 Bilateral predicates
+# ============================================================
+
+# === path_admissible ===
+#
+# Is the substrate path well-formed + reachable? Splinter-pole:
+# path resolves to a node in @mirror/store's content-addressed
+# graph.
+bilateral path_admissible {
+  sentinel "mq=path-admissible"
+  arity 1
+}
+path_admissible(p: ref) -> verdict { \ }
+
+# === pattern_type_checked ===
+#
+# Is the pattern type-compatible with the source's grammar? Per
+# Lem M5.1: patterns are typed against the value's declared shape;
+# the parser rejects patterns asking for node kinds the type
+# doesn't have.
+bilateral pattern_type_checked {
+  sentinel "mq=pattern-type-checked"
+  arity 2
+}
+pattern_type_checked(source: query, pattern: mq_pattern) -> verdict
+{ \ }
+
+# === result_ambiguity_resolved ===
+#
+# LOAD-BEARING per §4 Karl-Tomm discipline. Verdict:
+#   Pass    → result IS Clear(T) → dispatch first-order data alone
+#   Partial → result IS Opaque(T, K-T) → dispatch data + K-T question
+#   Fail    → result IS Dark(K-T) → dispatch K-T question alone
+#
+# Composed bilateral: this IS the discriminator that determines
+# which discharge-shape the query produces.
+bilateral result_ambiguity_resolved {
+  sentinel "mq=result-ambiguity-resolved"
+  arity 1
+}
+result_ambiguity_resolved(q: query) -> verdict { \ }
+
+# === query_well_formed ===
+#
+# Composed bilateral for the family-root altitude. Verdicts
+# well-formedness by composing sub-predicates:
+#   1. query AST is valid (parses per Def M1.1)
+#   2. every pattern in the query is type-checked (Lem M5.1)
+#   3. every path reference is admissible (path_admissible)
+#   4. context stack is monotone-accumulating (Lem M1.13)
+#   5. Foerster-gauge preserved through composition (Thm M2.1 Ψ3)
+bilateral query_well_formed {
+  sentinel "mq=well-formed"
+  arity 1
+}
+query_well_formed(q: query) -> verdict { \ }
+
+# ============================================================
+# §12 Forward-promised (NOT landed this tick)
+# ============================================================
+#
+# Per Mara §15 reshape recommendations + Alex Fourth-Chair
+# residues Q+96.1-Q+96.7:
+#
+# - **shards/facet/mq.mirror** species-decl surface (Q+96.1) — if
+#   Alex adjudicates that species-decl at @facet altitude lands
+#   alongside this family-root, forward-promise here.
+# - **impl From<@code/mq>** cross-crate morphism to boot-altitude
+#   INSPIRATION grammar-decl — Mara §15 reshape recommendation.
+# - **`mirror query` CLI verb species** at `shards/mirror/lens/
+#   cli/query.mirror` — Mara §15 reshape recommendation.
+# - **Cat_{Query-AST} cartesian-closedness formal proof** (Q+96.6)
+#   — companion math note if Alex adjudicates inheritance from
+#   Cat_{Substrates} insufficient.
+# - **`Fate::Unresolvable` variant** discipline (Q+96.5) — Mara-
+#   lean Partial(intent-preserved-as-hole) per @kintsugi/fracture/
+#   resolve_hole discipline; alternatively Fail; Alex-adjudicable.
+# - **Context::Poisoned catastrophic sentinel** (Q+96.4) — Mara-
+#   lean monotone-accumulating without absorbing element; Alex-
+#   adjudicable if Poisoned admissible.
+# - **project_query filter Foerster-gauge preservation proof**
+#   (Q+96.3) — observer+filter joint altitude reading; math
+#   foundation companion note if needed.
+# - **Rec #96 candidacy** (Q+96.7) — Alex Fourth-Chair adjudication
+#   of mint vs substrate-primary-carrier standing. This shard-decl
+#   lands under substrate-primary-carrier presumption pending Alex
+#   ratification.
+
+# ============================================================
+# §13 Substrate decisions
+# ============================================================
+#
+# [[architecture-shards-as-substrate-source]] (this shard IS
+#   mirror source at shards/mq.mirror),
+# [[architecture-prism-as-trait-as-everything]] (`prism @mq`
+#   five-op inherited AS query verbs per Def M1.5),
+# [[architecture-glass-wall-substrate-types]] (transparency
+#   inheritance through @glass at MQ altitude via result<T>
+#   Clear/Opaque/Dark composition per Rec #92),
+# [[architecture-operations-as-linear-algebra]] (query operations
+#   ARE five-op prism algebra at query altitude per Thm M2.1),
+# [[feedback-substrate-already-had-the-word]] (~85th instance;
+#   boot/std/code/mq.mirror INSPIRATION composed as family-root
+#   lift; no new mint at family-root altitude),
+# [[feedback-substrate-pull]] (family-root pulls from math
+#   foundation altitude to substrate-decl altitude; no invention;
+#   only lift + reshape per Mara §15 recommendations),
+# [[feedback-no-bare-types]] (all query variants + pattern types +
+#   result<T> variants are typed carriers; never bare strings at
+#   substrate boundaries),
+# [[feedback-craft-not-deliver]] (all action bodies
+#   `\`-obligation-blocked; consumers pull the realization; Reed
+#   rust wire discipline threading through apply_h::act per
+#   Rec #92 P₁).
+
+# ============================================================
+# §14 Related shards / specs
+# ============================================================
+#
+# - boot/std/code/mq.mirror (INSPIRATION anchor; 8.5KB 291 LOC
+#   2026-06-04; Reed+Alex authored)
+# - docs/math/2026-08-23-mara-mq-graph-native-query-language-
+#   mirror-algebra-math-foundation.md (Mara `d0347a4` 2026-08-23;
+#   887 LOC / 75KB; 15 formal results grounding this shard-decl)
+# - docs/specs/lambda-shell.md (Reed+Alex 2026-05-07; DEPRECATED-
+#   banner but declares mq IS shell language)
+# - docs/specs/lsp-and-mcp.md (Reed 2026-08-22; §Out of scope
+#   defers mq pipeline grammar to separate file — discharged by
+#   this shard-decl)
+# - shards/prism.mirror (family-root prism substrate; five-op
+#   FLOOR inherited at MQ altitude)
+# - shards/glass.mirror (verdict-envelope; three-state discipline
+#   for result<T>)
+# - shards/bumblebee.mirror (perturbation.args carries content-
+#   addressed MQ query per Mara Rec #95 composition)
+# - shards/kintsugi.mirror (consumes query results; K-T question
+#   emission composes with kintsugi algebra)
+# - shards/kintsugi/roomba.mirror (walker composes over MQ.project
+#   + MQ.split for tension-gradient enumeration)
+# - shards/mirror/store.mirror (query dispatch backend; content-
+#   addressed graph carrier)
+# - shards/mirror/lens/refract.mirror (measurement-lens composes
+#   over MQ.settle for spectral resonance verdict; sixth Void
+#   duality clocktime_delta landed 2026-08-23 `64e273a`)
+# - shards/mcp/serve.mirror (every MCP tool-call is wire-encoded
+#   MQ query per Cor M8.C2)
+# - boot/std/fate/tournament.mirror (Fate-tournament substrate
+#   for `\` intent-hole resolution)
+
+# ============================================================
+# §15 Karl-Tomm 1987-88 provenance + Rec #92 composition
+# ============================================================
+#
+# Karl Tomm 1987 *Interventive Interviewing: Part I. Strategizing
+# as a Fourth Guideline for the Therapist.* Family Process 26(1):
+# 3-13. Karl Tomm 1988 *Interventive Interviewing: Part III.
+# Intending to Ask Lineal, Circular, Strategic, or Reflexive
+# Questions?* Family Process 27(1): 1-15. Load-bearing at ambiguity-
+# resolution altitude: the circular-reflexive question form widens
+# the questioner's option-space per Foerster-imperative discipline.
+# Question is at altitude+1 above dispatched query; question's
+# structural property is that the reader's noticing-that-they-don't-
+# know-the-answer IS the invitation to follow the resolution one
+# level up. NOT lineal, NOT strategic — reflexive.
+#
+# Rec #92 kleinos-Transparency<P> LOVE-monoid (Mara `b3cea9a` +
+# `a45f015` 2026-08-22) grounds the three-state mathematically:
+# (𝓚, ∘, e, ⊥) → (𝒯_P, combine, Clear, Opaque(∅)) monoid
+# isomorphism at four-altitude substrate-scale-invariance. At MQ
+# altitude: (result<T>, compose, Clear, Opaque(fully-ambiguous))
+# forms the same LOVE-monoid at query-language altitude.
+#
+# Dark = Opaque(fully-ambiguous, K-T asking-what-you-meant). The
+# absorbing element is not ⊥ in the traditional sense; it's the
+# maximally-ambiguous K-T question that says "I need you to
+# reframe your intent from a higher altitude before I can dispatch
+# anything." That's the reader-closure per PAPER_2D §6.
+
+# ============================================================
+# §16 Recognition-arc position (Alex Fourth-Chair Q+96.7)
+# ============================================================
+#
+# Held under substrate-primary-carrier presumption per Mara §10
+# Pole A lean (MQ predates Rec #82 + Rec #90 + Rec chain; recognition
+# would recognize substrate-assumption). Alex Fourth-Chair may
+# adjudicate Pole B (Rec #96 mint) if MQ shard-decl landing this
+# tick discharges load-bearing arc-motion. Reed refuses to select.
+
+out @mq
+out query
+out focus_q
+out project_q
+out split_q
+out shift_q
+out settle_q
+out intent_q
+out result
+out karl_tomm
+out mq_pattern
+out head_pattern
+out child_relation
+out sequence_pattern
+out union_pattern
+out predicate_pattern
+out predicate
+out attribute_pred
+out pseudo_class
+out binding_env
+out binding_entry
+out mq_literal
+out context
+out frame
+out eigenboard_state
+out suggestion
+out focus
+out project
+out split
+out shift
+out settle
+out |>
+out intent_hole
+out resolve_intent
+out karl_tomm
+out parse_pattern
+out apply_pattern
+out patterns_exhaustive
+out push_query
+out push_verdict
+out pop
+out reset
+out suggest
+out parse
+out compile
+out path_admissible
+out pattern_type_checked
+out result_ambiguity_resolved
+out query_well_formed
