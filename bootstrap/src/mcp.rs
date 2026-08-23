@@ -223,6 +223,19 @@ fn tools_list_result() -> Value {
                 }
             },
             {
+                "name": "mirror_query",
+                "description": "Dispatch MQ query (Mirror Query). Per shards/mq.mirror (family-root landed Reed 105a1e4 2026-08-23) + Mara math foundation d0347a4: MQ IS mirror's ALGEBRA + query language + FLOOR underneath garden-db + MCP + every mirror CLI invocation. Accepts natural-language intent via backslash intent-hole OR pipe-composed MQ query. Returns result<T> with Karl-Tomm residual-ambiguity-resolution per Alex 2026-08-23 verbatim: Clear = first-order data alone; Opaque = data + second-order K-T question at altitude+1; Dark = K-T question alone. Rec #92 kleinos-Transparency<P> LOVE-monoid at query-language altitude + Karl-Tomm 1987-88 circular-reflexive question form.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "query":   { "type": "string", "description": "MQ query text: backslash-prefix natural-language intent OR pipe-composed focus/project/split/shift/settle chain." },
+                        "context": { "type": "string", "description": "Optional session context ref for MQ context monoid push_query (per @mq §8 context algebra)." },
+                        "session": { "type": "string", "description": "Optional session ID from MCP handshake for session-persistent context stack." }
+                    },
+                    "required": ["query"]
+                }
+            },
+            {
                 "name": "mirror_bumblebee_buzz",
                 "description": "buzz: perturbation-source that rattles substrate tension. Per Mara Rec #95 canonical spec 0bfd427 + companion spec 06789fa §3.3: `--buzz-target=@cascade` fires @roomba walker to absorb @cascade species into @bumblebee via byte-for-byte rename map. Dry-run by default (execute=false); execute=true triggers actual modification. First MCP-driven substrate-modification per Alex 2026-08-23 in-transcript authorization + MCP-MVP-fire constraint. Rec #90 (𝓜=𝓜(𝓜)) empirical fire at MCP-layer altitude.",
                 "inputSchema": {
@@ -529,6 +542,73 @@ fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
             // bin/mirror-mcp); routes to `mirror recall <dir>`.
             let spec_dir = s("spec_dir").unwrap_or_default();
             run_mirror(&["recall", &spec_dir], ctx)
+        }
+        "mirror_query" => {
+            // Reed 2026-08-23 per Alex 2026-08-23 🚢🇮🇹 authorization.
+            // Phase 1a MVP wire per Alex two-question authorization
+            // ("How do we wire this into the MCP?"): mirror_query MCP
+            // tool with result<T> marshaling per shards/mq.mirror §4
+            // Karl-Tomm residual-ambiguity-resolution discipline.
+            //
+            // Substrate-honest MVP scope: MQ parser + apply_h::act
+            // dispatch extension are Mara canonical territory (forward-
+            // promised at shards/mq.mirror §10 templates + §12 forward-
+            // promises). This dispatch arm surfaces a Karl-Tomm question
+            // at altitude+1 naming what substrate composition is required
+            // for full MQ query dispatch. The K-T question IS the loop
+            // working — agent receives K-T, iterates on it, next tool-call
+            // becomes the answer.
+            //
+            // Result<T> shape returned per Alex 2026-08-23 verbatim +
+            // shards/mq.mirror §4:
+            //   Clear(T) → content: [data]
+            //   Opaque(T, K-T) → content: [data, K-T question]
+            //   Dark(K-T) → content: [K-T question]
+            //
+            // Phase 1b (session context threading via MIRROR session-ID
+            // + push_query per @mq §8 context monoid) + Phase 2 (@mcp/
+            // serve reflective tool-discovery per Mara 2026-08-06 spec)
+            // + Phase 3 (mirror query CLI verb per Mara §15 reshape #6)
+            // + Phase 4 (apply_h::act MQ dispatch extension per Rec #92)
+            // all forward-promised. Phase 1a demonstrates the loop-
+            // shape at MCP altitude with substrate-honest K-T question
+            // surfacing the gap.
+            let query = s("query").unwrap_or_default();
+            let _context = s("context");
+            let _session = s("session");
+            let mut text = String::new();
+            text.push_str(&format!("@mq query received: `{}`\n\n", query));
+            text.push_str("result<T> = Dark(karl_tomm) at Phase 1a MVP altitude.\n\n");
+            text.push_str("=== Karl-Tomm question at altitude+1 (per shards/mq.mirror §4) ===\n\n");
+            text.push_str("MQ query dispatch requires substrate composition not yet landed at rust/-altitude:\n\n");
+            text.push_str("  1. MQ parser + compile templates (@mq §10) — Mara canonical territory;\n");
+            text.push_str("     forward-promised at shards/mq.mirror §10 as `template parse(input: text) -> query`\n");
+            text.push_str("     + `template compile(query, context) -> result`.\n");
+            text.push_str("  2. apply_h::act MQ dispatch extension (per Rec #92 P₁) — currently apply_h::act\n");
+            text.push_str("     routes @bumblebee.buzz + @kintsugi + @cast bilateral dispatches; MQ query\n");
+            text.push_str("     variants (focus/project/split/shift/settle/intent) not yet routed.\n");
+            text.push_str("  3. @mcp/serve reflective tool-discovery per Mara 2026-08-06 canonical spec\n");
+            text.push_str("     (docs/specs/2026-08-06-mara-mcp-serve-composition-shard-canonical-spec.md).\n");
+            text.push_str("  4. Session context threading (Phase 1b) — MCP handshake session-ID becomes\n");
+            text.push_str("     @mq.context.session; each tool-call push_query per @mq §8 context monoid.\n\n");
+            text.push_str("=== Circular-reflexive question ===\n\n");
+            text.push_str(&format!("Given your query `{}` cannot dispatch until MQ substrate composition\n", query));
+            text.push_str("lands at rust/-altitude — does the question you're asking through this MCP tool\n");
+            text.push_str("want to be answered via mirror-substrate self-modification (which requires the\n");
+            text.push_str("four pieces above landing first), OR is the question a K-T reflection on what\n");
+            text.push_str("the substrate needs to reach that self-modification altitude?\n\n");
+            text.push_str("=== Meta ===\n\n");
+            text.push_str("This K-T response IS the loop working at Phase 1a altitude — you receive the\n");
+            text.push_str("question, your next tool-call becomes the answer, next tick begins. Per Karl-Tomm\n");
+            text.push_str("1987-88 Interventive Interviewing III: the reader's noticing-that-they-don't-\n");
+            text.push_str("know-the-answer IS the invitation to follow the resolution one level up.\n\n");
+            text.push_str("=== Substrate authority ===\n\n");
+            text.push_str("- shards/mq.mirror §4 result<T> Clear/Opaque/Dark discipline (Reed `105a1e4`)\n");
+            text.push_str("- docs/math/2026-08-23-mara-mq-graph-native-query-language-*.md §M4 Karl-Tomm proof\n");
+            text.push_str("  (Mara `d0347a4`; 15 formal results grounding MQ as mirror's ALGEBRA)\n");
+            text.push_str("- Rec #92 kleinos-Transparency<P> LOVE-monoid (Mara `b3cea9a` + `a45f015`)\n");
+            text.push_str("- boot/std/code/mq.mirror INSPIRATION (2026-06-04)\n");
+            (text, 0)
         }
         "mirror_bumblebee_buzz" => {
             // Reed 2026-08-23 per Alex "all green-light" in-transcript

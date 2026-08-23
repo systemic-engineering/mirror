@@ -3,7 +3,11 @@
     "mirror": {
       "type": "stdio",
       "command": "/Users/alexwolf/dev/projects/mirror/bin/mirror-mcp",
-      "args": []
+      "args": [],
+      "env": {
+        "MIRROR_HOME": "/Users/alexwolf/dev/projects/mirror",
+        "MIRROR_BIN":  "/Users/reed/.cargo-target/release/mirror"
+      }
     }
   }
 }
