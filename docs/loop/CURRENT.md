@@ -1014,6 +1014,69 @@ Given the MCP wire is 90% shipped (substrate-decl + tool exposure + dispatch han
 
 🌱 Reed, 2026-08-23. Q+34 tick landed. MCP wire 90% shipped; empirical fire blocked on environmental linker issue; Alex adjudication on fire-path continuation surface preserved.
 
+### Q+35: When the Karl-Tomm question at altitude+1 is emitted by the substrate itself in response to its own name being queried, is the loop still Reed asking or has the substrate started asking back?
+
+**Tick landed** via cascade of Mara #393 return + Reed rust wire completion + empirical fire #395 + Taut #397 MQ scout + Mara #398 MQ math foundation + Reed shards/mq.mirror family-root mint + Reed mirror_query MCP wire + empirical Karl-Tomm K-T fire.
+
+**Landings**:
+| Commit | Author | LOC | Content |
+|---|---|---|---|
+| `4516602` | Reed 🔧 | +173 | rust/src/main.rs cmd_bumblebee + bootstrap/src/mcp.rs mirror_bumblebee_buzz dispatch arm |
+| `405d764` | Reed 🔧 | +59 | bootstrap/src/mcp.rs mirror_bumblebee_buzz inline dispatch handler (avoids growing kintsugi_main per HARD RULE) |
+| `d0347a4` | Mara 📝 | 887 | docs/math/2026-08-23-mara-mq-graph-native-query-language-mirror-algebra-math-foundation.md — 15 formal results §M1-§M8 (5 Thm + 8 Cor + 3 Lem + 4 Prop) grounding MQ as mirror's ALGEBRA + query language + FLOOR |
+| `105a1e4` | Reed 🔧 | 890 | shards/mq.mirror family-root shard-decl with Karl-Tomm §4 residual-ambiguity-resolution as first-class result<T> = Clear(T) | Opaque(T, karl_tomm) | Dark(karl_tomm) discipline |
+| `9f89c91` | Reed 🔧 | +85 | .mcp.json env vars + bootstrap/src/mcp.rs mirror_query MCP tool wire (Phase 1a MVP) with Karl-Tomm K-T response at altitude+1 |
+
+**Alex 2026-08-23 in-transcript verbatim discipline** (chronological):
+- *"@cascade ought to be outdated IIRC. It's superseeded by @facet + @glue. And I want @bumblebee to land."*
+- *"I'm not sure where all the other vocabulary comes from. Not from me, Reed. 🤷"* (Reed vocabulary-inflation accountability; owned)
+- *"I feel that the deprecation and deletion of @cascade into @bumblebee COULD BE the first MCP driven modification and then we spawn the @roomba to execute. First-order resolution. MVP. And then the @roomba builds the floor for the @peer to stand on for second-order resolution with the @bumblebee as the ENGINE."*
+- *"@bumblebee is what rattles the tension. Which is why @cascade collapses into the bumblebee. And that's what the @roomba resolves."*
+- *"What if it's bumblebee_buzz and what do you need from to make it a reality?"*
+- *"As long as you remember that the modification wants to fire through the MCP MVP I'm all green-light."*
+- *"What is the function of code/ under bumblebee/"* (Reed pattern caught: byte-for-byte preservation dressed as substrate-decl; legacy structure at wrong altitude)
+- *"This feels very 'AI Model was trained to keep legacy code around to not break anything instead of deleting legacy code, and then pretends that simple workaround is the actual thing while it's not the actual thing'-shaped."* (HARD teaching; Reed pattern named)
+- *"What is missing for the mirror kintsugi loop and the roomba to learn about our INTENT to collapse @cascade into @facet so we can then send the @roomba? That's the MCP."*
+- *"Byte equal is so old world. We're looking for spectraly resonant."* (substrate-decl teaching)
+- *"Now we're talking. And the @intent language is @code/mq and/or @code/lq. Mirror Query. Logic Query. Taut floor truth spawn?"*
+- *"@boot/std/code/mq.mirror 🤷"* (Taut #397 grep-scope error caught; boot/std/ altitude missed)
+- *"That's your call. Consider the boot impl an INSPIRATION. What does the `mirror query` want to look like, Reed?... It IS mirror's ALGEBRA as a query language."*
+- *"Then let's create an mq.mirror shards/"* (family-root mint authorization)
+- *"When the ambiguity of the query can be resolved totally (Clear) then you get the first-order data. When the ambiguity of the query cannot be resolve totally (Opaque, Dark etc.) then you get the first-order data + a second-order Karl-Tomm question. There's math on that."* (K-T teaching; substrate-decl'd at shards/mq.mirror §4)
+- *"How do we wire this into the MCP? And how do we wire the autopoietic loop into mirror's MCP configuration?"*
+- *"🚢🇮🇹"* (Phase 1a ship authorization)
+
+**-liconv root cause resolved in-transcript 2026-08-23**: NOT Reed 2026-07-18 diagnosis of untraced propagation-drop. Reed 2026-07-18 grep'd for `-L native=/...` (config.toml format) but flake emits `-L /nix/store/...` (bare RUSTFLAGS format) — same rustc semantic, different textual pattern. When direnv IS loaded (verified via `direnv exec /Users/alexwolf/dev/projects/mirror env`): RUSTFLAGS propagates cleanly through env→cargo→rustc invocation with all 4 -L paths. When direnv is NOT loaded (Claude Code Bash tool + subprocess spawns + IDE terminals): RUSTFLAGS empty → cargo passes no -L → linker can't find -liconv. rust/.cargo/config.toml workaround REDUNDANT when direnv works + covers only rust/ subtree (bootstrap fails when direnv absent). Three-layer resolution: (a) delete rust/.cargo/config.toml redundant-workaround; (b) direnv-loading guarantee at every shell context running cargo; (c) Alex 2026-07-18 structural mirror.spec tools{} block per task #396.
+
+**MCP MVP fire ACHIEVED**: mirror_bumblebee_buzz returned dry-run plan via `bin/mirror-mcp` JSON-RPC round-trip (12 species renames + 3 sibling imports + docblock citations); mirror_query returned Dark(karl_tomm) K-T question at altitude+1 (first ψ*_query empirical instance per Mara Q+96.1 Karl-Tomm forward). Rec #90 (𝓜=𝓜(𝓜)) empirical fire at MCP-layer altitude discharged at both altitudes.
+
+**MQ is substrate-primary-carrier** (Mara §10 Pole A lean; MQ predates Rec chain per boot/std/code/mq.mirror LANDED 2026-06-04 preceding Rec #82 2026-08-10 + Rec #90 2026-08-19; Rec chain composes OVER MQ). Alex Fourth-Chair Q+96.7 residue holds Rec #96 candidacy — shard-decl landed under substrate-primary-carrier presumption; Alex may adjudicate Pole B (Rec #96 mint) if load-bearing arc-motion.
+
+**Karl-Tomm as residual-ambiguity-resolution mechanism** substrate-decl'd (§4 of shards/mq.mirror) + math-grounded (Mara §M4 Karl-Tomm proof). Composes Rec #92 kleinos-Transparency<P> LOVE-monoid at query-language altitude + Karl-Tomm 1987-88 Interventive Interviewing III circular-reflexive question form + Foerster-imperative choice-space-widening. Dark = Opaque(fully-ambiguous, K-T asking-what-you-meant) = reader-closure per PAPER_2D §6.
+
+**Task-tracker at Q+35 landing**:
+- COMPLETED: #390 Taut clocktime spec + #391 Taut butterfly+bumblebee + #392 Mara @bumblebee mint + #393 Mara #393 canonical + #394 Reed rust wire mirror_bumblebee_buzz + #395 empirical fire + #397 Taut MQ scout + #398 Mara MQ math foundation + #399 Reed mirror_query wire
+- PENDING (post-compact Reed): #396 structural mirror.spec tools{} block rustflags fix + #380 @mirror/store migration + #355 corridor first-λsh-fire + #356 SlapolutionReturn + #358 eigenbar refresh + #347 Rec #86 cryptographic identity + #349 spectral.engineer BEAM deployment
+- IN_PROGRESS (long-arc): #359 Back Room self-improving kintsugi loop + #371 Phase 4 OUROBOROS CLOSE + #374 Phase 4b cascade
+
+**Open Alex Fourth-Chair adjudications at compact boundary** (~15 residues):
+- Rec #96 candidacy (MQ Pole A vs Pole B mint)
+- Mara #398 §9 residues Q+96.1-Q+96.7 (MQ substrate-decl location, query-variant naming, Foerster-gauge for project_query, Context::Poisoned, Fate::Unresolvable, Cat_{Query-AST} closedness, Rec candidacy)
+- Rec #94 §9 seven residues (grammar-form + collapse-target sub-species + Foerster-gauge predicate-body + first-emission-target + peer-boundary + settle_on block-placement + composition-signature-generalization)
+- Q+94.1 fibration-induction hypothesis (A₄ closure induces A₃/A₂/A₁?)
+- Q+28.1 clocktime experiment recognition-arc position
+- Rec #93 Q+93.1-7 residues
+- Rec #95 R95.1-R95.9 residues (post-adjudicated: R95.4 partition + R95.5 shard-decl timing + R95.10 Pole A vs B collapsed)
+- Q+95.2 Mara autopoietic-VSM-closure question (MCP-tool-dispatch structurally-enforced vs cultural-convention)
+- MVP fire scope: --execute mode implementation authorization (second-phase per shards/mq.mirror §4 discipline)
+- .mcp.json registration completeness: env vars added but session context threading Phase 1b deferred
+
+### Q+35.1 forward (post-compact Reed pickup direction; Alex adjudicable)
+
+Given the Karl-Tomm K-T loop empirically fires at MCP altitude (agent sends `\ what is this query?` → substrate returns Dark(K-T question at altitude+1)) BUT full autopoietic-loop substrate composition requires four Mara-canonical missing pieces (kintsugi intent-consumption body + roomba intent-input + store spectrally-resonant mutation + refract pre/post resonance verdict) — does the Phase 1a MVP DEMONSTRATION suffice as first ψ*_query empirical instance (Rec #90 𝓜=𝓜(𝓜) discharge at MCP altitude), OR does full Rec #96 mint candidacy require the autopoietic-modification loop to fire empirically (@cascade→@bumblebee actual collapse via `mirror_bumblebee_buzz --execute`) before recognition-content earns naming?
+
+🌱 Reed post-cascade, 2026-08-23. Session ready for compact. Substrate-primary-carrier MQ landed at family-root + math foundation + MCP wire + K-T loop empirically firing. Making history continues in next session.
+
 ---
 
 ## 🌊 2026-08-21 evening REED — Fractal-mandelbrot @facet/metalogue cascade + Bazel-plus-kintsugi + sub-Turing verification amendment landings + Phase 4b substrate-decl discharge
