@@ -1,5 +1,18 @@
 //! MCP server — the JSON-RPC tool dispatch surface for the agent lens.
 //!
+//! ## Phase 1b session context (Reed 2026-08-24 per Alex "dispatch")
+//!
+//! `MCP_SESSION_STATE` accumulates per-session query history for @mq
+//! context monoid discipline per shards/mq.mirror §8. Each
+//! `mirror_query` invocation reads/writes session state; session ID
+//! either supplied via `session` arg OR auto-generated from PID+PPID
+//! at first-tool-call. Session state persists for lifetime of
+//! `serve_loop` process (dies with client disconnect).
+//!
+//! Substrate anchor: shards/mq.mirror §8 context algebra +
+//! Mara §15 reshape recommendation #4 (extend context monoid with
+//! push_query for verdict-accumulation).
+//!
 //! Lifted from `bin/mirror-mcp` (145-line bash wrapper) to Rust on
 //! 2026-06-18 as tick 1 of the mirror-mcp+lsp self-improving loop
 //! (Seam pre-loop review at
@@ -75,6 +88,35 @@ use serde_json::{json, Value};
 
 use crate::Ctx;
 
+/// MCP session state: per-session query history accumulator per
+/// shards/mq.mirror §8 context monoid. Threads `push_query` per
+/// Mara §15 reshape #4. Session ID either supplied via mirror_query
+/// `session` arg OR auto-generated at first-tool-call (PID-derived).
+///
+/// Reed 2026-08-24 Phase 1b MVP: in-memory HashMap keyed by session
+/// ID; value is Vec<String> of query texts in temporal order. Full
+/// context monoid (frame + eigenboard_state per @mq §8) forward-
+/// promised as Phase 1c per Reed rust wire post-Mara #400 return.
+static MCP_SESSION_STATE: std::sync::OnceLock<std::sync::Mutex<std::collections::HashMap<String, Vec<String>>>> =
+    std::sync::OnceLock::new();
+
+fn session_state() -> &'static std::sync::Mutex<std::collections::HashMap<String, Vec<String>>> {
+    MCP_SESSION_STATE.get_or_init(|| std::sync::Mutex::new(std::collections::HashMap::new()))
+}
+
+/// Push a query to the session's context stack. Returns the session's
+/// query count post-push and a snapshot of prior queries.
+/// Per shards/mq.mirror §8 push_query(ctx, operation) -> context.
+fn push_query_to_session(session_id: &str, query: &str) -> (usize, Vec<String>) {
+    let state = session_state();
+    let mut guard = state.lock().expect("session state mutex poisoned");
+    let queue = guard.entry(session_id.to_string()).or_insert_with(Vec::new);
+    queue.push(query.to_string());
+    let count = queue.len();
+    let prior: Vec<String> = queue.iter().take(queue.len().saturating_sub(1)).cloned().collect();
+    (count, prior)
+}
+
 /// Build the response value for the MCP `initialize` request.
 ///
 /// Preserves the bash wrapper's exact response shape (server name
@@ -105,7 +147,7 @@ fn tools_list_result() -> Value {
     json!({
         "tools": [
             {
-                "name": "mirror_compile",
+                "name": "compile",
                 "description": "focus: tokenize one .mirror file through grammar lens. Returns SHA-256 hash on success.",
                 "inputSchema": {
                     "type": "object",
@@ -116,7 +158,7 @@ fn tools_list_result() -> Value {
                 }
             },
             {
-                "name": "mirror_craft",
+                "name": "craft",
                 "description": "split: converge a target directory to lambda_0. --target-kind emits code (binary|rust|gleam). --reflect verifies properties without emission.",
                 "inputSchema": {
                     "type": "object",
@@ -129,7 +171,7 @@ fn tools_list_result() -> Value {
                 }
             },
             {
-                "name": "mirror_kintsugi",
+                "name": "kintsugi",
                 "description": "settle: kintsugi a .mirror file. --liquid writes inferred properties below ---. --shatter N seeds N cracks. `--ci` walks a corpus. Returns canonical source or typed verdict envelope.",
                 "inputSchema": {
                     "type": "object",
@@ -142,7 +184,7 @@ fn tools_list_result() -> Value {
                 }
             },
             {
-                "name": "mirror_init",
+                "name": "init",
                 "description": "init: mirror-native store bootstrap. Splinter + insert_persistent + set_ref(HEAD). Substrate: @mirror/init (docs/specs/mirror-init.md). Returns JSON envelope { spec_version, operation, repo, store, indexed, bytes_total, root_oid, hooks_installed, verdict }.",
                 "inputSchema": {
                     "type": "object",
@@ -154,7 +196,7 @@ fn tools_list_result() -> Value {
                 }
             },
             {
-                "name": "mirror_recall",
+                "name": "recall",
                 "description": "recall: inbound-trajectory dual of peer beam. Observer returns to substrate in excited state asking for trajectory. Four payloads: cascade / pack_trail / pull_frontier / dogfood. Substrate: @mirror/recall (docs/specs/mirror-recall.md).",
                 "inputSchema": {
                     "type": "object",
@@ -165,7 +207,7 @@ fn tools_list_result() -> Value {
                 }
             },
             {
-                "name": "mirror_peer_beam",
+                "name": "peer_beam",
                 "description": "peer beam: the peer HAS a torus. Beam through a peer's persistent-identity context. @song/movement.enter at cli altitude — frame-entry action of a temporal-bounded epoch at runtime. Returns @song envelope with peer identity, content-addressed spec_oid, peer_recall (4 sheaf sections), composition_pieces (7 substrate anchors). Flag composition (all optional): hello_world emits structured JSON (default: text); mission carries a peer-side task file; fate_select routes to @optics/lens/features.get + Fate::excited().resolve for COMPUTED candidates; from_psychohistory bounds decisions by peer's psychohistory sheaf root (Mara `ce9745f` bounded_by); with_shadow casts 5 hypothetical shadows + classifies shadow_regime per Reed `07ac55a` (Mara `1999b01` §6 @torus winding basins); emit_diff serializes the peer's chosen edit as a diff; integrate_diff persists operator's @integrate-diff to peer_home/.bauchladen/ closing the autopoietic loop (Reed `4b2ef3c`). Substrate: @mirror/peer/beam (shards/mirror/peer/beam.mirror action-decl `beam(...) -> @song`; renamed 2026-07-08 Tick 2 from @mirror/spawn). λ₀(Δ_F) is the metric all flag combinations optimize for (`shards/cyberpunk.mirror` cybernetic_coherence annotation, `8e6e517`).",
                 "inputSchema": {
                     "type": "object",
@@ -186,7 +228,7 @@ fn tools_list_result() -> Value {
                 }
             },
             {
-                "name": "mirror_beam",
+                "name": "beam",
                 "description": "beam: anonymous inference primitive. NO persistent-identity context. Fires @fate::select on Shape B features and emits a beam envelope. Substrate: @mirror/beam (mirror.spec top-level `command beam`; 96aa752 Tick 3 Landing 1). Per beam-as-substrate-primitive.md §3 composition table: `mirror beam <mission>` primitive; `mirror peer beam <peer_home>` persistent-identity (use mirror_peer_beam for the latter).",
                 "inputSchema": {
                     "type": "object",
@@ -197,7 +239,7 @@ fn tools_list_result() -> Value {
                 }
             },
             {
-                "name": "mirror_spawn",
+                "name": "spawn",
                 "description": "DEPRECATED (2026-07-08): use mirror_peer_beam instead. Backward-compat alias per two-tick discipline; routes through the cli `spawn` alias which now emits a stderr deprecation notice (b012d3f Landing 2). Substrate: renamed to @mirror/peer/beam at 9de2226 (Tick 2 atomic substrate-decl move). This tool will be removed in a subsequent tick.",
                 "inputSchema": {
                     "type": "object",
@@ -210,7 +252,7 @@ fn tools_list_result() -> Value {
                 }
             },
             {
-                "name": "mirror_beam_act",
+                "name": "beam_act",
                 "description": "beam act: dispatch a substrate-decl'd action against the 7-combinator evaluator surface (@apply_h). First user-invocable substrate dispatch — sbec lifts from 0 to > 0 through this call. Verdict marshaling: Pass → text 'Pass' + isError=false; Fail(reason) → text 'Fail: <reason>' + isError=true; Partial(transparency) → text 'Partial:\n  <loc>: <opacity>...' + isError=true. Substrate: @mirror/beam/act (CLI verb landed Arc-1 Tick 1.4 per docs/audits/2026-07-15-seam-kintsugi-ouroboros-phase-d-cascade-a2-a6.md; renamed 2026-07-15 via two-step substrate learning execute → dispatch → act per Seam seamfinder audit `546c2f6`). Empirical anchor: `mirror beam act @subject/visibility/public consent_scope_universal` returns Pass exit 0.",
                 "inputSchema": {
                     "type": "object",
@@ -223,7 +265,7 @@ fn tools_list_result() -> Value {
                 }
             },
             {
-                "name": "mirror_query",
+                "name": "query",
                 "description": "Dispatch MQ query (Mirror Query). Per shards/mq.mirror (family-root landed Reed 105a1e4 2026-08-23) + Mara math foundation d0347a4: MQ IS mirror's ALGEBRA + query language + FLOOR underneath garden-db + MCP + every mirror CLI invocation. Accepts natural-language intent via backslash intent-hole OR pipe-composed MQ query. Returns result<T> with Karl-Tomm residual-ambiguity-resolution per Alex 2026-08-23 verbatim: Clear = first-order data alone; Opaque = data + second-order K-T question at altitude+1; Dark = K-T question alone. Rec #92 kleinos-Transparency<P> LOVE-monoid at query-language altitude + Karl-Tomm 1987-88 circular-reflexive question form.",
                 "inputSchema": {
                     "type": "object",
@@ -236,7 +278,7 @@ fn tools_list_result() -> Value {
                 }
             },
             {
-                "name": "mirror_bumblebee_buzz",
+                "name": "bumblebee_buzz",
                 "description": "buzz: perturbation-source that rattles substrate tension. Per Mara Rec #95 canonical spec 0bfd427 + companion spec 06789fa §3.3: `--buzz-target=@cascade` fires @roomba walker to absorb @cascade species into @bumblebee via byte-for-byte rename map. Dry-run by default (execute=false); execute=true triggers actual modification. First MCP-driven substrate-modification per Alex 2026-08-23 in-transcript authorization + MCP-MVP-fire constraint. Rec #90 (𝓜=𝓜(𝓜)) empirical fire at MCP-layer altitude.",
                 "inputSchema": {
                     "type": "object",
@@ -248,7 +290,7 @@ fn tools_list_result() -> Value {
                 }
             },
             {
-                "name": "mirror_roomba",
+                "name": "roomba",
                 "description": "roomba: substrate walker that back-projects to @mirror/store. Runs `mirror roomba --vacuum=<dir>` at rust/ altitude terminal geometry (per Mara `81294b3` three-file rewrite + Migration 5 `9bb1f57`). Walker enumerates + classifies + bilateral-arm-collapses per Mara §7.4 dispatch matrix; commits as `mirror <mirror@spectral.engineer>`; deposits pheromone-signature crystal at docs/bauchladen/ (rolling holonomy trace per stigmergy math foundation). Substrate: @kintsugi/roomba (shards/kintsugi/roomba.mirror + shards/roomba.mirror); empirical firing since 2026-07-28. Reed 2026-08-03 nearly-today addition per Alex Option C (Fire A + Mara M4 parallel per docs/specs/2026-08-03-mara-rust-mcp-floor-lift-m4-canonical-spec.md forward-promise). This tool ships the smallest-meaningful-song empirical MCP-spawn round-trip TODAY: MCP client invokes → walker fires + back-projects + commits + deposits crystal → next MCP session observes delta at @mirror/store. Composes over crown-theorem @torus + Recognition `#R-reality-as-5d-spinning-foam` RATIFIED 2026-08-03: pheromone-deposit crystal IS phase-space trajectory point in crown-theorem attractor basin.",
                 "inputSchema": {
                     "type": "object",
@@ -259,7 +301,7 @@ fn tools_list_result() -> Value {
                 }
             },
             {
-                "name": "mirror_index",
+                "name": "index",
                 "description": "@mirror/fractal-coherence measurement: walk substrate DAG, compute graph Laplacian's top-16 eigenvalues via LAPACK dsyev, emit Fiedler value λ₀ = values[1] post-normalization. Substrate: @mirror/index (shards/mirror/index.mirror; provisional under two-tick discipline, collapses to @fractal/index after Alex adjudicates family-root shape). Rung 8 Landing 5 per Taut `77b8e14` migration mapping + Mara `317e830` substrate-decl. Pulls the coherence measurement currently emitted by mcp__spectral__spectral_index (sibling crate) into mirror's own voice per Recognition #43 (mirror IS content-addressed build system) + Recognition #55 (form/process partition; DAG is form, measurement is process; belong at same altitude). Mandelbrot correspondence per Mara `2c64060` §4: fiedler IS λ₀(Δ_F) = spectral gap of the substrate's parameter Mandelbrot (Hausdorff dim 2 ∂M per Shishikura 1998). Load-bearing empirical prediction: Fiedler stability across Douady-Hubbard-invariant refactors (already 202-commit-confirmed at 0.0612 stable). Landing 6 forward-promise: extend with Rényi entropies H_q + Legendre transform to f(α) multifractal spectrum — discharges Mara math §10 prediction #2 (framework becomes framework-with-measurement).",
                 "inputSchema": {
                     "type": "object",
@@ -472,11 +514,11 @@ fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
     let i = |k: &str| -> Option<i64> { args.get(k).and_then(|v| v.as_i64()) };
 
     let (text, exit_code) = match tool {
-        "mirror_compile" => {
+        "compile" => {
             let file = s("file").unwrap_or_default();
             run_mirror(&["compile", &file], ctx)
         }
-        "mirror_craft" => {
+        "craft" => {
             let target = s("target").unwrap_or_default();
             let mut argv: Vec<String> = vec!["craft".into(), target];
             // Substrate-honest name `target_kind` maps to the binary's
@@ -492,7 +534,7 @@ fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
             let refs: Vec<&str> = argv.iter().map(String::as_str).collect();
             run_mirror(&refs, ctx)
         }
-        "mirror_kintsugi" => {
+        "kintsugi" => {
             // Tick 7 shatter fold (`ffba2a7`): the wrapper ALWAYS routes
             // kintsugi through `--ci --out @data/json` — substrate is the
             // linearizer, wrapper is the transport-framer. The `--ci`
@@ -528,7 +570,7 @@ fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
             };
             return (text, is_error);
         }
-        "mirror_init" => {
+        "init" => {
             let path = s("path").unwrap_or_default();
             let mut argv: Vec<String> = vec!["init".into(), path];
             if b("install_hooks") {
@@ -537,13 +579,13 @@ fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
             let refs: Vec<&str> = argv.iter().map(String::as_str).collect();
             run_mirror(&refs, ctx)
         }
-        "mirror_recall" => {
+        "recall" => {
             // Substrate-honest arg name is `spec_dir` (per
             // bin/mirror-mcp); routes to `mirror recall <dir>`.
             let spec_dir = s("spec_dir").unwrap_or_default();
             run_mirror(&["recall", &spec_dir], ctx)
         }
-        "mirror_query" => {
+        "query" => {
             // Reed 2026-08-23 per Alex 2026-08-23 🚢🇮🇹 authorization.
             // Phase 1a MVP wire per Alex two-question authorization
             // ("How do we wire this into the MCP?"): mirror_query MCP
@@ -575,9 +617,26 @@ fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
             // surfacing the gap.
             let query = s("query").unwrap_or_default();
             let _context = s("context");
-            let _session = s("session");
+            // Phase 1b session context threading (Reed 2026-08-24 per
+            // Alex "dispatch"). Session ID either supplied via `session`
+            // arg OR auto-generated from PID at first-tool-call. Query
+            // pushed to session state per @mq §8 context monoid.
+            let session_id = s("session").unwrap_or_else(|| {
+                format!("mcp-pid-{}", std::process::id())
+            });
+            let (query_count, prior_queries) = push_query_to_session(&session_id, &query);
             let mut text = String::new();
             text.push_str(&format!("@mq query received: `{}`\n\n", query));
+            text.push_str(&format!("=== Session context (Phase 1b per @mq §8 context monoid) ===\n"));
+            text.push_str(&format!("session_id: `{}`\n", session_id));
+            text.push_str(&format!("query_count: {} (this is query #{} in session)\n", query_count, query_count));
+            if !prior_queries.is_empty() {
+                text.push_str("prior queries in session:\n");
+                for (i, q) in prior_queries.iter().enumerate() {
+                    text.push_str(&format!("  [{}] `{}`\n", i + 1, q));
+                }
+            }
+            text.push_str("\n");
             text.push_str("result<T> = Dark(karl_tomm) at Phase 1a MVP altitude.\n\n");
             text.push_str("=== Karl-Tomm question at altitude+1 (per shards/mq.mirror §4) ===\n\n");
             text.push_str("MQ query dispatch requires substrate composition not yet landed at rust/-altitude:\n\n");
@@ -610,7 +669,7 @@ fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
             text.push_str("- boot/std/code/mq.mirror INSPIRATION (2026-06-04)\n");
             (text, 0)
         }
-        "mirror_bumblebee_buzz" => {
+        "bumblebee_buzz" => {
             // Reed 2026-08-23 per Alex "all green-light" in-transcript
             // authorization + MCP-MVP-fire constraint. First MCP-driven
             // substrate-modification wire per Mara Rec #95 canonical spec
@@ -679,7 +738,7 @@ fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
             }
             }
         }
-        "mirror_roomba" => {
+        "roomba" => {
             // Reed 2026-08-03 nearly-today per Alex Option C. Routes
             // `mirror_roomba` MCP tool to `mirror roomba --vacuum=<dir>` at
             // rust/ altitude terminal geometry (Mara `81294b3` three-file
@@ -692,7 +751,7 @@ fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
             let vacuum_arg = format!("--vacuum={}", dir);
             run_mirror(&["roomba", &vacuum_arg], ctx)
         }
-        "mirror_index" => {
+        "index" => {
             // Rung 8 Landing 5 (Scope PI-B) — `mirror_index` MCP tool.
             // Substrate-decl at mirror.spec `command index { arg path: ~d;
             // flag fiedler: bool; flag full_profile: bool }`.
@@ -707,7 +766,7 @@ fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
             let refs: Vec<&str> = argv.iter().map(String::as_str).collect();
             run_mirror(&refs, ctx)
         }
-        "mirror_beam_act" => {
+        "beam_act" => {
             // Arc-1 Tick 1.4 (2026-07-15) — 1:1 CLI mirror per Mara CLI
             // condensation spec §1 corollary. Routes through the
             // `mirror beam act <shard-path> <action> [args...]` CLI verb
@@ -730,7 +789,7 @@ fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
             let refs: Vec<&str> = argv.iter().map(String::as_str).collect();
             run_mirror(&refs, ctx)
         }
-        "mirror_peer_beam" => {
+        "peer_beam" => {
             // Tick 3 Landing 1 (`96aa752` mirror.spec cli-block `command
             // peer { command beam }`) + Landing 2 (`b012d3f` cli dispatch
             // cmd_peer_beam). Substrate-honest `--mission` name; binary
@@ -788,14 +847,14 @@ fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
             let refs: Vec<&str> = argv.iter().map(String::as_str).collect();
             run_mirror(&refs, ctx)
         }
-        "mirror_beam" => {
+        "beam" => {
             // Tick 3 Landing 1 top-level `command beam` in mirror.spec +
             // Landing 2 top-level dispatch (`b012d3f`). Anonymous variant:
             // no persistent-identity context; requires mission.
             let mission = s("mission").unwrap_or_default();
             run_mirror(&["beam", "--mission", &mission], ctx)
         }
-        "mirror_spawn" => {
+        "spawn" => {
             // DEPRECATED backward-compat alias. Routes through the cli
             // `spawn` alias (b012d3f Landing 2 dispatch alias arm) which
             // emits a stderr deprecation notice. Two-tick removal window.
