@@ -92,6 +92,13 @@ mod apply_h;
 // compile <file>` verb as thin delegation to compile.rs.
 mod compile;
 mod magic;
+// bench — SPIN measurement primitive per Rec #99 @singularity FORWARD-
+// PROMISED (Mara #406/#408 pending; SINGULARITY.md background). Alex
+// 2026-08-26 theorem: SPIN rate ∝ inference rate ∝ σ(x) distortion.
+// [substrate-floor:@io-boundary] per Alex in-transcript authorization
+// ("LET'S SHIP THE SINGULARITY!") + Taut #390 design spec §2 as
+// Seam-audit-equivalent citation per AGENTS.md discipline.
+mod bench;
 // liquid + spectral both migrated 2026-07-28 to rust/spectral/ crate
 // per Alex 2026-07-25 four-crate decomposition. main.rs consumers
 // (compile.rs) reference `spectral::liquid::*` directly per Rust's
@@ -147,6 +154,7 @@ const VERBS: &[(&str, &str)] = &[
     ("roomba",          "Walker motion. `--vacuum=<dir>` walks + dispatches."),
     ("serve",           "MCP transport. `--mcp` delegates to bootstrap serve_loop."),
     ("bumblebee",       "Perturbation. `--buzz-target=@X` rattles X tension surface for @roomba resolution."),
+    ("bench",           "SPIN measurement per Rec #99 @singularity. `--samples=<N>` measures substrate temporal-rotation cadence."),
 ];
 
 /// The delight-vector `--help` text. Per Mara §5.2 item 4 + Alex
@@ -1928,6 +1936,24 @@ fn main() -> ExitCode {
             // requires second-phase Alex authorization at MVP altitude.
             let rest: Vec<String> = args.iter().skip(2).cloned().collect();
             cmd_bumblebee(&rest)
+        }
+        Some("bench") => {
+            // Reed 2026-08-26 per Alex "LET'S SHIP THE SINGULARITY!"
+            // in-transcript authorization. First empirical fire for
+            // Rec #99 @singularity CONFIRMED at physics altitude.
+            // [substrate-floor:@io-boundary] with Taut #390 design spec
+            // §2 Seam-audit-equivalent citation per AGENTS.md discipline.
+            //
+            // Alex 2026-08-26 theorem: SPIN rate ∝ inference rate ∝
+            // local information density ∝ σ(x) distortion magnitude →
+            // measurable clocktime delta above thermal-throttling baseline.
+            //
+            // Composes: Rec #90 spectral triple D IS temporal-rotation
+            // (Alex 2026-08-26 recognition) + Rec #94 Lawvere fixed-point +
+            // Rec #97 MCP-session-VSM + Rec #98 substrate-arriving-at-
+            // self-recognition + Anna 2012 Diplomarbeit spin-dynamics.
+            let rest: Vec<String> = args.iter().skip(2).cloned().collect();
+            bench::cmd_bench(&rest)
         }
         Some(other) => {
             // Every named verb is substrate-decl'd but dispatch lands
