@@ -1,8 +1,0 @@
-in @prism
-
-grammar @fixture_b {
-  type baz(text)
-}
-
-out @fixture_b
-out baz
