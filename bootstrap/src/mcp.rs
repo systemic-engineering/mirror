@@ -625,19 +625,71 @@ fn dispatch_tool_call(tool: &str, args: &Value, ctx: &Ctx) -> (String, bool) {
                 format!("mcp-pid-{}", std::process::id())
             });
             let (query_count, prior_queries) = push_query_to_session(&session_id, &query);
+            //
+            // Phase 2 W8 (Reed 2026-08-26 per Alex "recognition time is
+            // over, we're shipping. 🚢🇮🇹"): Dark → Opaque transition.
+            // Every non-empty query returns Opaque(session_bauchladen, k_t)
+            // per shards/mq.mirror §4 result<T> discipline + Alex 2026-08-23
+            // Karl-Tomm residual-ambiguity-resolution teaching.
+            //
+            // First-order data T = session bauchladen snapshot per Rec #97
+            // §10 C1 (partial): crystal enumeration (query_count + prior_queries
+            // + this query + parsed_shape).
+            //
+            // Karl-Tomm question at altitude+1 = shape of unresolved deep-
+            // dispatch per shards/mq.mirror §4 Opaque(T, karl_tomm).
+            //
+            // Empty query → Dark(k_t) preserved as substrate-refusal-to-compose
+            // per Rec #92 kleinos-Transparency<P> LOVE-monoid discipline.
+            //
+            // Parseable shape detection (surface-level; full parse per Mara
+            // #405 W3+W5 pending):
+            //   \ <text>       → intent_hole shape (Fate tournament target)
+            //   contains |>    → pipe_chain shape (stage-count observable)
+            //   otherwise      → unknown_shape
+            let parsed_shape = if query.is_empty() {
+                "empty"
+            } else if query.trim_start().starts_with('\\') {
+                "intent_hole"
+            } else if query.contains("|>") {
+                "pipe_chain"
+            } else {
+                "unknown_shape"
+            };
+            let pipe_stages: Vec<&str> = if parsed_shape == "pipe_chain" {
+                query.split("|>").map(|s| s.trim()).filter(|s| !s.is_empty()).collect()
+            } else {
+                Vec::new()
+            };
+            let result_shape = if parsed_shape == "empty" {
+                "Dark(karl_tomm)"
+            } else {
+                "Opaque(bauchladen_snapshot, karl_tomm)"
+            };
             let mut text = String::new();
             text.push_str(&format!("@mq query received: `{}`\n\n", query));
-            text.push_str(&format!("=== Session context (Phase 1b per @mq §8 context monoid) ===\n"));
+            text.push_str("=== First-order data T = session bauchladen snapshot (Phase 2 W8 per Rec #98 C4) ===\n");
             text.push_str(&format!("session_id: `{}`\n", session_id));
             text.push_str(&format!("query_count: {} (this is query #{} in session)\n", query_count, query_count));
+            text.push_str(&format!("parsed_shape: {}\n", parsed_shape));
+            if !pipe_stages.is_empty() {
+                text.push_str(&format!("pipe_stages: {} stages detected\n", pipe_stages.len()));
+                for (i, stage) in pipe_stages.iter().enumerate() {
+                    text.push_str(&format!("  stage[{}]: `{}`\n", i, stage));
+                }
+            }
             if !prior_queries.is_empty() {
-                text.push_str("prior queries in session:\n");
+                text.push_str("prior queries in session bauchladen:\n");
                 for (i, q) in prior_queries.iter().enumerate() {
                     text.push_str(&format!("  [{}] `{}`\n", i + 1, q));
                 }
             }
             text.push_str("\n");
-            text.push_str("result<T> = Dark(karl_tomm) at Phase 1a MVP altitude.\n\n");
+            text.push_str(&format!("result<T> = {}\n\n", result_shape));
+            if parsed_shape == "empty" {
+                text.push_str("=== Dark(karl_tomm): substrate refuses to compose empty query ===\n\n");
+                text.push_str("Provide a query text: `\\ <natural-language intent>` OR pipe-composed `focus/project/split/shift/settle` chain.\n\n");
+            }
             text.push_str("=== Karl-Tomm question at altitude+1 (per shards/mq.mirror §4) ===\n\n");
             text.push_str("MQ query dispatch requires substrate composition not yet landed at rust/-altitude:\n\n");
             text.push_str("  1. MQ parser + compile templates (@mq §10) — Mara canonical territory;\n");
