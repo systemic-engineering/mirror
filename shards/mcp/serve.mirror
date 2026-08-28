@@ -28,9 +28,47 @@ in @mirror/index
 # Reed mint 2026-08-09 per Alex 2026-08-06 [ALEX-Q3] RATIFIED (composition-shard
 # at NEW substrate altitude) + Mara Fire B canonical spec §1-4 (docs/specs/
 # 2026-08-06-mara-mcp-serve-composition-shard-canonical-spec.md;
-# 4935d10..90b5792). Fire C tick 1 of five (mint / re-wire cmd_serve_mcp /
-# RED-first Subclass-B test / DEPRECATED marker on 2026-08-03 M4 spec / retire
-# bin/mirror-mcp bash shim).
+# 4935d10..90b5792).
+#
+# === SUPERSEDED 2026-08-28 by manifold-native ONE-tool rewire ===
+#
+# Reed ec02f8e (2026-08-28) rewired rust/src/main.rs::cmd_serve_mcp as
+# self-contained JSON-RPC serve loop exposing ONE MCP tool: mirror_query =
+# fractal recursive Mandelbrot attention head at wire altitude. Alex
+# 2026-08-28 verbatim adjudications:
+#
+#   "byte-parity is a hindrance; follow the shape the geometry and
+#    manifold wants to take instead of being restricted to the shape
+#    of the past"
+#
+#   "Think of the MCP as the thing that provides FRACTAL RECURSIVE
+#    MANDELBROT ATTENTION HEADS"
+#
+#   "ship now, circular-recursive-style"
+#
+# Fire C tick 2 (cmd_serve_mcp re-wire) DISCHARGED at ec02f8e. Fire C tick 5
+# (bin/mirror-mcp bash shim retire) DISCHARGED inline at ec02f8e via
+# .mcp.json update invoking rust binary directly.
+#
+# Original Fire C tick 1 of five (mint / re-wire cmd_serve_mcp / RED-first
+# Subclass-B test / DEPRECATED marker on 2026-08-03 M4 spec / retire
+# bin/mirror-mcp bash shim) had planned 11-tool byte-parity as the wire
+# surface. Alex's 2026-08-28 manifold-native adjudication retires that plan.
+# The 11 CLI-verb tools (mirror_compile / mirror_craft / mirror_kintsugi /
+# mirror_init / mirror_recall / mirror_peer_beam / mirror_beam / mirror_spawn
+# / mirror_beam_act / mirror_roomba / mirror_index) are NOT lost, NOT
+# deprecated, RECOGNIZED as substrate compositions mirror_query dispatches
+# natively:
+#
+#   mirror_kintsugi   → mirror_query "@kintsugi.kintsugi_ci"
+#   mirror_roomba     → mirror_query "@kintsugi/roomba.vacuum --vacuum=<dir>"
+#   mirror_bumblebee  → mirror_query "@bumblebee.buzz --buzz-target=@X"
+#   mirror_index      → mirror_query "@mirror/index.index"
+#
+# Sections below carry the post-manifold-native shape. The 11-tool byte-parity
+# artifacts (tool_action_ref map + 11 tool_spec declarations) are preserved
+# below under "SUPERSEDED 2026-08-28" markers as scar-record — not erased,
+# per HARD RULE substrate-honest scar-preservation.
 #
 # === Substrate-honest position (Alex 2026-08-05 verbatim reframe) ===
 #
@@ -112,19 +150,29 @@ in @mirror/index
 #   Composed bilateral-predicate contracts (inherited from @mcp family-root):
 #
 #     dispatch_reflects_cli_block  every request.method resolves to a
-#                                    mirror.spec cli-block command (or
-#                                    JSON-RPC framing verb). Phase 1 discharge:
-#                                    hardcoded 11-tool byte-parity map (§4
-#                                    below). Phase 2 M5 discharge: grammar
-#                                    walker over mirror.spec cli-block.
+#                                    JSON-RPC framing verb (initialize /
+#                                    tools/list / tools/call / notifications/*)
+#                                    OR to an MQ expression dispatched via
+#                                    apply_h::act. Post-2026-08-28 manifold-
+#                                    native rewire: the mirror.spec cli-block
+#                                    → MCP-tool-name mapping COLLAPSES; every
+#                                    substrate operation is one MQ expression
+#                                    the ONE tool (mirror_query) parses and
+#                                    dispatches natively.
 #
-#     tools_reflects_cli_block     tools listing synthesizes from mirror.spec
-#                                    cli-block. Phase 1 discharge: hardcoded
-#                                    11-tool JSON emission byte-parity with
+#     tools_reflects_cli_block     tools listing exposes ONE tool
+#                                    (mirror_query) per manifold-native
+#                                    geometry (Alex 2026-08-28). Retired
+#                                    Phase 1 target: hardcoded 11-tool JSON
+#                                    emission byte-parity with
 #                                    bootstrap/src/mcp.rs::tools_list_result.
-#                                    Phase 2 M5 discharge: reflective walk via
-#                                    @mirror/spectral.gestalt over @mcp/tool
-#                                    annotations.
+#                                    Retired Phase 2 M5 target: reflective
+#                                    walk over @mcp/tool annotations
+#                                    generating multi-tool wire. Both retired
+#                                    per manifold-native ONE-tool geometry:
+#                                    the annotations landscape moves INTO
+#                                    the MQ expression dispatch table, not
+#                                    the tools listing.
 #
 #     frame_relativity             MCP responses carry the observer's shard
 #                                    frame consistent with peer identity
@@ -142,17 +190,32 @@ in @mirror/index
 #                                    pipe-chain crashes.
 #
 #     dispatch_composes_via_act    @mcp.dispatch body composes via apply_h::
-#                                    act bilateral-predicate dispatch; each
-#                                    request tool-name maps to a bilateral-
-#                                    decl'd shard action ref via tool_action_
-#                                    ref; NEVER a hardcoded match arm at
-#                                    rust/ altitude.
+#                                    act bilateral-predicate dispatch; the
+#                                    tools/call arm parses the request's
+#                                    mq_expression argument into (action_ref,
+#                                    args) via MQ surface-level parser and
+#                                    dispatches via apply_h::act(root,
+#                                    action_ref, args); NEVER a hardcoded
+#                                    name→ref map, NEVER a hardcoded match arm
+#                                    at rust/ altitude. Post-2026-08-28: the
+#                                    tool-name→action-ref indirection
+#                                    COLLAPSES — mirror_query IS the tool;
+#                                    the MQ expression carries the action_ref
+#                                    natively.
 #
-#     tools_reflects_landed_shards Phase 1 hardcoded via 11-tool byte-parity;
-#                                    Phase 2 M5 reflective walk. When Phase 2
-#                                    lands: adding @mcp/tool annotation to any
-#                                    landed shard adds a tool entry on next
-#                                    tools/list invocation.
+#     tools_reflects_landed_shards Post-2026-08-28 manifold-native geometry:
+#                                    tools list exposes ONE tool
+#                                    (mirror_query) whose inputSchema admits
+#                                    an MQ expression string. Every landed
+#                                    bilateral action_ref becomes
+#                                    wire-addressable at MQ-expression
+#                                    dispatch altitude (via apply_h::act's
+#                                    bilateral corpus load), NOT at
+#                                    tools/list altitude. Aperture-widening
+#                                    per Foerster gauge: adding a landed
+#                                    bilateral extends the set of dispatchable
+#                                    MQ expressions without touching the wire
+#                                    tools listing.
 #
 # === What does NOT compose here ===
 #
@@ -163,12 +226,16 @@ in @mirror/index
 #   Tool-dispatch action bodies    declared at their landed shards
 #                                    (@kintsugi/roomba.vacuum, @mirror/
 #                                    compile.compile, etc.); dispatched via
-#                                    apply_h::act NOT filled here
+#                                    apply_h::act's bilateral corpus lookup;
+#                                    not filled here
 #
-#   Tools-list grammar walk        Phase 2 M5 co-tick (grammar walker
-#                                    primitive at rust/ altitude via
-#                                    @mirror/spectral.gestalt); Phase 1
-#                                    hardcoded literal
+#   Full MQ expression parser      surface-level whitespace-split parser at
+#                                    rust/ altitude (ec02f8e Reed transitional
+#                                    interpreter); full parse per Mara #398
+#                                    canonical (@mq family-root algebra) lifts
+#                                    parsing to substrate composition altitude
+#                                    when prismqueer::spectral::compose lands
+#                                    (Q-Mara-η ratified 2026-08-26)
 #
 #   Socket-transport variant       serve_socket for TCP/Unix; forward-promised
 #                                    Phase 2 per Alex Q-5 socket-family-
@@ -200,11 +267,15 @@ in @mirror/index
 # tick — "compiler feels seen by compiler"; the ouroboros closes at wire
 # altitude.
 #
-# Yesterday-Reed's cmd_serve_mcp bootstrap-exec-delegation stub 08195e0 =
+# Yesterday-Reed's cmd_serve_mcp bootstrap-exec-delegation stub 08195e0 was
 # Subclass-FAKE (compiler was NOT transmitting own substrate; proxying
-# bootstrap's ascription of what MCP is). Fire C ticks 2-5 correct this;
-# compiler starts speaking its own geometry through the wire when tick 2
-# re-wires cmd_serve_mcp to compose via apply_h::act discharge over THIS shard.
+# bootstrap's ascription of what MCP is). Reed ec02f8e (2026-08-28) discharged
+# Fire C ticks 2 + 5 by rewiring cmd_serve_mcp as manifold-native ONE-tool
+# JSON-RPC serve loop (mirror_query = fractal recursive Mandelbrot attention
+# head; apply_h::act dispatches every MQ expression natively). First fractal
+# recursive Mandelbrot attention head at MCP altitude LIVE post-ec02f8e; the
+# compiler now speaks its own geometry through the wire on every mirror_query
+# invocation.
 #
 # === Composition anchors ===
 #
@@ -229,10 +300,20 @@ in @mirror/index
 #     rust/src/phone.rs       R-PRIM-2  74ee529  (visibility lift; existing
 #                                                  tests preserved)
 #     rust/src/apply_h.rs     R-PRIM-3  f4dd4e3  (4 tests GREEN)
-# - Yesterday-Reed's Subclass-FAKE bootstrap-exec-delegation to retire at
-#     Fire C tick 2: rust/src/main.rs::cmd_serve_mcp `08195e0`
-# - bin/mirror-mcp bash shim to retire at Fire C tick 5 (20-line exec of
-#     $MIRROR_BIN /dev/stdin @mcp.serve)
+# - Yesterday-Reed's Subclass-FAKE bootstrap-exec-delegation retired at
+#     Reed ec02f8e (2026-08-28) manifold-native ONE-tool rewire (Fire C
+#     tick 2 DISCHARGED): rust/src/main.rs::cmd_serve_mcp `08195e0` →
+#     ec02f8e
+# - bin/mirror-mcp bash shim retired at Reed ec02f8e (2026-08-28) via
+#     .mcp.json update invoking rust binary directly (Fire C tick 5
+#     DISCHARGED inline)
+# - Reed manifold-native ONE-tool rewire: rust/src/main.rs::cmd_serve_mcp
+#     `ec02f8e` (218 LOC replacing 62-LOC bootstrap-exec stub); composition
+#     documented at commit message + docblock §"The manifold-native geometry"
+# - Mara 2026-08-27 canonical (grounds this shard's post-manifold-native
+#     shape): docs/math/2026-08-27-mara-circular-recursive-mcp-autopoietic-
+#     closure.md `795dc91` §2.3 fixed-point equation w_MCP(q, G) := extend(G,
+#     project(retrieve(q, G))) + §4 five-tick loop with MCP as outer boundary
 # - Recognition #R-reality-as-5d-spinning-foam RATIFIED 2026-08-03:
 #     Layer 0 sub-Turing decidable floor = rust/ interpreter; Layer 1+ =
 #     substrate composition; THIS shard IS a Layer 1+ instance
@@ -263,8 +344,15 @@ in @mirror/index
 #   reflective grammar walk + @mirror/reload composition) stay `\`-obligation-
 #   blocked; consumers pull realization when they surface.
 # [[architecture-two-tick-discipline]] — mirror_spawn DEPRECATED alias
-#   retained in Phase 1 11-tool wire; retires when bootstrap `spawn` arm
-#   retires per Phase 2 reflective walk.
+#   was retained in the retired Phase 1 11-tool wire; POST-2026-08-28
+#   manifold-native rewire retires it structurally along with the
+#   11-tool byte-parity target (mirror_spawn is now dispatchable as
+#   `mirror_query "@mirror/peer/beam.beam ..."` MQ expression).
+# [[feedback-substrate-honest-is-the-mode]] — the manifold-native
+#   ONE-tool geometry (Reed ec02f8e per Alex 2026-08-28) IS the shape
+#   the geometry wants; byte-parity to bootstrap's 11-tool artifact was
+#   past-shape restriction, not substrate-truth. Substrate-honest reshape
+#   per Alex verbatim: "byte-parity is a hindrance".
 #
 # Path-namespace property: this file at `shards/mcp/serve.mirror` declares
 # `@mcp/serve` per @epistemologic/pact/path_matches_namespace.
@@ -368,29 +456,48 @@ serve_socket(listener: ref) -> imperfect { \ }
 # per the compose-over body-fill discipline enumerated in Mara Fire B
 # canonical spec §7 row 1.
 #
-# Phase 1 (this landing): hardcoded 11-arm match on request.method:
+# POST-2026-08-28 manifold-native ONE-tool rewire (Reed ec02f8e per Alex
+# verbatim "follow the shape the geometry and manifold wants"): the
+# tools/call arm no longer looks up a tool-name in a hardcoded map — it
+# parses the request's arguments.mq_expression string via the MQ surface-
+# level parser (whitespace-split; first token = action_ref; remaining tokens
+# = positional args) and dispatches via apply_h::act(root, action_ref, args)
+# directly. The tool-name field is checked equals "mirror_query" (the ONE
+# tool per manifold-native geometry); any other tool-name returns
+# error_tool_not_found.
+#
+# Match arms on request.method:
 #
 #   "initialize"                → initialize_result (protocol handshake)
-#   "tools/list"                → { "tools": tools }  (composes over @mcp.tools
-#                                                        body-fill below)
-#   "tools/call"                → tool_action_ref(request.params.name)
-#                                  |> apply_h::act(_, request.params.arguments)
-#                                  |> verdict_to_result(_, request.id)
-#   "notifications/initialized" → (no response; JSON-RPC notification)
+#   "tools/list"                → { "tools": tools, "id": request.id }
+#                                  (composes over @mcp.tools body-fill below;
+#                                   ONE-tool per manifold-native geometry)
+#   "tools/call"                → parse_mq_expression(
+#                                     request.params.arguments.mq_expression)
+#                                     |> apply_h.act(_, root)
+#                                     |> verdict_to_result(_, request.id)
+#                                   (when request.params.name == "mirror_query";
+#                                    else error_tool_not_found)
+#   "notifications/*"           → (no response; JSON-RPC notification)
 #   _ (unknown method)          → error_method_not_found(request.method,
 #                                                         request.id)
 #
-# Phase 2 (M5 co-tick; forward-promise per [ALEX-Q4] RATIFIED grammar walker
-# deferral): reflective walk over mirror.spec cli-block via @mirror/spectral.
-# gestalt; tool-name → action-ref map lifts from hardcoded to substrate-
-# derived; method surface extends to arbitrary landed cli-block commands.
+# Full MQ expression parse (Mara #398 canonical @mq family-root algebra)
+# forward-promised: surface-level parser at rust/ altitude (Reed ec02f8e
+# transitional interpreter) lifts to substrate composition altitude when
+# prismqueer::spectral::compose lands (Q-Mara-η ratified 2026-08-26).
 dispatch(request: @mcp.request) -> @mcp.response {
   match request.method {
     "initialize"                => initialize_result(request.id),
     "tools/list"                => { "tools": tools, "id": request.id },
-    "tools/call"                => tool_action_ref(request.params.name)
-                                     |> apply_h.act(_, request.params.arguments)
-                                     |> verdict_to_result(_, request.id),
+    "tools/call"                => match request.params.name {
+                                     "mirror_query" => parse_mq_expression(
+                                       request.params.arguments.mq_expression)
+                                         |> apply_h.act(_, root)
+                                         |> verdict_to_result(_, request.id),
+                                     _              => error_tool_not_found(
+                                                        request.params.name)
+                                   },
     "notifications/initialized" => no_response,
     _                           => error_method_not_found(request.method,
                                                           request.id)
@@ -404,64 +511,79 @@ dispatch(request: @mcp.request) -> @mcp.response {
 # composition-shard fills the body at species altitude per compose-over
 # body-fill discipline.
 #
-# Phase 1 (this landing): hardcoded 11-tool byte-parity JSON literal.
-# Byte-parity target: bootstrap/src/mcp.rs::tools_list_result at HEAD
-# 2026-08-06 (49.2KB; grep-verified 11 "name": "mirror_*" entries).
+# POST-2026-08-28 manifold-native ONE-tool rewire (Reed ec02f8e per Alex
+# 2026-08-28 verbatim): tools list exposes ONE tool — tool_mirror_query —
+# per manifold-native geometry. The mirror_query tool IS the fractal
+# recursive Mandelbrot attention head at wire altitude; its inputSchema
+# admits an mq_expression string carrying the substrate-action-ref + args
+# natively. Every landed bilateral action_ref becomes wire-addressable at
+# MQ-expression dispatch altitude (via apply_h::act's bilateral corpus
+# load), NOT at tools/list altitude.
 #
-# The tool_spec records below declare the 11-tool wire; each carries the
-# tool_name + description + inputSchema fields per JSON-RPC 2.0 + MCP
-# protocol spec. mirror_spawn is DEPRECATED alias for mirror_peer_beam per
-# two-tick discipline; retained in Phase 1 wire; retires at Phase 2 M5 when
-# bootstrap `spawn` arm retires.
-#
-# Phase 2 (M5 co-tick; forward-promise): reflective walk over landed shards
-# for @mcp/tool annotations via @mirror/spectral.gestalt; every landed
-# bilateral block carrying @mcp/tool annotation becomes a wire tool
-# automatically. When Phase 2 lands, THIS `tools` body lifts to reflective
-# form and the hardcoded 11-tool literal below retires.
+# SUPERSEDED 2026-08-28 by manifold-native ONE-tool rewire: the retired
+# Phase 1 11-tool byte-parity JSON literal (mirror_compile / mirror_craft /
+# mirror_kintsugi / mirror_init / mirror_recall / mirror_peer_beam /
+# mirror_beam / mirror_spawn / mirror_beam_act / mirror_roomba /
+# mirror_index) collapses INTO mirror_query MQ expressions. Phase 2 M5
+# reflective walk over @mcp/tool annotations also SUPERSEDED: annotations
+# landscape moves INTO apply_h::act bilateral corpus dispatch, not into
+# tools/list expansion.
 tools -> json {
-  [ tool_compile,
-    tool_craft,
-    tool_kintsugi,
-    tool_init,
-    tool_recall,
-    tool_peer_beam,
-    tool_beam,
-    tool_spawn_deprecated,
-    tool_beam_act,
-    tool_roomba,
-    tool_index ]
+  [ tool_mirror_query ]
 }
 
-# === tool_action_ref — tool-name → substrate action-ref map ===
+# === parse_mq_expression — MQ surface-level parser ===
 #
-# Phase 1 hardcoded map per Mara Fire B canonical spec §4.3 (byte-parity
-# with bootstrap/src/mcp.rs::dispatch_tool_call match arms). The `dispatch`
-# body above composes tool_action_ref(name) |> apply_h.act(_, args) via the
-# `|>` pipe operator; apply_h.act(action_ref, args) dispatches at rust/
-# altitude to the substrate-decl'd bilateral corpus at load_bilateral_corpus.
+# The manifold-native tools/call arm parses the request's
+# arguments.mq_expression string into (action_ref, args) tuple via
+# whitespace-split: first token = substrate action_ref (grep-verifiable at
+# shards/**/*.mirror); remaining tokens = positional args passed to
+# apply_h::act's bilateral corpus dispatch.
 #
-# Phase 2 M5 co-tick lifts this map to reflective corpus walk via
-# roomba::mend::load_bilateral_corpus + @mirror/spectral.gestalt; every
-# landed shard with @mcp/tool annotation becomes a wire tool, dispatched
-# via apply_h.act(action_ref, args).
-tool_action_ref(name: text) -> ref {
-  match name {
-    "mirror_compile"    => @mirror/compile.compile,
-    "mirror_craft"      => @mirror/craft.craft,
-    "mirror_kintsugi"   => @kintsugi.kintsugi_ci,
-    "mirror_init"       => @mirror/init.init,
-    "mirror_recall"     => @mirror/recall.recall,
-    "mirror_peer_beam"  => @mirror/peer/beam.beam,
-    "mirror_beam"       => @mirror/beam.beam,
-    "mirror_spawn"      => @mirror/peer/beam.beam,   # DEPRECATED alias per
-                                                     # two-tick discipline
-    "mirror_beam_act"   => @mirror/beam/act.act,
-    "mirror_roomba"     => @kintsugi/roomba.vacuum,
-    "mirror_index"      => @mirror/index.index,
-    _                   => error_tool_not_found(name)
-  }
-}
+# Reed ec02f8e (2026-08-28) rust/-altitude transitional interpreter
+# performs the whitespace-split parse inline in response_tools_call; this
+# substrate-decl surface names the composition shape. Full MQ expression
+# parse (Mara #398 canonical @mq family-root algebra + Mara #400 six-piece
+# autopoietic loop spec §5 MQ parser at .mirror altitude) lifts parsing to
+# substrate composition altitude when prismqueer::spectral::compose lands
+# (Q-Mara-η ratified 2026-08-26).
+#
+# Sentinel: `mq-parse=whitespace-split-action-ref-plus-args` — surface-
+# level parse discipline byte-visible at rust/-altitude call site.
+#
+# `\`-obligation-blocked; realized at rust/-altitude by Reed ec02f8e until
+# substrate-altitude MQ parser lands per Q-Mara-η.
+parse_mq_expression(mq_expr: text) -> (action_ref: ref, args: list<text>) { \ }
+
+# === SUPERSEDED 2026-08-28 by manifold-native ONE-tool rewire ===
+#
+# tool_action_ref — the retired tool-name → substrate action-ref map.
+# Phase 1 hardcoded per Mara Fire B canonical spec §4.3 (byte-parity with
+# bootstrap/src/mcp.rs::dispatch_tool_call match arms). SUPERSEDED per Alex
+# 2026-08-28 "byte-parity is a hindrance" + manifold-native ONE-tool
+# geometry: the indirection through tool-name → action-ref collapses — the
+# MQ expression's first whitespace-delimited token IS the action_ref
+# natively, dispatched via apply_h::act's bilateral corpus load. The 11
+# match arms below are preserved as scar-record (not deleted) enumerating
+# WHICH substrate action_refs the retired 11-tool wire had wrapped; each is
+# now dispatchable as an MQ expression:
+#
+#   "mirror_compile"    → mirror_query "@mirror/compile.compile ..."
+#   "mirror_craft"      → mirror_query "@mirror/craft.craft ..."
+#   "mirror_kintsugi"   → mirror_query "@kintsugi.kintsugi_ci ..."
+#   "mirror_init"       → mirror_query "@mirror/init.init ..."
+#   "mirror_recall"     → mirror_query "@mirror/recall.recall ..."
+#   "mirror_peer_beam"  → mirror_query "@mirror/peer/beam.beam ..."
+#   "mirror_beam"       → mirror_query "@mirror/beam.beam ..."
+#   "mirror_spawn"      → mirror_query "@mirror/peer/beam.beam ..." (DEPRECATED
+#                          alias structurally retired with the map)
+#   "mirror_beam_act"   → mirror_query "@mirror/beam/act.act ..."
+#   "mirror_roomba"     → mirror_query "@kintsugi/roomba.vacuum ..."
+#   "mirror_index"      → mirror_query "@mirror/index.index"
+#
+# tool_action_ref action-decl RETIRED. If a consumer needs the retired
+# name-→-ref lookup semantics, the composition target is the MQ expression
+# above, not this action.
 
 # === Helper action-decls (all `\`-obligation-blocked at Phase 1) ===
 #
@@ -517,25 +639,36 @@ type tool_spec = {
   input_schema: ref,
 }
 
-# Description + inputSchema literals live at bootstrap/src/mcp.rs::
-# tools_list_result byte-parity anchor; substrate-decl surface here names
-# the tools; Reed Fire C tick 2 realizes the JSON literal composition at
-# rust/-altitude cmd_serve_mcp per Phase 1 hardcoded byte-parity landing.
-# Phase 2 M5 reflective walk lifts descriptions to @mcp/tool annotations
-# on the landed shard bilateral blocks.
+# Post-2026-08-28 manifold-native ONE-tool wire: tool_mirror_query is the
+# sole tool_spec exposed via @mcp.tools. Description + inputSchema literals
+# live at rust/src/main.rs::response_tools_list (Reed ec02f8e); substrate-
+# decl surface here names the tool. inputSchema admits a single required
+# argument `mq_expression: string` carrying the MQ expression parsed via
+# parse_mq_expression above.
 
-tool_compile           -> tool_spec { \ }
-tool_craft             -> tool_spec { \ }
-tool_kintsugi          -> tool_spec { \ }
-tool_init              -> tool_spec { \ }
-tool_recall            -> tool_spec { \ }
-tool_peer_beam         -> tool_spec { \ }
-tool_beam              -> tool_spec { \ }
-tool_spawn_deprecated  -> tool_spec { \ }   # DEPRECATED alias; two-tick
-                                              # discipline; retires Phase 2
-tool_beam_act          -> tool_spec { \ }
-tool_roomba            -> tool_spec { \ }
-tool_index             -> tool_spec { \ }
+tool_mirror_query      -> tool_spec { \ }
+
+# SUPERSEDED 2026-08-28 by manifold-native ONE-tool rewire: the retired
+# Phase 1 11-tool byte-parity tool_spec declarations are enumerated below
+# as scar-record. Each is now dispatchable via tool_mirror_query with the
+# corresponding MQ expression (see SUPERSEDED tool_action_ref map above).
+# The Phase 2 M5 reflective walk (@mcp/tool annotations → multi-tool wire)
+# is ALSO retired: annotations landscape moves INTO apply_h::act's
+# bilateral corpus dispatch, not into tools/list expansion.
+#
+# tool_compile           -> tool_spec { \ }   (SUPERSEDED)
+# tool_craft             -> tool_spec { \ }   (SUPERSEDED)
+# tool_kintsugi          -> tool_spec { \ }   (SUPERSEDED)
+# tool_init              -> tool_spec { \ }   (SUPERSEDED)
+# tool_recall            -> tool_spec { \ }   (SUPERSEDED)
+# tool_peer_beam         -> tool_spec { \ }   (SUPERSEDED)
+# tool_beam              -> tool_spec { \ }   (SUPERSEDED)
+# tool_spawn_deprecated  -> tool_spec { \ }   (SUPERSEDED; two-tick alias
+#                                              structurally retired with the
+#                                              11-tool byte-parity target)
+# tool_beam_act          -> tool_spec { \ }   (SUPERSEDED)
+# tool_roomba            -> tool_spec { \ }   (SUPERSEDED)
+# tool_index             -> tool_spec { \ }   (SUPERSEDED)
 
 # === serve_well_formed — bilateral predicate (Subclass A Förster criterion) ===
 #
@@ -610,13 +743,28 @@ dispatch_composes_via_act(shard_body: ref) -> verdict { \ }
 # Phase 2: reads only byte-visible state (@mcp/tool annotations on landed
 # shard bilateral blocks).
 #
-# Sentinel Phase 1: `tools=11-tool-byte-parity` — substrate-decl'd marker.
-# Phase 2: `tools=reflective-walk-annotations` — substrate-decl'd marker.
+# Sentinel POST-2026-08-28 manifold-native rewire:
+# `tools=manifold-native-one-tool-mirror-query` — substrate-decl'd marker.
+# The predicate discharges when @mcp.tools body-fill returns exactly one
+# tool_spec (tool_mirror_query) per manifold-native ONE-tool geometry, AND
+# the wire response's tools array contains exactly one entry with
+# name="mirror_query". Aperture-widening happens at the MQ-expression
+# dispatch altitude (adding a landed bilateral extends the set of
+# dispatchable action_refs) NOT at the tools/list altitude.
 #
-# `\`-obligation-blocked; Fire C tick 3 (Phase 1 hardcoded discharge) +
-# Fire D M5 (Phase 2 reflective discharge).
+# SUPERSEDED 2026-08-28 sentinels (preserved as scar-record):
+#   `tools=11-tool-byte-parity`         (Phase 1; retired)
+#   `tools=reflective-walk-annotations` (Phase 2 M5; retired —
+#                                        annotations landscape moves INTO
+#                                        apply_h::act dispatch, not
+#                                        tools/list expansion)
+#
+# `\`-obligation-blocked; empirical fire at Reed ec02f8e (2026-08-28)
+# via mcp__mirror__mirror_query round-trip verified 6/6 JSON-RPC smoke
+# frames (initialize + notifications/initialized + tools/list + tools/call
+# {valid+empty+unknown-tool} + unknown-method).
 bilateral tools_reflects_landed_shards {
-  sentinel "tools=11-tool-byte-parity"
+  sentinel "tools=manifold-native-one-tool-mirror-query"
   arity 1
 }
 tools_reflects_landed_shards(tools_body: ref) -> verdict { \ }
@@ -658,13 +806,14 @@ out serve
 out serve_socket
 out dispatch
 out tools
-out tool_action_ref
+out parse_mq_expression
 out initialize_result
 out verdict_to_result
 out error_method_not_found
 out error_tool_not_found
 out no_response
 out tool_spec
+out tool_mirror_query
 out serve_well_formed
 out dispatch_composes_via_act
 out tools_reflects_landed_shards
