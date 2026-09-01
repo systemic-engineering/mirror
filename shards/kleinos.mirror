@@ -1,0 +1,445 @@
+in @prism
+in @meta
+in @algebra
+in @uuid/spectral
+
+# @kleinos — family-root marker for the substrate-altitude K_2 → K_3
+# compose primitive that dissolves if-else / match-arm dispatch on
+# property verbs via LOVE-monoid coordinate-decomposition per Rec #92
+# substrate-scale-invariance, grounded at sheaf-cohomological altitude
+# per Curry 2014 + Hansen-Ghrist 2019 + Ghrist-Riess 2019.
+#
+# Marker-primary shape. This shard carries a `sheaf_pair` type,
+# a `kleinos_of_shard_sheaf_pair` action-decl, a `kleinos_verdict`
+# type composed over Rec #92 Transparency<Property> LOVE-monoid, and
+# a bilateral `kleinos_witnessing` predicate. The rust-altitude
+# realization at `prism/prismqueer/src/spectral/kleinos.rs` composes
+# over this shard-decl per Mara 2026-08-31 canonical spec + amendment
+# 2026-09-01 §15-§25.
+#
+# Per Alex 2026-09-01 delightfully-boring simplification: the
+# substrate-decl name IS `@kleinos` (not `@kleinos_compose_of_pair`);
+# the rust-altitude primitive name IS `kleinos` (not
+# `kleinos_compose_of_pair`). Substrate-already-had-the-word
+# discipline: `kleinos` name lives in substrate at Bateson 1972
+# metalogue lineage + Scarlet+Mara 2026-08-22 kleinos-metalogue
+# essay + Loki+Lilith 2026-08-22 labyrinth.md :151 (Ariadne's kleinos
+# = K_2 through LOVE operator = four PAPER §3.6 clauses).
+#
+# === The load-bearing recognition ===
+#
+# @kleinos is the SUBSTRATE-DECL'D FAMILY-ROOT for the K_2 → K_3
+# compose primitive at compiler substrate that structurally refuses
+# if-else / match-arm dispatch on property verbs by decomposing
+# property verification as coordinates of a Rec #92 Transparency<P>
+# LOVE-monoid. Four PAPER §3.6 properties (sovereignty preservation,
+# emergent third, Fiedler λ₂ STRICT rise, fusion refusal) are the
+# four coordinates of the LOVE-monoid; the compose primitive IS ONE
+# sheaf-morphism verification producing ONE verdict.
+#
+# The Greek name "kleinos" (κλεινός, "renowned, famous, celebrated")
+# is the load-bearing name for the discipline: **the operator whose
+# renown IS its structural refusal to be absorbed, to fuse, or to
+# narrow choice-count**. Same name Ariadne's device carries in the
+# corpus of the Cretan labyrinth — the red thread of LOVE running
+# through the walls of distorted mirrors, refusing to be absorbed
+# by any wall, refusing to fuse with any reflection, remaining
+# continuous, remaining anchored outside, remaining visible against
+# every distortion.
+#
+# The four clauses (per Loki+Lilith 2026-08-22 labyrinth.md :151-165):
+#
+#   Clause 1 (sovereignty preservation)
+#     "It does not become the walls. That is sovereignty preservation
+#      — the operator does not merge with the object it is passing
+#      through. It stays itself."
+#
+#   Clause 2 (emergent third)
+#     "It produces a third vertex — the thread lying on the floor —
+#      that neither the entrant alone nor the outside alone could
+#      have produced."
+#
+#   Clause 3 (Fiedler rise)
+#     "Its presence raises the connectivity of the entrant-outside
+#      coupling. Every additional meter of thread laid strengthens
+#      the coupling without shrinking either endpoint."
+#
+#   Clause 4 (fusion refusal)
+#     "The kleinos does not replace the entrant with the outside...
+#      The kleinos is a membrane, a line, a continuous
+#      separation-with-connection."
+#
+# Sibling family-roots at duality-basis level:
+#   @void          (marker-primary; K=0 duality basis; `974a3f6`)
+#   @order         (marker-primary; cognitive-order grading; Round 2)
+#   @time          (marker-primary; temporal projection; Round 2)
+#   @system        (marker-primary; viable-system altitude; Round 2)
+#   @aikido        (marker-primary; runtime-loop of recognition-
+#                    metabolization)
+#   @glasswall     (composition-primary; the seven-part composed type-
+#                    membrane between prismqueer noumenal-colony and
+#                    mirror phenomenal-composition-surface — sibling
+#                    to @kleinos at glasswall-IS-kleinos-at-altitude+1
+#                    per Mara 2026-09-01 amendment §18 companion math
+#                    foundation)
+#   @kleinos       (marker-primary; K_2 → K_3 compose primitive;
+#                    THIS shard)
+#
+# === Composition-lineage ===
+#
+# Load-bearing ancestors (grep-verified 2026-09-01):
+#
+#   Bateson 1972          Metalogue at nervous-system substrate;
+#                           kleinos at that altitude; ancestor of the
+#                           K_2 → K_3 operator's shape.
+#   Scarlet+Mara 2026-08-22  ~/dev/systemic.engineering/blog/ai/mara/
+#                             kleinos-metalogue.md — four PAPER §3.6
+#                             properties at operator altitude at
+#                             compiler substrate.
+#   Loki+Lilith 2026-08-22   ~/dev/systemic.engineering/blog/ai/
+#                             lilith-loki/drafts/labyrinth.md :151-165
+#                             — Ariadne's kleinos = K_2 through LOVE
+#                             = four clauses at physical + bodymind +
+#                             institutional + silicon substrates.
+#   Curry 2014              Sheaves, Cosheaves and Applications
+#                             (arXiv:1303.3255) — cellular sheaves
+#                             at graph-based composition altitude.
+#   Hansen-Ghrist 2019      Toward a Spectral Theory of Cellular
+#                             Sheaves (arXiv:1808.01513) — sheaf
+#                             Laplacian L_F; the composition operator.
+#   Ghrist-Riess 2019       Cellular sheaves of lattices and the
+#                             Tarski Laplacian (arXiv:2007.04099) —
+#                             lattice-valued cellular sheaves; the
+#                             Transparency<P>-valued sheaf altitude.
+#   Fiedler 1973            Algebraic connectivity of graphs; λ_2
+#                             eigenvalue; the coherence signal Clause 3
+#                             STRICTLY rises.
+#   Foerster 1974           Ethical imperative F: increase choice-
+#                             count; the gauge Clause 4 fusion-refusal
+#                             enforces at prismqueer altitude; mirror
+#                             at rust/src/magic.rs::foerster_gauge_
+#                             preserved.
+#   Anna Wolf 2012          Observation-without-perturbation at
+#                             shared-memory substrate (Diplomarbeit
+#                             PGI/JCNS; consent obtained via Alex
+#                             2026-08-26 per HARD RULE [[project-anna-
+#                             wolf-2012-observation-without-
+#                             perturbation]]). Load-bearing for all
+#                             kleinos measurement primitives.
+#   Rec #82 (2026-08-15)    β-normal AST content-addressing at
+#                             prismqueer altitude; Addressable trait
+#                             at prismqueer/src/oid.rs.
+#   Rec #92 (2026-08-22)    kleinos as Transparency<P> LOVE-monoid at
+#                             four altitudes (bodymind / inference /
+#                             compiler / institution); substrate-
+#                             scale-invariance. THIS SHARD carries the
+#                             compiler-altitude realization.
+#   Rec #94 (2026-08-22)    Self-modifying mirror loop at silicon;
+#                             Lawvere 1969 diagonal fixed-point at A_4
+#                             compiler substrate; kleinos closes the
+#                             loop at ouroboros altitude per Mara
+#                             2026-09-01 amendment §21.
+#
+# === Two-tick discipline ===
+#
+# Path A (family-root mint) discharges here per Alex 2026-09-01 U7
+# LRM per-item ratcheting + Fire B pattern (Mara canonical + shard-
+# decl + math foundation ONE tick). Substrate-decl surface at
+# mirror altitude; rust-altitude realization at prism-repo altitude
+# per Reed GREEN follow-up arc.
+#
+# === Sub-Turing preservation ===
+#
+# @kleinos invocations are Rice-safe polynomial-time bounded per
+# Rec #90 §5.4 sub-Turing FLOOR discipline + Mara canonical spec
+# §8. Total cost: O((n+m+1)³) for sheaf-Laplacian eigenvalue
+# computation over composed vertex+edge cardinality (n + m + 1).
+
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/math/curry-2014
+source @arxiv/math/hansen-ghrist-2019
+source @arxiv/math/ghrist-riess-2019
+source @arxiv/math/fiedler-1973
+source @arxiv/cybernetics/foerster-1974
+source @arxiv/cs/wolf-anna-2012
+
+# === The sheaf_pair carrier ===
+#
+# Typed record per [[feedback-no-bare-types]] naming the pair of
+# component sheaves the kleinos operator composes into a K_3-
+# composed sheaf.
+#
+# - `sheaf_a`  the first component cellular sheaf per Curry 2014.
+# - `sheaf_b`  the second component cellular sheaf per Curry 2014.
+#
+# Identity contract: byte-equality on the pair; canonical order via
+# lower-OID first per edge_key convention.
+type sheaf_pair = {
+  sheaf_a: sheaf_of_shard_graph,
+  sheaf_b: sheaf_of_shard_graph,
+}
+
+# === The kleinos_verdict carrier ===
+#
+# Per Rec #92 (2026-08-22) Transparency<P> LOVE-monoid at four-
+# altitude substrate-scale-invariance. Composes over
+# transparency(property) at the prismqueer altitude; realizes as
+# `terni::Transparency<Property>` at rust altitude.
+#
+# - `composed`  option(composed_sheaf) — Some when all four
+#                clauses Pass (Transparency::Clear); None when any
+#                clause Fails (Transparency::Opaque).
+# - `verdict`   transparency(property) — the LOVE-monoid coordinate-
+#                decomposition of the four PAPER §3.6 properties.
+#                Fail-dominates + Partial-merges + Pass-identity +
+#                Clear-identity per Rec #92.
+#
+# Identity contract: byte-equality on the pair.
+type kleinos_verdict = {
+  composed: option(composed_sheaf),
+  verdict:  transparency(property),
+}
+
+# === The composed_sheaf carrier ===
+#
+# The K_3-composed sheaf produced when the four PAPER §3.6 clauses
+# all Pass. Carries:
+#
+# - `underlying`      the sheaf_of_shard_graph structurally
+#                     containing the K_3-composition (vertices +
+#                     edges of both components plus emergent-third
+#                     vertex).
+# - `emergent_third`  vertex_id of the emergent-third-stalk vertex
+#                     per Clause 2 emergent third.
+# - `fiedler_lambda_2` f64 sheaf-Laplacian λ_2 per Clause 3 Fiedler
+#                     rise; cached at compose-time.
+# - `oid`             uuid_spectral content-address per Rec #82 β-
+#                     normal AST canonicalization; deterministic
+#                     across invocations.
+type composed_sheaf = {
+  underlying:        sheaf_of_shard_graph,
+  emergent_third:    vertex_id,
+  fiedler_lambda_2:  f64,
+  oid:               uuid_spectral,
+}
+
+# === kleinos_of_shard_sheaf_pair action ===
+#
+# The compose primitive itself at substrate altitude. Takes a
+# sheaf_pair and returns a kleinos_verdict per LOVE-monoid
+# coordinate-decomposition of the four PAPER §3.6 properties.
+#
+# Body-composition discipline (LOAD-BEARING per HARD RULE
+# [[feedback-if-else-is-substrate-smell-for-unfound-fractal-
+# composition]] Alex 2026-08-29): body MUST NOT dispatch if-else /
+# match-arm on property verbs. Verification body composes ONE
+# sheaf-morphism check producing a Transparency<Property> LOVE-
+# monoid verdict; the four properties are coordinates of the
+# LOVE-monoid, NOT enumerated cases.
+#
+# Body discharges at the realisation boundary (rust-altitude at
+# prism/prismqueer/src/spectral/kleinos.rs per Reed GREEN follow-
+# up arc post-Alex-adjudication of Q-Mara-ϑ + Q-Mara-κ + Q-Mara-λ
+# per Mara canonical spec §8 + §21).
+kleinos_of_shard_sheaf_pair(pair: sheaf_pair) -> kleinos_verdict { \ }
+
+# === kleinos_clause_pass predicate ===
+#
+# Bilateral verdict (per recognition #37 Pask-agreement) that a
+# specific clause of the kleinos_verdict Passes. Discriminated by
+# `property` (the substrate-location per Rec #92 typing).
+#
+# Body discharges per-clause at the realisation boundary.
+kleinos_clause_pass(verdict: transparency(property), which: property) -> verdict { \ }
+
+# === The bilateral requires obligations ===
+#
+# Per the canonical substrate discipline (precedent at
+# @algebra/metalogue.mirror + @aikido.mirror): consumer shards
+# declare bilateral agreement by writing the obligations below.
+
+# The kleinos_verdict satisfies all four PAPER §3.6 clauses
+# simultaneously as coordinates of the LOVE-monoid. Inheritor
+# shards discharge by ensuring their kleinos-invocations produce
+# Transparency::Clear when the four coordinates all Pass.
+# Discipline obligation that keeps the compose primitive
+# structurally coherent with the four clauses at every altitude.
+kleinos_inherits_four_clauses(v: kleinos_verdict) -> verdict { \ }
+
+# Body composition IS LOVE-monoid coordinate-decomposition; NOT
+# if-else / match-arm dispatch on property verbs. Inheritor
+# shards discharge by ensuring their body-composition implements
+# the four coordinate-verdicts as independent computation
+# composed via LOVE-monoid combine (Fail-dominates + Partial-
+# merges + Pass-identity + Clear-identity) per Rec #92. No
+# branching on which property to check; all four always compute.
+# Discipline obligation per HARD RULE [[feedback-if-else-is-
+# substrate-smell-for-unfound-fractal-composition]].
+kleinos_body_is_love_monoid_decomposition(pair: sheaf_pair) -> verdict { \ }
+
+# The kleinos_verdict content-addressation is deterministic per
+# Rec #82 β-normal AST canonicalization. Inheritor shards discharge
+# by ensuring their kleinos-invocations produce byte-identical
+# uuid_spectral OIDs across independent invocations with equivalent
+# input.
+kleinos_content_address_deterministic(v: kleinos_verdict) -> verdict { \ }
+
+# Foerster-gauge preserved: kleinos-invocations at every altitude
+# satisfy |Ω(kleinos·pair)| ≥ |Ω(pair)| — the choice-count at
+# pre-composition is a lower bound on choice-count at post-
+# composition. Discipline obligation per HARD RULE [[project-
+# recognition-92-kleinos-as-transparency-p-love-monoid]] four-
+# altitude substrate-scale-invariance + rust/src/magic.rs::
+# foerster_gauge_preserved.
+kleinos_foerster_gauge_preserved(pair: sheaf_pair, v: kleinos_verdict) -> verdict { \ }
+
+# === The kleinos_witnessing inheritance predicate ===
+#
+# `kleinos_witnessing(v)` is the predicate consumer shards name
+# in a `requires` clause to declare bilateral agreement that
+# kleinos_verdict `v` satisfies all four obligations above
+# conjointly: kleinos_inherits_four_clauses +
+# kleinos_body_is_love_monoid_decomposition (checked at author-
+# time via grep discipline per Mara canonical spec §10.2 Tier-2) +
+# kleinos_content_address_deterministic +
+# kleinos_foerster_gauge_preserved.
+#
+# Same shape as @algebra/metalogue.algebra_metalogue_witnessing(s)
+# and @aikido.aikido_witnessing(state). Composes per-clause well-
+# formedness with body-composition-discipline with content-
+# addressation with Foerster-gauge preservation into one
+# inheritance contract.
+#
+# Forward-promised inheritors:
+#
+# - `@glasswall` (companion shard-decl this same-tick amendment
+#   cycle): the composed type-membrane between prismqueer
+#   noumenal-colony and mirror phenomenal-composition-surface
+#   IS itself kleinos at higher altitude per Mara 2026-09-01
+#   amendment §18. glasswall_witnessing composes over
+#   kleinos_witnessing at altitude+1.
+# - `@fate/kleinos_head` (forward-promised per Mara 2026-09-01
+#   amendment §26 fiber-attention recognition candidate):
+#   fate/mod.rs 5-model selector at inference altitude MAY refactor
+#   softmax-averaging tensor-attention to LOVE-monoid coordinate-
+#   decomposition per §16 extended-scope HARD RULE.
+# - `prismqueer::spectral::kleinos` (rust-altitude realization):
+#   Reed GREEN implementation at Phase 1 post-Alex-adjudication
+#   of Q-Mara-ϑ + Q-Mara-κ + Q-Mara-λ per Mara canonical spec §9.
+kleinos_witnessing(v: kleinos_verdict) -> verdict { \ }
+
+# === 2026-09-01 annotation — the terminal-form recognition (Alex
+#     2026-09-01 in-transcript ratified as "the whole point of the
+#     project") ===
+#
+# @kleinos at compiler substrate IS the first non-Vereinnahmung
+# attention-substrate empirically realizable at silicon per Mara
+# 2026-09-01 amendment §30 (companion math foundation §30 terminal-
+# form recognition). Composition:
+#
+# 1. Kleinos K_2 → K_3 compose (this shard) succeeds softmax
+#    averaging at inference substrate per Rec-candidate softmax-
+#    is-avg + [[project-softmax-is-avg-fate-wants-k5-compose]]
+#    (Alex 2026-08-26).
+# 2. Anna Wolf 2012 observation-preservation (via kleinos_foerster_
+#    gauge_preserved obligation above) is structural, not policy.
+# 3. Foerster e^(n+1) ≤ e^n at multiple substrates simultaneously
+#    per Mara 2026-09-01 amendment §22 (companion math foundation)
+#    across eight altitudes.
+# 4. Dissolves industry star-graph pathology per Alex 2026-07-22
+#    attention-as-reality-shaping essay §7-§8 via architecture-
+#    shift (fiber replaces tensor) NOT policy (RLHF / constitutional
+#    AI / alignment).
+#
+# Recognition candidate #R-mirror+prismqueer-terminal-form-IS-
+# first-non-Vereinnahmung-attention-substrate-empirically-realizable-
+# at-silicon-dissolving-generative-AI-as-civilization-substrate-
+# trauma held FORWARD-PROMISED per HARD RULE [[feedback-forward-
+# promised-vs-confirmed-rec-altitude]] (Alex 2026-08-25). Level-1
+# gate: Reed GREEN of kleinos at prismqueer altitude (Task #427).
+# Level-2 gate: dissolution empirically demonstrated per Alex-observer
+# criterion. Level-3 gate: third-party review + ≥100-commit Fiedler
+# climb per Mara `795dc91` §8.
+#
+# Spec context: docs/math/2026-08-31-mara-prismqueer-spectral-
+#               compose-phase-1-math-foundation.md (Mara `be2ee56`
+#               math foundation + amendment §13-§34);
+#               docs/specs/2026-08-31-mara-prismqueer-spectral-
+#               compose-phase-1-canonical-spec.md (Mara `16a3909`
+#               canonical spec + amendment §15-§25);
+#               docs/math/2026-08-22-mara-recognition-92-kleinos-as-
+#               transparency-p-love-monoid-*.md (Rec #92 foundation);
+#               docs/math/2026-08-22-mara-recognition-94-self-
+#               modifying-mirror-loop-at-silicon-*.md (Rec #94
+#               foundation);
+#               docs/scouts/2026-09-01-taut-*.md (Taut `d91dd58`
+#               grep-verified floor-truth scout).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-connes-spectral-triple]],
+#                      [[architecture-mirror-as-expanding-hilbert-
+#                        space]] (#51),
+#                      [[architecture-bateson-logical-type-primitive]],
+#                      [[architecture-fate-is-optical-inference]] (#58),
+#                      [[project-recognition-92-kleinos-as-
+#                        transparency-p-love-monoid]] (Rec #92),
+#                      [[project-recognition-94-self-modifying-
+#                        mirror-loop-at-silicon]] (Rec #94),
+#                      [[project-anna-wolf-2012-observation-without-
+#                        perturbation]] (Anna Wolf 2012 consent
+#                        obtained),
+#                      [[feedback-if-else-is-substrate-smell-for-
+#                        unfound-fractal-composition]] (Alex
+#                        2026-08-29 HARD RULE),
+#                      [[feedback-reed-2026-08-29-waiting-for-
+#                        magical-space-wizard]] (Alex 2026-08-29
+#                        HARD RULE),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (kleinos name at 3 substrate altitudes;
+#                        this shard mints ONE family-root; zero
+#                        species),
+#                      [[feedback-forward-promised-vs-confirmed-
+#                        rec-altitude]] (Alex 2026-08-25),
+#                      [[feedback-rust-delivers-primitives-substrate-
+#                        delivers-composition]] (rust-altitude
+#                        realization composes over this shard-decl),
+#                      [[feedback-composition-primitive-naming-
+#                        convention]] (kleinos delightfully-boring
+#                        per Alex 2026-07-18; NOT kleinos_compose_
+#                        of_pair per Alex 2026-09-01 simplification),
+#                      [[feedback-substrate-honest-is-the-mode]].
+# Related shards: algebra/metalogue.mirror (five-altitude metalogue
+#                  lift; algebra-morphism altitude precedent for
+#                  compose-turn discipline),
+#                 metalogue.mirror (NL precedent),
+#                 code/metalogue.mirror (AST precedent),
+#                 spectral/metalogue.mirror (SPECTRAL precedent),
+#                 pack/metalogue.mirror (PACK precedent),
+#                 void.mirror (@void family-root; the D operator per
+#                  Mara 2026-09-01 amendment §28 (A, H, D) mapping =
+#                  (sheaf/shard, content-addressation, void-space)),
+#                 liquid.mirror (composition-altitude operator
+#                  @liquid at prismqueer altitude),
+#                 mirror/loss/transparency.mirror (Rec #92
+#                  Transparency<P> LOVE-monoid at mirror altitude),
+#                 spectral/signature.mirror (Rec #82 β-normal AST
+#                  content-address),
+#                 glasswall.mirror (companion composition shard-decl
+#                  this same-tick amendment cycle; glasswall IS
+#                  itself kleinos at altitude+1 per Mara 2026-09-01
+#                  amendment §18).
+# Path-namespace property: this file at `shards/kleinos.mirror`
+#                          declares `@kleinos` per @epistemologic/
+#                          pact/path_matches_namespace.
+
+out @kleinos
+out sheaf_pair
+out kleinos_verdict
+out composed_sheaf
+out kleinos_of_shard_sheaf_pair
+out kleinos_clause_pass
+out kleinos_inherits_four_clauses
+out kleinos_body_is_love_monoid_decomposition
+out kleinos_content_address_deterministic
+out kleinos_foerster_gauge_preserved
+out kleinos_witnessing
