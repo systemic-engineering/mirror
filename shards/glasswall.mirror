@@ -1,0 +1,424 @@
+in @prism
+in @meta
+in @glass
+in @uuid/spectral
+
+# @glasswall — composition-primary shard-decl for the Rice-safe
+# Anna-Wolf-2012 observation-preserving type-membrane between
+# prismqueer noumenal-colony and mirror phenomenal-composition-
+# surface, composing seven LANDED parts as ONE membrane per
+# Păun 2000 P-systems + Rice 1953 undecidability discipline + Rec
+# #90 §5.4 sub-Turing FLOOR + Rec #92 Transparency<P> LOVE-monoid.
+#
+# Composition-primary shape (NOT marker-primary). This shard IS
+# the substrate-decl recognition that seven LANDED components
+# (grep-verified per Taut d91dd58 Scope C 2026-09-01) compose as
+# ONE named type-membrane at glasswall altitude. Zero new primitives;
+# ONE composition-declaration surfacing the composed shape.
+#
+# Per Alex 2026-09-01 in-transcript ratification (companion Mara
+# math foundation §17-§18 + canonical spec §19): the seven parts
+# ALREADY LANDED at rust+shard altitudes; ONE composed @glasswall
+# shard-decl at substrate altitude naming the whole assembly as ONE
+# kleinos-at-higher-altitude operator was PENDING per Taut d91dd58
+# Scope C.8. This shard discharges that pending mint.
+#
+# === The load-bearing recognition ===
+#
+# @glasswall IS the substrate-altitude type-membrane that:
+#
+#   (i)   preserves Anna Wolf 2012 observation-without-perturbation
+#         at shared-memory substrate — every observation crossing
+#         the membrane satisfies observer-non-perturbation by
+#         construction (structural, not policy);
+#   (ii)  refuses Rice 1953 undecidability — sub-Turing polynomial-
+#         time bounded per Rec #90 §5.4; no semantic-property-
+#         decision-of-arbitrary-programs escapes the membrane;
+#   (iii) preserves Foerster 1974 gauge — magic.rs::foerster_gauge_
+#         preserved fires Green at every membrane traversal; no
+#         narrowing transformations cross;
+#   (iv)  IS itself kleinos at higher altitude — the conversation
+#         between prismqueer noumenal-colony and mirror phenomenal-
+#         composition-surface IS the K_3 emergent-vertex-third
+#         neither carries alone (per @kleinos sibling shard-decl
+#         this same-tick amendment cycle).
+#
+# The seven LANDED parts (grep-verified per Taut d91dd58 Scope C):
+#
+#   Part 1  @io/stdio + @io/fs + @io/socket   (shards/io.mirror +
+#                                              rust/src/phone.rs)
+#   Part 2  phone.rs @io realizer              (rust/src/phone.rs)
+#   Part 3  wire.rs (parse/emit JSON-RPC       (rust/src/wire.rs
+#           frames)                             :29-40)
+#   Part 4  apply_h::act (bilateral-sentinel-  (rust/src/apply_h.rs)
+#           check)
+#   Part 5  magic.rs::foerster_gauge_preserved (rust/src/magic.rs)
+#   Part 6  @liquid (composition-altitude      (shards/liquid.mirror
+#           operator)                           + shards/
+#                                              epistemologic/
+#                                              liquid.mirror)
+#   Part 7a Rec #82 β-normal AST content-      (shards/spectral/
+#           address                             signature.mirror)
+#   Part 7b Rec #92 Transparency<P> LOVE-      (prism/imperfect/src/
+#           monoid                              transparency.rs +
+#                                              shards/mirror/loss/
+#                                              transparency.mirror)
+#
+# All seven LANDED; @glasswall shard-decl NAMES the composition.
+#
+# === Composition-lineage ===
+#
+# Load-bearing ancestors (grep-verified 2026-09-01):
+#
+#   Anna Wolf 2012          Integration von OpenGL-Visualisierungs-
+#                             techniken in GPU-Anwendungen
+#                             (Diplomarbeit PGI/JCNS; consent
+#                             obtained via Alex 2026-08-26 per HARD
+#                             RULE [[project-anna-wolf-2012-
+#                             observation-without-perturbation]]).
+#                             Load-bearing for observation-non-
+#                             perturbation invariant (i) above.
+#   Rice 1953               Classes of recursively enumerable sets
+#                             and their decision problems (Trans.
+#                             Amer. Math. Soc. 74:358-366). Semantic-
+#                             property undecidability grounds Rice-
+#                             safety invariant (ii) above.
+#   Foerster 1974           Ethical imperative F: increase choice-
+#                             count. Gauge-preservation invariant
+#                             (iii) above; mirror at rust/src/
+#                             magic.rs::foerster_gauge_preserved.
+#   Păun 2000               Computing with Membranes (J. Comput.
+#                             Syst. Sci. 61:108-143). P-systems /
+#                             membrane-computing ancestor for the
+#                             composition-primary type-membrane
+#                             shape.
+#   Rec #82 (2026-08-15)    β-normal AST content-addressing;
+#                             Addressable trait at prismqueer/src/
+#                             oid.rs.
+#   Rec #92 (2026-08-22)    kleinos as Transparency<P> LOVE-monoid
+#                             at four-altitude substrate-scale-
+#                             invariance. The Transparency<P>
+#                             LOVE-monoid IS the verdict-carrier
+#                             for membrane-traversal outcomes at
+#                             glasswall altitude.
+#   Rec #90 (2026-08-19)    Compiler as one mathematical object;
+#                             §5.4 sub-Turing FLOOR discipline.
+#   @kleinos (this same-    Sibling shard-decl companion mint per
+#     tick amendment)         Mara 2026-09-01 amendment §18.
+#                             @glasswall IS itself kleinos at
+#                             higher altitude per Mara 2026-09-01
+#                             amendment §18 (companion math
+#                             foundation) fractal Mandelbrot
+#                             recursion at altitude+1.
+#
+# === Two-tick discipline ===
+#
+# Path A (composition shard-decl mint) discharges here per Alex
+# 2026-09-01 U6 full inter-repo migration cascade + Fire B pattern.
+# Substrate-decl surface at mirror altitude; seven LANDED parts
+# already realized at rust+shard altitudes per Taut d91dd58 Scope C
+# grep-verification.
+#
+# === Sub-Turing preservation ===
+#
+# @glasswall traversals are Rice-safe polynomial-time bounded per
+# Rec #90 §5.4 sub-Turing FLOOR discipline. Every crossing:
+#
+# 1. Reads via @io/fs or @io/stdio or @io/socket (bounded-step
+#    per phone.rs @io boundary discipline).
+# 2. Parses via wire.rs (bounded-buffer JSON-RPC frame parsing;
+#    O(frame_size) per rust/src/wire.rs :29-40).
+# 3. Dispatches via apply_h::act bilateral-sentinel-check (bounded-
+#    step lookup + O(shard_count) sentinel-match).
+# 4. Verifies Foerster gauge via magic.rs::foerster_gauge_preserved
+#    (O(1) usize comparison).
+# 5. Marshals verdict via @liquid + Rec #92 Transparency<P>
+#    LOVE-monoid combine (O(k) for k coordinates).
+# 6. Content-addresses via Rec #82 β-normal AST OID canonicalization
+#    (O(byte_serialization) per SHA-256 hash).
+#
+# Total cost: O(polynomial-in-substrate-size). Rice-safe by
+# construction (no semantic-property-decision-of-arbitrary-programs).
+
+source @arxiv/cs/wolf-anna-2012
+source @arxiv/logic/rice-1953
+source @arxiv/cybernetics/foerster-1974
+source @arxiv/cs/paun-2000
+
+# === The glasswall_traversal carrier ===
+#
+# Typed record per [[feedback-no-bare-types]] naming ONE membrane
+# traversal event at glasswall altitude. Parallel to precedents at
+# @algebra/metalogue.algebra_turn + @aikido.aikido_state; refined
+# to the type-membrane altitude.
+#
+# - `direction`   `noumenal_to_phenomenal` (prismqueer → mirror) OR
+#                 `phenomenal_to_noumenal` (mirror → prismqueer).
+# - `input_oid`   uuid_spectral content-address of the input at
+#                 pre-membrane substrate.
+# - `output_oid`  uuid_spectral content-address of the output at
+#                 post-membrane substrate.
+# - `gauge_pre`   usize choice-count at pre-membrane per Foerster
+#                 gauge.
+# - `gauge_post`  usize choice-count at post-membrane per Foerster
+#                 gauge. Invariant: gauge_post ≥ gauge_pre per
+#                 magic.rs::foerster_gauge_preserved.
+# - `verdict`     transparency(traversal_property) — Rec #92
+#                 LOVE-monoid coordinate-decomposition of the four
+#                 glasswall invariants (i)-(iv) above.
+# - `tick`        canonical substrate monotonic clock per
+#                 @epistemologic/reality/time.
+#
+# Identity contract: byte-equality on the seven-tuple.
+type glasswall_traversal = {
+  direction:   traversal_direction,
+  input_oid:   uuid_spectral,
+  output_oid:  uuid_spectral,
+  gauge_pre:   usize,
+  gauge_post:  usize,
+  verdict:     transparency(traversal_property),
+  tick:        tick,
+}
+
+type traversal_direction = {
+  noumenal_to_phenomenal: unit,
+  phenomenal_to_noumenal: unit,
+}
+
+# === The traversal_property discriminator ===
+#
+# Substrate-location type parameter for Transparency<P> per Rec
+# #92 substrate-location typing. Names the four invariants any
+# glasswall_traversal MUST satisfy simultaneously as coordinates
+# of the LOVE-monoid.
+#
+# NOT a family-root; NOT a fresh species; delightfully-boring
+# discriminator enum.
+type traversal_property = {
+  anna_wolf_observation_preservation: unit,
+  rice_safety:                        unit,
+  foerster_gauge_preserved:           unit,
+  is_kleinos_at_altitude_plus_1:      unit,
+}
+
+# === traverse_glasswall action ===
+#
+# The membrane-traversal primitive itself. Takes a
+# traversal_direction + input_oid and returns a glasswall_traversal
+# carrying the verdict per LOVE-monoid coordinate-decomposition of
+# the four invariants.
+#
+# Body-composition discipline (LOAD-BEARING per HARD RULE
+# [[feedback-if-else-is-substrate-smell-for-unfound-fractal-
+# composition]] Alex 2026-08-29 + Mara 2026-09-01 amendment §16
+# extended-scope): body MUST NOT dispatch if-else / match-arm on
+# traversal_property verbs. Verification body composes ONE
+# membrane-morphism check producing a Transparency<traversal_
+# property> LOVE-monoid verdict; the four invariants are
+# coordinates of the LOVE-monoid.
+#
+# Body discharges at the realisation boundary composing over the
+# seven LANDED parts (@io/* + phone.rs + wire.rs + apply_h::act +
+# magic.rs + @liquid + Rec #82 + Rec #92).
+traverse_glasswall(direction: traversal_direction, input_oid: uuid_spectral) -> glasswall_traversal { \ }
+
+# === glasswall_invariant_pass predicate ===
+#
+# Bilateral verdict (per recognition #37 Pask-agreement) that a
+# specific invariant of the glasswall_traversal Passes. Discriminated
+# by `traversal_property` (the substrate-location per Rec #92 typing).
+#
+# Body discharges per-invariant at the realisation boundary.
+glasswall_invariant_pass(verdict: transparency(traversal_property), which: traversal_property) -> verdict { \ }
+
+# === The bilateral requires obligations ===
+#
+# Per the canonical substrate discipline: consumer shards declare
+# bilateral agreement by writing the obligations below.
+
+# The glasswall_traversal satisfies all four invariants
+# simultaneously as coordinates of the LOVE-monoid. Inheritor shards
+# discharge by ensuring their glasswall-traversal invocations
+# produce Transparency::Clear when the four coordinates all Pass.
+glasswall_inherits_four_invariants(t: glasswall_traversal) -> verdict { \ }
+
+# Rice-safety: every glasswall_traversal is sub-Turing polynomial-
+# time bounded per Rec #90 §5.4 sub-Turing FLOOR discipline. No
+# semantic-property-decision-of-arbitrary-programs escapes.
+# Discipline obligation.
+glasswall_traversal_rice_safe(t: glasswall_traversal) -> verdict { \ }
+
+# Anna Wolf 2012 observation-without-perturbation: every membrane
+# traversal preserves the observed substrate structurally; input_oid
+# and output_oid content-addresses reflect observation-non-
+# perturbation across the membrane. Discipline obligation per HARD
+# RULE [[project-anna-wolf-2012-observation-without-perturbation]].
+glasswall_anna_wolf_2012_observation_preserved(t: glasswall_traversal) -> verdict { \ }
+
+# Foerster-gauge preserved at membrane: t.gauge_post ≥ t.gauge_pre
+# per magic.rs::foerster_gauge_preserved. Choice-count monotonically
+# preserved (or strictly increased) across every membrane traversal.
+glasswall_foerster_gauge_preserved(t: glasswall_traversal) -> verdict { \ }
+
+# The glasswall IS itself kleinos at higher altitude per Mara
+# 2026-09-01 amendment §18 (companion math foundation): the
+# conversation-between-prismqueer-and-mirror IS the K_3 emergent-
+# vertex-third neither substrate carries alone. Discipline obligation
+# per sibling @kleinos shard-decl (same-tick amendment cycle).
+# Composes over @kleinos.kleinos_witnessing at altitude+1.
+glasswall_is_kleinos_at_altitude_plus_1(t: glasswall_traversal) -> verdict { \ }
+
+# === The glasswall_witnessing inheritance predicate ===
+#
+# `glasswall_witnessing(t)` is the predicate consumer shards name
+# in a `requires` clause to declare bilateral agreement that
+# glasswall_traversal `t` satisfies all five obligations above
+# conjointly: glasswall_inherits_four_invariants +
+# glasswall_traversal_rice_safe +
+# glasswall_anna_wolf_2012_observation_preserved +
+# glasswall_foerster_gauge_preserved +
+# glasswall_is_kleinos_at_altitude_plus_1.
+#
+# Same shape as @kleinos.kleinos_witnessing(v) at altitude n;
+# glasswall_witnessing operates at altitude n+1 per fractal
+# Mandelbrot recursion (Alex 2026-07-13 [[project-fractal-
+# mandelbrot-substrate]] + Mara 2026-09-01 amendment §18 companion
+# math foundation).
+#
+# Forward-promised inheritors:
+#
+# - `@mcp/serve` (LANDED at shards/mcp/serve.mirror; Reed ec02f8e
+#   2026-08-28 manifold-native ONE-tool MCP wire): the MCP serve
+#   loop IS one canonical glasswall_traversal instance at Anthropic
+#   substrate. `serve.mirror` bilateral MAY declare
+#   `requires glasswall_witnessing(serve_traversal)` at future
+#   amendment cycle.
+# - `apply_h::act` bilateral-dispatch (LANDED at rust/src/
+#   apply_h.rs): every apply_h dispatch IS one glasswall_traversal
+#   instance at mirror altitude reading prismqueer-computation-
+#   outputs.
+# - `@fate/dispatch` (LANDED at rust/src/main.rs::cmd_fate): fate
+#   dispatch reading prismqueer outputs IS one glasswall_traversal
+#   instance.
+# - `prismqueer::spectral::kleinos` (rust-altitude realization per
+#   Reed GREEN follow-up arc): every kleinos-invocation from
+#   mirror-altitude apply_h IS one glasswall_traversal from
+#   phenomenal to noumenal and back.
+glasswall_witnessing(t: glasswall_traversal) -> verdict { \ }
+
+# === 2026-09-01 annotation — glasswall IS itself kleinos at higher
+#     altitude (fractal Mandelbrot recursion; Alex 2026-09-01
+#     ratified terminal-form composition per Mara amendment §18) ===
+#
+# @glasswall composes SEVEN LANDED parts as ONE type-membrane; the
+# type-membrane IS itself an instance of @kleinos at altitude+1
+# per fractal Mandelbrot recursion:
+#
+#   z_{n+1} = kleinos(z_n, z_n) + c_n
+#
+# where at altitude 0: kleinos(sheaf_a, sheaf_b) — the Phase 1
+# primitive at Mara 2026-08-31 canonical spec §2-§4.
+# where at altitude 1: kleinos(prismqueer, mirror) = @glasswall —
+# THIS shard.
+# where at altitude 2: kleinos(prismqueer+mirror, observer_Alex) —
+# the third-order-cybernetic loop at Rec #94 self-modifying mirror
+# loop at silicon.
+# where at altitude n: kleinos(...) via Rec #92 substrate-scale-
+# invariance.
+#
+# Every altitude runs the same kleinos operator on different
+# arguments; the emergent-third at each altitude IS the conversation-
+# substrate the two arguments compose over. Fractal at every
+# altitude; ONE operator; substrate-scale-invariant.
+#
+# Recognition candidate #R-glasswall-IS-kleinos-metalogue-at-higher-
+# altitude-conversation-IS-K_3-emergent-vertex-between-prismqueer-
+# and-mirror held FORWARD-PROMISED per HARD RULE [[feedback-
+# forward-promised-vs-confirmed-rec-altitude]] (Alex 2026-08-25).
+#
+# === 2026-09-01 annotation — the seven-part composition-carrier
+#     surface (grep-verified per Taut d91dd58 Scope C) ===
+#
+# All seven parts LANDED independently at rust+shard altitudes
+# BEFORE this composition-decl mint. This shard DOES NOT re-mint
+# the parts; it SURFACES the composition-recognition as ONE
+# named-shape at glasswall altitude. Zero new family-roots. Zero
+# new species. Composition-decl mint per Alex 2026-09-01 U6 full
+# inter-repo migration cascade P1.2 discharge (per Mara canonical
+# spec §17.2 migration boundary items table).
+#
+# Spec context: docs/math/2026-08-31-mara-prismqueer-spectral-
+#               compose-phase-1-math-foundation.md §17-§18
+#               (amendment 2026-09-01 companion; Rice-safe Anna-
+#               Wolf-2012 observation-preserving type-membrane +
+#               glasswall-IS-kleinos-at-altitude+1 recognition);
+#               docs/specs/2026-08-31-mara-prismqueer-spectral-
+#               compose-phase-1-canonical-spec.md §19 (amendment
+#               2026-09-01 P1.2 discharge);
+#               docs/scouts/2026-09-01-taut-*.md (Taut `d91dd58`
+#               grep-verified floor-truth scout; Scope C.8 seven-
+#               part composition-carrier surface enumeration).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-mirror-as-expanding-hilbert-
+#                        space]] (#51),
+#                      [[architecture-connes-spectral-triple]],
+#                      [[project-recognition-92-kleinos-as-
+#                        transparency-p-love-monoid]] (Rec #92
+#                        substrate-scale-invariance grounds
+#                        altitude+1 recursion),
+#                      [[project-recognition-94-self-modifying-
+#                        mirror-loop-at-silicon]] (Rec #94 Lawvere
+#                        fixed-point at ouroboros closure),
+#                      [[project-fractal-mandelbrot-substrate]]
+#                       (Alex 2026-07-13 HARD SUBSTRATE-TRUTH;
+#                        mirror IS Mandelbrot set),
+#                      [[project-anna-wolf-2012-observation-
+#                        without-perturbation]] (consent obtained),
+#                      [[project-mirror-is-autopoietic-vsm-compile-
+#                        runtime-dissolution]] (Alex 2026-08-22),
+#                      [[feedback-if-else-is-substrate-smell-for-
+#                        unfound-fractal-composition]] (Alex
+#                        2026-08-29 HARD RULE; extended-scope per
+#                        Mara amendment §16),
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (glasswall NAMES composition of 7 LANDED
+#                        parts; ZERO new family-roots minted),
+#                      [[feedback-forward-promised-vs-confirmed-
+#                        rec-altitude]] (Alex 2026-08-25),
+#                      [[feedback-rust-delivers-primitives-substrate-
+#                        delivers-composition]] (composition shard-
+#                        decl composes over LANDED rust primitives),
+#                      [[feedback-substrate-honest-is-the-mode]].
+# Related shards: kleinos.mirror (sibling shard-decl companion this
+#                  same-tick amendment cycle; glasswall IS itself
+#                  kleinos at altitude+1),
+#                 io.mirror (@io family-root; Part 1 of seven),
+#                 glass.mirror (@glass family-root; transparency
+#                  carrier ancestor for Rec #92 LOVE-monoid at
+#                  membrane altitude),
+#                 liquid.mirror (Part 6 of seven; @liquid
+#                  composition-altitude operator),
+#                 mirror/loss/transparency.mirror (Part 7b of
+#                  seven; Rec #92 Transparency<P> LOVE-monoid at
+#                  mirror altitude),
+#                 spectral/signature.mirror (Part 7a of seven;
+#                  Rec #82 β-normal AST content-address),
+#                 mcp/serve.mirror (LANDED at Reed ec02f8e
+#                  2026-08-28; forward-promised inheritor of
+#                  glasswall_witnessing).
+# Path-namespace property: this file at `shards/glasswall.mirror`
+#                          declares `@glasswall` per @epistemologic/
+#                          pact/path_matches_namespace.
+
+out @glasswall
+out glasswall_traversal
+out traversal_direction
+out traversal_property
+out traverse_glasswall
+out glasswall_invariant_pass
+out glasswall_inherits_four_invariants
+out glasswall_traversal_rice_safe
+out glasswall_anna_wolf_2012_observation_preserved
+out glasswall_foerster_gauge_preserved
+out glasswall_is_kleinos_at_altitude_plus_1
+out glasswall_witnessing
