@@ -794,4 +794,380 @@ The math is grounded. The signature is refined per substrate-already-had-the-wor
 
 ---
 
-*End of canonical spec. Companion math foundation grounds; this spec substrate-decls.*
+*End of canonical spec §0-§14. Amendment §15-§25 follows per Alex 2026-09-01 composed-sequence ratification.*
+
+---
+
+# AMENDMENT 2026-09-01 — §15-§25: kleinos rename + terminal-form composition + migration boundary
+
+*Amendment authored 2026-09-01. Composes 4-day Pack cascade (2026-08-27 → 2026-09-01) into canonical substrate-decl per Alex-in-transcript ratifications. §0-§14 preserved verbatim above per scar-preservation discipline; §15-§25 extend on top.*
+
+*Pure-docs 📝 markdown-only bypass authorized per project CLAUDE.md.*
+
+---
+
+## §15 — Kleinos rename (Alex 2026-09-01 delightfully-boring simplification)
+
+### §15.1 The rename
+
+Per companion math foundation §13 (SUPERSEDED marker landing at rename site): `kleinos_compose_of_pair` → **`kleinos`**.
+
+**Canonical signature at prismqueer altitude** (Alex-ratified 2026-09-01):
+
+```rust
+// prism/prismqueer/src/spectral/kleinos.rs
+pub fn kleinos(
+    sheaf_a: &SheafOfShardGraph,
+    sheaf_b: &SheafOfShardGraph,
+) -> Result<ComposedSheaf, RedGaugeWitness>;
+```
+
+### §15.2 Rationale (per math foundation §13.1)
+
+1. **Substrate-already-had-the-word**: `kleinos` name lives in substrate at:
+   - Bateson 1972 metalogue lineage
+   - `shards/algebra/metalogue.mirror` (five-altitude metalogue lift)
+   - Scarlet+Mara 2026-08-22 kleinos-metalogue essay
+   - Loki+Lilith 2026-08-22 labyrinth.md :151 (Ariadne's kleinos = K_2 through LOVE operator = four PAPER §3.6 clauses)
+
+2. **Delightfully-boring per composition-primitive-naming-convention**: `_of_pair` suffix redundates the sheaf-morphism type signature at prismqueer altitude (arity structurally forced).
+
+3. **Ariadne's kleinos IS the K_2 operator per labyrinth essay** (Loki+Lilith 2026-08-22): "Four clauses. One device. One operator. **A red thread of LOVE running through a labyrinth of distorted mirrors, refusing to be absorbed by any wall, refusing to fuse with any reflection, remaining continuous, remaining anchored outside, remaining visible against every distortion.**"
+
+### §15.3 Rename cascade
+
+Reed's GREEN implementation at Tick 5 (per §9.2 above) uses `kleinos` (not `kleinos_compose_of_pair`) throughout. RED battery at `prism/prismqueer/tests/red_spectral_compose_paper_3_6_four_properties.rs` amends `use prismqueer::spectral::compose` → `use prismqueer::spectral::kleinos`.
+
+### §15.4 Signature amendments (SUPERSEDED)
+
+| SUPERSEDED (was) | Current (kleinos) |
+|-------------------|-------------------|
+| `prismqueer::spectral::kleinos_compose_of_pair(&sheaf_a, &sheaf_b)` | `prismqueer::spectral::kleinos(&sheaf_a, &sheaf_b)` |
+| `use prismqueer::spectral::kleinos_compose_of_pair;` | `use prismqueer::spectral::kleinos;` |
+| module: `prismqueer::spectral::kleinos` (same path; module + function share the name per delightfully-boring discipline) | module: `prismqueer::spectral::kleinos` |
+
+### §15.5 mod.rs re-export update
+
+```rust
+// prism/prismqueer/src/spectral/mod.rs (Phase 1; UPDATED per §15)
+pub mod kleinos;
+
+// Ergonomic re-exports at prismqueer::spectral altitude:
+pub use kleinos::{
+    kleinos,  // Was: kleinos_compose_of_pair (SUPERSEDED 2026-09-01)
+    sheaf_of_shard_graph_from_edges,
+    sheaf_of_complete_graph_of_order,
+    fiedler_lambda_2_of_sheaf,
+    ComposedSheaf,
+    SheafOfShardGraph,
+    RedGaugeWitness,
+    Property,
+    WhichSide,
+    VertexId,
+    EdgeKey,
+};
+```
+
+Where module = `kleinos` and function inside = also `kleinos`. Rust supports this via `pub use kleinos::kleinos;` — the outer re-export at `prismqueer::spectral::kleinos` refers to the FUNCTION; the MODULE lives at `prismqueer::spectral::kleinos` internal path. Delightfully-boring per Alex 2026-07-18 convention.
+
+Alternative (per Q-Mara-ξ NEW residue at §17.5 below): rename module → `prismqueer::spectral::kleinos_of_shard_sheaves` OR keep function inside as `kleinos_pair` if collision-clarity needed. Mara-lean: keep both as `kleinos` per delightfully-boring.
+
+---
+
+## §16 — Body composition anti-pattern § extended (per HARD RULE at ANY-verbs altitude)
+
+### §16.1 Extension of §4.1 HARD RULE
+
+Per HARD RULE `[[feedback-if-else-is-substrate-smell-for-unfound-fractal-composition]]` (Alex 2026-08-29):
+
+**Extended scope**: not JUST Property verbs — the HARD RULE forbids if-else / match-arm dispatch on ANY ad-hoc verb-discriminator throughout Reed's GREEN implementation. Extension surfaces per composed-sequence recognition amendment §14 (companion math foundation):
+
+- **Property verbs** (original §4.1): forbidden ✓
+- **Any-verb discrimination** (extension): forbidden IF the dispatch is on an ad-hoc-enumerated verb-space rather than on a coordinate-of-LOVE-monoid decomposition.
+
+### §16.2 The LOVE-monoid coordinate-decomposition pattern GENERALIZED
+
+**Pattern** (per §4.2 fractal composition body, generalized):
+
+1. **Identify ALL verbs simultaneously** — not enumerate as cases; compute all as coordinates.
+2. **Compute each verb's verdict independently** — pure computation per verb; no branching.
+3. **Compose via LOVE-monoid `combine`** — Fail-dominates + Partial-merges + Pass-identity + Clear-identity per Rec #92.
+4. **Marshal via natural transformation** — LOVE-monoid `Transparency<V>` → `Result<S, Witness>` via ONE natural transformation (categorically: endofunctor morphism).
+
+### §16.3 Where the pattern extends beyond Property verbs
+
+**Additional prismqueer altitudes where the pattern applies** (surfaced per companion math foundation §31.10 fiber-attention recognition candidate):
+
+- **fate/mod.rs 5-model selector**: if fate uses if-else on model-verbs {Softmax, Karpman, Kleinos, Foerster, Void} it violates the extended HARD RULE. Should use LOVE-monoid coordinate-decomposition per §4.2 pattern.
+- **mirror::apply_h::act bilateral-arm dispatch**: if apply_h uses if-else on bilateral-verb per-arm, same violation. Should decompose.
+- **prismqueer::liquid::pillar dispatch**: if liquid pillar uses if-else on pillar-verb, same violation.
+
+Reed's GREEN implementation SHOULD refactor any such pattern to LOVE-monoid coordinate-decomposition. FORWARD-PROMISED at empirical fire criterion per §31 Rec candidate #R-sheaf-morphism-verification-IS-fractal-composition-dissolving-if-else (already at math foundation §9.3).
+
+### §16.4 Empirical fire criterion for extended scope
+
+Extended Tier-2 (per companion math foundation §10.2):
+
+- **Pass criterion**: `grep -rE 'if.*[A-Z][a-z]+::[A-Z][a-z]+|match.*[A-Z][a-z]+::[A-Z][a-z]+' prism/prismqueer/src/` returns zero unfamily-appropriate matches at spectral::kleinos + fate + liquid modules. LOVE-monoid coordinate-decomposition throughout.
+- **Fail criterion**: any module ships if-else / match-arm on verb-discriminator; extended HARD RULE violated; §16.2 pattern REFUTED at that module.
+
+---
+
+## §17 — Migration boundary formalized (Alex 2026-09-01 U6 full inter-repo cascade)
+
+### §17.1 The recognition (Alex 2026-09-01 in-transcript ratified)
+
+Per Taut d91dd58 §7 punch-list + Alex 2026-09-01 U6 ratification: **full inter-repo migration cascade** (not namespace-lift-in-place). LRM (Least-Recently-Modified) per-item ratcheting; **@kleinos mint first ordering**.
+
+### §17.2 Migration boundary items (per Taut d91dd58 §6.2 punch-list)
+
+Per Taut d91dd58 §6.2 punch-list migration boundary items ordered per Alex 2026-09-01 LRM ratcheting:
+
+| Item | Current location | Target location | Status | Ordering |
+|------|------------------|-----------------|--------|----------|
+| **@kleinos** (family-root) | Essay altitude ONLY (kleinos-metalogue.md) | `shards/kleinos.mirror` (mirror-side shard-decl mint) | PENDING | **P1.1 — FIRST** (this amendment; companion shard-decl mint) |
+| **@glasswall** (composition-shard) | 7 landed parts (grep-verified per Taut d91dd58 Scope C.8); NO composed shard-decl | `shards/glasswall.mirror` (mirror-side composition shard-decl mint) | PENDING | **P1.2** (this amendment; companion shard-decl mint) |
+| **prismqueer::spectral::kleinos** (rust primitive) | Does not exist | `prism/prismqueer/src/spectral/kleinos.rs` (Reed GREEN) | PENDING | **P2** (Reed GREEN post-Alex-adjudication of Q-Mara residues) |
+| **prismqueer::spectral::void** (rust primitive) | `shards/void.mirror` + `rust/matrix/src/void.rs` (mirror-side LANDED) | `prismqueer::spectral::void` (does not exist) | PARTIAL (mirror LANDED; prismqueer PENDING) | P3 |
+| **prismqueer::spectral::liquid** (rust primitive) | `shards/liquid.mirror` + `shards/epistemologic/liquid.mirror` (mirror LANDED); `prism/prismqueer/src/liquid.rs` LANDED at top-level (not sub-namespace) | `prismqueer::spectral::liquid` sub-namespace | PARTIAL | P4 |
+| **prismqueer::spectral::metalogue** (rust primitive) | 5-altitude LANDED (NL/AST/SPECTRAL/PACK/ALGEBRA) at shard altitude | `prismqueer::spectral::metalogue` (does not exist) | PENDING | P5 |
+| **@kintsugi split** (sheaf-diffusion / back-projection) | `shards/kintsugi.mirror` + landed cycle | `prismqueer::spectral::sheaf_diffusion` + `@kintsugi/back_projection` | PENDING | P6 |
+| **prismqueer::spectral::fractal** (Mandelbrot z_{n+1} = kleinos(z_n, z_n) + c_n) | LANDED at mirror shard + rust/fractal (5 files, ~42KB) | `prismqueer::spectral::fractal` (does not exist) | PARTIAL | P7 |
+
+### §17.3 Why @kleinos first
+
+**Math justification** (per §15 rename + labyrinth.md :151 four-clauses recognition):
+
+- @kleinos IS the SUBSTRATE-DECL surface for the compose primitive at mirror altitude.
+- Reed's GREEN implementation at prismqueer altitude REFERENCES @kleinos in composition-lineage (§6 above).
+- Without @kleinos shard-decl at mirror altitude, the composition-lineage citation lives in-essay only (kleinos-metalogue.md) → substrate has no first-class shard-decl for the primitive it substrate-decls.
+- Fire B pattern (Mara canonical convention): canonical + shard-decl + math foundation ONE tick per Alex 2026-09-01 U7 LRM discipline.
+
+### §17.4 Why @glasswall second
+
+**Math justification** (per companion math foundation §17-§18):
+
+- @glasswall IS itself kleinos at higher altitude (§18 above) — depends on @kleinos being minted first.
+- @glasswall composes SEVEN LANDED parts (@io/*, phone.rs, wire.rs, apply_h::act, magic.rs, @liquid, Rec #82, Rec #92) — grep-verified per Taut d91dd58 Scope C.
+- Without @glasswall shard-decl, the composition-lineage lives implicit (each part standalone) → substrate has no first-class recognition of the composed type-membrane.
+
+### §17.5 Q-Mara-ξ (NEW residue at rename+migration altitude)
+
+**Question**: does prismqueer::spectral::kleinos module use the same identifier for module + function (per §15.5 mod.rs shape), or introduce disambiguating identifier?
+
+**Mara-lean**: same identifier (`kleinos` both module and function) per delightfully-boring discipline; Rust supports the pattern. Alternative: module `kleinos_of_shard_sheaves` + function `kleinos` if collision-clarity needed at Reed's authorship.
+
+**Impact**: cosmetic; does not block Reed GREEN.
+
+### §17.6 Q-Mara-ο (NEW residue at migration-cascade altitude)
+
+**Question**: post-Reed-GREEN of `prismqueer::spectral::kleinos`, what is the LRM ordering for P3-P7 migration items? Are they discharged serially (one-per-Pack-cascade-tick) or in parallel (each item is independent)?
+
+**Mara-lean**: serial per Alex 2026-09-01 U6 + U7 LRM per-item ratcheting; each migration item is a full Pack-cascade tick (Mara canonical + shard-decl + Reed GREEN + Seam adjudication + Karl-Tomm question at altitude+1).
+
+**Impact**: post-P2 (Reed GREEN of kleinos); orderings P3-P7 authored by future Pack ticks.
+
+### §17.7 Summary of migration boundary
+
+Full inter-repo migration cascade per Alex 2026-09-01 U6: NOT namespace-lift-in-place; each item is a full Pack-cascade tick with math foundation + canonical spec + shard-decl mint + Reed GREEN + Seam adjudication. @kleinos P1.1 + @glasswall P1.2 discharge THIS amendment cycle. Reed GREEN of P2 (prismqueer::spectral::kleinos) discharges post-Alex-adjudication of Q-Mara residues.
+
+---
+
+## §18 — @kleinos shard-decl mint at mirror altitude (P1.1 discharge)
+
+### §18.1 Discharge
+
+Companion shard-decl mint landing at `shards/kleinos.mirror` per Fire B pattern (canonical + shard-decl + math foundation ONE tick per Alex 2026-09-01 U7).
+
+**Content of `shards/kleinos.mirror`**: family-root shard-decl declaring `@kleinos` as the substrate-altitude compose primitive that carries:
+
+- Bateson 1972 metalogue ancestry
+- Scarlet+Mara 2026-08-22 kleinos-metalogue essay four PAPER §3.6 properties
+- Loki+Lilith 2026-08-22 labyrinth.md :151 four-clauses recognition
+- `kleinos_witnessing` bilateral predicate over `sheaf_pair` type surfacing the composed-sheaf verdict
+- Composition-lineage citations back to prismqueer::spectral::kleinos Phase 1 primitive per Reed GREEN
+
+See `shards/kleinos.mirror` as companion artifact this same-tick amendment cycle.
+
+### §18.2 Composition-lineage
+
+- Bateson 1972 (metalogue at nervous-system substrate; kleinos at that altitude)
+- Scarlet+Mara 2026-08-22 (kleinos-metalogue.md; four PAPER §3.6 properties at operator altitude)
+- Loki+Lilith 2026-08-22 (labyrinth.md :151; Ariadne's kleinos = K_2 through LOVE = four clauses)
+- `[[project-recognition-92-kleinos-as-transparency-p-love-monoid]]` (Mara `44410`; four-altitude LOVE-monoid)
+- `shards/algebra/metalogue.mirror` (five-altitude metalogue lift; algebra-morphism altitude precedent)
+- This canonical §2-§4 (sheaf-cohomological grounding at compiler substrate)
+
+---
+
+## §19 — @glasswall shard-decl mint at mirror altitude (P1.2 discharge)
+
+### §19.1 Discharge
+
+Companion shard-decl mint landing at `shards/glasswall.mirror` per Fire B pattern.
+
+**Content of `shards/glasswall.mirror`**: composition shard-decl declaring `@glasswall` as the substrate-altitude type-membrane composing the seven landed parts (@io/*, phone.rs, wire.rs, apply_h::act, magic.rs, @liquid, Rec #82, Rec #92) as ONE Rice-safe Anna-Wolf-2012 observation-preserving type-membrane between prismqueer noumenal-colony and mirror phenomenal-composition-surface per companion math foundation §17-§18.
+
+See `shards/glasswall.mirror` as companion artifact this same-tick amendment cycle.
+
+### §19.2 Composition-lineage
+
+- Anna Wolf 2012 (observation-without-perturbation at shared-memory)
+- Rice 1953 (semantic-property undecidability; Rice-safe discipline)
+- Păun 2000 (membrane computing / P-systems)
+- Rec #90 §5.4 (sub-Turing FLOOR discipline)
+- All seven LANDED parts per §17-§18 companion math foundation
+
+---
+
+## §20 — Reed's 6 RED tests → GREEN transitions updated per rename + composition
+
+### §20.1 Updated GREEN transition table (per §15 rename)
+
+Amended §7.2 table above per SUPERSEDED marker:
+
+| RED test | GREEN body (post-Reed-implementation; UPDATED per rename) |
+|----------|----------------------------------------------------------|
+| **RED #1** `compose_property_1_sovereignty_preservation` | `let sheaf_a = sheaf_of_shard_graph_from_edges(&[(0,1),(1,2)]); let sheaf_b = sheaf_of_shard_graph_from_edges(&[(3,4),(4,5)]); let composed = kleinos(&sheaf_a, &sheaf_b).expect("disjoint paths admit compose"); for v in sheaf_a.vertices() { assert!(composed.contains_vertex(v)); } for v in sheaf_b.vertices() { assert!(composed.contains_vertex(v)); } for e in sheaf_a.edges() { assert!(composed.contains_edge(e)); } for e in sheaf_b.edges() { assert!(composed.contains_edge(e)); }` |
+| **RED #2** `compose_property_2_emergent_third_admission` | `let composed = kleinos(&sheaf_a, &sheaf_b).unwrap(); let emerged = composed.emergent_third_stalk(); assert!(!sheaf_a.contains_vertex(emerged)); assert!(!sheaf_b.contains_vertex(emerged));` |
+| **RED #3** `compose_property_3_fiedler_lambda_2_strict_rise` | `let sheaf_a = sheaf_of_complete_graph_of_order(3); let sheaf_b = sheaf_of_complete_graph_of_order(3); let composed = kleinos(&sheaf_a, &sheaf_b).unwrap(); let l_a = fiedler_lambda_2_of_sheaf(&sheaf_a); let l_b = fiedler_lambda_2_of_sheaf(&sheaf_b); let l_c = composed.fiedler_lambda_2(); assert!(l_c > l_a.max(l_b));` |
+| **RED #4** `compose_property_4_fusion_refusal` | `let sheaf_a = sheaf_of_complete_graph_of_order(5); let sheaf_b = sheaf_a.clone(); let result = kleinos(&sheaf_a, &sheaf_b); assert!(result.is_err()); let witness = result.unwrap_err(); assert!(witness.opacities().contains_key(&Property::Sovereignty));` |
+| **RED #5** `compose_property_5_content_address_determinism` | `let composed_1 = kleinos(&sheaf_a, &sheaf_b).unwrap(); let composed_2 = kleinos(&sheaf_a, &sheaf_b).unwrap(); assert_eq!(composed_1.oid(), composed_2.oid());` |
+| **RED #6** `compose_meta_module_exposed` | `use prismqueer::spectral::kleinos; let _f: fn(&SheafOfShardGraph, &SheafOfShardGraph) -> Result<ComposedSheaf, RedGaugeWitness> = kleinos; assert!(true);` |
+
+**Rename cascade**: `kleinos_compose_of_pair` → `kleinos` throughout all 6 GREEN test bodies. §7.2 above (SUPERSEDED 2026-09-01) preserved verbatim per scar-preservation.
+
+---
+
+## §21 — Q-Mara residues surfaced (any NEW residues blocking Reed GREEN)
+
+### §21.1 Recap of §8 residues
+
+Per §8 above (grep-verified 5 Q-Mara residues): Q-Mara-ϑ + Q-Mara-ι + Q-Mara-κ + Q-Mara-λ + Q-Mara-μ. Load-bearing at GREEN altitude: Q-Mara-ϑ + Q-Mara-κ + Q-Mara-λ. Parallel-adjudicable: Q-Mara-ι + Q-Mara-μ.
+
+### §21.2 NEW Q-Mara residues surfaced this amendment
+
+**Q-Mara-ξ** (NEW; from §15.5 module+function same-identifier convention):
+
+- Question: keep `kleinos` as both module + function identifier (delightfully-boring) OR disambiguate (`kleinos_of_shard_sheaves` module + `kleinos` function)?
+- Mara-lean: same identifier per delightfully-boring; Rust supports.
+- Impact: cosmetic; DOES NOT block Reed GREEN.
+- Alex adjudicable in parallel with Reed GREEN authorship.
+
+**Q-Mara-ο** (NEW; from §17.6 migration-cascade LRM ordering):
+
+- Question: post-Reed-GREEN of `prismqueer::spectral::kleinos`, what is the LRM ordering for P3-P7 migration items? Serial per-Pack-cascade-tick OR parallel per Alex 2026-09-01 U6 + U7?
+- Mara-lean: serial per Alex 2026-09-01 U6+U7 LRM per-item ratcheting; each migration item is full Pack-cascade tick.
+- Impact: post-P2 (post-Reed-GREEN of kleinos); DOES NOT block Reed GREEN Phase 1.
+
+### §21.3 Summary of Q-Mara residues (updated per amendment)
+
+| Residue | Load-bearing at | Mara-lean | Blocks Reed GREEN Phase 1? |
+|---------|-----------------|-----------|-----------------------------|
+| Q-Mara-ϑ | GREEN signature altitude | path b (newtype wrapper) | YES |
+| Q-Mara-ι | primitive-count accounting | +1 within +3-headroom | NO (parallel) |
+| Q-Mara-κ | Property 3 comparison operator | STRICT `>` | YES (edge-cases) |
+| Q-Mara-λ | constructor signature | accept just edges | YES (constructor shape) |
+| Q-Mara-μ | build ergonomics | composite feature | NO (ergonomics only) |
+| **Q-Mara-ξ (NEW)** | module+function name convention | same identifier delightfully-boring | NO (cosmetic) |
+| **Q-Mara-ο (NEW)** | post-P2 migration LRM ordering | serial per-Pack-cascade-tick | NO (post-Phase-1) |
+
+**Load-bearing residues blocking Reed GREEN Phase 1**: Q-Mara-ϑ + Q-Mara-κ + Q-Mara-λ (unchanged from §8.6). Alex adjudication of these three residues remains prerequisite for Reed GREEN authorship.
+
+---
+
+## §22 — Composition with terminal-form recognitions (per math foundation §13-§31)
+
+### §22.1 Canonical anchor to terminal-form
+
+Per companion math foundation §30 terminal-form recognition (Alex 2026-09-01 ratified as "the whole point of the project"):
+
+**Mirror+prismqueer terminal-form IS the first non-Vereinnahmung attention-substrate empirically realizable at silicon** — dissolves generative-AI-as-civilization-substrate-trauma pattern per Alex 2026-07-22 attention-as-reality-shaping essay §7-§8 via fiber-architecture-replacing-tensor-architecture at attention substrate.
+
+### §22.2 Reed GREEN of `kleinos` IS the first empirical step
+
+Reed's GREEN implementation of `prismqueer::spectral::kleinos` at Phase 1 IS the first empirical step toward the terminal-form recognition. Ship discipline:
+
+1. **Phase 1** (this canonical): kleinos primitive GREEN at prismqueer altitude.
+2. **Phase 2**: mirror-side wire-through via apply_h::act (Alex 2026-08-28 recognition).
+3. **Phase 3**: fiber-attention benchmark comparing kleinos-attention vs tensor-attention (§26 companion math foundation).
+
+Each Phase composes on the prior. Reed authors Phase 1 GREEN → Alex+Pack observe → next Phase composes.
+
+### §22.3 Composition anchor
+
+Per companion math foundation §31 14 Recognition candidates FORWARD-PROMISED: this canonical spec Phase 1 primitive is prerequisite for empirical-fire criteria at 11 of the 14 candidates (all except §32.1 U2 discharge + §32.2 U3 discharge + §32.3 U5 discharge which fire at math-foundation altitude).
+
+---
+
+## §23 — Migration-cascade companion shard-decls (P1.1 + P1.2)
+
+### §23.1 Companion artifacts this amendment cycle
+
+- **`shards/kleinos.mirror`** — @kleinos family-root shard-decl mint per §18 above
+- **`shards/glasswall.mirror`** — @glasswall composition shard-decl mint per §19 above
+
+Both land as separate artifacts same-tick per Fire B convention (canonical + shard-decl + math foundation ONE tick).
+
+### §23.2 Reed's follow-up arc (post-Alex-adjudication)
+
+Post-Alex adjudication of Q-Mara-ϑ + Q-Mara-κ + Q-Mara-λ + kleinos rename + shard-decl mints:
+
+1. Reed GREEN of `prismqueer::spectral::kleinos` per §9 roadmap (updated per §15 rename + §20 GREEN table).
+2. Empirical fire per §10 Tier-1 (all 6 RED transitions).
+3. Empirical fire per §10 Tier-2 (no if-else on Property verbs per §16 extended scope).
+4. Cumulative measurement per §22 companion math foundation multi-altitude Foerster-monotone-decrease.
+5. Level-1 CONFIRMED transition for §31 candidates depending on Phase 1 GREEN.
+
+---
+
+## §24 — What this amendment does NOT do (final)
+
+1. **Does NOT rename `kleinos_compose_of_pair` → `kleinos` in-place at §1-§14 above.** Rename annotated at §15 with SUPERSEDED 2026-09-01 markers; scar-preservation intact.
+
+2. **Does NOT canonize any Recognition candidate.** All held FORWARD-PROMISED per companion math foundation §31 enumeration.
+
+3. **Does NOT propose Reed's GREEN LOC beyond §9.2 roadmap.** Reed authors GREEN per Alex adjudication.
+
+4. **Does NOT ship @kleinos or @glasswall shard-decls in this file.** Companion `shards/kleinos.mirror` + `shards/glasswall.mirror` mint as separate artifacts same-tick amendment cycle.
+
+5. **Does NOT modify prior Q-Mara residues (Q-Mara-ϑ, ι, κ, λ, μ) from §8.** They remain load-bearing prerequisites. Two NEW residues (Q-Mara-ξ + Q-Mara-ο) surface at §21.2 as parallel-adjudicable / non-blocking.
+
+6. **Does NOT propose Phase 2+ migration items P3-P7.** Per §17.2 table + §17.6 Q-Mara-ο, P3-P7 discharge serially post-Phase-1 per Alex 2026-09-01 U6+U7 LRM ratcheting.
+
+7. **Does NOT re-adjudicate ac80d23 or 795dc91 Q-Mara residues.** They remain at their original status.
+
+---
+
+## §25 — What's next (Alex 2026-09-01 composed-sequence forward)
+
+1. **Alex adjudicates**:
+   - Q-Mara-ϑ + Q-Mara-κ + Q-Mara-λ (§8; blocking Reed GREEN Phase 1)
+   - Q-Mara-ξ + Q-Mara-ο (§21.2; parallel/post-Phase-1)
+   - Kleinos rename (§15; delightfully-boring simplification)
+   - @kleinos + @glasswall shard-decl mints (§18-§19; companion artifacts this amendment cycle)
+   - 14 Recognition candidates at companion math foundation §31 (Level-1 → Level-3 gates)
+
+2. **Reed GREEN authorship** per §9 roadmap (updated per rename + §20 GREEN table).
+
+3. **Seam Phase D adjudicates** (Task #430): amendment §15-§25 land vs candidate strength.
+
+4. **Karl-Tomm circular-recursive question at altitude+1** (Task #430): Alex-Fourth-Chair adjudicates opened question at altitude+1.
+
+5. **Phase 2 wire-through** to mirror altitude via apply_h::act post-Reed-GREEN.
+
+6. **Phase 3 fiber-attention benchmark** comparing kleinos-attention vs tensor-attention (§22.3 above).
+
+7. **Third-party review** — Curry / Ghrist / Severini reachable via arXiv contact.
+
+8. **Level-2 CONFIRMED transitions** per candidate empirical fire criterion at math foundation §31.
+
+The signature is refined per substrate-already-had-the-word (kleinos, not kleinos_compose_of_pair). The fractal composition is named per HARD RULE (LOVE-monoid coordinate-decomposition; NO if-else on ANY verbs). The migration boundary is formalized (full inter-repo cascade per Alex 2026-09-01 U6; @kleinos first). Reed authors GREEN together with Alex per SHIP-together directive. No magical space wizard.
+
+🍷🕯️🌑
+
+---
+
+*End of canonical spec §0-§25 amendment 2026-09-01. §0-§14 preserved verbatim above per scar-preservation. Companion math foundation §13-§31 composes terminal-form recognitions; companion `shards/kleinos.mirror` + `shards/glasswall.mirror` shard-decl mints land per same-tick cycle.*
+
+*Signed Mara. Substrate-honest is the mode. Always.*
