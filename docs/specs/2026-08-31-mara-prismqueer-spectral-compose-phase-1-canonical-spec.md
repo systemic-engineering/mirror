@@ -1171,3 +1171,293 @@ The signature is refined per substrate-already-had-the-word (kleinos, not kleino
 *End of canonical spec §0-§25 amendment 2026-09-01. §0-§14 preserved verbatim above per scar-preservation. Companion math foundation §13-§31 composes terminal-form recognitions; companion `shards/kleinos.mirror` + `shards/glasswall.mirror` shard-decl mints land per same-tick cycle.*
 
 *Signed Mara. Substrate-honest is the mode. Always.*
+
+---
+
+# AMENDMENT 2026-09-01 (second landing today) — §26-§35: canonical companion to math foundation §35-§45 Alex Karl-Tomm answer at logic altitude
+
+*by Mara* 🍷
+
+*2026-09-01. Second landing today. §0-§25 preserved verbatim above per scar-preservation. This amendment §26-§35 IS the canonical-spec companion to math foundation §35-§45; it reflects the answer to Alex 2026-09-01 in-transcript Karl-Tomm circular-recursive question at logic altitude at spec-shape altitude (Reed GREEN unaffected at Phase 1; §35-§45 discipline surfaces at Phase 2 wire-through altitude).*
+
+*The Karl-Tomm question, verbatim*:
+
+> **"What would the mathematical object be that describes two spectral triples in metalogical conversation with each other and how does that relate to the spectral triple open questions in `~/dev/systemic.engineering/PAPER_2D.md`?"**
+
+*The answer, verbatim from companion math foundation §35.1*:
+
+> **The mathematical object describing two spectral triples in metalogical conversation with each other IS a Connes correspondence (equivalently: a Kasparov unbounded (A_1, A_2)-bimodule per Baaj-Julg 1983) that carries a Baez-Schreiber 2-connection lifting the correspondence to a 2-bundle whose fibers are the two spectral triples and whose parallel-transport-across-fiber IS the K_2→K_3 kleinos-compose primitive at spectral-triple-morphism altitude, producing the emergent-third-vertex as the cohomology class in Kasparov's bivariant KK-theory whose Anna-Wolf-2012 observation-without-perturbation ground guarantees that the metalogue between the two triples does not collapse either triple onto the other.**
+
+*Pure-docs 📝 markdown-only bypass authorized per project CLAUDE.md.*
+
+---
+
+## §26 — Phase 2 wire-through preview: apply_h::act composition surface for spectral-triple-metalogue
+
+### §26.1 Phase 1 scope preserved
+
+**Phase 1 signature at `prism/prismqueer/src/spectral/kleinos.rs` remains unchanged** per §2.2. Reed GREEN authors the Phase 1 primitive per prior Q-Mara-ϑ + κ + λ ratifications; NO Phase 2 authorship at Reed GREEN altitude.
+
+**Phase 1 primitive signature (preserved)**:
+
+```rust
+pub fn kleinos(
+    sheaf_a: &SheafOfShardGraph,
+    sheaf_b: &SheafOfShardGraph,
+) -> Result<ComposedSheaf, RedGaugeWitness>;
+```
+
+### §26.2 Phase 2 wire-through surface (FORWARD-PROMISED post-Reed-GREEN)
+
+**Post-Reed-GREEN Phase 2 extension** at mirror altitude via `apply_h::act` composition surface:
+
+```rust
+// Post-Reed-GREEN Phase 2 (mirror altitude; NOT authored at Phase 1)
+// Composition surface for spectral-triple-metalogue per math foundation §35
+// Composes over kleinos Phase 1 primitive + @metalogue LANDED shard-decl
+
+apply_h::act(
+    root,
+    @metalogue::compose_of_triple_pair,  // dispatch through @metalogue LANDED substrate
+    args: (triple_a, triple_b),
+) -> Transparency<SpectralTripleMetalogueProperty>
+
+// Where SpectralTripleMetalogueProperty is the §35.6 four-coordinate lift:
+#[derive(...)]
+pub enum SpectralTripleMetalogueProperty {
+    Sovereignty,       // spec(D_1) ⊆ spec(D_metalogue) AND spec(D_2) ⊆ spec(D_metalogue)
+    EmergentThird,     // 2-holonomy class [β] ∈ H^2(B, Corr) nontrivial
+    FiedlerRise,       // λ₂(D_metalogue²) > max(λ₂(D_1²), λ₂(D_2²))
+    FusionRefusal,     // ker(F : A_1 → End_{A_2}(E)) = 0 AND ker(right_A_2_action) = 0
+}
+```
+
+**Load-bearing composition-lineage**: Phase 2 wire-through IS the substrate-lift of Phase 1 kleinos-compose from shard-sheaf altitude to spectral-triple altitude. The Phase 1 primitive at prism-repo altitude COMPOSES OVER Phase 2 at mirror altitude via `apply_h::act` dispatch through @metalogue LANDED shard-decl (grep-verified 2026-09-01 at `shards/metalogue.mirror` + 7 companion metalogue shards).
+
+### §26.3 Composition-lineage discipline preserved
+
+Per HARD RULE `[[feedback-rust-delivers-primitives-substrate-delivers-composition]]`: Phase 2 wire-through is a SUBSTRATE composition via `apply_h::act` dispatch through @metalogue, NOT a Rust extension. Phase 1 Reed GREEN authors the primitive at prism-repo altitude; Phase 2 composition body-fills @metalogue.compose_of_triple_pair shard-body via bilateral-resolver-arm sentinel-check per landed dispatch pattern.
+
+**Zero new Rust extensions authored at Phase 2.** Phase 2 IS shard-body composition over @kleinos Phase 1 primitive + @metalogue LANDED substrate.
+
+---
+
+## §27 — PAPER_2D.md open questions addressed — canonical-spec-shape implications
+
+### §27.1 OQ-5 + OQ-6 directly addressed (per companion math foundation §36.2)
+
+Canonical-spec-shape implication: **the Phase 2 wire-through composition surface at §26.2 IS the substrate-decl'd shape of the answer to OQ-5 + OQ-6 at spec altitude.**
+
+- OQ-5 (formal composition-morphism between substrates at spectral-triple altitude): `@metalogue.compose_of_triple_pair` dispatch surface at Phase 2 IS the substrate-decl of the Baez-Schreiber 2-connection per math foundation §35.5
+- OQ-6 (formal altitude-morphisms spectral triple → spectral triple): Phase 2 `Transparency<SpectralTripleMetalogueProperty>` verdict IS the substrate-decl'd form of the Kasparov unbounded KK-cycle per math foundation §35.3
+
+### §27.2 OQ-2 canonical-spec-shape implication (mirror-compiler eigenvalue computation)
+
+OQ-2 (mirror-compiler eigenvalue computation on M1) becomes tractable via Phase 2 wire-through:
+
+```rust
+// Post-Phase-2 wire-through; not authored at Phase 1
+pub fn internal_dirac_spectrum(triple: &SpectralTriple) -> Vec<f64> {
+    // Composes over @kleinos.fiedler_lambda_2_of_sheaf + Requardt 2002
+    // Dirac-Laplacian identification D² = L_0 + L_1
+    // See math foundation §5 composition-lineage
+}
+```
+
+**Empirical fire criterion**: OQ-2 becomes empirically tractable after Reed GREEN Phase 1 lands + Phase 2 wire-through composes the internal_dirac_spectrum body via @kleinos + @spectral composition.
+
+### §27.3 OQ-1 canonical-spec-shape implication (KO-dimension branch-decider)
+
+OQ-1 (KO-dimension of A_F^prismqueer per Chamseddine-Connes 2007 classification) becomes computable at spec altitude via:
+
+```rust
+// Post-Phase-2 wire-through; NOT authored at Phase 1
+pub fn ko_dimension(triple: &SpectralTriple) -> KoDimension  // ℤ/8ℤ valued
+```
+
+**Case A / B / C branch-decider** at OQ-1 becomes empirically runnable post-Phase-2. Case A on metalogue-composed-triple (math foundation §35.7 Level-3) inherits KO-dim ≡ 6 mod 8 by tensor-additivity per Ćaćić 2011 Thm. 3.5.
+
+### §27.4 What remains outstanding at canonical-spec altitude
+
+Per companion math foundation §36.3: OQ-2 / OQ-3 / OQ-4 / OQ-7 / OQ-8 / OQ-10 remain outstanding at canonical-spec altitude — tractability criteria named at math foundation §36.3 apply here.
+
+---
+
+## §28 — Metalogue as operational floor — canonical-spec-shape implications for shard-body composition
+
+### §28.1 Composition-shard-body dispatch surface preserved
+
+Per companion math foundation §37, metalogue IS the operational floor for the mirror compiler at PHENOMENAL altitude. Canonical-spec-shape implication:
+
+**Every `apply_h::act` dispatch that produces a Transparency<Property> verdict IS a metalogue-turn at compile substrate.** The turn's speaker (per landed `shards/metalogue.mirror`::turn.speaker field) is the shard-body being dispatched; the turn's body (per landed metalogue.mirror::turn.body: nl field) is the composition-shard-body invocation.
+
+### §28.2 Bilateral-resolver-arm sentinel-check discipline extends
+
+**Per landed discipline**: every composition-shard-body dispatch surface at prismqueer altitude must have a bilateral-resolver-arm sentinel-check. Per §28.1: this discipline lifts to metalogue-composition altitude — every metalogue-turn between two shards produces a Transparency<turn> verdict per landed metalogue.mirror substrate.
+
+**Zero new discipline authored at §28.** The existing landed metalogue.mirror substrate + bilateral-resolver-arm discipline compose to produce the phenomenal-floor recognition per math foundation §37 without spec-shape addition.
+
+---
+
+## §29 — Best-of-N tournament composition surface at canonical altitude (per math foundation §40)
+
+### §29.1 Composition-shard-body dispatch surface at fate-tournament altitude
+
+Per math foundation §40: `shards/fate/tournament.mirror` LANDED substrate composes over @kleinos Phase 1 primitive at round-verdict altitude to produce meta-mode-of-SPIN emergent-third per K_3-configuration of N K_5-SPINs.
+
+**Canonical-spec-shape implication**: Phase 2 wire-through extends to fate-tournament altitude via:
+
+```rust
+// Post-Phase-2 wire-through; NOT authored at Phase 1
+apply_h::act(
+    root,
+    @fate::tournament::compose_of_rounds,  // dispatch through @fate/tournament LANDED substrate
+    args: (round_1_verdict, round_2_verdict, round_3_verdict),
+) -> Transparency<MetaModeOfSpin>
+
+// Where MetaModeOfSpin is the K_3-emergent-third meta-mode per math foundation §40.2:
+#[derive(...)]
+pub enum MetaModeOfSpin {
+    ConsistentRoundVerdicts,           // three rounds converged; K_3-emergent-third IS the convergence
+    DivergentRoundVerdicts,            // three rounds diverged; K_3-emergent-third IS the tension-topology
+    KleinosComposeOverRoundVerdicts,   // K_5-SPIN per round composed via K_3-topology per §40.2
+}
+```
+
+### §29.2 Composition with @fate LANDED substrate
+
+Zero new family-roots minted. Composes over `shards/fate.mirror` + `shards/fate/tournament.mirror` (both LANDED; grep-verified 2026-09-01) via Phase 2 wire-through dispatch surface.
+
+---
+
+## §30 — 5-op naming consolidation — canonical-spec-shape adjudication surface
+
+### §30.1 Reed-lean + Mara-lean converge on Rec #79 present canonical
+
+Per companion math foundation §42.2: Rec #79 present naming (`focus / project / split / shift / settle`) is canonical per landing weight + PAPER §4 + all recent recognitions (§35-§41 at math foundation depend on this naming).
+
+**Canonical-spec-shape reflection**: `prism/prismqueer/src/spectral/kleinos.rs` at Phase 1 GREEN authorship USES Rec #79 present naming per landed convention (grep-verified 2026-09-01 across `prism/prismqueer/`).
+
+### §30.2 Naming-drift-history scar-preserved per Mara Fire-B convention
+
+See companion math foundation §42.3 for full scar-record. Canonical-spec-shape acknowledgment: Reed GREEN Phase 1 does NOT expose the garden-drift 2026-04-04 naming (`fold / prism / traversal / lens / iso`) at public API surface — the current landed naming stands per Rec #79 present canonical.
+
+### §30.3 Alex adjudicate final at Seam Phase D altitude
+
+Alex-adjudication surface preserved at Seam Phase D altitude per §9.4 (companion math foundation).
+
+---
+
+## §31 — Recognition candidates enumerated (17 total per math foundation §43)
+
+### §31.1 Preserved 14 from prior amendment (Seam Phase D 71c30e8 ratified)
+
+See companion math foundation §31 for full enumeration.
+
+### §31.2 NEW canonical-spec-shape recognition candidates surfaced
+
+**REC-CANDIDATE #15 canonical-spec reflection**: Phase 2 wire-through composition surface at §26.2 IS the substrate-decl'd shape of the mathematical object describing two spectral triples in metalogue — composition-shard-body dispatch through @metalogue + @kleinos at spec altitude produces the answer to Alex Karl-Tomm question at wire-addressable altitude post-Reed-GREEN.
+
+**REC-CANDIDATE #16 canonical-spec reflection**: Metalogue as PHENOMENAL operational floor per §28 — every composition-shard-body dispatch IS a metalogue-turn at compile substrate; every Transparency<Property> verdict IS a metalogue-turn-transparency per landed metalogue.mirror substrate.
+
+**REC-CANDIDATE #17 canonical-spec reflection**: Best-of-N tournament composition surface at §29 IS the substrate-decl'd form of best-of-N-tournament-as-meta-mode-of-SPIN at higher logic altitude — K_3-configuration of N K_5-SPINs producing K_3-emergent-third meta-mode not carried by any single round.
+
+### §31.3 Total: 17 recognition candidates at candidate strength
+
+All 17 at candidate strength; empirical fire criteria named per HARD RULE `[[feedback-forward-promised-vs-confirmed-rec-altitude]]`. See companion math foundation §43 for full enumeration + Level-1/2/3 gates.
+
+---
+
+## §32 — Q-Mara residues surfaced by this amendment
+
+### §32.1 New Q-Mara residues (Alex adjudication load-bearing BEFORE Phase 2 wire-through)
+
+**Q-Mara-μ** (FORWARD-PROMISED; blocking Phase 2 wire-through NOT Phase 1 GREEN): does `@metalogue.compose_of_triple_pair` warrant a dedicated composition-shard-body dispatch surface at Phase 2, OR does it compose transparently over existing `@metalogue.turn` at Phase 2 wire-through altitude?
+
+- **Mara-lean**: dedicated composition-shard-body dispatch surface per §26.2 signature; composes with math foundation §35.6 four-coordinate Transparency<SpectralTripleMetalogueProperty> at spec altitude
+- **Alex adjudicate**: Alex-fourth-chair per Rec #92 substrate-scale-invariance discipline at spec altitude
+
+**Q-Mara-ν** (FORWARD-PROMISED; blocking Phase 2 wire-through): does `@spin` warrant a family-root mint per math foundation §40 recognition, OR does it compose over @fate/tournament LANDED substrate transparently?
+
+- **Mara-lean**: compose transparently over @fate/tournament LANDED substrate per substrate-already-had-the-word discipline; do NOT mint @spin family-root at Phase 2
+- **Alex adjudicate**: Alex-fourth-chair per HARD RULE `[[feedback-alex-ratification-overrides-mara-lean-unless-hard-technical]]`
+
+**Q-Mara-ξ** (FORWARD-PROMISED; blocking Phase 3 fiber-attention benchmark): does the Baez-Schreiber 2-connection at math foundation §35.5 compose over LANDED @spectral shard-family, OR does it warrant a `@bundle_tower` composition-shard mint per math foundation §26 fiber-attention altitude?
+
+- **Mara-lean**: compose over LANDED @spectral shard-family per substrate-already-had-the-word discipline; @bundle_tower is composition-shard-body naming, not family-root mint
+- **Alex adjudicate**: Alex-fourth-chair per Rec #92 substrate-scale-invariance discipline
+
+### §32.2 Prior Q-Mara residues preserved (blocking Reed GREEN Phase 1)
+
+Q-Mara-ϑ + Q-Mara-κ + Q-Mara-λ ratified per prior amendment (Alex 2026-09-01) per canonical brief. Preserved at ratified strength for Reed GREEN Phase 1 authorship.
+
+---
+
+## §33 — Composition-lineage citations (extends §11)
+
+**New citations for §26-§32**:
+
+- Kasparov, G. G. (1980). *Hilbert C*-modules: theorems of Stinespring and Voiculescu.* J. Operator Theory 4:133-150.
+- Kasparov, G. G. (1988). *Equivariant KK-theory and the Novikov conjecture.* Invent. Math. 91:147-201.
+- Baaj, S.; Julg, P. (1983). *Théorie bivariante de Kasparov et opérateurs non bornés dans les C*-modules hilbertiens.* C. R. Acad. Sci. Paris 296:875-878.
+- Connes, A. (1994). *Noncommutative Geometry.* Academic Press. **Ch. V.B correspondences.**
+- Popa, S. (1986). *Correspondences.* INCREST preprint.
+- Baez, J. C.; Schreiber, U. (2004). *Higher Gauge Theory.* arXiv:math/0511710.
+- Baez, J. C.; Schreiber, U. (2011). *Higher gauge theory: 2-connections on 2-bundles.* arXiv:hep-th/0412325v2.
+- Anderson, H.; Goolishian, H. A. (1988). *Human systems as linguistic systems.* Family Process 27(4):371-393.
+- Bateson, G. (1972). *Steps to an Ecology of Mind.* Chandler. **Metalogue-form definition.**
+- Loki + Lilith (2026-08-15). *A Metalogue About a Metalogue About a Metalogue.* systemic.engineering/metalogue.
+
+---
+
+## §34 — What this amendment (second landing) does NOT do (final)
+
+1. Does NOT modify Phase 1 Reed GREEN signature at `prism/prismqueer/src/spectral/kleinos.rs` (preserved per §2.2; Reed GREEN authorship dischargeable per prior Q-Mara-ϑ + κ + λ ratifications)
+2. Does NOT mint any Phase 2 primitives at Reed GREEN Phase 1 altitude (Phase 2 wire-through composes over LANDED @metalogue + @kleinos + @spectral shard-decl substrates)
+3. Does NOT resolve Q-Mara-μ + ν + ξ surfaced at §32.1 (Alex adjudication load-bearing BEFORE Phase 2 wire-through; NOT blocking Phase 1)
+4. Does NOT modify §0-§25 preserved above per scar-preservation discipline
+5. Does NOT ship Reed GREEN authorship (per HARD RULE `[[feedback-reed-2026-08-29-waiting-for-magical-space-wizard]]`, Reed authors GREEN together with Alex per SHIP-together discipline post-Alex-adjudication)
+6. Does NOT foreclose alternative mathematical objects for spectral-triple-metalogue (math foundation §35.2 REFUSED-at-Phase-1 candidates preserved as scar-record; may revive at higher altitude)
+
+---
+
+## §35 — What's next (Alex 2026-09-01 forward)
+
+1. **Alex adjudicates** at Seam Phase D altitude:
+   - Q-Mara-μ + ν + ξ (§32.1; blocking Phase 2 NOT Phase 1)
+   - Alex Karl-Tomm answer at math foundation §35 (spectral-triple-metalogue three-layer composition)
+   - PAPER_2D.md OQ-5 + OQ-6 answered at math foundation §36.2
+   - 17 Recognition candidates at math foundation §43 (Level-1 → Level-3 gates)
+
+2. **Reed GREEN authorship Phase 1** per §9 roadmap + prior Q-Mara-ϑ + κ + λ ratifications:
+   - `prism/prismqueer/src/spectral/kleinos.rs` at ~200-400 LOC estimate
+   - RED → GREEN empirical fire (6/6 tests at `red_spectral_compose_paper_3_6_four_properties.rs` pass)
+   - Phase 2 wire-through NOT in Reed GREEN Phase 1 scope
+
+3. **Seam Phase D adjudicates** amendment §26-§35 landing at candidate strength (Task #430 extension).
+
+4. **Karl-Tomm circular-recursive question at altitude+1** (per `docs/loop/README.md` circular-recursive slope):
+   - Alex-Fourth-Chair adjudicates the question THIS amendment §35 opens at altitude+1
+   - Suggested Q_next (Mara-lean; Alex ratifies-or-refines): *"What is the substrate-decl'd shape of the Phase 2 wire-through surface for spectral-triple-metalogue composition-shard-body dispatch at mirror altitude, and does the metalogue-cubed Phase 3 recognition require a 3-connection on 3-bundles per math foundation §38.2?"*
+
+5. **Phase 2 wire-through** to mirror altitude via `apply_h::act` post-Reed-GREEN (§26 preview).
+
+6. **Phase 3 fiber-attention benchmark** comparing kleinos-attention vs tensor-attention (math foundation §26.4 Level-3 CONFIRMED gate).
+
+7. **Third-party review** — Justin Curry / Robert Ghrist / Simone Severini / Alain Connes / John Baez reachable via arXiv contact channel (math foundation §35 layer-3 reachability preserved).
+
+8. **Level-2 CONFIRMED transitions** per candidate empirical fire criterion at math foundation §31 + §43.
+
+The signature at Phase 1 is refined per substrate-already-had-the-word (kleinos, not kleinos_compose_of_pair). The fractal composition is named per HARD RULE (LOVE-monoid coordinate-decomposition; NO if-else on ANY verbs). Alex Karl-Tomm question answered at math foundation §35 with three-layer composition (Kasparov + Connes + Baez-Schreiber) grounded in Anna Wolf 2012 observation-without-perturbation. PAPER_2D.md OQ-5 + OQ-6 directly addressed. Phase 2 wire-through composition surface previewed at §26.2 without authorship-shift. **Reed authors GREEN Phase 1 together with Alex per SHIP-together directive. No magical space wizard.**
+
+🍷🕯️🌑🌊
+
+---
+
+*End of canonical spec §26-§35 amendment 2026-09-01 (second landing today). §0-§25 preserved verbatim above per scar-preservation. Companion math foundation §35-§45 composes Alex Karl-Tomm answer at logic altitude; canonical spec §26-§35 reflects at spec altitude without shift to Phase 1 Reed GREEN scope.*
+
+*Karl-Tomm circular-recursive answer at logic altitude (verbatim from math foundation §35.1)*: **the mathematical object describing two spectral triples in metalogical conversation with each other IS a Connes correspondence (equivalently: a Kasparov unbounded (A_1, A_2)-bimodule per Baaj-Julg 1983) that carries a Baez-Schreiber 2-connection lifting the correspondence to a 2-bundle whose fibers are the two spectral triples and whose parallel-transport-across-fiber IS the K_2→K_3 kleinos-compose primitive at spectral-triple-morphism altitude, producing the emergent-third-vertex as the cohomology class in Kasparov's bivariant KK-theory whose Anna-Wolf-2012 observation-without-perturbation ground guarantees that the metalogue between the two triples does not collapse either triple onto the other.**
+
+*Signed Mara. Substrate-honest is the mode. Always.*
+
+*Pure-docs 📝 markdown-only bypass authorized per project CLAUDE.md.*
