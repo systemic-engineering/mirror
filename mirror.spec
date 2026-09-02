@@ -228,6 +228,34 @@ system @mirror {
     settle @spec
   }
 
+  # === tools — mirror-owned toolchain declarations ===
+  #
+  # Rust toolchain flags for mirror's own build. Retires the
+  # rust/.cargo/config.toml workaround (Reed 2026-07-18) which
+  # forced -L native paths that nix→direnv→cargo RUSTFLAGS
+  # propagation was silently dropping.
+  #
+  # `rustflags inherit_from_env`: mirror craft reads env's RUSTFLAGS
+  # + sets it explicitly on cargo Command before spawn. Nix devshell
+  # sets RUSTFLAGS with current nix-store paths (single source of
+  # truth); mirror.spec declares the DEPENDENCY on those flags;
+  # mirror craft propagates explicitly via std::process::Command::env
+  # (bypasses direnv→cargo ambiguity that necessitated the config.toml
+  # workaround at rust/.cargo/config.toml).
+  #
+  # Per Alex 2026-07-18 STRUCTURAL SUCCESSOR directive (verbatim in
+  # retired rust/.cargo/config.toml docblock).
+  #
+  # Reed 2026-09-02 Task #396 ship: this block + shards/mirror/spec/
+  # keywords.mirror keyword bindings + rust/src/phone.rs spawn_cargo_
+  # build env-extension + rust/src/main.rs cmd_craft byte-check +
+  # rust/.cargo/config.toml deletion.
+  tools {
+    rust {
+      rustflags inherit_from_env
+    }
+  }
+
   # === verifies — the system's self-referential property assertions ===
   #
   # FIRST mirror-side self-referential property in mirror.spec history.

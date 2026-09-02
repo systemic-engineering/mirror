@@ -1744,7 +1744,36 @@ fn cmd_craft(rest: &[String]) -> ExitCode {
         bin_name,
         rust_dir.display()
     );
-    let status = match phone::spawn_cargo_build(&rust_dir, &bin_name) {
+    // Reed 2026-09-02 Task #396 ship: read mirror.spec `tools { rust {
+    // rustflags inherit_from_env } }` block via Rice-safe byte-check. If
+    // present, inherit RUSTFLAGS from env + pass explicitly to cargo Command
+    // (bypasses nix→direnv→cargo propagation ambiguity). Retires the
+    // rust/.cargo/config.toml workaround.
+    let inherit_env_rustflags = spec_source.contains("tools {")
+        && spec_source.contains("rust {")
+        && spec_source.contains("rustflags inherit_from_env");
+
+    let rustflags = if inherit_env_rustflags {
+        match std::env::var("RUSTFLAGS") {
+            Ok(v) => {
+                eprintln!(
+                    "mirror craft: tools.rust.rustflags inherit_from_env → RUSTFLAGS ({} chars)",
+                    v.len()
+                );
+                Some(v)
+            }
+            Err(_) => {
+                eprintln!(
+                    "mirror craft: tools.rust.rustflags inherit_from_env declared but env RUSTFLAGS unset"
+                );
+                None
+            }
+        }
+    } else {
+        None
+    };
+
+    let status = match phone::spawn_cargo_build(&rust_dir, &bin_name, rustflags.as_deref()) {
         Ok(s) => s,
         Err(e) => {
             eprintln!("mirror craft: cargo spawn failed: {}", e);

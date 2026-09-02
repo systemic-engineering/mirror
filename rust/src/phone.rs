@@ -458,11 +458,20 @@ pub(crate) fn git_commit_as(
 pub(crate) fn spawn_cargo_build(
     dir: &Path,
     bin_name: &str,
+    rustflags: Option<&str>,
 ) -> io::Result<std::process::ExitStatus> {
-    std::process::Command::new("cargo")
-        .args(["build", "--bin", bin_name])
-        .current_dir(dir)
-        .status()
+    // Reed 2026-09-02 Task #396 ship: optional rustflags parameter enables
+    // mirror.spec `tools { rust { rustflags inherit_from_env } }` block to
+    // propagate RUSTFLAGS explicitly via std::process::Command::env, bypassing
+    // the nix→direnv→cargo RUSTFLAGS propagation ambiguity that necessitated
+    // the rust/.cargo/config.toml workaround. Per Alex 2026-07-18 STRUCTURAL
+    // SUCCESSOR directive.
+    let mut cmd = std::process::Command::new("cargo");
+    cmd.args(["build", "--bin", bin_name]).current_dir(dir);
+    if let Some(flags) = rustflags {
+        cmd.env("RUSTFLAGS", flags);
+    }
+    cmd.status()
 }
 
 /// General-purpose subprocess spawn primitive at @io/process altitude.

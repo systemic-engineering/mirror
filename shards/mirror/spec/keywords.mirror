@@ -69,6 +69,15 @@ grammar @mirror/spec("spec") {
   focus kintsugi_tooling
   settle settle_on
 
+  # === toolchain declarations (Reed 2026-09-02 Task #396) ===
+  #
+  # `tools { rust { rustflags <value> } }` block at mirror.spec
+  # altitude. Declares mirror-owned rustc invocation flags. Retires
+  # rust/.cargo/config.toml workaround via mirror craft owning the
+  # cargo Command env-set.
+  focus tools
+  focus rust
+
   # === single-line directives ===
   project source
   project legacy
@@ -86,4 +95,12 @@ grammar @mirror/spec("spec") {
   # `audit` extend the surface to cover the pre-commit chain
   # (recognition #43, the build-system substrate-pull).
   project check
+
+  # === toolchain directives (Reed 2026-09-02 Task #396) ===
+  #
+  # `rustflags <value>` inside `tools { rust { ... } }` block.
+  # `inherit_from_env` is a substrate-declared literal meaning
+  # "read env's RUSTFLAGS at craft-time". Value tokens parse as
+  # identifiers per project-keyword semantics.
+  project rustflags
 }
