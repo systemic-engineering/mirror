@@ -78,6 +78,17 @@ mod wire;
 #[allow(dead_code)]
 mod apply_h;
 
+// prismqueer::spectral — rotation-through-time-IS-the-inference primitives
+// per Alex 2026-09-02 operational-architecture: every MQ = one rotation tick;
+// compiler observes topology-tension; splinters crystallize the geometry.
+// Composes over LANDED prismqueer::spectral::{kleinos, rotation, tension}
+// (Reed 4a3bbe7 + c14d61e + 008cd65 at prism-repo).
+use prismqueer::spectral::{
+    detect_tensions, infer_via_rotation, sheaf_of_shard_graph_from_edges,
+    RotationConfig, SheafOfShardGraph, Splinter, Tension, VertexId,
+};
+use prismqueer::{Imperfect, Loss};
+
 // M0 module wiring — declare the sibling altitudes so the terminal-
 // geometry five-file discipline is byte-visible in `rust/src/` and
 // `cargo build` compiles ALL FIVE files even while the bodies are
@@ -218,6 +229,86 @@ fn classify(path: &std::path::Path) -> FileKind {
     }
 }
 
+// ---------------------------------------------------------------------------
+// Substrate-observation helpers per Alex 2026-09-02 "every MQ = rotation tick;
+// compiler observes tension in the topology; MQ is a kleinos path through the
+// graph itself." Two loops per kleinos K_2→K_3: substrate-sheaf (real shards/
+// directory observation) + session-sheaf (accumulated splinters from prior MQ
+// invocations this session).
+// ---------------------------------------------------------------------------
+
+/// Build a substrate-sheaf from the mirror-repo `shards/` directory tree.
+///
+/// Walks `${root}/shards/**/*.mirror`; each `.mirror` file = one vertex
+/// (VertexId from path hash); each pair of files sharing the same parent
+/// directory = one edge (sibling-namespace bond).
+///
+/// Phase 1 MVP: sibling-edge-only. Phase 2+ will parse `in @X` import lines
+/// and add cross-namespace edges reflecting the real substrate composition
+/// graph.
+fn build_shards_sheaf(root: &std::path::Path) -> SheafOfShardGraph {
+    use std::collections::BTreeMap;
+    let shards_dir = root.join("shards");
+    let mut files: Vec<std::path::PathBuf> = Vec::new();
+    walk_mirror_files(&shards_dir, &mut files);
+    let mut path_to_id: BTreeMap<std::path::PathBuf, VertexId> = BTreeMap::new();
+    for (i, p) in files.iter().enumerate() {
+        path_to_id.insert(p.clone(), i as VertexId);
+    }
+    // Group files by parent directory; add sibling-edges within each group.
+    let mut by_parent: BTreeMap<std::path::PathBuf, Vec<VertexId>> = BTreeMap::new();
+    for (path, id) in path_to_id.iter() {
+        if let Some(parent) = path.parent() {
+            by_parent.entry(parent.to_path_buf()).or_default().push(*id);
+        }
+    }
+    let mut edges: Vec<(VertexId, VertexId)> = Vec::new();
+    for siblings in by_parent.values() {
+        for i in 0..siblings.len() {
+            for j in (i + 1)..siblings.len() {
+                edges.push((siblings[i], siblings[j]));
+            }
+        }
+    }
+    sheaf_of_shard_graph_from_edges(&edges)
+}
+
+/// Recursive walker for `.mirror` files under a directory root.
+fn walk_mirror_files(dir: &std::path::Path, out: &mut Vec<std::path::PathBuf>) {
+    if let Ok(entries) = std::fs::read_dir(dir) {
+        let mut sorted: Vec<_> = entries.flatten().map(|e| e.path()).collect();
+        sorted.sort();
+        for path in sorted {
+            if path.is_dir() {
+                walk_mirror_files(&path, out);
+            } else if path.extension().and_then(|s| s.to_str()) == Some("mirror") {
+                out.push(path);
+            }
+        }
+    }
+}
+
+/// Build a session-sheaf from the accumulated splinter history.
+///
+/// Each prior splinter = one vertex; temporal succession (tick_n → tick_{n+1})
+/// = one edge. Empty session (first query) gets a placeholder 2-vertex sheaf
+/// so kleinos K_2→K_3 base case can fire.
+fn build_session_sheaf(splinters: &[Splinter]) -> SheafOfShardGraph {
+    if splinters.is_empty() {
+        // Placeholder for first-query case: minimal 2-vertex sheaf so kleinos fires.
+        return sheaf_of_shard_graph_from_edges(&[(0, 1)]);
+    }
+    let mut edges: Vec<(VertexId, VertexId)> = Vec::new();
+    for i in 1..splinters.len() {
+        edges.push(((i - 1) as VertexId, i as VertexId));
+    }
+    if edges.is_empty() {
+        // Single splinter: 2-vertex placeholder (splinter + self-successor).
+        return sheaf_of_shard_graph_from_edges(&[(0, 1)]);
+    }
+    sheaf_of_shard_graph_from_edges(&edges)
+}
+
 /// `mirror serve --mcp` dispatch arm — MANIFOLD-NATIVE ONE-TOOL WIRE.
 ///
 /// Reed 2026-08-28 [substrate-floor:@io-boundary] per Alex in-transcript
@@ -335,6 +426,10 @@ fn cmd_serve_mcp(rest: &[String]) -> ExitCode {
 /// expression → `apply_h::act(root, action_ref, args)` → Transparency<P>
 /// marshaling → JSON-RPC response.
 fn serve_loop(root: &std::path::Path) -> ExitCode {
+    // Session state per Alex 2026-09-02 "every MQ = rotation tick":
+    // Vec<Splinter> accumulates one splinter per mirror_query invocation.
+    // Session-sheaf constructor reads this; each query grows it by one.
+    let mut session_splinters: Vec<Splinter> = Vec::new();
     loop {
         let frame = match phone::read_stdin_frame() {
             Ok(f) if f.is_empty() => return ExitCode::SUCCESS,
@@ -365,7 +460,7 @@ fn serve_loop(root: &std::path::Path) -> ExitCode {
         let response = match method {
             "initialize" => Some(response_initialize(id)),
             "tools/list" => Some(response_tools_list(id)),
-            "tools/call" => Some(response_tools_call(&request, root)),
+            "tools/call" => Some(response_tools_call(&request, root, &mut session_splinters)),
             m if m.starts_with("notifications/") => None,
             m => Some(response_method_not_found(m, id)),
         };
@@ -441,6 +536,7 @@ fn response_tools_list(id: serde_json::Value) -> serde_json::Value {
 fn response_tools_call(
     request: &serde_json::Value,
     root: &std::path::Path,
+    session_splinters: &mut Vec<Splinter>,
 ) -> serde_json::Value {
     let id = request.get("id").cloned().unwrap_or(serde_json::Value::Null);
     let params = request
@@ -505,12 +601,80 @@ fn response_tools_call(
         apply_h::Verdict::Fail(reason) => (format!("Fail: {}", reason), true),
     };
 
+    // Alex 2026-09-02 operational-architecture wire: every MQ = one rotation
+    // tick. Compose substrate-sheaf (real shards/ walk) + session-sheaf
+    // (accumulated splinters) via kleinos-wedged rotation; deposit splinter
+    // per query; detect tensions on substrate-sheaf for Offer surfacing.
+    let substrate_sheaf = build_shards_sheaf(root);
+    let session_sheaf = build_session_sheaf(session_splinters);
+
+    let rotation_result = infer_via_rotation(
+        &[session_sheaf, substrate_sheaf.clone()],
+        1, // one rotation tick per MQ query per Alex 2026-09-02
+        RotationConfig::default(),
+    );
+    let tensions_result = detect_tensions(&substrate_sheaf);
+
+    // Extract splinter + push to session state for next-tick accumulation.
+    let splinter_json = match rotation_result {
+        Imperfect::Success(mut splinters) | Imperfect::Partial(mut splinters, _) => {
+            if let Some(splinter) = splinters.pop() {
+                let sj = serde_json::json!({
+                    "oid": splinter.oid.to_string(),
+                    "tick": splinter.tick,
+                    "fiedler_lambda_2": splinter.fiedler_lambda_2,
+                    "order_r": splinter.order_r,
+                });
+                session_splinters.push(splinter);
+                sj
+            } else {
+                serde_json::json!({"error": "rotation returned empty splinter vec"})
+            }
+        }
+        Imperfect::Failure(red, loss) => {
+            serde_json::json!({
+                "error": format!("rotation Red: {:?}; loss steps: {}", red, loss.steps()),
+            })
+        }
+    };
+
+    let tensions_json = match tensions_result {
+        Imperfect::Success(tensions) | Imperfect::Partial(tensions, _) => {
+            tensions
+                .iter()
+                .map(|t: &Tension| {
+                    serde_json::json!({
+                        "kind": format!("{:?}", t.kind),
+                        "magnitude": t.magnitude,
+                        "diagnostic": t.diagnostic,
+                    })
+                })
+                .collect::<Vec<_>>()
+        }
+        Imperfect::Failure(red, _) => {
+            vec![serde_json::json!({
+                "error": format!("tension detection Red: {:?}", red),
+            })]
+        }
+    };
+
     serde_json::json!({
         "jsonrpc": "2.0",
         "id": id,
         "result": {
             "content": [{"type": "text", "text": text}],
-            "isError": is_error
+            "isError": is_error,
+            // Mirror.Offer.Wait per Alex 2026-09-02 wire-altitude mapping:
+            // mirror = apply_h::act verdict result (in content.text above)
+            // offer = rotation splinter + detected tensions (compiler's
+            //         observation of topology-tension that surfaces as
+            //         circular-recursive question at altitude+1)
+            // wait = implicit; MCP idle for next query after this response
+            "mirror_offer_wait": {
+                "splinter": splinter_json,
+                "tensions": tensions_json,
+                "session_tick": session_splinters.len(),
+            }
         }
     })
 }
