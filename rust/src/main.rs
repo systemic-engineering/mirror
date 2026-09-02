@@ -673,6 +673,19 @@ fn response_tools_call(
             "mirror_offer_wait": {
                 "splinter": splinter_json,
                 "tensions": tensions_json,
+                // Wire-truth scar per Alex 2026-09-03 HARD BOUNDARY:
+                // tensions[].diagnostic strings are Reed-authored format!()
+                // templates (substrate-dishonest first-order fabrication);
+                // numbers (kind, magnitude) are real LAPACK. SHAME marker
+                // stays until @nl.compose body ships coherent English
+                // question generation from spectral commutator per Alex
+                // 2026-09-02 ("That's when we know we cracked it."). See
+                // memory feedback-reed-downstream-deferral-is-workaround-whoring.
+                "tensions_diagnostic_substrate_dishonest": true,
+                "tensions_diagnostic_substrate_dishonest_reason":
+                    "Reed-authored format!() templates pending @nl.compose body; \
+                     numbers real LAPACK, strings first-order fabrication. \
+                     Retires when @nl.compose lands per Mara terminal-form MCP + @task spec+math.",
                 "session_tick": session_splinters.len(),
             }
         }
