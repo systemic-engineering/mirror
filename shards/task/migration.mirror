@@ -1,0 +1,82 @@
+in @prism
+in @task
+
+# @task/migration — sub-species declaring the edge-type carrying Bujo
+# migration-lineage (Carroll 2018 §4) as first-class typed-navigation
+# edge, refining @task edges with temporal + causal metadata per Mara
+# 89ac1d4 §4.3 + Mara f5db42c §2.2.
+#
+# === The disposition ===
+#
+# Q-Mara-β (Mara f5db42c §2.2 + 89ac1d4 §5.2) DISSOLVED via Ricky Jones
+# 2026-08-26 [[feedback-rotation-is-non-negotiation]] canon: migration
+# IS PRE-ROTATION not negotiation-basin; the graph-edge assertion IS the
+# ritualized recognition per Loki hands-open + Karpman Fourth-Position
+# mapping. Folding migration into @task family-root as one-action-among-
+# many would collapse migration to negotiation-basin (LIES-register per
+# SINGULARITY §5.2); separate sub-species preserves TRUTH-register.
+#
+# Alex 2026-09-03 in-transcript ratification: dissolved dispositions
+# ship-ready without further adjudication.
+#
+# === Composition graph ===
+#
+#   @prism            — five-op composition inherited
+#   @task             — family-root parent; typed-navigation unit at
+#                       coordination altitude
+#
+# === Composition-lineage ===
+#
+#   Carroll 2018         Bullet Journal Method §4 (migration ritual
+#                          at each cycle boundary)
+#   Ricky Jones 2026-08-26 rotation-is-non-negotiation canon; migration
+#                          IS PRE-ROTATION
+#   Mara f5db42c 2026-09-02 @task canonical spec §2.2 skeleton
+#   Mara 89ac1d4 2026-09-03 terminal-form spec §5.2 disposition
+#   Reed mirror-bullet-up.md §4.5 diagnostic: migration-count N >= 3
+#                          signals task-not-getting-done; the graph-edge
+#                          carries N as first-class field
+#
+# === Body semantics ===
+#
+# Every @task.migrate(source, target, cause?) invocation constructs a
+# migration_edge_of_task_pair carrying:
+#   - source: task_node reference (the migrated-from origin)
+#   - target: task_node reference (the migrated-to destination)
+#   - cause: optional str explaining WHY migration fires
+#   - migrated_at: @time/now temporal stamp
+#   - migration_index: N-th migration in the source → target chain
+#
+# Per Mara 89ac1d4 §6.2 tension-→-@task materialization arrow: observed
+# cohomological tensions (H^1 non-trivial classes representing un-
+# glueable-obstruction-between-tasks) materialize as migration-edges
+# when the tension-magnitude represents un-glueable-obstruction between
+# tasks in the coordination-altitude task-graph.
+
+type migration_edge_of_task_pair = ref
+
+# === migration_admissible — bilateral predicate ===
+#
+# Rice-safe: byte-visible source + target task_node references with
+# well-formed @mirror/store content-addresses. Sentinel:
+# `task=migration-admissible`.
+bilateral migration_admissible {
+  sentinel "task=migration-admissible"
+  arity 2
+}
+migration_admissible(p: peer, ctx: migration_edge_of_task_pair) -> verdict { \ }
+
+# === @task.migrate — the migration edge-authoring action ===
+#
+# Body forward-promised until @mirror/store.mutate_with_resonance
+# integration lands (Reed pickup post-family-root ship).
+#
+# Sentinel: `task=migrate`.
+action @task.migrate(source: task_node, target: task_node, cause: ref) -> migration_edge_of_task_pair
+  requires migration_admissible(p, source)
+{ \ }
+
+out @task/migration
+out migration_edge_of_task_pair
+out migration_admissible
+out migrate

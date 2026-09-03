@@ -1,0 +1,113 @@
+in @prism
+in @task
+in @nl
+
+# @task/link — sub-species declaring the typed navigation edge at
+# coordination altitude. Obsidian-style [[link]] reference is ONE use of
+# this species; more generally, @task/link IS the typed-navigation edge-
+# carrier at task-graph altitude that other typed nodes navigate INTO
+# and OUT OF per typed-navigation discipline (Alex 2026-09-03 terminal-
+# form recognition: mirror = properly-typed navigation of human
+# knowledge; @task/link = the typed edges of that navigation).
+#
+# === The naming ===
+#
+# Alex 2026-09-03 verbatim: "@task/link (for wiki links)". Rename from
+# Mara f5db42c §2.4 `@task/wiki_link` per culture-independent naming
+# discipline: "link" is the substrate-altitude type name; "wiki" is
+# Obsidian-cultural framing. Not @task/wiki_link (imports Obsidian
+# vernacular into substrate); not @task/edge (too generic; misses
+# semantic); not @nl/link (wrong altitude — link semantic is task-graph
+# not language); not @markdown/link (wrong altitude — presentation not
+# substrate). @task/link IS the typed-navigation edge type at
+# coordination altitude.
+#
+# === The disposition ===
+#
+# Q-Mara-δ (Mara f5db42c §2.4 + 89ac1d4 §5.4) resolved per Alex
+# 2026-09-03 in-transcript ratification: @task/link (not @task/wiki_link;
+# not @nl/wiki_link; not @markdown/wiki_link). Coordination-altitude
+# typed-navigation edges belong at @task/link altitude by construction.
+#
+# === Composition graph ===
+#
+#   @prism            — five-op composition inherited
+#   @task             — family-root parent; typed-navigation unit
+#   @nl               — body-carrier substrate; @sigil("[[") pattern
+#                       composed for wiki-link syntax variant
+#
+# === Composition-lineage ===
+#
+#   Obsidian 2020+       Public [[link]] markup convention; typed-
+#                          navigation edges in personal-knowledge-
+#                          management substrates
+#   @sigil pattern       LANDED at shards/nl.mirror :30-38 (@sigil("#") +
+#                          @sigil("mq")) precedent for syntactic-mark-
+#                          yielding-typed-substrate-value discipline
+#   Alex 2026-09-02      Obsidian-style @gestalt wiki markdown markup
+#                          syntax; wiki-links as explicit connection
+#                          layer per Mirror-Bullet-Up recognition
+#   Alex 2026-09-03      Rename verbatim "@task/link (for wiki links)";
+#                          culture-independent naming
+#   Mara f5db42c 2026-09-02 @task canonical spec §2.4 skeleton
+#   Mara 89ac1d4 2026-09-03 terminal-form spec §5.4 disposition
+#   [[project-mirror-is-typed-navigation-of-human-knowledge-llm-is-
+#     stringly-typed-navigation]] (Alex 2026-09-03 terminal-form
+#     recognition) — @task/link IS the typed edge of mirror's typed-
+#     navigation substrate; LLM tokens are stringly-typed pseudo-edges
+#     via softmax similarity; @task/link is the substrate-honest ship
+#
+# === Extended link syntax variants per Mara 89ac1d4 §3.4 (wiki-link
+# is ONE use of @task/link) ===
+#
+#   [[target]]                       — base typed navigation edge
+#   [[target|display]]               — display-alias variant
+#   [[target#anchor]]                — sub-target-address variant
+#   [[target#^block-id]]             — block-reference variant
+#   ![[target]]                      — transclusion variant
+#
+# Per Alex 2026-09-03 typed-navigation recognition: wiki-link syntax IS
+# one syntactic surface of @task/link; other syntactic surfaces (bare
+# task-id reference; MQ-expression-form; content-address-form) compose
+# over the same underlying typed-navigation edge type.
+
+type link_edge_of_task = ref
+type link_syntax = @sigil("[[")
+type link_display_alias = @sigil("[[")
+type link_sub_target = @sigil("[[")
+type link_block_ref = @sigil("[[")
+type link_transclusion = @sigil("![[")
+
+# === link_admissible — bilateral predicate ===
+#
+# Rice-safe: byte-visible link syntax + resolvable target task_node
+# reference. Sentinel: `task=link-admissible`.
+bilateral link_admissible {
+  sentinel "task=link-admissible"
+  arity 2
+}
+link_admissible(p: peer, ctx: link_edge_of_task) -> verdict { \ }
+
+# === @task.parse_links_of_body — body-parser action ===
+#
+# Composes over @nl.render + @sigil("[[") pattern (LANDED at
+# shards/nl.mirror :30-38). Enumerates typed navigation edges from task
+# body markdown.
+#
+# Body forward-promised until @nl.compose body integration lands (Task
+# #435).
+#
+# Sentinel: `task=parse-links-of-body`.
+action @task.parse_links_of_body(body: ref) -> ref
+  requires link_admissible(p, body)
+{ \ }
+
+out @task/link
+out link_edge_of_task
+out link_syntax
+out link_display_alias
+out link_sub_target
+out link_block_ref
+out link_transclusion
+out link_admissible
+out parse_links_of_body

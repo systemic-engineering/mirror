@@ -1,0 +1,120 @@
+in @prism
+in @task
+in @mq
+in @kleinos
+
+# @task/projection — sub-species declaring the six-projection dispatch
+# surface per Reed 2026-09-02 mirror-bullet-up.md §3 (Daily / Weekly /
+# Cycle / Corpus / Agent / Physical) + Mara 89ac1d4 §4.7 + Mara f5db42c
+# §2.6 with ONE species carrying six-coordinate parameter-vector per
+# HARD RULE [[feedback-if-else-is-substrate-smell-for-unfound-fractal-
+# composition]] (Alex 2026-08-29 verbatim: "if-else IS A SMELL THAT WE
+# HAVEN'T FOUND THE FRACTAL COMPOSITION YET!").
+#
+# === The disposition ===
+#
+# Q-Mara-ζ (Mara f5db42c §2.6 + 89ac1d4 §5.6) DISSOLVED via HARD RULE:
+# ONE species with six-coordinate parameter-vector; NOT six sibling
+# species (`@task/projection/daily`, `@task/projection/weekly`, etc.)
+# because six sibling species would introduce if-else at dispatch
+# altitude per HARD RULE. Fractal composition IS the ONE dispatch path
+# per kleinos K_2 → K_3 (Reed 4a3bbe7 prism-repo LANDED); the six
+# projections are six coordinates of ONE parameter-space per Rec #92
+# substrate-scale-invariance A_5.
+#
+# Alex 2026-09-03 in-transcript ratification: dissolved dispositions
+# ship-ready without further adjudication.
+#
+# === The six projections (per Reed mirror-bullet-up.md §3) ===
+#
+#   daily     — filter(scheduled_on = today)
+#   weekly    — filter(scheduled_in_week; show_hill_position)
+#   cycle     — filter(status = shaped; appetite = set)
+#   corpus    — filter(status = shipped | status = tombstoned)
+#   agent     — serialize(F_task); domain-filter; last-touched-window
+#   physical  — render(F_task; template = physical_journal;
+#                rapid_log = bujo_signifiers)
+#
+# Each projection IS a query over F_task via @mq grammar; the six
+# projections differ only in their query-parameter vector; the six
+# coordinates dispatch via ONE sheaf-morphism per @kleinos.
+#
+# === Composition graph ===
+#
+#   @prism            — five-op composition inherited
+#   @task             — family-root parent
+#   @mq               — query grammar LANDED at shards/mq.mirror; the
+#                       projection-parameter-vector expresses via @mq
+#   @kleinos          — K_2 → K_3 compose primitive LANDED at
+#                       shards/kleinos.mirror; sheaf-morphism dispatch
+#                       for six-projection parameter-space
+#
+# === Composition-lineage ===
+#
+#   Reed 2026-09-02      mirror-bullet-up.md §3 six-projection surface;
+#                          Alex ratified as MVP for mirror + MCP
+#   Alex 2026-08-29      HARD RULE [[feedback-if-else-is-substrate-
+#                          smell-for-unfound-fractal-composition]]:
+#                          "if-else IS A SMELL THAT WE HAVEN'T FOUND
+#                          THE FRACTAL COMPOSITION YET!"
+#   Rec #92 (2026-08-22) substrate-scale-invariance A_5; parameter-
+#                          vector coordinates instead of species-
+#                          proliferation
+#   Reed 4a3bbe7 (2026-09-02) prismqueer::spectral::kleinos LANDED;
+#                          ring-and-hub topology; 6/6 empirical fire
+#   Mara f5db42c 2026-09-02 @task canonical spec §2.6 skeleton
+#   Mara 89ac1d4 2026-09-03 terminal-form spec §5.6 disposition;
+#                          §7 coordination-altitude interface
+#   [[project-mirror-is-typed-navigation-of-human-knowledge-llm-is-
+#     stringly-typed-navigation]] (Alex 2026-09-03) — @task/projection
+#     IS the typed-navigation traversal surface at coordination altitude
+#
+# === Body semantics ===
+#
+# Every @task.project(verb, params) invocation dispatches via ONE
+# apply_h::act invocation over @kleinos-composed sheaf-morphism per Mara
+# 89ac1d4 §7.3 (NO match-arm branching on projection-verb names).
+#
+# projection_verb_of_task carries one of six coordinates:
+#   {daily | weekly | cycle | corpus | agent | physical}
+#
+# projection_parameter_of_task carries the coordinate's parameter-vector
+# (filter expression + serialization format + template + rapid_log body
+# per coordinate).
+
+type projection_verb_of_task = ref
+type projection_parameter_of_task = ref
+type projection_result_of_task = ref
+
+# === projection_admissible — bilateral predicate ===
+#
+# Rice-safe: byte-visible projection_verb from six-coordinate set +
+# well-formed projection_parameter_of_task. Sentinel:
+# `task=projection-admissible`.
+bilateral projection_admissible {
+  sentinel "task=projection-admissible"
+  arity 2
+}
+projection_admissible(p: peer, ctx: projection_parameter_of_task) -> verdict { \ }
+
+# === @task.project — the six-projection dispatch action ===
+#
+# ONE dispatch path via @kleinos sheaf-morphism per Mara 89ac1d4 §7.3;
+# NO if-else / match-arm branching on projection-verb names per HARD
+# RULE [[feedback-if-else-is-substrate-smell]].
+#
+# Body forward-promised until @mq grammar tasks-query surface lands
+# (Mara f5db42c §5) + @kleinos-composed dispatch integration at
+# apply_h::act altitude.
+#
+# Sentinel: `task=project`.
+action @task.project(verb: projection_verb_of_task, params: projection_parameter_of_task) -> projection_result_of_task
+  requires projection_admissible(p, params)
+{ \ }
+
+out @task/projection
+out projection_verb_of_task
+out projection_parameter_of_task
+out projection_result_of_task
+out projection_admissible
+out project

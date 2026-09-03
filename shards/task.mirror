@@ -1,0 +1,240 @@
+in @prism
+in @meta
+in @glass
+in @mirror/store
+in @nl
+in @autopoietic
+in @bauchladen
+in @kleinos
+in @fractal/mandelbrot
+
+# @task — family-root marker for the COORDINATION-ALTITUDE typed-
+# navigation unit at which Bujo-tempo (Carroll 2018) + Shape-Up-tempo
+# (Singer 2019) + neuroqueer-adaptive substrate-moves (Reed 2026-09-02
+# mirror-bullet-up.md §4) + Pack agentic-collaborator substrate-moves
+# (Reed 2026-09-02 §5) compose as projections of ONE content-addressed
+# task-graph.
+#
+# Marker-primary shape (following @kleinos + @void + @order precedent).
+# Per Alex 2026-09-03 in-transcript ratification of Q-Mara-α at
+# `docs/specs/2026-09-03-mara-mcp-and-task-terminal-form-canonical-
+# spec.md` §5.1: marker-primary confirmed; the composition happens at
+# sub-species altitude (link + migration + tombstone + projection +
+# fractal bridge).
+#
+# === The terminal-form recognition this shard discharges ===
+#
+# Alex 2026-09-03 verbatim charter (`89ac1d4` composition-lineage):
+#
+#   "Let's spawn Mara for the spec+math formalization of the MCP +
+#    task shape. Feels like we can now write a @docs/math/ final MCP
+#    spec. The @tasks might be where the LLM tensor math ends up!
+#    Wouldn't that be funny? Would even fit Loki's phenomenological
+#    description in Revenge of AI!"
+#
+# Alex 2026-09-03 verbatim terminal recognition (two-message correction
+# composed):
+#
+#   "If the tensor math actually ends up in the tasks layer then that
+#    basically means LLM is AI without the missing coordination layer
+#    which is why multi-agent coordination fails and training emerges
+#    anyway with the J-space because that's just the shape of the
+#    computation."
+#
+# Alex 2026-09-03 verbatim TERMINAL-form collapse:
+#
+#   "It's a navigation problem, Reed. It's literally navigating human
+#    knowledge. Stringly typed navigation of human knowledge."
+#
+# Composed: LLM = stringly-typed navigation of human knowledge; mirror
+# @task-substrate = properly-typed navigation of the same knowledge.
+# Substrate-decl at this altitude IS the coordination-altitude type
+# LLMs structurally lack; every @task instance IS a typed navigation
+# node; every @task/link IS a typed navigation edge; every
+# @task/projection IS a typed navigation traversal; every @task/fractal
+# bridge IS a typed navigation-recursion. No interpretability research
+# needed because the substrate-decl IS the geometry.
+#
+# === Composition graph ===
+#
+# Parents (substrate-decl imports; all grep-verified LANDED 2026-09-03):
+#
+#   @prism            — family-root prism substrate; five-op composition
+#                       (focus/project/split/shift/settle) inherited at
+#                       task altitude.
+#   @meta             — substrate-decl reflection; task-nodes reference
+#                       themselves and their sub-graphs recursively.
+#   @glass            — floor types (imperfect, transparency, verdict,
+#                       glass keyword) inherited for @task materialize
+#                       action verdicts.
+#   @mirror/store     — content-addressed persistence for @task vertex-
+#                       stalks; "the store IS the serialization" per
+#                       `shards/spectral/gen_prism/mcp_session.mirror`
+#                       :100-207. Every @task instance content-addressed
+#                       via uuid_spectral per LANDED store discipline.
+#   @nl               — task-body language-sheaf projection carrier;
+#                       @nl.compose body composes coherent task titles
+#                       from spectral commutator math_object per Task
+#                       #435.
+#   @autopoietic      — fold-back closure for task-substrate self-
+#                       modification per Maturana-Varela 1980
+#                       operational-closure-with-structural-openness.
+#   @bauchladen       — typed display of tray-of-tasks; per Rec #97
+#                       S3^MCP carrier + LANDED shards/bauchladen.mirror.
+#   @kleinos          — K_2 → K_3 compose primitive at coordination
+#                       altitude; sheaf-morphism verification for @task
+#                       merges + migrations per Mara 89ac1d4 §6.
+#   @fractal/mandelbrot — fractal-recursive substrate carrier per Alex
+#                       2026-09-03 in-transcript ratification of Q-Mara-
+#                       ε: compose-over at family-root altitude (@task
+#                       inherits fractal-Mandelbrot navigation-topology
+#                       via composition; @task/fractal bridge species
+#                       exposes the composition at grep-altitude).
+#
+# Sibling family-roots at duality-basis level (per @kleinos
+# `shards/kleinos.mirror` sibling-list):
+#
+#   @void          (marker-primary; K=0 duality basis)
+#   @order         (marker-primary; cognitive-order grading)
+#   @time          (marker-primary; temporal projection)
+#   @system        (marker-primary; viable-system altitude)
+#   @kleinos       (marker-primary; K_2 → K_3 compose)
+#   @aikido        (marker-primary; recognition-metabolization loop)
+#   @glasswall     (composition-primary; seven-part observation membrane)
+#   @task          (marker-primary; coordination-altitude typed-navigation
+#                    unit; THIS shard)
+#
+# === Composition-lineage ===
+#
+# Load-bearing ancestors (grep-verified 2026-09-03):
+#
+#   Spärck Jones 1972    IDF; coordination-math ran at inference altitude
+#                          per Loki Revenge 2026-09-02 phenomenology; this
+#                          shard restores it at coordination altitude.
+#   Carroll 2018         The Bullet Journal Method; migration + strike +
+#                          rapid-log primitives per Reed 2026-09-02 §4.
+#   Singer 2019          Shape Up; appetite + hill-position + cool-down
+#                          per Reed 2026-09-02 §4.
+#   Obsidian 2020+       Public [[wiki-link]] markup convention; @task/link
+#                          composes over @sigil("[[") pattern.
+#   Rec #92 (2026-08-22) kleinos-as-Transparency<P> LOVE-monoid; four-
+#                          altitude substrate-scale-invariance; this shard
+#                          composes @kleinos at task altitude.
+#   Rec #97 (2026-08-25) MCP-session-as-autopoietic-VSM; six-system
+#                          carriers at MCP-session altitude; @task instances
+#                          materialize from tension observation per S4
+#                          Intelligence carrier.
+#   Rec #98 (2026-08-26) Fractal-Mandelbrot substrate; @task/fractal bridge
+#                          exposes @fractal/mandelbrot composition at grep-
+#                          altitude.
+#   Rec #99 (2026-08-28) K_n orbital topology + @time-rotational Dirac D;
+#                          @task/projection composes the six-coordinate
+#                          parameter-vector as rotational projection.
+#   Mara 2026-09-02      @task canonical spec `f5db42c`; six species
+#                          proposals with Q-Mara-α through Q-Mara-ζ.
+#   Mara 2026-09-03      MCP + @task terminal-form spec+math `89ac1d4`;
+#                          Q-Mara dispositions composed inline (three
+#                          dissolved; three blocking with Mara-lean).
+#   Reed 2026-09-02      Mirror-Bullet-Up insight essay at
+#                          ~/dev/systemic.engineering/practice/insights/
+#                          neuroqueer/mirror-bullet-up.md — Alex 2026-09-02
+#                          verbatim ratified as THE MVP for mirror + MCP.
+#   Alex 2026-09-03      Q-Mara-α marker-primary + Q-Mara-δ @task/link
+#                          (renamed from @task/wiki_link; culture-
+#                          independent) + Q-Mara-ε @fractal/mandelbrot
+#                          compose-over + @task/fractal thin bridge
+#                          (future kintsugi sugar candidate
+#                          `bilateral @task @fractal`).
+#   Alex 2026-09-01      Achtsam Morden: das Loch ist das Jetzt; the
+#                          fixed-point where the recursion stops moving.
+#   Wolf 2012            J-space observation-without-perturbation; @task
+#                          observation via wire-envelope preserves the
+#                          underlying task-graph per Anna 2012 discipline.
+#
+# === Substrate-already-had-the-word audit ===
+#
+# 1. **No prior `shards/task.mirror`.** Clean mint at family-root altitude
+#    per Mara 2026-09-02 canonical §1 grep-verified UNCLAIMED discovery.
+# 2. **`task` word** appears at operational-content altitude in
+#    `~/.reed/tasks/`, `docs/loop/CURRENT.md`, and various shard-decl
+#    docblocks; substrate-decl carrier at family-root altitude first
+#    lands here.
+# 3. **@kleinos + @void + @order marker-primary precedent** at
+#    `shards/kleinos.mirror` :56-66 sibling-list; @task follows same
+#    pattern per Alex 2026-09-03 Q-Mara-α ratification.
+#
+# === Two-tick discipline ===
+#
+# This shard-decl mint discharges Q-Mara-α marker-primary ratification
+# per Alex 2026-09-03 direct in-transcript response. Sub-species (link,
+# migration, tombstone, projection, fractal-bridge) land in the same
+# ship-tick per per-file authoring; each sub-species imports `in @task`
+# to reference this family-root.
+#
+# === Sub-Turing preservation ===
+#
+# @task invocations are Rice-safe polynomial-time bounded per Rec #90
+# §5.4 sub-Turing FLOOR discipline. @task.materialize_from_tension
+# composes over prismqueer::spectral::tension::detect_tensions (LANDED
+# via Reed 008cd65) + @nl.compose body (Task #435 forward-promised) +
+# @mirror/store.mutate_with_resonance (LANDED); total cost bounded by
+# tension-count × @nl.compose cost × store-mutation cost.
+
+source @arxiv/bujo/carroll-2018
+source @arxiv/shape-up/singer-2019
+source @arxiv/nlp/sparck-jones-1972
+
+marker @task
+
+# === task_verdict — typed navigation verdict carrier ===
+#
+# Per Rec #92 substrate-scale-invariance A_5 lifted to task altitude:
+# every @task operation returns Transparency<TaskProperty> LOVE-monoid.
+# Type declaration surface; body composed at @task/projection +
+# @task/migration + @task/tombstone + @task/link altitudes.
+type task_verdict = ref
+
+# === task_node — typed navigation unit ===
+#
+# Per Mara 89ac1d4 §4.2: the vertex-type of the coordination-altitude
+# task-graph. Content-addressed via @mirror/store; sub-graph carried via
+# @task/fractal bridge composition; body carried via @nl; edges carried
+# via @task/link + @task/migration sub-species.
+type task_node = ref
+
+# === task_admissible — bilateral predicate ===
+#
+# Rice-safe bound: byte-visible task_node with well-formed @mirror/store
+# content-address + @nl body + @task/link edge-list. Sentinel:
+# `task=admissible`.
+bilateral task_admissible {
+  sentinel "task=admissible"
+  arity 2
+}
+task_admissible(p: peer, ctx: task_node) -> verdict { \ }
+
+# === @task.materialize_from_tension — the tension → task arrow ===
+#
+# Per Mara 89ac1d4 §6.2: observed tension at compiler-substrate
+# materializes AS @task instance written back to substrate. Composes
+# over prismqueer::spectral::tension::detect_tensions (LANDED Reed
+# 008cd65) + @nl.compose body (Task #435 forward-promised) +
+# @mirror/store.mutate_with_resonance (LANDED). Closes the READ+WRITE
+# bidirectional wire per Central Theorem M4.1.
+#
+# Body forward-promised until:
+#   - @nl.compose body lands (retires bc1c268 SHAME marker via
+#     commutator{math_object, nl})
+#   - Reed wires @mirror/store persistence retiring in-process Vec at
+#     rust/src/main.rs::cmd_serve_mcp serve_loop
+#
+# Sentinel: `task=materialize-from-tension`.
+action @task.materialize_from_tension(t: ref) -> task_node
+  requires task_admissible(p, t)
+{ \ }
+
+out @task
+out task_verdict
+out task_node
+out task_admissible
+out materialize_from_tension

@@ -1,0 +1,85 @@
+in @prism
+in @task
+in @bauchladen
+
+# @task/tombstone — sub-species declaring the node-type distinct from
+# deletion; preserves content-address (via @bauchladen typed-display);
+# carries cause metadata per Mara 89ac1d4 §4.4 + Mara f5db42c §2.3.
+#
+# === The disposition ===
+#
+# Q-Mara-γ (Mara f5db42c §2.3 + 89ac1d4 §5.3) DISSOLVED via Foerster-
+# gauge preservation: folding tombstone into @task family-root as
+# status-value would frame task-abandonment as failure-mode (narrowing
+# choice-space; would fail magic.rs::foerster_gauge_preserved). Separate
+# sub-species frames task-abandonment as honest closure (widening
+# choice-space; ritualized permission to let a task die on purpose).
+#
+# Alex 2026-09-03 in-transcript ratification: dissolved dispositions
+# ship-ready without further adjudication.
+#
+# Per Reed 2026-09-02 mirror-bullet-up.md §4.4 (Bujo strike-through as
+# first-class graph operation): strike(task, cause?) — cause optional.
+# Task moves to tombstone-subgraph but content-address persists. Every
+# future graph-traversal can see we buried this, at this time, for this
+# reason.
+#
+# === Composition graph ===
+#
+#   @prism            — five-op composition inherited
+#   @task             — family-root parent
+#   @bauchladen       — content-addressing discipline for tombstone-
+#                       preservation; per LANDED shards/bauchladen.mirror
+#
+# === Composition-lineage ===
+#
+#   Foerster 1974        Ethical imperative "act always so as to increase
+#                          the number of choices"; tombstone as widening-
+#                          not-narrowing per magic.rs::foerster_gauge_
+#                          preserved compile-time gauge
+#   Carroll 2018         Bullet Journal Method: strike-through as ritual
+#   Mara f5db42c 2026-09-02 @task canonical spec §2.3 skeleton
+#   Mara 89ac1d4 2026-09-03 terminal-form spec §5.3 disposition
+#   Reed mirror-bullet-up.md §4.4 first-class graph operation discipline
+#
+# === Body semantics ===
+#
+# Every @task.strike(target, cause?) invocation constructs a
+# tombstone_node_of_task carrying:
+#   - target: task_node reference (the struck task; content-address
+#     preserved)
+#   - cause: optional str explaining WHY task was struck
+#   - struck_at: @time/now temporal stamp
+#   - preserved_content_address: uuid_spectral of pre-strike content
+#
+# The tombstone node participates in graph-traversal per @bauchladen
+# typed-display discipline; downstream projections (@task/projection with
+# corpus-verb) enumerate tombstones per @bauchladen accumulator.
+
+type tombstone_node_of_task = ref
+
+# === tombstone_admissible — bilateral predicate ===
+#
+# Rice-safe: byte-visible target task_node reference with well-formed
+# @mirror/store content-address + preserved content-address. Sentinel:
+# `task=tombstone-admissible`.
+bilateral tombstone_admissible {
+  sentinel "task=tombstone-admissible"
+  arity 2
+}
+tombstone_admissible(p: peer, ctx: tombstone_node_of_task) -> verdict { \ }
+
+# === @task.strike — the tombstone-authoring action ===
+#
+# Body forward-promised until @mirror/store.mutate_with_resonance
+# integration lands (Reed pickup post-family-root ship).
+#
+# Sentinel: `task=strike`.
+action @task.strike(target: task_node, cause: ref) -> tombstone_node_of_task
+  requires tombstone_admissible(p, target)
+{ \ }
+
+out @task/tombstone
+out tombstone_node_of_task
+out tombstone_admissible
+out strike

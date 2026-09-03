@@ -1,0 +1,132 @@
+in @prism
+in @task
+in @fractal/mandelbrot
+
+# @task/fractal — thin bridge species composing @task with
+# @fractal/mandelbrot at grep-altitude per Alex 2026-09-03 in-transcript
+# ratification of Q-Mara-ε refinement: don't mint fractal-sub-graph
+# semantic at @task altitude; @task family-root composes over
+# @fractal/mandelbrot; @task/fractal bridge exposes the composition at
+# grep-altitude for query + wire + kintsugi-sugar-desugar altitude.
+#
+# === Alex 2026-09-03 verbatim naming pattern ===
+#
+#   "There might be a @task/fractal bridge. That's a pattern we've in
+#    multiple places.
+#
+#    Might also be something the kintsugi loop captures as a
+#    collapsible sugar pattern eventually.
+#
+#    Like `bilateral @task @fractal` or sth like that."
+#
+# The bridge-species pattern (Alex 2026-09-03 verbatim: "a pattern we've
+# in multiple places") captures WHERE @task-altitude composition-over-
+# @fractal/mandelbrot happens at grep-altitude. Without the bridge, the
+# composition lives only at @task family-root altitude and is not grep-
+# visible when searching for @task ↔ @fractal composition sites.
+#
+# Future kintsugi collapsible sugar candidate (Alex 2026-09-03 forward-
+# promised): `bilateral @task @fractal` sugar-desugar expansion where
+# the kintsugi mend-loop captures the bridge-species pattern and desugars
+# `bilateral @X @Y` → bridge-species shard-decl at `shards/X/Y.mirror`
+# composing over `in @X + in @Y`. Species-mint gets automated at the
+# kintsugi loop altitude when the pattern surfaces at scale.
+#
+# === The disposition ===
+#
+# Q-Mara-ε (Mara f5db42c §2.5 + 89ac1d4 §5.5) resolved per Alex
+# 2026-09-03 in-transcript ratification composing FOURTH option not in
+# Mara's original three-choice framing (@task/gestalt vs @task/sub_graph
+# vs @task/mandelbrot): compose-over @fractal/mandelbrot at @task family-
+# root altitude + thin bridge species at @task/fractal altitude for grep-
+# visibility.
+#
+# Refuses:
+#   - @task/gestalt (name collision with Alex's higher-altitude
+#     @gestalt Obsidian-wiki-markdown-markup usage)
+#   - @task/sub_graph (stringly-typed-adjacent naming per Alex 2026-09-03
+#     terminal-form recognition "stringly typed navigation of human
+#     knowledge"; substrate discipline refuses generic "sub_" + "graph"
+#     naming when a substrate-decl'd carrier already exists)
+#   - @task/mandelbrot (duplicates LANDED @fractal/mandelbrot per
+#     substrate-already-had-the-word HARD RULE)
+#
+# === Composition graph ===
+#
+#   @prism             — five-op composition inherited
+#   @task              — family-root parent
+#   @fractal/mandelbrot — LANDED species-decl at shards/fractal/
+#                          mandelbrot.mirror (Mara 2026-07-20; Alex
+#                          2026-07-13 recognition "@fractal underlies
+#                          @kintsugi/consent; mirror compiler IS a
+#                          Mandelbrot set")
+#
+# === Composition-lineage ===
+#
+#   Mandelbrot 1980      Fractals: Form, Chance and Dimension; the
+#                          mathematical substrate for fractal-recursive
+#                          navigation topology
+#   [[project-fractal-mandelbrot-substrate]] (Alex 2026-07-13; Rec
+#                          candidate; load-bearing hinge) — @fractal
+#                          underlies @kintsugi/consent + @task at every
+#                          altitude
+#   Rec #98 (2026-08-26; FORWARD-PROMISED) Opaque-payload-IS-fractal-
+#                          AST-in-5-op-prismqueer-shape; @gestalt as
+#                          bijective classifier+renderer; Rec #92
+#                          Transparency<P> P-instantiated as
+#                          Mandelbrot<query_AST>
+#   Rec #94 (2026-08-22; MINTED) Lawvere 1969 diagonal fixed-point;
+#                          the fixed-point where recursion stops moving
+#                          per Alex 2026-09-01 das-Loch=das-Jetzt
+#   Mara f5db42c 2026-09-02 @task canonical spec §2.5 skeleton (as
+#                          @task/gestalt; refined per Alex 2026-09-03)
+#   Mara 89ac1d4 2026-09-03 terminal-form spec §5.5 disposition with
+#                          name-collision-warning
+#   Alex 2026-09-03      Refinement resolving three-choice framing via
+#                          FOURTH-option compose-over-@fractal/mandelbrot
+#                          + @task/fractal thin bridge per typed-
+#                          navigation recognition
+#
+# === Body semantics ===
+#
+# Every @task instance IS-A Mandelbrot<task_node> point per
+# @fractal/mandelbrot mandelbrot_state variant (Liquid<task_node> in-
+# flow OR Crystal<task_node> settled). @task.crystallize composes over
+# @time/now.crystallize LANDED to transition Liquid → Crystal at
+# temporal-singularity events.
+#
+# The fractal-recursion "each task contains a sub-graph that IS a task"
+# (Alex 2026-09-02 verbatim; "turtles all the way down"; recursion stops
+# at λ₀=NOW) IS the @fractal/mandelbrot mandelbrot_state variant applied
+# recursively at task altitude.
+
+type mandelbrot_state_of_task = ref
+
+# === task_fractal_admissible — bilateral predicate ===
+#
+# Rice-safe: byte-visible mandelbrot_state variant (Liquid or Crystal)
+# wrapping a well-formed task_node. Sentinel: `task=fractal-admissible`.
+bilateral task_fractal_admissible {
+  sentinel "task=fractal-admissible"
+  arity 2
+}
+task_fractal_admissible(p: peer, ctx: mandelbrot_state_of_task) -> verdict { \ }
+
+# === @task.mandelbrot_state_of — the bridge action ===
+#
+# Given a task_node, discharges its Mandelbrot-state per
+# @fractal/mandelbrot.is_settled discipline: Crystal if the task is
+# settled (content-address stable; sub-graph closed at λ₀); Liquid if
+# in-flow (sub-graph in-motion; recursion not yet stopped moving).
+#
+# Body composes over @fractal/mandelbrot.is_settled LANDED.
+#
+# Sentinel: `task=mandelbrot-state-of`.
+action @task.mandelbrot_state_of(t: ref) -> mandelbrot_state_of_task
+  requires task_fractal_admissible(p, t)
+{ \ }
+
+out @task/fractal
+out mandelbrot_state_of_task
+out task_fractal_admissible
+out mandelbrot_state_of
