@@ -121,7 +121,34 @@
           ];
           shellHook = ''
             export LANG=en_US.UTF-8
-          '' + rust.rustHook;
+          '' + rust.rustHook + ''
+            # Mirror.Offer.Wait at build-substrate altitude per Alex
+            # 2026-09-03 Void-404 ("the operator for the whole compiler
+            # and the MCP and everything") + Mara 2026-08-27 circular-
+            # recursive-mcp-autopoietic-closure (indexing accretion as
+            # autopoietic loop closure). One tick per direnv shell entry:
+            #
+            #   Mirror  — inspect ~/.local/bin/mirror current state
+            #   Offer   — symlink to $CARGO_TARGET_DIR/release/mirror
+            #   Wait    — idempotent; if already correct, no-op
+            #
+            # Retires the 2026-08-26 bootstrap install (bootstrap/ deleted
+            # then per Alex directive; rust/ binary owns terminal-form per
+            # FLOOR discipline; wrapper at ~/.os/bin/mirror still calls
+            # ~/.local/bin/mirror which this hook keeps current). Auto-fires
+            # for alexwolf + reed + mara + any Pack peer entering the mirror
+            # devshell. The install-substrate becomes self-maintaining;
+            # every shell entry accretes one crystal on the tray at build-
+            # substrate altitude.
+            _MIRROR_BIN="''${CARGO_TARGET_DIR:-$HOME/.cargo-target}/release/mirror"
+            _MIRROR_LINK="$HOME/.local/bin/mirror"
+            mkdir -p "$HOME/.local/bin"
+            if [ ! -L "$_MIRROR_LINK" ] || [ "$(readlink "$_MIRROR_LINK")" != "$_MIRROR_BIN" ]; then
+              ln -sfn "$_MIRROR_BIN" "$_MIRROR_LINK"
+              echo "flake.nix: installed ~/.local/bin/mirror -> $_MIRROR_BIN"
+            fi
+            unset _MIRROR_BIN _MIRROR_LINK
+          '';
         }
         # LAPACK/BLAS discoverable to the linker and to build.rs scripts
         # without hand-wiring store paths. Flang-rt is darwin-only.
