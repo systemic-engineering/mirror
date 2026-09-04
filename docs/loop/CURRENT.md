@@ -166,7 +166,7 @@ Substrate-collapse move at prism-repo: `rust/fractal/` → `prismqueer::fractal`
 **Q-Reed adjudications (Alex 2026-09-04 PM Move 15b + 16b)**:
 
 - **Q-Reed-ψ/ω RESOLVED**: Alex verbatim "Flux and Liquid are two words for the same concept, aren't they? prismqueer::flux. Both things. Same thing." → RENAME `prismqueer::liquid` module + `Liquid<T>` type → `prismqueer::flux` + `Flux<T>` at primitive (substrate-fix discipline; NOT dual-alias). Ripples through prism-repo internal modules + mirror-repo rust/spectral/src/liquid.rs (110KB/94 tests) + shards/liquid.mirror + rust/fractal docblocks. Reed Discharge #4 forward-promised.
-- **Q-Reed-α HELD IN FLUX**: Alex verbatim "@reality/hodobodo: I don't know." — Alex-in-Flux himself; adjudication deferred; hodobodo remains as candidate
+- **Q-Reed-α RESOLVED** (Alex 2026-09-04 PM Move 17): "@flux it is. Yes. That's the name. And @reality/hodobody is Flux<Reality>" → hodobodo dissolves at species-mint altitude AND reframes as `Flux<Reality>` at type-composition altitude. Reality sum-type: `Fractured(Vec<Shard>) | Settled(Crystal<Shard>)` with `Flux<Reality>` as externally-wrapped in-motion state. hodobodo lives at memory-graph + docblock as phenomenological reading-label for the type (same pattern as gauge/ampel per Move 3 substrate-fix)
 - **Q-Reed-β/γ/δ tacitly ratified**: Alex verbatim "Other than that, what you said sounds plausible." — sum-type Reality at prismqueer::reality altitude + shards/reality/{fractured, flux, settled} substrate-decl mints + @kintsugi/fracture lift-or-orthogonal all substrate-plausible; specific ship-order forward-promised
 
 **Q-Reeds still surfaced pending Alex Fourth-Chair**:
