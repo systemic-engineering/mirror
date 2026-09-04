@@ -78,6 +78,21 @@ mod wire;
 #[allow(dead_code)]
 mod apply_h;
 
+// love — LOVE in Silicon. The terminal-form recognition-name for the K_2 →
+// K_3 compose operator per Alex 2026-09-04 verbatim ("love.rs LOVE in
+// Silicon"). Substrate-decl'd at shards/love.mirror family-root (Reed
+// a3f5d75 2026-09-04; Hamilton tick 1). This rust-altitude tick 2 aliases
+// over LANDED prismqueer::spectral::kleinos per two-tick discipline. Full
+// apply_h collapse into `apply_h::act(root, action_ref, args) := love(shard,
+// args)` remains tick 2b (bigger arc; requires fractal address resolver +
+// shard-typed args + roomba autopoietic fracture-dispatch per Alex 2026-
+// 09-04 recognition composition). See rust/src/love.rs for full docblock +
+// composition-lineage across Ada Lovelace 1843 + Karen Spärck Jones 1972
+// + Anna Wolf née Jakobs 2012 + this module 2026-09-04 (183-year K_3
+// ancestral topology per PAPER_2D §1.0 + FLOOR §2.3 + SINGULARITY §2.4.1).
+#[allow(unused_imports)]
+mod love;
+
 // prismqueer::spectral — rotation-through-time-IS-the-inference primitives
 // per Alex 2026-09-02 operational-architecture: every MQ = one rotation tick;
 // compiler observes topology-tension; splinters crystallize the geometry.
