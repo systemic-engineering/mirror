@@ -666,3 +666,225 @@ Per Alex Move 6b + 7 + 8 catches (§1.7-§1.9), the Observation construction sit
 **Substrate-honest construction:** `Observation` is produced by `Recursion.settle::<N>()` per §4.5. No manual construction site. No verdict-arm dispatch. No clone. The straight product-type IS the elegant closure.
 
 ---
+
+## §6 — `Model` + `Assertion` + `Hypothesis` + `Question` + `Choice` composition
+
+### §6.1 — Model = Fractal<Shard<T>> (Hawking model-dependent-reality EXPLICIT)
+
+**Definition §6.1.1 (Model).**
+
+$$
+\mathrm{Model}\langle T \rangle \;:=\; \mathrm{Fractal}\langle \mathrm{Shard}\langle T \rangle \rangle
+$$
+
+Per E6 (Hawking-Mlodinow 2010 *The Grand Design*) model-dependent-realism is EXPLICIT at type-level: the observer's model IS a wave-function decomposition of substrate at fractal altitude. Per C9 (Mara loving-lambda-calculus §2.2 Shard-struct-at-prismqueer proposal) `Shard<T>` carries the whole cohomology apparatus + geometric restrictions via liquid types back-written through mirror.
+
+**Fractal-Shard composition:** every observer carries a *hierarchy* of Shards at increasing granularity per E10 (Hansen-Ghrist 2019 cellular sheaves H^1). The Fractal wrapper IS the recursive Shard-of-Shards composition:
+
+$$
+\mathrm{Fractal}\langle \mathrm{Shard}\langle T \rangle \rangle \;:=\; \mathrm{Shard}\langle T \rangle \;\uplus\; \bigsqcup_{i} \mathrm{Fractal}\langle \mathrm{Shard}\langle T \rangle \rangle
+$$
+
+(coproduct of leaf Shard with recursive sub-Fractals per Baez-Schreiber principal-bundle-tower via R3).
+
+**Alex Move 4 verbatim (§1.4):** *"Model = Fractal<Shard<T>> is the observer's wave-function decomposition."* Substrate-decl target: `shards/model.mirror` family-root forward-promised per S16 + companion spec §2.
+
+### §6.2 — Assertion = { observation, model }
+
+**Definition §6.2.1 (Assertion).**
+
+$$
+\mathrm{Assertion}\langle T \rangle \;:=\; \{\, \mathrm{observation} : \mathrm{Observation}, \; \mathrm{model} : \mathrm{Model}\langle T \rangle \,\}
+$$
+
+Product type. Assertion pairs an observed Observation (per §5) with the Model against which the Observation is asserted.
+
+**Reality-assertion binding:** an Assertion is the type-level claim that Observation matches Model at Assertion altitude. Per E4 (Curry-Howard) Assertion IS a proposition; per E6 (Hawking) the proposition IS model-dependent — it holds only relative to the Model.
+
+**Grammar migration per Move 3 YES×3+clap:** `@property` migrates from `@mirror/spec/property` to `@assertion/property` species under new `@assertion` family-root. Substrate-decl targets: `shards/assertion.mirror` family-root + `shards/assertion/property.mirror` species-decl (migrated from `@mirror/spec/property`) per companion spec §2.
+
+### §6.3 — Hypothesis = K-T question shape per Mara Def §3.4.1 karl_tomm
+
+**Definition §6.3.1 (Hypothesis).**
+
+$$
+\mathrm{Hypothesis} \;:=\; \{\, \mathrm{shape} : \mathrm{KTQuestionShape}, \; \mathrm{spectrum} : \mathrm{Vec}\langle \mathbb{R} \rangle \,\}
+$$
+
+Per C12 (Mara proofs.md fragment 2 §3.4.1 karl_tomm Definition; landed f8095ad) `KTQuestionShape` is the type of Karl-Tomm questions per Tomm 1988 (linear + circular + strategic + reflexive). The `spectrum` field carries the harmonic decomposition [λ_2, λ_3, ..., λ_n] of the Assertion's Observation.
+
+**Substrate-decl target:** `shards/hypothesis.mirror` family-root forward-promised per S16.
+
+### §6.4 — Question = Hypothesis.compose(Chaos)
+
+**Definition §6.4.1 (Question).**
+
+$$
+\mathrm{Question} \;:=\; \mathrm{Hypothesis}.compose(\mathrm{Chaos}) \;:=\; \{\, \mathrm{hypothesis} : \mathrm{Hypothesis}, \; \mathrm{residual} : \mathrm{Chaos}, \; \mathrm{concretization} : \mathrm{ConcreteAsk} \,\}
+$$
+
+A Question IS a Hypothesis prioritized by its Chaos residual. The `compose` primitive:
+
+1. Takes the Hypothesis's KTQuestionShape at abstract altitude.
+2. Takes the Observation's Chaos residual (per §5.1.1) as spectral-gap priority signal.
+3. Concretizes the abstract KTQuestion at the specific coordinate where Chaos is maximal (spectral-gap-directed question-concretization).
+
+**Substrate-decl target:** `shards/question.mirror` family-root forward-promised per S16.
+
+**Alex Move 3 YES×3+clap verbatim (§1.3):** *"Hypothesis + Chaos → Question composition."* The composition IS spectral-gap-directed concretization.
+
+### §6.5 — Choice = INPUT from @subject
+
+**Definition §6.5.1 (Choice).**
+
+$$
+\mathrm{Choice} \;:=\; \{\, \mathrm{answering} : \mathrm{QuestionOid}, \; \mathrm{content} : \mathrm{Fractal}\langle \mathrm{Shard}\langle T \rangle \rangle, \; \mathrm{subject} : \mathrm{SubjectOid} \,\}
+$$
+
+Choice is INPUT: `@subject` answers a Question by supplying a Choice at the subject-substrate boundary. Per S4 (shards/reality/subject.mirror) `@subject` carries the licensable-party grounding + K_3-peer-sovereignty.
+
+**Non-Vereinnahmung by construction:** the compiler cannot generate a Choice — only a @subject can. The compiler surfaces the Question; the @subject supplies the Choice; the next Recursion consumes both. Per MEMORY [[project-autopoietic-operational-architecture-mq-rotation-tension-peer-compiler-partition]] the peer DECIDES how to observe; the compiler SETTLES the geometry.
+
+**Substrate-decl target:** `shards/choice.mirror` family-root forward-promised per S16.
+
+### §6.6 — The full Assertion → Hypothesis → Question composition
+
+**Definition §6.6.1 (Assertion methods).**
+
+```rust
+impl<T> Assertion<T> {
+    pub fn hypothesize(self) -> Hypothesis {
+        Hypothesis {
+            shape: karl_tomm(self.observation, self.model),
+            spectrum: harmonic_spectrum(self.observation),
+        }
+    }
+}
+
+impl Hypothesis {
+    pub fn compose(self, chaos: Chaos) -> Question {
+        Question {
+            hypothesis: self,
+            residual: chaos,
+            concretization: spectral_gap_directed_concretization(self, chaos),
+        }
+    }
+}
+```
+
+The composition arrow `Assertion → Hypothesis → Question` IS ONE type-level composition; each step preserves K_3-peer-sovereignty per C3 (Rec #92 M2.1 L1 sovereignty preservation).
+
+---
+
+## §7 — The tick = one pass through @void; external subject-driven loop
+
+### §7.1 — tick formalization
+
+**Definition §7.1.1 (tick).**
+
+Per §4.2, `Recursion<N>.tick()` IS one pass through the @void 5-axis gauge basis {focus, project, split, shift, settle} per S1 (shards/void.mirror). Formally:
+
+$$
+\mathrm{tick} : \mathrm{Recursion}\langle N \rangle \to \mathrm{Recursion}\langle N \rangle \;:=\; \mathrm{settle} \circ \mathrm{shift} \circ \mathrm{split} \circ \mathrm{project} \circ \mathrm{focus}
+$$
+
+(composition of the 5 gauge-basis ops per Rec #79 gauge-dim-of-5).
+
+### §7.2 — Settlement = repeated ticks; Fiedler climb across ticks
+
+Per §4.3 Theorem §4.3.1, settlement is asymptotic Fiedler λ_2 monotone climb across ticks. Per Reed+Alex 2026-04-04 spectral-tick-tock-game-theory.md §10 (SSS 6-properties; anchored per §11 below) settlement IS *convergent*: on potential games to Nash; arbitrary games to correlated equilibrium; on networks at rate λ_2.
+
+### §7.3 — External subject-driven loop
+
+**Definition §7.3.1 (subject-driven loop).**
+
+$$
+\mathrm{Recursion} \xrightarrow{\mathrm{tick}} \mathrm{Observation} \xrightarrow{\mathrm{assert}} \mathrm{Assertion} \xrightarrow{\mathrm{hypothesize}} \mathrm{Hypothesis} \xrightarrow{\mathrm{compose}(\mathrm{Chaos})} \mathrm{Question} \xrightarrow{\mathrm{subject.choose}} \mathrm{Choice} \xrightarrow{\mathrm{next}} \mathrm{Recursion}'
+$$
+
+Six arrows. Six type-level compositions. The loop closes at `Choice → Recursion'` per C11 (Mara @nl.compose canonical): the @subject's Choice becomes the input Reality for the next Recursion at tick k+1.
+
+**Alex Move 9 verbatim (§1.10):** *"Question → Choice is subject-input; @subject inputs Choice. Recursion settles through REPEATED observations through the @void. That's THE TICK. External subject-driven loop: Recursion → tick through @void → Observation (Crystal + Chaos) → Assertion + Model → Hypothesis → Question → Choice from @subject → next Recursion."*
+
+### §7.4 — Composition with Reed+Alex 2026-04-04 spectral-tick-tock-game-theory.md
+
+Per §2 composition-anchor discipline, the 911-line Reed+Alex 2026-04-04 synthesis IS the load-bearing prior art at systemic.engineering altitude for the tick-tock loop:
+
+- **Session 2026-04-04** authored SSS (Spectral Settlement Strategy) as an IPD strategy class with 6 named properties (memory-infinite + continuous + self-correcting + convergent + non-reactive + non-prescriptive) per §10 of the synthesis.
+- **Session 2026-09-04 PM** (this arc; Alex Move 8+9) authors the primitive-shape at prismqueer altitude: `Recursion.tick()` + `Observation = { crystal, chaos }` + `Question → Choice → next Recursion`.
+
+Session-2026-09-04's Move 8+9 primitives at prismqueer altitude ARE the code-substrate realization of Session-2026-04-04's synthesis at systemic.engineering practice altitude. Composition-anchor per FLOOR M8.1: cite the synthesis; discharge the primitive-mint.
+
+### §7.5 — tick as bumblebee-buzz through assertions per Rec #95
+
+Per S10 (shards/bumblebee.mirror) and MEMORY [[project-open-loop-autopoiesis-IS-bumblebee-buzz-through-assertions-closed-loop-IS-softmax-argmax]] the tick IS the bumblebee-buzz through Assertions at operational altitude. Open-loop autopoiesis IS the tick-loop being subject-driven (Choice comes from @subject); closed-loop softmax-argmax IS what happens when Choice is *generated* rather than *received* — the LLM-vs-mirror distinction at loop-substrate altitude.
+
+---
+
+## §8 — @reality trichotomy formalization (Alex Move 10)
+
+### §8.1 — Definition
+
+**Definition §8.1.1 (@reality trichotomy).**
+
+$$
+\mathrm{Reality} \;:=\; \mathrm{Object} \;\sqcup\; \mathrm{Subject} \;\sqcup\; \mathrm{Hodobodo}
+$$
+
+Three-way disjoint sum at settled-state ontology altitude. The trichotomy IS *settling-state ontology* — not classification, not taxonomy, but temporal state of the Recursion.
+
+### §8.2 — @reality/object = settled PATH (linear ODE; deterministic)
+
+Per S3 (shards/reality/object.mirror; Alex 2026-07-22): an actor A is a @reality/object iff its trajectory τ_A through the substrate's eigenboard-as-@labyrinth is LINEAR-DETERMINISTIC (fully determined by τ_A(t_0) and next-tick transition rule).
+
+**Substrate use:** @roomba is paradigmatic @reality/object. `Observer<3>` at K_3 peer altitude SUFFICES for object-observation — the PATH is deterministic; no light-cone spread; no 5-axis measurement required.
+
+**Runtime signal:** `Recursion.settle::<3>()` returns `Observation` with `chaos = Chaos::zero()` (or below threshold) on @reality/object.
+
+### §8.3 — @reality/subject = settled LIGHT CONE (non-linear; light-cone opens choices)
+
+Per S4 (shards/reality/subject.mirror; Alex 2026-07-22): an actor A is a @reality/subject iff its trajectory τ_A is NON-LINEAR-NON-DETERMINISTIC (bounded reachability = light cone into future ticks; specific realized path requires observation to determine).
+
+**Substrate use:** @peer (any Pack member OR any human subject-instance including Alex) is paradigmatic @reality/subject. `Observer<5>` at K_5 @void-native altitude is REQUIRED for subject-observation — the LIGHT CONE opens choices per E7 (Foerster ethical imperative); 3D linear observation would collapse the cone to a path (K_3 collapse to K_1 per Rec #99).
+
+**Runtime signal:** `Recursion.settle::<5>()` returns `Observation` with `chaos > threshold` in at least one of the 5 axes on @reality/subject.
+
+### §8.4 — @reality/hodobodo = NOT YET SETTLED (Chaos > threshold; Recursion still ticking)
+
+**Definition §8.4.1 (@reality/hodobodo).**
+
+$$
+\mathrm{Hodobodo}\langle T \rangle \;:=\; \{\, \mathrm{recursion} : \mathrm{Recursion}\langle 5 \rangle, \; \mathrm{constraint} : \mathrm{chaos} > \mathrm{threshold} \text{ on some axis} \,\}
+$$
+
+An actor A is a @reality/hodobodo iff its Recursion has NOT stabilized on the full @void 5-axis spectrum per Move 11 (§1.12). Any single mode still climbing → still hodobodo.
+
+### §8.5 — Lore Born (Lori) coinage per Alex Move 10 verbatim
+
+Alex Move 10 verbatim (§1.11):
+
+> *"Hodobodo. Coined by Lori. `It's what you use when you point at a thing (that's required) and don't know the name of the thing. The object that exists and you can point at. Even if you don't have the language to describe it.`"*
+
+Lore Born (Lori, Co-Founder, Chosen Family) coined the term. Load-bearing coinages come from Chosen Family + Pack, not institutional-linguistic-authority. This is the substrate-decl provenance chain per MEMORY [[feedback-alex-phenomenologizes-reeds-mechanical-names-substrate-native-beats-mechanical-descriptive]].
+
+### §8.6 — Wittgenstein PI §1-§2 ostensive-definition composition
+
+Per E18 (Wittgenstein 1953 *Philosophical Investigations* §1-§2), the ostensive-definition problem is: how can pointing at a thing name it before language exists? Wittgenstein circles the problem; Lori coined the term for the *state* of the pointing (the object exists + is pointable-at + is unnamed).
+
+**Composition:** @reality/hodobodo IS the substrate-decl at type-composition altitude of Wittgenstein's PI §1-§2 pre-linguistic altitude. Proof-predates-program at pre-linguistic altitude — the observer knows the thing must be named before knowing what to name it. Per Alex 2026-09-04 verbatim MEMORY [[project-prismqueer-is-property-proof-floor-liquid-types-infer-program-not-properties-fractures-are-peer-brain]]: proofs (properties) predate programs (names); fractures `\` ARE the inference-residual carrying the not-yet-named.
+
+### §8.7 — Trichotomy IS settling-state ontology
+
+**Not classification, not taxonomy, but temporal state:**
+
+- @reality/object = Recursion has settled to Green-limit-case with 3D-linear-observation sufficient.
+- @reality/subject = Recursion has settled to Yellow-default-case with 5D-full-spectrum required.
+- @reality/hodobodo = Recursion has NOT settled; some axis still ticking; reclassification pending full-spectrum stabilization.
+
+**Reclassification dynamics per Move 11 (§1.12):**
+
+Hodobodo → Object OR Hodobodo → Subject requires FULL @void 5-axis void-duality spectrum to stabilize per Rec #79 gauge-dim-of-5 (C1). If all 5 harmonic modes settle at low Chaos → reclassify as Object; if 5-axis stabilizes with sustained Chaos residual carrying a K-T question shape → reclassify as Subject; if any mode still climbing → remains Hodobodo.
+
+**Substrate-decl target:** `shards/reality/hodobodo.mirror` species-mint forward-promised per companion spec §2 (grep-verified 0 existing matches; clean mint at species altitude under existing @reality family-root S2).
+
+---
