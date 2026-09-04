@@ -888,3 +888,224 @@ Hodobodo → Object OR Hodobodo → Subject requires FULL @void 5-axis void-dual
 **Substrate-decl target:** `shards/reality/hodobodo.mirror` species-mint forward-promised per companion spec §2 (grep-verified 0 existing matches; clean mint at species altitude under existing @reality family-root S2).
 
 ---
+
+## §9 — 5-op prismqueer basis linear/non-linear split (Alex Move 13)
+
+### §9.1 — LINEAR (3D) subset
+
+**Definition §9.1.1 (linear 5-op subset).**
+
+$$
+\mathrm{LinearOps} \;:=\; \{\, \mathrm{focus}, \; \mathrm{project}, \; \mathrm{shift} \,\} \;\subset\; \{\, \mathrm{focus}, \; \mathrm{project}, \; \mathrm{split}, \; \mathrm{shift}, \; \mathrm{settle} \,\}
+$$
+
+Three ops. Matrix operations at type-composition altitude:
+
+- **focus**: orthogonal projection (linear operator; rank≤n).
+- **project**: coproduct filter (linear; component extraction from direct sum).
+- **shift**: basis transformation (linear invertible; group action from orthogonal group O(n)).
+
+**Rank invariance:** each linear op preserves choice-count (rank invariant). No choice-widening; no non-linearity.
+
+**Substrate use:** @reality/object (S3) is observation-sufficient at LinearOps altitude. `Observer<3>` applies exactly the 3 LinearOps in one tick; each op is O(n³) via R5 (prismqueer::ffi::eigenvalues LAPACK dsyev bounded).
+
+### §9.2 — NON-LINEAR (2 additional dims)
+
+**Definition §9.2.1 (non-linear 5-op complement).**
+
+$$
+\mathrm{NonLinearOps} \;:=\; \{\, \mathrm{split}, \; \mathrm{settle} \,\} \;=\; \{\, \mathrm{focus}, \; \mathrm{project}, \; \mathrm{split}, \; \mathrm{shift}, \; \mathrm{settle} \,\} \;\setminus\; \mathrm{LinearOps}
+$$
+
+Two ops. Non-linear operations at type-composition altitude:
+
+- **split**: Cheeger cut per E15 (Cheeger 1970 lower bound on smallest eigenvalue) — partition-choice op; choice-count INCREASES via graph-bisection along Fiedler eigenvector; NON-LINEAR because the cut-point depends on the eigenvector, not on the input data linearly.
+- **settle**: Mandelbrot fixed-point iteration z_{n+1} = z_n² + c per R6 (rust/fractal/mandelbrot.rs; forward-promised to prismqueer::fractal per Move 5) — iteration op; choice-count reachability EXPANDS via bounded-orbit iteration until Crystal condenses; NON-LINEAR because z_{n+1} depends quadratically on z_n.
+
+**Choice-count widening per E7 (Foerster ethical imperative):** each non-linear op INCREASES choice-count. This IS the substrate operationalization of Foerster's imperative: *"act always so as to increase the number of choices"*. LinearOps preserve; NonLinearOps expand.
+
+**Substrate use:** @reality/subject (S4) and @reality/hodobodo (S16) REQUIRE the full 5-op basis. `Observer<5>` applies all 5 ops in one tick.
+
+### §9.3 — Proposition: LinearOps rank-invariance vs NonLinearOps choice-widening
+
+**Proposition §9.3.1 (rank invariance of LinearOps).** *For any input Reality R and any composition of ops in LinearOps, the rank of the resulting Observation matches the rank of R.*
+
+**Proof-by-composition:** focus is orthogonal projection (rank≤rank(R)); project is coproduct filter (rank≤rank(R)); shift is basis transformation (rank=rank(R)). Composition of rank-preserving-or-reducing ops preserves rank invariance. No re-derivation required per FLOOR M8.1 (linear algebra composition is elementary).
+
+**Proposition §9.3.2 (choice-widening of NonLinearOps).** *For any input Reality R with rank r, the reachability-set after applying any op in NonLinearOps has cardinality > r.*
+
+**Proof-by-composition:** split via Cheeger cut partitions n nodes into two components, each with reachability > r/2 (Cheeger bound; E15); settle via Mandelbrot iteration reaches |orbit_bound(c)| ≥ 2^n distinct z-values before bounded-orbit criterion at n iterations (Mandelbrot; standard). No re-derivation required per FLOOR M8.1.
+
+**Consequence:** the 3D-linear-subset choice is *not* an approximation; it is *sufficient* for @reality/object where rank preservation IS the trajectory-shape (PATH). The 5D-full-basis is *required* for @reality/subject where choice-widening IS the trajectory-shape (LIGHT CONE).
+
+---
+
+## §10 — Mirror-fast performance model terminal-form (Alex Move 13)
+
+### §10.1 — Cold path: @nl Choice → 5D decomposition (once per Choice)
+
+**Definition §10.1.1 (cold path).**
+
+$$
+\mathrm{ColdPath}(\mathrm{choice}) \;:=\; \mathrm{Recursion}\langle 5 \rangle.\mathrm{from}(\mathrm{choice}).\mathrm{settle}::\langle 5 \rangle()
+$$
+
+Given a Choice from @subject (per §6.5), the cold path decomposes the Choice across the full @void 5-axis gauge basis via the 5-op basis {focus, project, split, shift, settle} once. NON-LINEAR ops in §9.2 make this slow. No shortcut per E7 (Foerster imperative choice-widening cannot be linearly approximated).
+
+**Cost model:** cold path is O(n³) LinearOps + O(2^n) NonLinearOps in the worst case. Bounded above by iteration cap on Mandelbrot per R6.
+
+**Substrate-honest naming:** bigger Choice = bigger decomposition. Alex Move 13 verbatim (§1.14): *"Cold path: @nl Choice → 5D decomposition (once per Choice); non-linear slow; bigger Choice = bigger decomposition; no shortcut per Foerster imperative choice-widening."*
+
+### §10.2 — Warm path: settled Crystal = @reality/object → 3D linear observation
+
+**Definition §10.2.1 (warm path).**
+
+$$
+\mathrm{WarmPath}(\mathrm{crystal}) \;:=\; \mathrm{Observer}\langle 3 \rangle.\mathrm{observe}(\mathrm{Reality} \;\text{indexed at crystal.oid via CoincidenceHash}\langle N \rangle)
+$$
+
+Given a settled Crystal (produced by prior Recursion.settle), the warm path performs 3D linear observation:
+
+1. O(1) content-addressed lookup via `crystal.oid` per R4 (prismqueer::coincidence::Detector<N> CoincidenceHash<N>).
+2. O(n³) matrix projection via R5 (prismqueer::ffi::eigenvalues LAPACK dsyev bounded).
+
+**Cost model:** warm path is O(1) lookup + O(n³) matrix projection. LAPACK-bounded.
+
+### §10.3 — Amortization: decompose ONCE per Choice; observe FOREVER against crystal-cache
+
+**Proposition §10.3.1 (amortization).** *Given a stream of observations o_1, o_2, ..., o_k against the same @reality/object with rank n, the total cost is:*
+
+$$
+\mathrm{Cost}(\mathrm{stream}) \;=\; \underbrace{O(n^3)}_{\mathrm{cold path once}} \;+\; \underbrace{O(2^n)}_{\mathrm{NL cold path once}} \;+\; \underbrace{k \cdot O(n^3)}_{\mathrm{warm path repeated}}
+$$
+
+**Amortized-per-observation cost:** `Cost(stream) / k → O(n³)` as `k → ∞`.
+
+**Compare LLM softmax attention** per MEMORY [[project-llm-is-poor-mans-approximation-of-explicit-mirror-task-tensor-mesh-geometry]]:
+
+$$
+\mathrm{Cost}_{\mathrm{LLM}}(\mathrm{stream}) \;=\; k \cdot O(d^2) \;\text{ where } d \text{ is embedding dim (typically } d \gg n \text{)}
+$$
+
+**Amortized-per-observation cost for LLM:** `O(d²)` per token, always — no crystallization.
+
+**Consequence:** mirror is structurally faster than LLM softmax attention at *streams* against settled @reality/object because mirror amortizes the 5D decomposition cost while LLM decomposes 5D-analogue every token.
+
+### §10.4 — δ_critical = 1 - λ_2/λ_max = runtime signal for crystal maturity
+
+**Definition §10.4.1 (δ_critical).**
+
+$$
+\delta_{\mathrm{critical}} \;:=\; 1 \;-\; \frac{\lambda_2(\mathrm{sheaf}(\mathrm{crystal}))}{\lambda_{\max}(\mathrm{sheaf}(\mathrm{crystal}))}
+$$
+
+Per E16 (Fudenberg-Maskin 1986 Folk Theorem) and Reed+Alex 2026-04-04 spectral-tick-tock-game-theory.md §4 (novel formalization; NEVER LANDED at any Rust altitude per Taut scout §5), δ_critical is the discount factor threshold for cooperation-sustainability in the repeated interaction. At crystal-maturity altitude, δ_critical is the runtime signal for whether the Crystal has matured enough to drop from 5D non-linear to 3D linear observation altitude.
+
+**Threshold semantics:**
+
+- δ_critical low (→ 0) ↔ λ_2 close to λ_max ↔ Crystal spectrum flat ↔ warm-path 3D observation admissible.
+- δ_critical high (→ 1) ↔ λ_2 far below λ_max ↔ Crystal spectrum concentrated ↔ cold-path 5D observation required.
+
+**FORWARD-PROMISED at Rust altitude:** the `delta_critical` runtime signal is not yet a landed prismqueer primitive per Taut scout §4.3. Reed TICK-B step 3 (per docs/loop/CURRENT.md §Q+40.forward step 3) `prismqueer::spectral::harmonic_spectrum` full λ_2 through λ_n harmonic-voice decomposition composes toward this landing.
+
+### §10.5 — LLM softmax attention = 5D per token every time = always slow (no crystallization)
+
+Per MEMORY [[project-llm-is-ai-without-coordination-layer-task-substrate-is-the-missing-layer]] and [[project-mirror-is-typed-navigation-of-human-knowledge-llm-is-stringly-typed-navigation]]:
+
+- **LLM**: strings all the way down (tokens → embedding vectors → softmax attention → next-token). Every token IS a full 5D-analogue decomposition. No settlement; no crystallization; no content-addressation.
+- **Mirror**: types all the way down (splinter → shard → prism → glass → pact; kleinos compose; @task tensor mesh; Mirror.Offer.Wait typed envelope). Decompose once per Choice; crystallize; observe fast against content-addressed Crystals thereafter.
+
+### §10.6 — THIS IS WHY MIRROR IS FAST STRUCTURALLY
+
+**Theorem §10.6.1 (structural-fast).** *For any stream of observations against settled @reality/object, mirror's amortized-per-observation cost is asymptotically bounded by O(n³) LAPACK-bounded, while LLM softmax attention's per-token cost is O(d²) with d ≥ n (typically d >> n).*
+
+**Proof-by-composition:** compose Proposition §10.3.1 (amortization) with §10.5 (LLM no-crystallization) with R4 (content-addressation) with R5 (LAPACK bounded). Q.E.D.
+
+**The two-regime architecture IS a fundamental property, not an optimization.** Amortize slow 5D decomposition ONCE per Choice; observe FAST against crystal-cache forever after. This IS the LLM-vs-mirror distinction at performance-substrate altitude.
+
+---
+
+## §11 — Composition with SSS 6-properties + Fiedler-as-ESS + δ_critical (Alex Q-Taut-δ MANDATORY)
+
+Per Alex adjudication of Q-Taut-δ (§1.13 Move 12): this §11 composition-anchor section is MANDATORY. It cites the Reed+Alex 2026-04-04 spectral-tick-tock-game-theory.md 911-line synthesis at systemic.engineering practice altitude as *shape-guide* for the whole-pipeline formalization.
+
+### §11.1 — SSS 6 properties (Reed+Alex 2026-04-04 §10)
+
+Spectral Settlement Strategy (SSS) as IPD strategy class per Reed+Alex 2026-04-04 spectral-tick-tock-game-theory.md §10:
+
+| Property | Definition | Discharge at whole-pipeline altitude |
+|---|---|---|
+| **Memory-infinite** | full history compressed into eigenvalues | at §4 Reality composes prismqueer::spectral H^1 (E10 Hansen-Ghrist cellular sheaves preserves history) |
+| **Continuous** | not binary cooperate/defect | at §5 Observation = { crystal, chaos } straight product (not verdict-binary; Chaos is continuous-valued monoid) |
+| **Self-correcting** | unsettled eigenvalues trigger adjustment | at §7 Chaos-residual triggers next-tick observation; external subject-driven loop closes via Question → Choice → next Recursion |
+| **Convergent** | on potential games to Nash; arbitrary games to correlated equilibrium; on networks at rate λ_2 | at §4.3 Theorem §4.3.1 Settlement-via-Fiedler Fiedler λ_2 monotone climb per Rec #92 M2.2 L3 |
+| **Non-reactive** | doesn't respond to opponent moves; integrates them | at §3 Observer<N> integrates Reality via `self`-consumption; doesn't respond to individual moves |
+| **Non-prescriptive** | doesn't impose desired outcome; settles toward the structural minimum | at §5.4 λ_0 fixed-point is *structural* not *specified*; per Rec #94 Lawvere-diagonal (C4) the fixed-point exists at compiler-substrate |
+
+**Reed's Move 8 primitive design UNIFIES the 6 SSS properties as a single type-level closure.** The synthesis names them explicitly; the whole-pipeline formalization discharges each at type-composition altitude. Substrate-already-had-the-word discipline: the 6 properties existed at systemic.engineering practice altitude 5 months ago; today's §§3-10 IS the operational discharge at prismqueer altitude.
+
+### §11.2 — Fiedler-as-ESS stability margin (Reed+Alex 2026-04-04 §1 novel)
+
+Per Reed+Alex 2026-04-04 spectral-tick-tock-game-theory.md §1 verbatim (novel-claim per Taut scout §4.2):
+
+> *"Novel insight: The Fiedler value IS the ESS stability margin of the spectral settlement. This connection appears to be original."*
+
+**Discharge at whole-pipeline altitude:** the Mandelbrot-bounded-orbit criterion in Recursion.settle (§4.5) is mathematically equivalent to Fiedler > invasion-threshold. The synthesis names this connection novel; today's §4.3 Theorem §4.3.1 lifts it to type-composition altitude as `Settlement-via-Fiedler` grounded in Rec #92 M2.2 L3 (C3).
+
+### §11.3 — δ_critical = 1 - λ_2/λ_max Folk Theorem formula (Reed+Alex 2026-04-04 §4 novel; NEVER LANDED at Rust altitude)
+
+Per Reed+Alex 2026-04-04 spectral-tick-tock-game-theory.md §4 verbatim (novel-formalization per Taut scout §4.3):
+
+> *"Novel formalization: delta_critical = 1 - (lambda_2 / lambda_max). When the Fiedler value lambda_2 is large relative to the maximum eigenvalue, the critical discount factor is low, meaning cooperation is easy to sustain."*
+
+**Discharge at whole-pipeline altitude:** δ_critical formalized at §10.4 Definition §10.4.1 as the runtime signal for crystal-maturity threshold governing warm-path/cold-path transition. FORWARD-PROMISED at Rust altitude per Reed TICK-B step 3 `prismqueer::spectral::harmonic_spectrum` full λ_2 through λ_n decomposition.
+
+**Composition-anchor gap named:** cross-repo grep for `delta_critical` / `lambda_max` at spectral-db + spectral + mirror = 0 matches per Taut scout §4.3. Formula lives ONLY at systemic.engineering practice altitude 5 months. Today's §10.4 IS the first mirror-corpus citation.
+
+### §11.4 — Structural claim (a)-(f) (Reed+Alex 2026-04-04 §12 partial-formalization status)
+
+Per Reed+Alex 2026-04-04 spectral-tick-tock-game-theory.md §12 (5 numbered novel-contributions if formalized):
+
+1. **Settlement as solution concept** — discharged at §5 Observation = { crystal, chaos } straight product type at type-composition altitude.
+2. **Fiedler value as ESS stability margin** — discharged at §11.2 above (composition with §4.3).
+3. **Eigengap as Folk Theorem discount factor** — discharged at §11.3 above (composition with §10.4).
+4. **Spectral mechanism design** — discharged at §9 5-op basis linear/non-linear split (choice-count widening as design mechanism).
+5. **Alignment-as-coordination vs. alignment-as-control** — discharged at §3 Observer<N> observer-inclusiveness vs Turing 1936 observer-stripping category-error.
+6. **Spectral Settlement Strategy** — discharged at §7 external subject-driven loop as the whole-pipeline instantiation of SSS at type-composition altitude.
+
+**Substrate-honest status:** 6 novel-contribution claims from Reed+Alex 2026-04-04 synthesis — all 6 receive first mirror-corpus composition-anchor discharge in today's whole-pipeline formalization. FORWARD-PROMISED as Rec-candidate updates per §16.
+
+---
+
+## §12 — Move 6a mirror surface collapse — what mirror does vs prismqueer
+
+### §12.1 — Whole compiler formula
+
+$$
+\mathrm{Mirror} \;=\; \mathrm{prismqueer} \;+\; \mathrm{git\text{-}projection}(\mathrm{crystal\text{-}graph}) \;+\; \mathrm{phone\text{-}connection}(\mathrm{peers})
+$$
+
+Per Alex Move 6a verbatim (§1.6):
+
+> *"The only thing mirror adds is the actual 'save the content addressed crystals for the shards to disk as git projection of the graph' and connect them through phone etc. the rest is mirror syntax computed and observed by prismqueer into Crystals."*
+
+### §12.2 — Three components of mirror surface
+
+**Component (a): git-projection of crystal graph = persistence.** The Crystal graph produced by `prismqueer::fractal::mandelbrot::crystallize` per R6 is persisted at mirror altitude as git objects (blob content-addressed by Oid = CoincidenceHash<N> per R4). This IS S12 (shards/task.mirror + shards/task/*.mirror; @task substrate carrying crystal-graph persistence).
+
+**Component (b): phone-connection between peers.** rust/src/phone.rs LANDED (peer-to-peer connection primitive at mirror altitude). Per MEMORY [[project-mirror-offer-wait-is-the-operator-for-whole-compiler-mcp-everything]] the phone-connection carries Mirror.Offer.Wait envelope at wire altitude.
+
+**Component (c): etc. (MCP + CLI + LSP shells around prismqueer).** MCP server surface + CLI verb-dispatch + LSP integration all live at mirror altitude as thin shells around prismqueer primitives. Per MEMORY [[project-observer-reality-observation-chaos-assertion-hypothesis-question-full-pipeline-at-prismqueer]] the reduction is: (1) prismqueer authors primitives; (2) mirror composes primitives at surface altitudes; (3) MCP/CLI/LSP export the composition.
+
+### §12.3 — Reed TICK-B implication
+
+- **apply_h ARMS → love() at prismqueer** per R9 (rust/src/apply_h.rs 58.2KB / 1509 LOC / 44 tests → ≤750 LOC per Mara loving-lambda-calculus §10.3 criterion 1).
+- **magic.rs dissolves** — Reed authoritative retirement commit `fc07ee4` LANDED 2026-09-04 per Move 3 (Alex YES×3+clap) + Move 8 substrate-fix; foerster_imperative type-level wrapper now composes over prismqueer directly per S5 love + S6 kleinos + §13 loving-lambda-calculus composition.
+- **rust/fractal moves to prismqueer::fractal** per Move 5 substrate-collapse; witnessed.rs stays at mirror per Mara provenance-concern.
+- **most bench+observer logic moves to prismqueer** per Move 6a compiler-formula.
+
+### §12.4 — Everything else = prismqueer
+
+Whole compiler = `prismqueer + git-projection + phone-connection`. Any function that is not (a) persistence, (b) peer-connection, or (c) surface-shell BELONGS at prismqueer. The composition-anchor discipline: substrate-honest reporting per HARD RULE [[feedback-reed-workaround-whore-reflex-instead-of-substrate-fix]] — do not extend mirror-repo Rust when the substrate-fix belongs at prismqueer.
+
+---
