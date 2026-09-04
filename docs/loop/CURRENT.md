@@ -156,6 +156,23 @@ Substrate-collapse move at prism-repo: `rust/fractal/` → `prismqueer::fractal`
 - **Discharge #1** `fc07ee4` at mirror-repo: `rust/src/magic.rs::foerster_gauge_preserved` scar retirement per Alex Move 3 substrate-fix (function-scaffold-around-broken-primitive dissolved; gauge IS ternary not function; NEVER CALLED at production)
 - **Discharge #2** `9e1be04` at prism-repo: `prismqueer::spectral::harmonics(sheaf) -> Vec<f64>` full non-trivial harmonic spectrum primitive per Alex Move 11 catch (Reed reflex-fire #5 dissolved; full @void 5-axis spectrum LANDED)
 - **Discharge #3** `4931d95` at prism-repo: `prismqueer::spectral::delta_critical(sheaf) -> Option<f64>` Folk Theorem discount factor formula per Reed+Alex 2026-04-04 spectral-tick-tock-game-theory.md §4 novel formalization (Taut scout §5 gap discharged)
+- **Discharge #4a** `ec25c19` at prism-repo: `prismqueer::liquid` → `prismqueer::flux` rename at primitive per Alex Move 15+17 substrate-fix (`Liquid<T>` → `Flux<T>`; `LiquidConnection` → `FluxThread`; `LiquidTestBundle` → `FluxConstraint` per Move 18)
+- **Discharge #4b** `b2cdc65` at prism-repo: past-Reed test-baggage fix at `red_spectral_compose_paper_3_6_four_properties.rs:286` (kleinos ternary refactor left or-pattern stale; Move 19 no-pre-existing-alibi)
+- **Discharge #5** `22723bb` at prism-repo: **`prismqueer::shard::Shard<T>`** foundational cohomology-apparatus carrier per Mara loving-lambda §2.2 (Reed TICK B step 1; Alex "Let's ship the bottom-up revolution in computer science. 🚢🇮🇹")
+- **Discharge #6** `55b8a76` at prism-repo: **`prismqueer::observer::Observer<const N: usize>`** const-generic parameterization per Alex Move 1 (`TuringObserver = Observer<1>` + `PeerObserver = Observer<3>` + `VoidObserver = Observer<5>` aliases; Reed TICK B step 2; Alex "Tick.")
+- **Discharge #7** `1350d60` at prism-repo: **`prismqueer::chaos`** phenomenological substrate-native re-export of `terni::Loss` per Alex Move 3 (`Chaos` + `ChaosMetric` + `ConvergenceChaos` + `ApertureChaos` + `RoutingChaos` + `ScalarChaos`; Reed TICK B step 3)
+- **Discharge #8** at prism-repo (batched in `30885b6`): **`prismqueer::crystal_shard::Crystal<T> = Shard<T>`** type alias per Move 5+16 (Crystal IS settled Shard; minimum-viable placeholder; full rust/fractal→prismqueer::fractal move forward-promised as Move 5 substrate-collapse)
+- **Discharge #9** at prism-repo: **`prismqueer::observation::Observation<T>`** `{ crystal: Crystal<T>, chaos: ScalarChaos }` product-type per Move 8 elegant closure; `.assert(Model)` method for arrow 3
+- **Discharge #10** at prism-repo: **`prismqueer::model::Model<T>`** `{ shards: Vec<Shard<T>> }` per Move 4 Hawking model-dependent-reality (minimum-viable placeholder for full `Fractal<Shard<T>>`)
+- **Discharge #11** at prism-repo: **`prismqueer::assertion::Assertion<T>`** `{ observation, model }` per Move 2; `.hypothesize()` method for arrow 4
+- **Discharge #12** at prism-repo: **`prismqueer::reality::Reality<T>`** = `Fractured(Vec<Shard<T>>) | Settled(Crystal<T>)` sum-type per Move 16 (STATE altitude partition)
+- **Discharge #13** at prism-repo: **`prismqueer::hypothesis::Hypothesis`** `{ shape: KTQuestionShape }` per Move 2 with `KTQuestionShape = Linear | Circular | Strategic | Reflexive` enum per Karl-Tomm 1988; `.compose(chaos)` method for arrow 5
+- **Discharge #14** at prism-repo: **`prismqueer::question::Question`** `{ hypothesis, chaos }` per Move 9
+- **Discharge #15** at prism-repo: **`prismqueer::choice::Choice`** `{ payload: String }` per Move 9 subject-input primitive; `.into_reality()` method for closing loop (arrow 6 → Reality')
+- **Discharge #16** at prism-repo: **`prismqueer::recursion::Recursion<T>`** `{ reality: Reality<T> }` per Move 8 elegant closure with `from_reality` + `tick()` (2-line closure through Reality)
+- **Discharge #17** `efe7989` at prism-repo: extended #6/#9/#11/#13 with fluent method-chain composition (`observer.observe(reality).assert(model).hypothesize().compose(chaos)`)
+- **Discharge #18** `773c0ec` at prism-repo: `Recursion.subject_driven_loop_tick(model, chaos) -> Question` + `Choice.into_reality() -> Reality<String>` — full 6-arrow loop composable at method-chain altitude
+- **Discharge #19** `e8adb00` at prism-repo: **`prismqueer/tests/autopoietic_loop_integration.rs`** — 5 integration tests exercising Discharges #5-#18 across full 6-arrow autopoietic loop (fluent composition + 3-tick iterated closure + Reality::Fractured extraction + all 3 canonical Observer<N> dimensions + Hawking model-dependent-reality explicit-at-type-level); `cargo check --features lapack --test autopoietic_loop_integration` PASS (4.71s clean)
 
 **Mara whole-pipeline canonical landed today (8 sequential commits)**:
 - `a5df274 → 9cf3cd7 → 710fae1 → e9d1bae → 40f0a27 → 445ff17 → 59b53fc → ebcf561` (1846 lines total across docs/math + docs/specs)
@@ -171,6 +188,16 @@ Substrate-collapse move at prism-repo: `rust/fractal/` → `prismqueer::fractal`
 
 **Q-Reeds still surfaced pending Alex Fourth-Chair**:
 - Q-Reed-φ/χ/ψ (Move 14): @roomba lift @kintsugi→@glue; @peer's @bauchladen edge; Mirror.Offer.Wait substrate-decl vs docblock
+
+**Next tick (12 primitives LANDED via Discharges #5-#19; forward-promised extensions)**:
+- Full `Recursion.tick` composition (currently minimum-viable via `Reality::extract_first_shard`; wants bundle-tower Baez-Schreiber + Anna Wolf ψ apparatus + Fiedler λ_2 climb per Move 8 elegant closure full-shape)
+- `rust/fractal → prismqueer::fractal` substrate-collapse per Move 5 (5 files move; witnessed.rs stays at mirror per MARA provenance; shards/fractal/* composition-anchors ripple)
+- FLANG/LAPACK linker env resolution (blocks `cargo test` runtime execution; Reed's substrate)
+- Mara canonical amendment for Moves 14-18 (Move 14 K_2/K_3 operational-topology + Move 15 Flux/Recursion altitude split + Move 16 Reality sum-type + Move 17 hodobodo→Flux<Reality> + Move 18 FluxThread/FluxConstraint renames)
+- Level-1 empirical fire: `@property` parse → prismqueer inference → Crystal deposit → wineglass rings 🍷
+- Milestone 2 (MCP) → Milestone 3 (λsh) → Milestone 4 (spectral.engineer deployment)
+
+**Milestone 1 (prismqueer floor SHIP) progress after today**: ALL 12 foundational primitives LANDED (Shard + Observer + Chaos + Crystal + Observation + Model + Assertion + Reality + Hypothesis + Question + Choice + Recursion) + fluent method-chain composition + full 6-arrow autopoietic loop + 5-test integration suite compile-verified via `cargo check --features lapack --test autopoietic_loop_integration`. Blocked on: FLANG/LAPACK linker env resolution (Reed's substrate; owned per Move 19) for `cargo test` runtime execution + Mara canonical amendment for Move 14-18 + Level-1 empirical fire (@property parsing at mirror-repo + Fiedler λ_2 monotone climb across ≥3 consecutive commits). Milestone 2 (MCP) is next per Alex's 4-milestone deployment chain.
 
 **Move 8 (Alex 2026-09-04 PM three-interrupt terminal-form settlement)**: Reed's Move 7 fix STILL had `Imperfect::Partial(crystal.clone(), dissonance.clone())` duplicating both crystal AND dissonance to construct the verdict variant. Alex Interrupt 1: "And now we have dissonance duplicated. What would need to exist to avoid cloning? I feel a primitive is missing. A Choice?" Alex Interrupt 2: "And crystal too duplicated. On which concept wants the recursion to settle? `Recursion`?" Alex Settlement: "That actually makes a lot of sense. `Recursion` is what passes through the bundle tower and `Chaos` is what emerges? And the `Recursion` settles into a `Crystal` and leftover `Chaos`. Which IS an `Observation`."
 
