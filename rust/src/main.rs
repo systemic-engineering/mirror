@@ -102,7 +102,7 @@ use prismqueer::spectral::{
     detect_tensions, infer_via_rotation, sheaf_of_shard_graph_from_edges,
     RotationConfig, SheafOfShardGraph, Splinter, Tension, VertexId,
 };
-use prismqueer::{Imperfect, Loss};
+use prismqueer::Imperfect;
 
 // M0 module wiring — declare the sibling altitudes so the terminal-
 // geometry five-file discipline is byte-visible in `rust/src/` and
