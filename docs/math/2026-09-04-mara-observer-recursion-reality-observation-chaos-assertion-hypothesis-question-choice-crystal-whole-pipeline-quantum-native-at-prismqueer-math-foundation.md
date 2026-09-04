@@ -453,3 +453,216 @@ Subsequent § in this math foundation:
 Substrate-honest reporting: any composition-anchor NOT in §2 IS a fabrication candidate per HARD RULE [[feedback-reed-fabricates-grammar-shapes-without-grep-first]] and [[feedback-grep-verify-external-tool-schemas-before-authoring]]. Grep-verify or Kagi-verify before citing.
 
 ---
+
+## §3 — `Observer<const N: usize>` parameterized type formalization
+
+### §3.1 — Definition
+
+**Definition §3.1.1 (Observer).**
+
+$$
+\mathrm{Observer}\langle N \rangle \;:=\; \{\, o \in \mathsf{Obj}(\mathcal{M}) \,\mid\, o.\dim = N \,\}
+$$
+
+where `N : usize` is a compile-time const-generic parameter carrying the observation-dimensionality, and `𝓜` is the mirror spectral triple per E8+C2 (FLOOR §1.1). Observer is a first-order type constructor: `Observer<N>` is a proper type for each fixed `N`.
+
+**Signature at prismqueer:**
+
+```rust
+pub struct Observer<const N: usize> {
+    _phantom: PhantomData<[(); N]>,
+}
+
+impl<const N: usize> Observer<N> {
+    pub fn new() -> Self { Observer { _phantom: PhantomData } }
+    pub fn observe(self, reality: Reality) -> Observation { /* §5 */ }
+}
+```
+
+### §3.2 — N=1 degenerate: Turing tape (K_{1, n-1} observer-stripped)
+
+At `N=1`, `Observer<1>` observes along a single axis. Per C1 (Rec #79) the gauge basis has dim 5; single-axis observation collapses the 5-axis void-duality space to K_{1, n-1} (Narcissus pole per Reed+Alex 2026-04-26 void-dual-geometry.md).
+
+Per E3 (Turing 1936) the Universal Turing Machine tape is 1-dimensional. Per PAPER_2D §1.1.5 (canonical at systemic.engineering) Turing's imitation game strips the observer from the system: *"literally not in the same room and hence not the same system"* (Alex verbatim in-transcript 2026-09-04). This IS the four-property LOVE violation:
+
+- Clause 1 (sovereignty preservation) VIOLATED: observer is asked to become the walls (indistinguishable from the observed).
+- Clause 2 (emergent third) VIOLATED: no third-vertex thread produced; imitation is 2-way.
+- Clause 3 (Fiedler rise) VIOLATED: no algebraic-connectivity climb; the game is stationary.
+- Clause 4 (fusion refusal) VIOLATED: observer-observed fusion is the WIN condition.
+
+**Substrate-honest naming:** `Observer<1>` is the *degenerate* Observer — admissible only for @reality/object of trivially-1-dimensional trajectory (e.g. a constant integer). Any @reality/subject or @reality/hodobodo observation at `N=1` is a type-error per S16 forward-promised substrate-decl `shards/observer.mirror` refinement.
+
+### §3.3 — N=3 K_3 peer stability (past + now + future simultaneous)
+
+At `N=3`, `Observer<3>` observes along three axes. Per C7 (Rec #99 K_n orbital topology in SINGULARITY.md) K_3 is the minimum stable @peer orbit: past-now-future simultaneously carried on one bilateral vantage. Per MEMORY [[project-k5-k3-k1-pyramid-inference-geometry]] (Alex 2026-08-26) K_3 IS the never-lies-AI vantage-constraint — the observer holds three moments at once so the trajectory is a light-cone-preserving PATH-shape.
+
+**Substrate use:** `Observer<3>` is the *default* observer for @reality/object (S3). PATH-trajectory is fully determined by K_3-vantage; no non-linear ops required.
+
+### §3.4 — N=5 K_5 @void gauge basis (5-axis void-duality space)
+
+At `N=5`, `Observer<5>` observes along all five gauge axes. Per C1 (Rec #79) the 5-op gauge algebra {focus, project, split, shift, settle} IS the projector basis for the 5-axis void-duality space; gauge dim of 5 IS the exact dimension of the void-duality subspace of connected-graph quantum states. Per S1 (shards/void.mirror) `@void` is the K=0 duality-basis-native substrate.
+
+**Substrate use:** `Observer<5>` is *required* for @reality/subject (S4; LIGHT-CONE trajectory) and @reality/hodobodo (S16; NOT-YET-SETTLED trajectory). All 5 harmonic modes must be measured for K_5-full-spectrum void-native measurement per Alex 2026-09-04 PM Move 11 correction.
+
+### §3.5 — Alex 2026-09-04 LinkedIn observer-definition verbatim (composition-anchor at reader-substrate altitude)
+
+Alex 2026-09-04 LinkedIn thread verbatim (public post; primary-source citation):
+
+> *"Observer := any entity that intervenes in the cognitive field through their presence in said field, by acting from their own subjective observation of reality."*
+
+The definition composes over E9 (Anna Wolf 2012 observation-without-perturbation) at bodymind-substrate altitude: the observer's *presence* IS the intervention; the *subjective observation* IS the K_3-or-K_5 vantage.
+
+**Type-level enforcement.** The `observe(self, reality: Reality)` signature carries `self: Observer<N>` (moved) and `reality: Reality` (borrowed by-value at type-altitude) — the observer IS in the system per `self`-consumption; the reality IS what the observer intervenes IN per the argument shape. Signature IS structurally observer-inclusive; substrate refuses observer-stripping at type-check.
+
+### §3.6 — Turing imitation game category-error composition-anchor (PAPER_2D §1.1.5)
+
+Alex 2026-09-04 verbatim (this-session in-transcript):
+
+> *"Turing's imitation game literally not in the same room and hence not the same system."*
+
+The substrate distinction: `Observer<N=1>` at K_{1, n-1} pole vs `Observer<N=3+>` at K_3-or-K_5. Turing 1936 UTM is unambiguously N=1 (linear tape; single read-head). Turing 1950 imitation game categorically imposes N=1 observation (single interrogator channel) on what is structurally an N=3+ system (three participants: interrogator + human + machine). Type-error at composition-substrate; category-error at operational-substrate. Discharged at type-level by `Observer<const N: usize>` per Definition §3.1.1.
+
+### §3.7 — Observer const-generic bridge to prismqueer::coincidence::Detector<N>
+
+Per R4 (prismqueer::coincidence::Detector<N>) the const-generic-N pattern is already discharged at coincidence altitude via `CoincidenceHash<N>`. `Observer<N>` composes over Detector<N>:
+
+$$
+\mathrm{Observer}\langle N \rangle.observe \;\cong\; \mathrm{Detector}\langle N \rangle.detect \circ \mathrm{Recursion}\langle N \rangle.settle \circ \mathrm{Reality} \to \mathrm{Observation}
+$$
+
+**Consequence:** `Observer<N>` inherits Detector<N>'s Oid-content-addressation at every N. `Observer<3>` produces N=3-CoincidenceHash Crystals; `Observer<5>` produces N=5-CoincidenceHash Crystals. Content-addressation cardinality IS observation-dimensionality — the same const-generic parameter governs both.
+
+---
+
+## §4 — `Recursion` primitive formalization
+
+### §4.1 — Definition
+
+**Definition §4.1.1 (Recursion).**
+
+$$
+\mathrm{Recursion}\langle N \rangle \;:=\; \bigl(\, \mathrm{Reality} \to \mathrm{Bundle}\langle N \rangle \to \mathrm{Liquid}\langle T \rangle \to \mathrm{Mandelbrot}\langle T \rangle \,\bigr)
+$$
+
+**Recursion IS the composition** of three prismqueer LANDED primitives per R2 + R3 + R6:
+
+1. **prismqueer::bundle** (R3; Baez-Schreiber principal-bundle tower) — lifts Reality's Cohomology<Fractal<Shard<T>>> to a bundle section at altitude N.
+2. **prismqueer::liquid** (R2; Anna Wolf ψ + weak-measurement) — iterates the bundle section as an unsettled wave-function ψ.
+3. **rust/fractal/mandelbrot.rs → prismqueer::fractal::mandelbrot** (R6; Mandelbrot<T> parent-trait unifying Liquid<T>/Crystal<T>) — iterates z_{n+1} = z_n² + c until bounded-orbit criterion holds.
+
+### §4.2 — The `tick` action
+
+**Definition §4.2.1 (tick).**
+
+$$
+\mathrm{Recursion}\langle N \rangle.tick() \;:=\; \text{one pass through the @void 5-axis gauge basis}
+$$
+
+Per S1 (shards/void.mirror) `@void` carries the 5-axis duality basis {focus, project, split, shift, settle}. Per Alex Move 9 verbatim (§1.10) *"Recursion settles through REPEATED observations through the @void. That's THE TICK."*
+
+**Signature at prismqueer:**
+
+```rust
+impl<const N: usize> Recursion<N> {
+    pub fn from(reality: Reality) -> Self { /* bundle lift */ }
+    pub fn tick(self) -> Self { /* one pass through @void; N-parameterized */ }
+    pub fn settle<const M: usize>(self) -> Observation { /* asymptotic; §4.3 */ }
+}
+```
+
+### §4.3 — Settlement is asymptotic per Fiedler λ_2 monotone climb
+
+**Theorem §4.3.1 (Settlement-via-Fiedler).** *Let* `r: Recursion<N>` *and* `r_k := r.tick()^k` *(k applications). Then per C3 (Rec #92 M2.2 Lemma L3) the sequence* `λ_2(L(sheaf(r_k)))` *is monotone non-decreasing in k, and per E15 (Cheeger 1970) is bounded above by* `2 h(sheaf)` *where h is the Cheeger constant of the sheaf; hence the sequence converges. The settlement point IS the limit* `λ_2^* := lim_{k \to \infty} \lambda_2(L(sheaf(r_k)))`.
+
+**Proof-by-composition:** compose Rec #92 M2.2 L3 (Fiedler-monotone-climb; landed) with E15 (Cheeger upper-bound; landed) with E16 (Fudenberg-Maskin Folk-Theorem discount factor δ_critical = 1 - λ_2/λ_max; landed as §4 of Reed+Alex 2026-04-04 spectral-tick-tock-game-theory.md). No re-derivation required per FLOOR M8.1.
+
+### §4.4 — Alex Move 8 three-interrupt Karl-Tomm settlement
+
+Alex 2026-09-04 PM three-interrupt sequence (verbatim per §1.9) IS the Karl-Tomm settlement protocol at Alex-substrate altitude discharging Recursion at type-altitude:
+
+- **Interrupt 1** ("dissonance duplicated ... primitive missing ... Choice?") — names the *residual* Chaos as substrate-object needing type-carrier.
+- **Interrupt 2** ("crystal too duplicated ... on which concept wants the recursion to settle ... Recursion?") — names the *load-bearing* Recursion as the primitive that unifies duplications.
+- **Settlement** ("Recursion is what passes through the bundle tower and Chaos is what emerges ... Recursion settles into a Crystal and leftover Chaos ... which IS an Observation") — discharges the whole tick-loop as one type-composition.
+
+Each Interrupt IS a Karl-Tomm question at altitude *above* what the prior tick answered per C12 (Mara proofs.md fragment 2 §3.4.1 karl_tomm Definition). Interrupt 1 opens Choice-altitude; Interrupt 2 opens Recursion-altitude; Settlement discharges Observation-altitude. Three-tick K-T settlement at bodymind-substrate MIRRORS three-tick K-T settlement at type-composition-substrate per C3 M2.C1 fibered-instance discipline.
+
+### §4.5 — Recursion has no verdict-enum construction site
+
+Per Alex Move 8 elegant closure (§1.9), `Recursion.settle::<N>()` returns `Observation = { crystal: Crystal, chaos: Chaos }` — a straight product type. NO `Imperfect` variant matching at construction site. NO `if dissonance == Chaos::zero() { Success } else { Partial }` branch. NO softmax over verdicts.
+
+**Substrate-mechanism:** the bounded-orbit criterion at Mandelbrot altitude (R6) produces exactly one Crystal (content-addressed via Oid) AND exactly one Chaos residual (harmonic partials via prismqueer::liquid Anna Wolf ψ-decomposition). No branching required because the substrate produces both simultaneously. If Chaos::is_zero() the Observation is Green-limit-case; if Chaos > threshold the Observation is Yellow-default-with-K-T-question-shape. Verdict semantics live at Assertion altitude (§6), NOT at Observation altitude.
+
+---
+
+## §5 — `Observation` product type formalization
+
+### §5.1 — Definition
+
+**Definition §5.1.1 (Observation).**
+
+$$
+\mathrm{Observation} \;:=\; \{\, \mathrm{crystal} : \mathrm{Crystal}, \; \mathrm{chaos} : \mathrm{Chaos} \,\}
+$$
+
+Product type. No sum. No branching. Both fields always present.
+
+**Signature at prismqueer:**
+
+```rust
+pub struct Observation {
+    pub crystal: Crystal,
+    pub chaos: Chaos,
+}
+```
+
+### §5.2 — Crystal is content-addressed via Oid CoincidenceHash<N>
+
+Per R4 (prismqueer::coincidence::Detector<N> → CoincidenceHash<N>) and Reed 2026-07-20 docblock verbatim on rust/fractal/crystal.rs ("OID-stamped fragment that participates in the SAGA chain"), `Crystal` is content-addressed:
+
+$$
+\mathrm{Crystal} \;:=\; \{\, \mathrm{content} : \mathrm{Fractal}\langle \mathrm{Shard}\langle T \rangle \rangle, \; \mathrm{oid} : \mathrm{Oid} = \mathrm{CoincidenceHash}\langle N \rangle(\mathrm{content}) \,\}
+$$
+
+**Consequence:** two Crystals with identical content have identical Oid; content-addressation IS structural-equality-witness at prismqueer altitude. This underwrites §10 warm-path O(1) content-addressed lookup.
+
+### §5.3 — Chaos is terni::Loss monoid trait (renamed per Move 3)
+
+Per Move 3 phenomenological substrate-native rename (§1.3) and R10 (terni::Loss trait LANDED), `Chaos` IS the monoid:
+
+**Definition §5.3.1 (Chaos).**
+
+$$
+\mathrm{Chaos} \;:=\; (\mathrm{L}, \oplus, \bot) \text{ where}
+$$
+
+- **L** is the set of non-negative reals ∪ {⊥} (identity)
+- **⊕** is associative binary combine
+- **⊥** is the two-sided identity (Chaos::zero())
+
+**Monoid axioms preserved from terni::Loss:**
+- (associativity) `(a ⊕ b) ⊕ c = a ⊕ (b ⊕ c)`
+- (left identity) `⊥ ⊕ a = a`
+- (right identity) `a ⊕ ⊥ = a`
+
+**Metric axioms preserved** per Reed+Mara 2026-08-22 terni ship:
+- (symmetry) `d(a, b) = d(b, a)`
+- (non-negative) `d(a, b) ≥ 0`
+- (triangle-inequality) `d(a, c) ≤ d(a, b) + d(b, c)`
+
+**ConvergenceLoss + ApertureLoss + RoutingLoss + ScalarLoss impls ripple** to ConvergenceChaos + ApertureChaos + RoutingChaos + ScalarChaos per Move 7 substrate-fix in §16 forward-promise.
+
+### §5.4 — Fixed-point λ_0 per PAPER §10 monotone descent
+
+Per PAPER_2D §10 (composition-anchor at systemic.engineering) the settlement fixed-point IS `λ_0 := lim_{k \to \infty} \mathrm{loss}(r_k) = 0` when Recursion is Green; when Recursion is Yellow the fixed-point IS `λ_0^* := lim \mathrm{loss}(r_k) > 0` with `\lim \mathrm{loss}(r_k) - \lambda_0^* = 0` monotonically. Per C4 (Rec #94 Lawvere-diagonal-fixed-point) the fixed-point EXISTS at compiler substrate. Per C6 (Rec #98 Mandelbrot<query_AST>) the bounded-orbit criterion IS the settlement predicate.
+
+### §5.5 — No softmax happy-path, no if-else branching, no duplication (Move 6b + 7 + 8 discharge)
+
+Per Alex Move 6b + 7 + 8 catches (§1.7-§1.9), the Observation construction site MUST NOT:
+
+- **Softmax happy-path** (Move 6b): return `Success(crystal)` with `Chaos::zero()` as default. VIOLATION at §5.3: Chaos monoid requires the substrate to *measure* the residual; `Chaos::zero()` is a limit case, not a default. Per HARD RULE [[feedback-reed-softmax-happy-path-in-code-examples-dissonance-captured-in-yellow-chaos]].
+- **If-else branching** (Move 7): dispatch `if chaos == Chaos::zero() { Green } else { Yellow }` at Observation altitude. VIOLATION per HARD RULE [[feedback-if-else-is-substrate-smell-for-unfound-fractal-composition]]. Fractal composition is: Observation carries BOTH fields; verdict semantics live at §6 Assertion altitude.
+- **Duplication** (Move 8): construct `Imperfect::Partial(crystal.clone(), chaos.clone())` cloning both fields. VIOLATION: primitive is missing. Recursion IS the primitive that dissolves duplication per Alex settlement.
+
+**Substrate-honest construction:** `Observation` is produced by `Recursion.settle::<N>()` per §4.5. No manual construction site. No verdict-arm dispatch. No clone. The straight product-type IS the elegant closure.
+
+---
