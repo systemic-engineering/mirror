@@ -59,8 +59,12 @@
 //! - `prismqueer::spectral::kleinos` (Reed 4a3bbe7 prism-repo 2026-09-02;
 //!   ring-and-hub topology; 6/6 empirical fire per PAPER §3.6.3 strict
 //!   FiedlerRise)
-//! - `rust/src/magic.rs::foerster_gauge_preserved` (Reed d885a70 2026-08-18;
-//!   compile-time gauge orthogonal to A_F^prismqueer per Rec #90 §8)
+//! - `terni::Imperfect<Green, Red, Yellow>` where L=Chaos (Loss) IS the
+//!   gauge-preserved ternary per Alex 2026-09-04 Move 3 substrate-fix
+//!   ("gauge IS type alias not function"); replaces retired
+//!   `rust/src/magic.rs::foerster_gauge_preserved` 60-LOC scar (Reed
+//!   d885a70 2026-08-18 NEVER CALLED at production; retired 2026-09-04
+//!   per Alex Move 3 substrate-fix + Move 8 elegant closure)
 //! - `prismqueer::ffi::eigenvalues` (LAPACK dsyev via FLANG per FLOOR §7
 //!   numerical pipeline)
 //! - `terni::Transparency<P>` LOVE-monoid at Rec #92 §M1

@@ -117,7 +117,6 @@ use prismqueer::Imperfect;
 // cascade iterations 2-3 (Alex 2026-07-20); iter 4 wires `mirror
 // compile <file>` verb as thin delegation to compile.rs.
 mod compile;
-mod magic;
 // bench — SPIN measurement primitive per Rec #99 @singularity FORWARD-
 // PROMISED (Mara #406/#408 pending; SINGULARITY.md background). Alex
 // 2026-08-26 theorem: SPIN rate ∝ inference rate ∝ σ(x) distortion.
