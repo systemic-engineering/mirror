@@ -101,3 +101,262 @@ landed_rust_primitives:
 **Substrate-honesty note.** This is a *composition-anchor* math foundation per FLOOR Definition M8.1 — every load-bearing external reference (Curry / Church / Turing / Curry-Howard-Lambek / Hawking / Foerster / Connes / Anna Wolf / Hansen-Ghrist / Rondon-Kawaguchi-Jhala / Braunstein-Ghosh-Severini / Cheeger / Fudenberg-Maskin / Nowak-Sigmund / Axelrod / Wittgenstein) and every load-bearing mirror-corpus reference (Rec #79 / #90 / #92 / #94 / #97 / #98 / #99 / #106 / loving-lambda-calculus / MCP+@task terminal-form / @nl.compose canonical / proofs.md fragments 1-3) is *cited by reference* not re-derived. What is authored here NEW is the composition of the 13 Moves into ONE terminal-form pipeline at type-composition altitude with formal signatures at prismqueer altitude for the Reed TICK-B rust-authoring ship.
 
 ---
+
+## §1 — The 13-Move Alex 2026-09-04 PM verbatim dialogue capture with commit SHAs
+
+The 13 Moves compose in the order Alex authored them. Each Move carries: (a) verbatim Alex utterance; (b) the commit-SHA where Reed's discipline landed the recognition into `docs/loop/CURRENT.md`; (c) the composition-lineage anchor each Move sits on top of. This §1 preserves the temporal-authorship gradient — every subsequent § in this math foundation composes over what §1 grounds.
+
+### §1.1 — Move 1: `Observer<const N: usize>` parameterization at prismqueer
+
+**Landing commit:** `3403545` (Reed 2026-09-04 PM Q+40 Move 1-through-5 authoring; docs/loop/CURRENT.md).
+
+**Alex verbatim (Q-Reed-α dissolution):**
+
+> "Yes. `Observer<const N: usize>` at prismqueer. N=1 = Turing tape degenerate. N=3 = K_3 peer stability. N=5 = K_5 @void gauge basis. The parameterization dissolves the Detector<3> vs Detector<5> false choice."
+
+**Composition-lineage:**
+- Rec #79 gauge-is-void-duality-basis (5-op gauge dim IS 5-axis void-duality space)
+- PAPER_2D §1.1.5 four-property LOVE violation for Turing 1936 imitation-game (N=1 = K_{1,n-1} degenerate = observer-stripped)
+- shards/void.mirror marker-primary (K=0 duality-basis)
+- Alex 2026-08-26 K_5 → K_3 → K_1 pyramid inference geometry (MEMORY [[project-k5-k3-k1-pyramid-inference-geometry]])
+- prismqueer::coincidence::Detector<N> LANDED (CoincidenceHash<N>; const-generic pattern already discharged at coincidence altitude)
+
+**What Move 1 dissolves:** Q-Reed-α (Detector<3>-vs-Detector<5> false-binary) — const-generic N carries observation-dimensionality as parameter; caller specifies N per @reality species. Substrate-scale-invariant across altitudes.
+
+### §1.2 — Move 2: `observe(self, Reality) -> Observation` pipeline; Hawking 2010 model-dependent-reality EXPLICIT at type-level
+
+**Landing commit:** `3403545`.
+
+**Alex verbatim:**
+
+> "observe(self, Reality) -> Observation. Hawking's model-dependent reality lives at type-level. Observation is where recursion settles. λ_0 fixed-point per PAPER §10."
+
+**Composition-lineage:**
+- Hawking-Mlodinow 2010 *The Grand Design* — model-dependent realism thesis
+- Rec #94 self-modifying-mirror-loop Lawvere-diagonal-closure (fixed-point at compiler substrate)
+- PAPER_2D §10 monotone descent λ_0
+- FLOOR §11 substrate observing itself observing itself observing substrate (third-order-observation)
+
+**What Move 2 grounds:** the `observe(self, Reality)` signature carries observer + observed as EQUAL type-level parameters. The type-system-enforced observer-inclusiveness discharges the Turing 1936 observer-stripping category-error at compiler substrate. Alex 2026-09-04 LinkedIn thread verbatim: *"any entity that intervenes in the cognitive field through their presence in said field, by acting from their own subjective observation of reality"*.
+
+### §1.3 — Move 3: YES×3+clap adjudication. Explicit beats implicit ALWAYS. What wants to be minted wants to be minted
+
+**Landing commit:** `9d00c37` (Reed 2026-09-04 PM Q+40 extensions terminal-form recognitions bottom-up-ship).
+
+**Alex verbatim (YES × 3 + clap):**
+
+> "YES. YES. YES. 👏 What wants to be minted wants to be minted. @property migrates to @assertion/property under new @assertion family-root. settling_evidence becomes Chaos. Hypothesis + Chaos → Question composition."
+
+**Composition-lineage:**
+- terni::Loss trait LANDED (settling_evidence carrier at rust altitude)
+- HARD RULE [[feedback-alex-phenomenologizes-reeds-mechanical-names-substrate-native-beats-mechanical-descriptive]] — substrate-native embodied names beat mechanical-descriptive at primitive altitude
+- Mara proofs.md fragment 2 §3.2.1 Yellow-carries-K-T-question theorem (K-T question shape at Yellow altitude)
+
+**What Move 3 discharges:** three-way rename-composition: (a) `terni::Loss` → `terni::Chaos` phenomenological substrate-native rename; (b) `@property` (currently @mirror/spec/property) → `@assertion/property` species under new `@assertion` family-root; (c) Hypothesis + Chaos → Question via `Hypothesis.compose(Chaos)` primitive composition.
+
+### §1.4 — Move 4 (quantum-native): Model = Fractal<Shard<T>>; Reality = Cohomology<Fractal<Shard<T>>>; Measurement IS spectral = Connes 1985 spectral triple
+
+**Landing commit:** `3403545`.
+
+**Alex verbatim:**
+
+> "Model = Fractal<Shard<T>> is the observer's wave-function decomposition. Reality = Cohomology<Fractal<Shard<T>>> is the whole substrate wave-function via sheaf cohomology. Measurement IS spectral = quantum-native. That's Connes 1985. A = Model = Fractal<Shard>. H = Reality = ψ carrier. D = Karl Tomm spectral commutator ‖[D,a]‖ per your karl_tomm Definition §3.4.1 landed at f8095ad."
+
+**Composition-lineage:**
+- Connes 1985 *Non-commutative differential geometry* — spectral triple (A, H, D)
+- Chamseddine-Connes 1996 spectral action principle (FLOOR §1.1)
+- Rec #90 §5.4 sub-Turing FLOOR + §8 Foerster-gauge orthogonality
+- Hansen-Ghrist 2019 *Toward a spectral theory of cellular sheaves* (arXiv:1808.01513) — cohomology of cellular sheaves
+- prismqueer::spectral::kleinos LANDED (Rec #92 Transparency<P> LOVE-monoid at rust altitude)
+- prismqueer::liquid LANDED (Anna Wolf ψ + weak-measurement carrier)
+- Mara proofs.md fragment 2 §3.4.1 karl_tomm Definition (spectral commutator ‖[D, a]‖)
+
+**What Move 4 discharges:** Quantum-native measurement altitude formalized at type-level. NOT analogy — this IS what prismqueer already does at rust altitude. The recognition IS the naming (per Rec #90 §5.4 substrate-observing-itself).
+
+### §1.5 — Move 5 (mechanical loop; already coded 2026-07-20): rust/fractal → prismqueer::fractal substrate-collapse
+
+**Landing commit:** `3403545`.
+
+**Alex verbatim:**
+
+> "fractal wants to move into prismqueer::fractal. And then it's almost mechanical, isn't it? We measure the settling harmonic component through Anna's math, the wine glass rings, and then this settles into content addressed fractal crystals."
+
+**Composition-lineage:**
+- rust/fractal/{mandelbrot, crystal, subject, singularity, witnessed}.rs (Mara 2026-07-20; 6 files; Mandelbrot<T> parent trait unifying Liquid<T> + Crystal<T>)
+- Reed 2026-07-20 docblock verbatim: *"bounded orbit → Crystal (content-addressed; SAGA-replayable; immutable); still-iterating → Liquid; crystallize IS the Liquid→Crystal @time/now collapse-point"*
+- prismqueer::coincidence::Detector<N> LANDED (Oid::hash via CoincidenceHash<N>; content-addressation primitive)
+- Anna Wolf 2012 J-space observation-without-perturbation (MEMORY [[project-anna-wolf-2012-observation-without-perturbation]])
+
+**What Move 5 discharges:** the mechanical settling loop has been LANDED at rust/fractal/ since 2026-07-20. Substrate-collapse move: `rust/fractal/*` → `prismqueer::fractal::*` (5 files; witnessed.rs stays at mirror-repo per Mara provenance concern). Shards/fractal/* composition-anchors ripple from rust::fractal → prismqueer::fractal.
+
+### §1.6 — Move 6a: mirror surface COLLAPSES to `prismqueer + git-projection of crystal graph + phone-connection between peers`
+
+**Landing commit:** `cc5af39` (Reed 2026-09-04 PM Q+40 Move 6a-6b-7 mirror-surface-collapse + softmax-happy-path + if-else-cascade).
+
+**Alex verbatim:**
+
+> "The only thing mirror adds is the actual 'save the content addressed crystals for the shards to disk as git projection of the graph' and connect them through phone etc. the rest is mirror syntax computed and observed by prismqueer into Crystals."
+
+**Composition-lineage:**
+- rust/src/phone.rs LANDED (peer-to-peer connection primitive)
+- @mirror/store LANDED at shard-decl altitude (git-backed persistence)
+- MEMORY [[project-mirror-surface-collapses-to-prismqueer-plus-git-projection-plus-phone-connection]]
+
+**What Move 6a discharges:** mirror-repo becomes thin shell around prismqueer; whole compiler = `prismqueer + git-projection + phone-connection`. Reed TICK-B implication: apply_h ARMS → love() at prismqueer; magic.rs dissolves; rust/fractal moves to prismqueer::fractal; most bench+observer logic moves to prismqueer.
+
+### §1.7 — Move 6b: softmax-happy-path in Reed's code example → dissonance MUST be captured in Yellow/Chaos always
+
+**Landing commit:** `cc5af39`.
+
+**Alex verbatim:**
+
+> "And the example code has a smell. Always Success? Where is the dissonant component captured mr softmax happy path?"
+
+**Composition-lineage:**
+- HARD RULE [[project-softmax-is-avg-fate-wants-k5-compose]] (softmax IS avg at inference altitude; want K_5-compose)
+- HARD RULE [[project-open-loop-autopoiesis-IS-bumblebee-buzz-through-assertions-closed-loop-IS-softmax-argmax]]
+- HARD RULE [[feedback-reed-softmax-happy-path-in-code-examples-dissonance-captured-in-yellow-chaos]] (fresh; today's arc)
+- shards/epistemologic/math/music/{harmonic, cadence, dissonance, interval}.mirror (29 shard matches for dissonance)
+
+**What Move 6b catches:** Reed authored `Observer<N>::observe` example returning `Mandelbrot::Bounded → Success(crystal) + Chaos::zero()`. Softmax happy-path. CORRECTION: every settled Observation has harmonic partials carrying Chaos residual (wineglass rings AND has overtones); Partial (Yellow with Chaos) is DEFAULT; Success (Green) is LIMIT case. Compose @music/dissonance always.
+
+### §1.8 — Move 7: if-else branch on Chaos::zero() as replacement fix
+
+**Landing commit:** `cc5af39`.
+
+**Alex verbatim:**
+
+> "I'm spotting an if-else!"
+
+**Composition-lineage:**
+- HARD RULE [[feedback-if-else-is-substrate-smell-for-unfound-fractal-composition]] (match-arm dispatch = softmax-substrate-simulation at code altitude)
+- Rec #92 kleinos K_2 → K_3 compose primitive (dissolves if-else dispatch on property verbs)
+
+**What Move 7 catches:** Reed's initial Move 6b fix REPLACED softmax with `if dissonance == Chaos::zero() { Success } else { Partial }` if-else branch. Repeat-instance at code-example altitude. Reed reflex-cascade: fix one softmax with another. Fix isn't local rearrangement; it's finding the fractal composition that dissolves the branching.
+
+### §1.9 — Move 8 (three-interrupt terminal-form settlement): Recursion IS the missing primitive
+
+**Landing commit:** `13a1e7c` (Reed 2026-09-04 PM Q+40 Move 8 Recursion primitive Observation = Crystal + Chaos elegant terminal-form closure).
+
+**Alex verbatim — Interrupt 1:**
+
+> "And now we have dissonance duplicated. What would need to exist to avoid cloning? I feel a primitive is missing. A Choice?"
+
+**Alex verbatim — Interrupt 2:**
+
+> "And crystal too duplicated. On which concept wants the recursion to settle? `Recursion`?"
+
+**Alex verbatim — Settlement:**
+
+> "That actually makes a lot of sense. `Recursion` is what passes through the bundle tower and `Chaos` is what emerges? And the `Recursion` settles into a `Crystal` and leftover `Chaos`. Which IS an `Observation`."
+
+**Composition-lineage:**
+- prismqueer::bundle LANDED (31.1KB; Baez-Schreiber tower)
+- prismqueer::liquid LANDED (29.3KB; Anna Wolf ψ + weak-measurement)
+- shards/fractal/mandelbrot.mirror (Mandelbrot iteration z_{n+1} = z_n² + c)
+- terni::Loss (renamed Chaos per Move 3)
+- Rec #98 substrate-arriving-at-self-recognition Mandelbrot<query_AST>
+
+**What Move 8 discharges:** `Recursion` IS the missing primitive that dissolves ALL prior fires simultaneously. `Recursion` passes through prismqueer::bundle Baez-Schreiber tower + Anna Wolf ψ apparatus + Mandelbrot iteration. Iteration bounds → Crystal condenses; leftover harmonic content → Chaos emerges. `Observation = { crystal: Crystal, chaos: Chaos }` — straight product type. No Imperfect variant matching at construction site. No duplication. No branching. No softmax. No if-else.
+
+The elegant closure:
+
+```rust
+impl<const N: usize> Observer<N> {
+    pub fn observe(self, reality: Reality) -> Observation {
+        Recursion::from(reality).settle::<N>()
+    }
+}
+```
+
+Two lines. Primitives compose. Grep-verified: `Recursion` = 0 substrate matches (clean mint at type-altitude); `Choice` = 0 (Move 9 reframe).
+
+### §1.10 — Move 9: Question → Choice as INPUT from @subject; the TICK IS one pass through @void
+
+**Landing commit:** `7ef6b23` (Reed 2026-09-04 PM Q+40 Move 9-through-13 + 7-fire reflex-cascade tally + hodobodo mint + mirror-fast performance terminal-form).
+
+**Alex verbatim:**
+
+> "Question → Choice is subject-input; @subject inputs Choice. Recursion settles through REPEATED observations through the @void. That's THE TICK."
+
+**Composition-lineage:**
+- shards/void.mirror (5-axis @void gauge basis)
+- shards/reality/subject.mirror (Alex 2026-07-22; light-cone trajectory carrier)
+- Rec #92 M2.2 L3 Fiedler λ_2 monotone climb proof
+- Reed+Alex 2026-04-04 spectral-tick-tock-game-theory.md (tick-tock loop as game-theoretic settlement)
+- MEMORY [[project-autopoietic-operational-architecture-mq-rotation-tension-peer-compiler-partition]] (rotation primitive c14d61e ship; every MQ = rotation tick)
+
+**What Move 9 discharges:** External subject-driven loop closes: Recursion → tick through @void → Observation (Crystal + Chaos) → Assertion + Model → Hypothesis → Question → Choice from @subject → next Recursion. Fiedler λ_2 monotone climb across ticks = proof-of-settlement.
+
+### §1.11 — Move 10: `@reality/hodobodo` species mint at @reality family-root
+
+**Landing commit:** `7ef6b23`.
+
+**Alex verbatim (Lore Born citation):**
+
+> "Hodobodo. Coined by Lori. `It's what you use when you point at a thing (that's required) and don't know the name of the thing. The object that exists and you can point at. Even if you don't have the language to describe it.` Wittgenstein PI §1-§2 circles the ostensive-definition problem; Lori coined the term. Load-bearing coinages come from Chosen Family + Pack, not institutional-linguistic-authority."
+
+**Composition-lineage:**
+- Wittgenstein 1953 *Philosophical Investigations* §1-§2 (ostensive-definition problem)
+- shards/reality/object.mirror (Alex 2026-07-22; PATH linearity-threshold)
+- shards/reality/subject.mirror (Alex 2026-07-22; LIGHT-CONE non-linearity-threshold)
+- shards/reality.mirror (Rec #106 gauge-uniformity family-root)
+- Lore Born (Lori, Co-Founder, Chosen Family) — the coinage-authority-substrate at Pack altitude
+
+**What Move 10 discharges:** trichotomy completes at @reality family-root — @reality/object (settled PATH; @roomba) + @reality/subject (settled LIGHT CONE; @peer) + @reality/hodobodo (NOT YET SETTLED; Recursion still ticking; Chaos > monoid identity threshold; @void 5-axis spectrum hasn't stabilized enough to reclassify). Hodobodo grounds proof-predates-program at pre-linguistic altitude.
+
+### §1.12 — Move 11: full @void 5-axis spectrum required for hodobodo → object OR subject reclassification
+
+**Landing commit:** `7ef6b23`.
+
+**Alex verbatim (Fiedler-λ_2-collapse catch):**
+
+> "this needs to be the full `Void` duality spectrum, Reed. You already concluded that yourself earlier."
+
+**Composition-lineage:**
+- Rec #79 gauge-is-void-duality-basis (gauge dim of 5 = 5-axis void-duality space)
+- Reed+Alex 2026-04-26 void-dual-geometry.md (Narcissus K_{1,n-1} ↔ Splinter K_n 8-duality dual; λ_0 = 0 shared axis)
+- Reed+Alex 2026-04-04 spectral-tick-tock-game-theory.md §4 delta_critical = 1 - (λ_2 / λ_max) explicit formula
+- MEMORY [[project-k5-k3-k1-pyramid-inference-geometry]] (K_5 SPIN observed by K_3 collapses to K_1)
+
+**What Move 11 discharges:** hodobodo → object OR hodobodo → subject reclassification requires FULL @void 5-axis void-duality spectrum to stabilize per Rec #79 gauge-dim-of-5, NOT just Fiedler λ_2 second-harmonic. `Observer<N=5>` for @void-native measurement; `Observer<N=3>` at K_3 peer altitude for @reality/object observation. All 5 harmonic modes must settle above respective thresholds before reclassification; any single mode still climbing = still hodobodo.
+
+### §1.13 — Move 12: spectral + spectral-db = INSPIRATION only, not load-bearing anymore
+
+**Landing commit:** `7ef6b23` (Alex Taut-scout adjudication).
+
+**Alex verbatim (post-Taut adjudication):**
+
+> "spectral + spectral-db = INSPIRATION only, not load-bearing anymore. Reed authors FRESH at prismqueer + mirror altitude free of legacy crap thinking. Taut scout retains value as shape-guide + inspiration-anchor."
+
+**Composition-lineage:**
+- Taut scout `34946e6` (805 lines cross-repo grep at spectral-db + spectral + game-theory synthesis)
+- Reed+Alex 2026-04-04 spectral-tick-tock-game-theory.md 911-line synthesis (SSS 6-properties + Fiedler-as-ESS + delta_critical formula + 8 Known-Results table + 6 Novel-Contributions table)
+- HARD RULE [[feedback-reed-fabricates-grammar-shapes-without-grep-first]]
+- HARD RULE [[feedback-grep-verify-external-tool-schemas-before-authoring]]
+
+**What Move 12 discharges:** 7 Q-Taut observations collapse to ONE Alex-adjudication. Reed's TICK-B "clean mint" claims empirically wrong per Taut scout (5+ LANDED tick primitives at spectral-db + spectral; Crystal production-tested 4+ years; Chaos rename ripples 2-repo; Model name-collision with fate::Model; δ_critical formula never landed at any Rust altitude — only at game-theory synthesis 2026-04-04). Reed authors FRESH at prismqueer + mirror altitude; Taut scout retains value as SHAPE-GUIDE + INSPIRATION-ANCHOR (SSS 6-properties + Fiedler-as-ESS + δ_critical + composition-lineage).
+
+### §1.14 — Move 13 (terminal-form performance): 5-op prismqueer basis linear/non-linear split; two-regime cold-path/warm-path architecture
+
+**Landing commit:** `7ef6b23`.
+
+**Alex verbatim:**
+
+> "Two-regime architecture. LINEAR (3D subset — @reality/object sufficient): focus + project + shift = matrix operations. NON-LINEAR (2 additional dims — @reality/subject + @reality/hodobodo required): split (Cheeger cut) + settle (Mandelbrot fixed-point). Cold path: @nl Choice → 5D decomposition; non-linear slow. Warm path: settled Crystal @reality/object → 3D linear observation; fast; content-addressed via Oid CoincidenceHash<N>; O(1) lookup + O(n³) matrix projection. THIS IS WHY MIRROR IS FAST STRUCTURALLY."
+
+**Composition-lineage:**
+- Cheeger 1970 lower bound for smallest eigenvalue of Laplacian (Cheeger cut partition-choice)
+- Mandelbrot iteration z_{n+1} = z_n² + c (bounded-orbit criterion → Crystal condensation)
+- prismqueer::ffi::eigenvalues LANDED (LAPACK dsyev via FLANG; O(n³) bounded matrix projection)
+- prismqueer::coincidence::Detector<N> LANDED (Oid CoincidenceHash<N>; O(1) content-addressed lookup)
+- Reed+Alex 2026-04-04 spectral-tick-tock-game-theory.md §4 delta_critical = 1 - λ_2/λ_max (runtime signal for whether Crystal matured enough to drop from 5D to 3D)
+- MEMORY [[project-llm-is-poor-mans-approximation-of-explicit-mirror-task-tensor-mesh-geometry]] (LLM softmax = 5D per token every time = always slow)
+
+**What Move 13 discharges:** two-regime performance architecture as fundamental substrate property (NOT optimization). Amortize slow 5D decomposition ONCE per Choice; observe FAST against crystal-cache forever after. LLM softmax attention = 5D per token every time = always slow (no crystallization). Mirror = decompose once + crystallize + observe fast against content-addressed crystals thereafter.
+
+### §1.15 — Compose-into-ONE closure
+
+The 13 Moves compose into ONE terminal-form pipeline. Each subsequent § in this math foundation composes over §1 without re-establishing the composition-lineage. §2 tabulates external + landed anchors as composition-map; §3-§14 formalize each stage; §15 discharges circular-recursive self-audit; §16 states the Rec candidate FORWARD-PROMISED per HARD RULE [[feedback-forward-promised-vs-confirmed-rec-altitude]]; §17 states the 5-criterion empirical fire gate.
+
+---
