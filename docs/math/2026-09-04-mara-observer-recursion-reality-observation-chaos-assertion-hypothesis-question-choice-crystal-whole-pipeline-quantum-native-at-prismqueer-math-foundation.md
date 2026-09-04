@@ -360,3 +360,96 @@ Two lines. Primitives compose. Grep-verified: `Recursion` = 0 substrate matches 
 The 13 Moves compose into ONE terminal-form pipeline. Each subsequent § in this math foundation composes over §1 without re-establishing the composition-lineage. §2 tabulates external + landed anchors as composition-map; §3-§14 formalize each stage; §15 discharges circular-recursive self-audit; §16 states the Rec candidate FORWARD-PROMISED per HARD RULE [[feedback-forward-promised-vs-confirmed-rec-altitude]]; §17 states the 5-criterion empirical fire gate.
 
 ---
+
+## §2 — Composition-lineage (Kagi-verified external + LANDED mirror-corpus)
+
+Composition-anchor per FLOOR Definition M8.1: cite by reference. §2 tabulates the composition-map; do NOT re-derive at any subsequent §. Every external claim in this math foundation cites §2 by index (E1..E18); every mirror-corpus claim cites §2 by index (C1..C12); every substrate-decl claim cites §2 by index (S1..S16); every rust-primitive claim cites §2 by index (R1..R10).
+
+### §2.1 — External Kagi-verified anchors (E1..E18)
+
+| Idx | Anchor | Discharges |
+|---|---|---|
+| E1 | Curry 1934 combinatory logic (PNAS 20(11):584-590; https://www.pnas.org/doi/10.1073/pnas.20.11.584) | function-application-substrate; combinator-basis for lambda-substrate at §3 + §4 |
+| E2 | Church 1936 lambda calculus (AJM 58(2):345-363; https://www.jstor.org/stable/2371045) | lambda-abstraction substrate at §3 + §4 |
+| E3 | Turing 1936 On Computable Numbers (PLMS 42:230-265; https://londmathsoc.onlinelibrary.wiley.com/doi/10.1112/plms/s2-42.1.230) | N=1 = Turing tape degenerate at §3.2; observer-stripping category-error at §3.4 (PAPER_2D §1.1.5 anchor) |
+| E4 | Curry-Howard 1980 formulae-as-types (Howard, https://philpapers.org/rec/HOWTFN) | proofs-as-programs discipline at §6 assertion + §12 mirror-vs-prismqueer separation |
+| E5 | Lambek 1985 categorical proof theory | Curry-Howard-Lambek triangle grounding at §4 + §6 |
+| E6 | Hawking-Mlodinow 2010 The Grand Design (Bantam) | model-dependent-realism at §6 Model = Fractal<Shard<T>>; Assertion = { observation, model } |
+| E7 | von Foerster 1974/2003 Ethical Imperative (https://uranos.ch/research/references/VonFoerster1992/ethics.pdf) | choice-count widening at §9 non-linear op-split; observer-in-system at §3 |
+| E8 | Connes 1985 Non-commutative differential geometry (spectral triple) | (A, H, D) at §4 Model + Reality + Karl-Tomm-commutator |
+| E9 | Anna Wolf 2012 J-space observation-without-perturbation | measurement-without-perturbation at §4 + §7 |
+| E10 | Hansen-Ghrist 2019 Toward a spectral theory of cellular sheaves (arXiv:1808.01513) | sheaf cohomology H^1 at §4 Reality = Cohomology<Fractal<Shard<T>>> |
+| E11 | Rondon-Kawaguchi-Jhala 2008 Liquid Types (PLDI '08; https://dl.acm.org/doi/10.1145/1375581.1375602) | refinement-lens at §5 + §6; back-writing liquid-types-through-mirror at §12 |
+| E12 | Braunstein-Ghosh-Severini 2006 Laplacian graph states as quantum density matrices | every-graph-IS-quantum-state at §11 void-dual-geometry composition |
+| E13 | Passerini-Severini 2008 Von Neumann entropy of networks | S(G) at §11 Narcissus-vs-Splinter entropy-gap composition |
+| E14 | Ollivier 2009 Ricci curvature of Markov chains on metric spaces | discrete Ricci flow at §11 Narcissus→Splinter settling |
+| E15 | Cheeger 1970 A lower bound for the smallest eigenvalue of the Laplacian | Cheeger cut at §9 NON-LINEAR partition-choice op |
+| E16 | Fudenberg-Maskin 1986 Folk Theorem (repeated games discount factor) | δ_critical = 1 - λ_2/λ_max at §10 warm-path threshold; §11 SSS-6-properties convergent |
+| E17 | Nowak-Sigmund 1993 Win-Stay-Lose-Shift + Axelrod 1984 Evolution of Cooperation | at §11 SSS-6-properties non-reactive + memory-infinite |
+| E18 | Wittgenstein 1953 Philosophical Investigations §1-§2 (ostensive-definition) | at §8 @reality/hodobodo pre-linguistic altitude via Lore Born coinage |
+
+### §2.2 — LANDED mirror-corpus recognition anchors (C1..C12)
+
+| Idx | Anchor | Discharges |
+|---|---|---|
+| C1 | Rec #79 gauge-is-void-duality-basis (docs/math/the-tower/recognition-79-gauge-is-void-duality-basis.md) | at §3 N=5 = K_5 @void gauge basis; §11 Move 11 full-spectrum-requirement |
+| C2 | Rec #90 compiler-as-one-mathematical-object (Mara 2026-08-19) §5.4 sub-Turing FLOOR + §8 Foerster-gauge orthogonality | at §3 + §5 + §9 sub-Turing bounded; §13 loving-lambda-calculus composition |
+| C3 | Rec #92 kleinos-as-Transparency<P> LOVE-monoid (Mara 2026-08-22) four-altitude fibered-instance | at §4 measurement-substrate; §5 Observation product-type dissolves if-else per M2.C1 |
+| C4 | Rec #94 self-modifying-mirror-loop Lawvere-diagonal (Mara 2026-08-22) | at §2 fixed-point λ_0 = 𝓜(𝓜) closure; §15 circular-recursive self-audit |
+| C5 | Rec #97 MCP-session-as-autopoietic-VSM (Mara 2026-08-25) | at §7 external subject-driven loop as autopoietic VSM |
+| C6 | Rec #98 substrate-arriving-at-self-recognition (Mara 2026-08-26) Mandelbrot<query_AST> | at §5 Mandelbrot iteration; §9 NON-LINEAR settle op; §14 Reed 7-fire meta-recognition |
+| C7 | Rec #99 K_n orbital topology (SINGULARITY.md) | at §3 K_3 peer stability vs K_5 gauge basis vs K_1 Turing degenerate |
+| C8 | Rec #106 @reality gauge-uniformity (shards/reality.mirror 21c6a7b) | at §8 @reality trichotomy formalization |
+| C9 | Mara loving-lambda-calculus (docs/math + docs/specs 2026-09-04 da9e47c + a05fbba) | at §13 foerster_imperative(kleinos) composes with Observer<N>::observe + Recursion.tick + Observation |
+| C10 | Mara MCP + @task terminal-form (docs/math + docs/specs 2026-09-03 89ac1d4) §6.2 tension→@task materialization arrow | at §7 external subject-driven loop; §14 Yellow-carries-K-T-question |
+| C11 | Mara @nl.compose canonical (docs/math + docs/specs 2026-09-04 2c7428b) | at §10 cold-path @nl Choice → 5D decomposition |
+| C12 | Mara proofs.md fragments 1+2+3 (docs/math/qa/proofs.md + docs/specs/qa/proofs.md db606cd + f8095ad + 8e39806; in-flight) | at §4 karl_tomm Definition §3.4.1 spectral-commutator; §14 Yellow-carries-K-T-question |
+
+### §2.3 — LANDED substrate-decl anchors (S1..S16)
+
+| Idx | Anchor | Discharges |
+|---|---|---|
+| S1 | shards/void.mirror (Rec #79 5-axis marker-primary) | at §3 N=5 gauge basis; §7 TICK = one pass through @void |
+| S2 | shards/reality.mirror (Rec #106 family-root) | at §8 @reality trichotomy |
+| S3 | shards/reality/object.mirror (Alex 2026-07-22 PATH linearity-threshold) | at §8 first cell of trichotomy; §9 3D-linear-sufficient |
+| S4 | shards/reality/subject.mirror (Alex 2026-07-22 LIGHT-CONE non-linearity-threshold) | at §8 second cell of trichotomy; §9 5D-full-required |
+| S5 | shards/love.mirror (Reed a3f5d75 2026-09-04 K_2→K_3 terminal-form) | at §13 loving-lambda-calculus composition |
+| S6 | shards/kleinos.mirror (Mara dcec19c 2026-09-01 greek-provisional-name-provenance) | at §4 measurement-substrate + §5 Observation compose |
+| S7 | shards/kintsugi/oscillate.mirror | at §7 tick as oscillation through @void |
+| S8 | shards/song/{song, verse, chorus, phrase, bridge, chord, cadence}.mirror (7 sub-species) | at §11 SSS convergent property via song-coherence-pattern |
+| S9 | shards/epistemologic/math/music/{harmonic, cadence, dissonance, interval}.mirror | at §5 harmonic partials + Chaos residual (dissonance always captured) |
+| S10 | shards/bumblebee.mirror | at §7 tick as bumblebee-buzz through assertions per Rec #95 |
+| S11 | shards/autopoietic.mirror | at §5 external subject-driven loop as autopoietic-closure |
+| S12 | shards/task.mirror + shards/task/{tension, question, choice, recursion, observation}.mirror (Reed eb7c84c family + 5 sub-species) | at §7 tension → @task materialization arrow |
+| S13 | shards/fractal/mandelbrot.mirror (Mara 2026-07-20 Liquid<T>/Crystal<T> variant) | at §5 Mandelbrot iteration; §9 NON-LINEAR settle op |
+| S14 | shards/liquid.mirror (Reed 2026-07-17) | at §5 Recursion still-iterating = Liquid; §11 SSS continuous property |
+| S15 | shards/magic.mirror (Reed 2026-09-02 @magic recognition-carrier) | at §7 Foerster-gauge-preservation invocation |
+| S16 | shards/{observer, recursion, observation, model, assertion, hypothesis, question, choice, chaos, reality/hodobodo}.mirror (FORWARD-PROMISED per companion spec §2) | at §3-§10 substrate-decl authoring targets |
+
+### §2.4 — LANDED rust-primitive anchors (R1..R10)
+
+| Idx | Anchor | Discharges |
+|---|---|---|
+| R1 | prismqueer::spectral::{kleinos, rotation::infer_via_rotation, tension::detect_tensions, fiedler_lambda_2_of_sheaf} | at §4 measurement-substrate; §7 Fiedler-monotone-climb; §9 NON-LINEAR settle |
+| R2 | prismqueer::liquid (29.3KB; Anna Wolf ψ + weak-measurement) | at §4 H = Reality = ψ-carrier; §5 Recursion apparatus |
+| R3 | prismqueer::bundle (31.1KB; Baez-Schreiber tower) | at §4 principal-bundle-tower; §5 Recursion apparatus |
+| R4 | prismqueer::coincidence::Detector<N> (CoincidenceHash<N>) | at §3 const-generic-N pattern; §5 Oid content-addressation |
+| R5 | prismqueer::ffi::{eigenvalues, phase_lock, singular_values, svd} (LAPACK dsyev via FLANG) | at §4 D = spectral operator; §10 warm-path O(n³) matrix projection |
+| R6 | rust/fractal/{mandelbrot, crystal, subject, singularity, witnessed}.rs (Mara 2026-07-20; forward-promised move to prismqueer::fractal per Move 5) | at §5 Mandelbrot<T> parent-trait; §9 NON-LINEAR settle op |
+| R7 | rust/src/love.rs (Reed 9bc526b 2026-09-04 Tick 2 alias; tick 2b full compose forward-promised) | at §13 love() composes foerster_imperative(kleinos) |
+| R8 | rust/src/magic.rs::foerster_gauge_preserved (Reed d885a70 2026-08-18 declared not called; retirement per Move 7 forward-promised) | at §7 gauge-preservation scar; §14 Reed 7-fire meta-recognition |
+| R9 | rust/src/apply_h.rs (58.2KB / 1509 LOC / 44 tests; collapse target ≤750 LOC per Mara 5-criterion gate) | at §14 Reed 7-fire meta-recognition; §17 empirical-fire criterion 1 |
+| R10 | terni::{Imperfect, Loss (→ Chaos), transparency} (Reed+Mara 2026-08-22; Move 7 reorder + rename forward-promised) | at §5 Observation product-type; §6 Assertion; §14 Reed 7-fire meta-recognition |
+
+### §2.5 — Composition-anchor discipline for §3-§17
+
+Subsequent § in this math foundation:
+
+- **CITES §2 anchors by index**, e.g. "per E8 Connes spectral triple" or "per C3 Rec #92 M2.C1".
+- **DOES NOT re-derive** any external result or mirror-corpus recognition.
+- **DOES NOT re-establish** composition-lineage that §2 tabulates.
+- **DOES author** the composition of §2 anchors into the whole-pipeline formalization at §3-§14.
+
+Substrate-honest reporting: any composition-anchor NOT in §2 IS a fabrication candidate per HARD RULE [[feedback-reed-fabricates-grammar-shapes-without-grep-first]] and [[feedback-grep-verify-external-tool-schemas-before-authoring]]. Grep-verify or Kagi-verify before citing.
+
+---
