@@ -1,0 +1,79 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @loom
+in @coincidence
+in @epistemologic/math/music/harmonic
+in @epistemologic/math/music/dissonance
+
+# @loom/gutter — spectral-decomposition-visualization species.
+#
+# Per Mara canonical spec 2026-09-05 §3.3. LineDecoration carrier
+# at edit-tick altitude. Per-line gutter marks visualise:
+#   1. Oid-prefix (first 8 bytes of prismqueer::coincidence::
+#      CoincidenceHash<N>) — content-address signature at line
+#   2. Foerster gauge luminosity (Green/Yellow/Red per terni::
+#      Imperfect) — admissibility verdict at line
+#   3. Spectral coupling measure (@music/harmonic) — how tightly
+#      this line composes with surrounding
+#
+# Grounded in ~/.reed/tasks/pending/loom-rendering-architecture.md
+# (2026-04-23; INSPIRATION per Alex 2026-09-05): spectral gutter
+# renderer at ~1ms render budget; loss heatmap + OID prefix +
+# coupling indicator per line.
+#
+# === Composition-lineage ===
+#
+#   @loom family-root: this species composes-under
+#   @coincidence: prismqueer::coincidence::CoincidenceHash<N> for
+#     oid-prefix
+#   @epistemologic/math/music/harmonic: coupling-measure spectral
+#   @epistemologic/math/music/dissonance: vor-witness at line
+#
+# === Path-namespace ===
+#
+# Path-namespace property: this file at `shards/loom/gutter.mirror`
+# declares `@loom/gutter` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+# === Carriers ===
+
+# Per-line gutter mark. Computed at edit-tick per
+# compute_gutter(loom_gestalt) -> [gutter_mark] below.
+type gutter_mark = {
+  line_ref:       ref,
+  oid_prefix:     bytes_8,             # first 8 bytes of CoincidenceHash
+  luminosity:     imperfect(luminosity), # Green/Yellow/Red
+  coupling:       spectral_measure,     # @music/harmonic measure
+}
+
+# Terminal luminosity states for gutter visualization. Foerster
+# gauge tri-state (Green/Yellow/Red) + neutral (dim_grey) +
+# edit-focus (bold_cyan) + attention-flash (inverted_flash) +
+# hidden (dark).
+type luminosity =
+  | dim_grey        # Green (settled)
+  | bright_white    # Green (recently settled)
+  | bold_cyan       # Green (edit-focus at cursor)
+  | inverted_flash  # Yellow (K-T question at line)
+  | dark            # Red (dissonance witnessed at line)
+
+# === Actions ===
+
+# Per-line gutter mark computation. O(|gestalt.nodes|) per
+# Mara THEOREM M7.1 sub-Turing bound preservation.
+compute_gutter(g: loom_gestalt) -> [gutter_mark] { \ }
+
+# === Bilaterals ===
+
+# Each gutter mark's luminosity must satisfy Foerster gauge per
+# @order/third.third_order_active discharge on the line's
+# observation_depth.
+gutter_admissible(marks: [gutter_mark]) -> verdict { \ }
+
+out @loom/gutter
+out gutter_mark
+out luminosity
+out compute_gutter
+out gutter_admissible
