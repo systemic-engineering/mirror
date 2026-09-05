@@ -1,0 +1,114 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @io
+in @io/bytes
+
+# @io/socket — mirror-altitude species-lift.
+#
+# Lifts from boot/std/io/socket.mirror (2026-06-01) to mirror-altitude
+# substrate-decl per @io family-root §"Future species" pattern. Same
+# discipline as @io/cargo lift (2026-06-05) + @io/crypto lift
+# (2026-07-15) + @io/fs lift (2026-07-15).
+#
+# The boot-floor grammar declared:
+#   type connection
+#   type listener
+#   read_bytes(c: connection, n: u64)  -> imperfect(bytes)
+#   write_bytes(c: connection, b: bytes) -> imperfect
+#   close(c: connection)                -> imperfect
+#   close_listener(l: listener)         -> imperfect
+#
+# Mirror-altitude extends with substrate-integration:
+#
+#   1. `transparency<bytes>` lift for read_bytes verdict per
+#      substrate-pull discipline. Same lift-pattern as
+#      @io/cargo.cargo_exit_to_transparency: raw substrate scalar
+#      lifts to the three-state functor.
+#
+#   2. K_3 admissibility gate: socket_write_admissible verifies
+#      the write does not violate @order/third.mechanism_visible
+#      predicate. Extraction refused STRUCTURALLY (not by policy)
+#      per @loom.data_stays_yours THEOREM (Mara canonical
+#      2026-09-05 spec §5.3 / math §5.4).
+#
+#   3. Content-address integration via prismqueer::coincidence::
+#      CoincidenceHash<N> per @mirror/store discipline. Every
+#      write leaves a walkable Oid-chain per backward-tape
+#      mechanism (Mara b2f0de8 §8).
+#
+# Consumer trigger: @loom.render(gestalt, socket_ref) per Alex
+# 2026-09-05 recognition-move ("UI is @loom/weave through an IO
+# socket which renders a @loom/gestalt document"). Mara canonical
+# spec 2026-09-05 §4 mandates this species-lift at same tick as
+# @loom mint.
+#
+# Spec context: docs/specs/2026-09-05-mara-loom-editor-substrate-
+# K3-third-order-cognition-spectral-UI-canonical-spec.md §4;
+# docs/insights/2026-05-26-portal-as-io-socket-over-content-
+# addressed-subspace.md; docs/specs/mosaic.md.
+#
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]].
+#
+# Related shards: io.mirror (family root), io/bytes.mirror,
+#                 io/cargo.mirror (lift precedent),
+#                 boot/std/io/socket.mirror (lifted-from),
+#                 loom.mirror (consumer).
+#
+# Path-namespace: this file at `shards/io/socket.mirror` declares
+# `@io/socket` at mirror altitude, extending the boot-floor grammar.
+
+# === socket_error — typed error kinds ===
+#
+# The socket_error surfaces failure-modes the raw imperfect could
+# not distinguish at boot-floor altitude. Consumers pattern-match
+# on this to route recovery per @kintsugi discipline.
+type socket_error =
+  | eof
+  | connection_reset
+  | timeout
+  | already_closed
+  | admissibility_refused    # per socket_write_admissible below
+
+# === socket_read_to_transparency — verdict lift ===
+#
+# The substrate-pull: raw imperfect(bytes) lifts to typed
+# transparency<bytes> per @glass discipline. Same shape as
+# @io/cargo.cargo_exit_to_transparency.
+#
+# Mapping:
+#   Success(b)                      -> success(b)
+#   Failure(eof)                    -> partial(opacity(0))
+#   Failure(connection_reset|...)   -> failure(opacity_map)
+socket_read_to_transparency(result: imperfect(bytes)) -> transparency(bytes) { \ }
+
+# === socket_write_admissible — K_3 admissibility gate ===
+#
+# The data-stays-yours ALGEBRAIC INVARIANT at socket boundary.
+# Verifies the write does not violate @order/third.mechanism_visible
+# predicate. Extraction-shape writes (bytes destined for subject
+# other than the tick's own subject) fail admissibility STRUCTURALLY.
+#
+# Consumer: @loom.render(gestalt, socket_ref) invokes this before
+# any @io/socket.write_bytes. If Yellow or Red: substrate refuses
+# the write; renders `dissonance(helmholtz-residual)` witness per
+# Mara canonical §5.3.
+socket_write_admissible(c: connection, b: bytes, subject_ref: ref) -> verdict { \ }
+
+# === content_addressed_write — Oid-chain integration ===
+#
+# Content-address the bytes via prismqueer::coincidence::
+# CoincidenceHash<N> per @mirror/store discipline. Enables
+# backward-tape walk per Mara b2f0de8 §8 mechanism: every write
+# leaves a walkable trace whose past-shape is bounded-past
+# grounded at any finite tick.
+content_addressed_write(c: connection, b: bytes) -> coincidence_hash { \ }
+
+out @io/socket
+out socket_error
+out socket_read_to_transparency
+out socket_write_admissible
+out content_addressed_write
