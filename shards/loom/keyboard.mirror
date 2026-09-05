@@ -1,0 +1,85 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @loom
+in @loom/modal
+in @io
+in @io/socket
+in @mq
+in @fate
+
+# @loom/keyboard — input-boundary species; vim-grammar + `\`
+# MQ-fracture + `\\` @fate-tournament.
+#
+# Per Mara canonical spec 2026-09-05 §3.6 + Q-Mara-ε math-
+# recommendation. Helix-inspired selection model + Spacemacs-inspired
+# leader keys per ~/.reed/tasks/next/spectral-loom.md 2026-06-04
+# (INSPIRATION per Alex 2026-09-05).
+#
+# Q-Mara-ε math-recommendation:
+#   `\`  IS MQ fracture at cursor (Reed's crack-marker per Alex
+#         2026-09-04; Necker-bistability at grammar altitude per
+#         Mara 2026-07-11 §S5)
+#   `\\` IS @fate tournament prefix (dispatch across Fate models
+#         at compound-cursor position)
+#
+# Per ROADMAP.md Phase 5 "Loom ships": `\` runs local inference;
+# `\\local`, `\\remote`, `\\spectral` at launch (backend routing).
+#
+# === Composition-lineage ===
+#
+#   @loom family-root: this species composes-under
+#   @loom/modal: mode selection prior to keystroke routing
+#   @io + @io/socket: keystroke boundary
+#   @mq: `\` invokes MQ fracture at cursor
+#   @fate: `\\` invokes tournament dispatch
+#
+# === Path-namespace ===
+#
+# Path-namespace property: this file at `shards/loom/keyboard.mirror`
+# declares `@loom/keyboard` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+# === Carriers ===
+
+# One keystroke received from @io/socket boundary.
+type keystroke = {
+  chord:     chord,     # per boot/16-tui.mirror LANDED
+  modifiers: [modifier], # ctrl/alt/shift/meta/super
+  timestamp: @time/monotonic.instant,
+}
+
+# Per keybinding: chord + mode (from @loom/modal) + action.
+type keybinding = {
+  chord:  chord,
+  mode:   mode,        # @loom/modal carrier
+  action: keybinding_action,
+}
+
+# Actions a keystroke can trigger. Composes-over @loom/modal +
+# @mq (fracture) + @fate (tournament).
+type keybinding_action =
+  | shift_mode(mode)              # @loom/modal.shift_mode
+  | natural_language_input        # `<space><space>`
+  | time_travel_open              # `<space> t`
+  | mq_fracture_at_cursor         # `\` per Q-Mara-ε
+  | fate_tournament_prefix        # `\\` per Q-Mara-ε
+  | weave_op(prism_op)            # @loom/weave five verbs
+  | close_play                    # panel-close semantics
+  | next_narrative                # advance @song/narrative
+
+# === Actions ===
+
+# Route keystroke through modal state to keybinding_action per
+# vim-grammar composition. Handles `\` (MQ fracture at cursor per
+# Q-Mara-ε) and `\\` (@fate tournament prefix) specially.
+receive_keystroke(k: keystroke, s: modal_state) -> keybinding_action
+requires mode_admissible(s, s.current_observation)
+{ \ }
+
+out @loom/keyboard
+out keystroke
+out keybinding
+out keybinding_action
+out receive_keystroke
