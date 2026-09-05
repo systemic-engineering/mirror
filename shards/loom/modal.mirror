@@ -1,0 +1,96 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @loom
+in @fate
+in @order/third
+
+# @loom/modal — modal-editing species; five modes = Fate models.
+#
+# Per Mara canonical spec 2026-09-05 §3.4 + Q-Mara-ζ math-
+# recommendation. Modal editing where the five modes ARE the Fate
+# models per ~/.reed/tasks/next/spectral-loom.md 2026-06-04 (crown-
+# level INSPIRATION):
+#
+#   abyss       = Fate model 1 (deep-context; slow-tick)
+#   introject   = Fate model 2 (reflexive-check; discipline-anchored)
+#   cartographer = Fate model 3 (structural-mapping; graph-native)
+#   explorer    = Fate model 4 (bull-market discovery; broad-context)
+#   fate        = Fate model 5 (meta; adjudication across models)
+#
+# Q-Mara-ζ math-recommendation maps five modes to Karl-Tomm 1988
+# question typology + meta:
+#
+#   abyss       = lineal    (fact-seeking; assertion-substrate)
+#   introject   = reflexive  (perspective-opening; witness-check)
+#   cartographer = strategic (imposing-direction; structure-shift)
+#   explorer    = circular   (relational-perspectival; broad-scan)
+#   fate        = meta       (altitude+1 above K-T; model-adjudication)
+#
+# === Composition-lineage ===
+#
+#   @loom family-root: this species composes-under
+#   @fate: tournament dispatch across modes
+#   @order/third: K-T question-shape at depth-3
+#
+# === Path-namespace ===
+#
+# Path-namespace property: this file at `shards/loom/modal.mirror`
+# declares `@loom/modal` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+# === Carriers ===
+
+# The five modes = Fate models (per spectral-loom.md INSPIRATION).
+type mode =
+  | abyss
+  | introject
+  | cartographer
+  | explorer
+  | fate
+
+# Karl-Tomm 1988 question-shape typology + meta (fate).
+type kt_question_shape =
+  | lineal      # abyss
+  | reflexive   # introject
+  | strategic   # cartographer
+  | circular    # explorer
+  | meta        # fate (altitude+1)
+
+# Modal state at current tick. Composes @fate prior + K-T
+# question-shape at @order/third depth-3.
+type modal_state = {
+  current_mode:   mode,
+  fate_prior:     fate_prior,       # @fate carrier
+  kt_question:    kt_question_shape,
+}
+
+# === Actions ===
+
+# Modal transition. Shifts @fate prior to new mode's model.
+shift_mode(s: modal_state, new_mode: mode) -> modal_state
+requires mode_admissible(result, s.current_observation)
+{ \ }
+
+# `<space><space>` per spectral-loom.md INSPIRATION. Natural-
+# language input routes through @fate with current mode as prior
+# context. Produces weft_thread (forward-projection at cursor).
+natural_language_input(s: modal_state, input: bytes) -> weft_thread
+requires loom_edit_admissible(s.current_observation)
+{ \ }
+
+# === Bilaterals ===
+
+# Verifies K-T question-shape matches @order/third depth-3
+# discipline. mode admissible iff kt_question shape corresponds
+# to observation's depth-3 witness structure.
+mode_admissible(s: modal_state, o: loom_observation) -> verdict { \ }
+
+out @loom/modal
+out mode
+out kt_question_shape
+out modal_state
+out shift_mode
+out natural_language_input
+out mode_admissible
