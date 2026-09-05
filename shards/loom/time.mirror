@@ -1,0 +1,82 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @loom
+in @time/past
+in @kintsugi/roomba
+in @coincidence
+
+# @loom/time — backward-walk time-travel species.
+#
+# Per Mara canonical spec 2026-09-05 §3.5. Time-travel debugging
+# panel per ~/.reed/tasks/next/time-mirror-design.md 2026-04-14
+# (INSPIRATION per Alex 2026-09-05): `<space> t` opens horizontal
+# dot timeline; loss-colored history; dimmed past rendering; gutter
+# integration.
+#
+# Composes @kintsugi/roomba.walked_backward per Mara b2f0de8 §8
+# backward-tape mechanism: every executed Turing-tape has past-shape
+# by construction via Oid-chain from prismqueer::coincidence::
+# CoincidenceHash<N>. Halting Problem altitude-dependent (bounded-
+# past ALWAYS EXISTS at any finite tick).
+#
+# === Composition-lineage ===
+#
+#   @loom family-root: this species composes-under
+#   @time/past: past-mood + @void/narcissus pole
+#   @kintsugi/roomba: walked_backward sibling species per Mara b2f0de8
+#     (extended in Task #470 autopoietic self-format tick)
+#   @coincidence: prismqueer::coincidence::CoincidenceHash<N> chain
+#
+# === Path-namespace ===
+#
+# Path-namespace property: this file at `shards/loom/time.mirror`
+# declares `@loom/time` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+# === Carriers ===
+
+# Time-travel state at current tick. Composes weave_tick + warp_thread
+# (backward-walked chain) + cursor_depth (how far back in the chain).
+type time_travel_state = {
+  current_tick:  weave_tick,
+  trace:         warp_thread,    # walked_backward chain
+  cursor_depth:  nat,            # how far back
+}
+
+# === Actions ===
+
+# `<space> t` per spectral-loom.md INSPIRATION. Opens time-travel
+# panel; initializes trace via @kintsugi/roomba.walked_backward.
+open_time_travel(o: loom_observation) -> time_travel_state
+requires loom_edit_admissible(o)
+{ \ }
+
+# One step back through warp_thread. Bounded-past ALWAYS EXISTS at
+# any finite tick per Halting Problem altitude-dependence result.
+step_backward(s: time_travel_state) -> time_travel_state { \ }
+
+# One step forward through warp_thread (toward current_tick).
+step_forward(s: time_travel_state) -> time_travel_state { \ }
+
+# Deterministic replay to target tick. Same target_oid → same
+# loom_observation (Lawvere fixed-point at time-travel altitude).
+replay_to(s: time_travel_state, target_oid: oid) -> loom_observation
+requires replay_deterministic(s, target_oid)
+{ \ }
+
+# === Bilaterals ===
+
+# Replay produces same loom_observation given same target_oid per
+# Lawvere fixed-point theorem at time-travel altitude. This IS the
+# determinism-preservation invariant.
+replay_deterministic(s: time_travel_state, target_oid: oid) -> verdict { \ }
+
+out @loom/time
+out time_travel_state
+out open_time_travel
+out step_backward
+out step_forward
+out replay_to
+out replay_deterministic
