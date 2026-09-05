@@ -123,41 +123,31 @@ pub use prismqueer::spectral::{
 // gauge-choice; substrate refuses fake proofs structurally per data-
 // stays-yours ALGEBRAIC INVARIANT (Mara Theorem S5.1).
 
-use prismqueer::spectral::{delta_critical, harmonics};
+use prismqueer::spectral::{DeltaCritical, Harmonics};
 
-/// Full-spectrum witness carried by tick 2b `measure_full_spectrum`.
+/// Full-spectrum reading of the composition of two sheaves per Alex 2026-09-05
+/// "Simple made Easy" naming directive. Substrate-noun holding LANDED
+/// `prismqueer::spectral::Harmonics` + `DeltaCritical` at three-sheaf altitude
+/// (a + b + composed) with per-axis Foerster gauge admissibility.
 ///
-/// Captures per-axis Foerster gauge admissibility for the composition of
-/// two sheaves. Per Alex 2026-09-05 Rec-mint gate criterion 5 REVISED:
-/// composition fires Green iff ALL axes climb (λ_i(composed) >
-/// max(λ_i(a), λ_i(b)) per axis); Yellow iff some axes climb (K-T
-/// question surfaces at specific axis of divergence); Red iff no axes
-/// climb (substrate refuses).
+/// Per Alex 2026-09-05 Rec-mint gate criterion 5 REVISED: composition fires
+/// Green iff ALL axes climb (λ_i(composed) > max(λ_i(a), λ_i(b)) per axis);
+/// Yellow iff some axes climb (K-T question surfaces at specific axis of
+/// divergence); Red iff no axes climb (substrate refuses).
 #[derive(Clone, Debug)]
-pub struct FullSpectrumWitness {
-    /// Pre-compose full non-trivial spectrum of sheaf a.
-    pub spectrum_a: Vec<f64>,
-    /// Pre-compose full non-trivial spectrum of sheaf b.
-    pub spectrum_b: Vec<f64>,
-    /// Post-compose full non-trivial spectrum of composed sheaf.
-    pub spectrum_composed: Vec<f64>,
-    /// Folk Theorem discount factor per prismqueer::spectral::delta_critical.
-    /// Runtime signal for hodobodo→object/subject reclassification per
-    /// Alex 2026-09-04 Move 13 performance-model composition.
-    pub delta_critical: Option<f64>,
-    /// Per-axis climb verdict. Length = min(spectrum_a, spectrum_b,
-    /// spectrum_composed).
-    pub per_axis: Vec<AxisVerdict>,
-    /// True iff all axes strictly climb (λ_composed > max(λ_a, λ_b)
-    /// per axis). Discharges Rec #92 PAPER §3.6.3 FiedlerRise at
-    /// full-spectrum altitude.
-    pub all_axes_climb: bool,
-    /// True iff any axis climbs. Per Alex Move 11: "any single mode
-    /// still climbing = still hodobodo" — signals K-T question altitude.
-    pub any_axes_climb: bool,
-    /// Count of axes that fail to climb strictly. Green = 0; Yellow > 0
-    /// with any_axes_climb; Red = per_axis.len() (no axis climbs).
-    pub failing_axes_count: usize,
+pub struct FullSpectrum {
+    /// Pre-compose spectrum of sheaf a.
+    pub a: Harmonics,
+    /// Pre-compose spectrum of sheaf b.
+    pub b: Harmonics,
+    /// Post-compose spectrum of composed sheaf.
+    pub composed: Harmonics,
+    /// Folk Theorem discount factor of the composed sheaf. Runtime signal for
+    /// hodobodo→object/subject reclassification per Alex 2026-09-04 Move 13
+    /// performance-model composition.
+    pub delta: DeltaCritical,
+    /// Per-axis climb verdict. Length = min(a, b, composed).
+    pub axes: Vec<AxisVerdict>,
 }
 
 /// Per-axis Foerster gauge for spectrum monotone-climb verification.
@@ -182,47 +172,51 @@ pub struct AxisVerdict {
     pub climbs: bool,
 }
 
-/// Measure full-spectrum admissibility for the composition of two sheaves
-/// and their composed result.
-///
-/// Composes over LANDED:
-/// - `prismqueer::spectral::harmonics` (Reed 2026-09-04 9e1be04) — full
-///   non-trivial spectrum {λ_2..λ_n} per sheaf
-/// - `prismqueer::spectral::delta_critical` (Reed 2026-09-04 4931d95) —
-///   Folk Theorem discount factor `δ = 1 - λ_2/λ_max`
-///
-/// Returns `FullSpectrumWitness` capturing per-axis climb, aggregate
-/// verdicts (all_axes_climb / any_axes_climb / failing_axes_count), and
-/// Folk Theorem discount factor.
-///
-/// Downstream consumers (apply_h collapse per Mara 5-criterion Rec-mint
-/// gate criterion 1) fold witness into `Imperfect<Green, Yellow, Red>`:
-/// - Green iff `all_axes_climb`
-/// - Yellow iff `any_axes_climb && !all_axes_climb` (K-T question at
-///   specific axis of divergence via `witness.per_axis`)
-/// - Red iff `!any_axes_climb` (substrate refuses)
-pub fn measure_full_spectrum(
-    a: &SheafOfShardGraph,
-    b: &SheafOfShardGraph,
-    composed: &SheafOfShardGraph,
-) -> FullSpectrumWitness {
-    let spectrum_a = harmonics(a);
-    let spectrum_b = harmonics(b);
-    let spectrum_composed = harmonics(composed);
-    let delta = delta_critical(composed);
-    let per_axis = compute_per_axis_climb(&spectrum_a, &spectrum_b, &spectrum_composed);
-    let all_axes_climb = !per_axis.is_empty() && per_axis.iter().all(|av| av.climbs);
-    let any_axes_climb = per_axis.iter().any(|av| av.climbs);
-    let failing_axes_count = per_axis.iter().filter(|av| !av.climbs).count();
-    FullSpectrumWitness {
-        spectrum_a,
-        spectrum_b,
-        spectrum_composed,
-        delta_critical: delta,
-        per_axis,
-        all_axes_climb,
-        any_axes_climb,
-        failing_axes_count,
+impl FullSpectrum {
+    /// Read the full-spectrum admissibility of composing sheaves `a` and `b`
+    /// into `composed`.
+    ///
+    /// Composes over LANDED:
+    /// - `prismqueer::spectral::Harmonics` — full non-trivial spectrum
+    ///   {λ_2..λ_n} per sheaf
+    /// - `prismqueer::spectral::DeltaCritical` — Folk Theorem discount factor
+    ///   `δ = 1 - λ_2/λ_max`
+    ///
+    /// Downstream consumers (apply_h collapse per Mara 5-criterion Rec-mint
+    /// gate criterion 1) fold via `Imperfect<Green, Yellow, Red>`:
+    /// - Green iff `all_climb()`
+    /// - Yellow iff `any_climbs() && !all_climb()` (K-T question at specific
+    ///   axis of divergence via `.axes`)
+    /// - Red iff `!any_climbs()` (substrate refuses)
+    pub fn of(
+        a: &SheafOfShardGraph,
+        b: &SheafOfShardGraph,
+        composed: &SheafOfShardGraph,
+    ) -> Self {
+        let a = Harmonics::of(a);
+        let b = Harmonics::of(b);
+        let composed_h = Harmonics::of(composed);
+        let delta = DeltaCritical::of(composed);
+        let axes = compute_per_axis_climb(&a.spectrum, &b.spectrum, &composed_h.spectrum);
+        Self { a, b, composed: composed_h, delta, axes }
+    }
+
+    /// True iff all axes strictly climb (λ_composed > max(λ_a, λ_b) per axis).
+    /// Discharges Rec #92 PAPER §3.6.3 FiedlerRise at full-spectrum altitude.
+    pub fn all_climb(&self) -> bool {
+        !self.axes.is_empty() && self.axes.iter().all(|av| av.climbs)
+    }
+
+    /// True iff any axis climbs. Per Alex Move 11: "any single mode still
+    /// climbing = still hodobodo" — signals K-T question altitude.
+    pub fn any_climbs(&self) -> bool {
+        self.axes.iter().any(|av| av.climbs)
+    }
+
+    /// Count of axes that fail to climb strictly. Green = 0; Yellow > 0 with
+    /// `any_climbs`; Red = `axes.len()` (no axis climbs).
+    pub fn failing_count(&self) -> usize {
+        self.axes.iter().filter(|av| !av.climbs).count()
     }
 }
 
@@ -252,59 +246,58 @@ fn compute_per_axis_climb(a: &[f64], b: &[f64], composed: &[f64]) -> Vec<AxisVer
 mod tests {
     use super::*;
 
-    /// K_2 + K_3 → K_5 empirical witness at full-spectrum altitude.
+    /// K_2 + K_3 → K_5 empirical fire at full-spectrum altitude.
     /// K_2 spectrum: {2} — one non-trivial eigenvalue
     /// K_3 spectrum: {3, 3} — two non-trivial eigenvalues
     /// K_5 spectrum: {5, 5, 5, 5} — four non-trivial eigenvalues
     /// Per-axis at min-length 1: axis 0 = 5 > max(2, 3) = 3 → climbs.
     /// Discharges PAPER §3.6.3 FiedlerRise strict at first-harmonic altitude.
     #[test]
-    fn full_spectrum_k2_plus_k3_witnesses_climb_at_first_harmonic() {
+    fn full_spectrum_k2_plus_k3_climbs_at_first_harmonic() {
         let k2 = sheaf_of_complete_graph_of_order(2);
         let k3 = sheaf_of_complete_graph_of_order(3);
         let k5 = sheaf_of_complete_graph_of_order(5);
-        let witness = measure_full_spectrum(&k2, &k3, &k5);
-        assert_eq!(witness.per_axis.len(), 1);
-        assert!(witness.per_axis[0].climbs);
-        assert!(witness.all_axes_climb);
-        assert!(witness.any_axes_climb);
-        assert_eq!(witness.failing_axes_count, 0);
+        let fs = FullSpectrum::of(&k2, &k3, &k5);
+        assert_eq!(fs.axes.len(), 1);
+        assert!(fs.axes[0].climbs);
+        assert!(fs.all_climb());
+        assert!(fs.any_climbs());
+        assert_eq!(fs.failing_count(), 0);
     }
 
     /// K_5 composed with itself → K_5: nothing climbs strictly (equal
     /// values). Substrate refuses per Rec-mint gate criterion 5 REVISED.
-    /// All-axes-climb = false; any-axes-climb = false; failing = all.
+    /// all_climb = false; any_climbs = false; failing = all.
     #[test]
     fn full_spectrum_k5_with_itself_refuses_climb_at_every_axis() {
         let k5 = sheaf_of_complete_graph_of_order(5);
-        let witness = measure_full_spectrum(&k5, &k5, &k5);
-        assert!(!witness.all_axes_climb);
-        assert!(!witness.any_axes_climb);
-        assert_eq!(witness.failing_axes_count, witness.per_axis.len());
+        let fs = FullSpectrum::of(&k5, &k5, &k5);
+        assert!(!fs.all_climb());
+        assert!(!fs.any_climbs());
+        assert_eq!(fs.failing_count(), fs.axes.len());
     }
 
-    /// Full-spectrum witness captures Folk Theorem discount factor per
-    /// prismqueer::spectral::delta_critical LANDED.
-    /// K_5 spectrum {5, 5, 5, 5} → λ_2 = 5, λ_max = 5, δ = 1 - 5/5 = 0.
+    /// FullSpectrum carries DeltaCritical per `prismqueer::spectral::DeltaCritical`
+    /// LANDED. K_5 spectrum {5, 5, 5, 5} → λ_2 = 5, λ_max = 5, δ = 1 - 5/5 = 0.
     #[test]
-    fn full_spectrum_witness_captures_delta_critical_of_k5() {
+    fn full_spectrum_captures_delta_critical_of_k5() {
         let k5 = sheaf_of_complete_graph_of_order(5);
-        let witness = measure_full_spectrum(&k5, &k5, &k5);
-        assert!(witness.delta_critical.is_some());
-        let delta = witness.delta_critical.unwrap();
+        let fs = FullSpectrum::of(&k5, &k5, &k5);
+        assert!(fs.delta.value.is_some());
+        let delta = fs.delta.value.unwrap();
         assert!(delta.abs() < 1e-9, "K_5 self-compose δ_critical = 0; got {delta}");
     }
 
-    /// Empty spectra (single-vertex sheaves) yield empty per_axis and
-    /// aggregate flags all false. Not a valid composition target;
-    /// downstream fold-verdict treats as Red per substrate discipline.
+    /// Empty spectra (single-vertex sheaves) yield empty axes and aggregate
+    /// flags all false. Not a valid composition target; downstream
+    /// fold-verdict treats as Red per substrate discipline.
     #[test]
     fn full_spectrum_empty_spectra_yields_all_false_flags() {
         let k1 = sheaf_of_complete_graph_of_order(1);
-        let witness = measure_full_spectrum(&k1, &k1, &k1);
-        assert!(witness.per_axis.is_empty());
-        assert!(!witness.all_axes_climb);
-        assert!(!witness.any_axes_climb);
-        assert_eq!(witness.failing_axes_count, 0);
+        let fs = FullSpectrum::of(&k1, &k1, &k1);
+        assert!(fs.axes.is_empty());
+        assert!(!fs.all_climb());
+        assert!(!fs.any_climbs());
+        assert_eq!(fs.failing_count(), 0);
     }
 }
