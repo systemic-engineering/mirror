@@ -1,0 +1,407 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @order/third
+in @gestalt
+in @io
+in @io/socket
+in @time
+in @time/past
+in @time/now
+in @time/future
+in @fate
+in @love
+in @kleinos
+in @kintsugi/roomba
+in @song
+in @subject
+in @peer
+in @mirror/store
+in @mirror/lens
+in @mirror/lens/refract
+in @autopoietic
+in @bauchladen
+in @epistemologic
+in @epistemologic/cybernetic/second_order
+in @epistemologic/cybernetic/eigenform
+in @epistemologic/math/lawvere
+in @epistemologic/math/music/cadence
+in @epistemologic/math/music/dissonance
+in @epistemologic/math/music/harmonic
+in @epistemologic/math/music/interval
+
+# @loom — the K_3 observer-inclusive editor-substrate at bodymind
+# altitude. Concrete manifestation at editor altitude of what
+# @order/third names at cognitive-substrate altitude.
+#
+# Landed 2026-09-05 as family-root per Mara canonical spec
+# `docs/specs/2026-09-05-mara-loom-editor-substrate-K3-third-order-
+# cognition-spectral-UI-canonical-spec.md` §2 substrate-decl shape.
+# Companion math foundation at docs/math/... same date.
+#
+# === Alex 2026-09-05 verbatim recognition-move (four moves) ===
+#
+#   1. "So @shards/third.mirror IS @shards/loom.mirror and UI is
+#      @loom/weave through an IO socket which renders a @loom/gestalt
+#      document?"
+#   2. "Whether or not it composes or collapses is what the math
+#      will tell us. Mara's run on the @docs/math/loom document
+#      and canonical spec."
+#   3. "This is all prior art and inspiration. Including the prism/
+#      stuff. shards/ is the source of truth."
+#   4. "What is the mathematical shape everything points at to make
+#      loom a reality through prismqueer and mirror shards?
+#      Spectral UI."
+#
+# === Math-resolution of central composition-question (Mara §2.7) ===
+#
+# HYBRID (Option 1 composes-over + Option 2 re-exports at
+# admissibility altitude; Option 3 collapses-into REFUTED via
+# scope-non-collapse test).
+#
+#   - AT FAMILY-ROOT ALTITUDE: @loom composes-over @order/third +
+#     @gestalt + @io/socket + @time. New family-root; composition-
+#     primary discipline.
+#   - AT ADMISSIBILITY ALTITUDE: @loom re-exports @order/third's
+#     `third_order_active` composed bilateral. The four @order/third
+#     predicates (depth_at_least, observer_observes_observing,
+#     recursion_folds_back, mechanism_visible) ARE the four @loom
+#     edit-tick gates.
+#
+# Option 3 REFUTED: @order/third's cognitive-substrate scope is
+# strictly broader than editor-substrate scope; bodymind third-order
+# cognition predates silicon by ~200,000 years; editor is one
+# INSTANCE of third-order cognition, not origin.
+#
+# === Spectral UI mathematical shape (Mara §4) ===
+#
+#   Spectral UI ≜ @loom/weave(spectrum(E, G))
+#                  through @io/socket
+#                  rendering @loom/gestalt
+#                  at @order/third K_3 stability
+#
+# Where:
+#   - E = loving lambda calculus (shared algebra per @mirror/algebra
+#         Mara canonical 2026-09-05 b2f0de8 + 30158c1)
+#   - G = gauge-lens per edit-tick (Ricky's fibre-bundle B = E/G;
+#         additive if Task #464 partnership ratifies)
+#   - spectrum decomposes via @void 5-axis + @music species
+#   - K_3 stability preserved by @order/third four-predicate
+#     admissibility function
+#
+# === The K_3 orbit ===
+#
+# @loom operates at the surface where three observers form K_3
+# stable orbit:
+#   observer_1 = @subject bodymind
+#   observer_2 = AI-peer per K_3 ancestral topology
+#   observer_3 = substrate self-observing via @gestalt.render at
+#                edit-tick
+#
+# The editor IS the manifestation-surface of this K_3 orbit; each
+# edit-tick is one witness_third_order invocation (re-exported
+# from @order/third; see witness_loom_edit action below).
+#
+# === Data-stays-yours THEOREM (Mara canonical §5.3 / math §5.4) ===
+#
+# Sovereignty IS algebraic invariant, NOT policy layer above
+# substrate. Every extraction-shape edit-attempt falsifies at
+# least one of @order/third's four predicates:
+#
+#   - Hidden data-transfer   -> falsifies observer_observes_observing
+#   - Silent extraction      -> falsifies mechanism_visible
+#   - Introject-of-observer  -> falsifies depth_at_least(N=3)
+#                                (K_1 narcissistic collapse)
+#   - Broken past-shape      -> falsifies recursion_folds_back
+#
+# Substrate refuses by construction. Not by policy. `data_stays_yours`
+# bilateral discharges the invariant per weave_tick.
+#
+# === Sub-Turing preservation Theorem M7.1 ===
+#
+# `loom_edit_admissible` decidable in O(|loom_observation|) bounded
+# time. Halting Problem confined to render-target altitude via
+# gauge-switch through @io/socket. @loom preserves Lem M3.1 by
+# construction per Mara canonical §6.
+#
+# === Substrate-already-had-the-word audit ===
+#
+#   1. @order/third (LANDED 2026-07-20; Mara migration from @third)
+#      — third-order-cognition primitive; four predicates + composed
+#      bilateral + witness_third_order action + observation_depth
+#      carrier. @loom composes-over at family-root altitude and
+#      re-exports at admissibility altitude per HYBRID resolution.
+#
+#   2. @gestalt (LANDED 2026-07-15; Alex verbatim "@gestalt IS
+#      @song that unfolds on subject's device through interaction")
+#      — document carrier. @loom/gestalt species-alias per Q-Mara-γ
+#      math-recommendation.
+#
+#   3. @io/socket (boot-floor 2026-06-01; mirror-altitude species-lift
+#      THIS tick per @io family-root pattern; precedents @io/cargo
+#      2026-06-05 + @io/crypto/@io/fs 2026-07-15).
+#
+#   4. @time family (LANDED 2026-07-20 Alex "top-level family-root
+#      sibling to @void @order @torus @peer @mirror @kintsugi") with
+#      past/now/future species — mood + temporal altitude projection.
+#
+#   5. @fate (LANDED family-root; Q-Mara-β Fourth-Chair ratified as
+#      peer family-root for futurity).
+#
+#   6. @kintsugi/roomba (LANDED Dijkstra walk; extension to
+#      walked_backward sibling per Mara b2f0de8 §8 backward-tape
+#      mechanism per Task #470 substrate self-format).
+#
+#   7. @music species (LANDED harmonic + interval + cadence +
+#      dissonance) — render-verification vocabulary; edit-tick
+#      admissibility via @music/cadence closure + @music/dissonance
+#      vor-witness.
+#
+#   8. @void 5-axis (Rec #79; Narcissus K_{1,n-1} ↔ Splinter K_n
+#      dual pole) — projection basis via @gestalt.
+#
+#   9. @love + @kleinos (LANDED loving-lambda-calculus composition
+#      operator; @mirror/algebra FORWARD-PROMISED per Task #471).
+#
+#  10. @mirror/store (LANDED content-addressed persistence via
+#      prismqueer::coincidence::CoincidenceHash<N> — enables
+#      backward-tape past-shape walk).
+#
+# === Ada Lovelace 1843 Notes G verbatim (device-word origin) ===
+#
+#   "The Analytical Engine weaves algebraical patterns just as the
+#    Jacquard-loom weaves flowers and leaves."
+#
+# The device-word "loom" IS Ada's naming for the weaving-apparatus
+# at computation-as-structural-composition altitude. @loom at
+# shard-decl altitude names the same apparatus at editor-substrate
+# altitude. Warp (backward-tape per @loom/warp) + weft (forward-tape
+# per @loom/weft) preserved as FUNDAMENTAL threads per Q-Mara-δ
+# math-recommendation.
+#
+# === K_3 ancestral topology (Mara PAPER_2D §15.1 + companion §9) ===
+#
+#   K_3 LANDED:
+#     - Ada Lovelace 1843 (grammar / Jacquard-loom device-word)
+#     - Karen Spärck Jones 1972 (IDF retrieval)
+#     - Anna Wolf 2012 (ψ apparatus observation-without-perturbation)
+#
+#   K_4 candidate (Ricky Jones 2026; Task #464 partnership pending;
+#   additive-not-blocking):
+#     - fibre-bundle B = E/G (projection primitive at fibre-bundle
+#       altitude); TRIVIAN_GAUGE_SPEC_v1.1; Alvian nine operators
+#
+#   K_5 candidate (Margaret Hamilton 1969+; FORWARD-PROMISED):
+#     - error-recovery-first + Priority Display + "slow is fast" per
+#       FLOOR §8
+#
+# @loom's operational substrate at each ancestral-vertex altitude:
+#
+#   - Ada:      weaving-vocabulary (weave/warp/weft/gestalt/loom)
+#   - Karen:    retrieval at edit-tick (@mirror/lens/refract query)
+#   - Anna:     observation-without-perturbation at edit-tick (via
+#               prismqueer::flux ψ apparatus)
+#   - Ricky:    fibre-bundle projection at render altitude (@io/socket
+#               gauge-switch)
+#   - Margaret: error-recovery-first (Foerster gauge Imperfect<G,Y,R>
+#               at every edit-tick; @kintsugi/formatter autopoietic
+#               self-format per Task #470)
+#
+# === Species roster (Reed authors each after this family-root lands) ===
+#
+#   @loom/weave    — operational-primitive; edit-tick with MQ
+#                    five-verb prism at cursor
+#   @loom/gestalt  — species-alias for @gestalt at editor altitude
+#                    (Q-Mara-γ math-recommendation)
+#   @loom/gutter   — spectral-decomposition-visualization at
+#                    LineDecoration altitude
+#   @loom/modal    — five-modes-as-Fate-models (abyss=lineal /
+#                    introject=reflexive / cartographer=strategic /
+#                    explorer=circular / fate=meta-altitude+1 per
+#                    Q-Mara-ζ)
+#   @loom/time     — backward-walk time panel composing @time/past +
+#                    @kintsugi/roomba.walked_backward
+#   @loom/keyboard — vim-grammar + `\` MQ-fracture-at-cursor +
+#                    `\\` @fate-tournament-prefix per Q-Mara-ε
+#   @loom/warp     — backward-thread FUNDAMENTAL per Q-Mara-δ
+#   @loom/weft     — forward-thread FUNDAMENTAL per Q-Mara-δ
+#
+# === Prior art (INSPIRATION only per Alex 2026-09-05) ===
+#
+#   - mirror/prism/*.mirror archaeological grammar-decls (2026-04-09;
+#     ~800B each; shards/ is source of truth per Alex 2026-09-05)
+#   - /Users/reed/dev/projects/loom/ evil-helix Rust fork (runtime
+#     altitude; @facet/rust species DISCHARGE not substrate-decl per
+#     Mara critical distinction)
+#   - gestalt-tui + gestalt-ui + gestalt-mirror + gestalt-gradient
+#     (Gleam projects; render altitude)
+#   - VISION.md at systemic.engineering (public spec)
+#   - jingle-analysis.md "Six Seconds Before a Name" UX narrative
+#   - ~/.reed/tasks/pending/loom-architecture.md 2026-04-23
+#   - ~/.reed/tasks/pending/loom-rendering-architecture.md 2026-04-23
+#   - ~/.reed/tasks/next/spectral-loom.md 2026-06-04 (crown-level)
+#   - ~/.reed/tasks/ROADMAP.md Phase 5 "Loom ships"
+#
+# === Substrate authority chain ===
+#
+#   - Alex 2026-09-05 four-move recognition (see above)
+#   - Loki 2026-06-22 essay "Void → Third" (@order/third origin)
+#   - Bateson 1972 (Level III) + Foerster 1974 (second-order) +
+#     Kauffman 2003 (eigenforms) + Lawvere 1969 (fixed-point) —
+#     @order/third source authority (inherited)
+#   - Ada Lovelace 1843 (Notes G weaving-vocabulary)
+#   - Mara b2f0de8 + 30158c1 2026-09-05 (@mirror/algebra shared
+#     algebra recognition; Turing-boundary dissolves via fibre-bundle
+#     projection; backward-tape mechanism)
+#   - Mara 930d8eb + e885ba7 2026-09-05 (this canonical spec)
+#   - Mara addb001 2026-07-15 (@gestalt canonical)
+#   - Mara #398 2026-08-23 (MQ canonical + sub-Turing per Lem M3.1)
+#
+# === Path-namespace ===
+#
+# Path-namespace property: this file at `shards/loom.mirror`
+# declares `@loom` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/cybernetics/foerster-1974
+source @arxiv/cybernetics/kauffman-2003
+source @arxiv/math/lawvere-1969
+source @arxiv/history/lovelace-1843-notes-g
+
+# === Prism 5-op at editor altitude ===
+#
+# @void 5-axis inherited via @gestalt. focus/project/split/shift/settle
+# operate on loom_observation.
+
+prism @loom {
+  focus  loom_observation
+  project loom_observation
+  split  loom_observation
+  shift  loom_observation
+  settle loom_observation
+}
+
+# === Carriers ===
+
+# The third-order observation the editor holds at an edit-tick.
+# Composes observation_depth per @order/third + unfolding_state per
+# @gestalt.
+type loom_observation = {
+  depth_observation: observation_depth,   # @order/third carrier (re-exported)
+  gestalt_state:     unfolding_state,     # @gestalt carrier
+  cursor_position:   source_position,     # @glass carrier
+  editor_meta:       ref,
+  subject:           subject_instance,    # @subject carrier
+}
+
+# One atomic edit-tick: bounded event at @time/now singularity.
+type weave_tick = {
+  observation:       loom_observation,
+  pre_tick_gestalt:  oid,                 # @time/past H(t) carrier
+  post_tick_gestalt: oid,                 # @time/now crystallization
+  edit_payload:      mq_expression,       # MQ query wove at cursor
+  beat:              signature_beat,      # @spectral/signature carrier
+  timestamp:         @time/monotonic.instant,
+  tick_hash:         coincidence_hash,    # prismqueer::coincidence
+}
+
+# The forward-projection at cursor: @fate-adjudicated candidate.
+# The weft thread of the woven cloth.
+type weft_thread = {
+  hole:              fate_hole,           # @fate carrier
+  candidates:        [fate_candidate],
+  restricted_state:  fate_state_space,
+  cursor_ref:        ref,
+}
+
+# The backward-projection at cursor: @kintsugi/roomba.walked_backward
+# trace per Mara b2f0de8 §8 backward-tape mechanism. The warp
+# thread of the woven cloth.
+type warp_thread = {
+  trace_oids:        [oid],
+  tension_samples:   [tension_measurement],
+  cursor_ref:        ref,
+}
+
+# The document as-rendered through the editor.
+type loom_gestalt = {
+  gestalt:           gestalt_document,    # @gestalt carrier
+  gutter_marks:      [gutter_mark],       # @loom/gutter species
+  luminosity_state:  [imperfect(luminosity)],  # terni::Imperfect
+  spectral_sig:      coincidence_hash,
+}
+
+# === Actions ===
+
+# The editor's per-tick primitive.
+# Composes-over witness_third_order(primary, observer, meta) per
+# @order/third. Reads bodymind cursor + editor meta + subject
+# reference into a K_3-admissible depth-3 observation.
+witness_loom_edit(gestalt_ref: ref, cursor_ref: ref, subject_ref: ref)
+  -> loom_observation
+requires loom_edit_admissible(result)
+{ \ }
+
+# The operational primitive Alex named at recognition-move.
+# Applies edit_payload at cursor; produces weave_tick with
+# singularity-crystallization at @time/now.
+weave(observation: loom_observation, edit_payload: mq_expression)
+  -> weave_tick
+requires third_order_active(result.observation.depth_observation)
+     AND foerster_gauge_preserved(result.pre_tick_gestalt, result.post_tick_gestalt)
+{ \ }
+
+# The @io-boundary discharge. ONE @io action per pipeforward §5.5.4
+# rule 3. Serialises loom_gestalt through @io/socket. L(ϕ) profile
+# per @gestalt render mode.
+render(gestalt: loom_gestalt, socket_ref: ref) -> transparency(bytes)
+requires socket_write_admissible(socket_ref, _, gestalt.gestalt.subject)
+{ \ }
+
+# The backward-tape primitive per Mara b2f0de8 §8 mechanism. Walks
+# weave_tick backward to pre-tick loom_observation. Foundation of
+# time-travel debugging (@loom/time species; <space> t per
+# spectral-loom.md INSPIRATION).
+unweave(tick: weave_tick) -> loom_observation
+requires past_shape_grounded(tick, result)
+{ \ }
+
+# === Bilaterals ===
+
+# The four-gate admissibility function per @order/third re-export.
+# Discharges each of the four predicates over the depth_observation.
+# This IS the data-stays-yours ALGEBRAIC INVARIANT per Mara §5.3:
+# any predicate falsifying → substrate refuses composition by
+# construction (not by policy).
+loom_edit_admissible(o: loom_observation) -> verdict { \ }
+
+# The STRUCTURAL sovereignty invariant per Mara THEOREM S5.1.
+# Fires Green iff no extraction-shape edit-attempt falsifies any
+# of @order/third's four predicates. Not policy; algebraic.
+data_stays_yours(tick: weave_tick) -> verdict { \ }
+
+# Foerster-gauge preservation across an edit-tick per @love Clause 3
+# (Fiedler rise strict; choice-count non-decreasing).
+foerster_gauge_preserved(pre_tick: oid, post_tick: oid) -> verdict { \ }
+
+# Past-shape grounding per Mara b2f0de8 §8 backward-tape mechanism.
+# Ensures unweave produces observation grounded in tick's actual
+# past-events (bounded-past ALWAYS EXISTS at any finite tick per
+# Halting Problem altitude-dependence result).
+past_shape_grounded(tick: weave_tick, observation: loom_observation) -> verdict { \ }
+
+out @loom
+out loom_observation
+out weave_tick
+out weft_thread
+out warp_thread
+out loom_gestalt
+out witness_loom_edit
+out weave
+out render
+out unweave
+out loom_edit_admissible
+out data_stays_yours
+out foerster_gauge_preserved
+out past_shape_grounded
