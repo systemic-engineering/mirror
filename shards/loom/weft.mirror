@@ -1,0 +1,63 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @loom
+in @fate
+in @time/future
+in @spectral/tension
+
+# @loom/weft — the forward-thread species; FUNDAMENTAL per Q-Mara-δ.
+#
+# Per Mara canonical spec 2026-09-05 §3.8 + Q-Mara-δ math-
+# recommendation ratified as FUNDAMENTAL threads per Ada 1843
+# weaving-vocabulary (NOT emergent-only from @time/*).
+#
+# Weft thread = the forward-tape at cursor. Composes @fate.dice_roll
+# for candidate enumeration + @time/future futurity + prismqueer::
+# spectral::tension::detect_tensions for tension-sample capture.
+# Every weave_tick's weft is the @fate-adjudicated candidate at
+# cursor produced by the five weave verbs (@loom/weave).
+#
+# Ada 1843 Notes G: the weft passes horizontally through the warp;
+# the cloth emerges from the interaction. Backward-tape (warp) +
+# forward-tape (weft) = @loom bidirectional-by-construction.
+#
+# === Composition-lineage ===
+#
+#   @loom family-root: this species composes-under
+#   @fate: dice_roll for candidate enumeration
+#   @time/future: future-mood + @void/splinter pole (peer to @fate)
+#   @spectral/tension: prismqueer::spectral::tension::detect_tensions
+#     for tension-sample capture
+#
+# === Path-namespace ===
+#
+# Path-namespace property: this file at `shards/loom/weft.mirror`
+# declares `@loom/weft` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+# === Actions ===
+
+# Enumerate @fate-adjudicated candidates at cursor per @fate.
+# dice_roll. Restricts fate_state_space to admissible next-tick
+# states per @loom.loom_edit_admissible.
+weft_candidates(o: loom_observation, hole: fate_hole) -> weft_thread
+requires loom_edit_admissible(o)
+{ \ }
+
+# Capture tension-samples across weft_thread via prismqueer::
+# spectral::tension::detect_tensions. Composes H¹ non-trivial class
+# detection per Rec #92 kleinos LANDED.
+capture_tensions(w: weft_thread) -> [tension_measurement] { \ }
+
+# === Bilaterals ===
+
+# Every candidate in weft_thread's restricted_state satisfies
+# @loom.loom_edit_admissible on the produced next-tick loom_observation.
+weft_admissible(w: weft_thread) -> verdict { \ }
+
+out @loom/weft
+out weft_candidates
+out capture_tensions
+out weft_admissible
