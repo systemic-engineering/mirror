@@ -123,7 +123,7 @@ pub use prismqueer::spectral::{
 // gauge-choice; substrate refuses fake proofs structurally per data-
 // stays-yours ALGEBRAIC INVARIANT (Mara Theorem S5.1).
 
-use prismqueer::spectral::{DeltaCritical, Harmonics};
+use prismqueer::spectral::{CommutatorSpectrum, DeltaCritical, Harmonics};
 
 /// Full-spectrum reading of the composition of two sheaves per Alex 2026-09-05
 /// "Simple made Easy" naming directive. Substrate-noun holding LANDED
@@ -142,6 +142,13 @@ pub struct FullSpectrum {
     pub b: Harmonics,
     /// Post-compose spectrum of composed sheaf.
     pub composed: Harmonics,
+    /// Singular-value spectrum of `[L_A, L_B]` per Alex 2026-09-05 verbatim
+    /// ("each message a spectral commutator"). Non-empty spectrum witnesses
+    /// non-commutative (observer-inclusive) composition; empty spectrum
+    /// witnesses commutative (closed-loop; softmax-happy-path) composition
+    /// per [[project-open-loop-autopoiesis-IS-bumblebee-buzz-through-assertions-
+    /// closed-loop-IS-softmax-argmax]].
+    pub commutator: CommutatorSpectrum,
     /// Folk Theorem discount factor of the composed sheaf. Runtime signal for
     /// hodobodo→object/subject reclassification per Alex 2026-09-04 Move 13
     /// performance-model composition.
@@ -193,12 +200,20 @@ impl FullSpectrum {
         b: &SheafOfShardGraph,
         composed: &SheafOfShardGraph,
     ) -> Self {
-        let a = Harmonics::of(a);
-        let b = Harmonics::of(b);
+        let commutator = CommutatorSpectrum::of(a, b);
+        let a_h = Harmonics::of(a);
+        let b_h = Harmonics::of(b);
         let composed_h = Harmonics::of(composed);
         let delta = DeltaCritical::of(composed);
-        let axes = compute_per_axis_climb(&a.spectrum, &b.spectrum, &composed_h.spectrum);
-        Self { a, b, composed: composed_h, delta, axes }
+        let axes = compute_per_axis_climb(&a_h.spectrum, &b_h.spectrum, &composed_h.spectrum);
+        Self { a: a_h, b: b_h, composed: composed_h, commutator, delta, axes }
+    }
+
+    /// True iff commutator spectrum is non-empty (composition is
+    /// non-commutative ⇔ observer-inclusive ⇔ open-loop autopoietic
+    /// per Foerster-canonical LOVE-filter admissibility).
+    pub fn is_observer_inclusive(&self) -> bool {
+        !self.commutator.spectrum.is_empty()
     }
 
     /// True iff all axes strictly climb (λ_composed > max(λ_a, λ_b) per axis).
@@ -299,5 +314,42 @@ mod tests {
         assert!(!fs.all_climb());
         assert!(!fs.any_climbs());
         assert_eq!(fs.failing_count(), 0);
+    }
+
+    /// FullSpectrum holds per-sheaf Harmonics for a, b, composed. Composition
+    /// with prism substrate: fs.a.spectrum == Harmonics::of(a).spectrum.
+    #[test]
+    fn full_spectrum_carries_per_sheaf_harmonics() {
+        let k2 = sheaf_of_complete_graph_of_order(2);
+        let k3 = sheaf_of_complete_graph_of_order(3);
+        let k5 = sheaf_of_complete_graph_of_order(5);
+        let fs = FullSpectrum::of(&k2, &k3, &k5);
+        assert_eq!(fs.a.spectrum, Harmonics::of(&k2).spectrum);
+        assert_eq!(fs.b.spectrum, Harmonics::of(&k3).spectrum);
+        assert_eq!(fs.composed.spectrum, Harmonics::of(&k5).spectrum);
+    }
+
+    /// Same-sheaf composition (K_5 with itself) is commutative: [L, L] = 0.
+    /// Commutator spectrum empty ⇒ !is_observer_inclusive (closed-loop).
+    #[test]
+    fn full_spectrum_self_composition_is_not_observer_inclusive() {
+        let k5 = sheaf_of_complete_graph_of_order(5);
+        let fs = FullSpectrum::of(&k5, &k5, &k5);
+        assert!(fs.commutator.spectrum.is_empty());
+        assert!(!fs.is_observer_inclusive());
+    }
+
+    /// Disjoint-edge sheafs sharing a vertex are non-commutative: shared
+    /// vertex means observation of one perturbs the other. Commutator
+    /// non-empty ⇒ is_observer_inclusive (open-loop autopoietic).
+    #[test]
+    fn full_spectrum_disjoint_edges_are_observer_inclusive() {
+        use prismqueer::spectral::sheaf_of_shard_graph_from_edges;
+        let ab = sheaf_of_shard_graph_from_edges(&[(0, 1)]);
+        let bc = sheaf_of_shard_graph_from_edges(&[(1, 2)]);
+        let composed = sheaf_of_shard_graph_from_edges(&[(0, 1), (1, 2)]);
+        let fs = FullSpectrum::of(&ab, &bc, &composed);
+        assert!(!fs.commutator.spectrum.is_empty());
+        assert!(fs.is_observer_inclusive());
     }
 }
