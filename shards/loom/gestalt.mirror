@@ -1,0 +1,55 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @loom
+in @gestalt
+in @io/socket
+
+# @loom/gestalt — species-alias for @gestalt at editor altitude.
+#
+# Per Mara canonical spec 2026-09-05 §3.2 + Q-Mara-γ math-
+# recommendation ratified as SPECIES-ALIAS (not migration). @gestalt
+# stays at family-root altitude (LANDED shards/gestalt.mirror 21.9KB
+# Alex 2026-07-15 verbatim "@gestalt IS @song that unfolds on
+# subject's device through interaction"); @loom/gestalt is the
+# editor-altitude specialisation.
+#
+# Q-Mara-γ REFUTED migration: @gestalt has 6+ non-editor consumers
+# (jingle-analysis narrative, blog gestalt-* documents, non-loom
+# render targets). Species-alias preserves broader @gestalt scope
+# while lifting editor-specific rendering to @loom/gestalt.
+#
+# === Composition-lineage ===
+#
+#   @loom family-root: this species composes-under
+#   @gestalt: consumes gestalt_document + unfolding_state + annotation
+#             + signature_beat + visibility_scope + subject_instance
+#   @io/socket: render discharge boundary
+#
+# === Path-namespace ===
+#
+# Path-namespace property: this file at `shards/loom/gestalt.mirror`
+# declares `@loom/gestalt` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+# === Actions — editor-altitude rendering ===
+
+# @io discharge (delegates to @loom.render at family-root altitude).
+# Serialises loom_gestalt through @io/socket per L(ϕ) profile per
+# @gestalt render mode (markdown/html/tui/latex/slides/epub/pdf).
+render_gestalt(g: loom_gestalt, socket_ref: ref) -> transparency(bytes)
+requires socket_write_admissible(socket_ref, _, g.gestalt.subject)
+{ \ }
+
+# Composes @gestalt annotation discipline at editor altitude.
+# Attaches annotation to loom_gestalt without perturbing the
+# document's spectral_sig (Anna Wolf ψ apparatus:
+# observation-without-perturbation).
+annotate_gestalt(g: loom_gestalt, ann: annotation) -> loom_gestalt
+requires loom_edit_admissible(g.gestalt_state.observation)
+{ \ }
+
+out @loom/gestalt
+out render_gestalt
+out annotate_gestalt
