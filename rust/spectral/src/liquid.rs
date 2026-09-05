@@ -54,7 +54,7 @@
 //! - `PropertyDecl` carrier (name + sentinel + arity + require list)
 //! - `extract_properties(source: &str) -> Vec<PropertyDecl>` byte-scanner
 //! - `enact_property(decl, args) -> PropertyVerdict` stub
-//!   (composed dispatch through prismqueer::liquid::pillar arrives
+//!   (composed dispatch through prismqueer::flux::pillar arrives
 //!   at iteration 3+ with the ~20 pillar predicates from the /loop
 //!   prompt)
 //!
@@ -601,11 +601,11 @@ pub fn enact_spec_property(prop: &SpecProperty, args: &[String]) -> Verdict {
 
     // Arm 4: algedonic threshold on raw Loss magnitudes. Shape:
     // `algedonic(<magnitude>, <theta>)` where both are f64 literals.
-    // Dispatches to prismqueer::liquid::pillar::algedonic_of_magnitude
+    // Dispatches to prismqueer::flux::pillar::algedonic_of_magnitude
     // per Mara §2.3 dispatch table row 1 (commutator_norm shape).
     // This is the Rice-safe stepping-stone form — raw magnitudes,
     // no Fiber<T> sampling. Full Fiber<T>-flow via pillar::algedonic
-    // with LiquidTestBundle commutators forward-promised iter 11+.
+    // with FluxConstraint commutators forward-promised iter 11+.
     if let Some(rest) = verifies.strip_prefix("algedonic(") {
         if let Some(paren_end) = rest.rfind(')') {
             let args_source = rest[..paren_end].trim();
@@ -645,7 +645,7 @@ pub fn enact_spec_property(prop: &SpecProperty, args: &[String]) -> Verdict {
             }
             let mag_loss = prismqueer::ScalarLoss::new(magnitude);
             let theta_loss = prismqueer::ScalarLoss::new(theta);
-            let pv = prismqueer::liquid::pillar::algedonic_of_magnitude(&mag_loss, &theta_loss);
+            let pv = prismqueer::flux::pillar::algedonic_of_magnitude(&mag_loss, &theta_loss);
             return property_verdict_to_verdict(pv, &prop.name);
         }
     }
@@ -654,11 +654,11 @@ pub fn enact_spec_property(prop: &SpecProperty, args: &[String]) -> Verdict {
     // rolling window. Shape:
     //   `viability([m1, m2, m3, …], theta, omega)`
     // where the array holds f64 magnitudes, theta is f64 threshold,
-    // omega is usize window size. Dispatches to prismqueer::liquid::
+    // omega is usize window size. Dispatches to prismqueer::flux::
     // pillar::viability_of_magnitudes per Mara §2.3 dispatch table
     // row 2. Rice-safe stepping-stone (raw magnitudes; no Fiber<T>
     // sampling). Fiber<T>-flow via pillar::viability with
-    // LiquidTestBundle commutator histories forward-promised iter 12+.
+    // FluxConstraint commutator histories forward-promised iter 12+.
     if let Some(rest) = verifies.strip_prefix("viability(") {
         if let Some(paren_end) = rest.rfind(')') {
             let args_source = &rest[..paren_end];
@@ -741,7 +741,7 @@ pub fn enact_spec_property(prop: &SpecProperty, args: &[String]) -> Verdict {
             let history_loss: Vec<prismqueer::ScalarLoss> =
                 history.iter().map(|&m| prismqueer::ScalarLoss::new(m)).collect();
             let theta_loss = prismqueer::ScalarLoss::new(theta);
-            let pv = prismqueer::liquid::pillar::viability_of_magnitudes(
+            let pv = prismqueer::flux::pillar::viability_of_magnitudes(
                 &history_loss,
                 &theta_loss,
                 omega,
@@ -806,27 +806,27 @@ pub fn enact_spec_property(prop: &SpecProperty, args: &[String]) -> Verdict {
                 };
                 verdicts.push(pv);
             }
-            let pv = prismqueer::liquid::pillar::fold(&verdicts);
+            let pv = prismqueer::flux::pillar::fold(&verdicts);
             return property_verdict_to_verdict(pv, &prop.name);
         }
     }
 
-    // Arm 7: TRUE Fiber<T>-flow via pillar::algedonic + LiquidTestBundle
+    // Arm 7: TRUE Fiber<T>-flow via pillar::algedonic + FluxConstraint
     // Commutator. Shape: `bundle_commutator(strategy_a=<u8>,
-    // strategy_b=<u8>, theta=<f64>)`. Constructs two LiquidTestBundle
+    // strategy_b=<u8>, theta=<f64>)`. Constructs two FluxConstraint
     // instances at prismqueer::bundle::examples altitude, forms a
     // Commutator between them at default state [0.0; 4], invokes
     // pillar::algedonic (which takes &Commutator not raw magnitude),
     // converts PropertyVerdict → Verdict.
     //
     // Substrate-honest FLOW altitude per Alex 2026-07-21 correction:
-    // LiquidTestBundle::Transport::transport returns Imperfect<State,
+    // FluxConstraint::Transport::transport returns Imperfect<State,
     // Infallible, ScalarLoss>. Liquid<ScalarLoss> flows through
     // Fiber<[f64;4]> per the Bundle Tower supertrait chain
     // (Transport → Gauge → Connection → Fiber → State). This IS
     // Fiber<T> sampling, not stepping-stone on raw magnitudes.
     //
-    // Non-abelian semantic property: LiquidTestBundle transport loss
+    // Non-abelian semantic property: FluxConstraint transport loss
     // depends on strategy.value() NOT state, so commutator between two
     // bundles with SAME strategy vanishes (both produce identical
     // holonomy → metric distance zero → Fail). Commutator between
@@ -875,14 +875,14 @@ pub fn enact_spec_property(prop: &SpecProperty, args: &[String]) -> Verdict {
                     prop.name, theta
                 ));
             }
-            // Construct two LiquidTestBundle instances at the Bundle
+            // Construct two FluxConstraint instances at the Bundle
             // Tower altitude. Strategy values wrap mod 4 per Cyclic<4>.
-            let bundle_a = prismqueer::bundle::examples::LiquidTestBundle::with_strategy(strategy_a);
-            let bundle_b = prismqueer::bundle::examples::LiquidTestBundle::with_strategy(strategy_b);
+            let bundle_a = prismqueer::bundle::examples::FluxConstraint::with_strategy(strategy_a);
+            let bundle_b = prismqueer::bundle::examples::FluxConstraint::with_strategy(strategy_b);
             let state: [f64; 4] = [0.0, 0.0, 0.0, 0.0];
-            let commutator = prismqueer::liquid::commutator(&bundle_a, &bundle_b, &state);
+            let commutator = prismqueer::flux::commutator(&bundle_a, &bundle_b, &state);
             let theta_holonomy = prismqueer::ScalarLoss::new(theta);
-            let pv = prismqueer::liquid::pillar::algedonic(&commutator, &theta_holonomy);
+            let pv = prismqueer::flux::pillar::algedonic(&commutator, &theta_holonomy);
             return property_verdict_to_verdict(pv, &prop.name);
         }
     }
@@ -952,7 +952,7 @@ fn property_verdict_to_verdict(pv: prismqueer::PropertyVerdict, prop_name: &str)
 /// BEAM composition, bundle-tower connections, Lawvere fixed-point,
 /// Förster's imperative, etc.).
 ///
-/// Substrate composition: iter 6+ composes over `prismqueer::liquid::
+/// Substrate composition: iter 6+ composes over `prismqueer::flux::
 /// pillar` (which supplies domain-agnostic pillars: dispatch_ambiguity,
 /// algedonic, viability, fold). This module holds mirror-domain-specific
 /// classifier witnesses (VSM, aikido, paradox, consent, redirect).
@@ -1025,7 +1025,7 @@ pub mod pillar {
         // Byte-visible mutation-marker check (Rice-safe): the OID must
         // NOT contain any of the known-mutation sentinels. Real body-
         // composition against fractal::Crystal.oid content-addressing
-        // invariant arrives when prismqueer::liquid::Sample+Arbitrary
+        // invariant arrives when prismqueer::flux::Sample+Arbitrary
         // primitives land (Task #263 pending).
         if oid.contains("mutated") || oid.contains("revised") || oid.contains("deleted") {
             return Verdict::Fail(format!(
@@ -2225,7 +2225,7 @@ project demo {
     // dispatch_spec_property arm 4: algedonic_of_magnitude (Fiber<T>-
     // sampling STEPPING STONE per Mara §2.3 dispatch table row 1).
     // Raw magnitudes, no bundle sampling; full Fiber<T>-flow via
-    // pillar::algedonic with LiquidTestBundle commutators forward-
+    // pillar::algedonic with FluxConstraint commutators forward-
     // promised iter 11+.
     // -----------------------------------------------------------------
 
@@ -2346,7 +2346,7 @@ project demo {
     // dispatch_spec_property arm 5: viability_of_magnitudes (Fiber<T>-
     // sampling STEPPING STONE per Mara §2.3 dispatch table row 2).
     // Raw magnitudes over rolling window; no bundle sampling yet.
-    // Fiber<T>-flow via pillar::viability with LiquidTestBundle
+    // Fiber<T>-flow via pillar::viability with FluxConstraint
     // commutator histories forward-promised iter 12+.
     // -----------------------------------------------------------------
 
@@ -2643,7 +2643,7 @@ project demo {
 
     // -----------------------------------------------------------------
     // dispatch_spec_property arm 7: TRUE Fiber<T>-flow via
-    // pillar::algedonic with LiquidTestBundle Commutator per Alex
+    // pillar::algedonic with FluxConstraint Commutator per Alex
     // 2026-07-21 correction. Culminating iter 13: closes the
     // stepping-stone-to-full-flow arc.
     // -----------------------------------------------------------------
@@ -2661,7 +2661,7 @@ project demo {
 
     #[test]
     fn dispatch_spec_property_bundle_commutator_different_strategy_above_theta_passes() {
-        // Different strategies with LiquidTestBundle: transport loss
+        // Different strategies with FluxConstraint: transport loss
         // depends on strategy.value() as f64. Commutator between
         // strategies 1 and 3: metric distance between two ScalarLoss
         // values (1.0 vs 3.0) is 2.0. theta=0.5 → magnitude 2.0 > 0.5
