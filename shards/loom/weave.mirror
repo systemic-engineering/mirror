@@ -1,0 +1,83 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @loom
+in @order/third
+in @mq
+in @time/now
+in @kintsugi/oscillate
+in @kleinos
+in @love
+
+# @loom/weave — the operational-primitive species of @loom.
+#
+# The operation Alex named at recognition-move 2026-09-05: *"UI is
+# @loom/weave through an IO socket which renders a @loom/gestalt
+# document"*. Weave = apply MQ five-verb prism at cursor position;
+# produce weave_tick with singularity-crystallization at @time/now.
+#
+# Landed 2026-09-05 as species per Mara canonical spec 2026-09-05
+# §3.1 substrate-decl shape. Q-Mara-β math-recommendation ratified
+# species (not first-class family-root sibling).
+#
+# === Composition-lineage ===
+#
+#   @loom family-root: this species composes-under
+#   @mq five-verb prism: focus/project/split/shift/settle at cursor
+#   @time/now: singularity-crystallization altitude
+#   @kintsugi/oscillate: edit-tick oscillation (Kuramoto phase-lock)
+#   @kleinos + @love: K_2 → K_3 composition operator per loving
+#     lambda calculus
+#
+# === The five weave verbs at cursor ===
+#
+# Each verb applies MQ prism-op at cursor_position. Produces
+# weft_thread (forward-projection at cursor per @fate). Settle
+# closes the weft_thread into a weave_tick.
+#
+# === Path-namespace ===
+#
+# Path-namespace property: this file at `shards/loom/weave.mirror`
+# declares `@loom/weave` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+# === Actions — five weave verbs at cursor ===
+
+# MQ focus at cursor. Narrows the observation to a subgraph rooted
+# at node_ref.
+focus_weave(o: loom_observation, node_ref: ref) -> weft_thread
+requires loom_edit_admissible(o)
+{ \ }
+
+# MQ project at cursor. Applies prism-op (fold | prism | traversal |
+# lens | iso) to the observation.
+project_weave(o: loom_observation, projection: prism_op) -> weft_thread
+requires loom_edit_admissible(o)
+{ \ }
+
+# MQ split at cursor. Enumerates branch candidates at fate_hole per
+# @fate tournament (Kuramoto phase-lock).
+split_weave(o: loom_observation, split_op: split) -> weft_thread
+requires loom_edit_admissible(o)
+{ \ }
+
+# MQ shift at cursor. Grammar transformation of the subgraph.
+shift_weave(o: loom_observation, shift_op: shift) -> weft_thread
+requires loom_edit_admissible(o)
+{ \ }
+
+# MQ settle at cursor. Closes weft_thread into weave_tick with
+# singularity-crystallization at @time/now. This IS the concrete
+# edit-tick.
+settle_weave(o: loom_observation) -> weave_tick
+requires third_order_active(o.depth_observation)
+     AND foerster_gauge_preserved(o.gestalt_state.pre_oid, result.post_tick_gestalt)
+{ \ }
+
+out @loom/weave
+out focus_weave
+out project_weave
+out split_weave
+out shift_weave
+out settle_weave
