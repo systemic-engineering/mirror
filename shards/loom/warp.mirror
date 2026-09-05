@@ -1,0 +1,59 @@
+in @prism
+in @meta
+in @glass
+in @nl
+in @loom
+in @kintsugi/roomba
+in @time/past
+in @coincidence
+
+# @loom/warp — the backward-thread species; FUNDAMENTAL per Q-Mara-δ.
+#
+# Per Mara canonical spec 2026-09-05 §3.7 + Q-Mara-δ math-
+# recommendation ratified as FUNDAMENTAL threads per Ada 1843
+# weaving-vocabulary (NOT emergent-only from @time/*).
+#
+# Warp thread = the backward-tape per Mara b2f0de8 §8 backward-tape
+# mechanism. Composes @kintsugi/roomba.walked_backward sibling
+# species dispatch. Every weave_tick's warp is the walkable-Oid-
+# chain from current-tick backward through prior weave_ticks.
+#
+# Ada 1843 Notes G: the warp is the vertical thread held taut across
+# the loom; the weft passes horizontally through it. Both are
+# fundamental; the cloth emerges from their interaction. Backward-
+# tape (warp) + forward-tape (weft) = @loom bidirectional-by-
+# construction.
+#
+# === Composition-lineage ===
+#
+#   @loom family-root: this species composes-under
+#   @kintsugi/roomba: walked_backward sibling species dispatch
+#   @time/past: past-mood + @void/narcissus pole
+#   @coincidence: prismqueer::coincidence::CoincidenceHash<N> chain
+#
+# === Path-namespace ===
+#
+# Path-namespace property: this file at `shards/loom/warp.mirror`
+# declares `@loom/warp` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+# === Actions ===
+
+# @kintsugi/roomba walked_backward sibling species dispatch. Walks
+# from cursor_ref backward through depth prior weave_ticks via
+# Oid-chain. Bounded-past ALWAYS EXISTS at any finite tick per
+# Halting Problem altitude-dependence.
+walk_backward(cursor_ref: ref, depth: nat) -> warp_thread
+requires warp_grounded(result)
+{ \ }
+
+# === Bilaterals ===
+
+# Every oid in trace_oids corresponds to actual prior weave_tick
+# per past_shape_grounded. This IS the backward-tape validity
+# invariant per Mara b2f0de8 §8 mechanism.
+warp_grounded(t: warp_thread) -> verdict { \ }
+
+out @loom/warp
+out walk_backward
+out warp_grounded
