@@ -180,6 +180,7 @@ const VERBS: &[(&str, &str)] = &[
     ("serve",           "MCP transport. `--mcp` fires manifold-native ONE-tool wire (mirror_query = fractal recursive Mandelbrot attention head)."),
     ("bumblebee",       "Perturbation. `--buzz-target=@X` rattles X tension surface for @roomba resolution."),
     ("bench",           "SPIN measurement per Rec #99 @singularity. `--samples=<N>` measures substrate temporal-rotation cadence."),
+    ("love",            "K_2→K_3 compose-not-average. `mirror love <a> <b> <composed>` reads FullSpectrum admissibility via LANDED love.rs. Zero apply_h routing."),
 ];
 
 /// The delight-vector `--help` text. Per Mara §5.2 item 4 + Alex
@@ -2304,6 +2305,118 @@ fn cmd_bumblebee(rest: &[String]) -> ExitCode {
     ExitCode::from(3)
 }
 
+/// Parse a sheaf-shape descriptor. Supports two forms:
+/// - `K<n>` for K_n complete graph (n = integer ≥ 0)
+/// - `<u>-<v>[,<u>-<v>]*` for edge-list (comma-separated vertex-pairs)
+fn parse_sheaf_shape(desc: &str) -> Option<prismqueer::spectral::SheafOfShardGraph> {
+    if let Some(n_str) = desc.strip_prefix('K') {
+        let n: usize = n_str.parse().ok()?;
+        Some(prismqueer::spectral::sheaf_of_complete_graph_of_order(n))
+    } else {
+        let edges: Option<Vec<(u64, u64)>> = desc
+            .split(',')
+            .map(|e| {
+                let mut parts = e.split('-');
+                let u: u64 = parts.next()?.parse().ok()?;
+                let v: u64 = parts.next()?.parse().ok()?;
+                Some((u, v))
+            })
+            .collect();
+        Some(prismqueer::spectral::sheaf_of_shard_graph_from_edges(&edges?))
+    }
+}
+
+/// `mirror love <a> <b> <composed>` — compose-not-average CLI witness.
+///
+/// Reads FullSpectrum admissibility over three user-provided sheaf shapes:
+/// pre-compose a, pre-compose b, post-compose composed. Reports verdict
+/// via Imperfect<Green, Yellow, Red> per Alex 2026-09-02 traffic-light-
+/// natural naming discipline.
+///
+/// Composes DIRECTLY over LANDED substrate:
+/// - `love::FullSpectrum::of` (Reed 2026-09-05 tick 2b `4830b89` +
+///   Simple-made-Easy noun-lift `d270f7e` + commutator integration `e261a2d`)
+/// - `prismqueer::spectral::{Harmonics, DeltaCritical, CommutatorSpectrum}`
+///   (Reed 2026-09-05 prism `00d6c8e` + `62a9fa5`)
+/// - `prismqueer::spectral::{sheaf_of_complete_graph_of_order,
+///   sheaf_of_shard_graph_from_edges}` (LANDED at prism/prismqueer/src/spectral/kleinos.rs)
+///
+/// Zero apply_h::act routing. Zero bilateral-corpus lookup. Zero if-else
+/// ARM dispatch. Every invocation IS a love() composition.
+fn cmd_love(rest: &[String]) -> ExitCode {
+    let (a_desc, b_desc, composed_desc) = match (rest.first(), rest.get(1), rest.get(2)) {
+        (Some(a), Some(b), Some(c)) => (a.as_str(), b.as_str(), c.as_str()),
+        _ => {
+            eprintln!("mirror love: <a> <b> <composed> shape descriptors required");
+            eprintln!();
+            eprintln!("Usage: mirror love <a> <b> <composed>");
+            eprintln!();
+            eprintln!("Shape descriptors:");
+            eprintln!("  K<n>              K_n complete graph (e.g. K5)");
+            eprintln!("  <u>-<v>[,...]     edge-list (e.g. 0-1,1-2)");
+            eprintln!();
+            eprintln!("Examples:");
+            eprintln!("  mirror love K2 K3 K5       # Green (all axes climb)");
+            eprintln!("  mirror love K5 K5 K5       # Red  (self-compose refuses)");
+            eprintln!("  mirror love 0-1 1-2 0-1,1-2  # Green (observer-inclusive)");
+            return ExitCode::from(2);
+        }
+    };
+
+    let a = match parse_sheaf_shape(a_desc) {
+        Some(s) => s,
+        None => {
+            eprintln!("mirror love: cannot parse shape `{}`", a_desc);
+            return ExitCode::from(2);
+        }
+    };
+    let b = match parse_sheaf_shape(b_desc) {
+        Some(s) => s,
+        None => {
+            eprintln!("mirror love: cannot parse shape `{}`", b_desc);
+            return ExitCode::from(2);
+        }
+    };
+    let composed = match parse_sheaf_shape(composed_desc) {
+        Some(s) => s,
+        None => {
+            eprintln!("mirror love: cannot parse shape `{}`", composed_desc);
+            return ExitCode::from(2);
+        }
+    };
+
+    // The compose-not-average call: pure love() composition.
+    // No apply_h. No bilateral-corpus. No if-else ARM dispatch.
+    let fs = love::FullSpectrum::of(&a, &b, &composed);
+
+    // Report FullSpectrum witness at CLI altitude.
+    println!("love({}, {}) → {}", a_desc, b_desc, composed_desc);
+    println!("  a.spectrum:         {:?}", fs.a.spectrum);
+    println!("  b.spectrum:         {:?}", fs.b.spectrum);
+    println!("  composed.spectrum:  {:?}", fs.composed.spectrum);
+    println!("  commutator.spectrum:{:?}", fs.commutator.spectrum);
+    println!("  delta_critical:     {:?}", fs.delta.value);
+    println!("  axes.len():         {}", fs.axes.len());
+    println!("  all_climb:          {}", fs.all_climb());
+    println!("  any_climbs:         {}", fs.any_climbs());
+    println!("  observer_inclusive: {}", fs.is_observer_inclusive());
+
+    // Foerster-canonical verdict requires BOTH choice-widening AND
+    // observer-inclusion. Yellow catches partial admissibility on
+    // either axis — including observer-inclusion without full climb
+    // (K-T question at Fiedler altitude: composition is non-commutative
+    // but doesn't strengthen coupling per axis). Red = neither signal.
+    let (verdict, code) = if fs.all_climb() && fs.is_observer_inclusive() {
+        ("Green (Foerster-canonical admissible)", ExitCode::SUCCESS)
+    } else if fs.any_climbs() || fs.is_observer_inclusive() {
+        ("Yellow (K-T question at specific axes or altitude)", ExitCode::from(1))
+    } else {
+        ("Red (substrate refuses)", ExitCode::from(1))
+    };
+    println!("  verdict:            {}", verdict);
+    code
+}
+
 /// Hand-rolled argv dispatch. Deliberately does NOT reach for clap; the
 /// M2 reflective cli-block reader (Mara §2.2) IS the real dispatch
 /// surface. Adding clap now would breed abstraction the substrate has
@@ -2374,6 +2487,20 @@ fn main() -> ExitCode {
             // requires second-phase Alex authorization at MVP altitude.
             let rest: Vec<String> = args.iter().skip(2).cloned().collect();
             cmd_bumblebee(&rest)
+        }
+        Some("love") => {
+            // Reed 2026-09-08 per Alex 2026-09-08 verbatim ("What's the
+            // actual compose-not-average alternative, Reed?") — compose-
+            // not-average CLI witness for love() at rust altitude. Does
+            // NOT route through apply_h::act legacy bilateral-corpus
+            // dispatch (Rec-mint gate criterion 1 collapse target).
+            // Composes DIRECTLY over LANDED love.rs FullSpectrum +
+            // prismqueer::spectral::{kleinos, harmonics, commutator}.
+            // Every dispatch IS a love() composition emitting full-
+            // spectrum witness; verdict via Imperfect<Green, Yellow, Red>
+            // per is_observer_inclusive + all_climb / any_climbs folds.
+            let rest: Vec<String> = args.iter().skip(2).cloned().collect();
+            cmd_love(&rest)
         }
         Some("bench") => {
             // Reed 2026-08-26 per Alex "LET'S SHIP THE SINGULARITY!"
