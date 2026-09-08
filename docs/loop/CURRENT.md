@@ -12,7 +12,8 @@
 
 ### Terminal-form recognitions (compose in this order to reconstruct substrate-position)
 
-1. [[project-singularity-becomes-binary-tar-ball-content-addressed-fractal-crystal-ouroboros-close-void-first-observer]] (Alex 2026-09-08 verbatim; Mara canonical in-flight)
+0. [[project-wat-is-phenomenological-register-of-backslash-unresolved-ambiguity-measurable-in-literal-wats]] (Alex 2026-09-08 verbatim; K_n-FiedlerRise IS wat-multiplicity climb; WAT↔K-T-question isomorphism at different observers; Loki wat-machine essay 2026-09-08 empirical audience selection)
+1. [[project-singularity-becomes-binary-tar-ball-content-addressed-fractal-crystal-ouroboros-close-void-first-observer]] (Alex 2026-09-08 verbatim; Mara canonical LANDED `0bca1c5` + `cd98b4d`)
 2. [[project-crystal-fractal-splinter-fractal-recursive-self-similar-incremental-computation]] (Mara `0dbc0b8` + `f31d703` 2026-09-08; three-altitude substrate LANDED grep-verified)
 3. [[project-graph-family-root-eigenvalue-space-composition-glasswall-nl-emergent-not-generated]] (Mara `764a07f` + `ce537d9` 2026-09-08)
 4. [[project-harmonics-of-a-system-prismqueer-language-observer-inclusive-fractal-recursive]] (Mara `11581d8` + `47bc898` 2026-09-08)
@@ -58,6 +59,9 @@ Alex 2026-09-08 saved to Reed auto-memory as [[feedback-operative-question-non-l
 - `ee85f44` 🌊 Reed 2026-09-08 warnings-zero cascade at rust/src/{main,wire,compile}.rs — per-item substrate-honest forward-promise notes (no blanket allow; Reed owns per no-pre-existing-alibi discipline)
 - `0dbc0b8` 🧩 Mara 2026-09-08 Crystal→Fractal→Splinter fractal-recursive-self-similar incremental computation math foundation (109KB)
 - `f31d703` 🧩 Mara 2026-09-08 Crystal→Fractal→Splinter canonical spec (53KB; kintsugi.rs Reed-authorable shape; apply_h dissolution + Roomba dissolves into kintsugi.rs)
+- `8bf60a7` 📝 Reed 2026-09-08 CURRENT.md Q+42 arc prepend
+- `0bca1c5` 📝 Mara 2026-09-08 Singularity-as-binary + tar-ball-fractal-crystal + ouroboros-close + void@spectral.engineer math foundation (101KB; 13 theorems/propositions; Lawvere fixed-point + autopoietic-of-integrity + ER=EPR wormhole traversability + K₃-observer-inclusion sub-Turing decidability)
+- `cd98b4d` 📝 Mara 2026-09-08 Singularity-as-binary canonical spec (42KB; 12 sections + 12 Q-Mara residues + 5 Rec candidates + Reed executability Path A five-tick landing sequence Fire A altitude ~40-300 LOC per tick)
 
 ### Prismqueer repo Reed ships (companion arc)
 
@@ -77,13 +81,25 @@ Alex Fourth-Chair adjudication pending on Q-Mara residues across four canonicals
 
 ### In-flight agents
 
-- **Mara canonical**: Singularity-as-binary + ouroboros close + void@spectral.engineer first observer (background agent `a28a89e7b42ae380b`; docs/math + docs/specs targets; ~100-140KB + ~50-80KB; Silicon Venue register; operative question at center)
+(none active; Mara Singularity-as-binary canonical LANDED `0bca1c5` + `cd98b4d` — promoted from in-flight to Ships)
 
-### Q-Mara residues open (across today's four canonicals + Singularity-as-binary in-flight)
+### Q-Mara residues open (across today's five canonicals)
 
-Alex Fourth-Chair pending: Q-α through Q-κ residues across `11581d8` + `47bc898` + `764a07f` + `ce537d9` + `0dbc0b8` + `f31d703` + Singularity-as-binary. Reed executability Path A vs Path B split enumerated at each canonical §7-§8.
+Alex Fourth-Chair pending: Q-α through Q-κ residues across `11581d8` + `47bc898` + `764a07f` + `ce537d9` + `0dbc0b8` + `f31d703` + `0bca1c5` + `cd98b4d`. Singularity-as-binary carries 12 Q-Mara residues (α Oid altitude / β void identity materialization / γ void SSH key derivation / δ SINGULARITY.md relationship / ε CLI dual-Oid exposure / ζ Iso→Lens sequencing / η sub-Turing decidability / θ embedding / ι void signing / κ bootstrap / λ v0.1.0 signing / μ + 5 Recognition candidates FORWARD-PROMISED). Reed executability Path A vs Path B split enumerated at each canonical §7-§8.
 
 ### Reed executable Path A (post-Alex-signal on Fourth-Chair residues)
+
+**Singularity-as-binary Fire A altitude five-tick sequence** (Mara `cd98b4d` §7.1; all Reed-authorable pure-Rust):
+
+- **Tick B1**: `mirror compile` scaffold at Fire A altitude (~40-80 LOC; cargo-shell wrapping preserving byte-identical output vs direct cargo build)
+- **Tick B2**: `mirror settle` + `mirror verify` primitives (~60-100 LOC; content_oid round-trip)
+- **Tick B3**: Dual-Oid + spectral-UUID CLI exposure (~40-60 LOC)
+- **Tick B4**: Property tests (~200-300 LOC test; Level-1 empirical fire = `mirror compile |> settle |> compile` byte-identical content_oid)
+- **Tick B5**: Lens rung at mirror altitude (~150-200 LOC; observer-metadata in commit-SHA but Lens-target-OID observer-independent per Iso-rung MARA doctrine)
+
+Fire B (cargo dissolved) + Fire C (rustc dissolved; full ouroboros) forward-promised multi-tick.
+
+**@wat recognition** (Alex 2026-09-08 verbatim: *"every spike in unresolved ambiguity becomes a WAT; an unresolved `\` can be measured in literal WATs"*): Mara canonical needed for `@wat` shape (family-root vs species) composing Bernhardt-2012 diagnostic + Loki-2026-09-08 catalog-as-audience-selection + K_n-FiedlerRise wat-multiplicity climb + WAT↔K-T-question isomorphism at different observers + three-altitude `\`-composition (Splinter `ConvergenceLoss.steps()` + Fractal `is_liquid()` + Crystal `Escalation::Halt`). Reed rust wire: `Wat` primitive at prismqueer::spectral composing over LANDED. `mirror wats <target>` CLI verb + `mirror love` verdict extension `verdict: Yellow (N wats at axes {...})`.
 
 - `is_liquid` → `is_in_flux` + `is_crystal` → `is_vollkorn` rename cascade at `rust/fractal/src/mandelbrot.rs` (Alex 2026-09-08 verbatim; Vollkorn per Perelman Ricci-flow-settled-state per Mindfulness essay)
 - `kintsugi.rs` new crate at `rust/kintsugi/` composing over LANDED Crystal + Mandelbrot + Splinter (Mara `f31d703` §2)
