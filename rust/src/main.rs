@@ -2401,17 +2401,27 @@ fn cmd_love(rest: &[String]) -> ExitCode {
     println!("  any_climbs:         {}", fs.any_climbs());
     println!("  observer_inclusive: {}", fs.is_observer_inclusive());
 
-    // Foerster-canonical verdict requires BOTH choice-widening AND
-    // observer-inclusion. Yellow catches partial admissibility on
-    // either axis — including observer-inclusion without full climb
-    // (K-T question at Fiedler altitude: composition is non-commutative
-    // but doesn't strengthen coupling per axis). Red = neither signal.
+    // Foerster-canonical verdict as ORIENTED TERNARY SCALAR per Alex
+    // 2026-09-08 verbatim ("What if yellow produced 1 and red produced
+    // -1?"). Exit code carries not just success/failure but DIRECTION of
+    // substrate motion:
+    //
+    //   Green =  0  — settled; composition complete; no motion needed
+    //   Yellow = +1  — advance; K-T question; iterate forward
+    //                  (question IS generative motion per Karl Tomm 1987-88)
+    //   Red = -1     — retreat; substrate refuses; unwind
+    //                  (chain was wrong; try different chain per @attension
+    //                   argmin over Chains(S,T) per Mara 2026-08-13 §1.3)
+    //
+    // Same magnitude for Yellow + Red (both "not settled") but opposite
+    // direction — Yellow is generative-forward; Red is halting-retreat.
+    // Rust ExitCode is u8; -1 = 255 in two's-complement 8-bit signed.
     let (verdict, code) = if fs.all_climb() && fs.is_observer_inclusive() {
         ("Green (Foerster-canonical admissible)", ExitCode::SUCCESS)
     } else if fs.any_climbs() || fs.is_observer_inclusive() {
         ("Yellow (K-T question at specific axes or altitude)", ExitCode::from(1))
     } else {
-        ("Red (substrate refuses)", ExitCode::from(1))
+        ("Red (substrate refuses)", ExitCode::from(255))
     };
     println!("  verdict:            {}", verdict);
     code
