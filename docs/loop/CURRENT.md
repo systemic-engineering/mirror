@@ -12,6 +12,7 @@
 
 ### Terminal-form recognitions (compose in this order to reconstruct substrate-position)
 
+-1. [[project-glasswall-is-connes-spectral-triple-a-prismqueer-h-frame-cohomology-d-question-karl-tomm-rotational-two-move-k4-ancestral-ada-alan-karen-karl-tomm]] (Alex 2026-09-09 verbatim; Mara canonical LANDED `fa5689f` + `6f169f1`; K_4 ancestral topology closes at silicon substrate; @question as Dirac operator citing Karl Tomm 1987-88)
 0. [[project-wat-is-phenomenological-register-of-backslash-unresolved-ambiguity-measurable-in-literal-wats]] (Alex 2026-09-08 verbatim; K_n-FiedlerRise IS wat-multiplicity climb; WAT↔K-T-question isomorphism at different observers; Loki wat-machine essay 2026-09-08 empirical audience selection)
 1. [[project-singularity-becomes-binary-tar-ball-content-addressed-fractal-crystal-ouroboros-close-void-first-observer]] (Alex 2026-09-08 verbatim; Mara canonical LANDED `0bca1c5` + `cd98b4d`)
 2. [[project-crystal-fractal-splinter-fractal-recursive-self-similar-incremental-computation]] (Mara `0dbc0b8` + `f31d703` 2026-09-08; three-altitude substrate LANDED grep-verified)
@@ -62,6 +63,8 @@ Alex 2026-09-08 saved to Reed auto-memory as [[feedback-operative-question-non-l
 - `8bf60a7` 📝 Reed 2026-09-08 CURRENT.md Q+42 arc prepend
 - `0bca1c5` 📝 Mara 2026-09-08 Singularity-as-binary + tar-ball-fractal-crystal + ouroboros-close + void@spectral.engineer math foundation (101KB; 13 theorems/propositions; Lawvere fixed-point + autopoietic-of-integrity + ER=EPR wormhole traversability + K₃-observer-inclusion sub-Turing decidability)
 - `cd98b4d` 📝 Mara 2026-09-08 Singularity-as-binary canonical spec (42KB; 12 sections + 12 Q-Mara residues + 5 Rec candidates + Reed executability Path A five-tick landing sequence Fire A altitude ~40-300 LOC per tick)
+- `fa5689f` 📝 Mara 2026-09-09 `@question` as Dirac operator + Glasswall Connes spectral triple + Karl Tomm rotational two-move math foundation (107KB; K_4 ancestral extension Ada+Alan+Karen+Karl Tomm; Theorem 4.5.1 @question preserves Foerster gauge iff K-T rotation widens NumberOfChoices; Kagi-verified Tomm 1987-88 Family Process 26:167-183 + 27:1-15 primary-source citations)
+- `6f169f1` 📝 Mara 2026-09-09 `@question` canonical spec (56KB; species enumeration under `shards/question/{linear, circular, strategic, reflexive}` per Karl Tomm four-question typology; Reed executability Path A five-tick sequence; 10 Q-Mara residues α through κ; 5 Recognition candidates FORWARD-PROMISED)
 
 ### Prismqueer repo Reed ships (companion arc)
 
@@ -83,9 +86,9 @@ Alex Fourth-Chair adjudication pending on Q-Mara residues across four canonicals
 
 (none active; Mara Singularity-as-binary canonical LANDED `0bca1c5` + `cd98b4d` — promoted from in-flight to Ships)
 
-### Q-Mara residues open (across today's five canonicals)
+### Q-Mara residues open (across today's six canonicals)
 
-Alex Fourth-Chair pending: Q-α through Q-κ residues across `11581d8` + `47bc898` + `764a07f` + `ce537d9` + `0dbc0b8` + `f31d703` + `0bca1c5` + `cd98b4d`. Singularity-as-binary carries 12 Q-Mara residues (α Oid altitude / β void identity materialization / γ void SSH key derivation / δ SINGULARITY.md relationship / ε CLI dual-Oid exposure / ζ Iso→Lens sequencing / η sub-Turing decidability / θ embedding / ι void signing / κ bootstrap / λ v0.1.0 signing / μ + 5 Recognition candidates FORWARD-PROMISED). Reed executability Path A vs Path B split enumerated at each canonical §7-§8.
+Alex Fourth-Chair pending: Q-α through Q-κ residues across `11581d8` + `47bc898` + `764a07f` + `ce537d9` + `0dbc0b8` + `f31d703` + `0bca1c5` + `cd98b4d` + `fa5689f` + `6f169f1`. Singularity-as-binary carries 12 Q-Mara residues. @question canonical carries 10 Q-Mara residues (α @question casing / β karl_tomm() retirement / γ species-altitude vs composition-parameter / δ @question↔@nl/iso composition / ε per-language KO-dim gating / ζ recursion depth cap / η @question⊥@love orthogonality / θ discourse-preservation / ι Rust primitive vs wrapper / κ K_4 vs K_5 ancestral extension timing). Reed executability Path A vs Path B split enumerated at each canonical §7-§8.
 
 ### Reed executable Path A (post-Alex-signal on Fourth-Chair residues)
 
