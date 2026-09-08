@@ -86,6 +86,11 @@ pub fn emit(value: &Value) -> Result<String, String> {
 /// # Errors
 ///
 /// Same as [`emit`] — only fails on NaN/Infinity float components.
+///
+/// Forward-promised: consumed by future @graph/glasswall projection layer
+/// (Mara canonical 2026-09-08 in flight) + MCP verbose-output mode; wire
+/// substrate keeps it public per Simple-made-Easy noun-vs-verb discipline.
+#[allow(dead_code)]
 pub fn emit_pretty(value: &Value) -> Result<String, String> {
     serde_json::to_string_pretty(value).map_err(|e| format!("wire::emit_pretty: {}", e))
 }

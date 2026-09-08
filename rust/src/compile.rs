@@ -121,6 +121,14 @@ pub struct PropertyDischarge {
 ///   unresolvable Defer chain that names an authorship territory not
 ///   yet minted). Distinct from Escalate: Halt is a boundary signal
 ///   to the caller, not a refusal.
+// Forward-promised: Escalation carriers + accessors compose with apply_h
+// collapse (retiring bilateral-corpus lookup) + error-as-question spec
+// (docs/specs/error-as-question.md; Mara 2026-06-01) — Halt is the
+// algedonic-bypass carrier for substrate-critical failures. Not yet wired
+// to a caller that discharges beyond is_continue; is_escalate + is_halt +
+// Halt(String) preserved as SAGA-chain-of-Crystals loop substrate per
+// docblock (line ~119). Substrate-honest forward-promise, not scaffolding.
+#[allow(dead_code)]
 #[derive(Debug, Clone, PartialEq)]
 pub enum Escalation {
     Continue,
@@ -128,6 +136,7 @@ pub enum Escalation {
     Halt(String),
 }
 
+#[allow(dead_code)]
 impl Escalation {
     pub fn is_continue(&self) -> bool {
         matches!(self, Escalation::Continue)

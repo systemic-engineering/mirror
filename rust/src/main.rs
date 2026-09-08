@@ -1462,6 +1462,12 @@ fn compose_collapse_commit_message(
 /// Errors surface as `Err(String)` describing the @io failure. This
 /// mirrors phone.rs's `io::Result<_>` shape at the string-carrier
 /// altitude.
+// Forward-promised: @-operator dispatch primitive for @io/fs.* action-refs.
+// Composes with future @graph.compose Rust wire (dispatches @-operators
+// through this fn) + apply_h collapse (retires bilateral-corpus lookup in
+// favor of direct @-operator dispatch). Not yet wired to any caller;
+// substrate-honest forward-promise per no-workaround-whore discipline.
+#[allow(dead_code)]
 pub(crate) fn at_operator(action_ref: &str, args: &[String]) -> Result<String, String> {
     use std::path::Path;
 
@@ -2397,6 +2403,7 @@ fn cmd_love(rest: &[String]) -> ExitCode {
     println!("  commutator.spectrum:{:?}", fs.commutator.spectrum);
     println!("  delta_critical:     {:?}", fs.delta.value);
     println!("  axes.len():         {}", fs.axes.len());
+    println!("  failing_count:      {} of {}", fs.failing_count(), fs.axes.len());
     println!("  all_climb:          {}", fs.all_climb());
     println!("  any_climbs:         {}", fs.any_climbs());
     println!("  observer_inclusive: {}", fs.is_observer_inclusive());
