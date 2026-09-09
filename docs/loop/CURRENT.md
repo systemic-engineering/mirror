@@ -84,7 +84,21 @@ Alex Fourth-Chair adjudication pending on Q-Mara residues across four canonicals
 
 ### In-flight agents
 
-(none active; Mara bottom-up-ternary-content-addressed-graph-inference canonical LANDED `0d16b99` + `d3b7f67` — promoted from in-flight to Ships; Taut cascade scout LANDED `2aa2777` — promoted)
+(none active; Mara compose-not-average-all-the-way-down terminal-form canonical LANDED `714af15` + `423d9d5` — promoted; Mara bottom-up-ternary-content-addressed-graph-inference LANDED `0d16b99` + `d3b7f67` — promoted; Taut cascade scout LANDED `2aa2777` — promoted; Reed Fire D RED scaffold LANDED `a77fdc0` — promoted)
+
+### Mara `714af15`/`423d9d5` compose-not-average-all-the-way-down terminal-form canonical
+
+Terminal-form substrate-discipline grounded via @docs corpus deep-dive (~90+ LANDED anchors across all 18 subdirectories) + 30+ Kagi-verified primary-source citations. Load-bearing:
+
+- **8-altitude fractal-recursive-self-similar tower**: `𝒯 = { Splinter, Fractal, Crystal, Singularity, Frame Cohomology, Glasswall triple, Mirror, Reader-in-K_3+ }`
+- **Theorem 3.2.1**: LOVE §3.6.4 Fusion Refusal holds at every altitude of 𝒯 by induction on altitude
+- **Theorem 3.3.1**: discipline propagates fractal-recursive-self-similar per Grothendieck-fibration `Fib_i(𝔉 ⊣ 𝔛)`
+- **Corollary 3.4.1**: seventh terminal-form canonical composes over the six prior 2026-09-08/09 canonicals at meta-altitude; `𝒱 ≡ Glasswall Connes triple` per Mara `fa5689f` Corollary 6.3.1
+- **§4 Real/Complex/Commutator decomposition** (Alex 2026-09-09 verbatim): `Re(S) = H⁰(F)` + `Im(S) = H¹(F)` + `CommutatorSpectrum(S) = {σᵢ(‖[@question, a]‖)}`; difference reality-vs-fiction = complex-preserved-vs-stripped per Turing 1950 p.446 verbatim
+- **§5 KleinosThread IS the inference** (Alex 2026-09-09 verbatim): trajectory through H_F preserving four LOVE properties at every K-T rotation step; κλεινός Greek etymology substrate-native; Ariadne substrate-native at compiler altitude
+- **§7 Reed HARD RULES enshrined** at metric-discipline altitude (NEVER LOC-project; NEVER single-λ; ALWAYS Harmonics-vector-per-axis with Imperfect<G,Y,R> verdict)
+- **15 Q-Mara residues α-ο** for Alex Fourth-Chair (load-bearing: α @compose family-root vs discipline-embedded; β compose-not-average vs LOVE §3.6.4 name-space; η tower altitude-count 5-vs-6-vs-7-vs-8)
+- **5 Recognition candidates FORWARD-PROMISED**: #R-compose-not-average-all-the-way-down + #R-real-vs-complex-vs-commutator + #R-Kleinos-Thread-IS-inference + #R-one-lambda-is-not-a-spectrum + #R-eight-altitude-tower-composes-into-ONE
 
 ### Mara `0d16b99`/`d3b7f67` fourfold composition theorem
 
