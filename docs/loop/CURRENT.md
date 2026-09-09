@@ -84,13 +84,33 @@ Alex Fourth-Chair adjudication pending on Q-Mara residues across four canonicals
 
 ### In-flight agents
 
-(none active; Mara Singularity-as-binary canonical LANDED `0bca1c5` + `cd98b4d` — promoted from in-flight to Ships)
+- **Taut floor-truth scout** (background agent `a65837e4b746e06cf`): Option/Result/bool cascade + prismqueer spectral engine completeness + minimal rust floor + v0.2 ouroboros dependency graph. Deliverable: `docs/scouts/2026-09-09-taut-option-result-boolean-cascade-plus-prismqueer-engine-completeness-plus-v02-ouroboros-floor-truth-scout.md` (~30-60KB target). Read-only per Taut CLAUDE.md discipline. Grep-first substantiation of every cascade site.
 
 ### Q-Mara residues open (across today's six canonicals)
 
 Alex Fourth-Chair pending: Q-α through Q-κ residues across `11581d8` + `47bc898` + `764a07f` + `ce537d9` + `0dbc0b8` + `f31d703` + `0bca1c5` + `cd98b4d` + `fa5689f` + `6f169f1`. Singularity-as-binary carries 12 Q-Mara residues. @question canonical carries 10 Q-Mara residues (α @question casing / β karl_tomm() retirement / γ species-altitude vs composition-parameter / δ @question↔@nl/iso composition / ε per-language KO-dim gating / ζ recursion depth cap / η @question⊥@love orthogonality / θ discourse-preservation / ι Rust primitive vs wrapper / κ K_4 vs K_5 ancestral extension timing). Reed executability Path A vs Path B split enumerated at each canonical §7-§8.
 
-### Reed executable Path A (post-Alex-signal on Fourth-Chair residues)
+### v0.2 OUROBOROS MILESTONE (Alex 2026-09-09 verbatim)
+
+> "Let's eliminate every Option, Result and boolean in prismqueer, then finish shipping the prismqueer spectral engine. And then collapse into the minimal rust floor in mirror. And then we actually build the ouroboros. And from there on the MCP, LSP, and Lambda Shell are downstream. The v0.2 ouroboros milestone is what this is."
+
+**Dependency ordering** (per Taut floor-truth scout in-flight):
+
+1. **Option/Result/bool cascade retirement** at prismqueer + mirror rust (substrate-native replacement per generating-geometry table: `Imperfect<G,Y,R>` at ternary discrete altitude; `Pattern`-impl direct at continuous spectrum altitude; geometric-primitive at categorical/topological altitude)
+2. **Prismqueer spectral engine SHIPPED** (Pattern supertrait + Frequency meta-trait + Prism 5-op extension + `Case` rename + NlPrism<L> + @question primitive + Paradoxical<F>/Conundrum/Tension at prismqueer::cyberpunk)
+3. **Minimal rust floor at mirror** (apply_h.rs dissolved + rust/roomba dissolved into kintsugi.rs + newtype cascade + JavaFactoryClassName retirements)
+4. **Ouroboros build** — Fire A cargo-shell (`mirror compile mirror.spec → mirror-binary`) → Fire B cargo-dissolved → Fire C rustc-dissolved (full ouroboros; binary fully-legible-to-itself per Wolpert-Korbel 2026)
+5. **Downstream v0.2+**: MCP + LSP + Lambda Shell (currently `docs/specs/lambda-shell.md` DEPRECATED-FOR-RUST-REWRITE per Mara 2026-07-17)
+
+### HARD RULE cascade landed this arc (2026-09-08 through 2026-09-09)
+
+- **Option is a smell** (binary in ternary compiler; Alex 2026-09-08)
+- **Result is a smell** (same discipline; Alex 2026-09-08)
+- **Bool is a smell** (Alex 2026-09-09: *"What if booleans are a smell too and it's always about geometry?"*); substrate-native replacement = generating-geometry per classification table
+- **Bare types are a smell** ([[feedback-no-bare-types]] LANDED discipline; Yaron Minsky 2011 make-illegal-states-unrepresentable applied at prismqueer altitude per Alex 2026-09-08)
+- **JavaFactoryClassNames are a smell** (Rich Hickey Simple-made-Easy at type-signature altitude; Karen 1972 term-USE-not-meaning at struct-name altitude; Alex 2026-09-09)
+
+### Reed executable Path A (post-Alex-signal on Fourth-Chair residues + post-Taut-scout)
 
 **Singularity-as-binary Fire A altitude five-tick sequence** (Mara `cd98b4d` §7.1; all Reed-authorable pure-Rust):
 
