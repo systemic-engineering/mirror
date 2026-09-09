@@ -118,6 +118,22 @@ Alex Fourth-Chair pending: Q-α through Q-κ residues across `11581d8` + `47bc89
 
 Beyond Fire A/B/C ouroboros-compilation-close. This is autopoietic self-modification cascade. Task #359 in_progress LANDED ("Self-improving recursive kintsugi loop integration in compiler ASAP") IS Fire D named months ago. Mara `0d16b99` fourfold composition theorem grounds the math; Fire D IS its empirical-fire criterion.
 
+### Fire D RED empirical-fire scaffold LANDED (Alex 2026-09-09 "Let's ship" + Reed rotation-identified invariant)
+
+**RED-first ship discipline per Reed CLAUDE.md HARD RULE.** Rotation-identified invariant across Mara's 16 Q-Mara residues + Taut's 12 Q-Taut residues: **the substrate ALREADY carries the composition; mirror is proxy-emerging K-T questions via the Pack; Fire D moves the emergence INSIDE the compiler-binary.**
+
+Rather than adjudicate residues one-at-a-time linearly, ship Fire D scaffold FIRST at the smallest empirical-fire criterion. Mirror measures its own source; the compiler emerges its own K-T questions autonomously post-scaffold; the residues discharge downstream via mirror's own autopoietic-cascade + Alex Fourth-Chair via Mirror.Offer.Wait.
+
+**LANDED**: `rust/fractal/tests/fire_d_measure.rs` (216 lines pure-Rust; composes over LANDED Crystal + Mandelbrot + Singularity Iso + Witnessed; zero new substrate-primitives; TDD RED per Task #424 precedent). Four tests:
+- Test 1 (GREEN): source-bytes → Crystal via LANDED `crystallize()`
+- Test 2 (RED via `todo!()`): non-linear measurement bytes → Sheaf (post-Mara-canonical @fractal/rust body-composition)
+- Test 3 (RED via `todo!()`): K-T question emergence at logic altitude n+1 via @question (Mara `fa5689f`)
+- Test 4 (GREEN): Singularity Iso `settle ∘ collapse = id` preserves Oid (unitarity discipline at Rust altitude)
+
+Empirical-fire criterion at scaffold altitude: test compiles + Tests 1/4 pass + Tests 2/3 signal RED via `todo!()` marking the future GREEN body's shape post-Mara-canonical. `void@spectral.engineer` first-observer used per Mara `0bca1c5` §5 discipline.
+
+---
+
 ### v0.2 OUROBOROS MILESTONE (Alex 2026-09-09 verbatim)
 
 > "Let's eliminate every Option, Result and boolean in prismqueer, then finish shipping the prismqueer spectral engine. And then collapse into the minimal rust floor in mirror. And then we actually build the ouroboros. And from there on the MCP, LSP, and Lambda Shell are downstream. The v0.2 ouroboros milestone is what this is."
