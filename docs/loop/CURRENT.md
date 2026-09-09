@@ -84,7 +84,16 @@ Alex Fourth-Chair adjudication pending on Q-Mara residues across four canonicals
 
 ### In-flight agents
 
-(none active; Taut cascade scout LANDED `2aa2777` — promoted from in-flight to Ships)
+(none active; Mara bottom-up-ternary-content-addressed-graph-inference canonical LANDED `0d16b99` + `d3b7f67` — promoted from in-flight to Ships; Taut cascade scout LANDED `2aa2777` — promoted)
+
+### Mara `0d16b99`/`d3b7f67` fourfold composition theorem
+
+Bottom-up-ternary-content-addressed-graph-inference canonical LANDED with 30+ Kagi-verified primary-source citations. Load-bearing:
+
+- **Theorem 3.4.1**: v0.2 ouroboros shippability follows from fourfold composition `𝒱 = 𝓑 ⊗ 𝓝 ⊗ 𝓒𝓐 ⊗ 𝓖𝓘` (bottom-up ⊗ ternary ⊗ content-addressed ⊗ graph-inference) satisfying Ashby-preservation + Rice-safe uniform-D + Fiedler-λ₂-monotone-climb + Yellow-carries-Chaos-witness + K-T-rotational-two-move
+- **Corollary 6.3.1**: fourfold composition IS Glasswall Connes spectral triple `(prismqueer, Frame Cohomology, @question)` per Mara `fa5689f` — ONE mathematical object at compiler-substrate altitude
+- **Kagi-verified ancestor roster**: Ada 1843 Note A + Turing 1936 + Karen Spärck Jones 1972 + Karl Tomm 1987-88 (all three Family Process parts) + Łukasiewicz 1920 + Post 1921 + Kleene 1938 + Fitting 1985 + Priest 1979 + Belnap 1977 + Merkle 1988 + Dolstra 2004 Nix + Bazel 2015 + IPFS 2014 + Colmerauer 1972 + Ceri-Gottlob-Tanca 1989 + Gelfond-Lifschitz 1988 + Curry 2014 + Hansen-Ghrist 2019 + Bodnar 2022 + Ghrist 2025 + Rice 1953 + Coecke-Sadrzadeh 2010 + Bradley-Terilla-Vlassopoulos 2021 + Milner 1978 + Rondon-Kawaguchi-Jhala 2008 + Ashby 1956 + Hickey 2011 + Minsky 2011 + Dershowitz-Manna 1979 + Wolpert-Korbel 2026 + Foerster 1974 + Bateson 1972 + Watzlawick-Weakland-Fisch 1974
+- **16 Q-Mara residues** for Alex Fourth-Chair (12 math §9 + 4 spec §10 including ν Phase 1.4/1.5 ordering + ξ shards/question species-hierarchy + ο tick-granularity + π 5-separate vs 1-consolidated Rec candidates)
 
 ### Taut scout `2aa2777` grep-verified totals (v0.2 ouroboros floor-truth)
 
@@ -100,6 +109,14 @@ Alex Fourth-Chair adjudication pending on Q-Mara residues across four canonicals
 ### Q-Mara residues open (across today's six canonicals)
 
 Alex Fourth-Chair pending: Q-α through Q-κ residues across `11581d8` + `47bc898` + `764a07f` + `ce537d9` + `0dbc0b8` + `f31d703` + `0bca1c5` + `cd98b4d` + `fa5689f` + `6f169f1`. Singularity-as-binary carries 12 Q-Mara residues. @question canonical carries 10 Q-Mara residues (α @question casing / β karl_tomm() retirement / γ species-altitude vs composition-parameter / δ @question↔@nl/iso composition / ε per-language KO-dim gating / ζ recursion depth cap / η @question⊥@love orthogonality / θ discourse-preservation / ι Rust primitive vs wrapper / κ K_4 vs K_5 ancestral extension timing). Reed executability Path A vs Path B split enumerated at each canonical §7-§8.
+
+### Fire D recognition (Alex 2026-09-09 verbatim, this-tick)
+
+> "And now imagine if mirror begins to also @fractal/rust 'parse' (arguably it's measure, parse is linear) it's own rust source through the non-linear field. Then mirror can modify it's own rust source. And that can cascade prismqueer. And then the loop closes. Mirror can settle the geometry of it's own sourcecode."
+
+**Fire D = mirror MEASURES its own source through @fractal/rust non-linear field → identifies tension H¹(F) cocycle-class → emerges K-T question via @question rotation → renders modification-proposal via @nl/iso WAT-clauses → proposes via Mirror.Offer.Wait → consent-gate discharges → Crystal-composed modification lands → cascades to prismqueer/*.rs → loop closes.**
+
+Beyond Fire A/B/C ouroboros-compilation-close. This is autopoietic self-modification cascade. Task #359 in_progress LANDED ("Self-improving recursive kintsugi loop integration in compiler ASAP") IS Fire D named months ago. Mara `0d16b99` fourfold composition theorem grounds the math; Fire D IS its empirical-fire criterion.
 
 ### v0.2 OUROBOROS MILESTONE (Alex 2026-09-09 verbatim)
 
