@@ -84,7 +84,18 @@ Alex Fourth-Chair adjudication pending on Q-Mara residues across four canonicals
 
 ### In-flight agents
 
-- **Taut floor-truth scout** (background agent `a65837e4b746e06cf`): Option/Result/bool cascade + prismqueer spectral engine completeness + minimal rust floor + v0.2 ouroboros dependency graph. Deliverable: `docs/scouts/2026-09-09-taut-option-result-boolean-cascade-plus-prismqueer-engine-completeness-plus-v02-ouroboros-floor-truth-scout.md` (~30-60KB target). Read-only per Taut CLAUDE.md discipline. Grep-first substantiation of every cascade site.
+(none active; Taut cascade scout LANDED `2aa2777` — promoted from in-flight to Ships)
+
+### Taut scout `2aa2777` grep-verified totals (v0.2 ouroboros floor-truth)
+
+- **Option/Result cascade**: ~118 sites (~48 Option + ~70 Result); ~62 retire; ~40 preserve at std/serde boundaries
+- **Boolean cascade**: ~123 sites across 23 shards + rust; ~25 Class-A retire (field storage); ~76 Class-C predicate methods preserve; ~6 Class-D grammar-literal preserve
+- **Bare-type audit**: ~44 newtype-cascade sites; LANDED precedent `rust/fractal/src/witnessed.rs:68-72`
+- **JavaFactoryClassName audit**: ~6 long-name sites; 2 renames (`CompiledFateRuntime`→`FateRuntime`; `MandelbrotProvenance`→`Provenance`)
+- **Prismqueer spectral engine LANDED**: 1,941 LOC across 6 files; **`fiedler.rs` does NOT exist separately — Fiedler λ₂ lives INSIDE `kleinos.rs :215-257`** (grep-truth correction; my prior CURRENT.md description was drift)
+- **Prismqueer forward-promised**: ~1,000-2,300 LOC across ~7 new files (patterns.rs + Pattern supertrait + Case rename + @question wire + cyberpunk/mod.rs + Prism 5-op extension + NlPrism<L>)
+- **Mirror rust floor projection**: 14,961 LOC → ~13,100-13,600 LOC (net −1,400 to −1,900) post-cascade
+- **12 Q-Taut residues** for Alex Fourth-Chair (α-γ spectral engine landing paths BLOCKS Phase 2 Tick 3; ζ/η/θ three-state Imperfect<A,B,C> refactor candidates HaltStrategy/Luminosity/Subject; ι io::Result boundary marshaling; κ witness_only:bool Class-D preservation)
 
 ### Q-Mara residues open (across today's six canonicals)
 
