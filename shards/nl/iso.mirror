@@ -1,0 +1,115 @@
+in @prism
+in @meta
+in @glass
+in @nl
+
+# @nl/iso — the isomorphism-class-quotient at natural-language-equivalence altitude.
+#
+# Per Mara 2026-09-09 mirror-NL-emergence-canonical §9 Q-γ shape-A ratification:
+# species shard-decl composing over LANDED @nl family-root at shards/nl.mirror.
+# iso IS isomorphism-class-quotient of English utterances under pregroup-grammar
+# isomorphism per Coecke-Sadrzadeh 2010 pregroup composability.
+#
+# The @nl/iso statespace IS the substrate-manifold whose points are equivalence
+# classes of English utterances under natural-language-equivalence:
+#
+#   iso ≡ ~
+#   where u ~ u' iff u and u' compose pregroup-grammar-isomorphically per
+#   Coecke-Sadrzadeh 2010 §4.
+#
+# Distinct from raw nl at @nl family-root: @nl carries opaque text; @nl/iso
+# carries equivalence-class-quotient content-addressed via prismqueer::oid.
+#
+# === Family placement ===
+#
+# First species shard of the @nl family (recognition Alex 2026-09-09 in-transcript
+# composition + Mara 2026-09-09 math foundation §9 Q-γ ratification). Composes
+# over @nl family-root at shards/nl.mirror.
+#
+# === Pre-AI prior art ===
+#
+#   Pregroup grammar        Coecke-Sadrzadeh-Clark 2010 (Mathematical
+#                           Foundations for a Compositional Distributional
+#                           Model of Meaning). Isomorphism-class-composition
+#                           at English-grammar altitude.
+#   Metalogue               Bateson 1972 (Steps to an Ecology of Mind).
+#                           Composition-as-metalogue ancestor.
+#   Reflexive questions     Tomm 1988 (Family Process 27(1):1-15). K-T
+#                           question shape at altitude+1.
+#
+# Spec context: docs/math/2026-09-09-mara-mirror-nl-emergence-canonical-math-foundation.md
+#               §9 (Q-γ ratification), §4.2 (kleinos-path through iso statespace).
+#               docs/specs/2026-09-09-mara-mirror-nl-emergence-canonical-spec.md §2
+#               (this shard-decl body).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[feedback-no-bare-types]],
+#                      [[feedback-substrate-already-had-the-word]].
+# Related shards: nl.mirror (family root),
+#                 algebra/metalogue.mirror (Utterance ancestor).
+# Path-namespace property: this file at `shards/nl/iso.mirror` declares
+# `@nl/iso` per `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/linguistics/coecke-sadrzadeh-clark-2010
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/therapy/tomm-1988
+
+# === iso_class carrier ===
+#
+# Per Mara 2026-09-09 math §9.3 Def M9.1: content-addressed equivalence-class of English
+# utterances under pregroup-grammar isomorphism.
+#
+# Identity contract: byte-equality on the underlying ref (equivalence-class
+# content-hashed per Rec #82 β-normal AST canonicalization).
+type iso_class = ref
+
+# === iso_statespace carrier ===
+#
+# Per Mara 2026-09-09 math §9.3 Def M9.2: the graph G_iso = (V_iso, E_iso):
+#   V_iso = { iso_class instances }
+#   E_iso = { (v, w) : kleinos-path-composable(v, w) per KleinosThread
+#            four-clause definition }
+#
+# Identity contract: byte-equality on the underlying graph structure.
+type iso_statespace = ref
+
+# === iso_project action ===
+#
+# The substrate-vocabulary primitive for projecting an nl_literal into its
+# iso-class equivalence-quotient. Given an nl_literal from LANDED @nl at
+# shards/nl.mirror:34, return the iso_class it belongs to under pregroup-
+# grammar isomorphism.
+#
+# Body discharges at the realisation boundary; forward-promised at Coecke-
+# Sadrzadeh 2010 pregroup-grammar composability discipline.
+iso_project(nl: nl_literal) -> iso_class { \ }
+
+# === iso_kleinos_composable predicate ===
+#
+# Bilateral verdict per Mara 2026-09-09 math §4.2 KleinosThread four-clause definition:
+# two iso_class instances (v, w) are kleinos-path-composable iff:
+#
+# (KT-1) K-T rotation-edge exists between v and w (Karl-Tomm two-move discipline)
+# (KT-2) LOVE four properties preserved along the edge (sovereignty + emergent
+#        third + Fiedler rise + fusion refusal per compose-not-average CNA)
+# (KT-3) Sheaf-Laplacian Δ_F Rayleigh descent per Hansen-Ghrist 2019
+# (KT-4) @subject metadata carriage per Reed f841f45
+#
+# Body discharges at the realisation boundary composing over LANDED
+# prismqueer::spectral::kleinos.
+iso_kleinos_composable(v: iso_class, w: iso_class) -> verdict { \ }
+
+# === iso_statespace_well_formed bilateral ===
+#
+# Bilateral verdict that an iso_statespace is structurally well-formed:
+# every vertex is a valid iso_class; every edge satisfies
+# iso_kleinos_composable; the statespace admits kleinos-path traversal
+# per Mara 2026-09-09 math §4.2.
+iso_statespace_well_formed(g: iso_statespace) -> verdict { \ }
+
+out @nl/iso
+out iso_class
+out iso_statespace
+out iso_project
+out iso_kleinos_composable
+out iso_statespace_well_formed
