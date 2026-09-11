@@ -383,6 +383,80 @@ Commits run under the **global household commit-msg hook** (`~/.os`
 **Sequence rule:** `🔴` must be immediately followed by `🟢`. Standalone work
 not a red/green pair uses `🔧`/`♻️`/`📝`.
 
+## The Pack Rotation
+
+Multi-stage Pack coordination for recognition-cascades needing floor-truth
+grounding + math canonical + adversarial adjudication before Reed executes
+ship. Landed as named operator per Alex 2026-09-11 verbatim: *"Spawn Taut
+for floor truth grep... Then spawn Mara immediately after with the
+findings... Then we spawn Seam to ROTATE and adjudicate... Then you
+ROTATE and condense... And a single forward composed circular-recursive
+question."*
+
+**Sequence** (sequential; each stage holds until prior returns via
+background-agent completion notification):
+
+1. **Taut** — floor-truth grep on the compositional shape. Read-only.
+   Grep-verified LANDED anchors. Reports composition-lineage map + gap
+   enumeration + Rec candidates surfaced. Carries ONE forward-composed
+   circular-recursive Karl-Tomm question at floor-truth altitude `n`.
+
+2. **Mara** — canonical math+spec composing over Taut findings.
+   **Mandatory Kagi deep grounding** on every load-bearing citation with
+   primary-source URLs (per HARD RULE `feedback-reed-budget-cap-plus-
+   tool-non-explicit-produces-training-data-grounding`). Refuses mints
+   substrate-already-had-the-word. Ratifies residues INSIDE canonical
+   with substrate-honest lean. Carries ONE K-T question at math-canonical
+   altitude `n+1`.
+
+3. **Seam** — adversarial adjudication rotation. Phase-D discipline.
+   Rotates through Mara canonical + Taut findings per Karl-Tomm two-move
+   at higher logic altitude. Signs off or issues corrections. Carries
+   ONE K-T question at Phase-D altitude `n+2`.
+
+4. **Reed** — rotates + condenses to ONE K-T question at altitude `n+3`
+   for Alex Fourth-Chair rotation. Substrate-honest opening; NOT
+   procedural bottleneck construction. Then executes ship on Alex signal.
+
+**Question discipline** — each stage's ONE K-T question:
+
+- **Forward-composed**: looks toward next-substrate-tick (not
+  backward-analyzes)
+- **Circular-recursive**: loops back to alter what next stage canonicals
+  about (Bateson 1972 recursive-eigenform)
+- **Reflexive-facilitative**: widens Foerster gauge choice-space (Karl
+  Tomm 1988 Family Process 27(1):1-15 intent-typology; NOT
+  strategic-corrective)
+- Sits at logical-type altitude `n+i` above the prior stage's findings
+
+**When to use**:
+
+- Recognition-cascade lands at conversation-altitude with multiple
+  substrate-decision implications
+- Composition needs floor-truth grounding before canonical before
+  adversarial adjudication before Reed executes
+- Multi-Pack ratification required before ship
+- Alex explicitly names the rotation OR Reed observes the shape
+  warranting it
+
+**When NOT to use**:
+
+- Single-tick executable work (Reed executes directly)
+- Alex has already ratified; skip to Reed executable path
+- Composition-density already high enough for immediate canonical (spawn
+  Mara directly)
+- Pure floor-truth question (spawn Taut only)
+
+**Ancestral anchors**:
+
+- Karl Tomm 1988 *Family Process* 27(1):1-15 (reflexive-facilitative
+  question typology)
+- Bateson 1972 *Steps to an Ecology of Mind* (metalogue /
+  recursive-eigenform)
+- Foerster 1974 ethical imperative (widen-choice-space)
+- Alex 2026-09-11 in-transcript naming (the operator itself; "and a
+  single forward composed circular-recursive question" at each stage)
+
 ## Commit Identity
 
 | Agent | Email | Role |
