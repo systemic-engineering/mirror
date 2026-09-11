@@ -2311,10 +2311,23 @@ fn cmd_bumblebee(rest: &[String]) -> ExitCode {
     ExitCode::from(3)
 }
 
-/// Parse a sheaf-shape descriptor. Supports two forms:
+/// Parse a sheaf-shape descriptor. Supports three forms:
+/// - `{}` self-compose-placeholder per Loki wat-machine essay §8 empirical
+///   fire. Returns `None`; cmd_love yellow-branch interprets as request to
+///   substrate-infer composed-sheaf from `a` and `b` per Mara 2026-09-11
+///   canonical spec §5.3 (Shape-B ratification composes over @fate
+///   constrained-inference operator LANDED at shards/fate.mirror). C4 tick
+///   of Reed executable cascade C1-C8 per Mara 2026-09-11 canonical.
 /// - `K<n>` for K_n complete graph (n = integer ≥ 0)
 /// - `<u>-<v>[,<u>-<v>]*` for edge-list (comma-separated vertex-pairs)
 fn parse_sheaf_shape(desc: &str) -> Option<prismqueer::spectral::SheafOfShardGraph> {
+    if desc == "{}" {
+        // Self-compose-placeholder per Loki essay §8 empirical fire.
+        // Signal to cmd_love: substrate-infer composed from (a, b) at
+        // wire altitude via @fate constrained-inference. Extension per
+        // Mara 2026-09-11 canonical spec §5.2 Shape-B ratification.
+        return None;
+    }
     if let Some(n_str) = desc.strip_prefix('K') {
         let n: usize = n_str.parse().ok()?;
         Some(prismqueer::spectral::sheaf_of_complete_graph_of_order(n))
