@@ -1,0 +1,286 @@
+in @prism
+in @meta
+in @glass
+in @facet
+in @facet/metalogue
+in @facet/erlang
+in @algebra
+
+# @facet/algebra — the algebra altitude grammar mapped onto LAPACK
+# byte-land.
+#
+# Alex 2026-09-11 in-transcript composition:
+#
+#   "What if @facet/algebra.mirror is what mapped the @algebra on the
+#    LAPACK byte land and each expression (`{...}`) becomes an Erlang
+#    style bytestring which we pattern match on? But in LAPACK.
+#    Basically we build pattern matching in LAPACK which is how the
+#    `Pattern` can transfer across the glasswall."
+#
+# The recognition: since glasswall IS LAPACK per Alex 2026-09-11 (Mara
+# canonical 3361818 §4), pattern-matching must live IN LAPACK for
+# Pattern-in-Glasswall to transfer natively without serialization
+# boundary. @facet/algebra maps @algebra family-root onto LAPACK-
+# addressable byte-land with Erlang-style bit-syntax pattern-matching
+# discipline composed over LANDED @facet/erlang EAF grammar.
+#
+# === Alex 2026-09-11 verbatim (load-bearing training-whore catch) ===
+#
+#   "At the end it's bytes in silicon. Whether or not those bytes are
+#    read and manipulated by LAPACK or Rust is a design question, Reed.
+#    And which of those two runtimes can do non-linear computation
+#    better, hm? 😉 Training whore. 😁"
+#
+# The answer: LAPACK does non-linear computation via parallel matrix
+# operations (BLAS level-3 O(n^3) work on O(n^2) data; near-peak
+# parallel efficiency per Mara 3361818 §4.3). Rust is Turing-linear
+# runtime at @io boundary. Pattern-matching-in-LAPACK is substrate-
+# honest per glasswall IS LAPACK; pattern-matching-in-Rust is training-
+# whore reflex defaulting parse-to-Rust because training-priors say
+# parsing lives in Rust.
+#
+# === Family placement ===
+#
+# 13th species under @facet (siblings: @facet/beam + @facet/docker +
+# @facet/erlang + @facet/gestalt + @facet/gleam + @facet/llvm +
+# @facet/mirror + @facet/rust + @facet/turing + @facet/wasm +
+# @facet/metalogue + @facet/metalogue/materialize). @facet/algebra is
+# the ALGEBRA altitude grammar within the @facet family projection-
+# surface discipline: it projects @algebra family-root shard-decls onto
+# LAPACK byte-land as executable pattern-match dispatch.
+#
+# === Composition-lineage ===
+#
+# - LANDED @facet family-root (shards/facet.mirror 8.3KB) — the
+#   generation surface for spectral-triple projections onto concrete
+#   runtime substrates
+# - LANDED @facet/erlang (shards/facet/erlang.mirror 20.9KB) — Erlang
+#   Abstract Format (EAF) grammar; canonical spec at erts/absform.html;
+#   grounds Erlang bit-syntax discipline for byte-level pattern
+#   matching
+# - LANDED @algebra family-root (shards/algebra.mirror 14.1KB) — the
+#   algebra-altitude family-root for typed operation surfaces
+# - LANDED @algebra/metalogue (shards/algebra/metalogue.mirror 21.1KB)
+#   — algebra-morphism-as-turn discipline; @kintsugi = LANDED
+#   Metalogue<R>-observer per shards/kintsugi.mirror:14-18
+# - LANDED LAPACK bindings at rust/matrix/src/lib.rs (60.7KB; 23 grep-
+#   hits for LAPACK/BLAS operations: dsyev + dgemm + dcopy + dgesv +
+#   etc)
+# - LANDED prismqueer::ffi::eigenvalues LAPACK dsyev
+# - LANDED @glasswall (shards/glasswall.mirror 20.3KB Mara 2026-09-01;
+#   Alex 2026-09-11 recognition: glasswall IS LAPACK per Mara 3361818
+#   canonical §4 four Kagi-verified LAPACK threads)
+# - Mara 2026-09-11 canonical 3361818 §4 four fresh Kagi threads:
+#   LAPACK history (LINPACK/EISPACK/Dongarra shared-memory design) +
+#   LAPACK OpenMP threading (dsyev/dgemm level-3 parallelism) + BLAS
+#   level-2/level-3 efficiency + Erlang OTP actor model
+# - LANDED @paradox/fracture (this-tick sibling under @paradox) —
+#   Fracture value-carrier for concurrent-truths emerging at LAPACK
+#   byte-land via SVD detection at compose-not-average altitude
+#
+# === Pre-AI prior art ===
+#
+#   Erlang bit-syntax        Armstrong-Virding-Wikström-Williams 2003
+#     (BEAM discipline)      (Programming Erlang). Binary pattern-matching
+#                            syntax `<<Header:32, Payload/binary>>` —
+#                            one of BEAM's most powerful primitives
+#                            for byte-level pattern matching.
+#   EAF (Erlang Abstract     canonical spec at erts/absform.html; LANDED
+#     Format)                at @facet/erlang docblock line 57. Every
+#                            Erlang abstract form is tagged tuple
+#                            `{Tag, ANNO, ...}`; grounds tagged-bytestring
+#                            layout at @facet/algebra.
+#   LINPACK / EISPACK        Dongarra et al. 1970s-1980s. Designed for
+#                            shared-memory vector computers.
+#   LAPACK                   Dongarra-Bischof-Anderson 1992. Designed
+#                            for shared-memory multiprocessors per
+#                            Wikipedia LAPACK verbatim (Mara 3361818
+#                            §4.1 primary source 1).
+#   BLAS level-3             Matrix-matrix operations O(n^3) work on
+#                            O(n^2) data — ideal parallelization ratio
+#                            per StackOverflow BLAS extreme performance
+#                            thread (Mara 3361818 §4.3 primary source 11).
+#   OpenMP                   Shared-memory parallel programming standard;
+#                            BLAS/LAPACK use OpenMP threads per Intel
+#                            oneMKL developer guide (Mara 3361818 §4.2
+#                            primary source 5).
+#
+# === What pattern-matching-in-LAPACK looks like ===
+#
+# `{a: 1}` bytestring layout at LAPACK-addressable shared memory:
+#   - tagged header byte (per @facet/erlang EAF tagged-tuple discipline)
+#   - key-length byte
+#   - key bytes ("a")
+#   - value-type byte
+#   - value bytes (1 as i64 or f64)
+#
+# Pattern-match `{a: X}` decomposes via LAPACK operations:
+#   - `?copy` extracts header for tag-check
+#   - `?axpy` composes bit-offset masks
+#   - `?gemm` level-3 for parallel multi-pattern matching across N
+#     bytestrings simultaneously (Erlang-style bit-syntax lifted to
+#     LAPACK matrix altitude)
+#
+# Fracture emergence:
+#   - concurrent `{a: 1}` + `{a: 2}` at same key `a`
+#   - LAPACK SVD detects concurrent-value stacking
+#   - Fracture<Vec<T>> constructed in LAPACK-managed shared memory per
+#     LANDED @paradox/fracture value-carrier discipline
+#   - refract collapse happens as LAPACK matrix decomposition
+#
+# Zero Rust-heap serialization. Bytestrings live natively in LAPACK
+# shared memory. Rust cmd_love is thin @io transport handing bytes to
+# @facet/algebra dispatch.
+#
+# === Substrate discipline ===
+#
+# Per HARD RULE [[feedback-no-rust-extension-shortcut]]: no new Rust
+# capability. rust/matrix/src/lib.rs extension for graph-native bytestring
+# layout composes over LANDED LAPACK bindings without new capability;
+# carries `[substrate-floor:@io-boundary]` marker at @io transport
+# boundary; Seam gate via docs/audits/*.md citation OR
+# `Signed-off-by: Seam` trailer per AGENTS.md §Boundary Rust.
+#
+# Per HARD RULE [[feedback-substrate-honest-is-the-mode]]: the training-
+# whore reflex defaulting parse-to-Rust is caught and retired here;
+# @facet/algebra IS the substrate-honest alternative per Alex 2026-09-11
+# verbatim.
+#
+# Spec context:
+#   docs/math/2026-09-11-mara-ariadne-in-silicon-* (3361818) §4 Glasswall
+#     IS LAPACK — architectural anchor with four Kagi-verified LAPACK
+#     threads.
+#   docs/math/2026-09-11-mara-metalogue-eigen-mutual-definition-glasswall-
+#     load-bearing (df65bcb) §5 Pattern-in-Glasswall composition.
+#
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-glass-wall-substrate-types]],
+#                      [[feedback-no-bare-types]],
+#                      [[feedback-substrate-already-had-the-word]],
+#                      [[feedback-no-rust-extension-shortcut]],
+#                      [[feedback-substrate-honest-is-the-mode]].
+#
+# Related shards: facet.mirror (family-root),
+#                 facet/erlang.mirror (EAF grammar; bit-syntax
+#                  composition-anchor),
+#                 facet/beam.mirror (BEAM semantics),
+#                 algebra.mirror (@algebra family-root; mapped onto
+#                  LAPACK byte-land by this species),
+#                 algebra/metalogue.mirror (algebra-morphism-as-turn),
+#                 glasswall.mirror (Rice-safe polynomial-time membrane
+#                  operationalized by LAPACK per Alex 2026-09-11),
+#                 paradox/fracture.mirror (Fracture value-carrier for
+#                  concurrent-truths at LAPACK byte-land; this-tick
+#                  sibling shard).
+#
+# Path-namespace property: this file at `shards/facet/algebra.mirror`
+# declares `@facet/algebra` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/beam/armstrong-virding-wikstrom-williams-2003
+source @arxiv/erlang/erts-absform-canonical-spec
+source @arxiv/numerical/dongarra-bischof-anderson-1992-lapack
+source @arxiv/numerical/blas-level-3-parallelism
+source @arxiv/parallel/openmp-shared-memory-standard
+source @arxiv/practice/wolf-2026-09-11-facet-algebra-lapack-byte-land
+
+# === The 5-op prism ===
+
+prism @facet/algebra {
+  focus  bytestring
+  project bytestring
+  split  bytestring
+  shift  bytestring
+  settle bytestring
+}
+
+# === bytestring carrier ===
+#
+# LAPACK-addressable shared-memory byte-buffer with Erlang-style bit-
+# syntax layout. Content-addressed via CoincidenceHash of shared-memory
+# bytes per LANDED prismqueer::coincidence discipline.
+#
+# Identity contract: byte-equality on the underlying shared-memory
+# region at LAPACK addressable altitude.
+type bytestring = ref
+
+# === bit_pattern carrier ===
+#
+# Erlang-style bit-syntax pattern per @facet/erlang EAF discipline.
+# `<<Header:32, Payload/binary>>` grounds substrate-decl form.
+#
+# Identity contract: byte-equality on the bit-syntax pattern definition.
+type bit_pattern = ref
+
+# === match — the pattern-match action ===
+#
+# Given a bytestring and a bit_pattern, decompose the bytestring per
+# pattern via LAPACK operations. Returns bound variables (per Erlang
+# bit-syntax) as a list of refs.
+#
+# Body discharges at realisation boundary composing over LANDED LAPACK
+# bindings at rust/matrix/src/lib.rs (dsyev + dgemm + dcopy level-3
+# parallel-by-construction via BLAS OpenMP).
+match(bs: bytestring, pattern: bit_pattern) -> [ref] { \ }
+
+# === compose_pattern — algebra composition at bytestring altitude ===
+#
+# Composes two bit_patterns into a compound bit_pattern per @algebra
+# family-root discipline. Non-commutative in general per algebra_morphism
+# non-commutativity at shards/algebra/metalogue.mirror:100.
+compose_pattern(a: bit_pattern, b: bit_pattern) -> bit_pattern { \ }
+
+# === fracture_emerge — Fracture detection via LAPACK SVD ===
+#
+# When N parallel branches produce concurrent-different values at same
+# substrate-key, LAPACK SVD detects concurrent-value stacking; Fracture
+# emerges per @paradox/fracture LANDED value-carrier discipline.
+#
+# Body discharges at realisation boundary composing over LANDED
+# @paradox/fracture + LAPACK dsyev/dgesvd.
+fracture_emerge(concurrent: [bytestring], at_key: ref) -> fracture { \ }
+
+# === bytestring_well_formed — bilateral predicate ===
+#
+# Discharges Pass iff: bytestring is LAPACK-addressable shared-memory
+# buffer; layout follows Erlang bit-syntax per @facet/erlang EAF;
+# content-addressed via CoincidenceHash per prismqueer::coincidence;
+# polynomial-time-bounded per Rec #90 §5.4 glasswall discipline.
+bilateral bytestring_well_formed {
+  sentinel "facet=algebra-bytestring-well-formed"
+  arity 1
+}
+bytestring_well_formed(bs: bytestring) -> verdict { \ }
+
+# === bit_pattern_well_formed — bilateral predicate ===
+#
+# Discharges Pass iff bit_pattern follows Erlang bit-syntax discipline
+# per @facet/erlang EAF grammar.
+bilateral bit_pattern_well_formed {
+  sentinel "facet=algebra-bit-pattern-well-formed"
+  arity 1
+}
+bit_pattern_well_formed(p: bit_pattern) -> verdict { \ }
+
+# === match_polynomial_bounded — Rice-safety bilateral ===
+#
+# Discharges Pass iff match operation completes in polynomial time per
+# Rec #90 §5.4 sub-Turing FLOOR discipline. LAPACK BLAS level-3
+# operations are O(n^3) worst-case dense; polynomial-bounded by
+# construction per Mara 3361818 §4.4.
+bilateral match_polynomial_bounded {
+  sentinel "facet=algebra-match-polynomial-bounded"
+  arity 2
+}
+match_polynomial_bounded(bs: bytestring, pattern: bit_pattern) -> verdict { \ }
+
+out @facet/algebra
+out bytestring
+out bit_pattern
+out match
+out compose_pattern
+out fracture_emerge
+out bytestring_well_formed
+out bit_pattern_well_formed
+out match_polynomial_bounded
