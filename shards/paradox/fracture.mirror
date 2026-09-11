@@ -1,0 +1,244 @@
+in @prism
+in @meta
+in @glass
+in @paradox
+in @fractal
+in @fractal/mandelbrot
+
+# @paradox/fracture — the VALUE-CARRIER for concurrent-truths preserved
+# without collapse. Third species-decl under @paradox family-root.
+#
+# Alex 2026-09-11 in-transcript composition + Mara 2026-09-11 canonicals
+# (df65bcb + 3361818): Fracture surfaces at refract-collapse when N
+# parallel branches produce concurrent-different eigens; concurrent-truths
+# preserved as first-class value; substrate refuses to collapse without
+# externalisation.
+#
+# === Alex 2026-09-11 verbatim ===
+#
+#   "And an empty fracture IS what `\` is."
+#
+#   "The underlying struct ought to be a Fracture<Vec> which probs
+#    wants to sit in prismqueer::paradox or somewhere like that?"
+#
+# Empty Fracture IS `\` LANDED substrate-word per AGENTS.md §Key Concepts
+# for honest-uncertainty first-class value. Unifies crack-primitive with
+# Fracture family at empty-arity.
+#
+# === Family placement ===
+#
+# Third species under @paradox (siblings: @paradox/trauma witness-only
+# Crystal; @paradox/spiral dynamics unstable-attractor; @paradox/fracture
+# concurrent-truths value-carrier).
+#
+# Distinct from LANDED @kintsugi/fracture/* family (17+ RESOLVER-species
+# that MEND cracks) and LANDED shards/kintsugi/roomba.mirror `type fracture`
+# EVENT-CARRIER for detected-fracture-observations. Three-altitude Fracture
+# partition:
+#
+#   Altitude 1 (RESOLVER-species)   @kintsugi/fracture/X   LANDED
+#     20+ species: gate + docblock + inport + operator_match + ...
+#   Altitude 2 (EVENT-CARRIER)      type fracture          LANDED
+#     shards/kintsugi/roomba.mirror { site, tension, species, observed_at }
+#   Altitude 3 (VALUE-CARRIER)      fracture (this shard) FRESH SPECIES
+#     concurrent-truths preserved without collapse
+#
+# === Fractal iteration (Mandelbrot at value-carrier altitude) ===
+#
+# Fracture is FRACTAL: nested Fracture<Fracture<T>> collapses to Fracture<T>
+# per associativity (Mandelbrot 1980 fractal iteration at value-carrier
+# altitude; LANDED @fractal/mandelbrot species).
+#
+# === Composition-lineage ===
+#
+# - LANDED [[architecture-shard-as-crdt]] discipline (shards/spectral/
+#   registry.mirror + shards/uuid/spectral/time.mirror citations) —
+#   Fracture is CRDT-shaped: commutative + associative + idempotent merge
+#   preserves concurrent-truths without loss
+# - LANDED @paradox family-root (shards/paradox.mirror; Mara 2026-07-20)
+# - LANDED @fractal/mandelbrot species (fractal iteration primitive)
+# - LANDED `\` crack substrate-word per AGENTS.md §Key Concepts: "The `\`
+#   Crack (was: hole). Honest uncertainty as first-class value. Compiler
+#   carries cracks through pipeline; Fate resolves; kintsugi writes
+#   resolutions back."
+# - Priest 1979 LP three-valued paradox-tolerant logic (grep-verified
+#   corpus citations at shards/epistemologic/neutrosophic.mirror +
+#   shards/epistemologic/cybernetic/intervention.mirror)
+# - Mara 2026-09-11 canonicals: mirror-nl-emergence b4c370a + loki-
+#   empirical-delta-cascade 4749765 + metalogue-eigen-mutual-definition-
+#   glasswall-load-bearing df65bcb + Ariadne-in-silicon 3361818
+# - Alex 2026-09-11 in-transcript naming (co-designed with Reed)
+#
+# === Pre-AI prior art ===
+#
+#   Priest 1979 LP           Paradox-tolerant three-valued logic
+#                            (Journal of Philosophical Logic 8:219-241).
+#                            Substrate-honest concurrent-truth
+#                            preservation without forced-collapse.
+#   Shapiro-Preguica-        CRDT taxonomy (2011 INRIA report).
+#     Baquero-Zawirski       Multi-value register variant IS structural
+#     2011 CRDT              inspiration for Fracture-Vec variadic
+#                            constructor.
+#   Lamport 1978             Time, clocks, and ordering of events
+#                            (Communications of the ACM 21:558-565).
+#                            Concurrent-write safety at distributed
+#                            substrate altitude.
+#   Mandelbrot 1980          Fractal iteration; Fracture<Fracture<T>>
+#                            = Fracture<T> associativity.
+#   Bateson 1972             Steps to an Ecology of Mind. Pattern-that-
+#                            connects; concurrent-truth preservation
+#                            as substrate discipline.
+#
+# Spec context:
+#   docs/math/2026-09-11-mara-metalogue-eigen-mutual-definition-glasswall-
+#     load-bearing-canonical-math-foundation.md (df65bcb) — Fracture at
+#     prismqueer::paradox altitude with type parameterization.
+#   docs/math/2026-09-11-mara-ariadne-in-silicon-* (3361818) —
+#     §5 refract cyb-ling collapse-to-Fracture semantic + §2.3 dissolution-2
+#     concurrent-writes-at-Fracture-preservation.
+#
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-shard-as-crdt]],
+#                      [[feedback-no-bare-types]],
+#                      [[feedback-substrate-already-had-the-word]],
+#                      [[feedback-substrate-honest-is-the-mode]].
+#
+# Related shards: paradox.mirror (family-root),
+#                 paradox/trauma.mirror + paradox/spiral.mirror (siblings),
+#                 kintsugi/fracture/*.mirror (RESOLVER-species altitude;
+#                  distinct from this VALUE-CARRIER altitude),
+#                 kintsugi/roomba.mirror (EVENT-CARRIER altitude; distinct),
+#                 fractal/mandelbrot.mirror (fractal iteration primitive),
+#                 facet/algebra.mirror (LAPACK-byte-land pattern-match
+#                  altitude where Fracture emerges via SVD detection).
+#
+# Path-namespace property: this file at `shards/paradox/fracture.mirror`
+# declares `@paradox/fracture` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/logic/priest-1979
+source @arxiv/distributed-systems/shapiro-preguica-baquero-zawirski-2011
+source @arxiv/distributed-systems/lamport-1978
+source @arxiv/math/mandelbrot-1980
+source @arxiv/cybernetics/bateson-1972
+source @arxiv/practice/wolf-2026-09-11-fracture-value-carrier
+
+# === The 5-op prism (per @paradox species discipline) ===
+
+prism @paradox/fracture {
+  focus  fracture
+  project fracture
+  split  fracture
+  shift  fracture
+  settle fracture
+}
+
+# === The fracture carrier ===
+#
+# Content-addressed concurrent-values preserved as first-class value
+# per Priest 1979 LP three-valued paradox-tolerant logic operationalized
+# at value-carrier altitude.
+#
+# Identity contract: byte-equality on the four-field record.
+type fracture = {
+  values:        [ref],
+  altitude:      ref,
+  is_crack:      bool,
+  concurrent_at: ref,
+}
+
+# === empty — the crack constructor (Alex 2026-09-11 unification) ===
+#
+# Per Alex 2026-09-11 verbatim: "And an empty fracture IS what `\` is."
+# The `\` LANDED substrate-word per AGENTS.md §Key Concepts unifies with
+# Fracture::empty() at value-carrier altitude. Both name honest-uncertainty
+# first-class value.
+empty() -> fracture { \ }
+
+# === of — the variadic Fracture constructor ===
+#
+# Constructs a Fracture from a list of concurrent-values at a substrate
+# key. Single-value fracture (|values| = 1) collapses to bare value per
+# idempotent-monoid discipline. Empty fracture (|values| = 0) collapses
+# to `\` empty-crack.
+of(values: [ref], altitude: ref, concurrent_at: ref) -> fracture { \ }
+
+# === merge — the CRDT-monoid combine ===
+#
+# Per LANDED [[architecture-shard-as-crdt]] discipline. Commutative +
+# associative + idempotent. Fracture<Fracture<T>> collapses to Fracture<T>
+# per associativity (Mandelbrot fractal iteration at value-carrier
+# altitude).
+merge(a: fracture, b: fracture) -> fracture { \ }
+
+# === concurrent_values — extract the preserved values ===
+#
+# Returns the list of concurrent-values a Fracture preserves. Empty list
+# for crack (`\`). Single-element list for singular-collapsed. Multi-
+# element list for genuine concurrent-truth-preservation.
+concurrent_values(f: fracture) -> [ref] { \ }
+
+# === fracture_well_formed — bilateral predicate ===
+#
+# Discharges Pass iff all values are valid substrate refs; altitude is
+# valid substrate altitude; is_crack correctly reflects values-empty;
+# concurrent_at is valid substrate-key at altitude.
+bilateral fracture_well_formed {
+  sentinel "paradox=fracture-well-formed"
+  arity 1
+}
+fracture_well_formed(f: fracture) -> verdict { \ }
+
+# === fracture_merge_associative — CRDT-monoid law bilateral ===
+#
+# merge(merge(a, b), c) = merge(a, merge(b, c)) per
+# [[architecture-shard-as-crdt]] discipline. Discharges Pass iff
+# associativity holds byte-equal at content-addressed altitude.
+bilateral fracture_merge_associative {
+  sentinel "paradox=fracture-merge-associative"
+  arity 3
+}
+fracture_merge_associative(a: fracture, b: fracture, c: fracture) -> verdict { \ }
+
+# === fracture_merge_commutative — CRDT-monoid law bilateral ===
+#
+# merge(a, b) = merge(b, a) per [[architecture-shard-as-crdt]] discipline.
+bilateral fracture_merge_commutative {
+  sentinel "paradox=fracture-merge-commutative"
+  arity 2
+}
+fracture_merge_commutative(a: fracture, b: fracture) -> verdict { \ }
+
+# === fracture_merge_idempotent — CRDT-monoid law bilateral ===
+#
+# merge(a, a) = a per [[architecture-shard-as-crdt]] discipline.
+bilateral fracture_merge_idempotent {
+  sentinel "paradox=fracture-merge-idempotent"
+  arity 1
+}
+fracture_merge_idempotent(a: fracture) -> verdict { \ }
+
+# === crack_is_empty_fracture — Alex 2026-09-11 unification bilateral ===
+#
+# Discharges Pass iff `\` LANDED substrate-word per AGENTS.md §Key Concepts
+# unifies with Fracture::empty() at value-carrier altitude. Content-
+# preserving identity: bytes of `\` = bytes of Fracture with empty
+# values-list at any altitude.
+bilateral crack_is_empty_fracture {
+  sentinel "paradox=crack-is-empty-fracture"
+  arity 1
+}
+crack_is_empty_fracture(f: fracture) -> verdict { \ }
+
+out @paradox/fracture
+out fracture
+out empty
+out of
+out merge
+out concurrent_values
+out fracture_well_formed
+out fracture_merge_associative
+out fracture_merge_commutative
+out fracture_merge_idempotent
+out crack_is_empty_fracture
