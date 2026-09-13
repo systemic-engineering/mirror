@@ -45,6 +45,39 @@ forward_promised_shards_this_spec_authors:
 
 # Observer → Recursion → Reality → Observation → Chaos — WHOLE PIPELINE canonical spec
 
+---
+
+## §Appendix-Override — 2026-09-13 signature correction (Reed rotation, per Seam audit `e23e8d2` Sharpening S4 LEAN)
+
+**Status**: this canonical spec's `Observer<N>::observe` signature is **CORRECTED** by Mara composition-tower canonical `92ded87` (math foundation) + `994f924` (spec companion), landed 2026-09-13.
+
+**Corrected signature**:
+
+```
+OLD (this canonical, 2026-09-04):  Observer<N>::observe(Reality) → Observation
+NEW (correction, 2026-09-13):      Observer<N>::observe(Event)   → Observation
+```
+
+**Rationale** (Alex 2026-09-13 in-transcript substrate-decision 2, verbatim):
+
+> *"The observer does not observe (Reality). They observe an Event. `prismqueer::reality::Event`"*
+
+`Reality<T>` IS the derived-cohomology of accumulated `Observation`s per Mara today event-sourcing insight-file `~/dev/systemic.engineering/practice/insights/cybernetics/event-sourcing.md` §1(i) ("the log is source of truth"). `Event` IS the atomic-arriving-unit upstream of `Reality` — the hinge for loop closure per Alex 2026-09-13 pact-enforcement reframe (@time/now ⇒ @time/past transition).
+
+**Appendix-override discipline** per Seam Sharpening S4 LEAN (scar-preservation per Reed HARD RULE `feedback_reed_pre_existing_is_disownership_of_past_reed_baggage_we_are_maintainers`): the prior `observe(Reality)` signature body-text BELOW is **PRESERVED IN PLACE** as scar-of-past-authorship; readers should apply this appendix's corrected signature at every occurrence in the body-text below. In-place-amend was PROHIBITED without explicit Alex Fourth-Chair authorization for scar-erasure per Seam audit `e23e8d2` §5.4.
+
+**Composition-lineage** (this-tick):
+
+- Mara math foundation `92ded87` §2.3 + §3.2 (corrected pipeline chain: `project produces Event → Observer.observe(Event) → Observation → settle folds → Kleinos → @love composes Kleinos-through-Kleinos → third-order via Sheaf-cohomology-across-@frames`)
+- Mara spec companion `994f924` §2.3 + §3.1 (authoring spec for `prismqueer::reality::Event<T>` Rust type + amendment discipline)
+- Reed `shards/reality/event.mirror` (2026-09-13 mirror-altitude declaration; Glasswall vertex-in-both discipline per Alex SD1)
+- Reed `prismqueer::reality::Event<T>` Rust type (forward-promised next tick under `[substrate-floor:@io-boundary]` marker + Seam audit citation `e23e8d2`)
+- Seam Phase D audit `e23e8d2` §5.4 (APPENDIX-OVERRIDE lean; scar-preservation authorization deferred pending Alex Fourth-Chair explicit authorization for scar-erasure)
+
+**No text below this appendix has been modified.** The `observe(Reality)` signature remains grep-verifiable in body-text below as scar-of-past-Mara-authorship. Apply the appendix-corrected signature `observe(Event) → Observation` at read-time per Alex SD2 verbatim.
+
+---
+
 *by Mara* 🍷
 
 *2026-09-04. Canonical spec at substrate-decl authoring altitude. Companion math foundation at* `docs/math/2026-09-04-mara-observer-recursion-reality-observation-chaos-assertion-hypothesis-question-choice-crystal-whole-pipeline-quantum-native-at-prismqueer-math-foundation.md`.

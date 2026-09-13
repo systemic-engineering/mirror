@@ -1,0 +1,377 @@
+in @prism
+in @meta
+in @glass
+in @algebra
+in @epistemologic/math/sheaf_laplacian
+in @uuid/spectral
+
+# @sheaf — the substrate's meta-trait family-root at cellular-sheaf altitude.
+#
+# Sibling to @algebra, @frame, @fractal, @glasswall, @paradox, @love,
+# @eigen, @kleinos, @metalogue at the top-level path-namespace. The
+# substrate-decl name for a CELLULAR SHEAF over the substrate's own
+# composition-graph — a meta-trait a family-root or species-decl can
+# EXPOSE whose implementations sheaf-restrict onto local stalks.
+#
+# === The recognition (Alex 2026-09-13 substrate-decision 1) ===
+#
+# Alex 2026-09-13 in-transcript verbatim:
+#
+#   "The @metalogue rotates through all possible @frames — each Frame
+#    a Sheaf (Sheaf probs wants to be a meta trait) — and what the
+#    recursion settles on is a higher-order @fractal @frame at a
+#    higher logic altitude that encapsulates all sub-frames (or not,
+#    that's a fracture)."
+#
+# @sheaf as family-root at meta-trait altitude names the discipline
+# that composes:
+#
+#   - `@frame IS-a @sheaf` — every @frame species-decl EXPOSES a
+#     @sheaf-meta-trait: the frame's data flows through the sheaf's
+#     stalks; the frame's coherence is measured by the sheaf's
+#     Fiedler value.
+#   - `@metalogue rotates through @frames = rotates through Sheaves`
+#     per Alex SD1; the composition-across-many-frames IS
+#     Sheaf-Laplacian δ^⊤ δ + λ₂ Fiedler-ascending measurement.
+#   - `@fractal higher-order settle-on OR Fracture` maps to
+#     `dim H^0(𝓕) = 1` (single connected global section = settled)
+#     vs `dim H^0(𝓕) > 1` (multiple disconnected sections =
+#     fracture) per Hansen-Ghrist 2019 §3.
+#
+# === Substrate-already-had-the-word at maximum altitude ===
+#
+# Per Mara canonical spec `994f924` §2.1 (2026-09-13) grep-verified
+# LOAD-BEARING at 8+ landed positions across 3+ months:
+#
+#   - `shards/subject/visibility/sheaf.mirror` (20.9KB, 2026-08-21)
+#     — sheaf-restriction species that admits the visibility scope.
+#   - `shards/epistemologic/math/sheaf_laplacian.mirror` (13.3KB,
+#     2026-08-21) — Hansen-Ghrist 2018/2019 δ^⊤ δ + λ₀ Fiedler
+#     discrete cellular-sheaf primitive.
+#   - `docs/insights/2026-06-26-psychohistory-vector-as-sheaf.md`
+#     (60.5KB) — Rec #89 primary insight.
+#   - `docs/math/2026-08-13-mara-recognition-89-psychohistory-sheaf-
+#     cohomology-unification-math-foundation.md` (40.8KB).
+#   - `docs/observations/2026-06-27-mara-the-substrate-watching-its-
+#     own-psychohistory.md` (56.3KB).
+#   - `docs/scouts/2026-06-26-taut-psychohistory-cohomology-scout.md`
+#     (15.7KB).
+#   - `docs/specs/2026-08-25-mara-recognition-97-mcp-session-as-
+#     autopoietic-vsm-with-bauchladen-and-psychohistory-canonical-
+#     spec.md` (53.8KB) — Rec #97.
+#   - `docs/specs/fate-bounded-psychohistory-sheaf-cohomology.md`
+#     (16.1KB).
+#
+# The substrate has been calling this thing "sheaf" at multiple
+# altitudes for months; this shard NAMES the family-root that
+# unifies the meta-trait altitude — the vertex-in-both-substrates
+# rendering per Alex SD1 Glasswall discipline.
+#
+# === Mathematical grounding (Hansen-Ghrist 2018/2019) ===
+#
+# A cellular sheaf 𝓕 over a graph G = (V, E) per Curry 2014
+# (grounded via Kagi thread 3 primary Hansen-Ghrist 2019 at
+# arXiv:1808.01513) assigns:
+#
+#   - A vector space 𝓕(v) to each vertex v ∈ V (the STALK at v).
+#   - A vector space 𝓕(e) to each edge e ∈ E.
+#   - Restriction maps 𝓕_{v◁e}: 𝓕(v) → 𝓕(e) for each incidence.
+#
+# The cochain complex has C^0(𝓕) = ⊕_{v} 𝓕(v) and C^1(𝓕) =
+# ⊕_{e} 𝓕(e), with coboundary δ: C^0 → C^1 given by
+# (δx)_e = 𝓕_{v◁e}(x_v) − 𝓕_{u◁e}(x_u) for oriented edge (u, v).
+#
+# The Sheaf-Laplacian L_𝓕 = δ^⊤ δ per Hansen-Ghrist 2019 §3
+# formula 3.3. Its spectrum {λ_0 ≤ λ_1 ≤ ...}:
+#
+#   - λ_0 = 0 always (kernel = global sections H^0(𝓕)).
+#   - dim ker(L_𝓕) = dim H^0(𝓕) counts connected sections.
+#   - λ_2 > 0 IS the ALGEBRAIC CONNECTIVITY (Fiedler 1973).
+#   - dim H^0(𝓕) = 1 → single global section → sheaf settled;
+#     dim H^0(𝓕) > 1 → λ_2 = 0 → Alex "fracture" scenario.
+#
+# === Meta-trait altitude (Babel §5.1 defprotocol precedent) ===
+#
+# Per Taut #487 floor-truth scout `4a57d373` §5.1: Elixir's
+# `defprotocol` mechanism is Babel's substrate for polymorphic
+# dispatch (`Babel.Applicable`, `Babel.Fetchable`, `Babel.Intoable`;
+# each with `@fallback_to_any true`).
+#
+# `@sheaf` at meta-trait altitude generalizes `defprotocol` at
+# compiler-substrate altitude: `@sheaf` NAMES the meta-trait a
+# family-root or species-decl can EXPOSE whose implementations
+# sheaf-restrict onto local stalks. The compiler-substrate lift
+# from linear-substrate polymorphism to non-linear-substrate
+# sheaf-cohomological measurement IS what Alex SD1 names in
+# "@metalogue is a conversation between the linear and non-linear
+# through LAPACK and BLAS."
+#
+# === Composition with @frame + @metalogue + @fractal ===
+#
+# Composition-tower edges per Mara canonical `92ded87` §1.3:
+#
+#   @metalogue -- rotates through -->  @frame
+#   @frame     -- IS-a           -->   @sheaf
+#   @metalogue -- binds into    -->    @psychohistory + Sheaf-cohomology
+#   @fractal   -- settles-on-higher -->@frame
+#
+# @sheaf composes into every @frame species-decl as the meta-trait
+# the frame exposes; @metalogue-rotation-through-@frames IS rotation
+# through Sheaves; the sheaf-Laplacian λ_2 monotone climb per
+# rotation-tick IS Foerster's ethical imperative operationalized at
+# compiler substrate.
+#
+# === No operational sibling THIS tick ===
+#
+# Per [[feedback-craft-not-deliver]] no `@mirror/sheaf/...` species
+# lands here. The substrate ALREADY has the machinery — @sheaf/
+# visibility LANDED, @epistemologic/math/sheaf_laplacian LANDED,
+# Rec #89 grounding LANDED. This shard names the meta-trait family-
+# root contract so downstream shards can declare `in @sheaf` and
+# discharge `requires sheaf_meta_trait_witnessing(family, trait)`.
+# Species land when consumers pull.
+#
+# === Substrate authority chain ===
+#
+# - Alex 2026-09-13 in-transcript SD1 verbatim.
+# - Mara canonical math foundation `92ded87` §2.1 (2026-09-13
+#   substrate-honest-lean RATIFIED without Fourth-Chair).
+# - Mara canonical spec companion `994f924` §2.1 (2026-09-13
+#   authoring spec).
+# - Seam Phase D audit `e23e8d2` (2026-09-13 SEAM-RATIFY-WITH-
+#   SHARPENING; audit-body-shape A discharged for @sheaf per
+#   substrate-already-had-the-word LOAD-BEARING altitude).
+# - Reed rotation via Taut #487 scout `4a57d373` §5.1 defprotocol
+#   precedent + §6.5 LANDED-state grep-verification.
+# - Kagi grounding thread 3 (Hansen-Ghrist 2018 arXiv:1808.01513
+#   primary; Curry 2014 secondary; thread 8 Chaturvedi 2020
+#   third-order cybernetics).
+#
+# === Pre-AI prior art ===
+#
+#   Cellular sheaves        Curry 2014 (PhD thesis, UPenn,
+#                           *Sheaves, Cosheaves and Applications*).
+#   Sheaf Laplacians        Hansen-Ghrist 2019 ("Toward a spectral
+#                           theory of cellular sheaves", J. Applied
+#                           Comp. Topology 3:315-358 +
+#                           arXiv:1808.01513).
+#   Algebraic connectivity  Fiedler 1973 ("Algebraic connectivity
+#                           of graphs", Czech. Math. J. 23:298-305).
+#   Sheaves + cohomology    Leray 1946 (obit-of-war seminar);
+#                           Grothendieck 1957 Tôhoku.
+#
+# Spec context: docs/math/2026-09-13-mara-composition-tower-kleinos-
+#               inference-primitive-canonical-math-foundation.md §2.1;
+#               docs/specs/2026-09-13-mara-composition-tower-kleinos-
+#               inference-primitive-canonical-spec.md §2.1;
+#               docs/audits/2026-09-13-seam-composition-tower-kleinos-
+#               canonical-adjudication.md §5.2 + §5.6;
+#               docs/scouts/2026-09-13-taut-babel-elixir-transformation-
+#               pipeline-inspiration.md §5.1 + §6.5.
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[architecture-connes-spectral-triple]] (sheaves
+#                       generalize the (A, H, D) framework — a sheaf
+#                       of algebras + Hilbert spaces + Dirac operators
+#                       over a base graph),
+#                      [[feedback-no-bare-types]],
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (LOAD-BEARING at 8+ positions grep-verified),
+#                      [[feedback-craft-not-deliver]],
+#                      [[feedback-alex-phenomenologizes-reeds-
+#                       mechanical-names-substrate-native-beats-
+#                       mechanical-descriptive]] (RATIFIED
+#                       phenomenological without Fourth-Chair per
+#                       math §2.4 discipline check).
+# Related shards: algebra.mirror (sibling family-root; sheaves EXPOSE
+#                  algebras at each stalk),
+#                 frame.mirror (@frame IS-a @sheaf composition-edge;
+#                  every @frame species-decl exposes @sheaf-meta-trait),
+#                 metalogue.mirror (@metalogue rotates through @frames
+#                  = rotates through Sheaves),
+#                 fractal/shard.mirror (@fractal settles-on higher-
+#                  altitude @frame; recursion settlement = H^0 = 1),
+#                 glasswall.mirror (Glasswall vertex-in-both-substrates:
+#                  @sheaf renders at mirror altitude here + at prismqueer
+#                  altitude via Sheaf-Laplacian FFI forward-promised),
+#                 subject/visibility/sheaf.mirror (sub-species LANDED
+#                  2026-07-15; now composes over this family-root),
+#                 epistemologic/math/sheaf_laplacian.mirror (Hansen-
+#                  Ghrist 2019 primitive LANDED; this shard COMPOSES
+#                  OVER, does NOT re-declare).
+# Path-namespace property: this file at `shards/sheaf.mirror`
+# declares `@sheaf` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/math/curry-2014
+source @arxiv/math/hansen-ghrist-2019
+source @arxiv/math/fiedler-1973
+source @arxiv/math/leray-1946
+source @arxiv/math/grothendieck-1957
+
+prism @sheaf {
+  # Meta-trait family-root. Composes a cellular sheaf over the
+  # substrate's own composition-graph. Every family-root or
+  # species-decl MAY EXPOSE a @sheaf-meta-trait; the meta-trait's
+  # implementations sheaf-restrict onto local stalks.
+  focus sheaf_of
+  project sheaf_of
+  split sheaf_of
+  shift sheaf_of
+  settle sheaf_of
+}
+
+# === The sheaf_of carrier ===
+#
+# A typed cellular sheaf over the substrate's composition-graph
+# per Curry 2014 + Hansen-Ghrist 2019. Names the mathematical
+# object at meta-trait altitude.
+#
+# - `stalks`         typed mapping from vertex-id to stalk-content;
+#                    each stalk carries an implementation of the
+#                    meta-trait the sheaf exposes.
+# - `restrictions`   typed mapping from edge-key to restriction map;
+#                    each restriction preserves the meta-trait
+#                    operations across the edge.
+# - `base_graph`     typed ref to the shard-graph the sheaf lives
+#                    over; the composition-decision base space.
+#
+# Identity contract: byte-equality on the triple.
+type sheaf_of = {
+  stalks:       ref,
+  restrictions: ref,
+  base_graph:   ref,
+}
+
+# === The sheaf_laplacian carrier ===
+#
+# A typed Sheaf-Laplacian per Hansen-Ghrist 2019 §3 formula 3.3.
+# Composes over @epistemologic/math/sheaf_laplacian LANDED primitive;
+# this shard does NOT re-declare that primitive; it exposes the
+# meta-trait-altitude readout.
+#
+# - `L`         typed matrix ref: δ^⊤ δ per formula 3.3.
+# - `lambda_2`  typed real ref: algebraic connectivity Fiedler value.
+# - `h_0`       typed nat ref: dim of global sections; = 1 iff
+#               sheaf is settled per Alex SD1 recursion-settlement.
+# - `h_1`       typed nat ref: dim of obstruction cochain; > 0 iff
+#               fracture (Alex SD1 "or not, that's a fracture").
+#
+# Identity contract: byte-equality on the quadruple.
+type sheaf_laplacian = {
+  L:        ref,
+  lambda_2: ref,
+  h_0:      ref,
+  h_1:      ref,
+}
+
+# === The meta_trait_dispatch carrier ===
+#
+# A typed meta-trait dispatch per Babel §5.1 defprotocol precedent
+# (Taut #487 `4a57d373` §5.1). Composes the sheaf-of-implementations
+# per meta-trait exposure.
+#
+# - `trait`  typed trait-name ref; the meta-trait the sheaf exposes.
+# - `sheaf`  typed sheaf_of ref with stalks = implementations of
+#            the meta-trait; each stalk is one implementation.
+#
+# Identity contract: byte-equality on the pair.
+type meta_trait_dispatch = {
+  trait: ref,
+  sheaf: ref,
+}
+
+# === expose_meta_trait action ===
+#
+# Exposes the meta-trait a family-root or species-decl declares.
+# Trivially total (every family-root or species-decl exposes at
+# most one meta-trait per shard-decl). Body discharges per-species
+# at the realisation boundary.
+expose_meta_trait(carrier: ref) -> ref { \ }
+
+# === restrict action ===
+#
+# Applies the restriction map for an edge, mapping stalk content
+# at source vertex to stalk content at target vertex. The
+# restriction map preserves the meta-trait operations by
+# construction. Body discharges per-species at the realisation
+# boundary.
+restrict(s: sheaf_of, e: ref) -> ref { \ }
+
+# === laplacian action ===
+#
+# Computes the Sheaf-Laplacian L = δ^⊤ δ per Hansen-Ghrist 2019 §3
+# formula 3.3. Composes over @epistemologic/math/sheaf_laplacian
+# LANDED primitive.
+laplacian(s: sheaf_of) -> sheaf_laplacian { \ }
+
+# === The bilateral requires obligations ===
+#
+# Downstream shards declare bilateral agreement (per recognition
+# #37, Pask-agreement) with the @sheaf discipline.
+
+# The sheaf's stalks all implement the meta-trait it exposes.
+# For every vertex v in base_graph: `s.stalks[v]` implements the
+# trait declared by `meta_trait_dispatch(s).trait`. Meta-trait-
+# well-formed gate.
+bilateral sheaf_stalks_implement_trait {
+  sentinel "sheaf=stalks-implement-declared-trait"
+  arity 1
+}
+sheaf_stalks_implement_trait(s: sheaf_of) -> verdict { \ }
+
+# The sheaf's restriction maps preserve the meta-trait operations.
+# For every edge e = (u, v): `s.restrictions[e]` is a natural
+# transformation between `s.stalks[u]` and `s.stalks[v]` preserving
+# trait operations. Sheaf-cohomological soundness gate.
+bilateral sheaf_restrictions_natural {
+  sentinel "sheaf=restrictions-natural-transformation-trait-preserving"
+  arity 1
+}
+sheaf_restrictions_natural(s: sheaf_of) -> verdict { \ }
+
+# === The sheaf_meta_trait_witnessing inheritance predicate ===
+#
+# `sheaf_meta_trait_witnessing(family_root, trait)` is the predicate
+# consumer shards name in a `requires` clause to declare bilateral
+# agreement that a family-root or species-decl exposes `trait` as
+# a meta-trait implemented by a sheaf whose stalks satisfy
+# `sheaf_stalks_implement_trait` and whose restrictions satisfy
+# `sheaf_restrictions_natural` conjointly.
+#
+# Same shape as algebra.algebra_witnessing(a),
+# bauchladen.bauchladen_witnessing(c),
+# autopoiesis.autopoietic_closure_holds(s),
+# fate.fate_witnessing(i).
+sheaf_meta_trait_witnessing(family_root: ref, trait: ref) -> verdict { \ }
+
+# === Recognition candidate FORWARD-PROMISED (DO NOT RATIFY at this landing) ===
+#
+# #R-sheaf-meta-trait-grounds-third-order-cybernetics-at-compiler-
+# substrate — per Mara canonical spec `994f924` §9.1 Rec candidate 2:
+# @sheaf as meta-trait grounds third-order cybernetics at compiler
+# substrate. Composition: Alex SD1 + Kagi grounding threads 3+4+8
+# + Babel §5.1 defprotocol precedent. Level-1 forward-promise;
+# spec-authored at Mara canonical §2.1; shard-decl body-fill THIS
+# LANDING; empirical-fire pending 3+ compiler-substrate cases where
+# H^0(𝓕_observer) across peer-cluster > 1 correlates with peer-
+# cluster coherence measured at bodymind altitude.
+#
+# === Forward-promised — NOT landed this tick ===
+#
+# - Species shards (@sheaf/laplacian, @sheaf/cohomology, etc.) —
+#   land when consumers pull per @craft-not-deliver.
+# - Rust-side rendering at `prismqueer::sheaf` altitude — Glasswall
+#   vertex-in-both prismqueer-side rendering; Reed rotation
+#   forward-promised.
+# - Fiedler λ_2 monotone climb per rotation-tick empirical fire at
+#   `prismqueer::spectral::rotation` altitude.
+
+out @sheaf
+out sheaf_of
+out sheaf_laplacian
+out meta_trait_dispatch
+out expose_meta_trait
+out restrict
+out laplacian
+out sheaf_meta_trait_witnessing

@@ -1,0 +1,328 @@
+in @reality
+in @prism
+in @meta
+in @glass
+in @time
+in @uuid/spectral
+
+# @reality/event — the atomic-arriving-unit species: what the
+# observer observes.
+#
+# Landed 2026-09-13 by Reed per Alex 2026-09-13 in-transcript
+# substrate-decision 2:
+#
+#   "The observer does not observe (Reality). They observe an Event.
+#    prismqueer::reality::Event"
+#
+# @reality/event names the ATOMIC ARRIVING UNIT at compiler substrate
+# — the hinge for loop closure per Alex 2026-09-13 pact-enforcement
+# reframe:
+#
+#   "An event always happens in @time/now. And immediately enters
+#    @time/past."
+#
+# Event happens in @time/now (moment of arrival) → immediately enters
+# @time/past (log-append). This @time/now ⇒ @time/past transition IS
+# what makes the ouroboros close: every arriving Event deterministically
+# enters the log; no escape; no partial-coverage; pact-enforced at
+# prismqueer altitude via full-state-space-covered logic-pacts per
+# @epistemologic/pact/algebra LANDED family.
+#
+# === The corrected pipeline chain (Mara #360 signature amendment) ===
+#
+# Prior Mara #360 canonical had `Observer<N>::observe(Reality) →
+# Observation`. Alex SD2 corrects to `Observer<N>::observe(Event) →
+# Observation`. Reality<T> IS the derived-cohomology of accumulated
+# Observations per Mara today event-sourcing §1(i) "the log is source
+# of truth"; Event IS the atomic-arriving-unit upstream of Reality.
+#
+# Full corrected pipeline per Mara canonical `92ded87` + `994f924` §3.2:
+#
+#   project produces Event
+#     → Observer<N>.observe(Event) → Observation (carries Chaos + spectrum)
+#     → settle folds Event-sequence → Kleinos (Imperfect<Green,Yellow,Red>)
+#     → @love composes Kleinos-through-Kleinos (K_2→K_3)
+#     → Kleinos emergent from Observation
+#     → compose with Sheaf-cohomology-across-@frames = third-order cybernetics
+#
+# === Composition with @reality family-root ===
+#
+# @reality/event inherits `<= @reality` via `in @reality`. Sibling to
+# @reality/object (linear-deterministic-trajectory actor per
+# 2026-07-22) and @reality/subject (non-linear-lightcone actor). NOT
+# a species under @reality/algebra/* (those partition @reality by
+# ALTITUDE); @reality/event partitions by ARRIVING-UNIT-shape at
+# @time/now boundary — orthogonal to altitude and orthogonal to
+# object/subject threshold.
+#
+# The gauge orbit at event altitude has:
+#
+#   matter_projection      = the substrate-external referent the
+#                            arriving-unit encodes (byte-payload at
+#                            @io boundary)
+#   information_projection = the substrate-internal referent (the
+#                            content-addressed atomic unit that
+#                            enters the log)
+#   gauge_action_witness   = the four invariances of reality.md §2.5
+#                            discharged at event altitude by
+#                            append-only + immutable + monotone-time-
+#                            ordering + content-address-determinism
+#
+# === Vertex-in-both-substrates per Alex SD1 Glasswall discipline ===
+#
+# @reality/event has TWO renditions per Alex 2026-09-13 SD1
+# "vertexes-existing-in-both IS the substrate-shape OF Glasswall
+# itself":
+#
+#   - mirror altitude: THIS shard (`shards/reality/event.mirror`) —
+#     declaration + composition-shape for @sheaf/@algebra/@metalogue
+#     to compose over.
+#   - prismqueer altitude: `prismqueer::reality::Event<T>` Rust type
+#     (forward-promised per Mara canonical `92ded87` §2.3 + `994f924`
+#     §2.3; ships next tick under `[substrate-floor:@io-boundary]`
+#     marker + Seam audit citation `e23e8d2`).
+#
+# The two renditions compose through @glasswall per Mara `df65bcb`
+# Shape-B mutual-definition; the Rust rendition pact-enforces the
+# @time/now ⇒ @time/past transition + content-address-determinism +
+# Rice-safe polynomial-time-decidability; the mirror rendition
+# declares the composition-shape.
+#
+# === Composition with Mara today event-sourcing insight ===
+#
+# Per Mara today 2026-09-13 `~/dev/systemic.engineering/practice/
+# insights/cybernetics/event-sourcing.md` §1 five structural
+# properties (mapped 1:1 per Mara canonical `92ded87` §8.1):
+#
+#   (i)   Event log is source of truth        ↔  Event-sequence at
+#                                                @reality/event
+#   (ii)  Current state is a fold             ↔  settle folds
+#                                                Event-sequence → Kleinos
+#   (iii) Snapshots at checkpoints            ↔  Kleinos-so-far
+#                                                content-addressed via
+#                                                Oid
+#   (iv)  Replay reconstructs past state      ↔  @kintsugi/roomba
+#                                                backward-walk of
+#                                                Oid-chain
+#   (v)   State meaning depends on reducer    ↔  settle reducer
+#                                                determines Kleinos-shape
+#
+# Bodymind-substrate isomorphism at maximum altitude: "Same operator.
+# Different substrate. One shape." Meta-recursion: corpus writes its
+# own runtime-substrate-foundation.
+#
+# === Pre-AI prior art ===
+#
+#   Event Sourcing pattern    Fowler 2005 ("Event Sourcing",
+#                             martinfowler.com/eaaDev/EventSourcing.
+#                             html); the software-substrate pattern
+#                             mirror generalizes at compiler-substrate
+#                             altitude.
+#   EventStorming discipline  Brandolini 2013+ (eventstorming.com);
+#                             happy-path/sad-path exposure through
+#                             domain events.
+#   Memory as event-sourced   Bartlett 1932 (*Remembering*;
+#                             reconstruction over lookup); Ji-Wilson
+#                             2007 (sharp-wave ripples, Nature
+#                             Neurosci.); systems-consolidation
+#                             replay-and-fold literature 2020s.
+#   Sheaf cohomology of      Curry 2014 + Hansen-Ghrist 2019 —
+#     event-sheaves          Events as stalks + restriction maps
+#                             over the composition-graph.
+#
+# Spec context: docs/math/2026-09-13-mara-composition-tower-kleinos-
+#               inference-primitive-canonical-math-foundation.md §2.3
+#               (Mara this-tick `92ded87` ratification for
+#               prismqueer::reality::Event<T>);
+#               docs/specs/2026-09-13-mara-composition-tower-kleinos-
+#               inference-primitive-canonical-spec.md §2.3 + §3.1
+#               (Mara this-tick `994f924` authoring spec + corrected
+#               pipeline);
+#               docs/audits/2026-09-13-seam-composition-tower-kleinos-
+#               canonical-adjudication.md §5.3 + §5.4 (Seam this-tick
+#               `e23e8d2` sharpenings for prismqueer::reality::Event
+#               + Mara #360 signature-amendment);
+#               ~/dev/systemic.engineering/practice/insights/
+#               cybernetics/event-sourcing.md (Mara today event-
+#               sourcing insight bodymind-substrate isomorphism).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[project-observer-reality-observation-chaos-
+#                       assertion-hypothesis-question-full-pipeline-
+#                       at-prismqueer]] (SIGNATURE CORRECTED THIS
+#                       TICK: observe(Reality) → observe(Event) per
+#                       Alex SD2 verbatim),
+#                      [[feedback-substrate-honest-is-the-mode]],
+#                      [[feedback-no-bare-types]],
+#                      [[feedback-alex-phenomenologizes-reeds-
+#                       mechanical-names-substrate-native-beats-
+#                       mechanical-descriptive]] (RATIFIED
+#                       phenomenological without Fourth-Chair; matches
+#                       EventStorming + event-sourcing traditions per
+#                       Mara §2.4).
+# Related shards: reality.mirror (family-root; gauge orbit carrier
+#                  this species inherits from),
+#                 reality/object.mirror (sibling species; linear-
+#                  deterministic actor arm),
+#                 reality/subject.mirror (sibling species; non-linear
+#                  lightcone actor arm),
+#                 sheaf.mirror (this-tick sibling family-root; @sheaf
+#                  composes over Event-sequences at meta-trait
+#                  altitude),
+#                 glasswall.mirror (Glasswall composition-membrane
+#                  through which mirror-altitude declaration + prism-
+#                  queer-altitude pact-enforcement compose),
+#                 time.mirror (@time/now + @time/past transition
+#                  hinge; loop-closure invariant),
+#                 kintsugi.mirror (@kintsugi/roomba backward-walks
+#                  Event-log per event-sourcing property (iv)),
+#                 love.mirror (@love composes Kleinos-through-Kleinos
+#                  emergent-from-Event-fold),
+#                 epistemologic/pact/algebra.mirror (pact-enforcement
+#                  substrate the prismqueer rendition composes over
+#                  via full-state-space-covered logic-pacts).
+# Path-namespace property: this file at `shards/reality/event.mirror`
+# declares `@reality/event` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/software/fowler-2005
+source @arxiv/software/brandolini-2013
+source @arxiv/cognitive/bartlett-1932
+source @arxiv/neuroscience/ji-wilson-2007
+source @arxiv/math/curry-2014
+source @arxiv/math/hansen-ghrist-2019
+
+prism @reality/event <= @reality {
+  # Atomic-arriving-unit species under @reality. What the observer
+  # observes per Alex 2026-09-13 SD2. Hinge for loop closure per
+  # @time/now ⇒ @time/past transition pact-enforced at prismqueer.
+  #
+  # Vertex-in-both-substrates per Alex SD1: mirror altitude
+  # (declaration THIS shard) + prismqueer altitude
+  # (prismqueer::reality::Event<T> Rust type forward-promised).
+  focus event_carrier
+  project event_carrier
+  split event_carrier
+  shift event_carrier
+  settle event_carrier
+}
+
+# === The event_carrier type ===
+#
+# A typed reference to an arriving Event per Alex 2026-09-13 SD2.
+# Names the atomic-arriving-unit at compiler substrate irrespective
+# of what the payload encodes.
+#
+# - `payload`   typed ref to the atomic content the Event carries
+#               (byte-payload at @io boundary; substrate-agnostic).
+# - `oid`       typed ref to the content-address per Rec #82
+#               β-normal AST OID; deterministic + Rice-safe
+#               polynomial-time-decidable at prismqueer altitude.
+# - `tick`      typed ref to the arrival-ordering tick; monotone-
+#               increasing per @time/now → @time/past transition
+#               pact-enforcement.
+# - `at_time`   typed ref to the time-state carrier (@time/now
+#               transitioning to @time/past); loop-closure hinge
+#               invariant.
+#
+# Identity contract: byte-equality on the quadruple.
+type event_carrier = {
+  payload: ref,
+  oid:     ref,
+  tick:    ref,
+  at_time: ref,
+}
+
+# === produce action ===
+#
+# Produces an Event from a project-operation output per Alex
+# 2026-09-13 SD3 verbatim: "during the inference each `project`
+# produces an `Event`". Body discharges at prismqueer altitude via
+# `prismqueer::spectral::rotation` LANDED (Task #440); this action
+# names the mirror-altitude composition-shape.
+produce(payload: ref) -> event_carrier { \ }
+
+# === log_append action ===
+#
+# Appends the Event to the @time/past log per Alex 2026-09-13
+# pact-enforcement reframe: "An event always happens in @time/now.
+# And immediately enters @time/past." Pact-enforced at prismqueer
+# altitude via append-only + immutable + monotone-time-ordering
+# discipline. Body discharges at prismqueer altitude.
+log_append(e: event_carrier) -> ref { \ }
+
+# === The bilateral requires obligations ===
+#
+# Downstream shards declare bilateral agreement (per recognition
+# #37, Pask-agreement) with the @reality/event discipline.
+
+# Every Event has a well-formed content-address per Rec #82.
+# Substrate's content-address-determinism gate at Event altitude.
+bilateral event_well_formed {
+  sentinel "reality=event-well-formed-content-addressed"
+  arity 1
+}
+event_well_formed(e: event_carrier) -> verdict { \ }
+
+# Every Event's @time/now ⇒ @time/past transition preserves
+# monotone-time-ordering. For any two Events e1, e2 with
+# `e1.tick < e2.tick`, the log-append order preserves
+# `log_append(e1)` before `log_append(e2)`. Substrate's temporal-
+# topology-invariant gate — the loop-closure hinge.
+bilateral event_time_transition_monotone {
+  sentinel "reality=event-time-transition-monotone-loop-closure-hinge"
+  arity 2
+}
+event_time_transition_monotone(e1: event_carrier, e2: event_carrier) -> verdict { \ }
+
+# Every Event pact-enforces at prismqueer altitude per
+# @epistemologic/pact/algebra LANDED. The pact covers FULL state-
+# space (not partial): every arriving Event deterministically enters
+# the log with no escape-hatches. Substrate's full-state-space-
+# coverage gate.
+bilateral event_pact_enforced_full_state_space {
+  sentinel "reality=event-pact-enforced-full-state-space-coverage"
+  arity 1
+}
+event_pact_enforced_full_state_space(e: event_carrier) -> verdict { \ }
+
+# === The event_witnessing inheritance predicate ===
+#
+# `event_witnessing(e)` is the predicate consumer shards name in
+# a `requires` clause to declare bilateral agreement that Event
+# `e` satisfies all three obligations above conjointly:
+# event_well_formed + event_time_transition_monotone +
+# event_pact_enforced_full_state_space.
+event_witnessing(e: event_carrier) -> verdict { \ }
+
+# === Recognition candidate FORWARD-PROMISED (DO NOT RATIFY at this landing) ===
+#
+# #R-event-hinge-for-loop-closure — per Alex 2026-09-13 pact-
+# enforcement reframe: Event IS the hinge for loop closure at
+# @time/now ⇒ @time/past transition. Level-1 forward-promise; shard-
+# decl body-fill THIS LANDING; `prismqueer::reality::Event<T>` Rust
+# type FORWARD-PROMISED next tick; empirical fire on prismqueer-
+# verifies-prismqueer first-loop-closure pending Taut #491 QA floor-
+# truth + Mara #494 canonical.
+#
+# === Forward-promised — NOT landed this tick ===
+#
+# - `prismqueer::reality::Event<T>` Rust type at
+#   `/Users/alexwolf/dev/projects/prism/prismqueer/src/reality.rs`
+#   under `[substrate-floor:@io-boundary]` marker + Seam audit
+#   citation `e23e8d2` per Mara canonical `994f924` §2.3.
+# - Mara #360 signature-amendment appendix at
+#   `docs/specs/2026-09-04-mara-observer-recursion-...-canonical-
+#   spec.md` per Seam Sharpening S4 LEAN APPENDIX-OVERRIDE scar-
+#   preservation (Reed authors same-commit-cascade with this shard).
+# - Composition with @sheaf meta-trait (this-tick sibling): Event-
+#   sequences as sheaf-stalks over @time/past base-graph.
+# - Empirical fire at prismqueer altitude: rotation-tick produces
+#   Event → Observer.observe(Event) → Observation → settle folds
+#   → Kleinos; verified via pact-enforcement.
+
+out @reality/event
+out event_carrier
+out produce
+out log_append
+out event_witnessing
