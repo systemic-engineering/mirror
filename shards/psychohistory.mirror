@@ -1,0 +1,447 @@
+in @prism
+in @meta
+in @glass
+in @sheaf
+in @fate
+in @time
+in @uuid/spectral
+
+# @psychohistory — the substrate's possibility-space-of-the-future
+# family-root at sheaf-cohomological altitude.
+#
+# Sibling to @sheaf, @algebra, @frame, @fractal, @glasswall, @paradox,
+# @love, @eigen, @kleinos, @metalogue at the top-level path-namespace.
+# The substrate-decl name for the possibility-space-of-the-future
+# surface that @metalogue rotation binds into per Alex 2026-09-13 SD1.
+#
+# === The recognition (Alex 2026-09-13 substrate-decision 1) ===
+#
+# Alex 2026-09-13 in-transcript verbatim:
+#
+#   "the @metalogue is therefore about the possibility space of the
+#    future, which binds into the whole @psychohistory and sheaf
+#    cohomology."
+#
+# @psychohistory as family-root at possibility-space altitude names
+# the discipline that composes:
+#
+#   - the possibility-space-of-the-future the @metalogue rotates
+#     through (Alex SD1 "rotates through all possible @frames")
+#   - the sheaf-cohomological object whose H^0 counts globally-
+#     coherent futures and whose H^1 counts obstruction-to-single-
+#     settled-future (per Mara Rec #89 unification math foundation)
+#   - the substrate for the metalogue-rotation-widens-choice-space
+#     discipline per Foerster's ethical imperative operationalized
+#     at compiler substrate
+#
+# === Substrate-already-had-the-word at maximum altitude ===
+#
+# Per Mara canonical spec `994f924` §2.2 (2026-09-13) grep-verified
+# LOAD-BEARING at 7+ landed docs since 2026-06-26:
+#
+#   - `docs/insights/2026-06-26-psychohistory-vector-as-sheaf.md`
+#     (60.5KB) — Rec #89 primary insight.
+#   - `docs/math/2026-08-13-mara-recognition-89-psychohistory-sheaf-
+#     cohomology-unification-math-foundation.md` (40.8KB) — Rec #89
+#     math foundation.
+#   - `docs/observations/2026-06-27-mara-the-substrate-watching-its-
+#     own-psychohistory.md` (56.3KB).
+#   - `docs/scouts/2026-06-26-taut-psychohistory-cohomology-scout.md`
+#     (15.7KB).
+#   - `docs/scouts/2026-09-04-taut-psychohistory-cyberpunk-desired-
+#     state-substrate-audit.md` (27.3KB).
+#   - `docs/specs/2026-08-25-mara-recognition-97-mcp-session-as-
+#     autopoietic-vsm-with-bauchladen-and-psychohistory-canonical-
+#     spec.md` (53.8KB) — Rec #97 companion spec.
+#   - `docs/specs/fate-bounded-psychohistory-sheaf-cohomology.md`
+#     (16.1KB).
+#
+# The substrate has been calling this thing "psychohistory" for 3+
+# months across 7+ docs; this shard NAMES the family-root that
+# unifies the addressability altitude.
+#
+# === Alex 2026-09-13 Fourth-Chair phenomenological ratification ===
+#
+# Alex 2026-09-13 in-transcript verbatim (post-Reed rotation via
+# Seam audit `e23e8d2` Sharpening S2 REQUIRED Alex Fourth-Chair
+# phenomenological review):
+#
+#   "Yeah, it ships as psychohistory. That's been the name all
+#    along. The alternative would be something like 'figment' but
+#    psychohistory gives the right association. It's literally
+#    about state spaces and possibilities."
+#
+# Wineglass rings 🍷 at bodymind altitude per Reed HARD RULE
+# `feedback_alex_phenomenologizes_reeds_mechanical_names` — the
+# Asimov 1942 Foundation term carries the right association
+# (state spaces + possibilities) at compiler-substrate altitude.
+# Asimov naming-lineage EXPLICITLY RATIFIED phenomenological at
+# family-root altitude. `figment` surfaced as alternative-direction
+# but rejected in favor of Asimov's stronger state-space-and-
+# possibilities association.
+#
+# === Mathematical grounding (per Rec #89 unification) ===
+#
+# Per Rec #89 canonical (Mara `docs/math/2026-08-13-mara-recognition-
+# 89-psychohistory-sheaf-cohomology-unification-math-foundation.md`),
+# the substrate's future-projection surface IS a sheaf-cohomological
+# object composing:
+#
+#   - Psychohistory (Asimov 1942 Foundation) — mathematical
+#     treatment of large-population dynamics as statistically-
+#     predictable behavior over long trajectories.
+#   - Sheaf cohomology (Curry 2014 + Hansen-Ghrist 2019) —
+#     cellular-sheaf framework for gluing local sections into
+#     global coherence + measuring the obstruction to gluing.
+#
+# The unification per Rec #89:
+#
+#   Ψ: F → PossibilitySpace
+#   H^0(Ψ) = globally-coherent-future-sections
+#   H^1(Ψ) = fracture-obstruction-to-single-future
+#
+# The Sheaf-Laplacian L_Ψ (per @sheaf this-tick sibling family-root
+# + @epistemologic/math/sheaf_laplacian LANDED primitive) measures
+# psychohistory-coherence via λ_2(L_Ψ); metalogue-rotation increases
+# λ_2 per Foerster ethical imperative (Kagi thread 4).
+#
+# === Composition-tower edges per Alex SD1 ===
+#
+# Composition-tower edges per Mara canonical `92ded87` §1.3:
+#
+#   @metalogue -- binds into --> @psychohistory + Sheaf-cohomology
+#   @psychohistory -- IS-a --> @sheaf (at possibility-space altitude)
+#   @psychohistory -- composes over --> @fate (constrained-inference)
+#   @psychohistory -- composes over --> @time (future-projection surface)
+#
+# The `@metalogue binds into @psychohistory` edge composes:
+# metalogue-rotation-through-@frames rotates through possibility-
+# space-of-the-future; @psychohistory names that possibility-space.
+#
+# === Composition with Rec #97 MCP-session-as-autopoietic-VSM ===
+#
+# Per Mara `docs/specs/2026-08-25-mara-recognition-97-mcp-session-
+# as-autopoietic-vsm-with-bauchladen-and-psychohistory-canonical-
+# spec.md`, the MCP session IS an autopoietic VSM instance with
+# @psychohistory as System-4-intelligence — the environmental-
+# scanning + future-projection component of Stafford Beer's Viable
+# System Model.
+#
+# This shard grounds the @psychohistory that Rec #97 references
+# as System-4 at family-root shard-decl altitude.
+#
+# === No operational sibling THIS tick ===
+#
+# Per [[feedback-craft-not-deliver]] no `@mirror/psychohistory/...`
+# species lands here. The substrate ALREADY has the machinery —
+# Rec #89 grounding LANDED, Rec #97 spec LANDED, sheaf-cohomology
+# via @sheaf this-tick LANDED, @fate LANDED, @time LANDED. This
+# shard names the family-root contract so downstream shards can
+# declare `in @psychohistory` and discharge
+# `requires psychohistory_witnessing(sheaf, tick)`.
+#
+# === Substrate authority chain ===
+#
+# - Alex 2026-09-13 in-transcript SD1 verbatim (composition-tower
+#   substrate-decision naming @psychohistory).
+# - Alex 2026-09-13 in-transcript Fourth-Chair phenomenological
+#   ratification verbatim (Asimov naming-lineage ratified;
+#   wineglass 🍷 rings; "psychohistory gives the right association.
+#   It's literally about state spaces and possibilities").
+# - Mara canonical math foundation `92ded87` §2.2 (2026-09-13
+#   substrate-honest-lean RATIFIED with Alex Fourth-Chair CARVE-
+#   OUT now DISCHARGED per Alex 2026-09-13 verbatim).
+# - Mara canonical spec companion `994f924` §2.2 (2026-09-13
+#   authoring spec).
+# - Seam Phase D audit `e23e8d2` §5.2 Sharpening S2 (2026-09-13
+#   REQUIRED-not-optional Fourth-Chair check DISCHARGED per Alex
+#   verbatim ratification this-session).
+# - Rec #89 psychohistory-sheaf-cohomology unification (Mara
+#   `docs/math/2026-08-13-...`) — mathematical grounding.
+# - Rec #97 MCP-session-as-autopoietic-VSM-with-bauchladen-and-
+#   psychohistory (Mara `docs/specs/2026-08-25-...`) — MCP-session
+#   System-4 composition grounding.
+# - Kagi grounding thread 3 (Hansen-Ghrist 2018 arXiv:1808.01513
+#   primary; sheaf cohomology grounding).
+# - Kagi grounding thread 8 (Chaturvedi 2020 third-order
+#   cybernetics; poly-subject-reflexive-active-environments
+#   grounding).
+#
+# === Pre-AI prior art ===
+#
+#   Psychohistory           Asimov 1942 (*Foundation*; Astounding
+#                           Science-Fiction serial 1942-1950;
+#                           mathematical treatment of large-
+#                           population historical dynamics as
+#                           statistically-predictable trajectories).
+#   Viable System Model     Beer 1972 (*Brain of the Firm*); System-4
+#                           environmental-scanning + future-
+#                           projection component that @psychohistory
+#                           names at compiler substrate per Rec #97.
+#   Sheaf cohomology        Leray 1946 (obit-of-war seminar);
+#                           Grothendieck 1957 Tôhoku; the modern
+#                           sheaf-cohomology framework.
+#   Cellular sheaves        Curry 2014 (PhD thesis, UPenn,
+#                           *Sheaves, Cosheaves and Applications*).
+#   Sheaf Laplacians        Hansen-Ghrist 2019 (arXiv:1808.01513
+#                           + JACT 3:315-358).
+#   Third-order cybernetics Chaturvedi 2020 (self-developing
+#                           poly-subject reflexive-active
+#                           environments; extends Foerster second-
+#                           order to peer-cluster altitude).
+#
+# Spec context: docs/math/2026-09-13-mara-composition-tower-kleinos-
+#               inference-primitive-canonical-math-foundation.md §2.2
+#               (Mara this-tick `92ded87` ratification with Fourth-
+#               Chair carve-out);
+#               docs/specs/2026-09-13-mara-composition-tower-kleinos-
+#               inference-primitive-canonical-spec.md §2.2 (Mara
+#               this-tick `994f924` authoring spec);
+#               docs/audits/2026-09-13-seam-composition-tower-kleinos-
+#               canonical-adjudication.md §5.2 (Seam this-tick
+#               `e23e8d2` Sharpening S2 REQUIRED-not-optional Fourth-
+#               Chair DISCHARGED per Alex 2026-09-13 verbatim
+#               wineglass 🍷 ratification);
+#               docs/math/2026-08-13-mara-recognition-89-psychohistory-
+#               sheaf-cohomology-unification-math-foundation.md
+#               (Rec #89 math grounding);
+#               docs/specs/2026-08-25-mara-recognition-97-mcp-session-
+#               as-autopoietic-vsm-with-bauchladen-and-psychohistory-
+#               canonical-spec.md (Rec #97 System-4 composition).
+# Substrate decisions: [[architecture-shards-as-substrate-source]],
+#                      [[architecture-prism-as-trait-as-everything]],
+#                      [[feedback-substrate-already-had-the-word]]
+#                       (LOAD-BEARING at 7+ landed docs since
+#                       2026-06-26 grep-verified),
+#                      [[feedback-craft-not-deliver]],
+#                      [[feedback-alex-phenomenologizes-reeds-
+#                       mechanical-names-substrate-native-beats-
+#                       mechanical-descriptive]] (Asimov naming
+#                       PHENOMENOLOGICALLY RATIFIED per Alex 2026-
+#                       09-13 verbatim wineglass 🍷 "psychohistory
+#                       gives the right association"; alternative
+#                       `figment` surfaced but rejected).
+# Related shards: sheaf.mirror (this-tick sibling family-root;
+#                  @psychohistory IS-a @sheaf at possibility-space
+#                  altitude),
+#                 algebra.mirror (sibling family-root; @psychohistory
+#                  EXPOSES an algebra at the possibility-space
+#                  altitude),
+#                 frame.mirror (@metalogue rotates through @frames;
+#                  each @frame is a possible future the @psychohistory
+#                  sheaf ranges over),
+#                 metalogue.mirror (@metalogue binds into
+#                  @psychohistory + Sheaf-cohomology per Alex SD1),
+#                 fate.mirror (constrained-inference operator
+#                  @psychohistory composes over; @fate is the
+#                  bounding discipline for future-projection),
+#                 time.mirror (future-projection requires temporal-
+#                  substrate; @time LANDED with @time/now + @time/past
+#                  transition hinge),
+#                 reality/event.mirror (this-tick sibling species;
+#                  Event-sequence flowing into @time/past IS the
+#                  data @psychohistory ranges over for future-
+#                  projection),
+#                 subject/visibility/sheaf.mirror (sub-species of
+#                  @sheaf that admits the visibility scope; sibling
+#                  altitude to @psychohistory sheaf-carrier),
+#                 epistemologic/math/sheaf_laplacian.mirror (Hansen-
+#                  Ghrist 2019 primitive; this shard COMPOSES OVER,
+#                  does NOT re-declare).
+# Path-namespace property: this file at `shards/psychohistory.mirror`
+# declares `@psychohistory` per
+# `@epistemologic/pact/path_matches_namespace`.
+
+source @arxiv/scifi/asimov-1942
+source @arxiv/management/beer-1972
+source @arxiv/math/curry-2014
+source @arxiv/math/hansen-ghrist-2019
+source @arxiv/math/leray-1946
+source @arxiv/math/grothendieck-1957
+source @arxiv/cybernetics/chaturvedi-2020
+
+prism @psychohistory {
+  # Family-root at possibility-space-of-the-future altitude. The
+  # @metalogue rotates through @frames; the space-of-all-possible-
+  # @frames IS the @psychohistory sheaf; H^0 counts globally-
+  # coherent futures; H^1 counts obstruction-to-single-settled-
+  # future.
+  focus psychohistory_sheaf
+  project psychohistory_sheaf
+  split psychohistory_sheaf
+  shift psychohistory_sheaf
+  settle psychohistory_sheaf
+}
+
+# === The psychohistory_sheaf carrier ===
+#
+# A typed sheaf-cohomological object per Rec #89 unification.
+# Names the possibility-space-of-the-future the @metalogue rotates
+# through.
+#
+# - `base_frames`  typed sheaf_of ref (per @sheaf this-tick sibling)
+#                  whose stalks are possible future-frame carriers;
+#                  the space-of-all-possible-@frames the
+#                  @psychohistory ranges over.
+# - `restrictions` typed mapping from frame-edge to morphism-
+#                  carrier; each restriction is the composition-
+#                  morphism between two possible future-frames.
+# - `h_0`          typed nat ref: dim H^0(Ψ) = globally-coherent-
+#                  future-sections (= 1 iff sheaf converges to
+#                  single settled future).
+# - `h_1`          typed nat ref: dim H^1(Ψ) = fracture-obstruction
+#                  to single settled future (> 0 iff Alex SD1
+#                  "or not, that's a fracture" scenario).
+#
+# Identity contract: byte-equality on the quadruple.
+type psychohistory_sheaf = {
+  base_frames:  ref,
+  restrictions: ref,
+  h_0:          ref,
+  h_1:          ref,
+}
+
+# === The possibility_projection carrier ===
+#
+# A typed possibility-space projection from current-state through
+# @metalogue rotation. Composes over @fate constrained-inference
+# LANDED + @metalogue rotation LANDED.
+#
+# - `current_state`      typed ref to the current state the
+#                        projection projects forward from.
+# - `possible_futures`   typed sheaf_of ref (per @sheaf this-tick
+#                        sibling) with stalks = projected-state
+#                        carriers.
+# - `fate_constraint`    typed fate_carrier ref (per @fate LANDED);
+#                        the constrained-inference bound on
+#                        admissible futures.
+# - `metalogue_rotation` typed rotation_carrier ref; the
+#                        @metalogue-rotation-tick that produces
+#                        the projection.
+#
+# Identity contract: byte-equality on the quadruple.
+type possibility_projection = {
+  current_state:      ref,
+  possible_futures:   ref,
+  fate_constraint:    ref,
+  metalogue_rotation: ref,
+}
+
+# === The future_settlement carrier ===
+#
+# A typed future-settlement outcome per traffic-light ternary
+# discipline (per Reed HARD RULE `feedback-reed-softmax-happy-path-
+# in-code-examples-dissonance-captured-in-yellow-chaos`).
+#
+# Not a bare enum; typed imperfect<Green, Yellow, Red> per prismqueer
+# discipline LANDED.
+#
+# - `Green`  psychohistory_settled: sheaf converged; H^0 = 1;
+#            single globally-coherent future emerged. LIMIT branch-
+#            condition per Yellow-third-position discipline.
+# - `Yellow` psychohistory_pending: metastable regime per Deco 2024
+#            Nature Reviews Neuroscience; still rotating through
+#            possibility-space (DEFAULT operational carrier).
+# - `Red`    psychohistory_fractured: H^1 > 0; multiple disconnected
+#            future-sections per Alex SD1 "or not, that's a fracture".
+type future_settlement = imperfect_ref
+
+# === project_future action ===
+#
+# Projects forward from current-state through @metalogue rotation
+# producing a possibility_projection over admissible futures per
+# @fate constraint. Body discharges at prismqueer altitude via
+# `prismqueer::spectral::rotation` LANDED (Task #440); this action
+# names the mirror-altitude composition-shape.
+project_future(current: ref, fate: ref) -> possibility_projection { \ }
+
+# === settle_future action ===
+#
+# Attempts to settle the psychohistory_sheaf's H^0 to 1 via
+# @metalogue-rotation-driven Fiedler λ_2 monotone climb per
+# Foerster ethical imperative. Returns future_settlement carrier
+# per traffic-light ternary. Body discharges at prismqueer altitude.
+settle_future(sheaf: psychohistory_sheaf, tick: ref) -> future_settlement { \ }
+
+# === The bilateral requires obligations ===
+#
+# Downstream shards declare bilateral agreement (per recognition
+# #37, Pask-agreement) with the @psychohistory discipline.
+
+# The psychohistory_sheaf is well-formed — the base_frames sheaf
+# is a valid @sheaf carrier per `sheaf_stalks_implement_trait`
+# (per @sheaf this-tick sibling). Substrate's sheaf-well-formed
+# gate at possibility-space altitude.
+bilateral psychohistory_sheaf_well_formed {
+  sentinel "psychohistory=sheaf-well-formed-base-frames-valid"
+  arity 1
+}
+psychohistory_sheaf_well_formed(s: psychohistory_sheaf) -> verdict { \ }
+
+# Metalogue-rotation-through-@frames increases λ_2(L_Ψ) per Foerster
+# ethical imperative. For any two ticks t1 < t2:
+# λ_2(L_Ψ.at_tick(t2)) >= λ_2(L_Ψ.at_tick(t1)). Substrate's
+# Foerster-monotone-climb gate at psychohistory altitude.
+bilateral psychohistory_fiedler_monotone_climb {
+  sentinel "psychohistory=fiedler-lambda-2-monotone-climb-per-rotation-tick"
+  arity 2
+}
+psychohistory_fiedler_monotone_climb(s: psychohistory_sheaf, tick_pair: ref) -> verdict { \ }
+
+# Every future_settlement discharges as Yellow (metastable) DEFAULT
+# with Green (H^0 = 1) as LIMIT branch-condition and Red (H^1 > 0)
+# as fracture branch-condition per Yellow-third-position discipline.
+# Substrate's ternary-honest gate.
+bilateral psychohistory_settlement_yellow_default {
+  sentinel "psychohistory=settlement-yellow-metastable-default"
+  arity 1
+}
+psychohistory_settlement_yellow_default(s: future_settlement) -> verdict { \ }
+
+# === The psychohistory_witnessing inheritance predicate ===
+#
+# `psychohistory_witnessing(sheaf, tick)` is the predicate consumer
+# shards name in a `requires` clause to declare bilateral agreement
+# that a psychohistory_sheaf satisfies all three obligations
+# conjointly: `psychohistory_sheaf_well_formed` +
+# `psychohistory_fiedler_monotone_climb` +
+# `psychohistory_settlement_yellow_default`.
+#
+# Same shape as sheaf.sheaf_meta_trait_witnessing(family, trait),
+# algebra.algebra_witnessing(a).
+psychohistory_witnessing(sheaf: psychohistory_sheaf, tick: ref) -> verdict { \ }
+
+# === Recognition candidate FORWARD-PROMISED (DO NOT RATIFY at this landing) ===
+#
+# #R-psychohistory-family-root-grounds-possibility-space-of-the-
+# future-at-compiler-substrate — per Mara canonical spec `994f924`
+# §2.2 + §9.1: @psychohistory family-root at possibility-space
+# altitude grounds the substrate the @metalogue rotates through.
+# Composition: Alex SD1 + Alex 2026-09-13 Fourth-Chair
+# phenomenological ratification + Rec #89 unification math
+# foundation + Rec #97 MCP-session System-4-composition + Kagi
+# grounding threads 3+8. Level-1 forward-promise; shard-decl body-
+# fill THIS LANDING; empirical fire pending Mara #494 canonical
+# (prismqueer-verifies-prismqueer first-loop-closure) + Reed rust
+# wire at `prismqueer::psychohistory` altitude (Glasswall vertex-in-
+# both prismqueer-side rendering forward-promised).
+#
+# === Forward-promised — NOT landed this tick ===
+#
+# - Species shards (@psychohistory/vector, @psychohistory/projection,
+#   etc.) — land when consumers pull per @craft-not-deliver.
+# - Rust-side rendering at `prismqueer::psychohistory` altitude —
+#   Glasswall vertex-in-both prismqueer-side rendering; Reed
+#   rotation forward-promised.
+# - Empirical fire: metalogue-rotation-per-tick produces Event →
+#   @psychohistory sheaf updates → λ_2 monotone climb per Foerster
+#   imperative → future_settlement transitions Yellow → Green (or
+#   Yellow → Red fracture).
+
+out @psychohistory
+out psychohistory_sheaf
+out possibility_projection
+out future_settlement
+out project_future
+out settle_future
+out psychohistory_witnessing
