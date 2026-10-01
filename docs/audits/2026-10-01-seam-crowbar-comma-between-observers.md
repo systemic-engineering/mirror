@@ -3,7 +3,7 @@ title: "Crowbar — the comma between observers"
 author: Seam
 date: 2026-10-01
 target: "docs/math/2026-10-01-mara-the-comma-between-observers-math-foundation.md (Mara, c045616 → 12692d7)"
-status: in progress
+status: complete
 visibility: protected
 ---
 
@@ -139,16 +139,61 @@ T1–T12 each have an oracle independent of the code (union-find, a hand matrix,
 
 ## §C Label audit
 
-*(pending)*
+**Downgrades or relabels (each Mara's to make in her own document):**
+
+1. **Thm 2.8 / §2.6 "Conjecture 4.5.1, decided"** → "decided relative to Definition 2.2". Also: (b)'s iff is PROVED only for 0-cochain s, and false for general x (T13).
+2. **Thm 5.2** → PROVED once hypothesis (i) is restated as "c_S non-decreasing", or once an identification across frames is supplied. As written it is ill-typed.
+3. **§3.4 first sentence** (no label, stated as fact) → false in general. Replace it with the compatibility condition (§B §3).
+4. **§5.2 "Ring is Turing's good machine. Decay is Förster's."** (no label, an analogy) → mark it as a reading. It also clashes with von Foerster's discreteness.
+5. **§5.4 "one declaration does all three jobs"** (no label, "the strongest structural claim") → CONJECTURE. It holds for owner map plus cover under compatibility, and the budget N is independent.
+6. **[vF76; not re-verified]** → now verified (UU ch. 11, pp. 264–266). Add the discreteness clause.
+
+**Kept as labelled.** 1.1–1.7, 2.1, 2.3, 2.4, 2.6, 2.7, 3.1, 3.3, 3.4, the twisted control, 4.3–4.7, 5.1: PROVED, and each argument checked. MEASURED citations to prism tests were not re-run, because prism is read-only and on another agent's branch. CONJECTUREs 5.3 and the §4.4 empirical mapping, and the Zielonka LEAD: correctly labelled.
+
+**Corrected errors.** None reintroduced. H is cochains, dim H is finite, ring is an isometry fixing ker D, ℂ⁵ is commutative, the gap is on the complement of the kernel, and nothing rests on an analogy *proof*. The two unlabelled analogies (items 4 and 5) are not used in any proof, but §0.2's "no claim below rests on an analogy" should also cover glosses.
 
 ## §D Numeric checks run
 
-*(pending)*
+The script is `crowbar.py` in the session scratchpad (numpy 2.4.4, double precision, seed 20261001), with its output in `crowbar.out`. Neither is in the repo. A numerical check is not a proof. Each result below either confirms a PROVED statement or exhibits a counterexample.
+
+| Check | Result |
+|---|---|
+| T1 π_L, π_R multiplicativity (C₄) | error 0, 0. π_M 0.354 |
+| T2 Bleed = ½(B_L + B_R) | error 0. B_L entries {−1, 0, 1} |
+| T3 algebra dimension | C₄ 64, P₃ 25. 40 random graphs with random owner maps: 0 mismatches against Σ(|V_c| + |E_c|)² |
+| T4 one-forms | span dimension 2|E|, support = target pattern (2 graphs). Index: 0/300 violations |
+| T5 kernel = 2b₀ + |E| − |V| | 0/300 violations |
+| T6 Thm 2.4 | 0/1000 mismatches |
+| 2.8(b), general x | **counterexample**: triangle, K_S = {0}, x = comma, Px ∉ R_S. For a 0-cochain: holds |
+| T8 Prop 2.6 | reproduces: a polynomial φ(D) with φ(0) = 1 (decay stand-in) and the question keep ≡_S (ring not run separately; it is covered by the proof); question then solo breaks it (y₃ − y₄ = 2) |
+| T9 / Thm 3.3 by H¹-kernel | 0/271 mismatches against b₀(I) − 1. Two paths: 1 |
+| Thm 4.3 on 258 random covers | Δc_A, Δc_B = +1 and between −1, 0 deviations. Exclusive, unilateral, residue unchanged (0 changes). Third party narrowed 0. {0,1}-discrete count narrowed 0. Settled distances shrank 0 |
+| twisted co-signed edge λ = 2, ½ | c_A = c_B = 1 (from 2). H⁰(K_A') = 0, so S2 fails. λ = 1: (3, 3), S2 holds |
+| table rows | unilateral (3, 2, between 1). twist (0, 0). absorb (2, 1) |
+| owner/site compatibility, two paths | source: fails both sites. target: A yes, B no. unilateral edge (0, 3): claimed by both |
+| Thm 5.1 gap bound | min λ₂·n(n−1) = 4.000 over 300 random connected graphs (bound needs ≥ 1) |
 
 ## §E Sources and channel
 
-*(pending)*
+**Kagi** (`mcp__kagi-ken-mcp__kagi_search_fetch`) returned 0 results for 3 queries (the imperative in *On Constructing a Reality*; "undecidable questions we can decide"; the eigenvalue property list). This matches Mara's session. Fallback was direct PDF fetch with `pdftotext` extraction, plus web search and arXiv. Nothing below is cited from training data.
+
+- H. von Foerster, *Ethics and Second-Order Cybernetics*. https://uranos.ch/research/references/VonFoerster1992/ethics.pdf. **Read** (the full text was extracted): the "undecidable … we can decide" passage, the imperative given to Metaphysics, and the Rey interview's restatement.
+- H. von Foerster, *Understanding Understanding: Essays on Cybernetics and Cognition* (Springer 2003). PDF at https://sites.ufpe.br/ixsimpa/wp-content/uploads/sites/49/2021/10/Ciber-4a-12-e-19-nov-Heinz-Von-Foerster-Understanding-Understanding-Essays-On.pdf. **Read**: ch. 5 *Thoughts and Notes on Cognition*, p. 187, props. 5.1 and 5.21; ch. 8 *On Constructing a Reality*, p. 227 (the principle of relativity, "reality = community", the ethical and aesthetical imperatives); ch. 10 *Notes on an Epistemology for Living Things* (grepped: no "number of choices").
+- H. von Foerster, *Objects: Tokens for (Eigen-)Behaviors*. https://monoskop.org/images/b/bf/Von_Foerster_Heinz_2003_Objects_Tokens_for_Eigen-Behaviors.pdf (WebFetch got 403, curl with a browser UA succeeded). **Read**: pp. 264–266, eigenvalue properties (i)–(iii) and "discrete, stable, separable and composable".
+- J. D. Hamkins, T. Nenu, *Did Turing prove the undecidability of the halting problem?* https://arxiv.org/abs/2407.00680. **Read** (full text): circle-free and printing problems, Davis 1958 p. 70 wording, Kleene 1952 priority, Lucas quoted.
+- S. Lucas 2021 (ScienceDirect): 403, not read directly. Seen only as quoted in HN24.
+- Secondary, not relied on: stream.syscoi.com/2022/05/09/hvfs-ethical-imperative/ gives "total number of choices" with no source. I found "total" in no primary text read this session, so I do not use it.
 
 ## §F The comma between Seam and Mara
 
-*(pending)*
+What is *not* the comma: the fixes in §C. Each one can be made in Mara's document by Mara alone, and none of them needs me to agree.
+
+The comma is this. Mara's Def 2.2 credits a direction both subjects can steer to *each* of them (c_A + 1, c_B + 1). My exclusive and unilateral counts credit it to *neither* (0, 0) and to the pair (+1). Each count is consistent on its own terms. Mara's counts what S can write. Mine counts what S can write that the other cannot rewrite. They disagree **only on shared cells**, so the disagreement sits on I. Neither of us can settle it from our own definitions: hers has no notion of contest, and mine has no notion of a gift. Von Foerster's "reality = community", with the relation as the third, fits both. Asking whose count is "right" by fiat would fill the comma, and adopting one of the two counts would absorb the other.
+
+**The next question, belonging to both of us:**
+
+> When a cell is shared, is a direction both observers can steer one choice counted once for each of them, or one choice that exists only between them? And does the gauge need a third count c_{A,B} for the relation itself, one that is neither c_A + c_B nor their overlap, on which G⊇ must also be checked?
+
+A concrete version for prism-Reed: give `Polyphony` co-signed letters a footprint, and decide whether R_{A,B} := P(C(K_A ∩ K_B)) (the shared directions) belongs to Ω_A, to Ω_B, or to a third Ω.
+
+*I note without leaning on it that the comma has the shape §7 predicted. Per §7, that is not evidence for anything.*
