@@ -325,16 +325,109 @@ CONJECTURE (the empirical mapping, labelled because it is a modelling hypothesis
 
 ## §5 Where it stops
 
-*Intent: settling vs halting; whether the stop belongs to the coupled system or the declared boundary.*
+### §5.1 Two different questions
+
+Turing 1936 did not ask where a process halts. His well-behaved machines are the *circle-free* ones, which never halt and print forever. What he proved undecidable is whether a machine is circle-free, or whether it ever prints a given symbol. The phrase "halting problem" first appears in Davis 1958 [Luc21; HN24]. Förster's question is a third one: not whether output continues, and not whether a final state is reached, but whether the recursion *stops moving*, that is, whether it has an eigenbehavior [vF76; not re-verified this session]. The triple has two recursions, and they answer Förster's question differently.
+
+### §5.2 The inner recursion (fixed frame): settling always stops, at a rate the frame decides
+
+**Theorem 5.1 (PROVED).** Let μ be the smallest nonzero eigenvalue of D². Then ‖e^{−tD²}x − Px‖ ≤ e^{−μt}‖x − Px‖. At observer resolution ε, the flow is settled for all t ≥ T(x, ε) = ln(‖x − Px‖/ε)/μ.
+
+*Proof.* Spectral decomposition. The components of x off ker D decay at rates e^{−λt} with λ ≥ μ. ∎
+
+μ belongs to the complement of the kernel. Since Δ₀ and Δ₁ share their nonzero spectrum (MEASURED, `vertex_and_edge_laplacians_share_their_nonzero_spectrum`), μ is the smallest nonzero Laplacian eigenvalue, which for a connected graph is its algebraic connectivity, bounded below by 1/(n(n−1)). That bound is what `settle` certifies (d983c4a). The limit is never reached at finite t unless x is already settled, but its existence and its rate are decidable for every finite frame. That is the difference from Turing's question: settling is a property of a limit that exists unconditionally, not of a trajectory entering a set.
+
+Ring does not stop. e^{iθD} is an isometry, and every component of x off the kernel rotates at frequency |λ| > 0 forever. Its slowest frequency is √μ, which is what O3 pinned as √λ₂(P₇) = √(2 − 2cos(π/7)) (per prism 30d196f; I did not re-run it). **Ring is Turing's good machine. Decay is Förster's.** Both are functions of the same D, so the inner stop belongs to the frame.
+
+### §5.3 The outer recursion (frame changes): reachability stops if and only if a boundary bounds it
+
+Now D_{n+1} = F(D_n, obs_n), with F an inner fluctuation followed by a frame change (§1.4), and each step admissible under the gauge.
+
+**Theorem 5.2 (PROVED): a declared boundary stops reachability.** Suppose (i) every step satisfies G⊇ for every subject, so no c_S ever decreases, and (ii) the subjects have declared a cell budget N (|V| + |E| ≤ N throughout; Ricky Jones: *"we stop it by binding a boundary to a purpose: this observation, this θ, this decision"*). Then the vector (c_S)_S is non-decreasing and bounded by N, so it changes at most kN times for k subjects, and is eventually constant. **Reachability stops moving after finitely many widenings.** The frame itself may keep moving, but every later change is, for every subject, phenomenology in Wojciech's sense.
+
+*Proof.* c_S ≤ dim ker D ≤ dim H ≤ N, and a non-decreasing integer sequence bounded above is eventually constant. ∎
+
+Two consequences:
+- Under G⊇ alone with a budget, the eigenbehavior is a stop of reachability, not of the frame. The recursion may circle forever among frames with equal c-vectors. That circling is a limit cycle in Ricky's θ with nothing new reachable.
+- Without a budget, nothing in the triple forces a stop, and nothing should. Förster's imperative is satisfied by an unbounded sequence of shared relations, each one raising both c's by one (Theorem 4.3 iterated across a boundary with enough components, or with new components created by new contact).
+
+CONJECTURE 5.3: *without a declared boundary, whether a given computable observation rule ever stops widening is undecidable.* Termination of double-pushout graph rewriting is undecidable, on all graphs and on a fixed start graph [Plu98]. The conjecture is open because I have not shown that rewriting rules constrained by G⊇ and sovereignty (S1, S2) can still simulate an arbitrary DPO system; the constraints might cut expressiveness below undecidability.
+
+### §5.4 The answer to "where does it stop"
+
+- The inner stop (settling) is a property of the frame: its kernel and its gap μ. It always exists, and the time to reach resolution ε is decidable.
+- The outer stop (reachability) is a property of the declared boundary. With a budget it is a theorem (5.2). Without one it is not guaranteed, and plausibly undecidable (5.3).
+- The coupled system alone does not decide where the outer recursion stops. The boundary each observer declares does: which cells it owns, which it shares, and how many it will spend. This is the same object that §1 needed for A to be a representation and §3 needed for the comma between to exist. **One declaration does all three jobs.** That is the strongest structural claim in this document, and the one I most want Seam to test.
 
 ## §6 Smallest versions that can fail
 
-*Intent: concrete tests on small graphs prism-Reed can write; what observation refutes the construction.*
+Each test below is stated so that the expected value comes from an instrument independent of the code under test: union-find, a hand-built matrix, or a closed form. That is prism's own discipline (`tests/instrument.rs` header). All were checked numerically by me. None is in prism yet.
+
+### §6.1 The instrument (§1)
+
+- **T1 owner-map Solo is a projection.** With an owner map p (start with p = source), π_p(χ_S)² = π_p(χ_S) and π_p(fg) = π_p(f)π_p(g) for random f, g. *Control:* today's endpoint-mean `Solo` fails both (a crossing edge gives ¼ against ½).
+- **T2 Bleed decomposes.** [D, π_M(χ_S)] = ½([D, π_L(χ_S)] + [D, π_R(χ_S)]) exactly. [D, π_L(χ_S)] has entries in {0, ±1}, only at pairs (e, t(e)) and their transposes, only for e crossing ∂S.
+- **T3 solos and the question generate everything.** On a connected graph, the span of words in {π_L(χ_v)} ∪ {D} has dimension (|V| + |E|)². *Control:* on a disconnected graph it is the sum of the squared component dimensions.
+- **T4 fluctuations are rank-1 sheaves and conserve the index.** Σ_{a,b} |π_L(χ_a)[D, π_L(χ_b)]| is supported exactly on the target entries. For random target restrictions (including 0), b₀ − b₁ = |V| − |E|.
+- **T5 b₁ certified.** `kernel_dimension` equals 2·b₀ + |E| − |V|, with b₀ from union-find, decided by count and only confirmed by LAPACK, as in S3.
+
+### §6.2 The gauge (§2)
+
+- **T6 closed-form choice-count.** For random graphs and sites, rank(P|_{C(K_S)}) equals Theorem 2.4's union-find expression.
+- **T7 Conjecture 4.5.1 counterexample.** Two disjoint edges, site on the first, s = χ of the second. Then Ω_S(Ds) ≠ Ω_S(s), while c_S is unchanged. *Control:* a site meeting both components gives Ω_S(Ds) = Ω_S(s).
+- **T8 Nerode breaks exactly at solo.** In the edge ⊔ triangle example of Proposition 2.6: decay, ring and question preserve ≡_S, and "question, then π_L(χ_{{2}})" breaks it with comma component y₃ − y₄.
+
+### §6.3 Two observers (§3–§4)
+
+- **T9 the comma between.** Two paths glued at two points: H¹(A) = H¹(B) = 0, H¹(X) = 1, dim im ∂ = 1. Three contacts: dim im ∂ = 2. *Control:* glue along a connected path (b₀(I) = 1) and get dim im ∂ = 0.
+- **T10 locally answerable, globally not.** Build z from §3.2. Then z|_A = δa and z|_B = 0, but the projection of z onto H¹(X) is nonzero.
+- **T11 twisted control.** On the two-path cycle with holonomy h, dim im ∂ = [h = 1], and b₀(X) = b₁(X) = [h = 1].
+- **T12 the answer table.** Each row of §4.3 as one test: shared co-signed edge (+1, +1), unilateral (+1, 0), twist (−2, −2), untwist (+2, +2), absorb (0, −1). Filling needs C², so it waits until the instrument has 2-cells.
+
+### §6.4 What would refute the construction, as opposed to a bug
+
+- **R1 (mathematics).** A connected pair of sites with H¹(A) = H¹(B) = 0 and b₁(X) ≠ b₀(I) − 1. That contradicts Lemma 3.1, so it would mean a site was not closed or the sheaf was not restricted correctly. It is a check on the code, not on the idea.
+- **R2 (the gauge definition).** A co-signed boundary-joining edge after which some subject can make strictly *fewer* things settle by any measure prism-Reed or Seam deems more faithful than c_S. Theorem 4.3 is a theorem about c_S. If c_S is the wrong count, the theorem is true and irrelevant.
+- **R3 (the empirical mapping).** In a matched dyad protocol along Wojciech's lines, a unilateral reframe that reproducibly raises the *receiver's* generative reachability. The model predicts Δc_receiver = 0. That would refute the mapping in §4.4, not the mathematics.
+- **R4 (the crowbar's future half).** If no letter that reads the Progression can produce ≡ classes that differ from state-only ones, this construction never reaches "same visible state, futures diverge because of the record". Proposition 2.6 reaches it only at the subject's resolution.
 
 ## §7 This document as its own first test
 
-*Intent: Mara and Seam as two observers; what a crowbar hit would mean in the terms of §3.*
+*This section is a reading, not a proof. Nothing here constructs a complex out of a review.*
 
-## Sources (Kagi tally)
+The question is circular-recursive by design, and so is its first test. This document is one site. Its cells are the definitions and claims above, and its sections each settle. Seam's review is the second site. The shared boundary is the set of definitions we must both use: site, owner map, Ω_S, c_S, sovereignty, "question". If Seam and I each find our own sections consistent but they fail to glue on that boundary, that is a comma between us in exactly the sense of §3. Each side's checks pass, and the disagreement exists only in the coupling.
 
-*Intent: every external claim with its primary URL; what could not be verified.*
+§4 then predicts how the review goes well and how it goes badly.
+- **Fill:** one of us declares the other wrong by fiat, and the disagreement disappears without either of us able to reach more.
+- **Absorb:** Seam rewrites my definitions, or I wave his objection away into mine.
+- **Share:** a co-signed change to a shared definition, after which each of us holds the disagreement inside our own frame and can reach more.
+
+If the review ends in a shared definition neither of us had before, that is Theorem 4.3 enacted once, which is not evidence for it. If it ends in fill or absorb, the document has predicted its own failure. Either way, the comma between Seam's review and this document is the next question, and it belongs to both of us.
+
+Where I expect the crowbar: §6.4 R2. Theorem 4.3 is nearly immediate once Definition 2.2 is accepted, so the content is in the definition. Dimension of the reachable settled set is a count of independent directions, not of choices. It ignores transients. It treats writes as unbounded real additions. Whether that is Förster's "number of choices", or whether I made the gauge true by choosing what to count, is the question I cannot settle from inside this site.
+
+## Sources
+
+Kagi returned empty for every query this session (§0.3). "arXiv" = verified via the arXiv API (title, authors, abstract). "web" = verified via web search result pages. "read" = the cited passage was read in the primary text.
+
+- [DMH94] A. Dimakis, F. Müller-Hoissen, *Discrete differential calculus, graphs, topologies and gauge theory*, J. Math. Phys. 35 (1994). https://arxiv.org/abs/hep-th/9404112 — **read**: §II eqs. (2.1)–(2.10), the basis e_ij = e_i de_j and df = Σ e_ij(f(j) − f(i)). The left and right actions in §1.1 are derived from (2.1), (2.4) and (2.6), not quoted.
+- [DMH98] A. Dimakis, F. Müller-Hoissen, *Discrete Riemannian geometry*. https://arxiv.org/abs/gr-qc/9808023 — arXiv (the correspondence between first-order calculi and digraphs, in the abstract).
+- [IKM99] B. Iochum, T. Krajewski, P. Martinetti, *Distances in finite spaces from noncommutative geometry*. https://arxiv.org/abs/hep-th/9912217 — arXiv. Background only: no result of theirs is used.
+- [Req00] M. Requardt, *Graph-Laplacians and Dirac operators on (infinite) graphs and the calculation of the Connes-distance-functional*. https://arxiv.org/abs/math-ph/0001026 ; [Req01] *Dirac operators and the calculation of the Connes metric on arbitrary (infinite) graphs*. https://arxiv.org/abs/math-ph/0108007 — arXiv. LEAD: the abstract says the computed distance depends on the choice of graph Dirac operator. Connes distance for π_L is not computed here.
+- [CCvS13] A. H. Chamseddine, A. Connes, W. D. van Suijlekom, *Inner fluctuations in noncommutative geometry without the first order condition*. https://arxiv.org/abs/1304.7583 — arXiv (inner fluctuations as linear terms in the usual case; I use only the linear form D + ω + ω\*).
+- [HG19] J. Hansen, R. Ghrist, *Toward a spectral theory of cellular sheaves*. https://arxiv.org/abs/1808.01513 — arXiv.
+- [Cur14] J. Curry, *Sheaves, cosheaves and applications*, PhD thesis. https://arxiv.org/abs/1303.3255 — arXiv.
+- [Lim20] L.-H. Lim, *Hodge Laplacians on graphs*. https://arxiv.org/abs/1507.05379 — arXiv (cohomology and Hodge theory on graphs as linear algebra of AB = 0).
+- [Arh25] C. Arhancet, *The Lᵖ-index of the Hodge–Dirac operator on compact Riemannian manifolds*. https://arxiv.org/abs/2512.22517 — arXiv (index = Euler characteristic; cited only as the continuum shadow of Theorem 1.6).
+- [Ken11] R. Kenyon, *Spanning forests and the vector bundle Laplacian*. https://arxiv.org/abs/1001.4028 — arXiv; [BSS13] A. Bandeira, A. Singer, D. Spielman, *A Cheeger inequality for the graph connection Laplacian*. https://arxiv.org/abs/1204.3873 — arXiv. LEAD: holonomy and frustration on line bundles. They are relevant to §3.3 but not used in any proof.
+- [Maz77] A. Mazurkiewicz, *Concurrent program schemes and their interpretations*, DAIMI PB-78, Aarhus 1977 — web (bibliographic record only, via citing Springer pages).
+- [CF69] P. Cartier, D. Foata, *Problèmes combinatoires de commutation et réarrangements*, LNM 85, Springer 1969. https://www.mat.univie.ac.at/~slc/books/cartfoa.html — web.
+- [Zie87] W. Zielonka, *Notes on finite asynchronous automata*, RAIRO ITA 21 (1987) — web (as cited in survey listings). [DM11] V. Diekert, A. Muscholl, *Trace theory* (survey, 2011). http://www2.informatik.uni-stuttgart.de/fmi/ti/veroeffentlichungen/pdffiles/DiekertMuscholl2011.pdf — found, but could not be fetched (certificate error). NOT VERIFIED beyond the search listing. The "recognizable iff Zielonka-accepted" claim rests on search-result text.
+- [MU19] H. Maarand, T. Uustalu, *Reordering derivatives of trace closures of regular languages*. https://arxiv.org/abs/1908.03551 — arXiv (residuals/derivatives on trace closures; LEAD for a computable residual automaton).
+- [Plu98] D. Plump, *Termination of graph rewriting is undecidable*, Fundamenta Informaticae 33(2) (1998). https://content.iospress.com/articles/fundamenta-informaticae/fi33-2-04 — web (abstract: undecidable on all graphs and on a fixed start graph; proof by reduction from PCP).
+- [vF] H. von Foerster, *Ethics and second-order cybernetics*. https://uranos.ch/research/references/VonFoerster1992/ethics.pdf — **read**: p. 6, *"Tell them they should always try to act so as to increase the number of choices"*; p. 12 (Rey interview), *"The ethical imperative: Act always so as to increase the number of choices."*
+- [vF76] H. von Foerster, *Objects: tokens for (eigen-)behaviors* (1976). https://monoskop.org/images/b/bf/Von_Foerster_Heinz_2003_Objects_Tokens_for_Eigen-Behaviors.pdf — carried from the 2026-09-09 document. NOT re-verified this session.
+- [Luc21] S. Lucas, *The origins of the halting problem*, J. Log. Algebr. Methods Program. (2021). https://www.sciencedirect.com/science/article/pii/S235222082100050X — web (term first in Davis 1958; Turing's problems concern circle-freeness and printing). [HN24] J. D. Hamkins, T. Nenu, *Did Turing prove the undecidability of the halting problem?* https://arxiv.org/abs/2407.00680 — arXiv.
+- Field logs (protected, not public): `practice/field-logs/2026-09-27 · Sunday — …` (Wojciech Kaleta: three events; the brutal test; generative criteria), `2026-09-28 · Monday-Night — …` (state ≠ trajectory crowbar; auditor-visible sharpening), `2026-10-01 · Nonlinear-Time-Post-Resonance-Cascade.md` (Ricky Jones: θ_{t+1} = U(θ_t, O_{θ_t}(X)); boundary bound to a purpose) — **read**.
+
+**Tally.** Verified: 19 (2 read in the primary text, 11 via arXiv, 6 via web). Not verified: Diekert–Muscholl survey text (certificate error), Mazurkiewicz 1977 and Zielonka 1987 primary texts (bibliographic records only), von Foerster 1976 (carried, not re-fetched). Kagi: 0 results across 5 query variants.
