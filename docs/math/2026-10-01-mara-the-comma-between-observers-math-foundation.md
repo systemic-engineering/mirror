@@ -23,6 +23,16 @@ builds-on:
 
 Labels: **PROVED** (proof given), **MEASURED** (commit/test cited), **CONJECTURE** (one line why open), **LEAD** (unverified pointer).
 
+### The answer, in one paragraph
+
+**Instrument.** A = C(V) acts genuinely on C⁰ ⊕ C¹ only once each edge has a declared owner endpoint (§1). Bleed's ±½ is the owner-undeclared average of two genuine representations, and the solos together with the question generate every operator on H.
+
+**Gauge.** The gauge becomes computable as Ω_S = what subject S can make settle. Its dimension c_S is a union-find count (§2). On a fixed frame no letter can widen it, so the question never widens (Conjecture 4.5.1 decided).
+
+**The comma between.** Two observers have a comma between them, though neither has one alone, exactly when their shared boundary is disconnected (§3, Mayer–Vietoris). It becomes a question they ask each other when they co-sign a new relation joining the boundary's components. That widens both by exactly one, dissolves the comma between into one comma inside each observer, and overwrites neither Tonic (§4). Filling, twisting and absorbing all narrow.
+
+**Where it stops.** Settling stops by the frame (its gap). Widening stops by the declared boundary (its budget), and plausibly nowhere decidable without one (§5). The same declaration, of which cells each observer owns and which they share, is what makes A a representation, what makes the comma between exist, and what makes the recursion stop.
+
 ## §0 Ground and corrections carried
 
 ### §0.1 The triple as it stands in code
@@ -97,7 +107,7 @@ Each family is commutative. The two families do not commute with each other, and
 
 This answers prism-Reed's NT3 ("where do non-commuting ops live"). **They live in words over two commutative alphabets, π_p(A) and C\*(D).** Those words reach every operator on H. Nothing non-commutative needs to be adjoined.
 
-**On the five FLOOR projectors (focus, split, project, lift, refract).** Five mutually orthogonal projectors generate ℂ⁵. A representation of ℂ⁵ on H is a five-way orthogonal grading of C⁰ ⊕ C¹, and FLOOR does not specify one. Until it does, the five are not operators on this H and cannot sit in A. **Verdict:** the five ops belong in the alphabet, as letters of words executed on the triple. That is prism-Reed's Fold5 reading. A is C(V) acting through a declared owner map p. If a future grading is specified, it is checked against Theorem 1.4: whatever it is, it already lies in the algebra the solos and the question generate. CONJECTURE (unexamined): no grading by those five names commutes with D on every graph, because only the trivial grading commutes with D for all X.
+**On the five FLOOR projectors (focus, split, project, lift, refract).** Five mutually orthogonal projectors generate ℂ⁵. A representation of ℂ⁵ on H is a five-way orthogonal grading of C⁰ ⊕ C¹, and FLOOR does not specify one. Until it does, the five are not operators on this H and cannot sit in A. **Verdict:** the five ops belong in the alphabet, as letters of words executed on the triple. That is prism-Reed's Fold5 reading. A is C(V) acting through a declared owner map p. If a future grading is specified, it is checked against Theorem 1.4: whatever it is, it already lies in the algebra the solos and the question generate.
 
 ### §1.4 What F is in D_{n+1} = F(D_n, obs): inner fluctuations are rank-1 sheaves
 
