@@ -74,29 +74,68 @@ Setting: Theorem 4.3's hypotheses on 258 random connected covers with a disconne
 
 ## §B Section-by-section
 
-### §1 Instrument
+### §1 Instrument: PASS
 
-*(pending)*
+- **1.1.** π_L and π_R are \*-homomorphisms: the multiplicativity error is 0 on C₄. π_M fails to be multiplicative, by 0.354 for my random f, g (Mara reports 0.18 for hers; the size depends on f, g). It is a convex combination of \*-homomorphisms, so it is completely positive, which is slightly stronger than "positive". PASS.
+- **1.2.** I redid both commutator computations by hand: [δ, π_L(f)] = (f(t) − f(s))·s(t) and [δ, π_R(f)] = (f(t) − f(s))·s(s). Bleed equals the average to error 0, with entries in {0, ±1}. PASS.
+- **1.3.** The proof is correct. Note the choice of S = {w} makes the −1 appear at (e, t(e)). PASS.
+- **1.4.** Generation of B(H). C₄ gives 64 and P₃ gives 25. On 40 random graphs with **random per-edge owner maps**, the algebra dimension equals Σ over components of (|V_c| + |E_c|)², with 0 mismatches. So the "general owner map, same argument" sentence holds, and so does the disconnected control in T3. PASS.
+- **1.5.** The span of one-forms has dimension 2|E| (C₄ and a random 5-vertex graph), supported exactly on (e, t(e)) and its transpose. The two blocks carry independent coefficients, which the fluctuation adds into φ_e. PASS.
+- **1.6 and 1.7.** The index holds on 300 random rank-1 sheaves, zero restrictions included, with 0 violations. kernel dim = 2b₀ + |E| − |V| on 300 random graphs, 0 violations. PASS.
+- **FLOOR paragraph.** Mutually orthogonal projectors generate ℂ⁵ *as a unital algebra* only if they sum to 1. Otherwise their complement adds a sixth summand. This is a nit and the verdict ("letters, not A") stands.
+- **Residue (terminology, matters in §3–§4).** "Owner" means p(e) ∈ ∂e, a vertex, in §1. In §4.1 S1 ("a shared cell needs every owner as author") it means a subject holding the cell in its site. These are different objects. Their relation is the compatibility condition in §3 below.
 
-### §2 Gauge
+### §2 Gauge: PARTIAL
 
-*(pending)*
+- **2.1** (trace factorisation) is standard and correctly hedged on the soundness contract. PASS.
+- **2.3** Pφ(D) = φ(0)P. PASS.
+- **2.4** I checked the closed form independently against rank(P|_{C(K_S)}) on **1000** random (graph, site) pairs, with 0 mismatches (Mara ran 300). The proof uses dim P_Z(W) = dim Z − dim(Z ∩ W^⊥), which is correct. PASS.
+- **2.6** The edge ⊔ triangle counterexample reproduces. Py = 0. Decay, ring and question keep the difference in R_S. "Question, then π_L(χ_{2})" takes it out, with comma component y₃ − y₄ = 2. With prism's π_M in place of π_L it also breaks, with factor ½. PASS.
+- **2.7** Correct on a fixed frame. This is where D1 applies (§A.2): the proposition is the frame-invariance of Def 2.2 and is true of *every* letter. Read "only a frame change can widen" as a property of the gauge as defined, not a fact about observation. PASS as mathematics. Relabel the gloss.
+- **2.8 (Conjecture 4.5.1 "decided").**
+  - (b) **is false as written** if s ranges over all of H. Counterexample: X a triangle, K_S = {0}, s the harmonic comma (0,1) + (1,2) − (0,2). K_S meets every component, yet Ps = s ∉ R_S = constants (computed: False). It is true when s is a 0-cochain (computed: True). That is the type of "assertion" everywhere else in the document (§3.2 "A's own assertion a ∈ C⁰"). **Fix:** say "for every 0-cochain s". For general x the condition is c_S = dim ker D, which by Thm 2.4 means K_S meets every component *and* b₁(X ∖ E_S) = 0.
+  - (d) and "decided": under Def 2.2 the count form is vacuously true for *any* letter on a fixed frame, so it carries no information about the question in particular. Under the observation-relative count of D2 the question can widen. **Downgrade:** "decided relative to Definition 2.2", with that sentence attached. (a) and (c) PASS.
+- **2.5 and the Zielonka LEAD.** Correctly labelled. One addition (new): under Thm 4.3 the residue n_S, the dimension of the ≡_S classes, is invariant (§A.3). Read through Def 2.5, the main theorem changes nothing about how much past each subject has to live with.
 
-### §3 Two observers
+### §3 Two observers: PARTIAL (mathematics PASS, §3.4 FAIL)
 
-*(pending)*
+- **3.1** Exactness holds: closed sites, every cell in one of them, zero-extension for surjectivity. PASS.
+- **3.3 and 3.4.** On **271** random connected covers by two connected closed sites, I computed dim ker(H¹(X) → H¹(A) ⊕ H¹(B)) directly, from harmonic representatives and site-local harmonic projection, independently of the H⁰ formula. It equals b₀(I) − 1, with 0 mismatches. Two paths glued at two points give 1. PASS.
+- **"Neither can tune it away alone"** (the z construction). Correct, since δa vanishes on I's edges because a|_I is a section. PASS.
+- **Twisted control.** Correct. My numerics reproduce h⁰(X) = [h = 1]. PASS.
+- **§3.4, first sentence: FAIL.** "Under a declared owner map p, every crossing edge belongs to exactly one site, so I consists of vertices only." Theorem 4.3 adds an edge to *both* sites, so I' contains an edge. The sentence and the main theorem cannot both hold. What is true (new, PROVED):
+  > **Compatibility.** For a cover by closed sites, there is an owner map p with range(π_p(χ_{V_A})) = C(K_A) and range(π_p(χ_{V_B})) = C(K_B) iff no single-site edge has both endpoints in I. *Proof.* A vertex is in C(K_A) iff it is in V_A. An edge in K_A only needs p(e) ∈ V_A ∖ V_B, which exists iff e has an endpoint outside I. A shared edge has both endpoints in I = V_A ∩ V_B, so either choice works. ∎
 
-### §4 Answers and sovereignty
+  On the two-paths example neither orientation-induced map is compatible: source fails for both sites, target fails for B. A per-edge choice is. **Prop 4.4's unilateral edge (0, 3) violates compatibility.** Both endpoints are shared, so every p(e) puts it in both π_p(χ_{V_A}) and π_p(χ_{V_B}). Under §1's ownership, A cannot hold that edge alone.
 
-*(pending)*
+### §4 Answers and sovereignty: PASS (mathematics) / PARTIAL (reading and definitions)
 
-### §5 Where it stops
+- **4.3.** All five parts check by hand. Numerically, on 258 random instances: Δc_A = Δc_B = +1 and the comma between drops by 1, with 0 deviations. On two paths: 2 → 3, and between 1 → 0. PASS. The reading ("each widens") depends on the count: see §A.3.
+- **4.4 to 4.7 and the table.** Every row reproduces: unilateral (3, 2, between 1), twist (0, 0), absorb (2, 1); the shared row is above. PASS. Prop 4.4 also needs the §A.3/Lemma A observation that third parties never narrow, and it needs the compatibility caveat from §3.
+- **Are S1/S2 chosen to make 4.3 pass? No.** 4.3's widening is proved without them (Thm 2.4 alone). S1/S2 do no work in the widening. **They are too weak for the question, though.** The question asks for widening "without either absorbing the other", and Mara defines absorption as failure of S1 or S2. Now take the A-authored twist on A's own edge (Prop 4.6). For B: no cell of B is written, so S1 holds. B's site and its sheaf are unchanged, so S2 holds. Yet c_B goes 2 → 0. Under these definitions, narrowing the other without touching it does not count as absorbing it. The table's "sovereign?" cell for that row ("B narrowed non-locally") states the effect and steps around the classification. **Suggestion (Mara's to take or refuse):** an S3, "c_B' ≥ c_B" (or an injection of Ω_B as in Lemma A). With S3 added, sovereignty contains G⊇ for the other party, and the twist is classified correctly.
+- **S2 typing.** "Restriction H⁰(F'|_{K_A'}) → H⁰(F|_{K_A})" is a map only if F' agrees with F on the old cells. 4.3's proof uses that. For fluctuations (4.6, 4.7) it is not a map, and the table's "tonic overwritten" relies on an unstated comparison. Fix: either require F'|_{K_A} = F|_{K_A}, or define S2 as "every old section is the restriction of a new one, through a declared identification of stalks".
+- **Co-signing must include the transport (new, MEASURED).** Give the co-signed edge (0, 3) target restriction λ = 2 or ½. Then c_A = c_B = 1 (from 2): both narrow. S2 fails because H⁰(K_A') = 0, so the definitions catch it, but only because S2 is there. Theorem 4.3's hypothesis "constant sheaf" carries the weight. In the reading, *a question they ask each other* has to be co-signed in its restriction map as well as its existence. That is a second shared definition beyond the cell itself.
+- **Site definition (§2.1).** "Vertices together with edges whose endpoints it contains" can be read as *induced*. On that reading every edge between two shared vertices lies in both sites automatically, so Prop 4.4's unilateral edge is impossible and 4.3's "co-signed" is forced, not chosen. Say "closed" (edges only if their endpoints are in), not "induced".
 
-*(pending)*
+### §5 Where it stops: PARTIAL
 
-### §6 Tests and refutation conditions
+- **5.1 (history).** Checked against Hamkins–Nenu (arXiv 2407.00680, full text read). Turing's machines "are not designed ever to halt". His undecidable problems are the circle-free problem and the printing problem. "Halting problem" as a phrase first appears in Davis 1958 (*Computability and Unsolvability*, p. 70), and Kleene 1952 already has the content (HN24 quoting Lucas). PASS, with two nuances to add. HN24 call the printing problem "easily seen to be computably equivalent to the halting problem", and conclude it is "not unreasonable to offer qualified attribution to Turing". "Two different questions" is accurate about what Turing *asked*, not about the computational content.
+- **Theorem 5.1** is correct. The bound λ₂ ≥ 1/(n(n−1)) is valid and loose: on 300 random connected graphs, min λ₂·n(n−1) = 4.000, which matches Mohar's 4/(n·diam). PASS.
+- **"Ring is Turing's good machine. Decay is Förster's."** This is an analogy without a label, and §0.2 says no claim rests on one. It also clashes with the primary text (§A.1 item 4). Von Foerster's eigenvalues are *discrete* and *attracting*, "even if the domain … is continuous". Decay's limit set ker D is a continuum of *neutrally* stable points: a perturbation inside ker D is never brought back. The von Foerster-faithful eigenbehaviors of the triple are the integers (b₀, b₁, c_S), or the kernel as a whole object, not the point Px. **Relabel as a reading and add the residue.**
+- **Theorem 5.2: PROVED only after restating its hypothesis.** Hypothesis (i), "every step satisfies G⊇", is ill-typed across frame changes. Ω_S(σ) ⊆ ker D_X and Ω_S(tσ) ⊆ ker D_{X'} live in different spaces, and Prop 2.7 defines ⊇ only on a fixed frame. Either assume "c_S non-decreasing" directly, which makes the theorem the monotone-bounded-integer fact, or supply the identification. Lemma A supplies it for edge additions between connected vertices, and that covers the iterated-4.3 story in the second bullet after the theorem.
+- **Conjecture 5.3** is correctly labelled. Plump 1998 is the right anchor (I did not re-fetch it).
+- **§5.4 "One declaration does all three jobs": HOLD.** The three jobs use three objects: the owner map p : E → ∂e (§1), the closed site cover (§3), and the budget N (§5). By the compatibility result in §3, a cover determines a compatible p exactly when no single-site edge lies inside I. So the first two can be one declaration under a stated condition that Prop 4.4 violates. N is a separate number, and nothing in the document derives it from the cover. The claim holds for two of the three jobs under a condition, so as written it stays on HOLD.
 
-*(pending)*
+### §6 Tests and refutation conditions: PARTIAL
+
+T1–T12 each have an oracle independent of the code (union-find, a hand matrix, or a closed form), and each has a control that would fail if the claim were false. Every one reproduced (§D). Four tests are missing, and each guards a residue above:
+
+- **T13 (2.8(b) typing).** Triangle, K_S = {0}, x = the harmonic comma. Ω_S(Dx) ≠ Ω_S(x). *Control:* x a 0-cochain gives equality.
+- **T14 (compatibility).** Two-paths cover. No orientation-induced p matches both sites, and a per-edge p does. Adding a unilateral edge inside I makes every p incompatible.
+- **T15 (transport).** A co-signed edge (0, 3) with restriction λ ≠ 1 gives (c_A, c_B) = (1, 1), and S2 fails. *Control:* λ = 1 gives (3, 3).
+- **T16 (the slogan, by count).** Under 4.3: exclusive control and residue unchanged, unilateral count unchanged, third-party c never decreases.
+
+**Refutation conditions.** R1 is honest that it checks the code, not the idea. R3 and R4 are real and correctly scoped. **R2 is real but unbounded.** "Any measure … deems more faithful" cannot be discharged. Sharpened (new): *R2′, a count that does not increase under norm-≤ 1 linear images, and under which a co-signed untwisted boundary-joining edge decreases some subject's count.* Lemma A rules R2′ out. What remains of R2 lives outside that class: counts that are not monotone under such images (second-order budget counts, rejected in §A.3), and counts that reprice shared directions. In every case I tried, the second kind changed the size of the widening (+1, +½, 0) and never its sign. Which price is right is the comma in §F.
 
 ## §C Label audit
 
