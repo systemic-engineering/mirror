@@ -219,7 +219,45 @@ So Conjecture 4.5.1 is replaced by: **the question is gauge-neutral for subjects
 
 ## §3 Two observers — the comma that exists only between
 
-*Intent: Mayer–Vietoris on two glued sites; the connecting map as the comma; exact condition for a coupled comma when each side has none.*
+### §3.1 Gluing two triples
+
+Two subjects A and B declare sites K_A, K_B with K_A ∪ K_B = X. Write I = K_A ∩ K_B for the shared boundary, a closed subcomplex. Each site has its own triple (C(K_A), D_A) and (C(K_B), D_B), built from the sheaf restricted to the site. The coupled triple is (C(X), D_X). It is not C(K_A) ⊕ C(K_B), which counts shared cells twice. It is the equalizer: the pairs that agree on I.
+
+**Lemma 3.1 (PROVED).** The sequence of cochain complexes
+
+  0 → C•(X) → C•(K_A) ⊕ C•(K_B) → C•(I) → 0,  x ↦ (x|_A, x|_B),  (a, b) ↦ a|_I − b|_I
+
+is exact and commutes with δ. *Proof.* Every cell of X lies in K_A or K_B, which gives injectivity. A pair agreeing on I glues to a cochain on X, which gives exactness in the middle. A cochain on I extends by zero to K_A, which gives surjectivity. Restriction commutes with δ because the sites are closed. ∎
+
+The zig-zag lemma turns this into the Mayer–Vietoris sequence. On a graph, H² = 0, so
+
+  0 → H⁰(X) → H⁰(A) ⊕ H⁰(B) → H⁰(I) —∂→ H¹(X) → H¹(A) ⊕ H¹(B) → H¹(I) → 0.
+
+### §3.2 The comma between
+
+**Definition 3.2.** The *comma between A and B* is im ∂ ⊆ H¹(X). By exactness this equals ker(H¹(X) → H¹(A) ⊕ H¹(B)): the disagreements of the coupled system that restrict to zero on each site.
+
+**Theorem 3.3 (PROVED).**
+
+  dim im ∂ = dim H⁰(I) − dim H⁰(A) − dim H⁰(B) + dim H⁰(X).
+
+For the constant sheaf with K_A, K_B and X connected, this is b₀(I) − 1.
+
+*Proof.* Alternating dimensions along the exact segment 0 → H⁰(X) → H⁰(A) ⊕ H⁰(B) → H⁰(I) → im ∂ → 0. ∎
+
+**Corollary 3.4 (PROVED): when the coupled comma exists though neither side has one.** Suppose H¹(A) = H¹(B) = 0. Then im ∂ = H¹(X), and the coupled system has a comma iff H⁰(A) ⊕ H⁰(B) → H⁰(I) is not surjective. For the constant sheaf and connected sites, **a comma exists between two observers, though neither has one alone, iff their shared boundary is disconnected**. The number of such commas is the number of components of the boundary minus one.
+
+**What "neither can tune it away alone" means precisely (PROVED).** Take s ∈ H⁰(I) outside the image. Extend it to any a ∈ C⁰(K_A) with a|_I = s, and set b = 0 on K_B. The 1-cochain z on X that equals δa on A's edges and 0 on B's edges is well defined, because δa = 0 = δb on edges of I (s is a section there). Its class is ∂s. On K_A, z = δa is a question A's own assertion a answers. On K_B, z = 0. **Each side sees only a question it can answer alone. The sum is not the question of any assertion on X.** Each can tune away its own part. Neither tuning, nor both tunings, removes the class, because the two tunings disagree on I.
+
+### §3.3 The smallest instance, and its twisted control
+
+**Two paths glued at two points.** K_A = path 0–1–2–3, K_B = path 3–4–5–0, I = {0, 3}. Then (b₀, b₁) is (1, 0) for each side, (2, 0) for I and (1, 1) for X, so dim im ∂ = 2 − 1 − 1 + 1 = 1. **One comma, and it exists only between them.** With three contact points (A = path 0…–4, B a star at a new vertex 5 touching 0, 2 and 4), dim im ∂ = 2. MEASURED numerically: both match Theorem 3.3.
+
+**Twisted control (PROVED).** Give the cycle a rank-1 sheaf with nonzero restrictions (§1.4) and holonomy h around the loop. Each path still has H⁰ = 1 and H¹ = 0, since a rank-1 sheaf on a tree with invertible restrictions has a unique section up to scale. H⁰(I) = 2, and H⁰(X) = 1 iff h = 1. So dim im ∂ = [h = 1]. When the two observers' transports around the shared loop disagree (h ≠ 1), there is no comma between them, and also no global tonic. Every edge disagreement is then the question of some assertion, but nothing settles globally (Theorem 1.6 trades one for the other). **The comma between two observers exists only over a shared tonic.** It is the residue of an agreement, not its absence. Numerically: twisting edge (1, 2) by 2 gives (b₀, b₁)(X) = (0, 0) and dim im ∂ = 0.
+
+### §3.4 How this meets §1
+
+Under a declared owner map p, every crossing edge belongs to exactly one site, so I consists of vertices only: the far endpoints of crossing edges. Then dim im ∂ = |I| − b₀(A) − b₀(B) + b₀(X), and each extra contact point closes a loop through both sites. Bleed under π_p (±1) sits on the crossing edges, and the comma between is assembled from those same edges by the construction above. The undeclared π_M (±½) splits each crossing edge between the two sites, and no site decomposition corresponds to it. LEAD: that would make "undeclared boundary" and "no Mayer–Vietoris decomposition" the same failure; not checked beyond this observation.
 
 ## §4 The question as operator on reachability
 
