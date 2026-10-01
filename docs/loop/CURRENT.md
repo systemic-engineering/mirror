@@ -13,7 +13,7 @@
 **Terminal-form Mara canonicals** (2026-09-08 through 2026-09-09):
 - `714af15` + `423d9d5` — compose-not-average-all-the-way-down (30+ Kagi + ~90+ @docs anchors; 8-altitude tower; Theorems 3.2.1 + 3.3.1; Corollary 3.4.1)
 - `0d16b99` + `d3b7f67` — bottom-up-ternary-content-addressed-graph-inference (fourfold composition theorem 𝒱 = 𝓑 ⊗ 𝓝 ⊗ 𝓒𝓐 ⊗ 𝓖𝓘; Corollary 6.3.1: fourfold ≡ Glasswall Connes triple)
-- `fa5689f` + `6f169f1` — @question as Dirac operator; Glasswall Connes triple (A, H, D) = (prismqueer, Frame Cohomology, @question); K_4 ancestral (Ada + Alan + Karen + Karl Tomm)
+- `fa5689f` + `6f169f1` — @question as Dirac operator; Glasswall Connes triple (A, H, D) = (prismqueer, C⁰(F) ⊕ C¹(F), @question); K_4 ancestral (Ada + Alan + Karen + Karl Tomm)
 - `0bca1c5` + `cd98b4d` — Singularity<T>-as-binary + ouroboros close + `void@spectral.engineer` first observer
 - `0dbc0b8` + `f31d703` — Crystal→Fractal→Splinter fractal-recursive-self-similar three-altitude substrate
 - `764a07f` + `ce537d9` — @graph family-root + Glasswall dual-lens projection

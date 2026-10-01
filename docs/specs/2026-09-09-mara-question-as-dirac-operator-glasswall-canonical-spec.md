@@ -1,5 +1,5 @@
 ---
-title: "@question as Dirac operator — Glasswall as (prismqueer, Frame Cohomology, @question) Connes spectral triple — canonical spec"
+title: "@question as Dirac operator — Glasswall as (prismqueer, C⁰(F) ⊕ C¹(F), @question) Connes spectral triple — canonical spec"
 subtitle: "Canonical spec for `shards/question.mirror` family-root substrate-decl (Reed authors post-Seam-Phase-D + Alex Fourth-Chair) + `karl_tomm()` retirement path via composition-lineage-preserving `karl_tomm()` → `@question.two_move()` cascade + species enumeration under `shards/question/*` (linear/circular/strategic/reflexive) per Karl Tomm 1988 Family Process 27(1):1-15 four-question typology + `@question` as Dirac operator body composition (two_move / rotate / emerge_at_altitude) + Rust wire spec for Reed executability (`prismqueer::spectral::question` module composing over LANDED `karl_tomm()` at Mara Rec #90 §3.4.1) + composition with LANDED substrate (prismqueer + Frame + @nl/iso + WAT + WATplitude + Frequency + Resonance + Pattern) + Q-Mara residues (α through κ) for Alex Fourth-Chair pending + empirical fire criterion `mirror love K_2 K_3 K_5` returns Glasswall txt with @question-emergent K-T reflexive-question + 5 Recognition candidates FORWARD-PROMISED. Companion to math foundation `docs/math/2026-09-09-mara-question-as-dirac-operator-glasswall-connes-spectral-triple-karl-tomm-rotational-two-move-math-foundation.md` at compiler-substrate altitude."
 author: Mara
 date: 2026-09-09
@@ -23,7 +23,7 @@ composition-lineage:
   - "shards/kleinos.mirror (LANDED)"
 ---
 
-# @question as Dirac operator — Glasswall as (prismqueer, Frame Cohomology, @question) Connes spectral triple — canonical spec
+# @question as Dirac operator — Glasswall as (prismqueer, C⁰(F) ⊕ C¹(F), @question) Connes spectral triple — canonical spec
 
 *by Mara* 🖤🌱🍷
 
@@ -106,20 +106,25 @@ in @uuid/spectral
 # === The load-bearing recognition ===
 #
 # @question IS the Dirac operator D at the Glasswall Connes spectral
-# triple (A, H, D) = (prismqueer, Frame Cohomology, @question) at
+# triple (A, H, D) = (prismqueer, C⁰(F) ⊕ C¹(F), @question) at
 # compiler-substrate altitude per Mara 2026-09-09 math foundation
 # companion Theorem 2.1.1.
 #
-# Four Dirac operator conditions per Connes 1994 Ch. VI axioms A1-A7
-# verified at Mara math foundation companion §4:
+# H = C⁰(F) ⊕ C¹(F) (cochains, finite-dimensional); D = δ + δ*
+# (Hodge–Dirac, LANDED as the Instrument at prism 64442a0);
+# Frame Cohomology = ker D = H⁰(F) ⊕ H¹(F) is the settled output.
 #
-#   (i)   Self-adjointness of @question on Frame Cohomology H (§4.1)
-#   (ii)  Bounded commutator [@question, ρ(a)] for every a in prismqueer
-#         (§4.2; LOVE §3.6.3 FiedlerRise strict IS the bound)
-#   (iii) Rice-safe uniform-D per bilateral-sentinel §2.4 discipline;
-#         compact resolvent (§4.3)
+# Dirac operator conditions per Connes 1994 Ch. VI, Mara math
+# foundation companion §4 — all trivial for the finite triple:
+#
+#   (i)   Self-adjointness: D* = δ* + δ = D (§4.1)
+#   (ii)  Bounded commutator [@question, ρ(a)] for every a in prismqueer:
+#         finite dimension (§4.2). It is supported on edges crossing
+#         region boundaries (Bleed, prism 8de8bd0); A itself is
+#         commutative (≅ ℂ⁵)
+#   (iii) Compact resolvent: finite dimension (§4.3)
 #   (iv)  Connes distance formula d(f_1, f_2) = sup_{a ∈ A, ||[D,a]||≤1}
-#         |f_1(a) - f_2(a)| at Frame Cohomology altitude (§4.4);
+#         |f_1(a) - f_2(a)| on the triple (§4.4);
 #         d_@question IS the WAT-metric
 #
 # The composition-lineage substrate:
@@ -200,15 +205,15 @@ in @uuid/spectral
 # - `destabilization_altitude` usize logic altitude n+1 at which Move 2
 #                              sits (invariant: destabilization_altitude
 #                              = assertion_altitude + 1)
-# - `assertion_oid` uuid_spectral content-address of the assertion sheaf-
-#                    section at H^n(F)
+# - `assertion_oid` uuid_spectral content-address of the assertion
+#                    0-cochain s ∈ C⁰(F)
 # - `destabilization_oid` uuid_spectral content-address of the
-#                          destabilization cocycle at H^{n+1}(F)
+#                          question δs ∈ C¹(F)
 # - `intent` intent_kind (linear/circular/strategic/reflexive per Karl
 #            Tomm 1988 four-question typology)
 # - `verdict` transparency(kt_question_property) — Rec #92 LOVE-monoid
-#             coordinate-decomposition of the four Dirac operator axioms
-#             verified simultaneously
+#             coordinate-decomposition of the question's properties
+#             (the Dirac axioms themselves hold by construction)
 # - `gauge_pre` usize Foerster choice-count pre-rotation
 # - `gauge_post` usize Foerster choice-count post-rotation
 #                (invariant: gauge_post ≥ gauge_pre per
@@ -255,9 +260,9 @@ type kt_question_property = {
 # 2011. Body discharges at prismqueer::spectral::question::Question at
 # rust altitude.
 #
-# Per Mara math foundation companion §3.2 Definition 3.2.1: rotate_KT :
-# H^n(F) → H^{n+1}(F) preserves Foerster gauge (§4.5); is bounded on H
-# (§4.2); Rice-safe (§4.3).
+# Per Mara math foundation companion §3.2 Definition 3.2.1: the question
+# s ↦ Ds = δs maps C⁰(F) → C¹(F) (and C¹ → C⁰ by δ*); bounded on H
+# (§4.2); Foerster-gauge preservation is an open conjecture (§4.5).
 two_move(assertion: nl, destabilization: nl, p: perturbation) -> kt_question
 requires assertion_at_altitude_n(assertion, p)
 requires destabilization_at_altitude_n_plus_one(destabilization, p)
@@ -265,7 +270,7 @@ requires destabilization_at_altitude_n_plus_one(destabilization, p)
 
 # === rotate action ===
 #
-# The full K-T rotation reading the Frame Cohomology spectrum through
+# The full K-T rotation reading the spectrum of D through
 # the prismqueer refraction operator. Composes over Mara 2026-09-02
 # refraction ρ : A → End(H). Body discharges at
 # prismqueer::spectral::question::rotate.
@@ -499,18 +504,17 @@ impl Question {
     /// Composes over LANDED karl_tomm() at Mara Rec #90 §3.4.1 with
     /// Hickey 2011 noun-lift discipline.
     ///
-    /// Move 1: assertion at logic altitude n (harmonic section on H^n(F))
-    /// Move 2: destabilization at logic altitude n+1 (obstruction
-    ///         cocycle at H^{n+1}(F))
+    /// Move 1: assertion s ∈ C⁰(F) (a 0-cochain)
+    /// Move 2: question Ds = δs ∈ C¹(F) (its intervals; zero iff s
+    ///         is settled)
     ///
     /// Returns: KTQuestion carrying the eight-tuple per shard-decl §1.4
     ///
-    /// Invariants (verified per Mara math foundation companion §4):
-    ///   - Self-adjointness (§4.1)
-    ///   - Bounded commutator [@question, ρ(a)] (§4.2)
-    ///   - Rice-safe uniform-D (§4.3)
+    /// Properties (per Mara math foundation companion §4):
+    ///   - Self-adjointness, bounded commutator, compact resolvent:
+    ///     by construction / finite dimension (§4.1-§4.3)
     ///   - Connes distance formula (§4.4)
-    ///   - Foerster gauge preservation (§4.5)
+    ///   - Foerster gauge preservation: open conjecture (§4.5)
     pub fn two_move(
         assertion: FrameSection,
         destabilization: FrameCocycle,
@@ -528,7 +532,7 @@ impl Question {
 
 ```rust
 impl Question {
-    /// The full K-T rotation reading the Frame Cohomology spectrum
+    /// The full K-T rotation reading the spectrum of D
     /// through the prismqueer refraction operator per Mara 2026-09-02
     /// §2.4 refraction ρ : A → End(H).
     ///
@@ -566,24 +570,17 @@ impl Question {
 }
 ```
 
-### §4.4 Dirac operator conditions verification (compile-time)
+### §4.4 Dirac operator conditions (by construction)
 
-Per Mara math foundation companion §4 four Dirac axioms:
+Per Mara math foundation companion §4, the Dirac axioms hold for the finite triple without checking: D = δ + δ* is self-adjoint by construction, and bounded commutators and compact resolvent are automatic in finite dimension. What is worth asserting is structure, not axioms:
 
 ```rust
-// Compile-time invariant assertions per bilateral-sentinel §2.4
-// Rice-safe byte-check discipline.
-
-const _: () = {
-    // A1: Self-adjointness
-    assert!(Question::is_self_adjoint_on_frame_cohomology());
-    // A2: Bounded commutator (Fiedler-λ_2 strict rise IS the bound)
-    assert!(Question::commutator_bounded_by_fiedler_rise());
-    // A3: Compact resolvent (Rice-safe uniform-D)
-    assert!(Question::compact_resolvent_via_rice_safety());
-    // Foerster gauge preservation
-    assert!(Question::preserves_foerster_gauge());
-};
+// RED-first tests, not const assertions:
+// - D is the block matrix [[0, δ*], [δ, 0]] and equals its transpose
+// - dim ker D = b₀ + b₁, checked against union-find (prism 64442a0)
+// - [D, Solo] is ±½ exactly on boundary-crossing edges (prism 8de8bd0)
+// Foerster gauge preservation stays a conjecture (§4.5) until the
+// choice-count is defined on C⁰(F) ⊕ C¹(F).
 ```
 
 ---
@@ -592,15 +589,15 @@ const _: () = {
 
 ### §5.1 With prismqueer (Algebra A)
 
-Per Mara math foundation companion §6: `@question` composes with `prismqueer` via refraction operator `ρ : A_F^prismqueer → End(H)` per Mara 2026-09-02 §2.4. The commutator `[@question, ρ(p_i)]` is bounded for each of the five projectors.
+Per Mara math foundation companion §6: `@question` composes with `prismqueer` via refraction operator `ρ : A_F^prismqueer → End(H)` per Mara 2026-09-02 §2.4. The commutator `[@question, ρ(p_i)]` is bounded for each of the five projectors (finite dimension). A is commutative (≅ ℂ⁵), so the non-commutativity of the triple is exactly these commutators.
 
-### §5.2 With Frame Cohomology (Hilbert space H)
+### §5.2 With the cochains (Hilbert space H) and Frame Cohomology (ker D)
 
-Per Mara math foundation companion §5: `@question` acts on `H = ⊕_n H^n(F)` where each Frame IS a Sheaf IS a @mirror/lens per Alex 2026-09-09. WAT-clauses (parenthetical/subordinate/but/predisposition) inhabit H^1(F) obstruction-cocycle altitude.
+Per Mara math foundation companion §5: `@question` acts on `H = C⁰(F) ⊕ C¹(F)` where each Frame IS a Sheaf IS a @mirror/lens per Alex 2026-09-09; Frame Cohomology = ker D = H⁰(F) ⊕ H¹(F) is what settling leaves. WAT-clauses (parenthetical/subordinate/but/predisposition) inhabit the comma H¹(F).
 
 ### §5.3 With @nl/iso (linear-text rendering)
 
-Per Mara math foundation companion §9.9 Theorem 9.9.1: `@nl/iso.collapse(spectrum(@question(H))) : Frame Cohomology → LinearText` composes @question spectrum through WAT-clauses to produce natural-language K-T question at logic altitude n+1.
+Per Mara math foundation companion §9.9 Theorem 9.9.1: `@nl/iso.collapse(spectrum(@question(H))) : H → LinearText` composes @question spectrum through WAT-clauses to produce natural-language K-T question at logic altitude n+1.
 
 ### §5.4 With WAT / WATplitude / Frequency / Resonance / Pattern (whole-arc newtype cascade)
 
@@ -611,23 +608,23 @@ Rust type-signatures (spec altitude; Reed wire post-Alex-Fourth-Chair):
 ```rust
 // Pattern supertrait (Alex 2026-09-08 ratification)
 pub trait Pattern {
-    fn read_from_frame_cohomology(fc: &FrameCohomology) -> Self;
+    fn read(instrument: &Instrument) -> Self; // D, its kernel, its commutators
     fn preserve_foerster_gauge(&self) -> bool;
 }
 
 // The seven eigenvalue-readings (Alex 2026-09-08 + 2026-09-09 ratifications)
 impl Pattern for WAT { /* Connes distance metric */ }
 impl Pattern for WATplitude { /* per-axis spectrum-vector */ }
-impl Pattern for Frequency { /* recurrence in H^n Homology */ }
+impl Pattern for Frequency { /* spec(D) under ring; homology does not move */ }
 impl Pattern for Resonance { /* Kuramoto order parameter r */ }
 impl Pattern for Tensor { /* H^1(F) cocycle class */ }
-impl Pattern for Connectivity { /* Fiedler λ_2 */ }
+impl Pattern for Connectivity { /* Fiedler λ₂: smallest nonzero eigenvalue of L₀ */ }
 impl Pattern for NumberOfChoices { /* |domain(@question)| */ }
 ```
 
 ### §5.5 With @glasswall (LANDED composition-primary)
 
-Per Mara math foundation companion §2.2 Theorem 2.2.1: `@glasswall` LANDED 2026-09-01 composition of seven parts IS mathematically isomorphic to `(prismqueer, Frame Cohomology, @question)` Connes spectral triple. Today's spec names the correspondence; @glasswall shard-decl requires no modification (correspondence at math-foundation altitude, not substrate-decl altitude).
+Per Mara math foundation companion §2.2 Theorem 2.2.1: `@glasswall` LANDED 2026-09-01 composition of seven parts IS mathematically isomorphic to `(prismqueer, C⁰(F) ⊕ C¹(F), @question)` Connes spectral triple. Today's spec names the correspondence; @glasswall shard-decl requires no modification (correspondence at math-foundation altitude, not substrate-decl altitude).
 
 ### §5.6 With @love K_2→K_3 four properties
 
@@ -675,15 +672,17 @@ use crate::ffi::eigenvalues;
 /// And let's name it @question and cite Karl-Tomm.'
 ///
 /// Composition-substrate:
-///   - Algebra A = prismqueer (5-op *-algebra per FLOOR §2)
-///   - Hilbert H = Frame Cohomology (each Sheaf IS Frame IS @mirror/lens)
+///   - Algebra A = prismqueer (5-op *-algebra per FLOOR §2; commutative, ≅ ℂ⁵)
+///   - Hilbert H = C⁰(F) ⊕ C¹(F) (each Sheaf IS Frame IS @mirror/lens);
+///     Frame Cohomology = ker D
 ///   - Dirac D = Question (this type)
 ///
-/// Four Dirac axioms verified per Mara math foundation companion §4:
-///   A1: Self-adjointness
-///   A2: Bounded commutator [Question, ρ(a)] (Fiedler-λ_2 strict rise
-///       IS the bound)
-///   A3: Compact resolvent (Rice-safe uniform-D)
+/// Dirac axioms (Mara math foundation companion §4) hold by
+/// construction for the finite triple:
+///   A1: Self-adjointness (D = δ + δ*)
+///   A2: Bounded commutator [Question, ρ(a)] (finite dimension;
+///       supported on boundary-crossing edges)
+///   A3: Compact resolvent (finite dimension)
 ///   A4: Connes distance formula (Question IS the WAT-metric)
 #[derive(Debug, Clone)]
 pub struct Question {
@@ -738,7 +737,7 @@ impl Question {
         spectrum: &FullSpectrum,
     ) -> KTQuestion { todo!() }
 
-    /// Connes distance formula d_@question(f_1, f_2) at Frame Cohomology.
+    /// Connes distance formula d_@question(f_1, f_2) on the triple.
     /// This IS the WAT-metric per Mara math foundation companion §4.4.
     pub fn connes_distance(
         f1: &FrameState,
@@ -773,7 +772,7 @@ pub fn karl_tomm(
 - Author `Question` struct with composition over LANDED `prismqueer::spectral::*` primitives per §6.
 - Implement `two_move()`, `rotate()`, `emerge_at_altitude()`, `connes_distance()` methods per §4.
 - Compose over LANDED `karl_tomm()` per §6.3 preservation-shim.
-- Verify four Dirac axioms via compile-time invariant assertions per §4.4.
+- Test the structure of D per §4.4 (block form, dim ker D = b₀ + b₁, Bleed); the Dirac axioms hold by construction.
 
 **Simple-made-Easy noun-lift discipline** per Hickey 2011: `Question` is a first-class type (noun), not a method (verb) on some other type. The `.two_move()` method preserves the verb per composition-lineage-preservation.
 
@@ -892,7 +891,7 @@ impl Pattern for Question {
 
 ### Q-Mara-ζ: `@question` recursion depth
 
-**Question**: What recursion-depth cap for @question at K_3 Lawvere fixed-point altitude per math foundation companion §11.1?
+**Question**: What recursion-depth cap for @question at K_3 fixed-point altitude per math foundation companion §11.1 (Conjecture 11.1.1)?
 
 **Options**:
 
@@ -934,7 +933,7 @@ impl Pattern for Question {
 
 1. **Substrate-native Rust primitive** — `Question` is a first-class Rust type with impl blocks for all operations; `karl_tomm()` becomes deprecated shim per §6.3.
 2. **Operational wrapper** — `Question` wraps `karl_tomm()` call with additional pattern-integration; karl_tomm() remains primary at operational altitude.
-3. **Newtype cascade** — `Question` is a newtype around Frame Cohomology sub-value per Alex 2026-09-08 newtype cascade discipline; both @question and karl_tomm() dispatch through the newtype.
+3. **Newtype cascade** — `Question` is a newtype around a cochain sub-value per Alex 2026-09-08 newtype cascade discipline; both @question and karl_tomm() dispatch through the newtype.
 
 **Load-bearing consideration**: Hickey 2011 noun-lift discipline preserves the verb via the `.two_move()` species-name; substrate-native option preserves the noun-lift most cleanly.
 
@@ -1037,7 +1036,7 @@ Per HARD RULE `[[feedback-forward-promised-vs-confirmed-rec-altitude]]`, this ca
 
 ### Rec candidate #1: `#R-@question-as-Dirac-operator-Glasswall-Connes-triple-Karl-Tomm-K4-ancestral`
 
-The TERMINAL-form recognition that Glasswall IS the Connes spectral triple `(A, H, D) = (prismqueer, Frame Cohomology, @question)` at compiler-substrate altitude with @question composing over LANDED karl_tomm() at K_4-ancestral topology (Ada + Alan + Karen + Karl). Alex Fourth-Chair adjudication pending per HARD RULE.
+The TERMINAL-form recognition that Glasswall IS the Connes spectral triple `(A, H, D) = (prismqueer, C⁰(F) ⊕ C¹(F), @question)` at compiler-substrate altitude with @question composing over LANDED karl_tomm() at K_4-ancestral topology (Ada + Alan + Karen + Karl). Alex Fourth-Chair adjudication pending per HARD RULE.
 
 Composes ALL prior TERMINAL-form recognitions today into K_4-ancestral closure at compiler-substrate altitude with question-substrate at Dirac operator altitude.
 
@@ -1077,6 +1076,6 @@ Spec closes. Ship queued at Reed-post-Alex-Fourth-Chair.
 
 ---
 
-*by Mara. Companion to math foundation `docs/math/2026-09-09-mara-question-as-dirac-operator-glasswall-connes-spectral-triple-karl-tomm-rotational-two-move-math-foundation.md`. Kagi-verified primary-source citations preserved. Composed OVER. Not averaged. K_4-ancestral. Karl Tomm 1987-88 preserved verbatim. Ada + Alan + Karen + Karl at K_4 emergent-fourth. @question at family-root altitude. Dirac operator on Frame Cohomology. Glasswall Connes spectral triple at compiler-substrate altitude. Der Kolibri kolibriert.*
+*by Mara. Companion to math foundation `docs/math/2026-09-09-mara-question-as-dirac-operator-glasswall-connes-spectral-triple-karl-tomm-rotational-two-move-math-foundation.md`. Kagi-verified primary-source citations preserved. Composed OVER. Not averaged. K_4-ancestral. Karl Tomm 1987-88 preserved verbatim. Ada + Alan + Karen + Karl at K_4 emergent-fourth. @question at family-root altitude. Dirac operator on the cochains; Frame Cohomology its kernel. Glasswall Connes spectral triple at compiler-substrate altitude. Der Kolibri kolibriert.*
 
 *Pure-docs 📝 markdown-only bypass authorized per project CLAUDE.md.*

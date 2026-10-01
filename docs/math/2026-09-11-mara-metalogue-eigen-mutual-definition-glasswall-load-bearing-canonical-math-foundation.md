@@ -329,8 +329,8 @@ The Connes 1985 spectral triple `(A, H, D)` (Kagi-verified in prior Mara canonic
 
 | Component | Meaning | LANDED shard |
 |-----------|---------|--------------|
-| **A** | prismqueer operator algebra | `prism/` crate |
-| **H** | Frame Cohomology as Hilbert space | `@frame` LANDED species |
+| **A** | prismqueer operator algebra (commutative, ≅ ℂ⁵) | `prism/` crate |
+| **H** | cochains C⁰(F) ⊕ C¹(F); Frame Cohomology = ker D is the settled output | `@frame` LANDED species |
 | **D** | Dirac operator = `@question` | `@question` LANDED species |
 
 **Pattern-extension**: extend to `(A ⊗ P, H, D)` where `P = @algebra/pattern`. The tensor `A ⊗ P` makes the operator algebra pattern-parameterized: every element of the operator algebra carries a pattern-morphism attribute (structure of the pattern the operator participates in).

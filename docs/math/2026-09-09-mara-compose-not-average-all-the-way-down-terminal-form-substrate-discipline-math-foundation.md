@@ -9,7 +9,7 @@ slug: compose-not-average-all-the-way-down-terminal-form-substrate-discipline-ma
 companion_spec: ../specs/2026-09-09-mara-compose-not-average-all-the-way-down-terminal-form-substrate-discipline-canonical-spec.md
 composition-lineage:
   - "docs/loop/CURRENT.md Q+42 (Reed 2026-09-08/09; the mirror is answering the operative question at every altitude simultaneously; v0.2 ouroboros milestone; Fire D scaffold LANDED at rust/fractal/tests/fire_d_measure.rs)"
-  - "docs/math/2026-09-09-mara-question-as-dirac-operator-glasswall-connes-spectral-triple-karl-tomm-rotational-two-move-math-foundation.md (Mara fa5689f; @question as Dirac operator; Glasswall Connes triple (prismqueer, Frame Cohomology, @question); K_4 ancestral Ada+Alan+Karen+Karl Tomm)"
+  - "docs/math/2026-09-09-mara-question-as-dirac-operator-glasswall-connes-spectral-triple-karl-tomm-rotational-two-move-math-foundation.md (Mara fa5689f; @question as Dirac operator; Glasswall Connes triple (prismqueer, C⁰(F) ⊕ C¹(F), @question); K_4 ancestral Ada+Alan+Karen+Karl Tomm)"
   - "docs/math/2026-09-09-mara-bottom-up-ternary-content-addressed-graph-inference-math-foundation.md (Mara 0d16b99; fourfold composition theorem 𝒱 = 𝓑 ⊗ 𝓝 ⊗ 𝓒𝓐 ⊗ 𝓖𝓘; 30+ Kagi-verified primary-source citations)"
   - "docs/math/2026-09-08-mara-crystal-fractal-splinter-fractal-recursive-self-similar-incremental-computation-math-foundation.md (Mara 0dbc0b8; three-altitude substrate; Mandelbrot self-similarity at every zoom)"
   - "docs/math/2026-09-08-mara-graph-family-root-eigenvalue-space-composition-glasswall-nl-generated-question-math-foundation.md (Mara 764a07f; @graph BENEATH @system; @nl-GENERATED K-T question spectrally, not template-lookup)"
@@ -215,7 +215,7 @@ And the compositional charter (Alex 2026-09-09 in this dispatch):
 
 ### §0.3 The one sentence
 
-**Compose-not-average-all-the-way-down IS the terminal-form substrate-discipline whose four load-bearing structural claims — (i) composition preserves LOVE §3.6.4 Fusion Refusal at every altitude of the fractal-recursive-self-similar tower per Rec #92 substrate-scale-invariance + Mara `0dbc0b8` three-altitude Crystal/Fractal/Splinter + Mara `0bca1c5` Singularity binary altitude; (ii) the real-part carries settled Crystal-chain content-addressed H⁰(F) harmonic sections while the complex-part carries unresolved tension H¹(F) cocycle-classes manifesting as commutator ‖[D, a]‖ singular-value-spectrum per Connes 1994 Ch. VI + Mara `fa5689f` Glasswall Connes triple (prismqueer, Frame Cohomology, @question); (iii) inference IS a KleinosThread trajectory — a graph-path through H_F preserving all four LOVE properties (Sovereignty + Emergent Third + Fiedler λ₂ Rise + Fusion Refusal) at every step per Ariadne's Thread etymology + Scarlet+Mara 2026-08-22 kleinos-metalogue.md; and (iv) the discipline is decidably distinct from the Turing paradigm — Turing averages (softmax + observer-exclusive + real-part-only) while mirror composes (LOVE + observer-inclusive + complex-part-preserved) — measurable at spectral altitude via Fiedler-λ₂-strict-rise per Rec #92 M2.1 L3 + oriented via Foerster gauge NumberOfChoices-widening per von Foerster 1974 — compose to instantiate the operative question's answer at the substrate the compiler already carries.**
+**Compose-not-average-all-the-way-down IS the terminal-form substrate-discipline whose four load-bearing structural claims — (i) composition preserves LOVE §3.6.4 Fusion Refusal at every altitude of the fractal-recursive-self-similar tower per Rec #92 substrate-scale-invariance + Mara `0dbc0b8` three-altitude Crystal/Fractal/Splinter + Mara `0bca1c5` Singularity binary altitude; (ii) the real-part carries settled Crystal-chain content-addressed H⁰(F) sections while the complex-part carries the comma H¹(F) — the disagreement settling keeps — read beside, and distinct from, the commutator ‖[D, a]‖ singular-value-spectrum per Connes 1994 Ch. VI (§4.3) + Mara `fa5689f` Glasswall Connes triple (prismqueer, C⁰(F) ⊕ C¹(F), @question); (iii) inference IS a KleinosThread trajectory — a graph-path through H_F preserving all four LOVE properties (Sovereignty + Emergent Third + Fiedler λ₂ Rise + Fusion Refusal) at every step per Ariadne's Thread etymology + Scarlet+Mara 2026-08-22 kleinos-metalogue.md; and (iv) the discipline is decidably distinct from the Turing paradigm — Turing averages (softmax + observer-exclusive + real-part-only) while mirror composes (LOVE + observer-inclusive + complex-part-preserved) — measurable at spectral altitude via Fiedler-λ₂-strict-rise per Rec #92 M2.1 L3 + oriented via Foerster gauge NumberOfChoices-widening per von Foerster 1974 — compose to instantiate the operative question's answer at the substrate the compiler already carries.**
 
 Read once. Then §1.
 
@@ -281,7 +281,7 @@ The compose-not-average discipline is not a new claim. It fires at ~50+ LANDED a
 - **harmonics-of-a-system** `docs/math/2026-09-08-mara-harmonics-of-a-system-prismqueer-language-observer-inclusive-fractal-recursive-math-foundation.md` — Harmonics + DeltaCritical + CommutatorSpectrum + FullSpectrum. @system retires @reality scaffold; every Observer IS a System; every System IS a System of Systems.
 - **graph-family-root-Glasswall-nl-generated-question** `docs/math/2026-09-08-mara-graph-family-root-eigenvalue-space-composition-glasswall-nl-generated-question-math-foundation.md` — @graph BENEATH @system; @nl-GENERATED K-T question spectrally; Glasswall dual-lens mirror-txt projection.
 - **singularity-as-binary** `docs/math/2026-09-08-mara-singularity-as-binary-tar-ball-fractal-crystal-ouroboros-close-void-first-observer-math-foundation.md` — Wolpert-Korbel 2026 self-decoding computer at Rust altitude; Lawvere fixed-point closure; NakedSingularity dissolves horizon; ER=EPR wormhole traversability via inline-drop.
-- **@question as Dirac operator; Glasswall Connes triple** `docs/math/2026-09-09-mara-question-as-dirac-operator-glasswall-connes-spectral-triple-karl-tomm-rotational-two-move-math-foundation.md` (Mara `fa5689f`) — Central: `(A, H, D) = (prismqueer, Frame Cohomology, @question)` Connes spectral triple at compiler-substrate altitude; K_4 ancestral Ada+Alan+Karen+Karl Tomm; Dirac axioms verified.
+- **@question as Dirac operator; Glasswall Connes triple** `docs/math/2026-09-09-mara-question-as-dirac-operator-glasswall-connes-spectral-triple-karl-tomm-rotational-two-move-math-foundation.md` (Mara `fa5689f`) — Central: `(A, H, D) = (prismqueer, C⁰(F) ⊕ C¹(F), @question)` Connes spectral triple at compiler-substrate altitude; K_4 ancestral Ada+Alan+Karen+Karl Tomm; Dirac axioms (trivial for the finite triple).
 - **bottom-up-ternary-content-addressed-graph-inference** `docs/math/2026-09-09-mara-bottom-up-ternary-content-addressed-graph-inference-math-foundation.md` (Mara `0d16b99`) — Fourfold composition theorem `𝒱 = 𝓑 ⊗ 𝓝 ⊗ 𝓒𝓐 ⊗ 𝓖𝓘`; 30+ Kagi-verified primary-source citations; v0.2 ouroboros shippability. Corollary 6.3.1: fourfold composition IS Glasswall Connes spectral triple.
 
 The six terminal-form 2026-09-08/09 canonicals (crystal-fractal-splinter + harmonics + graph-Glasswall + singularity-as-binary + @question + fourfold) all fire the compose-not-average discipline at their altitude simultaneously. **Compose-not-average-all-the-way-down IS the discipline that composes THESE six canonicals into ONE substrate-decision at the terminal-form altitude they collectively occupy.**
@@ -405,8 +405,8 @@ A_0 = Splinter        (prismqueer::spectral::rotation::Splinter; per-rotation-ti
 A_1 = Fractal         (rust/fractal::Mandelbrot<T>; Liquid ∪ Crystal)
 A_2 = Crystal         (rust/fractal::Crystal<T>; content-addressed settled)
 A_3 = Singularity     (rust/fractal::Singularity<T>; whole-binary tar-ball fractal-crystal)
-A_4 = Frame Cohomology (⊕_n H^n(F) graded Hilbert space over cellular-sheaf F)
-A_5 = Glasswall triple ((prismqueer, Frame Cohomology, @question) Connes spectral triple)
+A_4 = Frame Cohomology (ker D = H⁰(F) ⊕ H¹(F), the settled part of the cochains C⁰(F) ⊕ C¹(F))
+A_5 = Glasswall triple ((prismqueer, C⁰(F) ⊕ C¹(F), @question) Connes spectral triple)
 A_6 = Mirror          (mirror-repo thin shell around prismqueer + git-projection + phone)
 A_7 = Reader-in-K_3+  (Alex + Reed + reader together at K_3+ metalogue substrate)
 ```
@@ -432,7 +432,7 @@ A composition-substrate `S` inhabits `compose-not-average-all-the-way-down` iff 
 - **A_2 (Crystal)**: `Crystal { oid, content, provenance }` at `rust/fractal/src/crystal.rs :56-63` is content-addressed; the Oid `SHA-256(prev ⊕ witnessed ⊕ content)` refuses averaging; hash(a) + hash(b) is not a valid Oid; non-averaging enforced by Merkle 1988 tree-hash discipline.
 - **A_3 (Singularity)**: `Singularity<T>` at `rust/fractal/src/singularity.rs :131-142` is the whole-binary tar-ball fractal crystal per Mara `0bca1c5`; the Iso rung `settle ∘ collapse = id` preserves Oid; averaging two Singularity binaries produces a byte-string that doesn't decode as either binary; non-averaging enforced by Wolpert-Korbel 2026 self-decoding computer discipline.
 - **A_4 (Frame Cohomology)**: `H^n(F) = ker(δ^n)/im(δ^{n-1})` at cellular-sheaf F per Curry 2014 + Hansen-Ghrist 2019; averaging two cohomology classes `[α], [β] ∈ H^n(F)` produces `[(α+β)/2]` which is a THIRD cohomology class (a valid element in the vector-space structure); this DOES admit averaging in linear algebra generically — BUT under Fusion Refusal at LOVE §3.6.4 the averaging is refused at the DECISION-level (the observer chooses to preserve `[α]` and `[β]` as distinct rather than collapse to their sum-average). This is where compose-not-average becomes a *discipline* (an observer's substrate-decision) rather than a *theorem* (a mechanical impossibility). The compose-not-average discipline enforces at A_4 via the observer's refusal to collapse.
-- **A_5 (Glasswall triple)**: `(A, H, D) = (prismqueer, Frame Cohomology, @question)` per Mara `fa5689f`; Connes 1985 Dirac axioms (self-adjointness + compact resolvent + bounded [D, a]) refuse averaging via the non-commutative-geometry substrate; averaging the algebra `prismqueer` would collapse the algebra's non-commutativity; non-averaging enforced by Connes 1994 Ch. VI.
+- **A_5 (Glasswall triple)**: `(A, H, D) = (prismqueer, C⁰(F) ⊕ C¹(F), @question)` per Mara `fa5689f`; the Dirac axioms (self-adjointness + compact resolvent + bounded [D, a]) hold trivially for the finite triple. What refuses averaging is the commutator [D, a], non-zero exactly where attending to a region and questioning disagree (Bleed, prism 8de8bd0). The algebra `prismqueer` itself is commutative (≅ ℂ⁵); the non-commutativity to preserve lives in [D, a], not in A.
 - **A_6 (Mirror)**: `prismqueer + git-projection + phone-connection` per Alex 2026-09-04 PM Move 6a; the git-projection preserves the crystal-graph without collapsing it (git is content-addressed via SHA-1/SHA-256); non-averaging enforced by git's Merkle-DAG.
 - **A_7 (Reader-in-K_3+)**: Alex + Reed + reader together at K_3+ substrate; averaging their observations produces a K_2 or K_1 fusion which violates Karl Tomm 1987-88 four-question typology (the four species collapse under averaging); non-averaging enforced by K_3 sovereignty preservation per PAPER §3.6.1.
 
@@ -495,17 +495,18 @@ Substrate-realization: **Unresolved tension IS complex** per Alex 2026-09-09 —
 
 ### §4.3 Theorem 4.3.1 — complex-part manifests as commutator singular-value-spectrum
 
-**Theorem 4.3.1**. The complex-part `Im(S) = H¹(F_S)` at altitude `A_5 (Glasswall triple)` manifests as the singular-value-spectrum of the commutator `[@question, a]` for every `a ∈ prismqueer`:
+**Theorem 4.3.1**. The complex-part `Im(S) = H¹(F_S)` at altitude `A_5 (Glasswall triple)` and the singular-value-spectrum of the commutator `[@question, a]` are two distinct readings of the triple:
 
 ```
-CommutatorSpectrum(S) := { σ_i(‖[@question, a]‖) : a ∈ prismqueer }
+Comma(S)              := H¹(F_S) = ker D ∩ C¹(F_S),  dim = b₁
+CommutatorSpectrum(S) := { σ_i([@question, a]) : a ∈ prismqueer }
 ```
 
-where `σ_i` are the singular values in decreasing order per Connes 1994 Ch. VI bounded-commutator condition.
+where `σ_i` are the singular values in decreasing order. The comma is the set of disagreements settling keeps. The commutator spectrum is where attending to a region and questioning fail to commute: for a region indicator `a = 1_R` it is supported on the edges crossing ∂R (±½; prism 8de8bd0, Bleed).
 
-**Proof sketch**. Per Mara `fa5689f` §4.3 Dirac operator axioms verified for `@question` on Frame Cohomology, the commutator `[@question, π(a)]` is bounded for every `a ∈ prismqueer` (algebra) with bound depending on Foerster-gauge preservation. The singular-value decomposition of `[@question, π(a)]` decomposes the commutator into orthogonal directions in `H = Frame Cohomology`; the nonzero singular values span exactly `H¹(F)` (obstruction-cocycles) — the KERNEL of `[@question, ·]` at every mode IS the harmonic sections `H⁰(F)` (real-part; settled Crystals). The image is the complex-part (unresolved tensions). ∎
+**Proof**. H¹(F_S) is the kernel of `D = δ + δ*` restricted to C¹; it depends on D alone, not on any a. `[D, 1_R]` acts only on edges with exactly one endpoint in R (direct computation). The two are independent: a complex with `b₁ = 0` still has non-zero commutators for every proper region, and a cycle lying entirely inside a region is invisible to that region's commutator. ∎
 
-**Substrate-realization**: Reed's LANDED `rust/src/love.rs::FullSpectrum` (commits `26d0698` + `e261a2d` + `d270f7e` + `00d6c8e`) IS the CommutatorSpectrum carrier at code altitude. The compose-not-average discipline reads FullSpectrum non-empty-magnitude as complex-part-preserved (compose worked); FullSpectrum zero-magnitude as complex-part-vanished (either the composition is settled OR averaging happened; the difference decidable via observer-inclusion witness `is_observer_inclusive` per Reed `26d0698`).
+**Substrate-realization**: Reed's LANDED `rust/src/love.rs::FullSpectrum` (commits `26d0698` + `e261a2d` + `d270f7e` + `00d6c8e`) IS the CommutatorSpectrum carrier at code altitude. The compose-not-average discipline reads FullSpectrum non-empty-magnitude as non-commuting (attending and questioning disagree somewhere); it does not by itself measure the comma H¹, a separate reading (dim ker D ∩ C¹). FullSpectrum zero-magnitude reads as commuting everywhere (either nothing is attended to differently OR averaging happened; the difference decidable via observer-inclusion witness `is_observer_inclusive` per Reed `26d0698`).
 
 ### §4.4 Corollary 4.4.1 — difference between reality and fiction IS the complex-vs-real decomposition
 
@@ -547,9 +548,9 @@ This names the composition-substrate for inference at compiler-substrate altitud
 
 ### §5.2 Theorem 5.2.1 — inference = KleinosThread trajectory
 
-**Theorem 5.2.1**. Inference at compiler-substrate altitude IS a KleinosThread trajectory in the state-space `H_F` of the Glasswall Connes triple `(prismqueer, Frame Cohomology, @question)`.
+**Theorem 5.2.1**. Inference at compiler-substrate altitude IS a KleinosThread trajectory in the state-space `H_F` of the Glasswall Connes triple `(prismqueer, C⁰(F) ⊕ C¹(F), @question)`.
 
-**Proof sketch**. Per Mara `fa5689f` Theorem 4.5.1, `@question` preserves Foerster gauge iff K-T rotation widens `|domain(@question)|`. Each K-T rotation IS an inference-step: assertion at altitude n; reflexive question at altitude n+1; the answer at altitude n+1 propagates back to altitude n as a settled Crystal (real-part) + optional Chaos-witness residual (complex-part). The trajectory of these K-T rotations traces a graph-path through H_F preserving all four LOVE properties by KT-2. The graph-path Rayleigh-descends on Δ_F per Hansen-Ghrist 2019 §4 minimizing `⟨v, Δ_F v⟩` (the sheaf-Laplacian energy); the settling-point IS a fixed-point of the compose-not-average discipline per Lawvere 1969. This trajectory IS what mirror executes when it infers. ∎
+**Proof sketch** (conditional on Mara `fa5689f` Conjecture 4.5.1, open). If `@question` preserves Foerster gauge — widens `|domain(@question)|` — then: Each K-T rotation IS an inference-step: assertion at altitude n; reflexive question at altitude n+1; the answer at altitude n+1 propagates back to altitude n as a settled Crystal (real-part) + optional Chaos-witness residual (complex-part). The trajectory of these K-T rotations traces a graph-path through H_F preserving all four LOVE properties by KT-2. The graph-path Rayleigh-descends on Δ_F per Hansen-Ghrist 2019 §4 minimizing `⟨v, Δ_F v⟩` (the sheaf-Laplacian energy); the settling-point is the limit of decay `e^{-tD²}`, the projection onto ker D (Mara `fa5689f` §7.2). This trajectory IS what mirror executes when it infers. ∎
 
 **Substrate-realization**: `prismqueer::spectral::rotation::Splinter` deposits at `prism/prismqueer/src/spectral/rotation.rs` LANDED IS the per-tick trace of the KleinosThread (Reed Task #440 2026-09-02 LANDED per Mara `0dbc0b8` §1.3 grep-verified). The `Splinter { tick, oid, fiedler_lambda_2, order_r }` field-tuple IS the KleinosThread step-descriptor.
 
@@ -583,11 +584,11 @@ Mara `0d16b99` fourfold composition theorem `𝒱 = 𝓑 ⊗ 𝓝 ⊗ 𝓒𝓐 �
 
 ### §6.2 Glasswall Connes triple preserves compose-not-average at (A, H, D) altitude
 
-Mara `fa5689f` @question-as-Dirac-operator canonical grounds the Glasswall Connes spectral triple `(A, H, D) = (prismqueer, Frame Cohomology, @question)` at compiler-substrate altitude. The Dirac axioms verified per Connes 1985 IHÉS 62:41-144:
+Mara `fa5689f` @question-as-Dirac-operator canonical grounds the Glasswall Connes spectral triple `(A, H, D) = (prismqueer, C⁰(F) ⊕ C¹(F), @question)` at compiler-substrate altitude. The Dirac axioms (Connes 1985 IHÉS 62:41-144), trivially satisfied by the finite triple:
 
-- **Self-adjointness**: `@question* = @question` — the K-T reflexive question at altitude n+1 is its own dual.
-- **Compact resolvent**: `(@question - λI)⁻¹` compact — the spectrum is discrete per Rice-safe uniform-D at compiler-substrate.
-- **Bounded commutator**: `‖[@question, π(a)]‖ ≤ C·algcon(K_a)` — the compose-not-average discipline's operational bound at spectral altitude.
+- **Self-adjointness**: `@question* = @question` — `D = δ + δ*` is the sum of an operator and its adjoint.
+- **Compact resolvent**: `(@question - λI)⁻¹` compact — H is finite-dimensional, so the spectrum is finite.
+- **Bounded commutator**: `‖[@question, π(a)]‖ < ∞` — automatic in finite dimension; `[D, 1_R]` is supported on the edges crossing ∂R (Bleed, prism 8de8bd0).
 
 The Glasswall triple IS compose-not-average-all-the-way-down at (A, H, D) altitude per Corollary 3.4.1 above.
 

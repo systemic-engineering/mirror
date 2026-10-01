@@ -657,14 +657,14 @@ The @question rotation IS the graph-inference primitive at $\mathcal{GI}$ Defini
 
 ### §6.3 Glasswall Connes triple IS the composite substrate
 
-Per Mara `fa5689f` §2 LANDED: the Glasswall IS the Connes spectral triple $(A, H, D) = (\mathrm{prismqueer}, \mathrm{Frame\ Cohomology}, @\mathrm{question})$ at compiler-substrate altitude.
+Per Mara `fa5689f` §2 LANDED: the Glasswall IS the Connes spectral triple $(A, H, D) = (\mathrm{prismqueer}, C^0(F) \oplus C^1(F), @\mathrm{question})$ at compiler-substrate altitude.
 
 Mapping to Definition 3.1.1 v0.2 ouroboros composition-substrate:
 - A = prismqueer IS the involutive unital *-algebra at $\mathcal{B}$ bottom-up primitive-first substrate;
-- H = Frame Cohomology IS the graded Hilbert space carrying Ashby-axis-5 epistemologic variety per $\mathcal{T}$ + $\mathcal{CA}$;
+- H = C⁰(F) ⊕ C¹(F) IS the finite-dimensional cochain space carrying Ashby-axis-5 epistemologic variety per $\mathcal{T}$ + $\mathcal{CA}$; Frame Cohomology = ker D = H⁰(F) ⊕ H¹(F) is its settled output;
 - D = @question IS the Dirac operator IS the graph-inference K-T rotational two-move at $\mathcal{GI}$.
 
-**Corollary 6.3.1 (Glasswall triple IS v0.2 ouroboros composition-substrate).** The Glasswall Connes spectral triple $(A, H, D) = (\mathrm{prismqueer}, \mathrm{Frame\ Cohomology}, @\mathrm{question})$ at compiler-substrate altitude IS the v0.2 ouroboros composition-substrate $\mathcal{V}$ at Definition 3.1.1. Naming: the fourfold composition is the triple at math-foundation altitude; the composition-theorem (Theorem 3.4.1) is the triple's Dirac-conditions-verified at Mara `fa5689f` §4.
+**Corollary 6.3.1 (Glasswall triple IS v0.2 ouroboros composition-substrate).** The Glasswall Connes spectral triple $(A, H, D) = (\mathrm{prismqueer}, C^0(F) \oplus C^1(F), @\mathrm{question})$ at compiler-substrate altitude IS the v0.2 ouroboros composition-substrate $\mathcal{V}$ at Definition 3.1.1. Naming: the fourfold composition is the triple at math-foundation altitude; the triple's Dirac conditions (Mara `fa5689f` §4) hold trivially in finite dimension and carry none of Theorem 3.4.1's content.
 
 ### §6.4 Frame + Paradoxical<F> + Conundrum topology
 
