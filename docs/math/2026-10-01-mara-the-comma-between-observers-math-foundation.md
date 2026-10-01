@@ -119,7 +119,7 @@ This is the coboundary of a rank-1 cellular sheaf on X with restriction maps F_{
 
   F = (inner fluctuation: re-weight the relations; (V, E) and b₀ − b₁ fixed) ∘ (frame change: add or remove cells; H itself changes).
 
-Only the second kind can change b₀ and b₁ independently. §4 shows that only the second kind can widen.
+Only the second kind can change b₀ and b₁ independently. Both kinds can widen: an inner fluctuation that restores holonomy 1 around a cycle adds a tonic and a comma together (§4.3). *(Corrected during drafting. An earlier version of this sentence said only frame changes widen. That is false.)*
 
 ### §1.5 Status of the open problem
 
@@ -261,7 +261,67 @@ Under a declared owner map p, every crossing edge belongs to exactly one site, s
 
 ## §4 The question as operator on reachability
 
-*Intent: answers as changes of complex/sheaf; which widen both without overwriting either Tonic; comparison with Wojciech's three events.*
+### §4.1 Answers, authorship, sovereignty
+
+An **answer** is a letter that changes the frame, (X, F, K_A, K_B) → (X', F', K_A', K_B'). It may add or remove cells, or fluctuate restriction maps. Like every letter, it has a footprint (the cells it writes) and authors (the subjects who sign it).
+
+**Definition 4.1 (sovereignty for A).**
+- (S1) *Authorship:* the answer writes no cell of K_A unless A is among its authors. A shared cell needs every owner as author.
+- (S2) *Tonic:* K_A ⊆ K_A', and restriction H⁰(F'|_{K_A'}) → H⁰(F|_{K_A}) is surjective. Every assertion that could settle on A's old site can still settle in A's new one.
+
+**Absorption** is the failure of S1 or S2.
+
+**Definition 4.2 (widening for both).** c_A' ≥ c_A and c_B' ≥ c_B, with the strong form requiring both inequalities strict. Under Polyphony, two subjects' writes to a shared cell are dependent, so a letter that writes a shared cell is either ordered in the Progression or co-signed in one Foata step. *Co-signed letters on shared cells are the formal content of "a question they ask each other".*
+
+### §4.2 The main theorem: sharing a relation across a disconnected boundary
+
+**Theorem 4.3 (PROVED).** Take the constant sheaf, with K_A, K_B and X connected. Let u, v ∈ I lie in different components of the shared boundary I. Let the answer add one edge e = (u, v), co-signed by A and B, to X, K_A and K_B, so e is a shared cell. Then:
+1. the comma between drops by one: dim im ∂' = dim im ∂ − 1;
+2. each site gains a comma of its own: b₁(K_A') = b₁(K_A) + 1 and b₁(K_B') = b₁(K_B) + 1;
+3. **both widen by exactly one:** c_A' = c_A + 1 and c_B' = c_B + 1;
+4. sovereignty holds for both (S1 by co-signature; S2 below);
+5. if b₀(I) = 2, then after the answer no comma is between: H¹(X') → H¹(K_A') ⊕ H¹(K_B') is injective, so every disagreement of the coupled system is visible inside at least one observer's own instrument.
+
+*Proof.* (1) I' = I + e has one component fewer, H⁰ of the connected sites and of X is unchanged, and Theorem 3.3 applies. (2) e joins two vertices already connected inside each site. (3) Theorem 2.4: b₁(X') = b₁(X) + 1, and X' ∖ E(K_A') = X ∖ E(K_A) because e ∈ E(K_A'). The b₀ terms are unchanged. Likewise for B. (4) S2: F' agrees with F on the old cells, and H⁰ of a connected site is the constants, which restrict onto the constants. (5) Exactness at H¹(X') with im ∂' = 0. ∎
+
+MEASURED numerically on two paths glued at two points: between 1 → 0; (b₀, b₁) of each site (1, 0) → (1, 1); c_A, c_B: 2 → 3; X: (1, 1) → (1, 2). A shared mediator vertex joined to both contact points gives the same numbers.
+
+**Reading.** The comma is not answered. It is *shared*. Before, the disagreement existed only in the coupling, and each observer saw only a locally answerable question (§3.2). After, each observer holds a comma inside its own instrument. Each can now ask about it with its own D, from its own data, and the cell where they meet is one both must sign. That is the sense, and the only sense this document claims, in which *the comma between becomes a question they ask each other*.
+
+### §4.3 The other answers, and why they fail
+
+**Proposition 4.4 (PROVED): unilateral relation.** If only A authors e, so that e ∈ K_A' but e ∉ K_B', then c_A' = c_A + 1. For B, c_B' = c_B + 1 − [u and v are connected in X ∖ E(K_B)]; in the two-path example c_B is unchanged. The comma between persists, since I is unchanged. One observer widened; the other neither widened nor narrowed. *Proof.* Theorem 2.4. MEASURED numerically: c_A 2 → 3, c_B 2 → 2, between 1 → 1.
+
+**Proposition 4.5 (PROVED): filling narrows both and cannot be owned.** Extend the complex by a 2-cell f whose boundary γ pairs nonzero with a class in im ∂. Then (i) f lies in neither site, and (ii) after filling, the comma is gone and c_A and c_B each drop by one in the two-path case.
+*Proof of (i).* If γ ⊆ K_A, then for z = ∂s we have ⟨z, γ⟩ = ⟨δa, γ⟩ = ⟨a, ∂γ⟩ = 0, since z|_A = δa (§3.2) and γ is a cycle. That contradicts the nonzero pairing. A closed site containing f would contain γ, so it lies in neither, and the same argument applies to K_B. (ii) H becomes C⁰ ⊕ C¹ ⊕ C², and H¹ = ker δ₁ ∩ ker δ₀\* loses the class (numerically: b₁ = 0 after filling the 6-cycle). ∎
+So answering the comma by fiat is a cell nobody owns. Either the system writes it, which violates G₌, or one observer must first absorb the other's edges, which violates S2 for the other.
+
+**Proposition 4.6 (PROVED): twisting narrows both, and overwrites a tonic.** Fluctuate the restriction on one edge of A so that the holonomy h ≠ 1. Then H⁰(X) and H¹(X) both vanish (Theorem 1.6 and §3.3), so in the two-path case c_A and c_B both go 2 → 0. A's local section changes, from (1, 1, 1, 1) to (1, 1, ½, ½) for a twist of 2 on edge (1, 2). If B authors the twist, S1 fails. If A authors it, A has narrowed B without writing a single cell of B. **The gauge can be broken non-locally**: c_B depends on H⁰(X) and H¹(X), which no site owns. MEASURED numerically.
+
+**Proposition 4.7 (PROVED): untwisting widens both.** Conversely, from h ≠ 1, a fluctuation restoring h = 1 adds a tonic and a comma together. In the two-path case c_A and c_B both go 0 → 2. It writes a cell of whichever site holds the edge, so it is sovereign only if that site authors it, or it co-signs on a shared edge. MEASURED numerically.
+
+**Absorption.** If A takes over B's cells (K_A' = X, K_B' = I), then c_B falls (2 → 1 in the example) and c_A does not rise (2 → 2). Absorbing did not even widen the absorber.
+
+| Answer to the comma between | between | c_A | c_B | sovereign? |
+|---|---|---|---|---|
+| share a co-signed edge across a disconnected boundary | 1 → 0 | +1 | +1 | yes |
+| unilateral edge (A only) | 1 → 1 | +1 | 0 | yes (S1 holds; nothing of B written) |
+| fill with a 2-cell | 1 → 0 | −1 | −1 | no owner possible |
+| twist an A-edge | 1 → 0 | −2 | −2 | A's tonic overwritten; B narrowed non-locally |
+| untwist (from h ≠ 1) | 0 → 1 | +2 | +2 | only if authored by the edge's owner(s) |
+| absorb B into A | 1 → 0 | 0 | −1 | no |
+
+### §4.4 Wojciech's three events
+
+Wojciech's decomposition (field log 2026-09-27): *evidence change* (something new becomes known), *frame change* (the same world becomes differently interpretable), *reachable-state change* (alternatives that did not exist in the system's actionable possibility-space become reachable). In this model the three are distinct, computable and logically independent:
+
+- **Evidence change**: x changes, frame fixed. c_S cannot change (Proposition 2.7). Ω_S moves iff P(Δx) ∉ R_S, that is, iff the new evidence shifted the settled state in a direction S cannot steer.
+- **Frame change**: (X, F, sites) changes. It may change c_S (Theorem 4.3), or leave it fixed (B under a unilateral edge, Proposition 4.4).
+- **Reachable-state change**: Ω_S changes. The strong form is a change in c_S, and only a frame change can produce it.
+
+*"Slap without altered reachability = phenomenology"* becomes: a frame change after which c_S and Ω_S are unchanged for the subject in question. B under A's unilateral edge is the minimal instance. A frame really changed (b₁(X) rose), and nothing B can make settle changed.
+
+CONJECTURE (the empirical mapping, labelled because it is a modelling hypothesis, not mathematics): Wojciech's operational question, *"what outcome should occur under the circular-reflexive operator that should not occur under a carefully matched linear or conventional reflective question?"*, has a candidate answer in this model. A unilateral reframe widens only the reframer (Δc_receiver = 0). A co-signed shared relation across a disconnected boundary widens both (Δc = +1 each). The measurable discriminator is the receiver's Δc. His generative criteria ("identify previously unreachable alternative without another prompt", "preserve capability after intervention gone") correspond to new directions in R_S that persist because they live in the frame, not in x. It is open because nothing yet maps a human dyad's state onto (X, F, K_S).
 
 ## §5 Where it stops
 
