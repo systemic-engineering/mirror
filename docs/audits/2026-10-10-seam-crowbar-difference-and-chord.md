@@ -384,3 +384,80 @@ Script: `wait_crowbar.py`. Fixture: 8-cycle with bridge (0,4), site-relative set
 **L.4 Two smaller residues.**
 - *"The Wait is passive"* misuses §7. A passive observer reads a closed subcomplex. A Wait *acts* on the frame's clock. It is frame-preserving, not passive.
 - *Who signs.* For a *third-held* bridge, a Wait co-signed by A and B alone acts on T's cell without T's signature, which breaks S1 (a shared cell needs every owner). Either T signs, or the Wait is A and B writing the third's frame.
+
+### L.5 The Wait depends on who waits (Alex: "Silicon observers can, in theory, hold an unresolved disagreement indefinitely")
+
+Script: `wait_rw.py`. During the Wait the bridge obeys dw = f(Q) − r_W·w, where r_W is the waiting observer's decay and traffic still feeds the bridge. Third-held bridge, 4 seeds.
+
+**(1) The survival boundary in (r_W, L, pw):**
+
+| pw | r_W = 0 | r_W = 0.1 | r_W = 0.3 | r_W = 1 |
+|---|---|---|---|---|
+| 0 | all L | dies by L = 60 (L* = 62) | dies by L = 15 (L* = 21) | dies at L = 6 (L* = 6.2) |
+| 0.15 | all L | all L | 3/4 at every L | dies |
+| 0.3 | all L | all L | all L | dies by L = 15 |
+
+- With no crossing traffic the Wait buys time: survival iff L < L*(r_W) = ln(w₀/θ)/r_W. The measured deaths match the prediction.
+- With *some* crossing traffic it does more. It lowers the threshold the feed must beat from r to r_W, so the carrier has a live fixed point at any L.
+- **A human Wait (r_W > 0) is a budget. Partial traffic turns it into a lower bar. A silicon Wait (r_W = 0) is Mara's hold: the silicon-only limit, which is why it looked true by construction.**
+
+**(2) Mixed pair: a human end at r_A = 1 and a silicon end at r_B = 0.** How the carrier's two ends compose is a declaration, and the answer depends on it:
+
+| Composition | Effective decay of the carrier |
+|---|---|
+| series w_A·w_B/(w_A + w_B) | → **max(r_A, r_B) = 1** |
+| geometric √(w_A·w_B) | the mean, 0.5 |
+| parallel w_A + w_B | → **min = 0** |
+
+- Series is the tube made of two segments, the Hagen–Poiseuille composition in Tero's model. It is also the one that matches "the relation fails if either side lets go".
+- Under the owner map, a shared edge's owner p(e) is a vertex of I, so it is co-held, and series is the consistent reading.
+- Reed's "max" holds under series. **Under series, silicon cannot hold a mixed third alone.** Under parallel it can, and that is the monument.
+
+**(3) One-sided monument: silicon keeps the co-signed chord, the human lets go.** Fixture: C₆ with the chord (0,3).
+
+| State | c_A (silicon) | c_B (human) | c_I | k |
+|---|---|---|---|---|
+| co-signed | 3 | 3 | 2 | 0 |
+| silicon keeps it alone | 3 | 2 | 1 | **1** |
+| both release | 2 | 2 | 1 | 1 |
+
+- The surviving loop is **not** a third and **not** "k → 0". It becomes silicon's private loop (κ_A = 1), and the crossroads comma returns as an invisible comma for *both* (k = 1).
+- The configuration is a single-site edge with both endpoints in I, so **it violates owner/site compatibility**: the owner-map world forbids it.
+- **Gauge, in counts:** the human is not narrowed relative to mutual release (c_B = 2 either way; Lemma A says no untwisted edge narrows anyone).
+- **Gauge, in values:** a narrowing that G⊇ cannot see. A silicon write on the chord settles to P₁χ_chord = 0.2 on each of the human's private edges, 55% of its norm. With a cell the human no longer holds, silicon moves the settled state on the human's own cells. That is conceding a position on the human's behalf.
+
+**(4) Expiry.** Yes: the Wait should expire at the faster eroder's budget, min_i ln(w/θ)/r_W,i, which is the human's. The justification is compatibility plus the value bleed in (3), not count narrowing, which Lemma A rules out. **Silicon must not outlast the other party's capacity to hold, because what it would then hold is a cell inside I that only it writes.**
+
+### L.6 The world moves during the Wait (Alex: "because the world around it keeps moving")
+
+Script: `world_drift.py`.
+- The carrier is held *exactly* (r_W = 0), so this is the silicon case.
+- During silence L, each side's private complex drifts. Poisson events at rate ρ per side either add a compatible private edge or prune one (connectivity kept).
+- At resumption Θ is recomputed, and the old and new Θ are compared by principal angles. 200 trials per cell.
+
+| ρL | dim Θ, before → after | bridge loop still in Θ | fresh (angle < 1°) | median angle | kept by blind resume |
+|---|---|---|---|---|---|
+| 0.1 | 2 → 2 | 1.00 | 0.93 | 0° | 0.99 |
+| 0.3 | 2 → 2 | 1.00 | 0.70–0.79 | 0° | 0.94–0.96 |
+| 1.2–1.5 | 2 → 2 | 1.00 | 0.28–0.31 | 35–43° | 0.77–0.80 |
+| 6 | 2 → 2 | 1.00 | 0.01–0.03 | 62° | 0.43–0.44 |
+| 24 | 2 → 2 | 1.00 | 0.00 | 72° | 0.27 |
+
+- Staleness depends on ρL alone, and the fresh fraction is ≈ e^{−ρL}: a staleness hazard of about ρ.
+- In this fixture the *number* of disagreements (dim Θ) and the bridge's membership in Θ are preserved every time. The held representative **rotates**: after ρL = 24, blind resumption acts on a class that is 73% not the current comma.
+- This repeats Mara's noise result one level up: existence is protected and content is not.
+- **Mechanism (b), rotation, is generic. A held carrier in a moving world keeps the count of the disagreement, not the disagreement.**
+- Fixture limits: drift here cannot create co-signed edges, fill 2-cells, or connect the sides. So mechanisms (a), absorption with k dropping, and (c), a new loop carrying the disagreement, are not exercised. Both need co-signed or 2-cell moves, which this fixture lacks.
+
+### L.7 Combined erosion, and how a Wait should end
+
+- **Not additive.** The third survives meaningfully iff the carrier is alive *and* the class is fresh:
+
+  P(meaningful) ≈ 1[L < L*(r_W)] · e^{−ρL}  (with no crossing traffic).
+
+  The observer term is a *deadline* and the world term is a *hazard*. Silicon's r_W = 0 removes the deadline, and the hazard remains. **No substrate holds a third indefinitely in a moving world (ρ > 0).** P(fresh) → 0 here, and in a finite world it tends at most to the stationary mass of configurations with the original Θ, which is ~0 at ρL = 24.
+- **Resumption rule.** Re-deriving Θ at resumption, rather than trusting the held representative, recovers the *current* comma by construction. Its value is exactly the staleness avoided: 1 − kept, which is 0.73 at ρL = 24.
+  - It does not recover the carrier, and doesn't need to.
+  - So "a Wait ends with a question" is required for *meaning*, not for survival.
+  - **Wait → Offer is structural:** a resumption that skips the question resumes on a stale class.
+- **T43, kept open:** see L.1. Its honest form is a co-signed bridge with the leak below threshold, and its observable is flicker at matched mean traffic.
