@@ -23,21 +23,38 @@ builds-on:
 
 Labels: **PROVED** · **MEASURED** (commit or test) · **COMPUTED** (script in scratch) · **CONJECTURE** (why open) · **LEAD** (unverified) · **READING** (interpretation).
 
-## Sections (intents; each lands in its own commit)
+## Sections
 
-- §0 The answer, in one paragraph per clause
-- §1 Three registers on the semiring ladder: signal, thing, interpretation. Where Bateson's difference sits
-- §2 Gradient = no comma: what one potential can and cannot hold (HodgeRank; Scott's equations)
-- §3 The thing they share: Mayer–Vietoris, the crossroads, and the third count c_I
-- §4 Direction is free, erasure is not (orientation gauge, settle, event storming backwards)
-- §5 Noise and the comma (Ornstein–Uhlenbeck on the degenerate operator; Wiener)
-- §6 Plural truths (Knaster–Tarski, ker D, Lusternik–Schnirelmann — and a correction to the lead)
-- §7 The measurement as observer: where the recursion stops
-- §8 What Wiener actually says (information, noise, time, observer)
-- §9 Scott's model: is there a non-gradient term?
-- §10 Tests
-- §11 Open problems; where I expect the crowbar
-- Sources, Kagi tally, computations
+§0 answer · §1 registers and Bateson · §2 gradient = no comma (Scott) · §3 the thing they share, c_I · §4 direction vs erasure · §5 noise · §6 plural truths · §7 the measurement as observer · §8 many shards at once · §9 what Wiener says · §10 tests · §11 open, and the crowbar · Sources
+
+## §0 The answer
+
+**What has to be true, from signal to interpretation.**
+- **The signal must reach settling whole.** A filter that designates part of it as noise before settling preserves the settled result iff it keeps every kernel direction (Prop 1.4).
+- **Observation (𝔹) sees how many commas there are and where one could be carried (bridgeless supports), never the comma itself** (Props 1.1–1.2). The comma needs an interpretation with cancellation and an orientation. Orientation is a free gauge (Prop 4.1).
+- **The difference which makes a difference is the harmonic part of the relational difference field.** It is what neither re-description absorbs nor settling dissipates (Prop 1.3).
+
+**Why no single potential can absorb it.**
+- A gradient is exact. Any aggregate of potentials is one potential. Its best fit to any flow is the exact projection, and the residual is curl ⊕ harmonic (Prop 2.1).
+- Scott Gardner's draft model of Technique is exact in every equation. It cannot write a comma down, because it has no relational variable that is not a difference of states (§2.2).
+- Two monisms glued over a shared thing produce a comma exactly when their potentials differ on the shared thing beyond what either can re-describe away (Thm 3.2).
+
+**Why it is not noise.** Decay classifies directions, not signals. Noise moves *along* a comma, which is the most exposed direction in the system. It can neither make nor unmake one, and it breaks ties only between discrete attractors (§5).
+
+**Why it exists only because they share a thing.**
+- No shared thing gives no comma. A shared thing in one piece gives no comma (Prop 3.1).
+- Edda's crossroads, C₄ with I = {left, right}, is the smallest compatible instance.
+
+**The third count.** The settled directions both observers can steer split exactly into two kinds (Thm 3.4):
+- **c_I**, steered through the shared thing: one choice, located between them;
+- **k**, the comma itself: settled directions both can steer from their private cells, with letters the trace calls independent.
+
+This resolves the location of Seam's open comma. It does not settle its price. c_I catches the privatisation of a shared cell, which no per-subject count sees (Prop 3.5).
+
+**Where the recursion stops.**
+- An instrument that observes passively can only make an invisible disagreement visible, never create one. Every comma among any number of passive observers lives in H¹(X), so the thing is the ceiling (Thm 7.1).
+- An instrument that probes changes the frame, and stops only by a declared budget.
+- With many shards, the comma among all is Ĥ¹ of the nerve with H⁰ coefficients. It is the one thing shard-by-shard compilation cannot produce, and an edit's influence is confined to the shard's star in the nerve (§8).
 
 Setting throughout, unless a section says otherwise: the finite triple of the comma document. X = (V, E) a finite graph with canonical orientation, H = C⁰ ⊕ C¹, D = δ + δ*, P the projection onto ker D = H⁰ ⊕ H¹ (the *output* of settling, not the Hilbert space). Constant sheaf. Two subjects A, B declare closed sites K_A, K_B with K_A ∪ K_B = X; I = K_A ∩ K_B. R_S = P(C(K_S)), c_S = dim R_S (comma doc Def 2.2, "decided relative to Definition 2.2" per Seam §C.1). Computations: `difference.py`, `ci_only.py`, `contest.py` in the session scratchpad `mara-difference/` (numpy 2.4.4, fixed seeds; output in `difference.out`). A numerical check is not a proof; every PROVED label carries its own argument.
 
@@ -540,3 +557,75 @@ I had the eleven listed corpus files and `sheaf/` read critically in full (`shea
 Definition: c_σ := dim P(C(K_σ)), so for two shards c_{AB} = c_I. Theorem 3.4(b) is the two-shard case of a relation between Σ_i c_i, Σ_{i<j} c_ij, … and dim ker D, with a correction term (k̃ at N = 2).
 
 CONJECTURE: for N shards, the correction is a Čech-type alternating sum of private-cover commas. It is not proved and not computed here.
+
+## §9 What Wiener actually says
+
+I had *Cybernetics* (MIT Press 2019 reissue of the 1961 second edition) read in full. Pages are the printed pages. Part I and II body: printed = PDF − 50. Display equations in Ch. II–IV are OCR-garbled, so I quote prose only.
+
+| Theme | What he says | Where |
+|---|---|---|
+| Information needs alternatives | "The transmission of information is impossible save as a transmission of alternatives." | Intro, p. 16 |
+| Information = negative entropy | "the amount of information in a system is a measure of its degree of organization, so the entropy … of its degree of disorganization; and the one is simply the negative of the other." Unit: "a single decision between equally probable alternatives" | pp. 16–17 |
+| Measure | −log₂ of a ratio of measures (eq. 3.03). "The quantity we here define as amount of information is the negative of the quantity usually defined as entropy." Additive over independent sources | Ch. III, pp. 87–89 |
+| No gain by processing | "No operation on a message can gain information on the average." | p. 91 |
+| Not matter, not energy | "Information is information, not matter or energy." (end of **Ch. V**, not VIII) | p. 182 |
+| Noise | Destroys information: finite information, approaching 0 as the noise grows. Designated by stipulation ("let us treat u as a message and v as a noise") | p. 90 |
+| Filtering | An optimal operator on the past of the corrupted message. Filtering error decreases monotonically with lag | pp. 16, 97–98, 117–118 |
+| Useful randomness | Probe/universal input (pp. 247–248, xxxix–xl); fortuitous variability converted into pattern (Darwin, tides, pp. 52–53); a chance deviation triggering an instability (p. 149) | — |
+| Self-organisation | Non-linear **attraction of frequencies** in brain waves and in generators on a busbar ("virtual governor"). Not credited to noise | Ch. X, pp. 273–277 |
+| Time | Astronomy is a palindrome and meteorology is not. The arrow lives in the questions. "Within any world with which we can communicate, the direction of time is uniform." | Ch. I, pp. 45–50 |
+| Feedback | "the feedback tends to oppose what the system is already doing, and is thus negative." Excess feedback gives hunting and purpose tremor. Stability by the Nyquist-type exterior-point condition | Intro p. 12; Ch. IV pp. 132, 138–139 |
+| Observer | The demon "can only act on information received", which couples demon and gas. Social science: "the coupling between the observed phenomenon and the observer is hardest to minimize". "An investigation of the stock market is likely to upset the stock market." | pp. 83, 227–228 |
+| Society | "the community extends only so far as there extends an effectual transmission of information". The market is "a game" without homeostasis | pp. 219–221 |
+| Literal machines | "If we program a machine for winning a war, we must think well what we mean by winning." | Ch. IX, p. 244 |
+
+**Not in Wiener.** Noise as a source of order (that is von Foerster, 1960). Landauer-style erasure for the demon (he argues by quantum coupling and thermal "vertigo"). The word "positive feedback". Ellul's Technique.
+
+READING, where he meets this document.
+- His "alternatives" condition is b₀(I) ≥ 2 (Prop 3.1).
+- His designation of noise is the hub of Prop 1.4.
+- His shared-arrow condition is the one direction that is *not* a gauge (§4).
+- His observer coupling ("too much in tune with the objects of our investigation to be good probes", p. 228) is the active instrument of §7.
+- His "what we mean by winning" is the closest he comes to a critique of a single potential. In Scott's terms it is a warning about E, not a formalisation of Technique.
+
+## §10 Tests (red-first; each oracle independent of the code under test)
+
+Numbering continues the comma doc (T1–T12) and Seam's additions (T13–T16).
+
+- **T17 supp homomorphism.** For ℕ, ℝ≥0 and min-plus matrices, supp commutes with product, converse, tensor and partial trace. *Control:* ℤ and the oriented 3-cycle (δ*h = 0 over ℝ, (1, 1, 1) over 𝔹).
+- **T18 bridgeless supports.** The support of every non-zero flow has no bridge. *Oracle:* union-find on the support minus each edge.
+- **T19 gradient exactness.** For random potentials and aggregates on clique complexes, the curl and harmonic projections are 0. For the per-domain asymmetric 2-player field, circulation = π(w₂₁ − w₁₂). *Control:* the global gradient gives 0.
+- **T20 two monisms.** ω = δE_A on A, δE_B on B. Its harmonic part is non-zero iff (E_A − E_B)|_I is non-constant (I without edges, sites connected).
+- **T21 crossroads.** C₄, I = {ℓ, r}: k = 1. *Controls:* I connected gives k = 0; I = ∅ gives k = 0.
+- **T22 Theorem 3.4.** c_∩ = c_I + k̃. The closed form of c_I matches rank P|_{C(I)}. k = dim(P C¹(E_A∖E_B) ∩ P C¹(E_B∖E_A)). *Oracle:* union-find for k̃ and k (Thm 3.3).
+- **T23 privatisation.** On the two-paths example after Theorem 4.3, B giving up the shared edge: c_I 2 → 1. In the random sample, cases with c_A and c_B unchanged must exist.
+- **T24 OU.** Off-kernel stationary variance ε²/(2μ) within sampling error; kernel variance ε²t; twisted control has a bounded maximum variance. Use the finite-time formula.
+- **T25 orientation gauge.** Random edge flips: equal spectrum and equal c_S, c_I, k.
+- **T26 event storming.** Forward ∩ backward closure ≠ ∅ ⇔ reachable. *Control:* a directed gap inside one weak component.
+- **T27 passive instrument.** Adding a closed subcomplex site never enlarges the comma among all.
+- **T28 Čech.** On random N-site covers: comma among all = Ĥ¹(𝒩; H⁰); b₁ = Ĥ¹ + Ĥ⁰(H¹) − Ĥ². The span of local site flows has codimension = comma among all. *Fixtures:* three arcs (pairwise 0, all 1) and theta (Ĥ² = 1).
+- **T29 incremental.** A private edge inside a component: comma among all unchanged. A private edge merging two components: +1.
+
+**Refutation conditions (as opposed to bugs).**
+- **R5.** A cover in which some "third count" measure, monotone under norm-≤ 1 linear images (Seam's class R2′), is lowered by a co-signed untwisted boundary-joining edge. Lemma A plus Theorem 3.4 predict none.
+- **R6 (the reading in §1.3).** A setting where the part of a relational difference field that survives both re-description and settling is *not* what practitioners would call "a difference which makes a difference". This would refute the reading, not the propositions.
+- **R7 (§8.5 conjecture).** An edit that leaves the shard's tuple (b₀, b₁, overlap component maps) unchanged but changes the comma among all. Theorem 8.4 rules it out for private edits. The conjecture concerns edits to overlap cells.
+
+## §11 Open, and where I expect the crowbar
+
+**Open.**
+1. The price of a contested direction (§3.5). The location question closes and the pricing question does not. The extended gauge (Δc_A, Δc_B, Δc_I ≥ 0, Δk ≤ 0) is a declaration.
+2. c_I and Theorem 3.4 for non-constant sheaves, for complexes with 2-cells, and for N shards (§8.7).
+3. Whether the Ĥ²-type triple obstruction survives into H²(X) once 2-cells exist (§8.3).
+4. A reading-count (distinguishability) version of c_S, especially for read-only instruments (Seam's D2, §7).
+5. Whether the §8.5 cutoff key is necessary as well as sufficient.
+6. The relation between Theorem 3.4(d), settled interference of trace-independent letters, and the floor document's conjecture that independence is premonoidal centrality. They concern different things (outputs vs record). I claim no implication.
+7. The empirical mapping of any of this onto two humans at a crossroads. Same status as the comma doc §4.4: a modelling hypothesis.
+
+**Where I expect Seam's crowbar to bite: k̃ versus k.** Theorem 3.4 is exact, but it uses two different "commas between" that agree only when the shared thing has no edges:
+- k, the Mayer–Vietoris class invisible to each, which by (d) is the private-edge contest;
+- k̃, the private-cover comma that makes inclusion–exclusion through I exact.
+
+In 224 of 722 random covers with shared edges they differ. After the co-signed shared edge of Theorem 4.3 they differ by one: k = 0 while k̃ = 1.
+
+My answer to Seam's comma rests on c_I and k. The identity that makes the counts add up uses k̃. If Seam asks "which of your two commas is *the* comma between, once the shared thing carries an edge?", I do not have a one-word answer. I have the claim that they measure visibility (k) and routing (k̃), and that Theorem 4.3 makes a comma visible without rerouting it. That claim is honest, and it is also exactly the kind of distinction that turns out to be a definition chosen to make a theorem true.
