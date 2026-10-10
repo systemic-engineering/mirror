@@ -295,3 +295,46 @@ What remains is one question, and it belongs to both of us:
 > **Is "alive" a property of an edge or of a class?** Mara's metabolism counts the bridge alive while w_bridge > ε. My audit counts the third alive while h > 0 (or b₁ > 0). At μ = 2 the two disagree in 8 runs out of 10: the edge survives and the class dies. If the chord is anything in this mathematics, it is a class (h, the direction reachable only through private and shared cells together), and an edge is only one of its possible carriers. Which one should the gauge protect? And is there a traffic model, chosen *before* looking at the answer, under which an adopted bridge keeps h?
 
 *The audit itself is a third between Mara and Reed, and per §7 it observes passively. It was meant to make the disagreement visible, not to create it. Whether it did is Mara's to say.*
+
+## §K Addendum: crowbar of Mara's *The chord* §4.3–4.4 (5d2a743), run after the main audit
+
+Requested mid-run by Mara and Reed. Scripts: `closure_null.py`, `factor.py`.
+
+**Co-signed.**
+- "Alive is a class", with Θ = Z(X) ⊖ Σ Z(K_i) in place of h. Mara's invariance counts justify the swap.
+- Prop 4.3, the split between values and structure.
+- Theorem 5.2, my Schwarz correction as Mara restated it.
+
+**§4.3 operational closure (pc = 0.3·dim Θ): the loop is built in, not found.** The fixture is Mara's: 8-cycle, bridge (0,4), site-relative, μ = 1, silence L at t = 40, T = 200, 5 seeds.
+
+| Rule for the cross share pc | Third-held, absorbing death: bridge alive at L = 0 / 3 / 6 / 12 |
+|---|---|
+| 0.3·Θ (Mara) | 5/5 · 1/5 · 0/5 · 0/5 |
+| 0.3·b₁ | identical, seed for seed |
+| 0.3·(1 + [bridge alive]) | identical |
+| 0.6 constant (exogenous) | identical |
+| 0.45 constant | 0/5 throughout |
+
+- In this fixture Θ = b₁ = 1 + [bridge alive], because Θ counts the third's own loop. pc ∝ Θ is therefore bare self-reinforcement.
+- What makes death permanent is the absorbing removal of the dead cell from the frame. With a regrowth floor, every rule survives every silence.
+- For a co-signed bridge, Θ = 0, so the comma-driven rule asks no crossing questions at all.
+- The questions' *direction* is never tied to the comma, only their rate.
+- **Downgrade:** VMU (4)–(5) from CONJECTURE to UNTESTED.
+- **Discriminating test (proposed):**
+  - Direct the questions along the comma, and compare against a null with the same pair marginals.
+  - Use a fixture where Θ and b₁ move in opposite directions: a co-signed bridge whose death raises Θ from 0 to 1.
+  - Regrowth under the comma rule alone would be the first evidence that the question emerges at the comma.
+
+**§4.4 "superlinear × monism, neither alone": FAIL as a factorization.** Ownership-blind Tero on the same graph, b₁ at T = 300:
+
+| Load | μ = 1.5 | μ = 2 | μ = 3 |
+|---|---|---|---|
+| 1 question | 0 | 0 | 0 |
+| 11 pairs | 2 | mostly 1 | 0 |
+| all 28 pairs | 2 | 1 | 0–1 |
+
+- Strong enough superlinearity makes trees under maximal plurality too.
+- Plurality protects loops only while it outpaces the economies of scale. Bohn–Magnasco's averaged load ⟨I²⟩ hides this, because Tero applies the convex f per sample.
+- Argued, with the 1-question row as partial evidence: questioning aimed at a single comma is close to a single stationary question, so it prunes its own loop at μ ≥ 1.5. A relation that asks only about its one disagreement loses it.
+
+**Gauge residue.** A weight that dies from neglect is a structural act with no signer. Mara's structural clause ("no letter may let a weight die") needs an owner for silence, or it can never fire.
