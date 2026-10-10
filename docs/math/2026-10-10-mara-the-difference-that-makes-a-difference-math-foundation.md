@@ -298,4 +298,130 @@ In the privatization row shown, c_B also drops. That is the row's own configurat
 
 - For non-constant sheaves the degree split survives, but the union-find closed forms do not.
 - With 2-cells, H¹ changes (comma doc Prop 4.5), and (d) needs re-proving with δ₁.
-- For more than two sites the intersection pattern is a nerve, and the right generalisation of c_I is presumably a Čech-type count. Not done.
+- For more than two sites the intersection pattern is a nerve. §8 does the Čech count for the comma itself. A per-overlap c_σ is defined there, but its identities are not proved.
+
+## §4 Direction is free; erasure is not
+
+**Proposition 4.1 (PROVED): orientation is a gauge.** Flipping a set of edges replaces δ by Sδ, with S diagonal ±1 on C¹. Then D′ = U D Uᵀ with U = 1 ⊕ S orthogonal. Spectrum, kernel dimensions, c_S, c_I and k are unchanged. Harmonic vectors change by S. COMPUTED: 200/200 (CHECK8).
+
+Two observers who read an edge in opposite directions disagree about the sign of a comma vector and agree about the comma. Direction of reading costs nothing.
+
+**Proposition 4.2 (PROVED): only the limit erases.** For finite t, e^{−tD²} is invertible: its eigenvalues e^{−tμ} are positive. Mathematically, nothing is lost at any finite time. The limit P is a projection of rank b₀ + b₁, and it erases dim H − b₀ − b₁ directions. At a finite resolution ε, the directions with e^{−tμ}|x_μ| < ε are lost at time t, and Theorem 5.1 of the comma doc gives the time.
+
+READING (the 09-28 design rule, now with its mathematical place):
+- **Erasure happens at settle, once.** That is where a non-invertible map is applied and where the record must say what it destroyed.
+- Causal order is born there. It is not born at observation, which in register 1 is a homomorphism, and not at orientation, which is a gauge.
+- Landauer's bound attaches to the erasing step, not to the reading direction. Verified wording: "computing machines inevitably involve devices which perform logical functions that do not have a single-valued inverse. This logical irreversibility is associated with physical irreversibility" (Landauer 1961, abstract; "0.6931 kT per restored bit", §4).
+
+**Wiener on the arrow (primary text, Ch. I).**
+- He places the arrow in the questions, not the laws: "even in a Newtonian system, in which time is perfectly reversible, questions of probability and prediction lead to answers asymmetrical as between past and future, because the questions to which they are answers are asymmetrical" (printed p. 47).
+- He makes a shared arrow the condition of communication: "Within any world with which we can communicate, the direction of time is uniform" (p. 50, italic in the original). That follows his thought experiment of a being whose time runs the other way, whose drawn square "would appear to us as a catastrophe".
+
+READING. Orientation of each relation is a gauge two communicators may differ on. The order of erasures is not, if they are to communicate at all. The gauge group acts on edges, not on the log.
+
+**Event storming backwards (PROVED; one lead corrected).** Let R be the one-step relation on states, s a start and t an end.
+- (R°)* = (R*)°, so the backward closure from t is the converse of the forward closure.
+- The forward set R*(s) and the backward set (R°)*(t) meet iff t ∈ R*(s). A missing step is exactly forward and backward closures that do not meet.
+- Running backwards adds no reachability information. It changes the computation (bidirectional search) and the questions asked.
+
+The lead's "a missing step = b₀ > 1" is **sufficient, not necessary**. COMPUTED (CHECK9): over 400 random digraphs, 228 had a gap, and in 124 of those s and t lay in the same weak component. Directed gaps hide inside one undirected component.
+
+## §5 Noise and the comma
+
+### §5.1 Ornstein–Uhlenbeck on the degenerate operator
+
+**Theorem 5.1 (PROVED).** Let dx = −D²x dt + ε dW on H (finite, white noise on every cell), with x₀ = 0. Write x in the eigenbasis of D².
+(i) A mode with eigenvalue μ > 0 is an OU process with variance ε²(1 − e^{−2μt})/(2μ) → ε²/(2μ).
+(ii) A kernel mode is Brownian motion with variance ε²t.
+(iii) The deterministic part of any initial x₀ decays to Px₀ (comma doc Thm 5.1).
+
+*Proof.* D² is symmetric, so the system decouples into independent scalar equations dy = −μy dt + ε dw. For the stationary variance σ²/(2α) see Holmes-Cerfon, *Applied Stochastic Analysis*, Lecture 10, Ex. 10.6. ∎
+
+COMPUTED on two paths glued at two points (C₆), ε = 0.3, T = 40, 2000 paths (CHECK5):
+- Kernel variances / (ε²T) = 1.051, 0.964.
+- Off-kernel |var/(ε²/2μ) − 1| ≤ 0.056.
+- The softest non-zero mode (μ = 1) fluctuates four times as much as the stiffest (μ = 4).
+- Noiseless decay: |x(40) − Px₀| = 7 × 10⁻¹⁴.
+
+### §5.2 The four claims, tested
+
+**(a) "Decay separates noise from comma": CORRECTED.** Decay classifies *directions*, not signals.
+- Off the kernel, whatever is there, signal or noise, relaxes to a fluctuation of size ε²/(2μ).
+- On the kernel, whatever is there, signal or noise, persists, and noise accumulates as a random walk.
+
+So what decay erases was not a comma, whatever its origin. A comma's *coordinate* is not protected from noise at all: it is the most exposed thing in the system. What is protected is its *existence*, the dimension b₁, a property of the frame that no additive noise can change.
+
+**Noise moves along a comma. It cannot make or unmake one.**
+
+Wiener draws his cut differently. His filter separates message from noise by their statistics, after designating which is which (Ch. III). Settling separates by topology, with no designation. On the kernel the two cuts disagree completely. Kernel noise sits at the zero eigenvalue together with the comma. An estimator of the comma's *value* needs a prior, which Wiener would supply. Its *dimension* needs none.
+
+**(b) "Noise explores equally good truths and breaks ties": PROVED for the first half, CORRECTED for the second.**
+- Exploring is right. On ker D, noise diffuses through the affine space of settled states, all of them zero-energy and so equally good.
+- But on a neutral continuum it breaks no tie: it wanders. COMPUTED (CHECK6): on a neutral line, variance 1.217 against a predicted 1.2, and |x| has no preferred value.
+- Ties are broken where attractors are **discrete**. In the double well dx = −(x³ − x)dt + ε dW started at the unstable point, ε = 0 stays at 0 forever (Buridan: the rest is unstable and there is no choice). ε = 0.2 sends 49.4% right and the rest left, with |x| ≈ 0.98.
+- The escape rate between discrete attractors is Kramers': r_K = (ω₀ω_b/2πγ) exp(−ΔV/D) (Gammaitoni et al. 1998, eq. (1.1)).
+
+This matches Seam's correction to the comma doc: von Foerster's eigenvalues are discrete and attracting, while ker D is neutral. **Noise picks among eigenvalues in von Foerster's sense. Among the points of ker D it picks nothing.**
+
+**(c) Fluctuation–dissipation: PROVED in the standard form.**
+- For dx = −λ∇E dt + ε dW the stationary density is ∝ exp(−2λE/ε²), a Boltzmann density at k_BT = ε²/(2λ).
+- A dissipative system held at temperature T therefore needs noise ε² = 2λk_BT. That is Anna Jakobs' Eq. 7 (floor doc §6.1) and Einstein's relation in Kubo's statement: friction and diffusion "must be related", with equilibrium requiring f(x) ∝ exp(−V/kT) (Kubo 1966, §2).
+- READING for "to stay open": with ε → 0 the density concentrates on the minima of E, which is a closed system in the corpus's sense.
+- Von Foerster's "order from noise" (1960, verified) is a *selection* principle: "only those components of the noise were selected which contributed to the increase of order in the system". That is (b)'s discrete-attractor case, not diffusion on a neutral kernel.
+
+**(d) "No shared tonic, no comma for noise to explore": PROVED.** Under the twisted control (holonomy h ≠ 1, comma doc §3.3) we have b₀ = b₁ = 0, so ker D = 0 and every mode of the OU process is confined. COMPUTED (CHECK5b, h = 2): kernel dimension 0, maximum variance at T = 40 is 2.32, against a finite-time prediction of 2.26 (the slowest μ = 0.0128 has not yet equilibrated). Without a shared tonic, every disagreement is a fluctuation that decays to a finite size. Nothing diffuses, because nothing is free.
+
+### §5.3 What Wiener treats as noise
+
+Primary text (`Cybernetics`, MIT Press 2019 reissue of the 1961 edition; printed pages):
+- Noise is what destroys information. "the information carried by a precise message in the absence of a noise is infinite. In the presence of a noise, however, this amount of information is finite, and it approaches 0 very rapidly as the noise increases in intensity" (p. 90).
+- Which component counts as noise is a stipulation ("let us treat u as a message and v as a noise", p. 90; "a generalized noise", p. 93).
+- Noise is useful to him in three ways only.
+  - **Probe.** Tube noise "is in a sense a universal input" (p. 247). Random input draws a white box "into the similitude of a given black-box transducer" (p. 248). The 1961 Preface adds synthesis by noise input (pp. xxxix–xl).
+  - **Raw material converted by a dynamical process.** "Darwinian evolution is thus a mechanism by which a more or less fortuitous variability is combined into a rather definite pattern" (p. 52).
+  - **Trigger of an instability.** In the organ pipe, "the slightest chance deviation" excites a mode (p. 149).
+- His self-organisation in brain waves (Ch. X) is credited to non-linear *attraction of frequencies*, "a non-linear interaction causing the attraction of frequency can generate a self-organizing system" (p. 277), not to noise.
+- Wiener never says noise generates order. That is von Foerster's 1960 move.
+
+READING. The comma is neither Wiener's message nor his noise. It is not designated in advance, so it is not a message. Settling does not remove it, so it is not noise. It is a direction along which noise is free to move and which no filter can remove without removing the shared tonic that makes it exist.
+
+## §6 Plural truths
+
+**Lattice (PROVED, cited).** Tarski 1955, Thm 1, verified: for an increasing f on a complete lattice, "the set P is not empty and the system (P, ≤) is a complete lattice". There is more than one fixed point iff the least and greatest differ.
+
+**Linear settling (PROVED).** The settled states of decay form the affine space x ↦ Px. There is more than one truth up to scale iff dim ker D = b₀ + b₁ > 1. For two observers, §3.4 counts which of these truths each can steer.
+
+**Gradient settling: the lead CORRECTED.** The lead read: "Technique-as-gradient on a space with loops cannot settle on one truth."
+- **What topology forces** (verified): "The number of critical points of any smooth function on a closed manifold M is at least cat M". This is in the non-normalised convention, where cat S¹ = 2 (Rudyak–Schlenk, §1; others write 1 + cat M with cat S¹ = 1). For Morse functions, the weak Morse inequalities give #critical points of index λ ≥ b_λ (Milnor, *Morse Theory*, Thm 5.2).
+- **What it does not force:** two *minima*. On S¹, a height function has one minimum and one maximum. Gradient descent from almost every start reaches the same unique minimum.
+- **Corrected statement (PROVED).** On a closed manifold with b₁ > 0, Technique-as-gradient must have at least two rest points, so at least one rest point that is not the optimum. It may still have a single attractor, whose basin is almost everything. What it cannot do is *represent* the loop. The harmonic 1-form dθ on S¹ vanishes nowhere: a circulation has no rest point at all and settles as a class, not as a point.
+- The discrete version: a scalar on the vertices of a cycle graph has a local maximum and a local minimum.
+
+READING. Faced with a loop, a single potential is forced to invent a worst place, a maximum it did not want. The loop's own content, the circulation, stays invisible to it. A gradient cannot settle a loop. It can only put a hill on it.
+
+## §7 The measurement as observer: where the recursion stops
+
+An instrument M that observes the same thing declares a site K_M. Call it **passive** if K_M is a closed subcomplex of the existing X, so it reads cells that are already there and the frame does not change. Call it **active** if observing adds cells, a probe.
+
+**Theorem 7.1 (PROVED).** Let K_A, K_B cover X, and let M be passive.
+(i) The comma between A and B, ker(H¹(X) → H¹(A) ⊕ H¹(B)), is unchanged.
+(ii) The comma among all three, ker(H¹(X) → H¹(A) ⊕ H¹(B) ⊕ H¹(M)), is contained in it. It is strictly smaller iff some class of the A–B comma restricts non-zero to K_M, that is, iff the instrument's site contains a loop that pairs with it.
+(iii) For any family of passive observers, every comma among any subfamily is a subspace of H¹(X). So its dimension is at most b₁(X), however many observers, observers of observers, and so on are added.
+
+*Proof.* (i): the map does not involve M. (ii): adding a target to a map can only shrink its kernel. (iii): every such comma is a kernel of a map out of H¹(X), and passive observers do not change X. ∎
+
+COMPUTED (CHECK7): a random passive instrument added to 800 random covers left the comma among all unchanged in 747 cases, shrank it in 53, and grew it in 0.
+
+**Active instruments.** A probe edge between two already-connected vertices raises b₁(X) by exactly 1 (299/299, CHECK7b). §8's Theorem 8.3 says where that new class lives.
+- If the probe is private to the instrument and lies inside one component of its site, the new class is the instrument's own, and the comma among all is unchanged.
+- If the probe joins two components of the instrument's site, it creates **exactly one** new comma among all.
+
+An instrument that touches the thing in two disconnected places and connects them by probing manufactures a disagreement nobody can see alone. That disagreement includes the instrument.
+
+**Where the recursion stops.**
+- **Observing observers passively stops at once.** The thing bounds the disagreements about it: H¹(X) is a ceiling independent of the number of observers. Each passive observer can only make some invisible disagreement visible (ii), never create one.
+- **Measuring actively is a frame change**, and it stops only by a declared budget. That is the comma doc's Theorem 5.2, read with Seam's restatement (hypothesis: c non-decreasing, since G⊇ is ill-typed across frames). It is the same budget, and nothing new is needed.
+
+READING. An instrument whose site contains the loop is von Foerster's third. In Seam's reading of *On Constructing a Reality* (crowbar §A.1, item 3): "there must be a third that is the central reference … reality = community". Such an instrument makes the comma between A and B visible to someone without changing X and without writing a cell: gauge-neutral observation that dissolves invisibility, not disagreement.
+
+**Caveat (open, Seam's D2).** Definition 2.2 counts writes, so a read-only instrument has c_M = 0. A count of what an observer can *distinguish* would differ. On that count the question-as-observation can widen (crowbar §A.2). Theorem 7.1 is about the commas, not about anyone's choice-count, so it does not depend on this. A reading-count version of c_M is open.
