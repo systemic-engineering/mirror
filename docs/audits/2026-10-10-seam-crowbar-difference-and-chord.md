@@ -632,3 +632,68 @@ Both are erasures, at a removal or at a settle: Mara's 09-28 rule that erasure h
 - Above zero, v is not linear or additive, and the level sets of v are unions of subspaces, not subspaces. So no graded weight log(N/v) is a cohomology invariant in any useful sense. That part is a pun.
 - And at zero, Spärck Jones' idf = log(N/n) **diverges**: a term in no document is not maximally specific but **unretrievable**, because no single-document query finds it.
 - **The useful reading is the inversion: the comma among all is the term no single-site query can retrieve. It is found only from the composition.**
+
+## §O Addendum: abstention and exit. Crowbar of *The chord* dad094b and Reed's Wait/Release
+
+Script: `exit.py`. Base fixture: C₆, A holds the path 0–1–2–3, B holds 3–4–5–0, I = {0, 3}.
+
+**O.1 Two shapes of bridge, and only one has "ends" (new, COMPUTED; compatibility per my 10-01 §B §3).**
+
+| Bridge | Compatible? | (c_A, c_B, c_I, k) | Reading |
+|---|---|---|---|
+| co-signed chord (0,3) | yes | (3, 3, 2, 0) | **adoption**: the loop lives inside each site |
+| the same chord after B retreats (A-only) | **no**: single-site edge inside I | — | inadmissible |
+| 0–m–3 with m shared, segments single-site | **no**: both segments lie inside I | — | inadmissible |
+| 0–a–b–3 with a A-only, b B-only | **no**: an A-only–B-only edge | — | inadmissible |
+| **0–a–m–b–3 with m shared** (A: 0–a–m, B: m–b–3) | **yes** | **(3, 3, 1, 2)** | **the third**: the bridge loop is invisible to both, so k counts it |
+
+- Under compatibility, a bridge with per-side ends *must* meet at a shared mediator vertex. That is the only shape in which "B's end" exists.
+- It is also exactly the shape in which the bridge's loop is a comma (k = 2 = the crossroads plus the bridge).
+- A co-signed cell is an adoption and has no ends.
+- **So the third has ends; the adopted bridge does not.**
+
+**O.2 Reed's point 1: does S1 forbid unilateral exit? It depends on the shape.**
+- **Mediated bridge (the third): (b) holds.** B's segment m–b–3 lies in B's site alone, so cutting it is a site-local act that S1 does not touch.
+  - Measured: B's release takes (3, 3, 1, 2) to **(2, 2, 1, 1), which is exactly the pre-relation baseline**, whether or not B also retreats from m.
+  - The shared verdict changes as a consequence of B's act, not as B's letter.
+- **Co-signed cell (adoption): (a) holds.** No "own end" exists. B's retreat would leave A holding a single-site cell inside I, which compatibility forbids, so B's exit forces the cell's removal for A too.
+  - S1 (both sign every change to a shared cell) must give way. Otherwise A can trap B, which is the Förster prohibition.
+  - The bound that keeps this from being license: removing the cell returns every party to the counts of the frame without it, which is the baseline (2, 2, 1, 1). By Lemma A, the adding of that cell is all that the removal takes back.
+- **The exact boundary.**
+  - **Alone, a party may:**
+    - cut its own site-local cells;
+    - retreat from its own site membership, including shared cells, with the consequences that compatibility forces;
+    - author its own Wait or Release;
+    - settle for itself (per-observer verdict).
+  - Exit may narrow others **only down to the pre-relation baseline**, never below. This is the one admissible exception to S3 ("c_other must not drop").
+  - **Never alone:**
+    - write or keep the other's cells;
+    - add a shared cell;
+    - change the aggregate verdict (all-commit);
+    - absorb for both;
+    - erase or rewrite the log.
+
+**O.3 Reed's point 2: after B's Release, what is A obliged to do?**
+- **Mediated bridge.** A keeps its half, 0–a–m, as a pendant path. A write on it settles to **4 × 10⁻¹⁶**: no loop and no bleed. Before the release, the same write put 0.091 on each of B's private edges.
+- "You may remember; you may not act on my cells" is enforced by topology, so **no values clause is needed.**
+- **Co-signed cell.** A's continued holding is the one-sided monument (3, 2, 1, 1) of §L.5. It is already **inadmissible by compatibility**, before any value bleed, so A is obliged to drop the cell.
+- The values clause is needed only where a party writes on cells it may still hold. Exit leaves none of those.
+
+**O.4 Reed's point 3: is "abstention = Wait" over-constrained? Not once the Wait is the clock factor of §L.**
+- Mara's open case, "verdict withheld, carrier not held", is **Wait(r_W = r)**: no hold, natural decay, logged, with expiry at most the faster eroder's budget.
+- Because expiry falls before L*, the question arrives before decay can decide. The verdict stays withheld under all-commit until that question.
+- So one parametrised letter covers both postures:
+  - **Wait(r_W = 0)** holds;
+  - **Wait(r_W = r)** is undecided.
+- **Release is the only separate letter**, because a Wait cannot say "no". Two letters, not three.
+
+**O.5 Reed's point 4: instant cut or decay at r_B?**
+- A Release implemented as "stop feeding" leaves B's segment live for L* = ln(w₀/θ)/r_B: 6.2, 20.7 and 62.1 time units for r_B = 1, 0.3 and 0.1.
+- Under use = collapse, every read A makes through that segment in the window is a settle through cells B has left: **acting on B's cells after exit.**
+- So **Release must be an immediate cut.** The erasure then sits at the letter, at a logged instant. Under series composition the carrier is 0 the moment w_B = 0.
+- The log difference is real. With an immediate cut, the death and the letter are the same entry. With decay, the death happens at a threshold crossing nobody signed, which is the unsigned-erasure pattern again.
+
+**Tests to add.**
+- **T59.** Compatibility of the five bridge shapes in O.1; the mediated bridge gives k = 2.
+- **T60.** Release of the mediated bridge returns (2, 2, 1, 1), and A's half settles to 0.
+- **T61.** A decay-release window of length L*(r_B), against 0 for an immediate cut.
