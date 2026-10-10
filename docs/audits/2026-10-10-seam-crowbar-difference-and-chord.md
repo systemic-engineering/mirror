@@ -461,3 +461,76 @@ Script: `world_drift.py`.
   - So "a Wait ends with a question" is required for *meaning*, not for survival.
   - **Wait → Offer is structural:** a resumption that skips the question resumes on a stale class.
 - **T43, kept open:** see L.1. Its honest form is a co-signed bridge with the leak below threshold, and its observable is flicker at matched mean traffic.
+
+## §M Addendum: who declares τ? A crowbar of *The chord* Def 4.6 / Prop 4.7 (d0cc862), and a retraction of my own §L.6
+
+Scripts: `canon.py`, `canon2.py`, `canon3.py`.
+
+Fixture, built so that absorption is possible:
+- an 8-cycle; A-only vertices {1, 3}, B-only {5, 6, 7}, I = {0, 2, 4};
+- a B edge (2, 6) and a third-held bridge (0, 4); dim Θ = 3;
+- drift: private adds, private prunes (each side stays connected), and co-signed adds on I-pairs, at share p_co.
+
+Two specific classes are tracked:
+- the **held bridge loop** z_br = 0–1–2–3–4–(bridge), which is Mara's θ_held;
+- the **crossroads loop** z_x = the 8-cycle.
+
+**M.0 The canonical comparison needs no τ (new, PROVED).**
+- Frames X (before) and X′ (after) both include into the union frame U = X ∪ X′, with the sites unioned.
+- A class z is **absorbed** iff its image in coker_U = Z(U) ⊖ Σ Z(K_i^U) is 0. It is **lost** iff the image is non-zero but not in the image of coker_{X′}. Otherwise it is **carried**: the same disagreement, transported.
+- Each test is a rank computation (an SVD) on a finite complex. It is exact and binary, with no tolerance.
+- The principal angle of Def 4.6 compares *harmonic representatives* (orthogonal complements) in a coordinate space. It conflates a change of representative with a change of class.
+
+**M.1 Does the meaning of the angle drift? Yes. The regress is an artifact of the angle.** 400–600 draws per cell, ρL ∈ {0.5, 2, 6, 24}:
+
+| | canonical status | angle when carried (median) | angle when absorbed |
+|---|---|---|---|
+| held bridge loop, every p_co | **carried in 100%** (never absorbed, never lost) | 31° (p_co = 0) to 48° (p_co = 0.4), and it grows with ρL | — |
+| crossroads, p_co = 0 | carried 100% | 32° | — |
+| crossroads, p_co = 0.15 | carried 72%, absorbed 28%, lost 0% | 24–32° | median 86°, **minimum 72°** |
+| crossroads, p_co = 0.4 | absorbed 48% | 12° | median 85°, min 72° |
+
+- A canonically *unchanged* class sits at a large and growing angle. Its angle does drift with ρL, as Reed suspected.
+- That drift is not the disagreement changing; it is the coordinates rotating. So any constant τ on the angle mis-measures, and needs its own τ′, and so on.
+- **The regress is real for the angle and absent for the canonical test.**
+
+**Retraction (my §L.6 and L.7).**
+- "A held carrier keeps the count of the disagreement, not the disagreement" was wrong in its fixture. Every move there was a private add or prune, and those carry every class canonically (Thm 8.4 plus rerouting). The 72° "staleness" was representational.
+- The world hazard e^{−ρL} applies only to moves that **absorb** (co-signed cells, 2-cells) or **cut without reroute**, not to generic drift.
+- Corrected: P(meaningful) ≈ 1[L < L*(r_W)] · P(no absorbing or cutting move in L). Alex's "the world keeps moving" erodes the third only through moves that change the cokernel, and those moves can be checked.
+- Wait → Offer stays structural, but the expiry question is now **mostly decidable**: re-derive Θ′ *and* the frame map, then run M.0.
+
+**M.2 Can the grey band be exploited? A and B co-sign "still ours" on a 72° class.**
+- **If the class is canonically carried** (the held bridge loop is carried at every angle measured), "still ours" is *true*. It is not a forgery; the angle misled.
+- **If it is canonically absorbed,** it was absorbed by *their own* co-signed edge (the only absorbing move here). Co-signing "still ours" contradicts a decidable fact: they dissolved it. **Signers cannot outvote topology where topology decides.**
+- **If no union frame exists** (cells merged, vertices re-identified, a stalk or sheaf changed), the frames are not jointly embeddable. A *declared identification* is then needed. This is my 10-01 S2 fix again: "through a declared identification of stalks". There the co-signed answer is their right, logged as a declaration and subject to the values clause.
+- T has no voice in that case, because nothing decides it. That is von Foerster's "Only those questions that are in principle undecidable, we can decide": the grey band is exactly where the frame does not decide.
+
+**M.3 Is the asymmetry real (loose τ_lo forges; tight τ_hi only costs load)? Partly, and not in the safe direction.**
+
+Angle rule "renew iff ∠ < τ", scored against canonical truth:
+
+| τ | forged (renews an absorbed class) | falsely refused (refuses a carried class): crossroads / held bridge |
+|---|---|---|
+| 15° | 0.00 | 0.48–0.65 / 0.54–0.69 |
+| 45° | 0.00 | 0.16–0.33 / 0.23–0.53 |
+| 60° | 0.00 | 0.02–0.15 / 0.05–0.21 |
+| 80° | **0.18–0.20** | 0.00–0.01 / 0.00 |
+
+- Loose τ forges, as predicted.
+- Tight τ refuses *unchanged* disagreements up to 69% of the time, and that is not only load. A refusal tells A and B their disagreement has changed when it hasn't, which sends them into a fresh Offer about a different thing. **That is a cost to consent through misinformation, not just question load.**
+- **There is no τ that is both forgery-free and refusal-free on the held class.** The canonical test is both, wherever it is defined.
+
+**M.4 Decidable, or answerable?**
+- With M.0 in place of the angle, Prop 4.7 is decidable *without* τ wherever a union frame exists (union-find plus SVD rank on U).
+- Where it doesn't exist, the predicate is decidable *relative to an oracle*: the subjects' co-signed identification. Deciding that is a Turing reduction to the subjects, not a decision procedure.
+- Honest wording: **"decided by the frame where the frames compose; answerable by the signers where they don't."**
+- Reed's three bands become three *canonical* cases, not angle bands:
+  - carried: renew as a minimal question;
+  - absorbed or lost: refuse and return to Offer;
+  - no frame map: ask for a declared identification.
+- "τ is never declared once" holds, and more strongly: **τ is not needed at all.**
+
+**Tests to add.**
+- **T50.** The held bridge loop under private drift only: canonically carried in 100% of cases while ∠ > 30° in more than half. *Control:* a co-signed I-edge absorbs the crossroads class, and its image in coker_U is 0.
+- **T51.** τ sweep against canonical truth, reproducing the M.3 table.
