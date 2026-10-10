@@ -697,3 +697,78 @@ Script: `exit.py`. Base fixture: C₆, A holds the path 0–1–2–3, B holds 3
 - **T59.** Compatibility of the five bridge shapes in O.1; the mediated bridge gives k = 2.
 - **T60.** Release of the mediated bridge returns (2, 2, 1, 1), and A's half settles to 0.
 - **T61.** A decay-release window of length L*(r_B), against 0 for an immediate cut.
+
+## §P Addendum: exit for OPEN observers. Crowbar of §O and *The chord* Prop 4.9–4.10 (10b8a67), after Alex
+
+Alex: "A severed coupling is not a neutral act. Unless one system is a closed system."
+
+Scripts: `open_exit.py`, `open_exit2.py`, `open_exit3.py`.
+
+**Fixture.**
+- A ring 0–5 with A = {0, 1, 2, 3} and B = {3, 4, 5, 0}.
+- Private chords: A has (0,2) and (1,3); B has (3,5) and (0,4). That gives each side 2 private loops and 5 private edges.
+- A mediated bridge 0–a–m–b–3.
+- Site-relative Tero (§C), θ = 10⁻³ absorbing.
+- **Common random numbers.** The internal-question stream is identical in every run:
+  - **coupled**: cross questions at share 0.4 until T = 150, then B releases (immediate cut, cross traffic stops); the run ends at 400;
+  - **keep**: coupled throughout;
+  - **never**: never coupled, the same internal stream, no bridge.
+- Columns are [A private b₁, B private b₁, A private edges alive, B private edges alive]. The pre-relation frame is [2, 2, 5, 5]. 4–6 seeds per cell.
+
+**P.1 The closed-observer control reproduces §O exactly.** With metabolism off, all four columns are [2, 2, 5, 5] at the cut and at the end, for every seed.
+
+**P.2 Open observers.**
+
+| Internal load q_int | μ | at the cut | severed, at end | keep, at end | never, at end | post-cut private losses | ‖w_sev − w_never‖ |
+|---|---|---|---|---|---|---|---|
+| 0.6 (self-sufficient) | 1.0 | [2 2 5 5] | [2 2 5 5] | same | same | 0 | **0.000** |
+| 0.6 | 1.5 | [1 1 4 4] | [1 1 4 4] | same | same | 0 | **0.000** |
+| 0.6 | 2.0 | **[0 0 3 3]** | [0 0 3 3] | [0 0 3 3] | **[1 1 4 4]** | 0 | 0.07–0.17 |
+| 0.2 (dependent) | 1.0 | [2 2 5 5] | [1 1 4 4] / [1 0 4 1] | [2 2 5 5] | [0 0 0 0] to [1 0 4 0] | **2–5** | 0.03–0.12 |
+| 0.2 | 1.5 | [0 0 3 3] | [0 0 1 0] to [0 0 2 1] | [0 0 3 3] | [0 1 0 4] / [0 0 0 0] / … | **3–5** | 0.01–0.09 |
+| 0.2 | 2.0 | [0 0 2 2]–[0 0 3 3] | [0 0 0 1] / [0 0 1 0] / [0 0 1 1] | [0 0 2 2] | [0 0 0 0] | **3–4** | 0.01–0.03 |
+
+**What this shows.**
+
+1. **Alex is right against the pre-relation frame.** Every metabolizing run ends away from [2, 2, 5, 5], *including the never-coupled one* (μ ≥ 1.5 prunes by itself). §O's "back to baseline", and Props 4.9–4.10, hold for **closed** observers only (frozen K_A, K_B). For any open observer the pre-relation frame is the wrong baseline. The honest one is the **never-coupled trajectory over the same time and load**.
+
+2. **There are two distinct sources of non-neutrality.**
+   - **(a) Coupling-time hysteresis (structural coupling).** At μ = 2 the relation prunes one private loop per side *during* coupling ([0 0 3 3] against the counterfactual [1 1 4 4]). Absorbing deaths do not regrow. The scar is there at the cut, and the cut adds nothing (0 post-cut losses). Reed's (i) holds.
+   - **(b) Dependency, the starvation wave.** When internal load cannot sustain what the coupling sustained (q_int = 0.2), the cut triggers **2–5 post-cut private-edge deaths**, against 0 for "keep". Reed's (ii) holds.
+     - Against the counterfactual, the severed party usually ends *above* it, because part of the coupling's dividend persists.
+     - **But not always.** At q_int = 0.2, μ = 1.5, seed 0, B ends with 0 private edges and b₁ 0, while never-coupled B keeps 4 edges and b₁ 1. Coupling rerouted B's structure onto the bridge, and the cut starved it. **Exit can leave a party below its never-coupled counterfactual.** Reed's (iii) holds.
+
+3. **The invariant that separates closed from open is history-forgetting, not "metabolism on/off".**
+   - Exit is neutral against the counterfactual iff each side's internal-only dynamics, started from the coupled state, reach the same state as from the never-coupled history.
+   - Measured: yes at q_int = 0.6 with μ ≤ 1.5, where ‖w_sev − w_never‖ = **0.000** (the private weights revert *exactly*). No under absorbing pruning (μ = 2) or dependency (q_int = 0.2).
+   - A closed observer is the trivial case: its frame never left.
+   - The **cross-feed fraction** of a private edge is *not* a useful predictor of post-cut death. Medians for the dead vs the survivors were 0.56 vs 0.46 and 0.46 vs 0.44.
+
+4. **Can any letter make severance neutral? No. At the class level it is irreducible here.**
+   - Tapering the cross traffic over 25 or 100 time units, instead of stopping it at once (bridge cut at T in both cases), saves some *tree* edges: at μ = 1.5 the mean loss drops from 4.25 to 2.75.
+   - It leaves the private b₁ **identical in every seed**: [2, 1, 2, 1] at μ = 1, and 0 at μ ≥ 1.5.
+   - Loop loss is fixed by the internal-only attractor, not by the form of the cut. **Alex's claim holds in this model: for a dependent or hysteretic open observer, non-neutrality is irreducible.**
+   - §O.5 (Release is an immediate cut) survives. Consent hygiene costs nothing at the class level, only a few tree edges.
+
+**P.3 The exit boundary, restated honestly.**
+- **Closed observers:** exit returns the counts to the pre-relation frame (§O, Props 4.9–4.10, as stated).
+- **Open observers, history-forgetting:** exit returns each party to its *never-coupled counterfactual*, not to the pre-relation frame.
+- **Open observers, hysteretic or dependent:** exit is **not neutral**, and it can leave a party below its counterfactual. "Exit narrows others only down to baseline" is **false** here.
+- What survives is the **admissibility** of exit, not its neutrality.
+  - Exit stays admissible because trapping (Förster) is worse.
+  - Its cost is the relation's, and both parties bear it: the coupling-time scar is co-authored, and the starvation wave falls on whoever had come to depend.
+- Gauge consequence (READING as design):
+  - **consent to couple an open observer includes consent to irreversibility**;
+  - a relation entered at μ > 1, or with dependency, should declare that up front;
+  - the Wait (§L) is the only letter that delays the cost, and the Release (§O) is the only one that logs it. Neither removes it.
+
+**Caveats.**
+- The dependency regime arises because cross questions route through each side's interior.
+- Deaths are absorbing at a declared θ.
+- One fixture, 4–6 seeds per cell.
+
+**Tests to add.**
+- **T62.** Closed control (metabolism off) reproduces §O.
+- **T63.** Self-sufficient, μ ≤ 1.5: ‖w_sev − w_never‖ = 0 (history-forgetting).
+- **T64.** Dependent regime: post-cut losses > 0, plus at least one case below the counterfactual.
+- **T65.** A taper changes edge losses but not b₁.
