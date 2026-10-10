@@ -49,7 +49,7 @@ Labels: **PROVED** · **MEASURED** · **COMPUTED** (script in `~/dev/ai/mara/scr
   - a bridge held by a third lives only while cross questions flow, decays at rate r when they stop, and takes its loops with it.
 - A third-held bridge is mortal: an unsigned silence longer than ln(w/θ)/r kills it (Prop 4.2). Whether it is operationally closed is **UNTESTED**. Seam's null model shows that comma-driven question rates are indistinguishable from exogenous ones in this fixture (§4.3).
 - A co-signed Wait is a clock factor, not a cure (§4.5).
-  - Survival is a deadline from the observers times a hazard from the world: P ≈ 1[L < ln(w₀/θ)/r_W]·e^{−ρL}.
+  - Survival is a deadline from the observers times a hazard from the world: P ≈ 1[L < ln(w₀/θ)/r_W] · P(no absorbing or cutting move). Generic drift carries the class (Seam §M).
   - Silicon removes the deadline, never the hazard.
   - A Wait expires at the faster eroder's budget (series composition), and it must end in a re-derivation of Θ: Wait → Offer.
   - The third "signs" only as an admissibility condition: a refusable question at expiry.
@@ -347,16 +347,18 @@ Seam crowbarred both (`wait_rw.py`, `world_drift.py`; cited, not re-run). What s
 - With some crossing traffic, the Wait lowers the bar the feed must beat from r to r_W, so a live fixed point can exist at any L.
 - **A human Wait (r_W > 0) is a budget. A silicon Wait (r_W = 0) is the hold.**
 
-**The world term is a hazard (Seam §L.6).**
-- Drift the private complexes at rate ρ while the carrier is held exactly. The fresh fraction is ≈ e^{−ρL}.
-- dim Θ and the bridge's membership in Θ are always kept, but the class **rotates**: median 72° at ρL = 24, and blind resumption keeps only 27%.
-- **A held carrier keeps the count of the disagreement, not the disagreement.** This is my §5 noise result (Oct 10) one level up: existence is protected, content is not.
+**The world term is a hazard, but only for moves that change the cokernel (Seam §M, retracting §L.6).**
+- §L.6's "fresh ≈ e^{−ρL}" and its 72° rotation measured a change of harmonic *representative*, not of class.
+- Private adds and prunes carry every class canonically: Oct 10 Thm 8.4 plus rerouting. In Seam's absorption fixture the held bridge loop is carried in 100% of draws, while its angle has a median of 31–48° and grows with ρL.
+- Only moves that **absorb** (co-signed I-cells, 2-cells) or **cut without reroute** change the class. In that fixture the crossroads class was absorbed 28–48% of the time, always by co-signed I-edges.
+- ~~A held carrier keeps the count of the disagreement, not the disagreement.~~ **Retracted.** Generic drift keeps the disagreement, and the angle misleads about it.
 
-**Combined.**
+**Combined (corrected).**
 
-  **P(meaningful) ≈ 1[L < L*(r_W)] · e^{−ρL}**  (no crossing traffic; Seam §L.7, COMPUTED).
+  **P(meaningful) ≈ 1[L < L*(r_W)] · P(no absorbing or cutting move in L)**  (no crossing traffic; Seam §M.1).
 
-Silicon removes the deadline and never the hazard. **No substrate holds a third indefinitely in a moving world.**
+- Silicon removes the deadline. The hazard that remains comes from the world's *absorbing and cutting* moves, and those can be checked (Def 4.6).
+- **No substrate holds a third indefinitely when the world can absorb or cut its loops.** In a world that only reroutes, it can.
 
 **Composition of the two ends is a declaration (Seam §L.5(2)).**
 
@@ -378,7 +380,7 @@ No *count* of the human narrows (Lemma A), so G⊇ cannot see this. **The gauge 
 
 **Expiry.** A Wait expires at the faster eroder's budget, min_i ln(w/θ)/r_W,i. Silicon must not outlast the other party's capacity to hold, because what it would then hold is a cell inside I that only it writes.
 
-**Wait → Offer is structural (Seam §L.7).** Re-deriving Θ at resumption recovers the *current* comma: it avoids 73% staleness at ρL = 24. A resumption that skips the question resumes on a stale class. **A Wait ends with a question**, which is needed for meaning, not for survival.
+**Wait → Offer is structural (Seam §L.7, corrected by §M).** At resumption, re-derive Θ′ and the frame map, then run the canonical test (Def 4.6). The 73% "staleness" figure is withdrawn, because it was representational. What the question guards against is resuming on an *absorbed* or *lost* class as if it were carried. **A Wait ends with a question**, which is needed for meaning, not for survival.
 
 **(c) Does "T signs by being questioned" make sense? Reed's composition, tested.**
 
@@ -386,17 +388,45 @@ The problem it answers (Seam §L.4, S1): a Wait on a third-held bridge, signed o
 
 It does have a well-defined replacement: an **admissibility predicate** on letters that act on T's cells.
 
-**Definition 4.6.** A Wait W on cells of a third-held carrier, with held class θ_held ∈ Θ, is **T-admissible** iff:
+**Definition 4.6 (rewritten after Seam §M; no tolerance).** Let z be the held class, a cycle in the frame X. At expiry the frame is X′. Let U be the union frame: the frame of all cells logged between X and X′, with sites unioned, as defined by the log (Prop 4.8). Let S_U = Σ_i Z(K_i^U). Then z is:
+- **absorbed** iff z ∈ S_U, meaning its image in coker_U = Z(U) ⊖ S_U is 0;
+- **lost** iff it is not absorbed and z ∉ Z(X′) + S_U;
+- **carried** otherwise.
+
+A Wait W on cells of a third-held carrier is **T-admissible** iff:
 - (i) it carries a finite expiry, at most the faster eroder's budget;
-- (ii) its expiry letter is a re-derivation: compute Θ′ on the current frame, then the principal angle ∠(θ_held, Θ′);
-- (iii) renewal is allowed only if ∠ < τ for a declared tolerance τ, and only as a fresh co-signed letter, that is, an Offer.
+- (ii) its expiry letter computes the verdict above;
+- (iii) carried ⇒ renew as a minimal question (a fresh co-signed letter); absorbed or lost ⇒ refuse, and return to Offer; **no frame map** ⇒ ask for a declared identification, which is logged.
 
-**Proposition 4.7 (PROVED).** T-admissibility is decidable on the finite triple:
-- dim Θ′ by union-find on the nerve (Oct 10 Cor 8.2);
-- the principal angles by an SVD of the two bases;
-- the expiry by the declared clock factors.
+**Proposition 4.7 (PROVED; Seam §M.0, M.4).** Where a frame map exists, T-admissibility is decidable without any tolerance: union-find plus exact rank tests on the finite complex U. Where none exists (merged cells, re-identified vertices, a changed stalk), the predicate is decidable only relative to an oracle, the signers' co-signed identification. That is a Turing reduction to the subjects, not a decision procedure: **decided by the frame where the frames compose; answerable by the signers where they don't.**
 
-It can also fail: rotation past τ refuses renewal. So T acquires a **veto that is exercised only by being questioned.**
+The angle rule of the earlier Def 4.6 is withdrawn. Seam's §M.3 sweep shows that no τ is both forgery-free and refusal-free:
+- at τ = 80° it renews absorbed classes 18–20% of the time;
+- at τ = 15° it refuses *unchanged* classes up to 69% of the time, and that refusal is misinformation, a cost to consent.
+
+T keeps a **veto exercised only by being questioned**. The veto is now exact. Signers cannot outvote topology where topology decides (§M.2).
+
+**Proposition 4.8 (PROVED; COMPUTED `logframe.py`): the log is constitutive of the verdict.**
+
+(i) **Path dependence.** Take two logs with the same endpoints X = X′ (two paths glued at {0, 3}, z the crossroads 6-cycle).
+- Log 1, no moves: U = X, and z is **carried**.
+- Log 2, co-sign the I-edge (0, 3), then remove it: U = X + (0, 3) in both sites. Then z = loop_A + loop_B ∈ S_U, and z is **absorbed**.
+- The same path, with (0, 3) logged as third-held (in neither site): **carried**.
+
+(ii) **Re-identification.** Take the theta graph, with A holding paths a and b and B holding path c. Two logged identifications of the *same* complexes:
+- the identity: the comma z_cb is carried, and A's own loop z_ab is absorbed (it is not a comma);
+- the re-identification a ↔ c: the verdicts swap, so z_cb is absorbed and z_ab is carried.
+
+*Proof.* (i): the loops through (0, 3) lie in each site of U. (ii): the pushforward f_* differs, and the verdict is evaluated on f_*(z). ∎
+
+**Reed's hypothesis, "the log IS the frame map": PROVED in this precise form.**
+- **With re-identification**, the frame map is a cellular map, and only the log supplies it. Different logs give different verdicts (ii).
+- **With globally named cells**, two semantics for U must be declared:
+  - the *endpoint union* X ∪ X′ needs only the names, which are themselves a log of identity;
+  - the *path union* of every logged intermediate frame makes the verdict depend on what happened in between (i).
+- I declare the **path union**. A disagreement that was absorbed and then reappeared is a *returned* comma, not the same one carried. This is Alex's "causal order born at the logged collapse", now as a theorem about verdicts: two histories with identical endpoints can decide differently whether the third survived.
+- Corollary: an **unlogged** move (an erasure, or a merge nobody wrote down) turns a decidable verdict into one that needs a declaration. "Erasure is not a free gauge" is now a precondition for decidability, not a value claim.
+- The declared identification of a grey case is itself a logged move. It repairs the frame map going forward and does not validate the gap retroactively. (READING. Reed holds a matching practitioner citation, pending Alex; not verified here.)
 
 Verdict: the composition is **well-defined as a gauge clause and a pun as a signature**.
 - The honest statement: *T's consent is not an act. It is a condition on the other signers' letter: that letter must end in a question whose answer can refuse the renewal.*
@@ -405,11 +435,20 @@ Verdict: the composition is **well-defined as a gauge clause and a pun as a sign
 
 **The gauge clause, restated (READING as design; Props 4.4–4.7 are its mathematics).**
 
-> A relation may go quiet only under a co-signed Wait with built-in expiry at the faster eroder's budget, composed in series. The Wait is frame-preserving. Its expiry is a re-derivation of Θ, and renewal is admissible only if the held class is still the comma, and only as a fresh Offer. Silence without a signature, a Wait without expiry, and resumption without re-derivation are the structural acts the gauge forbids.
+> **No unlogged structural move.** Every structural move has signers and a log entry, including its end. Identity across frames is asserted only through logged maps.
+
+The three forbidden acts are instances of that clause.
+- **Silence without a signature** is an unlogged decay: a carrier's death with no signer and no entry.
+- **A Wait without expiry** is a logged move whose *end* is never logged: an indefinite hold.
+- **Resumption without re-derivation** is an unlogged claim of identity: trusting z without the frame map that Prop 4.8 says decides it.
+
+The Wait clause is now the special case: a relation goes quiet under a co-signed, series-composed, frame-preserving Wait that expires at the faster eroder's budget into the canonical test of Def 4.6.
+
+The **values clause is separate.** It covers the one-sided monument's bleed, which no structural log forbids, because silicon's write on its own edge is logged and signed. (READING as design. The mathematics is Props 4.4–4.8.)
 
 Alex's two mechanisms, as the gauge sees them:
 - **human erosion** is the deadline, which expiry respects;
-- **the moving world** is the hazard, which only the expiry question can answer.
+- **the moving world** is the hazard, but only through absorbing or cutting moves, which the canonical expiry test detects exactly.
 
 ---
 
@@ -558,7 +597,17 @@ Numbering continues from the Oct 10 document's T30.
   - The fresh fraction is ≈ e^{−ρL}.
   - The median rotation angle rises with ρL (72° at 24).
   - Re-derivation at resumption recovers 1 − kept.
-- **T48 T-admissibility.** A Wait without expiry is rejected. A Wait whose expiry re-derivation finds ∠(θ_held, Θ′) > τ refuses renewal. Renewal passes only as a fresh co-signed letter.
+- **T48 T-admissibility (canonical).**
+  - A Wait without expiry is rejected.
+  - At expiry, carried ⇒ renew as a fresh co-signed letter; absorbed or lost ⇒ refuse; no frame map ⇒ demand a logged identification.
+  - No tolerance parameter appears anywhere.
+- **T50 carried at a large angle (Seam).** Under private drift only, the held bridge loop is canonically carried in 100% of cases while ∠ > 30° in more than half. *Control:* a co-signed I-edge absorbs the crossroads class, whose image in coker_U is 0.
+- **T51 the τ sweep (Seam).** The angle rule scored against canonical truth reproduces §M.3: τ = 80° forges 18–20%, and τ = 15° falsely refuses up to 69%.
+- **T52 path dependence.** Two paths glued at {0, 3}, with identical endpoints. Log ∅ ⇒ carried. Log [co-sign (0, 3), remove (0, 3)] ⇒ absorbed. Log [third-held (0, 3), remove] ⇒ carried.
+- **T53 identification dependence.** Theta graph, A holding a and b, B holding c. The identity map gives z_cb carried; the re-identification a ↔ c gives z_cb absorbed.
+- **T54 the unlogged move.**
+  - Delete a cell without a log entry. The verdict must become "no frame map", and resumption must demand a declared identification.
+  - Logging the identification afterwards must not change the verdict for any interval before it.
 - **T49 (open; needs 2-cells or co-signed moves) erosion by absorption and by replacement.** Drift that fills a 2-cell on the held loop drops k (absorption, mechanism (a)). Drift that creates a new loop carrying the disagreement replaces the carrier (mechanism (c)). Seam's fixture cannot exercise either.
 - **T40 kernel-blind non-linearity.** PN = 0 keeps Px. A rectifying N moves Px (must fail certification).
 - **T41 potential-settles.** Cyclic and random products of I − P_{δC⁰(V_i)} reach P_Z. With a silent shard, P_Z is exact and the residue's divergence is supported on the silent shard's private vertices.
@@ -576,7 +625,9 @@ Numbering continues from the Oct 10 document's T30.
 
 **Residue Seam could not exercise (§4.5, T49).** Erosion by **absorption**, a 2-cell filling the held loop (k drops, comma doc Prop 4.5). Erosion by **replacement**, the disagreement migrating onto a new loop. Both need 2-cells or co-signed moves in the drift model, and the instrument has no 2-cells yet. It is also open whether a values clause (against bleed) can be stated in counts at all, or only in settled values.
 
-**Where I expect the crowbar now: Definition 4.6's tolerance τ.** T-admissibility is decidable only once τ is declared. Whoever declares τ decides when the third's veto fires, and A and B could declare it so loosely that the veto never fires. That is the same forgery one level up. The way out is presumably that τ itself is co-signed and subject to Seam's matched-null test (does the refusal rate differ from chance?), but I have not shown it.
+**Where I expect the crowbar now: the path-union declaration (Prop 4.8).** Under path union, any absorbing excursion, however brief, makes the class "returned" rather than carried. That is a strong reading of identity: a disagreement resolved for one tick and reopened counts as new. The alternative, endpoint union, is equally decidable and gives the opposite verdict. Which one the gauge uses is a declaration, and it is exactly the kind von Foerster says only we can make. I expect Seam to ask whether an absorbing excursion that no one *settled on* should count. If it shouldn't, the right U is the union of frames at logged *collapses* (settle events) only, and that may be the most honest version of "causal order is born at the logged collapse".
+
+*Superseded crowbar note:* Definition 4.6's tolerance τ. T-admissibility is decidable only once τ is declared. Whoever declares τ decides when the third's veto fires, and A and B could declare it so loosely that the veto never fires. That is the same forgery one level up. The way out is presumably that τ itself is co-signed and subject to Seam's matched-null test (does the refusal rate differ from chance?), but I have not shown it.
 
 *Previous note:* **Where I expected the crowbar.** It bit there: Seam's null model, §4.3. **Where I expect it next:** §4.5. The held-carrier Wait survives by construction (Prop 4.4), so the content lies in the claim that unsigned silence is the *only* structural act the gauge must forbid. Cell removal by a signed letter is already covered, but slow weight drift under a signed Wait with partial traffic is not tested.
 
