@@ -54,7 +54,7 @@ This resolves the location of Seam's open comma. It does not settle its price. c
 **Where the recursion stops.**
 - An instrument that observes passively can only make an invisible disagreement visible, never create one. Every comma among any number of passive observers lives in H¹(X), so the thing is the ceiling (Thm 7.1).
 - An instrument that probes changes the frame, and stops only by a declared budget.
-- With many shards, the comma among all is Ĥ¹ of the nerve with H⁰ coefficients. It is the one thing shard-by-shard compilation cannot produce, and an edit's influence is confined to the shard's star in the nerve (§8).
+- With many shards, the comma among all is Ĥ¹ of the nerve with H⁰ coefficients. It is the one thing shard-by-shard compilation cannot produce. Alternating local settles erase exactly it. A global fixed point with a purely local stencil keeps it. An edit's influence is confined to the shard's star in the nerve (§8).
 
 Setting throughout, unless a section says otherwise: the finite triple of the comma document. X = (V, E) a finite graph with canonical orientation, H = C⁰ ⊕ C¹, D = δ + δ*, P the projection onto ker D = H⁰ ⊕ H¹ (the *output* of settling, not the Hilbert space). Constant sheaf. Two subjects A, B declare closed sites K_A, K_B with K_A ∪ K_B = X; I = K_A ∩ K_B. R_S = P(C(K_S)), c_S = dim R_S (comma doc Def 2.2, "decided relative to Definition 2.2" per Seam §C.1). Computations: `difference.py`, `ci_only.py`, `contest.py` in the session scratchpad `mara-difference/` (numpy 2.4.4, fixed seeds; output in `difference.out`). A numerical check is not a proof; every PROVED label carries its own argument.
 
@@ -75,7 +75,7 @@ In the triple (READING for the correspondence, PROVED for the mathematics attach
 
 **Proposition 1.1 (PROVED).** Let S be a semiring that is zero-sum-free (a ⊕ b = 0 ⇒ a = b = 0) and entire (a ⊗ b = 0 ⇒ a = 0 or b = 0). Then supp : S → 𝔹, a ↦ [a ≠ 0], is a semiring homomorphism. Applied entrywise, it commutes with composition, converse, Kronecker tensor and partial trace in Mat_S. Signed ℝ is neither, and supp is not a homomorphism there.
 
-*Proof.* supp(a ⊕ b) = 1 iff a ⊕ b ≠ 0, which by zero-sum-freeness holds iff a ≠ 0 or b ≠ 0. supp(a ⊗ b) = 1 iff a ⊗ b ≠ 0, which by entireness holds iff both are non-zero. The matrix operations are built from ⊕ and ⊗ entrywise. In ℝ, 1 + (−1) = 0 but 1 ∨ 1 = 1. ∎ COMPUTED (`difference.py` CHECK10): ℕ and min-plus (zero = +∞) give 0 violations; ℤ gives 4 on the box [−2, 2]². LEAD: Golan's terminology for these conditions is being checked (Sources).
+*Proof.* supp(a ⊕ b) = 1 iff a ⊕ b ≠ 0, which by zero-sum-freeness holds iff a ≠ 0 or b ≠ 0. supp(a ⊗ b) = 1 iff a ⊗ b ≠ 0, which by entireness holds iff both are non-zero. The matrix operations are built from ⊕ and ⊗ entrywise. In ℝ, 1 + (−1) = 0 but 1 ∨ 1 = 1. ∎ COMPUTED (`difference.py` CHECK10): ℕ and min-plus (zero = +∞) give 0 violations; ℤ gives 4 on the box [−2, 2]². Terminology, verified: "zero-sum free if a + b = 0 implies a = b = 0" (Jun–Mincheva–Tolliver, arXiv 2009.03030, Def 2.3, whose proof of Prop 3.5 uses the homomorphism R → 𝔹); "zerosumfree … and entire if ab = 0 implies a = 0 or b = 0" (Nasehpour, arXiv 2606.00916). Converse (PROVED): a homomorphism to 𝔹 with kernel {0} forces both conditions, given 1 ≠ 0.
 
 So every positive interpretation (counts, probabilities, least action) is a refinement of the observation: compute in S, take supports, and you get the 𝔹 computation. The floor document's 3-cycle (§1.4.3) is the counterexample in ℝ. δ* of the oriented cycle vector is 0 over ℝ and (1, 1, 1) over 𝔹.
 
@@ -163,7 +163,10 @@ Two consequences.
 **(b) Where a non-gradient term would enter, and what it is.**
 - If each domain descends only its own objective in its own variable, θ_i ← θ_i − η∇_{θ_i}[E_i + Σ_j w_ij D(θ_i, θ_j)], the joint field is in general **not** a gradient.
 - For quadratic D its Jacobian has antisymmetric part ½(w_ij − w_ji). COMPUTED (CHECK4): with (w₁₂, w₂₁) = (2, 0.5), the circulation around the unit circle is −4.7124 = π(w₂₁ − w₁₂). Under the draft's global update it is 0.0000 for the same weights.
-- That is the game-theoretic split into a potential part and a rotational part. LEAD: Monderer–Shapley's potential games, and Balduzzi et al.'s symmetric/antisymmetric decomposition of the game Jacobian, are being checked (Sources).
+- That is the game-theoretic split, verified.
+  - Balduzzi et al. 2018, Lemma 1: "H(w) = S(w) + A(w) where S ≡ Sᵀ is symmetric and A + Aᵀ ≡ 0 is antisymmetric." Def 2: "A game is a potential game if A(w) ≡ 0. It is a Hamiltonian game if S(w) ≡ 0." And informally: "There is no reason to expect ξ to be the gradient of a single function in general."
+  - Monderer–Shapley 1996 define the exact potential game, and their Thm 4.5 gives the smooth criterion ∂²u_i/∂y_i∂y_j = ∂²u_j/∂y_i∂y_j.
+  - Scott Gardner's draft writes the potential case only.
 - This term is **curl in state space**: local circulation from asymmetric coupling. It is not the harmonic comma of §3, which needs a loop in the relational structure. Both are non-gradient. The draft has neither.
 
 ### §2.3 Two monisms sharing a thing
@@ -461,7 +464,7 @@ READING. An instrument whose site contains the loop is von Foerster's third. In 
 (i) The generalised Mayer–Vietoris sequence 0 → C•(X) → ⊕_i C•(K_i) → ⊕_{i<j} C•(K_ij) → … is exact.
 (ii) Hence there is a spectral sequence with E₁^{p,q} = ⊕_{|σ|=p+1} H^q(K_σ) and E₂^{p,q} = Ĥ^p(𝒩; H^q), converging to H^{p+q}(X).
 
-*Proof of (i).* Fix a cell c. The sites containing it form a non-empty set S(c), and the part of the sequence that involves c is the augmented cochain complex of the full simplex on S(c), which is acyclic. (ii) is the double-complex spectral sequence of (i) (LEAD for the textbook page: Bott–Tu §8, being checked). ∎
+*Proof of (i).* Fix a cell c. The sites containing it form a non-empty set S(c), and the part of the sequence that involves c is the augmented cochain complex of the full simplex on S(c), which is acyclic. (ii) is the double-complex spectral sequence of (i). Compare Bott–Tu, Prop 8.5 (generalised Mayer–Vietoris, exact, for open covers of manifolds) and pp. 169–170 (E₁ = C^p(U, ℋ^q), E₂ = H^p_δ(U, ℋ^q)); Stacks Project Lemma 20.11.5 (tag 01ES) for sheaves of modules. The closed-subcomplex version is proved above. For constant coefficients it matches Torras-Casas (arXiv 1907.05228, Def 2.4: "by definition the Čech complex is a chain complex and is exact"). ∎
 
 On a graph, H^q = 0 for q ≥ 2. That gives three statements.
 
@@ -505,9 +508,19 @@ With 2-cells, E_∞^{2,0} can survive into H²(X), giving a genuine two-dimensio
 1. **Tonics compile shard by shard.** Each shard settles alone, and H⁰ glues by the equaliser (8.2(a)). Shards with disjoint write footprints are independent letters under `Polyphony`, so their settles commute and may run in parallel (comma doc Prop 2.1).
 2. **Each shard's own commas compile shard by shard** (Σ_i Z(K_i)).
 3. **What no shard-by-shard compilation can produce is exactly the comma among all** (8.3). Its dimension is a nerve computation on overlap components (8.2(b)): cheap, discrete, certifiable by union-find. Its representatives are flows that cross shards, and they need one coupled solve, the global settle.
-4. Hansen–Ghrist's sheaf heat flow, the global settle, converges to the projection onto H⁰ (LEAD for the exact statement: being checked). It is the operation that sees the comma, because the comma is invisible from inside every shard.
+4. Hansen–Ghrist, Prop 8.1, verified: "The dynamical system ẋ = −Δ^k_F x has as its space of equilibria H^k(X;F) … The trajectory … converges exponentially quickly to the orthogonal projection of x₀ onto H^k(X;F)." The update at v uses only neighbours: "the only terms that influence ẋ_v are the x_w for w adjacent to v."
 
-READING. "Compiled at once" is needed **for the commas, and only for them**. Everything else is parallel. The overlaps are where order and disagreement live.
+**Local stencil is not local settle (PROVED; COMPUTED).** Two different things are both called "local", and they behave oppositely on the comma.
+- **Local stencil, global fixed point.** Hansen–Ghrist's flow at k = 1 communicates only between neighbours, and its limit is the *global* harmonic part. It sees the comma.
+- **Local settles, alternated.** Let each shard project onto its own constraint, "harmonic on K_i", and iterate the product, Schwarz-style. Halperin's theorem (verified: "T^n converges strongly to E₁∧…∧E_r"; von Neumann for r = 2) says the iterates converge to the projection onto the *intersection* of the local solution spaces. P.-L. Lions reads the Schwarz alternating method as exactly this kind of successive projection (verified, 1988, §I.2).
+- For an **edge-disjoint** cover, that intersection is Σ_i Z(K_i) exactly, and its codimension in Z(X) is the comma among all (3000/3000, `schwarz.py`). For degree 0 it equals H⁰(X) in every case (600/600).
+- On two paths glued at two points, alternating local settles send every flow to **0**, while the global harmonic part is non-zero.
+
+**Alternating local settles erase precisely the comma among all.** With shared edges they lose more, because both sides constrain the shared cells: the dimension falls below b₁ in 473 of 600 covers.
+
+So "compile each shard, then reconcile by iterating local settles" is a comma-erasing procedure. It reaches consensus by killing the disagreement that only the coupling has. To compile the comma, the fixed point must be global, even if every message is local.
+
+READING. "Compiled at once" is needed **for the commas, and only for them**. Everything else is parallel. The overlaps are where order and disagreement live. Curry's thesis already names the parallel part. In Remark 8.2.20 (verified), Čech-sheaf strategies are "examples of distributed cohomology computation … one can assign each local computation to a different processor … and aggregate this information". The aggregation step is where the comma among all is computed: Ĥ¹(𝒩; H⁰), from overlap components.
 
 Theorem 3.4(d) adds one warning that the slogan "parallel where independent" does not carry. Trace-independent private writes can still contest a comma, so commuting local settles do not imply a comma-free glue. That bears on the floor document's §1.6.3 conjecture (independence = premonoidal centrality) only obliquely. Centrality is about interchange in the record, and (d) is about interference in the settled output. I do not claim either implies the other.
 
@@ -605,6 +618,10 @@ Numbering continues the comma doc (T1–T12) and Seam's additions (T13–T16).
 - **T27 passive instrument.** Adding a closed subcomplex site never enlarges the comma among all.
 - **T28 Čech.** On random N-site covers: comma among all = Ĥ¹(𝒩; H⁰); b₁ = Ĥ¹ + Ĥ⁰(H¹) − Ĥ². The span of local site flows has codimension = comma among all. *Fixtures:* three arcs (pairwise 0, all 1) and theta (Ĥ² = 1).
 - **T29 incremental.** A private edge inside a component: comma among all unchanged. A private edge merging two components: +1.
+- **T30 local stencil vs local settle.** On two paths glued at two points:
+  - the product of the two local "harmonic on K_i" projections, iterated, tends to 0;
+  - the Laplacian flow ẋ = −Δ₁x tends to the global harmonic part, which is non-zero;
+  - on edge-disjoint covers, the limit of the product has codimension = comma among all.
 
 **Refutation conditions (as opposed to bugs).**
 - **R5.** A cover in which some "third count" measure, monotone under norm-≤ 1 linear images (Seam's class R2′), is lowered by a co-signed untwisted boundary-joining edge. Lemma A plus Theorem 3.4 predict none.
@@ -667,8 +684,32 @@ Kagi (`mcp__kagi-ken-mcp__kagi_search_fetch`) was live this session. Every exter
 - [Sco98] J. C. Scott, *Seeing Like a State* (1998), Introduction (legibility; high modernism). **[read]** Cited for context only. It is not the Scott of the brief: the brief's "Scott" is Scott Gardner.
 - Scott Gardner, *Technique as a Field — A Dynamical Systems Formalization of Ellul* (internal draft, confidential, shared with Alex; v0.03, 2026-03-29). Read in full. Quoted only for the core update and the equations analysed in §2.2.
 
-### Pending (being verified as this commit lands)
-Bott–Tu §8 (generalised Mayer–Vietoris, Čech double complex); Curry 2014; Hansen–Ghrist 2019 (sheaf Laplacian, heat flow to H⁰) and their distributed-optimisation paper; Robinson (consistency radius); von Neumann alternating projections; Balduzzi et al. 2018; Monderer–Shapley 1996; Golan on zero-sum-free semirings. Until verified, every use of these in the text is labelled LEAD.
+### Sheaves, covers, distributed computation
+- [Cur14] J. Curry, *Sheaves, Cosheaves and Applications*, arXiv 1303.3255. **[read]**
+  - Def 4.1.6 (cellular sheaf); Def 6.2.1 (the cellular cochain complex, which Curry calls *compactly supported*, equal to ordinary cohomology on a finite complex).
+  - Thm 8.2.9 (nerve); Prop 8.2.11 (nerves of dimension ≤ 1); Remark 8.2.20 (distributed cohomology, quoted).
+  - **Not found in Curry:** Mayer–Vietoris or Leray for *closed-subcomplex* covers of cellular sheaves. §8.2(i) proves the version used here.
+- [HG19] J. Hansen, R. Ghrist, *Toward a spectral theory of cellular sheaves*, J. Appl. Comput. Topol. 3 (2019) 315–358; arXiv 1808.01513. **[read]** Defs 2.4–2.5; Thm 3.1 (Hodge); Prop 4.1 (harmonic extension); Prop 8.1 (Laplacian flow converges to the projection onto H^k; local updates). They do not use the phrase "sheaf diffusion".
+- [HG19b] J. Hansen, R. Ghrist, *Distributed optimization with sheaf homological constraints*, 57th Allerton Conf. (2019). https://www.jakobhansen.org/publications/distopt.pdf **[read]** It states "ker L_F = ker δ = H⁰(G;F)". Its method is primal–dual saddle-point dynamics (not ADMM). No arXiv id found.
+- [Rob17] M. Robinson, *Sheaves are the canonical data structure for sensor integration*, Information Fusion (2017); arXiv 1603.01446. **[read]** Def 20 (consistency radius); Prop 23; §5 (fusion as projection onto H⁰). The Def 27 misprint (image d^{k+1}) is not copied. *Topological Signal Processing* (Springer 2014): **[meta]**.
+- [BT82] R. Bott, L. Tu, *Differential Forms in Algebraic Topology*, GTM 82. **[read]**
+  - Prop 8.5 (generalised Mayer–Vietoris); Prop 8.8; Thm 8.9 (good covers: de Rham = Čech).
+  - pp. 169–170 (E₁, E₂ of the Čech double complex; written as ∏).
+  - Their "Leray's theorem" (Thm 14.18) is the fibre-bundle one and is not cited for acyclic covers.
+- [Stacks] Stacks Project, Lemma 20.11.5 (tag 01ES; Čech-to-cohomology spectral sequence) and Lemma 20.11.6 (tag 01ET; Leray acyclicity). **[read]**
+- [TC19] Á. Torras-Casas, *Distributing persistent homology via spectral sequences*, arXiv 1907.05228. **[read]** Def 2.4 (Čech complex for a cover by subcomplexes).
+- [Hal62] I. Halperin, *The product of projection operators*, Acta Sci. Math. (Szeged) 23 (1962) 96–99, Thm 1. **[read]** Von Neumann's r = 2 case (*Functional Operators* II, Thm 13.7) is **[meta]**, via Halperin. Convergence is strong, not uniform.
+- [Lio88] P.-L. Lions, *On the Schwarz alternating method I* (1988), §I.2 and Thm I.1. **[read]** (page images)
+- [BS20] S. Barbarossa, S. Sardellitti, *Topological signal processing over simplicial complexes*, IEEE TSP 68 (2020); arXiv 1907.11577, eqs. (18)–(19). **[read]** No distributed solver.
+- [Bal18] D. Balduzzi et al., *The mechanics of n-player differentiable games*, ICML 2018; arXiv 1802.05642: §2, Lemma 1, Def 2. **[read]**
+- [MS96] D. Monderer, L. Shapley, *Potential games*, Games Econ. Behav. 14 (1996) 124–143, eq. (2.2), p. 128, Thm 4.5. **[read]**
+- [JMT20] J. Jun, K. Mincheva, J. Tolliver, arXiv 2009.03030, Def 2.3, Prop 3.5 proof. **[read]** [Nas] P. Nasehpour, arXiv 2606.00916 (zerosumfree, entire). **[read]** Golan 1999: **[meta]**.
+
+**Not found** (searched with Kagi):
+- a paper linking domain decomposition of Hodge or graph Laplacians to Mayer–Vietoris or cohomology;
+- a "distributed Hodge decomposition" paper by Bennett, Lim or Hirani.
+
+Lewis–Morozov's parallel persistent homology via the blowup complex: **[meta]** (download failed).
 
 ### Corpus
 - mirror `docs/math/2026-10-01-mara-the-comma-between-observers-math-foundation.md`; `docs/audits/2026-10-01-seam-crowbar-comma-between-observers.md` (Lemma A; owner/site compatibility; D1–D3; vF readings).
@@ -682,8 +723,15 @@ Session scratchpad `mara-difference/`, numpy 2.4.4, fixed seeds:
 - `ci_only.py` (privatisation);
 - `contest.py` (Thm 3.4(d));
 - `cech.py` → `cech.out` (§8);
-- `cech_fix.py` (pairwise commas on K_i ∪ K_j; the merge sign).
+- `cech_fix.py` (pairwise commas on K_i ∪ K_j; the merge sign);
+- `schwarz.py` → `schwarz.out` (alternating local settles vs the global settle).
 
 The ARCS line in `cech.out` prints "pairwise commas [1, 1, 1]" from a call that computed classes of X, not of K_i ∪ K_j. `cech_fix.py` gives the correct [0, 0, 0]. The directory is ephemeral. Port before it disappears.
 
-**Kagi tally (so far).** 19 external items. Verified, primary text read: 17. Metadata only: 2 (Kramers 1940; Wiener 1949). Not verified: 2 sub-claims (Bateson's page; the Bateson p. 315 variant). Pending: the eight items above.
+**Kagi tally.** 34 external items. Every one was found through Kagi; Kagi returned results for every query this session.
+- **Verified, primary text read: 32.** These include 13 cited only inside other entries: Milnor, Rudyak 2306.07942, Hatcher, Holmes-Cerfon, Gammaitoni et al., Stacks, Torras-Casas, Halperin, Lions, Barbarossa–Sardellitti, Jun–Mincheva–Tolliver, Nasehpour, Hansen–Ghrist distopt.
+- **Metadata only: 2 full items** (Kramers 1940; Wiener 1949), plus sub-items von Neumann 1950, Golan 1999, Robinson 2014 and Lewis–Morozov.
+- **Not verified: 2 sub-claims** (Bateson's page; the Bateson p. 315 variant).
+- **Not found: 4** (Curry closed-cover Mayer–Vietoris; a domain-decomposition/cohomology paper; a distributed Hodge decomposition paper; a distopt arXiv id).
+
+The scratchpad copies of the primary texts are ephemeral, like the scripts.
