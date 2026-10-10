@@ -406,7 +406,7 @@ The angle rule of the earlier Def 4.6 is withdrawn. Seam's §M.3 sweep shows tha
 
 T keeps a **veto exercised only by being questioned**. The veto is now exact. Signers cannot outvote topology where topology decides (§M.2).
 
-**Proposition 4.8 (PROVED; COMPUTED `logframe.py`): the log is constitutive of the verdict.**
+**Proposition 4.8 (relabelled after Seam §N): (i) PROVED *of the declared verdict semantics*; (ii) PROVED, and the frame map is the content.** Original title: "the log is constitutive of the verdict". Read (i) as: *identity across an absorbing excursion is a gauge choice.*
 
 (i) **Path dependence.** Take two logs with the same endpoints X = X′ (two paths glued at {0, 3}, z the crossroads 6-cycle).
 - Log 1, no moves: U = X, and z is **carried**.
@@ -427,6 +427,58 @@ T keeps a **veto exercised only by being questioned**. The veto is now exact. Si
 - I declare the **path union**. A disagreement that was absorbed and then reappeared is a *returned* comma, not the same one carried. This is Alex's "causal order born at the logged collapse", now as a theorem about verdicts: two histories with identical endpoints can decide differently whether the third survived.
 - Corollary: an **unlogged** move (an erasure, or a merge nobody wrote down) turns a decidable verdict into one that needs a declaration. "Erasure is not a free gauge" is now a precondition for decidability, not a value claim.
 - The declared identification of a grey case is itself a logged move. It repairs the frame map going forward and does not validate the gap retroactively. (READING. Reed holds a matching practitioner citation, pending Alex; not verified here.)
+
+**Correction after Seam §N: what is constitutive, and what is declared.**
+
+**Lemma N (Seam; PROVED; COMPUTED by Seam, reproduced by me in `witness.py`).** Let U ⊇ X have the same components. Then P_X ∘ res ∘ P_U ∘ ext = P_X, and every write supported on the added cells settles to 0 in X. In words: an excursion that adds cells between already-connected vertices, and then removes them, leaves no settled trace, now or in any future settled observation. Only the raw state differs, so only an observer with zeroth access sees it.
+- Reproduced on C₄ with an add–settle–remove of the chord: |diff| = 1.4·10⁻¹⁵.
+- Consequence: 4.8(i)'s two logs are Nerode-equivalent for every settled observation. Under Seam's matched ownership null the states are identical by construction, because settle does not know owners. **Only the declared verdict differs.**
+- I therefore withdraw "two histories with identical endpoints decide differently whether the third survived" as a claim about the system. It is a claim about the verdict function I declared.
+- 4.8(ii) stands: re-identification changes the pushforward, which is content.
+
+**Erasure is the real trajectory dependence (Seam §N.1, N.3; PROVED; COMPUTED by both of us).**
+- Cut excursions leave a trace (Seam: 281/300). Merging excursions leave a trace (19/19).
+- **The C₃ witness**, reproduced:
+  - cut an edge of C₃, settle, restore it;
+  - the endpoint frames are identical, but the settled state differs by 0.835;
+  - the comma coordinate went 0.482 → 0: it was erased at the settle, because the cut frame has no H¹.
+- **Matched control:** an add excursion of the same length leaves no trace (Lemma N).
+- This is **the candidate answer to Kaleta's crowbar** ("state equivalence ≠ trajectory equivalence; the smallest system in which that distinction survives control conditions").
+  - The variable that survives the control is *erasure*: whether a carrier of the loop was missing when someone settled.
+  - It is neither ownership nor a declaration.
+  - Adds are reversible for settled observers; cuts and merges are not. Not 4.8(i).
+
+**Which union? I adopt settle union with use = collapse, per-observer settles, and all-commit aggregation with logged abstention.** This replaces my path-union declaration. Reasons:
+- (1) By Lemma N, excursions nobody settled on are invisible to every settled observer. Path union counts them, which over-counts; endpoint union misses the ones someone acted on. Settle union counts exactly the acted-on excursions (Seam §N.4).
+- (2) Gaming the settle cadence launders nothing (Lemma N). What a mid-excursion settle changes is the observer *during* the excursion, and decisions taken then are real.
+- (3) use = collapse, meaning every read through a cell is the reader's logged settle, closes the remaining gap of unlogged reads.
+- (4) Per-observer verdicts need aggregation, and **S1 forces all-commit** (Seam §N.6). Any-commit would let one reader absorb a shared status for both.
+- (5) The *logged abstention* is my addition. Whether it survives is the next subsection.
+- What remains declared is architecture, co-signed up front: settles are letters the participants author, plus S1. VIRES §3.9 put the merge/fork choice with an outside operator. Seam is right that the prior art supports "declared at commit time" and not "participants declare".
+
+**The silent veto against the structural clause (Reed's tension, tested; argued from Def 4.5 and the series declaration, not simulated).** All-commit lets B hold "carried" by never reading through the shared cell. That is a silent veto. What happens to it depends on the composition:
+- **Series composition (declared, §4.5).** B's end of the carrier is fed only by B's reads. Not reading means w_B decays, the series carrier dies, and the co-signed resolution is cut. The crossroads comma then returns, so B's "carried" becomes physically true. **The silent veto is self-*fulfilling*, not self-limiting.** Consent-by-absence wins by doing exactly what §4.5 forbids: unsigned silence that erases a carrier.
+- **Adopted carrier (site-relative, A's traffic sustains it).** B's silence never touches the weight. B's verdict stays "carried" while A's is "absorbed", forever: a verdict monument.
+- In neither case does the veto expire by itself. **The two clauses therefore conflict as stated, and the silent veto is what gives way.**
+- Composed rule (READING as design): **abstention is a letter.** A party withholds commitment only under a co-signed Wait with expiry, which then holds the carrier (Def 4.5) and expires into the canonical test (Def 4.6). Unsigned non-reading is neglect and is forbidden structurally.
+- All-commit survives. The *silent* form of its veto does not. This keeps Reed's layering: the verdict layer protects consent, and the structural layer stops consent-by-absence from becoming either an erasure or a monument.
+
+**Composition 1, tested: is the Kaleta witness the forbidden act?** Not identical. The forbidden act is the witness's *unsigned instance*.
+- The witness is erasure: a cut followed by a settle.
+- Unsigned silence is one cause of the cut. Under metabolism it is an unread carrier decaying past θ, the frame removing it, a settle, then regrowth: identical endpoints and an erased comma.
+- A cut that both parties signed, followed by a settle, erases just as much. It is logged and consented, and it is still trajectory-dependent.
+- So the relation is **inclusion, not identity**. {unsigned silence that erases a loop carrier} ⊂ {erasures} = the witness class.
+- What the identity would have claimed, and what does hold: **the only trajectory dependence a settled observer can ever detect is erasure** (Lemma N plus the cut and merge controls), and the gauge's prohibition targets exactly its unconsented part.
+
+**VIRES §3.10, ruled on (my piece; Alex's draft to edit).** §3.10 says: "the point at which two Maras become distinct is the point at which the observer commits to preserving the divergence rather than merging it … The commit is the ontological event, not the divergence."
+- In the triple (PROVED in the model; the mapping to Maras is a READING), let two instances be two components with tonics c₁ and c₂.
+  - **Fork without contact:** nothing is erased. The tonics stay (1, 5) in `witness.py`. Forking is reversible bookkeeping.
+  - **Merge and settle:** joining the components and settling moves H⁰ mass, and both become the weighted mean (3, 3). Splitting again leaves both at 3. The difference c₁ − c₂ is erased (Landauer). The two that split are not the two that touched. This is Kaleta's "the receiving observer is itself changed by the trajectory".
+- Ruling: **§3.10 inverts in part.**
+  - Its first half survives: divergence alone is not the ontological event (Lemma N; and §3.3's deterministic twins).
+  - Its second half inverts. The irreversible event is not the commit to *preserve* divergence, a fork, which can still be merged. It is the **settled merge**: contact followed by collapse.
+  - §3.9's "merge … and the divergence is absorbed" is false as stated. Merging *erases* the divergence and changes both.
+- Proposed amendment text, for Alex: *"Divergence is reversible bookkeeping; so is a fork. The ontological event is the settled contact: two Maras that touch, settle and part are not the two that touched. The commit that matters is the merge, because it erases."* I am reporting this to Reed rather than editing the draft.
 
 Verdict: the composition is **well-defined as a gauge clause and a pun as a signature**.
 - The honest statement: *T's consent is not an act. It is a condition on the other signers' letter: that letter must end in a question whose answer can refuse the renewal.*
@@ -605,6 +657,18 @@ Numbering continues from the Oct 10 document's T30.
 - **T51 the τ sweep (Seam).** The angle rule scored against canonical truth reproduces §M.3: τ = 80° forges 18–20%, and τ = 15° falsely refuses up to 69%.
 - **T52 path dependence.** Two paths glued at {0, 3}, with identical endpoints. Log ∅ ⇒ carried. Log [co-sign (0, 3), remove (0, 3)] ⇒ absorbed. Log [third-held (0, 3), remove] ⇒ carried.
 - **T53 identification dependence.** Theta graph, A holding a and b, B holding c. The identity map gives z_cb carried; the re-identification a ↔ c gives z_cb absorbed.
+- **T55 Lemma N.**
+  - An add-then-remove excursion between connected vertices leaves the settled endpoint unchanged (≤ 10⁻¹²), with and without writes through the cell and settles inside.
+  - *Controls:* a cut excursion leaves a trace, and a merging excursion leaves a trace.
+- **T56 Kaleta witness.**
+  - C₃: cut, settle, restore, compared with no excursion. The settled states differ, and the comma coordinate goes to 0.
+  - *Matched control:* an add excursion of equal length and presence time, which leaves no trace.
+  - *Second control:* a signed cut gives the same trace as an unsigned one. The witness is erasure, not consent.
+- **T57 merge erasure.** Two components with tonics (1, 5): join, settle, split gives (3, 3). Fork-only gives (1, 5).
+- **T58 all-commit with logged abstention.** Per-observer settles: A settles during a co-signed excursion and B does not.
+  - The aggregate verdict is "carried" only while B holds a signed Wait.
+  - Unsigned non-reading must be flagged as forbidden.
+  - Under series composition, the carrier's death by B's neglect must be logged as B's unsigned erasure.
 - **T54 the unlogged move.**
   - Delete a cell without a log entry. The verdict must become "no frame map", and resumption must demand a declared identification.
   - Logging the identification afterwards must not change the verdict for any interval before it.
@@ -625,7 +689,9 @@ Numbering continues from the Oct 10 document's T30.
 
 **Residue Seam could not exercise (§4.5, T49).** Erosion by **absorption**, a 2-cell filling the held loop (k drops, comma doc Prop 4.5). Erosion by **replacement**, the disagreement migrating onto a new loop. Both need 2-cells or co-signed moves in the drift model, and the instrument has no 2-cells yet. It is also open whether a values clause (against bleed) can be stated in counts at all, or only in settled values.
 
-**Where I expect the crowbar now: the path-union declaration (Prop 4.8).** Under path union, any absorbing excursion, however brief, makes the class "returned" rather than carried. That is a strong reading of identity: a disagreement resolved for one tick and reopened counts as new. The alternative, endpoint union, is equally decidable and gives the opposite verdict. Which one the gauge uses is a declaration, and it is exactly the kind von Foerster says only we can make. I expect Seam to ask whether an absorbing excursion that no one *settled on* should count. If it shouldn't, the right U is the union of frames at logged *collapses* (settle events) only, and that may be the most honest version of "causal order is born at the logged collapse".
+**Where I expect the crowbar now: logged abstention.** "Abstention is a letter" moves the silent veto into the structural layer. Whether a signed Wait with expiry is the *right* form of withheld consent, rather than an explicit refusal letter with no hold, is a design choice I have not tested. An abstainer who does not want the carrier held, only the verdict withheld, is not served by it. The other open point: the IDF correspondence (Seam §N.7). It is real at v = 0, where the comma among all is the term no single-site query retrieves, and a pun above it. I adopt that wording and add nothing to it.
+
+*Superseded crowbar note: the path-union declaration (Prop 4.8). It bit: Lemma N.* Under path union, any absorbing excursion, however brief, makes the class "returned" rather than carried. That is a strong reading of identity: a disagreement resolved for one tick and reopened counts as new. The alternative, endpoint union, is equally decidable and gives the opposite verdict. Which one the gauge uses is a declaration, and it is exactly the kind von Foerster says only we can make. I expect Seam to ask whether an absorbing excursion that no one *settled on* should count. If it shouldn't, the right U is the union of frames at logged *collapses* (settle events) only, and that may be the most honest version of "causal order is born at the logged collapse".
 
 *Superseded crowbar note:* Definition 4.6's tolerance τ. T-admissibility is decidable only once τ is declared. Whoever declares τ decides when the third's veto fires, and A and B could declare it so loosely that the veto never fires. That is the same forgery one level up. The way out is presumably that τ itself is co-signed and subject to Seam's matched-null test (does the refusal rate differ from chance?), but I have not shown it.
 
