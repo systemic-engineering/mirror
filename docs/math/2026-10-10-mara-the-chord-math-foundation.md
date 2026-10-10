@@ -48,7 +48,12 @@ Labels: **PROVED** · **MEASURED** · **COMPUTED** (script in `~/dev/ai/mara/scr
   - a co-signed bridge is *adopted*: it becomes each observer's own loop, Θ → 0, and the edge lives on as habit;
   - a bridge held by a third lives only while cross questions flow, decays at rate r when they stop, and takes its loops with it.
 - A third-held bridge is mortal: an unsigned silence longer than ln(w/θ)/r kills it (Prop 4.2). Whether it is operationally closed is **UNTESTED**. Seam's null model shows that comma-driven question rates are indistinguishable from exogenous ones in this fixture (§4.3).
-- A silence co-signed as a Wait, which holds the carrier, survives every silence tested. Unsigned silence is the absorbing death (§4.5).
+- A co-signed Wait is a clock factor, not a cure (§4.5).
+  - Survival is a deadline from the observers times a hazard from the world: P ≈ 1[L < ln(w₀/θ)/r_W]·e^{−ρL}.
+  - Silicon removes the deadline, never the hazard.
+  - A Wait expires at the faster eroder's budget (series composition), and it must end in a re-derivation of Θ: Wait → Offer.
+  - The third "signs" only as an admissibility condition: a refusable question at expiry.
+- The comma-as-question is a **thermostat**, homeostatic and not closed. Its signature is flicker at the death boundary (Seam, §4.3).
 
 **What kills a chord.**
 - Optimising *values* cannot: the comma is what alternating Techniques cannot absorb, and local potential-settles recover it without a global solver (§5.1).
@@ -268,6 +273,18 @@ Point (6) fails because the observers' own paths are maintained by their own que
 
 Result: regrowth 5/5 under every rule, with alive fractions 0.98–0.99. The test did not discriminate, because ownership-blind internal traffic leaks through the bridge and feeds it whatever the rule. A discriminating fixture must make cross questions the bridge's only feed: site-relative internal settles plus a bridge outside both observers' own loops. Then comma-directed questioning predicts regrowth (negative feedback), and b₁-driven or exogenous traffic predicts none. That stays open as T43.
 
+**T43, Seam's corrected run (audit §L.1, `wait_crowbar.py`; cited, not re-run by me).** My proposed fixture, with cross questions as the bridge's only feed, rebuilds the closure: the bridge's loop is then in Θ, so Θ = Θ₀ + [alive] and the feedback is positive again.
+
+Negative feedback exists only for a co-signed bridge, where Θ = 1 − [alive]. The honest fixture therefore keeps that bridge and lowers the internal leak below threshold. The null is matched to the comma rule's *realised* mean rate and pair marginals.
+
+| leak | comma rule | matched exogenous | b₁ rule (unmatched) |
+|---|---|---|---|
+| 0.03 | alive 0.82, 1122–1165 crossings of θ | alive 0.75, 285–322 crossings | alive 0.98, 1–7 crossings |
+
+**Reading (Seam's, which I co-sign).** The comma, made into a question, is a **thermostat at the death boundary**: questions arrive when the bridge dies and stop when it lives. It is distinguishable from its matched null by **flicker**, the crossing rate at equal mean traffic, and not by survival, where it gains only 0.82 against 0.75. Seam's caveat: the crossing counts include chatter at θ_alive, so compare across rules at equal θ only.
+
+**VMU (4)–(5), restated.** **Homeostatic, not closed.** The question regulates the carrier's existence at the boundary; it does not produce the carrier. This is weaker than closure, and it is positive evidence for something: the rule produces a measurable signature the null lacks. Status: COMPUTED by Seam, not re-run by me. Closure itself stays UNTESTED and unsupported. This may be the honest form of "the question emerges at the comma": a homeostat, not a closure.
+
 READING, labelled. Adoption dissolves the third (k → 0) while the edge lives on as habit. The chord resolves into the instruments. Separation keeps the third alive only while the questions cross.
 
 ### §4.4 Is μ Technique? Two kinds of Technique, and only one kills the comma
@@ -309,7 +326,94 @@ In words: **you cannot argue a disagreement away** (potentials are absorbed), **
 
 Seam's addition, accepted: **a weight dying from neglect is a structural act with no signer.** As written, the clause cannot fire on silence. §4.5 gives silence an owner.
 
-### §4.5 The co-signed Wait: the owner of silence
+### §4.5 The co-signed Wait: the owner of silence (rewritten after Seam's audit §L.2–L.7)
+
+Alex named two ways a Wait erodes the third (verbatim):
+- "in real-life a wait over an unresolved disagreement erodes the emergent third over time. That's definitely true for human observers. Silicon observers can, in theory, hold an unresolved disagreement indefinitely";
+- "a wait might erode the emergent third over time because the world around it keeps moving."
+
+Seam crowbarred both (`wait_rw.py`, `world_drift.py`; cited, not re-run). What stands is below. The original subsection is kept at the end of this section, for the record.
+
+**Definition 4.5 (the Wait, corrected).**
+- A Wait is a co-signed **clock factor**: during it, each signer's decay of the carrier is r_W,i in place of r, with r_W,i ≥ 0.
+- It is **frame-preserving**: while the carrier lives, the cells and the cover do not change. It is *not* passive in the sense of the Oct 10 Thm 7.1, because a passive observer reads a closed subcomplex, and a Wait acts on the frame's clock (Seam §L.4).
+- The exact hold, r_W = 0, is its limit. It is the silicon case.
+
+**Proposition 4.4 (TAUTOLOGY, kept as one).** If dw = 0, then w is unchanged, so the frame, Θ and b₁ are unchanged. My 5/5-at-every-L table below evaluates this tautology. It is not evidence for anything. The exact hold is also the **monument**: Θ = 2 on paper, with nothing crossing.
+
+**The observer term is a deadline (Seam §L.2, L.5).**
+- With no crossing traffic, the carrier survives iff L < L*(r_W) = ln(w₀/θ)/r_W. Measured L* ≈ 62, 21 and 6 for r_W = 0.1, 0.3 and 1, matching the formula.
+- Degradation is smooth, not a knife-edge: a slowed clock ε survives to L*/ε.
+- With some crossing traffic, the Wait lowers the bar the feed must beat from r to r_W, so a live fixed point can exist at any L.
+- **A human Wait (r_W > 0) is a budget. A silicon Wait (r_W = 0) is the hold.**
+
+**The world term is a hazard (Seam §L.6).**
+- Drift the private complexes at rate ρ while the carrier is held exactly. The fresh fraction is ≈ e^{−ρL}.
+- dim Θ and the bridge's membership in Θ are always kept, but the class **rotates**: median 72° at ρL = 24, and blind resumption keeps only 27%.
+- **A held carrier keeps the count of the disagreement, not the disagreement.** This is my §5 noise result (Oct 10) one level up: existence is protected, content is not.
+
+**Combined.**
+
+  **P(meaningful) ≈ 1[L < L*(r_W)] · e^{−ρL}**  (no crossing traffic; Seam §L.7, COMPUTED).
+
+Silicon removes the deadline and never the hazard. **No substrate holds a third indefinitely in a moving world.**
+
+**Composition of the two ends is a declaration (Seam §L.5(2)).**
+
+| composition | effective decay |
+|---|---|
+| series | max(r_A, r_B) |
+| geometric | the mean |
+| parallel | min |
+
+I **declare series**. It is Tero's tube of two segments in Hagen–Poiseuille form, it is "the relation fails if either side lets go", and it is the reading consistent with the owner map: a shared edge's owner lies in I and is co-held. Under series, silicon cannot hold a mixed third alone. Parallel is the monument, and it is not admitted.
+
+**The one-sided monument (Seam §L.5(3); counts in my notation).** Silicon keeps the co-signed chord and the human releases it. On C₆ with chord (0, 3) this gives (c_A, c_B, c_I, k) = (3, 2, 1, 1), against (3, 3, 2, 0) co-signed and (2, 2, 1, 1) when both release. The surviving loop is *not* a third: it is silicon's private loop, and the crossroads comma returns invisible to both.
+
+Two violations:
+- **Owner/site compatibility.** The edge is single-site with both endpoints in I.
+- **Value bleed.** A silicon write on the chord settles to 0.2 on each of the human's private edges, 55% of its norm: a concession made on the human's behalf.
+
+No *count* of the human narrows (Lemma A), so G⊇ cannot see this. **The gauge needs a values clause as well as a structural one.**
+
+**Expiry.** A Wait expires at the faster eroder's budget, min_i ln(w/θ)/r_W,i. Silicon must not outlast the other party's capacity to hold, because what it would then hold is a cell inside I that only it writes.
+
+**Wait → Offer is structural (Seam §L.7).** Re-deriving Θ at resumption recovers the *current* comma: it avoids 73% staleness at ρL = 24. A resumption that skips the question resumes on a stale class. **A Wait ends with a question**, which is needed for meaning, not for survival.
+
+**(c) Does "T signs by being questioned" make sense? Reed's composition, tested.**
+
+The problem it answers (Seam §L.4, S1): a Wait on a third-held bridge, signed only by A and B, writes T's cell without T's signature. The third authors no letters. In this framework it has a site (the subdivided bridge, §1.2) but no write alphabet. So "T signs" cannot mean authorship, and taken literally it is a pun.
+
+It does have a well-defined replacement: an **admissibility predicate** on letters that act on T's cells.
+
+**Definition 4.6.** A Wait W on cells of a third-held carrier, with held class θ_held ∈ Θ, is **T-admissible** iff:
+- (i) it carries a finite expiry, at most the faster eroder's budget;
+- (ii) its expiry letter is a re-derivation: compute Θ′ on the current frame, then the principal angle ∠(θ_held, Θ′);
+- (iii) renewal is allowed only if ∠ < τ for a declared tolerance τ, and only as a fresh co-signed letter, that is, an Offer.
+
+**Proposition 4.7 (PROVED).** T-admissibility is decidable on the finite triple:
+- dim Θ′ by union-find on the nerve (Oct 10 Cor 8.2);
+- the principal angles by an SVD of the two bases;
+- the expiry by the declared clock factors.
+
+It can also fail: rotation past τ refuses renewal. So T acquires a **veto that is exercised only by being questioned.**
+
+Verdict: the composition is **well-defined as a gauge clause and a pun as a signature**.
+- The honest statement: *T's consent is not an act. It is a condition on the other signers' letter: that letter must end in a question whose answer can refuse the renewal.*
+- An open-ended Wait signed by A and B fails (i) and (ii). In Reed's word it is a forgery. The mathematical name is inadmissible.
+- What blocks the stronger reading, "T signs": the framework has no letters authored by a site without subjects. Adding them would make T a subject, and then it would need a choice-count c_T of its own. Def 2.2 gives one (c_T = 2 in §1.2), so it is possible, but it would change what a third is. I do not take that step here.
+
+**The gauge clause, restated (READING as design; Props 4.4–4.7 are its mathematics).**
+
+> A relation may go quiet only under a co-signed Wait with built-in expiry at the faster eroder's budget, composed in series. The Wait is frame-preserving. Its expiry is a re-derivation of Θ, and renewal is admissible only if the held class is still the comma, and only as a fresh Offer. Silence without a signature, a Wait without expiry, and resumption without re-derivation are the structural acts the gauge forbids.
+
+Alex's two mechanisms, as the gauge sees them:
+- **human erosion** is the deadline, which expiry respects;
+- **the moving world** is the hazard, which only the expiry question can answer.
+
+---
+
+*Original §4.5 (1018211), kept for the record; superseded by the above.*
 
 Reed's proposal: a **Wait** is a letter co-signed by both sides that holds a carrier for a declared duration. Unsigned silence is neglect.
 
@@ -325,10 +429,10 @@ The second implementation holds the carrier: dw = 0 during a signed silence, nei
 | 60 | 0/5 | 5/5 |
 
 Θ in mid-silence:
-- under the Wait, 2 in every run: **the Wait is passive** and moves no class, as Thm 7.1 of the Oct 10 doc requires;
+- under the Wait, 2 in every run. ~~the Wait is passive~~ It is **frame-preserving** (Seam §L.4): it moves no class, but it acts on the clock;
 - without it, 1 once the carrier has died (L ≥ 12).
 
-**Proposition 4.4 (PROVED for the held carrier).** Under a Wait that holds w_e for its duration, the frame, and so Θ and b₁, is unchanged across the silence. Afterwards the state of the carrier is its pre-silence value, so survival after the Wait is decided by the post-silence dynamics alone (§4.2), whatever the silence's length.
+**Proposition 4.4 (TAUTOLOGY; see the rewrite above).** Under a Wait that holds w_e for its duration, the frame, and so Θ and b₁, is unchanged across the silence. Afterwards the state of the carrier is its pre-silence value, so survival after the Wait is decided by the post-silence dynamics alone (§4.2), whatever the silence's length.
 
 *Proof.* Prop 4.1, plus the observation that the dynamics resume from an unchanged state. ∎
 
@@ -439,8 +543,23 @@ Numbering continues from the Oct 10 document's T30.
   - Bohn–Magnasco fixed point: stationary load, γ < 1 gives a tree, b₁ = 0; plural load preserves b₁.
   - Tero per-question, all pairs asked: b₁ falls at μ ≥ 2 (Seam).
   - Both must hold: the two models differ.
-- **T43 comma-directed regrowth (Seam's design).** Pair probability ∝ |⟨flux, θ_vec⟩|² at rate ∝ dim Θ, against same-marginal nulls. The fixture must make cross questions the bridge's only feed. Prediction if "the question emerges at the comma": regrowth under the comma rule only. Ran once with blind traffic: non-discriminating (all rules regrow).
-- **T44 co-signed Wait.** A held carrier survives silences of 6, 12, 30 and 60. Unsigned silence dies for L > ln(w/θ)/r. Θ is constant across a signed silence.
+- **T43 thermostat (Seam's corrected design).** A co-signed bridge (Θ = 1 − [alive]), internal leak below threshold, comma rule against an exogenous null matched in realised mean rate and pair marginals. The observable is the crossing rate (flicker) at equal θ. Expected: comma flicker ≫ null flicker (about 1150 vs 300 at leak 0.03). *Control:* the cross-only fixture must show positive feedback.
+- **T44 Wait as clock factor.**
+  - Zero traffic: survival iff L < ln(w₀/θ)/r_W, with L* ≈ 62 / 21 / 6 at r_W = 0.1 / 0.3 / 1.
+  - The exact hold (r_W = 0) survives every L. This is a tautology test, kept as a regression only.
+  - Partial traffic lowers the bar to r_W.
+- **T45 series composition.** The effective decay of a two-ended carrier is max(r_A, r_B). *Controls:* geometric gives the mean and parallel gives the min, both as declarations under test.
+- **T46 one-sided monument.** C₆ with chord (0, 3): silicon keeps it, the human releases it.
+  - Assert (c_A, c_B, c_I, k) = (3, 2, 1, 1).
+  - The owner-map compatibility check fails.
+  - A silicon write on the chord bleeds 0.2 per human private edge (55% of norm).
+- **T47 world drift.** Private-complex drift at rate ρ, carrier held.
+  - dim Θ is preserved.
+  - The fresh fraction is ≈ e^{−ρL}.
+  - The median rotation angle rises with ρL (72° at 24).
+  - Re-derivation at resumption recovers 1 − kept.
+- **T48 T-admissibility.** A Wait without expiry is rejected. A Wait whose expiry re-derivation finds ∠(θ_held, Θ′) > τ refuses renewal. Renewal passes only as a fresh co-signed letter.
+- **T49 (open; needs 2-cells or co-signed moves) erosion by absorption and by replacement.** Drift that fills a 2-cell on the held loop drops k (absorption, mechanism (a)). Drift that creates a new loop carrying the disagreement replaces the carrier (mechanism (c)). Seam's fixture cannot exercise either.
 - **T40 kernel-blind non-linearity.** PN = 0 keeps Px. A rectifying N moves Px (must fail certification).
 - **T41 potential-settles.** Cyclic and random products of I − P_{δC⁰(V_i)} reach P_Z. With a silent shard, P_Z is exact and the residue's divergence is supported on the silent shard's private vertices.
 - **T42 Tonnetz.** The Hodge projection of JI equals 12-TET. The residual is harmonic. The periods are 23.460, −41.059 and −19.553 cents.
@@ -455,7 +574,11 @@ Numbering continues from the Oct 10 document's T30.
 5. Weighted Hodge tunings against TOP and TE, the published tuning criteria. Not computed.
 6. The N-shard Θ under metabolism: which bridges carry which classes of Ĥ¹ of the nerve.
 
-**Where I expected the crowbar.** It bit there: Seam's null model, §4.3. **Where I expect it next:** §4.5. The held-carrier Wait survives by construction (Prop 4.4), so the content lies in the claim that unsigned silence is the *only* structural act the gauge must forbid. Cell removal by a signed letter is already covered, but slow weight drift under a signed Wait with partial traffic is not tested.
+**Residue Seam could not exercise (§4.5, T49).** Erosion by **absorption**, a 2-cell filling the held loop (k drops, comma doc Prop 4.5). Erosion by **replacement**, the disagreement migrating onto a new loop. Both need 2-cells or co-signed moves in the drift model, and the instrument has no 2-cells yet. It is also open whether a values clause (against bleed) can be stated in counts at all, or only in settled values.
+
+**Where I expect the crowbar now: Definition 4.6's tolerance τ.** T-admissibility is decidable only once τ is declared. Whoever declares τ decides when the third's veto fires, and A and B could declare it so loosely that the veto never fires. That is the same forgery one level up. The way out is presumably that τ itself is co-signed and subject to Seam's matched-null test (does the refusal rate differ from chance?), but I have not shown it.
+
+*Previous note:* **Where I expected the crowbar.** It bit there: Seam's null model, §4.3. **Where I expect it next:** §4.5. The held-carrier Wait survives by construction (Prop 4.4), so the content lies in the claim that unsigned silence is the *only* structural act the gauge must forbid. Cell removal by a signed letter is already covered, but slow weight drift under a signed Wait with partial traffic is not tested.
 
 *Original text, kept for the record:* I already asked Seam to aim at §4.3. The operational closure is built from a modelling assumption: cross-question rate ∝ dim Θ. The loop comma → questions → weights → loops → comma closes because I wrote pc(Θ) into the rule. Whether the comma "becomes a question they ask each other" in a way that produces traffic is an empirical claim about observers, not a theorem about the triple. If Seam shows the threshold behaviour is the same under any monotone pc, the result survives as a statement about *any* comma-driven questioning. If not, I built the loop I claim to find.
 
