@@ -338,3 +338,49 @@ Requested mid-run by Mara and Reed. Scripts: `closure_null.py`, `factor.py`.
 - Argued, with the 1-question row as partial evidence: questioning aimed at a single comma is close to a single stationary question, so it prunes its own loop at μ ≥ 1.5. A relation that asks only about its one disagreement loses it.
 
 **Gauge residue.** A weight that dies from neglect is a structural act with no signer. Mara's structural clause ("no letter may let a weight die") needs an owner for silence, or it can never fire.
+
+## §L Addendum: crowbar of *The chord* §4.3 T43 and §4.5 the co-signed Wait (1018211)
+
+Script: `wait_crowbar.py`. Fixture: 8-cycle with bridge (0,4), site-relative settle, μ = 1, r = 1. Closed forms, checked against the nerve code: a co-signed bridge has Θ = 1 − [alive] and b₁ = 1 + [alive]; a third-held bridge has Θ = b₁ = 1 + [alive].
+
+**L.1 T43: "cross questions as the bridge's only feed" builds the closure in a second time.**
+- If cross questions are the only feed, the bridge lies on no observer's own loop. The loop through it is then held by no single site, so Θ contains it: Θ = Θ₀ + [alive], structurally.
+- Under that fixture the comma rule asks *fewer* questions when the bridge is dead. That is positive feedback again. The negative feedback T43 predicts is impossible there.
+- Negative feedback exists only for a co-signed bridge, where Θ = 1 − [alive]. That bridge is fed by internal traffic, so the honest fixture keeps the co-signed bridge and *reduces* the internal leak below threshold instead of removing it.
+- The null: exogenous cross questions at the comma rule's realised mean rate, with the same pair marginals.
+
+| Internal leak q_int | comma rule (pc = 0.6·Θ) | exogenous, matched mean pc | b₁ rule (unmatched, pc ≈ 0.6) |
+|---|---|---|---|
+| 1.0, 0.3 | alive 0.99 | alive 0.99–1.00 | alive 0.99–1.00 |
+| 0.1 | alive 0.96; 131–209 crossings of θ_alive | 0.93; 109–111 crossings | 0.99; 1 crossing |
+| 0.03 | **alive 0.82; 1122–1165 crossings; mean pc 0.111** | **0.75; 285–322 crossings; same mean pc** | 0.98; 1–7 crossings |
+
+- With the leak low, the comma rule *is* distinguishable from its matched null. Its signature is a relaxation oscillation at the death boundary: questions arrive when the bridge dies and stop when it lives, so it gets a thermostat instead of a fixed point.
+- It buys a small gain over the matched null (0.82 vs 0.75). It protects less than the unmatched b₁ rule, which simply asks more.
+- **Reading:** the comma, made into a question, regulates the bridge at the edge of death. It does not make it thrive.
+- T43's discriminating observable is the *flicker* (the crossing rate at matched mean traffic), not survival counts.
+- Caveat: the crossing counts include some chatter right at θ_alive, so compare them only across rules at the same θ.
+
+**L.2 The Wait, under partial traffic (Mara's drift target).** Third-held bridge; Wait over [40, 40+L); cross share pw during the Wait and 0.6 after; 4 seeds.
+
+| Wait semantics | pw = 0: L = 6 / 30 / 120 | pw = 0.15: L = 6 / 30 / 120 |
+|---|---|---|
+| none (unsigned) | 0 / 0 / 0 | 0 / 0 / 0 |
+| exact hold (dw = 0; Mara) | 4 / 4 / 4 | 4 / 4 / 4 |
+| slowed clock, ε = 0.1 | 4 / 2 / 0 | 3 / 3 / 0 |
+| slowed clock, ε = 0.01 | 4 / 4 / 3 | 4 / 4 / 3 |
+| ratchet (growth allowed, no decay) | 4 / 4 / 4 | 4 / 4 / 4 |
+
+- **Prop 4.4 is a tautology.** dw = 0 implies w is unchanged. PASS, but the 5/5-at-every-L table is that tautology evaluated, not evidence for anything.
+- Frame invariance needs the hold to be exact. It is not a knife-edge, though. A leaky Wait (the clock slowed by ε) degrades *smoothly*: with zero traffic it survives iff L < L*/ε, where L* = ln(w₀/θ)/r (about 62 for ε = 0.1 and about 620 for ε = 0.01, with w₀ ≈ 0.5). Measured deaths sit at that scale.
+- So the gauge clause is robust: a Wait is a declared time-dilation factor, and an exact hold is its ε → 0 limit.
+- Partial traffic below threshold during the Wait changes almost nothing (pw = 0.15 rows), because the Wait scales the clock and does not move the attractor.
+
+**L.3 Monument (Reed's point 1): yes, and the slowed clock removes it.**
+- An exact hold (or a ratchet) keeps a loop alive for unbounded L with zero traffic: Θ = 2 on paper and nothing crossing. That is a monument.
+- Proposal: **a Wait is a co-signed clock factor ε > 0**, not a freeze. Its expiry is then built in, L_max = ln(w₀/θ)/(εr), with no separate timer.
+- *Renewal* is a fresh co-signed letter, which is itself a crossing: the minimal question. When a Wait expires unrenewed, normal decay resumes. Whether that should force a question is declaration; the mathematics only says that expiry without renewal is silence again.
+
+**L.4 Two smaller residues.**
+- *"The Wait is passive"* misuses §7. A passive observer reads a closed subcomplex. A Wait *acts* on the frame's clock. It is frame-preserving, not passive.
+- *Who signs.* For a *third-held* bridge, a Wait co-signed by A and B alone acts on T's cell without T's signature, which breaks S1 (a shared cell needs every owner). Either T signs, or the Wait is A and B writing the third's frame.
