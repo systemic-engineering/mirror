@@ -41,6 +41,126 @@ Labels: **PROVED** · **MEASURED** (commit or test) · **COMPUTED** (script in s
 
 Setting throughout, unless a section says otherwise: the finite triple of the comma document. X = (V, E) a finite graph with canonical orientation, H = C⁰ ⊕ C¹, D = δ + δ*, P the projection onto ker D = H⁰ ⊕ H¹ (the *output* of settling, not the Hilbert space). Constant sheaf. Two subjects A, B declare closed sites K_A, K_B with K_A ∪ K_B = X; I = K_A ∩ K_B. R_S = P(C(K_S)), c_S = dim R_S (comma doc Def 2.2, "decided relative to Definition 2.2" per Seam §C.1). Computations: `difference.py`, `ci_only.py`, `contest.py` in the session scratchpad `mara-difference/` (numpy 2.4.4, fixed seeds; output in `difference.out`). A numerical check is not a proof; every PROVED label carries its own argument.
 
+## §1 Three registers: signal, observation, interpretation
+
+### §1.1 The registers, stated
+
+The zeroth-order register document puts four orders on one axis: 0 (signal before categorisation), 1 (content), 2 (observation of content), 3 (second order informing first without leaving it). It claims that third-order operation needs access to 0. It also names the mechanism that removes that access: a hub that categorises before arrival, deciding "this signal is content, … this signal is pattern, … this signal is noise (discard)" (§5.1, §6.3: "order-assignment IS measurement").
+
+In the triple (READING for the correspondence, PROVED for the mathematics attached):
+
+- **Register 0, the signal.** A cochain x ∈ C⁰ ⊕ C¹ on the complex X, before any decomposition is chosen. Every part of it is present: the exact part, the harmonic part, and whatever later gets called noise.
+- **Register 1, the observation.** The 𝔹-reading of the floor document (§1.4): *whether*. Support, reachability, b₀ and b₁ by union-find.
+- **Register 2, the interpretation.** A reading in a semiring with cancellation: an orientation chosen, signs allowed. Only here can x be decomposed into the part a potential absorbs and the part it cannot.
+- **The thing.** The complex X itself, with the cover by observers' sites. §3 is about it.
+
+### §1.2 Positive interpretations refine an observation; the comma refines none
+
+**Proposition 1.1 (PROVED).** Let S be a semiring that is zero-sum-free (a ⊕ b = 0 ⇒ a = b = 0) and entire (a ⊗ b = 0 ⇒ a = 0 or b = 0). Then supp : S → 𝔹, a ↦ [a ≠ 0], is a semiring homomorphism. Applied entrywise, it commutes with composition, converse, Kronecker tensor and partial trace in Mat_S. Signed ℝ is neither, and supp is not a homomorphism there.
+
+*Proof.* supp(a ⊕ b) = 1 iff a ⊕ b ≠ 0, which by zero-sum-freeness holds iff a ≠ 0 or b ≠ 0. supp(a ⊗ b) = 1 iff a ⊗ b ≠ 0, which by entireness holds iff both are non-zero. The matrix operations are built from ⊕ and ⊗ entrywise. In ℝ, 1 + (−1) = 0 but 1 ∨ 1 = 1. ∎ COMPUTED (`difference.py` CHECK10): ℕ and min-plus (zero = +∞) give 0 violations; ℤ gives 4 on the box [−2, 2]². LEAD: Golan's terminology for these conditions is being checked (Sources).
+
+So every positive interpretation (counts, probabilities, least action) is a refinement of the observation: compute in S, take supports, and you get the 𝔹 computation. The floor document's 3-cycle (§1.4.3) is the counterexample in ℝ. δ* of the oriented cycle vector is 0 over ℝ and (1, 1, 1) over 𝔹.
+
+**Proposition 1.2 (PROVED): what the observation sees of a comma.** If h is a non-zero flow (δ*h = 0) on a graph, then no edge of supp(h) is a bridge of supp(h). Conversely, every bridgeless edge set is the support of some flow.
+
+*Proof.* If e were a bridge of supp(h), deleting it would split supp(h) into two sides. Summing δ*h = 0 over the vertices of one side cancels every edge internal to that side and leaves ±h(e) = 0, a contradiction. For the converse, every edge of a bridgeless set lies on a cycle in it, and a generic combination of those cycle vectors vanishes on no edge. ∎ COMPUTED: 0 bridges in the supports of generic flows over 300 random graphs (CHECK10b).
+
+Register 1 therefore holds exactly two facts about the comma: *that* there are b₁ of them, and *where* one could be carried (bridgeless supports). The comma vector itself, its signs and its class, exists only in register 2. **The comma is the part of an interpretation that refines no observation.**
+
+### §1.3 Where Bateson's difference sits
+
+Bateson, *Form, Substance and Difference* (1970), verified wording: "what we mean by information—the elementary unit of information—is **a difference which makes a difference**, and it is able to make a difference because the neural pathways along which it travels and is continually transformed are themselves provided with energy."
+
+Two neighbouring sentences matter as much:
+- "Differences are the things that get onto a map."
+- "the transform of a difference traveling in a circuit is the elementary idea."
+
+(Text from a transcription of *Steps to an Ecology of Mind*. The page number is not verified.)
+
+**Proposition 1.3 (PROVED).** Let ω ∈ C¹(X) be a field of differences across relations, on a graph with no 2-cells. Then ω = δφ + h uniquely, with h harmonic. Moreover:
+(i) ω is absorbed by re-describing the vertices (ω = δφ for some φ) iff h = 0;
+(ii) under settling, e^{−tΔ₁}ω → h;
+(iii) h is unchanged by any re-description φ ↦ φ + ψ.
+With 2-cells, ω = δ₀φ + δ₁*β + h. The middle (curl) part is not absorbed by any potential, but settling removes it.
+
+*Proof.* Hodge decomposition C¹ = im δ₀ ⊕ ker Δ₁ ⊕ im δ₁* (Jiang–Lim–Yao–Ye 2011, Thm 2, journal numbering; Lim 2020 eq. (3.5)). Decay is a function of Δ₁ with limit the projection onto ker Δ₁. Adding δψ changes only the first summand. ∎
+
+READING. **The difference which makes a difference is the harmonic part of the relational difference field.**
+- The first "difference" is δ. The coboundary is literally the difference operator across a relation, (δs)(e) = s(t) − s(s), and its values are what "get onto a map".
+- A difference "makes a difference" when it is neither absorbed by re-description (i) nor dissipated by settling (ii).
+- Curl is the intermediate case. It is local inconsistency, which no potential absorbs but which settling dissipates. In Jiang–Lim–Yao–Ye's words, the curl part accounts "for local inconsistencies" and the harmonic part "for global inconsistencies" (Thm 3).
+- Bateson's "circuit" is where it lives: h ≠ 0 needs a cycle, b₁ > 0.
+
+For two observers, §3 shows that the cycle is made out of the thing they share.
+
+### §1.4 Zeroth access, stated as a condition
+
+**Proposition 1.4 (PROVED, elementary).** Let a hub apply an orthogonal projection F onto a designated subspace W before settling (keep the content, discard the rest). Then PFx = Px for all x iff ker D ⊆ W.
+
+*Proof.* PF = P iff (taking adjoints) FP = P iff range(P) ⊆ W. ∎
+
+READING. A categorising hub preserves everything that settles iff it discards nothing in the kernel. If it discards a comma direction as "noise" before settling, no later order can recover it. That is the zeroth-order document's "third order requires zeroth access", in the one form this triple can state: **the settled result is computed from the whole signal, and the comma is the first casualty of pre-categorisation.** Wiener's filtering begins with exactly such a designation: "let us treat u as a message and v as a noise" (*Cybernetics* Ch. III, printed p. 90). §5 returns to it.
+
+## §2 Gradient = no comma
+
+### §2.1 What one potential can hold
+
+**Proposition 2.1 (PROVED).** On any finite cell complex:
+(i) a flow ω = −δE with E a single scalar potential on the vertices has zero curl part and zero harmonic part;
+(ii) any aggregate of potentials E = Σ w_i E_i is one potential, so (i) applies to it;
+(iii) the best single-potential representation of an arbitrary flow ω is its exact projection, and the residual is exactly curl ⊕ harmonic.
+
+*Proof.* (i) and (ii): Hodge orthogonality (Prop 1.3) and linearity of δ. (iii): the least-squares problem min_E ‖δE − ω‖ is solved by the projection onto im δ (Jiang–Lim–Yao–Ye 2011, Thm 3). They state it this way: the gradient component "represents the l2-optimal global ranking", and "cyclic rankings have zero projection on global rankings". ∎ COMPUTED: 300 random clique complexes; the decomposition dimensions add up in 300/300, and aggregates of three random potentials have zero curl and zero harmonic part in 300/300 (CHECK3a).
+
+The same holds in the continuum. For any metric g on a manifold M, the field −∇_g E is g-dual to the exact 1-form −dE, so its integral around every closed loop is zero. A harmonic 1-form, of which there are b₁(M) independent ones, has no potential.
+
+### §2.2 Scott's Technique is one potential, throughout
+
+Scott Gardner, internal draft (confidential, shared with Alex), formalises Ellul's Technique as
+
+  θ_{t+1} = θ_t − η∇_θE(θ_t),
+
+with E an "inefficiency potential" on a socio-technical manifold M with metric g. He reads Ellul's *Monism* as "Technique collapses plural value systems into a single metric". (Ellul's own text, verified: "The technical phenomenon, embracing all the separate techniques, forms a whole. This monism of technique…"; monism is one of seven characteristics Ellul lists, after rationality and artificiality.)
+
+I read every equation in the draft. Each one is a gradient of a single scalar, or a scalar condition on one:
+
+| Draft element | Non-gradient term? | Why |
+|---|---|---|
+| core update θ − η∇E | no | definition |
+| self-amplification dη/dt = γ‖∇E‖ ("Theorem 1") | no | η rescales the step and never changes its direction. The flow lines are those of −∇E |
+| lock-in ∇E(θ*) = 0, ∇²E ≻ 0; hysteresis ΔE_escape | no | conditions on E |
+| totalisation E_global = Σ_i E_i(θ_i) + Σ_{i≠j} w_ij D_ij(θ_i, θ_j), updated by ∇_θE_global | no | one scalar, however many terms, and however asymmetric w_ij or D_ij are |
+| dimensional collapse dim span{∇E(θ_t)} ≪ dim M | no | a statement about which directions a gradient flow visits |
+| metric g | no | a natural gradient g⁻¹∇E is still a gradient for g |
+
+**Finding (PROVED for each row).** Scott's model contains no non-gradient term. It is exact by construction: Ellul's Monism, written as mathematics, *is* exactness.
+
+Two consequences.
+
+**(a) The draft formalises one of Technique's two blind spots and not the other.**
+- §11 of the draft, "value directions" v with ⟨∇E, v⟩ = 0, is **indifference**: directions the potential does not move. In the triple these behave like H⁰, tonics a gradient leaves alone.
+- The second blind spot is **circulation**: a flow around a loop that no potential can express at all, however it is shaped. The draft has no object for it. Its state is θ ∈ M, a vertex-type variable, and the only relational quantities it can form are differences of states. In graph terms, every edge quantity in the model is δθ, exact by construction.
+- **A comma needs a relational degree of freedom that is not a difference of states.** Scott's model has none, so it cannot represent a comma. The model does not deny commas; it cannot write one down.
+
+**(b) Where a non-gradient term would enter, and what it is.**
+- If each domain descends only its own objective in its own variable, θ_i ← θ_i − η∇_{θ_i}[E_i + Σ_j w_ij D(θ_i, θ_j)], the joint field is in general **not** a gradient.
+- For quadratic D its Jacobian has antisymmetric part ½(w_ij − w_ji). COMPUTED (CHECK4): with (w₁₂, w₂₁) = (2, 0.5), the circulation around the unit circle is −4.7124 = π(w₂₁ − w₁₂). Under the draft's global update it is 0.0000 for the same weights.
+- That is the game-theoretic split into a potential part and a rotational part. LEAD: Monderer–Shapley's potential games, and Balduzzi et al.'s symmetric/antisymmetric decomposition of the game Jacobian, are being checked (Sources).
+- This term is **curl in state space**: local circulation from asymmetric coupling. It is not the harmonic comma of §3, which needs a loop in the relational structure. Both are non-gradient. The draft has neither.
+
+### §2.3 Two monisms sharing a thing
+
+§3.2's Theorem 3.2 is the bridge. Put one Technique on A's site (one potential E_A) and another on B's (E_B), each exact on its own domain. Glued over the thing they share, they produce a harmonic, non-gradient flow **exactly when E_A − E_B, evaluated on the shared thing, is not constant**, or more generally not absorbable by either side's re-description.
+
+READING. Totalisation in the draft's sense replaces E_A and E_B by one E_global. The theorem says what that replacement must lose. Whatever the coupling, one potential can only represent the exact part. The difference between the two potentials on the shared thing, where it is not absorbable, is exactly what one potential cannot hold. **Technique can make two parties agree on their states (H⁰). It cannot represent the comma that exists because they share a thing (H¹).**
+
+### §2.4 A note on the draft's collapse modes
+
+For E(x) = x² and η = 1, discrete descent alternates 1, −1, 1, … with E constant (CHECK4b). In general, gradient descent with fixed step η on an L-smooth E is stable only for η < 2/L (PROVED here for quadratics: the iteration factor is 1 − 2η per unit curvature).
+
+The draft's §15.1 "hyperoptimization collapse" (η_t → ∞) is this discretisation instability, which its own η-dynamics guarantees eventually. That is a property of step size, not of topology. It produces oscillation without a comma.
+
 ## §3 The thing they share
 
 ### §3.1 No shared thing, no disagreement; one road, no disagreement
