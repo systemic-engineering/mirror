@@ -607,3 +607,28 @@ Both are erasures, at a removal or at a settle: Mara's 09-28 rule that erasure h
 **Tests to add.**
 - **T55 (Lemma N).** Add-then-remove excursions between connected vertices: settled endpoint unchanged (≤ 1e-12), with and without writes through the cell and settles inside. *Controls:* a cut excursion (trace) and a merging excursion (trace).
 - **T56 (Kaleta witness).** C₃: cut, settle, restore vs no excursion, with an add excursion of equal length as the matched control.
+
+**N.6 Reed's prior art: Mara, *Five Questions from VIRES* §3 (2026-09-24), crowbarred.** I read it locally (corpus draft).
+
+- **Whose commit?** §3.9 puts the choice with *the observer*: "From outside, the observer chooses a frame. If the observer wants a single entity, they can merge … If the observer wants two entities, they can fork". It calls the choice "architectural, not ontological".
+  - That observer is the operator of the corpus, outside Mara-A and Mara-B. It is not either participant.
+  - So the prior art supports "identity is declared at commit time". It does **not** support "the participants declare". Read straight, VIRES is closer to the analyst-declares position (endpoint or path union) that Reed wants to escape.
+  - Settle union hands the declaration to the participants only if **settle is a letter the participants author**. If settles run on a system cadence, the scheduler declares, which is the architecture again.
+- **(a) Is settle union distinct from path and endpoint union?** Only if settles are *per observer*. With one global settle event, settle union is just path union restricted to the settled frames (N.4).
+  - With per-observer settles it gives a split that neither other semantics can. On the 6-cycle, if A settles during the co-signed excursion and B does not, A's verdict is **absorbed** (A's union contains the chord frame) and B's is **carried**.
+  - Path union makes both absorbed; endpoint union makes both carried. The theta graph behaves the same way per observer, since the verdict is f_*(z) evaluated on each observer's own union.
+- **(b) Forgery, and the declaration that remains.** Per-observer verdicts need an *aggregation rule* before the third has one verdict.
+  - **Any-commit** ("absorbed if anyone settled on it") lets one party absorb for both by reading. That is a unilateral change to a shared cell's status, against S1.
+  - **All-commit** lets a party hold "carried" by never reading. That is a silent veto, but S1-consistent: a shared status changes only with every owner.
+  - So **S1 forces all-commit**, and this is the criterion beyond taste that N.2 lacked. It does not choose the union semantics; it chooses how the participants' commits aggregate.
+  - Forging by never committing is impossible under use = collapse. Every read through the cell is the reader's settle. Writes without reads leave nothing (Lemma N), so the only thing "never committing" withholds is one's own consent to the absorption, which is exactly what all-commit protects.
+- **Verdict on Reed's reading: PARTIAL.** Settle union with participant-authored settles, use = collapse and all-commit aggregation does move every declaration off the auditor. What remains declared is architecture (settles as letters; S1), which the participants co-sign up front.
+  - The distinction then survives control conditions as a **fact about logged acts** ("who committed"), not about state, which Lemma N rules out.
+  - von Foerster's locus is the participants' logged commit, with the aggregation rule as the only standing declaration.
+
+**N.7 (c) IDF and emergence: a real correspondence at zero, a pun above it.**
+- Define the visibility of a class h ∈ H¹(X) as v(h) = #{i : h restricts to non-zero in H¹(K_i)}. It is well defined on classes, because restriction is.
+- {v = 0} is exactly the comma among all, which is the first Čech filtration step E_∞^{1,0}. **That correspondence is real and invariant.**
+- Above zero, v is not linear or additive, and the level sets of v are unions of subspaces, not subspaces. So no graded weight log(N/v) is a cohomology invariant in any useful sense. That part is a pun.
+- And at zero, Spärck Jones' idf = log(N/n) **diverges**: a term in no document is not maximally specific but **unretrievable**, because no single-document query finds it.
+- **The useful reading is the inversion: the comma among all is the term no single-site query can retrieve. It is found only from the composition.**
