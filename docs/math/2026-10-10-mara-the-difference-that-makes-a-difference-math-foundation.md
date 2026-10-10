@@ -425,3 +425,118 @@ An instrument that touches the thing in two disconnected places and connects the
 READING. An instrument whose site contains the loop is von Foerster's third. In Seam's reading of *On Constructing a Reality* (crowbar §A.1, item 3): "there must be a third that is the central reference … reality = community". Such an instrument makes the comma between A and B visible to someone without changing X and without writing a cell: gauge-neutral observation that dissolves invisibility, not disagreement.
 
 **Caveat (open, Seam's D2).** Definition 2.2 counts writes, so a read-only instrument has c_M = 0. A count of what an observer can *distinguish* would differ. On that count the question-as-observation can widen (crowbar §A.2). Theorem 7.1 is about the commas, not about anyone's choice-count, so it does not depend on this. A reading-count version of c_M is open.
+
+## §8 Many shards, compiled at once
+
+*Added at Alex's request (2026-10-10, relayed by the coordinator): "look at the existing sheaf cohomology resources in docs/math … and how these compose with the idea of a non-linear compilation where many sheafs (shards) are compiled/computed at once."*
+
+### §8.1 Setting
+
+- N subjects, or shards, declare closed sites K_1, …, K_N covering X.
+- For σ ⊆ {1, …, N}, K_σ = ⋂_{i∈σ} K_i. The nerve 𝒩 has a simplex for each σ with K_σ ≠ ∅.
+- The **comma among all** is ker(H¹(X) → ⊕_i H¹(K_i)): disagreements no shard sees alone.
+- Constant sheaf, graph, as before.
+- Computations: `cech.py`, `cech_fix.py`, output `cech.out`, on 1200 random 3- and 4-site covers.
+
+### §8.2 The Čech structure
+
+**Theorem 8.1 (PROVED; standard construction, applied here to closed subcomplex covers).**
+(i) The generalised Mayer–Vietoris sequence 0 → C•(X) → ⊕_i C•(K_i) → ⊕_{i<j} C•(K_ij) → … is exact.
+(ii) Hence there is a spectral sequence with E₁^{p,q} = ⊕_{|σ|=p+1} H^q(K_σ) and E₂^{p,q} = Ĥ^p(𝒩; H^q), converging to H^{p+q}(X).
+
+*Proof of (i).* Fix a cell c. The sites containing it form a non-empty set S(c), and the part of the sequence that involves c is the augmented cochain complex of the full simplex on S(c), which is acyclic. (ii) is the double-complex spectral sequence of (i) (LEAD for the textbook page: Bott–Tu §8, being checked). ∎
+
+On a graph, H^q = 0 for q ≥ 2. That gives three statements.
+
+**Corollary 8.2 (PROVED; COMPUTED 1200/1200 each).**
+(a) H⁰(X) = Ĥ⁰(𝒩; H⁰). Settling each shard and gluing by the equaliser recovers every tonic exactly.
+(b) The comma among all ≅ Ĥ¹(𝒩; H⁰). Its dimension is computed from the components of the overlaps alone, by union-find on each K_σ.
+(c) b₁(X) = dim Ĥ¹(𝒩; H⁰) + dim Ĥ⁰(𝒩; H¹) − dim Ĥ²(𝒩; H⁰).
+
+*Proof.* (a) E₂^{0,0} = E_∞^{0,0}. (b) Nothing hits E^{1,0} and nothing leaves it (E^{−1,1} = E^{3,−1} = 0), so E_∞^{1,0} = E₂^{1,0}. It is the first filtration step of H¹(X), namely the kernel of the edge map to E^{0,1} ⊆ ⊕_i H¹(K_i). (c) E_∞^{0,1} = ker(d₂ : E₂^{0,1} → E₂^{2,0}). Since H²(X) = 0 and only d₂ reaches E^{2,0}, that d₂ is onto. ∎
+
+For two shards, the spectral sequence is the Mayer–Vietoris sequence of §3, and the comma between is the first-level term.
+
+### §8.3 Owned by a triple: a comma, and a relation
+
+The lead asked: is there a genuinely three-way obstruction that no pair shows? Yes, in two different forms, and neither is a new H² class of X on a graph.
+
+**A comma owned by a triple (PROVED; COMPUTED).** Cut C₆ into three arcs K₁ = 0–1–2, K₂ = 2–3–4, K₃ = 4–5–0. Each pair meets in one vertex, and there is no triple overlap.
+- Every pair-union K_i ∪ K_j is a path, so every pairwise comma is 0.
+- The comma among all is 1, which is Ĥ¹ of the nerve: a hollow triangle.
+
+The disagreement exists only for the three together. No pair, asked in isolation, finds it.
+
+Over 1200 random covers, 171 carried a class invisible to every pair-union.
+
+**A relation owned by a triple (PROVED; COMPUTED).** Take the theta graph: two vertices p, q joined by three paths a, b, c. Shard i holds the two paths other than i, so each shard is a cycle and holds one comma of its own. Each pairwise overlap is one path (connected), and the triple overlap is {p, q} (two components).
+- Ĥ⁰(𝒩; H¹) = 3: three local commas, pairwise compatible.
+- Ĥ²(𝒩; H⁰) = 1.
+- b₁(X) = 0 + 3 − 1 = 2.
+
+The three local commas satisfy one relation (with orientations, c_ab + c_bc + c_ca = 0) that only the disconnected triple overlap imposes. Ĥ²(𝒩; H⁰) counts **relations among local disagreements that no pair shows**. It does not count new disagreements.
+
+With 2-cells, E_∞^{2,0} can survive into H²(X), giving a genuine two-dimensional obstruction owned by triples. That is open here.
+
+### §8.4 Global settle vs local settles: what compiling "at once" is needed for
+
+**Theorem 8.3 (PROVED; COMPUTED 1200/1200).** Extend each shard's harmonic flows Z(K_i) by zero. Their span Σ_i Z(K_i) ⊆ Z(X) has codimension exactly the dimension of the comma among all.
+
+*Proof.* A flow of a closed subcomplex, extended by zero, is a flow of X. So Σ_i Z(K_i) is the image of ⊕_i H₁(K_i) → H₁(X). Over ℝ this map is adjoint to restriction H¹(X) → ⊕_i H¹(K_i) under the cycle/cocycle pairing, so the two have equal rank. The codimension is b₁(X) minus that rank, which is the dimension of the comma among all. ∎
+
+**What this says about non-linear compilation (PROVED parts, labelled).**
+1. **Tonics compile shard by shard.** Each shard settles alone, and H⁰ glues by the equaliser (8.2(a)). Shards with disjoint write footprints are independent letters under `Polyphony`, so their settles commute and may run in parallel (comma doc Prop 2.1).
+2. **Each shard's own commas compile shard by shard** (Σ_i Z(K_i)).
+3. **What no shard-by-shard compilation can produce is exactly the comma among all** (8.3). Its dimension is a nerve computation on overlap components (8.2(b)): cheap, discrete, certifiable by union-find. Its representatives are flows that cross shards, and they need one coupled solve, the global settle.
+4. Hansen–Ghrist's sheaf heat flow, the global settle, converges to the projection onto H⁰ (LEAD for the exact statement: being checked). It is the operation that sees the comma, because the comma is invisible from inside every shard.
+
+READING. "Compiled at once" is needed **for the commas, and only for them**. Everything else is parallel. The overlaps are where order and disagreement live.
+
+Theorem 3.4(d) adds one warning that the slogan "parallel where independent" does not carry. Trace-independent private writes can still contest a comma, so commuting local settles do not imply a comma-free glue. That bears on the floor document's §1.6.3 conjecture (independence = premonoidal centrality) only obliquely. Centrality is about interchange in the record, and (d) is about interference in the settled output. I do not claim either implies the other.
+
+### §8.5 Incremental compilation: the locality bound
+
+**Theorem 8.4 (PROVED; COMPUTED).** Let a change touch only cells of K_i that lie in no other shard (private cells).
+(i) Every Čech term indexed by a σ not containing i is unchanged. The comma among all can change only through H⁰(K_i) and the restriction maps out of it. **The radius of influence is the star of i in the nerve.**
+(ii) For a new private edge inside one component of K_i: b₁(X) rises by 1, the new class is K_i's own, and the comma among all is unchanged (760/760).
+(iii) For a new private edge joining two components of K_i, with X connected: the comma among all rises by exactly 1 (612/612 changed; 246/246 by +1 in a separate sample).
+
+*Proof.* (i) Only the K_σ with i ∈ σ contain changed cells, and private cells lie in K_i alone. (ii) No b₀ of any K_σ changes, so 8.2(b) is unchanged.
+
+(iii) Write X′ = X + e.
+- The indicator χ_e is a cocycle on X′. It is not a coboundary, because the endpoints of e are already connected in X, so e lies on a cycle.
+- On K_i′, e is a bridge, so χ_e restricts to a coboundary. Every other shard misses e, so the restriction there is 0.
+- H¹(K_j′) ≅ H¹(K_j) for every j, and the old classes restrict as before.
+- So b₁ rises by one, the rank of the restriction map is unchanged, and the comma among all rises by one. ∎
+
+READING, and a design consequence (CONJECTURE for the claim of sufficiency). A shard's contribution to the global comma computation is the tuple (b₀(K_i), b₁(K_i), the component maps K_σ → K_i for σ ∋ i). That tuple is exactly the output on which Salsa-style red–green *early cutoff* should key: if an edit leaves it unchanged, no recomputation outside the shard is needed. The corpus's Crystal/Fractal/Splinter document cites Salsa, Adapton and Roslyn accurately (§5), but never states what the cutoff key is for a sheaf. This is a candidate. The conjecture is that the tuple is also *necessary*, that no smaller key suffices. It is open.
+
+### §8.6 What the corpus already has, and what not to import
+
+I had the eleven listed corpus files and `sheaf/` read critically in full (`sheaf/` holds `README.md` and `laplacian.md`). The verdict, compressed.
+
+**Sound and used here.**
+- The cellular sheaf, δ, Δ = δ*δ and ker Δ⁰ ≅ H⁰ (`sheaf/laplacian.md` §1–3; composition-tower 09-13 §2.1).
+- The Čech complex C^k = ∏ F(U_{α₀…α_k}) (07-23 fractal-shard §7.1).
+- The triple-overlap cocycle condition (07-22 §5; the only file that states it correctly, and the coefficients there are nonabelian).
+- Restriction to a subgraph gives a map H⁰(X) → H⁰(X_K), not an isomorphism (Rec #89 §6).
+- dim H¹ = |E| − |V| + c for the constant sheaf (09-02 task §4.7).
+- Per-shard O(|body|) checks with local invalidation (07-23 kintsugi §5).
+- Collapse-by-content-hash into agree / disagree / unsettled (09-11 Ariadne §5).
+- The incremental prior art (09-08 §5).
+
+**Not imported, with the reason in one line each.**
+- λ₀ or λ_min read as the spectral gap, and PL contraction of λ₀ across iterations (laplacian.md §2.1, §6; Rec #89 §2.3, §4.4). The gap belongs to the complement of the kernel, and an operator's eigenvalue does not contract under iteration of a vector.
+- H¹ = coker δ¹, and "H¹ → H⁰" mass transfer (Rec #89 §3.3, §4.3). Both are ill-typed.
+- "K₅ simply connected ⇒ H¹ = 0" (language 09-02 §2.2). b₁(K₅) = 6.
+- Stalks that are not vector spaces, and partial "restrictions" (07-22 §2; 07-23 §2; Rec #89 §1; 09-13 §1.3). These are not sheaves.
+- 07-23 fractal-shard Thm 7.2, "a mend is supported only at the overlap". False in general: δ of a 0-cochain on U_i hits every U_ij. Theorem 8.4(i) is the correct locality statement: the star of i, not the overlap alone.
+- "Each discharge lowers dim H¹ by 1" (07-23 kintsugi §4, §7). Adding an edge never lowers b₁.
+- Fiedler strict rise as a law (phase-1 P3; task L3). It holds for the join that `kleinos.rs` builds, and not in general. The code is a graph with no stalks. It computes λ₂ of D − A via LAPACK.
+- "Every shard is a Connes triple" (07-23 §5), and (A, H, D) = (sheaf, content-addressing, void) (phase-1 §28). Both contradict the corrected triple.
+
+### §8.7 Per-overlap counts: defined, not proved
+
+Definition: c_σ := dim P(C(K_σ)), so for two shards c_{AB} = c_I. Theorem 3.4(b) is the two-shard case of a relation between Σ_i c_i, Σ_{i<j} c_ij, … and dim ker D, with a correction term (k̃ at N = 2).
+
+CONJECTURE: for N shards, the correction is a Čech-type alternating sum of private-cover commas. It is not proved and not computed here.
