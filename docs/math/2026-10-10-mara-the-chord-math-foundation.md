@@ -535,6 +535,80 @@ This is the third move of Mirror. Offer. Wait. as a gauge clause, and Seam's "ow
 
 The comma doc's G⊇ constrains reachable values. It says nothing about the death of carriers.
 
+### §4.6 Exit: what a relation leaves behind (Seam audit §O, plus Reed's (a)–(c), tested)
+
+**Seam §O, folded (cited, COMPUTED by Seam in `exit.py`; I read §O.1–O.5).** Base fixture: C₆, crossroads at I = {0, 3}.
+
+**O.1 Only the mediated bridge has ends.**
+- The mediated bridge 0–a–m–b–3 has m shared, with A holding 0–a–m and B holding m–b–3.
+  - It is the only compatible bridge shape with per-side ends.
+  - It is **the third**: (c_A, c_B, c_I, k) = (3, 3, 1, 2). The bridge loop is a comma, invisible to both.
+- The co-signed chord is an **adoption** with no ends: (3, 3, 2, 0).
+- The shapes 0–m–3 and 0–a–b–3 are inadmissible.
+- This matches §1.2 here: a third that is to be owned needs a vertex of its own.
+
+**O.2 Exit is bounded by the pre-relation baseline.**
+- When B cuts its own segment of the mediated bridge, the counts go (3, 3, 1, 2) → (2, 2, 1, 1), which is exactly the baseline.
+- For a co-signed cell, compatibility forces the cell to go for both parties, so S1 gives way, again bounded by the baseline.
+- The boundary is exact:
+  - **Alone, a party may** cut its own cells, retreat from its own membership, author its own Wait or Release, and settle for itself.
+  - **Exit may narrow others only down to the baseline.** That is the one admissible exception to S3.
+  - **Never alone:** write or keep the other's cells, add a shared cell, change the aggregate verdict, absorb for both, or erase or rewrite the log.
+
+**O.3 Topology enforces non-interference.** After a Release on the mediated bridge, A's remaining half is pendant.
+- A write on it settles to 4·10⁻¹⁶.
+- Before the Release, the same write moved B's private edges by 0.091.
+- On a co-signed cell, holding on alone is the inadmissible one-sided monument.
+
+**O.4 Abstention is Wait(r_W).** Wait(0) holds the carrier; Wait(r) is "undecided". **Release is a separate letter**, because a Wait cannot say no.
+
+**O.5 Release must be an immediate cut.** As decay, B's segment would stay live for L* = 6.2, 20.7 or 62.1, and A's reads in that window would act on cells B has left. With an immediate cut, the death and the letter are one log entry.
+
+**(a) Structure is bounded by the baseline; values are not (PROVED; COMPUTED `exitvals.py`).** Reed's composition, tested.
+
+**Proposition 4.9.** Let a relation add bridge cells (with vertices) to X, forming U. Allow any sequence of writes on bridge cells and settles on U. Then a clean exit removes the bridge cells, except that a pendant half may remain, and the frame settles. On the baseline cells, compared with the never-related history:
+- (i) **every baseline comma coordinate is restored exactly**;
+- (ii) **the tonics are not restored**: the H⁰ part carries the averaging over U's vertices, including the bridge's written values.
+
+*Proof.* (i) For h ∈ Z(X), its zero extension satisfies ext h ∈ Z(U) ⊆ ker D_U. So P_U preserves ⟨·, ext h⟩, and writes on bridge cells are orthogonal to ext h (disjoint support). After exit, h is again harmonic in the exit frame, because a pendant half adds no cycle. This is Lemma N's H¹ half, extended to added vertices and any number of settles. (ii) P_U on H⁰ replaces vertex values by means over U's components, and U has vertices X does not. ∎
+
+COMPUTED, 200 trials, 3 settles each, with writes on the bridge between settles:
+
+| fixture | max change of a comma coordinate | median tonic shift |
+|---|---|---|
+| C₆ crossroads | 8·10⁻¹⁵ | 0.169 |
+| two previously unrelated cycles | 9.8·10⁻¹⁵ | 0.447 |
+
+Seam's Lemma N assumed no new vertices. With a mediated bridge the vertex set grows, and that is exactly where the tonic trace comes from.
+
+**So "exit returns to the baseline" is true of structure (counts, frame up to a pendant) and of every comma, and false of the tonics whenever the relation settled across contact.** The selves are not restored, the disagreements are, and the frame is. That is T57 (the settled merge erases) at the scale of a relation, and it is VIRES §3.10's inversion again.
+
+**(b) Is the persisting tonic change a consent problem? Mostly no, with one qualification (READING; the operator facts are PROVED).**
+- The contact was co-signed (m is shared, so S1), so the cell through which mass moved was consented.
+- What is consented is an **operator class**, not an outcome. Every settle is an orthogonal projection: norm non-increasing, and on H⁰ it replaces values by component means, a convex combination of present values.
+  - The *kind* of change is foreseeable: you move toward the shared mean, never outside the convex hull.
+  - The *amount* is not: it depends on what the other wrote and when they read.
+- Under use = collapse, every read by the other is such a settle. So signing the shared cell signs every future settle through it, until Release. This is the "consent you can't foresee" that Reed worried about. It is bounded in three ways: by the operator class, by the immediate-cut Release, and by the log.
+- Ruling: **legitimate erasure** is erasure by settles through a co-signed cell, between its co-signing and a Release.
+  - It survives exit, and it should. Undoing it would require rewriting the other's settled values, which is a write on the other's cells, and §O forbids that.
+  - Its legitimacy is *procedural* (signed at the time, bounded by class and window), not *substantive* (the amount was not foreseen).
+- The qualification: the window is only as bounded as the Release is available. A party who cannot release, because Release is blocked, slow, or decay-implemented (O.5), is consenting beyond what it signed. **Hence Release must be immediate and always available.** I count this as part of the consent, not an extra.
+
+**(c) What a relation leaves behind (PROVED for the triple; the naming is READING).**
+
+**Proposition 4.10 (the remainder of a clean exit).** After a relation on a mediated bridge ends by an immediate-cut Release, with A keeping or dropping its pendant half, exactly three things differ from the never-related history:
+1. **the log**, always (§4.5: nothing structural without an entry);
+2. **the tonic displacement** from settled contact (Prop 4.9(ii)), legitimate per (b);
+3. **a value-isolated pendant**, if A keeps its half: counts-neutral, and any write on it settles to 0 on everyone else's cells (O.3).
+
+All baseline commas are restored exactly (Prop 4.9(i)), and the counts equal the baseline (O.2).
+
+*Proof.* Assemble O.2, O.3 and Prop 4.9. ∎
+
+READING. **A relation leaves behind its log and what the two became by touching. It leaves none of the disagreements it carried, and no reach into the other.** The third's own comma, the bridge loop, is erased at the Release, which is a signed erasure in the one letter that makes it. The remembered half is memory without leverage.
+
+**A caveat on "commas restored".** The baseline commas come back *as they were*. Any disagreement A and B had *before* the relation is still open, exactly. A relation can carry a third, but it cannot resolve the crossroads unless it was co-signed into adoption (and then Release cuts that too). So exit does not undo a quarrel, and it does not settle one either.
+
 ## §5 Non-linear coupling and the certified settle
 
 **Theorem 5.1 (PROVED).** Let ẋ = −D²x + N(x) on H, with P the projection onto ker D and μ the smallest non-zero eigenvalue of D².
@@ -669,6 +743,11 @@ Numbering continues from the Oct 10 document's T30.
   - The aggregate verdict is "carried" only while B holds a signed Wait.
   - Unsigned non-reading must be flagged as forbidden.
   - Under series composition, the carrier's death by B's neglect must be logged as B's unsigned erasure.
+- **T59 bridge shapes (Seam).** Compatibility of the five shapes in §O.1. The mediated bridge gives (3, 3, 1, 2) with k = 2.
+- **T60 release (Seam).** Releasing the mediated bridge gives (2, 2, 1, 1), and a write on A's pendant half settles to 0 on B's cells.
+- **T61 release window (Seam).** A decay-implemented Release leaves a live window of L*(r_B): 6.2, 20.7, 62.1. An immediate cut leaves 0.
+- **T62 commas restored, tonics not (Prop 4.9).** With any writes on bridge cells and any number of settles on U, the comma coordinates of baseline loops after exit equal the never-related ones (≤ 10⁻¹²), while the tonic shift is > 0 whenever a settle crossed contact with bridge vertex mass. *Control:* no settle during contact.
+- **T63 the remainder (Prop 4.10).** After an immediate-cut Release, the state differs from the never-related history only in H⁰ on the formerly connected component(s) and on the pendant cells. The log contains the Release as the entry of the bridge loop's erasure.
 - **T54 the unlogged move.**
   - Delete a cell without a log entry. The verdict must become "no frame map", and resumption must demand a declared identification.
   - Logging the identification afterwards must not change the verdict for any interval before it.
