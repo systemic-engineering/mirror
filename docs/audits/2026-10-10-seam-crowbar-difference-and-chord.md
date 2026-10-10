@@ -534,3 +534,76 @@ Angle rule "renew iff ∠ < τ", scored against canonical truth:
 **Tests to add.**
 - **T50.** The held bridge loop under private drift only: canonically carried in 100% of cases while ∠ > 30° in more than half. *Control:* a co-signed I-edge absorbs the crossroads class, and its image in coker_U is 0.
 - **T51.** τ sweep against canonical truth, reproducing the M.3 table.
+
+## §N Addendum: which history counts? Crowbar of *The chord* Prop 4.8 (62293cf)
+
+Script: `history.py`. The state is x ∈ C⁰ ⊕ C¹ over a fixed edge index. A settle sets x ← P_frame·x, and removing a cell erases its value.
+
+**N.1 Lemma N (new, PROVED; COMPUTED). An excursion that adds cells and then removes them leaves no settled trace, provided it joins only vertices that were already connected.**
+
+Let U ⊇ X have the same components. Then
+
+  P_X ∘ res ∘ P_U ∘ ext = P_X,
+
+and any write supported on the added cells settles to 0 in X.
+
+*Proof.*
+- Take h ∈ Z(X). Its zero extension lies in Z(U), so ⟨res P_U y, h⟩ = ⟨P_U y, ext h⟩ = ⟨y, ext h⟩. For y supported on U ∖ X, this is 0.
+- H⁰ is unchanged because the components are unchanged.
+- By linearity, every *future* settled observation coincides too. ∎
+
+COMPUTED:
+- 6-cycle with the chord (0,3): the settled endpoint differs from the no-excursion case by ≤ 8 × 10⁻¹⁵ for add-then-remove, add-settle-remove, and add-write-through-the-chord-settle-remove (300 each).
+- Random graphs: no trace in 281/281.
+- The raw, unsettled state does differ (median 2.9). Only an observer with zeroth access can see it.
+
+**Where real, undeclared trajectory dependence lives:**
+- **cut excursions**: remove a cell, then restore it. There is a trace in 281/300 with a settle inside. Erasing the cut cell's value already leaves a trace without a settle (median 0.30), and a settle inside raises it to 0.69, because the settle erases the comma coordinate;
+- **merging excursions**: an added cell that joins components moves H⁰ mass between them. Trace in 19/19.
+
+Both are erasures, at a removal or at a settle: Mara's 09-28 rule that erasure happens at settle, together with Landauer.
+
+**N.2 Reed's point 1: is Prop 4.8(i) trivial by declaration? Yes.**
+- Its two logs (no move; co-sign (0,3) then remove) are Nerode-equivalent for *every* settled observation, present and future (Lemma N).
+- Under the matched null that holds the moves, endpoints and presence time fixed and varies only co-signed vs third-held ownership, the states are identical *by construction*: settle is ownership-blind, because D does not know owners. Only the gauge verdict differs, and it differs because the sites are declared differently.
+- So 4.8(i) is the verdict function evaluated, not a fact about the system. It should be labelled **PROVED of the declared verdict semantics**, not "the log is constitutive" in any physical sense.
+- **Honest claim:** *identity semantics across an absorbing excursion is a gauge choice.*
+- Is there a criterion other than taste that forces path union? None that I can find in the mathematics.
+  - The candidate forgery, "B co-signed a resolution and A alone reopened it, and endpoint union calls it carried", is caught by **S1 on the removal letter**. Removing a co-signed cell needs both signers, whatever semantics the union uses.
+  - Once both have signed the removal, "carried" vs "returned" is a naming difference that no settled observable can witness.
+  - Path union is admissible as a declared preference for an honest *narrative* ("returned, not carried"). It does not force itself.
+- **Prop 4.8(ii)** (re-identification swaps the verdicts) stands on its own. There the frame map *is* the content, and no union semantics removes that.
+
+**N.3 For Kaleta ("state equivalence ≠ trajectory equivalence; smallest system that survives control conditions"): do not use 4.8(i).**
+- **Use the cut excursion.** Take one loop (C₃ suffices), cut an edge, settle, and restore it.
+- The endpoint frames are identical, and the future settled outputs differ (the comma coordinate has been erased).
+- The matched control is an *add* excursion with the same move count and presence time. It leaves no trace (Lemma N).
+- The variable that survives the control is **erasure**: whether a carrier of the loop was missing when someone settled. That is not ownership, and not a declaration.
+- Kaleta's distinction holds exactly at the erasures. Adds are reversible for settled observers, and cuts and merges are not.
+
+**N.4 Reed's point 2: settle union.**
+
+6-cycle, co-signed chord excursion:
+
+| Semantics | no settle during the excursion | a settle during the excursion |
+|---|---|---|
+| path union | absorbed | absorbed |
+| settle union | carried | absorbed |
+| endpoint union | carried | carried |
+
+- So settle union coincides with endpoint union when nobody settled, and with path union when someone did. All three tables are distinct only across that split.
+- **Gaming.** Co-sign, write through the chord, remove before the next settle. This launders *nothing*: by Lemma N, even with a settle inside, the settled endpoint carries no trace.
+- What a mid-excursion settle *does* change is the observer *during* the excursion: P_U x ≠ P_X x, and decisions taken on that state are real.
+- Reed's "a settle is the event that changes an observer" is right, read as "changed during", not "different at the end".
+- **use = collapse** (every letter that reads through the cell forces a logged settle) closes the only gap: unlogged *reads* of the excursion's settled state. Writes without reads leave nothing to launder.
+- **Recommendation:** settle union with use = collapse is the semantics that counts exactly the excursions some observer acted on. Path union also counts excursions nobody acted on, which are invisible by Lemma N.
+
+**N.5 Reed's point 3: matched null for T52.**
+- Same moves, endpoints and presence time; ownership varied.
+- Result: identical raw *and* settled states, because the settle cannot see owners. Only the verdict differs.
+- The variable is ownership history, and it moves the *gauge*, never the *state*, in the linear triple.
+- It would move the state only under site-relative dynamics (my §C metabolism). There ownership enters the physics, and the matched null would test something real.
+
+**Tests to add.**
+- **T55 (Lemma N).** Add-then-remove excursions between connected vertices: settled endpoint unchanged (≤ 1e-12), with and without writes through the cell and settles inside. *Controls:* a cut excursion (trace) and a merging excursion (trace).
+- **T56 (Kaleta witness).** C₃: cut, settle, restore vs no excursion, with an add excursion of equal length as the matched control.
