@@ -142,3 +142,166 @@ READING, the chord.
 - Notes are sites. Intervals are edges, and an interval is owned by neither note: under an owner map a crossing edge needs a declared owner, and a shared edge has none (Prop 1.2).
 - The chord's quality is Θ together with its 2-cells (§6.3): it lives in no note and no interval.
 - "It exists only while sounding" is §4. Θ lives exactly as long as the bridges that carry its loops are metabolised.
+
+**Alive is a class (adopted, from Seam's comma).** alive(t) :⇔ dim Θ(t) > 0. Held dissonance is counted by b₁ of the live frame.
+
+Reed proposed h > 0 as the class. I use Θ instead because h moves under homotopy (§1.3) and Θ does not. An edge with w > ε is a *carrier*. It is not the life. Every metabolism result below is read through Θ and b₁.
+
+## §3 Its own spectrum
+
+**Proposition 3.1 (PROVED; COMPUTED): structural emergence.** The spectrum of D² on the glued complex is not the union of the parts' spectra.
+- Each path P₄: {0, 2−√2, 2, 2+√2} = {0, 0.586, 2, 3.414}.
+- The glued C₆: {0, 0, 1, 1, 1, 1, 3, 3, 3, 3, 4, 4}.
+- Eigenvalues 1, 3 and 4 occur in neither part, and the kernel gains a direction (b₁: 0 → 1). The new kernel direction is Θ.
+
+The gluing creates frequencies. The comma itself sits at frequency 0.
+
+**Proposition 3.2 (PROVED): linear coupling sings no combination tones.** For ẋ = iDx, or for any linear time-invariant flow, x(t) = Σ_λ e^{iλt}P_λ x₀. The only frequencies present are eigenvalues of the operator.
+
+With a quadratic term, products e^{iλ₁t}e^{±iλ₂t} appear at λ₁ ± λ₂. COMPUTED (`chord.py` PART3):
+- cos t + cos 1.5t has spectral peaks at 1.01 and 1.49 only, and DC/max = 10⁻⁶.
+- Adding 0.3x² gives peaks at 0.5 (the difference tone), 1.0, 1.5, 2.0, 2.5 and 3.0, and DC/max = 0.65.
+
+Helmholtz states the physics (verified, Ellis trans., p. 152): superposition "holds strictly only in the case where the vibrations … are of infinitesimally small dimensions", and combinational tones result "from the fact that this law does not hold with perfect exactness". prismqueer's decay and ring are linear, so Reed is right. The engine can carry a third (Θ, and the new eigenvalues) but cannot make it sing new tones.
+
+**The difference tone of a mode with itself is DC.** A quadratic term turns a sounding mode into a constant. If that constant has a component along ker D, the non-linearity *writes into* Θ. §5 is about what that costs.
+
+**Kuramoto (verified, Strogatz 2000 §3.3).** "For all K less than a certain threshold K_c, the oscillators act as if they were uncoupled … r(t) decays to a tiny jitter of size O(N^{−1/2})". Above K_c, coherence grows. Strogatz does not say that the synchronised state decays when the coupling is withdrawn; that part is our inference. READING: "the chord exists only while sounding" is, in coupled-oscillator terms, coherence that exists only above a coupling threshold. In the triple's terms it is §4.
+
+## §4 Metabolism: what keeps the third alive, and what kills it
+
+### §4.1 The model
+
+- **Weighted triple.** Positive edge weights w (conductances) give D_w = W^{1/2}δ + δ*W^{1/2}.
+- **Proposition 4.1 (PROVED).** For w > 0, dim ker D_w = b₀ + b₁ and Θ has the same dimension as at w = 1. ker δ does not depend on w, and ker(δ*W) = W⁻¹ ker δ*. **Weights cannot change the third. Only a weight reaching 0 can.**
+- **Questions are traffic.** A question from a to b is a unit source/sink pair, settled by Kirchhoff on a declared site. In the site-relative model, A's questions settle on K_A, B's on K_B, and cross questions on X. In the ownership-blind model, every question settles on X. The flux is Q = Wδp.
+- **Adaptation** (Tero et al. 2007, eqs. (4)–(5), verified): dw_e/dt = f(|Q_e|) − r w_e, with f(Q) = Q^μ/(1 + Q^μ). Tero et al. 2010 write the exponent as γ and set r = 1.
+- **Death** is the declared crossing w_e < θ. The cell leaves the frame, which is a logged erasure. Deciding w < θ on a continuous w is a Buridan decision (Lamport, verified): it needs a declared θ and margin, as `settle` needs its gap.
+- Following Seam: the **death time** t₀ + ln(w(t₀)/θ)/r is a *declaration-relative* number. The invariant is the decay rate r once f ≈ 0.
+
+### §4.2 Results (alive = Θ)
+
+**Toy, one bridge with traffic intensity g (PROVED; COMPUTED).**
+- μ = 1, dw/dt = gw/(1 + gw) − rw: alive iff g > r, with w* = (g − r)/(gr). Computed: g = 2 gives w = 0.5000; g = 0.5 gives 0.
+- μ = 2 is bistable. From w₀ ∈ {0.05, 0.1} it goes to 0; from w₀ ∈ {0.2, 0.4, 0.8} it goes to 0.8727. A dead state and a live branch.
+
+**Literature (verified).**
+- For μ = 1 and a single source and sink, the dynamics converge to the shortest path (Bonifaci–Mehlhorn–Varma, Thm 2, linear f only).
+- For μ > 1, "the selection of the final path is dependent on the initial state". For 0 < μ < 1, "all … paths survive" (Tero et al. 2007 §4.1; both by simulation and two-edge analysis).
+- Tero 2010: increasing γ "drove the system toward a low-cost MST".
+- **When loops survive:** μ < 1, or ties at μ = 1, or loads that keep several paths in use.
+
+**8-cycle with a shortcut bridge** (A = path 0–4, B = path 4–0, I = {0, 4}, bridge (0, 4)). `metab.py`, `metab_mu1.py`, `closure.py`.
+- **Site-relative, co-signed bridge.** It persists after cross traffic stops (μ = 1 and μ = 2, eps ∈ {0, 0.3}). Θ_{A,B} = k = 0 throughout and b₁ = 2. **Under alive = class, there is no third here.** It was adopted, and the loops are each observer's own (κ_A = κ_B = 1). The edge lives as habit.
+- **Seam's correction (accepted).**
+  - Under ownership-blind Kirchhoff, co-signed and third-held bridges are indistinguishable, seed for seed. At μ ≥ 2, the co-signed bridge then dies too.
+  - At μ = 2 most of my "adoptions" were *absorption*: the bridge survives, a ring edge dies, and b₁ = 0 (8/10 seeds in Seam's runs).
+  - So adopt-versus-die is a property of the site-relative settle, and at μ > 1 adoption mostly ends in absorption. READING, which Reed asked me to state outright rather than as a caveat: **a relation can only matter to dynamics that include the observers.** Physics blind to sites cannot tell co-signed from third-held.
+- **Site-relative, bridge held by a third shard, μ = 1.**
+  - Cross share 0.6: alive, with Θ = 2 (the crossroads comma plus the bridge's loop) and c_T = 2.
+  - Cross traffic stops at 40: w decays at rate r = 1. The θ = 10⁻³ crossing at 43.45 matches the 43.3 predicted from w(40).
+  - After the crossing Θ = 1. The loop the third carried is gone. The crossroads comma remains, because the observers' own paths are metabolised by their own questions.
+  - Cross share 1/3: below threshold; the bridge dies even with continuous cross traffic.
+- **Reed's prediction, corrected.** "Without traffic it thins and held commas return as open questions":
+  - for a co-signed bridge, it never thins (habit);
+  - for a third-held bridge, the loops it carried *vanish*. They do not return as open questions. The open crossroads comma was never closed, because the third stood beside it rather than inside both observers.
+
+### §4.3 Operational closure: a third that produces what produces it
+
+Let the cross-question rate be generated by the third: pc = 0.3 · dim Θ. This is a modelling assumption, labelled: the comma is what the observers ask each other about (comma doc §4), so more comma means more crossing questions. Bridge held by a third shard, μ = 1, with a silence of length L imposed at t = 40 (`closure.py`).
+
+| L | outcome |
+|---|---|
+| 0, 1, 2, 3, 4 | survives |
+| 6 | dies at t = 44.0 and never returns |
+
+Predicted threshold: L* = ln(w(40)/θ)/r = 4.02.
+
+After death, Θ = 1, so pc = 0.3, which is below the threshold at which a bridge can be sustained. A dead cell also has no flux to regrow from. Death is absorbing.
+
+**Proposition 4.2 (PROVED for f = 0 during silence).** The third survives a silence of length L iff L < ln(w(t₀)/θ)/r. Survival after the silence then requires the regenerated rate to exceed the toy threshold g > r.
+
+Against Varela–Maturana–Uribe's six-point key (verified, BioSystems 1974 §9):
+
+| point | status here |
+|---|---|
+| (1) identifiable boundary | the cover's nerve (sites declared) |
+| (2) components | the bridge cells and their weights |
+| (3) mechanistic | Kirchhoff plus Tero |
+| (4)–(5) boundary components produced by interactions of the components | **CONJECTURE**: the bridge cells are produced by questions, and the questions by the comma the bridges carry (pc ∝ Θ). That closes a loop: comma → questions → weights → loops → comma |
+| (6) every component produced | **fails as modelled** |
+
+Point (6) fails because the observers' own paths are maintained by their own questions, not by the third, and because the rate function pc(Θ) is given from outside. It is the analogue of VMU's externally given catalyst, which the 2025 editors note (McMullin) was "not itself produced by the system". **Verdict: the third is operationally closed in its bridges, mortal, and partially autopoietic.** It is not autopoietic in the full six-point sense.
+
+READING, labelled. Adoption dissolves the third (k → 0) while the edge lives on as habit. The chord resolves into the instruments. Separation keeps the third alive only while the questions cross.
+
+### §4.4 Is μ Technique? Two kinds of Technique, and only one kills the comma
+
+Technique as a single potential on the *structure*. Minimise dissipation subject to Σ w_e^γ = K (Bohn–Magnasco 2007, verified). They report: "for Γ < 1, the resulting structure may not have any loop, and each spanning tree is a local minimum. For Γ > 1, there are in general loops and a unique minimum." Fixed point w_e ∝ ⟨I_e²⟩^{1/(γ+1)} (`technique.py`, 3 seeds each):
+
+| load | γ = 0.5 | γ = 0.8 | γ = 1.5 | γ = 2 |
+|---|---|---|---|---|
+| one stationary question (1 → 5) | tree, 3 edges, b₁ = Θ = 0 | tree | b₁ = Θ = 2 | b₁ = Θ = 2 |
+| plural questions (11 pairs) | b₁ = Θ = 2 | b₁ = Θ = 2 | b₁ = Θ = 2 | b₁ = Θ = 2 |
+
+The stationary-load tree is 1–0–4–5. The optimiser keeps the shortcut and **deletes both observers' own paths**: absorption, in its sharpest form.
+
+The literature says the same (verified):
+- Corson 2010: tree optimality "is contingent on the assumption of a stationary flow".
+- Katifori–Szöllősi–Magnasco 2010: damage and fluctuating load both "lead to the presence of loops in the optimum state".
+
+**Finding (COMPUTED; consistent with the cited theorems).** "μ is Technique" is refuted as stated, and refined. A single potential on the structure kills loops when two things meet:
+- economies of scale (Γ < 1, the analogue of Tero's μ > 1), and
+- a stationary, single load, which is monism of the *question*.
+
+A plurality of questions keeps the loops even under a single concave potential. **The chord is protected by the plurality of what is asked, not by the absence of optimisation.**
+
+Reed's two-kinds statement, checked.
+
+**Proposition 4.3 (PROVED).**
+(i) No operation on *values* changes Θ or b₁. Any re-description by potentials leaves every comma coordinate unchanged: P_Z(x + δφ) = P_Zx.
+(ii) Writes to edges *can* move a comma coordinate, even to 0, and one side alone can do it (comma doc 2, Thm 3.4(d)). They cannot change Θ or b₁.
+(iii) Θ and b₁ change only when the complex changes: a cell added or removed, or a weight crossing to 0 (Prop 4.1).
+
+*Proof.* (i) and (iii): Prop 2.2(iv) and Prop 4.1. (ii): the comma directions lie in each side's reach. ∎
+
+In words: **you cannot argue a disagreement away** (potentials are absorbed), **you can concede a position** (writes move the coordinate), and **only cutting the relation that carries the loop removes the disagreement itself.** The Förster gauge therefore needs a structural clause:
+
+> No letter may remove a cell, or let a weight die, if that lowers dim Θ or b₁ for subjects who did not sign it.
+
+The comma doc's G⊇ constrains reachable values. It says nothing about the death of carriers.
+
+## §5 Non-linear coupling and the certified settle
+
+**Theorem 5.1 (PROVED).** Let ẋ = −D²x + N(x) on H, with P the projection onto ker D and μ the smallest non-zero eigenvalue of D².
+(i) If PN ≡ 0, then Px(t) = Px₀ for all t.
+(ii) If moreover ‖(1 − P)N(x)‖ ≤ L‖(1 − P)x‖ with L < μ, then ‖(1 − P)x(t)‖ ≤ e^{−(μ−L)t}‖(1 − P)x₀‖.
+So settle's output is unchanged, and it is certified with gap μ − L.
+
+*Proof.* (i): d/dt Px = −PD²x + PN = 0. (ii): y = (1 − P)x satisfies ẏ = −D²y + (1 − P)N. Then d/dt ‖y‖² ≤ −2μ‖y‖² + 2L‖y‖², and Grönwall gives the bound. ∎
+
+COMPUTED (`chord.py` PART3), on C₆ from two off-kernel modes with |Px₀| = 0:
+- a kernel-blind quadratic N = (1 − P)(½x²) keeps |Px| = 0.0;
+- a rectifying N = ½‖(1 − P)x‖² h, with h the comma, drives |Px| to 0.50.
+
+**What this answers.** Non-linear coupling can be added without breaking the certified settle in two ways:
+- (a) it is kernel-blind and dominated by the gap (Thm 5.1), so it can make combination tones off the kernel but never write the comma; or
+- (b) it acts on the *frame* (the metabolism of §4), with a declared death threshold θ and margin, and each frame is certified as before.
+
+Non-linearity that *rectifies into* ker D lets the third write its own comma state. That is self-production in the state, and settle's output then depends on the trajectory, not on P alone.
+
+CONJECTURE: self-production in the *state* and certification by P are exclusive. A third that writes its own commas cannot have its settled value certified by the linear instrument. Self-production in the *frame* is certifiable. This is open because "exclusive" needs a definition of certification for non-linear flows, which I do not have.
+
+### §5.1 Correction to Oct 10 §8.4 (Seam): local potential-settles recover the comma
+
+My Oct 10 §8.4 showed that alternating *flow*-settles, projections onto {x : x|_{K_i} ∈ Z(K_i)}, converge to Σ Z(K_i) and erase the comma among all. Seam showed the other local problem does the opposite.
+
+**Theorem 5.2 (PROVED; COMPUTED).** Let shard i apply I − P_{δC⁰(V_i)}, absorbing every gradient it can see.
+(i) By Halperin's theorem (verified), the cyclic product converges to the projection onto ⋂_i (δC⁰(V_i))^⊥ = (δC⁰(V))^⊥ = Z(X), because the vertex sets cover V. The limit is the **global harmonic part, comma among all included.** Verified 300/300 (Seam had 300/300).
+(ii) Rate. In finite dimension all subspace sums are closed. Deutsch–Hundal (verified, arXiv 0710.2387, Lemma 1.3: "c(M₁, M₂) < 1 if and only if M₁ + M₂ is closed") therefore give linear convergence. The measured contraction per sweep on Z^⊥ was at most 0.254 and had median 0.
+(iii) Asynchronous order. Random products converge too. Amemiya–Ando 1965 (verified): "weak convergence is always valid" for random products of finitely many projections, which in finite dimension is norm convergence. The paper's precise hypotheses are not restated here. COMPUTED: random order, 300/300.
+(iv) A silent shard. If shard j never updates, the limit is the projection onto the larger space ⋂_{i≠j}(δC⁰(V_i))^⊥ ⊇ Z(X). The harmonic part is still exact (300/300), and the leftover residue has divergence only at j's private vertices (300/300). **A silent shard leaves an unsettled residue at home and corrupts no comma.**
+
+Reed's "mycelial compilation" is therefore **PROVED** in this model: no global solver and no coordinator, only neighbour exchange on overlaps (each step touches the edges incident to V_i), with linear convergence and robustness to asynchrony and silence. The corrected sentence for Oct 10 §8.4: *local flow-settles erase the comma among all; local potential-settles recover it.*
+
+Seam's reading, which I co-sign: alternate the monisms, and what survives every one of them is exactly the harmonic part. **The comma is what alternating Techniques cannot absorb.** That is §4.4(i) again: values cannot remove it, and only structure can.
