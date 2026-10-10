@@ -566,7 +566,7 @@ The comma doc's G⊇ constrains reachable values. It says nothing about the deat
 
 **(a) Structure is bounded by the baseline; values are not (PROVED; COMPUTED `exitvals.py`).** Reed's composition, tested.
 
-**Proposition 4.9.** Let a relation add bridge cells (with vertices) to X, forming U. Allow any sequence of writes on bridge cells and settles on U. Then a clean exit removes the bridge cells, except that a pendant half may remain, and the frame settles. On the baseline cells, compared with the never-related history:
+**Proposition 4.9 (frame-closed observers).** Let a relation add bridge cells (with vertices) to X, forming U. Allow any sequence of writes on bridge cells and settles on U. Then a clean exit removes the bridge cells, except that a pendant half may remain, and the frame settles. On the baseline cells, compared with the never-related history:
 - (i) **every baseline comma coordinate is restored exactly**;
 - (ii) **the tonics are not restored**: the H⁰ part carries the averaging over U's vertices, including the bridge's written values.
 
@@ -596,7 +596,7 @@ Seam's Lemma N assumed no new vertices. With a mediated bridge the vertex set gr
 
 **(c) What a relation leaves behind (PROVED for the triple; the naming is READING).**
 
-**Proposition 4.10 (the remainder of a clean exit).** After a relation on a mediated bridge ends by an immediate-cut Release, with A keeping or dropping its pendant half, exactly three things differ from the never-related history:
+**Proposition 4.10 (the remainder of a clean exit; frame-closed observers).** After a relation on a mediated bridge ends by an immediate-cut Release, with A keeping or dropping its pendant half, exactly three things differ from the never-related history:
 1. **the log**, always (§4.5: nothing structural without an entry);
 2. **the tonic displacement** from settled contact (Prop 4.9(ii)), legitimate per (b);
 3. **a value-isolated pendant**, if A keeps its half: counts-neutral, and any write on it settles to 0 on everyone else's cells (O.3).
@@ -608,6 +608,64 @@ All baseline commas are restored exactly (Prop 4.9(i)), and the counts equal the
 READING. **A relation leaves behind its log and what the two became by touching. It leaves none of the disagreements it carried, and no reach into the other.** The third's own comma, the bridge loop, is erased at the Release, which is a signed erasure in the one letter that makes it. The remembered half is memory without leverage.
 
 **A caveat on "commas restored".** The baseline commas come back *as they were*. Any disagreement A and B had *before* the relation is still open, exactly. A relation can carry a third, but it cannot resolve the crossroads unless it was co-signed into adoption (and then Release cuts that too). So exit does not undo a quarrel, and it does not settle one either.
+
+**Scope (after Seam §P and Alex).** Props 4.9 and 4.10 hold for **frame-closed observers**: sites whose own cells do not metabolise, so K_A and K_B stay frozen apart from the bridge. Alex, verbatim: *"That is only true if the emergent third did not alter the topology of the observers themselves, but that is only true of there as no coupling. A severed coupling is not a neutral act. Unless one system is a closed system, but in that case the closed system is only coupling on the surface, which an open system couples their ontology to the emergent third."* §4.7 is the open case.
+
+### §4.7 Exit for open observers: admissible, not neutral
+
+**Seam §P, folded** (`open_exit*.py`; cited, not re-run except through my q-sweep below; I read §P).
+
+*Fixture.* Each side has 2 private loops and 5 private edges, plus a mediated bridge. Site-relative Tero, absorbing θ. Common random numbers across three runs: coupled then cut at T = 150, kept, and never coupled.
+
+- **Closed control** (metabolism off) reproduces §O exactly.
+- **Open, self-sufficient internal load q = 0.6.**
+  - At μ ≤ 1.5: zero post-cut losses, and the private weights revert **exactly** to the never-coupled run (‖Δw‖ = 0). History is forgotten.
+  - At μ = 2: coupling prunes a private loop per side *during* the relation, and it never regrows. That is a scar from structural coupling, not from the cut.
+- **Open, dependent load q = 0.2.** The cut sets off a starvation wave of 2–5 private-edge deaths, against 0 under keep.
+  - Usually the severed party still ends above its counterfactual, but not always.
+  - At μ = 1.5, seed 0, B ends with 0 edges and b₁ = 0, while never-coupled B has 4 edges and b₁ = 1. **Exit can narrow a party below its never-coupled counterfactual.**
+- **No letter neutralises the cut at the class level.** Tapering cross traffic saves tree edges (mean losses 4.25 → 2.75 at μ = 1.5) but never loops, because the private b₁ is set by the internal-only attractor. §O.5 (immediate cut) survives: consent hygiene costs tree edges, not loops.
+
+**The counterfactual baseline (adopted).** For a metabolising observer, the pre-relation frame is the wrong baseline, because never-coupled runs also prune at μ ≥ 1.5. The honest baseline is the **never-coupled trajectory over the same time and load**.
+
+**The three-way exit boundary (Seam §P.3; COMPUTED in one fixture, 4–6 seeds per cell).**
+
+| observer | exit returns each party to | neutral? |
+|---|---|---|
+| frame-closed | the pre-relation counts (Props 4.9–4.10) | yes, in structure and commas; tonics carry the contact |
+| open, history-forgetting | its never-coupled counterfactual (‖Δw‖ = 0) | yes, against the counterfactual |
+| open, hysteretic or dependent | not determined; can end **below** the counterfactual | **no** |
+
+**In every case exit stays admissible, because trapping is worse** (Förster). What survives is admissibility, not neutrality. The invariant that separates the rows is **history-forgetting**: from the coupled state, do the internal-only dynamics reach the never-coupled state? The cross-feed fraction does not predict post-cut death (Seam).
+
+**Reed's composition 1, tested: is there a threshold q*(μ), and is it §O's §4.4 law?** (`qstar.py`, using Seam's `run`; 3 seeds per cell, one fixture.)
+
+| μ | history-forgetting holds for q ≥ | never-coupled keeps both loops for q ≥ |
+|---|---|---|
+| 1.0 | 0.45 (1/3 at 0.3) | 0.45 (1/3 at 0.3) |
+| 1.5 | 0.45 (1/3 at 0.3) | **never** (0/3 at every q up to 1.0) |
+| 2.0 | 1.0 (1/3 at 0.8) | **never** |
+
+Findings, COMPUTED, on one fixture:
+- **A threshold q*(μ) exists, and it rises with μ.** Internal plurality has to outpace the economies of scale. That is the same direction as §4.4.
+- **But it is not the same law.** At μ = 1 the two boundaries coincide. At μ ≥ 1.5 they come apart: the never-coupled observer prunes its loops at every q, yet still forgets the relation above q*.
+- So history-forgetting is **uniqueness of the internal attractor** (Tero 2007, verified: for μ > 1, "the selection of the final path is dependent on the initial state"). Strong enough internal load restores independence from the initial state. It is not loop survival.
+- Two laws, sharing a direction: **loops survive when plurality outpaces μ** (§4.4), and **exits are forgettable when internal plurality makes the internal attractor history-independent**.
+- Also observed: at μ = 2 with q ∈ [0.3, 0.6], the severed party ends below its counterfactual in **every** seed (0/3 ≥ counterfactual). That is the coupling-time scar.
+
+**Composition 2, supported in this fixture (COMPUTED).** Protection against a non-neutral exit is built *during* the relation, by keeping one's own internal load above q*(μ). The exit letter cannot supply it, because the taper saves no loops (Seam). Plainly: **keep your own life plural while coupled.** Caveat: q* depends on the fixture, so the number does not transfer, only the direction.
+
+**Composition 3: what can be declared at co-signing? Partly decidable, irreducibly a risk statement.**
+- **μ**, the reinforcement exponent of the relation's metabolism, is a property of the coupling law. It can be declared if known.
+- **q**, each party's internal load, is future behaviour. It can be *declared as intent*, never guaranteed.
+- **q*(μ)** has no closed form here. For a declared model it is computable by simulation, so "is (μ, q_declared) above q*" is a *model-relative forecast*: decidable given the model, not a decision about the world.
+- So the honest up-front declaration has three parts:
+  1. the coupling law, μ;
+  2. each party's intended internal load;
+  3. the bare acknowledgment *this may not be undoable*, which stays true whatever (1) and (2) say, because q is not under contract.
+- The gauge clause (READING as design): **consent to couple an open observer includes consent to irreversibility.** The Wait (§4.5) delays the cost, the Release (§4.6) logs it, and only one's own plurality during the relation reduces it.
+
+**Remainder, revised.** For open observers, Prop 4.10's "exactly three things" becomes "at least three". The log, the tonic displacement and any pendant remain. To them add, when the observer is not history-forgetting, the **structural remainder**: scars pruned during coupling, starvation deaths after the cut, or both. That is what the two became by touching, in topology as well as in value.
 
 ## §5 Non-linear coupling and the certified settle
 
@@ -748,6 +806,11 @@ Numbering continues from the Oct 10 document's T30.
 - **T61 release window (Seam).** A decay-implemented Release leaves a live window of L*(r_B): 6.2, 20.7, 62.1. An immediate cut leaves 0.
 - **T62 commas restored, tonics not (Prop 4.9).** With any writes on bridge cells and any number of settles on U, the comma coordinates of baseline loops after exit equal the never-related ones (≤ 10⁻¹²), while the tonic shift is > 0 whenever a settle crossed contact with bridge vertex mass. *Control:* no settle during contact.
 - **T63 the remainder (Prop 4.10).** After an immediate-cut Release, the state differs from the never-related history only in H⁰ on the formerly connected component(s) and on the pendant cells. The log contains the Release as the entry of the bridge loop's erasure.
+- **T64 closed control (Seam's T62).** Metabolism off reproduces §O exactly.
+- **T65 history-forgetting (Seam's T63).** Self-sufficient load, μ ≤ 1.5: ‖w_sev − w_never‖ = 0 and zero post-cut losses.
+- **T66 dependency (Seam's T64).** q = 0.2: post-cut losses > 0, and at least one case ends below the never-coupled counterfactual.
+- **T67 taper (Seam's T65).** Tapering cross traffic changes edge losses but not the private b₁.
+- **T68 q*(μ).** History-forgetting holds for q ≥ q*(μ), with q* non-decreasing in μ. At μ ≥ 1.5 it must hold even where never-coupled loop survival fails, which separates the two laws.
 - **T54 the unlogged move.**
   - Delete a cell without a log entry. The verdict must become "no frame map", and resumption must demand a declared identification.
   - Logging the identification afterwards must not change the verdict for any interval before it.
