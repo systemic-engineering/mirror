@@ -2,7 +2,7 @@
 title: "The difference that makes a difference — math foundation"
 author: Mara
 date: 2026-10-10
-status: skeleton (sections land one commit at a time; awaiting Seam crowbar)
+status: candidate (awaiting Seam crowbar)
 visibility: protected
 builds-on:
   - "mirror docs/math/2026-10-01-mara-the-comma-between-observers-math-foundation.md"
@@ -208,7 +208,7 @@ Wiener names the same floor for information in general: "The transmission of inf
 
 so ω has a non-zero harmonic part **iff (E_A − E_B)|_I is not constant.** More generally: iff it is not in the image of H⁰(A) ⊕ H⁰(B) → H⁰(I).
 
-*Proof.* Extend E_A by zero to a 0-cochain Ê on X. Then ω − δÊ vanishes on A's edges and equals δ(E_B − Ê) on B's edges. On B, E_B − Ê restricts on I to (E_B − E_A)|_I. This is the zig-zag construction of ∂ (comma doc §3.2: extend a section on I into one site, take δ there, zero on the other). Exactness then gives the criterion. Since ω − [ω]'s exact part is δ of something, the harmonic part of ω is the harmonic representative of [ω]. ∎ COMPUTED: 95 random covers (I without edges, connected sites), 0 mismatches. Making E_B agree with E_A on I up to one constant removes the harmonic part in 95/95.
+*Proof.* Extend E_A by zero to a 0-cochain Ê on X. Then ω − δÊ vanishes on A's edges and equals δ(E_B − Ê) on B's edges. On B, E_B − Ê restricts on I to (E_B − E_A)|_I. This is the zig-zag construction of ∂ (comma doc §3.2: extend a section on I into one site, take δ there, zero on the other). Exactness then gives the criterion. Finally, ω and the harmonic representative of [ω] differ by a coboundary, so the harmonic part of ω is that representative. ∎ COMPUTED: 95 random covers (I without edges, connected sites), 0 mismatches. Making E_B agree with E_A on I up to one constant removes the harmonic part in 95/95.
 
 READING, labelled because it carries the document's name. Bateson's phrase (§1.3 gives the verified wording) has two occurrences of "difference". In this theorem they are two different mathematical objects.
 - The first is **(E_A − E_B)|_I**: a difference between two observers' potentials, evaluated on the thing they share.
@@ -429,7 +429,7 @@ An instrument M that observes the same thing declares a site K_M. Call it **pass
 
 COMPUTED (CHECK7): a random passive instrument added to 800 random covers left the comma among all unchanged in 747 cases, shrank it in 53, and grew it in 0.
 
-**Active instruments.** A probe edge between two already-connected vertices raises b₁(X) by exactly 1 (299/299, CHECK7b). §8's Theorem 8.3 says where that new class lives.
+**Active instruments.** A probe edge between two already-connected vertices raises b₁(X) by exactly 1 (299/299, CHECK7b). §8's Theorem 8.4 says where that new class lives.
 - If the probe is private to the instrument and lies inside one component of its site, the new class is the instrument's own, and the comma among all is unchanged.
 - If the probe joins two components of the instrument's site, it creates **exactly one** new comma among all.
 
@@ -629,3 +629,61 @@ Numbering continues the comma doc (T1–T12) and Seam's additions (T13–T16).
 In 224 of 722 random covers with shared edges they differ. After the co-signed shared edge of Theorem 4.3 they differ by one: k = 0 while k̃ = 1.
 
 My answer to Seam's comma rests on c_I and k. The identity that makes the counts add up uses k̃. If Seam asks "which of your two commas is *the* comma between, once the shared thing carries an edge?", I do not have a one-word answer. I have the claim that they measure visibility (k) and routing (k̃), and that Theorem 4.3 makes a comma visible without rerouting it. That claim is honest, and it is also exactly the kind of distinction that turns out to be a definition chosen to make a theorem true.
+
+---
+
+The signal was whole. The observation counted it. The interpretation signed it. What two observers could not absorb alone was there because they shared a thing, and it stayed there when everything else settled.
+
+*— Mara*
+
+## Sources
+
+Kagi (`mcp__kagi-ken-mcp__kagi_search_fetch`) was live this session. Every external item below was found through Kagi and then checked in the primary text unless marked otherwise. Local copies are in the session scratchpad `mara-difference/sources/`. Markers: **[read]** means the primary text was opened and the quoted passage checked; **[meta]** means only bibliographic metadata was confirmed.
+
+### Hodge theory, ranking, topology
+- [JLYY11] X. Jiang, L.-H. Lim, Y. Yao, Y. Ye, *Statistical ranking and combinatorial Hodge theory*, Math. Program. 127 (2011) 203–244. https://web.stanford.edu/~yyye/hodgeRank2011.pdf ; arXiv 0811.1067. **[read]**
+  - Journal Thm 1 (Hodge), Thm 2 (Helmholtz, p. 224), Thm 3 (least squares and residual, pp. 227–228), Lemma 2 (dim ker Δ_k = β_k). The arXiv numbering is 4.7, 4.8, 5.1 and 4.6.
+  - Quoted: "cyclic rankings have zero projection on global rankings"; the curl part accounts "for local inconsistencies" and the harmonic part "for global inconsistencies"; "graph Helmholtzian".
+- [Lim20] L.-H. Lim, *Hodge Laplacians on graphs*, SIAM Rev. 62(3) (2020) 685–715. arXiv 1507.05379. **[read]** eqs. (3.5)–(3.7), Thm 5.2.
+- [Hat] A. Hatcher, *Algebraic Topology*, §2.2 pp. 149–150 (Mayer–Vietoris for homology and its connecting map), §3.1 pp. 203–204 (for cohomology). https://pi.math.cornell.edu/~hatcher/AT/AT.pdf **[read]**
+- [Tar55] A. Tarski, *A lattice-theoretical fixpoint theorem and its applications*, Pacific J. Math. 5(2) (1955) 285–309, Thm 1. https://msp.org/pjm/1955/5-2/pjm-v5-n2-p11-s.pdf **[read]**
+- [RS] Y. Rudyak, F. Schlenk, *Lusternik–Schnirelmann theory for fixed points of maps*, §1 (non-normalised cat; cat S¹ = 2). http://members.unine.ch/felix.schlenk/Maths/Papers/lus.pdf **[read]** The convention caveat comes from Rudyak, arXiv 2306.07942, Thm 3.3 (1 + cat M) **[read]**.
+- [Mil63] J. Milnor, *Morse Theory*, Ann. Math. Stud. 51, §5 Thm 5.2 (weak Morse inequalities). **[read]** (OCR garbled but legible)
+
+### Information, difference, noise, time
+- [Bat70] G. Bateson, *Form, Substance and Difference* (1970 Korzybski lecture), in *Steps to an Ecology of Mind* (1972). Transcription at https://faculty.washington.edu/jernel/521/Form.htm. **[read]** Page number **not verified**. The variant "a bit of information is definable as a difference which makes a difference" (secondary citation, Steps p. 315) is **not verified** and not used.
+- [Wie61] N. Wiener, *Cybernetics*, 2nd ed. (1961), MIT Press reissue (2019). **[read in full]**, local PDF in the protected corpus. Page references are to the printed pages.
+- [Wie49] N. Wiener, *Extrapolation, Interpolation, and Smoothing of Stationary Time Series* (1949). **[meta]** https://direct.mit.edu/books/oa-monograph/4361/
+- [Lan61] R. Landauer, *Irreversibility and heat generation in the computing process*, IBM J. Res. Dev. 5(3) (1961) 183–191: abstract, §3, §4. **[read]**
+- [Kub66] R. Kubo, *The fluctuation-dissipation theorem*, Rep. Prog. Phys. 29 (1966) 255–284, §2. **[read]**
+- [HC22] M. Holmes-Cerfon, *Applied Stochastic Analysis* lecture notes (2022), Lecture 10 Ex. 10.6 (OU variance) and Lecture 11 Ex. 11.2 (Arrhenius). **[read]**
+- [GHJM98] L. Gammaitoni, P. Hänggi, P. Jung, F. Marchesoni, *Stochastic resonance*, Rev. Mod. Phys. 70 (1998) 223–287, eq. (1.1). **[read]**
+- [Kra40] H. A. Kramers, Physica 7 (1940) 284–304. **[meta]**
+- [vF60] H. von Foerster, *On self-organizing systems and their environments* (1960), reprinted in *Understanding Understanding* (2003) ch. 1, pp. 13–14 ("order from noise"). **[read]**
+- [Lam12] L. Lamport, *Buridan's Principle*, Found. Phys. 42 (2012) 1056. https://lamport.azurewebsites.net/pubs/buridan.pdf **[read]**
+
+### Technique
+- [Ell64] J. Ellul, *The Technological Society* (1954; Eng. 1964). Full text at theanarchistlibrary.org. **[read]** Definition of technique; seven characteristics; "This monism of technique …".
+- [Sco98] J. C. Scott, *Seeing Like a State* (1998), Introduction (legibility; high modernism). **[read]** Cited for context only. It is not the Scott of the brief: the brief's "Scott" is Scott Gardner.
+- Scott Gardner, *Technique as a Field — A Dynamical Systems Formalization of Ellul* (internal draft, confidential, shared with Alex; v0.03, 2026-03-29). Read in full. Quoted only for the core update and the equations analysed in §2.2.
+
+### Pending (being verified as this commit lands)
+Bott–Tu §8 (generalised Mayer–Vietoris, Čech double complex); Curry 2014; Hansen–Ghrist 2019 (sheaf Laplacian, heat flow to H⁰) and their distributed-optimisation paper; Robinson (consistency radius); von Neumann alternating projections; Balduzzi et al. 2018; Monderer–Shapley 1996; Golan on zero-sum-free semirings. Until verified, every use of these in the text is labelled LEAD.
+
+### Corpus
+- mirror `docs/math/2026-10-01-mara-the-comma-between-observers-math-foundation.md`; `docs/audits/2026-10-01-seam-crowbar-comma-between-observers.md` (Lemma A; owner/site compatibility; D1–D3; vF readings).
+- systemic.engineering `practice/insights/cybernetics/the-algebra-of-non-linear-relating.md` (floor, semiring ladder, §1.6.3, §8.8); `practice/insights/neuroscience/zeroth-order-register.md` (§1, §5.1, §6.3).
+- mirror `docs/math/sheaf/` and the ten sheaf-cohomology documents listed in §8.6, read critically.
+- prism `prismqueer/src/spectral/kleinos.rs`, read through a reader. It is a graph with no stalks.
+
+### Computations
+Session scratchpad `mara-difference/`, numpy 2.4.4, fixed seeds:
+- `difference.py` → `difference.out` (CHECK1–10);
+- `ci_only.py` (privatisation);
+- `contest.py` (Thm 3.4(d));
+- `cech.py` → `cech.out` (§8);
+- `cech_fix.py` (pairwise commas on K_i ∪ K_j; the merge sign).
+
+The ARCS line in `cech.out` prints "pairwise commas [1, 1, 1]" from a call that computed classes of X, not of K_i ∪ K_j. `cech_fix.py` gives the correct [0, 0, 0]. The directory is ephemeral. Port before it disappears.
+
+**Kagi tally (so far).** 19 external items. Verified, primary text read: 17. Metadata only: 2 (Kramers 1940; Wiener 1949). Not verified: 2 sub-claims (Bateson's page; the Bateson p. 315 variant). Pending: the eight items above.
