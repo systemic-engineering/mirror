@@ -46,7 +46,7 @@ which rules apply.
 
 ```
 mirror/                                  Apache-2.0 (open foundation)
-├── bootstrap/                           the Rust seed
+├── rust/                                the Rust floor (bootstrap/ was deleted 2026-08-26)
 ├── boot/, shards/, prism/               the grammar
 ├── license/{APACHE2,SEL}.md             both license texts live here
 │                                        (SEL is canonical at license/SEL.md)
@@ -60,7 +60,7 @@ mirror/                                  Apache-2.0 (open foundation)
 Three altitudes, three sets of rules:
 
 1. **`mirror/`** — Apache 2.0. The compiler, the grammars, the
-   bootstrap seed, the genre-documented docs. Standard open-source
+   Rust floor, the genre-documented docs. Standard open-source
    contribution flow. This is the surface most contributors will
    touch.
 2. **`mirror/spectral.engineer/`** — SEL-typed jurisdiction. The
@@ -90,7 +90,7 @@ just bootstrap          # = git submodule update --init --recursive
 ```
 
 Open-foundation only (skip if you only intend to work on
-`bootstrap/`, `boot/`, `shards/`, or `docs/`):
+`rust/`, `boot/`, `shards/`, or `docs/`):
 
 ```bash
 git clone <mirror-url>
@@ -147,7 +147,7 @@ the pointer, not the spec.
 ### Hooks per jurisdiction
 
 Different repository, different hook policy — by design. Mirror's
-`bootstrap/` carries the global commit-msg + pre-push hooks
+open foundation carries the global commit-msg + pre-push hooks
 (phase-marker enforcement, `just format`, `just pre-commit`) because
 those hooks encode the Apache-foundation jurisdiction's discipline.
 `spectral.engineer/` is its own git repository, its own jurisdiction;
@@ -207,10 +207,11 @@ commit makes it pass. This is non-negotiable, including for "small"
 or "obvious" or "mechanical" changes (per
 [`feedback-always-tdd-no-shortcuts`](.) in MEMORY).
 
-For Rust bootstrap work:
+For Rust work (`rust/`; needs a sibling `../prism` checkout at a
+compatible revision, see the README's Status section):
 
 ```
-cargo test --release --manifest-path bootstrap/Cargo.toml
+cargo test --manifest-path rust/Cargo.toml --bin mirror
 ```
 
 For grammar work (`.mirror` files):
