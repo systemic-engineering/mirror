@@ -14,7 +14,7 @@ Verified on 2026-10-19 (macOS arm64, `nix develop`):
 
 | | State |
 |---|---|
-| `rust/` (the `mirror` binary) | **Builds** against prism commit `62a9fa5` (2026-09-05). **Does not build** against prism's current `main`: prism renamed `SheafOfShardGraph`, `ComposedSheaf` and `Harmonics` after 2026-09-19, and from 2026-09-16 it links against `gfortran`, which mirror's dev shell does not provide. |
+| `rust/` (the `mirror` binary) | **Builds** against prism commit `62a9fa5` (2026-09-05), tagged `mirror-compat-2026-09`. **Does not build** against prism's current `main`: prism renamed `SheafOfShardGraph`, `ComposedSheaf` and `Harmonics` after 2026-09-19, and from 2026-09-16 it links against `gfortran`, which mirror's dev shell does not provide. |
 | `mirror` binary unit tests | 175 passed, 0 failed, 1 ignored |
 | `rust/tests/red_spec_claims.rs` | 9 passed, 10 failed. Deliberate: each test asserts a claim from a spec that the code does not implement yet. The failures list the gap between spec and code. |
 | `rust/tests/red_liquid_pillar_i_commutator_antisymmetric.rs` | Does not compile (it imports `prismqueer::liquid`, which has since been renamed `flux`) |
@@ -39,7 +39,7 @@ mirror depends on prism by relative path (`../../prism/prismqueer` from `rust/`)
 ```sh
 git clone https://github.com/systemic-engineering/mirror
 git clone https://github.com/systemic-engineering/prism
-git -C prism checkout 62a9fa5 && git -C prism submodule update --init
+git -C prism checkout mirror-compat-2026-09 && git -C prism submodule update --init
 
 cd mirror
 nix develop     # Rust toolchain, flang, LAPACK/BLAS
