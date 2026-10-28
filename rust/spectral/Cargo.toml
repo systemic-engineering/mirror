@@ -17,8 +17,8 @@ license = "MIT OR Apache-2.0"
 [dependencies]
 # prismqueer with lapack + bundle features for pillar predicates +
 # apply_h operator action + Bundle trait tower (Connes A, H, D).
-prismqueer = { path = "../../../prism/prismqueer", features = ["lapack", "bundle"] }
+prismqueer = { git = "ssh://git@github.com/systemic-engineering/prism.git", rev = "7e6b00f8f6900a4df41cbf4574e30442569f72d9", features = ["lapack", "bundle"] }
 
 [dev-dependencies]
-terni = { path = "../../../prism/imperfect" }
+terni = { git = "ssh://git@github.com/systemic-engineering/prism.git", rev = "7e6b00f8f6900a4df41cbf4574e30442569f72d9" }
 tempfile = "3"

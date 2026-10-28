@@ -143,6 +143,7 @@ fn fire_d_source_bytes_crystallize_via_landed() {
 /// GREEN body composes over LANDED spectral engine (1,941 LOC per
 /// Taut `2aa2777` scout). Zero new primitives at spectral altitude.
 #[test]
+#[cfg_attr(not(feature = "red-claims"), ignore = "RED by design; green with the graph builder (DAG on disk -> Laplacian)")]
 fn fire_d_non_linear_measurement_bytes_to_sheaf() {
     let bytes = fire_d_scaffold_source();
     let _input_crystal = crystallize(bytes, test_witnessed(), Oid::GENESIS);
@@ -171,6 +172,7 @@ fn fire_d_non_linear_measurement_bytes_to_sheaf() {
 /// language altitude per Alex 2026-09-08) with 5 cyb-ling operators
 /// (refract/frame/key/reframe/name) per Alex 2026-09-09.
 #[test]
+#[cfg_attr(not(feature = "red-claims"), ignore = "RED by design; green when commas are offered (rerere for commas)")]
 fn fire_d_kt_question_emergent_at_altitude_n_plus_1() {
     let bytes = fire_d_scaffold_source();
     let _input_crystal = crystallize(bytes, test_witnessed(), Oid::GENESIS);

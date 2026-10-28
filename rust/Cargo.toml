@@ -62,8 +62,8 @@ spectral = { path = "spectral" }
 roomba = { path = "roomba" }
 # prismqueer with `lapack` + `bundle` features enabled. The `lapack`
 # feature carries the FLANG-floor integration (prismqueer/build.rs
-# compiles native/spectral.f90 + native/prism.f90 via flang and links
-# LAPACK + BLAS + flang-rt). matrix.rs::eigenvalues delegates to
+# compiles native/*.f90 with $FC, else gfortran, and links LAPACK + BLAS +
+# libgfortran). matrix.rs::eigenvalues delegates to
 # prismqueer::ffi::eigenvalues at the ONE ordained numerical @io
 # boundary (Loki matrix.rs essay + Mara terminal-geometry spec).
 #
@@ -71,7 +71,12 @@ roomba = { path = "roomba" }
 # Reed. We don't forward promise the FLOOR." — path A per matrix.rs
 # docblock line 40 ratified: extend prism/prismqueer/build.rs to
 # compile Fortran wrappers + link LAPACK.
-prismqueer = { path = "../../prism/prismqueer", features = ["lapack", "bundle"] }
+#
+# Pinned by git rev (Alex 2026-10-27, prism-002): mirror no longer builds
+# against whatever prism happens to have checked out. A prism move is a
+# deliberate bump here. All five crates in rust/ must name the same rev,
+# or cargo sees two distinct prismqueer sources.
+prismqueer = { git = "ssh://git@github.com/systemic-engineering/prism.git", rev = "7e6b00f8f6900a4df41cbf4574e30442569f72d9", features = ["lapack", "bundle"] }
 
 # serde_json — the wire encoding primitive at rust/ altitude. Reed
 # 2026-08-06 R-PRIM-1 per Taut scout 7af55ee §7 smallest-primitive-gap +
@@ -86,6 +91,12 @@ prismqueer = { path = "../../prism/prismqueer", features = ["lapack", "bundle"] 
 # at terminal-geometry rust/ altitude.
 serde_json = "1.0"
 
+
+[features]
+# RED-by-design claim batteries (tests/red_spec_claims.rs). Off by default
+# so the commit gate runs what is meant to pass; each RED test names where
+# on the roadmap it turns green. `just test-red` runs them.
+red-claims = []
 
 # Dev-dependencies for property-based RED tests grounded in Mara
 # 3cd9a42 (grounding spec) + 5d3040d (math foundation). These are

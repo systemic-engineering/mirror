@@ -269,9 +269,9 @@ mod tests {
     /// Discharges PAPER §3.6.3 FiedlerRise strict at first-harmonic altitude.
     #[test]
     fn full_spectrum_k2_plus_k3_climbs_at_first_harmonic() {
-        let k2 = sheaf_of_complete_graph_of_order(2);
-        let k3 = sheaf_of_complete_graph_of_order(3);
-        let k5 = sheaf_of_complete_graph_of_order(5);
+        let k2 = graph_complete_of_order(2);
+        let k3 = graph_complete_of_order(3);
+        let k5 = graph_complete_of_order(5);
         let fs = FullSpectrum::of(&k2, &k3, &k5);
         assert_eq!(fs.axes.len(), 1);
         assert!(fs.axes[0].climbs);
@@ -285,7 +285,7 @@ mod tests {
     /// all_climb = false; any_climbs = false; failing = all.
     #[test]
     fn full_spectrum_k5_with_itself_refuses_climb_at_every_axis() {
-        let k5 = sheaf_of_complete_graph_of_order(5);
+        let k5 = graph_complete_of_order(5);
         let fs = FullSpectrum::of(&k5, &k5, &k5);
         assert!(!fs.all_climb());
         assert!(!fs.any_climbs());
@@ -296,7 +296,7 @@ mod tests {
     /// LANDED. K_5 spectrum {5, 5, 5, 5} → λ_2 = 5, λ_max = 5, δ = 1 - 5/5 = 0.
     #[test]
     fn full_spectrum_captures_delta_critical_of_k5() {
-        let k5 = sheaf_of_complete_graph_of_order(5);
+        let k5 = graph_complete_of_order(5);
         let fs = FullSpectrum::of(&k5, &k5, &k5);
         assert!(fs.delta.value.is_some());
         let delta = fs.delta.value.unwrap();
@@ -308,7 +308,7 @@ mod tests {
     /// fold-verdict treats as Red per substrate discipline.
     #[test]
     fn full_spectrum_empty_spectra_yields_all_false_flags() {
-        let k1 = sheaf_of_complete_graph_of_order(1);
+        let k1 = graph_complete_of_order(1);
         let fs = FullSpectrum::of(&k1, &k1, &k1);
         assert!(fs.axes.is_empty());
         assert!(!fs.all_climb());
@@ -320,23 +320,23 @@ mod tests {
     /// with prism substrate: fs.a.spectrum == Harmonics::of(a).spectrum.
     #[test]
     fn full_spectrum_carries_per_sheaf_harmonics() {
-        let k2 = sheaf_of_complete_graph_of_order(2);
-        let k3 = sheaf_of_complete_graph_of_order(3);
-        let k5 = sheaf_of_complete_graph_of_order(5);
+        let k2 = graph_complete_of_order(2);
+        let k3 = graph_complete_of_order(3);
+        let k5 = graph_complete_of_order(5);
         let fs = FullSpectrum::of(&k2, &k3, &k5);
-        assert_eq!(fs.a.spectrum, Harmonics::of(&k2).spectrum);
-        assert_eq!(fs.b.spectrum, Harmonics::of(&k3).spectrum);
-        assert_eq!(fs.composed.spectrum, Harmonics::of(&k5).spectrum);
+        assert_eq!(fs.a.eigenvalues, Spectrum::of(&k2).eigenvalues);
+        assert_eq!(fs.b.eigenvalues, Spectrum::of(&k3).eigenvalues);
+        assert_eq!(fs.composed.eigenvalues, Spectrum::of(&k5).eigenvalues);
     }
 
     /// Same-sheaf composition (K_5 with itself) is commutative: [L, L] = 0.
     /// Commutator spectrum empty ⇒ !is_observer_inclusive (closed-loop).
     #[test]
     fn full_spectrum_self_composition_is_not_observer_inclusive() {
-        let k5 = sheaf_of_complete_graph_of_order(5);
+        let k5 = graph_complete_of_order(5);
         let fs = FullSpectrum::of(&k5, &k5, &k5);
-        assert!(fs.commutator.spectrum.is_empty());
-        assert!(!fs.is_observer_inclusive());
+        assert!(matches!(&fs.commutator, Imperfect::Success(d) if d.spectrum.is_empty()));
+        assert_eq!(fs.is_observer_inclusive(), Some(false));
     }
 
     /// Disjoint-edge sheafs sharing a vertex are non-commutative: shared
@@ -344,12 +344,39 @@ mod tests {
     /// non-empty ⇒ is_observer_inclusive (open-loop autopoietic).
     #[test]
     fn full_spectrum_disjoint_edges_are_observer_inclusive() {
-        use prismqueer::spectral::sheaf_of_shard_graph_from_edges;
-        let ab = sheaf_of_shard_graph_from_edges(&[(0, 1)]);
-        let bc = sheaf_of_shard_graph_from_edges(&[(1, 2)]);
-        let composed = sheaf_of_shard_graph_from_edges(&[(0, 1), (1, 2)]);
+        let ab = graph_from_edges(&[(0, 1)]);
+        let bc = graph_from_edges(&[(1, 2)]);
+        let composed = graph_from_edges(&[(0, 1), (1, 2)]);
         let fs = FullSpectrum::of(&ab, &bc, &composed);
-        assert!(!fs.commutator.spectrum.is_empty());
-        assert!(fs.is_observer_inclusive());
+        assert!(matches!(&fs.commutator, Imperfect::Success(d) if !d.spectrum.is_empty()));
+        assert_eq!(fs.is_observer_inclusive(), Some(true));
+    }
+
+    // One arm per Dissonance outcome (prism-002 §4). Never read Partial or
+    // Failure as "commutes".
+
+    #[test]
+    fn observer_inclusive_certified_empty_spectrum_is_some_false() {
+        let r: CommutatorReading = Imperfect::Success(Dissonance { spectrum: vec![] });
+        assert_eq!(observer_inclusive(&r), Some(false));
+    }
+
+    #[test]
+    fn observer_inclusive_certified_nonempty_spectrum_is_some_true() {
+        let r: CommutatorReading = Imperfect::Success(Dissonance { spectrum: vec![2.0] });
+        assert_eq!(observer_inclusive(&r), Some(true));
+    }
+
+    #[test]
+    fn observer_inclusive_partial_is_unknown_even_with_empty_spectrum() {
+        let r: CommutatorReading =
+            Imperfect::Partial(Dissonance { spectrum: vec![] }, vec![3.0e-9]);
+        assert_eq!(observer_inclusive(&r), None);
+    }
+
+    #[test]
+    fn observer_inclusive_unmeasured_is_unknown() {
+        let r: CommutatorReading = Imperfect::Failure(Unmeasured(7), vec![]);
+        assert_eq!(observer_inclusive(&r), None);
     }
 }

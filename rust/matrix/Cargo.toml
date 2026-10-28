@@ -31,11 +31,11 @@ fractal = { path = "../fractal" }
 # envelope; custom phase_lock). Matches rust/Cargo.toml feature
 # selection (lapack + bundle) so byte-parity of numerical output
 # across the two dep chains is preserved.
-prismqueer = { path = "../../../prism/prismqueer", features = ["lapack", "bundle"] }
+prismqueer = { git = "ssh://git@github.com/systemic-engineering/prism.git", rev = "7e6b00f8f6900a4df41cbf4574e30442569f72d9", features = ["lapack", "bundle"] }
 
 [dev-dependencies]
 # Property-test framework (terni) + tempdir for fs-dependent tests.
 # Matches rust/Cargo.toml dev-deps for consistent test-authorship
 # discipline across the crate boundary.
-terni = { path = "../../../prism/imperfect" }
+terni = { git = "ssh://git@github.com/systemic-engineering/prism.git", rev = "7e6b00f8f6900a4df41cbf4574e30442569f72d9" }
 tempfile = "3"

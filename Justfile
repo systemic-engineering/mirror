@@ -300,6 +300,12 @@ test:
         cargo test --manifest-path "$manifest"
     done
 
+# Run the RED-by-design claim batteries (expected to fail until each
+# claim's roadmap step lands; the ignore reason names the step).
+test-red:
+    cargo test --manifest-path {{MANIFEST_PATH}} --features red-claims --test red_spec_claims
+    cargo test --manifest-path rust/fractal/Cargo.toml --features red-claims --test fire_d_measure
+
 # Watch + retest on every change (requires cargo-watch).
 # Install with: cargo install cargo-watch
 test-watch:

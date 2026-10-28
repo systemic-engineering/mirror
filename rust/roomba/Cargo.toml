@@ -42,8 +42,8 @@ tempfile = "3"
 # terni: PropertyVerdict framework consumed by mend::prop_tests for
 # ouroboros_monotone byte-shrinkage witnesses (moved from rust/ with
 # the tests during Migration 5). Path-dep to sibling crate.
-terni = { path = "../../../prism/imperfect" }
+terni = { git = "ssh://git@github.com/systemic-engineering/prism.git", rev = "7e6b00f8f6900a4df41cbf4574e30442569f72d9" }
 # prismqueer: pillar predicates + ScalarLoss consumed by mend::prop_tests
 # for byte-level ouroboros_monotone witness composition. lapack+bundle
 # features match mirror-bin config.
-prismqueer = { path = "../../../prism/prismqueer", features = ["lapack", "bundle"] }
+prismqueer = { git = "ssh://git@github.com/systemic-engineering/prism.git", rev = "7e6b00f8f6900a4df41cbf4574e30442569f72d9", features = ["lapack", "bundle"] }

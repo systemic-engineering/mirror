@@ -28,6 +28,7 @@ categories = ["cryptography"]
 default = ["ssh"]
 ssh = []  # Placeholder; slimmed keys.rs (step 3) will pull ssh-key + x25519-dalek + chacha20poly1305 + hkdf per Mara §4
 gpg = []  # Deferred per Mara §4 (feature-gated; not needed for M0)
+red-claims = []  # RED-by-design Fire D battery (tests/fire_d_measure.rs); `just test-red`
 
 [dependencies]
 # Alex 2026-07-18 direct-transcript redirect: "Consider how you can
@@ -45,4 +46,4 @@ gpg = []  # Deferred per Mara §4 (feature-gated; not needed for M0)
 #
 # NO ssh-key/x25519/chacha20poly1305/hkdf. Crypto lives at @tool
 # altitude, not in fractal's Rust source.
-prismqueer = { path = "../../../prism/prismqueer" }
+prismqueer = { git = "ssh://git@github.com/systemic-engineering/prism.git", rev = "7e6b00f8f6900a4df41cbf4574e30442569f72d9" }
