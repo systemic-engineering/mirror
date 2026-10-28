@@ -1,0 +1,59 @@
+files 410
+prefix: 20 shards with undeclared code-line refs
+exact: 35 shards with undeclared code-line refs
+prose-only uncovered (prefix rule): 360
+  P bumblebee.mirror @mcp/tool
+  P epistemologic/cybernetic/algedonic.mirror @cyberpunk/reframe
+  P epistemologic/cybernetic/design.mirror @epistemologic/cybernetic/design
+  P generated/rust_translated_hello_translate.mirror @facet/turing @facet/turing/mirror/value @facet/turing/program
+  P gestalt.mirror @time/monotonic
+  P glass.mirror @nl
+  P kintsugi/mosaic.mirror @repo
+  P loom/keyboard.mirror @time/monotonic
+  P mirror/lens/cli.mirror @mirror/store/oid
+  P mirror/lens/knife.mirror @fractal
+  P mirror/mosaic.mirror @facet/rust
+  P nl.mirror @sigil
+  P optics/source/ganglion/abyss.mirror @optics/aperture/connectome @optics/aperture/splinter
+  P optics/source/ganglion/cartographer.mirror @optics/aperture/connectome @optics/aperture/splinter
+  P optics/source/ganglion/explorer.mirror @optics/aperture/connectome @optics/aperture/splinter
+  P optics/source/ganglion/fate.mirror @optics/aperture/connectome @optics/aperture/splinter
+  P optics/source/ganglion/introject.mirror @optics/aperture/connectome @optics/aperture/splinter
+  P spectral/mosaic.mirror @repo
+  P task/link.mirror @sigil
+  P uuid/spectral/time.mirror @time/monotonic
+  E bumblebee.mirror @mcp/tool
+  E epistemologic/cybernetic/algedonic.mirror @cyberpunk/reframe @epistemologic/cybernetic/algedonic
+  E epistemologic/cybernetic/coevolution.mirror @epistemologic/cybernetic/coherence-parametric/carrier @epistemologic/property/coevolution/edge_of_chaos @epistemologic/property/coevolution/red_queen_bounded @epistemologic/property/coevolution/transition_well_typed @epistemologic/property/coevolution/well_formed
+  E epistemologic/cybernetic/design.mirror @epistemologic/cybernetic/design
+  E epistemologic/math/cholesky.mirror @epistemologic/math
+  E generated/rust_translated_hello_translate.mirror @facet/turing @facet/turing/mirror/value @facet/turing/program
+  E gestalt.mirror @time/monotonic
+  E glass.mirror @nl
+  E kintsugi/fracture/angle_to_paren.mirror @meta/ast
+  E kintsugi/fracture/cold_compile_within_tolerance.mirror @meta/ast
+  E kintsugi/fracture/dark_count_monotone.mirror @meta/ast
+  E kintsugi/fracture/gate.mirror @meta/ast
+  E kintsugi/fracture/keyword.mirror @meta/ast
+  E kintsugi/fracture/operator_match.mirror @meta/ast
+  E kintsugi/fracture/parent_cycle.mirror @meta/ast
+  E kintsugi/fracture/partials_align.mirror @meta/ast
+  E kintsugi/fracture/relocate.mirror @meta/ast
+  E kintsugi/fracture/symbol_lift.mirror @meta/ast
+  E kintsugi/mosaic.mirror @repo
+  E loom/keyboard.mirror @time/monotonic
+  E loom.mirror @time/monotonic
+  E mirror/lens/cli.mirror @mirror/store/oid
+  E mirror/lens/knife.mirror @fractal
+  E mirror/mosaic.mirror @facet/rust
+  E mirror/ref.mirror @meta/ast
+  E nl.mirror @sigil
+  E optics/source/ganglion/abyss.mirror @optics/aperture/connectome @optics/aperture/splinter
+  E optics/source/ganglion/cartographer.mirror @optics/aperture/connectome @optics/aperture/splinter
+  E optics/source/ganglion/explorer.mirror @optics/aperture/connectome @optics/aperture/splinter
+  E optics/source/ganglion/fate.mirror @optics/aperture/connectome @optics/aperture/splinter
+  E optics/source/ganglion/introject.mirror @optics/aperture/connectome @optics/aperture/splinter
+  E spectral/mosaic.mirror @repo
+  E spectral/signature.mirror @time/monotonic
+  E task/link.mirror @sigil
+  E uuid/spectral/time.mirror @time/monotonic
