@@ -24,7 +24,8 @@ From about 22:40, **every exec of a freshly written file blocks for minutes** at
 | `just` `[script("bash")]` recipe (temp file passed to bash) | 0.14s |
 | previously-assessed binary (`~/.cargo-target/debug/mirror --version`) | 0.42s |
 | `.githooks/commit-msg` in a fresh worktree | >10s, timed out |
-| long probe: fresh `true`, 1500s timeout | still blocked when this was written (>4 min) |
+| long probe: fresh `true`, started 23:08 | **1351.3s** (22.5 min) |
+| this scout's own `📝` commit (2e8c032); the only fresh exec is the worktree's `.githooks/commit-msg` | **875s**; no cargo, no nix |
 | Reed's probe: fresh `true` | **11m09.9s**, 0.00s user/sys |
 
 What a `.rs` commit has to exec fresh: two just shebang recipes (`format`, `pre-commit`), twice over when the nix re-exec fires (an outer and an inner `just`); the repo hook after any checkout that rewrites it; every build script cargo relinks; every proc-macro dylib rustc dlopens (Reed's rustc jobs on `terni`, `zerofrom`, `criterion` sat at 0% CPU for 20+ min); and every relinked test binary (12 per gate run in `rust/target/debug/deps`). With a healthy syspolicyd, each of these costs a first-exec assessment. With a wedged one, the commit never finishes.
