@@ -52,6 +52,27 @@ INSTALL_DIR := env_var_or_default("INSTALL_DIR", env_var("HOME") + "/.local/bin"
 default:
     @just --list
 
+# The flake devShell's environment, cached as a `nix print-dev-env`
+# snapshot keyed on flake.nix + flake.lock. Recipes that need the env and
+# aren't already in it source this instead of re-executing under
+# `nix develop`: the commit hook always runs on a dirty tree, which
+# disables the flake eval cache, so each `nix develop` cost 37-96s and
+# the hook paid it twice per commit (Taut scout 2026-10-28). The
+# snapshot is regenerated only when the flake inputs change. Needs bash
+# >= 4 (the nix one), not macOS's /bin/bash 3.2.
+_devenv:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    key=$(cat flake.nix flake.lock | shasum -a 256 | cut -c1-16)
+    dir="${XDG_CACHE_HOME:-$HOME/.cache}/mirror"
+    env_file="$dir/devenv-$key.sh"
+    if [ ! -s "$env_file" ]; then
+        mkdir -p "$dir"
+        nix print-dev-env > "$env_file.tmp"
+        mv "$env_file.tmp" "$env_file"
+    fi
+    echo "$env_file"
+
 # ────────────────────────────────────────────────────────────────────────────────
 # Bootstrap — first-clone setup. Newcomers run this once after cloning.
 # ────────────────────────────────────────────────────────────────────────────────
@@ -79,7 +100,7 @@ bootstrap:
 format:
     #!/usr/bin/env bash
     set -euo pipefail
-    [ -n "${IN_NIX_SHELL:-}" ] || exec nix develop --command just format
+    [ -n "${IN_NIX_SHELL:-}" ] || { set +u; source "$(just _devenv)"; set -u; }
     cargo fmt --manifest-path {{MANIFEST_PATH}} --all
 
 # Pre-commit gate — substrate-native settlement of the pre-commit
@@ -134,7 +155,7 @@ pre-commit:
     # cargo build fails with `ld: library not found for -liconv`. Guard
     # re-execs inside `nix develop` to restore the env; no-op when direnv
     # already keeps the shell warm.
-    [ -n "${IN_NIX_SHELL:-}" ] || exec nix develop --command just pre-commit
+    [ -n "${IN_NIX_SHELL:-}" ] || { set +u; source "$(just _devenv)"; set -u; }
     # Diff-closure intersection: the @io closure of `mirror kintsugi mirror.spec`
     # at this tick is the Rust crate. Compute the staged-diff intersection;
     # short-circuit when empty.
@@ -172,7 +193,7 @@ pre-commit:
 pre-push:
     #!/usr/bin/env bash
     set -euo pipefail
-    [ -n "${IN_NIX_SHELL:-}" ] || exec nix develop --command just pre-push
+    [ -n "${IN_NIX_SHELL:-}" ] || { set +u; source "$(just _devenv)"; set -u; }
     cargo test --manifest-path {{MANIFEST_PATH}}
     echo "(coverage enforcement: TODO — cargo-llvm-cov + threshold)"
 
@@ -184,14 +205,14 @@ pre-push:
 build:
     #!/usr/bin/env bash
     set -euo pipefail
-    [ -n "${IN_NIX_SHELL:-}" ] || exec nix develop --command just build
+    [ -n "${IN_NIX_SHELL:-}" ] || { set +u; source "$(just _devenv)"; set -u; }
     cargo build --release --manifest-path {{MANIFEST_PATH}}
 
 # Debug build — faster iteration, produces {{MIRROR_BIN_DEBUG}}.
 build-debug:
     #!/usr/bin/env bash
     set -euo pipefail
-    [ -n "${IN_NIX_SHELL:-}" ] || exec nix develop --command just build-debug
+    [ -n "${IN_NIX_SHELL:-}" ] || { set +u; source "$(just _devenv)"; set -u; }
     cargo build --manifest-path {{MANIFEST_PATH}}
 
 # Install the release binary to {{INSTALL_DIR}}/mirror.
