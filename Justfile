@@ -29,12 +29,12 @@ set positional-arguments
 
 # The workspace has no root Cargo.toml; bootstrap/ is the package.
 # Pass --manifest-path so recipes work from the repo root without `cd`.
-MANIFEST_PATH := "bootstrap/Cargo.toml"
+MANIFEST_PATH := "rust/Cargo.toml"
 
 # The cargo target dir. The flake's devShell sets CARGO_TARGET_DIR
 # (typically /Users/reed/.cargo-target), so we honour that; fall back to
 # the in-tree bootstrap/target/ when not in the flake shell.
-CARGO_TARGET := env_var_or_default("CARGO_TARGET_DIR", justfile_directory() + "/bootstrap/target")
+CARGO_TARGET := env_var_or_default("CARGO_TARGET_DIR", justfile_directory() + "/rust/target")
 
 # The [[bin]] inherits the package name `mirror` (per bootstrap/Cargo.toml line 2).
 MIRROR_BIN_DEBUG   := CARGO_TARGET + "/debug/mirror"
