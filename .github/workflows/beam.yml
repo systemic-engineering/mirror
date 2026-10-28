@@ -1,0 +1,53 @@
+name: beam
+
+# mirror builds itself as a composition through spectral-beam:
+#
+#   out = tool(in)
+#   tool = this flake's packages.mirror (@nix, pinned by narHash)
+#   in   = the commit (hash + tree)
+#   out  = the mirror binary, type @data/binary, built on x86_64-linux
+#
+# spectral stores tool, input and output as crystals and records the
+# composition as a content-addressed crystal. Same commit, same tool, same
+# binary: same composition hash.
+
+on:
+  push:
+    branches: [main, "reed/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: the commit, as an input
+        run: printf 'commit %s\ntree %s\n' "$(git rev-parse HEAD)" "$(git rev-parse 'HEAD^{tree}')" > commit.txt
+
+      # prism and its `imperfect` submodule are private. The flake pins prism
+      # as a git+ssh input; nix fetches it with git, so rewrite both URL forms
+      # (ssh:// and the scp-style submodule URL) to HTTPS with a read token.
+      - name: read access to prism
+        env:
+          TOKEN: ${{ secrets.PRISM_READ_TOKEN }}
+        run: |
+          git config --global url."https://x-access-token:${TOKEN}@github.com/".insteadOf "ssh://git@github.com/"
+          git config --global --add url."https://x-access-token:${TOKEN}@github.com/".insteadOf "git@github.com:"
+
+      # TODO pin by SHA once spectral-beam's action.yml is pushed to main.
+      - id: mirror
+        uses: systemic-engineering/spectral-beam@main
+        with:
+          tool: .#mirror
+          run: mirror --version && cp -L "$(command -v mirror)" {output}
+          in: commit.txt
+          out: mirror-x86_64-linux
+          type: "@data/binary"
+          title: mirror ${{ github.sha }} (x86_64-linux)
+          token: ${{ secrets.MCP_TOKEN }}
+
+      - run: echo "composition ${{ steps.mirror.outputs.composition }}"

@@ -1,0 +1,5 @@
+# prism is fetched over SSH (rust/Cargo.toml pins prismqueer by rev).
+# Use the git CLI so the user's ssh-agent / CI deploy key is honoured,
+# including for prism's `imperfect` submodule.
+[net]
+git-fetch-with-cli = true
