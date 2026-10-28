@@ -20,12 +20,12 @@ Labels (as in `docs/math/2026-10-10-mara-the-chord-math-foundation.md`): **PROVE
 ## §0 The answer
 
 1. **The loop closes, with one honest boundary.** `compile = settle ∘ normalize ∘ parse` maps `mirror.mirror` to a Merkle DAG whose root address is the parser's identity. Stage 1 (the parser read off that DAG) reproducing the seed's root is a checkable equation, not a theorem: it can fail, and a seed that misreads itself consistently also satisfies it (§6). The fixed point certifies agreement between two readers, never honesty of the first.
-2. **Comma 1, the Splinter collision, is by design and holds after one correction.** There is one splinter type: an altitude-tagged content address plus a transparency. The tick (rotation) and the source position (parsing) are coordinates of the *deposit*, i.e. of when and where a splinter fell, and must stay out of its address; otherwise no rotation reaches a fixed point (§1.4, PROVED). Rotation's current struct puts `tick` inside the address. That is its Phase-1 slice, and it is the one field that has to move.
-3. **Comma 2, three ops.** Sequence is composition, not an op. Literal is `focus`. Labelling a match is `project` (emission, per prism's 2026-10-27 decision). Choice is `split` followed by `settle` with a declared ruler. Recursion is a named reference, which is not an op at all. Words over `{focus, project, settle}` can't express choice (PROVED, §4.2), so `split` is necessary. It doesn't have to be a fourth method on the `Prism` trait; it can be the fracture node of the Beam's trace DAG that prism's `CURRENT.md` §5 already proposes.
+2. **Comma 1, the Splinter collision, is by design and holds after one correction.** There is one splinter type: an altitude-tagged content address plus a transparency. The tick (rotation) and the source position (parsing) are coordinates of the *deposit*, i.e. of when and where a splinter fell, and must stay out of its address; otherwise no rotation reaches a fixed point (§1.4, PROVED). Rotation's current struct puts `tick` inside the address. That is its Phase-1 slice, and it is the one field that has to move. *[Seam 2026-10-28, `358f430`: moving it is necessary, not sufficient. Kuramoto phases never wrap, so the absolute state never repeats; the content must also be quotiented by common phase rotation, and non-monotone steps stop on consecutive equality with `cycle(p)` reported. Folded into §1.5.]*
+3. **Comma 2, three ops.** Sequence is composition, not an op. Literal is `focus`. Labelling a match is `project` (emission, per prism's 2026-10-27 decision). Choice is `split` followed by `settle` with a declared ruler. Recursion is a named reference, which is not an op at all. ~~Words over `{focus, project, settle}` can't express choice (PROVED, §4.2), so `split` is necessary.~~ *[Seam 2026-10-28, `86ae959`: the proof leaned on a hypothesis the Beam contract doesn't give. Repaired in §4.2: choice needs a **coproduct eliminator** (a case split on success/failure). `split` + `settle` is one realisation, and it's the one mirror chooses, because it puts the choice in the trace. That's a design choice, not a theorem.]* It doesn't have to be a fourth method on the `Prism` trait; it can be the fracture node of the Beam's trace DAG that prism's `CURRENT.md` §5 already proposes.
 4. **Comma 3, bytes vs. abstract form.** The address is over the normal form, i.e. the quotient by declared free moves (§2). Trivia (whitespace, comments, source positions, bound-variable names) are neither kept in the splinter nor dropped: `settle` writes them as an erasure record next to the semantic root, with its own address. Two round trips hold, at two altitudes: bytes to bytes through the concrete tree, and meaning to meaning through the normal form (§3).
 5. **Parsing and inference share one engine, and it isn't the Kuramoto part.** A PEG is a positive Datalog program over (expression, position) items (PROVED, §5.1; COMPUTED 1480/1480 against packrat). Semi-naive evaluation is "a rotation": a tick is a round, only the delta joins, and the fixed point is the first tick at which nothing new falls (PROVED, standard; COMPUTED 2000/2000). The well-founded alternating fixpoint `mirror pact eval` uses is two such rotations per round, with retractions on the over-estimate side. Phases, coupling `K` and the Fiedler gauge in `rotation.rs` are not part of the shared engine (§5.4).
 6. **The semantic id falls out of compile, with two rulers to declare.** `dark` = the first 80 bits of the normal-form Merkle root: free-move-invariant and meaning-sensitive (PROVED, given a collision-resistant hash). `active` = a quantized spectrum of the crystal's own DAG: relabelling-invariant (PROVED). But the directed DAG's adjacency spectrum is identically zero (PROVED, §7.4), so "which operator" is a real choice, and cospectral non-isomorphic trees exist from 8 vertices on (COMPUTED). So `active` locates and never identifies. It reads the undirected multigraph of the crystal's own hash-consed DAG, where reuse is exactly `b₁` (Lemma 7.7). No landed builder produces that graph yet (Taut's scout). `SpectralCoordinate<5>` has three incompatible definitions. The quantizer is a ruler that the uuid can't name, so it has to be one `@ruler`, system-wide and signed by every issuer (§7.4).
-7. **Found while checking (load-bearing for Seam):** prismqueer's `Oid::hash` feeds SHA-256 three `f64` scalars, not the input (COMPUTED: reimplementation reproduces the pinned vector `08f8e91d…`, and every projection is rank one). Its collision resistance is bounded by those three float sums, not by SHA-256, and its value depends on floating-point summation order (my first Python port was wrong only because Python 3.12's `sum()` is compensated). The root address of a self-hosting compiler should not run through float arithmetic. §7.2.
+7. **Found while checking:** prismqueer's `Oid::hash` has **no security argument**: there is no reduction to SHA-256. The value is fixed by IEEE-754 operation order *and* by the `BTreeMap` order of the labels `"d0"…"d15"`, and it costs 17 SHA-256 calls per byte. The root address of a self-hosting compiler should not run through float arithmetic. §7.2. *[Seam 2026-10-28, `358f430`: my first version said "SHA-256 of three `f64` scalars, at most 192 bits". That model was wrong. The code hashes 48 separately rounded floats, and 121 states with bit-identical scalar triples gave 0 shared digests. Corrected in §7.2.]*
 
 ---
 
@@ -93,6 +93,14 @@ This is Unison's rule, verified: "A term or type definition that's part of a cyc
 
 So Reed's item 1 ("the tick or the source position is the altitude coordinate") holds **as the deposit's coordinate, not the splinter's identity**. Rotation's struct is the Phase-1 slice in exactly the place its docblock says: `altitude` and `transparency` are missing, and `tick` sits in the content. Under one type, a rotation observation is `Splinter { altitude: @spectral/rotation, content: (phases, order_r, fiedler), … }` deposited at coordinate `tick`. If two ticks observe the same state, that is **one** splinter deposited twice. That's the property a fixed point needs, and it's the same rule as composite #9's "witness events (time, actor, place) kept out of the hash".
 
+*[Seam 2026-10-28, `358f430`, folded. Prop. 1.7 holds; the step from it to "rotation reaches a fixed point" did not.]*
+
+**Definition 1.8 (gauge-fixed rotation content).** The Kuramoto step (`native/spectral.f90:188-210`) never wraps phases, and the mean phase drifts by `dt·mean(ω) > 0` per tick, so absolute phases never repeat (Seam, `kuramoto_seam.py`, 20 000 ticks, `n = 3, 5, 8`). A common phase shift is a symmetry of the system: a free move, by Alex's "rotation is free". So the content of a rotation splinter is the **quotient by common rotation**: `(relative phases (θᵢ − θ₀) mod 2π, r, λ₂)`. Gauge-fixed, Seam's simulation becomes stationary at ticks 767–1372. **(PROVED** that absolute phases never repeat when every `ωᵢ > 0`; **COMPUTED (Seam)** that the gauge-fixed state settles.)
+
+**Proposition 1.9 (two stop tests; PROVED).** For a **monotone** step over a finite set (Datalog, §5), the cumulative test `S_{t+1} = S_t` is right. For a **non-monotone** step (Kuramoto, the stage iteration of §6.3), it misreports: a period-2 orbit `A, B, A, B` gives `S = {A, B}` after two ticks and passes. Non-monotone steps stop on **consecutive equality** `addr(x_{t+1}) = addr(x_t)`. A splinter that recurs at non-consecutive ticks `t` and `t + p` is reported as `cycle(p)`, never as fixed. *Proof.* Take the counterexample. A consecutive repeat of a deterministic step's state is a fixed point of the step. ∎
+
+So "one splinter deposited twice" is a fixed point **only at consecutive ticks**. Above, I wrote that it is "the property a fixed point needs" without that qualifier, which was not enough.
+
 **READING.** "Parsing is a rotation over bytes; inference is a rotation over splinters" (Reed). §5 makes the shared part precise: deposit, delta, stop when nothing new falls. Which part is *not* shared is said there too.
 
 **DECISION (Alex + prism-Reed).** Moving `tick` from `Splinter.oid`'s preimage to a deposit record changes every existing rotation splinter address. One consumer exists (grep): `rust/src/main.rs:107,634` calls `infer_via_rotation`, keeps the splinters in session state and emits `oid` and `tick` as JSON. Whether anything persists those oids beyond the session is not established here; if something does, the move needs a migration record, not a silent change.
@@ -119,6 +127,8 @@ This is Reed's item 2 and the brief's comma 3: "identity is what survives every 
 
 **Proposition 2.2 (PROVED, linear algebra).** "Isometry" is defined relative to a metric. For an inner product with Gram matrix `M`, the isometries are `{Q : QᵀMQ = M}`. The criterion `QᵀQ = I` is the special case `M = I`. A shear `S` with `SᵀMS = M` exists for suitable `M`. So no linear map is free or ruler-carrying in itself; it is one or the other relative to a declared metric.
 
+*[Seam 2026-10-28, `ce06cbf`, folded, two additions.]* (i) The OID is the quotient by the **declared, decidable** free moves only. Some equivalences have no computable canonical form: language equivalence of CFGs is undecidable, and so is βη-equality of untyped terms. `μ` can't declare those as free. (ii) `μ` is named by a name. Every address is `addr ∘ c_μ`, but the splinter carries the tag `@mirror`, not `μ`'s address. The root grammar can't carry its own address (a hash has no fixed point containing itself). So the root of identity is a **name, and that name is a ruler signed by its owner (Alex)**: one irreducible signature, next to the floor of §6.1. Every format other than the self-describing root carries `τ = (name, addr(format grammar))` (§7.1).
+
 Consequence, discretely: *which* moves are free is fixed by `μ`, and `μ` is a declaration. Is a comment meaning? Is declaration order? Is a rule name? Each answer is a ruler, chosen once. "The basis is free" is true only **after** someone has declared the space of meaning. So mirror has to declare `μ` in the grammar itself, and it does so in exactly three places: which tokens are trivia, which positions bind variables, and which rewrite rules the normalizer applies. Then every free move follows, and nothing else needs a ruler. This sharpens Reed's item 1: free moves don't need a signature *each*, because they inherit one signature, which is `μ`'s.
 
 ### §2.3 Free means injective under the discrete metric
@@ -130,6 +140,16 @@ That is the bridge from Alex's linear algebra to a parser. The discrete metric i
 
 - operations that are **injective** on meanings lose nothing and are free;
 - operations that **identify** distinct meanings (choose, cut, threshold, quantize) carry a ruler, and the ruler must be declared: `settle(n, by: r)` in mirror-005 is the template.
+
+*[Seam 2026-10-28, `ce06cbf`: "free" was defined twice, as `μ`-invariant in §2.1 and as injective here. They disagree on renaming an exported rule, which is injective but changes meaning. Repair, accepted: there are **three** classes of moves on representations.]*
+
+| class | test | identity | ruler |
+|---|---|---|---|
+| **free** | `μ ∘ g = μ` | unchanged | none |
+| **edit** | injective, `μ ∘ g ≠ μ` | changes | none needed |
+| **ruler-carrying** | non-injective on meanings | changes | must be declared |
+
+Proposition 4.2 (every loss of meaning happens at a `settle`) concerns the third class and stands. **Where I keep a distinction Seam's table collapses:** the three classes are for **moves on representations** (endomaps `R → R`). The pipeline's ops (`focus`, `project`, …) are maps **between altitudes** (bytes → items → AST). For a map that *computes* `μ`, "`μ ∘ g = μ`" is a category error, because its codomain isn't `R`. Pipeline ops are classified by injectivity alone. So `project` (emission) is not an *edit of* meaning; it is part of *constructing* meaning, and it loses nothing (§4.4).
 
 ### §2.4 The shear in a parser: swapping ordered alternatives
 
@@ -211,11 +231,43 @@ So "β-normal" for a grammar keeps its recursion as names. The grammar is a syst
 
 **Proposition 3.6 (normalization terminates; PROVED).** `nf` terminates on every finite AST: R1–R4 strictly decrease node count (2026-08-10 Theorem 2.1), α is one structural pass, and sorting an SCC is finite.
 
+*[Seam 2026-10-28, `ce06cbf`, folded below Prop. 3.7: confluence holds per path, but path dependence breaks addressing.]*
+
 **Proposition 3.7 (normal form unique; CONJECTURE until critical pairs are checked).** Termination plus local confluence gives unique normal forms (Newman's lemma). The 2026-08-10 proof of confluence asserts R1–R4 are non-overlapping. That needs checking against nested identity prisms (an R1 redex inside an R2 redex) and against R5's path exemption, which makes the rules depend on context (the file path), not just on the term. The spec makes "enumerate critical pairs of R1–R4 over the corpus" a red test.
+
+**Amended (Seam 2026-10-28).** For a fixed path, R1–R4 each delete one top-level item, and their side conditions read only that item and the path. So deletions commute and normal forms are unique per path (**PROVED**, Seam §7). R1 against R3 is **UNTESTED**, though: if the identity-prism detector compares `@X` with the declared `out`, then deleting the `out` changes whether R1 fires. T8 carries exactly that pair.
+
+**Proposition 3.8 (path-dependent rules break Prop. 2.1; PROVED by Seam's counterexamples).** R3 (`τ_path`) and R5 (path exemption) make `nf` depend on the file path, which is a source coordinate:
+- identical bytes at `shards/prism.mirror` and `shards/x/prism.mirror` get different roots;
+- a shard with no `out` at `shards/a.mirror` and at `shards/b.mirror` gets **equal** roots with **different** exports;
+- T1.3 fails by construction if R3 elides `out @mirror` in `mirror.mirror` but not in the reformatted copy at another path.
+
+**Repair (accepted).** Normalize toward the explicit:
+- **reverse R3**: insert `out τ_path(path)` when it is absent, and keep it when present, so the export the file takes from its location is written into `N` as meaning;
+- **make R5 content-based**: the self-declaring shards are recognised by what they declare, not where they sit;
+- R4 is moot if comments are trivia (Decision 2).
+
+The 2026-08-10 foundation's Theorem 4.1 (round trip "for every sugar-rule composition") inherits this repair: it holds per path, and with reversed R3 it holds across paths for shards that declare their `out`.
 
 **Holes (PROVED).** No rule R1–R4 has `\` in its left-hand side, and α doesn't touch `\`. So a `\` is never part of a redex and never reduced: holes survive normalization as holes, and a partial stays partial. Holes don't break termination either, since they add no redexes.
 
-**Hole identity (DECISION, Alex; Seam target).** Under §1.2, every bare `\` atom at the same altitude has the same address. If the hole's address is just `addr("\")`, then `mirror fate <hole_oid>` can't say *which* hole. Lean: a hole is addressed by the **question it asks**, i.e. its signature, the type it has to inhabit (`io f(x: a) -> b { \ }` gives the hole `hole(a → b)`). Two holes asking the same question share an address, so one answer serves both. That is content addressing applied to questions. The alternative is to address holes by path, which turns position into identity and runs against Proposition 1.7.
+**Hole identity (DECISION, Alex). Lean reversed after Seam.**
+
+~~Lean: a hole is addressed by its signature, `io f(x: a) -> b { \ }` giving `hole(a → b)`. The alternative is to address holes by path, which turns position into identity and runs against Proposition 1.7.~~
+
+*[Seam 2026-10-28, `ce06cbf`: FAILS.]*
+- `io normalize(x: path) -> path { \ }` and `io parent(x: path) -> path { \ }` hash-cons into **one** splinter.
+- Every untyped value hole `x = \` shares one address.
+- A signature isn't the question. The question is the judgment `Γ ⊢ ? : T` together with the pacts in scope.
+- My argument against paths was wrong. A path **in `N`** is invariant under every free move, because `N` is the quotient. Prop. 1.7 forbids source coordinates and ticks, not paths in the normal form.
+
+**Definition 3.9 (two identifiers per hole; the rerere split).**
+- **question** = `H("hole\0" ‖ τ ‖ enc(Γ ⊢ T) ‖ enc(pacts in scope))`, with the context de Bruijn-normalised. Same question, same address. Resolutions are **offered** by question.
+- **occurrence** = `(addr(N), path in N)`, a deposit coordinate. Resolutions are **applied** by occurrence. `mirror fate` takes an occurrence.
+
+This is git's rerere, moved from merge conflicts to commas. rerere records a resolution keyed by the conflict's content and replays it at each place the same conflict recurs. Here the key is the question and the place is the occurrence. Reed relays (memory, Alex 2026-10-28): mirror is git rerere for commas. Definition 3.9 is where that sentence lands in the math. git's documentation: rerere works by "recording conflicted automerge results and corresponding hand resolve results on the initial manual merge, and applying previously recorded hand resolutions to their corresponding automerge results" (https://git-scm.com/docs/git-rerere, fetched 2026-10-28). The correspondence is a READING: conflict ↔ question, hand resolution ↔ resolution offered, applying it to a later automerge result ↔ applying at an occurrence.
+
+**Where I add to Seam.** Under Definition 3.9, `N` still contains the hole as its question-addressed atom, so `normalize`'s and `parent`'s holes still hash-cons into one atom, and `Γ` gains a reuse edge between them. I keep that on purpose: the edge says "two places ask the same question", which is true and is exactly what `active` should locate. The harm in Seam's counterexample was that a resolution recorded for one hole applied to both. Applying by occurrence removes that harm.
 
 **If λ-β is added later.** Strong normalization holds for the simply-typed λ-calculus (Tait 1967) and fails for the untyped one (`(λx.xx)(λx.xx)`). So mirror's "sub-Turing" claim has to become a **typing discipline** before "β-normal form exists" can be a theorem for λ-terms. Until then the claim is CONJECTURE, and this stage needs no λ-β: `mirror.mirror` is a grammar, and grammars normalize by Definition 3.4.
 
@@ -238,10 +290,18 @@ So "β-normal" for a grammar keeps its recursion as names. The grammar is a syst
 
 ### §4.2 Why three ops cannot express choice
 
-**Proposition 4.1 (PROVED, given the Beam contract).** Let a pipeline be a word `w ∈ {focus, project, settle}*` (each letter applied by a fixed prism), with composition as concatenation. Suppose, as prismqueer's `Beam` contract says, a failed beam is dark: "Failure beams are dark: a fixpoint under `smap` and `next`" (`beam.rs`). Then no word expresses PEG choice `e₁ / e₂` from words for `e₁` and `e₂`, unless the branch is hidden inside the body of a single op.
+*[Seam 2026-10-28, `86ae959`: HOLDS-WITH-REPAIR. The original statement and proof are kept below, struck in substance, and the repaired statement follows them.]*
+
+**Proposition 4.1 (as first written; the hypothesis is not the Beam contract).** Let a pipeline be a word `w ∈ {focus, project, settle}*` (each letter applied by a fixed prism), with composition as concatenation. Suppose, as prismqueer's `Beam` contract says, a failed beam is dark: "Failure beams are dark: a fixpoint under `smap` and `next`" (`beam.rs`). Then no word expresses PEG choice `e₁ / e₂` from words for `e₁` and `e₂`, unless the branch is hidden inside the body of a single op.
 *Proof.* A word that contains the word for `e₁` as a factor fails whenever `e₁` fails on the input that factor receives, because darkness propagates to the end. Choice must succeed when `e₁` fails and `e₂` succeeds, so the word for `e₁ / e₂` can't contain `e₁` as a factor run on the original input. A word without that factor doesn't consult `e₁` at all and can't implement "`e₂` only if `e₁` fails". The only other way out is an op whose body inspects a dark beam and continues from the **original** input. But `Beam::input()` "panics on dark propagated beams", so that op would have to hold the input outside the failing branch, which is a fork: a `split` hidden inside an op body. ∎
 
-So **choice needs `split`** (a fork that keeps the input for the second branch) and **`settle`** (the join that picks a branch by a declared ruler). A PEG's ruler is "first success in declared order". It is declared by the syntax itself, so a PEG collapses early but **not** by an undeclared ruler. That answers Reed's item 5. An ambiguous (CFG-style) choice keeps both branches until `settle`. If more than one survives, that is a comma (`\`), never a silent pick.
+**What was wrong.** The Beam contract binds `tick`, `smap` and `next` (`beam.rs:33`). It does not bind `Prism::focus/project/settle` (`lib.rs:190-206`), which take a whole beam and may read `result().err()`. And the failure can carry the position (`f(e, i)` in my own §5.1), so the input isn't lost when `e₁` fails. Seam's counterexample: `w(e₁) · settle_recover · lift(w(e₂))`, where `settle_recover` maps `Success(j) ↦ Done(j)` and `Failure(i) ↦ Todo(i)`, and `lift` passes `Done` through unchanged. It expresses choice with no copy of the input.
+
+**Proposition 4.1′ (PROVED; Seam's repair).** Choice needs a **coproduct eliminator**: a case split on success/failure, provided either by a binary join (`split` + `settle`) or by letters that each dispatch on a sum type (`Done | Todo`), which is what an optic prism's `preview` is. Unary words of ops that are all dark-absorbing cannot express choice, and the original proof holds under that hypothesis. My own `!e` row (a `settle` keeping the failure branch) already contradicted the hypothesis for `settle`.
+
+**Design choice (not a theorem):** mirror realises the eliminator as `split` + `settle`, because the choice then appears in the trace as a Fracture/Join (§4.3) and its ruler (alternative order) is visible to the algebra. Cost noted by Seam: Divisi semantics evaluates `e₂` even when `e₁` succeeds. Packrat memo and bottom-up evaluation already pay that cost, and they're the engine of §5.
+
+So **choice needs an eliminator**, and mirror's eliminator is `split` (a fork that keeps the input for the second branch) plus **`settle`** (the join that picks a branch by a declared ruler). A PEG's ruler is "first success in declared order". It is declared by the syntax itself, so a PEG collapses early but **not** by an undeclared ruler. That answers Reed's item 5. An ambiguous (CFG-style) choice keeps both branches until `settle`. If more than one survives, that is a comma (`\`), never a silent pick.
 
 ### §4.3 Where `split` lives
 
@@ -250,7 +310,7 @@ So **choice needs `split`** (a fork that keeps the input for the second branch) 
 ### §4.4 The five ops, classified (Reed's item 5, with one correction)
 
 - `focus`: free if the complement (the unconsumed input) is carried, which is true in parsing. A `focus` that discards the complement is a projection and carries a ruler.
-- `project`: **free**. Reed's proposal said "lossy, needs declared erasure", but that was the reading before prism's 2026-10-27 decision. As emission it is an injective append (Proposition 2.3).
+- `project`: **injective (loses nothing)**. Reed's proposal said "lossy, needs declared erasure", but that was the reading before prism's 2026-10-27 decision. As emission it is an injective append (Proposition 2.3). *[Seam 2026-10-28: `project` adds meaning, the rule-name labels, so it isn't "free" in §2.1's sense. Agreed on the fact. I disagree on the class: `project` is a pipeline op that constructs `μ`, not a move on representations (see the note after Prop. 2.3), so it is neither free nor an edit. It is injective, and that is all Prop. 4.2 needs. Prism's pinned `lib.rs:202` still says "lossy" (Seam confirms the drift).]*
 - `split`: free (a copy into branches is injective).
 - `shift`: free iff invertible (a basis change). A `shift` into `@io` is an effect, outside `μ` altogether (composite #10).
 - `settle`: the **only** ruler-carrying op and the only one that logs erasure.
