@@ -124,7 +124,11 @@ SIZE<=3 LMAX<=3: grammars=13225 atoms=3933328 loop/undefined atoms=1292316
 C1 functionality violations: 0
 C2 TD/BU disagreements: 0
 ```
-(A size-4 run with inputs up to length 2 is in progress; its result is appended in a later commit.)
+```
+SIZE<=4 LMAX<=2: grammars=490000 atoms=64334120 loop/undefined atoms=23501435
+C1 functionality violations: 0
+C2 TD/BU disagreements: 0
+```
 
 **Verdict: HOLDS.** Small repairs: add `&e`; say that `f("c",i) :- ¬input(i,"c")` is negation on the EDB only (stratum 0), so "positive" means "positive over the input's complement"; the `j > i` guard on `e*` is redundant against Ford (a nullable `e` under `*` has no finite derivation either way) but harmless.
 
@@ -162,3 +166,129 @@ X3 E_troj: stage-2 fixed point: True; DDC addr(N0) equal to honest: True
 1. Spec T11 (DDC on `addr(N₀)`) checks the seed. That's the part the fixed point already checks. Wheeler's DDC compiles "the putative compiler source code" (Wheeler 2009/2010, https://arxiv.org/abs/1004.5534); here the putative compiler is `E`. **Repair T11:** if `E` is a mirror shard (Alex: the evaluator lives in mirror), DDC applies to `E`'s source: build `E` from its shard with two independent floors and require bit-identical `E` artefacts. Add a **semantics oracle independent of `G`**: a corpus of user grammars and inputs with known verdicts (Ford's examples, Prop. 2.4's shear, `!`/`&` vectors) run through `E(N₀)`. `G`'s self-reading can never test a construct `G` doesn't exercise on itself.
 2. Shared `strip`/`nf` is in the same blind spot. A normalizer that sorted choice children (prism's `MerkleTree` "sorted by Oid", math §1.3) would pass T1 everywhere. Only T2's alternative swap catches it, so T2 must be a gate on T1's green, not a follow-up.
 3. `--fixpoint` with `k_max ≥ 2` launders seed misreadings: a mutated `N₀` goes to `N_true` in one step and then stays there. Report `fixed at k` and treat `k > 1` as a failed stage 2, as spec §3 already requires for `k = 1`.
+
+---
+
+## §6 Hole identity: addressing `\` by its signature — FAILS
+
+Lean (math §3.4, spec §5, Decision 4): a hole is addressed by `hole(signature)`, so "two holes asking the same question share an address, so one answer serves both".
+
+**Counterexample 6a (same signature, different questions).**
+```
+io normalize(x: path) -> path { \ }
+io parent(x: path)    -> path { \ }
+```
+Both holes get `hole(path → path)`, which is one address. In `N` they hash-cons to **one** splinter. A resolution recorded against that address is a resolution of both. In the rerere picture Alex gave, git's rerere *keys* a resolution by the conflict's content but *applies* it at each occurrence. Here the key and the occurrence have been made the same thing. Offering `parent`'s body for `normalize` is fine, because offers are what the arc is for. But *identity* says they are the same hole, and `Γ` gains a reuse edge (`b₁ + 1`) between two unrelated functions.
+
+**Counterexample 6b (no signature).** Spec §2 item 9 makes `\` valid "wherever a body **or value** is expected". A value hole with no declared type (`x = \`, a record field, a `requires \`) has signature `?`. Every such hole in the system gets the same address.
+
+**Counterexample 6c (the signature isn't the question).** The question a hole asks is the judgment `Γ ⊢ ? : T`: the bound variables in scope with their types, the goal, and the pacts (`requires` / `ensures`) in force. `f(x: a) -> b` names only the parameters and the result. Two holes under the same signature with different `requires` clauses ask different questions.
+
+**Mara's argument against path addressing doesn't apply.** Prop. 1.7 forbids coordinates that change under iteration (ticks) or under free moves (source spans, E3). A path **in `N`** is invariant under every free move, because `N` is the quotient. It's a coordinate of the occurrence, not of the source.
+
+**Repair.** Two identifiers:
+- *question* = `H("hole\0" ‖ τ ‖ enc(Γ ⊢ T) ‖ enc(pacts in scope))`, with de Bruijn-normalised context. Same question, same address. Resolutions are **offered** by this key.
+- *occurrence* = `(addr(N), path in N)`, a deposit coordinate. Resolutions are **applied** by this key. `mirror fate` takes an occurrence.
+
+T7 then reads: two `\` with the same judgment share a *question* address and have two *occurrences*; `holes` counts occurrences.
+
+---
+
+## §7 Prop. 3.7: confluence of R1–R4 under R5 — confluence HOLDS per path; path dependence FAILS addressing
+
+R1–R4 (2026-08-10 §1.2) each delete one top-level item of a composition `X ∘ M`. Their side conditions read the item itself and the file path, never another item. Deleting two different items commutes, so there are no critical pairs **for a fixed path**, and Newman's lemma gives unique normal forms per path. (UNTESTED caveat: if the landed P1 detector checks the prism's `@X` against the shard's *declared* `out`, then R3 deleting that `out` changes whether R1 fires, and there is a critical pair. I didn't read `apply_h.rs`; T8 should include exactly this pair.)
+
+The problem is not confluence. R3, R4 and R5 make the normal form depend on **the file path**, which is a source coordinate. That's what Prop. 1.7's discipline keeps out of identity, and it breaks Prop. 2.1 in both directions.
+
+- **7a (same bytes, different address).** Put the same bytes, containing an identity prism, at `shards/prism.mirror` and at `shards/x/prism.mirror`. R5 exempts the first only, so the normal forms differ and the roots differ. Same holds for `out @a` at `shards/a.mirror` (elided by R3) and at `shards/b.mirror` (kept).
+- **7b (same address, different meaning).** A shard with **no** `out` at `shards/a.mirror` and at `shards/b.mirror`. Both normal forms lack `out`, so the roots are equal. The exports differ (`τ_path` gives `@a` and `@b`). Equal `addr`, different meaning.
+- **7c (the spec contradicts itself).** Spec §2 item 1 requires `out @mirror` in `mirror.mirror`, and §2 item 6 puts R1–R4 with R5 into `μ`. T1.3 compiles `tests/fixpoint/mirror.reformatted.mirror`, a different path, and requires the same root. If `τ_path(mirror.mirror) = @mirror`, R3 elides `out @mirror` in the original and keeps it in the copy, and **T1.3 fails by construction**. If `τ_path` is undefined at the repo root, R3 never fires there and T1.3 passes, but then every `shards/` file has the 7a/7b problem.
+
+**Repair.** Normalize toward *explicit*. Reverse R3: insert `out τ_path(path)` when it is absent, and keep it when present. Path then enters `N` only to supply a missing export, which is meaning the file really does take from its location. Replace R5's path test with a content test: the self-declaring shards are recognised by what they declare, not where they sit. Or drop R5 and let their identity prisms elide like everyone else's. R4 (docblock template) becomes moot if Decision 2 makes comments trivia.
+
+---
+
+## §8 Prop. 2.2: "which moves are free is itself a ruler" — HOLDS, with two consequences
+
+The linear algebra is correct (isometry is relative to `M`).
+
+**8a. "Free" has two definitions in the math.** §2.1: free means `μ ∘ g = μ` (meaning-invariant). §2.3: free means injective (isometric under the discrete metric). They disagree:
+
+| move | injective? | `μ`-invariant? | math says |
+|---|---|---|---|
+| renaming an exported rule | yes (bijective) | no | ruler (§2.5) |
+| `project` (emission) | yes | no: it adds labels, and labels are meaning | free (§4.4) |
+
+**Repair:** three classes, not two. *Free* (`μ`-invariant): no identity change, no ruler. *Edit* (injective, meaning-changing): identity changes, no ruler needed. *Ruler-carrying* (non-injective): needs a declared ruler. Prop. 4.2 ("every loss of meaning happens at a `settle`") is about the third class and survives.
+
+**8b. Identity is relative to `μ`, and `μ` is named by a name.** Any OID is `addr ∘ c_μ`. The splinter carries `τ = @mirror`, a name, not `μ`'s address. If the `@mirror` grammar changes `μ` (say comments become meaning), old and new addresses live in one namespace, and an equal `addr` across the change asserts that two sources are the same under two different quotients. So whose declaration is it? Whoever controls the name.
+
+You can't fix this by putting `addr(μ)` into every `τ` all the way down. For `mirror.mirror`, `μ` *is* the file, so its own root would have to contain its own root, and a hash has no such fixed point. **Repair:** every format other than the self-describing root carries `τ = (name, addr(format grammar))`. The root carries a name, and that name is a ruler signed by its owner (Alex). Write it down as the one irreducible signature, next to the floor of math §6.1.
+
+**8c. Spec §10 contradicts itself.** "Dark never includes a ruler" is followed by "the result of a ruler-carrying op carries the ruler's address in its own content", which puts the ruler's address into dark. PEG alternative order (a ruler per §2.5) is in dark too, and so is `μ` (8b). **Repair:** "dark never includes an *unnamed* ruler."
+
+(Mara's §11 item 6, a free move `μ` can't declare: any equivalence without a computable canonical form, e.g. language equivalence of grammars, which is undecidable for CFGs, or βη-equality of untyped terms. So the OID is the quotient by the *declared, decidable* free moves. That's worth one sentence in §2.)
+
+---
+
+## §9 Lemmas 7.7–7.9, §7.4 item 1, Prop. 7.11
+
+COMPUTED with `spectra_seam.py` (numpy, my own DAG generator with real hash-consing).
+
+| claim | result | verdict |
+|---|---|---|
+| 7.7: `b₁ = \|E\|−\|V\|+1 = Σ_{v≠root}(indeg−1)` | 500/500 random hash-consed DAGs | HOLDS |
+| 7.8: `A` nilpotent; `spec(D_out − A)` = out-degrees | 300/300 | HOLDS |
+| 7.9: uniform phase sees only unequal lengths | diamond (2,2) invisible; triangle (1,2) visible | HOLDS-WITH-REPAIR |
+| §7.4 item 1: "only `L₀ + L₁` carries `b₁`" | `b₁ = tr(L₀)/2 − n + mult₀(L₀)`: 500/500 | **FAILS** |
+| 7.11 for the Laplacian | none ≤ 10 vertices; a pair at 11 | conclusion HOLDS; Mara's "8" is adjacency |
+
+**7.9 repair.** The flux around *any* cycle of the underlying graph is `θ·(#forward − #backward)`, not only around two-path reuse loops. Invisible iff `θ(f − b) ∈ 2πℤ`:
+- a zigzag `a→c, b→c, b→d, a→d` (net 0) is invisible;
+- at `θ = π/2`, a net-4 loop (direct edge plus a path of 5) is invisible;
+- `f(x, x)` (two parallel edges) is invisible for every `θ`.
+
+So the magnetic operator never sees the most common reuse in an AST.
+
+**§7.4 item 1 counterexample.** `L₀`'s spectrum alone determines `n`, `b₀` (zeros) and `|E|` (trace/2), hence `b₁`. `L₁ = BᵀB` has exactly `L₀`'s nonzero eigenvalues plus `b₁` zeros (500/500). `L₀ + L₁` adds **no** information at the spectrum level. It changes only which compressed *features* expose `b₁`: heat trace `h_{L₀+L₁}(t) = 2h₀(t) − b₀ + b₁`. **Repair for Decision 10:** don't choose an operator to smuggle an integer through a float. Put `b₁` (exact, integer, from Lemma 7.7) into the coordinate as its own field, and spend the float axes on what isn't already exact.
+
+**Does `active` survive free moves once the builder is real?** Yes, provided `Γ` is built from `N`. Then `Γ` is a function of `N`, and Prop. 7.10 covers relabelling. Two notes. `Γ` ignores child order, so a ruler move (swapping alternatives) leaves `active` unchanged: it locates, as Mara says. And with de Bruijn indices and hash-consing, `Var(0)` and common literals become hubs shared by every rule, so `b₁` and the low spectrum mostly count recurrences of trivial atoms. That's a quality issue for a locator, not a correctness issue; T9 should include a fixture showing it.
+
+---
+
+## §10 The four addresses (Reed's item)
+
+**They don't collapse.** `addr` and the source lens differ by prefix (`"fragment\0"` vs `"lens\0"`). Git ids carry git's own header. `uuid` is a different width. With `active = 0`, `uuid` is a pure function of `dark` and carries nothing extra, which is honest, since spec §8 prints `active unsigned`.
+
+**Leaks and breaks:**
+1. **`μ` in dark** (§8b): dark is computed under a quotient named only by `@mirror`.
+2. **`SpectralUuid` isn't an RFC 9562 UUID.** `from_parts` (`spectral_uuid.rs:93-101`) writes dark into bytes 6–15 and sets no version or variant bits. RFC 9562 puts the version in octet 6 and the variant in "the most significant bits of octet 8" (https://www.rfc-editor.org/info/rfc9562/), and both are dark bits here. Any library that validates or re-stamps v8 UUIDs on the way through overwrites up to 6 of the 80 dark bits. **Repair:** either don't print it in 8-4-4-4-12 form, or spend 6 bits on version/variant and say dark is 74 bits.
+3. **`SpectralUuid::EMPTY` is unreachable from `compile`.** Its dark is the first 10 bytes of `BLAKE3("")` (`:77-82`). Under math §1.2 the empty shard's address is `H("fragment\0" ‖ τ ‖ …)`, not `BLAKE3("")`. The lattice bottom that the CRDT spec and `spectral_uuid.rs:58-63` rely on is not a value compile produces. **Repair:** define `EMPTY` as `uuid(compile(empty shard))`.
+4. **"Only dark's Merkle rule composes" (math §7.4 item 5) is false at uuid altitude.** `dark(a ⊔ b)` is a prefix of a hash of the *full* child addresses, and it can't be computed from `dark(a)` and `dark(b)`, which are 80-bit truncations. The **address** composes; the uuid is a homomorphism in neither half. **Repair:** store and merge on `addr` (256 bits); derive the uuid at the edge.
+5. **Git side.** Prop. 7.4's isomorphism holds "barring a collision in either hash", and a default repo uses SHA-1 (git's own hash-function-transition doc treats it as no longer collision-resistant). T1.5's re-hash walk is what makes `refs/mirror/root/<addr>` trustworthy. **Repair:** make it the read path (re-hash on every load from git), not only a test.
+
+---
+
+## Which §12 decisions change
+
+| # | decision | change |
+|---|---|---|
+| 4 | holes by signature | **reverse**: question = judgment `Γ ⊢ T` + pacts (offered by it); occurrence = `(addr(N), path in N)` (applied by it). §6 |
+| 5 | BLAKE3; `Oid::hash` a measurement | **stands**; replace the stated reason (§1) |
+| 7 | move `tick` out of `rotation::Splinter` | **insufficient**: also quotient the common phase rotation; stop test = consecutive equality, cycles reported. §2 |
+| 8 | `split` as Fracture | **reframe**: what is needed is a coproduct eliminator; Fracture/Join is one choice. §3 |
+| 9 | where the seed lives | **demoted**: the trust root is `E` and the floor. New decision: DDC on `E`'s source plus a `G`-independent semantics oracle. §5 |
+| 10 | `L₀ + L₁` vs `L₀` | **argument void**: `L₀` already carries `b₁`; put `b₁` in the coordinate explicitly. §9 |
+| 11 | `active` `@ruler` | add: uuid version bits, `EMPTY` from compile, merge on `addr` not uuid. §10 |
+| new | R3 / R5 | reverse R3 (insert, don't elide); R5 by content, not path. §7 |
+| new | `τ` | `(name, addr(format grammar))`; the root's name is the one signed ruler. §8 |
+| new | `undefined` | count only the start atom's dependency cone. §4 |
+
+Decisions 1, 2, 3, 6 and 12 are unaffected (6 gains the re-hash-on-read note).
+
+## Against myself
+
+- §1b is an estimate, not a bound. I didn't attempt the k-tree. Someone with more time may find the rounding noise more correlated than my 121-sample measurement suggests.
+- §5 X2 tests single-site mutations only. "Every seed misreading is caught" is not proved, only "none of 324 survived".
+- §9: the Laplacian-cospectral tree search is random (40 000 samples per `n`), not exhaustive.
+- §4: the exhaustive runs are bounded (rule bodies of ≤ 4 nodes, inputs of length ≤ 3 and ≤ 2). The proof carries the general case. The runs check my transcription of it.
