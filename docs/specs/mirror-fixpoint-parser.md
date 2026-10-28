@@ -213,6 +213,8 @@ Rulers to declare once `@ruler` exists (math §9): the commutator thresholds `1e
 
 ## §12 Decisions needed before green
 
+**Ratified (Alex 2026-10-28):** Mara's lean on every Alex-owned row below (1, 2, 3, 4, 6, 9, 9′, 13, 14; 5 was already decided). Still open: 7, 8 and 12 (prism-Reed), 10 and 11 (the spectral coordinate and the `active` `@ruler`). On the uuid (11), Alex expects it to become the identity people dial; that is consistent with this spec as long as "same shard?" is answered by the dark half (a truncation of `addr`) and merges are computed on `addr`. The active half is a neighbourhood that moves when its ruler moves, so it never decides identity.
+
 | # | decision | owner | Mara-lean | math |
 |---|---|---|---|---|
 | 1 | fragment = composite splinter (supersedes 2026-07-22's "fragment = `@eigen(Crystal<T>)`") | Alex | yes | §1.1 |
