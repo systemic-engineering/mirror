@@ -279,7 +279,7 @@ e*       m(e*,i,i) :- f(e,i).                  m(e*,i,k) :- m(e,i,j), j>i, m(e*,
 ```
 
 **Proposition 5.1 (PROVED; COMPUTED).** The least model of this program equals Ford's ⇒ relation on the suffixes of `s`. No negation is needed, because failure is derived positively.
-*Proof.* Ford 2004 §3.1 defines ⇒ inductively, with one rule per expression form, and failure `f` is an outcome of ⇒ like success. Each inference rule is one of the Horn clauses above, read over positions instead of suffixes. The least fixed point of an inductive definition is the least Herbrand model of its rules. The `j > i` side condition is Ford's: `e*` over a possibly-empty `e` is not well-formed (§3.6, `WF(e*)` requires `e` not to succeed without consuming input). ∎
+*Proof.* Ford 2004 §3.3 defines ⇒ inductively, with one rule per expression form (and a step counter `n`, which the Datalog form drops because it only measures derivation length), and failure `f` is an outcome of ⇒ like success. Each inference rule is one of the Horn clauses above, read over positions instead of suffixes. The least fixed point of an inductive definition is the least Herbrand model of its rules. The `j > i` side condition is Ford's: `e*` over a possibly-empty `e` is not well-formed (§3.6, `WF(e*)` requires `e` not to succeed without consuming input). ∎
 *COMPUTED* (`peg_datalog.py`, seed `20261028`): over 2000 random three-rule grammars and inputs of length 0–5, the least model agrees with a direct packrat interpreter on all 1480 cases where packrat terminates. In the 520 cases where packrat detects a loop, the start atom has **neither** `m` nor `f`: an undefined atom.
 
 **Corollary 5.2 (PROVED, from Ford).** Ford: "A well-formed grammar G is complete" (every expression either succeeds or fails on every input), and "the relation ⇒G is a function". So for a well-formed grammar the least model has, for every `(e, i)`, exactly one `m(e, i, j)` or one `f(e, i)`. Left recursion (not well-formed) shows up as an **undefined atom**: in mirror's words a `\`, not a crash and not a silent failure. Ford proves completeness undecidable in general ("It is undecidable whether an arbitrary grammar is complete"). Well-formedness, though, is a structural property that "can be computed by iteration to a fixed point" (Ford §3.6). So `mirror.mirror` is checked for well-formedness statically, and that check is itself a least fixed point.
@@ -309,3 +309,220 @@ So the outer loop isn't an inflationary rotation, and "only the delta joins" fai
 - **Cost.** Packrat is linear (Ford 2002: "guarantees linear parse time") because each `(e, i)` is computed once. The Datalog formulation reaches linear time only if the engine indexes `m` by `(e, i)` and uses Ford's functionality (at most one `j`), so that a sequence rule joins in O(1). An unindexed ground program is cubic in `n` (my script's naive grounding is). **CONJECTURE** for the shared engine with that index. Left recursion would break it: Warth et al. 2008 note their left-recursion extension can "yield super-linear parse times for some left-recursive grammars". `mirror.mirror` is required to be well-formed, so it has none.
 
 **Termination of the parse, related to `halts.mirror`.** `boot/std/epistemologic/property/halts.mirror` halts on "(a) autopoietic settlement … fixed_point" OR "(b) reduction exhaustion … budget". A parse of a well-formed grammar halts by **(a)**: the rotation reaches its least fixed point within `|B| ≤ |E|·(n+1)² + |E|·(n+1)` ticks (PROVED, Proposition 5.4). A non-well-formed grammar still halts by (a), since the least model always exists, but leaves undefined atoms. Clause (b) is needed only for steps that are not monotone over a finite domain (Kuramoto, the stage iteration of §6.3). That is the correct division: **monotone and finite gives a fixed point for free; anything else needs a declared budget, which is a ruler.**
+
+---
+
+## §6 The fixed point: bootstrap as ordinary self-hosting
+
+### §6.1 Stages
+
+Let `G` be the bytes of `mirror.mirror`, `L₀` the subset of mirror syntax that `G` uses, and `E` the engine of §5 (a PEG evaluator that takes a grammar normal form and returns a reader).
+
+- **Stage 0.** A seed reader `P₀` for exactly `L₀`. `N₀ = nf(strip(P₀(G)))`, `o₀ = addr(N₀)`.
+- **Stage 1.** `P₁ = E(N₀)`: the parser read off the self-description. Its identity is the pair `(addr(E), o₀)`. The root OID identifies the **grammar**. It identifies the parser only together with the engine. If `E` is itself a mirror shard (Alex: the evaluator lives in mirror), `addr(E)` is a shard address too, and the regress stops at the floor that executes `E`. That floor is the irreducible witness, and it should be named as such rather than hidden.
+- **Stage 2.** `N₁ = nf(strip(P₁(G)))`. The **fixed-point equation** is `addr(N₁) = o₀`.
+- After stage 2 the seed is only a witness: `P₁` reads `mirror.mirror` and every later change to it.
+
+Define `F(N) = nf(strip(E(N)(G)))`. Stage 2 says `F(N₀) = N₀`.
+
+### §6.2 Existence, uniqueness, and what the fixed point does not prove
+
+**Proposition 6.1 (existence is by exhibition, not by a theorem; READING + precedent).** No general theorem supplies a fixed point of `F`. It exists iff `mirror.mirror` correctly describes the syntax it is written in **and** `P₀` and `E(N₀)` agree on `G`. The precedent that such self-descriptions exist and are small: Ford 2004, Figure 1, "PEG formally describing its own ASCII syntax", which "describes its own complete syntax including all lexical characteristics". Kleene's second recursion theorem (1938) and Lawvere's fixed-point theorem (1969) guarantee self-reference in settings far stronger than this one, namely acceptable numberings of all partial recursive functions, and cartesian closed categories with a point-surjective `A → Y^A`. Neither is needed here, and neither applies as stated to a sub-Turing grammar class. The fixed point is checked, not inferred.
+
+**Correction to `docs/math/2026-08-22-mara-recognition-94-…-lawvere-fixed-point-closure-math-foundation.md` §Q+M0.1.** It paraphrases Lawvere as "every endomorphism of the terminal object has a fixed point". The theorem says: if `φ : A → Y^A` is point-surjective, then every endomorphism `f : Y → Y` has a fixed point (Lawvere 1969; statement checked against the secondary summary, Wikipedia "Lawvere's fixed-point theorem", not against the LNM text). The terminal object's endomorphisms are trivially fixed. The paraphrase misplaces the content of the theorem, so Rec #94's convergence argument doesn't rest on what it cites. I'm not re-deriving Rec #94 here, only marking that this document doesn't lean on it.
+
+**Proposition 6.2 (uniqueness fails in general; PROVED).** `F` can have several fixed points, and passing stage 2 certifies only that the pair (`P₀`, `E`) agrees with itself on `G`.
+*Proof.* Thompson 1984 shows a compiler binary that reproduces itself while miscompiling chosen patterns: "We must 'train' the compiler"; the trojan "will deliberately miscompile source whenever a particular pattern is matched". Translated here: a seed `P₀` that reads one construct of `G` wrongly, in a way that `E(N₀)` then reproduces (because `N₀` encodes the misreading), passes stage 2. The equation `F(N) = N` constrains the reading only up to self-consistency. ∎
+**Countermeasure (Wheeler 2005, diverse double-compiling):** "recompile the source code twice: once with a second (trusted) compiler, and again using the result of the first compilation." Here that means computing `o₀` with a second, independently written seed `P₀'`, e.g. a reader in another language, or the legacy `boot/` grammar as a witness. A misreading would then have to be replicated in both. The spec makes this a test (DDC) and is honest that it raises the cost of a consistent misreading without excluding it.
+
+### §6.3 Iterating beyond stage 2, and `halts.mirror`
+
+`N_{k+1} = F(N_k)`. If `G` is fixed and well-formed, every `N_k` is a normal form of a parse of `G` whose labels are names occurring in `G` and whose depth is bounded by `|G|·|rules|` (no ε-loops in a well-formed grammar). So the `N_k` range over a finite set.
+
+**Proposition 6.3 (PROVED).** The orbit `N₀, N₁, …` of a function on a finite set is eventually periodic. Three outcomes: a fixed point (period 1: green), a cycle of period > 1 (an oscillating self-description: a comma, `\`), or failure (some `E(N_k)` doesn't parse `G`: dark).
+
+`F` is not monotone on any lattice the parser knows, so no Knaster–Tarski argument bounds the time to the period. This is `halts.mirror` clause (b): the iteration needs a **declared budget** `k_max`, and the budget is a ruler (§9). The spec asks for period 1 at `k = 1`, which is the strongest and cheapest form.
+
+---
+
+## §7 Addresses: ours, prism's, git's, and the spectral uuid
+
+### §7.1 Four identifiers, never conflated
+
+| identifier | preimage | hash | width | role |
+|---|---|---|---|---|
+| `addr(N)`: semantic root | canonical encoding of the normal form (§1.2) | `H` (§7.2) | 256 | meaning identity; the parser's id |
+| source address | lens over `addr(N)` and `addr(ε)` (§3.3) | `H` | 256 | the shard's bytes, recoverable |
+| git object id | `"<type> <len>\0" ‖ payload` | SHA-1, or SHA-256 in a `sha256` repo | 160 / 256 | storage and distribution |
+| `uuid_spectral` | `active₄₈ ‖ dark₈₀` | (§7.4) | 128 | semantic id for routing; `dark` = identity |
+
+**Proposition 7.1 (PROVED).** `addr` and the git id are never equal as strings, except by a collision across two different preimage spaces. They are different functions of the same canonical structure. Git's header (verified, Pro Git §10.2: "a header which starts by identifying the type of object … a space followed by the size in bytes of the content, and adding a final null byte") and our prefix (`"splinter\0"`, `"fragment\0"` plus tag) make the preimages differ.
+
+### §7.2 prismqueer's `Oid::hash` is not a cryptographic hash of its input (COMPUTED)
+
+`Oid::hash(bytes) = canonical_hash(bytes)` (`oid.rs`), the `CoincidenceHash<3>` detector (`coincidence.rs`). Reading the code and reimplementing it in Python (`oidhash.py`, which reproduces the pinned vector `Oid::hash(b"prism") = 08f8e91d230c49a5072202e4e82db8306e226d83f77aa6f57d05dc87b56efc1e`; I also ran prism's own test `oid_hash_cross_version_stable`: ok):
+
+1. `encode_into_basis` maps the input to a 16-dimensional `f64` vector `s(x) = Σᵢ e(i, xᵢ)`, a sum of pseudo-random vectors, one per (position, byte).
+2. Each of the three projections is rank one (`Projection::rank1`, `P = v vᵀ`), so `P s = v ⟨v, s⟩`. COMPUTED: for each projection, the ratio of projected entries to `v` collapses to one value.
+3. SHA-256 is applied to `"prism-core:coincidence:" ‖ "coincidence:" ‖ 3 ‖` the three projected vectors' bytes, i.e. to a function of **three `f64` scalars** `⟨v_k, s(x)⟩`.
+
+**Proposition 7.2 (PROVED from the code).** Any two inputs with bit-identical triples `(⟨v₁,s⟩, ⟨v₂,s⟩, ⟨v₃,s⟩)` get the same `Oid`. The digest's collision resistance is therefore bounded by that of the map `x ↦` three float sums, at most 192 bits of state, which is linear in per-position contributions. It is not SHA-256's.
+**CONJECTURE (Seam):** collisions are findable far below `2¹²⁸` work. The structure is a sum of independent per-position terms, which is the setting of Wagner's generalized birthday problem (Wagner 2002, k-tree algorithm); exact float equality is the obstacle to measure.
+**COMPUTED (portability).** The digest depends on floating-point summation order. My first port disagreed with the pin, and only because Python 3.12's `sum()` is compensated while Rust's `Iterator::sum` is sequential. Any second implementation (the BEAM port in scout-spectral-uuid, a mirror-in-mirror engine) has to replicate IEEE-754 operation order exactly. The path also contains rulers: `f64::EPSILON` filters drop small coefficients inside the hash.
+
+**DECISION (Alex + prism-Reed).** The root address of a self-hosting compiler should be a hash of the canonical encoding with no float arithmetic on the path. BLAKE3 is what `2026-08-10-…beta-normal…` §3.1 and `uuid_spectral` already specify ("BLAKE3-truncated content hash"). The coincidence detector can stay what it is good for (a measurement), but not the identity. Until then `addr` is specified as BLAKE3-256 and is a different function from `prismqueer::Oid::hash`. The spec treats them as two columns, never one.
+
+### §7.3 Back-projection into git
+
+AGENTS.md: "Git IS the crystal store." Alex 2026-09-04: "the only thing mirror adds is 'save the content addressed crystals for the shards to disk as git projection of the graph'." Precedent: fragmentation's `write_tree` already writes "Shard -> blob, Fractal -> tree with .data + numbered children" (`fragmentation/vcs/git/src/git.rs:79-97`, per Taut's scout).
+
+**Definition 7.3 (the projection `g`).**
+- atom → **blob** whose payload is the atom's canonical encoding, including the altitude tag;
+- fragment with label `ℓ` and children `x₀ … x_{k−1}` → **tree** with an entry `@` (blob: `τ ‖ ℓ`) and entries `000 … ` (zero-padded to a fixed width per tree, so git's byte-order sort of entry names is the child order), each pointing at `g(xᵢ)` with mode `100644` (blob) or `040000` (tree);
+- lens → tree with `@` and entries `^000 …` for its targets. That makes git reachability equal splinter reachability, so `git gc` keeps what the graph keeps;
+- references inside an SCC are `(SCC, index)` in content, never tree entries. Git's object graph is acyclic by construction (a tree's id depends on its entries' ids), which is Proposition 1.5's condensation again.
+
+**Proposition 7.4 (PROVED; COMPUTED).** On the splinters reachable from a root, `g` is a bijection onto the git objects reachable from `g(root)`, and it commutes with children: `g` is an isomorphism of the two Merkle DAGs, barring a collision in either hash. *Proof.* Both addresses are Merkle functions of the same canonical tree (Proposition 1.1 twice). Decoding a tree's `@` entry and its ordered numbered entries inverts Definition 7.3. ∎ *COMPUTED* (`git_projection.py`, a throwaway repo): for a toy grammar, `git cat-file -t` on the root is `tree`; walking it reproduces the AST; a reformatted source gives the same `addr` **and** the same git id; changing one literal changes both; `addr ≠` git id.
+
+The existing `@mirror/store/git` (`shards/mirror/store/git.mirror`) stores fragmentation objects in a namespace under `.git/mirror/`. Those are not native git objects that `git cat-file` can read. The back-projection here writes native objects. **DECISION (Alex):** supersede the namespaced wire, or keep both with the namespaced store as a cache. AGENTS.md's "no other store" argues for superseding.
+
+### §7.4 The semantic spectral uuid falls out of compile (Alex: "from the Merkle DAG the semantic spectral uuid emerges")
+
+**`dark`.** `dark = addr(N)[0..80)` with `H` = BLAKE3, which matches the spec (`prismqueer::SpectralUuid::from_parts` takes "the first 10 bytes" of a 32-byte hash).
+**Proposition 7.5 (PROVED).** `dark` is invariant under every free move (Proposition 2.1) and changes whenever meaning changes, except for 80-bit collisions (birthday bound around 2⁴⁰ items, as the scout notes). This satisfies scout-spectral-uuid rule 1 ("dark must hash the MEANING") **by construction**.
+
+**`active`: which graph.** Taut's scout (`docs/scouts/2026-10-28-taut-graph-magic-dag-to-laplacian.md` §1–§2) finds that no landed path keeps the DAG. `coincidence::Laplacian::from_tree` allocates "a vertex per *occurrence*", and prism's `Graph` is "undirected and simple (`BTreeSet<EdgeKey>`)", so parallel edges collapse. So the graph has to be defined here.
+
+**Definition 7.6.** `Γ(N)`: vertices = distinct addresses reachable from the root (hash-consed). There is one undirected edge per (parent, child-slot) pair, **with multiplicity** (`f(x, x)` gives two parallel edges). Atoms and fragments are vertices. The erasure record and witnesses are not part of `Γ`.
+
+**Lemma 7.7 (reuse is `b₁`; PROVED).** If every vertex of `Γ(N)` is reachable from the root, `Γ` is connected and `b₁(Γ) = |E| − |V| + 1 = Σ_{v ≠ root} (indeg(v) − 1)`: the total number of reuses. A tree has `b₁ = 0`, so the per-occurrence expansion erases exactly this information. *Proof.* `|E| = Σ_v indeg(v)`, the root has in-degree 0, and Euler's formula for connected graphs gives `b₁ = |E| − |V| + 1`. ∎ prism's `Instrument` already returns `dim ker D = b₀ + b₁` (`instrument.rs:220-221`, per Taut).
+
+**Lemma 7.8 (directed operators see nothing or only degrees; PROVED; COMPUTED).** Order the vertices of a DAG topologically. Then the adjacency `A` is strictly upper triangular, hence nilpotent with spectrum `{0}`, and `D_out − A` is upper triangular with diagonal `D_out`, so its spectrum is the multiset of out-degrees. *COMPUTED* (`spectra.py`, a random 9-vertex DAG; Taut independently on three DAGs). prism's `docs/math/constrained-inference-floor.md:217-234` already states the adjacency half ("Do not decide this with floating eigenvalues").
+
+**Lemma 7.9 (uniform-phase magnetic Laplacian sees only unequal path lengths; PROVED).** With phase `θ` on every directed edge, the flux around a reuse loop made of two directed paths `r ⇝ c` of lengths `ℓ₁, ℓ₂` is `θ(ℓ₁ − ℓ₂)`. Equal-length diamonds are gauge-trivial and invisible. *Proof.* The flux around a cycle is the signed sum of edge phases along it. One path is traversed forward and the other backward. ∎ (Taut COMPUTED the same on a diamond and a triangle.) Making the magnetic operator see every reuse needs per-edge phases with meaning, which is a ruler. When it's wanted, the solver exists today: an `n × n` Hermitian problem `A + iB` is equivalent to the real symmetric `2n × 2n` problem `[[A, −B], [B, A]]`, whose eigenvalues are those of the Hermitian matrix, "each … repeated twice" (Numerical Recipes, §11.4), so `dsyev` suffices.
+
+**Recommendation (Mara-lean, DECISION Alex).** `active` reads the **undirected Laplacian of `Γ(N)` with multiplicity** (Taut's candidate (a)). It is intrinsic: it reads only the crystal's own DAG, which is content, not context. That reconciles `docs/specs/spectral-hash-design.md:211` ("without requiring graph context") with uuid_spectral's "local Laplacian … within a shard's splinter OID graph". It sees all reuse (Lemma 7.7), and it needs only `dsyev`.
+
+**Proposition 7.10 (relabelling invariance; PROVED).** For a permutation `P`, `P L Pᵀ` is similar to `L`, so the spectrum doesn't depend on vertex order. That satisfies scout rule 2 (intrinsic, never contextual), provided `Γ` is built from content alone, as in Definition 7.6.
+
+**Proposition 7.11 (active never identifies; PROVED; COMPUTED).** Cospectral non-isomorphic graphs exist: `K₁,₄` and `C₄ ∪ K₁` share the adjacency spectrum `{−2, 0, 0, 0, 2}`. The smallest Laplacian-cospectral non-isomorphic pair has 6 vertices, and the smallest adjacency-cospectral non-isomorphic trees have 8 (COMPUTED, `spectra.py`, by brute force). Schwenk 1973 ("Almost all trees are cospectral") and Godsil & McKay 1982 ("new and powerful constructions for pairs of cospectral graphs") give the general picture. An AST without reuse is a tree, so `active` collisions among ASTs are **generic, not exotic**. Identity reads `dark` only; `active` routes.
+
+**What isn't settled, and so can't be quantized yet (DECISION Alex; Taut §4).**
+1. **Three incompatible definitions of `SpectralCoordinate<5>`** (fragmentation `mirror-native-vcs.md:1095-1101`: λ₂, λ₅−λ₂ and three heat traces; `rung-8-9-…:162-166`: void dualities; prism `spectrum.rs`: Split/Refract/Project/Focus/Lift). The landed `SpectralCoordinate` is SHA-seeded random projections of bytes, i.e. none of the three. In prism's set, `Project = √(2·λ₂)` is a function of `Split = λ₂` (`spectrum.rs`), so it carries no independent bits, and `Focus` and `Lift` are not computed. That leaves **two** independent axes landed (λ₂ and the von Neumann entropy). Mara-lean: the fragmentation definition, because it reads the Laplacian and its heat traces carry multiplicity information. But `mirror-native-vcs.md` itself disagrees on whether `D² = L₀` or `L₀ + L₁` (`:1024` vs `:1104`), and only `L₀ + L₁` carries `b₁`. With Lemma 7.7, the lean is `L₀ + L₁`.
+2. **Bit budget.** 48 / 5 is not an integer; `reality-shard-as-crdt.md:312` says 12 bits per dimension (60 total). The split (e.g. 10/10/10/9/9) is a ruler.
+3. **Storage vs. identifier.** `store-vs-db-and-the-cascade.md:48-61` forbids a spatial coordinate in the storage OID, while uuid_spectral puts one in the identifier. Reading: there is no conflict if the storage address is `addr` (with no active bits) and `uuid_spectral` is a separate identifier whose identity half is `dark`. Then what the 2026-05-30 posture forbids (a contextual coordinate in the storage address) doesn't happen.
+4. **`active = 0` everywhere in production** (Taut §1, Stage 6). Nothing has to migrate yet, which is the cheapest moment to fix the definition.
+5. **The `combine` law.** `shards/uuid/spectral.mirror` says active halves compose "via SpectralCoordinate's eigenvalue addition law (to first order)". **Counterexample (PROVED):** the disjoint union of two `K₂` has Laplacian spectrum `{0,0,2,2}` and Fiedler value 0, while the sum of the parts' Fiedler values is 4. Spectra of unions are multiset unions, not sums. The homomorphism claim for `active` fails, and only `dark`'s Merkle rule composes.
+
+**The ruler for `active` is system-wide (PROVED).** The uuid has no room to name which quantization produced its active bits: 128 bits, all used. So two issuers' active halves are comparable only if both used the same quantizer, the same operator and the same graph construction. These are `@ruler` crystals (§9), **fixed system-wide and signed by every issuer**. An active half issued under an unsigned or different ruler isn't comparable, and the spec says so.
+
+---
+
+## §8 The universal transformation: one engine, every wire format, no serde
+
+Alex: "remove serde in favour of mirror doing the transformation itself"; 2026-09-02: "all wire formats are mirror type declarations + parse/emit bodies with `\` for partials".
+
+**Definition 8.1.** A wire format is a pair `(G_fmt, μ_fmt)`: a grammar (a PEG with its rule labels) and a meaning declaration (trivia, binders, normalization rules). Then `read_fmt = settle ∘ nf ∘ strip ∘ E(G_fmt)` and `emit_fmt = print_fmt` (the canonical printer). mirror-text is one such pair, JSON is another, and `mirror.mirror` is the pair for mirror itself.
+
+**Proposition 8.2 (PROVED, by construction).** One engine `E` reads every format. `serde` disappears because a format is *data* (a grammar plus `μ`), not code. The per-format obligations are Proposition 3.3 (the meaning round trip) and well-formedness (Corollary 5.2). Both are checked per grammar.
+
+**JSON as a grammar: what `μ_JSON` must declare.** RFC 8259: "An object is an unordered collection of zero or more name/value pairs". So member order is **free** under `μ_JSON`, and the normal form sorts members. **mirror-001's first red test** (two events differing only in key order and whitespace get the same id) is then Proposition 2.1 applied to `μ_JSON`, not a special case. Each of the following is a **ruler** to declare, not to assume:
+- duplicate names (RFC 8259 leaves the behaviour unpredictable) → lean: `\` (a comma), never last-wins;
+- number equivalence (`1`, `1.0`, `1e0`) → lean: exact decimal, never `f64`;
+- string normalization (escapes are free; Unicode normalization such as NFC is a ruler; prism's gate ids already chose NFC, per prism `CURRENT.md` §7b″).
+
+**Partials.** An input that leaves undefined atoms (Corollary 5.2), or a value a format can't express, is a `\`, never an error and never a silent drop.
+
+**Cross-format `shift`.** Reading a value from mirror-text and writing it as JSON is `shift` between two formats. It is free iff the value lies in both formats' expressible range. JSON has no `\` and no `@`-references, so `shift` into JSON is **partial**: what it can't carry is logged as erasure and the output marks the gap. That's why JSON lives only behind `--out @data/json`, an `@io` crossing.
+
+**Consequence for `pact.rs`** (`1324aae`): it parses with `serde_json` (`use serde_json::{json, Value}`). Under this section it is a reader for `G_pact-json` waiting to become `E(G_pact-json)`. Its vectors (`tests/pact/`) stay the oracle.
+
+---
+
+## §9 Rulers in the code today (declare each as an `@ruler`)
+
+Every constant that identifies distinct values is a ruler (§2.3). Inventory, all from the pinned prism `7e6b00f` unless stated:
+
+| ruler | where | value |
+|---|---|---|
+| commutator numerical zero / clearly non-zero | `spectral/commutator.rs:93,97` | `1e-12`, `1e-6` (× Frobenius scale) |
+| Refract cut-off | `spectral/spectrum.rs:110,116` | eigenvalues `≤ 1e-12` dropped |
+| settle noise / harmonic tolerance | `spectral/settle.rs:168,282` | `16·ε·scale·n`, `Noise(1e-6)` |
+| Kuramoto coupling, step, spread | `spectral/rotation.rs` `RotationConfig::default` | `K = 1.0`, `dt = 0.05`, `omega_scale = 0.3` |
+| rotation tick count | `infer_via_rotation(…, ticks, …)` | caller's choice (a budget) |
+| coefficient filters inside `Oid::hash` | `coincidence.rs` | `f64::EPSILON` (§7.2) |
+| fragility threshold | `coincidence.rs:256` | `1e-6` (computed both branches identical, so currently inert) |
+| quantizer for `active` | absent (Taut §1 Stage 6) | must be system-wide (§7.4) |
+| stage-iteration budget | §6.3 | `k_max` |
+| PEG alternative order | every choice in every grammar | declared by position (§2.4) |
+
+Instrument resolution (machine epsilon) is **declared**, a property of the instrument. The multiplier chosen on top of it is **signed**. That follows Reed's `@ruler` shape point 6, and Proposition 2.3 is why it is the right split: the discrete metric needs no signer, and everything finer does.
+
+---
+
+## §10 What the corpus already said: kept, sharpened, superseded
+
+| document | kept | sharpened | superseded |
+|---|---|---|---|
+| `shards/glass.mirror` (2026-06-06) | splinter = universal atom; atom/fractal/lens; transparency outside identity | fragment = fractal-shaped splinter; address formula §1.2; ordered children | — |
+| `2026-07-22-splinter-eigen-fragment-ouroboros-closure.md` | splinter at every altitude | — | §3 "fragment = `@eigen(Crystal<T>)`" (fragment is now any composite) |
+| `2026-08-10-…beta-normal…` math + spec | hash the normal form (Dhall's semantic integrity check: "a SHA-256 hash of the binary representation of an expression's normal form"); R1–R4; termination by size | "β" is sugar elision, not λ-β (§3.4); confluence needs a critical-pair check (Prop. 3.7) | Cor. 2.2 "linear time" (not shown); `H = Fold5` content encoding (bootstrap deleted) replaced by the encoding of §1.2 |
+| `2026-09-08-…crystal-fractal-splinter…` | Alex: "Crystal → Fractal(spectral uuid addressed) → Splinter (AST)"; `\` as a value | splinter's address excludes tick (Prop. 1.7) | Thm M2.1 "same operator at every altitude": true of the deposit shape, false of the guarantees (§5.4) |
+| `docs/specs/parser-as-prism-grammar.md` (2026-05-21) | grammars as combinator trees; kintsugi round trip; `dark_fallback` | dark spans = undefined atoms (Cor. 5.2) | `AstKind`/`Fold5` five-op AST (deleted with `bootstrap/`; prism CURRENT §7d) |
+| `docs/specs/generated-parser-spec.md` (2026-04-14) | the bootstrap phase diagram as an idea | — | already marked superseded (2026-05-19); codegen replaced by interpretation `E(N)` |
+| `boot/std/mirror/grammar.mirror` | `seq`/`literal`/`choice`/`repeat`; comment lifts to `@nl` | used as the second witness (DDC, §6.2) | as the grammar (no `pact`, `requires`, `\`) |
+| `2026-08-23-…mq-graph-native…` | — | — | Cor. M8.C4 (MQ strictly more expressive than Datalog): false as the brief notes, since MQ patterns can't express transitive closure; this document's engine is Datalog |
+| `2026-08-22-…recognition-94…` | — | — | §Q+M0.1's statement of Lawvere (§6.2) |
+| `shards/uuid/spectral.mirror` | `active ‖ dark`; identity reads dark | — | "active composes via eigenvalue addition" (counterexample §7.4) |
+| prismqueer `lib.rs` docstring "project — the lossy transformation" | — | — | by prism's own §7b″ ("project is emission"); drift to report |
+
+---
+
+## §11 Where Seam should aim first
+
+1. **Proposition 1.7 and its consequence.** Is there a rotation that needs the tick in the address? If the answer is "time-series observations", show that the deposit record doesn't carry it equally well.
+2. **Proposition 4.1 (choice needs `split`).** It rests on the Beam contract (darkness absorbing; `input()` panics on dark). Find a three-op encoding of ordered choice that doesn't hide a fork in an op body.
+3. **Proposition 5.1 (PEG = positive Datalog).** 1480/1480 is random testing over three-rule grammars with inputs up to length 5, not a proof by exhaustion. Attack the `!e`, `e*` and well-formedness boundary.
+4. **Proposition 7.2 (`Oid::hash`).** Produce a collision, or bound the work.
+5. **Proposition 6.2.** Construct a concrete seed misreading of a construct of `mirror.mirror` that passes stage 2. That turns the Thompson argument into a test vector.
+6. **§2.2.** Is there a free move that `μ` can't be made to declare, i.e. a representation change everyone agrees is meaning-preserving that the three declaration points (trivia, binders, rules) can't express?
+7. **Proposition 3.7 (confluence of R1–R4).** R5's path dependence makes the rewriting context-sensitive. Check whether that breaks Church–Rosser.
+8. **Hole identity (§3.4).** Two holes with the same signature in different shards share an address under the lean. Is that a feature (one answer serves both) or a leak (an answer meant for one context lands in another)?
+9. **Lemma 7.7 + Definition 7.6.** Does multiplicity-preserving `Γ` make `active` stable under every free move? Sorting SCC members, de Bruijn indices and R1–R4 all change the DAG. They are free moves applied **before** `Γ` is built, so `Γ(N)` sees only normal forms. Check that nothing builds `Γ` from a pre-normal tree.
+
+---
+
+## Sources (verified via Kagi this session unless marked)
+
+Read (primary text fetched and quoted):
+- Ford, B. (2004). *Parsing Expression Grammars: A Recognition-Based Syntactic Foundation.* POPL. https://bford.info/pub/lang/peg.pdf (Fig. 1 self-description; §3.3 ⇒ "is a function"; §3.6 well-formedness; completeness theorems)
+- Ford, B. (2002). *Packrat Parsing: Simple, Powerful, Lazy, Linear Time.* ICFP. https://pdos.csail.mit.edu/papers/packrat-parsing:icfp02.pdf
+- Warth, A., Douglass, J., Millstein, T. (2008). *Packrat Parsers Can Support Left Recursion.* PEPM. https://tinlizzie.org/VPRIPapers/tr2007002_packrat.pdf
+- Shieber, S., Schabes, Y., Pereira, F. (1995). *Principles and Implementation of Deductive Parsing.* J. Logic Programming. https://www.eecs.harvard.edu/~shieber/Biblio/Papers/infer.pdf
+- Thompson, K. (1984). *Reflections on Trusting Trust.* CACM 27(8). https://www.cs.cmu.edu/~rdriley/487/papers/Thompson_1984_ReflectionsonTrustingTrust.pdf
+- Godsil, C., McKay, B. (1982). *Constructing cospectral graphs.* Aequationes Math. 25. https://cs.anu.edu.au/~Brendan.McKay/papers/GodsilMcKayCospectral.pdf
+- Unison language reference, *Hashes.* https://www.unison-lang.org/docs/language-reference/hashes/
+- Chacon & Straub, *Pro Git* §10.2 Git Objects. https://git-scm.com/book/en/v2/Git-Internals-Git-Objects
+- Press et al., *Numerical Recipes* §11.4 Hermitian Matrices. https://phys.uri.edu/nigh/NumRec/bookfpdf/f11-4.pdf
+
+Abstract or summary only (secondary for the specific claim used):
+- Bancilhon, F. (1986). *Naive Evaluation of Recursively Defined Relations.* https://link.springer.com/chapter/10.1007/978-1-4612-4980-1_17
+- Van Gelder, A. (1993). *The Alternating Fixpoint of Logic Programs with Negation.* JCSS. https://www.sciencedirect.com/science/article/pii/002200009390024Q
+- Van Gelder, Ross, Schlipf (1991). *The Well-Founded Semantics for General Logic Programs.* JACM 38(3). https://dl.acm.org/doi/10.1145/116825.116838
+- Wheeler, D. A. (2005). *Countering Trusting Trust through Diverse Double-Compiling.* ACSAC. https://dwheeler.com/trusting-trust/acsac-countering-trusting-trust-20050922-alt.pdf
+- Merkle, R. (1987). *A Digital Signature Based on a Conventional Encryption Function.* CRYPTO. https://link.springer.com/chapter/10.1007/3-540-48184-2_32
+- Filliâtre, J.-C., Conchon, S. (2006). *Type-Safe Modular Hash-Consing.* ML Workshop. https://dl.acm.org/doi/10.1145/1159876.1159880
+- de Bruijn, N. G. (1972). *Lambda calculus notation with nameless dummies.* Indag. Math. 34. https://automath.win.tue.nl/archive/pdf/aut029.pdf
+- Tait, W. (1967). *Intensional Interpretations of Functionals of Finite Type I.* JSL. https://www.jstor.org/stable/2271658 (strong normalization of simply-typed terms: standard attribution, not read here)
+- Lawvere, F. W. (1969). *Diagonal arguments and cartesian closed categories.* LNM 92. http://www.tac.mta.ca/tac/reprints/articles/15/tr15abs.html (statement checked against Wikipedia's summary only)
+- Kleene, S. C. (1938). *On Notation for Ordinal Numbers.* JSL. https://www.jstor.org/stable/2267778 (second recursion theorem: standard attribution, not read)
+- Schwenk, A. J. (1973). *Almost all trees are cospectral.* (title and venue via scirp reference list; not read)
+- Wagner, D. (2002). *A Generalized Birthday Problem.* CRYPTO. https://iacr.org/archive/crypto2002/24420288/24420288.pdf
+- Dhall standard, `binary.md`. https://github.com/dhall-lang/dhall-lang/blob/master/standard/binary.md
+- RFC 8259 (JSON). https://www.rfc-editor.org/info/rfc8259/
+- Git hash-function transition. https://git-scm.com/docs/hash-function-transition
+- McCarthy (1960), Abelson & Sussman SICP §4.1: precedent for an evaluator written in its own language; cited, not used in any proof.
+
+Not used in a proof: Dolstra (2006) Nix thesis (store paths hash declared inputs; same pattern at package altitude), Chung (2005) directed Laplacians (defined for strongly connected digraphs per Taut's scout; a DAG with `n ≥ 2` is not), Fanuel et al. magnetic eigenmaps (arXiv:1606.08266).
+
+COMPUTED scripts (`~/dev/ai/mara/scratch/fixpoint-parser/`): `oidhash.py` (§7.2), `peg_datalog.py` (§5.1–5.2), `git_projection.py` (§7.3), `spectra.py` (§7.4).
