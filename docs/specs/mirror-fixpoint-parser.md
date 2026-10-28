@@ -303,4 +303,4 @@ Each test is written red first, against the binary (`mirror compile …`), the w
 
 ## §14 Pickup
 
-The order for the builder: T1 red, the seed (decision 9), `E`'s core with the PEG clauses, `mirror.mirror`, then T1 green. T2 (with the swap assertion) **gates** T1's green; T3–T7 next, because they pin meaning. T8–T13 after that. T14 waits for `@ruler`; T15 belongs to prism.
+The order for the builder: T1 red, the seed (decision 9), `E`'s core with the PEG clauses, `mirror.mirror`, then T2's swap assertion green, then T1 green (T2 gates T1). T3–T7 next, because they pin meaning. T8–T13 after that. T14 waits for `@ruler`; T15 belongs to prism.
