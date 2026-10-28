@@ -31,6 +31,10 @@ set positional-arguments
 # Pass --manifest-path so recipes work from the repo root without `cd`.
 MANIFEST_PATH := "rust/Cargo.toml"
 
+# rust/ is not a workspace: the binary crate plus four path crates, each
+# with its own manifest and tests.
+CRATE_MANIFESTS := "rust/Cargo.toml rust/fractal/Cargo.toml rust/matrix/Cargo.toml rust/spectral/Cargo.toml rust/roomba/Cargo.toml"
+
 # The cargo target dir. The flake's devShell sets CARGO_TARGET_DIR
 # (typically /Users/reed/.cargo-target), so we honour that; fall back to
 # the in-tree bootstrap/target/ when not in the flake shell.
@@ -139,31 +143,29 @@ pre-commit:
         || true)
     if [ -z "$rust_closure" ]; then
         echo "✓ pre-commit: diff-closure empty (no .rs, Cargo.toml, Cargo.lock staged)"
-        echo "  skipping mirror kintsugi mirror.spec — gate matches diff closure"
+        echo "  skipping the gate — gate matches diff closure"
         echo "  (recognition #53 second instance: @kintsugi/fracture/gate applied at @io)"
         exit 0
     fi
-    # Rust closure non-empty: run the substrate-native settlement chain.
-    # Speed-up per Taut scout 2026-07-01 Win 1: use debug profile
-    # (build-debug + MIRROR_BIN_DEBUG). Bootstrap binary here only runs
-    # mirror.spec kintsugi locally; optimization buys zero extra signal.
-    # `just install` still uses --release for the shipped artifact.
-    # Saves 30-60s per commit. JSON gate retained for verdict fidelity
-    # (Win 3 grep-based gate deferred; needs care around dark verdicts).
-    just build-debug
-    # Redirect to file then cat instead of `| tee` — the tee pipeline
-    # causes cargo descendants to inherit the read-end and hold it open,
-    # deadlocking mirror kintsugi's spawn+wait+drain even with the
-    # bootstrap/src/lib.rs `.output()` → spawn+wait+threaded-drain fix
-    # (912c33c). Discovered 2026-07-07 by Taut deep-dive during N-cascade
-    # N5 debugging. The redirect keeps the same operator-visible output
-    # via the subsequent `cat`, without the pipe hold.
-    {{MIRROR_BIN_DEBUG}} kintsugi mirror.spec > /tmp/mirror-spec-verdict.mirror
-    cat /tmp/mirror-spec-verdict.mirror
-    {{MIRROR_BIN_DEBUG}} kintsugi --out=@data/json mirror.spec > /tmp/mirror-spec-verdict.json
-    jq -e '.verdict != "failure"' /tmp/mirror-spec-verdict.json > /dev/null || ( \
-        echo "✖ mirror kintsugi mirror.spec: verdict failure — see /tmp/mirror-spec-verdict.mirror" >&2; \
-        exit 1 )
+    # INTERIM GATE (Alex 2026-10-28). The gate is `mirror kintsugi
+    # mirror.spec`: mirror verifying mirror. rust/ does not dispatch
+    # `kintsugi` yet (it exits 2, "dispatch lands at M3+"), so since
+    # bootstrap/ was deleted (2026-08-26) no Rust commit could pass this
+    # gate honestly. Until then the gate is every crate's own tests, with
+    # default features: the RED-by-design batteries sit behind the
+    # `red-claims` feature (`just test-red` runs them).
+    #
+    # Not a fallback. The commit that makes `mirror kintsugi` dispatch
+    # (`mirror compile` → fixpoint-parser T1) restores the kintsugi gate
+    # here; that is part of T1's definition of done.
+    #
+    # Own target dir: the shared CARGO_TARGET_DIR is locked by any other
+    # session's cargo run, and the gate must not wait on another repo.
+    export CARGO_TARGET_DIR="{{justfile_directory()}}/rust/target"
+    for manifest in {{CRATE_MANIFESTS}}; do
+        echo "── cargo test --manifest-path $manifest"
+        cargo test --manifest-path "$manifest"
+    done
 
 # Pre-push gate. Re-runs the suite (coverage tooling not wired yet — when it
 # is, this recipe migrates to cargo-llvm-cov + a threshold check).
@@ -290,9 +292,13 @@ craft-binary: build
 # Cargo conveniences
 # ──────────────────────────────────────────────────────────────────────────
 
-# Run the test suite.
+# Run every crate's tests (default features; RED batteries excluded).
 test:
-    cargo test --manifest-path {{MANIFEST_PATH}}
+    #!/usr/bin/env bash
+    set -euo pipefail
+    for manifest in {{CRATE_MANIFESTS}}; do
+        cargo test --manifest-path "$manifest"
+    done
 
 # Watch + retest on every change (requires cargo-watch).
 # Install with: cargo install cargo-watch
