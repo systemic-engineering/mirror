@@ -814,10 +814,18 @@ mod fs_prop_tests {
         assert!(entries.iter().all(|e| !e.is_dir));
         let names: Vec<String> = entries
             .iter()
-            .filter_map(|e| e.path.file_name().and_then(|n| n.to_str()).map(String::from))
+            .filter_map(|e| {
+                e.path
+                    .file_name()
+                    .and_then(|n| n.to_str())
+                    .map(String::from)
+            })
             .collect();
         for n in ["a", "b", "c"] {
-            assert!(names.contains(&n.to_string()), "expected `{n}` in {names:?}");
+            assert!(
+                names.contains(&n.to_string()),
+                "expected `{n}` in {names:?}"
+            );
         }
     }
 
@@ -877,7 +885,9 @@ mod fs_prop_tests {
             .map(|e| e.path.to_string_lossy().to_string())
             .collect();
         assert!(
-            !paths.iter().any(|p| p.contains("/.git/") || p.ends_with("/.git")),
+            !paths
+                .iter()
+                .any(|p| p.contains("/.git/") || p.ends_with("/.git")),
             "no .git entries expected; got {paths:?}"
         );
         assert!(paths.iter().any(|p| p.ends_with("main.rs")));
@@ -1165,7 +1175,10 @@ mod git_prop_tests {
             .current_dir(tmp.path())
             .output()
             .unwrap();
-        assert!(out.status.success(), "git config core.hooksPath=/dev/null failed");
+        assert!(
+            out.status.success(),
+            "git config core.hooksPath=/dev/null failed"
+        );
         Some(tmp)
     }
 
@@ -1206,8 +1219,14 @@ mod git_prop_tests {
             .unwrap();
         Command::new("git")
             .args([
-                "-c", "user.name=T", "-c", "user.email=t@t",
-                "commit", "-m", "seed", "--no-gpg-sign",
+                "-c",
+                "user.name=T",
+                "-c",
+                "user.email=t@t",
+                "commit",
+                "-m",
+                "seed",
+                "--no-gpg-sign",
             ])
             .current_dir(tmp.path())
             .output()
@@ -1289,8 +1308,7 @@ mod git_prop_tests {
         git_add(tmp.path(), &file).unwrap();
         let author = test_author();
         let committer = test_committer();
-        let oid = git_commit_as(tmp.path(), &author, &committer, "first commit")
-            .unwrap();
+        let oid = git_commit_as(tmp.path(), &author, &committer, "first commit").unwrap();
         assert_eq!(oid.len(), 40);
         assert_eq!(oid, git_head_oid(tmp.path()).unwrap());
     }
@@ -1317,9 +1335,15 @@ mod git_prop_tests {
         let parts: Vec<&str> = line.split('|').collect();
         assert_eq!(parts.len(), 4, "expected 4 fields; got {parts:?}");
         assert_eq!(parts[0], "Author", "author name mismatch");
-        assert_eq!(parts[1], "author@systemic.engineer", "author email mismatch");
+        assert_eq!(
+            parts[1], "author@systemic.engineer",
+            "author email mismatch"
+        );
         assert_eq!(parts[2], "Committer", "committer name mismatch");
-        assert_eq!(parts[3], "committer@systemic.engineer", "committer email mismatch");
+        assert_eq!(
+            parts[3], "committer@systemic.engineer",
+            "committer email mismatch"
+        );
     }
 
     #[test]

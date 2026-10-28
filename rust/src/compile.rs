@@ -91,11 +91,11 @@
 // crate) per Alex 2026-07-25 four-crate + Mara 9bb1f57 naming
 // discipline. dispatch_property/dispatch_spec_property renames to
 // enact_property/enact_spec_property land in Migration 4b.
-use spectral::liquid::{
-    enact_property, enact_spec_property, extract_properties, extract_spec_properties,
-    PropertyDecl, Verdict,
-};
 use fractal::{crystallize, Crystal, Oid, Witnessed};
+use spectral::liquid::{
+    enact_property, enact_spec_property, extract_properties, extract_spec_properties, PropertyDecl,
+    Verdict,
+};
 
 /// One property discharge — the verdict of one dispatch call plus the
 /// property name that produced it. Serialized to bytes for OID hashing
@@ -382,7 +382,10 @@ bilateral not_yet_registered_pillar_name {
         assert_eq!(comp.depth(), 1);
         assert_eq!(comp.crystals[0].prev(), &Oid::GENESIS);
         assert!(comp.crystals[0].is_genesis());
-        assert_eq!(comp.discharges[0].property_name, "not_yet_registered_pillar_name");
+        assert_eq!(
+            comp.discharges[0].property_name,
+            "not_yet_registered_pillar_name"
+        );
         // Unregistered names defer through pillar::dispatch fallthrough.
         assert!(comp.discharges[0].verdict.is_defer());
         assert!(comp.escalation.is_continue());

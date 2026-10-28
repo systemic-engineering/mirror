@@ -310,11 +310,7 @@ pub fn extract_spec_properties(source: &str) -> Vec<SpecProperty> {
             }
             // Detect `domain @<Type>` directive.
             if let Some(d_rest) = body_trimmed.strip_prefix("domain ") {
-                domain_ref = d_rest
-                    .split_whitespace()
-                    .next()
-                    .unwrap_or("")
-                    .to_string();
+                domain_ref = d_rest.split_whitespace().next().unwrap_or("").to_string();
                 continue;
             }
             // Detect `samples <n>` directive.
@@ -613,7 +609,8 @@ pub fn enact_spec_property(prop: &SpecProperty, args: &[String]) -> Verdict {
             if parts.len() != 2 {
                 return Verdict::Fail(format!(
                     "property `{}` verifies algedonic(mag, theta) requires exactly 2 args; got {}",
-                    prop.name, parts.len()
+                    prop.name,
+                    parts.len()
                 ));
             }
             let magnitude: f64 = match parts[0].parse() {
@@ -738,8 +735,10 @@ pub fn enact_spec_property(prop: &SpecProperty, args: &[String]) -> Verdict {
                     prop.name, theta
                 ));
             }
-            let history_loss: Vec<prismqueer::ScalarLoss> =
-                history.iter().map(|&m| prismqueer::ScalarLoss::new(m)).collect();
+            let history_loss: Vec<prismqueer::ScalarLoss> = history
+                .iter()
+                .map(|&m| prismqueer::ScalarLoss::new(m))
+                .collect();
             let theta_loss = prismqueer::ScalarLoss::new(theta);
             let pv = prismqueer::flux::pillar::viability_of_magnitudes(
                 &history_loss,
@@ -786,7 +785,8 @@ pub fn enact_spec_property(prop: &SpecProperty, args: &[String]) -> Verdict {
                 .map(str::trim)
                 .filter(|s| !s.is_empty())
                 .collect();
-            let mut verdicts: Vec<prismqueer::PropertyVerdict> = Vec::with_capacity(verdict_tokens.len());
+            let mut verdicts: Vec<prismqueer::PropertyVerdict> =
+                Vec::with_capacity(verdict_tokens.len());
             for token in &verdict_tokens {
                 let pv = match *token {
                     "pass" => prismqueer::PropertyVerdict::Pass,
@@ -909,10 +909,7 @@ fn property_verdict_to_verdict(pv: prismqueer::PropertyVerdict, prop_name: &str)
     use prismqueer::PropertyVerdict as PV;
     match pv {
         PV::Pass => Verdict::Pass,
-        PV::Fail(diag) => Verdict::Fail(format!(
-            "property `{}` failed: {:?}",
-            prop_name, diag
-        )),
+        PV::Fail(diag) => Verdict::Fail(format!("property `{}` failed: {:?}", prop_name, diag)),
         PV::Partial {
             confidence,
             diagnostics,
@@ -1017,8 +1014,7 @@ pub mod pillar {
             Some(o) if !o.is_empty() => o,
             _ => {
                 return Verdict::Fail(
-                    "paradox_crystal_immutable: expected non-empty OID at args[0]"
-                        .to_string(),
+                    "paradox_crystal_immutable: expected non-empty OID at args[0]".to_string(),
                 )
             }
         };
@@ -1067,15 +1063,14 @@ pub mod pillar {
                 )
             }
         };
-        let first_fail = match args.get(1) {
-            Some(f) => f,
-            None => {
-                return Verdict::Fail(
+        let first_fail =
+            match args.get(1) {
+                Some(f) => f,
+                None => return Verdict::Fail(
                     "redirect_witness_preserves_original_pin: expected first_fail_oid at args[1]"
                         .to_string(),
-                )
-            }
-        };
+                ),
+            };
         if pinned == first_fail {
             Verdict::Pass
         } else {
@@ -1184,21 +1179,19 @@ pub mod pillar {
     ///
     /// Args: [escalate_chain_length, first_escalate_oid]
     pub fn consent_through_refusal(args: &[String]) -> Verdict {
-        let chain_len = match args.first().and_then(|s| s.parse::<usize>().ok()) {
-            Some(n) => n,
-            None => {
-                return Verdict::Fail(
+        let chain_len =
+            match args.first().and_then(|s| s.parse::<usize>().ok()) {
+                Some(n) => n,
+                None => return Verdict::Fail(
                     "consent_through_refusal: expected escalate_chain_length (usize) at args[0]"
                         .to_string(),
-                )
-            }
-        };
+                ),
+            };
         let escalate_oid = match args.get(1) {
             Some(o) => o,
             None => {
                 return Verdict::Fail(
-                    "consent_through_refusal: expected first_escalate_oid at args[1]"
-                        .to_string(),
+                    "consent_through_refusal: expected first_escalate_oid at args[1]".to_string(),
                 )
             }
         };
@@ -1472,7 +1465,11 @@ pub mod pillar {
         #[test]
         fn paradox_crystal_immutable_fails_mutation_marker() {
             let v = paradox_crystal_immutable(&["a3dc9053b8879f2d-mutated".to_string()]);
-            assert!(v.is_fail(), "OID with `mutated` marker must fail; got {:?}", v);
+            assert!(
+                v.is_fail(),
+                "OID with `mutated` marker must fail; got {:?}",
+                v
+            );
         }
 
         #[test]
@@ -1498,7 +1495,10 @@ pub mod pillar {
                 "latest_hurt_oid".to_string(),
                 "original_wound_oid".to_string(),
             ]);
-            assert!(v.is_fail(), "witness-target shift must fail (re-litigation)");
+            assert!(
+                v.is_fail(),
+                "witness-target shift must fail (re-litigation)"
+            );
             if let Verdict::Fail(msg) = v {
                 assert!(msg.contains("re-litigation"));
             }
@@ -1568,19 +1568,14 @@ pub mod pillar {
 
         #[test]
         fn consent_through_refusal_passes_non_empty_refusal_chain() {
-            let v = consent_through_refusal(&[
-                "3".to_string(),
-                "first_escalate_oid_abc".to_string(),
-            ]);
+            let v =
+                consent_through_refusal(&["3".to_string(), "first_escalate_oid_abc".to_string()]);
             assert!(v.is_pass());
         }
 
         #[test]
         fn consent_through_refusal_fails_empty_chain() {
-            let v = consent_through_refusal(&[
-                "0".to_string(),
-                "never_escalated".to_string(),
-            ]);
+            let v = consent_through_refusal(&["0".to_string(), "never_escalated".to_string()]);
             assert!(v.is_fail());
             if let Verdict::Fail(msg) = v {
                 assert!(msg.contains("empty escalate chain"));
@@ -1620,10 +1615,10 @@ pub mod pillar {
         #[test]
         fn intervention_composes_when_chain_pos_after_wound_and_oids_match() {
             let v = intervention_composes_without_deleting_trauma(&[
-                "5".to_string(),  // intervention_pos
-                "3".to_string(),  // wound_pos
-                "wound_abc123".to_string(),  // targets
-                "wound_abc123".to_string(),  // actual wound_oid
+                "5".to_string(),            // intervention_pos
+                "3".to_string(),            // wound_pos
+                "wound_abc123".to_string(), // targets
+                "wound_abc123".to_string(), // actual wound_oid
             ]);
             assert!(v.is_pass());
         }
@@ -1726,7 +1721,7 @@ pub mod pillar {
                 "s2".to_string(),
                 "s3".to_string(),
                 "s4".to_string(),
-                "policy".to_string(),  // wrong name for s5
+                "policy".to_string(), // wrong name for s5
             ]);
             assert!(v.is_fail());
             if let Verdict::Fail(msg) = v {
@@ -1763,19 +1758,22 @@ pub mod pillar {
 
         #[test]
         fn dispatch_routes_iter_6_pillars() {
-            let v = enact("vsm_invariants", &[
-                "s1".to_string(),
-                "s2".to_string(),
-                "s3".to_string(),
-                "s4".to_string(),
-                "s5".to_string(),
-            ]);
+            let v = enact(
+                "vsm_invariants",
+                &[
+                    "s1".to_string(),
+                    "s2".to_string(),
+                    "s3".to_string(),
+                    "s4".to_string(),
+                    "s5".to_string(),
+                ],
+            );
             assert!(v.is_pass());
 
-            let v2 = enact("autopoietic_lawvere_fixed_point", &[
-                "same".to_string(),
-                "same".to_string(),
-            ]);
+            let v2 = enact(
+                "autopoietic_lawvere_fixed_point",
+                &["same".to_string(), "same".to_string()],
+            );
             assert!(v2.is_pass());
         }
     }
@@ -2020,12 +2018,16 @@ project demo {
         let props = extract_spec_properties(source);
         assert_eq!(props.len(), 1);
         assert!(
-            props[0].verifies_source.contains("commutator_norm(a, b) == commutator_norm(b, a)"),
+            props[0]
+                .verifies_source
+                .contains("commutator_norm(a, b) == commutator_norm(b, a)"),
             "expected multi-line verifies to contain commutator equation; got: {:?}",
             props[0].verifies_source
         );
         assert!(
-            props[0].verifies_source.contains("commutator_norm(a, a) == zero"),
+            props[0]
+                .verifies_source
+                .contains("commutator_norm(a, a) == zero"),
             "expected multi-line verifies to contain self-annihilation; got: {:?}",
             props[0].verifies_source
         );
@@ -2126,14 +2128,22 @@ project demo {
     fn dispatch_spec_property_boolean_true_returns_pass() {
         let prop = spec_property_verifies("trivial_true", "true");
         let v = enact_spec_property(&prop, &[]);
-        assert!(v.is_pass(), "verifies {{ true }} MUST return Pass; got {:?}", v);
+        assert!(
+            v.is_pass(),
+            "verifies {{ true }} MUST return Pass; got {:?}",
+            v
+        );
     }
 
     #[test]
     fn dispatch_spec_property_boolean_false_returns_fail() {
         let prop = spec_property_verifies("trivial_false", "false");
         let v = enact_spec_property(&prop, &[]);
-        assert!(v.is_fail(), "verifies {{ false }} MUST return Fail; got {:?}", v);
+        assert!(
+            v.is_fail(),
+            "verifies {{ false }} MUST return Fail; got {:?}",
+            v
+        );
         if let Verdict::Fail(msg) = v {
             assert!(
                 msg.contains("trivial_false"),
@@ -2146,14 +2156,8 @@ project demo {
 
     #[test]
     fn dispatch_spec_property_sentinel_containment_pass() {
-        let prop = spec_property_verifies(
-            "state_well_formed",
-            r#"contains("well-formed")"#,
-        );
-        let v = enact_spec_property(
-            &prop,
-            &["state=well-formed-and-observed".to_string()],
-        );
+        let prop = spec_property_verifies("state_well_formed", r#"contains("well-formed")"#);
+        let v = enact_spec_property(&prop, &["state=well-formed-and-observed".to_string()]);
         assert!(
             v.is_pass(),
             "contains(\"well-formed\") on args[0]=`state=well-formed-and-observed` MUST return Pass; got {:?}",
@@ -2163,10 +2167,7 @@ project demo {
 
     #[test]
     fn dispatch_spec_property_sentinel_containment_fail() {
-        let prop = spec_property_verifies(
-            "state_well_formed",
-            r#"contains("well-formed")"#,
-        );
+        let prop = spec_property_verifies("state_well_formed", r#"contains("well-formed")"#);
         let v = enact_spec_property(&prop, &["state=malformed".to_string()]);
         assert!(
             v.is_fail(),
@@ -2205,10 +2206,7 @@ project demo {
 
     #[test]
     fn dispatch_spec_property_unrecognized_verifies_defers_with_iter_4_message() {
-        let prop = spec_property_verifies(
-            "unknown_shape",
-            "commutator_norm(a, b) > theta",
-        );
+        let prop = spec_property_verifies("unknown_shape", "commutator_norm(a, b) > theta");
         let v = enact_spec_property(&prop, &[]);
         assert!(v.is_defer());
         if let Verdict::Defer(msg) = v {
@@ -2231,10 +2229,7 @@ project demo {
 
     #[test]
     fn dispatch_spec_property_algedonic_magnitude_above_theta_returns_pass() {
-        let prop = spec_property_verifies(
-            "algedonic_strong_signal",
-            "algedonic(5.0, 3.0)",
-        );
+        let prop = spec_property_verifies("algedonic_strong_signal", "algedonic(5.0, 3.0)");
         let v = enact_spec_property(&prop, &[]);
         assert!(
             v.is_pass(),
@@ -2245,10 +2240,7 @@ project demo {
 
     #[test]
     fn dispatch_spec_property_algedonic_zero_magnitude_returns_fail() {
-        let prop = spec_property_verifies(
-            "algedonic_no_signal",
-            "algedonic(0.0, 3.0)",
-        );
+        let prop = spec_property_verifies("algedonic_no_signal", "algedonic(0.0, 3.0)");
         let v = enact_spec_property(&prop, &[]);
         assert!(
             v.is_fail(),
@@ -2259,10 +2251,7 @@ project demo {
 
     #[test]
     fn dispatch_spec_property_algedonic_between_zero_and_theta_defers_partial() {
-        let prop = spec_property_verifies(
-            "algedonic_below_threshold",
-            "algedonic(1.5, 3.0)",
-        );
+        let prop = spec_property_verifies("algedonic_below_threshold", "algedonic(1.5, 3.0)");
         let v = enact_spec_property(&prop, &[]);
         assert!(
             v.is_defer(),
@@ -2277,10 +2266,7 @@ project demo {
 
     #[test]
     fn dispatch_spec_property_algedonic_wrong_arity_returns_fail() {
-        let prop = spec_property_verifies(
-            "algedonic_bad_arity",
-            "algedonic(5.0)",
-        );
+        let prop = spec_property_verifies("algedonic_bad_arity", "algedonic(5.0)");
         let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
@@ -2290,10 +2276,7 @@ project demo {
 
     #[test]
     fn dispatch_spec_property_algedonic_non_numeric_returns_fail() {
-        let prop = spec_property_verifies(
-            "algedonic_bad_number",
-            "algedonic(hello, 3.0)",
-        );
+        let prop = spec_property_verifies("algedonic_bad_number", "algedonic(hello, 3.0)");
         let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
@@ -2306,10 +2289,7 @@ project demo {
         // ScalarLoss invariant: magnitude ≥ 0. Dispatch guards against
         // negative values before constructing the Loss, surfacing a
         // substrate-honest domain error instead of panicking.
-        let prop = spec_property_verifies(
-            "algedonic_negative",
-            "algedonic(-1.0, 3.0)",
-        );
+        let prop = spec_property_verifies("algedonic_negative", "algedonic(-1.0, 3.0)");
         let v = enact_spec_property(&prop, &[]);
         assert!(
             v.is_fail(),
@@ -2323,10 +2303,7 @@ project demo {
 
     #[test]
     fn dispatch_spec_property_algedonic_large_magnitude_passes() {
-        let prop = spec_property_verifies(
-            "algedonic_huge",
-            "algedonic(1000000.0, 0.001)",
-        );
+        let prop = spec_property_verifies("algedonic_huge", "algedonic(1000000.0, 0.001)");
         let v = enact_spec_property(&prop, &[]);
         assert!(v.is_pass());
     }
@@ -2334,10 +2311,7 @@ project demo {
     #[test]
     fn dispatch_spec_property_algedonic_integer_literal_parses() {
         // f64::parse accepts integer literals (they parse as f64 too).
-        let prop = spec_property_verifies(
-            "algedonic_int_literals",
-            "algedonic(5, 3)",
-        );
+        let prop = spec_property_verifies("algedonic_int_literals", "algedonic(5, 3)");
         let v = enact_spec_property(&prop, &[]);
         assert!(v.is_pass(), "got {:?}", v);
     }
@@ -2355,10 +2329,8 @@ project demo {
         // history.len() >= omega AND accumulated > theta → Pass.
         // ScalarLoss combine is scalar addition; window last-3 of
         // [2,3,4] = 9.0 > theta 5.0 → Pass.
-        let prop = spec_property_verifies(
-            "viability_persistent",
-            "viability([2.0, 3.0, 4.0], 5.0, 3)",
-        );
+        let prop =
+            spec_property_verifies("viability_persistent", "viability([2.0, 3.0, 4.0], 5.0, 3)");
         let v = enact_spec_property(&prop, &[]);
         assert!(v.is_pass(), "got {:?}", v);
     }
@@ -2366,10 +2338,8 @@ project demo {
     #[test]
     fn dispatch_spec_property_viability_window_full_below_theta_fails() {
         // window accumulated 0.5 + 0.5 + 0.5 = 1.5, theta 10.0 → Fail.
-        let prop = spec_property_verifies(
-            "viability_starving",
-            "viability([0.5, 0.5, 0.5], 10.0, 3)",
-        );
+        let prop =
+            spec_property_verifies("viability_starving", "viability([0.5, 0.5, 0.5], 10.0, 3)");
         let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail(), "got {:?}", v);
     }
@@ -2377,10 +2347,7 @@ project demo {
     #[test]
     fn dispatch_spec_property_viability_history_shorter_than_window_defers_partial() {
         // history.len() < omega → Partial → Defer.
-        let prop = spec_property_verifies(
-            "viability_early",
-            "viability([1.0, 2.0], 5.0, 5)",
-        );
+        let prop = spec_property_verifies("viability_early", "viability([1.0, 2.0], 5.0, 5)");
         let v = enact_spec_property(&prop, &[]);
         assert!(v.is_defer(), "got {:?}", v);
         if let Verdict::Defer(msg) = v {
@@ -2391,10 +2358,7 @@ project demo {
 
     #[test]
     fn dispatch_spec_property_viability_empty_history_defers() {
-        let prop = spec_property_verifies(
-            "viability_empty",
-            "viability([], 5.0, 3)",
-        );
+        let prop = spec_property_verifies("viability_empty", "viability([], 5.0, 3)");
         let v = enact_spec_property(&prop, &[]);
         assert!(v.is_defer(), "got {:?}", v);
     }
@@ -2402,10 +2366,8 @@ project demo {
     #[test]
     fn dispatch_spec_property_viability_window_larger_than_history_defers() {
         // 2 magnitudes, window 5 → shorter than window → Partial → Defer.
-        let prop = spec_property_verifies(
-            "viability_short_history",
-            "viability([10.0, 10.0], 5.0, 5)",
-        );
+        let prop =
+            spec_property_verifies("viability_short_history", "viability([10.0, 10.0], 5.0, 5)");
         let v = enact_spec_property(&prop, &[]);
         assert!(v.is_defer(), "got {:?}", v);
     }
@@ -2429,10 +2391,7 @@ project demo {
 
     #[test]
     fn dispatch_spec_property_viability_missing_bracket_returns_fail() {
-        let prop = spec_property_verifies(
-            "viability_no_array",
-            "viability(1.0, 2.0, 3)",
-        );
+        let prop = spec_property_verifies("viability_no_array", "viability(1.0, 2.0, 3)");
         let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
@@ -2442,10 +2401,8 @@ project demo {
 
     #[test]
     fn dispatch_spec_property_viability_missing_closing_bracket_returns_fail() {
-        let prop = spec_property_verifies(
-            "viability_unclosed",
-            "viability([1.0, 2.0, 3.0, 5.0, 3)",
-        );
+        let prop =
+            spec_property_verifies("viability_unclosed", "viability([1.0, 2.0, 3.0, 5.0, 3)");
         let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
@@ -2455,10 +2412,7 @@ project demo {
 
     #[test]
     fn dispatch_spec_property_viability_missing_theta_omega_returns_fail() {
-        let prop = spec_property_verifies(
-            "viability_no_tail",
-            "viability([1.0, 2.0, 3.0])",
-        );
+        let prop = spec_property_verifies("viability_no_tail", "viability([1.0, 2.0, 3.0])");
         let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
@@ -2481,10 +2435,8 @@ project demo {
 
     #[test]
     fn dispatch_spec_property_viability_bad_omega_returns_fail() {
-        let prop = spec_property_verifies(
-            "viability_bad_omega",
-            "viability([1.0, 2.0], 5.0, three)",
-        );
+        let prop =
+            spec_property_verifies("viability_bad_omega", "viability([1.0, 2.0], 5.0, three)");
         let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
@@ -2495,10 +2447,8 @@ project demo {
 
     #[test]
     fn dispatch_spec_property_viability_negative_magnitude_returns_fail() {
-        let prop = spec_property_verifies(
-            "viability_negative",
-            "viability([1.0, -2.0, 3.0], 5.0, 3)",
-        );
+        let prop =
+            spec_property_verifies("viability_negative", "viability([1.0, -2.0, 3.0], 5.0, 3)");
         let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
@@ -2537,14 +2487,22 @@ project demo {
     fn dispatch_spec_property_fold_empty_list_returns_pass_neutral() {
         let prop = spec_property_verifies("fold_empty", "fold([])");
         let v = enact_spec_property(&prop, &[]);
-        assert!(v.is_pass(), "empty fold MUST return Pass (neutral); got {:?}", v);
+        assert!(
+            v.is_pass(),
+            "empty fold MUST return Pass (neutral); got {:?}",
+            v
+        );
     }
 
     #[test]
     fn dispatch_spec_property_fold_single_fail_dominates_result() {
         let prop = spec_property_verifies("fold_one_fail", "fold([pass, pass, fail, pass])");
         let v = enact_spec_property(&prop, &[]);
-        assert!(v.is_fail(), "one fail in fold MUST dominate to Fail; got {:?}", v);
+        assert!(
+            v.is_fail(),
+            "one fail in fold MUST dominate to Fail; got {:?}",
+            v
+        );
     }
 
     #[test]
@@ -2567,7 +2525,11 @@ project demo {
         // dominates (uncertainty propagates).
         let prop = spec_property_verifies("fold_pass_defer", "fold([pass, defer, pass])");
         let v = enact_spec_property(&prop, &[]);
-        assert!(v.is_defer(), "Pass + Partial merge → Partial → Defer; got {:?}", v);
+        assert!(
+            v.is_defer(),
+            "Pass + Partial merge → Partial → Defer; got {:?}",
+            v
+        );
     }
 
     #[test]
@@ -2651,12 +2613,13 @@ project demo {
     #[test]
     fn dispatch_spec_property_bundle_commutator_same_strategy_vanishes_to_fail() {
         // Same strategy → commutator vanishes → magnitude zero → Fail.
-        let prop = spec_property_verifies(
-            "bundle_same_strategy",
-            "bundle_commutator(1, 1, 0.5)",
-        );
+        let prop = spec_property_verifies("bundle_same_strategy", "bundle_commutator(1, 1, 0.5)");
         let v = enact_spec_property(&prop, &[]);
-        assert!(v.is_fail(), "same-strategy commutator vanishes; got {:?}", v);
+        assert!(
+            v.is_fail(),
+            "same-strategy commutator vanishes; got {:?}",
+            v
+        );
     }
 
     #[test]
@@ -2666,22 +2629,20 @@ project demo {
         // strategies 1 and 3: metric distance between two ScalarLoss
         // values (1.0 vs 3.0) is 2.0. theta=0.5 → magnitude 2.0 > 0.5
         // → Pass.
-        let prop = spec_property_verifies(
-            "bundle_strong_signal",
-            "bundle_commutator(1, 3, 0.5)",
-        );
+        let prop = spec_property_verifies("bundle_strong_signal", "bundle_commutator(1, 3, 0.5)");
         let v = enact_spec_property(&prop, &[]);
-        assert!(v.is_pass(), "different-strategy magnitude > theta; got {:?}", v);
+        assert!(
+            v.is_pass(),
+            "different-strategy magnitude > theta; got {:?}",
+            v
+        );
     }
 
     #[test]
     fn dispatch_spec_property_bundle_commutator_below_theta_defers_partial() {
         // Commutator magnitude between strategies 1+2 = |1-2| = 1.0.
         // theta=5.0 → magnitude 1.0 <= 5.0, non-zero → Partial → Defer.
-        let prop = spec_property_verifies(
-            "bundle_weak_signal",
-            "bundle_commutator(1, 2, 5.0)",
-        );
+        let prop = spec_property_verifies("bundle_weak_signal", "bundle_commutator(1, 2, 5.0)");
         let v = enact_spec_property(&prop, &[]);
         assert!(
             v.is_defer(),
@@ -2692,10 +2653,7 @@ project demo {
 
     #[test]
     fn dispatch_spec_property_bundle_commutator_wrong_arity_returns_fail() {
-        let prop = spec_property_verifies(
-            "bundle_bad_arity",
-            "bundle_commutator(1, 2)",
-        );
+        let prop = spec_property_verifies("bundle_bad_arity", "bundle_commutator(1, 2)");
         let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
@@ -2705,10 +2663,8 @@ project demo {
 
     #[test]
     fn dispatch_spec_property_bundle_commutator_bad_strategy_returns_fail() {
-        let prop = spec_property_verifies(
-            "bundle_bad_strategy",
-            "bundle_commutator(hello, 2, 0.5)",
-        );
+        let prop =
+            spec_property_verifies("bundle_bad_strategy", "bundle_commutator(hello, 2, 0.5)");
         let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
@@ -2719,10 +2675,7 @@ project demo {
 
     #[test]
     fn dispatch_spec_property_bundle_commutator_negative_theta_returns_fail() {
-        let prop = spec_property_verifies(
-            "bundle_negative_theta",
-            "bundle_commutator(1, 2, -0.5)",
-        );
+        let prop = spec_property_verifies("bundle_negative_theta", "bundle_commutator(1, 2, -0.5)");
         let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail());
         if let Verdict::Fail(msg) = v {
@@ -2735,10 +2688,7 @@ project demo {
         // Cyclic<4> wraps: strategy 5 = strategy 1 mod 4. So
         // bundle_commutator(5, 5, 0.5) behaves like (1, 1, 0.5)
         // → same strategy → vanishes → Fail.
-        let prop = spec_property_verifies(
-            "bundle_wrap",
-            "bundle_commutator(5, 5, 0.5)",
-        );
+        let prop = spec_property_verifies("bundle_wrap", "bundle_commutator(5, 5, 0.5)");
         let v = enact_spec_property(&prop, &[]);
         assert!(v.is_fail(), "Cyclic<4> wrap 5==1; got {:?}", v);
     }
@@ -2746,10 +2696,7 @@ project demo {
     #[test]
     fn dispatch_spec_property_bundle_commutator_zero_theta_edge_case() {
         // theta=0.0 and magnitude>0 → magnitude > 0 == true → Pass.
-        let prop = spec_property_verifies(
-            "bundle_zero_theta",
-            "bundle_commutator(0, 1, 0.0)",
-        );
+        let prop = spec_property_verifies("bundle_zero_theta", "bundle_commutator(0, 1, 0.0)");
         let v = enact_spec_property(&prop, &[]);
         assert!(v.is_pass(), "got {:?}", v);
     }
@@ -2774,7 +2721,8 @@ project demo {
             assert!(
                 expect(&v),
                 "fold composition {} produced unexpected verdict {:?}",
-                verifies, v
+                verifies,
+                v
             );
         }
     }
@@ -2809,9 +2757,7 @@ project demo {
         // surface the spec-body property; spec-property extractor
         // doesn't surface the shard-body bilateral.
         assert!(
-            !bilateral_decls
-                .iter()
-                .any(|d| d.name == "new_spec_body"),
+            !bilateral_decls.iter().any(|d| d.name == "new_spec_body"),
             "extract_properties (bilateral) MUST NOT surface spec-body property"
         );
         assert!(

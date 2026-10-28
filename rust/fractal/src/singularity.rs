@@ -281,7 +281,7 @@ mod tests {
         };
         let s3 = SingularityState {
             observer: Oid::GENESIS,
-            target_ref: Oid([2u8; 32]),  // different target
+            target_ref: Oid([2u8; 32]), // different target
             optic_kind: OpticKind::Iso,
         };
         assert_eq!(s1, s2);
@@ -320,9 +320,7 @@ mod tests {
             format!("{}", SingularityError::EmptyLens),
             "Lens has no targets"
         );
-        assert!(format!("{}", SingularityError::TargetNotFound("abc".to_string()))
-            .contains("abc"));
-        assert!(format!("{}", SingularityError::CommitNotFound("xyz".to_string()))
-            .contains("xyz"));
+        assert!(format!("{}", SingularityError::TargetNotFound("abc".to_string())).contains("abc"));
+        assert!(format!("{}", SingularityError::CommitNotFound("xyz".to_string())).contains("xyz"));
     }
 }

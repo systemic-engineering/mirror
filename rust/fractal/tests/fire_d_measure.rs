@@ -121,10 +121,22 @@ fn fire_d_source_bytes_crystallize_via_landed() {
     let crystal = crystallize(bytes.clone(), test_witnessed(), Oid::GENESIS);
 
     assert!(crystal.is_crystal(), "Fire D input-crystal MUST be settled");
-    assert!(!crystal.is_liquid(), "Fire D input-crystal MUST NOT be liquid");
-    assert!(!crystal.oid.is_genesis(), "Fire D crystal MUST have non-genesis Oid");
-    assert_eq!(crystal.content, bytes, "Fire D crystal preserves source-bytes");
-    assert!(crystal.is_genesis(), "Fire D scaffold-crystal's prev is Oid::GENESIS (void@spectral.engineer first-observer)");
+    assert!(
+        !crystal.is_liquid(),
+        "Fire D input-crystal MUST NOT be liquid"
+    );
+    assert!(
+        !crystal.oid.is_genesis(),
+        "Fire D crystal MUST have non-genesis Oid"
+    );
+    assert_eq!(
+        crystal.content, bytes,
+        "Fire D crystal preserves source-bytes"
+    );
+    assert!(
+        crystal.is_genesis(),
+        "Fire D scaffold-crystal's prev is Oid::GENESIS (void@spectral.engineer first-observer)"
+    );
 }
 
 /// ## Test 2 (RED via `todo!()`)
@@ -143,7 +155,10 @@ fn fire_d_source_bytes_crystallize_via_landed() {
 /// GREEN body composes over LANDED spectral engine (1,941 LOC per
 /// Taut `2aa2777` scout). Zero new primitives at spectral altitude.
 #[test]
-#[cfg_attr(not(feature = "red-claims"), ignore = "RED by design; green with the graph builder (DAG on disk -> Laplacian)")]
+#[cfg_attr(
+    not(feature = "red-claims"),
+    ignore = "RED by design; green with the graph builder (DAG on disk -> Laplacian)"
+)]
 fn fire_d_non_linear_measurement_bytes_to_sheaf() {
     let bytes = fire_d_scaffold_source();
     let _input_crystal = crystallize(bytes, test_witnessed(), Oid::GENESIS);
@@ -172,7 +187,10 @@ fn fire_d_non_linear_measurement_bytes_to_sheaf() {
 /// language altitude per Alex 2026-09-08) with 5 cyb-ling operators
 /// (refract/frame/key/reframe/name) per Alex 2026-09-09.
 #[test]
-#[cfg_attr(not(feature = "red-claims"), ignore = "RED by design; green when commas are offered (rerere for commas)")]
+#[cfg_attr(
+    not(feature = "red-claims"),
+    ignore = "RED by design; green when commas are offered (rerere for commas)"
+)]
 fn fire_d_kt_question_emergent_at_altitude_n_plus_1() {
     let bytes = fire_d_scaffold_source();
     let _input_crystal = crystallize(bytes, test_witnessed(), Oid::GENESIS);
@@ -204,7 +222,9 @@ fn fire_d_singularity_iso_preserves_oid_under_roundtrip() {
     let crystal = crystallize(bytes, test_witnessed(), Oid::GENESIS);
     let oid_before = crystal.oid.clone();
 
-    let artifact = crystal.collapse().expect("Fire D Iso collapse succeeds (Infallible)");
+    let artifact = crystal
+        .collapse()
+        .expect("Fire D Iso collapse succeeds (Infallible)");
     let recovered = <Crystal<Vec<u8>> as Singularity>::settle(&artifact)
         .expect("Fire D Iso settle succeeds (Infallible)");
 
@@ -212,6 +232,12 @@ fn fire_d_singularity_iso_preserves_oid_under_roundtrip() {
         oid_before, recovered.oid,
         "Fire D unitarity: settle ∘ collapse preserves Oid at Iso Singularity altitude"
     );
-    assert!(recovered.is_crystal(), "Fire D Iso-settled recovered-crystal MUST be settled");
-    assert!(!recovered.is_liquid(), "Fire D Iso-settled recovered-crystal MUST NOT be liquid");
+    assert!(
+        recovered.is_crystal(),
+        "Fire D Iso-settled recovered-crystal MUST be settled"
+    );
+    assert!(
+        !recovered.is_liquid(),
+        "Fire D Iso-settled recovered-crystal MUST NOT be liquid"
+    );
 }

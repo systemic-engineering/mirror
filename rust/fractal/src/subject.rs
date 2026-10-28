@@ -172,10 +172,16 @@ mod tests {
     fn subject_void_is_deterministic() {
         let v1 = Subject::void();
         let v2 = Subject::void();
-        assert_eq!(v1, v2, "Subject::void() must be deterministic (K=0 canonical default)");
+        assert_eq!(
+            v1, v2,
+            "Subject::void() must be deterministic (K=0 canonical default)"
+        );
         assert_eq!(v1.name, "void");
         assert_eq!(v1.email, "void@spectral.engineer");
-        assert_eq!(v1.home, None, "Void has no home (pre-character; no persistence)");
+        assert_eq!(
+            v1.home, None,
+            "Void has no home (pre-character; no persistence)"
+        );
         assert_eq!(v1.kind, SubjectKind::Void);
     }
 
@@ -191,7 +197,10 @@ mod tests {
         let alex = Subject::human("alex", "alex@spectral.engineer");
         assert_eq!(alex.name, "alex");
         assert_eq!(alex.email, "alex@spectral.engineer");
-        assert_eq!(alex.home, None, "Human @subject has no compiler-managed home");
+        assert_eq!(
+            alex.home, None,
+            "Human @subject has no compiler-managed home"
+        );
         assert!(alex.is_human());
         assert!(!alex.is_void());
         assert!(!alex.is_peer());
@@ -199,11 +208,7 @@ mod tests {
 
     #[test]
     fn subject_peer_carries_home() {
-        let reed = Subject::peer(
-            "reed",
-            "reed@spectral.engineer",
-            "/Users/reed",
-        );
+        let reed = Subject::peer("reed", "reed@spectral.engineer", "/Users/reed");
         assert_eq!(reed.name, "reed");
         assert_eq!(reed.email, "reed@spectral.engineer");
         assert_eq!(reed.home, Some("/Users/reed".to_string()));
@@ -214,11 +219,7 @@ mod tests {
 
     #[test]
     fn subject_as_author_and_committer_preserve_identity() {
-        let mara = Subject::peer(
-            "mara",
-            "mara@spectral.engineer",
-            "/Users/mara",
-        );
+        let mara = Subject::peer("mara", "mara@spectral.engineer", "/Users/mara");
         let a = mara.as_author();
         let c = mara.as_committer();
         assert_eq!(a.name, "mara");

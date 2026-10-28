@@ -61,14 +61,20 @@ fn source_has_non_comment(source: &str, needle: &str) -> bool {
 // ──────────────────────────────────────────────────────────────────
 
 #[test]
-#[cfg_attr(not(feature = "red-claims"), ignore = "RED by design; retire: the numerics live in prism; move to prism as a behavioural test")]
+#[cfg_attr(
+    not(feature = "red-claims"),
+    ignore = "RED by design; retire: the numerics live in prism; move to prism as a behavioural test"
+)]
 fn matrix_rs_has_actual_lapack_function_calls() {
     // Spec claim (Mara §4): "matrix.rs is FLANG emit + LAPACK/BLAS link;
     // sub-Turing numerical floor; emits Fortran that computes."
     let matrix = read_source("matrix.rs");
-    let lapack_fns = ["dpotrf", "zpotrf", "dsyev", "zheev", "dgesvd",
-                      "dgemm", "dgeev", "dgetrf", "dpotrs"];
-    let has_call = lapack_fns.iter().any(|f| source_has_non_comment(&matrix, &format!("{}(", f)));
+    let lapack_fns = [
+        "dpotrf", "zpotrf", "dsyev", "zheev", "dgesvd", "dgemm", "dgeev", "dgetrf", "dpotrs",
+    ];
+    let has_call = lapack_fns
+        .iter()
+        .any(|f| source_has_non_comment(&matrix, &format!("{}(", f)));
     assert!(
         has_call,
         "matrix.rs claims LAPACK/BLAS link (Mara §4) but source contains NO \
@@ -77,7 +83,10 @@ fn matrix_rs_has_actual_lapack_function_calls() {
 }
 
 #[test]
-#[cfg_attr(not(feature = "red-claims"), ignore = "RED by design; retire: the numerics live in prism; move to prism as a behavioural test")]
+#[cfg_attr(
+    not(feature = "red-claims"),
+    ignore = "RED by design; retire: the numerics live in prism; move to prism as a behavioural test"
+)]
 fn matrix_rs_emits_actual_fortran_source() {
     // Spec claim (Mara §4 + Loki `b53aeeb` §2): "matrix.rs EMITS the Fortran
     // that computes; it doesn't compute; it emits the code that computes."
@@ -96,7 +105,10 @@ fn matrix_rs_emits_actual_fortran_source() {
 }
 
 #[test]
-#[cfg_attr(not(feature = "red-claims"), ignore = "RED by design; retire: the numerics live in prism; move to prism as a behavioural test")]
+#[cfg_attr(
+    not(feature = "red-claims"),
+    ignore = "RED by design; retire: the numerics live in prism; move to prism as a behavioural test"
+)]
 fn matrix_rs_computes_baez_schreiber_2_connection() {
     // Spec claim (Mara §6 + `610c6d6` beam-runtime.md §5): "Baez-Schreiber
     // 2-connection compatibility condition dA + [A,A] = t(B) reduces to matrix
@@ -114,7 +126,10 @@ fn matrix_rs_computes_baez_schreiber_2_connection() {
 }
 
 #[test]
-#[cfg_attr(not(feature = "red-claims"), ignore = "RED by design; retire: the numerics live in prism; move to prism as a behavioural test")]
+#[cfg_attr(
+    not(feature = "red-claims"),
+    ignore = "RED by design; retire: the numerics live in prism; move to prism as a behavioural test"
+)]
 fn matrix_rs_has_matrix_type_or_dependency() {
     // Spec claim (Mara §4): matrix.rs holds matrix operations. Any actual
     // matrix operation needs either a matrix type or a linalg crate.
@@ -157,7 +172,10 @@ fn phone_rs_actually_implements_sockets() {
 }
 
 #[test]
-#[cfg_attr(not(feature = "red-claims"), ignore = "RED by design; green at the in/out @io boundary")]
+#[cfg_attr(
+    not(feature = "red-claims"),
+    ignore = "RED by design; green at the in/out @io boundary"
+)]
 fn phone_rs_composes_over_io_socket_abstraction() {
     // Spec claim (Mara §3): "composes over @io/socket + @io/fs + @io/git
     // primitives per shards/io.mirror; NOT direct std::fs use."
@@ -256,8 +274,7 @@ fn main_rs_reads_kintsugi_roomba_cascade_catalog_from_mirror_spec() {
     // decl'd cascade catalog."
     let main = read_source("main.rs");
     let reads_spec = source_has_non_comment(&main, "mirror.spec")
-        && (source_has_non_comment(&main, "kintsugi")
-            || source_has_non_comment(&main, "cascade"));
+        && (source_has_non_comment(&main, "kintsugi") || source_has_non_comment(&main, "cascade"));
     assert!(
         reads_spec,
         "main.rs claims to read kintsugi.roomba cascade catalog from mirror.spec \
@@ -272,7 +289,10 @@ fn main_rs_reads_kintsugi_roomba_cascade_catalog_from_mirror_spec() {
 // ──────────────────────────────────────────────────────────────────
 
 #[test]
-#[cfg_attr(not(feature = "red-claims"), ignore = "RED by design; green with fixpoint-parser T1 + the Voice")]
+#[cfg_attr(
+    not(feature = "red-claims"),
+    ignore = "RED by design; green with fixpoint-parser T1 + the Voice"
+)]
 fn pheromone_deposit_chains_via_signature_beat_previous_beat_merkle() {
     // Spec claim (Mara `95c0e4a` §4 + math `d7ff58e` §5.2): "observation crystal
     // deposit chains to previous_beat per @spectral/signature.signature_beat
@@ -293,7 +313,10 @@ fn pheromone_deposit_chains_via_signature_beat_previous_beat_merkle() {
 }
 
 #[test]
-#[cfg_attr(not(feature = "red-claims"), ignore = "RED by design; green with fixpoint-parser T1 + the Voice")]
+#[cfg_attr(
+    not(feature = "red-claims"),
+    ignore = "RED by design; green with fixpoint-parser T1 + the Voice"
+)]
 fn pheromone_stages_via_io_git_substrate_dispatch_not_command() {
     // Spec claim (@io/git.stage substrate action; Mara §9.1 shards/io/git.mirror
     // consumer): "staging + committing goes through @io/git substrate dispatch
@@ -317,7 +340,10 @@ fn pheromone_stages_via_io_git_substrate_dispatch_not_command() {
 // ──────────────────────────────────────────────────────────────────
 
 #[test]
-#[cfg_attr(not(feature = "red-claims"), ignore = "RED by design; green with the serde-free end-to-end (pacts + stop test)")]
+#[cfg_attr(
+    not(feature = "red-claims"),
+    ignore = "RED by design; green with the serde-free end-to-end (pacts + stop test)"
+)]
 fn vacuum_dispatches_vacuum_admissible_bilateral() {
     // Spec claim (Mara §7.4 + §9.1): "dispatch is byte-check on directory
     // content shape via bilateral sentinel-check at @kintsugi/roomba.
@@ -389,7 +415,10 @@ fn vacuum_dispatches_pivot_at_song_for_ambiguity() {
 }
 
 #[test]
-#[cfg_attr(not(feature = "red-claims"), ignore = "RED by design; green with the serde-free end-to-end (pacts + stop test)")]
+#[cfg_attr(
+    not(feature = "red-claims"),
+    ignore = "RED by design; green with the serde-free end-to-end (pacts + stop test)"
+)]
 fn vacuum_docks_at_fixed_point() {
     // Spec claim (Mara §7.4 + Q2 ratification): "Nothing dispatchable →
     // dock — motion halts; walker docks. dock = halt of the roomba."
@@ -411,7 +440,10 @@ fn vacuum_docks_at_fixed_point() {
 // ──────────────────────────────────────────────────────────────────
 
 #[test]
-#[cfg_attr(not(feature = "red-claims"), ignore = "RED by design; moves to spectral")]
+#[cfg_attr(
+    not(feature = "red-claims"),
+    ignore = "RED by design; moves to spectral"
+)]
 fn peer_audhd_k_greater_than_1_fanout_actually_spawns_multiple() {
     // Spec claim (Mara `d8b149c` + stigmergy spec §2): "K>1 fan-out mode; the
     // commutator arms literally instantiated in parallel physical compute

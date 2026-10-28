@@ -736,7 +736,9 @@ pub fn walk_p1_sugar_cascade(root: &Path, mode: CascadeMode) -> CascadeReport {
 
     for shard_path in shard_paths {
         report.shards_walked += 1;
-        let pre_len = std::fs::metadata(&shard_path).map(|m| m.len() as usize).unwrap_or(0);
+        let pre_len = std::fs::metadata(&shard_path)
+            .map(|m| m.len() as usize)
+            .unwrap_or(0);
         match reduce_identity_prism_at(&shard_path) {
             ReduceResult::Reduced { new_source } => {
                 let post_len = new_source.len();
@@ -744,15 +746,17 @@ pub fn walk_p1_sugar_cascade(root: &Path, mode: CascadeMode) -> CascadeReport {
                 report.shards_reduced += 1;
                 report.bytes_removed += removed;
                 report.reduced_paths.push(
-                    shard_path.strip_prefix(root).unwrap_or(&shard_path).to_path_buf(),
+                    shard_path
+                        .strip_prefix(root)
+                        .unwrap_or(&shard_path)
+                        .to_path_buf(),
                 );
                 if mode == CascadeMode::Commit {
                     if let Err(e) = std::fs::write(&shard_path, &new_source) {
                         report.shards_errored += 1;
-                        report.errored_paths.push((
-                            shard_path.clone(),
-                            format!("write_file failed: {}", e),
-                        ));
+                        report
+                            .errored_paths
+                            .push((shard_path.clone(), format!("write_file failed: {}", e)));
                     }
                 }
             }
@@ -762,7 +766,10 @@ pub fn walk_p1_sugar_cascade(root: &Path, mode: CascadeMode) -> CascadeReport {
             ReduceResult::Error(reason) => {
                 report.shards_errored += 1;
                 report.errored_paths.push((
-                    shard_path.strip_prefix(root).unwrap_or(&shard_path).to_path_buf(),
+                    shard_path
+                        .strip_prefix(root)
+                        .unwrap_or(&shard_path)
+                        .to_path_buf(),
                     reason,
                 ));
             }
@@ -951,10 +958,8 @@ bilateral consent_scope_universal {
     #[test]
     fn derive_family_depth_3_shard() {
         assert_eq!(
-            derive_family_from_shard_path(Path::new(
-                "shards/kintsugi/fracture/keyword.mirror"
-            ))
-            .as_deref(),
+            derive_family_from_shard_path(Path::new("shards/kintsugi/fracture/keyword.mirror"))
+                .as_deref(),
             Some("kintsugi/fracture/keyword")
         );
     }
@@ -996,9 +1001,7 @@ bilateral consent_scope_universal {
              split spectral\n  shift spectral\n  settle spectral\n}}\n"
         );
         assert!(source_carries_p1_identity_prism(
-            &canonical,
-            "spectral",
-            "spectral"
+            &canonical, "spectral", "spectral"
         ));
     }
 
@@ -1030,7 +1033,9 @@ bilateral consent_scope_universal {
             "prism @spectral {{\n  focus spectral\n  project spectral\n  \
              split spectral\n  shift spectral\n}}\n"
         );
-        assert!(!source_carries_p1_identity_prism(&source, "spectral", "spectral"));
+        assert!(!source_carries_p1_identity_prism(
+            &source, "spectral", "spectral"
+        ));
     }
 
     #[test]
@@ -1040,7 +1045,9 @@ bilateral consent_scope_universal {
             "prism @spectral {{\n  focus spectral\n  split spectral\n  \
              project spectral\n  shift spectral\n  settle spectral\n}}\n"
         );
-        assert!(!source_carries_p1_identity_prism(&source, "spectral", "spectral"));
+        assert!(!source_carries_p1_identity_prism(
+            &source, "spectral", "spectral"
+        ));
     }
 
     #[test]
@@ -1134,9 +1141,7 @@ bilateral consent_scope_universal {
     #[test]
     fn strip_normalization_rule_reducible_ref_rejects_non_normalization_action() {
         assert_eq!(
-            strip_normalization_rule_reducible_ref(
-                "@kintsugi/fracture/prism_boilerplate.detect"
-            ),
+            strip_normalization_rule_reducible_ref("@kintsugi/fracture/prism_boilerplate.detect"),
             None
         );
     }
@@ -1162,7 +1167,9 @@ bilateral consent_scope_universal {
                 assert!(!new_source.contains("  focus spectral"));
                 assert!(!new_source.contains("  settle spectral"));
                 // But MUST preserve the surrounding docblock + out line.
-                assert!(new_source.contains("# Fixture shard for detect_prism_boilerplate P1 tests."));
+                assert!(
+                    new_source.contains("# Fixture shard for detect_prism_boilerplate P1 tests.")
+                );
                 assert!(new_source.contains("out @spectral"));
             }
             other => panic!("expected Reduced on P1 fixture, got {:?}", other),
@@ -1201,7 +1208,10 @@ bilateral consent_scope_universal {
         let shard_path = dir.path().join("shards").join("prism.mirror");
         match reduce_identity_prism_at(&shard_path) {
             ReduceResult::NoReduction => {} // Q3 fixed-point exemption
-            other => panic!("expected NoReduction on shards/prism.mirror, got {:?}", other),
+            other => panic!(
+                "expected NoReduction on shards/prism.mirror, got {:?}",
+                other
+            ),
         }
     }
 
@@ -1274,26 +1284,17 @@ bilateral consent_scope_universal {
 
     #[test]
     fn collapse_excess_blank_lines_preserves_single_blank() {
-        assert_eq!(
-            collapse_excess_blank_lines("a\n\nb"),
-            "a\n\nb"
-        );
+        assert_eq!(collapse_excess_blank_lines("a\n\nb"), "a\n\nb");
     }
 
     #[test]
     fn collapse_excess_blank_lines_collapses_triple_to_double() {
-        assert_eq!(
-            collapse_excess_blank_lines("a\n\n\nb"),
-            "a\n\nb"
-        );
+        assert_eq!(collapse_excess_blank_lines("a\n\n\nb"), "a\n\nb");
     }
 
     #[test]
     fn collapse_excess_blank_lines_collapses_quintuple_to_double() {
-        assert_eq!(
-            collapse_excess_blank_lines("a\n\n\n\n\nb"),
-            "a\n\nb"
-        );
+        assert_eq!(collapse_excess_blank_lines("a\n\n\n\n\nb"), "a\n\nb");
     }
 
     // =================================================================
@@ -1370,7 +1371,10 @@ bilateral consent_scope_universal {
         for path in &report.reduced_paths {
             let abs = dir.path().join(path);
             let post_source = fs::read_to_string(&abs).unwrap();
-            assert!(!post_source.contains("prism @p1_"), "reduced source should lack P1 block");
+            assert!(
+                !post_source.contains("prism @p1_"),
+                "reduced source should lack P1 block"
+            );
         }
     }
 
@@ -1439,7 +1443,11 @@ bilateral consent_scope_universal {
     #[ignore]
     fn fire_e_m_e4_empirical_walker() {
         let commit_mode = std::env::var("FIRE_E_M_E4_COMMIT").as_deref() == Ok("1");
-        let mode = if commit_mode { CascadeMode::Commit } else { CascadeMode::DryRun };
+        let mode = if commit_mode {
+            CascadeMode::Commit
+        } else {
+            CascadeMode::DryRun
+        };
 
         // Discover project root via marker file (mirror.spec at root).
         let mut root = std::env::current_dir().expect("cwd");
@@ -1464,9 +1472,11 @@ bilateral consent_scope_universal {
         println!("  shards_reduced:      {}", report.shards_reduced);
         println!("  shards_no_reduction: {}", report.shards_no_reduction);
         println!("  shards_errored:      {}", report.shards_errored);
-        println!("  bytes_removed:       {} bytes (~{:.1} KB)",
-                 report.bytes_removed,
-                 report.bytes_removed as f64 / 1024.0);
+        println!(
+            "  bytes_removed:       {} bytes (~{:.1} KB)",
+            report.bytes_removed,
+            report.bytes_removed as f64 / 1024.0
+        );
         println!();
 
         if !report.reduced_paths.is_empty() {

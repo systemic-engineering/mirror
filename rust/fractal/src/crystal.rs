@@ -63,7 +63,11 @@ impl<T: Clone> Crystal<T> {
     /// Construct a Crystal directly (for tests + composition; the
     /// canonical constructor is `crystallize`).
     pub fn new(oid: Oid, content: T, provenance: MandelbrotProvenance) -> Self {
-        Crystal { oid, content, provenance }
+        Crystal {
+            oid,
+            content,
+            provenance,
+        }
     }
 
     /// The previous Crystal's OID in the SAGA chain — what
@@ -140,7 +144,11 @@ pub fn crystallize<T: Clone + AsRef<[u8]>>(
     }
     let oid = Oid(oid_bytes);
     let provenance = MandelbrotProvenance { witnessed, prev };
-    Crystal { oid, content, provenance }
+    Crystal {
+        oid,
+        content,
+        provenance,
+    }
 }
 
 // =====================================================================
@@ -173,7 +181,10 @@ mod tests {
     fn crystallize_content_addressing_distinguishes_different_content() {
         let c1 = crystallize(b"hello".to_vec(), test_witnessed(), Oid::GENESIS);
         let c2 = crystallize(b"world".to_vec(), test_witnessed(), Oid::GENESIS);
-        assert_ne!(c1.oid, c2.oid, "different content MUST produce different OIDs");
+        assert_ne!(
+            c1.oid, c2.oid,
+            "different content MUST produce different OIDs"
+        );
     }
 
     #[test]
@@ -186,7 +197,10 @@ mod tests {
 
         let c1 = crystallize(b"same-content".to_vec(), w1, Oid::GENESIS);
         let c2 = crystallize(b"same-content".to_vec(), w2, Oid::GENESIS);
-        assert_ne!(c1.oid, c2.oid, "different witnessed MUST produce different OIDs");
+        assert_ne!(
+            c1.oid, c2.oid,
+            "different witnessed MUST produce different OIDs"
+        );
     }
 
     #[test]

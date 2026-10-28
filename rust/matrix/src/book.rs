@@ -215,8 +215,16 @@ mod tests {
     #[test]
     fn unknown_at_name_error_names_mara_registry_territory() {
         let e = resolve("@peer/nonexistent").unwrap_err().message;
-        assert!(e.contains("@peer/registry"), "missing @peer/registry hint: {}", e);
-        assert!(e.contains("@trust"), "missing @trust family-root hint: {}", e);
+        assert!(
+            e.contains("@peer/registry"),
+            "missing @peer/registry hint: {}",
+            e
+        );
+        assert!(
+            e.contains("@trust"),
+            "missing @trust family-root hint: {}",
+            e
+        );
     }
 
     #[test]
@@ -236,7 +244,10 @@ mod tests {
     fn well_known_at_names_is_stable_ordered_8_element_set() {
         let names = well_known_at_names();
         assert_eq!(names.len(), 8, "well-known set size is 8 (this landing)");
-        assert_eq!(names[0], "@peer/mirror", "stable head: compiler self-identity");
+        assert_eq!(
+            names[0], "@peer/mirror",
+            "stable head: compiler self-identity"
+        );
         assert_eq!(names[1], "@peer/void", "stable second: K=0 default");
         assert_eq!(names[7], "@human/alex", "stable tail: first Human @subject");
     }
@@ -245,10 +256,22 @@ mod tests {
     fn resolve_is_deterministic() {
         // Content-addressability discipline per @peer/registry §2.2:
         // same @<name> resolves to same Subject across calls.
-        assert_eq!(resolve("@peer/mirror").unwrap(), resolve("@peer/mirror").unwrap());
-        assert_eq!(resolve("@peer/reed").unwrap(), resolve("@peer/reed").unwrap());
-        assert_eq!(resolve("@human/alex").unwrap(), resolve("@human/alex").unwrap());
-        assert_eq!(resolve("@peer/void").unwrap(), resolve("@peer/void").unwrap());
+        assert_eq!(
+            resolve("@peer/mirror").unwrap(),
+            resolve("@peer/mirror").unwrap()
+        );
+        assert_eq!(
+            resolve("@peer/reed").unwrap(),
+            resolve("@peer/reed").unwrap()
+        );
+        assert_eq!(
+            resolve("@human/alex").unwrap(),
+            resolve("@human/alex").unwrap()
+        );
+        assert_eq!(
+            resolve("@peer/void").unwrap(),
+            resolve("@peer/void").unwrap()
+        );
     }
 
     #[test]
