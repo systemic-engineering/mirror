@@ -17,7 +17,11 @@
 
 > **Amended 2026-10-28 after Seam's crowbar** (`docs/audits/2026-10-28-seam-crowbar-mirror-fixpoint-parser.md`, `358f430` `86ae959` `ce06cbf`). Every change is marked *[Seam]* where it lands. The math is amended to match (math §12 has the verdict table and the three points where I disagree).
 
+> **Amended 2026-10-29 (Alex, ratified: "yes … excitiiiing!"): `mirror compile` compiles a single shard; `mirror kintsugi` does kintsugi.** Compile computes **local sections**: one shard in, one crystal out. It reads that shard's bytes and its format grammar, nothing else, and it can only report **holes** ("I don't know here"). Gluing compiled shards, and reporting **commas** ("you two disagree"), is `mirror kintsugi`: `docs/specs/mirror-kintsugi.md`. Math: `docs/math/2026-10-29-mara-compile-kintsugi-local-sections-and-gluing.md`. Every change is marked *[10-29]*. The same pass pins the byte encoding and settles six ambiguities the T1 builder found (`9dbcb13`), marked *[T1]*.
+
 ## §1 What `mirror compile <file>` does
+
+*[10-29]* **One shard.** `compile` reads the bytes of one file and the grammar of its format (`@mirror` by default; §9), and nothing else: no other shard, no `in @X` target, no path lookup (decision 13: identity by content, not path). Its output is a function of those two inputs, so it is cacheable by `(addr(format grammar), source bytes)`, and its result is addressed by `root`. What the shard needs from other shards is recorded in its **interface** (§1.3), and checked by `mirror kintsugi`.
 
 One pipeline, each stage one function, each stage's output content-addressed:
 
@@ -31,6 +35,7 @@ One pipeline, each stage one function, each stage's output content-addressed:
 | 6 | **back-project** | DAG → native git objects (blobs and trees); refs written | §7.3 |
 | 7 | **graph** | DAG → `Γ(N)` (undirected, OID-keyed, multiplicity-preserving) | §7.4, Def. 7.6 |
 | 8 | **identify** | `addr(N)` and `Γ(N)` → `uuid_spectral` | §7.4 |
+| 9 | **interface** *[10-29]* | `N` → the interface fragment `I(N)` (§1.3), addressed | 10-29 math §1 |
 
 Today (`rust/src/compile.rs`, `rust/spectral/src/liquid.rs`) `compile` does none of stages 1–4. `compile_from_source` calls `extract_properties` / `extract_spec_properties` (line scans for property declarations), evaluates them and chains the verdicts. On a pact shard this prints "SAGA chain of 0 crystal(s)". This spec replaces the front of that pipeline and keeps the verdict chain as what runs *after* stage 5.
 
@@ -39,26 +44,89 @@ Today (`rust/src/compile.rs`, `rust/spectral/src/liquid.rs`) `compile` does none
 Per `docs/specs/kintsugi-ci-v0.1.md` §1.4 (mirror-text is the default; JSON only at the `@io` boundary):
 
 ```text
-verdict   success
-file      "mirror.mirror"
-root      <addr(N), 64 hex, BLAKE3>
-source    <addr of the source lens, 64 hex>
-erasure   <addr(ε), 64 hex>
-git       <git object id of g(root): 40 hex (sha1 repo) or 64 hex (sha256 repo)>
-uuid      <uuid_spectral, 32 hex, no hyphens (not an RFC 9562 UUID; DECISION §12) >
-crystals  <number of distinct splinters in the DAG>
-holes     <number of `\` in N>
-undefined <number of undefined (e, i) atoms in the start atom's dependency cone>
-wf        <true | false: Ford's well-formedness of the grammar, reported separately>
+verdict    success
+file       "mirror.mirror"
+root       <addr(N), 64 hex, BLAKE3>
+source     <addr of the source lens, 64 hex>
+erasure    <addr(ε), 64 hex>
+interface  <addr(I(N)), 64 hex: the shard's stalk, §1.3>
+git        <git object id of g(root): 40 hex (sha1 repo) or 64 hex (sha256 repo)>
+uuid       <uuid_spectral, 32 hex, no hyphens (not an RFC 9562 UUID; DECISION §12) >
+active     unsigned
+crystals   <number of distinct splinters in the DAG>
+holes      <number of `\` occurrences in N>
+undefined  <number of undefined (e, i) atoms in the start atom's dependency cone>
+undeclared <number of code-line references to @X with no `in @X`, §1.3>
+wf         <true | false: Ford's well-formedness of the grammar, reported separately>
 ```
 
-`verdict` is `success` (no holes, no undefined atoms), `partial` (holes or undefined atoms, all named in the record) or `dark` (the input could not be read at all). Exit codes follow `docs/specs/strict-and-total-classification.md`.
+*[T1]* `active` is `unsigned` until the `active` `@ruler` is signed (§8); after that it is `signed <addr of the @ruler>`. It is a field of the record, not a comment on `uuid`.
+
+*[10-29]* After the summary record, one record per finding, blank-line separated, in normal-form path order:
+
+```text
+hole       <question address, 64 hex>
+at         <path in N>
+line       <line:col from ε; a source coordinate, for people, never identity>
+
+undeclared @tool/git
+at         <path in N of the first referring code line>
+line       <line:col from ε>
+```
+
+`verdict` is `success` (no holes, no undefined atoms, no undeclared references), `partial` (holes or undefined atoms, all named), `fail` *[10-29]* (`undeclared > 0`: an implicit gluing; Alex 2026-07-23, "That needs to be an explicit boundary. Not soft."; DECISION §12 row 20) or `dark` (the input could not be read at all).
+
+**Exit codes** *[T1; reconciled with `strict-and-total-classification.md` §"Implementation" step 5 and `kintsugi-ci-v0.1.md` §1.1 item 5]*:
+
+| verdict | exit | with `--strict` |
+|---|---|---|
+| `success` | 0 | 0 |
+| `partial` | 0 | 1 |
+| `fail` | 1 | 1 |
+| `dark` | 2 | 2 |
+
+Holes are honest, so `partial` exits 0 (kintsugi-ci: "0 on `partial` (unless `fail-on: partial`)"); `--strict` is that `fail-on`. `dark` exits 2, as `strict-and-total` already specifies for unrecognised bytes. T1.1's "exits 0" asks for `verdict success` and is consistent with this table. The landed `rust/src/compile.rs` exits 0 on `fail`; this table replaces it.
 
 `--out @data/json` prints the same fields as JSON through the JSON grammar's printer (§9). That is an `@io` crossing.
 
 ### §1.2 Four identifiers, never one column
 
-`root`, `source`, `git` and `uuid` are four different values (math §7.1). No code path compares one with another. `git` is computed from the canonical bytes by git's rule (`"<type> <len>\0" ‖ payload`) and is never derived from `root`'s string.
+`root`, `source`, `git` and `uuid` are four different values (math §7.1). No code path compares one with another. `git` is computed from the canonical bytes by git's rule (`"<type> <len>\0" ‖ payload`) and is never derived from `root`'s string. *[10-29]* `interface` is a fifth: the address of `I(N)`, a different fragment from `N`. Two shards with equal `interface` and different `root` are expected (a body changed, the contract didn't).
+
+### §1.2′ Which parser: `--stage` *[T1]*
+
+- `mirror compile --stage 0 <file>` reads with the seed `P₀`.
+- `mirror compile --stage 1 <file>` reads with `P₁ = E(N₀)`, where `N₀` is the normal form of `mirror.mirror` as read by `P₀` (cached by `root`; recomputed when `mirror.mirror`'s bytes change).
+- **Plain `mirror compile <file>` is `--stage 1`.** It is the parser the substrate trusts once the engine exists. Before `E` exists, plain compile is red: it does not silently fall back to the seed.
+- On any file, `mirror.mirror` included, the parser reads the file under its format grammar (`@mirror` unless `--in <format>` names another, §9) and prints one §1.1 record. Nothing is special about `mirror.mirror` except that it *is* the `@mirror` grammar.
+- Consequence for T1.4: comparing plain against `--stage 1` compares a thing with itself. T1.4 compares **`--stage 0` against `--stage 1`** (amended below).
+
+### §1.3 The interface, and the one lint compile owns *[10-29]*
+
+**Interface `I(N)`** (the shard's stalk; math §1). A fragment at altitude `@mirror/interface`, computed from `N` alone:
+
+| part | content | addressed by |
+|---|---|---|
+| `name` | the shard's `out @X` (after reversed R3 inserts it, decision 13) | the name |
+| `in` | the `in @X` lines, sorted | the names |
+| `export` | each exported declaration: `(name, kind, addr)` with `kind ∈ {carrier, action, pact, bilateral, prism, grammar}`; `addr` = address of the declaration's normal form. For an action: its signature **and** its `requires` clauses, not its body | Merkle, so a change deep inside an exported type changes the export's `addr` |
+| `uses` | per imported `@X`: each name the code lines use, with its **use kind** (`carrier` when it appears in a type position; `action/k` when applied to `k` arguments; `pact` in `requires`) | names and kinds |
+| `requires` | the `requires` clauses the shard states about imported names (pacts on another shard's behaviour) | addresses |
+
+Carriers and actions are different kinds, and the restriction to a line keeps the kind (the June insight §4.3(b): "a B that imports A's carriers is a different section from a B that imports A's actions").
+
+**The lint compile owns.** With `references(S, X)` = some **code line** of `S` (not a comment, not inside a string literal, not an `in` / `out` / `source` line) mentions `@X` or `@X.name`, where `X` is the whole `/`-path before any `.`:
+
+```text
+undeclared(S, X) :- references(S, X), not imports(S, X), not declares(S, X).
+```
+
+- `declares(S, X)` reads `N`, so the `out` that reversed R3 inserts counts: a shard may name itself.
+- **Exact match.** `in @kintsugi` does not cover `@kintsugi/roomba` (DECISION §12 row 21, lean exact): `in` imports *a shard* (Alex 2026-07-23), and a prefix rule would let a change to `@kintsugi/roomba` escape every line that should re-check it (math Prop. 4.2, stalk completeness).
+- **Prose is reported, not failed.** References inside comments are counted in a separate field only with `--prose` (`prose_refs <n>`), never in `verdict`. Counting prose would force cycles (`@sheaf` → `@psychohistory` → `@sheaf`, Taut 2026-10-29 §2.3).
+- This lint is `@kintsugi/fracture/inport` (`shards/kintsugi/fracture/inport.mirror`, Alex's name: "inport = `in`-port"). The substrate already had the word; compile is where its `detect` runs, because it is decidable from one shard's bytes (that shard's own §5 proof).
+- The converse rule, an `in @X` with no shard `X`, needs the shard set and belongs to kintsugi (`unresolved`, `mirror-kintsugi.md` §3).
+
 
 ---
 
@@ -80,6 +148,7 @@ This spec does not write `mirror.mirror`. It states what the file must contain f
 7. **`split` as syntax.** The verb exists in the grammar (math §4.2–4.3: choice needs it). Its semantics on the spectral triple live in prismqueer.
 8. **Ruler positions.** `settle`'s `by:` and every threshold or bin position accept an `@ruler` reference (§10). Until `@ruler` lands, a bare number in a ruler position reads as `Opaque` ("whose ruler?"), mirror-005's rule.
 9. **Holes.** `\` is an atom, valid wherever a body or value is expected, and never reduced (math §3.4). Each hole has a **question** and an **occurrence** (§5.1).
+10. *[T1]* **The start rule is declared by name, never by position.** Decision 3 says declaration order isn't meaning, so a first-rule-is-start convention would make T1.3 (declarations reordered) fail by construction. The grammar names its start rule in `μ`, e.g. `start shard`; the start rule is part of `N` (it decides the language) and so of `root`. A grammar with no start declaration compiles to `partial` with one hole whose question is "start?". The keyword's spelling is Alex's (DECISION §12 row 17; lean `start`).
 
 ---
 
@@ -122,6 +191,24 @@ This spec does not write `mirror.mirror`. It states what the file must contain f
 - **Sorted children are not allowed here.** prismqueer's `MerkleTree` convention ("sorted by Oid") is the store-merge composition, not syntax (math §1.3).
 - **Holes.** See §5.1. ~~A `\` is addressed by `hole(signature)`.~~ *[Seam: FAILS. Two different functions with the same signature hash-cons to one hole, and every untyped value hole shares one address.]*
 
+### §5.0 Bytes, pinned *[T1]*
+
+The encoding of §5 at byte level. Spec-owned (DECISION §12 row 19): any injective, prefix-free choice satisfies math Prop. 1.1, and this one is fixed so that two implementations agree bit for bit.
+
+| symbol | bytes |
+|---|---|
+| `u64(n)` | 8 bytes, unsigned, big-endian |
+| `enc(b)` | `u64(len(b)) ‖ b` |
+| `τ` | UTF-8 of the altitude `@`-ref, then `0x00`, then `0x00` for the root grammar `@mirror`, or `0x01 ‖` the 32 raw bytes of `addr(format grammar)` for every other format (decision 14). A name never contains NUL, so `τ` is prefix-free |
+| `k` | `u64(k)` |
+| child address | 32 raw bytes (never hex) |
+| `H` | BLAKE3, default (unkeyed) mode, 32-byte output |
+
+- atom: `addr = H("splinter\0" ‖ τ ‖ enc(content))`
+- fragment: `addr = H("fragment\0" ‖ τ ‖ enc(ℓ) ‖ u64(k) ‖ addr(x₀) ‖ … ‖ addr(x_{k−1}))`
+- lens: `addr = H("lens\0" ‖ τ ‖ enc(ℓ) ‖ u64(k) ‖ addr(t₀) ‖ …)`
+- **The kind prefix (`splinter\0`, `fragment\0`, `lens\0`) is never stored.** In git it is carried by the object's shape (§7): a blob is an atom; a tree with numbered entries is a fragment; a tree with `^` entries is a lens. Everything after the kind prefix and before the child addresses is stored verbatim (§7), so the read path re-hashes without re-deriving anything.
+
 ### §5.1 Holes and resolutions: rerere for commas
 
 This is what the arc is for: mirror is git rerere for commas (Alex, 2026-10-28, relayed by Reed). git's rerere records "hand resolve results" and applies them "to their corresponding automerge results". Mirror does the same for `\`, with two identifiers per hole (math Def. 3.9):
@@ -147,10 +234,12 @@ Requirement: `render(N, ε)` reproduces the input bytes exactly (math Prop. 3.2)
 
 ## §7 Back-projection into git
 
-Layout (math Def. 7.3):
-- atom → blob (payload = canonical encoding, including `τ`);
-- fragment → tree: entry `@` (blob: `τ ‖ label`), then `000`, `001`, … (zero-padded to the width of the largest index in that tree), modes `100644` / `040000`;
-- lens → tree: `@`, then `^000 …` for the targets;
+Layout (math Def. 7.3; bytes pinned *[T1]* against §5.0):
+- atom → blob, payload **`τ ‖ enc(content)`**, so `addr = H("splinter\0" ‖ payload)`;
+- fragment → tree: entry `@` (blob, payload **`τ ‖ enc(ℓ)`**), then the children as numbered entries, modes `100644` / `040000`;
+- lens → tree: `@` (same payload shape), then `^`-prefixed numbered entries for the targets;
+- **child-entry width** *[T1]*: a fixed width per tree, `w = max(3, number of decimal digits of k − 1)`. So `000 … 009` for ten children and `0000 … 1233` for 1234. Fixed width makes git's byte order of entry names the child order, and the minimum of 3 is the `000` the example always showed. ("Width of the largest index" and "fixed width per tree" now say the same thing.);
+- **the read path's re-encoding**: for a tree, `addr = H(kind ‖ @payload ‖ u64(number of numbered entries) ‖ addr(child₀) ‖ …)` with `kind` = `fragment\0` or `lens\0` by entry prefix, children taken in entry order, each child's `addr` computed recursively; for a blob, `addr = H("splinter\0" ‖ blob)`. Every `@` payload starts with `@` (the first byte of `τ`), which is what `9dbcb13`'s T1.5 asserts;
 - objects are written into the repository's own object database (`git hash-object -w`, `git mktree`), in the repository's object format (SHA-1 or SHA-256).
 
 Refs (so `git gc` keeps what the graph keeps):
@@ -173,7 +262,7 @@ This writes native git objects. The namespaced `@mirror/store/git` wire (`.git/m
 - `active` = quantization of a spectral reading of `Γ(N)` (math Def. 7.6: undirected, OID-keyed, **multiplicity-preserving**; reuse is `b₁`, Lemma 7.7). The **graph builder is a stage of its own** (stage 7), because no landed builder keeps reuse (Taut's scout: `coincidence::Laplacian::from_tree` allocates per occurrence; prism's `Graph` collapses parallel edges).
 - The operator (undirected Laplacian `L₀ + L₁` of `Γ` is the lean; the directed adjacency is useless on a DAG, math Lemma 7.8), the five axes, the bin edges and the 48-bit split are **one `@ruler`, fixed system-wide and signed by every issuer**. The uuid has no room to name its ruler (math §7.4).
 - *[Seam]* `b₁` (the reuse count, exact) is an **integer field** of the coordinate, not something read off a float axis. `L₀`'s spectrum already determines it, so `L₀ + L₁` adds nothing (math §7.4 item 1).
-- **Until that ruler is signed, `active = 0`**, as every production caller does today (Taut §1, Stage 6). `compile` prints the uuid with `active = 0` and says so in the record (`active unsigned`). It never fills active bits from an unsigned quantizer.
+- **Until that ruler is signed, `active = 0`**, as every production caller does today (Taut §1, Stage 6). `compile` prints the uuid with `active = 0` and says so in the record's `active` field (`active unsigned`, §1.1 *[T1]*). It never fills active bits from an unsigned quantizer.
 - `active` never identifies: cospectral non-isomorphic graphs exist, and among ASTs (trees) collisions are generic (math Prop. 7.11).
 
 ---
@@ -183,6 +272,17 @@ This writes native git objects. The namespaced `@mirror/store/git` wire (`.git/m
 - A format is `(G_fmt, μ_fmt)`: a grammar plus its meaning declaration (math §8). `read_fmt = settle ∘ nf ∘ strip ∘ E(G_fmt)`; `emit_fmt = print_fmt`.
 - Formats in scope for this arc: `mirror` (`mirror.mirror`), `mirror-text` (records, kintsugi-ci §1.4), `json` (RFC 8259).
 - `μ_json` declares: member order free (sorted in normal form); whitespace trivia; duplicate names → `\`; numbers as exact decimals (never `f64`); escapes free; Unicode normalization (NFC) a ruler.
+
+### §9.1 Is `1` the same as `1.0`? *[10-29; Reed's bullet-up Response #2]*
+
+spectral's `|> graph` writes weights `1`; Mara's spike wrote `1.0`. Same graph, two ids, unless the normal form decides. The math (10-29 math §7):
+
+- Rewriting `1.0` to `1` is a **free move iff the number type `μ` declares is the exact value**, i.e. the number denotes an element of ℚ (a finite decimal). Then the literals `1`, `1.0`, `1.00`, `1e0`, `10e-1` are representations of one value, and the map literal → value is the quotient the normal form already takes for layout. It is injective on meaning (math §2.3), so it moves nothing.
+- It is **not** free if `μ` gives a number more than its value: a declared **precision** (`1.0` asserts a tenth; a measurement reading), or a **type** read off the spelling (`1` an integer, `1.0` a real, in a typed field). Then `1 ≡ 1.0` merges two meanings, which is a `settle` and needs an `@ruler`.
+- **`f64` is not the number type**: under IEEE-754 both literals are the same double, but so are decimals that differ in ℚ beyond double precision (e.g. `9007199254740993` and `9007199254740992`); using `f64` would make the identification free for the wrong reason (spec §9: "never `f64`"). RFC 8785 (JCS) canonicalises numbers through IEEE-754 doubles and ECMAScript's serialiser, so its canonical form identifies decimals that differ beyond double precision. It is prior art for the shape, not for the number type.
+- **Canonical form if ℚ is chosen:** the shortest decimal that denotes the value: no exponent, no leading `+`, no trailing zeros after the point, no point when the value is an integer, `-0` → `0`. This is a bijection between finite decimals and canonical strings, so Reed's proposal ("integral numbers normalize to integers") is the integer case of it.
+- **Until decided: `Opaque`**, as Reed proposed: a graph compiled from `1.0` and one from `1` get different roots and the record says why (`number unnormalized`), never a silent coercion.
+- **Owner: Alex** (DECISION §12 row 18): which number type `μ_json` and `μ_mirror-text` declare for weights. Mara-lean: exact value (ℚ) for data positions; precision, where it matters, is declared as its own field or as an `@ruler`, never inferred from a trailing zero.
 - Shifting a value into JSON is partial (no `\`, no `@`-refs). What can't be carried is logged in `ε`, and the output marks the gap.
 - **No serde on the compile path.** The `json` reader and printer are `E(G_json)` and `print_json`. `pact.rs`'s `serde_json` input parser is replaced by `E(G_pact-json)` with the same vectors as oracle.
 
@@ -232,6 +332,12 @@ Rulers to declare once `@ruler` exists (math §9): the commutator thresholds `1e
 | 13 | **new [Seam]:** reverse R3 (insert, don't elide); R5 by content, not path | Alex | yes | Prop. 3.8 |
 | 14 | **new [Seam]:** `τ = (name, addr(format grammar))`; the root name `@mirror` is the one signed ruler of identity | Alex | yes | §2.2 note |
 | 15 | **new [Seam]:** `undefined` counts only the start atom's dependency cone; `wf` reported separately | — (spec) | yes | §5.1 |
+| 16 | *[10-29]* **Ratified (Alex 2026-10-29, "yes … excitiiiing!"):** `mirror compile` compiles one shard (local sections, holes); `mirror kintsugi` glues (commas). `mirror-kintsugi.md` | Alex | — | 10-29 math §0 |
+| 17 | *[T1]* the start rule is declared by name in `μ`; the keyword's spelling | Alex | `start <rule>` | §2 item 10 |
+| 18 | *[10-29]* number type of `μ_json` / `μ_mirror-text`: exact value (ℚ, `1 ≡ 1.0` free) or value + precision/type (`1 ≢ 1.0`). `Opaque` until decided | Alex | exact value in data positions | §9.1; 10-29 math §7 |
+| 19 | *[T1]* byte encoding (`u64` big-endian lengths, `τ` layout, stored payloads, child width) | — (spec) | as §5.0, §7 | Prop. 1.1 |
+| 20 | *[10-29]* `undeclared > 0` makes compile `fail` (exit 1), not `partial` | Alex | fail ("Not soft", 2026-07-23) | §1.3 |
+| 21 | *[10-29]* `in @X` covers exactly `@X`, not `@X/…` | Alex | exact (stalk completeness) | 10-29 math Prop. 4.2 |
 | 12 | prismqueer `lib.rs` docstring "project — the lossy transformation" vs. §7b″ "project is emission" | prism-Reed | fix the docstring | §3.3 |
 
 ---
@@ -245,7 +351,7 @@ Each test is written red first, against the binary (`mirror compile …`), the w
 1. exits 0 and prints a record with `verdict success`, a non-empty crystal DAG (`crystals > 0`) and a `root`;
 2. a second run prints the same `root`;
 3. `tests/fixpoint/mirror.reformatted.mirror` (same file with layout changed and declarations reordered; generated by a fixture script, checked in) prints the same `root`. This holds at a different path only because R3 is reversed and R5 is content-based (decision 13): `mirror.mirror` declares `out @mirror` explicitly;
-4. the stage-1 parser (`mirror compile --stage 1 mirror.mirror`, i.e. `E(N₀)` reading the file) prints the same `root` (stage 2);
+4. the stage-1 parser (`mirror compile --stage 1 mirror.mirror`, i.e. `E(N₀)` reading the file) prints the same `root` as the seed (`mirror compile --stage 0 mirror.mirror`) (stage 2). *[T1]* Plain `compile` is `--stage 1` (§1.2′), so comparing plain with `--stage 1` would be vacuous;
 5. `git cat-file -t <git>` prints `tree`, and walking that tree (`@` entry plus numbered entries, recursively) reproduces the fragments: the walk's re-encoding hashes to `root`.
 
 **T2. Meaning changes change the root.**
@@ -255,7 +361,7 @@ Each test is written red first, against the binary (`mirror compile …`), the w
 
 **T3. Free moves don't.** Layout, declaration order, α-renaming a pact variable, and (per decision 2) a comment edit: same `root`, same `dark`. A comment edit changes `source`.
 
-**T4. Bytes round trip.** `mirror kintsugi --render mirror.mirror` (render `N` with `ε`) reproduces the file byte for byte, for the original and for the reformatted copy.
+**T4. Bytes round trip.** *[10-29: moved from kintsugi to compile; rendering one shard is local]* `mirror compile --render mirror.mirror` (render `N` with `ε`) reproduces the file byte for byte, for the original and for the reformatted copy.
 
 **T5. Meaning round trip.** `print(N)` compiled again gives `N`, and printing is idempotent (`print(compile(print(N))) == print(N)`).
 
@@ -299,6 +405,12 @@ Each test is written red first, against the binary (`mirror compile …`), the w
 
 **T15. One Splinter (prism side; forwarded to prism-Reed).** *[Seam's repair]* Two **consecutive** ticks whose states agree **modulo a common phase rotation** deposit one splinter twice: one address, two deposit records (math Prop. 1.7, Def. 1.8). The same splinter deposited at ticks `t` and `t + p`, `p > 1`, with different splinters in between, is reported as `cycle(p)`, never as fixed (Prop. 1.9).
 
+**T17. One shard, its interface, its lint** *[10-29]*.
+- a) `mirror compile a.mirror` in a directory where `a.mirror`'s `in @b` target does not exist prints the same record as in a directory where it does: compile reads no other shard (run under a sandbox that denies reads outside `a.mirror` and the grammar).
+- b) Changing an action's **body** in `a.mirror` changes `root` and leaves `interface` unchanged; changing its signature or a `requires` changes both.
+- c) A code line `x = @tool/git.commit()` with no `in @tool/git`: `verdict fail`, exit 1, `undeclared 1`, one `undeclared @tool/git` record. The same reference in a comment: `verdict success`, `undeclared 0`. With `in @tool` only (prefix): still `undeclared 1` (row 21).
+- d) **Corpus fixture.** `tests/kintsugi/undeclared/expected.mirror-text` lists `(S, X)` for every shard under `shards/` at the fixture commit, produced by an oracle independent of the compiler (a line scanner with exactly §1.3's rule). Mara's oracle run on `346253b` gives 20 shards under the prefix rule and 35 under the exact rule; Taut's 27 (2026-10-29 §2.3) used a different lexical rule (string literals and self-references counted). The test pins the rule, not the number. `mirror compile` summed over the fixture equals the oracle.
+
 **T16. Re-hash on read.** Corrupting one git object under `refs/mirror/root/<addr>` (via a replacement object) makes the load dark; it never yields a different `N`.
 
 ---
@@ -306,3 +418,5 @@ Each test is written red first, against the binary (`mirror compile …`), the w
 ## §14 Pickup
 
 The order for the builder: T1 red, the seed (decision 9), `E`'s core with the PEG clauses, `mirror.mirror`, then T2's swap assertion green, then T1 green (T2 gates T1). T3–T7 next, because they pin meaning. T8–T13 after that. T14 waits for `@ruler`; T15 belongs to prism.
+
+*[10-29]* T17 (one shard, interface, lint) lands with T7, since both are records compile prints. Gluing (`mirror kintsugi`, K1–K9) starts after T17 is green: kintsugi consumes interfaces. Its own order is `mirror-kintsugi.md` §9. The §5.0 bytes and §7 widths are pinned now, so T1.5's final re-hash can be written against them.
