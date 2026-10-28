@@ -429,7 +429,7 @@ mod prop_tests {
     //! altitude — the second layer of the property ouroboros.
 
     use super::*;
-    use prismqueer::liquid::pillar;
+    use prismqueer::flux::pillar;
     use prismqueer::ScalarLoss;
     use terni::{Diagnostic, Loss, PropertyVerdict};
 
@@ -622,9 +622,7 @@ mod prop_tests {
         let corpus = fixture_corpus();
         let arms = find_redundant_arms(&source, &corpus);
         let verdict = if arms.is_empty() {
-            PropertyVerdict::Fail(Diagnostic::new(
-                "no bilateral arms matched corpus",
-            ))
+            PropertyVerdict::Fail(Diagnostic::new("no bilateral arms matched corpus"))
         } else {
             PropertyVerdict::Pass
         };
@@ -644,14 +642,16 @@ mod prop_tests {
         let corpus = fixture_corpus();
         let arms = find_redundant_arms(&source, &corpus);
         let out = apply(&source, &arms);
-        let expected_delta: usize = arms.iter()
-            .map(|a| a.byte_end - a.byte_start)
-            .sum();
+        let expected_delta: usize = arms.iter().map(|a| a.byte_end - a.byte_start).sum();
         let actual_delta = source.len() - out.len();
         assert_eq!(
-            actual_delta, expected_delta,
+            actual_delta,
+            expected_delta,
             "byte accounting: source.len={} out.len={} delta={} expected={}",
-            source.len(), out.len(), actual_delta, expected_delta,
+            source.len(),
+            out.len(),
+            actual_delta,
+            expected_delta,
         );
     }
 
@@ -670,10 +670,7 @@ mod prop_tests {
         for _ in 0..k {
             let source = fixture_source();
             let arms = find_redundant_arms(&source, &corpus);
-            let magnitude: usize = arms
-                .iter()
-                .map(|a| a.byte_end - a.byte_start)
-                .sum();
+            let magnitude: usize = arms.iter().map(|a| a.byte_end - a.byte_start).sum();
             history.push(ScalarLoss::new(magnitude as f64));
         }
         history
@@ -704,7 +701,10 @@ mod prop_tests {
             .map(|s| s.clone())
             .fold(ScalarLoss::zero(), |a, b| a.combine(b))
             .0;
-        assert!(accumulated_total > 0.0, "fixture must produce nonzero shrinkage");
+        assert!(
+            accumulated_total > 0.0,
+            "fixture must produce nonzero shrinkage"
+        );
         let theta = ScalarLoss::new(accumulated_total / 2.0); // half the total
         let verdict = pillar::viability_of_magnitudes(&history, &theta, k);
         assert!(
@@ -762,10 +762,7 @@ mod prop_tests {
         let source = fixture_source();
         let corpus = fixture_corpus();
         let arms = find_redundant_arms(&source, &corpus);
-        let bytes: usize = arms
-            .iter()
-            .map(|a| a.byte_end - a.byte_start)
-            .sum();
+        let bytes: usize = arms.iter().map(|a| a.byte_end - a.byte_start).sum();
         ScalarLoss::new(bytes as f64)
     }
 
@@ -779,7 +776,10 @@ mod prop_tests {
     /// viability_pass` (iter 4) at single-tick granularity.
     fn single_tick_shrinkage_composes_to_pillar_ii_algedonic_pass() {
         let magnitude = single_tick_shrinkage();
-        assert!(!magnitude.is_zero(), "fixture must produce nonzero shrinkage");
+        assert!(
+            !magnitude.is_zero(),
+            "fixture must produce nonzero shrinkage"
+        );
         // theta = 0 opens Pass gate on any positive magnitude.
         let theta = ScalarLoss::new(0.0);
         let verdict = pillar::algedonic_of_magnitude(&magnitude, &theta);
@@ -798,12 +798,12 @@ mod prop_tests {
         let source = fixture_source();
         let empty_corpus: HashMap<String, BilateralDecl> = HashMap::new();
         let arms = find_redundant_arms(&source, &empty_corpus);
-        let bytes: usize = arms
-            .iter()
-            .map(|a| a.byte_end - a.byte_start)
-            .sum();
+        let bytes: usize = arms.iter().map(|a| a.byte_end - a.byte_start).sum();
         let magnitude = ScalarLoss::new(bytes as f64);
-        assert!(magnitude.is_zero(), "empty corpus must produce zero shrinkage");
+        assert!(
+            magnitude.is_zero(),
+            "empty corpus must produce zero shrinkage"
+        );
         let theta = ScalarLoss::new(1.0);
         let verdict = pillar::algedonic_of_magnitude(&magnitude, &theta);
         assert!(
@@ -851,7 +851,10 @@ mod prop_tests {
         let tmp = tempfile::TempDir::new().expect("tempdir");
         // Do NOT create a shards/ subdir under tmp.
         let corpus = load_bilateral_corpus(tmp.path());
-        assert!(corpus.is_empty(), "missing shards dir must return empty corpus");
+        assert!(
+            corpus.is_empty(),
+            "missing shards dir must return empty corpus"
+        );
     }
 
     #[test]
@@ -861,12 +864,21 @@ mod prop_tests {
         let tmp = tempfile::TempDir::new().expect("tempdir");
         std::fs::create_dir_all(tmp.path().join("shards")).expect("create shards dir");
         let corpus = load_bilateral_corpus(tmp.path());
-        assert!(corpus.is_empty(), "empty shards dir must return empty corpus");
+        assert!(
+            corpus.is_empty(),
+            "empty shards dir must return empty corpus"
+        );
     }
 
     /// Helper: write a minimal .mirror shard file at
     /// `<root>/shards/<rel_path>` with one bilateral block.
-    fn write_shard(root: &std::path::Path, rel_path: &str, shard_ref: &str, name: &str, sentinel: &str) {
+    fn write_shard(
+        root: &std::path::Path,
+        rel_path: &str,
+        shard_ref: &str,
+        name: &str,
+        sentinel: &str,
+    ) {
         let full = root.join("shards").join(rel_path);
         if let Some(parent) = full.parent() {
             std::fs::create_dir_all(parent).expect("create parent");

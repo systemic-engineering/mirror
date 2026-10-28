@@ -85,8 +85,7 @@
 
 pub use prismqueer::spectral::kleinos as love;
 pub use prismqueer::spectral::{
-    fiedler_lambda_2_of_sheaf as fiedler_of_sheaf, sheaf_of_complete_graph_of_order,
-    sheaf_of_shard_graph_from_edges, ComposedSheaf, SheafOfShardGraph,
+    fiedler_lambda_2_of_graph, graph_complete_of_order, graph_from_edges, Composition, Graph,
 };
 
 // === Tick 2b — full COMPOSE with full-spectrum admissibility ===
@@ -123,7 +122,13 @@ pub use prismqueer::spectral::{
 // gauge-choice; substrate refuses fake proofs structurally per data-
 // stays-yours ALGEBRAIC INVARIANT (Mara Theorem S5.1).
 
-use prismqueer::spectral::{CommutatorSpectrum, DeltaCritical, Harmonics};
+use prismqueer::spectral::{DeltaCritical, Dissonance, Spectrum, Unmeasured};
+use prismqueer::Imperfect;
+
+/// What prism's `Dissonance::of` returns: the commutator reading, which may be
+/// certified (`Success`), partly unknown (`Partial`, with the ambiguous
+/// singular values), or unmeasured (`Failure`).
+pub type CommutatorReading = Imperfect<Dissonance, Unmeasured, Vec<f64>>;
 
 /// Full-spectrum reading of the composition of two sheaves per Alex 2026-09-05
 /// "Simple made Easy" naming directive. Substrate-noun holding LANDED
@@ -137,18 +142,21 @@ use prismqueer::spectral::{CommutatorSpectrum, DeltaCritical, Harmonics};
 #[derive(Clone, Debug)]
 pub struct FullSpectrum {
     /// Pre-compose spectrum of sheaf a.
-    pub a: Harmonics,
+    pub a: Spectrum,
     /// Pre-compose spectrum of sheaf b.
-    pub b: Harmonics,
+    pub b: Spectrum,
     /// Post-compose spectrum of composed sheaf.
-    pub composed: Harmonics,
+    pub composed: Spectrum,
     /// Singular-value spectrum of `[L_A, L_B]` per Alex 2026-09-05 verbatim
     /// ("each message a spectral commutator"). Non-empty spectrum witnesses
     /// non-commutative (observer-inclusive) composition; empty spectrum
     /// witnesses commutative (closed-loop; softmax-happy-path) composition
     /// per [[project-open-loop-autopoiesis-IS-bumblebee-buzz-through-assertions-
     /// closed-loop-IS-softmax-argmax]].
-    pub commutator: CommutatorSpectrum,
+    ///
+    /// Kept as prism returns it. `Partial` and `Failure` are not "commutes":
+    /// the instrument doesn't know yet, or couldn't measure (prism-002 §4).
+    pub commutator: CommutatorReading,
     /// Folk Theorem discount factor of the composed sheaf. Runtime signal for
     /// hodobodo→object/subject reclassification per Alex 2026-09-04 Move 13
     /// performance-model composition.
@@ -195,25 +203,31 @@ impl FullSpectrum {
     /// - Yellow iff `any_climbs() && !all_climb()` (K-T question at specific
     ///   axis of divergence via `.axes`)
     /// - Red iff `!any_climbs()` (substrate refuses)
-    pub fn of(
-        a: &SheafOfShardGraph,
-        b: &SheafOfShardGraph,
-        composed: &SheafOfShardGraph,
-    ) -> Self {
-        let commutator = CommutatorSpectrum::of(a, b);
-        let a_h = Harmonics::of(a);
-        let b_h = Harmonics::of(b);
-        let composed_h = Harmonics::of(composed);
+    pub fn of(a: &Graph, b: &Graph, composed: &Graph) -> Self {
+        let commutator = Dissonance::of(a, b);
+        let a_h = Spectrum::of(a);
+        let b_h = Spectrum::of(b);
+        let composed_h = Spectrum::of(composed);
         let delta = DeltaCritical::of(composed);
-        let axes = compute_per_axis_climb(&a_h.spectrum, &b_h.spectrum, &composed_h.spectrum);
-        Self { a: a_h, b: b_h, composed: composed_h, commutator, delta, axes }
+        let axes =
+            compute_per_axis_climb(&a_h.eigenvalues, &b_h.eigenvalues, &composed_h.eigenvalues);
+        Self {
+            a: a_h,
+            b: b_h,
+            composed: composed_h,
+            commutator,
+            delta,
+            axes,
+        }
     }
 
-    /// True iff commutator spectrum is non-empty (composition is
-    /// non-commutative ⇔ observer-inclusive ⇔ open-loop autopoietic
-    /// per Foerster-canonical LOVE-filter admissibility).
-    pub fn is_observer_inclusive(&self) -> bool {
-        !self.commutator.spectrum.is_empty()
+    /// Whether the composition is observer-inclusive (non-commutative ⇔
+    /// open-loop autopoietic per Foerster-canonical LOVE-filter admissibility).
+    ///
+    /// `None` when the commutator reading isn't certified; see
+    /// [`observer_inclusive`].
+    pub fn is_observer_inclusive(&self) -> Option<bool> {
+        observer_inclusive(&self.commutator)
     }
 
     /// True iff all axes strictly climb (λ_composed > max(λ_a, λ_b) per axis).
@@ -255,6 +269,23 @@ fn compute_per_axis_climb(a: &[f64], b: &[f64], composed: &[f64]) -> Vec<AxisVer
             }
         })
         .collect()
+}
+
+/// Read a commutator outcome as observer-inclusiveness, one arm per outcome
+/// (prism-002 §4):
+///
+/// - `Success`, empty spectrum: commutes, certified. `Some(false)`.
+/// - `Success`, non-empty spectrum: does not commute. `Some(true)`.
+/// - `Partial`: some singular values sit between numerical zero and clearly
+///   non-zero; the instrument doesn't know yet. `None`.
+/// - `Failure(Unmeasured)`: LAPACK could not measure. `None`.
+///
+/// `None` is a question, never "commutes".
+pub fn observer_inclusive(reading: &CommutatorReading) -> Option<bool> {
+    match reading {
+        Imperfect::Success(d) => Some(!d.spectrum.is_empty()),
+        Imperfect::Partial(..) | Imperfect::Failure(..) => None,
+    }
 }
 
 #[cfg(test)]
@@ -300,7 +331,10 @@ mod tests {
         let fs = FullSpectrum::of(&k5, &k5, &k5);
         assert!(fs.delta.value.is_some());
         let delta = fs.delta.value.unwrap();
-        assert!(delta.abs() < 1e-9, "K_5 self-compose δ_critical = 0; got {delta}");
+        assert!(
+            delta.abs() < 1e-9,
+            "K_5 self-compose δ_critical = 0; got {delta}"
+        );
     }
 
     /// Empty spectra (single-vertex sheaves) yield empty axes and aggregate
@@ -363,7 +397,9 @@ mod tests {
 
     #[test]
     fn observer_inclusive_certified_nonempty_spectrum_is_some_true() {
-        let r: CommutatorReading = Imperfect::Success(Dissonance { spectrum: vec![2.0] });
+        let r: CommutatorReading = Imperfect::Success(Dissonance {
+            spectrum: vec![2.0],
+        });
         assert_eq!(observer_inclusive(&r), Some(true));
     }
 

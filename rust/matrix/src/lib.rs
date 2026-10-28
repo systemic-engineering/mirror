@@ -284,7 +284,7 @@ pub fn envelope(m: usize, n: usize, matrix: &[f64]) -> Vec<f64> {
 #[cfg(test)]
 mod prop_tests {
     use super::*;
-    use prismqueer::liquid::pillar::{forall, Arbitrary, Sample};
+    use prismqueer::flux::pillar::{forall, Arbitrary, Sample};
     use std::panic::{catch_unwind, AssertUnwindSafe};
     use terni::{Diagnostic, PropertyVerdict};
 
@@ -333,8 +333,9 @@ mod prop_tests {
     }
 
     fn safe_eigenvalues_raw(n: usize, data: &[f64]) -> Result<Vec<f64>, String> {
-        catch_unwind(AssertUnwindSafe(|| eigenvalues(n, data)))
-            .map_err(|_| "matrix::eigenvalues panicked (LAPACK dsyev convergence failure)".to_string())
+        catch_unwind(AssertUnwindSafe(|| eigenvalues(n, data))).map_err(|_| {
+            "matrix::eigenvalues panicked (LAPACK dsyev convergence failure)".to_string()
+        })
     }
 
     // -------------------------------------------------------------
@@ -448,7 +449,9 @@ mod prop_tests {
     impl Arbitrary for RandomDiagonal {
         fn arbitrary(sample: &mut Sample) -> Self {
             let n = sample.draw_integer(2, 8) as usize;
-            let diag: Vec<f64> = (0..n).map(|_| sample.draw_integer(-10, 10) as f64).collect();
+            let diag: Vec<f64> = (0..n)
+                .map(|_| sample.draw_integer(-10, 10) as f64)
+                .collect();
             Self { n, diag }
         }
     }
@@ -540,19 +543,17 @@ mod prop_tests {
     // =============================================================
     #[test]
     fn eigenvalues_are_finite() {
-        let v = forall::<SymLaplacian, _>(20, |l: SymLaplacian| {
-            match safe_eigenvalues(&l) {
-                Ok(evals) => {
-                    if evals.iter().all(|x| x.is_finite()) {
-                        PropertyVerdict::Pass
-                    } else {
-                        PropertyVerdict::Fail(Diagnostic::new(
-                            "eigenvalues contained non-finite value (NaN or Inf)",
-                        ))
-                    }
+        let v = forall::<SymLaplacian, _>(20, |l: SymLaplacian| match safe_eigenvalues(&l) {
+            Ok(evals) => {
+                if evals.iter().all(|x| x.is_finite()) {
+                    PropertyVerdict::Pass
+                } else {
+                    PropertyVerdict::Fail(Diagnostic::new(
+                        "eigenvalues contained non-finite value (NaN or Inf)",
+                    ))
                 }
-                Err(msg) => PropertyVerdict::Fail(Diagnostic::new(&msg)),
             }
+            Err(msg) => PropertyVerdict::Fail(Diagnostic::new(&msg)),
         });
         assert!(
             matches!(v, PropertyVerdict::Pass),
@@ -567,20 +568,18 @@ mod prop_tests {
     // =============================================================
     #[test]
     fn eigenvalues_are_in_ascending_order() {
-        let v = forall::<SymLaplacian, _>(20, |l: SymLaplacian| {
-            match safe_eigenvalues(&l) {
-                Ok(evals) => {
-                    let sorted = evals.windows(2).all(|w| w[0] <= w[1]);
-                    if sorted {
-                        PropertyVerdict::Pass
-                    } else {
-                        PropertyVerdict::Fail(Diagnostic::new(
-                            "eigenvalues not in ascending order (LAPACK dsyev convention)",
-                        ))
-                    }
+        let v = forall::<SymLaplacian, _>(20, |l: SymLaplacian| match safe_eigenvalues(&l) {
+            Ok(evals) => {
+                let sorted = evals.windows(2).all(|w| w[0] <= w[1]);
+                if sorted {
+                    PropertyVerdict::Pass
+                } else {
+                    PropertyVerdict::Fail(Diagnostic::new(
+                        "eigenvalues not in ascending order (LAPACK dsyev convention)",
+                    ))
                 }
-                Err(msg) => PropertyVerdict::Fail(Diagnostic::new(&msg)),
             }
+            Err(msg) => PropertyVerdict::Fail(Diagnostic::new(&msg)),
         });
         assert!(
             matches!(v, PropertyVerdict::Pass),
@@ -705,10 +704,7 @@ mod prop_tests {
                 let data = scalar_matrix(n, c);
                 let evals = safe_eigenvalues_raw(n, &data).unwrap();
                 for &e in &evals {
-                    assert!(
-                        (e - c).abs() < 1e-9,
-                        "n={n}, c={c}: got eigenvalue {e}"
-                    );
+                    assert!((e - c).abs() < 1e-9, "n={n}, c={c}: got eigenvalue {e}");
                 }
             }
         }
@@ -748,21 +744,19 @@ mod prop_tests {
     // Property 10: Trace preservation — sum of eigenvalues == trace(A).
     #[test]
     fn trace_equals_sum_of_eigenvalues() {
-        let v = forall::<SymLaplacian, _>(30, |l: SymLaplacian| {
-            match safe_eigenvalues(&l) {
-                Ok(evals) => {
-                    let sum: f64 = evals.iter().sum();
-                    let tr = trace(&l.data, l.n);
-                    if (sum - tr).abs() < 1e-9 * (1.0 + tr.abs()) {
-                        PropertyVerdict::Pass
-                    } else {
-                        PropertyVerdict::Fail(Diagnostic::new(&format!(
-                            "trace preservation: Σλ_i={sum} ≠ tr(A)={tr}"
-                        )))
-                    }
+        let v = forall::<SymLaplacian, _>(30, |l: SymLaplacian| match safe_eigenvalues(&l) {
+            Ok(evals) => {
+                let sum: f64 = evals.iter().sum();
+                let tr = trace(&l.data, l.n);
+                if (sum - tr).abs() < 1e-9 * (1.0 + tr.abs()) {
+                    PropertyVerdict::Pass
+                } else {
+                    PropertyVerdict::Fail(Diagnostic::new(&format!(
+                        "trace preservation: Σλ_i={sum} ≠ tr(A)={tr}"
+                    )))
                 }
-                Err(msg) => PropertyVerdict::Fail(Diagnostic::new(&msg)),
             }
+            Err(msg) => PropertyVerdict::Fail(Diagnostic::new(&msg)),
         });
         assert!(matches!(v, PropertyVerdict::Pass), "{v:?}");
     }
@@ -770,21 +764,19 @@ mod prop_tests {
     // Property 11: Frobenius norm squared == sum of squared eigenvalues.
     #[test]
     fn frobenius_norm_squared_equals_sum_of_squared_eigenvalues() {
-        let v = forall::<SymLaplacian, _>(30, |l: SymLaplacian| {
-            match safe_eigenvalues(&l) {
-                Ok(evals) => {
-                    let eval_sq_sum: f64 = evals.iter().map(|x| x * x).sum();
-                    let frob_sq = frobenius_norm_squared(&l.data);
-                    if (eval_sq_sum - frob_sq).abs() < 1e-8 * (1.0 + frob_sq.abs()) {
-                        PropertyVerdict::Pass
-                    } else {
-                        PropertyVerdict::Fail(Diagnostic::new(&format!(
-                            "Frobenius: Σλ_i²={eval_sq_sum} ≠ ||A||_F²={frob_sq}"
-                        )))
-                    }
+        let v = forall::<SymLaplacian, _>(30, |l: SymLaplacian| match safe_eigenvalues(&l) {
+            Ok(evals) => {
+                let eval_sq_sum: f64 = evals.iter().map(|x| x * x).sum();
+                let frob_sq = frobenius_norm_squared(&l.data);
+                if (eval_sq_sum - frob_sq).abs() < 1e-8 * (1.0 + frob_sq.abs()) {
+                    PropertyVerdict::Pass
+                } else {
+                    PropertyVerdict::Fail(Diagnostic::new(&format!(
+                        "Frobenius: Σλ_i²={eval_sq_sum} ≠ ||A||_F²={frob_sq}"
+                    )))
                 }
-                Err(msg) => PropertyVerdict::Fail(Diagnostic::new(&msg)),
             }
+            Err(msg) => PropertyVerdict::Fail(Diagnostic::new(&msg)),
         });
         assert!(matches!(v, PropertyVerdict::Pass), "{v:?}");
     }
@@ -863,7 +855,9 @@ mod prop_tests {
                 return PropertyVerdict::Fail(Diagnostic::new("not ascending at larger n"));
             }
             if !evals.iter().all(|&x| x >= -1e-8) {
-                return PropertyVerdict::Fail(Diagnostic::new("negative eigenvalue for PSD Laplacian at larger n"));
+                return PropertyVerdict::Fail(Diagnostic::new(
+                    "negative eigenvalue for PSD Laplacian at larger n",
+                ));
             }
             if evals[0].abs() >= 1e-8 {
                 return PropertyVerdict::Fail(Diagnostic::new(&format!(
@@ -909,8 +903,14 @@ mod prop_tests {
             let data = wilkinson_matrix(*n);
             let evals = safe_eigenvalues_raw(*n, &data).unwrap();
             assert_eq!(evals.len(), *n);
-            assert!(evals.iter().all(|x| x.is_finite()), "W_{n} produced non-finite");
-            assert!(evals.windows(2).all(|w| w[0] <= w[1]), "W_{n} not ascending");
+            assert!(
+                evals.iter().all(|x| x.is_finite()),
+                "W_{n} produced non-finite"
+            );
+            assert!(
+                evals.windows(2).all(|w| w[0] <= w[1]),
+                "W_{n} not ascending"
+            );
             let sum: f64 = evals.iter().sum();
             let tr = trace(&data, *n);
             assert!(
@@ -966,8 +966,9 @@ mod prop_tests {
     // =============================================================
 
     fn safe_envelope(m: usize, n: usize, matrix: &[f64]) -> Result<Vec<f64>, String> {
-        catch_unwind(AssertUnwindSafe(|| envelope(m, n, matrix)))
-            .map_err(|_| "matrix::envelope panicked (LAPACK dgesvd convergence failure)".to_string())
+        catch_unwind(AssertUnwindSafe(|| envelope(m, n, matrix))).map_err(|_| {
+            "matrix::envelope panicked (LAPACK dgesvd convergence failure)".to_string()
+        })
     }
 
     /// Row-major matrix product A * B where A is (m×k) and B is (k×n).
@@ -1039,7 +1040,8 @@ mod prop_tests {
                 for &s in &svs {
                     assert!(
                         (s - c.abs()).abs() < 1e-9,
-                        "n={n} c={c}: got sv {s} expected |c|={}", c.abs()
+                        "n={n} c={c}: got sv {s} expected |c|={}",
+                        c.abs()
                     );
                 }
             }
@@ -1084,9 +1086,14 @@ mod prop_tests {
     #[test]
     fn envelope_singular_values_in_descending_order() {
         for &(m, n) in &[(2, 2), (3, 3), (4, 5), (5, 4), (8, 8)] {
-            let data: Vec<f64> = (0..m * n).map(|i| ((i * 13 + 7) % 19) as f64 - 9.0).collect();
+            let data: Vec<f64> = (0..m * n)
+                .map(|i| ((i * 13 + 7) % 19) as f64 - 9.0)
+                .collect();
             let svs = safe_envelope(m, n, &data).unwrap();
-            assert!(svs.windows(2).all(|w| w[0] >= w[1]), "m={m} n={n} not descending");
+            assert!(
+                svs.windows(2).all(|w| w[0] >= w[1]),
+                "m={m} n={n} not descending"
+            );
         }
     }
 
@@ -1126,10 +1133,15 @@ mod prop_tests {
             let expected_top = vec_norm(&u) * vec_norm(&v);
             assert!(
                 (svs[0] - expected_top).abs() < 1e-9 * (1.0 + expected_top.abs()),
-                "m={m} n={n} rank-1 top sv {} ≠ ||u||·||v|| {expected_top}", svs[0]
+                "m={m} n={n} rank-1 top sv {} ≠ ||u||·||v|| {expected_top}",
+                svs[0]
             );
             for (i, &s) in svs.iter().skip(1).enumerate() {
-                assert!(s.abs() < 1e-9, "m={m} n={n} rank-1 sv[{}]={s} should be 0", i + 1);
+                assert!(
+                    s.abs() < 1e-9,
+                    "m={m} n={n} rank-1 sv[{}]={s} should be 0",
+                    i + 1
+                );
             }
         }
     }
@@ -1138,7 +1150,9 @@ mod prop_tests {
     #[test]
     fn envelope_frobenius_norm_squared_equals_sum_of_squared_svs() {
         for &(m, n) in &[(2, 2), (3, 5), (5, 3), (4, 4), (6, 8)] {
-            let data: Vec<f64> = (0..m * n).map(|i| ((i * 3 + 1) as f64).sin() * 5.0).collect();
+            let data: Vec<f64> = (0..m * n)
+                .map(|i| ((i * 3 + 1) as f64).sin() * 5.0)
+                .collect();
             let svs = safe_envelope(m, n, &data).unwrap();
             let sv_sq_sum: f64 = svs.iter().map(|x| x * x).sum();
             let frob_sq = frobenius_norm_squared(&data);
@@ -1153,7 +1167,9 @@ mod prop_tests {
     #[test]
     fn envelope_svs_squared_equal_ata_eigenvalues() {
         for &(m, n) in &[(3, 2), (5, 3), (6, 4), (8, 5)] {
-            let a: Vec<f64> = (0..m * n).map(|i| ((i * 7 + 3) as f64).sin() * 2.0).collect();
+            let a: Vec<f64> = (0..m * n)
+                .map(|i| ((i * 7 + 3) as f64).sin() * 2.0)
+                .collect();
             let svs = safe_envelope(m, n, &a).unwrap();
 
             // Compute A^T (n×m) row-major
@@ -1194,8 +1210,10 @@ mod prop_tests {
         steps: usize,
         dt: f64,
     ) -> Result<(Vec<f64>, f64), String> {
-        catch_unwind(AssertUnwindSafe(|| phase_lock(phases, omegas, k, steps, dt)))
-            .map_err(|_| "matrix::phase_lock panicked".to_string())
+        catch_unwind(AssertUnwindSafe(|| {
+            phase_lock(phases, omegas, k, steps, dt)
+        }))
+        .map_err(|_| "matrix::phase_lock panicked".to_string())
     }
 
     /// Kuramoto order parameter r = |(1/N) Σ e^(iθ)| for a set of
@@ -1253,7 +1271,8 @@ mod prop_tests {
             let expected = 0.7 + omega * (steps as f64) * dt;
             assert!(
                 (out[0] - expected).abs() < 1e-10,
-                "ω={omega}: got {} expected {expected}", out[0]
+                "ω={omega}: got {} expected {expected}",
+                out[0]
             );
         }
     }
@@ -1283,10 +1302,7 @@ mod prop_tests {
                 let phases = vec![phase; n];
                 let omegas = vec![0.0; n];
                 let (out, r) = safe_phase_lock(&phases, &omegas, 10.0, 50, 0.01).unwrap();
-                assert!(
-                    (r - 1.0).abs() < 1e-10,
-                    "n={n} phase={phase}: r={r} ≠ 1"
-                );
+                assert!((r - 1.0).abs() < 1e-10, "n={n} phase={phase}: r={r} ≠ 1");
                 for &p in &out {
                     assert!((p - phase).abs() < 1e-10);
                 }
@@ -1300,13 +1316,12 @@ mod prop_tests {
     fn phase_lock_evenly_distributed_phases_order_r_is_zero() {
         use std::f64::consts::PI;
         for n in &[3usize, 4, 5, 6, 8, 12] {
-            let phases: Vec<f64> = (0..*n).map(|i| 2.0 * PI * (i as f64) / (*n as f64)).collect();
+            let phases: Vec<f64> = (0..*n)
+                .map(|i| 2.0 * PI * (i as f64) / (*n as f64))
+                .collect();
             let omegas = vec![0.0; *n];
             let (_, r) = safe_phase_lock(&phases, &omegas, 0.0, 0, 0.0).unwrap();
-            assert!(
-                r.abs() < 1e-10,
-                "n={n} evenly distributed: r={r} ≠ 0"
-            );
+            assert!(r.abs() < 1e-10, "n={n} evenly distributed: r={r} ≠ 0");
         }
     }
 
@@ -1380,7 +1395,9 @@ mod prop_tests {
         // exactly at it — dynamics are zero because sin(π)=sin(-π)=0.
         assert!(
             (out[0]).abs() < 1e-10 && (out[1] - PI).abs() < 1e-10,
-            "antipodal drifted: {} vs 0; {} vs π", out[0], out[1]
+            "antipodal drifted: {} vs 0; {} vs π",
+            out[0],
+            out[1]
         );
         // Order parameter: |e^i0 + e^iπ|/2 = |1 - 1|/2 = 0.
         assert!(r.abs() < 1e-10, "antipodal r={r} ≠ 0");
@@ -1402,7 +1419,9 @@ mod prop_tests {
             let expected = kuramoto_order(&phases);
             assert!(
                 (r - expected).abs() < 1e-12,
-                "n={} phases={:?}: got r={r} expected {expected}", phases.len(), phases
+                "n={} phases={:?}: got r={r} expected {expected}",
+                phases.len(),
+                phases
             );
         }
     }
@@ -1423,7 +1442,8 @@ mod prop_tests {
 
         for &shift in &[0.5, PI, -1.7, 2.0 * PI] {
             let shifted: Vec<f64> = base_phases.iter().map(|p| p + shift).collect();
-            let (out_shifted, r_shifted) = safe_phase_lock(&shifted, &omegas, k, steps, dt).unwrap();
+            let (out_shifted, r_shifted) =
+                safe_phase_lock(&shifted, &omegas, k, steps, dt).unwrap();
             assert!(
                 (r_base - r_shifted).abs() < 1e-9,
                 "shift {shift}: order parameter broke: {r_base} vs {r_shifted}"
@@ -1460,11 +1480,13 @@ mod prop_tests {
 
             assert!(
                 (svs[0] - sv_hi).abs() < 1e-9 * (1.0 + sv_hi),
-                "2x2 [{a},{b},{c},{d}]: sv[0]={} expected {sv_hi}", svs[0]
+                "2x2 [{a},{b},{c},{d}]: sv[0]={} expected {sv_hi}",
+                svs[0]
             );
             assert!(
                 (svs[1] - sv_lo).abs() < 1e-9 * (1.0 + sv_lo),
-                "2x2 [{a},{b},{c},{d}]: sv[1]={} expected {sv_lo}", svs[1]
+                "2x2 [{a},{b},{c},{d}]: sv[1]={} expected {sv_lo}",
+                svs[1]
             );
         }
     }

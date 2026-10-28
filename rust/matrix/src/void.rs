@@ -190,10 +190,7 @@ pub fn welcome_perturbation(
     // full content-address lives in the file body (see compose_beat_entry).
     // If beat_oid is shorter than 12 chars (test-generated), use whole.
     let prefix_len = perturbation.beat_oid.len().min(12);
-    let beat_path = membrane_root.join(format!(
-        "beat-{}.md",
-        &perturbation.beat_oid[..prefix_len]
-    ));
+    let beat_path = membrane_root.join(format!("beat-{}.md", &perturbation.beat_oid[..prefix_len]));
     let body = compose_beat_entry(perturbation);
     OpenOptions::new()
         .create(true)
@@ -234,7 +231,7 @@ fn compose_beat_entry(p: &SignatureBeat) -> String {
 #[cfg(test)]
 mod prop_tests {
     use super::*;
-    use prismqueer::liquid::pillar::{forall, Arbitrary, Sample};
+    use prismqueer::flux::pillar::{forall, Arbitrary, Sample};
     use terni::{Diagnostic, PropertyVerdict};
 
     /// Arbitrary impl for SignatureBeat. Draws:
@@ -279,7 +276,10 @@ mod prop_tests {
     /// left to the OS; each test uses a distinct name to avoid overlap.
     fn scratch_dir(name: &str) -> std::path::PathBuf {
         let mut p = std::env::temp_dir();
-        p.push(format!("mirror-void-proptest-{name}-{}", std::process::id()));
+        p.push(format!(
+            "mirror-void-proptest-{name}-{}",
+            std::process::id()
+        ));
         p
     }
 
@@ -407,7 +407,9 @@ mod prop_tests {
             seed.previous_beat_oid = None; // first in chain
             let oid1 = match welcome_perturbation(&call_root, &seed) {
                 Ok(o) => o,
-                Err(e) => return PropertyVerdict::Fail(Diagnostic::new(&format!("beat 1 failed: {e}"))),
+                Err(e) => {
+                    return PropertyVerdict::Fail(Diagnostic::new(&format!("beat 1 failed: {e}")))
+                }
             };
 
             let beat2 = SignatureBeat {
@@ -418,7 +420,9 @@ mod prop_tests {
             };
             let oid2 = match welcome_perturbation(&call_root, &beat2) {
                 Ok(o) => o,
-                Err(e) => return PropertyVerdict::Fail(Diagnostic::new(&format!("beat 2 failed: {e}"))),
+                Err(e) => {
+                    return PropertyVerdict::Fail(Diagnostic::new(&format!("beat 2 failed: {e}")))
+                }
             };
 
             let beat3 = SignatureBeat {
@@ -429,7 +433,9 @@ mod prop_tests {
             };
             let oid3 = match welcome_perturbation(&call_root, &beat3) {
                 Ok(o) => o,
-                Err(e) => return PropertyVerdict::Fail(Diagnostic::new(&format!("beat 3 failed: {e}"))),
+                Err(e) => {
+                    return PropertyVerdict::Fail(Diagnostic::new(&format!("beat 3 failed: {e}")))
+                }
             };
 
             // Verify the Merkle chain: beat3.prev == oid2; beat2.prev == oid1.

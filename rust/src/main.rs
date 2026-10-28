@@ -99,8 +99,8 @@ mod love;
 // Composes over LANDED prismqueer::spectral::{kleinos, rotation, tension}
 // (Reed 4a3bbe7 + c14d61e + 008cd65 at prism-repo).
 use prismqueer::spectral::{
-    detect_tensions, infer_via_rotation, sheaf_of_shard_graph_from_edges,
-    RotationConfig, SheafOfShardGraph, Splinter, Tension, VertexId,
+    detect_tensions, graph_from_edges, infer_via_rotation, Graph, RotationConfig, Splinter,
+    Tension, VertexId,
 };
 use prismqueer::Imperfect;
 
@@ -261,7 +261,7 @@ fn classify(path: &std::path::Path) -> FileKind {
 /// Phase 1 MVP: sibling-edge-only. Phase 2+ will parse `in @X` import lines
 /// and add cross-namespace edges reflecting the real substrate composition
 /// graph.
-fn build_shards_sheaf(root: &std::path::Path) -> SheafOfShardGraph {
+fn build_shards_sheaf(root: &std::path::Path) -> Graph {
     use std::collections::BTreeMap;
     let shards_dir = root.join("shards");
     let mut files: Vec<std::path::PathBuf> = Vec::new();
@@ -285,7 +285,7 @@ fn build_shards_sheaf(root: &std::path::Path) -> SheafOfShardGraph {
             }
         }
     }
-    sheaf_of_shard_graph_from_edges(&edges)
+    graph_from_edges(&edges)
 }
 
 /// Recursive walker for `.mirror` files under a directory root.
@@ -308,10 +308,10 @@ fn walk_mirror_files(dir: &std::path::Path, out: &mut Vec<std::path::PathBuf>) {
 /// Each prior splinter = one vertex; temporal succession (tick_n → tick_{n+1})
 /// = one edge. Empty session (first query) gets a placeholder 2-vertex sheaf
 /// so kleinos K_2→K_3 base case can fire.
-fn build_session_sheaf(splinters: &[Splinter]) -> SheafOfShardGraph {
+fn build_session_sheaf(splinters: &[Splinter]) -> Graph {
     if splinters.is_empty() {
         // Placeholder for first-query case: minimal 2-vertex sheaf so kleinos fires.
-        return sheaf_of_shard_graph_from_edges(&[(0, 1)]);
+        return graph_from_edges(&[(0, 1)]);
     }
     let mut edges: Vec<(VertexId, VertexId)> = Vec::new();
     for i in 1..splinters.len() {
@@ -319,9 +319,9 @@ fn build_session_sheaf(splinters: &[Splinter]) -> SheafOfShardGraph {
     }
     if edges.is_empty() {
         // Single splinter: 2-vertex placeholder (splinter + self-successor).
-        return sheaf_of_shard_graph_from_edges(&[(0, 1)]);
+        return graph_from_edges(&[(0, 1)]);
     }
-    sheaf_of_shard_graph_from_edges(&edges)
+    graph_from_edges(&edges)
 }
 
 /// `mirror serve --mcp` dispatch arm — MANIFOLD-NATIVE ONE-TOOL WIRE.
@@ -425,8 +425,7 @@ fn cmd_serve_mcp(rest: &[String]) -> ExitCode {
     let root = std::env::var("MIRROR_HOME")
         .map(std::path::PathBuf::from)
         .unwrap_or_else(|_| {
-            std::env::current_dir()
-                .unwrap_or_else(|_| std::path::PathBuf::from("."))
+            std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from("."))
         });
 
     serve_loop(&root)
@@ -463,10 +462,7 @@ fn serve_loop(root: &std::path::Path) -> ExitCode {
             }
         };
 
-        let method = request
-            .get("method")
-            .and_then(|m| m.as_str())
-            .unwrap_or("");
+        let method = request.get("method").and_then(|m| m.as_str()).unwrap_or("");
         let id = request
             .get("id")
             .cloned()
@@ -553,7 +549,10 @@ fn response_tools_call(
     root: &std::path::Path,
     session_splinters: &mut Vec<Splinter>,
 ) -> serde_json::Value {
-    let id = request.get("id").cloned().unwrap_or(serde_json::Value::Null);
+    let id = request
+        .get("id")
+        .cloned()
+        .unwrap_or(serde_json::Value::Null);
     let params = request
         .get("params")
         .cloned()
@@ -574,7 +573,10 @@ fn response_tools_call(
         });
     }
 
-    let args = params.get("arguments").cloned().unwrap_or(serde_json::Value::Null);
+    let args = params
+        .get("arguments")
+        .cloned()
+        .unwrap_or(serde_json::Value::Null);
     let mq_expr = args
         .get("mq_expression")
         .and_then(|e| e.as_str())
@@ -654,18 +656,16 @@ fn response_tools_call(
     };
 
     let tensions_json = match tensions_result {
-        Imperfect::Success(tensions) | Imperfect::Partial(tensions, _) => {
-            tensions
-                .iter()
-                .map(|t: &Tension| {
-                    serde_json::json!({
-                        "kind": format!("{:?}", t.kind),
-                        "magnitude": t.magnitude,
-                        "diagnostic": t.diagnostic,
-                    })
+        Imperfect::Success(tensions) | Imperfect::Partial(tensions, _) => tensions
+            .iter()
+            .map(|t: &Tension| {
+                serde_json::json!({
+                    "kind": format!("{:?}", t.kind),
+                    "magnitude": t.magnitude,
+                    "diagnostic": t.diagnostic,
                 })
-                .collect::<Vec<_>>()
-        }
+            })
+            .collect::<Vec<_>>(),
         Imperfect::Failure(red, _) => {
             vec![serde_json::json!({
                 "error": format!("tension detection Red: {:?}", red),
@@ -709,10 +709,7 @@ fn response_tools_call(
 
 /// MCP unknown-method response — JSON-RPC 2.0 §5.1 error envelope
 /// with code -32601 (method not found).
-fn response_method_not_found(
-    method: &str,
-    id: serde_json::Value,
-) -> serde_json::Value {
+fn response_method_not_found(method: &str, id: serde_json::Value) -> serde_json::Value {
     serde_json::json!({
         "jsonrpc": "2.0",
         "id": id,
@@ -809,9 +806,15 @@ fn cmd_roomba(rest: &[String]) -> ExitCode {
     println!("found {} entries:", entries.len());
     println!("  {:>4} directories", dirs);
     println!("  {:>4} .rs      (arm-collapse candidates)", rust_files);
-    println!("  {:>4} .mirror  (materialize candidates; M7 dispatch)", mirror_shards);
+    println!(
+        "  {:>4} .mirror  (materialize candidates; M7 dispatch)",
+        mirror_shards
+    );
     println!("  {:>4} .md      (docs; cascade-invisible)", docs);
-    println!("  {:>4} other    (unclassified; walker enumerates only)", other);
+    println!(
+        "  {:>4} other    (unclassified; walker enumerates only)",
+        other
+    );
 
     // Arm-collapse dispatch per Mara §7.4 dispatch matrix row 1:
     // `.rs` → arm-collapse. Loads the bilateral corpus from the
@@ -857,7 +860,10 @@ fn cmd_roomba(rest: &[String]) -> ExitCode {
                                 oid,
                             );
                             for arm in &report.arms {
-                                println!("              ↳ {} (sentinel: {})", arm.action_ref, arm.sentinel);
+                                println!(
+                                    "              ↳ {} (sentinel: {})",
+                                    arm.action_ref, arm.sentinel
+                                );
                             }
                         }
                         None => {
@@ -871,7 +877,11 @@ fn cmd_roomba(rest: &[String]) -> ExitCode {
                 }
             }
             Err(e) => {
-                eprintln!("  [.rs ✗    ] {} — dispatch error: {}", entry.path.display(), e);
+                eprintln!(
+                    "  [.rs ✗    ] {} — dispatch error: {}",
+                    entry.path.display(),
+                    e
+                );
             }
         }
     }
@@ -886,11 +896,7 @@ fn cmd_roomba(rest: &[String]) -> ExitCode {
 
     // Sample enumeration: first 10 non-directory entries with their
     // classification. Empirical readability > exhaustive dump.
-    let sample: Vec<_> = entries
-        .iter()
-        .filter(|e| !e.is_dir)
-        .take(10)
-        .collect();
+    let sample: Vec<_> = entries.iter().filter(|e| !e.is_dir).take(10).collect();
     if !sample.is_empty() {
         println!();
         println!("sample (first {} files):", sample.len());
@@ -944,7 +950,10 @@ fn cmd_roomba(rest: &[String]) -> ExitCode {
             );
             println!("walker signature: {}", deposit.signature);
             match deposit.commit_oid.as_deref() {
-                Some(oid) => println!("crystal committed as mirror <mirror@spectral.engineer>: {}", oid),
+                Some(oid) => println!(
+                    "crystal committed as mirror <mirror@spectral.engineer>: {}",
+                    oid
+                ),
                 None => println!("crystal APPENDED but no commit landed (no enclosing git repo)."),
             }
         }
@@ -1081,13 +1090,8 @@ fn deposit_observation_crystal(
     );
 
     let mirror_subject = fractal::Subject::mirror();
-    let commit_oid = phone::git_commit_as(
-        &repo_root,
-        &mirror_subject,
-        &mirror_subject,
-        &message,
-    )
-    .map_err(|e| format!("@io/git.commit: {}", e))?;
+    let commit_oid = phone::git_commit_as(&repo_root, &mirror_subject, &mirror_subject, &message)
+        .map_err(|e| format!("@io/git.commit: {}", e))?;
 
     Ok(CrystalDeposit {
         observations_path,
@@ -1200,21 +1204,20 @@ fn is_leap(y: u32) -> bool {
 /// follows FIPS 180-4 §6.2.
 fn sha256_hex(input: &[u8]) -> String {
     const K: [u32; 64] = [
-        0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1,
-        0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
-        0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786,
-        0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
-        0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147,
-        0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13,
-        0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85, 0xa2bfe8a1, 0xa81a664b,
-        0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
-        0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a,
-        0x5b9cca4f, 0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208,
-        0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2,
+        0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4,
+        0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe,
+        0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f,
+        0x4a7484aa, 0x5cb0a9dc, 0x76f988da, 0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7,
+        0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc,
+        0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85, 0xa2bfe8a1, 0xa81a664b,
+        0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070, 0x19a4c116,
+        0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+        0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7,
+        0xc67178f2,
     ];
     let mut h: [u32; 8] = [
-        0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c,
-        0x1f83d9ab, 0x5be0cd19,
+        0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab,
+        0x5be0cd19,
     ];
 
     // Pre-processing: pad message to multiple of 512 bits.
@@ -1344,13 +1347,8 @@ fn mend_at(
     let message = compose_collapse_commit_message(rs_path, &arms, bytes_before, bytes_after);
 
     let mirror_subject = fractal::Subject::mirror();
-    let commit_oid = phone::git_commit_as(
-        &repo_root,
-        &mirror_subject,
-        &mirror_subject,
-        &message,
-    )
-    .map_err(|e| format!("@io/git.commit: {}", e))?;
+    let commit_oid = phone::git_commit_as(&repo_root, &mirror_subject, &mirror_subject, &message)
+        .map_err(|e| format!("@io/git.commit: {}", e))?;
 
     let _ = substrate_root; // reserved for future reflective composer.
 
@@ -1612,11 +1610,7 @@ mod at_operator_tests {
             .unwrap()
             .write_all(b"hello mirror")
             .unwrap();
-        let result = at_operator(
-            "@io/fs.read",
-            &[f.display().to_string()],
-        )
-        .unwrap();
+        let result = at_operator("@io/fs.read", &[f.display().to_string()]).unwrap();
         assert_eq!(result, "hello mirror");
     }
 
@@ -1629,11 +1623,7 @@ mod at_operator_tests {
             &[f.display().to_string(), "substrate flows".to_string()],
         )
         .unwrap();
-        let read_back = at_operator(
-            "@io/fs.read",
-            &[f.display().to_string()],
-        )
-        .unwrap();
+        let read_back = at_operator("@io/fs.read", &[f.display().to_string()]).unwrap();
         assert_eq!(read_back, "substrate flows");
     }
 
@@ -1820,7 +1810,10 @@ mod at_operator_tests {
         )
         .unwrap();
         assert_eq!(void_oid.len(), 40);
-        assert_ne!(void_oid, commit_oid, "distinct commits must have distinct OIDs");
+        assert_ne!(
+            void_oid, commit_oid,
+            "distinct commits must have distinct OIDs"
+        );
     }
 
     #[test]
@@ -1890,8 +1883,7 @@ fn cmd_craft(rest: &[String]) -> ExitCode {
     // §5.2 M2). Accepts both `system @<name>` (post-VSM-transition)
     // and legacy `project <name>` grammars per Mara two-tick
     // alias-shim discipline (c6eb2d8).
-    let has_container_block =
-        spec_source.contains("system @") || spec_source.contains("project ");
+    let has_container_block = spec_source.contains("system @") || spec_source.contains("project ");
     if !has_container_block {
         eprintln!(
             "mirror craft: {} does not declare a `system @<name>` or `project <name>` block",
@@ -1904,10 +1896,9 @@ fn cmd_craft(rest: &[String]) -> ExitCode {
     // 2026-08-21): accept BOTH `altitude @code/rust` (legacy) and
     // `altitude @facet/rust` (post-rename canonical). Window closes
     // when all downstream spec files migrate to @facet/rust.
-    let has_rust_target =
-        (spec_source.contains("altitude @code/rust")
-            || spec_source.contains("altitude @facet/rust"))
-            && (spec_source.contains("cargo"));
+    let has_rust_target = (spec_source.contains("altitude @code/rust")
+        || spec_source.contains("altitude @facet/rust"))
+        && (spec_source.contains("cargo"));
     if !has_rust_target {
         eprintln!(
             "mirror craft: {} does not declare a `@facet/rust` (or legacy `@code/rust`) binary target via cargo",
@@ -2153,7 +2144,11 @@ fn cmd_compile(rest: &[String]) -> ExitCode {
 
     let comp = compile::compile_from_source(&source, &witnessed);
 
-    println!("mirror compile: SAGA chain of {} crystal(s) from {}", comp.depth(), file);
+    println!(
+        "mirror compile: SAGA chain of {} crystal(s) from {}",
+        comp.depth(),
+        file
+    );
     println!();
     for (i, (crystal, discharge)) in comp.crystals.iter().zip(comp.discharges.iter()).enumerate() {
         let verdict_tag = if discharge.verdict.is_pass() {
@@ -2163,8 +2158,17 @@ fn cmd_compile(rest: &[String]) -> ExitCode {
         } else {
             "defer "
         };
-        let oid_prefix: String = crystal.oid.0.iter().take(8).map(|b| format!("{:02x}", b)).collect();
-        println!("  [{:>3}] {} {} — {}", i, verdict_tag, oid_prefix, discharge.property_name);
+        let oid_prefix: String = crystal
+            .oid
+            .0
+            .iter()
+            .take(8)
+            .map(|b| format!("{:02x}", b))
+            .collect();
+        println!(
+            "  [{:>3}] {} {} — {}",
+            i, verdict_tag, oid_prefix, discharge.property_name
+        );
     }
 
     println!();
@@ -2174,7 +2178,10 @@ fn cmd_compile(rest: &[String]) -> ExitCode {
         }
         compile::Escalation::Escalate(oid) => {
             let prefix: String = oid.0.iter().take(8).map(|b| format!("{:02x}", b)).collect();
-            println!("escalation: Escalate(crystal={}) — @peer.redirect walk-target", prefix);
+            println!(
+                "escalation: Escalate(crystal={}) — @peer.redirect walk-target",
+                prefix
+            );
         }
         compile::Escalation::Halt(msg) => {
             println!("escalation: Halt({})", msg);
@@ -2246,17 +2253,50 @@ fn cmd_bumblebee(rest: &[String]) -> ExitCode {
     // byte-for-byte preservation).
     let renames: [(&str, &str); 12] = [
         ("shards/cascade.mirror", "shards/bumblebee/code.mirror"),
-        ("shards/cascade/code/formal/prose.mirror", "shards/bumblebee/code/formal/prose.mirror"),
-        ("shards/cascade/code/gestalt/gleam.mirror", "shards/bumblebee/code/gestalt/gleam.mirror"),
-        ("shards/cascade/code/gleam/beam.mirror", "shards/bumblebee/code/gleam/beam.mirror"),
-        ("shards/cascade/code/gleam/js.mirror", "shards/bumblebee/code/gleam/js.mirror"),
-        ("shards/cascade/code/llvm/turing.mirror", "shards/bumblebee/code/llvm/turing.mirror"),
-        ("shards/cascade/code/mirror/gestalt.mirror", "shards/bumblebee/code/mirror/gestalt.mirror"),
-        ("shards/cascade/code/purescript/js.mirror", "shards/bumblebee/code/purescript/js.mirror"),
-        ("shards/cascade/code/rust/go.mirror", "shards/bumblebee/code/rust/go.mirror"),
-        ("shards/cascade/code/rust/llvm.mirror", "shards/bumblebee/code/rust/llvm.mirror"),
-        ("shards/cascade/code/rust/wasm.mirror", "shards/bumblebee/code/rust/wasm.mirror"),
-        ("shards/cascade/code/turing/mirror.mirror", "shards/bumblebee/code/turing/mirror.mirror"),
+        (
+            "shards/cascade/code/formal/prose.mirror",
+            "shards/bumblebee/code/formal/prose.mirror",
+        ),
+        (
+            "shards/cascade/code/gestalt/gleam.mirror",
+            "shards/bumblebee/code/gestalt/gleam.mirror",
+        ),
+        (
+            "shards/cascade/code/gleam/beam.mirror",
+            "shards/bumblebee/code/gleam/beam.mirror",
+        ),
+        (
+            "shards/cascade/code/gleam/js.mirror",
+            "shards/bumblebee/code/gleam/js.mirror",
+        ),
+        (
+            "shards/cascade/code/llvm/turing.mirror",
+            "shards/bumblebee/code/llvm/turing.mirror",
+        ),
+        (
+            "shards/cascade/code/mirror/gestalt.mirror",
+            "shards/bumblebee/code/mirror/gestalt.mirror",
+        ),
+        (
+            "shards/cascade/code/purescript/js.mirror",
+            "shards/bumblebee/code/purescript/js.mirror",
+        ),
+        (
+            "shards/cascade/code/rust/go.mirror",
+            "shards/bumblebee/code/rust/go.mirror",
+        ),
+        (
+            "shards/cascade/code/rust/llvm.mirror",
+            "shards/bumblebee/code/rust/llvm.mirror",
+        ),
+        (
+            "shards/cascade/code/rust/wasm.mirror",
+            "shards/bumblebee/code/rust/wasm.mirror",
+        ),
+        (
+            "shards/cascade/code/turing/mirror.mirror",
+            "shards/bumblebee/code/turing/mirror.mirror",
+        ),
     ];
 
     // Sibling shard imports per Mara companion spec 06789fa §5 (4 files with
@@ -2264,10 +2304,17 @@ fn cmd_bumblebee(rest: &[String]) -> ExitCode {
     let sibling_imports: [(&str, &str, &str); 3] = [
         ("shards/glue.mirror", "in @cascade", "in @bumblebee/code"),
         ("shards/io/oci.mirror", "in @cascade", "in @bumblebee/code"),
-        ("shards/magic/trick.mirror", "in @cascade", "in @bumblebee/code"),
+        (
+            "shards/magic/trick.mirror",
+            "in @cascade",
+            "in @bumblebee/code",
+        ),
     ];
 
-    println!("@bumblebee.buzz — perturbation-source firing on target {}", target);
+    println!(
+        "@bumblebee.buzz — perturbation-source firing on target {}",
+        target
+    );
     println!("Per Mara Rec #95 companion spec 06789fa §3.3 rename map (byte-for-byte).");
     println!();
     println!("=== 12 direct species renames ===");
@@ -2320,7 +2367,7 @@ fn cmd_bumblebee(rest: &[String]) -> ExitCode {
 ///   of Reed executable cascade C1-C8 per Mara 2026-09-11 canonical.
 /// - `K<n>` for K_n complete graph (n = integer ≥ 0)
 /// - `<u>-<v>[,<u>-<v>]*` for edge-list (comma-separated vertex-pairs)
-fn parse_sheaf_shape(desc: &str) -> Option<prismqueer::spectral::SheafOfShardGraph> {
+fn parse_sheaf_shape(desc: &str) -> Option<prismqueer::spectral::Graph> {
     if desc == "{}" {
         // Self-compose-placeholder per Loki essay §8 empirical fire.
         // Signal to cmd_love: substrate-infer composed from (a, b) at
@@ -2330,7 +2377,7 @@ fn parse_sheaf_shape(desc: &str) -> Option<prismqueer::spectral::SheafOfShardGra
     }
     if let Some(n_str) = desc.strip_prefix('K') {
         let n: usize = n_str.parse().ok()?;
-        Some(prismqueer::spectral::sheaf_of_complete_graph_of_order(n))
+        Some(prismqueer::spectral::graph_complete_of_order(n))
     } else {
         let edges: Option<Vec<(u64, u64)>> = desc
             .split(',')
@@ -2341,7 +2388,7 @@ fn parse_sheaf_shape(desc: &str) -> Option<prismqueer::spectral::SheafOfShardGra
                 Some((u, v))
             })
             .collect();
-        Some(prismqueer::spectral::sheaf_of_shard_graph_from_edges(&edges?))
+        Some(prismqueer::spectral::graph_from_edges(&edges?))
     }
 }
 
@@ -2410,16 +2457,36 @@ fn cmd_love(rest: &[String]) -> ExitCode {
 
     // Report FullSpectrum witness at CLI altitude.
     println!("love({}, {}) → {}", a_desc, b_desc, composed_desc);
-    println!("  a.spectrum:         {:?}", fs.a.spectrum);
-    println!("  b.spectrum:         {:?}", fs.b.spectrum);
-    println!("  composed.spectrum:  {:?}", fs.composed.spectrum);
-    println!("  commutator.spectrum:{:?}", fs.commutator.spectrum);
+    println!("  a.spectrum:         {:?}", fs.a.eigenvalues);
+    println!("  b.spectrum:         {:?}", fs.b.eigenvalues);
+    println!("  composed.spectrum:  {:?}", fs.composed.eigenvalues);
+    match &fs.commutator {
+        prismqueer::Imperfect::Success(d) => {
+            println!("  commutator.spectrum:{:?}", d.spectrum)
+        }
+        prismqueer::Imperfect::Partial(d, ambiguous) => println!(
+            "  commutator.spectrum:{:?} (ambiguous: {:?}; is the composition commutative? not certified)",
+            d.spectrum, ambiguous
+        ),
+        prismqueer::Imperfect::Failure(unmeasured, _) => println!(
+            "  commutator.spectrum:unmeasured (LAPACK info {}; does the composition commute? unknown)",
+            unmeasured.0
+        ),
+    }
     println!("  delta_critical:     {:?}", fs.delta.value);
     println!("  axes.len():         {}", fs.axes.len());
-    println!("  failing_count:      {} of {}", fs.failing_count(), fs.axes.len());
+    println!(
+        "  failing_count:      {} of {}",
+        fs.failing_count(),
+        fs.axes.len()
+    );
     println!("  all_climb:          {}", fs.all_climb());
     println!("  any_climbs:         {}", fs.any_climbs());
-    println!("  observer_inclusive: {}", fs.is_observer_inclusive());
+    let observer_inclusive = fs.is_observer_inclusive();
+    println!(
+        "  observer_inclusive: {}",
+        observer_inclusive.map_or("unknown".to_string(), |b| b.to_string())
+    );
 
     // Foerster-canonical verdict as ORIENTED TERNARY SCALAR per Alex
     // 2026-09-08 verbatim ("What if yellow produced 1 and red produced
@@ -2436,10 +2503,16 @@ fn cmd_love(rest: &[String]) -> ExitCode {
     // Same magnitude for Yellow + Red (both "not settled") but opposite
     // direction — Yellow is generative-forward; Red is halting-retreat.
     // Rust ExitCode is u8; -1 = 255 in two's-complement 8-bit signed.
-    let (verdict, code) = if fs.all_climb() && fs.is_observer_inclusive() {
+    //
+    // An uncertified commutator (None) is a question, never Green and never
+    // a refusal: it lands in Yellow.
+    let (verdict, code) = if fs.all_climb() && observer_inclusive == Some(true) {
         ("Green (Foerster-canonical admissible)", ExitCode::SUCCESS)
-    } else if fs.any_climbs() || fs.is_observer_inclusive() {
-        ("Yellow (K-T question at specific axes or altitude)", ExitCode::from(1))
+    } else if fs.any_climbs() || observer_inclusive != Some(false) {
+        (
+            "Yellow (K-T question at specific axes or altitude)",
+            ExitCode::from(1),
+        )
     } else {
         ("Red (substrate refuses)", ExitCode::from(255))
     };

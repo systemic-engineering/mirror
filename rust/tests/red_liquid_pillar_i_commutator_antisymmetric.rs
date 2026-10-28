@@ -38,7 +38,7 @@
 //! witnessed in the prismqueer-side ouroboros suite.
 
 use prismqueer::bundle::examples::TestBundle;
-use prismqueer::liquid::commutator_norm;
+use prismqueer::flux::commutator_norm;
 use prismqueer::Loss;
 
 #[test]
