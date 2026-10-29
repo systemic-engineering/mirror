@@ -4,7 +4,8 @@ in @glass
 in @uuid/spectral
 
 # @glasswall — composition-primary shard-decl for the Rice-safe
-# Anna-Wolf-2012 observation-preserving type-membrane between
+# observation-preserving type-membrane (named for the apparatus from
+# Anna Jakobs's 2012 thesis, read across; see invariant (i)) between
 # prismqueer noumenal-colony and mirror phenomenal-composition-
 # surface, composing seven LANDED parts as ONE membrane per
 # Păun 2000 P-systems + Rice 1953 undecidability discipline + Rec
@@ -254,7 +255,8 @@ glasswall_inherits_four_invariants(t: glasswall_traversal) -> verdict { \ }
 # Discipline obligation.
 glasswall_traversal_rice_safe(t: glasswall_traversal) -> verdict { \ }
 
-# Anna Wolf 2012 observation-without-perturbation: every membrane
+# Observation-without-perturbation (named for Anna Jakobs's 2012
+# thesis, read across; see invariant (i)): every membrane
 # traversal preserves the observed substrate structurally; input_oid
 # and output_oid content-addresses reflect observation-non-
 # perturbation across the membrane. Discipline obligation per HARD
