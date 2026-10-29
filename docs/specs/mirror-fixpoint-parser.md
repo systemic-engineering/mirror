@@ -203,6 +203,64 @@ This spec does not write `mirror.mirror`. It states what the file must contain f
 - **Undefined atoms counted in the cone** *[Seam]*. `undefined` counts only atoms reached by the start atom's first-premise evaluation (math §5.1). `S <- 'a' / L ; L <- L 'b'` on `a` is `success` with `wf false`.
 - **One store.** Parse items, AST splinters, pact facts and rotation observations are all splinters under one address function (§5) and one git projection (§7). Altitude tags keep them apart (math Cor. 1.3).
 
+### §4.1 The contract `E` meets before any parser exists *[10-29]*
+
+The smallest input/output contract under which `E` is testable with no grammar, no `mirror.mirror` and no parser. Where `E` lives (shard or boundary Rust) doesn't change it. Math: §5.1–§5.3.
+
+**Terms.** Function-free (Datalog). A term is a **variable** or a **constant**, and a constant is one of three tagged kinds: `sym` (a UTF-8 name), `nat` (an unsigned integer; positions) or `addr` (32 bytes; a splinter). There is **no arithmetic and no comparison in the core**. What the PEG clauses need arrives as extensional facts generated with the input ("EDB"):
+- `next(i, j)` for `j = i + 1`;
+- `lt(i, j)` for `i < j`, over `0..n`;
+- `lit(t, i, j)` when the input's bytes `[i, j)` equal terminal `t`;
+- `nolit(t, i)` when they don't (math §5.1's `¬input`, the stratum-0 negation, precomputed).
+
+The core sees no negation at all.
+
+**Program.** A finite list of rules `id: h :- b₁, …, b_k` (k ≥ 0) over atoms `p(t₁, …, t_n)`, with each predicate at a fixed arity.
+- **Safe**: every head variable occurs in a body atom.
+- An unsafe rule, an arity mismatch or a function term makes the program `dark` (not run).
+- Optional declarations `functional p(1, 2) → 3` assert at most one value of argument 3 per value of arguments (1, 2). That is Ford's functionality for `m(e, i, j)`, and `E` indexes the relation by the key.
+
+**Fact store.** A set of ground atoms. Each atom is a splinter at an altitude `τ` (`@parse/item`, `@pact/fact`, or `@datalog/fact` for tests):
+- `addr = H("splinter\0" ‖ τ ‖ enc(p) ‖ u64(n) ‖ for each argument: tag byte ‖ enc(bytes))` (§5.0);
+- two atoms are the same atom iff their addresses are equal;
+- the store is append-only.
+
+**A run.** `E(P, F, k_max) → (M, D, stop)`:
+- `M`: the least model, `F ⊆ M`. Its address is the store-merge fragment of `M` (children sorted by address, which is right here because `M` is a set, math §1.3).
+- `D`: one **deposit** per atom of `M`, `(addr, tick)`, where tick 0 holds the facts and tick t the atoms first derived in round t. Deposits are records beside the atoms. The tick is never in an atom's address or in `M`'s address (math Prop. 1.7).
+- `stop`: `fixed at T` (the first round whose delta is empty; the last deposit tick is `T − 1`), or `budget at k_max` (a non-empty delta at the budget). For a positive finite program `budget` cannot happen when `k_max ≥ |B|` (math Prop. 5.4). If it is ever reported, it is a bug, and the run is `dark`.
+- Functionality violations are returned as findings `functional_violation(p, key, v, v′)`, never as a crash.
+
+**The well-founded wrapper `W`** (math §5.3). Rules may carry negative body literals `not a`.
+- `γ(S)` = `M` of one core run of the program with each `not a` read as the EDB test `a ∉ S`.
+- `under₀ = F`; `over_k = γ(under_k)`; `under_{k+1} = γ(over_k)`.
+- Stop at consecutive equality of `under`, which is monotone, so this is also an empty delta.
+- `W` returns: `true = under`; `undefined = over ∖ under`; `false` for the queried atoms; `outcome` `clear` iff `undefined = ∅`, else `opaque`.
+- Each retraction (an atom of `over_k` missing from `over_{k+1}`) is deposited as a **status splinter** `(atom, round, undefined → false)`. Nothing is deleted.
+
+**Red tests, in order** (`rust/tests/engine_*.rs` or the engine shard's own harness). Fixtures are **data in the test** or mirror-text files. No JSON is read and no serde is linked.
+
+- **E1. Semi-naive = naive** (math Prop. 5.4). Equal `M` and equal tick per atom on each fixture (a deposit's tick is the first naive round containing the atom):
+  - transitive closure over pact vector 01's graph (the cycle `b → c → b`);
+  - a chain of length 10;
+  - 200 random positive programs from a fixed seed, generated in the test.
+- **E2. Empty-delta stop.** Facts `e(0,1) … e(n−1,n)` with `p(X,Y) :- e(X,Y). p(X,Z) :- p(X,Y), e(Y,Z).` give `stop fixed at n + 1`, the last deposit at tick `n`, and `|M| = n + n(n+1)/2`. A program with no rules gives `M = F` and `stop fixed at 1`.
+- **E3. The tick is not in the address.** One atom derived at tick 1 in one run and at tick 3 in another has one address. Every permutation of `P` and `F` gives the same `M` address and the same deposit ticks.
+- **E4. The PEG clauses of math §5.1 on hand-built grammars.** Clauses are written as data, with the EDB above. Ford's functionality holds in every case.
+  - `S <- 'a' S / 'a'` on `aaa` → `m(S,0,3)`.
+  - Seam's `E_long` vector `Top <- S !. ; S <- 'a' / 'ab'` on `ab` → `f(Top,0)` (ordered choice, not longest match).
+  - The `E_troj` vector (a rule `Admin` present; `Guard <- !'root' Name`) on `root` → `f(Guard,0)`.
+  - `S <- 'a' / L ; L <- L 'b'` on `a` → `m(S,0,1)`, and `(L,0)` has neither `m` nor `f`.
+  - `A <- A 'a' / 'a'` on `aa` → `(A,0)` undefined, `stop fixed` (no hang).
+  - `S <- &'a' 'a'`: on `a` → `m(S,0,1)`; on `b` → `f(S,0)`.
+  - The undefined-in-cone count belongs to the parse wrapper, not to `E`.
+- **E5. Pacts through `W`.** Expected results are transcribed from `tests/pact/oracles.md` and vectors 01, 03 and 04 (branch `reed/mirror-006-pact`, `5babfbad`):
+  - 01: the nine `path` facts true, `clear`;
+  - 03: `send(a1)` false, `clear`;
+  - 04: `true {r}`, `undefined {p, q, t}`, `opaque`.
+  - Math Prop. 5.5's example (`b :- not a. c :- not b. d :- not c.`, fact `a`) deposits one status splinter for `d` at round 1 and deletes nothing.
+- **E6. Order never matters.** For every vector marked `permute`, the result record is byte-identical under the runner's fixed sample of permutations of rules and facts.
+- **E7. No serde.** The engine's crate (or shard) has no `serde` dependency: `cargo tree -i serde` on it is empty.
 ---
 
 ## §5 Addressing
@@ -448,7 +506,7 @@ Each test is written red first, against the binary (`mirror compile …`), the w
 
 ## §14 Pickup
 
-The order for the builder: T1 red, the seed (decision 9), `E`'s core with the PEG clauses, `mirror.mirror`, then T2's swap assertion green, then T1 green (T2 gates T1). T3–T7 next, because they pin meaning. T8–T13 after that. T14 waits for `@ruler`; T15 belongs to prism.
+The order for the builder: T1 red, the seed (decision 9), `E`'s core with the PEG clauses (*[10-29]* driven by §4.1's E1–E7, which need no parser), `mirror.mirror`, then T2's swap assertion green, then T1 green (T2 gates T1). T3–T7 next, because they pin meaning. T8–T13 after that. T14 waits for `@ruler`; T15 belongs to prism.
 
 *[10-29]* T17 (one shard, interface, lint) lands with T7, since both are records compile prints. Gluing (`mirror kintsugi`, K1–K9) starts after T17 is green: kintsugi consumes interfaces. Its own order is `mirror-kintsugi.md` §9. The §5.0 bytes and §7 widths are pinned now, so T1.5's final re-hash can be written against them.
 
