@@ -217,26 +217,37 @@ The core sees no negation at all.
 
 **Program.** A finite list of rules `id: h :- b₁, …, b_k` (k ≥ 0) over atoms `p(t₁, …, t_n)`, with each predicate at a fixed arity.
 - **Safe**: every head variable occurs in a body atom.
-- An unsafe rule, an arity mismatch or a function term makes the program `dark` (not run).
-- Optional declarations `functional p(1, 2) → 3` assert at most one value of argument 3 per value of arguments (1, 2). That is Ford's functionality for `m(e, i, j)`, and `E` indexes the relation by the key.
+- An unsafe rule or an arity mismatch makes the program `dark` (not run). *[review 10-29]* A function term can't be written (`Term` has no such case), so there is nothing to check. §4.2 moves both checks to construction.
+- Optional declarations `functional p(1, 2) → 3` assert at most one value of argument 3 per value of arguments (1, 2). That is Ford's functionality for `m(e, i, j)`.
+  - **Positions are 1-based**, lie in `1..=arity`, and the value position is outside the key.
+  - `E` uses the key index on the **`M` side of a join only**; the `Δ` side is scanned. Linear parse time stays a CONJECTURE (math §5.4) until T6c measures it.
+  - **Several values for one key** give one finding per extra value, each paired with the least value in `Const` order: values `v₁ < v₂ < v₃` give `(v₁, v₂)` and `(v₁, v₃)`.
 
-**Fact store.** A set of ground atoms. Each atom is a splinter at an altitude `τ` (`@parse/item`, `@pact/fact`, or `@datalog/fact` for tests):
-- `addr = H("splinter\0" ‖ τ ‖ enc(p) ‖ u64(n) ‖ for each argument: tag byte ‖ enc(bytes))` (§5.0);
+**Fact store.** A set of ground atoms at **one altitude per store** *[review]*. The facts and every atom derived from them in that run share `τ` (`@parse/item`, `@pact/fact`, or `@datalog/fact` for tests). Bytes, pinned *[review A1, A2]*:
+- **one formula, §5.0's**: `addr = H("splinter\0" ‖ τ ‖ enc(content))` with `content = enc(p) ‖ u64(n) ‖ arg₁ ‖ … ‖ arg_n`. The earlier §4.1 text inlined `content` without its outer `enc`; §5.0 wins, so every atom in the system has one shape. The builder's `addr` gains the outer length prefix: a one-line change of derived hex, which no test pins yet (Seam's engine audit §3.2);
+- each `arg` = tag byte ‖ `enc(bytes)`, with tags **`sym 0x00`, `nat 0x01`, `addr 0x02`**. `sym` bytes are UTF-8. `nat` bytes are `u64` big-endian (so `enc` = 8 ‖ 8 bytes). `addr` bytes are the 32 raw bytes;
+- **engine altitudes use the root-grammar flag**: `τ = UTF-8(altitude) ‖ 0x00 ‖ 0x00`. They are the engine's own vocabulary, not a format grammar's. A grammar an atom is about enters through its content: `m(e, i, j)` carries `e` as an `addr` constant, and `e`'s address carries its grammar. Domain separation (math Cor. 1.3) holds because the altitude names differ;
+- `M`'s address: `H("fragment\0" ‖ τ ‖ enc("model") ‖ u64(|M|) ‖ addr₁ ‖ …)`, children sorted by address;
+- a **status splinter** (W's retraction) is an atom at `@pact/status` with content `enc("status") ‖ u64(3) ‖ (addr, the retracted atom) ‖ (sym, "undefined") ‖ (sym, "false")`. Its **round is a deposit coordinate, never in its address** (math Prop. 1.7), like a tick;
 - two atoms are the same atom iff their addresses are equal;
 - the store is append-only.
 
 **A run.** `E(P, F, k_max) → (M, D, stop)`:
 - `M`: the least model, `F ⊆ M`. Its address is the store-merge fragment of `M` (children sorted by address, which is right here because `M` is a set, math §1.3).
 - `D`: one **deposit** per atom of `M`, `(addr, tick)`, where tick 0 holds the facts and tick t the atoms first derived in round t. Deposits are records beside the atoms. The tick is never in an atom's address or in `M`'s address (math Prop. 1.7).
-- `stop`: `fixed at T` (the first round whose delta is empty; the last deposit tick is `T − 1`), or `budget at k_max` (a non-empty delta at the budget). For a positive finite program `budget` cannot happen when `k_max ≥ |B|` (math Prop. 5.4). If it is ever reported, it is a bug, and the run is `dark`.
+- `stop`: `fixed at T` (the first round whose delta is empty; the last deposit tick is `T − 1`), or `budget at k_max` (a non-empty delta at the budget; `k_max ≥ 1`).
+- *[review A3; PROVED]* **`T ≤ |B| − |F| + 1 ≤ |B| + 1`.** Every round before `T` adds at least one atom of `B ∖ F`, and round `T` adds none. The earlier bound `k_max ≥ |B|` was off by one: the program `a.` has `|B| = 1`, `F = ∅`, and stops `fixed at 2`. With `k_max ≥ |B| − |F| + 1`, `budget` cannot happen, so the run's stop is `fixed` and there is no "bound exceeded" case to report (§4.2 removes it).
 - Functionality violations are returned as findings `functional_violation(p, key, v, v′)`, never as a crash.
 
 **The well-founded wrapper `W`** (math §5.3). Rules may carry negative body literals `not a`.
 - `γ(S)` = `M` of one core run of the program with each `not a` read as the EDB test `a ∉ S`.
 - `under₀ = F`; `over_k = γ(under_k)`; `under_{k+1} = γ(over_k)`.
 - Stop at consecutive equality of `under`, which is monotone, so this is also an empty delta.
-- `W` returns: `true = under`; `undefined = over ∖ under`; `false` for the queried atoms; `outcome` `clear` iff `undefined = ∅`, else `opaque`.
-- Each retraction (an atom of `over_k` missing from `over_{k+1}`) is deposited as a **status splinter** `(atom, round, undefined → false)`. Nothing is deleted.
+- `W` returns `true = under`, `undefined = over ∖ under`, and `outcome` (`clear` iff `undefined = ∅`, else `opaque`). *[review A5]* There is **no query**. The status of any ground atom is read with `status(atom)`: true, undefined, or false (closed world for facts only). The pact oracle's `absent` is `status = false` for an atom no rule heads.
+- Each retraction (an atom of `over_k` missing from `over_{k+1}`) is deposited as a **status splinter** (bytes above), with `k + 1` as its round. Nothing is deleted.
+- *[review A5]* **`γ` always runs to completion.** Each core call inside `W` gets the sufficient budget `|B| − |F| + 1`, so `γ` can't stop at a budget, and "`γ` hit its budget" is not an outcome. `W`'s own outer loop is bounded by `|B|` rounds (`under` grows each round).
+- *[review A5]* **Functionality findings under `W`** are computed on `true` (definite violations). Undefined atoms can't violate definitively, and the `γ` calls' intermediate findings are not reported.
+- *[review; PROVED, §4.3]* At the end, `γ(under) = over` and `γ(over) = under`, so every undefined atom flips at each step of `γ` from `under`: **undefined = period 2**.
 
 **Red tests, in order** (`rust/tests/engine_*.rs` or the engine shard's own harness). Fixtures are **data in the test** or mirror-text files. No JSON is read and no serde is linked.
 
@@ -261,6 +272,94 @@ The core sees no negation at all.
   - Math Prop. 5.5's example (`b :- not a. c :- not b. d :- not c.`, fact `a`) deposits one status splinter for `d` at round 1 and deletes nothing.
 - **E6. Order never matters.** For every vector marked `permute`, the result record is byte-identical under the runner's fixed sample of permutations of rules and facts.
 - **E7. No serde.** The engine's crate (or shard) has no `serde` dependency: `cargo tree -i serde` on it is empty.
+
+### §4.2 The type-level contract (Alex: "No bare types. Make illegal state unrepresentable.") *[review 10-29]*
+
+A review of `rust/engine/src/lib.rs` at `83fe665` against §4.1. For each runtime check or unreachable variant, the type that removes it. The builder lands this as ♻️: no behaviour change, and E1–E7 plus the 38 existing tests stay green. The one exception is the address bytes of §4.1 A1, which change derived hex that no test pins; that lands as its own 🟢 before the ♻️.
+
+**Newtypes (no bare `u64` / `usize` / `String` / `[u8; 32]` in the public API).**
+
+| type | wraps | invariant it carries | removes |
+|---|---|---|---|
+| `Addr` | `[u8; 32]` | a BLAKE3 output; only `addr()`, `fragment()` and a checked parse construct it | `pub type Addr = [u8; 32]`, which lets any 32 bytes pose as an address |
+| `Altitude` | `String` | starts with `@`, contains no NUL, non-empty path segments | the silent NUL collision in `put_tau`; a misspelt altitude producing valid hashes |
+| `Sym`, `Predicate`, `Var`, `RuleId` | `String` | UTF-8, no NUL; four distinct types | passing a variable name where a predicate is expected (`Atom.pred: String`, `Term::Var(String)`, `Rule.id: String`) |
+| `Nat` | `u64` | a domain constant | `Const::Nat(u64)` mixing with counts |
+| `Arity` | `u32` | the arity a predicate is declared at | `usize` arities in `Dark::Arity` |
+| `Position` | `NonZeroU32` | 1-based, `≤ arity`, checked against the predicate's `Arity` at construction | `Functional.key: Vec<usize>` plus the 1-based→0-based subtraction in `keys()` (an underflow if 0 slips through) |
+| `Tick` | `u64` | a core round; 0 = facts | `Deposit.tick: u64`, `Stop::Fixed(u64)` |
+| `Round` | `u64` | a `W` outer round; distinct from `Tick` | `Retraction.round: u64` being comparable with a tick |
+| `Budget` | `NonZeroU64` | `k_max ≥ 1` | `k_max = 0` (A4) |
+
+**Typestates.**
+- **`PositiveProgram` and `NormalProgram`.** Built only by `PositiveProgram::new(rules, decls) -> Result<PositiveProgram, Dark>` (and likewise `NormalProgram::new`). Construction does what `validate()` does at run time today: arity, range restriction (safety), declaration positions. A `PositiveRule` has `body: Vec<Atom>`, so **negation in the core can't be written**. `Dark::Negation` disappears, and `run` takes `&PositiveProgram` and can't fail on safety.
+- **`Instance<'p>`** = a program plus a `Facts` store whose arities agree with the program's signature, built by `Instance::new(&program, facts) -> Result<_, Dark>`. That is where the facts-vs-rules arity check happens. After it, `run` is total.
+- **`Bounds`.** `Instance::sufficient_budget() -> Budget` returns `|B| − |F| + 1` (PROVED, §4.1).
+  - `run_to_fixpoint(&Instance) -> Run<Fixed>` uses that budget. Its `stop` field is `Fixed(Tick)` with no `Budget` case.
+  - `run_bounded(&Instance, Budget) -> Run<Bounded>` keeps both cases.
+  - `W` calls `run_to_fixpoint`, so **`Dark::Budget` disappears**.
+  - **`Dark::Bound` is removed.** It is unreachable by Prop. 5.4, so it becomes a `debug_assert!`, never an API variant.
+- **What remains of `Dark`** is only what construction finds: `Unsafe { rule: RuleId, var: Var }`, `Arity { pred: Predicate, expected: Arity, found: Arity }`, `Functional { pred: Predicate, position: Position }`. A `Run` never carries a `Dark`.
+- **`FunctionalViolation { pred, key: Vec<Const>, least: Const, other: Const }`.** Field names say the pairing rule (§4.1), and `least < other` is checked at construction.
+- **`WellFounded::status(&self, &Fact) -> Status`** stays (no query, A5). The altitude is the `Instance`'s, so `status` can't be asked about an atom at another altitude.
+
+**Which runtime checks go away, in one line each:** arity (construction); safety (construction); negation in the core (unwritable); declaration positions (`Position` checked against `Arity`); `k_max = 0` (`NonZeroU64`); `γ`'s budget (`Run<Fixed>`); the Prop. 5.4 bound (`debug_assert!`); NUL in an altitude (`Altitude::new`); 0-based/1-based confusion (`Position`).
+
+### §4.3 `Frequency`: one shape for every iterating thing *[review 10-29]*
+
+Math: `docs/math/2026-10-29-mara-engine-frequency-and-kleinos.md` §1. Every deterministic iteration in the system (E's rounds, W's alternation, `rotation::Splinter` (decision 7), `compile --fixpoint` (§3), convergence passes, kintsugi re-runs) ends one of three ways: **fixed** (period 1, `X = COORD(X)`), **cycle(p)** (period p ≥ 2), or **unknown within a window** (the budget). One trait gives all of them that shape:
+
+```rust
+pub trait Frequency {
+    type State;
+    type Kind: OrbitKind;                       // Monotone | General
+    fn step(&self, s: &Self::State) -> Self::State;
+    fn addr(s: &Self::State) -> Addr;           // equality of states = equality of addresses
+}
+
+pub enum Orbit<K: OrbitKind> {
+    Fixed { at: Tick },                         // λ = 1, first reached at tick μ
+    Cycle { from: Tick, period: Period, _k: K::CycleWitness },  // λ ≥ 2
+    Unknown { window: Budget },                 // μ + λ > window: a fact about the observer
+}
+// Period: NonZeroU64 with value ≥ 2 (a period of 1 is Fixed, never Cycle).
+// Monotone::CycleWitness = core::convert::Infallible: Cycle is unconstructible
+// for inflationary steps (law F4), so E's stop type has two cases, as now.
+```
+
+**Laws** (each PROVED in the math doc §1):
+- **F1 (rho):** on a finite state set, every orbit has a unique tail length `μ ≥ 0` and period `λ ≥ 1` with `s_{t+λ} = s_t` for all `t ≥ μ`.
+- **F2 (divisibility):** for `t ≥ μ`, `s_t = s_{t+q}` iff `λ | q`. Every later recurrence is a multiple of the period.
+- **F3:** fixed ⇔ `λ = 1` ⇔ `step(s_μ) = s_μ`.
+- **F4 (monotone ⇒ no cycle):** if `s ⊆ step(s)` on a finite powerset, `λ = 1`. E's core is this case.
+- **F5 (phase from deposits):** with every tick's address deposited, the first repeated address, at tick `t` with earlier tick `t′`, gives exactly `μ = t′` and `λ = t − t′`. For `t ≥ μ` the phase is `(t − μ) mod λ`. Without the deposits, Brent's or Floyd's constant-memory cycle finding gives the same `(μ, λ)` in `O(μ + λ)` steps.
+- **F6 (W):** `W`'s outer sequence `under_k` is monotone (`λ = 1`). The raw antitone step `γ` from `under` has `λ ≤ 2`, and the atoms with period 2 are exactly the undefined ones. The comma inside one program is a frequency.
+
+**Consecutive equality only detects `λ = 1`.** That is why compile §3 and decision 7 report `cycle(p)` separately. A non-monotone loop that only compares consecutive states calls a 2-cycle "not converged" forever and reaches its budget. F5 is the remedy, and it costs only the deposits the store already keeps.
+
+**Spectral side: honest for linear steps, analogy for the rest** (math §1.4):
+- for `x ↦ Ax`, an orbit of period `λ` lives in `ker(A^λ − I)`, where `A`'s eigenvalues are `λ`-th roots of unity, and `λ` is the lcm of their orders (PROVED);
+- for any finite step map, the 0/1 matrix of its functional graph has spectrum = all `p`-th roots of unity for each cycle of length `p`, plus `0` for the tails (PROVED). This is exact but lives on the state space (`2^|B|` states for E), so it is a statement, not a computation;
+- Kuramoto rotation is non-linear, and its address equality passes through a quantizing ruler, so "frequency" there is an analogy until a linearisation is declared.
+
+### §4.4 Kleinos at the engine layer: red tests *[review 10-29]*
+
+Math: the frequency/kleinos doc §2. Notation: `lfp(P, F)` = `M` of `run_to_fixpoint`, `E₃ = lfp(P₁ ∪ P₂, F₁ ∪ F₂) ∖ (lfp(P₁, F₁) ∪ lfp(P₂, F₂))`, as a set of addresses.
+
+- **K-E1 (sovereignty).** On 500 seeded pairs of positive programs, `lfp(Pᵢ, Fᵢ) ⊆ lfp(P₁ ∪ P₂, F₁ ∪ F₂)`.
+- **K-E2 (the emergent third, as addresses).**
+  - `P₁ = {q(X) :- p(X)}`, `F₁ = {p(a)}`; `P₂ = {r(X) :- q(X)}`, `F₂ = ∅` → `E₃ = {addr(r(a))}`.
+  - The same with `P₂ = ∅`, `F₂ = {p(a)}` (they cross on `p`, nothing new) → `E₃ = ∅`.
+  - `P₁ = {path(X,Y) :- e(X,Y)}` with `F₁` = edges `0→1, 1→2, 2→3`; `P₂ = {path(X,Z) :- path(X,Y), path(Y,Z)}` with `F₂` = edges `3→4, 4→5, 5→0` → `E₃` = all 36 `path` atoms of the 6-cycle minus the 3 that `P₁` derives alone, so `|E₃| = 33 > 1`. That refutes "exactly one emergent third" at this layer.
+- **K-E3 (crossing is necessary).** On the seeded pairs, `E₃ ≠ ∅` implies a crossing edge in the predicate dependency graph (a body predicate of one side that the other side heads or holds facts of).
+- **K-E4 (fusion is idempotence).** `P ∪ P = P`. Composing a program with itself gives the same model address and `E₃ = ∅`.
+- **K-E5 (no Fiedler law; math only).** In K-E2's first fixture, `λ₂` of the dependency graph falls from 2 (each part is `K₂`) to 1 (the union is `P₃`) while `E₃ ≠ ∅`. Recorded as a counterexample, not a test.
+- **K-E6 (retraction under W: a part disagrees with the glue).** `P₁ = {p :- not q}`, `P₂ = {q.}`: `W(P₁)` has `p` true, `W(P₁ ∪ P₂)` has `p` false and `q` true. The record lists `{p}` as the part/glue disagreement. On positive pairs that set is always empty (K-E1).
+- **K-E7 (the tick's shape).** For every deposit at tick `t ≥ 1` on the E1 fixtures, some rule instance derives it with every premise at tick `≤ t − 1` and at least one premise at exactly `t − 1`.
+- **F-E1 (frequency).**
+  - Vector 04: `γ(under) = over` and `γ(over) = under`, and the period-2 atoms are `{p, q, t}`.
+  - A hand-built general step of period 3 with a tail of 2: deposits give `μ = 2`, `λ = 3`.
+  - A budget below `μ + λ` gives `Unknown`.
 ---
 
 ## §5 Addressing
