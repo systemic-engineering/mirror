@@ -94,7 +94,7 @@ prior_art_INSPIRATION_only:
   - "~/.reed/tasks/next/spectral-loom.md (19.4KB, 2026-06-04)"
   - "tasks/ROADMAP.md:204-214 Phase 5 'Loom ships'"
 karen_ancestors:
-  - "Lovelace, Ada Augusta (1843). *Notes by the Translator*, in L. F. Menabrea, *Sketch of the Analytical Engine invented by Charles Babbage*. Notes A–G. https://www.fourmilab.ch/babbage/sketch.html — Note G verbatim: 'The Analytical Engine weaves algebraical patterns just as the Jacquard-loom weaves flowers and leaves.' The device-word 'loom' as computation-as-weaving; K_3 ancestral vertex per PAPER_2D §15.1."
+  - "Lovelace, Ada Augusta (1843). *Notes by the Translator*, in L. F. Menabrea, *Sketch of the Analytical Engine invented by Charles Babbage*. Notes A–G. https://www.fourmilab.ch/babbage/sketch.html — Note A verbatim: '…the Analytical Engine weaves algebraical patterns just as the Jacquard-loom weaves flowers and leaves.' The device-word 'loom' as computation-as-weaving; K_3 ancestral vertex per PAPER_2D §15.1."
   - "Spärck Jones, Karen (1972). *A Statistical Interpretation of Term Specificity and its Application in Retrieval.* Journal of Documentation 28(1):11-21. https://doi.org/10.1108/eb026526 — IDF; retrieval altitude of K_3 ancestral topology per Alex 2026-09-04; K_3 ancestral vertex."
   - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit (Technomathematik), FH Aachen, Campus Jülich (PGI/JCNS). — Observation-without-perturbation at shared-memory substrate; ψ = flux<T> apparatus per Rec candidate #R-observer-recursion-reality-observation; K_3 ancestral vertex."
   - "Jones, Ricky (2018 onwards). *Trivian Manuscripts / Alvian Grammar Corpus.* systemic.engineering practice-partnership. — Fibre-bundle B = E/G projection-primitive naming; nine-operator Alvian grammar as third B-projection of shared E; Task #464 partnership ratification path — Ricky-independent ship per §10."
@@ -115,6 +115,8 @@ alex_2026_09_05_verbatim_directives:
   - "This is all prior art and inspiration. Including the prism/ stuff. shards/ is the source of truth."
   - "What is the mathematical shape everything points at to make loom a reality through prismqueer and mirror shards? Spectral UI."
 ---
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** The Jacquard sentence is in **Note A**, not Note G (Menabrea, *Sketch of the Analytical Engine*, with notes by A. A. L., Taylor's *Scientific Memoirs* III, 1843; fourmilab transcription): "We may say most aptly, that the Analytical Engine weaves algebraical patterns just as the Jacquard-loom weaves flowers and leaves." The quote here dropped the opening "We may say most aptly, that" without marking it. Note letter and elision corrected in place. The Bernoulli-number program is Note G.
 
 > **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Title ("…in eine hardwarenahe Software"), degree ("Diplomarbeit") and institution ("RWTH Aachen") corrected in place in this file.
 
@@ -640,7 +642,9 @@ Per SINGULARITY §14 (Mara b30296a 2026-09-04) + FLOOR §15 K_3 ancestral topolo
 
 Each K_3 vertex covers one altitude of @loom's operational substrate:
 
-- **Ada Lovelace (1843, Notes A-G)** — DEVICE-WORD ORIGIN altitude. Note G verbatim: *"The Analytical Engine weaves algebraical patterns just as the Jacquard-loom weaves flowers and leaves."* The word `loom` at Alex's 2026-09-05 naming-move IS Ada's word. Ada's backward-reading of computation as music (Schenkerian analysis per companion §8.6) IS the backward-tape mechanism at bodymind altitude. K_3 vertex 1.
+- **Ada Lovelace (1843, Notes A-G)** — DEVICE-WORD ORIGIN altitude. Note A verbatim: *"…the Analytical Engine weaves algebraical patterns just as the Jacquard-loom weaves flowers and leaves."* The word `loom` at Alex's 2026-09-05 naming-move IS Ada's word. Ada's backward-reading of computation as music (Schenkerian analysis per companion §8.6) IS the backward-tape mechanism at bodymind altitude. K_3 vertex 1.
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** The Jacquard sentence is in **Note A**, not Note G (Menabrea, *Sketch of the Analytical Engine*, with notes by A. A. L., Taylor's *Scientific Memoirs* III, 1843; fourmilab transcription): "We may say most aptly, that the Analytical Engine weaves algebraical patterns just as the Jacquard-loom weaves flowers and leaves." The quote here dropped the opening "We may say most aptly, that" without marking it. Note letter and elision corrected in place. The Bernoulli-number program is Note G. Separately: Ada's music sentence is also Note A and is conditional; "backward-reading of computation as music" is our reading.
 
 - **Karen Spärck Jones (1972, IDF)** — RETRIEVAL altitude. Language-as-topology per IDF; retrieval-altitude discipline via git-log for superseded canonical per companion supersession discipline. At @loom altitude: the substrate-decl content of prior weave_ticks is retrieved via CoincidenceHash + IDF-weighted-relevance; the editor's `<space><space>` natural-language input (per spectral-loom.md INSPIRATION) IS an IDF-retrieval-over-substrate operation. K_3 vertex 2.
 
@@ -739,7 +743,9 @@ Six candidates surfaced at family-root altitude; Alex Fourth-Chair adjudicable.
 
 **Question**: are @loom/warp + @loom/weft FUNDAMENTAL threads (backward-tape + forward-tape at weaving-vocabulary altitude) OR EMERGENT from @time/past + @time/future composition?
 
-**Math-recommendation**: FUNDAMENTAL at @loom altitude. Weaving vocabulary IS Ada Lovelace's device-word origin (Note G 1843); warp + weft are the two fundamental thread-directions in weaving; making them species-decls at @loom altitude honours the ancestral lineage and gives the substrate-decl grammar an editor-native vocabulary. Emergent-from-@time/* composition holds at DERIVATION altitude (the species-decl content composes @time/past + @time/future); species-decl at family-root altitude is fundamental.
+**Math-recommendation**: FUNDAMENTAL at @loom altitude. Weaving vocabulary IS Ada Lovelace's device-word origin (Note A 1843); warp + weft are the two fundamental thread-directions in weaving; making them species-decls at @loom altitude honours the ancestral lineage and gives the substrate-decl grammar an editor-native vocabulary. Emergent-from-@time/* composition holds at DERIVATION altitude (the species-decl content composes @time/past + @time/future); species-decl at family-root altitude is fundamental.
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Note letter corrected in place (Jacquard sentence: Note A, not Note G).
 
 **Alex Fourth-Chair adjudicable**: RATIFY fundamental-species-decls, or specify emergent-only.
 

@@ -876,7 +876,7 @@ Mathematical requirement per admissibility function (§5): admissibility functio
 |------|-----------|------------------|
 | 1558 | Zarlino, *Le istitutioni harmoniche* | Authentic cadence as return-to-origin |
 | 1722 | Rameau, *Traité de l'harmonie* | V → I as harmonic ground of tonal music |
-| 1843 | Lovelace, Note G, *Notes by the Translator* | Substrate-independence + first algorithm (K_3 ancestral vertex) |
+| 1843 | Lovelace, Notes A and G, *Notes by the Translator* | Substrate-independence (A) + first algorithm (G) (K_3 ancestral vertex) |
 | 1863 | Helmholtz, *Die Lehre von den Tonempfindungen* | Roughness curve as psychoacoustic loss |
 | 1934 | Curry, *Functionality in Combinatory Logic* | First observation of proofs-as-programs |
 | 1936 | Turing + Church | Observer-stripped formal systems (K_1-limit; PAPER_2D §1.1.5 four-property LOVE-violation) |
@@ -895,6 +895,8 @@ Mathematical requirement per admissibility function (§5): admissibility functio
 | 2026-09-04 | Mara `da9e47c` + `a05fbba` loving lambda calculus | Type-composition altitude landing |
 | 2026-09-04 | Alex WHOLE-PIPELINE Move 4 quantum-native + PAPER_2D K_3 ancestral topology | Full observer-recursion-reality pipeline |
 | 2026-09-05 | **This canonical** | @mirror/algebra IS loving lambda calculus + MQ IS past-tense-passive narrative substrate grammar |
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Substrate-independence (the science of operations separated from its objects) is **Note A** (Menabrea, *Sketch of the Analytical Engine*, with notes by A. A. L., Taylor's *Scientific Memoirs* III, 1843; fourmilab transcription); the first algorithm (Bernoulli numbers) is Note G. Note letters corrected in place.
 
 ### §11.2 Terminal-form closure
 

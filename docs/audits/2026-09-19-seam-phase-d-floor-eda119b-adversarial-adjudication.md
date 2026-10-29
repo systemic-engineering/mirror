@@ -76,6 +76,8 @@ Every load-bearing primary-source claim in FLOOR was submitted to `mcp__kagi-ken
 | 31 | **Tomm 1988** — Family Process | Not re-verified this pass; canonical corpus reference. |
 | 32 | **Bateson 1972** — Steps to an Ecology of Mind | Not re-verified this pass; canonical reference. |
 
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Row 23 verified the source edition, not which Note holds the quotes the corpus attributes to Note G. The Jacquard sentence ("We may say most aptly, that the Analytical Engine weaves algebraical patterns just as the Jacquard-loom weaves flowers and leaves.") and the music sentence are in **Note A** (Menabrea, *Sketch of the Analytical Engine*, with notes by A. A. L., Taylor's *Scientific Memoirs* III, 1843; fourmilab transcription). The Bernoulli-number program is Note G.
+
 > **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
 
 ### §1.3 — Summary of verification tally

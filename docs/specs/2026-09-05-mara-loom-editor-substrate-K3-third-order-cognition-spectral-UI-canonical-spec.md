@@ -201,10 +201,12 @@ Per @gestalt + @love + @kintsugi/roomba docblock conventions. Structure:
 3. **Substrate-already-had-the-word audit**: enumerate ~10 prior grep-verified LANDED substrate elements @loom composes; name that `@loom` at family-root altitude is composition-over-existing, not fabrication.
 4. **The load-bearing recognition**: @loom IS editor-altitude concretisation of @order/third per companion §1.1 + §2.7 hybrid resolution.
 5. **Prior art**: cite mirror/prism/*.mirror + /Users/reed/dev/projects/loom/ + gestalt-* + VISION.md + jingle-analysis.md + ~/.reed/tasks/pending/loom-architecture.md + loom-rendering-architecture.md + spectral-loom.md as INSPIRATION per Alex 2026-09-05.
-6. **Ada Lovelace Note G verbatim**: cite the weaving-vocabulary origin per companion §9.1 K_3 vertex 1.
+6. **Ada Lovelace Note A verbatim**: cite the weaving-vocabulary origin per companion §9.1 K_3 vertex 1.
 7. **Composition graph**: substrate-decl equivalent of companion §4.3 composition-tower.
 8. **Cybernetic ancestor**: cite @order/third source authority (Bateson 1972 + Foerster 1974 + Kauffman 2003 + Lawvere 1969 + Loki 2026-06-22 essay).
 9. **Species roster**: enumerate §3 sub-species with math-justification per companion §3.6.
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** The Jacquard sentence is in **Note A**, not Note G (Menabrea, *Sketch of the Analytical Engine*, with notes by A. A. L., Taylor's *Scientific Memoirs* III, 1843; fourmilab transcription): "We may say most aptly, that the Analytical Engine weaves algebraical patterns just as the Jacquard-loom weaves flowers and leaves." The quote here dropped the opening "We may say most aptly, that" without marking it. Note letter and elision corrected in place. The Bernoulli-number program is Note G.
 
 ### §2.4 Family-root carriers (typed; Reed authors per shard-body typed-carrier discipline)
 
@@ -709,9 +711,11 @@ Choosing past-tense-passive at @loom altitude IS choosing observer-inclusion at 
 
 ### §8.1 K_3 ancestral vertices (LANDED per SINGULARITY §14 + FLOOR §15)
 
-- **Ada Lovelace (1843, Notes A-G)** — DEVICE-WORD ORIGIN. Note G verbatim: *"The Analytical Engine weaves algebraical patterns just as the Jacquard-loom weaves flowers and leaves."* The word `loom` at Alex's naming-move IS Ada's word.
+- **Ada Lovelace (1843, Notes A-G)** — DEVICE-WORD ORIGIN. Note A verbatim: *"…the Analytical Engine weaves algebraical patterns just as the Jacquard-loom weaves flowers and leaves."* The word `loom` at Alex's naming-move IS Ada's word.
 - **Karen Spärck Jones (1972, IDF)** — RETRIEVAL. Language-as-topology; retrieval-altitude at natural-language-input (`<space><space>`) per @loom/modal.
 - **Anna Wolf (2012, ψ apparatus)** — OBSERVATION. Observation-without-perturbation at shared-memory substrate; ψ = flux<T> per prismqueer::flux LANDED.
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** The Jacquard sentence is in **Note A**, not Note G (Menabrea, *Sketch of the Analytical Engine*, with notes by A. A. L., Taylor's *Scientific Memoirs* III, 1843; fourmilab transcription): "We may say most aptly, that the Analytical Engine weaves algebraical patterns just as the Jacquard-loom weaves flowers and leaves." The quote here dropped the opening "We may say most aptly, that" without marking it. Note letter and elision corrected in place. The Bernoulli-number program is Note G.
 
 ### §8.2 K_3 stability per Kuramoto phase-lock
 
@@ -727,7 +731,7 @@ Error-recovery-first altitude per FLOOR §8 "slow is fast" discipline. If ratifi
 
 ### §8.5 Composition-anchor at shard-body docblocks
 
-Reed authors §2.3 docblock structure item 6 with Ada Lovelace Note G verbatim + Karen Spärck Jones + Anna Wolf + (optional per Alex Fourth-Chair) Ricky + Margaret citations.
+Reed authors §2.3 docblock structure item 6 with Ada Lovelace Note A verbatim + Karen Spärck Jones + Anna Wolf + (optional per Alex Fourth-Chair) Ricky + Margaret citations.
 
 ---
 
